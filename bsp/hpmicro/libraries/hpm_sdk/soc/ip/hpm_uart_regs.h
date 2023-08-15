@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 hpmicro
+ * Copyright (c) 2021-2023 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -10,10 +10,14 @@
 #define HPM_UART_H
 
 typedef struct {
-    __R  uint8_t  RESERVED0[16];               /* 0x0 - 0xF: Reserved */
+    __R  uint8_t  RESERVED0[4];                /* 0x0 - 0x3: Reserved */
+    __RW uint32_t IDLE_CFG;                    /* 0x4: Idle Configuration Register */
+    __RW uint32_t ADDR_CFG;                    /* 0x8: address match config register */
+    __RW uint32_t IIR2;                        /* 0xC: Interrupt Identification Register2 */
     __RW uint32_t CFG;                         /* 0x10: Configuration Register */
     __RW uint32_t OSCR;                        /* 0x14: Over Sample Control Register */
-    __R  uint8_t  RESERVED1[8];                /* 0x18 - 0x1F: Reserved */
+    __RW uint32_t FCRR;                        /* 0x18: FIFO Control Register config */
+    __RW uint32_t MOTO_CFG;                    /* 0x1C: moto system control register */
     union {
         __R  uint32_t RBR;                     /* 0x20: Receiver Buffer Register (when DLAB = 0) */
         __W  uint32_t THR;                     /* 0x20: Transmitter Holding Register (when DLAB = 0) */
@@ -24,7 +28,7 @@ typedef struct {
         __RW uint32_t DLM;                     /* 0x24: Divisor Latch MSB (when DLAB = 1) */
     };
     union {
-        __R  uint32_t IIR;                     /* 0x28: Interrupt Identification Register */
+        __RW uint32_t IIR;                     /* 0x28: Interrupt Identification Register */
         __W  uint32_t FCR;                     /* 0x28: FIFO Control Register */
     };
     __RW uint32_t LCR;                         /* 0x2C: Line Control Register */
@@ -33,6 +37,248 @@ typedef struct {
     __R  uint32_t MSR;                         /* 0x38: Modem Status Register */
 } UART_Type;
 
+
+/* Bitfield definition for register: IDLE_CFG */
+/*
+ * TX_IDLE_COND (RW)
+ *
+ * IDLE Detection Condition
+ * 0 - Treat as idle if TX pin is logic one
+ * 1 - Treat as idle if UART state machine state is idle
+ */
+#define UART_IDLE_CFG_TX_IDLE_COND_MASK (0x2000000UL)
+#define UART_IDLE_CFG_TX_IDLE_COND_SHIFT (25U)
+#define UART_IDLE_CFG_TX_IDLE_COND_SET(x) (((uint32_t)(x) << UART_IDLE_CFG_TX_IDLE_COND_SHIFT) & UART_IDLE_CFG_TX_IDLE_COND_MASK)
+#define UART_IDLE_CFG_TX_IDLE_COND_GET(x) (((uint32_t)(x) & UART_IDLE_CFG_TX_IDLE_COND_MASK) >> UART_IDLE_CFG_TX_IDLE_COND_SHIFT)
+
+/*
+ * TX_IDLE_EN (RW)
+ *
+ * UART TX Idle Detect Enable
+ * 0 - Disable
+ * 1 - Enable
+ */
+#define UART_IDLE_CFG_TX_IDLE_EN_MASK (0x1000000UL)
+#define UART_IDLE_CFG_TX_IDLE_EN_SHIFT (24U)
+#define UART_IDLE_CFG_TX_IDLE_EN_SET(x) (((uint32_t)(x) << UART_IDLE_CFG_TX_IDLE_EN_SHIFT) & UART_IDLE_CFG_TX_IDLE_EN_MASK)
+#define UART_IDLE_CFG_TX_IDLE_EN_GET(x) (((uint32_t)(x) & UART_IDLE_CFG_TX_IDLE_EN_MASK) >> UART_IDLE_CFG_TX_IDLE_EN_SHIFT)
+
+/*
+ * TX_IDLE_THR (RW)
+ *
+ * Threshold for UART transmit Idle detection (in terms of bits)
+ */
+#define UART_IDLE_CFG_TX_IDLE_THR_MASK (0xFF0000UL)
+#define UART_IDLE_CFG_TX_IDLE_THR_SHIFT (16U)
+#define UART_IDLE_CFG_TX_IDLE_THR_SET(x) (((uint32_t)(x) << UART_IDLE_CFG_TX_IDLE_THR_SHIFT) & UART_IDLE_CFG_TX_IDLE_THR_MASK)
+#define UART_IDLE_CFG_TX_IDLE_THR_GET(x) (((uint32_t)(x) & UART_IDLE_CFG_TX_IDLE_THR_MASK) >> UART_IDLE_CFG_TX_IDLE_THR_SHIFT)
+
+/*
+ * RXEN (RW)
+ *
+ * UART receive enable.
+ * 0 - hold RX input to high, avoide wrong data input when config pinmux
+ * 1 - bypass RX input from PIN
+ * software should set it after config pinmux
+ */
+#define UART_IDLE_CFG_RXEN_MASK (0x800U)
+#define UART_IDLE_CFG_RXEN_SHIFT (11U)
+#define UART_IDLE_CFG_RXEN_SET(x) (((uint32_t)(x) << UART_IDLE_CFG_RXEN_SHIFT) & UART_IDLE_CFG_RXEN_MASK)
+#define UART_IDLE_CFG_RXEN_GET(x) (((uint32_t)(x) & UART_IDLE_CFG_RXEN_MASK) >> UART_IDLE_CFG_RXEN_SHIFT)
+
+/*
+ * RX_IDLE_COND (RW)
+ *
+ * IDLE Detection Condition
+ * 0 - Treat as idle if RX pin is logic one
+ * 1 - Treat as idle if UART state machine state is idle
+ */
+#define UART_IDLE_CFG_RX_IDLE_COND_MASK (0x200U)
+#define UART_IDLE_CFG_RX_IDLE_COND_SHIFT (9U)
+#define UART_IDLE_CFG_RX_IDLE_COND_SET(x) (((uint32_t)(x) << UART_IDLE_CFG_RX_IDLE_COND_SHIFT) & UART_IDLE_CFG_RX_IDLE_COND_MASK)
+#define UART_IDLE_CFG_RX_IDLE_COND_GET(x) (((uint32_t)(x) & UART_IDLE_CFG_RX_IDLE_COND_MASK) >> UART_IDLE_CFG_RX_IDLE_COND_SHIFT)
+
+/*
+ * RX_IDLE_EN (RW)
+ *
+ * UART Idle Detect Enable
+ * 0 - Disable
+ * 1 - Enable
+ * it should be enabled if enable address match feature
+ */
+#define UART_IDLE_CFG_RX_IDLE_EN_MASK (0x100U)
+#define UART_IDLE_CFG_RX_IDLE_EN_SHIFT (8U)
+#define UART_IDLE_CFG_RX_IDLE_EN_SET(x) (((uint32_t)(x) << UART_IDLE_CFG_RX_IDLE_EN_SHIFT) & UART_IDLE_CFG_RX_IDLE_EN_MASK)
+#define UART_IDLE_CFG_RX_IDLE_EN_GET(x) (((uint32_t)(x) & UART_IDLE_CFG_RX_IDLE_EN_MASK) >> UART_IDLE_CFG_RX_IDLE_EN_SHIFT)
+
+/*
+ * RX_IDLE_THR (RW)
+ *
+ * Threshold for UART Receive Idle detection (in terms of bits)
+ */
+#define UART_IDLE_CFG_RX_IDLE_THR_MASK (0xFFU)
+#define UART_IDLE_CFG_RX_IDLE_THR_SHIFT (0U)
+#define UART_IDLE_CFG_RX_IDLE_THR_SET(x) (((uint32_t)(x) << UART_IDLE_CFG_RX_IDLE_THR_SHIFT) & UART_IDLE_CFG_RX_IDLE_THR_MASK)
+#define UART_IDLE_CFG_RX_IDLE_THR_GET(x) (((uint32_t)(x) & UART_IDLE_CFG_RX_IDLE_THR_MASK) >> UART_IDLE_CFG_RX_IDLE_THR_SHIFT)
+
+/* Bitfield definition for register: ADDR_CFG */
+/*
+ * TXEN_9BIT (RW)
+ *
+ * set to use 9bit mode for transmitter,
+ * will set the MSB for the first character as address flag, keep 0 for others.
+ */
+#define UART_ADDR_CFG_TXEN_9BIT_MASK (0x100000UL)
+#define UART_ADDR_CFG_TXEN_9BIT_SHIFT (20U)
+#define UART_ADDR_CFG_TXEN_9BIT_SET(x) (((uint32_t)(x) << UART_ADDR_CFG_TXEN_9BIT_SHIFT) & UART_ADDR_CFG_TXEN_9BIT_MASK)
+#define UART_ADDR_CFG_TXEN_9BIT_GET(x) (((uint32_t)(x) & UART_ADDR_CFG_TXEN_9BIT_MASK) >> UART_ADDR_CFG_TXEN_9BIT_SHIFT)
+
+/*
+ * RXEN_ADDR_MSB (RW)
+ *
+ * set to use MSB as address flag at receiver(actually this is done by software set correct MSB in addr0/addr1).
+ * Clr to use first character as address.
+ * Only needed if enable address match feature
+ */
+#define UART_ADDR_CFG_RXEN_ADDR_MSB_MASK (0x80000UL)
+#define UART_ADDR_CFG_RXEN_ADDR_MSB_SHIFT (19U)
+#define UART_ADDR_CFG_RXEN_ADDR_MSB_SET(x) (((uint32_t)(x) << UART_ADDR_CFG_RXEN_ADDR_MSB_SHIFT) & UART_ADDR_CFG_RXEN_ADDR_MSB_MASK)
+#define UART_ADDR_CFG_RXEN_ADDR_MSB_GET(x) (((uint32_t)(x) & UART_ADDR_CFG_RXEN_ADDR_MSB_MASK) >> UART_ADDR_CFG_RXEN_ADDR_MSB_SHIFT)
+
+/*
+ * RXEN_9BIT (RW)
+ *
+ * set to use 9bit mode for receiver, only valid if rxen_addr_msb is set
+ */
+#define UART_ADDR_CFG_RXEN_9BIT_MASK (0x40000UL)
+#define UART_ADDR_CFG_RXEN_9BIT_SHIFT (18U)
+#define UART_ADDR_CFG_RXEN_9BIT_SET(x) (((uint32_t)(x) << UART_ADDR_CFG_RXEN_9BIT_SHIFT) & UART_ADDR_CFG_RXEN_9BIT_MASK)
+#define UART_ADDR_CFG_RXEN_9BIT_GET(x) (((uint32_t)(x) & UART_ADDR_CFG_RXEN_9BIT_MASK) >> UART_ADDR_CFG_RXEN_9BIT_SHIFT)
+
+/*
+ * A1_EN (RW)
+ *
+ * enable addr1 compare for the first character.
+ * If a1_en OR a0_en, then do not receive data if address not match.
+ * If ~a1_en AND ~a0_en, the receive all data like before.
+ * NOTE: should set idle_tmout_en if enable address match feature
+ */
+#define UART_ADDR_CFG_A1_EN_MASK (0x20000UL)
+#define UART_ADDR_CFG_A1_EN_SHIFT (17U)
+#define UART_ADDR_CFG_A1_EN_SET(x) (((uint32_t)(x) << UART_ADDR_CFG_A1_EN_SHIFT) & UART_ADDR_CFG_A1_EN_MASK)
+#define UART_ADDR_CFG_A1_EN_GET(x) (((uint32_t)(x) & UART_ADDR_CFG_A1_EN_MASK) >> UART_ADDR_CFG_A1_EN_SHIFT)
+
+/*
+ * A0_EN (RW)
+ *
+ * enable addr0 compare for the first character
+ */
+#define UART_ADDR_CFG_A0_EN_MASK (0x10000UL)
+#define UART_ADDR_CFG_A0_EN_SHIFT (16U)
+#define UART_ADDR_CFG_A0_EN_SET(x) (((uint32_t)(x) << UART_ADDR_CFG_A0_EN_SHIFT) & UART_ADDR_CFG_A0_EN_MASK)
+#define UART_ADDR_CFG_A0_EN_GET(x) (((uint32_t)(x) & UART_ADDR_CFG_A0_EN_MASK) >> UART_ADDR_CFG_A0_EN_SHIFT)
+
+/*
+ * ADDR1 (RW)
+ *
+ * address 1 fileld.
+ * in 9bit mode, this is the full address byte.
+ * For other mode(8/7/6/5bit), MSB should be set for address flag.
+ * If want address==0 to be matched at 8bit mode, should set addr1=0x80
+ */
+#define UART_ADDR_CFG_ADDR1_MASK (0xFF00U)
+#define UART_ADDR_CFG_ADDR1_SHIFT (8U)
+#define UART_ADDR_CFG_ADDR1_SET(x) (((uint32_t)(x) << UART_ADDR_CFG_ADDR1_SHIFT) & UART_ADDR_CFG_ADDR1_MASK)
+#define UART_ADDR_CFG_ADDR1_GET(x) (((uint32_t)(x) & UART_ADDR_CFG_ADDR1_MASK) >> UART_ADDR_CFG_ADDR1_SHIFT)
+
+/*
+ * ADDR0 (RW)
+ *
+ * address 0 field.
+ */
+#define UART_ADDR_CFG_ADDR0_MASK (0xFFU)
+#define UART_ADDR_CFG_ADDR0_SHIFT (0U)
+#define UART_ADDR_CFG_ADDR0_SET(x) (((uint32_t)(x) << UART_ADDR_CFG_ADDR0_SHIFT) & UART_ADDR_CFG_ADDR0_MASK)
+#define UART_ADDR_CFG_ADDR0_GET(x) (((uint32_t)(x) & UART_ADDR_CFG_ADDR0_MASK) >> UART_ADDR_CFG_ADDR0_SHIFT)
+
+/* Bitfield definition for register: IIR2 */
+/*
+ * RXIDLE_FLAG (W1C)
+ *
+ * UART RX IDLE Flag, assert after rxd low and then rx idle timeout, write one clear
+ * 0 - UART RX is busy
+ * 1 - UART RX is idle
+ */
+#define UART_IIR2_RXIDLE_FLAG_MASK (0x80000000UL)
+#define UART_IIR2_RXIDLE_FLAG_SHIFT (31U)
+#define UART_IIR2_RXIDLE_FLAG_SET(x) (((uint32_t)(x) << UART_IIR2_RXIDLE_FLAG_SHIFT) & UART_IIR2_RXIDLE_FLAG_MASK)
+#define UART_IIR2_RXIDLE_FLAG_GET(x) (((uint32_t)(x) & UART_IIR2_RXIDLE_FLAG_MASK) >> UART_IIR2_RXIDLE_FLAG_SHIFT)
+
+/*
+ * TXIDLE_FLAG (W1C)
+ *
+ * UART TX IDLE Flag, assert after txd low and then tx idle timeout, write one clear
+ * 0 - UART TX is busy
+ * 1 - UART TX is idle
+ */
+#define UART_IIR2_TXIDLE_FLAG_MASK (0x40000000UL)
+#define UART_IIR2_TXIDLE_FLAG_SHIFT (30U)
+#define UART_IIR2_TXIDLE_FLAG_SET(x) (((uint32_t)(x) << UART_IIR2_TXIDLE_FLAG_SHIFT) & UART_IIR2_TXIDLE_FLAG_MASK)
+#define UART_IIR2_TXIDLE_FLAG_GET(x) (((uint32_t)(x) & UART_IIR2_TXIDLE_FLAG_MASK) >> UART_IIR2_TXIDLE_FLAG_SHIFT)
+
+/*
+ * ADDR_MATCH (W1C)
+ *
+ * address match irq status, assert if either address match(and enabled). Write one clear
+ * NOTE: the address byte may not moved by DMA at this point.
+ * User can wait next addr_match_idle irq for the whole data include address
+ */
+#define UART_IIR2_ADDR_MATCH_MASK (0x20000000UL)
+#define UART_IIR2_ADDR_MATCH_SHIFT (29U)
+#define UART_IIR2_ADDR_MATCH_SET(x) (((uint32_t)(x) << UART_IIR2_ADDR_MATCH_SHIFT) & UART_IIR2_ADDR_MATCH_MASK)
+#define UART_IIR2_ADDR_MATCH_GET(x) (((uint32_t)(x) & UART_IIR2_ADDR_MATCH_MASK) >> UART_IIR2_ADDR_MATCH_SHIFT)
+
+/*
+ * ADDR_MATCH_IDLE (W1C)
+ *
+ * address match and idle irq status, assert at rx bus idle if address match event triggered.
+ * Write one clear;
+ */
+#define UART_IIR2_ADDR_MATCH_IDLE_MASK (0x10000000UL)
+#define UART_IIR2_ADDR_MATCH_IDLE_SHIFT (28U)
+#define UART_IIR2_ADDR_MATCH_IDLE_SET(x) (((uint32_t)(x) << UART_IIR2_ADDR_MATCH_IDLE_SHIFT) & UART_IIR2_ADDR_MATCH_IDLE_MASK)
+#define UART_IIR2_ADDR_MATCH_IDLE_GET(x) (((uint32_t)(x) & UART_IIR2_ADDR_MATCH_IDLE_MASK) >> UART_IIR2_ADDR_MATCH_IDLE_SHIFT)
+
+/*
+ * DATA_LOST (W1C)
+ *
+ * assert if data lost before address match status, write one clear;
+ * It will not assert if no address match occurs
+ */
+#define UART_IIR2_DATA_LOST_MASK (0x8000000UL)
+#define UART_IIR2_DATA_LOST_SHIFT (27U)
+#define UART_IIR2_DATA_LOST_SET(x) (((uint32_t)(x) << UART_IIR2_DATA_LOST_SHIFT) & UART_IIR2_DATA_LOST_MASK)
+#define UART_IIR2_DATA_LOST_GET(x) (((uint32_t)(x) & UART_IIR2_DATA_LOST_MASK) >> UART_IIR2_DATA_LOST_SHIFT)
+
+/*
+ * FIFOED (RO)
+ *
+ * FIFOs enabled
+ * These two bits are 1 when bit 0 of the FIFO Control
+ * Register (FIFOE) is set to 1.
+ */
+#define UART_IIR2_FIFOED_MASK (0xC0U)
+#define UART_IIR2_FIFOED_SHIFT (6U)
+#define UART_IIR2_FIFOED_GET(x) (((uint32_t)(x) & UART_IIR2_FIFOED_MASK) >> UART_IIR2_FIFOED_SHIFT)
+
+/*
+ * INTRID (RO)
+ *
+ * Interrupt ID, see IIR2 for detail decoding
+ */
+#define UART_IIR2_INTRID_MASK (0xFU)
+#define UART_IIR2_INTRID_SHIFT (0U)
+#define UART_IIR2_INTRID_GET(x) (((uint32_t)(x) & UART_IIR2_INTRID_MASK) >> UART_IIR2_INTRID_SHIFT)
 
 /* Bitfield definition for register: CFG */
 /*
@@ -63,6 +309,176 @@ typedef struct {
 #define UART_OSCR_OSC_SHIFT (0U)
 #define UART_OSCR_OSC_SET(x) (((uint32_t)(x) << UART_OSCR_OSC_SHIFT) & UART_OSCR_OSC_MASK)
 #define UART_OSCR_OSC_GET(x) (((uint32_t)(x) & UART_OSCR_OSC_MASK) >> UART_OSCR_OSC_SHIFT)
+
+/* Bitfield definition for register: FCRR */
+/*
+ * FIFOT4EN (RW)
+ *
+ * set to use new 4bit fifo threshold(TFIFOT4 and RFIFOT4)
+ * clr to use 2bit(TFIFOT and RFIFOT)
+ */
+#define UART_FCRR_FIFOT4EN_MASK (0x800000UL)
+#define UART_FCRR_FIFOT4EN_SHIFT (23U)
+#define UART_FCRR_FIFOT4EN_SET(x) (((uint32_t)(x) << UART_FCRR_FIFOT4EN_SHIFT) & UART_FCRR_FIFOT4EN_MASK)
+#define UART_FCRR_FIFOT4EN_GET(x) (((uint32_t)(x) & UART_FCRR_FIFOT4EN_MASK) >> UART_FCRR_FIFOT4EN_SHIFT)
+
+/*
+ * TFIFOT4 (RW)
+ *
+ * txfifo threshold(0 for 1byte, 0xF for 16bytes), uart will send tx_dma_req when data in fifo is less than threshold.
+ */
+#define UART_FCRR_TFIFOT4_MASK (0xF0000UL)
+#define UART_FCRR_TFIFOT4_SHIFT (16U)
+#define UART_FCRR_TFIFOT4_SET(x) (((uint32_t)(x) << UART_FCRR_TFIFOT4_SHIFT) & UART_FCRR_TFIFOT4_MASK)
+#define UART_FCRR_TFIFOT4_GET(x) (((uint32_t)(x) & UART_FCRR_TFIFOT4_MASK) >> UART_FCRR_TFIFOT4_SHIFT)
+
+/*
+ * RFIFOT4 (RW)
+ *
+ * rxfifo threshold(0 for 1byte, 0xF for 16bytes).
+ * Uart will send rx_dma_req if data in fifo reachs the threshold, also will set the rxdata irq if enabled
+ */
+#define UART_FCRR_RFIFOT4_MASK (0xF00U)
+#define UART_FCRR_RFIFOT4_SHIFT (8U)
+#define UART_FCRR_RFIFOT4_SET(x) (((uint32_t)(x) << UART_FCRR_RFIFOT4_SHIFT) & UART_FCRR_RFIFOT4_MASK)
+#define UART_FCRR_RFIFOT4_GET(x) (((uint32_t)(x) & UART_FCRR_RFIFOT4_MASK) >> UART_FCRR_RFIFOT4_SHIFT)
+
+/*
+ * RFIFOT (RW)
+ *
+ * Receiver FIFO trigger level
+ */
+#define UART_FCRR_RFIFOT_MASK (0xC0U)
+#define UART_FCRR_RFIFOT_SHIFT (6U)
+#define UART_FCRR_RFIFOT_SET(x) (((uint32_t)(x) << UART_FCRR_RFIFOT_SHIFT) & UART_FCRR_RFIFOT_MASK)
+#define UART_FCRR_RFIFOT_GET(x) (((uint32_t)(x) & UART_FCRR_RFIFOT_MASK) >> UART_FCRR_RFIFOT_SHIFT)
+
+/*
+ * TFIFOT (RW)
+ *
+ * Transmitter FIFO trigger level
+ */
+#define UART_FCRR_TFIFOT_MASK (0x30U)
+#define UART_FCRR_TFIFOT_SHIFT (4U)
+#define UART_FCRR_TFIFOT_SET(x) (((uint32_t)(x) << UART_FCRR_TFIFOT_SHIFT) & UART_FCRR_TFIFOT_MASK)
+#define UART_FCRR_TFIFOT_GET(x) (((uint32_t)(x) & UART_FCRR_TFIFOT_MASK) >> UART_FCRR_TFIFOT_SHIFT)
+
+/*
+ * DMAE (RW)
+ *
+ * DMA enable
+ * 0: Disable
+ * 1: Enable
+ */
+#define UART_FCRR_DMAE_MASK (0x8U)
+#define UART_FCRR_DMAE_SHIFT (3U)
+#define UART_FCRR_DMAE_SET(x) (((uint32_t)(x) << UART_FCRR_DMAE_SHIFT) & UART_FCRR_DMAE_MASK)
+#define UART_FCRR_DMAE_GET(x) (((uint32_t)(x) & UART_FCRR_DMAE_MASK) >> UART_FCRR_DMAE_SHIFT)
+
+/*
+ * TFIFORST (WO)
+ *
+ * Transmitter FIFO reset
+ * Write 1 to clear all bytes in the TXFIFO and resets its
+ * counter. The Transmitter Shift Register is not cleared.
+ * This bit will automatically be cleared.
+ */
+#define UART_FCRR_TFIFORST_MASK (0x4U)
+#define UART_FCRR_TFIFORST_SHIFT (2U)
+#define UART_FCRR_TFIFORST_SET(x) (((uint32_t)(x) << UART_FCRR_TFIFORST_SHIFT) & UART_FCRR_TFIFORST_MASK)
+#define UART_FCRR_TFIFORST_GET(x) (((uint32_t)(x) & UART_FCRR_TFIFORST_MASK) >> UART_FCRR_TFIFORST_SHIFT)
+
+/*
+ * RFIFORST (WO)
+ *
+ * Receiver FIFO reset
+ * Write 1 to clear all bytes in the RXFIFO and resets its
+ * counter. The Receiver Shift Register is not cleared.
+ * This bit will automatically be cleared.
+ */
+#define UART_FCRR_RFIFORST_MASK (0x2U)
+#define UART_FCRR_RFIFORST_SHIFT (1U)
+#define UART_FCRR_RFIFORST_SET(x) (((uint32_t)(x) << UART_FCRR_RFIFORST_SHIFT) & UART_FCRR_RFIFORST_MASK)
+#define UART_FCRR_RFIFORST_GET(x) (((uint32_t)(x) & UART_FCRR_RFIFORST_MASK) >> UART_FCRR_RFIFORST_SHIFT)
+
+/*
+ * FIFOE (RW)
+ *
+ * FIFO enable
+ * Write 1 to enable both the transmitter and receiver
+ * FIFOs.
+ * The FIFOs are reset when the value of this bit toggles.
+ */
+#define UART_FCRR_FIFOE_MASK (0x1U)
+#define UART_FCRR_FIFOE_SHIFT (0U)
+#define UART_FCRR_FIFOE_SET(x) (((uint32_t)(x) << UART_FCRR_FIFOE_SHIFT) & UART_FCRR_FIFOE_MASK)
+#define UART_FCRR_FIFOE_GET(x) (((uint32_t)(x) & UART_FCRR_FIFOE_MASK) >> UART_FCRR_FIFOE_SHIFT)
+
+/* Bitfield definition for register: MOTO_CFG */
+/*
+ * SWTRG (WO)
+ *
+ * software trigger. User should avoid use sw/hw trigger at same time, otherwise result unknown.
+ * Hardware auto reset.
+ */
+#define UART_MOTO_CFG_SWTRG_MASK (0x80000000UL)
+#define UART_MOTO_CFG_SWTRG_SHIFT (31U)
+#define UART_MOTO_CFG_SWTRG_SET(x) (((uint32_t)(x) << UART_MOTO_CFG_SWTRG_SHIFT) & UART_MOTO_CFG_SWTRG_MASK)
+#define UART_MOTO_CFG_SWTRG_GET(x) (((uint32_t)(x) & UART_MOTO_CFG_SWTRG_MASK) >> UART_MOTO_CFG_SWTRG_SHIFT)
+
+/*
+ * TXSTP_BITS (RW)
+ *
+ * if TXSTOP_INSERT is enabled, the STOP bits to be inserted between each byte. 0 for 1 bit;  0xFF for 256bits
+ */
+#define UART_MOTO_CFG_TXSTP_BITS_MASK (0xFF00U)
+#define UART_MOTO_CFG_TXSTP_BITS_SHIFT (8U)
+#define UART_MOTO_CFG_TXSTP_BITS_SET(x) (((uint32_t)(x) << UART_MOTO_CFG_TXSTP_BITS_SHIFT) & UART_MOTO_CFG_TXSTP_BITS_MASK)
+#define UART_MOTO_CFG_TXSTP_BITS_GET(x) (((uint32_t)(x) & UART_MOTO_CFG_TXSTP_BITS_MASK) >> UART_MOTO_CFG_TXSTP_BITS_SHIFT)
+
+/*
+ * HWTRG_EN (RW)
+ *
+ * set to enable hardware trigger(trigger from moto is shared by other UART)
+ */
+#define UART_MOTO_CFG_HWTRG_EN_MASK (0x80U)
+#define UART_MOTO_CFG_HWTRG_EN_SHIFT (7U)
+#define UART_MOTO_CFG_HWTRG_EN_SET(x) (((uint32_t)(x) << UART_MOTO_CFG_HWTRG_EN_SHIFT) & UART_MOTO_CFG_HWTRG_EN_MASK)
+#define UART_MOTO_CFG_HWTRG_EN_GET(x) (((uint32_t)(x) & UART_MOTO_CFG_HWTRG_EN_MASK) >> UART_MOTO_CFG_HWTRG_EN_SHIFT)
+
+/*
+ * TRG_MODE (RW)
+ *
+ * set to enable trigger mode.
+ * software should push needed data into txbuffer frist, uart will not start transmission at this time.
+ * User should send trigger signal(by hw or sw), uart will send all data in txfifo till  empty
+ * NOTE: the hw_trigger should be pulse signal from trig mux.
+ */
+#define UART_MOTO_CFG_TRG_MODE_MASK (0x40U)
+#define UART_MOTO_CFG_TRG_MODE_SHIFT (6U)
+#define UART_MOTO_CFG_TRG_MODE_SET(x) (((uint32_t)(x) << UART_MOTO_CFG_TRG_MODE_SHIFT) & UART_MOTO_CFG_TRG_MODE_MASK)
+#define UART_MOTO_CFG_TRG_MODE_GET(x) (((uint32_t)(x) & UART_MOTO_CFG_TRG_MODE_MASK) >> UART_MOTO_CFG_TRG_MODE_SHIFT)
+
+/*
+ * TRG_CLR_RFIFO (RW)
+ *
+ * set to enable the feature that, clear rxfifo at tx trigger(sw or hw), avoid unexpected data in rxfifo.
+ */
+#define UART_MOTO_CFG_TRG_CLR_RFIFO_MASK (0x20U)
+#define UART_MOTO_CFG_TRG_CLR_RFIFO_SHIFT (5U)
+#define UART_MOTO_CFG_TRG_CLR_RFIFO_SET(x) (((uint32_t)(x) << UART_MOTO_CFG_TRG_CLR_RFIFO_SHIFT) & UART_MOTO_CFG_TRG_CLR_RFIFO_MASK)
+#define UART_MOTO_CFG_TRG_CLR_RFIFO_GET(x) (((uint32_t)(x) & UART_MOTO_CFG_TRG_CLR_RFIFO_MASK) >> UART_MOTO_CFG_TRG_CLR_RFIFO_SHIFT)
+
+/*
+ * TXSTOP_INSERT (RW)
+ *
+ * set to insert STOP bits between each tx byte till tx fifo empty.
+ * NOTE: there will be no 1.5/2 STOP bits if enabled this feature, LCR.STB should be set to 0 if this bit is set
+ */
+#define UART_MOTO_CFG_TXSTOP_INSERT_MASK (0x10U)
+#define UART_MOTO_CFG_TXSTOP_INSERT_SHIFT (4U)
+#define UART_MOTO_CFG_TXSTOP_INSERT_SET(x) (((uint32_t)(x) << UART_MOTO_CFG_TXSTOP_INSERT_SHIFT) & UART_MOTO_CFG_TXSTOP_INSERT_MASK)
+#define UART_MOTO_CFG_TXSTOP_INSERT_GET(x) (((uint32_t)(x) & UART_MOTO_CFG_TXSTOP_INSERT_MASK) >> UART_MOTO_CFG_TXSTOP_INSERT_SHIFT)
 
 /* Bitfield definition for register: RBR */
 /*
@@ -97,6 +513,58 @@ typedef struct {
 #define UART_DLL_DLL_GET(x) (((uint32_t)(x) & UART_DLL_DLL_MASK) >> UART_DLL_DLL_SHIFT)
 
 /* Bitfield definition for register: IER */
+/*
+ * ERXIDLE (RW)
+ *
+ * Enable Receive Idle interrupt
+ * 0 - Disable Idle interrupt
+ * 1 - Enable Idle interrupt
+ */
+#define UART_IER_ERXIDLE_MASK (0x80000000UL)
+#define UART_IER_ERXIDLE_SHIFT (31U)
+#define UART_IER_ERXIDLE_SET(x) (((uint32_t)(x) << UART_IER_ERXIDLE_SHIFT) & UART_IER_ERXIDLE_MASK)
+#define UART_IER_ERXIDLE_GET(x) (((uint32_t)(x) & UART_IER_ERXIDLE_MASK) >> UART_IER_ERXIDLE_SHIFT)
+
+/*
+ * ETXIDLE (RW)
+ *
+ * enable transmit idle interrupt
+ */
+#define UART_IER_ETXIDLE_MASK (0x40000000UL)
+#define UART_IER_ETXIDLE_SHIFT (30U)
+#define UART_IER_ETXIDLE_SET(x) (((uint32_t)(x) << UART_IER_ETXIDLE_SHIFT) & UART_IER_ETXIDLE_MASK)
+#define UART_IER_ETXIDLE_GET(x) (((uint32_t)(x) & UART_IER_ETXIDLE_MASK) >> UART_IER_ETXIDLE_SHIFT)
+
+/*
+ * EADDRM (RW)
+ *
+ * enable ADDR_MATCH  interrupt
+ */
+#define UART_IER_EADDRM_MASK (0x20000000UL)
+#define UART_IER_EADDRM_SHIFT (29U)
+#define UART_IER_EADDRM_SET(x) (((uint32_t)(x) << UART_IER_EADDRM_SHIFT) & UART_IER_EADDRM_MASK)
+#define UART_IER_EADDRM_GET(x) (((uint32_t)(x) & UART_IER_EADDRM_MASK) >> UART_IER_EADDRM_SHIFT)
+
+/*
+ * EADDRM_IDLE (RW)
+ *
+ * enable ADDR_MATCH_IDLE interrupt
+ */
+#define UART_IER_EADDRM_IDLE_MASK (0x10000000UL)
+#define UART_IER_EADDRM_IDLE_SHIFT (28U)
+#define UART_IER_EADDRM_IDLE_SET(x) (((uint32_t)(x) << UART_IER_EADDRM_IDLE_SHIFT) & UART_IER_EADDRM_IDLE_MASK)
+#define UART_IER_EADDRM_IDLE_GET(x) (((uint32_t)(x) & UART_IER_EADDRM_IDLE_MASK) >> UART_IER_EADDRM_IDLE_SHIFT)
+
+/*
+ * EDATLOST (RW)
+ *
+ * enable DATA_LOST interrupt
+ */
+#define UART_IER_EDATLOST_MASK (0x8000000UL)
+#define UART_IER_EDATLOST_SHIFT (27U)
+#define UART_IER_EDATLOST_SET(x) (((uint32_t)(x) << UART_IER_EDATLOST_SHIFT) & UART_IER_EDATLOST_MASK)
+#define UART_IER_EDATLOST_GET(x) (((uint32_t)(x) & UART_IER_EDATLOST_MASK) >> UART_IER_EDATLOST_SHIFT)
+
 /*
  * EMSI (RW)
  *
@@ -160,6 +628,19 @@ typedef struct {
 
 /* Bitfield definition for register: IIR */
 /*
+ * RXIDLE_FLAG (W1C)
+ *
+ * UART IDLE Flag
+ * 0 - UART is busy
+ * 1 - UART is idle
+ * NOTE: when write one to clear this bit, avoid changging FCR register since it's same address as IIR
+ */
+#define UART_IIR_RXIDLE_FLAG_MASK (0x80000000UL)
+#define UART_IIR_RXIDLE_FLAG_SHIFT (31U)
+#define UART_IIR_RXIDLE_FLAG_SET(x) (((uint32_t)(x) << UART_IIR_RXIDLE_FLAG_SHIFT) & UART_IIR_RXIDLE_FLAG_MASK)
+#define UART_IIR_RXIDLE_FLAG_GET(x) (((uint32_t)(x) & UART_IIR_RXIDLE_FLAG_MASK) >> UART_IIR_RXIDLE_FLAG_SHIFT)
+
+/*
  * FIFOED (RO)
  *
  * FIFOs enabled
@@ -173,7 +654,7 @@ typedef struct {
 /*
  * INTRID (RO)
  *
- * Interrupt ID
+ * Interrupt ID, see IIR2 for detail decoding
  */
 #define UART_IIR_INTRID_MASK (0xFU)
 #define UART_IIR_INTRID_SHIFT (0U)
@@ -380,6 +861,42 @@ typedef struct {
 #define UART_MCR_RTS_GET(x) (((uint32_t)(x) & UART_MCR_RTS_MASK) >> UART_MCR_RTS_SHIFT)
 
 /* Bitfield definition for register: LSR */
+/*
+ * RXIDLE (RO)
+ *
+ * rxidle after timeout, clear after rx idle condition not match
+ */
+#define UART_LSR_RXIDLE_MASK (0x80000000UL)
+#define UART_LSR_RXIDLE_SHIFT (31U)
+#define UART_LSR_RXIDLE_GET(x) (((uint32_t)(x) & UART_LSR_RXIDLE_MASK) >> UART_LSR_RXIDLE_SHIFT)
+
+/*
+ * TXIDLE (RO)
+ *
+ * txidle after timeout, clear after tx idle condition not match
+ */
+#define UART_LSR_TXIDLE_MASK (0x40000000UL)
+#define UART_LSR_TXIDLE_SHIFT (30U)
+#define UART_LSR_TXIDLE_GET(x) (((uint32_t)(x) & UART_LSR_TXIDLE_MASK) >> UART_LSR_TXIDLE_SHIFT)
+
+/*
+ * RFIFO_NUM (RO)
+ *
+ * data bytes in rxfifo not read
+ */
+#define UART_LSR_RFIFO_NUM_MASK (0x1F0000UL)
+#define UART_LSR_RFIFO_NUM_SHIFT (16U)
+#define UART_LSR_RFIFO_NUM_GET(x) (((uint32_t)(x) & UART_LSR_RFIFO_NUM_MASK) >> UART_LSR_RFIFO_NUM_SHIFT)
+
+/*
+ * TFIFO_NUM (RO)
+ *
+ * data bytes in txfifo not sent
+ */
+#define UART_LSR_TFIFO_NUM_MASK (0x1F00U)
+#define UART_LSR_TFIFO_NUM_SHIFT (8U)
+#define UART_LSR_TFIFO_NUM_GET(x) (((uint32_t)(x) & UART_LSR_TFIFO_NUM_MASK) >> UART_LSR_TFIFO_NUM_SHIFT)
+
 /*
  * ERRF (RO)
  *

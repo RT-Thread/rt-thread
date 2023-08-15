@@ -1,11 +1,16 @@
 /*
- * Copyright (c) 2021 hpmicro
+ * Copyright (c) 2021 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
  */
 
 #include "hpm_ov7725.h"
+
+static camera_param_dvp_t camera_dvp_param = {
+    .hsync_active_low = true,
+    .vsync_active_low = false,
+};
 
 hpm_stat_t camera_device_init(camera_context_t *camera_context, camera_config_t *camera_config)
 {
@@ -30,3 +35,8 @@ hpm_stat_t camera_device_init(camera_context_t *camera_context, camera_config_t 
     return stat;
 }
 
+hpm_stat_t camera_device_get_dvp_param(camera_context_t *camera_context, camera_config_t *camera_config)
+{
+    camera_config->interface_param = (void *)&camera_dvp_param;
+    return status_success;
+}

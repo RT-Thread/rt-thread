@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 hpmicro
+ * Copyright (c) 2021-2023 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -10,15 +10,17 @@
 #define HPM_DMA_H
 
 typedef struct {
-    __R  uint8_t  RESERVED0[16];               /* 0x0 - 0xF: Reserved */
+    __R  uint8_t  RESERVED0[4];                /* 0x0 - 0x3: Reserved */
+    __R  uint32_t IDMISC;                      /* 0x4: ID Misc */
+    __R  uint8_t  RESERVED1[8];                /* 0x8 - 0xF: Reserved */
     __R  uint32_t DMACFG;                      /* 0x10: DMAC Configuration Register */
-    __R  uint8_t  RESERVED1[12];               /* 0x14 - 0x1F: Reserved */
+    __R  uint8_t  RESERVED2[12];               /* 0x14 - 0x1F: Reserved */
     __W  uint32_t DMACTRL;                     /* 0x20: DMAC Control Register */
     __W  uint32_t CHABORT;                     /* 0x24: Channel Abort Register */
-    __R  uint8_t  RESERVED2[8];                /* 0x28 - 0x2F: Reserved */
+    __R  uint8_t  RESERVED3[8];                /* 0x28 - 0x2F: Reserved */
     __W  uint32_t INTSTATUS;                   /* 0x30: Interrupt Status Register */
     __R  uint32_t CHEN;                        /* 0x34: Channel Enable Register */
-    __R  uint8_t  RESERVED3[8];                /* 0x38 - 0x3F: Reserved */
+    __R  uint8_t  RESERVED4[8];                /* 0x38 - 0x3F: Reserved */
     struct {
         __RW uint32_t CTRL;                    /* 0x40: Channel n Control Register */
         __RW uint32_t TRANSIZE;                /* 0x44: Channel n Transfer Size Register */
@@ -31,6 +33,18 @@ typedef struct {
     } CHCTRL[8];
 } DMA_Type;
 
+
+/* Bitfield definition for register: IDMISC */
+/*
+ * IDLE_FLAG (RO)
+ *
+ * DMA Idle Flag
+ * 0 - DMA is busy
+ * 1 - DMA is dile
+ */
+#define DMA_IDMISC_IDLE_FLAG_MASK (0x8000U)
+#define DMA_IDMISC_IDLE_FLAG_SHIFT (15U)
+#define DMA_IDMISC_IDLE_FLAG_GET(x) (((uint32_t)(x) & DMA_IDMISC_IDLE_FLAG_MASK) >> DMA_IDMISC_IDLE_FLAG_SHIFT)
 
 /* Bitfield definition for register: DMACFG */
 /*
@@ -273,7 +287,8 @@ typedef struct {
  * 0x8: 256 transfers
  * 0x9:512 transfers
  * 0xa: 1024 transfers
- * 0xb -0xf: Reserved, setting this field with a reserved value triggers the error exception
+ * 0xb-0xf: Reserved, setting this field with a reserved value triggers the error exception
+ * for XDMA, the maximum allowed value is 0xa; for HDMA, the maximum allowed value is 0x7
  */
 #define DMA_CHCTRL_CTRL_SRCBURSTSIZE_MASK (0xF000000UL)
 #define DMA_CHCTRL_CTRL_SRCBURSTSIZE_SHIFT (24U)
@@ -291,6 +306,7 @@ typedef struct {
  * 0x4: Quad word transfer
  * 0x5: Eight word transfer
  * 0x6-x7: Reserved, setting this field with a reserved value triggers the error exception
+ * for XDMA, the maximum allowed value is 0x3, for HDMA, the maximum allowed value is 0x2
  */
 #define DMA_CHCTRL_CTRL_SRCWIDTH_MASK (0xE00000UL)
 #define DMA_CHCTRL_CTRL_SRCWIDTH_SHIFT (21U)
@@ -310,6 +326,7 @@ typedef struct {
  * 0x4: Quad word transfer
  * 0x5: Eight word transfer
  * 0x6-x7: Reserved, setting this field with a reserved value triggers the error exception
+ * for XDMA, the maximum allowed value is 0x3, for HDMA, the maximum allowed value is 0x2
  */
 #define DMA_CHCTRL_CTRL_DSTWIDTH_MASK (0x1C0000UL)
 #define DMA_CHCTRL_CTRL_DSTWIDTH_SHIFT (18U)

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 hpmicro
+ * Copyright (c) 2021 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -8,18 +8,21 @@
 #ifndef HPM_USB_DEVICE_H
 #define HPM_USB_DEVICE_H
 
-/*---------------------------------------------------------------------*
+/*---------------------------------------------------------------------
  * Includes
- *---------------------------------------------------------------------*/
+ *---------------------------------------------------------------------
+ */
 #include "hpm_usb_drv.h"
 #include "hpm_soc_feature.h"
-/*---------------------------------------------------------------------*
+/*---------------------------------------------------------------------
  *  Macro Constant Declarations
- *---------------------------------------------------------------------*/
+ *---------------------------------------------------------------------
+ */
 
-/*---------------------------------------------------------------------*
+/*---------------------------------------------------------------------
  * Macro Typedef Declaration
- *---------------------------------------------------------------------*/
+ *---------------------------------------------------------------------
+ */
 
 /* Queue Transfer Descriptor */
 typedef struct {
@@ -27,18 +30,18 @@ typedef struct {
     volatile uint32_t next; /* Next link pointer This field contains the physical memory address of the next dTD to be processed */
 
     /* Word 1: qTQ Token */
-    volatile uint32_t                      : 3  ;
-    volatile uint32_t xact_err             : 1  ;
-    volatile uint32_t                      : 1  ;
-    volatile uint32_t buffer_err           : 1  ;
-    volatile uint32_t halted               : 1  ;
-    volatile uint32_t active               : 1  ;
-    volatile uint32_t                      : 2  ;
+    volatile uint32_t                      : 3;
+    volatile uint32_t xact_err             : 1;
+    volatile uint32_t                      : 1;
+    volatile uint32_t buffer_err           : 1;
+    volatile uint32_t halted               : 1;
+    volatile uint32_t active               : 1;
+    volatile uint32_t                      : 2;
     volatile uint32_t iso_mult_override    : 2  ; /* This field can be used for transmit ISOs to override the MULT field in the dQH. This field must be zero for all packet types that are not transmit-ISO. */
-    volatile uint32_t                      : 3  ;
-    volatile uint32_t int_on_complete      : 1  ;
-    volatile uint32_t total_bytes          : 15 ;
-    volatile uint32_t                      : 0  ;
+    volatile uint32_t                      : 3;
+    volatile uint32_t int_on_complete      : 1;
+    volatile uint32_t total_bytes          : 15;
+    volatile uint32_t                      : 0;
 
     /* Word 2-6: Buffer Page Pointer List, Each element in the list is a 4K page aligned, physical memory address. The lower 12 bits in each pointer are reserved (except for the first one) as each memory pointer must reference the start of a 4K page */
     volatile uint32_t buffer[USB_SOC_DCD_QHD_BUFFER_COUNT];
@@ -55,10 +58,10 @@ typedef struct {
     volatile uint32_t                         : 15 ; /* Number of packets executed per transaction descriptor 00 - Execute N transactions as demonstrated by the USB variable length protocol where N is computed using Max_packet_length and the Total_bytes field in the dTD. 01 - Execute one transaction 10 - Execute two transactions 11 - Execute three transactions Remark: Non-isochronous endpoints must set MULT = 00. Remark: Isochronous endpoints must set MULT = 01, 10, or 11 as needed. */
     volatile uint32_t int_on_setup            : 1  ; /* Interrupt on setup This bit is used on control type endpoints to indicate if USBINT is set in response to a setup being received. */
     volatile uint32_t max_packet_size         : 11 ; /* This directly corresponds to the maximum packet size of the associated endpoint (wMaxPacketSize) */
-    volatile uint32_t                         : 2  ;
+    volatile uint32_t                         : 2;
     volatile uint32_t zero_length_termination : 1  ; /* This bit is used for non-isochronous endpoints to indicate when a zero-length packet is received to terminate transfers in case the total transfer length is “multiple”. 0 - Enable zero-length packet to terminate transfers equal to a multiple of Max_packet_length (default). 1 - Disable zero-length packet on transfers that are equal in length to a multiple Max_packet_length. */
-    volatile uint32_t iso_mult                : 2  ;
-    volatile uint32_t                         : 0  ;
+    volatile uint32_t iso_mult                : 2;
+    volatile uint32_t                         : 0;
 
     /* Word 1: Current qTD Pointer */
     volatile uint32_t qtd_addr;
@@ -69,10 +72,11 @@ typedef struct {
     /* Word 10-11: Setup request (control OUT only) */
     volatile usb_control_request_t setup_request;
 
-    /*--------------------------------------------------------------------*
+    /*--------------------------------------------------------------------
      * Due to the fact QHD is 64 bytes aligned but occupies only 48 bytes
      * thus there are 16 bytes padding free that we can make use of.
-     *--------------------------------------------------------------------*/
+     *--------------------------------------------------------------------
+     */
     volatile uint8_t reserved[16];
 } dcd_qhd_t;
 
@@ -90,14 +94,15 @@ typedef struct {
 extern "C" {
 #endif /* __cplusplus */
 
-/*---------------------------------------------------------------------*
+/*---------------------------------------------------------------------
  *   Exported Function Declarations
- *---------------------------------------------------------------------*/
+ *---------------------------------------------------------------------
+ */
 /* Get a qhd of the specifed endpoint */
-dcd_qhd_t* usb_device_qhd_get(usb_device_handle_t *handle, uint8_t ep_idx);
+dcd_qhd_t *usb_device_qhd_get(usb_device_handle_t *handle, uint8_t ep_idx);
 
 /* Get a qtd of the specifed endpoint */
-dcd_qtd_t* usb_device_qtd_get(usb_device_handle_t *handle, uint8_t ep_idx);
+dcd_qtd_t *usb_device_qtd_get(usb_device_handle_t *handle, uint8_t ep_idx);
 
 /* USB bus reset */
 void usb_device_bus_reset(usb_device_handle_t *handle, uint16_t ep0_max_packet_size);

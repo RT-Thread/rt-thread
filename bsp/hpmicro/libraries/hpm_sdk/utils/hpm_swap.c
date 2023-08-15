@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 hpmicro
+ * Copyright (c) 2021 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -7,6 +7,7 @@
 
 #include "hpm_common.h"
 
+#ifndef __riscv_xandes
 uint32_t __bswapsi2 (uint32_t u)
 {
     return ((((u) & 0xff000000) >> 24)
@@ -26,3 +27,4 @@ uint64_t __bswapdi2 (uint64_t u)
         | (((u) & 0x000000000000ff00ull) << 40)
         | (((u) & 0x00000000000000ffull) << 56));
 }
+#endif

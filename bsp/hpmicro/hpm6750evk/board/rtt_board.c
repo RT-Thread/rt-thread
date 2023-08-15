@@ -107,6 +107,11 @@ ATTR_PLACE_AT(".isr_vector") void mchtmr_isr(void)
     rt_interrupt_leave();
 }
 
+void rt_hw_us_delay(rt_uint32_t us)
+{
+    clock_cpu_delay_us(us);
+}
+
 void rt_hw_cpu_reset(void)
 {
     HPM_PPOR->RESET_ENABLE = (1UL << 31);

@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 hpmicro
+ * Copyright (c) 2021-2023 HPMicro
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
@@ -10,16 +10,11 @@ HEAP_SIZE = DEFINED(_heap_size) ? _heap_size : 0x4000;
 
 MEMORY
 {
-    ILM (wx) : ORIGIN = 0, LENGTH = 256K
-    DLM (w) : ORIGIN = 0x80000, LENGTH = 256K
-    /* It's alias address of core0 ILM+DLM, but accessing via system bus */
-    CORE0_LM_SLV (wx) : ORIGIN = 0x1000000, LENGTH = 512K
-    /* It's alias address of core1 ILM+DLM, but accessing via system bus */
-    CORE1_LM_SLV (wx) : ORIGIN = 0x1180000, LENGTH = 512K
-    SDRAM (wx) : ORIGIN = 0x40000000, LENGTH = 32M
-
-    AXI_SRAM (wx) : ORIGIN = 0x1080000, LENGTH = 768K
-    AXI_SRAM_NONCACHEABLE (wx) : ORIGIN = 0x01140000, LENGTH = 256K
+    ILM (wx) : ORIGIN = 0x00000000, LENGTH = 256K
+    DLM (w) : ORIGIN = 0x00080000, LENGTH = 256K
+    NONCACHEABLE_RAM (w) : ORIGIN = 0x01140000, LENGTH = 64K    /* AXI SRAM1 */
+    AXI_SRAM (wx) : ORIGIN = 0x01150000, LENGTH = 176K
+    SHARE_RAM (w) : ORIGIN = 0x0117C000, LENGTH = 16K
 }
 
 SECTIONS
@@ -27,18 +22,18 @@ SECTIONS
     .start : {
         . = ALIGN(8);
         KEEP(*(.start))
-    } > CORE1_LM_SLV
+    } > ILM
 
     .vectors : {
         . = ALIGN(8);
         KEEP(*(.isr_vector))
         KEEP(*(.vector_table))
         . = ALIGN(8);
-    } > CORE1_LM_SLV
+    } > ILM
 
     .rel : {
         KEEP(*(.rel*))
-    } > CORE1_LM_SLV
+    } > ILM
 
     .text : {
         . = ALIGN(8);
@@ -59,12 +54,18 @@ SECTIONS
 
         KEEP (*(.init))
         KEEP (*(.fini))
-        . = ALIGN(8);
 
+        /* section information for usbh class */
+        . = ALIGN(8);
+        __usbh_class_info_start__ = .;
+        KEEP(*(.usbh_class_info))
+        __usbh_class_info_end__ = .;
+
+        . = ALIGN(8);
         PROVIDE (__etext = .);
         PROVIDE (_etext = .);
         PROVIDE (etext = .);
-    } > CORE1_LM_SLV
+    } > ILM
 
     .data : AT(etext) {
         . = ALIGN(8);
@@ -126,9 +127,9 @@ SECTIONS
         *(.fast)
         . = ALIGN(8);
         PROVIDE(__ramfunc_end__ = .);
-    } > AXI_SRAM
+    } > ILM
 
-    .bss : {
+    .bss (NOLOAD) : {
         . = ALIGN(8);
         __bss_start__ = .;
         *(.bss)
@@ -146,43 +147,56 @@ SECTIONS
     } > AXI_SRAM
 
     .framebuffer (NOLOAD) : {
-        KEEP(*(.framebuffer))
-    } > AXI_SRAM
-
-    .dual_core_share (NOLOAD) : {
-        KEEP(*(.dual_core_share))
-    } > AXI_SRAM
-
-    .heap : {
         . = ALIGN(8);
-        __heap_start__ = .;
-        . += HEAP_SIZE;
-        __heap_end__ = .;
-
+        KEEP(*(.framebuffer))
+        . = ALIGN(8);
     } > AXI_SRAM
 
-    .noncacheable : AT(etext + __data_end__ - __data_start__ + __ramfunc_end__ - __ramfunc_start__) {
+    .noncacheable.init : AT(etext + __data_end__ - __data_start__ + __ramfunc_end__ - __ramfunc_start__) {
         . = ALIGN(8);
         __noncacheable_init_start__ = .;
         KEEP(*(.noncacheable.init))
         __noncacheable_init_end__ = .;
+        . = ALIGN(8);
+    } > NONCACHEABLE_RAM
+
+    .noncacheable.bss (NOLOAD) : {
+        . = ALIGN(8);
         KEEP(*(.noncacheable))
         __noncacheable_bss_start__ = .;
         KEEP(*(.noncacheable.bss))
         __noncacheable_bss_end__ = .;
         . = ALIGN(8);
-    } > AXI_SRAM_NONCACHEABLE
+    } > NONCACHEABLE_RAM
 
-    .stack : {
+    .sh_mem (NOLOAD) : {
+        KEEP(*(.sh_mem))
+    } > SHARE_RAM
+
+    .fast_ram (NOLOAD) : {
+        KEEP(*(.fast_ram))
+    } > DLM
+
+    .heap (NOLOAD) : {
+        . = ALIGN(8);
+        __heap_start__ = .;
+        . += HEAP_SIZE;
+        __heap_end__ = .;
+    } > DLM
+
+    .stack (NOLOAD) : {
         . = ALIGN(8);
         __stack_base__ = .;
         . += STACK_SIZE;
+        . = ALIGN(8);
         PROVIDE (_stack = .);
         PROVIDE (_stack_safe = .);
-    } > AXI_SRAM
+    } > DLM
 
-    __noncacheable_start__ = ORIGIN(AXI_SRAM_NONCACHEABLE);
-    __noncacheable_end__ = ORIGIN(AXI_SRAM_NONCACHEABLE) + LENGTH(AXI_SRAM_NONCACHEABLE);
+    __noncacheable_start__ = ORIGIN(NONCACHEABLE_RAM);
+    __noncacheable_end__ = ORIGIN(NONCACHEABLE_RAM) + LENGTH(NONCACHEABLE_RAM);
+    __share_mem_start__ = ORIGIN(SHARE_RAM);
+    __share_mem_end__ = ORIGIN(SHARE_RAM) + LENGTH(SHARE_RAM);
 
-    ASSERT(__stack_base__ >= __heap_end__, "stack overlapped with heap")
+    ASSERT((STACK_SIZE + HEAP_SIZE) <= 256K, "stack and heap total size larger than 256k")
 }

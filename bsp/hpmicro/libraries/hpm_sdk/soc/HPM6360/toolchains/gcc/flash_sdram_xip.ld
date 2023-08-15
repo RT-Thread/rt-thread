@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 hpmicro
+ * Copyright (c) 2022-2023 HPMicro
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
@@ -11,11 +11,12 @@ HEAP_SIZE = DEFINED(_heap_size) ? _heap_size : 0x4000;
 MEMORY
 {
     XPI0 (rx) : ORIGIN = 0x80000000, LENGTH = _flash_size
-    ILM : ORIGIN = 0, LENGTH = 128K
-    DLM : ORIGIN = 0x80000, LENGTH = 128K
+    ILM (wx) : ORIGIN = 0x00000000, LENGTH = 128K
+    DLM (w) : ORIGIN = 0x00080000, LENGTH = 128K
+    AXI_SRAM (wx) : ORIGIN = 0x1080000, LENGTH = 512K
     SDRAM (wx) : ORIGIN = 0x40000000, LENGTH = (_extram_size - 4M)
     SDRAM_NONCACHEABLE (wx) : ORIGIN = 0x40000000 + (_extram_size - 4M), LENGTH = 4M
-    AXI_SRAM (wx) : ORIGIN = 0x1080000, LENGTH = 512K
+    AHB_SRAM (w) : ORIGIN = 0xF0300000, LENGTH = 32k
 }
 
 __nor_cfg_option_load_addr__ = ORIGIN(XPI0) + 0x400;
@@ -69,6 +70,15 @@ SECTIONS
         KEEP(*(.rel*))
     } > XPI0
 
+    /* section information for usbh class */
+    .usbh_class_info : {
+        . = ALIGN(4);
+        __usbh_class_info_start__ = .;
+        KEEP(*(.usbh_class_info))
+        __usbh_class_info_end__ = .;
+        . = ALIGN(8);
+    } > XPI0
+
     PROVIDE (__etext = .);
     PROVIDE (_etext = .);
     PROVIDE (etext = .);
@@ -84,7 +94,6 @@ SECTIONS
         . = ALIGN(8);
         __vector_ram_end__ = .;
     } > ILM
-
 
     .data : AT(etext) {
         . = ALIGN(8);
@@ -145,10 +154,10 @@ SECTIONS
         *(.fast)
         . = ALIGN(8);
         __ramfunc_end__ = .;
-    } > AXI_SRAM
+    } > ILM
 
     __fw_size__ = __ramfunc_end__ - __ramfunc_start__ + __data_end__ - __data_start__ + etext - __app_load_addr__;
-    .bss : {
+    .bss (NOLOAD) : {
         . = ALIGN(8);
         __bss_start__ = .;
         *(.bss)
@@ -163,13 +172,6 @@ SECTIONS
         . = ALIGN(8);
         _end = .;
         __bss_end__ = .;
-    } > AXI_SRAM
-
-    .heap : {
-        . = ALIGN(8);
-        __heap_start__ = .;
-        . += HEAP_SIZE;
-        __heap_end__ = .;
     } > SDRAM
 
     .framebuffer (NOLOAD) : {
@@ -178,11 +180,16 @@ SECTIONS
         . = ALIGN(8);
     } > SDRAM
 
-    .noncacheable : AT(etext + __data_end__ - __data_start__ + __ramfunc_end__ - __ramfunc_start__) {
+    .noncacheable.init : AT(etext + __data_end__ - __data_start__ + __ramfunc_end__ - __ramfunc_start__) {
         . = ALIGN(8);
         __noncacheable_init_start__ = .;
         KEEP(*(.noncacheable.init))
         __noncacheable_init_end__ = .;
+        . = ALIGN(8);
+    } > SDRAM_NONCACHEABLE
+
+    .noncacheable.bss (NOLOAD) : {
+        . = ALIGN(8);
         KEEP(*(.noncacheable))
         __noncacheable_bss_start__ = .;
         KEEP(*(.noncacheable.bss))
@@ -190,7 +197,22 @@ SECTIONS
         . = ALIGN(8);
     } > SDRAM_NONCACHEABLE
 
-    .stack : {
+    .ahb_sram (NOLOAD) : {
+        KEEP(*(.ahb_sram))
+    } > AHB_SRAM
+
+    .fast_ram (NOLOAD) : {
+        KEEP(*(.fast_ram))
+    } > DLM
+
+    .heap (NOLOAD) : {
+        . = ALIGN(8);
+        __heap_start__ = .;
+        . += HEAP_SIZE;
+        __heap_end__ = .;
+    } > SDRAM
+
+    .stack (NOLOAD) : {
         . = ALIGN(8);
         __stack_base__ = .;
         . += STACK_SIZE;

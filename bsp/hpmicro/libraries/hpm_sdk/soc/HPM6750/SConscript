@@ -15,6 +15,7 @@ src = Split('''
     hpm_l1c_drv.c
     hpm_sysctl_drv.c
     hpm_clock_drv.c
+    hpm_otp_drv.c
     boot/hpm_bootheader.c
 ''')
 

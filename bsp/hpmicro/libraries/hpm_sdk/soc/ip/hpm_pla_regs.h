@@ -1,0 +1,1708 @@
+/*
+ * Copyright (c) 2021-2023 HPMicro
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+ *
+ */
+
+
+#ifndef HPM_PLA_H
+#define HPM_PLA_H
+
+typedef struct {
+    struct {
+        __RW uint32_t AOI_16TO8[8];            /* 0x0 - 0x1C: CHN AOI_16to8 AND logic cfg */
+        __RW uint32_t AOI_8TO7_00_01;          /* 0x20: CHN AOI_16to8_00_01 OR logic cfg */
+        __RW uint32_t AOI_8TO7_02_03;          /* 0x24: CHN AOI_16to8_02_03 OR logic cfg */
+        __RW uint32_t AOI_8TO7_04_05;          /* 0x28: CHN AOI_16to8_04_05 OR logic cfg */
+        __RW uint32_t AOI_8TO7_06;             /* 0x2C: CHN AOI_16to8_06 OR logic cfg */
+        __RW uint32_t FILTER_2ND[8];           /* 0x30 - 0x4C: CHN SECOND_FILTER cfg */
+        __RW uint32_t FILTER_3RD[7];           /* 0x50 - 0x68: CHN THIRD_FILTER cfg */
+        __RW uint32_t CFG_FF;                  /* 0x6C: CHN cfg ff */
+    } CHN[8];
+    __R  uint8_t  RESERVED0[64];               /* 0x380 - 0x3BF: Reserved */
+    __RW uint32_t FILTER_1ST_PLA_IN[8];        /* 0x3C0 - 0x3DC: FRIST_FILTER_PLA_IN setting */
+    __RW uint32_t FILTER_1ST_PLA_OUT[8];       /* 0x3E0 - 0x3FC: FRIST_FILTER_PLA_OUT setting */
+    __RW uint32_t CHN_CFG_ACTIVE[8];           /* 0x400 - 0x41C: CHN  cfg active */
+} PLA_Type;
+
+
+/* Bitfield definition for register of struct array CHN: AOI_16TO8_00 */
+/*
+ * AOI_16TO8_15 (RW)
+ *
+ * select value for AOI_16to8_15.
+ * 0: 0.
+ * 1: 1st_filter_out[15].
+ * 2: ~1st_filter_out[15].
+ * 3: 1
+ */
+#define PLA_CHN_AOI_16TO8_AOI_16TO8_15_MASK (0xC0000000UL)
+#define PLA_CHN_AOI_16TO8_AOI_16TO8_15_SHIFT (30U)
+#define PLA_CHN_AOI_16TO8_AOI_16TO8_15_SET(x) (((uint32_t)(x) << PLA_CHN_AOI_16TO8_AOI_16TO8_15_SHIFT) & PLA_CHN_AOI_16TO8_AOI_16TO8_15_MASK)
+#define PLA_CHN_AOI_16TO8_AOI_16TO8_15_GET(x) (((uint32_t)(x) & PLA_CHN_AOI_16TO8_AOI_16TO8_15_MASK) >> PLA_CHN_AOI_16TO8_AOI_16TO8_15_SHIFT)
+
+/*
+ * AOI_16TO8_14 (RW)
+ *
+ * select value for AOI_16to8_14.
+ * 0: 0.
+ * 1: 1st_filter_out[14].
+ * 2: ~1st_filter_out[14].
+ * 3: 1
+ */
+#define PLA_CHN_AOI_16TO8_AOI_16TO8_14_MASK (0x30000000UL)
+#define PLA_CHN_AOI_16TO8_AOI_16TO8_14_SHIFT (28U)
+#define PLA_CHN_AOI_16TO8_AOI_16TO8_14_SET(x) (((uint32_t)(x) << PLA_CHN_AOI_16TO8_AOI_16TO8_14_SHIFT) & PLA_CHN_AOI_16TO8_AOI_16TO8_14_MASK)
+#define PLA_CHN_AOI_16TO8_AOI_16TO8_14_GET(x) (((uint32_t)(x) & PLA_CHN_AOI_16TO8_AOI_16TO8_14_MASK) >> PLA_CHN_AOI_16TO8_AOI_16TO8_14_SHIFT)
+
+/*
+ * AOI_16TO8_13 (RW)
+ *
+ * select value for AOI_16to8_13.
+ * 0: 0.
+ * 1: 1st_filter_out[13].
+ * 2: ~1st_filter_out[13].
+ * 3: 1
+ */
+#define PLA_CHN_AOI_16TO8_AOI_16TO8_13_MASK (0xC000000UL)
+#define PLA_CHN_AOI_16TO8_AOI_16TO8_13_SHIFT (26U)
+#define PLA_CHN_AOI_16TO8_AOI_16TO8_13_SET(x) (((uint32_t)(x) << PLA_CHN_AOI_16TO8_AOI_16TO8_13_SHIFT) & PLA_CHN_AOI_16TO8_AOI_16TO8_13_MASK)
+#define PLA_CHN_AOI_16TO8_AOI_16TO8_13_GET(x) (((uint32_t)(x) & PLA_CHN_AOI_16TO8_AOI_16TO8_13_MASK) >> PLA_CHN_AOI_16TO8_AOI_16TO8_13_SHIFT)
+
+/*
+ * AOI_16TO8_12 (RW)
+ *
+ * select value for AOI_16to8_12.
+ * 0: 0.
+ * 1: 1st_filter_out[12].
+ * 2: ~1st_filter_out[12].
+ * 3: 1
+ */
+#define PLA_CHN_AOI_16TO8_AOI_16TO8_12_MASK (0x3000000UL)
+#define PLA_CHN_AOI_16TO8_AOI_16TO8_12_SHIFT (24U)
+#define PLA_CHN_AOI_16TO8_AOI_16TO8_12_SET(x) (((uint32_t)(x) << PLA_CHN_AOI_16TO8_AOI_16TO8_12_SHIFT) & PLA_CHN_AOI_16TO8_AOI_16TO8_12_MASK)
+#define PLA_CHN_AOI_16TO8_AOI_16TO8_12_GET(x) (((uint32_t)(x) & PLA_CHN_AOI_16TO8_AOI_16TO8_12_MASK) >> PLA_CHN_AOI_16TO8_AOI_16TO8_12_SHIFT)
+
+/*
+ * AOI_16TO8_11 (RW)
+ *
+ * select value for AOI_16to8_11.
+ * 0: 0.
+ * 1: 1st_filter_out[11].
+ * 2: ~1st_filter_out[11].
+ * 3: 1
+ */
+#define PLA_CHN_AOI_16TO8_AOI_16TO8_11_MASK (0xC00000UL)
+#define PLA_CHN_AOI_16TO8_AOI_16TO8_11_SHIFT (22U)
+#define PLA_CHN_AOI_16TO8_AOI_16TO8_11_SET(x) (((uint32_t)(x) << PLA_CHN_AOI_16TO8_AOI_16TO8_11_SHIFT) & PLA_CHN_AOI_16TO8_AOI_16TO8_11_MASK)
+#define PLA_CHN_AOI_16TO8_AOI_16TO8_11_GET(x) (((uint32_t)(x) & PLA_CHN_AOI_16TO8_AOI_16TO8_11_MASK) >> PLA_CHN_AOI_16TO8_AOI_16TO8_11_SHIFT)
+
+/*
+ * AOI_16TO8_10 (RW)
+ *
+ * select value for AOI_16to8_10.
+ * 0: 0.
+ * 1: 1st_filter_out[10].
+ * 2: ~1st_filter_out[10].
+ * 3: 1
+ */
+#define PLA_CHN_AOI_16TO8_AOI_16TO8_10_MASK (0x300000UL)
+#define PLA_CHN_AOI_16TO8_AOI_16TO8_10_SHIFT (20U)
+#define PLA_CHN_AOI_16TO8_AOI_16TO8_10_SET(x) (((uint32_t)(x) << PLA_CHN_AOI_16TO8_AOI_16TO8_10_SHIFT) & PLA_CHN_AOI_16TO8_AOI_16TO8_10_MASK)
+#define PLA_CHN_AOI_16TO8_AOI_16TO8_10_GET(x) (((uint32_t)(x) & PLA_CHN_AOI_16TO8_AOI_16TO8_10_MASK) >> PLA_CHN_AOI_16TO8_AOI_16TO8_10_SHIFT)
+
+/*
+ * AOI_16TO8_9 (RW)
+ *
+ * select value for AOI_16to8_9.
+ * 0: 0.
+ * 1: 1st_filter_out[9].
+ * 2: ~1st_filter_out[9].
+ * 3: 1
+ */
+#define PLA_CHN_AOI_16TO8_AOI_16TO8_9_MASK (0xC0000UL)
+#define PLA_CHN_AOI_16TO8_AOI_16TO8_9_SHIFT (18U)
+#define PLA_CHN_AOI_16TO8_AOI_16TO8_9_SET(x) (((uint32_t)(x) << PLA_CHN_AOI_16TO8_AOI_16TO8_9_SHIFT) & PLA_CHN_AOI_16TO8_AOI_16TO8_9_MASK)
+#define PLA_CHN_AOI_16TO8_AOI_16TO8_9_GET(x) (((uint32_t)(x) & PLA_CHN_AOI_16TO8_AOI_16TO8_9_MASK) >> PLA_CHN_AOI_16TO8_AOI_16TO8_9_SHIFT)
+
+/*
+ * AOI_16TO8_8 (RW)
+ *
+ * select value for AOI_16to8_8.
+ * 0: 0.
+ * 1: 1st_filter_out[8].
+ * 2: ~1st_filter_out[8].
+ * 3: 1
+ */
+#define PLA_CHN_AOI_16TO8_AOI_16TO8_8_MASK (0x30000UL)
+#define PLA_CHN_AOI_16TO8_AOI_16TO8_8_SHIFT (16U)
+#define PLA_CHN_AOI_16TO8_AOI_16TO8_8_SET(x) (((uint32_t)(x) << PLA_CHN_AOI_16TO8_AOI_16TO8_8_SHIFT) & PLA_CHN_AOI_16TO8_AOI_16TO8_8_MASK)
+#define PLA_CHN_AOI_16TO8_AOI_16TO8_8_GET(x) (((uint32_t)(x) & PLA_CHN_AOI_16TO8_AOI_16TO8_8_MASK) >> PLA_CHN_AOI_16TO8_AOI_16TO8_8_SHIFT)
+
+/*
+ * AOI_16TO8_7 (RW)
+ *
+ * select value for AOI_16to8_7.
+ * 0: 0.
+ * 1: 1st_filter_out[7].
+ * 2: ~1st_filter_out[7].
+ * 3: 1
+ */
+#define PLA_CHN_AOI_16TO8_AOI_16TO8_7_MASK (0xC000U)
+#define PLA_CHN_AOI_16TO8_AOI_16TO8_7_SHIFT (14U)
+#define PLA_CHN_AOI_16TO8_AOI_16TO8_7_SET(x) (((uint32_t)(x) << PLA_CHN_AOI_16TO8_AOI_16TO8_7_SHIFT) & PLA_CHN_AOI_16TO8_AOI_16TO8_7_MASK)
+#define PLA_CHN_AOI_16TO8_AOI_16TO8_7_GET(x) (((uint32_t)(x) & PLA_CHN_AOI_16TO8_AOI_16TO8_7_MASK) >> PLA_CHN_AOI_16TO8_AOI_16TO8_7_SHIFT)
+
+/*
+ * AOI_16TO8_6 (RW)
+ *
+ * select value for AOI_16to8_6.
+ * 0: 0.
+ * 1: 1st_filter_out[6].
+ * 2: ~1st_filter_out[6].
+ * 3: 1
+ */
+#define PLA_CHN_AOI_16TO8_AOI_16TO8_6_MASK (0x3000U)
+#define PLA_CHN_AOI_16TO8_AOI_16TO8_6_SHIFT (12U)
+#define PLA_CHN_AOI_16TO8_AOI_16TO8_6_SET(x) (((uint32_t)(x) << PLA_CHN_AOI_16TO8_AOI_16TO8_6_SHIFT) & PLA_CHN_AOI_16TO8_AOI_16TO8_6_MASK)
+#define PLA_CHN_AOI_16TO8_AOI_16TO8_6_GET(x) (((uint32_t)(x) & PLA_CHN_AOI_16TO8_AOI_16TO8_6_MASK) >> PLA_CHN_AOI_16TO8_AOI_16TO8_6_SHIFT)
+
+/*
+ * AOI_16TO8_5 (RW)
+ *
+ * select value for AOI_16to8_5.
+ * 0: 0.
+ * 1: 1st_filter_out[5].
+ * 2: ~1st_filter_out[5].
+ * 3: 1
+ */
+#define PLA_CHN_AOI_16TO8_AOI_16TO8_5_MASK (0xC00U)
+#define PLA_CHN_AOI_16TO8_AOI_16TO8_5_SHIFT (10U)
+#define PLA_CHN_AOI_16TO8_AOI_16TO8_5_SET(x) (((uint32_t)(x) << PLA_CHN_AOI_16TO8_AOI_16TO8_5_SHIFT) & PLA_CHN_AOI_16TO8_AOI_16TO8_5_MASK)
+#define PLA_CHN_AOI_16TO8_AOI_16TO8_5_GET(x) (((uint32_t)(x) & PLA_CHN_AOI_16TO8_AOI_16TO8_5_MASK) >> PLA_CHN_AOI_16TO8_AOI_16TO8_5_SHIFT)
+
+/*
+ * AOI_16TO8_4 (RW)
+ *
+ * select value for AOI_16to8_4.
+ * 0: 0.
+ * 1: 1st_filter_out[4].
+ * 2: ~1st_filter_out[4].
+ * 3: 1
+ */
+#define PLA_CHN_AOI_16TO8_AOI_16TO8_4_MASK (0x300U)
+#define PLA_CHN_AOI_16TO8_AOI_16TO8_4_SHIFT (8U)
+#define PLA_CHN_AOI_16TO8_AOI_16TO8_4_SET(x) (((uint32_t)(x) << PLA_CHN_AOI_16TO8_AOI_16TO8_4_SHIFT) & PLA_CHN_AOI_16TO8_AOI_16TO8_4_MASK)
+#define PLA_CHN_AOI_16TO8_AOI_16TO8_4_GET(x) (((uint32_t)(x) & PLA_CHN_AOI_16TO8_AOI_16TO8_4_MASK) >> PLA_CHN_AOI_16TO8_AOI_16TO8_4_SHIFT)
+
+/*
+ * AOI_16TO8_3 (RW)
+ *
+ * select value for AOI_16to8_3.
+ * 0: 0.
+ * 1: 1st_filter_out[3].
+ * 2: ~1st_filter_out[3].
+ * 3: 1
+ */
+#define PLA_CHN_AOI_16TO8_AOI_16TO8_3_MASK (0xC0U)
+#define PLA_CHN_AOI_16TO8_AOI_16TO8_3_SHIFT (6U)
+#define PLA_CHN_AOI_16TO8_AOI_16TO8_3_SET(x) (((uint32_t)(x) << PLA_CHN_AOI_16TO8_AOI_16TO8_3_SHIFT) & PLA_CHN_AOI_16TO8_AOI_16TO8_3_MASK)
+#define PLA_CHN_AOI_16TO8_AOI_16TO8_3_GET(x) (((uint32_t)(x) & PLA_CHN_AOI_16TO8_AOI_16TO8_3_MASK) >> PLA_CHN_AOI_16TO8_AOI_16TO8_3_SHIFT)
+
+/*
+ * AOI_16TO8_2 (RW)
+ *
+ * select value for AOI_16to8_2.
+ * 0: 0.
+ * 1: 1st_filter_out[2].
+ * 2: ~1st_filter_out[2].
+ * 3: 1
+ */
+#define PLA_CHN_AOI_16TO8_AOI_16TO8_2_MASK (0x30U)
+#define PLA_CHN_AOI_16TO8_AOI_16TO8_2_SHIFT (4U)
+#define PLA_CHN_AOI_16TO8_AOI_16TO8_2_SET(x) (((uint32_t)(x) << PLA_CHN_AOI_16TO8_AOI_16TO8_2_SHIFT) & PLA_CHN_AOI_16TO8_AOI_16TO8_2_MASK)
+#define PLA_CHN_AOI_16TO8_AOI_16TO8_2_GET(x) (((uint32_t)(x) & PLA_CHN_AOI_16TO8_AOI_16TO8_2_MASK) >> PLA_CHN_AOI_16TO8_AOI_16TO8_2_SHIFT)
+
+/*
+ * AOI_16TO8_1 (RW)
+ *
+ * select value for AOI_16to8_1.
+ * 0: 0.
+ * 1: 1st_filter_out[1].
+ * 2: ~1st_filter_out[1].
+ * 3: 1
+ */
+#define PLA_CHN_AOI_16TO8_AOI_16TO8_1_MASK (0xCU)
+#define PLA_CHN_AOI_16TO8_AOI_16TO8_1_SHIFT (2U)
+#define PLA_CHN_AOI_16TO8_AOI_16TO8_1_SET(x) (((uint32_t)(x) << PLA_CHN_AOI_16TO8_AOI_16TO8_1_SHIFT) & PLA_CHN_AOI_16TO8_AOI_16TO8_1_MASK)
+#define PLA_CHN_AOI_16TO8_AOI_16TO8_1_GET(x) (((uint32_t)(x) & PLA_CHN_AOI_16TO8_AOI_16TO8_1_MASK) >> PLA_CHN_AOI_16TO8_AOI_16TO8_1_SHIFT)
+
+/*
+ * AOI_16TO8_0 (RW)
+ *
+ * select value for AOI_16to8_0.
+ * 0: 0.
+ * 1: 1st_filter_out[0].
+ * 2: ~1st_filter_out[0].
+ * 3: 1
+ */
+#define PLA_CHN_AOI_16TO8_AOI_16TO8_0_MASK (0x3U)
+#define PLA_CHN_AOI_16TO8_AOI_16TO8_0_SHIFT (0U)
+#define PLA_CHN_AOI_16TO8_AOI_16TO8_0_SET(x) (((uint32_t)(x) << PLA_CHN_AOI_16TO8_AOI_16TO8_0_SHIFT) & PLA_CHN_AOI_16TO8_AOI_16TO8_0_MASK)
+#define PLA_CHN_AOI_16TO8_AOI_16TO8_0_GET(x) (((uint32_t)(x) & PLA_CHN_AOI_16TO8_AOI_16TO8_0_MASK) >> PLA_CHN_AOI_16TO8_AOI_16TO8_0_SHIFT)
+
+/* Bitfield definition for register of struct array CHN: AOI_8TO7_00_01 */
+/*
+ * AOI_8TO7_01_7 (RW)
+ *
+ * select value for AOI_8to7_01_7.
+ * 0: 0.
+ * 1: 2nd_filter_out[7].
+ * 2: ~2nd_filter_out[7].
+ * 3: 1
+ */
+#define PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_01_7_MASK (0xC0000000UL)
+#define PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_01_7_SHIFT (30U)
+#define PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_01_7_SET(x) (((uint32_t)(x) << PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_01_7_SHIFT) & PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_01_7_MASK)
+#define PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_01_7_GET(x) (((uint32_t)(x) & PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_01_7_MASK) >> PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_01_7_SHIFT)
+
+/*
+ * AOI_8TO7_01_6 (RW)
+ *
+ * select value for AOI_8to7_01_6.
+ * 0: 0.
+ * 1: 2nd_filter_out[6].
+ * 2: ~2nd_filter_out[6].
+ * 3: 1
+ */
+#define PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_01_6_MASK (0x30000000UL)
+#define PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_01_6_SHIFT (28U)
+#define PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_01_6_SET(x) (((uint32_t)(x) << PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_01_6_SHIFT) & PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_01_6_MASK)
+#define PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_01_6_GET(x) (((uint32_t)(x) & PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_01_6_MASK) >> PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_01_6_SHIFT)
+
+/*
+ * AOI_8TO7_01_5 (RW)
+ *
+ * select value for AOI_8to7_01_5.
+ * 0: 0.
+ * 1: 2nd_filter_out[5].
+ * 2: ~2nd_filter_out[5].
+ * 3: 1
+ */
+#define PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_01_5_MASK (0xC000000UL)
+#define PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_01_5_SHIFT (26U)
+#define PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_01_5_SET(x) (((uint32_t)(x) << PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_01_5_SHIFT) & PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_01_5_MASK)
+#define PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_01_5_GET(x) (((uint32_t)(x) & PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_01_5_MASK) >> PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_01_5_SHIFT)
+
+/*
+ * AOI_8TO7_01_4 (RW)
+ *
+ * select value for AOI_8to7_01_4.
+ * 0: 0.
+ * 1: 2nd_filter_out[4].
+ * 2: ~2nd_filter_out[4].
+ * 3: 1
+ */
+#define PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_01_4_MASK (0x3000000UL)
+#define PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_01_4_SHIFT (24U)
+#define PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_01_4_SET(x) (((uint32_t)(x) << PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_01_4_SHIFT) & PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_01_4_MASK)
+#define PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_01_4_GET(x) (((uint32_t)(x) & PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_01_4_MASK) >> PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_01_4_SHIFT)
+
+/*
+ * AOI_8TO7_01_3 (RW)
+ *
+ * select value for AOI_8to7_01_3.
+ * 0: 0.
+ * 1: 2nd_filter_out[3].
+ * 2: ~2nd_filter_out[3].
+ * 3: 1
+ */
+#define PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_01_3_MASK (0xC00000UL)
+#define PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_01_3_SHIFT (22U)
+#define PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_01_3_SET(x) (((uint32_t)(x) << PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_01_3_SHIFT) & PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_01_3_MASK)
+#define PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_01_3_GET(x) (((uint32_t)(x) & PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_01_3_MASK) >> PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_01_3_SHIFT)
+
+/*
+ * AOI_8TO7_01_2 (RW)
+ *
+ * select value for AOI_8to7_01_2.
+ * 0: 0.
+ * 1: 2nd_filter_out[2].
+ * 2: ~2nd_filter_out[2].
+ * 3: 1
+ */
+#define PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_01_2_MASK (0x300000UL)
+#define PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_01_2_SHIFT (20U)
+#define PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_01_2_SET(x) (((uint32_t)(x) << PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_01_2_SHIFT) & PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_01_2_MASK)
+#define PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_01_2_GET(x) (((uint32_t)(x) & PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_01_2_MASK) >> PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_01_2_SHIFT)
+
+/*
+ * AOI_8TO7_01_1 (RW)
+ *
+ * select value for AOI_8to7_01_1.
+ * 0: 0.
+ * 1: 2nd_filter_out[1].
+ * 2: ~2nd_filter_out[1].
+ * 3: 1
+ */
+#define PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_01_1_MASK (0xC0000UL)
+#define PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_01_1_SHIFT (18U)
+#define PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_01_1_SET(x) (((uint32_t)(x) << PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_01_1_SHIFT) & PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_01_1_MASK)
+#define PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_01_1_GET(x) (((uint32_t)(x) & PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_01_1_MASK) >> PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_01_1_SHIFT)
+
+/*
+ * AOI_8TO7_01_0 (RW)
+ *
+ * select value for AOI_8to7_01_0.
+ * 0: 0.
+ * 1: 2nd_filter_out[0].
+ * 2: ~2nd_filter_out[0].
+ * 3: 1
+ */
+#define PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_01_0_MASK (0x30000UL)
+#define PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_01_0_SHIFT (16U)
+#define PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_01_0_SET(x) (((uint32_t)(x) << PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_01_0_SHIFT) & PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_01_0_MASK)
+#define PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_01_0_GET(x) (((uint32_t)(x) & PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_01_0_MASK) >> PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_01_0_SHIFT)
+
+/*
+ * AOI_8TO7_00_7 (RW)
+ *
+ * select value for AOI_8to7_00_7.
+ * 0: 0.
+ * 1: 2nd_filter_out[7].
+ * 2: ~2nd_filter_out[7].
+ * 3: 1
+ */
+#define PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_00_7_MASK (0xC000U)
+#define PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_00_7_SHIFT (14U)
+#define PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_00_7_SET(x) (((uint32_t)(x) << PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_00_7_SHIFT) & PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_00_7_MASK)
+#define PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_00_7_GET(x) (((uint32_t)(x) & PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_00_7_MASK) >> PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_00_7_SHIFT)
+
+/*
+ * AOI_8TO7_00_6 (RW)
+ *
+ * select value for AOI_8to7_00_6.
+ * 0: 0.
+ * 1: 2nd_filter_out[6].
+ * 2: ~2nd_filter_out[6].
+ * 3: 1
+ */
+#define PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_00_6_MASK (0x3000U)
+#define PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_00_6_SHIFT (12U)
+#define PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_00_6_SET(x) (((uint32_t)(x) << PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_00_6_SHIFT) & PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_00_6_MASK)
+#define PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_00_6_GET(x) (((uint32_t)(x) & PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_00_6_MASK) >> PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_00_6_SHIFT)
+
+/*
+ * AOI_8TO7_00_5 (RW)
+ *
+ * select value for AOI_8to7_00_5.
+ * 0: 0.
+ * 1: 2nd_filter_out[5].
+ * 2: ~2nd_filter_out[5].
+ * 3: 1
+ */
+#define PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_00_5_MASK (0xC00U)
+#define PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_00_5_SHIFT (10U)
+#define PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_00_5_SET(x) (((uint32_t)(x) << PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_00_5_SHIFT) & PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_00_5_MASK)
+#define PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_00_5_GET(x) (((uint32_t)(x) & PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_00_5_MASK) >> PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_00_5_SHIFT)
+
+/*
+ * AOI_8TO7_00_4 (RW)
+ *
+ * select value for AOI_8to7_00_4.
+ * 0: 0.
+ * 1: 2nd_filter_out[4].
+ * 2: ~2nd_filter_out[4].
+ * 3: 1
+ */
+#define PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_00_4_MASK (0x300U)
+#define PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_00_4_SHIFT (8U)
+#define PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_00_4_SET(x) (((uint32_t)(x) << PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_00_4_SHIFT) & PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_00_4_MASK)
+#define PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_00_4_GET(x) (((uint32_t)(x) & PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_00_4_MASK) >> PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_00_4_SHIFT)
+
+/*
+ * AOI_8TO7_00_3 (RW)
+ *
+ * select value for AOI_8to7_00_3.
+ * 0: 0.
+ * 1: 2nd_filter_out[3].
+ * 2: ~2nd_filter_out[3].
+ * 3: 1
+ */
+#define PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_00_3_MASK (0xC0U)
+#define PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_00_3_SHIFT (6U)
+#define PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_00_3_SET(x) (((uint32_t)(x) << PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_00_3_SHIFT) & PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_00_3_MASK)
+#define PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_00_3_GET(x) (((uint32_t)(x) & PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_00_3_MASK) >> PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_00_3_SHIFT)
+
+/*
+ * AOI_8TO7_00_2 (RW)
+ *
+ * select value for AOI_8to7_00_2.
+ * 0: 0.
+ * 1: 2nd_filter_out[2].
+ * 2: ~2nd_filter_out[2].
+ * 3: 1
+ */
+#define PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_00_2_MASK (0x30U)
+#define PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_00_2_SHIFT (4U)
+#define PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_00_2_SET(x) (((uint32_t)(x) << PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_00_2_SHIFT) & PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_00_2_MASK)
+#define PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_00_2_GET(x) (((uint32_t)(x) & PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_00_2_MASK) >> PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_00_2_SHIFT)
+
+/*
+ * AOI_8TO7_00_1 (RW)
+ *
+ * select value for AOI_8to7_00_1.
+ * 0: 0.
+ * 1: 2nd_filter_out[1].
+ * 2: ~2nd_filter_out[1].
+ * 3: 1
+ */
+#define PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_00_1_MASK (0xCU)
+#define PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_00_1_SHIFT (2U)
+#define PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_00_1_SET(x) (((uint32_t)(x) << PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_00_1_SHIFT) & PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_00_1_MASK)
+#define PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_00_1_GET(x) (((uint32_t)(x) & PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_00_1_MASK) >> PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_00_1_SHIFT)
+
+/*
+ * AOI_8TO7_00_0 (RW)
+ *
+ * select value for AOI_8to7_00_0.
+ * 0: 0.
+ * 1: 2nd_filter_out[0].
+ * 2: ~2nd_filter_out[0].
+ * 3: 1
+ */
+#define PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_00_0_MASK (0x3U)
+#define PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_00_0_SHIFT (0U)
+#define PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_00_0_SET(x) (((uint32_t)(x) << PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_00_0_SHIFT) & PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_00_0_MASK)
+#define PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_00_0_GET(x) (((uint32_t)(x) & PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_00_0_MASK) >> PLA_CHN_AOI_8TO7_00_01_AOI_8TO7_00_0_SHIFT)
+
+/* Bitfield definition for register of struct array CHN: AOI_8TO7_02_03 */
+/*
+ * AOI_8TO7_03_7 (RW)
+ *
+ * select value for AOI_8to7_03_7.
+ * 0: 0.
+ * 1: 2nd_filter_out[7].
+ * 2: ~2nd_filter_out[7].
+ * 3: 1
+ */
+#define PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_03_7_MASK (0xC0000000UL)
+#define PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_03_7_SHIFT (30U)
+#define PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_03_7_SET(x) (((uint32_t)(x) << PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_03_7_SHIFT) & PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_03_7_MASK)
+#define PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_03_7_GET(x) (((uint32_t)(x) & PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_03_7_MASK) >> PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_03_7_SHIFT)
+
+/*
+ * AOI_8TO7_03_6 (RW)
+ *
+ * select value for AOI_8to7_03_6.
+ * 0: 0.
+ * 1: 2nd_filter_out[6].
+ * 2: ~2nd_filter_out[6].
+ * 3: 1
+ */
+#define PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_03_6_MASK (0x30000000UL)
+#define PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_03_6_SHIFT (28U)
+#define PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_03_6_SET(x) (((uint32_t)(x) << PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_03_6_SHIFT) & PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_03_6_MASK)
+#define PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_03_6_GET(x) (((uint32_t)(x) & PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_03_6_MASK) >> PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_03_6_SHIFT)
+
+/*
+ * AOI_8TO7_03_5 (RW)
+ *
+ * select value for AOI_8to7_03_5.
+ * 0: 0.
+ * 1: 2nd_filter_out[5].
+ * 2: ~2nd_filter_out[5].
+ * 3: 1
+ */
+#define PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_03_5_MASK (0xC000000UL)
+#define PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_03_5_SHIFT (26U)
+#define PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_03_5_SET(x) (((uint32_t)(x) << PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_03_5_SHIFT) & PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_03_5_MASK)
+#define PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_03_5_GET(x) (((uint32_t)(x) & PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_03_5_MASK) >> PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_03_5_SHIFT)
+
+/*
+ * AOI_8TO7_03_4 (RW)
+ *
+ * select value for AOI_8to7_03_4.
+ * 0: 0.
+ * 1: 2nd_filter_out[4].
+ * 2: ~2nd_filter_out[4].
+ * 3: 1
+ */
+#define PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_03_4_MASK (0x3000000UL)
+#define PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_03_4_SHIFT (24U)
+#define PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_03_4_SET(x) (((uint32_t)(x) << PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_03_4_SHIFT) & PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_03_4_MASK)
+#define PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_03_4_GET(x) (((uint32_t)(x) & PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_03_4_MASK) >> PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_03_4_SHIFT)
+
+/*
+ * AOI_8TO7_03_3 (RW)
+ *
+ * select value for AOI_8to7_03_3.
+ * 0: 0.
+ * 1: 2nd_filter_out[3].
+ * 2: ~2nd_filter_out[3].
+ * 3: 1
+ */
+#define PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_03_3_MASK (0xC00000UL)
+#define PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_03_3_SHIFT (22U)
+#define PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_03_3_SET(x) (((uint32_t)(x) << PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_03_3_SHIFT) & PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_03_3_MASK)
+#define PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_03_3_GET(x) (((uint32_t)(x) & PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_03_3_MASK) >> PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_03_3_SHIFT)
+
+/*
+ * AOI_8TO7_03_2 (RW)
+ *
+ * select value for AOI_8to7_03_2.
+ * 0: 0.
+ * 1: 2nd_filter_out[2].
+ * 2: ~2nd_filter_out[2].
+ * 3: 1
+ */
+#define PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_03_2_MASK (0x300000UL)
+#define PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_03_2_SHIFT (20U)
+#define PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_03_2_SET(x) (((uint32_t)(x) << PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_03_2_SHIFT) & PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_03_2_MASK)
+#define PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_03_2_GET(x) (((uint32_t)(x) & PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_03_2_MASK) >> PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_03_2_SHIFT)
+
+/*
+ * AOI_8TO7_03_1 (RW)
+ *
+ * select value for AOI_8to7_03_1.
+ * 0: 0.
+ * 1: 2nd_filter_out[1].
+ * 2: ~2nd_filter_out[1].
+ * 3: 1
+ */
+#define PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_03_1_MASK (0xC0000UL)
+#define PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_03_1_SHIFT (18U)
+#define PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_03_1_SET(x) (((uint32_t)(x) << PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_03_1_SHIFT) & PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_03_1_MASK)
+#define PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_03_1_GET(x) (((uint32_t)(x) & PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_03_1_MASK) >> PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_03_1_SHIFT)
+
+/*
+ * AOI_8TO7_03_0 (RW)
+ *
+ * select value for AOI_8to7_03_0.
+ * 0: 0.
+ * 1: 2nd_filter_out[0].
+ * 2: ~2nd_filter_out[0].
+ * 3: 1
+ */
+#define PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_03_0_MASK (0x30000UL)
+#define PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_03_0_SHIFT (16U)
+#define PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_03_0_SET(x) (((uint32_t)(x) << PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_03_0_SHIFT) & PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_03_0_MASK)
+#define PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_03_0_GET(x) (((uint32_t)(x) & PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_03_0_MASK) >> PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_03_0_SHIFT)
+
+/*
+ * AOI_8TO7_02_7 (RW)
+ *
+ * select value for AOI_8to7_02_7.
+ * 0: 0.
+ * 1: 2nd_filter_out[7].
+ * 2: ~2nd_filter_out[7].
+ * 3: 1
+ */
+#define PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_02_7_MASK (0xC000U)
+#define PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_02_7_SHIFT (14U)
+#define PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_02_7_SET(x) (((uint32_t)(x) << PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_02_7_SHIFT) & PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_02_7_MASK)
+#define PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_02_7_GET(x) (((uint32_t)(x) & PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_02_7_MASK) >> PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_02_7_SHIFT)
+
+/*
+ * AOI_8TO7_02_6 (RW)
+ *
+ * select value for AOI_8to7_02_6.
+ * 0: 0.
+ * 1: 2nd_filter_out[6].
+ * 2: ~2nd_filter_out[6].
+ * 3: 1
+ */
+#define PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_02_6_MASK (0x3000U)
+#define PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_02_6_SHIFT (12U)
+#define PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_02_6_SET(x) (((uint32_t)(x) << PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_02_6_SHIFT) & PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_02_6_MASK)
+#define PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_02_6_GET(x) (((uint32_t)(x) & PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_02_6_MASK) >> PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_02_6_SHIFT)
+
+/*
+ * AOI_8TO7_02_5 (RW)
+ *
+ * select value for AOI_8to7_02_5.
+ * 0: 0.
+ * 1: 2nd_filter_out[5].
+ * 2: ~2nd_filter_out[5].
+ * 3: 1
+ */
+#define PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_02_5_MASK (0xC00U)
+#define PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_02_5_SHIFT (10U)
+#define PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_02_5_SET(x) (((uint32_t)(x) << PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_02_5_SHIFT) & PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_02_5_MASK)
+#define PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_02_5_GET(x) (((uint32_t)(x) & PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_02_5_MASK) >> PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_02_5_SHIFT)
+
+/*
+ * AOI_8TO7_02_4 (RW)
+ *
+ * select value for AOI_8to7_02_4.
+ * 0: 0.
+ * 1: 2nd_filter_out[4].
+ * 2: ~2nd_filter_out[4].
+ * 3: 1
+ */
+#define PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_02_4_MASK (0x300U)
+#define PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_02_4_SHIFT (8U)
+#define PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_02_4_SET(x) (((uint32_t)(x) << PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_02_4_SHIFT) & PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_02_4_MASK)
+#define PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_02_4_GET(x) (((uint32_t)(x) & PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_02_4_MASK) >> PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_02_4_SHIFT)
+
+/*
+ * AOI_8TO7_02_3 (RW)
+ *
+ * select value for AOI_8to7_02_3.
+ * 0: 0.
+ * 1: 2nd_filter_out[3].
+ * 2: ~2nd_filter_out[3].
+ * 3: 1
+ */
+#define PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_02_3_MASK (0xC0U)
+#define PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_02_3_SHIFT (6U)
+#define PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_02_3_SET(x) (((uint32_t)(x) << PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_02_3_SHIFT) & PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_02_3_MASK)
+#define PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_02_3_GET(x) (((uint32_t)(x) & PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_02_3_MASK) >> PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_02_3_SHIFT)
+
+/*
+ * AOI_8TO7_02_2 (RW)
+ *
+ * select value for AOI_8to7_02_2.
+ * 0: 0.
+ * 1: 2nd_filter_out[2].
+ * 2: ~2nd_filter_out[2].
+ * 3: 1
+ */
+#define PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_02_2_MASK (0x30U)
+#define PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_02_2_SHIFT (4U)
+#define PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_02_2_SET(x) (((uint32_t)(x) << PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_02_2_SHIFT) & PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_02_2_MASK)
+#define PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_02_2_GET(x) (((uint32_t)(x) & PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_02_2_MASK) >> PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_02_2_SHIFT)
+
+/*
+ * AOI_8TO7_02_1 (RW)
+ *
+ * select value for AOI_8to7_02_1.
+ * 0: 0.
+ * 1: 2nd_filter_out[1].
+ * 2: ~2nd_filter_out[1].
+ * 3: 1
+ */
+#define PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_02_1_MASK (0xCU)
+#define PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_02_1_SHIFT (2U)
+#define PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_02_1_SET(x) (((uint32_t)(x) << PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_02_1_SHIFT) & PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_02_1_MASK)
+#define PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_02_1_GET(x) (((uint32_t)(x) & PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_02_1_MASK) >> PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_02_1_SHIFT)
+
+/*
+ * AOI_8TO7_02_0 (RW)
+ *
+ * select value for AOI_8to7_02_0.
+ * 0: 0.
+ * 1: 2nd_filter_out[0].
+ * 2: ~2nd_filter_out[0].
+ * 3: 1
+ */
+#define PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_02_0_MASK (0x3U)
+#define PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_02_0_SHIFT (0U)
+#define PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_02_0_SET(x) (((uint32_t)(x) << PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_02_0_SHIFT) & PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_02_0_MASK)
+#define PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_02_0_GET(x) (((uint32_t)(x) & PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_02_0_MASK) >> PLA_CHN_AOI_8TO7_02_03_AOI_8TO7_02_0_SHIFT)
+
+/* Bitfield definition for register of struct array CHN: AOI_8TO7_04_05 */
+/*
+ * AOI_8TO7_05_7 (RW)
+ *
+ * select value for AOI_8to7_05_7.
+ * 0: 0.
+ * 1: 2nd_filter_out[7].
+ * 2: ~2nd_filter_out[7].
+ * 3: 1
+ */
+#define PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_05_7_MASK (0xC0000000UL)
+#define PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_05_7_SHIFT (30U)
+#define PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_05_7_SET(x) (((uint32_t)(x) << PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_05_7_SHIFT) & PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_05_7_MASK)
+#define PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_05_7_GET(x) (((uint32_t)(x) & PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_05_7_MASK) >> PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_05_7_SHIFT)
+
+/*
+ * AOI_8TO7_05_6 (RW)
+ *
+ * select value for AOI_8to7_05_6.
+ * 0: 0.
+ * 1: 2nd_filter_out[6].
+ * 2: ~2nd_filter_out[6].
+ * 3: 1
+ */
+#define PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_05_6_MASK (0x30000000UL)
+#define PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_05_6_SHIFT (28U)
+#define PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_05_6_SET(x) (((uint32_t)(x) << PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_05_6_SHIFT) & PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_05_6_MASK)
+#define PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_05_6_GET(x) (((uint32_t)(x) & PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_05_6_MASK) >> PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_05_6_SHIFT)
+
+/*
+ * AOI_8TO7_05_5 (RW)
+ *
+ * select value for AOI_8to7_05_5.
+ * 0: 0.
+ * 1: 2nd_filter_out[5].
+ * 2: ~2nd_filter_out[5].
+ * 3: 1
+ */
+#define PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_05_5_MASK (0xC000000UL)
+#define PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_05_5_SHIFT (26U)
+#define PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_05_5_SET(x) (((uint32_t)(x) << PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_05_5_SHIFT) & PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_05_5_MASK)
+#define PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_05_5_GET(x) (((uint32_t)(x) & PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_05_5_MASK) >> PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_05_5_SHIFT)
+
+/*
+ * AOI_8TO7_05_4 (RW)
+ *
+ * select value for AOI_8to7_05_4.
+ * 0: 0.
+ * 1: 2nd_filter_out[4].
+ * 2: ~2nd_filter_out[4].
+ * 3: 1
+ */
+#define PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_05_4_MASK (0x3000000UL)
+#define PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_05_4_SHIFT (24U)
+#define PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_05_4_SET(x) (((uint32_t)(x) << PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_05_4_SHIFT) & PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_05_4_MASK)
+#define PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_05_4_GET(x) (((uint32_t)(x) & PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_05_4_MASK) >> PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_05_4_SHIFT)
+
+/*
+ * AOI_8TO7_05_3 (RW)
+ *
+ * select value for AOI_8to7_05_3.
+ * 0: 0.
+ * 1: 2nd_filter_out[3].
+ * 2: ~2nd_filter_out[3].
+ * 3: 1
+ */
+#define PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_05_3_MASK (0xC00000UL)
+#define PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_05_3_SHIFT (22U)
+#define PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_05_3_SET(x) (((uint32_t)(x) << PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_05_3_SHIFT) & PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_05_3_MASK)
+#define PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_05_3_GET(x) (((uint32_t)(x) & PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_05_3_MASK) >> PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_05_3_SHIFT)
+
+/*
+ * AOI_8TO7_05_2 (RW)
+ *
+ * select value for AOI_8to7_05_2.
+ * 0: 0.
+ * 1: 2nd_filter_out[2].
+ * 2: ~2nd_filter_out[2].
+ * 3: 1
+ */
+#define PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_05_2_MASK (0x300000UL)
+#define PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_05_2_SHIFT (20U)
+#define PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_05_2_SET(x) (((uint32_t)(x) << PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_05_2_SHIFT) & PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_05_2_MASK)
+#define PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_05_2_GET(x) (((uint32_t)(x) & PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_05_2_MASK) >> PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_05_2_SHIFT)
+
+/*
+ * AOI_8TO7_05_1 (RW)
+ *
+ * select value for AOI_8to7_05_1.
+ * 0: 0.
+ * 1: 2nd_filter_out[1].
+ * 2: ~2nd_filter_out[1].
+ * 3: 1
+ */
+#define PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_05_1_MASK (0xC0000UL)
+#define PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_05_1_SHIFT (18U)
+#define PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_05_1_SET(x) (((uint32_t)(x) << PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_05_1_SHIFT) & PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_05_1_MASK)
+#define PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_05_1_GET(x) (((uint32_t)(x) & PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_05_1_MASK) >> PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_05_1_SHIFT)
+
+/*
+ * AOI_8TO7_05_0 (RW)
+ *
+ * select value for AOI_8to7_05_0.
+ * 0: 0.
+ * 1: 2nd_filter_out[0].
+ * 2: ~2nd_filter_out[0].
+ * 3: 1
+ */
+#define PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_05_0_MASK (0x30000UL)
+#define PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_05_0_SHIFT (16U)
+#define PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_05_0_SET(x) (((uint32_t)(x) << PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_05_0_SHIFT) & PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_05_0_MASK)
+#define PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_05_0_GET(x) (((uint32_t)(x) & PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_05_0_MASK) >> PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_05_0_SHIFT)
+
+/*
+ * AOI_8TO7_04_7 (RW)
+ *
+ * select value for AOI_8to7_04_7.
+ * 0: 0.
+ * 1: 2nd_filter_out[7].
+ * 2: ~2nd_filter_out[7].
+ * 3: 1
+ */
+#define PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_04_7_MASK (0xC000U)
+#define PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_04_7_SHIFT (14U)
+#define PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_04_7_SET(x) (((uint32_t)(x) << PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_04_7_SHIFT) & PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_04_7_MASK)
+#define PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_04_7_GET(x) (((uint32_t)(x) & PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_04_7_MASK) >> PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_04_7_SHIFT)
+
+/*
+ * AOI_8TO7_04_6 (RW)
+ *
+ * select value for AOI_8to7_04_6.
+ * 0: 0.
+ * 1: 2nd_filter_out[6].
+ * 2: ~2nd_filter_out[6].
+ * 3: 1
+ */
+#define PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_04_6_MASK (0x3000U)
+#define PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_04_6_SHIFT (12U)
+#define PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_04_6_SET(x) (((uint32_t)(x) << PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_04_6_SHIFT) & PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_04_6_MASK)
+#define PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_04_6_GET(x) (((uint32_t)(x) & PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_04_6_MASK) >> PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_04_6_SHIFT)
+
+/*
+ * AOI_8TO7_04_5 (RW)
+ *
+ * select value for AOI_8to7_04_5.
+ * 0: 0.
+ * 1: 2nd_filter_out[5].
+ * 2: ~2nd_filter_out[5].
+ * 3: 1
+ */
+#define PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_04_5_MASK (0xC00U)
+#define PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_04_5_SHIFT (10U)
+#define PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_04_5_SET(x) (((uint32_t)(x) << PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_04_5_SHIFT) & PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_04_5_MASK)
+#define PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_04_5_GET(x) (((uint32_t)(x) & PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_04_5_MASK) >> PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_04_5_SHIFT)
+
+/*
+ * AOI_8TO7_04_4 (RW)
+ *
+ * select value for AOI_8to7_04_4.
+ * 0: 0.
+ * 1: 2nd_filter_out[4].
+ * 2: ~2nd_filter_out[4].
+ * 3: 1
+ */
+#define PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_04_4_MASK (0x300U)
+#define PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_04_4_SHIFT (8U)
+#define PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_04_4_SET(x) (((uint32_t)(x) << PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_04_4_SHIFT) & PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_04_4_MASK)
+#define PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_04_4_GET(x) (((uint32_t)(x) & PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_04_4_MASK) >> PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_04_4_SHIFT)
+
+/*
+ * AOI_8TO7_04_3 (RW)
+ *
+ * select value for AOI_8to7_04_3.
+ * 0: 0.
+ * 1: 2nd_filter_out[3].
+ * 2: ~2nd_filter_out[3].
+ * 3: 1
+ */
+#define PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_04_3_MASK (0xC0U)
+#define PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_04_3_SHIFT (6U)
+#define PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_04_3_SET(x) (((uint32_t)(x) << PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_04_3_SHIFT) & PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_04_3_MASK)
+#define PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_04_3_GET(x) (((uint32_t)(x) & PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_04_3_MASK) >> PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_04_3_SHIFT)
+
+/*
+ * AOI_8TO7_04_2 (RW)
+ *
+ * select value for AOI_8to7_04_2.
+ * 0: 0.
+ * 1: 2nd_filter_out[2].
+ * 2: ~2nd_filter_out[2].
+ * 3: 1
+ */
+#define PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_04_2_MASK (0x30U)
+#define PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_04_2_SHIFT (4U)
+#define PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_04_2_SET(x) (((uint32_t)(x) << PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_04_2_SHIFT) & PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_04_2_MASK)
+#define PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_04_2_GET(x) (((uint32_t)(x) & PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_04_2_MASK) >> PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_04_2_SHIFT)
+
+/*
+ * AOI_8TO7_04_1 (RW)
+ *
+ * select value for AOI_8to7_04_1.
+ * 0: 0.
+ * 1: 2nd_filter_out[1].
+ * 2: ~2nd_filter_out[1].
+ * 3: 1
+ */
+#define PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_04_1_MASK (0xCU)
+#define PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_04_1_SHIFT (2U)
+#define PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_04_1_SET(x) (((uint32_t)(x) << PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_04_1_SHIFT) & PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_04_1_MASK)
+#define PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_04_1_GET(x) (((uint32_t)(x) & PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_04_1_MASK) >> PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_04_1_SHIFT)
+
+/*
+ * AOI_8TO7_04_0 (RW)
+ *
+ * select value for AOI_8to7_04_0.
+ * 0: 0.
+ * 1: 2nd_filter_out[0].
+ * 2: ~2nd_filter_out[0].
+ * 3: 1
+ */
+#define PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_04_0_MASK (0x3U)
+#define PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_04_0_SHIFT (0U)
+#define PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_04_0_SET(x) (((uint32_t)(x) << PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_04_0_SHIFT) & PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_04_0_MASK)
+#define PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_04_0_GET(x) (((uint32_t)(x) & PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_04_0_MASK) >> PLA_CHN_AOI_8TO7_04_05_AOI_8TO7_04_0_SHIFT)
+
+/* Bitfield definition for register of struct array CHN: AOI_8TO7_06 */
+/*
+ * AOI_8TO7_06_7 (RW)
+ *
+ * select value for AOI_8to7_06_7.
+ * 0: 0.
+ * 1: 2nd_filter_out[7].
+ * 2: ~2nd_filter_out[7].
+ * 3: 1
+ */
+#define PLA_CHN_AOI_8TO7_06_AOI_8TO7_06_7_MASK (0xC000U)
+#define PLA_CHN_AOI_8TO7_06_AOI_8TO7_06_7_SHIFT (14U)
+#define PLA_CHN_AOI_8TO7_06_AOI_8TO7_06_7_SET(x) (((uint32_t)(x) << PLA_CHN_AOI_8TO7_06_AOI_8TO7_06_7_SHIFT) & PLA_CHN_AOI_8TO7_06_AOI_8TO7_06_7_MASK)
+#define PLA_CHN_AOI_8TO7_06_AOI_8TO7_06_7_GET(x) (((uint32_t)(x) & PLA_CHN_AOI_8TO7_06_AOI_8TO7_06_7_MASK) >> PLA_CHN_AOI_8TO7_06_AOI_8TO7_06_7_SHIFT)
+
+/*
+ * AOI_8TO7_06_6 (RW)
+ *
+ * select value for AOI_8to7_06_6.
+ * 0: 0.
+ * 1: 2nd_filter_out[6].
+ * 2: ~2nd_filter_out[6].
+ * 3: 1
+ */
+#define PLA_CHN_AOI_8TO7_06_AOI_8TO7_06_6_MASK (0x3000U)
+#define PLA_CHN_AOI_8TO7_06_AOI_8TO7_06_6_SHIFT (12U)
+#define PLA_CHN_AOI_8TO7_06_AOI_8TO7_06_6_SET(x) (((uint32_t)(x) << PLA_CHN_AOI_8TO7_06_AOI_8TO7_06_6_SHIFT) & PLA_CHN_AOI_8TO7_06_AOI_8TO7_06_6_MASK)
+#define PLA_CHN_AOI_8TO7_06_AOI_8TO7_06_6_GET(x) (((uint32_t)(x) & PLA_CHN_AOI_8TO7_06_AOI_8TO7_06_6_MASK) >> PLA_CHN_AOI_8TO7_06_AOI_8TO7_06_6_SHIFT)
+
+/*
+ * AOI_8TO7_06_5 (RW)
+ *
+ * select value for AOI_8to7_06_5.
+ * 0: 0.
+ * 1: 2nd_filter_out[5].
+ * 2: ~2nd_filter_out[5].
+ * 3: 1
+ */
+#define PLA_CHN_AOI_8TO7_06_AOI_8TO7_06_5_MASK (0xC00U)
+#define PLA_CHN_AOI_8TO7_06_AOI_8TO7_06_5_SHIFT (10U)
+#define PLA_CHN_AOI_8TO7_06_AOI_8TO7_06_5_SET(x) (((uint32_t)(x) << PLA_CHN_AOI_8TO7_06_AOI_8TO7_06_5_SHIFT) & PLA_CHN_AOI_8TO7_06_AOI_8TO7_06_5_MASK)
+#define PLA_CHN_AOI_8TO7_06_AOI_8TO7_06_5_GET(x) (((uint32_t)(x) & PLA_CHN_AOI_8TO7_06_AOI_8TO7_06_5_MASK) >> PLA_CHN_AOI_8TO7_06_AOI_8TO7_06_5_SHIFT)
+
+/*
+ * AOI_8TO7_06_4 (RW)
+ *
+ * select value for AOI_8to7_06_4.
+ * 0: 0.
+ * 1: 2nd_filter_out[4].
+ * 2: ~2nd_filter_out[4].
+ * 3: 1
+ */
+#define PLA_CHN_AOI_8TO7_06_AOI_8TO7_06_4_MASK (0x300U)
+#define PLA_CHN_AOI_8TO7_06_AOI_8TO7_06_4_SHIFT (8U)
+#define PLA_CHN_AOI_8TO7_06_AOI_8TO7_06_4_SET(x) (((uint32_t)(x) << PLA_CHN_AOI_8TO7_06_AOI_8TO7_06_4_SHIFT) & PLA_CHN_AOI_8TO7_06_AOI_8TO7_06_4_MASK)
+#define PLA_CHN_AOI_8TO7_06_AOI_8TO7_06_4_GET(x) (((uint32_t)(x) & PLA_CHN_AOI_8TO7_06_AOI_8TO7_06_4_MASK) >> PLA_CHN_AOI_8TO7_06_AOI_8TO7_06_4_SHIFT)
+
+/*
+ * AOI_8TO7_06_3 (RW)
+ *
+ * select value for AOI_8to7_06_3.
+ * 0: 0.
+ * 1: 2nd_filter_out[3].
+ * 2: ~2nd_filter_out[3].
+ * 3: 1
+ */
+#define PLA_CHN_AOI_8TO7_06_AOI_8TO7_06_3_MASK (0xC0U)
+#define PLA_CHN_AOI_8TO7_06_AOI_8TO7_06_3_SHIFT (6U)
+#define PLA_CHN_AOI_8TO7_06_AOI_8TO7_06_3_SET(x) (((uint32_t)(x) << PLA_CHN_AOI_8TO7_06_AOI_8TO7_06_3_SHIFT) & PLA_CHN_AOI_8TO7_06_AOI_8TO7_06_3_MASK)
+#define PLA_CHN_AOI_8TO7_06_AOI_8TO7_06_3_GET(x) (((uint32_t)(x) & PLA_CHN_AOI_8TO7_06_AOI_8TO7_06_3_MASK) >> PLA_CHN_AOI_8TO7_06_AOI_8TO7_06_3_SHIFT)
+
+/*
+ * AOI_8TO7_06_2 (RW)
+ *
+ * select value for AOI_8to7_06_2.
+ * 0: 0.
+ * 1: 2nd_filter_out[2].
+ * 2: ~2nd_filter_out[2].
+ * 3: 1
+ */
+#define PLA_CHN_AOI_8TO7_06_AOI_8TO7_06_2_MASK (0x30U)
+#define PLA_CHN_AOI_8TO7_06_AOI_8TO7_06_2_SHIFT (4U)
+#define PLA_CHN_AOI_8TO7_06_AOI_8TO7_06_2_SET(x) (((uint32_t)(x) << PLA_CHN_AOI_8TO7_06_AOI_8TO7_06_2_SHIFT) & PLA_CHN_AOI_8TO7_06_AOI_8TO7_06_2_MASK)
+#define PLA_CHN_AOI_8TO7_06_AOI_8TO7_06_2_GET(x) (((uint32_t)(x) & PLA_CHN_AOI_8TO7_06_AOI_8TO7_06_2_MASK) >> PLA_CHN_AOI_8TO7_06_AOI_8TO7_06_2_SHIFT)
+
+/*
+ * AOI_8TO7_06_1 (RW)
+ *
+ * select value for AOI_8to7_06_1.
+ * 0: 0.
+ * 1: 2nd_filter_out[1].
+ * 2: ~2nd_filter_out[1].
+ * 3: 1
+ */
+#define PLA_CHN_AOI_8TO7_06_AOI_8TO7_06_1_MASK (0xCU)
+#define PLA_CHN_AOI_8TO7_06_AOI_8TO7_06_1_SHIFT (2U)
+#define PLA_CHN_AOI_8TO7_06_AOI_8TO7_06_1_SET(x) (((uint32_t)(x) << PLA_CHN_AOI_8TO7_06_AOI_8TO7_06_1_SHIFT) & PLA_CHN_AOI_8TO7_06_AOI_8TO7_06_1_MASK)
+#define PLA_CHN_AOI_8TO7_06_AOI_8TO7_06_1_GET(x) (((uint32_t)(x) & PLA_CHN_AOI_8TO7_06_AOI_8TO7_06_1_MASK) >> PLA_CHN_AOI_8TO7_06_AOI_8TO7_06_1_SHIFT)
+
+/*
+ * AOI_8TO7_06_0 (RW)
+ *
+ * select value for AOI_8to7_06_0.
+ * 0: 0.
+ * 1: 2nd_filter_out[0].
+ * 2: ~2nd_filter_out[0].
+ * 3: 1
+ */
+#define PLA_CHN_AOI_8TO7_06_AOI_8TO7_06_0_MASK (0x3U)
+#define PLA_CHN_AOI_8TO7_06_AOI_8TO7_06_0_SHIFT (0U)
+#define PLA_CHN_AOI_8TO7_06_AOI_8TO7_06_0_SET(x) (((uint32_t)(x) << PLA_CHN_AOI_8TO7_06_AOI_8TO7_06_0_SHIFT) & PLA_CHN_AOI_8TO7_06_AOI_8TO7_06_0_MASK)
+#define PLA_CHN_AOI_8TO7_06_AOI_8TO7_06_0_GET(x) (((uint32_t)(x) & PLA_CHN_AOI_8TO7_06_AOI_8TO7_06_0_MASK) >> PLA_CHN_AOI_8TO7_06_AOI_8TO7_06_0_SHIFT)
+
+/* Bitfield definition for register of struct array CHN: SECOND_FILTER_0 */
+/*
+ * FILTER_EXT_COUNTER (RW)
+ *
+ * filter_ext counter value, cycles for filter or extent by system clock。
+ * 0：0*apb_clk_period
+ * 1：1*apb_clk_period
+ * 2: 2*apb_clk_period
+ * …
+ * 65535: 65535*apb_clk_period
+ */
+#define PLA_CHN_FILTER_2ND_FILTER_EXT_COUNTER_MASK (0xFFFF0000UL)
+#define PLA_CHN_FILTER_2ND_FILTER_EXT_COUNTER_SHIFT (16U)
+#define PLA_CHN_FILTER_2ND_FILTER_EXT_COUNTER_SET(x) (((uint32_t)(x) << PLA_CHN_FILTER_2ND_FILTER_EXT_COUNTER_SHIFT) & PLA_CHN_FILTER_2ND_FILTER_EXT_COUNTER_MASK)
+#define PLA_CHN_FILTER_2ND_FILTER_EXT_COUNTER_GET(x) (((uint32_t)(x) & PLA_CHN_FILTER_2ND_FILTER_EXT_COUNTER_MASK) >> PLA_CHN_FILTER_2ND_FILTER_EXT_COUNTER_SHIFT)
+
+/*
+ * FILTER_EXT_TYPE (RW)
+ *
+ * filter extend type.
+ * 0-3：nothing to do.
+ * 4： input high level extend.
+ * 5： input low level extend.
+ * 6： output extend.
+ * 7： input pulse extend.
+ */
+#define PLA_CHN_FILTER_2ND_FILTER_EXT_TYPE_MASK (0x7000U)
+#define PLA_CHN_FILTER_2ND_FILTER_EXT_TYPE_SHIFT (12U)
+#define PLA_CHN_FILTER_2ND_FILTER_EXT_TYPE_SET(x) (((uint32_t)(x) << PLA_CHN_FILTER_2ND_FILTER_EXT_TYPE_SHIFT) & PLA_CHN_FILTER_2ND_FILTER_EXT_TYPE_MASK)
+#define PLA_CHN_FILTER_2ND_FILTER_EXT_TYPE_GET(x) (((uint32_t)(x) & PLA_CHN_FILTER_2ND_FILTER_EXT_TYPE_MASK) >> PLA_CHN_FILTER_2ND_FILTER_EXT_TYPE_SHIFT)
+
+/*
+ * FILTER_EXT_ENABLE (RW)
+ *
+ * filter extend enable.
+ * 0. bypass filter extend. all setting in bit31:12 are inactive
+ * 1. enable filter extend, all setting in bit31:12 are active.
+ */
+#define PLA_CHN_FILTER_2ND_FILTER_EXT_ENABLE_MASK (0x100U)
+#define PLA_CHN_FILTER_2ND_FILTER_EXT_ENABLE_SHIFT (8U)
+#define PLA_CHN_FILTER_2ND_FILTER_EXT_ENABLE_SET(x) (((uint32_t)(x) << PLA_CHN_FILTER_2ND_FILTER_EXT_ENABLE_SHIFT) & PLA_CHN_FILTER_2ND_FILTER_EXT_ENABLE_MASK)
+#define PLA_CHN_FILTER_2ND_FILTER_EXT_ENABLE_GET(x) (((uint32_t)(x) & PLA_CHN_FILTER_2ND_FILTER_EXT_ENABLE_MASK) >> PLA_CHN_FILTER_2ND_FILTER_EXT_ENABLE_SHIFT)
+
+/*
+ * FILTER_SYNC_LEVEL (RW)
+ *
+ * synchroniser level.
+ * 0: 2 level sync.
+ * 1: 3 level sync
+ */
+#define PLA_CHN_FILTER_2ND_FILTER_SYNC_LEVEL_MASK (0x80U)
+#define PLA_CHN_FILTER_2ND_FILTER_SYNC_LEVEL_SHIFT (7U)
+#define PLA_CHN_FILTER_2ND_FILTER_SYNC_LEVEL_SET(x) (((uint32_t)(x) << PLA_CHN_FILTER_2ND_FILTER_SYNC_LEVEL_SHIFT) & PLA_CHN_FILTER_2ND_FILTER_SYNC_LEVEL_MASK)
+#define PLA_CHN_FILTER_2ND_FILTER_SYNC_LEVEL_GET(x) (((uint32_t)(x) & PLA_CHN_FILTER_2ND_FILTER_SYNC_LEVEL_MASK) >> PLA_CHN_FILTER_2ND_FILTER_SYNC_LEVEL_SHIFT)
+
+/*
+ * POSE_EDGE_DECT_ENABLE (RW)
+ *
+ * pose edge detector enable.
+ * 0: disable.
+ * 1: enable.
+ */
+#define PLA_CHN_FILTER_2ND_POSE_EDGE_DECT_ENABLE_MASK (0x40U)
+#define PLA_CHN_FILTER_2ND_POSE_EDGE_DECT_ENABLE_SHIFT (6U)
+#define PLA_CHN_FILTER_2ND_POSE_EDGE_DECT_ENABLE_SET(x) (((uint32_t)(x) << PLA_CHN_FILTER_2ND_POSE_EDGE_DECT_ENABLE_SHIFT) & PLA_CHN_FILTER_2ND_POSE_EDGE_DECT_ENABLE_MASK)
+#define PLA_CHN_FILTER_2ND_POSE_EDGE_DECT_ENABLE_GET(x) (((uint32_t)(x) & PLA_CHN_FILTER_2ND_POSE_EDGE_DECT_ENABLE_MASK) >> PLA_CHN_FILTER_2ND_POSE_EDGE_DECT_ENABLE_SHIFT)
+
+/*
+ * NEGE_EDGE_DECT_ENABLE (RW)
+ *
+ * nege edge detector enable.
+ * 0: disable.
+ * 1: enable.
+ */
+#define PLA_CHN_FILTER_2ND_NEGE_EDGE_DECT_ENABLE_MASK (0x20U)
+#define PLA_CHN_FILTER_2ND_NEGE_EDGE_DECT_ENABLE_SHIFT (5U)
+#define PLA_CHN_FILTER_2ND_NEGE_EDGE_DECT_ENABLE_SET(x) (((uint32_t)(x) << PLA_CHN_FILTER_2ND_NEGE_EDGE_DECT_ENABLE_SHIFT) & PLA_CHN_FILTER_2ND_NEGE_EDGE_DECT_ENABLE_MASK)
+#define PLA_CHN_FILTER_2ND_NEGE_EDGE_DECT_ENABLE_GET(x) (((uint32_t)(x) & PLA_CHN_FILTER_2ND_NEGE_EDGE_DECT_ENABLE_MASK) >> PLA_CHN_FILTER_2ND_NEGE_EDGE_DECT_ENABLE_SHIFT)
+
+/*
+ * EDGE_DECT_ENABLE (RW)
+ *
+ * edge detector enable.
+ * 0: disable. bit6/bit5 setting inactive.
+ * 1: enable. bit6/bit5 setting active.
+ */
+#define PLA_CHN_FILTER_2ND_EDGE_DECT_ENABLE_MASK (0x10U)
+#define PLA_CHN_FILTER_2ND_EDGE_DECT_ENABLE_SHIFT (4U)
+#define PLA_CHN_FILTER_2ND_EDGE_DECT_ENABLE_SET(x) (((uint32_t)(x) << PLA_CHN_FILTER_2ND_EDGE_DECT_ENABLE_SHIFT) & PLA_CHN_FILTER_2ND_EDGE_DECT_ENABLE_MASK)
+#define PLA_CHN_FILTER_2ND_EDGE_DECT_ENABLE_GET(x) (((uint32_t)(x) & PLA_CHN_FILTER_2ND_EDGE_DECT_ENABLE_MASK) >> PLA_CHN_FILTER_2ND_EDGE_DECT_ENABLE_SHIFT)
+
+/*
+ * FILTER_REVERSE (RW)
+ *
+ * reverse sync and edge detector filter's output.
+ * 0: not reverse.
+ * 1: reverse.
+ */
+#define PLA_CHN_FILTER_2ND_FILTER_REVERSE_MASK (0x8U)
+#define PLA_CHN_FILTER_2ND_FILTER_REVERSE_SHIFT (3U)
+#define PLA_CHN_FILTER_2ND_FILTER_REVERSE_SET(x) (((uint32_t)(x) << PLA_CHN_FILTER_2ND_FILTER_REVERSE_SHIFT) & PLA_CHN_FILTER_2ND_FILTER_REVERSE_MASK)
+#define PLA_CHN_FILTER_2ND_FILTER_REVERSE_GET(x) (((uint32_t)(x) & PLA_CHN_FILTER_2ND_FILTER_REVERSE_MASK) >> PLA_CHN_FILTER_2ND_FILTER_REVERSE_SHIFT)
+
+/*
+ * SOFTWARE_INJECT (RW)
+ *
+ * software inject value for sync and edge detector filter.
+ * 0: inject low level.
+ * 1: inject high level.
+ * 2: not inject.
+ * 3. inject high level.
+ */
+#define PLA_CHN_FILTER_2ND_SOFTWARE_INJECT_MASK (0x6U)
+#define PLA_CHN_FILTER_2ND_SOFTWARE_INJECT_SHIFT (1U)
+#define PLA_CHN_FILTER_2ND_SOFTWARE_INJECT_SET(x) (((uint32_t)(x) << PLA_CHN_FILTER_2ND_SOFTWARE_INJECT_SHIFT) & PLA_CHN_FILTER_2ND_SOFTWARE_INJECT_MASK)
+#define PLA_CHN_FILTER_2ND_SOFTWARE_INJECT_GET(x) (((uint32_t)(x) & PLA_CHN_FILTER_2ND_SOFTWARE_INJECT_MASK) >> PLA_CHN_FILTER_2ND_SOFTWARE_INJECT_SHIFT)
+
+/*
+ * SYNC_EDGE_FILTER_ENABLE (RW)
+ *
+ * sync and edge detector filter.
+ * 0: disable.
+ * 1: enable.
+ */
+#define PLA_CHN_FILTER_2ND_SYNC_EDGE_FILTER_ENABLE_MASK (0x1U)
+#define PLA_CHN_FILTER_2ND_SYNC_EDGE_FILTER_ENABLE_SHIFT (0U)
+#define PLA_CHN_FILTER_2ND_SYNC_EDGE_FILTER_ENABLE_SET(x) (((uint32_t)(x) << PLA_CHN_FILTER_2ND_SYNC_EDGE_FILTER_ENABLE_SHIFT) & PLA_CHN_FILTER_2ND_SYNC_EDGE_FILTER_ENABLE_MASK)
+#define PLA_CHN_FILTER_2ND_SYNC_EDGE_FILTER_ENABLE_GET(x) (((uint32_t)(x) & PLA_CHN_FILTER_2ND_SYNC_EDGE_FILTER_ENABLE_MASK) >> PLA_CHN_FILTER_2ND_SYNC_EDGE_FILTER_ENABLE_SHIFT)
+
+/* Bitfield definition for register of struct array CHN: THIRD_FILTER_0 */
+/*
+ * FILTER_EXT_COUNTER (RW)
+ *
+ * filter_ext counter value, cycles for filter or extent by system clock。
+ * 0：0*apb_clk_period
+ * 1：1*apb_clk_period
+ * 2: 2*apb_clk_period
+ * …
+ * 65535: 65535*apb_clk_period
+ */
+#define PLA_CHN_FILTER_3RD_FILTER_EXT_COUNTER_MASK (0xFFFF0000UL)
+#define PLA_CHN_FILTER_3RD_FILTER_EXT_COUNTER_SHIFT (16U)
+#define PLA_CHN_FILTER_3RD_FILTER_EXT_COUNTER_SET(x) (((uint32_t)(x) << PLA_CHN_FILTER_3RD_FILTER_EXT_COUNTER_SHIFT) & PLA_CHN_FILTER_3RD_FILTER_EXT_COUNTER_MASK)
+#define PLA_CHN_FILTER_3RD_FILTER_EXT_COUNTER_GET(x) (((uint32_t)(x) & PLA_CHN_FILTER_3RD_FILTER_EXT_COUNTER_MASK) >> PLA_CHN_FILTER_3RD_FILTER_EXT_COUNTER_SHIFT)
+
+/*
+ * FILTER_EXT_TYPE (RW)
+ *
+ * filter extend type.
+ * 0-3：nothing to do.
+ * 4： input high level extend.
+ * 5： input low level extend.
+ * 6： output extend.
+ * 7： input pulse extend.
+ */
+#define PLA_CHN_FILTER_3RD_FILTER_EXT_TYPE_MASK (0x7000U)
+#define PLA_CHN_FILTER_3RD_FILTER_EXT_TYPE_SHIFT (12U)
+#define PLA_CHN_FILTER_3RD_FILTER_EXT_TYPE_SET(x) (((uint32_t)(x) << PLA_CHN_FILTER_3RD_FILTER_EXT_TYPE_SHIFT) & PLA_CHN_FILTER_3RD_FILTER_EXT_TYPE_MASK)
+#define PLA_CHN_FILTER_3RD_FILTER_EXT_TYPE_GET(x) (((uint32_t)(x) & PLA_CHN_FILTER_3RD_FILTER_EXT_TYPE_MASK) >> PLA_CHN_FILTER_3RD_FILTER_EXT_TYPE_SHIFT)
+
+/*
+ * FILTER_EXT_ENABLE (RW)
+ *
+ * filter extend enable.
+ * 0. bypass filter extend. all setting in bit31:12 are inactive
+ * 1. enable filter extend, all setting in bit31:12 are active.
+ */
+#define PLA_CHN_FILTER_3RD_FILTER_EXT_ENABLE_MASK (0x100U)
+#define PLA_CHN_FILTER_3RD_FILTER_EXT_ENABLE_SHIFT (8U)
+#define PLA_CHN_FILTER_3RD_FILTER_EXT_ENABLE_SET(x) (((uint32_t)(x) << PLA_CHN_FILTER_3RD_FILTER_EXT_ENABLE_SHIFT) & PLA_CHN_FILTER_3RD_FILTER_EXT_ENABLE_MASK)
+#define PLA_CHN_FILTER_3RD_FILTER_EXT_ENABLE_GET(x) (((uint32_t)(x) & PLA_CHN_FILTER_3RD_FILTER_EXT_ENABLE_MASK) >> PLA_CHN_FILTER_3RD_FILTER_EXT_ENABLE_SHIFT)
+
+/*
+ * FILTER_SYNC_LEVEL (RW)
+ *
+ * synchroniser level.
+ * 0: 2 level sync.
+ * 1: 3 level sync
+ */
+#define PLA_CHN_FILTER_3RD_FILTER_SYNC_LEVEL_MASK (0x80U)
+#define PLA_CHN_FILTER_3RD_FILTER_SYNC_LEVEL_SHIFT (7U)
+#define PLA_CHN_FILTER_3RD_FILTER_SYNC_LEVEL_SET(x) (((uint32_t)(x) << PLA_CHN_FILTER_3RD_FILTER_SYNC_LEVEL_SHIFT) & PLA_CHN_FILTER_3RD_FILTER_SYNC_LEVEL_MASK)
+#define PLA_CHN_FILTER_3RD_FILTER_SYNC_LEVEL_GET(x) (((uint32_t)(x) & PLA_CHN_FILTER_3RD_FILTER_SYNC_LEVEL_MASK) >> PLA_CHN_FILTER_3RD_FILTER_SYNC_LEVEL_SHIFT)
+
+/*
+ * POSE_EDGE_DECT_ENABLE (RW)
+ *
+ * pose edge detector enable.
+ * 0: disable.
+ * 1: enable.
+ */
+#define PLA_CHN_FILTER_3RD_POSE_EDGE_DECT_ENABLE_MASK (0x40U)
+#define PLA_CHN_FILTER_3RD_POSE_EDGE_DECT_ENABLE_SHIFT (6U)
+#define PLA_CHN_FILTER_3RD_POSE_EDGE_DECT_ENABLE_SET(x) (((uint32_t)(x) << PLA_CHN_FILTER_3RD_POSE_EDGE_DECT_ENABLE_SHIFT) & PLA_CHN_FILTER_3RD_POSE_EDGE_DECT_ENABLE_MASK)
+#define PLA_CHN_FILTER_3RD_POSE_EDGE_DECT_ENABLE_GET(x) (((uint32_t)(x) & PLA_CHN_FILTER_3RD_POSE_EDGE_DECT_ENABLE_MASK) >> PLA_CHN_FILTER_3RD_POSE_EDGE_DECT_ENABLE_SHIFT)
+
+/*
+ * NEGE_EDGE_DECT_ENABLE (RW)
+ *
+ * nege edge detector enable.
+ * 0: disable.
+ * 1: enable.
+ */
+#define PLA_CHN_FILTER_3RD_NEGE_EDGE_DECT_ENABLE_MASK (0x20U)
+#define PLA_CHN_FILTER_3RD_NEGE_EDGE_DECT_ENABLE_SHIFT (5U)
+#define PLA_CHN_FILTER_3RD_NEGE_EDGE_DECT_ENABLE_SET(x) (((uint32_t)(x) << PLA_CHN_FILTER_3RD_NEGE_EDGE_DECT_ENABLE_SHIFT) & PLA_CHN_FILTER_3RD_NEGE_EDGE_DECT_ENABLE_MASK)
+#define PLA_CHN_FILTER_3RD_NEGE_EDGE_DECT_ENABLE_GET(x) (((uint32_t)(x) & PLA_CHN_FILTER_3RD_NEGE_EDGE_DECT_ENABLE_MASK) >> PLA_CHN_FILTER_3RD_NEGE_EDGE_DECT_ENABLE_SHIFT)
+
+/*
+ * EDGE_DECT_ENABLE (RW)
+ *
+ * edge detector enable.
+ * 0: disable. bit6/bit5 setting inactive.
+ * 1: enable. bit6/bit5 setting active.
+ */
+#define PLA_CHN_FILTER_3RD_EDGE_DECT_ENABLE_MASK (0x10U)
+#define PLA_CHN_FILTER_3RD_EDGE_DECT_ENABLE_SHIFT (4U)
+#define PLA_CHN_FILTER_3RD_EDGE_DECT_ENABLE_SET(x) (((uint32_t)(x) << PLA_CHN_FILTER_3RD_EDGE_DECT_ENABLE_SHIFT) & PLA_CHN_FILTER_3RD_EDGE_DECT_ENABLE_MASK)
+#define PLA_CHN_FILTER_3RD_EDGE_DECT_ENABLE_GET(x) (((uint32_t)(x) & PLA_CHN_FILTER_3RD_EDGE_DECT_ENABLE_MASK) >> PLA_CHN_FILTER_3RD_EDGE_DECT_ENABLE_SHIFT)
+
+/*
+ * FILTER_REVERSE (RW)
+ *
+ * reverse sync and edge detector filter's output.
+ * 0: not reverse.
+ * 1: reverse.
+ */
+#define PLA_CHN_FILTER_3RD_FILTER_REVERSE_MASK (0x8U)
+#define PLA_CHN_FILTER_3RD_FILTER_REVERSE_SHIFT (3U)
+#define PLA_CHN_FILTER_3RD_FILTER_REVERSE_SET(x) (((uint32_t)(x) << PLA_CHN_FILTER_3RD_FILTER_REVERSE_SHIFT) & PLA_CHN_FILTER_3RD_FILTER_REVERSE_MASK)
+#define PLA_CHN_FILTER_3RD_FILTER_REVERSE_GET(x) (((uint32_t)(x) & PLA_CHN_FILTER_3RD_FILTER_REVERSE_MASK) >> PLA_CHN_FILTER_3RD_FILTER_REVERSE_SHIFT)
+
+/*
+ * SOFTWARE_INJECT (RW)
+ *
+ * software inject value for sync and edge detector filter.
+ * 0: inject low level.
+ * 1: inject high level.
+ * 2: not inject.
+ * 3. inject high level.
+ */
+#define PLA_CHN_FILTER_3RD_SOFTWARE_INJECT_MASK (0x6U)
+#define PLA_CHN_FILTER_3RD_SOFTWARE_INJECT_SHIFT (1U)
+#define PLA_CHN_FILTER_3RD_SOFTWARE_INJECT_SET(x) (((uint32_t)(x) << PLA_CHN_FILTER_3RD_SOFTWARE_INJECT_SHIFT) & PLA_CHN_FILTER_3RD_SOFTWARE_INJECT_MASK)
+#define PLA_CHN_FILTER_3RD_SOFTWARE_INJECT_GET(x) (((uint32_t)(x) & PLA_CHN_FILTER_3RD_SOFTWARE_INJECT_MASK) >> PLA_CHN_FILTER_3RD_SOFTWARE_INJECT_SHIFT)
+
+/*
+ * SYNC_EDGE_FILTER_ENABLE (RW)
+ *
+ * sync and edge detector filter.
+ * 0: disable.
+ * 1: enable.
+ */
+#define PLA_CHN_FILTER_3RD_SYNC_EDGE_FILTER_ENABLE_MASK (0x1U)
+#define PLA_CHN_FILTER_3RD_SYNC_EDGE_FILTER_ENABLE_SHIFT (0U)
+#define PLA_CHN_FILTER_3RD_SYNC_EDGE_FILTER_ENABLE_SET(x) (((uint32_t)(x) << PLA_CHN_FILTER_3RD_SYNC_EDGE_FILTER_ENABLE_SHIFT) & PLA_CHN_FILTER_3RD_SYNC_EDGE_FILTER_ENABLE_MASK)
+#define PLA_CHN_FILTER_3RD_SYNC_EDGE_FILTER_ENABLE_GET(x) (((uint32_t)(x) & PLA_CHN_FILTER_3RD_SYNC_EDGE_FILTER_ENABLE_MASK) >> PLA_CHN_FILTER_3RD_SYNC_EDGE_FILTER_ENABLE_SHIFT)
+
+/* Bitfield definition for register of struct array CHN: CFG_FF */
+/*
+ * OSC_LOOP_CLAMP_VALUE (RW)
+ *
+ * osc loop clamp value when osc ring active.
+ * 0: clamp 0.
+ * 1: clamp 1.
+ */
+#define PLA_CHN_CFG_FF_OSC_LOOP_CLAMP_VALUE_MASK (0x20000UL)
+#define PLA_CHN_CFG_FF_OSC_LOOP_CLAMP_VALUE_SHIFT (17U)
+#define PLA_CHN_CFG_FF_OSC_LOOP_CLAMP_VALUE_SET(x) (((uint32_t)(x) << PLA_CHN_CFG_FF_OSC_LOOP_CLAMP_VALUE_SHIFT) & PLA_CHN_CFG_FF_OSC_LOOP_CLAMP_VALUE_MASK)
+#define PLA_CHN_CFG_FF_OSC_LOOP_CLAMP_VALUE_GET(x) (((uint32_t)(x) & PLA_CHN_CFG_FF_OSC_LOOP_CLAMP_VALUE_MASK) >> PLA_CHN_CFG_FF_OSC_LOOP_CLAMP_VALUE_SHIFT)
+
+/*
+ * DIS_OSC_LOOP_CLAMP (RW)
+ *
+ * disable osc loop clamp.
+ * 0: enable osc loop clamp when osc ring active.
+ * 1: disable or clean current osc loop clamp.
+ */
+#define PLA_CHN_CFG_FF_DIS_OSC_LOOP_CLAMP_MASK (0x10000UL)
+#define PLA_CHN_CFG_FF_DIS_OSC_LOOP_CLAMP_SHIFT (16U)
+#define PLA_CHN_CFG_FF_DIS_OSC_LOOP_CLAMP_SET(x) (((uint32_t)(x) << PLA_CHN_CFG_FF_DIS_OSC_LOOP_CLAMP_SHIFT) & PLA_CHN_CFG_FF_DIS_OSC_LOOP_CLAMP_MASK)
+#define PLA_CHN_CFG_FF_DIS_OSC_LOOP_CLAMP_GET(x) (((uint32_t)(x) & PLA_CHN_CFG_FF_DIS_OSC_LOOP_CLAMP_MASK) >> PLA_CHN_CFG_FF_DIS_OSC_LOOP_CLAMP_SHIFT)
+
+/*
+ * SEL_ADDER_MINUS (RW)
+ *
+ * 0: select adder when cfg_adder_minus active.
+ * 1: select minus when cfg_adder_minus active.
+ */
+#define PLA_CHN_CFG_FF_SEL_ADDER_MINUS_MASK (0x10U)
+#define PLA_CHN_CFG_FF_SEL_ADDER_MINUS_SHIFT (4U)
+#define PLA_CHN_CFG_FF_SEL_ADDER_MINUS_SET(x) (((uint32_t)(x) << PLA_CHN_CFG_FF_SEL_ADDER_MINUS_SHIFT) & PLA_CHN_CFG_FF_SEL_ADDER_MINUS_MASK)
+#define PLA_CHN_CFG_FF_SEL_ADDER_MINUS_GET(x) (((uint32_t)(x) & PLA_CHN_CFG_FF_SEL_ADDER_MINUS_MASK) >> PLA_CHN_CFG_FF_SEL_ADDER_MINUS_SHIFT)
+
+/*
+ * SEL_CLK_SOURCE (RW)
+ *
+ * cfg_ff clock source.
+ * 0: system clock.
+ * 1: use 3rd_filter_2 as clock.
+ */
+#define PLA_CHN_CFG_FF_SEL_CLK_SOURCE_MASK (0x8U)
+#define PLA_CHN_CFG_FF_SEL_CLK_SOURCE_SHIFT (3U)
+#define PLA_CHN_CFG_FF_SEL_CLK_SOURCE_SET(x) (((uint32_t)(x) << PLA_CHN_CFG_FF_SEL_CLK_SOURCE_SHIFT) & PLA_CHN_CFG_FF_SEL_CLK_SOURCE_MASK)
+#define PLA_CHN_CFG_FF_SEL_CLK_SOURCE_GET(x) (((uint32_t)(x) & PLA_CHN_CFG_FF_SEL_CLK_SOURCE_MASK) >> PLA_CHN_CFG_FF_SEL_CLK_SOURCE_SHIFT)
+
+/*
+ * SEL_CFG_FF_TYPE (RW)
+ *
+ * cfg_ff type.
+ * 0: DFF.
+ * 1: 3rd_filter_0.
+ * 2: dual-edge DFF.
+ * 3: Trigger FF.
+ * 4: JK FF.
+ * 5. latch.
+ * 6: full adder/minus.
+ */
+#define PLA_CHN_CFG_FF_SEL_CFG_FF_TYPE_MASK (0x7U)
+#define PLA_CHN_CFG_FF_SEL_CFG_FF_TYPE_SHIFT (0U)
+#define PLA_CHN_CFG_FF_SEL_CFG_FF_TYPE_SET(x) (((uint32_t)(x) << PLA_CHN_CFG_FF_SEL_CFG_FF_TYPE_SHIFT) & PLA_CHN_CFG_FF_SEL_CFG_FF_TYPE_MASK)
+#define PLA_CHN_CFG_FF_SEL_CFG_FF_TYPE_GET(x) (((uint32_t)(x) & PLA_CHN_CFG_FF_SEL_CFG_FF_TYPE_MASK) >> PLA_CHN_CFG_FF_SEL_CFG_FF_TYPE_SHIFT)
+
+/* Bitfield definition for register array: FILTER_1ST_PLA_IN */
+/*
+ * FILTER_EXT_COUNTER (RW)
+ *
+ * filter_ext counter value, cycles for filter or extent by system clock。
+ * 0：0*apb_clk_period
+ * 1：1*apb_clk_period
+ * 2: 2*apb_clk_period
+ * …
+ * 65535: 65535*apb_clk_period
+ */
+#define PLA_FILTER_1ST_PLA_IN_FILTER_EXT_COUNTER_MASK (0xFFFF0000UL)
+#define PLA_FILTER_1ST_PLA_IN_FILTER_EXT_COUNTER_SHIFT (16U)
+#define PLA_FILTER_1ST_PLA_IN_FILTER_EXT_COUNTER_SET(x) (((uint32_t)(x) << PLA_FILTER_1ST_PLA_IN_FILTER_EXT_COUNTER_SHIFT) & PLA_FILTER_1ST_PLA_IN_FILTER_EXT_COUNTER_MASK)
+#define PLA_FILTER_1ST_PLA_IN_FILTER_EXT_COUNTER_GET(x) (((uint32_t)(x) & PLA_FILTER_1ST_PLA_IN_FILTER_EXT_COUNTER_MASK) >> PLA_FILTER_1ST_PLA_IN_FILTER_EXT_COUNTER_SHIFT)
+
+/*
+ * FILTER_EXT_TYPE (RW)
+ *
+ * filter extend type.
+ * 0-3：nothing to do.
+ * 4： input high level extend.
+ * 5： input low level extend.
+ * 6： output extend.
+ * 7： input pulse extend.
+ */
+#define PLA_FILTER_1ST_PLA_IN_FILTER_EXT_TYPE_MASK (0x7000U)
+#define PLA_FILTER_1ST_PLA_IN_FILTER_EXT_TYPE_SHIFT (12U)
+#define PLA_FILTER_1ST_PLA_IN_FILTER_EXT_TYPE_SET(x) (((uint32_t)(x) << PLA_FILTER_1ST_PLA_IN_FILTER_EXT_TYPE_SHIFT) & PLA_FILTER_1ST_PLA_IN_FILTER_EXT_TYPE_MASK)
+#define PLA_FILTER_1ST_PLA_IN_FILTER_EXT_TYPE_GET(x) (((uint32_t)(x) & PLA_FILTER_1ST_PLA_IN_FILTER_EXT_TYPE_MASK) >> PLA_FILTER_1ST_PLA_IN_FILTER_EXT_TYPE_SHIFT)
+
+/*
+ * FILTER_EXT_ENABLE (RW)
+ *
+ * filter extend enable.
+ * 0. bypass filter extend. all setting in bit31:12 are inactive
+ * 1. enable filter extend, all setting in bit31:12 are active.
+ */
+#define PLA_FILTER_1ST_PLA_IN_FILTER_EXT_ENABLE_MASK (0x100U)
+#define PLA_FILTER_1ST_PLA_IN_FILTER_EXT_ENABLE_SHIFT (8U)
+#define PLA_FILTER_1ST_PLA_IN_FILTER_EXT_ENABLE_SET(x) (((uint32_t)(x) << PLA_FILTER_1ST_PLA_IN_FILTER_EXT_ENABLE_SHIFT) & PLA_FILTER_1ST_PLA_IN_FILTER_EXT_ENABLE_MASK)
+#define PLA_FILTER_1ST_PLA_IN_FILTER_EXT_ENABLE_GET(x) (((uint32_t)(x) & PLA_FILTER_1ST_PLA_IN_FILTER_EXT_ENABLE_MASK) >> PLA_FILTER_1ST_PLA_IN_FILTER_EXT_ENABLE_SHIFT)
+
+/*
+ * FILTER_SYNC_LEVEL (RW)
+ *
+ * synchroniser level.
+ * 0: 2 level sync.
+ * 1: 3 level sync
+ */
+#define PLA_FILTER_1ST_PLA_IN_FILTER_SYNC_LEVEL_MASK (0x80U)
+#define PLA_FILTER_1ST_PLA_IN_FILTER_SYNC_LEVEL_SHIFT (7U)
+#define PLA_FILTER_1ST_PLA_IN_FILTER_SYNC_LEVEL_SET(x) (((uint32_t)(x) << PLA_FILTER_1ST_PLA_IN_FILTER_SYNC_LEVEL_SHIFT) & PLA_FILTER_1ST_PLA_IN_FILTER_SYNC_LEVEL_MASK)
+#define PLA_FILTER_1ST_PLA_IN_FILTER_SYNC_LEVEL_GET(x) (((uint32_t)(x) & PLA_FILTER_1ST_PLA_IN_FILTER_SYNC_LEVEL_MASK) >> PLA_FILTER_1ST_PLA_IN_FILTER_SYNC_LEVEL_SHIFT)
+
+/*
+ * POSE_EDGE_DECT_ENABLE (RW)
+ *
+ * pose edge detector enable.
+ * 0: disable.
+ * 1: enable.
+ */
+#define PLA_FILTER_1ST_PLA_IN_POSE_EDGE_DECT_ENABLE_MASK (0x40U)
+#define PLA_FILTER_1ST_PLA_IN_POSE_EDGE_DECT_ENABLE_SHIFT (6U)
+#define PLA_FILTER_1ST_PLA_IN_POSE_EDGE_DECT_ENABLE_SET(x) (((uint32_t)(x) << PLA_FILTER_1ST_PLA_IN_POSE_EDGE_DECT_ENABLE_SHIFT) & PLA_FILTER_1ST_PLA_IN_POSE_EDGE_DECT_ENABLE_MASK)
+#define PLA_FILTER_1ST_PLA_IN_POSE_EDGE_DECT_ENABLE_GET(x) (((uint32_t)(x) & PLA_FILTER_1ST_PLA_IN_POSE_EDGE_DECT_ENABLE_MASK) >> PLA_FILTER_1ST_PLA_IN_POSE_EDGE_DECT_ENABLE_SHIFT)
+
+/*
+ * NEGE_EDGE_DECT_ENABLE (RW)
+ *
+ * nege edge detector enable.
+ * 0: disable.
+ * 1: enable.
+ */
+#define PLA_FILTER_1ST_PLA_IN_NEGE_EDGE_DECT_ENABLE_MASK (0x20U)
+#define PLA_FILTER_1ST_PLA_IN_NEGE_EDGE_DECT_ENABLE_SHIFT (5U)
+#define PLA_FILTER_1ST_PLA_IN_NEGE_EDGE_DECT_ENABLE_SET(x) (((uint32_t)(x) << PLA_FILTER_1ST_PLA_IN_NEGE_EDGE_DECT_ENABLE_SHIFT) & PLA_FILTER_1ST_PLA_IN_NEGE_EDGE_DECT_ENABLE_MASK)
+#define PLA_FILTER_1ST_PLA_IN_NEGE_EDGE_DECT_ENABLE_GET(x) (((uint32_t)(x) & PLA_FILTER_1ST_PLA_IN_NEGE_EDGE_DECT_ENABLE_MASK) >> PLA_FILTER_1ST_PLA_IN_NEGE_EDGE_DECT_ENABLE_SHIFT)
+
+/*
+ * EDGE_DECT_ENABLE (RW)
+ *
+ * edge detector enable.
+ * 0: disable. bit6/bit5 setting inactive.
+ * 1: enable. bit6/bit5 setting active.
+ */
+#define PLA_FILTER_1ST_PLA_IN_EDGE_DECT_ENABLE_MASK (0x10U)
+#define PLA_FILTER_1ST_PLA_IN_EDGE_DECT_ENABLE_SHIFT (4U)
+#define PLA_FILTER_1ST_PLA_IN_EDGE_DECT_ENABLE_SET(x) (((uint32_t)(x) << PLA_FILTER_1ST_PLA_IN_EDGE_DECT_ENABLE_SHIFT) & PLA_FILTER_1ST_PLA_IN_EDGE_DECT_ENABLE_MASK)
+#define PLA_FILTER_1ST_PLA_IN_EDGE_DECT_ENABLE_GET(x) (((uint32_t)(x) & PLA_FILTER_1ST_PLA_IN_EDGE_DECT_ENABLE_MASK) >> PLA_FILTER_1ST_PLA_IN_EDGE_DECT_ENABLE_SHIFT)
+
+/*
+ * FILTER_REVERSE (RW)
+ *
+ * reverse sync and edge detector filter's output.
+ * 0: not reverse.
+ * 1: reverse.
+ */
+#define PLA_FILTER_1ST_PLA_IN_FILTER_REVERSE_MASK (0x8U)
+#define PLA_FILTER_1ST_PLA_IN_FILTER_REVERSE_SHIFT (3U)
+#define PLA_FILTER_1ST_PLA_IN_FILTER_REVERSE_SET(x) (((uint32_t)(x) << PLA_FILTER_1ST_PLA_IN_FILTER_REVERSE_SHIFT) & PLA_FILTER_1ST_PLA_IN_FILTER_REVERSE_MASK)
+#define PLA_FILTER_1ST_PLA_IN_FILTER_REVERSE_GET(x) (((uint32_t)(x) & PLA_FILTER_1ST_PLA_IN_FILTER_REVERSE_MASK) >> PLA_FILTER_1ST_PLA_IN_FILTER_REVERSE_SHIFT)
+
+/*
+ * SOFTWARE_INJECT (RW)
+ *
+ * software inject value for sync and edge detector filter.
+ * 0: inject low level.
+ * 1: inject high level.
+ * 2: not inject.
+ * 3. inject high level.
+ */
+#define PLA_FILTER_1ST_PLA_IN_SOFTWARE_INJECT_MASK (0x6U)
+#define PLA_FILTER_1ST_PLA_IN_SOFTWARE_INJECT_SHIFT (1U)
+#define PLA_FILTER_1ST_PLA_IN_SOFTWARE_INJECT_SET(x) (((uint32_t)(x) << PLA_FILTER_1ST_PLA_IN_SOFTWARE_INJECT_SHIFT) & PLA_FILTER_1ST_PLA_IN_SOFTWARE_INJECT_MASK)
+#define PLA_FILTER_1ST_PLA_IN_SOFTWARE_INJECT_GET(x) (((uint32_t)(x) & PLA_FILTER_1ST_PLA_IN_SOFTWARE_INJECT_MASK) >> PLA_FILTER_1ST_PLA_IN_SOFTWARE_INJECT_SHIFT)
+
+/*
+ * SYNC_EDGE_FILTER_ENABLE (RW)
+ *
+ * sync and edge detector filter.
+ * 0: disable.
+ * 1: enable.
+ */
+#define PLA_FILTER_1ST_PLA_IN_SYNC_EDGE_FILTER_ENABLE_MASK (0x1U)
+#define PLA_FILTER_1ST_PLA_IN_SYNC_EDGE_FILTER_ENABLE_SHIFT (0U)
+#define PLA_FILTER_1ST_PLA_IN_SYNC_EDGE_FILTER_ENABLE_SET(x) (((uint32_t)(x) << PLA_FILTER_1ST_PLA_IN_SYNC_EDGE_FILTER_ENABLE_SHIFT) & PLA_FILTER_1ST_PLA_IN_SYNC_EDGE_FILTER_ENABLE_MASK)
+#define PLA_FILTER_1ST_PLA_IN_SYNC_EDGE_FILTER_ENABLE_GET(x) (((uint32_t)(x) & PLA_FILTER_1ST_PLA_IN_SYNC_EDGE_FILTER_ENABLE_MASK) >> PLA_FILTER_1ST_PLA_IN_SYNC_EDGE_FILTER_ENABLE_SHIFT)
+
+/* Bitfield definition for register array: FILTER_1ST_PLA_OUT */
+/*
+ * FILTER_EXT_COUNTER (RW)
+ *
+ * filter_ext counter value, cycles for filter or extent by system clock。
+ * 0：0*apb_clk_period
+ * 1：1*apb_clk_period
+ * 2: 2*apb_clk_period
+ * …
+ * 65535: 65535*apb_clk_period
+ */
+#define PLA_FILTER_1ST_PLA_OUT_FILTER_EXT_COUNTER_MASK (0xFFFF0000UL)
+#define PLA_FILTER_1ST_PLA_OUT_FILTER_EXT_COUNTER_SHIFT (16U)
+#define PLA_FILTER_1ST_PLA_OUT_FILTER_EXT_COUNTER_SET(x) (((uint32_t)(x) << PLA_FILTER_1ST_PLA_OUT_FILTER_EXT_COUNTER_SHIFT) & PLA_FILTER_1ST_PLA_OUT_FILTER_EXT_COUNTER_MASK)
+#define PLA_FILTER_1ST_PLA_OUT_FILTER_EXT_COUNTER_GET(x) (((uint32_t)(x) & PLA_FILTER_1ST_PLA_OUT_FILTER_EXT_COUNTER_MASK) >> PLA_FILTER_1ST_PLA_OUT_FILTER_EXT_COUNTER_SHIFT)
+
+/*
+ * FILTER_EXT_TYPE (RW)
+ *
+ * filter extend type.
+ * 0-3：nothing to do.
+ * 4： input high level extend.
+ * 5： input low level extend.
+ * 6： output extend.
+ * 7： input pulse extend.
+ */
+#define PLA_FILTER_1ST_PLA_OUT_FILTER_EXT_TYPE_MASK (0x7000U)
+#define PLA_FILTER_1ST_PLA_OUT_FILTER_EXT_TYPE_SHIFT (12U)
+#define PLA_FILTER_1ST_PLA_OUT_FILTER_EXT_TYPE_SET(x) (((uint32_t)(x) << PLA_FILTER_1ST_PLA_OUT_FILTER_EXT_TYPE_SHIFT) & PLA_FILTER_1ST_PLA_OUT_FILTER_EXT_TYPE_MASK)
+#define PLA_FILTER_1ST_PLA_OUT_FILTER_EXT_TYPE_GET(x) (((uint32_t)(x) & PLA_FILTER_1ST_PLA_OUT_FILTER_EXT_TYPE_MASK) >> PLA_FILTER_1ST_PLA_OUT_FILTER_EXT_TYPE_SHIFT)
+
+/*
+ * FILTER_EXT_ENABLE (RW)
+ *
+ * filter extend enable.
+ * 0. bypass filter extend. all setting in bit31:12 are inactive
+ * 1. enable filter extend, all setting in bit31:12 are active.
+ */
+#define PLA_FILTER_1ST_PLA_OUT_FILTER_EXT_ENABLE_MASK (0x100U)
+#define PLA_FILTER_1ST_PLA_OUT_FILTER_EXT_ENABLE_SHIFT (8U)
+#define PLA_FILTER_1ST_PLA_OUT_FILTER_EXT_ENABLE_SET(x) (((uint32_t)(x) << PLA_FILTER_1ST_PLA_OUT_FILTER_EXT_ENABLE_SHIFT) & PLA_FILTER_1ST_PLA_OUT_FILTER_EXT_ENABLE_MASK)
+#define PLA_FILTER_1ST_PLA_OUT_FILTER_EXT_ENABLE_GET(x) (((uint32_t)(x) & PLA_FILTER_1ST_PLA_OUT_FILTER_EXT_ENABLE_MASK) >> PLA_FILTER_1ST_PLA_OUT_FILTER_EXT_ENABLE_SHIFT)
+
+/*
+ * FILTER_SYNC_LEVEL (RW)
+ *
+ * synchroniser level.
+ * 0: 2 level sync.
+ * 1: 3 level sync
+ */
+#define PLA_FILTER_1ST_PLA_OUT_FILTER_SYNC_LEVEL_MASK (0x80U)
+#define PLA_FILTER_1ST_PLA_OUT_FILTER_SYNC_LEVEL_SHIFT (7U)
+#define PLA_FILTER_1ST_PLA_OUT_FILTER_SYNC_LEVEL_SET(x) (((uint32_t)(x) << PLA_FILTER_1ST_PLA_OUT_FILTER_SYNC_LEVEL_SHIFT) & PLA_FILTER_1ST_PLA_OUT_FILTER_SYNC_LEVEL_MASK)
+#define PLA_FILTER_1ST_PLA_OUT_FILTER_SYNC_LEVEL_GET(x) (((uint32_t)(x) & PLA_FILTER_1ST_PLA_OUT_FILTER_SYNC_LEVEL_MASK) >> PLA_FILTER_1ST_PLA_OUT_FILTER_SYNC_LEVEL_SHIFT)
+
+/*
+ * POSE_EDGE_DECT_ENABLE (RW)
+ *
+ * pose edge detector enable.
+ * 0: disable.
+ * 1: enable.
+ */
+#define PLA_FILTER_1ST_PLA_OUT_POSE_EDGE_DECT_ENABLE_MASK (0x40U)
+#define PLA_FILTER_1ST_PLA_OUT_POSE_EDGE_DECT_ENABLE_SHIFT (6U)
+#define PLA_FILTER_1ST_PLA_OUT_POSE_EDGE_DECT_ENABLE_SET(x) (((uint32_t)(x) << PLA_FILTER_1ST_PLA_OUT_POSE_EDGE_DECT_ENABLE_SHIFT) & PLA_FILTER_1ST_PLA_OUT_POSE_EDGE_DECT_ENABLE_MASK)
+#define PLA_FILTER_1ST_PLA_OUT_POSE_EDGE_DECT_ENABLE_GET(x) (((uint32_t)(x) & PLA_FILTER_1ST_PLA_OUT_POSE_EDGE_DECT_ENABLE_MASK) >> PLA_FILTER_1ST_PLA_OUT_POSE_EDGE_DECT_ENABLE_SHIFT)
+
+/*
+ * NEGE_EDGE_DECT_ENABLE (RW)
+ *
+ * nege edge detector enable.
+ * 0: disable.
+ * 1: enable.
+ */
+#define PLA_FILTER_1ST_PLA_OUT_NEGE_EDGE_DECT_ENABLE_MASK (0x20U)
+#define PLA_FILTER_1ST_PLA_OUT_NEGE_EDGE_DECT_ENABLE_SHIFT (5U)
+#define PLA_FILTER_1ST_PLA_OUT_NEGE_EDGE_DECT_ENABLE_SET(x) (((uint32_t)(x) << PLA_FILTER_1ST_PLA_OUT_NEGE_EDGE_DECT_ENABLE_SHIFT) & PLA_FILTER_1ST_PLA_OUT_NEGE_EDGE_DECT_ENABLE_MASK)
+#define PLA_FILTER_1ST_PLA_OUT_NEGE_EDGE_DECT_ENABLE_GET(x) (((uint32_t)(x) & PLA_FILTER_1ST_PLA_OUT_NEGE_EDGE_DECT_ENABLE_MASK) >> PLA_FILTER_1ST_PLA_OUT_NEGE_EDGE_DECT_ENABLE_SHIFT)
+
+/*
+ * EDGE_DECT_ENABLE (RW)
+ *
+ * edge detector enable.
+ * 0: disable. bit6/bit5 setting inactive.
+ * 1: enable. bit6/bit5 setting active.
+ */
+#define PLA_FILTER_1ST_PLA_OUT_EDGE_DECT_ENABLE_MASK (0x10U)
+#define PLA_FILTER_1ST_PLA_OUT_EDGE_DECT_ENABLE_SHIFT (4U)
+#define PLA_FILTER_1ST_PLA_OUT_EDGE_DECT_ENABLE_SET(x) (((uint32_t)(x) << PLA_FILTER_1ST_PLA_OUT_EDGE_DECT_ENABLE_SHIFT) & PLA_FILTER_1ST_PLA_OUT_EDGE_DECT_ENABLE_MASK)
+#define PLA_FILTER_1ST_PLA_OUT_EDGE_DECT_ENABLE_GET(x) (((uint32_t)(x) & PLA_FILTER_1ST_PLA_OUT_EDGE_DECT_ENABLE_MASK) >> PLA_FILTER_1ST_PLA_OUT_EDGE_DECT_ENABLE_SHIFT)
+
+/*
+ * FILTER_REVERSE (RW)
+ *
+ * reverse sync and edge detector filter's output.
+ * 0: not reverse.
+ * 1: reverse.
+ */
+#define PLA_FILTER_1ST_PLA_OUT_FILTER_REVERSE_MASK (0x8U)
+#define PLA_FILTER_1ST_PLA_OUT_FILTER_REVERSE_SHIFT (3U)
+#define PLA_FILTER_1ST_PLA_OUT_FILTER_REVERSE_SET(x) (((uint32_t)(x) << PLA_FILTER_1ST_PLA_OUT_FILTER_REVERSE_SHIFT) & PLA_FILTER_1ST_PLA_OUT_FILTER_REVERSE_MASK)
+#define PLA_FILTER_1ST_PLA_OUT_FILTER_REVERSE_GET(x) (((uint32_t)(x) & PLA_FILTER_1ST_PLA_OUT_FILTER_REVERSE_MASK) >> PLA_FILTER_1ST_PLA_OUT_FILTER_REVERSE_SHIFT)
+
+/*
+ * SOFTWARE_INJECT (RW)
+ *
+ * software inject value for sync and edge detector filter.
+ * 0: inject low level.
+ * 1: inject high level.
+ * 2: not inject.
+ * 3. inject high level.
+ */
+#define PLA_FILTER_1ST_PLA_OUT_SOFTWARE_INJECT_MASK (0x6U)
+#define PLA_FILTER_1ST_PLA_OUT_SOFTWARE_INJECT_SHIFT (1U)
+#define PLA_FILTER_1ST_PLA_OUT_SOFTWARE_INJECT_SET(x) (((uint32_t)(x) << PLA_FILTER_1ST_PLA_OUT_SOFTWARE_INJECT_SHIFT) & PLA_FILTER_1ST_PLA_OUT_SOFTWARE_INJECT_MASK)
+#define PLA_FILTER_1ST_PLA_OUT_SOFTWARE_INJECT_GET(x) (((uint32_t)(x) & PLA_FILTER_1ST_PLA_OUT_SOFTWARE_INJECT_MASK) >> PLA_FILTER_1ST_PLA_OUT_SOFTWARE_INJECT_SHIFT)
+
+/*
+ * SYNC_EDGE_FILTER_ENABLE (RW)
+ *
+ * sync and edge detector filter.
+ * 0: disable.
+ * 1: enable.
+ */
+#define PLA_FILTER_1ST_PLA_OUT_SYNC_EDGE_FILTER_ENABLE_MASK (0x1U)
+#define PLA_FILTER_1ST_PLA_OUT_SYNC_EDGE_FILTER_ENABLE_SHIFT (0U)
+#define PLA_FILTER_1ST_PLA_OUT_SYNC_EDGE_FILTER_ENABLE_SET(x) (((uint32_t)(x) << PLA_FILTER_1ST_PLA_OUT_SYNC_EDGE_FILTER_ENABLE_SHIFT) & PLA_FILTER_1ST_PLA_OUT_SYNC_EDGE_FILTER_ENABLE_MASK)
+#define PLA_FILTER_1ST_PLA_OUT_SYNC_EDGE_FILTER_ENABLE_GET(x) (((uint32_t)(x) & PLA_FILTER_1ST_PLA_OUT_SYNC_EDGE_FILTER_ENABLE_MASK) >> PLA_FILTER_1ST_PLA_OUT_SYNC_EDGE_FILTER_ENABLE_SHIFT)
+
+/* Bitfield definition for register array: CHN_CFG_ACTIVE */
+/*
+ * CFG_ACTIVE (RW)
+ *
+ * write 0xF00D to enable all setting. Otherwire, all setting inactive.
+ */
+#define PLA_CHN_CFG_ACTIVE_CFG_ACTIVE_MASK (0xFFFFU)
+#define PLA_CHN_CFG_ACTIVE_CFG_ACTIVE_SHIFT (0U)
+#define PLA_CHN_CFG_ACTIVE_CFG_ACTIVE_SET(x) (((uint32_t)(x) << PLA_CHN_CFG_ACTIVE_CFG_ACTIVE_SHIFT) & PLA_CHN_CFG_ACTIVE_CFG_ACTIVE_MASK)
+#define PLA_CHN_CFG_ACTIVE_CFG_ACTIVE_GET(x) (((uint32_t)(x) & PLA_CHN_CFG_ACTIVE_CFG_ACTIVE_MASK) >> PLA_CHN_CFG_ACTIVE_CFG_ACTIVE_SHIFT)
+
+
+
+/* AOI_16TO8 register group index macro definition */
+#define PLA_CHN_AOI_16TO8_AOI_16TO8_00 (0UL)
+#define PLA_CHN_AOI_16TO8_AOI_16TO8_01 (1UL)
+#define PLA_CHN_AOI_16TO8_AOI_16TO8_02 (2UL)
+#define PLA_CHN_AOI_16TO8_AOI_16TO8_03 (3UL)
+#define PLA_CHN_AOI_16TO8_AOI_16TO8_04 (4UL)
+#define PLA_CHN_AOI_16TO8_AOI_16TO8_05 (5UL)
+#define PLA_CHN_AOI_16TO8_AOI_16TO8_06 (6UL)
+#define PLA_CHN_AOI_16TO8_AOI_16TO8_07 (7UL)
+
+/* FILTER_2ND register group index macro definition */
+#define PLA_CHN_FILTER_2ND_SECOND_FILTER_0 (0UL)
+#define PLA_CHN_FILTER_2ND_SECOND_FILTER_1 (1UL)
+#define PLA_CHN_FILTER_2ND_SECOND_FILTER_2 (2UL)
+#define PLA_CHN_FILTER_2ND_SECOND_FILTER_3 (3UL)
+#define PLA_CHN_FILTER_2ND_SECOND_FILTER_4 (4UL)
+#define PLA_CHN_FILTER_2ND_SECOND_FILTER_5 (5UL)
+#define PLA_CHN_FILTER_2ND_SECOND_FILTER_6 (6UL)
+#define PLA_CHN_FILTER_2ND_SECOND_FILTER_7 (7UL)
+
+/* FILTER_3RD register group index macro definition */
+#define PLA_CHN_FILTER_3RD_THIRD_FILTER_0 (0UL)
+#define PLA_CHN_FILTER_3RD_THIRD_FILTER_1 (1UL)
+#define PLA_CHN_FILTER_3RD_THIRD_FILTER_2 (2UL)
+#define PLA_CHN_FILTER_3RD_THIRD_FILTER_3 (3UL)
+#define PLA_CHN_FILTER_3RD_THIRD_FILTER_4 (4UL)
+#define PLA_CHN_FILTER_3RD_THIRD_FILTER_5 (5UL)
+#define PLA_CHN_FILTER_3RD_THIRD_FILTER_6 (6UL)
+
+/* CHN register group index macro definition */
+#define PLA_CHN_0 (0UL)
+#define PLA_CHN_1 (1UL)
+#define PLA_CHN_2 (2UL)
+#define PLA_CHN_3 (3UL)
+#define PLA_CHN_4 (4UL)
+#define PLA_CHN_5 (5UL)
+#define PLA_CHN_6 (6UL)
+#define PLA_CHN_7 (7UL)
+
+/* FILTER_1ST_PLA_IN register group index macro definition */
+#define PLA_FILTER_1ST_PLA_IN_FRIST_FILTER_PLA_IN_0 (0UL)
+#define PLA_FILTER_1ST_PLA_IN_FRIST_FILTER_PLA_IN_1 (1UL)
+#define PLA_FILTER_1ST_PLA_IN_FRIST_FILTER_PLA_IN_2 (2UL)
+#define PLA_FILTER_1ST_PLA_IN_FRIST_FILTER_PLA_IN_3 (3UL)
+#define PLA_FILTER_1ST_PLA_IN_FRIST_FILTER_PLA_IN_4 (4UL)
+#define PLA_FILTER_1ST_PLA_IN_FRIST_FILTER_PLA_IN_5 (5UL)
+#define PLA_FILTER_1ST_PLA_IN_FRIST_FILTER_PLA_IN_6 (6UL)
+#define PLA_FILTER_1ST_PLA_IN_FRIST_FILTER_PLA_IN_7 (7UL)
+
+/* FILTER_1ST_PLA_OUT register group index macro definition */
+#define PLA_FILTER_1ST_PLA_OUT_FRIST_FILTER_PLA_IN_0 (0UL)
+#define PLA_FILTER_1ST_PLA_OUT_FRIST_FILTER_PLA_OUT_0 (0UL)
+#define PLA_FILTER_1ST_PLA_OUT_FRIST_FILTER_PLA_OUT_1 (1UL)
+#define PLA_FILTER_1ST_PLA_OUT_FRIST_FILTER_PLA_OUT_2 (2UL)
+#define PLA_FILTER_1ST_PLA_OUT_FRIST_FILTER_PLA_OUT_3 (3UL)
+#define PLA_FILTER_1ST_PLA_OUT_FRIST_FILTER_PLA_OUT_4 (4UL)
+#define PLA_FILTER_1ST_PLA_OUT_FRIST_FILTER_PLA_OUT_5 (5UL)
+#define PLA_FILTER_1ST_PLA_OUT_FRIST_FILTER_PLA_OUT_6 (6UL)
+#define PLA_FILTER_1ST_PLA_OUT_FRIST_FILTER_PLA_OUT_7 (7UL)
+
+/* CHN_CFG_ACTIVE register group index macro definition */
+#define PLA_CHN_CFG_ACTIVE_CFG_ACTIVE_CHN0 (0UL)
+#define PLA_CHN_CFG_ACTIVE_CFG_ACTIVE_CHN1 (1UL)
+#define PLA_CHN_CFG_ACTIVE_CFG_ACTIVE_CHN2 (2UL)
+#define PLA_CHN_CFG_ACTIVE_CFG_ACTIVE_CHN3 (3UL)
+#define PLA_CHN_CFG_ACTIVE_CFG_ACTIVE_CHN4 (4UL)
+#define PLA_CHN_CFG_ACTIVE_CFG_ACTIVE_CHN5 (5UL)
+#define PLA_CHN_CFG_ACTIVE_CFG_ACTIVE_CHN6 (6UL)
+#define PLA_CHN_CFG_ACTIVE_CFG_ACTIVE_CHN7 (7UL)
+
+
+#endif /* HPM_PLA_H */

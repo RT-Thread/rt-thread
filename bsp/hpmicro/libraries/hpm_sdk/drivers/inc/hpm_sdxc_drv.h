@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 - 2022 hpmicro
+ * Copyright (c) 2021-2023 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -33,7 +33,7 @@
 
 #define SDXC_STS_CMD_ERR (SDXC_INT_STAT_CMD_TOUT_ERR_MASK | SDXC_INT_STAT_CMD_CRC_ERR_MASK |\
             SDXC_INT_STAT_CMD_END_BIT_ERR_MASK | SDXC_INT_STAT_CMD_IDX_ERR_MASK | SDXC_INT_STAT_AUTO_CMD_ERR_MASK)
-#define SDXC_STS_DATA_ERR (SDXC_INT_STAT_DATA_TOUT_ERR_MASK| SDXC_INT_STAT_DATA_CRC_ERR_MASK | \
+#define SDXC_STS_DATA_ERR (SDXC_INT_STAT_DATA_TOUT_ERR_MASK | SDXC_INT_STAT_DATA_CRC_ERR_MASK | \
             SDXC_INT_STAT_DATA_END_BIT_ERR_MASK)
 #define SDXC_STS_CARD_ERR (SDXC_INT_STAT_CARD_REMOVAL_MASK)
 #define SDXC_STS_ERROR (SDXC_INT_STAT_ERR_INTERRUPT_MASK | SDXC_STS_CMD_ERR | SDXC_STS_DATA_ERR | SDXC_STS_CARD_ERR)
@@ -366,9 +366,8 @@ typedef struct _sdxc_data {
  */
 enum {
     sdxc_xfer_data_normal = 0U,         /**< Transfer normal read/write data */
-    sdxc_xfer_data_tuning = 1U,         /**< Transfer Tuning data */
-    sdxc_xfer_data_boot = 2U,           /**< Transfer boot data */
-    sdxc_xfer_data_boot_continuous = 3U, /**< Transfer boot data continuously */
+    sdxc_xfer_data_boot = 1U,           /**< Transfer boot data */
+    sdxc_xfer_data_boot_continuous = 2U, /**< Transfer boot data continuously */
 };
 
 /**
@@ -696,8 +695,7 @@ static inline void sdxc_enable_software_tuning(SDXC_Type *base, bool enable)
 {
     if (enable) {
         base->AUTO_TUNING_CTRL |= SDXC_AUTO_TUNING_CTRL_SW_TUNE_EN_MASK;
-    }
-    else {
+    } else {
         base->AUTO_TUNING_CTRL &= ~SDXC_AUTO_TUNING_CTRL_SW_TUNE_EN_MASK;
     }
 }
@@ -747,6 +745,28 @@ static inline void sdxc_enable_internal_clock(SDXC_Type *base, bool enable)
 static inline uint32_t sdxc_get_present_status(SDXC_Type *base)
 {
     return base->PSTATE;
+}
+
+/**
+ * @brief Check whether the Data Buffer is writable or not
+ * @param [in] base SDXC base address
+ * @retval true Data buffer is writeable
+ * @retval false Data buffer write is disabled
+ */
+static inline bool sdxc_is_data_buf_writable(SDXC_Type *base)
+{
+    return ((base->PSTATE & SDXC_PSTATE_BUF_WR_ENABLE_MASK) != 0U);
+}
+
+/**
+ * @brief Check whether the data buffer is readable
+ * @param [in] base SDXC base address
+ * @retval true There are data available in data buffer
+ * @retval false there is no data available in data buffer, read is disabled
+ */
+static inline bool sdxc_is_data_buf_readable(SDXC_Type *base)
+{
+    return ((base->PSTATE & SDXC_PSTATE_BUF_RD_ENABLE_MASK) != 0U);
 }
 
 /**
@@ -855,8 +875,7 @@ static inline void sdxc_enable_enhanced_strobe(SDXC_Type *base, bool enable)
 {
     if (enable) {
         base->EMMC_BOOT_CTRL |= SDXC_EMMC_BOOT_CTRL_ENH_STROBE_ENABLE_MASK;
-    }
-    else {
+    } else {
         base->EMMC_BOOT_CTRL &= ~SDXC_EMMC_BOOT_CTRL_ENH_STROBE_ENABLE_MASK;
     }
 }

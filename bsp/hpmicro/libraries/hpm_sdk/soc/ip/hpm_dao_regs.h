@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 hpmicro
+ * Copyright (c) 2021-2023 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -30,19 +30,6 @@ typedef struct {
 #define DAO_CTRL_HPF_EN_SHIFT (17U)
 #define DAO_CTRL_HPF_EN_SET(x) (((uint32_t)(x) << DAO_CTRL_HPF_EN_SHIFT) & DAO_CTRL_HPF_EN_MASK)
 #define DAO_CTRL_HPF_EN_GET(x) (((uint32_t)(x) & DAO_CTRL_HPF_EN_MASK) >> DAO_CTRL_HPF_EN_SHIFT)
-
-/*
- * SAT_ERR_IE (RW)
- *
- * Error interrupt enable
- * This bit controls the generation of an interrupt when an error condition  (saturation) occurs.
- * 0: Error interrupt is masked
- * 1: Error interrupt is enabled
- */
-#define DAO_CTRL_SAT_ERR_IE_MASK (0x10000UL)
-#define DAO_CTRL_SAT_ERR_IE_SHIFT (16U)
-#define DAO_CTRL_SAT_ERR_IE_SET(x) (((uint32_t)(x) << DAO_CTRL_SAT_ERR_IE_SHIFT) & DAO_CTRL_SAT_ERR_IE_MASK)
-#define DAO_CTRL_SAT_ERR_IE_GET(x) (((uint32_t)(x) & DAO_CTRL_SAT_ERR_IE_MASK) >> DAO_CTRL_SAT_ERR_IE_SHIFT)
 
 /*
  * MONO (RW)

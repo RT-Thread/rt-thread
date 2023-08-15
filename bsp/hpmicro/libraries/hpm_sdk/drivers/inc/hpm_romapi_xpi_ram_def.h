@@ -75,8 +75,7 @@ typedef struct {
 /**
  * @brief XPI RAM type options
  */
-enum
-{
+enum {
     xpi_ram_type_apmemory_x8 = 0,       /**< APMemory PSRAM X8 */
     xpi_ram_type_hyperram = 1,          /**< HyperRAM */
     xpi_ram_type_apmemory_x4 = 2,       /**< APMemory PSRAM X4 */
@@ -85,8 +84,7 @@ enum
 /**
  * @brief HyperRAM voltage options
  */
-enum
-{
+enum {
     xpi_ram_option_misc_hyperram_3v0,
     xpi_ram_option_misc_hyperram_1v8,
 };
@@ -95,8 +93,7 @@ enum
 /**
  * @brief XPI RAM maximum CS low time definition
  */
-enum
-{
+enum {
    xpi_ram_default_max_cs_low_time_us = 4, /**< Default Maximum CS low internal is 4us */
 };
 
@@ -122,7 +119,7 @@ enum {
 typedef struct {
     uint8_t cmd_type;       /**< Command type */
     uint8_t param_size;     /**< Size of the parameter */
-}device_config_t;
+} device_config_t;
 
 /**
  * @brief XPI RAM information structure

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 hpmicro
+ * Copyright (c) 2021-2023 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -337,6 +337,51 @@ typedef struct {
 
 /* Bitfield definition for register: CTRL */
 /*
+ * DATACNT_HIGH (RW)
+ *
+ * Data counts in bytes.
+ * Master: The number of bytes to transmit/receive. 0 means max length. DataCnt will be decreased by one for each byte transmitted/received.
+ * Slave: the meaning of DataCnt depends on the DMA mode:
+ * If DMA is not enabled, DataCnt is the number of bytes transmitted/received from the bus master. It is reset to 0 when the controller is addressed and then increased by one for each byte of data transmitted/received.
+ * If DMA is enabled, DataCnt is the number of bytes to transmit/receive. It will not be reset to 0 when the slave is addressed and it will be decreased by one for each byte of data transmitted/received.
+ */
+#define I2C_CTRL_DATACNT_HIGH_MASK (0xFF000000UL)
+#define I2C_CTRL_DATACNT_HIGH_SHIFT (24U)
+#define I2C_CTRL_DATACNT_HIGH_SET(x) (((uint32_t)(x) << I2C_CTRL_DATACNT_HIGH_SHIFT) & I2C_CTRL_DATACNT_HIGH_MASK)
+#define I2C_CTRL_DATACNT_HIGH_GET(x) (((uint32_t)(x) & I2C_CTRL_DATACNT_HIGH_MASK) >> I2C_CTRL_DATACNT_HIGH_SHIFT)
+
+/*
+ * RESET_LEN (RW)
+ *
+ * reset clock cycles. the clock high/low time is defined by Setup.T_SCLHi, 50% duty cycle.
+ */
+#define I2C_CTRL_RESET_LEN_MASK (0xF00000UL)
+#define I2C_CTRL_RESET_LEN_SHIFT (20U)
+#define I2C_CTRL_RESET_LEN_SET(x) (((uint32_t)(x) << I2C_CTRL_RESET_LEN_SHIFT) & I2C_CTRL_RESET_LEN_MASK)
+#define I2C_CTRL_RESET_LEN_GET(x) (((uint32_t)(x) & I2C_CTRL_RESET_LEN_MASK) >> I2C_CTRL_RESET_LEN_SHIFT)
+
+/*
+ * RESET_HOLD_SCKIN (RW)
+ *
+ * set to hold input clock to high when reset is active
+ */
+#define I2C_CTRL_RESET_HOLD_SCKIN_MASK (0x4000U)
+#define I2C_CTRL_RESET_HOLD_SCKIN_SHIFT (14U)
+#define I2C_CTRL_RESET_HOLD_SCKIN_SET(x) (((uint32_t)(x) << I2C_CTRL_RESET_HOLD_SCKIN_SHIFT) & I2C_CTRL_RESET_HOLD_SCKIN_MASK)
+#define I2C_CTRL_RESET_HOLD_SCKIN_GET(x) (((uint32_t)(x) & I2C_CTRL_RESET_HOLD_SCKIN_MASK) >> I2C_CTRL_RESET_HOLD_SCKIN_SHIFT)
+
+/*
+ * RESET_ON (RW)
+ *
+ * set to send reset signals(just toggle clock bus defined by reset_len).
+ * this register is clered when reset is end, can't be cleared by software
+ */
+#define I2C_CTRL_RESET_ON_MASK (0x2000U)
+#define I2C_CTRL_RESET_ON_SHIFT (13U)
+#define I2C_CTRL_RESET_ON_SET(x) (((uint32_t)(x) << I2C_CTRL_RESET_ON_SHIFT) & I2C_CTRL_RESET_ON_MASK)
+#define I2C_CTRL_RESET_ON_GET(x) (((uint32_t)(x) & I2C_CTRL_RESET_ON_MASK) >> I2C_CTRL_RESET_ON_SHIFT)
+
+/*
  * PHASE_START (RW)
  *
  * Enable this bit to send a START condition at the beginning of transaction.
@@ -400,7 +445,7 @@ typedef struct {
  * DATACNT (RW)
  *
  * Data counts in bytes.
- * Master: The number of bytes to transmit/receive. 0 means 256 bytes. DataCnt will be decreased by one for each byte transmitted/received.
+ * Master: The number of bytes to transmit/receive. 0 means max length. DataCnt will be decreased by one for each byte transmitted/received.
  * Slave: the meaning of DataCnt depends on the DMA mode:
  * If DMA is not enabled, DataCnt is the number of bytes transmitted/received from the bus master. It is reset to 0 when the controller is addressed and then increased by one for each byte of data transmitted/received.
  * If DMA is enabled, DataCnt is the number of bytes to transmit/receive. It will not be reset to 0 when the slave is addressed and it will be decreased by one for each byte of data transmitted/received.
