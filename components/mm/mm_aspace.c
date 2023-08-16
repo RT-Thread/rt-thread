@@ -400,11 +400,11 @@ static inline int _not_align(void *start, rt_size_t length, rt_size_t mask)
            (((uintptr_t)start & mask) || (length & mask));
 }
 
+/** if the flag is currently supported */
 static inline int _not_support(rt_size_t flags)
 {
-    rt_size_t support_ops = (MMF_PREFETCH | MMF_MAP_FIXED | MMF_TEXT |
-        MMF_STATIC_ALLOC | MMF_REQUEST_ALIGN);
-    return flags & ~(support_ops | _MMF_ALIGN_MASK);
+    rt_size_t support_ops = MMF_CREATE(((__MMF_INVALID - 1) << 1) - 1, 1);
+    return flags & ~(support_ops);
 }
 
 int rt_aspace_map(rt_aspace_t aspace, void **addr, rt_size_t length,
@@ -855,6 +855,15 @@ int rt_varea_map_page(rt_varea_t varea, void *vaddr, void *page)
 
 #define ALIGNED(addr) (!((rt_size_t)(addr) & ARCH_PAGE_MASK))
 
+int rt_varea_unmap_page(rt_varea_t varea, void *vaddr)
+{
+    void *va_aligned = (void *)RT_ALIGN_DOWN((rt_base_t)vaddr, ARCH_PAGE_SIZE);
+    return rt_varea_unmap_range(varea, va_aligned, ARCH_PAGE_SIZE);
+}
+
+/**
+ * @note Caller should take care of synchronization of its varea among all the map/unmap operation
+ */
 int rt_varea_map_range(rt_varea_t varea, void *vaddr, void *paddr, rt_size_t length)
 {
     int err;
@@ -879,6 +888,35 @@ int rt_varea_map_range(rt_varea_t varea, void *vaddr, void *paddr, rt_size_t len
             MM_PA_TO_OFF(paddr),
             varea->attr
         );
+    }
+    return err;
+}
+
+/**
+ * @note Caller should take care of synchronization of its varea among all the map/unmap operation
+ */
+int rt_varea_unmap_range(rt_varea_t varea, void *vaddr, rt_size_t length)
+{
+    int err;
+    rt_base_t va_align;
+
+    if (!varea || !vaddr || !length)
+    {
+        LOG_W("%s(%p,%p,%lx): invalid input", __func__, varea, vaddr, length);
+        err = -RT_EINVAL;
+    }
+    else if (_not_in_range(vaddr, length, varea->start, varea->size))
+    {
+        LOG_W("%s(%p,%lx): not in range of varea(%p,%lx)", __func__,
+            vaddr, length, varea->start, varea->size);
+        err = -RT_EINVAL;
+    }
+    else
+    {
+        va_align = RT_ALIGN_DOWN((rt_base_t)vaddr, ARCH_PAGE_SIZE);
+        rt_hw_mmu_unmap(varea->aspace, (void *)va_align, length);
+        rt_hw_tlb_invalidate_range(varea->aspace, (void *)va_align, length, ARCH_PAGE_SIZE);
+        err = RT_EOK;
     }
     return err;
 }

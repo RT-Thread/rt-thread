@@ -89,17 +89,15 @@ static int _exec_fault(rt_varea_t varea, void *pa, struct rt_aspace_fault_msg *m
     return err;
 }
 
-int rt_aspace_fault_try_fix(struct rt_aspace_fault_msg *msg)
+int rt_aspace_fault_try_fix(rt_aspace_t aspace, struct rt_aspace_fault_msg *msg)
 {
-    struct rt_lwp *lwp = lwp_self();
     int err = UNRECOVERABLE;
     uintptr_t va = (uintptr_t)msg->fault_vaddr;
     va &= ~ARCH_PAGE_MASK;
     msg->fault_vaddr = (void *)va;
 
-    if (lwp)
+    if (aspace)
     {
-        rt_aspace_t aspace = lwp->aspace;
         rt_varea_t varea;
 
         RD_LOCK(aspace);

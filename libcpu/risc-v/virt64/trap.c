@@ -152,6 +152,7 @@ static const char *get_exception_msg(int id)
 void handle_user(rt_size_t scause, rt_size_t stval, rt_size_t sepc, struct rt_hw_stack_frame *sp)
 {
     rt_size_t id = __MASKVALUE(scause, __MASK(63UL));
+    struct rt_lwp *lwp;
 
     /* user page fault */
     enum rt_mm_fault_op fault_op;
@@ -200,13 +201,14 @@ void handle_user(rt_size_t scause, rt_size_t stval, rt_size_t sepc, struct rt_hw
 
     if (fault_op)
     {
+        lwp = lwp_self();
         struct rt_aspace_fault_msg msg = {
             .fault_op = fault_op,
             .fault_type = fault_type,
             .fault_vaddr = (void *)stval,
         };
 
-        if (rt_aspace_fault_try_fix(&msg))
+        if (lwp && rt_aspace_fault_try_fix(lwp->aspace, &msg))
         {
             return;
         }
