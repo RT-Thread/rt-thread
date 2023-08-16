@@ -102,7 +102,9 @@ int libc_stdio_set_console(const char* device_name, int mode)
             _GLOBAL_REENT->_stderr = std_console;
         }
 
+#if __GNUC__ < 11
         _GLOBAL_REENT->__sdidinit = 1;
+#endif
     }
 
     if (std_console)
