@@ -23,6 +23,7 @@
 #include <rtthread.h>
 #include <dfs.h>
 
+#include "lwp_arch.h"
 #include "lwp_pid.h"
 #include "lwp_ipc.h"
 #include "lwp_signal.h"
@@ -30,22 +31,25 @@
 #include "lwp_avl.h"
 #include "mm_aspace.h"
 
+#ifdef RT_USING_MUSLLIBC
+#include "libc_musl.h"
+#endif /* RT_USING_MUSLLIBC */
+
 #ifdef ARCH_MM_MMU
 #include "lwp_shm.h"
-
 #include "mmu.h"
 #include "page.h"
 #else
 #include "lwp_mpu.h"
-#endif
-#include "lwp_arch.h"
+#endif /* ARCH_MM_MMU */
 
-#ifdef RT_USING_MUSL
+#ifdef RT_USING_MUSLLIBC
 #include <locale.h>
-#endif
+#endif /* RT_USING_MUSLLIBC */
+
 #ifdef  RT_USING_TTY
 struct tty_struct;
-#endif
+#endif /* RT_USING_TTY */
 
 #ifdef __cplusplus
 extern "C" {

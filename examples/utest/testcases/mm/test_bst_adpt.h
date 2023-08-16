@@ -11,7 +11,6 @@
 #define __TEST_BST_ADPT_H__
 
 #include "common.h"
-#include "lwp_arch.h"
 
 #ifdef RT_USING_SMART
 #include "lwp_user_mm.h"
