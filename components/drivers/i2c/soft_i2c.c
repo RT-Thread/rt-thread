@@ -42,37 +42,37 @@ struct soft_i2c_config i2c_cfg[] =
 {
     #ifdef RT_USING_SOFT_I2C1
     {
-        .scl_pin = RT_SOFT_I2C1_SCL_PIN,
-        .sda_pin = RT_SOFT_I2C1_SDA_PIN,
-        .bus_name = RT_SOFT_I2C1_BUS_NAME,
-        .timing_delay = RT_SOFT_I2C1_TIMING_DELAY,
+        .scl_pin        = RT_SOFT_I2C1_SCL_PIN,
+        .sda_pin        = RT_SOFT_I2C1_SDA_PIN,
+        .bus_name       = RT_SOFT_I2C1_BUS_NAME,
+        .timing_delay   = RT_SOFT_I2C1_TIMING_DELAY,
         .timing_timeout = RT_SOFT_I2C1_TIMING_TIMEOUT,
     },
     #endif  //RT_USING_SOFT_I2C1
     #ifdef RT_USING_SOFT_I2C2
     {
-        .scl_pin = RT_SOFT_I2C2_SCL_PIN,
-        .sda_pin = RT_SOFT_I2C2_SDA_PIN,
-        .bus_name = RT_SOFT_I2C2_BUS_NAME,
-        .timing_delay = RT_SOFT_I2C2_TIMING_DELAY,
+        .scl_pin        = RT_SOFT_I2C2_SCL_PIN,
+        .sda_pin        = RT_SOFT_I2C2_SDA_PIN,
+        .bus_name       = RT_SOFT_I2C2_BUS_NAME,
+        .timing_delay   = RT_SOFT_I2C2_TIMING_DELAY,
         .timing_timeout = RT_SOFT_I2C2_TIMING_TIMEOUT,
     },
     #endif  //RT_USING_SOFT_I2C2
     #ifdef RT_USING_SOFT_I2C3
     {
-        .scl_pin = RT_SOFT_I2C3_SCL_PIN,
-        .sda_pin = RT_SOFT_I2C3_SDA_PIN,
-        .bus_name = RT_SOFT_I2C3_BUS_NAME,
-        .timing_delay = RT_SOFT_I2C3_TIMING_DELAY,
+        .scl_pin        = RT_SOFT_I2C3_SCL_PIN,
+        .sda_pin        = RT_SOFT_I2C3_SDA_PIN,
+        .bus_name       = RT_SOFT_I2C3_BUS_NAME,
+        .timing_delay   = RT_SOFT_I2C3_TIMING_DELAY,
         .timing_timeout = RT_SOFT_I2C3_TIMING_TIMEOUT,
     },
     #endif  //RT_USING_SOFT_I2C3
     #ifdef RT_USING_SOFT_I2C4
     {
-        .scl_pin = RT_SOFT_I2C4_SCL_PIN,
-        .sda_pin = RT_SOFT_I2C4_SDA_PIN,
-        .bus_name = RT_SOFT_I2C4_BUS_NAME,
-        .timing_delay = RT_SOFT_I2C4_TIMING_DELAY,
+        .scl_pin        = RT_SOFT_I2C4_SCL_PIN,
+        .sda_pin        = RT_SOFT_I2C4_SDA_PIN,
+        .bus_name       = RT_SOFT_I2C4_BUS_NAME,
+        .timing_delay   = RT_SOFT_I2C4_TIMING_DELAY,
         .timing_timeout = RT_SOFT_I2C4_TIMING_TIMEOUT,
     },
     #endif  //RT_USING_SOFT_I2C4
