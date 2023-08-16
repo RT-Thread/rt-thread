@@ -26,6 +26,6 @@ struct soft_i2c_config
     const char *bus_name;
 };
 
-int rt_hw_i2c_init(void);
+int rt_soft_i2c_init(void);
 
 #endif /* __DRV_I2C_SOFT__ */

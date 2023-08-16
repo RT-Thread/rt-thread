@@ -20,28 +20,28 @@
 
 static const struct soft_i2c_config soft_i2c_config[] =
 {
-#ifdef RT_USING_SOFT_I2C1
+#ifdef BSP_USING_SOFT_I2C1
     {                                                    \
         .scl = BSP_SOFT_I2C1_SCL_PIN,                    \
         .sda = BSP_SOFT_I2C1_SDA_PIN,                    \
         .bus_name = "si2c1",                             \
     },
 #endif
-#ifdef RT_USING_SOFT_I2C2
+#ifdef BSP_USING_SOFT_I2C2
     {                                                    \
         .scl = BSP_SOFT_I2C2_SCL_PIN,                    \
         .sda = BSP_SOFT_I2C2_SDA_PIN,                    \
         .bus_name = "si2c2",                             \
     },
 #endif
-#ifdef RT_USING_SOFT_I2C3
+#ifdef BSP_USING_SOFT_I2C3
     {                                                    \
         .scl = BSP_SOFT_I2C3_SCL_PIN,                    \
         .sda = BSP_SOFT_I2C3_SDA_PIN,                    \
         .bus_name = "si2c3",                             \
     },
 #endif
-#ifdef RT_USING_SOFT_I2C4
+#ifdef BSP_USING_SOFT_I2C4
     {                                                    \
         .scl = BSP_SOFT_I2C4_SCL_PIN,                    \
         .sda = BSP_SOFT_I2C4_SDA_PIN,                    \
@@ -135,7 +135,7 @@ static const struct rt_i2c_bit_ops bit_ops_default =
     .set_scl  = set_scl,
     .get_sda  = get_sda,
     .get_scl  = get_scl,
-    .udelay   = rt_hw_us_delay, //TODO: use rt us delay
+    .udelay   = rt_hw_us_delay,
     .delay_us = 1,
     .timeout  = 100
 };
@@ -170,7 +170,7 @@ static rt_err_t soft_i2c_bus_unlock(const struct soft_i2c_config *cfg)
 }
 
 /* I2C initialization function */
-int rt_hw_i2c_init(void)
+int rt_soft_i2c_init(void)
 {
     rt_err_t result;
 
@@ -194,4 +194,4 @@ int rt_hw_i2c_init(void)
 
     return RT_EOK;
 }
-INIT_COMPONENT_EXPORT(rt_hw_i2c_init);
+INIT_COMPONENT_EXPORT(rt_soft_i2c_init);
