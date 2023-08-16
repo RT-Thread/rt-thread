@@ -141,13 +141,12 @@ if RT_USING_I2C
 			bool "Enable I2C5 Bus (software simulation)"
 			default n
 			if RT_USING_SOFT_I2C5
-				comment "Notice: PA00 --> 0x00; PA01 --> 0x01"
 				config RT_SOFT_I2C5_SCL_PIN
-					hex "SCL pin number"
+					hex "SCL pin number (HEX)"
 					range 0x00 0xFF
 					default 0x00
 				config RT_SOFT_I2C5_SDA_PIN
-					hex "SDA pin number"
+					hex "SDA pin number (HEX)"
 					range 0x00 0xFF
 					default 0x01
 				config RT_SOFT_I2C5_BUS_NAME
@@ -166,13 +165,12 @@ if RT_USING_I2C
 			bool "Enable I2C6 Bus (software simulation)"
 			default n
 			if RT_USING_SOFT_I2C6
-				comment "Notice: PB02 --> 0x12; PB03 --> 0x13"
 				config RT_SOFT_I2C6_SCL_PIN
-					hex "SCL pin number"
+					hex "SCL pin number (HEX)"
 					range 0x00 0xFF
 					default 0x12
 				config RT_SOFT_I2C6_SDA_PIN
-					hex "SDA pin number"
+					hex "SDA pin number (HEX)"
 					range 0x00 0xFF
 					default 0x13
 				config RT_SOFT_I2C6_BUS_NAME
@@ -191,13 +189,12 @@ if RT_USING_I2C
 			bool "Enable I2C7 Bus (software simulation)"
 			default n
 			if RT_USING_SOFT_I2C7
-				comment "Notice: PC04 --> 0x24; PC05 --> 0x25"
 				config RT_SOFT_I2C7_SCL_PIN
-					hex "SCL pin number"
+					hex "SCL pin number (HEX)"
 					range 0x00 0xFF
 					default 0x24
 				config RT_SOFT_I2C7_SDA_PIN
-					hex "SDA pin number"
+					hex "SDA pin number (HEX)"
 					range 0x00 0xFF
 					default 0x25
 				config RT_SOFT_I2C7_BUS_NAME
@@ -216,13 +213,12 @@ if RT_USING_I2C
 			bool "Enable I2C8 Bus (software simulation)"
 			default n
 			if RT_USING_SOFT_I2C8
-				comment "Notice: PD06 --> 0x36; PD07 --> 0x37"
 				config RT_SOFT_I2C8_SCL_PIN
-					hex "SCL pin number"
+					hex "SCL pin number (HEX)"
 					range 0x00 0xFF
 					default 0x36
 				config RT_SOFT_I2C8_SDA_PIN
-					hex "SDA pin number"
+					hex "SDA pin number (HEX)"
 					range 0x00 0xFF
 					default 0x37
 				config RT_SOFT_I2C8_BUS_NAME
