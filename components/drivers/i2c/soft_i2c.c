@@ -11,7 +11,9 @@
 #include <rtdevice.h>
 
 #ifdef RT_USING_SOFT_I2C
-#if defined(RT_USING_SOFT_I2C5) || defined(RT_USING_SOFT_I2C6)||\
+#if defined(RT_USING_SOFT_I2C1) || defined(RT_USING_SOFT_I2C2)||\
+defined(RT_USING_SOFT_I2C3) ||defined(RT_USING_SOFT_I2C4)||\
+defined(RT_USING_SOFT_I2C5) ||defined(RT_USING_SOFT_I2C6)||\
 defined(RT_USING_SOFT_I2C7) ||defined(RT_USING_SOFT_I2C8)
 
 #define DBG_ENABLE
