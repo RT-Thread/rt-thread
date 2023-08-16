@@ -48,6 +48,7 @@ int lwp_munmap(void *addr);
 size_t lwp_get_from_user(void *dst, void *src, size_t size);
 size_t lwp_put_to_user(void *dst, void *src, size_t size);
 int lwp_user_accessable(void *addr, size_t size);
+int lwp_user_accessible_ext(struct rt_lwp *lwp, void *addr, size_t size);
 
 size_t lwp_data_get(struct rt_lwp *lwp, void *dst, void *src, size_t size);
 size_t lwp_data_put(struct rt_lwp *lwp, void *dst, void *src, size_t size);
