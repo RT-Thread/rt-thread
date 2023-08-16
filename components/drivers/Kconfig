@@ -139,7 +139,7 @@ if RT_USING_I2C
     if RT_USING_SOFT_I2C
         config RT_USING_SOFT_I2C1
             bool "Enable I2C1 Bus (software simulation)"
-            default n
+            default y
             if RT_USING_SOFT_I2C1
                 config RT_SOFT_I2C1_SCL_PIN
                     int "SCL pin number"
