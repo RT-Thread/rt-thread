@@ -11,10 +11,16 @@
 #include <rtdevice.h>
 
 #ifdef RT_USING_SOFT_I2C
-#if defined(RT_USING_SOFT_I2C1) || defined(RT_USING_SOFT_I2C2)||\
-defined(RT_USING_SOFT_I2C3) ||defined(RT_USING_SOFT_I2C4)||\
-defined(RT_USING_SOFT_I2C5) ||defined(RT_USING_SOFT_I2C6)||\
-defined(RT_USING_SOFT_I2C7) ||defined(RT_USING_SOFT_I2C8)
+#if !defined(RT_USING_SOFT_I2C1) && !defined(RT_USING_SOFT_I2C2) &&\
+    !defined(RT_USING_SOFT_I2C3) && !defined(RT_USING_SOFT_I2C4) &&\
+    !defined(RT_USING_SOFT_I2C5) && !defined(RT_USING_SOFT_I2C6) &&\
+    !defined(RT_USING_SOFT_I2C7) && !defined(RT_USING_SOFT_I2C8)
+    #error "Please define at least one RT_USING_SOFT_I2Cx"
+    /*
+    This driver can be disabled at:
+    menuconfig -> RT-Thread Components -> Device Drivers -> Using I2C device drivers
+    */
+#endif
 
 #define DBG_ENABLE
 #define DBG_TAG                         "I2C_S"
@@ -254,5 +260,4 @@ int rt_soft_i2c_init(void)
 }
 INIT_PREV_EXPORT(rt_soft_i2c_init);
 
-#endif  //RT_USING_SOFT_I2Cx
 #endif // RT_USING_SOFT_I2C
