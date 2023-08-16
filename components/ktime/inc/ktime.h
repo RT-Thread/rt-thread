@@ -25,6 +25,7 @@ struct rt_ktime_hrtimer
     void               *parameter;
     unsigned long       init_cnt;
     unsigned long       timeout_cnt;
+    rt_err_t            error;
     struct rt_semaphore sem;
     void (*timeout_func)(void *parameter);
 };
@@ -125,11 +126,17 @@ void     rt_ktime_hrtimer_init(rt_ktime_hrtimer_t timer,
                                rt_uint8_t         flag,
                                void (*timeout)(void *parameter),
                                void *parameter);
-rt_err_t rt_ktime_hrtimer_delete(rt_ktime_hrtimer_t timer);
 rt_err_t rt_ktime_hrtimer_start(rt_ktime_hrtimer_t timer);
 rt_err_t rt_ktime_hrtimer_stop(rt_ktime_hrtimer_t timer);
 rt_err_t rt_ktime_hrtimer_control(rt_ktime_hrtimer_t timer, int cmd, void *arg);
 rt_err_t rt_ktime_hrtimer_detach(rt_ktime_hrtimer_t timer);
+
+rt_inline void rt_ktime_hrtimer_keep_errno(rt_ktime_hrtimer_t timer, rt_err_t err)
+{
+    RT_ASSERT(timer != RT_NULL);
+
+    timer->error = err;
+}
 
 /**
  * @brief sleep by the cputimer cnt value
