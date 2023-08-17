@@ -31,7 +31,7 @@ struct rt_i2c_msg
 {
     rt_uint16_t addr;
     rt_uint16_t flags;
-    rt_uint32_t len;
+    rt_uint16_t len;
     rt_uint8_t  *buf;
 };
 
@@ -56,9 +56,9 @@ struct rt_i2c_bus_device
     struct rt_device parent;
     const struct rt_i2c_bus_device_ops *ops;
     rt_uint16_t  flags;
-    rt_uint16_t  retries;
     struct rt_mutex lock;
     rt_uint32_t  timeout;
+    rt_uint32_t  retries;
     void *priv;
 };
 
@@ -88,7 +88,7 @@ rt_ssize_t rt_i2c_master_recv(struct rt_i2c_bus_device *bus,
                              rt_uint8_t               *buf,
                              rt_uint32_t               count);
 
-rt_inline rt_err_t rt_i2c_bus_lock(struct rt_i2c_bus_device *bus, rt_int32_t timeout)
+rt_inline rt_err_t rt_i2c_bus_lock(struct rt_i2c_bus_device *bus, rt_tick_t timeout)
 {
     return rt_mutex_take(&bus->lock, timeout);
 }
