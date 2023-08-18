@@ -584,44 +584,23 @@ int dfs_file_stat(const char *path, struct stat *buf)
         return -ENOENT;
     }
 
-    if ((fullpath[0] == '/' && fullpath[1] == '\0') ||
-        (dfs_subdir(fs->path, fullpath) == NULL))
+    if (fs->ops->stat == NULL)
     {
-        /* it's the root directory */
-        buf->st_dev   = 0;
-
-        buf->st_mode  = S_IRUSR | S_IRGRP | S_IROTH |
-                        S_IWUSR | S_IWGRP | S_IWOTH;
-        buf->st_mode |= S_IFDIR | S_IXUSR | S_IXGRP | S_IXOTH;
-
-        buf->st_size    = 0;
-        buf->st_mtime   = 0;
-
-        /* release full path */
         rt_free(fullpath);
+        LOG_E("the filesystem didn't implement this function");
 
-        return RT_EOK;
+        return -ENOSYS;
+    }
+    /* get the real file path and get file stat */
+    if (fs->ops->flags & DFS_FS_FLAG_FULLPATH)
+    {
+        result = fs->ops->stat(fs, fullpath, buf);
     }
     else
     {
-        if (fs->ops->stat == NULL)
-        {
-            rt_free(fullpath);
-            LOG_E("the filesystem didn't implement this function");
-
-            return -ENOSYS;
-        }
-        /* get the real file path and get file stat */
-        if (fs->ops->flags & DFS_FS_FLAG_FULLPATH)
-        {
-            result = fs->ops->stat(fs, fullpath, buf);
-        }
-        else
-        {
-            const char *subdir = dfs_subdir(fs->path, fullpath);
-            subdir = subdir ? subdir : "/";
-            result = fs->ops->stat(fs, subdir, buf);
-        }
+        const char *subdir = dfs_subdir(fs->path, fullpath);
+        subdir = subdir ? subdir : "/";
+        result = fs->ops->stat(fs, subdir, buf);
     }
 
     rt_free(fullpath);
