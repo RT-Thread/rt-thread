@@ -13,22 +13,23 @@ extern rt_mem_region_t *rt_mem_protection_find_free_region(rt_thread_t thread);
 extern rt_mem_region_t *rt_mem_protection_find_region(rt_thread_t thread, rt_mem_region_t *region);
 
 static rt_hw_mp_exception_hook_t mem_manage_hook = RT_NULL;
+static rt_uint8_t mpu_mair[8U];
 
-rt_weak rt_uint32_t rt_hw_mp_region_default_attr(rt_mem_region_t *region)
+rt_weak rt_uint8_t rt_hw_mp_region_default_attr(rt_mem_region_t *region)
 {
-    static rt_uint32_t default_mem_attr[] = {
-        NORMAL_OUTER_INNER_WRITE_THROUGH_NON_SHAREABLE,
-        NORMAL_OUTER_INNER_WRITE_BACK_WRITE_READ_ALLOCATE_NON_SHAREABLE,
-        DEVICE_NON_SHAREABLE,
-        NORMAL_OUTER_INNER_WRITE_BACK_WRITE_READ_ALLOCATE_NON_SHAREABLE,
-        NORMAL_OUTER_INNER_WRITE_THROUGH_NON_SHAREABLE,
-        DEVICE_SHAREABLE,
-        DEVICE_NON_SHAREABLE
+    static rt_uint8_t default_mem_attr[] = {
+        ARM_MPU_ATTR(ARM_MPU_ATTR_MEMORY_(1U, 0U, 1U, 0U), ARM_MPU_ATTR_MEMORY_(1U, 0U, 1U, 0U)),
+        ARM_MPU_ATTR(ARM_MPU_ATTR_MEMORY_(1U, 1U, 1U, 1U), ARM_MPU_ATTR_MEMORY_(1U, 1U, 1U, 1U)),
+        ARM_MPU_ATTR_DEVICE_nGnRE,
+        ARM_MPU_ATTR(ARM_MPU_ATTR_MEMORY_(1U, 1U, 1U, 1U), ARM_MPU_ATTR_MEMORY_(1U, 1U, 1U, 1U)),
+        ARM_MPU_ATTR(ARM_MPU_ATTR_MEMORY_(1U, 0U, 1U, 0U), ARM_MPU_ATTR_MEMORY_(1U, 0U, 1U, 0U)),
+        ARM_MPU_ATTR_DEVICE_nGnRE,
+        ARM_MPU_ATTR_DEVICE_nGnRE
     };
-    rt_uint32_t attr = 0U;
+    rt_uint8_t attr = 0U;
     if ((rt_uint32_t)region->start >= 0xE0000000U)
     {
-        attr = ((rt_uint32_t)region->start >= 0xE0100000U) ? STRONGLY_ORDERED_SHAREABLE : DEVICE_SHAREABLE;            
+        attr = ((rt_uint32_t)region->start >= 0xE0100000U) ? ARM_MPU_ATTR_DEVICE_nGnRE : ARM_MPU_ATTR_DEVICE_nGnRnE;            
     }
     else
     {
@@ -37,21 +38,55 @@ rt_weak rt_uint32_t rt_hw_mp_region_default_attr(rt_mem_region_t *region)
     return attr;
 }
 
-static rt_uint32_t mpu_rasr(rt_mem_region_t *region)
+static rt_err_t mpu_rbar_rlar(rt_mem_region_t *region)
 {
-    rt_uint32_t rasr = 0U;
-    if ((region->attr.rasr & RESERVED) == RESERVED)
+    rt_uint32_t rlar = 0U;
+    rt_uint8_t mair_attr;
+    rt_uint8_t index;
+    rt_uint8_t attr_indx = 0xFFU;
+    region->attr.rbar = (rt_uint32_t)region->start | (region->attr.rbar & (~MPU_RBAR_BASE_Msk));
+    rlar |= ((rt_uint32_t)region->start + region->size - 1U) & MPU_RLAR_LIMIT_Msk;
+    if (region->attr.mair_attr == RT_ARM_DEFAULT_MAIR_ATTR)
     {
-        rasr |= rt_hw_mp_region_default_attr(region);
-        rasr |= region->attr.rasr & (MPU_RASR_XN_Msk | MPU_RASR_AP_Msk);
+        mair_attr = rt_hw_mp_region_default_attr(region);
     }
     else
     {
-        rasr |= region->attr.rasr & MPU_RASR_ATTRS_Msk;
+        mair_attr = (rt_uint8_t)region->attr.mair_attr;
     }
-    rasr |= ((32U - __builtin_clz(region->size - 1U) - 2U + 1U) << MPU_RASR_SIZE_Pos) & MPU_RASR_SIZE_Msk;
-    rasr |= MPU_RASR_ENABLE_Msk;
-    return rasr;
+    for (index = 0U; index < 8U; index++)
+    {
+        if (mpu_mair[index] == RT_ARM_DEFAULT_MAIR_ATTR)
+        {
+            break;
+        }
+        else if (mpu_mair[index] == mair_attr)
+        {
+            attr_indx = index;
+            break;
+        }
+    }
+    // Current region's mair_attr does not match any existing region
+    // All entries in MPU_MAIR are configured
+    if (index == 8U)
+    {
+        return RT_ERROR;
+    }
+    // An existing region has the same mair_attr
+    if (attr_indx != 0xFFU)
+    {
+        rlar |= attr_indx & MPU_RLAR_AttrIndx_Msk;
+    }
+    // Current region's mair_attr does not match any existing region
+    else
+    {
+        ARM_MPU_SetMemAttr(index, mair_attr);
+        rlar |= index & MPU_RLAR_AttrIndx_Msk;
+    }
+    rlar |= MPU_RLAR_EN_Msk;
+    region->attr.rlar = rlar;
+
+    return RT_EOK;
 }
 
 rt_bool_t rt_hw_mp_region_valid(rt_mem_region_t *region)
@@ -61,14 +96,14 @@ rt_bool_t rt_hw_mp_region_valid(rt_mem_region_t *region)
         LOG_E("Region size is too small");
         return RT_FALSE;
     }
-    if (region->size & (region->size - 1U) != 0U)
+    if (region->size & (~(MPU_MIN_REGION_SIZE - 1U)) != region->size)
     {
-        LOG_E("Region size is not power of 2");
+        LOG_E("Region size is not a multiple of 32 bytes");
         return RT_FALSE;
     }
-    if ((rt_uint32_t)region->start & (region->size - 1U) != 0U)
+    if ((rt_uint32_t)region->start & (MPU_MIN_REGION_SIZE - 1U) != 0U)
     {
-        LOG_E("Region is not naturally aligned");
+        LOG_E("Region is not aligned by 32 bytes");
         return RT_FALSE;
     }
     return RT_TRUE;
@@ -98,11 +133,15 @@ rt_err_t rt_hw_mp_init()
     {
         LOG_E("Insufficient MPU regions: %d hardware MPU regions", num_mpu_regions);
 #ifdef RT_USING_HW_STACK_GUARD
-        LOG_E("Current configuration requires %d static regions + %d configurable regions + %d exclusive regions + %d stack guard regions", NUM_STATIC_REGIONS, NUM_CONFIGURABLE_REGIONS, NUM_EXCLUSIVE_REGIONS, 2);
+        LOG_E("Current configuration requires %d static regions + %d configurable regions + %d exclusive regions + %d stack guard regions", NUM_STATIC_REGIONS, NUM_CONFIGURABLE_REGIONS, NUM_EXCLUSIVE_REGIONS, 1);
 #else
         LOG_E("Current configuration requires %d static regions + %d configurable regions + %d exclusive regions", NUM_STATIC_REGIONS, NUM_CONFIGURABLE_REGIONS, NUM_EXCLUSIVE_REGIONS);
 #endif
         return RT_ERROR;
+    }
+    for (index = 0U; index < 8U; index++)
+    {
+        mpu_mair[index] = RT_ARM_DEFAULT_MAIR_ATTR;
     }
 
     ARM_MPU_Disable();
@@ -112,8 +151,12 @@ rt_err_t rt_hw_mp_init()
         {
             return RT_ERROR;
         }
-        static_regions[index].attr.rasr = mpu_rasr(&(static_regions[index]));
-        ARM_MPU_SetRegion(ARM_MPU_RBAR(index, (rt_uint32_t)static_regions[index].start), static_regions[index].attr.rasr);
+        if (mpu_rbar_rlar(&(static_regions[index])) == RT_ERROR)
+        {
+            LOG_E("Number of different mair_attr configurations exceeds 8");
+            return RT_ERROR;
+        }
+        ARM_MPU_SetRegion(index, static_regions[index].attr.rbar, static_regions[index].attr.rlar);
     }
     // Enable background region
     ARM_MPU_Enable(MPU_CTRL_PRIVDEFENA_Msk);
@@ -129,12 +172,18 @@ rt_err_t rt_hw_mp_add_region(rt_thread_t thread, rt_mem_region_t *region)
     {
         return RT_ERROR;
     }
-    region->attr.rasr = mpu_rasr(region);
+    rt_enter_critical();
+    if (mpu_rbar_rlar(region) == RT_ERROR)
+    {
+        rt_exit_critical();
+        LOG_E("Number of different mair_attr configurations exceeds 8");
+        return RT_ERROR;
+    }
     if (thread == RT_NULL)
     {
+        rt_exit_critical();
         return RT_EOK;
     }
-    rt_enter_critical();
     free_region = rt_mem_protection_find_free_region(thread);
     if (free_region == RT_NULL)
     {
@@ -146,7 +195,7 @@ rt_err_t rt_hw_mp_add_region(rt_thread_t thread, rt_mem_region_t *region)
     if (thread == rt_thread_self())
     {
         index = MEM_REGION_TO_MPU_INDEX(thread, free_region);
-        ARM_MPU_SetRegion(ARM_MPU_RBAR(index, (rt_uint32_t)region->start), region->attr.rasr);
+        ARM_MPU_SetRegion(index, region->attr.rbar, region->attr.rlar);
     }
     rt_exit_critical();
     return RT_EOK;
@@ -180,8 +229,13 @@ rt_err_t rt_hw_mp_update_region(rt_thread_t thread, rt_mem_region_t *region)
     {
         return RT_ERROR;
     }
-    region->attr.rasr = mpu_rasr(region);
     rt_enter_critical();
+    if (mpu_rbar_rlar(region) == RT_ERROR)
+    {
+        rt_exit_critical();
+        LOG_E("Number of different mair_attr configurations exceeds 8");
+        return RT_ERROR;
+    }
     rt_mem_region_t *old_region = rt_mem_protection_find_region(thread, region);
     if (old_region == RT_NULL)
     {
@@ -193,7 +247,7 @@ rt_err_t rt_hw_mp_update_region(rt_thread_t thread, rt_mem_region_t *region)
     if (thread == rt_thread_self())
     {
         index = MEM_REGION_TO_MPU_INDEX(thread, old_region);
-        ARM_MPU_SetRegion(ARM_MPU_RBAR(index, (rt_uint32_t)region->start), region->attr.rasr);
+        ARM_MPU_SetRegion(index, region->attr.rbar, region->attr.rlar);
     }  
     rt_exit_critical();
     return RT_EOK;
@@ -214,7 +268,7 @@ void rt_hw_mp_table_switch(rt_thread_t thread)
     {
         if (thread->mem_regions[i].size != 0U)
         {
-            ARM_MPU_SetRegion(ARM_MPU_RBAR(index, (rt_uint32_t)(thread->mem_regions[i].start)), thread->mem_regions[i].attr.rasr);
+            ARM_MPU_SetRegion(index, thread->mem_regions[i].attr.rbar, thread->mem_regions[i].attr.rlar);
             index += 1U;
         }
     }
@@ -222,7 +276,7 @@ void rt_hw_mp_table_switch(rt_thread_t thread)
     {
         if ((exclusive_regions[i].owner != RT_NULL) && (exclusive_regions[i].owner != thread))
         {
-            ARM_MPU_SetRegion(ARM_MPU_RBAR(index, (rt_uint32_t)(exclusive_regions[i].region.start)), exclusive_regions[i].region.attr.rasr);
+            ARM_MPU_SetRegion(index, exclusive_regions[i].region.attr.rbar, exclusive_regions[i].region.attr.rlar);
             index += 1U;
         }
     }

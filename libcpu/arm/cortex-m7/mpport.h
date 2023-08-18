@@ -5,7 +5,7 @@
 
 #include <board.h>
 
-#define MPU_MIN_REGION_SIZE	32
+#define MPU_MIN_REGION_SIZE	32U
 
 /* MPU attributes for configuring data region permission */
 /* Privileged No Access, Unprivileged No Access */
@@ -61,7 +61,7 @@ typedef void (*rt_hw_mp_exception_hook_t)(rt_mem_exception_info_t *);
 
 #define RT_ARM_MEM_ATTR(perm, type) ((rt_mem_attr_t){ (perm) | (type)})
 
-/* Convenient macros for configuring data region attributes with default cacheability */
+/* Convenient macros for configuring data region attributes with default memory type */
 #define RT_MEM_REGION_P_NA_U_NA	RT_ARM_MEM_ATTR(P_NA_U_NA, RESERVED)
 #define RT_MEM_REGION_P_RW_U_RW	RT_ARM_MEM_ATTR(P_RW_U_RW, RESERVED)
 #define RT_MEM_REGION_P_RW_U_RO	RT_ARM_MEM_ATTR(P_RW_U_RO, RESERVED)
@@ -69,13 +69,14 @@ typedef void (*rt_hw_mp_exception_hook_t)(rt_mem_exception_info_t *);
 #define RT_MEM_REGION_P_RO_U_RO	RT_ARM_MEM_ATTR(P_RO_U_RO, RESERVED)
 #define RT_MEM_REGION_P_RO_U_NA	RT_ARM_MEM_ATTR(P_RO_U_NA, RESERVED)
 
-/* Convenient macros for configuring code region attributes with default cacheability */
+/* Convenient macros for configuring code region attributes with default memory type */
 #define RT_MEM_REGION_P_RWX_U_RWX	RT_ARM_MEM_ATTR(P_RWX_U_RWX, RESERVED)
 #define RT_MEM_REGION_P_RWX_U_RX	RT_ARM_MEM_ATTR(P_RWX_U_RX, RESERVED)
 #define RT_MEM_REGION_P_RWX_U_NA	RT_ARM_MEM_ATTR(P_RWX_U_NA, RESERVED)
 #define RT_MEM_REGION_P_RX_U_RX		RT_ARM_MEM_ATTR(P_RX_U_RX, RESERVED)
 #define RT_MEM_REGION_P_RX_U_NA		RT_ARM_MEM_ATTR(P_RX_U_NA, RESERVED)
 
+rt_weak rt_uint32_t rt_hw_mp_region_default_attr(rt_mem_region_t *region);
 rt_bool_t rt_hw_mp_region_valid(rt_mem_region_t *region);
 rt_err_t rt_hw_mp_init();
 rt_err_t rt_hw_mp_add_region(rt_thread_t thread, rt_mem_region_t *region);

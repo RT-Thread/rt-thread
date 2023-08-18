@@ -10,6 +10,19 @@
 
 #include "board.h"
 
+#ifdef RT_USING_MEM_PROTECTION
+#include "mp.h"
+
+rt_mem_region_t static_regions[NUM_STATIC_REGIONS] = {
+  /* Flash region, read only */
+  {
+    .start = (void *)STM32_FLASH_START_ADRESS,
+    .size = (rt_size_t)STM32_FLASH_SIZE,
+    .attr = RT_MEM_REGION_P_RO_U_RO,
+  },
+};
+#endif
+
 void SystemClock_Config(void)
 {
   RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};

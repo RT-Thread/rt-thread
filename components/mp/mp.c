@@ -46,17 +46,38 @@ int rt_mem_protection_init()
 
 rt_err_t rt_mem_protection_add_region(rt_thread_t thread, rt_mem_region_t *region)
 {
-    return rt_hw_mp_add_region(thread, region);
+    if (thread == RT_NULL)
+    {
+        return rt_hw_mp_add_region(rt_thread_self(), region);
+    }
+    else
+    {
+        return rt_hw_mp_add_region(thread, region);
+    }
 }
 
 rt_err_t rt_mem_protection_delete_region(rt_thread_t thread, rt_mem_region_t *region)
 {
-    return rt_hw_mp_delete_region(thread, region);
+    if (thread == RT_NULL)
+    {
+        return rt_hw_mp_delete_region(rt_thread_self(), region);
+    }
+    else
+    {
+        return rt_hw_mp_delete_region(thread, region);
+    }
 }
 
 rt_err_t rt_mem_protection_update_region(rt_thread_t thread, rt_mem_region_t *region)
 {
-    return rt_hw_mp_update_region(thread, region);
+    if (thread == RT_NULL)
+    {
+        return rt_hw_mp_update_region(rt_thread_self(), region);
+    }
+    else
+    {
+        return rt_hw_mp_update_region(thread, region);
+    }
 }
 
 rt_err_t rt_mem_protection_add_exclusive_region(void *start, rt_size_t size)
