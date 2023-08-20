@@ -230,6 +230,11 @@ menu "On-chip Peripheral Drivers"
                 endif
         endif
 
+    config BSP_USING_SDRAM
+        bool "Enable SDRAM"
+        select RT_USING_SDRAM
+        default n
+
     source "../libraries/gd32_drivers/Kconfig"
 
 endmenu
