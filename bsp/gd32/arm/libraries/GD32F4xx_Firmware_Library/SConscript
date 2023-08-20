@@ -48,6 +48,10 @@ if GetDepend(['RT_USING_SDIO']):
     src += ['GD32F4xx_standard_peripheral/Source/gd32f4xx_sdio.c']
     src += ['GD32F4xx_standard_peripheral/Source/gd32f4xx_dma.c']
 
+if GetDepend(['BSP_USING_SDRAM']):
+    src += ['GD32F4xx_standard_peripheral/Source/gd32f4xx_fmc.c']
+    src += ['GD32F4xx_standard_peripheral/Source/gd32f4xx_exmc.c']
+
 path = [
     cwd + '/CMSIS/GD/GD32F4xx/Include',
     cwd + '/CMSIS',
