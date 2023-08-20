@@ -66,6 +66,10 @@ def CheckHeader(rtconfig, filename):
 
     return False
 
+# GCC like means the toolchains which are compatible with GCC
+def GetGCCLikePLATFORM():
+    return ['gcc', 'armclang', 'llvm-arm']
+
 def GetNewLibVersion(rtconfig):
     version = None
     root = GetGCCRoot(rtconfig)
