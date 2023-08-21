@@ -165,25 +165,25 @@ jobs:
           config=${{ github.event.inputs.bsp_config}}
           preconfig=${config%%=*}
           echo "$preconfig"
-          sed -i "/$preconfig/ s/.*/$config/" .config
+          sed -i "/$preconfig/ s/.*/$config/" bsp/$RTT_BSP/.config
           scons -C bsp/$RTT_BSP --pyconfig-silent
           pushd bsp/$RTT_BSP && pkgs --update && popd
           config=${{ github.event.inputs.bsp_config1}}
           preconfig=${config%%=*}
           echo "$preconfig" 
-          sed -i "/$preconfig/ s/.*/$config/" .config
+          sed -i "/$preconfig/ s/.*/$config/" bsp/$RTT_BSP/.config
           scons -C bsp/$RTT_BSP --pyconfig-silent
           pushd bsp/$RTT_BSP && pkgs --update && popd
           config=${{ github.event.inputs.bsp_config2}}
           preconfig=${config%%=*}
           echo "$preconfig" 
-          sed -i "/$preconfig/ s/.*/$config/" .config
+          sed -i "/$preconfig/ s/.*/$config/" bsp/$RTT_BSP/.config
           scons -C bsp/$RTT_BSP --pyconfig-silent
           pushd bsp/$RTT_BSP && pkgs --update && popd
           config=${{ github.event.inputs.bsp_config3}}
           preconfig=${config%%=*}
           echo "$preconfig" 
-          sed -i "/$preconfig/ s/.*/$config/" .config
+          sed -i "/$preconfig/ s/.*/$config/" bsp/$RTT_BSP/.config
           scons -C bsp/$RTT_BSP --pyconfig-silent
           pushd bsp/$RTT_BSP && pkgs --update && popd
           cat bsp/$RTT_BSP/.config
