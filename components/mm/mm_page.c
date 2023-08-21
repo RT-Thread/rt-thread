@@ -603,7 +603,7 @@ void list_page(void)
 {
     int i;
     rt_size_t free = 0;
-    rt_size_t installed = page_nr + _high_pages_nr;
+    rt_size_t installed = page_nr;
 
     rt_base_t level;
     level = rt_hw_interrupt_disable();
