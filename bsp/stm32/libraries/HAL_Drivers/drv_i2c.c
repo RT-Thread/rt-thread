@@ -68,7 +68,7 @@ static rt_err_t _stm32_i2c_configure(struct rt_i2c_bus_device *device, struct rt
     i2c_handle->Instance = i2c_drv->config->Instance;
     i2c_handle->Init.ClockSpeed = cfg->clk_speed;
     i2c_handle->Init.DutyCycle = I2C_DUTYCYCLE_2;
-    i2c_handle->Init.OwnAddress1 = cfg->addr_slave;
+    i2c_handle->Init.OwnAddress1 = cfg->slave_addr;
     i2c_handle->Init.DualAddressMode = I2C_DUALADDRESS_DISABLE;
     i2c_handle->Init.OwnAddress2 = 0;
     i2c_handle->Init.GeneralCallMode = I2C_GENERALCALL_DISABLE;
