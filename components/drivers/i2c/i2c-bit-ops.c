@@ -446,7 +446,6 @@ static const struct rt_i2c_bus_device_ops i2c_bit_bus_ops =
 {
     i2c_bit_xfer,
     RT_NULL,
-    RT_NULL,
     RT_NULL
 };
 

@@ -7,7 +7,6 @@
  * Date           Author        Notes
  * 2012-04-25     weety         first version
  * 2021-04-20     RiceChen      added support for bus control api
- * 2023-08-22     Donocean      support for hw i2c configuration
  */
 
 #include <rtdevice.h>
@@ -144,28 +143,4 @@ rt_ssize_t rt_i2c_master_recv(struct rt_i2c_bus_device *bus,
     ret = rt_i2c_transfer(bus, &msg, 1);
 
     return (ret == 1) ? count : ret;
-}
-
-rt_err_t rt_i2c_configure(struct rt_i2c_bus_device *device,
-                          struct rt_i2c_configuration *cfg)
-{
-    RT_ASSERT(device != RT_NULL);
-    RT_ASSERT(cfg != RT_NULL);
-
-    rt_err_t result = -RT_ERROR;
-
-    /* set configuration */
-    device->config.mode = cfg->mode;
-    device->config.clk_speed = cfg->clk_speed;
-    device->config.addr_length = cfg->addr_length;
-
-    if (cfg->mode & RT_I2C_MODE_SLAVE)
-        device->config.slave_addr = cfg->slave_addr;
-    else
-        device->config.slave_addr = 0;
-
-    if (device->ops->configure)
-        result = device->ops->configure(device, &device->config);
-
-    return result;
 }

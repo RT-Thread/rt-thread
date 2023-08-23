@@ -123,7 +123,7 @@ if RT_USING_I2C
 
     config RT_USING_I2C_BITOPS
         bool "Use GPIO to simulate I2C"
-        default n
+        default y
 
     if RT_USING_I2C_BITOPS
         config RT_I2C_BITOPS_DEBUG
