@@ -1721,6 +1721,7 @@ static void lwp_struct_copy(struct rt_lwp *dst, struct rt_lwp *src)
     dst->args = src->args;
     dst->leader = 0;
     dst->session = src->session;
+    dst->background = src->background;
     dst->tty_old_pgrp = 0;
     dst->__pgrp = src->__pgrp;
     dst->tty = src->tty;
