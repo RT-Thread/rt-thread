@@ -463,17 +463,17 @@ int lwp_thread_signal_suspend_check(rt_thread_t thread, int suspend_flag)
 void lwp_thread_signal_catch(void *exp_frame)
 {
     rt_base_t level;
-    int signo;
+    int signo = 0;
     struct rt_thread *thread;
     struct rt_lwp *lwp;
-    lwp_siginfo_t siginfo;
+    lwp_siginfo_t siginfo = 0;
     lwp_sigqueue_t pending;
     lwp_sigset_t *sig_mask;
     lwp_sigset_t save_sig_mask;
     lwp_sigset_t new_sig_mask;
-    lwp_sighandler_t handler;
+    lwp_sighandler_t handler = 0;
     siginfo_t usiginfo;
-    siginfo_t *p_usi;
+    siginfo_t *p_usi = RT_NULL;
 
     thread = rt_thread_self();
     lwp = (struct rt_lwp*)thread->lwp;
