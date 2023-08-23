@@ -1,0 +1,22 @@
+from building import *
+
+cwd = GetCurrentDir()
+src	= Glob('*.c')
+
+if GetDepend('BSP_USING_UART') == False:
+    src_need_remove = ['drv_uart.c'] # need remove file list.
+    SrcRemove(src, src_need_remove)
+
+if GetDepend('BSP_USING_SPIFLASH') == False:
+    src_need_remove = ['drv_spiflash.c'] # need remove file list.
+    SrcRemove(src, src_need_remove)
+
+if GetDepend('BSP_USING_SDIO') == False:
+    src_need_remove = ['drv_emmc.c'] # need remove file list.
+    SrcRemove(src, src_need_remove)
+
+CPPPATH = [cwd]
+
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')
