@@ -30,9 +30,8 @@ struct nu_eadc
 typedef struct nu_eadc *nu_eadc_t;
 
 /* Private functions ------------------------------------------------------------*/
-static rt_err_t nu_eadc_enabled(struct rt_adc_device *device, rt_uint32_t channel, rt_bool_t enabled);
-static rt_err_t nu_get_eadc_value(struct rt_adc_device *device, rt_uint32_t channel, rt_uint32_t *value);
-static rt_err_t nu_get_eadc_value(struct rt_adc_device *device, rt_uint32_t channel, rt_uint32_t *value);
+static rt_err_t nu_eadc_enabled(struct rt_adc_device *device, rt_int8_t channel, rt_bool_t enabled);
+static rt_err_t nu_get_eadc_value(struct rt_adc_device *device, rt_int8_t channel, rt_uint32_t *value);
 
 
 /* Public functions ------------------------------------------------------------*/
@@ -60,9 +59,8 @@ static const struct rt_adc_ops nu_adc_ops =
 };
 typedef struct rt_adc_ops *rt_adc_ops_t;
 
-
 /* nu_adc_enabled - Enable ADC clock and wait for ready */
-static rt_err_t nu_eadc_enabled(struct rt_adc_device *device, rt_uint32_t channel, rt_bool_t enabled)
+static rt_err_t nu_eadc_enabled(struct rt_adc_device *device, rt_int8_t channel, rt_bool_t enabled)
 {
 
     EADC_T *eadc_base = ((nu_eadc_t)device)->eadc_base;
@@ -94,7 +92,7 @@ static rt_err_t nu_eadc_enabled(struct rt_adc_device *device, rt_uint32_t channe
     return RT_EOK;
 }
 
-static rt_err_t nu_get_eadc_value(struct rt_adc_device *device, rt_uint32_t channel, rt_uint32_t *value)
+static rt_err_t nu_get_eadc_value(struct rt_adc_device *device, rt_int8_t channel, rt_uint32_t *value)
 {
 
     RT_ASSERT(device != RT_NULL);
