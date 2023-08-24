@@ -645,7 +645,7 @@ err2:
  */
 rt_int32_t init_sd(struct rt_mmcsd_host *host, rt_uint32_t ocr)
 {
-    rt_int32_t err = RT_EOK;
+    rt_int32_t err = -RT_EINVAL;
     rt_uint32_t  current_ocr;
     /*
      * We need to get OCR a different way for SPI.
