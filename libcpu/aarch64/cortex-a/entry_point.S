@@ -331,7 +331,11 @@ after_mmu_enable_cpux:
     b rt_hw_secondary_cpu_bsp_start
 #endif
 
+#ifndef RT_CPUS_NR
+#define RT_CPUS_NR 1
+#endif
+
 .align 12
 .el_stack:
-.space (8192)
+.space (8192 * RT_CPUS_NR)
 .el_stack_top:
