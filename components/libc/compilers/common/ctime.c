@@ -626,7 +626,7 @@ RTM_EXPORT(clock_gettime);
 int clock_nanosleep(clockid_t clockid, int flags, const struct timespec *rqtp, struct timespec *rmtp)
 {
     struct timespec ts = {0};
-    rt_err_t        err;
+    rt_err_t err = -RT_EINVAL;
 
     if (rqtp == RT_NULL)
     {
