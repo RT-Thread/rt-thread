@@ -151,6 +151,8 @@ tftp> q
 
 - RT-Smart 依赖 SD 卡挂载为 / 目录，要保证插入的卡格式为 FAT32，否则会提示初始化失败的信息
 
+- Phytium PI 固件可能在 SD 卡中，这种情况下需要将 SD 卡分成两个区，第一个分区格式为 RAW 放置固件，第二个分区格式为 FAT32 作为 RT-Thread/RT-Smart 的根目录使用，在编译镜像时，需要调整 CONFIG_SDCARD_OFFSET 配置，避免读写操作影响固件
+
 #### 利用 uboot 上tftp 服务加载镜像
 
 - 进入`u-boot`界面，输入如下指令，配置开发板ip，`host`侧ip和网关地址
