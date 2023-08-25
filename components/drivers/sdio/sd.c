@@ -534,21 +534,21 @@ static rt_int32_t mmcsd_sd_init_card(struct rt_mmcsd_host *host,
 
     err = mmcsd_send_app_op_cond(host, ocr, RT_NULL);
     if (err)
-        goto err;
+        goto err2;
 
     if (controller_is_spi(host))
         err = mmcsd_get_cid(host, resp);
     else
         err = mmcsd_all_get_cid(host, resp);
     if (err)
-        goto err;
+        goto err2;
 
     card = rt_malloc(sizeof(struct rt_mmcsd_card));
     if (!card)
     {
         LOG_E("malloc card failed!");
         err = -RT_ENOMEM;
-        goto err;
+        goto err2;
     }
     rt_memset(card, 0, sizeof(struct rt_mmcsd_card));
 
@@ -635,7 +635,7 @@ static rt_int32_t mmcsd_sd_init_card(struct rt_mmcsd_host *host,
 
 err1:
     rt_free(card);
-err:
+err2:
 
     return err;
 }
@@ -645,7 +645,7 @@ err:
  */
 rt_int32_t init_sd(struct rt_mmcsd_host *host, rt_uint32_t ocr)
 {
-    rt_int32_t err;
+    rt_int32_t err = -RT_EINVAL;
     rt_uint32_t  current_ocr;
     /*
      * We need to get OCR a different way for SPI.
@@ -656,7 +656,7 @@ rt_int32_t init_sd(struct rt_mmcsd_host *host, rt_uint32_t ocr)
 
         err = mmcsd_spi_read_ocr(host, 0, &ocr);
         if (err)
-            goto err;
+            goto _err;
     }
 
     if (ocr & VDD_165_195)
@@ -675,7 +675,7 @@ rt_int32_t init_sd(struct rt_mmcsd_host *host, rt_uint32_t ocr)
     if (!current_ocr)
     {
         err = -RT_ERROR;
-        goto err;
+        goto _err;
     }
 
     /*
@@ -683,7 +683,7 @@ rt_int32_t init_sd(struct rt_mmcsd_host *host, rt_uint32_t ocr)
      */
     err = mmcsd_sd_init_card(host, current_ocr);
     if (err)
-        goto err;
+        goto _err;
 
     mmcsd_host_unlock(host);
 
@@ -699,7 +699,7 @@ remove_card:
     rt_mmcsd_blk_remove(host->card);
     rt_free(host->card);
     host->card = RT_NULL;
-err:
+_err:
 
     LOG_D("init SD card failed!");
 
