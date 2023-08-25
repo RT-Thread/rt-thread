@@ -36,16 +36,8 @@ static int filesystem_mount(void)
     }
     else
     {
-        LOG_W("[sd] File System on SD initialization failed!");
-        LOG_W("[sd] Try to format and re-mount...");
-        if (dfs_mkfs("elm", SD_DEIVCE_NAME) == 0)
-        {
-            if (dfs_mount(SD_DEIVCE_NAME, "/", "elm", 0, 0) == 0)
-            {
-                LOG_I("[sd] File System on SD initialized!");
-            }
-        }
         LOG_E("[sd] File System on SD initialization failed!");
+        LOG_E("[sd] Please format SD Card as FAT32!!!...");
         return -1;
     }
 

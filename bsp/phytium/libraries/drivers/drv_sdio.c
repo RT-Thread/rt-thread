@@ -28,7 +28,6 @@
 #if defined(TARGET_E2000)
     #include "fparameters.h"
 #endif
-#include "fparameters_comm.h"
 
 #include "fsdio.h"
 #include "fsdio_hw.h"
@@ -39,8 +38,6 @@
     #define SDIO_CONTROLLER_ID    FSDIO0_ID
 #elif defined (USING_SDIO1)
     #define SDIO_CONTROLLER_ID    FSDIO1_ID
-#elif defined (USING_EMMC)
-    #define SDIO_CONTROLLER_ID    FSDIO0_ID
 #endif
 #define SDIO_TF_CARD_HOST_ID  0x1
 #define SDIO_MALLOC_CAP_DESC  256U

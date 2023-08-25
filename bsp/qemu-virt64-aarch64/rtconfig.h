@@ -7,6 +7,7 @@
 /* RT-Thread Kernel */
 
 #define RT_NAME_MAX 16
+#define RT_USING_SMART
 #define RT_USING_SMP
 #define RT_CPUS_NR 4
 #define RT_ALIGN_SIZE 8
@@ -28,8 +29,10 @@
 
 #define RT_KSERVICE_USING_STDLIB
 #define RT_KPRINTF_USING_LONGLONG
-#define RT_DEBUG
-#define RT_DEBUG_COLOR
+#define RT_USING_DEBUG
+#define RT_DEBUGING_COLOR
+#define RT_DEBUGING_CONTEXT
+#define RT_DEBUGING_INIT
 
 /* Inter-Thread communication */
 
@@ -61,15 +64,16 @@
 #define RT_CONSOLE_DEVICE_NAME "uart0"
 #define RT_VER_NUM 0x50001
 #define RT_USING_STDC_ATOMIC
-
-/* RT-Thread Architecture */
-
 #define ARCH_CPU_64BIT
 #define RT_USING_CACHE
 #define ARCH_MM_MMU
 #define ARCH_ARM
 #define ARCH_ARM_MMU
+#define KERNEL_VADDR_START 0xffff000000000000
 #define ARCH_ARMV8
+
+/* AArch64 Architecture Configuration */
+
 #define ARCH_TEXT_OFFSET 0x80000
 #define ARCH_RAM_OFFSET 0x40000000
 #define ARCH_SECONDARY_CPU_STACK_SIZE 4096
@@ -121,6 +125,13 @@
 #define RT_DFS_ELM_MUTEX_TIMEOUT 3000
 #define RT_USING_DFS_DEVFS
 #define RT_USING_DFS_ROMFS
+#define RT_USING_LWP
+#define RT_LWP_MAX_NR 30
+#define LWP_TASK_STACK_SIZE 16384
+#define RT_CH_MSG_MAX_NR 1024
+#define LWP_CONSOLE_INPUT_BUFFER_SIZE 1024
+#define LWP_TID_MAX_NR 64
+#define RT_LWP_SHM_MAX_NR 64
 
 /* Device Drivers */
 
@@ -133,6 +144,7 @@
 #define RT_USING_SERIAL_V1
 #define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 256
+#define RT_USING_TTY
 #define RT_USING_PIN
 #define RT_USING_NULL
 #define RT_USING_ZERO
@@ -156,7 +168,14 @@
 
 /* C/C++ and POSIX layer */
 
-#define RT_LIBC_DEFAULT_TIMEZONE 8
+/* ISO-ANSI C layer */
+
+/* Timezone and Daylight Saving Time */
+
+#define RT_LIBC_USING_LIGHT_TZ_DST
+#define RT_LIBC_TZ_DEFAULT_HOUR 8
+#define RT_LIBC_TZ_DEFAULT_MIN 0
+#define RT_LIBC_TZ_DEFAULT_SEC 0
 
 /* POSIX (Portable Operating System Interface) layer */
 
@@ -168,6 +187,7 @@
 #define RT_USING_POSIX_TERMIOS
 #define RT_USING_POSIX_DELAY
 #define RT_USING_POSIX_CLOCK
+#define RT_USING_POSIX_TIMER
 
 /* Interprocess Communication (IPC) */
 
@@ -182,9 +202,13 @@
 
 /* Utilities */
 
+#define RT_USING_RESOURCE_ID
 #define RT_USING_ADT
 #define RT_USING_ADT_AVL
-#define RT_USING_RESOURCE_ID
+#define RT_USING_ADT_BITMAP
+#define RT_USING_ADT_HASHMAP
+#define RT_USING_ADT_REF
+#define RT_USING_KTIME
 
 /* RT-Thread Utestcases */
 
@@ -224,9 +248,6 @@
 /* u8g2: a monochrome graphic library */
 
 
-/* PainterEngine: A cross-platform graphics application framework written in C language */
-
-
 /* tools packages */
 
 
@@ -246,11 +267,19 @@
 
 /* peripheral libraries and drivers */
 
+/* sensors drivers */
+
+
+/* touch drivers */
+
 
 /* Kendryte SDK */
 
 
 /* AI packages */
+
+
+/* Signal Processing and Control Algorithm Packages */
 
 
 /* miscellaneous packages */
@@ -290,6 +319,7 @@
 
 
 /* Other */
+
 
 /* Signal IO */
 

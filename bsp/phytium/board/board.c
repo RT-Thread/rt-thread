@@ -219,7 +219,7 @@ void rt_hw_board_aarch32_init(void)
 
     arm_gic_redist_address_set(0, redist_addr + (cpu_id + cpu_offset) * GICV3_RD_OFFSET, rt_hw_cpu_id());
 
-#if defined(TARGET_E2000Q)
+#if defined(TARGET_E2000Q) || defined(TARGET_PHYTIUMPI)
 
 #if RT_CPUS_NR == 2
     arm_gic_redist_address_set(0, redist_addr + 3 * GICV3_RD_OFFSET, 1);

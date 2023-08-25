@@ -32,22 +32,28 @@ if GetDepend(['TARGET_F2000_4']):
     src += Glob(STANDALONE_DIR+'/board/ft2004/*.c')
     path += [STANDALONE_DIR + '/board/ft2004'] 
 
-if GetDepend(['TARGET_E2000']):
+if GetDepend(['TARGET_E2000Q']):
     src += Glob(STANDALONE_DIR+'/board/e2000/*.c')
     path += [STANDALONE_DIR + '/board/e2000'] 
+    src += Glob(STANDALONE_DIR+'/board/e2000/q/*.c')
+    path += [STANDALONE_DIR + '/board/e2000/q'] 
 
-    if GetDepend(['TARGET_E2000Q']):
-        src += Glob(STANDALONE_DIR+'/board/e2000/q/*.c')
-        path += [STANDALONE_DIR + '/board/e2000/q'] 
+if GetDepend(['TARGET_E2000D']):
+    src += Glob(STANDALONE_DIR+'/board/e2000/*.c')
+    path += [STANDALONE_DIR + '/board/e2000'] 
+    src += Glob(STANDALONE_DIR+'/board/e2000/d/*.c')
+    path += [STANDALONE_DIR + '/board/e2000/d'] 
 
-    if GetDepend(['TARGET_E2000D']):
-        src += Glob(STANDALONE_DIR+'/board/e2000/d/*.c')
-        path += [STANDALONE_DIR + '/board/e2000/d'] 
+if GetDepend(['ARGET_E2000S']):
+    src += Glob(STANDALONE_DIR+'/board/e2000/*.c')
+    path += [STANDALONE_DIR + '/board/e2000'] 
+    src += Glob(STANDALONE_DIR+'/board/e2000/s/*.c')
+    path += [STANDALONE_DIR + '/board/e2000/s'] 
     
-    if GetDepend(['ARGET_E2000S']):
-        src += Glob(STANDALONE_DIR+'/board/e2000/s/*.c')
-        path += [STANDALONE_DIR + '/board/e2000/s'] 
-    
+if GetDepend(['TARGET_PHYTIUMPI']):
+    src += Glob(STANDALONE_DIR+'/board/phytium-pi/*.c')
+    path += [STANDALONE_DIR + '/board/phytium-pi'] 
+
 if GetDepend(['TARGET_D2000']):
     path += [STANDALONE_DIR + '/board/d2000'] 
 

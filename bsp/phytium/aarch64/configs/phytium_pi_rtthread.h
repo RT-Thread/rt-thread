@@ -7,7 +7,6 @@
 /* RT-Thread Kernel */
 
 #define RT_NAME_MAX 16
-#define RT_USING_SMART
 #define RT_USING_SMP
 #define RT_CPUS_NR 4
 #define RT_ALIGN_SIZE 4
@@ -19,11 +18,11 @@
 #define RT_HOOK_USING_FUNC_PTR
 #define RT_USING_IDLE_HOOK
 #define RT_IDLE_HOOK_LIST_SIZE 4
-#define IDLE_THREAD_STACK_SIZE 4096
-#define SYSTEM_THREAD_STACK_SIZE 4096
+#define IDLE_THREAD_STACK_SIZE 8192
+#define SYSTEM_THREAD_STACK_SIZE 8192
 #define RT_USING_TIMER_SOFT
 #define RT_TIMER_THREAD_PRIO 4
-#define RT_TIMER_THREAD_STACK_SIZE 4096
+#define RT_TIMER_THREAD_STACK_SIZE 8192
 
 /* kservice optimization */
 
@@ -41,11 +40,10 @@
 #define RT_USING_EVENT
 #define RT_USING_MAILBOX
 #define RT_USING_MESSAGEQUEUE
-#define RT_USING_MESSAGEQUEUE_PRIORITY
 
 /* Memory Management */
 
-#define RT_PAGE_MAX_ORDER 11
+#define RT_PAGE_MAX_ORDER 16
 #define RT_USING_SLAB
 #define RT_USING_MEMHEAP
 #define RT_MEMHEAP_FAST_MODE
@@ -57,18 +55,23 @@
 
 #define RT_USING_DEVICE
 #define RT_USING_CONSOLE
-#define RT_CONSOLEBUF_SIZE 256
+#define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uart1"
 #define RT_VER_NUM 0x50001
+#define ARCH_CPU_64BIT
 #define RT_USING_CACHE
-#define RT_USING_HW_ATOMIC
-#define RT_USING_CPU_FFS
+#define ARCH_ARM_BOOTWITH_FLUSH_CACHE
 #define ARCH_MM_MMU
 #define ARCH_ARM
 #define ARCH_ARM_MMU
-#define KERNEL_VADDR_START 0xc0000000
-#define ARCH_ARM_CORTEX_A
-#define RT_USING_GIC_V3
+#define ARCH_ARMV8
+
+/* AArch64 Architecture Configuration */
+
+#define ARCH_TEXT_OFFSET 0x80000
+#define ARCH_RAM_OFFSET 0x80000000
+#define ARCH_SECONDARY_CPU_STACK_SIZE 4096
+#define ARCH_HAVE_EFFICIENT_UNALIGNED_ACCESS
 
 /* RT-Thread Components */
 
@@ -116,39 +119,28 @@
 #define RT_DFS_ELM_MUTEX_TIMEOUT 3000
 #define RT_USING_DFS_DEVFS
 #define RT_USING_DFS_RAMFS
-#define RT_USING_DFS_MQUEUE
-#define RT_USING_LWP
-#define RT_LWP_MAX_NR 30
-#define LWP_TASK_STACK_SIZE 16384
-#define RT_CH_MSG_MAX_NR 1024
-#define LWP_CONSOLE_INPUT_BUFFER_SIZE 1024
-#define LWP_TID_MAX_NR 64
-#define LWP_ENABLE_ASID
-#define RT_LWP_SHM_MAX_NR 64
 
 /* Device Drivers */
 
 #define RT_USING_DEVICE_IPC
 #define RT_UNAMED_PIPE_NUMBER 64
 #define RT_USING_SYSTEM_WORKQUEUE
-#define RT_SYSTEM_WORKQUEUE_STACKSIZE 4096
+#define RT_SYSTEM_WORKQUEUE_STACKSIZE 8192
 #define RT_SYSTEM_WORKQUEUE_PRIORITY 23
 #define RT_USING_SERIAL
 #define RT_USING_SERIAL_V1
 #define RT_SERIAL_USING_DMA
-#define RT_SERIAL_RB_BUFSZ 1024
-#define RT_USING_TTY
+#define RT_SERIAL_RB_BUFSZ 64
 #define RT_USING_NULL
 #define RT_USING_ZERO
 #define RT_USING_RANDOM
 #define RT_USING_RTC
 #define RT_USING_SDIO
-#define RT_SDIO_STACK_SIZE 512
+#define RT_SDIO_STACK_SIZE 4096
 #define RT_SDIO_THREAD_PRIORITY 15
-#define RT_MMCSD_STACK_SIZE 1024
+#define RT_MMCSD_STACK_SIZE 4096
 #define RT_MMCSD_THREAD_PREORITY 22
 #define RT_MMCSD_MAX_PARTITION 16
-#define RT_USING_DEV_BUS
 
 /* Using USB */
 
@@ -169,20 +161,13 @@
 #define RT_USING_POSIX_FS
 #define RT_USING_POSIX_DEVIO
 #define RT_USING_POSIX_STDIO
-#define RT_USING_POSIX_POLL
-#define RT_USING_POSIX_SELECT
 #define RT_USING_POSIX_TERMIOS
-#define RT_USING_POSIX_AIO
 #define RT_USING_POSIX_DELAY
 #define RT_USING_POSIX_CLOCK
 #define RT_USING_POSIX_TIMER
 
 /* Interprocess Communication (IPC) */
 
-#define RT_USING_POSIX_PIPE
-#define RT_USING_POSIX_PIPE_SIZE 512
-#define RT_USING_POSIX_MESSAGE_QUEUE
-#define RT_USING_POSIX_MESSAGE_SEMAPHORE
 
 /* Socket is in the 'Network' category */
 
@@ -242,14 +227,13 @@
 #define LWIP_SO_LINGER 0
 #define LWIP_NETIF_LOOPBACK 0
 #define RT_LWIP_USING_PING
+#define RT_LWIP_DEBUG
+#define RT_LWIP_NETIF_DEBUG
 
 /* Utilities */
 
 #define RT_USING_RYM
 #define YMODEM_USING_FILE_TRANSFER
-#define RT_USING_UTEST
-#define UTEST_THR_STACK_SIZE 4096
-#define UTEST_THR_PRIORITY 20
 #define RT_USING_RESOURCE_ID
 #define RT_USING_ADT
 #define RT_USING_ADT_AVL
@@ -336,6 +320,9 @@
 
 /* samples: kernel and components samples */
 
+#define PKG_USING_KERNEL_SAMPLES
+#define PKG_USING_KERNEL_SAMPLES_LATEST_VERSION
+#define PKG_USING_KERNEL_SAMPLES_EN
 
 /* entertainment: terminal games and other interesting software packages */
 
@@ -382,18 +369,16 @@
 #define RT_USING_UART1
 #define BSP_USING_ETH
 #define RT_LWIP_PBUF_POOL_BUFSIZE 1700
-#define BSP_USING_SDIO
-#define BSP_USING_SDCARD_FATFS
-#define USING_SDIO0
 
 /* Board extended module Drivers */
 
-#define PHYTIUM_ARCH_AARCH32
+#define BSP_USING_GIC
+#define BSP_USING_GICV3
+#define PHYTIUM_ARCH_AARCH64
 
 /* Standalone Setting */
 
-#define TARGET_ARMV8_AARCH32
-#define USE_AARCH64_L1_TO_AARCH32
+#define TARGET_ARMV8_AARCH64
 
 /* Board Configuration */
 
@@ -403,8 +388,13 @@
 
 /* Components Configuration */
 
-#define USE_GIC
-#define ENABLE_GICV3
+#define USE_SPI
+#define USE_FSPIM
+#define USE_QSPI
+
+/* Qspi Configuration */
+
+#define USE_FQSPI
 #define USE_IOPAD
 #define ENABLE_IOPAD
 #define USE_SERIAL
@@ -422,7 +412,5 @@
 /* Sdk common configuration */
 
 #define LOG_ERROR
-#define USE_DEFAULT_INTERRUPT_CONFIG
-#define INTERRUPT_ROLE_MASTER
 
 #endif

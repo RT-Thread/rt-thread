@@ -53,7 +53,7 @@ rt_inline rt_uint32_t platform_get_gic_redist_base(void)
     cpu_offset = FT_GIC_REDISTRUBUTIOR_OFFSET ;
 #endif
 
-#if defined(TARGET_E2000Q)
+#if defined(TARGET_E2000Q) || defined(TARGET_PHYTIUMPI)
     u32 cpu_id = 0;
     cpu_id = phytium_cpu_id();
 
