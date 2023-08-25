@@ -121,6 +121,10 @@ if RT_USING_I2C
         bool "Use I2C debug message"
         default n
 
+    config RT_USING_I2C_HW
+        bool "Use hardware I2C"
+        default n
+
     config RT_USING_I2C_BITOPS
         bool "Use GPIO to simulate I2C"
         default n

@@ -67,6 +67,7 @@ menu "On-chip Peripheral Drivers"
         bool "Enable I2C BUS"
         default n
         select RT_USING_I2C
+        select RT_USING_I2C_HW
         if BSP_USING_I2C
             config BSP_USING_I2C1
                 bool "Enable I2C1 BUS"
