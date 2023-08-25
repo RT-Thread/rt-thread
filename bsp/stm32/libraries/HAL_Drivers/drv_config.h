@@ -50,6 +50,7 @@ extern "C" {
 #include "f3/pwm_config.h"
 #include "f3/dma_config.h"
 #elif  defined(SOC_SERIES_STM32F4)
+#include "f4/i2c_config.h"
 #include "f4/dma_config.h"
 #include "f4/uart_config.h"
 #include "f4/spi_config.h"
