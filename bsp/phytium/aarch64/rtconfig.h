@@ -330,9 +330,6 @@
 
 /* samples: kernel and components samples */
 
-#define PKG_USING_KERNEL_SAMPLES
-#define PKG_USING_KERNEL_SAMPLES_LATEST_VERSION
-#define PKG_USING_KERNEL_SAMPLES_EN
 
 /* entertainment: terminal games and other interesting software packages */
 
@@ -382,6 +379,7 @@
 #define BSP_USING_SDIO
 #define BSP_USING_SDCARD_FATFS
 #define USING_SDIO0
+#define SDCARD_OFFSET 0x0
 
 /* Board extended module Drivers */
 
