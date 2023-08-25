@@ -165,8 +165,8 @@ tftp> q
 - 随后烧录的文件到开发板，输入以下指令
   
   ```
-  tftpboot 0x90100000 rtthread.elf
-  bootelf -p 0x90100000
+  tftpboot 0x80080000 rtthread.bin
+  go 0x80080000
   ```
 
 ### 运行结果
