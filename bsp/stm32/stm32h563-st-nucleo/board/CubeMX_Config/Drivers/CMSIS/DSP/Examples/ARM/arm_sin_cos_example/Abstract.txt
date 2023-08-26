@@ -1,0 +1,10 @@
+CMSIS DSP_Lib example arm_sin_cos_example.
+
+The example is available for different targets:
+  Cortex-M0
+  Cortex-M3
+  Cortex-M4 with FPU
+  Cortex-M7 with single precision FPU
+  Cortex-M55 with double precision FPU, Integer + Floating Point MVE
+
+The example is configured for Models Debugger

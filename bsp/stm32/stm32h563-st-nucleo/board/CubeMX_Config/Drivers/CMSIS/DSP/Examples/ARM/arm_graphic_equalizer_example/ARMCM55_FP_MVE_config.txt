@@ -1,0 +1,25 @@
+# Parameters:
+# instance.parameter=value       #(type, mode) default = 'def value' : description : [min..max]
+#------------------------------------------------------------------------------
+cpu0.semihosting-enable=0                             # (bool  , init-time) default = '1'      : Enable semihosting SVC traps. Applications that do not use semihosting must set this parameter to false.
+cpu0.cpi_div=1                                        # (int   , run-time ) default = '0x1'    : divider for calculating CPI (Cycles Per Instruction)
+cpu0.cpi_mul=1                                        # (int   , run-time ) default = '0x1'    : multiplier for calculating CPI (Cycles Per Instruction)
+cpu0.min_sync_level=3                                 # (int   , run-time ) default = '0x0'    : force minimum syncLevel (0=off=default,1=syncState,2=postInsnIO,3=postInsnAll)
+cpu0.FPU=1                                            # (bool  , init-time) default = '1'      : Set whether the model has VFP support
+cpu0.MVE=2                                            # (int   , init-time) default = '0x1'    : Set whether the model has MVE support. If FPU = 0: 0=MVE not included, 1=Integer subset of MVE included. If FPU = 1: 0=MVE not included, 1=Integer subset of MVE included, 2=Integer and half and single precision floating point MVE included
+cpu0.SAU=0                                            # (int   , init-time) default = '0x8'    : Number of SAU regions (0 => no SAU)
+cpu0.SECEXT=0                                         # (bool  , init-time) default = '1'      : Whether the ARMv8-M Security Extensions are included
+cpu0.INITSVTOR=0                                      # (int   , init-time) default = '0x10000000' : Secure vector-table offset at reset
+cpu0.INITNSVTOR=0                                     # (int   , init-time) default = '0x0'    : Non-Secure vector-table offset at reset
+#
+cpu1.semihosting-enable=0                             # (bool  , init-time) default = '1'      : Enable semihosting SVC traps. Applications that do not use semihosting must set this parameter to false.
+cpu1.cpi_div=1                                        # (int   , run-time ) default = '0x1'    : divider for calculating CPI (Cycles Per Instruction)
+cpu1.cpi_mul=1                                        # (int   , run-time ) default = '0x1'    : multiplier for calculating CPI (Cycles Per Instruction)
+cpu1.min_sync_level=3                                 # (int   , run-time ) default = '0x0'    : force minimum syncLevel (0=off=default,1=syncState,2=postInsnIO,3=postInsnAll)
+cpu1.FPU=1                                            # (bool  , init-time) default = '1'      : Set whether the model has VFP support
+cpu1.MVE=2                                            # (int   , init-time) default = '0x1'    : Set whether the model has MVE support. If FPU = 0: 0=MVE not included, 1=Integer subset of MVE included. If FPU = 1: 0=MVE not included, 1=Integer subset of MVE included, 2=Integer and half and single precision floating point MVE included
+cpu1.SAU=0                                            # (int   , init-time) default = '0x8'    : Number of SAU regions (0 => no SAU)
+cpu1.SECEXT=0                                         # (bool  , init-time) default = '1'      : Whether the ARMv8-M Security Extensions are included
+cpu1.INITSVTOR=0                                      # (int   , init-time) default = '0x10000000' : Secure vector-table offset at reset
+cpu1.INITNSVTOR=0                                     # (int   , init-time) default = '0x0'    : Non-Secure vector-table offset at reset
+#------------------------------------------------------------------------------
