@@ -40,7 +40,6 @@ if GetDepend(['RT_USING_I2C']):
 if GetDepend(['RT_USING_SPI']):
     src += ['stm32h5xx_HAL_Driver/Src/stm32h5xx_hal_spi.c']
     src += ['stm32h5xx_HAL_Driver/Src/stm32h5xx_hal_spi_ex.c']
-    src += ['stm32h5xx_HAL_Driver/Src/stm32h5xx_hal_ospi.c']
 
 if GetDepend(['RT_USING_USB']):
     src += ['stm32h5xx_HAL_Driver/Src/stm32h5xx_hal_hcd.c']
