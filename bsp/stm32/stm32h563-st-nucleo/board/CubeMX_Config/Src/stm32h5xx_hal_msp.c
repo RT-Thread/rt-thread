@@ -22,7 +22,7 @@
 #include "main.h"
 
 /* USER CODE BEGIN Includes */
-
+#include <drv_common.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/

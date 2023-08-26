@@ -71,6 +71,11 @@ config SOC_SERIES_STM32U5
     select ARCH_ARM_CORTEX_M33
     select SOC_FAMILY_STM32
 
+config SOC_SERIES_STM32H5
+    bool
+    select ARCH_ARM_CORTEX_M33
+    select SOC_FAMILY_STM32
+
 config SOC_SERIES_STM32MP1
     bool
     select ARCH_ARM_CORTEX_M4

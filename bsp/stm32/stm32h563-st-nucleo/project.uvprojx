@@ -14,16 +14,16 @@
       <uAC6>1</uAC6>
       <TargetOption>
         <TargetCommonOption>
-          <Device>STM32U575ZITx</Device>
+          <Device>STM32H563ZITx</Device>
           <Vendor>STMicroelectronics</Vendor>
-          <PackID>Keil.STM32U5xx_DFP.2.1.0</PackID>
+          <PackID>Keil.STM32H5xx_DFP.1.1.0</PackID>
           <PackURL>https://www.keil.com/pack/</PackURL>
-          <Cpu>IROM(0x08000000-0x81FFFFF) IRAM(0x20000000-0x200BFFFF) CLOCK(8000000) FPU3(SFPU) CPUTYPE("Cortex-M33") ELITTLE TZ</Cpu>
+          <Cpu>IRAM(0x20000000,0x00050000) IRAM2(0x20050000,0x00050000) IROM(0x08000000,0x00200000) CPUTYPE("Cortex-M33") FPU3(SFPU) DSP TZ CLOCK(12000000) ELITTLE</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
           <StartupFile></StartupFile>
-          <FlashDriverDll></FlashDriverDll>
+          <FlashDriverDll>UL2V8M(-S0 -C0 -P0 -FD20000000 -FC8000 -FN2 -FF0STM32H5xx_2M_0800 -FS08000000 -FL0200000 -FF1STM32H5xx_2M_0C00 -FS1C000000 -FL1200000 -FP0($$Device:STM32H563ZITx$CMSIS\Flash\STM32H5xx_2M_0800.FLM) -FP1($$Device:STM32H563ZITx$CMSIS\Flash\STM32H5xx_2M_0C00.FLM))</FlashDriverDll>
           <DeviceId>0</DeviceId>
-          <RegisterFile></RegisterFile>
+          <RegisterFile>$$Device:STM32H563ZITx$Drivers\CMSIS\Device\ST\STM32H5xx\Include\stm32h5xx.h</RegisterFile>
           <MemoryEnv></MemoryEnv>
           <Cmp></Cmp>
           <Asm></Asm>
@@ -33,7 +33,7 @@
           <SLE66CMisc></SLE66CMisc>
           <SLE66AMisc></SLE66AMisc>
           <SLE66LinkerMisc></SLE66LinkerMisc>
-          <SFDFile>$$Device:STM32U575ZITx$CMSIS\SVD\STM32U5xx.svd</SFDFile>
+          <SFDFile>$$Device:STM32H563ZITx$CMSIS\SVD\STM32H563.svd</SFDFile>
           <bCustSvd>0</bCustSvd>
           <UseEnv>0</UseEnv>
           <BinPath></BinPath>
@@ -114,7 +114,7 @@
           <SimDlgDll></SimDlgDll>
           <SimDlgDllArguments></SimDlgDllArguments>
           <TargetDllName>SARMV8M.DLL</TargetDllName>
-          <TargetDllArguments>-MPU</TargetDllArguments>
+          <TargetDllArguments> -MPU</TargetDllArguments>
           <TargetDlgDll>TCM.DLL</TargetDlgDll>
           <TargetDlgDllArguments>-pCM33</TargetDlgDllArguments>
         </DllOption>
@@ -138,7 +138,7 @@
           </Flash1>
           <bUseTDR>1</bUseTDR>
           <Flash2>BIN\UL2V8M.DLL</Flash2>
-          <Flash3>"" ()</Flash3>
+          <Flash3></Flash3>
           <Flash4></Flash4>
           <pFcarmOut></pFcarmOut>
           <pFcarmGrp></pFcarmGrp>
@@ -186,10 +186,10 @@
             <RvdsVP>2</RvdsVP>
             <RvdsMve>0</RvdsMve>
             <RvdsCdeCp>0</RvdsCdeCp>
-            <hadIRAM2>0</hadIRAM2>
+            <hadIRAM2>1</hadIRAM2>
             <hadIROM2>0</hadIROM2>
             <StupSel>8</StupSel>
-            <useUlib>1</useUlib>
+            <useUlib>0</useUlib>
             <EndSel>0</EndSel>
             <uLtcg>0</uLtcg>
             <nSecure>0</nSecure>
@@ -246,7 +246,7 @@
               <IRAM>
                 <Type>0</Type>
                 <StartAddress>0x20000000</StartAddress>
-                <Size>0xc0000</Size>
+                <Size>0x50000</Size>
               </IRAM>
               <IROM>
                 <Type>1</Type>
@@ -301,12 +301,12 @@
               <OCR_RVCT9>
                 <Type>0</Type>
                 <StartAddress>0x20000000</StartAddress>
-                <Size>0xc0000</Size>
+                <Size>0x50000</Size>
               </OCR_RVCT9>
               <OCR_RVCT10>
                 <Type>0</Type>
-                <StartAddress>0x0</StartAddress>
-                <Size>0x0</Size>
+                <StartAddress>0x20050000</StartAddress>
+                <Size>0x50000</Size>
               </OCR_RVCT10>
             </OnChipMemories>
             <RvctStartVector></RvctStartVector>
@@ -337,9 +337,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls></MiscControls>
-              <Define>__STDC_LIMIT_MACROS, STM32U575xx, USE_HAL_DRIVER, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__, RT_USING_ARMLIBC</Define>
+              <Define>STM32H563xx, __STDC_LIMIT_MACROS, RT_USING_ARMLIBC, USE_HAL_DRIVER, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__</Define>
               <Undefine></Undefine>
-              <IncludePath>.;..\..\..\components\drivers\include;..\..\..\libcpu\arm\common;..\..\..\components\libc\compilers\common\include;..\libraries\STM32U5xx_HAL\CMSIS\Device\ST\STM32U5xx\Include;..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Inc;..\..\..\components\drivers\include;..\libraries\HAL_Drivers\config;..\..\..\components\libc\posix\ipc;..\libraries\HAL_Drivers;..\..\..\include;..\..\..\components\drivers\spi;..\..\..\components\drivers\include;..\..\..\components\libc\posix\io\poll;..\..\..\components\drivers\include;..\..\..\components\finsh;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\components\drivers\include;..\..\..\libcpu\arm\cortex-m33;..\libraries\HAL_Drivers\CMSIS\Include;..\..\..\components\libc\compilers\common\extension;applications;board\CubeMX_Config\Inc;board;..\..\..\components\libc\posix\io\stdio</IncludePath>
+              <IncludePath>..\..\..\components\libc\compilers\common\include;.;..\..\..\components\drivers\include;..\libraries\HAL_Drivers\CMSIS\Include;..\..\..\components\libc\posix\io\poll;..\libraries\HAL_Drivers\config;..\..\..\components\libc\compilers\common\extension;..\..\..\components\drivers\spi;..\..\..\libcpu\arm\common;..\libraries\stm32h5xx_HAL\stm32h5xx_HAL_Driver\Inc;..\..\..\libcpu\arm\cortex-m33;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\libc\posix\ipc;..\libraries\HAL_Drivers;..\..\..\include;..\..\..\components\libc\posix\io\epoll;..\..\..\components\drivers\include;..\..\..\components\finsh;..\libraries\stm32h5xx_HAL\CMSIS\Device\ST\stm32h5xx\Include;board\CubeMX_Config\Inc;..\..\..\components\libc\posix\io\eventfd;applications;board;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\libraries\HAL_Drivers\config\u5</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -409,11 +409,6 @@
               <FilePath>..\..\..\components\libc\compilers\common\cctype.c</FilePath>
             </File>
             <File>
-              <FileName>cstdio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\compilers\common\cstdio.c</FilePath>
-            </File>
-            <File>
               <FileName>cstdlib.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\libc\compilers\common\cstdlib.c</FilePath>
@@ -427,6 +422,11 @@
               <FileName>ctime.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\libc\compilers\common\ctime.c</FilePath>
+            </File>
+            <File>
+              <FileName>cunistd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\libc\compilers\common\cunistd.c</FilePath>
             </File>
             <File>
               <FileName>cwchar.c</FileName>
@@ -478,6 +478,11 @@
         <Group>
           <GroupName>DeviceDrivers</GroupName>
           <Files>
+            <File>
+              <FileName>device.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\core\device.c</FilePath>
+            </File>
             <File>
               <FileName>i2c-bit-ops.c</FileName>
               <FileType>1</FileType>
@@ -564,21 +569,6 @@
           <GroupName>Drivers</GroupName>
           <Files>
             <File>
-              <FileName>startup_stm32u575xx.s</FileName>
-              <FileType>2</FileType>
-              <FilePath>..\libraries\STM32U5xx_HAL\CMSIS\Device\ST\STM32U5xx\Source\Templates\arm\startup_stm32u575xx.s</FilePath>
-            </File>
-            <File>
-              <FileName>stm32u5xx_hal_msp.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>board\CubeMX_Config\Src\stm32u5xx_hal_msp.c</FilePath>
-            </File>
-            <File>
-              <FileName>board.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>board\board.c</FilePath>
-            </File>
-            <File>
               <FileName>drv_adc.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\HAL_Drivers\drv_adc.c</FilePath>
@@ -602,6 +592,21 @@
               <FileName>drv_usart.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\HAL_Drivers\drv_usart.c</FilePath>
+            </File>
+            <File>
+              <FileName>startup_stm32h563xx.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>..\libraries\stm32h5xx_HAL\CMSIS\Device\ST\stm32h5xx\Source\Templates\arm\startup_stm32h563xx.s</FilePath>
+            </File>
+            <File>
+              <FileName>stm32h5xx_hal_msp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>board\CubeMX_Config\Src\stm32h5xx_hal_msp.c</FilePath>
+            </File>
+            <File>
+              <FileName>board.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>board\board.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -642,11 +647,6 @@
               <FileName>components.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\components.c</FilePath>
-            </File>
-            <File>
-              <FileName>device.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\device.c</FilePath>
             </File>
             <File>
               <FileName>idle.c</FileName>
@@ -704,164 +704,215 @@
           <GroupName>Libraries</GroupName>
           <Files>
             <File>
-              <FileName>stm32u5xx_hal_uart.c</FileName>
+              <FileName>stm32h5xx_hal_dma_ex.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_uart.c</FilePath>
+              <FilePath>..\libraries\stm32h5xx_HAL\stm32h5xx_HAL_Driver\Src\stm32h5xx_hal_dma_ex.c</FilePath>
             </File>
             <File>
-              <FileName>stm32u5xx_hal.c</FileName>
+              <FileName>stm32h5xx_hal_gpio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal.c</FilePath>
+              <FilePath>..\libraries\stm32h5xx_HAL\stm32h5xx_HAL_Driver\Src\stm32h5xx_hal_gpio.c</FilePath>
             </File>
             <File>
-              <FileName>stm32u5xx_hal_spi.c</FileName>
+              <FileName>stm32h5xx_hal_rcc_ex.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_spi.c</FilePath>
+              <FilePath>..\libraries\stm32h5xx_HAL\stm32h5xx_HAL_Driver\Src\stm32h5xx_hal_rcc_ex.c</FilePath>
             </File>
             <File>
-              <FileName>stm32u5xx_hal_crc.c</FileName>
+              <FileName>stm32h5xx_hal_i2c.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_crc.c</FilePath>
+              <FilePath>..\libraries\stm32h5xx_HAL\stm32h5xx_HAL_Driver\Src\stm32h5xx_hal_i2c.c</FilePath>
             </File>
             <File>
-              <FileName>stm32u5xx_hal_spi_ex.c</FileName>
+              <FileName>stm32h5xx_hal_icache.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_spi_ex.c</FilePath>
+              <FilePath>..\libraries\stm32h5xx_HAL\stm32h5xx_HAL_Driver\Src\stm32h5xx_hal_icache.c</FilePath>
             </File>
             <File>
-              <FileName>stm32u5xx_hal_icache.c</FileName>
+              <FileName>stm32h5xx_hal_adc_ex.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_icache.c</FilePath>
+              <FilePath>..\libraries\stm32h5xx_HAL\stm32h5xx_HAL_Driver\Src\stm32h5xx_hal_adc_ex.c</FilePath>
             </File>
             <File>
-              <FileName>stm32u5xx_hal_uart_ex.c</FileName>
+              <FileName>stm32h5xx_hal_uart_ex.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_uart_ex.c</FilePath>
+              <FilePath>..\libraries\stm32h5xx_HAL\stm32h5xx_HAL_Driver\Src\stm32h5xx_hal_uart_ex.c</FilePath>
             </File>
             <File>
-              <FileName>stm32u5xx_hal_dma.c</FileName>
+              <FileName>stm32h5xx_hal_i2c_ex.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_dma.c</FilePath>
+              <FilePath>..\libraries\stm32h5xx_HAL\stm32h5xx_HAL_Driver\Src\stm32h5xx_hal_i2c_ex.c</FilePath>
             </File>
             <File>
-              <FileName>stm32u5xx_hal_usart.c</FileName>
+              <FileName>stm32h5xx_hal_tim.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_usart.c</FilePath>
+              <FilePath>..\libraries\stm32h5xx_HAL\stm32h5xx_HAL_Driver\Src\stm32h5xx_hal_tim.c</FilePath>
             </File>
             <File>
-              <FileName>stm32u5xx_hal_pwr.c</FileName>
+              <FileName>stm32h5xx_hal_comp.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_pwr.c</FilePath>
+              <FilePath>..\libraries\stm32h5xx_HAL\stm32h5xx_HAL_Driver\Src\stm32h5xx_hal_comp.c</FilePath>
             </File>
             <File>
-              <FileName>stm32u5xx_hal_rcc.c</FileName>
+              <FileName>stm32h5xx_hal_cryp_ex.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_rcc.c</FilePath>
+              <FilePath>..\libraries\stm32h5xx_HAL\stm32h5xx_HAL_Driver\Src\stm32h5xx_hal_cryp_ex.c</FilePath>
             </File>
             <File>
-              <FileName>stm32u5xx_hal_gpio.c</FileName>
+              <FileName>stm32h5xx_hal_pwr.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_gpio.c</FilePath>
+              <FilePath>..\libraries\stm32h5xx_HAL\stm32h5xx_HAL_Driver\Src\stm32h5xx_hal_pwr.c</FilePath>
             </File>
             <File>
-              <FileName>stm32u5xx_hal_rng.c</FileName>
+              <FileName>stm32h5xx_hal_cryp.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_rng.c</FilePath>
+              <FilePath>..\libraries\stm32h5xx_HAL\stm32h5xx_HAL_Driver\Src\stm32h5xx_hal_cryp.c</FilePath>
             </File>
             <File>
-              <FileName>stm32u5xx_hal_tim.c</FileName>
+              <FileName>stm32h5xx_hal_usart_ex.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_tim.c</FilePath>
+              <FilePath>..\libraries\stm32h5xx_HAL\stm32h5xx_HAL_Driver\Src\stm32h5xx_hal_usart_ex.c</FilePath>
             </File>
             <File>
-              <FileName>stm32u5xx_hal_cortex.c</FileName>
+              <FileName>stm32h5xx_hal_exti.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_cortex.c</FilePath>
+              <FilePath>..\libraries\stm32h5xx_HAL\stm32h5xx_HAL_Driver\Src\stm32h5xx_hal_exti.c</FilePath>
             </File>
             <File>
-              <FileName>stm32u5xx_hal_ospi.c</FileName>
+              <FileName>stm32h5xx_hal_rng.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_ospi.c</FilePath>
+              <FilePath>..\libraries\stm32h5xx_HAL\stm32h5xx_HAL_Driver\Src\stm32h5xx_hal_rng.c</FilePath>
             </File>
             <File>
-              <FileName>stm32u5xx_hal_cryp.c</FileName>
+              <FileName>stm32h5xx_hal_crc_ex.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_cryp.c</FilePath>
+              <FilePath>..\libraries\stm32h5xx_HAL\stm32h5xx_HAL_Driver\Src\stm32h5xx_hal_crc_ex.c</FilePath>
             </File>
             <File>
-              <FileName>stm32u5xx_hal_crc_ex.c</FileName>
+              <FileName>stm32h5xx_hal_tim_ex.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_crc_ex.c</FilePath>
+              <FilePath>..\libraries\stm32h5xx_HAL\stm32h5xx_HAL_Driver\Src\stm32h5xx_hal_tim_ex.c</FilePath>
             </File>
             <File>
-              <FileName>stm32u5xx_hal_lptim.c</FileName>
+              <FileName>stm32h5xx_hal.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_lptim.c</FilePath>
+              <FilePath>..\libraries\stm32h5xx_HAL\stm32h5xx_HAL_Driver\Src\stm32h5xx_hal.c</FilePath>
             </File>
             <File>
-              <FileName>stm32u5xx_hal_rcc_ex.c</FileName>
+              <FileName>stm32h5xx_hal_ospi.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_rcc_ex.c</FilePath>
+              <FilePath>build\libraries\STM32H5xx_HAL\stm32h5xx_HAL_Driver\Src\stm32h5xx_hal_ospi.c</FilePath>
+              <FileOption>
+                <CommonProperty>
+                  <UseCPPCompiler>2</UseCPPCompiler>
+                  <RVCTCodeConst>0</RVCTCodeConst>
+                  <RVCTZI>0</RVCTZI>
+                  <RVCTOtherData>0</RVCTOtherData>
+                  <ModuleSelection>0</ModuleSelection>
+                  <IncludeInBuild>0</IncludeInBuild>
+                  <AlwaysBuild>2</AlwaysBuild>
+                  <GenerateAssemblyFile>2</GenerateAssemblyFile>
+                  <AssembleAssemblyFile>2</AssembleAssemblyFile>
+                  <PublicsOnly>2</PublicsOnly>
+                  <StopOnExitCode>11</StopOnExitCode>
+                  <CustomArgument></CustomArgument>
+                  <IncludeLibraryModules></IncludeLibraryModules>
+                  <ComprImg>1</ComprImg>
+                </CommonProperty>
+                <FileArmAds>
+                  <Cads>
+                    <interw>2</interw>
+                    <Optim>0</Optim>
+                    <oTime>2</oTime>
+                    <SplitLS>2</SplitLS>
+                    <OneElfS>2</OneElfS>
+                    <Strict>2</Strict>
+                    <EnumInt>2</EnumInt>
+                    <PlainCh>2</PlainCh>
+                    <Ropi>2</Ropi>
+                    <Rwpi>2</Rwpi>
+                    <wLevel>0</wLevel>
+                    <uThumb>2</uThumb>
+                    <uSurpInc>2</uSurpInc>
+                    <uC99>2</uC99>
+                    <uGnu>2</uGnu>
+                    <useXO>2</useXO>
+                    <v6Lang>0</v6Lang>
+                    <v6LangP>0</v6LangP>
+                    <vShortEn>2</vShortEn>
+                    <vShortWch>2</vShortWch>
+                    <v6Lto>2</v6Lto>
+                    <v6WtE>2</v6WtE>
+                    <v6Rtti>2</v6Rtti>
+                    <VariousControls>
+                      <MiscControls></MiscControls>
+                      <Define></Define>
+                      <Undefine></Undefine>
+                      <IncludePath></IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
             <File>
-              <FileName>stm32u5xx_hal_i2c.c</FileName>
+              <FileName>system_stm32h5xx.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_i2c.c</FilePath>
+              <FilePath>..\libraries\stm32h5xx_HAL\CMSIS\Device\ST\stm32h5xx\Source\Templates\system_stm32h5xx.c</FilePath>
             </File>
             <File>
-              <FileName>stm32u5xx_hal_usart_ex.c</FileName>
+              <FileName>stm32h5xx_hal_cortex.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_usart_ex.c</FilePath>
+              <FilePath>..\libraries\stm32h5xx_HAL\stm32h5xx_HAL_Driver\Src\stm32h5xx_hal_cortex.c</FilePath>
             </File>
             <File>
-              <FileName>stm32u5xx_hal_cryp_ex.c</FileName>
+              <FileName>stm32h5xx_hal_rcc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_cryp_ex.c</FilePath>
+              <FilePath>..\libraries\stm32h5xx_HAL\stm32h5xx_HAL_Driver\Src\stm32h5xx_hal_rcc.c</FilePath>
             </File>
             <File>
-              <FileName>system_stm32u5xx.c</FileName>
+              <FileName>stm32h5xx_hal_dma.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\STM32U5xx_HAL\CMSIS\Device\ST\STM32U5xx\Source\Templates\system_stm32u5xx.c</FilePath>
+              <FilePath>..\libraries\stm32h5xx_HAL\stm32h5xx_HAL_Driver\Src\stm32h5xx_hal_dma.c</FilePath>
             </File>
             <File>
-              <FileName>stm32u5xx_hal_pwr_ex.c</FileName>
+              <FileName>stm32h5xx_hal_uart.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_pwr_ex.c</FilePath>
+              <FilePath>..\libraries\stm32h5xx_HAL\stm32h5xx_HAL_Driver\Src\stm32h5xx_hal_uart.c</FilePath>
             </File>
             <File>
-              <FileName>stm32u5xx_hal_comp.c</FileName>
+              <FileName>stm32h5xx_hal_pwr_ex.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_comp.c</FilePath>
+              <FilePath>..\libraries\stm32h5xx_HAL\stm32h5xx_HAL_Driver\Src\stm32h5xx_hal_pwr_ex.c</FilePath>
             </File>
             <File>
-              <FileName>stm32u5xx_hal_i2c_ex.c</FileName>
+              <FileName>stm32h5xx_hal_spi.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_i2c_ex.c</FilePath>
+              <FilePath>..\libraries\stm32h5xx_HAL\stm32h5xx_HAL_Driver\Src\stm32h5xx_hal_spi.c</FilePath>
             </File>
             <File>
-              <FileName>stm32u5xx_hal_adc_ex.c</FileName>
+              <FileName>stm32h5xx_hal_adc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_adc_ex.c</FilePath>
+              <FilePath>..\libraries\stm32h5xx_HAL\stm32h5xx_HAL_Driver\Src\stm32h5xx_hal_adc.c</FilePath>
             </File>
             <File>
-              <FileName>stm32u5xx_hal_tim_ex.c</FileName>
+              <FileName>stm32h5xx_hal_spi_ex.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_tim_ex.c</FilePath>
+              <FilePath>..\libraries\stm32h5xx_HAL\stm32h5xx_HAL_Driver\Src\stm32h5xx_hal_spi_ex.c</FilePath>
             </File>
             <File>
-              <FileName>stm32u5xx_hal_dma_ex.c</FileName>
+              <FileName>stm32h5xx_hal_usart.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_dma_ex.c</FilePath>
+              <FilePath>..\libraries\stm32h5xx_HAL\stm32h5xx_HAL_Driver\Src\stm32h5xx_hal_usart.c</FilePath>
             </File>
             <File>
-              <FileName>stm32u5xx_hal_adc.c</FileName>
+              <FileName>stm32h5xx_hal_lptim.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_adc.c</FilePath>
+              <FilePath>..\libraries\stm32h5xx_HAL\stm32h5xx_HAL_Driver\Src\stm32h5xx_hal_lptim.c</FilePath>
             </File>
             <File>
-              <FileName>stm32u5xx_hal_exti.c</FileName>
+              <FileName>stm32h5xx_hal_crc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_exti.c</FilePath>
+              <FilePath>..\libraries\stm32h5xx_HAL\stm32h5xx_HAL_Driver\Src\stm32h5xx_hal_crc.c</FilePath>
             </File>
           </Files>
         </Group>

@@ -120,12 +120,12 @@
         <SetRegEntry>
           <Number>0</Number>
           <Key>UL2V8M</Key>
-          <Name>UL2V8M(-S0 -C0 -P0 -FD20000000 -FC1000 -FN2 -FF0STM32U5xx_2M_0800 -FS08000000 -FL0200000 -FF1STM32U5xx_2M_0C00 -FS1C000000 -FL1200000 -FP0($$Device:STM32U575ZITx$CMSIS\Flash\STM32U5xx_2M_0800.FLM) -FP1($$Device:STM32U575ZITx$CMSIS\Flash\STM32U5xx_2M_0C00.FLM))</Name>
+          <Name>UL2V8M(-S0 -C0 -P0 -FD20000000 -FC8000 -FN2 -FF0STM32H5xx_2M_0800 -FS08000000 -FL0200000 -FF1STM32H5xx_2M_0C00 -FS1C000000 -FL1200000 -FP0($$Device:STM32H563ZITx$CMSIS\Flash\STM32H5xx_2M_0800.FLM) -FP1($$Device:STM32H563ZITx$CMSIS\Flash\STM32H5xx_2M_0C00.FLM))</Name>
         </SetRegEntry>
         <SetRegEntry>
           <Number>0</Number>
           <Key>ST-LINKIII-KEIL_SWO</Key>
-          <Name>-U003200374741500720383733 -O2254 -SF10000 -C0 -A0 -I0 -HNlocalhost -HP7184 -P1 -N00("") -D00(00000000) -L00(0) -TO131090 -TC10000000 -TT10000000 -TP21 -TDS8007 -TDT0 -TDC1F -TIEFFFFFFFF -TIP8 -FO7 -FD20000000 -FC1000 -FN1 -FF0STM32U5xx_2M_0800.FLM -FS08000000 -FL0200000 -FP0($$Device:STM32U575ZITx$CMSIS\Flash\STM32U5xx_2M_0800.FLM)</Name>
+          <Name>-U001300334D46501220383832 -O2254 -SF10000 -C0 -A1 -I0 -HNlocalhost -HP7184 -P1 -N00("ARM CoreSight SW-DP (ARM Core") -D00(6BA02477) -L00(0) -TO131090 -TC10000000 -TT10000000 -TP21 -TDS8000 -TDT0 -TDC1F -TIEFFFFFFFF -TIP8 -FO15 -FD20000000 -FC1000 -FN1 -FF0STM32H5xx_2M_0800 -FS08000000 -FL0200000 -FP0($$Device:STM32H563ZITx$CMSIS\Flash\STM32H5xx_2M_0800.FLM)</Name>
         </SetRegEntry>
       </TargetDriverDllRegistry>
       <Breakpoint/>
@@ -250,18 +250,6 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\..\..\components\libc\compilers\common\cstdio.c</PathWithFileName>
-      <FilenameWithoutPath>cstdio.c</FilenameWithoutPath>
-      <RteFlg>0</RteFlg>
-      <bShared>0</bShared>
-    </File>
-    <File>
-      <GroupNumber>2</GroupNumber>
-      <FileNumber>6</FileNumber>
-      <FileType>1</FileType>
-      <tvExp>0</tvExp>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <bDave2>0</bDave2>
       <PathWithFileName>..\..\..\components\libc\compilers\common\cstdlib.c</PathWithFileName>
       <FilenameWithoutPath>cstdlib.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
@@ -269,7 +257,7 @@
     </File>
     <File>
       <GroupNumber>2</GroupNumber>
-      <FileNumber>7</FileNumber>
+      <FileNumber>6</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -281,13 +269,25 @@
     </File>
     <File>
       <GroupNumber>2</GroupNumber>
-      <FileNumber>8</FileNumber>
+      <FileNumber>7</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
       <PathWithFileName>..\..\..\components\libc\compilers\common\ctime.c</PathWithFileName>
       <FilenameWithoutPath>ctime.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>2</GroupNumber>
+      <FileNumber>8</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\..\..\components\libc\compilers\common\cunistd.c</PathWithFileName>
+      <FilenameWithoutPath>cunistd.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -410,6 +410,18 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
+      <PathWithFileName>..\..\..\components\drivers\core\device.c</PathWithFileName>
+      <FilenameWithoutPath>device.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>4</GroupNumber>
+      <FileNumber>18</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
       <PathWithFileName>..\..\..\components\drivers\i2c\i2c-bit-ops.c</PathWithFileName>
       <FilenameWithoutPath>i2c-bit-ops.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
@@ -417,7 +429,7 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
-      <FileNumber>18</FileNumber>
+      <FileNumber>19</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -429,7 +441,7 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
-      <FileNumber>19</FileNumber>
+      <FileNumber>20</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -441,7 +453,7 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
-      <FileNumber>20</FileNumber>
+      <FileNumber>21</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -453,7 +465,7 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
-      <FileNumber>21</FileNumber>
+      <FileNumber>22</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -465,7 +477,7 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
-      <FileNumber>22</FileNumber>
+      <FileNumber>23</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -477,7 +489,7 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
-      <FileNumber>23</FileNumber>
+      <FileNumber>24</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -489,7 +501,7 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
-      <FileNumber>24</FileNumber>
+      <FileNumber>25</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -501,7 +513,7 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
-      <FileNumber>25</FileNumber>
+      <FileNumber>26</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -513,7 +525,7 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
-      <FileNumber>26</FileNumber>
+      <FileNumber>27</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -525,7 +537,7 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
-      <FileNumber>27</FileNumber>
+      <FileNumber>28</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -537,7 +549,7 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
-      <FileNumber>28</FileNumber>
+      <FileNumber>29</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -549,7 +561,7 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
-      <FileNumber>29</FileNumber>
+      <FileNumber>30</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -561,7 +573,7 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
-      <FileNumber>30</FileNumber>
+      <FileNumber>31</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -573,7 +585,7 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
-      <FileNumber>31</FileNumber>
+      <FileNumber>32</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -585,7 +597,7 @@
     </File>
     <File>
       <GroupNumber>4</GroupNumber>
-      <FileNumber>32</FileNumber>
+      <FileNumber>33</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -605,43 +617,7 @@
     <RteFlg>0</RteFlg>
     <File>
       <GroupNumber>5</GroupNumber>
-      <FileNumber>33</FileNumber>
-      <FileType>2</FileType>
-      <tvExp>0</tvExp>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <bDave2>0</bDave2>
-      <PathWithFileName>..\libraries\STM32U5xx_HAL\CMSIS\Device\ST\STM32U5xx\Source\Templates\arm\startup_stm32u575xx.s</PathWithFileName>
-      <FilenameWithoutPath>startup_stm32u575xx.s</FilenameWithoutPath>
-      <RteFlg>0</RteFlg>
-      <bShared>0</bShared>
-    </File>
-    <File>
-      <GroupNumber>5</GroupNumber>
       <FileNumber>34</FileNumber>
-      <FileType>1</FileType>
-      <tvExp>0</tvExp>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <bDave2>0</bDave2>
-      <PathWithFileName>board\CubeMX_Config\Src\stm32u5xx_hal_msp.c</PathWithFileName>
-      <FilenameWithoutPath>stm32u5xx_hal_msp.c</FilenameWithoutPath>
-      <RteFlg>0</RteFlg>
-      <bShared>0</bShared>
-    </File>
-    <File>
-      <GroupNumber>5</GroupNumber>
-      <FileNumber>35</FileNumber>
-      <FileType>1</FileType>
-      <tvExp>0</tvExp>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <bDave2>0</bDave2>
-      <PathWithFileName>board\board.c</PathWithFileName>
-      <FilenameWithoutPath>board.c</FilenameWithoutPath>
-      <RteFlg>0</RteFlg>
-      <bShared>0</bShared>
-    </File>
-    <File>
-      <GroupNumber>5</GroupNumber>
-      <FileNumber>36</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -653,7 +629,7 @@
     </File>
     <File>
       <GroupNumber>5</GroupNumber>
-      <FileNumber>37</FileNumber>
+      <FileNumber>35</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -665,7 +641,7 @@
     </File>
     <File>
       <GroupNumber>5</GroupNumber>
-      <FileNumber>38</FileNumber>
+      <FileNumber>36</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -677,7 +653,7 @@
     </File>
     <File>
       <GroupNumber>5</GroupNumber>
-      <FileNumber>39</FileNumber>
+      <FileNumber>37</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -689,13 +665,49 @@
     </File>
     <File>
       <GroupNumber>5</GroupNumber>
-      <FileNumber>40</FileNumber>
+      <FileNumber>38</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
       <PathWithFileName>..\libraries\HAL_Drivers\drv_usart.c</PathWithFileName>
       <FilenameWithoutPath>drv_usart.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>5</GroupNumber>
+      <FileNumber>39</FileNumber>
+      <FileType>2</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>..\libraries\stm32h5xx_HAL\CMSIS\Device\ST\stm32h5xx\Source\Templates\arm\startup_stm32h563xx.s</PathWithFileName>
+      <FilenameWithoutPath>startup_stm32h563xx.s</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>5</GroupNumber>
+      <FileNumber>40</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>board\CubeMX_Config\Src\stm32h5xx_hal_msp.c</PathWithFileName>
+      <FilenameWithoutPath>stm32h5xx_hal_msp.c</FilenameWithoutPath>
+      <RteFlg>0</RteFlg>
+      <bShared>0</bShared>
+    </File>
+    <File>
+      <GroupNumber>5</GroupNumber>
+      <FileNumber>41</FileNumber>
+      <FileType>1</FileType>
+      <tvExp>0</tvExp>
+      <tvExpOptDlg>0</tvExpOptDlg>
+      <bDave2>0</bDave2>
+      <PathWithFileName>board\board.c</PathWithFileName>
+      <FilenameWithoutPath>board.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -709,7 +721,7 @@
     <RteFlg>0</RteFlg>
     <File>
       <GroupNumber>6</GroupNumber>
-      <FileNumber>41</FileNumber>
+      <FileNumber>42</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -721,7 +733,7 @@
     </File>
     <File>
       <GroupNumber>6</GroupNumber>
-      <FileNumber>42</FileNumber>
+      <FileNumber>43</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -733,7 +745,7 @@
     </File>
     <File>
       <GroupNumber>6</GroupNumber>
-      <FileNumber>43</FileNumber>
+      <FileNumber>44</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -745,7 +757,7 @@
     </File>
     <File>
       <GroupNumber>6</GroupNumber>
-      <FileNumber>44</FileNumber>
+      <FileNumber>45</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -765,7 +777,7 @@
     <RteFlg>0</RteFlg>
     <File>
       <GroupNumber>7</GroupNumber>
-      <FileNumber>45</FileNumber>
+      <FileNumber>46</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -777,25 +789,13 @@
     </File>
     <File>
       <GroupNumber>7</GroupNumber>
-      <FileNumber>46</FileNumber>
+      <FileNumber>47</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
       <PathWithFileName>..\..\..\src\components.c</PathWithFileName>
       <FilenameWithoutPath>components.c</FilenameWithoutPath>
-      <RteFlg>0</RteFlg>
-      <bShared>0</bShared>
-    </File>
-    <File>
-      <GroupNumber>7</GroupNumber>
-      <FileNumber>47</FileNumber>
-      <FileType>1</FileType>
-      <tvExp>0</tvExp>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <bDave2>0</bDave2>
-      <PathWithFileName>..\..\..\src\device.c</PathWithFileName>
-      <FilenameWithoutPath>device.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -934,8 +934,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_uart.c</PathWithFileName>
-      <FilenameWithoutPath>stm32u5xx_hal_uart.c</FilenameWithoutPath>
+      <PathWithFileName>..\libraries\stm32h5xx_HAL\stm32h5xx_HAL_Driver\Src\stm32h5xx_hal_dma_ex.c</PathWithFileName>
+      <FilenameWithoutPath>stm32h5xx_hal_dma_ex.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -946,8 +946,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal.c</PathWithFileName>
-      <FilenameWithoutPath>stm32u5xx_hal.c</FilenameWithoutPath>
+      <PathWithFileName>..\libraries\stm32h5xx_HAL\stm32h5xx_HAL_Driver\Src\stm32h5xx_hal_gpio.c</PathWithFileName>
+      <FilenameWithoutPath>stm32h5xx_hal_gpio.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -958,8 +958,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_spi.c</PathWithFileName>
-      <FilenameWithoutPath>stm32u5xx_hal_spi.c</FilenameWithoutPath>
+      <PathWithFileName>..\libraries\stm32h5xx_HAL\stm32h5xx_HAL_Driver\Src\stm32h5xx_hal_rcc_ex.c</PathWithFileName>
+      <FilenameWithoutPath>stm32h5xx_hal_rcc_ex.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -970,8 +970,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_crc.c</PathWithFileName>
-      <FilenameWithoutPath>stm32u5xx_hal_crc.c</FilenameWithoutPath>
+      <PathWithFileName>..\libraries\stm32h5xx_HAL\stm32h5xx_HAL_Driver\Src\stm32h5xx_hal_i2c.c</PathWithFileName>
+      <FilenameWithoutPath>stm32h5xx_hal_i2c.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -982,8 +982,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_spi_ex.c</PathWithFileName>
-      <FilenameWithoutPath>stm32u5xx_hal_spi_ex.c</FilenameWithoutPath>
+      <PathWithFileName>..\libraries\stm32h5xx_HAL\stm32h5xx_HAL_Driver\Src\stm32h5xx_hal_icache.c</PathWithFileName>
+      <FilenameWithoutPath>stm32h5xx_hal_icache.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -994,8 +994,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_icache.c</PathWithFileName>
-      <FilenameWithoutPath>stm32u5xx_hal_icache.c</FilenameWithoutPath>
+      <PathWithFileName>..\libraries\stm32h5xx_HAL\stm32h5xx_HAL_Driver\Src\stm32h5xx_hal_adc_ex.c</PathWithFileName>
+      <FilenameWithoutPath>stm32h5xx_hal_adc_ex.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -1006,8 +1006,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_uart_ex.c</PathWithFileName>
-      <FilenameWithoutPath>stm32u5xx_hal_uart_ex.c</FilenameWithoutPath>
+      <PathWithFileName>..\libraries\stm32h5xx_HAL\stm32h5xx_HAL_Driver\Src\stm32h5xx_hal_uart_ex.c</PathWithFileName>
+      <FilenameWithoutPath>stm32h5xx_hal_uart_ex.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -1018,8 +1018,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_dma.c</PathWithFileName>
-      <FilenameWithoutPath>stm32u5xx_hal_dma.c</FilenameWithoutPath>
+      <PathWithFileName>..\libraries\stm32h5xx_HAL\stm32h5xx_HAL_Driver\Src\stm32h5xx_hal_i2c_ex.c</PathWithFileName>
+      <FilenameWithoutPath>stm32h5xx_hal_i2c_ex.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -1030,8 +1030,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_usart.c</PathWithFileName>
-      <FilenameWithoutPath>stm32u5xx_hal_usart.c</FilenameWithoutPath>
+      <PathWithFileName>..\libraries\stm32h5xx_HAL\stm32h5xx_HAL_Driver\Src\stm32h5xx_hal_tim.c</PathWithFileName>
+      <FilenameWithoutPath>stm32h5xx_hal_tim.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -1042,8 +1042,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_pwr.c</PathWithFileName>
-      <FilenameWithoutPath>stm32u5xx_hal_pwr.c</FilenameWithoutPath>
+      <PathWithFileName>..\libraries\stm32h5xx_HAL\stm32h5xx_HAL_Driver\Src\stm32h5xx_hal_comp.c</PathWithFileName>
+      <FilenameWithoutPath>stm32h5xx_hal_comp.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -1054,8 +1054,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_rcc.c</PathWithFileName>
-      <FilenameWithoutPath>stm32u5xx_hal_rcc.c</FilenameWithoutPath>
+      <PathWithFileName>..\libraries\stm32h5xx_HAL\stm32h5xx_HAL_Driver\Src\stm32h5xx_hal_cryp_ex.c</PathWithFileName>
+      <FilenameWithoutPath>stm32h5xx_hal_cryp_ex.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -1066,8 +1066,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_gpio.c</PathWithFileName>
-      <FilenameWithoutPath>stm32u5xx_hal_gpio.c</FilenameWithoutPath>
+      <PathWithFileName>..\libraries\stm32h5xx_HAL\stm32h5xx_HAL_Driver\Src\stm32h5xx_hal_pwr.c</PathWithFileName>
+      <FilenameWithoutPath>stm32h5xx_hal_pwr.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -1078,8 +1078,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_rng.c</PathWithFileName>
-      <FilenameWithoutPath>stm32u5xx_hal_rng.c</FilenameWithoutPath>
+      <PathWithFileName>..\libraries\stm32h5xx_HAL\stm32h5xx_HAL_Driver\Src\stm32h5xx_hal_cryp.c</PathWithFileName>
+      <FilenameWithoutPath>stm32h5xx_hal_cryp.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -1090,8 +1090,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_tim.c</PathWithFileName>
-      <FilenameWithoutPath>stm32u5xx_hal_tim.c</FilenameWithoutPath>
+      <PathWithFileName>..\libraries\stm32h5xx_HAL\stm32h5xx_HAL_Driver\Src\stm32h5xx_hal_usart_ex.c</PathWithFileName>
+      <FilenameWithoutPath>stm32h5xx_hal_usart_ex.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -1102,8 +1102,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_cortex.c</PathWithFileName>
-      <FilenameWithoutPath>stm32u5xx_hal_cortex.c</FilenameWithoutPath>
+      <PathWithFileName>..\libraries\stm32h5xx_HAL\stm32h5xx_HAL_Driver\Src\stm32h5xx_hal_exti.c</PathWithFileName>
+      <FilenameWithoutPath>stm32h5xx_hal_exti.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -1114,8 +1114,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_ospi.c</PathWithFileName>
-      <FilenameWithoutPath>stm32u5xx_hal_ospi.c</FilenameWithoutPath>
+      <PathWithFileName>..\libraries\stm32h5xx_HAL\stm32h5xx_HAL_Driver\Src\stm32h5xx_hal_rng.c</PathWithFileName>
+      <FilenameWithoutPath>stm32h5xx_hal_rng.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -1126,8 +1126,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_cryp.c</PathWithFileName>
-      <FilenameWithoutPath>stm32u5xx_hal_cryp.c</FilenameWithoutPath>
+      <PathWithFileName>..\libraries\stm32h5xx_HAL\stm32h5xx_HAL_Driver\Src\stm32h5xx_hal_crc_ex.c</PathWithFileName>
+      <FilenameWithoutPath>stm32h5xx_hal_crc_ex.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -1138,8 +1138,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_crc_ex.c</PathWithFileName>
-      <FilenameWithoutPath>stm32u5xx_hal_crc_ex.c</FilenameWithoutPath>
+      <PathWithFileName>..\libraries\stm32h5xx_HAL\stm32h5xx_HAL_Driver\Src\stm32h5xx_hal_tim_ex.c</PathWithFileName>
+      <FilenameWithoutPath>stm32h5xx_hal_tim_ex.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -1150,8 +1150,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_lptim.c</PathWithFileName>
-      <FilenameWithoutPath>stm32u5xx_hal_lptim.c</FilenameWithoutPath>
+      <PathWithFileName>..\libraries\stm32h5xx_HAL\stm32h5xx_HAL_Driver\Src\stm32h5xx_hal.c</PathWithFileName>
+      <FilenameWithoutPath>stm32h5xx_hal.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -1162,8 +1162,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_rcc_ex.c</PathWithFileName>
-      <FilenameWithoutPath>stm32u5xx_hal_rcc_ex.c</FilenameWithoutPath>
+      <PathWithFileName>build\libraries\STM32H5xx_HAL\stm32h5xx_HAL_Driver\Src\stm32h5xx_hal_ospi.c</PathWithFileName>
+      <FilenameWithoutPath>stm32h5xx_hal_ospi.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -1174,8 +1174,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_i2c.c</PathWithFileName>
-      <FilenameWithoutPath>stm32u5xx_hal_i2c.c</FilenameWithoutPath>
+      <PathWithFileName>..\libraries\stm32h5xx_HAL\CMSIS\Device\ST\stm32h5xx\Source\Templates\system_stm32h5xx.c</PathWithFileName>
+      <FilenameWithoutPath>system_stm32h5xx.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -1186,8 +1186,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_usart_ex.c</PathWithFileName>
-      <FilenameWithoutPath>stm32u5xx_hal_usart_ex.c</FilenameWithoutPath>
+      <PathWithFileName>..\libraries\stm32h5xx_HAL\stm32h5xx_HAL_Driver\Src\stm32h5xx_hal_cortex.c</PathWithFileName>
+      <FilenameWithoutPath>stm32h5xx_hal_cortex.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -1198,8 +1198,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_cryp_ex.c</PathWithFileName>
-      <FilenameWithoutPath>stm32u5xx_hal_cryp_ex.c</FilenameWithoutPath>
+      <PathWithFileName>..\libraries\stm32h5xx_HAL\stm32h5xx_HAL_Driver\Src\stm32h5xx_hal_rcc.c</PathWithFileName>
+      <FilenameWithoutPath>stm32h5xx_hal_rcc.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -1210,8 +1210,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\libraries\STM32U5xx_HAL\CMSIS\Device\ST\STM32U5xx\Source\Templates\system_stm32u5xx.c</PathWithFileName>
-      <FilenameWithoutPath>system_stm32u5xx.c</FilenameWithoutPath>
+      <PathWithFileName>..\libraries\stm32h5xx_HAL\stm32h5xx_HAL_Driver\Src\stm32h5xx_hal_dma.c</PathWithFileName>
+      <FilenameWithoutPath>stm32h5xx_hal_dma.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -1222,8 +1222,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_pwr_ex.c</PathWithFileName>
-      <FilenameWithoutPath>stm32u5xx_hal_pwr_ex.c</FilenameWithoutPath>
+      <PathWithFileName>..\libraries\stm32h5xx_HAL\stm32h5xx_HAL_Driver\Src\stm32h5xx_hal_uart.c</PathWithFileName>
+      <FilenameWithoutPath>stm32h5xx_hal_uart.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -1234,8 +1234,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_comp.c</PathWithFileName>
-      <FilenameWithoutPath>stm32u5xx_hal_comp.c</FilenameWithoutPath>
+      <PathWithFileName>..\libraries\stm32h5xx_HAL\stm32h5xx_HAL_Driver\Src\stm32h5xx_hal_pwr_ex.c</PathWithFileName>
+      <FilenameWithoutPath>stm32h5xx_hal_pwr_ex.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -1246,8 +1246,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_i2c_ex.c</PathWithFileName>
-      <FilenameWithoutPath>stm32u5xx_hal_i2c_ex.c</FilenameWithoutPath>
+      <PathWithFileName>..\libraries\stm32h5xx_HAL\stm32h5xx_HAL_Driver\Src\stm32h5xx_hal_spi.c</PathWithFileName>
+      <FilenameWithoutPath>stm32h5xx_hal_spi.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -1258,8 +1258,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_adc_ex.c</PathWithFileName>
-      <FilenameWithoutPath>stm32u5xx_hal_adc_ex.c</FilenameWithoutPath>
+      <PathWithFileName>..\libraries\stm32h5xx_HAL\stm32h5xx_HAL_Driver\Src\stm32h5xx_hal_adc.c</PathWithFileName>
+      <FilenameWithoutPath>stm32h5xx_hal_adc.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -1270,8 +1270,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_tim_ex.c</PathWithFileName>
-      <FilenameWithoutPath>stm32u5xx_hal_tim_ex.c</FilenameWithoutPath>
+      <PathWithFileName>..\libraries\stm32h5xx_HAL\stm32h5xx_HAL_Driver\Src\stm32h5xx_hal_spi_ex.c</PathWithFileName>
+      <FilenameWithoutPath>stm32h5xx_hal_spi_ex.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -1282,8 +1282,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_dma_ex.c</PathWithFileName>
-      <FilenameWithoutPath>stm32u5xx_hal_dma_ex.c</FilenameWithoutPath>
+      <PathWithFileName>..\libraries\stm32h5xx_HAL\stm32h5xx_HAL_Driver\Src\stm32h5xx_hal_usart.c</PathWithFileName>
+      <FilenameWithoutPath>stm32h5xx_hal_usart.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -1294,8 +1294,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_adc.c</PathWithFileName>
-      <FilenameWithoutPath>stm32u5xx_hal_adc.c</FilenameWithoutPath>
+      <PathWithFileName>..\libraries\stm32h5xx_HAL\stm32h5xx_HAL_Driver\Src\stm32h5xx_hal_lptim.c</PathWithFileName>
+      <FilenameWithoutPath>stm32h5xx_hal_lptim.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -1306,8 +1306,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_exti.c</PathWithFileName>
-      <FilenameWithoutPath>stm32u5xx_hal_exti.c</FilenameWithoutPath>
+      <PathWithFileName>..\libraries\stm32h5xx_HAL\stm32h5xx_HAL_Driver\Src\stm32h5xx_hal_crc.c</PathWithFileName>
+      <FilenameWithoutPath>stm32h5xx_hal_crc.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>

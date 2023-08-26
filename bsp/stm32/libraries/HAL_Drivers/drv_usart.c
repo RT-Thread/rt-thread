@@ -317,7 +317,7 @@ static int stm32_putc(struct rt_serial_device *serial, char c)
 #if defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32WL) || defined(SOC_SERIES_STM32F7) || defined(SOC_SERIES_STM32F0) \
     || defined(SOC_SERIES_STM32L0) || defined(SOC_SERIES_STM32G0) || defined(SOC_SERIES_STM32H7) || defined(SOC_SERIES_STM32L5) \
     || defined(SOC_SERIES_STM32G4) || defined(SOC_SERIES_STM32MP1) || defined(SOC_SERIES_STM32WB) || defined(SOC_SERIES_STM32F3)  \
-    || defined(SOC_SERIES_STM32U5)
+    || defined(SOC_SERIES_STM32U5) || defined(SOC_SERIES_STM32H5)
     uart->handle.Instance->TDR = c;
 #else
     uart->handle.Instance->DR = c;
@@ -339,7 +339,7 @@ static int stm32_getc(struct rt_serial_device *serial)
 #if defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32WL) || defined(SOC_SERIES_STM32F7) || defined(SOC_SERIES_STM32F0) \
     || defined(SOC_SERIES_STM32L0) || defined(SOC_SERIES_STM32G0) || defined(SOC_SERIES_STM32H7) || defined(SOC_SERIES_STM32L5) \
     || defined(SOC_SERIES_STM32G4) || defined(SOC_SERIES_STM32MP1) || defined(SOC_SERIES_STM32WB)|| defined(SOC_SERIES_STM32F3) \
-    || defined(SOC_SERIES_STM32U5)
+    || defined(SOC_SERIES_STM32U5) || defined(SOC_SERIES_STM32H5)
         ch = uart->handle.Instance->RDR & uart->DR_mask;
 #else
         ch = uart->handle.Instance->DR & uart->DR_mask;
@@ -477,7 +477,7 @@ static void uart_isr(struct rt_serial_device *serial)
 #if !defined(SOC_SERIES_STM32L4) && !defined(SOC_SERIES_STM32WL) && !defined(SOC_SERIES_STM32F7) && !defined(SOC_SERIES_STM32F0) \
     && !defined(SOC_SERIES_STM32L0) && !defined(SOC_SERIES_STM32G0) && !defined(SOC_SERIES_STM32H7) \
     && !defined(SOC_SERIES_STM32G4) && !defined(SOC_SERIES_STM32MP1) && !defined(SOC_SERIES_STM32WB) \
-    && !defined(SOC_SERIES_STM32L5) && !defined(SOC_SERIES_STM32U5)
+    && !defined(SOC_SERIES_STM32L5) && !defined(SOC_SERIES_STM32U5) && !defined(SOC_SERIES_STM32H5)
 #ifdef SOC_SERIES_STM32F3
         if (__HAL_UART_GET_FLAG(&(uart->handle), UART_FLAG_LBDF) != RESET)
         {
@@ -1003,7 +1003,7 @@ static void stm32_dma_config(struct rt_serial_device *serial, rt_ubase_t flag)
         __HAL_LINKDMA(&(uart->handle), hdmatx, uart->dma_tx.handle);
     }
 
-#if defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32L0)|| defined(SOC_SERIES_STM32F3) || defined(SOC_SERIES_STM32L1) || defined(SOC_SERIES_STM32U5)
+#if defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32L0)|| defined(SOC_SERIES_STM32F3) || defined(SOC_SERIES_STM32L1) || defined(SOC_SERIES_STM32U5) || defined(SOC_SERIES_STM32H5)
     DMA_Handle->Instance                 = dma_config->Instance;
 #elif defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7)
     DMA_Handle->Instance                 = dma_config->Instance;
