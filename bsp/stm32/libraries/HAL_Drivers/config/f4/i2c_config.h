@@ -126,4 +126,4 @@ extern "C" {
 }
 #endif
 
-#endif /*__SPI_CONFIG_H__ */
+#endif /*__I2C_CONFIG_H__ */

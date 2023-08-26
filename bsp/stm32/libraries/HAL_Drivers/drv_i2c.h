@@ -45,13 +45,11 @@ struct stm32_i2c
     I2C_HandleTypeDef handle;
     struct stm32_i2c_config *config;
 
-#ifdef RT_SERIAL_USING_DMA
     struct
     {
         DMA_HandleTypeDef handle_rx;
         DMA_HandleTypeDef handle_tx;
     } dma;
-#endif
 
     rt_uint8_t i2c_dma_flag; /**< @ref enum stm32_i2c_dma_flags */
     struct rt_i2c_bus_device i2c_bus;
