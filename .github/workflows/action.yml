@@ -149,6 +149,7 @@ jobs:
                 - "stm32/stm32g071-st-nucleo"
                 - "stm32/stm32g431-st-nucleo"
                 - "stm32/stm32g474-st-nucleo"
+                - "stm32/stm32h563-st-nucleo"
                 - "stm32/stm32h743-armfly-v7"
                 - "stm32/stm32h743-atk-apollo"
                 - "stm32/stm32h743-openmv-h7plus"
