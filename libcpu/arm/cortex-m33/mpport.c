@@ -297,7 +297,7 @@ void MemManage_Handler(void)
     if (SCB->CFSR & SCB_CFSR_MMARVALID_Msk)
     {
         info.addr = (void *)(SCB->MMFAR);
-        for (i = NUM_EXCLUSIVE_REGIONS - 1U; i >= 0U; i--)
+        for (i = NUM_EXCLUSIVE_REGIONS - 1; i >= 0; i--)
         {
         if ((exclusive_regions[i].owner != RT_NULL) && ((exclusive_regions[i].owner != rt_thread_self())) && ADDR_IN_REGION(info.addr, (rt_mem_region_t *)&(exclusive_regions[i])))
             {
@@ -307,7 +307,7 @@ void MemManage_Handler(void)
         }
         if (info.region.size == 0U)
         {
-            for (i = NUM_DYNAMIC_REGIONS - 1U; i >= 0U; i--)
+            for (i = NUM_DYNAMIC_REGIONS - 1; i >= 0; i--)
             {
                 if ((info.thread->mem_regions[i].size != 0U) && ADDR_IN_REGION(info.addr, &(info.thread->mem_regions[i])))
                 {
@@ -317,7 +317,7 @@ void MemManage_Handler(void)
             }
             if (info.region.size == 0U)
             {
-                for (i = NUM_STATIC_REGIONS - 1U; i >= 0U; i--)
+                for (i = NUM_STATIC_REGIONS - 1; i >= 0; i--)
                 {
                     if (ADDR_IN_REGION(info.addr, &(static_regions[i])))
                     {

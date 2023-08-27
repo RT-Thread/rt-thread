@@ -11,8 +11,6 @@ static void thread1_entry(void *parameter)
 {
     (void)parameter;
     rt_mem_protection_add_exclusive_region((void *)thread1_private_data, MPU_MIN_REGION_SIZE);
-    //rt_mem_protection_delete_exclusive_region((void *)thread1_private_data, MPU_MIN_REGION_SIZE);
-    rt_thread_delay(1000);
     for (int i = 0; i < MPU_MIN_REGION_SIZE; i++)
     {
         // should succeed
@@ -47,8 +45,8 @@ int mpu_example1()
                            THREAD_STACK_SIZE,
                            THREAD_PRIORITY,
                            THREAD_TIMESLICE);
-    //if (tid2 != RT_NULL)
-        //rt_thread_startup(tid2);
+    if (tid2 != RT_NULL)
+        rt_thread_startup(tid2);
 
     return 0;
 }

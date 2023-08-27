@@ -20,15 +20,13 @@ static void thread1_entry(void *parameter)
         .size = MPU_MIN_REGION_SIZE,
         .attr = RT_MEM_REGION_P_RO_U_RO,
     };
-    rt_mem_protection_add_region(rt_thread_self(), &ro_region);
+    rt_mem_protection_add_region(RT_NULL, &ro_region);
     for (int i = 0; i < MPU_MIN_REGION_SIZE; i++)
     {
         // should succeed
         rt_kprintf("ro_data[%d] = %d\n", i, ro_data[i]);
     }
-    //rt_thread_delay(RT_TICK_PER_SECOND * 5);
-    ro_region.attr = RT_MEM_REGION_P_RW_U_RW;
-    rt_mem_protection_update_region(rt_thread_self(), &ro_region);
+    rt_thread_delay(RT_TICK_PER_SECOND * 1);
     for (int i = 0; i < MPU_MIN_REGION_SIZE; i++)
     {
         // should fail
@@ -41,6 +39,7 @@ static void thread2_entry(void *parameter)
     (void)parameter;
     for (int i = 0; i < MPU_MIN_REGION_SIZE; i++)
     {
+        // should succeed
         ro_data[i] = i;
     }
 }

@@ -204,12 +204,8 @@ rt_uint8_t *rt_hw_stack_init(void       *tentry,
 #else
     stack_frame->lr = 0xffffffbcL;
 #endif
-
-#ifdef RT_USING_HW_STACK_GUARD
-    stack_frame->psplim = (rt_uint32_t)stack_addr;
-#else
+    /* TODO: Set up hardware stack guard using psplim*/
     stack_frame->psplim = 0x00;
-#endif
     /*
      * CONTROL register bit assignments
      * +---+------+------+-------+-------+
