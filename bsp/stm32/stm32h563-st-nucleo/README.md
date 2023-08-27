@@ -1,43 +1,55 @@
-# 第一部分：NUCLEO-H563ZI-Q 开发板 BSP 说明
+# **NUCLEO-H563ZI** 开发板 BSP 说明
 
 ## 简介
 
-本文档为 yuanzihao为 NUCLEO-U575ZI-Q 开发板提供的 BSP (板级支持包) 说明。
+本文档为 yuanzihao为 NUCLEO-STM32H563ZIT6  开发板提供的 BSP (板级支持包) 说明。
 
 主要内容如下：
 
 - 开发板资源介绍
 - BSP 快速上手
-- 进阶使用方法
+- 注意事项及参考资料
 
 通过阅读快速上手章节开发者可以快速地上手该 BSP，将 RT-Thread 运行在开发板上。
 
 ## 开发板介绍
 
-STM32U575ZI 是 ST 推出的一款基于 ARM Cortex-M33 内核的开发板，最高主频为 160 Mhz，该开发板具有丰富的板载资源，可以充分发挥 STM32U575 的芯片性能。
+NUCLEO-STM32H563ZIT6是 ST 推出的一款基于 ARM Cortex-M33 内核的开发板，最高主频为 250Mhz，2 MB Flash，640 KB RAM，该开发板具有丰富的板载资源，可以充分发挥 STM32H563ZIT6的芯片性能。
 
 开发板外观如下图所示（板载TYPE-C接口的STLINK-V3哦）：
 
-![board](H:\3_rep\3_RT-Thread-github\bsp\stm32\stm32h563-st-nucleo\figures\board.png)
+![board](figures\board.png)
 
 该开发板常用 **板载资源** 如下：
 
-- MCU：STM32U575ZI，主频 160 MHz，2048KB FLASH ，786KB RAM
-- 常用接口：USB 转串口、USB 接口、arduino 接口等
-- 调试接口，标准 JTAG/SWD
+- MCU：STM32H563ZI，高性能，Arm Cortex-M33带有TrustZone，MCU带有2 MB Flash，640 KB RAM，250 MHz CPU，375 DMIPS (Dhrystone 2.1)
+- 通用特性
+  - 采用LQFP144封装的STM32 微控制器
+  - 3个用户LED
+  - 2个用户按钮和复位按钮
+  - 32.768 kHz晶体振荡器
+  - 板连接器：SWDST Zio扩展连接器，包括ARDUINO® Uno V3ST morpho扩展连接器
+  - 灵活的供电选项：ST-LINK、USB VBUS或外部电源
+  - 具有USB重新枚举功能的板上ST-LINK调试器/编程器：大容量存储器、虚拟COM端口和调试端口
+  - 提供了全面的免费软件库和例程，可从STM32Cube MCU软件包获得
+  - 支持多种集成开发环境（IDE），包括IAR™、Keil®、和STM32CubeIDE
 
-开发板更多详细信息请参考 ST [STM32U575ZI](https://www.st.com/en/evaluation-tools/nucleo-u575zi-q.html)。
+开发板更多详细信息请参考 ST [STM32H563ZI]([STM32H563ZI - 高性能，Arm Cortex-M33带有TrustZone，MCU带有2 MB Flash，640 KB RAM，250 MHz CPU - 意法半导体STMicroelectronics](https://www.st.com/zh/microcontrollers-microprocessors/stm32h563zi.html))。
+
+硬件框图如下：
+
+![hardware_block_diagram](figures\hardware_block_diagram.png)
 
 ## 外设支持
 
 本 BSP 目前对外设的支持情况如下：
 
-| **板载外设** | **支持情况** | **备注** |
-| :----------- | :----------: | :------- |
-| USB 转串口   |     支持     |          |
-| **片上外设** | **支持情况** | **备注** |
-| GPIO         |     支持     |          |
-| UART         |     支持     | UART3    |
+| **板载外设**                     | **支持情况** | **备注** |
+| :------------------------------- | :----------: | :------- |
+| USB 转 串口(板载**STLINK-V3EC**) |     支持     |          |
+| **片上外设**                     | **支持情况** | **备注** |
+| GPIO                             |     支持     |          |
+| UART                             |     支持     | UART3    |
 
 
 ## 使用说明
@@ -59,7 +71,7 @@ STM32U575ZI 是 ST 推出的一款基于 ARM Cortex-M33 内核的开发板，最
 
 #### 硬件连接
 
-使用数据线连接开发板到 PC，打开电源开关。
+使用Type-C数据线连接开发板到 PC。
 
 #### 编译下载
 
@@ -69,15 +81,19 @@ STM32U575ZI 是 ST 推出的一款基于 ARM Cortex-M33 内核的开发板，最
 
 #### 运行结果
 
-下载程序成功之后，系统会自动运行，LED闪烁。
+下载程序成功之后，系统会自动运行，LED1闪烁。
 
 连接开发板对应串口到 PC , 在终端工具里打开相应的串口（115200-8-1-N），复位设备后，可以看到 RT-Thread 的输出信息:
 
 ```bash
  \ | /
 - RT -     Thread Operating System
- / | \     4.0.4 build Nov 14 2021 21:15:06
- 2006 - 2021 Copyright by rt-thread team
+ / | \     5.0.1 build Aug 27 2023 20:47:55
+ 2006 - 2022 Copyright by RT-Thread team
+do components initialization.
+initialize rti_board_end:0 done
+initialize rt_work_sys_workqueue_init:0 done
+initialize finsh_system_init:0 done
 msh >
 ```
 
@@ -97,20 +113,23 @@ msh >
 
 ## 注意事项
 
-- 调试串口为 UART3 映射说明
+- 调试串口为 UART3 ，映射说明（详情看STM32Cubemx中的配置）：
 
   ```c
-  PA9     ------> USART1_TX
-  PA10     ------> USART1_RX
+  PD8     ------> USART3_TX（T_VCP_TX）
+  PD9     ------> USART3_RX（T_VCP_RX）
   ```
 
+* MDK版本最好使用比较新的版本的，本次搭建是在MDK5.36版本下进行的。
 
 ## 参考资料：   
 
-1. [STM32F401 Nucleo-64使用SPI驱动RW007](https://www.rt-thread.org/document/site/#/rt-thread-version/rt-thread-standard/application-note/packages/rw007_module_using/an0034-rw007-module-using?id=rw007)  
-2. [STM32U575-NUCLEO原理图下载](https://www.st.com/resource/en/schematic_pack/mb1549-u575ziq-c03_schematic.pdf)
+1. [STM32H563-NUCLEO原理图下载](https://www.st.com/resource/en/schematic_pack/mb1404-h563zi-c01-schematic.pdf)
+2. [STM32H563官方介绍页](https://www.st.com/en/microcontrollers-microprocessors/stm32h563zi.html)
+3. [STM32H563-NUCLEO开发板手册](https://www.st.com/resource/en/user_manual/um3115-stm32h5-nucleo144-board-mb1404-stmicroelectronics.pdf)
 
-## 注意事项：  
+## 联系人信息
 
-1. MDK版本最好使用比较新的版本的，本次实验是在MDK5.36版本下进行的。
+维护人:
 
+- [yuanzihao](https://github.com/zihao-yuan/), 邮箱：[y@yzh.email](mailto:y@yzh.email)
