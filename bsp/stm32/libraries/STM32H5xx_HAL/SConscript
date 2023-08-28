@@ -8,109 +8,109 @@ cwd = GetCurrentDir()
 
 src = Split('''
 CMSIS/Device/ST/stm32h5xx/Source/Templates/system_stm32h5xx.c
-stm32h5xx_HAL_Driver/Src/stm32h5xx_hal.c
-stm32h5xx_HAL_Driver/Src/stm32h5xx_hal_comp.c
-stm32h5xx_HAL_Driver/Src/stm32h5xx_hal_cortex.c
-stm32h5xx_HAL_Driver/Src/stm32h5xx_hal_crc.c
-stm32h5xx_HAL_Driver/Src/stm32h5xx_hal_crc_ex.c
-stm32h5xx_HAL_Driver/Src/stm32h5xx_hal_cryp.c
-stm32h5xx_HAL_Driver/Src/stm32h5xx_hal_cryp_ex.c
-stm32h5xx_HAL_Driver/Src/stm32h5xx_hal_dma.c
-stm32h5xx_HAL_Driver/Src/stm32h5xx_hal_dma_ex.c
-stm32h5xx_HAL_Driver/Src/stm32h5xx_hal_exti.c
-stm32h5xx_HAL_Driver/Src/stm32h5xx_hal_pwr.c
-stm32h5xx_HAL_Driver/Src/stm32h5xx_hal_pwr_ex.c
-stm32h5xx_HAL_Driver/Src/stm32h5xx_hal_rcc.c
-stm32h5xx_HAL_Driver/Src/stm32h5xx_hal_rcc_ex.c
-stm32h5xx_HAL_Driver/Src/stm32h5xx_hal_rng.c
-stm32h5xx_HAL_Driver/Src/stm32h5xx_hal_gpio.c
-stm32h5xx_HAL_Driver/Src/stm32h5xx_hal_icache.c
+STM32H5xx_HAL_Driver/Src/stm32h5xx_hal.c
+STM32H5xx_HAL_Driver/Src/stm32h5xx_hal_comp.c
+STM32H5xx_HAL_Driver/Src/stm32h5xx_hal_cortex.c
+STM32H5xx_HAL_Driver/Src/stm32h5xx_hal_crc.c
+STM32H5xx_HAL_Driver/Src/stm32h5xx_hal_crc_ex.c
+STM32H5xx_HAL_Driver/Src/stm32h5xx_hal_cryp.c
+STM32H5xx_HAL_Driver/Src/stm32h5xx_hal_cryp_ex.c
+STM32H5xx_HAL_Driver/Src/stm32h5xx_hal_dma.c
+STM32H5xx_HAL_Driver/Src/stm32h5xx_hal_dma_ex.c
+STM32H5xx_HAL_Driver/Src/stm32h5xx_hal_exti.c
+STM32H5xx_HAL_Driver/Src/stm32h5xx_hal_pwr.c
+STM32H5xx_HAL_Driver/Src/stm32h5xx_hal_pwr_ex.c
+STM32H5xx_HAL_Driver/Src/stm32h5xx_hal_rcc.c
+STM32H5xx_HAL_Driver/Src/stm32h5xx_hal_rcc_ex.c
+STM32H5xx_HAL_Driver/Src/stm32h5xx_hal_rng.c
+STM32H5xx_HAL_Driver/Src/stm32h5xx_hal_gpio.c
+STM32H5xx_HAL_Driver/Src/stm32h5xx_hal_icache.c
 ''')
 
 if GetDepend(['RT_USING_SERIAL']):
-    src += ['stm32h5xx_HAL_Driver/Src/stm32h5xx_hal_uart.c']
-    src += ['stm32h5xx_HAL_Driver/Src/stm32h5xx_hal_uart_ex.c']
-    src += ['stm32h5xx_HAL_Driver/Src/stm32h5xx_hal_usart.c']
-    src += ['stm32h5xx_HAL_Driver/Src/stm32h5xx_hal_usart_ex.c']
+    src += ['STM32H5xx_HAL_Driver/Src/stm32h5xx_hal_uart.c']
+    src += ['STM32H5xx_HAL_Driver/Src/stm32h5xx_hal_uart_ex.c']
+    src += ['STM32H5xx_HAL_Driver/Src/stm32h5xx_hal_usart.c']
+    src += ['STM32H5xx_HAL_Driver/Src/stm32h5xx_hal_usart_ex.c']
 
 if GetDepend(['RT_USING_I2C']):
-    src += ['stm32h5xx_HAL_Driver/Src/stm32h5xx_hal_i2c.c']
-    src += ['stm32h5xx_HAL_Driver/Src/stm32h5xx_hal_i2c_ex.c']
+    src += ['STM32H5xx_HAL_Driver/Src/stm32h5xx_hal_i2c.c']
+    src += ['STM32H5xx_HAL_Driver/Src/stm32h5xx_hal_i2c_ex.c']
 
 if GetDepend(['RT_USING_SPI']):
-    src += ['stm32h5xx_HAL_Driver/Src/stm32h5xx_hal_spi.c']
-    src += ['stm32h5xx_HAL_Driver/Src/stm32h5xx_hal_spi_ex.c']
+    src += ['STM32H5xx_HAL_Driver/Src/stm32h5xx_hal_spi.c']
+    src += ['STM32H5xx_HAL_Driver/Src/stm32h5xx_hal_spi_ex.c']
 
 if GetDepend(['RT_USING_USB']):
-    src += ['stm32h5xx_HAL_Driver/Src/stm32h5xx_hal_hcd.c']
-    src += ['stm32h5xx_HAL_Driver/Src/stm32h5xx_hal_pcd.c']
-    src += ['stm32h5xx_HAL_Driver/Src/stm32h5xx_hal_pcd_ex.c']
-    src += ['stm32h5xx_HAL_Driver/Src/stm32h5xx_ll_usb.c']
+    src += ['STM32H5xx_HAL_Driver/Src/stm32h5xx_hal_hcd.c']
+    src += ['STM32H5xx_HAL_Driver/Src/stm32h5xx_hal_pcd.c']
+    src += ['STM32H5xx_HAL_Driver/Src/stm32h5xx_hal_pcd_ex.c']
+    src += ['STM32H5xx_HAL_Driver/Src/stm32h5xx_ll_usb.c']
 
 if GetDepend(['RT_USING_CAN']):
-    src += ['stm32h5xx_HAL_Driver/Src/stm32h5xx_hal_can.c']
+    src += ['STM32H5xx_HAL_Driver/Src/stm32h5xx_hal_can.c']
 
 if GetDepend(['RT_USING_HWTIMER']) or GetDepend(['RT_USING_PWM']):
-    src += ['stm32h5xx_HAL_Driver/Src/stm32h5xx_hal_lptim.c']
-    src += ['stm32h5xx_HAL_Driver/Src/stm32h5xx_hal_tim.c']
-    src += ['stm32h5xx_HAL_Driver/Src/stm32h5xx_hal_tim_ex.c']
+    src += ['STM32H5xx_HAL_Driver/Src/stm32h5xx_hal_lptim.c']
+    src += ['STM32H5xx_HAL_Driver/Src/stm32h5xx_hal_tim.c']
+    src += ['STM32H5xx_HAL_Driver/Src/stm32h5xx_hal_tim_ex.c']
 
 if GetDepend(['RT_USING_ADC']):
-    src += ['stm32h5xx_HAL_Driver/Src/stm32h5xx_hal_adc.c']
-    src += ['stm32h5xx_HAL_Driver/Src/stm32h5xx_hal_adc_ex.c']
+    src += ['STM32H5xx_HAL_Driver/Src/stm32h5xx_hal_adc.c']
+    src += ['STM32H5xx_HAL_Driver/Src/stm32h5xx_hal_adc_ex.c']
 
 if GetDepend(['RT_USING_DAC']):
-    src += ['stm32h5xx_HAL_Driver/Src/stm32h5xx_hal_dac.c']
-    src += ['stm32h5xx_HAL_Driver/Src/stm32h5xx_hal_dac_ex.c']
+    src += ['STM32H5xx_HAL_Driver/Src/stm32h5xx_hal_dac.c']
+    src += ['STM32H5xx_HAL_Driver/Src/stm32h5xx_hal_dac_ex.c']
 
 if GetDepend(['RT_USING_RTC']):
-    src += ['stm32h5xx_HAL_Driver/Src/stm32h5xx_hal_rtc.c']
-    src += ['stm32h5xx_HAL_Driver/Src/stm32h5xx_hal_rtc_ex.c']
+    src += ['STM32H5xx_HAL_Driver/Src/stm32h5xx_hal_rtc.c']
+    src += ['STM32H5xx_HAL_Driver/Src/stm32h5xx_hal_rtc_ex.c']
 
 if GetDepend(['RT_USING_WDT']):
-    src += ['stm32h5xx_HAL_Driver/Src/stm32h5xx_hal_iwdg.c']
-    src += ['stm32h5xx_HAL_Driver/Src/stm32h5xx_hal_wwdg.c']
+    src += ['STM32H5xx_HAL_Driver/Src/stm32h5xx_hal_iwdg.c']
+    src += ['STM32H5xx_HAL_Driver/Src/stm32h5xx_hal_wwdg.c']
 
 if GetDepend(['RT_USING_SDIO']):
-    src += ['stm32h5xx_HAL_Driver/Src/stm32h5xx_hal_sd.c']
-    src += ['stm32h5xx_HAL_Driver/Src/stm32h5xx_hal_sd_ex.c']
-    src += ['stm32h5xx_HAL_Driver/Src/stm32h5xx_ll_sdmmc.c']
+    src += ['STM32H5xx_HAL_Driver/Src/stm32h5xx_hal_sd.c']
+    src += ['STM32H5xx_HAL_Driver/Src/stm32h5xx_hal_sd_ex.c']
+    src += ['STM32H5xx_HAL_Driver/Src/stm32h5xx_ll_sdmmc.c']
 
 if GetDepend(['RT_USING_AUDIO']):
-    src += ['stm32h5xx_HAL_Driver/Src/stm32h5xx_hal_sai.c']
-    src += ['stm32h5xx_HAL_Driver/Src/stm32h5xx_hal_sai_ex.c']
+    src += ['STM32H5xx_HAL_Driver/Src/stm32h5xx_hal_sai.c']
+    src += ['STM32H5xx_HAL_Driver/Src/stm32h5xx_hal_sai_ex.c']
 
 if GetDepend(['RT_USING_MTD_NOR']):
-    src += ['stm32h5xx_HAL_Driver/Src/stm32h5xx_hal_nor.c']
+    src += ['STM32H5xx_HAL_Driver/Src/stm32h5xx_hal_nor.c']
 
 if GetDepend(['RT_USING_MTD_NAND']):
-    src += ['stm32h5xx_HAL_Driver/Src/stm32h5xx_hal_nand.c']
+    src += ['STM32H5xx_HAL_Driver/Src/stm32h5xx_hal_nand.c']
 
 if GetDepend(['RT_USING_PM']):
-    src += ['stm32h5xx_HAL_Driver/Src/stm32h5xx_hal_lptim.c']
+    src += ['STM32H5xx_HAL_Driver/Src/stm32h5xx_hal_lptim.c']
 
 if GetDepend(['BSP_USING_ON_CHIP_FLASH']):
-    src += ['stm32h5xx_HAL_Driver/Src/stm32h5xx_hal_flash.c']
-    src += ['stm32h5xx_HAL_Driver/Src/stm32h5xx_hal_flash_ex.c']
-    src += ['stm32h5xx_HAL_Driver/Src/stm32h5xx_hal_flash_ramfunc.c']
+    src += ['STM32H5xx_HAL_Driver/Src/stm32h5xx_hal_flash.c']
+    src += ['STM32H5xx_HAL_Driver/Src/stm32h5xx_hal_flash_ex.c']
+    src += ['STM32H5xx_HAL_Driver/Src/stm32h5xx_hal_flash_ramfunc.c']
 
 if GetDepend(['BSP_USING_FMC']):
-    src += ['stm32h5xx_HAL_Driver/Src/stm32h5xx_ll_fmc.c']
+    src += ['STM32H5xx_HAL_Driver/Src/stm32h5xx_ll_fmc.c']
 
 if GetDepend(['BSP_USING_GFXMMU']):
-    src += ['stm32h5xx_HAL_Driver/Src/stm32h5xx_hal_gfxmmu.c']
+    src += ['STM32H5xx_HAL_Driver/Src/stm32h5xx_hal_gfxmmu.c']
 
 if GetDepend(['BSP_USING_DSI']):
-    src += ['stm32h5xx_HAL_Driver/Src/stm32h5xx_hal_dsi.c']
-    src += ['stm32h5xx_HAL_Driver/Src/stm32h5xx_hal_dma2d.c']
-    src += ['stm32h5xx_HAL_Driver/Src/stm32h5xx_ll_dma2d.c']
-    src += ['stm32h5xx_HAL_Driver/Src/stm32h5xx_hal_ltdc.c']
-    src += ['stm32h5xx_HAL_Driver/Src/stm32h5xx_hal_ltdc_ex.c']
+    src += ['STM32H5xx_HAL_Driver/Src/stm32h5xx_hal_dsi.c']
+    src += ['STM32H5xx_HAL_Driver/Src/stm32h5xx_hal_dma2d.c']
+    src += ['STM32H5xx_HAL_Driver/Src/stm32h5xx_ll_dma2d.c']
+    src += ['STM32H5xx_HAL_Driver/Src/stm32h5xx_hal_ltdc.c']
+    src += ['STM32H5xx_HAL_Driver/Src/stm32h5xx_hal_ltdc_ex.c']
 
 if GetDepend(['BSP_USING_SRAM']):
-    src += ['stm32h5xx_HAL_Driver/Src/stm32h5xx_hal_sram.c']
+    src += ['STM32H5xx_HAL_Driver/Src/stm32h5xx_hal_sram.c']
 
-path = [cwd + '/stm32h5xx_HAL_Driver/Inc',
+path = [cwd + '/STM32H5xx_HAL_Driver/Inc',
     cwd + '/CMSIS/Device/ST/STM32H5xx/Include']
 
 CPPDEFINES = ['USE_HAL_DRIVER']
