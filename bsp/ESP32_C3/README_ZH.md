@@ -61,7 +61,7 @@
 
   2. 配置工具链的路径：
 
-     在`rtconfig.py`文件中将`RISC-V`工具链的本地路径添加到`EXEC_PATH`变量中，或者通过设置 `RTT_EXEC_PATH`环境变量指定路径，例如：
+     在`bsp/ESP32_C3/rtconfig.py`文件中将`RISC-V`工具链的本地路径添加到`EXEC_PATH`变量中，或者通过设置 `RTT_EXEC_PATH`环境变量指定路径，例如：
 
      ```sh
      export RTT_EXEC_PATH=/opt/riscv32-esp-elf/bin
@@ -75,7 +75,7 @@
      pip install esptool
      ```
 
-     在 Linux 平台下执行以下命令进行配置：
+     在 Linux 平台下进入`bsp/ESP32_C3/`执行以下命令进行配置：
 
      ```
      scons --menuconfig
