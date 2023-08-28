@@ -18,7 +18,7 @@ NUCLEO-STM32H563ZIT6是 ST 推出的一款基于 ARM Cortex-M33 内核的开发�
 
 开发板外观如下图所示（板载TYPE-C接口的STLINK-V3哦）：
 
-![board](figures\board.png)
+![board](figures/board.png)
 
 该开发板常用 **板载资源** 如下：
 
@@ -38,7 +38,7 @@ NUCLEO-STM32H563ZIT6是 ST 推出的一款基于 ARM Cortex-M33 内核的开发�
 
 硬件框图如下：
 
-![hardware_block_diagram](figures\hardware_block_diagram.png)
+![hardware_block_diagram](figures/hardware_block_diagram.png)
 
 ## 外设支持
 
