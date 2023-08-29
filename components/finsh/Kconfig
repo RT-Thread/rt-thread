@@ -76,4 +76,17 @@ if RT_USING_MSH
         int "The number of arguments for a shell command"
         default 10
 
+    config FINSH_USING_CPUTH
+        bool "Enable cputh"
+        default n
+
+    if FINSH_USING_CPUTH
+        config CPUTH_USING_STATISTICS
+            bool "Enable cputh statistics"
+            default n
+        config CPUTH_TIMER_COUNTDOWN
+            bool "Enable cputh hardware timer count down"
+            default n
+    endif
+
 endif
