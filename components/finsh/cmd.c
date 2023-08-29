@@ -1015,4 +1015,348 @@ _usage:
 }
 MSH_CMD_EXPORT_ALIAS(cmd_list, list, list objects);
 
+#define RT_USING_CPUTH
+#define CPUTH_USING_STATISTICS
+#define CPUTH_TIMER_COUNTDOWN
+
+#ifdef RT_USING_CPUTH
+#include <stdlib.h>
+#include <math.h>
+
+static rt_uint32_t CPU_TICK_CYCLE;
+static rt_uint32_t CPUTH_CALC_PRD_TICK = RT_TICK_PER_SECOND;    //in tick
+
+static rt_uint32_t start_tick,start_cycle;
+static rt_thread_t th_from,th_to;
+float percent;
+div_t div_d;
+
+rt_weak rt_uint32_t cputh_get_cycle_per_tick(void)
+{
+//    #error ""
+    return 0;
+}
+rt_weak rt_uint32_t cputh_get_cycle_in_tick(void)
+{
+//    #error ""
+    return 0;
+}
+rt_weak rt_uint32_t cputh_get_cycle_overflow(void)
+{
+//    #error ""
+    return 0;
+}
+//#define mod(a,b)    (a-b*(a/b))
+//#define mod(a,b)    fmodf(a,b)   
+#define mod(a,b)    lldiv(a,b).rem
+#define ot(ct,st,cc,sc)  (ct-st-(cc<sc))
+#define oc(cc,sc) (mod((cc+CPU_TICK_CYCLE-sc),CPU_TICK_CYCLE))
+#define at(ct,st,cc,sc)  (ct+st+((cc+sc)>=CPU_TICK_CYCLE))
+#define ac(cc,sc) (mod((cc+sc),CPU_TICK_CYCLE))
+struct cputh_data
+{
+		rt_list_t list;
+#ifdef RT_USING_CPUTH
+    rt_uint32_t to_tick;
+    rt_uint32_t to_cycle;
+    rt_uint32_t ticks;
+    rt_uint32_t cycles;
+    rt_uint32_t usage;
+#ifdef CPUTH_USING_STATISTICS
+    rt_uint32_t cycled;
+    rt_uint32_t scheduled;
+    rt_uint32_t schedule_cnt;
+    rt_uint32_t overed;
+#endif
+#endif
+	
+};
+
+static void cputh_hook_of_scheduler(struct rt_thread* fth, struct rt_thread* tth)
+{
+    rt_uint32_t calc_tick;
+//    rt_uint32_t calc_cycle;
+    rt_uint32_t over_tick;
+    rt_uint32_t over_cycle;
+	
+		struct cputh_data * from = (struct cputh_data *)fth->user_data;
+		struct cputh_data * to = (struct cputh_data *)tth->user_data;
+    
+    to->to_cycle = cputh_get_cycle_in_tick();
+#ifdef CPUTH_TIMER_COUNTDOWN
+    to->to_cycle = CPU_TICK_CYCLE-to->to_cycle;
+#endif
+    to->to_tick = rt_tick_get();
+    if(cputh_get_cycle_overflow())
+    {
+        to->to_tick += 1;
+    }
+    
+    calc_tick = start_tick+CPUTH_CALC_PRD_TICK;
+    
+#ifdef CPUTH_USING_STATISTICS
+    to->schedule_cnt++;
+#endif
+    
+    if(from==RT_NULL)
+    {
+        return;
+    }
+    
+    over_tick = ot(to->to_tick,calc_tick,to->to_cycle,start_cycle);
+    over_cycle = oc(to->to_cycle,start_cycle);
+    
+    if(over_tick<RT_TICK_MAX/2)
+    {
+        struct rt_list_node *node = RT_NULL;
+        struct rt_thread *thread;
+				rt_list_t * list = &rt_object_get_information(RT_Object_Class_Thread)->object_list;		
+				struct cputh_data * data;
+        
+        rt_uint32_t ot1 = ot(calc_tick,from->to_tick,start_cycle,from->to_cycle);
+        rt_uint32_t oc1 = oc(start_cycle,from->to_cycle);
+        from->ticks  = at(ot1,from->ticks,oc1,from->cycles);
+        from->cycles = ac(oc1,from->cycles);
+        
+        rt_uint64_t cycles;
+        rt_list_for_each(node, list)
+        {            
+            thread = rt_container_of(node, struct rt_thread, parent.list);
+						data = (struct cputh_data *)thread->user_data;
+            cycles = (rt_uint64_t)data->ticks*CPU_TICK_CYCLE+data->cycles;
+					
+						
+            data->usage = percent*cycles;
+            
+#ifdef CPUTH_USING_STATISTICS
+            data->cycled = cycles;
+            data->scheduled = data->schedule_cnt;
+            data->schedule_cnt = 0;
+            data->overed = 0;
+#endif
+            data->ticks = 0;
+            data->cycles = 0;
+        }      
+        from->ticks = mod(over_tick,CPUTH_CALC_PRD_TICK);
+        from->cycles = over_cycle;
+        
+        start_tick = calc_tick + over_tick-mod(over_tick,CPUTH_CALC_PRD_TICK);
+#ifdef CPUTH_USING_STATISTICS
+        from->overed = over_tick/CPUTH_CALC_PRD_TICK;
+        th_from = fth;
+        th_to = tth;
+#endif
+    }
+    else
+    {
+        rt_uint32_t ot1 = ot(to->to_tick,from->to_tick,to->to_cycle,from->to_cycle);
+        rt_uint32_t oc1 = oc(to->to_cycle,from->to_cycle);
+        from->ticks  = at(ot1,from->ticks,oc1,from->cycles);
+        from->cycles = ac(oc1,from->cycles);
+    }
+}
+
+
+
+void print_usage(void)
+{
+		struct rt_list_node *node = RT_NULL;
+    struct rt_thread *thread;
+		rt_list_t * list = &rt_object_get_information(RT_Object_Class_Thread)->object_list;		
+		struct cputh_data * data;
+	
+#ifdef CPUTH_USING_STATISTICS
+    char ch;
+    
+    rt_kprintf("system up time in ticks %d\n",rt_tick_get());
+    rt_kprintf("cpu usage check period in ticks %u\n",CPUTH_CALC_PRD_TICK);
+    rt_kprintf("cpu cycles per tick %u\n",CPU_TICK_CYCLE);
+    rt_kprintf("%-*.s  usage    overed     cycled   scheduled\n", RT_NAME_MAX, "thread");
+    rt_kprintf("--------- ------ ---------- ---------- ----------\n");
+    rt_enter_critical();
+    rt_list_for_each(node, list)
+    {
+        thread = rt_container_of(node, struct rt_thread, parent.list); 
+				data = (struct cputh_data *)thread->user_data;
+        ch = thread==th_from?'>':(thread==th_to?'<':' ');
+        rt_kprintf("%c%-*.*s",ch,RT_NAME_MAX, RT_NAME_MAX, thread->parent.name);
+        rt_kprintf(" %2u.%02u%% 0x%08x 0x%08x 0x%08x\n",  data->usage/100,data->usage%100,data->overed,(rt_uint32_t)data->cycled,data->scheduled);
+    }
+    rt_exit_critical();
+#else
+    rt_kprintf("%-*.s usage\n", RT_NAME_MAX, "thread");
+    rt_kprintf("-------- ------\n");
+    rt_enter_critical();
+    rt_list_for_each(node, list)
+    {
+        thread = rt_container_of(node, struct rt_thread, parent.list); 
+        rt_kprintf("%-*.*s %2u.%02u%%\n", RT_NAME_MAX, RT_NAME_MAX, thread->parent.name, thread->parent.usage/100,thread->usage%100);
+    }
+    rt_exit_critical();
+#endif	
+}
+
+#define EVENT_CPU_UPDATE_PERIOD		(1<<0)
+#define EVENT_CPU_UPDATE_MANUAL		(1<<1)
+
+static struct rt_event event_cpu;
+
+static struct rt_timer tim_cpu;
+
+static void rt_timer_cpu(void * parameter)
+{
+		rt_event_send(&event_cpu,EVENT_CPU_UPDATE_PERIOD);
+}
+
+
+static rt_err_t _rx_ind(rt_device_t dev, rt_size_t size)
+{
+    RT_ASSERT(dev != RT_NULL);
+
+    rt_event_send(&event_cpu,EVENT_CPU_UPDATE_MANUAL);
+
+    return RT_EOK;
+}
+
+
+
+void cputh(int argc, char**argv)
+{
+		start_tick = 0;
+		start_cycle = 0;
+		//init cputh data list
+		struct rt_list_node *node = RT_NULL;
+		struct rt_thread *thread;
+		rt_list_t * list = &rt_object_get_information(RT_Object_Class_Thread)->object_list;		
+	
+		rt_list_for_each(node, list)
+		{   
+				void * data = rt_malloc(sizeof(struct cputh_data));
+				rt_memset(data, 0, sizeof(struct cputh_data));
+				thread = rt_container_of(node, struct rt_thread, parent.list);
+				thread->user_data = (rt_ubase_t)data;	
+		}		
+	
+		
+		rt_int32_t num = -1;
+		if(argc>1)
+		{
+				CPUTH_CALC_PRD_TICK = atoi(argv[1]);	
+				if(CPUTH_CALC_PRD_TICK==0)
+				{
+						CPUTH_CALC_PRD_TICK = RT_TICK_PER_SECOND;
+				}
+		}
+		if(argc>2)
+		{
+				
+				num = atoi(argv[2]);
+		}
+		
+		CPU_TICK_CYCLE = cputh_get_cycle_per_tick();
+		start_tick = rt_tick_get();
+    start_cycle = cputh_get_cycle_in_tick();
+		#ifdef CPUTH_TIMER_COUNTDOWN
+		start_cycle = CPU_TICK_CYCLE-start_cycle;
+		#endif
+    
+    percent = 10000.0f/CPUTH_CALC_PRD_TICK/CPU_TICK_CYCLE;
+		
+//		rt_sem_init(&sem_cputh,"semcpu",0,RT_IPC_FLAG_FIFO);
+		
+		rt_timer_init(&tim_cpu,"timcpu",rt_timer_cpu,RT_NULL,CPUTH_CALC_PRD_TICK,RT_TIMER_FLAG_PERIODIC);
+		
+		rt_event_init(&event_cpu, "evtcpu", RT_IPC_FLAG_FIFO);
+		
+		rt_device_t console = rt_console_get_device();
+		rt_err_t (*rx_ind)(rt_device_t dev,rt_size_t size) = console->rx_indicate;
+		rt_device_set_rx_indicate(console, _rx_ind);
+		
+		rt_kprintf("\033c");	//redraw screen
+		rt_kprintf("\033[s");				//save cursor position
+		rt_kprintf("\033[?25l");		//hide cursor
+		rt_kprintf("\033[u");		//restore cursor positon
+		print_usage();
+		
+
+		
+		thread=rt_thread_self();
+		((struct cputh_data*)thread->user_data)->to_tick = start_tick;
+		((struct cputh_data*)thread->user_data)->to_cycle = start_cycle;			
+		
+		//set hook
+		rt_scheduler_sethook(cputh_hook_of_scheduler);
+		
+		rt_timer_start(&tim_cpu);
+		
+		while(num)
+		{
+				
+				rt_uint32_t e;
+//				rt_sem_take(&sem_cputh,RT_WAITING_FOREVER);
+				rt_event_recv(&event_cpu,
+											(EVENT_CPU_UPDATE_PERIOD | EVENT_CPU_UPDATE_MANUAL),
+                      RT_EVENT_FLAG_OR | RT_EVENT_FLAG_CLEAR,
+                      RT_WAITING_FOREVER,&e);
+				if(e&EVENT_CPU_UPDATE_MANUAL)
+				{
+						char ach;
+
+						rt_size_t size;
+__repeat:
+						size	= rt_device_read(console, -1, &ach, 1);
+					
+						if(size==0)
+						{
+								continue;
+						}
+
+						
+						if(ach == 0x03)
+						{
+								break;
+						}
+						if(ach == 'q')
+						{
+								break;
+						}
+
+						//size!=0 and other input
+						rt_kprintf("\033[u");		//restore cursor positon, 
+						print_usage();
+						goto __repeat;
+
+				}
+				rt_kprintf("\033[u");		//restore cursor positon, 
+//				rt_kprintf("\033[0J");	//clear content after cursor
+				print_usage();
+				if(num>0)
+				{
+						num--;
+				}
+		}
+		rt_kprintf("\033[?25h");						//show cursor
+		//reset hook
+		rt_scheduler_sethook(RT_NULL);
+		
+		rt_timer_stop(&tim_cpu);
+		rt_timer_detach(&tim_cpu);
+		
+		rt_device_set_rx_indicate(console, rx_ind);
+		
+//		rt_sem_detach(&sem_cputh);
+		rt_event_detach(&event_cpu);
+		//release cputh data
+		rt_list_for_each(node, list)
+		{   
+				thread = rt_container_of(node, struct rt_thread, parent.list);
+				rt_free((void*)thread->user_data);
+				thread->user_data = 0;
+				
+		}
+		
+}
+MSH_CMD_EXPORT(cputh,cpu usage of thread);
+#endif
+
 #endif /* RT_USING_FINSH */
