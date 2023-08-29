@@ -475,9 +475,9 @@ int gettimeofday(struct timeval *tv, struct timezone *tz)
     {
         tz->tz_dsttime = DST_NONE;
 #if defined(RT_LIBC_USING_LIGHT_TZ_DST)
-        tz->tz_minuteswest = -(rt_tz_get() / 60U);
+        tz->tz_minuteswest = -(rt_tz_get() / 60);
 #else
-        tz->tz_minuteswest = 0U;
+        tz->tz_minuteswest = 0;
 #endif /* RT_LIBC_USING_LIGHT_TZ_DST */
     }
 
