@@ -115,7 +115,7 @@ void FIOPadSetGpioMux(u32 ctrl_id_p, u32 pin_id_p)
     }
 #endif
 
-#if defined(TARGET_E2000Q)
+#if defined(TARGET_E2000Q) || defined(TARGET_PHYTIUMPI)
     if (ctrl_id_p == FGPIO4_ID)
     {
         switch (pin_id_p)

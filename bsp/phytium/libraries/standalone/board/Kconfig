@@ -34,6 +34,12 @@ menu "Board Configuration"
             select USE_SERIAL
             select ENABLE_Pl011_UART
 
+        config TARGET_PHYTIUMPI
+            bool "Phytium Pi"
+            select TARGET_E2000
+            select USE_SERIAL
+            select ENABLE_Pl011_UART
+
 #       config TARGET_TARDIGRADE
 #           bool "TARDIGRADE"
                    
