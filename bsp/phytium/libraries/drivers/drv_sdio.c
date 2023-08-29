@@ -28,7 +28,6 @@
 #if defined(TARGET_E2000)
     #include "fparameters.h"
 #endif
-#include "fparameters_comm.h"
 
 #include "fsdio.h"
 #include "fsdio_hw.h"
@@ -39,8 +38,6 @@
     #define SDIO_CONTROLLER_ID    FSDIO0_ID
 #elif defined (USING_SDIO1)
     #define SDIO_CONTROLLER_ID    FSDIO1_ID
-#elif defined (USING_EMMC)
-    #define SDIO_CONTROLLER_ID    FSDIO0_ID
 #endif
 #define SDIO_TF_CARD_HOST_ID  0x1
 #define SDIO_MALLOC_CAP_DESC  256U
@@ -48,6 +45,10 @@
 #define SDIO_DMA_BLK_SZ       512U
 #define SDIO_VALID_OCR        0x00FFFF80 /* supported voltage range is 1.65v-3.6v (VDD_165_195-VDD_35_36) */
 #define SDIO_MAX_BLK_TRANS    20U
+
+#ifndef CONFIG_SDCARD_OFFSET
+#define CONFIG_SDCARD_OFFSET 0x0U
+#endif
 /**************************** Type Definitions *******************************/
 typedef struct
 {
@@ -223,7 +224,7 @@ static void mmc_request_send(struct rt_mmcsd_host *host, struct rt_mmcsd_req *re
         req_cmd.flag |= FSDIO_CMD_FLAG_EXP_DATA;
 
         req_data.blksz = req->data->blksize;
-        req_data.blkcnt = req->data->blks;
+        req_data.blkcnt = req->data->blks + CONFIG_SDCARD_OFFSET;
         req_data.datalen = req->data->blksize * req->data->blks;
         if ((uintptr)req->data->buf % SDIO_DMA_ALIGN) /* data buffer should be 512-aligned */
         {
