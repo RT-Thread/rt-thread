@@ -135,7 +135,7 @@ jobs:
                 - "stm32/stm32f429-st-disco"
                 - "stm32/stm32f446-st-nucleo"
                 - "stm32/stm32f469-st-disco"
-         -  RTT_BSP: "stm32_f7_g0_h7_mp15_u5_wb5" 
+         -  RTT_BSP: "stm32_f7_g0_h7_mp15_u5_h5_wb5" 
             RTT_TOOL_CHAIN: "sourcery-arm"
             SUB_RTT_BSP: 
                 - "stm32/stm32f746-st-disco"
@@ -149,6 +149,7 @@ jobs:
                 - "stm32/stm32g071-st-nucleo"
                 - "stm32/stm32g431-st-nucleo"
                 - "stm32/stm32g474-st-nucleo"
+                - "stm32/stm32h563-st-nucleo"
                 - "stm32/stm32h743-armfly-v7"
                 - "stm32/stm32h743-atk-apollo"
                 - "stm32/stm32h743-openmv-h7plus"
