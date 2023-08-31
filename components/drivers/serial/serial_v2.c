@@ -533,13 +533,14 @@ static rt_ssize_t _serial_fifo_tx_blocking_buf(struct rt_device        *dev,
                                                (rt_uint8_t *)buffer + offset,
                                                size);
 
-        offset += tx_fifo->put_size;
-        size -= tx_fifo->put_size;
         /* Call the transmit interface for transmission */
         serial->ops->transmit(serial,
                              (rt_uint8_t *)buffer + offset,
                              tx_fifo->put_size,
                              RT_SERIAL_TX_BLOCKING);
+                             
+        offset += tx_fifo->put_size;
+        size -= tx_fifo->put_size;
         /* Waiting for the transmission to complete */
         rt_completion_wait(&(tx_fifo->tx_cpt), RT_WAITING_FOREVER);
     }
@@ -598,7 +599,7 @@ static rt_ssize_t _serial_fifo_tx_nonblocking(struct rt_device        *dev,
         return length;
     }
 
-    /* If the activated mode is RT_FALSE, it means that serial device is transmitting,
+    /* If the activated mode is RT_TRUE, it means that serial device is transmitting,
      * where only the data in the ringbuffer and there is no need to call the transmit() API.
      * Note that this part of the code requires disable interrupts
      * to prevent multi thread reentrant */
