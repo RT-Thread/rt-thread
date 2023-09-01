@@ -538,7 +538,7 @@ static rt_ssize_t _serial_fifo_tx_blocking_buf(struct rt_device        *dev,
                              (rt_uint8_t *)buffer + offset,
                              tx_fifo->put_size,
                              RT_SERIAL_TX_BLOCKING);
-                             
+
         offset += tx_fifo->put_size;
         size -= tx_fifo->put_size;
         /* Waiting for the transmission to complete */
@@ -1561,7 +1561,7 @@ void rt_hw_serial_isr(struct rt_serial_device *serial, int event)
                 /* Maybe some datas left in the buffer still need to be sent in block mode,
                  * so tx_fifo->activated should be RT_TRUE */
                 if (serial->parent.open_flag & RT_SERIAL_TX_BLOCKING)
-                {				
+                {
                     rt_completion_done(&(tx_fifo->tx_cpt));
                 }
                 else
