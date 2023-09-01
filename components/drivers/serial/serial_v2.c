@@ -545,7 +545,7 @@ static rt_ssize_t _serial_fifo_tx_blocking_buf(struct rt_device        *dev,
         rt_completion_wait(&(tx_fifo->tx_cpt), RT_WAITING_FOREVER);
     }
     /* Finally Inactivate the tx->fifo */
-	tx_fifo->activated = RT_FALSE;
+    tx_fifo->activated = RT_FALSE;
 
     return length;
 }
@@ -1558,16 +1558,16 @@ void rt_hw_serial_isr(struct rt_serial_device *serial, int event)
                 if (serial->parent.tx_complete != RT_NULL)
                     serial->parent.tx_complete(&serial->parent, RT_NULL);
 
-                /* Maybe some datas left in the buffer still need to be sent in block mode. */
-				/* so tx_fifo->activated should be RT_TRUE */
+                /* Maybe some datas left in the buffer still need to be sent in block mode,
+                 * so tx_fifo->activated should be RT_TRUE */
                 if (serial->parent.open_flag & RT_SERIAL_TX_BLOCKING)
-				{				
+                {				
                     rt_completion_done(&(tx_fifo->tx_cpt));
-				}
-				else
-				{
-			    	tx_fifo->activated = RT_FALSE;
-				}
+                }
+                else
+                {
+                    tx_fifo->activated = RT_FALSE;
+                }
 
                 break;
             }
