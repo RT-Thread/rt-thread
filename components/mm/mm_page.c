@@ -27,8 +27,8 @@
 #define DBG_LVL DBG_WARNING
 #include <rtdbg.h>
 
-RT_CTASSERT(order_huge_pg, RT_PAGE_MAX_ORDER > ARCH_PAGE_SHIFT - 2);
-RT_CTASSERT(size_width, sizeof(rt_size_t) == sizeof(void *));
+RT_STATIC_ASSERT(order_huge_pg, RT_PAGE_MAX_ORDER > ARCH_PAGE_SHIFT - 2);
+RT_STATIC_ASSERT(size_width, sizeof(rt_size_t) == sizeof(void *));
 
 #ifdef RT_USING_SMART
 #include "lwp_arch_comm.h"
