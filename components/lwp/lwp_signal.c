@@ -310,7 +310,7 @@ static void sigqueue_discard(lwp_sigqueue_t sigqueue, int signo)
 }
 
 /* assuming that (void *) is compatible to long at length */
-RT_CTASSERT(lp_width_same, sizeof(void *) == sizeof(long));
+RT_STATIC_ASSERT(lp_width_same, sizeof(void *) == sizeof(long));
 
 /** translate lwp siginfo to user siginfo_t  */
 rt_inline void siginfo_k2u(lwp_siginfo_t ksigi, siginfo_t *usigi)
