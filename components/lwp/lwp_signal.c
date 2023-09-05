@@ -393,6 +393,20 @@ void lwp_sigqueue_clear(lwp_sigqueue_t sigq)
     }
 }
 
+static void lwp_signal_notify(rt_slist_t *list_head, lwp_siginfo_t siginfo)
+{
+    rt_slist_t *node;
+
+    rt_slist_for_each(node, list_head)
+    {
+        struct rt_lwp_notify *n = rt_slist_entry(node, struct rt_lwp_notify, list_node);
+        if (n->notify)
+        {
+            n->notify(n->signalfd_queue, siginfo->ksiginfo.signo);
+        }
+    }
+}
+
 rt_err_t lwp_signal_init(struct lwp_signal *sig)
 {
     rt_err_t rc;
@@ -705,6 +719,7 @@ rt_err_t lwp_signal_kill(struct rt_lwp *lwp, long signo, long code, long value)
             {
                 need_schedule = _siginfo_deliver_to_lwp(lwp, siginfo);
                 ret = 0;
+                lwp_signal_notify(&lwp->signalfd_notify_head, siginfo);
             }
             else
             {
@@ -857,6 +872,7 @@ rt_err_t lwp_thread_signal_kill(rt_thread_t thread, long signo, long code, long 
             {
                 need_schedule = _siginfo_deliver_to_thread(thread, siginfo);
                 ret = 0;
+                lwp_signal_notify(&lwp->signalfd_notify_head, siginfo);
             }
             else
             {
