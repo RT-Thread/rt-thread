@@ -229,11 +229,10 @@ rt_inline int sigqueue_peek(lwp_sigqueue_t sigqueue, lwp_sigset_t *mask)
 
 rt_inline int sigqueue_examine(lwp_sigqueue_t sigqueue, lwp_sigset_t *pending)
 {
-    lwp_sigset_t not_mask;
     int is_empty = sigqueue_isempty(sigqueue);
     if (!is_empty)
     {
-        _sigorsets(pending, &sigqueue->sigset_pending, &not_mask);
+        _sigorsets(pending, &sigqueue->sigset_pending, &sigqueue->sigset_pending);
     }
     return is_empty;
 }
@@ -924,21 +923,24 @@ static int _dequeue_signal(rt_thread_t thread, lwp_sigset_t *mask, siginfo_t *us
     lwp_siginfo_t si;
     struct rt_lwp *lwp;
     lwp_sigset_t *pending;
+    lwp_sigqueue_t sigqueue;
 
-    pending = &_SIGQ(thread)->sigset_pending;
+    sigqueue = _SIGQ(thread);
+    pending = &sigqueue->sigset_pending;
     signo = _next_signal(pending, mask);
     if (!signo)
     {
         lwp = thread->lwp;
         RT_ASSERT(lwp);
-        pending = &_SIGQ(lwp)->sigset_pending;
+        sigqueue = _SIGQ(lwp);
+        pending = &sigqueue->sigset_pending;
         signo = _next_signal(pending, mask);
     }
 
     if (!signo)
         return signo;
 
-    si = sigqueue_dequeue(_SIGQ(thread), signo);
+    si = sigqueue_dequeue(sigqueue, signo);
     RT_ASSERT(!!si);
 
     siginfo_k2u(si, usi);
@@ -1035,13 +1037,19 @@ rt_err_t lwp_thread_signal_timedwait(rt_thread_t thread, lwp_sigset_t *sigset,
 
 void lwp_thread_signal_pending(rt_thread_t thread, lwp_sigset_t *pending)
 {
+    rt_base_t level;
     struct rt_lwp *lwp;
     lwp = thread->lwp;
 
     if (lwp)
     {
         memset(pending, 0, sizeof(*pending));
+
+        level = rt_hw_interrupt_disable();
         sigqueue_examine(_SIGQ(thread), pending);
         sigqueue_examine(_SIGQ(lwp), pending);
+        rt_hw_interrupt_enable(level);
+
+        _sigandsets(pending, pending, &thread->signal.sigset_mask);
     }
 }
