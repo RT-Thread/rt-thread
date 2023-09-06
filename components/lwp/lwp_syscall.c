@@ -1878,6 +1878,7 @@ sysret_t _sys_fork(void)
     thread->user_stack_size = self_thread->user_stack_size;
     thread->signal.sigset_mask = self_thread->signal.sigset_mask;
     thread->thread_idr = self_thread->thread_idr;
+    thread->clear_child_tid = self_thread->clear_child_tid;
     thread->lwp = (void *)lwp;
     thread->tid = tid;
 
