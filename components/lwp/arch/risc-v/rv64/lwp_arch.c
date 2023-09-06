@@ -272,7 +272,7 @@ void *arch_signal_ucontext_restore(rt_base_t user_sp)
     else
     {
         LOG_I("User frame corrupted during signal handling\nexiting...");
-        sys_exit(EXIT_FAILURE);
+        sys_exit_group(EXIT_FAILURE);
     }
 
     return (void *)&new_sp->frame;
@@ -314,7 +314,7 @@ void *arch_signal_ucontext_save(int signo, siginfo_t *psiginfo,
     else
     {
         LOG_I("%s: User stack overflow", __func__);
-        sys_exit(EXIT_FAILURE);
+        sys_exit_group(EXIT_FAILURE);
     }
 
     return new_sp;

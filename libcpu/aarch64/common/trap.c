@@ -34,7 +34,6 @@ extern long list_thread(void);
 #include <lwp_core_dump.h>
 #endif
 
-void sys_exit(int value);
 void check_user_fault(struct rt_hw_exp_stack *regs, uint32_t pc_adj, char *info)
 {
     uint32_t mode = regs->cpsr;
@@ -46,7 +45,7 @@ void check_user_fault(struct rt_hw_exp_stack *regs, uint32_t pc_adj, char *info)
         lwp_core_dump(regs, pc_adj);
 #endif
         backtrace((unsigned long)regs->pc, (unsigned long)regs->x30, (unsigned long)regs->x29);
-        sys_exit(-1);
+        sys_exit_group(-1);
     }
 }
 
