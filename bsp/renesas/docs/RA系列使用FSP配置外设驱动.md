@@ -77,7 +77,7 @@ RA系列已更新 **FSP 3.5.0** 版本的支持，请使用 **FSP 3.5.0** 版本
    {
        rt_kprintf("\n IRQ00 triggered \n");
    }
-
+   
    void icu_sample(void)
    {
        /* init */
@@ -191,6 +191,35 @@ RA系列已更新 **FSP 3.5.0** 版本的支持，请使用 **FSP 3.5.0** 版本
 ![img](figures/dac_config2.png) 
 
 4. 在 menuconfig 中打开对应的通道
+
+### Timer（GPT）
+
+GPT 定时器在该芯片中可作为通用定时器，可以用于计时功能。
+
+1、添加 GPT 设备
+
+![img](figures/add_gpt.png)
+
+2、对 GPT 较为关键的配置如图所示，具体解释如下：
+
+1. 设置开启的定时器名称，比如 timer0/1...
+2. 设置定时器通道，需要和定时器名称后缀名相同，比如 0/1...
+3. 设置定时器中断回调函数，比如 timer0—>**timer0_callback**，timer1—>**timer1_callback**
+4. 设置定时器中断优先级
+
+![img](figures/set_gpt.png)
+
+3、在 env 中配置 timer 外设：
+
+* 使能 timer 外设
+
+![img](figures/en_timer.png)
+
+* 选择需要打开的某个定时器
+
+![img](figures/en_timerx.png)
+
+* 最后使用 scons --target=mdk5 等方式生成工程
 
 ### PWM（GPT）
 
