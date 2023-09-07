@@ -879,7 +879,7 @@ static void copyfile(const char *src, const char *dst)
         return;
     }
     fd_init(&fd);
-    if (dfs_file_open(&fd, dst, O_WRONLY | O_CREAT) < 0)
+    if (dfs_file_open(&fd, dst, O_WRONLY | O_CREAT | O_TRUNC) < 0)
     {
         rt_free(block_ptr);
         dfs_file_close(&src_fd);

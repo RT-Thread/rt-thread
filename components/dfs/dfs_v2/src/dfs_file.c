@@ -1939,7 +1939,7 @@ static void copyfile(const char *src, const char *dst)
 
     dfs_file_init(&dst_file);
 
-    ret = dfs_file_open(&dst_file, dst, O_WRONLY | O_CREAT, 0);
+    ret = dfs_file_open(&dst_file, dst, O_WRONLY | O_CREAT | O_TRUNC, 0);
     if (ret < 0)
     {
         dfs_file_deinit(&dst_file);
