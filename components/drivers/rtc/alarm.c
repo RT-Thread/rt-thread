@@ -281,7 +281,11 @@ static void alarm_update(rt_uint32_t event)
         else
         {
             if (_container.current != RT_NULL)
+            {
                 alarm_set(_container.current);
+                if (!(_container.current->flag & RT_ALARM_STATE_START))
+                    _container.current = RT_NULL;
+            }
         }
     }
     rt_mutex_release(&_container.mutex);
