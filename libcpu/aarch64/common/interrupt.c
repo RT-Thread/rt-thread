@@ -415,3 +415,48 @@ void rt_hw_ipi_handler_install(int ipi_vector, rt_isr_handler_t ipi_isr_handler)
     rt_hw_interrupt_install(ipi_vector, ipi_isr_handler, 0, "IPI_HANDLER");
 }
 #endif
+
+#if defined(FINSH_USING_MSH) && defined(RT_USING_INTERRUPT_INFO)
+int list_isr()
+{
+    int idx;
+
+    rt_kprintf("%-*.*s nr   handler            param              counter         ", RT_NAME_MAX, RT_NAME_MAX, "irq");
+#ifdef RT_USING_SMP
+    for (int i = 0; i < RT_CPUS_NR; i++)
+    {
+        rt_kprintf(" cpu%2d  ", i);
+    }
+#endif
+    rt_kprintf("\n");
+    for (int i = 0; i < RT_NAME_MAX; i++)
+    {
+        rt_kprintf("-");
+    }
+    rt_kprintf(" ---- ------------------ ------------------ ----------------");
+#ifdef RT_USING_SMP
+    for (int i = 0; i < RT_CPUS_NR; i++)
+    {
+        rt_kprintf(" -------");
+    }
+#endif
+    rt_kprintf("\n");
+    for (idx = 0; idx < MAX_HANDLERS; idx++)
+    {
+        if (isr_table[idx].handler != RT_NULL)
+        {
+            rt_kprintf("%*.s %4d %p %p %16d", RT_NAME_MAX, isr_table[idx].name, idx, isr_table[idx].handler,
+                       isr_table[idx].param, isr_table[idx].counter);
+#ifdef RT_USING_SMP
+            for (int i = 0; i < RT_CPUS_NR; i++)
+                 rt_kprintf(" %7d", isr_table[idx].cpu_counter[i]);
+#endif
+            rt_kprintf("\n");
+        }
+    }
+    return 0;
+}
+
+#include "finsh.h"
+MSH_CMD_EXPORT(list_isr, list isr)
+#endif

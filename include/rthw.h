@@ -112,6 +112,9 @@ struct rt_irq_desc
 #ifdef RT_USING_INTERRUPT_INFO
     char             name[RT_NAME_MAX];
     rt_uint32_t      counter;
+#ifdef RT_USING_SMP
+    rt_ubase_t       cpu_counter[RT_CPUS_NR];
+#endif
 #endif
 };
 
