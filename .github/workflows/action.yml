@@ -38,7 +38,6 @@ jobs:
             SUB_RTT_BSP: 
                 - "qemu-vexpress-a9"
                 - "airm2m/air32f103"
-                #- "airm2m/air105"
                 - "acm32/acm32f0x0-nucleo"
                 - "CME_M7"
                 - "apollo2"
@@ -67,7 +66,6 @@ jobs:
                 - "hc32/ev_hc32f4a0_lqfp176"
                 - "hc32/ev_hc32f460_lqfp100_v2"
                 - "hc32l196"
-                #- "tae32f5300"
                 - "mm32/mm32f3270-100ask-pitaya"
                 - "sam7x"
                 - "hk32/hk32f030c8-mini"
