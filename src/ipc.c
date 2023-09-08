@@ -3805,12 +3805,12 @@ rt_err_t rt_mq_send_wait_prio(rt_mq_t mq,
 {
     return _rt_mq_send_wait(mq, buffer, size, prio, timeout, suspend_flag);
 }
-rt_err_t rt_mq_recv_prio(rt_mq_t mq,
-                         void *buffer,
-                         rt_size_t size,
-                         rt_int32_t *prio,
-                         rt_int32_t timeout,
-                         int suspend_flag)
+rt_ssize_t rt_mq_recv_prio(rt_mq_t mq,
+                           void *buffer,
+                           rt_size_t size,
+                           rt_int32_t *prio,
+                           rt_int32_t timeout,
+                           int suspend_flag)
 {
     return _rt_mq_recv(mq, buffer, size, prio, timeout, suspend_flag);
 }
