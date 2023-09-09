@@ -538,7 +538,7 @@ void lwp_thread_signal_catch(void *exp_frame)
         if (handler == LWP_SIG_ACT_DFL)
         {
             LOG_D("%s: default handler; and exit", __func__);
-            sys_exit(0);
+            sys_exit_group(0);
         }
 
         /**

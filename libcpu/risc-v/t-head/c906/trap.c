@@ -225,7 +225,7 @@ void handle_user(rt_size_t scause, rt_size_t stval, rt_size_t sepc, struct rt_hw
     LOG_E("User Fault, killing thread: %s", rt_thread_self()->parent.name);
 
     EXIT_TRAP;
-    sys_exit(-1);
+    sys_exit_group(-1);
 }
 #endif
 
