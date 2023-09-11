@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -59,10 +59,10 @@ static time_t get_rtc_timestamp(void)
     return timegm(&tm_new);
 }
 
-static rt_err_t ra_get_secs(void *args)
+static rt_err_t ra_get_secs(time_t *sec)
 {
-    *(rt_uint32_t *)args = get_rtc_timestamp();
-    LOG_D("RTC: get rtc_time %x\n", *(rt_uint32_t *)args);
+    *(rt_uint32_t *)sec = get_rtc_timestamp();
+    LOG_D("RTC: get rtc_time %x\n", *(rt_uint32_t *)sec);
 
     return RT_EOK;
 }
@@ -95,25 +95,25 @@ static rt_err_t set_rtc_time_stamp(time_t time_stamp)
     return RT_EOK;
 }
 
-static rt_err_t ra_set_secs(void *args)
+static rt_err_t ra_set_secs(time_t *sec)
 {
 
     rt_err_t result = RT_EOK;
 
-    if (set_rtc_time_stamp(*(rt_uint32_t *)args))
+    if (set_rtc_time_stamp(*(rt_uint32_t *)sec))
     {
         result = -RT_ERROR;
     }
-    LOG_D("RTC: set rtc_time %x\n", *(rt_uint32_t *)args);
+    LOG_D("RTC: set rtc_time %x\n", *(rt_uint32_t *)sec);
 
     return result;
 }
 
 #ifdef RT_USING_ALARM
-static rt_err_t ra_get_alarm(void *arg)
+static rt_err_t ra_get_alarm(struct rt_rtc_wkalarm *alarm)
 {
     rt_err_t result = RT_EOK;
-    struct rt_rtc_wkalarm *wkalarm = (struct rt_rtc_wkalarm *)arg;
+    struct rt_rtc_wkalarm *wkalarm = alarm;
     rtc_alarm_time_t alarm_time_get =
     {
         .sec_match        =  RT_FALSE,
@@ -139,10 +139,10 @@ static rt_err_t ra_get_alarm(void *arg)
     return result;
 }
 
-static rt_err_t ra_set_alarm(void *arg)
+static rt_err_t ra_set_alarm(struct rt_rtc_wkalarm *alarm)
 {
     rt_err_t result = RT_EOK;
-    struct rt_rtc_wkalarm *wkalarm = (struct rt_rtc_wkalarm *)arg;
+    struct rt_rtc_wkalarm *wkalarm = alarm;
     rtc_alarm_time_t alarm_time_set =
     {
         .sec_match        =  RT_TRUE,

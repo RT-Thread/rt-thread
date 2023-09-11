@@ -648,21 +648,33 @@ pid_t waitpid(pid_t pid, int *status, int options)
     rt_base_t level;
     struct rt_thread *thread;
     struct rt_lwp *lwp;
-    struct rt_lwp *lwp_self;
+    struct rt_lwp *this_lwp;
+
+    this_lwp = lwp_self();
+    if (!this_lwp)
+    {
+        goto quit;
+    }
 
     level = rt_hw_interrupt_disable();
-    lwp = lwp_from_pid(pid);
-    if (!lwp)
+    if (pid == -1)
     {
-        goto quit;
+        lwp = this_lwp->first_child;
+        if (!lwp)
+            goto quit;
+        else
+            pid = lwp->pid;
+    }
+    else
+    {
+        lwp = lwp_from_pid(pid);
+        if (!lwp)
+        {
+            goto quit;
+        }
     }
 
-    lwp_self = (struct rt_lwp *)rt_thread_self()->lwp;
-    if (!lwp_self)
-    {
-        goto quit;
-    }
-    if (lwp->parent != lwp_self)
+    if (lwp->parent != this_lwp)
     {
         goto quit;
     }
@@ -693,7 +705,7 @@ pid_t waitpid(pid_t pid, int *status, int options)
         struct rt_lwp **lwp_node;
 
         *status = lwp->lwp_ret;
-        lwp_node = &lwp_self->first_child;
+        lwp_node = &this_lwp->first_child;
         while (*lwp_node != lwp)
         {
             RT_ASSERT(*lwp_node != RT_NULL);

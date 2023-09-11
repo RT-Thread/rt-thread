@@ -322,14 +322,14 @@ static void _crt_thread_entry(void *parameter)
 #endif /* ARCH_MM_MMU */
 }
 
-/* thread/process */
-void sys_exit(int value)
+/* exit group */
+sysret_t sys_exit_group(int value)
 {
     rt_base_t level;
     rt_thread_t tid, main_thread;
     struct rt_lwp *lwp;
 
-    LOG_D("thread/process exit.");
+    LOG_D("process exit");
 
     tid = rt_thread_self();
     lwp = (struct rt_lwp *)tid->lwp;
@@ -374,15 +374,51 @@ void sys_exit(int value)
 #endif /* ARCH_MM_MMU */
 
     rt_thread_delete(tid);
-    rt_schedule();
     rt_hw_interrupt_enable(level);
+    rt_schedule();
 
-    return;
+    /* never reach here */
+    return 0;
 }
 
-/* exit group */
-void sys_exit_group(int status)
+/* thread exit */
+void sys_exit(int status)
 {
+    rt_base_t level;
+    rt_thread_t tid, main_thread;
+    struct rt_lwp *lwp;
+
+    LOG_D("thread exit");
+
+    tid = rt_thread_self();
+    lwp = (struct rt_lwp *)tid->lwp;
+
+    level = rt_hw_interrupt_disable();
+
+#ifdef ARCH_MM_MMU
+    if (tid->clear_child_tid)
+    {
+        int t = 0;
+        int *clear_child_tid = tid->clear_child_tid;
+
+        tid->clear_child_tid = RT_NULL;
+        lwp_put_to_user(clear_child_tid, &t, sizeof t);
+        sys_futex(clear_child_tid, FUTEX_WAKE, 1, RT_NULL, RT_NULL, 0);
+    }
+
+    main_thread = rt_list_entry(lwp->t_grp.prev, struct rt_thread, sibling);
+    if (main_thread == tid && tid->sibling.prev == &lwp->t_grp)
+    {
+        lwp_terminate(lwp);
+        lwp_wait_subthread_exit();
+        lwp->lwp_ret = status;
+    }
+#endif /* ARCH_MM_MMU */
+
+    rt_thread_delete(tid);
+    rt_hw_interrupt_enable(level);
+    rt_schedule();
+
     return;
 }
 
@@ -1382,7 +1418,7 @@ struct ksigevent
 };
 
 /* to protect unsafe implementation in current rt-smart toolchain */
-RT_CTASSERT(sigevent_compatible, offsetof(struct ksigevent, sigev_tid) == offsetof(struct sigevent, sigev_notify_function));
+RT_STATIC_ASSERT(sigevent_compatible, offsetof(struct ksigevent, sigev_tid) == offsetof(struct sigevent, sigev_notify_function));
 
 sysret_t sys_timer_create(clockid_t clockid, struct sigevent *restrict sevp, timer_t *restrict timerid)
 {
@@ -1846,6 +1882,7 @@ sysret_t _sys_fork(void)
     thread->user_stack_size = self_thread->user_stack_size;
     thread->signal.sigset_mask = self_thread->signal.sigset_mask;
     thread->thread_idr = self_thread->thread_idr;
+    thread->clear_child_tid = self_thread->clear_child_tid;
     thread->lwp = (void *)lwp;
     thread->tid = tid;
 

@@ -28,7 +28,6 @@ extern long list_thread(void);
 #include <lwp_core_dump.h>
 #endif
 
-void sys_exit(int value);
 void check_user_fault(struct rt_hw_exp_stack *regs, uint32_t pc_adj, char *info)
 {
     uint32_t mode = regs->cpsr;
@@ -39,7 +38,7 @@ void check_user_fault(struct rt_hw_exp_stack *regs, uint32_t pc_adj, char *info)
 #ifdef LWP_USING_CORE_DUMP
         lwp_core_dump(regs, pc_adj);
 #endif
-        sys_exit(-1);
+        sys_exit_group(-1);
     }
 }
 
