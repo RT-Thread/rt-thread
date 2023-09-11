@@ -53,6 +53,10 @@
 #include <stdio.h> /* rename() */
 #include <sys/stat.h>
 #include <sys/statfs.h> /* statfs() */
+#include <sys/timerfd.h>
+#ifdef RT_USING_MUSLLIBC
+#include <sys/signalfd.h>
+#endif
 #endif
 
 #include "mqueue.h"
@@ -5416,6 +5420,15 @@ sysret_t sys_epoll_pwait(int fd,
     return (ret < 0 ? GET_ERRNO() : ret);
 }
 
+sysret_t sys_ftruncate(int fd, off_t length)
+{
+    int ret;
+
+    ret = ftruncate(fd, length);
+
+    return (ret < 0 ? GET_ERRNO() : ret);
+}
+
 sysret_t sys_chmod(const char *fileName, mode_t mode)
 {
     char *copy_fileName;
@@ -5562,6 +5575,54 @@ ssize_t sys_pwrite64(int fd, void *buf, int size, off_t offset)
     return (ret < 0 ? GET_ERRNO() : ret);
 }
 #endif
+
+sysret_t sys_timerfd_create(int clockid, int flags)
+{
+    return 0;
+}
+
+sysret_t sys_timerfd_settime(int fd, int flags, const struct itimerspec *new, struct itimerspec *old)
+{
+    return 0;
+}
+
+sysret_t sys_timerfd_gettime(int fd, struct itimerspec *cur)
+{
+    return 0;
+}
+
+sysret_t sys_signalfd(int fd, const sigset_t *mask, int flags)
+{
+    int ret = 0;
+    sigset_t *kmask = RT_NULL;
+
+#ifdef RT_USING_MUSLLIBC
+    if (mask == RT_NULL)
+        return -EINVAL;
+
+    if (!lwp_user_accessable((void *)mask, sizeof(struct itimerspec)))
+    {
+        return -EFAULT;
+    }
+
+    kmask = kmem_get(sizeof(*kmask));
+
+    if (kmask)
+    {
+        lwp_get_from_user(kmask, (void *)mask, sizeof(*kmask));
+        ret = signalfd(fd, mask, flags);
+        lwp_put_to_user((void *)mask, kmask, sizeof(*kmask));
+        kmem_put(kmask);
+    }
+#endif
+
+    return (ret < 0 ? GET_ERRNO() : ret);
+}
+
+sysret_t sys_memfd_create()
+{
+    return 0;
+}
 
 const static struct rt_syscall_def func_table[] =
 {
@@ -5798,6 +5859,13 @@ const static struct rt_syscall_def func_table[] =
     SYSCALL_SIGN(sys_epoll_create1),
     SYSCALL_SIGN(sys_epoll_ctl),
     SYSCALL_SIGN(sys_epoll_pwait),
+    SYSCALL_SIGN(sys_notimpl),                          /* 195 */
+    SYSCALL_SIGN(sys_timerfd_create),
+    SYSCALL_SIGN(sys_timerfd_settime),
+    SYSCALL_SIGN(sys_timerfd_gettime),
+    SYSCALL_SIGN(sys_signalfd),
+    SYSCALL_SIGN(sys_memfd_create),                     /* 200 */
+    SYSCALL_SIGN(sys_ftruncate),
 };
 
 const void *lwp_get_sys_api(rt_uint32_t number)

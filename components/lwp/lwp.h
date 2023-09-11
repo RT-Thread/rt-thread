@@ -68,6 +68,13 @@ struct rt_lwp_objs
     struct rt_mem_obj mem_obj;
 };
 
+struct rt_lwp_notify
+{
+    void (*notify)(rt_wqueue_t *signalfd_queue, int signo);
+    rt_wqueue_t *signalfd_queue;
+    rt_slist_t list_node;
+};
+
 struct rt_lwp
 {
 #ifdef ARCH_MM_MMU
@@ -130,6 +137,8 @@ struct rt_lwp
     char working_directory[DFS_PATH_MAX];
     int debug;
     uint32_t bak_first_ins;
+
+    rt_slist_t signalfd_notify_head;
 
 #ifdef LWP_ENABLE_ASID
     uint64_t generation;
