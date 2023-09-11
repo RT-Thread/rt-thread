@@ -48,7 +48,7 @@ rt_inline rt_size_t _adjust_size(rt_ubase_t base, rt_size_t *size)
 static struct rt_mmblk_reg *_dummy_malloc(struct rt_memblock *memblock, struct rt_mmblk_reg *prev)
 {
     struct rt_mmblk_reg *ret = RT_NULL;
-    
+
     for(int i = memblock->hint_idx; i < memblock->max; i++)
     {
         if(memblock->regions[i].size == 0)
@@ -76,7 +76,7 @@ static struct rt_mmblk_reg *_dummy_malloc(struct rt_memblock *memblock, struct r
                 memblock->hint_idx = i + 1;
                 ret = &memblock->regions[i];
                 break;
-            } 
+            }
         }
     }
 
@@ -84,7 +84,7 @@ static struct rt_mmblk_reg *_dummy_malloc(struct rt_memblock *memblock, struct r
 }
 
 static void _dummy_free(struct rt_memblock *memblock, struct rt_mmblk_reg *prev)
-{   
+{
     if(prev->next == RT_NULL)
         return;
 
@@ -123,9 +123,9 @@ static void _memblock_merge_regions(struct rt_memblock *memblock)
         /* skip the guard node */
         if(reg->size == 0)
             continue;
-        
+
         /* 'reg' can merge with next*/
-        while (reg->next && 
+        while (reg->next &&
             reg->flags == reg->next->flags &&
             reg->base + reg->size == reg->next->base)
         {
@@ -173,7 +173,7 @@ static void _memblock_add_range(struct rt_memblock *memblock,
             {
                 reg->next->base = base;
                 reg->next->size += rbase - base;
-            }   
+            }
         }
         base = MIN(rend, end);
     }
@@ -236,8 +236,8 @@ static void _memblock_isolate_range(struct rt_memblock *memblock,
     }
 }
 
-static void _memblock_setclr_flag(struct rt_memblock *memblock, 
-                    rt_ubase_t base, rt_size_t size, 
+static void _memblock_setclr_flag(struct rt_memblock *memblock,
+                    rt_ubase_t base, rt_size_t size,
                     rt_bool_t set, enum mmblk_flag flag)
 {
     struct rt_mmblk_reg *start_reg = RT_NULL, *end_reg = RT_NULL;
@@ -291,7 +291,7 @@ static void _memblock_dump(struct rt_memblock *memblock)
  * @brief Find the next free region
  * The free region is within the memory regions and not within the reserved regions.
  * The current free region is identified by *m and *r
- * 
+ *
  * @param m *m point to the current memory region
  * @param r *r point to the current reserved region
  * @param flags flags of desired regions
@@ -309,7 +309,7 @@ void _next_free_region(struct rt_mmblk_reg **m, struct rt_mmblk_reg **r, enum mm
     rt_ubase_t r_start = 0;
     rt_ubase_t r_end = 0;
 
-    for (; *m != RT_NULL; *m = (*m)->next) 
+    for (; *m != RT_NULL; *m = (*m)->next)
     {
         if((*m)->flags != flags)
             continue;
