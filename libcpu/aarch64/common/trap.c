@@ -34,18 +34,48 @@ extern long list_thread(void);
 #include <lwp_core_dump.h>
 #endif
 
-void check_user_fault(struct rt_hw_exp_stack *regs, uint32_t pc_adj, char *info)
+static void _check_fault(struct rt_hw_exp_stack *regs, uint32_t pc_adj, char *info)
 {
     uint32_t mode = regs->cpsr;
 
     if ((mode & 0x1f) == 0x00)
     {
         rt_kprintf("%s! pc = 0x%08x\n", info, regs->pc - pc_adj);
+
+        /* user stack backtrace */
+    #ifdef RT_USING_LWP
+        {
+            rt_thread_t th;
+
+            th = rt_thread_self();
+            if (th && th->lwp)
+            {
+                rt_backtrace_user_thread(th);
+            }
+        }
+    #endif
+
 #ifdef LWP_USING_CORE_DUMP
         lwp_core_dump(regs, pc_adj);
 #endif
-        backtrace((unsigned long)regs->pc, (unsigned long)regs->x30, (unsigned long)regs->x29);
         sys_exit_group(-1);
+    }
+    else
+    {
+        /* user stack backtrace */
+    #ifdef RT_USING_LWP
+        {
+            rt_thread_t th;
+
+            th = rt_thread_self();
+            if (th && th->lwp)
+            {
+                rt_backtrace_user_thread(th);
+            }
+        }
+    #endif
+        /* kernel stack backtrace */
+        backtrace((unsigned long)regs->pc, (unsigned long)regs->x30, (unsigned long)regs->x29);
     }
 }
 
@@ -293,28 +323,17 @@ void rt_hw_trap_exception(struct rt_hw_exp_stack *regs)
     process_exception(esr, regs->pc);
     rt_hw_show_register(regs);
     rt_kprintf("current: %s\n", rt_thread_self()->parent.name);
-#ifdef RT_USING_LWP
-    check_user_fault(regs, 0, "user fault");
-#endif
+
 #ifdef RT_USING_FINSH
     list_thread();
 #endif
 
 #ifdef RT_USING_LWP
-    {
-        rt_thread_t th;
-
-        th = rt_thread_self();
-        if (th && th->lwp)
-        {
-            rt_backtrace_user_thread(th);
-        }
-    }
+    _check_fault(regs, 0, "user fault");
 #endif
-
-    backtrace((unsigned long)regs->pc, (unsigned long)regs->x30, (unsigned long)regs->x29);
     rt_hw_cpu_shutdown();
 }
+
 
 void rt_hw_trap_serror(struct rt_hw_exp_stack *regs)
 {
