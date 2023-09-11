@@ -38,6 +38,9 @@ struct rt_rtc_wkalarm
     rt_int32_t tm_sec;               /* alarm at tm_sec */
     rt_int32_t tm_min;               /* alarm at tm_min */
     rt_int32_t tm_hour;              /* alarm at tm_hour */
+    rt_int32_t tm_mday;              /* alarm at tm_mday */
+    rt_int32_t tm_mon;               /* alarm at tm_mon */
+    rt_int32_t tm_year;              /* alarm at tm_year */
 };
 
 struct rt_rtc_ops
