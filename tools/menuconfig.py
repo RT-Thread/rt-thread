@@ -219,6 +219,9 @@ def touch_env():
     if sys.platform != 'win32':
         env_sh = open(os.path.join(env_dir, 'env.sh'), 'w')
         env_sh.write('export PATH=~/.env/tools/scripts:$PATH')
+
+        env_fish = open(os.path.join(env_dir, 'env.fish'), 'w')
+        env_fish.write('set -gx PATH ~/.env/tools/scripts $PATH')
     else:
         if os.path.exists(os.path.join(env_dir, 'tools', 'scripts')):
             os.environ["PATH"] = os.path.join(env_dir, 'tools', 'scripts') + ';' + os.environ["PATH"]
