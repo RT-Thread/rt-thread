@@ -394,18 +394,22 @@ void rt_memblock_reserve_ext(rt_ubase_t base, rt_size_t size, enum mmblk_flag fl
 rt_size_t rt_memblock_end()
 {
     rt_bool_t init = RT_TRUE;
-    rt_region_t reg;
     rt_size_t mem = 0;
+    rt_ubase_t start = 0, end = 0;
+    rt_region_t reg = {
+        .start = 0,
+        .end = 0,
+    };
 
     /* make sure region is compact */
     _memblock_merge_regions(&mmblk_memory);
 
     struct rt_mmblk_reg *m, *r;
 
-    for_each_free_region(m, r, MEMBLOCK_NONE, &reg.start, &reg.end)
+    for_each_free_region(m, r, MEMBLOCK_NONE, &start, &end)
     {
-        reg.start -= PV_OFFSET;
-        reg.end -= PV_OFFSET;
+        reg.start = (rt_size_t)start - PV_OFFSET;
+        reg.end = (rt_size_t)end - PV_OFFSET;
 
         if(init)
         {
