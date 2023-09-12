@@ -12,6 +12,7 @@
 #include "gic.h"
 #include "interrupt.h"
 #include "mmu.h"
+#include "gtimer.h"
 
 #ifdef RT_USING_SMP
 
@@ -29,6 +30,7 @@ void rt_hw_secondary_cpu_bsp_start(void)
     arm_gic_cpu_init(0, 0);
 
     // local timer init
+    rt_hw_gtimer_init();
 
     rt_system_scheduler_start();
 }
