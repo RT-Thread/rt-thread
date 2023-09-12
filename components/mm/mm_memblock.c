@@ -383,7 +383,7 @@ void rt_memblock_reserve_ext(rt_ubase_t base, rt_size_t size, mmblk_flag_t flags
     _memblock_add_range(&mmblk_reserved, base, size, flags);
 }
 
-rt_size_t rt_memblock_free_all()
+rt_size_t rt_memblock_free_all(void)
 {
     rt_bool_t init = RT_TRUE;
     rt_size_t mem = 0;
@@ -420,7 +420,7 @@ rt_size_t rt_memblock_free_all()
     return mem;
 }
 
-void rt_memblock_dump()
+void rt_memblock_dump(void)
 {
     rt_size_t mem_size = _memblock_size(&mmblk_memory);
     rt_size_t reserved_size = _memblock_size(&mmblk_reserved);

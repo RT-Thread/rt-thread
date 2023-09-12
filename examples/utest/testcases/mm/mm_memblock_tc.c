@@ -41,7 +41,7 @@ rt_inline rt_uint32_t _reg_cnt(struct rt_memblock *memblock)
     return ret;
 }
 
-static void _reset_memblock()
+static void _reset_memblock(void)
 {
     mmblk_memory.hint_idx = 1;
     mmblk_memory.regions[0].next = RT_NULL;
@@ -83,7 +83,7 @@ static void test_memblock_add_simple(void)
     uassert_int_equal(_reg_cnt(&mmblk_memory), 2);
 }
 
-static void test_memblock_add_overlap_top()
+static void test_memblock_add_overlap_top(void)
 {
     _reset_memblock();
 
@@ -98,7 +98,7 @@ static void test_memblock_add_overlap_top()
     uassert_int_equal(_reg_cnt(&mmblk_memory), 1);
 }
 
-static void test_memblock_add_overlap_bottom()
+static void test_memblock_add_overlap_bottom(void)
 {
     _reset_memblock();
 
@@ -113,7 +113,7 @@ static void test_memblock_add_overlap_bottom()
     uassert_int_equal(_reg_cnt(&mmblk_memory), 1);
 }
 
-static void test_memblock_add_within()
+static void test_memblock_add_within(void)
 {
     _reset_memblock();
 
@@ -128,7 +128,7 @@ static void test_memblock_add_within()
     uassert_int_equal(_reg_cnt(&mmblk_memory), 1);
 }
 
-static void test_memblock_add_twice()
+static void test_memblock_add_twice(void)
 {
     _reset_memblock();
 
@@ -142,7 +142,7 @@ static void test_memblock_add_twice()
     uassert_int_equal(_reg_cnt(&mmblk_memory), 1);
 }
 
-static void test_memblock_add_between()
+static void test_memblock_add_between(void)
 {
     _reset_memblock();
 
@@ -159,7 +159,7 @@ static void test_memblock_add_between()
     uassert_int_equal(_reg_cnt(&mmblk_memory), 1);
 }
 
-static void test_memblock_add_near_max()
+static void test_memblock_add_near_max(void)
 {
     _reset_memblock();
 

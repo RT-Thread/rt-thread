@@ -80,14 +80,14 @@ void rt_memblock_reserve(rt_ubase_t base, rt_size_t size);
 /**
  * @brief Print the information about overall and reserved memory regions
  */
-void rt_memblock_dump();
+void rt_memblock_dump(void);
 
 /**
  * @brief Free the available memory to buddy system
  *
  * @return the freed memory size in bytes
  */
-rt_size_t rt_memblock_free_all();
+rt_size_t rt_memblock_free_all(void);
 
 void rt_memblock_mark_hotplug(rt_ubase_t base, rt_size_t size);
 void rt_memblock_clear_hotplug(rt_ubase_t base, rt_size_t size);
