@@ -5,7 +5,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2023-09-07     ZhaoMaosheng the first version
+ * 2023-09-07     zmshahaha    the first version
  */
 
 #include "mm_memblock.h"
@@ -85,15 +85,15 @@ static struct rt_mmblk_reg *_dummy_malloc(struct rt_memblock *memblock, struct r
 
 static void _dummy_free(struct rt_memblock *memblock, struct rt_mmblk_reg *prev)
 {
-    if(prev->next == RT_NULL)
-        return;
-
-    prev->next->size = 0;
-    prev->next = prev->next->next;
+    if(prev->next != RT_NULL)
+    {
+        prev->next->size = 0;
+        prev->next = prev->next->next;
+    }
 }
 
 static void _reg_insert_after(struct rt_memblock *memblock, struct rt_mmblk_reg *reg,
-                            rt_ubase_t base, rt_size_t size, enum mmblk_flag flags)
+                            rt_ubase_t base, rt_size_t size, mmblk_flag_t flags)
 {
     struct rt_mmblk_reg *new_reg = _dummy_malloc(memblock, reg);
 
@@ -135,19 +135,16 @@ static void _memblock_merge_regions(struct rt_memblock *memblock)
 
         /* avoid having 'reg' as the last range after executing '_reg_remove_after' */
         if(!reg->next)
-            return;
+            break;
     }
 }
 
 static void _memblock_add_range(struct rt_memblock *memblock,
                                     rt_ubase_t base, rt_size_t size,
-                                    enum mmblk_flag flags)
+                                    mmblk_flag_t flags)
 {
     rt_ubase_t end = base + _adjust_size(base, &size);
     struct rt_mmblk_reg *reg = RT_NULL;
-
-    if(!size)
-        return ;
 
     for_each_region(memblock, reg)
     {
@@ -197,9 +194,6 @@ static void _memblock_isolate_range(struct rt_memblock *memblock,
 
     *start_reg = *end_reg = RT_NULL;
 
-    if(!size)
-        return ;
-
     for_each_region(memblock, reg)
     {
         rt_ubase_t rbase = reg->next->base;
@@ -238,7 +232,7 @@ static void _memblock_isolate_range(struct rt_memblock *memblock,
 
 static void _memblock_setclr_flag(struct rt_memblock *memblock,
                     rt_ubase_t base, rt_size_t size,
-                    rt_bool_t set, enum mmblk_flag flag)
+                    rt_bool_t set, mmblk_flag_t flag)
 {
     struct rt_mmblk_reg *start_reg = RT_NULL, *end_reg = RT_NULL;
 
@@ -298,7 +292,7 @@ static void _memblock_dump(struct rt_memblock *memblock)
  * @param out_strat *out_start stores the returned free region's beginning
  * @param out_end *out_end stores the ending of the returned free region
  */
-void _next_free_region(struct rt_mmblk_reg **m, struct rt_mmblk_reg **r, enum mmblk_flag flags,
+void _next_free_region(struct rt_mmblk_reg **m, struct rt_mmblk_reg **r, mmblk_flag_t flags,
                       rt_ubase_t *out_start, rt_ubase_t *out_end)
 {
     /* memory related data */
@@ -366,7 +360,7 @@ void rt_memblock_add(rt_ubase_t base, rt_size_t size)
     _memblock_add_range(&mmblk_memory, base, size, 0);
 }
 
-void rt_memblock_add_ext(rt_ubase_t base, rt_size_t size, enum mmblk_flag flags)
+void rt_memblock_add_ext(rt_ubase_t base, rt_size_t size, mmblk_flag_t flags)
 {
     LOG_D("add physical address range [%p-%p) with flag 0x%x" \
             " to overall memory regions\n", base, base + size, flag);
@@ -382,16 +376,15 @@ void rt_memblock_reserve(rt_ubase_t base, rt_size_t size)
     _memblock_add_range(&mmblk_reserved, base, size, 0);
 }
 
-void rt_memblock_reserve_ext(rt_ubase_t base, rt_size_t size, enum mmblk_flag flags)
+void rt_memblock_reserve_ext(rt_ubase_t base, rt_size_t size, mmblk_flag_t flags)
 {
     LOG_D("add physical address range [%p-%p) with flag 0x%x" \
-            " to reserved memory regions\n",\
-                                        base, base + size);
+            " to reserved memory regions\n", base, base + size);
 
     _memblock_add_range(&mmblk_reserved, base, size, flags);
 }
 
-rt_size_t rt_memblock_end()
+rt_size_t rt_memblock_free_all()
 {
     rt_bool_t init = RT_TRUE;
     rt_size_t mem = 0;

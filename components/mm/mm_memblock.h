@@ -5,7 +5,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2023-09-07     ZhaoMaosheng the first version
+ * 2023-09-07     zmshahaha    the first version
  */
 
 #ifndef __MM_MEMBLOCK_H__
@@ -16,12 +16,12 @@
 
 enum mmblk_flag
 {
-    MEMBLOCK_NONE       = 0x0,
-    MEMBLOCK_HOTPLUG    = 0x1,
-    MEMBLOCK_NOMAP      = 0x2,
-    MEMBLOCK_REUSEABLE  = 0x4,
+    MEMBLOCK_NONE       = 0x0,      /**< normal region */
+    MEMBLOCK_HOTPLUG    = 0x1,      /**< hotpluggable region */
+    MEMBLOCK_NOMAP      = 0x2,      /**< don't add to kernel direct mapping */
 };
 
+typedef rt_uint32_t mmblk_flag_t;
 /**
  * @struct rt_mmblk_reg
  *
@@ -29,9 +29,9 @@ enum mmblk_flag
  */
 struct rt_mmblk_reg
 {
-    rt_ubase_t base;                ///< the beginning physical address of the region
-    rt_size_t size;                 ///< the size of the region
-    enum mmblk_flag flags;          ///< the flag of the region
+    rt_ubase_t base;                /**< the beginning physical address of the region */
+    rt_size_t size;                 /**< the size of the region. if size is 0, this region is unallocated. */
+    mmblk_flag_t flags;             /**< the flag of the region */
     struct rt_mmblk_reg *next;
 };
 
@@ -44,11 +44,11 @@ struct rt_memblock
 {
     rt_uint32_t hint_idx;
     rt_uint32_t max;
-    struct rt_mmblk_reg *regions;   ///< store the regions of the memory block
+    struct rt_mmblk_reg *regions;   /**< store the regions of the memory block */
 };
 
-extern struct rt_memblock mmblk_memory;     ///< overall memory block
-extern struct rt_memblock mmblk_reserved;   ///< reserved memory block
+extern struct rt_memblock mmblk_memory;     /**< overall memory block */
+extern struct rt_memblock mmblk_reserved;   /**< reserved memory block */
 
 /**
  * @brief Add a physical address range to the overall memory region
@@ -67,7 +67,7 @@ void rt_memblock_add(rt_ubase_t base, rt_size_t size);
  * @param size the size of the physical address range
  * @param flags the flags of the region
  */
-void rt_memblock_add_ext(rt_ubase_t base, rt_size_t size, enum mmblk_flag flags);
+void rt_memblock_add_ext(rt_ubase_t base, rt_size_t size, mmblk_flag_t flags);
 
 /**
  * @brief Add a physical address range to the reserved memory region
@@ -87,7 +87,7 @@ void rt_memblock_dump();
  *
  * @return the freed memory size in bytes
  */
-rt_size_t rt_memblock_end();
+rt_size_t rt_memblock_free_all();
 
 void rt_memblock_mark_hotplug(rt_ubase_t base, rt_size_t size);
 void rt_memblock_clear_hotplug(rt_ubase_t base, rt_size_t size);
@@ -104,13 +104,13 @@ rt_inline rt_bool_t rt_memreg_is_nomap(struct rt_mmblk_reg *m)
     return m->flags & MEMBLOCK_NOMAP;
 }
 
-#define for_each_region(memblock, rgn)           \
-    for (rgn = memblock->regions;            \
-         rgn->next != RT_NULL;                 \
-         rgn = rgn->next)
+#define for_each_region(memblock, reg)           \
+    for (reg = memblock->regions;            \
+         reg->next != RT_NULL;                 \
+         reg = reg->next)
 
 /* just for for_each_free_region api */
-void _next_free_region(struct rt_mmblk_reg **m, struct rt_mmblk_reg **r, enum mmblk_flag flags,
+void _next_free_region(struct rt_mmblk_reg **m, struct rt_mmblk_reg **r, mmblk_flag_t flags,
                       rt_ubase_t *out_start, rt_ubase_t *out_end);
 
 #define for_each_free_region(m, r, flags, p_start, p_end)   \
