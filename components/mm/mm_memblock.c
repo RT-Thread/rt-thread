@@ -241,9 +241,8 @@ static void _memblock_setclr_flag(struct rt_memblock *memblock,
     if(start_reg == RT_NULL)
         return;
 
-    RT_ASSERT(end_reg != RT_NULL);
-
-    for (struct rt_mmblk_reg *iter = start_reg; iter != end_reg; iter = iter->next) {
+    for (struct rt_mmblk_reg *iter = start_reg; iter != end_reg; iter = iter->next)
+    {
         if (set)
             iter->flags |= flag;
         else
