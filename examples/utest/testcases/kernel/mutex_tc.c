@@ -6,11 +6,18 @@
  * Change Logs:
  * Date           Author       Notes
  * 2021-09.01     luckyzjq     the first version
+ * 2023-09-15     xqyjlj       change stack size in cpu64
  */
 
 #include <rtthread.h>
 #include <stdlib.h>
 #include "utest.h"
+
+#ifdef ARCH_CPU_64BIT
+#define THREAD_STACKSIZE 4096
+#else
+#define THREAD_STACKSIZE 1024
+#endif
 
 static struct rt_mutex static_mutex;
 
@@ -84,7 +91,7 @@ static void test_static_mutex_take(void)
     rt_thread_t tid = rt_thread_create("mutex_th",
                                        static_mutex_take_entry,
                                        &static_mutex,
-                                       2048,
+                                       THREAD_STACKSIZE,
                                        10,
                                        10);
     if (RT_NULL == tid)
@@ -145,7 +152,7 @@ static void test_static_mutex_release(void)
     rt_thread_t tid = rt_thread_create("mutex_th",
                                        static_mutex_release_entry,
                                        &static_mutex,
-                                       2048,
+                                       THREAD_STACKSIZE,
                                        10,
                                        10);
     if (RT_NULL == tid)
@@ -200,7 +207,7 @@ static void test_static_mutex_trytake(void)
     rt_thread_t tid = rt_thread_create("mutex_th",
                                        static_mutex_trytake_entry,
                                        &static_mutex,
-                                       2048,
+                                       THREAD_STACKSIZE,
                                        10,
                                        10);
     if (RT_NULL == tid)
@@ -397,7 +404,7 @@ static void test_dynamic_mutex_take(void)
     rt_thread_t tid = rt_thread_create("mutex_th",
                                        dynamic_mutex_take_entry,
                                        dynamic_mutex,
-                                       2048,
+                                       THREAD_STACKSIZE,
                                        10,
                                        10);
     if (RT_NULL == tid)
@@ -458,7 +465,7 @@ static void test_dynamic_mutex_release(void)
     rt_thread_t tid = rt_thread_create("mutex_th",
                                        dynamic_mutex_release_entry,
                                        dynamic_mutex,
-                                       2048,
+                                       THREAD_STACKSIZE,
                                        10,
                                        10);
     if (RT_NULL == tid)
@@ -513,7 +520,7 @@ static void test_dynamic_mutex_trytake(void)
     rt_thread_t tid = rt_thread_create("mutex_th",
                                        dynamic_mutex_trytake_entry,
                                        dynamic_mutex,
-                                       2048,
+                                       THREAD_STACKSIZE,
                                        10,
                                        10);
     if (RT_NULL == tid)
