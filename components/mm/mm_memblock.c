@@ -24,19 +24,19 @@
 
 #define PHYS_ADDR_MAX (~(rt_ubase_t)0)
 
-static struct rt_mmblk_reg _memreg[INIT_MEMORY_REGIONS];
-static struct rt_mmblk_reg _resreg[INIT_RESERVED_REGIONS];
+static struct rt_mmblk_reg _init_memory_regions[INIT_MEMORY_REGIONS];
+static struct rt_mmblk_reg _init_reserved_regions[INIT_RESERVED_REGIONS];
 
 struct rt_memblock mmblk_memory = {
     .hint_idx = 1,
     .max = INIT_MEMORY_REGIONS,
-    .regions = &_memreg[0],
+    .regions = &_init_memory_regions[0],
 };
 
 struct rt_memblock mmblk_reserved = {
     .hint_idx = 1,
     .max = INIT_RESERVED_REGIONS,
-    .regions = &_resreg[0],
+    .regions = &_init_reserved_regions[0],
 };
 
 /* adjust size to avoid exceed physical addr range */
