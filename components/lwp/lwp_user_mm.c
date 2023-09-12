@@ -633,7 +633,7 @@ int lwp_user_accessible_ext(struct rt_lwp *lwp, void *addr, size_t size)
     {
         return 0;
     }
-    if (!size || !addr)
+    if (!addr)
     {
         return 0;
     }

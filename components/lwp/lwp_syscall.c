@@ -476,11 +476,6 @@ ssize_t sys_write(int fd, const void *buf, size_t nbyte)
     void *kmem = RT_NULL;
     ssize_t ret = -1;
 
-    if (!nbyte)
-    {
-        return -EINVAL;
-    }
-
     if (!lwp_user_accessable((void *)buf, nbyte))
     {
         return -EFAULT;
