@@ -120,19 +120,26 @@ int dfs_tmpfs_mount(struct dfs_filesystem *fs,
     struct tmpfs_sb *superblock;
 
     superblock = rt_calloc(1, sizeof(struct tmpfs_sb));
-    superblock->df_size = sizeof(struct tmpfs_sb);
-    superblock->magic = TMPFS_MAGIC;
-    rt_list_init(&superblock->sibling);
+    if (superblock)
+    {
+        superblock->df_size = sizeof(struct tmpfs_sb);
+        superblock->magic = TMPFS_MAGIC;
+        rt_list_init(&superblock->sibling);
 
-    superblock->root.name[0] = '/';
-    superblock->root.sb = superblock;
-    superblock->root.type = TMPFS_TYPE_DIR;
-    rt_list_init(&superblock->root.sibling);
-    rt_list_init(&superblock->root.subdirs);
+        superblock->root.name[0] = '/';
+        superblock->root.sb = superblock;
+        superblock->root.type = TMPFS_TYPE_DIR;
+        rt_list_init(&superblock->root.sibling);
+        rt_list_init(&superblock->root.subdirs);
 
-    rt_spin_lock_init(&superblock->lock);
+        rt_spin_lock_init(&superblock->lock);
 
-    fs->data = superblock;
+        fs->data = superblock;
+    }
+    else
+    {
+        return -1;
+    }
 
     return RT_EOK;
 }
