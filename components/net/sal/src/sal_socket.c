@@ -1098,9 +1098,9 @@ int sal_ioctlsocket(int socket, long cmd, void *arg)
                     {
                         addr_in = (struct sockaddr_in *)&(ifr->ifr_ifru.ifru_addr);
                     #if NETDEV_IPV4 && NETDEV_IPV6
-                        addr_in->sin_addr.s_addr = sock->netdev->ip_addr.u_addr.ip4.addr;
+                        addr_in->sin_addr.s_addr = netdev->ip_addr.u_addr.ip4.addr;
                     #elif NETDEV_IPV4
-                        addr_in->sin_addr.s_addr = sock->netdev->ip_addr.addr;
+                        addr_in->sin_addr.s_addr = netdev->ip_addr.addr;
                     #elif NETDEV_IPV6
                     #error "Do not only support IPV6"
                     #endif /* NETDEV_IPV4 && NETDEV_IPV6 */
