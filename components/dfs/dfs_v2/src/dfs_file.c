@@ -1283,7 +1283,7 @@ int dfs_file_symlink(const char *target, const char *linkpath)
                     {
                         if (dentry->mnt->fs_ops->symlink)
                         {
-                            char *path = dfs_normalize_path(NULL, target);
+                            char *path = dfs_normalize_path(parent, target);
                             if (path)
                             {
                                 char *tmp = dfs_nolink_path(&mnt, path, 0);
@@ -1297,26 +1297,19 @@ int dfs_file_symlink(const char *target, const char *linkpath)
                                     tmp = path;
                                 }
 
-                                if (dfs_file_access(path, O_RDONLY) == 0)
+                                ret = rt_strncmp(parent, path, strlen(parent));
+                                if (ret == 0)
                                 {
-                                    ret = rt_strncmp(parent, path, strlen(parent));
-                                    if (ret == 0)
+                                    tmp = path + strlen(parent);
+                                    if (*tmp == '/')
                                     {
-                                        tmp = path + strlen(parent);
-                                        if (*tmp == '/')
-                                        {
-                                            tmp ++;
-                                        }
-                                    }
-
-                                    if (dfs_is_mounted(mnt) == 0)
-                                    {
-                                        ret = mnt->fs_ops->symlink(dentry, tmp, index + 1);
+                                        tmp ++;
                                     }
                                 }
-                                else
+
+                                if (dfs_is_mounted(mnt) == 0)
                                 {
-                                    ret = -ENOENT;
+                                    ret = mnt->fs_ops->symlink(dentry, tmp, index + 1);
                                 }
 
                                 rt_free(path);
