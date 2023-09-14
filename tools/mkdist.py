@@ -243,10 +243,6 @@ def MkDist(program, BSP_ROOT, RTT_ROOT, Env, project_name, project_path):
     # delete testcases in Kconfig
     bsp_update_kconfig_testcases(dist_dir)
 
-    # make zip package
-    if project_path == None:
-        zip_dist(dist_dir, project_name)
-
     target_project_type = GetOption('target')
     if target_project_type:
         child = subprocess.Popen('scons --target={} --project-name="{}"'.format(target_project_type, project_name), cwd=dist_dir, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
@@ -257,5 +253,9 @@ def MkDist(program, BSP_ROOT, RTT_ROOT, Env, project_name, project_path):
             print(stderr)
     else:
         print('suggest to use command scons --dist [--target=xxx] [--project-name="xxx"] [--project-path="xxx"]')
+
+    # make zip package
+    if project_path == None:
+        zip_dist(dist_dir, project_name)
 
     print('dist project successfully!')
