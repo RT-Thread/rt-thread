@@ -30,6 +30,7 @@ import os
 import json
 import utils
 import rtconfig
+import pyocdconf
 from utils import _make_path_relative
 
 def delete_repeatelist(data):
@@ -103,7 +104,69 @@ def GenerateCFiles(env):
                 path['name'] = 'rtthread/' + '/'.join([p for p in path['path'].split('\\') if p != '..'])
         json_obj['folders'] = path_list
         vsc_space_file.write(json.dumps(json_obj, ensure_ascii=False, indent=4))
-        vsc_space_file.close()    
+        vsc_space_file.close()
+
+    res_pyocdconf = pyocdconf.get_cmsisPack_targetId()
+    cmsispack = res_pyocdconf[0]
+    targetId = res_pyocdconf[1]
+
+    """
+    Generate .vscode/launch.json files
+    """
+
+    vsc_launch_file = open('.vscode/launch.json', 'w')
+    if vsc_launch_file:
+        config_obj = {}
+        config_obj['name'] = 'Cortex Debug'
+        config_obj['cwd'] = '${workspaceFolder}'
+        config_obj['executable'] = 'rt-thread.elf'
+        config_obj['request'] = 'launch'
+        config_obj['type'] = 'cortex-debug'
+        config_obj['runToEntryPoint'] = 'Reset_Handler'
+        config_obj['servertype'] = 'pyocd'
+        config_obj['toolchainPrefix'] = 'arm-none-eabi'
+        config_obj['targetId'] = targetId
+        config_obj['cmsisPack'] = cmsispack
+
+        json_obj = {}
+        json_obj['version'] = '0.2.0'
+        json_obj['configurations'] = [config_obj]
+        vsc_launch_file.write(json.dumps(json_obj, ensure_ascii=False, indent=4))
+        vsc_launch_file.close()
+
+    """
+    Generate .vscode/tasks.json files
+    """
+
+    vsc_tasks_file = open('.vscode/tasks.json', 'w')
+    if vsc_tasks_file:
+        task_build_obj = {}
+        task_build_obj['type'] = 'shell'
+        task_build_obj['label'] = 'Build target files'
+        task_build_obj['command'] = 'scons'
+        task_build_obj['args'] = ['-j12']
+        task_build_obj['problemMatcher'] = ['$gcc']
+        task_build_obj['group'] = 'build'
+
+        task_download_obj = {}
+        task_download_obj['type'] = 'shell'
+        task_download_obj['label'] = 'Download code to flash memory'
+        task_download_obj['command'] = 'python'
+        task_download_obj['args'] = ['-m', 'pyocd', 'flash', '--erase', 'chip', '--target', \
+                                    targetId, '--pack', cmsispack, 'rt-thread.elf']
+        task_download_obj['problemMatcher'] = ['$gcc']
+        task_download_obj['group'] = 'build'
+
+        task_build_download_obj = task_download_obj.copy()
+        task_build_download_obj['label'] = 'Build and Download'
+        task_build_download_obj['dependsOn'] = 'Build target files'
+
+        json_obj = {}
+        json_obj['version'] = '2.0.0'
+        json_obj['tasks'] = [task_build_obj, task_download_obj, task_build_download_obj]
+        vsc_tasks_file.write(json.dumps(json_obj, ensure_ascii=False, indent=4))
+        vsc_tasks_file.close()
+
     return
 
 def GenerateVSCode(env):
