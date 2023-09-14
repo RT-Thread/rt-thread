@@ -49,17 +49,26 @@
  * 2022-12-20     Meco Man     add const name for rt_object
  * 2023-04-01     Chushicheng  change version number to v5.0.1
  * 2023-05-20     Bernard      add stdc atomic detection.
+ * 2023-09-17     Meco Man     add RT_USING_LIBC_ISO_ONLY macro
  */
 
 #ifndef __RT_DEF_H__
 #define __RT_DEF_H__
 
 #include <rtconfig.h>
+
 #ifdef RT_USING_LIBC
+#if !defined(RT_USING_LIBC_ISO_ONLY) && !defined(RT_VER_NUM)
+#define RT_USING_LIBC_ISO_ONLY  (1)
+#else
+#define RT_USING_LIBC_ISO_ONLY  (0)
+#endif /* !defined(RT_USING_LIBC_ISO_ONLY) &&  !defined(RT_VER_NUM) */
 #include <stdint.h>
 #include <stddef.h>
 #include <stdarg.h>
+#if !RT_USING_LIBC_ISO_ONLY
 #include <sys/types.h>
+#endif /* !RT_USING_LIBC_ISO_ONLY */
 #endif /* RT_USING_LIBC */
 
 #ifdef __cplusplus
@@ -99,8 +108,6 @@ typedef uint16_t                        rt_uint16_t;    /**< 16bit unsigned inte
 typedef uint32_t                        rt_uint32_t;    /**< 32bit unsigned integer type */
 typedef int64_t                         rt_int64_t;     /**< 64bit integer type */
 typedef uint64_t                        rt_uint64_t;    /**< 64bit unsigned integer type */
-typedef size_t                          rt_size_t;      /**< Type for size number */
-typedef ssize_t                         rt_ssize_t;     /**< Used for a count of bytes or an error indication */
 #else
 typedef signed   char                   rt_int8_t;      /**<  8bit integer type */
 typedef signed   short                  rt_int16_t;     /**< 16bit integer type */
@@ -115,10 +122,16 @@ typedef unsigned long                   rt_uint64_t;    /**< 64bit unsigned inte
 typedef signed long long                rt_int64_t;     /**< 64bit integer type */
 typedef unsigned long long              rt_uint64_t;    /**< 64bit unsigned integer type */
 #endif /* ARCH_CPU_64BIT */
-typedef rt_ubase_t                      rt_size_t;      /**< Type for size number */
-typedef rt_base_t                       rt_ssize_t;     /**< Used for a count of bytes or an error indication */
 #endif /* RT_USING_LIBC */
 #endif /* RT_USING_ARCH_DATA_TYPE */
+
+#if defined(RT_USING_LIBC) && !RT_USING_LIBC_ISO_ONLY
+typedef size_t                          rt_size_t;      /**< Type for size number */
+typedef ssize_t                         rt_ssize_t;     /**< Used for a count of bytes or an error indication */
+#else
+typedef rt_ubase_t                      rt_size_t;      /**< Type for size number */
+typedef rt_base_t                       rt_ssize_t;     /**< Used for a count of bytes or an error indication */
+#endif /* defined(RT_USING_LIBC) && !RT_USING_LIBC_ISO_ONLY */
 
 typedef rt_base_t                       rt_err_t;       /**< Type for error number */
 typedef rt_uint32_t                     rt_time_t;      /**< Type for time stamp */
