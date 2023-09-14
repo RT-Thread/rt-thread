@@ -906,7 +906,7 @@ def GenTargetProject(program = None):
         ESPIDFProject(Env, Projects)
 
 def EndBuilding(target, program = None):
-    from mkdist import MkDist, MkDist_Strip
+    from mkdist import MkDist
 
     need_exit = False
 
@@ -936,9 +936,6 @@ def EndBuilding(target, program = None):
     project_path = GetOption('project-path')
     if GetOption('make-dist') and program != None:
         MkDist(program, BSP_ROOT, Rtt_Root, Env, project_name, project_path)
-        need_exit = True
-    if GetOption('make-dist-strip') and program != None:
-        MkDist_Strip(program, BSP_ROOT, Rtt_Root, Env)
         need_exit = True
     if GetOption('make-dist-ide') and program != None:
         import subprocess
