@@ -200,7 +200,7 @@ struct process_aux *lwp_argscopy(struct rt_lwp *lwp, int argc, char **argv, char
     {
         len = rt_strlen(argv[i]) + 1;
         new_argve[i] = str;
-        rt_memcpy(str_k, argv[i], len);
+        lwp_memcpy(str_k, argv[i], len);
         str += len;
         str_k += len;
     }
@@ -216,7 +216,7 @@ struct process_aux *lwp_argscopy(struct rt_lwp *lwp, int argc, char **argv, char
         {
             len = rt_strlen(envp[j]) + 1;
             new_argve[i] = str;
-            rt_memcpy(str_k, envp[j], len);
+            lwp_memcpy(str_k, envp[j], len);
             str += len;
             str_k += len;
             i++;
@@ -298,7 +298,7 @@ static struct process_aux *lwp_argscopy(struct rt_lwp *lwp, int argc, char **arg
     {
         len = rt_strlen(argv[i]) + 1;
         new_argve[i] = str;
-        rt_memcpy(str, argv[i], len);
+        lwp_memcpy(str, argv[i], len);
         str += len;
     }
     new_argve[i] = 0;
@@ -312,7 +312,7 @@ static struct process_aux *lwp_argscopy(struct rt_lwp *lwp, int argc, char **arg
         {
             len = rt_strlen(envp[j]) + 1;
             new_argve[i] = str;
-            rt_memcpy(str, envp[j], len);
+            lwp_memcpy(str, envp[j], len);
             str += len;
             i++;
         }

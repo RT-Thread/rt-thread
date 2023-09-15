@@ -49,7 +49,7 @@ void *lwp_copy_return_code_to_user_stack()
     {
         rt_size_t size = (rt_size_t)lwp_thread_return_end - (rt_size_t)lwp_thread_return;
         rt_size_t userstack = (rt_size_t)tid->user_stack + tid->user_stack_size - size;
-        rt_memcpy((void *)userstack, lwp_thread_return, size);
+        lwp_memcpy((void *)userstack, lwp_thread_return, size);
         return (void *)userstack;
     }
 
@@ -290,19 +290,19 @@ void *arch_signal_ucontext_save(int signo, siginfo_t *psiginfo,
         /* push psiginfo */
         if (psiginfo)
         {
-            memcpy(&new_sp->si, psiginfo, sizeof(*psiginfo));
+            lwp_memcpy(&new_sp->si, psiginfo, sizeof(*psiginfo));
         }
 
-        memcpy(&new_sp->frame, exp_frame, sizeof(*exp_frame));
+        lwp_memcpy(&new_sp->frame, exp_frame, sizeof(*exp_frame));
 
         /* copy the save_sig_mask */
-        memcpy(&new_sp->save_sigmask, save_sig_mask, sizeof(lwp_sigset_t));
+        lwp_memcpy(&new_sp->save_sigmask, save_sig_mask, sizeof(lwp_sigset_t));
 
         /* copy lwp_sigreturn */
         const size_t lwp_sigreturn_bytes = 8;
         extern void lwp_sigreturn(void);
         /* -> ensure that the sigreturn start at the outer most boundary */
-        memcpy(&new_sp->sigreturn,  &lwp_sigreturn, lwp_sigreturn_bytes);
+        lwp_memcpy(&new_sp->sigreturn,  &lwp_sigreturn, lwp_sigreturn_bytes);
 
         /**
          * synchronize dcache & icache if target is
