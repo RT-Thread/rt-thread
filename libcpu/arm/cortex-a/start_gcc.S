@@ -458,13 +458,30 @@ vector_irq:
 
 #else
     stmfd   sp!, {r0-r12,lr}
+#ifdef RT_USING_FPU
+        vstmdb sp!, {d0-d15}
+#ifdef RT_USING_VFPD32	/*there art 32 double float registers to save*/
+        vstmdb sp!, {d16-d31}	@ save the upper 16 registers
+#endif
+        vmrs r5, fpscr
+        stmfd sp!, {r5}
+#endif
 
     bl      rt_interrupt_enter
     bl      rt_hw_trap_irq
     bl      rt_interrupt_leave
 
-    /* if rt_thread_switch_interrupt_flag set, jump to
-     * rt_hw_context_switch_interrupt_do and don't return */
+#ifdef RT_USING_FPU
+    ldmfd sp!, {r5}
+    vmsr fpscr, r5
+#ifdef RT_USING_VFPD32	/*there art 32 double float registers to restore*/
+    vldmia sp!, {d16-d31}	@ restore the upper 16 registers
+#endif
+    vldmia sp!, {d0-d15}
+#endif
+
+    @ if rt_thread_switch_interrupt_flag set, jump to
+    @ rt_hw_context_switch_interrupt_do and don't return
     ldr     r0, =rt_thread_switch_interrupt_flag
     ldr     r1, [r0]
     cmp     r1, #1
