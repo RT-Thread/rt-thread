@@ -72,6 +72,12 @@ def GetGCCLikePLATFORM():
 
 def GetNewLibVersion(rtconfig):
     version = None
+
+    try:
+        rtconfig.PREFIX
+    except:
+        return version
+
     root = GetGCCRoot(rtconfig)
     if CheckHeader(rtconfig, '_newlib_version.h'): # get version from _newlib_version.h file
         f = open(os.path.join(root, 'include', '_newlib_version.h'), 'r')
@@ -92,6 +98,12 @@ def GetNewLibVersion(rtconfig):
 # FIXME: there is no musl version or musl macros can be found officially
 def GetMuslVersion(rtconfig):
     version = None
+
+    try:
+        rtconfig.PREFIX
+    except:
+        return version
+
     if 'musl' in rtconfig.PREFIX:
         version = 'unknown'
     return version
