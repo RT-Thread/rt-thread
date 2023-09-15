@@ -459,12 +459,12 @@ vector_irq:
 #else
     stmfd   sp!, {r0-r12,lr}
 #ifdef RT_USING_FPU
-        vstmdb sp!, {d0-d15}
+    vstmdb sp!, {d0-d15}
 #ifdef RT_USING_VFPD32	/*there art 32 double float registers to save*/
-        vstmdb sp!, {d16-d31}	@ save the upper 16 registers
+    vstmdb sp!, {d16-d31}	@ save the upper 16 registers
 #endif
-        vmrs r5, fpscr
-        stmfd sp!, {r5}
+    vmrs r5, fpscr
+    stmfd sp!, {r5}
 #endif
 
     bl      rt_interrupt_enter
