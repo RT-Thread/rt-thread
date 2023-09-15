@@ -553,11 +553,11 @@ void rt_spin_unlock(struct rt_spinlock *lock);
 rt_base_t rt_spin_lock_irqsave(struct rt_spinlock *lock);
 void rt_spin_unlock_irqrestore(struct rt_spinlock *lock, rt_base_t level);
 #else
-#define rt_spin_lock_init(lock)                 /* nothing */
-#define rt_spin_lock(lock)                      rt_enter_critical()
-#define rt_spin_unlock(lock)                    rt_exit_critical()
-#define rt_spin_lock_irqsave(lock)              rt_hw_interrupt_disable()
-#define rt_spin_unlock_irqrestore(lock, level)  rt_hw_interrupt_enable(level)
+#define rt_spin_lock_init(lock)                  { RT_UNUSED(lock);                                 }
+#define rt_spin_lock(lock)                       { RT_UNUSED(lock);                                 }
+#define rt_spin_unlock(lock)                     { RT_UNUSED(lock);                                 }
+#define rt_spin_lock_irqsave(lock)              ({ RT_UNUSED(lock); rt_hw_interrupt_disable();      })
+#define rt_spin_unlock_irqrestore(lock, level)   { RT_UNUSED(lock); rt_hw_interrupt_enable(level);  }
 #endif /* RT_USING_SMP */
 
 /**@}*/
@@ -742,14 +742,11 @@ if (!(EX))                                                                    \
 #define RT_DEBUG_NOT_IN_INTERRUPT                                             \
 do                                                                            \
 {                                                                             \
-    rt_base_t level;                                                          \
-    level = rt_hw_interrupt_disable();                                        \
     if (rt_interrupt_get_nest() != 0)                                         \
     {                                                                         \
         rt_kprintf("Function[%s] shall not be used in ISR\n", __FUNCTION__);  \
         RT_ASSERT(0)                                                          \
     }                                                                         \
-    rt_hw_interrupt_enable(level);                                            \
 }                                                                             \
 while (0)
 
@@ -760,8 +757,6 @@ while (0)
 #define RT_DEBUG_IN_THREAD_CONTEXT                                            \
 do                                                                            \
 {                                                                             \
-    rt_base_t level;                                                          \
-    level = rt_hw_interrupt_disable();                                        \
     if (rt_thread_self() == RT_NULL)                                          \
     {                                                                         \
         rt_kprintf("Function[%s] shall not be used before scheduler start\n", \
@@ -769,7 +764,6 @@ do                                                                            \
         RT_ASSERT(0)                                                          \
     }                                                                         \
     RT_DEBUG_NOT_IN_INTERRUPT;                                                \
-    rt_hw_interrupt_enable(level);                                            \
 }                                                                             \
 while (0)
 
@@ -785,9 +779,7 @@ do                                                                            \
     if (need_check)                                                           \
     {                                                                         \
         rt_bool_t interrupt_disabled;                                         \
-        rt_base_t level;                                                      \
         interrupt_disabled = rt_hw_interrupt_is_disabled();                   \
-        level = rt_hw_interrupt_disable();                                    \
         if (rt_critical_level() != 0)                                         \
         {                                                                     \
             rt_kprintf("Function[%s]: scheduler is not available\n",          \
@@ -801,7 +793,6 @@ do                                                                            \
             RT_ASSERT(0)                                                      \
         }                                                                     \
         RT_DEBUG_IN_THREAD_CONTEXT;                                           \
-        rt_hw_interrupt_enable(level);                                        \
     }                                                                         \
 }                                                                             \
 while (0)

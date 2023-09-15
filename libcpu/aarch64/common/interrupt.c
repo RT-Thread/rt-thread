@@ -38,7 +38,7 @@ extern void *system_vectors;
 #ifdef RT_USING_SMP
 #define rt_interrupt_nest rt_cpu_self()->irq_nest
 #else
-extern volatile rt_uint8_t rt_interrupt_nest;
+extern volatile rt_atomic_t rt_interrupt_nest;
 #endif
 
 #ifdef SOC_BCM283x
@@ -85,7 +85,7 @@ void rt_hw_interrupt_init(void)
     }
 
     /* init interrupt nest, and context in thread sp */
-    rt_interrupt_nest = 0;
+    rt_atomic_store(&rt_interrupt_nest, 0);
     rt_interrupt_from_thread = 0;
     rt_interrupt_to_thread = 0;
     rt_thread_switch_interrupt_flag = 0;

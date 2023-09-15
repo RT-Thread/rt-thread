@@ -16,6 +16,7 @@
  * 2018-11-22     Jesven       add per cpu idle task
  *                             combine the code of primary and secondary cpu
  * 2021-11-15     THEWON       Remove duplicate work between idle and _thread_exit
+ * 2023-09-15     xqyjlj       perf rt_hw_interrupt_disable/enable
  */
 
 #include <rthw.h>
@@ -42,7 +43,8 @@
 #define _CPUS_NR                RT_CPUS_NR
 
 static rt_list_t _rt_thread_defunct = RT_LIST_OBJECT_INIT(_rt_thread_defunct);
-
+static struct rt_mutex _defunct_mutex;
+static rt_atomic_t _idle_inited = 0;
 static struct rt_thread idle_thread[_CPUS_NR];
 rt_align(RT_ALIGN_SIZE)
 static rt_uint8_t idle_thread_stack[_CPUS_NR][IDLE_THREAD_STACK_SIZE];
@@ -78,11 +80,7 @@ static void (*idle_hook_list[RT_IDLE_HOOK_LIST_SIZE])(void);
 rt_err_t rt_thread_idle_sethook(void (*hook)(void))
 {
     rt_size_t i;
-    rt_base_t level;
     rt_err_t ret = -RT_EFULL;
-
-    /* disable interrupt */
-    level = rt_hw_interrupt_disable();
 
     for (i = 0; i < RT_IDLE_HOOK_LIST_SIZE; i++)
     {
@@ -93,9 +91,6 @@ rt_err_t rt_thread_idle_sethook(void (*hook)(void))
             break;
         }
     }
-    /* enable interrupt */
-    rt_hw_interrupt_enable(level);
-
     return ret;
 }
 
@@ -110,11 +105,7 @@ rt_err_t rt_thread_idle_sethook(void (*hook)(void))
 rt_err_t rt_thread_idle_delhook(void (*hook)(void))
 {
     rt_size_t i;
-    rt_base_t level;
     rt_err_t ret = -RT_ENOSYS;
-
-    /* disable interrupt */
-    level = rt_hw_interrupt_disable();
 
     for (i = 0; i < RT_IDLE_HOOK_LIST_SIZE; i++)
     {
@@ -125,9 +116,6 @@ rt_err_t rt_thread_idle_delhook(void (*hook)(void))
             break;
         }
     }
-    /* enable interrupt */
-    rt_hw_interrupt_enable(level);
-
     return ret;
 }
 
@@ -142,7 +130,13 @@ rt_err_t rt_thread_idle_delhook(void (*hook)(void))
  */
 void rt_thread_defunct_enqueue(rt_thread_t thread)
 {
+    if (rt_atomic_load(&_idle_inited) == 0)
+    {
+        return;
+    }
+    rt_mutex_take(&_defunct_mutex, RT_WAITING_FOREVER);
     rt_list_insert_after(&_rt_thread_defunct, &thread->tlist);
+    rt_mutex_release(&_defunct_mutex);
 #ifdef RT_USING_SMP
     rt_sem_release(&system_sem);
 #endif
@@ -158,8 +152,7 @@ rt_thread_t rt_thread_defunct_dequeue(void)
     rt_list_t *l = &_rt_thread_defunct;
 
 #ifdef RT_USING_SMP
-    /* disable interrupt */
-    level = rt_hw_interrupt_disable();
+    rt_mutex_take(&_defunct_mutex, RT_WAITING_FOREVER);
     if (l->next != l)
     {
         thread = rt_list_entry(l->next,
@@ -167,7 +160,8 @@ rt_thread_t rt_thread_defunct_dequeue(void)
                 tlist);
         rt_list_remove(&(thread->tlist));
     }
-    rt_hw_interrupt_enable(level);
+    rt_mutex_release(&_defunct_mutex);
+    RT_UNUSED(level);
 #else
     if (l->next != l)
     {
@@ -355,6 +349,8 @@ void rt_thread_idle_init(void)
     /* startup */
     rt_thread_startup(&rt_system_thread);
 #endif
+    rt_mutex_init(&_defunct_mutex, "defunct_mutex", RT_IPC_FLAG_FIFO);
+    rt_atomic_store(&(_idle_inited), 1);
 }
 
 /**

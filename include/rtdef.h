@@ -49,6 +49,7 @@
  * 2022-12-20     Meco Man     add const name for rt_object
  * 2023-04-01     Chushicheng  change version number to v5.0.1
  * 2023-05-20     Bernard      add stdc atomic detection.
+ * 2023-09-15     xqyjlj       perf rt_hw_interrupt_disable/enable
  * 2023-09-17     Meco Man     add RT_USING_LIBC_ISO_ONLY macro
  * 2023-10-10     Chushicheng  change version number to v5.1.0
  * 2023-10-11     zmshahaha    move specific devices related and driver to components/drivers
@@ -492,6 +493,35 @@ struct rt_slist_node
 };
 typedef struct rt_slist_node rt_slist_t;                /**< Type for single list. */
 
+#ifdef RT_USING_SMP
+#include <cpuport.h> /* for spinlock from arch */
+
+struct rt_spinlock
+{
+    rt_hw_spinlock_t lock;
+#if defined(RT_DEBUGING_SPINLOCK)
+    void *owner;
+    void *pc;
+#endif /* RT_DEBUGING_SPINLOCK */
+};
+
+#ifndef RT_SPINLOCK_INIT
+#define RT_SPINLOCK_INIT {{0}} // default
+#endif
+
+#else
+typedef rt_ubase_t rt_spinlock_t;
+struct rt_spinlock
+{
+    rt_spinlock_t lock;
+};
+
+#define RT_SPINLOCK_INIT {0}
+
+#endif
+
+#define RT_DEFINE_SPINLOCK(x)  struct rt_spinlock x = RT_SPINLOCK_INIT
+
 /**
  * @addtogroup KernelObject
  */
@@ -574,6 +604,7 @@ struct rt_object_information
     enum rt_object_class_type type;                     /**< object class type */
     rt_list_t                 object_list;              /**< object list */
     rt_size_t                 object_size;              /**< object size */
+    struct rt_spinlock        spinlock;
 };
 
 /**
@@ -759,7 +790,7 @@ struct rt_cpu
 {
     struct rt_thread *current_thread;
     struct rt_thread *idle_thread;
-    rt_uint16_t irq_nest;
+    rt_atomic_t irq_nest;
     rt_uint8_t  irq_switch_flag;
 
     rt_uint8_t current_priority;
@@ -857,6 +888,7 @@ struct rt_user_context
 #endif
 
 typedef void (*rt_thread_cleanup_t)(struct rt_thread *tid);
+
 
 /**
  * Thread structure
@@ -967,6 +999,8 @@ struct rt_thread
     int                         *clear_child_tid;
 #endif /* ARCH_MM_MMU */
 #endif /* RT_USING_SMART */
+    rt_atomic_t                 counter;
+    struct rt_spinlock          spinlock;
     rt_ubase_t                  user_data;              /**< private user data beyond this thread */
 };
 typedef struct rt_thread *rt_thread_t;
@@ -976,6 +1010,11 @@ typedef struct rt_thread *rt_thread_t;
 #endif /* RT_USING_SMART */
 
 /**@}*/
+
+#define rt_atomic_inc(v)                rt_atomic_add((v), 1)
+#define rt_atomic_dec(v)                rt_atomic_sub((v), 1)
+#define rt_get_thread_struct(object)    do { rt_atomic_inc(&(object)->counter); } while(0)
+#define rt_put_thread_struct(object)    do { rt_atomic_dec(&(object)->counter); } while(0)
 
 /**
  * @addtogroup IPC
@@ -1016,6 +1055,7 @@ struct rt_semaphore
 
     rt_uint16_t          value;                         /**< value of semaphore. */
     rt_uint16_t          reserved;                      /**< reserved field */
+    struct rt_spinlock   spinlock;
 };
 typedef struct rt_semaphore *rt_sem_t;
 #endif /* RT_USING_SEMAPHORE */
@@ -1035,6 +1075,7 @@ struct rt_mutex
 
     struct rt_thread    *owner;                         /**< current owner of mutex */
     rt_list_t            taken_list;                    /**< the object list taken by thread */
+    struct rt_spinlock   spinlock;
 };
 typedef struct rt_mutex *rt_mutex_t;
 #endif /* RT_USING_MUTEX */
@@ -1055,6 +1096,7 @@ struct rt_event
     struct rt_ipc_object parent;                        /**< inherit from ipc_object */
 
     rt_uint32_t          set;                           /**< event set */
+    struct rt_spinlock   spinlock;
 };
 typedef struct rt_event *rt_event_t;
 #endif /* RT_USING_EVENT */
@@ -1076,6 +1118,7 @@ struct rt_mailbox
     rt_uint16_t          out_offset;                    /**< output offset of the message buffer */
 
     rt_list_t            suspend_sender_thread;         /**< sender thread suspended on this mailbox */
+    struct rt_spinlock   spinlock;
 };
 typedef struct rt_mailbox *rt_mailbox_t;
 #endif /* RT_USING_MAILBOX */
@@ -1100,6 +1143,7 @@ struct rt_messagequeue
     void                *msg_queue_free;                /**< pointer indicated the free node of queue */
 
     rt_list_t            suspend_sender_thread;         /**< sender thread suspended on this message queue */
+    struct rt_spinlock   spinlock;
 };
 typedef struct rt_messagequeue *rt_mq_t;
 #endif /* RT_USING_MESSAGEQUEUE */
@@ -1189,18 +1233,19 @@ struct rt_memheap
  */
 struct rt_mempool
 {
-    struct rt_object parent;                            /**< inherit from rt_object */
+    struct rt_object    parent;                            /**< inherit from rt_object */
 
-    void            *start_address;                     /**< memory pool start */
-    rt_size_t        size;                              /**< size of memory pool */
+    void                *start_address;                     /**< memory pool start */
+    rt_size_t           size;                              /**< size of memory pool */
 
-    rt_size_t        block_size;                        /**< size of memory blocks */
-    rt_uint8_t      *block_list;                        /**< memory blocks list */
+    rt_size_t           block_size;                        /**< size of memory blocks */
+    rt_uint8_t          *block_list;                        /**< memory blocks list */
 
-    rt_size_t        block_total_count;                 /**< numbers of memory block */
-    rt_size_t        block_free_count;                  /**< numbers of free memory block */
+    rt_size_t           block_total_count;                 /**< numbers of memory block */
+    rt_size_t           block_free_count;                  /**< numbers of free memory block */
 
-    rt_list_t        suspend_thread;                    /**< threads pended on this resource */
+    rt_list_t           suspend_thread;                    /**< threads pended on this resource */
+    struct rt_spinlock  spinlock;
 };
 typedef struct rt_mempool *rt_mp_t;
 #endif /* RT_USING_MEMPOOL */

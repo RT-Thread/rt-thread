@@ -219,6 +219,13 @@ menuconfig RT_USING_DEBUG
             bool "Enable page leaking tracer"
             depends on ARCH_MM_MMU
             default n
+
+        if RT_USING_SMP
+            config RT_DEBUGING_SPINLOCK
+            bool "Enable spinlock debugging"
+            default n
+        endif
+
     endif
 
 menu "Inter-Thread communication"

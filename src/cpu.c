@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2018-10-30     Bernard      The first version
+ * 2023-09-15     xqyjlj       perf rt_hw_interrupt_disable/enable
  */
 #include <rthw.h>
 #include <rtthread.h>
@@ -17,57 +18,17 @@
 #ifdef RT_USING_SMP
 static struct rt_cpu _cpus[RT_CPUS_NR];
 rt_hw_spinlock_t _cpus_lock;
+#if defined(RT_DEBUGING_SPINLOCK)
+void *_cpus_lock_owner = 0;
+void *_cpus_lock_pc = 0;
 
-/*
- * @brief   disable scheduler
- */
-static void _cpu_preempt_disable(void)
-{
-    rt_base_t level;
-    struct rt_thread *current_thread;
+#if defined (__GNUC__)
+#define __GET_RETURN_ADDRESS __builtin_return_address(0)
+#else
+#define __GET_RETURN_ADDRESS ((void *)0xdeadbeaf)
+#endif
 
-    /* disable interrupt */
-    level = rt_hw_local_irq_disable();
-
-    current_thread = rt_thread_self();
-    if (!current_thread)
-    {
-        rt_hw_local_irq_enable(level);
-        return;
-    }
-
-    /* lock scheduler for local cpu */
-    current_thread->scheduler_lock_nest ++;
-
-    /* enable interrupt */
-    rt_hw_local_irq_enable(level);
-}
-
-/*
- * @brief   enable scheduler
- */
-static void _cpu_preempt_enable(void)
-{
-    rt_base_t level;
-    struct rt_thread *current_thread;
-
-    /* disable interrupt */
-    level = rt_hw_local_irq_disable();
-
-    current_thread = rt_thread_self();
-    if (!current_thread)
-    {
-        rt_hw_local_irq_enable(level);
-        return;
-    }
-
-    /* unlock scheduler for local cpu */
-    current_thread->scheduler_lock_nest --;
-
-    rt_schedule();
-    /* enable interrupt */
-    rt_hw_local_irq_enable(level);
-}
+#endif /* RT_DEBUGING_SPINLOCK */
 
 /**
  * @brief   Initialize a static spinlock object.
@@ -90,8 +51,14 @@ RTM_EXPORT(rt_spin_lock_init)
  */
 void rt_spin_lock(struct rt_spinlock *lock)
 {
-    _cpu_preempt_disable();
     rt_hw_spin_lock(&lock->lock);
+#if defined(RT_DEBUGING_SPINLOCK)
+    if (rt_cpu_self() != RT_NULL)
+    {
+        lock->owner = rt_cpu_self()->current_thread;
+        lock->pc = __GET_RETURN_ADDRESS;
+    }
+#endif /* RT_DEBUGING_SPINLOCK */
 }
 RTM_EXPORT(rt_spin_lock)
 
@@ -103,7 +70,10 @@ RTM_EXPORT(rt_spin_lock)
 void rt_spin_unlock(struct rt_spinlock *lock)
 {
     rt_hw_spin_unlock(&lock->lock);
-    _cpu_preempt_enable();
+#if defined(RT_DEBUGING_SPINLOCK)
+    lock->owner = (void *)0;
+    lock->pc = (void *)0xbeafdead;
+#endif /* RT_DEBUGING_SPINLOCK */
 }
 RTM_EXPORT(rt_spin_unlock)
 
@@ -121,11 +91,15 @@ rt_base_t rt_spin_lock_irqsave(struct rt_spinlock *lock)
 {
     unsigned long level;
 
-    _cpu_preempt_disable();
-
     level = rt_hw_local_irq_disable();
     rt_hw_spin_lock(&lock->lock);
-
+#if defined(RT_DEBUGING_SPINLOCK)
+    if (rt_cpu_self() != RT_NULL)
+    {
+        lock->owner = rt_cpu_self()->current_thread;
+        lock->pc = __GET_RETURN_ADDRESS;
+    }
+#endif /* RT_DEBUGING_SPINLOCK */
     return level;
 }
 RTM_EXPORT(rt_spin_lock_irqsave)
@@ -139,10 +113,12 @@ RTM_EXPORT(rt_spin_lock_irqsave)
  */
 void rt_spin_unlock_irqrestore(struct rt_spinlock *lock, rt_base_t level)
 {
+#if defined(RT_DEBUGING_SPINLOCK)
+    lock->owner = (void *)0xdeadbeaf;
+    lock->pc = (void *)0;
+#endif /* RT_DEBUGING_SPINLOCK */
     rt_hw_spin_unlock(&lock->lock);
     rt_hw_local_irq_enable(level);
-
-    _cpu_preempt_enable();
 }
 RTM_EXPORT(rt_spin_unlock_irqrestore)
 
@@ -190,6 +166,10 @@ rt_base_t rt_cpus_lock(void)
         {
             pcpu->current_thread->scheduler_lock_nest++;
             rt_hw_spin_lock(&_cpus_lock);
+#if defined(RT_DEBUGING_SPINLOCK)
+            _cpus_lock_owner = pcpu->current_thread;
+            _cpus_lock_pc = __GET_RETURN_ADDRESS;
+#endif
         }
     }
 
@@ -214,6 +194,10 @@ void rt_cpus_unlock(rt_base_t level)
         if (pcpu->current_thread->cpus_lock_nest == 0)
         {
             pcpu->current_thread->scheduler_lock_nest--;
+#if defined(RT_DEBUGING_SPINLOCK)
+            _cpus_lock_owner = (void *)0xdeadbeaf;
+            _cpus_lock_pc = (void *)0;
+#endif
             rt_hw_spin_unlock(&_cpus_lock);
         }
     }
@@ -235,11 +219,22 @@ void rt_cpus_lock_status_restore(struct rt_thread *thread)
 #if defined(ARCH_MM_MMU) && defined(RT_USING_SMART)
     lwp_aspace_switch(thread);
 #endif
+    if (pcpu->current_thread != RT_NULL )
+    {
+        rt_spin_unlock(&(pcpu->current_thread->spinlock));
+        if ((pcpu->current_thread->stat & RT_THREAD_STAT_MASK) == RT_THREAD_RUNNING)
+        {
+            rt_schedule_insert_thread(pcpu->current_thread);
+        }
+        rt_put_thread_struct(pcpu->current_thread);
+
+    }
     pcpu->current_thread = thread;
+    rt_get_thread_struct(thread);
     if (!thread->cpus_lock_nest)
     {
         rt_hw_spin_unlock(&_cpus_lock);
     }
 }
 RTM_EXPORT(rt_cpus_lock_status_restore);
-#endif
+#endif /* RT_USING_SMP */
