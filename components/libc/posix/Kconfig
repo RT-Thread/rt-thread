@@ -36,6 +36,18 @@ if RT_USING_POSIX_FS
             bool "Enable I/O Multiplexing epoll <sys/epoll.h>"
             select RT_USING_POSIX_POLL
             default n
+
+        config RT_USING_POSIX_SIGNALFD
+            bool "Enable Signalfd <sys/signalfd.h>"
+            select RT_USING_POSIX_POLL
+            default n
+
+        if RT_USING_POSIX_SIGNALFD
+            config RT_SIGNALFD_MAX_NUM
+                int "signaled The maximum number of concurrent firing signals"
+                range 1 20
+                default 10
+        endif
     endif
 
     config RT_USING_POSIX_SOCKET
