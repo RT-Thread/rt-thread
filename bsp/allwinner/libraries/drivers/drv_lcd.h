@@ -19,7 +19,11 @@
 
 int rt_hw_lcd_init(void);
 
-#define FBIOGET_FSCREENINFO     0x4602
+#define FBIOGET_VSCREENINFO 0x4600
+#define FBIOPUT_VSCREENINFO 0x4601
+#define FBIOGET_FSCREENINFO 0x4602
+#define FBIOGET_PIXELINFO   0x4603
+#define FBIOPAN_DISPLAY     0x4606
 
 struct fb_fix_screeninfo
 {
@@ -29,6 +33,13 @@ struct fb_fix_screeninfo
 
     uint32_t line_length;
 };
+
+struct fb_var_screeninfo
+{
+    uint32_t xres;
+    uint32_t yres;
+};
+
 rt_uint8_t get_lcd_backlight(void);
 void set_lcd_backlight(rt_uint8_t value);
 void turn_down_lcd_backlight(void);
