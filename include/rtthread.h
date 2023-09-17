@@ -443,7 +443,7 @@ rt_err_t rt_mb_send_wait_killable(rt_mailbox_t mb,
                          rt_int32_t   timeout);
 rt_err_t rt_mb_urgent(rt_mailbox_t mb, rt_ubase_t value);
 rt_err_t rt_mb_recv(rt_mailbox_t mb, rt_ubase_t *value, rt_int32_t timeout);
-rt_err_t rt_mb_recv_interruptibale(rt_mailbox_t mb, rt_ubase_t *value, rt_int32_t timeout);
+rt_err_t rt_mb_recv_interruptible(rt_mailbox_t mb, rt_ubase_t *value, rt_int32_t timeout);
 rt_err_t rt_mb_recv_killable(rt_mailbox_t mb, rt_ubase_t *value, rt_int32_t timeout);
 rt_err_t rt_mb_control(rt_mailbox_t mb, int cmd, void *arg);
 #endif /* RT_USING_MAILBOX */
@@ -481,7 +481,7 @@ rt_err_t rt_mq_delete(rt_mq_t mq);
 #endif /* RT_USING_HEAP */
 
 rt_err_t rt_mq_send(rt_mq_t mq, const void *buffer, rt_size_t size);
-rt_err_t rt_mq_send_interrupt(rt_mq_t mq, const void *buffer, rt_size_t size);
+rt_err_t rt_mq_send_interruptible(rt_mq_t mq, const void *buffer, rt_size_t size);
 rt_err_t rt_mq_send_killable(rt_mq_t mq, const void *buffer, rt_size_t size);
 rt_err_t rt_mq_send_wait(rt_mq_t     mq,
                          const void *buffer,
