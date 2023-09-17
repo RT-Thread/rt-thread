@@ -2816,11 +2816,11 @@ rt_err_t rt_mb_recv(rt_mailbox_t mb, rt_ubase_t *value, rt_int32_t timeout)
 }
 RTM_EXPORT(rt_mb_recv);
 
-rt_err_t rt_mb_recv_interruptibale(rt_mailbox_t mb, rt_ubase_t *value, rt_int32_t timeout)
+rt_err_t rt_mb_recv_interruptible(rt_mailbox_t mb, rt_ubase_t *value, rt_int32_t timeout)
 {
     return _rt_mb_recv(mb, value, timeout, RT_INTERRUPTIBLE);
 }
-RTM_EXPORT(rt_mb_recv_interruptibale);
+RTM_EXPORT(rt_mb_recv_interruptible);
 
 rt_err_t rt_mb_recv_killable(rt_mailbox_t mb, rt_ubase_t *value, rt_int32_t timeout)
 {
@@ -3459,11 +3459,11 @@ rt_err_t rt_mq_send(rt_mq_t mq, const void *buffer, rt_size_t size)
 }
 RTM_EXPORT(rt_mq_send);
 
-rt_err_t rt_mq_send_interrupt(rt_mq_t mq, const void *buffer, rt_size_t size)
+rt_err_t rt_mq_send_interruptible(rt_mq_t mq, const void *buffer, rt_size_t size)
 {
     return rt_mq_send_wait_interruptible(mq, buffer, size, 0);
 }
-RTM_EXPORT(rt_mq_send_interrupt);
+RTM_EXPORT(rt_mq_send_interruptible);
 
 rt_err_t rt_mq_send_killable(rt_mq_t mq, const void *buffer, rt_size_t size)
 {
