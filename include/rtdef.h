@@ -62,12 +62,15 @@
 #define RT_USING_LIBC_ISO_ONLY  (1)
 #else
 #define RT_USING_LIBC_ISO_ONLY  (0)
-#endif /* !defined(RT_USING_LIBC_ISO_ONLY) &&  !defined(RT_VER_NUM) */
+#endif /* !defined(RT_USING_LIBC_ISO_ONLY) && !defined(RT_VER_NUM) */
 #include <stdint.h>
 #include <stddef.h>
 #include <stdarg.h>
 #if !RT_USING_LIBC_ISO_ONLY
 #include <sys/types.h>
+#if defined(RT_USING_SIGNALS) || defined(RT_USING_SMART)
+#include <sys/signal.h>
+#endif /* defined(RT_USING_SIGNALS) || defined(RT_USING_SMART) */
 #endif /* !RT_USING_LIBC_ISO_ONLY */
 #endif /* RT_USING_LIBC */
 
@@ -639,19 +642,10 @@ typedef struct rt_timer *rt_timer_t;
 /**@{*/
 
 #ifdef RT_USING_SIGNALS
-#include <sys/signal.h>
+#define RT_SIG_MAX          32
 typedef unsigned long rt_sigset_t;
 typedef siginfo_t rt_siginfo_t;
 typedef void (*rt_sighandler_t)(int signo);
-
-#define RT_SIG_MAX          32
-
-#else
-
-#ifdef RT_USING_SMART
-#include <sys/signal.h>
-#endif
-
 #endif /* RT_USING_SIGNALS */
 /**@}*/
 
