@@ -237,3 +237,6 @@ config ARCH_CPU_STACK_GROWS_UPWARD
     bool
     default n
 
+if ARCH_ARMV8 && ARCH_CPU_64BIT
+    source "$RTT_DIR/libcpu/aarch64/Kconfig"
+endif
