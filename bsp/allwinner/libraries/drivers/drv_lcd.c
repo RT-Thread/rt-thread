@@ -1,11 +1,12 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
  * 2018-04-12     RT-Thread    the first version
+ * 2023-09-02     zbtrs        support sdl2
  */
 
 #include "rtthread.h"
@@ -612,12 +613,12 @@ static rt_err_t rt_lcd_control(rt_device_t dev, int cmd, void *args)
     return RT_EOK;
 }
 
-static rt_err_t fb_open(rt_device_t dev,rt_uint16_t oflag) 
+static rt_err_t fb_open(rt_device_t dev,rt_uint16_t oflag)
 {
     return RT_EOK;
 }
 
-static rt_err_t fb_close(rt_device_t dev) 
+static rt_err_t fb_close(rt_device_t dev)
 {
     return RT_EOK;
 }
@@ -625,7 +626,7 @@ static rt_err_t fb_close(rt_device_t dev)
 static rt_err_t fb_control(rt_device_t dev, int cmd, void *args)
 {
     switch(cmd) {
-        case FBIOGET_PIXELINFO: 
+        case FBIOGET_PIXELINFO:
         {
             int *fmt = (int *)args;
             *fmt = RTGRAPHIC_PIXEL_FORMAT_ARGB888;
@@ -654,11 +655,11 @@ static rt_err_t fb_control(rt_device_t dev, int cmd, void *args)
         case RT_FIOMMAP2:
         {
             struct dfs_mmap2_args *mmap2 = (struct dfs_mmap2_args *)args;
-            if (mmap2) 
-            {   
+            if (mmap2)
+            {
                 mmap2->ret = lwp_map_user_phy(lwp_self(),RT_NULL,g_lcd->framebuffer,mmap2->length,1);
-            } 
-            else 
+            }
+            else
             {
                 return -EIO;
             }
@@ -714,12 +715,11 @@ static int fb_init(rt_device_t fb)
     fb_init_ok = RT_TRUE;
 
     return RT_EOK;
-} 
+}
 
 /* set up the 'lcd_device' and register it */
 int rt_hw_lcd_init(void)
 {
-    printf("arrive rt_hw_lcd_init\n");
     struct lcd_device *lcd_drv = &_lcd_device;
 
     g_lcd = lcd_drv;
@@ -742,7 +742,7 @@ int rt_hw_lcd_init(void)
 
     rt_lcd_init((rt_device_t)lcd_drv);
 
-    if (fb_init(&(lcd_drv->fb)) != RT_EOK) 
+    if (fb_init(&(lcd_drv->fb)) != RT_EOK)
     {
         rt_kprintf("fb device init failure\n");
         return -RT_ERROR;
