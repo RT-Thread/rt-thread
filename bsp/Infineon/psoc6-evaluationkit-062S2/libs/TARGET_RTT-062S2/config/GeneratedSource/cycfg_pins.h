@@ -58,15 +58,14 @@ extern "C" {
     #define CYBSP_J2_9 CYBSP_A4
     #define CYBSP_A5 (P10_5)
     #define CYBSP_J2_11 CYBSP_A5
-    #define CYBSP_QSPI_FRAM_SSEL (P11_0)
-    #define CYBSP_QSPI_SS (P11_2)
-    #define CYBSP_QSPI_FLASH_SSEL CYBSP_QSPI_SS
-    #define CYBSP_QSPI_D3 (P11_3)
-    #define CYBSP_QSPI_D2 (P11_4)
-    #define CYBSP_QSPI_D1 (P11_5)
-    #define CYBSP_QSPI_D0 (P11_6)
-    #define CYBSP_QSPI_SCK (P11_7)
+    #define CYBSP_BT_UART_RX (P11_0)
+    #define CYBSP_BT_UART_TX (P11_1)
+    #define CYBSP_BT_UART_RTS (P11_2)
+    #define CYBSP_BT_UART_CTS (P11_3)
+    #define CYBSP_BT_DEVICE_WAKE (P11_6)
+    #define CYBSP_BT_POWER (P11_7)
     #define CYBSP_WIFI_HOST_WAKE (P12_6)
+    #define CYBSP_BT_HOST_WAKE (P12_7)
     #define CYBSP_WIFI_SDIO_D0 (P2_0)
     #define CYBSP_WIFI_SDIO_D1 (P2_1)
     #define CYBSP_WIFI_SDIO_D2 (P2_2)

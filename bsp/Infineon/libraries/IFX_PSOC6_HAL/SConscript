@@ -114,7 +114,7 @@ if GetDepend('BSP_USING_RTC'):
     src += ['mtb-hal-cat1/source/cyhal_rtc.c']
     src += ['mtb-pdl-cat1/drivers/source/cy_rtc.c']
 
-if GetDepend('BSP_USING_ON_CHIP_FLASH'):
+if GetDepend('BSP_USING_ON_CHIP_FLASH') or GetDepend('BSP_USING_CYW43012_BT') :
     src += ['mtb-hal-cat1/source/cyhal_flash.c']
     src += ['mtb-pdl-cat1/drivers/source/cy_flash.c']
 

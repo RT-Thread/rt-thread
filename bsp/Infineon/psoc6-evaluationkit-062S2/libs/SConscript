@@ -16,7 +16,13 @@ elif rtconfig.PLATFORM in ['gcc', 'armclang']:
     src += Glob(cwd + '/TARGET_RTT-062S2/config/GeneratedSource/*.c')
 
     CPPPATH = [ cwd + '/TARGET_RTT-062S2',
-                cwd + '/TARGET_RTT-062S2/config/GeneratedSource']
+                cwd + '/TARGET_RTT-062S2/config/GeneratedSource',
+                cwd + '/TARGET_RTT-062S2/config',
+                cwd + '/TARGET_RTT-062S2/bluetooth'
+                ]
+    if GetDepend(['BSP_USING_CYW43012_BT']):
+        src += Glob(cwd + '/TARGET_RTT-062S2/bluetooth/*.c')
+
     if rtconfig.PLATFORM in ['gcc']:
         src += [cwd + '/TARGET_RTT-062S2/COMPONENT_CM4/TOOLCHAIN_GCC_ARM/startup_psoc6_02_cm4.S']
     elif rtconfig.PLATFORM in ['armclang']:
