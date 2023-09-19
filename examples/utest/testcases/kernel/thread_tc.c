@@ -13,7 +13,7 @@
 #include <stdlib.h>
 #include "utest.h"
 
-#define THREAD_STACK_SIZE  512
+#define THREAD_STACK_SIZE  FINSH_THREAD_STACK_SIZE
 #define THREAD_TIMESLICE   10
 
 rt_align(RT_ALIGN_SIZE)
