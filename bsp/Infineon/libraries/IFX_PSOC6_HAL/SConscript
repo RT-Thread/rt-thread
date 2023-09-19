@@ -78,6 +78,7 @@ if GetDepend(['SOC_CY8C6244LQI_S4D92']):
     src += Glob('psoc6cm0p/COMPONENT_CM0P_SLEEP/*.c')
 
 if GetDepend(['RT_USING_SERIAL']):
+    src += ['retarget-io/cy_retarget_io.c']
     src += ['mtb-hal-cat1/source/cyhal_uart.c']
     src += ['mtb-pdl-cat1/drivers/source/cy_scb_uart.c']
 
