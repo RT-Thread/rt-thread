@@ -182,6 +182,14 @@ menu "Onboard Peripheral Drivers"
         imply RTDUINO_USING_WIRE
         imply RTDUINO_USING_SPI
         default n
+
+    config BSP_USING_MPU6050
+        bool "Enable MPU6050 to read accel data"
+        select BSP_USING_I2C
+        select BSP_USING_I2C1
+        select PKG_USING_MPU6XXX
+        default n
+
 endmenu
 
 endmenu
