@@ -167,7 +167,6 @@ void lwp_tid_put(int tid);
 rt_thread_t lwp_tid_get_thread(int tid);
 void lwp_tid_set_thread(int tid, rt_thread_t thread);
 
-size_t lwp_user_strlen(const char *s, int *err);
 int lwp_execve(char *filename, int debug, int argc, char **argv, char **envp);
 
 /*create by lwp_setsid.c*/
