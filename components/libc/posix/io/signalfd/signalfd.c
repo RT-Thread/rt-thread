@@ -19,7 +19,8 @@
 #include <poll.h>
 
 #define SIGNALFD_MUTEX_NAME "signalfd"
-#define SIGNALFD_SHART_MAX 10
+#define SIGINFO_MAX 10
+#define SIGNALFD_SHART_MAX RT_SIGNALFD_MAX_NUM
 
 static int is_head_init = 0;
 
@@ -27,8 +28,8 @@ struct rt_signalfd_ctx
 {
     sigset_t sigmask;
     struct rt_mutex lock;
-    siginfo_t info;
-    int tick;
+    siginfo_t info[SIGINFO_MAX];
+    int sig_num;
     rt_wqueue_t signalfd_queue;
     struct rt_lwp *lwp[SIGNALFD_SHART_MAX];
 };
@@ -81,10 +82,9 @@ static int signalfd_poll(struct dfs_file *file, struct rt_pollreq *req)
 
         rt_mutex_take(&sfd->lock, RT_WAITING_FOREVER);
 
-        if (sfd->tick)
+        if (sfd->sig_num)
             events |= POLLIN;
 
-        sfd->tick = 0;
         rt_mutex_release(&sfd->lock);
     }
 
@@ -97,30 +97,62 @@ static ssize_t signalfd_read(struct dfs_file *file, void *buf, size_t count)
 static ssize_t signalfd_read(struct dfs_file *file, void *buf, size_t count, off_t *pos)
 #endif
 {
-    struct rt_signalfd_ctx *sfd;
-    struct signalfd_siginfo *buffer;
+    struct rt_signalfd_ctx *sfd = RT_NULL;
+    struct signalfd_siginfo *buffer = RT_NULL;
+    int user_buf_num = 0;
+    int sig_num = 0;
+    int i = 0;
     rt_err_t ret = -1;
 
     if (sizeof(struct signalfd_siginfo) > count)
         return -1;
 
+    if (buf == RT_NULL)
+        return -1;
+
     buffer = (struct signalfd_siginfo *)buf;
+    user_buf_num = count / sizeof(struct signalfd_siginfo);
 
     if (file->vnode)
     {
         sfd = file->vnode->data;
 
         signalfd_add_notify(sfd);
+        if ((sfd->sig_num == 0) && (file->flags & O_NONBLOCK))
+        {
+            ret = -EAGAIN;
+        }
+        else
+        {
+            if (sfd->sig_num == 0)
+            {
+                rt_wqueue_wait(&sfd->signalfd_queue, 0, RT_WAITING_FOREVER);
+            }
 
-        rt_wqueue_wait(&sfd->signalfd_queue, 0, RT_WAITING_FOREVER);
-        rt_mutex_take(&sfd->lock, RT_WAITING_FOREVER);
-        sfd->tick = 1;
-        rt_mutex_release(&sfd->lock);
+            rt_mutex_take(&sfd->lock, RT_WAITING_FOREVER);
+            for (i = 0; i < sfd->sig_num; i++)
+            {
+                if (i < user_buf_num)
+                {
+                    memcpy(&buffer[i], &sfd->info[i], sizeof(struct signalfd_siginfo));
+                    sfd->sig_num -= 1;
+                    sig_num += 1;
+                }
+                else
+                {
+                    break;
+                }
+            }
 
-        buffer->ssi_signo = sfd->info.si_signo;
-        buffer->ssi_code = sfd->info.si_code;
+            for (int j = 0; j < sfd->sig_num; j ++)
+            {
+                memcpy(&sfd->info[j], &sfd->info[i ++], sizeof(struct signalfd_siginfo));
+            }
 
-        ret = sizeof(struct signalfd_siginfo);
+            rt_mutex_release(&sfd->lock);
+
+            ret = sizeof(struct signalfd_siginfo) * sig_num;
+        }
     }
 
     return ret;
@@ -134,16 +166,16 @@ static void signalfd_callback(rt_wqueue_t *signalfd_queue, int signum)
 
     if (sfd)
     {
-        for (int sig = 1; sig < NSIG; sig++)
+        if (sigismember(&sfd->sigmask, signum))
         {
-            if (sigismember(&sfd->sigmask, signum))
+            rt_mutex_take(&sfd->lock, RT_WAITING_FOREVER);
+            if (sfd->sig_num < SIGINFO_MAX)
             {
-                rt_mutex_take(&sfd->lock, RT_WAITING_FOREVER);
-                sfd->tick = 1;
-                sfd->info.si_signo = signum;
-                rt_mutex_release(&sfd->lock);
-                rt_wqueue_wakeup(signalfd_queue, (void*)POLLIN);
+                sfd->info[sfd->sig_num].si_signo = signum;
+                sfd->sig_num += 1;
             }
+            rt_mutex_release(&sfd->lock);
+            rt_wqueue_wakeup(signalfd_queue, (void*)POLLIN);
         }
     }
 }
@@ -249,7 +281,7 @@ static int signalfd_do(int fd, const sigset_t *mask, int flags)
                         ret = -1;
                     }
 
-                    sfd->tick = 0;
+                    sfd->sig_num = 0;
 
                     df->flags |= flags;
 
