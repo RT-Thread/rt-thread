@@ -30,9 +30,6 @@
         <path>$PROJ_DIR$\usb\class\cdc\device</path>
         <path>$PROJ_DIR$\usb\device</path>
         <path>$PROJ_DIR$\</path>
-        <path>$PROJ_DIR$\config</path>
-        <path>$PROJ_DIR$\stdio_redirect</path>
-        <path>$PROJ_DIR$\</path>
         <path>$PROJ_DIR$\CMSIS\Core\Include</path>
         <path>$PROJ_DIR$\samd51a\include</path>
     </includePath>
@@ -63,9 +60,6 @@
         <path>$PROJ_DIR$\usb\class\cdc\device</path>
         <path>$PROJ_DIR$\usb\device</path>
         <path>$PROJ_DIR$\</path>
-        <path>$PROJ_DIR$\config</path>
-        <path>$PROJ_DIR$\stdio_redirect</path>
-        <path>$PROJ_DIR$\</path>
         <path>$PROJ_DIR$\CMSIS\Core\Include</path>
         <path>$PROJ_DIR$\samd51a\include</path>
     </asmIncludePath>
@@ -92,8 +86,6 @@
             <path>driver_init.c</path>
             <path>driver_init.h</path>
             <path>main.c</path>
-            <path>stdio_start.c</path>
-            <path>stdio_start.h</path>
             <path>usb_start.c</path>
             <path>usb_start.h</path>
     
@@ -133,7 +125,6 @@
             <path>config/hpl_sercom_config.h</path>
             <path>config/hpl_usb_config.h</path>
             <path>config/peripheral_clk_config.h</path>
-            <path>config/stdio_redirect_config.h</path>
             <path>config/usbd_config.h</path>
         </group>
 
@@ -150,7 +141,7 @@
             <path>hal/include/hal_init.h</path>
             <path>hal/include/hal_io.h</path>
             <path>hal/include/hal_sleep.h</path>
-            <path>hal/include/hal_usart_sync.h</path>
+            <path>hal/include/hal_usart_async.h</path>
             <path>hal/include/hal_usb_device.h</path>
             <path>hal/include/hpl_cmcc.h</path>
             <path>hal/include/hpl_core.h</path>
@@ -191,7 +182,7 @@
             <path>hal/src/hal_init.c</path>
             <path>hal/src/hal_io.c</path>
             <path>hal/src/hal_sleep.c</path>
-            <path>hal/src/hal_usart_sync.c</path>
+            <path>hal/src/hal_usart_async.c</path>
             <path>hal/src/hal_usb_device.c</path>
         </group>
 
@@ -206,12 +197,14 @@
             <path>hal/utils/include/utils_increment_macro.h</path>
             <path>hal/utils/include/utils_list.h</path>
             <path>hal/utils/include/utils_repeat_macro.h</path>
+            <path>hal/utils/include/utils_ringbuffer.h</path>
         </group>
 
         <group name="hal/utils/src">
             <path>hal/utils/src/utils_assert.c</path>
             <path>hal/utils/src/utils_event.c</path>
             <path>hal/utils/src/utils_list.c</path>
+            <path>hal/utils/src/utils_ringbuffer.c</path>
         </group>
 
         <group name="hpl/cmcc">
@@ -443,16 +436,6 @@
             <path>samd51a/include/pio/samd51n20a.h</path>
             <path>samd51a/include/pio/samd51p19a.h</path>
             <path>samd51a/include/pio/samd51p20a.h</path>
-        </group>
-
-        <group name="stdio_redirect">
-            <path>stdio_redirect/stdio_io.c</path>
-            <path>stdio_redirect/stdio_io.h</path>
-        </group>
-
-        <group name="stdio_redirect/iar">
-            <path>stdio_redirect/iar/read.c</path>
-            <path>stdio_redirect/iar/write.c</path>
         </group>
 
         <group name="usb">

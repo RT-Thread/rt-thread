@@ -1,8 +1,19 @@
-The USART Synchronous Driver
-============================
+The USART Asynchronous Driver
+=============================
 
 The universal synchronous and asynchronous receiver and transmitter
 (USART) is usually used to transfer data from one device to the other.
+
+The USART driver use a ring buffer to store received data. When the USART
+raise the data received interrupt, this data will be stored in the ring buffer
+at the next free location. When the ring buffer is full, the next reception
+will overwrite the oldest data stored in the ring buffer. There is one
+USART_BUFFER_SIZE macro per used hardware instance, e.g. for SERCOM0 the macro
+is called SERCOM0_USART_BUFFER_SIZE.
+
+On the other hand, when sending data over USART, the data is not copied to an
+internal buffer, but the data buffer supplied by the user is used. The callback
+will only be generated at the end of the buffer and not for each byte.
 
 User can set action for flow control pins by function usart_set_flow_control,
 if the flow control is enabled. All the available states are defined in union
@@ -24,6 +35,8 @@ Features
   * Data order
   * Flow control
 * Data transfer: transmission, reception
+* Notifications about transfer done or error case via callbacks
+* Status information with busy state and transfer count
 
 Applications
 ------------
@@ -34,7 +47,8 @@ between devices.
 Dependencies
 ------------
 
-USART capable hardware.
+USART capable hardware, with interrupt on each character is sent or
+received.
 
 Concurrency
 -----------

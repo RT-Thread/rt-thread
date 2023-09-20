@@ -26,13 +26,14 @@ static uint8_t board_info[48] = "Adafruit Metro M4 Express, Microchip SAMD51\n";
 void rt_hw_console_output(const char *str)
 {
     io_write(g_stdio, (uint8_t *)str, strlen(str));
+    while (TARGET_IO.stat != 0);
 }
 RTM_EXPORT(rt_hw_console_output);
 
 static inline void hw_board_init_usart(void)
 {
-    usart_sync_get_io_descriptor(&TARGET_IO, &g_stdio);
-    usart_sync_enable(&TARGET_IO);
+    usart_async_get_io_descriptor(&TARGET_IO, &g_stdio);
+    usart_async_enable(&TARGET_IO);
     io_write(g_stdio, board_info, strlen(board_info));
 }
 

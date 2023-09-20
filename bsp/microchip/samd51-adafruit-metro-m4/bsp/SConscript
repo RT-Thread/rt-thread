@@ -38,7 +38,7 @@ src += Glob('usb/device/*.c')
 src += Glob('usb/class/cdc/device/*.c')
 src += [cwd + '/atmel_start.c']
 src += [cwd + '/driver_init.c']
-src += [cwd + '/stdio_start.c']
+# src += [cwd + '/stdio_start.c']
 src += [cwd + '/usb_start.c']
 
 #add for startup script
@@ -71,7 +71,7 @@ path = [
     cwd + '/usb/class/cdc/device',
     cwd + '/usb/device',
     cwd + '/samd51a/include',
-    cwd + '/stdio_redirect',
+    # cwd + '/stdio_redirect',
     cwd + '/../board',
     cwd + '/../../common/applications'
     ]
