@@ -50,6 +50,10 @@ if RT_USING_POSIX_FS
         endif
     endif
 
+    config RT_USING_POSIX_TIMERFD
+            bool "Enable I/O timerfd <sys/timerfd.h>"
+            default n
+
     config RT_USING_POSIX_SOCKET
         bool "Enable BSD Socket I/O <sys/socket.h> <netdb.h>"
         select RT_USING_POSIX_SELECT
