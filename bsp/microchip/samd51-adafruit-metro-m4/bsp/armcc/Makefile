@@ -27,35 +27,33 @@ endif
 # List the subdirectories for creating object files
 SUB_DIRS +=  \
  \
-hal/src \
-hpl/ramecc \
-examples \
-hpl/oscctrl \
-stdio_redirect/keil \
+hpl/pm \
 hpl/osc32kctrl \
 samd51a/armcc/Device/SAMD51/Source \
-usb \
+hpl/ramecc \
 hpl/dmac \
 usb/class/cdc/device \
-stdio_redirect \
+hal/src \
+hpl/mclk \
+usb \
 hal/utils/src \
+hpl/sercom \
+examples \
+hpl/gclk \
+usb/device \
+hpl/oscctrl \
 samd51a/armcc/Device/SAMD51/Source/ARM \
 hpl/usb \
-hpl/pm \
-hpl/cmcc \
-hpl/gclk \
-hpl/mclk \
-usb/device \
-hpl/sercom \
-hpl/core
+hpl/core \
+hpl/cmcc
 
 # List the object files
 OBJS +=  \
 hal/src/hal_io.o \
-stdio_redirect/stdio_io.o \
 hpl/core/hpl_core_m4.o \
 usb/class/cdc/device/cdcdf_acm.o \
-hpl/dmac/hpl_dmac.o \
+samd51a/armcc/Device/SAMD51/Source/ARM/startup_samd51.o \
+usb_start.o \
 hpl/usb/hpl_usb.o \
 samd51a/armcc/Device/SAMD51/Source/system_samd51.o \
 hal/src/hal_delay.o \
@@ -64,14 +62,10 @@ hpl/core/hpl_init.o \
 hpl/gclk/hpl_gclk.o \
 hal/utils/src/utils_list.o \
 hal/utils/src/utils_assert.o \
-usb_start.o \
+hpl/dmac/hpl_dmac.o \
 hpl/oscctrl/hpl_oscctrl.o \
-hal/src/hal_usart_sync.o \
 hpl/mclk/hpl_mclk.o \
-stdio_redirect/keil/Retarget.o \
-samd51a/armcc/Device/SAMD51/Source/ARM/startup_samd51.o \
 hpl/ramecc/hpl_ramecc.o \
-stdio_start.o \
 usb/usb_protocol.o \
 hal/src/hal_init.o \
 hal/src/hal_usb_device.o \
@@ -79,7 +73,9 @@ main.o \
 hpl/osc32kctrl/hpl_osc32kctrl.o \
 examples/driver_examples.o \
 driver_init.o \
+hal/src/hal_usart_async.o \
 hpl/sercom/hpl_sercom.o \
+hal/utils/src/utils_ringbuffer.o \
 hal/src/hal_gpio.o \
 hal/utils/src/utils_event.o \
 hal/src/hal_sleep.o \
@@ -91,10 +87,10 @@ hal/src/hal_atomic.o
 
 OBJS_AS_ARGS +=  \
 "hal/src/hal_io.o" \
-"stdio_redirect/stdio_io.o" \
 "hpl/core/hpl_core_m4.o" \
 "usb/class/cdc/device/cdcdf_acm.o" \
-"hpl/dmac/hpl_dmac.o" \
+"samd51a/armcc/Device/SAMD51/Source/ARM/startup_samd51.o" \
+"usb_start.o" \
 "hpl/usb/hpl_usb.o" \
 "samd51a/armcc/Device/SAMD51/Source/system_samd51.o" \
 "hal/src/hal_delay.o" \
@@ -103,14 +99,10 @@ OBJS_AS_ARGS +=  \
 "hpl/gclk/hpl_gclk.o" \
 "hal/utils/src/utils_list.o" \
 "hal/utils/src/utils_assert.o" \
-"usb_start.o" \
+"hpl/dmac/hpl_dmac.o" \
 "hpl/oscctrl/hpl_oscctrl.o" \
-"hal/src/hal_usart_sync.o" \
 "hpl/mclk/hpl_mclk.o" \
-"stdio_redirect/keil/Retarget.o" \
-"samd51a/armcc/Device/SAMD51/Source/ARM/startup_samd51.o" \
 "hpl/ramecc/hpl_ramecc.o" \
-"stdio_start.o" \
 "usb/usb_protocol.o" \
 "hal/src/hal_init.o" \
 "hal/src/hal_usb_device.o" \
@@ -118,7 +110,9 @@ OBJS_AS_ARGS +=  \
 "hpl/osc32kctrl/hpl_osc32kctrl.o" \
 "examples/driver_examples.o" \
 "driver_init.o" \
+"hal/src/hal_usart_async.o" \
 "hpl/sercom/hpl_sercom.o" \
+"hal/utils/src/utils_ringbuffer.o" \
 "hal/src/hal_gpio.o" \
 "hal/utils/src/utils_event.o" \
 "hal/src/hal_sleep.o" \
@@ -132,7 +126,6 @@ OBJS_AS_ARGS +=  \
 DEPS := $(OBJS:%.o=%.d)
 
 DEPS_AS_ARGS +=  \
-"stdio_redirect/stdio_io.d" \
 "hal/utils/src/utils_event.d" \
 "hal/src/hal_io.d" \
 "hpl/ramecc/hpl_ramecc.d" \
@@ -143,26 +136,25 @@ DEPS_AS_ARGS +=  \
 "samd51a/armcc/Device/SAMD51/Source/ARM/startup_samd51.d" \
 "hal/utils/src/utils_list.d" \
 "hpl/cmcc/hpl_cmcc.d" \
-"usb_start.d" \
+"hpl/dmac/hpl_dmac.d" \
 "hal/utils/src/utils_assert.d" \
 "hal/src/hal_delay.d" \
 "hpl/core/hpl_init.d" \
 "hpl/pm/hpl_pm.d" \
 "usb/usb_protocol.d" \
-"stdio_start.d" \
 "hpl/gclk/hpl_gclk.d" \
 "hal/src/hal_usb_device.d" \
-"hpl/dmac/hpl_dmac.d" \
+"usb_start.d" \
 "hal/src/hal_init.d" \
-"hal/src/hal_usart_sync.d" \
-"stdio_redirect/keil/Retarget.d" \
 "hpl/mclk/hpl_mclk.d" \
 "driver_init.d" \
+"hal/src/hal_usart_async.d" \
 "hpl/osc32kctrl/hpl_osc32kctrl.d" \
 "main.d" \
 "examples/driver_examples.d" \
 "hal/src/hal_cache.d" \
 "hal/src/hal_sleep.d" \
+"hal/utils/src/utils_ringbuffer.d" \
 "hpl/sercom/hpl_sercom.d" \
 "hal/src/hal_gpio.d" \
 "hal/src/hal_atomic.d" \
@@ -204,7 +196,7 @@ $(OBJS_AS_ARGS)
 	@echo Building file: $<
 	@echo ARMCC Compiler
 	$(QUOTE)armcc$(QUOTE) --c99 -c -DDEBUG -O1 -g --apcs=interwork --split_sections --cpu Cortex-M4 -D__SAMD51J19A__ \
--I"../" -I"../config" -I"../examples" -I"../hal/include" -I"../hal/utils/include" -I"../hpl/cmcc" -I"../hpl/core" -I"../hpl/dmac" -I"../hpl/gclk" -I"../hpl/mclk" -I"../hpl/osc32kctrl" -I"../hpl/oscctrl" -I"../hpl/pm" -I"../hpl/port" -I"../hpl/ramecc" -I"../hpl/sercom" -I"../hpl/usb" -I"../hri" -I"../" -I"../config" -I"../usb" -I"../usb/class/cdc" -I"../usb/class/cdc/device" -I"../usb/device" -I"../" -I"../config" -I"../stdio_redirect" -I"../" -I"../CMSIS/Core/Include" -I"../samd51a/include"  \
+-I"../" -I"../config" -I"../examples" -I"../hal/include" -I"../hal/utils/include" -I"../hpl/cmcc" -I"../hpl/core" -I"../hpl/dmac" -I"../hpl/gclk" -I"../hpl/mclk" -I"../hpl/osc32kctrl" -I"../hpl/oscctrl" -I"../hpl/pm" -I"../hpl/port" -I"../hpl/ramecc" -I"../hpl/sercom" -I"../hpl/usb" -I"../hri" -I"../" -I"../config" -I"../usb" -I"../usb/class/cdc" -I"../usb/class/cdc/device" -I"../usb/device" -I"../" -I"../CMSIS/Core/Include" -I"../samd51a/include"  \
 --depend "$@"  -o "$@" "$<"
 
 	@echo Finished building: $<
@@ -213,7 +205,7 @@ $(OBJS_AS_ARGS)
 	@echo Building file: $<
 	@echo ARMCC Assembler
 	$(QUOTE)armasm$(QUOTE) -g --apcs=interwork --cpu Cortex-M4 --pd "D__SAMD51J19A__ SETA 1" \
--I"../" -I"../config" -I"../examples" -I"../hal/include" -I"../hal/utils/include" -I"../hpl/cmcc" -I"../hpl/core" -I"../hpl/dmac" -I"../hpl/gclk" -I"../hpl/mclk" -I"../hpl/osc32kctrl" -I"../hpl/oscctrl" -I"../hpl/pm" -I"../hpl/port" -I"../hpl/ramecc" -I"../hpl/sercom" -I"../hpl/usb" -I"../hri" -I"../" -I"../config" -I"../usb" -I"../usb/class/cdc" -I"../usb/class/cdc/device" -I"../usb/device" -I"../" -I"../config" -I"../stdio_redirect" -I"../" -I"../CMSIS/Core/Include" -I"../samd51a/include"  \
+-I"../" -I"../config" -I"../examples" -I"../hal/include" -I"../hal/utils/include" -I"../hpl/cmcc" -I"../hpl/core" -I"../hpl/dmac" -I"../hpl/gclk" -I"../hpl/mclk" -I"../hpl/osc32kctrl" -I"../hpl/oscctrl" -I"../hpl/pm" -I"../hpl/port" -I"../hpl/ramecc" -I"../hpl/sercom" -I"../hpl/usb" -I"../hri" -I"../" -I"../config" -I"../usb" -I"../usb/class/cdc" -I"../usb/class/cdc/device" -I"../usb/device" -I"../" -I"../CMSIS/Core/Include" -I"../samd51a/include"  \
 --depend "$(@:%.o=%.d)" -o "$@" "$<"
 
 	@echo Finished building: $<
@@ -222,7 +214,7 @@ $(OBJS_AS_ARGS)
 	@echo Building file: $<
 	@echo ARMCC Preprocessing Assembler
 	$(QUOTE)armcc$(QUOTE) --c99 -c -DDEBUG -O1 -g --apcs=interwork --split_sections --cpu Cortex-M4 -D__SAMD51J19A__ \
--I"../" -I"../config" -I"../examples" -I"../hal/include" -I"../hal/utils/include" -I"../hpl/cmcc" -I"../hpl/core" -I"../hpl/dmac" -I"../hpl/gclk" -I"../hpl/mclk" -I"../hpl/osc32kctrl" -I"../hpl/oscctrl" -I"../hpl/pm" -I"../hpl/port" -I"../hpl/ramecc" -I"../hpl/sercom" -I"../hpl/usb" -I"../hri" -I"../" -I"../config" -I"../usb" -I"../usb/class/cdc" -I"../usb/class/cdc/device" -I"../usb/device" -I"../" -I"../config" -I"../stdio_redirect" -I"../" -I"../CMSIS/Core/Include" -I"../samd51a/include"  \
+-I"../" -I"../config" -I"../examples" -I"../hal/include" -I"../hal/utils/include" -I"../hpl/cmcc" -I"../hpl/core" -I"../hpl/dmac" -I"../hpl/gclk" -I"../hpl/mclk" -I"../hpl/osc32kctrl" -I"../hpl/oscctrl" -I"../hpl/pm" -I"../hpl/port" -I"../hpl/ramecc" -I"../hpl/sercom" -I"../hpl/usb" -I"../hri" -I"../" -I"../config" -I"../usb" -I"../usb/class/cdc" -I"../usb/class/cdc/device" -I"../usb/device" -I"../" -I"../CMSIS/Core/Include" -I"../samd51a/include"  \
 --depend "$@"  -o "$@" "$<"
 
 	@echo Finished building: $<

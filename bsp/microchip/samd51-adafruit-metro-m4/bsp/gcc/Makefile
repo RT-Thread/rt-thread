@@ -30,39 +30,34 @@ endif
 # List the subdirectories for creating object files
 SUB_DIRS +=  \
  \
-samd51a/gcc/gcc \
-hal/src \
-hpl/ramecc \
-examples \
-hpl/oscctrl \
-stdio_redirect/gcc \
-hpl/osc32kctrl \
-usb \
-hpl/dmac \
-usb/class/cdc/device \
-stdio_redirect \
-samd51a/gcc \
-hal/utils/src \
-hpl/usb \
 hpl/pm \
-hpl/cmcc \
-hpl/gclk \
+hpl/osc32kctrl \
+hpl/ramecc \
+hpl/dmac \
+samd51a/gcc \
+usb/class/cdc/device \
+hal/src \
+samd51a/gcc/gcc \
 hpl/mclk \
-usb/device \
+usb \
+hal/utils/src \
 hpl/sercom \
-hpl/core
+examples \
+hpl/gclk \
+usb/device \
+hpl/oscctrl \
+hpl/usb \
+hpl/core \
+hpl/cmcc
 
 # List the object files
 OBJS +=  \
 hal/src/hal_io.o \
-stdio_redirect/stdio_io.o \
-stdio_redirect/gcc/write.o \
 samd51a/gcc/system_samd51.o \
 hpl/core/hpl_core_m4.o \
 usb/class/cdc/device/cdcdf_acm.o \
 hal/utils/src/utils_syscalls.o \
-stdio_redirect/gcc/read.o \
-hpl/dmac/hpl_dmac.o \
+usb_start.o \
 hpl/usb/hpl_usb.o \
 hal/src/hal_delay.o \
 hpl/pm/hpl_pm.o \
@@ -70,12 +65,10 @@ hpl/core/hpl_init.o \
 hpl/gclk/hpl_gclk.o \
 hal/utils/src/utils_list.o \
 hal/utils/src/utils_assert.o \
-usb_start.o \
+hpl/dmac/hpl_dmac.o \
 hpl/oscctrl/hpl_oscctrl.o \
-hal/src/hal_usart_sync.o \
 hpl/mclk/hpl_mclk.o \
 hpl/ramecc/hpl_ramecc.o \
-stdio_start.o \
 usb/usb_protocol.o \
 hal/src/hal_init.o \
 hal/src/hal_usb_device.o \
@@ -83,7 +76,9 @@ main.o \
 hpl/osc32kctrl/hpl_osc32kctrl.o \
 examples/driver_examples.o \
 driver_init.o \
+hal/src/hal_usart_async.o \
 hpl/sercom/hpl_sercom.o \
+hal/utils/src/utils_ringbuffer.o \
 hal/src/hal_gpio.o \
 hal/utils/src/utils_event.o \
 hal/src/hal_sleep.o \
@@ -96,14 +91,11 @@ hal/src/hal_atomic.o
 
 OBJS_AS_ARGS +=  \
 "hal/src/hal_io.o" \
-"stdio_redirect/stdio_io.o" \
-"stdio_redirect/gcc/write.o" \
 "samd51a/gcc/system_samd51.o" \
 "hpl/core/hpl_core_m4.o" \
 "usb/class/cdc/device/cdcdf_acm.o" \
 "hal/utils/src/utils_syscalls.o" \
-"stdio_redirect/gcc/read.o" \
-"hpl/dmac/hpl_dmac.o" \
+"usb_start.o" \
 "hpl/usb/hpl_usb.o" \
 "hal/src/hal_delay.o" \
 "hpl/pm/hpl_pm.o" \
@@ -111,12 +103,10 @@ OBJS_AS_ARGS +=  \
 "hpl/gclk/hpl_gclk.o" \
 "hal/utils/src/utils_list.o" \
 "hal/utils/src/utils_assert.o" \
-"usb_start.o" \
+"hpl/dmac/hpl_dmac.o" \
 "hpl/oscctrl/hpl_oscctrl.o" \
-"hal/src/hal_usart_sync.o" \
 "hpl/mclk/hpl_mclk.o" \
 "hpl/ramecc/hpl_ramecc.o" \
-"stdio_start.o" \
 "usb/usb_protocol.o" \
 "hal/src/hal_init.o" \
 "hal/src/hal_usb_device.o" \
@@ -124,7 +114,9 @@ OBJS_AS_ARGS +=  \
 "hpl/osc32kctrl/hpl_osc32kctrl.o" \
 "examples/driver_examples.o" \
 "driver_init.o" \
+"hal/src/hal_usart_async.o" \
 "hpl/sercom/hpl_sercom.o" \
+"hal/utils/src/utils_ringbuffer.o" \
 "hal/src/hal_gpio.o" \
 "hal/utils/src/utils_event.o" \
 "hal/src/hal_sleep.o" \
@@ -162,9 +154,6 @@ DIR_INCLUDES +=  \
 -I"../usb/class/cdc/device" \
 -I"../usb/device" \
 -I"../" \
--I"../config" \
--I"../stdio_redirect" \
--I"../" \
 -I"../CMSIS/Core/Include" \
 -I"../samd51a/include"
 
@@ -172,7 +161,6 @@ DIR_INCLUDES +=  \
 DEPS := $(OBJS:%.o=%.d)
 
 DEPS_AS_ARGS +=  \
-"stdio_redirect/stdio_io.d" \
 "hal/utils/src/utils_event.d" \
 "hal/src/hal_io.d" \
 "hpl/ramecc/hpl_ramecc.d" \
@@ -180,30 +168,28 @@ DEPS_AS_ARGS +=  \
 "hal/utils/src/utils_syscalls.d" \
 "usb/class/cdc/device/cdcdf_acm.d" \
 "samd51a/gcc/system_samd51.d" \
-"stdio_redirect/gcc/write.d" \
 "hpl/usb/hpl_usb.d" \
 "hal/utils/src/utils_list.d" \
 "hpl/cmcc/hpl_cmcc.d" \
-"usb_start.d" \
+"hpl/dmac/hpl_dmac.d" \
 "hal/utils/src/utils_assert.d" \
 "hal/src/hal_delay.d" \
 "hpl/core/hpl_init.d" \
 "hpl/pm/hpl_pm.d" \
 "usb/usb_protocol.d" \
-"stdio_start.d" \
 "hpl/gclk/hpl_gclk.d" \
 "hal/src/hal_usb_device.d" \
-"hpl/dmac/hpl_dmac.d" \
+"usb_start.d" \
 "hal/src/hal_init.d" \
-"hal/src/hal_usart_sync.d" \
 "hpl/mclk/hpl_mclk.d" \
 "driver_init.d" \
-"stdio_redirect/gcc/read.d" \
+"hal/src/hal_usart_async.d" \
 "hpl/osc32kctrl/hpl_osc32kctrl.d" \
 "main.d" \
 "examples/driver_examples.d" \
 "hal/src/hal_cache.d" \
 "hal/src/hal_sleep.d" \
+"hal/utils/src/utils_ringbuffer.d" \
 "hpl/sercom/hpl_sercom.d" \
 "hal/src/hal_gpio.d" \
 "hal/src/hal_atomic.d" \

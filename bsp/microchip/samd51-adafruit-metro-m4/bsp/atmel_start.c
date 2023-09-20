@@ -7,5 +7,4 @@ void atmel_start_init(void)
 {
 	system_init();
 	usb_init();
-	stdio_redirect_init();
 }

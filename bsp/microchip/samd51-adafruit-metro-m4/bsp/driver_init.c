@@ -11,9 +11,33 @@
 #include <utils.h>
 #include <hal_init.h>
 
-struct usart_sync_descriptor TARGET_IO;
+/*! The buffer size for USART */
+#define TARGET_IO_BUFFER_SIZE 16
 
-void TARGET_IO_PORT_init(void)
+struct usart_async_descriptor TARGET_IO;
+
+static uint8_t TARGET_IO_buffer[TARGET_IO_BUFFER_SIZE];
+
+/**
+ * \brief USART Clock initialization function
+ *
+ * Enables register interface and peripheral clock
+ */
+void TARGET_IO_CLOCK_init()
+{
+
+	hri_gclk_write_PCHCTRL_reg(GCLK, SERCOM3_GCLK_ID_CORE, CONF_GCLK_SERCOM3_CORE_SRC | (1 << GCLK_PCHCTRL_CHEN_Pos));
+	hri_gclk_write_PCHCTRL_reg(GCLK, SERCOM3_GCLK_ID_SLOW, CONF_GCLK_SERCOM3_SLOW_SRC | (1 << GCLK_PCHCTRL_CHEN_Pos));
+
+	hri_mclk_set_APBBMASK_SERCOM3_bit(MCLK);
+}
+
+/**
+ * \brief USART pinmux initialization function
+ *
+ * Set each required pin to USART functionality
+ */
+void TARGET_IO_PORT_init()
 {
 
 	gpio_set_pin_function(PA22, PINMUX_PA22C_SERCOM3_PAD0);
@@ -21,18 +45,15 @@ void TARGET_IO_PORT_init(void)
 	gpio_set_pin_function(PA23, PINMUX_PA23C_SERCOM3_PAD1);
 }
 
-void TARGET_IO_CLOCK_init(void)
-{
-	hri_gclk_write_PCHCTRL_reg(GCLK, SERCOM3_GCLK_ID_CORE, CONF_GCLK_SERCOM3_CORE_SRC | (1 << GCLK_PCHCTRL_CHEN_Pos));
-	hri_gclk_write_PCHCTRL_reg(GCLK, SERCOM3_GCLK_ID_SLOW, CONF_GCLK_SERCOM3_SLOW_SRC | (1 << GCLK_PCHCTRL_CHEN_Pos));
-
-	hri_mclk_set_APBBMASK_SERCOM3_bit(MCLK);
-}
-
+/**
+ * \brief USART initialization function
+ *
+ * Enables USART peripheral, clocks and initializes USART driver
+ */
 void TARGET_IO_init(void)
 {
 	TARGET_IO_CLOCK_init();
-	usart_sync_init(&TARGET_IO, SERCOM3, (void *)NULL);
+	usart_async_init(&TARGET_IO, SERCOM3, TARGET_IO_buffer, TARGET_IO_BUFFER_SIZE, (void *)NULL);
 	TARGET_IO_PORT_init();
 }
 

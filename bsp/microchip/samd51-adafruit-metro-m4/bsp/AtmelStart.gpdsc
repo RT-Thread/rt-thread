@@ -36,21 +36,13 @@
       <require Dname="ATSAMD51J19A"/>
       <accept Tcompiler="GCC"/>
     </condition>
-    <condition id="IAR">
-      <require Dname="ATSAMD51J19A"/>
-      <accept Tcompiler="IAR"/>
-    </condition>
-    <condition id="ARMCC">
-      <require Dname="ATSAMD51J19A"/>
-      <accept Tcompiler="ARMCC"/>
-    </condition>
   </conditions>
   <components generator="AtmelStart">
     <component Cclass="AtmelStart" Cgroup="Framework" Cversion="1.0.0" condition="CMSIS Device Startup">
       <description>Atmel Start Framework</description>
       <RTE_Components_h>#define ATMEL_START</RTE_Components_h>
       <files>
-        <file category="doc" condition="ARMCC, GCC, IAR" name="hal/documentation/usart_sync.rst"/>
+        <file category="doc" condition="ARMCC, GCC, IAR" name="hal/documentation/usart_async.rst"/>
         <file category="doc" condition="ARMCC, GCC, IAR" name="hal/documentation/usb_device_async.rst"/>
         <file category="header" condition="ARMCC, GCC, IAR" name="hal/include/hal_atomic.h"/>
         <file category="header" condition="ARMCC, GCC, IAR" name="hal/include/hal_cache.h"/>
@@ -97,9 +89,11 @@
         <file category="header" condition="ARMCC, GCC, IAR" name="hal/utils/include/utils_increment_macro.h"/>
         <file category="header" condition="ARMCC, GCC, IAR" name="hal/utils/include/utils_list.h"/>
         <file category="header" condition="ARMCC, GCC, IAR" name="hal/utils/include/utils_repeat_macro.h"/>
+        <file category="header" condition="ARMCC, GCC, IAR" name="hal/utils/include/utils_ringbuffer.h"/>
         <file category="source" condition="ARMCC, GCC, IAR" name="hal/utils/src/utils_assert.c"/>
         <file category="source" condition="ARMCC, GCC, IAR" name="hal/utils/src/utils_event.c"/>
         <file category="source" condition="ARMCC, GCC, IAR" name="hal/utils/src/utils_list.c"/>
+        <file category="source" condition="ARMCC, GCC, IAR" name="hal/utils/src/utils_ringbuffer.c"/>
         <file category="source" condition="GCC" name="hal/utils/src/utils_syscalls.c"/>
         <file category="header" condition="ARMCC, GCC, IAR" name="hri/hri_ac_d51.h"/>
         <file category="header" condition="ARMCC, GCC, IAR" name="hri/hri_adc_d51.h"/>
@@ -155,21 +149,13 @@
         <file category="header" condition="ARMCC, GCC, IAR" name="usb/usb_includes.h"/>
         <file category="source" condition="ARMCC, GCC, IAR" name="usb/usb_protocol.c"/>
         <file category="header" condition="ARMCC, GCC, IAR" name="usb/usb_protocol.h"/>
-        <file category="doc" condition="ARMCC, GCC, IAR" name="documentation/stdio.rst"/>
-        <file category="source" condition="GCC" name="stdio_redirect/gcc/read.c"/>
-        <file category="source" condition="GCC" name="stdio_redirect/gcc/write.c"/>
-        <file category="source" condition="IAR" name="stdio_redirect/iar/read.c"/>
-        <file category="source" condition="IAR" name="stdio_redirect/iar/write.c"/>
-        <file category="source" condition="ARMCC" name="stdio_redirect/keil/Retarget.c"/>
-        <file category="source" condition="ARMCC, GCC, IAR" name="stdio_redirect/stdio_io.c"/>
-        <file category="header" condition="ARMCC, GCC, IAR" name="stdio_redirect/stdio_io.h"/>
         <file category="source" condition="ARMCC, GCC, IAR" name="main.c"/>
         <file category="source" condition="ARMCC, GCC, IAR" name="driver_init.c"/>
         <file category="header" condition="ARMCC, GCC, IAR" name="driver_init.h"/>
         <file category="header" condition="ARMCC, GCC, IAR" name="atmel_start_pins.h"/>
         <file category="header" condition="ARMCC, GCC, IAR" name="examples/driver_examples.h"/>
         <file category="source" condition="ARMCC, GCC, IAR" name="examples/driver_examples.c"/>
-        <file category="header" condition="ARMCC, GCC, IAR" name="hal/include/hal_usart_sync.h"/>
+        <file category="header" condition="ARMCC, GCC, IAR" name="hal/include/hal_usart_async.h"/>
         <file category="header" condition="ARMCC, GCC, IAR" name="hal/include/hpl_missing_features.h"/>
         <file category="header" condition="ARMCC, GCC, IAR" name="hal/include/hpl_reset.h"/>
         <file category="header" condition="ARMCC, GCC, IAR" name="hal/include/hpl_spi_m_async.h"/>
@@ -179,7 +165,7 @@
         <file category="header" condition="ARMCC, GCC, IAR" name="hal/include/hpl_spi_s_sync.h"/>
         <file category="header" condition="ARMCC, GCC, IAR" name="hal/include/hpl_usart_async.h"/>
         <file category="header" condition="ARMCC, GCC, IAR" name="hal/include/hpl_usart_sync.h"/>
-        <file category="source" condition="ARMCC, GCC, IAR" name="hal/src/hal_usart_sync.c"/>
+        <file category="source" condition="ARMCC, GCC, IAR" name="hal/src/hal_usart_async.c"/>
         <file category="header" condition="ARMCC, GCC, IAR" name="hal/utils/include/parts.h"/>
         <file category="source" condition="ARMCC, GCC, IAR" name="hpl/cmcc/hpl_cmcc.c"/>
         <file category="source" condition="ARMCC, GCC, IAR" name="hpl/core/hpl_core_m4.c"/>
@@ -199,8 +185,6 @@
         <file category="source" condition="ARMCC, GCC, IAR" name="hpl/usb/hpl_usb.c"/>
         <file category="source" condition="ARMCC, GCC, IAR" name="usb_start.c"/>
         <file category="header" condition="ARMCC, GCC, IAR" name="usb_start.h"/>
-        <file category="source" condition="ARMCC, GCC, IAR" name="stdio_start.c"/>
-        <file category="header" condition="ARMCC, GCC, IAR" name="stdio_start.h"/>
         <file category="header" condition="ARMCC, GCC, IAR" name="atmel_start.h"/>
         <file category="source" condition="ARMCC, GCC, IAR" name="atmel_start.c"/>
         <file attr="config" category="header" condition="ARMCC, GCC, IAR" name="config/hpl_cmcc_config.h"/>
@@ -214,7 +198,6 @@
         <file attr="config" category="header" condition="ARMCC, GCC, IAR" name="config/hpl_usb_config.h"/>
         <file attr="config" category="header" condition="ARMCC, GCC, IAR" name="config/peripheral_clk_config.h"/>
         <file attr="config" category="header" condition="ARMCC, GCC, IAR" name="config/usbd_config.h"/>
-        <file attr="config" category="header" condition="ARMCC, GCC, IAR" name="config/stdio_redirect_config.h"/>
         <file category="include" condition="ARMCC, GCC, IAR" name=""/>
         <file category="include" condition="ARMCC, GCC, IAR" name="config"/>
         <file category="include" condition="ARMCC, GCC, IAR" name="examples"/>
@@ -239,9 +222,6 @@
         <file category="include" condition="ARMCC, GCC, IAR" name="usb/class/cdc"/>
         <file category="include" condition="ARMCC, GCC, IAR" name="usb/class/cdc/device"/>
         <file category="include" condition="ARMCC, GCC, IAR" name="usb/device"/>
-        <file category="include" condition="ARMCC, GCC, IAR" name=""/>
-        <file category="include" condition="ARMCC, GCC, IAR" name="config"/>
-        <file category="include" condition="ARMCC, GCC, IAR" name="stdio_redirect"/>
         <file category="include" condition="ARMCC, GCC, IAR" name=""/>
       </files>
     </component>

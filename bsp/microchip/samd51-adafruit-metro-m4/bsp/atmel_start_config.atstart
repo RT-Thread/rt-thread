@@ -87,14 +87,6 @@ middlewares:
     dependencies:
       USB Device Stack Core Instance: USB_DEVICE_STACK_CORE_INSTANCE
       USB Class CDC: USB_CLASS_CDC
-  STDIO_REDIRECT_0:
-    user_label: STDIO_REDIRECT_0
-    configuration: {}
-    definition: Atmel:STDIO_redirect:0.0.1::STDIO_Redirect
-    functionality: STDIO_Redirect
-    api: STDIO:Redirect:IO
-    dependencies:
-      Target IO: TARGET_IO
 drivers:
   CMCC:
     user_label: CMCC
@@ -868,8 +860,8 @@ drivers:
       _$freq_output_Digital Frequency Locked Loop (DFLL48M): 48000000
       _$freq_output_Digital Phase Locked Loop (DPLL0): 47985664
       _$freq_output_Digital Phase Locked Loop (DPLL1): 47985664
-      _$freq_output_External Crystal Oscillator 8-48MHz (XOSC0): '12000000'
-      _$freq_output_External Crystal Oscillator 8-48MHz (XOSC1): '12000000'
+      _$freq_output_External Crystal Oscillator 8-48MHz (XOSC0): 12000000
+      _$freq_output_External Crystal Oscillator 8-48MHz (XOSC1): 12000000
       dfll_arch_bplckc: false
       dfll_arch_calibration: false
       dfll_arch_ccdis: false
@@ -995,11 +987,11 @@ drivers:
       domain_group: null
   TARGET_IO:
     user_label: TARGET_IO
-    definition: Atmel:SAMD51_Drivers:0.0.1::SAMD51J19A-MF::SERCOM3::driver_config_definition::UART::HAL:Driver:USART.Sync
+    definition: Atmel:SAMD51_Drivers:0.0.1::SAMD51J19A-MF::SERCOM3::driver_config_definition::UART::HAL:Driver:USART.Async
     functionality: USART
-    api: HAL:Driver:USART_Sync
+    api: HAL:Driver:USART_Async
     configuration:
-      usart_advanced: false
+      usart_advanced: true
       usart_arch_clock_mode: USART with internal clock
       usart_arch_cloden: false
       usart_arch_dbgstop: Keep running
