@@ -7,6 +7,7 @@
  * Date           Author       Notes
  * 2022-10-24     flybreak     the first version
  * 2023-02-01     xqyjlj       fix cannot open the same file repeatedly in 'w' mode
+ * 2023-09-20     zmq810150896 adds truncate functionality and standardized unlink adaptations
  */
 
 #include <rthw.h>
@@ -367,7 +368,28 @@ static off_t dfs_tmpfs_lseek(struct dfs_file *file, off_t offset, int wherece)
 
 static int dfs_tmpfs_close(struct dfs_file *file)
 {
+    struct tmpfs_file *d_file;
+
     RT_ASSERT(file->vnode->ref_count > 0);
+    if (file->vnode->ref_count != 1)
+        return 0;
+
+    d_file = (struct tmpfs_file *)file->vnode->data;
+
+    if (d_file == NULL)
+        return -ENOENT;
+
+    if (d_file->fre_memory == RT_TRUE)
+    {
+        if (d_file->data != NULL)
+        {
+            rt_free(d_file->data);
+            d_file->data = RT_NULL;
+        }
+
+        rt_free(d_file);
+    }
+
     return RT_EOK;
 }
 
@@ -506,9 +528,20 @@ static int dfs_tmpfs_unlink(struct dfs_dentry *dentry)
     rt_list_remove(&(d_file->sibling));
     rt_spin_unlock(&superblock->lock);
 
-    if (d_file->data != NULL)
-        rt_free(d_file->data);
-    rt_free(d_file);
+    if (rt_atomic_load(&(dentry->ref_count)) == 1)
+    {
+        if (d_file->data != NULL)
+        {
+            rt_free(d_file->data);
+            d_file->data = RT_NULL;
+        }
+
+        rt_free(d_file);
+    }
+    else
+    {
+        d_file->fre_memory = RT_TRUE;
+    }
 
     return RT_EOK;
 }
@@ -644,6 +677,7 @@ static struct dfs_vnode *dfs_tmpfs_create_vnode(struct dfs_dentry *dentry, int t
         d_file->data = NULL;
         d_file->size = 0;
         d_file->sb = superblock;
+        d_file->fre_memory = RT_FALSE;
         if (type == FT_DIRECTORY)
         {
             d_file->type = TMPFS_TYPE_DIR;
@@ -679,6 +713,38 @@ static int dfs_tmpfs_free_vnode(struct dfs_vnode *vnode)
     return 0;
 }
 
+static int dfs_tmpfs_truncate(struct dfs_file *file, off_t offset)
+{
+    struct tmpfs_file *d_file = RT_NULL;
+    struct tmpfs_sb *superblock = RT_NULL;
+    rt_uint8_t *ptr = RT_NULL;
+
+    d_file = (struct tmpfs_file *)file->vnode->data;
+    RT_ASSERT(d_file != RT_NULL);
+
+    superblock = d_file->sb;
+    RT_ASSERT(superblock != RT_NULL);
+
+    ptr = rt_realloc(d_file->data, offset);
+    if (ptr == RT_NULL)
+    {
+        rt_set_errno(-ENOMEM);
+        return 0;
+    }
+
+    rt_spin_lock(&superblock->lock);
+    superblock->df_size = offset;
+    rt_spin_unlock(&superblock->lock);
+
+    /* update d_file and file size */
+    d_file->data = ptr;
+    d_file->size = offset;
+    file->vnode->size = d_file->size;
+    LOG_D("tmpfile ptr:%x, size:%d", ptr, d_file->size);
+
+    return 0;
+}
+
 static const struct dfs_file_ops _tmp_fops =
 {
     .open = dfs_tmpfs_open,
@@ -688,6 +754,7 @@ static const struct dfs_file_ops _tmp_fops =
     .write = dfs_tmpfs_write,
     .lseek = dfs_tmpfs_lseek,
     .getdents = dfs_tmpfs_getdents,
+    .truncate = dfs_tmpfs_truncate,
 };
 
 static const struct dfs_filesystem_ops _tmpfs_ops =
