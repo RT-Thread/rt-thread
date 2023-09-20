@@ -1082,7 +1082,7 @@ int dfs_file_unlink(const char *path)
                     rt_bool_t has_child = RT_FALSE;
 
                     has_child = dfs_mnt_has_child_mnt(mnt, fullpath);
-                    if (has_child == RT_FALSE && rt_atomic_load(&(dentry->ref_count)) == 1)
+                    if (has_child == RT_FALSE)
                     {
                         /* no child mnt point, unlink it */
                         ret = -RT_ERROR;

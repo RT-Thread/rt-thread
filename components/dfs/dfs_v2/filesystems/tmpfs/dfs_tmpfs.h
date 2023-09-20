@@ -30,6 +30,7 @@ struct tmpfs_file
     struct tmpfs_sb *sb;       /* superblock ptr */
     rt_uint8_t      *data;     /* file date ptr */
     rt_size_t        size;     /* file size */
+    rt_bool_t       fre_memory;/* Whether to release memory upon close */
 };
 
 
