@@ -24,7 +24,7 @@ elif CROSS_TOOL == 'keil':
     EXEC_PATH   = r'C:/Keil_v5'
 elif CROSS_TOOL == 'iar':
     PLATFORM    = 'iccarm'
-    EXEC_PATH   = r'C:/Program Files (x86)/IAR Systems/Embedded Workbench 8.3'
+    EXEC_PATH   = r'C:/Program Files/IAR Systems/Embedded Workbench 9.2'
 
 if os.getenv('RTT_EXEC_PATH'):
     EXEC_PATH = os.getenv('RTT_EXEC_PATH')
@@ -145,7 +145,7 @@ elif PLATFORM == 'iccarm':
     else:
         CFLAGS += ' -Oh'
 
-    LFLAGS = ' --config "board/linker_scripts/link.icf"'
+    LFLAGS = ' --config "board/linker_scripts/link_ram.icf"'
     LFLAGS += ' --redirect _Printf=_PrintfTiny'
     LFLAGS += ' --redirect _Scanf=_ScanfSmall'
     LFLAGS += ' --entry __iar_program_start'
