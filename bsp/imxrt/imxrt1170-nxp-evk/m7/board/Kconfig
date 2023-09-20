@@ -141,6 +141,42 @@ menu "On-chip Peripheral Drivers"
                     bool "Enable FLEXSPI2"
                     default n
             endif
+			
+    menuconfig BSP_USING_VGLITE
+        bool "Enable VGLITE"
+        select RT_USING_PIN
+        default n
+		
+		if BSP_USING_VGLITE
+			choice
+				prompt "Select lcd panel"
+				default VGLITE_USING_RK055AHD091
+				
+				config VGLITE_USING_RK055AHD091
+					bool "RK055AHD091-CTG (RK055HDMIPI4M 720 * 1280)"
+					
+				config VGLITE_USING_RK055IQH091
+					bool "RK055IQH091-CTG (540 * 960)"
+					
+				config VGLITE_USING_RK055MHD091
+					bool "RK055MHD091A0-CTG (RK055HDMIPI4MA0 720 * 1280)"
+			endchoice
+			
+			choice
+				prompt "Select display controller"
+				default VGLITE_USING_LCDIFV2
+				
+				config VGLITE_USING_ELCDIF
+					bool "ELCDIF"
+				
+				config VGLITE_USING_LCDIFV2
+					bool "LCDIFV2"
+			endchoice
+
+			config VGLITE_USING_ELM
+			bool "Enable Elementary"
+			default y
+		endif
 endmenu
 
 menu "Onboard Peripheral Drivers"
