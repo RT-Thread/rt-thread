@@ -118,6 +118,7 @@ static struct _errno_str_t  rt_errno_strs[] =
     {RT_ENOENT  , "ENOENT "},
     {RT_ENOSPC  , "ENOSPC "},
     {RT_EPERM   , "EPERM  "},
+    {RT_ETRAP   , "ETRAP  "},
 };
 
 /**

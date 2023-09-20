@@ -419,6 +419,7 @@ typedef int (*init_fn_t)(void);
 #define RT_ENOENT                       ENOENT          /**< No entry */
 #define RT_ENOSPC                       ENOSPC          /**< No space left */
 #define RT_EPERM                        EPERM           /**< Operation not permitted */
+#define RT_ETRAP                        254             /**< Trap event */
 #else
 #define RT_EOK                          0               /**< There is no error */
 #define RT_ERROR                        1               /**< A generic/unknown error happens */
@@ -434,6 +435,7 @@ typedef int (*init_fn_t)(void);
 #define RT_ENOENT                       11              /**< No entry */
 #define RT_ENOSPC                       12              /**< No space left */
 #define RT_EPERM                        13              /**< Operation not permitted */
+#define RT_ETRAP                        14              /**< Trap event */
 #endif /* defined(RT_USING_LIBC) && !RT_USING_LIBC_ISO_ONLY */
 
 /**@}*/
