@@ -21,7 +21,7 @@ extern int rt_hw_uart_init(void);
 #endif
 
 static struct io_descriptor* g_stdio;
-static uint8_t board_info[48] = "Adafruit Metro M4 Express, Microchip SAMD51\n";
+static uint8_t board_info[32] = "* Adafruit Metro M4 Express\r\n"; //Microchip SAMD51
 
 void rt_hw_console_output(const char *str)
 {
