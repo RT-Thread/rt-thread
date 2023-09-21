@@ -1,9 +1,9 @@
 /*
-* Copyright (c) 2021 hpmicro
-*
-* SPDX-License-Identifier: BSD-3-Clause
-*
-*/
+ * Copyright (c) 2021 HPMicro
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+ *
+ */
 #include "hpm_dao_drv.h"
 
 void dao_get_default_config(DAO_Type *ptr, dao_config_t *config)

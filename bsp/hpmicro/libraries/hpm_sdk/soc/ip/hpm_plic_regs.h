@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 hpmicro
+ * Copyright (c) 2021-2023 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -140,10 +140,10 @@ typedef struct {
  *
  * The interrupt enable bit for interrupt. Every interrupt source occupies 1 bit.
  */
-#define PLIC_INTEN_INTERRUPT_MASK (0xFFFFFFFFUL)
-#define PLIC_INTEN_INTERRUPT_SHIFT (0U)
-#define PLIC_INTEN_INTERRUPT_SET(x) (((uint32_t)(x) << PLIC_INTEN_INTERRUPT_SHIFT) & PLIC_INTEN_INTERRUPT_MASK)
-#define PLIC_INTEN_INTERRUPT_GET(x) (((uint32_t)(x) & PLIC_INTEN_INTERRUPT_MASK) >> PLIC_INTEN_INTERRUPT_SHIFT)
+#define PLIC_TARGETINT_INTEN_INTERRUPT_MASK (0xFFFFFFFFUL)
+#define PLIC_TARGETINT_INTEN_INTERRUPT_SHIFT (0U)
+#define PLIC_TARGETINT_INTEN_INTERRUPT_SET(x) (((uint32_t)(x) << PLIC_TARGETINT_INTEN_INTERRUPT_SHIFT) & PLIC_TARGETINT_INTEN_INTERRUPT_MASK)
+#define PLIC_TARGETINT_INTEN_INTERRUPT_GET(x) (((uint32_t)(x) & PLIC_TARGETINT_INTEN_INTERRUPT_MASK) >> PLIC_TARGETINT_INTEN_INTERRUPT_SHIFT)
 
 /* Bitfield definition for register of struct array TARGETCONFIG: THRESHOLD */
 /*

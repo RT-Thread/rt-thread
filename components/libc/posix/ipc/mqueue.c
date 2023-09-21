@@ -130,7 +130,7 @@ ssize_t mq_receive(mqd_t id, char *msg_ptr, size_t msg_len, unsigned *msg_prio)
 
     result = rt_mq_recv_prio(mq, msg_ptr, msg_len, (rt_int32_t *)msg_prio, RT_WAITING_FOREVER, RT_UNINTERRUPTIBLE);
     if (result >= 0)
-        return rt_strlen(msg_ptr);
+        return result;
 
     rt_set_errno(EBADF);
     return -1;
@@ -186,7 +186,7 @@ ssize_t mq_timedreceive(mqd_t                  id,
     result = rt_mq_recv_prio(mq, msg_ptr, msg_len, (rt_int32_t *)msg_prio, tick, RT_UNINTERRUPTIBLE);
 
     if (result >= 0)
-        return rt_strlen(msg_ptr);
+        return result;
 
     if (result == -RT_ETIMEOUT)
         rt_set_errno(ETIMEDOUT);

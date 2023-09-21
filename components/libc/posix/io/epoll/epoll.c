@@ -36,6 +36,7 @@ struct rt_fd_list
     rt_pollreq_t req;
     struct rt_eventpoll *ep;
     struct rt_wqueue_node wqn;
+    int fd;
     struct rt_fd_list *next;
 };
 
@@ -113,6 +114,9 @@ static int epoll_close_rdlist(struct rt_ready_list *rdlist)
 static int epoll_close(struct dfs_file *file)
 {
     struct rt_eventpoll *ep;
+
+    if (file->vnode->ref_count != 1)
+        return 0;
 
     if (file->vnode)
     {
@@ -206,7 +210,7 @@ static int epoll_rdlist_add(struct rt_fd_list *fdl, rt_uint32_t revents)
     while (rdlist->next != RT_NULL)
     {
         rdlist = rdlist->next;
-        if (rdlist->rdl_event->epev.data.fd == fdl->epev.data.fd)
+        if (rdlist->rdl_event->fd == fdl->fd)
         {
             isexist = 1;
             res = 0;
@@ -227,10 +231,6 @@ static int epoll_rdlist_add(struct rt_fd_list *fdl, rt_uint32_t revents)
             ep->rdlist->next = rdlist;
             ep->eventpoll_num ++;
             res = 0;
-            if (rdlist->rdl_event->revents & EPOLLONESHOT)
-            {
-                rdlist->rdl_event->revents = 0;
-            }
         }
     }
 
@@ -282,6 +282,7 @@ static void epoll_ctl_install(struct rt_fd_list *fdlist, struct rt_eventpoll *ep
     fdlist->req._key = fdlist->revents;
 
     mask = epoll_get_event(fdlist, &fdlist->req);
+
     if (mask & fdlist->revents)
     {
         epoll_rdlist_add(fdlist, mask);
@@ -328,7 +329,7 @@ static int epoll_epf_init(int fd)
                 if (ep->fdlist)
                 {
                     ep->fdlist->next = RT_NULL;
-                    ep->fdlist->epev.data.fd = fd;
+                    ep->fdlist->fd = fd;
                     ep->fdlist->ep = ep;
                     dfs_vnode_init(df->vnode, FT_REGULAR, &epoll_fops);
                     df->vnode->data = ep;
@@ -387,7 +388,7 @@ static int epoll_do_create(int size)
     return ret;
 }
 
-static int epoll_ctl_add(struct dfs_file *df ,struct epoll_event *event)
+static int epoll_ctl_add(struct dfs_file *df, int fd, struct epoll_event *event)
 {
     struct rt_fd_list *fdlist;
     struct rt_eventpoll *ep;
@@ -401,7 +402,7 @@ static int epoll_ctl_add(struct dfs_file *df ,struct epoll_event *event)
 
         while (fdlist->next != RT_NULL)
         {
-            if (fdlist->next->epev.data.fd == event->data.fd)
+            if (fdlist->next->fd == fd)
             {
                 return 0;
             }
@@ -411,7 +412,8 @@ static int epoll_ctl_add(struct dfs_file *df ,struct epoll_event *event)
         fdlist = (struct rt_fd_list *)rt_malloc(sizeof(struct rt_fd_list));
         if (fdlist)
         {
-            fdlist->epev.data.fd = event->data.fd;
+            fdlist->fd = fd;
+            memcpy(&fdlist->epev.data, &event->data, sizeof(event->data));
             fdlist->epev.events = event->events;
             fdlist->ep = ep;
             fdlist->req._proc = epoll_wqueue_add_callback;
@@ -430,7 +432,7 @@ static int epoll_ctl_add(struct dfs_file *df ,struct epoll_event *event)
     return ret;
 }
 
-static int epoll_ctl_del(struct dfs_file *df ,struct epoll_event *event)
+static int epoll_ctl_del(struct dfs_file *df, int fd)
 {
     struct rt_fd_list *fdlist, *fre_fd;
     struct rt_eventpoll *ep = RT_NULL;
@@ -444,7 +446,7 @@ static int epoll_ctl_del(struct dfs_file *df ,struct epoll_event *event)
         fdlist = ep->fdlist;
         while (fdlist->next != RT_NULL)
         {
-            if (fdlist->next->epev.data.fd == event->data.fd)
+            if (fdlist->next->fd == fd)
             {
                 fre_fd = fdlist->next;
                 fdlist->next = fdlist->next->next;
@@ -466,7 +468,7 @@ static int epoll_ctl_del(struct dfs_file *df ,struct epoll_event *event)
             rdlist = ep->rdlist;
             while (rdlist->next != RT_NULL)
             {
-                if (rdlist->next->rdl_event->epev.data.fd == event->data.fd)
+                if (rdlist->next->rdl_event->fd == fd)
                 {
                     fre_rdl = rdlist->next;
                     rdlist->next = rdlist->next->next;
@@ -487,7 +489,7 @@ static int epoll_ctl_del(struct dfs_file *df ,struct epoll_event *event)
     return ret;
 }
 
-static int epoll_ctl_mod(struct dfs_file *df ,struct epoll_event *event)
+static int epoll_ctl_mod(struct dfs_file *df, int fd, struct epoll_event *event)
 {
     struct rt_fd_list *fdlist;
     struct rt_eventpoll *ep = RT_NULL;
@@ -500,9 +502,9 @@ static int epoll_ctl_mod(struct dfs_file *df ,struct epoll_event *event)
         fdlist = ep->fdlist;
         while (fdlist->next != RT_NULL)
         {
-            if (fdlist->next->epev.data.fd == event->data.fd)
+            if (fdlist->next->fd == fd)
             {
-                fdlist->next->epev.events = event->events;
+                memcpy(&fdlist->next->epev.data, &event->data, sizeof(event->data));
                 fdlist->next->revents = event->events;
                 rt_wqueue_remove(&fdlist->next->wqn);
                 epoll_ctl_install(fdlist->next, ep);
@@ -530,7 +532,7 @@ static int epoll_do_ctl(int epfd, int op, int fd, struct epoll_event *event)
         return -1;
     }
 
-    if ((epfd == fd) || (epfd < 0) || (fd < 0) || (event->data.fd != fd))
+    if ((epfd == fd) || (epfd < 0))
     {
         rt_set_errno(EINVAL);
         return -1;
@@ -542,24 +544,30 @@ static int epoll_do_ctl(int epfd, int op, int fd, struct epoll_event *event)
         return -1;
     }
 
+    if (!fd_get(fd))
+    {
+        rt_set_errno(EBADF);
+        return -1;
+    }
+
     epdf = fd_get(epfd);
 
     if (epdf->vnode->data)
     {
         ep = epdf->vnode->data;
-
+        event->events  |= EPOLLERR | EPOLLHUP;
         rt_mutex_take(&ep->lock, RT_WAITING_FOREVER);
 
         switch (op)
         {
         case EPOLL_CTL_ADD:
-            ret = epoll_ctl_add(epdf, event);
+            ret = epoll_ctl_add(epdf, fd, event);
             break;
         case EPOLL_CTL_DEL:
-            ret = epoll_ctl_del(epdf, event);
+            ret = epoll_ctl_del(epdf, fd);
             break;
         case EPOLL_CTL_MOD:
-            ret = epoll_ctl_mod(epdf, event);
+            ret = epoll_ctl_mod(epdf, fd, event);
             break;
         default:
             rt_set_errno(EINVAL);
@@ -570,6 +578,10 @@ static int epoll_do_ctl(int epfd, int op, int fd, struct epoll_event *event)
         {
             rt_set_errno(-ret);
             ret = -1;
+        }
+        else
+        {
+            ep->polling_thread = rt_thread_self();
         }
 
         rt_mutex_release(&ep->lock);
@@ -623,7 +635,7 @@ static int epoll_get_event(struct rt_fd_list *fl, rt_pollreq_t *req)
     int mask = 0;
     int fd = 0;
 
-    fd = fl->epev.data.fd;
+    fd = fl->fd;
     if (fd >= 0)
     {
         df = fd_get(fd);
@@ -667,8 +679,22 @@ static int epoll_do(struct rt_eventpoll *ep, struct epoll_event *events, int max
                 rdlist = rdlist->next;
                 if (event_num < maxevents)
                 {
-                    if (rdlist->rdl_event->revents == 0)
+                    rt_wqueue_remove(&rdlist->rdl_event->wqn);
+                    mask = epoll_get_event(rdlist->rdl_event, &rdlist->rdl_event->req);
+
+                    if (mask & rdlist->rdl_event->revents)
                     {
+                        rdlist->rdl_event->epev.events = mask & rdlist->rdl_event->revents;
+                    }
+                    else
+                    {
+                        isfree = 1;
+                        isn_add = 1;
+                    }
+
+                    if (rdlist->rdl_event->revents & EPOLLONESHOT)
+                    {
+                        rdlist->rdl_event->revents = 0;
                         isfree = 1;
                         rt_wqueue_remove(&rdlist->rdl_event->wqn);
                     }
@@ -676,28 +702,11 @@ static int epoll_do(struct rt_eventpoll *ep, struct epoll_event *events, int max
                     {
                         if (rdlist->rdl_event->revents & EPOLLET)
                         {
-                            rt_wqueue_remove(&rdlist->rdl_event->wqn);
-                            mask = epoll_get_event(rdlist->rdl_event, &rdlist->rdl_event->req);
-                            rdlist->rdl_event->epev.events = mask & rdlist->rdl_event->revents;
                             isfree = 1;
                         }
                         else
                         {
-                            if (rdlist->exclusive)
-                            {
-                                rt_wqueue_remove(&rdlist->rdl_event->wqn);
-                                mask = epoll_get_event(rdlist->rdl_event, &rdlist->rdl_event->req);
-                                if (mask & rdlist->rdl_event->revents)
-                                {
-                                    rdlist->rdl_event->epev.events = mask;
-                                }
-                                else
-                                {
-                                    isfree = 1;
-                                    isn_add = 1;
-                                }
-                            }
-                            else
+                            if (rdlist->exclusive != 1)
                             {
                                 rdlist->exclusive = 1;
                             }
@@ -706,8 +715,7 @@ static int epoll_do(struct rt_eventpoll *ep, struct epoll_event *events, int max
 
                     if (!isn_add)
                     {
-                        events[event_num].data.fd = rdlist->rdl_event->epev.data.fd;
-                        events[event_num].events = rdlist->rdl_event->epev.events;
+                        memcpy(&events[event_num], &rdlist->rdl_event->epev, sizeof(rdlist->rdl_event->epev));
                         event_num ++;
                     }
 

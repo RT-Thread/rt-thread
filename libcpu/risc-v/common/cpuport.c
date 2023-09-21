@@ -97,16 +97,3 @@ rt_weak void rt_hw_context_switch_interrupt(rt_ubase_t from, rt_ubase_t to, rt_t
     return ;
 }
 #endif /* end of RT_USING_SMP */
-
-/** shutdown CPU */
-rt_weak void rt_hw_cpu_shutdown()
-{
-    rt_base_t level;
-    rt_kprintf("shutdown...\n");
-
-    level = rt_hw_interrupt_disable();
-    while (level)
-    {
-        RT_ASSERT(0);
-    }
-}

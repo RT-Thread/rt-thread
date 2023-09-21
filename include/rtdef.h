@@ -49,17 +49,30 @@
  * 2022-12-20     Meco Man     add const name for rt_object
  * 2023-04-01     Chushicheng  change version number to v5.0.1
  * 2023-05-20     Bernard      add stdc atomic detection.
+ * 2023-09-17     Meco Man     add RT_USING_LIBC_ISO_ONLY macro
  */
 
 #ifndef __RT_DEF_H__
 #define __RT_DEF_H__
 
 #include <rtconfig.h>
+
 #ifdef RT_USING_LIBC
+#if !defined(RT_USING_LIBC_ISO_ONLY) && !defined(RT_VER_NUM)
+#define RT_USING_LIBC_ISO_ONLY  (1)
+#else
+#define RT_USING_LIBC_ISO_ONLY  (0)
+#endif /* !defined(RT_USING_LIBC_ISO_ONLY) && !defined(RT_VER_NUM) */
 #include <stdint.h>
 #include <stddef.h>
 #include <stdarg.h>
+#if !RT_USING_LIBC_ISO_ONLY
 #include <sys/types.h>
+#include <sys/errno.h>
+#if defined(RT_USING_SIGNALS) || defined(RT_USING_SMART)
+#include <sys/signal.h>
+#endif /* defined(RT_USING_SIGNALS) || defined(RT_USING_SMART) */
+#endif /* !RT_USING_LIBC_ISO_ONLY */
 #endif /* RT_USING_LIBC */
 
 #ifdef __cplusplus
@@ -99,8 +112,6 @@ typedef uint16_t                        rt_uint16_t;    /**< 16bit unsigned inte
 typedef uint32_t                        rt_uint32_t;    /**< 32bit unsigned integer type */
 typedef int64_t                         rt_int64_t;     /**< 64bit integer type */
 typedef uint64_t                        rt_uint64_t;    /**< 64bit unsigned integer type */
-typedef size_t                          rt_size_t;      /**< Type for size number */
-typedef ssize_t                         rt_ssize_t;     /**< Used for a count of bytes or an error indication */
 #else
 typedef signed   char                   rt_int8_t;      /**<  8bit integer type */
 typedef signed   short                  rt_int16_t;     /**< 16bit integer type */
@@ -115,10 +126,16 @@ typedef unsigned long                   rt_uint64_t;    /**< 64bit unsigned inte
 typedef signed long long                rt_int64_t;     /**< 64bit integer type */
 typedef unsigned long long              rt_uint64_t;    /**< 64bit unsigned integer type */
 #endif /* ARCH_CPU_64BIT */
-typedef rt_ubase_t                      rt_size_t;      /**< Type for size number */
-typedef rt_base_t                       rt_ssize_t;     /**< Used for a count of bytes or an error indication */
 #endif /* RT_USING_LIBC */
 #endif /* RT_USING_ARCH_DATA_TYPE */
+
+#if defined(RT_USING_LIBC) && !RT_USING_LIBC_ISO_ONLY
+typedef size_t                          rt_size_t;      /**< Type for size number */
+typedef ssize_t                         rt_ssize_t;     /**< Used for a count of bytes or an error indication */
+#else
+typedef rt_ubase_t                      rt_size_t;      /**< Type for size number */
+typedef rt_base_t                       rt_ssize_t;     /**< Used for a count of bytes or an error indication */
+#endif /* defined(RT_USING_LIBC) && !RT_USING_LIBC_ISO_ONLY */
 
 typedef rt_base_t                       rt_err_t;       /**< Type for error number */
 typedef rt_uint32_t                     rt_time_t;      /**< Type for time stamp */
@@ -180,7 +197,7 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
 #define RT_UNUSED(x)                   ((void)x)
 
 /* compile time assertion */
-#define RT_CTASSERT(name, expn) typedef char _ct_assert_##name[(expn)?1:-1]
+#define RT_STATIC_ASSERT(name, expn) typedef char _static_assert_##name[(expn)?1:-1]
 
 /* Compiler Related Definitions */
 #if defined(__ARMCC_VERSION)           /* ARM Compiler */
@@ -380,27 +397,46 @@ typedef int (*init_fn_t)(void);
 #endif
 
 /**
- * @addtogroup Error
+ * @addtogroup Error Code
  */
 
 /**@{*/
 
 /* RT-Thread error code definitions */
+#if defined(RT_USING_LIBC) && !RT_USING_LIBC_ISO_ONLY
+/* POSIX error code compatible */
 #define RT_EOK                          0               /**< There is no error */
-#define RT_ERROR                        1               /**< A generic error happens */
+#define RT_ERROR                        255             /**< A generic/unknown error happens */
+#define RT_ETIMEOUT                     ETIMEDOUT       /**< Timed out */
+#define RT_EFULL                        ENOSPC          /**< The resource is full */
+#define RT_EEMPTY                       ENODATA         /**< The resource is empty */
+#define RT_ENOMEM                       ENOMEM          /**< No memory */
+#define RT_ENOSYS                       ENOSYS          /**< Function not implemented */
+#define RT_EBUSY                        EBUSY           /**< Busy */
+#define RT_EIO                          EIO             /**< IO error */
+#define RT_EINTR                        EINTR           /**< Interrupted system call */
+#define RT_EINVAL                       EINVAL          /**< Invalid argument */
+#define RT_ENOENT                       ENOENT          /**< No entry */
+#define RT_ENOSPC                       ENOSPC          /**< No space left */
+#define RT_EPERM                        EPERM           /**< Operation not permitted */
+#define RT_ETRAP                        254             /**< Trap event */
+#else
+#define RT_EOK                          0               /**< There is no error */
+#define RT_ERROR                        1               /**< A generic/unknown error happens */
 #define RT_ETIMEOUT                     2               /**< Timed out */
 #define RT_EFULL                        3               /**< The resource is full */
 #define RT_EEMPTY                       4               /**< The resource is empty */
 #define RT_ENOMEM                       5               /**< No memory */
-#define RT_ENOSYS                       6               /**< No system */
+#define RT_ENOSYS                       6               /**< Function not implemented */
 #define RT_EBUSY                        7               /**< Busy */
 #define RT_EIO                          8               /**< IO error */
 #define RT_EINTR                        9               /**< Interrupted system call */
 #define RT_EINVAL                       10              /**< Invalid argument */
-#define RT_ETRAP                        11              /**< Trap event */
-#define RT_ENOENT                       12              /**< No entry */
-#define RT_ENOSPC                       13              /**< No space left */
-#define RT_EPERM                        14              /**< Operation not permitted */
+#define RT_ENOENT                       11              /**< No entry */
+#define RT_ENOSPC                       12              /**< No space left */
+#define RT_EPERM                        13              /**< Operation not permitted */
+#define RT_ETRAP                        14              /**< Trap event */
+#endif /* defined(RT_USING_LIBC) && !RT_USING_LIBC_ISO_ONLY */
 
 /**@}*/
 
@@ -626,19 +662,10 @@ typedef struct rt_timer *rt_timer_t;
 /**@{*/
 
 #ifdef RT_USING_SIGNALS
-#include <sys/signal.h>
+#define RT_SIG_MAX          32
 typedef unsigned long rt_sigset_t;
 typedef siginfo_t rt_siginfo_t;
 typedef void (*rt_sighandler_t)(int signo);
-
-#define RT_SIG_MAX          32
-
-#else
-
-#ifdef RT_USING_SMART
-#include <sys/signal.h>
-#endif
-
 #endif /* RT_USING_SIGNALS */
 /**@}*/
 
@@ -807,6 +834,8 @@ struct rt_user_context
     void *sp;
     void *pc;
     void *flag;
+
+    void *ctx;
 };
 #endif
 

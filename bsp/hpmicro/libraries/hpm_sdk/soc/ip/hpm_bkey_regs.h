@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 hpmicro
+ * Copyright (c) 2021-2023 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -24,10 +24,10 @@ typedef struct {
  *
  * security key data
  */
-#define BKEY_DATA_DATA_MASK (0xFFFFFFFFUL)
-#define BKEY_DATA_DATA_SHIFT (0U)
-#define BKEY_DATA_DATA_SET(x) (((uint32_t)(x) << BKEY_DATA_DATA_SHIFT) & BKEY_DATA_DATA_MASK)
-#define BKEY_DATA_DATA_GET(x) (((uint32_t)(x) & BKEY_DATA_DATA_MASK) >> BKEY_DATA_DATA_SHIFT)
+#define BKEY_KEY_DATA_DATA_MASK (0xFFFFFFFFUL)
+#define BKEY_KEY_DATA_DATA_SHIFT (0U)
+#define BKEY_KEY_DATA_DATA_SET(x) (((uint32_t)(x) << BKEY_KEY_DATA_DATA_SHIFT) & BKEY_KEY_DATA_DATA_MASK)
+#define BKEY_KEY_DATA_DATA_GET(x) (((uint32_t)(x) & BKEY_KEY_DATA_DATA_MASK) >> BKEY_KEY_DATA_DATA_SHIFT)
 
 /* Bitfield definition for register array: ECC */
 /*

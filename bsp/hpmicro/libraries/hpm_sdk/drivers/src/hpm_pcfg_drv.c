@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 hpmicro
+ * Copyright (c) 2021 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -91,4 +91,14 @@ void pcfg_irc24m_config_track(PCFG_Type *ptr, pcfg_irc24m_config_t *config)
     ptr->RC24M_TRACK = PCFG_RC24M_TRACK_SEL24M_SET(config->reference)
         | PCFG_RC24M_TRACK_RETURN_SET(config->return_to_default_on_xtal_loss)
         | PCFG_RC24M_TRACK_TRACK_SET(config->free_run);
+}
+
+hpm_stat_t pcfg_dcdc_set_lpmode_voltage(PCFG_Type *ptr, uint16_t mv)
+{
+    hpm_stat_t stat = status_success;
+    if ((mv < PCFG_SOC_DCDC_MIN_VOLTAGE_IN_MV) || (mv > PCFG_SOC_DCDC_MAX_VOLTAGE_IN_MV)) {
+        return status_invalid_argument;
+    }
+    ptr->DCDC_LPMODE = (ptr->DCDC_LPMODE & ~PCFG_DCDC_LPMODE_STBY_VOLT_MASK) | PCFG_DCDC_LPMODE_STBY_VOLT_SET(mv);
+    return stat;
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 hpmicro
+ * Copyright (c) 2021-2023 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -170,6 +170,7 @@ typedef struct {
  * AES algorithem selection.
  * 0x0 = AES 128;
  * 0x1 = AES 256;
+ * 0x8 = SM4；
  * Others, reserved.
  */
 #define SDP_MODCTRL_AESALG_MASK (0xF0000000UL)

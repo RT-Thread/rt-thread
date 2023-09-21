@@ -956,8 +956,14 @@ void rt_mutex_drop_thread(rt_mutex_t mutex, rt_thread_t thread)
 
     rt_list_remove(&(thread->tlist));
 
-    /* should change the priority of mutex owner thread */
-    if (mutex->owner->current_priority == thread->current_priority)
+    /**
+     * Should change the priority of mutex owner thread
+     * Note: After current thread is detached from mutex pending list, there is
+     *       a chance that the mutex owner has been released the mutex. Which
+     *       means mutex->owner can be NULL at this point. If that happened,
+     *       it had already reset its priority. So it's okay to skip
+     */
+    if (mutex->owner && mutex->owner->current_priority == thread->current_priority)
         need_update = RT_TRUE;
 
     /* update the priority of mutex */
@@ -1304,8 +1310,14 @@ static rt_err_t _rt_mutex_take(rt_mutex_t mutex, rt_int32_t timeout, int suspend
 
                     rt_bool_t need_update = RT_FALSE;
 
-                    /* should change the priority of mutex owner thread */
-                    if (mutex->owner->current_priority == thread->current_priority)
+                    /**
+                     * Should change the priority of mutex owner thread
+                     * Note: After current thread is detached from mutex pending list, there is
+                     *       a chance that the mutex owner has been released the mutex. Which
+                     *       means mutex->owner can be NULL at this point. If that happened,
+                     *       it had already reset its priority. So it's okay to skip
+                     */
+                    if (mutex->owner && mutex->owner->current_priority == thread->current_priority)
                         need_update = RT_TRUE;
 
                     /* update the priority of mutex */
@@ -1340,8 +1352,12 @@ static rt_err_t _rt_mutex_take(rt_mutex_t mutex, rt_int32_t timeout, int suspend
                     /* enable interrupt */
                     rt_hw_interrupt_enable(level);
 
-                    /* return error */
-                    return thread->error;
+                    /* clear pending object before exit */
+                    thread->pending_object = RT_NULL;
+
+                    /* fix thread error number to negative value and return */
+                    ret = thread->error;
+                    return ret > 0 ? -ret : ret;
                 }
             }
         }
@@ -2800,11 +2816,11 @@ rt_err_t rt_mb_recv(rt_mailbox_t mb, rt_ubase_t *value, rt_int32_t timeout)
 }
 RTM_EXPORT(rt_mb_recv);
 
-rt_err_t rt_mb_recv_interruptibale(rt_mailbox_t mb, rt_ubase_t *value, rt_int32_t timeout)
+rt_err_t rt_mb_recv_interruptible(rt_mailbox_t mb, rt_ubase_t *value, rt_int32_t timeout)
 {
     return _rt_mb_recv(mb, value, timeout, RT_INTERRUPTIBLE);
 }
-RTM_EXPORT(rt_mb_recv_interruptibale);
+RTM_EXPORT(rt_mb_recv_interruptible);
 
 rt_err_t rt_mb_recv_killable(rt_mailbox_t mb, rt_ubase_t *value, rt_int32_t timeout)
 {
@@ -3443,11 +3459,11 @@ rt_err_t rt_mq_send(rt_mq_t mq, const void *buffer, rt_size_t size)
 }
 RTM_EXPORT(rt_mq_send);
 
-rt_err_t rt_mq_send_interrupt(rt_mq_t mq, const void *buffer, rt_size_t size)
+rt_err_t rt_mq_send_interruptible(rt_mq_t mq, const void *buffer, rt_size_t size)
 {
     return rt_mq_send_wait_interruptible(mq, buffer, size, 0);
 }
-RTM_EXPORT(rt_mq_send_interrupt);
+RTM_EXPORT(rt_mq_send_interruptible);
 
 rt_err_t rt_mq_send_killable(rt_mq_t mq, const void *buffer, rt_size_t size)
 {
@@ -3789,12 +3805,12 @@ rt_err_t rt_mq_send_wait_prio(rt_mq_t mq,
 {
     return _rt_mq_send_wait(mq, buffer, size, prio, timeout, suspend_flag);
 }
-rt_err_t rt_mq_recv_prio(rt_mq_t mq,
-                         void *buffer,
-                         rt_size_t size,
-                         rt_int32_t *prio,
-                         rt_int32_t timeout,
-                         int suspend_flag)
+rt_ssize_t rt_mq_recv_prio(rt_mq_t mq,
+                           void *buffer,
+                           rt_size_t size,
+                           rt_int32_t *prio,
+                           rt_int32_t timeout,
+                           int suspend_flag)
 {
     return _rt_mq_recv(mq, buffer, size, prio, timeout, suspend_flag);
 }

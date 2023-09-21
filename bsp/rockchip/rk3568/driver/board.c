@@ -62,6 +62,10 @@ void rt_hw_board_init(void)
 
     rt_hw_mmu_setup(&rt_kernel_space, platform_mem_desc, platform_mem_desc_size);
 
+#ifdef RT_USING_HEAP
+    /* initialize memory system */
+    rt_system_heap_init(RT_HW_HEAP_BEGIN, RT_HW_HEAP_END);
+#endif
     /* initialize hardware interrupt */
     rt_hw_interrupt_init();
 
@@ -84,7 +88,6 @@ void rt_hw_board_init(void)
 #ifdef RT_USING_HEAP
     /* initialize memory system */
     rt_kprintf("heap: [0x%08x - 0x%08x]\n", RT_HW_HEAP_BEGIN, RT_HW_HEAP_END);
-    rt_system_heap_init(RT_HW_HEAP_BEGIN, RT_HW_HEAP_END);
 #endif
 
 #ifdef RT_USING_COMPONENTS_INIT
@@ -133,7 +136,7 @@ void start_cpu(int argc, char *argv[])
 MSH_CMD_EXPORT(start_cpu, start_cpu);
 
 #ifdef RT_AMP_SLAVE
-void rt_hw_cpu_shutdown()
+void rt_hw_cpu_shutdown(void)
 {
     if (psci_ops.cpu_off)
     {

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 hpmicro
+ * Copyright (c) 2021 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -55,11 +55,11 @@ static inline psec_lifecycle_t psec_get_pmic_lifecycle(PSEC_Type *ptr)
 
 static inline hpm_stat_t psec_switch_pmic_state(PSEC_Type *ptr, psec_state_t state)
 {
-    if ((state == psec_state_secure)) {
+    if (state == psec_state_secure) {
         if (!PSEC_SECURE_STATE_ALLOW_SEC_GET(ptr->SECURE_STATE)) {
             return status_psec_switch_state_not_allowed;
         }
-    } else if ((state == psec_state_non_secure)) {
+    } else if (state == psec_state_non_secure) {
         if (!PSEC_SECURE_STATE_ALLOW_NSC_GET(ptr->SECURE_STATE)) {
             return status_psec_switch_state_not_allowed;
         }
@@ -156,11 +156,11 @@ static inline psec_lifecycle_t psec_get_batt_lifecycle(PSEC_Type *ptr)
 
 static inline hpm_stat_t psec_switch_batt_state(PSEC_Type *ptr, batt_sec_state_t state)
 {
-    if ((state == batt_sec_state_secure)) {
+    if (state == batt_sec_state_secure) {
         if (!PSEC_SECURE_STATE_ALLOW_SEC_GET(ptr->SECURE_STATE)) {
             return status_psec_switch_state_not_allowed;
         }
-    } else if ((state == batt_sec_state_non_secure)) {
+    } else if (state == batt_sec_state_non_secure) {
         if (!PSEC_SECURE_STATE_ALLOW_NSC_GET(ptr->SECURE_STATE)) {
             return status_psec_switch_state_not_allowed;
         }

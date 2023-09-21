@@ -5,7 +5,6 @@ config SOC_HPM6000
     select SOC_SERIES_HPM6000
     select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN
-    select RT_USING_HW_ATOMIC
     default y
 
 menu "On-chip Peripheral Drivers"
@@ -45,18 +44,6 @@ menu "On-chip Peripheral Drivers"
                         depends on BSP_USING_UART0 && RT_SERIAL_USING_DMA
                         default n
 
-                    config BSP_UART0_RX_DMA_CHANNEL
-                        int "Set UART0 RX DMA CHANNEL"
-                        range 0 7
-                        depends on BSP_USING_UART0 && RT_SERIAL_USING_DMA
-                        default 0
-
-                    config BSP_UART0_TX_DMA_CHANNEL
-                        int "Set UART0 TX DMA CHANNEL"
-                        range 0 7
-                        depends on BSP_USING_UART0 && RT_SERIAL_USING_DMA
-                        default 1
-
                     config BSP_UART0_RX_BUFSIZE
                         int "Set UART0 RX buffer size"
                         range 64 65535
@@ -82,18 +69,6 @@ menu "On-chip Peripheral Drivers"
                         bool "Enable UART6 TX DMA"
                         depends on BSP_USING_UART6 && RT_SERIAL_USING_DMA
                         default n
-
-                    config BSP_UART6_RX_DMA_CHANNEL
-                        int "Set UART6 RX DMA CHANNEL"
-                        range 0 7
-                        depends on BSP_USING_UART6 && RT_SERIAL_USING_DMA
-                        default 0
-
-                    config BSP_UART6_TX_DMA_CHANNEL
-                        int "Set UART6 TX DMA CHANNEL"
-                        range 0 7
-                        depends on BSP_USING_UART6 && RT_SERIAL_USING_DMA
-                        default 1
 
                     config BSP_UART6_RX_BUFSIZE
                         int "Set UART6 RX buffer size"
@@ -121,18 +96,6 @@ menu "On-chip Peripheral Drivers"
                         depends on BSP_USING_UART13 && RT_SERIAL_USING_DMA
                         default n
 
-                    config BSP_UART13_RX_DMA_CHANNEL
-                        int "Set UART13 RX DMA CHANNEL"
-                        range 0 7
-                        depends on BSP_USING_UART13 && RT_SERIAL_USING_DMA
-                        default 0
-
-                    config BSP_UART13_TX_DMA_CHANNEL
-                        int "Set UART13 TX DMA CHANNEL"
-                        range 0 7
-                        depends on BSP_USING_UART13 && RT_SERIAL_USING_DMA
-                        default 1
-
                     config BSP_UART13_RX_BUFSIZE
                         int "Set UART13 RX buffer size"
                         range 64 65535
@@ -158,18 +121,6 @@ menu "On-chip Peripheral Drivers"
                         bool "Enable UART14 TX DMA"
                         depends on BSP_USING_UART14 && RT_SERIAL_USING_DMA
                         default n
-
-                    config BSP_UART14_RX_DMA_CHANNEL
-                        int "Set UART14 RX DMA CHANNEL"
-                        range 0 7
-                        depends on BSP_USING_UART14 && RT_SERIAL_USING_DMA
-                        default 0
-
-                    config BSP_UART14_TX_DMA_CHANNEL
-                        int "Set UART14 TX DMA CHANNEL"
-                        range 0 7
-                        depends on BSP_USING_UART14 && RT_SERIAL_USING_DMA
-                        default 1
 
                     config BSP_UART14_RX_BUFSIZE
                         int "Set UART14 RX buffer size"
@@ -252,6 +203,11 @@ menu "On-chip Peripheral Drivers"
         bool "Enable LVGL"
         default n
         select PKG_USING_LVGL if BSP_USING_LVGL
+        select BSP_USING_PDMA if BSP_USING_LVGL
+
+    menuconfig BSP_USING_PDMA
+        bool "Enable PDMA"
+        default n
 
     menuconfig BSP_USING_GPTMR
         bool "Enable GPTMR"
@@ -293,8 +249,8 @@ menu "On-chip Peripheral Drivers"
                     default n
         endif
 
-    menuconfig BSP_USING_DRAM
-       bool "Enable DRAM"
+    menuconfig BSP_USING_FEMC
+       bool "Enable FEMC"
        default y
     menuconfig INIT_EXT_RAM_FOR_DATA
         bool "INIT_EXT_RAM_FOR_DATA"
@@ -304,7 +260,7 @@ menu "On-chip Peripheral Drivers"
     menuconfig BSP_USING_XPI_FLASH
         bool "Enable XPI FLASH"
     default n
-        select PKG_USING_FAL if BSP_USING_XPI_FLASH
+        select RT_USING_FAL if BSP_USING_XPI_FLASH
 
     menuconfig BSP_USING_PWM
         bool "Enable PWM"
@@ -400,17 +356,15 @@ menu "On-chip Peripheral Drivers"
                         bool "Enable ADC2"
                         default n
                 endif
-            if !BSP_USING_ADC12
-                menuconfig BSP_USING_ADC16
-                bool "Enable ADC16"
+            menuconfig BSP_USING_ADC16
+            bool "Enable ADC16"
                 default n
                     if BSP_USING_ADC16
                         config BSP_USING_ADC3
                             bool "Enable ADC3"
                             default n
                     endif
-            endif
-         endif
+        endif
 endmenu
 
 

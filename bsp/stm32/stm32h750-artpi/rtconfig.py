@@ -58,7 +58,7 @@ if PLATFORM == 'gcc':
         CFLAGS += ' -O2'
 
     CXXFLAGS = CFLAGS 
-    CFLAGS += ' -std=c99'
+    CFLAGS += ' -std=gnu99'
 
     POST_ACTION = OBJCPY + ' -O binary $TARGET rtthread.bin\n' + SIZE + ' $TARGET \n'
 
@@ -90,7 +90,7 @@ elif PLATFORM == 'armcc':
         CFLAGS += ' -O2'
 
     CXXFLAGS = CFLAGS 
-    CFLAGS += ' -std=c99'
+    CFLAGS += ' -std=gnu99'
 
     POST_ACTION = 'fromelf --bin $TARGET --output rtthread.bin \nfromelf -z $TARGET'
 
@@ -124,7 +124,7 @@ elif PLATFORM == 'armclang':
         CFLAGS += ' -O2'
         
     CXXFLAGS = CFLAGS
-    CFLAGS += ' -std=c99'
+    CFLAGS += ' -std=gnu99'
 
     POST_ACTION = 'fromelf --bin $TARGET --output rtthread.bin \nfromelf -z $TARGET'
 

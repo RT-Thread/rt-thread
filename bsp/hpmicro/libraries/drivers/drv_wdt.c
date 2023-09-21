@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 - 2022 hpmicro
+ * Copyright (c) 2021 - 2022 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -207,7 +207,7 @@ static rt_err_t hpm_wdog_control(rt_watchdog_t *wdt, int cmd, void *args)
         hpm_wdog_close(wdt);
         break;
     default:
-        ret = -RT_EINVAL;
+        ret = RT_EINVAL;
         break;
     }
 

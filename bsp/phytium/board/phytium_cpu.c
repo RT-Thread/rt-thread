@@ -32,7 +32,7 @@
 */
 int phytium_cpu_id_mapping(int cpu_id)
 {
-#if defined(TARGET_E2000Q)
+#if defined(TARGET_E2000Q) || defined(TARGET_PHYTIUMPI)
 #if RT_CPUS_NR <= 2
     switch (cpu_id)
     {
@@ -88,7 +88,7 @@ int rt_hw_cpu_id(void)
 
 int phytium_cpu_id_mapping(int cpu_id)
 {
-#if defined(TARGET_E2000Q)
+#if defined(TARGET_E2000Q) || defined(TARGET_PHYTIUMPI)
     switch (cpu_id)
     {
     case 0:
@@ -127,7 +127,7 @@ int rt_hw_cpu_id(void)
 
 rt_uint64_t get_main_cpu_affval(void)
 {
-#if defined(TARGET_E2000Q)
+#if defined(TARGET_E2000Q) || defined(TARGET_PHYTIUMPI)
     return CORE2_AFF;
 #else
     return CORE0_AFF;

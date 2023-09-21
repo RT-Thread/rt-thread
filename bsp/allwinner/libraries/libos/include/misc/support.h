@@ -21,8 +21,6 @@
 #define __SUPPORT_H__
 #include <typedef.h>
 #include <kapi.h>
-#include <libc.h>
-
 /*
  * Generic macro to convert pointers to values for comparison purposes.
  */

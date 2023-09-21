@@ -38,7 +38,6 @@ jobs:
             SUB_RTT_BSP: 
                 - "qemu-vexpress-a9"
                 - "airm2m/air32f103"
-                #- "airm2m/air105"
                 - "acm32/acm32f0x0-nucleo"
                 - "CME_M7"
                 - "apollo2"
@@ -67,7 +66,6 @@ jobs:
                 - "hc32/ev_hc32f4a0_lqfp176"
                 - "hc32/ev_hc32f460_lqfp100_v2"
                 - "hc32l196"
-                #- "tae32f5300"
                 - "mm32/mm32f3270-100ask-pitaya"
                 - "sam7x"
                 - "hk32/hk32f030c8-mini"
@@ -135,7 +133,7 @@ jobs:
                 - "stm32/stm32f429-st-disco"
                 - "stm32/stm32f446-st-nucleo"
                 - "stm32/stm32f469-st-disco"
-         -  RTT_BSP: "stm32_f7_g0_h7_mp15_u5_wb5" 
+         -  RTT_BSP: "stm32_f7_g0_h7_mp15_u5_h5_wb5" 
             RTT_TOOL_CHAIN: "sourcery-arm"
             SUB_RTT_BSP: 
                 - "stm32/stm32f746-st-disco"
@@ -149,6 +147,7 @@ jobs:
                 - "stm32/stm32g071-st-nucleo"
                 - "stm32/stm32g431-st-nucleo"
                 - "stm32/stm32g474-st-nucleo"
+                - "stm32/stm32h563-st-nucleo"
                 - "stm32/stm32h743-armfly-v7"
                 - "stm32/stm32h743-atk-apollo"
                 - "stm32/stm32h743-openmv-h7plus"
@@ -321,9 +320,9 @@ jobs:
         shell: bash
         run: |
           sudo apt-get update
-          sudo apt-get -qq install gcc-multilib libncurses5 libncurses5-dev libncursesw5-dev scons
-          sudo python -m pip install --upgrade pip -qq
-          pip install requests -qq
+          wget https://raw.githubusercontent.com/RT-Thread/env/master/install_ubuntu.sh
+          chmod 777 install_ubuntu.sh
+          ./install_ubuntu.sh
           git config --global http.postBuffer 524288000
           python -c "import tools.menuconfig; tools.menuconfig.touch_env()"
           echo "RTT_ROOT=${{ github.workspace }}" >> $GITHUB_ENV
@@ -344,6 +343,7 @@ jobs:
         run: |
           wget -q https://github.com/ARM-software/LLVM-embedded-toolchain-for-Arm/releases/download/release-16.0.0/LLVMEmbeddedToolchainForArm-16.0.0-Linux-x86_64.tar.gz
           sudo tar zxf LLVMEmbeddedToolchainForArm-16.0.0-Linux-x86_64.tar.gz -C /opt
+          sudo apt-get -qq install libncurses5 libncurses5-dev libncursesw5-dev
           /opt/LLVMEmbeddedToolchainForArm-16.0.0-Linux-x86_64/bin/clang --version
           echo "RTT_CC=llvm-arm" >> $GITHUB_ENV
           echo "RTT_EXEC_PATH=/opt/LLVMEmbeddedToolchainForArm-16.0.0-Linux-x86_64/bin" >> $GITHUB_ENV
@@ -388,7 +388,7 @@ jobs:
           wget -q https://github.com/espressif/crosstool-NG/releases/download/esp-2022r1-RC1/riscv32-esp-elf-gcc11_2_0-esp-2022r1-RC1-linux-amd64.tar.xz
           sudo tar xf riscv32-esp-elf-gcc11_2_0-esp-2022r1-RC1-linux-amd64.tar.xz -C /opt
           /opt/riscv32-esp-elf/bin/riscv32-esp-elf-gcc --version
-          /usr/bin/pip install esptool
+          pip3 install esptool
           echo "RTT_EXEC_PATH=/opt/riscv32-esp-elf/bin" >> $GITHUB_ENV
 
       - name: Install Simulator Tools

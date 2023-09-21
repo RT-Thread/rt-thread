@@ -12,7 +12,7 @@
 #include <LowLevelIOInterface.h>
 #include <unistd.h>
 #ifdef RT_USING_POSIX_STDIO
-#include "libc.h"
+#include <posix/stdio.h>
 #endif /* RT_USING_POSIX_STDIO */
 #include <compiler_private.h>
 #define DBG_TAG    "dlib.syscall.read"
@@ -40,7 +40,7 @@ size_t __read(int handle, unsigned char *buf, size_t len)
     if (handle == _LLIO_STDIN)
     {
 #ifdef RT_USING_POSIX_STDIO
-        if (libc_stdio_get_console() < 0)
+        if (rt_posix_stdio_get_console() < 0)
         {
             LOG_W("Do not invoke standard input before initializing Compiler");
             return 0; /* error, but keep going */

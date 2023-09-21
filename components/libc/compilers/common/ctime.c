@@ -22,6 +22,7 @@
  * 2023-07-03     xqyjlj       refactor posix time and timer
  * 2023-07-16     Shell        update signal generation routine for lwp
  *                             adapt to new api and do the signal handling in thread context
+ * 2023-08-12     Meco Man     re-implement RT-Thread lightweight timezone API
  */
 
 #include "sys/time.h"
@@ -115,6 +116,49 @@ static rt_err_t _control_rtc(int cmd, void *arg)
 #endif /* RT_USING_RTC */
 }
 
+/* lightweight timezone and daylight saving time */
+#ifdef RT_LIBC_USING_LIGHT_TZ_DST
+#ifndef RT_LIBC_TZ_DEFAULT_HOUR
+#define RT_LIBC_TZ_DEFAULT_HOUR   (8U)
+#endif /* RT_LIBC_TZ_DEFAULT_HOUR */
+
+#ifndef RT_LIBC_TZ_DEFAULT_MIN
+#define RT_LIBC_TZ_DEFAULT_MIN    (0U)
+#endif /* RT_LIBC_TZ_DEFAULT_MIN */
+
+#ifndef RT_LIBC_TZ_DEFAULT_SEC
+#define RT_LIBC_TZ_DEFAULT_SEC    (0U)
+#endif /* RT_LIBC_TZ_DEFAULT_SEC */
+
+static volatile int32_t _current_tz_offset_sec = \
+    RT_LIBC_TZ_DEFAULT_HOUR * 3600U + RT_LIBC_TZ_DEFAULT_MIN * 60U + RT_LIBC_TZ_DEFAULT_SEC;
+
+/* return current timezone offset in seconds */
+void rt_tz_set(int32_t offset_sec)
+{
+    rt_base_t level;
+    level = rt_hw_interrupt_disable();
+    _current_tz_offset_sec = offset_sec;
+    rt_hw_interrupt_enable(level);
+}
+
+int32_t rt_tz_get(void)
+{
+    int32_t offset_sec;
+    rt_base_t level;
+
+    level = rt_hw_interrupt_disable();
+    offset_sec = _current_tz_offset_sec;
+    rt_hw_interrupt_enable(level);
+    return offset_sec;
+}
+
+int8_t rt_tz_is_dst(void)
+{
+    return 0U; /* TODO */
+}
+#endif /* RT_LIBC_USING_LIGHT_TZ_DST */
+
 struct tm *gmtime_r(const time_t *timep, struct tm *r)
 {
     int i;
@@ -158,8 +202,11 @@ struct tm *gmtime_r(const time_t *timep, struct tm *r)
 
     r->tm_mon = i;
     r->tm_mday += work - __spm[i];
-
-    r->tm_isdst = tz_is_dst();
+#if defined(RT_LIBC_USING_LIGHT_TZ_DST)
+    r->tm_isdst = rt_tz_is_dst();
+#else
+    r->tm_isdst = 0U;
+#endif /* RT_LIBC_USING_LIGHT_TZ_DST */
     return r;
 }
 RTM_EXPORT(gmtime_r);
@@ -174,8 +221,11 @@ RTM_EXPORT(gmtime);
 struct tm* localtime_r(const time_t* t, struct tm* r)
 {
     time_t local_tz;
-
-    local_tz = *t + (time_t)tz_get() * 3600;
+#if defined(RT_LIBC_USING_LIGHT_TZ_DST)
+    local_tz = *t + rt_tz_get();
+#else
+    local_tz = *t + 0U;
+#endif /* RT_LIBC_USING_LIGHT_TZ_DST */
     return gmtime_r(&local_tz, r);
 }
 RTM_EXPORT(localtime_r);
@@ -192,7 +242,11 @@ time_t mktime(struct tm * const t)
     time_t timestamp;
 
     timestamp = timegm(t);
-    timestamp = timestamp - 3600 * (time_t)tz_get();
+#if defined(RT_LIBC_USING_LIGHT_TZ_DST)
+    timestamp = timestamp - rt_tz_get();
+#else
+    timestamp = timestamp - 0U;
+#endif /* RT_LIBC_USING_LIGHT_TZ_DST */
     return timestamp;
 }
 RTM_EXPORT(mktime);
@@ -420,7 +474,11 @@ int gettimeofday(struct timeval *tv, struct timezone *tz)
     if(tz != RT_NULL)
     {
         tz->tz_dsttime = DST_NONE;
-        tz->tz_minuteswest = -(tz_get() * 60);
+#if defined(RT_LIBC_USING_LIGHT_TZ_DST)
+        tz->tz_minuteswest = -(rt_tz_get() / 60);
+#else
+        tz->tz_minuteswest = 0;
+#endif /* RT_LIBC_USING_LIGHT_TZ_DST */
     }
 
     if (tv != RT_NULL)
@@ -444,7 +502,7 @@ int settimeofday(const struct timeval *tv, const struct timezone *tz)
      * The tz_dsttime field has never been used under Linux.
      * Thus, the following is purely of historic interest.
      */
-    if (tv != RT_NULL && tv->tv_usec >= 0 && tv->tv_sec >= 0)
+    if (tv != RT_NULL && (long)tv->tv_usec >= 0 && (long)tv->tv_sec >= 0)
     {
         if (_control_rtc(RT_DEVICE_CTRL_RTC_SET_TIMEVAL, (void *)tv) == RT_EOK)
             return 0;
@@ -568,7 +626,7 @@ RTM_EXPORT(clock_gettime);
 int clock_nanosleep(clockid_t clockid, int flags, const struct timespec *rqtp, struct timespec *rmtp)
 {
     struct timespec ts = {0};
-    rt_err_t        err;
+    rt_err_t err = -RT_EINVAL;
 
     if (rqtp == RT_NULL)
     {
@@ -1126,29 +1184,3 @@ int timer_settime(timer_t timerid, int flags, const struct itimerspec *value,
 }
 RTM_EXPORT(timer_settime);
 #endif /* RT_USING_POSIX_TIMER && RT_USING_KTIME */
-
-
-/* timezone */
-#ifndef RT_LIBC_DEFAULT_TIMEZONE
-#define RT_LIBC_DEFAULT_TIMEZONE    8
-#endif
-
-static volatile int8_t _current_timezone = RT_LIBC_DEFAULT_TIMEZONE;
-
-void tz_set(int8_t tz)
-{
-    rt_base_t level;
-    level = rt_hw_interrupt_disable();
-    _current_timezone = tz;
-    rt_hw_interrupt_enable(level);
-}
-
-int8_t tz_get(void)
-{
-    return _current_timezone;
-}
-
-int8_t tz_is_dst(void)
-{
-    return 0;
-}

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 hpmicro
+ * Copyright (c) 2021 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -10,6 +10,23 @@
 #include "hpm_common.h"
 #include "hpm_camera_config.h"
 
+/**
+ * @brief OV7725 sensor driver APIs
+ * @defgroup ov7725_interface sensor driver APIs
+ * @ingroup component_interfaces
+ * @{
+ *
+
+ */
+/***********************************************************************************************************************
+ *
+ * Definitions
+ *
+ **********************************************************************************************************************/
+
+/**
+ * @brief OV7725 definition
+ */
 #define OV7725_ACTIVE_IMAGE_WIDTH  (480U)
 #define OV7725_ACTIVE_IMAGE_HEIGHT (480U)
 #define OV7725_I2C_ADDR (0x21U)
@@ -22,7 +39,9 @@
 #define OV7725_RST_INACTIVE  1
 #define OV7725_PWDN_ACTIVE   1
 #define OV7725_PWDN_INACTIVE 0
-
+/**
+ * @brief OV7725 registers
+ */
 #define GAIN                    (0x00U) /* AGC – Gain control gain setting */
 #define BLUE                    (0x01U) /* AWB – Blue channel gain setting */
 #define RED                     (0x02U) /* AWB – Red channel gain setting */
@@ -340,30 +359,53 @@
 extern "C" {
 #endif
 
-/*
- * ov7725 initialization routine
+/**
+ * @brief ov7725 initialization routine
+ * @param [in] context camera_context_t
+ * @param [in] ov_config camera config structure
  */
 hpm_stat_t ov7725_init(camera_context_t *context, camera_config_t *ov_config);
 
-/*
- * ov7725 read register
+/**
+ * @brief ov7725 read register
+ * @param [in] context camera_context_t
+ * @param [in] reg register address
+ * @param [in] buf buffer to store read data
+ * @retval status_success if everything is okay
  */
 hpm_stat_t ov7725_read_register(camera_context_t *context, uint8_t reg, uint8_t *buf);
 
-/*
- * ov7725 write register
+/**
+ * @brief ov7725 write register
+ * @param [in] context camera_context_t
+ * @param [in] reg register address
+ * @param [in] val value to be written
+ * @retval status_success if everything is okay
  */
 hpm_stat_t ov7725_write_register(camera_context_t *context, uint8_t reg, uint8_t val);
 
-/*
- * ov7725 reset
+/**
+ * @brief ov7725 reset
+ * @param [in] context camera_context_t
  */
 hpm_stat_t ov7725_software_reset(camera_context_t *context);
 
-/*
- * ov7725 check chip id
+/**
+ * @brief ov7725 check chip id
+ * @param [in] context camera_context_t
  */
 hpm_stat_t ov7725_check_chip_id(camera_context_t *context);
+
+
+/**
+ * @brief ov7725 load set of register-value pairs
+ *
+ * @param [in] context camera_context_t
+ * @param [in] reg_values register-value pair in 2-d array form, ex. reg_values[][2] = {{COM3, 0x1}};
+ * @parma [in] count register-value pair count in 2-d array
+ * @retval status_success if everything is okay
+ */
+hpm_stat_t ov7725_load_settings(camera_context_t *context, uint8_t *reg_values, uint32_t count);
 
 /**
  * @brief ov7725 power up
@@ -375,4 +417,10 @@ void ov7725_power_up(camera_context_t *context);
 #ifdef __cplusplus
 }
 #endif
+
+/**
+ * @}
+ *
+ */
+
 #endif /* HPM_OV7725_H */

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 hpmicro
+ * Copyright (c) 2021 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -415,8 +415,9 @@ static rt_err_t hpm_uart_control(struct rt_serial_device *serial, int cmd, void 
 static int hpm_uart_putc(struct rt_serial_device *serial, char ch)
 {
     struct hpm_uart *uart  = (struct hpm_uart *)serial->parent.user_data;
-    uart_send_byte(uart->uart_base, ch);
-    uart_flush(uart->uart_base);
+    uart_write_byte(uart->uart_base, ch);
+    while(!uart_check_status(uart->uart_base, uart_stat_transmitter_empty)) {
+    }
 }
 
 static int hpm_uart_getc(struct rt_serial_device *serial)

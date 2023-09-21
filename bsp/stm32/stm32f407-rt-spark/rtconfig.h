@@ -20,8 +20,10 @@
 
 /* kservice optimization */
 
-#define RT_DEBUG
-#define RT_DEBUG_COLOR
+#define RT_USING_DEBUG
+#define RT_DEBUGING_COLOR
+#define RT_DEBUGING_CONTEXT
+#define RT_DEBUGING_INIT
 
 /* Inter-Thread communication */
 
@@ -85,6 +87,7 @@
 #define RT_USING_I2C
 #define RT_USING_I2C_BITOPS
 #define RT_USING_PIN
+#define RT_USING_PWM
 
 /* Using USB */
 
@@ -110,6 +113,26 @@
 
 /* RT-Thread Utestcases */
 
+#define SOC_FAMILY_STM32
+#define SOC_SERIES_STM32F4
+
+/* Hardware Drivers Config */
+
+#define SOC_STM32F407ZG
+#define BOARD_STM32F407_SPARK
+
+/* Onboard Peripheral Drivers */
+
+#define BSP_USING_USB_TO_USART
+
+/* On-chip Peripheral Drivers */
+
+#define BSP_USING_GPIO
+#define BSP_USING_UART
+#define BSP_USING_UART1
+
+/* Board extended module Drivers */
+
 
 /* RT-Thread online packages */
 
@@ -122,6 +145,9 @@
 
 
 /* Wiced WiFi */
+
+
+/* CYW43012 WiFi */
 
 
 /* IoT Cloud */
@@ -146,9 +172,6 @@
 /* u8g2: a monochrome graphic library */
 
 
-/* PainterEngine: A cross-platform graphics application framework written in C language */
-
-
 /* tools packages */
 
 
@@ -168,42 +191,64 @@
 
 /* peripheral libraries and drivers */
 
+/* sensors drivers */
 
-/* kendryte-sdk: Kendryte SDK */
+
+/* touch drivers */
+
+
+/* Kendryte SDK */
 
 
 /* AI packages */
+
+
+/* Signal Processing and Control Algorithm Packages */
 
 
 /* miscellaneous packages */
 
 /* project laboratory */
 
-
 /* samples: kernel and components samples */
 
 
 /* entertainment: terminal games and other interesting software packages */
 
-#define SOC_FAMILY_STM32
-#define SOC_SERIES_STM32F4
 
-/* Hardware Drivers Config */
+/* Arduino libraries */
 
-#define SOC_STM32F407ZG
-#define BOARD_STM32F407_ATK_EXPLORER
 
-/* Onboard Peripheral Drivers */
+/* Projects and Demos */
 
-#define BSP_USING_USB_TO_USART
 
-/* On-chip Peripheral Drivers */
+/* Sensors */
 
-#define BSP_USING_GPIO
-#define BSP_USING_UART
-#define BSP_USING_UART1
 
-/* Board extended module Drivers */
+/* Display */
+
+
+/* Timing */
+
+
+/* Data Processing */
+
+
+/* Data Storage */
+
+/* Communication */
+
+
+/* Device Control */
+
+
+/* Other */
+
+
+/* Signal IO */
+
+
+/* Uncategorized */
 
 
 #endif

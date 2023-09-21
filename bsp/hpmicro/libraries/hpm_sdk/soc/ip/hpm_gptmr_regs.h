@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 hpmicro
+ * Copyright (c) 2021-2023 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -41,6 +41,43 @@ typedef struct {
 #define GPTMR_CHANNEL_CR_CNTUPT_SHIFT (31U)
 #define GPTMR_CHANNEL_CR_CNTUPT_SET(x) (((uint32_t)(x) << GPTMR_CHANNEL_CR_CNTUPT_SHIFT) & GPTMR_CHANNEL_CR_CNTUPT_MASK)
 #define GPTMR_CHANNEL_CR_CNTUPT_GET(x) (((uint32_t)(x) & GPTMR_CHANNEL_CR_CNTUPT_MASK) >> GPTMR_CHANNEL_CR_CNTUPT_SHIFT)
+
+/*
+ * OPMODE (RW)
+ *
+ * 0:  round mode
+ * 1:  one-shot mode, timer will stopped at reload point.
+ * NOTE: reload irq will be always set at one-shot mode at end
+ */
+#define GPTMR_CHANNEL_CR_OPMODE_MASK (0x20000UL)
+#define GPTMR_CHANNEL_CR_OPMODE_SHIFT (17U)
+#define GPTMR_CHANNEL_CR_OPMODE_SET(x) (((uint32_t)(x) << GPTMR_CHANNEL_CR_OPMODE_SHIFT) & GPTMR_CHANNEL_CR_OPMODE_MASK)
+#define GPTMR_CHANNEL_CR_OPMODE_GET(x) (((uint32_t)(x) & GPTMR_CHANNEL_CR_OPMODE_MASK) >> GPTMR_CHANNEL_CR_OPMODE_SHIFT)
+
+/*
+ * MONITOR_SEL (RW)
+ *
+ * set to monitor input signal high level time(chan_meas_high)
+ * clr to monitor input signal period(chan_meas_prd)
+ */
+#define GPTMR_CHANNEL_CR_MONITOR_SEL_MASK (0x10000UL)
+#define GPTMR_CHANNEL_CR_MONITOR_SEL_SHIFT (16U)
+#define GPTMR_CHANNEL_CR_MONITOR_SEL_SET(x) (((uint32_t)(x) << GPTMR_CHANNEL_CR_MONITOR_SEL_SHIFT) & GPTMR_CHANNEL_CR_MONITOR_SEL_MASK)
+#define GPTMR_CHANNEL_CR_MONITOR_SEL_GET(x) (((uint32_t)(x) & GPTMR_CHANNEL_CR_MONITOR_SEL_MASK) >> GPTMR_CHANNEL_CR_MONITOR_SEL_SHIFT)
+
+/*
+ * MONITOR_EN (RW)
+ *
+ * set to monitor input signal period or high level time.
+ * When this bit is set, if detected period less than val_0 or more than val_1, will set related irq_sts
+ * * only can be used when trig_mode is selected as measure mode(100)
+ * * the time may not correct after reload, so monitor is disabled after reload point, and enabled again after two continul posedge.
+ * if no posedge after reload for more than val_1, will also assert irq_capt
+ */
+#define GPTMR_CHANNEL_CR_MONITOR_EN_MASK (0x8000U)
+#define GPTMR_CHANNEL_CR_MONITOR_EN_SHIFT (15U)
+#define GPTMR_CHANNEL_CR_MONITOR_EN_SET(x) (((uint32_t)(x) << GPTMR_CHANNEL_CR_MONITOR_EN_SHIFT) & GPTMR_CHANNEL_CR_MONITOR_EN_MASK)
+#define GPTMR_CHANNEL_CR_MONITOR_EN_GET(x) (((uint32_t)(x) & GPTMR_CHANNEL_CR_MONITOR_EN_MASK) >> GPTMR_CHANNEL_CR_MONITOR_EN_SHIFT)
 
 /*
  * CNTRST (RW)
@@ -120,10 +157,10 @@ typedef struct {
  * DMASEL (RW)
  *
  * select one of DMA request:
- * 00- RLD flag, counter reload;
- * 01- Input signal toggle captured
- * 10- CMP0 flag
- * 11- CMP1 flag
+ * 00- CMP0 flag
+ * 01- CMP1 flag
+ * 10- Input signal toggle captured
+ * 11- RLD flag, counter reload;
  */
 #define GPTMR_CHANNEL_CR_DMASEL_MASK (0xC0U)
 #define GPTMR_CHANNEL_CR_DMASEL_SHIFT (6U)
@@ -181,10 +218,10 @@ typedef struct {
  *
  * compare value 0
  */
-#define GPTMR_CMP_CMP_MASK (0xFFFFFFFFUL)
-#define GPTMR_CMP_CMP_SHIFT (0U)
-#define GPTMR_CMP_CMP_SET(x) (((uint32_t)(x) << GPTMR_CMP_CMP_SHIFT) & GPTMR_CMP_CMP_MASK)
-#define GPTMR_CMP_CMP_GET(x) (((uint32_t)(x) & GPTMR_CMP_CMP_MASK) >> GPTMR_CMP_CMP_SHIFT)
+#define GPTMR_CHANNEL_CMP_CMP_MASK (0xFFFFFFFFUL)
+#define GPTMR_CHANNEL_CMP_CMP_SHIFT (0U)
+#define GPTMR_CHANNEL_CMP_CMP_SET(x) (((uint32_t)(x) << GPTMR_CHANNEL_CMP_CMP_SHIFT) & GPTMR_CHANNEL_CMP_CMP_MASK)
+#define GPTMR_CHANNEL_CMP_CMP_GET(x) (((uint32_t)(x) & GPTMR_CHANNEL_CMP_CMP_MASK) >> GPTMR_CHANNEL_CMP_CMP_SHIFT)
 
 /* Bitfield definition for register of struct array CHANNEL: RLD */
 /*

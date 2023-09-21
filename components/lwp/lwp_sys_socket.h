@@ -94,4 +94,43 @@
 #define INTF_IPV6_V6ONLY    26
 #define IMPL_IPV6_V6ONLY    27
 
+struct musl_sockaddr
+{
+    uint16_t sa_family;
+    char     sa_data[14];
+};
+
+struct musl_ifmap {
+    unsigned long int mem_start;
+    unsigned long int mem_end;
+    unsigned short int base_addr;
+    unsigned char irq;
+    unsigned char dma;
+    unsigned char port;
+};
+
+struct musl_ifreq
+{
+    union
+    {
+#define IFNAMSIZ	16
+        char ifrn_name[IFNAMSIZ];
+    } ifr_ifrn;
+    union
+    {
+        struct musl_sockaddr ifru_addr;
+        struct musl_sockaddr ifru_dstaddr;
+        struct musl_sockaddr ifru_broadaddr;
+        struct musl_sockaddr ifru_netmask;
+        struct musl_sockaddr ifru_hwaddr;
+        short int ifru_flags;
+        int ifru_ivalue;
+        int ifru_mtu;
+        struct musl_ifmap ifru_map;
+        char ifru_slave[IFNAMSIZ];
+        char ifru_newname[IFNAMSIZ];
+        char *ifru_data;
+    } ifr_ifru;
+};
+
 #endif /* __LWP_SYS_SOCKET_H__ */

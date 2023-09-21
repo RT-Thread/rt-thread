@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 hpmicro
+ * Copyright (c) 2022 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -8,7 +8,6 @@
 #include <string.h>
 #include "hpm_dma_manager.h"
 #include "hpm_soc.h"
-#include <stdio.h>
 
 /*****************************************************************************************************************
  *

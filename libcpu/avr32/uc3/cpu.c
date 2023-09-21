@@ -15,24 +15,6 @@
  */
 /*@{*/
 
-/**
- * reset cpu by dog's time-out
- *
- */
-rt_weak void rt_hw_cpu_reset()
-{
-    /*NOTREACHED*/
-}
 
-/**
- *  shutdown CPU
- *
- */
-void rt_hw_cpu_shutdown()
-{
-    rt_kprintf("shutdown...\n");
-
-    RT_ASSERT(0);
-}
 
 /*@}*/

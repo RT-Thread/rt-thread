@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 hpmicro
+ * Copyright (c) 2021-2023 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -27,7 +27,7 @@ typedef struct {
     __R  uint32_t CAPABILITIES2;               /* 0x44:  */
     __R  uint32_t CURR_CAPABILITIES1;          /* 0x48:  */
     __R  uint32_t CURR_CAPABILITIES2;          /* 0x4C:  */
-    __RW uint32_t FORCE_EVENT;                 /* 0x50:  */
+    __W  uint32_t FORCE_EVENT;                 /* 0x50:  */
     __R  uint32_t ADMA_ERR_STAT;               /* 0x54:  */
     __RW uint32_t ADMA_SYS_ADDR;               /* 0x58:  */
     __R  uint8_t  RESERVED0[4];                /* 0x5C - 0x5F: Reserved */
@@ -319,7 +319,8 @@ typedef struct {
  * RESP_ERR_CHK_ENABLE (RW)
  *
  * Response Error Check Enable
- * The Host Controller supports response check function to avoid overhead of response error check by Host driver. Response types of only R1 and R5 can be checked by the Controller. If the Host Controller checks the response error, set this bit to 1 and set Response Interrupt Disable to 1. If an error is detected, the Response Error interrupt is generated in the Error Interrupt Status register.
+ * The Host Controller supports response check function to avoid overhead of response error check by Host driver. Response types of only R1 and R5 can be checked by the Controller.
+ * If the Host Controller checks the response error, set this bit to 1 and set Response Interrupt Disable to 1. If an error is detected, the Response Error interrupt is generated in the Error Interrupt Status register.
  * Note:
  * - Response error check must not be enabled for any response type other than R1 and R5.
  * - Response check must not be enabled for the tuning command.
@@ -440,7 +441,7 @@ typedef struct {
 
 /* Bitfield definition for register array: RESP */
 /*
- * RESP01 (R)
+ * RESP01 (RO)
  *
  * Command Response
  * These bits reflect 39-8 bits of SD/eMMC Response Field.
@@ -464,7 +465,7 @@ typedef struct {
 
 /* Bitfield definition for register: PSTATE */
 /*
- * SUB_CMD_STAT (R)
+ * SUB_CMD_STAT (RO)
  *
  * Sub Command Status
  * This bit is used to distinguish between a main command and a sub command status.
@@ -477,7 +478,7 @@ typedef struct {
 #define SDXC_PSTATE_SUB_CMD_STAT_GET(x) (((uint32_t)(x) & SDXC_PSTATE_SUB_CMD_STAT_MASK) >> SDXC_PSTATE_SUB_CMD_STAT_SHIFT)
 
 /*
- * CMD_ISSUE_ERR (R)
+ * CMD_ISSUE_ERR (RO)
  *
  * Command Not Issued by Error
  * This bit is set if a command cannot be issued after setting the command register due to an error except the Auto CMD12 error.
@@ -490,7 +491,7 @@ typedef struct {
 #define SDXC_PSTATE_CMD_ISSUE_ERR_GET(x) (((uint32_t)(x) & SDXC_PSTATE_CMD_ISSUE_ERR_MASK) >> SDXC_PSTATE_CMD_ISSUE_ERR_SHIFT)
 
 /*
- * CMD_LINE_LVL (R)
+ * CMD_LINE_LVL (RO)
  *
  * Command-Line Signal Level
  * This bit is used to check the CMD line level to recover from errors and for debugging. These bits reflect the value of the sd_cmd_in signal.
@@ -500,7 +501,7 @@ typedef struct {
 #define SDXC_PSTATE_CMD_LINE_LVL_GET(x) (((uint32_t)(x) & SDXC_PSTATE_CMD_LINE_LVL_MASK) >> SDXC_PSTATE_CMD_LINE_LVL_SHIFT)
 
 /*
- * DAT_3_0 (R)
+ * DAT_3_0 (RO)
  *
  * DAT[3:0] Line Signal Level
  * This bit is used to check the DAT line level to recover from errors and for debugging. These bits reflect the value of the sd_dat_in (lower nibble) signal.
@@ -510,7 +511,7 @@ typedef struct {
 #define SDXC_PSTATE_DAT_3_0_GET(x) (((uint32_t)(x) & SDXC_PSTATE_DAT_3_0_MASK) >> SDXC_PSTATE_DAT_3_0_SHIFT)
 
 /*
- * WR_PROTECT_SW_LVL (R)
+ * WR_PROTECT_SW_LVL (RO)
  *
  * Write Protect Switch Pin Level
  * This bit is supported only for memory and combo cards. This bit reflects the synchronized value of the card_write_prot signal.
@@ -523,7 +524,7 @@ typedef struct {
 #define SDXC_PSTATE_WR_PROTECT_SW_LVL_GET(x) (((uint32_t)(x) & SDXC_PSTATE_WR_PROTECT_SW_LVL_MASK) >> SDXC_PSTATE_WR_PROTECT_SW_LVL_SHIFT)
 
 /*
- * CARD_DETECT_PIN_LEVEL (R)
+ * CARD_DETECT_PIN_LEVEL (RO)
  *
  * Card Detect Pin Level
  * This bit reflects the inverse synchronized value of the card_detect_n signal.
@@ -536,7 +537,7 @@ typedef struct {
 #define SDXC_PSTATE_CARD_DETECT_PIN_LEVEL_GET(x) (((uint32_t)(x) & SDXC_PSTATE_CARD_DETECT_PIN_LEVEL_MASK) >> SDXC_PSTATE_CARD_DETECT_PIN_LEVEL_SHIFT)
 
 /*
- * CARD_STABLE (R)
+ * CARD_STABLE (RO)
  *
  * Card Stable
  * This bit indicates the stability of the Card Detect Pin Level. A card is not detected if this bit is set to 1 and the value of the CARD_INSERTED bit is 0.
@@ -549,7 +550,7 @@ typedef struct {
 #define SDXC_PSTATE_CARD_STABLE_GET(x) (((uint32_t)(x) & SDXC_PSTATE_CARD_STABLE_MASK) >> SDXC_PSTATE_CARD_STABLE_SHIFT)
 
 /*
- * CARD_INSERTED (R)
+ * CARD_INSERTED (RO)
  *
  * Card Inserted
  * This bit indicates whether a card has been inserted. The Host Controller debounces this signal so that Host Driver need not wait for it to stabilize.
@@ -562,7 +563,7 @@ typedef struct {
 #define SDXC_PSTATE_CARD_INSERTED_GET(x) (((uint32_t)(x) & SDXC_PSTATE_CARD_INSERTED_MASK) >> SDXC_PSTATE_CARD_INSERTED_SHIFT)
 
 /*
- * BUF_RD_ENABLE (R)
+ * BUF_RD_ENABLE (RO)
  *
  * Buffer Read Enable
  * This bit is used for non-DMA transfers. This bit is set if valid data exists in the Host buffer.
@@ -575,7 +576,7 @@ typedef struct {
 #define SDXC_PSTATE_BUF_RD_ENABLE_GET(x) (((uint32_t)(x) & SDXC_PSTATE_BUF_RD_ENABLE_MASK) >> SDXC_PSTATE_BUF_RD_ENABLE_SHIFT)
 
 /*
- * BUF_WR_ENABLE (R)
+ * BUF_WR_ENABLE (RO)
  *
  * Buffer Write Enable
  * This bit is used for non-DMA transfers. This bit is set if space is available for writing data.
@@ -588,7 +589,7 @@ typedef struct {
 #define SDXC_PSTATE_BUF_WR_ENABLE_GET(x) (((uint32_t)(x) & SDXC_PSTATE_BUF_WR_ENABLE_MASK) >> SDXC_PSTATE_BUF_WR_ENABLE_SHIFT)
 
 /*
- * RD_XFER_ACTIVE (R)
+ * RD_XFER_ACTIVE (RO)
  *
  * Read Transfer Active
  * This bit indicates whether a read transfer is active for SD/eMMC mode.
@@ -601,7 +602,7 @@ typedef struct {
 #define SDXC_PSTATE_RD_XFER_ACTIVE_GET(x) (((uint32_t)(x) & SDXC_PSTATE_RD_XFER_ACTIVE_MASK) >> SDXC_PSTATE_RD_XFER_ACTIVE_SHIFT)
 
 /*
- * WR_XFER_ACTIVE (R)
+ * WR_XFER_ACTIVE (RO)
  *
  * Write Transfer Active
  * This status indicates whether a write transfer is active for SD/eMMC mode.
@@ -614,7 +615,7 @@ typedef struct {
 #define SDXC_PSTATE_WR_XFER_ACTIVE_GET(x) (((uint32_t)(x) & SDXC_PSTATE_WR_XFER_ACTIVE_MASK) >> SDXC_PSTATE_WR_XFER_ACTIVE_SHIFT)
 
 /*
- * DAT_7_4 (R)
+ * DAT_7_4 (RO)
  *
  * DAT[7:4] Line Signal Level
  * This bit is used to check the DAT line level to recover from errors and for debugging. These bits reflect the value of the sd_dat_in (upper nibble) signal.
@@ -624,7 +625,7 @@ typedef struct {
 #define SDXC_PSTATE_DAT_7_4_GET(x) (((uint32_t)(x) & SDXC_PSTATE_DAT_7_4_MASK) >> SDXC_PSTATE_DAT_7_4_SHIFT)
 
 /*
- * RE_TUNE_REQ (R)
+ * RE_TUNE_REQ (RO)
  *
  * Re-Tuning Request
  * SDXC does not generate retuning request. The software must maintain the Retuning timer.
@@ -634,7 +635,7 @@ typedef struct {
 #define SDXC_PSTATE_RE_TUNE_REQ_GET(x) (((uint32_t)(x) & SDXC_PSTATE_RE_TUNE_REQ_MASK) >> SDXC_PSTATE_RE_TUNE_REQ_SHIFT)
 
 /*
- * DAT_LINE_ACTIVE (R)
+ * DAT_LINE_ACTIVE (RO)
  *
  * DAT Line Active (
  * This bit indicates whether one of the DAT lines on the SD/eMMC bus is in use.
@@ -650,7 +651,7 @@ typedef struct {
 #define SDXC_PSTATE_DAT_LINE_ACTIVE_GET(x) (((uint32_t)(x) & SDXC_PSTATE_DAT_LINE_ACTIVE_MASK) >> SDXC_PSTATE_DAT_LINE_ACTIVE_SHIFT)
 
 /*
- * DAT_INHIBIT (R)
+ * DAT_INHIBIT (RO)
  *
  * Command Inhibit (DAT)
  * This bit is generated if either DAT line active or Read transfer active is set to 1.
@@ -664,7 +665,7 @@ typedef struct {
 #define SDXC_PSTATE_DAT_INHIBIT_GET(x) (((uint32_t)(x) & SDXC_PSTATE_DAT_INHIBIT_MASK) >> SDXC_PSTATE_DAT_INHIBIT_SHIFT)
 
 /*
- * CMD_INHIBIT (R)
+ * CMD_INHIBIT (RO)
  *
  * Command Inhibit (CMD)
  * This bit indicates the following :
@@ -817,6 +818,23 @@ typedef struct {
 #define SDXC_PROT_CTRL_SD_BUS_VOL_VDD1_SHIFT (9U)
 #define SDXC_PROT_CTRL_SD_BUS_VOL_VDD1_SET(x) (((uint32_t)(x) << SDXC_PROT_CTRL_SD_BUS_VOL_VDD1_SHIFT) & SDXC_PROT_CTRL_SD_BUS_VOL_VDD1_MASK)
 #define SDXC_PROT_CTRL_SD_BUS_VOL_VDD1_GET(x) (((uint32_t)(x) & SDXC_PROT_CTRL_SD_BUS_VOL_VDD1_MASK) >> SDXC_PROT_CTRL_SD_BUS_VOL_VDD1_SHIFT)
+
+/*
+ * SD_BUS_PWR_VDD1 (RW)
+ *
+ * SD Bus Power for VDD1
+ * This bit enables VDD1 power of the card.
+ * This setting is available on the sd_vdd1_on output of SDXC so that it can be used to control the VDD1 power supply of the card.
+ * Before setting this bit, the SD Host Driver sets the SD Bus Voltage Select bit. If the Host Controller detects a No Card state, this bit is cleared.
+ * In SD mode, if this bit is cleared, the Host Controller stops the SD Clock by clearing the SD_CLK_IN bit in the CLK_CTRL_R register.
+ * Values:
+ * 0x0 (OFF): Power off
+ * 0x1 (ON): Power on
+ */
+#define SDXC_PROT_CTRL_SD_BUS_PWR_VDD1_MASK (0x100U)
+#define SDXC_PROT_CTRL_SD_BUS_PWR_VDD1_SHIFT (8U)
+#define SDXC_PROT_CTRL_SD_BUS_PWR_VDD1_SET(x) (((uint32_t)(x) << SDXC_PROT_CTRL_SD_BUS_PWR_VDD1_SHIFT) & SDXC_PROT_CTRL_SD_BUS_PWR_VDD1_MASK)
+#define SDXC_PROT_CTRL_SD_BUS_PWR_VDD1_GET(x) (((uint32_t)(x) & SDXC_PROT_CTRL_SD_BUS_PWR_VDD1_MASK) >> SDXC_PROT_CTRL_SD_BUS_PWR_VDD1_SHIFT)
 
 /*
  * EXT_DAT_XFER (RW)
@@ -1123,7 +1141,8 @@ typedef struct {
  * RESP_ERR (R/W1C)
  *
  * Response Error
- * Host Controller Version 4.00 supports response error check function to avoid overhead of response error check by Host Driver during DMA execution. If Response Error Check Enable is set to 1 in the Transfer Mode register, Host Controller Checks R1 or R5 response. If an error is detected in a response, this bit is set to 1.This is applicable in SD/eMMC mode.
+ * Host Controller Version 4.00 supports response error check function to avoid overhead of response error check by Host Driver during DMA execution.
+ * If Response Error Check Enable is set to 1 in the Transfer Mode register, Host Controller Checks R1 or R5 response. If an error is detected in a response, this bit is set to 1.This is applicable in SD/eMMC mode.
  * Values:
  * 0x0 (FALSE): No error
  * 0x1 (TRUE): Error
@@ -1320,7 +1339,7 @@ typedef struct {
 #define SDXC_INT_STAT_CMD_TOUT_ERR_GET(x) (((uint32_t)(x) & SDXC_INT_STAT_CMD_TOUT_ERR_MASK) >> SDXC_INT_STAT_CMD_TOUT_ERR_SHIFT)
 
 /*
- * ERR_INTERRUPT (R)
+ * ERR_INTERRUPT (RO)
  *
  * Error Interrupt
  * If any of the bits in the Error Interrupt Status register are set, then this bit is set.
@@ -1347,7 +1366,7 @@ typedef struct {
 #define SDXC_INT_STAT_CQE_EVENT_GET(x) (((uint32_t)(x) & SDXC_INT_STAT_CQE_EVENT_MASK) >> SDXC_INT_STAT_CQE_EVENT_SHIFT)
 
 /*
- * FX_EVENT (R)
+ * FX_EVENT (RO)
  *
  * FX Event
  * This status is set when R[14] of response register is set to 1 and Response Type R1/R5 is set to 0 in Transfer Mode register. This interrupt is used with response check function.
@@ -1360,7 +1379,7 @@ typedef struct {
 #define SDXC_INT_STAT_FX_EVENT_GET(x) (((uint32_t)(x) & SDXC_INT_STAT_FX_EVENT_MASK) >> SDXC_INT_STAT_FX_EVENT_SHIFT)
 
 /*
- * RE_TUNE_EVENT (R)
+ * RE_TUNE_EVENT (RO)
  *
  * Re-tuning Event
  * This bit is set if the Re-Tuning Request changes from 0 to 1. Re-Tuning request is not supported.
@@ -1370,7 +1389,7 @@ typedef struct {
 #define SDXC_INT_STAT_RE_TUNE_EVENT_GET(x) (((uint32_t)(x) & SDXC_INT_STAT_RE_TUNE_EVENT_MASK) >> SDXC_INT_STAT_RE_TUNE_EVENT_SHIFT)
 
 /*
- * CARD_INTERRUPT (R)
+ * CARD_INTERRUPT (RO)
  *
  * Card Interrupt
  * This bit reflects the synchronized value of:
@@ -2317,7 +2336,7 @@ typedef struct {
 #define SDXC_AC_HOST_CTRL_UHS_MODE_SEL_GET(x) (((uint32_t)(x) & SDXC_AC_HOST_CTRL_UHS_MODE_SEL_MASK) >> SDXC_AC_HOST_CTRL_UHS_MODE_SEL_SHIFT)
 
 /*
- * CMD_NOT_ISSUED_AUTO_CMD12 (R)
+ * CMD_NOT_ISSUED_AUTO_CMD12 (RO)
  *
  * Command Not Issued By Auto CMD12 Error
  * If this bit is set to 1, CMD_wo_DAT is not executed due to an Auto CMD12 Error (D04-D01) in this register.
@@ -2331,7 +2350,7 @@ typedef struct {
 #define SDXC_AC_HOST_CTRL_CMD_NOT_ISSUED_AUTO_CMD12_GET(x) (((uint32_t)(x) & SDXC_AC_HOST_CTRL_CMD_NOT_ISSUED_AUTO_CMD12_MASK) >> SDXC_AC_HOST_CTRL_CMD_NOT_ISSUED_AUTO_CMD12_SHIFT)
 
 /*
- * AUTO_CMD_RESP_ERR (R)
+ * AUTO_CMD_RESP_ERR (RO)
  *
  * Auto CMD Response Error
  * This bit is set when Response Error Check Enable in the Transfer Mode register is set to 1 and an error is detected in R1 response of either Auto CMD12 or CMD13.
@@ -2345,7 +2364,7 @@ typedef struct {
 #define SDXC_AC_HOST_CTRL_AUTO_CMD_RESP_ERR_GET(x) (((uint32_t)(x) & SDXC_AC_HOST_CTRL_AUTO_CMD_RESP_ERR_MASK) >> SDXC_AC_HOST_CTRL_AUTO_CMD_RESP_ERR_SHIFT)
 
 /*
- * AUTO_CMD_IDX_ERR (R)
+ * AUTO_CMD_IDX_ERR (RO)
  *
  * Auto CMD Index Error
  * This bit is set if the command index error occurs in response to a command.
@@ -2358,7 +2377,7 @@ typedef struct {
 #define SDXC_AC_HOST_CTRL_AUTO_CMD_IDX_ERR_GET(x) (((uint32_t)(x) & SDXC_AC_HOST_CTRL_AUTO_CMD_IDX_ERR_MASK) >> SDXC_AC_HOST_CTRL_AUTO_CMD_IDX_ERR_SHIFT)
 
 /*
- * AUTO_CMD_EBIT_ERR (R)
+ * AUTO_CMD_EBIT_ERR (RO)
  *
  * Auto CMD End Bit Error
  * This bit is set when detecting that the end bit of command response is 0.
@@ -2371,7 +2390,7 @@ typedef struct {
 #define SDXC_AC_HOST_CTRL_AUTO_CMD_EBIT_ERR_GET(x) (((uint32_t)(x) & SDXC_AC_HOST_CTRL_AUTO_CMD_EBIT_ERR_MASK) >> SDXC_AC_HOST_CTRL_AUTO_CMD_EBIT_ERR_SHIFT)
 
 /*
- * AUTO_CMD_CRC_ERR (R)
+ * AUTO_CMD_CRC_ERR (RO)
  *
  * Auto CMD CRC Error
  * This bit is set when detecting a CRC error in the command response.
@@ -2384,7 +2403,7 @@ typedef struct {
 #define SDXC_AC_HOST_CTRL_AUTO_CMD_CRC_ERR_GET(x) (((uint32_t)(x) & SDXC_AC_HOST_CTRL_AUTO_CMD_CRC_ERR_MASK) >> SDXC_AC_HOST_CTRL_AUTO_CMD_CRC_ERR_SHIFT)
 
 /*
- * AUTO_CMD_TOUT_ERR (R)
+ * AUTO_CMD_TOUT_ERR (RO)
  *
  * Auto CMD Timeout Error
  * This bit is set if no response is returned with 64 SDCLK cycles from the end bit of the command.
@@ -2398,7 +2417,7 @@ typedef struct {
 #define SDXC_AC_HOST_CTRL_AUTO_CMD_TOUT_ERR_GET(x) (((uint32_t)(x) & SDXC_AC_HOST_CTRL_AUTO_CMD_TOUT_ERR_MASK) >> SDXC_AC_HOST_CTRL_AUTO_CMD_TOUT_ERR_SHIFT)
 
 /*
- * AUTO_CMD12_NOT_EXEC (R)
+ * AUTO_CMD12_NOT_EXEC (RO)
  *
  * Auto CMD12 Not Executed
  * If multiple memory block data transfer is not started due to a command error, this bit is not set because it is not necessary to issue an Auto CMD12.
@@ -2415,7 +2434,7 @@ typedef struct {
 
 /* Bitfield definition for register: CAPABILITIES1 */
 /*
- * SLOT_TYPE_R (R)
+ * SLOT_TYPE_R (RO)
  *
  * Slot Type
  * These bits indicate usage of a slot by a specific Host System.
@@ -2430,7 +2449,7 @@ typedef struct {
 #define SDXC_CAPABILITIES1_SLOT_TYPE_R_GET(x) (((uint32_t)(x) & SDXC_CAPABILITIES1_SLOT_TYPE_R_MASK) >> SDXC_CAPABILITIES1_SLOT_TYPE_R_SHIFT)
 
 /*
- * ASYNC_INT_SUPPORT (R)
+ * ASYNC_INT_SUPPORT (RO)
  *
  * Asynchronous Interrupt Support (SD Mode only)
  * Values:
@@ -2442,7 +2461,7 @@ typedef struct {
 #define SDXC_CAPABILITIES1_ASYNC_INT_SUPPORT_GET(x) (((uint32_t)(x) & SDXC_CAPABILITIES1_ASYNC_INT_SUPPORT_MASK) >> SDXC_CAPABILITIES1_ASYNC_INT_SUPPORT_SHIFT)
 
 /*
- * VOLT_18 (R)
+ * VOLT_18 (RO)
  *
  * Voltage Support for 1.8V
  * Values:
@@ -2454,7 +2473,7 @@ typedef struct {
 #define SDXC_CAPABILITIES1_VOLT_18_GET(x) (((uint32_t)(x) & SDXC_CAPABILITIES1_VOLT_18_MASK) >> SDXC_CAPABILITIES1_VOLT_18_SHIFT)
 
 /*
- * VOLT_30 (R)
+ * VOLT_30 (RO)
  *
  * Voltage Support for SD 3.0V or Embedded 1.2V
  * Values:
@@ -2466,7 +2485,7 @@ typedef struct {
 #define SDXC_CAPABILITIES1_VOLT_30_GET(x) (((uint32_t)(x) & SDXC_CAPABILITIES1_VOLT_30_MASK) >> SDXC_CAPABILITIES1_VOLT_30_SHIFT)
 
 /*
- * VOLT_33 (R)
+ * VOLT_33 (RO)
  *
  * Voltage Support for 3.3V
  * Values:
@@ -2478,7 +2497,7 @@ typedef struct {
 #define SDXC_CAPABILITIES1_VOLT_33_GET(x) (((uint32_t)(x) & SDXC_CAPABILITIES1_VOLT_33_MASK) >> SDXC_CAPABILITIES1_VOLT_33_SHIFT)
 
 /*
- * SUS_RES_SUPPORT (R)
+ * SUS_RES_SUPPORT (RO)
  *
  * Suspense/Resume Support
  * This bit indicates whether the Host Controller supports Suspend/Resume functionality.
@@ -2492,7 +2511,7 @@ typedef struct {
 #define SDXC_CAPABILITIES1_SUS_RES_SUPPORT_GET(x) (((uint32_t)(x) & SDXC_CAPABILITIES1_SUS_RES_SUPPORT_MASK) >> SDXC_CAPABILITIES1_SUS_RES_SUPPORT_SHIFT)
 
 /*
- * SDMA_SUPPORT (R)
+ * SDMA_SUPPORT (RO)
  *
  * SDMA Support
  * This bit indicates whether the Host Controller is capable of using SDMA to transfer data between the system memory and the Host Controller directly.
@@ -2505,7 +2524,7 @@ typedef struct {
 #define SDXC_CAPABILITIES1_SDMA_SUPPORT_GET(x) (((uint32_t)(x) & SDXC_CAPABILITIES1_SDMA_SUPPORT_MASK) >> SDXC_CAPABILITIES1_SDMA_SUPPORT_SHIFT)
 
 /*
- * HIGH_SPEED_SUPPORT (R)
+ * HIGH_SPEED_SUPPORT (RO)
  *
  * High Speed Support
  * This bit indicates whether the Host Controller and the Host System supports High Speed mode and they can supply the SD Clock frequency from 25 MHz to 50 MHz.
@@ -2518,7 +2537,7 @@ typedef struct {
 #define SDXC_CAPABILITIES1_HIGH_SPEED_SUPPORT_GET(x) (((uint32_t)(x) & SDXC_CAPABILITIES1_HIGH_SPEED_SUPPORT_MASK) >> SDXC_CAPABILITIES1_HIGH_SPEED_SUPPORT_SHIFT)
 
 /*
- * ADMA2_SUPPORT (R)
+ * ADMA2_SUPPORT (RO)
  *
  * ADMA2 Support
  * This bit indicates whether the Host Controller is capable of using ADMA2.
@@ -2531,7 +2550,7 @@ typedef struct {
 #define SDXC_CAPABILITIES1_ADMA2_SUPPORT_GET(x) (((uint32_t)(x) & SDXC_CAPABILITIES1_ADMA2_SUPPORT_MASK) >> SDXC_CAPABILITIES1_ADMA2_SUPPORT_SHIFT)
 
 /*
- * EMBEDDED_8_BIT (R)
+ * EMBEDDED_8_BIT (RO)
  *
  * 8-bit Support for Embedded Device
  * This bit indicates whether the Host Controller is capable of using an 8-bit bus width mode. This bit is not effective when the Slot Type is set to 10b.
@@ -2544,7 +2563,7 @@ typedef struct {
 #define SDXC_CAPABILITIES1_EMBEDDED_8_BIT_GET(x) (((uint32_t)(x) & SDXC_CAPABILITIES1_EMBEDDED_8_BIT_MASK) >> SDXC_CAPABILITIES1_EMBEDDED_8_BIT_SHIFT)
 
 /*
- * MAX_BLK_LEN (R)
+ * MAX_BLK_LEN (RO)
  *
  * Maximum Block Length
  * This bit indicates the maximum block size that the Host driver can read and write to the buffer in the Host Controller.
@@ -2560,7 +2579,7 @@ typedef struct {
 #define SDXC_CAPABILITIES1_MAX_BLK_LEN_GET(x) (((uint32_t)(x) & SDXC_CAPABILITIES1_MAX_BLK_LEN_MASK) >> SDXC_CAPABILITIES1_MAX_BLK_LEN_SHIFT)
 
 /*
- * BASE_CLK_FREQ (R)
+ * BASE_CLK_FREQ (RO)
  *
  * Base Clock Frequency for SD clock
  * These bits indicate the base (maximum) clock frequency for the SD Clock. The definition of these bits depend on the Host Controller Version.
@@ -2586,7 +2605,7 @@ typedef struct {
 #define SDXC_CAPABILITIES1_BASE_CLK_FREQ_GET(x) (((uint32_t)(x) & SDXC_CAPABILITIES1_BASE_CLK_FREQ_MASK) >> SDXC_CAPABILITIES1_BASE_CLK_FREQ_SHIFT)
 
 /*
- * TOUT_CLK_UNIT (R)
+ * TOUT_CLK_UNIT (RO)
  *
  * Timeout Clock Unit
  * This bit shows the unit of base clock frequency used to detect Data TImeout Error.
@@ -2599,7 +2618,7 @@ typedef struct {
 #define SDXC_CAPABILITIES1_TOUT_CLK_UNIT_GET(x) (((uint32_t)(x) & SDXC_CAPABILITIES1_TOUT_CLK_UNIT_MASK) >> SDXC_CAPABILITIES1_TOUT_CLK_UNIT_SHIFT)
 
 /*
- * TOUT_CLK_FREQ (R)
+ * TOUT_CLK_FREQ (RO)
  *
  * Timeout Clock Frequency
  * This bit shows the base clock frequency used to detect Data Timeout Error. The Timeout Clock unit defines the unit of timeout clock frequency. It can be KHz or MHz.
@@ -2616,7 +2635,7 @@ typedef struct {
 
 /* Bitfield definition for register: CAPABILITIES2 */
 /*
- * VDD2_18V_SUPPORT (R)
+ * VDD2_18V_SUPPORT (RO)
  *
  * 1.8V VDD2 Support
  * This bit indicates support of VDD2 for the Host System.
@@ -2628,7 +2647,7 @@ typedef struct {
 #define SDXC_CAPABILITIES2_VDD2_18V_SUPPORT_GET(x) (((uint32_t)(x) & SDXC_CAPABILITIES2_VDD2_18V_SUPPORT_MASK) >> SDXC_CAPABILITIES2_VDD2_18V_SUPPORT_SHIFT)
 
 /*
- * ADMA3_SUPPORT (R)
+ * ADMA3_SUPPORT (RO)
  *
  * ADMA3 Support
  * This bit indicates whether the Host Controller is capable of using ADMA3.
@@ -2641,7 +2660,7 @@ typedef struct {
 #define SDXC_CAPABILITIES2_ADMA3_SUPPORT_GET(x) (((uint32_t)(x) & SDXC_CAPABILITIES2_ADMA3_SUPPORT_MASK) >> SDXC_CAPABILITIES2_ADMA3_SUPPORT_SHIFT)
 
 /*
- * CLK_MUL (R)
+ * CLK_MUL (RO)
  *
  * Clock Multiplier
  * These bits indicate the clock multiplier of the programmable clock generator. Setting these bits to 0 means that the Host Controller does not support a programmable clock generator.
@@ -2656,7 +2675,7 @@ typedef struct {
 #define SDXC_CAPABILITIES2_CLK_MUL_GET(x) (((uint32_t)(x) & SDXC_CAPABILITIES2_CLK_MUL_MASK) >> SDXC_CAPABILITIES2_CLK_MUL_SHIFT)
 
 /*
- * RE_TUNING_MODES (R)
+ * RE_TUNING_MODES (RO)
  *
  * Re-Tuning Modes (UHS-I only)
  * These bits select the re-tuning method and limit the maximum data length.
@@ -2671,7 +2690,7 @@ typedef struct {
 #define SDXC_CAPABILITIES2_RE_TUNING_MODES_GET(x) (((uint32_t)(x) & SDXC_CAPABILITIES2_RE_TUNING_MODES_MASK) >> SDXC_CAPABILITIES2_RE_TUNING_MODES_SHIFT)
 
 /*
- * USE_TUNING_SDR50 (R)
+ * USE_TUNING_SDR50 (RO)
  *
  * Use Tuning for SDR50 (UHS-I only)
  * Values:
@@ -2683,7 +2702,7 @@ typedef struct {
 #define SDXC_CAPABILITIES2_USE_TUNING_SDR50_GET(x) (((uint32_t)(x) & SDXC_CAPABILITIES2_USE_TUNING_SDR50_MASK) >> SDXC_CAPABILITIES2_USE_TUNING_SDR50_SHIFT)
 
 /*
- * RETUNE_CNT (R)
+ * RETUNE_CNT (RO)
  *
  * Timer Count for Re-Tuning (UHS-I only)
  * 0x0: Re-Tuning Timer disabled
@@ -2702,7 +2721,7 @@ typedef struct {
 #define SDXC_CAPABILITIES2_RETUNE_CNT_GET(x) (((uint32_t)(x) & SDXC_CAPABILITIES2_RETUNE_CNT_MASK) >> SDXC_CAPABILITIES2_RETUNE_CNT_SHIFT)
 
 /*
- * DRV_TYPED (R)
+ * DRV_TYPED (RO)
  *
  * Driver Type D Support (UHS-I only)
  * This bit indicates support of Driver Type D for 1.8 Signaling.
@@ -2715,7 +2734,7 @@ typedef struct {
 #define SDXC_CAPABILITIES2_DRV_TYPED_GET(x) (((uint32_t)(x) & SDXC_CAPABILITIES2_DRV_TYPED_MASK) >> SDXC_CAPABILITIES2_DRV_TYPED_SHIFT)
 
 /*
- * DRV_TYPEC (R)
+ * DRV_TYPEC (RO)
  *
  * Driver Type C Support (UHS-I only)
  * This bit indicates support of Driver Type C for 1.8 Signaling.
@@ -2728,7 +2747,7 @@ typedef struct {
 #define SDXC_CAPABILITIES2_DRV_TYPEC_GET(x) (((uint32_t)(x) & SDXC_CAPABILITIES2_DRV_TYPEC_MASK) >> SDXC_CAPABILITIES2_DRV_TYPEC_SHIFT)
 
 /*
- * DRV_TYPEA (R)
+ * DRV_TYPEA (RO)
  *
  * Driver Type A Support (UHS-I only)
  * This bit indicates support of Driver Type A for 1.8 Signaling.
@@ -2741,7 +2760,7 @@ typedef struct {
 #define SDXC_CAPABILITIES2_DRV_TYPEA_GET(x) (((uint32_t)(x) & SDXC_CAPABILITIES2_DRV_TYPEA_MASK) >> SDXC_CAPABILITIES2_DRV_TYPEA_SHIFT)
 
 /*
- * UHS2_SUPPORT (R)
+ * UHS2_SUPPORT (RO)
  *
  * UHS-II Support (UHS-II only)
  * This bit indicates whether Host Controller supports UHS-II.
@@ -2754,7 +2773,7 @@ typedef struct {
 #define SDXC_CAPABILITIES2_UHS2_SUPPORT_GET(x) (((uint32_t)(x) & SDXC_CAPABILITIES2_UHS2_SUPPORT_MASK) >> SDXC_CAPABILITIES2_UHS2_SUPPORT_SHIFT)
 
 /*
- * DDR50_SUPPORT (R)
+ * DDR50_SUPPORT (RO)
  *
  * DDR50 Support (UHS-I only)
  * Values:
@@ -2766,7 +2785,7 @@ typedef struct {
 #define SDXC_CAPABILITIES2_DDR50_SUPPORT_GET(x) (((uint32_t)(x) & SDXC_CAPABILITIES2_DDR50_SUPPORT_MASK) >> SDXC_CAPABILITIES2_DDR50_SUPPORT_SHIFT)
 
 /*
- * SDR104_SUPPORT (R)
+ * SDR104_SUPPORT (RO)
  *
  * SDR104 Support (UHS-I only)
  * This bit mentions that SDR104 requires tuning.
@@ -2779,7 +2798,7 @@ typedef struct {
 #define SDXC_CAPABILITIES2_SDR104_SUPPORT_GET(x) (((uint32_t)(x) & SDXC_CAPABILITIES2_SDR104_SUPPORT_MASK) >> SDXC_CAPABILITIES2_SDR104_SUPPORT_SHIFT)
 
 /*
- * SDR50_SUPPORT (R)
+ * SDR50_SUPPORT (RO)
  *
  * SDR50 Support (UHS-I only)
  * This bit indicates that SDR50 is supported. The bit 13 (USE_TUNING_SDR50) indicates whether SDR50 requires tuning or not.
@@ -2793,7 +2812,7 @@ typedef struct {
 
 /* Bitfield definition for register: CURR_CAPABILITIES1 */
 /*
- * MAX_CUR_18V (R)
+ * MAX_CUR_18V (RO)
  *
  * Maximum Current for 1.8V
  * This bit specifies the Maximum Current for 1.8V VDD1 power supply for the card.
@@ -2809,7 +2828,7 @@ typedef struct {
 #define SDXC_CURR_CAPABILITIES1_MAX_CUR_18V_GET(x) (((uint32_t)(x) & SDXC_CURR_CAPABILITIES1_MAX_CUR_18V_MASK) >> SDXC_CURR_CAPABILITIES1_MAX_CUR_18V_SHIFT)
 
 /*
- * MAX_CUR_30V (R)
+ * MAX_CUR_30V (RO)
  *
  * Maximum Current for 3.0V
  * This bit specifies the Maximum Current for 3.0V VDD1 power supply for the card.
@@ -2825,7 +2844,7 @@ typedef struct {
 #define SDXC_CURR_CAPABILITIES1_MAX_CUR_30V_GET(x) (((uint32_t)(x) & SDXC_CURR_CAPABILITIES1_MAX_CUR_30V_MASK) >> SDXC_CURR_CAPABILITIES1_MAX_CUR_30V_SHIFT)
 
 /*
- * MAX_CUR_33V (R)
+ * MAX_CUR_33V (RO)
  *
  * Maximum Current for 3.3V
  * This bit specifies the Maximum Current for 3.3V VDD1 power supply for the card.
@@ -2842,7 +2861,7 @@ typedef struct {
 
 /* Bitfield definition for register: CURR_CAPABILITIES2 */
 /*
- * MAX_CUR_VDD2_18V (R)
+ * MAX_CUR_VDD2_18V (RO)
  *
  * Maximum Current for 1.8V VDD2
  * This bit specifies the Maximum Current for 1.8V VDD2 power supply for the UHS-II card.
@@ -2859,7 +2878,7 @@ typedef struct {
 
 /* Bitfield definition for register: FORCE_EVENT */
 /*
- * FORCE_BOOT_ACK_ERR (W)
+ * FORCE_BOOT_ACK_ERR (WO)
  *
  * Force Event for Boot Ack error
  * Values:
@@ -2872,7 +2891,7 @@ typedef struct {
 #define SDXC_FORCE_EVENT_FORCE_BOOT_ACK_ERR_GET(x) (((uint32_t)(x) & SDXC_FORCE_EVENT_FORCE_BOOT_ACK_ERR_MASK) >> SDXC_FORCE_EVENT_FORCE_BOOT_ACK_ERR_SHIFT)
 
 /*
- * FORCE_RESP_ERR (W)
+ * FORCE_RESP_ERR (WO)
  *
  * Force Event for Response Error (SD Mode only)
  * Values:
@@ -2885,7 +2904,7 @@ typedef struct {
 #define SDXC_FORCE_EVENT_FORCE_RESP_ERR_GET(x) (((uint32_t)(x) & SDXC_FORCE_EVENT_FORCE_RESP_ERR_MASK) >> SDXC_FORCE_EVENT_FORCE_RESP_ERR_SHIFT)
 
 /*
- * FORCE_TUNING_ERR (W)
+ * FORCE_TUNING_ERR (WO)
  *
  * Force Event for Tuning Error (UHS-I Mode only)
  * Values:
@@ -2898,7 +2917,7 @@ typedef struct {
 #define SDXC_FORCE_EVENT_FORCE_TUNING_ERR_GET(x) (((uint32_t)(x) & SDXC_FORCE_EVENT_FORCE_TUNING_ERR_MASK) >> SDXC_FORCE_EVENT_FORCE_TUNING_ERR_SHIFT)
 
 /*
- * FORCE_ADMA_ERR (W)
+ * FORCE_ADMA_ERR (WO)
  *
  * Force Event for ADMA Error
  * Values:
@@ -2911,7 +2930,7 @@ typedef struct {
 #define SDXC_FORCE_EVENT_FORCE_ADMA_ERR_GET(x) (((uint32_t)(x) & SDXC_FORCE_EVENT_FORCE_ADMA_ERR_MASK) >> SDXC_FORCE_EVENT_FORCE_ADMA_ERR_SHIFT)
 
 /*
- * FORCE_AUTO_CMD_ERR (W)
+ * FORCE_AUTO_CMD_ERR (WO)
  *
  * Force Event for Auto CMD Error (SD/eMMC Mode only)
  * Values:
@@ -2924,7 +2943,7 @@ typedef struct {
 #define SDXC_FORCE_EVENT_FORCE_AUTO_CMD_ERR_GET(x) (((uint32_t)(x) & SDXC_FORCE_EVENT_FORCE_AUTO_CMD_ERR_MASK) >> SDXC_FORCE_EVENT_FORCE_AUTO_CMD_ERR_SHIFT)
 
 /*
- * FORCE_CUR_LMT_ERR (W)
+ * FORCE_CUR_LMT_ERR (WO)
  *
  * Force Event for Current Limit Error
  * Values:
@@ -2937,7 +2956,7 @@ typedef struct {
 #define SDXC_FORCE_EVENT_FORCE_CUR_LMT_ERR_GET(x) (((uint32_t)(x) & SDXC_FORCE_EVENT_FORCE_CUR_LMT_ERR_MASK) >> SDXC_FORCE_EVENT_FORCE_CUR_LMT_ERR_SHIFT)
 
 /*
- * FORCE_DATA_END_BIT_ERR (W)
+ * FORCE_DATA_END_BIT_ERR (WO)
  *
  * Force Event for Data End Bit Error (SD/eMMC Mode only)
  * Values:
@@ -2950,7 +2969,7 @@ typedef struct {
 #define SDXC_FORCE_EVENT_FORCE_DATA_END_BIT_ERR_GET(x) (((uint32_t)(x) & SDXC_FORCE_EVENT_FORCE_DATA_END_BIT_ERR_MASK) >> SDXC_FORCE_EVENT_FORCE_DATA_END_BIT_ERR_SHIFT)
 
 /*
- * FORCE_DATA_CRC_ERR (W)
+ * FORCE_DATA_CRC_ERR (WO)
  *
  * Force Event for Data CRC Error (SD/eMMC Mode only)
  * Values:
@@ -2963,7 +2982,7 @@ typedef struct {
 #define SDXC_FORCE_EVENT_FORCE_DATA_CRC_ERR_GET(x) (((uint32_t)(x) & SDXC_FORCE_EVENT_FORCE_DATA_CRC_ERR_MASK) >> SDXC_FORCE_EVENT_FORCE_DATA_CRC_ERR_SHIFT)
 
 /*
- * FORCE_DATA_TOUT_ERR (W)
+ * FORCE_DATA_TOUT_ERR (WO)
  *
  * Force Event for Data Timeout Error (SD/eMMC Mode only)
  * Values:
@@ -2976,7 +2995,7 @@ typedef struct {
 #define SDXC_FORCE_EVENT_FORCE_DATA_TOUT_ERR_GET(x) (((uint32_t)(x) & SDXC_FORCE_EVENT_FORCE_DATA_TOUT_ERR_MASK) >> SDXC_FORCE_EVENT_FORCE_DATA_TOUT_ERR_SHIFT)
 
 /*
- * FORCE_CMD_IDX_ERR (W)
+ * FORCE_CMD_IDX_ERR (WO)
  *
  * Force Event for Command Index Error (SD/eMMC Mode only)
  * Values:
@@ -2989,7 +3008,7 @@ typedef struct {
 #define SDXC_FORCE_EVENT_FORCE_CMD_IDX_ERR_GET(x) (((uint32_t)(x) & SDXC_FORCE_EVENT_FORCE_CMD_IDX_ERR_MASK) >> SDXC_FORCE_EVENT_FORCE_CMD_IDX_ERR_SHIFT)
 
 /*
- * FORCE_CMD_END_BIT_ERR (W)
+ * FORCE_CMD_END_BIT_ERR (WO)
  *
  * Force Event for Command End Bit Error (SD/eMMC Mode only)
  * Values:
@@ -3002,7 +3021,7 @@ typedef struct {
 #define SDXC_FORCE_EVENT_FORCE_CMD_END_BIT_ERR_GET(x) (((uint32_t)(x) & SDXC_FORCE_EVENT_FORCE_CMD_END_BIT_ERR_MASK) >> SDXC_FORCE_EVENT_FORCE_CMD_END_BIT_ERR_SHIFT)
 
 /*
- * FORCE_CMD_CRC_ERR (W)
+ * FORCE_CMD_CRC_ERR (WO)
  *
  * Force Event for Command CRC Error (SD/eMMC Mode only)
  * Values:
@@ -3015,7 +3034,7 @@ typedef struct {
 #define SDXC_FORCE_EVENT_FORCE_CMD_CRC_ERR_GET(x) (((uint32_t)(x) & SDXC_FORCE_EVENT_FORCE_CMD_CRC_ERR_MASK) >> SDXC_FORCE_EVENT_FORCE_CMD_CRC_ERR_SHIFT)
 
 /*
- * FORCE_CMD_TOUT_ERR (W)
+ * FORCE_CMD_TOUT_ERR (WO)
  *
  * Force Event for Command Timeout Error (SD/eMMC Mode only)
  * Values:
@@ -3028,7 +3047,7 @@ typedef struct {
 #define SDXC_FORCE_EVENT_FORCE_CMD_TOUT_ERR_GET(x) (((uint32_t)(x) & SDXC_FORCE_EVENT_FORCE_CMD_TOUT_ERR_MASK) >> SDXC_FORCE_EVENT_FORCE_CMD_TOUT_ERR_SHIFT)
 
 /*
- * FORCE_CMD_NOT_ISSUED_AUTO_CMD12 (W)
+ * FORCE_CMD_NOT_ISSUED_AUTO_CMD12 (WO)
  *
  * Force Event for Command Not Issued By Auto CMD12 Error
  * Values:
@@ -3041,7 +3060,7 @@ typedef struct {
 #define SDXC_FORCE_EVENT_FORCE_CMD_NOT_ISSUED_AUTO_CMD12_GET(x) (((uint32_t)(x) & SDXC_FORCE_EVENT_FORCE_CMD_NOT_ISSUED_AUTO_CMD12_MASK) >> SDXC_FORCE_EVENT_FORCE_CMD_NOT_ISSUED_AUTO_CMD12_SHIFT)
 
 /*
- * FORCE_AUTO_CMD_RESP_ERR (W)
+ * FORCE_AUTO_CMD_RESP_ERR (WO)
  *
  * Force Event for Auto CMD Response Error
  * Values:
@@ -3054,7 +3073,7 @@ typedef struct {
 #define SDXC_FORCE_EVENT_FORCE_AUTO_CMD_RESP_ERR_GET(x) (((uint32_t)(x) & SDXC_FORCE_EVENT_FORCE_AUTO_CMD_RESP_ERR_MASK) >> SDXC_FORCE_EVENT_FORCE_AUTO_CMD_RESP_ERR_SHIFT)
 
 /*
- * FORCE_AUTO_CMD_IDX_ERR (W)
+ * FORCE_AUTO_CMD_IDX_ERR (WO)
  *
  * Force Event for Auto CMD Index Error
  * Values:
@@ -3067,7 +3086,7 @@ typedef struct {
 #define SDXC_FORCE_EVENT_FORCE_AUTO_CMD_IDX_ERR_GET(x) (((uint32_t)(x) & SDXC_FORCE_EVENT_FORCE_AUTO_CMD_IDX_ERR_MASK) >> SDXC_FORCE_EVENT_FORCE_AUTO_CMD_IDX_ERR_SHIFT)
 
 /*
- * FORCE_AUTO_CMD_EBIT_ERR (W)
+ * FORCE_AUTO_CMD_EBIT_ERR (WO)
  *
  * Force Event for Auto CMD End Bit Error
  * Values:
@@ -3080,7 +3099,7 @@ typedef struct {
 #define SDXC_FORCE_EVENT_FORCE_AUTO_CMD_EBIT_ERR_GET(x) (((uint32_t)(x) & SDXC_FORCE_EVENT_FORCE_AUTO_CMD_EBIT_ERR_MASK) >> SDXC_FORCE_EVENT_FORCE_AUTO_CMD_EBIT_ERR_SHIFT)
 
 /*
- * FORCE_AUTO_CMD_CRC_ERR (W)
+ * FORCE_AUTO_CMD_CRC_ERR (WO)
  *
  * Force Event for Auto CMD CRC Error
  * Values:
@@ -3093,7 +3112,7 @@ typedef struct {
 #define SDXC_FORCE_EVENT_FORCE_AUTO_CMD_CRC_ERR_GET(x) (((uint32_t)(x) & SDXC_FORCE_EVENT_FORCE_AUTO_CMD_CRC_ERR_MASK) >> SDXC_FORCE_EVENT_FORCE_AUTO_CMD_CRC_ERR_SHIFT)
 
 /*
- * FORCE_AUTO_CMD_TOUT_ERR (W)
+ * FORCE_AUTO_CMD_TOUT_ERR (WO)
  *
  * Force Event for Auto CMD Timeout Error
  * Values:
@@ -3106,7 +3125,7 @@ typedef struct {
 #define SDXC_FORCE_EVENT_FORCE_AUTO_CMD_TOUT_ERR_GET(x) (((uint32_t)(x) & SDXC_FORCE_EVENT_FORCE_AUTO_CMD_TOUT_ERR_MASK) >> SDXC_FORCE_EVENT_FORCE_AUTO_CMD_TOUT_ERR_SHIFT)
 
 /*
- * FORCE_AUTO_CMD12_NOT_EXEC (W)
+ * FORCE_AUTO_CMD12_NOT_EXEC (WO)
  *
  * Force Event for Auto CMD12 Not Executed
  * Values:
@@ -3120,7 +3139,7 @@ typedef struct {
 
 /* Bitfield definition for register: ADMA_ERR_STAT */
 /*
- * ADMA_LEN_ERR (R)
+ * ADMA_LEN_ERR (RO)
  *
  * ADMA Length Mismatch Error States
  * This error occurs in the following instances:
@@ -3135,7 +3154,7 @@ typedef struct {
 #define SDXC_ADMA_ERR_STAT_ADMA_LEN_ERR_GET(x) (((uint32_t)(x) & SDXC_ADMA_ERR_STAT_ADMA_LEN_ERR_MASK) >> SDXC_ADMA_ERR_STAT_ADMA_LEN_ERR_SHIFT)
 
 /*
- * ADMA_ERR_STATES (R)
+ * ADMA_ERR_STATES (RO)
  *
  * ADMA Error States
  * These bits indicate the state of ADMA when an error occurs during ADMA data transfer.
@@ -3166,7 +3185,7 @@ typedef struct {
 
 /* Bitfield definition for register array: PRESET */
 /*
- * CLK_GEN_SEL_VAL (R)
+ * CLK_GEN_SEL_VAL (RO)
  *
  * Clock Generator Select Value
  * This bit is effective when the Host Controller supports a programmable clock generator.
@@ -3179,7 +3198,7 @@ typedef struct {
 #define SDXC_PRESET_CLK_GEN_SEL_VAL_GET(x) (((uint16_t)(x) & SDXC_PRESET_CLK_GEN_SEL_VAL_MASK) >> SDXC_PRESET_CLK_GEN_SEL_VAL_SHIFT)
 
 /*
- * FREQ_SEL_VAL (R)
+ * FREQ_SEL_VAL (RO)
  *
  * SDCLK/RCLK Frequency Select Value
  * 10-bit preset value to be set in SDCLK/RCLK Frequency Select field of the Clock Control register described by a Host System.
@@ -3204,7 +3223,7 @@ typedef struct {
 
 /* Bitfield definition for register: P_EMBEDDED_CNTRL */
 /*
- * REG_OFFSET_ADDR (R)
+ * REG_OFFSET_ADDR (RO)
  *
  * Offset Address of Embedded Control register.
  */
@@ -3214,7 +3233,7 @@ typedef struct {
 
 /* Bitfield definition for register: P_VENDOR_SPECIFIC_AREA */
 /*
- * REG_OFFSET_ADDR (R)
+ * REG_OFFSET_ADDR (RO)
  *
  * Base offset Address for Vendor-Specific registers.
  */
@@ -3224,7 +3243,7 @@ typedef struct {
 
 /* Bitfield definition for register: P_VENDOR2_SPECIFIC_AREA */
 /*
- * REG_OFFSET_ADDR (R)
+ * REG_OFFSET_ADDR (RO)
  *
  * Base offset Address for Command Queuing registers.
  */
@@ -3234,7 +3253,7 @@ typedef struct {
 
 /* Bitfield definition for register: SLOT_INTR_STATUS */
 /*
- * INTR_SLOT (R)
+ * INTR_SLOT (RO)
  *
  * Interrupt signal for each Slot
  * These status bits indicate the logical OR of Interrupt signal and Wakeup signal for each slot.
@@ -3254,7 +3273,7 @@ typedef struct {
 
 /* Bitfield definition for register: CQVER */
 /*
- * EMMC_VER_MAHOR (R)
+ * EMMC_VER_MAHOR (RO)
  *
  * This bit indicates the eMMC major version (1st digit left of decimal point) in BCD format.
  */
@@ -3263,7 +3282,7 @@ typedef struct {
 #define SDXC_CQVER_EMMC_VER_MAHOR_GET(x) (((uint32_t)(x) & SDXC_CQVER_EMMC_VER_MAHOR_MASK) >> SDXC_CQVER_EMMC_VER_MAHOR_SHIFT)
 
 /*
- * EMMC_VER_MINOR (R)
+ * EMMC_VER_MINOR (RO)
  *
  * This bit indicates the eMMC minor version (1st digit right of decimal point) in BCD format.
  */
@@ -3272,7 +3291,7 @@ typedef struct {
 #define SDXC_CQVER_EMMC_VER_MINOR_GET(x) (((uint32_t)(x) & SDXC_CQVER_EMMC_VER_MINOR_MASK) >> SDXC_CQVER_EMMC_VER_MINOR_SHIFT)
 
 /*
- * EMMC_VER_SUFFIX (R)
+ * EMMC_VER_SUFFIX (RO)
  *
  * This bit indicates the eMMC version suffix (2nd digit right of decimal point) in BCD format.
  */
@@ -3282,7 +3301,7 @@ typedef struct {
 
 /* Bitfield definition for register: CQCAP */
 /*
- * CRYPTO_SUPPORT (R)
+ * CRYPTO_SUPPORT (RO)
  *
  * Crypto Support
  * This bit indicates whether the Host Controller supports cryptographic operations.
@@ -3295,7 +3314,7 @@ typedef struct {
 #define SDXC_CQCAP_CRYPTO_SUPPORT_GET(x) (((uint32_t)(x) & SDXC_CQCAP_CRYPTO_SUPPORT_MASK) >> SDXC_CQCAP_CRYPTO_SUPPORT_SHIFT)
 
 /*
- * ITCFMUL (R)
+ * ITCFMUL (RO)
  *
  * Internal Timer Clock Frequency Multiplier (ITCFMUL)
  * This field indicates the frequency of the clock used for interrupt coalescing timer and for determining the SQS
@@ -3312,7 +3331,7 @@ typedef struct {
 #define SDXC_CQCAP_ITCFMUL_GET(x) (((uint32_t)(x) & SDXC_CQCAP_ITCFMUL_MASK) >> SDXC_CQCAP_ITCFMUL_SHIFT)
 
 /*
- * ITCFVAL (R)
+ * ITCFVAL (RO)
  *
  * Internal Timer Clock Frequency Value (ITCFVAL)
  * This field scales the frequency of the timer clock provided by ITCFMUL. The Final clock frequency of actual timer clock is calculated as ITCFVAL* ITCFMUL.
@@ -3575,7 +3594,7 @@ typedef struct {
 #define SDXC_CQIC_INTC_EN_GET(x) (((uint32_t)(x) & SDXC_CQIC_INTC_EN_MASK) >> SDXC_CQIC_INTC_EN_SHIFT)
 
 /*
- * INTC_STAT (R)
+ * INTC_STAT (RO)
  *
  * Interrupt Coalescing Status Bit
  * This bit indicates to the software whether any tasks (with INT=0) have completed and counted towards interrupt
@@ -3589,7 +3608,7 @@ typedef struct {
 #define SDXC_CQIC_INTC_STAT_GET(x) (((uint32_t)(x) & SDXC_CQIC_INTC_STAT_MASK) >> SDXC_CQIC_INTC_STAT_SHIFT)
 
 /*
- * INTC_RST (W)
+ * INTC_RST (WO)
  *
  * Counter and Timer Reset
  * When host driver writes 1, the interrupt coalescing timer and counter are reset.
@@ -3603,7 +3622,7 @@ typedef struct {
 #define SDXC_CQIC_INTC_RST_GET(x) (((uint32_t)(x) & SDXC_CQIC_INTC_RST_MASK) >> SDXC_CQIC_INTC_RST_SHIFT)
 
 /*
- * INTC_TH_WEN (W)
+ * INTC_TH_WEN (WO)
  *
  * Interrupt Coalescing Counter Threshold Write Enable
  * When software writes 1 to this bit, the value INTC_TH is updated with the contents written on the same cycle.
@@ -3617,7 +3636,7 @@ typedef struct {
 #define SDXC_CQIC_INTC_TH_WEN_GET(x) (((uint32_t)(x) & SDXC_CQIC_INTC_TH_WEN_MASK) >> SDXC_CQIC_INTC_TH_WEN_SHIFT)
 
 /*
- * INTC_TH (W)
+ * INTC_TH (WO)
  *
  * Interrupt Coalescing Counter Threshold filed
  * Software uses this field to configure the number of task completions (only tasks with INT=0 in the Task Descriptor), which are required in order to generate an interrupt.
@@ -3637,7 +3656,7 @@ typedef struct {
 #define SDXC_CQIC_INTC_TH_GET(x) (((uint32_t)(x) & SDXC_CQIC_INTC_TH_MASK) >> SDXC_CQIC_INTC_TH_SHIFT)
 
 /*
- * TOUT_VAL_WEN (W)
+ * TOUT_VAL_WEN (WO)
  *
  * When software writes 1 to this bit, the value TOUT_VAL is updated with the contents written on the same cycle.
  * Values:
@@ -3822,7 +3841,7 @@ typedef struct {
 
 /* Bitfield definition for register: CQCRDCT */
 /*
- * DCMD_RESP (R)
+ * DCMD_RESP (RO)
  *
  * This register contains the response of the command generated by the last direct command (DCMD) task that was sent.
  * Contents of this register are valid only after bit 31 of CQTDBR register is cleared by the controller.
@@ -3849,7 +3868,7 @@ typedef struct {
 
 /* Bitfield definition for register: CQTERRI */
 /*
- * TRANS_ERR_TASKID (R)
+ * TRANS_ERR_TASKID (RO)
  *
  * This field captures the ID of the task that was executed and whose data transfer has errors.
  */
@@ -3858,7 +3877,7 @@ typedef struct {
 #define SDXC_CQTERRI_TRANS_ERR_TASKID_GET(x) (((uint32_t)(x) & SDXC_CQTERRI_TRANS_ERR_TASKID_MASK) >> SDXC_CQTERRI_TRANS_ERR_TASKID_SHIFT)
 
 /*
- * TRANS_ERR_CMD_INDX (R)
+ * TRANS_ERR_CMD_INDX (RO)
  *
  * This field captures the index of the command that was executed and whose data transfer has errors.
  */
@@ -3867,7 +3886,7 @@ typedef struct {
 #define SDXC_CQTERRI_TRANS_ERR_CMD_INDX_GET(x) (((uint32_t)(x) & SDXC_CQTERRI_TRANS_ERR_CMD_INDX_MASK) >> SDXC_CQTERRI_TRANS_ERR_CMD_INDX_SHIFT)
 
 /*
- * RESP_ERR_FIELDS_VALID (R)
+ * RESP_ERR_FIELDS_VALID (RO)
  *
  * This bit is updated when an error is detected while a command transaction was in progress.
  * Values:
@@ -3879,7 +3898,7 @@ typedef struct {
 #define SDXC_CQTERRI_RESP_ERR_FIELDS_VALID_GET(x) (((uint32_t)(x) & SDXC_CQTERRI_RESP_ERR_FIELDS_VALID_MASK) >> SDXC_CQTERRI_RESP_ERR_FIELDS_VALID_SHIFT)
 
 /*
- * RESP_ERR_TASKID (R)
+ * RESP_ERR_TASKID (RO)
  *
  * This field captures the ID of the task which was executed on the command line when the error occurred.
  */
@@ -3888,7 +3907,7 @@ typedef struct {
 #define SDXC_CQTERRI_RESP_ERR_TASKID_GET(x) (((uint32_t)(x) & SDXC_CQTERRI_RESP_ERR_TASKID_MASK) >> SDXC_CQTERRI_RESP_ERR_TASKID_SHIFT)
 
 /*
- * RESP_ERR_CMD_INDX (R)
+ * RESP_ERR_CMD_INDX (RO)
  *
  * This field captures the index of the command that was executed on the command line when the error occurred
  */
@@ -3898,7 +3917,7 @@ typedef struct {
 
 /* Bitfield definition for register: CQCRI */
 /*
- * CMD_RESP_INDX (R)
+ * CMD_RESP_INDX (RO)
  *
  * Last Command Response index
  * This field stores the index of the last received command response. Controller updates the value every time a command response is received
@@ -3909,7 +3928,7 @@ typedef struct {
 
 /* Bitfield definition for register: CQCRA */
 /*
- * CMD_RESP_ARG (R)
+ * CMD_RESP_ARG (RO)
  *
  * Last Command Response argument
  * This field stores the argument of the last received command response. Controller updates the value every time a command response is received.
@@ -3920,7 +3939,7 @@ typedef struct {
 
 /* Bitfield definition for register: MSHC_VER_ID */
 /*
- * VER_ID (R)
+ * VER_ID (RO)
  *
  */
 #define SDXC_MSHC_VER_ID_VER_ID_MASK (0xFFFFFFFFUL)
@@ -3929,7 +3948,7 @@ typedef struct {
 
 /* Bitfield definition for register: MSHC_VER_TYPE */
 /*
- * VER_TYPE (R)
+ * VER_TYPE (RO)
  *
  */
 #define SDXC_MSHC_VER_TYPE_VER_TYPE_MASK (0xFFFFFFFFUL)
@@ -4005,7 +4024,7 @@ typedef struct {
 #define SDXC_EMMC_BOOT_CTRL_BOOT_ACK_ENABLE_GET(x) (((uint32_t)(x) & SDXC_EMMC_BOOT_CTRL_BOOT_ACK_ENABLE_MASK) >> SDXC_EMMC_BOOT_CTRL_BOOT_ACK_ENABLE_SHIFT)
 
 /*
- * VALIDATE_BOOT (W)
+ * VALIDATE_BOOT (WO)
  *
  * Validate Mandatory Boot Enable bit
  * This bit is used to validate the MAN_BOOT_EN bit.
@@ -4288,7 +4307,7 @@ typedef struct {
 
 /* Bitfield definition for register: AUTO_TUNING_STAT */
 /*
- * L_EDGE_PH_CODE (R)
+ * L_EDGE_PH_CODE (RO)
  *
  * Left Edge Phase code. Reading this field returns the phase code value used by Auto-tuning engine to sample data on Left edge of sampling window.
  */
@@ -4297,7 +4316,7 @@ typedef struct {
 #define SDXC_AUTO_TUNING_STAT_L_EDGE_PH_CODE_GET(x) (((uint32_t)(x) & SDXC_AUTO_TUNING_STAT_L_EDGE_PH_CODE_MASK) >> SDXC_AUTO_TUNING_STAT_L_EDGE_PH_CODE_SHIFT)
 
 /*
- * R_EDGE_PH_CODE (R)
+ * R_EDGE_PH_CODE (RO)
  *
  * Right Edge Phase code. Reading this field returns the phase code value used by Auto-tuning engine to sample data on Right edge of sampling window.
  */
@@ -4317,17 +4336,10 @@ typedef struct {
 
 /* Bitfield definition for register: MISC_CTRL0 */
 /*
- * IRQ_EN (RW)
- *
- */
-#define SDXC_MISC_CTRL0_IRQ_EN_MASK (0xC0000000UL)
-#define SDXC_MISC_CTRL0_IRQ_EN_SHIFT (30U)
-#define SDXC_MISC_CTRL0_IRQ_EN_SET(x) (((uint32_t)(x) << SDXC_MISC_CTRL0_IRQ_EN_SHIFT) & SDXC_MISC_CTRL0_IRQ_EN_MASK)
-#define SDXC_MISC_CTRL0_IRQ_EN_GET(x) (((uint32_t)(x) & SDXC_MISC_CTRL0_IRQ_EN_MASK) >> SDXC_MISC_CTRL0_IRQ_EN_SHIFT)
-
-/*
  * CARDCLK_INV_EN (RW)
  *
+ * set to invert card_clk, for slow speed card to meet 5ns setup timing.
+ * May cause glitch on clock, should be set before enable clk(in core cfg)
  */
 #define SDXC_MISC_CTRL0_CARDCLK_INV_EN_MASK (0x10000000UL)
 #define SDXC_MISC_CTRL0_CARDCLK_INV_EN_SHIFT (28U)
@@ -4337,6 +4349,8 @@ typedef struct {
 /*
  * PAD_CLK_SEL_B (RW)
  *
+ * set to use internal clock directly, may have timing issue;
+ * clr to use clock loopback from pad.
  */
 #define SDXC_MISC_CTRL0_PAD_CLK_SEL_B_MASK (0x20000UL)
 #define SDXC_MISC_CTRL0_PAD_CLK_SEL_B_SHIFT (17U)
@@ -4344,17 +4358,10 @@ typedef struct {
 #define SDXC_MISC_CTRL0_PAD_CLK_SEL_B_GET(x) (((uint32_t)(x) & SDXC_MISC_CTRL0_PAD_CLK_SEL_B_MASK) >> SDXC_MISC_CTRL0_PAD_CLK_SEL_B_SHIFT)
 
 /*
- * CARDCLK_EN_SW (RW)
- *
- */
-#define SDXC_MISC_CTRL0_CARDCLK_EN_SW_MASK (0x1000U)
-#define SDXC_MISC_CTRL0_CARDCLK_EN_SW_SHIFT (12U)
-#define SDXC_MISC_CTRL0_CARDCLK_EN_SW_SET(x) (((uint32_t)(x) << SDXC_MISC_CTRL0_CARDCLK_EN_SW_SHIFT) & SDXC_MISC_CTRL0_CARDCLK_EN_SW_MASK)
-#define SDXC_MISC_CTRL0_CARDCLK_EN_SW_GET(x) (((uint32_t)(x) & SDXC_MISC_CTRL0_CARDCLK_EN_SW_MASK) >> SDXC_MISC_CTRL0_CARDCLK_EN_SW_SHIFT)
-
-/*
  * FREQ_SEL_SW_EN (RW)
  *
+ * set to use FREQ_SEL_SW as card clock divider;
+ * clear to use core logic as clock divider.
  */
 #define SDXC_MISC_CTRL0_FREQ_SEL_SW_EN_MASK (0x800U)
 #define SDXC_MISC_CTRL0_FREQ_SEL_SW_EN_SHIFT (11U)
@@ -4364,6 +4371,8 @@ typedef struct {
 /*
  * TMCLK_EN (RW)
  *
+ * set to force enable tmclk;
+ * clear to  use core signal intclk_en to control it
  */
 #define SDXC_MISC_CTRL0_TMCLK_EN_MASK (0x400U)
 #define SDXC_MISC_CTRL0_TMCLK_EN_SHIFT (10U)
@@ -4373,6 +4382,7 @@ typedef struct {
 /*
  * FREQ_SEL_SW (RW)
  *
+ * software card clock divider, it will be used only when FREQ_SEL_SW_EN is set
  */
 #define SDXC_MISC_CTRL0_FREQ_SEL_SW_MASK (0x3FFU)
 #define SDXC_MISC_CTRL0_FREQ_SEL_SW_SHIFT (0U)
@@ -4383,6 +4393,9 @@ typedef struct {
 /*
  * CARD_ACTIVE (RW)
  *
+ * SW write 1 to start card clock delay counter(delay time is configed by CARD_ACTIVE_PERIOD_SEL).
+ * When counter finished, this bit will be cleared by hardware.
+ * Write 1 when this bit is 1 will cause unknown result(actually no use except write at exact finish time)
  */
 #define SDXC_MISC_CTRL1_CARD_ACTIVE_MASK (0x80000000UL)
 #define SDXC_MISC_CTRL1_CARD_ACTIVE_SHIFT (31U)
@@ -4392,11 +4405,33 @@ typedef struct {
 /*
  * CARD_ACTIVE_PERIOD_SEL (RW)
  *
+ * card clock delay config.
+ * 00 for 100 cycle; 01 for 74 cycle; 10 for 128 cycle; 11 for 256 cycle
  */
 #define SDXC_MISC_CTRL1_CARD_ACTIVE_PERIOD_SEL_MASK (0x30000000UL)
 #define SDXC_MISC_CTRL1_CARD_ACTIVE_PERIOD_SEL_SHIFT (28U)
 #define SDXC_MISC_CTRL1_CARD_ACTIVE_PERIOD_SEL_SET(x) (((uint32_t)(x) << SDXC_MISC_CTRL1_CARD_ACTIVE_PERIOD_SEL_SHIFT) & SDXC_MISC_CTRL1_CARD_ACTIVE_PERIOD_SEL_MASK)
 #define SDXC_MISC_CTRL1_CARD_ACTIVE_PERIOD_SEL_GET(x) (((uint32_t)(x) & SDXC_MISC_CTRL1_CARD_ACTIVE_PERIOD_SEL_MASK) >> SDXC_MISC_CTRL1_CARD_ACTIVE_PERIOD_SEL_SHIFT)
+
+/*
+ * CARDCLK_DLYSEL (RW)
+ *
+ * for card clock DLL, default 0
+ */
+#define SDXC_MISC_CTRL1_CARDCLK_DLYSEL_MASK (0x3F00000UL)
+#define SDXC_MISC_CTRL1_CARDCLK_DLYSEL_SHIFT (20U)
+#define SDXC_MISC_CTRL1_CARDCLK_DLYSEL_SET(x) (((uint32_t)(x) << SDXC_MISC_CTRL1_CARDCLK_DLYSEL_SHIFT) & SDXC_MISC_CTRL1_CARDCLK_DLYSEL_MASK)
+#define SDXC_MISC_CTRL1_CARDCLK_DLYSEL_GET(x) (((uint32_t)(x) & SDXC_MISC_CTRL1_CARDCLK_DLYSEL_MASK) >> SDXC_MISC_CTRL1_CARDCLK_DLYSEL_SHIFT)
+
+/*
+ * STROBE_DLYSEL (RW)
+ *
+ * for strobe DLL, default 7taps(1ns)
+ */
+#define SDXC_MISC_CTRL1_STROBE_DLYSEL_MASK (0x3F000UL)
+#define SDXC_MISC_CTRL1_STROBE_DLYSEL_SHIFT (12U)
+#define SDXC_MISC_CTRL1_STROBE_DLYSEL_SET(x) (((uint32_t)(x) << SDXC_MISC_CTRL1_STROBE_DLYSEL_SHIFT) & SDXC_MISC_CTRL1_STROBE_DLYSEL_MASK)
+#define SDXC_MISC_CTRL1_STROBE_DLYSEL_GET(x) (((uint32_t)(x) & SDXC_MISC_CTRL1_STROBE_DLYSEL_MASK) >> SDXC_MISC_CTRL1_STROBE_DLYSEL_SHIFT)
 
 
 

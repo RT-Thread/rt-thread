@@ -125,7 +125,7 @@ static void mq_send_entry(void *param)
 static void mq_recv_case(rt_mq_t testmq)
 {
     rt_uint32_t recv_buf[MAX_MSGS+1] = {0};
-    rt_err_t ret = RT_EOK;
+    rt_ssize_t ret = RT_EOK;
 
     for (int var = 0; var < MAX_MSGS + 1; ++var)
     {

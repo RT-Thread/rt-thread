@@ -61,8 +61,11 @@ static int eventfd_close(struct dfs_file *file)
 {
     struct eventfd_ctx *ctx = file->vnode->data;
 
-    rt_mutex_detach(&ctx->lock);
-    rt_free(ctx);
+    if (file->vnode->ref_count == 1)
+    {
+        rt_mutex_detach(&ctx->lock);
+        rt_free(ctx);
+    }
 
     return 0;
 }
@@ -219,7 +222,7 @@ static int rt_eventfd_create(struct dfs_file *df, unsigned int count, int flags)
         df->vnode = (struct dfs_vnode *)rt_malloc(sizeof(struct dfs_vnode));
         if (df->vnode)
         {
-            dfs_vnode_init(df->vnode, FT_REGULAR, &eventfd_fops);
+            dfs_vnode_init(df->vnode, FT_NONLOCK, &eventfd_fops);
             df->vnode->data = ctx;
             df->flags = flags;
         }

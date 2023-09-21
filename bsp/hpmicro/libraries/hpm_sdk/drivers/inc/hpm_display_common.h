@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 hpmicro
+ * Copyright (c) 2021 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -50,6 +50,8 @@ typedef enum display_pixel_format {
     display_pixel_format_gbr422,
     display_pixel_format_yuv422,
     display_pixel_format_ycbcr422,
+    display_pixel_format_y8,
+    display_pixel_format_raw8,
 } display_pixel_format_t;
 
 /**
@@ -160,17 +162,21 @@ extern "C" {
 static inline
     uint8_t display_get_pixel_size_in_bit(display_pixel_format_t format)
 {
-    switch(format) {
-        case display_pixel_format_argb8888:
-            return 32;
-        case display_pixel_format_rgb565:
-            return 16;
-        case display_pixel_format_yuv422:
-            return 16;
-        case display_pixel_format_ycbcr422:
-            return 16;
-        default:
-            return 0;
+    switch (format) {
+    case display_pixel_format_argb8888:
+        return 32;
+    case display_pixel_format_rgb565:
+        return 16;
+    case display_pixel_format_yuv422:
+        return 16;
+    case display_pixel_format_ycbcr422:
+        return 16;
+    case display_pixel_format_y8:
+        return 8;
+    case display_pixel_format_raw8:
+        return 8;
+    default:
+        return 0;
     }
 }
 
@@ -183,13 +189,13 @@ static inline
  */
 static inline bool display_pixel_format_is_yuv_format(display_pixel_format_t format)
 {
-    switch(format) {
-        case display_pixel_format_yuv422:
-            return true;
-        case display_pixel_format_ycbcr422:
-            return true;
-        default:
-            return false;
+    switch (format) {
+    case display_pixel_format_yuv422:
+        return true;
+    case display_pixel_format_ycbcr422:
+        return true;
+    default:
+        return false;
     }
 }
 

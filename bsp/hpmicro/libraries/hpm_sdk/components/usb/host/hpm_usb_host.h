@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 hpmicro
+ * Copyright (c) 2021 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -8,47 +8,60 @@
 #ifndef HPM_USB_HOST_H
 #define HPM_USB_HOST_H
 
-/*---------------------------------------------------------------------*
+/*---------------------------------------------------------------------
  * Includes
- *---------------------------------------------------------------------*/
+ *---------------------------------------------------------------------
+ */
 #include "hpm_usb_drv.h"
 #include "hpm_common.h"
 #include "hpm_soc_feature.h"
 
-/*---------------------------------------------------------------------*
+/*---------------------------------------------------------------------
  * Macros
- *---------------------------------------------------------------------*/
-#define USB_HOST_BIN8(x)          ((uint8_t)  (0b##x))
-#define USB_BIN16(b1, b2)         ((uint16_t) (0b##b1##b2))
-#define USB_BIN32(b1, b2, b3, b4) ((uint32_t) (0b##b1##b2##b3##b4))
+ *---------------------------------------------------------------------
+ */
 
-#define USB_HCD_PERIODIC_ARR_COUNT      (4U)
-#define USB_HCD_MAX_CONNECTED_DEVICES   (5U)
-#define USB_SETUP_PACKET_LEN            (8U)
-/*---------------------------------------------------------------------*
+
+#ifndef USB_HCD_PERIODIC_ARR_COUNT
+#define USB_HCD_PERIODIC_ARR_COUNT     (4U)
+#endif
+
+#ifndef USB_HCD_MAX_CONNECTED_DEVICES
+#define USB_HCD_MAX_CONNECTED_DEVICES  (5U)
+#endif
+
+#ifndef USB_HCD_MAX_QHD_COUNT
+#define USB_HCD_MAX_QHD_COUNT          (USB_HCD_MAX_CONNECTED_DEVICES * 16U * 2U)
+#endif
+
+#ifndef USB_HCD_MAX_QTD_COUNT
+#define USB_HCD_MAX_QTD_COUNT          (USB_HCD_MAX_QHD_COUNT * 2U)
+#endif
+/*---------------------------------------------------------------------
  * Enum Declarations
- *---------------------------------------------------------------------*/
+ *---------------------------------------------------------------------
+ */
 typedef enum {
     usb_max_itd  = 4,
     usb_max_sitd = 16
 } usb_max_xtd_t;
 
 typedef enum {
-    usb_qtype_itd = 0 ,
+    usb_qtype_itd = 0,
     usb_qtype_qhd,
     usb_qtype_sitd,
     usb_qtype_fstn
 } usb_qtype_t;
 
 typedef enum {
-    usb_pid_out = 0 ,
-    usb_pid_in      ,
+    usb_pid_out = 0,
+    usb_pid_in,
     usb_pid_setup
 } usb_pid_t;
 
 typedef enum {
     usb_speed_full = 0,
-    usb_speed_low     ,
+    usb_speed_low,
     usb_speed_high,
     usb_speed_invalid = 0xff,
 } usb_speed_t;
@@ -86,8 +99,7 @@ typedef union {
 
 /* Queue Element Transfer Descriptor */
 /* Qtd is used to declare overlay in hcd_qhd_t */
-typedef struct
-{
+typedef struct {
     /* Word 0: Next QTD Pointer */
     volatile hcd_link_t next;
 
@@ -123,8 +135,7 @@ typedef struct
 } hcd_qtd_t;
 
 /* Queue Head */
-typedef struct
-{
+typedef struct {
     /* Word 0: Next QHD */
     hcd_link_t next;
 
@@ -155,7 +166,8 @@ typedef struct
     /*--------------------------------------------------------------------
      * Due to the fact QHD is 32 bytes aligned but occupies only 48 bytes
      * thus there are 16 bytes padding free that we can make use of.
-     *--------------------------------------------------------------------*/
+     *--------------------------------------------------------------------
+     */
     uint8_t used;
     uint8_t removing;    /* removed from async list, waiting for async advance */
     uint8_t pid;
@@ -168,8 +180,7 @@ typedef struct
     hcd_qtd_t * volatile p_qtd_list_tail;	/* tail of the scheduled TD list */
 } hcd_qhd_t;
 
-typedef struct
-{
+typedef struct {
     hcd_link_t period_framelist[USB_HOST_FRAMELIST_SIZE];
 
     /* for ECHI, only implement 1 ms & 2 ms & 4 ms, 8 ms (framelist)
@@ -183,8 +194,8 @@ typedef struct
         hcd_qtd_t qtd;
     } control[USB_HCD_MAX_CONNECTED_DEVICES + 1];
 
-    hcd_qhd_t qhd_pool[USB_SOC_HCD_MAX_ENDPOINT_COUNT];
-    hcd_qtd_t qtd_pool[USB_SOC_HCD_MAX_XFER_ENDPOINT_COUNT];
+    hcd_qhd_t qhd_pool[USB_HCD_MAX_QHD_COUNT];
+    hcd_qtd_t qtd_pool[USB_HCD_MAX_QTD_COUNT];
 
     uint32_t uframe_number;
 } hcd_data_t;
@@ -202,9 +213,9 @@ typedef struct {
 /* USB Endpoint Descriptor */
 typedef struct __attribute__ ((packed))
 {
-    uint8_t  bLength          ;
-    uint8_t  bDescriptorType  ;
-    uint8_t  bEndpointAddress ;
+    uint8_t  bLength;
+    uint8_t  bDescriptorType;
+    uint8_t  bEndpointAddress;
 
     struct __attribute__ ((packed)) {
         uint8_t xfer  : 2;
@@ -244,19 +255,19 @@ static inline uint8_t usb_edpt_addr(uint8_t num, uint8_t dir)
     return (uint8_t)(num | (dir ? usb_dir_in_mask : 0));
 }
 
-static inline uint32_t usb_host_align16 (uint32_t value) { return (value & 0xFFFFFFF0UL); }
-static inline uint32_t usb_host_align32 (uint32_t value) { return (value & 0xFFFFFFE0UL); }
-static inline uint32_t usb_host_align4k (uint32_t value) { return (value & 0xFFFFF000UL); }
+static inline uint32_t usb_host_align16(uint32_t value) { return (value & 0xFFFFFFF0UL); }
+static inline uint32_t usb_host_align32(uint32_t value) { return (value & 0xFFFFFFE0UL); }
+static inline uint32_t usb_host_align4k(uint32_t value) { return (value & 0xFFFFF000UL); }
 static inline uint32_t usb_host_offset4k(uint32_t value) { return (value & 0xFFFUL); }
 
-bool usb_host_qhd_has_xact_error (hcd_qhd_t * p_qhd);
-bool usb_host_qhd_has_xact_error(hcd_qhd_t * p_qhd);
+bool usb_host_qhd_has_xact_error(hcd_qhd_t *p_qhd);
+bool usb_host_qhd_has_xact_error(hcd_qhd_t *p_qhd);
 void usb_host_qtd_remove_1st_from_qhd(hcd_qhd_t *p_qhd);
-hcd_link_t* usb_host_list_next(hcd_link_t *p_link_pointer);
-hcd_link_t* usb_host_get_period_head(usb_host_handle_t *handle, uint8_t interval_ms);
-hcd_qhd_t* usb_host_qhd_async_head(usb_host_handle_t *handle);
-hcd_qhd_t* usb_host_qhd_next(hcd_qhd_t const * p_qhd);
-hcd_qtd_t* usb_host_qtd_control(usb_host_handle_t *handle, uint8_t dev_addr);
+hcd_link_t *usb_host_list_next(hcd_link_t *p_link_pointer);
+hcd_link_t *usb_host_get_period_head(usb_host_handle_t *handle, uint8_t interval_ms);
+hcd_qhd_t *usb_host_qhd_async_head(usb_host_handle_t *handle);
+hcd_qhd_t *usb_host_qhd_next(hcd_qhd_t const *p_qhd);
+hcd_qtd_t *usb_host_qtd_control(usb_host_handle_t *handle, uint8_t dev_addr);
 uint32_t usb_host_uframe_number(usb_host_handle_t *handle);
 uint32_t usb_host_status_flags(usb_host_handle_t *handle);
 uint32_t usb_host_interrupts(usb_host_handle_t *handle);
@@ -267,9 +278,9 @@ bool usb_host_init(usb_host_handle_t *handle, uint32_t int_mask, uint16_t framel
 bool usb_host_get_port_ccs(usb_host_handle_t *handle);
 bool usb_host_port_csc(usb_host_handle_t *handle);
 void usb_host_device_close(usb_host_handle_t *handle, uint8_t dev_addr);
-bool usb_host_edpt_xfer(usb_host_handle_t *handle, uint8_t dev_addr, uint8_t ep_addr, uint8_t * buffer, uint16_t buflen);
+bool usb_host_edpt_xfer(usb_host_handle_t *handle, uint8_t dev_addr, uint8_t ep_addr, uint8_t *buffer, uint16_t buflen);
 bool usb_host_setup_send(usb_host_handle_t *handle, uint8_t dev_addr,  const uint8_t *setup_packet);
-bool usb_host_edpt_open(usb_host_handle_t *handle, uint8_t dev_addr, usb_desc_endpoint_t const * ep_desc);
+bool usb_host_edpt_open(usb_host_handle_t *handle, uint8_t dev_addr, usb_desc_endpoint_t const *ep_desc);
 bool usb_host_pipe_queue_xfer(usb_host_handle_t *handle, uint8_t dev_addr, uint8_t ep_addr, uint8_t buffer[], uint16_t total_bytes);
 bool usb_host_pipe_xfer(usb_host_handle_t *handle, uint8_t dev_addr, uint8_t ep_addr, uint8_t buffer[], uint16_t total_bytes, bool int_on_complete);
 bool usb_host_edpt_busy(usb_host_handle_t *handle, uint8_t dev_addr, uint8_t ep_addr);

@@ -1010,7 +1010,6 @@ rt_err_t rt_thread_suspend_with_flag(rt_thread_t thread, int suspend_flag)
     {
         /* not to suspend */
         rt_hw_interrupt_enable(level);
-        rt_kprintf("-RT_EINTR\r\n");
         return -RT_EINTR;
     }
 #endif

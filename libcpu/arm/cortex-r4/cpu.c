@@ -16,25 +16,6 @@
  */
 /*@{*/
 
-/**
- * this function will reset CPU
- *
- */
-rt_weak void rt_hw_cpu_reset()
-{
-}
-
-/**
- * this function will shutdown CPU
- *
- */
-rt_weak void rt_hw_cpu_shutdown()
-{
-    rt_kprintf("shutdown...\n");
-
-    while (1);
-}
-
 #ifdef __TI_COMPILER_VERSION__
 #ifdef RT_USING_CPU_FFS
 int __rt_ffs(int value)

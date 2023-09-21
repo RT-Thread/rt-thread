@@ -50,6 +50,9 @@ extern "C" {
 #define CONFIG_TARGET_D2000
 #elif defined(TARGET_F2000_4)
 #define CONFIG_TARGET_F2000_4
+#elif defined(TARGET_PHYTIUMPI)
+#define CONFIG_TARGET_E2000
+#define CONFIG_TARGET_PHYTIUMPI
 #endif
 
 #if defined(LOG_VERBOS)

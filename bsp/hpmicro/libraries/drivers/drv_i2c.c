@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 hpmicro
+ * Copyright (c) 2022 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -41,16 +41,16 @@ static struct hpm_i2c hpm_i2cs[] =
 #endif
 #if defined(BSP_USING_I2C2)
     {
-        .base = HPM_I2C1,
-        .bus_name = "i2c1",
-        .clk_name = clock_i2c1,
+        .base = HPM_I2C2,
+        .bus_name = "i2c2",
+        .clk_name = clock_i2c2,
     },
 #endif
 #if defined(BSP_USING_I2C3)
     {
-        .base = HPM_I2C1,
-        .bus_name = "i2c1",
-        .clk_name = clock_i2c1,
+        .base = HPM_I2C3,
+        .bus_name = "i2c3",
+        .clk_name = clock_i2c3,
     },
 #endif
 };
@@ -74,7 +74,7 @@ static rt_ssize_t hpm_i2c_master_transfer(struct rt_i2c_bus_device *bus, struct 
     struct hpm_i2c *i2c_info = (struct hpm_i2c *)bus;
 
     hpm_stat_t i2c_stat = status_success;
-    rt_err_t ret = -RT_ERROR;
+    rt_size_t ret = 0;
     rt_uint32_t i;
 
     for (i = 0; i < num; i++)

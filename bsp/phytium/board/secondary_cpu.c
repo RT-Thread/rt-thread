@@ -43,7 +43,7 @@ rt_uint64_t rt_cpu_mpidr_early[] =
 #if defined(TARGET_E2000D)
     [0] = 0x80000200,
     [1] = 0x80000201,
-#elif defined(TARGET_E2000Q)
+#elif defined(TARGET_E2000Q) || defined(TARGET_PHYTIUMPI)
     [0] = 0x80000000,
     [1] = 0x80000100,
     [2] = 0x80000200,

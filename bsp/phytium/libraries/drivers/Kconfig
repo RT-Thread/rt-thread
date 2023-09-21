@@ -105,7 +105,13 @@ menu "On-chip Peripheral Drivers"
 
                     config USING_EMMC
                         bool "Use EMMC"
-                endchoice  
+                endchoice 
+
+                config SDCARD_OFFSET
+                    hex "Block Offset"
+                    default 0x0 
+                    help 
+                        Skip access start paration of SD Card to protect BIOS
         endif
 endmenu
 

@@ -106,6 +106,11 @@ static void lwp_pid_put(pid_t pid)
     rt_base_t level;
     struct lwp_avl_struct *p;
 
+    if (pid == 0)
+    {
+        return;
+    }
+
     level = rt_hw_interrupt_disable();
     p  = lwp_avl_find(pid, lwp_pid_root);
     if (p)
@@ -464,13 +469,18 @@ void lwp_free(struct rt_lwp* lwp)
         if (lwp->tty != RT_NULL)
         {
             rt_mutex_take(&lwp->tty->lock, RT_WAITING_FOREVER);
-            old_lwp = tty_pop(&lwp->tty->head, RT_NULL);
-            rt_mutex_release(&lwp->tty->lock);
             if (lwp->tty->foreground == lwp)
             {
+                old_lwp = tty_pop(&lwp->tty->head, RT_NULL);
                 lwp->tty->foreground = old_lwp;
-                lwp->tty = RT_NULL;
             }
+            else
+            {
+                tty_pop(&lwp->tty->head, lwp);
+            }
+            rt_mutex_release(&lwp->tty->lock);
+
+            lwp->tty = RT_NULL;
         }
     }
     else
@@ -638,21 +648,33 @@ pid_t waitpid(pid_t pid, int *status, int options)
     rt_base_t level;
     struct rt_thread *thread;
     struct rt_lwp *lwp;
-    struct rt_lwp *lwp_self;
+    struct rt_lwp *this_lwp;
+
+    this_lwp = lwp_self();
+    if (!this_lwp)
+    {
+        goto quit;
+    }
 
     level = rt_hw_interrupt_disable();
-    lwp = lwp_from_pid(pid);
-    if (!lwp)
+    if (pid == -1)
     {
-        goto quit;
+        lwp = this_lwp->first_child;
+        if (!lwp)
+            goto quit;
+        else
+            pid = lwp->pid;
+    }
+    else
+    {
+        lwp = lwp_from_pid(pid);
+        if (!lwp)
+        {
+            goto quit;
+        }
     }
 
-    lwp_self = (struct rt_lwp *)rt_thread_self()->lwp;
-    if (!lwp_self)
-    {
-        goto quit;
-    }
-    if (lwp->parent != lwp_self)
+    if (lwp->parent != this_lwp)
     {
         goto quit;
     }
@@ -683,7 +705,7 @@ pid_t waitpid(pid_t pid, int *status, int options)
         struct rt_lwp **lwp_node;
 
         *status = lwp->lwp_ret;
-        lwp_node = &lwp_self->first_child;
+        lwp_node = &this_lwp->first_child;
         while (*lwp_node != lwp)
         {
             RT_ASSERT(*lwp_node != RT_NULL);

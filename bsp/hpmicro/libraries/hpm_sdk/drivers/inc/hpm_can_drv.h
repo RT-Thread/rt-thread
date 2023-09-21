@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 - 2022 hpmicro
+ * Copyright (c) 2021-2023 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -10,7 +10,7 @@
 
 #include "hpm_common.h"
 #include "hpm_can_regs.h"
-
+#include "hpm_soc_feature.h"
 
 /**
  * @brief CAN driver APIs
@@ -103,7 +103,7 @@ typedef enum _can_mode {
     can_mode_loopback_internal,   /**< Internal loopback mode */
     can_mode_loopback_external,   /**< External loopback mode */
     can_mode_listen_only,         /**< CAN listen mode */
-} can_mode_t;
+} can_node_mode_t;
 
 /**
  * @brief CAN bit timing options
@@ -239,7 +239,7 @@ typedef struct {
         };
     };
 
-    can_mode_t mode;                            /**< CAN work mode */
+    can_node_mode_t mode;                            /**< CAN work mode */
     bool use_lowlevel_timing_setting;           /**< Use low-level timing setting */
     bool enable_canfd;                          /**< Enable CAN FD */
     bool enable_self_ack;                       /**< CAN self-ack flag */
@@ -257,7 +257,7 @@ typedef struct {
 } can_config_t;
 
 
-#ifdef __cpluspuls
+#ifdef __cplusplus
 extern "C" {
 #endif
 
@@ -289,7 +289,7 @@ static inline void can_reset(CAN_Type *base, bool enable)
  *  @arg can_mode_loopback_external external loopback mode
  *  @arg can_mode_listen_only CAN listen-only mode
  */
-static inline void can_set_mode(CAN_Type *base, can_mode_t mode)
+static inline void can_set_node_mode(CAN_Type *base, can_node_mode_t mode)
 {
     uint32_t cfg_stat = base->CMD_STA_CMD_CTRL & ~(CAN_CMD_STA_CMD_CTRL_LBME_MASK | CAN_CMD_STA_CMD_CTRL_LBMI_MASK | CAN_CMD_STA_CMD_CTRL_LOM_MASK);
     if (mode == can_mode_loopback_internal) {
@@ -678,7 +678,11 @@ static inline uint8_t can_get_last_arbitration_lost_position(CAN_Type *base)
  */
 static inline void can_set_transmitter_delay_compensation(CAN_Type *base, uint8_t sample_point, bool enable)
 {
+#if defined(CAN_SOC_CANFD_TDC_REQUIRE_STUFF_EXCEPTION_WORKAROUND) && (CAN_SOC_CANFD_TDC_REQUIRE_STUFF_EXCEPTION_WORKAROUND == 1)
+    base->TDC = CAN_TDC_TDCEN_SET((uint8_t) enable);
+#else
     base->TDC = CAN_TDC_SSPOFF_SET(sample_point) | CAN_TDC_TDCEN_SET((uint8_t) enable);
+#endif
 }
 
 /**
@@ -874,7 +878,7 @@ hpm_stat_t can_read_received_message(CAN_Type *base, can_receive_buf_t *message)
  */
 
 
-#ifdef __cpluspuls
+#ifdef __cplusplus
 }
 #endif
 

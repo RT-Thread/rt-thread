@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021 hpmicro
+ * Copyright (c) 2021 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -111,7 +111,7 @@ typedef enum {
     sysctl_resource_clk_top_axi1 = 69,
     sysctl_resource_clk_top_axi2 = 70,
     sysctl_resource_clk_top_ahb0 = 71,
-    sysctl_resource_clk_top_dram = 72,
+    sysctl_resource_clk_top_femc = 72,
     sysctl_resource_clk_top_xpi0 = 73,
     sysctl_resource_clk_top_xpi1 = 74,
     sysctl_resource_clk_top_gptmr0 = 75,
@@ -184,7 +184,7 @@ typedef enum {
     sysctl_resource_axis = 257,
     sysctl_resource_axic = 258,
     sysctl_resource_axiv = 259,
-    sysctl_resource_dram = 260,
+    sysctl_resource_femc = 260,
     sysctl_resource_rom0 = 261,
     sysctl_resource_lmm0 = 262,
     sysctl_resource_lmm1 = 263,
@@ -299,7 +299,7 @@ typedef enum {
     clock_node_axi1 = 5,
     clock_node_axi2 = 6,
     clock_node_ahb0 = 7,
-    clock_node_dram = 8,
+    clock_node_femc = 8,
     clock_node_xpi0 = 9,
     clock_node_xpi1 = 10,
     clock_node_gptmr0 = 11,
@@ -435,7 +435,7 @@ typedef enum {
     monitor_target_clk_top_axi1 = 133,
     monitor_target_clk_top_axi2 = 134,
     monitor_target_clk_top_ahb0 = 135,
-    monitor_target_clk_top_dram = 136,
+    monitor_target_clk_top_femc = 136,
     monitor_target_clk_top_xpi0 = 137,
     monitor_target_clk_top_xpi1 = 138,
     monitor_target_clk_top_gptmr0 = 139,
@@ -520,6 +520,13 @@ typedef enum {
     monitor_reference_24mhz = 1,
 } monitor_reference_t;
 
+typedef enum {
+    cpu_event_flag_mask_reset = SYSCTL_CPU_LP_RESET_FLAG_MASK,
+    cpu_event_flag_mask_sleep = SYSCTL_CPU_LP_SLEEP_FLAG_MASK,
+    cpu_event_flag_mask_wake = SYSCTL_CPU_LP_WAKE_FLAG_MASK,
+    cpu_event_flag_mask_all = SYSCTL_CPU_LP_RESET_FLAG_MASK | SYSCTL_CPU_LP_SLEEP_FLAG_MASK | SYSCTL_CPU_LP_WAKE_FLAG_MASK,
+} cpu_event_flag_mask_t;
+
 /**
  * @brief Monitor config
  */
@@ -562,7 +569,8 @@ static inline bool sysctl_monitor_result_is_valid(SYSCTL_Type *ptr, uint8_t moni
 static inline uint32_t sysctl_monitor_get_current_result(SYSCTL_Type *ptr,
                                                          uint8_t monitor_index)
 {
-    while(!sysctl_monitor_result_is_valid(ptr, monitor_index));
+    while (!sysctl_monitor_result_is_valid(ptr, monitor_index)) {
+    }
     return ptr->MONITOR[monitor_index].CURRENT;
 }
 
@@ -747,11 +755,35 @@ static inline void sysctl_resource_target_set_mode(SYSCTL_Type *ptr,
  * @param[in] cpu_index cpu index
  * @param[in] mask bit mask to clear
  */
-static inline void sysctl_cpu_lp_clear_retention_with_mask(SYSCTL_Type *ptr,
+static inline void sysctl_clear_cpu_lp_retention_with_mask(SYSCTL_Type *ptr,
                                                         uint8_t cpu_index,
                                                         uint32_t mask)
 {
     ptr->RETENTION[cpu_index].CLEAR = mask;
+}
+
+/**
+ * @brief Disable resource retention when CPU0 enters stop mode
+ *
+ * @param[in] ptr SYSCTL_Type base address
+ * @param[in] mask bit mask to clear
+ */
+static inline void sysctl_clear_cpu0_lp_retention_with_mask(SYSCTL_Type *ptr,
+                                                        uint32_t mask)
+{
+    sysctl_clear_cpu_lp_retention_with_mask(ptr, 0, mask);
+}
+
+/**
+ * @brief Disable resource retention when CPU1 enters stop mode
+ *
+ * @param[in] ptr SYSCTL_Type base address
+ * @param[in] mask bit mask to clear
+ */
+static inline void sysctl_clear_cpu1_lp_retention_with_mask(SYSCTL_Type *ptr,
+                                                        uint32_t mask)
+{
+    sysctl_clear_cpu_lp_retention_with_mask(ptr, 1, mask);
 }
 
 /**
@@ -761,11 +793,71 @@ static inline void sysctl_cpu_lp_clear_retention_with_mask(SYSCTL_Type *ptr,
  * @param[in] cpu_index cpu index
  * @param[in] mask bit mask to set
  */
-static inline void sysctl_cpu_lp_set_retention_with_mask(SYSCTL_Type *ptr,
+static inline void sysctl_set_cpu_lp_retention_with_mask(SYSCTL_Type *ptr,
                                             uint8_t cpu_index,
                                             uint32_t mask)
 {
     ptr->RETENTION[cpu_index].SET = mask;
+}
+
+/**
+ * @brief Enable resource retention when CPU0 enters stop mode
+ *
+ * @param[in] ptr SYSCTL_Type base address
+ * @param[in] mask bit mask to set
+ */
+static inline void sysctl_set_cpu0_lp_retention_with_mask(SYSCTL_Type *ptr,
+                                            uint32_t mask)
+{
+    sysctl_set_cpu_lp_retention_with_mask(ptr, 0, mask);
+}
+
+/**
+ * @brief Enable resource retention when CPU1 enters stop mode
+ *
+ * @param[in] ptr SYSCTL_Type base address
+ * @param[in] mask bit mask to set
+ */
+static inline void sysctl_set_cpu1_lp_retention_with_mask(SYSCTL_Type *ptr,
+                                            uint32_t mask)
+{
+    sysctl_set_cpu_lp_retention_with_mask(ptr, 1, mask);
+}
+
+/**
+ * @brief Enable resource retention when specific CPU enters stop mode
+ *
+ * @param[in] ptr SYSCTL_Type base address
+ * @param[in] cpu_index cpu index
+ * @param[in] value value to be set
+ */
+static inline void sysctl_set_cpu_lp_retention(SYSCTL_Type *ptr,
+                                            uint8_t cpu_index,
+                                            uint32_t value)
+{
+    ptr->RETENTION[cpu_index].VALUE = value;
+}
+
+/**
+ * @brief Enable resource retention when CPU0 enters stop mode
+ *
+ * @param[in] ptr SYSCTL_Type base address
+ * @param[in] value value to be set
+ */
+static inline void sysctl_set_cpu0_lp_retention(SYSCTL_Type *ptr, uint32_t value)
+{
+    sysctl_set_cpu_lp_retention(ptr, 0, value);
+}
+
+/**
+ * @brief Enable resource retention when CPU1 enters stop mode
+ *
+ * @param[in] ptr SYSCTL_Type base address
+ * @param[in] value value to be set
+ */
+static inline void sysctl_set_cpu1_lp_retention(SYSCTL_Type *ptr, uint32_t value)
+{
+    sysctl_set_cpu_lp_retention(ptr, 1, value);
 }
 
 /**
@@ -776,7 +868,7 @@ static inline void sysctl_cpu_lp_set_retention_with_mask(SYSCTL_Type *ptr,
  * @param[in] domain target domain power to be retained
  * @param[in] retain_mem set true to retain memory/register of target domain
  */
-static inline void sysctl_cpu_lp_retain_domain(SYSCTL_Type *ptr,
+static inline void sysctl_set_cpu_lp_retain_domain(SYSCTL_Type *ptr,
                                                uint8_t cpu_index,
                                                sysctl_retention_domain_t domain,
                                                bool retain_mem)
@@ -786,6 +878,34 @@ static inline void sysctl_cpu_lp_retain_domain(SYSCTL_Type *ptr,
         set_mask = retain_mem ? 0x3 : 0x1;
     }
     ptr->RETENTION[cpu_index].SET = (set_mask << domain);
+}
+
+/**
+ * @brief Retain target domain for specific CPU0
+ *
+ * @param[in] ptr SYSCTL_Type base address
+ * @param[in] domain target domain power to be retained
+ * @param[in] retain_mem set true to retain memory/register of target domain
+ */
+static inline void sysctl_set_cpu0_lp_retain_domain(SYSCTL_Type *ptr,
+                                               sysctl_retention_domain_t domain,
+                                               bool retain_mem)
+{
+    sysctl_set_cpu_lp_retain_domain(ptr, 0, domain, retain_mem);
+}
+
+/**
+ * @brief Retain target domain for specific CPU
+ *
+ * @param[in] ptr SYSCTL_Type base address
+ * @param[in] domain target domain power to be retained
+ * @param[in] retain_mem set true to retain memory/register of target domain
+ */
+static inline void sysctl_set_cpu1_lp_retain_domain(SYSCTL_Type *ptr,
+                                               sysctl_retention_domain_t domain,
+                                               bool retain_mem)
+{
+    sysctl_set_cpu_lp_retain_domain(ptr, 1, domain, retain_mem);
 }
 
 /**
@@ -903,6 +1023,32 @@ static inline uint32_t sysctl_get_wakeup_source_status(SYSCTL_Type *ptr,
 }
 
 /**
+ * @brief Get target CPU0 wakeup source status
+ *
+ * @param[in] ptr SYSCTL_Type base address
+ * @param[in] status_index wakeup status index 0 - 7
+ * @return wakeup source status mask
+ */
+static inline uint32_t sysctl_get_cpu0_wakeup_source_status(SYSCTL_Type *ptr,
+                                                       uint8_t status_index)
+{
+    return sysctl_get_wakeup_source_status(ptr, 0, status_index);
+}
+
+/**
+ * @brief Get target CPU1 wakeup source status
+ *
+ * @param[in] ptr SYSCTL_Type base address
+ * @param[in] status_index wakeup status index 0 - 7
+ * @return wakeup source status mask
+ */
+static inline uint32_t sysctl_get_cpu1_wakeup_source_status(SYSCTL_Type *ptr,
+                                                       uint8_t status_index)
+{
+    return sysctl_get_wakeup_source_status(ptr, 1, status_index);
+}
+
+/**
  * @brief Check wakeup source status with mask
  *
  * @param[in] ptr SYSCTL_Type base address
@@ -918,6 +1064,38 @@ static inline
                                                          uint32_t mask)
 {
     return ptr->CPU[cpu_index].WAKEUP_STATUS[status_index] & mask;
+}
+
+/**
+ * @brief Check CPU0 wakeup source status with mask
+ *
+ * @param[in] ptr SYSCTL_Type base address
+ * @param[in] status_index wakeup status index 0 - 7
+ * @param[in] mask expected status mask
+ * @return wakeup status according to given bit mask
+ */
+static inline
+    uint32_t sysctl_check_cpu0_wakeup_source_status_with_mask(SYSCTL_Type *ptr,
+                                                         uint8_t status_index,
+                                                         uint32_t mask)
+{
+    return sysctl_check_wakeup_source_status_with_mask(ptr, 0, status_index, mask);
+}
+
+/**
+ * @brief Check CPU1 wakeup source status with mask
+ *
+ * @param[in] ptr SYSCTL_Type base address
+ * @param[in] status_index wakeup status index 0 - 7
+ * @param[in] mask expected status mask
+ * @return wakeup status according to given bit mask
+ */
+static inline
+    uint32_t sysctl_check_cpu1_wakeup_source_status_with_mask(SYSCTL_Type *ptr,
+                                                         uint8_t status_index,
+                                                         uint32_t mask)
+{
+    return sysctl_check_wakeup_source_status_with_mask(ptr, 1, status_index, mask);
 }
 
 /**
@@ -938,6 +1116,34 @@ static inline
 }
 
 /**
+ * @brief Enable CPU0 wakeup source status with mask
+ *
+ * @param[in] ptr SYSCTL_Type base address
+ * @param[in] enable_index wakeup enable index 0 - 7
+ * @param[in] mask expected status mask
+ */
+static inline void sysctl_enable_cpu0_wakeup_source_with_mask(SYSCTL_Type *ptr,
+                                                              uint8_t enable_index,
+                                                              uint32_t mask)
+{
+    ptr->CPU[0].WAKEUP_ENABLE[enable_index] |= mask;
+}
+
+/**
+ * @brief Enable CPU1 wakeup source status with mask
+ *
+ * @param[in] ptr SYSCTL_Type base address
+ * @param[in] enable_index wakeup enable index 0 - 7
+ * @param[in] mask expected status mask
+ */
+static inline void sysctl_enable_cpu1_wakeup_source_with_mask(SYSCTL_Type *ptr,
+                                                              uint8_t enable_index,
+                                                              uint32_t mask)
+{
+    ptr->CPU[1].WAKEUP_ENABLE[enable_index] |= mask;
+}
+
+/**
  * @brief Disable wakeup source status with mask
  *
  * @param[in] ptr SYSCTL_Type base address
@@ -955,17 +1161,71 @@ static inline
 }
 
 /**
+ * @brief Disable CPU0 wakeup source status with mask
+ *
+ * @param[in] ptr SYSCTL_Type base address
+ * @param[in] enable_index wakeup enable index 0 - 7
+ * @param[in] mask expected status mask
+ */
+static inline void sysctl_disable_cpu0_wakeup_source_with_mask(SYSCTL_Type *ptr,
+                                                               uint8_t enable_index,
+                                                               uint32_t mask)
+{
+    sysctl_disable_wakeup_source_with_mask(ptr, 0, enable_index, mask);
+}
+
+
+/**
+ * @brief Disable CPU1 wakeup source status with mask
+ *
+ * @param[in] ptr SYSCTL_Type base address
+ * @param[in] enable_index wakeup enable index 0 - 7
+ * @param[in] mask expected status mask
+ */
+static inline void sysctl_disable_cpu1_wakeup_source_with_mask(SYSCTL_Type *ptr,
+                                                               uint8_t enable_index,
+                                                               uint32_t mask)
+{
+    sysctl_disable_wakeup_source_with_mask(ptr, 1, enable_index, mask);
+}
+
+/**
  * @brief Disable wakeup source status with irq
  *
  * @param[in] ptr SYSCTL_Type base address
  * @param[in] cpu_index CPU index
- * @param[in] irq_num irq number to be set as wakeup source
+ * @param[in] irq_num irq number to be disabled as wakeup source
  */
 static inline void sysctl_disable_wakeup_source_with_irq(SYSCTL_Type *ptr,
                                                          uint8_t cpu_index,
                                                          uint16_t irq_num)
 {
     ptr->CPU[cpu_index].WAKEUP_ENABLE[irq_num >> 2] &= ~(1UL << (irq_num % 32));
+}
+
+/**
+ * @brief Disable CPU0 wakeup source status with irq
+ *
+ * @param[in] ptr SYSCTL_Type base address
+ * @param[in] irq_num irq number to be disabled as wakeup source
+ */
+static inline void sysctl_disable_cpu0_wakeup_source_with_irq(SYSCTL_Type *ptr,
+                                                        uint16_t irq_num)
+{
+    sysctl_disable_wakeup_source_with_irq(ptr, 0, irq_num);
+}
+
+
+/**
+ * @brief Disable CPU1 wakeup source status with irq
+ *
+ * @param[in] ptr SYSCTL_Type base address
+ * @param[in] irq_num irq number to be disabled as wakeup source
+ */
+static inline void sysctl_disable_cpu1_wakeup_source_with_irq(SYSCTL_Type *ptr,
+                                                        uint16_t irq_num)
+{
+    sysctl_disable_wakeup_source_with_irq(ptr, 1, irq_num);
 }
 
 /**
@@ -979,8 +1239,47 @@ static inline void sysctl_enable_wakeup_source_with_irq(SYSCTL_Type *ptr,
                                                         uint8_t cpu_index,
                                                         uint16_t irq_num)
 {
-    ptr->CPU[cpu_index].WAKEUP_ENABLE[irq_num / 32] |= 1UL << (irq_num % 32);
+    ptr->CPU[cpu_index].WAKEUP_ENABLE[irq_num / 32] |= 1UL << (irq_num & 0x1F);
 }
+
+/**
+ * @brief Enable CPU0 wakeup source status with irq
+ *
+ * @param[in] ptr SYSCTL_Type base address
+ * @param[in] irq_num irq number to be set as wakeup source
+ */
+static inline void sysctl_enable_cpu0_wakeup_source_with_irq(SYSCTL_Type *ptr,
+                                                        uint16_t irq_num)
+{
+    sysctl_enable_wakeup_source_with_irq(ptr, 0, irq_num);
+}
+
+/**
+ * @brief Enable CPU1 wakeup source status with irq
+ *
+ * @param[in] ptr SYSCTL_Type base address
+ * @param[in] irq_num irq number to be set as wakeup source
+ */
+static inline void sysctl_enable_cpu1_wakeup_source_with_irq(SYSCTL_Type *ptr,
+                                                        uint16_t irq_num)
+{
+    sysctl_enable_wakeup_source_with_irq(ptr, 1, irq_num);
+}
+
+/**
+ * @brief Lock CPU gpr with mask
+ *
+ * @param[in] ptr SYSCTL_Type base address
+ * @param[in] cpu_index CPU index
+ * @param[in] gpr_mask bit mask of gpr registers to be locked
+ */
+static inline void sysctl_cpu_lock_gpr_with_mask(SYSCTL_Type *ptr,
+                                                  uint8_t cpu_index,
+                                                  uint16_t gpr_mask)
+{
+    ptr->CPU[cpu_index].LOCK |= SYSCTL_CPU_LOCK_GPR_SET(gpr_mask);
+}
+
 
 /**
  * @brief Lock CPU0 gpr with mask
@@ -991,7 +1290,7 @@ static inline void sysctl_enable_wakeup_source_with_irq(SYSCTL_Type *ptr,
 static inline void sysctl_cpu0_lock_gpr_with_mask(SYSCTL_Type *ptr,
                                                  uint16_t gpr_mask)
 {
-    ptr->CPU[0].LOCK |= SYSCTL_CPU_LOCK_GPR_SET(gpr_mask);
+    sysctl_cpu_lock_gpr_with_mask(ptr, 0, gpr_mask);
 }
 
 /**
@@ -1003,7 +1302,18 @@ static inline void sysctl_cpu0_lock_gpr_with_mask(SYSCTL_Type *ptr,
 static inline void sysctl_cpu1_lock_gpr_with_mask(SYSCTL_Type *ptr,
                                                  uint16_t gpr_mask)
 {
-    ptr->CPU[1].LOCK |= SYSCTL_CPU_LOCK_GPR_SET(gpr_mask);
+    sysctl_cpu_lock_gpr_with_mask(ptr, 1, gpr_mask);
+}
+
+/**
+ * @brief Lock CPU lock
+ *
+ * @param[in] ptr SYSCTL_Type base address
+ * @param[in] cpu_index CPU index
+ */
+static inline void sysctl_cpu_lock(SYSCTL_Type *ptr, uint8_t cpu_index)
+{
+    ptr->CPU[cpu_index].LOCK |= SYSCTL_CPU_LOCK_LOCK_MASK;
 }
 
 /**
@@ -1013,7 +1323,7 @@ static inline void sysctl_cpu1_lock_gpr_with_mask(SYSCTL_Type *ptr,
  */
 static inline void sysctl_cpu0_lock(SYSCTL_Type *ptr)
 {
-    ptr->CPU[0].LOCK |= SYSCTL_CPU_LOCK_LOCK_MASK;
+    sysctl_cpu_lock(ptr, 0);
 }
 
 /**
@@ -1023,7 +1333,155 @@ static inline void sysctl_cpu0_lock(SYSCTL_Type *ptr)
  */
 static inline void sysctl_cpu1_lock(SYSCTL_Type *ptr)
 {
-    ptr->CPU[1].LOCK |= SYSCTL_CPU_LOCK_LOCK_MASK;
+    sysctl_cpu_lock(ptr, 1);
+}
+
+/**
+ * @brief Set CPU low power mode
+ *
+ * @param[in] ptr SYSCTL_Type base address
+ * @param[in] cpu_index CPU index
+ * @param[in] mode target mode to set
+ */
+static inline void sysctl_set_cpu_lp_mode(SYSCTL_Type *ptr, uint8_t cpu_index, cpu_lp_mode_t mode)
+{
+    ptr->CPU[cpu_index].LP = (ptr->CPU[cpu_index].LP & ~(SYSCTL_CPU_LP_MODE_MASK)) | (mode);
+}
+
+/**
+ * @brief Set CPU0 low power mode
+ *
+ * @param[in] ptr SYSCTL_Type base address
+ * @param[in] mode target mode to set
+ */
+static inline void sysctl_set_cpu0_lp_mode(SYSCTL_Type *ptr, cpu_lp_mode_t mode)
+{
+    sysctl_set_cpu_lp_mode(ptr, 0, mode);
+}
+
+/**
+ * @brief Set CPU1 low power mode
+ *
+ * @param[in] ptr SYSCTL_Type base address
+ * @param[in] mode target mode to set
+ */
+static inline void sysctl_set_cpu1_lp_mode(SYSCTL_Type *ptr, cpu_lp_mode_t mode)
+{
+    sysctl_set_cpu_lp_mode(ptr, 1, mode);
+}
+
+/**
+ * @brief Clear CPU event flags
+ *
+ * @param[in] ptr SYSCTL_Type base address
+ * @param[in] cpu_index CPU index
+ * @param[in] flags flag mask to be cleared
+ */
+static inline void sysctl_clear_cpu_flags(SYSCTL_Type *ptr, uint8_t cpu_index, cpu_event_flag_mask_t flags)
+{
+    ptr->CPU[cpu_index].LP |= ((SYSCTL_CPU_LP_SLEEP_FLAG_MASK | SYSCTL_CPU_LP_WAKE_FLAG_MASK | SYSCTL_CPU_LP_RESET_FLAG_MASK) & flags);
+}
+
+/**
+ * @brief Clear CPU0 event flags
+ *
+ * @param[in] ptr SYSCTL_Type base address
+ * @param[in] flags flag mask to be cleared
+ */
+static inline void sysctl_clear_cpu0_flags(SYSCTL_Type *ptr, cpu_event_flag_mask_t flags)
+{
+    sysctl_clear_cpu_flags(ptr, 0, flags);
+}
+
+/**
+ * @brief Clear CPU1 event flags
+ *
+ * @param[in] ptr SYSCTL_Type base address
+ * @param[in] flags flag mask to be cleared
+ */
+static inline void sysctl_clear_cpu1_flags(SYSCTL_Type *ptr, cpu_event_flag_mask_t flags)
+{
+    sysctl_clear_cpu_flags(ptr, 1, flags);
+}
+
+/**
+ * @brief Get CPU event flags
+ *
+ * @param[in] ptr SYSCTL_Type base address
+ * @param[in] cpu_index CPU index
+ * @retval event flag mask
+ */
+static inline uint32_t sysctl_get_cpu_flags(SYSCTL_Type *ptr, uint8_t cpu_index)
+{
+    return ptr->CPU[cpu_index].LP & (SYSCTL_CPU_LP_SLEEP_FLAG_MASK | SYSCTL_CPU_LP_WAKE_FLAG_MASK | SYSCTL_CPU_LP_RESET_FLAG_MASK);
+}
+
+/**
+ * @brief Get CPU0 event flags
+ *
+ * @param[in] ptr SYSCTL_Type base address
+ * @retval event flag mask
+ */
+static inline uint32_t sysctl_get_cpu0_flags(SYSCTL_Type *ptr)
+{
+    return sysctl_get_cpu_flags(ptr, 0);
+}
+
+/**
+ * @brief Get CPU1 event flags
+ *
+ * @param[in] ptr SYSCTL_Type base address
+ * @retval event flag mask
+ */
+static inline uint32_t sysctl_get_cpu1_flags(SYSCTL_Type *ptr)
+{
+    return sysctl_get_cpu_flags(ptr, 1);
+}
+
+/**
+ * @brief Release cpu
+ *
+ * @param[in] ptr SYSCTL_Type base address
+ * @param[in] cpu_index CPU index
+ */
+static inline void sysctl_release_cpu(SYSCTL_Type *ptr, uint8_t cpu_index)
+{
+    ptr->CPU[cpu_index].LP &= ~SYSCTL_CPU_LP_HALT_MASK;
+}
+
+/**
+ * @brief Release cpu1
+ *
+ * @param[in] ptr SYSCTL_Type base address
+ */
+static inline void sysctl_release_cpu1(SYSCTL_Type *ptr)
+{
+    sysctl_release_cpu(ptr, 1);
+}
+
+/**
+ * @brief Check whether CPU is released or not
+ *
+ * @param [in] ptr SYSCTL_Type base address
+ * @param[in] cpu_index CPU index
+ * @retval true CPU is released
+ * @retval false CPU is on-hold
+ */
+static inline bool sysctl_is_cpu_released(SYSCTL_Type *ptr, uint8_t cpu_index)
+{
+    return ((ptr->CPU[cpu_index].LP & SYSCTL_CPU_LP_HALT_MASK) == 0U);
+}
+
+/**
+ * @brief Check whether CPU1 is released or not
+ *
+ * @param [in] ptr SYSCTL_Type base address
+ * @retval true CPU1 is released
+ * @retval false CPU1 is on-hold
+ */
+static inline bool sysctl_is_cpu1_released(SYSCTL_Type *ptr)
+{
+    return sysctl_is_cpu_released(ptr, 1);
 }
 
 /**
@@ -1051,18 +1509,6 @@ hpm_stat_t sysctl_config_clock(SYSCTL_Type *ptr,
 hpm_stat_t sysctl_set_adc_i2s_clock_mux(SYSCTL_Type *ptr,
                                         clock_node_t node,
                                         clock_source_adc_i2s_t source);
-
-/**
- * @brief Set CPU low power mode
- *
- * @param[in] ptr SYSCTL_Type base address
- * @param[in] cpu_index cpu index
- * @param[in] mode target mode to set
- * @return status_success if everything is okay
- */
-hpm_stat_t sysctl_set_cpu_lp_mode(SYSCTL_Type *ptr,
-                                  uint8_t cpu_index,
-                                  cpu_lp_mode_t mode);
 
 /**
  * @brief Enable group resource
@@ -1191,21 +1637,16 @@ hpm_stat_t sysctl_get_cpu1_gpr(SYSCTL_Type *ptr,
                                uint8_t start,
                                uint8_t count,
                                uint32_t *data);
-/**
- * @brief Release cpu1
- *
- * @param[in] ptr SYSCTL_Type base address
- */
-void sysctl_release_cpu1(SYSCTL_Type *ptr);
 
 /**
- * @brief Check whether CPU1 is released or not
+ * @brief Set entry point on CPU boot or wakeup
  *
- * @param [in] ptr SYSCTL_Type base address
- * @retval true CPU1 is released
- * @retval false CPU1 is on-hold
+ * @param[in] ptr SYSCTL_Type base address
+ * @param[in] cpu CPU index
+ * @param[in] entry Entry address for CPU
+ * @return status_success if everything is okay
  */
-bool sysctl_is_cpu1_released(SYSCTL_Type *ptr);
+hpm_stat_t sysctl_set_cpu_entry(SYSCTL_Type *ptr, uint8_t cpu, uint32_t entry);
 
 /**
  * @brief Set entry point on CPU0 wakeup

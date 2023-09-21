@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 - 2022 hpmicro
+ * Copyright (c) 2021-2023 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -36,11 +36,15 @@
 #define IRQ_COP                 12
 #define IRQ_HOST                13
 
+#ifdef DEBUG
+#define RT_EXCEPTION_TRACE rt_kprintf
+#else
+#define RT_EXCEPTION_TRACE(...)
+#endif
+
 typedef void (*isr_func_t)(void);
 
 static volatile rt_hw_stack_frame_t *s_stack_frame;
-
-static void rt_show_stack_frame(void);
 
 __attribute((weak)) void mchtmr_isr(void)
 {
@@ -54,140 +58,166 @@ __attribute__((weak)) void syscall_handler(uint32_t n, uint32_t a0, uint32_t a1,
 {
 }
 
+void rt_show_stack_frame(void)
+{
+    RT_EXCEPTION_TRACE("Stack frame:\r\n----------------------------------------\r\n");
+    RT_EXCEPTION_TRACE("ra      : 0x%08x\r\n", s_stack_frame->ra);
+    RT_EXCEPTION_TRACE("mstatus : 0x%08x\r\n", read_csr(0x300));//mstatus
+    RT_EXCEPTION_TRACE("t0      : 0x%08x\r\n", s_stack_frame->t0);
+    RT_EXCEPTION_TRACE("t1      : 0x%08x\r\n", s_stack_frame->t1);
+    RT_EXCEPTION_TRACE("t2      : 0x%08x\r\n", s_stack_frame->t2);
+    RT_EXCEPTION_TRACE("a0      : 0x%08x\r\n", s_stack_frame->a0);
+    RT_EXCEPTION_TRACE("a1      : 0x%08x\r\n", s_stack_frame->a1);
+    RT_EXCEPTION_TRACE("a2      : 0x%08x\r\n", s_stack_frame->a2);
+    RT_EXCEPTION_TRACE("a3      : 0x%08x\r\n", s_stack_frame->a3);
+    RT_EXCEPTION_TRACE("a4      : 0x%08x\r\n", s_stack_frame->a4);
+    RT_EXCEPTION_TRACE("a5      : 0x%08x\r\n", s_stack_frame->a5);
+#ifndef __riscv_32e
+    RT_EXCEPTION_TRACE("a6      : 0x%08x\r\n", s_stack_frame->a6);
+    RT_EXCEPTION_TRACE("a7      : 0x%08x\r\n", s_stack_frame->a7);
+    RT_EXCEPTION_TRACE("t3      : 0x%08x\r\n", s_stack_frame->t3);
+    RT_EXCEPTION_TRACE("t4      : 0x%08x\r\n", s_stack_frame->t4);
+    RT_EXCEPTION_TRACE("t5      : 0x%08x\r\n", s_stack_frame->t5);
+    RT_EXCEPTION_TRACE("t6      : 0x%08x\r\n", s_stack_frame->t6);
+#endif
+}
+
 uint32_t exception_handler(uint32_t cause, uint32_t epc)
 {
     /* Unhandled Trap */
     uint32_t mdcause = read_csr(CSR_MDCAUSE);
     uint32_t mtval = read_csr(CSR_MTVAL);
+    rt_uint32_t mscratch = read_csr(0x340);
+
+    s_stack_frame = (rt_hw_stack_frame_t *)mscratch;
+    rt_show_stack_frame();
+
     switch (cause)
     {
     case MCAUSE_INSTR_ADDR_MISALIGNED:
-        rt_kprintf("exception: instruction address was mis-aligned, mtval=0x%08x\n", mtval);
+        RT_EXCEPTION_TRACE("exception: instruction address was mis-aligned, mtval=0x%08x\n", mtval);
         break;
     case MCAUSE_INSTR_ACCESS_FAULT:
-        rt_kprintf("exception: instruction access fault happened, mtval=0x%08x, epc=0x%08x\n", mtval, epc);
+        RT_EXCEPTION_TRACE("exception: instruction access fault happened, mtval=0x%08x, epc=0x%08x\n", mtval, epc);
         switch (mdcause & 0x07)
         {
         case 1:
-            rt_kprintf("mdcause: ECC/Parity error\r\n");
+            RT_EXCEPTION_TRACE("mdcause: ECC/Parity error\r\n");
             break;
         case 2:
-            rt_kprintf("mdcause: PMP instruction access violation \r\n");
+            RT_EXCEPTION_TRACE("mdcause: PMP instruction access violation \r\n");
             break;
         case 3:
-            rt_kprintf("mdcause: BUS error\r\n");
+            RT_EXCEPTION_TRACE("mdcause: BUS error\r\n");
             break;
         case 4:
-            rt_kprintf("mdcause: PMP empty hole access \r\n");
+            RT_EXCEPTION_TRACE("mdcause: PMP empty hole access \r\n");
             break;
         default:
-            rt_kprintf("mdcause: reserved \r\n");
+            RT_EXCEPTION_TRACE("mdcause: reserved \r\n");
             break;
         }
         break;
     case MCAUSE_ILLEGAL_INSTR:
-        rt_kprintf("exception: illegal instruction was met, mtval=0x%08x\n", mtval);
+        RT_EXCEPTION_TRACE("exception: illegal instruction was met, mtval=0x%08x\n", mtval);
         switch (mdcause & 0x07)
         {
         case 0:
-            rt_kprintf("mdcause: the actual faulting instruction is stored in the mtval CSR\r\n");
+            RT_EXCEPTION_TRACE("mdcause: the actual faulting instruction is stored in the mtval CSR\r\n");
             break;
         case 1:
-            rt_kprintf("mdcause: FP disabled exception \r\n");
+            RT_EXCEPTION_TRACE("mdcause: FP disabled exception \r\n");
             break;
         case 2:
-            rt_kprintf("mdcause: ACE disabled exception \r\n");
+            RT_EXCEPTION_TRACE("mdcause: ACE disabled exception \r\n");
             break;
         default:
-            rt_kprintf("mdcause: reserved \r\n");
+            RT_EXCEPTION_TRACE("mdcause: reserved \r\n");
             break;
         }
         break;
     case MCAUSE_BREAKPOINT:
-        rt_kprintf("exception: breakpoint was hit, mtval=0x%08x\n", mtval);
+        RT_EXCEPTION_TRACE("exception: breakpoint was hit, mtval=0x%08x\n", mtval);
         break;
     case MCAUSE_LOAD_ADDR_MISALIGNED:
-        rt_kprintf("exception: load address was mis-aligned, mtval=0x%08x\n", mtval);
+        RT_EXCEPTION_TRACE("exception: load address was mis-aligned, mtval=0x%08x\n", mtval);
         break;
     case MCAUSE_LOAD_ACCESS_FAULT:
-        rt_kprintf("exception: load access fault happened, epc=%08x, mdcause=0x%x\n", epc, mdcause);
+        RT_EXCEPTION_TRACE("exception: load access fault happened, epc=%08x, mdcause=0x%x\n", epc, mdcause);
         switch (mdcause & 0x07)
         {
         case 1:
-            rt_kprintf("mdcause: ECC/Parity error\r\n");
+            RT_EXCEPTION_TRACE("mdcause: ECC/Parity error\r\n");
             break;
         case 2:
-            rt_kprintf("mdcause: PMP instruction access violation \r\n");
+            RT_EXCEPTION_TRACE("mdcause: PMP instruction access violation \r\n");
             break;
         case 3:
-            rt_kprintf("mdcause: BUS error\r\n");
+            RT_EXCEPTION_TRACE("mdcause: BUS error\r\n");
             break;
         case 4:
-            rt_kprintf("mdcause: Misaligned access \r\n");
+            RT_EXCEPTION_TRACE("mdcause: Misaligned access \r\n");
             break;
         case 5:
-            rt_kprintf("mdcause: PMP empty hole access \r\n");
+            RT_EXCEPTION_TRACE("mdcause: PMP empty hole access \r\n");
             break;
         case 6:
-            rt_kprintf("mdcause: PMA attribute inconsistency\r\n");
+            RT_EXCEPTION_TRACE("mdcause: PMA attribute inconsistency\r\n");
             break;
         default:
-            rt_kprintf("mdcause: reserved \r\n");
+            RT_EXCEPTION_TRACE("mdcause: reserved \r\n");
             break;
         }
         break;
     case MCAUSE_STORE_AMO_ADDR_MISALIGNED:
-        rt_kprintf("exception: store amo address was misaligned, epc=%08x\n", epc);
+        RT_EXCEPTION_TRACE("exception: store amo address was misaligned, epc=%08x\n", epc);
         break;
     case MCAUSE_STORE_AMO_ACCESS_FAULT:
-        rt_kprintf("exception: store amo access fault happened, epc=%08x\n", epc);
+        RT_EXCEPTION_TRACE("exception: store amo access fault happened, epc=%08x\n", epc);
         switch (mdcause & 0x07)
         {
         case 1:
-            rt_kprintf("mdcause: ECC/Parity error\r\n");
+            RT_EXCEPTION_TRACE("mdcause: ECC/Parity error\r\n");
             break;
         case 2:
-            rt_kprintf("mdcause: PMP instruction access violation \r\n");
+            RT_EXCEPTION_TRACE("mdcause: PMP instruction access violation \r\n");
             break;
         case 3:
-            rt_kprintf("mdcause: BUS error\r\n");
+            RT_EXCEPTION_TRACE("mdcause: BUS error\r\n");
             break;
         case 4:
-            rt_kprintf("mdcause: Misaligned access \r\n");
+            RT_EXCEPTION_TRACE("mdcause: Misaligned access \r\n");
             break;
         case 5:
-            rt_kprintf("mdcause: PMP empty hole access \r\n");
+            RT_EXCEPTION_TRACE("mdcause: PMP empty hole access \r\n");
             break;
         case 6:
-            rt_kprintf("mdcause: PMA attribute inconsistency\r\n");
+            RT_EXCEPTION_TRACE("mdcause: PMA attribute inconsistency\r\n");
             break;
         case 7:
-            rt_kprintf("mdcause: PMA NAMO exception \r\n");
+            RT_EXCEPTION_TRACE("mdcause: PMA NAMO exception \r\n");
         default:
-            rt_kprintf("mdcause: reserved \r\n");
+            RT_EXCEPTION_TRACE("mdcause: reserved \r\n");
             break;
         }
         break;
     default:
-        rt_kprintf("Unknown exception happened, cause=%d\n", cause);
+        RT_EXCEPTION_TRACE("Unknown exception happened, cause=%d\n", cause);
         break;
     }
 
-    rt_show_stack_frame();
-    while (1)
-    {
+    rt_kprintf("cause=0x%08x, epc=0x%08x, ra=0x%08x\n", cause, epc, s_stack_frame->ra);
+    while(1) {
     }
 }
 
-void trap_entry(rt_hw_stack_frame_t *stack_frame);
+void trap_entry(void);
 
-void trap_entry(rt_hw_stack_frame_t *stack_frame)
+void trap_entry(void)
 {
     uint32_t mcause = read_csr(CSR_MCAUSE);
     uint32_t mepc = read_csr(CSR_MEPC);
     uint32_t mstatus = read_csr(CSR_MSTATUS);
-
-    s_stack_frame = stack_frame;
 
 #if SUPPORT_PFT_ARCH
     uint32_t mxstatus = read_csr(CSR_MXSTATUS);
@@ -271,26 +301,4 @@ void trap_entry(rt_hw_stack_frame_t *stack_frame)
 #ifdef __riscv_flen
     write_fcsr(fcsr);
 #endif
-}
-
-static void rt_show_stack_frame(void)
-{
-    rt_kprintf("Stack frame:\r\n----------------------------------------\r\n");
-    rt_kprintf("ra      : 0x%08x\r\n", s_stack_frame->ra);
-    rt_kprintf("mstatus : 0x%08x\r\n", read_csr(CSR_MSTATUS));
-    rt_kprintf("t0      : 0x%08x\r\n", s_stack_frame->t0);
-    rt_kprintf("t1      : 0x%08x\r\n", s_stack_frame->t1);
-    rt_kprintf("t2      : 0x%08x\r\n", s_stack_frame->t2);
-    rt_kprintf("a0      : 0x%08x\r\n", s_stack_frame->a0);
-    rt_kprintf("a1      : 0x%08x\r\n", s_stack_frame->a1);
-    rt_kprintf("a2      : 0x%08x\r\n", s_stack_frame->a2);
-    rt_kprintf("a3      : 0x%08x\r\n", s_stack_frame->a3);
-    rt_kprintf("a4      : 0x%08x\r\n", s_stack_frame->a4);
-    rt_kprintf("a5      : 0x%08x\r\n", s_stack_frame->a5);
-    rt_kprintf("a6      : 0x%08x\r\n", s_stack_frame->a6);
-    rt_kprintf("a7      : 0x%08x\r\n", s_stack_frame->a7);
-    rt_kprintf("t3      : 0x%08x\r\n", s_stack_frame->t3);
-    rt_kprintf("t4      : 0x%08x\r\n", s_stack_frame->t4);
-    rt_kprintf("t5      : 0x%08x\r\n", s_stack_frame->t5);
-    rt_kprintf("t6      : 0x%08x\r\n", s_stack_frame->t6);
 }

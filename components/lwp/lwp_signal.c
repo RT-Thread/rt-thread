@@ -229,11 +229,10 @@ rt_inline int sigqueue_peek(lwp_sigqueue_t sigqueue, lwp_sigset_t *mask)
 
 rt_inline int sigqueue_examine(lwp_sigqueue_t sigqueue, lwp_sigset_t *pending)
 {
-    lwp_sigset_t not_mask;
     int is_empty = sigqueue_isempty(sigqueue);
     if (!is_empty)
     {
-        _sigorsets(pending, &sigqueue->sigset_pending, &not_mask);
+        _sigorsets(pending, &sigqueue->sigset_pending, &sigqueue->sigset_pending);
     }
     return is_empty;
 }
@@ -310,7 +309,7 @@ static void sigqueue_discard(lwp_sigqueue_t sigqueue, int signo)
 }
 
 /* assuming that (void *) is compatible to long at length */
-RT_CTASSERT(lp_width_same, sizeof(void *) == sizeof(long));
+RT_STATIC_ASSERT(lp_width_same, sizeof(void *) == sizeof(long));
 
 /** translate lwp siginfo to user siginfo_t  */
 rt_inline void siginfo_k2u(lwp_siginfo_t ksigi, siginfo_t *usigi)
@@ -393,6 +392,20 @@ void lwp_sigqueue_clear(lwp_sigqueue_t sigq)
     }
 }
 
+static void lwp_signal_notify(rt_slist_t *list_head, lwp_siginfo_t siginfo)
+{
+    rt_slist_t *node;
+
+    rt_slist_for_each(node, list_head)
+    {
+        struct rt_lwp_notify *n = rt_slist_entry(node, struct rt_lwp_notify, list_node);
+        if (n->notify)
+        {
+            n->notify(n->signalfd_queue, siginfo->ksiginfo.signo);
+        }
+    }
+}
+
 rt_err_t lwp_signal_init(struct lwp_signal *sig)
 {
     rt_err_t rc;
@@ -463,17 +476,17 @@ int lwp_thread_signal_suspend_check(rt_thread_t thread, int suspend_flag)
 void lwp_thread_signal_catch(void *exp_frame)
 {
     rt_base_t level;
-    int signo;
+    int signo = 0;
     struct rt_thread *thread;
     struct rt_lwp *lwp;
-    lwp_siginfo_t siginfo;
+    lwp_siginfo_t siginfo = 0;
     lwp_sigqueue_t pending;
     lwp_sigset_t *sig_mask;
     lwp_sigset_t save_sig_mask;
     lwp_sigset_t new_sig_mask;
-    lwp_sighandler_t handler;
+    lwp_sighandler_t handler = 0;
     siginfo_t usiginfo;
-    siginfo_t *p_usi;
+    siginfo_t *p_usi = RT_NULL;
 
     thread = rt_thread_self();
     lwp = (struct rt_lwp*)thread->lwp;
@@ -538,7 +551,7 @@ void lwp_thread_signal_catch(void *exp_frame)
         if (handler == LWP_SIG_ACT_DFL)
         {
             LOG_D("%s: default handler; and exit", __func__);
-            sys_exit(0);
+            sys_exit_group(0);
         }
 
         /**
@@ -705,6 +718,7 @@ rt_err_t lwp_signal_kill(struct rt_lwp *lwp, long signo, long code, long value)
             {
                 need_schedule = _siginfo_deliver_to_lwp(lwp, siginfo);
                 ret = 0;
+                lwp_signal_notify(&lwp->signalfd_notify_head, siginfo);
             }
             else
             {
@@ -857,6 +871,7 @@ rt_err_t lwp_thread_signal_kill(rt_thread_t thread, long signo, long code, long 
             {
                 need_schedule = _siginfo_deliver_to_thread(thread, siginfo);
                 ret = 0;
+                lwp_signal_notify(&lwp->signalfd_notify_head, siginfo);
             }
             else
             {
@@ -924,21 +939,24 @@ static int _dequeue_signal(rt_thread_t thread, lwp_sigset_t *mask, siginfo_t *us
     lwp_siginfo_t si;
     struct rt_lwp *lwp;
     lwp_sigset_t *pending;
+    lwp_sigqueue_t sigqueue;
 
-    pending = &_SIGQ(thread)->sigset_pending;
+    sigqueue = _SIGQ(thread);
+    pending = &sigqueue->sigset_pending;
     signo = _next_signal(pending, mask);
     if (!signo)
     {
         lwp = thread->lwp;
         RT_ASSERT(lwp);
-        pending = &_SIGQ(lwp)->sigset_pending;
+        sigqueue = _SIGQ(lwp);
+        pending = &sigqueue->sigset_pending;
         signo = _next_signal(pending, mask);
     }
 
     if (!signo)
         return signo;
 
-    si = sigqueue_dequeue(_SIGQ(thread), signo);
+    si = sigqueue_dequeue(sigqueue, signo);
     RT_ASSERT(!!si);
 
     siginfo_k2u(si, usi);
@@ -1035,13 +1053,19 @@ rt_err_t lwp_thread_signal_timedwait(rt_thread_t thread, lwp_sigset_t *sigset,
 
 void lwp_thread_signal_pending(rt_thread_t thread, lwp_sigset_t *pending)
 {
+    rt_base_t level;
     struct rt_lwp *lwp;
     lwp = thread->lwp;
 
     if (lwp)
     {
         memset(pending, 0, sizeof(*pending));
+
+        level = rt_hw_interrupt_disable();
         sigqueue_examine(_SIGQ(thread), pending);
         sigqueue_examine(_SIGQ(lwp), pending);
+        rt_hw_interrupt_enable(level);
+
+        _sigandsets(pending, pending, &thread->signal.sigset_mask);
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 hpmicro
+ * Copyright (c) 2021-2023 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -33,6 +33,7 @@ typedef struct {
  */
 #define RTC_ALARM_TYPE_ONE_SHOT (0U) /**<  The RTC alarm will be triggered only once */
 #define RTC_ALARM_TYPE_PERIODIC (1U) /**< The RTC alarm will be triggered periodically */
+#define RTC_ALARM_TYPE_ABSOLUTE_TIME_ONE_SHOT (2U) /**< The RTC alarm will be triggered via the absolute time provided via period */
 
 /**
  * @brief Typical RTC alarm period definitions
@@ -87,8 +88,7 @@ static inline void rtc_enable_alarm_interrupt(RTC_Type *base, uint32_t index, bo
 
     if (enable) {
         base->ALARM_EN |= mask;
-    }
-    else {
+    } else {
         base->ALARM_EN &= ~mask;
     }
 }
@@ -134,4 +134,4 @@ static inline bool rtc_is_alarm_flag_asserted(RTC_Type *base, uint32_t index)
  *
  */
 
-#endif // HPM_RTC_DRV_H
+#endif /* HPM_RTC_DRV_H */

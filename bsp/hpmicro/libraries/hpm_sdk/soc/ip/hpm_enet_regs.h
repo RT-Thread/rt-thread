@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 hpmicro
+ * Copyright (c) 2021-2023 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -18,8 +18,7 @@ typedef struct {
     __RW uint32_t GMII_DATA;                   /* 0x14: GMII Data Register */
     __RW uint32_t FLOWCTRL;                    /* 0x18: Flow Control Register */
     __RW uint32_t VLAN_TAG;                    /* 0x1C: VLAN Tag Register */
-    __R  uint32_t VERSION;                     /* 0x20: Version Register */
-    __R  uint32_t DEBUGGING;                   /* 0x24: Debug Register */
+    __R  uint8_t  RESERVED0[8];                /* 0x20 - 0x27: Reserved */
     __RW uint32_t RWKFRMFILT;                  /* 0x28: Remote Wake-Up Frame Filter Register */
     __RW uint32_t PMT_CSR;                     /* 0x2C: PMT Control and Status Register */
     __RW uint32_t LPI_CSR;                     /* 0x30: LPI Control and Status Regsiter */
@@ -32,11 +31,10 @@ typedef struct {
         __RW uint32_t HIGH;                    /* 0x48: MAC Address High Register */
         __RW uint32_t LOW;                     /* 0x4C: MAC Address Low Register */
     } MAC_ADDR[4];
-    __R  uint8_t  RESERVED0[112];              /* 0x68 - 0xD7: Reserved */
+    __R  uint8_t  RESERVED1[112];              /* 0x68 - 0xD7: Reserved */
     __RW uint32_t XMII_CSR;                    /* 0xD8: SGMII/RGMII/SMII Control and Status Register */
     __RW uint32_t WDOG_WTO;                    /* 0xDC: Watchdog Timeout Register */
-    __RW uint32_t GPIO;                        /* 0xE0: General Purpose IO Register */
-    __R  uint8_t  RESERVED1[28];               /* 0xE4 - 0xFF: Reserved */
+    __R  uint8_t  RESERVED2[32];               /* 0xE0 - 0xFF: Reserved */
     __RW uint32_t MMC_CNTRL;                   /* 0x100: MMC Control establishes the operating mode of MMC. */
     __RW uint32_t MMC_INTR_RX;                 /* 0x104: MMC Receive Interrupt maintains the interrupt generated from all
 of the receive statistic counters. */
@@ -68,152 +66,20 @@ frames. */
     __RW uint32_t TX1024TOMAXOCTETS_GB;        /* 0x138: Number of good and bad frames transmitted with length between
 1,024 and maxsize (inclusive) bytes, exclusive of preamble and
 retried frames. */
-    __RW uint32_t TXUNICASTFRAMES_GB;          /* 0x13C: Number of good and bad unicast frames transmitted. */
-    __RW uint32_t TXMULTICASTFRAMES_GB;        /* 0x140: Number of good and bad multicast frames transmitted. */
-    __RW uint32_t TXBROADCASTFRAMES_GB;        /* 0x144: Number of good and bad broadcast frames transmitted. */
-    __RW uint32_t TXUNDERFLOWERROR;            /* 0x148: Number of frames aborted because of frame underflow error. */
-    __RW uint32_t TXSINGLECOL_G;               /* 0x14C: Number of successfully transmitted frames after a single collision
-in the half-duplex mode. */
-    __RW uint32_t TXMULTICOL_G;                /* 0x150: Number of successfully transmitted frames after multiple collisions
-in the half-duplex mode. */
-    __RW uint32_t TXDEFERRED;                  /* 0x154: Number of successfully transmitted frames after a deferral in the
-half-duplex mode. */
-    __RW uint32_t TXLATECOL;                   /* 0x158: Number of frames aborted because of late collision error */
-    __RW uint32_t TXEXESSCOL;                  /* 0x15C: Number of frames aborted because of excessive (16) collision
-errors */
-    __RW uint32_t TXCARRIERERROR;              /* 0x160: Number of frames aborted because of carrier sense error (no
-carrier or loss of carrier). */
-    __RW uint32_t TXOCTETCOUNT_G;              /* 0x164: Number of bytes transmitted, exclusive of preamble, only in good
-frames. */
-    __RW uint32_t TXFRAMECOUNT_G;              /* 0x168: Number of good frames transmitted */
-    __RW uint32_t TXEXCESSDEF;                 /* 0x16C: Number of frames aborted because of excessive deferral error
-(deferred for more than two max-sized frame times). */
-    __RW uint32_t TXPAUSEFRAMES;               /* 0x170: Number of good Pause frames transmitted */
-    __RW uint32_t TXVLANFRAMES_G;              /* 0x174: Number of good VLAN frames transmitted, exclusive of retried
-frames. */
-    __RW uint32_t TXOVERSIZE_G;                /* 0x178: Number of frames transmitted without errors and with length
-greater than the maxsize (1,518 or 1,522 bytes for VLAN tagged
-frames; 2000 bytes if enabled in Bit 27 of Register 0 (MAC
-Configuration Register)). */
-    __R  uint8_t  RESERVED2[4];                /* 0x17C - 0x17F: Reserved */
+    __R  uint8_t  RESERVED3[68];               /* 0x13C - 0x17F: Reserved */
     __RW uint32_t RXFRAMECOUNT_GB;             /* 0x180: Number of good and bad frames received */
-    __RW uint32_t RXOCTETCOUNT_G;              /* 0x184: Number of bytes received, exclusive of preamble, only in good
-frames. */
-    __RW uint32_t RXOCTETCOUNT_GB;             /* 0x188: Number of bytes received, exclusive of preamble, in good and bad
-frames. */
-    __RW uint32_t RXBROADCASTFRAMES_G;         /* 0x18C: Number of good broadcast frames received */
-    __RW uint32_t RXMULTICASTFRAMES_G;         /* 0x190: Number of good multicast frames received */
-    __RW uint32_t RXCRCERROR;                  /* 0x194: Number of frames received with CRC error */
-    __RW uint32_t RXALIGNMENTERROR;            /* 0x198: Number of frames received with alignment (dribble) error. Valid
-only in 10/100 mode */
-    __RW uint32_t RXRUNTERROR;                 /* 0x19C: Number of frames received with runt (<64 bytes and CRC error)
-error. */
-    __RW uint32_t RXJABBERERROR;               /* 0x1A0: Number of giant frames received with length (including CRC)
-greater than 1,518 bytes (1,522 bytes for VLAN tagged) and with
-CRC error. If Jumbo Frame mode is enabled, then frames of
-length greater than 9,018 bytes (9,022 for VLAN tagged) are
-considered as giant frames. */
-    __RW uint32_t RXUNDERSIZE_G;               /* 0x1A4: Number of frames received with length less than 64 bytes, without
-any errors. */
-    __RW uint32_t RXOVERSIZE_G;                /* 0x1A8: Number of frames received without errors, with length greater
-than the maxsize (1,518 or 1,522 for VLAN tagged frames; 2,000
-bytes if enabled in Bit 27 of Register 0 (MAC Configuration
-Register)) */
-    __RW uint32_t RX64OCTETS_GB;               /* 0x1AC: Number of good and bad frames received with length 64 bytes,
-exclusive of preamble. */
-    __RW uint32_t RX65TO127OCTETS_GB;          /* 0x1B0:  */
-    __RW uint32_t RX128TO255OCTETS_GB;         /* 0x1B4:  */
-    __RW uint32_t RX256TO511OCTETS_GB;         /* 0x1B8: Number of good and bad frames received with length between
-256 and 511 (inclusive) bytes, exclusive of preamble. */
-    __RW uint32_t RX512TO1023OCTETS_GB;        /* 0x1BC: Number of good and bad frames received with length between
-512 and 1023 (inclusive) bytes, exclusive of preamble. */
-    __RW uint32_t RX1024TOMAXOCTETS_GB;        /* 0x1C0: Number of good and bad frames received with length between
-1024 and maxsize (inclusive) bytes, exclusive of preamble. */
-    __RW uint32_t RXUNICASTFRAMES_G;           /* 0x1C4: Number of received good unicast frames. */
-    __RW uint32_t RXLENGTHERROR;               /* 0x1C8: Number of frames received with length error (Length type field ≠
-frame size), for all frames with valid length field. */
-    __RW uint32_t RXOUTOFRANGETYPE;            /* 0x1CC: Number of frames received with length field not equal to the valid
-frame size (greater than 1,500 but less than 1,536). */
-    __RW uint32_t RXPAUSEFRAMES;               /* 0x1D0: Number of good and valid Pause frames received. */
-    __RW uint32_t RXFIFOOVERFLOW;              /* 0x1D4: Number of missed received frames because of FIFO overflow.
-This counter is not present in the GMAC-CORE configuration. */
-    __RW uint32_t RXVLANFRAMES_GB;             /* 0x1D8: Number of good and bad VLAN frames received. */
-    __RW uint32_t RXWATCHDOGERROR;             /* 0x1DC: Number of frames received with error because of watchdog
-timeout error (frames with a data load larger than 2,048 bytes or
-the value programmed in Register 55 (Watchdog Timeout
-Register)). */
-    __RW uint32_t RXRCVERROR;                  /* 0x1E0: Number of frames received with Receive error or Frame Extension
-error on the GMII or MII interface. */
-    __RW uint32_t RXCTRLFRAMES_G;              /* 0x1E4: Number of received good control frames */
-    __R  uint8_t  RESERVED3[24];               /* 0x1E8 - 0x1FF: Reserved */
+    __R  uint8_t  RESERVED4[124];              /* 0x184 - 0x1FF: Reserved */
     __RW uint32_t MMC_IPC_INTR_MASK_RX;        /* 0x200: MMC IPC Receive Checksum Offload Interrupt Mask maintains
 the mask for the interrupt generated from the receive IPC statistic
 counters. */
-    __R  uint8_t  RESERVED4[4];                /* 0x204 - 0x207: Reserved */
+    __R  uint8_t  RESERVED5[4];                /* 0x204 - 0x207: Reserved */
     __RW uint32_t MMC_IPC_INTR_RX;             /* 0x208: MMC Receive Checksum Offload Interrupt maintains the interrupt
 that the receive IPC statistic counters generate. See Table 4-25
 for further detail. */
-    __R  uint8_t  RESERVED5[4];                /* 0x20C - 0x20F: Reserved */
+    __R  uint8_t  RESERVED6[4];                /* 0x20C - 0x20F: Reserved */
     __RW uint32_t RXIPV4_GD_FMS;               /* 0x210: Number of good IPv4 datagrams received with the TCP, UDP, or
 ICMP payload */
-    __RW uint32_t RXIPV4_HDRERR_FRMS;          /* 0x214: Number of IPv4 datagrams received with header (checksum,
-length, or version mismatch) errors */
-    __RW uint32_t RXIPV4_NOPAY_FRMS;           /* 0x218: Number of IPv4 datagram frames received that did not have a
-TCP, UDP, or ICMP payload processed by the Checksum engine */
-    __RW uint32_t RXIPV4_FRAG_FRMS;            /* 0x21C: Number of good IPv4 datagrams with fragmentation */
-    __RW uint32_t RXIPV4_UDSBL_FRMS;           /* 0x220: Number of good IPv4 datagrams received that had a UDP
-payload with checksum disabled */
-    __RW uint32_t RXIPV6_GD_FRMS;              /* 0x224: Number of good IPv6 datagrams received with TCP, UDP, or
-ICMP payloads */
-    __RW uint32_t RXIPV6_HDRERR_FRMS;          /* 0x228: Number of IPv6 datagrams received with header errors (length or
-version mismatch) */
-    __RW uint32_t RXIPV6_NOPAY_FRMS;           /* 0x22C: Number of IPv6 datagram frames received that did not have a
-TCP, UDP, or ICMP payload. This includes all IPv6 datagrams with
-fragmentation or security extension headers */
-    __RW uint32_t RXUDP_GD_FRMS;               /* 0x230: Number of good IP datagrams with a good UDP payload. This
-counter is not updated when the rxipv4_udsbl_frms counter is
-incremented. */
-    __RW uint32_t RXUDP_ERR_FRMS;              /* 0x234: Number of good IP datagrams whose UDP payload has a
-checksum error */
-    __RW uint32_t RXTCP_GD_FRMS;               /* 0x238: Number of good IP datagrams with a good TCP payload */
-    __RW uint32_t RXTCP_ERR_FRMS;              /* 0x23C: Number of good IP datagrams whose TCP payload has a
-checksum error */
-    __RW uint32_t RXICMP_GD_FRMS;              /* 0x240: Number of good IP datagrams with a good ICMP payload */
-    __RW uint32_t RXICMP_ERR_FRMS;             /* 0x244: Number of good IP datagrams whose ICMP payload has a
-checksum error */
-    __R  uint8_t  RESERVED6[8];                /* 0x248 - 0x24F: Reserved */
-    __RW uint32_t RXIPV4_GD_OCTETS;            /* 0x250: Number of bytes received in good IPv4 datagrams encapsulating
-TCP, UDP, or ICMP data. (Ethernet header, FCS, pad, or IP pad
-bytes are not included in this counter or in the octet counters listed
-below). */
-    __RW uint32_t RXIPV4_HDRERR_OCTETS;        /* 0x254: Number of bytes received in IPv4 datagrams with header errors
-(checksum, length, version mismatch). The value in the Length
-field of IPv4 header is used to update this counter. */
-    __RW uint32_t RXIPV4_NOPAY_OCTETS;         /* 0x258: Number of bytes received in IPv4 datagrams that did not have a
-TCP, UDP, or ICMP payload. The value in the IPv4 header’s
-Length field is used to update this counter. */
-    __RW uint32_t RXIPV4_FRAG_OCTETS;          /* 0x25C: Number of bytes received in fragmented IPv4 datagrams. The
-value in the IPv4 header’s Length field is used to update this
-counter */
-    __RW uint32_t RXIPV4_UDSBL_OCTETS;         /* 0x260: Number of bytes received in a UDP segment that had the UDP
-checksum disabled. This counter does not count IP Header bytes. */
-    __RW uint32_t RXIPV6_GD_OCTETS;            /* 0x264: Number of bytes received in good IPv6 datagrams encapsulating
-TCP, UDP or ICMPv6 data */
-    __RW uint32_t RXIPV6_HDRERR_OCTETS;        /* 0x268: Number of bytes received in IPv6 datagrams with header errors
-(length, version mismatch). The value in the IPv6 header’s Length
-field is used to update this counter. */
-    __RW uint32_t RXIPV6_NOPAY_OCTETS;         /* 0x26C: Number of bytes received in IPv6 datagrams that did not have a
-TCP, UDP, or ICMP payload. The value in the IPv6 header’s
-Length field is used to update this counter. */
-    __RW uint32_t RXUDP_GD_OCTETS;             /* 0x270: Number of bytes received in a good UDP segment. This counter
-(and the counters below) does not count IP header bytes. */
-    __RW uint32_t RXUDP_ERR_OCTETS;            /* 0x274: Number of bytes received in a UDP segment that had checksum
-errors */
-    __RW uint32_t RXTCP_GD_OCTETS;             /* 0x278: Number of bytes received in a good TCP segment */
-    __RW uint32_t RXTCP_ERR_OCTETS;            /* 0x27C: Number of bytes received in a TCP segment with checksum
-errors */
-    __RW uint32_t RXICMP_GD_OCTETS;            /* 0x280: Number of bytes received in a good ICMP segment */
-    __R  uint8_t  RESERVED7[380];              /* 0x284 - 0x3FF: Reserved */
+    __R  uint8_t  RESERVED7[492];              /* 0x214 - 0x3FF: Reserved */
     struct {
         __RW uint32_t L3_L4_CTRL;              /* 0x400: Layer 3 and Layer 4 Control Register */
         __RW uint32_t L4_ADDR;                 /* 0x404: Layer 4 Address Register */
@@ -222,18 +88,15 @@ errors */
         __RW uint32_t L3_ADDR_1;               /* 0x414: Layer 3 Address 1 Register */
         __RW uint32_t L3_ADDR_2;               /* 0x418: Layer 3 Address 2 Register */
         __RW uint32_t L3_ADDR_3;               /* 0x41C: Layer 3 Address 3 Register */
-        __R  uint8_t  RESERVED1[16];           /* 0x420 - 0x42F: Reserved */
-    } L3_L4_CFG[4];
-    __R  uint8_t  RESERVED8[64];               /* 0x4C0 - 0x4FF: Reserved */
-    __RW uint32_t HASH_TABLE[8];               /* 0x500 - 0x51C: Hash Table Register 0 */
-    __R  uint8_t  RESERVED9[100];              /* 0x520 - 0x583: Reserved */
+    } L3_L4_CFG[1];
+    __R  uint8_t  RESERVED8[356];              /* 0x420 - 0x583: Reserved */
     __RW uint32_t VLAN_TAG_INC_RPL;            /* 0x584: VLAN Tag Inclusion or Replacement Register */
     __RW uint32_t VLAN_HASH;                   /* 0x588: VLAN Hash Table Register */
-    __R  uint8_t  RESERVED10[372];             /* 0x58C - 0x6FF: Reserved */
+    __R  uint8_t  RESERVED9[372];              /* 0x58C - 0x6FF: Reserved */
     __RW uint32_t TS_CTRL;                     /* 0x700: Timestamp Control Register */
     __RW uint32_t SUB_SEC_INCR;                /* 0x704: Sub-Second Increment Register */
-    __RW uint32_t SYST_SEC;                    /* 0x708: System Time - Seconds Register */
-    __RW uint32_t SYST_NSEC;                   /* 0x70C: System Time - Nanoseconds Register */
+    __R  uint32_t SYST_SEC;                    /* 0x708: System Time - Seconds Register */
+    __R  uint32_t SYST_NSEC;                   /* 0x70C: System Time - Nanoseconds Register */
     __RW uint32_t SYST_SEC_UPD;                /* 0x710: System Time - Seconds Update Register */
     __RW uint32_t SYST_NSEC_UPD;               /* 0x714: System Time - Nanoseconds Update Register */
     __RW uint32_t TS_ADDEND;                   /* 0x718: Timestamp Addend Register */
@@ -242,12 +105,12 @@ errors */
     __RW uint32_t SYSTM_H_SEC;                 /* 0x724: System Time - Higher Word Seconds Register */
     __R  uint32_t TS_STATUS;                   /* 0x728: Timestamp Status Register */
     __RW uint32_t PPS_CTRL;                    /* 0x72C: PPS Control Register */
-    __RW uint32_t AUX_TS_NSEC;                 /* 0x730: Auxiliary Timestamp - Nanoseconds Register */
-    __RW uint32_t AUX_TS_SEC;                  /* 0x734: Auxiliary Timestamp - Seconds Register */
-    __R  uint8_t  RESERVED11[40];              /* 0x738 - 0x75F: Reserved */
+    __R  uint32_t AUX_TS_NSEC;                 /* 0x730: Auxiliary Timestamp - Nanoseconds Register */
+    __R  uint32_t AUX_TS_SEC;                  /* 0x734: Auxiliary Timestamp - Seconds Register */
+    __R  uint8_t  RESERVED10[40];              /* 0x738 - 0x75F: Reserved */
     __RW uint32_t PPS0_INTERVAL;               /* 0x760: PPS0 Interval Register */
     __RW uint32_t PPS0_WIDTH;                  /* 0x764: PPS0 Width Register */
-    __R  uint8_t  RESERVED12[24];              /* 0x768 - 0x77F: Reserved */
+    __R  uint8_t  RESERVED11[24];              /* 0x768 - 0x77F: Reserved */
     struct {
         __RW uint32_t TGTTM_SEC;               /* 0x780: PPS Target Time Seconds Register */
         __RW uint32_t TGTTM_NSEC;              /* 0x784: PPS Target Time Nanoseconds Register */
@@ -255,7 +118,7 @@ errors */
         __RW uint32_t WIDTH;                   /* 0x78C: PPS Width Register */
         __R  uint8_t  RESERVED0[16];           /* 0x790 - 0x79F: Reserved */
     } PPS[3];
-    __R  uint8_t  RESERVED13[2080];            /* 0x7E0 - 0xFFF: Reserved */
+    __R  uint8_t  RESERVED12[2080];            /* 0x7E0 - 0xFFF: Reserved */
     __RW uint32_t DMA_BUS_MODE;                /* 0x1000: Bus Mode Register */
     __RW uint32_t DMA_TX_POLL_DEMAND;          /* 0x1004: Transmit Poll Demand Register */
     __RW uint32_t DMA_RX_POLL_DEMAND;          /* 0x1008: Receive Poll Demand Register */
@@ -268,17 +131,16 @@ errors */
     __RW uint32_t DMA_RX_INTR_WDOG;            /* 0x1024: Receive Interrupt Watchdog Timer Register */
     __RW uint32_t DMA_AXI_MODE;                /* 0x1028: AXI Bus Mode Register */
     __RW uint32_t DMA_BUS_STATUS;              /* 0x102C: AHB or AXI Status Register */
-    __R  uint8_t  RESERVED14[24];              /* 0x1030 - 0x1047: Reserved */
+    __R  uint8_t  RESERVED13[24];              /* 0x1030 - 0x1047: Reserved */
     __RW uint32_t DMA_CURR_HOST_TX_DESC;       /* 0x1048: Current Host Transmit Descriptor Register */
     __RW uint32_t DMA_CURR_HOST_RX_DESC;       /* 0x104C: Current Host Receive Descriptor Register */
     __RW uint32_t DMA_CURR_HOST_TX_BUF;        /* 0x1050: Current Host Transmit Buffer Address Register */
     __RW uint32_t DMA_CURR_HOST_RX_BUF;        /* 0x1054: Current Host Receive Buffer Address Register */
-    __RW uint32_t DMA_HW_FEATURE;              /* 0x1058: HW Feature Register */
-    __R  uint8_t  RESERVED15[8100];            /* 0x105C - 0x2FFF: Reserved */
+    __R  uint8_t  RESERVED14[8104];            /* 0x1058 - 0x2FFF: Reserved */
     __RW uint32_t CTRL0;                       /* 0x3000: Control Register 0 */
-    __R  uint8_t  RESERVED16[4];               /* 0x3004 - 0x3007: Reserved */
+    __R  uint8_t  RESERVED15[4];               /* 0x3004 - 0x3007: Reserved */
     __RW uint32_t CTRL2;                       /* 0x3008: Control  Register 1 */
-    __R  uint8_t  RESERVED17[28];              /* 0x300C - 0x3027: Reserved */
+    __R  uint8_t  RESERVED16[28];              /* 0x300C - 0x3027: Reserved */
 } ENET_Type;
 
 
@@ -982,162 +844,6 @@ errors */
 #define ENET_VLAN_TAG_VL_SET(x) (((uint32_t)(x) << ENET_VLAN_TAG_VL_SHIFT) & ENET_VLAN_TAG_VL_MASK)
 #define ENET_VLAN_TAG_VL_GET(x) (((uint32_t)(x) & ENET_VLAN_TAG_VL_MASK) >> ENET_VLAN_TAG_VL_SHIFT)
 
-/* Bitfield definition for register: VERSION */
-/*
- * USERVER (RO)
- *
- * User-defined Version
- */
-#define ENET_VERSION_USERVER_MASK (0xFF00U)
-#define ENET_VERSION_USERVER_SHIFT (8U)
-#define ENET_VERSION_USERVER_GET(x) (((uint32_t)(x) & ENET_VERSION_USERVER_MASK) >> ENET_VERSION_USERVER_SHIFT)
-
-/*
- * SNPSVER (RO)
- *
- * Synopsys-defined Version (3.7)
- */
-#define ENET_VERSION_SNPSVER_MASK (0xFFU)
-#define ENET_VERSION_SNPSVER_SHIFT (0U)
-#define ENET_VERSION_SNPSVER_GET(x) (((uint32_t)(x) & ENET_VERSION_SNPSVER_MASK) >> ENET_VERSION_SNPSVER_SHIFT)
-
-/* Bitfield definition for register: DEBUGGING */
-/*
- * TXSTSFSTS (RO)
- *
- * MTL TxStatus FIFO Full Status
- *  When high, this bit indicates that the MTL TxStatus FIFO is full. Therefore, the MTL cannot accept any more frames for transmission. This bit is reserved in the GMAC-AHB and GMAC-DMA configurations.
- */
-#define ENET_DEBUGGING_TXSTSFSTS_MASK (0x2000000UL)
-#define ENET_DEBUGGING_TXSTSFSTS_SHIFT (25U)
-#define ENET_DEBUGGING_TXSTSFSTS_GET(x) (((uint32_t)(x) & ENET_DEBUGGING_TXSTSFSTS_MASK) >> ENET_DEBUGGING_TXSTSFSTS_SHIFT)
-
-/*
- * TXFSTS (RO)
- *
- * MTL Tx FIFO Not Empty Status
- * When high, this bit indicates that the MTL Tx FIFO is not empty and some data is left for transmission.
- */
-#define ENET_DEBUGGING_TXFSTS_MASK (0x1000000UL)
-#define ENET_DEBUGGING_TXFSTS_SHIFT (24U)
-#define ENET_DEBUGGING_TXFSTS_GET(x) (((uint32_t)(x) & ENET_DEBUGGING_TXFSTS_MASK) >> ENET_DEBUGGING_TXFSTS_SHIFT)
-
-/*
- * TWCSTS (RO)
- *
- * MTL Tx FIFO Write Controller Status
- * When high, this bit indicates that the MTL Tx FIFO Write Controller is active and is transferring data to the Tx FIFO.
- */
-#define ENET_DEBUGGING_TWCSTS_MASK (0x400000UL)
-#define ENET_DEBUGGING_TWCSTS_SHIFT (22U)
-#define ENET_DEBUGGING_TWCSTS_GET(x) (((uint32_t)(x) & ENET_DEBUGGING_TWCSTS_MASK) >> ENET_DEBUGGING_TWCSTS_SHIFT)
-
-/*
- * TRCSTS (RO)
- *
- * MTL Tx FIFO Read Controller Status
- * This field indicates the state of the Tx FIFO Read Controller:
- * - 00: IDLE state
- * - 01: READ state (transferring data to the MAC transmitter)
- * - 10: Waiting for TxStatus from the MAC transmitter
- * - 11: Writing the received TxStatus or flushing the Tx FIFO
- */
-#define ENET_DEBUGGING_TRCSTS_MASK (0x300000UL)
-#define ENET_DEBUGGING_TRCSTS_SHIFT (20U)
-#define ENET_DEBUGGING_TRCSTS_GET(x) (((uint32_t)(x) & ENET_DEBUGGING_TRCSTS_MASK) >> ENET_DEBUGGING_TRCSTS_SHIFT)
-
-/*
- * TXPAUSED (RO)
- *
- * MAC Transmitter in Pause
- * When high, this bit indicates that the MAC transmitter is in the Pause condition (in the full-duplex-only mode) and hence does not schedule any frame for transmission.
- */
-#define ENET_DEBUGGING_TXPAUSED_MASK (0x80000UL)
-#define ENET_DEBUGGING_TXPAUSED_SHIFT (19U)
-#define ENET_DEBUGGING_TXPAUSED_GET(x) (((uint32_t)(x) & ENET_DEBUGGING_TXPAUSED_MASK) >> ENET_DEBUGGING_TXPAUSED_SHIFT)
-
-/*
- * TFCSTS (RO)
- *
- * MAC Transmit Frame Controller Status
- * This field indicates the state of the MAC Transmit Frame Controller module:
- * - 00: IDLE state
- * - 01: Waiting for status of previous frame or IFG or backoff period to be over
- * - 10: Generating and transmitting a Pause frame (in the full-duplex mode)
- * - 11: Transferring input frame for transmission
- */
-#define ENET_DEBUGGING_TFCSTS_MASK (0x60000UL)
-#define ENET_DEBUGGING_TFCSTS_SHIFT (17U)
-#define ENET_DEBUGGING_TFCSTS_GET(x) (((uint32_t)(x) & ENET_DEBUGGING_TFCSTS_MASK) >> ENET_DEBUGGING_TFCSTS_SHIFT)
-
-/*
- * TPESTS (RO)
- *
- * MAC GMII or MII Transmit Protocol Engine Status
- *  When high, this bit indicates that the MAC GMII or MII transmit protocol engine is actively transmitting data and is not in the IDLE state.
- */
-#define ENET_DEBUGGING_TPESTS_MASK (0x10000UL)
-#define ENET_DEBUGGING_TPESTS_SHIFT (16U)
-#define ENET_DEBUGGING_TPESTS_GET(x) (((uint32_t)(x) & ENET_DEBUGGING_TPESTS_MASK) >> ENET_DEBUGGING_TPESTS_SHIFT)
-
-/*
- * RXFSTS (RO)
- *
- * MTL RxFIFO Fill-Level Status
- * This field gives the status of the fill-level of the Rx FIFO:
- * - 00: Rx FIFO Empty
- * - 01: Rx FIFO fill-level below flow-control deactivate threshold
- * - 10: Rx FIFO fill-level above flow-control activate threshold
- * - 11: Rx FIFO Full
- */
-#define ENET_DEBUGGING_RXFSTS_MASK (0x300U)
-#define ENET_DEBUGGING_RXFSTS_SHIFT (8U)
-#define ENET_DEBUGGING_RXFSTS_GET(x) (((uint32_t)(x) & ENET_DEBUGGING_RXFSTS_MASK) >> ENET_DEBUGGING_RXFSTS_SHIFT)
-
-/*
- * RRCSTS (RO)
- *
- * MTL RxFIFO Read Controller State
- * This field gives the state of the Rx FIFO read Controller:
- * - 00: IDLE state
- * - 01: Reading frame data
- * - 10: Reading frame status (or timestamp)
- * - 11: Flushing the frame data and status
- */
-#define ENET_DEBUGGING_RRCSTS_MASK (0x60U)
-#define ENET_DEBUGGING_RRCSTS_SHIFT (5U)
-#define ENET_DEBUGGING_RRCSTS_GET(x) (((uint32_t)(x) & ENET_DEBUGGING_RRCSTS_MASK) >> ENET_DEBUGGING_RRCSTS_SHIFT)
-
-/*
- * RWCSTS (RO)
- *
- * MTL Rx FIFO Write Controller Active Status
- *  When high, this bit indicates that the MTL Rx FIFO Write Controller is active and is transferring a received frame to the FIFO.
- */
-#define ENET_DEBUGGING_RWCSTS_MASK (0x10U)
-#define ENET_DEBUGGING_RWCSTS_SHIFT (4U)
-#define ENET_DEBUGGING_RWCSTS_GET(x) (((uint32_t)(x) & ENET_DEBUGGING_RWCSTS_MASK) >> ENET_DEBUGGING_RWCSTS_SHIFT)
-
-/*
- * RFCFCSTS (RO)
- *
- * MAC Receive Frame FIFO Controller Status
- *  When high, this field indicates the active state of the small FIFO Read and Write controllers of the MAC Receive Frame Controller Module. - RFCFCSTS[1] represents the status of small FIFO Read controller. - RFCFCSTS[0] represents the status of small FIFO Write controller.
- */
-#define ENET_DEBUGGING_RFCFCSTS_MASK (0x6U)
-#define ENET_DEBUGGING_RFCFCSTS_SHIFT (1U)
-#define ENET_DEBUGGING_RFCFCSTS_GET(x) (((uint32_t)(x) & ENET_DEBUGGING_RFCFCSTS_MASK) >> ENET_DEBUGGING_RFCFCSTS_SHIFT)
-
-/*
- * RPESTS (RO)
- *
- * MAC GMII or MII Receive Protocol Engine Status
- * When high, this bit indicates that the MAC GMII or MII receive protocol engine is actively receiving data and not in IDLE state.
- */
-#define ENET_DEBUGGING_RPESTS_MASK (0x1U)
-#define ENET_DEBUGGING_RPESTS_SHIFT (0U)
-#define ENET_DEBUGGING_RPESTS_GET(x) (((uint32_t)(x) & ENET_DEBUGGING_RPESTS_MASK) >> ENET_DEBUGGING_RPESTS_SHIFT)
-
 /* Bitfield definition for register: RWKFRMFILT */
 /*
  * WKUPFRMFILT (RW)
@@ -1552,14 +1258,13 @@ errors */
 
 /* Bitfield definition for register: MAC_ADDR_0_HIGH */
 /*
- * AE (RW)
+ * AE (RO)
  *
  * Address Enable
- *  This bit is always set to 1.
+ *  This bit is RO. The bit value is fixed at 1.
  */
 #define ENET_MAC_ADDR_0_HIGH_AE_MASK (0x80000000UL)
 #define ENET_MAC_ADDR_0_HIGH_AE_SHIFT (31U)
-#define ENET_MAC_ADDR_0_HIGH_AE_SET(x) (((uint32_t)(x) << ENET_MAC_ADDR_0_HIGH_AE_SHIFT) & ENET_MAC_ADDR_0_HIGH_AE_MASK)
 #define ENET_MAC_ADDR_0_HIGH_AE_GET(x) (((uint32_t)(x) & ENET_MAC_ADDR_0_HIGH_AE_MASK) >> ENET_MAC_ADDR_0_HIGH_AE_SHIFT)
 
 /*
@@ -1644,15 +1349,6 @@ errors */
 
 /* Bitfield definition for register: XMII_CSR */
 /*
- * SMIDRXS (RO)
- *
- * Delay SMII RX Data Sampling with respect to the SMII SYNC Signal When set, the first bit of the SMII RX data is sampled one cycle after the SMII SYNC signal. When reset, the first bit of the SMII RX data is sampled along with the SMII SYNC signal. If the SMII PHY Interface with source synchronous mode is selected during core configuration, this bit is reserved (RO with default value).
- */
-#define ENET_XMII_CSR_SMIDRXS_MASK (0x10000UL)
-#define ENET_XMII_CSR_SMIDRXS_SHIFT (16U)
-#define ENET_XMII_CSR_SMIDRXS_GET(x) (((uint32_t)(x) & ENET_XMII_CSR_SMIDRXS_MASK) >> ENET_XMII_CSR_SMIDRXS_SHIFT)
-
-/*
  * FALSCARDET (RW)
  *
  * False Carrier Detected
@@ -1734,43 +1430,6 @@ errors */
 #define ENET_WDOG_WTO_WTO_SHIFT (0U)
 #define ENET_WDOG_WTO_WTO_SET(x) (((uint32_t)(x) << ENET_WDOG_WTO_WTO_SHIFT) & ENET_WDOG_WTO_WTO_MASK)
 #define ENET_WDOG_WTO_WTO_GET(x) (((uint32_t)(x) & ENET_WDOG_WTO_WTO_MASK) >> ENET_WDOG_WTO_WTO_SHIFT)
-
-/* Bitfield definition for register: GPIO */
-/*
- * GPIT (RW)
- *
- */
-#define ENET_GPIO_GPIT_MASK (0xF000000UL)
-#define ENET_GPIO_GPIT_SHIFT (24U)
-#define ENET_GPIO_GPIT_SET(x) (((uint32_t)(x) << ENET_GPIO_GPIT_SHIFT) & ENET_GPIO_GPIT_MASK)
-#define ENET_GPIO_GPIT_GET(x) (((uint32_t)(x) & ENET_GPIO_GPIT_MASK) >> ENET_GPIO_GPIT_SHIFT)
-
-/*
- * GPIE (RW)
- *
- */
-#define ENET_GPIO_GPIE_MASK (0xF0000UL)
-#define ENET_GPIO_GPIE_SHIFT (16U)
-#define ENET_GPIO_GPIE_SET(x) (((uint32_t)(x) << ENET_GPIO_GPIE_SHIFT) & ENET_GPIO_GPIE_MASK)
-#define ENET_GPIO_GPIE_GET(x) (((uint32_t)(x) & ENET_GPIO_GPIE_MASK) >> ENET_GPIO_GPIE_SHIFT)
-
-/*
- * GPO (RW)
- *
- */
-#define ENET_GPIO_GPO_MASK (0xF00U)
-#define ENET_GPIO_GPO_SHIFT (8U)
-#define ENET_GPIO_GPO_SET(x) (((uint32_t)(x) << ENET_GPIO_GPO_SHIFT) & ENET_GPIO_GPO_MASK)
-#define ENET_GPIO_GPO_GET(x) (((uint32_t)(x) & ENET_GPIO_GPO_MASK) >> ENET_GPIO_GPO_SHIFT)
-
-/*
- * GPIS (RW)
- *
- */
-#define ENET_GPIO_GPIS_MASK (0xFU)
-#define ENET_GPIO_GPIS_SHIFT (0U)
-#define ENET_GPIO_GPIS_SET(x) (((uint32_t)(x) << ENET_GPIO_GPIS_SHIFT) & ENET_GPIO_GPIS_MASK)
-#define ENET_GPIO_GPIS_GET(x) (((uint32_t)(x) & ENET_GPIO_GPIS_MASK) >> ENET_GPIO_GPIS_SHIFT)
 
 /* Bitfield definition for register: MMC_CNTRL */
 /*
@@ -3101,182 +2760,6 @@ errors */
 #define ENET_TX1024TOMAXOCTETS_GB_FRMCNT_SET(x) (((uint32_t)(x) << ENET_TX1024TOMAXOCTETS_GB_FRMCNT_SHIFT) & ENET_TX1024TOMAXOCTETS_GB_FRMCNT_MASK)
 #define ENET_TX1024TOMAXOCTETS_GB_FRMCNT_GET(x) (((uint32_t)(x) & ENET_TX1024TOMAXOCTETS_GB_FRMCNT_MASK) >> ENET_TX1024TOMAXOCTETS_GB_FRMCNT_SHIFT)
 
-/* Bitfield definition for register: TXUNICASTFRAMES_GB */
-/*
- * FRMCNT (RW)
- *
- * Number of good and bad unicast frames transmitted.
- */
-#define ENET_TXUNICASTFRAMES_GB_FRMCNT_MASK (0xFFFFFFFFUL)
-#define ENET_TXUNICASTFRAMES_GB_FRMCNT_SHIFT (0U)
-#define ENET_TXUNICASTFRAMES_GB_FRMCNT_SET(x) (((uint32_t)(x) << ENET_TXUNICASTFRAMES_GB_FRMCNT_SHIFT) & ENET_TXUNICASTFRAMES_GB_FRMCNT_MASK)
-#define ENET_TXUNICASTFRAMES_GB_FRMCNT_GET(x) (((uint32_t)(x) & ENET_TXUNICASTFRAMES_GB_FRMCNT_MASK) >> ENET_TXUNICASTFRAMES_GB_FRMCNT_SHIFT)
-
-/* Bitfield definition for register: TXMULTICASTFRAMES_GB */
-/*
- * FRMCNT (RW)
- *
- * Number of good and bad multicast frames transmitted.
- */
-#define ENET_TXMULTICASTFRAMES_GB_FRMCNT_MASK (0xFFFFFFFFUL)
-#define ENET_TXMULTICASTFRAMES_GB_FRMCNT_SHIFT (0U)
-#define ENET_TXMULTICASTFRAMES_GB_FRMCNT_SET(x) (((uint32_t)(x) << ENET_TXMULTICASTFRAMES_GB_FRMCNT_SHIFT) & ENET_TXMULTICASTFRAMES_GB_FRMCNT_MASK)
-#define ENET_TXMULTICASTFRAMES_GB_FRMCNT_GET(x) (((uint32_t)(x) & ENET_TXMULTICASTFRAMES_GB_FRMCNT_MASK) >> ENET_TXMULTICASTFRAMES_GB_FRMCNT_SHIFT)
-
-/* Bitfield definition for register: TXBROADCASTFRAMES_GB */
-/*
- * FRMCNT (RW)
- *
- * Number of good and bad broadcast frames transmitted.
- */
-#define ENET_TXBROADCASTFRAMES_GB_FRMCNT_MASK (0xFFFFFFFFUL)
-#define ENET_TXBROADCASTFRAMES_GB_FRMCNT_SHIFT (0U)
-#define ENET_TXBROADCASTFRAMES_GB_FRMCNT_SET(x) (((uint32_t)(x) << ENET_TXBROADCASTFRAMES_GB_FRMCNT_SHIFT) & ENET_TXBROADCASTFRAMES_GB_FRMCNT_MASK)
-#define ENET_TXBROADCASTFRAMES_GB_FRMCNT_GET(x) (((uint32_t)(x) & ENET_TXBROADCASTFRAMES_GB_FRMCNT_MASK) >> ENET_TXBROADCASTFRAMES_GB_FRMCNT_SHIFT)
-
-/* Bitfield definition for register: TXUNDERFLOWERROR */
-/*
- * FRMCNT (RW)
- *
- * Number of frames aborted because of frame underflow error.
- */
-#define ENET_TXUNDERFLOWERROR_FRMCNT_MASK (0xFFFFFFFFUL)
-#define ENET_TXUNDERFLOWERROR_FRMCNT_SHIFT (0U)
-#define ENET_TXUNDERFLOWERROR_FRMCNT_SET(x) (((uint32_t)(x) << ENET_TXUNDERFLOWERROR_FRMCNT_SHIFT) & ENET_TXUNDERFLOWERROR_FRMCNT_MASK)
-#define ENET_TXUNDERFLOWERROR_FRMCNT_GET(x) (((uint32_t)(x) & ENET_TXUNDERFLOWERROR_FRMCNT_MASK) >> ENET_TXUNDERFLOWERROR_FRMCNT_SHIFT)
-
-/* Bitfield definition for register: TXSINGLECOL_G */
-/*
- * FRMCNT (RW)
- *
- * Number of successfully transmitted frames after a single collision in the half-duplex mode.
- */
-#define ENET_TXSINGLECOL_G_FRMCNT_MASK (0xFFFFFFFFUL)
-#define ENET_TXSINGLECOL_G_FRMCNT_SHIFT (0U)
-#define ENET_TXSINGLECOL_G_FRMCNT_SET(x) (((uint32_t)(x) << ENET_TXSINGLECOL_G_FRMCNT_SHIFT) & ENET_TXSINGLECOL_G_FRMCNT_MASK)
-#define ENET_TXSINGLECOL_G_FRMCNT_GET(x) (((uint32_t)(x) & ENET_TXSINGLECOL_G_FRMCNT_MASK) >> ENET_TXSINGLECOL_G_FRMCNT_SHIFT)
-
-/* Bitfield definition for register: TXMULTICOL_G */
-/*
- * FRMCNT (RW)
- *
- * Number of successfully transmitted frames after multiple collisions in the half-duplex mode.
- */
-#define ENET_TXMULTICOL_G_FRMCNT_MASK (0xFFFFFFFFUL)
-#define ENET_TXMULTICOL_G_FRMCNT_SHIFT (0U)
-#define ENET_TXMULTICOL_G_FRMCNT_SET(x) (((uint32_t)(x) << ENET_TXMULTICOL_G_FRMCNT_SHIFT) & ENET_TXMULTICOL_G_FRMCNT_MASK)
-#define ENET_TXMULTICOL_G_FRMCNT_GET(x) (((uint32_t)(x) & ENET_TXMULTICOL_G_FRMCNT_MASK) >> ENET_TXMULTICOL_G_FRMCNT_SHIFT)
-
-/* Bitfield definition for register: TXDEFERRED */
-/*
- * FRMCNT (RW)
- *
- * Number of successfully transmitted frames after a deferral in the half-duplex mode.
- */
-#define ENET_TXDEFERRED_FRMCNT_MASK (0xFFFFFFFFUL)
-#define ENET_TXDEFERRED_FRMCNT_SHIFT (0U)
-#define ENET_TXDEFERRED_FRMCNT_SET(x) (((uint32_t)(x) << ENET_TXDEFERRED_FRMCNT_SHIFT) & ENET_TXDEFERRED_FRMCNT_MASK)
-#define ENET_TXDEFERRED_FRMCNT_GET(x) (((uint32_t)(x) & ENET_TXDEFERRED_FRMCNT_MASK) >> ENET_TXDEFERRED_FRMCNT_SHIFT)
-
-/* Bitfield definition for register: TXLATECOL */
-/*
- * FRMCNT (RW)
- *
- * Number of frames aborted because of late collision error.
- */
-#define ENET_TXLATECOL_FRMCNT_MASK (0xFFFFFFFFUL)
-#define ENET_TXLATECOL_FRMCNT_SHIFT (0U)
-#define ENET_TXLATECOL_FRMCNT_SET(x) (((uint32_t)(x) << ENET_TXLATECOL_FRMCNT_SHIFT) & ENET_TXLATECOL_FRMCNT_MASK)
-#define ENET_TXLATECOL_FRMCNT_GET(x) (((uint32_t)(x) & ENET_TXLATECOL_FRMCNT_MASK) >> ENET_TXLATECOL_FRMCNT_SHIFT)
-
-/* Bitfield definition for register: TXEXESSCOL */
-/*
- * FRMCNT (RW)
- *
- * Number of frames aborted because of excessive (16) collision errors.
- */
-#define ENET_TXEXESSCOL_FRMCNT_MASK (0xFFFFFFFFUL)
-#define ENET_TXEXESSCOL_FRMCNT_SHIFT (0U)
-#define ENET_TXEXESSCOL_FRMCNT_SET(x) (((uint32_t)(x) << ENET_TXEXESSCOL_FRMCNT_SHIFT) & ENET_TXEXESSCOL_FRMCNT_MASK)
-#define ENET_TXEXESSCOL_FRMCNT_GET(x) (((uint32_t)(x) & ENET_TXEXESSCOL_FRMCNT_MASK) >> ENET_TXEXESSCOL_FRMCNT_SHIFT)
-
-/* Bitfield definition for register: TXCARRIERERROR */
-/*
- * FRMCNT (RW)
- *
- * Number of frames aborted because of carrier sense error (no carrier or loss of carrier).
- */
-#define ENET_TXCARRIERERROR_FRMCNT_MASK (0xFFFFFFFFUL)
-#define ENET_TXCARRIERERROR_FRMCNT_SHIFT (0U)
-#define ENET_TXCARRIERERROR_FRMCNT_SET(x) (((uint32_t)(x) << ENET_TXCARRIERERROR_FRMCNT_SHIFT) & ENET_TXCARRIERERROR_FRMCNT_MASK)
-#define ENET_TXCARRIERERROR_FRMCNT_GET(x) (((uint32_t)(x) & ENET_TXCARRIERERROR_FRMCNT_MASK) >> ENET_TXCARRIERERROR_FRMCNT_SHIFT)
-
-/* Bitfield definition for register: TXOCTETCOUNT_G */
-/*
- * BYTECNT (RW)
- *
- * Number of bytes transmitted, exclusive of preamble, only in good frames.
- */
-#define ENET_TXOCTETCOUNT_G_BYTECNT_MASK (0xFFFFFFFFUL)
-#define ENET_TXOCTETCOUNT_G_BYTECNT_SHIFT (0U)
-#define ENET_TXOCTETCOUNT_G_BYTECNT_SET(x) (((uint32_t)(x) << ENET_TXOCTETCOUNT_G_BYTECNT_SHIFT) & ENET_TXOCTETCOUNT_G_BYTECNT_MASK)
-#define ENET_TXOCTETCOUNT_G_BYTECNT_GET(x) (((uint32_t)(x) & ENET_TXOCTETCOUNT_G_BYTECNT_MASK) >> ENET_TXOCTETCOUNT_G_BYTECNT_SHIFT)
-
-/* Bitfield definition for register: TXFRAMECOUNT_G */
-/*
- * FRMCNT (RW)
- *
- * Number of good frames transmitted.
- */
-#define ENET_TXFRAMECOUNT_G_FRMCNT_MASK (0xFFFFFFFFUL)
-#define ENET_TXFRAMECOUNT_G_FRMCNT_SHIFT (0U)
-#define ENET_TXFRAMECOUNT_G_FRMCNT_SET(x) (((uint32_t)(x) << ENET_TXFRAMECOUNT_G_FRMCNT_SHIFT) & ENET_TXFRAMECOUNT_G_FRMCNT_MASK)
-#define ENET_TXFRAMECOUNT_G_FRMCNT_GET(x) (((uint32_t)(x) & ENET_TXFRAMECOUNT_G_FRMCNT_MASK) >> ENET_TXFRAMECOUNT_G_FRMCNT_SHIFT)
-
-/* Bitfield definition for register: TXEXCESSDEF */
-/*
- * FRMCNT (RW)
- *
- * Number of frames aborted because of excessive deferral error (deferred for more than two max-sized frame times).
- */
-#define ENET_TXEXCESSDEF_FRMCNT_MASK (0xFFFFFFFFUL)
-#define ENET_TXEXCESSDEF_FRMCNT_SHIFT (0U)
-#define ENET_TXEXCESSDEF_FRMCNT_SET(x) (((uint32_t)(x) << ENET_TXEXCESSDEF_FRMCNT_SHIFT) & ENET_TXEXCESSDEF_FRMCNT_MASK)
-#define ENET_TXEXCESSDEF_FRMCNT_GET(x) (((uint32_t)(x) & ENET_TXEXCESSDEF_FRMCNT_MASK) >> ENET_TXEXCESSDEF_FRMCNT_SHIFT)
-
-/* Bitfield definition for register: TXPAUSEFRAMES */
-/*
- * FRMCNT (RW)
- *
- * Number of good Pause frames transmitted.
- */
-#define ENET_TXPAUSEFRAMES_FRMCNT_MASK (0xFFFFFFFFUL)
-#define ENET_TXPAUSEFRAMES_FRMCNT_SHIFT (0U)
-#define ENET_TXPAUSEFRAMES_FRMCNT_SET(x) (((uint32_t)(x) << ENET_TXPAUSEFRAMES_FRMCNT_SHIFT) & ENET_TXPAUSEFRAMES_FRMCNT_MASK)
-#define ENET_TXPAUSEFRAMES_FRMCNT_GET(x) (((uint32_t)(x) & ENET_TXPAUSEFRAMES_FRMCNT_MASK) >> ENET_TXPAUSEFRAMES_FRMCNT_SHIFT)
-
-/* Bitfield definition for register: TXVLANFRAMES_G */
-/*
- * FRMCNT (RW)
- *
- * Number of good VLAN frames transmitted, exclusive of retried frames.
- */
-#define ENET_TXVLANFRAMES_G_FRMCNT_MASK (0xFFFFFFFFUL)
-#define ENET_TXVLANFRAMES_G_FRMCNT_SHIFT (0U)
-#define ENET_TXVLANFRAMES_G_FRMCNT_SET(x) (((uint32_t)(x) << ENET_TXVLANFRAMES_G_FRMCNT_SHIFT) & ENET_TXVLANFRAMES_G_FRMCNT_MASK)
-#define ENET_TXVLANFRAMES_G_FRMCNT_GET(x) (((uint32_t)(x) & ENET_TXVLANFRAMES_G_FRMCNT_MASK) >> ENET_TXVLANFRAMES_G_FRMCNT_SHIFT)
-
-/* Bitfield definition for register: TXOVERSIZE_G */
-/*
- * FRMCNT (RW)
- *
- * Number of frames transmitted without errors and with length greater than the maxsize (1,518 or 1,522 bytes for VLAN tagged frames; 2000 bytes if enabled in Bit 27 of Register 0 (MAC Configuration Register)).
- */
-#define ENET_TXOVERSIZE_G_FRMCNT_MASK (0xFFFFFFFFUL)
-#define ENET_TXOVERSIZE_G_FRMCNT_SHIFT (0U)
-#define ENET_TXOVERSIZE_G_FRMCNT_SET(x) (((uint32_t)(x) << ENET_TXOVERSIZE_G_FRMCNT_SHIFT) & ENET_TXOVERSIZE_G_FRMCNT_MASK)
-#define ENET_TXOVERSIZE_G_FRMCNT_GET(x) (((uint32_t)(x) & ENET_TXOVERSIZE_G_FRMCNT_MASK) >> ENET_TXOVERSIZE_G_FRMCNT_SHIFT)
-
 /* Bitfield definition for register: RXFRAMECOUNT_GB */
 /*
  * FRMCNT (RW)
@@ -3287,281 +2770,6 @@ errors */
 #define ENET_RXFRAMECOUNT_GB_FRMCNT_SHIFT (0U)
 #define ENET_RXFRAMECOUNT_GB_FRMCNT_SET(x) (((uint32_t)(x) << ENET_RXFRAMECOUNT_GB_FRMCNT_SHIFT) & ENET_RXFRAMECOUNT_GB_FRMCNT_MASK)
 #define ENET_RXFRAMECOUNT_GB_FRMCNT_GET(x) (((uint32_t)(x) & ENET_RXFRAMECOUNT_GB_FRMCNT_MASK) >> ENET_RXFRAMECOUNT_GB_FRMCNT_SHIFT)
-
-/* Bitfield definition for register: RXOCTETCOUNT_G */
-/*
- * BYTECNT (RW)
- *
- * Number of bytes received, exclusive of preamble, in good and bad frames.
- */
-#define ENET_RXOCTETCOUNT_G_BYTECNT_MASK (0xFFFFFFFFUL)
-#define ENET_RXOCTETCOUNT_G_BYTECNT_SHIFT (0U)
-#define ENET_RXOCTETCOUNT_G_BYTECNT_SET(x) (((uint32_t)(x) << ENET_RXOCTETCOUNT_G_BYTECNT_SHIFT) & ENET_RXOCTETCOUNT_G_BYTECNT_MASK)
-#define ENET_RXOCTETCOUNT_G_BYTECNT_GET(x) (((uint32_t)(x) & ENET_RXOCTETCOUNT_G_BYTECNT_MASK) >> ENET_RXOCTETCOUNT_G_BYTECNT_SHIFT)
-
-/* Bitfield definition for register: RXOCTETCOUNT_GB */
-/*
- * BYTECNT (RW)
- *
- * Number of bytes received, exclusive of preamble, only in good frames.
- */
-#define ENET_RXOCTETCOUNT_GB_BYTECNT_MASK (0xFFFFFFFFUL)
-#define ENET_RXOCTETCOUNT_GB_BYTECNT_SHIFT (0U)
-#define ENET_RXOCTETCOUNT_GB_BYTECNT_SET(x) (((uint32_t)(x) << ENET_RXOCTETCOUNT_GB_BYTECNT_SHIFT) & ENET_RXOCTETCOUNT_GB_BYTECNT_MASK)
-#define ENET_RXOCTETCOUNT_GB_BYTECNT_GET(x) (((uint32_t)(x) & ENET_RXOCTETCOUNT_GB_BYTECNT_MASK) >> ENET_RXOCTETCOUNT_GB_BYTECNT_SHIFT)
-
-/* Bitfield definition for register: RXBROADCASTFRAMES_G */
-/*
- * FRMCNT (RW)
- *
- * Number of good broadcast frames received.
- */
-#define ENET_RXBROADCASTFRAMES_G_FRMCNT_MASK (0xFFFFFFFFUL)
-#define ENET_RXBROADCASTFRAMES_G_FRMCNT_SHIFT (0U)
-#define ENET_RXBROADCASTFRAMES_G_FRMCNT_SET(x) (((uint32_t)(x) << ENET_RXBROADCASTFRAMES_G_FRMCNT_SHIFT) & ENET_RXBROADCASTFRAMES_G_FRMCNT_MASK)
-#define ENET_RXBROADCASTFRAMES_G_FRMCNT_GET(x) (((uint32_t)(x) & ENET_RXBROADCASTFRAMES_G_FRMCNT_MASK) >> ENET_RXBROADCASTFRAMES_G_FRMCNT_SHIFT)
-
-/* Bitfield definition for register: RXMULTICASTFRAMES_G */
-/*
- * FRMCNT (RW)
- *
- * Number of good multicast frames received.
- */
-#define ENET_RXMULTICASTFRAMES_G_FRMCNT_MASK (0xFFFFFFFFUL)
-#define ENET_RXMULTICASTFRAMES_G_FRMCNT_SHIFT (0U)
-#define ENET_RXMULTICASTFRAMES_G_FRMCNT_SET(x) (((uint32_t)(x) << ENET_RXMULTICASTFRAMES_G_FRMCNT_SHIFT) & ENET_RXMULTICASTFRAMES_G_FRMCNT_MASK)
-#define ENET_RXMULTICASTFRAMES_G_FRMCNT_GET(x) (((uint32_t)(x) & ENET_RXMULTICASTFRAMES_G_FRMCNT_MASK) >> ENET_RXMULTICASTFRAMES_G_FRMCNT_SHIFT)
-
-/* Bitfield definition for register: RXCRCERROR */
-/*
- * FRMCNT (RW)
- *
- * Number of frames received with CRC error.
- */
-#define ENET_RXCRCERROR_FRMCNT_MASK (0xFFFFFFFFUL)
-#define ENET_RXCRCERROR_FRMCNT_SHIFT (0U)
-#define ENET_RXCRCERROR_FRMCNT_SET(x) (((uint32_t)(x) << ENET_RXCRCERROR_FRMCNT_SHIFT) & ENET_RXCRCERROR_FRMCNT_MASK)
-#define ENET_RXCRCERROR_FRMCNT_GET(x) (((uint32_t)(x) & ENET_RXCRCERROR_FRMCNT_MASK) >> ENET_RXCRCERROR_FRMCNT_SHIFT)
-
-/* Bitfield definition for register: RXALIGNMENTERROR */
-/*
- * FRMCNT (RW)
- *
- * Number of frames received with alignment (dribble) error. Valid only in 10/100 mode.
- */
-#define ENET_RXALIGNMENTERROR_FRMCNT_MASK (0xFFFFFFFFUL)
-#define ENET_RXALIGNMENTERROR_FRMCNT_SHIFT (0U)
-#define ENET_RXALIGNMENTERROR_FRMCNT_SET(x) (((uint32_t)(x) << ENET_RXALIGNMENTERROR_FRMCNT_SHIFT) & ENET_RXALIGNMENTERROR_FRMCNT_MASK)
-#define ENET_RXALIGNMENTERROR_FRMCNT_GET(x) (((uint32_t)(x) & ENET_RXALIGNMENTERROR_FRMCNT_MASK) >> ENET_RXALIGNMENTERROR_FRMCNT_SHIFT)
-
-/* Bitfield definition for register: RXRUNTERROR */
-/*
- * FRMCNT (RW)
- *
- * Number of frames received with runt (<64 bytes and CRC error) error.
- */
-#define ENET_RXRUNTERROR_FRMCNT_MASK (0xFFFFFFFFUL)
-#define ENET_RXRUNTERROR_FRMCNT_SHIFT (0U)
-#define ENET_RXRUNTERROR_FRMCNT_SET(x) (((uint32_t)(x) << ENET_RXRUNTERROR_FRMCNT_SHIFT) & ENET_RXRUNTERROR_FRMCNT_MASK)
-#define ENET_RXRUNTERROR_FRMCNT_GET(x) (((uint32_t)(x) & ENET_RXRUNTERROR_FRMCNT_MASK) >> ENET_RXRUNTERROR_FRMCNT_SHIFT)
-
-/* Bitfield definition for register: RXJABBERERROR */
-/*
- * FRMCNT (RW)
- *
- * Number of giant frames received with length (including CRC) greater than 1,518 bytes (1,522 bytes for VLAN tagged) and with CRC error. If Jumbo Frame mode is enabled, then frames of length greater than 9,018 bytes (9,022 for VLAN tagged) are considered as giant frames.
- */
-#define ENET_RXJABBERERROR_FRMCNT_MASK (0xFFFFFFFFUL)
-#define ENET_RXJABBERERROR_FRMCNT_SHIFT (0U)
-#define ENET_RXJABBERERROR_FRMCNT_SET(x) (((uint32_t)(x) << ENET_RXJABBERERROR_FRMCNT_SHIFT) & ENET_RXJABBERERROR_FRMCNT_MASK)
-#define ENET_RXJABBERERROR_FRMCNT_GET(x) (((uint32_t)(x) & ENET_RXJABBERERROR_FRMCNT_MASK) >> ENET_RXJABBERERROR_FRMCNT_SHIFT)
-
-/* Bitfield definition for register: RXUNDERSIZE_G */
-/*
- * FRMCNT (RW)
- *
- * Number of frames received with length less than 64 bytes, without any errors.
- */
-#define ENET_RXUNDERSIZE_G_FRMCNT_MASK (0xFFFFFFFFUL)
-#define ENET_RXUNDERSIZE_G_FRMCNT_SHIFT (0U)
-#define ENET_RXUNDERSIZE_G_FRMCNT_SET(x) (((uint32_t)(x) << ENET_RXUNDERSIZE_G_FRMCNT_SHIFT) & ENET_RXUNDERSIZE_G_FRMCNT_MASK)
-#define ENET_RXUNDERSIZE_G_FRMCNT_GET(x) (((uint32_t)(x) & ENET_RXUNDERSIZE_G_FRMCNT_MASK) >> ENET_RXUNDERSIZE_G_FRMCNT_SHIFT)
-
-/* Bitfield definition for register: RXOVERSIZE_G */
-/*
- * FRMCNT (RW)
- *
- * Number of frames received without errors, with length greater than the maxsize (1,518 or 1,522 for VLAN tagged frames; 2,000 bytes if enabled in Bit 27 of Register 0 (MAC Configuration Register)).
- */
-#define ENET_RXOVERSIZE_G_FRMCNT_MASK (0xFFFFFFFFUL)
-#define ENET_RXOVERSIZE_G_FRMCNT_SHIFT (0U)
-#define ENET_RXOVERSIZE_G_FRMCNT_SET(x) (((uint32_t)(x) << ENET_RXOVERSIZE_G_FRMCNT_SHIFT) & ENET_RXOVERSIZE_G_FRMCNT_MASK)
-#define ENET_RXOVERSIZE_G_FRMCNT_GET(x) (((uint32_t)(x) & ENET_RXOVERSIZE_G_FRMCNT_MASK) >> ENET_RXOVERSIZE_G_FRMCNT_SHIFT)
-
-/* Bitfield definition for register: RX64OCTETS_GB */
-/*
- * FRMCNT (RW)
- *
- * Number of good and bad frames received with length 64 bytes, exclusive of preamble.
- */
-#define ENET_RX64OCTETS_GB_FRMCNT_MASK (0xFFFFFFFFUL)
-#define ENET_RX64OCTETS_GB_FRMCNT_SHIFT (0U)
-#define ENET_RX64OCTETS_GB_FRMCNT_SET(x) (((uint32_t)(x) << ENET_RX64OCTETS_GB_FRMCNT_SHIFT) & ENET_RX64OCTETS_GB_FRMCNT_MASK)
-#define ENET_RX64OCTETS_GB_FRMCNT_GET(x) (((uint32_t)(x) & ENET_RX64OCTETS_GB_FRMCNT_MASK) >> ENET_RX64OCTETS_GB_FRMCNT_SHIFT)
-
-/* Bitfield definition for register: RX65TO127OCTETS_GB */
-/*
- * FRMCNT (RW)
- *
- * Number of good and bad frames received with length between 65 and 127 (inclusive) bytes, exclusive of preamble.
- */
-#define ENET_RX65TO127OCTETS_GB_FRMCNT_MASK (0xFFFFFFFFUL)
-#define ENET_RX65TO127OCTETS_GB_FRMCNT_SHIFT (0U)
-#define ENET_RX65TO127OCTETS_GB_FRMCNT_SET(x) (((uint32_t)(x) << ENET_RX65TO127OCTETS_GB_FRMCNT_SHIFT) & ENET_RX65TO127OCTETS_GB_FRMCNT_MASK)
-#define ENET_RX65TO127OCTETS_GB_FRMCNT_GET(x) (((uint32_t)(x) & ENET_RX65TO127OCTETS_GB_FRMCNT_MASK) >> ENET_RX65TO127OCTETS_GB_FRMCNT_SHIFT)
-
-/* Bitfield definition for register: RX128TO255OCTETS_GB */
-/*
- * FRMCNT (RW)
- *
- * Number of good and bad frames received with length between 128 and 255 (inclusive) bytes, exclusive of preamble.
- */
-#define ENET_RX128TO255OCTETS_GB_FRMCNT_MASK (0xFFFFFFFFUL)
-#define ENET_RX128TO255OCTETS_GB_FRMCNT_SHIFT (0U)
-#define ENET_RX128TO255OCTETS_GB_FRMCNT_SET(x) (((uint32_t)(x) << ENET_RX128TO255OCTETS_GB_FRMCNT_SHIFT) & ENET_RX128TO255OCTETS_GB_FRMCNT_MASK)
-#define ENET_RX128TO255OCTETS_GB_FRMCNT_GET(x) (((uint32_t)(x) & ENET_RX128TO255OCTETS_GB_FRMCNT_MASK) >> ENET_RX128TO255OCTETS_GB_FRMCNT_SHIFT)
-
-/* Bitfield definition for register: RX256TO511OCTETS_GB */
-/*
- * FRMCNT (RW)
- *
- * Number of good and bad frames received with length between 256 and 511 (inclusive) bytes, exclusive of preamble.
- */
-#define ENET_RX256TO511OCTETS_GB_FRMCNT_MASK (0xFFFFFFFFUL)
-#define ENET_RX256TO511OCTETS_GB_FRMCNT_SHIFT (0U)
-#define ENET_RX256TO511OCTETS_GB_FRMCNT_SET(x) (((uint32_t)(x) << ENET_RX256TO511OCTETS_GB_FRMCNT_SHIFT) & ENET_RX256TO511OCTETS_GB_FRMCNT_MASK)
-#define ENET_RX256TO511OCTETS_GB_FRMCNT_GET(x) (((uint32_t)(x) & ENET_RX256TO511OCTETS_GB_FRMCNT_MASK) >> ENET_RX256TO511OCTETS_GB_FRMCNT_SHIFT)
-
-/* Bitfield definition for register: RX512TO1023OCTETS_GB */
-/*
- * FRMCNT (RW)
- *
- * Number of good and bad frames received with length between 512 and 1,023 (inclusive) bytes, exclusive of preamble.
- */
-#define ENET_RX512TO1023OCTETS_GB_FRMCNT_MASK (0xFFFFFFFFUL)
-#define ENET_RX512TO1023OCTETS_GB_FRMCNT_SHIFT (0U)
-#define ENET_RX512TO1023OCTETS_GB_FRMCNT_SET(x) (((uint32_t)(x) << ENET_RX512TO1023OCTETS_GB_FRMCNT_SHIFT) & ENET_RX512TO1023OCTETS_GB_FRMCNT_MASK)
-#define ENET_RX512TO1023OCTETS_GB_FRMCNT_GET(x) (((uint32_t)(x) & ENET_RX512TO1023OCTETS_GB_FRMCNT_MASK) >> ENET_RX512TO1023OCTETS_GB_FRMCNT_SHIFT)
-
-/* Bitfield definition for register: RX1024TOMAXOCTETS_GB */
-/*
- * FRMCNT (RW)
- *
- * Number of good and bad frames received with length between 1,024 and maxsize (inclusive) bytes, exclusive of preamble and retried frames.
- */
-#define ENET_RX1024TOMAXOCTETS_GB_FRMCNT_MASK (0xFFFFFFFFUL)
-#define ENET_RX1024TOMAXOCTETS_GB_FRMCNT_SHIFT (0U)
-#define ENET_RX1024TOMAXOCTETS_GB_FRMCNT_SET(x) (((uint32_t)(x) << ENET_RX1024TOMAXOCTETS_GB_FRMCNT_SHIFT) & ENET_RX1024TOMAXOCTETS_GB_FRMCNT_MASK)
-#define ENET_RX1024TOMAXOCTETS_GB_FRMCNT_GET(x) (((uint32_t)(x) & ENET_RX1024TOMAXOCTETS_GB_FRMCNT_MASK) >> ENET_RX1024TOMAXOCTETS_GB_FRMCNT_SHIFT)
-
-/* Bitfield definition for register: RXUNICASTFRAMES_G */
-/*
- * FRMCNT (RW)
- *
- * Number of received good unicast frames.
- */
-#define ENET_RXUNICASTFRAMES_G_FRMCNT_MASK (0xFFFFFFFFUL)
-#define ENET_RXUNICASTFRAMES_G_FRMCNT_SHIFT (0U)
-#define ENET_RXUNICASTFRAMES_G_FRMCNT_SET(x) (((uint32_t)(x) << ENET_RXUNICASTFRAMES_G_FRMCNT_SHIFT) & ENET_RXUNICASTFRAMES_G_FRMCNT_MASK)
-#define ENET_RXUNICASTFRAMES_G_FRMCNT_GET(x) (((uint32_t)(x) & ENET_RXUNICASTFRAMES_G_FRMCNT_MASK) >> ENET_RXUNICASTFRAMES_G_FRMCNT_SHIFT)
-
-/* Bitfield definition for register: RXLENGTHERROR */
-/*
- * FRMCNT (RW)
- *
- * Number of frames received with length error (Length type field ≠ frame size), for all frames with valid length field.
- */
-#define ENET_RXLENGTHERROR_FRMCNT_MASK (0xFFFFFFFFUL)
-#define ENET_RXLENGTHERROR_FRMCNT_SHIFT (0U)
-#define ENET_RXLENGTHERROR_FRMCNT_SET(x) (((uint32_t)(x) << ENET_RXLENGTHERROR_FRMCNT_SHIFT) & ENET_RXLENGTHERROR_FRMCNT_MASK)
-#define ENET_RXLENGTHERROR_FRMCNT_GET(x) (((uint32_t)(x) & ENET_RXLENGTHERROR_FRMCNT_MASK) >> ENET_RXLENGTHERROR_FRMCNT_SHIFT)
-
-/* Bitfield definition for register: RXOUTOFRANGETYPE */
-/*
- * FRMCNT (RW)
- *
- * Number of frames received with length field not equal to the valid frame size (greater than 1,500 but less than 1,536).
- */
-#define ENET_RXOUTOFRANGETYPE_FRMCNT_MASK (0xFFFFFFFFUL)
-#define ENET_RXOUTOFRANGETYPE_FRMCNT_SHIFT (0U)
-#define ENET_RXOUTOFRANGETYPE_FRMCNT_SET(x) (((uint32_t)(x) << ENET_RXOUTOFRANGETYPE_FRMCNT_SHIFT) & ENET_RXOUTOFRANGETYPE_FRMCNT_MASK)
-#define ENET_RXOUTOFRANGETYPE_FRMCNT_GET(x) (((uint32_t)(x) & ENET_RXOUTOFRANGETYPE_FRMCNT_MASK) >> ENET_RXOUTOFRANGETYPE_FRMCNT_SHIFT)
-
-/* Bitfield definition for register: RXPAUSEFRAMES */
-/*
- * FRMCNT (RW)
- *
- * Number of good and valid Pause frames received.
- */
-#define ENET_RXPAUSEFRAMES_FRMCNT_MASK (0xFFFFFFFFUL)
-#define ENET_RXPAUSEFRAMES_FRMCNT_SHIFT (0U)
-#define ENET_RXPAUSEFRAMES_FRMCNT_SET(x) (((uint32_t)(x) << ENET_RXPAUSEFRAMES_FRMCNT_SHIFT) & ENET_RXPAUSEFRAMES_FRMCNT_MASK)
-#define ENET_RXPAUSEFRAMES_FRMCNT_GET(x) (((uint32_t)(x) & ENET_RXPAUSEFRAMES_FRMCNT_MASK) >> ENET_RXPAUSEFRAMES_FRMCNT_SHIFT)
-
-/* Bitfield definition for register: RXFIFOOVERFLOW */
-/*
- * FRMCNT (RW)
- *
- * Number of missed received frames because of FIFO overflow. This counter is not present in the GMAC-CORE configuration.
- */
-#define ENET_RXFIFOOVERFLOW_FRMCNT_MASK (0xFFFFFFFFUL)
-#define ENET_RXFIFOOVERFLOW_FRMCNT_SHIFT (0U)
-#define ENET_RXFIFOOVERFLOW_FRMCNT_SET(x) (((uint32_t)(x) << ENET_RXFIFOOVERFLOW_FRMCNT_SHIFT) & ENET_RXFIFOOVERFLOW_FRMCNT_MASK)
-#define ENET_RXFIFOOVERFLOW_FRMCNT_GET(x) (((uint32_t)(x) & ENET_RXFIFOOVERFLOW_FRMCNT_MASK) >> ENET_RXFIFOOVERFLOW_FRMCNT_SHIFT)
-
-/* Bitfield definition for register: RXVLANFRAMES_GB */
-/*
- * FRMCNT (RW)
- *
- * Number of good and bad VLAN frames received.
- */
-#define ENET_RXVLANFRAMES_GB_FRMCNT_MASK (0xFFFFFFFFUL)
-#define ENET_RXVLANFRAMES_GB_FRMCNT_SHIFT (0U)
-#define ENET_RXVLANFRAMES_GB_FRMCNT_SET(x) (((uint32_t)(x) << ENET_RXVLANFRAMES_GB_FRMCNT_SHIFT) & ENET_RXVLANFRAMES_GB_FRMCNT_MASK)
-#define ENET_RXVLANFRAMES_GB_FRMCNT_GET(x) (((uint32_t)(x) & ENET_RXVLANFRAMES_GB_FRMCNT_MASK) >> ENET_RXVLANFRAMES_GB_FRMCNT_SHIFT)
-
-/* Bitfield definition for register: RXWATCHDOGERROR */
-/*
- * FRMCNT (RW)
- *
- * Number of frames received with error because of watchdog timeout error (frames with a data load larger than 2,048 bytes or the value programmed in Register 55 (Watchdog Timeout Register)).
- */
-#define ENET_RXWATCHDOGERROR_FRMCNT_MASK (0xFFFFFFFFUL)
-#define ENET_RXWATCHDOGERROR_FRMCNT_SHIFT (0U)
-#define ENET_RXWATCHDOGERROR_FRMCNT_SET(x) (((uint32_t)(x) << ENET_RXWATCHDOGERROR_FRMCNT_SHIFT) & ENET_RXWATCHDOGERROR_FRMCNT_MASK)
-#define ENET_RXWATCHDOGERROR_FRMCNT_GET(x) (((uint32_t)(x) & ENET_RXWATCHDOGERROR_FRMCNT_MASK) >> ENET_RXWATCHDOGERROR_FRMCNT_SHIFT)
-
-/* Bitfield definition for register: RXRCVERROR */
-/*
- * FRMCNT (RW)
- *
- * Number of frames received with Receive error or Frame Extension error on the GMII or MII interface.
- */
-#define ENET_RXRCVERROR_FRMCNT_MASK (0xFFFFFFFFUL)
-#define ENET_RXRCVERROR_FRMCNT_SHIFT (0U)
-#define ENET_RXRCVERROR_FRMCNT_SET(x) (((uint32_t)(x) << ENET_RXRCVERROR_FRMCNT_SHIFT) & ENET_RXRCVERROR_FRMCNT_MASK)
-#define ENET_RXRCVERROR_FRMCNT_GET(x) (((uint32_t)(x) & ENET_RXRCVERROR_FRMCNT_MASK) >> ENET_RXRCVERROR_FRMCNT_SHIFT)
-
-/* Bitfield definition for register: RXCTRLFRAMES_G */
-/*
- * FRMCNT (RW)
- *
- * Number of received good control frames.
- */
-#define ENET_RXCTRLFRAMES_G_FRMCNT_MASK (0xFFFFFFFFUL)
-#define ENET_RXCTRLFRAMES_G_FRMCNT_SHIFT (0U)
-#define ENET_RXCTRLFRAMES_G_FRMCNT_SET(x) (((uint32_t)(x) << ENET_RXCTRLFRAMES_G_FRMCNT_SHIFT) & ENET_RXCTRLFRAMES_G_FRMCNT_MASK)
-#define ENET_RXCTRLFRAMES_G_FRMCNT_GET(x) (((uint32_t)(x) & ENET_RXCTRLFRAMES_G_FRMCNT_MASK) >> ENET_RXCTRLFRAMES_G_FRMCNT_SHIFT)
 
 /* Bitfield definition for register: MMC_IPC_INTR_MASK_RX */
 /*
@@ -4192,292 +3400,6 @@ errors */
 #define ENET_RXIPV4_GD_FMS_FRMCNT_SET(x) (((uint32_t)(x) << ENET_RXIPV4_GD_FMS_FRMCNT_SHIFT) & ENET_RXIPV4_GD_FMS_FRMCNT_MASK)
 #define ENET_RXIPV4_GD_FMS_FRMCNT_GET(x) (((uint32_t)(x) & ENET_RXIPV4_GD_FMS_FRMCNT_MASK) >> ENET_RXIPV4_GD_FMS_FRMCNT_SHIFT)
 
-/* Bitfield definition for register: RXIPV4_HDRERR_FRMS */
-/*
- * FRMCNT (RW)
- *
- * Number of IPv4 datagrams received with header (checksum, length, or version mismatch) errors
- */
-#define ENET_RXIPV4_HDRERR_FRMS_FRMCNT_MASK (0xFFFFFFFFUL)
-#define ENET_RXIPV4_HDRERR_FRMS_FRMCNT_SHIFT (0U)
-#define ENET_RXIPV4_HDRERR_FRMS_FRMCNT_SET(x) (((uint32_t)(x) << ENET_RXIPV4_HDRERR_FRMS_FRMCNT_SHIFT) & ENET_RXIPV4_HDRERR_FRMS_FRMCNT_MASK)
-#define ENET_RXIPV4_HDRERR_FRMS_FRMCNT_GET(x) (((uint32_t)(x) & ENET_RXIPV4_HDRERR_FRMS_FRMCNT_MASK) >> ENET_RXIPV4_HDRERR_FRMS_FRMCNT_SHIFT)
-
-/* Bitfield definition for register: RXIPV4_NOPAY_FRMS */
-/*
- * FRMCNT (RW)
- *
- * Number of IPv4 datagram frames received that did not have a TCP, UDP, or ICMP payload processed by the Checksum engine
- */
-#define ENET_RXIPV4_NOPAY_FRMS_FRMCNT_MASK (0xFFFFFFFFUL)
-#define ENET_RXIPV4_NOPAY_FRMS_FRMCNT_SHIFT (0U)
-#define ENET_RXIPV4_NOPAY_FRMS_FRMCNT_SET(x) (((uint32_t)(x) << ENET_RXIPV4_NOPAY_FRMS_FRMCNT_SHIFT) & ENET_RXIPV4_NOPAY_FRMS_FRMCNT_MASK)
-#define ENET_RXIPV4_NOPAY_FRMS_FRMCNT_GET(x) (((uint32_t)(x) & ENET_RXIPV4_NOPAY_FRMS_FRMCNT_MASK) >> ENET_RXIPV4_NOPAY_FRMS_FRMCNT_SHIFT)
-
-/* Bitfield definition for register: RXIPV4_FRAG_FRMS */
-/*
- * FRMCNT (RW)
- *
- * Number of good IPv4 datagrams with fragmentation
- */
-#define ENET_RXIPV4_FRAG_FRMS_FRMCNT_MASK (0xFFFFFFFFUL)
-#define ENET_RXIPV4_FRAG_FRMS_FRMCNT_SHIFT (0U)
-#define ENET_RXIPV4_FRAG_FRMS_FRMCNT_SET(x) (((uint32_t)(x) << ENET_RXIPV4_FRAG_FRMS_FRMCNT_SHIFT) & ENET_RXIPV4_FRAG_FRMS_FRMCNT_MASK)
-#define ENET_RXIPV4_FRAG_FRMS_FRMCNT_GET(x) (((uint32_t)(x) & ENET_RXIPV4_FRAG_FRMS_FRMCNT_MASK) >> ENET_RXIPV4_FRAG_FRMS_FRMCNT_SHIFT)
-
-/* Bitfield definition for register: RXIPV4_UDSBL_FRMS */
-/*
- * FRMCNT (RW)
- *
- * Number of good IPv4 datagrams received that had a UDP payload with checksum disabled
- */
-#define ENET_RXIPV4_UDSBL_FRMS_FRMCNT_MASK (0xFFFFFFFFUL)
-#define ENET_RXIPV4_UDSBL_FRMS_FRMCNT_SHIFT (0U)
-#define ENET_RXIPV4_UDSBL_FRMS_FRMCNT_SET(x) (((uint32_t)(x) << ENET_RXIPV4_UDSBL_FRMS_FRMCNT_SHIFT) & ENET_RXIPV4_UDSBL_FRMS_FRMCNT_MASK)
-#define ENET_RXIPV4_UDSBL_FRMS_FRMCNT_GET(x) (((uint32_t)(x) & ENET_RXIPV4_UDSBL_FRMS_FRMCNT_MASK) >> ENET_RXIPV4_UDSBL_FRMS_FRMCNT_SHIFT)
-
-/* Bitfield definition for register: RXIPV6_GD_FRMS */
-/*
- * FRMCNT (RW)
- *
- * Number of good IPv6 datagrams received with TCP, UDP, or ICMP payloads
- */
-#define ENET_RXIPV6_GD_FRMS_FRMCNT_MASK (0xFFFFFFFFUL)
-#define ENET_RXIPV6_GD_FRMS_FRMCNT_SHIFT (0U)
-#define ENET_RXIPV6_GD_FRMS_FRMCNT_SET(x) (((uint32_t)(x) << ENET_RXIPV6_GD_FRMS_FRMCNT_SHIFT) & ENET_RXIPV6_GD_FRMS_FRMCNT_MASK)
-#define ENET_RXIPV6_GD_FRMS_FRMCNT_GET(x) (((uint32_t)(x) & ENET_RXIPV6_GD_FRMS_FRMCNT_MASK) >> ENET_RXIPV6_GD_FRMS_FRMCNT_SHIFT)
-
-/* Bitfield definition for register: RXIPV6_HDRERR_FRMS */
-/*
- * FRMCNT (RW)
- *
- * Number of IPv6 datagrams received with header errors (length or version mismatch)
- */
-#define ENET_RXIPV6_HDRERR_FRMS_FRMCNT_MASK (0xFFFFFFFFUL)
-#define ENET_RXIPV6_HDRERR_FRMS_FRMCNT_SHIFT (0U)
-#define ENET_RXIPV6_HDRERR_FRMS_FRMCNT_SET(x) (((uint32_t)(x) << ENET_RXIPV6_HDRERR_FRMS_FRMCNT_SHIFT) & ENET_RXIPV6_HDRERR_FRMS_FRMCNT_MASK)
-#define ENET_RXIPV6_HDRERR_FRMS_FRMCNT_GET(x) (((uint32_t)(x) & ENET_RXIPV6_HDRERR_FRMS_FRMCNT_MASK) >> ENET_RXIPV6_HDRERR_FRMS_FRMCNT_SHIFT)
-
-/* Bitfield definition for register: RXIPV6_NOPAY_FRMS */
-/*
- * FRMCNT (RW)
- *
- * Number of IPv6 datagram frames received that did not have a TCP, UDP, or ICMP payload. This includes all IPv6 datagrams with fragmentation or security extension headers
- */
-#define ENET_RXIPV6_NOPAY_FRMS_FRMCNT_MASK (0xFFFFFFFFUL)
-#define ENET_RXIPV6_NOPAY_FRMS_FRMCNT_SHIFT (0U)
-#define ENET_RXIPV6_NOPAY_FRMS_FRMCNT_SET(x) (((uint32_t)(x) << ENET_RXIPV6_NOPAY_FRMS_FRMCNT_SHIFT) & ENET_RXIPV6_NOPAY_FRMS_FRMCNT_MASK)
-#define ENET_RXIPV6_NOPAY_FRMS_FRMCNT_GET(x) (((uint32_t)(x) & ENET_RXIPV6_NOPAY_FRMS_FRMCNT_MASK) >> ENET_RXIPV6_NOPAY_FRMS_FRMCNT_SHIFT)
-
-/* Bitfield definition for register: RXUDP_GD_FRMS */
-/*
- * FRMCNT (RW)
- *
- * Number of good IP datagrams with a good UDP payload. This counter is not updated when the rxipv4_udsbl_frms counter is incremented.
- */
-#define ENET_RXUDP_GD_FRMS_FRMCNT_MASK (0xFFFFFFFFUL)
-#define ENET_RXUDP_GD_FRMS_FRMCNT_SHIFT (0U)
-#define ENET_RXUDP_GD_FRMS_FRMCNT_SET(x) (((uint32_t)(x) << ENET_RXUDP_GD_FRMS_FRMCNT_SHIFT) & ENET_RXUDP_GD_FRMS_FRMCNT_MASK)
-#define ENET_RXUDP_GD_FRMS_FRMCNT_GET(x) (((uint32_t)(x) & ENET_RXUDP_GD_FRMS_FRMCNT_MASK) >> ENET_RXUDP_GD_FRMS_FRMCNT_SHIFT)
-
-/* Bitfield definition for register: RXUDP_ERR_FRMS */
-/*
- * FRMCNT (RW)
- *
- * Number of good IP datagrams whose UDP payload has a checksum error
- */
-#define ENET_RXUDP_ERR_FRMS_FRMCNT_MASK (0xFFFFFFFFUL)
-#define ENET_RXUDP_ERR_FRMS_FRMCNT_SHIFT (0U)
-#define ENET_RXUDP_ERR_FRMS_FRMCNT_SET(x) (((uint32_t)(x) << ENET_RXUDP_ERR_FRMS_FRMCNT_SHIFT) & ENET_RXUDP_ERR_FRMS_FRMCNT_MASK)
-#define ENET_RXUDP_ERR_FRMS_FRMCNT_GET(x) (((uint32_t)(x) & ENET_RXUDP_ERR_FRMS_FRMCNT_MASK) >> ENET_RXUDP_ERR_FRMS_FRMCNT_SHIFT)
-
-/* Bitfield definition for register: RXTCP_GD_FRMS */
-/*
- * FRMCNT (RW)
- *
- * Number of good IP datagrams with a good TCP payload
- */
-#define ENET_RXTCP_GD_FRMS_FRMCNT_MASK (0xFFFFFFFFUL)
-#define ENET_RXTCP_GD_FRMS_FRMCNT_SHIFT (0U)
-#define ENET_RXTCP_GD_FRMS_FRMCNT_SET(x) (((uint32_t)(x) << ENET_RXTCP_GD_FRMS_FRMCNT_SHIFT) & ENET_RXTCP_GD_FRMS_FRMCNT_MASK)
-#define ENET_RXTCP_GD_FRMS_FRMCNT_GET(x) (((uint32_t)(x) & ENET_RXTCP_GD_FRMS_FRMCNT_MASK) >> ENET_RXTCP_GD_FRMS_FRMCNT_SHIFT)
-
-/* Bitfield definition for register: RXTCP_ERR_FRMS */
-/*
- * FRMCNT (RW)
- *
- * Number of good IP datagrams whose TCP payload has a checksum error
- */
-#define ENET_RXTCP_ERR_FRMS_FRMCNT_MASK (0xFFFFFFFFUL)
-#define ENET_RXTCP_ERR_FRMS_FRMCNT_SHIFT (0U)
-#define ENET_RXTCP_ERR_FRMS_FRMCNT_SET(x) (((uint32_t)(x) << ENET_RXTCP_ERR_FRMS_FRMCNT_SHIFT) & ENET_RXTCP_ERR_FRMS_FRMCNT_MASK)
-#define ENET_RXTCP_ERR_FRMS_FRMCNT_GET(x) (((uint32_t)(x) & ENET_RXTCP_ERR_FRMS_FRMCNT_MASK) >> ENET_RXTCP_ERR_FRMS_FRMCNT_SHIFT)
-
-/* Bitfield definition for register: RXICMP_GD_FRMS */
-/*
- * FRMCNT (RW)
- *
- * Number of good IP datagrams with a good ICMP payload
- */
-#define ENET_RXICMP_GD_FRMS_FRMCNT_MASK (0xFFFFFFFFUL)
-#define ENET_RXICMP_GD_FRMS_FRMCNT_SHIFT (0U)
-#define ENET_RXICMP_GD_FRMS_FRMCNT_SET(x) (((uint32_t)(x) << ENET_RXICMP_GD_FRMS_FRMCNT_SHIFT) & ENET_RXICMP_GD_FRMS_FRMCNT_MASK)
-#define ENET_RXICMP_GD_FRMS_FRMCNT_GET(x) (((uint32_t)(x) & ENET_RXICMP_GD_FRMS_FRMCNT_MASK) >> ENET_RXICMP_GD_FRMS_FRMCNT_SHIFT)
-
-/* Bitfield definition for register: RXICMP_ERR_FRMS */
-/*
- * FRMCNT (RW)
- *
- * Number of good IP datagrams whose ICMP payload has a checksum error
- */
-#define ENET_RXICMP_ERR_FRMS_FRMCNT_MASK (0xFFFFFFFFUL)
-#define ENET_RXICMP_ERR_FRMS_FRMCNT_SHIFT (0U)
-#define ENET_RXICMP_ERR_FRMS_FRMCNT_SET(x) (((uint32_t)(x) << ENET_RXICMP_ERR_FRMS_FRMCNT_SHIFT) & ENET_RXICMP_ERR_FRMS_FRMCNT_MASK)
-#define ENET_RXICMP_ERR_FRMS_FRMCNT_GET(x) (((uint32_t)(x) & ENET_RXICMP_ERR_FRMS_FRMCNT_MASK) >> ENET_RXICMP_ERR_FRMS_FRMCNT_SHIFT)
-
-/* Bitfield definition for register: RXIPV4_GD_OCTETS */
-/*
- * BYTECNT (RW)
- *
- * Number of bytes received in good IPv4 datagrams encapsulating TCP, UDP, or ICMP data. (Ethernet header, FCS, pad, or IP pad bytes are not included in this counter or in the octet counters listed below).
- */
-#define ENET_RXIPV4_GD_OCTETS_BYTECNT_MASK (0xFFFFFFFFUL)
-#define ENET_RXIPV4_GD_OCTETS_BYTECNT_SHIFT (0U)
-#define ENET_RXIPV4_GD_OCTETS_BYTECNT_SET(x) (((uint32_t)(x) << ENET_RXIPV4_GD_OCTETS_BYTECNT_SHIFT) & ENET_RXIPV4_GD_OCTETS_BYTECNT_MASK)
-#define ENET_RXIPV4_GD_OCTETS_BYTECNT_GET(x) (((uint32_t)(x) & ENET_RXIPV4_GD_OCTETS_BYTECNT_MASK) >> ENET_RXIPV4_GD_OCTETS_BYTECNT_SHIFT)
-
-/* Bitfield definition for register: RXIPV4_HDRERR_OCTETS */
-/*
- * BYTECNT (RW)
- *
- * Number of bytes received in IPv4 datagrams with header errors (checksum, length, version mismatch). The value in the Length field of IPv4 header is used to update this counter.
- */
-#define ENET_RXIPV4_HDRERR_OCTETS_BYTECNT_MASK (0xFFFFFFFFUL)
-#define ENET_RXIPV4_HDRERR_OCTETS_BYTECNT_SHIFT (0U)
-#define ENET_RXIPV4_HDRERR_OCTETS_BYTECNT_SET(x) (((uint32_t)(x) << ENET_RXIPV4_HDRERR_OCTETS_BYTECNT_SHIFT) & ENET_RXIPV4_HDRERR_OCTETS_BYTECNT_MASK)
-#define ENET_RXIPV4_HDRERR_OCTETS_BYTECNT_GET(x) (((uint32_t)(x) & ENET_RXIPV4_HDRERR_OCTETS_BYTECNT_MASK) >> ENET_RXIPV4_HDRERR_OCTETS_BYTECNT_SHIFT)
-
-/* Bitfield definition for register: RXIPV4_NOPAY_OCTETS */
-/*
- * BYTECNT (RW)
- *
- * Number of bytes received in IPv4 datagrams that did not have a TCP, UDP, or ICMP payload. The value in the IPv4 header’s Length field is used to update this counter.
- */
-#define ENET_RXIPV4_NOPAY_OCTETS_BYTECNT_MASK (0xFFFFFFFFUL)
-#define ENET_RXIPV4_NOPAY_OCTETS_BYTECNT_SHIFT (0U)
-#define ENET_RXIPV4_NOPAY_OCTETS_BYTECNT_SET(x) (((uint32_t)(x) << ENET_RXIPV4_NOPAY_OCTETS_BYTECNT_SHIFT) & ENET_RXIPV4_NOPAY_OCTETS_BYTECNT_MASK)
-#define ENET_RXIPV4_NOPAY_OCTETS_BYTECNT_GET(x) (((uint32_t)(x) & ENET_RXIPV4_NOPAY_OCTETS_BYTECNT_MASK) >> ENET_RXIPV4_NOPAY_OCTETS_BYTECNT_SHIFT)
-
-/* Bitfield definition for register: RXIPV4_FRAG_OCTETS */
-/*
- * BYTECNT (RW)
- *
- * Number of bytes received in fragmented IPv4 datagrams. The value in the IPv4 header’s Length field is used to update this counter.
- */
-#define ENET_RXIPV4_FRAG_OCTETS_BYTECNT_MASK (0xFFFFFFFFUL)
-#define ENET_RXIPV4_FRAG_OCTETS_BYTECNT_SHIFT (0U)
-#define ENET_RXIPV4_FRAG_OCTETS_BYTECNT_SET(x) (((uint32_t)(x) << ENET_RXIPV4_FRAG_OCTETS_BYTECNT_SHIFT) & ENET_RXIPV4_FRAG_OCTETS_BYTECNT_MASK)
-#define ENET_RXIPV4_FRAG_OCTETS_BYTECNT_GET(x) (((uint32_t)(x) & ENET_RXIPV4_FRAG_OCTETS_BYTECNT_MASK) >> ENET_RXIPV4_FRAG_OCTETS_BYTECNT_SHIFT)
-
-/* Bitfield definition for register: RXIPV4_UDSBL_OCTETS */
-/*
- * BYTECNT (RW)
- *
- * Number of bytes received in a UDP segment that had the UDP checksum disabled. This counter does not count IP Header bytes.
- */
-#define ENET_RXIPV4_UDSBL_OCTETS_BYTECNT_MASK (0xFFFFFFFFUL)
-#define ENET_RXIPV4_UDSBL_OCTETS_BYTECNT_SHIFT (0U)
-#define ENET_RXIPV4_UDSBL_OCTETS_BYTECNT_SET(x) (((uint32_t)(x) << ENET_RXIPV4_UDSBL_OCTETS_BYTECNT_SHIFT) & ENET_RXIPV4_UDSBL_OCTETS_BYTECNT_MASK)
-#define ENET_RXIPV4_UDSBL_OCTETS_BYTECNT_GET(x) (((uint32_t)(x) & ENET_RXIPV4_UDSBL_OCTETS_BYTECNT_MASK) >> ENET_RXIPV4_UDSBL_OCTETS_BYTECNT_SHIFT)
-
-/* Bitfield definition for register: RXIPV6_GD_OCTETS */
-/*
- * BYTECNT (RW)
- *
- * Number of bytes received in good IPv6 datagrams encapsulating TCP, UDP or ICMPv6 data
- */
-#define ENET_RXIPV6_GD_OCTETS_BYTECNT_MASK (0xFFFFFFFFUL)
-#define ENET_RXIPV6_GD_OCTETS_BYTECNT_SHIFT (0U)
-#define ENET_RXIPV6_GD_OCTETS_BYTECNT_SET(x) (((uint32_t)(x) << ENET_RXIPV6_GD_OCTETS_BYTECNT_SHIFT) & ENET_RXIPV6_GD_OCTETS_BYTECNT_MASK)
-#define ENET_RXIPV6_GD_OCTETS_BYTECNT_GET(x) (((uint32_t)(x) & ENET_RXIPV6_GD_OCTETS_BYTECNT_MASK) >> ENET_RXIPV6_GD_OCTETS_BYTECNT_SHIFT)
-
-/* Bitfield definition for register: RXIPV6_HDRERR_OCTETS */
-/*
- * BYTECNT (RW)
- *
- * Number of bytes received in IPv6 datagrams with header errors (length, version mismatch). The value in the IPv6 header’s Length field is used to update this counter.
- */
-#define ENET_RXIPV6_HDRERR_OCTETS_BYTECNT_MASK (0xFFFFFFFFUL)
-#define ENET_RXIPV6_HDRERR_OCTETS_BYTECNT_SHIFT (0U)
-#define ENET_RXIPV6_HDRERR_OCTETS_BYTECNT_SET(x) (((uint32_t)(x) << ENET_RXIPV6_HDRERR_OCTETS_BYTECNT_SHIFT) & ENET_RXIPV6_HDRERR_OCTETS_BYTECNT_MASK)
-#define ENET_RXIPV6_HDRERR_OCTETS_BYTECNT_GET(x) (((uint32_t)(x) & ENET_RXIPV6_HDRERR_OCTETS_BYTECNT_MASK) >> ENET_RXIPV6_HDRERR_OCTETS_BYTECNT_SHIFT)
-
-/* Bitfield definition for register: RXIPV6_NOPAY_OCTETS */
-/*
- * BYTECNT (RW)
- *
- * Number of bytes received in IPv6 datagrams that did not have a TCP, UDP, or ICMP payload. The value in the IPv6 header’s Length field is used to update this counter.
- */
-#define ENET_RXIPV6_NOPAY_OCTETS_BYTECNT_MASK (0xFFFFFFFFUL)
-#define ENET_RXIPV6_NOPAY_OCTETS_BYTECNT_SHIFT (0U)
-#define ENET_RXIPV6_NOPAY_OCTETS_BYTECNT_SET(x) (((uint32_t)(x) << ENET_RXIPV6_NOPAY_OCTETS_BYTECNT_SHIFT) & ENET_RXIPV6_NOPAY_OCTETS_BYTECNT_MASK)
-#define ENET_RXIPV6_NOPAY_OCTETS_BYTECNT_GET(x) (((uint32_t)(x) & ENET_RXIPV6_NOPAY_OCTETS_BYTECNT_MASK) >> ENET_RXIPV6_NOPAY_OCTETS_BYTECNT_SHIFT)
-
-/* Bitfield definition for register: RXUDP_GD_OCTETS */
-/*
- * BYTECNT (RW)
- *
- * Number of bytes received in a good UDP segment. This counter (and the counters below) does not count IP header bytes.
- */
-#define ENET_RXUDP_GD_OCTETS_BYTECNT_MASK (0xFFFFFFFFUL)
-#define ENET_RXUDP_GD_OCTETS_BYTECNT_SHIFT (0U)
-#define ENET_RXUDP_GD_OCTETS_BYTECNT_SET(x) (((uint32_t)(x) << ENET_RXUDP_GD_OCTETS_BYTECNT_SHIFT) & ENET_RXUDP_GD_OCTETS_BYTECNT_MASK)
-#define ENET_RXUDP_GD_OCTETS_BYTECNT_GET(x) (((uint32_t)(x) & ENET_RXUDP_GD_OCTETS_BYTECNT_MASK) >> ENET_RXUDP_GD_OCTETS_BYTECNT_SHIFT)
-
-/* Bitfield definition for register: RXUDP_ERR_OCTETS */
-/*
- * BYTECNT (RW)
- *
- * Number of bytes received in a UDP segment that had checksum errors
- */
-#define ENET_RXUDP_ERR_OCTETS_BYTECNT_MASK (0xFFFFFFFFUL)
-#define ENET_RXUDP_ERR_OCTETS_BYTECNT_SHIFT (0U)
-#define ENET_RXUDP_ERR_OCTETS_BYTECNT_SET(x) (((uint32_t)(x) << ENET_RXUDP_ERR_OCTETS_BYTECNT_SHIFT) & ENET_RXUDP_ERR_OCTETS_BYTECNT_MASK)
-#define ENET_RXUDP_ERR_OCTETS_BYTECNT_GET(x) (((uint32_t)(x) & ENET_RXUDP_ERR_OCTETS_BYTECNT_MASK) >> ENET_RXUDP_ERR_OCTETS_BYTECNT_SHIFT)
-
-/* Bitfield definition for register: RXTCP_GD_OCTETS */
-/*
- * BYTECNT (RW)
- *
- * Number of bytes received in a good TCP segment
- */
-#define ENET_RXTCP_GD_OCTETS_BYTECNT_MASK (0xFFFFFFFFUL)
-#define ENET_RXTCP_GD_OCTETS_BYTECNT_SHIFT (0U)
-#define ENET_RXTCP_GD_OCTETS_BYTECNT_SET(x) (((uint32_t)(x) << ENET_RXTCP_GD_OCTETS_BYTECNT_SHIFT) & ENET_RXTCP_GD_OCTETS_BYTECNT_MASK)
-#define ENET_RXTCP_GD_OCTETS_BYTECNT_GET(x) (((uint32_t)(x) & ENET_RXTCP_GD_OCTETS_BYTECNT_MASK) >> ENET_RXTCP_GD_OCTETS_BYTECNT_SHIFT)
-
-/* Bitfield definition for register: RXTCP_ERR_OCTETS */
-/*
- * BYTECNT (RW)
- *
- * Number of bytes received in a TCP segment with checksum errors
- */
-#define ENET_RXTCP_ERR_OCTETS_BYTECNT_MASK (0xFFFFFFFFUL)
-#define ENET_RXTCP_ERR_OCTETS_BYTECNT_SHIFT (0U)
-#define ENET_RXTCP_ERR_OCTETS_BYTECNT_SET(x) (((uint32_t)(x) << ENET_RXTCP_ERR_OCTETS_BYTECNT_SHIFT) & ENET_RXTCP_ERR_OCTETS_BYTECNT_MASK)
-#define ENET_RXTCP_ERR_OCTETS_BYTECNT_GET(x) (((uint32_t)(x) & ENET_RXTCP_ERR_OCTETS_BYTECNT_MASK) >> ENET_RXTCP_ERR_OCTETS_BYTECNT_SHIFT)
-
-/* Bitfield definition for register: RXICMP_GD_OCTETS */
-/*
- * BYTECNT (RW)
- *
- * Number of bytes received in a good ICMP segment
- */
-#define ENET_RXICMP_GD_OCTETS_BYTECNT_MASK (0xFFFFFFFFUL)
-#define ENET_RXICMP_GD_OCTETS_BYTECNT_SHIFT (0U)
-#define ENET_RXICMP_GD_OCTETS_BYTECNT_SET(x) (((uint32_t)(x) << ENET_RXICMP_GD_OCTETS_BYTECNT_SHIFT) & ENET_RXICMP_GD_OCTETS_BYTECNT_MASK)
-#define ENET_RXICMP_GD_OCTETS_BYTECNT_GET(x) (((uint32_t)(x) & ENET_RXICMP_GD_OCTETS_BYTECNT_MASK) >> ENET_RXICMP_GD_OCTETS_BYTECNT_SHIFT)
-
 /* Bitfield definition for register of struct array L3_L4_CFG: L3_L4_CTRL */
 /*
  * L4DPIM0 (RW)
@@ -4692,18 +3614,6 @@ errors */
 #define ENET_L3_L4_CFG_L3_ADDR_3_L3A30_SHIFT (0U)
 #define ENET_L3_L4_CFG_L3_ADDR_3_L3A30_SET(x) (((uint32_t)(x) << ENET_L3_L4_CFG_L3_ADDR_3_L3A30_SHIFT) & ENET_L3_L4_CFG_L3_ADDR_3_L3A30_MASK)
 #define ENET_L3_L4_CFG_L3_ADDR_3_L3A30_GET(x) (((uint32_t)(x) & ENET_L3_L4_CFG_L3_ADDR_3_L3A30_MASK) >> ENET_L3_L4_CFG_L3_ADDR_3_L3A30_SHIFT)
-
-/* Bitfield definition for register array: HASH_TABLE */
-/*
- * HT31T0 (RW)
- *
- * First 32 bits of Hash Table
- *  This field contains the first 32 Bits (31:0) of the Hash table.
- */
-#define ENET_HASH_TABLE_HT31T0_MASK (0xFFFFFFFFUL)
-#define ENET_HASH_TABLE_HT31T0_SHIFT (0U)
-#define ENET_HASH_TABLE_HT31T0_SET(x) (((uint32_t)(x) << ENET_HASH_TABLE_HT31T0_SHIFT) & ENET_HASH_TABLE_HT31T0_MASK)
-#define ENET_HASH_TABLE_HT31T0_GET(x) (((uint32_t)(x) & ENET_HASH_TABLE_HT31T0_MASK) >> ENET_HASH_TABLE_HT31T0_SHIFT)
 
 /* Bitfield definition for register: VLAN_TAG_INC_RPL */
 /*
@@ -5011,26 +3921,24 @@ errors */
 
 /* Bitfield definition for register: SYST_SEC */
 /*
- * TSS (RW)
+ * TSS (RO)
  *
  * Timestamp Second
  *  The value in this field indicates the current value in seconds of the System Time maintained by the MAC.
  */
 #define ENET_SYST_SEC_TSS_MASK (0xFFFFFFFFUL)
 #define ENET_SYST_SEC_TSS_SHIFT (0U)
-#define ENET_SYST_SEC_TSS_SET(x) (((uint32_t)(x) << ENET_SYST_SEC_TSS_SHIFT) & ENET_SYST_SEC_TSS_MASK)
 #define ENET_SYST_SEC_TSS_GET(x) (((uint32_t)(x) & ENET_SYST_SEC_TSS_MASK) >> ENET_SYST_SEC_TSS_SHIFT)
 
 /* Bitfield definition for register: SYST_NSEC */
 /*
- * TSSS (RW)
+ * TSSS (RO)
  *
  * Timestamp Sub Seconds
  *  The value in this field has the sub second representation of time, with an accuracy of 0.46 ns. When Bit 9 (TSCTRLSSR) is set in Register 448 (Timestamp Control Register), each bit represents 1 ns and the maximum value is 0x3B9A_C9FF, after which it rolls-over to zero.
  */
 #define ENET_SYST_NSEC_TSSS_MASK (0x7FFFFFFFUL)
 #define ENET_SYST_NSEC_TSSS_SHIFT (0U)
-#define ENET_SYST_NSEC_TSSS_SET(x) (((uint32_t)(x) << ENET_SYST_NSEC_TSSS_SHIFT) & ENET_SYST_NSEC_TSSS_MASK)
 #define ENET_SYST_NSEC_TSSS_GET(x) (((uint32_t)(x) & ENET_SYST_NSEC_TSSS_MASK) >> ENET_SYST_NSEC_TSSS_SHIFT)
 
 /* Bitfield definition for register: SYST_SEC_UPD */
@@ -5299,6 +4207,17 @@ errors */
 #define ENET_PPS_CTRL_TRGTMODSEL1_GET(x) (((uint32_t)(x) & ENET_PPS_CTRL_TRGTMODSEL1_MASK) >> ENET_PPS_CTRL_TRGTMODSEL1_SHIFT)
 
 /*
+ * PPSEN1 (RW)
+ *
+ * Flexible PPS1 Output Mode Enable
+ * When set high, Bits[10:8] function as PPSCMD.
+ */
+#define ENET_PPS_CTRL_PPSEN1_MASK (0x1000U)
+#define ENET_PPS_CTRL_PPSEN1_SHIFT (12U)
+#define ENET_PPS_CTRL_PPSEN1_SET(x) (((uint32_t)(x) << ENET_PPS_CTRL_PPSEN1_SHIFT) & ENET_PPS_CTRL_PPSEN1_MASK)
+#define ENET_PPS_CTRL_PPSEN1_GET(x) (((uint32_t)(x) & ENET_PPS_CTRL_PPSEN1_MASK) >> ENET_PPS_CTRL_PPSEN1_SHIFT)
+
+/*
  * PPSCMD1 (RW)
  *
  * Flexible PPS1 Output Control
@@ -5336,7 +4255,7 @@ errors */
 #define ENET_PPS_CTRL_PPSEN0_GET(x) (((uint32_t)(x) & ENET_PPS_CTRL_PPSEN0_MASK) >> ENET_PPS_CTRL_PPSEN0_SHIFT)
 
 /*
- * PPSCTRL0 (RW)
+ * PPSCTRLCMD0 (RW)
  *
  * PPSCTRL0: PPS0 Output Frequency Control
  * This field controls the frequency of the PPS0 output (ptp_pps_o[0]) signal. The default value of PPSCTRL is 0000, and the PPS output is 1 pulse (of width clk_ptp_i) every second. For other values of PPSCTRL, the PPS output becomes a generated clock of following frequencies:
@@ -5345,32 +4264,60 @@ errors */
  * - 0011: The binary rollover is 8 Hz, and the digital rollover is 4 Hz.
  * - 0100: The binary rollover is 16 Hz, and the digital rollover is 8 Hz. - ...
  * - 1111: The binary rollover is 32.768 KHz, and the digital rollover is 16.384 KHz. Note: In the binary rollover mode, the PPS output (ptp_pps_o) has a duty cycle of 50 percent with these frequencies. In the digital rollover mode, the PPS output frequency is an average number. The actual clock is of different frequency that gets synchronized every second. For example: - When PPSCTRL = 0001, the PPS (1 Hz) has a low period of 537 ms and a high period of 463 ms - When PPSCTRL = 0010, the PPS (2 Hz) is a sequence of: - One clock of 50 percent duty cycle and 537 ms period - Second clock of 463 ms period (268 ms low and 195 ms high) - When PPSCTRL = 0011, the PPS (4 Hz) is a sequence of: - Three clocks of 50 percent duty cycle and 268 ms period - Fourth clock of 195 ms period (134 ms low and 61 ms high)
+ * PPSCMD0: Flexible PPS0 Output Control
+ * 0000: No Command
+ * 0001: START Single Pulse
+ * This command generates single pulse rising at the start point defined in
+ * Target Time Registers and of a duration defined
+ * in the PPS0 Width Register.
+ * 0010: START Pulse Train
+ * This command generates the train of pulses rising at the start point
+ * defined in the Target Time Registers and of a duration defined in the
+ * PPS0 Width Register and repeated at interval defined in the PPS
+ * Interval Register. By default, the PPS pulse train is free-running unless
+ * stopped by ‘STOP Pulse train at time’ or ‘STOP Pulse Train
+ * immediately’ commands.
+ * 0011: Cancel START
+ * This command cancels the START Single Pulse and START Pulse Train
+ * commands if the system time has not crossed the programmed start
+ * time.
+ * 0100: STOP Pulse train at time
+ * This command stops the train of pulses initiated by the START Pulse
+ * Train command (PPSCMD = 0010) after the time programmed in the
+ * Target Time registers elapses.
+ * 0101: STOP Pulse Train immediately
+ * This command immediately stops the train of pulses initiated by the
+ * START Pulse Train command (PPSCMD = 0010).
+ * 0110: Cancel STOP Pulse train
+ * This command cancels the STOP pulse train at time command if the
+ * programmed stop time has not elapsed. The PPS pulse train becomes
+ * free-running on the successful execution of this command.
+ * 0111-1111: Reserved
+ * Note: These bits get cleared automatically
  */
-#define ENET_PPS_CTRL_PPSCTRL0_MASK (0xFU)
-#define ENET_PPS_CTRL_PPSCTRL0_SHIFT (0U)
-#define ENET_PPS_CTRL_PPSCTRL0_SET(x) (((uint32_t)(x) << ENET_PPS_CTRL_PPSCTRL0_SHIFT) & ENET_PPS_CTRL_PPSCTRL0_MASK)
-#define ENET_PPS_CTRL_PPSCTRL0_GET(x) (((uint32_t)(x) & ENET_PPS_CTRL_PPSCTRL0_MASK) >> ENET_PPS_CTRL_PPSCTRL0_SHIFT)
+#define ENET_PPS_CTRL_PPSCTRLCMD0_MASK (0xFU)
+#define ENET_PPS_CTRL_PPSCTRLCMD0_SHIFT (0U)
+#define ENET_PPS_CTRL_PPSCTRLCMD0_SET(x) (((uint32_t)(x) << ENET_PPS_CTRL_PPSCTRLCMD0_SHIFT) & ENET_PPS_CTRL_PPSCTRLCMD0_MASK)
+#define ENET_PPS_CTRL_PPSCTRLCMD0_GET(x) (((uint32_t)(x) & ENET_PPS_CTRL_PPSCTRLCMD0_MASK) >> ENET_PPS_CTRL_PPSCTRLCMD0_SHIFT)
 
 /* Bitfield definition for register: AUX_TS_NSEC */
 /*
- * AUXTSLO (RW)
+ * AUXTSLO (RO)
  *
  * Contains the lower 31 bits (nano-seconds field) of the auxiliary timestamp.
  */
 #define ENET_AUX_TS_NSEC_AUXTSLO_MASK (0x7FFFFFFFUL)
 #define ENET_AUX_TS_NSEC_AUXTSLO_SHIFT (0U)
-#define ENET_AUX_TS_NSEC_AUXTSLO_SET(x) (((uint32_t)(x) << ENET_AUX_TS_NSEC_AUXTSLO_SHIFT) & ENET_AUX_TS_NSEC_AUXTSLO_MASK)
 #define ENET_AUX_TS_NSEC_AUXTSLO_GET(x) (((uint32_t)(x) & ENET_AUX_TS_NSEC_AUXTSLO_MASK) >> ENET_AUX_TS_NSEC_AUXTSLO_SHIFT)
 
 /* Bitfield definition for register: AUX_TS_SEC */
 /*
- * AUXTSHI (RW)
+ * AUXTSHI (RO)
  *
  * Contains the lower 32 bits of the Seconds field of the auxiliary timestamp.
  */
 #define ENET_AUX_TS_SEC_AUXTSHI_MASK (0xFFFFFFFFUL)
 #define ENET_AUX_TS_SEC_AUXTSHI_SHIFT (0U)
-#define ENET_AUX_TS_SEC_AUXTSHI_SET(x) (((uint32_t)(x) << ENET_AUX_TS_SEC_AUXTSHI_SHIFT) & ENET_AUX_TS_SEC_AUXTSHI_MASK)
 #define ENET_AUX_TS_SEC_AUXTSHI_GET(x) (((uint32_t)(x) & ENET_AUX_TS_SEC_AUXTSHI_MASK) >> ENET_AUX_TS_SEC_AUXTSHI_SHIFT)
 
 /* Bitfield definition for register: PPS0_INTERVAL */
@@ -6630,293 +5577,13 @@ errors */
 #define ENET_DMA_CURR_HOST_RX_BUF_CURRBUFAPTR_SET(x) (((uint32_t)(x) << ENET_DMA_CURR_HOST_RX_BUF_CURRBUFAPTR_SHIFT) & ENET_DMA_CURR_HOST_RX_BUF_CURRBUFAPTR_MASK)
 #define ENET_DMA_CURR_HOST_RX_BUF_CURRBUFAPTR_GET(x) (((uint32_t)(x) & ENET_DMA_CURR_HOST_RX_BUF_CURRBUFAPTR_MASK) >> ENET_DMA_CURR_HOST_RX_BUF_CURRBUFAPTR_SHIFT)
 
-/* Bitfield definition for register: DMA_HW_FEATURE */
-/*
- * ACTPHYIF (RW)
- *
- * Active or selected PHY interface
- * When you have multiple PHY interfaces in your configuration, this field indicates the sampled value of phy_intf_sel_i during reset de-assertion.
- * - 000: GMII or MII
- * - 001: RGMII
- * - 010: SGMII
- * - 011: TBI
- * - 100: RMII
- * - 101: RTBI
- * - 110: SMII
- * - 111: RevMII - All Others: Reserved
- */
-#define ENET_DMA_HW_FEATURE_ACTPHYIF_MASK (0x70000000UL)
-#define ENET_DMA_HW_FEATURE_ACTPHYIF_SHIFT (28U)
-#define ENET_DMA_HW_FEATURE_ACTPHYIF_SET(x) (((uint32_t)(x) << ENET_DMA_HW_FEATURE_ACTPHYIF_SHIFT) & ENET_DMA_HW_FEATURE_ACTPHYIF_MASK)
-#define ENET_DMA_HW_FEATURE_ACTPHYIF_GET(x) (((uint32_t)(x) & ENET_DMA_HW_FEATURE_ACTPHYIF_MASK) >> ENET_DMA_HW_FEATURE_ACTPHYIF_SHIFT)
-
-/*
- * SAVLANINS (RW)
- *
- * Source Address or VLAN Insertion
- */
-#define ENET_DMA_HW_FEATURE_SAVLANINS_MASK (0x8000000UL)
-#define ENET_DMA_HW_FEATURE_SAVLANINS_SHIFT (27U)
-#define ENET_DMA_HW_FEATURE_SAVLANINS_SET(x) (((uint32_t)(x) << ENET_DMA_HW_FEATURE_SAVLANINS_SHIFT) & ENET_DMA_HW_FEATURE_SAVLANINS_MASK)
-#define ENET_DMA_HW_FEATURE_SAVLANINS_GET(x) (((uint32_t)(x) & ENET_DMA_HW_FEATURE_SAVLANINS_MASK) >> ENET_DMA_HW_FEATURE_SAVLANINS_SHIFT)
-
-/*
- * FLEXIPPSEN (RW)
- *
- * Flexible Pulse-Per-Second Output
- */
-#define ENET_DMA_HW_FEATURE_FLEXIPPSEN_MASK (0x4000000UL)
-#define ENET_DMA_HW_FEATURE_FLEXIPPSEN_SHIFT (26U)
-#define ENET_DMA_HW_FEATURE_FLEXIPPSEN_SET(x) (((uint32_t)(x) << ENET_DMA_HW_FEATURE_FLEXIPPSEN_SHIFT) & ENET_DMA_HW_FEATURE_FLEXIPPSEN_MASK)
-#define ENET_DMA_HW_FEATURE_FLEXIPPSEN_GET(x) (((uint32_t)(x) & ENET_DMA_HW_FEATURE_FLEXIPPSEN_MASK) >> ENET_DMA_HW_FEATURE_FLEXIPPSEN_SHIFT)
-
-/*
- * INTTSEN (RW)
- *
- * Timestamping with Internal System Time
- */
-#define ENET_DMA_HW_FEATURE_INTTSEN_MASK (0x2000000UL)
-#define ENET_DMA_HW_FEATURE_INTTSEN_SHIFT (25U)
-#define ENET_DMA_HW_FEATURE_INTTSEN_SET(x) (((uint32_t)(x) << ENET_DMA_HW_FEATURE_INTTSEN_SHIFT) & ENET_DMA_HW_FEATURE_INTTSEN_MASK)
-#define ENET_DMA_HW_FEATURE_INTTSEN_GET(x) (((uint32_t)(x) & ENET_DMA_HW_FEATURE_INTTSEN_MASK) >> ENET_DMA_HW_FEATURE_INTTSEN_SHIFT)
-
-/*
- * ENHDESSEL (RW)
- *
- * Alternate (Enhanced Descriptor)
- */
-#define ENET_DMA_HW_FEATURE_ENHDESSEL_MASK (0x1000000UL)
-#define ENET_DMA_HW_FEATURE_ENHDESSEL_SHIFT (24U)
-#define ENET_DMA_HW_FEATURE_ENHDESSEL_SET(x) (((uint32_t)(x) << ENET_DMA_HW_FEATURE_ENHDESSEL_SHIFT) & ENET_DMA_HW_FEATURE_ENHDESSEL_MASK)
-#define ENET_DMA_HW_FEATURE_ENHDESSEL_GET(x) (((uint32_t)(x) & ENET_DMA_HW_FEATURE_ENHDESSEL_MASK) >> ENET_DMA_HW_FEATURE_ENHDESSEL_SHIFT)
-
-/*
- * TXCHCNT (RW)
- *
- * Number of additional Tx Channels
- */
-#define ENET_DMA_HW_FEATURE_TXCHCNT_MASK (0xC00000UL)
-#define ENET_DMA_HW_FEATURE_TXCHCNT_SHIFT (22U)
-#define ENET_DMA_HW_FEATURE_TXCHCNT_SET(x) (((uint32_t)(x) << ENET_DMA_HW_FEATURE_TXCHCNT_SHIFT) & ENET_DMA_HW_FEATURE_TXCHCNT_MASK)
-#define ENET_DMA_HW_FEATURE_TXCHCNT_GET(x) (((uint32_t)(x) & ENET_DMA_HW_FEATURE_TXCHCNT_MASK) >> ENET_DMA_HW_FEATURE_TXCHCNT_SHIFT)
-
-/*
- * RXCHCNT (RW)
- *
- * Number of additional Rx Channels
- */
-#define ENET_DMA_HW_FEATURE_RXCHCNT_MASK (0x300000UL)
-#define ENET_DMA_HW_FEATURE_RXCHCNT_SHIFT (20U)
-#define ENET_DMA_HW_FEATURE_RXCHCNT_SET(x) (((uint32_t)(x) << ENET_DMA_HW_FEATURE_RXCHCNT_SHIFT) & ENET_DMA_HW_FEATURE_RXCHCNT_MASK)
-#define ENET_DMA_HW_FEATURE_RXCHCNT_GET(x) (((uint32_t)(x) & ENET_DMA_HW_FEATURE_RXCHCNT_MASK) >> ENET_DMA_HW_FEATURE_RXCHCNT_SHIFT)
-
-/*
- * RXFIFOSIZE (RW)
- *
- * Rx FIFO > 2,048 Bytes
- */
-#define ENET_DMA_HW_FEATURE_RXFIFOSIZE_MASK (0x80000UL)
-#define ENET_DMA_HW_FEATURE_RXFIFOSIZE_SHIFT (19U)
-#define ENET_DMA_HW_FEATURE_RXFIFOSIZE_SET(x) (((uint32_t)(x) << ENET_DMA_HW_FEATURE_RXFIFOSIZE_SHIFT) & ENET_DMA_HW_FEATURE_RXFIFOSIZE_MASK)
-#define ENET_DMA_HW_FEATURE_RXFIFOSIZE_GET(x) (((uint32_t)(x) & ENET_DMA_HW_FEATURE_RXFIFOSIZE_MASK) >> ENET_DMA_HW_FEATURE_RXFIFOSIZE_SHIFT)
-
-/*
- * RXTYP2COE (RW)
- *
- * IP Checksum Offload (Type 2) in Rx
- */
-#define ENET_DMA_HW_FEATURE_RXTYP2COE_MASK (0x40000UL)
-#define ENET_DMA_HW_FEATURE_RXTYP2COE_SHIFT (18U)
-#define ENET_DMA_HW_FEATURE_RXTYP2COE_SET(x) (((uint32_t)(x) << ENET_DMA_HW_FEATURE_RXTYP2COE_SHIFT) & ENET_DMA_HW_FEATURE_RXTYP2COE_MASK)
-#define ENET_DMA_HW_FEATURE_RXTYP2COE_GET(x) (((uint32_t)(x) & ENET_DMA_HW_FEATURE_RXTYP2COE_MASK) >> ENET_DMA_HW_FEATURE_RXTYP2COE_SHIFT)
-
-/*
- * RXTYP1COE (RW)
- *
- * IP Checksum Offload (Type 1) in Rx Note: If IPCHKSUM_EN = Enabled and IPC_FULL_OFFLOAD = Enabled, then RXTYP1COE = 0 and RXTYP2COE = 1.
- */
-#define ENET_DMA_HW_FEATURE_RXTYP1COE_MASK (0x20000UL)
-#define ENET_DMA_HW_FEATURE_RXTYP1COE_SHIFT (17U)
-#define ENET_DMA_HW_FEATURE_RXTYP1COE_SET(x) (((uint32_t)(x) << ENET_DMA_HW_FEATURE_RXTYP1COE_SHIFT) & ENET_DMA_HW_FEATURE_RXTYP1COE_MASK)
-#define ENET_DMA_HW_FEATURE_RXTYP1COE_GET(x) (((uint32_t)(x) & ENET_DMA_HW_FEATURE_RXTYP1COE_MASK) >> ENET_DMA_HW_FEATURE_RXTYP1COE_SHIFT)
-
-/*
- * TXCOESEL (RW)
- *
- * Checksum Offload in Tx
- */
-#define ENET_DMA_HW_FEATURE_TXCOESEL_MASK (0x10000UL)
-#define ENET_DMA_HW_FEATURE_TXCOESEL_SHIFT (16U)
-#define ENET_DMA_HW_FEATURE_TXCOESEL_SET(x) (((uint32_t)(x) << ENET_DMA_HW_FEATURE_TXCOESEL_SHIFT) & ENET_DMA_HW_FEATURE_TXCOESEL_MASK)
-#define ENET_DMA_HW_FEATURE_TXCOESEL_GET(x) (((uint32_t)(x) & ENET_DMA_HW_FEATURE_TXCOESEL_MASK) >> ENET_DMA_HW_FEATURE_TXCOESEL_SHIFT)
-
-/*
- * AVSEL (RW)
- *
- * AV feature
- */
-#define ENET_DMA_HW_FEATURE_AVSEL_MASK (0x8000U)
-#define ENET_DMA_HW_FEATURE_AVSEL_SHIFT (15U)
-#define ENET_DMA_HW_FEATURE_AVSEL_SET(x) (((uint32_t)(x) << ENET_DMA_HW_FEATURE_AVSEL_SHIFT) & ENET_DMA_HW_FEATURE_AVSEL_MASK)
-#define ENET_DMA_HW_FEATURE_AVSEL_GET(x) (((uint32_t)(x) & ENET_DMA_HW_FEATURE_AVSEL_MASK) >> ENET_DMA_HW_FEATURE_AVSEL_SHIFT)
-
-/*
- * EEESEL (RW)
- *
- * Energy Efficient Ethernet
- */
-#define ENET_DMA_HW_FEATURE_EEESEL_MASK (0x4000U)
-#define ENET_DMA_HW_FEATURE_EEESEL_SHIFT (14U)
-#define ENET_DMA_HW_FEATURE_EEESEL_SET(x) (((uint32_t)(x) << ENET_DMA_HW_FEATURE_EEESEL_SHIFT) & ENET_DMA_HW_FEATURE_EEESEL_MASK)
-#define ENET_DMA_HW_FEATURE_EEESEL_GET(x) (((uint32_t)(x) & ENET_DMA_HW_FEATURE_EEESEL_MASK) >> ENET_DMA_HW_FEATURE_EEESEL_SHIFT)
-
-/*
- * TSVER2SEL (RW)
- *
- * IEEE 1588-2008 Advanced timestamp
- */
-#define ENET_DMA_HW_FEATURE_TSVER2SEL_MASK (0x2000U)
-#define ENET_DMA_HW_FEATURE_TSVER2SEL_SHIFT (13U)
-#define ENET_DMA_HW_FEATURE_TSVER2SEL_SET(x) (((uint32_t)(x) << ENET_DMA_HW_FEATURE_TSVER2SEL_SHIFT) & ENET_DMA_HW_FEATURE_TSVER2SEL_MASK)
-#define ENET_DMA_HW_FEATURE_TSVER2SEL_GET(x) (((uint32_t)(x) & ENET_DMA_HW_FEATURE_TSVER2SEL_MASK) >> ENET_DMA_HW_FEATURE_TSVER2SEL_SHIFT)
-
-/*
- * TSVER1SEL (RW)
- *
- * Only IEEE 1588-2002 timestamp
- */
-#define ENET_DMA_HW_FEATURE_TSVER1SEL_MASK (0x1000U)
-#define ENET_DMA_HW_FEATURE_TSVER1SEL_SHIFT (12U)
-#define ENET_DMA_HW_FEATURE_TSVER1SEL_SET(x) (((uint32_t)(x) << ENET_DMA_HW_FEATURE_TSVER1SEL_SHIFT) & ENET_DMA_HW_FEATURE_TSVER1SEL_MASK)
-#define ENET_DMA_HW_FEATURE_TSVER1SEL_GET(x) (((uint32_t)(x) & ENET_DMA_HW_FEATURE_TSVER1SEL_MASK) >> ENET_DMA_HW_FEATURE_TSVER1SEL_SHIFT)
-
-/*
- * MMCSEL (RW)
- *
- * RMON module
- */
-#define ENET_DMA_HW_FEATURE_MMCSEL_MASK (0x800U)
-#define ENET_DMA_HW_FEATURE_MMCSEL_SHIFT (11U)
-#define ENET_DMA_HW_FEATURE_MMCSEL_SET(x) (((uint32_t)(x) << ENET_DMA_HW_FEATURE_MMCSEL_SHIFT) & ENET_DMA_HW_FEATURE_MMCSEL_MASK)
-#define ENET_DMA_HW_FEATURE_MMCSEL_GET(x) (((uint32_t)(x) & ENET_DMA_HW_FEATURE_MMCSEL_MASK) >> ENET_DMA_HW_FEATURE_MMCSEL_SHIFT)
-
-/*
- * MGKSEL (RW)
- *
- * PMT magic packet
- */
-#define ENET_DMA_HW_FEATURE_MGKSEL_MASK (0x400U)
-#define ENET_DMA_HW_FEATURE_MGKSEL_SHIFT (10U)
-#define ENET_DMA_HW_FEATURE_MGKSEL_SET(x) (((uint32_t)(x) << ENET_DMA_HW_FEATURE_MGKSEL_SHIFT) & ENET_DMA_HW_FEATURE_MGKSEL_MASK)
-#define ENET_DMA_HW_FEATURE_MGKSEL_GET(x) (((uint32_t)(x) & ENET_DMA_HW_FEATURE_MGKSEL_MASK) >> ENET_DMA_HW_FEATURE_MGKSEL_SHIFT)
-
-/*
- * RWKSEL (RW)
- *
- * PMT remote wake-up frame
- */
-#define ENET_DMA_HW_FEATURE_RWKSEL_MASK (0x200U)
-#define ENET_DMA_HW_FEATURE_RWKSEL_SHIFT (9U)
-#define ENET_DMA_HW_FEATURE_RWKSEL_SET(x) (((uint32_t)(x) << ENET_DMA_HW_FEATURE_RWKSEL_SHIFT) & ENET_DMA_HW_FEATURE_RWKSEL_MASK)
-#define ENET_DMA_HW_FEATURE_RWKSEL_GET(x) (((uint32_t)(x) & ENET_DMA_HW_FEATURE_RWKSEL_MASK) >> ENET_DMA_HW_FEATURE_RWKSEL_SHIFT)
-
-/*
- * SMASEL (RW)
- *
- * SMA (MDIO) Interface
- */
-#define ENET_DMA_HW_FEATURE_SMASEL_MASK (0x100U)
-#define ENET_DMA_HW_FEATURE_SMASEL_SHIFT (8U)
-#define ENET_DMA_HW_FEATURE_SMASEL_SET(x) (((uint32_t)(x) << ENET_DMA_HW_FEATURE_SMASEL_SHIFT) & ENET_DMA_HW_FEATURE_SMASEL_MASK)
-#define ENET_DMA_HW_FEATURE_SMASEL_GET(x) (((uint32_t)(x) & ENET_DMA_HW_FEATURE_SMASEL_MASK) >> ENET_DMA_HW_FEATURE_SMASEL_SHIFT)
-
-/*
- * L3L4FLTREN (RW)
- *
- * Layer 3 and Layer 4 feature
- */
-#define ENET_DMA_HW_FEATURE_L3L4FLTREN_MASK (0x80U)
-#define ENET_DMA_HW_FEATURE_L3L4FLTREN_SHIFT (7U)
-#define ENET_DMA_HW_FEATURE_L3L4FLTREN_SET(x) (((uint32_t)(x) << ENET_DMA_HW_FEATURE_L3L4FLTREN_SHIFT) & ENET_DMA_HW_FEATURE_L3L4FLTREN_MASK)
-#define ENET_DMA_HW_FEATURE_L3L4FLTREN_GET(x) (((uint32_t)(x) & ENET_DMA_HW_FEATURE_L3L4FLTREN_MASK) >> ENET_DMA_HW_FEATURE_L3L4FLTREN_SHIFT)
-
-/*
- * PCSSEL (RW)
- *
- * PCS registers (TBI, SGMII, or RTBI PHY interface)
- */
-#define ENET_DMA_HW_FEATURE_PCSSEL_MASK (0x40U)
-#define ENET_DMA_HW_FEATURE_PCSSEL_SHIFT (6U)
-#define ENET_DMA_HW_FEATURE_PCSSEL_SET(x) (((uint32_t)(x) << ENET_DMA_HW_FEATURE_PCSSEL_SHIFT) & ENET_DMA_HW_FEATURE_PCSSEL_MASK)
-#define ENET_DMA_HW_FEATURE_PCSSEL_GET(x) (((uint32_t)(x) & ENET_DMA_HW_FEATURE_PCSSEL_MASK) >> ENET_DMA_HW_FEATURE_PCSSEL_SHIFT)
-
-/*
- * ADDMACADRSEL (RW)
- *
- * Multiple MAC Address registers
- */
-#define ENET_DMA_HW_FEATURE_ADDMACADRSEL_MASK (0x20U)
-#define ENET_DMA_HW_FEATURE_ADDMACADRSEL_SHIFT (5U)
-#define ENET_DMA_HW_FEATURE_ADDMACADRSEL_SET(x) (((uint32_t)(x) << ENET_DMA_HW_FEATURE_ADDMACADRSEL_SHIFT) & ENET_DMA_HW_FEATURE_ADDMACADRSEL_MASK)
-#define ENET_DMA_HW_FEATURE_ADDMACADRSEL_GET(x) (((uint32_t)(x) & ENET_DMA_HW_FEATURE_ADDMACADRSEL_MASK) >> ENET_DMA_HW_FEATURE_ADDMACADRSEL_SHIFT)
-
-/*
- * HASHSEL (RW)
- *
- * HASH filter
- */
-#define ENET_DMA_HW_FEATURE_HASHSEL_MASK (0x10U)
-#define ENET_DMA_HW_FEATURE_HASHSEL_SHIFT (4U)
-#define ENET_DMA_HW_FEATURE_HASHSEL_SET(x) (((uint32_t)(x) << ENET_DMA_HW_FEATURE_HASHSEL_SHIFT) & ENET_DMA_HW_FEATURE_HASHSEL_MASK)
-#define ENET_DMA_HW_FEATURE_HASHSEL_GET(x) (((uint32_t)(x) & ENET_DMA_HW_FEATURE_HASHSEL_MASK) >> ENET_DMA_HW_FEATURE_HASHSEL_SHIFT)
-
-/*
- * EXTHASHEN (RW)
- *
- * Expanded DA Hash filter
- */
-#define ENET_DMA_HW_FEATURE_EXTHASHEN_MASK (0x8U)
-#define ENET_DMA_HW_FEATURE_EXTHASHEN_SHIFT (3U)
-#define ENET_DMA_HW_FEATURE_EXTHASHEN_SET(x) (((uint32_t)(x) << ENET_DMA_HW_FEATURE_EXTHASHEN_SHIFT) & ENET_DMA_HW_FEATURE_EXTHASHEN_MASK)
-#define ENET_DMA_HW_FEATURE_EXTHASHEN_GET(x) (((uint32_t)(x) & ENET_DMA_HW_FEATURE_EXTHASHEN_MASK) >> ENET_DMA_HW_FEATURE_EXTHASHEN_SHIFT)
-
-/*
- * HDSEL (RW)
- *
- * Half-duplex support
- */
-#define ENET_DMA_HW_FEATURE_HDSEL_MASK (0x4U)
-#define ENET_DMA_HW_FEATURE_HDSEL_SHIFT (2U)
-#define ENET_DMA_HW_FEATURE_HDSEL_SET(x) (((uint32_t)(x) << ENET_DMA_HW_FEATURE_HDSEL_SHIFT) & ENET_DMA_HW_FEATURE_HDSEL_MASK)
-#define ENET_DMA_HW_FEATURE_HDSEL_GET(x) (((uint32_t)(x) & ENET_DMA_HW_FEATURE_HDSEL_MASK) >> ENET_DMA_HW_FEATURE_HDSEL_SHIFT)
-
-/*
- * GMIISEL (RW)
- *
- * 1000 Mbps support
- */
-#define ENET_DMA_HW_FEATURE_GMIISEL_MASK (0x2U)
-#define ENET_DMA_HW_FEATURE_GMIISEL_SHIFT (1U)
-#define ENET_DMA_HW_FEATURE_GMIISEL_SET(x) (((uint32_t)(x) << ENET_DMA_HW_FEATURE_GMIISEL_SHIFT) & ENET_DMA_HW_FEATURE_GMIISEL_MASK)
-#define ENET_DMA_HW_FEATURE_GMIISEL_GET(x) (((uint32_t)(x) & ENET_DMA_HW_FEATURE_GMIISEL_MASK) >> ENET_DMA_HW_FEATURE_GMIISEL_SHIFT)
-
-/*
- * MIISEL (RW)
- *
- * 10 or 100 Mbps support
- */
-#define ENET_DMA_HW_FEATURE_MIISEL_MASK (0x1U)
-#define ENET_DMA_HW_FEATURE_MIISEL_SHIFT (0U)
-#define ENET_DMA_HW_FEATURE_MIISEL_SET(x) (((uint32_t)(x) << ENET_DMA_HW_FEATURE_MIISEL_SHIFT) & ENET_DMA_HW_FEATURE_MIISEL_MASK)
-#define ENET_DMA_HW_FEATURE_MIISEL_GET(x) (((uint32_t)(x) & ENET_DMA_HW_FEATURE_MIISEL_MASK) >> ENET_DMA_HW_FEATURE_MIISEL_SHIFT)
-
 /* Bitfield definition for register: CTRL0 */
 /*
  * ENET0_RXCLK_DLY_SEL (RW)
  *
  */
-#define ENET_CTRL0_ENET0_RXCLK_DLY_SEL_MASK (0x3E0U)
-#define ENET_CTRL0_ENET0_RXCLK_DLY_SEL_SHIFT (5U)
+#define ENET_CTRL0_ENET0_RXCLK_DLY_SEL_MASK (0x3F00U)
+#define ENET_CTRL0_ENET0_RXCLK_DLY_SEL_SHIFT (8U)
 #define ENET_CTRL0_ENET0_RXCLK_DLY_SEL_SET(x) (((uint32_t)(x) << ENET_CTRL0_ENET0_RXCLK_DLY_SEL_SHIFT) & ENET_CTRL0_ENET0_RXCLK_DLY_SEL_MASK)
 #define ENET_CTRL0_ENET0_RXCLK_DLY_SEL_GET(x) (((uint32_t)(x) & ENET_CTRL0_ENET0_RXCLK_DLY_SEL_MASK) >> ENET_CTRL0_ENET0_RXCLK_DLY_SEL_SHIFT)
 
@@ -6924,24 +5591,27 @@ errors */
  * ENET0_TXCLK_DLY_SEL (RW)
  *
  */
-#define ENET_CTRL0_ENET0_TXCLK_DLY_SEL_MASK (0x1FU)
+#define ENET_CTRL0_ENET0_TXCLK_DLY_SEL_MASK (0x3FU)
 #define ENET_CTRL0_ENET0_TXCLK_DLY_SEL_SHIFT (0U)
 #define ENET_CTRL0_ENET0_TXCLK_DLY_SEL_SET(x) (((uint32_t)(x) << ENET_CTRL0_ENET0_TXCLK_DLY_SEL_SHIFT) & ENET_CTRL0_ENET0_TXCLK_DLY_SEL_MASK)
 #define ENET_CTRL0_ENET0_TXCLK_DLY_SEL_GET(x) (((uint32_t)(x) & ENET_CTRL0_ENET0_TXCLK_DLY_SEL_MASK) >> ENET_CTRL0_ENET0_TXCLK_DLY_SEL_SHIFT)
 
 /* Bitfield definition for register: CTRL2 */
 /*
- * ENET0_IRQ_EN (RW)
+ * ENET0_LPI_IRQ_EN (RW)
  *
+ * lowpower interrupt enable, for internal use only, user should use core registers for enable/disable interrupt
  */
-#define ENET_CTRL2_ENET0_IRQ_EN_MASK (0xF8000000UL)
-#define ENET_CTRL2_ENET0_IRQ_EN_SHIFT (27U)
-#define ENET_CTRL2_ENET0_IRQ_EN_SET(x) (((uint32_t)(x) << ENET_CTRL2_ENET0_IRQ_EN_SHIFT) & ENET_CTRL2_ENET0_IRQ_EN_MASK)
-#define ENET_CTRL2_ENET0_IRQ_EN_GET(x) (((uint32_t)(x) & ENET_CTRL2_ENET0_IRQ_EN_MASK) >> ENET_CTRL2_ENET0_IRQ_EN_SHIFT)
+#define ENET_CTRL2_ENET0_LPI_IRQ_EN_MASK (0x20000000UL)
+#define ENET_CTRL2_ENET0_LPI_IRQ_EN_SHIFT (29U)
+#define ENET_CTRL2_ENET0_LPI_IRQ_EN_SET(x) (((uint32_t)(x) << ENET_CTRL2_ENET0_LPI_IRQ_EN_SHIFT) & ENET_CTRL2_ENET0_LPI_IRQ_EN_MASK)
+#define ENET_CTRL2_ENET0_LPI_IRQ_EN_GET(x) (((uint32_t)(x) & ENET_CTRL2_ENET0_LPI_IRQ_EN_MASK) >> ENET_CTRL2_ENET0_LPI_IRQ_EN_SHIFT)
 
 /*
  * ENET0_REFCLK_OE (RW)
  *
+ * set to enable output 50MHz clock to rmii phy.
+ * User should set it if use soc internal clock as refclk
  */
 #define ENET_CTRL2_ENET0_REFCLK_OE_MASK (0x80000UL)
 #define ENET_CTRL2_ENET0_REFCLK_OE_SHIFT (19U)
@@ -6951,6 +5621,9 @@ errors */
 /*
  * ENET0_PHY_INF_SEL (RW)
  *
+ * PHY mode select
+ * 000MII; 001RGMII; 100RMII;
+ * should be set before config IOMUX, otherwise may cause glitch for RGMII
  */
 #define ENET_CTRL2_ENET0_PHY_INF_SEL_MASK (0xE000U)
 #define ENET_CTRL2_ENET0_PHY_INF_SEL_SHIFT (13U)
@@ -6960,6 +5633,7 @@ errors */
 /*
  * ENET0_FLOWCTRL (RW)
  *
+ * flow control request
  */
 #define ENET_CTRL2_ENET0_FLOWCTRL_MASK (0x1000U)
 #define ENET_CTRL2_ENET0_FLOWCTRL_SHIFT (12U)
@@ -6969,6 +5643,10 @@ errors */
 /*
  * ENET0_RMII_TXCLK_SEL (RW)
  *
+ * RMII mode output clock pad select
+ * set to use txck as RMII refclk;
+ * clr to use rxck as RMII refclk;  default 0(rxck)
+ * refclk is always from pad, can use external clock from pad, or use internal clock output to pad then loopback.
  */
 #define ENET_CTRL2_ENET0_RMII_TXCLK_SEL_MASK (0x400U)
 #define ENET_CTRL2_ENET0_RMII_TXCLK_SEL_SHIFT (10U)
@@ -6985,19 +5663,6 @@ errors */
 
 /* L3_L4_CFG register group index macro definition */
 #define ENET_L3_L4_CFG_0 (0UL)
-#define ENET_L3_L4_CFG_1 (1UL)
-#define ENET_L3_L4_CFG_2 (2UL)
-#define ENET_L3_L4_CFG_3 (3UL)
-
-/* HASH_TABLE register group index macro definition */
-#define ENET_HASH_TABLE_REGISTER0 (0UL)
-#define ENET_HASH_TABLE_REGISTER1 (1UL)
-#define ENET_HASH_TABLE_REGISTER2 (2UL)
-#define ENET_HASH_TABLE_REGISTER3 (3UL)
-#define ENET_HASH_TABLE_REGISTER4 (4UL)
-#define ENET_HASH_TABLE_REGISTER5 (5UL)
-#define ENET_HASH_TABLE_REGISTER6 (6UL)
-#define ENET_HASH_TABLE_REGISTER7 (7UL)
 
 /* PPS register group index macro definition */
 #define ENET_PPS_1 (0UL)

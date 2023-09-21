@@ -19,7 +19,7 @@
 #endif
 
 #ifdef RT_USING_POSIX_STDIO
-#include <libc.h>
+#include <posix/stdio.h>
 #endif /* RT_USING_POSIX_STDIO */
 
 /* Global variables */

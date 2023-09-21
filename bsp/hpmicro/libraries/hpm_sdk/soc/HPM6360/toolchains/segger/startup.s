@@ -38,20 +38,20 @@
 
 File      : SEGGER_RISCV_crt0.s
 Purpose   : Generic runtime init startup code for RISC-V CPUs.
-            Designed to work with the SEGGER linker to produce 
+            Designed to work with the SEGGER linker to produce
             smallest possible executables.
-            
+
             This file does not normally require any customization.
 
 Additional information:
   Preprocessor Definitions
     FULL_LIBRARY
-      If defined then 
+      If defined then
         - argc, argv are set up by calling SEGGER_SEMIHOST_GetArgs().
         - the exit symbol is defined and executes on return from main.
         - the exit symbol calls destructors, atexit functions and then
           calls SEGGER_SEMIHOST_Exit().
-    
+
       If not defined then
         - argc and argv are not valid (main is assumed to not take parameters)
         - the exit symbol is defined, executes on return from main and
@@ -147,16 +147,16 @@ Additional information:
 *       _start
 *
 *  Function description
-*    Entry point for the startup code. 
+*    Entry point for the startup code.
 *    Usually called by the reset handler.
-*    Performs all initialisation, based on the entries in the 
+*    Performs all initialisation, based on the entries in the
 *    linker-generated init table, then calls main().
-*    It is device independent, so there should not be any need for an 
+*    It is device independent, so there should not be any need for an
 *    end-user to modify it.
 *
 *  Additional information
-*    At this point, the stack pointer should already have been 
-*    initialized 
+*    At this point, the stack pointer should already have been
+*    initialized
 *      - by hardware (such as on Cortex-M),
 *      - by the device-specific reset handler,
 *      - or by the debugger (such as for RAM Code).
@@ -223,12 +223,27 @@ MARK_FUNC __SEGGER_init_done
     call _clean_up
 #endif
 
-#ifndef CONFIG_FREERTOS
-    #define HANDLER_TRAP SW_handler
-    #define HANDLER_S_TRAP irq_handler_s_trap
-#else
+#if defined(CONFIG_FREERTOS) && CONFIG_FREERTOS
     #define HANDLER_TRAP freertos_risc_v_trap_handler
     #define HANDLER_S_TRAP freertos_risc_v_trap_handler
+
+    /* Use mscratch to store isr level */
+    csrw mscratch, 0
+#elif defined(CONFIG_UCOS_III) && CONFIG_UCOS_III
+    #define HANDLER_TRAP ucos_risc_v_trap_handler
+    #define HANDLER_S_TRAP ucos_risc_v_trap_handler
+
+    /* Use mscratch to store isr level */
+    csrw mscratch, 0
+#elif defined(CONFIG_THREADX) && CONFIG_THREADX
+    #define HANDLER_TRAP tx_risc_v_trap_handler
+    #define HANDLER_S_TRAP tx_risc_v_trap_handler
+
+    /* Use mscratch to store isr level */
+    csrw mscratch, 0
+#else
+    #define HANDLER_TRAP irq_handler_trap
+    #define HANDLER_S_TRAP irq_handler_s_trap
 #endif
 
 #if !defined(USE_NONVECTOR_MODE)
@@ -321,14 +336,14 @@ END_FUNC _start
 *
 *  Function description
 *    Exit of the system.
-*    Called on return from application entry point or explicit call 
+*    Called on return from application entry point or explicit call
 *    to exit.
 *
 *  Additional information
 *    In a hosted environment exit gracefully, by
 *    saving the return value,
-*    calling destructurs of global objects, 
-*    calling registered atexit functions, 
+*    calling destructurs of global objects,
+*    calling registered atexit functions,
 *    and notifying the host/debugger.
 */
 #undef L

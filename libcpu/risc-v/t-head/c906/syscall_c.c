@@ -45,7 +45,7 @@ void syscall_handler(struct rt_hw_stack_frame *regs)
     if (syscallfunc == RT_NULL)
     {
         LOG_E("unsupported syscall!\n");
-        sys_exit(-1);
+        sys_exit_group(-1);
     }
 
 #if DBG_LVL >= DBG_INFO

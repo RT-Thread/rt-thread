@@ -23,6 +23,7 @@
 #include <rtthread.h>
 #include <dfs.h>
 
+#include "lwp_arch.h"
 #include "lwp_pid.h"
 #include "lwp_ipc.h"
 #include "lwp_signal.h"
@@ -30,22 +31,25 @@
 #include "lwp_avl.h"
 #include "mm_aspace.h"
 
+#ifdef RT_USING_MUSLLIBC
+#include "libc_musl.h"
+#endif /* RT_USING_MUSLLIBC */
+
 #ifdef ARCH_MM_MMU
 #include "lwp_shm.h"
-
 #include "mmu.h"
 #include "page.h"
 #else
 #include "lwp_mpu.h"
-#endif
-#include "lwp_arch.h"
+#endif /* ARCH_MM_MMU */
 
-#ifdef RT_USING_MUSL
+#ifdef RT_USING_MUSLLIBC
 #include <locale.h>
-#endif
+#endif /* RT_USING_MUSLLIBC */
+
 #ifdef  RT_USING_TTY
 struct tty_struct;
-#endif
+#endif /* RT_USING_TTY */
 
 #ifdef __cplusplus
 extern "C" {
@@ -62,6 +66,13 @@ struct rt_lwp_objs
 {
     rt_aspace_t source;
     struct rt_mem_obj mem_obj;
+};
+
+struct rt_lwp_notify
+{
+    void (*notify)(rt_wqueue_t *signalfd_queue, int signo);
+    rt_wqueue_t *signalfd_queue;
+    rt_slist_t list_node;
 };
 
 struct rt_lwp
@@ -127,6 +138,8 @@ struct rt_lwp
     int debug;
     uint32_t bak_first_ins;
 
+    rt_slist_t signalfd_notify_head;
+
 #ifdef LWP_ENABLE_ASID
     uint64_t generation;
     unsigned int asid;
@@ -164,6 +177,10 @@ void lwp_aspace_switch(struct rt_thread *thread);
 #endif
 void lwp_user_setting_save(rt_thread_t thread);
 void lwp_user_setting_restore(rt_thread_t thread);
+
+void lwp_uthread_ctx_save(void *ctx);
+void lwp_uthread_ctx_restore(void);
+
 int lwp_setaffinity(pid_t pid, int cpu);
 
 /* ctime lwp API */

@@ -357,7 +357,7 @@ const char *rt_hw_cpu_arch(void)
 }
 
 /** shutdown CPU */
-rt_weak void rt_hw_cpu_shutdown()
+void rt_hw_cpu_shutdown(void)
 {
     rt_uint32_t level;
     rt_kprintf("shutdown...\n");

@@ -69,7 +69,7 @@ void arch_kuser_init(rt_aspace_t aspace, void *vectors)
         while (1)
             ; // early failed
 
-    rt_memcpy((void *)((char *)vectors + 0x1000 - kuser_sz), __kuser_helper_start, kuser_sz);
+    lwp_memcpy((void *)((char *)vectors + 0x1000 - kuser_sz), __kuser_helper_start, kuser_sz);
     /*
      * vectors + 0xfe0 = __kuser_get_tls
      * vectors + 0xfe8 = hardware TLS instruction at 0xffff0fe8
@@ -152,7 +152,7 @@ void *arch_signal_ucontext_restore(rt_base_t user_sp)
     else
     {
         LOG_I("User frame corrupted during signal handling\nexiting...");
-        sys_exit(EXIT_FAILURE);
+        sys_exit_group(EXIT_FAILURE);
     }
 
     return (void *)&new_sp->frame;
@@ -171,27 +171,27 @@ void *arch_signal_ucontext_save(rt_base_t lr, siginfo_t *psiginfo,
         /* push psiginfo */
         if (psiginfo)
         {
-            memcpy(&new_sp->si, psiginfo, sizeof(*psiginfo));
+            lwp_memcpy(&new_sp->si, psiginfo, sizeof(*psiginfo));
         }
 
-        memcpy(&new_sp->frame.r0_to_r12, exp_frame, sizeof(new_sp->frame.r0_to_r12) + sizeof(rt_base_t));
+        lwp_memcpy(&new_sp->frame.r0_to_r12, exp_frame, sizeof(new_sp->frame.r0_to_r12) + sizeof(rt_base_t));
         new_sp->frame.lr = lr;
 
         __asm__ volatile("mrs %0, spsr":"=r"(spsr));
         new_sp->frame.spsr = spsr;
 
         /* copy the save_sig_mask */
-        memcpy(&new_sp->save_sigmask, save_sig_mask, sizeof(lwp_sigset_t));
+        lwp_memcpy(&new_sp->save_sigmask, save_sig_mask, sizeof(lwp_sigset_t));
 
         /* copy lwp_sigreturn */
         extern void lwp_sigreturn(void);
         /* -> ensure that the sigreturn start at the outer most boundary */
-        memcpy(&new_sp->sigreturn,  &lwp_sigreturn, lwp_sigreturn_bytes);
+        lwp_memcpy(&new_sp->sigreturn,  &lwp_sigreturn, lwp_sigreturn_bytes);
     }
     else
     {
         LOG_I("%s: User stack overflow", __func__);
-        sys_exit(EXIT_FAILURE);
+        sys_exit_group(EXIT_FAILURE);
     }
 
     return new_sp;

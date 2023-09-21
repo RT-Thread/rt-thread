@@ -327,7 +327,8 @@ void rt_hw_mmu_unmap(rt_aspace_t aspace, void *v_addr, size_t size)
     while (npages--)
     {
         MM_PGTBL_LOCK(aspace);
-        _kenrel_unmap_4K(aspace->page_table, v_addr);
+        if (rt_hw_mmu_v2p(aspace, v_addr) != ARCH_MAP_FAILED)
+            _kenrel_unmap_4K(aspace->page_table, v_addr);
         MM_PGTBL_UNLOCK(aspace);
         v_addr = (char *)v_addr + ARCH_PAGE_SIZE;
     }

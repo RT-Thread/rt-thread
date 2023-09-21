@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 hpmicro
+ * Copyright (c) 2021 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -11,7 +11,7 @@
 #define SYSCTL_RESOURCE_GROUP0 0
 #define SYSCTL_RESOURCE_GROUP1 1
 
-#define SYSCTL_CPU_RELEASE_KEY(cpu) (0xC0BEF1A9UL | ((cpu & 1) << 24 ))
+#define SYSCTL_CPU_RELEASE_KEY(cpu) (0xC0BEF1A9UL | ((cpu & 1) << 24))
 
 static inline bool sysctl_valid_cpu_index(uint8_t cpu)
 {
@@ -145,15 +145,6 @@ static hpm_stat_t _sysctl_set_cpu_entry(SYSCTL_Type *ptr, uint8_t cpu, uint32_t 
 hpm_stat_t sysctl_set_cpu0_wakeup_entry(SYSCTL_Type *ptr, uint32_t entry)
 {
     return _sysctl_set_cpu_entry(ptr, 0, entry);
-}
-
-hpm_stat_t sysctl_set_cpu_lp_mode(SYSCTL_Type *ptr, uint8_t cpu, cpu_lp_mode_t mode)
-{
-    if (!sysctl_valid_cpu_index(cpu)) {
-        return status_invalid_argument;
-    }
-    ptr->CPU[cpu].LP = (ptr->CPU[cpu].LP & ~(SYSCTL_CPU_LP_MODE_MASK)) | (mode);
-    return status_success;
 }
 
 hpm_stat_t

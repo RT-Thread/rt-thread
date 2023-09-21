@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 hpmicro
+ * Copyright (c) 2021 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -43,7 +43,7 @@ static inline gpiom_gpio_t gpiom_get_pin_controller(GPIOM_Type *ptr,
                                                       uint8_t pin_index)
 {
     return (gpiom_gpio_t)((ptr->ASSIGN[gpio_index].PIN[pin_index]
-            & (GPIOM_PIN_SELECT_MASK)) >> GPIOM_PIN_SELECT_SHIFT);
+            & (GPIOM_ASSIGN_PIN_SELECT_MASK)) >> GPIOM_ASSIGN_PIN_SELECT_SHIFT);
 }
 
 /**
@@ -60,8 +60,8 @@ static inline void gpiom_set_pin_controller(GPIOM_Type *ptr,
                               gpiom_gpio_t gpio)
 {
     ptr->ASSIGN[gpio_index].PIN[pin_index] =
-        (ptr->ASSIGN[gpio_index].PIN[pin_index] & ~(GPIOM_PIN_SELECT_MASK))
-      | GPIOM_PIN_SELECT_SET(gpio);
+        (ptr->ASSIGN[gpio_index].PIN[pin_index] & ~(GPIOM_ASSIGN_PIN_SELECT_MASK))
+      | GPIOM_ASSIGN_PIN_SELECT_SET(gpio);
 }
 
 /**
@@ -80,8 +80,8 @@ static inline bool gpiom_check_pin_visibility(GPIOM_Type *ptr,
                               uint8_t pin_index,
                               gpiom_gpio_t gpio)
 {
-    return (ptr->ASSIGN[gpio_index].PIN[pin_index] & ((1 << gpio) << GPIOM_PIN_HIDE_SHIFT))
-        >> GPIOM_PIN_HIDE_SHIFT >> gpio == gpiom_pin_visible;
+    return (ptr->ASSIGN[gpio_index].PIN[pin_index] & ((1 << gpio) << GPIOM_ASSIGN_PIN_HIDE_SHIFT))
+        >> GPIOM_ASSIGN_PIN_HIDE_SHIFT >> gpio == gpiom_pin_visible;
 }
 
 /**
@@ -98,7 +98,7 @@ static inline void gpiom_enable_pin_visibility(GPIOM_Type *ptr,
                               gpiom_gpio_t gpio)
 {
     ptr->ASSIGN[gpio_index].PIN[pin_index] =
-        (ptr->ASSIGN[gpio_index].PIN[pin_index] & ~((1 << gpio) << GPIOM_PIN_HIDE_SHIFT));
+        (ptr->ASSIGN[gpio_index].PIN[pin_index] & ~((1 << gpio) << GPIOM_ASSIGN_PIN_HIDE_SHIFT));
 }
 
 /**
@@ -115,8 +115,8 @@ static inline void gpiom_disable_pin_visibility(GPIOM_Type *ptr,
                               gpiom_gpio_t gpio)
 {
     ptr->ASSIGN[gpio_index].PIN[pin_index] =
-        (ptr->ASSIGN[gpio_index].PIN[pin_index] & ~((1 << gpio) << GPIOM_PIN_HIDE_SHIFT))
-      | GPIOM_PIN_HIDE_SET(1 << gpio);
+        (ptr->ASSIGN[gpio_index].PIN[pin_index] & ~((1 << gpio) << GPIOM_ASSIGN_PIN_HIDE_SHIFT))
+      | GPIOM_ASSIGN_PIN_HIDE_SET(1 << gpio);
 }
 
 /**
@@ -133,8 +133,8 @@ static inline bool gpiom_pin_is_locked(GPIOM_Type *ptr,
                               uint8_t gpio_index,
                               uint8_t pin_index)
 {
-    return (ptr->ASSIGN[gpio_index].PIN[pin_index] & GPIOM_PIN_LOCK_MASK)
-        == GPIOM_PIN_LOCK_MASK;
+    return (ptr->ASSIGN[gpio_index].PIN[pin_index] & GPIOM_ASSIGN_PIN_LOCK_MASK)
+        == GPIOM_ASSIGN_PIN_LOCK_MASK;
 }
 
 /**
@@ -148,7 +148,7 @@ static inline void gpiom_lock_pin(GPIOM_Type *ptr,
                               uint8_t gpio_index,
                               uint8_t pin_index)
 {
-    ptr->ASSIGN[gpio_index].PIN[pin_index] |= GPIOM_PIN_LOCK_MASK;
+    ptr->ASSIGN[gpio_index].PIN[pin_index] |= GPIOM_ASSIGN_PIN_LOCK_MASK;
 }
 
 #ifdef __cplusplus

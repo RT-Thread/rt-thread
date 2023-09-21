@@ -429,7 +429,8 @@ int dfs_file_open(struct dfs_file *file, const char *path, int oflags, mode_t mo
                             oflags &= ~O_EXCL;
                             /* the dentry already exists */
                             dfs_dentry_unref(dentry);
-                            dentry = RT_NULL;
+                            ret = -EEXIST;
+                            goto _ERR_RET;
                         }
                     }
                     else
@@ -536,6 +537,7 @@ int dfs_file_open(struct dfs_file *file, const char *path, int oflags, mode_t mo
                     {
                         DLOG(msg, "dfs_file", mnt->fs_ops->name, DLOG_MSG, "no permission or fops->open");
                         dfs_file_unref(file);
+                        ret = -EPERM;
                     }
                 }
                 else
@@ -544,8 +546,6 @@ int dfs_file_open(struct dfs_file *file, const char *path, int oflags, mode_t mo
                     ret = -ENOENT;
                 }
             }
-
-            rt_free(fullpath);
         }
 
         if (ret >= 0 && (oflags & O_TRUNC))
@@ -584,6 +584,11 @@ int dfs_file_open(struct dfs_file *file, const char *path, int oflags, mode_t mo
         }
     }
 
+_ERR_RET:
+    if (fullpath != NULL)
+    {
+        rt_free(fullpath);
+    }
     return ret;
 }
 
@@ -1278,7 +1283,7 @@ int dfs_file_symlink(const char *target, const char *linkpath)
                     {
                         if (dentry->mnt->fs_ops->symlink)
                         {
-                            char *path = dfs_normalize_path(NULL, target);
+                            char *path = dfs_normalize_path(parent, target);
                             if (path)
                             {
                                 char *tmp = dfs_nolink_path(&mnt, path, 0);
@@ -1292,26 +1297,19 @@ int dfs_file_symlink(const char *target, const char *linkpath)
                                     tmp = path;
                                 }
 
-                                if (dfs_file_access(path, O_RDONLY) == 0)
+                                ret = rt_strncmp(parent, path, strlen(parent));
+                                if (ret == 0)
                                 {
-                                    ret = rt_strncmp(parent, path, strlen(parent));
-                                    if (ret == 0)
+                                    tmp = path + strlen(parent);
+                                    if (*tmp == '/')
                                     {
-                                        tmp = path + strlen(parent);
-                                        if (*tmp == '/')
-                                        {
-                                            tmp ++;
-                                        }
-                                    }
-
-                                    if (dfs_is_mounted(mnt) == 0)
-                                    {
-                                        ret = mnt->fs_ops->symlink(dentry, tmp, index + 1);
+                                        tmp ++;
                                     }
                                 }
-                                else
+
+                                if (dfs_is_mounted(mnt) == 0)
                                 {
-                                    ret = -ENOENT;
+                                    ret = mnt->fs_ops->symlink(dentry, tmp, index + 1);
                                 }
 
                                 rt_free(path);
@@ -1934,7 +1932,7 @@ static void copyfile(const char *src, const char *dst)
 
     dfs_file_init(&dst_file);
 
-    ret = dfs_file_open(&dst_file, dst, O_WRONLY | O_CREAT, 0);
+    ret = dfs_file_open(&dst_file, dst, O_WRONLY | O_CREAT | O_TRUNC, 0);
     if (ret < 0)
     {
         dfs_file_deinit(&dst_file);

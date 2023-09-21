@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 hpmicro
+ * Copyright (c) 2021-2023 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -22,7 +22,7 @@ default_irq_handler:
 
 __vector_table:
     .weak default_isr_trap
-    .set default_isr_trap, SW_handler
+    .set default_isr_trap, irq_handler_trap
     .long default_isr_trap
     IRQ_HANDLER 1 /* GPIO0_A IRQ handler */
     IRQ_HANDLER 2 /* GPIO0_B IRQ handler */
@@ -76,7 +76,7 @@ __vector_table:
     IRQ_HANDLER 50 /* XPI1 IRQ handler */
     IRQ_HANDLER 51 /* XDMA IRQ handler */
     IRQ_HANDLER 52 /* HDMA IRQ handler */
-    IRQ_HANDLER 53 /* DRAM IRQ handler */
+    IRQ_HANDLER 53 /* FEMC IRQ handler */
     IRQ_HANDLER 54 /* RNG IRQ handler */
     IRQ_HANDLER 55 /* I2S0 IRQ handler */
     IRQ_HANDLER 56 /* I2S1 IRQ handler */
@@ -176,7 +176,7 @@ __vector_s_table:
     IRQ_S_HANDLER 50 /* XPI1 IRQ handler */
     IRQ_S_HANDLER 51 /* XDMA IRQ handler */
     IRQ_S_HANDLER 52 /* HDMA IRQ handler */
-    IRQ_S_HANDLER 53 /* DRAM IRQ handler */
+    IRQ_S_HANDLER 53 /* FEMC IRQ handler */
     IRQ_S_HANDLER 54 /* RNG IRQ handler */
     IRQ_S_HANDLER 55 /* I2S0 IRQ handler */
     IRQ_S_HANDLER 56 /* I2S1 IRQ handler */

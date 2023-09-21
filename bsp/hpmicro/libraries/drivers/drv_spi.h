@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 hpmicro
+ * Copyright (c) 2021 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
@@ -25,4 +25,3 @@ int rt_hw_spi_init(void);
 
 
 #endif /* DRV_SPI_H */
-

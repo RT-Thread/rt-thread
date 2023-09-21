@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 hpmicro
+ * Copyright (c) 2021 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -29,7 +29,7 @@
 /**
  * @brief byte order in a word
  */
-#define JPEG_BYTE_ORDER_3210        (0U)      /**< CAN Receive event *//* no order change, {A3, A2, A1, A0} */
+#define JPEG_BYTE_ORDER_3210        (0U)      /**< no order change, {A3, A2, A1, A0} */
 #define JPEG_BYTE_ORDER_2301        (1U)      /**< order change, {A2, A3, A0, A1} */
 #define JPEG_BYTE_ORDER_1032        (2U)      /**< order change, {A1, A0, A2, A3} */
 #define JPEG_BYTE_ORDER_0123        (3U)      /**< order change, {A0, A1, A2, A3} */
@@ -37,10 +37,7 @@
 /**
  * @brief jpeg pixel conversion format
  */
-#define JPEG_PIXEL_FORMAT_AS_ORIGIN (0U)
-#define JPEG_PIXEL_FORMAT_ARGB8888  (1U)
-#define JPEG_PIXEL_FORMAT_RGB565    (2U)
-#define JPEG_PIXEL_FORMAT_YUV422H1P (3U)
+
 
 /**
  * @brief jpeg data format definition
@@ -61,6 +58,13 @@ typedef struct {
     uint8_t vc:2;                   /**< bit:  7-6 --> Vertical c component */
 } jpeg_sampling_t;
 
+typedef struct {
+    uint8_t pixel_width;
+    uint8_t ipath;
+    uint8_t opath;
+    bool is_rgb;
+} jpeg_pixel_t;
+
 /**
  * @brief jpeg encoding and decoding configuration parameters
  *   @arg bit:  31-27 --> name
@@ -76,15 +80,24 @@ typedef enum jpeg_table {
     jpeg_table_huffsymb = 0x101506,     /**< definition Huffman SYMB mem values */
 } jpeg_table_t;
 
+typedef enum jpeg_pixel_format {
+    jpeg_pixel_format_argb8888 = 0,
+    jpeg_pixel_format_rgb565,
+    jpeg_pixel_format_yuv422h1p,
+    jpeg_pixel_format_yuv422h2p,
+    jpeg_pixel_format_yuv420,
+    jpeg_pixel_format_y8,
+} jpeg_pixel_format_t;
+
 /**
  * @brief jpeg encoding and decoding configuration parameters
  */
 typedef struct {
     uint8_t jpeg_format;            /**< supported jpeg format */
-    uint8_t in_pixel_format;        /**< input pixel format */
-    uint8_t out_pixel_format;       /**< output pixel format */
-    uint8_t byte_order;             /**< byte order */
-    bool enable_csc;                /**< enable color space covertion */
+    jpeg_pixel_format_t in_pixel_format;
+    jpeg_pixel_format_t out_pixel_format;
+    uint8_t in_byte_order;          /**< byte order */
+    uint8_t out_byte_order;          /**< byte order */
     bool enable_ycbcr;              /**< enable YCbCr or YUV */
     uint16_t width_in_pixel;        /**< Image width register*/
     uint16_t height_in_pixel;       /**< Image height register*/

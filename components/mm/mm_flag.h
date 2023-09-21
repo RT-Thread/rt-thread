@@ -47,22 +47,36 @@ enum mm_flag_cntl
      */
     MMF_PREFETCH = _DEF_FLAG(3),
 
+    /**
+     * @brief Allocate the mapping using "huge" pages
+     */
     MMF_HUGEPAGE = _DEF_FLAG(4),
 
+    /** internal reserved flags */
     MMF_TEXT = _DEF_FLAG(5),
 
+    /** internal reserved flags */
     MMF_STATIC_ALLOC = _DEF_FLAG(6),
+
+    /**
+     * @brief Shared mapping. Updates to the mapping are visible to other
+     * processes mapping the same region, and are carried through to the
+     * underlying file.
+     */
+    MMF_MAP_SHARED = _DEF_FLAG(7),
 
     /**
      * @brief a non-locked memory can be swapped out when required, this is
      * reserved for future
      */
-    MMF_NONLOCKED = _DEF_FLAG(20),
+    MMF_NONLOCKED = _DEF_FLAG(8),
 
     /**
      * @brief An alignment is specified in flags that the mapping must admit
      */
-    MMF_REQUEST_ALIGN = _DEF_FLAG(21),
+    MMF_REQUEST_ALIGN = _DEF_FLAG(9),
+
+    __MMF_INVALID,
 };
 
 #define MMF_GET_ALIGN(src) ((src & _MMF_ALIGN_MASK))
@@ -78,7 +92,7 @@ enum mm_flag_cntl
  * @brief Create Flags
  *
  * example: MMF_CREATE(0, 0)
- *          MMF_CREATE(MM_MAP_FIXED, 0x2000)
+ *          MMF_CREATE(MMF_MAP_FIXED, 0x2000)
  *
  * Direct use of flag is also acceptable: (MMF_MAP_FIXED | MMF_PREFETCH)
  */

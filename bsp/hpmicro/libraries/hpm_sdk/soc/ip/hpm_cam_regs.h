@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 hpmicro
+ * Copyright (c) 2021-2023 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -15,7 +15,7 @@ typedef struct {
     __R  uint8_t  RESERVED0[8];                /* 0x8 - 0xF: Reserved */
     __RW uint32_t CR2;                         /* 0x10: Control 2 Register */
     __R  uint8_t  RESERVED1[16];               /* 0x14 - 0x23: Reserved */
-    __W  uint32_t STA;                         /* 0x24: Status Register */
+    __RW uint32_t STA;                         /* 0x24: Status Register */
     __R  uint8_t  RESERVED2[8];                /* 0x28 - 0x2F: Reserved */
     __RW uint32_t DMASA_FB1;                   /* 0x30: Pixel DMA Frame Buffer 1 Address */
     __RW uint32_t DMASA_FB2;                   /* 0x34: Pixel DMA Frame Buffer 2 Address */
@@ -35,10 +35,28 @@ typedef struct {
     __RW uint32_t CLRKEY_HIGH;                 /* 0x80: High Color Key Register */
     __R  uint8_t  RESERVED5[12];               /* 0x84 - 0x8F: Reserved */
     __R  uint32_t HISTOGRAM_FIFO[256];         /* 0x90 - 0x48C: Histogram Registers */
+    __RW uint32_t ROI_WIDTH;                   /* 0x490: Roi Width Config Register */
+    __RW uint32_t ROI_HEIGHT;                  /* 0x494: Roi Width Config Register */
+    __RW uint32_t PRO_CTRL;                    /* 0x498: Pro Config Register */
+    __RW uint32_t ACT_SIZE;                    /* 0x49C: actual size */
+    __RW uint32_t VSYNC_VALID_CNT;             /* 0x4A0: vsync valid counter */
+    __RW uint32_t HSYNC_VALID_CNT;             /* 0x4A4: hsync valid counter */
+    __RW uint32_t VALID_MARGIN;                /* 0x4A8: valid margin */
+    __RW uint32_t ALARM_SET;                   /* 0x4AC: alarm set */
 } CAM_Type;
 
 
 /* Bitfield definition for register: CR1 */
+/*
+ * INV_DEN (RW)
+ *
+ * invert den pad input before it is used
+ */
+#define CAM_CR1_INV_DEN_MASK (0x40000000UL)
+#define CAM_CR1_INV_DEN_SHIFT (30U)
+#define CAM_CR1_INV_DEN_SET(x) (((uint32_t)(x) << CAM_CR1_INV_DEN_SHIFT) & CAM_CR1_INV_DEN_MASK)
+#define CAM_CR1_INV_DEN_GET(x) (((uint32_t)(x) & CAM_CR1_INV_DEN_MASK) >> CAM_CR1_INV_DEN_SHIFT)
+
 /*
  * COLOR_EXT (RW)
  *
@@ -184,8 +202,11 @@ typedef struct {
  * COLOR_FORMATS (RW)
  *
  * input color formats:
- * 0010b: 24bit: RGB888
- * 0100b: 16bit: RGB565
+ * 0010b:24bit:RGB888
+ * 0011b:24bit:RGB666
+ * 0100b:16bit:RGB565
+ * 0101b:16bit:RGB444
+ * 0110b:16bit:RGB555
  * 0111b: 16bit: YCbCr422 (Y0 Cb Y1 Cr, each 8-bit)
  * YUV
  * YCrCb
@@ -203,6 +224,7 @@ typedef struct {
  * the bit width of the sensor
  * 0: 8 bits
  * 1: 10 bits
+ * 3:24bits
  * Others: Undefined
  */
 #define CAM_CR1_SENSOR_BIT_WIDTH_MASK (0x7U)
@@ -307,7 +329,7 @@ typedef struct {
 
 /* Bitfield definition for register: CR2 */
 /*
- * FRMCNT_15_0 (ROI)
+ * FRMCNT_15_0 (RO)
  *
  * Frame Counter. This is a 16-bit Frame Counter
  * (Wraps around automatically after reaching the maximum)
@@ -750,13 +772,290 @@ typedef struct {
 
 /* Bitfield definition for register array: HISTOGRAM_FIFO */
 /*
- * HIST_Y (ROI)
+ * HIST_Y (RO)
  *
  * the appearance of bin x (x=(address-DATA0)/4)
  */
 #define CAM_HISTOGRAM_FIFO_HIST_Y_MASK (0xFFFFFFUL)
 #define CAM_HISTOGRAM_FIFO_HIST_Y_SHIFT (0U)
 #define CAM_HISTOGRAM_FIFO_HIST_Y_GET(x) (((uint32_t)(x) & CAM_HISTOGRAM_FIFO_HIST_Y_MASK) >> CAM_HISTOGRAM_FIFO_HIST_Y_SHIFT)
+
+/* Bitfield definition for register: ROI_WIDTH */
+/*
+ * ROI_WIDTH_END (RW)
+ *
+ * end address of width for roi
+ */
+#define CAM_ROI_WIDTH_ROI_WIDTH_END_MASK (0xFFFF0000UL)
+#define CAM_ROI_WIDTH_ROI_WIDTH_END_SHIFT (16U)
+#define CAM_ROI_WIDTH_ROI_WIDTH_END_SET(x) (((uint32_t)(x) << CAM_ROI_WIDTH_ROI_WIDTH_END_SHIFT) & CAM_ROI_WIDTH_ROI_WIDTH_END_MASK)
+#define CAM_ROI_WIDTH_ROI_WIDTH_END_GET(x) (((uint32_t)(x) & CAM_ROI_WIDTH_ROI_WIDTH_END_MASK) >> CAM_ROI_WIDTH_ROI_WIDTH_END_SHIFT)
+
+/*
+ * ROI_WIDTH_START (RW)
+ *
+ * start address of width for roi
+ */
+#define CAM_ROI_WIDTH_ROI_WIDTH_START_MASK (0xFFFFU)
+#define CAM_ROI_WIDTH_ROI_WIDTH_START_SHIFT (0U)
+#define CAM_ROI_WIDTH_ROI_WIDTH_START_SET(x) (((uint32_t)(x) << CAM_ROI_WIDTH_ROI_WIDTH_START_SHIFT) & CAM_ROI_WIDTH_ROI_WIDTH_START_MASK)
+#define CAM_ROI_WIDTH_ROI_WIDTH_START_GET(x) (((uint32_t)(x) & CAM_ROI_WIDTH_ROI_WIDTH_START_MASK) >> CAM_ROI_WIDTH_ROI_WIDTH_START_SHIFT)
+
+/* Bitfield definition for register: ROI_HEIGHT */
+/*
+ * ROI_HEIGHT_END (RW)
+ *
+ * end address of height for roi
+ */
+#define CAM_ROI_HEIGHT_ROI_HEIGHT_END_MASK (0xFFFF0000UL)
+#define CAM_ROI_HEIGHT_ROI_HEIGHT_END_SHIFT (16U)
+#define CAM_ROI_HEIGHT_ROI_HEIGHT_END_SET(x) (((uint32_t)(x) << CAM_ROI_HEIGHT_ROI_HEIGHT_END_SHIFT) & CAM_ROI_HEIGHT_ROI_HEIGHT_END_MASK)
+#define CAM_ROI_HEIGHT_ROI_HEIGHT_END_GET(x) (((uint32_t)(x) & CAM_ROI_HEIGHT_ROI_HEIGHT_END_MASK) >> CAM_ROI_HEIGHT_ROI_HEIGHT_END_SHIFT)
+
+/*
+ * ROI_HEIGHT_START (RW)
+ *
+ * start address of height for roi
+ */
+#define CAM_ROI_HEIGHT_ROI_HEIGHT_START_MASK (0xFFFFU)
+#define CAM_ROI_HEIGHT_ROI_HEIGHT_START_SHIFT (0U)
+#define CAM_ROI_HEIGHT_ROI_HEIGHT_START_SET(x) (((uint32_t)(x) << CAM_ROI_HEIGHT_ROI_HEIGHT_START_SHIFT) & CAM_ROI_HEIGHT_ROI_HEIGHT_START_MASK)
+#define CAM_ROI_HEIGHT_ROI_HEIGHT_START_GET(x) (((uint32_t)(x) & CAM_ROI_HEIGHT_ROI_HEIGHT_START_MASK) >> CAM_ROI_HEIGHT_ROI_HEIGHT_START_SHIFT)
+
+/* Bitfield definition for register: PRO_CTRL */
+/*
+ * ASYNC_FIFO_SEL (RW)
+ *
+ * 0 use fifo for sync
+ * 1 use flipflop for sync
+ */
+#define CAM_PRO_CTRL_ASYNC_FIFO_SEL_MASK (0x8000U)
+#define CAM_PRO_CTRL_ASYNC_FIFO_SEL_SHIFT (15U)
+#define CAM_PRO_CTRL_ASYNC_FIFO_SEL_SET(x) (((uint32_t)(x) << CAM_PRO_CTRL_ASYNC_FIFO_SEL_SHIFT) & CAM_PRO_CTRL_ASYNC_FIFO_SEL_MASK)
+#define CAM_PRO_CTRL_ASYNC_FIFO_SEL_GET(x) (((uint32_t)(x) & CAM_PRO_CTRL_ASYNC_FIFO_SEL_MASK) >> CAM_PRO_CTRL_ASYNC_FIFO_SEL_SHIFT)
+
+/*
+ * ERR_INJECT (RW)
+ *
+ * 0 generate alarm in normal mode
+ * 1 force to generate fatal alarm
+ */
+#define CAM_PRO_CTRL_ERR_INJECT_MASK (0x4000U)
+#define CAM_PRO_CTRL_ERR_INJECT_SHIFT (14U)
+#define CAM_PRO_CTRL_ERR_INJECT_SET(x) (((uint32_t)(x) << CAM_PRO_CTRL_ERR_INJECT_SHIFT) & CAM_PRO_CTRL_ERR_INJECT_MASK)
+#define CAM_PRO_CTRL_ERR_INJECT_GET(x) (((uint32_t)(x) & CAM_PRO_CTRL_ERR_INJECT_MASK) >> CAM_PRO_CTRL_ERR_INJECT_SHIFT)
+
+/*
+ * BAYER_BIG_ENDIAN (RW)
+ *
+ * 0 bayer data is little-endian
+ * 1 bayer data is big-endian
+ */
+#define CAM_PRO_CTRL_BAYER_BIG_ENDIAN_MASK (0x2000U)
+#define CAM_PRO_CTRL_BAYER_BIG_ENDIAN_SHIFT (13U)
+#define CAM_PRO_CTRL_BAYER_BIG_ENDIAN_SET(x) (((uint32_t)(x) << CAM_PRO_CTRL_BAYER_BIG_ENDIAN_SHIFT) & CAM_PRO_CTRL_BAYER_BIG_ENDIAN_MASK)
+#define CAM_PRO_CTRL_BAYER_BIG_ENDIAN_GET(x) (((uint32_t)(x) & CAM_PRO_CTRL_BAYER_BIG_ENDIAN_MASK) >> CAM_PRO_CTRL_BAYER_BIG_ENDIAN_SHIFT)
+
+/*
+ * READY_ERROR (W1C)
+ *
+ * indicate cam_te_b0_ready and cam_te_b1_ready assert at the same time
+ * clear by writing 1
+ */
+#define CAM_PRO_CTRL_READY_ERROR_MASK (0x1000U)
+#define CAM_PRO_CTRL_READY_ERROR_SHIFT (12U)
+#define CAM_PRO_CTRL_READY_ERROR_SET(x) (((uint32_t)(x) << CAM_PRO_CTRL_READY_ERROR_SHIFT) & CAM_PRO_CTRL_READY_ERROR_MASK)
+#define CAM_PRO_CTRL_READY_ERROR_GET(x) (((uint32_t)(x) & CAM_PRO_CTRL_READY_ERROR_MASK) >> CAM_PRO_CTRL_READY_ERROR_SHIFT)
+
+/*
+ * READY_ENABLE (RO)
+ *
+ * indicate cam_in_init assert
+ */
+#define CAM_PRO_CTRL_READY_ENABLE_MASK (0x800U)
+#define CAM_PRO_CTRL_READY_ENABLE_SHIFT (11U)
+#define CAM_PRO_CTRL_READY_ENABLE_GET(x) (((uint32_t)(x) & CAM_PRO_CTRL_READY_ENABLE_MASK) >> CAM_PRO_CTRL_READY_ENABLE_SHIFT)
+
+/*
+ * READY_DISABLE (RW)
+ *
+ * indicate cam_out_init de-assert
+ */
+#define CAM_PRO_CTRL_READY_DISABLE_MASK (0x400U)
+#define CAM_PRO_CTRL_READY_DISABLE_SHIFT (10U)
+#define CAM_PRO_CTRL_READY_DISABLE_SET(x) (((uint32_t)(x) << CAM_PRO_CTRL_READY_DISABLE_SHIFT) & CAM_PRO_CTRL_READY_DISABLE_MASK)
+#define CAM_PRO_CTRL_READY_DISABLE_GET(x) (((uint32_t)(x) & CAM_PRO_CTRL_READY_DISABLE_MASK) >> CAM_PRO_CTRL_READY_DISABLE_SHIFT)
+
+/*
+ * BUFFER_SWITCH (RW)
+ *
+ * 00 switch buffer every frame
+ * 01 switch buffer every 8 lines
+ * 10 switch buffer every 16 lines
+ */
+#define CAM_PRO_CTRL_BUFFER_SWITCH_MASK (0x300U)
+#define CAM_PRO_CTRL_BUFFER_SWITCH_SHIFT (8U)
+#define CAM_PRO_CTRL_BUFFER_SWITCH_SET(x) (((uint32_t)(x) << CAM_PRO_CTRL_BUFFER_SWITCH_SHIFT) & CAM_PRO_CTRL_BUFFER_SWITCH_MASK)
+#define CAM_PRO_CTRL_BUFFER_SWITCH_GET(x) (((uint32_t)(x) & CAM_PRO_CTRL_BUFFER_SWITCH_MASK) >> CAM_PRO_CTRL_BUFFER_SWITCH_SHIFT)
+
+/*
+ * ROI_UPDATE (RW)
+ *
+ * roi configration update
+ */
+#define CAM_PRO_CTRL_ROI_UPDATE_MASK (0x80U)
+#define CAM_PRO_CTRL_ROI_UPDATE_SHIFT (7U)
+#define CAM_PRO_CTRL_ROI_UPDATE_SET(x) (((uint32_t)(x) << CAM_PRO_CTRL_ROI_UPDATE_SHIFT) & CAM_PRO_CTRL_ROI_UPDATE_MASK)
+#define CAM_PRO_CTRL_ROI_UPDATE_GET(x) (((uint32_t)(x) & CAM_PRO_CTRL_ROI_UPDATE_MASK) >> CAM_PRO_CTRL_ROI_UPDATE_SHIFT)
+
+/*
+ * SCALE_UPDATE (RW)
+ *
+ * scale configration update
+ */
+#define CAM_PRO_CTRL_SCALE_UPDATE_MASK (0x40U)
+#define CAM_PRO_CTRL_SCALE_UPDATE_SHIFT (6U)
+#define CAM_PRO_CTRL_SCALE_UPDATE_SET(x) (((uint32_t)(x) << CAM_PRO_CTRL_SCALE_UPDATE_SHIFT) & CAM_PRO_CTRL_SCALE_UPDATE_MASK)
+#define CAM_PRO_CTRL_SCALE_UPDATE_GET(x) (((uint32_t)(x) & CAM_PRO_CTRL_SCALE_UPDATE_MASK) >> CAM_PRO_CTRL_SCALE_UPDATE_SHIFT)
+
+/*
+ * SCALE_HEIGHT_SELECT (RW)
+ *
+ * 000 keep all pixel for height
+ * 001 keep 1 for every 2 pixel for height
+ * 010 keep 1 for every 3 pixel for height
+ * 011 keep 1 for every 4 pixel for height
+ * 100 keep 1 for every 5 pixel for height
+ * 101 keep 1 for every 6 pixel for height
+ * 110 keep 1 for every 7 pixel for height
+ * 111 keep 1 for every 8 pixel for height
+ */
+#define CAM_PRO_CTRL_SCALE_HEIGHT_SELECT_MASK (0x38U)
+#define CAM_PRO_CTRL_SCALE_HEIGHT_SELECT_SHIFT (3U)
+#define CAM_PRO_CTRL_SCALE_HEIGHT_SELECT_SET(x) (((uint32_t)(x) << CAM_PRO_CTRL_SCALE_HEIGHT_SELECT_SHIFT) & CAM_PRO_CTRL_SCALE_HEIGHT_SELECT_MASK)
+#define CAM_PRO_CTRL_SCALE_HEIGHT_SELECT_GET(x) (((uint32_t)(x) & CAM_PRO_CTRL_SCALE_HEIGHT_SELECT_MASK) >> CAM_PRO_CTRL_SCALE_HEIGHT_SELECT_SHIFT)
+
+/*
+ * SCALE_WIDTH_SELECT (RW)
+ *
+ * 000 keep all pixel for width
+ * 001 keep 1 for every 2 pixel for width
+ * 010 keep 1 for every 3 pixel for width
+ * 011 keep 1 for every 4 pixel for width
+ * 100 keep 1 for every 5 pixel for width
+ * 101 keep 1 for every 6 pixel for width
+ * 110 keep 1 for every 7 pixel for width
+ * 111 keep 1 for every 8 pixel for width
+ */
+#define CAM_PRO_CTRL_SCALE_WIDTH_SELECT_MASK (0x7U)
+#define CAM_PRO_CTRL_SCALE_WIDTH_SELECT_SHIFT (0U)
+#define CAM_PRO_CTRL_SCALE_WIDTH_SELECT_SET(x) (((uint32_t)(x) << CAM_PRO_CTRL_SCALE_WIDTH_SELECT_SHIFT) & CAM_PRO_CTRL_SCALE_WIDTH_SELECT_MASK)
+#define CAM_PRO_CTRL_SCALE_WIDTH_SELECT_GET(x) (((uint32_t)(x) & CAM_PRO_CTRL_SCALE_WIDTH_SELECT_MASK) >> CAM_PRO_CTRL_SCALE_WIDTH_SELECT_SHIFT)
+
+/* Bitfield definition for register: ACT_SIZE */
+/*
+ * ACT_HEIGHT (RW)
+ *
+ * actual height after scale and/or roi
+ */
+#define CAM_ACT_SIZE_ACT_HEIGHT_MASK (0xFFFF0000UL)
+#define CAM_ACT_SIZE_ACT_HEIGHT_SHIFT (16U)
+#define CAM_ACT_SIZE_ACT_HEIGHT_SET(x) (((uint32_t)(x) << CAM_ACT_SIZE_ACT_HEIGHT_SHIFT) & CAM_ACT_SIZE_ACT_HEIGHT_MASK)
+#define CAM_ACT_SIZE_ACT_HEIGHT_GET(x) (((uint32_t)(x) & CAM_ACT_SIZE_ACT_HEIGHT_MASK) >> CAM_ACT_SIZE_ACT_HEIGHT_SHIFT)
+
+/*
+ * ACT_WIDTH (RW)
+ *
+ * actual width after scale and/or roi
+ */
+#define CAM_ACT_SIZE_ACT_WIDTH_MASK (0xFFFFU)
+#define CAM_ACT_SIZE_ACT_WIDTH_SHIFT (0U)
+#define CAM_ACT_SIZE_ACT_WIDTH_SET(x) (((uint32_t)(x) << CAM_ACT_SIZE_ACT_WIDTH_SHIFT) & CAM_ACT_SIZE_ACT_WIDTH_MASK)
+#define CAM_ACT_SIZE_ACT_WIDTH_GET(x) (((uint32_t)(x) & CAM_ACT_SIZE_ACT_WIDTH_MASK) >> CAM_ACT_SIZE_ACT_WIDTH_SHIFT)
+
+/* Bitfield definition for register: VSYNC_VALID_CNT */
+/*
+ * VSYNC_VALID_CNT (RW)
+ *
+ * vsync valid counter
+ */
+#define CAM_VSYNC_VALID_CNT_VSYNC_VALID_CNT_MASK (0xFFFFFFFFUL)
+#define CAM_VSYNC_VALID_CNT_VSYNC_VALID_CNT_SHIFT (0U)
+#define CAM_VSYNC_VALID_CNT_VSYNC_VALID_CNT_SET(x) (((uint32_t)(x) << CAM_VSYNC_VALID_CNT_VSYNC_VALID_CNT_SHIFT) & CAM_VSYNC_VALID_CNT_VSYNC_VALID_CNT_MASK)
+#define CAM_VSYNC_VALID_CNT_VSYNC_VALID_CNT_GET(x) (((uint32_t)(x) & CAM_VSYNC_VALID_CNT_VSYNC_VALID_CNT_MASK) >> CAM_VSYNC_VALID_CNT_VSYNC_VALID_CNT_SHIFT)
+
+/* Bitfield definition for register: HSYNC_VALID_CNT */
+/*
+ * HSYNC_VALID_CNT (RW)
+ *
+ * hsync valid counter
+ */
+#define CAM_HSYNC_VALID_CNT_HSYNC_VALID_CNT_MASK (0xFFFFFFFFUL)
+#define CAM_HSYNC_VALID_CNT_HSYNC_VALID_CNT_SHIFT (0U)
+#define CAM_HSYNC_VALID_CNT_HSYNC_VALID_CNT_SET(x) (((uint32_t)(x) << CAM_HSYNC_VALID_CNT_HSYNC_VALID_CNT_SHIFT) & CAM_HSYNC_VALID_CNT_HSYNC_VALID_CNT_MASK)
+#define CAM_HSYNC_VALID_CNT_HSYNC_VALID_CNT_GET(x) (((uint32_t)(x) & CAM_HSYNC_VALID_CNT_HSYNC_VALID_CNT_MASK) >> CAM_HSYNC_VALID_CNT_HSYNC_VALID_CNT_SHIFT)
+
+/* Bitfield definition for register: VALID_MARGIN */
+/*
+ * HSYNC_VALID_MARGIN (RW)
+ *
+ * hsync valid margin
+ */
+#define CAM_VALID_MARGIN_HSYNC_VALID_MARGIN_MASK (0xFFFF0000UL)
+#define CAM_VALID_MARGIN_HSYNC_VALID_MARGIN_SHIFT (16U)
+#define CAM_VALID_MARGIN_HSYNC_VALID_MARGIN_SET(x) (((uint32_t)(x) << CAM_VALID_MARGIN_HSYNC_VALID_MARGIN_SHIFT) & CAM_VALID_MARGIN_HSYNC_VALID_MARGIN_MASK)
+#define CAM_VALID_MARGIN_HSYNC_VALID_MARGIN_GET(x) (((uint32_t)(x) & CAM_VALID_MARGIN_HSYNC_VALID_MARGIN_MASK) >> CAM_VALID_MARGIN_HSYNC_VALID_MARGIN_SHIFT)
+
+/*
+ * VSYNC_VALID_MARGIN (RW)
+ *
+ * vsync valid margin
+ */
+#define CAM_VALID_MARGIN_VSYNC_VALID_MARGIN_MASK (0xFFFFU)
+#define CAM_VALID_MARGIN_VSYNC_VALID_MARGIN_SHIFT (0U)
+#define CAM_VALID_MARGIN_VSYNC_VALID_MARGIN_SET(x) (((uint32_t)(x) << CAM_VALID_MARGIN_VSYNC_VALID_MARGIN_SHIFT) & CAM_VALID_MARGIN_VSYNC_VALID_MARGIN_MASK)
+#define CAM_VALID_MARGIN_VSYNC_VALID_MARGIN_GET(x) (((uint32_t)(x) & CAM_VALID_MARGIN_VSYNC_VALID_MARGIN_MASK) >> CAM_VALID_MARGIN_VSYNC_VALID_MARGIN_SHIFT)
+
+/* Bitfield definition for register: ALARM_SET */
+/*
+ * SIG_NORMAL (RW)
+ *
+ * define signal duty cycles(base clock)
+ * 0x0: disable signal
+ * 0x1:  high 1, low 15
+ * 0x2:  high 2, low 14
+ * …...
+ * 0xF:   high 15, low 1
+ */
+#define CAM_ALARM_SET_SIG_NORMAL_MASK (0xF00000UL)
+#define CAM_ALARM_SET_SIG_NORMAL_SHIFT (20U)
+#define CAM_ALARM_SET_SIG_NORMAL_SET(x) (((uint32_t)(x) << CAM_ALARM_SET_SIG_NORMAL_SHIFT) & CAM_ALARM_SET_SIG_NORMAL_MASK)
+#define CAM_ALARM_SET_SIG_NORMAL_GET(x) (((uint32_t)(x) & CAM_ALARM_SET_SIG_NORMAL_MASK) >> CAM_ALARM_SET_SIG_NORMAL_SHIFT)
+
+/*
+ * FATAL_NORMAL (RW)
+ *
+ * define signal duty cycles(base clock)
+ * 0x0: disable signal
+ * 0x1:  high 1, low 15
+ * 0x2:  high 2, low 14
+ * …...
+ * 0xF:   high 15, low 1
+ */
+#define CAM_ALARM_SET_FATAL_NORMAL_MASK (0xF0000UL)
+#define CAM_ALARM_SET_FATAL_NORMAL_SHIFT (16U)
+#define CAM_ALARM_SET_FATAL_NORMAL_SET(x) (((uint32_t)(x) << CAM_ALARM_SET_FATAL_NORMAL_SHIFT) & CAM_ALARM_SET_FATAL_NORMAL_MASK)
+#define CAM_ALARM_SET_FATAL_NORMAL_GET(x) (((uint32_t)(x) & CAM_ALARM_SET_FATAL_NORMAL_MASK) >> CAM_ALARM_SET_FATAL_NORMAL_SHIFT)
+
+/*
+ * PRE_DIV (RW)
+ *
+ * frequency division
+ */
+#define CAM_ALARM_SET_PRE_DIV_MASK (0xFFFFU)
+#define CAM_ALARM_SET_PRE_DIV_SHIFT (0U)
+#define CAM_ALARM_SET_PRE_DIV_SET(x) (((uint32_t)(x) << CAM_ALARM_SET_PRE_DIV_SHIFT) & CAM_ALARM_SET_PRE_DIV_MASK)
+#define CAM_ALARM_SET_PRE_DIV_GET(x) (((uint32_t)(x) & CAM_ALARM_SET_PRE_DIV_MASK) >> CAM_ALARM_SET_PRE_DIV_SHIFT)
 
 
 
