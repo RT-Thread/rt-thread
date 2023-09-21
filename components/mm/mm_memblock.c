@@ -19,62 +19,39 @@
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
 
-#define INIT_MEMORY_REGIONS 128
-#define INIT_RESERVED_REGIONS 128
+static rt_uint32_t _hint_idx = 1;
+static rt_uint32_t _max_regions = RT_INIT_MEMORY_REGIONS;
+static struct rt_mmblk_reg _memory_regions[RT_INIT_MEMORY_REGIONS];
+struct rt_memblock mmblk_memory;
 
-#define PHYS_ADDR_MAX (~(rt_ubase_t)0)
+#define NEXT_MEMREG(prev) (prev->node.next ? rt_slist_entry(prev->node.next, struct rt_mmblk_reg, node) : RT_NULL)
 
-static struct rt_mmblk_reg _init_memory_regions[INIT_MEMORY_REGIONS];
-static struct rt_mmblk_reg _init_reserved_regions[INIT_RESERVED_REGIONS];
-
-struct rt_memblock mmblk_memory = {
-    .hint_idx = 1,
-    .max = INIT_MEMORY_REGIONS,
-    .regions = &_init_memory_regions[0],
-};
-
-struct rt_memblock mmblk_reserved = {
-    .hint_idx = 1,
-    .max = INIT_RESERVED_REGIONS,
-    .regions = &_init_reserved_regions[0],
-};
-
-/* adjust size to avoid exceed physical addr range */
-rt_inline rt_size_t _adjust_size(rt_ubase_t base, rt_size_t *size)
-{
-    return *size = MIN(*size, PHYS_ADDR_MAX - base );
-}
-
-static struct rt_mmblk_reg *_dummy_malloc(struct rt_memblock *memblock, struct rt_mmblk_reg *prev)
+static struct rt_mmblk_reg *_malloc_memreg(struct rt_mmblk_reg *prev)
 {
     struct rt_mmblk_reg *ret = RT_NULL;
 
-    for(int i = memblock->hint_idx; i < memblock->max; i++)
+    for(int i = _hint_idx; i < _max_regions; i++)
     {
-        if(memblock->regions[i].size == 0)
+        if(_memory_regions[i].alloc == RT_FALSE)
         {
-            memblock->regions[i].next = prev->next;
-            prev->next = &memblock->regions[i];
-            /* mark as alloced */
-            memblock->regions[i].size = 1;
-            memblock->hint_idx = i + 1;
-            ret = &memblock->regions[i];
+            rt_slist_insert(&(prev->node), &(_memory_regions[i].node));
+            _memory_regions[i].alloc = RT_TRUE;
+            _hint_idx = i + 1;
+            ret = &_memory_regions[i];
             break;
         }
     }
 
     if(ret == RT_NULL)
     {
-        for(int i = 1; i < memblock->hint_idx; i++)
+        for(int i = 0; i < _hint_idx; i++)
         {
-            if(memblock->regions[i].size == 0)
+            if(_memory_regions[i].alloc == RT_FALSE)
             {
-                memblock->regions[i].next = prev->next;
-                prev->next = &memblock->regions[i];
-                /* mark as alloced */
-                memblock->regions[i].size = 1;
-                memblock->hint_idx = i + 1;
-                ret = &memblock->regions[i];
+                rt_slist_insert(&(prev->node), &(_memory_regions[i].node));
+                _memory_regions[i].alloc = RT_TRUE;
+                _hint_idx = i + 1;
+                ret = &_memory_regions[i];
                 break;
             }
         }
@@ -83,19 +60,18 @@ static struct rt_mmblk_reg *_dummy_malloc(struct rt_memblock *memblock, struct r
     return ret;
 }
 
-static void _dummy_free(struct rt_memblock *memblock, struct rt_mmblk_reg *prev)
+static void _free_memreg(struct rt_mmblk_reg *prev)
 {
-    if(prev->next != RT_NULL)
-    {
-        prev->next->size = 0;
-        prev->next = prev->next->next;
-    }
+    struct rt_mmblk_reg *next = NEXT_MEMREG(prev);
+
+    next->alloc = RT_FALSE;
+    rt_slist_remove(&(prev->node), prev->node.next);
 }
 
-static void _reg_insert_after(struct rt_memblock *memblock, struct rt_mmblk_reg *reg,
-                            rt_ubase_t base, rt_size_t size, mmblk_flag_t flags)
+static void _reg_insert_after(struct rt_mmblk_reg *prev, rt_region_t *reg,
+                                mmblk_flag_t flags)
 {
-    struct rt_mmblk_reg *new_reg = _dummy_malloc(memblock, reg);
+    struct rt_mmblk_reg *new_reg = _malloc_memreg(prev);
 
     if(!new_reg)
     {
@@ -103,317 +79,238 @@ static void _reg_insert_after(struct rt_memblock *memblock, struct rt_mmblk_reg 
         RT_ASSERT(0);
     }
 
-    new_reg->base = base;
-    new_reg->size = size;
+    rt_memcpy(&(new_reg->memreg), reg, sizeof(*reg));
     new_reg->flags = flags;
 }
 
-static void _reg_remove_after(struct rt_memblock *memblock, struct rt_mmblk_reg *reg)
+static void _reg_remove_after(struct rt_mmblk_reg *prev)
 {
-    _dummy_free(memblock, reg);
+    _free_memreg(prev);
 }
 
-static void _memblock_merge_regions(struct rt_memblock *memblock)
+/* merge normal memory regions */
+static void _memblock_merge_memory()
 {
-    struct rt_mmblk_reg *reg = RT_NULL;
+    struct rt_mmblk_reg *reg;
 
-    /* test if a memblock can merge with next */
-    for_each_region(memblock, reg)
+    rt_slist_for_each_entry(reg, &(mmblk_memory.reg_list), node)
     {
-        /* skip the guard node */
-        if(reg->size == 0)
-            continue;
-
-        /* 'reg' can merge with next*/
-        while (reg->next &&
-            reg->flags == reg->next->flags &&
-            reg->base + reg->size == reg->next->base)
+        while (reg->node.next &&
+            reg->flags == MEMBLOCK_NORMAL &&
+            NEXT_MEMREG(reg)->flags == MEMBLOCK_NORMAL &&
+            reg->memreg.end == NEXT_MEMREG(reg)->memreg.start)
         {
-            reg->size += reg->next->size;
-            _reg_remove_after(memblock, reg);
+            reg->memreg.end = NEXT_MEMREG(reg)->memreg.end;
+            _reg_remove_after(reg);
         }
-
-        /* avoid having 'reg' as the last range after executing '_reg_remove_after' */
-        if(!reg->next)
-            break;
     }
 }
 
-static void _memblock_add_range(struct rt_memblock *memblock,
-                                    rt_ubase_t base, rt_size_t size,
-                                    mmblk_flag_t flags)
+/* this function simply adds the specified range without affecting existing regions */
+static void _memblock_add_memory(rt_region_t *region, mm_flag_t flag)
 {
-    rt_ubase_t end = base + _adjust_size(base, &size);
-    struct rt_mmblk_reg *reg = RT_NULL;
+    RT_ASSERT(region->start < region->end);
 
-    for_each_region(memblock, reg)
+    struct rt_mmblk_reg *reg, *reg_next;
+    rt_slist_t sentinel;
+    rt_ubase_t start = (rt_ubase_t)region->start, end = (rt_ubase_t)region->end;
+
+    sentinel.next = &(mmblk_memory.reg_list);
+
+    rt_slist_for_each_entry(reg, &sentinel, node)
     {
-        rt_ubase_t rbase = reg->next->base;
-        rt_ubase_t rend = rbase + reg->next->size;
-
-        if(rbase >= end)
+        if(reg->node.next == RT_NULL)
             break;
-        if(rend <= base)
+
+        /* skip sentinel node */
+        reg_next = NEXT_MEMREG(reg);
+        rt_ubase_t rstart = reg_next->memreg.start;
+        rt_ubase_t rend = reg_next->memreg.end;
+
+        /* check overlap */
+        if(rstart >= end)
+            break;
+        if(rend <= start)
             continue;
 
-        /* region to add overlaps with reg */
-        if(rbase > base)
+        if((reg_next->flags & MEMBLOCK_RESERVED) && (flag != MEMBLOCK_NORMAL))
         {
-            if(flags != reg->next->flags)
-            {
-                LOG_W("range [%p-%p) with flags %d overlaps region [%p-%p) with different flags %d",\
-                            (void*)base, (void*)(base + size), flags, \
-                            (void*)rbase, (void*)(rend), reg->next->flags);
-                _reg_insert_after(memblock, reg, base, rbase - base, flags);
-            }
-            else
-            {
-                reg->next->base = base;
-                reg->next->size += rbase - base;
-            }
+            LOG_W("reserve a non-normal region %s: [%p-%p) with flag 0x%x!", \
+                reg_next->memreg.name, reg_next->memreg.start, \
+                reg_next->memreg.end, reg_next->flags);
         }
-        base = MIN(rend, end);
+
+        if(rstart > start)
+        {
+            _reg_insert_after(reg, &(rt_region_t)
+            {
+                .name = "memory",
+                .start = (rt_size_t)start,
+                .end = (rt_size_t)rstart,
+            }, flag);
+        }
+        start = MIN(rend, end);
     }
 
     /* insert the remaining portion */
-    if(base < end)
+    if(start < end)
     {
-        _reg_insert_after(memblock, reg, base, end - base, flags);
+        _reg_insert_after(reg, &(rt_region_t)
+        {
+            .name = "memory",
+            .start = (rt_size_t)start,
+            .end = (rt_size_t)end,
+        }, flag);
     }
-
-    _memblock_merge_regions(memblock);
 }
 
-/* [*start_reg, *end_reg) is the isolated range */
-static void _memblock_isolate_range(struct rt_memblock *memblock,
-                    rt_ubase_t base, rt_size_t size,
-                    struct rt_mmblk_reg **start_reg, struct rt_mmblk_reg **end_reg)
+/* 
+ * set the reserved range's name and flag, this range should be normal memory in memblock before
+ * Note: this function will fully cover the range's name and flag
+ */
+static void _memblock_set_reserve(rt_region_t *range, mmblk_flag_t flag)
 {
-    rt_ubase_t end = base + _adjust_size(base, &size);
-    struct rt_mmblk_reg *reg = RT_NULL;
+    RT_ASSERT(range->start < range->end);
 
-    *start_reg = *end_reg = RT_NULL;
+    struct rt_mmblk_reg *reg, *reg_next, *start_reg_prev, *end_reg_next;
+    rt_slist_t sentinel;
 
-    for_each_region(memblock, reg)
+    start_reg_prev = end_reg_next = RT_NULL;
+    sentinel.next = &(mmblk_memory.reg_list);
+
+    /* find the start_reg_prev and end_reg_prev of this range */
+    rt_slist_for_each_entry(reg, &sentinel, node)
     {
-        rt_ubase_t rbase = reg->next->base;
-        rt_ubase_t rend = rbase + reg->next->size;
-
-        if (rbase >= end)
+        if(reg->node.next == RT_NULL)
             break;
-        if (rend <= base)
+
+        reg_next = NEXT_MEMREG(reg);
+        rt_ubase_t rstart = reg_next->memreg.start;
+        rt_ubase_t rend = reg_next->memreg.end;
+
+        if (rstart >= range->end)
+            break;
+        if (rend <= range->start)
             continue;
 
         /* the beginning of the range separates its respective region */
-        if(rbase < base)
+        if(rstart < range->start)
         {
-            reg->next->base = base;
-            reg->next->size -= base - rbase;
-            _reg_insert_after(memblock, reg, rbase, base - rbase, reg->flags);
+            _reg_insert_after(reg_next, &(rt_region_t)
+            {
+                .name = reg_next->memreg.name,
+                .start = (rt_size_t)range->start,
+                .end = (rt_size_t)reg_next->memreg.end,
+            }, reg_next->flags);
+            reg_next->memreg.end = range->start;
+
+            start_reg_prev = reg_next;
+            end_reg_next = NEXT_MEMREG(NEXT_MEMREG(reg_next));
         }
         /* the endpoint of the range separates its respective region */
-        else if (rend > end)
+        else if(rend > range->end)
         {
-            reg->next->base = end;
-            reg->next->size -= end - rbase;
-            _reg_insert_after(memblock, reg, rbase, end - rbase, reg->flags);
-            *end_reg = reg->next->next;
+            _reg_insert_after(reg, &(rt_region_t)
+            {
+                .name = reg_next->memreg.name,
+                .start = (rt_size_t)reg_next->memreg.start,
+                .end = (rt_size_t)range->end,
+            }, reg_next->flags);
+            reg_next->memreg.start = range->end;
+
+            end_reg_next = NEXT_MEMREG(NEXT_MEMREG(reg));
             break;
         }
         /* reg->next is fully contained in range */
         else
         {
-            if(!*end_reg)
-                *start_reg = reg->next;
-            *end_reg = reg->next->next;
+            if(end_reg_next == RT_NULL)
+                start_reg_prev = reg;
+            end_reg_next = NEXT_MEMREG(reg_next);
         }
     }
-}
 
-static void _memblock_setclr_flag(struct rt_memblock *memblock,
-                    rt_ubase_t base, rt_size_t size,
-                    rt_bool_t set, mmblk_flag_t flag)
-{
-    struct rt_mmblk_reg *start_reg = RT_NULL, *end_reg = RT_NULL;
-
-    _memblock_isolate_range(memblock, base, size, &start_reg, &end_reg);
-
-    if(start_reg == RT_NULL)
-        return;
-
-    for (struct rt_mmblk_reg *iter = start_reg; iter != end_reg; iter = iter->next)
+    /* delete origin overlay regions */
+    for(reg = start_reg_prev; NEXT_MEMREG(reg) != end_reg_next;)
     {
-        if (set)
-            iter->flags |= flag;
-        else
-            iter->flags &= ~flag;
-    }
-
-    _memblock_merge_regions(memblock);
-}
-
-static rt_size_t _memblock_size(struct rt_memblock *memblock)
-{
-    rt_size_t size = 0;
-    struct rt_mmblk_reg *reg = RT_NULL;
-
-    for_each_region(memblock, reg)
-    {
-        size += reg->size;
-    }
-    return size;
-}
-
-static void _memblock_dump(struct rt_memblock *memblock)
-{
-    rt_uint32_t idx = 0;
-    struct rt_mmblk_reg *reg;
-    rt_ubase_t reg_end = 0, reg_begin = 0, reg_size = 0;
-
-    for_each_region(memblock, reg)
-    {
-        reg_begin = reg->next->base;
-        reg_end = reg->next->base + reg->next->size;
-        reg_size = reg->next->size;
-        rt_kprintf("[0x%x]\t[%p-%p) size: 0x%xBytes flags:0x%x\n",
-            idx, (void*)reg_begin, (void*)reg_end, reg_size, reg->next->flags);
-    }
-}
-
-/**
- * @brief Find the next free region
- * The free region is within the memory regions and not within the reserved regions.
- * The current free region is identified by *m and *r
- *
- * @param m *m point to the current memory region
- * @param r *r point to the current reserved region
- * @param flags flags of desired regions
- * @param out_strat *out_start stores the returned free region's beginning
- * @param out_end *out_end stores the ending of the returned free region
- */
-void _next_free_region(struct rt_mmblk_reg **m, struct rt_mmblk_reg **r, mmblk_flag_t flags,
-                      rt_ubase_t *out_start, rt_ubase_t *out_end)
-{
-    /* memory related data */
-    rt_ubase_t m_start = 0;
-    rt_ubase_t m_end = 0;
-
-    /* reserved related data */
-    rt_ubase_t r_start = 0;
-    rt_ubase_t r_end = 0;
-
-    for (; *m != RT_NULL; *m = (*m)->next)
-    {
-        if((*m)->flags != flags)
-            continue;
-
-        m_start = (*m)->base;
-        m_end = (*m)->base + (*m)->size;
-
-        for(; *r != RT_NULL; *r = (*r)->next)
+        if(NEXT_MEMREG(reg)->flags != MEMBLOCK_NORMAL)
         {
-            /*
-             * r started with _resreg_guard
-             * Find the complement of reserved memblock.
-             * For example, if reserved memblock is following:
-             *
-             *  0:[8-16), 1:[32-48), 2:[128-130)
-             *
-             * The upper 32bit indexes the following regions.
-             *
-             *  0:[0-8), 1:[16-32), 2:[48-128), 3:[130-MAX)
-             *
-             * So we can find intersecting region other than excluding.
-             */
-            r_start = (*r)->base + (*r)->size;
-            r_end = ((*r)->next) ? (*r)->next->base : PHYS_ADDR_MAX;
-
-            /* reserved memory */
-            if(r_start >= m_end)
-                break;
-
-            /* free memory */
-            if(m_start < r_end)
-            {
-                *out_start = MAX(m_start, r_start);
-                *out_end = MIN(m_end, r_end);
-
-                if(m_end <= r_end)
-                    *m = (*m)->next;
-                else
-                    *r = (*r)->next;
-                return;
-            }
+            LOG_W("reserve a non-normal region %s: [%p-%p) with flag 0x%x!", \
+                NEXT_MEMREG(reg)->memreg.name, NEXT_MEMREG(reg)->memreg.start, \
+                NEXT_MEMREG(reg)->memreg.end, NEXT_MEMREG(reg)->flags);
         }
+        _free_memreg(reg);
     }
 
-    /* all regions found */
-    *m = mmblk_memory.regions;
+    /* insert new region */
+    _reg_insert_after(start_reg_prev, &(rt_region_t)
+    {
+        .name = range->name,
+        .start = (rt_size_t)range->start,
+        .end = (rt_size_t)range->end,
+    }, flag);
 }
 
-void rt_memblock_add(rt_ubase_t base, rt_size_t size)
+void rt_memblock_add_memory(rt_region_t *memory)
 {
-    LOG_D("add physical address range [%p-%p) to overall memory regions\n",\
-                                        base, base + size);
+    LOG_D("add physical address range %s: [%p-%p) to overall memory regions\n",\
+                                    memory->name, memory->start, memory->end);
 
-    _memblock_add_range(&mmblk_memory, base, size, 0);
+    _memblock_add_memory(memory, MEMBLOCK_NORMAL);
+    _memblock_merge_memory();
 }
 
-void rt_memblock_add_ext(rt_ubase_t base, rt_size_t size, mmblk_flag_t flags)
+void rt_memblock_add_memory_ext(rt_region_t *memory, mmblk_flag_t flags)
 {
-    LOG_D("add physical address range [%p-%p) with flag 0x%x" \
-            " to overall memory regions\n", base, base + size, flag);
+    LOG_D("add physical address range %s: [%p-%p) with flag 0x%x" \
+            " to overall memory regions\n", memory->name, \
+            memory->start, memory->end, flags);
 
-    _memblock_add_range(&mmblk_memory, base, size, flags);
+    _memblock_add_memory(memory, flags);
 }
 
-void rt_memblock_reserve(rt_ubase_t base, rt_size_t size)
+void rt_memblock_reserve(rt_region_t *reserved)
 {
-    LOG_D("add physical address range [%p-%p) to reserved memory regions\n",\
-                                        base, base + size);
+    LOG_D("set physical address range %s: [%p-%p) reserved\n",\
+                                    memory->name, memory->start, memory->end);
 
-    _memblock_add_range(&mmblk_reserved, base, size, 0);
+    _memblock_add_memory(reserved, MEMBLOCK_NORMAL);
+    _memblock_set_reserve(reserved, MEMBLOCK_RESERVED);
 }
 
-void rt_memblock_reserve_ext(rt_ubase_t base, rt_size_t size, mmblk_flag_t flags)
+void rt_memblock_reserve_ext(rt_region_t *reserved, mmblk_flag_t flags)
 {
-    LOG_D("add physical address range [%p-%p) with flag 0x%x" \
-            " to reserved memory regions\n", base, base + size);
+    LOG_D("set physical address range %s: [%p-%p) with flag 0x%x" \
+            " reserved\n", memory->name, memory->start, memory->end, flags);
 
-    _memblock_add_range(&mmblk_reserved, base, size, flags);
+    _memblock_add_memory(reserved, MEMBLOCK_NORMAL);
+    _memblock_set_reserve(reserved, flags | MEMBLOCK_RESERVED);
 }
 
 rt_size_t rt_memblock_free_all(void)
 {
     rt_bool_t init = RT_TRUE;
     rt_size_t mem = 0;
-    rt_ubase_t start = 0, end = 0;
-    rt_region_t reg = {
-        .start = 0,
-        .end = 0,
-    };
+    struct rt_mmblk_reg *reg;
 
     /* make sure region is compact */
-    _memblock_merge_regions(&mmblk_memory);
+    _memblock_merge_memory();
 
-    struct rt_mmblk_reg *m, *r;
-
-    for_each_free_region(m, r, MEMBLOCK_NONE, &start, &end)
+    rt_slist_for_each_entry(reg, &(mmblk_memory.reg_list), node)
     {
-        reg.start = (rt_size_t)start - PV_OFFSET;
-        reg.end = (rt_size_t)end - PV_OFFSET;
-
-        if(init)
+        if(reg->flags == MEMBLOCK_NORMAL)
         {
-            rt_page_init(reg);
-            init = RT_FALSE;
+            if(init)
+            {
+                rt_page_init(reg->memreg);
+                init = RT_FALSE;
+            }
+            else
+            {
+                rt_page_install(reg->memreg);
+            }
+            mem += reg->memreg.end - reg->memreg.start;
         }
-        else
-        {
-            rt_page_install(reg);
-        }
-        LOG_D("region [%p-%p) added to buddy system\n", reg.start, reg.end);
-        mem += reg.end - reg.start;
     }
 
     LOG_D("0x%lx(%ld) bytes memory added to buddy system\n", mem, mem);
@@ -422,34 +319,40 @@ rt_size_t rt_memblock_free_all(void)
 
 void rt_memblock_dump(void)
 {
-    rt_size_t mem_size = _memblock_size(&mmblk_memory);
-    rt_size_t reserved_size = _memblock_size(&mmblk_reserved);
+    rt_size_t usable = 0, reserved = 0;
+    struct rt_mmblk_reg *reg;
 
-    rt_kprintf("Memory info:\n");
-    _memblock_dump(&mmblk_memory);
-    rt_kprintf("Total memory size: 0x%lx(%ld) bytes\n", mem_size, mem_size);
+    rt_slist_for_each_entry(reg, &(mmblk_memory.reg_list), node)
+    {
+        if(rt_memreg_is_reserved(reg))
+        {
+            reserved += reg->memreg.end - reg->memreg.start;
+        }
+        else
+        {
+            usable += reg->memreg.end - reg->memreg.start;
+        }
+    }
 
-    rt_kprintf("\nReserved memory info:\n");
-    _memblock_dump(&mmblk_reserved);
-    rt_kprintf("Total reserved size: 0x%lx(%ld) bytes\n\n", reserved_size, reserved_size);
-}
+    rt_kprintf("Usable memory info:\n");
+    rt_slist_for_each_entry(reg, &(mmblk_memory.reg_list), node)
+    {
+        if(!rt_memreg_is_reserved(reg))
+        {
+            rt_kprintf("  %-*.s [%p, %p) flags: 0x%x\n", \
+                RT_NAME_MAX, reg->memreg.name, reg->memreg.start, reg->memreg.end, reg->flags);
+        }
+    }
+    rt_kprintf("Total usable memory size: 0x%lx(%ld) bytes\n", usable, usable);
 
-void rt_memblock_mark_hotplug(rt_ubase_t base, rt_size_t size)
-{
-    _memblock_setclr_flag(&mmblk_memory, base, size, 1, MEMBLOCK_HOTPLUG);
-}
-
-void rt_memblock_clear_hotplug(rt_ubase_t base, rt_size_t size)
-{
-    _memblock_setclr_flag(&mmblk_memory, base, size, 0, MEMBLOCK_HOTPLUG);
-}
-
-void rt_memblock_mark_nomap(rt_ubase_t base, rt_size_t size)
-{
-    _memblock_setclr_flag(&mmblk_memory, base, size, 1, MEMBLOCK_NOMAP);
-}
-
-void rt_memblock_clear_nomap(rt_ubase_t base, rt_size_t size)
-{
-    _memblock_setclr_flag(&mmblk_memory, base, size, 0, MEMBLOCK_NOMAP);
+    rt_kprintf("Reserved memory info:\n");
+    rt_slist_for_each_entry(reg, &(mmblk_memory.reg_list), node)
+    {
+        if(rt_memreg_is_reserved(reg))
+        {
+            rt_kprintf("  %-*.s [%p, %p) flags: 0x%x\n", \
+                RT_NAME_MAX, reg->memreg.name, reg->memreg.start, reg->memreg.end, reg->flags);
+        }
+    }
+    rt_kprintf("Total reserved memory size: 0x%lx(%ld) bytes\n", reserved, reserved);
 }

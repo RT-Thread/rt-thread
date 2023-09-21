@@ -16,24 +16,27 @@
 #define SZ_512M             0x20000000
 #define SZ_1G               0x40000000
 
-rt_inline struct rt_mmblk_reg *_nth_reg(struct rt_memblock *memblock, int n)
-{
-    struct rt_mmblk_reg *ret = &memblock->regions[0];
+#define NEXT_MEMREG(prev) rt_slist_entry(prev->node.next, struct rt_mmblk_reg, node)
 
-    for(; n > 0; n--)
+rt_inline struct rt_mmblk_reg *_nth_reg(rt_uint32_t n)
+{
+    struct rt_mmblk_reg *ret = RT_NULL;
+
+    rt_slist_for_each_entry(ret, &(mmblk_memory.reg_list), node)
     {
-        ret = ret->next;
+        if(--n == 0)
+            return ret;
     }
 
     return ret;
 }
 
-rt_inline rt_uint32_t _reg_cnt(struct rt_memblock *memblock)
+rt_inline rt_uint32_t _reg_cnt()
 {
     rt_uint32_t ret = 0;
-    struct rt_mmblk_reg *reg = &memblock->regions[0];
+    struct rt_mmblk_reg *reg;
 
-    for(; reg->next != RT_NULL; reg = reg->next)
+    rt_slist_for_each_entry(reg, &(mmblk_memory.reg_list), node)
     {
         ret++;
     }
@@ -43,19 +46,13 @@ rt_inline rt_uint32_t _reg_cnt(struct rt_memblock *memblock)
 
 static void _reset_memblock(void)
 {
-    mmblk_memory.hint_idx = 1;
-    mmblk_memory.regions[0].next = RT_NULL;
-    for(int i = 0; i < mmblk_memory.max; i++)
-    {
-        mmblk_memory.regions[i].size = 0;
-    }
+    struct rt_mmblk_reg *reg;
 
-    mmblk_reserved.hint_idx = 1;
-    mmblk_reserved.regions[0].next = RT_NULL;
-    for(int i = 0; i < mmblk_reserved.max; i++)
+    rt_slist_for_each_entry(reg, &(mmblk_memory.reg_list), node)
     {
-        mmblk_reserved.regions[i].size = 0;
+        reg->alloc = RT_FALSE;
     }
+    mmblk_memory.reg_list.next = RT_NULL;
 }
 
 static void test_memblock_add_simple(void)
@@ -65,22 +62,32 @@ static void test_memblock_add_simple(void)
     rt_ubase_t base1 = SZ_1G, size1 = SZ_256M;
     rt_ubase_t base2 = SZ_128M, size2 = SZ_128M;
 
-    rt_memblock_add(base1, size1);
+    rt_memblock_add_memory(&(rt_region_t)
+    {
+        .name = "memory",
+        .start = (rt_size_t)base1,
+        .end = (rt_size_t)(base1 + size1),
+    });
 
-    uassert_int_equal(_nth_reg(&mmblk_memory, 1)->base, base1);
-    uassert_int_equal(_nth_reg(&mmblk_memory, 1)->size, size1);
-    uassert_int_equal(_nth_reg(&mmblk_memory, 1)->flags, 0);
-    uassert_int_equal(_reg_cnt(&mmblk_memory), 1);
+    uassert_int_equal(_nth_reg(1)->memreg.start, base1);
+    uassert_int_equal(_nth_reg(1)->memreg.end, base1 + size1);
+    uassert_int_equal(_nth_reg(1)->flags, 0);
+    uassert_int_equal(_reg_cnt(), 1);
 
-    rt_memblock_add_ext(base2, size2, 1);
+    rt_memblock_add_memory_ext(&(rt_region_t)
+    {
+        .name = "memory",
+        .start = (rt_size_t)base2,
+        .end = (rt_size_t)(base2 + size2),
+    }, 1);
 
-    uassert_int_equal(_nth_reg(&mmblk_memory, 1)->base, base2);
-    uassert_int_equal(_nth_reg(&mmblk_memory, 1)->size, size2);
-    uassert_int_equal(_nth_reg(&mmblk_memory, 1)->flags, 1);
-    uassert_int_equal(_nth_reg(&mmblk_memory, 2)->base, base1);
-    uassert_int_equal(_nth_reg(&mmblk_memory, 2)->size, size1);
-    uassert_int_equal(_nth_reg(&mmblk_memory, 2)->flags, 0);
-    uassert_int_equal(_reg_cnt(&mmblk_memory), 2);
+    uassert_int_equal(_nth_reg(1)->memreg.start, base2);
+    uassert_int_equal(_nth_reg(1)->memreg.end, base2 + size2);
+    uassert_int_equal(_nth_reg(1)->flags, 1);
+    uassert_int_equal(_nth_reg(2)->memreg.start, base1);
+    uassert_int_equal(_nth_reg(2)->memreg.end, base1 + size1);
+    uassert_int_equal(_nth_reg(2)->flags, 0);
+    uassert_int_equal(_reg_cnt(), 2);
 }
 
 static void test_memblock_add_overlap_top(void)
@@ -90,12 +97,22 @@ static void test_memblock_add_overlap_top(void)
     rt_ubase_t base1 = SZ_512M, size1 = SZ_1G;
     rt_ubase_t base2 = SZ_256M, size2 = SZ_512M;
 
-    rt_memblock_add(base1, size1);
-    rt_memblock_add(base2, size2);
+    rt_memblock_add_memory(&(rt_region_t)
+    {
+        .name = "memory",
+        .start = (rt_size_t)base1,
+        .end = (rt_size_t)(base1 + size1),
+    });
+    rt_memblock_add_memory(&(rt_region_t)
+    {
+        .name = "memory",
+        .start = (rt_size_t)base2,
+        .end = (rt_size_t)(base2 + size2),
+    });
 
-    uassert_int_equal(_nth_reg(&mmblk_memory, 1)->base, SZ_256M);
-    uassert_int_equal(_nth_reg(&mmblk_memory, 1)->size, SZ_1G + SZ_256M);
-    uassert_int_equal(_reg_cnt(&mmblk_memory), 1);
+    uassert_int_equal(_nth_reg(1)->memreg.start, SZ_256M);
+    uassert_int_equal(_nth_reg(1)->memreg.end, SZ_1G + SZ_512M);
+    uassert_int_equal(_reg_cnt(), 1);
 }
 
 static void test_memblock_add_overlap_bottom(void)
@@ -105,12 +122,22 @@ static void test_memblock_add_overlap_bottom(void)
     rt_ubase_t base1 = SZ_128M, size1 = SZ_512M;
     rt_ubase_t base2 = SZ_256M, size2 = SZ_1G;
 
-    rt_memblock_add(base1, size1);
-    rt_memblock_add(base2, size2);
+    rt_memblock_add_memory(&(rt_region_t)
+    {
+        .name = "memory",
+        .start = (rt_size_t)base1,
+        .end = (rt_size_t)(base1 + size1),
+    });
+    rt_memblock_add_memory(&(rt_region_t)
+    {
+        .name = "memory",
+        .start = (rt_size_t)base2,
+        .end = (rt_size_t)(base2 + size2),
+    });
 
-    uassert_int_equal(_nth_reg(&mmblk_memory, 1)->base, SZ_128M);
-    uassert_int_equal(_nth_reg(&mmblk_memory, 1)->size, SZ_1G + SZ_128M);
-    uassert_int_equal(_reg_cnt(&mmblk_memory), 1);
+    uassert_int_equal(_nth_reg(1)->memreg.start, SZ_128M);
+    uassert_int_equal(_nth_reg(1)->memreg.end, SZ_1G + SZ_256M);
+    uassert_int_equal(_reg_cnt(), 1);
 }
 
 static void test_memblock_add_within(void)
@@ -120,12 +147,22 @@ static void test_memblock_add_within(void)
     rt_ubase_t base1 = SZ_128M, size1 = SZ_1G;
     rt_ubase_t base2 = SZ_256M, size2 = SZ_512M;
 
-    rt_memblock_add(base1, size1);
-    rt_memblock_add(base2, size2);
+    rt_memblock_add_memory(&(rt_region_t)
+    {
+        .name = "memory",
+        .start = (rt_size_t)base1,
+        .end = (rt_size_t)(base1 + size1),
+    });
+    rt_memblock_add_memory(&(rt_region_t)
+    {
+        .name = "memory",
+        .start = (rt_size_t)base2,
+        .end = (rt_size_t)(base2 + size2),
+    });
 
-    uassert_int_equal(_nth_reg(&mmblk_memory, 1)->base, SZ_128M);
-    uassert_int_equal(_nth_reg(&mmblk_memory, 1)->size, SZ_1G);
-    uassert_int_equal(_reg_cnt(&mmblk_memory), 1);
+    uassert_int_equal(_nth_reg(1)->memreg.start, SZ_128M);
+    uassert_int_equal(_nth_reg(1)->memreg.end, SZ_1G + SZ_128M);
+    uassert_int_equal(_reg_cnt(), 1);
 }
 
 static void test_memblock_add_twice(void)
@@ -134,12 +171,22 @@ static void test_memblock_add_twice(void)
 
     rt_ubase_t base1 = SZ_128M, size1 = SZ_1G;
 
-    rt_memblock_add(base1, size1);
-    rt_memblock_add(base1, size1);
+    rt_memblock_add_memory(&(rt_region_t)
+    {
+        .name = "memory",
+        .start = (rt_size_t)base1,
+        .end = (rt_size_t)(base1 + size1),
+    });
+    rt_memblock_add_memory(&(rt_region_t)
+    {
+        .name = "memory",
+        .start = (rt_size_t)base1,
+        .end = (rt_size_t)(base1 + size1),
+    });
 
-    uassert_int_equal(_nth_reg(&mmblk_memory, 1)->base, SZ_128M);
-    uassert_int_equal(_nth_reg(&mmblk_memory, 1)->size, SZ_1G);
-    uassert_int_equal(_reg_cnt(&mmblk_memory), 1);
+    uassert_int_equal(_nth_reg(1)->memreg.start, SZ_128M);
+    uassert_int_equal(_nth_reg(1)->memreg.end, SZ_1G + SZ_128M);
+    uassert_int_equal(_reg_cnt(), 1);
 }
 
 static void test_memblock_add_between(void)
@@ -150,26 +197,28 @@ static void test_memblock_add_between(void)
     rt_ubase_t base2 = SZ_1G, size2 = SZ_512M;
     rt_ubase_t base3 = SZ_512M + SZ_256M, size3 = SZ_256M;
 
-    rt_memblock_add(base1, size1);
-    rt_memblock_add(base2, size2);
-    rt_memblock_add(base3, size3);
+    rt_memblock_add_memory(&(rt_region_t)
+    {
+        .name = "memory",
+        .start = (rt_size_t)base1,
+        .end = (rt_size_t)(base1 + size1),
+    });
+    rt_memblock_add_memory(&(rt_region_t)
+    {
+        .name = "memory",
+        .start = (rt_size_t)base2,
+        .end = (rt_size_t)(base2 + size2),
+    });
+    rt_memblock_add_memory(&(rt_region_t)
+    {
+        .name = "memory",
+        .start = (rt_size_t)base3,
+        .end = (rt_size_t)(base3 + size3),
+    });
 
-    uassert_int_equal(_nth_reg(&mmblk_memory, 1)->base, SZ_512M);
-    uassert_int_equal(_nth_reg(&mmblk_memory, 1)->size, SZ_1G);
-    uassert_int_equal(_reg_cnt(&mmblk_memory), 1);
-}
-
-static void test_memblock_add_near_max(void)
-{
-    _reset_memblock();
-
-    rt_ubase_t base1 = (rt_ubase_t)0 - (rt_ubase_t)SZ_128M, size1 = SZ_256M;
-
-    rt_memblock_add(base1, size1);
-
-    uassert_int_equal(_nth_reg(&mmblk_memory, 1)->base, base1);
-    uassert_int_equal(_nth_reg(&mmblk_memory, 1)->size, SZ_128M - 1);
-    uassert_int_equal(_reg_cnt(&mmblk_memory), 1);
+    uassert_int_equal(_nth_reg(1)->memreg.start, SZ_512M);
+    uassert_int_equal(_nth_reg(1)->memreg.end, SZ_1G + SZ_512M);
+    uassert_int_equal(_reg_cnt(), 1);
 }
 
 static void test_memblock_add(void)
@@ -180,68 +229,98 @@ static void test_memblock_add(void)
     test_memblock_add_within();
     test_memblock_add_twice();
     test_memblock_add_between();
-    test_memblock_add_near_max();
 }
 
-static void test_memblock_set(void)
+static void test_memblock_reserve(void)
 {
     _reset_memblock();
 
     rt_ubase_t base1 = SZ_128M, size1 = SZ_256M;
     rt_ubase_t base2 = SZ_512M, size2 = SZ_256M;
     rt_ubase_t base3 = SZ_1G, size3 = SZ_512M;
-    rt_ubase_t base_set = SZ_256M, size_set = SZ_1G;
+    rt_ubase_t base_reserve = SZ_256M, size_reserve = SZ_1G;
 
-    rt_memblock_add(base1, size1);
-    rt_memblock_add(base2, size2);
-    rt_memblock_add(base3, size3);
-    rt_memblock_mark_nomap(base_set, size_set);
+    rt_memblock_add_memory(&(rt_region_t)
+    {
+        .name = "memory",
+        .start = (rt_size_t)base1,
+        .end = (rt_size_t)(base1 + size1),
+    });
+    rt_memblock_add_memory(&(rt_region_t)
+    {
+        .name = "memory",
+        .start = (rt_size_t)base2,
+        .end = (rt_size_t)(base2 + size2),
+    });
+    rt_memblock_add_memory(&(rt_region_t)
+    {
+        .name = "memory",
+        .start = (rt_size_t)base3,
+        .end = (rt_size_t)(base3 + size3),
+    });
+    rt_memblock_reserve(&(rt_region_t)
+    {
+        .name = "reserve",
+        .start = (rt_size_t)base_reserve,
+        .end = (rt_size_t)(base_reserve + size_reserve),
+    });
 
-    uassert_int_equal(_reg_cnt(&mmblk_memory), 5);
-    uassert_int_equal(_nth_reg(&mmblk_memory, 1)->base, SZ_128M);
-    uassert_int_equal(_nth_reg(&mmblk_memory, 1)->size, SZ_128M);
-    uassert_int_equal(_nth_reg(&mmblk_memory, 1)->flags, MEMBLOCK_NONE);
-    uassert_int_equal(_nth_reg(&mmblk_memory, 2)->base, SZ_256M);
-    uassert_int_equal(_nth_reg(&mmblk_memory, 2)->size, SZ_128M);
-    uassert_int_equal(_nth_reg(&mmblk_memory, 2)->flags, MEMBLOCK_NOMAP);
-    uassert_int_equal(_nth_reg(&mmblk_memory, 3)->base, SZ_512M);
-    uassert_int_equal(_nth_reg(&mmblk_memory, 3)->size, SZ_256M);
-    uassert_int_equal(_nth_reg(&mmblk_memory, 3)->flags, MEMBLOCK_NOMAP);
-    uassert_int_equal(_nth_reg(&mmblk_memory, 4)->base, SZ_1G);
-    uassert_int_equal(_nth_reg(&mmblk_memory, 4)->size, SZ_256M);
-    uassert_int_equal(_nth_reg(&mmblk_memory, 4)->flags, MEMBLOCK_NOMAP);
-    uassert_int_equal(_nth_reg(&mmblk_memory, 5)->base, SZ_1G + SZ_256M);
-    uassert_int_equal(_nth_reg(&mmblk_memory, 5)->size, SZ_256M);
-    uassert_int_equal(_nth_reg(&mmblk_memory, 5)->flags, MEMBLOCK_NONE);
+    uassert_int_equal(_reg_cnt(), 3);
+    uassert_int_equal(_nth_reg(1)->memreg.start, SZ_128M);
+    uassert_int_equal(_nth_reg(1)->memreg.end, SZ_256M);
+    uassert_int_equal(_nth_reg(1)->flags, MEMBLOCK_NORMAL);
+    uassert_int_equal(_nth_reg(2)->memreg.start, SZ_256M);
+    uassert_int_equal(_nth_reg(2)->memreg.end, SZ_256M + SZ_1G);
+    uassert_int_equal(_nth_reg(2)->flags, MEMBLOCK_RESERVED);
+    uassert_int_equal(_nth_reg(3)->memreg.start, SZ_256M + SZ_1G);
+    uassert_int_equal(_nth_reg(3)->memreg.end, SZ_512M + SZ_1G);
+    uassert_int_equal(_nth_reg(3)->flags, MEMBLOCK_NORMAL);
 }
 
-static void test_memblock_free(void)
+static void test_memblock_reserve_before_add(void)
 {
     _reset_memblock();
 
     rt_ubase_t base1 = SZ_128M, size1 = SZ_256M;
     rt_ubase_t base2 = SZ_512M, size2 = SZ_256M;
-    rt_ubase_t base3 = SZ_512M + SZ_256M, size3 = SZ_256M; /* flag = 1 */
-    rt_ubase_t base4 = SZ_1G, size4 = SZ_512M;
-    rt_ubase_t base1r = SZ_256M, size1r = SZ_256M + SZ_128M;
-    rt_ubase_t base2r = SZ_1G + SZ_128M, size2r = SZ_256M;
+    rt_ubase_t base3 = SZ_1G, size3 = SZ_512M;
+    rt_ubase_t base_reserve = SZ_256M, size_reserve = SZ_1G;
 
-    rt_ubase_t mem = 0, start = 0, end = 0;
-
-    struct rt_mmblk_reg *m, *r;
-
-    rt_memblock_add(base1, size1);
-    rt_memblock_add(base2, size2);
-    rt_memblock_add_ext(base3, size3, 1);
-    rt_memblock_add(base4, size4);
-    rt_memblock_reserve(base1r, size1r);
-    rt_memblock_reserve(base2r, size2r);
-
-    for_each_free_region(m, r, MEMBLOCK_NONE, &start, &end)
+    rt_memblock_reserve(&(rt_region_t)
     {
-        mem += end - start;
-    }
-    uassert_int_equal(mem, SZ_512M);
+        .name = "reserve",
+        .start = (rt_size_t)base_reserve,
+        .end = (rt_size_t)(base_reserve + size_reserve),
+    });
+    rt_memblock_add_memory(&(rt_region_t)
+    {
+        .name = "memory",
+        .start = (rt_size_t)base1,
+        .end = (rt_size_t)(base1 + size1),
+    });
+    rt_memblock_add_memory(&(rt_region_t)
+    {
+        .name = "memory",
+        .start = (rt_size_t)base2,
+        .end = (rt_size_t)(base2 + size2),
+    });
+    rt_memblock_add_memory(&(rt_region_t)
+    {
+        .name = "memory",
+        .start = (rt_size_t)base3,
+        .end = (rt_size_t)(base3 + size3),
+    });
+
+    uassert_int_equal(_reg_cnt(), 3);
+    uassert_int_equal(_nth_reg(1)->memreg.start, SZ_128M);
+    uassert_int_equal(_nth_reg(1)->memreg.end, SZ_256M);
+    uassert_int_equal(_nth_reg(1)->flags, MEMBLOCK_NORMAL);
+    uassert_int_equal(_nth_reg(2)->memreg.start, SZ_256M);
+    uassert_int_equal(_nth_reg(2)->memreg.end, SZ_256M + SZ_1G);
+    uassert_int_equal(_nth_reg(2)->flags, MEMBLOCK_RESERVED);
+    uassert_int_equal(_nth_reg(3)->memreg.start, SZ_256M + SZ_1G);
+    uassert_int_equal(_nth_reg(3)->memreg.end, SZ_512M + SZ_1G);
+    uassert_int_equal(_nth_reg(3)->flags, MEMBLOCK_NORMAL);
 }
 
 static rt_err_t utest_tc_init(void)
@@ -259,7 +338,7 @@ static rt_err_t utest_tc_cleanup(void)
 static void testcase(void)
 {
     UTEST_UNIT_RUN(test_memblock_add);
-    UTEST_UNIT_RUN(test_memblock_set);
-    UTEST_UNIT_RUN(test_memblock_free);
+    UTEST_UNIT_RUN(test_memblock_reserve);
+    UTEST_UNIT_RUN(test_memblock_reserve_before_add);
 }
 UTEST_TC_EXPORT(testcase, "testcases.mm.memblock_tc", utest_tc_init, utest_tc_cleanup, 20);
