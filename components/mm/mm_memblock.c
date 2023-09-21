@@ -127,7 +127,7 @@ static void _memblock_add_memory(rt_region_t *region, mm_flag_t flag)
         rt_ubase_t rstart = reg_next->memreg.start;
         rt_ubase_t rend = reg_next->memreg.end;
 
-        /* check overlap */
+        /* not overlap */
         if(rstart >= end)
             break;
         if(rend <= start)
@@ -251,11 +251,30 @@ static void _memblock_set_reserve(rt_region_t *range, mmblk_flag_t flag)
     }, flag);
 }
 
+void _check_overlap_region(rt_region_t *region)
+{
+    struct rt_mmblk_reg *reg;
+
+    rt_slist_for_each_entry(reg, &(mmblk_memory.reg_list), node)
+    {
+        if(!(reg->flags & MEMBLOCK_RESERVED))
+        {
+            /* overlap */
+            if(!(region->end < reg->memreg.start || region->start > reg->memreg.end))
+            {
+                LOG_W("memory region overlap");
+                LOG_W("\tregion to add: %s [%p-%p)", region->name, region->start, region->end);
+                LOG_W("\toverlaped with: %s [%p-%p)", reg->memreg.name, reg->memreg.start, reg->memreg.end);
+            }
+        }
+    }
+}
+
 void rt_memblock_add_memory(rt_region_t *memory)
 {
     LOG_D("add physical address range %s: [%p-%p) to overall memory regions\n",\
                                     memory->name, memory->start, memory->end);
-
+    _check_overlap_region(memory);
     _memblock_add_memory(memory, MEMBLOCK_NORMAL);
     _memblock_merge_memory();
 }
@@ -266,7 +285,9 @@ void rt_memblock_add_memory_ext(rt_region_t *memory, mmblk_flag_t flags)
             " to overall memory regions\n", memory->name, \
             memory->start, memory->end, flags);
 
+    _check_overlap_region(memory);
     _memblock_add_memory(memory, flags);
+    _memblock_merge_memory();
 }
 
 void rt_memblock_reserve(rt_region_t *reserved)
