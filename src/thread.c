@@ -518,6 +518,18 @@ rt_thread_t rt_thread_create(const char *name,
 }
 RTM_EXPORT(rt_thread_create);
 
+void _free_owned_mutex(rt_thread_t thread)
+{
+    rt_list_t *node;
+    rt_list_t *tmp_list;
+    struct rt_mutex *mutex;
+
+    rt_list_for_each_safe(node, tmp_list, &(thread->taken_object_list))
+    {
+        mutex = rt_list_entry(node, struct rt_mutex, taken_list);
+        rt_mutex_release(mutex);
+    }
+}
 /**
  * @brief   This function will delete a thread. The thread object will be removed from
  *          thread queue and deleted from system object management in the idle thread.
@@ -553,6 +565,7 @@ rt_err_t rt_thread_delete(rt_thread_t thread)
     thread->stat = RT_THREAD_CLOSE;
 
 #ifdef RT_USING_MUTEX
+    _free_owned_mutex(thread);
     if ((thread->pending_object) &&
         (rt_object_get_type(thread->pending_object) == RT_Object_Class_Mutex))
     {
