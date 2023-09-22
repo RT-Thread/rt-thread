@@ -120,7 +120,8 @@ static void _scheduler_stack_check(struct rt_thread *thread)
 
         rt_kprintf("thread:%s stack overflow\n", thread->parent.name);
 
-        level = rt_hw_interrupt_disable();
+        level = rt_hw_local_irq_disable();
+        rt_spin_lock(&_spinlock);
         while (level);
     }
 #ifdef ARCH_CPU_STACK_GROWS_UPWARD
@@ -571,21 +572,21 @@ void rt_schedule(void)
 
 #ifdef RT_USING_SIGNALS
     /* check stat of thread for signal */
-    level = rt_hw_interrupt_disable();
+    rt_spin_lock(&(current_thread->spinlock));
     if (current_thread->stat & RT_THREAD_STAT_SIGNAL_PENDING)
     {
         extern void rt_thread_handle_sig(rt_bool_t clean_state);
 
         current_thread->stat &= ~RT_THREAD_STAT_SIGNAL_PENDING;
 
-        rt_hw_interrupt_enable(level);
+        rt_spin_unlock(&(current_thread->spinlock));
 
         /* check signal status */
         rt_thread_handle_sig(RT_TRUE);
     }
     else
     {
-        rt_hw_interrupt_enable(level);
+        rt_spin_unlock(&(current_thread->spinlock));
     }
 #endif /* RT_USING_SIGNALS */
 
