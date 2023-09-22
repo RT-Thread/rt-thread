@@ -1,5 +1,5 @@
 /*
- * Copyright (c)
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -241,8 +241,8 @@ int rt_hw_uart_init(void)
 
     sam_serial.ops       = &sam_serial_ops;
     sam_serial.config    = config;
-    // sam_serial.serial_rx = RT_NULL;
-    // sam_serial.serial_tx = RT_NULL;
+    sam_serial.serial_rx = RT_NULL;
+    sam_serial.serial_tx = RT_NULL;
     rt_hw_serial_register(&sam_serial, "uart0" /* RT_CONSOLE_DEVICE_NAME */,
                           RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX |
                           RT_DEVICE_FLAG_INT_TX, (void *)&TARGET_IO);
