@@ -147,22 +147,16 @@ typedef rt_base_t                       rt_flag_t;      /**< Type for flags */
 typedef rt_ubase_t                      rt_dev_t;       /**< Type for device */
 typedef rt_base_t                       rt_off_t;       /**< Type for offset */
 
-#if !defined(__cplusplus)
+#ifdef __cplusplus
+    typedef rt_base_t rt_atomic_t;
+#else
 #if defined(RT_USING_HW_ATOMIC)
     typedef rt_base_t rt_atomic_t;
 #elif defined(RT_USING_STDC_ATOMIC)
     #include <stdatomic.h>
     typedef atomic_size_t rt_atomic_t;
 #else
-
-    /* To detect std atomic */
-    #if defined(RT_USING_LIBC) && defined(__GNUC__) && !defined(__STDC_NO_ATOMICS__)
-        #include <stdatomic.h>
-        typedef atomic_size_t rt_atomic_t;
-    #else
-        typedef rt_base_t rt_atomic_t;
-    #endif /* __GNUC__ && !__STDC_NO_ATOMICS__ */
-
+    typedef rt_base_t rt_atomic_t;
 #endif /* RT_USING_STDC_ATOMIC */
 #endif /* __cplusplus */
 
