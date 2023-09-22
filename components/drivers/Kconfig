@@ -218,19 +218,6 @@ config RT_USING_PM
         endif
     endif
 
-config RT_USING_FDT
-    bool "Using fdt interface for device drivers"
-    default n
-    if RT_USING_FDT
-        config RT_USING_FDTLIB
-            bool "Using fdt lib for device drivers"
-            default y
-        config FDT_USING_DEBUG
-            bool "Using fdt debug function "
-            default n
-
-    endif
-
 config RT_USING_RTC
     bool "Using RTC device drivers"
     default n
