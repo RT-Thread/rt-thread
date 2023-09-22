@@ -1,11 +1,12 @@
 /*
- * Copyright (c)
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
- * Date        Author    Email                    Notes
- * 2022-04-16  Kevin.Liu kevin.liu.mchp@gmail.com First Release
+ * Date        Author     Email                     Notes
+ * 2019-07-16  Kevin.Liu  kevin.liu.mchp@gmail.com  First Release
+ * 2023-09-16  luhuadong  luhuadong@163.com         fix uart config
  */
 #ifndef __BOARD_H__
 #define __BOARD_H__
@@ -41,6 +42,11 @@ extern int Image$$RW_IRAM1$$ZI$$Limit;
 extern int __bss_end;
 #define HEAP_BEGIN    (&__bss_end)
 #define HEAP_END      SAML10_SRAM_END
+#endif
+
+#ifdef RT_USING_SERIAL
+#include "hpl_sercom_config.h"
+#define DEFAULT_USART_BAUD_RATE CONF_SERCOM_2_USART_BAUD
 #endif
 
 void rt_hw_board_init(void);
