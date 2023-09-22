@@ -119,6 +119,7 @@ extern int _lseek(int file, int ptr, int dir)
 	return 0;
 }
 
+#if 0
 /**
  * \brief Replacement of C library of _exit
  */
@@ -129,6 +130,7 @@ extern void _exit(int status)
 	for (;;)
 		;
 }
+#endif
 
 /**
  * \brief Replacement of C library of _kill

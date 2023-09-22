@@ -6,6 +6,5 @@
 void atmel_start_init(void)
 {
 	system_init();
-	dma_memory_init();
 	usb_init();
 }

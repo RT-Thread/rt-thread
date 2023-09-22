@@ -33,7 +33,6 @@ samd51a/armcc/Device/SAMD51/Source \
 hpl/ramecc \
 hpl/dmac \
 usb/class/cdc/device \
-dma_m2m \
 hal/src \
 hpl/mclk \
 usb \
@@ -52,12 +51,11 @@ hpl/cmcc
 OBJS +=  \
 hal/src/hal_io.o \
 hpl/core/hpl_core_m4.o \
-dma_m2m/dma_memory.o \
+usb/class/cdc/device/cdcdf_acm.o \
 samd51a/armcc/Device/SAMD51/Source/ARM/startup_samd51.o \
 usb_start.o \
 hpl/usb/hpl_usb.o \
 samd51a/armcc/Device/SAMD51/Source/system_samd51.o \
-usb/class/cdc/device/cdcdf_acm.o \
 hal/src/hal_delay.o \
 hpl/pm/hpl_pm.o \
 hpl/core/hpl_init.o \
@@ -71,14 +69,13 @@ hpl/ramecc/hpl_ramecc.o \
 usb/usb_protocol.o \
 hal/src/hal_init.o \
 hal/src/hal_usb_device.o \
-dma_m2m_main.o \
+main.o \
 hpl/osc32kctrl/hpl_osc32kctrl.o \
 examples/driver_examples.o \
 driver_init.o \
 hal/src/hal_usart_async.o \
 hpl/sercom/hpl_sercom.o \
 hal/utils/src/utils_ringbuffer.o \
-main.o \
 hal/src/hal_gpio.o \
 hal/utils/src/utils_event.o \
 hal/src/hal_sleep.o \
@@ -91,12 +88,11 @@ hal/src/hal_atomic.o
 OBJS_AS_ARGS +=  \
 "hal/src/hal_io.o" \
 "hpl/core/hpl_core_m4.o" \
-"dma_m2m/dma_memory.o" \
+"usb/class/cdc/device/cdcdf_acm.o" \
 "samd51a/armcc/Device/SAMD51/Source/ARM/startup_samd51.o" \
 "usb_start.o" \
 "hpl/usb/hpl_usb.o" \
 "samd51a/armcc/Device/SAMD51/Source/system_samd51.o" \
-"usb/class/cdc/device/cdcdf_acm.o" \
 "hal/src/hal_delay.o" \
 "hpl/pm/hpl_pm.o" \
 "hpl/core/hpl_init.o" \
@@ -110,14 +106,13 @@ OBJS_AS_ARGS +=  \
 "usb/usb_protocol.o" \
 "hal/src/hal_init.o" \
 "hal/src/hal_usb_device.o" \
-"dma_m2m_main.o" \
+"main.o" \
 "hpl/osc32kctrl/hpl_osc32kctrl.o" \
 "examples/driver_examples.o" \
 "driver_init.o" \
 "hal/src/hal_usart_async.o" \
 "hpl/sercom/hpl_sercom.o" \
 "hal/utils/src/utils_ringbuffer.o" \
-"main.o" \
 "hal/src/hal_gpio.o" \
 "hal/utils/src/utils_event.o" \
 "hal/src/hal_sleep.o" \
@@ -131,15 +126,13 @@ OBJS_AS_ARGS +=  \
 DEPS := $(OBJS:%.o=%.d)
 
 DEPS_AS_ARGS +=  \
-"usb/class/cdc/device/cdcdf_acm.d" \
 "hal/utils/src/utils_event.d" \
 "hal/src/hal_io.d" \
 "hpl/ramecc/hpl_ramecc.d" \
 "hpl/core/hpl_core_m4.d" \
-"dma_m2m/dma_memory.d" \
+"usb/class/cdc/device/cdcdf_acm.d" \
 "samd51a/armcc/Device/SAMD51/Source/system_samd51.d" \
 "hpl/usb/hpl_usb.d" \
-"main.d" \
 "samd51a/armcc/Device/SAMD51/Source/ARM/startup_samd51.d" \
 "hal/utils/src/utils_list.d" \
 "hpl/cmcc/hpl_cmcc.d" \
@@ -157,7 +150,7 @@ DEPS_AS_ARGS +=  \
 "driver_init.d" \
 "hal/src/hal_usart_async.d" \
 "hpl/osc32kctrl/hpl_osc32kctrl.d" \
-"dma_m2m_main.d" \
+"main.d" \
 "examples/driver_examples.d" \
 "hal/src/hal_cache.d" \
 "hal/src/hal_sleep.d" \
@@ -203,7 +196,7 @@ $(OBJS_AS_ARGS)
 	@echo Building file: $<
 	@echo ARMCC Compiler
 	$(QUOTE)armcc$(QUOTE) --c99 -c -DDEBUG -O1 -g --apcs=interwork --split_sections --cpu Cortex-M4 -D__SAMD51P19A__ \
--I"../" -I"../config" -I"../examples" -I"../hal/include" -I"../hal/utils/include" -I"../hpl/cmcc" -I"../hpl/core" -I"../hpl/dmac" -I"../hpl/gclk" -I"../hpl/mclk" -I"../hpl/osc32kctrl" -I"../hpl/oscctrl" -I"../hpl/pm" -I"../hpl/port" -I"../hpl/ramecc" -I"../hpl/sercom" -I"../hpl/usb" -I"../hri" -I"../" -I"../dma_m2m" -I"../" -I"../config" -I"../usb" -I"../usb/class/cdc" -I"../usb/class/cdc/device" -I"../usb/device" -I"../" -I"../CMSIS/Core/Include" -I"../samd51a/include"  \
+-I"../" -I"../config" -I"../examples" -I"../hal/include" -I"../hal/utils/include" -I"../hpl/cmcc" -I"../hpl/core" -I"../hpl/dmac" -I"../hpl/gclk" -I"../hpl/mclk" -I"../hpl/osc32kctrl" -I"../hpl/oscctrl" -I"../hpl/pm" -I"../hpl/port" -I"../hpl/ramecc" -I"../hpl/sercom" -I"../hpl/usb" -I"../hri" -I"../" -I"../config" -I"../usb" -I"../usb/class/cdc" -I"../usb/class/cdc/device" -I"../usb/device" -I"../" -I"../CMSIS/Core/Include" -I"../samd51a/include"  \
 --depend "$@"  -o "$@" "$<"
 
 	@echo Finished building: $<
@@ -212,7 +205,7 @@ $(OBJS_AS_ARGS)
 	@echo Building file: $<
 	@echo ARMCC Assembler
 	$(QUOTE)armasm$(QUOTE) -g --apcs=interwork --cpu Cortex-M4 --pd "D__SAMD51P19A__ SETA 1" \
--I"../" -I"../config" -I"../examples" -I"../hal/include" -I"../hal/utils/include" -I"../hpl/cmcc" -I"../hpl/core" -I"../hpl/dmac" -I"../hpl/gclk" -I"../hpl/mclk" -I"../hpl/osc32kctrl" -I"../hpl/oscctrl" -I"../hpl/pm" -I"../hpl/port" -I"../hpl/ramecc" -I"../hpl/sercom" -I"../hpl/usb" -I"../hri" -I"../" -I"../dma_m2m" -I"../" -I"../config" -I"../usb" -I"../usb/class/cdc" -I"../usb/class/cdc/device" -I"../usb/device" -I"../" -I"../CMSIS/Core/Include" -I"../samd51a/include"  \
+-I"../" -I"../config" -I"../examples" -I"../hal/include" -I"../hal/utils/include" -I"../hpl/cmcc" -I"../hpl/core" -I"../hpl/dmac" -I"../hpl/gclk" -I"../hpl/mclk" -I"../hpl/osc32kctrl" -I"../hpl/oscctrl" -I"../hpl/pm" -I"../hpl/port" -I"../hpl/ramecc" -I"../hpl/sercom" -I"../hpl/usb" -I"../hri" -I"../" -I"../config" -I"../usb" -I"../usb/class/cdc" -I"../usb/class/cdc/device" -I"../usb/device" -I"../" -I"../CMSIS/Core/Include" -I"../samd51a/include"  \
 --depend "$(@:%.o=%.d)" -o "$@" "$<"
 
 	@echo Finished building: $<
@@ -221,7 +214,7 @@ $(OBJS_AS_ARGS)
 	@echo Building file: $<
 	@echo ARMCC Preprocessing Assembler
 	$(QUOTE)armcc$(QUOTE) --c99 -c -DDEBUG -O1 -g --apcs=interwork --split_sections --cpu Cortex-M4 -D__SAMD51P19A__ \
--I"../" -I"../config" -I"../examples" -I"../hal/include" -I"../hal/utils/include" -I"../hpl/cmcc" -I"../hpl/core" -I"../hpl/dmac" -I"../hpl/gclk" -I"../hpl/mclk" -I"../hpl/osc32kctrl" -I"../hpl/oscctrl" -I"../hpl/pm" -I"../hpl/port" -I"../hpl/ramecc" -I"../hpl/sercom" -I"../hpl/usb" -I"../hri" -I"../" -I"../dma_m2m" -I"../" -I"../config" -I"../usb" -I"../usb/class/cdc" -I"../usb/class/cdc/device" -I"../usb/device" -I"../" -I"../CMSIS/Core/Include" -I"../samd51a/include"  \
+-I"../" -I"../config" -I"../examples" -I"../hal/include" -I"../hal/utils/include" -I"../hpl/cmcc" -I"../hpl/core" -I"../hpl/dmac" -I"../hpl/gclk" -I"../hpl/mclk" -I"../hpl/osc32kctrl" -I"../hpl/oscctrl" -I"../hpl/pm" -I"../hpl/port" -I"../hpl/ramecc" -I"../hpl/sercom" -I"../hpl/usb" -I"../hri" -I"../" -I"../config" -I"../usb" -I"../usb/class/cdc" -I"../usb/class/cdc/device" -I"../usb/device" -I"../" -I"../CMSIS/Core/Include" -I"../samd51a/include"  \
 --depend "$@"  -o "$@" "$<"
 
 	@echo Finished building: $<

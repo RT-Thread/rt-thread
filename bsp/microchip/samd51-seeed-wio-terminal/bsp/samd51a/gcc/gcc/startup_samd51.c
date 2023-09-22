@@ -623,6 +623,8 @@ __attribute__((section(".vectors"))) const DeviceVectors exception_table
 #endif
 };
 
+int rtthread_startup(void);
+
 /**
  * \brief This is the code that gets called on processor reset.
  * To initialize the device, and call the main() routine.
@@ -660,8 +662,8 @@ void Reset_Handler(void)
 	/* Initialize the C library */
 	__libc_init_array();
 
-	/* Branch to main function */
-	main();
+	/* Branch to rtthread_startup function */
+	rtthread_startup();
 
 	/* Infinite loop */
 	while (1)

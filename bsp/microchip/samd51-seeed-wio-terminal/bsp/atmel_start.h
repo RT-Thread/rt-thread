@@ -6,7 +6,6 @@ extern "C" {
 #endif
 
 #include "driver_init.h"
-#include "dma_m2m_main.h"
 #include "usb_start.h"
 
 /**
