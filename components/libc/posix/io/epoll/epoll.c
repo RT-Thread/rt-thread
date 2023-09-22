@@ -115,6 +115,9 @@ static int epoll_close(struct dfs_file *file)
 {
     struct rt_eventpoll *ep;
 
+    if (file->vnode->ref_count != 1)
+        return 0;
+
     if (file->vnode)
     {
         if (file->vnode->data)
@@ -552,7 +555,7 @@ static int epoll_do_ctl(int epfd, int op, int fd, struct epoll_event *event)
     if (epdf->vnode->data)
     {
         ep = epdf->vnode->data;
-
+        event->events  |= EPOLLERR | EPOLLHUP;
         rt_mutex_take(&ep->lock, RT_WAITING_FOREVER);
 
         switch (op)
@@ -575,6 +578,10 @@ static int epoll_do_ctl(int epfd, int op, int fd, struct epoll_event *event)
         {
             rt_set_errno(-ret);
             ret = -1;
+        }
+        else
+        {
+            ep->polling_thread = rt_thread_self();
         }
 
         rt_mutex_release(&ep->lock);

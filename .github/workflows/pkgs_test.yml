@@ -1,0 +1,28 @@
+name: pkgs_test
+
+on:
+    push:
+        branches:
+          - master
+        paths-ignore:
+          - documentation/**
+          - '**/README.md'
+          - '**/README_zh.md'
+    pull_request:
+        branches:
+          - master
+        paths-ignore:
+          - documentation/**
+          - '**/README.md'
+          - '**/README_zh.md'
+    workflow_dispatch:
+
+jobs:
+    change:
+        uses: RT-Thread/pkgs-test/.github/workflows/pkgs-action.yml@main
+        with:
+            rt-thread-versions: "branch:master"
+            test-specific-pkgs: true
+            pkgs: |
+                hello
+

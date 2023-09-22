@@ -140,20 +140,20 @@ void *arch_signal_ucontext_save(rt_base_t user_sp, siginfo_t *psiginfo,
         /* push psiginfo */
         if (psiginfo)
         {
-            memcpy(&new_sp->si, psiginfo, sizeof(*psiginfo));
+            lwp_memcpy(&new_sp->si, psiginfo, sizeof(*psiginfo));
         }
 
         /* exp frame is already aligned as AAPCS64 required */
-        memcpy(&new_sp->frame, exp_frame, sizeof(*exp_frame));
+        lwp_memcpy(&new_sp->frame, exp_frame, sizeof(*exp_frame));
 
         /* copy the save_sig_mask */
-        memcpy(&new_sp->save_sigmask, save_sig_mask, sizeof(lwp_sigset_t));
+        lwp_memcpy(&new_sp->save_sigmask, save_sig_mask, sizeof(lwp_sigset_t));
 
         /* copy lwp_sigreturn */
         const size_t lwp_sigreturn_bytes = 8;
         extern void lwp_sigreturn(void);
         /* -> ensure that the sigreturn start at the outer most boundary */
-        memcpy(&new_sp->sigreturn,  &lwp_sigreturn, lwp_sigreturn_bytes);
+        lwp_memcpy(&new_sp->sigreturn,  &lwp_sigreturn, lwp_sigreturn_bytes);
     }
     else
     {

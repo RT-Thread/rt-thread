@@ -11,6 +11,7 @@
  * 2021-02-19     lizhirui     add riscv64 support for lwp_user_accessable and lwp_get_from_user
  * 2021-06-07     lizhirui     modify user space bound check
  * 2022-12-25     wangxiaoyao  adapt to new mm
+ * 2023-09-13     Shell        Add lwp_memcpy and support run-time choice of memcpy base on memory attr
  */
 
 #include <rtthread.h>
@@ -624,6 +625,63 @@ size_t lwp_put_to_user(void *dst, void *src, size_t size)
     return lwp_data_put(lwp, dst, src, size);
 }
 
+rt_inline rt_bool_t _in_user_space(const char *addr)
+{
+    return (addr >= (char *)USER_VADDR_START && addr < (char *)USER_VADDR_TOP);
+}
+
+rt_inline rt_bool_t _can_unaligned_access(const char *addr)
+{
+    return rt_kmem_v2p((char *)addr) - PV_OFFSET == addr;
+}
+
+void *lwp_memcpy(void * __restrict dst, const void * __restrict src, size_t size)
+{
+    void *rc = dst;
+    long len;
+
+    if (_in_user_space(dst))
+    {
+        if (!_in_user_space(src))
+        {
+            len = lwp_put_to_user(dst, (void *)src, size);
+            if (!len)
+            {
+                LOG_E("lwp_put_to_user(lwp=%p, dst=%p,src=%p,size=0x%lx) failed", lwp_self(), dst, src, size);
+            }
+        }
+        else
+        {
+            /* not support yet */
+            LOG_W("%s(dst=%p,src=%p,size=0x%lx): operation not support", dst, src, size, __func__);
+        }
+    }
+    else
+    {
+        if (_in_user_space(src))
+        {
+            len = lwp_get_from_user(dst, (void *)src, size);
+            if (!len)
+            {
+                LOG_E("lwp_get_from_user(lwp=%p, dst=%p,src=%p,size=0x%lx) failed", lwp_self(), dst, src, size);
+            }
+        }
+        else
+        {
+            if (_can_unaligned_access(dst) && _can_unaligned_access(src))
+            {
+                rc = memcpy(dst, src, size);
+            }
+            else
+            {
+                rt_memcpy(dst, src, size);
+            }
+        }
+    }
+
+    return rc;
+}
+
 int lwp_user_accessible_ext(struct rt_lwp *lwp, void *addr, size_t size)
 {
     void *addr_start = RT_NULL, *addr_end = RT_NULL, *next_page = RT_NULL;
@@ -631,11 +689,11 @@ int lwp_user_accessible_ext(struct rt_lwp *lwp, void *addr, size_t size)
 
     if (!lwp)
     {
-        return 0;
+        return RT_FALSE;
     }
     if (!size || !addr)
     {
-        return 0;
+        return RT_FALSE;
     }
     addr_start = addr;
     addr_end = (void *)((char *)addr + size);
@@ -643,16 +701,16 @@ int lwp_user_accessible_ext(struct rt_lwp *lwp, void *addr, size_t size)
 #ifdef ARCH_RISCV64
     if (addr_start < (void *)USER_VADDR_START)
     {
-        return 0;
+        return RT_FALSE;
     }
 #else
     if (addr_start >= (void *)USER_VADDR_TOP)
     {
-        return 0;
+        return RT_FALSE;
     }
     if (addr_end > (void *)USER_VADDR_TOP)
     {
-        return 0;
+        return RT_FALSE;
     }
 #endif
 
@@ -677,16 +735,16 @@ int lwp_user_accessible_ext(struct rt_lwp *lwp, void *addr, size_t size)
                     .fault_vaddr = addr_start,
                 };
                 if (!rt_aspace_fault_try_fix(lwp->aspace, &msg))
-                    return 0;
+                    return RT_FALSE;
             }
             else
-                return 0;
+                return RT_FALSE;
         }
         addr_start = (void *)((char *)addr_start + len);
         size -= len;
         next_page = (void *)((char *)next_page + ARCH_PAGE_SIZE);
     } while (addr_start < addr_end);
-    return 1;
+    return RT_TRUE;
 }
 
 int lwp_user_accessable(void *addr, size_t size)

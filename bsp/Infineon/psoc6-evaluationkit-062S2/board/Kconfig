@@ -423,6 +423,10 @@ menu "Board extended module Drivers"
         bool "Enable cyw43012 wifi"
         select PKG_USING_WLAN_CYW43012
         default n
+    config BSP_USING_CYW43012_BT
+        bool "Enable cyw43012 Bluetooth"
+        select PKG_USING_BT_CYW43012
+        default n
 endmenu
 
 endmenu

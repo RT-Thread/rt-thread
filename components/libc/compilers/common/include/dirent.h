@@ -28,6 +28,7 @@ extern "C" {
 #define FT_USER         3   /* user defined */
 #define FT_DEVICE       4   /* device */
 #define FT_SYMLINK      5   /* symbol link */
+#define FT_NONLOCK      6   /* non lock */
 
 #define DT_UNKNOWN      0x00
 #define DT_FIFO         0x01

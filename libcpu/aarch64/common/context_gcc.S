@@ -268,6 +268,17 @@ START_POINT_END(_thread_start)
     ERET
 .endm
 
+.macro SAVE_USER_CTX
+    MRS     X1, SPSR_EL1
+    AND     X1, X1, 0xf
+    CMP     X1, XZR
+
+    BNE     1f
+    BL      lwp_uthread_ctx_save
+    LDP     X0, X1, [SP]
+1:
+.endm
+
 #ifdef RT_USING_SMP
 #define rt_hw_interrupt_disable rt_hw_local_irq_disable
 #define rt_hw_interrupt_enable rt_hw_local_irq_enable
@@ -375,17 +386,6 @@ rt_hw_context_switch_interrupt:
 .globl vector_fiq
 vector_fiq:
     B       .
-
-.macro SAVE_USER_CTX
-    MRS     X1, SPSR_EL1
-    AND     X1, X1, 0xf
-    CMP     X1, XZR
-
-    BNE     1f
-    BL      lwp_uthread_ctx_save
-    LDP     X0, X1, [SP]
-1:
-.endm
 
 .globl vector_irq
 vector_irq:
