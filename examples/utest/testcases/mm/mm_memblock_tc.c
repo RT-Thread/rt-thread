@@ -16,7 +16,7 @@
 #define SZ_512M             0x20000000
 #define SZ_1G               0x40000000
 
-#define NEXT_MEMREG(prev) rt_slist_entry(prev->node.next, struct rt_mmblk_reg, node)
+#define NEXT_MEMREG(prev) (prev->node.next ? rt_slist_entry(prev->node.next, struct rt_mmblk_reg, node) : RT_NULL)
 
 rt_inline struct rt_mmblk_reg *_nth_reg(rt_uint32_t n)
 {

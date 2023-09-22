@@ -43,7 +43,6 @@ struct rt_mmblk_reg
  */
 struct rt_memblock
 {
-    rt_uint32_t hint_idx;
     rt_slist_t reg_list;
 };
 

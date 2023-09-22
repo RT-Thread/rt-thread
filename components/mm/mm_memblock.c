@@ -164,7 +164,7 @@ static void _memblock_add_memory(rt_region_t *region, mm_flag_t flag)
     }
 }
 
-/* 
+/*
  * set the reserved range's name and flag, this range should be normal memory in memblock before
  * Note: this function will fully cover the range's name and flag
  */
