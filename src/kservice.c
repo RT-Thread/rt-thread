@@ -681,6 +681,189 @@ rt_size_t rt_strnlen(const char *s, rt_ubase_t maxlen)
 }
 RTM_EXPORT(rt_strnlen);
 
+/**
+ * @brief  This function finds the first occurrence of (after conversion to
+ * chchar as if by (char)ch) in the null-terminated byte string pointed to by
+ * (each character interpreted as strunsigned char). The terminating null
+ * character is considered to be a part of the string and can be found when
+ * searching for '\0'.
+ *
+ * @param  s is the pointer to the null-terminated byte string to be analyzed.
+ *
+ * @param  c is the character to search for.
+ *
+ * @return Pointer to the found character in str, or null pointer if no such
+ * character is found.
+ */
+char *rt_strchr(const char *s, int c)
+{
+    while (*s != (char)c && *s != '\0')
+    {
+        ++s;
+    }
+
+    return *s == '\0' ? RT_NULL : (char *)s;
+}
+RTM_EXPORT(rt_strchr);
+
+/**
+ * @brief  This function finds the last occurrence of ch (after conversion to
+ * char as if by (char)ch) in the null-terminated byte string pointed to by str
+ * (each character interpreted as unsigned char). The terminating null character
+ * is considered to be a part of the string and can be found if searching for '\0'.
+ *
+ * @param  s is the pointer to the null-terminated byte string to be analyzed.
+ *
+ * @param  c is the character to search for.
+ *
+ * @return Pointer to the found character in str, or null pointer if no such
+ * character is found.
+ */
+char *rt_strrchr(const char *s, int c)
+{
+    const char *p = s + rt_strlen(s);
+
+    while (*p != (char)c && p != s)
+    {
+        --p;
+    }
+
+    return (*p != c) ? RT_NULL : (char *)p;
+}
+RTM_EXPORT(rt_strrchr);
+
+/**
+ * @brief  This function is like strchr() except that if c is not found in s,
+ * then it returns a pointer to the null byte at the end of s, rather than NULL.
+ *
+ * @param  s is the pointer to the null-terminated byte string to be analyzed.
+ *
+ * @param  c is the character to search for.
+ *
+ * @return Pointer to the found character in str, or end of the string's pointer
+ * if no such character is found.
+ */
+char *rt_strchrnul(const char *s, int c)
+{
+    while (*s != '\0' && *s != c)
+    {
+        ++s;
+    }
+
+    return (char *)s;
+}
+RTM_EXPORT(rt_strchrnul);
+
+/**
+ * @brief  This function will return the length of the maximum initial segment
+ * (span) of the null-terminated byte string pointed to by dest, that consists
+ * of only the characters found in the null-terminated byte string pointed to by
+ * src.
+ *
+ * @param  s is the pointer to the null-terminated byte string to be analyzed.
+ *
+ * @param  accept is the pointer to the null-terminated byte string that
+ * contains the characters to search for.
+ *
+ * @return The length of the maximum initial segment that contains only
+ * characters from the null-terminated byte string pointed to by src.
+ */
+rt_size_t rt_strspn(const char *s, const char *accept)
+{
+    const char *p;
+
+    for (p = s; *p != '\0'; ++p)
+    {
+        if (!rt_strchr(accept, *p))
+        {
+            break;
+        }
+    }
+    return p - s;
+}
+RTM_EXPORT(rt_strspn);
+
+/**
+ * @brief  This function will returns the length of the maximum initial segment
+ * of the byte string pointed to by dest, that consists of only the characters
+ * not found in byte string pointed to by src.
+ *
+ * @param  s is the pointer to the null-terminated byte string to be analyzed.
+ *
+ * @param  accept is the pointer to the null-terminated byte string that
+ * contains the characters to search for.
+ *
+ * @return The length of the maximum initial segment that contains only
+ * characters not found in the byte string pointed to by src.
+ */
+rt_size_t rt_strcspn(const char *s, const char *reject)
+{
+    rt_size_t ret = 0;
+
+    while (*s)
+    {
+        if (rt_strchr(reject, *s))
+        {
+            break;
+        }
+        else
+        {
+            ++s;
+            ++ret;
+        }
+    }
+
+    return ret;
+}
+RTM_EXPORT(rt_strcspn);
+
+/**
+ * @brief  This function will returns the length of the maximum initial segment
+ * of the byte string pointed to by dest, that consists of only the characters
+ * not found in byte string pointed to by src.
+ *
+ * @param  s is the pointer to the null-terminated byte string to tokenize.
+ *
+ * @param  delim is the pointer to the null-terminated byte string identifying
+ * delimiters.
+ *
+ * @param  context is the pointer to stored information necessary for the
+ * function to continue scanning the same string.
+ *
+ * @return The first time the function is called, it returns a pointer to the
+ * first token in string. In later calls with the same token string, the
+ * function returns a pointer to the next token in the string. A NULL pointer is
+ * returned when there are no more tokens.
+ */
+char *rt_strtok_r(char *s, const char *delim, char **context)
+{
+    char *ret = RT_NULL;
+
+    if (s == RT_NULL)
+    {
+        s = *context;
+    }
+
+    s += rt_strspn(s, delim);
+
+    if (*s != '\0')
+    {
+        ret = s;
+
+        s += rt_strcspn(s, delim);
+
+        if (*s)
+        {
+            *s++ = '\0';
+        }
+
+        *context = s;
+    }
+
+    return ret;
+}
+RTM_EXPORT(rt_strtok_r);
+
 #ifdef RT_USING_HEAP
 /**
  * @brief  This function will duplicate a string.

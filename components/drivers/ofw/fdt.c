@@ -702,7 +702,7 @@ rt_err_t rt_fdt_scan_chosen_stdout(void)
 
                 if (stdout_path && len)
                 {
-                    const char *path_split = strchrnul(stdout_path, ':');
+                    const char *path_split = rt_strchrnul(stdout_path, ':');
 
                     if (*path_split != '\0')
                     {
@@ -781,13 +781,13 @@ rt_err_t rt_fdt_scan_chosen_stdout(void)
 
                     if (*options)
                     {
-                        type_len = strchrnul(options, ',') - options;
+                        type_len = rt_strchrnul(options, ',') - options;
                     }
                 }
 
                 if (options && *options && *options != ' ')
                 {
-                    options_len = strchrnul(options, ' ') - options;
+                    options_len = rt_strchrnul(options, ' ') - options;
                 }
 
                 /* console > stdout-path */
