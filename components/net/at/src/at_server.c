@@ -43,8 +43,8 @@ extern rt_size_t at_utils_send(rt_device_t dev,
                                rt_off_t    pos,
                                const void *buffer,
                                rt_size_t   size);
-extern void at_vprintf(rt_device_t device, const char *format, va_list args);
-extern void at_vprintfln(rt_device_t device, const char *format, va_list args);
+extern void at_vprintf(rt_device_t device, char *send_buf, rt_size_t buf_size, const char *format, va_list args);
+extern void at_vprintfln(rt_device_t device, char *send_buf, rt_size_t buf_size, const char *format, va_list args);
 
 /**
  * AT server send data to AT device
@@ -57,7 +57,7 @@ void at_server_printf(const char *format, ...)
 
     va_start(args, format);
 
-    at_vprintf(at_server_local->device, format, args);
+    at_vprintf(at_server_local->device, at_server_local->send_buffer, sizeof(at_server_local->send_buffer), format, args);
 
     va_end(args);
 }
@@ -73,7 +73,7 @@ void at_server_printfln(const char *format, ...)
 
     va_start(args, format);
 
-    at_vprintfln(at_server_local->device, format, args);
+    at_vprintfln(at_server_local->device, at_server_local->send_buffer, sizeof(at_server_local->send_buffer), format, args);
 
     va_end(args);
 }
