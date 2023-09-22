@@ -250,7 +250,7 @@ rt_bool_t rt_ofw_node_tag_equ(const struct rt_ofw_node *np, const char *tag)
     if (np && tag)
     {
         const char *node_name = rt_fdt_node_name(np->full_name);
-        rt_size_t tag_len = strchrnul(node_name, '@') - node_name;
+        rt_size_t tag_len = rt_strchrnul(node_name, '@') - node_name;
 
         ret = (rt_strlen(tag) == tag_len && !rt_strncmp(node_name, tag, tag_len));
     }
@@ -585,7 +585,7 @@ struct rt_ofw_node *rt_ofw_find_node_by_path(const char *path)
 
             while (*path)
             {
-                const char *next = strchrnul(path, '/');
+                const char *next = rt_strchrnul(path, '/');
                 rt_size_t len = next - path;
 
                 tmp = RT_NULL;

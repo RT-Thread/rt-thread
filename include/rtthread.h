@@ -29,6 +29,8 @@
 #include <rtservice.h>
 #include <rtm.h>
 #include <rtatomic.h>
+#include <drivers/core/device.h>
+#include <drivers/core/driver.h>
 #ifdef RT_USING_LEGACY
 #include <rtlegacy.h>
 #endif
@@ -680,6 +682,12 @@ rt_int32_t rt_memcmp(const void *cs, const void *ct, rt_size_t count);
 #endif /* RT_KSERVICE_USING_STDLIB_MEMORY */
 char *rt_strdup(const char *s);
 rt_size_t rt_strnlen(const char *s, rt_ubase_t maxlen);
+char *rt_strchr(const char *s, int c);
+char *rt_strrchr(const char *s, int c);
+char *rt_strchrnul(const char *s, int c);
+rt_size_t rt_strspn(const char *s, const char *accept);
+rt_size_t rt_strcspn(const char *s, const char *reject);
+char *rt_strtok_r(char *s, const char *delim, char **context);
 #ifndef RT_KSERVICE_USING_STDLIB
 char *rt_strstr(const char *str1, const char *str2);
 rt_int32_t rt_strcasecmp(const char *a, const char *b);

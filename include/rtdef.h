@@ -1268,24 +1268,6 @@ enum rt_device_class_type
 /* mtd interface device*/
 #define RT_DEVICE_CTRL_MTD_FORMAT       (RT_DEVICE_CTRL_BASE(MTD) + 1)              /**< format a MTD device */
 
-typedef struct rt_device *rt_device_t;
-
-#ifdef RT_USING_DEVICE_OPS
-/**
- * operations set for device object
- */
-struct rt_device_ops
-{
-    /* common device interface */
-    rt_err_t  (*init)   (rt_device_t dev);
-    rt_err_t  (*open)   (rt_device_t dev, rt_uint16_t oflag);
-    rt_err_t  (*close)  (rt_device_t dev);
-    rt_ssize_t (*read)  (rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size);
-    rt_ssize_t (*write) (rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size);
-    rt_err_t  (*control)(rt_device_t dev, int cmd, void *args);
-};
-#endif /* RT_USING_DEVICE_OPS */
-
 /**
  * WaitQueue structure
  */
@@ -1296,88 +1278,11 @@ struct rt_wqueue
 };
 typedef struct rt_wqueue rt_wqueue_t;
 
-/**
- * Device structure
- */
-struct rt_device
-{
-    struct rt_object          parent;                   /**< inherit from rt_object */
-#ifdef RT_USING_DM
-    struct rt_driver *drv;
-    void *dtb_node;
-#endif
-    enum rt_device_class_type type;                     /**< device type */
-    rt_uint16_t               flag;                     /**< device flag */
-    rt_uint16_t               open_flag;                /**< device open flag */
-
-    rt_uint8_t                ref_count;                /**< reference count */
-    rt_uint8_t                device_id;                /**< 0 - 255 */
-
-    /* device call back */
-    rt_err_t (*rx_indicate)(rt_device_t dev, rt_size_t size);
-    rt_err_t (*tx_complete)(rt_device_t dev, void *buffer);
-
-#ifdef RT_USING_DEVICE_OPS
-    const struct rt_device_ops *ops;
-#else
-    /* common device interface */
-    rt_err_t  (*init)   (rt_device_t dev);
-    rt_err_t  (*open)   (rt_device_t dev, rt_uint16_t oflag);
-    rt_err_t  (*close)  (rt_device_t dev);
-    rt_ssize_t (*read)  (rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size);
-    rt_ssize_t (*write) (rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size);
-    rt_err_t  (*control)(rt_device_t dev, int cmd, void *args);
-#endif /* RT_USING_DEVICE_OPS */
-
-#ifdef RT_USING_POSIX_DEVIO
-    const struct dfs_file_ops *fops;
-    struct rt_wqueue wait_queue;
-#endif /* RT_USING_POSIX_DEVIO */
-
-    void                     *user_data;                /**< device private data */
-};
-
 #define RT_DRIVER_MATCH_DTS (1<<0)
 struct rt_device_id
 {
     const char *compatible;
     void *data;
-};
-
-struct rt_driver
-{
-#ifdef RT_USING_DEVICE_OPS
-    const struct rt_device_ops *dev_ops;
-#else
-    /* common device interface */
-    rt_err_t  (*init)   (rt_device_t dev);
-    rt_err_t  (*open)   (rt_device_t dev, rt_uint16_t oflag);
-    rt_err_t  (*close)  (rt_device_t dev);
-    rt_ssize_t (*read)  (rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size);
-    rt_ssize_t (*write) (rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size);
-    rt_err_t  (*control)(rt_device_t dev, int cmd, void *args);
-#endif
-    const struct filesystem_ops *fops;
-    const char *name;
-    enum rt_device_class_type dev_type;
-    int device_size;
-    int flag;
-    const struct rt_device_id *dev_match;
-    int (*probe)(struct rt_device *dev);
-    int (*probe_init)(struct rt_device *dev);
-    int (*remove)(struct rt_device *dev);
-    const void *ops;    /* driver-specific operations */
-    void *drv_priv_data;
-};
-typedef struct rt_driver *rt_driver_t;
-
-/**
- * Notify structure
- */
-struct rt_device_notify
-{
-    void (*notify)(rt_device_t dev);
-    struct rt_device *dev;
 };
 
 #ifdef RT_USING_SMART
