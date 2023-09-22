@@ -1095,7 +1095,7 @@ struct rt_ofw_node *rt_ofw_get_alias_node(const char *tag, int id)
 int rt_ofw_get_alias_id(struct rt_ofw_node *np, const char *tag)
 {
     int id;
-    struct alias_info *info;
+    struct alias_info *info = RT_NULL;
 
     if (np && tag)
     {
@@ -1126,7 +1126,7 @@ int rt_ofw_get_alias_id(struct rt_ofw_node *np, const char *tag)
 int rt_ofw_get_alias_last_id(const char *tag)
 {
     int id;
-    struct alias_info *info;
+    struct alias_info *info = RT_NULL;
 
     if (tag)
     {
