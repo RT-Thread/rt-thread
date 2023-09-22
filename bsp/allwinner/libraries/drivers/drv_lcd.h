@@ -21,7 +21,6 @@
 
 int rt_hw_lcd_init(void);
 
-#define FBIOGET_PIXELINFO   0x4603
 
 
 rt_uint8_t get_lcd_backlight(void);
