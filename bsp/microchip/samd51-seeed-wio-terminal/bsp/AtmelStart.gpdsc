@@ -132,9 +132,6 @@
         <file category="header" condition="ARMCC, GCC, IAR" name="hri/hri_trng_d51.h"/>
         <file category="header" condition="ARMCC, GCC, IAR" name="hri/hri_usb_d51.h"/>
         <file category="header" condition="ARMCC, GCC, IAR" name="hri/hri_wdt_d51.h"/>
-        <file category="source" condition="ARMCC, GCC, IAR" name="dma_m2m/dma_memory.c"/>
-        <file category="header" condition="ARMCC, GCC, IAR" name="dma_m2m/dma_memory.h"/>
-        <file category="doc" condition="ARMCC, GCC, IAR" name="documentation/dma_m2m.rst"/>
         <file category="doc" condition="ARMCC, GCC, IAR" name="documentation/usb_device_cdc.rst"/>
         <file category="doc" condition="ARMCC, GCC, IAR" name="documentation/usb_device_core.rst"/>
         <file category="doc" condition="ARMCC, GCC, IAR" name="documentation/usb_protocol_cdc.rst"/>
@@ -186,8 +183,6 @@
         <file category="source" condition="ARMCC, GCC, IAR" name="hpl/ramecc/hpl_ramecc.c"/>
         <file category="source" condition="ARMCC, GCC, IAR" name="hpl/sercom/hpl_sercom.c"/>
         <file category="source" condition="ARMCC, GCC, IAR" name="hpl/usb/hpl_usb.c"/>
-        <file category="source" condition="ARMCC, GCC, IAR" name="dma_m2m_main.c"/>
-        <file category="header" condition="ARMCC, GCC, IAR" name="dma_m2m_main.h"/>
         <file category="source" condition="ARMCC, GCC, IAR" name="usb_start.c"/>
         <file category="header" condition="ARMCC, GCC, IAR" name="usb_start.h"/>
         <file category="header" condition="ARMCC, GCC, IAR" name="atmel_start.h"/>
@@ -202,7 +197,6 @@
         <file attr="config" category="header" condition="ARMCC, GCC, IAR" name="config/hpl_sercom_config.h"/>
         <file attr="config" category="header" condition="ARMCC, GCC, IAR" name="config/hpl_usb_config.h"/>
         <file attr="config" category="header" condition="ARMCC, GCC, IAR" name="config/peripheral_clk_config.h"/>
-        <file attr="config" category="header" condition="ARMCC, GCC, IAR" name="dma_m2m/dma_memory_config.h"/>
         <file attr="config" category="header" condition="ARMCC, GCC, IAR" name="config/usbd_config.h"/>
         <file category="include" condition="ARMCC, GCC, IAR" name=""/>
         <file category="include" condition="ARMCC, GCC, IAR" name="config"/>
@@ -222,8 +216,6 @@
         <file category="include" condition="ARMCC, GCC, IAR" name="hpl/sercom"/>
         <file category="include" condition="ARMCC, GCC, IAR" name="hpl/usb"/>
         <file category="include" condition="ARMCC, GCC, IAR" name="hri"/>
-        <file category="include" condition="ARMCC, GCC, IAR" name=""/>
-        <file category="include" condition="ARMCC, GCC, IAR" name="dma_m2m"/>
         <file category="include" condition="ARMCC, GCC, IAR" name=""/>
         <file category="include" condition="ARMCC, GCC, IAR" name="config"/>
         <file category="include" condition="ARMCC, GCC, IAR" name="usb"/>

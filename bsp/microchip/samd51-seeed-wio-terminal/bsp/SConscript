@@ -16,12 +16,10 @@ src  = Glob('hal/src/*.c')
 src += Glob('hal/utils/src/*.c')
 # src += Glob('hpl/adc/*.c')
 # src += Glob('hpl/aes/*.c')
-# src += Glob('hpl/can/*.c')
 src += Glob('hpl/cmcc/*.c')
 src += Glob('hpl/core/*.c')
 src += Glob('hpl/dmac/*.c')
 src += Glob('hpl/gclk/*.c')
-# src += Glob('hpl/gmac/*.c')
 src += Glob('hpl/mclk/*.c')
 src += Glob('hpl/osc32kctrl/*.c')
 src += Glob('hpl/oscctrl/*.c')
@@ -30,15 +28,12 @@ src += Glob('hpl/port/*.c')
 src += Glob('hpl/ramecc/*.c')
 src += Glob('hpl/sercom/*.c')
 src += Glob('hpl/usb/*.c')
-src += Glob('stdio_redirect/*.c')
-# src += Glob('ethernet_phy/*.c')
 src += Glob('hpl/usb/*.c')
 src += Glob('usb/*.c')
 src += Glob('usb/device/*.c')
 src += Glob('usb/class/cdc/device/*.c')
 src += [cwd + '/atmel_start.c']
 src += [cwd + '/driver_init.c']
-src += [cwd + '/stdio_start.c']
 src += [cwd + '/usb_start.c']
 
 #add for startup script
@@ -59,7 +54,6 @@ path = [
     cwd + '/hal/include',
     cwd + '/hal/utils/include',
     # cwd + '/hpl/adc',
-    # cwd + '/hpl/can',
     cwd + '/hpl/core',
     cwd + '/hpl/gclk',
     cwd + '/hpl/pm',
@@ -71,7 +65,6 @@ path = [
     cwd + '/usb/class/cdc/device',
     cwd + '/usb/device',
     cwd + '/samd51a/include',
-    cwd + '/stdio_redirect',
     cwd + '/../board',
     cwd + '/../../common/applications'
     ]

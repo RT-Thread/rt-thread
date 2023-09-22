@@ -267,7 +267,7 @@
 
 /* Hardware Drivers Config */
 
-#define SOC_SAMD51J19
+#define SOC_SAMD51P19
 
 /* Onboard Peripheral Drivers */
 

@@ -36,7 +36,6 @@ hpl/ramecc \
 hpl/dmac \
 samd51a/gcc \
 usb/class/cdc/device \
-dma_m2m \
 hal/src \
 samd51a/gcc/gcc \
 hpl/mclk \
@@ -56,11 +55,10 @@ OBJS +=  \
 hal/src/hal_io.o \
 samd51a/gcc/system_samd51.o \
 hpl/core/hpl_core_m4.o \
-dma_m2m/dma_memory.o \
+usb/class/cdc/device/cdcdf_acm.o \
 hal/utils/src/utils_syscalls.o \
 usb_start.o \
 hpl/usb/hpl_usb.o \
-usb/class/cdc/device/cdcdf_acm.o \
 hal/src/hal_delay.o \
 hpl/pm/hpl_pm.o \
 hpl/core/hpl_init.o \
@@ -74,14 +72,13 @@ hpl/ramecc/hpl_ramecc.o \
 usb/usb_protocol.o \
 hal/src/hal_init.o \
 hal/src/hal_usb_device.o \
-dma_m2m_main.o \
+main.o \
 hpl/osc32kctrl/hpl_osc32kctrl.o \
 examples/driver_examples.o \
 driver_init.o \
 hal/src/hal_usart_async.o \
 hpl/sercom/hpl_sercom.o \
 hal/utils/src/utils_ringbuffer.o \
-main.o \
 hal/src/hal_gpio.o \
 hal/utils/src/utils_event.o \
 hal/src/hal_sleep.o \
@@ -96,11 +93,10 @@ OBJS_AS_ARGS +=  \
 "hal/src/hal_io.o" \
 "samd51a/gcc/system_samd51.o" \
 "hpl/core/hpl_core_m4.o" \
-"dma_m2m/dma_memory.o" \
+"usb/class/cdc/device/cdcdf_acm.o" \
 "hal/utils/src/utils_syscalls.o" \
 "usb_start.o" \
 "hpl/usb/hpl_usb.o" \
-"usb/class/cdc/device/cdcdf_acm.o" \
 "hal/src/hal_delay.o" \
 "hpl/pm/hpl_pm.o" \
 "hpl/core/hpl_init.o" \
@@ -114,14 +110,13 @@ OBJS_AS_ARGS +=  \
 "usb/usb_protocol.o" \
 "hal/src/hal_init.o" \
 "hal/src/hal_usb_device.o" \
-"dma_m2m_main.o" \
+"main.o" \
 "hpl/osc32kctrl/hpl_osc32kctrl.o" \
 "examples/driver_examples.o" \
 "driver_init.o" \
 "hal/src/hal_usart_async.o" \
 "hpl/sercom/hpl_sercom.o" \
 "hal/utils/src/utils_ringbuffer.o" \
-"main.o" \
 "hal/src/hal_gpio.o" \
 "hal/utils/src/utils_event.o" \
 "hal/src/hal_sleep.o" \
@@ -153,8 +148,6 @@ DIR_INCLUDES +=  \
 -I"../hpl/usb" \
 -I"../hri" \
 -I"../" \
--I"../dma_m2m" \
--I"../" \
 -I"../config" \
 -I"../usb" \
 -I"../usb/class/cdc" \
@@ -168,16 +161,14 @@ DIR_INCLUDES +=  \
 DEPS := $(OBJS:%.o=%.d)
 
 DEPS_AS_ARGS +=  \
-"usb/class/cdc/device/cdcdf_acm.d" \
 "hal/utils/src/utils_event.d" \
 "hal/src/hal_io.d" \
 "hpl/ramecc/hpl_ramecc.d" \
 "hpl/core/hpl_core_m4.d" \
 "hal/utils/src/utils_syscalls.d" \
-"dma_m2m/dma_memory.d" \
+"usb/class/cdc/device/cdcdf_acm.d" \
 "samd51a/gcc/system_samd51.d" \
 "hpl/usb/hpl_usb.d" \
-"main.d" \
 "hal/utils/src/utils_list.d" \
 "hpl/cmcc/hpl_cmcc.d" \
 "hpl/dmac/hpl_dmac.d" \
@@ -194,7 +185,7 @@ DEPS_AS_ARGS +=  \
 "driver_init.d" \
 "hal/src/hal_usart_async.d" \
 "hpl/osc32kctrl/hpl_osc32kctrl.d" \
-"dma_m2m_main.d" \
+"main.d" \
 "examples/driver_examples.d" \
 "hal/src/hal_cache.d" \
 "hal/src/hal_sleep.d" \

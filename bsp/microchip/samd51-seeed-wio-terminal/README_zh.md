@@ -1,25 +1,28 @@
-# SAMD51J19A Adafruit Metro M4 BSP 介绍
+# Seeed Wio-Terminal BSP 介绍
 
 [English](README.md) 
 
-- MCU: ATSAMD51J19A @120MHz, 512KB FLASH, 192KB RAM
-- D51: Cortex-M4F + Adavanced Feature Set
-- 管脚: G系列-48 pins, J系列-64 pins, N系列-100 pins, P系列-128 pins
-- Flash: 尾缀18=256KB, 19=512KB, 20=1024KB (size=2^n)
-- SRAM : 128KB(Flash 256KB), 192KB(Flash 512KB), 256KB(Flash 1MB)
-- 手册: <https://www.microchip.com/en-us/product/ATSAMD51J19>
+![](https://static.getiot.tech/WioT-Hardware-Overview.png)
+
+- MCU：ATSAMD51P19A @120MHz，512KB FLASH，192KB RAM
+- D51：Cortex-M4F + Adavanced Feature Set
+- 管脚：G 系列-48 pins，J 系列-64 pins，N 系列-100 pins，P 系列-128 pins
+- Flash：尾缀 18=256KB, 19=512KB, 20=1024KB（size=2^n）
+- SRAM：128KB（Flash 256KB），192KB（Flash 512KB），256KB（Flash 1MB）
+- 手册：<https://www.microchip.com/en-us/product/ATSAMD51P19>
 
 #### 关键特性
 
 #### 内核
 
-- 32-bit Arm® Cortex®-M4 内核 + 单精度FPU + 4 KB 复用的指令和数据Cache，最大工作主频120 MHz, 带MPU, 403 CoreMark®@120 MHz, 支持 DSP指令集
+- 32-bit Arm® Cortex®-M4 内核 + 单精度 FPU + 4 KB 复用的指令和数据 Cache，最大工作主频 120 MHz，带MPU，403 CoreMark®@120 MHz，支持 DSP 指令集
 
 #### 内存
 
 - 1 MB/512 KB/256 KB in-system self-programmable Flash with:
-- Error Correction Code (ECC)
-- Dual bank with Read-While-Write (RWW) support
+  - Error Correction Code (ECC)
+  - Dual bank with Read-While-Write (RWW) support
+
 - EEPROM hardware emulation
 - 128 KB, 192 KB, 256 KB SRAM main memory
 - 64 KB, 96 KB, 128 KB of Error Correction Code (ECC) RAM option
@@ -97,7 +100,7 @@
 
 #### I/O管脚
 
- - 最多提供99个用户可编程I/O管脚
+ - 最多提供 99 个用户可编程 I/O 管脚
 
 #### 汽车应用
 
@@ -114,7 +117,7 @@
 
 #### 开发板信息
 
-- [Adafruit Metro M4 feat. Microchip ATSAMD51](https://www.adafruit.com/product/3382)
+- [Wio Terminal: ATSAMD51 Core with Realtek RTL8720DN BLE 5.0 & Wi-Fi Dev Board](https://www.seeedstudio.com/Wio-Terminal-p-4509.html)
 
 #### 联系方式
 

@@ -75,7 +75,7 @@ extern int __bss_end;
 
 #ifdef RT_USING_SERIAL
 #include "hpl_sercom_config.h"
-#define DEFAULT_USART_BAUD_RATE CONF_SERCOM_3_USART_BAUD_RATE
+#define DEFAULT_USART_BAUD_RATE CONF_SERCOM_2_USART_BAUD_RATE
 #endif
 
 void rt_hw_board_init(void);

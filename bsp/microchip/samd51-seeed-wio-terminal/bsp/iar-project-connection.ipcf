@@ -24,8 +24,6 @@
         <path>$PROJ_DIR$\hpl\usb</path>
         <path>$PROJ_DIR$\hri</path>
         <path>$PROJ_DIR$\</path>
-        <path>$PROJ_DIR$\dma_m2m</path>
-        <path>$PROJ_DIR$\</path>
         <path>$PROJ_DIR$\config</path>
         <path>$PROJ_DIR$\usb</path>
         <path>$PROJ_DIR$\usb\class\cdc</path>
@@ -56,8 +54,6 @@
         <path>$PROJ_DIR$\hpl\usb</path>
         <path>$PROJ_DIR$\hri</path>
         <path>$PROJ_DIR$\</path>
-        <path>$PROJ_DIR$\dma_m2m</path>
-        <path>$PROJ_DIR$\</path>
         <path>$PROJ_DIR$\config</path>
         <path>$PROJ_DIR$\usb</path>
         <path>$PROJ_DIR$\usb\class\cdc</path>
@@ -87,8 +83,6 @@
             <path>atmel_start.c</path>
             <path>atmel_start.h</path>
             <path>atmel_start_pins.h</path>
-            <path>dma_m2m_main.c</path>
-            <path>dma_m2m_main.h</path>
             <path>driver_init.c</path>
             <path>driver_init.h</path>
             <path>main.c</path>
@@ -132,12 +126,6 @@
             <path>config/hpl_usb_config.h</path>
             <path>config/peripheral_clk_config.h</path>
             <path>config/usbd_config.h</path>
-        </group>
-
-        <group name="dma_m2m">
-            <path>dma_m2m/dma_memory.c</path>
-            <path>dma_m2m/dma_memory.h</path>
-            <path>dma_m2m/dma_memory_config.h</path>
         </group>
 
         <group name="examples">

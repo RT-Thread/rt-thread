@@ -1,13 +1,15 @@
-# SAMD51J19A Adafruit Metro M4 BSP Introduction
+# Seeed Wio-Terminal BSP Introduction
 
-[中文](README_zh.md) 
+[中文](README_zh.md)
 
-- MCU: ATSAMD51J19A @120MHz, 512KB FLASH, 192KB RAM
+![](https://static.getiot.tech/WioT-Hardware-Overview.png)
+
+- MCU: ATSAMD51P19A @120MHz, 512KB FLASH, 192KB RAM
 - D51: Cortex-M4F + Adavanced Feature Set
 - Pin: G=48 pins, J=64 pins, N=100 pins, P=128 pins
 - Flash: 18=256KB, 19=512KB, 20=1024KB (size=2^n)
 - SRAM : 128KB(Flash 256KB), 192KB(Flash 512KB), 256KB(Flash 1MB)
-- Datasheet: <https://www.microchip.com/en-us/product/ATSAMD51J19>
+- Datasheet: <https://www.microchip.com/en-us/product/ATSAMD51P19>
 
 #### KEY FEATURES
 
@@ -18,8 +20,9 @@
 #### Memories
 
 - 1 MB/512 KB/256 KB in-system self-programmable Flash with:
-- Error Correction Code (ECC)
-- Dual bank with Read-While-Write (RWW) support
+  - Error Correction Code (ECC)
+  - Dual bank with Read-While-Write (RWW) support
+
 - EEPROM hardware emulation
 - 128 KB, 192 KB, 256 KB SRAM main memory
 - 64 KB, 96 KB, 128 KB of Error Correction Code (ECC) RAM option
@@ -114,7 +117,7 @@
 
 #### Board info
 
-- [Adafruit Metro M4 feat. Microchip ATSAMD51](https://www.adafruit.com/product/3382)
+- [Wio Terminal: ATSAMD51 Core with Realtek RTL8720DN BLE 5.0 & Wi-Fi Dev Board](https://www.seeedstudio.com/Wio-Terminal-p-4509.html)
 
 #### Contact Info
 
