@@ -12,6 +12,8 @@
  */
 
 #include <rtthread.h>
+#include <rtdevice.h>
+
 #include "drivers/usb_device.h"
 #include "mstorage.h"
 

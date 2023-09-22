@@ -10,7 +10,6 @@
 
 #include <rtthread.h>
 
-#include <string.h>
 #include <drivers/pic.h>
 #include <drivers/ofw.h>
 #include <drivers/ofw_io.h>

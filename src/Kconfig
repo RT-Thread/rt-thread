@@ -25,6 +25,7 @@ config RT_USING_SMART
     select RT_USING_DFS
     select RT_USING_LIBC
     select RT_USING_POSIX_CLOCKTIME
+    select RT_USING_DEVICE
     select RT_USING_TTY
     select RT_USING_NULL
     select RT_USING_ZERO
@@ -383,52 +384,33 @@ menu "Memory Management"
         default y if RT_USING_USERHEAP
 endmenu
 
-menu "Kernel Device Object"
+config RT_USING_DEVICE
+    bool "Using device object"
+    default y
 
-    config RT_USING_DEVICE
-        bool "Using device object"
-        default y
+config RT_USING_DEVICE_OPS
+    bool "Using ops for each device object"
+    default n
 
-    config RT_USING_DEVICE_OPS
-        bool "Using ops for each device object"
-        default n
+config RT_USING_INTERRUPT_INFO
+    bool "Enable additional interrupt trace information"
+    default n
+    help
+        Add name and counter information for interrupt trace.
 
-    config RT_USING_DM
-        bool "Enable device driver model with device tree"
-        default n
-        help
-            Enable device driver model with device tree (FDT). It will use more memory
-            to parse and support device tree feature.
+config RT_USING_CONSOLE
+    bool "Using console for rt_kprintf"
+    default y
 
-    config RT_USING_DM_FDT
-        bool "Enablie builtin libfdt"
-        depends on RT_USING_DM
-        default y
-        help
-            libfdt - Flat Device Tree manipulation. If your code already contains the
-            libfdt, you can cancel this built-in libfdt to avoid link issue.
+if RT_USING_CONSOLE
+    config RT_CONSOLEBUF_SIZE
+        int "the buffer size for console log printf"
+        default 128
 
-    config RT_USING_INTERRUPT_INFO
-        bool "Enable additional interrupt trace information"
-        default n
-        help
-            Add name and counter information for interrupt trace.
-
-    config RT_USING_CONSOLE
-        bool "Using console for rt_kprintf"
-        default y
-
-    if RT_USING_CONSOLE
-        config RT_CONSOLEBUF_SIZE
-            int "the buffer size for console log printf"
-            default 128
-
-        config RT_CONSOLE_DEVICE_NAME
-            string "the device name for console"
-            default "uart"
-    endif
-
-endmenu
+    config RT_CONSOLE_DEVICE_NAME
+        string "the device name for console"
+        default "uart"
+endif
 
 config RT_VER_NUM
     hex

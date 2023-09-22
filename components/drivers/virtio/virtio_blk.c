@@ -12,6 +12,7 @@
 #include <rthw.h>
 #include <rtthread.h>
 #include <cpuport.h>
+#include <rtdevice.h>
 
 #ifdef RT_USING_VIRTIO_BLK
 

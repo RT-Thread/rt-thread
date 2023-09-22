@@ -10,6 +10,8 @@
 
 #include <rthw.h>
 #include <rtthread.h>
+#include <rtdevice.h>
+
 #include "mbox.h"
 #include "drv_fb.h"
 #include "mmu.h"

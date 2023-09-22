@@ -9,6 +9,8 @@
  */
 
 #include <rtthread.h>
+#include <rtdevice.h>
+
 #include "lcd.h"
 #include "font.h"
 

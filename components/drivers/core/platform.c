@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2023-04-12     ErikChan      the first version
+ * 2023-10-13     zmshahaha    distinguish ofw and none-ofw situation
  */
 
 #include <rtthread.h>
@@ -61,10 +62,14 @@ rt_err_t rt_platform_device_register(struct rt_platform_device *pdev)
 
 static rt_bool_t platform_match(rt_driver_t drv, rt_device_t dev)
 {
-    struct rt_ofw_node *np = dev->ofw_node;
     struct rt_platform_driver *pdrv = rt_container_of(drv, struct rt_platform_driver, parent);
     struct rt_platform_device *pdev = rt_container_of(dev, struct rt_platform_device, parent);
 
+#ifdef RT_USING_OFW
+    struct rt_ofw_node *np = dev->ofw_node;
+#endif
+
+#ifdef RT_USING_OFW
     if (np)
     {
         /* 1、match with ofw node */
@@ -72,7 +77,8 @@ static rt_bool_t platform_match(rt_driver_t drv, rt_device_t dev)
 
         return !!pdev->id;
     }
-    else if (pdev->name && pdrv->name)
+#endif
+    if (pdev->name && pdrv->name)
     {
         /* 2、match with name */
         if (pdev->name == pdrv->name)
@@ -91,12 +97,16 @@ static rt_bool_t platform_match(rt_driver_t drv, rt_device_t dev)
 static rt_err_t platform_probe(rt_device_t dev)
 {
     rt_err_t err;
-    struct rt_ofw_node *np = dev->ofw_node;
+    
     struct rt_platform_driver *pdrv = rt_container_of(dev->drv, struct rt_platform_driver, parent);
     struct rt_platform_device *pdev = rt_container_of(dev, struct rt_platform_device, parent);
+#ifdef RT_USING_OFW
+    struct rt_ofw_node *np = dev->ofw_node;
+#endif
 
     err = pdrv->probe(pdev);
 
+#ifdef RT_USING_OFW
     if (!err)
     {
         if (np)
@@ -111,6 +121,7 @@ static rt_err_t platform_probe(rt_device_t dev)
             rt_ofw_data(np) = &pdev->parent;
         }
     }
+#endif
 
     return err;
 }

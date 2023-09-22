@@ -8,10 +8,11 @@
  * 2022-08-25     GuEe-GUI     first version
  */
 
+#define _GNU_SOURCE
+
 #include <rthw.h>
 #include <rtthread.h>
 
-#include <string.h>
 #include <drivers/ofw_fdt.h>
 #include <drivers/ofw_raw.h>
 #include <drivers/core/dm.h>

@@ -12,7 +12,7 @@
 #define __CORE_BUS_H__
 
 #include <rthw.h>
-#include <drivers/core/device.h>
+#include <rtdef.h>
 #include <drivers/core/driver.h>
 
 typedef struct rt_bus *rt_bus_t;

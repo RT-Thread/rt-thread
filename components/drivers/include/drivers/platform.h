@@ -6,12 +6,16 @@
  * Change Logs:
  * Date           Author       Notes
  * 2023-04-12     ErikChan      the first version
+ * 2023-10-13     zmshahaha    distinguish ofw and none-ofw situation
  */
 
 #ifndef __PLATFORM_H__
 #define __PLATFORM_H__
 
+#ifdef RT_USING_OFW
 #include <drivers/ofw.h>
+#endif
+
 #include <drivers/core/driver.h>
 
 struct rt_platform_device
@@ -19,7 +23,10 @@ struct rt_platform_device
     struct rt_device parent;
 
     const char *name;
+
+#ifdef RT_USING_OFW
     const struct rt_ofw_node_id *id;
+#endif
 
     void *priv;
 };
@@ -29,7 +36,10 @@ struct rt_platform_driver
     struct rt_driver parent;
 
     const char *name;
+
+#ifdef RT_USING_OFW
     const struct rt_ofw_node_id *ids;
+#endif
 
     rt_err_t (*probe)(struct rt_platform_device *pdev);
 };

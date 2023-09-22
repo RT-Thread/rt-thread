@@ -50,6 +50,7 @@
  * 2023-04-01     Chushicheng  change version number to v5.0.1
  * 2023-05-20     Bernard      add stdc atomic detection.
  * 2023-09-17     Meco Man     add RT_USING_LIBC_ISO_ONLY macro
+ * 2023-10-11     zmshahaha    move specific devices related and driver to components/drivers
  */
 
 #ifndef __RT_DEF_H__
@@ -1279,22 +1280,6 @@ enum rt_device_class_type
  */
 #define RT_DEVICE_CTRL_BASE(Type)        ((RT_Device_Class_##Type + 1) * 0x100)
 
-/**
- * special device commands
- */
-/* character device */
-#define RT_DEVICE_CTRL_CHAR_STREAM      (RT_DEVICE_CTRL_BASE(Char) + 1)             /**< stream mode on char device */
-/* block device */
-#define RT_DEVICE_CTRL_BLK_GETGEOME     (RT_DEVICE_CTRL_BASE(Block) + 1)            /**< get geometry information   */
-#define RT_DEVICE_CTRL_BLK_SYNC         (RT_DEVICE_CTRL_BASE(Block) + 2)            /**< flush data to block device */
-#define RT_DEVICE_CTRL_BLK_ERASE        (RT_DEVICE_CTRL_BASE(Block) + 3)            /**< erase block on block device */
-#define RT_DEVICE_CTRL_BLK_AUTOREFRESH  (RT_DEVICE_CTRL_BASE(Block) + 4)            /**< block device : enter/exit auto refresh mode */
-#define RT_DEVICE_CTRL_BLK_PARTITION    (RT_DEVICE_CTRL_BASE(Block) + 5)            /**< get block device partition */
-/* net interface device*/
-#define RT_DEVICE_CTRL_NETIF_GETMAC     (RT_DEVICE_CTRL_BASE(NetIf) + 1)            /**< get mac address */
-/* mtd interface device*/
-#define RT_DEVICE_CTRL_MTD_FORMAT       (RT_DEVICE_CTRL_BASE(MTD) + 1)              /**< format a MTD device */
-
 typedef struct rt_device *rt_device_t;
 
 #ifdef RT_USING_DEVICE_OPS
@@ -1323,16 +1308,27 @@ struct rt_wqueue
 };
 typedef struct rt_wqueue rt_wqueue_t;
 
+#ifdef RT_USING_DM
+struct rt_driver;
+struct rt_bus;
+#endif
+
 /**
  * Device structure
  */
 struct rt_device
 {
     struct rt_object          parent;                   /**< inherit from rt_object */
+
 #ifdef RT_USING_DM
-    struct rt_driver *drv;
-    void *dtb_node;
+    struct rt_bus *bus;                                 /**< the bus mounting to */
+    rt_list_t node;                                     /**< to mount on bus */
+    struct rt_driver *drv;                              /**< driver for powering the device */
+#ifdef RT_USING_OFW
+    void *ofw_node;                                     /**< ofw node get from device tree */
 #endif
+#endif
+
     enum rt_device_class_type type;                     /**< device type */
     rt_uint16_t               flag;                     /**< device flag */
     rt_uint16_t               open_flag;                /**< device open flag */
@@ -1363,40 +1359,7 @@ struct rt_device
 
     void                     *user_data;                /**< device private data */
 };
-
-#define RT_DRIVER_MATCH_DTS (1<<0)
-struct rt_device_id
-{
-    const char *compatible;
-    void *data;
-};
-
-struct rt_driver
-{
-#ifdef RT_USING_DEVICE_OPS
-    const struct rt_device_ops *dev_ops;
-#else
-    /* common device interface */
-    rt_err_t  (*init)   (rt_device_t dev);
-    rt_err_t  (*open)   (rt_device_t dev, rt_uint16_t oflag);
-    rt_err_t  (*close)  (rt_device_t dev);
-    rt_ssize_t (*read)  (rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size);
-    rt_ssize_t (*write) (rt_device_t dev, rt_off_t pos, const void *buffer, rt_size_t size);
-    rt_err_t  (*control)(rt_device_t dev, int cmd, void *args);
-#endif
-    const struct filesystem_ops *fops;
-    const char *name;
-    enum rt_device_class_type dev_type;
-    int device_size;
-    int flag;
-    const struct rt_device_id *dev_match;
-    int (*probe)(struct rt_device *dev);
-    int (*probe_init)(struct rt_device *dev);
-    int (*remove)(struct rt_device *dev);
-    const void *ops;    /* driver-specific operations */
-    void *drv_priv_data;
-};
-typedef struct rt_driver *rt_driver_t;
+typedef struct rt_device *rt_device_t;
 
 /**
  * Notify structure
@@ -1420,113 +1383,6 @@ struct rt_channel
 };
 typedef struct rt_channel *rt_channel_t;
 #endif
-
-/**
- * block device geometry structure
- */
-struct rt_device_blk_geometry
-{
-    rt_uint64_t sector_count;                           /**< count of sectors */
-    rt_uint32_t bytes_per_sector;                       /**< number of bytes per sector */
-    rt_uint32_t block_size;                             /**< number of bytes to erase one block */
-};
-
-/**
- * sector arrange struct on block device
- */
-struct rt_device_blk_sectors
-{
-    rt_uint64_t sector_begin;                           /**< begin sector */
-    rt_uint64_t sector_end;                             /**< end sector   */
-};
-
-/**
- * cursor control command
- */
-#define RT_DEVICE_CTRL_CURSOR_SET_POSITION  0x10
-#define RT_DEVICE_CTRL_CURSOR_SET_TYPE      0x11
-
-/**
- * graphic device control command
- */
-#define RTGRAPHIC_CTRL_RECT_UPDATE      (RT_DEVICE_CTRL_BASE(Graphic) + 0)
-#define RTGRAPHIC_CTRL_POWERON          (RT_DEVICE_CTRL_BASE(Graphic) + 1)
-#define RTGRAPHIC_CTRL_POWEROFF         (RT_DEVICE_CTRL_BASE(Graphic) + 2)
-#define RTGRAPHIC_CTRL_GET_INFO         (RT_DEVICE_CTRL_BASE(Graphic) + 3)
-#define RTGRAPHIC_CTRL_SET_MODE         (RT_DEVICE_CTRL_BASE(Graphic) + 4)
-#define RTGRAPHIC_CTRL_GET_EXT          (RT_DEVICE_CTRL_BASE(Graphic) + 5)
-#define RTGRAPHIC_CTRL_SET_BRIGHTNESS   (RT_DEVICE_CTRL_BASE(Graphic) + 6)
-#define RTGRAPHIC_CTRL_GET_BRIGHTNESS   (RT_DEVICE_CTRL_BASE(Graphic) + 7)
-#define RTGRAPHIC_CTRL_GET_MODE         (RT_DEVICE_CTRL_BASE(Graphic) + 8)
-#define RTGRAPHIC_CTRL_GET_STATUS       (RT_DEVICE_CTRL_BASE(Graphic) + 9)
-#define RTGRAPHIC_CTRL_PAN_DISPLAY      (RT_DEVICE_CTRL_BASE(Graphic) + 10)
-#define RTGRAPHIC_CTRL_WAIT_VSYNC       (RT_DEVICE_CTRL_BASE(Graphic) + 11)
-
-/* graphic device */
-enum
-{
-    RTGRAPHIC_PIXEL_FORMAT_MONO = 0,
-    RTGRAPHIC_PIXEL_FORMAT_GRAY4,
-    RTGRAPHIC_PIXEL_FORMAT_GRAY16,
-    RTGRAPHIC_PIXEL_FORMAT_RGB332,
-    RTGRAPHIC_PIXEL_FORMAT_RGB444,
-    RTGRAPHIC_PIXEL_FORMAT_RGB565,
-    RTGRAPHIC_PIXEL_FORMAT_RGB565P,
-    RTGRAPHIC_PIXEL_FORMAT_BGR565 = RTGRAPHIC_PIXEL_FORMAT_RGB565P,
-    RTGRAPHIC_PIXEL_FORMAT_RGB666,
-    RTGRAPHIC_PIXEL_FORMAT_RGB888,
-    RTGRAPHIC_PIXEL_FORMAT_BGR888,
-    RTGRAPHIC_PIXEL_FORMAT_ARGB888,
-    RTGRAPHIC_PIXEL_FORMAT_ABGR888,
-    RTGRAPHIC_PIXEL_FORMAT_RESERVED,
-};
-
-/**
- * build a pixel position according to (x, y) coordinates.
- */
-#define RTGRAPHIC_PIXEL_POSITION(x, y)  ((x << 16) | y)
-
-/**
- * graphic device information structure
- */
-struct rt_device_graphic_info
-{
-    rt_uint8_t  pixel_format;                           /**< graphic format */
-    rt_uint8_t  bits_per_pixel;                         /**< bits per pixel */
-    rt_uint16_t pitch;                                  /**< bytes per line */
-
-    rt_uint16_t width;                                  /**< width of graphic device */
-    rt_uint16_t height;                                 /**< height of graphic device */
-
-    rt_uint8_t *framebuffer;                            /**< frame buffer */
-    rt_uint32_t smem_len;                               /**< allocated frame buffer size */
-};
-
-/**
- * rectangle information structure
- */
-struct rt_device_rect_info
-{
-    rt_uint16_t x;                                      /**< x coordinate */
-    rt_uint16_t y;                                      /**< y coordinate */
-    rt_uint16_t width;                                  /**< width */
-    rt_uint16_t height;                                 /**< height */
-};
-
-/**
- * graphic operations
- */
-struct rt_device_graphic_ops
-{
-    void (*set_pixel) (const char *pixel, int x, int y);
-    void (*get_pixel) (char *pixel, int x, int y);
-
-    void (*draw_hline)(const char *pixel, int x1, int x2, int y);
-    void (*draw_vline)(const char *pixel, int x, int y1, int y2);
-
-    void (*blit_line) (const char *pixel, int x, int y, rt_size_t size);
-};
-#define rt_graphix_ops(device)          ((struct rt_device_graphic_ops *)(device->user_data))
 
 /**@}*/
 #endif /* RT_USING_DEVICE */

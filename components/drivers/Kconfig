@@ -1,5 +1,12 @@
 menu "Device Drivers"
 
+config RT_USING_DM
+    bool "Enable device driver model with device tree"
+    default n
+    help
+        Enable device driver model with device tree (FDT). It will use more memory
+        to parse and support device tree feature.
+
 config RT_USING_DEVICE_IPC
     bool "Using device drivers IPC"
     default y
@@ -216,19 +223,6 @@ config RT_USING_PM
                 int "PM standby mode threashold time"
                 default 100
         endif
-    endif
-
-config RT_USING_FDT
-    bool "Using fdt interface for device drivers"
-    default n
-    if RT_USING_FDT
-        config RT_USING_FDTLIB
-            bool "Using fdt lib for device drivers"
-            default y
-        config FDT_USING_DEBUG
-            bool "Using fdt debug function "
-            default n
-
     endif
 
 config RT_USING_RTC
