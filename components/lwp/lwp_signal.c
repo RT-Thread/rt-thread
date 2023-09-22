@@ -690,7 +690,7 @@ rt_err_t lwp_signal_kill(struct rt_lwp *lwp, long signo, long code, long value)
     /** must be able to be suspended */
     RT_DEBUG_SCHEDULER_AVAILABLE(RT_TRUE);
 
-    if (!lwp || signo < 0 || signo >= _LWP_NSIG)
+    if (!lwp || signo <= 0 || signo > _LWP_NSIG)
     {
         ret = -RT_EINVAL;
     }

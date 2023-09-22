@@ -857,7 +857,7 @@ MSH_CMD_EXPORT(list_process, list process);
 static void cmd_kill(int argc, char** argv)
 {
     int pid;
-    int sig = 0;
+    int sig = SIGKILL;
 
     if (argc < 2)
     {
