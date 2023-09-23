@@ -27,10 +27,6 @@
 #define RT_DEBUGING_COLOR
 #define RT_DEBUGING_CONTEXT
 #define RT_DEBUGING_INIT
-#define RT_USING_DEBUG
-#define RT_DEBUGING_COLOR
-#define RT_DEBUGING_CONTEXT
-#define RT_DEBUGING_INIT
 
 /* Inter-Thread communication */
 
@@ -96,12 +92,7 @@
 #define RT_SERIAL_RB_BUFSZ 64
 #define RT_USING_I2C
 #define RT_USING_I2C_BITOPS
-#define RT_USING_I2C
-#define RT_USING_I2C_BITOPS
 #define RT_USING_PIN
-#define RT_USING_ADC
-#define RT_USING_PWM
-#define RT_USING_SPI
 #define RT_USING_ADC
 #define RT_USING_PWM
 #define RT_USING_SPI
@@ -140,7 +131,7 @@
 #define RT_USING_MEM_PROTECTION
 #define RT_USING_HW_STACK_GUARD
 #define NUM_MEM_REGIONS 8
-#define NUM_EXCLUSIVE_REGIONS 3
+#define NUM_EXCLUSIVE_REGIONS 2
 #define NUM_CONFIGURABLE_REGIONS 3
 
 /* RT-Thread Utestcases */
