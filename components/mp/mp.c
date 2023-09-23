@@ -19,7 +19,7 @@ rt_mem_region_t *rt_mem_protection_find_free_region(rt_thread_t thread)
             break;
         }
     }
-    
+
     return free_region;
 }
 
@@ -35,7 +35,7 @@ rt_mem_region_t *rt_mem_protection_find_region(rt_thread_t thread, rt_mem_region
             break;
         }
     }
-    
+
     return found_region;
 }
 

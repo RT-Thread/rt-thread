@@ -10,11 +10,11 @@
 #endif
 
 typedef struct {
-	rt_uint32_t rbar;
-	union {
-		rt_uint32_t mair_attr;
-		rt_uint32_t rlar;
-	};
+    rt_uint32_t rbar;
+    union {
+        rt_uint32_t mair_attr;
+        rt_uint32_t rlar;
+    };
 } rt_mem_attr_t;
 
 #endif /* RT_USING_MEM_PROTECTION */

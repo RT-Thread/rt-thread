@@ -24,8 +24,8 @@ static void thread2_entry(void *parameter)
     (void)parameter;
     for (int i = 0; i < MPU_MIN_REGION_SIZE; i++)
     {
-        /* 
-         * Thread 2 does not have access to thread 1's private data. 
+        /*
+         * Thread 2 does not have access to thread 1's private data.
          * Access generates an exception.
          */
         thread1_private_data[i] = i;

@@ -28,7 +28,7 @@ rt_weak rt_uint32_t rt_hw_mp_region_default_attr(rt_mem_region_t *region)
     rt_uint32_t attr = 0U;
     if ((rt_uint32_t)region->start >= 0xE0000000U)
     {
-        attr = ((rt_uint32_t)region->start >= 0xE0100000U) ? STRONGLY_ORDERED_SHAREABLE : DEVICE_SHAREABLE;            
+        attr = ((rt_uint32_t)region->start >= 0xE0100000U) ? STRONGLY_ORDERED_SHAREABLE : DEVICE_SHAREABLE;
     }
     else
     {
@@ -92,7 +92,7 @@ rt_err_t rt_hw_mp_init()
         LOG_E("NUM_MEM_REGIONS = %d, hardware support %d MPU regions", NUM_MEM_REGIONS, num_mpu_regions);
         return RT_ERROR;
     }
-    
+
     num_dynamic_regions = NUM_DYNAMIC_REGIONS + NUM_EXCLUSIVE_REGIONS;
     if (num_dynamic_regions + NUM_STATIC_REGIONS > num_mpu_regions)
     {
@@ -194,7 +194,7 @@ rt_err_t rt_hw_mp_update_region(rt_thread_t thread, rt_mem_region_t *region)
     {
         index = MEM_REGION_TO_MPU_INDEX(thread, old_region);
         ARM_MPU_SetRegion(ARM_MPU_RBAR(index, (rt_uint32_t)region->start), region->attr.rasr);
-    }  
+    }
     rt_exit_critical();
     return RT_EOK;
 }

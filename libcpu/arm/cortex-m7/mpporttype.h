@@ -10,7 +10,7 @@
 #endif
 
 typedef struct {
-	rt_uint32_t rasr;
+    rt_uint32_t rasr;
 } rt_mem_attr_t;
 
 #endif /* RT_USING_MEM_PROTECTION */
