@@ -29,13 +29,13 @@
 #endif
 
 #include <video/sunxi_display2.h>
+#include <dfs_file.h>
 #include "dev_disp.h"
 
 #define DEFAULT_SCREEN (0)
 
 #define LCD_DRV_FB_SZ (lcd_drv->lcd_info.width * lcd_drv->lcd_info.height * sizeof(rt_uint32_t))
 
-#define RT_FIOMMAP2      0x52540002U
 
 enum state_buff
 {
