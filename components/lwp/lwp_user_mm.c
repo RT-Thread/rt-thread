@@ -832,4 +832,66 @@ size_t lwp_data_put(struct rt_lwp *lwp, void *dst, void *src, size_t size)
     return copy_len;
 }
 
+size_t lwp_user_strlen_ext(struct rt_lwp *lwp, const char *s)
+{
+    int len = 0;
+    char *new_buf = RT_NULL;
+    void *addr_start = RT_NULL;
+    int size = 0;
+    int err = 0;
+
+    if (s == RT_NULL)
+        return 0;
+
+    addr_start = (void *)s;
+    new_buf = rt_malloc(ARCH_PAGE_SIZE);
+
+    if (lwp == RT_NULL)
+    {
+        LOG_W("%s: lwp is NULL", __func__);
+        return -1;
+    }
+
+    err = lwp_data_get(lwp, new_buf, addr_start, ARCH_PAGE_SIZE);
+    if (err == 0)
+    {
+        rt_free(new_buf);
+        return -1;
+    }
+
+    while (new_buf[size] != '\0')
+    {
+        len ++;
+        if (size == (ARCH_PAGE_SIZE -1))
+        {
+            err = lwp_data_get(lwp, new_buf, addr_start + len, ARCH_PAGE_SIZE);
+            if (err == 0)
+            {
+                rt_free(new_buf);
+                return -1;
+            }
+
+            size = 0;
+        }
+        else
+        {
+            size ++;
+        }
+    }
+
+    rt_free(new_buf);
+
+    return len;
+}
+
+size_t lwp_user_strlen(const char *s)
+{
+    struct rt_lwp *lwp = RT_NULL;
+
+    lwp = lwp_self();
+    RT_ASSERT(lwp != RT_NULL);
+
+    return lwp_user_strlen_ext(lwp, s);
+}
+
 #endif

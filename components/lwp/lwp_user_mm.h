@@ -145,6 +145,9 @@ void lwp_unmap_user_space(struct rt_lwp *lwp);
 int lwp_unmap_user(struct rt_lwp *lwp, void *va);
 void *lwp_map_user(struct rt_lwp *lwp, void *map_va, size_t map_size, rt_bool_t text);
 
+size_t lwp_user_strlen(const char *s);
+size_t lwp_user_strlen_ext(struct rt_lwp *lwp, const char *s);
+
 rt_varea_t lwp_map_user_varea(struct rt_lwp *lwp, void *map_va, size_t map_size);
 
 /* check LWP_MAP_FLAG_* */
