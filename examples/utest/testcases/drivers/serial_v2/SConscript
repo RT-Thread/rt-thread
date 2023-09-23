@@ -7,6 +7,10 @@ uart_rxb_txnb.c
 uart_rxb_txb.c
 uart_rxnb_txb.c
 uart_rxnb_txnb.c
+uart_blocking_rx.c
+uart_blocking_tx.c
+uart_nonblocking_rx.c
+uart_nonblocking_tx.c
 ''')
 
 CPPPATH = [cwd]
