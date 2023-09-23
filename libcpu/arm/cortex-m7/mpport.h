@@ -22,10 +22,15 @@
 #define P_RO_U_RO       ((0x6 << MPU_RASR_AP_Pos) & MPU_RASR_AP_Msk | MPU_RASR_XN_Msk)
 
 /* MPU attributes for configuring code region permission */
+/* Privileged Read Write Execute, Unprivileged Read Write Execute */
 #define P_RWX_U_RWX     ((0x3 << MPU_RASR_AP_Pos) & MPU_RASR_AP_Msk)
+/* Privileged Read Write Execute, Unprivileged Read Execute */
 #define P_RWX_U_RX      ((0x2 << MPU_RASR_AP_Pos) & MPU_RASR_AP_Msk)
+/* Privileged Read Write Execute, Unprivileged No Access */
 #define P_RWX_U_NA      ((0x1 << MPU_RASR_AP_Pos) & MPU_RASR_AP_Msk)
+/* Privileged Read Execute, Unprivileged Read Execute */
 #define P_RX_U_RX       ((0x6 << MPU_RASR_AP_Pos) & MPU_RASR_AP_Msk)
+/* Privileged Read Execute, Unprivileged No Access */
 #define P_RX_U_NA       ((0x5 << MPU_RASR_AP_Pos) & MPU_RASR_AP_Msk)
 
 /* MPU attributes for configuring memory type, cacheability and shareability */
@@ -76,14 +81,12 @@ typedef void (*rt_hw_mp_exception_hook_t)(rt_mem_exception_info_t *);
 #define RT_MEM_REGION_P_RX_U_RX     RT_ARM_MEM_ATTR(P_RX_U_RX, RESERVED)
 #define RT_MEM_REGION_P_RX_U_NA     RT_ARM_MEM_ATTR(P_RX_U_NA, RESERVED)
 
-rt_weak rt_uint32_t rt_hw_mp_region_default_attr(rt_mem_region_t *region);
 rt_bool_t rt_hw_mp_region_valid(rt_mem_region_t *region);
 rt_err_t rt_hw_mp_init();
 rt_err_t rt_hw_mp_add_region(rt_thread_t thread, rt_mem_region_t *region);
 rt_err_t rt_hw_mp_delete_region(rt_thread_t thread, rt_mem_region_t *region);
 rt_err_t rt_hw_mp_update_region(rt_thread_t thread, rt_mem_region_t *region);
 rt_err_t rt_hw_mp_exception_set_hook(rt_hw_mp_exception_hook_t hook);
-void rt_hw_mp_table_switch(rt_thread_t thread);
 
 #endif /* RT_USING_MEM_PROTECTION */
 

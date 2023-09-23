@@ -32,14 +32,17 @@
 #define P_RWX_U_NA_OUTER_SHAREABLE    (((0x2 << MPU_RBAR_SH_Pos) & MPU_RBAR_SH_Msk) | ((0x0 << MPU_RBAR_AP_Pos) & MPU_RBAR_AP_Msk))
 #define P_RWX_U_NA_INNER_SHAREABLE    (((0x3 << MPU_RBAR_SH_Pos) & MPU_RBAR_SH_Msk) | ((0x0 << MPU_RBAR_AP_Pos) & MPU_RBAR_AP_Msk))
 
+/* Privileged Read Write Execute, Unprivileged Read Write Execute */
 #define P_RWX_U_RWX_NON_SHAREABLE     (((0x0 << MPU_RBAR_SH_Pos) & MPU_RBAR_SH_Msk) | ((0x1 << MPU_RBAR_AP_Pos) & MPU_RBAR_AP_Msk))
 #define P_RWX_U_RWX_OUTER_SHAREABLE   (((0x2 << MPU_RBAR_SH_Pos) & MPU_RBAR_SH_Msk) | ((0x1 << MPU_RBAR_AP_Pos) & MPU_RBAR_AP_Msk))
 #define P_RWX_U_RWX_INNER_SHAREABLE   (((0x3 << MPU_RBAR_SH_Pos) & MPU_RBAR_SH_Msk) | ((0x1 << MPU_RBAR_AP_Pos) & MPU_RBAR_AP_Msk))
 
+/* Privileged Read Execute, Unprivileged No Access */
 #define P_RX_U_NA_NON_SHAREABLE       (((0x0 << MPU_RBAR_SH_Pos) & MPU_RBAR_SH_Msk) | ((0x2 << MPU_RBAR_AP_Pos) & MPU_RBAR_AP_Msk))
 #define P_RX_U_NA_OUTER_SHAREABLE     (((0x2 << MPU_RBAR_SH_Pos) & MPU_RBAR_SH_Msk) | ((0x2 << MPU_RBAR_AP_Pos) & MPU_RBAR_AP_Msk))
 #define P_RX_U_NA_INNER_SHAREABLE     (((0x3 << MPU_RBAR_SH_Pos) & MPU_RBAR_SH_Msk) | ((0x2 << MPU_RBAR_AP_Pos) & MPU_RBAR_AP_Msk))
 
+/* Privileged Read Execute, Unprivileged Read Execute */
 #define P_RX_U_RX_NON_SHAREABLE       (((0x0 << MPU_RBAR_SH_Pos) & MPU_RBAR_SH_Msk) | ((0x3 << MPU_RBAR_AP_Pos) & MPU_RBAR_AP_Msk))
 #define P_RX_U_RX_OUTER_SHAREABLE     (((0x2 << MPU_RBAR_SH_Pos) & MPU_RBAR_SH_Msk) | ((0x3 << MPU_RBAR_AP_Pos) & MPU_RBAR_AP_Msk))
 #define P_RX_U_RX_INNER_SHAREABLE     (((0x3 << MPU_RBAR_SH_Pos) & MPU_RBAR_SH_Msk) | ((0x3 << MPU_RBAR_AP_Pos) & MPU_RBAR_AP_Msk))
@@ -72,14 +75,12 @@ typedef void (*rt_hw_mp_exception_hook_t)(rt_mem_exception_info_t *);
 #define RT_MEM_REGION_P_RX_U_NA     RT_ARM_MEM_ATTR(P_RX_U_NA_NON_SHAREABLE, RT_ARM_DEFAULT_MAIR_ATTR)
 #define RT_MEM_REGION_P_RX_U_RX     RT_ARM_MEM_ATTR(P_RX_U_RX_NON_SHAREABLE, RT_ARM_DEFAULT_MAIR_ATTR)
 
-rt_weak rt_uint8_t rt_hw_mp_region_default_attr(rt_mem_region_t *region);
 rt_bool_t rt_hw_mp_region_valid(rt_mem_region_t *region);
 rt_err_t rt_hw_mp_init();
 rt_err_t rt_hw_mp_add_region(rt_thread_t thread, rt_mem_region_t *region);
 rt_err_t rt_hw_mp_delete_region(rt_thread_t thread, rt_mem_region_t *region);
 rt_err_t rt_hw_mp_update_region(rt_thread_t thread, rt_mem_region_t *region);
 rt_err_t rt_hw_mp_exception_set_hook(rt_hw_mp_exception_hook_t hook);
-void rt_hw_mp_table_switch(rt_thread_t thread);
 
 #endif /* RT_USING_MEM_PROTECTION */
 
