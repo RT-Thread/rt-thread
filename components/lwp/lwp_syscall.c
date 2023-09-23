@@ -6289,17 +6289,87 @@ ssize_t sys_pwrite64(int fd, void *buf, int size, off_t offset)
 
 sysret_t sys_timerfd_create(int clockid, int flags)
 {
-    return 0;
+    int ret;
+
+    ret = timerfd_create(clockid, flags);
+
+    return (ret < 0 ? GET_ERRNO() : ret);
 }
 
 sysret_t sys_timerfd_settime(int fd, int flags, const struct itimerspec *new, struct itimerspec *old)
 {
-    return 0;
+    int ret = -1;
+    struct itimerspec *knew = RT_NULL;
+    struct itimerspec *kold = RT_NULL;
+
+    if (new == RT_NULL)
+        return -EINVAL;
+
+    if (!lwp_user_accessable((void *)new, sizeof(struct itimerspec)))
+    {
+        return -EFAULT;
+    }
+
+    knew = kmem_get(sizeof(struct itimerspec));
+
+    if (knew)
+    {
+        lwp_get_from_user(knew, (void*)new, sizeof(struct itimerspec));
+
+        if (old)
+        {
+            if (!lwp_user_accessable((void *)old, sizeof(struct itimerspec)))
+            {
+                kmem_put(knew);
+                return -EFAULT;
+            }
+
+            kold = kmem_get(sizeof(struct itimerspec));
+            if (kold == RT_NULL)
+            {
+                kmem_put(knew);
+                return -ENOMEM;
+            }
+        }
+
+        ret = timerfd_settime(fd, flags, knew, kold);
+
+        if (old)
+        {
+            lwp_put_to_user(old, kold, sizeof(*kold));
+            kmem_put(kold);
+        }
+
+        kmem_put(knew);
+    }
+
+    return (ret < 0 ? GET_ERRNO() : ret);
 }
 
 sysret_t sys_timerfd_gettime(int fd, struct itimerspec *cur)
 {
-    return 0;
+    int ret = -1;
+    struct itimerspec *kcur;
+
+    if (cur == RT_NULL)
+        return -EINVAL;
+
+    if (!lwp_user_accessable((void *)cur, sizeof(struct itimerspec)))
+    {
+        return -EFAULT;
+    }
+
+    kcur = kmem_get(sizeof(struct itimerspec));
+
+    if (kcur)
+    {
+        lwp_get_from_user(kcur, cur, sizeof(struct itimerspec));
+        ret = timerfd_gettime(fd, kcur);
+        lwp_put_to_user(cur, kcur, sizeof(struct itimerspec));
+        kmem_put(kcur);
+    }
+
+    return (ret < 0 ? GET_ERRNO() : ret);
 }
 
 sysret_t sys_signalfd(int fd, const sigset_t *mask, int flags)
