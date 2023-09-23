@@ -19,9 +19,12 @@
 #include <board.h>
 #include <rtthread.h>
 #include <rthw.h>
-#include <lwp_arch.h>
 #include <mmu.h>
 #include <tlb.h>
+
+#ifdef RT_USING_SMART
+#include <lwp_arch.h>
+#endif
 
 #include <ioremap.h>
 #include <mm_aspace.h>

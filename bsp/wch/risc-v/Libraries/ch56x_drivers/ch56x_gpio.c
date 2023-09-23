@@ -8,7 +8,6 @@
  * 2022-07-15     Emuzit            first version
  */
 #include <rthw.h>
-#include <rtdebug.h>
 #include <drivers/pin.h>
 #include "ch56x_gpio.h"
 #include "isr_sp.h"
@@ -191,6 +190,8 @@ static rt_base_t gpio_pin_get(const char *name)
         }
     }
 
+out:
+    rt_kprintf("PX.nn X: A,B,C,D...  nn: 0~31, e.g. PA.0\n");
     return -1;
 }
 

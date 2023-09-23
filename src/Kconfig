@@ -34,12 +34,29 @@ config RT_USING_SMART
     select RT_USING_POSIX_CLOCK
     select RT_USING_POSIX_FS
     select RT_USING_POSIX_TERMIOS
+    select RT_USING_KTIME
     depends on ARCH_ARM_CORTEX_M || ARCH_ARM_ARM9 || ARCH_ARM_CORTEX_A || ARCH_ARMV8 || ARCH_RISCV64
     help
         RT-Thread Smart is a microkernel based operating system on RT-Thread.
 
+config RT_USING_AMP
+    bool "Enable AMP (Asymmetric Multi-Processing)"
+    default n
+    if RT_USING_AMP
+        choice
+            prompt "Select the AMP role"
+            default RT_AMP_SLAVE
+
+            config RT_AMP_MASTER
+            bool "amp role MASTER"
+
+            config RT_AMP_SLAVE
+            bool "amp role SLAVE"
+        endchoice
+    endif
+
 config RT_USING_SMP
-    bool "Enable SMP(Symmetric multiprocessing)"
+    bool "Enable SMP (Symmetric multiprocessing)"
     default n
     help
         This option should be selected by machines which have an SMP-
@@ -50,7 +67,7 @@ config RT_USING_SMP
 config RT_CPUS_NR
     int "Number of CPUs"
     default 2
-    depends on RT_USING_SMP
+    depends on RT_USING_SMP || RT_USING_AMP
     help
         Number of CPUs in the system
 
@@ -60,19 +77,19 @@ config RT_ALIGN_SIZE
     help
         Alignment size for CPU architecture data access
 
-    choice
-        prompt "The maximal level value of priority of thread"
-        default RT_THREAD_PRIORITY_32
+choice
+    prompt "The maximal level value of priority of thread"
+    default RT_THREAD_PRIORITY_32
 
-        config RT_THREAD_PRIORITY_8
-            bool "8"
+    config RT_THREAD_PRIORITY_8
+        bool "8"
 
-        config RT_THREAD_PRIORITY_32
-            bool "32"
+    config RT_THREAD_PRIORITY_32
+        bool "32"
 
-        config RT_THREAD_PRIORITY_256
-            bool "256"
-    endchoice
+    config RT_THREAD_PRIORITY_256
+        bool "256"
+endchoice
 
 config RT_THREAD_PRIORITY_MAX
     int
@@ -181,103 +198,28 @@ menu "kservice optimization"
 
 endmenu
 
-menuconfig RT_DEBUG
+menuconfig RT_USING_DEBUG
     bool "Enable debugging features"
     default y
 
-if RT_DEBUG
+    if RT_USING_DEBUG
+        config RT_DEBUGING_COLOR
+            bool "Enable color debugging log"
+            default y
 
-    config RT_DEBUG_COLOR
-        bool "Enable color debugging log"
-        default n
+        config RT_DEBUGING_CONTEXT
+            bool "Enable debugging of environment and context check"
+            default y
 
-    config RT_DEBUG_INIT_CONFIG
-        bool "Enable debugging of components initialization"
-        default n
+        config RT_DEBUGING_INIT
+            bool "Enable debugging of components initialization"
+            default y
 
-    config RT_DEBUG_INIT
-        int
-        default 1 if RT_DEBUG_INIT_CONFIG
-
-    config RT_DEBUG_THREAD_CONFIG
-        bool "Enable debugging of Thread State Changes"
-        default n
-
-    config RT_DEBUG_THREAD
-        int
-        default 1 if RT_DEBUG_THREAD_CONFIG
-
-    config RT_DEBUG_SCHEDULER_CONFIG
-        bool "Enable debugging of Scheduler"
-        default n
-
-    config RT_DEBUG_SCHEDULER
-        int
-        default 1 if RT_DEBUG_SCHEDULER_CONFIG
-
-    config RT_DEBUG_IPC_CONFIG
-        bool "Enable debugging of IPC"
-        default n
-
-    config RT_DEBUG_IPC
-        int
-        default 1 if RT_DEBUG_IPC_CONFIG
-
-    config RT_DEBUG_TIMER_CONFIG
-        bool "Enable debugging of Timer"
-        default n
-
-    config RT_DEBUG_TIMER
-        int
-        default 1 if RT_DEBUG_TIMER_CONFIG
-
-    config RT_DEBUG_IRQ_CONFIG
-        bool "Enable debugging of IRQ(Interrupt Request)"
-        default n
-
-    config RT_DEBUG_IRQ
-        int
-        default 1 if RT_DEBUG_IRQ_CONFIG
-
-    config RT_DEBUG_MEM_CONFIG
-        bool "Enable debugging of Small Memory Algorithm"
-        default n
-
-    config RT_DEBUG_MEM
-        int
-        default 1 if RT_DEBUG_MEM_CONFIG
-
-    config RT_DEBUG_SLAB_CONFIG
-        bool "Enable debugging of SLAB Memory Algorithm"
-        default n
-
-    config RT_DEBUG_SLAB
-        int
-        default 1 if RT_DEBUG_SLAB_CONFIG
-
-    config RT_DEBUG_MEMHEAP_CONFIG
-        bool "Enable debugging of Memory Heap Algorithm"
-        default n
-
-    config RT_DEBUG_MEMHEAP
-        int
-        default 1 if RT_DEBUG_MEMHEAP_CONFIG
-
-    if ARCH_MM_MMU
-        config RT_DEBUG_PAGE_LEAK
+        config RT_DEBUGING_PAGE_LEAK
             bool "Enable page leaking tracer"
+            depends on ARCH_MM_MMU
             default n
     endif
-
-    config RT_DEBUG_MODULE_CONFIG
-        bool "Enable debugging of Application Module"
-        default n
-
-    config RT_DEBUG_MODULE
-        int
-        default 1 if RT_DEBUG_MODULE_CONFIG
-
-endif
 
 menu "Inter-Thread communication"
 
@@ -301,6 +243,12 @@ menu "Inter-Thread communication"
         bool "Enable message queue"
         default y
 
+    if RT_USING_MESSAGEQUEUE
+        config RT_USING_MESSAGEQUEUE_PRIORITY
+            bool "Enable message queue priority"
+            default n
+    endif
+
     config RT_USING_SIGNALS
         bool "Enable signals"
         select RT_USING_MEMPOOL
@@ -313,17 +261,16 @@ endmenu
 
 menu "Memory Management"
 
-    if ARCH_MM_MMU
-        config RT_PAGE_MAX_ORDER
-            int "Max order of pages allocatable by page allocator"
-            default 11
-            help
-                For example, A value of 11 means the maximum chunk of contiguous memory
-                allocatable by page system is 2^(11 + ARCH_PAGE_BITS - 1) Bytes.
-                Large memory requirement can consume all system resource, and should
-                consider reserved memory instead to enhance system endurance.
-                Max order should at least satisfied usage by huge page.
-    endif
+    config RT_PAGE_MAX_ORDER
+        int "Max order of pages allocatable by page allocator"
+        default 11
+        depends on ARCH_MM_MMU
+        help
+            For example, A value of 11 means the maximum chunk of contiguous memory
+            allocatable by page system is 2^(11 + ARCH_PAGE_BITS - 1) Bytes.
+            Large memory requirement can consume all system resource, and should
+            consider reserved memory instead to enhance system endurance.
+            Max order should at least satisfied usage by huge page.
 
     config RT_USING_MEMPOOL
         bool "Using memory pool"

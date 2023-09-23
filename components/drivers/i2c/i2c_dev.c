@@ -67,7 +67,6 @@ static rt_err_t i2c_bus_device_control(rt_device_t dev,
     rt_err_t ret;
     struct rt_i2c_priv_data *priv_data;
     struct rt_i2c_bus_device *bus = (struct rt_i2c_bus_device *)dev->user_data;
-    rt_uint32_t bus_clock;
 
     RT_ASSERT(bus != RT_NULL);
 
@@ -88,16 +87,8 @@ static rt_err_t i2c_bus_device_control(rt_device_t dev,
             return -RT_EIO;
         }
         break;
-    case RT_I2C_DEV_CTRL_CLK:
-        bus_clock = *(rt_uint32_t *)args;
-        ret = rt_i2c_control(bus, cmd, bus_clock);
-        if (ret < 0)
-        {
-            return -RT_EIO;
-        }
-        break;
     default:
-        break;
+        return rt_i2c_control(bus, cmd, args);
     }
 
     return RT_EOK;

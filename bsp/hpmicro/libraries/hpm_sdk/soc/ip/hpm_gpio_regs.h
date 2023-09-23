@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 hpmicro
+ * Copyright (c) 2021-2023 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -11,10 +11,8 @@
 
 typedef struct {
     struct {
-        __RW uint32_t VALUE;                   /* 0x0: GPIO input value */
-        __RW uint32_t SET;                     /* 0x4: GPIO input set */
-        __RW uint32_t CLEAR;                   /* 0x8: GPIO input clear */
-        __RW uint32_t TOGGLE;                  /* 0xC: GPIO input toggle */
+        __R  uint32_t VALUE;                   /* 0x0: GPIO input value */
+        __R  uint8_t  RESERVED0[12];           /* 0x4 - 0xF: Reserved */
     } DI[16];
     struct {
         __RW uint32_t VALUE;                   /* 0x100: GPIO output value */
@@ -30,9 +28,7 @@ typedef struct {
     } OE[16];
     struct {
         __W  uint32_t VALUE;                   /* 0x300: GPIO interrupt flag value */
-        __RW uint32_t SET;                     /* 0x304: GPIO interrupt flag set */
-        __RW uint32_t CLEAR;                   /* 0x308: GPIO interrupt flag clear */
-        __RW uint32_t TOGGLE;                  /* 0x30C: GPIO interrupt flag toggle */
+        __R  uint8_t  RESERVED0[12];           /* 0x304 - 0x30F: Reserved */
     } IF[16];
     struct {
         __RW uint32_t VALUE;                   /* 0x400: GPIO interrupt enable value */
@@ -63,7 +59,7 @@ typedef struct {
 
 /* Bitfield definition for register of struct array DI: VALUE */
 /*
- * INPUT (RW)
+ * INPUT (RO)
  *
  * GPIO input bus value, each bit represents a bus bit
  * 0: low level presents on chip pin
@@ -71,47 +67,7 @@ typedef struct {
  */
 #define GPIO_DI_VALUE_INPUT_MASK (0xFFFFFFFFUL)
 #define GPIO_DI_VALUE_INPUT_SHIFT (0U)
-#define GPIO_DI_VALUE_INPUT_SET(x) (((uint32_t)(x) << GPIO_DI_VALUE_INPUT_SHIFT) & GPIO_DI_VALUE_INPUT_MASK)
 #define GPIO_DI_VALUE_INPUT_GET(x) (((uint32_t)(x) & GPIO_DI_VALUE_INPUT_MASK) >> GPIO_DI_VALUE_INPUT_SHIFT)
-
-/* Bitfield definition for register of struct array DI: SET */
-/*
- * INPUT (RW)
- *
- * GPIO input bus value, each bit represents a bus bit
- * 0: low level presents on chip pin
- * 1: high level presents on chip pin
- */
-#define GPIO_DI_SET_INPUT_MASK (0xFFFFFFFFUL)
-#define GPIO_DI_SET_INPUT_SHIFT (0U)
-#define GPIO_DI_SET_INPUT_SET(x) (((uint32_t)(x) << GPIO_DI_SET_INPUT_SHIFT) & GPIO_DI_SET_INPUT_MASK)
-#define GPIO_DI_SET_INPUT_GET(x) (((uint32_t)(x) & GPIO_DI_SET_INPUT_MASK) >> GPIO_DI_SET_INPUT_SHIFT)
-
-/* Bitfield definition for register of struct array DI: CLEAR */
-/*
- * INPUT (RW)
- *
- * GPIO input bus value, each bit represents a bus bit
- * 0: low level presents on chip pin
- * 1: high level presents on chip pin
- */
-#define GPIO_DI_CLEAR_INPUT_MASK (0xFFFFFFFFUL)
-#define GPIO_DI_CLEAR_INPUT_SHIFT (0U)
-#define GPIO_DI_CLEAR_INPUT_SET(x) (((uint32_t)(x) << GPIO_DI_CLEAR_INPUT_SHIFT) & GPIO_DI_CLEAR_INPUT_MASK)
-#define GPIO_DI_CLEAR_INPUT_GET(x) (((uint32_t)(x) & GPIO_DI_CLEAR_INPUT_MASK) >> GPIO_DI_CLEAR_INPUT_SHIFT)
-
-/* Bitfield definition for register of struct array DI: TOGGLE */
-/*
- * INPUT (RW)
- *
- * GPIO input bus value, each bit represents a bus bit
- * 0: low level presents on chip pin
- * 1: high level presents on chip pin
- */
-#define GPIO_DI_TOGGLE_INPUT_MASK (0xFFFFFFFFUL)
-#define GPIO_DI_TOGGLE_INPUT_SHIFT (0U)
-#define GPIO_DI_TOGGLE_INPUT_SET(x) (((uint32_t)(x) << GPIO_DI_TOGGLE_INPUT_SHIFT) & GPIO_DI_TOGGLE_INPUT_MASK)
-#define GPIO_DI_TOGGLE_INPUT_GET(x) (((uint32_t)(x) & GPIO_DI_TOGGLE_INPUT_MASK) >> GPIO_DI_TOGGLE_INPUT_SHIFT)
 
 /* Bitfield definition for register of struct array DO: VALUE */
 /*
@@ -229,45 +185,6 @@ typedef struct {
 #define GPIO_IF_VALUE_IRQ_FLAG_SHIFT (0U)
 #define GPIO_IF_VALUE_IRQ_FLAG_SET(x) (((uint32_t)(x) << GPIO_IF_VALUE_IRQ_FLAG_SHIFT) & GPIO_IF_VALUE_IRQ_FLAG_MASK)
 #define GPIO_IF_VALUE_IRQ_FLAG_GET(x) (((uint32_t)(x) & GPIO_IF_VALUE_IRQ_FLAG_MASK) >> GPIO_IF_VALUE_IRQ_FLAG_SHIFT)
-
-/* Bitfield definition for register of struct array IF: SET */
-/*
- * IRQ_FLAG (RW)
- *
- * GPIO interrupt flag, write 1 to clear this flag
- * 0: no irq
- * 1: irq pending
- */
-#define GPIO_IF_SET_IRQ_FLAG_MASK (0xFFFFFFFFUL)
-#define GPIO_IF_SET_IRQ_FLAG_SHIFT (0U)
-#define GPIO_IF_SET_IRQ_FLAG_SET(x) (((uint32_t)(x) << GPIO_IF_SET_IRQ_FLAG_SHIFT) & GPIO_IF_SET_IRQ_FLAG_MASK)
-#define GPIO_IF_SET_IRQ_FLAG_GET(x) (((uint32_t)(x) & GPIO_IF_SET_IRQ_FLAG_MASK) >> GPIO_IF_SET_IRQ_FLAG_SHIFT)
-
-/* Bitfield definition for register of struct array IF: CLEAR */
-/*
- * IRQ_FLAG (RW)
- *
- * GPIO interrupt flag, write 1 to clear this flag
- * 0: no irq
- * 1: irq pending
- */
-#define GPIO_IF_CLEAR_IRQ_FLAG_MASK (0xFFFFFFFFUL)
-#define GPIO_IF_CLEAR_IRQ_FLAG_SHIFT (0U)
-#define GPIO_IF_CLEAR_IRQ_FLAG_SET(x) (((uint32_t)(x) << GPIO_IF_CLEAR_IRQ_FLAG_SHIFT) & GPIO_IF_CLEAR_IRQ_FLAG_MASK)
-#define GPIO_IF_CLEAR_IRQ_FLAG_GET(x) (((uint32_t)(x) & GPIO_IF_CLEAR_IRQ_FLAG_MASK) >> GPIO_IF_CLEAR_IRQ_FLAG_SHIFT)
-
-/* Bitfield definition for register of struct array IF: TOGGLE */
-/*
- * IRQ_FLAG (RW)
- *
- * GPIO interrupt flag, write 1 to clear this flag
- * 0: no irq
- * 1: irq pending
- */
-#define GPIO_IF_TOGGLE_IRQ_FLAG_MASK (0xFFFFFFFFUL)
-#define GPIO_IF_TOGGLE_IRQ_FLAG_SHIFT (0U)
-#define GPIO_IF_TOGGLE_IRQ_FLAG_SET(x) (((uint32_t)(x) << GPIO_IF_TOGGLE_IRQ_FLAG_SHIFT) & GPIO_IF_TOGGLE_IRQ_FLAG_MASK)
-#define GPIO_IF_TOGGLE_IRQ_FLAG_GET(x) (((uint32_t)(x) & GPIO_IF_TOGGLE_IRQ_FLAG_MASK) >> GPIO_IF_TOGGLE_IRQ_FLAG_SHIFT)
 
 /* Bitfield definition for register of struct array IE: VALUE */
 /*

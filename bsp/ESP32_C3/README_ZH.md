@@ -50,70 +50,73 @@
 | UART              |     支持     | 使用LUATOS_ESP32C3开发板需要在UART0_TX和UART0_RX连接串口转USB芯片（如CP2102）|
 | JTAG调试          |     支持     | ESP32C3采用USB方式和PC链接的开发板可以调试                                |
 
-## 安装ESP-IDF
-可以使用两种方法安装ESP-IDF
-1. 使用Env工具安装
-- 下载软件包
-```
-pkgs --update
-```
-- 安装IDF工具链。如果使用Linux或MacOS系统，在命令行内进入到ESP-IDF软件包路径，安装IDf工具链。
-```
-cd packages/ESP-IDF-latest
-./install.sh
-```
-如果使用Windows系统，打开Command Prompt，注意不能使用其他任何命令行，如Env命令行和PowerShell。进入BSP目录并执行
-```
-install.bat
-```
-无论使用任何系统，这一步只需要在下载完软件包后执行一次。
-- 在软件包路径下设置IDF路径。每当在新的命令行编译BSP时需要执行此命令。
-如果使用Linux或MacOS系统，执行
-```
-. export.sh
-```
-如果使用Windows系统，执行
-```
-export.bat
-```
-这一步仍然只能使用Command Prompt。
+## 环境搭建及编译
 
-2. 在本地ESP-IDF加载patch
-- 通过`SCons --menuconfig`选择
-```
-Hardware Drivers Config
-    [*] Use local ESP-IDF installation
-```
-并取消勾选ESP-IDF软件包
-```
-RT-Thread online packages
-    peripheral libraries and drivers
-        [ ] ESP-IDF: Espressif IoT Development Framework
-```
-- 使用Env工具下载FreeRTOS兼容层
-```
-pkgs --update
-```
-- 可以选择其他方式在本地安装ESP-IDF，如[VSCode插件](https://github.com/espressif/vscode-esp-idf-extension/blob/master/docs/tutorial/install.md)。确保安装的ESP-IDF是master版本。
-- 进入本地ESP-IDF目录执行以下命令
-```
-git checkout 5c1044d84d625219eafa18c24758d9f0e4006b2c
-# 把rtt.patch换成BSP目录下rtt.patch的正确路径
-git am rtt.patch
-```
-- 加载patch后不会影响使用ESP-IDF编译基于FreeRTOS的工程
+1. 下载 RISC-V 工具链：
 
-## 编译和烧录
-1. 在BSP路径下配置RT-Thread
-```
-scons --menuconfig
-```
-2. 每当使用`scons --menuconfig`更改RT-Thread配置后需要重新生成`CMakeLists.txt`。
-```
-scons --target=esp-idf
-```
-3. 如果使用Env安装了ESP-IDF，使用`idf.py`命令编译，烧录。具体参考[乐鑫官网](https://docs.espressif.com/projects/esp-idf/en/latest/esp32c3/get-started/index.html#build-your-first-project)。注意如果使用Windows系统，`idf.py`只能在Command Prompt里执行。如果使用了在本地ESP-IDF加载patch的方式，可使用其他相应的编译和烧录方法，如[VSCode插件](https://github.com/espressif/vscode-esp-idf-extension/blob/master/docs/tutorial/install.md)。
-4. 下载程序成功之后，系统会运行，红色的 LED灯以 1S 周期闪烁。
+    ```sh
+    wget https://github.com/espressif/crosstool-NG/releases/download/esp-2022r1-RC1/riscv32-esp-elf-gcc11_2_0-esp-2022r1-RC1-linux-amd64.tar.xz
+    tar xf riscv32-esp-elf-gcc11_2_0-esp-2022r1-RC1-linux-amd64.tar.xz
+    ```
+
+  2. 配置工具链的路径：
+
+     在`bsp/ESP32_C3/rtconfig.py`文件中将`RISC-V`工具链的本地路径添加到`EXEC_PATH`变量中，或者通过设置 `RTT_EXEC_PATH`环境变量指定路径，例如：
+
+     ```sh
+     export RTT_EXEC_PATH=/opt/riscv32-esp-elf/bin
+     ```
+
+  3. 编译
+
+     安装 esptool 用于转换 ELF 文件为二进制烧录文件：
+
+     ```sh
+     pip install esptool
+     ```
+
+     在 Linux 平台下进入`bsp/ESP32_C3/`执行以下命令进行配置：
+
+     ```
+     scons --menuconfig
+     ```
+
+     它会自动下载env相关脚本到`~/.env`目录，然后执行：
+
+     ```sh
+     source ~/.env/env.sh
+     
+     cd bsp/ESP32_C3/
+     pkgs --update
+     ```
+
+     它会自动下载`RT-Thread-packages/esp-idf`和`RT-Thread-packages/FreeRTOS-Wrapper`，更新完软件包后，执行 `scons` 来编译这个板级支持包。
+
+     如果编译成功，将生成`rtthread.elf`、`rtthread.bin`文件。
+
+## 下载烧录
+
+1. 烧录工具下载
+
+    当前bsp测试使用`flash_download_tool_3.9.4`工具进行烧录无误。
+
+    烧录工具下载地址：[https://www.espressif.com.cn/sites/default/files/tools/flash_download_tool_3.9.4_0.zip](https://www.espressif.com.cn/sites/default/files/tools/flash_download_tool_3.9.4_0.zip)
+
+2. 烧录工具配置
+
+    芯片型号选择`ESP32-C3`
+
+    将二进制文件与偏移地址配置如下：
+
+    | 二进制文件          | 偏移地址 |
+    | ------------------- | -------- |
+    | bootloader.bin      | 0x0      |
+    | partition-table.bin | 0x8000   |
+    | rtthread.bin        | 0x10000  |
+
+    其中`bootloader.bin`和`partition-table.bin`可在`bsp/ESP32_C3/builtin_imgs`文件夹下找到，配置完成后截图如下，之后点击`START`即可下载。
+
+    ![flash_download_tools](images/flash_download_tools.png)
 
 ## 注意事项
 

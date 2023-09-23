@@ -10,6 +10,7 @@
 
 #include <rtthread.h>
 #include <dfs_fs.h>
+#include <dfs_file.h>
 
 #include <drivers/mmcsd_core.h>
 #include <drivers/gpt.h>
@@ -25,6 +26,8 @@
 static rt_list_t blk_devices = RT_LIST_OBJECT_INIT(blk_devices);
 
 #define BLK_MIN(a, b) ((a) < (b) ? (a) : (b))
+#define RT_DEVICE_CTRL_BLK_SSIZEGET      0x1268                                     /**< get number of bytes per sector */
+#define RT_DEVICE_CTRL_ALL_BLK_SSIZEGET  0x80081272                                 /**< get number of bytes per sector * sector counts*/
 
 struct mmcsd_blk_device
 {
@@ -267,6 +270,7 @@ static rt_err_t rt_mmcsd_close(rt_device_t dev)
 static rt_err_t rt_mmcsd_control(rt_device_t dev, int cmd, void *args)
 {
     struct mmcsd_blk_device *blk_dev = (struct mmcsd_blk_device *)dev->user_data;
+
     switch (cmd)
     {
     case RT_DEVICE_CTRL_BLK_GETGEOME:
@@ -274,6 +278,16 @@ static rt_err_t rt_mmcsd_control(rt_device_t dev, int cmd, void *args)
         break;
     case RT_DEVICE_CTRL_BLK_PARTITION:
         rt_memcpy(args, &blk_dev->part, sizeof(struct dfs_partition));
+        break;
+    case RT_DEVICE_CTRL_BLK_SSIZEGET:
+        rt_memcpy(args, &blk_dev->geometry.bytes_per_sector, sizeof(rt_uint32_t));
+        break;
+    case RT_DEVICE_CTRL_ALL_BLK_SSIZEGET:
+    {
+        rt_uint64_t count_mul_per = blk_dev->geometry.bytes_per_sector * blk_dev->geometry.sector_count;
+        rt_memcpy(args, &count_mul_per, sizeof(rt_uint64_t));
+    }
+        break;
     default:
         break;
     }
@@ -414,6 +428,207 @@ const static struct rt_device_ops mmcsd_blk_ops =
 };
 #endif
 
+#ifdef RT_USING_DFS_V2
+
+static ssize_t rt_mmcsd_fops_read(struct dfs_file *file, void *buf, size_t count, off_t *pos)
+{
+    int result = 0;
+    rt_device_t dev = (rt_device_t)file->vnode->data;
+    struct mmcsd_blk_device *blk_dev = (struct mmcsd_blk_device *)dev->user_data;
+    int bytes_per_sector = blk_dev->geometry.bytes_per_sector;
+    int blk_pos = *pos / bytes_per_sector;
+    int first_offs = *pos % bytes_per_sector;
+    char *rbuf;
+    int rsize = 0;
+
+    rbuf = rt_malloc(bytes_per_sector);
+    if (!rbuf)
+    {
+        return 0;
+    }
+
+    /*
+    ** #1: read first unalign block size.
+    */
+    result = rt_mmcsd_read(dev, blk_pos, rbuf, 1);
+    if (result != 1)
+    {
+        rt_free(rbuf);
+        return 0;
+    }
+
+    if (count > bytes_per_sector - first_offs)
+    {
+        rsize = bytes_per_sector - first_offs;
+    }
+    else
+    {
+        rsize = count;
+    }
+    rt_memcpy(buf, rbuf + first_offs, rsize);
+    blk_pos++;
+
+    /*
+    ** #2: read continuous block size.
+    */
+    while (rsize < count)
+    {
+        result = rt_mmcsd_read(dev, blk_pos++, rbuf, 1);
+        if (result != 1)
+        {
+            break;
+        }
+
+        if (count - rsize >= bytes_per_sector)
+        {
+            rt_memcpy(buf + rsize, rbuf, bytes_per_sector);
+            rsize += bytes_per_sector;
+        }
+        else
+        {
+            rt_memcpy(buf + rsize, rbuf, count - rsize);
+            rsize = count;
+        }
+    }
+
+    rt_free(rbuf);
+    *pos += rsize;
+
+    return rsize;
+}
+
+static int rt_mmcsd_fops_ioctl(struct dfs_file *file, int cmd, void *arg)
+{
+    rt_device_t dev = (rt_device_t)file->vnode->data;
+
+    return rt_mmcsd_control(dev,cmd,arg);
+}
+
+static int rt_mmcsd_fops_open(struct dfs_file *file)
+{
+    rt_device_t dev = (rt_device_t)file->vnode->data;
+    rt_mmcsd_control(dev, RT_DEVICE_CTRL_ALL_BLK_SSIZEGET, &file->vnode->size);
+    return RT_EOK;
+}
+
+static int rt_mmcsd_fops_close(struct dfs_file *file)
+{
+    return RT_EOK;
+}
+
+static ssize_t rt_mmcsd_fops_write(struct dfs_file *file, const void *buf, size_t count, off_t *pos)
+{
+    int result = 0;
+    rt_device_t dev = (rt_device_t)file->vnode->data;
+    struct mmcsd_blk_device *blk_dev = (struct mmcsd_blk_device *)dev->user_data;
+    int bytes_per_sector = blk_dev->geometry.bytes_per_sector;
+    int blk_pos = *pos / bytes_per_sector;
+    int first_offs = *pos % bytes_per_sector;
+    char *rbuf = 0;
+    int wsize = 0;
+
+    /*
+    ** #1: write first unalign block size.
+    */
+    if (first_offs != 0)
+    {
+        if (count > bytes_per_sector - first_offs)
+        {
+            wsize = bytes_per_sector - first_offs;
+        }
+        else
+        {
+            wsize = count;
+        }
+
+        rbuf = rt_malloc(bytes_per_sector);
+        if (!rbuf)
+        {
+            return 0;
+        }
+
+        result = rt_mmcsd_read(dev, blk_pos, rbuf, 1);
+        if (result != 1)
+        {
+            rt_free(rbuf);
+            return 0;
+        }
+
+        rt_memcpy(rbuf + first_offs, buf, wsize);
+        result = rt_mmcsd_write(dev, blk_pos, rbuf, 1);
+        if (result != 1)
+        {
+            rt_free(rbuf);
+            return 0;
+        }
+        rt_free(rbuf);
+        blk_pos += 1;
+    }
+
+    /*
+    ** #2: write continuous block size.
+    */
+    if ((count - wsize) / bytes_per_sector != 0)
+    {
+        result = rt_mmcsd_write(dev, blk_pos, buf + wsize, (count - wsize) / bytes_per_sector);
+        wsize += result * bytes_per_sector;
+        blk_pos += result;
+        if (result != (count - wsize) / bytes_per_sector)
+        {
+            *pos += wsize;
+            return wsize;
+        }
+    }
+
+    /*
+    ** # 3: write last unalign block size.
+    */
+    if ((count - wsize) != 0)
+    {
+        rbuf = rt_malloc(bytes_per_sector);
+        if (rbuf != RT_NULL)
+        {
+            result = rt_mmcsd_read(dev, blk_pos, rbuf, 1);
+            if (result == 1)
+            {
+                rt_memcpy(rbuf, buf + wsize, count - wsize);
+                result = rt_mmcsd_write(dev, blk_pos, rbuf, 1);
+                if (result == 1)
+                {
+                    wsize += count - wsize;
+                }
+            }
+
+            rt_free(rbuf);
+        }
+    }
+
+    *pos += wsize;
+    return wsize;
+}
+
+static int rt_mmcsd_fops_poll(struct dfs_file *file, struct rt_pollreq *req)
+{
+    int mask = 0;
+
+    return mask;
+}
+
+const static struct dfs_file_ops mmcsd_blk_fops =
+{
+    rt_mmcsd_fops_open,
+    rt_mmcsd_fops_close,
+    rt_mmcsd_fops_ioctl,
+    rt_mmcsd_fops_read,
+    rt_mmcsd_fops_write,
+    RT_NULL,
+    generic_dfs_lseek,
+    RT_NULL,
+    RT_NULL,
+    rt_mmcsd_fops_poll
+};
+#endif
+
 rt_int32_t gpt_device_probe(struct rt_mmcsd_card *card)
 {
     rt_int32_t err = RT_EOK;
@@ -460,6 +675,11 @@ rt_int32_t gpt_device_probe(struct rt_mmcsd_card *card)
 
     rt_device_register(&(blk_dev->dev), card->host->name,
                        RT_DEVICE_FLAG_RDWR);
+#ifdef RT_USING_POSIX_DEVIO
+#ifdef RT_USING_DFS_V2
+    blk_dev->dev.fops  = &mmcsd_blk_fops;
+#endif
+#endif
     rt_list_insert_after(&blk_devices, &blk_dev->list);
 
     for (i = 0; i < RT_GPT_PARTITION_MAX; i++)
@@ -505,6 +725,11 @@ rt_int32_t gpt_device_probe(struct rt_mmcsd_card *card)
 
             rt_device_register(&(blk_dev->dev), dname,
                                RT_DEVICE_FLAG_RDWR);
+#ifdef RT_USING_POSIX_DEVIO
+#ifdef RT_USING_DFS_V2
+            blk_dev->dev.fops  = &mmcsd_blk_fops;
+#endif
+#endif
             rt_list_insert_after(&blk_devices, &blk_dev->list);
         }
         else

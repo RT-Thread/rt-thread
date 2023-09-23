@@ -1,12 +1,13 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
- * 2023/01/17     WangShun    The first version
+ * 2023/01/17     WangShun     The first version
  * 2023/03/19     Flyingcys    Add riscv_32e support
+ * 2023/08/09     HPMicro      Fix the issue t0 was modified unexpectedly before being saved
  */
 #define __ASSEMBLY__
 #include "cpuport.h"
@@ -20,9 +21,7 @@
     .global SW_handler
 
 SW_handler:
-	li   t0,    0x08
-	csrc mstatus, t0
-
+    csrci mstatus, 0x8
 #ifdef ARCH_RISCV_FPU
     addi    sp, sp, -32 * FREGBYTES
     FSTORE  f0, 0 * FREGBYTES(sp)

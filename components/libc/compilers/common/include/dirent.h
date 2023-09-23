@@ -26,10 +26,15 @@ extern "C" {
 #define FT_SOCKET       1   /* socket file  */
 #define FT_DIRECTORY    2   /* directory    */
 #define FT_USER         3   /* user defined */
+#define FT_DEVICE       4   /* device */
+#define FT_SYMLINK      5   /* symbol link */
+#define FT_NONLOCK      6   /* non lock */
 
 #define DT_UNKNOWN      0x00
-#define DT_REG          0x01
-#define DT_DIR          0x02
+#define DT_FIFO         0x01
+#define DT_SYMLINK      0x03
+#define DT_DIR          0x04
+#define DT_REG          0x08
 
 #ifndef HAVE_DIR_STRUCTURE
 #define HAVE_DIR_STRUCTURE
@@ -61,7 +66,7 @@ DIR           *opendir(const char *);
 struct dirent *readdir(DIR *);
 int            readdir_r(DIR *, struct dirent *, struct dirent **);
 void           rewinddir(DIR *);
-void           seekdir(DIR *, long int);
+void           seekdir(DIR *, long);
 long           telldir(DIR *);
 
 #ifdef __cplusplus

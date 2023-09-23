@@ -21,10 +21,18 @@ ifdef CONFIG_TARGET_E2000D
 RTCONFIG := e2000d
 endif
 
+ifdef CONFIG_TARGET_PHYTIUMPI
+RTCONFIG := phytium_pi
+endif
+
 ifdef CONFIG_RT_USING_SMART
 RTCONFIG := $(RTCONFIG)_rtsmart
 else
 RTCONFIG := $(RTCONFIG)_rtthread
+endif
+
+ifdef CONFIG_PHYTIUM_RTT_TEST
+RTCONFIG := $(RTCONFIG)_test
 endif
 
 boot:
@@ -59,10 +67,22 @@ load_e2000q_rtsmart:
 	@cp ./configs/e2000q_rtsmart.h ./rtconfig.h -f
 	@scons -c
 
+load_e2000q_rtsmart_test:
+	@echo "Load configs from ./configs/e2000q_rtsmart_test"
+	@cp ./configs/e2000q_rtsmart_test ./.config -f
+	@cp ./configs/e2000q_rtsmart_test.h ./rtconfig.h -f
+	@scons -c
+
 load_e2000q_rtthread:
 	@echo "Load configs from ./configs/e2000q_rtthread"
 	@cp ./configs/e2000q_rtthread ./.config -f
 	@cp ./configs/e2000q_rtthread.h ./rtconfig.h -f
+	@scons -c
+
+load_e2000q_rtthread_test:
+	@echo "Load configs from ./configs/e2000q_rtthread_test"
+	@cp ./configs/e2000q_rtthread_test ./.config -f
+	@cp ./configs/e2000q_rtthread_test.h ./rtconfig.h -f
 	@scons -c
 
 load_e2000d_rtsmart:
@@ -71,8 +91,32 @@ load_e2000d_rtsmart:
 	@cp ./configs/e2000d_rtsmart.h ./rtconfig.h -f
 	@scons -c
 
+load_e2000d_rtsmart_test:
+	@echo "Load configs from ./configs/e2000d_rtsmart_test"
+	@cp ./configs/e2000d_rtsmart_test ./.config -f
+	@cp ./configs/e2000d_rtsmart_test.h ./rtconfig.h -f
+	@scons -c
+
 load_e2000d_rtthread:
 	@echo "Load configs from ./configs/e2000d_rtthread"
 	@cp ./configs/e2000d_rtthread ./.config -f
 	@cp ./configs/e2000d_rtthread.h ./rtconfig.h -f
 	scons -c
+
+load_e2000d_rtthread_test:
+	@echo "Load configs from ./configs/e2000d_rtthread_test"
+	@cp ./configs/e2000d_rtthread_test ./.config -f
+	@cp ./configs/e2000d_rtthread_test.h ./rtconfig.h -f
+	scons -c
+
+load_phytium_pi_rtthread:
+	@echo "Load configs from ./configs/phytium_pi_rtthread"
+	@cp ./configs/phytium_pi_rtthread ./.config -f
+	@cp ./configs/phytium_pi_rtthread.h ./rtconfig.h -f
+	scons -c
+
+load_phytium_pi_rtsmart:
+	@echo "Load configs from ./configs/phytium_pi_rtsmart"
+	@cp ./configs/phytium_pi_rtsmart ./.config -f
+	@cp ./configs/phytium_pi_rtsmart.h ./rtconfig.h -f
+	@scons -c

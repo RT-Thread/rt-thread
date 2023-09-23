@@ -191,8 +191,7 @@ FError FDdmaAllocateChan(FDdma *const instance, FDdmaChan *const dma_chan, const
         return FDDMA_ERR_INVALID_DDR_ADDR;
     }
 
-    if ((FDDMA_MAX_TRANSFER_LEN < dma_chan_config->trans_len) ||
-        (FDDMA_MIN_TRANSFER_LEN > dma_chan_config->trans_len) ||
+    if ((FDDMA_MIN_TRANSFER_LEN > dma_chan_config->trans_len) ||
         (0 != dma_chan_config->trans_len % FDDMA_MIN_TRANSFER_LEN))
     {
         FDDMA_ERROR("Invalid transfer size %d bytes !!!", dma_chan_config->trans_len);

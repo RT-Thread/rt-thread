@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 hpmicro
+ * Copyright (c) 2021-2023 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -176,7 +176,7 @@ typedef struct {
 
 /* Bitfield definition for register: STAT */
 /*
- * BLOCKY (ROI)
+ * BLOCKY (RO)
  *
  * Y block that is processing
  */
@@ -185,7 +185,7 @@ typedef struct {
 #define PDMA_STAT_BLOCKY_GET(x) (((uint32_t)(x) & PDMA_STAT_BLOCKY_MASK) >> PDMA_STAT_BLOCKY_SHIFT)
 
 /*
- * BLOCKX (ROI)
+ * BLOCKX (RO)
  *
  * X block that is processing
  */
@@ -194,7 +194,7 @@ typedef struct {
 #define PDMA_STAT_BLOCKX_GET(x) (((uint32_t)(x) & PDMA_STAT_BLOCKX_MASK) >> PDMA_STAT_BLOCKX_SHIFT)
 
 /*
- * PDMA_DONE (ROI)
+ * PDMA_DONE (RO)
  *
  * PDMA one image done
  */
@@ -203,7 +203,7 @@ typedef struct {
 #define PDMA_STAT_PDMA_DONE_GET(x) (((uint32_t)(x) & PDMA_STAT_PDMA_DONE_MASK) >> PDMA_STAT_PDMA_DONE_SHIFT)
 
 /*
- * AXI_ERR_ID (ROI)
+ * AXI_ERR_ID (RO)
  *
  * AXI error ID
  */
@@ -279,7 +279,7 @@ typedef struct {
  * 0: the DSTALPHA[7:0] is invalid, use the alpha value embedded in the stream
  * 1: the DSTALPHA[7:0] is used to override the alpha value embedded in the stream.  (useful when the corresponding data stream has no alpha info)
  * 2: the DSTALPHA[7:0] is used to scale the alpha value embedded in the stream
- * Others: Reserved
+ * 3: don't multiply the color data with any alpha values for blender inputs.
  */
 #define PDMA_OUT_CTRL_DSTALPHA_OP_MASK (0xC000U)
 #define PDMA_OUT_CTRL_DSTALPHA_OP_SHIFT (14U)
@@ -293,7 +293,7 @@ typedef struct {
  * 0: the SRCALPHA[7:0] is invalid, use the alpha value embedded in the stream
  * 1: the SRCALPHA[7:0] is used to override the alpha value embedded in the stream .  (useful when the corresponding data stream has no alpha info)
  * 2: the SRCALPHA[7:0] is used to scale the alpha value embedded in the stream
- * Others: Reserved
+ * 3: don't multiply the color data with any alpha values for blender inputs.
  */
 #define PDMA_OUT_CTRL_SRCALPHA_OP_MASK (0x3000U)
 #define PDMA_OUT_CTRL_SRCALPHA_OP_SHIFT (12U)
@@ -326,6 +326,16 @@ typedef struct {
 #define PDMA_OUT_CTRL_ABLEND_MODE_SHIFT (8U)
 #define PDMA_OUT_CTRL_ABLEND_MODE_SET(x) (((uint32_t)(x) << PDMA_OUT_CTRL_ABLEND_MODE_SHIFT) & PDMA_OUT_CTRL_ABLEND_MODE_MASK)
 #define PDMA_OUT_CTRL_ABLEND_MODE_GET(x) (((uint32_t)(x) & PDMA_OUT_CTRL_ABLEND_MODE_MASK) >> PDMA_OUT_CTRL_ABLEND_MODE_SHIFT)
+
+/*
+ * NORM_OUT (RW)
+ *
+ * Asserted to normalize the output color channels with alpha channels
+ */
+#define PDMA_OUT_CTRL_NORM_OUT_MASK (0x80U)
+#define PDMA_OUT_CTRL_NORM_OUT_SHIFT (7U)
+#define PDMA_OUT_CTRL_NORM_OUT_SET(x) (((uint32_t)(x) << PDMA_OUT_CTRL_NORM_OUT_SHIFT) & PDMA_OUT_CTRL_NORM_OUT_MASK)
+#define PDMA_OUT_CTRL_NORM_OUT_GET(x) (((uint32_t)(x) & PDMA_OUT_CTRL_NORM_OUT_MASK) >> PDMA_OUT_CTRL_NORM_OUT_SHIFT)
 
 /*
  * FORMAT (RW)
@@ -428,6 +438,17 @@ typedef struct {
 #define PDMA_OUT_PS_LRC_X_GET(x) (((uint32_t)(x) & PDMA_OUT_PS_LRC_X_MASK) >> PDMA_OUT_PS_LRC_X_SHIFT)
 
 /* Bitfield definition for register of struct array PS: CTRL */
+/*
+ * PL_ONLY_BLENDOP (RW)
+ *
+ * 1: For those pixels that are this plane-only, use the colcor values and alpha values directly as blender output for un-normalized outputs configurations.
+ * 0: For those pixels that are this plane-only, the operations are determined by other operation configurations.
+ */
+#define PDMA_PS_CTRL_PL_ONLY_BLENDOP_MASK (0x1000000UL)
+#define PDMA_PS_CTRL_PL_ONLY_BLENDOP_SHIFT (24U)
+#define PDMA_PS_CTRL_PL_ONLY_BLENDOP_SET(x) (((uint32_t)(x) << PDMA_PS_CTRL_PL_ONLY_BLENDOP_SHIFT) & PDMA_PS_CTRL_PL_ONLY_BLENDOP_MASK)
+#define PDMA_PS_CTRL_PL_ONLY_BLENDOP_GET(x) (((uint32_t)(x) & PDMA_PS_CTRL_PL_ONLY_BLENDOP_MASK) >> PDMA_PS_CTRL_PL_ONLY_BLENDOP_SHIFT)
+
 /*
  * INB13_SWAP (RW)
  *

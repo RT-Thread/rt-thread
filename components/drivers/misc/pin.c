@@ -156,10 +156,6 @@ rt_base_t rt_pin_get(const char *name)
 {
     RT_ASSERT(_hw_pin.ops != RT_NULL);
 
-    if (name[0] != 'P' && name[0] != 'p')
-    {
-        return -RT_EINVAL;
-    }
     if (_hw_pin.ops->pin_get == RT_NULL)
     {
         return -RT_ENOSYS;
@@ -176,36 +172,25 @@ rt_base_t rt_pin_get(const char *name)
 
 /*
  * convert function for port name
- * support PE02, PE2, PE.02, PE.2, pe02, pe2, pe.02, pe.2
  */
 static rt_base_t _pin_cmd_conv(const char *name)
 {
-    int size = 0;
-    char format_name[6] = { 0 };
-    format_name[0] = toupper(name[0]);
-    format_name[1] = toupper(name[1]);
-
-    size = rt_strlen(name);
-    size = (size > 5) ? 5 : size;
-    size -= 2;
-    if (name[2] != '.')
-    {
-        format_name[2] = '.';
-    }
-    strncat(format_name, name + 2, size);
-    return rt_pin_get(format_name);
+    return rt_pin_get(name);
 }
 
 static void _pin_cmd_print_usage(void)
 {
-    rt_kprintf("pin [option]\n");
-    rt_kprintf("  num: get pin number from hardware pin\n");
-    rt_kprintf("    num can be PE02, PE2, PE.02, PE.2, pe02, pe2, pe.02, pe.2\n");
-    rt_kprintf("    e.g. MSH >pin num PA.16\n");
-    rt_kprintf("  mode: set pin mode to output/input/input_pullup/input_pulldown/output_od\n    e.g. MSH >pin mode PA.16 output\n");
-    rt_kprintf("  read: read pin level of hardware pin\n    e.g. MSH >pin read PA.16\n");
-    rt_kprintf("  write: write pin level(high/low or on/off) to hardware pin\n    e.g. MSH >pin write PA.16 high\n");
-    rt_kprintf("  help: this help list\n");
+    rt_kprintf("pin [option] GPIO\n");
+    rt_kprintf("     num:      get pin number from hardware pin\n");
+    rt_kprintf("     mode:     set pin mode to output/input/input_pullup/input_pulldown/output_od\n");
+    rt_kprintf("               e.g. MSH >pin mode GPIO output\n");
+    rt_kprintf("     read:     read pin level of hardware pin\n");
+    rt_kprintf("               e.g. MSH >pin read GPIO\n");
+    rt_kprintf("     write:    write pin level(high/low or on/off) to hardware pin\n");
+    rt_kprintf("               e.g. MSH >pin write GPIO high\n");
+    rt_kprintf("     help:     this help list\n");
+    rt_kprintf("GPIO e.g.:");
+    rt_pin_get(" ");
 }
 
 /* e.g. MSH >pin num PA.16 */
@@ -307,11 +292,11 @@ static void _pin_cmd_read(int argc, char *argv[])
     value = rt_pin_read(pin);
     if (value == PIN_HIGH)
     {
-        rt_kprintf("pin[%d] = on\n", pin);
+        rt_kprintf("pin[%d] = high\n", pin);
     }
     else
     {
-        rt_kprintf("pin[%d] = off\n", pin);
+        rt_kprintf("pin[%d] = low\n", pin);
     }
 }
 

@@ -10,6 +10,7 @@
  * 2021-02-19     lizhirui     port to new version of rt-smart
  * 2022-11-08     Wangxiaoyao  Cleanup codes;
  *                             Support new context switch
+ * 2023-07-16     Shell        Move part of the codes to C from asm in signal handling
  */
 
 #include "rtconfig.h"
@@ -89,9 +90,8 @@ arch_ret_to_user:
     call sys_exit
 
 1:
-    call lwp_signal_check
-    beqz a0, ret_to_user_exit
-    J user_do_signal
+    mv a0, sp
+    call lwp_thread_signal_catch
 
 ret_to_user_exit:
     RESTORE_ALL
@@ -103,129 +103,80 @@ ret_to_user_exit:
  * And handle pending signals;
  */
 arch_signal_quit:
-    call lwp_signal_restore
-    call arch_get_usp_from_uctx
-    // return value is user sp
+    LOAD a0, FRAME_OFF_SP(sp)
+    call arch_signal_ucontext_restore
+
+    /* reset kernel sp to the stack */
+    STORE sp, FRAME_OFF_SP(a0)
+    /* return value is user sp */
     mv sp, a0
 
-    // restore user sp before enter trap
+    /* restore user sp before enter trap */
     addi a0, sp, CTX_REG_NR * REGBYTES 
     csrw sscratch, a0
+
 
     RESTORE_ALL
     SAVE_ALL
     j arch_ret_to_user
 
 /**
- * Prepare and enter user signal handler
- * Move user exception frame and setup signal return
- * routine in user stack
+ * rt_noreturn
+ * void arch_thread_signal_enter(
+ *      int signo,                      -> a0
+ *      siginfo_t *psiginfo,            -> a1
+ *      void *exp_frame,                -> a2
+ *      void *entry_uaddr,              -> a3
+ *      lwp_sigset_t *save_sig_mask,    -> a4
+ *      )
  */
-user_do_signal:
-    /* prefetch ustack to avoid corrupted status in RESTORE/STORE pair below */
-    LOAD t0, FRAME_OFF_SP(sp)
-    addi t1, t0, -CTX_REG_NR * REGBYTES
-    LOAD t2, (t0)
-    li t3, -0x1000
-1:
-    add t0, t0, t3
-    LOAD t2, (t0)
-    bgt t0, t1, 1b
-
-    /** restore and backup kernel sp carefully to avoid leaking */
-    addi t0, sp, CTX_REG_NR * REGBYTES
-    csrw sscratch, t0
-
-    RESTORE_ALL
-    SAVE_ALL
-
-    /**
-     * save lwp_sigreturn in user memory
-     */
-    mv s0, sp
-    la t0, lwp_sigreturn
-    la t1, lwp_sigreturn_end
-    // t1 <- size
-    sub t1, t1, t0
-    // s0 <- dst
-    sub s0, s0, t1
-    mv s2, t1
-lwp_sigreturn_copy_loop:
-    addi t2, t1, -1
-    add t3, t0, t2
-    add t4, s0, t2
-    lb t5, 0(t3)
-    sb t5, 0(t4)
-    mv t1, t2
-    bnez t1, lwp_sigreturn_copy_loop
-
-    /**
-     * 1. clear sscratch & restore kernel sp to 
-     *    enter kernel mode routine
-     * 2. storage exp frame address to restore context, 
-     *    by calling to lwp_signal_backup
-     * 3. storage lwp_sigreturn entry address
-     * 4. get signal id as param for signal handler
-     */
-    mv s1, sp
-    csrrw sp, sscratch, x0
-
-    /**
-     * synchronize dcache & icache if target is
-     * a Harvard Architecture machine, otherwise
-     * do nothing
-     */
-    mv a0, s0
-    mv a1, s2
-    call rt_hw_sync_cache_local
-
-    /**
-     * backup user sp (point to saved exception frame, skip sigreturn routine)
-     * And get signal id
-
-     * a0: user sp 
-     * a1: user_pc (not used, marked as 0 to avoid abuse)
-     * a2: user_flag (not used, marked as 0 to avoid abuse)
-     */
-    mv a0, s1
-    mv a1, zero
-    mv a2, zero
-    call lwp_signal_backup
-
-    /**
-     * backup signal id in s2, 
-     * and get sighandler by signal id
-     */
+.global arch_thread_signal_enter
+arch_thread_signal_enter:
+    mv s3, a2
     mv s2, a0
-    call lwp_sighandler_get
+    mv s1, a3
+
+    LOAD t0, FRAME_OFF_SP(a2)
+    mv a3, t0
+    call arch_signal_ucontext_save
+
+    /** restore kernel sp */
+    addi sp, s3, CTX_REG_NR * REGBYTES
 
     /**
      * set regiter RA to user signal handler
      * set sp to user sp & save kernel sp in sscratch
      */
-    mv ra, s0
+    mv ra, a0
     csrw sscratch, sp
-    mv sp, s0
+    mv sp, a0
 
     /**
-     * a0 is signal_handler,
-     * s1 = s0 == NULL ? lwp_sigreturn : s0;
+     * s1 is signal_handler,
+     * s1 = !s1 ? lwp_sigreturn : s1;
      */
-    mv s1, s0
-    beqz a0, skip_user_signal_handler
-    mv s1, a0
+    bnez s1, 1f
+    mv s1, ra
 
-skip_user_signal_handler:
-    // enter user mode and enable interrupt when return to user mode
+1:
+    /* enter user mode and enable interrupt when return to user mode */
     li t0, SSTATUS_SPP
     csrc sstatus, t0
     li t0, SSTATUS_SPIE
     csrs sstatus, t0
 
-    // sepc <- signal_handler
+    /* sepc <- signal_handler */
     csrw sepc, s1
-    // a0 <- signal id
+    /* a0 <- signal id */
     mv a0, s2
+    /* a1 <- siginfo */
+    add a1, sp, 16
+    /* dummy a2 */
+    mv a2, a1
+
+    /**
+     * handler(signo, psi, ucontext);
+     */
     sret
 
 .align 3
@@ -234,6 +185,7 @@ lwp_debugreturn:
     ecall
 
 .align 3
+.global lwp_sigreturn
 lwp_sigreturn:
     li a7, 0xfe
     ecall

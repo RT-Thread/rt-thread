@@ -1,0 +1,37 @@
+import os
+import rtconfig
+from building import *
+
+Import('SDK_LIB')
+
+cwd = GetCurrentDir()
+
+# add general drivers
+src = Split('''
+board.c
+CubeMX_Config/Src/stm32f4xx_hal_msp.c
+''')
+
+path =  [cwd]
+path += [cwd + '/CubeMX_Config/Inc']
+
+startup_path_prefix = SDK_LIB
+
+if rtconfig.PLATFORM in ['gcc']:
+    src += [startup_path_prefix + '/STM32F4xx_HAL/CMSIS/Device/ST/STM32F4xx/Source/Templates/gcc/startup_stm32f405xx.s']
+elif rtconfig.PLATFORM in ['armcc', 'armclang']:
+    src += [startup_path_prefix + '/STM32F4xx_HAL/CMSIS/Device/ST/STM32F4xx/Source/Templates/arm/startup_stm32f405xx.s']
+elif rtconfig.PLATFORM in ['iccarm']:
+    src += [startup_path_prefix + '/STM32F4xx_HAL/CMSIS/Device/ST/STM32F4xx/Source/Templates/iar/startup_stm32f405xx.s']
+
+# STM32F405xx) || STM32F415xx) || STM32F407xx) || STM32F417xx)
+# STM32F427xx) || STM32F437xx) || STM32F429xx) || STM32F439xx)
+# STM32F401xC) || STM32F401xE) || STM32F410Tx) || STM32F410Cx)
+# STM32F410Rx) || STM32F411xE) || STM32F446xx) || STM32F469xx)
+# STM32F479xx) || STM32F412Cx) || STM32F412Rx) || STM32F412Vx)
+# STM32F412Zx) || STM32F413xx) || STM32F423xx)
+# You can select chips from the list above
+CPPDEFINES = ['STM32F405xx']
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
+
+Return('group')

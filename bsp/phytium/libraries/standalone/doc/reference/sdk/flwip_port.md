@@ -15,6 +15,8 @@ Lwip Port为开发者提供了一系列接口，驱动开发者在完成GMAC/XMA
 6. 管理mac 控制器的状态（phy link status）
 7. 管理lwip 中link up/down 状态
 8. 提供多网卡检索功能
+9. 提供巨帧模式使能
+10.提供轮询模式接收数据包使能
 
 相关源文件为：
 ```
@@ -57,6 +59,7 @@ typedef struct
 	enum lwip_port_link_status (*eth_detect)(struct netif *netif);
 	void (*eth_deinit)(struct netif *netif);
 	void (*eth_start)(struct netif *netif);
+	void (*eth_poll)(struct netif *netif);
 } LwipPortOps; /*  lwip port 网卡注册函数*/
 
 struct LwipPort {
@@ -180,3 +183,23 @@ Return:
 
 - 无
 
+
+#### LwipEthProcessLoop
+
+- 网卡接收数据包底层处理
+
+```c
+void LwipEthProcessLoop(struct netif *netif);
+```
+
+Note:
+
+- 在main函数中循环调用，轮询处理到来的网络数据包
+
+Input:
+
+- {struct netif} *netif 网卡对象
+
+Return:
+
+- 无

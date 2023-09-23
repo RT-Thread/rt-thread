@@ -1,5 +1,5 @@
 /*
- * Copyright 2021-2022 hpmicro
+ * Copyright (c) 2021-2022 HPMicro
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
@@ -9,25 +9,19 @@
 #include "hpm_l1c_drv.h"
 #include "hpm_interrupt.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+
 extern void system_init(void);
-extern void __libc_init_array(void);
-extern void __libc_fini_array(void);
-#ifdef __cplusplus
-}
-#endif
+
 
 __attribute__((weak)) void _clean_up(void)
 {
-    /* clean up plic, it will help while debuging */
+    /* clean up plic, it will help while debugging */
     disable_irq_from_intc();
     intc_m_set_threshold(0);
     for (uint32_t irq = 0; irq < 128; irq++) {
         intc_m_complete_irq(irq);
     }
-    /* clear any bits left in plic enable regster */
+    /* clear any bits left in plic enable register */
     for (uint32_t i = 0; i < 4; i++) {
         *(volatile uint32_t *)(HPM_PLIC_BASE + HPM_PLIC_ENABLE_OFFSET + (i << 2)) = 0;
     }
@@ -84,28 +78,18 @@ __attribute__((weak)) void c_startup(void)
 
 __attribute__((weak)) int main(void)
 {
-    while(1);
+    while (1) {
+        ;
+    }
 }
 
 __attribute__((weak)) void reset_handler(void)
 {
     l1c_dc_disable();
     l1c_dc_invalidate_all();
-#if !defined(__SEGGER_RTL_VERSION) || defined(__GNU_LINKER)
-    /*
-     * Initialize LMA/VMA sections.
-     * Relocation for any sections that need to be copied from LMA to VMA.
-     */
-    c_startup();
-#endif
 
     /* Call platform specific hardware initialization */
     system_init();
-
-#ifdef __cplusplus
-    /* Do global constructors */
-    __libc_init_array();
-#endif
 
     /* Entry function */
     main();
@@ -116,14 +100,14 @@ __attribute__((weak)) void reset_handler(void)
  * a call to __cxa_atexit() with __dso_handle as one of the arguments.
  * The dummy versions of these symbols should be provided.
  */
-void __cxa_atexit(void (*arg1)(void*), void* arg2, void* arg3)
+__attribute__((weak)) void __cxa_atexit(void (*arg1)(void *), void *arg2, void *arg3)
 {
 }
 
-#ifndef __SEGGER_RTL_VERSION
-void*   __dso_handle = (void*) &__dso_handle;
+#if !defined(__SEGGER_RTL_VERSION) || defined(__riscv_xandes)
+void *__dso_handle = (void *) &__dso_handle;
 #endif
 
-__attribute__((weak)) void _init()
+__attribute__((weak)) void _init(void)
 {
 }

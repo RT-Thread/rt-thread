@@ -4,11 +4,16 @@ on:
   pull_request:
     branches:
       - master
+    paths-ignore:
+      - documentation/**
+      - '**/README.md'
+      - '**/README_zh.md'
 
 jobs:
   scancode_job:
     runs-on: ubuntu-latest
     name: Static code analysis
+    if: github.repository_owner == 'RT-Thread'
     steps:
       - uses: actions/checkout@v3
       - name: Set up Python

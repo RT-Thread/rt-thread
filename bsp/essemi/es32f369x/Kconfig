@@ -22,6 +22,7 @@ config SOC_ES32F3696LT
     bool
     select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN
+    select ARCH_ARM_CORTEX_M3
     default y
 
 source "drivers/Kconfig"

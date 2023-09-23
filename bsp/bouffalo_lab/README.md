@@ -1,3 +1,4 @@
+[English](README_en.md) | **中文**
 # bouffalo_lab bsp
 
 ## 1. 简介
@@ -149,7 +150,7 @@ Windows下推荐使用[env工具][1]，在console下进入bsp/bouffalo_lab/bl61x
 
 4. 点击"Download"开始下载
 
-![Flash Download](figures/bouffalo_flash_cube.jpg)
+![Flash Download](figures/bouffalo_flash_cube.png)
 
 
 
@@ -161,7 +162,7 @@ Windows下推荐使用[env工具][1]，在console下进入bsp/bouffalo_lab/bl61x
 
 其中：
 
-- bl616：芯片名称
+- bl616：芯片名称(bl808：三核同时下载；或者输入:bl808-m0/bl808-lp/bl808-d0分别烧录对应的核，但是m0必须要烧录才能运行)
 - /dev/ttyUSB1：下载串口号，linux下为/dev/ttyUSBx或/dev/ttyACMx，windows下为COMx
 
 
@@ -170,7 +171,7 @@ Windows下推荐使用[env工具][1]，在console下进入bsp/bouffalo_lab/bl61x
 
 如果编译 & 烧写无误，当复位设备后，会在串口上看到RT-Thread的启动logo信息：
 
-![terminal](figures/rt-thread.jpg)
+![terminal](figures/rt-thread.png)
 
 
 
@@ -199,6 +200,7 @@ Windows下推荐使用[env工具][1]，在console下进入bsp/bouffalo_lab/bl61x
 | WDT  | 支持     |                   |
 | HWTIMER  | 支持     |                   |
 | FLASH  | 支持     |                   |
+| SDCARD  | 支持     |                   |
 
 
 

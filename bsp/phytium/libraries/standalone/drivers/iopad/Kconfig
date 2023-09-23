@@ -1,0 +1,4 @@
+    config ENABLE_IOPAD
+        bool
+        prompt "Enable iopad"
+        default y if TARGET_E2000

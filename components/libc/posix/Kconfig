@@ -25,6 +25,34 @@ if RT_USING_POSIX_FS
         bool "Enable I/O Multiplexing select() <sys/select.h>"
         select RT_USING_POSIX_POLL
         default n
+    
+    config RT_USING_POSIX_EVENTFD
+        bool "Enable I/O event eventfd <sys/eventfd.h>"
+        select RT_USING_POSIX_POLL
+        default n
+
+    if RT_USING_SMART
+        config RT_USING_POSIX_EPOLL
+            bool "Enable I/O Multiplexing epoll <sys/epoll.h>"
+            select RT_USING_POSIX_POLL
+            default n
+
+        config RT_USING_POSIX_SIGNALFD
+            bool "Enable Signalfd <sys/signalfd.h>"
+            select RT_USING_POSIX_POLL
+            default n
+
+        if RT_USING_POSIX_SIGNALFD
+            config RT_SIGNALFD_MAX_NUM
+                int "signaled The maximum number of concurrent firing signals"
+                range 1 20
+                default 10
+        endif
+    endif
+
+    config RT_USING_POSIX_TIMERFD
+            bool "Enable I/O timerfd <sys/timerfd.h>"
+            default n
 
     config RT_USING_POSIX_SOCKET
         bool "Enable BSD Socket I/O <sys/socket.h> <netdb.h>"
@@ -47,6 +75,7 @@ if RT_USING_POSIX_FS
 endif
 
 config RT_USING_POSIX_DELAY
+    select RT_USING_KTIME
     bool "Enable delay APIs, sleep()/usleep()/msleep() etc"
     default n
 
@@ -56,7 +85,8 @@ config RT_USING_POSIX_CLOCK
     default n
 
 config RT_USING_POSIX_TIMER
-    select RT_USING_TIMER_SOFT
+    select RT_USING_KTIME
+    select RT_USING_RESOURCE_ID
     bool "Enable timer APIs, timer_create()/timer_gettime() etc"
     default n
 

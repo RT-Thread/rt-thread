@@ -121,34 +121,6 @@ class Win32Spawn:
 
         return proc.wait()
 
-# generate cconfig.h file
-def GenCconfigFile(env, BuildOptions):
-    # The cconfig.h will NOT generate in the lastest RT-Thread code.
-    # When you want to use it, you can uncomment out the following code.
-     
-    # if rtconfig.PLATFORM in ['gcc']:
-    #     contents = ''
-    #     if not os.path.isfile('cconfig.h'):
-    #         import gcc
-    #         gcc.GenerateGCCConfig(rtconfig)
-
-    #     # try again
-    #     if os.path.isfile('cconfig.h'):
-    #         f = open('cconfig.h', 'r')
-    #         if f:
-    #             contents = f.read()
-    #             f.close()
-
-    #             prep = PatchedPreProcessor()
-    #             prep.process_contents(contents)
-    #             options = prep.cpp_namespace
-
-    #             BuildOptions.update(options)
-
-    #             # add HAVE_CCONFIG_H definition
-    #             env.AppendUnique(CPPDEFINES = ['HAVE_CCONFIG_H'])
-    pass
-
 def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = []):
 
     global BuildOptions
@@ -311,9 +283,6 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
         # remove the POST_ACTION as it will cause meaningless errors(file not
         # found or something like that).
         rtconfig.POST_ACTION = ''
-
-    # generate cconfig.h file
-    GenCconfigFile(env, BuildOptions)
 
     # auto append '_REENT_SMALL' when using newlib 'nano.specs' option
     if rtconfig.PLATFORM in ['gcc'] and str(env['LINKFLAGS']).find('nano.specs') != -1:
@@ -513,6 +482,23 @@ def AddDepend(option):
     else:
         print('AddDepend arguements are illegal!')
 
+def Preprocessing(input, suffix, output = None, CPPPATH = None):
+    if hasattr(rtconfig, "CPP") and hasattr(rtconfig, "CPPFLAGS"):
+        if output == None:
+            import re
+            output = re.sub(r'[\.]+.*', suffix, input)
+        inc = ' '
+        cpppath = CPPPATH
+        for cpppath_item in cpppath:
+            inc += ' -I' + cpppath_item
+        CPP = rtconfig.EXEC_PATH + '/' + rtconfig.CPP
+        if not os.path.exists(CPP):
+            CPP = rtconfig.CPP
+        CPP += rtconfig.CPPFLAGS
+        path = GetCurrentDir() + '/'
+        os.system(CPP + inc + ' ' + path + input + ' -o ' + path + output)
+    else:
+        print('CPP tool or CPPFLAGS is undefined in rtconfig!')
 
 def MergeGroup(src_group, group):
     src_group['src'] = src_group['src'] + group['src']
@@ -920,7 +906,7 @@ def GenTargetProject(program = None):
         ESPIDFProject(Env, Projects)
 
 def EndBuilding(target, program = None):
-    from mkdist import MkDist, MkDist_Strip
+    from mkdist import MkDist
 
     need_exit = False
 
@@ -951,15 +937,12 @@ def EndBuilding(target, program = None):
     if GetOption('make-dist') and program != None:
         MkDist(program, BSP_ROOT, Rtt_Root, Env, project_name, project_path)
         need_exit = True
-    if GetOption('make-dist-strip') and program != None:
-        MkDist_Strip(program, BSP_ROOT, Rtt_Root, Env)
-        need_exit = True
     if GetOption('make-dist-ide') and program != None:
         import subprocess
         if not isinstance(project_path, str) or len(project_path) == 0 :
             project_path = os.path.join(BSP_ROOT, 'rt-studio-project')
         MkDist(program, BSP_ROOT, Rtt_Root, Env, project_name, project_path)
-        child = subprocess.Popen('scons --target=eclipse --project-name=' + project_name, cwd=project_path, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        child = subprocess.Popen('scons --target=eclipse --project-name="{}"'.format(project_name), cwd=project_path, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         stdout, stderr = child.communicate()
         need_exit = True
     if GetOption('cscope'):

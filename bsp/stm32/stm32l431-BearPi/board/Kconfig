@@ -46,6 +46,10 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable UART3 TX DMA"
                 depends on BSP_USING_UART3 && RT_SERIAL_USING_DMA
                 default n
+
+            config BSP_USING_LPUART1
+                bool "Enable LPUART1"
+                default n
         endif
 
     menuconfig BSP_USING_ADC
@@ -178,6 +182,14 @@ menu "Onboard Peripheral Drivers"
         imply RTDUINO_USING_WIRE
         imply RTDUINO_USING_SPI
         default n
+
+    config BSP_USING_MPU6050
+        bool "Enable MPU6050 to read accel data"
+        select BSP_USING_I2C
+        select BSP_USING_I2C1
+        select PKG_USING_MPU6XXX
+        default n
+
 endmenu
 
 endmenu

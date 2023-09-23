@@ -29,13 +29,14 @@
 本 BSP 目前对外设的支持情况如下：
 
 | **片上外设** | **支持情况** | **备注**          |
-| :----------------- | :----------------- | :------------- |
+|:-------- |:-------- |:--------------- |
 | UART     | 支持       | UART4 为默认日志输出端口 |
 | GPIO     | 支持       |                 |
+| I2C      | 支持       |                 |
+| SPI      | 支持       |                 |
 | 持续更新中... |          |                 |
 | **外接外设** | **支持情况** | **备注**          |
 | 持续更新中... |          |                 |
-
 
 ## 使用说明
 
@@ -44,6 +45,7 @@
 - 快速上手
   
   本章节是为刚接触 RT-Thread 的新手准备的使用说明，遵循简单的步骤即可将 RT-Thread 操作系统运行在该开发板上，看到实验效果 。
+
 - 进阶使用
   
   本章节是为需要在 RT-Thread 操作系统上使用更多开发板资源的开发者准备的。通过使用 ENV 工具对 BSP 进行配置，可以开启更多板载资源，实现更多高级功能。
@@ -129,7 +131,7 @@ void hal_entry(void)
 
 需要修改瑞萨的 BSP 外设配置或添加新的外设端口，需要用到瑞萨的 [FSP](https://www2.renesas.cn/jp/zh/software-tool/flexible-software-package-fsp#document) 配置工具。请务必按照如下步骤完成配置。配置中有任何问题可到[RT-Thread 社区论坛](https://club.rt-thread.org/)中提问。
 
-1. [下载灵活配置软件包 (FSP) | Renesas](https://www.renesas.com/cn/zh/software-tool/flexible-software-package-fsp)，请使用 FSP 3.5.0 版本
+1. [下载灵活配置软件包 (FSP) | Renesas](https://www.renesas.com/cn/zh/software-tool/flexible-software-package-fsp)，请使用 FSP 4.4.0 版本
 2. 请查看文档：[使用瑞萨 FSP 配置工具](./docs/使用瑞萨FSP配置工具.md)。在 MDK 中通过添加自定义命名来打开当前工程的 FSP 配置。
 
 **ENV 配置**
@@ -139,11 +141,11 @@ void hal_entry(void)
 此 BSP 默认只开启了 UART4 的功能，如果需使用更多高级功能例如组件、软件包等，需要利用 ENV 工具进行配置。
 
 步骤如下：
+
 1. 在 bsp 下打开 env 工具。
 2. 输入`menuconfig`命令配置工程，配置好之后保存退出。
 3. 输入`pkgs --update`命令更新软件包。
 4. 输入`scons --target=mdk5` 命令重新生成工程。
-
 
 ## 联系人信息
 

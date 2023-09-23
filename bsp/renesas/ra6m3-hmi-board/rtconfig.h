@@ -23,8 +23,10 @@
 
 /* kservice optimization */
 
-#define RT_DEBUG
-#define RT_DEBUG_COLOR
+#define RT_USING_DEBUG
+#define RT_DEBUGING_COLOR
+#define RT_DEBUGING_CONTEXT
+#define RT_DEBUGING_INIT
 
 /* Inter-Thread communication */
 
@@ -36,7 +38,6 @@
 
 /* Memory Management */
 
-#define RT_PAGE_MAX_ORDER 11
 #define RT_USING_SMALL_MEM
 #define RT_USING_SMALL_MEM_AS_HEAP
 #define RT_USING_HEAP
@@ -146,9 +147,6 @@
 /* u8g2: a monochrome graphic library */
 
 
-/* PainterEngine: A cross-platform graphics application framework written in C language */
-
-
 /* tools packages */
 
 
@@ -168,11 +166,19 @@
 
 /* peripheral libraries and drivers */
 
+/* sensors drivers */
+
+
+/* touch drivers */
+
 
 /* Kendryte SDK */
 
 
 /* AI packages */
+
+
+/* Signal Processing and Control Algorithm Packages */
 
 
 /* miscellaneous packages */
@@ -188,16 +194,36 @@
 /* Arduino libraries */
 
 
-/* Sensor libraries */
+/* Projects and Demos */
 
 
-/* Display libraries */
+/* Sensors */
 
 
-/* Timing libraries */
+/* Display */
 
 
-/* Project libraries */
+/* Timing */
+
+
+/* Data Processing */
+
+
+/* Data Storage */
+
+/* Communication */
+
+
+/* Device Control */
+
+
+/* Other */
+
+
+/* Signal IO */
+
+
+/* Uncategorized */
 
 #define SOC_FAMILY_RENESAS
 #define SOC_SERIES_R7FA6M3

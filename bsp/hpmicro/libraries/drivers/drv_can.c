@@ -1,11 +1,12 @@
 /*
- * Copyright (c) 2021 - 2022 hpmicro
+ * Copyright (c) 2021-2023 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
  * Change Logs:
  * Date           Author       Notes
- * 2022-05-08     hpmicro      the first version
+ * 2022-05-08     HPMicro      the first version
+ * 2023-05-08     HPMicro      Adapt RT-Thread v5.0.0
  */
 
 #include <rtthread.h>
@@ -398,7 +399,7 @@ static rt_err_t hpm_can_control(struct rt_can_device *can, int cmd, void *arg)
                 RT_ASSERT(filter->count <= CAN_FILTER_NUM_MAX);
                 for (uint32_t i=0; i<filter->count; i++)
                 {
-                    drv_can->filter_list[i].index = (filter->items[i].hdr_bank == -1) ? i : filter->items[i].hdr_bank;
+                    drv_can->filter_list[i].index = i;
                     drv_can->filter_list[i].enable = (filter->actived != 0U) ? true : false;
                     drv_can->filter_list[i].code = filter->items[i].id;
                     drv_can->filter_list[i].id_mode = (filter->items[i].ide != 0U) ? can_filter_id_mode_extended_frames : can_filter_id_mode_standard_frames;
@@ -699,5 +700,3 @@ int rt_hw_can_init(void)
 INIT_BOARD_EXPORT(rt_hw_can_init);
 
 #endif
-
-

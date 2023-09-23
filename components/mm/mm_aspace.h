@@ -207,7 +207,20 @@ void rt_aspace_print_all(rt_aspace_t aspace);
 int rt_varea_map_page(rt_varea_t varea, void *vaddr, void *page);
 
 /**
+ * @brief Unmap one page in varea
+ *
+ * @param varea target varea
+ * @param addr user address
+ * @param page the page frame to be mapped
+ * @return int
+ */
+int rt_varea_unmap_page(rt_varea_t varea, void *vaddr);
+
+/**
  * @brief Map a range of physical address to varea
+ *
+ * @warning Caller should take care of synchronization of its varea among all
+ *          the map/unmap operation
  *
  * @param varea target varea
  * @param vaddr user address
@@ -216,6 +229,19 @@ int rt_varea_map_page(rt_varea_t varea, void *vaddr, void *page);
  * @return int
  */
 int rt_varea_map_range(rt_varea_t varea, void *vaddr, void *paddr, rt_size_t length);
+
+/**
+ * @brief Unmap a range of physical address in varea
+ *
+ * @warning Caller should take care of synchronization of its varea among all
+ *          the map/unmap operation
+ *
+ * @param varea target varea
+ * @param vaddr user address
+ * @param length map range
+ * @return int
+ */
+int rt_varea_unmap_range(rt_varea_t varea, void *vaddr, rt_size_t length);
 
 /**
  * @brief Insert page to page manager of varea

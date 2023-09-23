@@ -19,6 +19,8 @@ menu "Onboard Peripheral Drivers"
         select PKG_USING_RTDUINO
         select BSP_USING_STLINK_TO_USART
         select BSP_USING_GPIO
+        select BSP_USING_TIM
+        select BSP_USING_TIM9
         select BSP_USING_ADC
         select BSP_USING_ADC1
         select BSP_USING_PWM
@@ -34,8 +36,13 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_PWM1_CH1
         select BSP_USING_I2C
         select BSP_USING_I2C1
+        select BSP_USING_SPI
+        select BSP_USING_SPI1
+        select BSP_SPI1_TX_USING_DMA
+        select BSP_SPI1_RX_USING_DMA
+        select RTDUINO_USING_WIRE
+        select RTDUINO_USING_SPI
         imply RTDUINO_USING_SERVO
-        imply RTDUINO_USING_WIRE
         default n
 
 endmenu
@@ -154,6 +161,16 @@ menu "On-chip Peripheral Drivers"
                 endif
         endif
 
+    menuconfig BSP_USING_TIM
+        bool "Enable timer"
+        default n
+        select RT_USING_HWTIMER
+        if BSP_USING_TIM
+            config BSP_USING_TIM9
+                bool "Enable TIM9"
+                default n
+        endif
+
     menuconfig BSP_USING_ONCHIP_RTC
         bool "Enable RTC"
         select RT_USING_RTC
@@ -179,6 +196,42 @@ menu "On-chip Peripheral Drivers"
         bool "Enable Watchdog Timer"
         select RT_USING_WDT
         default n
+
+    menuconfig BSP_USING_SPI
+        bool "Enable SPI Bus"
+        default n
+        select RT_USING_SPI
+        if BSP_USING_SPI
+            config BSP_USING_SPI1
+                bool "Enable SPI1 Bus"
+                default n
+
+            config BSP_SPI1_TX_USING_DMA
+                bool "Enable SPI1 TX DMA"
+                depends on BSP_USING_SPI1
+                default n
+
+            config BSP_SPI1_RX_USING_DMA
+                bool "Enable SPI1 RX DMA"
+                depends on BSP_USING_SPI1
+                select BSP_SPI1_TX_USING_DMA
+                default n
+
+            config BSP_USING_SPI3
+                bool "Enable SPI3 Bus"
+                default n
+
+            config BSP_SPI3_TX_USING_DMA
+                bool "Enable SPI3 TX DMA"
+                depends on BSP_USING_SPI3
+                default n
+
+            config BSP_SPI3_RX_USING_DMA
+                bool "Enable SPI3 RX DMA"
+                depends on BSP_USING_SPI3
+                select BSP_SPI3_TX_USING_DMA
+                default n
+        endif
 
     source "../libraries/HAL_Drivers/Kconfig"
 

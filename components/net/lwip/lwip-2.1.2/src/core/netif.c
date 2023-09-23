@@ -1763,7 +1763,8 @@ netif_find(const char *name)
     return NULL;
   }
 
-  num = (u8_t)atoi(&name[2]);
+  /* Out netif's name is e0, e1... */
+  num = (u8_t)atoi(&name[1]);
 
   NETIF_FOREACH(netif) {
     if (num == netif->num &&

@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 hpmicro
+ * Copyright (c) 2021-2023 HPMicro
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
@@ -7,14 +7,13 @@
 define memory with size = 4G;
 
 /* Regions */
-define region CORE0_LM_SLV = [from 0x1000000 size 512k]; /* CORE0 LM slave */
-define region CORE1_LM_SLV = [from 0x1180000 size 512k]; /* CORE1 LM slave */
-define region AXI_SRAM  = [from 0x1080000 size 768k];  /* reserve 256K for noncacheable region */
-define region NONCACHEABLE_RAM = [from 0x1140000 size 256K];
+define region ILM   = [from 0x00000000 size 256k];        /* ILM */
+define region DLM   = [from 0x00080000 size 256k];        /* DLM */
+define region NONCACHEABLE_RAM = [from 0x01140000 size 64k];    /* AXI SRAM1 */
+define region AXI_SRAM = [from 0x01150000 size 176k];
+define region SHARE_RAM = [from 0x0117C000 size 16k];
 
-define exported symbol __noncacheable_start__  = start of region NONCACHEABLE_RAM;
-define exported symbol __noncacheable_end__  = end of region NONCACHEABLE_RAM + 1;
-define exported symbol _stack = end of block stack + 1;
+assert (__STACKSIZE__ + __HEAPSIZE__) <= 256k with error "stack and heap total size larger than 256k";
 
 /* Blocks */
 define block vectors                        { section .isr_vector, section .vector_table };
@@ -25,13 +24,23 @@ define block tbss                           { section .tbss,      section .tbss.
 define block tdata                          { section .tdata,     section .tdata.* };
 define block tls                            { block tbss, block tdata };
 define block tdata_load                     { copy of block tdata };
+define block cherryusb_usbh_class_info      { section .usbh_class_info };
+define block framebuffer                    { section .framebuffer };
 define block heap  with size = __HEAPSIZE__,  alignment = 8, /* fill =0x00, */ readwrite access { };
 define block stack with size = __STACKSIZE__, alignment = 8, /* fill =0xCD, */ readwrite access { };
-define block framebuffer { section .framebuffer };
-define block safe_stack with size = 512, readwrite access {};
-define exported symbol _stack_safe = end of block safe_stack + 1;
 
+/* Symbols */
+define exported symbol __noncacheable_start__ = start of region NONCACHEABLE_RAM;
+define exported symbol __noncacheable_end__ = end of region NONCACHEABLE_RAM + 1;
+define exported symbol __share_mem_start__  = start of region SHARE_RAM;
+define exported symbol __share_mem_end__  = end of region SHARE_RAM + 1;
 
+define exported symbol _stack = end of block stack + 1;
+define exported symbol _stack_safe = end of block stack + 1;
+define exported symbol __usbh_class_info_start__ = start of block cherryusb_usbh_class_info;
+define exported symbol __usbh_class_info_end__ = end of block cherryusb_usbh_class_info + 1;
+
+/* Initialization */
 do not initialize                           { section .noncacheable };
 do not initialize                           { section .non_init, section .non_init.*, section .*.non_init, section .*.non_init.* };
 do not initialize                           { section .no_init, section .no_init.*, section .*.no_init, section .*.no_init.* };   // Legacy sections, kept for backwards compatibility
@@ -45,16 +54,17 @@ initialize by copy with packing=auto        { section .fast, section .fast.*, se
 initialize by symbol __SEGGER_init_heap     { block heap  };                                        // Init the heap if there is one
 initialize by symbol __SEGGER_init_ctors    { block ctors };                                        // Call constructors for global objects which need to be constructed before reaching main (if any). Make sure this is done after setting up heap.
 
-place at start of CORE1_LM_SLV                     { symbol _start };
-place in CORE1_LM_SLV                              { block vectors };                           // Vector table section
-place in CORE1_LM_SLV with minimum size order    {
+/* Placement */
+place at start of ILM                       { symbol _start };
+place in ILM                                { block vectors };                                      // Vector table section
+place in ILM                                { section .fast, section .fast.* };                     // "ramfunc" section
+place in ILM with minimum size order        {
                                               block tdata_load,                                     // Thread-local-storage load image
                                               block ctors,                                          // Constructors block
                                               block dtors,                                          // Destructors block
                                               block eh_frame,                                       // Exception frames placed directly into flash overriding default placement (sections writable)
                                               readonly,                                             // Catch-all for readonly data (e.g. .rodata, .srodata)
-                                              readexec,                                              // Catch-all for (readonly) executable code (e.g. .text)
-                                              section .fast, section .fast.*,                       // "ramfunc" section
+                                              readexec                                              // Catch-all for (readonly) executable code (e.g. .text)
                                             };
 
 //
@@ -66,14 +76,19 @@ define access readonly { section .gcc_except_table, section .gcc_except_table.* 
 define access readonly { section .eh_frame, section .eh_frame.* };
 define access readonly { section .sdata.DW.* };
 
-/* Explicit placement in AXI_SRAM */
-place in AXI_SRAM                               { block framebuffer };
-
-place in AXI_SRAM with auto order                {
+place in AXI_SRAM                           { block cherryusb_usbh_class_info };
+place in AXI_SRAM                           { block framebuffer };
+place in AXI_SRAM                           {
                                               block tls,                                            // Thread-local-storage block
                                               readwrite,                                            // Catch-all for initialized/uninitialized data sections (e.g. .data, .noinit)
-                                              zeroinit,                                              // Catch-all for zero-initialized data sections (e.g. .bss)
+                                              zeroinit                                              // Catch-all for zero-initialized data sections (e.g. .bss)
                                             };
+
 place in NONCACHEABLE_RAM                   { section .noncacheable, section .noncacheable.init, section .noncacheable.bss };  // Noncacheable
-place in AXI_SRAM                                { block heap };                                         // Heap reserved block
-place at end of AXI_SRAM                         { block stack, block safe_stack };                                        // Stack reserved block at the end
+place in SHARE_RAM                          { section .sh_mem};                                     // Share memory
+place in DLM                                { section .fast_ram};                                   // Fast access memory
+place in DLM                                { block heap };                                         // Heap reserved block
+place at end of DLM                         { block stack };                                        // Stack reserved block
+
+/* Keep */
+keep { section .usbh_class_info};

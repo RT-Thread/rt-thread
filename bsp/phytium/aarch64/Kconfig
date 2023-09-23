@@ -54,6 +54,12 @@ if TARGET_E2000D
         default 0
 endif
 
+if TARGET_PHYTIUMPI
+    config ARM_SPI_BIND_CPU_ID
+        int 
+        default 2
+endif
+
 menu "Standalone Setting"
     config TARGET_ARMV8_AARCH64
         bool "Armv8 Aarch64"
@@ -64,6 +70,4 @@ menu "Standalone Setting"
     source "$STANDALONE_DIR/common/Kconfig"
 
 endmenu
-
-
 

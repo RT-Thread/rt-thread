@@ -71,7 +71,7 @@ const FGdmaConfig fgdma_cfg_tbl[FGDMA_INSTANCE_NUM] =
         .irq_prority = 0,
         .rd_qos = FGDMA_OPER_NONE_PRIORITY_POLL,
         .wr_qos = FGDMA_OPER_NONE_PRIORITY_POLL,
-        .caps = FGDMA0_CAPACITY
+        .caps = FGDMA0_CAPACITY | FGDMA_TRANS_NEED_RESET_MASK
     }
 };
 

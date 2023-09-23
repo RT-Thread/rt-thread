@@ -1,7 +1,7 @@
 from building import *
 
 cwd = GetCurrentDir()
-src = []
+src = ['drv_common.c']
 path =  [cwd]
 
 if  GetDepend('SOC_RISCV_FAMILY_CH32'):

@@ -249,12 +249,12 @@ rt_err_t es32f3_spi_device_attach(rt_uint32_t pin, const char *bus_name, const c
 
 #ifdef BSP_USING_SPI1
     static struct rt_spi_bus _spi_bus1;
-    static spi_handle_t _spi1;
+    static ald_spi_handle_t _spi1;
 #endif
 
 #ifdef BSP_USING_SPI2
     static struct rt_spi_bus _spi_bus2;
-    static spi_handle_t _spi2;
+    static ald_spi_handle_t _spi2;
 #endif
 
 int rt_hw_spi_init(void)
@@ -328,7 +328,7 @@ int rt_hw_spi_init(void)
     spi = &_spi1;
 
     /* SPI1 gpio init */
-    gpio_instruct.mode = GPIO_MODE_OUTPUT;
+    gpio_instruct.mode = ALD_GPIO_MODE_OUTPUT;
 
 #if  defined(ES_SPI1_SCK_GPIO_FUNC)&&defined(ES_SPI1_SCK_GPIO_PORT)&&defined(ES_SPI1_SCK_GPIO_PIN)
     gpio_instruct.func = ES_SPI1_SCK_GPIO_FUNC;
@@ -341,7 +341,7 @@ int rt_hw_spi_init(void)
 #endif
 
 #if !defined(ES_SPI1_I2S_MODE)
-    gpio_instruct.mode = GPIO_MODE_INPUT;
+    gpio_instruct.mode = ALD_GPIO_MODE_INPUT;
 #endif
 
 #if  defined(ES_SPI1_MISO_GPIO_FUNC)&&defined(ES_SPI1_MISO_GPIO_PORT)&&defined(ES_SPI1_MISO_GPIO_PIN)
@@ -379,7 +379,7 @@ int rt_hw_spi_init(void)
     spi = &_spi2;
 
     /* SPI2 gpio init */
-    gpio_instruct.mode = GPIO_MODE_OUTPUT;
+    gpio_instruct.mode = ALD_GPIO_MODE_OUTPUT;
 
 #if  defined(ES_SPI2_SCK_GPIO_FUNC)&&defined(ES_SPI2_SCK_GPIO_PORT)&&defined(ES_SPI2_SCK_GPIO_PIN)
     gpio_instruct.func = ES_SPI2_SCK_GPIO_FUNC;

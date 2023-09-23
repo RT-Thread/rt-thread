@@ -46,7 +46,11 @@ static int dfs_net_ioctl(struct dfs_file* file, int cmd, void* args)
     return ret;
 }
 
-static int dfs_net_read(struct dfs_file* file, void *buf, size_t count)
+#ifdef RT_USING_DFS_V2
+static ssize_t dfs_net_read(struct dfs_file* file, void *buf, size_t count, off_t *pos)
+#else
+static ssize_t dfs_net_read(struct dfs_file* file, void *buf, size_t count)
+#endif
 {
     int ret;
     int socket = (int)(size_t)file->vnode->data;
@@ -57,10 +61,15 @@ static int dfs_net_read(struct dfs_file* file, void *buf, size_t count)
         ret = rt_get_errno();
         return (ret > 0) ? (-ret) : ret;
     }
+
     return ret;
 }
 
-static int dfs_net_write(struct dfs_file *file, const void *buf, size_t count)
+#ifdef RT_USING_DFS_V2
+static ssize_t dfs_net_write(struct dfs_file *file, const void *buf, size_t count, off_t *pos)
+#else
+static ssize_t dfs_net_write(struct dfs_file *file, const void *buf, size_t count)
+#endif
 {
     int ret;
     int socket = (int)(size_t)file->vnode->data;
@@ -71,8 +80,10 @@ static int dfs_net_write(struct dfs_file *file, const void *buf, size_t count)
         ret = rt_get_errno();
         return (ret > 0) ? (-ret) : ret;
     }
+
     return ret;
 }
+
 static int dfs_net_close(struct dfs_file* file)
 {
     int socket;
@@ -95,15 +106,11 @@ static int dfs_net_poll(struct dfs_file *file, struct rt_pollreq *req)
 
 const struct dfs_file_ops _net_fops =
 {
-    NULL,    /* open     */
-    dfs_net_close,
-    dfs_net_ioctl,
-    dfs_net_read,
-    dfs_net_write,
-    NULL,
-    NULL,    /* lseek    */
-    NULL,    /* getdents */
-    dfs_net_poll,
+    .close = dfs_net_close,
+    .ioctl = dfs_net_ioctl,
+    .read  = dfs_net_read,
+    .write = dfs_net_write,
+    .poll  = dfs_net_poll,
 };
 
 const struct dfs_file_ops *dfs_net_get_fops(void)

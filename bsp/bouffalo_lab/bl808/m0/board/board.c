@@ -15,10 +15,6 @@
 #include "board.h"
 #include "drv_uart.h"
 
-#ifdef BSP_USING_SDH_SDCARD
-#include "sdh_sdcard.h"
-#endif
-
 static void system_clock_init(void)
 {
     /* wifipll/audiopll */
@@ -63,17 +59,6 @@ static void peripheral_clock_init(void)
     GLB_Set_CAM_CLK(ENABLE, GLB_CAM_CLK_WIFIPLL_96M, 3);
 
     GLB_Set_PKA_CLK_Sel(GLB_PKA_CLK_MCU_MUXPLL_160M);
-
-#ifdef BSP_USING_SDH_SDCARD
-    PERIPHERAL_CLOCK_SDH_ENABLE();
-    uint32_t tmp_val;
-    tmp_val = BL_RD_REG(PDS_BASE, PDS_CTL5);
-    uint32_t tmp_val2 = BL_GET_REG_BITS_VAL(tmp_val, PDS_CR_PDS_GPIO_KEEP_EN);
-    tmp_val2 &= ~(1 << 0);
-    tmp_val = BL_SET_REG_BITS_VAL(tmp_val, PDS_CR_PDS_GPIO_KEEP_EN, tmp_val2);
-    BL_WR_REG(PDS_BASE, PDS_CTL5, tmp_val);
-    GLB_AHB_MCU_Software_Reset(GLB_AHB_MCU_SW_SDH);
-#endif
 
 #ifdef BSP_USING_CSI
     GLB_CSI_Config_MIPIPLL(2, 0x21000);

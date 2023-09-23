@@ -1,0 +1,18 @@
+from building import *
+
+cwd = GetCurrentDir()
+
+# add the general drivers
+src = Split("""
+    board.c
+    rtt_board.c
+    pinmux.c
+    fal_flash_port.c
+""")
+
+CPPPATH = [cwd]
+CPPDEFINES=['D45', 'HPM6280']
+
+group = DefineGroup('Board', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES = CPPDEFINES)
+
+Return('group')

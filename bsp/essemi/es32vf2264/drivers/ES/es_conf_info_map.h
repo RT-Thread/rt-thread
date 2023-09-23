@@ -573,6 +573,26 @@ static const struct pin_index pins[] =
 #endif
 
 
+
+#ifndef ES_MAP__PIN_PC11_USED
+#define ES_MAP__PIN_PC11_USED
+#ifndef ES_CUART2_RX_GPIO_FUNC
+#define ES_CUART2_RX_GPIO_FUNC  ALD_GPIO_FUNC_4
+#endif
+#ifndef ES_CUART2_RX_GPIO_PORT
+#define ES_CUART2_RX_GPIO_PORT  GPIOC
+#endif
+#ifndef ES_CUART2_RX_GPIO_PIN
+#define ES_CUART2_RX_GPIO_PIN  ALD_GPIO_PIN_11
+#endif
+
+#ifndef ES_CUART2_RX_PIN
+#ifdef ES_PIN_GPIO_C_11
+#define ES_CUART2_RX_PIN ES_PIN_GPIO_C_11
+#endif
+#endif
+#endif
+
 #ifndef ES_MAP__PIN_PD0_USED
 #define ES_MAP__PIN_PD0_USED
 #ifndef ES_CUART2_RX_GPIO_FUNC
@@ -632,6 +652,26 @@ static const struct pin_index pins[] =
 #endif
 #endif
 
+
+
+#ifndef ES_MAP__PIN_PC10_USED
+#define ES_MAP__PIN_PC10_USED
+#ifndef ES_CUART2_TX_GPIO_FUNC
+#define ES_CUART2_TX_GPIO_FUNC  ALD_GPIO_FUNC_4
+#endif
+#ifndef ES_CUART2_TX_GPIO_PORT
+#define ES_CUART2_TX_GPIO_PORT  GPIOC
+#endif
+#ifndef ES_CUART2_TX_GPIO_PIN
+#define ES_CUART2_TX_GPIO_PIN  ALD_GPIO_PIN_10
+#endif
+
+#ifndef ES_CUART2_TX_PIN
+#ifdef ES_PIN_GPIO_C_10
+#define ES_CUART2_TX_PIN ES_PIN_GPIO_C_10
+#endif
+#endif
+#endif
 
 #ifndef ES_MAP__PIN_PD1_USED
 #define ES_MAP__PIN_PD1_USED
@@ -2995,26 +3035,6 @@ static const struct pin_index pins[] =
 
 #ifndef ES_MAP__PIN_PC10_USED
 #define ES_MAP__PIN_PC10_USED
-#ifndef ES_CUART2_TX_GPIO_FUNC
-#define ES_CUART2_TX_GPIO_FUNC  ALD_GPIO_FUNC_4
-#endif
-#ifndef ES_CUART2_TX_GPIO_PORT
-#define ES_CUART2_TX_GPIO_PORT  GPIOC
-#endif
-#ifndef ES_CUART2_TX_GPIO_PIN
-#define ES_CUART2_TX_GPIO_PIN  ALD_GPIO_PIN_10
-#endif
-
-#ifndef ES_CUART2_TX_PIN
-#ifdef ES_PIN_GPIO_C_10
-#define ES_CUART2_TX_PIN ES_PIN_GPIO_C_10
-#endif
-#endif
-#endif
-
-
-#ifndef ES_MAP__PIN_PC10_USED
-#define ES_MAP__PIN_PC10_USED
 #ifndef ES_EUART1_TX_GPIO_FUNC
 #define ES_EUART1_TX_GPIO_FUNC  ALD_GPIO_FUNC_7
 #endif
@@ -3068,26 +3088,6 @@ static const struct pin_index pins[] =
 #ifndef ES_GP16C4T0_CH2_PIN
 #ifdef ES_PIN_GPIO_C_11
 #define ES_GP16C4T0_CH2_PIN ES_PIN_GPIO_C_11
-#endif
-#endif
-#endif
-
-
-#ifndef ES_MAP__PIN_PC11_USED
-#define ES_MAP__PIN_PC11_USED
-#ifndef ES_CUART2_RX_GPIO_FUNC
-#define ES_CUART2_RX_GPIO_FUNC  ALD_GPIO_FUNC_4
-#endif
-#ifndef ES_CUART2_RX_GPIO_PORT
-#define ES_CUART2_RX_GPIO_PORT  GPIOC
-#endif
-#ifndef ES_CUART2_RX_GPIO_PIN
-#define ES_CUART2_RX_GPIO_PIN  ALD_GPIO_PIN_11
-#endif
-
-#ifndef ES_CUART2_RX_PIN
-#ifdef ES_PIN_GPIO_C_11
-#define ES_CUART2_RX_PIN ES_PIN_GPIO_C_11
 #endif
 #endif
 #endif

@@ -50,7 +50,6 @@
 #define ECHO_BLOCK      256
 #define ECHO_DISCARD_WATERMARK  RT_TTY_BUF - (ECHO_BLOCK + 32)
 
-
 struct n_tty_data
 {
     /* producer-published */
@@ -136,6 +135,12 @@ rt_inline int test_and_clear_bit(int nr, volatile void *addr)
     return retval;
 }
 
+#ifdef __GNUC__
+rt_inline unsigned long __ffs(unsigned long word)
+{
+    return __builtin_ffsl(word);
+}
+#else
 rt_inline unsigned long __ffs(unsigned long word)
 {
     int num = 0;
@@ -174,6 +179,7 @@ rt_inline unsigned long __ffs(unsigned long word)
 
     return num;
 }
+#endif
 
 #define BITS_PER_LONG       32
 #define BITOP_WORD(nr)      ((nr) / BITS_PER_LONG)
@@ -703,13 +709,13 @@ static void __isig(int sig, struct tty_struct *tty)
                     ld->ops->set_termios(tty, &old_termios);
                 }
             }
-            tty_sigaddset(&lwp->signal_mask, SIGTTOU);
+            lwp_signal_kill(lwp, SIGTTOU, SI_USER, 0);
             old_lwp = tty_pop(&tty->head, RT_NULL);
             tty->foreground = old_lwp;
         }
         else
         {
-            lwp_kill(lwp_to_pid(lwp), sig);
+            lwp_signal_kill(lwp, sig, SI_USER, 0);
         }
     }
 }
@@ -1436,14 +1442,15 @@ static int canon_copy_from_read_buf(struct tty_struct *tty, char *b, size_t nr)
 
     size_t buf_size = RT_TTY_BUF - tail;
     const void *from = read_buf_addr(ldata, tail);
+    size_t temp_n = n;
     if (n > buf_size)
     {
         rt_memcpy(b, from, buf_size);
         b += buf_size;
-        n -= buf_size;
+        temp_n -= buf_size;
         from = ldata->read_buf;
     }
-    rt_memcpy(b, from, n);
+    rt_memcpy(b, from, temp_n);
 
     if (found)
     {

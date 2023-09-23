@@ -60,7 +60,7 @@ typedef unsigned long u_long;
 typedef int bool_t;
 typedef int enum_t;
 
-#if !defined(RT_USING_NEWLIB) && !defined(RT_USING_MUSL)
+#if !defined(RT_USING_NEWLIB) && !defined(RT_USING_MUSLLIBC)
 typedef unsigned long dev_t;
 #endif
 

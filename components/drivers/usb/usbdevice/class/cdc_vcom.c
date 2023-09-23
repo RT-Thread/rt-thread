@@ -20,6 +20,10 @@
 
 #ifdef RT_USB_DEVICE_CDC
 
+#define DBG_TAG           "usbdevice_cdc"
+#define DBG_LVL           DBG_INFO
+#include <rtdbg.h>
+
 #define VCOM_INTF_STR_INDEX 5
 #ifdef RT_VCOM_TX_TIMEOUT
 #define VCOM_TX_TIMEOUT      RT_VCOM_TX_TIMEOUT
@@ -287,7 +291,7 @@ static rt_err_t _ep_in_handler(ufunction_t func, rt_size_t size)
 
     data = (struct vcom*)func->user_data;
     request_size = data->ep_in->request.size;
-    RT_DEBUG_LOG(RT_DEBUG_USB, ("_ep_in_handler %d\n", request_size));
+    LOG_D("_ep_in_handler %d", request_size);
     if ((request_size != 0) && ((request_size % EP_MAXPACKET(data->ep_in)) == 0))
     {
         /* don't have data right now. Send a zero-length-packet to
@@ -325,7 +329,7 @@ static rt_err_t _ep_out_handler(ufunction_t func, rt_size_t size)
 
     RT_ASSERT(func != RT_NULL);
 
-    RT_DEBUG_LOG(RT_DEBUG_USB, ("_ep_out_handler %d\n", size));
+    LOG_D("_ep_out_handler %d", size);
 
     data = (struct vcom*)func->user_data;
     /* ensure serial is active */
@@ -362,7 +366,7 @@ static rt_err_t _ep_cmd_handler(ufunction_t func, rt_size_t size)
 {
     RT_ASSERT(func != RT_NULL);
 
-    RT_DEBUG_LOG(RT_DEBUG_USB, ("_ep_cmd_handler\n"));
+    LOG_D("_ep_cmd_handler");
 
     return RT_EOK;
 }
@@ -383,7 +387,7 @@ static rt_err_t _cdc_get_line_coding(udevice_t device, ureq_t setup)
     RT_ASSERT(device != RT_NULL);
     RT_ASSERT(setup != RT_NULL);
 
-    RT_DEBUG_LOG(RT_DEBUG_USB, ("_cdc_get_line_coding\n"));
+    LOG_D("_cdc_get_line_coding");
 
     data.dwDTERate = 115200;
     data.bCharFormat = 0;
@@ -398,7 +402,7 @@ static rt_err_t _cdc_get_line_coding(udevice_t device, ureq_t setup)
 
 static rt_err_t _cdc_set_line_coding_callback(udevice_t device, rt_size_t size)
 {
-    RT_DEBUG_LOG(RT_DEBUG_USB, ("_cdc_set_line_coding_callback\n"));
+    LOG_D("_cdc_set_line_coding_callback");
 
     dcd_ep0_send_status(device->dcd);
 
@@ -418,7 +422,7 @@ static rt_err_t _cdc_set_line_coding(udevice_t device, ureq_t setup)
     RT_ASSERT(device != RT_NULL);
     RT_ASSERT(setup != RT_NULL);
 
-    RT_DEBUG_LOG(RT_DEBUG_USB, ("_cdc_set_line_coding\n"));
+    LOG_D("_cdc_set_line_coding");
 
     rt_usbd_ep0_read(device, (void*)&line_coding, sizeof(struct ucdc_line_coding),
         _cdc_set_line_coding_callback);
@@ -464,7 +468,7 @@ static rt_err_t _interface_handler(ufunction_t func, ureq_t setup)
         break;
     case CDC_SET_CONTROL_LINE_STATE:
         data->connected = (setup->wValue & 0x01) > 0?RT_TRUE:RT_FALSE;
-        RT_DEBUG_LOG(RT_DEBUG_USB, ("vcom state:%d \n", data->connected));
+        LOG_D("vcom state:%d ", data->connected);
         dcd_ep0_send_status(func->device->dcd);
         break;
     case CDC_SEND_BREAK:
@@ -490,7 +494,7 @@ static rt_err_t _function_enable(ufunction_t func)
 
     RT_ASSERT(func != RT_NULL);
 
-    RT_DEBUG_LOG(RT_DEBUG_USB, ("cdc function enable\n"));
+    LOG_D("cdc function enable");
 
     _vcom_reset_state(func);
 
@@ -524,7 +528,7 @@ static rt_err_t _function_disable(ufunction_t func)
 
     RT_ASSERT(func != RT_NULL);
 
-    RT_DEBUG_LOG(RT_DEBUG_USB, ("cdc function disable\n"));
+    LOG_D("cdc function disable");
 
     _vcom_reset_state(func);
 
@@ -765,7 +769,7 @@ static rt_ssize_t _vcom_tx(struct rt_serial_device *serial, rt_uint8_t *buf, rt_
     RT_ASSERT(serial != RT_NULL);
     RT_ASSERT(buf != RT_NULL);
 
-    RT_DEBUG_LOG(RT_DEBUG_USB, ("%s\n",__func__));
+    LOG_D("%s",__func__);
 
     if (data->connected)
     {
@@ -917,7 +921,7 @@ static void vcom_tx_thread_entry(void* parameter)
 
             if (rt_completion_wait(&data->wait, VCOM_TX_TIMEOUT) != RT_EOK)
             {
-                RT_DEBUG_LOG(RT_DEBUG_USB, ("vcom tx timeout\n"));
+                LOG_D("vcom tx timeout");
             }
             if(data->serial.parent.open_flag &
 #ifdef RT_USING_SERIAL_V1

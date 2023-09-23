@@ -9,6 +9,7 @@
  * Date        Author       Notes
  * 2022-10-26  huanghe      first commit
  * 2022-10-26  zhugengyu    support aarch64
+ * 2023-07-26  huanghe      update psci uage
  *
  */
 
@@ -42,7 +43,7 @@ rt_uint64_t rt_cpu_mpidr_early[] =
 #if defined(TARGET_E2000D)
     [0] = 0x80000200,
     [1] = 0x80000201,
-#elif defined(TARGET_E2000Q)
+#elif defined(TARGET_E2000Q) || defined(TARGET_PHYTIUMPI)
     [0] = 0x80000000,
     [1] = 0x80000100,
     [2] = 0x80000200,
@@ -82,13 +83,14 @@ void rt_hw_secondary_cpu_up(void)
 
 #if defined(TARGET_ARMV8_AARCH64)
         /* code */
+        rt_kprintf("cpu_mask = 0x%x \n", cpu_mask);
         char *entry = (char *)_secondary_cpu_entry;
         entry += PV_OFFSET;
-        PsciCpuOn(cpu_mask, (uintptr)entry);
+        FPsciCpuMaskOn(cpu_mask, (uintptr)entry);
         __DSB();
 #else
             /* code */
-        PsciCpuOn(cpu_mask, (uintptr)rt_secondary_cpu_entry);
+        FPsciCpuMaskOn(cpu_mask, (uintptr)rt_secondary_cpu_entry);
         __asm__ volatile("dsb" ::: "memory");
 #endif
 

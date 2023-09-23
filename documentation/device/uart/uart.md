@@ -575,7 +575,7 @@ static void serial_thread_entry(void *parameter)
         rt_memset(&msg, 0, sizeof(msg));
         /* Read messages from the message queue*/
         result = rt_mq_recv(&rx_mq, &msg, sizeof(msg), RT_WAITING_FOREVER);
-        if (result == RT_EOK)
+        if (result >= 0)
         {
             /*Read data from the serial port*/
             rx_length = rt_device_read(msg.dev, 0, rx_buffer, msg.size);

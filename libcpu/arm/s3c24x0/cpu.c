@@ -148,7 +148,7 @@ rt_base_t rt_hw_cpu_dcache_status()
  * reset cpu by dog's time-out
  *
  */
-rt_weak void rt_hw_cpu_reset()
+void rt_hw_cpu_reset()
 {
     /* Disable all interrupt except the WDT */
     INTMSK = (~((rt_uint32_t)1 << INTWDT));
@@ -167,20 +167,5 @@ rt_weak void rt_hw_cpu_reset()
     /* NEVER REACHED */
 }
 
-/**
- *  shutdown CPU
- *
- */
-rt_weak void rt_hw_cpu_shutdown()
-{
-    rt_base_t level;
-    rt_kprintf("shutdown...\n");
-
-    level = rt_hw_interrupt_disable();
-    while (level)
-    {
-        RT_ASSERT(0);
-    }
-}
 
 /*@}*/

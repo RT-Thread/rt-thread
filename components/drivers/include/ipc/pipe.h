@@ -10,7 +10,8 @@
 #ifndef PIPE_H__
 #define PIPE_H__
 
-#include <rtthread.h>
+#include <rtdef.h>
+#include <rtconfig.h>
 
 /**
  * Pipe Device

@@ -1,5 +1,5 @@
 /***********************************************************************************************************************
- * Copyright [2020-2021] Renesas Electronics Corporation and/or its affiliates.  All Rights Reserved.
+ * Copyright [2020-2023] Renesas Electronics Corporation and/or its affiliates.  All Rights Reserved.
  *
  * This software and documentation are supplied by Renesas Electronics America Inc. and may only be used with products
  * of Renesas Electronics Corp. and its affiliates ("Renesas").  No other uses are authorized.  Renesas products are
@@ -21,7 +21,11 @@
 /** @} (end addtogroup BSP_MCU) */
 
 #ifndef BSP_ARM_EXCEPTIONS_H
-#define BSP_ARM_EXCEPTIONS_H
+ #define BSP_ARM_EXCEPTIONS_H
+
+ #ifdef __cplusplus
+extern "C" {
+ #endif
 
 /***********************************************************************************************************************
  * Macro definitions
@@ -46,5 +50,9 @@ typedef enum IRQn
     PendSV_IRQn           = -2,        /* 14 Pendable request for system service */
     SysTick_IRQn          = -1,        /* 15 System Tick Timer */
 } IRQn_Type;
+
+ #ifdef __cplusplus
+}
+ #endif
 
 #endif

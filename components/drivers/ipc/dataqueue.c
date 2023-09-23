@@ -9,9 +9,8 @@
  * 2016-10-31     armink       fix some resume push and pop thread bugs
  */
 
-#include <rtthread.h>
-#include <rtdevice.h>
 #include <rthw.h>
+#include <rtdevice.h>
 
 #define DATAQUEUE_MAGIC  0xbead0e0e
 

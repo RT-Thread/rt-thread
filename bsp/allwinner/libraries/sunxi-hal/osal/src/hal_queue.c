@@ -182,7 +182,7 @@ int hal_queue_recv(hal_queue_t queue, void *buffer, int timeout)
     }
 
     ret = rt_mq_recv(queue, buffer, queue->msg_size, timeout);
-    if (ret != RT_EOK)
+    if (ret < 0)
     {
         return -2;
     }

@@ -157,6 +157,9 @@ The SPI interface provided by the MIMXRT1060-EVK onboard Arduino interface has d
 
 ![](./figures/11.png)
 
+Solder works must be done before next step:
+![](./figures/18.jpg)
+
 ### 4.1 Configure the onboard SPI peripherals
 
 RW007 supports SPI interface for communication, MIMXRT1060-EVK supports SPI driver, defaults to using polling mode to communicate with RW007 (currently it does not support interrupt and DMA mode to communicate with RW007), the following shows how to use RT-Studio to configure SPI:
@@ -174,31 +177,7 @@ Click the RT-Thread Settings option on the left, there is a configuration menu w
 ![](./figures/12.png)
 
 ### 4.4 Modify the RW007 example
-
-Since the default example of the RW007 package is based on the STM32, minor modifications are required on the RT1060-EVK, modify the `rw007_stm32_port.c` file in the example folder in the RW007 package.
-
-Modify the `int wifi_spi_device_init(void)` function, replacing the example with the code given below:
-
-```
-int wifi_spi_device_init(void)
-{
-    char sn_version[32];
-    
-    rw007_gpio_init();
-    rt_hw_spi_device_attach(RW007_SPI_BUS_NAME, "wspi", RW007_CS_PIN);
-    rt_hw_wifi_init("wspi");
-
-    rt_wlan_set_mode(RT_WLAN_DEVICE_STA_NAME, RT_WLAN_STATION);
-    rt_wlan_set_mode(RT_WLAN_DEVICE_AP_NAME, RT_WLAN_AP);
-
-    rw007_sn_get(sn_version);
-    rt_kprintf("\nrw007  sn: [%s]\n", sn_version);
-    rw007_version_get(sn_version);
-    rt_kprintf("rw007 ver: [%s]\n\n", sn_version);
-
-    return 0;
-}
-```
+RW007 has been ported into IMXRT1062 platform, the port file is at: `board/ports/rw007_port.c`, Once we select RW007 package, it will join into our project automatically, there is no need to modify any code for simply turn on  this module.
 
 ### 4.5 After the modification is completed, compile the project and burn the firmware
 

@@ -24,12 +24,12 @@
 #include "fsl_lpadc.h"
 #include <rtdevice.h>
 
-static rt_err_t lpc_lpadc_enabled(struct rt_adc_device *device, rt_uint32_t channel, rt_bool_t enabled)
+static rt_err_t lpc_lpadc_enabled(struct rt_adc_device *device, rt_int8_t channel, rt_bool_t enabled)
 {
     return RT_EOK;
 }
 
-static rt_err_t lpc_lpadc_convert(struct rt_adc_device *device, rt_uint32_t channel, rt_uint32_t *value)
+static rt_err_t lpc_lpadc_convert(struct rt_adc_device *device, rt_int8_t channel, rt_uint32_t *value)
 {
     lpadc_conv_trigger_config_t mLpadcTriggerConfigStruct;
     lpadc_conv_command_config_t mLpadcCommandConfigStruct;

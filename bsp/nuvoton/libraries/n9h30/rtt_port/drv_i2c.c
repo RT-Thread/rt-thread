@@ -506,7 +506,7 @@ static rt_ssize_t nu_i2c_mst_xfer(struct rt_i2c_bus_device *bus,
     return i;
 }
 
-static rt_err_t nu_i2c_bus_control(struct rt_i2c_bus_device *bus, rt_uint32_t u32Cmd, rt_uint32_t u32Value)
+static rt_err_t nu_i2c_bus_control(struct rt_i2c_bus_device *bus, int cmd, void *args)
 {
     nu_i2c_bus_t psNuI2cBus;
     nu_i2c_dev_t psNuI2cDev;
@@ -516,10 +516,10 @@ static rt_err_t nu_i2c_bus_control(struct rt_i2c_bus_device *bus, rt_uint32_t u3
     psNuI2cBus = (nu_i2c_bus_t) bus;
     psNuI2cDev = &psNuI2cBus->dev;
 
-    switch (u32Cmd)
+    switch (cmd)
     {
     case RT_I2C_DEV_CTRL_CLK:
-        nu_i2c_set_speed(psNuI2cDev, (int32_t)u32Value);
+        nu_i2c_set_speed(psNuI2cDev, *(int32_t *)args);
         break;
     default:
         return -RT_EIO;

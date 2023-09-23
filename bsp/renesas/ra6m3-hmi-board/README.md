@@ -1,98 +1,93 @@
-# 瑞萨 RA6M3-HMI-Board 开发板 BSP 说明
+# RA6M3-HMI-Board BSP Instruction
 
-## 简介
+[中文](README_ZH.md)|English
 
-本文档为 RA6M3-HMI-Board 开发板提供的 BSP (板级支持包) 说明。通过阅读快速上手章节开发者可以快速地上手该 BSP，将 RT-Thread 运行在开发板上。
+## Introduction
 
-主要内容如下：
+Get ready to dive into the world of the RA6M3-HMI-Board development board! This document provides all the juicy details on the BSP (Board Support Package) instructions. By checking out the Quick Start section, developers can hit the ground running with this BSP and have RT-Thread up and running on the development board in no time.
 
-- 开发板介绍
-- BSP 快速上手指南
+Here’s what you can expect to find inside:
 
-## 开发板介绍
+• A comprehensive introduction to the development board 
 
-基于瑞萨 RA6M3 MCU 开发的 EK-RA6M3 MCU 评估板，通过灵活配置软件包和 IDE，可帮助用户对 RA6M3 MCU 群组的特性轻松进行评估，并对嵌入系统应用程序进行开发。
+• A handy BSP Quick Start Guide
 
-开发板正面外观如下图： 
+Let’s start with an introduction to the development board. The HMI-Board board, built on the foundation of the Renesas RA6M3 MCU, is a game-changer. With its flexible software package and IDE configuration, users can easily evaluate the features of the RA6M3 MCU group and develop cutting-edge embedded system applications.
+
+Curious about what it looks like? Check out the front view of the development board in the figure below:
 
 ![](docs/picture/front.png)
 
-开发板背面外观如下图： 
+The back view:
 
 ![](docs/picture/back.png)
 
-该开发板常用 **板载资源** 如下：
+- ## Hardware Framework
 
-![](docs/picture/resources.png)
+![img](https://miro.medium.com/v2/resize:fit:963/1*mogBeXeySQY9O4rFbPhy8g.png)
 
-- MCU：R7FA6M3AH，120MHz，Arm Cortex®-M4 内核，2MB 代码闪存, 640KB SRAM
-- RA6M3(R7FA6M3AH3CFB)：Cortex-M4F 内核，120Mhz 主频，具有 2MB Flash/640KB RAM，集成 TFT 控制器、2D 加速器和 JPEG 解码器。
-- 4.3 寸 LCD (RGB 888)
-- 板载仿真器
-- 以太网
-- RW007 (SPI 高速 WIFI)
-- USB-Device
-- TF Crad
-- CAN
-- 1路麦克风，1 路扬声器
-- Arduino 扩展接口
-- 2 路 PMOD 扩展接口
-- 4个按键：3个用户按键，一个复位按键
+  - RA6M3(R7FA6M3AH3CFB): Cortex-M4F core, 120Mhz main frequency, with 2MB Flash/640KB RAM, integrated TFT controller, 2D accelerator, and JPEG decoder.
+  - 4.3 inch LCD (RGB 888)
+  - On-board emulator
+  - Ethernet
+  - RW007 (SPI high-speed WIFI)
+  - USB-Device
+  - TF Card
+  - CAN
+  - 1 microphone, 1 speaker
+  - Arduino expansion interface
+  - 2 PMOD expansion interfaces
+  - 4 buttons: 3 user buttons, one reset button
 
-**更多详细资料及工具**
 
-## 外设支持
 
-本 BSP 目前对外设的支持情况如下：
+### Peripheral Condition
 
-| **片上外设** | **支持情况** | **备注** |
-| :----------------: | :----------------: | :------------- |
-| UART               | 支持               | UART9 为默认日志输出端口 |
-| GPIO               | 支持               |                |
-| LCD          | 支持         |                          |
-| SDHI | 支持 | |
-| JPEG | 支持 | |
-| G2D | 支持 | |
-| RW007 | 支持 | |
-| ETH | 支持 | |
-| SPI | 支持 | |
-| I2C | 支持 | |
-| CAN | 支持 | |
+Each peripheral supporting condition for this BSP is as follows:
 
-* 注意：仓库刚拉下来是最小系统，若需添加/使能其他外设需参考：[外设驱动使用教程 (rt-thread.org)](https://www.rt-thread.org/document/site/#/rt-thread-version/rt-thread-standard/tutorial/make-bsp/renesas-ra/RA系列BSP外设驱动使用教程)
+| **On-chip Peripheral Drivers** | **Support** | Remark                                |
+| ------------------------------ | ----------- | ------------------------------------- |
+| UART                           | Support     | UART9 is the default log output port. |
+| GPIO                           | Support     |                                       |
+| LCD                            | Support     |                                       |
+| SDHI                           | Support     |                                       |
+| JPEG                           | Support     |                                       |
+| G2D                            | Support     |                                       |
+| RW007                          | Support     |                                       |
+| ETH                            | Support     |                                       |
+| SPI                            | Support     |                                       |
+| I2C                            | Support     |                                       |
+| CAN                            | Support     |                                       |
 
-## 使用说明
+## Instructions for Use 
 
-使用说明分为如下两个章节：
+The instructions for use are divided into the following two sections:
 
-- 快速上手
+• Quick Start
 
-  本章节是为刚接触 RT-Thread 的新手准备的使用说明，遵循简单的步骤即可将 RT-Thread 操作系统运行在该开发板上，看到实验效果 。
-- 进阶使用
+This section is a user guide for newcomers to RT-Thread. By following simple steps, you can run the RT-Thread operating system on this development board and see the experimental results. 
 
-  本章节是为需要在 RT-Thread 操作系统上使用更多开发板资源的开发者准备的。通过使用 ENV 工具对 BSP 进行配置，可以开启更多板载资源，实现更多高级功能。
+• Advanced Use
 
-### 快速上手
+This section is for developers who want to enable more development board resources on the RT-Thread operating system. By using the ENV tool to configure the BSP, you can enable more on-board resources and achieve more advanced functions.
 
-本 BSP 目前仅提供 MDK5 工程。下面以 MDK5 开发环境为例，介绍如何将系统运行起来。
+## Quick Start 
 
-**硬件连接**
+This BSP currently only provides an MDK5 project. The following tutorial takes the MDK5 development environment as an example to introduce how to run the system.
 
-使用 USB 数据线连接开发板到 PC，使用 J-link 接口下载和 DEBUG 程序。使用 USB 转串口工具连接 UART7：P401(TXD)、P402(RXD)。
+**Compile and Download**
 
-**编译下载**
+• Compile: Double-click the **project.uvprojx** file to open the MDK5 project and compile the program. 
 
-- 编译：双击 project.uvprojx 文件，打开 MDK5 工程，编译程序。
+• Download: Click the Debug button in MDK to download and debug 
 
-- 下载：点击 MDK 的 Debug 按钮进行下载调试
+**Running results**
 
-**查看运行结果**
+After the program is downloaded successfully, the system will automatically run and print system information.
 
-下载程序成功之后，系统会自动运行并打印系统信息。
+Connect the corresponding serial port of the development board to the PC, open the corresponding serial port (115200-8-1-N) in the terminal tool, reset the device, and you can see RT-Thread’s output information. Enter the help command can view the commands supported by the system.
 
-连接开发板对应串口到 PC , 在终端工具里打开相应的串口（115200-8-1-N），复位设备后，可以看到 RT-Thread 的输出信息。输入 help 命令可查看系统中支持的命令。
-
-```bash
+```
  \ | /
 - RT -     Thread Operating System
  / | \     5.0.0 build Jan  4 2023 10:14:56
@@ -110,11 +105,11 @@ list             - list objects
 msh > 
 ```
 
-**应用入口函数**
+**Application Entry Function**
 
-应用层的入口函数在 **bsp\ra6m3-ek\src\hal_emtry.c** 中 的 `void hal_entry(void)` 。用户编写的源文件可直接放在 src 目录下。
+The entry function of the application layer is in **bsp\renesas\ra6m3-hmi-board\src\hal_entry.c** in `void hal_entry(void)`. Source files that you created can be placed directly in the src directory.
 
-```c
+```
 void hal_entry(void)
 {
     rt_kprintf("\nHello RT-Thread!\n");
@@ -129,41 +124,28 @@ void hal_entry(void)
 }
 ```
 
-### 进阶使用
+### Advanced Features
 
-**资料及文档**
+**Resources & Documents**
 
-- [开发板官网主页](https://www2.renesas.cn/cn/zh/products/microcontrollers-microprocessors/ra-cortex-m-mcus/cpk-ra6m4-evaluation-board)
-- [开发板用户手册](https://www2.renesas.cn/cn/zh/document/mah/1527156?language=zh&r=1527191)
-- [瑞萨RA MCU 基础知识](https://www2.renesas.cn/cn/zh/document/gde/1520091)
-- [RA6 MCU 快速设计指南](https://www2.renesas.cn/cn/zh/document/apn/ra6-quick-design-guide)
+- [Development Board Overview](https://www.renesas.com/us/en/products/microcontrollers-microprocessors/ra-cortex-m-mcus/cpk-ra6m4-evaluation-board#overview)
+- [User Guide](https://www2.renesas.cn/cn/zh/document/mah/1527156?language=zh&r=1527191)
+- [RA MCU](https://www.renesas.com/us/en/document/gde/1520091)
+- [RA6 MCU Quick Design Guide](https://www.renesas.com/us/en/document/apn/ra6-quick-design-guide)
 
-**FSP 配置**
+**ENV Configuration**
 
-需要修改瑞萨的 BSP 外设配置或添加新的外设端口，需要用到瑞萨的 [FSP](https://www2.renesas.cn/jp/zh/software-tool/flexible-software-package-fsp#document) 配置工具。请务必按照如下步骤完成配置。配置中有任何问题可到[RT-Thread 社区论坛](https://club.rt-thread.org/)中提问。
+• How to use the ENV tool: [RT-Thread env tool user manual](https://www.rt-thread.io/document/site/programming-manual/env/env/). 
 
-1. [下载灵活配置软件包 (FSP) | Renesas](https://www.renesas.com/cn/zh/software-tool/flexible-software-package-fsp)，请使用 FSP 3.5.0 版本
-2. 下载安装完成后，需要添加 EK-RA6M3 开发板的官方板级支持包
-> 打开[ EK-RA6M3 开发板详情页](https://www.renesas.cn/cn/zh/products/microcontrollers-microprocessors/ra-cortex-m-mcus/ek-ra6m3-evaluation-kit-ra6m3-mcu-group#document)，在 **“下载”** 列表中找到  **” EK-RA6M3板级支持包“** ，点击链接即可下载
-3. 如何将 **”EK-RA6M3板级支持包“**添加到 FSP 中，请参考文档[如何导入板级支持包](https://www2.renesas.cn/document/ppt/1527171?language=zh&r=1527191)
-4. 请查看文档：[使用 FSP 配置外设驱动](../docs/RA系列使用FSP配置外设驱动.md)，在 MDK 中通过添加自定义命名来打开当前工程的 FSP 配置。
+This BSP only enables the function of UART7 by default. If you're looking for more advanced functions such as components and software packages, ENV tool for configuration is available.
 
-**ENV 配置**
+The steps are as follows:
 
-- 如何使用 ENV 工具：[RT-Thread env 工具用户手册](https://www.rt-thread.org/document/site/#/development-tools/env/env)
+1. Open the env tool under bsp.
+2. Enter the `menuconfig` command to configure the project, and save and exit after configuration.
+3. Enter the `pkgs --update` command to update the software package.
+4. Enter the `scons --target=mdk5` command to regenerate the project.
 
-此 BSP 默认只开启了 UART7 的功能，如果需使用更多高级功能例如组件、软件包等，需要利用 ENV 工具进行配置。
+## Contribute the Code
 
-步骤如下：
-1. 在 bsp 下打开 env 工具。
-2. 输入`menuconfig`命令配置工程，配置好之后保存退出。
-3. 输入`pkgs --update`命令更新软件包。
-4. 输入`scons --target=mdk5` 命令重新生成工程。 
-
-## 联系人信息
-
-在使用过程中若您有任何的想法和建议，建议您通过以下方式来联系到我们  [RT-Thread 社区论坛](https://club.rt-thread.org/)
-
-## 贡献代码
-
-如果您对  EK-RA6M3 感兴趣，并且有一些好玩的项目愿意与大家分享的话欢迎给我们贡献代码，您可以参考 [如何向 RT-Thread 代码贡献](https://www.rt-thread.org/document/site/#/rt-thread-version/rt-thread-standard/development-guide/github/github)。
+If you’re interested in the HMI-Board and have some cool projects you’d like to share with everyone, we’d love for you to contribute your code! You can check out [how to contribute to RT-Thread’s code](https://www.rt-thread.io/contribution.html). Let’s make something awesome together!

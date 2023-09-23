@@ -13,6 +13,10 @@
 
 #include <rthw.h>
 
+#define DBG_TAG           "cpu.ti.c28x"
+#define DBG_LVL           DBG_INFO
+#include <rtdbg.h>
+
 extern volatile rt_uint8_t rt_interrupt_nest;
 
 /* exception and interrupt handler table */
@@ -154,16 +158,6 @@ int __rt_ffs(int value)
 }
 #endif
 
-/**
- * shutdown CPU
- */
-rt_weak void rt_hw_cpu_shutdown(void)
-{
-    rt_kprintf("shutdown...\n");
-
-    RT_ASSERT(0);
-}
-
 void rt_interrupt_enter(void)
 {
     rt_base_t level;
@@ -174,14 +168,14 @@ void rt_interrupt_enter(void)
     RT_OBJECT_HOOK_CALL(rt_interrupt_enter_hook,());
     rt_hw_interrupt_enable(level);
 
-    RT_DEBUG_LOG(RT_DEBUG_IRQ, ("irq has come..., irq current nest:%d\n",
-                                (rt_int32_t)rt_interrupt_nest));
+    LOG_D("irq has come..., irq current nest:%d",
+          (rt_int32_t)rt_interrupt_nest);
 }
 
 void rt_interrupt_leave(void)
 {
-    RT_DEBUG_LOG(RT_DEBUG_IRQ, ("irq is going to leave, irq current nest:%d\n",
-                                (rt_int32_t)rt_interrupt_nest));
+    LOG_D("irq is going to leave, irq current nest:%d",
+          (rt_int32_t)rt_interrupt_nest);
 
     rt_hw_interrupt_disable();
     RT_OBJECT_HOOK_CALL(rt_interrupt_leave_hook,());

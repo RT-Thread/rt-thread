@@ -27,8 +27,8 @@
 #define DBG_LVL DBG_WARNING
 #include <rtdbg.h>
 
-RT_CTASSERT(order_huge_pg, RT_PAGE_MAX_ORDER > ARCH_PAGE_SHIFT - 2);
-RT_CTASSERT(size_width, sizeof(rt_size_t) == sizeof(void *));
+RT_STATIC_ASSERT(order_huge_pg, RT_PAGE_MAX_ORDER > ARCH_PAGE_SHIFT - 2);
+RT_STATIC_ASSERT(size_width, sizeof(rt_size_t) == sizeof(void *));
 
 #ifdef RT_USING_SMART
 #include "lwp_arch_comm.h"
@@ -46,6 +46,7 @@ static struct rt_page *page_list_high[RT_PAGE_MAX_ORDER];
 #define page_start ((rt_page_t)rt_mpr_start)
 
 static rt_size_t page_nr;
+static rt_size_t _high_pages_nr;
 static rt_size_t early_offset;
 
 static const char *get_name(rt_varea_t varea)
@@ -84,7 +85,7 @@ static struct rt_mem_obj mm_page_mapper = {
     .hint_free = hint_free,
 };
 
-#ifdef RT_DEBUG_PAGE_LEAK
+#ifdef RT_DEBUGING_PAGE_LEAK
 static volatile int enable;
 static rt_page_t _trace_head;
 #define TRACE_ALLOC(pg, size)       _trace_alloc(pg, __builtin_return_address(0), size)
@@ -555,7 +556,7 @@ static void *_do_pages_alloc(rt_uint32_t size_bits, size_t flags)
     {
         alloc_buf = page_to_addr(p);
 
-        #ifdef RT_DEBUG_PAGE_LEAK
+        #ifdef RT_DEBUGING_PAGE_LEAK
             level = rt_hw_interrupt_disable();
             TRACE_ALLOC(p, size_bits);
             rt_hw_interrupt_enable(level);
@@ -596,46 +597,42 @@ int rt_pages_free(void *addr, rt_uint32_t size_bits)
 
 void rt_page_list(void) __attribute__((alias("list_page")));
 
-#warning TODO: improve list page
+#define PGNR2SIZE(nr) ((nr) * ARCH_PAGE_SIZE / 1024)
+
 void list_page(void)
 {
     int i;
-    rt_size_t total = 0;
+    rt_size_t free = 0;
+    rt_size_t installed = page_nr;
 
     rt_base_t level;
     level = rt_hw_interrupt_disable();
 
     for (i = 0; i < RT_PAGE_MAX_ORDER; i++)
     {
-        struct rt_page *p = page_list_low[i];
+        struct rt_page *lp = page_list_low[i];
+        struct rt_page *hp = page_list_high[i];
 
         rt_kprintf("level %d ", i);
 
-        while (p)
+        while (lp)
         {
-            total += (1UL << i);
-            rt_kprintf("[0x%08p]", rt_page_page2addr(p));
-            p = p->next;
+            free += (1UL << i);
+            rt_kprintf("[0x%08p]", rt_page_page2addr(lp));
+            lp = lp->next;
         }
-        rt_kprintf("\n");
-    }
-    for (i = 0; i < RT_PAGE_MAX_ORDER; i++)
-    {
-        struct rt_page *p = page_list_high[i];
-
-        rt_kprintf("level %d ", i);
-
-        while (p)
+        while (hp)
         {
-            total += (1UL << i);
-            rt_kprintf("[0x%08p]", rt_page_page2addr(p));
-            p = p->next;
+            free += (1UL << i);
+            rt_kprintf("[0x%08p]", rt_page_page2addr(hp));
+            hp = hp->next;
         }
         rt_kprintf("\n");
     }
 
     rt_hw_interrupt_enable(level);
-    rt_kprintf("free pages is 0x%08lx (%ld KB)\n", total, total * ARCH_PAGE_SIZE / 1024);
+    rt_kprintf("-------------------------------\n");
+    rt_kprintf("Page Summary:\n => free/installed: 0x%lx/0x%lx (%ld/%ld KB)\n", free, installed, PGNR2SIZE(free), PGNR2SIZE(installed));
     rt_kprintf("-------------------------------\n");
 }
 MSH_CMD_EXPORT(list_page, show page info);
@@ -669,6 +666,28 @@ void rt_page_get_info(rt_size_t *total_nr, rt_size_t *free_nr)
     }
     rt_hw_interrupt_enable(level);
     *total_nr = page_nr;
+    *free_nr = total_free;
+}
+
+void rt_page_high_get_info(rt_size_t *total_nr, rt_size_t *free_nr)
+{
+    int i;
+    rt_size_t total_free = 0;
+    rt_base_t level;
+
+    level = rt_hw_interrupt_disable();
+    for (i = 0; i < RT_PAGE_MAX_ORDER; i++)
+    {
+        struct rt_page *p = page_list_high[i];
+
+        while (p)
+        {
+            total_free += (1UL << i);
+            p = p->next;
+        }
+    }
+    rt_hw_interrupt_enable(level);
+    *total_nr = _high_pages_nr;
     *free_nr = total_free;
 }
 
@@ -723,6 +742,10 @@ static void _install_page(rt_page_t mpr_head, rt_region_t region, void *insert_h
 
         /* insert to list */
         rt_page_t *page_list = _get_page_list((void *)region.start);
+        if (page_list == page_list_high)
+        {
+            _high_pages_nr += 1 << (size_bits - ARCH_PAGE_SHIFT);
+        }
         insert(page_list, (rt_page_t)((char *)p - early_offset), size_bits - ARCH_PAGE_SHIFT);
         region.start += (1UL << size_bits);
     }

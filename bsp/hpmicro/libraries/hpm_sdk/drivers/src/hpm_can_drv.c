@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 - 2022 hpmicro
+ * Copyright (c) 2021-2023 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -84,42 +84,41 @@ typedef struct {
 /**
  * @brief CAN bit timing list for all supported bit timing modes
  */
-static const can_bit_timing_table_t s_can_bit_timing_tbl[3] =
+static const can_bit_timing_table_t s_can_bit_timing_tbl[3] = {
         {
-                {
-                        .tq_min = NUM_TQ_MIN_FOR_CAN2_0,
-                        .tq_max = NUM_TQ_MAX_FOR_CAN2_0,
-                        .seg1_min = TSEG1_MIN_FOR_CAN2_0,
-                        .seg1_max = TSEG1_MAX_FOR_CAN2_0,
-                        .seg2_min = TSEG2_MIN_FOR_CAN2_0,
-                        .seg2_max = TSEG2_MAX_FOR_CAN2_0,
-                        .sjw_min = TSJW_MIN_FOR_CAN2_0,
-                        .sjw_max = TSJW_MAX_FOR_CAN2_0,
-                        .min_diff_seg1_minus_seg2 = 2,
-                },
-                {
-                        .tq_min = NUM_TQ_MIN_FOR_CANFD_NOMINAL,
-                        .tq_max = NUM_TQ_MAX_FOR_CANFD_NOMINAL,
-                        .seg1_min = TSEG1_MIN_FOR_CANFD_NORMINAL,
-                        .seg1_max = TSEG1_MAX_FOR_CANFD_NORMINAL,
-                        .seg2_min = TSEG2_MIN_FOR_CANFD_NORMINAL,
-                        .seg2_max = TSEG2_MAX_FOR_CANFD_NORMINAL,
-                        .sjw_min = TSJW_MIN_FOR_CANFD_NORMINAL,
-                        .sjw_max = TSJW_MAX_FOR_CANFD_NORMINAL,
-                        .min_diff_seg1_minus_seg2 = 2,
-                },
-                {
-                        .tq_min = NUM_TQ_MIN_FOR_CANFD_DATA,
-                        .tq_max = NUM_TQ_MAX_FOR_CANFD_DATA,
-                        .seg1_min = TSEG1_MIN_FOR_CANFD_DATA,
-                        .seg1_max = TSEG1_MAX_FOR_CANFD_DATA,
-                        .seg2_min = TSEG2_MIN_FOR_CANFD_DATA,
-                        .seg2_max = TSEG2_MAX_FOR_CANFD_DATA,
-                        .sjw_min = TSJW_MIN_FOR_CANFD_DATA,
-                        .sjw_max = TSJW_MAX_FOR_CANFD_DATA,
-                        .min_diff_seg1_minus_seg2 = 1,
-                }
-        };
+                .tq_min = NUM_TQ_MIN_FOR_CAN2_0,
+                .tq_max = NUM_TQ_MAX_FOR_CAN2_0,
+                .seg1_min = TSEG1_MIN_FOR_CAN2_0,
+                .seg1_max = TSEG1_MAX_FOR_CAN2_0,
+                .seg2_min = TSEG2_MIN_FOR_CAN2_0,
+                .seg2_max = TSEG2_MAX_FOR_CAN2_0,
+                .sjw_min = TSJW_MIN_FOR_CAN2_0,
+                .sjw_max = TSJW_MAX_FOR_CAN2_0,
+                .min_diff_seg1_minus_seg2 = 2,
+        },
+        {
+                .tq_min = NUM_TQ_MIN_FOR_CANFD_NOMINAL,
+                .tq_max = NUM_TQ_MAX_FOR_CANFD_NOMINAL,
+                .seg1_min = TSEG1_MIN_FOR_CANFD_NORMINAL,
+                .seg1_max = TSEG1_MAX_FOR_CANFD_NORMINAL,
+                .seg2_min = TSEG2_MIN_FOR_CANFD_NORMINAL,
+                .seg2_max = TSEG2_MAX_FOR_CANFD_NORMINAL,
+                .sjw_min = TSJW_MIN_FOR_CANFD_NORMINAL,
+                .sjw_max = TSJW_MAX_FOR_CANFD_NORMINAL,
+                .min_diff_seg1_minus_seg2 = 2,
+        },
+        {
+                .tq_min = NUM_TQ_MIN_FOR_CANFD_DATA,
+                .tq_max = NUM_TQ_MAX_FOR_CANFD_DATA,
+                .seg1_min = TSEG1_MIN_FOR_CANFD_DATA,
+                .seg1_max = TSEG1_MAX_FOR_CANFD_DATA,
+                .seg2_min = TSEG2_MIN_FOR_CANFD_DATA,
+                .seg2_max = TSEG2_MAX_FOR_CANFD_DATA,
+                .sjw_min = TSJW_MIN_FOR_CANFD_DATA,
+                .sjw_max = TSJW_MAX_FOR_CANFD_DATA,
+                .min_diff_seg1_minus_seg2 = 1,
+        }
+};
 
 /***********************************************************************************************************************
  *
@@ -150,16 +149,16 @@ static uint32_t find_closest_prescaler(uint32_t num_tq_mul_prescaler, uint32_t s
             ++prescaler;
             continue;
         } else {
-            has_found = true;
-            break;
-        }
-        uint32_t tq = num_tq_mul_prescaler / prescaler;
-        if (tq * prescaler == num_tq_mul_prescaler) {
-            has_found = true;
-            break;
-        } else if (tq < min_tq) {
-            has_found = false;
-            break;
+            uint32_t tq = num_tq_mul_prescaler / prescaler;
+            if (tq * prescaler == num_tq_mul_prescaler) {
+                has_found = true;
+                break;
+            } else if (tq < min_tq) {
+                has_found = false;
+                break;
+            } else {
+                ++prescaler;
+            }
         }
     }
 
@@ -323,30 +322,30 @@ static uint8_t can_get_data_words_from_dlc(uint32_t dlc)
         copy_words = (dlc + 3U) / sizeof(uint32_t);
     } else {
         switch (dlc) {
-            case can_payload_size_12:
-                copy_words = 3U;
-                break;
-            case can_payload_size_16:
-                copy_words = 4U;
-                break;
-            case can_payload_size_20:
-                copy_words = 5U;
-                break;
-            case can_payload_size_24:
-                copy_words = 6U;
-                break;
-            case can_payload_size_32:
-                copy_words = 8U;
-                break;
-            case can_payload_size_48:
-                copy_words = 12U;
-                break;
-            case can_payload_size_64:
-                copy_words = 16U;
-                break;
-            default:
-                /* Code should never touch here */
-                break;
+        case can_payload_size_12:
+            copy_words = 3U;
+            break;
+        case can_payload_size_16:
+            copy_words = 4U;
+            break;
+        case can_payload_size_20:
+            copy_words = 5U;
+            break;
+        case can_payload_size_24:
+            copy_words = 6U;
+            break;
+        case can_payload_size_32:
+            copy_words = 8U;
+            break;
+        case can_payload_size_48:
+            copy_words = 12U;
+            break;
+        case can_payload_size_64:
+            copy_words = 16U;
+            break;
+        default:
+            /* Code should never touch here */
+            break;
         }
     }
 
@@ -412,7 +411,7 @@ hpm_stat_t can_send_high_priority_message_blocking(CAN_Type *base, const can_tra
     hpm_stat_t status = status_invalid_argument;
 
     do {
-        HPM_BREAK_IF ((base == NULL) || (message == NULL));
+        HPM_BREAK_IF((base == NULL) || (message == NULL));
         status = status_success;
 
         /* Select the high-priority buffer */
@@ -491,7 +490,7 @@ hpm_stat_t can_receive_message_blocking(CAN_Type *base, can_receive_buf_t *messa
     hpm_stat_t status = status_invalid_argument;
 
     do {
-        HPM_BREAK_IF ((base == NULL) || (message == NULL));
+        HPM_BREAK_IF((base == NULL) || (message == NULL));
 
         while (CAN_CMD_STA_CMD_CTRL_RSTAT_GET(base->CMD_STA_CMD_CTRL) == CAN_RXBUF_IS_EMPTY) {
 
@@ -684,8 +683,6 @@ hpm_stat_t can_init(CAN_Type *base, can_config_t *config, uint32_t src_clk_freq)
             base->CMD_STA_CMD_CTRL &= ~CAN_CMD_STA_CMD_CTRL_TSSS_MASK;
         }
 
-        can_enable_self_ack(base, config->enable_self_ack);
-
         /* Configure CAN filters */
         if (config->filter_list_num > CAN_FILTER_NUM_MAX) {
             status = status_can_filter_num_invalid;
@@ -713,8 +710,11 @@ hpm_stat_t can_init(CAN_Type *base, can_config_t *config, uint32_t src_clk_freq)
 
         can_reset(base, false);
 
+        /* Set Self-ack mode*/
+        can_enable_self_ack(base, config->enable_self_ack);
+
         /* Set CAN work mode */
-        can_set_mode(base, config->mode);
+        can_set_node_mode(base, config->mode);
 
         /* Configure TX Buffer priority mode */
         can_select_tx_buffer_priority_mode(base, config->enable_tx_buffer_priority_mode);

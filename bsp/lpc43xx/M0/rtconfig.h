@@ -25,10 +25,6 @@
 #define RT_DEBUG_COLOR
 // <bool name="RT_DEBUG_INIT" description="debug init enable" default=0 />
 #define RT_DEBUG_INIT   0
-//#define RT_DEBUG_SCHEDULER             1
-// <bool name="RT_THREAD_DEBUG" description="Thread debug enable" default="false" />
-// #define RT_THREAD_DEBUG
-// <bool name="RT_USING_OVERFLOW_CHECK" description="Thread stack over flow detect" default="true" />
 #define RT_USING_OVERFLOW_CHECK
 // </section>
 

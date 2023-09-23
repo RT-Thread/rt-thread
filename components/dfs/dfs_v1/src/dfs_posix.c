@@ -146,6 +146,7 @@ int close(int fd)
     }
 
     result = dfs_file_close(d);
+    fd_release(fd);
 
     if (result < 0)
     {
@@ -153,8 +154,6 @@ int close(int fd)
 
         return -1;
     }
-
-    fd_release(fd);
 
     return 0;
 }

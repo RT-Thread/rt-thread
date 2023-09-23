@@ -16,7 +16,7 @@ void lv_user_gui_init(void)
 #ifdef BSP_USING_LVGL_VIDEO_DEMO
     extern void lv_video_gui_init(void);
     lv_video_gui_init();
-#elif BSP_USING_LVGL_MUSIC_DEMO
+#else
     extern void lv_demo_music(void);
     lv_demo_music();
 #endif

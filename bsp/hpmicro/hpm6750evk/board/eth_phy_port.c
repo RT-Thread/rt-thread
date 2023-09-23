@@ -101,14 +101,14 @@ static rt_phy_status phy_init(void *object, rt_uint32_t phy_addr, rt_uint32_t sr
     return PHY_STATUS_OK;
 }
 
-static rt_ssize_t phy_read(void *bus, rt_uint32_t addr, rt_uint32_t reg, void *data, rt_uint32_t size)
+static rt_size_t phy_read(void *bus, rt_uint32_t addr, rt_uint32_t reg, void *data, rt_uint32_t size)
 {
     *(uint16_t *)data = enet_read_phy(((struct rt_mdio_bus *)bus)->hw_obj, addr, reg);
 
     return size;
 }
 
-static rt_ssize_t phy_write(void *bus, rt_uint32_t addr, rt_uint32_t reg, void *data, rt_uint32_t size)
+static rt_size_t phy_write(void *bus, rt_uint32_t addr, rt_uint32_t reg, void *data, rt_uint32_t size)
 {
     enet_write_phy(((struct rt_mdio_bus *)bus)->hw_obj, addr, reg,  *(uint16_t *)data);
 
@@ -170,13 +170,14 @@ static void phy_poll_status(void *parameter)
 {
     int ret;
     phy_info_t phy_info;
-    rt_uint32_t status;
+    rt_bool_t status;
     rt_device_t dev;
     rt_phy_msg_t msg;
     rt_uint32_t speed, duplex;
     phy_device_t *phy_dev;
     struct eth_device* eth_dev;
     char const *ps[] = {"10Mbps", "100Mbps", "1000Mbps"};
+    enet_line_speed_t line_speed[] = {enet_line_speed_10mbps, enet_line_speed_100mbps, enet_line_speed_1000mbps};
 
     eth_phy_monitor_handle_t *phy_monitor_handle = (eth_phy_monitor_handle_t *)parameter;
 
@@ -207,6 +208,8 @@ static void phy_poll_status(void *parameter)
             {
                 LOG_I("PHY Speed: %s", ps[phy_dev->phy_info.phy_speed]);
                 LOG_I("PHY Duplex: %s\n", phy_dev->phy_info.phy_duplex & PHY_FULL_DUPLEX ? "full duplex" : "half duplex");
+                enet_set_line_speed(phy_monitor_handle->phy_handle[i]->instance, line_speed[phy_dev->phy_info.phy_speed]);
+                enet_set_duplex_mode(phy_monitor_handle->phy_handle[i]->instance, phy_dev->phy_info.phy_duplex);
             }
         }
     }
@@ -272,7 +275,7 @@ static void phy_monitor_thread_entry(void *args)
 
 int phy_device_register(void)
 {
-    rt_err_t err = -RT_ERROR;
+    rt_err_t err = RT_ERROR;
     rt_thread_t thread_phy_monitor;
 
     /* Set ops for PHY */
@@ -308,7 +311,7 @@ int phy_device_register(void)
     }
     else
     {
-        err = -RT_ERROR;
+        err = RT_ERROR;
     }
 
     return err;

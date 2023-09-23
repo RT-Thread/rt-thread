@@ -1,11 +1,12 @@
 /*
- * Copyright (c) 2006-2020, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
  * 2019-10-12     Jesven       first version
+ * 2023-09-16     zmq810150896 Increased versatility of some features on dfs v2
  */
 #include <rtthread.h>
 #include <rthw.h>
@@ -371,7 +372,7 @@ static void *_ipc_msg_get_file(int fd)
         return RT_NULL;
 
     d->vnode->ref_count++;
-    return (void *)d->vnode;
+    return (void *)d;
 }
 
 /**
@@ -381,6 +382,14 @@ static int _ipc_msg_fd_new(void *file)
 {
     int fd;
     struct dfs_file *d;
+    struct dfs_file *df = RT_NULL;
+
+    if (file == RT_NULL)
+    {
+        return -1;
+    }
+
+    df = (struct dfs_file *)file;
 
     fd = fd_new();
     if (fd < 0)
@@ -395,8 +404,16 @@ static int _ipc_msg_fd_new(void *file)
         return -1;
     }
 
-    d->vnode = (struct dfs_vnode *)file;
-    d->flags = O_RDWR; /* set flags as read and write */
+#ifdef RT_USING_DFS_V2
+    d->fops = df->fops;
+    d->mode = df->mode;
+    d->dentry = df->dentry;
+#endif
+
+    d->vnode = df->vnode;
+    d->flags = df->flags;
+    d->data = df->data;
+    d->magic = df->magic;
 
     return fd;
 }
@@ -946,15 +963,8 @@ static int channel_fops_close(struct dfs_file *file)
 
 static const struct dfs_file_ops channel_fops =
 {
-    NULL,    /* open     */
-    channel_fops_close,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    NULL,    /* lseek    */
-    NULL,    /* getdents */
-    channel_fops_poll,
+    .close = channel_fops_close,    /* close */
+    .poll = channel_fops_poll,      /* poll */
 };
 
 int lwp_channel_open(int fdt_type, const char *name, int flags)
@@ -980,18 +990,9 @@ int lwp_channel_open(int fdt_type, const char *name, int flags)
     ch = rt_raw_channel_open(name, flags);
     if (ch)
     {
-        rt_memset(d->vnode, 0, sizeof(struct dfs_vnode));
-        rt_list_init(&d->vnode->list);
-        d->vnode->type = FT_USER;
-        d->vnode->path = NULL;
-        d->vnode->fullpath = NULL;
-
-        d->vnode->fops = &channel_fops;
-
+        /* initialize vnode */
+        dfs_vnode_init(d->vnode, FT_USER, &channel_fops);
         d->flags = O_RDWR; /* set flags as read and write */
-        d->vnode->size = 0;
-        d->pos = 0;
-        d->vnode->ref_count = 1;
 
         /* set socket to the data of dfs_file */
         d->vnode->data = (void *)ch;

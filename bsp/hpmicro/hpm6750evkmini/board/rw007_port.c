@@ -1,13 +1,13 @@
 
 /*
- * Copyright (c) 2022 hpmicro
+ * Copyright (c) 2022-2023 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
  */
 #include <rtthread.h>
 
-#ifdef RT_USING_WIFI
+#if defined(RT_USING_WIFI) && defined(BSP_USING_SPI1)
 #include <rtdevice.h>
 #include <drv_spi.h>
 #include <rtt_board.h>
@@ -118,4 +118,4 @@ void spi_wifi_int_cmd(rt_bool_t cmd)
     rt_pin_irq_enable(RW007_INT_BUSY_PIN, cmd);
 }
 
-#endif /* RT_USING_WIFI */
+#endif /* if defined(RT_USING_WIFI) && defined(BSP_USING_SPI1) */

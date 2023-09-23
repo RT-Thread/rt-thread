@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 hpmicro
+ * Copyright (c) 2021 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -88,26 +88,6 @@ static inline void dao_enable_hpf(DAO_Type *ptr)
 static inline void dao_disable_hpf(DAO_Type *ptr)
 {
     ptr->CTRL &= ~DAO_CTRL_HPF_EN_MASK;
-}
-
-/**
- * @brief enable error irq
- *
- * @param [in] ptr DAO base address
- */
-static inline void dao_enable_error_irq(DAO_Type *ptr)
-{
-    ptr->CTRL |= DAO_CTRL_SAT_ERR_IE_MASK;
-}
-
-/**
- * @brief disable error irq
- *
- * @param [in] ptr DAO base address
- */
-static inline void dao_disable_error_irq(DAO_Type *ptr)
-{
-    ptr->CTRL &= ~DAO_CTRL_SAT_ERR_IE_MASK;
 }
 
 /**

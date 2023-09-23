@@ -28,7 +28,6 @@ extern long list_thread(void);
 #include <lwp_core_dump.h>
 #endif
 
-void sys_exit(int value);
 void check_user_fault(struct rt_hw_exp_stack *regs, uint32_t pc_adj, char *info)
 {
     uint32_t mode = regs->cpsr;
@@ -39,13 +38,14 @@ void check_user_fault(struct rt_hw_exp_stack *regs, uint32_t pc_adj, char *info)
 #ifdef LWP_USING_CORE_DUMP
         lwp_core_dump(regs, pc_adj);
 #endif
-        sys_exit(-1);
+        sys_exit_group(-1);
     }
 }
 
 int check_user_stack(struct rt_hw_exp_stack *regs)
 {
     void *dfar = RT_NULL;
+    struct rt_lwp *lwp;
     asm volatile("MRC p15, 0, %0, c6, c0, 0" : "=r"(dfar));
 
     if ((dfar >= (void *)USER_STACK_VSTART) && (dfar < (void *)USER_STACK_VEND))
@@ -55,7 +55,8 @@ int check_user_stack(struct rt_hw_exp_stack *regs)
             .fault_type = MM_FAULT_TYPE_PAGE_FAULT,
             .fault_vaddr = dfar,
         };
-        if (rt_aspace_fault_try_fix(&msg))
+        lwp = lwp_self();
+        if (lwp && rt_aspace_fault_try_fix(lwp->aspace, &msg))
         {
             regs->pc -= 8;
             return 1;

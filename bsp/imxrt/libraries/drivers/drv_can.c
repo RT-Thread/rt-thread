@@ -430,7 +430,7 @@ static rt_ssize_t can_send(struct rt_can_device *can_dev, const void *buf, rt_ui
     return (rt_ssize_t)ret;
 }
 
-static int can_recv(struct rt_can_device *can_dev, void *buf, rt_uint32_t boxno)
+static rt_ssize_t can_recv(struct rt_can_device *can_dev, void *buf, rt_uint32_t boxno)
 {
     struct imxrt_can *can;
     struct rt_can_msg *pmsg;

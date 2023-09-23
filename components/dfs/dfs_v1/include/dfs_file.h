@@ -25,10 +25,10 @@ struct dfs_file_ops
     int (*open)     (struct dfs_file *fd);
     int (*close)    (struct dfs_file *fd);
     int (*ioctl)    (struct dfs_file *fd, int cmd, void *args);
-    int (*read)     (struct dfs_file *fd, void *buf, size_t count);
-    int (*write)    (struct dfs_file *fd, const void *buf, size_t count);
+    ssize_t (*read)     (struct dfs_file *fd, void *buf, size_t count);
+    ssize_t (*write)    (struct dfs_file *fd, const void *buf, size_t count);
     int (*flush)    (struct dfs_file *fd);
-    int (*lseek)    (struct dfs_file *fd, off_t offset);
+    off_t (*lseek)    (struct dfs_file *fd, off_t offset);
     int (*getdents) (struct dfs_file *fd, struct dirent *dirp, uint32_t count);
 
     int (*poll)     (struct dfs_file *fd, struct rt_pollreq *req);
@@ -76,16 +76,18 @@ struct dfs_mmap2_args
 };
 
 void dfs_vnode_mgr_init(void);
+int dfs_vnode_init(struct dfs_vnode *vnode, int type, const struct dfs_file_ops *fops);
+
 int dfs_file_is_open(const char *pathname);
 int dfs_file_open(struct dfs_file *fd, const char *path, int flags);
 int dfs_file_close(struct dfs_file *fd);
 int dfs_file_ioctl(struct dfs_file *fd, int cmd, void *args);
-int dfs_file_read(struct dfs_file *fd, void *buf, size_t len);
+ssize_t dfs_file_read(struct dfs_file *fd, void *buf, size_t len);
 int dfs_file_getdents(struct dfs_file *fd, struct dirent *dirp, size_t nbytes);
 int dfs_file_unlink(const char *path);
-int dfs_file_write(struct dfs_file *fd, const void *buf, size_t len);
+ssize_t dfs_file_write(struct dfs_file *fd, const void *buf, size_t len);
 int dfs_file_flush(struct dfs_file *fd);
-int dfs_file_lseek(struct dfs_file *fd, off_t offset);
+off_t dfs_file_lseek(struct dfs_file *fd, off_t offset);
 
 int dfs_file_stat(const char *path, struct stat *buf);
 int dfs_file_rename(const char *oldpath, const char *newpath);

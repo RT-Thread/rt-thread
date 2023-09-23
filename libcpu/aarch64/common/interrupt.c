@@ -14,12 +14,8 @@
 #include "interrupt.h"
 #include "gic.h"
 #include "gicv3.h"
-
-#ifdef RT_USING_SMART
 #include "ioremap.h"
-#else
-#define rt_ioremap(x, ...) (x)
-#endif
+
 
 /* exception and interrupt handler table */
 struct rt_irq_desc isr_table[MAX_HANDLERS];
@@ -215,9 +211,15 @@ void rt_hw_interrupt_ack(int vector)
  * @param vector:   the interrupt number
  *        cpu_mask: target cpus mask, one bit for one core
  */
-void rt_hw_interrupt_set_target_cpus(int vector, unsigned int cpu_mask)
+void rt_hw_interrupt_set_target_cpus(int vector, unsigned long cpu_mask)
 {
-    arm_gic_set_cpu(0, vector, cpu_mask);
+#ifdef BSP_USING_GIC
+#ifdef BSP_USING_GICV3
+    arm_gic_set_router_cpu(0, vector, cpu_mask);
+#else
+    arm_gic_set_cpu(0, vector, (unsigned int) cpu_mask);
+#endif
+#endif
 }
 
 /**
@@ -379,16 +381,31 @@ rt_isr_handler_t rt_hw_interrupt_install(int vector, rt_isr_handler_t handler,
         }
     }
 
+#ifdef BSP_USING_GIC
+    if (vector > 32)
+    {
+#ifdef BSP_USING_GICV3
+        rt_uint64_t cpu_affinity_val;
+        __asm__ volatile ("mrs %0, mpidr_el1":"=r"(cpu_affinity_val));
+        rt_hw_interrupt_set_target_cpus(vector, cpu_affinity_val);
+#else
+        rt_hw_interrupt_set_target_cpus(vector, 1 << rt_hw_cpu_id());
+#endif /* BSP_USING_GICV3 */
+    }
+#endif
+
     return old_handler;
 }
 
-#ifdef RT_USING_SMP
+#if defined(RT_USING_SMP) || defined(RT_USING_AMP)
 void rt_hw_ipi_send(int ipi_vector, unsigned int cpu_mask)
 {
 #ifdef BSP_USING_GICV2
     arm_gic_send_sgi(0, ipi_vector, cpu_mask, 0);
 #elif defined(BSP_USING_GICV3)
-    arm_gic_send_affinity_sgi(0, ipi_vector, (unsigned int *)&cpu_mask, GICV3_ROUTED_TO_SPEC);
+    rt_uint32_t gicv3_cpu_mask[(RT_CPUS_NR + 31) >> 5];
+    gicv3_cpu_mask[0] = cpu_mask;
+    arm_gic_send_affinity_sgi(0, ipi_vector, gicv3_cpu_mask, GICV3_ROUTED_TO_SPEC);
 #endif
 }
 

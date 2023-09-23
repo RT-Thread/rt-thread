@@ -34,6 +34,10 @@
 #include <rtthread.h>
 #include <rthw.h>
 
+#define DBG_TAG           "kernel.scheduler"
+#define DBG_LVL           DBG_INFO
+#include <rtdbg.h>
+
 rt_list_t rt_thread_priority_table[RT_THREAD_PRIORITY_MAX];
 rt_uint32_t rt_thread_ready_priority_group;
 #if RT_THREAD_PRIORITY_MAX > 32
@@ -180,8 +184,8 @@ void rt_system_scheduler_init(void)
     int cpu;
     rt_base_t offset;
 
-    RT_DEBUG_LOG(RT_DEBUG_SCHEDULER, ("start scheduler: max priority 0x%02x\n",
-                                      RT_THREAD_PRIORITY_MAX));
+    LOG_D("start scheduler: max priority 0x%02x",
+          RT_THREAD_PRIORITY_MAX);
 
     for (offset = 0; offset < RT_THREAD_PRIORITY_MAX; offset ++)
     {
@@ -345,13 +349,12 @@ void rt_schedule(void)
                 to_thread->stat = RT_THREAD_RUNNING | (to_thread->stat & ~RT_THREAD_STAT_MASK);
 
                 /* switch to new thread */
-                RT_DEBUG_LOG(RT_DEBUG_SCHEDULER,
-                        ("[%d]switch to priority#%d "
+                LOG_D("[%d]switch to priority#%d "
                          "thread:%.*s(sp:0x%08x), "
-                         "from thread:%.*s(sp: 0x%08x)\n",
+                         "from thread:%.*s(sp: 0x%08x)",
                          pcpu->irq_nest, highest_ready_priority,
                          RT_NAME_MAX, to_thread->parent.name, to_thread->sp,
-                         RT_NAME_MAX, current_thread->parent.name, current_thread->sp));
+                         RT_NAME_MAX, current_thread->parent.name, current_thread->sp);
 
 #ifdef RT_USING_OVERFLOW_CHECK
                 _scheduler_stack_check(to_thread);
@@ -482,7 +485,7 @@ void rt_scheduler_do_irq_switch(void *context)
 #ifdef RT_USING_OVERFLOW_CHECK
                 _scheduler_stack_check(to_thread);
 #endif /* RT_USING_OVERFLOW_CHECK */
-                RT_DEBUG_LOG(RT_DEBUG_SCHEDULER, ("switch in interrupt\n"));
+                LOG_D("switch in interrupt");
 
                 RT_ASSERT(current_thread->cpus_lock_nest > 0);
                 current_thread->cpus_lock_nest--;
@@ -584,8 +587,8 @@ void rt_schedule_insert_thread(struct rt_thread *thread)
         }
     }
 
-    RT_DEBUG_LOG(RT_DEBUG_SCHEDULER, ("insert thread[%.*s], the priority: %d\n",
-                                      RT_NAME_MAX, thread->parent.name, thread->current_priority));
+    LOG_D("insert thread[%.*s], the priority: %d",
+          RT_NAME_MAX, thread->parent.name, thread->current_priority);
 
 __exit:
     /* enable interrupt */
@@ -608,9 +611,9 @@ void rt_schedule_remove_thread(struct rt_thread *thread)
     /* disable interrupt */
     level = rt_hw_interrupt_disable();
 
-    RT_DEBUG_LOG(RT_DEBUG_SCHEDULER, ("remove thread[%.*s], the priority: %d\n",
-                                      RT_NAME_MAX, thread->parent.name,
-                                      thread->current_priority));
+    LOG_D("remove thread[%.*s], the priority: %d",
+          RT_NAME_MAX, thread->parent.name,
+          thread->current_priority);
 
     /* remove thread from ready list */
     rt_list_remove(&(thread->tlist));

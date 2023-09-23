@@ -1,0 +1,33 @@
+# CODEOWNERS for autoreview assigning in github
+
+# https://help.github.com/en/articles/about-code-owners#codeowners-syntax
+
+/.github                                  @supperthomas
+/.gitee                                   @supperthomas
+/.hooks                                   @supperthomas
+/.devcontainer                            @supperthomas
+/bsp/ESP32_C3                             @supperthomas
+/bsp/nr5x/                                @supperthomas
+/bsp/stm32/stm32l496-st-nucleo            @supperthomas
+/bsp/stm32/stm32f407-rt-spark             @supperthomas
+/bsp/stm32/stm32h743-openmv-h7plus        @supperthomas
+/bsp/stm32/stm32l4r9-st-sensortile-box/   @supperthomas
+/bsp/stm32/stm32l475-atk-pandora/         @mysterywolf
+/bsp/stm32/stm32f401-st-nucleo/           @mysterywolf
+/bsp/stm32/stm32f411-st-nucleo/           @mysterywolf
+/bsp/stm32/stm32f412-st-nucleo/           @mysterywolf
+/bsp/stm32/stm32l476-st-nucleo/           @mysterywolf
+/bsp/maxim                                @supperthomas
+
+*arduino*                                 @mysterywolf
+
+/components/libc/                         @mysterywolf
+/components/dfs/dfs_v2/                   @BernardXiong
+/components/lwp/                          @BernardXiong
+/components/mm/                           @BernardXiong
+/components/drivers/sensor/               @mysterywolf
+/components/drivers/tty/                  @BernardXiong
+
+/documentation                            @mysterywolf @Cathy-lulu
+/examples                                 @Guozhanxin
+

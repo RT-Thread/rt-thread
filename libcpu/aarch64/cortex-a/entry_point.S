@@ -6,13 +6,51 @@
  * Date           Author       Notes
  * 2020-01-15     bigmagic     the first version
  * 2020-08-10     SummerGift   support clang compiler
+ * 2023-04-29     GuEe-GUI     support kernel's ARM64 boot header
  */
 
 #include "rtconfig.h"
-.section ".text.entrypoint","ax"
-.global __start
 
-__start:
+    .section ".text.entrypoint","ax"
+
+#ifdef RT_USING_OFW
+/*
+ * Our goal is to boot the rt-thread as possible without modifying the
+ * bootloader's config, so we use the kernel's boot header for ARM64:
+ *   https://www.kernel.org/doc/html/latest/arm64/booting.html#call-the-kernel-image
+ */
+_head:
+    b       _start          /* Executable code */
+    .long   0               /* Executable code */
+    .quad   _text_offset    /* Image load offset from start of RAM, little endian */
+    .quad   _end - _head    /* Effective Image size, little endian (_end defined in link.lds) */
+    .quad   0xa             /* Kernel flags, little endian */
+    .quad   0               /* Reserved */
+    .quad   0               /* Reserved */
+    .quad   0               /* Reserved */
+    .ascii  "ARM\x64"       /* Magic number */
+    .long   0               /* Reserved (used for PE COFF offset) */
+#endif
+/* Variable registers: x21~x28 */
+dtb_paddr .req x21
+boot_arg0 .req x22
+boot_arg1 .req x23
+boot_arg2 .req x24
+stack_top .req x25
+
+    .global _start
+_start:
+/*
+ * Boot CPU general-purpose register settings:
+ *   x0 = physical address of device tree blob (dtb) in system RAM.
+ *   x1 = 0 (reserved for future use)
+ *   x2 = 0 (reserved for future use)
+ *   x3 = 0 (reserved for future use)
+ */
+    mov     dtb_paddr, x0
+    mov     boot_arg0, x1
+    mov     boot_arg1, x2
+    mov     boot_arg2, x3
 #ifdef ARCH_ARM_BOOTWITH_FLUSH_CACHE
     bl      __asm_flush_dcache_all
 #endif
@@ -21,15 +59,17 @@ __start:
     mrs     x0, tpidr_el1
     cbz     x0, .L__cpu_0           /* .L prefix is the local label in ELF */
 
+#ifndef RT_AMP_SLAVE
     /* cpu id > 0, stop */
     /* cpu id == 0 will also goto here after returned from entry() if possible */
 .L__current_cpu_idle:
     wfe
     b       .L__current_cpu_idle
+#endif
 
 .L__cpu_0:
     /* set stack before our code, Define stack pointer for current exception level */
-    adr     x1, __start
+    adr     x1, .el_stack_top
 
     /* set up EL1 */
     mrs     x0, CurrentEL           /* CurrentEL Register. bit 2, 3. Others reserved */
@@ -114,27 +154,25 @@ __start:
     sub     x3, x3, #1
     b       .L__clean_bss_loop_1
 
-.L__jump_to_entry:          /* jump to C code, should not return */        
+.L__jump_to_entry:          /* jump to C code, should not return */
     bl mmu_tcr_init
 
-    adr x1, __start         /* install early page table */
-    ldr x0, =~0x1fffff
-    and x0, x1, x0
-    add x1, x0, #0x1000     
+    bl get_ttbrn_base
+    add x1, x0, #0x1000
 
     msr ttbr0_el1, x0
     msr ttbr1_el1, x1
     dsb sy
 
 #ifdef RT_USING_SMART
-    ldr     x2, =__start
-    GET_PHY x3, __start
+    ldr     x2, =_start
+    GET_PHY x3, _start
     sub     x3, x3, x2
 #else
     mov     x3,0
 #endif
-    
-    ldr x2, =0x40000000     /* map 1G memory for kernel space */
+
+    ldr x2, =0x10000000     /* map 256M memory for kernel space */
     bl rt_hw_mem_setup_early
 
     ldr x30, =after_mmu_enable  /* set LR to after_mmu_enable function, it's a v_addr */
@@ -168,7 +206,7 @@ after_mmu_enable:
 
     mov     x0, #1
     msr     spsel, x0
-    adr     x1, __start
+    adr     x1, .el_stack_top
     mov     sp, x1           /* sp_el1 set to _start */
 
     b  rtthread_startup
@@ -181,7 +219,7 @@ after_mmu_enable:
 .global _secondary_cpu_entry
 _secondary_cpu_entry:
     bl      rt_hw_cpu_id_set
-    adr     x1, __start
+    adr     x1, .el_stack_top
 
     /* set up EL1 */
     mrs     x0, CurrentEL           /* CurrentEL Register. bit 2, 3. Others reserved */
@@ -203,7 +241,7 @@ _secondary_cpu_entry:
 .L__not_in_el3_cpux:                     /* running at EL2 or EL1 */
     cmp     x0, #4                  /* 0x04  0100 EL1 */
     beq     .L__in_el1_cpux              /* EL1 -> 5: */
- 
+
     mrs     x0, hcr_el2
     bic     x0, x0, #0xff
     msr     hcr_el2, x0
@@ -246,9 +284,7 @@ _secondary_cpu_entry:
 
     bl mmu_tcr_init
 
-    adr x1, __start             /* GET & setup early page table */
-    ldr x0, =~0x1fffff
-    and x0, x1, x0
+    bl get_ttbrn_base
     add x1, x0, #0x1000
 
     msr ttbr0_el1, x0
@@ -288,9 +324,18 @@ after_mmu_enable_cpux:
     msr     spsel, x0
     mrs     x0, tpidr_el1
     /* each cpu init stack is 8k */
-    adr     x1, __start
+    adr     x1, .el_stack_top
     sub     x1, x1, x0, lsl #13
     mov     sp, x1                  /* in EL1. Set sp to _start */
 
     b rt_hw_secondary_cpu_bsp_start
 #endif
+
+#ifndef RT_CPUS_NR
+#define RT_CPUS_NR 1
+#endif
+
+.align 12
+.el_stack:
+.space (8192 * RT_CPUS_NR)
+.el_stack_top:

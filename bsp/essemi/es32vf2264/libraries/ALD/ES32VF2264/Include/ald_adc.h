@@ -571,7 +571,7 @@ uint32_t ald_adc_get_error(ald_adc_handle_t *hperh);
   * @}
   */
 #ifdef __cplusplus
- extern "C" }
+}
 #endif /* __cplusplus */
 
 #endif /* __ALD_ADC_H */

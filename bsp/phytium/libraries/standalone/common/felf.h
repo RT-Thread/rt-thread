@@ -26,17 +26,26 @@
 #define FELF_H
 
 #include "ftypes.h"
+#include "ferror_code.h"
 
 #ifdef __cplusplus
 extern "C"
 {
 #endif
 
+#define FELF_SUCCESS        FT_SUCCESS /* SUCCESS */
+#define FELF_SECTION_NO_STRTAB      FT_MAKE_ERRCODE(ErrorModGeneral, ErrElf, 1)   /* There is no string table */
+#define FELF_SECTION_NO_SPACE       FT_MAKE_ERRCODE(ErrorModGeneral, ErrElf, 2)   /* There is no space section */
+#define FELF_SECTION_NOT_FIT        FT_MAKE_ERRCODE(ErrorModGeneral, ErrElf, 3)  /* No corresponding section was matched */
+#define FELF_SECTION_GET_ERROR      FT_MAKE_ERRCODE(ErrorModGeneral, ErrElf, 3)
+
 unsigned long ElfLoadElfImagePhdr(unsigned long addr);
 unsigned long ElfLoadElfImageShdr(unsigned long addr);
 int ElfIsImageValid(unsigned long addr);
 unsigned long ElfExecBootElf(unsigned long (*entry)(int, char *const[]),
                              int argc, char *const argv[]);
+
+FError ElfGetSection(unsigned long addr, char *section_name, u8 *data_get, u32 *length_p);
 
 #ifdef __cplusplus
 }

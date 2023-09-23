@@ -5,8 +5,8 @@
 * Establishes all necessary connections between hardware elements.
 * This file was automatically generated and should not be modified.
 * Configurator Backend 3.0.0
-* device-db 4.1.0.3437
-* mtb-pdl-cat1 3.3.0.21979
+* device-db 4.3.0.3855
+* mtb-pdl-cat1 3.4.0.24948
 *
 ********************************************************************************
 * Copyright 2023 Cypress Semiconductor Corporation (an Infineon company) or

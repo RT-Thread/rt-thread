@@ -225,12 +225,12 @@ FError FGdmaAllocateChan(FGdma *const instance_p, FGdmaChan *const dma_chan,
 
     /* set xfer config */
     reg_val = 0;
-    reg_val |= FGDMA_CHX_XFER_CFG_AR_LEN_SET(FGDMA_MAX_BURST_LEN) | /* burst length configed as max 8, which adapted when trans bytes less than 8 */
-               FGDMA_CHX_XFER_CFG_AR_SIZE_SET((u32)dma_chan->config.rd_align) |
+    reg_val |= FGDMA_CHX_XFER_CFG_AR_LEN_SET(FGDMA_BURST_LEN) | /* burst length configed as max 8, which adapted when trans bytes less than 8 */
+               FGDMA_CHX_XFER_CFG_AR_SIZE_SET((u32)dma_chan->config.rd_size) |
                FGDMA_CHX_XFER_CFG_AR_BRUST_SET(FGDMA_INCR); /* mem to mem trans work in incr mode */
 
-    reg_val |= FGDMA_CHX_XFER_CFG_AW_LEN_SET(FGDMA_MAX_BURST_LEN) |
-               FGDMA_CHX_XFER_CFG_AW_SIZE_SET((u32)dma_chan->config.wr_align) |
+    reg_val |= FGDMA_CHX_XFER_CFG_AW_LEN_SET(FGDMA_BURST_LEN) |
+               FGDMA_CHX_XFER_CFG_AW_SIZE_SET((u32)dma_chan->config.wr_size) |
                FGDMA_CHX_XFER_CFG_AW_BRUST_SET(FGDMA_INCR); /* mem to mem trans work in incr mode */
     FGDMA_WRITEREG(base_addr, FGDMA_CHX_XFER_CFG_OFFSET(chan_idx), reg_val);
     FGDMA_INFO("xfer cfg: 0x%x", FGDMA_READREG(base_addr, FGDMA_CHX_XFER_CFG_OFFSET(chan_idx)));
@@ -238,6 +238,12 @@ FError FGdmaAllocateChan(FGdma *const instance_p, FGdmaChan *const dma_chan,
     instance_p->chans[chan_idx] = dma_chan;
     dma_chan->gdma = instance_p;
 
+    if (dma_chan->config.wait_mode == FGDMA_WAIT_INTR)
+    {
+        /* enable channel interrupt */
+        FGdmaChanIrqEnable(base_addr, chan_idx, FGDMA_CHX_INT_CTRL_TRANS_END_ENABLE);
+    }
+    
     return ret;
 }
 
@@ -305,18 +311,18 @@ FError FGdmaDirectTransfer(FGdmaChan *const chan_p, uintptr src_addr, uintptr ds
         return FGDMA_ERR_NOT_INIT;
     }
 
-    if ((src_addr % FGDMA_GET_BURST_SIZE(chan_p->config.rd_align)) ||
-        (dst_addr % FGDMA_GET_BURST_SIZE(chan_p->config.wr_align)))
+    if ((src_addr % FGDMA_GET_BURST_BYTE(chan_p->config.rd_size)) ||
+        (dst_addr % FGDMA_GET_BURST_BYTE(chan_p->config.wr_size))) /* 报文传输的首地址需要与burst size所代表的单次burst传输的最大数据字节数对齐 */
     {
-        FGDMA_ERROR("src addr 0x%x or dst addr 0x%x not aligned with %d bytes",
-                    src_addr, dst_addr, FGDMA_ADDR_ALIGMENT);
+        FGDMA_ERROR("src addr 0x%x or dst addr 0x%x not aligned with burst size !!!",
+                    src_addr, dst_addr);
         return FGDMA_ERR_INVALID_ADDR;
     }
 
-    if (0 != (data_len % chan_p->config.wr_align))
+    if (0 != (data_len % FGDMA_GET_BURST_BYTE(chan_p->config.wr_size))) /* 报文传输的总数据量必须是burst size所代表的单次burst传输的最大数据字节数的整数倍 */
     {
-        FGDMA_ERROR("data length %d must be N times of burst size %d !!!",
-                    data_len, chan_p->config.wr_align);
+        FGDMA_ERROR("data length %d must be N times of burst size: %d bytes!!!",
+                    data_len, FGDMA_GET_BURST_BYTE(chan_p->config.wr_size));
         return FGDMA_ERR_INVALID_SIZE;
     }
 
@@ -354,9 +360,6 @@ FError FGdmaDirectTransfer(FGdmaChan *const chan_p, uintptr src_addr, uintptr ds
 
     FGDMA_INFO("ts: 0x%x", FGDMA_READREG(base_addr, FGDMA_CHX_TS_OFFSET(chan_idx)));
 
-    /* enable channel interrupt */
-    FGdmaChanIrqEnable(base_addr, chan_idx, FGDMA_CHX_INT_CTRL_TRANS_END_ENABLE);
-
     /* enable channel and start transfer */
     FGdmaChanEnable(base_addr, chan_idx);
 
@@ -385,18 +388,18 @@ FError FGdmaAppendBDLEntry(FGdmaChan *const chan_p, uintptr src_addr, uintptr ds
         return FGDMA_ERR_BDL_NOT_ENOUGH;
     }
 
-    if ((0U != (dst_addr % FGDMA_GET_BURST_SIZE(chan_p->config.wr_align))) ||
-        (0U != (src_addr % FGDMA_GET_BURST_SIZE(chan_p->config.rd_align))))
+    if ((0U != (dst_addr % FGDMA_GET_BURST_BYTE(chan_p->config.wr_size))) || 
+        (0U != (src_addr % FGDMA_GET_BURST_BYTE(chan_p->config.rd_size)))) /* 报文传输的首地址需要与burst size所代表的单次burst传输的最大数据字节数对齐 */
     {
         FGDMA_ERROR("SRC addr 0x%x or DST addr 0x%x are not aligned with the %d transfer size",
-                    src_addr, dst_addr, FGDMA_GET_BURST_SIZE(chan_p->config.wr_align));
+                    src_addr, dst_addr, FGDMA_GET_BURST_BYTE(chan_p->config.wr_size));
         return FGDMA_ERR_INVALID_ADDR;
     }
 
-    if (0U != (data_len % chan_p->config.wr_align))
+    if (0U != (data_len % FGDMA_GET_BURST_BYTE(chan_p->config.wr_size))) /* 报文传输的总数据量必须是burst size所代表的单次burst传输的最大数据字节数的整数倍 */
     {
         FGDMA_ERROR("The data length %d must be N times the burst size %d !!!",
-                    data_len, chan_p->config.wr_align);
+                    data_len, FGDMA_GET_BURST_BYTE(chan_p->config.wr_size));
         return FGDMA_ERR_INVALID_SIZE;
     }
 
@@ -414,13 +417,13 @@ FError FGdmaAppendBDLEntry(FGdmaChan *const chan_p, uintptr src_addr, uintptr ds
 
     /* rd = src */
     desc_entry->src_tc = FGDMA_SRC_TC_BDL_BURST_SET(FGDMA_INCR) |
-                         FGDMA_SRC_TC_BDL_SIZE_SET((u32)chan_p->config.rd_align) |
-                         FGDMA_SRC_TC_BDL_LEN_SET(FGDMA_MAX_BURST_LEN);
+                         FGDMA_SRC_TC_BDL_SIZE_SET((u32)chan_p->config.rd_size) |
+                         FGDMA_SRC_TC_BDL_LEN_SET(FGDMA_BURST_LEN);
 
     /* wr = dst */
     desc_entry->dst_tc = FGDMA_DST_TC_BDL_BURST_SET(FGDMA_INCR) |
-                         FGDMA_DST_TC_BDL_SIZE_SET((u32)chan_p->config.wr_align) |
-                         FGDMA_DST_TC_BDL_LEN_SET(FGDMA_MAX_BURST_LEN);
+                         FGDMA_DST_TC_BDL_SIZE_SET((u32)chan_p->config.wr_size) |
+                         FGDMA_DST_TC_BDL_LEN_SET(FGDMA_BURST_LEN);
 
     desc_entry->total_bytes = data_len;
     desc_entry->ioc = 0U;
@@ -488,9 +491,6 @@ FError FGdmaBDLTransfer(FGdmaChan *const chan_p)
     /* num of BDL entry */
     FGDMA_WRITEREG(base_addr, FGDMA_CHX_LVI_OFFSET(chan_idx), FGDMA_CHX_LVI_SET(chan_p->config.valid_desc_num));
 
-    /* enable channel interrupt */
-    FGdmaChanIrqEnable(base_addr, chan_idx, FGDMA_CHX_INT_CTRL_TRANS_END_ENABLE);
-
     /* enable channel and start transfer */
     FGdmaChanEnable(base_addr, chan_idx);
 
@@ -526,10 +526,8 @@ FError FGdmaStart(FGdma *const instance_p)
     reg_val |= FGDMA_CTL_OT_SET(FGDMA_OUTSTANDING); /* 设置传输outstanding数 */
     reg_val |= FGDMA_CTL_ENABLE; /* 使能DMA传输 */
     FGDMA_WRITEREG(base_addr, FGDMA_CTL_OFFSET, reg_val);
-    
 
-
-    return FGDMA_SUCCESS; // 放到初始化
+    return FGDMA_SUCCESS; //放到初始化
 }
 
 /**

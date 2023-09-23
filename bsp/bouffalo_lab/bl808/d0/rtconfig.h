@@ -107,10 +107,14 @@
 #define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 64
 #define RT_USING_TTY
+#define RT_USING_I2C
+#define RT_USING_I2C_BITOPS
+#define RT_USING_PIN
 #define RT_USING_NULL
 #define RT_USING_ZERO
 #define RT_USING_RANDOM
 #define RT_USING_RTC
+#define RT_USING_SPI
 
 /* Using USB */
 
@@ -145,6 +149,8 @@
 /* Utilities */
 
 #define RT_USING_ADT
+#define RT_USING_ADT_AVL
+#define RT_USING_RESOURCE_ID
 
 /* RT-Thread Utestcases */
 

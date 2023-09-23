@@ -128,10 +128,30 @@ menu "On-chip Peripheral Drivers"
             config BSP_USING_SOFT_I2C1
                 bool "Enable I2C1 Bus (software simulation)"
                 default n
+                if BSP_USING_SOFT_I2C1
+                    comment "Notice: num = 32 * PORTx + PINx + 1"
+                    comment "0_15 --> 16; 1_8 --> 41"
+                    config BSP_SOFT_I2C1_SCL_PIN
+                        int "si2c1 SCL pin number"
+                        default 16
+                    config BSP_SOFT_I2C1_SDA_PIN
+                        int "si2c1 SDA pin number"
+                        default 41
+                endif
 
             config BSP_USING_SOFT_I2C2
                 bool "Enable I2C2 Bus (software simulation)"
                 default n
+                if BSP_USING_SOFT_I2C2
+                    comment "Notice: num = 32 * PORTx + PINx + 1"
+                    comment "0_18 --> 19; 1_10 --> 43"
+                    config BSP_SOFT_I2C2_SCL_PIN
+                        int "si2c2 SCL pin number"
+                        default 19
+                    config BSP_SOFT_I2C2_SDA_PIN
+                        int "si2c2 SDA pin number"
+                        default 43
+                endif
         endif
 
     menuconfig BSP_USING_SPI
@@ -157,13 +177,39 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_SPI_BITOPS
         select RT_USING_SPI
         if BSP_USING_SOFT_SPI
-            menuconfig BSP_USING_SOFT_SPI1
+            config BSP_USING_SOFT_SPI1
                 bool "Enable soft SPI1 BUS (software simulation)"
                 default n
+                if BSP_USING_SOFT_SPI1
+                    comment "Notice: num = 32 * PORTx + PINx + 1"
+                    comment "1_11 --> 44; 0_15 --> 16; 1_8 --> 41"
+                    config BSP_S_SPI1_SCK_PIN
+                        int "sspi1 SCL pin number"
+                        default 44
+                    config BSP_S_SPI1_MOSI_PIN
+                        int "sspi1 MISO pin number"
+                        default 16
+                    config BSP_S_SPI1_MISO_PIN
+                        int "sspi1 MOSI pin number"
+                        default 41
+                endif
 
-            menuconfig BSP_USING_SOFT_SPI2
+            config BSP_USING_SOFT_SPI2
                 bool "Enable soft SPI2 BUS (software simulation)"
                 default n
+                if BSP_USING_SOFT_SPI2
+                    comment "Notice: num = 32 * PORTx + PINx + 1"
+                    comment "1_9 --> 42; 0_18 --> 19; 1_10 --> 43"
+                    config BSP_S_SPI2_SCK_PIN
+                        int "sspi2 SCL pin number"
+                        default 42
+                    config BSP_S_SPI2_MOSI_PIN
+                        int "sspi2 MISO pin number"
+                        default 19
+                    config BSP_S_SPI2_MISO_PIN
+                        int "sspi2 MOSI pin number"
+                        default 43
+                endif
         endif
             
     menuconfig BSP_USING_ADC
@@ -281,6 +327,7 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_GPIO
         select BSP_USING_ADC
         select BSP_USING_ADC0
+        select BSP_USING_ADC0_CH0
         select BSP_USING_PWM
         select BSP_USING_CTIMER1_MAT0
         select BSP_USING_CTIMER2_MAT0
@@ -292,9 +339,75 @@ menu "Onboard Peripheral Drivers"
         imply RTDUINO_USING_WIRE
         default n
 
+    if BSP_USING_ARDUINO
+        config BSP_USING_ARDUINO_AHT10
+            bool "Enable Arduino AHT10 sensor library"
+            select BSP_USING_I2C1
+            select PKG_USING_ARDUINO_ADAFRUIT_AHTX0
+            depends on !BSP_USING_AHT10
+            default n
+
+        config BSP_USING_ARDUINO_AHT10_DEMO
+            bool "Enable Arduino AHT10 sensor library demo"
+            select PKG_USING_ARDUINO_MSGQ_C_CPP_DEMO
+            depends on BSP_USING_ARDUINO_AHT10
+            default n
+    endif
+
 endmenu
 
 menu "Board extended module Drivers"
+    menuconfig BSP_USING_NXP_LCDM_S
+        config BSP_USING_NXP_LCDM_S
+            bool "Enable NXP LCD"
+            select BSP_USING_LCD
+            select BSP_USING_TOUCH
+            select BSP_USING_I2C
+            select BSP_USING_SPI
+            default n
+
+    menuconfig BSP_USING_LCD
+        config BSP_USING_LCD
+            bool "Enable LCD"
+            select BSP_USING_SPI
+            default n
+            if BSP_USING_LCD
+                config BSP_LCD_SPI_BUS
+                    string "the spi bus for lcd"
+                    default "spi3"
+                config BSP_LCD_CS_PIN
+                    int "the pin of lcd cs"
+                    default 5
+                config BSP_LCD_RST_PIN
+                    int "the pin of lcd rst"
+                    default 55
+                config BSP_LCD_DC_PIN
+                    int "the pin of lcd dc"
+                    default 3
+            endif
+
+    menuconfig BSP_USING_TOUCH
+        config BSP_USING_TOUCH
+            bool "Enable TOUCH"
+            select BSP_USING_I2C
+            default n
+            if BSP_USING_TOUCH
+                config BSP_TOUCH_I2C_BUS
+                    string "the i2c bus for lcd"
+                    default "i2c1"
+            endif
+
+    config BSP_USING_LVGL
+        bool "Enable LVGL for LCD"
+        select PKG_USING_LVGL
+        select BSP_USING_NXP_LCDM_S
+        default n
+
+    if BSP_USING_LVGL
+        config BSP_USING_LVGL_DEMO
+            bool "Enable LVGL demo"
+            default y
+    endif
 
 endmenu
 

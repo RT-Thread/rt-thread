@@ -1,3 +1,129 @@
+# RT-Thread v5.0.1 released
+
+Change log since v5.0.0 released
+
+## Kernel
+
+- Add stdc atomic detection. (#7536)
+- Add API rt_hw_interrupt_is_disabled. (#7706)
+- Add API to get object name and thread name (#7507)
+- Add AMP rt_hw_cpu_id and RT_USING_SMP Macro decoupling,rt_hw_ipi_send depend on RT_USING_AMP
+- Fix device_open oflag comparison error. (#7512)
+- Fix thread.c variable rt_err not initialized timer.c type conversion error in iar
+- Fix and add null pointer check
+- Fix Avoid repeated calls device_open interface. (#7476)
+- Modify rt_thread change the structure to explicit inheritance rt_object (#7131)
+
+## Components
+
+- DFS
+  - Add dfs-v2.0
+  - Fix potential Memory leak problems(#7378)
+  - Fix tmpfs spinlock error. (#7216),nfs 64bit arch fault
+
+- Libc
+  - Support rt-thread CPP wrapper sub-switch macros, external third pary libc software package, picolibc heap
+  - Optimize resource consumption
+  - Modify redirecting header sys/ioctl to bits/ioctl, improve posix interface message queue
+  - Modify if define cputime, then CLOCK_REALTIME use cputime (#7343)
+
+- LWP
+  - Add more syscall support.
+  - Support file descriptor transmit (#7318)
+- Support for scalable memory management (#7277)
+  - Fix lwp _load_script. (#7405)
+  - Modify rt_err_t change to sysret_t in the lwp_syscall (#7374)
+  - Modify when fork Child process, lwp_struct_copy function adds copy working_directory function (# 7380)
+
+- Network
+  - Add more hook functions
+  - Fix ping timeout calculation bug(#7545),ipv6 compatibility issues(#7339)
+  - Fix next-hop finding in lwip_ip4_route_src. (#7504)
+  - Modify use the interface to set the default netdev
+  - optimize at_vprintfln and network related Kconfig
+
+- Other
+  - Fix Finsh offset used before range check
+  - Support for scalable memory management (#7277)
+
+## Drivers Device
+
+- Fix cpu timer in multithreading (#7222),dtb compiling warning.
+- Optimize the spi transfer speed and fix some issues
+- Modify the ADC channel data type and add the built-in channel universal channel number identification
+- Modify convert the current sensor framework back to v1 version and make it independent of v2 (# 7698)
+- Modify changing tty's driver to a device and fixing multiple scanfs resulted in data loss issues
+
+## Libcpu
+
+add debug info for gdb
+
+- arm: Optimize interrupt mode API,Fix atomic_arm.c
+- aarch64: Optimize interrupt mode API,Decoupling startup process,Add no device tree mode in PSCI,Fix cache invalidate operation (#7363)
+- risc-v:add ioremap for c906
+- mips:Fix variable misuse
+
+## Tools
+
+- Add feature to filter out files to file_check.py that do not require cppcheck (#7499)- Add `--add-rtconfig` args for scons when you want to add macro definitions build time.
+- Support llvm-arm 16.0; Add llvm-arm workflows.
+- Fix cannot select c99 and gnu choice in Keil-MDK
+- Fix the deque issue for Env['CPPDEFINES'] (#7541)
+- Modify move file_check.py into ci folder
+
+## action
+
+- Refactoring and optimizing the execution process of ci and adding manual triggers and cppcheck checks for scons dist
+
+## utest
+
+- Add UtestTcTab section access under MSC and change access under gcc
+- Fix strtol,the sizeof incorrect calculation,the issue of thread test case looping at high optimization levels,file open close mismatch
+
+## bsp
+
+fix mismatched function types in rt_pin_ops for all drv_gpio.c
+
+- Add some new BSPs
+  - apm32: apm32e103ze-evalboard apm32e103ze-tinyboard apm32f030r8-miniboard
+  - at32: at32f423-start
+  - essemi: es32vf2264
+  - imxrt: imxrt1061-forlinx-OK1061-S
+  - renesas: ra6m3-hmi-board
+  - stm32: stm32f334-st-nucleo stm32l496-st-discovery
+  - yichip: yc3122-pos
+  - bouffalo_lab: bl808/d0
+- Add RTduino support for some bsps
+- Update some stm32 BSP drivers:  timer, uart v2, pwm, adc
+- Update BSP
+  - Add kconfig for some BSPs without kconfig
+  - fix mismatched function types in rt_pin_ops for all drv_gpio.c (#7457)
+  - stm32: Fixed some issues, added and improved some drivers
+  - Renesas: Fixed some issues, added and improved some drivers
+  - Infineon:Fix drv_gpio and spi problem,psoc6 add drv sdcard (#7522),update: READ.me use path of relative (#7500), fix spi chipselect
+  - simulator:sync upstream win32 driver (#7165), Fix Linux support
+  - airm2m/air32f103: update AIR32F10xLib (#7472)
+  - allwinner:  update allwinnter libraries object file path (#7482)
+  - apm32: add can driver and add apm32e1/s1 rtt driver support (#7170)
+  - at32 : add support dac driver,update for perfection of drv_usart_v2 (#7210),fixed some
+  - bouffalo_lab : add sdcard spi driver drv_i2c drv_soft_i2c hwtimer & flash driver support,update bouffalo_lab libraries && script, sdio host driver, uart driver pin && bl808-d0 ioremap mode
+  - essemi: Update es32vf2264 some library functions and drivers
+  - fujitsu: BSP support menuconfig
+  - gd32: Add PWM driver for GD32F303
+  - imxrt: Update to support Keil AC6, add link script files, improve SPI support, improve SPI support for RW007, and improve documentation
+  - LPC4088: Increase support for IAR environment (# 7611)
+  - lpc55sxx: update keil default project,update drv_soft_i2c drv_soft_spi drv_adc drv_wdt,add adaptation LVGL drv_lcd and drv_touch
+  - raspberry-pico: add drv_soft_spi drv_adc drv_wdt drv_soft_i2c
+  - rk3568:Support PSCI, amp mode
+
+## Userapps
+
+- Using xmake to build a system to replace the original scons
+- Built in Toolchain, zlib and other software packages
+- Can automatically generate images such as ext4 and fat
+- Supports multiple architectures such as arm aarch64 riscv64
+- Add built in QEMU runtime environment
+
 # RT-Thread v5.0.0 released
 
 Change log since v4.1.1 released
@@ -101,7 +227,7 @@ Change log since v4.1.0 released
 * remove the executable permission of thread.c
 * remove strnlen function
 * add NULL check for rt_free and rt_free_align
-* suuport perf_counter
+* support perf_counter
 * tighten size before check with mem_size_aligned
 * Add string information for error
 * fix a problem about finsh_set_prompt redefined msh command

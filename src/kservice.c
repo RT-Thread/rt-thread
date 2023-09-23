@@ -29,6 +29,14 @@
 #include <rtthread.h>
 #include <rthw.h>
 
+#define DBG_TAG           "kernel.device"
+#ifdef RT_DEBUG_DEVICE
+#define DBG_LVL           DBG_LOG
+#else
+#define DBG_LVL           DBG_WARNING
+#endif /* defined (RT_DEBUG_DEVICE) */
+#include <rtdbg.h>
+
 #ifdef RT_USING_MODULE
 #include <dlmodule.h>
 #endif /* RT_USING_MODULE */
@@ -58,8 +66,29 @@ static rt_device_t _console_device = RT_NULL;
 rt_weak void rt_hw_us_delay(rt_uint32_t us)
 {
     (void) us;
-    RT_DEBUG_LOG(RT_DEBUG_DEVICE, ("rt_hw_us_delay() doesn't support for this board."
-        "Please consider implementing rt_hw_us_delay() in another file.\n"));
+    LOG_W("rt_hw_us_delay() doesn't support for this board."
+        "Please consider implementing rt_hw_us_delay() in another file.");
+}
+
+rt_weak void rt_hw_cpu_reset(void)
+{
+    LOG_W("rt_hw_cpu_reset() doesn't support for this board."
+        "Please consider implementing rt_hw_cpu_reset() in another file.");
+    return;
+}
+
+rt_weak void rt_hw_cpu_shutdown(void)
+{
+    rt_base_t level;
+    LOG_I("CPU shutdown...");
+    LOG_W("Using default rt_hw_cpu_shutdown()."
+        "Please consider implementing rt_hw_cpu_reset() in another file.");
+    level = rt_hw_interrupt_disable();
+    while (level)
+    {
+        RT_ASSERT(RT_NULL);
+    }
+    return;
 }
 
 rt_weak const char *rt_hw_cpu_arch(void)
@@ -67,20 +96,29 @@ rt_weak const char *rt_hw_cpu_arch(void)
     return "unknown";
 }
 
-static const char* rt_errno_strs[] =
+struct _errno_str_t
 {
-    "OK",
-    "ERROR",
-    "ETIMOUT",
-    "ERSFULL",
-    "ERSEPTY",
-    "ENOMEM",
-    "ENOSYS",
-    "EBUSY",
-    "EIO",
-    "EINTRPT",
-    "EINVAL",
-    "EUNKNOW"
+    rt_err_t error;
+    const char *str;
+};
+
+static struct _errno_str_t  rt_errno_strs[] =
+{
+    {RT_EOK     , "OK     "},
+    {RT_ERROR   , "ERROR  "},
+    {RT_ETIMEOUT, "ETIMOUT"},
+    {RT_EFULL   , "ERSFULL"},
+    {RT_EEMPTY  , "ERSEPTY"},
+    {RT_ENOMEM  , "ENOMEM "},
+    {RT_ENOSYS  , "ENOSYS "},
+    {RT_EBUSY   , "EBUSY  "},
+    {RT_EIO     , "EIO    "},
+    {RT_EINTR   , "EINTRPT"},
+    {RT_EINVAL  , "EINVAL "},
+    {RT_ENOENT  , "ENOENT "},
+    {RT_ENOSPC  , "ENOSPC "},
+    {RT_EPERM   , "EPERM  "},
+    {RT_ETRAP   , "ETRAP  "},
 };
 
 /**
@@ -95,9 +133,13 @@ const char *rt_strerror(rt_err_t error)
     if (error < 0)
         error = -error;
 
-    return (error > RT_EINVAL + 1) ?
-           rt_errno_strs[RT_EINVAL + 1] :
-           rt_errno_strs[error];
+    for (int i = 0; i < sizeof(rt_errno_strs) / sizeof(rt_errno_strs[0]); i++)
+    {
+        if (rt_errno_strs[i].error == error)
+            return rt_errno_strs[i].str;
+    }
+
+    return "EUNKNOW";
 }
 RTM_EXPORT(rt_strerror);
 
@@ -1574,8 +1616,13 @@ rt_inline void _heap_unlock(rt_base_t level)
 
 #ifdef RT_USING_UTESTCASES
 /* export to utest to observe the inner statements */
+#ifdef _MSC_VER
+#define rt_heap_lock() _heap_lock()
+#define rt_heap_unlock() _heap_unlock()
+#else
 rt_base_t rt_heap_lock(void) __attribute__((alias("_heap_lock")));
 void rt_heap_unlock(rt_base_t level) __attribute__((alias("_heap_unlock")));
+#endif /* _MSC_VER */
 #endif
 
 #if defined(RT_USING_SMALL_MEM_AS_HEAP)
@@ -1974,7 +2021,7 @@ int __rt_ffs(int value)
     #define __on_rt_assert_hook(ex, func, line)         __ON_HOOK_ARGS(rt_assert_hook, (ex, func, line))
 #endif
 
-#ifdef RT_DEBUG
+#ifdef RT_USING_DEBUG
 /* RT_ASSERT(EX)'s hook */
 
 void (*rt_assert_hook)(const char *ex, const char *func, rt_size_t line);
@@ -2023,6 +2070,6 @@ void rt_assert_handler(const char *ex_string, const char *func, rt_size_t line)
     }
 }
 RTM_EXPORT(rt_assert_handler);
-#endif /* RT_DEBUG */
+#endif /* RT_USING_DEBUG */
 
 /**@}*/

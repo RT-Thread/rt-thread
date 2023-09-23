@@ -135,7 +135,11 @@ static int serial_fops_ioctl(struct dfs_file *fd, int cmd, void *args)
     return rt_device_control(device, cmd, args);
 }
 
-static int serial_fops_read(struct dfs_file *fd, void *buf, size_t count)
+#ifdef RT_USING_DFS_V2
+static ssize_t serial_fops_read(struct dfs_file *fd, void *buf, size_t count, off_t *pos)
+#else
+static ssize_t serial_fops_read(struct dfs_file *fd, void *buf, size_t count)
+#endif
 {
     int size = 0;
     rt_device_t device;
@@ -169,7 +173,11 @@ static int serial_fops_read(struct dfs_file *fd, void *buf, size_t count)
     return size;
 }
 
-static int serial_fops_write(struct dfs_file *fd, const void *buf, size_t count)
+#ifdef RT_USING_DFS_V2
+static ssize_t serial_fops_write(struct dfs_file *fd, const void *buf, size_t count, off_t *pos)
+#else
+static ssize_t serial_fops_write(struct dfs_file *fd, const void *buf, size_t count)
+#endif
 {
     rt_device_t device;
 
@@ -211,15 +219,12 @@ static int serial_fops_poll(struct dfs_file *fd, struct rt_pollreq *req)
 
 static const struct dfs_file_ops _serial_fops =
 {
-    serial_fops_open,
-    serial_fops_close,
-    serial_fops_ioctl,
-    serial_fops_read,
-    serial_fops_write,
-    RT_NULL, /* flush */
-    RT_NULL, /* lseek */
-    RT_NULL, /* getdents */
-    serial_fops_poll,
+    .open   = serial_fops_open,
+    .close  = serial_fops_close,
+    .ioctl  = serial_fops_ioctl,
+    .read   = serial_fops_read,
+    .write  = serial_fops_write,
+    .poll   = serial_fops_poll,
 };
 #endif /* RT_USING_POSIX_STDIO */
 
@@ -354,10 +359,9 @@ rt_inline int _serial_int_tx(struct rt_serial_device *serial, const rt_uint8_t *
             }
         }
 
-        if (serial->ops->putc(serial, *(char*)data) == -1)
+        while (serial->ops->putc(serial, *(char*)data) == -1)
         {
             rt_completion_wait(&(tx->completion), RT_WAITING_FOREVER);
-            continue;
         }
 
         data ++; length --;

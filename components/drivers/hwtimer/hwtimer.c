@@ -165,6 +165,10 @@ static rt_ssize_t rt_hwtimer_read(struct rt_device *dev, rt_off_t pos, void *buf
     {
         cnt = (rt_uint32_t)(timer->freq * timer->period_sec) - cnt;
     }
+    if (timer->mode == HWTIMER_MODE_ONESHOT)
+    {
+        overflow = 0;
+    }
 
     t = overflow * timer->period_sec + cnt/(float)timer->freq;
     tv.sec = (rt_int32_t)t;

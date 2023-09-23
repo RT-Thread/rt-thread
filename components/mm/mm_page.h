@@ -34,7 +34,7 @@
 #define PAGE_ANY_AVAILABLE 0x1ul
 
 
-#ifdef RT_DEBUG_PAGE_LEAK
+#ifdef RT_DEBUGING_PAGE_LEAK
 #define DEBUG_FIELD {           \
     /* trace list */            \
     struct rt_page *tl_next;    \
@@ -63,6 +63,8 @@ typedef struct tag_region
 {
     rt_size_t start;
     rt_size_t end;
+
+    const char *name;
 } rt_region_t;
 
 extern const rt_size_t rt_mpr_size;
@@ -87,6 +89,8 @@ void rt_page_list(void);
 rt_size_t rt_page_bits(rt_size_t size);
 
 void rt_page_get_info(rt_size_t *total_nr, rt_size_t *free_nr);
+
+void rt_page_high_get_info(rt_size_t *total_nr, rt_size_t *free_nr);
 
 void *rt_page_page2addr(struct rt_page *p);
 

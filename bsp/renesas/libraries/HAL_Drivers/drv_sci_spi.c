@@ -106,35 +106,53 @@ SCI_SPIx_CALLBACK(9);
     rt_event_recv(event, \
     RA_SCI_SPI##n##_EVENT, \
     RT_EVENT_FLAG_OR | RT_EVENT_FLAG_CLEAR, \
-    RT_WAITING_FOREVER, \
+    rt_tick_from_millisecond(1000), \
     &recved);
 
 static rt_err_t ra_wait_complete(rt_event_t event, const char bus_name[RT_NAME_MAX])
 {
     rt_uint32_t recved = 0x00;
+    rt_err_t ret = RT_EOK;
 
     switch (bus_name[4])
     {
-        case '0':
-        return SCI_SPIx_EVENT_RECV(0);
-        case '1':
-        return SCI_SPIx_EVENT_RECV(1);
-        case '2':
-        return SCI_SPIx_EVENT_RECV(2);
-        case '3':
-        return SCI_SPIx_EVENT_RECV(3);
-        case '4':
-        return SCI_SPIx_EVENT_RECV(4);
-        case '5':
-        return SCI_SPIx_EVENT_RECV(5);
-        case '6':
-        return SCI_SPIx_EVENT_RECV(6);
-        case '7':
-        return SCI_SPIx_EVENT_RECV(7);
-        case '8':
-        return SCI_SPIx_EVENT_RECV(8);
-        case '9':
-        return SCI_SPIx_EVENT_RECV(9);
+    case '0':
+        ret = SCI_SPIx_EVENT_RECV(0);
+        break;
+    case '1':
+        ret = SCI_SPIx_EVENT_RECV(1);
+        break;
+    case '2':
+        ret = SCI_SPIx_EVENT_RECV(2);
+        break;
+    case '3':
+        ret = SCI_SPIx_EVENT_RECV(3);
+        break;
+    case '4':
+        ret = SCI_SPIx_EVENT_RECV(4);
+        break;
+    case '5':
+        ret = SCI_SPIx_EVENT_RECV(5);
+        break;
+    case '6':
+        ret = SCI_SPIx_EVENT_RECV(6);
+        break;
+    case '7':
+        ret = SCI_SPIx_EVENT_RECV(7);
+        break;
+    case '8':
+        ret = SCI_SPIx_EVENT_RECV(8);
+        break;
+    case '9':
+        ret = SCI_SPIx_EVENT_RECV(9);
+        break;
+    default:
+        break;
+    }
+    if (ret != RT_EOK)
+    {
+        LOG_D("%s ra_wait_complete failed!", bus_name);
+        return ret;
     }
     return -RT_EINVAL;
 }

@@ -9,6 +9,7 @@
  * 2019-04-27     misonyo      update to cortex-m7 series
  */
 
+#include <rtthread.h>
 #include <rthw.h>
 #include <rtdef.h>
 #include <board.h>

@@ -51,6 +51,7 @@ RT-THREAD bsp company list
   - [lm3s8962](lm3s8962)
   - [dm365](dm365)
   - [beaglebone](beaglebone)
+  - [msp432e401y-LaunchPad](msp432e401y-LaunchPad)
 - Samsung
   - [wh44b0](wh44b0)
   - [mini4020](mini4020)

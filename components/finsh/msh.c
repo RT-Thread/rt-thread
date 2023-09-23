@@ -11,6 +11,7 @@
  */
 #include <rtthread.h>
 #include <string.h>
+#include <errno.h>
 
 #ifdef RT_USING_FINSH
 
@@ -274,7 +275,7 @@ static int _msh_exec_cmd(char *cmd, rt_size_t length, int *retp)
     RT_ASSERT(retp);
 
     /* find the size of first command */
-    while ((cmd[cmd0_size] != ' ' && cmd[cmd0_size] != '\t') && cmd0_size < length)
+    while (cmd0_size < length && (cmd[cmd0_size] != ' ' && cmd[cmd0_size] != '\t'))
         cmd0_size ++;
     if (cmd0_size == 0)
         return -RT_ERROR;
@@ -483,7 +484,7 @@ found_program:
 
 int msh_exec(char *cmd, rt_size_t length)
 {
-    int cmd_ret;
+    int cmd_ret = 0;
 
     /* strim the beginning of command */
     while ((length > 0) && (*cmd  == ' ' || *cmd == '\t'))
@@ -521,7 +522,8 @@ int msh_exec(char *cmd, rt_size_t length)
 #ifdef RT_USING_SMART
     /* exec from msh_exec , debug = 0*/
     /* _msh_exec_lwp return is pid , <= 0 means failed */
-    if (_msh_exec_lwp(0, cmd, length) > 0)
+    cmd_ret = _msh_exec_lwp(0, cmd, length);
+    if (cmd_ret > 0)
     {
         return 0;
     }
@@ -538,7 +540,16 @@ int msh_exec(char *cmd, rt_size_t length)
         }
         *tcmd = '\0';
     }
-    rt_kprintf("%s: command not found.\n", cmd);
+#ifdef RT_USING_SMART
+    if (cmd_ret == -EACCES)
+    {
+        rt_kprintf("%s: Permission denied.\n", cmd);
+    }
+    else
+#endif
+    {
+        rt_kprintf("%s: command not found.\n", cmd);
+    }
     return -1;
 }
 
@@ -677,9 +688,21 @@ void msh_auto_complete_path(char *path)
             if (multi == 1)
             {
                 struct stat buffer = {0};
-                if ((stat(path, &buffer) == 0) && (S_ISDIR(buffer.st_mode)))
+                if ((stat(path, &buffer) == 0))
                 {
-                    strcat(path, "/");
+                    if (S_ISDIR(buffer.st_mode))
+                    {
+                        strcat(path, "/");
+                    }
+                    else if (S_ISLNK(buffer.st_mode))
+                    {
+                        DIR *dir = opendir(path);
+                        if (dir)
+                        {
+                            closedir(dir);
+                            strcat(path, "/");
+                        }
+                    }
                 }
             }
         }

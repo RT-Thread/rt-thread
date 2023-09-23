@@ -9,7 +9,6 @@
  * 2021-11-28     GuEe-GUI     first version
  * 2022-12-10     WangXiaoyao  porting to MM
  */
-#include <board.h>
 #include <rthw.h>
 #include <rtthread.h>
 #include <stddef.h>
@@ -328,7 +327,8 @@ void rt_hw_mmu_unmap(rt_aspace_t aspace, void *v_addr, size_t size)
     while (npages--)
     {
         MM_PGTBL_LOCK(aspace);
-        _kenrel_unmap_4K(aspace->page_table, v_addr);
+        if (rt_hw_mmu_v2p(aspace, v_addr) != ARCH_MAP_FAILED)
+            _kenrel_unmap_4K(aspace->page_table, v_addr);
         MM_PGTBL_UNLOCK(aspace);
         v_addr = (char *)v_addr + ARCH_PAGE_SIZE;
     }
@@ -529,20 +529,18 @@ struct page_table
     unsigned long page[512];
 };
 
-static struct page_table *__init_page_array;
-static unsigned long __page_off = 0UL;
+/*  */
+static struct page_table __init_page_array[6] rt_align(0x1000);
+static unsigned long __page_off = 2UL; /* 0, 1 for ttbr0, ttrb1 */
+unsigned long get_ttbrn_base(void)
+{
+    return (unsigned long) __init_page_array;
+}
+
 unsigned long get_free_page(void)
 {
-    if (!__init_page_array)
-    {
-        unsigned long temp_page_start;
-        asm volatile("mov %0, sp" : "=r"(temp_page_start));
-        __init_page_array =
-            (struct page_table *)(temp_page_start & ~(ARCH_SECTION_MASK));
-        __page_off = 2; /* 0, 1 for ttbr0, ttrb1 */
-    }
     __page_off++;
-    return (unsigned long)(__init_page_array[__page_off - 1].page);
+    return (unsigned long) (__init_page_array[__page_off - 1].page);
 }
 
 static int _map_single_page_2M(unsigned long *lv0_tbl, unsigned long va,
@@ -591,6 +589,31 @@ static int _map_single_page_2M(unsigned long *lv0_tbl, unsigned long va,
     off &= MMU_LEVEL_MASK;
     cur_lv_tbl[off] = pa;
     return 0;
+}
+
+void *rt_ioremap_early(void *paddr, size_t size)
+{
+    size_t count;
+    static void *tbl = RT_NULL;
+
+    if (!size)
+    {
+        return RT_NULL;
+    }
+
+    if (!tbl)
+    {
+        tbl = rt_hw_mmu_tbl_get();
+    }
+
+    count = (size + ARCH_SECTION_MASK) >> ARCH_SECTION_SHIFT;
+
+    while (count --> 0)
+    {
+        _map_single_page_2M(tbl, (unsigned long)paddr, (unsigned long)paddr, MMU_MAP_K_DEVICE);
+    }
+
+    return paddr;
 }
 
 static int _init_map_2M(unsigned long *lv0_tbl, unsigned long va,
@@ -774,13 +797,19 @@ void rt_hw_mem_setup_early(unsigned long *tbl0, unsigned long *tbl1,
                            unsigned long size, unsigned long pv_off)
 {
     int ret;
+    unsigned long count = (size + ARCH_SECTION_MASK) >> ARCH_SECTION_SHIFT;
+    unsigned long normal_attr = MMU_MAP_CUSTOM(MMU_AP_KAUN, NORMAL_MEM);
+
+#ifdef RT_USING_SMART
+    unsigned long va = KERNEL_VADDR_START;
+#else
+    extern unsigned char _start;
+    unsigned long va = (unsigned long) &_start;
+    va = RT_ALIGN_DOWN(va, 0x200000);
+#endif
 
     /* setup pv off */
     rt_kmem_pvoff_set(pv_off);
-
-    unsigned long va = KERNEL_VADDR_START;
-    unsigned long count = (size + ARCH_SECTION_MASK) >> ARCH_SECTION_SHIFT;
-    unsigned long normal_attr = MMU_MAP_CUSTOM(MMU_AP_KAUN, NORMAL_MEM);
 
     /* clean the first two pages */
     rt_memset((char *)tbl0, 0, ARCH_PAGE_SIZE);

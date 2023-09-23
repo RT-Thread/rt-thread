@@ -10,7 +10,12 @@
  * 2021-02-03     lizhirui     add 64-bit arch support and riscv64 arch support
  * 2021-08-26     linzhenxing  add lwp_setcwd\lwp_getcwd
  * 2023-02-20     wangxiaoyao  inv icache before new app startup
+ * 2023-02-20     wangxiaoyao  fix bug on foreground app switch
  */
+
+#define DBG_TAG "LWP"
+#define DBG_LVL DBG_WARNING
+#include <rtdbg.h>
 
 #include <rthw.h>
 #include <rtthread.h>
@@ -31,11 +36,9 @@
 #include "lwp.h"
 #include "lwp_arch.h"
 #include "lwp_arch_comm.h"
+#include "lwp_signal.h"
+#include "lwp_dbg.h"
 #include "console.h"
-
-#define DBG_TAG "LWP"
-#define DBG_LVL DBG_WARNING
-#include <rtdbg.h>
 
 #ifdef ARCH_MM_MMU
 #include <lwp_user_mm.h>
@@ -197,7 +200,7 @@ struct process_aux *lwp_argscopy(struct rt_lwp *lwp, int argc, char **argv, char
     {
         len = rt_strlen(argv[i]) + 1;
         new_argve[i] = str;
-        rt_memcpy(str_k, argv[i], len);
+        lwp_memcpy(str_k, argv[i], len);
         str += len;
         str_k += len;
     }
@@ -213,7 +216,7 @@ struct process_aux *lwp_argscopy(struct rt_lwp *lwp, int argc, char **argv, char
         {
             len = rt_strlen(envp[j]) + 1;
             new_argve[i] = str;
-            rt_memcpy(str_k, envp[j], len);
+            lwp_memcpy(str_k, envp[j], len);
             str += len;
             str_k += len;
             i++;
@@ -295,7 +298,7 @@ static struct process_aux *lwp_argscopy(struct rt_lwp *lwp, int argc, char **arg
     {
         len = rt_strlen(argv[i]) + 1;
         new_argve[i] = str;
-        rt_memcpy(str, argv[i], len);
+        lwp_memcpy(str, argv[i], len);
         str += len;
     }
     new_argve[i] = 0;
@@ -309,7 +312,7 @@ static struct process_aux *lwp_argscopy(struct rt_lwp *lwp, int argc, char **arg
         {
             len = rt_strlen(envp[j]) + 1;
             new_argve[i] = str;
-            rt_memcpy(str, envp[j], len);
+            lwp_memcpy(str, envp[j], len);
             str += len;
             i++;
         }
@@ -1024,37 +1027,32 @@ out:
     return ret;
 }
 
+/* lwp thread clean up */
 void lwp_cleanup(struct rt_thread *tid)
 {
     rt_base_t level;
     struct rt_lwp *lwp;
-    struct tty_node *tty_head = RT_NULL;
 
     if (tid == NULL)
     {
+        LOG_I("%s: invalid parameter tid == NULL", __func__);
         return;
     }
-
-    LOG_I("cleanup thread: %s, stack_addr: %08X", tid->parent.name, tid->stack_addr);
+    else
+        LOG_D("cleanup thread: %s, stack_addr: 0x%x", tid->parent.name, tid->stack_addr);
 
     level = rt_hw_interrupt_disable();
     lwp = (struct rt_lwp *)tid->lwp;
 
+    /* lwp thread cleanup */
     lwp_tid_put(tid->tid);
     rt_list_remove(&tid->sibling);
-    rt_hw_interrupt_enable(level);
-    if (lwp->tty != RT_NULL)
-    {
-        tty_head = lwp->tty->head;
-    }
-    if (!lwp_ref_dec(lwp))
-    {
-        if (tty_head)
-        {
-            tty_pop(&tty_head, lwp);
-        }
-    }
+    lwp_thread_signal_detach(&tid->signal);
 
+    rt_hw_interrupt_enable(level);
+
+    /* tty will be release in lwp_ref_dec() if ref is cleared */
+    lwp_ref_dec(lwp);
     return;
 }
 
@@ -1147,6 +1145,11 @@ pid_t lwp_execve(char *filename, int debug, int argc, char **argv, char **envp)
     if (filename == RT_NULL)
     {
         return -RT_ERROR;
+    }
+
+    if (access(filename, X_OK) != 0)
+    {
+        return -EACCES;
     }
 
     lwp = lwp_new();
@@ -1250,15 +1253,19 @@ pid_t lwp_execve(char *filename, int debug, int argc, char **argv, char **envp)
                     struct rt_lwp *old_lwp;
                     tty = (struct tty_struct *)console_tty_get();
                     old_lwp = tty->foreground;
-                    rt_mutex_take(&tty->lock, RT_WAITING_FOREVER);
-                    ret = tty_push(&tty->head, old_lwp);
-                    rt_mutex_release(&tty->lock);
-                    if (ret < 0)
+                    if (old_lwp)
                     {
-                        lwp_tid_put(tid);
-                        lwp_ref_dec(lwp);
-                        LOG_E("malloc fail!\n");
-                        return -ENOMEM;
+                        rt_mutex_take(&tty->lock, RT_WAITING_FOREVER);
+                        ret = tty_push(&tty->head, old_lwp);
+                        rt_mutex_release(&tty->lock);
+
+                        if (ret < 0)
+                        {
+                            lwp_tid_put(tid);
+                            lwp_ref_dec(lwp);
+                            LOG_E("malloc fail!\n");
+                            return -ENOMEM;
+                        }
                     }
 
                     lwp->tty = tty;
@@ -1334,7 +1341,7 @@ pid_t lwp_execve(char *filename, int debug, int argc, char **argv, char **envp)
     return -RT_ERROR;
 }
 
-#ifdef RT_USING_MUSL
+#ifdef RT_USING_MUSLLIBC
 extern char **__environ;
 #else
 char **__environ = 0;
@@ -1396,3 +1403,17 @@ void lwp_user_setting_restore(rt_thread_t thread)
     }
 }
 #endif /* ARCH_MM_MMU */
+
+void lwp_uthread_ctx_save(void *ctx)
+{
+    rt_thread_t thread;
+    thread = rt_thread_self();
+    thread->user_ctx.ctx = ctx;
+}
+
+void lwp_uthread_ctx_restore(void)
+{
+    rt_thread_t thread;
+    thread = rt_thread_self();
+    thread->user_ctx.ctx = RT_NULL;
+}

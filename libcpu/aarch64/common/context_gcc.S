@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2021-05-18     Jesven       the first version
+ * 2023-06-24     WangXiaoyao  Support backtrace for user thread
  */
 
 #include "rtconfig.h"
@@ -18,6 +19,9 @@
 .type rt_hw_cpu_id_set, @function
 rt_hw_cpu_id_set:
     mrs x0, mpidr_el1           /* MPIDR_EL1: Multi-Processor Affinity Register */
+#ifdef ARCH_ARM_CORTEX_A55
+    lsr x0, x0, #8
+#endif
     and x0, x0, #15
     msr tpidr_el1, x0
     ret
@@ -264,6 +268,17 @@ START_POINT_END(_thread_start)
     ERET
 .endm
 
+.macro SAVE_USER_CTX
+    MRS     X1, SPSR_EL1
+    AND     X1, X1, 0xf
+    CMP     X1, XZR
+
+    BNE     1f
+    BL      lwp_uthread_ctx_save
+    LDP     X0, X1, [SP]
+1:
+.endm
+
 #ifdef RT_USING_SMP
 #define rt_hw_interrupt_disable rt_hw_local_irq_disable
 #define rt_hw_interrupt_enable rt_hw_local_irq_enable
@@ -374,12 +389,18 @@ vector_fiq:
 
 .globl vector_irq
 vector_irq:
-    CLREX
     SAVE_CONTEXT
     STP     X0, X1, [SP, #-0x10]!   /* X0 is thread sp */
 
     BL      rt_interrupt_enter
+    LDP     X0, X1, [SP]
+#ifdef RT_USING_LWP
+    SAVE_USER_CTX
+#endif
     BL      rt_hw_trap_irq
+#ifdef RT_USING_LWP
+    BL      lwp_uthread_ctx_restore
+#endif
     BL      rt_interrupt_leave
 
     LDP     X0, X1, [SP], #0x10
@@ -388,10 +409,11 @@ vector_irq:
 
 .global rt_hw_context_switch_exit
 rt_hw_context_switch_exit:
+    CLREX
     MOV     X0, SP
     RESTORE_CONTEXT
 
-#else
+#else   /* RT_USING_SMP */
 
 /*
  * void rt_hw_context_switch_to(rt_ubase_t to);
@@ -399,6 +421,7 @@ rt_hw_context_switch_exit:
  */
 .globl rt_hw_context_switch_to
 rt_hw_context_switch_to:
+    CLREX
     LDR     X0, [X0]
     RESTORE_CONTEXT
 
@@ -410,7 +433,7 @@ rt_hw_context_switch_to:
  */
 .globl rt_hw_context_switch
 rt_hw_context_switch:
-
+    CLREX
     SAVE_CONTEXT_FROM_EL1
 
     MOV    X2, SP
@@ -427,6 +450,7 @@ rt_hw_context_switch:
 .globl rt_interrupt_to_thread
 .globl rt_hw_context_switch_interrupt
 rt_hw_context_switch_interrupt:
+    CLREX
     LDR     X6, =rt_thread_switch_interrupt_flag
     LDR     X7, [X6]
     CMP     X7, #1
@@ -503,14 +527,22 @@ vector_irq:
 vector_irq_exit:
     MOV     SP, X0
     RESTORE_CONTEXT_WITHOUT_MMU_SWITCH
-#endif
+#endif  /* RT_USING_SMP */
 
 // -------------------------------------------------
 
 START_POINT(vector_exception)
     SAVE_CONTEXT
     STP     X0, X1, [SP, #-0x10]!
+#ifdef RT_USING_LWP
+    SAVE_USER_CTX
+#endif
+
     BL      rt_hw_trap_exception
+#ifdef RT_USING_LWP
+    BL      lwp_uthread_ctx_restore
+#endif
+
     LDP     X0, X1, [SP], #0x10
     MOV     SP, X0
     RESTORE_CONTEXT_WITHOUT_MMU_SWITCH
@@ -518,6 +550,9 @@ START_POINT_END(vector_exception)
 
 START_POINT(vector_serror)
     SAVE_CONTEXT
+#ifdef RT_USING_LWP
+    SAVE_USER_CTX
+#endif
     STP     X0, X1, [SP, #-0x10]!
     BL      rt_hw_trap_serror
     b .

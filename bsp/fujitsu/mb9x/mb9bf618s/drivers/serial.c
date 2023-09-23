@@ -249,7 +249,7 @@ static rt_err_t rt_serial_control (rt_device_t dev, int cmd, void *args)
 /*
  * serial register
  */
-rt_err_t rt_hw_serial_register(rt_device_t device, const char* name,
+rt_err_t rt_hw_fujitsu_serial_register(rt_device_t device, const char* name,
                                rt_uint32_t flag, struct serial_device *serial)
 {
     RT_ASSERT(device != RT_NULL);
@@ -270,7 +270,7 @@ rt_err_t rt_hw_serial_register(rt_device_t device, const char* name,
 }
 
 /* ISR for serial interrupt */
-void rt_hw_serial_isr(rt_device_t device)
+void rt_hw_fujitsu_serial_isr(rt_device_t device)
 {
     struct serial_device* uart = (struct serial_device*) device->user_data;
 
@@ -315,7 +315,7 @@ void MFS0RX_IRQHandler(void)
 {
     /* enter interrupt */
     rt_interrupt_enter();
-    rt_hw_serial_isr(&uart0_device);
+    rt_hw_fujitsu_serial_isr(&uart0_device);
     /* leave interrupt */
     rt_interrupt_leave();
 }
@@ -339,7 +339,7 @@ void MFS2RX_IRQHandler(void)
 {
     /* enter interrupt */
     rt_interrupt_enter();
-    rt_hw_serial_isr(&uart2_device);
+    rt_hw_fujitsu_serial_isr(&uart2_device);
     /* leave interrupt */
     rt_interrupt_leave();
 }
@@ -363,7 +363,7 @@ void MFS4RX_IRQHandler(void)
 {
     /* enter interrupt */
     rt_interrupt_enter();
-    rt_hw_serial_isr(&uart4_device);
+    rt_hw_fujitsu_serial_isr(&uart4_device);
     /* leave interrupt */
     rt_interrupt_leave();
 }
@@ -386,7 +386,7 @@ void rt_hw_serial_init(void)
     uart0.uart_device->SCR = SCR_RXE | SCR_TXE | SCR_RIE;
 
     /* register UART0 device */
-    rt_hw_serial_register(&uart0_device,
+    rt_hw_fujitsu_serial_register(&uart0_device,
                           "uart0",
                           RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_STREAM,
                           &uart0);
@@ -405,7 +405,7 @@ void rt_hw_serial_init(void)
     uart2.uart_device->SCR = SCR_RXE | SCR_TXE | SCR_RIE;
 
     /* register UART2 device */
-    rt_hw_serial_register(&uart2_device,
+    rt_hw_fujitsu_serial_register(&uart2_device,
                           "uart2",
                           RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_STREAM,
                           &uart2);
@@ -423,7 +423,7 @@ void rt_hw_serial_init(void)
     uart4.uart_device->SCR = SCR_RXE | SCR_TXE | SCR_RIE;
 
     /* register UART4 device */
-    rt_hw_serial_register(&uart4_device,
+    rt_hw_fujitsu_serial_register(&uart4_device,
                           "uart4",
                           RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX | RT_DEVICE_FLAG_STREAM,
                           &uart4);

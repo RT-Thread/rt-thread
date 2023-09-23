@@ -28,6 +28,7 @@
 
 #include "cy_result.h"
 #include "cybsp_types.h"
+#include "cycfg_pins.h"
 
 #if defined(__cplusplus)
 extern "C" {
@@ -35,6 +36,13 @@ extern "C" {
 
 #ifndef CYBSP_USER_BTN_DRIVE
 #define CYBSP_USER_BTN_DRIVE          (CYHAL_GPIO_DRIVE_PULLUP)
+#endif
+
+#ifndef CYBSP_DEBUG_UART_CTS
+#define CYBSP_DEBUG_UART_CTS (NC)
+#endif
+#ifndef CYBSP_DEBUG_UART_RTS
+#define CYBSP_DEBUG_UART_RTS (NC)
 #endif
 
 #if defined(__cplusplus)

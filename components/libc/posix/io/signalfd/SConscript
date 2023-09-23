@@ -1,0 +1,15 @@
+# RT-Thread building script for component
+
+from building import *
+
+cwd     = GetCurrentDir()
+src     = []
+CPPPATH = [cwd]
+
+if GetDepend('RT_USING_DFS'):
+    if GetDepend('RT_USING_MUSLLIBC'):
+        src += ['signalfd.c']
+
+group = DefineGroup('POSIX', src, depend = ['RT_USING_SMART','RT_USING_POSIX_SIGNALFD'], CPPPATH = CPPPATH)
+
+Return('group')

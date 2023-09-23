@@ -209,6 +209,12 @@ static int mmc_parse_ext_csd(struct rt_mmcsd_card *card, rt_uint8_t *ext_csd)
         card->hs_max_data_rate = 52000000;
     }
 
+    card->ext_csd.cache_size =
+        ext_csd[EXT_CSD_CACHE_SIZE + 0] << 0 |
+        ext_csd[EXT_CSD_CACHE_SIZE + 1] << 8 |
+        ext_csd[EXT_CSD_CACHE_SIZE + 2] << 16 |
+        ext_csd[EXT_CSD_CACHE_SIZE + 3] << 24;
+
     card_capacity = *((rt_uint32_t *)&ext_csd[EXT_CSD_SEC_CNT]);
     card->card_sec_cnt = card_capacity;
     card_capacity *= card->card_blksize;
@@ -301,7 +307,7 @@ out:
 }
 
 /*
- * Select the bus width amoung 4-bit and 8-bit(SDR).
+ * Select the bus width among 4-bit and 8-bit(SDR).
  * If the bus width is changed successfully, return the selected width value.
  * Zero is returned instead of error value if the wide width is not supported.
  */
@@ -331,22 +337,21 @@ static int mmc_select_bus_width(struct rt_mmcsd_card *card, rt_uint8_t *ext_csd)
         ddr = 2;
     }
     /*
-    * Unlike SD, MMC cards dont have a configuration register to notify
+    * Unlike SD, MMC cards don't have a configuration register to notify
     * supported bus width. So bus test command should be run to identify
-    * the supported bus width or compare the ext csd values of current
-    * bus width and ext csd values of 1 bit mode read earlier.
+    * the supported bus width or compare the EXT_CSD values of current
+    * bus width and EXT_CSD values of 1 bit mode read earlier.
     */
     for (idx = 0; idx < sizeof(bus_widths) / sizeof(rt_uint32_t); idx++)
     {
         /*
-        * Host is capable of 8bit transfer, then switch
-        * the device to work in 8bit transfer mode. If the
-        * mmc switch command returns error then switch to
-        * 4bit transfer mode. On success set the corresponding
-        * bus width on the host. Meanwhile, mmc core would
-        * bail out early if corresponding bus capable wasn't
-        * set by drivers.
-        */
+         * Determine BUS WIDTH mode according to the capability of host
+         */
+        if (((ext_csd_bits[idx][0] == EXT_CSD_BUS_WIDTH_8) && ((host->flags & MMCSD_BUSWIDTH_8) == 0)) ||
+            ((ext_csd_bits[idx][0] == EXT_CSD_BUS_WIDTH_4) && ((host->flags & MMCSD_BUSWIDTH_4) == 0)))
+        {
+            continue;
+        }
         bus_width = bus_widths[idx];
         if (bus_width == MMCSD_BUS_WIDTH_1)
         {
@@ -501,7 +506,7 @@ static int mmc_select_timing(struct rt_mmcsd_card *card)
     }
     else
     {
-        mmcsd_set_timing(card->host, MMCSD_TIMING_UHS_SDR50);
+        mmcsd_set_timing(card->host, MMCSD_TIMING_MMC_HS);
         mmcsd_set_clock(card->host, card->hs_max_data_rate);
     }
 
@@ -611,6 +616,12 @@ static rt_int32_t mmcsd_mmc_init_card(struct rt_mmcsd_host *host,
     {
         LOG_E("mmc select timing fail");
         goto err0;
+    }
+
+    if (card->ext_csd.cache_size > 0)
+    {
+        mmc_switch(card, EXT_CSD_CMD_SET_NORMAL,
+                   EXT_CSD_CACHE_CTRL, 1);
     }
 
     host->card = card;

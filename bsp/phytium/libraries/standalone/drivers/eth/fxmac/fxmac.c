@@ -78,6 +78,8 @@ static void FXmacHighSpeedConfiguration(FXmac *instance_p,u32 speed)
     FXMAC_PRINT_I("FXMAC_GEM_HSMAC is %x \r\n ", reg_value);
 }
 
+#if defined(FXMAC_CLK_TYPE_0)
+
 /**
  * @name: FXmacSelectClk
  * @msg:  Determine the driver clock configuration based on the media independent interface
@@ -85,7 +87,7 @@ static void FXmacHighSpeedConfiguration(FXmac *instance_p,u32 speed)
  * @param {u32} speed interface speed
  * @return {*}
  */
-void FXmacSelectClkOld(FXmac *instance_p)
+void FXmacSelectClk(FXmac *instance_p)
 {
     u32 reg_value;
 
@@ -244,7 +246,7 @@ void FXmacSelectClkOld(FXmac *instance_p)
 
     FXmacHighSpeedConfiguration(instance_p,speed);
 }
-
+#else
 void FXmacSelectClk(FXmac *instance_p)
 {
     u32 reg_value;
@@ -273,7 +275,7 @@ void FXmacSelectClk(FXmac *instance_p)
         FXmacHighSpeedConfiguration(instance_p,speed);
     }
 }
-
+#endif
 
 /**
  * Start the Ethernet controller as follows:
@@ -310,26 +312,6 @@ void FXmacStart(FXmac *instance_p)
     FASSERT(instance_p != NULL);
     FASSERT(instance_p->is_ready == (u32)FT_COMPONENT_IS_READY);
 
-    /* Start DMA */
-    /* When starting the DMA channels, both transmit and receive sides
-     * need an initialized BD list.
-     */
-
-    FASSERT(instance_p->rx_bd_queue.bdring.base_bd_addr != 0);
-
-    reg = FXMAC_READREG32(instance_p->config.base_address, FXMAC_RXQBASE_OFFSET);
-    reg = FXMAC_READREG32(instance_p->config.base_address, FXMAC_TXQBASE_OFFSET);
-
-    FXMAC_WRITEREG32(instance_p->config.base_address,
-                     FXMAC_RXQBASE_OFFSET,
-                     instance_p->rx_bd_queue.bdring.base_bd_addr);
-
-    FXMAC_WRITEREG32(instance_p->config.base_address,
-                     FXMAC_TXQBASE_OFFSET,
-                     instance_p->tx_bd_queue.bdring.base_bd_addr);
-
-    reg = FXMAC_READREG32(instance_p->config.base_address, FXMAC_RXQBASE_OFFSET);
-    reg = FXMAC_READREG32(instance_p->config.base_address, FXMAC_TXQBASE_OFFSET);
 
     /* clear any existed int status */
     FXMAC_WRITEREG32(instance_p->config.base_address, FXMAC_ISR_OFFSET,
@@ -366,7 +348,8 @@ void FXmacStart(FXmac *instance_p)
                   FXMAC_NWCTRL_OFFSET));
 
     /* Enable TX and RX interrupt */
-    FXMAC_INT_ENABLE(instance_p, FXMAC_IXR_LINKCHANGE_MASK | FXMAC_IXR_TX_ERR_MASK | FXMAC_IXR_RX_ERR_MASK | FXMAC_IXR_RXCOMPL_MASK | FXMAC_IXR_TXCOMPL_MASK);
+    FXMAC_INT_ENABLE(instance_p, instance_p->mask);
+
 
     /* Mark as started */
     instance_p->is_started = FT_COMPONENT_IS_STARTED;
@@ -623,11 +606,11 @@ static void FXmacReset(FXmac *instance_p)
     instance_p->moudle_id = (FXMAC_READREG32(instance_p->config.base_address, FXMAC_REVISION_REG_OFFSET) & FXMAC_IDENTIFICATION_MASK) >> 16;
     FXMAC_PRINT_I("instance_p->moudle_id is %d \r\n", instance_p->moudle_id);
     instance_p->max_mtu_size = FXMAC_MTU;
-    instance_p->max_frame_size = FXMAC_MTU + FXMAC_HDR_SIZE + FXMAC_TRL_SIZE;
+    instance_p->max_frame_size =  FXMAC_MAX_FRAME_SIZE;
 
     FXMAC_WRITEREG32(instance_p->config.base_address,
                      FXMAC_NWCTRL_OFFSET,
-                     ((FXMAC_NWCTRL_STATCLR_MASK) & (u32)(~FXMAC_NWCTRL_LOOPEN_MASK)) | FXMAC_NWCTRL_MDEN_MASK);
+                     ((FXMAC_NWCTRL_STATCLR_MASK) & (u32)(~FXMAC_NWCTRL_LOOPBACK_LOCAL_MASK)) | FXMAC_NWCTRL_MDEN_MASK);
     FXmacConfigureCaps(instance_p);
     write_reg = FXmacClkDivGet(instance_p); /* mdio clock division */
     write_reg |= FXmacDmaWidth(instance_p); /* DMA位宽 */
@@ -810,7 +793,7 @@ void FXmacInitInterface(FXmac *instance_p)
         config = FXMAC_READREG32(config_p->base_address, FXMAC_NWCFG_OFFSET);
         config |= FXMAC_NWCFG_PCSSEL_MASK | FXMAC_NWCFG_SGMII_MODE_ENABLE_MASK;
 
-        config &= ~(FXMAC_NWCFG_100_MASK | FXMAC_NWCFG_FDEN_MASK|FXMAC_NWCFG_LENGTH_FIELD_ERROR_FRAME_DISCARD);
+        config &= ~(FXMAC_NWCFG_100_MASK | FXMAC_NWCFG_FDEN_MASK|FXMAC_NWCFG_LENGTH_FIELD_ERROR_FRAME_DISCARD_MASK);
 
         if (instance_p->moudle_id >= 2)
         {
@@ -931,6 +914,7 @@ FError FXmacCfgInitialize(FXmac *instance_p, const FXmacConfig *config_p)
     instance_p->restart_handler = (FXmacIrqHandler)FXmacIrqStubHandler;
     instance_p->restart_args = NULL;
 
+    instance_p->mask = FXMAC_INTR_MASK;
     return FT_SUCCESS;
 }
 

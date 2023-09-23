@@ -4,8 +4,11 @@
 /aarch32/tools/ci.py
 /aarch32/tools/get_toolchain.py
 /aarch32/smart-env.sh
+/aarch32/smart-env.bat
 /aarch64/tools/gnu_gcc/*
 /aarch64/tools/ci.py
 /aarch64/tools/get_toolchain.py
 /aarch64/smart-env.sh
+/aarch64/smart-env.bat
 **/**/makefile
+/libraries/tests/*

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 hpmicro
+ * Copyright (c) 2021 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -31,27 +31,27 @@ void gpio_toggle_pin_interrupt_trigger_type(GPIO_Type *ptr, uint32_t gpio_index,
 
 void gpio_config_pin_interrupt(GPIO_Type *ptr, uint32_t gpio_index, uint8_t pin_index, gpio_interrupt_trigger_t trigger)
 {
-    switch(trigger) {
-        case gpio_interrupt_trigger_level_high:
-        case gpio_interrupt_trigger_level_low:
-            ptr->TP[gpio_index].CLEAR = 1 << pin_index;
-            if (trigger == gpio_interrupt_trigger_level_high) {
-                ptr->PL[gpio_index].CLEAR = 1 << pin_index;
-            } else {
-                ptr->PL[gpio_index].SET = 1 << pin_index;
-            }
-            break;
-        case gpio_interrupt_trigger_edge_falling:
-        case gpio_interrupt_trigger_edge_rising:
-            ptr->TP[gpio_index].SET = 1 << pin_index;
-            if (trigger == gpio_interrupt_trigger_edge_rising) {
-                ptr->PL[gpio_index].CLEAR = 1 << pin_index;
-            } else {
-                ptr->PL[gpio_index].SET = 1 << pin_index;
-            }
-            break;
-        default:
-            return;
+    switch (trigger) {
+    case gpio_interrupt_trigger_level_high:
+    case gpio_interrupt_trigger_level_low:
+        ptr->TP[gpio_index].CLEAR = 1 << pin_index;
+        if (trigger == gpio_interrupt_trigger_level_high) {
+            ptr->PL[gpio_index].CLEAR = 1 << pin_index;
+        } else {
+            ptr->PL[gpio_index].SET = 1 << pin_index;
+        }
+        break;
+    case gpio_interrupt_trigger_edge_falling:
+    case gpio_interrupt_trigger_edge_rising:
+        ptr->TP[gpio_index].SET = 1 << pin_index;
+        if (trigger == gpio_interrupt_trigger_edge_rising) {
+            ptr->PL[gpio_index].CLEAR = 1 << pin_index;
+        } else {
+            ptr->PL[gpio_index].SET = 1 << pin_index;
+        }
+        break;
+    default:
+        return;
     }
 }
 

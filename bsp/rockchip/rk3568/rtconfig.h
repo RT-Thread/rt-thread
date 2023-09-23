@@ -113,6 +113,7 @@
 /* Utilities */
 
 #define RT_USING_ADT
+#define RT_USING_ADT_AVL
 
 /* RT-Thread Utestcases */
 
@@ -238,5 +239,5 @@
 #define RT_USING_UART2
 #define BSP_USING_GIC
 #define BSP_USING_GICV3
-
+#define ARCH_ARM_BOOTWITH_FLUSH_CACHE
 #endif

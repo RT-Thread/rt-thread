@@ -1,0 +1,19 @@
+import os
+from building import *
+
+Import('rtconfig')
+
+cwd = GetCurrentDir()
+
+src = Glob('src/*.c')
+list = os.listdir(cwd + "/src")
+if rtconfig.ARCH in list:
+    if os.path.exists(cwd + "/src/" + rtconfig.ARCH + "/" + rtconfig.CPU):
+        src += Glob("src/" + rtconfig.ARCH + "/" + rtconfig.CPU + "/*.c")
+    else:
+        src += Glob("src/" + rtconfig.ARCH + "/*.c")
+CPPPATH = [cwd, cwd + "/inc"]
+
+group = DefineGroup('ktime', src, depend=['RT_USING_KTIME'], CPPPATH=CPPPATH)
+
+Return('group')

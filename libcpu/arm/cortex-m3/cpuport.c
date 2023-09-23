@@ -344,19 +344,9 @@ void rt_hw_hard_fault_exception(struct exception_info * exception_info)
 }
 
 /**
- * shutdown CPU
- */
-rt_weak void rt_hw_cpu_shutdown(void)
-{
-    rt_kprintf("shutdown...\n");
-
-    RT_ASSERT(0);
-}
-
-/**
  * reset CPU
  */
-rt_weak void rt_hw_cpu_reset(void)
+void rt_hw_cpu_reset(void)
 {
     SCB_AIRCR = SCB_RESET_VALUE;
 }

@@ -37,7 +37,7 @@
 #ifdef __aarch64__
 #include "faarch64.h"
 #else
-#include "fcp15.h"
+#include "faarch32.h"
 #endif
 
 #ifdef __cplusplus

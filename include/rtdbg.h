@@ -36,13 +36,13 @@
 extern "C" {
 #endif
 
-/* the debug log will force enable when RT_DEBUG macro is defined */
-#if defined(RT_DEBUG) && !defined(DBG_ENABLE)
+/* the debug log will force enable when RT_USING_DEBUG macro is defined */
+#if defined(RT_USING_DEBUG) && !defined(DBG_ENABLE)
 #define DBG_ENABLE
 #endif
 
-/* it will force output color log when RT_DEBUG_COLOR macro is defined */
-#if defined(RT_DEBUG_COLOR) && !defined(DBG_COLOR)
+/* it will force output color log when RT_DEBUGING_COLOR macro is defined */
+#if defined(RT_DEBUGING_COLOR) && !defined(DBG_COLOR)
 #define DBG_COLOR
 #endif
 

@@ -36,7 +36,7 @@ extern "C"
 
 /************************** Constant Definitions *****************************/
 /* CACHE */
-#define CACHE_LINE_ADDR_MASK 0x3FU
+#define CACHE_LINE_ADDR_MASK 0x3FUL
 #define CACHE_LINE  64U
 
 /* DEVICE Register Address */
@@ -140,12 +140,6 @@ enum
 #define FSCMI_MAX_PROTOCOLS_IMP	16
 #define FSCMI_MAX_PERF_DOMAINS  3
 #define FSCMI_MAX_OPPS		    4
-
-/* Generic Timer */
-#define GENERIC_TIMER_CLK_FREQ_MHZ 48U
-#define GENERIC_TIMER_NS_IRQ_NUM 30U
-#define GENERIC_TIMER_NS_CLK_FREQ 2000000U
-#define COUNTS_PER_SECOND GENERIC_TIMER_NS_CLK_FREQ
 
 /* UART */
 #define FUART_NUM 4U
@@ -312,6 +306,18 @@ enum
 
 #define FXMAC_PHY_MAX_NUM 32U
 
+#define FXMAC_CLK_TYPE_0
+
+#if !defined(__ASSEMBLER__)
+/* IOPAD */
+enum
+{
+    FIOPAD0_ID = 0,
+
+    FIOPAD_NUM
+};
+#endif
+
 /* QSPI */
 #if !defined(__ASSEMBLER__)
 enum
@@ -342,7 +348,7 @@ enum
 
 /* TIMER and TACHO */
 #define FTIMER_NUM 38U
-#define FTIMER_CLK_FREQ_HZ 50000000U /* 50MHz */
+#define FTIMER_CLK_FREQ_HZ 50000000ULL /* 50MHz */
 #define FTIMER_TICK_PERIOD_NS 20U      /* 20ns */
 #define FTIMER_TACHO_IRQ_NUM(n) (226U + (n))
 #define FTIMER_TACHO_BASE_ADDR(n) (0x28054000U + 0x1000U * (n))
@@ -533,6 +539,41 @@ enum
 #define FDDMA0_SPIM2_RX_SLAVE_ID          21U /* spi2 rx slave-id */
 #define FDDMA0_SPIM3_RX_SLAVE_ID          22U /* spi3 rx slave-id */
 
+/* FDDMA1_ID */
+#define FDDMA1_MIO0_TX_SLAVE_ID          0U  /* mio0 rx slave-id */
+#define FDDMA1_MIO1_TX_SLAVE_ID          1U  /* mio1 rx slave-id */
+#define FDDMA1_MIO2_TX_SLAVE_ID          2U  /* mio2 rx slave-id */
+#define FDDMA1_MIO3_TX_SLAVE_ID          3U  /* mio3 rx slave-id */
+#define FDDMA1_MIO4_TX_SLAVE_ID          4U  /* mio4 rx slave-id */
+#define FDDMA1_MIO5_TX_SLAVE_ID          5U  /* mio5 rx slave-id */
+#define FDDMA1_MIO6_TX_SLAVE_ID          6U  /* mio6 rx slave-id */
+#define FDDMA1_MIO7_TX_SLAVE_ID          7U  /* mio7 rx slave-id */
+#define FDDMA1_MIO8_TX_SLAVE_ID          8U  /* mio8 rx slave-id */
+#define FDDMA1_MIO9_TX_SLAVE_ID          9U  /* mio9 rx slave-id */
+#define FDDMA1_MIO10_TX_SLAVE_ID         10U  /* mio10 rx slave-id */
+#define FDDMA1_MIO11_TX_SLAVE_ID         11U  /* mio11 rx slave-id */
+#define FDDMA1_MIO12_TX_SLAVE_ID         12U  /* mio12 rx slave-id */
+#define FDDMA1_MIO13_TX_SLAVE_ID         13U  /* mio13 rx slave-id */
+#define FDDMA1_MIO14_TX_SLAVE_ID         14U  /* mio14 rx slave-id */
+#define FDDMA1_MIO15_TX_SLAVE_ID         15U  /* mio15 rx slave-id */
+
+#define FDDMA1_MIO0_RX_SLAVE_ID         16U  /* mio0 tx slave-id */
+#define FDDMA1_MIO1_RX_SLAVE_ID         17U  /* mio1 tx slave-id */
+#define FDDMA1_MIO2_RX_SLAVE_ID         18U  /* mio2 tx slave-id */
+#define FDDMA1_MIO3_RX_SLAVE_ID         19U  /* mio3 tx slave-id */
+#define FDDMA1_MIO4_RX_SLAVE_ID         20U  /* mio4 tx slave-id */
+#define FDDMA1_MIO5_RX_SLAVE_ID         21U  /* mio5 tx slave-id */
+#define FDDMA1_MIO6_RX_SLAVE_ID         22U  /* mio6 tx slave-id */
+#define FDDMA1_MIO7_RX_SLAVE_ID         23U  /* mio7 tx slave-id */
+#define FDDMA1_MIO8_RX_SLAVE_ID         24U  /* mio8 tx slave-id */
+#define FDDMA1_MIO9_RX_SLAVE_ID         25U  /* mio9 tx slave-id */
+#define FDDMA1_MIO10_RX_SLAVE_ID        26U  /* mio10 tx slave-id */
+#define FDDMA1_MIO11_RX_SLAVE_ID        27U  /* mio11 tx slave-id */
+#define FDDMA1_MIO12_RX_SLAVE_ID        28U  /* mio12 tx slave-id */
+#define FDDMA1_MIO13_RX_SLAVE_ID        29U  /* mio13 tx slave-id */
+#define FDDMA1_MIO14_RX_SLAVE_ID        30U  /* mio14 tx slave-id */
+#define FDDMA1_MIO15_RX_SLAVE_ID        31U  /* mio15 tx slave-id */
+
 #define FDDMA_MIN_SLAVE_ID               0U
 #define FDDMA_MAX_SLAVE_ID               31U
 
@@ -656,6 +697,23 @@ typedef enum
 #define FDP1_PHY_BASE_OFFSET (FDP0_PHY_BASE_OFFSET + 0x100000U)
 
 #define FDCDP_IRQ_NUM 76
+
+/* generic timer */
+/* non-secure physical timer int id */
+#define GENERIC_TIMER_NS_IRQ_NUM 30U
+
+/* virtual timer int id */
+#define GENERIC_VTIMER_IRQ_NUM 27U
+
+#if !defined(__ASSEMBLER__)
+enum
+{
+    GENERIC_TIMER_ID0 = 0, /* non-secure physical timer */
+    GENERIC_TIMER_ID1 = 1, /* virtual timer */
+
+    GENERIC_TIMER_NUM
+};
+#endif
 
 /*****************************************************************************/
 

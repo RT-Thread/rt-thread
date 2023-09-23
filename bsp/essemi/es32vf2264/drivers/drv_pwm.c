@@ -173,9 +173,9 @@ int rt_hw_pwm_init(void)
 
 #ifdef BSP_USING_AD16C4T0_PWM /* 4 channels */
     static struct rt_device_pwm ad16c4t0_pwm_dev;
-    static timer_handle_t ad16c4t0_timer_initstruct;
+    static ald_timer_handle_t ad16c4t0_timer_initstruct;
 
-    ad16c4t0_timer_initstruct.perh = AD16C4T0;
+    ad16c4t0_timer_initstruct.perh = AD16C4T;
     ald_timer_pwm_init(&ad16c4t0_timer_initstruct);
 
     /* gpio initialization */
@@ -203,108 +203,6 @@ int rt_hw_pwm_init(void)
     ret = rt_device_pwm_register(&ad16c4t0_pwm_dev, ES_DEVICE_NAME_AD16C4T0_PWM, &es32f3_pwm_ops,
                                  &ad16c4t0_timer_initstruct);
 #endif
-
-#ifdef BSP_USING_AD16C4T1_PWM /* 4 channels */
-    static struct rt_device_pwm ad16c4t1_pwm_dev;
-    static timer_handle_t ad16c4t1_timer_initstruct;
-
-    ad16c4t1_timer_initstruct.perh = AD16C4T1;
-    ald_timer_pwm_init(&ad16c4t1_timer_initstruct);
-
-    /* gpio initialization */
-
-#if  defined(ES_AD16C4T1_CH1_GPIO_FUNC)&&defined(ES_AD16C4T1_CH1_GPIO_PORT)&&defined(ES_AD16C4T1_CH1_GPIO_PIN)
-    gpio_initstructure.func = ES_AD16C4T1_CH1_GPIO_FUNC;
-    ald_gpio_init(ES_AD16C4T1_CH1_GPIO_PORT, ES_AD16C4T1_CH1_GPIO_PIN, &gpio_initstructure);
-#endif
-
-#if  defined(ES_AD16C4T1_CH2_GPIO_FUNC)&&defined(ES_AD16C4T1_CH2_GPIO_PORT)&&defined(ES_AD16C4T1_CH2_GPIO_PIN)
-    gpio_initstructure.func = ES_AD16C4T1_CH2_GPIO_FUNC;
-    ald_gpio_init(ES_AD16C4T1_CH2_GPIO_PORT, ES_AD16C4T1_CH2_GPIO_PIN, &gpio_initstructure);
-#endif
-
-#if  defined(ES_AD16C4T1_CH3_GPIO_FUNC)&&defined(ES_AD16C4T1_CH3_GPIO_PORT)&&defined(ES_AD16C4T1_CH3_GPIO_PIN)
-    gpio_initstructure.func = ES_AD16C4T1_CH3_GPIO_FUNC;
-    ald_gpio_init(ES_AD16C4T1_CH3_GPIO_PORT, ES_AD16C4T1_CH3_GPIO_PIN, &gpio_initstructure);
-#endif
-
-#if  defined(ES_AD16C4T1_CH4_GPIO_FUNC)&&defined(ES_AD16C4T1_CH4_GPIO_PORT)&&defined(ES_AD16C4T1_CH4_GPIO_PIN)
-    gpio_initstructure.func = ES_AD16C4T1_CH4_GPIO_FUNC;
-    ald_gpio_init(ES_AD16C4T1_CH4_GPIO_PORT, ES_AD16C4T1_CH4_GPIO_PIN, &gpio_initstructure);
-#endif
-
-    ret = rt_device_pwm_register(&ad16c4t1_pwm_dev, ES_DEVICE_NAME_AD16C4T1_PWM, &es32f3_pwm_ops,
-                                 &ad16c4t1_timer_initstruct);
-#endif
-
-
-#ifdef BSP_USING_GP32C4T0_PWM /* 4 channels */
-    static struct rt_device_pwm gp32c4t0_pwm_dev;
-    static timer_handle_t gp32c4t0_timer_initstruct;
-
-    gp32c4t0_timer_initstruct.perh = GP32C4T0;
-    ald_timer_pwm_init(&gp32c4t0_timer_initstruct);
-
-    /* gpio initialization */
-
-#if  defined(ES_GP32C4T0_CH1_GPIO_FUNC)&&defined(ES_GP32C4T0_CH1_GPIO_PORT)&&defined(ES_GP32C4T0_CH1_GPIO_PIN)
-    gpio_initstructure.func = ES_GP32C4T0_CH1_GPIO_FUNC;
-    ald_gpio_init(ES_GP32C4T0_CH1_GPIO_PORT, ES_GP32C4T0_CH1_GPIO_PIN, &gpio_initstructure);
-#endif
-
-#if  defined(ES_GP32C4T0_CH2_GPIO_FUNC)&&defined(ES_GP32C4T0_CH2_GPIO_PORT)&&defined(ES_GP32C4T0_CH2_GPIO_PIN)
-    gpio_initstructure.func = ES_GP32C4T0_CH2_GPIO_FUNC;
-    ald_gpio_init(ES_GP32C4T0_CH2_GPIO_PORT, ES_GP32C4T0_CH2_GPIO_PIN, &gpio_initstructure);
-#endif
-
-#if  defined(ES_GP32C4T0_CH3_GPIO_FUNC)&&defined(ES_GP32C4T0_CH3_GPIO_PORT)&&defined(ES_GP32C4T0_CH3_GPIO_PIN)
-    gpio_initstructure.func = ES_GP32C4T0_CH3_GPIO_FUNC;
-    ald_gpio_init(ES_GP32C4T0_CH3_GPIO_PORT, ES_GP32C4T0_CH3_GPIO_PIN, &gpio_initstructure);
-#endif
-
-#if  defined(ES_GP32C4T0_CH4_GPIO_FUNC)&&defined(ES_GP32C4T0_CH4_GPIO_PORT)&&defined(ES_GP32C4T0_CH4_GPIO_PIN)
-    gpio_initstructure.func = ES_GP32C4T0_CH4_GPIO_FUNC;
-    ald_gpio_init(ES_GP32C4T0_CH4_GPIO_PORT, ES_GP32C4T0_CH4_GPIO_PIN, &gpio_initstructure);
-#endif
-
-    ret = rt_device_pwm_register(&gp32c4t0_pwm_dev, ES_DEVICE_NAME_GP32C4T0_PWM, &es32f3_pwm_ops,
-                                 &gp32c4t0_timer_initstruct);
-#endif
-
-
-#ifdef BSP_USING_GP32C4T1_PWM /* 4 channels */
-    static struct rt_device_pwm gp32c4t1_pwm_dev;
-    static timer_handle_t gp32c4t1_timer_initstruct;
-
-    gp32c4t1_timer_initstruct.perh = GP32C4T1;
-    ald_timer_pwm_init(&gp32c4t1_timer_initstruct);
-
-    /* gpio initialization */
-
-#if  defined(ES_GP32C4T1_CH1_GPIO_FUNC)&&defined(ES_GP32C4T1_CH1_GPIO_PORT)&&defined(ES_GP32C4T1_CH1_GPIO_PIN)
-    gpio_initstructure.func = ES_GP32C4T1_CH1_GPIO_FUNC;
-    ald_gpio_init(ES_GP32C4T1_CH1_GPIO_PORT, ES_GP32C4T1_CH1_GPIO_PIN, &gpio_initstructure);
-#endif
-
-#if  defined(ES_GP32C4T1_CH2_GPIO_FUNC)&&defined(ES_GP32C4T1_CH2_GPIO_PORT)&&defined(ES_GP32C4T1_CH2_GPIO_PIN)
-    gpio_initstructure.func = ES_GP32C4T1_CH2_GPIO_FUNC;
-    ald_gpio_init(ES_GP32C4T1_CH2_GPIO_PORT, ES_GP32C4T1_CH2_GPIO_PIN, &gpio_initstructure);
-#endif
-
-#if  defined(ES_GP32C4T1_CH3_GPIO_FUNC)&&defined(ES_GP32C4T1_CH3_GPIO_PORT)&&defined(ES_GP32C4T1_CH3_GPIO_PIN)
-    gpio_initstructure.func = ES_GP32C4T1_CH3_GPIO_FUNC;
-    ald_gpio_init(ES_GP32C4T1_CH3_GPIO_PORT, ES_GP32C4T1_CH3_GPIO_PIN, &gpio_initstructure);
-#endif
-
-#if  defined(ES_GP32C4T1_CH4_GPIO_FUNC)&&defined(ES_GP32C4T1_CH4_GPIO_PORT)&&defined(ES_GP32C4T1_CH4_GPIO_PIN)
-    gpio_initstructure.func = ES_GP32C4T1_CH4_GPIO_FUNC;
-    ald_gpio_init(ES_GP32C4T1_CH4_GPIO_PORT, ES_GP32C4T1_CH4_GPIO_PIN, &gpio_initstructure);
-#endif
-
-    ret = rt_device_pwm_register(&gp32c4t1_pwm_dev, ES_DEVICE_NAME_GP32C4T1_PWM, &es32f3_pwm_ops,
-                                 &gp32c4t1_timer_initstruct);
-#endif
-
 
 #ifdef BSP_USING_GP16C4T0_PWM /* 4 channels */
     static struct rt_device_pwm gp16c4t0_pwm_dev;
@@ -339,10 +237,9 @@ int rt_hw_pwm_init(void)
                                  &gp16c4t0_timer_initstruct);
 #endif
 
-
 #ifdef BSP_USING_GP16C4T1_PWM /* 4 channels */
     static struct rt_device_pwm gp16c4t1_pwm_dev;
-    static timer_handle_t gp16c4t1_timer_initstruct;
+    static ald_timer_handle_t gp16c4t1_timer_initstruct;
 
     gp16c4t1_timer_initstruct.perh = GP16C4T1;
     ald_timer_pwm_init(&gp16c4t1_timer_initstruct);
@@ -371,6 +268,39 @@ int rt_hw_pwm_init(void)
 
     ret = rt_device_pwm_register(&gp16c4t1_pwm_dev, ES_DEVICE_NAME_GP16C4T1_PWM, &es32f3_pwm_ops,
                                  &gp16c4t1_timer_initstruct);
+#endif
+
+#ifdef BSP_USING_GP16C4T2_PWM /* 4 channels */
+    static struct rt_device_pwm gp16c4t2_pwm_dev;
+    static ald_timer_handle_t gp16c4t2_timer_initstruct;
+
+    gp16c4t2_timer_initstruct.perh = GP16C4T2;
+    ald_timer_pwm_init(&gp16c4t2_timer_initstruct);
+
+    /* gpio initialization */
+
+#if  defined(ES_GP16C4T2_CH1_GPIO_FUNC)&&defined(ES_GP16C4T2_CH1_GPIO_PORT)&&defined(ES_GP16C4T2_CH1_GPIO_PIN)
+    gpio_initstructure.func = ES_GP16C4T2_CH1_GPIO_FUNC;
+    ald_gpio_init(ES_GP16C4T2_CH1_GPIO_PORT, ES_GP16C4T2_CH1_GPIO_PIN, &gpio_initstructure);
+#endif
+
+#if  defined(ES_GP16C4T2_CH2_GPIO_FUNC)&&defined(ES_GP16C4T2_CH2_GPIO_PORT)&&defined(ES_GP16C4T2_CH2_GPIO_PIN)
+    gpio_initstructure.func = ES_GP16C4T2_CH2_GPIO_FUNC;
+    ald_gpio_init(ES_GP16C4T2_CH2_GPIO_PORT, ES_GP16C4T2_CH2_GPIO_PIN, &gpio_initstructure);
+#endif
+
+#if  defined(ES_GP16C4T2_CH3_GPIO_FUNC)&&defined(ES_GP16C4T2_CH3_GPIO_PORT)&&defined(ES_GP16C4T2_CH3_GPIO_PIN)
+    gpio_initstructure.func = ES_GP16C4T2_CH3_GPIO_FUNC;
+    ald_gpio_init(ES_GP16C4T2_CH3_GPIO_PORT, ES_GP16C4T2_CH3_GPIO_PIN, &gpio_initstructure);
+#endif
+
+#if  defined(ES_GP16C4T2_CH4_GPIO_FUNC)&&defined(ES_GP16C4T2_CH4_GPIO_PORT)&&defined(ES_GP16C4T2_CH4_GPIO_PIN)
+    gpio_initstructure.func = ES_GP16C4T2_CH4_GPIO_FUNC;
+    ald_gpio_init(ES_GP16C4T2_CH4_GPIO_PORT, ES_GP16C4T2_CH4_GPIO_PIN, &gpio_initstructure);
+#endif
+
+    ret = rt_device_pwm_register(&gp16c4t2_pwm_dev, ES_DEVICE_NAME_GP16C4T2_PWM, &es32f3_pwm_ops,
+                                 &gp16c4t2_timer_initstruct);
 #endif
 
     return ret;

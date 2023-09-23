@@ -1,0 +1,24 @@
+/*
+ * Copyright (c) 2022 HPMicro
+ *
+ * SPDX-License-Identifier: BSD-3-Clause
+ *
+ */
+
+#ifndef HPM_SDK_VERSION_H
+#define HPM_SDK_VERSION_H
+
+#cmakedefine SDK_VERSION_CODE @SDK_VERSION_CODE@
+#define SDK_VERSION(a,b,c) (((a) << 16) + ((b) << 8) + (c))
+
+#define SDKVERSION          @SDKVERSION@
+#define SDK_VERSION_NUMBER  @SDK_VERSION_NUMBER@
+#define SDK_VERSION_MAJOR   @SDK_VERSION_MAJOR@
+#define SDK_VERSION_MINOR   @SDK_VERSION_MINOR@
+#define SDK_PATCHLEVEL      @SDK_PATCHLEVEL@
+#define SDK_VERSION_STRING  @SDK_VERSION_STRING@
+
+#define BUILD_VERSION          @BUILD_VERSION@
+
+
+#endif /* HPM_SDK_VERSION_H */

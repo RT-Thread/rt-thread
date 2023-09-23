@@ -237,10 +237,6 @@ rt_err_t rt_spi_send_then_send(struct rt_spi_device *device,
                                const void           *send_buf2,
                                rt_size_t             send_length2);
 
-rt_err_t rt_spi_sendrecv16(struct rt_spi_device *device,
-                           rt_uint16_t senddata,
-                           rt_uint16_t *recvdata);
-
 /**
  * This function transmits data to SPI device.
  *
@@ -255,6 +251,14 @@ rt_ssize_t rt_spi_transfer(struct rt_spi_device *device,
                            const void           *send_buf,
                            void                 *recv_buf,
                            rt_size_t             length);
+
+rt_err_t rt_spi_sendrecv8(struct rt_spi_device *device,
+                          rt_uint8_t            senddata,
+                          rt_uint8_t           *recvdata);
+
+rt_err_t rt_spi_sendrecv16(struct rt_spi_device *device,
+                           rt_uint16_t           senddata,
+                           rt_uint16_t          *recvdata);
 
 /**
  * This function transfers a message list to the SPI device.
@@ -280,16 +284,6 @@ rt_inline rt_size_t rt_spi_send(struct rt_spi_device *device,
                                 rt_size_t             length)
 {
     return rt_spi_transfer(device, send_buf, RT_NULL, length);
-}
-
-rt_inline rt_uint8_t rt_spi_sendrecv8(struct rt_spi_device *device,
-                                      rt_uint8_t            data)
-{
-    rt_uint8_t value = 0;
-
-    rt_spi_send_then_recv(device, &data, 1, &value, 1);
-
-    return value;
 }
 
 /**

@@ -1,16 +1,22 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
  * 2021-05-18     Jesven       first version
+ * 2023-07-16     Shell        Move part of the codes to C from asm in signal handling
  */
+
+#ifndef __ASSEMBLY__
+#define __ASSEMBLY__
+#endif
 
 #include "rtconfig.h"
 #include "asm-generic.h"
 #include "asm-fpu.h"
+#include "armv8.h"
 
 /*********************
  *      SPSR BIT     *
@@ -31,67 +37,6 @@
 #define  SPSR_C(v)             ((v) << 29)
 #define  SPSR_Z(v)             ((v) << 30)
 #define  SPSR_N(v)             ((v) << 31)
-
-/*********************
- *   CONTEXT_OFFSET  *
- *********************/
-
-#define CONTEXT_OFFSET_ELR_EL1    0x0
-#define CONTEXT_OFFSET_SPSR_EL1   0x8
-#define CONTEXT_OFFSET_SP_EL0     0x10
-#define CONTEXT_OFFSET_X30        0x18
-#define CONTEXT_OFFSET_FPCR       0x20
-#define CONTEXT_OFFSET_FPSR       0x28
-#define CONTEXT_OFFSET_X28        0x30
-#define CONTEXT_OFFSET_X29        0x38
-#define CONTEXT_OFFSET_X26        0x40
-#define CONTEXT_OFFSET_X27        0x48
-#define CONTEXT_OFFSET_X24        0x50
-#define CONTEXT_OFFSET_X25        0x58
-#define CONTEXT_OFFSET_X22        0x60
-#define CONTEXT_OFFSET_X23        0x68
-#define CONTEXT_OFFSET_X20        0x70
-#define CONTEXT_OFFSET_X21        0x78
-#define CONTEXT_OFFSET_X18        0x80
-#define CONTEXT_OFFSET_X19        0x88
-#define CONTEXT_OFFSET_X16        0x90
-#define CONTEXT_OFFSET_X17        0x98
-#define CONTEXT_OFFSET_X14        0xa0
-#define CONTEXT_OFFSET_X15        0xa8
-#define CONTEXT_OFFSET_X12        0xb0
-#define CONTEXT_OFFSET_X13        0xb8
-#define CONTEXT_OFFSET_X10        0xc0
-#define CONTEXT_OFFSET_X11        0xc8
-#define CONTEXT_OFFSET_X8         0xd0
-#define CONTEXT_OFFSET_X9         0xd8
-#define CONTEXT_OFFSET_X6         0xe0
-#define CONTEXT_OFFSET_X7         0xe8
-#define CONTEXT_OFFSET_X4         0xf0
-#define CONTEXT_OFFSET_X5         0xf8
-#define CONTEXT_OFFSET_X2         0x100
-#define CONTEXT_OFFSET_X3         0x108
-#define CONTEXT_OFFSET_X0         0x110
-#define CONTEXT_OFFSET_X1         0x118
-
-#define CONTEXT_OFFSET_Q15        0x120
-#define CONTEXT_OFFSET_Q14        0x130
-#define CONTEXT_OFFSET_Q13        0x140
-#define CONTEXT_OFFSET_Q12        0x150
-#define CONTEXT_OFFSET_Q11        0x160
-#define CONTEXT_OFFSET_Q10        0x170
-#define CONTEXT_OFFSET_Q9         0x180
-#define CONTEXT_OFFSET_Q8         0x190
-#define CONTEXT_OFFSET_Q7         0x1a0
-#define CONTEXT_OFFSET_Q6         0x1b0
-#define CONTEXT_OFFSET_Q5         0x1c0
-#define CONTEXT_OFFSET_Q4         0x1d0
-#define CONTEXT_OFFSET_Q3         0x1e0
-#define CONTEXT_OFFSET_Q2         0x1f0
-#define CONTEXT_OFFSET_Q1         0x200
-#define CONTEXT_OFFSET_Q0         0x210
-
-#define CONTEXT_FPU_SIZE          0x100
-#define CONTEXT_SIZE              0x220
 
 /**************************************************/
 
@@ -248,8 +193,9 @@ arch_syscall_exit:
     add sp, sp, #0x40
     RESTORE_FPU sp
 
-.global arch_ret_to_user
-arch_ret_to_user:
+/* the sp is reset to the outer most level, irq and fiq are disabled */
+START_POINT(arch_ret_to_user)
+    /* save exception frame */
     SAVE_FPU sp
     stp x0, x1, [sp, #-0x10]!
     stp x2, x3, [sp, #-0x10]!
@@ -272,12 +218,16 @@ arch_ret_to_user:
     stp x0, x1, [sp, #-0x10]!
     stp x29, x30, [sp, #-0x10]!
 
+    /* pre-action */
     bl lwp_check_debug
+
     bl lwp_check_exit_request
     cbz w0, 1f
+    /* exit on event */
     mov x0, xzr
     b sys_exit
 1:
+    /* check if dbg ops exist */
     ldr x0, =rt_dbg_ops
     ldr x0, [x0]
     cbz x0, 3f
@@ -292,9 +242,24 @@ arch_ret_to_user:
     bic x2, x2, x1
     msr spsr_el1, x2
 3:
-    bl lwp_signal_check
-    cmp x0, xzr
 
+    /**
+     * push 2 dummy words to simulate a exception frame of interrupt
+     * @note in kernel state, the context switch dont saved the context
+     */
+    mrs x0, spsr_el1
+    mrs x1, elr_el1
+    stp x1, x0, [sp, #-0x10]!
+    mov x0, sp
+    msr daifclr, #3
+    bl lwp_thread_signal_catch
+    msr daifset, #3
+    ldp x1, x0, [sp], #0x10
+    msr spsr_el1, x0
+    msr elr_el1, x1
+
+    /* check debug */
+    /* restore exception frame */
     ldp x29, x30, [sp], #0x10
     ldp x0, x1, [sp], #0x10
     msr fpcr, x0
@@ -317,14 +282,14 @@ arch_ret_to_user:
     ldp x0, x1, [sp], #0x10
     RESTORE_FPU sp
 
-    bne user_do_signal
-
     stp x0, x1, [sp, #-0x10]!
     ldr x0, =rt_dbg_ops
     ldr x0, [x0]
     cmp x0, xzr
     ldp x0, x1, [sp], #0x10
     beq 1f
+
+    /* save */
     SAVE_FPU sp
     stp x0, x1, [sp, #-0x10]!
     stp x2, x3, [sp, #-0x10]!
@@ -345,8 +310,11 @@ arch_ret_to_user:
     mrs x1, fpsr
     stp x0, x1, [sp, #-0x10]!
     stp x29, x30, [sp, #-0x10]!
+
     mrs x0, elr_el1
     bl dbg_attach_req
+
+    /* restore */
     ldp x29, x30, [sp], #0x10
     ldp x0, x1, [sp], #0x10
     msr fpcr, x0
@@ -369,51 +337,8 @@ arch_ret_to_user:
     RESTORE_FPU sp
 1:
     eret
+START_POINT_END(arch_ret_to_user)
 
-/*
-struct rt_hw_exp_stack
-{
-    unsigned long pc;     0
-    unsigned long cpsr;
-    unsigned long sp_el0; 0x10
-    unsigned long x30;
-    unsigned long fpcr;   0x20
-    unsigned long fpsr;
-    unsigned long x28;    0x30
-    unsigned long x29;
-    unsigned long x26;    0x40
-    unsigned long x27;
-    unsigned long x24;    0x50
-    unsigned long x25;
-    unsigned long x22;    0x60
-    unsigned long x23;
-    unsigned long x20;    0x70
-    unsigned long x21;
-    unsigned long x18;    0x80
-    unsigned long x19;
-    unsigned long x16;    0x90
-    unsigned long x17;
-    unsigned long x14;    0xa0
-    unsigned long x15;
-    unsigned long x12;    0xb0
-    unsigned long x13;
-    unsigned long x10;    0xc0
-    unsigned long x11;
-    unsigned long x8;     0xd0
-    unsigned long x9;
-    unsigned long x6;     0xe0
-    unsigned long x7;
-    unsigned long x4;     0xf0
-    unsigned long x5;
-    unsigned long x2;     0x100
-    unsigned long x3;
-    unsigned long x0;     0x110
-    unsigned long x1;
-
-    unsigned long long fpu[16]; 0x120
-                                0x220 = 0x120 + 0x10 * 0x10
-};
-*/
 .global lwp_check_debug
 lwp_check_debug:
     ldr x0, =rt_dbg_ops
@@ -471,26 +396,27 @@ lwp_check_debug_quit:
 
 arch_signal_quit:
     msr daifset, #3
-/*
-    drop stack data
-*/
-    add sp, sp, #CONTEXT_SIZE
-    bl lwp_signal_restore
-    /* x0 is user_ctx : ori sp, pc, cpsr */
-    ldr x1, [x0]
-    ldr x2, [x0, #8]
-    ldr x3, [x0, #16]
-    msr spsr_el1, x3
-    msr elr_el1, x2
-    add x1, x1, #16
-    msr sp_el0, x1
 
+    /* drop current exception frame */
+    add sp, sp, #CONTEXT_SIZE
+    mrs x0, sp_el0
+    bl  arch_signal_ucontext_restore
+    add x0, x0, #-CONTEXT_SIZE
+    msr sp_el0, x0
+
+    /* restore previous exception frame */
     msr spsel, #0
 
+    ldp x2, x3, [sp], #0x10
+    msr elr_el1, x2
+    msr spsr_el1, x3
+
     ldp x29, x30, [sp], #0x10
+
     ldp x28, x29, [sp], #0x10
     msr fpcr, x28
     msr fpsr, x29
+
     ldp x28, x29, [sp], #0x10
     ldp x26, x27, [sp], #0x10
     ldp x24, x25, [sp], #0x10
@@ -512,65 +438,75 @@ arch_signal_quit:
 
     b arch_ret_to_user
 
-user_do_signal:
-    msr spsel, #0
-    SAVE_FPU sp
-    stp x0, x1, [sp, #-0x10]!
-    stp x2, x3, [sp, #-0x10]!
-    stp x4, x5, [sp, #-0x10]!
-    stp x6, x7, [sp, #-0x10]!
-    stp x8, x9, [sp, #-0x10]!
-    stp x10, x11, [sp, #-0x10]!
-    stp x12, x13, [sp, #-0x10]!
-    stp x14, x15, [sp, #-0x10]!
-    stp x16, x17, [sp, #-0x10]!
-    stp x18, x19, [sp, #-0x10]!
-    stp x20, x21, [sp, #-0x10]!
-    stp x22, x23, [sp, #-0x10]!
-    stp x24, x25, [sp, #-0x10]!
-    stp x26, x27, [sp, #-0x10]!
-    stp x28, x29, [sp, #-0x10]!
-    mrs x28, fpcr
-    mrs x29, fpsr
-    stp x28, x29, [sp, #-0x10]!
-    stp x29, x30, [sp, #-0x10]!
+/**
+ * rt_noreturn
+ * void arch_thread_signal_enter(
+ *      int signo,                      -> x0
+ *      siginfo_t *psiginfo,            -> x1
+ *      void *exp_frame,                -> x2
+ *      void *entry_uaddr,              -> x3
+ *      lwp_sigset_t *save_sig_mask,    -> x4
+ *      )
+ */
+.global arch_thread_signal_enter
+arch_thread_signal_enter:
+    mov x19, x0
+    mov x20, x2 /* exp_frame */
+    mov x21, x3
 
-    sub sp, sp, #0x10
-    adr x0, lwp_sigreturn
-    ldr w1, [x0]
-    str w1, [sp]
-    ldr w1, [x0, #4]
-    str w1, [sp, #4]
+    /**
+     * move exception frame to user stack
+     */
+    mrs x0, sp_el0
+    mov x3, x4
 
-    mov x20, sp /* lwp_sigreturn */
-    mov x0, sp
+    /* arch_signal_ucontext_save(user_sp, psiginfo, exp_frame, save_sig_mask); */
+    bl arch_signal_ucontext_save
 
     dc cvau, x0
     dsb sy
     ic ialluis
     dsb sy
 
-    msr spsel, #1
+    /**
+     * @brief Prepare the environment for signal handler
+     */
 
-    mrs x1, elr_el1
-    mrs x2, spsr_el1
-    bl lwp_signal_backup
-    /* x0 is signal */
-    mov x19, x0
-    bl lwp_sighandler_get
-    adds x1, x0, xzr
+    /** 
+     * reset the cpsr
+     * and drop exp frame on kernel stack, reset kernel sp
+     *
+     * @note Since we will reset spsr, but the reschedule will
+     * corrupt the spsr, we diable irq for a short period here
+     */
+    msr daifset, #3
+    ldr x1, [x20, #CONTEXT_OFFSET_SPSR_EL1]
+    msr spsr_el1, x1
+    add sp, x20, #CONTEXT_SIZE
+
+    /** reset user sp */
+    msr sp_el0, x0
+    /** set the return address to the sigreturn */
+    mov x30, x0
+
+    /** set the entry address of signal handler */
+    msr elr_el1, x21
+
+    /* siginfo is above the return address */
+    add x2, x30, 16
+    add x1, x2, #CONTEXT_SIZE
     mov x0, x19
-    bne 1f
-    mov x1, x20
-1:
-    msr elr_el1, x1
-    mov x30, x20
+
+    /**
+     * handler(signo, psi, ucontext);
+     */
     eret
 
 lwp_debugreturn:
     mov x8, 0xf000
     svc #0
 
+.global lwp_sigreturn
 lwp_sigreturn:
     mov x8, #0xe000
     svc #0

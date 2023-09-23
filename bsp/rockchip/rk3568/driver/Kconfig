@@ -51,8 +51,9 @@ menu "Hardware Drivers Config"
         bool
         default y
 
-        config BSP_USING_GICV3
-            bool
-            default y
+    config BSP_USING_GICV3
+        bool
+        default y
 
+    select ARCH_ARM_CORTEX_A55
 endmenu

@@ -8,6 +8,7 @@
  * 2018-10-03     Bernard      The first version
  * 2020/11/20     BalanceTWK   Add FPU support
  * 2023/01/04     WangShun     Adapt to CH32
+ * 2023/08/11     HPMicro      Define ARCH_RISCV_FPU if FPU is enabled
  */
 
 #ifndef CPUPORT_H__
@@ -29,10 +30,12 @@ typedef union {
 
 /* Preprocessor Definition */
 #if __riscv_flen == 32
+#define ARCH_RISCV_FPU
 #define ARCH_RISCV_FPU_S
 #endif
 
 #if __riscv_flen == 64
+#define ARCH_RISCV_FPU
 #define ARCH_RISCV_FPU_D
 #endif
 

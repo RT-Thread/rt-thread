@@ -1,11 +1,12 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
  * 2005-02-22     Bernard      The first version.
+ * 2023-05-05     Bernard      change to dfs v2.0
  */
 
 #ifndef __DFS_H__
@@ -15,20 +16,14 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
-#include <dirent.h>
+#include "../../libc/compilers/common/include/dirent.h"
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <sys/statfs.h>
 #include <sys/time.h>
+#include <sys/errno.h>
+#include <rtatomic.h>
 #include <rtdevice.h>
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-#ifndef DFS_FILESYSTEMS_MAX
-#define DFS_FILESYSTEMS_MAX     4
-#endif
 
 #ifndef DFS_FD_MAX
 #define DFS_FD_MAX              16
@@ -49,25 +44,32 @@ extern "C" {
 #define SECTOR_SIZE              512
 #endif
 
-#ifndef DFS_FILESYSTEM_TYPES_MAX
-#define DFS_FILESYSTEM_TYPES_MAX 2
-#endif
-
 #define DFS_FS_FLAG_DEFAULT     0x00    /* default flag */
 #define DFS_FS_FLAG_FULLPATH    0x01    /* set full path to underlaying file system */
 
-/* File types */
-#define FT_REGULAR               0   /* regular file */
-#define FT_SOCKET                1   /* socket file  */
-#define FT_DIRECTORY             2   /* directory    */
-#define FT_USER                  3   /* user defined */
-#define FT_DEVICE                4   /* device */
-
 /* File flags */
-#define DFS_F_OPEN              0x01000000
-#define DFS_F_DIRECTORY         0x02000000
-#define DFS_F_EOF               0x04000000
-#define DFS_F_ERR               0x08000000
+#define DFS_F_FREAD     0x01
+#define DFS_F_FWRITE    0x02
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+rt_inline int dfs_fflags(int oflags)
+{
+    int rw = oflags & O_ACCMODE;
+
+    oflags &= ~O_ACCMODE;
+    return (rw + 1) | oflags;
+}
+
+rt_inline int dfs_oflags(int fflags)
+{
+    int rw = fflags & (DFS_F_FREAD | DFS_F_FWRITE);
+
+    fflags &= ~(DFS_F_FREAD | DFS_F_FWRITE);
+    return (rw - 1) | fflags;
+}
 
 struct dfs_fdtable
 {
@@ -81,17 +83,11 @@ int dfs_init(void);
 char *dfs_normalize_path(const char *directory, const char *filename);
 const char *dfs_subdir(const char *directory, const char *filename);
 
-int fd_is_open(const char *pathname);
-struct dfs_fdtable *dfs_fdtable_get(void);
-
-void dfs_lock(void);
+rt_err_t dfs_lock(void);
 void dfs_unlock(void);
 
-void dfs_file_lock(void);
+rt_err_t dfs_file_lock(void);
 void dfs_file_unlock(void);
-
-void dfs_fm_lock(void);
-void dfs_fm_unlock(void);
 
 #ifdef DFS_USING_POSIX
 /* FD APIs */
@@ -108,6 +104,7 @@ void fd_init(struct dfs_file *fd);
 
 struct dfs_fdtable *dfs_fdtable_get(void);
 struct dfs_fdtable *dfs_fdtable_get_global(void);
+int dfs_dup(int oldfd, int startfd);
 #endif /* DFS_USING_POSIX */
 
 #ifdef __cplusplus

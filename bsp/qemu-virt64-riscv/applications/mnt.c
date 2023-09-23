@@ -19,9 +19,20 @@ int mnt_init(void)
     if (rt_device_find("virtio-blk0"))
     {
         /* mount virtio-blk as root directory */
-        if (dfs_mount("virtio-blk0", "/", "elm", 0, RT_NULL) != 0)
+        if (dfs_mount("virtio-blk0", "/", "elm", 0, RT_NULL) == 0)
         {
-            LOG_E("virtio-blk0 mount failed\n");
+            rt_kprintf("file system initialization done!\n");
+        }
+        else
+        {
+            if (dfs_mount("virtio-blk0", "/", "ext", 0, RT_NULL) == 0)
+            {
+                rt_kprintf("file system initialization done!\n");
+            }
+            else
+            {
+                rt_kprintf("file system initialization fail!\n");
+            }
         }
     }
 

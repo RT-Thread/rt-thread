@@ -25,7 +25,6 @@
 #ifndef _USB_LIST_H_
 #define _USB_LIST_H_
 
-#include <libc.h>
 #include <log.h>
 #include <hal_osal.h>
 //#include "usb_host_config.h"

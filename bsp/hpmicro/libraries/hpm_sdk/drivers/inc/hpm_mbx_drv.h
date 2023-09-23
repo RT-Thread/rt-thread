@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 hpmicro
+ * Copyright (c) 2021 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -143,7 +143,7 @@ static inline hpm_stat_t mbx_send_fifo(MBX_Type *ptr, uint32_t *msg, uint32_t co
 {
     uint32_t i;
     hpm_stat_t status = status_success;
-    for(i = 0; i < 4; i++) {
+    for (i = 0; i < 4; i++) {
         if (ptr->SR & MBX_SR_TFMA_MASK) {
             ptr->TXWRD[0] = MBX_TXWRD_TXFIFO_SET(*(msg + i));
             count--;
@@ -174,7 +174,7 @@ static inline hpm_stat_t mbx_retrieve_fifo(MBX_Type *ptr, uint32_t *msg, uint32_
 {
     uint32_t i;
     hpm_stat_t status = status_success;
-    for(i = 0; i < 4; i++) {
+    for (i = 0; i < 4; i++) {
         if (ptr->SR & MBX_SR_RFMA_MASK) {
             *(msg + i) = (ptr->RXWRD[0] & MBX_RXWRD_RXFIFO_MASK) >> MBX_RXWRD_RXFIFO_SHIFT;
             count--;

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 - 2022 hpmicro
+ * Copyright (c) 2021-2023 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -9,8 +9,6 @@
 #include "hpm_soc.h"
 #include "hpm_common.h"
 #include "hpm_pllctlv2_drv.h"
-#include "hpm_csr_regs.h"
-#include "riscv/riscv_core.h"
 /***********************************************************************************************************************
  * Definitions
  **********************************************************************************************************************/
@@ -354,7 +352,7 @@ hpm_stat_t clock_set_adc_source(clock_name_t clock_name, clk_src_t src)
 
     uint32_t clk_src_index = GET_CLK_SRC_INDEX(src);
     HPM_SYSCTL->ADCCLK[node_or_instance] =
-            (HPM_SYSCTL->ADCCLK[node_or_instance] & SYSCTL_ADCCLK_MUX_MASK) | SYSCTL_ADCCLK_MUX_SET(clk_src_index);
+            (HPM_SYSCTL->ADCCLK[node_or_instance] & ~SYSCTL_ADCCLK_MUX_MASK) | SYSCTL_ADCCLK_MUX_SET(clk_src_index);
 
     return status_success;
 }
@@ -368,13 +366,13 @@ hpm_stat_t clock_set_dac_source(clock_name_t clock_name, clk_src_t src)
         return status_clk_invalid;
     }
 
-    if ((src != clk_dac_src_ana) && (src != clk_dac_src_ahb)) {
+    if ((src != clk_dac_src_ana) || (src != clk_dac_src_ahb)) {
         return status_clk_src_invalid;
     }
 
     uint32_t clk_src_index = GET_CLK_SRC_INDEX(src);
     HPM_SYSCTL->DACCLK[node_or_instance] =
-            (HPM_SYSCTL->DACCLK[node_or_instance] & SYSCTL_DACCLK_MUX_MASK) | SYSCTL_DACCLK_MUX_SET(clk_src_index);
+            (HPM_SYSCTL->DACCLK[node_or_instance] & ~SYSCTL_DACCLK_MUX_MASK) | SYSCTL_DACCLK_MUX_SET(clk_src_index);
 
     return status_success;
 }
@@ -388,13 +386,13 @@ hpm_stat_t clock_set_i2s_source(clock_name_t clock_name, clk_src_t src)
         return status_clk_invalid;
     }
 
-    if ((src != clk_i2s_src_aud0) && (src != clk_i2s_src_aud1)) {
+    if ((src != clk_i2s_src_aud0) || (src != clk_i2s_src_aud1)) {
         return status_clk_src_invalid;
     }
 
     uint32_t clk_src_index = GET_CLK_SRC_INDEX(src);
     HPM_SYSCTL->I2SCLK[node_or_instance] =
-            (HPM_SYSCTL->I2SCLK[node_or_instance] & SYSCTL_I2SCLK_MUX_MASK) | SYSCTL_I2SCLK_MUX_SET(clk_src_index);
+            (HPM_SYSCTL->I2SCLK[node_or_instance] & ~SYSCTL_I2SCLK_MUX_MASK) | SYSCTL_I2SCLK_MUX_SET(clk_src_index);
 
     return status_success;
 }
@@ -445,10 +443,11 @@ hpm_stat_t clock_set_source_divider(clock_name_t clock_name, clk_src_t src, uint
              *  changes, the AXI and AHB clock changes accordingly, here the driver ensures the
              *  AXI and AHB bus clock frequency is in valid range.
              */
-            uint32_t expected_freq = get_frequency_for_source(src) / div;
+            clock_source_t source = GET_CLOCK_SOURCE_FROM_CLK_SRC(src);
+            uint32_t expected_freq = get_frequency_for_source(source) / div;
             uint32_t axi_sub_div  = (expected_freq + BUS_FREQ_MAX - 1U) / BUS_FREQ_MAX;
             uint32_t ahb_sub_div = (expected_freq + BUS_FREQ_MAX - 1U) / BUS_FREQ_MAX;
-            sysctl_config_cpu0_domain_clock(HPM_SYSCTL, src, div, axi_sub_div, ahb_sub_div);
+            sysctl_config_cpu0_domain_clock(HPM_SYSCTL, source, div, axi_sub_div, ahb_sub_div);
         } else {
             status = status_clk_shared_cpu0;
         }
@@ -522,35 +521,19 @@ void clock_disconnect_group_from_cpu(uint32_t group, uint32_t cpu)
     }
 }
 
-
-static uint64_t get_core_mcycle(void)
-{
-    uint64_t result;
-    uint32_t resultl_first = read_csr(CSR_CYCLE);
-    uint32_t resulth = read_csr(CSR_CYCLEH);
-    uint32_t resultl_second = read_csr(CSR_CYCLE);
-    if (resultl_first < resultl_second) {
-        result = ((uint64_t)resulth << 32) | resultl_first; /* if MCYCLE didn't roll over, return the value directly */
-    } else {
-        resulth = read_csr(CSR_MCYCLEH);
-        result = ((uint64_t)resulth << 32) | resultl_second; /* if MCYCLE rolled over, need to get the MCYCLEH again */
-    }
-    return result;
- }
-
 void clock_cpu_delay_us(uint32_t us)
 {
     uint32_t ticks_per_us = (hpm_core_clock + FREQ_1MHz - 1U) / FREQ_1MHz;
-    uint64_t expected_ticks = get_core_mcycle() + ticks_per_us * us;
-    while (get_core_mcycle() < expected_ticks) {
+    uint64_t expected_ticks = hpm_csr_get_core_cycle() + ticks_per_us * us;
+    while (hpm_csr_get_core_cycle() < expected_ticks) {
     }
 }
 
 void clock_cpu_delay_ms(uint32_t ms)
 {
     uint32_t ticks_per_us = (hpm_core_clock + FREQ_1MHz - 1U) / FREQ_1MHz;
-    uint64_t expected_ticks = get_core_mcycle() + (uint64_t)ticks_per_us * 1000UL * ms;
-    while (get_core_mcycle() < expected_ticks) {
+    uint64_t expected_ticks = hpm_csr_get_core_cycle() + (uint64_t)ticks_per_us * 1000UL * ms;
+    while (hpm_csr_get_core_cycle() < expected_ticks) {
     }
 }
 

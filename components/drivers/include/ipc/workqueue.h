@@ -11,7 +11,8 @@
 #ifndef WORKQUEUE_H__
 #define WORKQUEUE_H__
 
-#include <rtthread.h>
+#include <rtdef.h>
+#include <rtconfig.h>
 
 #ifdef __cplusplus
 extern "C" {

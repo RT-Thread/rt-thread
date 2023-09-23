@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 hpmicro
+ * Copyright (c) 2022 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -154,7 +154,7 @@ static rt_err_t hpm_i2s_init(struct rt_audio_device* audio)
     transfer.sample_rate = 24000U;
     transfer.protocol = I2S_PROTOCOL_LEFT_JUSTIFIED;
     transfer.channel_slot_mask = I2S_CHANNEL_SLOT_MASK(0); /* 1个通道 */
-    transfer.audio_depth = I2S_AUDIO_DEPTH_16_BITS;
+    transfer.audio_depth = i2s_audio_depth_16_bits;
     transfer.master_mode = true;
     hpm_audio->transfer = transfer;
     //将初始参数记录到audio_config
@@ -391,7 +391,7 @@ static rt_err_t hpm_i2s_configure(struct rt_audio_device* audio, struct rt_audio
 
     //i2s dma方式仅支持采样位宽为：16bit, 32bit
     assert(hpm_audio->audio_config.samplebits == 16 || hpm_audio->audio_config.samplebits == 32);
-    hpm_audio->transfer.audio_depth = (hpm_audio->audio_config.samplebits - 16) >> 3;
+    hpm_audio->transfer.audio_depth = hpm_audio->audio_config.samplebits;
 
     if (status_success != i2s_config_transfer(hpm_audio->base, clock_get_frequency(hpm_audio->clk_name), &hpm_audio->transfer))
     {
@@ -434,7 +434,7 @@ static rt_err_t hpm_i2s_start(struct rt_audio_device* audio, int stream)
         }
 
         if (RT_EOK != hpm_i2s_transmit(&hpm_audio->audio, NULL, hpm_audio->rx_buff, I2S_FIFO_SIZE)) {
-            return -RT_ERROR;
+            return RT_ERROR;
         }
     } else {
         return -RT_ERROR;
@@ -470,7 +470,7 @@ static rt_ssize_t hpm_i2s_transmit(struct rt_audio_device* audio, const void* wr
     //支持采样位宽16bit, 32bit
     uint8_t data_width;
     uint8_t data_shift_byte;
-    if (hpm_audio->transfer.audio_depth == I2S_AUDIO_DEPTH_16_BITS) {
+    if (hpm_audio->transfer.audio_depth == i2s_audio_depth_16_bits) {
         data_width = DMA_TRANSFER_WIDTH_HALF_WORD;
         data_shift_byte = 2U ; //16位音频数据位于寄存器的高位
     } else {
@@ -498,7 +498,7 @@ static rt_ssize_t hpm_i2s_transmit(struct rt_audio_device* audio, const void* wr
             l1c_dc_writeback((uint32_t)writeBuf, size);
         }
 
-        if (status_success != dma_setup_channel(dma_resource->base, dma_resource->channel, &ch_config)) {
+        if (status_success != dma_setup_channel(dma_resource->base, dma_resource->channel, &ch_config, true)) {
             LOG_E("dma setup channel failed\n");
             return -RT_ERROR;
         }
@@ -516,7 +516,7 @@ static rt_ssize_t hpm_i2s_transmit(struct rt_audio_device* audio, const void* wr
         ch_config.src_mode = DMA_HANDSHAKE_MODE_HANDSHAKE;
         ch_config.src_burst_size = DMA_NUM_TRANSFER_PER_BURST_1T;
 
-        if (status_success != dma_setup_channel(dma_resource->base, dma_resource->channel, &ch_config)) {
+        if (status_success != dma_setup_channel(dma_resource->base, dma_resource->channel, &ch_config, true)) {
             LOG_E("dma setup channel failed\n");
             return -RT_ERROR;
         }
@@ -581,4 +581,3 @@ INIT_DEVICE_EXPORT(rt_hw_i2s_init);
 
 
 #endif /* BSP_USING_I2S */
-

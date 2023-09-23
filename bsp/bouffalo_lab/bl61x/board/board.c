@@ -56,10 +56,6 @@ static void peripheral_clock_init(void)
     GLB_Set_CAM_CLK(ENABLE, GLB_CAM_CLK_WIFIPLL_96M, 3);
 
     GLB_Set_PKA_CLK_Sel(GLB_PKA_CLK_MCU_MUXPLL_160M);
-#ifdef CONFIG_BSP_SDH_SDCARD
-    PERIPHERAL_CLOCK_SDH_ENABLE();
-    GLB_AHB_MCU_Software_Reset(GLB_AHB_MCU_SW_EXT_SDH);
-#endif
 
     GLB_Set_USB_CLK_From_WIFIPLL(1);
     GLB_Swap_MCU_SPI_0_MOSI_With_MISO(0);
@@ -129,7 +125,11 @@ static void systick_isr(void)
 
 void rt_hw_board_init(void)
 {
+#if defined (BSP_USING_BL61X_MODULE_DEFAULT)
     bflb_flash_init();
+#elif defined (BSP_USING_BL61X_MODULE_M0P)
+
+#endif
 
     system_clock_init();
     peripheral_clock_init();

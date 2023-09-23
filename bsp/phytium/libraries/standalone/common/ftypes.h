@@ -84,6 +84,7 @@ typedef unsigned long ULONG;
 #endif
 
 #define _INLINE inline
+#define _ALWAYS_INLINE  inline __attribute__((always_inline))
 #define _WEAK __attribute__((weak))
 
 typedef void (*FIrqHandler)(void *InstancePtr);

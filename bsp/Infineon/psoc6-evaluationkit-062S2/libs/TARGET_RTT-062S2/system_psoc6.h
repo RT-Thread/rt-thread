@@ -632,7 +632,6 @@ extern void     Cy_SystemInitFpuEnable(void);
 
 extern uint32_t cy_delayFreqKhz;
 extern uint8_t  cy_delayFreqMhz;
-extern uint32_t cy_delay32kMs;
 /** \endcond */
 
 

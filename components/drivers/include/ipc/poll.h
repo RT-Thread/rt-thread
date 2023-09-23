@@ -11,6 +11,9 @@
 #ifndef IPC_POLL_H__
 #define IPC_POLL_H__
 
+#include <rtdef.h>
+#include <rtconfig.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif

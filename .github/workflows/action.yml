@@ -38,7 +38,6 @@ jobs:
             SUB_RTT_BSP: 
                 - "qemu-vexpress-a9"
                 - "airm2m/air32f103"
-                #- "airm2m/air105"
                 - "acm32/acm32f0x0-nucleo"
                 - "CME_M7"
                 - "apollo2"
@@ -63,13 +62,15 @@ jobs:
                 - "at32/at32f425-start"
                 - "at32/at32f435-start"
                 - "at32/at32f437-start"
+                - "yichip/yc3122-pos"
                 - "hc32/ev_hc32f4a0_lqfp176"
                 - "hc32/ev_hc32f460_lqfp100_v2"
                 - "hc32l196"
-                #- "tae32f5300"
                 - "mm32/mm32f3270-100ask-pitaya"
-                - "sam7x"   
+                - "sam7x"
                 - "hk32/hk32f030c8-mini"
+                - "acm32/acm32f0x0-nucleo"
+                - "acm32/acm32f4xx-nucleo"
          -  RTT_BSP: "stm32l4_f0_f1" 
             RTT_TOOL_CHAIN: "sourcery-arm"
             SUB_RTT_BSP: 
@@ -89,6 +90,7 @@ jobs:
                 - "stm32/stm32l476-st-nucleo"
                 - "stm32/stm32l496-ali-developer"
                 - "stm32/stm32l496-st-nucleo"
+                - "stm32/stm32l496-st-discovery"
                 - "stm32/stm32f072-st-nucleo"
                 - "stm32/stm32f091-st-nucleo"
                 - "stm32/stm32f103-100ask-mini"
@@ -110,6 +112,7 @@ jobs:
             SUB_RTT_BSP: 
                 - "stm32/stm32f207-st-nucleo"
                 - "stm32/stm32f302-st-nucleo"
+                - "stm32/stm32f334-st-nucleo"
                 - "stm32/stm32f401-st-nucleo"
                 - "stm32/stm32f401-weact-blackpill"
                 - "stm32/stm32f405-smdz-breadfruit"
@@ -130,7 +133,7 @@ jobs:
                 - "stm32/stm32f429-st-disco"
                 - "stm32/stm32f446-st-nucleo"
                 - "stm32/stm32f469-st-disco"
-         -  RTT_BSP: "stm32_f7_g0_h7_mp15_u5_wb5" 
+         -  RTT_BSP: "stm32_f7_g0_h7_mp15_u5_h5_wb5" 
             RTT_TOOL_CHAIN: "sourcery-arm"
             SUB_RTT_BSP: 
                 - "stm32/stm32f746-st-disco"
@@ -144,6 +147,7 @@ jobs:
                 - "stm32/stm32g071-st-nucleo"
                 - "stm32/stm32g431-st-nucleo"
                 - "stm32/stm32g474-st-nucleo"
+                - "stm32/stm32h563-st-nucleo"
                 - "stm32/stm32h743-armfly-v7"
                 - "stm32/stm32h743-atk-apollo"
                 - "stm32/stm32h743-openmv-h7plus"
@@ -155,6 +159,7 @@ jobs:
                 - "stm32/stm32mp157a-st-discovery"
                 - "stm32/stm32mp157a-st-ev1"
                 - "stm32/stm32u575-st-nucleo"
+                - "stm32/stm32u585-iot02a"
                 - "stm32/stm32wb55-st-nucleo"
          -  RTT_BSP: "nxp_renesas" 
             RTT_TOOL_CHAIN: "sourcery-arm"
@@ -178,13 +183,18 @@ jobs:
                 - "imxrt/imxrt1052-seeed-ArchMix"
                 - "imxrt/imxrt1060-nxp-evk"
                 - "imxrt/imxrt1064-nxp-evk"
+                - "imxrt/imxrt1021-nxp-evk"
                 - "frdm-k64f"
                 - "lpc176x"
                 - "xplorer4330/M4"
                 #- "lpc43xx/M4"
-                - "renesas/ra6m3-ek"
+                - "renesas/ebf_qi_min_6m5"
                 - "renesas/ra6m4-cpk"
-                - "renesas/ra6m3-hmi-board"  
+                - "renesas/ra6m4-iot"
+                - "renesas/ra6m3-ek"
+                - "renesas/ra6m3-hmi-board"
+                - "renesas/ra4m2-eco"
+                - "renesas/ra2l1-cpk"
          -  RTT_BSP: "gd32_n32_apm32"   
             RTT_TOOL_CHAIN: "sourcery-arm"
             SUB_RTT_BSP:             
@@ -254,12 +264,13 @@ jobs:
                 - "lm4f232"
                 - "tm4c123bsp"
                 - "tm4c129x"
+                - "msp432e401y-LaunchPad"
                 - "microchip/samc21"
                 - "microchip/same54"
                 - "microchip/same70"
                 - "smartfusion2"
                 - "maxim/max32660-evsys"
-                - "efm32"
+               # - "efm32"
          -  RTT_BSP: "mips" 
             RTT_TOOL_CHAIN: "sourcery-mips"
             SUB_RTT_BSP:  
@@ -273,6 +284,7 @@ jobs:
                 - "raspberry-pi/raspi3-64"
                 - "raspberry-pi/raspi4-64"
                 - "rockchip/rk3568"
+                - "phytium/aarch64"
          -  RTT_BSP: "riscv-none" 
             RTT_TOOL_CHAIN: "sourcery-riscv-none-embed"
             SUB_RTT_BSP:  
@@ -288,6 +300,15 @@ jobs:
             RTT_TOOL_CHAIN: "llvm-arm"
             SUB_RTT_BSP:  
                 - "stm32/stm32l475-atk-pandora"
+                - "renesas/ra6m3-hmi-board"
+         -  RTT_BSP: "simulator" 
+            RTT_TOOL_CHAIN: "gcc"
+            SUB_RTT_BSP:  
+                - "simulator"
+         -  RTT_BSP: "ESP32C3" 
+            RTT_TOOL_CHAIN: "sourcery-riscv32-esp32"
+            SUB_RTT_BSP:  
+                - "ESP32_C3"
     steps:
       - uses: actions/checkout@v3
       - name: Set up Python
@@ -299,9 +320,9 @@ jobs:
         shell: bash
         run: |
           sudo apt-get update
-          sudo apt-get -qq install gcc-multilib libncurses5 libncurses5-dev libncursesw5-dev scons
-          sudo python -m pip install --upgrade pip -qq
-          pip install requests -qq
+          wget https://raw.githubusercontent.com/RT-Thread/env/master/install_ubuntu.sh
+          chmod 777 install_ubuntu.sh
+          ./install_ubuntu.sh
           git config --global http.postBuffer 524288000
           python -c "import tools.menuconfig; tools.menuconfig.touch_env()"
           echo "RTT_ROOT=${{ github.workspace }}" >> $GITHUB_ENV
@@ -322,6 +343,7 @@ jobs:
         run: |
           wget -q https://github.com/ARM-software/LLVM-embedded-toolchain-for-Arm/releases/download/release-16.0.0/LLVMEmbeddedToolchainForArm-16.0.0-Linux-x86_64.tar.gz
           sudo tar zxf LLVMEmbeddedToolchainForArm-16.0.0-Linux-x86_64.tar.gz -C /opt
+          sudo apt-get -qq install libncurses5 libncurses5-dev libncursesw5-dev
           /opt/LLVMEmbeddedToolchainForArm-16.0.0-Linux-x86_64/bin/clang --version
           echo "RTT_CC=llvm-arm" >> $GITHUB_ENV
           echo "RTT_EXEC_PATH=/opt/LLVMEmbeddedToolchainForArm-16.0.0-Linux-x86_64/bin" >> $GITHUB_ENV
@@ -360,6 +382,20 @@ jobs:
           /opt/xpack-riscv-none-embed-gcc-8.3.0-2.3/bin/riscv-none-embed-gcc --version
           echo "RTT_EXEC_PATH=/opt/xpack-riscv-none-embed-gcc-8.3.0-2.3/bin" >> $GITHUB_ENV
 
+      - name: Install riscv32-esp-elf ToolChains
+        if: ${{ matrix.legs.RTT_TOOL_CHAIN == 'sourcery-riscv32-esp32' && success() }}
+        run: |
+          wget -q https://github.com/espressif/crosstool-NG/releases/download/esp-2022r1-RC1/riscv32-esp-elf-gcc11_2_0-esp-2022r1-RC1-linux-amd64.tar.xz
+          sudo tar xf riscv32-esp-elf-gcc11_2_0-esp-2022r1-RC1-linux-amd64.tar.xz -C /opt
+          /opt/riscv32-esp-elf/bin/riscv32-esp-elf-gcc --version
+          pip3 install esptool
+          echo "RTT_EXEC_PATH=/opt/riscv32-esp-elf/bin" >> $GITHUB_ENV
+
+      - name: Install Simulator Tools
+        if: ${{ matrix.legs.RTT_TOOL_CHAIN == 'gcc' && success() }}
+        run: |
+          sudo apt-get -qq install libsdl2-dev
+
       - name: Bsp Scons Compile
         if: ${{ success() }}
         shell: bash
@@ -375,6 +411,7 @@ jobs:
             count=$((count+1))
             echo "::group::Compiling BSP: ==$count=== $bsp ===="
             echo bsp/$bsp
+            ls bsp/$bsp/Kconfig && scons -C bsp/$bsp --pyconfig-silent
             pushd bsp/$bsp && pkgs --update && popd
             scons -C bsp/$bsp -j$(nproc) --debug=time | tee output.log || \
             { total_time=$(grep "Total command execution time" output.log | awk '{print $5}'); \

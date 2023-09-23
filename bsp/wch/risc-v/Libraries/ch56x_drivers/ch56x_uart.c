@@ -8,7 +8,6 @@
  * 2022-07-15     Emuzit            first version
  */
 #include <rthw.h>
-#include <rtdebug.h>
 #include <ipc/completion.h>
 #include <ipc/dataqueue.h>
 #ifdef RT_USING_SERIAL_V2
