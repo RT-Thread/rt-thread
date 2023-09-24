@@ -3,8 +3,8 @@
  * Copyright (c) 2011-2023, Shanghai Real-Thread Electronic Technology Co.,Ltd
  *
  * Change Logs:
- * Date           Author       Notes
- *
+ * Date           Author         Notes
+ * 2023-09-24     fang-jianzhou  first version
  */
 
 #include <rtthread.h>
