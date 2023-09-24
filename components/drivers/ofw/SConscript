@@ -7,7 +7,7 @@ if not GetDepend(['RT_USING_OFW']):
 
 cwd     = GetCurrentDir()
 list    = os.listdir(cwd)
-CPPPATH = [cwd, cwd + '/../include']
+CPPPATH = [cwd, cwd + '/../include', cwd + '/../include/drivers']
 
 src     = Glob('*.c')
 
