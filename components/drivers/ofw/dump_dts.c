@@ -19,7 +19,7 @@ static void dump_dts(int argc,char** argv)
         return;
     }
 
-    if(argc==1)
+    if(argc == 1)
     {
         rt_ofw_node_dump_dts(ofw_node_root, RT_TRUE);
     }
@@ -42,4 +42,3 @@ static void dump_dts(int argc,char** argv)
     }
 }
 MSH_CMD_EXPORT(dump_dts, dump the dts);
-
