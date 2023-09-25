@@ -13,7 +13,7 @@
 
 static void dump_dts(int argc,char** argv)
 {
-    if(ofw_node_root == NULL)
+    if(ofw_node_root == RT_NULL)
     {
         rt_kprintf("\"/\" path not found.");
         return;
