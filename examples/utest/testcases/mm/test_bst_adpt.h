@@ -31,7 +31,7 @@ void test_bst_adpt(void)
     rt_mem_obj_t mem_obj;
 
     /* create aspace by lwp */
-    lwp = lwp_new();
+    lwp = lwp_create(LWP_CREATE_FLAG_NONE);
     uassert_true(!!lwp);
     uassert_true(!lwp_user_space_init(lwp, 0));
     aspace = lwp->aspace;

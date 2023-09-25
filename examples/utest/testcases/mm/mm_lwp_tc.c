@@ -50,7 +50,7 @@ static void test_user_map_varea(void)
     const size_t buf_sz = ARCH_PAGE_SIZE * 4;
     struct rt_lwp *lwp;
     rt_varea_t varea;
-    lwp = lwp_new();
+    lwp = lwp_create(LWP_CREATE_FLAG_NONE);
 
     /* prepare environment */
     uassert_true(!!lwp);
@@ -74,7 +74,7 @@ static void test_user_map_varea_ext(void)
     const size_t buf_sz = ARCH_PAGE_SIZE * 4;
     struct rt_lwp *lwp;
     rt_varea_t varea;
-    lwp = lwp_new();
+    lwp = lwp_create(LWP_CREATE_FLAG_NONE);
 
     uassert_true(!!lwp);
     uassert_true(!lwp_user_space_init(lwp, 1));
@@ -104,7 +104,7 @@ static void test_user_accessible(void)
     /* Prepare Environment */
     char *test_address = (char *)(USER_STACK_VEND);
     struct rt_lwp *lwp;
-    lwp = lwp_new();
+    lwp = lwp_create(LWP_CREATE_FLAG_NONE);
     uassert_true(!!lwp);
     uassert_true(!lwp_user_space_init(lwp, 0));
 

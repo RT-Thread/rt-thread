@@ -145,6 +145,7 @@ struct rt_lwp
     unsigned int asid;
 #endif
 };
+typedef struct rt_lwp *rt_lwp_t;
 
 struct rt_lwp *lwp_self(void);
 

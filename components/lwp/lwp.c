@@ -1152,7 +1152,7 @@ pid_t lwp_execve(char *filename, int debug, int argc, char **argv, char **envp)
         return -EACCES;
     }
 
-    lwp = lwp_new();
+    lwp = lwp_create(LWP_CREATE_FLAG_ALLOC_PID);
 
     if (lwp == RT_NULL)
     {

@@ -2083,7 +2083,7 @@ sysret_t _sys_fork(void)
     void *user_stack = RT_NULL;
 
     /* new lwp */
-    lwp = lwp_new();
+    lwp = lwp_create(LWP_CREATE_FLAG_ALLOC_PID);
     if (!lwp)
     {
         SET_ERRNO(ENOMEM);
@@ -2685,15 +2685,13 @@ sysret_t sys_execve(const char *path, char *const argv[], char *const envp[])
     }
 
     /* alloc new lwp to operation */
-    new_lwp = (struct rt_lwp *)rt_malloc(sizeof(struct rt_lwp));
+    new_lwp = lwp_create(LWP_CREATE_FLAG_NONE);
     if (!new_lwp)
     {
         SET_ERRNO(ENOMEM);
         goto quit;
     }
-    rt_memset(new_lwp, 0, sizeof(struct rt_lwp));
-    new_lwp->ref = 1;
-    lwp_user_object_lock_init(new_lwp);
+
     ret = lwp_user_space_init(new_lwp, 0);
     if (ret != 0)
     {
@@ -2787,10 +2785,6 @@ sysret_t sys_execve(const char *path, char *const argv[], char *const envp[])
         lwp_aspace_switch(thread);
 
         rt_hw_interrupt_enable(level);
-
-        /* setup the signal, timer_list for the dummy lwp, so that is can be smoothly recycled */
-        lwp_signal_init(&new_lwp->signal);
-        rt_list_init(&new_lwp->timer);
 
         lwp_ref_dec(new_lwp);
         arch_start_umode(lwp->args,

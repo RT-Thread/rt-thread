@@ -17,11 +17,16 @@
 extern "C" {
 #endif
 
+#define LWP_CREATE_FLAG_NONE        0x0000
+#define LWP_CREATE_FLAG_ALLOC_PID   0x0001  /* allocate pid on lwp object create */
+
 struct rt_lwp;
 
 struct lwp_avl_struct *lwp_get_pid_ary(void);
 
-struct rt_lwp* lwp_new(void);
+/* create a lwp object */
+struct rt_lwp* lwp_create(rt_base_t flags);
+
 void lwp_free(struct rt_lwp* lwp);
 
 int lwp_ref_inc(struct rt_lwp *lwp);
