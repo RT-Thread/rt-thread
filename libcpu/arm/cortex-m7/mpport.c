@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2006-2023, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2023-08-25     tangzz98     the first version
+ */
+
 #include <rtdef.h>
 #include <mp.h>
 #include "mpport.h"
@@ -16,7 +26,8 @@ static rt_hw_mp_exception_hook_t mem_manage_hook = RT_NULL;
 
 rt_weak rt_uint32_t rt_hw_mp_region_default_attr(rt_mem_region_t *region)
 {
-    static rt_uint32_t default_mem_attr[] = {
+    static rt_uint32_t default_mem_attr[] =
+    {
         NORMAL_OUTER_INNER_WRITE_THROUGH_NON_SHAREABLE,
         NORMAL_OUTER_INNER_WRITE_BACK_WRITE_READ_ALLOCATE_NON_SHAREABLE,
         DEVICE_NON_SHAREABLE,
@@ -37,7 +48,7 @@ rt_weak rt_uint32_t rt_hw_mp_region_default_attr(rt_mem_region_t *region)
     return attr;
 }
 
-static rt_uint32_t mpu_rasr(rt_mem_region_t *region)
+static rt_uint32_t _mpu_rasr(rt_mem_region_t *region)
 {
     rt_uint32_t rasr = 0U;
     if ((region->attr.rasr & RESERVED) == RESERVED)
@@ -74,7 +85,7 @@ rt_bool_t rt_hw_mp_region_valid(rt_mem_region_t *region)
     return RT_TRUE;
 }
 
-rt_err_t rt_hw_mp_init()
+rt_err_t rt_hw_mp_init(void)
 {
     extern rt_mem_region_t static_regions[NUM_STATIC_REGIONS];
     rt_uint8_t num_mpu_regions;
@@ -112,10 +123,10 @@ rt_err_t rt_hw_mp_init()
         {
             return RT_ERROR;
         }
-        static_regions[index].attr.rasr = mpu_rasr(&(static_regions[index]));
+        static_regions[index].attr.rasr = _mpu_rasr(&(static_regions[index]));
         ARM_MPU_SetRegion(ARM_MPU_RBAR(index, (rt_uint32_t)static_regions[index].start), static_regions[index].attr.rasr);
     }
-    // Enable background region
+    /* Enable background region. */
     ARM_MPU_Enable(MPU_CTRL_PRIVDEFENA_Msk);
 
     return RT_EOK;
@@ -129,7 +140,7 @@ rt_err_t rt_hw_mp_add_region(rt_thread_t thread, rt_mem_region_t *region)
     {
         return RT_ERROR;
     }
-    region->attr.rasr = mpu_rasr(region);
+    region->attr.rasr = _mpu_rasr(region);
     if (thread == RT_NULL)
     {
         return RT_EOK;
@@ -180,7 +191,7 @@ rt_err_t rt_hw_mp_update_region(rt_thread_t thread, rt_mem_region_t *region)
     {
         return RT_ERROR;
     }
-    region->attr.rasr = mpu_rasr(region);
+    region->attr.rasr = _mpu_rasr(region);
     rt_enter_critical();
     rt_mem_region_t *old_region = rt_mem_protection_find_region(thread, region);
     if (old_region == RT_NULL)

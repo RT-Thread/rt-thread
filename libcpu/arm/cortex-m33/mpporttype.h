@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2006-2023, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2023-08-25     tangzz98     the first version
+ */
+
 #ifndef __MPPORTTYPE_H__
 #define __MPPORTTYPE_H__
 
@@ -9,9 +19,11 @@
 #define NUM_DYNAMIC_REGIONS (NUM_CONFIGURABLE_REGIONS)
 #endif
 
-typedef struct {
+typedef struct
+{
     rt_uint32_t rbar;
-    union {
+    union
+    {
         rt_uint32_t mair_attr;
         rt_uint32_t rlar;
     };

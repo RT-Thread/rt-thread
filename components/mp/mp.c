@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2006-2023, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2023-08-25     tangzz98     the first version
+ */
+
 #include "mp.h"
 
 #define DBG_ENABLE
@@ -39,11 +49,27 @@ rt_mem_region_t *rt_mem_protection_find_region(rt_thread_t thread, rt_mem_region
     return found_region;
 }
 
-int rt_mem_protection_init()
+/**
+ * @brief    This function will initialize memory protection.
+ *
+ * @return   Return the operation status. When the return value is RT_EOK, the initialization is successful.
+ *           When the return value is any other values, it means the initialization failed.
+ */
+int rt_mem_protection_init(void)
 {
     return (int)rt_hw_mp_init();
 }
 
+/**
+ * @brief    The function will add a memory region configuraiton for a thread.
+ *
+ * @param    thread is the thread that the memory region configuration will apply to.
+ *
+ * @param    region is the configuration for the  memory region to add.
+ *
+ * @return   Return the operation status. When the return value is RT_EOK, the operation is successful.
+ *           If the return value is any other values, it represents the operation failed.
+ */
 rt_err_t rt_mem_protection_add_region(rt_thread_t thread, rt_mem_region_t *region)
 {
     if (thread == RT_NULL)
@@ -56,6 +82,16 @@ rt_err_t rt_mem_protection_add_region(rt_thread_t thread, rt_mem_region_t *regio
     }
 }
 
+/**
+ * @brief    The function will delete an existing memory region configuraiton for a thread.
+ *
+ * @param    thread is the thread that the memory region configuration will apply to.
+ *
+ * @param    region is the configuration for the memory region to delete.
+ *
+ * @return   Return the operation status. When the return value is RT_EOK, the operation is successful.
+ *           If the return value is any other values, it represents the operation failed.
+ */
 rt_err_t rt_mem_protection_delete_region(rt_thread_t thread, rt_mem_region_t *region)
 {
     if (thread == RT_NULL)
@@ -68,6 +104,16 @@ rt_err_t rt_mem_protection_delete_region(rt_thread_t thread, rt_mem_region_t *re
     }
 }
 
+/**
+ * @brief    The function will update an existing memory region configuraiton for a thread.
+ *
+ * @param    thread is the thread that the memory region configuration will apply to.
+ *
+ * @param    region is the new configuration for the  memory region.
+ *
+ * @return   Return the operation status. When the return value is RT_EOK, the operation is successful.
+ *           If the return value is any other values, it represents the operation failed.
+ */
 rt_err_t rt_mem_protection_update_region(rt_thread_t thread, rt_mem_region_t *region)
 {
     if (thread == RT_NULL)
@@ -80,6 +126,16 @@ rt_err_t rt_mem_protection_update_region(rt_thread_t thread, rt_mem_region_t *re
     }
 }
 
+/**
+ * @brief    The function will add a memory region that is only accessible by the calling thread.
+ *
+ * @param    start is the start address of the memory region.
+ *
+ * @param    size is the size of the memory region.
+ *
+ * @return   Return the operation status. When the return value is RT_EOK, the operation is successful.
+ *           If the return value is any other values, it represents the operation failed.
+ */
 rt_err_t rt_mem_protection_add_exclusive_region(void *start, rt_size_t size)
 {
     rt_uint8_t i;
@@ -107,6 +163,17 @@ rt_err_t rt_mem_protection_add_exclusive_region(void *start, rt_size_t size)
     return RT_ERROR;
 }
 
+/**
+ * @brief    The function will delete a memory region that is only accessible by the calling thread.
+ *           The deleted region will be accessible by other threads.
+ *
+ * @param    start is the start address of the memory region.
+ *
+ * @param    size is the size of the memory region.
+ *
+ * @return   Return the operation status. When the return value is RT_EOK, the operation is successful.
+ *           If the return value is any other values, it represents the operation failed.
+ */
 rt_err_t rt_mem_protection_delete_exclusive_region(void *start, rt_size_t size)
 {
     rt_uint8_t i;

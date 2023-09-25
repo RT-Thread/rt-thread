@@ -2,6 +2,8 @@ from building import *
 
 cwd  = GetCurrentDir()
 src = Glob('*.c')
+SrcRemove(src, 'mpu_example_exclusive_region.c')
+SrcRemove(src, 'mpu_example_ro_data.c')
 CPPPATH = [cwd]
 
 group = DefineGroup('mp', src, depend = ['RT_USING_MEM_PROTECTION'], CPPPATH = CPPPATH)

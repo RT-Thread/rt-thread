@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2006-2023, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2023-08-25     tangzz98     the first version
+ */
+
 #ifndef __MPPORT_H__
 #define __MPPORT_H__
 
@@ -47,7 +57,8 @@
 #define P_RX_U_RX_OUTER_SHAREABLE     (((0x2 << MPU_RBAR_SH_Pos) & MPU_RBAR_SH_Msk) | ((0x3 << MPU_RBAR_AP_Pos) & MPU_RBAR_AP_Msk))
 #define P_RX_U_RX_INNER_SHAREABLE     (((0x3 << MPU_RBAR_SH_Pos) & MPU_RBAR_SH_Msk) | ((0x3 << MPU_RBAR_AP_Pos) & MPU_RBAR_AP_Msk))
 
-typedef struct {
+typedef struct
+{
     rt_thread_t thread;     /* Thread that triggered exception */
     void *addr;             /* Address of faulting memory access */
     rt_mem_region_t region; /* Configurations of the memory region containing the address */
@@ -76,7 +87,7 @@ typedef void (*rt_hw_mp_exception_hook_t)(rt_mem_exception_info_t *);
 #define RT_MEM_REGION_P_RX_U_RX     RT_ARM_MEM_ATTR(P_RX_U_RX_NON_SHAREABLE, RT_ARM_DEFAULT_MAIR_ATTR)
 
 rt_bool_t rt_hw_mp_region_valid(rt_mem_region_t *region);
-rt_err_t rt_hw_mp_init();
+rt_err_t rt_hw_mp_init(void);
 rt_err_t rt_hw_mp_add_region(rt_thread_t thread, rt_mem_region_t *region);
 rt_err_t rt_hw_mp_delete_region(rt_thread_t thread, rt_mem_region_t *region);
 rt_err_t rt_hw_mp_update_region(rt_thread_t thread, rt_mem_region_t *region);

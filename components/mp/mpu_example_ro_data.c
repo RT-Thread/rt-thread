@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2006-2023, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2023-08-25     tangzz98     the first version
+ */
+
 #include <rtthread.h>
 #include <mp.h>
 
@@ -16,7 +26,8 @@ static void thread1_entry(void *parameter)
         ro_data[i] = i;
         rt_kprintf("ro_data[%d] = %d\n", i, ro_data[i]);
     }
-    rt_mem_region_t ro_region = {
+    rt_mem_region_t ro_region =
+    {
         .start = (void *)ro_data,
         .size = MPU_MIN_REGION_SIZE,
         .attr = RT_MEM_REGION_P_RO_U_RO,
@@ -25,7 +36,6 @@ static void thread1_entry(void *parameter)
     rt_mem_protection_add_region(RT_NULL, &ro_region);
     for (int i = 0; i < MPU_MIN_REGION_SIZE; i++)
     {
-        // should succeed
         rt_kprintf("ro_data[%d] = %d\n", i, ro_data[i]);
     }
     rt_thread_delay(RT_TICK_PER_SECOND * 1);

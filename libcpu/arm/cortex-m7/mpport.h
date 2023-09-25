@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2006-2023, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2023-08-25     tangzz98     the first version
+ */
+
 #ifndef __MPPORT_H__
 #define __MPPORT_H__
 
@@ -55,7 +65,8 @@
 #define DEVICE_NON_SHAREABLE            (2 << MPU_RASR_TEX_Pos)
 #define RESERVED                        ((2 << MPU_RASR_TEX_Pos) | MPU_RASR_B_Msk)
 
-typedef struct {
+typedef struct
+{
     rt_thread_t thread;     /* Thread that triggered exception */
     void *addr;             /* Address of faulting memory access */
     rt_mem_region_t region; /* Configurations of the memory region containing the address */
@@ -82,7 +93,7 @@ typedef void (*rt_hw_mp_exception_hook_t)(rt_mem_exception_info_t *);
 #define RT_MEM_REGION_P_RX_U_NA     RT_ARM_MEM_ATTR(P_RX_U_NA, RESERVED)
 
 rt_bool_t rt_hw_mp_region_valid(rt_mem_region_t *region);
-rt_err_t rt_hw_mp_init();
+rt_err_t rt_hw_mp_init(void);
 rt_err_t rt_hw_mp_add_region(rt_thread_t thread, rt_mem_region_t *region);
 rt_err_t rt_hw_mp_delete_region(rt_thread_t thread, rt_mem_region_t *region);
 rt_err_t rt_hw_mp_update_region(rt_thread_t thread, rt_mem_region_t *region);

@@ -1,3 +1,13 @@
+/*
+ * Copyright (c) 2006-2023, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Change Logs:
+ * Date           Author       Notes
+ * 2023-08-25     tangzz98     the first version
+ */
+
 #include <rtdef.h>
 #include <mp.h>
 #include "mpport.h"
@@ -17,7 +27,8 @@ static rt_uint8_t mpu_mair[8U];
 
 rt_weak rt_uint8_t rt_hw_mp_region_default_attr(rt_mem_region_t *region)
 {
-    static rt_uint8_t default_mem_attr[] = {
+    static rt_uint8_t default_mem_attr[] =
+    {
         ARM_MPU_ATTR(ARM_MPU_ATTR_MEMORY_(1U, 0U, 1U, 0U), ARM_MPU_ATTR_MEMORY_(1U, 0U, 1U, 0U)),
         ARM_MPU_ATTR(ARM_MPU_ATTR_MEMORY_(1U, 1U, 1U, 1U), ARM_MPU_ATTR_MEMORY_(1U, 1U, 1U, 1U)),
         ARM_MPU_ATTR_DEVICE_nGnRE,
@@ -38,7 +49,7 @@ rt_weak rt_uint8_t rt_hw_mp_region_default_attr(rt_mem_region_t *region)
     return attr;
 }
 
-static rt_err_t mpu_rbar_rlar(rt_mem_region_t *region)
+static rt_err_t _mpu_rbar_rlar(rt_mem_region_t *region)
 {
     rt_uint32_t rlar = 0U;
     rt_uint8_t mair_attr;
@@ -66,18 +77,20 @@ static rt_err_t mpu_rbar_rlar(rt_mem_region_t *region)
             break;
         }
     }
-    // Current region's mair_attr does not match any existing region
-    // All entries in MPU_MAIR are configured
+    /*
+     * Current region's mair_attr does not match any existing region.
+     * All entries in MPU_MAIR are configured.
+     */
     if (index == 8U)
     {
         return RT_ERROR;
     }
-    // An existing region has the same mair_attr
+    /* An existing region has the same mair_attr. */
     if (attr_indx != 0xFFU)
     {
         rlar |= attr_indx & MPU_RLAR_AttrIndx_Msk;
     }
-    // Current region's mair_attr does not match any existing region
+    /* Current region's mair_attr does not match any existing region. */
     else
     {
         ARM_MPU_SetMemAttr(index, mair_attr);
@@ -109,7 +122,7 @@ rt_bool_t rt_hw_mp_region_valid(rt_mem_region_t *region)
     return RT_TRUE;
 }
 
-rt_err_t rt_hw_mp_init()
+rt_err_t rt_hw_mp_init(void)
 {
     extern rt_mem_region_t static_regions[NUM_STATIC_REGIONS];
     rt_uint8_t num_mpu_regions;
@@ -151,14 +164,14 @@ rt_err_t rt_hw_mp_init()
         {
             return RT_ERROR;
         }
-        if (mpu_rbar_rlar(&(static_regions[index])) == RT_ERROR)
+        if (_mpu_rbar_rlar(&(static_regions[index])) == RT_ERROR)
         {
             LOG_E("Number of different mair_attr configurations exceeds 8");
             return RT_ERROR;
         }
         ARM_MPU_SetRegion(index, static_regions[index].attr.rbar, static_regions[index].attr.rlar);
     }
-    // Enable background region
+    /* Enable background region. */
     ARM_MPU_Enable(MPU_CTRL_PRIVDEFENA_Msk);
 
     return RT_EOK;
@@ -173,7 +186,7 @@ rt_err_t rt_hw_mp_add_region(rt_thread_t thread, rt_mem_region_t *region)
         return RT_ERROR;
     }
     rt_enter_critical();
-    if (mpu_rbar_rlar(region) == RT_ERROR)
+    if (_mpu_rbar_rlar(region) == RT_ERROR)
     {
         rt_exit_critical();
         LOG_E("Number of different mair_attr configurations exceeds 8");
@@ -230,7 +243,7 @@ rt_err_t rt_hw_mp_update_region(rt_thread_t thread, rt_mem_region_t *region)
         return RT_ERROR;
     }
     rt_enter_critical();
-    if (mpu_rbar_rlar(region) == RT_ERROR)
+    if (_mpu_rbar_rlar(region) == RT_ERROR)
     {
         rt_exit_critical();
         LOG_E("Number of different mair_attr configurations exceeds 8");
