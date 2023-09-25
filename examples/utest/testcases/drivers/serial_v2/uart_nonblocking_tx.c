@@ -31,7 +31,7 @@ static rt_bool_t nonblock_write(rt_device_t uart_dev)
     index = 0;
     tmp = 0;
     tick1 = rt_tick_get();
-    for (i = 0; i < UART_SEND_TIMES; i++) 
+    for (i = 0; i < UART_SEND_TIMES; i++)
     {
         wr_sz = 0;
         while(wr_sz < 1024)
@@ -88,7 +88,7 @@ static rt_bool_t nonblock_write(rt_device_t uart_dev)
     tick_array[index] = tick2 - tick1;
     write_num_array[index++] = wr_sz;
 
-    rt_thread_mdelay(1000);    
+    rt_thread_mdelay(1000);
     LOG_D("\nNONBLOCKING_TX END\n");
     for(i = 0; i < index; i++)
     {
