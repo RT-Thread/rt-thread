@@ -314,53 +314,46 @@ void lwp_user_object_dup(struct rt_lwp *dst_lwp, struct rt_lwp *src_lwp)
     lwp_user_object_unlock(src_lwp);
 }
 
-struct rt_lwp* lwp_new(void)
+rt_lwp_t lwp_create(rt_base_t flags)
 {
     pid_t pid;
     rt_base_t level;
-    struct rt_lwp* lwp = RT_NULL;
+    rt_lwp_t new_lwp = rt_calloc(1, sizeof(struct rt_lwp));
 
-    lwp = (struct rt_lwp *)rt_malloc(sizeof(struct rt_lwp));
-    if (lwp == RT_NULL)
+    if (new_lwp)
     {
-        return lwp;
+        /* minimal setup of lwp object */
+        new_lwp->session = -1;
+        new_lwp->ref = 1;
+        rt_list_init(&new_lwp->wait_list);
+        rt_list_init(&new_lwp->t_grp);
+        rt_list_init(&new_lwp->timer);
+        lwp_user_object_lock_init(new_lwp);
+        rt_wqueue_init(&new_lwp->wait_queue);
+        lwp_signal_init(&new_lwp->signal);
+
+        /* lwp with pid */
+        if (flags & LWP_CREATE_FLAG_ALLOC_PID)
+        {
+            level = rt_hw_interrupt_disable();
+            pid = lwp_pid_get();
+            if (pid == 0)
+            {
+                lwp_user_object_lock_destroy(new_lwp);
+                rt_free(new_lwp);
+                new_lwp = RT_NULL;
+                LOG_E("pid slot fulled!\n");
+            }
+            else
+            {
+                new_lwp->pid = pid;
+                lwp_pid_set_lwp(pid, new_lwp);
+            }
+
+            rt_hw_interrupt_enable(level);
+        }
     }
-    memset(lwp, 0, sizeof(*lwp));
-    //lwp->tgroup_leader = RT_NULL;
-    rt_list_init(&lwp->wait_list);
-    lwp->leader = 0;
-    lwp->session = -1;
-    lwp->tty = RT_NULL;
-    rt_list_init(&lwp->t_grp);
-    rt_list_init(&lwp->timer);
-    lwp_user_object_lock_init(lwp);
-    lwp->address_search_head = RT_NULL;
-    rt_wqueue_init(&lwp->wait_queue);
-    lwp->ref = 1;
-
-    lwp_signal_init(&lwp->signal);
-
-    level = rt_hw_interrupt_disable();
-    pid = lwp_pid_get();
-    if (pid == 0)
-    {
-        lwp_user_object_lock_destroy(lwp);
-        rt_free(lwp);
-        lwp = RT_NULL;
-        LOG_E("pid slot fulled!\n");
-        goto out;
-    }
-    lwp->pid = pid;
-    lwp_pid_set_lwp(pid, lwp);
-
-#ifdef LWP_ENABLE_ASID
-    lwp->generation = 0;
-    lwp->asid = 0;
-#endif
-
-out:
-    rt_hw_interrupt_enable(level);
-    return lwp;
+    return new_lwp;
 }
 
 void lwp_free(struct rt_lwp* lwp)
