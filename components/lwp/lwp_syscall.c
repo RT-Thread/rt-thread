@@ -30,8 +30,8 @@
 
 #include "syscall_generic.h"
 
-#include <lwp.h>
-#include "lwp_signal.h"
+#include "libc_musl.h"
+#include "lwp_internal.h"
 #ifdef ARCH_MM_MMU
 #include <lwp_user_mm.h>
 #include <lwp_arch.h>
@@ -343,7 +343,7 @@ sysret_t sys_exit_group(int value)
 
         tid->clear_child_tid = RT_NULL;
         lwp_put_to_user(clear_child_tid, &t, sizeof t);
-        sys_futex(clear_child_tid, FUTEX_WAKE, 1, RT_NULL, RT_NULL, 0);
+        sys_futex(clear_child_tid, FUTEX_WAKE | FUTEX_PRIVATE, 1, RT_NULL, RT_NULL, 0);
     }
     lwp_terminate(lwp);
 

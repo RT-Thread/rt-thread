@@ -384,6 +384,16 @@ rt_err_t rt_mutex_take_interruptible(rt_mutex_t mutex, rt_int32_t time);
 rt_err_t rt_mutex_take_killable(rt_mutex_t mutex, rt_int32_t time);
 rt_err_t rt_mutex_release(rt_mutex_t mutex);
 rt_err_t rt_mutex_control(rt_mutex_t mutex, int cmd, void *arg);
+
+rt_inline rt_thread_t rt_mutex_get_owner(rt_mutex_t mutex)
+{
+    return mutex->owner;
+}
+rt_inline rt_ubase_t rt_mutex_get_hold(rt_mutex_t mutex)
+{
+    return mutex->hold;
+}
+
 #endif /* RT_USING_MUTEX */
 
 #ifdef RT_USING_EVENT
