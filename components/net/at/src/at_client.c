@@ -698,8 +698,8 @@ static int at_recv_readline(at_client_t client)
         }
 
         /* is newline or URC data */
-        if ((ch == '\n' && last_ch == '\r') || (client->end_sign != 0 && ch == client->end_sign)
-                || (client->urc = get_urc_obj(client)) != RT_NULL)
+        if ((client->urc = get_urc_obj(client)) != RT_NULL || (ch == '\n' && last_ch == '\r')
+                || (client->end_sign != 0 && ch == client->end_sign))
         {
             if (is_full)
             {
