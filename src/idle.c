@@ -198,6 +198,11 @@ static void rt_defunct_execute(void)
         {
             break;
         }
+
+        while (rt_atomic_load(&(thread->counter)))
+        {
+            rt_thread_delay(5);
+        }
 #ifdef RT_USING_MODULE
         module = (struct rt_dlmodule*)thread->parent.module_id;
         if (module)
@@ -335,7 +340,7 @@ void rt_thread_idle_init(void)
 #ifdef RT_USING_SMP
     RT_ASSERT(RT_THREAD_PRIORITY_MAX > 2);
 
-    rt_sem_init(&system_sem, "defunct", 1, RT_IPC_FLAG_FIFO);
+    rt_sem_init(&system_sem, "defunct", 0, RT_IPC_FLAG_FIFO);
 
     /* create defunct thread */
     rt_thread_init(&rt_system_thread,

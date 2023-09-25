@@ -56,8 +56,8 @@ void rt_spin_lock(struct rt_spinlock *lock)
     if (rt_cpu_self() != RT_NULL)
     {
         lock->owner = rt_cpu_self()->current_thread;
-        lock->pc = __GET_RETURN_ADDRESS;
     }
+    lock->pc = __GET_RETURN_ADDRESS;
 #endif /* RT_DEBUGING_SPINLOCK */
 }
 RTM_EXPORT(rt_spin_lock)
@@ -159,12 +159,11 @@ rt_base_t rt_cpus_lock(void)
     pcpu = rt_cpu_self();
     if (pcpu->current_thread != RT_NULL)
     {
-        register rt_ubase_t lock_nest = pcpu->current_thread->cpus_lock_nest;
+        register rt_ubase_t lock_nest = rt_atomic_load(&(pcpu->current_thread->cpus_lock_nest));
 
-        pcpu->current_thread->cpus_lock_nest++;
+        rt_atomic_add(&(pcpu->current_thread->cpus_lock_nest), 1);
         if (lock_nest == 0)
         {
-            pcpu->current_thread->scheduler_lock_nest++;
             rt_hw_spin_lock(&_cpus_lock);
 #if defined(RT_DEBUGING_SPINLOCK)
             _cpus_lock_owner = pcpu->current_thread;
@@ -188,12 +187,11 @@ void rt_cpus_unlock(rt_base_t level)
 
     if (pcpu->current_thread != RT_NULL)
     {
-        RT_ASSERT(pcpu->current_thread->cpus_lock_nest > 0);
-        pcpu->current_thread->cpus_lock_nest--;
+        RT_ASSERT(rt_atomic_load(&(pcpu->current_thread->cpus_lock_nest)) > 0);
+        rt_atomic_sub(&(pcpu->current_thread->cpus_lock_nest), 1);
 
         if (pcpu->current_thread->cpus_lock_nest == 0)
         {
-            pcpu->current_thread->scheduler_lock_nest--;
 #if defined(RT_DEBUGING_SPINLOCK)
             _cpus_lock_owner = (void *)0xdeadbeaf;
             _cpus_lock_pc = (void *)0;
@@ -231,10 +229,6 @@ void rt_cpus_lock_status_restore(struct rt_thread *thread)
     }
     pcpu->current_thread = thread;
     rt_get_thread_struct(thread);
-    if (!thread->cpus_lock_nest)
-    {
-        rt_hw_spin_unlock(&_cpus_lock);
-    }
 }
 RTM_EXPORT(rt_cpus_lock_status_restore);
 #endif /* RT_USING_SMP */

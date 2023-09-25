@@ -155,6 +155,7 @@ static rt_err_t _thread_init(struct rt_thread *thread,
 {
     /* init thread list */
     rt_list_init(&(thread->tlist));
+    rt_list_init(&(thread->tlist_schedule));
 
 #ifdef RT_USING_SMART
     thread->wakeup.func = RT_NULL;
@@ -202,8 +203,8 @@ static rt_err_t _thread_init(struct rt_thread *thread,
 #endif /* RT_THREAD_PRIORITY_MAX > 32 */
 
     /* tick init */
-    thread->init_tick      = tick;
-    thread->remaining_tick = tick;
+    thread->init_tick = tick;
+    rt_atomic_store(&thread->remaining_tick, tick);
 
     /* error and flags */
     thread->error = RT_EOK;
@@ -215,9 +216,8 @@ static rt_err_t _thread_init(struct rt_thread *thread,
     thread->oncpu = RT_CPU_DETACHED;
 
     /* lock init */
-    thread->scheduler_lock_nest = 0;
-    thread->cpus_lock_nest = 0;
-    thread->critical_lock_nest = 0;
+    rt_atomic_store(&thread->cpus_lock_nest, 0);
+    rt_atomic_store(&thread->critical_lock_nest, 0);
 #endif /* RT_USING_SMP */
 
     /* initialize cleanup function and user data */
@@ -576,7 +576,7 @@ rt_err_t rt_thread_yield(void)
 
     thread = rt_thread_self();
     level = rt_spin_lock_irqsave(&(thread->spinlock));
-    thread->remaining_tick = thread->init_tick;
+    rt_atomic_store(&thread->remaining_tick, thread->init_tick);
     thread->stat |= RT_THREAD_STAT_YIELD;
     rt_spin_unlock_irqrestore(&(thread->spinlock), level);
     rt_schedule();

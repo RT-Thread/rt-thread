@@ -26,7 +26,7 @@
 #ifdef RT_USING_SMP
 #define rt_tick rt_cpu_index(0)->tick
 #else
-static volatile rt_tick_t rt_tick = 0;
+static volatile rt_atomic_t rt_tick = 0;
 #endif /* RT_USING_SMP */
 
 #ifndef __on_rt_tick_hook
@@ -69,7 +69,7 @@ void rt_tick_sethook(void (*hook)(void))
 rt_tick_t rt_tick_get(void)
 {
     /* return the global tick */
-    return rt_tick;
+    return (rt_tick_t)rt_atomic_load(&(rt_tick));
 }
 RTM_EXPORT(rt_tick_get);
 
