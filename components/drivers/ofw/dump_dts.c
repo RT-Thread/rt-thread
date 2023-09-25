@@ -21,12 +21,12 @@ static void dump_dts(int argc,char** argv)
 
     if(argc==1)
     {
-        rt_ofw_node_dump_dts(ofw_node_root,RT_TRUE);
+        rt_ofw_node_dump_dts(ofw_node_root, RT_TRUE);
     }
     else if (argv[1][0]== '/')
     {
         struct rt_ofw_node *ofw_node_pointer = rt_ofw_find_node_by_path(argv[1]);
-            
+
         if (ofw_node_pointer)
         {
             rt_ofw_node_dump_dts(ofw_node_pointer, RT_FALSE);
@@ -38,8 +38,8 @@ static void dump_dts(int argc,char** argv)
     }
     else
     {
-        rt_kprintf("Usage: %s {path}\n",__func__);
+        rt_kprintf("Usage: %s {path}\n", __func__);
     }
 }
-MSH_CMD_EXPORT(dump_dts,dump the dts);
+MSH_CMD_EXPORT(dump_dts, dump the dts);
 
