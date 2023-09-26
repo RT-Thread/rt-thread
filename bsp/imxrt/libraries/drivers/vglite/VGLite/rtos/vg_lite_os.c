@@ -90,7 +90,7 @@ void command_queue(void * parameters)
             if(os_obj.queue_handle->entry)
             {
                 len = rt_mq_recv(os_obj.queue_handle, (void*) &peek_queue, os_obj.queue_handle->msg_size, (rt_int32_t) ((rt_int64_t)THREAD_WAIT_TIME * RT_TICK_PER_SECOND / 1000));
-                if(len != 0)
+                if(len)
                 {
 #if defined(PRINT_COMMAND_BUFFER)
                     int i = 0;

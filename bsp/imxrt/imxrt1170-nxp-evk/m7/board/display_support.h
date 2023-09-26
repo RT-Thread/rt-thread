@@ -12,11 +12,11 @@
 
 #include "fsl_dc_fb.h"
 
-#if defined(VGLITE_USING_RK055AHD091)
+#if defined(DISPLAY_USING_RK055AHD091)
 #include "fsl_rm68200.h"
-#elif defined(VGLITE_USING_RK055IQH091)
+#elif defined(DISPLAY_USING_RK055IQH091)
 #include "fsl_rm68191.h"
-#elif defined(VGLITE_USING_RK055MHD091)
+#elif defined(DISPLAY_USING_RK055MHD091)
 #include "fsl_hx8394.h"
 #else
 #error "Please config lcd panel parameters."
@@ -24,9 +24,9 @@
 #include "pin_mux.h"
 #include "board.h"
 
-#if defined(VGLITE_USING_LCDIFV2)
+#if defined(BSP_USING_LCDIFV2)
 #include "fsl_dc_fb_lcdifv2.h"
-#else
+#elif defined(BSP_USING_ELCDIF)
 #include "fsl_dc_fb_elcdif.h"
 #endif
 
@@ -69,20 +69,20 @@
 #define DEMO_BUFFER_BYTE_PER_PIXEL 2
 #endif
 
-#if (defined(VGLITE_USING_RK055AHD091) || defined(VGLITE_USING_RK055MHD091))
+#if (defined(DISPLAY_USING_RK055AHD091) || defined(DISPLAY_USING_RK055MHD091))
 
-#define LCD_WIDTH  (720)
-#define LCD_HEIGHT (1280)
+#define LCD_MIPI_WIDTH  (720)
+#define LCD_MIPI_HEIGHT (1280)
 
-#elif defined(VGLITE_USING_RK055IQH091)
+#elif defined(DISPLAY_USING_RK055IQH091)
 
-#define LCD_WIDTH  (540)
-#define LCD_HEIGHT (960)
+#define LCD_MIPI_WIDTH  (540)
+#define LCD_MIPI_HEIGHT (960)
 
 #endif
 
-#define DEMO_BUFFER_WIDTH  LCD_WIDTH
-#define DEMO_BUFFER_HEIGHT LCD_HEIGHT
+#define DEMO_BUFFER_WIDTH  LCD_MIPI_WIDTH
+#define DEMO_BUFFER_HEIGHT LCD_MIPI_HEIGHT
 
 /* Where the frame buffer is shown in the screen. */
 #define DEMO_BUFFER_START_X 0U
@@ -110,47 +110,47 @@
  * MIPI panel pin for RT-Thread
  */
 #define GET_PIN(PORTx, PIN)  (32 * (PORTx - 1) + (PIN & 31))    /* PORTx:1,2,3,4,5 */
-#define LCD_RST_GPIO_PORT    (3U)
-#define LCD_RST_GPIO_PIN     (1U)
-#define LCD_RST_PIN          GET_PIN(LCD_RST_GPIO_PORT, LCD_RST_GPIO_PIN)
+#define LCD_MIPI_RST_GPIO_PORT    (3U)
+#define LCD_MIPI_RST_GPIO_PIN     (1U)
+#define LCD_MIPI_RST_PIN          GET_PIN(LCD_MIPI_RST_GPIO_PORT, LCD_MIPI_RST_GPIO_PIN)
 /* Back light pin. */
-#define LCD_BL_GPIO_PORT     (3U)
-#define LCD_BL_GPIO_PIN      (29U)
-#define LCD_BL_PIN           GET_PIN(LCD_BL_GPIO_PORT, LCD_BL_GPIO_PIN)
+#define LCD_MIPI_BL_GPIO_PORT     (3U)
+#define LCD_MIPI_BL_GPIO_PIN      (29U)
+#define LCD_MIPI_BL_PIN           GET_PIN(LCD_MIPI_BL_GPIO_PORT, LCD_MIPI_BL_GPIO_PIN)
 
 /*
  * RK055AHD091 panel
  */
 
-#if defined(VGLITE_USING_RK055AHD091)
-#define LCD_HSW 8
-#define LCD_HFP 32
-#define LCD_HBP 32
-#define LCD_VSW 2
-#define LCD_VFP 16
-#define LCD_VBP 14
+#if defined(DISPLAY_USING_RK055AHD091)
+#define LCD_MIPI_HSW 8
+#define LCD_MIPI_HFP 32
+#define LCD_MIPI_HBP 32
+#define LCD_MIPI_VSW 2
+#define LCD_MIPI_VFP 16
+#define LCD_MIPI_VBP 14
 
-#elif defined(VGLITE_USING_RK055IQH091)
+#elif defined(DISPLAY_USING_RK055IQH091)
 
-#define LCD_HSW 2
-#define LCD_HFP 32
-#define LCD_HBP 30
-#define LCD_VSW 2
-#define LCD_VFP 16
-#define LCD_VBP 14
+#define LCD_MIPI_HSW 2
+#define LCD_MIPI_HFP 32
+#define LCD_MIPI_HBP 30
+#define LCD_MIPI_VSW 2
+#define LCD_MIPI_VFP 16
+#define LCD_MIPI_VBP 14
 
-#elif defined(VGLITE_USING_RK055MHD091)
+#elif defined(DISPLAY_USING_RK055MHD091)
 
-#define LCD_HSW 6
-#define LCD_HFP 12
-#define LCD_HBP 24
-#define LCD_VSW 2
-#define LCD_VFP 16
-#define LCD_VBP 14
+#define LCD_MIPI_HSW 6
+#define LCD_MIPI_HFP 12
+#define LCD_MIPI_HBP 24
+#define LCD_MIPI_VSW 2
+#define LCD_MIPI_VFP 16
+#define LCD_MIPI_VBP 14
 
 #endif
 
-#if defined(VGLITE_USING_LCDIFV2)
+#if defined(BSP_USING_LCDIFV2)
 
 #define DEMO_LCDIF_POL_FLAGS                                                             \
     (kLCDIFV2_DataEnableActiveHigh | kLCDIFV2_VsyncActiveLow | kLCDIFV2_HsyncActiveLow | \
@@ -158,7 +158,7 @@
 
 #define DEMO_LCDIF LCDIFV2
 
-#else
+#elif defined(BSP_USING_ELCDIF)
 
 #define DEMO_LCDIF_POL_FLAGS \
     (kELCDIF_DataEnableActiveHigh | kELCDIF_VsyncActiveLow | kELCDIF_HsyncActiveLow | kELCDIF_DriveDataOnFallingClkEdge)
@@ -168,8 +168,8 @@
 #endif
 
 /* Definitions for MIPI. */
-#define DEMO_MIPI_DSI          (&g_mipiDsi)
-#define DEMO_MIPI_DSI_LANE_NUM 2
+#define DEMO_LCD_MIPI          (&g_mipiDsi)
+#define DEMO_LCD_MIPI_LANE_NUM 2
 
 extern const dc_fb_t g_dc;
 

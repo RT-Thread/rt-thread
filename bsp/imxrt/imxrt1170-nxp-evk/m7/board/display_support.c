@@ -50,7 +50,7 @@ const MIPI_DSI_Type g_mipiDsi = {
     .dphy = DSI_HOST_DPHY_INTFC,
 };
 
-#if defined(VGLITE_USING_RK055AHD091)
+#if defined(DISPLAY_USING_RK055AHD091)
 
 static mipi_dsi_device_t dsiDevice = {
     .virtualChannel = 0,
@@ -68,7 +68,7 @@ static display_handle_t rm68200Handle = {
     .ops      = &rm68200_ops,
 };
 
-#elif defined(VGLITE_USING_RK055MHD091)
+#elif defined(DISPLAY_USING_RK055MHD091)
 
 static mipi_dsi_device_t dsiDevice = {
     .virtualChannel = 0,
@@ -86,7 +86,7 @@ static display_handle_t hx8394Handle = {
     .ops      = &hx8394_ops,
 };
 
-#else
+#elif defined(DISPLAY_USING_RK055IQH091)
 
 static mipi_dsi_device_t dsiDevice = {
     .virtualChannel = 0,
@@ -106,20 +106,19 @@ static display_handle_t rm68191Handle = {
 
 #endif
 
-#if defined(VGLITE_USING_LCDIFV2)
-
+#if defined(BSP_USING_LCDIFV2)
 static dc_fb_lcdifv2_handle_t s_dcFbLcdifv2Handle = {0};
 
 static const dc_fb_lcdifv2_config_t s_dcFbLcdifv2Config = {
     .lcdifv2       = DEMO_LCDIF,
-    .width         = LCD_WIDTH,
-    .height        = LCD_HEIGHT,
-    .hsw           = LCD_HSW,
-    .hfp           = LCD_HFP,
-    .hbp           = LCD_HBP,
-    .vsw           = LCD_VSW,
-    .vfp           = LCD_VFP,
-    .vbp           = LCD_VBP,
+    .width         = LCD_MIPI_WIDTH,
+    .height        = LCD_MIPI_HEIGHT,
+    .hsw           = LCD_MIPI_HSW,
+    .hfp           = LCD_MIPI_HFP,
+    .hbp           = LCD_MIPI_HBP,
+    .vsw           = LCD_MIPI_VSW,
+    .vfp           = LCD_MIPI_VFP,
+    .vbp           = LCD_MIPI_VBP,
     .polarityFlags = DEMO_LCDIF_POL_FLAGS,
     .lineOrder     = kLCDIFV2_LineOrderRGB,
 /* CM4 is domain 1, CM7 is domain 0. */
@@ -136,20 +135,20 @@ const dc_fb_t g_dc = {
     .config  = &s_dcFbLcdifv2Config,
 };
 
-#else
+#elif defined(BSP_USING_ELCDIF)
 
 dc_fb_elcdif_handle_t s_dcFbElcdifHandle = {0}; /* The handle must be initialized to 0. */
 
 const dc_fb_elcdif_config_t s_dcFbElcdifConfig = {
     .elcdif        = DEMO_LCDIF,
-    .width         = LCD_WIDTH,
-    .height        = LCD_HEIGHT,
-    .hsw           = LCD_HSW,
-    .hfp           = LCD_HFP,
-    .hbp           = LCD_HBP,
-    .vsw           = LCD_VSW,
-    .vfp           = LCD_VFP,
-    .vbp           = LCD_VBP,
+    .width         = LCD_MIPI_WIDTH,
+    .height        = LCD_MIPI_HEIGHT,
+    .hsw           = LCD_MIPI_HSW,
+    .hfp           = LCD_MIPI_HFP,
+    .hbp           = LCD_MIPI_HBP,
+    .vsw           = LCD_MIPI_VSW,
+    .vfp           = LCD_MIPI_VFP,
+    .vbp           = LCD_MIPI_VBP,
     .polarityFlags = DEMO_LCDIF_POL_FLAGS,
 #if (!DEMO_USE_XRGB8888) && (DEMO_USE_LUT8)
     .dataBus       = kELCDIF_DataBus8Bit,
@@ -195,7 +194,7 @@ static void BOARD_PullPanelPowerPin(bool pullUp)
 
 static status_t BOARD_DSI_Transfer(dsi_transfer_t *xfer)
 {
-    return DSI_TransferBlocking(DEMO_MIPI_DSI, xfer);
+    return DSI_TransferBlocking(DEMO_LCD_MIPI, xfer);
 }
 
 static void BOARD_InitLcdifClock(void)
@@ -209,19 +208,19 @@ static void BOARD_InitLcdifClock(void)
     const clock_root_config_t lcdifClockConfig = {
         .clockOff = false,
         .mux      = 4, /*!< PLL_528. */
-#if (defined(VGLITE_USING_RK055AHD091) || defined(VGLITE_USING_RK055MHD091))
+#if (defined(DISPLAY_USING_RK055AHD091) || defined(DISPLAY_USING_RK055MHD091))
         .div = 9,
-#else
+#elif defined(DISPLAY_USING_RK055IQH091)
         .div = 15,
 #endif
     };
 
-#if defined(VGLITE_USING_LCDIFV2)
+#if defined(BSP_USING_LCDIFV2)
     CLOCK_SetRootClock(kCLOCK_Root_Lcdifv2, &lcdifClockConfig);
 
     mipiDsiDpiClkFreq_Hz = CLOCK_GetRootClockFreq(kCLOCK_Root_Lcdifv2);
 
-#else
+#elif defined(BSP_USING_ELCDIF)
 
     CLOCK_SetRootClock(kCLOCK_Root_Lcdif, &lcdifClockConfig);
 
@@ -273,30 +272,26 @@ static status_t BOARD_InitLcdPanel(void)
     const gpio_pin_config_t pinConfig = {kGPIO_DigitalOutput, 0, kGPIO_NoIntmode};
 
     const display_config_t displayConfig = {
-        .resolution   = FSL_VIDEO_RESOLUTION(LCD_WIDTH, LCD_HEIGHT),
-        .hsw          = LCD_HSW,
-        .hfp          = LCD_HFP,
-        .hbp          = LCD_HBP,
-        .vsw          = LCD_VSW,
-        .vfp          = LCD_VFP,
-        .vbp          = LCD_VBP,
+        .resolution   = FSL_VIDEO_RESOLUTION(LCD_MIPI_WIDTH, LCD_MIPI_HEIGHT),
+        .hsw          = LCD_MIPI_HSW,
+        .hfp          = LCD_MIPI_HFP,
+        .hbp          = LCD_MIPI_HBP,
+        .vsw          = LCD_MIPI_VSW,
+        .vfp          = LCD_MIPI_VFP,
+        .vbp          = LCD_MIPI_VBP,
         .controlFlags = 0,
-        .dsiLanes     = DEMO_MIPI_DSI_LANE_NUM,
+        .dsiLanes     = DEMO_LCD_MIPI_LANE_NUM,
     };
 
     GPIO_PinInit(BOARD_MIPI_PANEL_POWER_GPIO, BOARD_MIPI_PANEL_POWER_PIN, &pinConfig);
     GPIO_PinInit(BOARD_MIPI_PANEL_BL_GPIO, BOARD_MIPI_PANEL_BL_PIN, &pinConfig);
     GPIO_PinInit(BOARD_MIPI_PANEL_RST_GPIO, BOARD_MIPI_PANEL_RST_PIN, &pinConfig);
 
-#if defined(VGLITE_USING_RK055AHD091)
+#if defined(DISPLAY_USING_RK055AHD091)
     status = RM68200_Init(&rm68200Handle, &displayConfig);
-
-#elif defined(VGLITE_USING_RK055MHD091)
-
+#elif defined(DISPLAY_USING_RK055MHD091)
     status = HX8394_Init(&hx8394Handle, &displayConfig);
-
-#else
-
+#elif defined(DISPLAY_USING_RK055IQH091)
     status = RM68191_Init(&rm68191Handle, &displayConfig);
 #endif
 
@@ -313,18 +308,18 @@ static void BOARD_SetMipiDsiConfig(void)
     dsi_config_t dsiConfig;
     dsi_dphy_config_t dphyConfig;
 
-    const dsi_dpi_config_t dpiConfig = {.pixelPayloadSize = LCD_WIDTH,
+    const dsi_dpi_config_t dpiConfig = {.pixelPayloadSize = LCD_MIPI_WIDTH,
                                         .dpiColorCoding   = kDSI_Dpi24Bit,
                                         .pixelPacket      = kDSI_PixelPacket24Bit,
                                         .videoMode        = kDSI_DpiBurst,
                                         .bllpMode         = kDSI_DpiBllpLowPower,
                                         .polarityFlags    = kDSI_DpiVsyncActiveLow | kDSI_DpiHsyncActiveLow,
-                                        .hfp              = LCD_HFP,
-                                        .hbp              = LCD_HBP,
-                                        .hsw              = LCD_HSW,
-                                        .vfp              = LCD_VFP,
-                                        .vbp              = LCD_VBP,
-                                        .panelHeight      = LCD_HEIGHT,
+                                        .hfp              = LCD_MIPI_HFP,
+                                        .hbp              = LCD_MIPI_HBP,
+                                        .hsw              = LCD_MIPI_HSW,
+                                        .vfp              = LCD_MIPI_VFP,
+                                        .vbp              = LCD_MIPI_VBP,
+                                        .panelHeight      = LCD_MIPI_HEIGHT,
                                         .virtualChannel   = 0};
 
     /*
@@ -337,11 +332,11 @@ static void BOARD_SetMipiDsiConfig(void)
      * dsiConfig.btaTo_ByteClk = 0;
      */
     DSI_GetDefaultConfig(&dsiConfig);
-    dsiConfig.numLanes       = DEMO_MIPI_DSI_LANE_NUM;
+    dsiConfig.numLanes       = DEMO_LCD_MIPI_LANE_NUM;
     dsiConfig.autoInsertEoTp = true;
 
     /* Init the DSI module. */
-    DSI_Init(DEMO_MIPI_DSI, &dsiConfig);
+    DSI_Init(DEMO_LCD_MIPI, &dsiConfig);
 
     /* Init DPHY.
      *
@@ -355,26 +350,26 @@ static void BOARD_SetMipiDsiConfig(void)
      *
      * Note that the DSI output pixel is 24bit per pixel.
      */
-    mipiDsiDphyBitClkFreq_Hz = mipiDsiDpiClkFreq_Hz * (24 / DEMO_MIPI_DSI_LANE_NUM);
+    mipiDsiDphyBitClkFreq_Hz = mipiDsiDpiClkFreq_Hz * (24 / DEMO_LCD_MIPI_LANE_NUM);
 
     mipiDsiDphyBitClkFreq_Hz = DEMO_MIPI_DPHY_BIT_CLK_ENLARGE(mipiDsiDphyBitClkFreq_Hz);
 
     DSI_GetDphyDefaultConfig(&dphyConfig, mipiDsiDphyBitClkFreq_Hz, mipiDsiTxEscClkFreq_Hz);
 
-    mipiDsiDphyBitClkFreq_Hz = DSI_InitDphy(DEMO_MIPI_DSI, &dphyConfig, mipiDsiDphyRefClkFreq_Hz);
+    mipiDsiDphyBitClkFreq_Hz = DSI_InitDphy(DEMO_LCD_MIPI, &dphyConfig, mipiDsiDphyRefClkFreq_Hz);
 
     /* Init DPI interface. */
-    DSI_SetDpiConfig(DEMO_MIPI_DSI, &dpiConfig, DEMO_MIPI_DSI_LANE_NUM, mipiDsiDpiClkFreq_Hz, mipiDsiDphyBitClkFreq_Hz);
+    DSI_SetDpiConfig(DEMO_LCD_MIPI, &dpiConfig, DEMO_LCD_MIPI_LANE_NUM, mipiDsiDpiClkFreq_Hz, mipiDsiDphyBitClkFreq_Hz);
 }
 
 status_t BOARD_InitDisplayInterface(void)
 {
     CLOCK_EnableClock(kCLOCK_Video_Mux);
 
-#if defined(VGLITE_USING_LCDIFV2)
+#if defined(BSP_USING_LCDIFV2)
     /* LCDIF v2 output to MIPI DSI. */
     VIDEO_MUX->VID_MUX_CTRL.SET = VIDEO_MUX_VID_MUX_CTRL_MIPI_DSI_SEL_MASK;
-#else
+#elif defined(BSP_USING_ELCDIF)
     /* ELCDIF output to MIPI DSI. */
     VIDEO_MUX->VID_MUX_CTRL.CLR = VIDEO_MUX_VID_MUX_CTRL_MIPI_DSI_SEL_MASK;
 #endif
@@ -405,12 +400,12 @@ status_t BOARD_InitDisplayInterface(void)
     return BOARD_InitLcdPanel();
 }
 
-#if defined(VGLITE_USING_LCDIFV2)
+#if defined(BSP_USING_LCDIFV2)
 void LCDIFv2_IRQHandler(void)
 {
     DC_FB_LCDIFV2_IRQHandler(&g_dc);
 }
-#else
+#elif defined(BSP_USING_ELCDIF)
 void eLCDIF_IRQHandler(void)
 {
     DC_FB_ELCDIF_IRQHandler(&g_dc);
@@ -449,7 +444,6 @@ status_t BOARD_PrepareDisplayController(void)
 
     if (status != kStatus_Success)
     {
-        // PRINTF("Error: Invalid display clock source.\r\n");
         return status;
     }
 
@@ -459,11 +453,11 @@ status_t BOARD_PrepareDisplayController(void)
 
     if (kStatus_Success == status)
     {
-#if defined(VGLITE_USING_LCDIFV2)
+#if defined(BSP_USING_LCDIFV2)
         NVIC_ClearPendingIRQ(LCDIFv2_IRQn);
         NVIC_SetPriority(LCDIFv2_IRQn, 3);
         EnableIRQ(LCDIFv2_IRQn);
-#else
+#elif defined(BSP_USING_ELCDIF)
         NVIC_ClearPendingIRQ(eLCDIF_IRQn);
         NVIC_SetPriority(eLCDIF_IRQn, 3);
         EnableIRQ(eLCDIF_IRQn);

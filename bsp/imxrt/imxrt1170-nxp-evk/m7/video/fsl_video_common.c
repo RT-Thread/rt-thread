@@ -7,7 +7,7 @@
  */
 
 #include "fsl_video_common.h"
-#if defined(SDK_OS_RTOS)
+#if defined(USE_RTOS)
 #include "rtthread.h"
 #endif
 
@@ -31,7 +31,7 @@ bool VIDEO_IsYUV(video_pixel_format_t format)
 
 void VIDEO_DelayMs(uint32_t ms)
 {
-#if defined(SDK_OS_RTOS)
+#if defined(USE_RTOS)
     rt_thread_mdelay(ms);
 #else
     while (0U != (ms--))

@@ -53,62 +53,10 @@ if GetDepend(['BSP_USING_FLEXSPI']):
     src += ['MIMXRT1176/drivers/fsl_flexspi.c']
 
 if GetDepend(['BSP_USING_VGLITE']):
-    src += ['MIMXRT1176/drivers/fsl_soc_src.c']
-    src += ['MIMXRT1176/drivers/fsl_mipi_dsi.c']
-    src += ['MIMXRT1176/drivers/fsl_video_common.c']
-    src += ['MIMXRT1176/drivers/display_support.c']
-    src += ['MIMXRT1176/drivers/fsl_fbdev.c']
-    src += ['MIMXRT1176/drivers/fsl_mipi_dsi_cmd.c']
-    
-    if GetDepend(['VGLITE_USING_LCDIFV2']):
-        src += ['MIMXRT1176/drivers/fsl_dc_fb_lcdifv2.c']
-        src += ['MIMXRT1176/drivers/fsl_lcdifv2.c']
-    else:
-        src += ['MIMXRT1176/drivers/fsl_dc_fb_elcdif.c']
-        src += ['MIMXRT1176/drivers/fsl_elcdif.c']
+    src += ['MIMXRT1176/drivers/fsl_soc_src.c', 'MIMXRT1176/drivers/fsl_mipi_dsi.c']
 
-    if GetDepend(['VGLITE_USING_RK055AHD091']):
-        src += ['MIMXRT1176/drivers/fsl_rm68200.c']
-    elif GetDepend(['VGLITE_USING_RK055IQH091']):
-        src += ['MIMXRT1176/drivers/fsl_rm68191.c']
-    else:
-        src += ['MIMXRT1176/drivers/fsl_hx8394.c']
-
-    src += ['MIMXRT1176/drivers/mf_bwfont.c']
-    src += ['MIMXRT1176/drivers/mf_encoding.c']
-    src += ['MIMXRT1176/drivers/mf_font.c']
-    src += ['MIMXRT1176/drivers/mf_justify.c']
-    src += ['MIMXRT1176/drivers/mf_kerning.c']
-    src += ['MIMXRT1176/drivers/mf_rlefont.c']
-    src += ['MIMXRT1176/drivers/mf_scaledfont.c']
-    src += ['MIMXRT1176/drivers/mf_wordwrap.c']
-    
-    src += ['MIMXRT1176/drivers/buf_reader.c']
-    src += ['MIMXRT1176/drivers/rle_font_read.c']
-    src += ['MIMXRT1176/drivers/vft_debug.c']
-    src += ['MIMXRT1176/drivers/vft_draw.c']
-    src += ['MIMXRT1176/drivers/vg_lite_text.c']
-    
-    src += ['MIMXRT1176/drivers/vg_lite_os.c']
-    src += ['MIMXRT1176/drivers/vg_lite.c']
-    src += ['MIMXRT1176/drivers/vg_lite_flat.c']
-    src += ['MIMXRT1176/drivers/vg_lite_image.c']
-    src += ['MIMXRT1176/drivers/vg_lite_matrix.c']
-    src += ['MIMXRT1176/drivers/vg_lite_path.c']
-    
-    src += ['MIMXRT1176/drivers/vglite_support.c']
-    src += ['MIMXRT1176/drivers/vglite_window.c']
-    
-    src += ['MIMXRT1176/drivers/vg_lite_hal.c']
-    src += ['MIMXRT1176/drivers/vg_lite_kernel.c']
-    
-    if GetDepend(['VGLITE_USING_ELM']):
-        src += ['MIMXRT1176/drivers/elm_buffer.c']
-        src += ['MIMXRT1176/drivers/elm_draw.c']
-        src += ['MIMXRT1176/drivers/elm_init.c']
-        src += ['MIMXRT1176/drivers/elm_object.c']
-        src += ['MIMXRT1176/drivers/elm_os.c']
-        src += ['MIMXRT1176/drivers/elm_text.c']
+if GetDepend(['BSP_USING_LCDIFV2']) or GetDepend(['BSP_USING_ELCDIF']):
+    src += ['MIMXRT1176/drivers/fsl_lcdifv2.c', 'MIMXRT1176/drivers/fsl_elcdif.c']
 
 #fsl os abstract files
 src += ['MIMXRT1176/drivers/fsl_os_abstraction_rtthread.c']

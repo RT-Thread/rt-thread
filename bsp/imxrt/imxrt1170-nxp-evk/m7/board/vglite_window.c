@@ -4,7 +4,7 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
-#include <rtthread.h>
+
 #include "vglite_support.h"
 #include "vg_lite_platform.h"
 #include "vglite_window.h"
@@ -15,7 +15,7 @@
 
 #if !DEMO_BUFFER_FIXED_ADDRESS
 AT_NONCACHEABLE_SECTION_ALIGN(
-    static uint8_t s_frameBuffer[APP_BUFFER_COUNT][LCD_HEIGHT][LCD_WIDTH][DEMO_BUFFER_BYTE_PER_PIXEL],
+    static uint8_t s_frameBuffer[APP_BUFFER_COUNT][DEMO_BUFFER_HEIGHT][DEMO_BUFFER_WIDTH][DEMO_BUFFER_BYTE_PER_PIXEL],
     FRAME_BUFFER_ALIGN);
 
 #define DEMO_BUFFER0_ADDR (uint32_t) s_frameBuffer[0]
@@ -79,7 +79,6 @@ vg_lite_error_t VGLITE_CreateDisplay(vg_lite_display_t *display)
     if (!display)
         return VG_LITE_INVALID_ARGUMENT;
 
-    BOARD_PrepareDisplayController();
     FBDEV_Open(&display->g_fbdev, &g_dc, 0);
 
     return VG_LITE_SUCCESS;

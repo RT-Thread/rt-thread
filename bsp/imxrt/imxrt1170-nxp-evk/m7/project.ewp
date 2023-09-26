@@ -1399,19 +1399,19 @@
   <group>
     <name>SAL</name>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\components\net\netdev\src\netdev.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\components\net\netdev\src\netdev_ipaddr.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\components\net\netdev\src\netdev_ipaddr.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\components\net\netdev\src\netdev.c</name>
     </file>
   </group>
   <group>
     <name>xip</name>
     <file>
-      <name>$PROJ_DIR$\xip\evkmimxrt1170_flexspi_nor_config.c</name>
+      <name>$PROJ_DIR$\xip\fsl_flexspi_nor_boot.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\xip\fsl_flexspi_nor_boot.c</name>
+      <name>$PROJ_DIR$\xip\evkmimxrt1170_flexspi_nor_config.c</name>
     </file>
   </group>
 </project>
