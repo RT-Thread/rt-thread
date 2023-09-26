@@ -35,6 +35,7 @@
 #include <rthw.h>
 #include <rtthread.h>
 #include <string.h>
+#include <stdlib.h>
 
 #ifdef RT_USING_FINSH
 #include <finsh.h>
@@ -1014,5 +1015,77 @@ _usage:
     return 0;
 }
 MSH_CMD_EXPORT_ALIAS(cmd_list, list, list objects);
+void dump_buf(unsigned char *buffer, rt_ubase_t length)
+{
+    int i  = 0;
+    int j  = 0;
 
+    if (NULL == buffer)
+    {
+        return;
+    }
+    for (i = 0; ((i < length) && (i < 10*1024*1024 )); i++)
+    {
+        if (0 == (i % 16))
+        {
+            rt_kprintf("%p: ", (buffer+i));
+            j = 0;
+        }
+        rt_kprintf("%02x ", buffer[i]);
+        j++;
+        if (0 == (j%16))
+        {
+            rt_kprintf("\n");
+        }
+    }
+    if (0 != length %16)
+    {
+        rt_kprintf("\n");
+    }
+}
+int dump_memory(int argc, char **argv)
+{
+    unsigned char * buf = NULL;
+    rt_ubase_t len = 0;
+    char * endptr;
+    if (argc == 3)
+    {
+        buf = (unsigned char *) strtoul(argv[1], &endptr, 0);
+        len = strtoul(argv[2], &endptr, 0);
+        dump_buf(buf, len);
+        return 0;
+    }
+    rt_kprintf("d addr len \n");
+    return -1;
+}
+
+MSH_CMD_EXPORT_ALIAS(dump_memory, d, show memory content);
+int m1(rt_ubase_t addr,int value)
+{
+     char * puctemp = NULL;
+     rt_kprintf("addr:%p value:%d 0x%x\n",addr,(char)value,(char)value);
+     if(addr == RT_NULL)
+     {
+        return -1;
+     }
+     puctemp = (char *)addr;
+     *puctemp = (char)value;
+     return *puctemp;
+}
+int modify_memory(int argc, char **argv)
+{
+    rt_ubase_t buf = RT_NULL;
+    rt_ubase_t value = 0;
+    char * endptr;
+    if (argc == 3)
+    {
+        buf = (rt_ubase_t ) strtoul(argv[1], &endptr, 0);
+        value = strtoul(argv[2], &endptr, 0);
+        m1(buf, value);
+        return 0;
+    }
+    rt_kprintf("m addr value \n");
+    return -1;
+}
+MSH_CMD_EXPORT_ALIAS(modify_memory, m1, modify one byte memory);
 #endif /* RT_USING_FINSH */
