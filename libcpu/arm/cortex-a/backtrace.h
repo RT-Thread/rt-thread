@@ -2,6 +2,7 @@
 #define __BACKTRACE_H
 
 #ifndef __ASSEMBLY__
+#include <rtthread.h>
 #include <cpuport.h>
 
 /* Unwind reason code according the the ARM EABI documents */
