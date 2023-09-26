@@ -780,10 +780,6 @@ typedef struct rt_cpu *rt_cpu_t;
 
 #endif /* RT_USING_SMP */
 
-#ifdef RT_USING_MEM_PROTECTION
-#include <mptype.h>
-#endif
-
 struct rt_thread;
 
 #ifdef RT_USING_SMART
@@ -973,7 +969,7 @@ struct rt_thread
 #endif /* RT_USING_SMART */
 
 #ifdef RT_USING_MEM_PROTECTION
-    rt_mem_region_t mem_regions[NUM_DYNAMIC_REGIONS];
+    void *mem_regions;
 #endif
     rt_ubase_t                  user_data;              /**< private user data beyond this thread */
 };

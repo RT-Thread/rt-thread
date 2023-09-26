@@ -12,9 +12,18 @@
 #define __MP_H__
 
 #include <rtdef.h>
-#include <mpport.h>
+#include <mpporttype.h>
 
 #define ADDR_IN_REGION(addr, region) (((rt_size_t)(addr) >= (rt_size_t)((region)->start)) && ((rt_size_t)(addr) < (rt_size_t)((region)->start) + (region)->size))
+
+typedef struct
+{
+    void *start;
+    rt_size_t size;
+    rt_mem_attr_t attr;
+} rt_mem_region_t;
+
+#include <mpport.h>
 
 typedef struct
 {

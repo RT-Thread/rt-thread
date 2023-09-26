@@ -172,7 +172,7 @@ static rt_err_t _thread_init(struct rt_thread *thread,
     rt_list_init(&(thread->tlist));
 
 #ifdef RT_USING_MEM_PROTECTION
-    rt_memset(&(thread->mem_regions), 0, sizeof(rt_mem_region_t) * NUM_DYNAMIC_REGIONS);
+    thread->mem_regions = RT_NULL;
 #endif
 
 #ifdef RT_USING_SMART

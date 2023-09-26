@@ -21,12 +21,15 @@ rt_mem_region_t *rt_mem_protection_find_free_region(rt_thread_t thread)
 {
     rt_uint8_t i;
     rt_mem_region_t *free_region = RT_NULL;
-    for (i = 0; i < NUM_DYNAMIC_REGIONS; i++)
+    if (thread->mem_regions != RT_NULL)
     {
-        if (thread->mem_regions[i].size == 0)
+        for (i = 0U; i < NUM_DYNAMIC_REGIONS; i++)
         {
-            free_region = &(thread->mem_regions[i]);
-            break;
+            if (((rt_mem_region_t *)thread->mem_regions)[i].size == 0)
+            {
+                free_region = &(((rt_mem_region_t *)thread->mem_regions)[i]);
+                break;
+            }
         }
     }
 
@@ -37,12 +40,15 @@ rt_mem_region_t *rt_mem_protection_find_region(rt_thread_t thread, rt_mem_region
 {
     rt_uint8_t i;
     rt_mem_region_t *found_region = RT_NULL;
-    for (i = 0; i < NUM_DYNAMIC_REGIONS; i++)
+    if (thread->mem_regions != RT_NULL)
     {
-        if ((thread->mem_regions[i].start == region->start) && (thread->mem_regions[i].size == region->size))
+        for (i = 0U; i < NUM_DYNAMIC_REGIONS; i++)
         {
-            found_region = &(thread->mem_regions[i]);
-            break;
+            if ((((rt_mem_region_t *)thread->mem_regions)[i].start == region->start) && (((rt_mem_region_t *)thread->mem_regions)[i].size == region->size))
+            {
+                found_region = &(((rt_mem_region_t *)thread->mem_regions)[i]);
+                break;
+            }
         }
     }
 
@@ -74,12 +80,18 @@ rt_err_t rt_mem_protection_add_region(rt_thread_t thread, rt_mem_region_t *regio
 {
     if (thread == RT_NULL)
     {
-        return rt_hw_mp_add_region(rt_thread_self(), region);
+        thread = rt_thread_self();
     }
-    else
+    if (thread->mem_regions == RT_NULL)
     {
-        return rt_hw_mp_add_region(thread, region);
+        thread->mem_regions = RT_KERNEL_MALLOC(NUM_DYNAMIC_REGIONS * sizeof(rt_mem_region_t));
+        if (thread->mem_regions == RT_NULL)
+        {
+            return RT_ERROR;
+        }
+        rt_memset(thread->mem_regions, 0U, sizeof(rt_mem_region_t ) * NUM_DYNAMIC_REGIONS);
     }
+    return rt_hw_mp_add_region(thread, region);
 }
 
 /**
@@ -96,12 +108,9 @@ rt_err_t rt_mem_protection_delete_region(rt_thread_t thread, rt_mem_region_t *re
 {
     if (thread == RT_NULL)
     {
-        return rt_hw_mp_delete_region(rt_thread_self(), region);
+        thread = rt_thread_self();
     }
-    else
-    {
-        return rt_hw_mp_delete_region(thread, region);
-    }
+    return rt_hw_mp_delete_region(thread, region);
 }
 
 /**
@@ -118,12 +127,9 @@ rt_err_t rt_mem_protection_update_region(rt_thread_t thread, rt_mem_region_t *re
 {
     if (thread == RT_NULL)
     {
-        return rt_hw_mp_update_region(rt_thread_self(), region);
+        thread = rt_thread_self();
     }
-    else
-    {
-        return rt_hw_mp_update_region(thread, region);
-    }
+    return rt_hw_mp_update_region(thread, region);
 }
 
 /**

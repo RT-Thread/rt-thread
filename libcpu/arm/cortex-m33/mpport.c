@@ -10,14 +10,13 @@
 
 #include <rtdef.h>
 #include <mp.h>
-#include "mpport.h"
 
 #define DBG_ENABLE
 #define DBG_SECTION_NAME "MEMORY PROTECTION"
 #define DBG_LEVEL DBG_ERROR
 #include <rtdbg.h>
 
-#define MEM_REGION_TO_MPU_INDEX(thread, region) (((rt_size_t)region - (rt_size_t)(&(thread->mem_regions[0]))) / sizeof(rt_mem_region_t)) + NUM_STATIC_REGIONS
+#define MEM_REGION_TO_MPU_INDEX(thread, region) ((((rt_size_t)region - (rt_size_t)(thread->mem_regions)) / sizeof(rt_mem_region_t)) + NUM_STATIC_REGIONS)
 
 extern rt_mem_region_t *rt_mem_protection_find_free_region(rt_thread_t thread);
 extern rt_mem_region_t *rt_mem_protection_find_region(rt_thread_t thread, rt_mem_region_t *region);
@@ -277,12 +276,15 @@ void rt_hw_mp_table_switch(rt_thread_t thread)
     extern rt_mem_exclusive_region_t exclusive_regions[NUM_EXCLUSIVE_REGIONS];
     rt_uint8_t i;
     rt_uint8_t index = NUM_STATIC_REGIONS;
-    for (i = 0U; i < NUM_DYNAMIC_REGIONS; i++)
+    if (thread->mem_regions != RT_NULL)
     {
-        if (thread->mem_regions[i].size != 0U)
+        for (i = 0U; i < NUM_DYNAMIC_REGIONS; i++)
         {
-            ARM_MPU_SetRegion(index, thread->mem_regions[i].attr.rbar, thread->mem_regions[i].attr.rlar);
-            index += 1U;
+            if (((rt_mem_region_t *)thread->mem_regions)[i].size != 0U)
+            {
+                ARM_MPU_SetRegion(index, ((rt_mem_region_t *)thread->mem_regions)[i].attr.rbar, ((rt_mem_region_t *)thread->mem_regions)[i].attr.rlar);
+                index += 1U;
+            }
         }
     }
     for (i = 0U; i < NUM_EXCLUSIVE_REGIONS; i++)
@@ -320,12 +322,15 @@ void MemManage_Handler(void)
         }
         if (info.region.size == 0U)
         {
-            for (i = NUM_DYNAMIC_REGIONS - 1; i >= 0; i--)
+            if (info.thread->mem_regions != RT_NULL)
             {
-                if ((info.thread->mem_regions[i].size != 0U) && ADDR_IN_REGION(info.addr, &(info.thread->mem_regions[i])))
+                for (i = NUM_DYNAMIC_REGIONS - 1; i >= 0; i--)
                 {
-                    rt_memcpy(&(info.region), &(info.thread->mem_regions[i]), sizeof(rt_mem_region_t));
-                    break;
+                    if ((((rt_mem_region_t *)info.thread->mem_regions)[i].size != 0U) && ADDR_IN_REGION(info.addr, &(((rt_mem_region_t *)info.thread->mem_regions)[i])))
+                    {
+                        rt_memcpy(&(info.region), &(((rt_mem_region_t *)info.thread->mem_regions)[i]), sizeof(rt_mem_region_t));
+                        break;
+                    }
                 }
             }
             if (info.region.size == 0U)

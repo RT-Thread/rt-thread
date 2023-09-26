@@ -14,6 +14,7 @@
 #ifdef RT_USING_MEM_PROTECTION
 
 #include <board.h>
+#include <mp.h>
 
 #define MPU_MIN_REGION_SIZE 32U
 
