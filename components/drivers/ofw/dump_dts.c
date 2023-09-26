@@ -11,7 +11,7 @@
 #include <ofw.h>
 #include "ofw_internal.h"
 
-static void dump_dts(int argc,char** argv)
+static void dump_dts(int argc, char** argv)
 {
     if(ofw_node_root == RT_NULL)
     {
