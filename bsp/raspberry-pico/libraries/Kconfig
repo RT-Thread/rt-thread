@@ -29,10 +29,83 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_PIN
         default y
 
-    config BSP_USING_UART
+    menuconfig BSP_USING_UART
         bool "Enable UART"
-        select RT_USING_UART
+        select RT_USING_SERIAL
         default y
+        if BSP_USING_UART
+            config BSP_USING_UART0
+                bool "Enable UART0"
+                default y
+            if BSP_USING_UART0
+                choice
+                    prompt "uart0 tx pin number (GP)"
+                    depends on BSP_USING_UART0
+                    default BSP_UART0_TX_PIN_0
+                    config BSP_UART0_TX_PIN_0
+                        bool "0"
+                    config BSP_UART0_TX_PIN_12
+                        bool "12"
+                    config BSP_UART0_TX_PIN_16
+                        bool "16"
+                endchoice
+                config BSP_UART0_TX_PIN
+                    int 
+                    default 0 if BSP_UART0_TX_PIN_0
+                    default 12 if BSP_UART0_TX_PIN_12
+                    default 16 if BSP_UART0_TX_PIN_16
+
+                choice
+                    prompt "uart0 rx pin number (GP)"
+                    depends on BSP_USING_UART0
+                    default BSP_UART0_RX_PIN_1
+                    config BSP_UART0_RX_PIN_1
+                        bool "1"
+                    config BSP_UART0_RX_PIN_13
+                        bool "13"
+                    config BSP_UART0_RX_PIN_17
+                        bool "17"
+                endchoice
+                config BSP_UART0_RX_PIN
+                    int
+                    default 1 if BSP_UART0_RX_PIN_1
+                    default 13 if BSP_UART0_RX_PIN_13
+                    default 17 if BSP_UART0_RX_PIN_17
+            endif
+
+            config BSP_USING_UART1
+                bool "Enable UART1"
+                default n
+            if BSP_USING_UART1
+                choice
+                    prompt "uart1 tx pin number (GP)"
+                    depends on BSP_USING_UART1
+                    default BSP_UART1_TX_PIN_4
+                    config BSP_UART1_TX_PIN_4
+                        bool "4"
+                    config BSP_UART1_TX_PIN_8
+                        bool "8"
+                endchoice
+                config BSP_UART1_TX_PIN
+                    int
+                    default 4 if BSP_UART1_TX_PIN_4
+                    default 8 if BSP_UART1_TX_PIN_8
+
+                choice
+                    prompt "uart1 rx pin number (GP)"
+                    depends on BSP_USING_UART1
+                    default BSP_UART1_RX_PIN_5
+                    config BSP_UART1_RX_PIN_5
+                        bool "5"
+                    config BSP_UART1_RX_PIN_9
+                        bool "9"
+                endchoice
+                config BSP_UART1_RX_PIN
+                    int
+                    default 5 if BSP_UART1_RX_PIN_5
+                    default 9 if BSP_UART1_RX_PIN_9
+            endif
+        endif
 
     menuconfig BSP_USING_SOFT_I2C
         bool "Enable I2C BUS (software simulation)"
@@ -121,58 +194,140 @@ menu "On-chip Peripheral Drivers"
         default n
 
     menuconfig BSP_USING_SPI
-        config BSP_USING_SPI
-            bool "Enable SPI"
-            select RT_USING_SPI
-            default n
+        bool "Enable SPI"
+        select RT_USING_SPI
+        default n
 
-            if BSP_USING_SPI
-                config BSP_USING_SPI0
-                    bool "Enable SPI0"
-                    default n
+        if BSP_USING_SPI
+            config BSP_USING_SPI0
+                bool "Enable SPI0"
+                default n
 
-                config BSP_USING_SPI1
-                    bool "Enable SPI1"
-                    default n
-            endif
+            config BSP_USING_SPI1
+                bool "Enable SPI1"
+                default n
+        endif
 
     menuconfig BSP_USING_I2C
-        config BSP_USING_I2C
-            bool "Enable I2C"
-            select RT_USING_I2C
-            select RT_USING_I2C_BITOPS
-            select RT_USING_PIN
-            default n
+        bool "Enable I2C"
+        select RT_USING_I2C
+        select RT_USING_I2C_BITOPS
+        select RT_USING_PIN
+        default n
 
-            if BSP_USING_I2C
-                config BSP_USING_I2C0
-                    bool "Enable I2C0"
-                    default n
-                    if BSP_USING_I2C0
-                        config BSP_I2C0_SCL_PIN
-                            int "i2c0 scl pin number (GP)"
-                            range 0 28
-                            default 21
-                        config BSP_I2C0_SDA_PIN
-                            int "I2C0 sda pin number (GP)"
-                            range 0 28
-                            default 20
-                    endif
+        if BSP_USING_I2C
+            config BSP_USING_I2C0
+                bool "Enable I2C0"
+                default n
+                if BSP_USING_I2C0
+                    choice
+                        prompt "i2c0 scl pin number (GP)"
+                        depends on BSP_USING_I2C0
+                        default BSP_I2C0_SCL_PIN_21
+                        config BSP_I2C0_SCL_PIN_1
+                            bool "1"
+                        config BSP_I2C0_SCL_PIN_5
+                            bool "5"
+                        config BSP_I2C0_SCL_PIN_9
+                            bool "9"
+                        config BSP_I2C0_SCL_PIN_13
+                            bool "13"
+                        config BSP_I2C0_SCL_PIN_17
+                            bool "17"
+                        config BSP_I2C0_SCL_PIN_21
+                            bool "21"
+                    endchoice
+                    config BSP_I2C0_SCL_PIN
+                        int
+                        default 1 if BSP_I2C0_SCL_PIN_1
+                        default 5 if BSP_I2C0_SCL_PIN_5
+                        default 9 if BSP_I2C0_SCL_PIN_9
+                        default 13 if BSP_I2C0_SCL_PIN_13
+                        default 17 if BSP_I2C0_SCL_PIN_17
+                        default 21 if BSP_I2C0_SCL_PIN_21
 
-                config BSP_USING_I2C1
-                    bool "Enable I2C1"
-                    default n
-                    if BSP_USING_I2C1
-                        config BSP_I2C1_SCL_PIN
-                            int "i2c1 scl pin number (GP)"
-                            range 0 28
-                            default 19
-                        config BSP_I2C1_SDA_PIN
-                            int "I2C1 sda pin number (GP)"
-                            range 0 28
-                            default 18
-                    endif
-            endif
+                    choice
+                        prompt "i2c0 sda pin number (GP)"
+                        depends on BSP_USING_I2C0
+                        default BSP_I2C0_SDA_PIN_20
+                        config BSP_I2C0_SDA_PIN_0
+                            bool "0"
+                        config BSP_I2C0_SDA_PIN_4
+                            bool "4"
+                        config BSP_I2C0_SDA_PIN_8
+                            bool "8"
+                        config BSP_I2C0_SDA_PIN_12
+                            bool "12"
+                        config BSP_I2C0_SDA_PIN_16
+                            bool "16"
+                        config BSP_I2C0_SDA_PIN_20
+                            bool "20"
+                    endchoice
+                    config BSP_I2C0_SDA_PIN
+                        int
+                        default 0 if BSP_I2C0_SDA_PIN_0
+                        default 4 if BSP_I2C0_SDA_PIN_4
+                        default 8 if BSP_I2C0_SDA_PIN_8
+                        default 12 if BSP_I2C0_SDA_PIN_12
+                        default 16 if BSP_I2C0_SDA_PIN_16
+                        default 20 if BSP_I2C0_SDA_PIN_20
+                endif
+
+            config BSP_USING_I2C1
+                bool "Enable I2C1"
+                default n
+                if BSP_USING_I2C1
+                    choice 
+                        prompt "i2c1 scl pin number (GP)"
+                        depends on BSP_USING_I2C1
+                        config BSP_I2C1_SCL_PIN_3
+                            bool "3"
+                        config BSP_I2C1_SCL_PIN_7
+                            bool "7"
+                        config BSP_I2C1_SCL_PIN_11
+                            bool "11"
+                        config BSP_I2C1_SCL_PIN_15
+                            bool "15"
+                        config BSP_I2C1_SCL_PIN_19
+                            bool "19"
+                        config BSP_I2C1_SCL_PIN_27
+                            bool "27"
+                    endchoice
+                    config BSP_I2C1_SCL_PIN
+                        int
+                        default 3 if BSP_I2C1_SCL_PIN_3
+                        default 7 if BSP_I2C1_SCL_PIN_7
+                        default 11 if BSP_I2C1_SCL_PIN_11
+                        default 15 if BSP_I2C1_SCL_PIN_15
+                        default 19 if BSP_I2C1_SCL_PIN_19
+                        default 27 if BSP_I2C1_SCL_PIN_27
+
+                    choice
+                        prompt "i2c1 sda pin number (GP)"
+                        depends on BSP_USING_I2C1
+                        config BSP_I2C1_SDA_PIN_2
+                            bool "2"
+                        config BSP_I2C1_SDA_PIN_6
+                            bool "6"
+                        config BSP_I2C1_SDA_PIN_10
+                            bool "10"
+                        config BSP_I2C1_SDA_PIN_14
+                            bool "14"
+                        config BSP_I2C1_SDA_PIN_18
+                            bool "18"
+                        config BSP_I2C1_SDA_PIN_26
+                            bool "26"
+                    endchoice
+                    config BSP_I2C1_SDA_PIN
+                        int
+                        default 2 if BSP_I2C1_SDA_PIN_2
+                        default 6 if BSP_I2C1_SDA_PIN_6
+                        default 10 if BSP_I2C1_SDA_PIN_10
+                        default 14 if BSP_I2C1_SDA_PIN_14
+                        default 18 if BSP_I2C1_SDA_PIN_18
+                        default 26 if BSP_I2C1_SDA_PIN_26
+                endif
+        endif
 endmenu
 
 endmenu
