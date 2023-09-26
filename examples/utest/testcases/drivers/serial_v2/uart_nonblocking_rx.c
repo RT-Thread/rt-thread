@@ -19,14 +19,24 @@ static rt_bool_t nonblock_read(rt_device_t uart_dev)
     uassert_not_null(log_buffer);
 
     /* make sure device is closed and reopen it */
-    while(rt_device_close(uart_dev)!= -RT_ERROR);
+    while(rt_device_close(uart_dev) != -RT_ERROR);
     rt_device_open(uart_dev, RT_DEVICE_FLAG_TX_BLOCKING | RT_DEVICE_FLAG_RX_NON_BLOCKING);
 
-    rt_sprintf(log_buffer,"\nNONBLOCKING READ BEGIN, PLEASE SEND SOME DATAS\n");
-    rt_device_write(uart_dev,0,log_buffer, rt_strlen(log_buffer));
+    rt_sprintf(log_buffer, "\nNONBLOCKING READ BEGIN, PLEASE SEND SOME DATAS\n");
+    rt_device_write(uart_dev, 0, log_buffer, rt_strlen(log_buffer));
 
     total_length = 0;
-    rt_device_write(uart_dev,0,"5\n", 2);
+    rt_device_write(uart_dev, 0, "5\n", 2);
+    recv_length = 0;
+    recv_length = rt_device_read(uart_dev, -1, uart_read_buffer, 256);
+    rt_device_write(uart_dev,  0,  uart_read_buffer, 256);
+    total_length += recv_length;
+    rt_thread_mdelay(1000);
+
+    rt_sprintf(log_buffer, "\nnonblock : %d bytes read, total: %d \n", recv_length, total_length);
+    rt_device_write(uart_dev, 0, log_buffer, rt_strlen(log_buffer));
+
+    rt_device_write(uart_dev, 0, "4\n", 2);
     recv_length = 0;
     recv_length = rt_device_read(uart_dev, -1, uart_read_buffer, 256);
     rt_device_write(uart_dev, 0, uart_read_buffer, 256);
@@ -36,27 +46,17 @@ static rt_bool_t nonblock_read(rt_device_t uart_dev)
     rt_sprintf(log_buffer,"\nnonblock : %d bytes read , total: %d \n", recv_length, total_length);
     rt_device_write(uart_dev,0,log_buffer, rt_strlen(log_buffer));
 
-    rt_device_write(uart_dev,0,"4\n", 2);
+    rt_device_write(uart_dev, 0, "3\n", 2);
     recv_length = 0;
     recv_length = rt_device_read(uart_dev, -1, uart_read_buffer, 256);
     rt_device_write(uart_dev, 0, uart_read_buffer, 256);
     total_length += recv_length;
     rt_thread_mdelay(1000);
 
-    rt_sprintf(log_buffer,"\nnonblock : %d bytes read , total: %d \n", recv_length, total_length);
+    rt_sprintf(log_buffer, "\nnonblock : %d bytes read, total: %d \n", recv_length, total_length);
     rt_device_write(uart_dev,0,log_buffer, rt_strlen(log_buffer));
 
-    rt_device_write(uart_dev,0,"3\n", 2);
-    recv_length = 0;
-    recv_length = rt_device_read(uart_dev, -1, uart_read_buffer, 256);
-    rt_device_write(uart_dev, 0, uart_read_buffer, 256);
-    total_length += recv_length;
-    rt_thread_mdelay(1000);
-
-    rt_sprintf(log_buffer,"\nnonblock : %d bytes read , total: %d \n", recv_length, total_length);
-    rt_device_write(uart_dev,0,log_buffer, rt_strlen(log_buffer));
-
-    rt_device_write(uart_dev,0,"2\n", 2);
+    rt_device_write(uart_dev, 0, "2\n", 2);
     recv_length = 0;
     recv_length = rt_device_read(uart_dev, -1, uart_read_buffer, 128);
     rt_device_write(uart_dev, 0, uart_read_buffer, 128);
@@ -64,20 +64,20 @@ static rt_bool_t nonblock_read(rt_device_t uart_dev)
     rt_thread_mdelay(1000);
 
     rt_sprintf(log_buffer,"\nnonblock : %d bytes read , total: %d \n", recv_length, total_length);
-    rt_device_write(uart_dev,0,log_buffer, rt_strlen(log_buffer));
+    rt_device_write(uart_dev, 0, log_buffer, rt_strlen(log_buffer));
 
-    rt_device_write(uart_dev,0,"1\n", 2);
+    rt_device_write(uart_dev, 0, "1\n", 2);
     recv_length = 0;
     recv_length = rt_device_read(uart_dev, -1, uart_read_buffer, 128);
     rt_device_write(uart_dev, 0, uart_read_buffer, 128);
     total_length += recv_length;
     rt_thread_mdelay(1000);
 
-    rt_sprintf(log_buffer,"\nnonblock : %d bytes read , total: %d \n", recv_length, total_length);
-    rt_device_write(uart_dev,0,log_buffer, rt_strlen(log_buffer));
+    rt_sprintf(log_buffer, "\nnonblock : %d bytes read , total: %d \n", recv_length, total_length);
+    rt_device_write(uart_dev, 0, log_buffer, rt_strlen(log_buffer));
 
-    rt_sprintf(log_buffer,"BLOCKING READ END");
-    rt_device_write(uart_dev,0,log_buffer, rt_strlen(log_buffer));
+    rt_sprintf(log_buffer, "BLOCKING READ END");
+    rt_device_write(uart_dev, 0, log_buffer, rt_strlen(log_buffer));
 
     rt_free(uart_read_buffer);
     return RT_TRUE;
@@ -101,8 +101,8 @@ static rt_err_t utest_tc_cleanup(void)
 {
     rt_device_t uart_dev;
     uart_dev = rt_device_find(SERIAL_UART_NAME);
-    while(rt_device_close(uart_dev)!= -RT_ERROR);
-    rt_device_open(uart_dev,  RT_DEVICE_FLAG_TX_BLOCKING | RT_DEVICE_FLAG_TX_BLOCKING);
+    while(rt_device_close(uart_dev) != -RT_ERROR);
+    rt_device_open(uart_dev, RT_DEVICE_FLAG_TX_BLOCKING | RT_DEVICE_FLAG_TX_BLOCKING);
     return RT_EOK;
 }
 

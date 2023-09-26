@@ -21,9 +21,9 @@ static rt_bool_t nonblock_write(rt_device_t uart_dev)
         uart_write_buffer[i] = '0' + (i % 50);
 
     /* make sure device is closed and reopen it */
-    while(rt_device_close(uart_dev)!= -RT_ERROR);
+    while(rt_device_close(uart_dev) != -RT_ERROR);
     uart_dev = rt_device_find(SERIAL_UART_NAME);
-    rt_device_open(uart_dev,  RT_DEVICE_FLAG_TX_NON_BLOCKING | RT_DEVICE_FLAG_RX_NON_BLOCKING);
+    rt_device_open(uart_dev, RT_DEVICE_FLAG_TX_NON_BLOCKING | RT_DEVICE_FLAG_RX_NON_BLOCKING);
 
     LOG_D("\nNONBLOCKING WRITE BEGIN\n");
     rt_thread_mdelay(2000);
@@ -92,7 +92,7 @@ static rt_bool_t nonblock_write(rt_device_t uart_dev)
     LOG_D("\nNONBLOCKING_TX END\n");
     for(i = 0; i < index; i++)
     {
-        LOG_D("\nNONBLOCKING_MODE : write %d / %d bytes in %d ticks\n", write_num_array[i],total_write_num[i], tick_array[i]);
+        LOG_D("\nNONBLOCKING_MODE : write %d / %d bytes in %d ticks\n", write_num_array[i], total_write_num[i], tick_array[i]);
         rt_thread_mdelay(1000);
     }
 
@@ -118,8 +118,8 @@ static rt_err_t utest_tc_cleanup(void)
 {
     rt_device_t uart_dev;
     uart_dev = rt_device_find(SERIAL_UART_NAME);
-    while(rt_device_close(uart_dev)!= -RT_ERROR);
-    rt_device_open(uart_dev,  RT_DEVICE_FLAG_TX_BLOCKING | RT_DEVICE_FLAG_TX_BLOCKING);
+    while(rt_device_close(uart_dev) != -RT_ERROR);
+    rt_device_open(uart_dev, RT_DEVICE_FLAG_TX_BLOCKING | RT_DEVICE_FLAG_TX_BLOCKING);
     return RT_EOK;
 }
 
