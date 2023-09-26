@@ -294,7 +294,7 @@ static void test_static_pri_reverse(void)
     tid1 = rt_thread_create("thread1",
                             static_thread1_entry,
                             &static_mutex,
-                            1024,
+                            UTEST_THR_STACK_SIZE,
                             10 - 1,
                             10);
     if (tid1 != RT_NULL)
@@ -304,7 +304,7 @@ static void test_static_pri_reverse(void)
     tid2 = rt_thread_create("thread2",
                             static_thread2_entry,
                             &static_mutex,
-                            1024,
+                            UTEST_THR_STACK_SIZE,
                             10,
                             10);
     if (tid2 != RT_NULL)
@@ -314,7 +314,7 @@ static void test_static_pri_reverse(void)
     tid3 = rt_thread_create("thread3",
                             static_thread3_entry,
                             &static_mutex,
-                            1024,
+                            UTEST_THR_STACK_SIZE,
                             10 + 1,
                             10);
     if (tid3 != RT_NULL)
@@ -603,7 +603,7 @@ static void test_dynamic_pri_reverse(void)
     tid1 = rt_thread_create("thread1",
                             dynamic_thread1_entry,
                             dynamic_mutex,
-                            1024,
+                            UTEST_THR_STACK_SIZE,
                             10 - 1,
                             10);
     if (tid1 != RT_NULL)
@@ -613,7 +613,7 @@ static void test_dynamic_pri_reverse(void)
     tid2 = rt_thread_create("thread2",
                             dynamic_thread2_entry,
                             dynamic_mutex,
-                            1024,
+                            UTEST_THR_STACK_SIZE,
                             10,
                             10);
     if (tid2 != RT_NULL)
@@ -623,7 +623,7 @@ static void test_dynamic_pri_reverse(void)
     tid3 = rt_thread_create("thread3",
                             dynamic_thread3_entry,
                             dynamic_mutex,
-                            1024,
+                            UTEST_THR_STACK_SIZE,
                             10 + 1,
                             10);
     if (tid3 != RT_NULL)

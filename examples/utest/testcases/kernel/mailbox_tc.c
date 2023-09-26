@@ -21,11 +21,11 @@ static uint8_t static_mb_recv_thread_finish, static_mb_send_thread_finish;
 static uint8_t dynamic_mb_recv_thread_finish, dynamic_mb_send_thread_finish;
 
 rt_align(RT_ALIGN_SIZE)
-static char thread1_stack[1024];
+static char thread1_stack[UTEST_THR_STACK_SIZE];
 static struct rt_thread thread1;
 
 rt_align(RT_ALIGN_SIZE)
-static char thread2_stack[1024];
+static char thread2_stack[UTEST_THR_STACK_SIZE];
 static struct rt_thread thread2;
 
 #define THREAD_PRIORITY      9
@@ -315,7 +315,7 @@ static void test_dynamic_mailbox_send_recv(void)
     mb_recv = rt_thread_create("mb_recv_thread",
                                 thread3_recv_dynamic_mb,
                                 RT_NULL,
-                                1024,
+                                UTEST_THR_STACK_SIZE,
                                 THREAD_PRIORITY - 1,
                                 THREAD_TIMESLICE);
     if (mb_recv == RT_NULL)
@@ -327,7 +327,7 @@ static void test_dynamic_mailbox_send_recv(void)
     mb_send = rt_thread_create("mb_send_thread",
                                 thread4_send_dynamic_mb,
                                 RT_NULL,
-                                1024,
+                                UTEST_THR_STACK_SIZE,
                                 THREAD_PRIORITY - 1,
                                 THREAD_TIMESLICE);
     if (mb_send == RT_NULL)
