@@ -76,7 +76,7 @@ if RT_USING_MSH
         int "The number of arguments for a shell command"
         default 10
 
-    config FINSH_OPTION_COMPLETION_ENABLED
+    config FINSH_USING_OPTION_COMPLETION
         bool "command option completion enable"
         default y
 

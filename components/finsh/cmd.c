@@ -39,6 +39,7 @@
 #ifdef RT_USING_FINSH
 #include <finsh.h>
 
+#define LIST_DFS_OPT_ID 0x100
 #define LIST_FIND_OBJ_NR 8
 
 static long clear(void)
@@ -903,7 +904,7 @@ long list_device(void)
 }
 #endif /* RT_USING_DEVICE */
 
-#ifndef FINSH_OPTION_COMPLETION_ENABLED
+#ifndef FINSH_USING_OPTION_COMPLETION
 int cmd_list(int argc, char **argv)
 {
     if(argc == 2)
@@ -1050,7 +1051,7 @@ int cmd_list(int argc, char **argv)
         case RT_Object_Class_Device: list_device(); break;
 #endif /* RT_USING_DEVICE */
 #ifdef RT_USING_DFS
-        case 0x100:
+        case LIST_DFS_OPT_ID:
         {
             extern int list_fd(void);
             list_fd();
@@ -1099,10 +1100,10 @@ CMD_OPTIONS_NODE(RT_Object_Class_MemPool,      mempool,  list memory pools)
 CMD_OPTIONS_NODE(RT_Object_Class_Device,       device,   list devices)
 #endif /* RT_USING_DEVICE */
 #ifdef RT_USING_DFS
-CMD_OPTIONS_NODE(0x100,                        fd,       list file descriptors)
+CMD_OPTIONS_NODE(LIST_DFS_OPT_ID,              fd,       list file descriptors)
 #endif /* RT_USING_DFS */
 CMD_OPTIONS_NODE_END
-#endif /* FINSH_OPTION_COMPLETION_ENABLED */
+#endif /* FINSH_USING_OPTION_COMPLETION */
 MSH_CMD_EXPORT_ALIAS(cmd_list, list, list objects, optenable);
 
 #endif /* RT_USING_FINSH */

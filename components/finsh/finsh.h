@@ -16,7 +16,7 @@
 #pragma section("FSymTab$f",read)
 #endif /* _MSC_VER */
 
-#ifdef FINSH_OPTION_COMPLETION_ENABLED
+#ifdef FINSH_USING_OPTION_COMPLETION
 #define FINSH_COND(opt) opt,
 #else
 #define FINSH_COND(opt)
@@ -135,7 +135,7 @@ typedef long (*syscall_func)(void);
  * @param opt This is an option, enter any content to enable option completion
  */
 /* MSH_CMD_EXPORT(command, desc) or MSH_CMD_EXPORT(command, desc, opt) */
-#ifdef FINSH_OPTION_COMPLETION_ENABLED
+#ifdef FINSH_USING_OPTION_COMPLETION
 #define MSH_CMD_EXPORT(...)                                 \
     __MSH_GET_MACRO(__VA_ARGS__, _MSH_FUNCTION_CMD3_OPT,    \
         _MSH_FUNCTION_CMD2)(__VA_ARGS__)
@@ -143,7 +143,7 @@ typedef long (*syscall_func)(void);
 #define MSH_CMD_EXPORT(...)                                 \
     __MSH_GET_MACRO(__VA_ARGS__, _MSH_FUNCTION_CMD3_NO_OPT, \
         _MSH_FUNCTION_CMD2)(__VA_ARGS__)
-#endif /* FINSH_OPTION_COMPLETION_ENABLED */
+#endif /* FINSH_USING_OPTION_COMPLETION */
 
 /**
  * @ingroup msh
@@ -157,7 +157,7 @@ typedef long (*syscall_func)(void);
  */
 /* #define MSH_CMD_EXPORT_ALIAS(command, alias, desc) or
    #define MSH_CMD_EXPORT_ALIAS(command, alias, desc, opt) */
-#ifdef FINSH_OPTION_COMPLETION_ENABLED
+#ifdef FINSH_USING_OPTION_COMPLETION
 #define MSH_CMD_EXPORT_ALIAS(...)                                           \
     __MSH_GET_EXPORT_MACRO(__VA_ARGS__, _MSH_FUNCTION_EXPORT_CMD4_OPT,      \
             _MSH_FUNCTION_EXPORT_CMD3)(__VA_ARGS__)
@@ -165,7 +165,7 @@ typedef long (*syscall_func)(void);
 #define MSH_CMD_EXPORT_ALIAS(...)                                           \
     __MSH_GET_EXPORT_MACRO(__VA_ARGS__, _MSH_FUNCTION_EXPORT_CMD4_NO_OPT,   \
             _MSH_FUNCTION_EXPORT_CMD3)(__VA_ARGS__)
-#endif /* FINSH_OPTION_COMPLETION_ENABLED */
+#endif /* FINSH_USING_OPTION_COMPLETION */
 
 /* system call table */
 struct finsh_syscall
@@ -175,7 +175,7 @@ struct finsh_syscall
     const char     *desc;       /* description of system call */
 #endif
 
-#ifdef FINSH_OPTION_COMPLETION_ENABLED
+#ifdef FINSH_USING_OPTION_COMPLETION
     struct msh_cmd_opt *opt;
 #endif
     syscall_func func;      /* the function address of system call */
@@ -188,7 +188,7 @@ struct finsh_syscall_item
     struct finsh_syscall syscall;       /* syscall */
 };
 
-#ifdef FINSH_OPTION_COMPLETION_ENABLED
+#ifdef FINSH_USING_OPTION_COMPLETION
 typedef struct msh_cmd_opt
 {
     rt_uint32_t         id;
@@ -201,8 +201,8 @@ typedef struct msh_cmd_opt
 #define CMD_OPTIONS_NODE(_id, _name, _des) {.id = _id, .name = #_name, .des = #_des},
 #define CMD_OPTIONS_NODE_END    {0},};
 
-extern void msh_opt_list_dump(void *options);
-extern int msh_cmd_opt_id_get(int argc, char *argv[], void *options);
+void msh_opt_list_dump(void *options);
+int msh_cmd_opt_id_get(int argc, char *argv[], void *options);
 #define MSH_OPT_ID_GET(fun) msh_cmd_opt_id_get(argc, argv, (void*) fun##_msh_options)
 #define MSH_OPT_DUMP(fun)   msh_opt_list_dump((void*) fun##_msh_options)
 

@@ -790,7 +790,7 @@ void msh_auto_complete(char *prefix)
     return ;
 }
 
-#ifdef FINSH_OPTION_COMPLETION_ENABLED
+#ifdef FINSH_USING_OPTION_COMPLETION
 static msh_cmd_opt_t *msh_get_cmd_opt(char *opt_str)
 {
     struct finsh_syscall *index;
@@ -946,5 +946,5 @@ void msh_opt_list_dump(void *options)
         rt_kprintf("    %-16s - %s\n", opt->name, opt->des);
     }
 }
-#endif /* FINSH_OPTION_COMPLETION_ENABLED */
+#endif /* FINSH_USING_OPTION_COMPLETION */
 #endif /* RT_USING_FINSH */
