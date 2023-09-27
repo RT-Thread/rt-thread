@@ -227,42 +227,42 @@ menu "Onboard Peripheral Drivers"
                 default n
         endif
 
-	menuconfig BSP_USING_VGLITE
+    menuconfig BSP_USING_VGLITE
         bool "Enable VGLite"
         select RT_USING_PIN
-		select BSP_USING_LCD_MIPI
+        select BSP_USING_LCD_MIPI
         default n
 
-		if BSP_USING_VGLITE
-			choice
-				prompt "Select display panel"
-				default DISPLAY_USING_RK055AHD091
-				
-				config DISPLAY_USING_RK055AHD091
-					bool "RK055AHD091-CTG (RK055HDMIPI4M 720 * 1280)"
-					
-				config DISPLAY_USING_RK055IQH091
-					bool "RK055IQH091-CTG (540 * 960)"
-					
-				config DISPLAY_USING_RK055MHD091
-					bool "RK055MHD091A0-CTG (RK055HDMIPI4MA0 720 * 1280)"
-			endchoice
+        if BSP_USING_VGLITE
+            choice
+                prompt "Select display panel"
+                default DISPLAY_USING_RK055AHD091
+                
+                config DISPLAY_USING_RK055AHD091
+                    bool "RK055AHD091-CTG (RK055HDMIPI4M 720 * 1280)"
+                    
+                config DISPLAY_USING_RK055IQH091
+                    bool "RK055IQH091-CTG (540 * 960)"
+                    
+                config DISPLAY_USING_RK055MHD091
+                    bool "RK055MHD091A0-CTG (RK055HDMIPI4MA0 720 * 1280)"
+            endchoice
 
-			choice
-				prompt "Select display controller"
-				default BSP_USING_LCDIFV2
-				
-				config BSP_USING_ELCDIF
-					bool "ELCDIF"
-				
-				config BSP_USING_LCDIFV2
-					bool "LCDIFV2"
-			endchoice
+            choice
+                prompt "Select display controller"
+                default BSP_USING_LCDIFV2
+                
+                config BSP_USING_ELCDIF
+                    bool "ELCDIF"
+                
+                config BSP_USING_LCDIFV2
+                    bool "LCDIFV2"
+            endchoice
 
-			config VGLITE_USING_ELM
-			bool "Enable Elementary"
-			default y
-		endif
+            config VGLITE_USING_ELM
+            bool "Enable Elementary"
+            default y
+        endif
 
 endmenu
 
