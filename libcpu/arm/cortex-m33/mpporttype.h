@@ -5,7 +5,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2023-08-25     tangzz98     the first version
+ * 2023-09-25     tangzz98     the first version
  */
 
 #ifndef __MPPORTTYPE_H__

@@ -11,6 +11,10 @@ config RT_USING_HW_STACK_GUARD
     select RT_USING_MEM_PROTECTION
 
 if RT_USING_MEM_PROTECTION
+    config USE_MEM_PROTECTION_EXAMPLES
+    bool "Use memory protection examples"
+    default y
+
     config NUM_MEM_REGIONS
     int "Total number of memory protection regions supported by hardware"
 
