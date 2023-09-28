@@ -31,7 +31,7 @@ if GetDepend(['RT_USING_QSPI']):
 if GetDepend('RT_USING_SPI_BITOPS'):
     src += ['drv_soft_spi.c']
 
-if GetDepend(['RT_USING_I2C', 'RT_USING_I2C_HW']):
+if GetDepend(['RT_USING_I2C', 'BSP_USING_I2C_HW']):
     src += ['drv_i2c.c']
 
 if GetDepend(['RT_USING_I2C', 'RT_USING_I2C_BITOPS']):

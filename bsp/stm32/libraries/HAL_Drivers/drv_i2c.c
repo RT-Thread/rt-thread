@@ -10,7 +10,7 @@
 
 #include "board.h"
 
-#ifdef RT_USING_I2C_HW
+#ifdef BSP_USING_I2C_HW
 
 #if defined(BSP_USING_I2C1) || defined(BSP_USING_I2C2) || defined(BSP_USING_I2C3)
 
