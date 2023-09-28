@@ -1,1 +1,2 @@
 pico_simple_hardware_target(rtc)
+pico_mirrored_target_link_libraries(hardware_rtc INTERFACE hardware_irq hardware_resets hardware_clocks)

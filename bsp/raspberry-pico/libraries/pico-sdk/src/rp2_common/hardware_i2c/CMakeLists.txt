@@ -1,1 +1,2 @@
 pico_simple_hardware_target(i2c)
+pico_mirrored_target_link_libraries(hardware_i2c INTERFACE pico_time hardware_resets hardware_clocks)

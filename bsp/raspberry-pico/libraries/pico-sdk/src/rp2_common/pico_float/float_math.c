@@ -4,15 +4,18 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#include "pico/types.h"
 #include "pico/float.h"
-#include "pico/platform.h"
+
+// opened a separate issue https://github.com/raspberrypi/pico-sdk/issues/166 to deal with these warnings if at all
+GCC_Pragma("GCC diagnostic push")
+GCC_Pragma("GCC diagnostic ignored \"-Wconversion\"")
+GCC_Pragma("GCC diagnostic ignored \"-Wsign-conversion\"")
 
 typedef uint32_t ui32;
 typedef int32_t i32;
 
-#define PINF ( HUGE_VAL)
-#define MINF (-HUGE_VAL)
+#define FPINF ( HUGE_VALF)
+#define FMINF (-HUGE_VALF)
 #define NANF ((float)NAN)
 #define PZERO (+0.0)
 #define MZERO (-0.0)
@@ -34,15 +37,29 @@ typedef int32_t i32;
 #define FUNPACK(x,e,m) e=((x)>>23)&0xff,m=((x)&0x007fffff)|0x00800000
 #define FUNPACKS(x,s,e,m) s=((x)>>31),FUNPACK((x),(e),(m))
 
-_Pragma("GCC diagnostic push")
-_Pragma("GCC diagnostic ignored \"-Wstrict-aliasing\"")
+typedef union {
+    float f;
+    ui32 ix;
+} float_ui32;
 
-static inline bool fisnan(float x) {
-    ui32 ix=*(i32*)&x;
-    return ix * 2 > 0xff000000u;
+static inline float ui322float(ui32 ix) {
+    float_ui32 tmp;
+    tmp.ix = ix;
+    return tmp.f;
+}
+
+static inline ui32 float2ui32(float f) {
+    float_ui32 tmp;
+    tmp.f = f;
+    return tmp.ix;
 }
 
 #if PICO_FLOAT_PROPAGATE_NANS
+static inline bool fisnan(float x) {
+    ui32 ix=float2ui32(x);
+    return ix * 2 > 0xff000000u;
+}
+
 #define check_nan_f1(x) if (fisnan((x))) return (x)
 #define check_nan_f2(x,y) if (fisnan((x))) return (x); else if (fisnan((y))) return (y);
 #else
@@ -51,17 +68,17 @@ static inline bool fisnan(float x) {
 #endif
 
 static inline int fgetsignexp(float x) {
-    ui32 ix=*(ui32*)&x;
+    ui32 ix=float2ui32(x);
     return (ix>>23)&0x1ff;
 }
 
 static inline int fgetexp(float x) {
-    ui32 ix=*(ui32*)&x;
+    ui32 ix=float2ui32(x);
     return (ix>>23)&0xff;
 }
 
 static inline float fldexp(float x,int de) {
-    ui32 ix=*(ui32*)&x,iy;
+    ui32 ix=float2ui32(x),iy;
     int e;
     e=fgetexp(x);
     if(e==0||e==0xff) return x;
@@ -69,7 +86,7 @@ static inline float fldexp(float x,int de) {
     if(e<=0) iy=ix&0x80000000; // signed zero for underflow
     else if(e>=0xff) iy=(ix&0x80000000)|0x7f800000ULL; // signed infinity on overflow
     else iy=ix+((ui32)de<<23);
-    return *(float*)&iy;
+    return ui322float(iy);
 }
 
 float WRAPPER_FUNC(ldexpf)(float x, int de) {
@@ -78,9 +95,9 @@ float WRAPPER_FUNC(ldexpf)(float x, int de) {
 }
 
 static inline float fcopysign(float x,float y) {
-    ui32 ix=*(ui32*)&x,iy=*(ui32*)&y;
+    ui32 ix=float2ui32(x),iy=float2ui32(y);
     ix=((ix&0x7fffffff)|(iy&0x80000000));
-    return *(float*)&ix;
+    return ui322float(ix);
 }
 
 float WRAPPER_FUNC(copysignf)(float x, float y) {
@@ -89,14 +106,14 @@ float WRAPPER_FUNC(copysignf)(float x, float y) {
 }
 
 static inline int fiszero(float x)  { return fgetexp    (x)==0; }
-static inline int fispzero(float x) { return fgetsignexp(x)==0; }
-static inline int fismzero(float x) { return fgetsignexp(x)==0x100; }
+//static inline int fispzero(float x) { return fgetsignexp(x)==0; }
+//static inline int fismzero(float x) { return fgetsignexp(x)==0x100; }
 static inline int fisinf(float x)   { return fgetexp    (x)==0xff; }
 static inline int fispinf(float x)  { return fgetsignexp(x)==0xff; }
 static inline int fisminf(float x)  { return fgetsignexp(x)==0x1ff; }
 
 static inline int fisint(float x) {
-    ui32 ix=*(ui32*)&x,m;
+    ui32 ix=float2ui32(x),m;
     int e=fgetexp(x);
     if(e==0) return 1;       // 0 is an integer
     e-=0x7f;                 // remove exponent bias
@@ -109,7 +126,7 @@ static inline int fisint(float x) {
 }
 
 static inline int fisoddint(float x) {
-    ui32 ix=*(ui32*)&x,m;
+    ui32 ix=float2ui32(x),m;
     int e=fgetexp(x);
     e-=0x7f;                 // remove exponent bias
     if(e<0) return 0;        // |x|<1; 0 is not odd
@@ -122,24 +139,24 @@ static inline int fisoddint(float x) {
 }
 
 static inline int fisstrictneg(float x) {
-    ui32 ix=*(ui32*)&x;
+    ui32 ix=float2ui32(x);
     if(fiszero(x)) return 0;
     return ix>>31;
 }
 
 static inline int fisneg(float x) {
-    ui32 ix=*(ui32*)&x;
+    ui32 ix=float2ui32(x);
     return ix>>31;
 }
 
 static inline float fneg(float x) {
-    ui32 ix=*(ui32*)&x;
+    ui32 ix=float2ui32(x);
     ix^=0x80000000;
-    return *(float*)&ix;
+    return ui322float(ix);
 }
 
 static inline int fispo2(float x) {
-    ui32 ix=*(ui32*)&x;
+    ui32 ix=float2ui32(x);
     if(fiszero(x)) return 0;
     if(fisinf(x)) return 0;
     ix&=0x007fffff;
@@ -156,33 +173,33 @@ static inline float fnan_or(float x) {
 
 float WRAPPER_FUNC(truncf)(float x) {
     check_nan_f1(x);
-    ui32 ix=*(ui32*)&x,m;
+    ui32 ix=float2ui32(x),m;
     int e=fgetexp(x);
     e-=0x7f;                 // remove exponent bias
     if(e<0) {                // |x|<1
         ix&=0x80000000;
-        return *(float*)&ix;
+        return ui322float(ix);
     }
     e=23-e;                  // bit position in mantissa with significance 1
     if(e<=0) return x;       // |x| large, so must be an integer
     m=(1<<e)-1;              // mask for bits of significance <1
     ix&=~m;
-    return *(float*)&ix;
+    return ui322float(ix);
 }
 
 float WRAPPER_FUNC(roundf)(float x) {
     check_nan_f1(x);
-    ui32 ix=*(ui32*)&x,m;
+    ui32 ix=float2ui32(x),m;
     int e=fgetexp(x);
     e-=0x7f;                 // remove exponent bias
     if(e<-1) {               // |x|<0.5
         ix&=0x80000000;
-        return *(float*)&ix;
+        return ui322float(ix);
     }
     if(e==-1) {              // 0.5<=|x|<1
         ix&=0x80000000;
         ix|=0x3f800000;        // ±1
-        return *(float*)&ix;
+        return ui322float(ix);
     }
     e=23-e;                  // bit position in mantissa with significance 1, <=23
     if(e<=0) return x;       // |x| large, so must be an integer
@@ -190,16 +207,16 @@ float WRAPPER_FUNC(roundf)(float x) {
     ix+=m;
     m=m+m-1;                 // mask for bits of significance <1
     ix&=~m;
-    return *(float*)&ix;
+    return ui322float(ix);
 }
 
 float WRAPPER_FUNC(floorf)(float x) {
     check_nan_f1(x);
-    ui32 ix=*(ui32*)&x,m;
+    ui32 ix=float2ui32(x),m;
     int e=fgetexp(x);
     if(e==0) {       // x==0
         ix&=0x80000000;
-        return *(float*)&ix;
+        return ui322float(ix);
     }
     e-=0x7f;                 // remove exponent bias
     if(e<0) {                // |x|<1, not zero
@@ -211,16 +228,16 @@ float WRAPPER_FUNC(floorf)(float x) {
     m=(1<<e)-1;              // mask for bit of significance <1
     if(fisneg(x)) ix+=m;     // add 1-ε to magnitude if negative
     ix&=~m;                  // truncate
-    return *(float*)&ix;
+    return ui322float(ix);
 }
 
 float WRAPPER_FUNC(ceilf)(float x) {
     check_nan_f1(x);
-    ui32 ix=*(ui32*)&x,m;
+    ui32 ix=float2ui32(x),m;
     int e=fgetexp(x);
     if(e==0) {       // x==0
         ix&=0x80000000;
-        return *(float*)&ix;
+        return ui322float(ix);
     }
     e-=0x7f;                 // remove exponent bias
     if(e<0) {                // |x|<1, not zero
@@ -232,14 +249,14 @@ float WRAPPER_FUNC(ceilf)(float x) {
     m=(1<<e)-1;              // mask for bit of significance <1
     if(!fisneg(x)) ix+=m;    // add 1-ε to magnitude if positive
     ix&=~m;                  // truncate
-    return *(float*)&ix;
+    return ui322float(ix);
 }
 
 float WRAPPER_FUNC(asinf)(float x) {
     check_nan_f1(x);
     float u;
     u=(1.0f-x)*(1.0f+x);
-    if(fisstrictneg(u)) return fnan_or(PINF);
+    if(fisstrictneg(u)) return fnan_or(FPINF);
     return atan2f(x,sqrtf(u));
 }
 
@@ -247,7 +264,7 @@ float WRAPPER_FUNC(acosf)(float x) {
     check_nan_f1(x);
     float u;
     u=(1.0f-x)*(1.0f+x);
-    if(fisstrictneg(u)) return fnan_or(PINF);
+    if(fisstrictneg(u)) return fnan_or(FPINF);
     return atan2f(sqrtf(u),x);
 }
 
@@ -360,27 +377,27 @@ static float fpowint_0(float x,int y) {
 }
 
 float WRAPPER_FUNC(powintf)(float x,int y) {
-    _Pragma("GCC diagnostic push")
-    _Pragma("GCC diagnostic ignored \"-Wfloat-equal\"")
+    GCC_Pragma("GCC diagnostic push")
+    GCC_Pragma("GCC diagnostic ignored \"-Wfloat-equal\"")
     if(x==1.0f||y==0) return 1;
     if(x==0.0f) {
         if(y>0) {
             if(y&1) return x;
             else    return 0;
         }
-        if((y&1)) return fcopysign(PINF,x);
-        return PINF;
+        if((y&1)) return fcopysign(FPINF,x);
+        return FPINF;
     }
-    _Pragma("GCC diagnostic pop")
+    GCC_Pragma("GCC diagnostic pop")
     check_nan_f1(x);
     if(fispinf(x)) {
         if(y<0) return 0;
-        else    return PINF;
+        else    return FPINF;
     }
     if(fisminf(x)) {
         if(y>0) {
-            if((y&1)) return MINF;
-            else      return PINF;
+            if((y&1)) return FMINF;
+            else      return FPINF;
         }
         if((y&1)) return MZERO;
         else      return PZERO;
@@ -409,42 +426,42 @@ static float fpow_0(float x,float y) {
 }
 
 float WRAPPER_FUNC(powf)(float x,float y) {
-    _Pragma("GCC diagnostic push")
-    _Pragma("GCC diagnostic ignored \"-Wfloat-equal\"")
+    GCC_Like_Pragma("GCC diagnostic push")
+    GCC_Like_Pragma("GCC diagnostic ignored \"-Wfloat-equal\"")
     if(x==1.0f||fiszero(y)) return 1;
     check_nan_f2(x,y);
     if(x==-1.0f&&fisinf(y)) return 1;
-    _Pragma("GCC diagnostic pop")
+    GCC_Like_Pragma("GCC diagnostic pop")
     if(fiszero(x)) {
         if(!fisneg(y)) {
             if(fisoddint(y)) return x;
             else             return 0;
         }
-        if(fisoddint(y)) return fcopysign(PINF,x);
-        return PINF;
+        if(fisoddint(y)) return fcopysign(FPINF,x);
+        return FPINF;
     }
     if(fispinf(x)) {
         if(fisneg(y)) return 0;
-        else          return PINF;
+        else          return FPINF;
     }
     if(fisminf(x)) {
         if(!fisneg(y)) {
-            if(fisoddint(y)) return MINF;
-            else             return PINF;
+            if(fisoddint(y)) return FMINF;
+            else             return FPINF;
         }
         if(fisoddint(y)) return MZERO;
         else             return PZERO;
     }
     if(fispinf(y)) {
         if(fgetexp(x)<0x7f) return PZERO;
-        else                return PINF;
+        else                return FPINF;
     }
     if(fisminf(y)) {
-        if(fgetexp(x)<0x7f) return PINF;
+        if(fgetexp(x)<0x7f) return FPINF;
         else                return PZERO;
     }
     if(fisint(y)) return fpow_0(x,y);
-    if(fisneg(x)) return PINF;
+    if(fisneg(x)) return FPINF;
     return fpow_1(x,y);
 }
 
@@ -500,15 +517,15 @@ static i32 frem_0(i32 mx,i32 my,int e,int*pquo) {
 
 float WRAPPER_FUNC(fmodf)(float x,float y) {
     check_nan_f2(x,y);
-    ui32 ix=*(ui32*)&x,iy=*(ui32*)&y;
+    ui32 ix=float2ui32(x),iy=float2ui32(y);
     int sx,ex,ey;
     i32 mx,my;
     FUNPACKS(ix,sx,ex,mx);
     FUNPACK(iy,ey,my);
     if(ex==0xff) {
-        return fnan_or(PINF);
+        return fnan_or(FPINF);
     }
-    if(ey==0) return PINF;
+    if(ey==0) return FPINF;
     if(ex==0) {
         if(!fisneg(x)) return PZERO;
         return MZERO;
@@ -521,14 +538,14 @@ float WRAPPER_FUNC(fmodf)(float x,float y) {
 
 float WRAPPER_FUNC(remquof)(float x,float y,int*quo) {
     check_nan_f2(x,y);
-    ui32 ix=*(ui32*)&x,iy=*(ui32*)&y;
+    ui32 ix=float2ui32(x),iy=float2ui32(y);
     int sx,sy,ex,ey,q;
     i32 mx,my;
     FUNPACKS(ix,sx,ex,mx);
     FUNPACKS(iy,sy,ey,my);
     if(quo) *quo=0;
-    if(ex==0xff) return PINF;
-    if(ey==0)    return PINF;
+    if(ex==0xff) return FPINF;
+    if(ey==0)    return FPINF;
     if(ex==0)    return PZERO;
     if(ey==0xff) return x;
     if(ex<ey-1)  return x;  // |x|<|y|/2
@@ -562,4 +579,4 @@ float WRAPPER_FUNC(dremf)(float x,float y) { check_nan_f2(x,y); return remquof(x
 
 float WRAPPER_FUNC(remainderf)(float x,float y) { check_nan_f2(x,y); return remquof(x,y,0); }
 
-_Pragma("GCC diagnostic pop") // strict-aliasing
+GCC_Pragma("GCC diagnostic pop") // conversion

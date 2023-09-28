@@ -13,7 +13,7 @@ endif ()
 
 set(PICO_PLATFORM ${PICO_PLATFORM} CACHE STRING "PICO Build platform (e.g. rp2040, host)")
 
-# PICO_CMAKE_CONFIG: PICO_CMAKE_RELOAD_PLATFORM_FILE, custom CMake file to use to set up the platform environment, default=none, group=build
+# PICO_CMAKE_CONFIG: PICO_CMAKE_PRELOAD_PLATFORM_FILE, custom CMake file to use to set up the platform environment, default=none, group=build
 set(PICO_CMAKE_PRELOAD_PLATFORM_FILE "" CACHE INTERNAL "")
 set(PICO_CMAKE_PRELOAD_PLATFORM_DIR "${CMAKE_CURRENT_LIST_DIR}/preload/platforms" CACHE INTERNAL "")
 

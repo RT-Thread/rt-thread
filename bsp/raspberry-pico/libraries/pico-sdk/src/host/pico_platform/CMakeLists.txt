@@ -1,3 +1,5 @@
+# This file may be included directly by a build to get common SDK macros and types
+
 if (NOT TARGET pico_platform_headers)
     add_library(pico_platform_headers INTERFACE)
 
@@ -11,7 +13,11 @@ if (NOT TARGET pico_platform_headers)
 endif()
 
 if (NOT TARGET pico_platform)
-    add_library(pico_platform INTERFACE)
+    if (COMMAND pico_add_platform_library)
+        pico_add_platform_library(pico_platform)
+    else()
+        add_library(pico_platform INTERFACE)
+    endif()
 
     target_sources(pico_platform INTERFACE
         ${CMAKE_CURRENT_LIST_DIR}/platform_base.c

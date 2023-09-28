@@ -1,2 +1,2 @@
 pico_simple_hardware_target(timer)
-target_link_libraries(hardware_timer INTERFACE hardware_claim)
+pico_mirrored_target_link_libraries(hardware_timer INTERFACE hardware_claim hardware_irq)

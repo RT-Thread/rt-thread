@@ -32,19 +32,21 @@ ENTRY(_entry_point)
 
 SECTIONS
 {
-    /* Watchdog reboot into RAM (via USB MSD will enter) image at the start of .text
-       The debugger will use the ELF entry point, which is the _entry_point
-       symbol if present, otherwise defaults to start of .text.
+    /* Note in NO_FLASH builds the entry point for both the bootrom, and debugger
+       entry (ELF entry point), are *first* in the image, and the vector table
+       follows immediately afterward. This is because the bootrom enters RAM
+       binaries directly at their lowest address (preferring main RAM over XIP
+       cache-as-SRAM if both are used).
     */
 
     .text : {
-    __reset_start = .;
+        __logical_binary_start = .;
+        __reset_start = .;
         KEEP (*(.reset))
-        /* reset should come first */
-        KEEP (*(.reset))
-        . = ALIGN(256);
         __reset_end = .;
-        ASSERT(__reset_end - __reset_start == 256, "ERROR: reset section should only be 256 bytes");
+        KEEP (*(.binary_info_header))
+        __binary_info_header_end = .;
+        . = ALIGN(256);
           KEEP (*(.vectors))
         *(.time_critical*)
         *(.text*)
@@ -98,8 +100,6 @@ SECTIONS
     . = ALIGN(4);
 
     .data : {
-        /* End of .text-like segments */
-        __etext = .;
         __data_start__ = .;
         *(vtable)
         *(.data*)
@@ -141,10 +141,12 @@ SECTIONS
         __data_end__ = .;
     } > RAM
 
-    .uninitialized_data (COPY): {
+    .uninitialized_data (NOLOAD): {
         . = ALIGN(4);
         *(.uninitialized_data*)
     } > RAM
+    /* __etext is (for backwards compatibility) the name of the .data init source pointer (...) */
+    __etext = LOADADDR(.data);
 
     /* Start and end symbols must be word-aligned */
     .scratch_x : {
@@ -172,11 +174,11 @@ SECTIONS
         __bss_end__ = .;
     } > RAM
 
-    .heap (COPY):
+    .heap (NOLOAD):
     {
         __end__ = .;
         end = __end__;
-        *(.heap*)
+        KEEP(*(.heap*))
         __HeapLimit = .;
     } > RAM
 
@@ -189,13 +191,13 @@ SECTIONS
     /* by default we put core 0 stack at the end of scratch Y, so that if core 1
      * stack is not used then all of SCRATCH_X is free.
      */
-    .stack1_dummy (COPY):
+    .stack1_dummy (NOLOAD):
     {
         *(.stack1*)
     } > SCRATCH_X
-    .stack_dummy (COPY):
+    .stack_dummy (NOLOAD):
     {
-        *(.stack*)
+        KEEP(*(.stack*))
     } > SCRATCH_Y
 
     /* stack limit is poorly named, but historically is maximum heap ptr */
@@ -208,6 +210,8 @@ SECTIONS
 
     /* Check if data + heap + stack exceeds RAM limit */
     ASSERT(__StackLimit >= __HeapLimit, "region RAM overflowed")
+
+    ASSERT( __binary_info_header_end - __logical_binary_start <= 256, "Binary info must be in first 256 bytes of the binary")
     /* todo assert on extra code */
 }
 

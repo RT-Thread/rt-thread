@@ -86,8 +86,6 @@ bool is_spin_locked(const spin_lock_t *lock);
 
 void spin_unlock(spin_lock_t *lock, uint32_t saved_irq);
 
-uint get_core_num();
-
 spin_lock_t *spin_lock_init(uint lock_num);
 
 void clear_spin_locks(void);

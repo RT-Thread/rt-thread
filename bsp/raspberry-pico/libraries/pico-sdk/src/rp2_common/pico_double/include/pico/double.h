@@ -8,7 +8,7 @@
 #define _PICO_DOUBLE_H
 
 #include <math.h>
-#include "pico/types.h"
+#include "pico.h"
 #include "pico/bootrom/sf_table.h"
 
 #ifdef __cplusplus

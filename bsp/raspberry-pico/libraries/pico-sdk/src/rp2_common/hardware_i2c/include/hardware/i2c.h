@@ -10,6 +10,7 @@
 #include "pico.h"
 #include "pico/time.h"
 #include "hardware/structs/i2c.h"
+#include "hardware/regs/dreq.h"
 
 // PICO_CONFIG: PARAM_ASSERTIONS_ENABLED_I2C, Enable/disable assertions in the I2C module, type=bool, default=0, group=hardware_i2c
 #ifndef PARAM_ASSERTIONS_ENABLED_I2C
@@ -26,10 +27,12 @@ extern "C" {
  * I2C Controller API
  *
  * The I2C bus is a two-wire serial interface, consisting of a serial data line SDA and a serial clock SCL. These wires carry
- * information between the devices connected to the bus. Each device is recognized by a unique address and can operate as
+ * information between the devices connected to the bus. Each device is recognized by a unique 7-bit address and can operate as
  * either a “transmitter” or “receiver”, depending on the function of the device. Devices can also be considered as masters or
  * slaves when performing data transfers. A master is a device that initiates a data transfer on the bus and generates the
- * clock signals to permit that transfer. At that time, any device addressed is considered a slave.
+ * clock signals to permit that transfer. The first byte in the data transfer always contains the 7-bit address and
+ * a read/write bit in the LSB position. This API takes care of toggling the read/write bit. After this, any device addressed
+ * is considered a slave. 
  *
  * This API allows the controller to be set up as a master or a slave using the \ref i2c_set_slave_mode function.
  *
@@ -48,6 +51,10 @@ extern "C" {
 
 typedef struct i2c_inst i2c_inst_t;
 
+// PICO_CONFIG: PICO_DEFAULT_I2C, Define the default I2C for a board, min=0, max=1, group=hardware_i2c
+// PICO_CONFIG: PICO_DEFAULT_I2C_SDA_PIN, Define the default I2C SDA pin, min=0, max=29, group=hardware_i2c
+// PICO_CONFIG: PICO_DEFAULT_I2C_SCL_PIN, Define the default I2C SCL pin, min=0, max=29, group=hardware_i2c
+
 /** The I2C identifiers for use in I2C functions.
  *
  * e.g. i2c_init(i2c0, 48000)
@@ -60,6 +67,14 @@ extern i2c_inst_t i2c1_inst;
 
 #define i2c0 (&i2c0_inst) ///< Identifier for I2C HW Block 0
 #define i2c1 (&i2c1_inst) ///< Identifier for I2C HW Block 1
+
+#if !defined(PICO_DEFAULT_I2C_INSTANCE) && defined(PICO_DEFAULT_I2C)
+#define PICO_DEFAULT_I2C_INSTANCE (__CONCAT(i2c,PICO_DEFAULT_I2C))
+#endif
+
+#ifdef PICO_DEFAULT_I2C_INSTANCE
+#define i2c_default PICO_DEFAULT_I2C_INSTANCE
+#endif
 
 /** @} */
 
@@ -74,7 +89,7 @@ extern i2c_inst_t i2c1_inst;
  * master.
  *
  * The I2C bus frequency is set as close as possible to requested, and
- * the return actual rate set is returned
+ * the actual rate set is returned
  *
  * \param i2c Either \ref i2c0 or \ref i2c1
  * \param baudrate Baudrate in Hz (e.g. 100kHz is 100000)
@@ -122,11 +137,11 @@ struct i2c_inst {
     bool restart_on_next;
 };
 
-/*! \brief Convert I2c instance to hardware instance number
+/*! \brief Convert I2C instance to hardware instance number
  *  \ingroup hardware_i2c
  *
  * \param i2c I2C instance
- * \return Number of UART, 0 or 1.
+ * \return Number of I2C, 0 or 1.
  */
 static inline uint i2c_hw_index(i2c_inst_t *i2c) {
     invalid_params_if(I2C, i2c != i2c0 && i2c != i2c1);
@@ -138,11 +153,17 @@ static inline i2c_hw_t *i2c_get_hw(i2c_inst_t *i2c) {
     return i2c->hw;
 }
 
+static inline i2c_inst_t *i2c_get_instance(uint instance) {
+    static_assert(NUM_I2CS == 2, "");
+    invalid_params_if(I2C, instance >= NUM_I2CS);
+    return instance ? i2c1 : i2c0;
+}
+
 /*! \brief Attempt to write specified number of bytes to address, blocking until the specified absolute time is reached.
  *  \ingroup hardware_i2c
  *
  * \param i2c Either \ref i2c0 or \ref i2c1
- * \param addr Address of device to write to
+ * \param addr 7-bit address of device to write to
  * \param src Pointer to data to send
  * \param len Length of data in bytes to send
  * \param nostop  If true, master retains control of the bus at the end of the transfer (no Stop is issued),
@@ -159,7 +180,7 @@ int i2c_write_blocking_until(i2c_inst_t *i2c, uint8_t addr, const uint8_t *src, 
  *  \ingroup hardware_i2c
  *
  * \param i2c Either \ref i2c0 or \ref i2c1
- * \param addr Address of device to read from
+ * \param addr 7-bit address of device to read from
  * \param dst Pointer to buffer to receive data
  * \param len Length of data in bytes to receive
  * \param nostop  If true, master retains control of the bus at the end of the transfer (no Stop is issued),
@@ -173,7 +194,7 @@ int i2c_read_blocking_until(i2c_inst_t *i2c, uint8_t addr, uint8_t *dst, size_t 
  *  \ingroup hardware_i2c
  *
  * \param i2c Either \ref i2c0 or \ref i2c1
- * \param addr Address of device to write to
+ * \param addr 7-bit address of device to write to
  * \param src Pointer to data to send
  * \param len Length of data in bytes to send
  * \param nostop  If true, master retains control of the bus at the end of the transfer (no Stop is issued),
@@ -195,7 +216,7 @@ int i2c_write_timeout_per_char_us(i2c_inst_t *i2c, uint8_t addr, const uint8_t *
  *  \ingroup hardware_i2c
  *
  * \param i2c Either \ref i2c0 or \ref i2c1
- * \param addr Address of device to read from
+ * \param addr 7-bit address of device to read from
  * \param dst Pointer to buffer to receive data
  * \param len Length of data in bytes to receive
  * \param nostop  If true, master retains control of the bus at the end of the transfer (no Stop is issued),
@@ -214,7 +235,7 @@ int i2c_read_timeout_per_char_us(i2c_inst_t *i2c, uint8_t addr, uint8_t *dst, si
  *  \ingroup hardware_i2c
  *
  * \param i2c Either \ref i2c0 or \ref i2c1
- * \param addr Address of device to write to
+ * \param addr 7-bit address of device to write to
  * \param src Pointer to data to send
  * \param len Length of data in bytes to send
  * \param nostop  If true, master retains control of the bus at the end of the transfer (no Stop is issued),
@@ -227,12 +248,12 @@ int i2c_write_blocking(i2c_inst_t *i2c, uint8_t addr, const uint8_t *src, size_t
  *  \ingroup hardware_i2c
  *
  * \param i2c Either \ref i2c0 or \ref i2c1
- * \param addr Address of device to read from
+ * \param addr 7-bit address of device to read from
  * \param dst Pointer to buffer to receive data
  * \param len Length of data in bytes to receive
  * \param nostop  If true, master retains control of the bus at the end of the transfer (no Stop is issued),
  *           and the next transfer will begin with a Restart rather than a Start.
- * \return Number of bytes read, or PICO_ERROR_GENERIC if address not acknowledged, no device present.
+ * \return Number of bytes read, or PICO_ERROR_GENERIC if address not acknowledged or no device present.
  */
 int i2c_read_blocking(i2c_inst_t *i2c, uint8_t addr, uint8_t *dst, size_t len, bool nostop);
 
@@ -245,7 +266,7 @@ int i2c_read_blocking(i2c_inst_t *i2c, uint8_t addr, uint8_t *dst, size_t len, b
  * least that many bytes can be written without blocking.
  */
 static inline size_t i2c_get_write_available(i2c_inst_t *i2c) {
-    const size_t IC_TX_BUFFER_DEPTH = 32;
+    const size_t IC_TX_BUFFER_DEPTH = 16;
     return IC_TX_BUFFER_DEPTH - i2c_get_hw(i2c)->txflr;
 }
 
@@ -267,7 +288,7 @@ static inline size_t i2c_get_read_available(i2c_inst_t *i2c) {
  * \param src Data to send
  * \param len Number of bytes to send
  *
- * Writes directly to the to I2C TX FIFO which us mainly useful for
+ * Writes directly to the I2C TX FIFO which is mainly useful for
  * slave-mode operation.
  */
 static inline void i2c_write_raw_blocking(i2c_inst_t *i2c, const uint8_t *src, size_t len) {
@@ -279,22 +300,66 @@ static inline void i2c_write_raw_blocking(i2c_inst_t *i2c, const uint8_t *src, s
     }
 }
 
-/*! \brief Write direct to TX FIFO
+/*! \brief Read direct from RX FIFO
  *  \ingroup hardware_i2c
  *
  * \param i2c Either \ref i2c0 or \ref i2c1
  * \param dst Buffer to accept data
- * \param len Number of bytes to send
+ * \param len Number of bytes to read
  *
- * Reads directly from the I2C RX FIFO which us mainly useful for
+ * Reads directly from the I2C RX FIFO which is mainly useful for
  * slave-mode operation.
  */
 static inline void i2c_read_raw_blocking(i2c_inst_t *i2c, uint8_t *dst, size_t len) {
     for (size_t i = 0; i < len; ++i) {
         while (!i2c_get_read_available(i2c))
             tight_loop_contents();
-        *dst++ = i2c_get_hw(i2c)->data_cmd;
+        *dst++ = (uint8_t)i2c_get_hw(i2c)->data_cmd;
     }
+}
+
+/**
+ * \brief Pop a byte from I2C Rx FIFO.
+ * \ingroup hardware_i2c
+ *
+ * This function is non-blocking and assumes the Rx FIFO isn't empty.
+ *
+ * \param i2c I2C instance.
+ * \return uint8_t Byte value.
+ */
+static inline uint8_t i2c_read_byte_raw(i2c_inst_t *i2c) {
+    i2c_hw_t *hw = i2c_get_hw(i2c);
+    assert(hw->status & I2C_IC_STATUS_RFNE_BITS); // Rx FIFO must not be empty
+    return (uint8_t)hw->data_cmd;
+}
+
+/**
+ * \brief Push a byte into I2C Tx FIFO.
+ * \ingroup hardware_i2c
+ *
+ * This function is non-blocking and assumes the Tx FIFO isn't full.
+ *
+ * \param i2c I2C instance.
+ * \param value Byte value.
+ */
+static inline void i2c_write_byte_raw(i2c_inst_t *i2c, uint8_t value) {
+    i2c_hw_t *hw = i2c_get_hw(i2c);
+    assert(hw->status & I2C_IC_STATUS_TFNF_BITS); // Tx FIFO must not be full
+    hw->data_cmd = value;
+}
+
+
+/*! \brief Return the DREQ to use for pacing transfers to/from a particular I2C instance
+ *  \ingroup hardware_i2c
+ *
+ * \param i2c Either \ref i2c0 or \ref i2c1
+ * \param is_tx true for sending data to the I2C instance, false for receiving data from the I2C instance
+ */
+static inline uint i2c_get_dreq(i2c_inst_t *i2c, bool is_tx) {
+    static_assert(DREQ_I2C0_RX == DREQ_I2C0_TX + 1, "");
+    static_assert(DREQ_I2C1_RX == DREQ_I2C1_TX + 1, "");
+    static_assert(DREQ_I2C1_TX == DREQ_I2C0_TX + 2, "");
+    return DREQ_I2C0_TX + i2c_hw_index(i2c) * 2 + !is_tx;
 }
 
 #ifdef __cplusplus

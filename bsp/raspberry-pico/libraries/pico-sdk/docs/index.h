@@ -17,6 +17,7 @@
  * \defgroup hardware_clocks hardware_clocks
  * \defgroup hardware_divider hardware_divider
  * \defgroup hardware_dma hardware_dma
+ * \defgroup hardware_exception hardware_exception
  * \defgroup hardware_flash hardware_flash
  * \defgroup hardware_gpio hardware_gpio
  * \defgroup hardware_i2c hardware_i2c
@@ -40,10 +41,15 @@
  * This group of libraries provide higher level functionality that isn't hardware related or provides a richer
  * set of functionality above the basic hardware interfaces
  * @{
+ * \defgroup pico_async_context pico_async_context
+ * \defgroup pico_flash pico_flash
+ * \defgroup pico_i2c_slave pico_i2c_slave
  * \defgroup pico_multicore pico_multicore
+ * \defgroup pico_rand pico_rand
  * \defgroup pico_stdlib pico_stdlib
  * \defgroup pico_sync pico_sync
  * \defgroup pico_time pico_time
+ * \defgroup pico_unique_id pico_unique_id
  * \defgroup pico_util pico_util
  * @}
  *
@@ -54,6 +60,15 @@
  * \defgroup tinyusb_host tinyusb_host
  * @}
  *
+ * \defgroup networking Networking Libraries
+ * Functions for implementing networking
+ * @{
+ * \defgroup pico_btstack pico_btstack
+ * \defgroup pico_lwip pico_lwip
+ * \defgroup pico_cyw43_driver pico_cyw43_driver
+ * \defgroup pico_cyw43_arch pico_cyw43_arch
+ * @}
+ *
  * \defgroup runtime Runtime Infrastructure
  * Libraries that are used to provide efficient implementation of certain
  * language level and C library functions, as well as CMake INTERFACE libraries
@@ -61,8 +76,10 @@
  * @{
  * \defgroup boot_stage2 boot_stage2
  * \defgroup pico_base pico_base
+ * \defgroup pico_binary_info pico_binary_info
  * \defgroup pico_bit_ops pico_bit_ops
  * \defgroup pico_bootrom pico_bootrom
+ * \defgroup pico_bootsel_via_double_reset pico_bootsel_via_double_reset
  * \defgroup pico_cxx_options pico_cxx_options
  * \defgroup pico_divider pico_divider
  * \defgroup pico_double pico_double

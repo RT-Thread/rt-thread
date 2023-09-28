@@ -54,6 +54,7 @@ typedef struct _binary_info_core binary_info_t;
 #define BINARY_INFO_ID_RP_PROGRAM_BUILD_ATTRIBUTE 0x4275f0d3
 #define BINARY_INFO_ID_RP_SDK_VERSION 0x5360b3ab
 #define BINARY_INFO_ID_RP_PICO_BOARD 0xb63cffbb
+#define BINARY_INFO_ID_RP_BOOT2_NAME 0x7f8882e1
 
 #if PICO_ON_DEVICE
 #define bi_ptr_of(x) x *
@@ -107,8 +108,8 @@ typedef struct __packed _binary_info_block_device {
 
 typedef struct __packed _binary_info_pins_with_func {
     struct _binary_info_core core;
-    // p4_5 : p3_5 : p2_5 : p1_5 : p0_5 : func_4 : 001_3 //individual pins p0,p1,p2,p3,p4 ... if fewer than 5 then duplicate p
-    //                    phi_5 : plo_5 : func_4 : 010_3 // pin range plo-phi inclusive
+    // p4_5 : p3_5 : p2_5 : p1_5 : p0_5 : func_4 : 010_3 //individual pins p0,p1,p2,p3,p4 ... if fewer than 5 then duplicate p
+    //                    phi_5 : plo_5 : func_4 : 001_3 // pin range plo-phi inclusive
     uint32_t pin_encoding;
 } binary_info_pins_with_func_t;
 

@@ -12,16 +12,18 @@
 // IT IS ***NOT*** SAFE TO CALL THESE FUNCTION POINTERS FROM ARBITRARY CODE
 uint32_t sd_table[SF_TABLE_V2_SIZE / 2];
 
-#if !PICO_DOUBLE_SUPPORT_ROM_V1
-static __attribute__((noreturn)) void missing_double_func_shim() {
+#if !(PICO_DOUBLE_SUPPORT_ROM_V1 && PICO_RP2040_B0_SUPPORTED)
+static __attribute__((noreturn)) void missing_double_func_shim(void) {
     panic("missing double function");
 }
 #endif
-extern void double_table_shim_on_use_helper();
+extern void double_table_shim_on_use_helper(void);
 
-void __aeabi_double_init() {
+void __attribute__((weak)) *sf_clz_func;
+
+void __aeabi_double_init(void) {
     int rom_version = rp2040_rom_version();
-#if PICO_DOUBLE_SUPPORT_ROM_V1
+#if PICO_DOUBLE_SUPPORT_ROM_V1 && PICO_RP2040_B0_SUPPORTED
     if (rom_version == 1) {
 
         // this is a little tricky.. we only want to pull in a shim if the corresponding function
@@ -45,7 +47,7 @@ void __aeabi_double_init() {
 #endif
     if (rom_version >= 2) {
         void *rom_table = rom_data_lookup(rom_table_code('S', 'D'));
-        assert(*((uint8_t *)(((void *)rom_data_lookup(rom_table_code('S', 'F')))-2)) * 4 >= SF_TABLE_V2_SIZE);
+        assert(*((uint8_t *)rom_data_lookup(rom_table_code('S', 'F'))-2) * 4 >= SF_TABLE_V2_SIZE);
         memcpy(&sd_table, rom_table, SF_TABLE_V2_SIZE);
         if (rom_version == 2) {
 #ifndef NDEBUG
@@ -63,4 +65,6 @@ void __aeabi_double_init() {
         // we use the unused entry for SINCOS
         sd_table[SF_TABLE_V3_FSINCOS / 4] = (uintptr_t) double_table_shim_on_use_helper;
     }
+
+    sf_clz_func = rom_func_lookup(ROM_FUNC_CLZ32);
 }

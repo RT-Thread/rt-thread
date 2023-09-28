@@ -41,8 +41,8 @@ uint32_t systick_config(uint32_t ticks)
     return (1UL);                                                   /* Reload value impossible */
   }
 
-  mpu_hw->rvr    = (uint32_t)(ticks - 1UL);                         /* set reload register */
-  mpu_hw->csr  = M0PLUS_SYST_CSR_CLKSOURCE_BITS |
+    systick_hw->rvr    = (uint32_t)(ticks - 1UL);                         /* set reload register */
+    systick_hw->csr  = M0PLUS_SYST_CSR_CLKSOURCE_BITS |
                    M0PLUS_SYST_CSR_TICKINT_BITS   |
                    M0PLUS_SYST_CSR_ENABLE_BITS;                     /* Enable SysTick IRQ and SysTick Timer */
   return (0UL);                                                     /* Function successful */

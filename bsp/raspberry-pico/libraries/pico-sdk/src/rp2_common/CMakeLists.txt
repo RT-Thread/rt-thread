@@ -10,6 +10,7 @@ pico_add_subdirectory(hardware_adc)
 pico_add_subdirectory(hardware_clocks)
 pico_add_subdirectory(hardware_dma)
 pico_add_subdirectory(hardware_divider)
+pico_add_subdirectory(hardware_exception)
 pico_add_subdirectory(hardware_flash)
 pico_add_subdirectory(hardware_gpio)
 pico_add_subdirectory(hardware_i2c)
@@ -36,23 +37,37 @@ if (NOT PICO_BARE_METAL)
     # NOTE THE ORDERING HERE IS IMPORTANT AS SOME TARGETS CHECK ON EXISTENCE OF OTHER TARGETS
     pico_add_subdirectory(boot_stage2)
 
+    pico_add_subdirectory(pico_bootsel_via_double_reset)
     pico_add_subdirectory(pico_multicore)
+    pico_add_subdirectory(pico_unique_id)
 
     pico_add_subdirectory(pico_bit_ops)
     pico_add_subdirectory(pico_divider)
     pico_add_subdirectory(pico_double)
     pico_add_subdirectory(pico_int64_ops)
+    pico_add_subdirectory(pico_flash)
     pico_add_subdirectory(pico_float)
     pico_add_subdirectory(pico_mem_ops)
     pico_add_subdirectory(pico_malloc)
     pico_add_subdirectory(pico_printf)
+    pico_add_subdirectory(pico_rand)
 
     pico_add_subdirectory(pico_stdio)
     pico_add_subdirectory(pico_stdio_semihosting)
     pico_add_subdirectory(pico_stdio_uart)
 
+    pico_add_subdirectory(cmsis)
     pico_add_subdirectory(tinyusb)
     pico_add_subdirectory(pico_stdio_usb)
+    pico_add_subdirectory(pico_i2c_slave)
+
+    # networking libraries - note dependency order is important
+    pico_add_subdirectory(pico_async_context)
+    pico_add_subdirectory(pico_btstack)
+    pico_add_subdirectory(pico_cyw43_driver)
+    pico_add_subdirectory(pico_lwip)
+    pico_add_subdirectory(pico_cyw43_arch)
+    pico_add_subdirectory(pico_mbedtls)
 
     pico_add_subdirectory(pico_stdlib)
 
@@ -68,3 +83,6 @@ endif()
 set(CMAKE_EXECUTABLE_SUFFIX "${CMAKE_EXECUTABLE_SUFFIX}" PARENT_SCOPE)
 
 pico_add_doxygen(${CMAKE_CURRENT_LIST_DIR})
+pico_add_doxygen_exclude(${CMAKE_CURRENT_LIST_DIR}/cmsis)
+
+pico_promote_common_scope_vars()

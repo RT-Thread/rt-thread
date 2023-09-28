@@ -31,10 +31,11 @@ bool time_reached(absolute_time_t t);
 typedef void (*hardware_alarm_callback_t)(uint alarm_num);
 void hardware_alarm_claim(uint alarm_num);
 void hardware_alarm_unclaim(uint alarm_num);
+int hardware_alarm_claim_unused(bool required);
 void hardware_alarm_set_callback(uint alarm_num, hardware_alarm_callback_t callback);
 bool hardware_alarm_set_target(uint alarm_num, absolute_time_t t);
 void hardware_alarm_cancel(uint alarm_num);
-
+void hardware_alarm_force_irq(uint alarm_num);
 #ifdef __cplusplus
 }
 #endif

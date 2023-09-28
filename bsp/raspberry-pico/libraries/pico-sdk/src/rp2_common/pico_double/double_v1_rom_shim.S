@@ -17,9 +17,7 @@
 
 #include "pico/asm_helper.S"
 
-.syntax unified
-.cpu cortex-m0plus
-.thumb
+pico_default_asm_setup
 
 .macro double_section name
 // todo separate flag for shims?
@@ -63,7 +61,7 @@ regular_func double_table_shim_on_use_helper
     str r0, [sp, #12]
     pop {r0-r2, pc}
 
-#if PICO_DOUBLE_SUPPORT_ROM_V1
+#if PICO_DOUBLE_SUPPORT_ROM_V1 && PICO_RP2040_B0_SUPPORTED
 // Note that the V1 ROM has no double support, so this is basically the identical
 // library, and shim inter-function calls do not bother to redirect back thru the
 // wrapper functions
@@ -144,7 +142,7 @@ l\@_2:
  lsls \re,#21
  bcc l\@_1                     @ skip on positive
  mvns \rb,\rb                  @ negate mantissa
- rsbs \ra,#0
+ negs \ra,\ra
  bcc l\@_1
  adds \rb,#1
 l\@_1:
@@ -218,7 +216,7 @@ da_pack:
  mvns r1,r1                    @ negate mantissa
  mvns r0,r0
  movs r2,#0
- rsbs r4,#0
+ negs r4,r4
  adcs r0,r2
  adcs r1,r2
 1:
@@ -263,7 +261,7 @@ da_3:
 da_7:
 @ here exponent overflow: return signed infinity
  lsls r1,r3,#31
- ldr r3,=#0x7ff00000
+ ldr r3,=0x7ff00000
  orrs r1,r3
  b 1f
 da_6:
@@ -524,7 +522,7 @@ double_section dmul_shim
  adcs r1,r1
  subs r3,#1                    @ correct exponent
 1:
- ldr r6,=#0x3ff
+ ldr r6,=0x3ff
  subs r3,r6                    @ correct for exponent bias
  lsls r6,#1                    @ 0x7fe
  cmp r3,r6
@@ -811,7 +809,7 @@ dd_1:
  muls r3,r0                    @ zL*xH Q73
  subs r4,r3
  mul32_32_64 r2,r0, r2,r3, r5,r6,r7,r2,r3  @ xL*zL
- rsbs r2,#0                    @ borrow from low half?
+ negs r2,r2                    @ borrow from low half?
  sbcs r4,r3                    @ y-xz Q73 (remainder bits 52..73)
 
  cmp r4,#0
@@ -830,9 +828,9 @@ dd_2:
  mov r2,r12
  lsls r7,r2,#31                @ result sign
  asrs r2,#2                    @ result exponent
- ldr r3,=#0x3fd
+ ldr r3,=0x3fd
  adds r2,r3
- ldr r3,=#0x7fe
+ ldr r3,=0x7fe
  cmp r2,r3
  bhs dd_3                      @ over- or underflow?
  lsls r2,#20
@@ -936,7 +934,7 @@ dq_0:
  b dq_4
 
 dq_3:
- ldr r1,=#0x7ff
+ ldr r1,=0x7ff
  lsls r1,#20                   @ return +Inf
 dq_4:
  movs r0,#0
@@ -949,7 +947,7 @@ regular_func dsqrt_shim
  bcs dq_0                      @ negative?
  lsrs r2,#21                   @ extract exponent
  subs r2,#1
- ldr r3,=#0x7fe
+ ldr r3,=0x7fe
  cmp r2,r3
  bhs dq_2                      @ catches 0 and +Inf
  push {r4-r7,r14}
@@ -968,8 +966,8 @@ regular_func dsqrt_shim
 @ here
 @ r0:r1  y mantissa Q52 [1,4)
 @ r12    result exponent
-
- adr r4,drsqrtapp-8            @ first eight table entries are never accessed because of the mantissa's leading 1
+.equ drsqrtapp_minus_8, (drsqrtapp-8)
+ adr r4,drsqrtapp_minus_8      @ first eight table entries are never accessed because of the mantissa's leading 1
  lsrs r2,r1,#17                @ y Q3
  ldrb r2,[r4,r2]               @ initial approximation to reciprocal square root a0 Q8
  lsrs r3,r1,#4                 @ first Newton-Raphson iteration
@@ -1100,7 +1098,7 @@ dq_5:
  adds r2,r3                    @ r1:r2 a5^2 Q106
  lsls r0,#22                   @ y Q84
 
- rsbs r1,#0
+ negs r1,r1
  sbcs r0,r2                    @ remainder y-a5^2
  bmi 1f                        @ y<a5^2: no need to increment a5
  movs r3,#0
@@ -1218,11 +1216,6 @@ double_section dcordic_rot_step
  mov r9,r3
  bx r14
 
-ret_dzero:
- movs r0,#0
- movs r1,#0
- bx r14
-
 @ convert packed double in r0:r1 to signed/unsigned 32/64-bit integer/fixed-point value in r0:r1 [with r2 places after point], with rounding towards -Inf
 @ fixed-point versions only work with reasonable values in r2 because of the way dunpacks works
 
@@ -1264,7 +1257,7 @@ regular_func double2fix64_shim
  eors r1,r1,r0                 @ generate extreme fixed-point values
  pop {r15}
 
-double_section double2uint64_shim
+double_section double2uint64_shim 
  regular_func double2uint64_shim
  movs r2,#0                    @ and fall through
 regular_func double2ufix64_shim
@@ -1288,9 +1281,15 @@ d2fix:
  asrs r3,r1,#31
  ldr r4, =d2fix_a
  bx r4
-
+ 
+ret_dzero:
+ movs r0,#0
+ movs r1,#0
+ bx r14
+ 
 .weak d2fix_a // weak because it exists in float code too
-regular_func d2fix_a
+.thumb_func
+d2fix_a:
 @ here
 @ r0:r1 two's complement mantissa
 @ r2    unbaised exponent
@@ -1304,7 +1303,7 @@ regular_func d2fix_a
  movs r4,r0
  lsls r1,r2
  lsls r0,r2
- rsbs r2,#0
+ negs r2,r2
  adds r2,#32                   @ complementary shift
  lsrs r4,r2
  orrs r1,r4
@@ -1319,7 +1318,7 @@ regular_func d2fix_a
  bmi 1f                        @ long shift?
  mov r4,r1
  lsls r4,r2
- rsbs r2,#0
+ negs r2,r2
  adds r2,#32                   @ complementary shift
  asrs r1,r2
  lsrs r0,r2
@@ -1331,7 +1330,7 @@ regular_func d2fix_a
  asrs r1,#31                   @ shift down 32 places
  adds r2,#32
  bmi 1f                        @ very long shift?
- rsbs r2,#0
+ negs r2,r2
  adds r2,#32
  asrs r0,r2
  pop {r4,r15}
@@ -1344,7 +1343,7 @@ double_section double2float_shim
  regular_func double2float_shim
  lsls r2,r1,#1
  lsrs r2,#21                   @ exponent
- ldr r3,=#0x3ff-0x7f
+ ldr r3,=0x3ff-0x7f
  subs r2,r3                    @ fix exponent bias
  ble 1f                        @ underflow or zero
  cmp r2,#0xff
@@ -1432,7 +1431,7 @@ regular_func fix642double_shim
  sbcs r1,r3
 uf2d:
  push {r4,r5,r14}
- ldr r4,=#0x432
+ ldr r4,=0x432
  subs r2,r4,r2                 @ form biased exponent
 @ here
 @ r0:r1 unnormalised mantissa
@@ -1455,7 +1454,7 @@ uf2d:
  lsrs r4,r1,#21
  bcc 5b
 4:
- ldr r4,=#0x7fe
+ ldr r4,=0x7fe
  cmp r2,r4
  bhs 6f                        @ over/underflow? return signed zero/infinity
 7:
@@ -1506,7 +1505,7 @@ uf2d:
 double_section dunpacks
  regular_func dunpacks
  mdunpacks r0,r1,r2,r3,r4
- ldr r3,=#0x3ff
+ ldr r3,=0x3ff
  subs r2,r3                    @ exponent without offset
  bx r14
 
@@ -1572,7 +1571,7 @@ double_section dreduce
  lsrs r3,r0,#24
  orrs r1,r3
  lsls r0,#8                    @ r0:r1 Q60, to be shifted down -r2 places
- rsbs r3,r2,#0
+ negs r3,r2
  adds r2,#32                   @ shift down in r3, complementary shift in r2
  bmi 1f                        @ long shift?
 2:
@@ -1630,19 +1629,19 @@ double_section dsin_shim
  pop {r4-r7,r15}
 
 double_section dsincos_shim
+
+ @ Note that this function returns in r0-r3
  regular_func dsincos_shim
+
  push {r4-r7,r14}
  bl push_r8_r11
- push {r2-r3}
  bl dsincos_internal
  mov r12,r0                    @ save ε
  bl dcos_finish
  push {r0,r1}
  mov r0,r12
  bl dsin_finish
- pop {r2,r3,r4,r5}
- stmia r4!, {r0, r1}
- stmia r5!, {r2, r3}
+ pop {r2,r3}
  bl pop_r8_r11
  pop {r4-r7,r15}
 
@@ -1663,13 +1662,13 @@ dsincos_internal:
  bl dreduce
 
  movs r4,#0
- ldr r5,=#0x9df04dbb           @ this value compensates for the non-unity scaling of the CORDIC rotations
- ldr r6,=#0x36f656c5
+ ldr r5,=0x9df04dbb           @ this value compensates for the non-unity scaling of the CORDIC rotations
+ ldr r6,=0x36f656c5
  lsls r2,#31
  bcc 1f
 @ quadrant 2 or 3
  mvns r6,r6
- rsbs r5,r5,#0
+ negs r5,r5
  adcs r6,r4
 1:
  lsls r2,#1
@@ -1757,7 +1756,7 @@ regular_func datan2_shim
 @ r2:r3 x
  push {r4-r7,r14}
  bl push_r8_r11
- ldr r5,=#0x7ff00000
+ ldr r5,=0x7ff00000
  movs r4,r1
  ands r4,r5                    @ y==0?
  beq 1f
@@ -1786,7 +1785,7 @@ regular_func datan2_shim
  eors r3,r5
  eors r1,r5
  bmi 1f                        @ quadrant offset=+2 if y was positive
- rsbs r6,#0                    @ quadrant offset=-2 if y was negative
+ negs r6,r6                    @ quadrant offset=-2 if y was negative
 1:
 @ now in quadrant 0 or 3
  adds r7,r1,r5                 @ r7=-r1
@@ -1895,8 +1894,8 @@ regular_func datan2_shim
 
  cmp r6,#0
  beq 1f
- ldr r4,=#0x885A308D           @ π/2 Q61
- ldr r5,=#0x3243F6A8
+ ldr r4,=0x885A308D           @ π/2 Q61
+ ldr r5,=0x3243F6A8
  bpl 2f
  mvns r4,r4                    @ negative quadrant offset
  mvns r5,r5
@@ -1959,8 +1958,8 @@ regular_func dexp_shim
  bl dreduce
  cmp r1,#0
  bge 1f
- ldr r4,=#0xF473DE6B
- ldr r5,=#0x2C5C85FD           @ ln2 Q62
+ ldr r4,=0xF473DE6B
+ ldr r5,=0x2C5C85FD           @ ln2 Q62
  adds r0,r4
  adcs r1,r5
  subs r2,#1
@@ -1979,7 +1978,7 @@ regular_func dexp_shim
  sbcs r1,r5
  bmi 1f
 
- rsbs r6,r7,#0
+ negs r6,r7
  adds r6,#32                   @ complementary shift
  movs r5,r3
  asrs r5,r7
@@ -2015,7 +2014,7 @@ regular_func dexp_shim
  adcs r1,r3
 
  pop {r2}
- rsbs r2,#0
+ negs r2,r2
  adds r2,#62
  bl fix642double_shim                 @ in principle we can pack faster than this because we know the exponent
  pop {r4-r7,r15}
@@ -2046,7 +2045,7 @@ regular_func dln_shim
  movs r3,#0                    @ y=0 Q62
 
 3:
- rsbs r6,r7,#0
+ negs r6,r7
  adds r6,#32                   @ complementary shift
  movs r5,r1
  asrs r5,r7
@@ -2086,8 +2085,8 @@ regular_func dln_shim
 @ here:
 @ r2:r3 ln m/2 = ln m - ln2 Q62
 @ r7    unbiased exponent
-
- adr r4,dreddata1+4
+.equ dreddata1_plus_4, (dreddata1+4)
+ adr r4,dreddata1_plus_4
  ldmia r4,{r0,r1,r4}
  adds r7,#1
  muls r0,r7                    @ Q62
@@ -2128,12 +2127,12 @@ regular_func dln_shim
  pop {r4-r7,r15}
 
 5:
- ldr r1,=#0xfff00000
+ ldr r1,=0xfff00000
  movs r0,#0
  pop {r4-r7,r15}
 
 6:
- ldr r1,=#0x7ff00000
+ ldr r1,=0x7ff00000
  movs r0,#0
  pop {r4-r7,r15}
 

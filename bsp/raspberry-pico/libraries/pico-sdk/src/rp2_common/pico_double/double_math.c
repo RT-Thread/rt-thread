@@ -5,9 +5,12 @@
  */
 
 #include <math.h>
-#include "pico/types.h"
 #include "pico/double.h"
-#include "pico/platform.h"
+
+// opened a separate issue https://github.com/raspberrypi/pico-sdk/issues/166 to deal with these warnings if at all
+GCC_Pragma("GCC diagnostic push")
+GCC_Pragma("GCC diagnostic ignored \"-Wconversion\"")
+GCC_Pragma("GCC diagnostic ignored \"-Wsign-conversion\"")
 
 typedef uint64_t ui64;
 typedef uint32_t ui32;
@@ -36,16 +39,30 @@ typedef int64_t i64;
 #define DUNPACK(x,e,m) e=((x)>>52)&0x7ff,m=((x)&0x000fffffffffffffULL)|0x0010000000000000ULL
 #define DUNPACKS(x,s,e,m) s=((x)>>63),DUNPACK((x),(e),(m))
 
-_Pragma("GCC diagnostic push")
-_Pragma("GCC diagnostic ignored \"-Wstrict-aliasing\"")
+typedef union {
+    double d;
+    ui64 ix;
+} double_ui64;
 
+static inline double ui642double(ui64 ix) {
+    double_ui64 tmp;
+    tmp.ix = ix;
+    return tmp.d;
+}
+
+static inline ui64 double2ui64(double d) {
+    double_ui64 tmp;
+    tmp.d = d;
+    return tmp.ix;
+}
+
+#if PICO_DOUBLE_PROPAGATE_NANS
 static inline bool disnan(double x) {
-    ui64 ix=*(i64*)&x;
+    ui64 ix= double2ui64(x);
     // checks the top bit of the low 32 bit of the NAN, but it I think that is ok
     return ((uint32_t)(ix >> 31)) > 0xffe00000u;
 }
 
-#if PICO_DOUBLE_PROPAGATE_NANS
 #define check_nan_d1(x) if (disnan((x))) return (x)
 #define check_nan_d2(x,y) if (disnan((x))) return (x); else if (disnan((y))) return (y);
 #else
@@ -54,17 +71,17 @@ static inline bool disnan(double x) {
 #endif
 
 static inline int dgetsignexp(double x) {
-    ui64 ix=*(ui64*)&x;
+    ui64 ix=double2ui64(x);
     return (ix>>52)&0xfff;
 }
 
 static inline int dgetexp(double x) {
-    ui64 ix=*(ui64*)&x;
+    ui64 ix=double2ui64(x);
     return (ix>>52)&0x7ff;
 }
 
 static inline double dldexp(double x,int de) {
-    ui64 ix=*(ui64*)&x,iy;
+    ui64 ix=double2ui64(x),iy;
     int e;
     e=dgetexp(x);
     if(e==0||e==0x7ff) return x;
@@ -72,7 +89,7 @@ static inline double dldexp(double x,int de) {
     if(e<=0) iy=ix&0x8000000000000000ULL; // signed zero for underflow
     else if(e>=0x7ff) iy=(ix&0x8000000000000000ULL)|0x7ff0000000000000ULL; // signed infinity on overflow
     else iy=ix+((ui64)de<<52);
-    return *(double*)&iy;
+    return ui642double(iy);
 }
 
 double WRAPPER_FUNC(ldexp)(double x, int de) {
@@ -82,9 +99,9 @@ double WRAPPER_FUNC(ldexp)(double x, int de) {
 
 
 static inline double dcopysign(double x,double y) {
-    ui64 ix=*(ui64*)&x,iy=*(ui64*)&y;
+    ui64 ix=double2ui64(x),iy=double2ui64(y);
     ix=((ix&0x7fffffffffffffffULL)|(iy&0x8000000000000000ULL));
-    return *(double*)&ix;
+    return ui642double(ix);
 }
 
 double WRAPPER_FUNC(copysign)(double x, double y) {
@@ -92,14 +109,14 @@ double WRAPPER_FUNC(copysign)(double x, double y) {
     return dcopysign(x, y);
 }
 static inline int diszero(double x)  { return dgetexp    (x)==0; }
-static inline int dispzero(double x) { return dgetsignexp(x)==0; }
-static inline int dismzero(double x) { return dgetsignexp(x)==0x800; }
+//static inline int dispzero(double x) { return dgetsignexp(x)==0; }
+//static inline int dismzero(double x) { return dgetsignexp(x)==0x800; }
 static inline int disinf(double x)   { return dgetexp    (x)==0x7ff; }
 static inline int dispinf(double x)  { return dgetsignexp(x)==0x7ff; }
 static inline int disminf(double x)  { return dgetsignexp(x)==0xfff; }
 
 static inline int disint(double x) {
-    ui64 ix=*(ui64*)&x,m;
+    ui64 ix=double2ui64(x),m;
     int e=dgetexp(x);
     if(e==0) return 1;       // 0 is an integer
     e-=0x3ff;                // remove exponent bias
@@ -112,7 +129,7 @@ static inline int disint(double x) {
 }
 
 static inline int disoddint(double x) {
-    ui64 ix=*(ui64*)&x,m;
+    ui64 ix=double2ui64(x),m;
     int e=dgetexp(x);
     e-=0x3ff;                // remove exponent bias
     if(e<0) return 0;        // |x|<1; 0 is not odd
@@ -125,24 +142,24 @@ static inline int disoddint(double x) {
 }
 
 static inline int disstrictneg(double x) {
-    ui64 ix=*(ui64*)&x;
+    ui64 ix=double2ui64(x);
     if(diszero(x)) return 0;
     return ix>>63;
 }
 
 static inline int disneg(double x) {
-    ui64 ix=*(ui64*)&x;
+    ui64 ix=double2ui64(x);
     return ix>>63;
 }
 
 static inline double dneg(double x) {
-    ui64 ix=*(ui64*)&x;
+    ui64 ix=double2ui64(x);
     ix^=0x8000000000000000ULL;
-    return *(double*)&ix;
+    return ui642double(ix);
 }
 
 static inline int dispo2(double x) {
-    ui64 ix=*(ui64*)&x;
+    ui64 ix=double2ui64(x);
     if(diszero(x)) return 0;
     if(disinf(x)) return 0;
     ix&=0x000fffffffffffffULL;
@@ -159,33 +176,33 @@ static inline double dnan_or(double x) {
 
 double WRAPPER_FUNC(trunc)(double x) {
     check_nan_d1(x);
-    ui64 ix=*(ui64*)&x,m;
+    ui64 ix=double2ui64(x),m;
     int e=dgetexp(x);
     e-=0x3ff;                // remove exponent bias
     if(e<0) {                // |x|<1
         ix&=0x8000000000000000ULL;
-        return *(double*)&ix;
+        return ui642double(ix);
     }
     e=52-e;                  // bit position in mantissa with significance 1
     if(e<=0) return x;       // |x| large, so must be an integer
     m=(1ULL<<e)-1;           // mask for bits of significance <1
     ix&=~m;
-    return *(double*)&ix;
+    return ui642double(ix);
 }
 
 double WRAPPER_FUNC(round)(double x) {
     check_nan_d1(x);
-    ui64 ix=*(ui64*)&x,m;
+    ui64 ix=double2ui64(x),m;
     int e=dgetexp(x);
     e-=0x3ff;                // remove exponent bias
     if(e<-1) {               // |x|<0.5
         ix&=0x8000000000000000ULL;
-        return *(double*)&ix;
+        return ui642double(ix);
     }
     if(e==-1) {              // 0.5<=|x|<1
         ix&=0x8000000000000000ULL;
         ix|=0x3ff0000000000000ULL;        // ±1
-        return *(double*)&ix;
+        return ui642double(ix);
     }
     e=52-e;                  // bit position in mantissa with significance 1, <=52
     if(e<=0) return x;       // |x| large, so must be an integer
@@ -193,16 +210,16 @@ double WRAPPER_FUNC(round)(double x) {
     ix+=m;
     m=m+m-1;                 // mask for bits of significance <1
     ix&=~m;
-    return *(double*)&ix;
+    return ui642double(ix);
 }
 
 double WRAPPER_FUNC(floor)(double x) {
     check_nan_d1(x);
-    ui64 ix=*(ui64*)&x,m;
+    ui64 ix=double2ui64(x),m;
     int e=dgetexp(x);
     if(e==0) {               // x==0
         ix&=0x8000000000000000ULL;
-        return *(double*)&ix;
+        return ui642double(ix);
     }
     e-=0x3ff;                // remove exponent bias
     if(e<0) {                // |x|<1, not zero
@@ -214,16 +231,16 @@ double WRAPPER_FUNC(floor)(double x) {
     m=(1ULL<<e)-1;           // mask for bit of significance <1
     if(disneg(x)) ix+=m;     // add 1-ε to magnitude if negative
     ix&=~m;                  // truncate
-    return *(double*)&ix;
+    return ui642double(ix);
 }
 
 double WRAPPER_FUNC(ceil)(double x) {
     check_nan_d1(x);
-    ui64 ix=*(ui64*)&x,m;
+    ui64 ix=double2ui64(x),m;
     int e=dgetexp(x);
     if(e==0) {               // x==0
         ix&=0x8000000000000000ULL;
-        return *(double*)&ix;
+        return ui642double(ix);
     }
     e-=0x3ff;                 // remove exponent bias
     if(e<0) {                // |x|<1, not zero
@@ -235,7 +252,7 @@ double WRAPPER_FUNC(ceil)(double x) {
     m=(1ULL<<e)-1;           // mask for bit of significance <1
     if(!disneg(x)) ix+=m;    // add 1-ε to magnitude if positive
     ix&=~m;                  // truncate
-    return *(double*)&ix;
+    return ui642double(ix);
 }
 
 double WRAPPER_FUNC(asin)(double x) {
@@ -402,10 +419,10 @@ static double dpowint_0(double x,int y) {
 }
 
 double WRAPPER_FUNC(powint)(double x,int y) {
-    _Pragma("GCC diagnostic push")
-    _Pragma("GCC diagnostic ignored \"-Wfloat-equal\"")
+    GCC_Like_Pragma("GCC diagnostic push")
+    GCC_Like_Pragma("GCC diagnostic ignored \"-Wfloat-equal\"")
     if(x==1.0||y==0) return 1;
-    _Pragma("GCC diagnostic pop")
+    GCC_Like_Pragma("GCC diagnostic pop")
     check_nan_d1(x);
     if(diszero(x)) {
         if(y>0) {
@@ -451,13 +468,13 @@ static double dpow_0(double x,double y) {
 }
 
 double WRAPPER_FUNC(pow)(double x,double y) {
-    _Pragma("GCC diagnostic push")
-    _Pragma("GCC diagnostic ignored \"-Wfloat-equal\"")
+    GCC_Like_Pragma("GCC diagnostic push")
+    GCC_Like_Pragma("GCC diagnostic ignored \"-Wfloat-equal\"")
 
     if(x==1.0||diszero(y)) return 1;
     check_nan_d2(x, y);
     if(x==-1.0&&disinf(y)) return 1;
-    _Pragma("GCC diagnostic pop")
+    GCC_Like_Pragma("GCC diagnostic pop")
 
     if(diszero(x)) {
         if(!disneg(y)) {
@@ -544,7 +561,7 @@ static i64 drem_0(i64 mx,i64 my,int e,int*pquo) {
 
 double WRAPPER_FUNC(fmod)(double x,double y) {
     check_nan_d2(x, y);
-    ui64 ix=*(ui64*)&x,iy=*(ui64*)&y;
+    ui64 ix=double2ui64(x),iy=double2ui64(y);
     int sx,ex,ey;
     i64 mx,my;
     DUNPACKS(ix,sx,ex,mx);
@@ -563,7 +580,7 @@ double WRAPPER_FUNC(fmod)(double x,double y) {
 
 double WRAPPER_FUNC(remquo)(double x,double y,int*quo) {
     check_nan_d2(x, y);
-    ui64 ix=*(ui64*)&x,iy=*(ui64*)&y;
+    ui64 ix=double2ui64(x),iy=double2ui64(y);
     int sx,sy,ex,ey,q;
     i64 mx,my;
     DUNPACKS(ix,sx,ex,mx);
@@ -604,4 +621,4 @@ double WRAPPER_FUNC(drem)(double x,double y) { check_nan_d2(x, y); return remquo
 
 double WRAPPER_FUNC(remainder)(double x,double y) { check_nan_d2(x, y); return remquo(x,y,0); }
 
-_Pragma("GCC diagnostic pop") // strict-aliasing
+GCC_Pragma("GCC diagnostic pop") // conversion

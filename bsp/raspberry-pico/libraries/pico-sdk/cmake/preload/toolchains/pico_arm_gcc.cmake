@@ -12,7 +12,7 @@ if (NOT PICO_GCC_TRIPLE)
         message("PICO_GCC_TRIPLE set from environment: $ENV{PICO_GCC_TRIPLE}")
     else()
         set(PICO_GCC_TRIPLE arm-none-eabi)
-        message("PICO_GCC_TRIPLE defaulted to arm-none-eabi")
+        #pico_message_debug("PICO_GCC_TRIPLE defaulted to arm-none-eabi")
     endif()
 endif()
 
@@ -35,10 +35,6 @@ set(CMAKE_INCLUDE_FLAG_ASM "-I")
 set(CMAKE_OBJCOPY ${PICO_OBJCOPY} CACHE FILEPATH "")
 set(CMAKE_OBJDUMP ${PICO_OBJDUMP} CACHE FILEPATH "")
 
-# Disable compiler checks.
-set(CMAKE_C_COMPILER_FORCED TRUE)
-set(CMAKE_CXX_COMPILER_FORCED TRUE)
-
 # Add target system root to cmake find path.
 get_filename_component(PICO_COMPILER_DIR "${PICO_COMPILER_CC}" DIRECTORY)
 get_filename_component(CMAKE_FIND_ROOT_PATH "${PICO_COMPILER_DIR}" DIRECTORY)
@@ -51,16 +47,6 @@ set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
 
 option(PICO_DEOPTIMIZED_DEBUG "Build debug builds with -O0" 0)
 
-# todo move to platform/Generix-xxx
-set(ARM_GCC_COMMON_FLAGS " -march=armv6-m -mcpu=cortex-m0plus -mthumb")
-#set(ARM_GCC_COMMON_FLAGS " -mcpu=cortex-m0plus -mthumb")
-foreach(LANG IN ITEMS C CXX ASM)
-    set(CMAKE_${LANG}_FLAGS_INIT "${ARM_GCC_COMMON_FLAGS}")
-    if (PICO_DEOPTIMIZED_DEBUG)
-        set(CMAKE_${LANG}_FLAGS_DEBUG_INIT "-O0")
-    else()
-        set(CMAKE_${LANG}_FLAGS_DEBUG_INIT "-Og")
-    endif()
-    set(CMAKE_${LANG}_LINK_FLAGS "-Wl,--build-id=none")
-endforeach()
-
+# on ARM -mcpu should not be mixed with -march
+set(ARM_TOOLCHAIN_COMMON_FLAGS " -mcpu=cortex-m0plus -mthumb")
+include(${CMAKE_CURRENT_LIST_DIR}/set_flags.cmake)

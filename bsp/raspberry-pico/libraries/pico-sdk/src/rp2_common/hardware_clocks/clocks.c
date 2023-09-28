@@ -7,13 +7,18 @@
 #include "pico.h"
 #include "hardware/regs/clocks.h"
 #include "hardware/platform_defs.h"
-#include "hardware/resets.h"
 #include "hardware/clocks.h"
 #include "hardware/watchdog.h"
 #include "hardware/pll.h"
 #include "hardware/xosc.h"
 #include "hardware/irq.h"
 #include "hardware/gpio.h"
+
+// The RTC clock frequency is 48MHz divided by power of 2 (to ensure an integer
+// division ratio will be used in the clocks block).  A divisor of 1024 generates
+// an RTC clock tick of 46875Hz.  This frequency is relatively close to the
+// customary 32 or 32.768kHz 'slow clock' crystals and provides good timing resolution.
+#define RTC_CLOCK_FREQ_HZ       (USB_CLK_KHZ * KHZ / 1024)
 
 check_hw_layout(clocks_hw_t, clk[clk_adc].selected, CLOCKS_CLK_ADC_SELECTED_OFFSET);
 check_hw_layout(clocks_hw_t, fc0.result, CLOCKS_FC0_RESULT_OFFSET);
@@ -49,7 +54,7 @@ bool clock_configure(enum clock_index clk_index, uint32_t src, uint32_t auxsrc, 
         return false;
 
     // Div register is 24.8 int.frac divider so multiply by 2^8 (left shift by 8)
-    div = (uint32_t) (((uint64_t) src_freq << 8) / freq);
+    div = (uint32_t) (((uint64_t) src_freq << CLOCKS_CLK_GPOUT0_DIV_INT_LSB) / freq);
 
     clock_hw_t *clock = &clocks_hw->clk[clk_index];
 
@@ -71,18 +76,15 @@ bool clock_configure(enum clock_index clk_index, uint32_t src, uint32_t auxsrc, 
     // propagating when changing aux mux. Note it would be a really bad idea
     // to do this on one of the glitchless clocks (clk_sys, clk_ref).
     else {
+        // Disable clock. On clk_ref and clk_sys this does nothing,
+        // all other clocks have the ENABLE bit in the same position.
         hw_clear_bits(&clock->ctrl, CLOCKS_CLK_GPOUT0_CTRL_ENABLE_BITS);
         if (configured_freq[clk_index] > 0) {
             // Delay for 3 cycles of the target clock, for ENABLE propagation.
             // Note XOSC_COUNT is not helpful here because XOSC is not
-            // necessarily running, nor is timer... so, 3 cycles per loop:
+            // necessarily running, nor is timer...:
             uint delay_cyc = configured_freq[clk_sys] / configured_freq[clk_index] + 1;
-            asm volatile (
-                "1: \n\t"
-                "sub %0, #1 \n\t"
-                "bne 1b"
-                : "+r" (delay_cyc)
-            );
+            busy_wait_at_least_cycles(delay_cyc * 3);
         }
     }
 
@@ -101,6 +103,8 @@ bool clock_configure(enum clock_index clk_index, uint32_t src, uint32_t auxsrc, 
             tight_loop_contents();
     }
 
+    // Enable clock. On clk_ref and clk_sys this does nothing,
+    // all other clocks have the ENABLE bit in the same position.
     hw_set_bits(&clock->ctrl, CLOCKS_CLK_GPOUT0_CTRL_ENABLE_BITS);
 
     // Now that the source is configured, we can trust that the user-supplied
@@ -108,22 +112,22 @@ bool clock_configure(enum clock_index clk_index, uint32_t src, uint32_t auxsrc, 
     clock->div = div;
 
     // Store the configured frequency
-    configured_freq[clk_index] = freq;
+    configured_freq[clk_index] = (uint32_t)(((uint64_t) src_freq << 8) / div);
 
     return true;
 }
 /// \end::clock_configure[]
 
 void clocks_init(void) {
-    // Start tick in watchdog
-    watchdog_start_tick(XOSC_MHZ);
+    // Start tick in watchdog, the argument is in 'cycles per microsecond' i.e. MHz
+    watchdog_start_tick(XOSC_KHZ / KHZ);
 
     // Everything is 48MHz on FPGA apart from RTC. Otherwise set to 0 and will be set in clock configure
     if (running_on_fpga()) {
         for (uint i = 0; i < CLK_COUNT; i++) {
             configured_freq[i] = 48 * MHZ;
         }
-        configured_freq[clk_rtc] = 46875;
+        configured_freq[clk_rtc] = RTC_CLOCK_FREQ_HZ;
         return;
     }
 
@@ -141,66 +145,56 @@ void clocks_init(void) {
     while (clocks_hw->clk[clk_ref].selected != 0x1)
         tight_loop_contents();
 
-    /// \tag::pll_settings[]
-    // Configure PLLs
-    //                   REF     FBDIV VCO            POSTDIV
-    // PLL SYS: 12 / 1 = 12MHz * 125 = 1500MHZ / 6 / 2 = 125MHz
-    // PLL USB: 12 / 1 = 12MHz * 40  = 480 MHz / 5 / 2 =  48MHz
-    /// \end::pll_settings[]
-
-    reset_block(RESETS_RESET_PLL_SYS_BITS | RESETS_RESET_PLL_USB_BITS);
-    unreset_block_wait(RESETS_RESET_PLL_SYS_BITS | RESETS_RESET_PLL_USB_BITS);
-
     /// \tag::pll_init[]
-    pll_init(pll_sys, 1, 1500 * MHZ, 6, 2);
-    pll_init(pll_usb, 1, 480 * MHZ, 5, 2);
+    pll_init(pll_sys, PLL_COMMON_REFDIV, PLL_SYS_VCO_FREQ_KHZ * KHZ, PLL_SYS_POSTDIV1, PLL_SYS_POSTDIV2);
+    pll_init(pll_usb, PLL_COMMON_REFDIV, PLL_USB_VCO_FREQ_KHZ * KHZ, PLL_USB_POSTDIV1, PLL_USB_POSTDIV2);
     /// \end::pll_init[]
 
     // Configure clocks
-    // CLK_REF = XOSC (12MHz) / 1 = 12MHz
+    // CLK_REF = XOSC (usually) 12MHz / 1 = 12MHz
     clock_configure(clk_ref,
                     CLOCKS_CLK_REF_CTRL_SRC_VALUE_XOSC_CLKSRC,
                     0, // No aux mux
-                    12 * MHZ,
-                    12 * MHZ);
+                    XOSC_KHZ * KHZ,
+                    XOSC_KHZ * KHZ);
 
     /// \tag::configure_clk_sys[]
-    // CLK SYS = PLL SYS (125MHz) / 1 = 125MHz
+    // CLK SYS = PLL SYS (usually) 125MHz / 1 = 125MHz
     clock_configure(clk_sys,
                     CLOCKS_CLK_SYS_CTRL_SRC_VALUE_CLKSRC_CLK_SYS_AUX,
                     CLOCKS_CLK_SYS_CTRL_AUXSRC_VALUE_CLKSRC_PLL_SYS,
-                    125 * MHZ,
-                    125 * MHZ);
+                    SYS_CLK_KHZ * KHZ,
+                    SYS_CLK_KHZ * KHZ);
     /// \end::configure_clk_sys[]
 
-    // CLK USB = PLL USB (48MHz) / 1 = 48MHz
+    // CLK USB = PLL USB 48MHz / 1 = 48MHz
     clock_configure(clk_usb,
                     0, // No GLMUX
                     CLOCKS_CLK_USB_CTRL_AUXSRC_VALUE_CLKSRC_PLL_USB,
-                    48 * MHZ,
-                    48 * MHZ);
+                    USB_CLK_KHZ * KHZ,
+                    USB_CLK_KHZ * KHZ);
 
-    // CLK ADC = PLL USB (48MHZ) / 1 = 48MHz
+    // CLK ADC = PLL USB 48MHZ / 1 = 48MHz
     clock_configure(clk_adc,
                     0, // No GLMUX
                     CLOCKS_CLK_ADC_CTRL_AUXSRC_VALUE_CLKSRC_PLL_USB,
-                    48 * MHZ,
-                    48 * MHZ);
+                    USB_CLK_KHZ * KHZ,
+                    USB_CLK_KHZ * KHZ);
 
-    // CLK RTC = PLL USB (48MHz) / 1024 = 46875Hz
+    // CLK RTC = PLL USB 48MHz / 1024 = 46875Hz
     clock_configure(clk_rtc,
                     0, // No GLMUX
                     CLOCKS_CLK_RTC_CTRL_AUXSRC_VALUE_CLKSRC_PLL_USB,
-                    48 * MHZ,
-                    46875);
+                    USB_CLK_KHZ * KHZ,
+                    RTC_CLOCK_FREQ_HZ);
 
     // CLK PERI = clk_sys. Used as reference clock for Peripherals. No dividers so just select and enable
     // Normally choose clk_sys or clk_usb
     clock_configure(clk_peri,
                     0,
                     CLOCKS_CLK_PERI_CTRL_AUXSRC_VALUE_CLK_SYS,
-                    125 * MHZ,
-                    125 * MHZ);
+                    SYS_CLK_KHZ * KHZ,
+                    SYS_CLK_KHZ * KHZ);
 }
 
 /// \tag::clock_get_hz[]
@@ -313,7 +307,7 @@ void clocks_enable_resus(resus_callback_t resus_callback) {
     clocks_hw->resus.ctrl = CLOCKS_CLK_SYS_RESUS_CTRL_ENABLE_BITS | timeout;
 }
 
-void clock_gpio_init(uint gpio, uint src, uint div) {
+void clock_gpio_init_int_frac(uint gpio, uint src, uint32_t div_int, uint8_t div_frac) {
     // Bit messy but it's as much code to loop through a lookup
     // table. The sources for each gpout generators are the same
     // so just call with the sources from GP0
@@ -321,7 +315,7 @@ void clock_gpio_init(uint gpio, uint src, uint div) {
     if      (gpio == 21) gpclk = clk_gpout0;
     else if (gpio == 23) gpclk = clk_gpout1;
     else if (gpio == 24) gpclk = clk_gpout2;
-    else if (gpio == 26) gpclk = clk_gpout3;
+    else if (gpio == 25) gpclk = clk_gpout3;
     else {
         invalid_params_if(CLOCKS, true);
     }
@@ -329,7 +323,7 @@ void clock_gpio_init(uint gpio, uint src, uint div) {
     // Set up the gpclk generator
     clocks_hw->clk[gpclk].ctrl = (src << CLOCKS_CLK_GPOUT0_CTRL_AUXSRC_LSB) |
                                  CLOCKS_CLK_GPOUT0_CTRL_ENABLE_BITS;
-    clocks_hw->clk[gpclk].div = div << CLOCKS_CLK_GPOUT0_DIV_INT_LSB;
+    clocks_hw->clk[gpclk].div = (div_int << CLOCKS_CLK_GPOUT0_DIV_INT_LSB) | div_frac;
 
     // Set gpio pin to gpclock function
     gpio_set_function(gpio, GPIO_FUNC_GPCK);

@@ -82,25 +82,25 @@ int main() {
 
             pwm_set_both_levels(pwm, v + 1, v);
             PICOTEST_CHECK_CHANNEL(pwm, slice->cc == (((v) << PWM_CH0_CC_B_LSB) | ((v + 1) << PWM_CH0_CC_A_LSB)),
-                                   "pwm_set_compare() failed to set register");
+                                   "pwm_set_both_levels() failed to set register");
 
             float divider = 100.5;
             int i = (int16_t) divider;
             int f = (int8_t) ((divider - i) * 16);
             pwm_set_clkdiv(pwm, divider);
-            PICOTEST_CHECK_CHANNEL(pwm, slice->div == (i << 4 | f), "pwm_set_divider_fract() failed to set register");
+            PICOTEST_CHECK_CHANNEL(pwm, slice->div == (i << 4 | f), "pwm_set_clkdiv() failed to set register");
 
             i++;
             pwm_set_clkdiv_int_frac(pwm, i, f);
             PICOTEST_CHECK_CHANNEL(pwm, slice->div == (i << 4 | f),
-                                   "pwm_set_divider_int_fract() failed to set register");
+                                   "pwm_set_clkdiv_int_frac() failed to set register");
 
             int c = 1234;
             pwm_set_counter(pwm, c);
-            PICOTEST_CHECK_CHANNEL(pwm, slice->ctr == c, "pwm_set_count() failed to set register");
+            PICOTEST_CHECK_CHANNEL(pwm, slice->ctr == c, "pwm_set_counter() failed to set register");
 
             int cc = pwm_get_counter(pwm);
-            PICOTEST_CHECK_CHANNEL(pwm, slice->ctr == cc && cc == c, "pwm_get_count() failed to get register");
+            PICOTEST_CHECK_CHANNEL(pwm, slice->ctr == cc && cc == c, "pwm_get_counter() failed to get register");
 
             pwm_set_output_polarity(pwm, false, false);
             PICOTEST_CHECK_CHANNEL(pwm,
@@ -120,15 +120,15 @@ int main() {
                                    "pwm_set_output_polarity() (T/T)");
 
             pwm_set_phase_correct(pwm, true);
-            PICOTEST_CHECK_CHANNEL(pwm, (slice->csr & PWM_CH0_CSR_PH_CORRECT_BITS), "pwm_set_phase_correction(T)");
+            PICOTEST_CHECK_CHANNEL(pwm, (slice->csr & PWM_CH0_CSR_PH_CORRECT_BITS), "pwm_set_phase_correct(T)");
 
             pwm_set_phase_correct(pwm, false);
-            PICOTEST_CHECK_CHANNEL(pwm, !(slice->csr & PWM_CH0_CSR_PH_CORRECT_BITS), "pwm_set_phase_correction(F)");
+            PICOTEST_CHECK_CHANNEL(pwm, !(slice->csr & PWM_CH0_CSR_PH_CORRECT_BITS), "pwm_set_phase_correct(F)");
 
             for (int m = PWM_DIV_FREE_RUNNING; m <= PWM_DIV_B_FALLING; m++) {
                 pwm_set_clkdiv_mode(pwm, m);
                 PICOTEST_CHECK_CHANNEL(pwm, ((slice->csr & PWM_CH0_CSR_DIVMODE_BITS) >> PWM_CH0_CSR_DIVMODE_LSB) == m,
-                                       "pwm_set_divider_mode");
+                                       "pwm_set_clkdiv_mode");
             }
         }
     PICOTEST_END_SECTION();

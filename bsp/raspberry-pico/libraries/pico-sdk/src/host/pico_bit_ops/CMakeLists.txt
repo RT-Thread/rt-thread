@@ -1,4 +1,4 @@
-add_library(pico_bit_ops INTERFACE)
+pico_add_impl_library(pico_bit_ops)
 
 target_sources(pico_bit_ops INTERFACE
         ${CMAKE_CURRENT_LIST_DIR}/bit_ops.c)

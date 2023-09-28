@@ -4,13 +4,13 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#include "hardware/platform_defs.h"
+#include "pico.h"
 #include "hardware/irq.h"
+#include "pico/asm_helper.S"
+
+pico_default_asm_setup
 
 #if !PICO_DISABLE_SHARED_IRQ_HANDLERS
-.syntax unified
-.cpu cortex-m0plus
-.thumb
 
 .data
 .align 2
@@ -54,17 +54,20 @@ irq_handler_chain_slots:
 .endr
 
 irq_handler_chain_first_slot:
-    push {lr}
-    ldr  r0, [r1, #4]
-    adds r1, #1
-    mov  lr, r1
-    bx   r0
+    push {r0, lr}     // Save EXC_RETURN token, so `pop {r0, pc}` will return from interrupt
+                      // Note that r0 does not NEED to be saved, however we must maintain
+                      // an 8 byte stack alignment, and this is the cheapest way to do so
+    ldr  r0, [r1, #4] // Get `handler` field of irq_handler_chain_slot
+    adds r1, #1       // r1 points to `inst3` field of slot struct. Set Thumb bit on r1,
+    mov  lr, r1       // and copy to lr, so `inst3` is executed on return from handler
+    bx   r0           // Enter handler
+
 irq_handler_chain_remove_tail:
-    mov  r0, lr
-    subs r0, #9
+    mov  r0, lr       // Get start of struct. This function was called by a bl at offset +4,
+    subs r0, #9       // so lr points to offset +8. Note also lr has its Thumb bit set!
     ldr  r1, =irq_add_tail_to_free_list
     blx  r1
-    pop  {pc}
+    pop  {r0, pc}     // Top of stack is EXC_RETURN
 
 
 #endif

@@ -13,7 +13,7 @@ if (NOT TARGET pico_platform_headers)
 endif()
 
 if (NOT TARGET pico_platform)
-    add_library(pico_platform INTERFACE)
+    pico_add_impl_library(pico_platform)
     target_sources(pico_platform INTERFACE
             ${CMAKE_CURRENT_LIST_DIR}/platform.c)
 

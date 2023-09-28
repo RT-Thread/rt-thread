@@ -4,10 +4,14 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef _PICO_DATETIME_H
-#define _PICO_DATETIME_H
+#ifndef _PICO_UTIL_DATETIME_H
+#define _PICO_UTIL_DATETIME_H
 
 #include "pico.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 /** \file datetime.h
  * \defgroup util_datetime datetime
@@ -24,4 +28,7 @@
  */
 void datetime_to_str(char *buf, uint buf_size, const datetime_t *t);
 
+#ifdef __cplusplus
+}
+#endif
 #endif

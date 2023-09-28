@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef _PLATFORM_SEM_H
-#define _PLATFORM_SEM_H
+#ifndef _PICO_SEM_H
+#define _PICO_SEM_H
 
 #include "pico/lock_core.h"
 
@@ -90,10 +90,48 @@ void sem_acquire_blocking(semaphore_t *sem);
  * return false, otherwise it will return true.
  *
  * \param sem Pointer to semaphore structure
- * \param timeout_ms Time to wait to acquire the semaphore, in ms.
+ * \param timeout_ms Time to wait to acquire the semaphore, in milliseconds.
  * \return false if timeout reached, true if permit was acquired.
  */
 bool sem_acquire_timeout_ms(semaphore_t *sem, uint32_t timeout_ms);
+
+/*! \brief  Acquire a permit from a semaphore, with timeout
+ *  \ingroup sem
+ *
+ * This function will block and wait if no permits are available, until the
+ * defined timeout has been reached. If the timeout is reached the function will
+ * return false, otherwise it will return true.
+ *
+ * \param sem Pointer to semaphore structure
+ * \param timeout_us Time to wait to acquire the semaphore, in microseconds.
+ * \return false if timeout reached, true if permit was acquired.
+ */
+bool sem_acquire_timeout_us(semaphore_t *sem, uint32_t timeout_us);
+
+/*! \brief Wait to acquire a permit from a semaphore until a specific time
+ *  \ingroup sem
+ *
+ * This function will block and wait if no permits are available, until the
+ * specified timeout time. If the timeout is reached the function will
+ * return false, otherwise it will return true.
+ *
+ * \param sem Pointer to semaphore structure
+ * \param until The time after which to return if the sem is not available.
+ * \return true if permit was acquired, false if the until time was reached before
+ * acquiring.
+ */
+bool sem_acquire_block_until(semaphore_t *sem, absolute_time_t until);
+
+/*! \brief Attempt to acquire a permit from a semaphore without blocking
+ *  \ingroup sem
+ *
+ * This function will return false without blocking if no permits are
+ * available, otherwise it will acquire a permit and return true.
+ *
+ * \param sem Pointer to semaphore structure
+ * \return true if permit was acquired.
+ */
+bool sem_try_acquire(semaphore_t *sem);
 
 #ifdef __cplusplus
 }

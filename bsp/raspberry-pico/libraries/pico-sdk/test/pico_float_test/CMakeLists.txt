@@ -11,15 +11,19 @@ add_executable(pico_double_test
         )
 
 
+#todo split out variants with different flags
 target_compile_definitions(pico_float_test PRIVATE
         PICO_USE_CRT_PRINTF=1 # want full precision output
 #        PICO_FLOAT_PROPAGATE_NANS=1
+#        PICO_DIVIDER_DISABLE_INTERRUPTS=1
 )
 
+#todo split out variants with different flags
 target_compile_definitions(pico_double_test PRIVATE
         PICO_USE_CRT_PRINTF=1 # want full precision output
                 PICO_FLOAT_PROPAGATE_NANS=1
-                PICO_DOUBLE_PROPAGATE_NANS=1
+                #PICO_DOUBLE_PROPAGATE_NANS=1
+                #PICO_DIVIDER_DISABLE_INTERRUPTS=1
         )
 
 # handy for testing we aren't pulling in extra stuff

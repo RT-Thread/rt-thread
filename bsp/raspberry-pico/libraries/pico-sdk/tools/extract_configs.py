@@ -5,7 +5,7 @@
 # SPDX-License-Identifier: BSD-3-Clause
 #
 #
-# Script to scan the Raspberry Pi PICO SDK tree searching for configuration items
+# Script to scan the Raspberry Pi Pico SDK tree searching for configuration items
 # Outputs a tab separated file of the configuration item:
 # name	location	description	type	advanced	default	depends	enumvalues	group	max	min
 #
@@ -29,7 +29,7 @@ scandir = sys.argv[1]
 outfile = sys.argv[2] if len(sys.argv) > 2 else 'pico_configs.tsv'
 
 CONFIG_RE = re.compile(r'//\s+PICO_CONFIG:\s+(\w+),\s+([^,]+)(?:,\s+(.*))?$')
-DEFINE_RE = re.compile(r'#define\s+(\w+)\s+(\w+)$')
+DEFINE_RE = re.compile(r'#define\s+(\w+)\s+(.+?)(\s*///.*)?$')
 
 all_configs = {}
 all_attrs = set()
@@ -38,7 +38,7 @@ all_defines = {}
 
 
 
-def ValidateAttrs(config_attrs):
+def ValidateAttrs(config_attrs, file_path, linenum):
     _type = config_attrs.get('type', 'int')
 
     # Validate attrs
@@ -149,7 +149,7 @@ for dirpath, dirnames, filenames in os.walk(scandir):
                                 k, v = (i.strip() for i in item.split('='))
                             except ValueError:
                                 raise Exception('{} at {}:{} has malformed value {}'.format(config_name, file_path, linenum, item))
-                            config_attrs[k] = v.replace('\0', ',') if v != 'undefined' else None
+                            config_attrs[k] = v.replace('\0', ',')
                             all_attrs.add(k)
                             prev = item
                         #print(file_path, config_name, config_attrs)
@@ -171,6 +171,11 @@ for dirpath, dirnames, filenames in os.walk(scandir):
                             m = re.match(r'^((0x)?\d+)u$', value.lower())
                             if m:
                                 value = m.group(1)
+                            else:
+                                # discard any '_u(X)' macro
+                                m = re.match(r'^_u\(((0x)?\d+)\)$', value.lower())
+                                if m:
+                                    value = m.group(1)
                             if name not in all_defines:
                                 all_defines[name] = dict()
                             if value not in all_defines[name]:
@@ -178,24 +183,40 @@ for dirpath, dirnames, filenames in os.walk(scandir):
                             all_defines[name][value] = (file_path, linenum)
 
 # Check for defines with missing PICO_CONFIG entries
+resolved_defines = dict()
 for d in all_defines:
     if d not in all_configs and d.startswith("PICO_"):
         logger.warning("Potential unmarked PICO define {}".format(d))
+    # resolve "nested defines" - this allows e.g. USB_DPRAM_MAX to resolve to USB_DPRAM_SIZE which is set to 4096 (which then matches the relevant PICO_CONFIG entry)
+    for val in all_defines[d]:
+        if val in all_defines:
+            resolved_defines[d] = all_defines[val]
 
-for config_name in all_configs:
+for config_name, config_obj in all_configs.items():
+    file_path = os.path.join(scandir, config_obj['filename'])
+    linenum = config_obj['line_number']
 
-    ValidateAttrs(all_configs[config_name]['attrs'])
+    ValidateAttrs(config_obj['attrs'], file_path, linenum)
 
-    if 'default' in all_configs[config_name]['attrs'] and config_name in all_defines:
-        if all_configs[config_name]['attrs']['default'] not in all_defines[config_name] and (all_configs[config_name]['attrs'].get('type', 'int') != 'bool'):
-            if config_name in ['USB_DPRAM_MAX'] or '/' in all_configs[config_name]['attrs']['default']:
-                continue
-            raise Exception('Found {} at {}:{} with a default of {}, but #define says {}'.format(config_name, all_configs[config_name]['filename'], all_configs[config_name]['line_number'], all_configs[config_name]['attrs']['default'], all_defines[config_name]))
+    # Check that default values match up
+    if 'default' in config_obj['attrs']:
+        config_default = config_obj['attrs']['default']
+        if config_name in all_defines:
+            defines_obj = all_defines[config_name]
+            if config_default not in defines_obj and (config_name not in resolved_defines or config_default not in resolved_defines[config_name]):
+                if '/' in config_default or ' ' in config_default:
+                    continue
+                # There _may_ be multiple matching defines, but arbitrarily display just one in the error message
+                first_define_value = list(defines_obj.keys())[0]
+                first_define_file_path, first_define_linenum = defines_obj[first_define_value]
+                raise Exception('Found {} at {}:{} with a default of {}, but #define says {} (at {}:{})'.format(config_name, file_path, linenum, config_default, first_define_value, first_define_file_path, first_define_linenum))
+        else:
+            raise Exception('Found {} at {}:{} with a default of {}, but no matching #define found'.format(config_name, file_path, linenum, config_default))
 
 with open(outfile, 'w', newline='') as csvfile:
     fieldnames = ('name', 'location', 'description', 'type') + tuple(sorted(all_attrs - set(['type'])))
     writer = csv.DictWriter(csvfile, fieldnames=fieldnames, extrasaction='ignore', dialect='excel-tab')
 
     writer.writeheader()
-    for config_name in sorted(all_configs):
-        writer.writerow({'name': config_name, 'location': '{}:{}'.format(all_configs[config_name]['filename'], all_configs[config_name]['line_number']), 'description': all_configs[config_name]['description'], **all_configs[config_name]['attrs']})
+    for config_name, config_obj in sorted(all_configs.items()):
+        writer.writerow({'name': config_name, 'location': '{}:{}'.format(config_obj['filename'], config_obj['line_number']), 'description': config_obj['description'], **config_obj['attrs']})

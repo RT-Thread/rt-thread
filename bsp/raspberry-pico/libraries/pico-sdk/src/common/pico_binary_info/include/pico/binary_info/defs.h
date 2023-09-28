@@ -32,7 +32,7 @@
 // The linker will store pointers within the binary using their runtime values, however because of
 // "AT" mapping in the link script these addresses actually correspond to a different address in the binary
 // image. This mapping (which in the case of crt0.S is simply the data copy table used at initialization
-// to copy data into it's runtime location) can be used by picotool or others to reverse the mapping to find data
+// to copy data into its runtime location) can be used by picotool or others to reverse the mapping to find data
 // within the binary.
 //
 // Note the above array is terminated with a NULL source_addr_start

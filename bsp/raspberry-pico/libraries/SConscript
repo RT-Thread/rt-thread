@@ -105,6 +105,8 @@ path = [
     cwd + '/pico-sdk/src/common/pico_binary_info/include',
     cwd + '/pico-sdk/src/rp2_common/pico_stdio/include',
     cwd + '/pico-sdk/src/rp2_common/pico_stdio_uart/include',
+    cwd + '/pico-sdk/src/rp2_common/pico_malloc/include',
+    cwd + '/pico-sdk/src/rp2_common/boot_stage2/include',
     cwd + '/generated/pico_base'
     ]
 

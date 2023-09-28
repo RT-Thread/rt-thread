@@ -1,3 +1,4 @@
 add_library(hardware_structs INTERFACE)
-target_include_directories(hardware_structs INTERFACE include)
-target_link_libraries(hardware_structs INTERFACE hardware_regs)
+add_library(hardware_structs_headers INTERFACE)
+target_include_directories(hardware_structs_headers INTERFACE include)
+pico_mirrored_target_link_libraries(hardware_structs INTERFACE hardware_regs)

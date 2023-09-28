@@ -6,21 +6,32 @@
 
 #include "pico.h"
 
-// For MHZ definitions etc
+// For frequency related definitions etc
 #include "hardware/clocks.h"
 
 #include "hardware/platform_defs.h"
 #include "hardware/regs/xosc.h"
-#include "hardware/structs/xosc.h"
+#include "hardware/xosc.h"
+
+#if XOSC_KHZ < (1 * KHZ) || XOSC_KHZ > (50 * KHZ)
+// Note: Although an external clock can be supplied up to 50 MHz, the maximum frequency the
+// XOSC cell is specified to work with a crystal is less, please see the RP2040 Datasheet.
+#error XOSC_KHZ must be in the range 1,000-50,000KHz i.e. 1-50MHz XOSC frequency
+#endif
+
+#define STARTUP_DELAY (((XOSC_KHZ + 128) / 256) * PICO_XOSC_STARTUP_DELAY_MULTIPLIER)
+
+// The DELAY field in xosc_hw->startup is 14 bits wide.
+#if STARTUP_DELAY >= (1 << 13)
+#error PICO_XOSC_STARTUP_DELAY_MULTIPLIER is too large: XOSC STARTUP.DELAY must be < 8192
+#endif
 
 void xosc_init(void) {
-    // Assumes 1-15 MHz input
-    assert(XOSC_MHZ <= 15);
+    // Assumes 1-15 MHz input, checked above.
     xosc_hw->ctrl = XOSC_CTRL_FREQ_RANGE_VALUE_1_15MHZ;
 
     // Set xosc startup delay
-    uint32_t startup_delay = (((12 * MHZ) / 1000) + 128) / 256;
-    xosc_hw->startup = startup_delay;
+    xosc_hw->startup = STARTUP_DELAY;
 
     // Set the enable bit now that we have set freq range and startup delay
     hw_set_bits(&xosc_hw->ctrl, XOSC_CTRL_ENABLE_VALUE_ENABLE << XOSC_CTRL_ENABLE_LSB);

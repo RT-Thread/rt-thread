@@ -49,25 +49,28 @@ void _watchdog_enable(uint32_t delay_ms, bool pause_on_debug) {
         hw_clear_bits(&watchdog_hw->ctrl, dbg_bits);
     }
 
-    if (!delay_ms) delay_ms = 50;
+    if (!delay_ms) {
+        hw_set_bits(&watchdog_hw->ctrl, WATCHDOG_CTRL_TRIGGER_BITS);
+    } else {
+        // Note, we have x2 here as the watchdog HW currently decrements twice per tick
+        load_value = delay_ms * 1000 * 2;
 
-    // Note, we have x2 here as the watchdog HW currently decrements twice per tick
-    load_value = delay_ms * 1000 * 2;
+        if (load_value > 0xffffffu)
+            load_value = 0xffffffu;
 
-    if (load_value > 0xffffffu)
-        load_value = 0xffffffu;
+        watchdog_update();
 
-
-    watchdog_update();
-
-    hw_set_bits(&watchdog_hw->ctrl, WATCHDOG_CTRL_ENABLE_BITS);
+        hw_set_bits(&watchdog_hw->ctrl, WATCHDOG_CTRL_ENABLE_BITS);
+    }
 }
 // end::watchdog_enable[]
 
+#define WATCHDOG_NON_REBOOT_MAGIC 0x6ab73121
+
 void watchdog_enable(uint32_t delay_ms, bool pause_on_debug) {
-    // This watchdog enable doesn't reboot so clear scratch register
-    // with magic word to jump into code
-    watchdog_hw->scratch[4] = 0;
+    // update scratch[4] to distinguish from magic used for reboot to specific address, or 0 used to reboot
+    // into regular flash path
+    watchdog_hw->scratch[4] = WATCHDOG_NON_REBOOT_MAGIC;
     _watchdog_enable(delay_ms, pause_on_debug);
 }
 
@@ -96,4 +99,8 @@ void watchdog_reboot(uint32_t pc, uint32_t sp, uint32_t delay_ms) {
 bool watchdog_caused_reboot(void) {
     // If any reason bits are set this is true
     return watchdog_hw->reason;
+}
+
+bool watchdog_enable_caused_reboot(void) {
+    return watchdog_hw->reason && watchdog_hw->scratch[4] == WATCHDOG_NON_REBOOT_MAGIC;
 }

@@ -1,5 +1,5 @@
 if (NOT TARGET pico_stdlib)
-    add_library(pico_stdlib INTERFACE)
+    pico_add_impl_library(pico_stdlib)
 
     target_sources(pico_stdlib INTERFACE
             ${CMAKE_CURRENT_LIST_DIR}/stdlib.c
@@ -14,6 +14,7 @@ if (NOT TARGET pico_stdlib)
             pico_printf
             pico_stdio
             hardware_gpio
+            hardware_uart
     )
 endif()
 

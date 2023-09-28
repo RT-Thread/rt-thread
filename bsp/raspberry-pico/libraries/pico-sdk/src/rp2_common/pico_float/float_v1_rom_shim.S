@@ -6,14 +6,13 @@
 
 #include "pico/asm_helper.S"
 
-#if PICO_FLOAT_SUPPORT_ROM_V1
-.syntax unified
-.cpu cortex-m0plus
-.thumb
+#if PICO_FLOAT_SUPPORT_ROM_V1 && PICO_RP2040_B0_SUPPORTED
 
 #ifndef PICO_FLOAT_IN_RAM
 #define PICO_FLOAT_IN_RAM 0
 #endif
+
+pico_default_asm_setup
 
 .macro float_section name
 // todo separate flag for shims?
@@ -100,7 +99,7 @@ regular_func fix642float_shim
  movs r5,r0
  movs r0,r1
 4:
- rsbs r2,#0
+ negs r2,r2
  adds r2,#32+29
 
  // bl packx
@@ -132,7 +131,7 @@ regular_func fatan2_shim
  bmi 2f         @ force y to 0 proper, so result will be zero
  subs r4,r2,r3  @ calculate shift
  bge 1f         @ ex>=ey?
- rsbs r4,#0     @ make shift positive
+ negs r4,r4     @ make shift positive
  asrs r0,r4
  cmp r4,#28
  blo 3f
@@ -159,8 +158,8 @@ regular_func fatan2_shim
  ldr r3, =0x2cfc         @ &pi_q29, circular coefficients
  cmp r0,#0               @ x negative
  bge 5f
- rsbs r0,#0              @ rotate to 1st/4th quadrants
- rsbs r1,#0
+ negs r0,r0              @ rotate to 1st/4th quadrants
+ negs r1,r1
  ldr r2,[r3]             @ pi Q29
 5:
  movs r4,#1              @ m=1
@@ -272,7 +271,7 @@ d2fix_a:
  movs r4,r0
  lsls r1,r2
  lsls r0,r2
- rsbs r2,#0
+ negs r2,r2
  adds r2,#32                   @ complementary shift
  lsrs r4,r2
  orrs r1,r4
@@ -287,7 +286,7 @@ d2fix_a:
  bmi 1f                        @ long shift?
  mov r4,r1
  lsls r4,r2
- rsbs r2,#0
+ negs r2,r2
  adds r2,#32                   @ complementary shift
  asrs r1,r2
  lsrs r0,r2
@@ -299,7 +298,7 @@ d2fix_a:
  asrs r1,#31                   @ shift down 32 places
  adds r2,#32
  bmi 1f                        @ very long shift?
- rsbs r2,#0
+ negs r2,r2
  adds r2,#32
  asrs r0,r2
  pop {r4,r15}
@@ -329,7 +328,7 @@ regular_func float2double_shim
  cmp r2,#0xff                  @ Inf?
  beq 2f
  lsrs r1,#4                    @ exponent and top 20 bits of mantissa
- ldr r2,=#(0x3ff-0x7f)<<20     @ difference in exponent offsets
+ ldr r2,=(0x3ff-0x7f)<<20     @ difference in exponent offsets
  adds r1,r2
  orrs r1,r3
  lsls r0,#29                   @ bottom 3 bits of mantissa
@@ -340,7 +339,7 @@ regular_func float2double_shim
  movs r0,#0
  bx r14
 2:
- ldr r1,=#0x7ff00000           @ return signed infinity
+ ldr r1,=0x7ff00000           @ return signed infinity
  adds r1,r3
  b 3b
 

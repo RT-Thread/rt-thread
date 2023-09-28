@@ -6,12 +6,11 @@
 
 #include "pico/asm_helper.S"
 #include "pico/bootrom/sf_table.h"
+#include "hardware/divider_helper.S"
 
 __pre_init __aeabi_float_init, 00020
 
-.syntax unified
-.cpu cortex-m0plus
-.thumb
+pico_default_asm_setup
 
 .macro float_section name
 #if PICO_FLOAT_IN_RAM
@@ -79,7 +78,7 @@ __check_nan_f2:
 #endif
 
 .macro table_tail_call SF_TABLE_OFFSET
-#if PICO_FLOAT_SUPPORT_ROM_V1
+#if PICO_FLOAT_SUPPORT_ROM_V1 && PICO_RP2040_B0_SUPPORTED
 #ifndef NDEBUG
     movs r3, #0
     mov ip, r3
@@ -93,27 +92,27 @@ __check_nan_f2:
 .macro shimmable_table_tail_call SF_TABLE_OFFSET shim
     ldr r3, =sf_table
     ldr r3, [r3, #\SF_TABLE_OFFSET]
-#if PICO_FLOAT_SUPPORT_ROM_V1
+#if PICO_FLOAT_SUPPORT_ROM_V1 && PICO_RP2040_B0_SUPPORTED
     mov ip, pc
 #endif
     bx r3
-#if PICO_FLOAT_SUPPORT_ROM_V1
+#if PICO_FLOAT_SUPPORT_ROM_V1 && PICO_RP2040_B0_SUPPORTED
 .byte \SF_TABLE_OFFSET, 0xdf
 .word \shim
 #endif
 .endm
 
 
-# note generally each function is in a separate section unless there is fall thru or branching between them
-# note fadd, fsub, fmul, fdiv are so tiny and just defer to rom so are lumped together so they can share constant pool
+// note generally each function is in a separate section unless there is fall thru or branching between them
+// note fadd, fsub, fmul, fdiv are so tiny and just defer to rom so are lumped together so they can share constant pool
 
-# note functions are word aligned except where they are an odd number of linear instructions
+// note functions are word aligned except where they are an odd number of linear instructions
 
 // float FUNC_NAME(__aeabi_fadd)(float, float)         single-precision addition
 float_wrapper_section __aeabi_farithmetic
 // float FUNC_NAME(__aeabi_frsub)(float x, float y)    single-precision reverse subtraction, y - x
 
-# frsub first because it is the only one that needs alignment
+// frsub first because it is the only one that needs alignment
 .align 2
 wrapper_func __aeabi_frsub
     eors r0, r1
@@ -146,7 +145,30 @@ wrapper_func_f2 __aeabi_fdiv
     b fdiv_fsub_nan_helper
 1:
 #endif
+#if !PICO_DIVIDER_DISABLE_INTERRUPTS
+    // to support IRQ usage (or context switch) we must save/restore divider state around call if state is dirty
+    ldr r2, =(SIO_BASE)
+    ldr r3, [r2, #SIO_DIV_CSR_OFFSET]
+    lsrs r3, #SIO_DIV_CSR_DIRTY_SHIFT_FOR_CARRY
+    bcs fdiv_save_state
+#else
+    // to avoid worrying about IRQs (or context switches), simply disable interrupts around call
+    push {r4, lr}
+    mrs r4, PRIMASK
+    cpsid i
+    bl fdiv_shim_call
+    msr PRIMASK, r4
+    pop {r4, pc}
+#endif
+fdiv_shim_call:
     table_tail_call SF_TABLE_FDIV
+#if !PICO_DIVIDER_DISABLE_INTERRUPTS
+fdiv_save_state:
+    save_div_state_and_lr
+    bl fdiv_shim_call
+    ldr r2, =(SIO_BASE)
+    restore_div_state_and_return
+#endif
 
 fdiv_fsub_nan_helper:
 #if PICO_FLOAT_PROPAGATE_NANS
@@ -354,7 +376,7 @@ wrapper_func __aeabi_i2f
         lsrs r1, r0, #31
         lsls r1, #31
         bpl 1f
-        rsbs r0, #0
+        negs r0, r0
 1:
         cmp r0, #0
         beq 7f
@@ -368,7 +390,7 @@ __aeabi_i2f_main:
         pop {r1, r2}
         lsls r1, r0
         subs r0, #158
-        rsbs r0, #0
+        negs r0, r0
 
         adds r1,#0x80  @ rounding
         bcs 5f         @ tripped carry? then have leading 1 in C as required (and result is even so can ignore sticky bits)
@@ -435,7 +457,7 @@ regular_func float2int_z
     bl __aeabi_f2uiz
     cmp r0, #0
     bmi 1f
-    rsbs r0, #0
+    negs r0, r0
     pop {pc}
 1:
     movs r0, #128
@@ -510,7 +532,7 @@ regular_func float2int64_z
     cmp r1, #0
     bmi 1f
     movs r2, #0
-    rsbs r0, #0
+    negs r0, r0
     sbcs r2, r1
     mov r1, r2
     pop {pc}
@@ -558,15 +580,15 @@ wrapper_func __aeabi_f2d
 #endif
     shimmable_table_tail_call SF_TABLE_FLOAT2DOUBLE float2double_shim
 
-float_wrapper_section srqtf
+float_wrapper_section sqrtf
 wrapper_func_f1 sqrtf
-#if PICO_FLOAT_SUPPORT_ROM_V1
+#if PICO_FLOAT_SUPPORT_ROM_V1 && PICO_RP2040_B0_SUPPORTED
     // check for negative
     asrs r1, r0, #23
     bmi 1f
 #endif
     table_tail_call SF_TABLE_FSQRT
-#if PICO_FLOAT_SUPPORT_ROM_V1
+#if PICO_FLOAT_SUPPORT_ROM_V1 && PICO_RP2040_B0_SUPPORTED
 1:
     mvns r0, r1
     cmp r0, #255
@@ -689,10 +711,33 @@ wrapper_func tanf
     lsls r1, r0, #1
     lsrs r1, #24
     cmp r1, #127 + 7
-    bge 1f
-2:
+    bge ftan_out_of_range
+ftan_in_range:
+#if !PICO_DIVIDER_DISABLE_INTERRUPTS
+    // to support IRQ usage (or context switch) we must save/restore divider state around call if state is dirty
+    ldr r2, =(SIO_BASE)
+    ldr r3, [r2, #SIO_DIV_CSR_OFFSET]
+    lsrs r3, #SIO_DIV_CSR_DIRTY_SHIFT_FOR_CARRY
+    bcs ftan_save_state
+#else
+    // to avoid worrying about IRQs (or context switches), simply disable interrupts around call
+    push {r4, lr}
+    mrs r4, PRIMASK
+    cpsid i
+    bl ftan_shim_call
+    msr PRIMASK, r4
+    pop {r4, pc}
+#endif
+ftan_shim_call:
     table_tail_call SF_TABLE_FTAN
-1:
+#if !PICO_DIVIDER_DISABLE_INTERRUPTS
+ftan_save_state:
+    save_div_state_and_lr
+    bl ftan_shim_call
+    ldr r2, =(SIO_BASE)
+    restore_div_state_and_return
+#endif
+ftan_out_of_range:
 #if PICO_FLOAT_PROPAGATE_NANS
     // also check for infinites
     cmp r1, #255
@@ -709,7 +754,7 @@ wrapper_func tanf
     bl remainderf
     pop {r1}
     mov lr, r1
-    b 2b
+    b ftan_in_range
 
 float_wrapper_section atan2f
 wrapper_func_f2 atan2f

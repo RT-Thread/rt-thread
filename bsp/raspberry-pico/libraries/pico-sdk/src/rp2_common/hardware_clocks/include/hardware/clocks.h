@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef _HARDWARE_CLOCKS_H_
-#define _HARDWARE_CLOCKS_H_
+#ifndef _HARDWARE_CLOCKS_H
+#define _HARDWARE_CLOCKS_H
 
 #include "pico.h"
 #include "hardware/structs/clocks.h"
@@ -89,6 +89,70 @@ extern "C" {
 #define KHZ 1000
 #define MHZ 1000000
 
+/// \tag::pll_settings[]
+//
+// There are two PLLs in RP2040:
+// 1. The 'SYS PLL' generates the 125MHz system clock, the frequency is defined by `SYS_CLK_KHZ`.
+// 2. The 'USB PLL' generates the 48MHz USB clock, the frequency is defined by `USB_CLK_KHZ`.
+//
+// The two PLLs use the crystal oscillator output directly as their reference frequency input; the PLLs reference
+// frequency cannot be reduced by the dividers present in the clocks block. The crystal frequency is defined by `XOSC_KHZ` or
+// `XOSC_MHZ`.
+//
+// The system's default definitions are correct for the above frequencies with a 12MHz
+// crystal frequency.  If different frequencies are required, these must be defined in
+// the board configuration file together with the revised PLL settings
+// Use `vcocalc.py` to check and calculate new PLL settings if you change any of these frequencies.
+//
+// Default PLL configuration:
+//                   REF     FBDIV VCO            POSTDIV
+// PLL SYS: 12 / 1 = 12MHz * 125 = 1500MHz / 6 / 2 = 125MHz
+// PLL USB: 12 / 1 = 12MHz * 100 = 1200MHz / 5 / 5 =  48MHz
+/// \end::pll_settings[]
+
+// PICO_CONFIG: PLL_COMMON_REFDIV, PLL reference divider setting - used for both PLLs, type=int, default=1, advanced=true, group=hardware_clocks
+#ifndef PLL_COMMON_REFDIV
+#define PLL_COMMON_REFDIV                   1
+#endif
+
+#if (SYS_CLK_KHZ == 125000) && (XOSC_KHZ == 12000) && (PLL_COMMON_REFDIV == 1)
+// PLL settings for standard 125 MHz system clock.
+// PICO_CONFIG: PLL_SYS_VCO_FREQ_KHZ, System clock PLL frequency, type=int, default=1500 * KHZ, advanced=true, group=hardware_clocks
+#ifndef PLL_SYS_VCO_FREQ_KHZ
+#define PLL_SYS_VCO_FREQ_KHZ                (1500 * KHZ)
+#endif
+// PICO_CONFIG: PLL_SYS_POSTDIV1, System clock PLL post divider 1 setting, type=int, default=6, advanced=true, group=hardware_clocks
+#ifndef PLL_SYS_POSTDIV1
+#define PLL_SYS_POSTDIV1                    6
+#endif
+// PICO_CONFIG: PLL_SYS_POSTDIV2, System clock PLL post divider 2 setting, type=int, default=2, advanced=true, group=hardware_clocks
+#ifndef PLL_SYS_POSTDIV2
+#define PLL_SYS_POSTDIV2                    2
+#endif
+#endif // SYS_CLK_KHZ == 125000 && XOSC_KHZ == 12000 && PLL_COMMON_REFDIV == 1
+#if !defined(PLL_SYS_VCO_FREQ_KHZ) || !defined(PLL_SYS_POSTDIV1) || !defined(PLL_SYS_POSTDIV2)
+#error PLL_SYS_VCO_FREQ_KHZ, PLL_SYS_POSTDIV1 and PLL_SYS_POSTDIV2 must all be specified when using custom clock setup
+#endif
+
+#if (USB_CLK_KHZ == 48000) && (XOSC_KHZ == 12000) && (PLL_COMMON_REFDIV == 1)
+// PLL settings for a USB clock of 48MHz.
+// PICO_CONFIG: PLL_USB_VCO_FREQ_KHZ, USB clock PLL frequency, type=int, default=1200 * KHZ, advanced=true, group=hardware_clocks
+#ifndef PLL_USB_VCO_FREQ_KHZ
+#define PLL_USB_VCO_FREQ_KHZ                (1200 * KHZ)
+#endif
+// PICO_CONFIG: PLL_USB_POSTDIV1, USB clock PLL post divider 1 setting, type=int, default=5, advanced=true, group=hardware_clocks
+#ifndef PLL_USB_POSTDIV1
+#define PLL_USB_POSTDIV1                    5
+#endif
+// PICO_CONFIG: PLL_USB_POSTDIV2, USB clock PLL post divider 2 setting, type=int, default=5, advanced=true, group=hardware_clocks
+#ifndef PLL_USB_POSTDIV2
+#define PLL_USB_POSTDIV2                    5
+#endif
+#endif // USB_CLK_KHZ == 48000 && XOSC_KHZ == 12000 && PLL_COMMON_REFDIV == 1
+#if !defined(PLL_USB_VCO_FREQ_KHZ) || !defined(PLL_USB_POSTDIV1) || !defined(PLL_USB_POSTDIV2)
+#error PLL_USB_VCO_FREQ_KHZ, PLL_USB_POSTDIV1 and PLL_USB_POSTDIV2 must all be specified when using custom clock setup.
+#endif
+
 // PICO_CONFIG: PARAM_ASSERTIONS_ENABLED_CLOCKS, Enable/disable assertions in the clocks module, type=bool, default=0, group=hardware_clocks
 #ifndef PARAM_ASSERTIONS_ENABLED_CLOCKS
 #define PARAM_ASSERTIONS_ENABLED_CLOCKS 0
@@ -99,7 +163,7 @@ extern "C" {
  *
  *  Must be called before any other clock function.
  */
-void clocks_init();
+void clocks_init(void);
 
 /*! \brief Configure the specified clock
  *  \ingroup hardware_clocks
@@ -140,7 +204,7 @@ uint32_t frequency_count_khz(uint src);
 /*! \brief Set the "current frequency" of the clock as reported by clock_get_hz without actually changing the clock
  *  \ingroup hardware_clocks
  *
- * \see clock_get_hz
+ * \see clock_get_hz()
  */
 void clock_set_reported_hz(enum clock_index clk_index, uint hz);
 
@@ -170,11 +234,26 @@ void clocks_enable_resus(resus_callback_t resus_callback);
 /*! \brief Output an optionally divided clock to the specified gpio pin.
  *  \ingroup hardware_clocks
  *
- * \param gpio The GPIO pin to output the clock to. Valid GPIOs are: 21, 23, 24, 26. These GPIOs are connected to the GPOUT0-3 clock generators.
+ * \param gpio The GPIO pin to output the clock to. Valid GPIOs are: 21, 23, 24, 25. These GPIOs are connected to the GPOUT0-3 clock generators.
  * \param src  The source clock. See the register field CLOCKS_CLK_GPOUT0_CTRL_AUXSRC for a full list. The list is the same for each GPOUT clock generator.
- * \param div  The amount to divide the source clock by. This is useful to not overwhelm the GPIO pin with a fast clock.
+ * \param div_int  The integer part of the value to divide the source clock by. This is useful to not overwhelm the GPIO pin with a fast clock. this is in range of 1..2^24-1.
+ * \param div_frac The fractional part of the value to divide the source clock by. This is in range of 0..255 (/256).
  */
-void clock_gpio_init(uint gpio, uint src, uint div);
+void clock_gpio_init_int_frac(uint gpio, uint src, uint32_t div_int, uint8_t div_frac);
+
+/*! \brief Output an optionally divided clock to the specified gpio pin.
+ *  \ingroup hardware_clocks
+ *
+ * \param gpio The GPIO pin to output the clock to. Valid GPIOs are: 21, 23, 24, 25. These GPIOs are connected to the GPOUT0-3 clock generators.
+ * \param src  The source clock. See the register field CLOCKS_CLK_GPOUT0_CTRL_AUXSRC for a full list. The list is the same for each GPOUT clock generator.
+ * \param div  The float amount to divide the source clock by. This is useful to not overwhelm the GPIO pin with a fast clock.
+ */
+static inline void clock_gpio_init(uint gpio, uint src, float div)
+{
+    uint div_int = (uint)div;
+    uint8_t frac = (uint8_t)((div - (float)div_int) * (1u << CLOCKS_CLK_GPOUT0_DIV_INT_LSB));
+    clock_gpio_init_int_frac(gpio, src, div_int, frac);
+}
 
 /*! \brief Configure a clock to come from a gpio input
  *  \ingroup hardware_clocks

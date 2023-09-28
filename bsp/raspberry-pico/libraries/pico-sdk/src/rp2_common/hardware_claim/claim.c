@@ -6,7 +6,7 @@
 
 #include "hardware/claim.h"
 
-uint32_t hw_claim_lock() {
+uint32_t hw_claim_lock(void) {
     return spin_lock_blocking(spin_lock_instance(PICO_SPINLOCK_ID_HARDWARE_CLAIM));
 }
 
@@ -14,25 +14,16 @@ void hw_claim_unlock(uint32_t save) {
     spin_unlock(spin_lock_instance(PICO_SPINLOCK_ID_HARDWARE_CLAIM), save);
 }
 
-bool hw_is_claimed(uint8_t *bits, uint bit_index) {
-    bool rc;
-    uint32_t save = hw_claim_lock();
-    if (bits[bit_index >> 3u] & (1u << (bit_index & 7u))) {
-        rc = false;
-    } else {
-        bits[bit_index >> 3u] |= (1u << (bit_index & 7u));
-        rc = true;
-    }
-    hw_claim_unlock(save);
-    return rc;
+inline bool hw_is_claimed(const uint8_t *bits, uint bit_index) {
+    return (bits[bit_index >> 3u] & (1u << (bit_index & 7u)));
 }
 
 void hw_claim_or_assert(uint8_t *bits, uint bit_index, const char *message) {
     uint32_t save = hw_claim_lock();
-    if (bits[bit_index >> 3u] & (1u << (bit_index & 7u))) {
+    if (hw_is_claimed(bits, bit_index)) {
         panic(message, bit_index);
     } else {
-        bits[bit_index >> 3u] |= (1u << (bit_index & 7u));
+        bits[bit_index >> 3u] |= (uint8_t)(1u << (bit_index & 7u));
     }
     hw_claim_unlock(save);
 }
@@ -42,9 +33,9 @@ int hw_claim_unused_from_range(uint8_t *bits, bool required, uint bit_lsb, uint 
     uint32_t save = hw_claim_lock();
     int found_bit = -1;
     for(uint bit=bit_lsb; bit <= bit_msb; bit++) {
-        if (!(bits[bit >> 3u] & (1u << (bit & 7u)))) {
-            bits[bit >> 3u] |= (1u << (bit & 7u));
-            found_bit = bit;
+        if (!hw_is_claimed(bits, bit)) {
+            bits[bit >> 3u] |= (uint8_t)(1u << (bit & 7u));
+            found_bit = (int)bit;
             break;
         }
     }
@@ -57,8 +48,8 @@ int hw_claim_unused_from_range(uint8_t *bits, bool required, uint bit_lsb, uint 
 
 void hw_claim_clear(uint8_t *bits, uint bit_index) {
     uint32_t save = hw_claim_lock();
-    assert(bits[bit_index >> 3u] & (1u << (bit_index & 7u)));
-    bits[bit_index >> 3u] &= ~(1u << (bit_index & 7u));
+    assert(hw_is_claimed(bits, bit_index));
+    bits[bit_index >> 3u] &= (uint8_t) ~(1u << (bit_index & 7u));
     hw_claim_unlock(save);
 }
 

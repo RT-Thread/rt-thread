@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef _PICO_INT64_H
-#define _PICO_INT64_H
+#ifndef _PICO_INT64_OPS_H
+#define _PICO_INT64_OPS_H
 
 #include "pico/types.h"
 

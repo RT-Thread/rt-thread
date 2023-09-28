@@ -124,8 +124,8 @@
 
 
 %left REVERSE
-%left MULTIPLY DIVIDE
 %left PLUS MINUS
+%left MULTIPLY DIVIDE
 %left AND OR XOR
 
 %printer { yyo << "..."; } <*>;

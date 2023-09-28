@@ -9,22 +9,27 @@
 #include "pico/util/pheap.h"
 
 pheap_t *ph_create(uint max_nodes, pheap_comparator comparator, void *user_data) {
-    invalid_params_if(PHEAP, !max_nodes || max_nodes >= (1u << sizeof(pheap_node_id_t)));
+    invalid_params_if(PHEAP, !max_nodes || max_nodes >= (1u << (8 * sizeof(pheap_node_id_t))));
     pheap_t *heap = calloc(1, sizeof(pheap_t));
-    heap->max_nodes = max_nodes;
-    heap->comparator = comparator;
     heap->nodes = calloc(max_nodes, sizeof(pheap_node_t));
+    ph_post_alloc_init(heap, max_nodes, comparator, user_data);
+    return heap;
+}
+
+void ph_post_alloc_init(pheap_t *heap, uint max_nodes, pheap_comparator comparator, void *user_data) {
+    invalid_params_if(PHEAP, !max_nodes || max_nodes >= (1u << (8 * sizeof(pheap_node_id_t))));
+    heap->max_nodes = (pheap_node_id_t) max_nodes;
+    heap->comparator = comparator;
     heap->user_data = user_data;
     ph_clear(heap);
-    return heap;
 }
 
 void ph_clear(pheap_t *heap) {
     heap->root_id = 0;
     heap->free_head_id = 1;
     heap->free_tail_id = heap->max_nodes;
-    for(uint i = 1; i < heap->max_nodes; i++) {
-        ph_get_node(heap, i)->sibling = i + 1;
+    for(pheap_node_id_t i = 1; i < heap->max_nodes; i++) {
+        ph_get_node(heap, i)->sibling = (pheap_node_id_t)(i + 1);
     }
     ph_get_node(heap, heap->max_nodes)->sibling = 0;
 }
@@ -47,15 +52,19 @@ pheap_node_id_t ph_merge_two_pass(pheap_t *heap, pheap_node_id_t id) {
     }
 }
 
-static pheap_node_id_t ph_remove_any_head(pheap_t *heap, pheap_node_id_t root_id, bool reserve) {
+static pheap_node_id_t ph_remove_any_head(pheap_t *heap, pheap_node_id_t root_id, bool free) {
     assert(root_id);
 //    printf("Removing head %d (parent %d sibling %d)\n", root_id, ph_get_node(heap, root_id)->parent, ph_get_node(heap, root_id)->sibling);
     assert(!ph_get_node(heap, root_id)->sibling);
     assert(!ph_get_node(heap, root_id)->parent);
     pheap_node_id_t new_root_id = ph_merge_two_pass(heap, ph_get_node(heap, root_id)->child);
-    if (!reserve) {
+    if (free) {
         if (heap->free_tail_id) {
             ph_get_node(heap, heap->free_tail_id)->sibling = root_id;
+        }
+        if (!heap->free_head_id) {
+            assert(!heap->free_tail_id);
+            heap->free_head_id = root_id;
         }
         heap->free_tail_id = root_id;
     }
@@ -64,18 +73,17 @@ static pheap_node_id_t ph_remove_any_head(pheap_t *heap, pheap_node_id_t root_id
     return new_root_id;
 }
 
-pheap_node_id_t ph_remove_head_reserve(pheap_t *heap, bool reserve) {
+pheap_node_id_t ph_remove_head(pheap_t *heap, bool free) {
     pheap_node_id_t old_root_id = ph_peek_head(heap);
-    heap->root_id = ph_remove_any_head(heap, old_root_id, reserve);
+    heap->root_id = ph_remove_any_head(heap, old_root_id, free);
     return old_root_id;
 }
 
-#include <stdio.h>
-bool ph_delete(pheap_t *heap, pheap_node_id_t id) {
+bool ph_remove_and_free_node(pheap_t *heap, pheap_node_id_t id) {
     // 1) trivial cases
     if (!id) return false;
     if (id == heap->root_id) {
-        ph_remove_head(heap);
+        ph_remove_and_free_head(heap);
         return true;
     }
     // 2) unlink the node from the tree
@@ -101,7 +109,7 @@ bool ph_delete(pheap_t *heap, pheap_node_id_t id) {
     node->sibling = node->parent = 0;
 //    ph_dump(heap, NULL, NULL);
     // 3) remove it from the head of its own subtree
-    pheap_node_id_t new_sub_tree = ph_remove_any_head(heap, id, false);
+    pheap_node_id_t new_sub_tree = ph_remove_any_head(heap, id, true);
     assert(new_sub_tree != heap->root_id);
     heap->root_id = ph_merge_nodes(heap, heap->root_id, new_sub_tree);
     return true;

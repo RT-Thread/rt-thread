@@ -1,6 +1,6 @@
 pico_simple_hardware_target(timer)
 
-target_compile_definitions(hardware_timer INTERFACE
+target_compile_definitions(hardware_timer_headers INTERFACE
     PICO_HARDWARE_TIMER_RESOLUTION_US=1000 # to loosen tests a little
 )
 

@@ -1,5 +1,6 @@
-PROJECT_NAME           = "Pico SDK"
-PROJECT_NUMBER         = @VERSION_MAJOR@.@VERSION_MINOR@.@VERSION_PATCH@
+PROJECT_NAME            = "Raspberry Pi Pico SDK"
+PROJECT_BRIEF           = "Raspberry Pi Pico SDK documentation"
+PROJECT_NUMBER          = @PICO_SDK_VERSION_STRING@
 
 #STRIP_FROM_PATH        = @PROJECT_SOURCE_DIR@
 STRIP_FROM_PATH         = @DOXY_INPUT_DIRS@
@@ -20,8 +21,6 @@ LAYOUT_FILE = @PROJECT_SOURCE_DIR@/docs/DoxygenLayout.xml
 HTML_FOOTER = @PROJECT_SOURCE_DIR@/docs/footer.html
 HTML_HEADER = @PROJECT_SOURCE_DIR@/docs/header.html
 
-PROJECT_BRIEF = "Pico SDK documentation"
-PROJECT_NUMBER = 1.0
 OPTIMIZE_OUTPUT_FOR_C = YES
 # HTML_EXTRA_STYLESHEET = @PROJECT_SOURCE_DIR@/docs/customdoxygen.css
 HTML_EXTRA_STYLESHEET  = @PROJECT_SOURCE_DIR@/docs/normalise.css @PROJECT_SOURCE_DIR@/docs/main.css @PROJECT_SOURCE_DIR@/docs/styles.css
@@ -61,4 +60,5 @@ PREDEFINED             = __not_in_flash_func(x) \
                          __time_critical_func(x) \
                          __not_in_flash(x)= \
                          __no_inline_not_in_flash(x)= \
-                         __attribute__(x)=
+                         __attribute__(x)= \
+                         DOXYGEN_GENERATION=

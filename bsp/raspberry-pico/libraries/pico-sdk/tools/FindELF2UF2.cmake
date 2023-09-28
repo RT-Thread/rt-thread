@@ -22,10 +22,12 @@ if (NOT ELF2UF2_FOUND)
     set(ELF2UF2_TARGET ELF2UF2)
 
     if (NOT TARGET ${ELF2UF2_BUILD_TARGET})
-        message("ELF2UF2 will need to be built")
+        pico_message_debug("ELF2UF2 will need to be built")
         ExternalProject_Add(${ELF2UF2_BUILD_TARGET}
-                PREFIX elf2uf2 SOURCE_DIR ${ELF2UF2_SOURCE_DIR}
+                PREFIX elf2uf2
+                SOURCE_DIR ${ELF2UF2_SOURCE_DIR}
                 BINARY_DIR ${ELF2UF2_BINARY_DIR}
+                CMAKE_ARGS "-DCMAKE_MAKE_PROGRAM:FILEPATH=${CMAKE_MAKE_PROGRAM}"
                 BUILD_ALWAYS 1 # force dependency checking
                 INSTALL_COMMAND ""
                 )

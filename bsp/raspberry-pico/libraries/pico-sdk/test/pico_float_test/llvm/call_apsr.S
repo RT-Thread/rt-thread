@@ -12,9 +12,9 @@
 //
 //===-
 
-.syntax unified
-.cpu cortex-m0plus
-.thumb
+#include "pico/asm_helper.S"
+
+pico_default_asm_setup
 
 .align 2
 

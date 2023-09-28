@@ -9,7 +9,7 @@
 
 #include <math.h>
 #include <float.h>
-#include "pico/types.h"
+#include "pico.h"
 #include "pico/bootrom/sf_table.h"
 
 #ifdef __cplusplus

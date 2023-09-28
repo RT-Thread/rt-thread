@@ -1,12 +1,9 @@
 if (NOT TARGET pico_divider)
     # library to be depended on - we make this depend on particular implementations using per target generator expressions
-    add_library(pico_divider INTERFACE)
+    pico_add_impl_library(pico_divider)
 
     # no custom implementation; falls thru to compiler
-    add_library(pico_divider_compiler INTERFACE)
-    target_compile_definitions(pico_divider_compiler INTERFACE
-            PICO_DIVIDER_COMPILER=1
-    )
+    pico_add_library(pico_divider_compiler)
 
     # add alias "default" which is just hardware.
     add_library(pico_divider_default INTERFACE)
@@ -24,13 +21,11 @@ if (NOT TARGET pico_divider)
 
     target_link_libraries(pico_divider_hardware_explicit INTERFACE
             pico_divider_headers
+            hardware_divider
             hardware_regs
             )
 
-    add_library(pico_divider_hardware INTERFACE)
-    target_compile_definitions(pico_divider_hardware INTERFACE
-            PICO_DIVIDER_HARDWARE=1
-            )
+    pico_add_library(pico_divider_hardware)
 
     target_link_libraries(pico_divider_hardware INTERFACE pico_divider_hardware_explicit)
 

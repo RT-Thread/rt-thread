@@ -11,21 +11,21 @@
 // NOTE THIS FUNCTION TABLE IS NOT PUBLIC OR NECESSARILY COMPLETE...
 // IT IS ***NOT*** SAFE TO CALL THESE FUNCTION POINTERS FROM ARBITRARY CODE
 uint32_t sf_table[SF_TABLE_V2_SIZE / 2];
-void *sf_clz_func;
+void __attribute__((weak)) *sf_clz_func;
 
-#if !PICO_FLOAT_SUPPORT_ROM_V1
-static __attribute__((noreturn)) void missing_float_func_shim() {
+#if !(PICO_FLOAT_SUPPORT_ROM_V1 && PICO_RP2040_B0_SUPPORTED)
+static __attribute__((noreturn)) void missing_float_func_shim(void) {
     panic("");
 }
 #endif
 
-void __aeabi_float_init() {
+void __aeabi_float_init(void) {
     int rom_version = rp2040_rom_version();
     void *rom_table = rom_data_lookup(rom_table_code('S', 'F'));
-#if PICO_FLOAT_SUPPORT_ROM_V1
+#if PICO_FLOAT_SUPPORT_ROM_V1 && PICO_RP2040_B0_SUPPORTED
     if (rom_version == 1) {
         memcpy(&sf_table, rom_table, SF_TABLE_V1_SIZE);
-        extern void float_table_shim_on_use_helper();
+        extern void float_table_shim_on_use_helper(void);
         // todo replace NDEBUG with a more exclusive assertion guard
 #ifndef NDEBUG
         if (*(uint16_t *)0x29ee != 0x0fc4 || // this is packx
@@ -63,8 +63,8 @@ void __aeabi_float_init() {
     }
 #endif
     if (rom_version >= 2) {
-        assert(*((uint8_t *)(rom_table-2)) * 4 >= SF_TABLE_V2_SIZE);
+        assert(*((uint8_t *)rom_table-2) * 4 >= SF_TABLE_V2_SIZE);
         memcpy(&sf_table, rom_table, SF_TABLE_V2_SIZE);
     }
-    sf_clz_func = rom_func_lookup(rom_table_code('L', '3'));
+    sf_clz_func = rom_func_lookup(ROM_FUNC_CLZ32);
 }

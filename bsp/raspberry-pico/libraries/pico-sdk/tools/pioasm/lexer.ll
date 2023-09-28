@@ -27,7 +27,7 @@
   yy::parser::symbol_type make_BINARY(const std::string &s, const yy::parser::location_type& loc);
 %}
 
-blank         [ \t]
+blank         [ \t\r]
 whitesp       {blank}+
 
 comment       (";"|"//")[^\n]*
@@ -77,7 +77,7 @@ output_fmt    [^%\n]+
 <code_block>{
     {blank}+                        loc.step();
     \n+                             { auto loc_newline = loc; loc_newline.end = loc_newline.begin; loc.lines(yyleng); loc.step(); }
-    "%}"                            { BEGIN(INITIAL); auto loc2 = loc; loc2.begin = code_block_start.begin; return yy::parser::make_CODE_BLOCK_CONTENTS(code_block_contents, loc2); }
+    "%}"{blank}*                    { BEGIN(INITIAL); auto loc2 = loc; loc2.begin = code_block_start.begin; return yy::parser::make_CODE_BLOCK_CONTENTS(code_block_contents, loc2); }
     .*                              { code_block_contents += std::string(yytext) + "\n"; }
 }
 

@@ -1,15 +1,10 @@
 if (NOT TARGET pico_float)
     # library to be depended on - we make this depend on particular implementations using per target generator expressions
-    add_library(pico_float INTERFACE)
+    pico_add_library(pico_float)
 
     # no custom implementation; falls thru to compiler
-    add_library(pico_float_compiler INTERFACE)
-    # PICO_BUILD_DEFINE: PICO_FLOAT_COMPILER, whether compiler provided float support is being used, type=bool, default=0, but dependent on CMake options, group=pico_float
-    target_compile_definitions(pico_float_compiler INTERFACE
-            PICO_FLOAT_COMPILER=1
-    )
+    pico_add_library(pico_float_compiler)
 
-    add_library(pico_float_headers INTERFACE)
     target_include_directories(pico_float_headers INTERFACE ${CMAKE_CURRENT_LIST_DIR}/include)
 
     # add alias "default" which is just rom.
@@ -21,31 +16,22 @@ if (NOT TARGET pico_float)
     target_link_libraries(pico_float INTERFACE
             $<IF:$<BOOL:$<TARGET_PROPERTY:PICO_TARGET_FLOAT_IMPL>>,$<TARGET_PROPERTY:PICO_TARGET_FLOAT_IMPL>,${PICO_DEFAULT_FLOAT_IMPL}>)
 
-    add_library(pico_float_pico INTERFACE)
+    pico_add_library(pico_float_pico)
     target_sources(pico_float_pico INTERFACE
             ${CMAKE_CURRENT_LIST_DIR}/float_aeabi.S
             ${CMAKE_CURRENT_LIST_DIR}/float_init_rom.c
             ${CMAKE_CURRENT_LIST_DIR}/float_math.c
             ${CMAKE_CURRENT_LIST_DIR}/float_v1_rom_shim.S
     )
-    # PICO_BUILD_DEFINE: PICO_FLOAT_PICO, whether optimized pico/bootrom provided float support is being used, type=bool, default=1, but dependent on CMake options, group=pico_float
-    target_compile_definitions(pico_float_pico INTERFACE
-            PICO_FLOAT_PICO=1
-            )
 
-    target_link_libraries(pico_float_pico INTERFACE pico_bootrom pico_float_headers)
+    target_link_libraries(pico_float_pico INTERFACE pico_bootrom pico_float_headers hardware_divider)
 
-    add_library(pico_float_none INTERFACE)
+    pico_add_library(pico_float_none)
     target_sources(pico_float_none INTERFACE
             ${CMAKE_CURRENT_LIST_DIR}/float_none.S
             )
 
     target_link_libraries(pico_float_none INTERFACE pico_float_headers)
-
-    # PICO_BUILD_DEFINE: PICO_FLOAT_NONE, whether float support is disabled and functions will panic, type=bool, default=0, but dependent on CMake options, group=pico_float
-    target_compile_definitions(pico_float_none INTERFACE
-            PICO_FLOAT_NONE=1
-    )
 
     function(wrap_float_functions TARGET)
         pico_wrap_function(${TARGET} __aeabi_fadd)

@@ -28,7 +28,15 @@
  * \include hello_rtc.c
  */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
 
+/*! Callback function type for RTC alarms
+ *  \ingroup hardware_rtc
+ *
+ * \sa rtc_set_alarm()
+ */
 typedef void (*rtc_callback_t)(void);
 
 /*! \brief Initialise the RTC system
@@ -38,6 +46,10 @@ void rtc_init(void);
 
 /*! \brief Set the RTC to the specified time
  *  \ingroup hardware_rtc
+ *
+ * \note Note that after setting the RTC date and time, a subsequent read of the values (e.g. via rtc_get_datetime()) may not
+ * reflect the new setting until up to three cycles of the potentially-much-slower RTC clock domain have passed. This represents a period
+ * of 64 microseconds with the default RTC clock configuration.
  *
  * \param t Pointer to a \ref datetime_t structure contains time to set
  * \return true if set, false if the passed in datetime was invalid.
@@ -66,9 +78,18 @@ bool rtc_running(void);
  */
 void rtc_set_alarm(datetime_t *t, rtc_callback_t user_callback);
 
+/*! \brief Enable the RTC alarm (if inactive)
+ *  \ingroup hardware_rtc
+ */
+void rtc_enable_alarm(void);
+
 /*! \brief Disable the RTC alarm (if active)
  *  \ingroup hardware_rtc
  */
 void rtc_disable_alarm(void);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

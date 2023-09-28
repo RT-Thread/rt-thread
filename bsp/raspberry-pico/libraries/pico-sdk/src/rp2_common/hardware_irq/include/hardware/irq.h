@@ -4,23 +4,29 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef _HARDWARE_IRQ_H_
-#define _HARDWARE_IRQ_H_
+#ifndef _HARDWARE_IRQ_H
+#define _HARDWARE_IRQ_H
 
 // These two config items are also used by assembler, so keeping separate
-// PICO_CONFIG: PICO_MAX_SHARED_IRQ_HANDLERS, Maximum Number of shared IRQ handers, default=4, advanced=true, group=hardware_irq
+// PICO_CONFIG: PICO_MAX_SHARED_IRQ_HANDLERS, Maximum number of shared IRQ handlers, default=4, advanced=true, group=hardware_irq
 #ifndef PICO_MAX_SHARED_IRQ_HANDLERS
-#define PICO_MAX_SHARED_IRQ_HANDLERS 4u
+#define PICO_MAX_SHARED_IRQ_HANDLERS 4
 #endif
 
-// PICO_CONFIG: PICO_DISABLE_SHARED_IRQ_HANDLERS, Disable shared IRQ handers, type=bool, default=0, group=hardware_irq
+// PICO_CONFIG: PICO_DISABLE_SHARED_IRQ_HANDLERS, Disable shared IRQ handlers, type=bool, default=0, group=hardware_irq
 #ifndef PICO_DISABLE_SHARED_IRQ_HANDLERS
 #define PICO_DISABLE_SHARED_IRQ_HANDLERS 0
+#endif
+
+// PICO_CONFIG: PICO_VTABLE_PER_CORE, user is using separate vector tables per core, type=bool, default=0, group=hardware_irq
+#ifndef PICO_VTABLE_PER_CORE
+#define PICO_VTABLE_PER_CORE 0
 #endif
 
 #ifndef __ASSEMBLER__
 
 #include "pico.h"
+#include "hardware/address_mapped.h"
 #include "hardware/regs/intctrl.h"
 #include "hardware/regs/m0plus.h"
 
@@ -36,13 +42,13 @@
  * On the RP2040, only the lower 26 IRQ signals are connected on the NVIC; IRQs 26 to 31 are tied to zero (never firing).
  *
  * There is one NVIC per core, and each core's NVIC has the same hardware interrupt lines routed to it, with the exception of the IO interrupts
- * where there is one IO interrupt per bank, per core. These are completely independent, so for example, processor 0 can be
+ * where there is one IO interrupt per bank, per core. These are completely independent, so, for example, processor 0 can be
  * interrupted by GPIO 0 in bank 0, and processor 1 by GPIO 1 in the same bank.
  *
  * \note That all IRQ APIs affect the executing core only (i.e. the core calling the function).
  *
  * \note You should not enable the same (shared) IRQ number on both cores, as this will lead to race conditions
- * or starvation of one of the cores. Additionally don't forget that disabling interrupts on one core does not disable interrupts
+ * or starvation of one of the cores. Additionally, don't forget that disabling interrupts on one core does not disable interrupts
  * on the other core.
  *
  * There are three different ways to set handlers for an IRQ:
@@ -52,7 +58,7 @@
  *    you will not be able to change it using the above APIs at runtime). Using this method can cause link conflicts at runtime, and offers no runtime performance benefit (i.e, it should not generally be used).
  *
  * \note If an IRQ is enabled and fires with no handler installed, a breakpoint will be hit and the IRQ number will
- * be in r0.
+ * be in register r0.
  *
  * \section interrupt_nums Interrupt Numbers
  *
@@ -94,13 +100,16 @@
 #define PICO_DEFAULT_IRQ_PRIORITY 0x80
 #endif
 
-#define PICO_LOWEST_IRQ_PRIORITY 0x01
-#define PICO_HIGHEST_IRQ_PRIORITY 0xff
+#define PICO_LOWEST_IRQ_PRIORITY 0xff
+#define PICO_HIGHEST_IRQ_PRIORITY 0x00
 
 // PICO_CONFIG: PICO_SHARED_IRQ_HANDLER_DEFAULT_ORDER_PRIORITY, Set default shared IRQ order priority, default=0x80, group=hardware_irq
 #ifndef PICO_SHARED_IRQ_HANDLER_DEFAULT_ORDER_PRIORITY
 #define PICO_SHARED_IRQ_HANDLER_DEFAULT_ORDER_PRIORITY 0x80
 #endif
+
+#define PICO_SHARED_IRQ_HANDLER_HIGHEST_ORDER_PRIORITY 0xff
+#define PICO_SHARED_IRQ_HANDLER_LOWEST_ORDER_PRIORITY 0x00
 
 // PICO_CONFIG: PARAM_ASSERTIONS_ENABLED_IRQ, Enable/disable assertions in the IRQ module, type=bool, default=0, group=hardware_irq
 #ifndef PARAM_ASSERTIONS_ENABLED_IRQ
@@ -116,18 +125,40 @@ extern "C" {
  *
  * All interrupts handlers should be of this type, and follow normal ARM EABI register saving conventions
  */
-typedef void (*irq_handler_t)();
+typedef void (*irq_handler_t)(void);
 
-/*! \brief Set specified interrupts priority
+static inline void check_irq_param(__unused uint num) {
+    invalid_params_if(IRQ, num >= NUM_IRQS);
+}
+
+/*! \brief Set specified interrupt's priority
  *  \ingroup hardware_irq
  *
- * \param num Interrupt number
- * \param hardware_priority Priority to set. Hardware priorities range from 0 (lowest) to 255 (highest) though only
- * the top 2 bits are significant on ARM Cortex M0+. To make it easier to specify higher or lower priorities
- * than the default, all IRQ priorities are initialized to PICO_DEFAULT_IRQ_PRIORITY by the SDK runtime at startup.
+ * \param num Interrupt number \ref interrupt_nums
+ * \param hardware_priority Priority to set.
+ * Numerically-lower values indicate a higher priority. Hardware priorities
+ * range from 0 (highest priority) to 255 (lowest priority) though only the
+ * top 2 bits are significant on ARM Cortex-M0+. To make it easier to specify
+ * higher or lower priorities than the default, all IRQ priorities are
+ * initialized to PICO_DEFAULT_IRQ_PRIORITY by the SDK runtime at startup.
  * PICO_DEFAULT_IRQ_PRIORITY defaults to 0x80
  */
 void irq_set_priority(uint num, uint8_t hardware_priority);
+
+/*! \brief Get specified interrupt's priority
+ *  \ingroup hardware_irq
+ *
+ * Numerically-lower values indicate a higher priority. Hardware priorities
+ * range from 0 (highest priority) to 255 (lowest priority) though only the
+ * top 2 bits are significant on ARM Cortex-M0+. To make it easier to specify
+ * higher or lower priorities than the default, all IRQ priorities are
+ * initialized to PICO_DEFAULT_IRQ_PRIORITY by the SDK runtime at startup.
+ * PICO_DEFAULT_IRQ_PRIORITY defaults to 0x80
+ *
+ * \param num Interrupt number \ref interrupt_nums
+ * \return the IRQ priority
+ */
+uint irq_get_priority(uint num);
 
 /*! \brief Enable or disable a specific interrupt on the executing core
  *  \ingroup hardware_irq
@@ -148,7 +179,7 @@ bool irq_is_enabled(uint num);
 /*! \brief Enable/disable multiple interrupts on the executing core
  *  \ingroup hardware_irq
  *
- * \param mask 32-bit mask with one bits set for the interrupts to enable/disable
+ * \param mask 32-bit mask with one bits set for the interrupts to enable/disable \ref interrupt_nums
  * \param enabled true to enable the interrupts, false to disable them.
  */
 void irq_set_mask_enabled(uint32_t mask, bool enabled);
@@ -165,7 +196,7 @@ void irq_set_mask_enabled(uint32_t mask, bool enabled);
  *
  * \param num Interrupt number \ref interrupt_nums
  * \param handler The handler to set. See \ref irq_handler_t
- * \see irq_add_shared_handler
+ * \see irq_add_shared_handler()
  */
 void irq_set_exclusive_handler(uint num, irq_handler_t handler);
 
@@ -176,7 +207,7 @@ void irq_set_exclusive_handler(uint num, irq_handler_t handler);
  * by irq_set_exclusive_handler if there is one.
  *
  * \param num Interrupt number \ref interrupt_nums
- * \see irq_set_exclusive_handler
+ * \see irq_set_exclusive_handler()
  * \return handler The handler if an exclusive handler is set for the IRQ,
  *                 NULL if no handler is set or shared/shareable handlers are installed
  */
@@ -193,7 +224,7 @@ irq_handler_t irq_get_exclusive_handler(uint num);
  * the (total across all IRQs on both cores) maximum (configurable via PICO_MAX_SHARED_IRQ_HANDLERS) number of shared handlers
  * would be exceeded.
  *
- * \param num Interrupt number
+ * \param num Interrupt number \ref interrupt_nums
  * \param handler The handler to set. See \ref irq_handler_t
  * \param order_priority The order priority controls the order that handlers for the same IRQ number on the core are called.
  * The shared irq handlers for an interrupt are all called when an IRQ fires, however the order of the calls is based
@@ -201,7 +232,10 @@ irq_handler_t irq_get_exclusive_handler(uint num);
  * rule of thumb is to use PICO_SHARED_IRQ_HANDLER_DEFAULT_ORDER_PRIORITY if you don't much care, as it is in the middle of
  * the priority range by default.
  *
- * \see irq_set_exclusive_handler
+ * \note The order_priority uses \em higher values for higher priorities which is the \em opposite of the CPU interrupt priorities passed
+ * to irq_set_priority() which use lower values for higher priorities.
+ *
+ * \see irq_set_exclusive_handler()
  */
 void irq_add_shared_handler(uint num, irq_handler_t handler, uint8_t order_priority);
 
@@ -218,10 +252,18 @@ void irq_add_shared_handler(uint num, irq_handler_t handler, uint8_t order_prior
  *
  * \param num Interrupt number \ref interrupt_nums
  * \param handler The handler to removed.
- * \see irq_set_exclusive_handler
- * \see irq_add_shared_handler
+ * \see irq_set_exclusive_handler()
+ * \see irq_add_shared_handler()
  */
 void irq_remove_handler(uint num, irq_handler_t handler);
+
+/*! \brief Determine if the current handler for the given number is shared
+ *  \ingroup hardware_irq
+ *
+ * \param num Interrupt number \ref interrupt_nums
+ * \return true if the specified IRQ has a shared handler
+ */
+bool irq_has_shared_handler(uint num);
 
 /*! \brief Get the current IRQ handler for the specified IRQ from the currently installed hardware vector table (VTOR)
  * of the execution core
@@ -235,13 +277,17 @@ irq_handler_t irq_get_vtable_handler(uint num);
 /*! \brief Clear a specific interrupt on the executing core
  *  \ingroup hardware_irq
  *
+ * This method is only useful for "software" IRQs that are not connected to hardware (i.e. IRQs 26-31)
+ * as the the NVIC always reflects the current state of the IRQ state of the hardware for hardware IRQs, and clearing
+ * of the IRQ state of the hardware is performed via the hardware's registers instead.
+ *
  * \param int_num Interrupt number \ref interrupt_nums
  */
 static inline void irq_clear(uint int_num) {
     *((volatile uint32_t *) (PPB_BASE + M0PLUS_NVIC_ICPR_OFFSET)) = (1u << ((uint32_t) (int_num & 0x1F)));
 }
 
-/*! \brief Force an interrupt to pending on the executing core
+/*! \brief Force an interrupt to be pending on the executing core
  *  \ingroup hardware_irq
  *
  * This should generally not be used for IRQs connected to hardware.
@@ -251,11 +297,74 @@ static inline void irq_clear(uint int_num) {
 void irq_set_pending(uint num);
 
 
-/*! \brief Perform IRQ priority intiialization for the current core
+/*! \brief Perform IRQ priority initialization for the current core
  *
  * \note This is an internal method and user should generally not call it.
  */
-void irq_init_priorities();
+void irq_init_priorities(void);
+
+/*! \brief Claim ownership of a user IRQ on the calling core
+ *  \ingroup hardware_irq
+ *  
+ * User IRQs are numbered 26-31 and are not connected to any hardware, but can be triggered by \ref irq_set_pending.
+ *
+ * \note User IRQs are a core local feature; they cannot be used to communicate between cores. Therfore all functions
+ * dealing with Uer IRQs affect only the calling core
+ * 
+ * This method explicitly claims ownership of a user IRQ, so other code can know it is being used.
+ *
+ * \param irq_num the user IRQ to claim
+ */
+void user_irq_claim(uint irq_num);
+
+/*! \brief Mark a user IRQ as no longer used on the calling core
+ *  \ingroup hardware_irq
+ *
+ * User IRQs are numbered 26-31 and are not connected to any hardware, but can be triggered by \ref irq_set_pending.
+ *
+ * \note User IRQs are a core local feature; they cannot be used to communicate between cores. Therfore all functions
+ * dealing with Uer IRQs affect only the calling core
+ * 
+ * This method explicitly releases ownership of a user IRQ, so other code can know it is free to use.
+ * 
+ * \note it is customary to have disabled the irq and removed the handler prior to calling this method.
+ *
+ * \param irq_num the irq irq_num to unclaim
+ */
+void user_irq_unclaim(uint irq_num);
+
+/*! \brief Claim ownership of a free user IRQ on the calling core
+ *  \ingroup hardware_irq
+ *  
+ * User IRQs are numbered 26-31 and are not connected to any hardware, but can be triggered by \ref irq_set_pending.
+ *
+ * \note User IRQs are a core local feature; they cannot be used to communicate between cores. Therfore all functions
+ * dealing with Uer IRQs affect only the calling core
+ * 
+ * This method explicitly claims ownership of an unused user IRQ if there is one, so other code can know it is being used.
+ *
+ * \param required if true the function will panic if none are available
+ * \return the user IRQ number or -1 if required was false, and none were free
+ */
+int user_irq_claim_unused(bool required);
+
+/*
+*! \brief Check if a user IRQ is in use on the calling core
+ *  \ingroup hardware_irq
+ *  
+ * User IRQs are numbered 26-31 and are not connected to any hardware, but can be triggered by \ref irq_set_pending.
+ *
+ * \note User IRQs are a core local feature; they cannot be used to communicate between cores. Therfore all functions
+ * dealing with Uer IRQs affect only the calling core
+ *
+ * \param irq_num the irq irq_num
+ * \return true if the irq_num is claimed, false otherwise
+ * \sa user_irq_claim
+ * \sa user_irq_unclaim
+ * \sa user_irq_claim_unused
+ */
+bool user_irq_is_claimed(uint irq_num);
+
 #ifdef __cplusplus
 }
 #endif

@@ -14,15 +14,24 @@ pico_add_subdirectory(pico_stdlib)
 pico_add_doxygen(${CMAKE_CURRENT_LIST_DIR})
 
 macro(pico_set_float_implementation TARGET IMPL)
+    # ignore
 endmacro()
 
 macro(pico_set_double_implementation TARGET IMPL)
+    # ignore
+endmacro()
+
+macro(pico_set_binary_type TARGET IMPL)
+    # ignore
 endmacro()
 
 macro(pico_set_boot_stage2 TARGET IMPL)
+    # ignore
 endmacro()
 
 set(PICO_HOST_DIR "${CMAKE_CURRENT_LIST_DIR}" CACHE INTERNAL "")
 function(pico_define_boot_stage2 NAME)
     add_executable(${NAME} ${PICO_HOST_DIR}/boot_stage2.c)
 endfunction()
+
+pico_promote_common_scope_vars()

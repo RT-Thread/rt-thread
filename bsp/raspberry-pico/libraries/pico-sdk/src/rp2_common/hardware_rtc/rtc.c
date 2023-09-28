@@ -65,13 +65,13 @@ bool rtc_set_datetime(datetime_t *t) {
     }
 
     // Write to setup registers
-    rtc_hw->setup_0 = (t->year  << RTC_SETUP_0_YEAR_LSB ) |
-                      (t->month << RTC_SETUP_0_MONTH_LSB) |
-                      (t->day   << RTC_SETUP_0_DAY_LSB);
-    rtc_hw->setup_1 = (t->dotw  << RTC_SETUP_1_DOTW_LSB) |
-                      (t->hour  << RTC_SETUP_1_HOUR_LSB) |
-                      (t->min   << RTC_SETUP_1_MIN_LSB)  |
-                      (t->sec   << RTC_SETUP_1_SEC_LSB);
+    rtc_hw->setup_0 = (((uint32_t)t->year)  << RTC_SETUP_0_YEAR_LSB ) |
+                      (((uint32_t)t->month) << RTC_SETUP_0_MONTH_LSB) |
+                      (((uint32_t)t->day)   << RTC_SETUP_0_DAY_LSB);
+    rtc_hw->setup_1 = (((uint32_t)t->dotw)  << RTC_SETUP_1_DOTW_LSB) |
+                      (((uint32_t)t->hour)  << RTC_SETUP_1_HOUR_LSB) |
+                      (((uint32_t)t->min)   << RTC_SETUP_1_MIN_LSB)  |
+                      (((uint32_t)t->sec)   << RTC_SETUP_1_SEC_LSB);
 
     // Load setup values into rtc clock domain
     rtc_hw->ctrl = RTC_CTRL_LOAD_BITS;
@@ -92,18 +92,21 @@ bool rtc_get_datetime(datetime_t *t) {
     }
 
     // Note: RTC_0 should be read before RTC_1
-    t->dotw  = (rtc_hw->rtc_0 & RTC_RTC_0_DOTW_BITS ) >> RTC_RTC_0_DOTW_LSB;
-    t->hour  = (rtc_hw->rtc_0 & RTC_RTC_0_HOUR_BITS ) >> RTC_RTC_0_HOUR_LSB;
-    t->min   = (rtc_hw->rtc_0 & RTC_RTC_0_MIN_BITS  ) >> RTC_RTC_0_MIN_LSB;
-    t->sec   = (rtc_hw->rtc_0 & RTC_RTC_0_SEC_BITS  ) >> RTC_RTC_0_SEC_LSB;
-    t->year  = (rtc_hw->rtc_1 & RTC_RTC_1_YEAR_BITS ) >> RTC_RTC_1_YEAR_LSB;
-    t->month = (rtc_hw->rtc_1 & RTC_RTC_1_MONTH_BITS) >> RTC_RTC_1_MONTH_LSB;
-    t->day   = (rtc_hw->rtc_1 & RTC_RTC_1_DAY_BITS  ) >> RTC_RTC_1_DAY_LSB;
+    uint32_t rtc_0 = rtc_hw->rtc_0;
+    uint32_t rtc_1 = rtc_hw->rtc_1;
+
+    t->dotw  = (int8_t) ((rtc_0 & RTC_RTC_0_DOTW_BITS ) >> RTC_RTC_0_DOTW_LSB);
+    t->hour  = (int8_t) ((rtc_0 & RTC_RTC_0_HOUR_BITS ) >> RTC_RTC_0_HOUR_LSB);
+    t->min   = (int8_t) ((rtc_0 & RTC_RTC_0_MIN_BITS  ) >> RTC_RTC_0_MIN_LSB);
+    t->sec   = (int8_t) ((rtc_0 & RTC_RTC_0_SEC_BITS  ) >> RTC_RTC_0_SEC_LSB);
+    t->year  = (int16_t) ((rtc_1 & RTC_RTC_1_YEAR_BITS ) >> RTC_RTC_1_YEAR_LSB);
+    t->month = (int8_t) ((rtc_1 & RTC_RTC_1_MONTH_BITS) >> RTC_RTC_1_MONTH_LSB);
+    t->day   = (int8_t) ((rtc_1 & RTC_RTC_1_DAY_BITS  ) >> RTC_RTC_1_DAY_LSB);
 
     return true;
 }
 
-static void rtc_enable_alarm(void) {
+void rtc_enable_alarm(void) {
     // Set matching and wait for it to be enabled
     hw_set_bits(&rtc_hw->irq_setup_0, RTC_IRQ_SETUP_0_MATCH_ENA_BITS);
     while(!(rtc_hw->irq_setup_0 & RTC_IRQ_SETUP_0_MATCH_ACTIVE_BITS)) {
@@ -131,13 +134,13 @@ static void rtc_irq_handler(void) {
 static bool rtc_alarm_repeats(datetime_t *t) {
     // If any value is set to -1 then we don't match on that value
     // hence the alarm will eventually repeat
-    if (t->year  == -1) return true;
-    if (t->month == -1) return true;
-    if (t->day   == -1) return true;
-    if (t->dotw  == -1) return true;
-    if (t->hour  == -1) return true;
-    if (t->min   == -1) return true;
-    if (t->sec   == -1) return true;
+    if (t->year  < 0) return true;
+    if (t->month < 0) return true;
+    if (t->day   < 0) return true;
+    if (t->dotw  < 0) return true;
+    if (t->hour  < 0) return true;
+    if (t->min   < 0) return true;
+    if (t->sec   < 0) return true;
     return false;
 }
 
@@ -145,22 +148,22 @@ void rtc_set_alarm(datetime_t *t, rtc_callback_t user_callback) {
     rtc_disable_alarm();
 
     // Only add to setup if it isn't -1
-    rtc_hw->irq_setup_0 = ((t->year  == -1) ? 0 : (t->year  << RTC_IRQ_SETUP_0_YEAR_LSB )) |
-                          ((t->month == -1) ? 0 : (t->month << RTC_IRQ_SETUP_0_MONTH_LSB)) |
-                          ((t->day   == -1) ? 0 : (t->day   << RTC_IRQ_SETUP_0_DAY_LSB  ));
-    rtc_hw->irq_setup_1 = ((t->dotw  == -1) ? 0 : (t->dotw  << RTC_IRQ_SETUP_1_DOTW_LSB)) |
-                          ((t->hour  == -1) ? 0 : (t->hour  << RTC_IRQ_SETUP_1_HOUR_LSB)) |
-                          ((t->min   == -1) ? 0 : (t->min   << RTC_IRQ_SETUP_1_MIN_LSB )) |
-                          ((t->sec   == -1) ? 0 : (t->sec   << RTC_IRQ_SETUP_1_SEC_LSB ));
+    rtc_hw->irq_setup_0 = ((t->year  < 0) ? 0 : (((uint32_t)t->year)  << RTC_IRQ_SETUP_0_YEAR_LSB )) |
+                          ((t->month < 0) ? 0 : (((uint32_t)t->month) << RTC_IRQ_SETUP_0_MONTH_LSB)) |
+                          ((t->day   < 0) ? 0 : (((uint32_t)t->day)   << RTC_IRQ_SETUP_0_DAY_LSB  ));
+    rtc_hw->irq_setup_1 = ((t->dotw  < 0) ? 0 : (((uint32_t)t->dotw)  << RTC_IRQ_SETUP_1_DOTW_LSB)) |
+                          ((t->hour  < 0) ? 0 : (((uint32_t)t->hour)  << RTC_IRQ_SETUP_1_HOUR_LSB)) |
+                          ((t->min   < 0) ? 0 : (((uint32_t)t->min)   << RTC_IRQ_SETUP_1_MIN_LSB )) |
+                          ((t->sec   < 0) ? 0 : (((uint32_t)t->sec)   << RTC_IRQ_SETUP_1_SEC_LSB ));
 
     // Set the match enable bits for things we care about
-    if (t->year  != -1) hw_set_bits(&rtc_hw->irq_setup_0, RTC_IRQ_SETUP_0_YEAR_ENA_BITS);
-    if (t->month != -1) hw_set_bits(&rtc_hw->irq_setup_0, RTC_IRQ_SETUP_0_MONTH_ENA_BITS);
-    if (t->day   != -1) hw_set_bits(&rtc_hw->irq_setup_0, RTC_IRQ_SETUP_0_DAY_ENA_BITS);
-    if (t->dotw  != -1) hw_set_bits(&rtc_hw->irq_setup_1, RTC_IRQ_SETUP_1_DOTW_ENA_BITS);
-    if (t->hour  != -1) hw_set_bits(&rtc_hw->irq_setup_1, RTC_IRQ_SETUP_1_HOUR_ENA_BITS);
-    if (t->min   != -1) hw_set_bits(&rtc_hw->irq_setup_1, RTC_IRQ_SETUP_1_MIN_ENA_BITS);
-    if (t->sec   != -1) hw_set_bits(&rtc_hw->irq_setup_1, RTC_IRQ_SETUP_1_SEC_ENA_BITS);
+    if (t->year  >= 0) hw_set_bits(&rtc_hw->irq_setup_0, RTC_IRQ_SETUP_0_YEAR_ENA_BITS);
+    if (t->month >= 0) hw_set_bits(&rtc_hw->irq_setup_0, RTC_IRQ_SETUP_0_MONTH_ENA_BITS);
+    if (t->day   >= 0) hw_set_bits(&rtc_hw->irq_setup_0, RTC_IRQ_SETUP_0_DAY_ENA_BITS);
+    if (t->dotw  >= 0) hw_set_bits(&rtc_hw->irq_setup_1, RTC_IRQ_SETUP_1_DOTW_ENA_BITS);
+    if (t->hour  >= 0) hw_set_bits(&rtc_hw->irq_setup_1, RTC_IRQ_SETUP_1_HOUR_ENA_BITS);
+    if (t->min   >= 0) hw_set_bits(&rtc_hw->irq_setup_1, RTC_IRQ_SETUP_1_MIN_ENA_BITS);
+    if (t->sec   >= 0) hw_set_bits(&rtc_hw->irq_setup_1, RTC_IRQ_SETUP_1_SEC_ENA_BITS);
 
     // Does it repeat? I.e. do we not match on any of the bits
     _alarm_repeats = rtc_alarm_repeats(t);

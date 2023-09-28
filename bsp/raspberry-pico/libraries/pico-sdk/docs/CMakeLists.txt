@@ -1,4 +1,4 @@
-find_package(Doxygen)
+find_package(Doxygen QUIET)
 if (PICO_SDK_TOP_LEVEL_PROJECT AND ${DOXYGEN_FOUND})
     set(PICO_BUILD_DOCS_DEFAULT 1)
 endif()
@@ -26,7 +26,7 @@ if(PICO_BUILD_DOCS)
         add_custom_target(doc-pico-examples)
     else()
         ExternalProject_Add(doc-pico-examples
-                GIT_REPOSITORY    git@github.com:raspberrypi/pico-examples.git
+                GIT_REPOSITORY    https://github.com/raspberrypi/pico-examples
                 GIT_TAG           master
                 CONFIGURE_COMMAND ""
                 BUILD_COMMAND ""

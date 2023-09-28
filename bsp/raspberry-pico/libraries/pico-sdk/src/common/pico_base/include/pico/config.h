@@ -4,11 +4,11 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef PICO_CONFIG_H_
-#define PICO_CONFIG_H_
+#ifndef _PICO_CONFIG_H
+#define _PICO_CONFIG_H
 
 // -----------------------------------------------------
-// NOTE: THIS HEADER IS ALSO INCLUDED BY ASSEMBLER SO
+// NOTE: THIS HEADER IS ALSO INCLUDED BY ASSEMBLY CODE SO
 //       SHOULD ONLY CONSIST OF PREPROCESSOR DIRECTIVES
 //       OR USE #ifndef __ASSEMBLER__ guards
 // -------------
@@ -17,5 +17,10 @@
 // entries are dumped in order at build time into this generated header
 
 #include "pico/config_autogen.h"
+
+// PICO_CONFIG: PICO_CONFIG_RTOS_ADAPTER_HEADER, unquoted path to header include in the default pico/config.h for RTOS integration defines that must be included in all sources, group=pico_base
+#ifdef PICO_CONFIG_RTOS_ADAPTER_HEADER
+#include __PICO_XSTRING(PICO_CONFIG_RTOS_ADAPTER_HEADER)
+#endif
 
 #endif

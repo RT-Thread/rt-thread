@@ -6,12 +6,11 @@
 
 #include "pico/asm_helper.S"
 #include "pico/bootrom/sf_table.h"
+#include "hardware/divider_helper.S"
+
+pico_default_asm_setup
 
 __pre_init __aeabi_double_init, 00020
-
-.syntax unified
-.cpu cortex-m0plus
-.thumb
 
 .macro double_section name
 #if PICO_DOUBLE_IN_RAM
@@ -82,7 +81,7 @@ __check_nan_d2:
 
 .macro table_tail_call SF_TABLE_OFFSET
     push {r3, r4}
-#if PICO_DOUBLE_SUPPORT_ROM_V1
+#if PICO_DOUBLE_SUPPORT_ROM_V1 && PICO_RP2040_B0_SUPPORTED
 #ifndef NDEBUG
     movs r3, #0
     mov ip, r3
@@ -98,12 +97,12 @@ __check_nan_d2:
     push {r3, r4}
     ldr r3, =sd_table
     ldr r3, [r3, #\SF_TABLE_OFFSET]
-#if PICO_DOUBLE_SUPPORT_ROM_V1
+#if PICO_DOUBLE_SUPPORT_ROM_V1 && PICO_RP2040_B0_SUPPORTED
     mov ip, pc
 #endif
     str r3, [sp, #4]
     pop {r3, pc}
-#if PICO_DOUBLE_SUPPORT_ROM_V1
+#if PICO_DOUBLE_SUPPORT_ROM_V1 && PICO_RP2040_B0_SUPPORTED
 .byte \SF_TABLE_OFFSET, 0xdf
 .word \shim
 #endif
@@ -131,16 +130,16 @@ regular_func pop_r8_r11
  mov r11,r7
  bx r14
 
-# note generally each function is in a separate section unless there is fall thru or branching between them
-# note fadd, fsub, fmul, fdiv are so tiny and just defer to rom so are lumped together so they can share constant pool
+// note generally each function is in a separate section unless there is fall thru or branching between them
+// note fadd, fsub, fmul, fdiv are so tiny and just defer to rom so are lumped together so they can share constant pool
 
-# note functions are word aligned except where they are an odd number of linear instructions
+// note functions are word aligned except where they are an odd number of linear instructions
 
 // double FUNC_NAME(__aeabi_dadd)(double, double)         double-precision addition
 double_wrapper_section __aeabi_darithmetic
 // double FUNC_NAME(__aeabi_drsub)(double x, double y)    double-precision reverse subtraction, y - x
 
-# frsub first because it is the only one that needs alignment
+// frsub first because it is the only one that needs alignment
 .align 2
 wrapper_func __aeabi_drsub
     eors r0, r1
@@ -177,7 +176,35 @@ wrapper_func_d2 __aeabi_ddiv
     b ddiv_dsub_nan_helper
 1:
 #endif
-   shimmable_table_tail_call SF_TABLE_FDIV ddiv_shim
+#if !PICO_DIVIDER_DISABLE_INTERRUPTS
+    // to support IRQ usage (or context switch) we must save/restore divider state around call if state is dirty
+    mov ip, r2
+    ldr r2, =(SIO_BASE)
+    ldr r2, [r2, #SIO_DIV_CSR_OFFSET]
+    lsrs r2, #SIO_DIV_CSR_DIRTY_SHIFT_FOR_CARRY
+    bcs ddiv_save_state
+    mov r2, ip
+#else
+    // to avoid worrying about IRQs (or context switches), simply disable interrupts around call
+    push {r4, lr}
+    mrs r4, PRIMASK
+    cpsid i
+    bl ddiv_shim_call
+    msr PRIMASK, r4
+    pop {r4, pc}
+#endif
+ddiv_shim_call:
+    shimmable_table_tail_call SF_TABLE_FDIV ddiv_shim
+
+#if !PICO_DIVIDER_DISABLE_INTERRUPTS
+ddiv_save_state:
+    ldr r2, =(SIO_BASE)
+    save_div_state_and_lr
+    mov r2, ip
+    bl ddiv_shim_call
+    ldr r2, =(SIO_BASE)
+    restore_div_state_and_return
+#endif
 
 ddiv_dsub_nan_helper:
 #if PICO_DOUBLE_PROPAGATE_NANS
@@ -261,7 +288,7 @@ wrapper_func __aeabi_cdcmple
 wrapper_func __aeabi_cdcmpeq
  push {r0-r7,r14}
 __aeabi_dfcmple_guts:
- ldr r7,=#0x7ff                @ flush NaNs and denormals
+ ldr r7,=0x7ff                @ flush NaNs and denormals
  lsls r4,r1,#1
  lsrs r4,#21
  beq 1f
@@ -421,7 +448,7 @@ wrapper_func __aeabi_i2d
     lsls r2, r4
     lsls r0, r2, #20
     lsrs r2, #12
-    ldr r1,=#1055
+    ldr r1,=1055
     subs r1, r4
     lsls r1, #20
     orrs r1, r3
@@ -523,7 +550,7 @@ regular_func double2int64_z
     cmp r1, #0
     bmi 1f
     movs r2, #0
-    rsbs r0, #0
+    negs r0, r0
     sbcs r2, r1
     mov r1, r2
     pop {pc}
@@ -592,6 +619,8 @@ regular_func sincostan_remainder
     ldr r2, =0x54442D18 // 2 * M_PI
     ldr r3, =0x401921FB
     push {lr}
+    // note remainder only uses the divider thru integer divider functions
+    // which save and restore themselves
     bl remainder
     pop {pc}
 
@@ -677,7 +706,7 @@ double_wrapper_section sincos
     bl sincostan_remainder
     pop {r2}
     mov lr, r2
-    b 1f
+    b 1f // continue with sincos
 
 wrapper_func sincos
     push {r2-r5, lr}
@@ -688,8 +717,7 @@ wrapper_func sincos
     cmp r2, #9
     bge 2b
 1:
-
-    bl 2f
+    bl 2f // call the shim
     pop {r4-r5}
     stmia r4!, {r0, r1}
     stmia r5!, {r2, r3}
@@ -697,22 +725,13 @@ wrapper_func sincos
 
 2:
     shimmable_table_tail_call SF_TABLE_V3_FSINCOS sincos_shim_bootstrap
-#if PICO_DOUBLE_PROPAGATE_NANS
-.align 2
-1:
-    pop {r2, r3}
-    stmia r2!, {r0, r1}
-    mov lr, r3
-    pop {r3}
-    stmia r3!, {r0, r1}
-    bx lr
-#endif
+
 .thumb_func
 sincos_shim_bootstrap:
     push {r2, r3, r4}
     movs r3, #0x13
     ldrb r3, [r3]
-#if PICO_DOUBLE_SUPPORT_ROM_V1
+#if PICO_DOUBLE_SUPPORT_ROM_V1 && PICO_RP2040_B0_SUPPORTED
     cmp r3, #1
     bne 1f
     ldr r3, =dsincos_shim
@@ -762,13 +781,40 @@ double_wrapper_section tan
 wrapper_func tan
     // rom version only works for -1024 < angle < 1024
     lsls r2, r1, #2
-    bcc 1f
+    bcc dtan_in_range
     lsrs r2, #22
     cmp r2, #9
-    bge 2f
-1:
+    bge dtan_angle_out_of_range
+dtan_in_range:
+#if !PICO_DIVIDER_DISABLE_INTERRUPTS
+    // to support IRQ usage (or context switch) we must save/restore divider state around call if state is dirty
+    mov ip, r2
+    ldr r2, =(SIO_BASE)
+    ldr r2, [r2, #SIO_DIV_CSR_OFFSET]
+    lsrs r2, #SIO_DIV_CSR_DIRTY_SHIFT_FOR_CARRY
+    bcs dtan_save_state
+    mov r2, ip
+#else
+    // to avoid worrying about IRQs (or context switches), simply disable interrupts around call
+    push {r4, lr}
+    mrs r4, PRIMASK
+    cpsid i
+    bl dtan_shim_call
+    msr PRIMASK, r4
+    pop {r4, pc}
+#endif
+dtan_shim_call:
     shimmable_table_tail_call SF_TABLE_FTAN dtan_shim
-2:
+#if !PICO_DIVIDER_DISABLE_INTERRUPTS
+dtan_save_state:
+    ldr r2, =(SIO_BASE)
+    save_div_state_and_lr
+    mov r2, ip
+    bl dtan_shim_call
+    ldr r2, =(SIO_BASE)
+    restore_div_state_and_return
+#endif
+dtan_angle_out_of_range:
 #if PICO_DOUBLE_PROPAGATE_NANS
     lsls r2, r1, #1
     asrs r2, #21
@@ -785,7 +831,7 @@ wrapper_func tan
     bl sincostan_remainder
     pop {r2}
     mov lr, r2
-    b 1b
+    b dtan_in_range
 
 double_wrapper_section atan2
 wrapper_func_d2 atan2

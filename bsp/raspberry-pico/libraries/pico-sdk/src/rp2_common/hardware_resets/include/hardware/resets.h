@@ -56,6 +56,10 @@
  * \include hello_reset.c
  */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /// \tag::reset_funcs[]
 
 /*! \brief Reset the specified HW blocks
@@ -87,5 +91,9 @@ static inline void unreset_block_wait(uint32_t bits) {
         tight_loop_contents();
 }
 /// \end::reset_funcs[]
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

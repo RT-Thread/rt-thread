@@ -18,7 +18,11 @@ PICOTEST_MODULE_NAME("pico_time_test", "pico_time test harness");
 static_assert(PICO_TIME_DEFAULT_ALARM_POOL_MAX_TIMERS >= MAX_TIMERS_PER_POOL, "");
 #define TEST_LENGTH_US 2000000
 
+#ifndef NDEBUG
+#define NUM_REPEATING_TIMERS 30
+#else
 #define NUM_REPEATING_TIMERS 50
+#endif
 static struct repeating_timer repeating_timers[NUM_REPEATING_TIMERS];
 static uint repeating_timer_callback_count[NUM_REPEATING_TIMERS];
 
@@ -64,12 +68,13 @@ static bool repeating_timer_callback(struct repeating_timer *t) {
 #define RESOLUTION_ALLOWANCE PICO_HARDWARE_TIMER_RESOLUTION_US
 #endif
 
+int issue_195_test(void);
+
 int main() {
     setup_default_uart();
     alarm_pool_init_default();
 
     PICOTEST_START();
-
     struct alarm_pool *pools[NUM_TIMERS];
     for(uint i=0; i<NUM_TIMERS; i++) {
         if (i == alarm_pool_hardware_alarm_num(alarm_pool_get_default())) {
@@ -206,6 +211,44 @@ int main() {
 
     PICOTEST_END_SECTION();
 
+    PICOTEST_START_SECTION("end of time");
+    PICOTEST_CHECK(absolute_time_diff_us(at_the_end_of_time, get_absolute_time()) < 0, "now should be before the end of time")
+    PICOTEST_CHECK(absolute_time_diff_us(get_absolute_time(), at_the_end_of_time) > 0, "the end of time should be after now")
+    PICOTEST_CHECK(absolute_time_diff_us(at_the_end_of_time, at_the_end_of_time) == 0, "the end of time should equal itself")
+    absolute_time_t near_the_end_of_time;
+    update_us_since_boot(&near_the_end_of_time, 0x7ffffeffffffffff);
+    PICOTEST_CHECK(absolute_time_diff_us(near_the_end_of_time, at_the_end_of_time) > 0, "near the end of time should be before the end of time")
+    PICOTEST_END_SECTION();
+
+    if (issue_195_test()) {
+        return -1;
+    }
+
     PICOTEST_END_TEST();
+}
+
+#define ISSUE_195_TIMER_DELAY 50
+volatile int issue_195_counter;
+int64_t issue_195_callback(alarm_id_t id, void *user_data) {
+    issue_195_counter++;
+    return -ISSUE_195_TIMER_DELAY;
+}
+
+int issue_195_test(void) {
+    PICOTEST_START_SECTION("Issue #195 race condition - without fix may hang on gcc 10.2.1 release builds");
+    absolute_time_t t1 = get_absolute_time();
+    int id = add_alarm_in_us(ISSUE_195_TIMER_DELAY, issue_195_callback, NULL, true);
+    for(uint i=0;i<5000;i++) {
+        sleep_us(100);
+        sleep_us(100);
+        uint delay = 9; // 9 seems to be the magic number (at least for reproducing on 10.2.1)
+        sleep_us(delay);
+    }
+    absolute_time_t t2 = get_absolute_time();
+    cancel_alarm(id);
+    int expected_count = absolute_time_diff_us(t1, t2) / ISSUE_195_TIMER_DELAY;
+    printf("Timer fires approx_expected=%d actual=%d\n", expected_count, issue_195_counter);
+    PICOTEST_END_SECTION();
+    return 0;
 }
 

@@ -15,17 +15,17 @@
 // =============================================================================
 // Register    : VREG_AND_CHIP_RESET_VREG
 // Description : Voltage regulator control and status
-#define VREG_AND_CHIP_RESET_VREG_OFFSET 0x00000000
-#define VREG_AND_CHIP_RESET_VREG_BITS   0x000010f3
-#define VREG_AND_CHIP_RESET_VREG_RESET  0x000000b1
+#define VREG_AND_CHIP_RESET_VREG_OFFSET _u(0x00000000)
+#define VREG_AND_CHIP_RESET_VREG_BITS   _u(0x000010f3)
+#define VREG_AND_CHIP_RESET_VREG_RESET  _u(0x000000b1)
 // -----------------------------------------------------------------------------
 // Field       : VREG_AND_CHIP_RESET_VREG_ROK
 // Description : regulation status
 //               0=not in regulation, 1=in regulation
-#define VREG_AND_CHIP_RESET_VREG_ROK_RESET  0x0
-#define VREG_AND_CHIP_RESET_VREG_ROK_BITS   0x00001000
-#define VREG_AND_CHIP_RESET_VREG_ROK_MSB    12
-#define VREG_AND_CHIP_RESET_VREG_ROK_LSB    12
+#define VREG_AND_CHIP_RESET_VREG_ROK_RESET  _u(0x0)
+#define VREG_AND_CHIP_RESET_VREG_ROK_BITS   _u(0x00001000)
+#define VREG_AND_CHIP_RESET_VREG_ROK_MSB    _u(12)
+#define VREG_AND_CHIP_RESET_VREG_ROK_LSB    _u(12)
 #define VREG_AND_CHIP_RESET_VREG_ROK_ACCESS "RO"
 // -----------------------------------------------------------------------------
 // Field       : VREG_AND_CHIP_RESET_VREG_VSEL
@@ -41,35 +41,35 @@
 //               1101         - 1.20V
 //               1110         - 1.25V
 //               1111         - 1.30V
-#define VREG_AND_CHIP_RESET_VREG_VSEL_RESET  0xb
-#define VREG_AND_CHIP_RESET_VREG_VSEL_BITS   0x000000f0
-#define VREG_AND_CHIP_RESET_VREG_VSEL_MSB    7
-#define VREG_AND_CHIP_RESET_VREG_VSEL_LSB    4
+#define VREG_AND_CHIP_RESET_VREG_VSEL_RESET  _u(0xb)
+#define VREG_AND_CHIP_RESET_VREG_VSEL_BITS   _u(0x000000f0)
+#define VREG_AND_CHIP_RESET_VREG_VSEL_MSB    _u(7)
+#define VREG_AND_CHIP_RESET_VREG_VSEL_LSB    _u(4)
 #define VREG_AND_CHIP_RESET_VREG_VSEL_ACCESS "RW"
 // -----------------------------------------------------------------------------
 // Field       : VREG_AND_CHIP_RESET_VREG_HIZ
 // Description : high impedance mode select
 //               0=not in high impedance mode, 1=in high impedance mode
-#define VREG_AND_CHIP_RESET_VREG_HIZ_RESET  0x0
-#define VREG_AND_CHIP_RESET_VREG_HIZ_BITS   0x00000002
-#define VREG_AND_CHIP_RESET_VREG_HIZ_MSB    1
-#define VREG_AND_CHIP_RESET_VREG_HIZ_LSB    1
+#define VREG_AND_CHIP_RESET_VREG_HIZ_RESET  _u(0x0)
+#define VREG_AND_CHIP_RESET_VREG_HIZ_BITS   _u(0x00000002)
+#define VREG_AND_CHIP_RESET_VREG_HIZ_MSB    _u(1)
+#define VREG_AND_CHIP_RESET_VREG_HIZ_LSB    _u(1)
 #define VREG_AND_CHIP_RESET_VREG_HIZ_ACCESS "RW"
 // -----------------------------------------------------------------------------
 // Field       : VREG_AND_CHIP_RESET_VREG_EN
 // Description : enable
 //               0=not enabled, 1=enabled
-#define VREG_AND_CHIP_RESET_VREG_EN_RESET  0x1
-#define VREG_AND_CHIP_RESET_VREG_EN_BITS   0x00000001
-#define VREG_AND_CHIP_RESET_VREG_EN_MSB    0
-#define VREG_AND_CHIP_RESET_VREG_EN_LSB    0
+#define VREG_AND_CHIP_RESET_VREG_EN_RESET  _u(0x1)
+#define VREG_AND_CHIP_RESET_VREG_EN_BITS   _u(0x00000001)
+#define VREG_AND_CHIP_RESET_VREG_EN_MSB    _u(0)
+#define VREG_AND_CHIP_RESET_VREG_EN_LSB    _u(0)
 #define VREG_AND_CHIP_RESET_VREG_EN_ACCESS "RW"
 // =============================================================================
 // Register    : VREG_AND_CHIP_RESET_BOD
 // Description : brown-out detection control
-#define VREG_AND_CHIP_RESET_BOD_OFFSET 0x00000004
-#define VREG_AND_CHIP_RESET_BOD_BITS   0x000000f1
-#define VREG_AND_CHIP_RESET_BOD_RESET  0x00000091
+#define VREG_AND_CHIP_RESET_BOD_OFFSET _u(0x00000004)
+#define VREG_AND_CHIP_RESET_BOD_BITS   _u(0x000000f1)
+#define VREG_AND_CHIP_RESET_BOD_RESET  _u(0x00000091)
 // -----------------------------------------------------------------------------
 // Field       : VREG_AND_CHIP_RESET_BOD_VSEL
 // Description : threshold select
@@ -89,26 +89,26 @@
 //               1101 - 1.032V
 //               1110 - 1.075V
 //               1111 - 1.118V
-#define VREG_AND_CHIP_RESET_BOD_VSEL_RESET  0x9
-#define VREG_AND_CHIP_RESET_BOD_VSEL_BITS   0x000000f0
-#define VREG_AND_CHIP_RESET_BOD_VSEL_MSB    7
-#define VREG_AND_CHIP_RESET_BOD_VSEL_LSB    4
+#define VREG_AND_CHIP_RESET_BOD_VSEL_RESET  _u(0x9)
+#define VREG_AND_CHIP_RESET_BOD_VSEL_BITS   _u(0x000000f0)
+#define VREG_AND_CHIP_RESET_BOD_VSEL_MSB    _u(7)
+#define VREG_AND_CHIP_RESET_BOD_VSEL_LSB    _u(4)
 #define VREG_AND_CHIP_RESET_BOD_VSEL_ACCESS "RW"
 // -----------------------------------------------------------------------------
 // Field       : VREG_AND_CHIP_RESET_BOD_EN
 // Description : enable
 //               0=not enabled, 1=enabled
-#define VREG_AND_CHIP_RESET_BOD_EN_RESET  0x1
-#define VREG_AND_CHIP_RESET_BOD_EN_BITS   0x00000001
-#define VREG_AND_CHIP_RESET_BOD_EN_MSB    0
-#define VREG_AND_CHIP_RESET_BOD_EN_LSB    0
+#define VREG_AND_CHIP_RESET_BOD_EN_RESET  _u(0x1)
+#define VREG_AND_CHIP_RESET_BOD_EN_BITS   _u(0x00000001)
+#define VREG_AND_CHIP_RESET_BOD_EN_MSB    _u(0)
+#define VREG_AND_CHIP_RESET_BOD_EN_LSB    _u(0)
 #define VREG_AND_CHIP_RESET_BOD_EN_ACCESS "RW"
 // =============================================================================
 // Register    : VREG_AND_CHIP_RESET_CHIP_RESET
 // Description : Chip reset control and status
-#define VREG_AND_CHIP_RESET_CHIP_RESET_OFFSET 0x00000008
-#define VREG_AND_CHIP_RESET_CHIP_RESET_BITS   0x01110100
-#define VREG_AND_CHIP_RESET_CHIP_RESET_RESET  0x00000000
+#define VREG_AND_CHIP_RESET_CHIP_RESET_OFFSET _u(0x00000008)
+#define VREG_AND_CHIP_RESET_CHIP_RESET_BITS   _u(0x01110100)
+#define VREG_AND_CHIP_RESET_CHIP_RESET_RESET  _u(0x00000000)
 // -----------------------------------------------------------------------------
 // Field       : VREG_AND_CHIP_RESET_CHIP_RESET_PSM_RESTART_FLAG
 // Description : This is set by psm_restart from the debugger.
@@ -117,35 +117,35 @@
 //               boot lock-up.
 //               In the safe mode the debugger can repair the boot code, clear
 //               this flag then reboot the processor.
-#define VREG_AND_CHIP_RESET_CHIP_RESET_PSM_RESTART_FLAG_RESET  0x0
-#define VREG_AND_CHIP_RESET_CHIP_RESET_PSM_RESTART_FLAG_BITS   0x01000000
-#define VREG_AND_CHIP_RESET_CHIP_RESET_PSM_RESTART_FLAG_MSB    24
-#define VREG_AND_CHIP_RESET_CHIP_RESET_PSM_RESTART_FLAG_LSB    24
+#define VREG_AND_CHIP_RESET_CHIP_RESET_PSM_RESTART_FLAG_RESET  _u(0x0)
+#define VREG_AND_CHIP_RESET_CHIP_RESET_PSM_RESTART_FLAG_BITS   _u(0x01000000)
+#define VREG_AND_CHIP_RESET_CHIP_RESET_PSM_RESTART_FLAG_MSB    _u(24)
+#define VREG_AND_CHIP_RESET_CHIP_RESET_PSM_RESTART_FLAG_LSB    _u(24)
 #define VREG_AND_CHIP_RESET_CHIP_RESET_PSM_RESTART_FLAG_ACCESS "WC"
 // -----------------------------------------------------------------------------
 // Field       : VREG_AND_CHIP_RESET_CHIP_RESET_HAD_PSM_RESTART
 // Description : Last reset was from the debug port
-#define VREG_AND_CHIP_RESET_CHIP_RESET_HAD_PSM_RESTART_RESET  0x0
-#define VREG_AND_CHIP_RESET_CHIP_RESET_HAD_PSM_RESTART_BITS   0x00100000
-#define VREG_AND_CHIP_RESET_CHIP_RESET_HAD_PSM_RESTART_MSB    20
-#define VREG_AND_CHIP_RESET_CHIP_RESET_HAD_PSM_RESTART_LSB    20
+#define VREG_AND_CHIP_RESET_CHIP_RESET_HAD_PSM_RESTART_RESET  _u(0x0)
+#define VREG_AND_CHIP_RESET_CHIP_RESET_HAD_PSM_RESTART_BITS   _u(0x00100000)
+#define VREG_AND_CHIP_RESET_CHIP_RESET_HAD_PSM_RESTART_MSB    _u(20)
+#define VREG_AND_CHIP_RESET_CHIP_RESET_HAD_PSM_RESTART_LSB    _u(20)
 #define VREG_AND_CHIP_RESET_CHIP_RESET_HAD_PSM_RESTART_ACCESS "RO"
 // -----------------------------------------------------------------------------
 // Field       : VREG_AND_CHIP_RESET_CHIP_RESET_HAD_RUN
 // Description : Last reset was from the RUN pin
-#define VREG_AND_CHIP_RESET_CHIP_RESET_HAD_RUN_RESET  0x0
-#define VREG_AND_CHIP_RESET_CHIP_RESET_HAD_RUN_BITS   0x00010000
-#define VREG_AND_CHIP_RESET_CHIP_RESET_HAD_RUN_MSB    16
-#define VREG_AND_CHIP_RESET_CHIP_RESET_HAD_RUN_LSB    16
+#define VREG_AND_CHIP_RESET_CHIP_RESET_HAD_RUN_RESET  _u(0x0)
+#define VREG_AND_CHIP_RESET_CHIP_RESET_HAD_RUN_BITS   _u(0x00010000)
+#define VREG_AND_CHIP_RESET_CHIP_RESET_HAD_RUN_MSB    _u(16)
+#define VREG_AND_CHIP_RESET_CHIP_RESET_HAD_RUN_LSB    _u(16)
 #define VREG_AND_CHIP_RESET_CHIP_RESET_HAD_RUN_ACCESS "RO"
 // -----------------------------------------------------------------------------
 // Field       : VREG_AND_CHIP_RESET_CHIP_RESET_HAD_POR
 // Description : Last reset was from the power-on reset or brown-out detection
 //               blocks
-#define VREG_AND_CHIP_RESET_CHIP_RESET_HAD_POR_RESET  0x0
-#define VREG_AND_CHIP_RESET_CHIP_RESET_HAD_POR_BITS   0x00000100
-#define VREG_AND_CHIP_RESET_CHIP_RESET_HAD_POR_MSB    8
-#define VREG_AND_CHIP_RESET_CHIP_RESET_HAD_POR_LSB    8
+#define VREG_AND_CHIP_RESET_CHIP_RESET_HAD_POR_RESET  _u(0x0)
+#define VREG_AND_CHIP_RESET_CHIP_RESET_HAD_POR_BITS   _u(0x00000100)
+#define VREG_AND_CHIP_RESET_CHIP_RESET_HAD_POR_MSB    _u(8)
+#define VREG_AND_CHIP_RESET_CHIP_RESET_HAD_POR_LSB    _u(8)
 #define VREG_AND_CHIP_RESET_CHIP_RESET_HAD_POR_ACCESS "RO"
 // =============================================================================
 #endif // HARDWARE_REGS_VREG_AND_CHIP_RESET_DEFINED

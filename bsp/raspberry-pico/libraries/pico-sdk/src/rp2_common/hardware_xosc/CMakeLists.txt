@@ -1,1 +1,2 @@
 pico_simple_hardware_target(xosc)
+pico_mirrored_target_link_libraries(hardware_xosc INTERFACE hardware_clocks)

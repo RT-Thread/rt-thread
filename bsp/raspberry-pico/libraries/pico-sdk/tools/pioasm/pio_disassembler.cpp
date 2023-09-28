@@ -86,10 +86,10 @@ std::string disassemble(uint16_t inst, uint sideset_bits_including_opt, bool sid
                 std::string guts = "";
                 if (arg1 & 4u) {
                     op("pull");
-                    if (arg1 & 2u) guts = "ifempty";
+                    if (arg1 & 2u) guts = "ifempty ";
                 } else {
                     op("push");
-                    if (arg1 & 2u) guts = "iffull";
+                    if (arg1 & 2u) guts = "iffull ";
                 }
                 guts += (arg1 & 0x1u) ? "block" : "noblock";
                 op_guts(guts);

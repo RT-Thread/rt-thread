@@ -4,8 +4,10 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
+#include "pico.h"
+#include "pico/asm_helper.S"
+
 #include "hardware/regs/m0plus.h"
-#include "hardware/platform_defs.h"
 #include "hardware/regs/addressmap.h"
 #include "hardware/regs/sio.h"
 #include "pico/binary_info/defs.h"
@@ -16,14 +18,13 @@
 #endif
 #endif
 
-.syntax unified
-.cpu cortex-m0plus
-.thumb
+pico_default_asm_setup
 
 .section .vectors, "ax"
 .align 2
 
-.global __vectors
+.global __vectors, __VECTOR_TABLE
+__VECTOR_TABLE:
 __vectors:
 .word __StackTop
 .word _reset_handler
@@ -74,6 +75,11 @@ __vectors:
 .word isr_irq30
 .word isr_irq31
 
+// all default exception handlers do nothing, and we can check for them being set to our
+// default values by seeing if they point to somewhere between __defaults_isrs_start and __default_isrs_end
+.global __default_isrs_start
+__default_isrs_start:
+
 // Declare a weak symbol for each ISR.
 // By default, they will fall through to the undefined IRQ handler below (breakpoint),
 // but can be overridden by C functions with correct name.
@@ -93,6 +99,9 @@ decl_isr_bkpt isr_hardfault
 decl_isr_bkpt isr_svcall
 decl_isr_bkpt isr_pendsv
 decl_isr_bkpt isr_systick
+
+.global __default_isrs_end
+__default_isrs_end:
 
 .macro decl_isr name
 .weak \name
@@ -138,46 +147,68 @@ decl_isr isr_irq31
 .global __unhandled_user_irq
 .thumb_func
 __unhandled_user_irq:
-    bl __get_current_exception
+    mrs  r0, ipsr
     subs r0, #16
 .global unhandled_user_irq_num_in_r0
 unhandled_user_irq_num_in_r0:
     bkpt #0
 
-.section .reset, "ax"
+// ----------------------------------------------------------------------------
 
-// This is the beginning of the image, which is entered from stage2 or bootrom USB MSD watchdog reboot
+.section .binary_info_header, "a"
 
-// note if we are NO_FLASH then start: below is currently identical anyway, so save 4 bytes
-#if !PICO_NO_FLASH
-    // We simply install our own vector table and redirect through it
-    ldr r0, =__vectors
-    b __vector_entry
+// Header must be in first 256 bytes of main image (i.e. excluding flash boot2).
+// For flash builds we put it immediately after vector table; for NO_FLASH the
+// vectors are at a +0x100 offset because the bootrom enters RAM images directly
+// at their lowest address, so we put the header in the VTOR alignment hole.
+
+#if !PICO_NO_BINARY_INFO
+binary_info_header:
+.word BINARY_INFO_MARKER_START
+.word __binary_info_start
+.word __binary_info_end
+.word data_cpy_table // we may need to decode pointers that are in RAM at runtime.
+.word BINARY_INFO_MARKER_END
 #endif
 
-// ELF entry point generally called when we load an ELF via debugger
+// ----------------------------------------------------------------------------
+
+.section .reset, "ax"
+
+// On flash builds, the vector table comes first in the image (conventional).
+// On NO_FLASH builds, the reset handler section comes first, as the entry
+// point is at offset 0 (fixed due to bootrom), and VTOR is highly-aligned.
+// Image is entered in various ways:
+//
+// - NO_FLASH builds are entered from beginning by UF2 bootloader
+//
+// - Flash builds vector through the table into _reset_handler from boot2
+//
+// - Either type can be entered via _entry_point by the debugger, and flash builds
+//   must then be sent back round the boot sequence to properly initialise flash
+
+// ELF entry point:
 .type _entry_point,%function
 .thumb_func
 .global _entry_point
 _entry_point:
 
 #if PICO_NO_FLASH
-    // non flash
+    // Vector through our own table (SP, VTOR will not have been set up at
+    // this point). Same path for debugger entry and bootloader entry.
     ldr r0, =__vectors
 #else
-    // todo clear watchdog?
-    // When using flash, we install and use the ROM vector table to go thru regular bootrom/stage2 flash sequence
+    // Debugger tried to run code after loading, so SSI is in 03h-only mode.
+    // Go back through bootrom + boot2 to properly initialise flash.
     movs r0, #0
 #endif
-
-__vector_entry:
-    ldr r1, =(PPB_BASE + M0PLUS_CPUID_OFFSET)
-    str r0, [r1, #8]
+    ldr r1, =(PPB_BASE + M0PLUS_VTOR_OFFSET)
+    str r0, [r1]
     ldmia r0!, {r1, r2}
     msr msp, r1
+    ldr r2, =_reset_handler
     bx r2
 
-// ----------------------------------------------------------------------------
 // Reset handler:
 // - initialises .data
 // - clears .bss
@@ -188,12 +219,16 @@ __vector_entry:
 .type _reset_handler,%function
 .thumb_func
 _reset_handler:
-    // Hang all cores except core 0
+    // Only core 0 should run the C runtime startup code; core 1 is normally
+    // sleeping in the bootrom at this point but check to be sure
     ldr r0, =(SIO_BASE + SIO_CPUID_OFFSET)
     ldr r0, [r0]
     cmp r0, #0
-    bne wait_for_vector
+    bne hold_non_core0_in_bootrom
 
+    // In a NO_FLASH binary, don't perform .data copy, since it's loaded
+    // in-place by the SRAM load. Still need to clear .bss
+#if !PICO_NO_FLASH
     adr r4, data_cpy_table
 
     // assume there is at least one entry
@@ -204,6 +239,7 @@ _reset_handler:
     bl data_cpy
     b 1b
 2:
+#endif
 
     // Zero out the BSS
     ldr r1, =__bss_start__
@@ -227,14 +263,11 @@ platform_entry: // symbol for stack traces
     blx r1
     // exit should not return.  If it does, hang the core.
     // (fall thru into our hang _exit impl
-.weak _exit
-.type _exit,%function
-.thumb_func
-_exit:
 1: // separate label because _exit can be moved out of branch range
     bkpt #0
     b 1b
 
+#if !PICO_NO_FLASH
 data_cpy_loop:
     ldm r1!, {r0}
     stm r2!, {r0}
@@ -242,15 +275,10 @@ data_cpy:
     cmp r2, r3
     blo data_cpy_loop
     bx lr
-
-#if !PICO_NO_BINARY_INFO
-binary_info_header:
-.word BINARY_INFO_MARKER_START
-.word __binary_info_start
-.word __binary_info_end
-.word data_cpy_table // we may need to decode pointers that are in RAM at runtime.
-.word BINARY_INFO_MARKER_END
 #endif
+
+// Note the data copy table is still included for NO_FLASH builds, even though
+// we skip the copy, because it is listed in binary info
 
 .align 2
 data_cpy_table:
@@ -284,32 +312,42 @@ runtime_init:
     bx lr
 
 // ----------------------------------------------------------------------------
-// In case core 1's VTOR has already been moved into flash, we need to handle
-// core 1 reset. However, we do so by just jumping back into bootrom version of
-// wait_for_vector
+// If core 1 somehow gets into crt0 due to a spectacular VTOR mishap, we need to
+// catch it and send back to the sleep-and-launch code in the bootrom. Shouldn't
+// happen (it should sleep in the ROM until given an entry point via the
+// cross-core FIFOs) but it's good to be defensive.
 
-wait_for_vector:
+hold_non_core0_in_bootrom:
     ldr r0, = 'W' | ('V' << 8)
     bl rom_func_lookup
     bx r0
 
-.global __get_current_exception
-.thumb_func
-__get_current_exception:
-    mrs  r0, ipsr
-    uxtb r0, r0
-    bx   lr
-
 // ----------------------------------------------------------------------------
 // Stack/heap dummies to set size
 
-.section .stack
+// Prior to SDK 1.5.1 these were `.section .stack` without the `, "a"`... Clang linker gives a warning about this,
+// however setting it explicitly to `, "a"` makes GCC *now* discard the section unless it is also KEEP. This
+// seems like very surprising behavior!
+//
+// Strictly the most correct thing to do (as .stack and .heap are unreferenced) is to mark them as "a", and also KEEP, which
+// works correctly for both GCC and Clang, however doing so may break anyone who already has custom linker scripts without
+// the KEEP. Therefore we will only add the "a" on Clang, but will also use KEEP to our own linker scripts.
+
+.macro spacer_section name
+#if PICO_ASSEMBLER_IS_CLANG
+.section \name, "a"
+#else
+.section \name
+#endif
+.endm
+
+spacer_section .stack
 // align to allow for memory protection (although this alignment is pretty much ignored by linker script)
-.align 5
+.p2align 5
     .equ StackSize, PICO_STACK_SIZE
 .space StackSize
 
-.section .heap
-.align 2
+spacer_section .heap
+.p2align 2
     .equ HeapSize, PICO_HEAP_SIZE
 .space HeapSize

@@ -1,15 +1,10 @@
 if (NOT TARGET pico_double)
     # library to be depended on - we make this depend on particular implementations using per target generator expressions
-    add_library(pico_double INTERFACE)
+    pico_add_library(pico_double)
 
     # no custom implementation; falls thru to compiler
-    add_library(pico_double_compiler INTERFACE)
-    # PICO_BUILD_DEFINE: PICO_DOUBLE_COMPILER, whether compiler provided double support is being used, type=bool, default=0, but dependent on CMake options, group=pico_double
-    target_compile_definitions(pico_double_compiler INTERFACE
-            PICO_DOUBLE_COMPILER=1
-    )
+    pico_add_library(pico_double_compiler)
 
-    add_library(pico_double_headers INTERFACE)
     target_include_directories(pico_double_headers INTERFACE ${CMAKE_CURRENT_LIST_DIR}/include)
 
     # add alias "default" which is just pico.
@@ -21,30 +16,24 @@ if (NOT TARGET pico_double)
     target_link_libraries(pico_double INTERFACE
             $<IF:$<BOOL:$<TARGET_PROPERTY:PICO_TARGET_DOUBLE_IMPL>>,$<TARGET_PROPERTY:PICO_TARGET_DOUBLE_IMPL>,${PICO_DEFAULT_DOUBLE_IMPL}>)
 
-    add_library(pico_double_pico INTERFACE)
+    pico_add_library(pico_double_pico)
     target_sources(pico_double_pico INTERFACE
             ${CMAKE_CURRENT_LIST_DIR}/double_aeabi.S
             ${CMAKE_CURRENT_LIST_DIR}/double_init_rom.c
             ${CMAKE_CURRENT_LIST_DIR}/double_math.c
             ${CMAKE_CURRENT_LIST_DIR}/double_v1_rom_shim.S
     )
-    # PICO_BUILD_DEFINE: PICO_DOUBLE_PICO, whether optimized pico/bootrom provided double support is being used, type=bool, default=1, but dependent on CMake options, group=pico_double
-    target_compile_definitions(pico_double_pico INTERFACE
-            PICO_DOUBLE_PICO=1
-            )
 
-    target_link_libraries(pico_double_pico INTERFACE pico_bootrom pico_double_headers)
+    target_link_libraries(pico_double_pico INTERFACE pico_bootrom pico_double_headers hardware_divider)
 
-    add_library(pico_double_none INTERFACE)
+    pico_add_library(pico_double_none)
     target_sources(pico_double_none INTERFACE
             ${CMAKE_CURRENT_LIST_DIR}/double_none.S
             )
 
     target_link_libraries(pico_double_none INTERFACE pico_double_headers)
 
-    # PICO_BUILD_DEFINE: PICO_DOUBLE_NONE, whether double support is disabled and functions will panic, type=bool, default=0, but dependent on CMake options, group=pico_double
-    target_compile_definitions(pico_double_none INTERFACE
-            PICO_DOUBLE_NONE=1
+    target_compile_definitions(pico_double_none_headers INTERFACE
             PICO_PRINTF_SUPPORT_FLOAT=0 # printing floats/doubles won't work, so we can save space by removing it
     )
 

@@ -1,4 +1,4 @@
-# PICO_CMAKE_CONFIG: PICO_BOARD, The board name being built for. This is overridable from the user environment, type=string, default=rp2040, group=build
+# PICO_CMAKE_CONFIG: PICO_BOARD, The board name being built for. This is overridable from the user environment, type=string, default=pico, group=build
 if (DEFINED ENV{PICO_BOARD})
     set(PICO_BOARD $ENV{PICO_BOARD})
     message("Using PICO_BOARD from environment ('${PICO_BOARD}')")
@@ -10,9 +10,9 @@ else()
         message("PICO target board is ${PICO_BOARD}.")
     endif()
 endif()
-set(PICO_BOARD ${PICO_BOARD} CACHE STRING "PICO target board (e.g. pico)")
+set(PICO_BOARD ${PICO_BOARD} CACHE STRING "PICO target board (e.g. pico)" FORCE)
 
-# PICO_CMAKE_CONFIG: PICO_BOARD_CMAKE_DIRS, Directors to look for <PICO_BOARD>.cmake in. This is overridable from the user environment, type=list, default="", group=build
+# PICO_CMAKE_CONFIG: PICO_BOARD_CMAKE_DIRS, Directories to look for <PICO_BOARD>.cmake in. This is overridable from the user environment, type=list, default="", group=build
 if (DEFINED ENV{PICO_BOARD_CMAKE_DIRS})
     set(PICO_BOARD_CMAKE_DIRS $ENV{PICO_BOARD_CMAKE_DIRS})
     message("Using PICO_BOARD_CMAKE_DIRS from environment ('${PICO_BOARD_CMAKE_DIRS}')")

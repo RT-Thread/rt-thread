@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef _HARDWARE_GPIO_H_
-#define _HARDWARE_GPIO_H_
+#ifndef _HARDWARE_GPIO_H
+#define _HARDWARE_GPIO_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -27,11 +27,22 @@ enum gpio_function {
     GPIO_FUNC_NULL = 0xf,
 };
 
+enum gpio_slew_rate {
+    GPIO_SLEW_RATE_SLOW = 0,  ///< Slew rate limiting enabled
+    GPIO_SLEW_RATE_FAST = 1   ///< Slew rate limiting disabled
+};
+
+enum gpio_drive_strength {
+    GPIO_DRIVE_STRENGTH_2MA = 0, ///< 2 mA nominal drive strength
+    GPIO_DRIVE_STRENGTH_4MA = 1, ///< 4 mA nominal drive strength
+    GPIO_DRIVE_STRENGTH_8MA = 2, ///< 8 mA nominal drive strength
+    GPIO_DRIVE_STRENGTH_12MA = 3 ///< 12 mA nominal drive strength
+};
 
 #define GPIO_OUT 1
 #define GPIO_IN 0
 
-#define N_GPIOS 30
+#define NUM_BANK0_GPIOS 30
 
 // ----------------------------------------------------------------------------
 // Pad Controls + IO Muxing
@@ -50,6 +61,8 @@ void gpio_disable_pulls(uint gpio);
 
 void gpio_set_pulls(uint gpio, bool up, bool down);
 
+void gpio_set_irqover(uint gpio, uint value);
+
 void gpio_set_outover(uint gpio, uint value);
 
 void gpio_set_inover(uint gpio, uint value);
@@ -57,6 +70,18 @@ void gpio_set_inover(uint gpio, uint value);
 void gpio_set_oeover(uint gpio, uint value);
 
 void gpio_set_input_enabled(uint gpio, bool enable);
+
+void gpio_set_input_hysteresis_enabled(uint gpio, bool enabled);
+
+bool gpio_is_input_hysteresis_enabled(uint gpio);
+
+void gpio_set_slew_rate(uint gpio, enum gpio_slew_rate slew);
+
+enum gpio_slew_rate gpio_get_slew_rate(uint gpio);
+
+void gpio_set_drive_strength(uint gpio, enum gpio_drive_strength drive);
+
+enum gpio_drive_strength gpio_get_drive_strength(uint gpio);
 
 // Configure a GPIO for direct input/output from software
 void gpio_init(uint gpio);
@@ -127,7 +152,9 @@ void gpio_set_dir_all_bits(uint32_t value);
 void gpio_set_dir(uint gpio, bool out);
 
 // debugging
+#ifndef PICO_DEBUG_PIN_BASE
 #define PICO_DEBUG_PIN_BASE 19u
+#endif
 
 // note these two macros may only be used once per compilation unit
 #define CU_REGISTER_DEBUG_PINS(p, ...)

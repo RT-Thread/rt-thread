@@ -23,6 +23,7 @@ add_executable(pioasm
 target_sources(pioasm PRIVATE c_sdk_output.cpp)
 target_sources(pioasm PRIVATE python_output.cpp)
 target_sources(pioasm PRIVATE hex_output.cpp)
+target_sources(pioasm PRIVATE ada_output.cpp)
 target_sources(pioasm PRIVATE ${PIOASM_EXTRA_SOURCE_FILES})
 
 if ((CMAKE_CXX_COMPILER_ID STREQUAL "GNU") AND
@@ -35,8 +36,11 @@ endif()
 
 target_include_directories(pioasm PRIVATE ${CMAKE_CURRENT_LIST_DIR} ${CMAKE_CURRENT_LIST_DIR}/gen)
 
-if (MSVC)
+if (MSVC OR
+    (WIN32 AND NOT MINGW AND (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")))
     target_compile_definitions(pioasm PRIVATE YY_NO_UNISTD_H)
+endif()
+if (MSVC)
     target_compile_options(pioasm PRIVATE "/std:c++latest")
 endif()
 

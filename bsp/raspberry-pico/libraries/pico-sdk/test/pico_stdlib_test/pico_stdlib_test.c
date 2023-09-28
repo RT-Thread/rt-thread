@@ -8,11 +8,67 @@
 #include <inttypes.h>
 #include "pico/stdlib.h"
 #include "pico/bit_ops.h"
+#include <stdlib.h>
+
+void test_builtin_bitops() {
+    int32_t x = 0;
+    for (uint32_t i = 0; i < 10000; i++) {
+        uint32_t vals32[] = {
+                i,
+                1u << (i & 31u),
+                i * 12355821u,
+        };
+        uint64_t vals64[] = {
+                i,
+                1ull << (i & 63u),
+                i * 12345678123125ull,
+        };
+        for(int j=0; j<count_of(vals32); j++) {
+            x += __builtin_popcount(vals32[j]);
+            x += __builtin_popcountl(vals32[j]);
+            x += (int32_t)__rev(vals32[j]);
+#if !PICO_ON_DEVICE
+            // the following functions are undefined on host mode, but on RP2040 we return 32
+            if (vals32[j]) {
+                x += __builtin_clz(vals32[j]);
+                x += __builtin_ctz(vals32[j]);
+            } else {
+                x += 64;
+            }
+#else
+            x += __builtin_clz(vals32[j]);
+            x += __builtin_ctz(vals32[j]);
+            // check l variants are the same
+            if (__builtin_clz(vals32[j]) != __builtin_clzl(vals32[j])) x += 17;
+            if (__builtin_ctz(vals32[j]) != __builtin_ctzl(vals32[j])) x += 23;
+#endif
+        }
+        for(int j=0; j<count_of(vals64); j++) {
+            x += __builtin_popcountll(vals64[j]);
+            x += (int32_t)__revll(vals64[j]);
+#if !PICO_ON_DEVICE
+            // the following functions are undefined on host mode, but on RP2040 we return 64
+            if (!vals64[j]) {
+                x += 128;
+                continue;
+            }
+#endif
+            x += __builtin_clzll(vals64[j]);
+            x += __builtin_ctzll(vals64[j]);
+        }
+    }
+    printf("Count is %d\n", (int)x);
+    int32_t expected = 1475508680;
+    if (x != expected) {
+        printf("FAILED (expected count %d\n", (int) expected);
+        exit(1);
+    }
+}
 
 int main() {
     setup_default_uart();
 
-    puts("Hellox, worlxxcd!");
+    puts("Hellox, world!");
     printf("Hello world %d\n", 2);
 #if PICO_NO_HARDWARE
     puts("This is native");
@@ -29,6 +85,8 @@ int main() {
                (unsigned long long) __revll(xl));
     }
 
+    test_builtin_bitops();
+
     for (int i = 0; i < 8; i++) {
         sleep_ms(500);
         printf( "%" PRIu64 "\n", to_us_since_boot(get_absolute_time()));
@@ -42,138 +100,3 @@ int main() {
     }
     puts("DONE");
 }
-
-void test1() {
-    uint32_t x = 0;
-    for (int i = 0; i < 1000; i++) {
-        x += __builtin_popcount(i);
-        x += __builtin_popcountl(i);
-        x += __builtin_popcountll(i * 1234567ll);
-        x += __builtin_clz(i);
-        x += __builtin_clzl(i);
-        x += __builtin_clzll(i * 1234567ll);
-        x += __builtin_ctz(i);
-        x += __builtin_ctzl(i);
-        x += __builtin_ctzll(i * 1234567ll);
-    }
-    if (x > 12345677) {
-        puts("ok");
-    }
-}
-
-#if 0
-struct event {
-
-};
-
-// something might be asyncrhonous.. it communicates the result via the event
-void do_something(struct event *e, int a, unsigned int b, char *c) {
-    if (a == b) puts(c);
-}
-
-int32_t event_result_timeout_ms(struct event *e, int32_t timeout_ms);
-int32_t event_result_timeout_us(struct event *e, int32_t timeout_us);
-bool is_event_done(struct event *e);
-// asserts if not done
-int32_t event_result(struct event *e);
-void event_set_callback(struct event *e, void (*callback)(struct event *e));
-void init_multi_event(struct event *target, struct event **events, uint event_count);
-
-#define timeout_ms_result(f, timeout) ({ \
-    struct event __event; \
-    struct event *event = &__event; \
-    (f); \
-    event_result_timeout_ms(event, timeout); \
-    })
-
-#define blocking_result(f) timeout_ms_result(f, -1)
-#define on_complete(f, cb) ({ \
-    static struct event __event; \
-    struct event *event = &__event; \
-    (f); \
-    event_set_callback(event, my_callback); \
-    })
-
-void test2() {
-    // just playing with blocking syntax
-    struct event e;
-    do_something(&e, 1, 1, "Hello");
-    uint32_t result = event_result_timeout_ms(&e, -1);
-}
-
-void test3() {
-    uint32_t result = blocking_result(do_something(event, 1, 1, "Hello"));
-}
-
-void test4() {
-    struct event e;
-    do_something(&e, 1, 1, "Hello");
-    // this would poll (down to hardware if there is no asynchronous mechanism)
-    while (!is_event_done(&e)) {
-        puts("waiting");
-    }
-    int32_t result = event_result(&e);
-}
-
-void my_callback(struct event *event) {
-    puts("Its done");
-    int32_t result = event_result(event);
-}
-
-void test5() {
-    static struct event e;
-    do_something(&e, 1, 1, "Hello");
-    event_set_callback(&e, my_callback);
-}
-
-void test6() {
-    on_complete(do_something(event, 1, 1, "Hello"), my_callback);
-}
-
-static struct event e1;
-static struct event e2;
-static struct event *events[2] = {&e1, &e2};
-static struct event multi;
-
-void test7() {
-    init_multi_event(&multi,events, count_of(events));
-    do_something(&e1, 1, 1, "Hello");
-    do_something(&e2, 1, 3, "Hello");
-    // something like this
-}
-
-struct dimpl {
-    uint8_t type;
-};
-
-struct doodad {
-    struct dimpl *type;
-    uint32_t param;
-};
-
-struct dimpl indefinite_waiter = {
-        .type = 1
-};
-
-extern struct dimpl INDEFINITE_WAIT;
-
-struct dimpl ms_waiter = {
-        .type = 1
-};
-
-struct doodad blocking_with_timeout_ms(uint32_t ms) {
-    struct doodad rc = {
-        .type = &ms_waiter,
-        .param = ms
-    };
-    return rc;
-}
-
-struct result {
-
-};
-
-struct result my_api_call(int arg, float x, struct doodad behavior) {
-
-}
-#endif

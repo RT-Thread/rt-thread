@@ -1,1 +1,3 @@
 pico_simple_hardware_target(pll)
+
+pico_mirrored_target_link_libraries(hardware_pll INTERFACE hardware_clocks)

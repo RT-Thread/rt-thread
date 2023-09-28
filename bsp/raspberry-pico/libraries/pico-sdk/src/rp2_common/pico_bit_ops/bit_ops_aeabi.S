@@ -4,12 +4,10 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-.syntax unified
-.cpu cortex-m0plus
-.thumb
-
 #include "pico/asm_helper.S"
-__pre_init __aeabi_bits_init, 00010
+#include "pico/bootrom.h"
+
+pico_default_asm_setup
 
 .macro bits_section name
 #if PICO_BITS_IN_RAM
@@ -19,15 +17,17 @@ __pre_init __aeabi_bits_init, 00010
 #endif
 .endm
 
+__pre_init __aeabi_bits_init, 00010
+
 .section .data.aeabi_bits_funcs
 .global aeabi_bits_funcs, aeabi_bits_funcs_end
 .equ BITS_FUNC_COUNT, 4
 .align 4
 aeabi_bits_funcs:
-    .word rom_table_code('P','3') // popcount32
-    .word rom_table_code('L','3') // clz32
-    .word rom_table_code('T','3') // ctz32
-    .word rom_table_code('R','3') // reverse32
+    .word ROM_FUNC_POPCOUNT32
+    .word ROM_FUNC_CLZ32
+    .word ROM_FUNC_CTZ32
+    .word ROM_FUNC_REVERSE32
 aeabi_bits_funcs_end:
 
 .section .text
@@ -83,7 +83,7 @@ wrapper_func __ctzdi2
     ldr r3, =aeabi_bits_funcs
     ldr r3, [r3, #CTZ32]
     cmp r0, #0
-    bne 1f
+    beq 1f
     bx r3
 1:
     push {lr}

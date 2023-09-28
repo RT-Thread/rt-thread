@@ -32,6 +32,10 @@
  * 3. Finding unused resources
  */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /*! \brief Atomically claim a resource, panicking if it is already in use
  *  \ingroup hardware_claim
  *
@@ -61,10 +65,10 @@ int hw_claim_unused_from_range(uint8_t *bits, bool required, uint bit_lsb, uint 
  * The resource ownership is indicated by the bit_index bit in an array of bits.
  *
  * \param bits pointer to an array of bits (8 bits per byte)
- * \param bit_index resource to unclaim (bit index into array of bits)
+ * \param bit_index resource to check (bit index into array of bits)
  * \return true if the resource is claimed
  */
-bool hw_is_claimed(uint8_t *bits, uint bit_index);
+bool hw_is_claimed(const uint8_t *bits, uint bit_index);
 
 /*! \brief Atomically unclaim a resource
  *  \ingroup hardware_claim
@@ -87,7 +91,7 @@ void hw_claim_clear(uint8_t *bits, uint bit_index);
  *
  * \return a token to pass to hw_claim_unlock()
  */
-uint32_t hw_claim_lock();
+uint32_t hw_claim_lock(void);
 
 /*! \brief Release the runtime mutual exclusion lock provided by the `hardware_claim` library
  *  \ingroup hardware_claim
@@ -97,5 +101,9 @@ uint32_t hw_claim_lock();
  * \param token the token returned by the corresponding call to hw_claim_lock()
  */
 void hw_claim_unlock(uint32_t token);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

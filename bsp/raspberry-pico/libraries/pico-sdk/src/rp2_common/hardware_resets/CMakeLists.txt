@@ -1,2 +1,1 @@
-add_library(hardware_resets INTERFACE)
-target_include_directories(hardware_resets INTERFACE include)
+pico_simple_hardware_headers_only_target(resets)

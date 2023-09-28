@@ -1,6 +1,7 @@
 pico_add_subdirectory(boot_picoboot)
 pico_add_subdirectory(boot_uf2)
 pico_add_subdirectory(pico_base)
+pico_add_subdirectory(pico_usb_reset_interface)
 
 # PICO_CMAKE_CONFIG: PICO_BARE_METAL, Flag to exclude anything except base headers from the build, type=bool, default=0, group=build
 if (NOT PICO_BARE_METAL)
@@ -14,3 +15,5 @@ if (NOT PICO_BARE_METAL)
 endif()
 
 pico_add_doxygen(${CMAKE_CURRENT_LIST_DIR})
+
+pico_promote_common_scope_vars()

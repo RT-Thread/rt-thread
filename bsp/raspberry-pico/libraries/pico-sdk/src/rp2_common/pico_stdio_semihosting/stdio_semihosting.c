@@ -8,31 +8,33 @@
 #include "pico/stdio_semihosting.h"
 #include "pico/binary_info.h"
 
-//static void __attribute__((naked)) semihosting_puts(const char *s) {
-//    __asm (
-//
-//    "mov r1, r0\n"
-//    "mov r0, #4\n"
-//    "bkpt 0xab\n"
-//    "bx lr\n"
-//    );
-//}
-
-static void __attribute__((naked)) semihosting_putc(char c) {
-    __asm (
-
-    "mov r1, r0\n"
-    "mov r0, #3\n"
-    "bkpt 0xab\n"
-    "bx lr\n"
-    );
-}
-
-
 static void stdio_semihosting_out_chars(const char *buf, int length) {
-    for (uint i = 0; i <length; i++) {
-        semihosting_putc(buf[i]);
-    }
+    // must be volatile or the buffer gets put in registers & optimized away
+    volatile struct {
+        // https://developer.arm.com/documentation/dui0375/g/What-is-Semihosting-/SYS-WRITE--0x05-
+        // arguments, in order:
+        // word 0 = file handle (1 = stdout)
+        // word 1 = pointer to buffer
+        // word 2 = length of buffer
+        size_t fd;
+        const char *buf;
+        size_t len;
+    } args;
+
+    args.fd = 1;  // 1 = stdout
+    args.buf = buf;
+    args.len = length;
+
+    pico_default_asm (
+    // r1 must contain a pointer to the arguments
+    "movs r1, %[args]\n"
+    // semihosting call number 0x05 = SYS_WRITE
+    "movs r0, #5\n"
+    // make the semihosting call: https://developer.arm.com/documentation/dui0375/g/What-is-Semihosting-/The-semihosting-interface
+    "bkpt 0xab\n"
+    :
+    : [args] "r" (&args)
+    : "r0", "r1");
 }
 
 stdio_driver_t stdio_semihosting = {

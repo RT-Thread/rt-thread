@@ -29,8 +29,8 @@
 //
 ///////////////////////////////////////////////////////////////////////////////
 
-#ifndef PICO_PRINTF_H_
-#define PICO_PRINTF_H_
+#ifndef _PICO_PRINTF_H
+#define _PICO_PRINTF_H
 
 /** \file printf.h
  *  \defgroup pico_printf pico_printf
@@ -55,7 +55,7 @@ extern "C" {
 #endif
 #endif
 
-#if PICO_PRINTF_PICO
+#if LIB_PICO_PRINTF_PICO
 // weak raw printf may be a puts if printf has not been called,
 // so that we can support gc of printf when it isn't called
 //

@@ -31,7 +31,7 @@ extern "C" {
  * code which uses both fewer CPU cycles and fewer CPU registers in the time critical sections of the
  * code.
  *
- * The interpolators are used heavily to accelerate audio operations within the Pico SDK, but their
+ * The interpolators are used heavily to accelerate audio operations within the SDK, but their
  * flexible configuration make it possible to optimise many other tasks such as quantization and
  * dithering, table lookup address generation, affine texture mapping, decompression and linear feedback.
  *
@@ -55,7 +55,7 @@ typedef struct {
 } interp_config;
 
 static inline uint interp_index(interp_hw_t *interp) {
-    assert(interp == interp0 || interp == interp1);
+    valid_params_if(INTERP, interp == interp0 || interp == interp1);
     return interp == interp1 ? 1 : 0;
 }
 
@@ -70,6 +70,8 @@ static inline uint interp_index(interp_hw_t *interp) {
  * \param lane The lane number, 0 or 1.
  */
 void interp_claim_lane(interp_hw_t *interp, uint lane);
+// The above really should be called this for consistency
+#define interp_lane_claim interp_claim_lane
 
 /*! \brief Claim the interpolator lanes specified in the mask
  *  \ingroup hardware_interp
@@ -86,6 +88,27 @@ void interp_claim_lane_mask(interp_hw_t *interp, uint lane_mask);
  * \param lane The lane number, 0 or 1
  */
 void interp_unclaim_lane(interp_hw_t *interp, uint lane);
+// The above really should be called this for consistency
+#define interp_lane_unclaim interp_unclaim_lane
+
+/*! \brief Determine if an interpolator lane is claimed
+ *  \ingroup hardware_interp
+ *
+ * \param interp Interpolator whose lane to check
+ * \param lane The lane number, 0 or 1
+ * \return true if claimed, false otherwise
+ * \see interp_claim_lane
+ * \see interp_claim_lane_mask
+ */
+bool interp_lane_is_claimed(interp_hw_t *interp, uint lane);
+
+/*! \brief Release previously claimed interpolator lanes \see interp_claim_lane_mask
+ *  \ingroup hardware_interp
+ *
+ * \param interp Interpolator on which to release lanes. interp0 or interp1
+ * \param lane_mask Bit pattern of lanes to unclaim (only bits 0 and 1 are valid)
+ */
+void interp_unclaim_lane_mask(interp_hw_t *interp, uint lane_mask);
 
 /*! \brief Set the interpolator shift value
  *  \ingroup interp_config
@@ -231,7 +254,7 @@ static inline void interp_config_set_force_bits(interp_config *c, uint bits) {
  *
  * \return A default interpolation configuration
  */
-static inline interp_config interp_default_config() {
+static inline interp_config interp_default_config(void) {
     interp_config c = {0};
     // Just pass through everything
     interp_config_set_mask(&c, 0, 31);
@@ -273,13 +296,13 @@ static inline void interp_set_config(interp_hw_t *interp, uint lane, interp_conf
  */
 static inline void interp_set_force_bits(interp_hw_t *interp, uint lane, uint bits) {
     // note cannot use hw_set_bits on SIO
-    interp->ctrl[lane] |= (bits << SIO_INTERP0_CTRL_LANE0_FORCE_MSB_LSB);
+    interp->ctrl[lane] = interp->ctrl[lane] | (bits << SIO_INTERP0_CTRL_LANE0_FORCE_MSB_LSB);
 }
 
 typedef struct {
-    io_rw_32 accum[2];
-    io_rw_32 base[3];
-    io_rw_32 ctrl[2];
+    uint32_t accum[2];
+    uint32_t base[3];
+    uint32_t ctrl[2];
 } interp_hw_save_t;
 
 /*! \brief Save the specified interpolator state
@@ -409,7 +432,6 @@ static inline uint32_t interp_peek_full_result(interp_hw_t *interp) {
  * \param interp Interpolator instance, interp0 or interp1.
  * \param lane The lane number, 0 or 1
  * \param val Value to add
- * \return The content of the FULL register
  */
 static inline void interp_add_accumulater(interp_hw_t *interp, uint lane, uint32_t val) {
     interp->add_raw[lane] = val;

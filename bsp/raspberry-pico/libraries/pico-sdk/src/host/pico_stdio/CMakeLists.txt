@@ -1,14 +1,14 @@
 if (NOT TARGET pico_stdio)
-    add_library(pico_stdio INTERFACE)
+    pico_add_library(pico_stdio)
 
-    target_include_directories(pico_stdio INTERFACE ${CMAKE_CURRENT_LIST_DIR}/include)
+    target_include_directories(pico_stdio_headers INTERFACE ${CMAKE_CURRENT_LIST_DIR}/include)
 
     target_sources(pico_stdio INTERFACE
             ${CMAKE_CURRENT_LIST_DIR}/stdio.c
             )
-    add_library(pico_stdio_usb INTERFACE)
-    add_library(pico_stdio_uart INTERFACE)
-    add_library(pico_stdio_semihosting INTERFACE)
+    pico_add_library(pico_stdio_usb)
+    pico_add_library(pico_stdio_uart)
+    pico_add_library(pico_stdio_semihosting)
     
     function(pico_enable_stdio_uart)
     endfunction()

@@ -15,20 +15,40 @@
 extern "C" {
 #endif
 
-
 /** \file hardware/sync.h
  *  \defgroup hardware_sync hardware_sync
  *
- * Low level hardware spin-lock, barrier and processor event API
+ * Low level hardware spin locks, barrier and processor event APIs
  *
- * Functions for synchronisation between core's, HW, etc
+ * Spin Locks
+ * ----------
  *
  * The RP2040 provides 32 hardware spin locks, which can be used to manage mutually-exclusive access to shared software
- * resources.
+ * and hardware resources.
  *
- * \note spin locks 0-15 are currently reserved for fixed uses by the SDK - i.e. if you use them other
- * functionality may break or not function optimally
+ * Generally each spin lock itself is a shared resource,
+ * i.e. the same hardware spin lock can be used by multiple higher level primitives (as long as the spin locks are neither held for long periods, nor
+ * held concurrently with other spin locks by the same core - which could lead to deadlock). A hardware spin lock that is exclusively owned can be used
+ * individually without more flexibility and without regard to other software. Note that no hardware spin lock may
+ * be acquired re-entrantly (i.e. hardware spin locks are not on their own safe for use by both thread code and IRQs) however the default spinlock related
+ * methods here (e.g. \ref spin_lock_blocking) always disable interrupts while the lock is held as use by IRQ handlers and user code is common/desirable,
+ * and spin locks are only expected to be held for brief periods.
+ *
+ * The SDK uses the following default spin lock assignments, classifying which spin locks are reserved for exclusive/special purposes
+ * vs those suitable for more general shared use:
+ *
+ * Number (ID) | Description
+ * :---------: | -----------
+ * 0-13        | Currently reserved for exclusive use by the SDK and other libraries. If you use these spin locks, you risk breaking SDK or other library functionality. Each reserved spin lock used individually has its own PICO_SPINLOCK_ID so you can search for those.
+ * 14,15       | (\ref PICO_SPINLOCK_ID_OS1 and \ref PICO_SPINLOCK_ID_OS2). Currently reserved for exclusive use by an operating system (or other system level software) co-existing with the SDK.
+ * 16-23       | (\ref PICO_SPINLOCK_ID_STRIPED_FIRST - \ref PICO_SPINLOCK_ID_STRIPED_LAST). Spin locks from this range are assigned in a round-robin fashion via \ref next_striped_spin_lock_num(). These spin locks are shared, but assigning numbers from a range reduces the probability that two higher level locking primitives using _striped_ spin locks will actually be using the same spin lock.
+ * 24-31       | (\ref PICO_SPINLOCK_ID_CLAIM_FREE_FIRST - \ref PICO_SPINLOCK_ID_CLAIM_FREE_LAST). These are reserved for exclusive use and are allocated on a first come first served basis at runtime via \ref spin_lock_claim_unused()
  */
+
+// PICO_CONFIG: PARAM_ASSERTIONS_ENABLED_SYNC, Enable/disable assertions in the HW sync module, type=bool, default=0, group=hardware_sync
+#ifndef PARAM_ASSERTIONS_ENABLED_SYNC
+#define PARAM_ASSERTIONS_ENABLED_SYNC 0
+#endif
 
 /** \brief A spin lock identifier
  * \ingroup hardware_sync
@@ -50,40 +70,55 @@ typedef volatile uint32_t spin_lock_t;
 #define PICO_SPINLOCK_ID_HARDWARE_CLAIM 11
 #endif
 
-// PICO_CONFIG: PICO_SPINLOCK_ID_STRIPED_FIRST, Spinlock ID for striped first, min=16, max=31, default=16, group=hardware_sync
+// PICO_CONFIG: PICO_SPINLOCK_ID_RAND, Spinlock ID for Random Number Generator, min=0, max=31, default=12, group=hardware_sync
+#ifndef PICO_SPINLOCK_ID_RAND
+#define PICO_SPINLOCK_ID_RAND 12
+#endif
+
+// PICO_CONFIG: PICO_SPINLOCK_ID_OS1, First Spinlock ID reserved for use by low level OS style software, min=0, max=31, default=14, group=hardware_sync
+#ifndef PICO_SPINLOCK_ID_OS1
+#define PICO_SPINLOCK_ID_OS1 14
+#endif
+
+// PICO_CONFIG: PICO_SPINLOCK_ID_OS2, Second Spinlock ID reserved for use by low level OS style software, min=0, max=31, default=15, group=hardware_sync
+#ifndef PICO_SPINLOCK_ID_OS2
+#define PICO_SPINLOCK_ID_OS2 15
+#endif
+
+// PICO_CONFIG: PICO_SPINLOCK_ID_STRIPED_FIRST, Lowest Spinlock ID in the 'striped' range, min=0, max=31, default=16, group=hardware_sync
 #ifndef PICO_SPINLOCK_ID_STRIPED_FIRST
 #define PICO_SPINLOCK_ID_STRIPED_FIRST 16
 #endif
 
-// PICO_CONFIG: PICO_SPINLOCK_ID_STRIPED_LAST, Spinlock ID for striped last, min=16, max=31, default=23, group=hardware_sync
+// PICO_CONFIG: PICO_SPINLOCK_ID_STRIPED_LAST, Highest Spinlock ID in the 'striped' range, min=0, max=31, default=23, group=hardware_sync
 #ifndef PICO_SPINLOCK_ID_STRIPED_LAST
 #define PICO_SPINLOCK_ID_STRIPED_LAST 23
 #endif
 
-// PICO_CONFIG: PICO_SPINLOCK_ID_CLAIM_FREE_FIRST, Spinlock ID for claim free first, min=16, max=31, default=24, group=hardware_sync
+// PICO_CONFIG: PICO_SPINLOCK_ID_CLAIM_FREE_FIRST, Lowest Spinlock ID in the 'claim free' range, min=0, max=31, default=24, group=hardware_sync
 #ifndef PICO_SPINLOCK_ID_CLAIM_FREE_FIRST
 #define PICO_SPINLOCK_ID_CLAIM_FREE_FIRST 24
 #endif
 
-// PICO_CONFIG: PICO_SPINLOCK_ID_CLAIM_FREE_END, Spinlock ID for claim free end, min=16, max=31, default=31, group=hardware_sync
-#ifndef PICO_SPINLOCK_ID_CLAIM_FREE_END
-#define PICO_SPINLOCK_ID_CLAIM_FREE_END 31
+#ifdef PICO_SPINLOCK_ID_CLAIM_FREE_END
+#warning PICO_SPINLOCK_ID_CLAIM_FREE_END has been renamed to PICO_SPINLOCK_ID_CLAIM_FREE_LAST
 #endif
 
-// PICO_CONFIG: PARAM_ASSERTIONS_ENABLED_SYNC, Enable/disable assertions in the HW sync module, type=bool, default=0, group=hardware_sync
-#ifndef PARAM_ASSERTIONS_ENABLED_SYNC
-#define PARAM_ASSERTIONS_ENABLED_SYNC 0
+// PICO_CONFIG: PICO_SPINLOCK_ID_CLAIM_FREE_LAST, Highest Spinlock ID in the 'claim free' range, min=0, max=31, default=31, group=hardware_sync
+#ifndef PICO_SPINLOCK_ID_CLAIM_FREE_LAST
+#define PICO_SPINLOCK_ID_CLAIM_FREE_LAST 31
 #endif
-
 
 /*! \brief Insert a SEV instruction in to the code path.
  *  \ingroup hardware_sync
 
  * The SEV (send event) instruction sends an event to both cores.
  */
-inline static void __sev() {
-    __asm volatile ("sev");
+#if !__has_builtin(__sev)
+__force_inline static void __sev(void) {
+    pico_default_asm_volatile ("sev");
 }
+#endif
 
 /*! \brief Insert a WFE instruction in to the code path.
  *  \ingroup hardware_sync
@@ -91,18 +126,22 @@ inline static void __sev() {
  * The WFE (wait for event) instruction waits until one of a number of
  * events occurs, including events signalled by the SEV instruction on either core.
  */
-inline static void __wfe() {
-    __asm volatile ("wfe");
+#if !__has_builtin(__wfe)
+__force_inline static void __wfe(void) {
+    pico_default_asm_volatile ("wfe");
 }
+#endif
 
 /*! \brief Insert a WFI instruction in to the code path.
   *  \ingroup hardware_sync
 *
  * The WFI (wait for interrupt) instruction waits for a interrupt to wake up the core.
  */
-inline static void __wfi() {
-    __asm volatile ("wfi");
+#if !__has_builtin(__wfi)
+__force_inline static void __wfi(void) {
+    pico_default_asm_volatile("wfi");
 }
+#endif
 
 /*! \brief Insert a DMB instruction in to the code path.
  *  \ingroup hardware_sync
@@ -110,8 +149,19 @@ inline static void __wfi() {
  * The DMB (data memory barrier) acts as a memory barrier, all memory accesses prior to this
  * instruction will be observed before any explicit access after the instruction.
  */
-inline static void __dmb() {
-    __asm volatile ("dmb");
+__force_inline static void __dmb(void) {
+    pico_default_asm_volatile("dmb" : : : "memory");
+}
+
+/*! \brief Insert a DSB instruction in to the code path.
+ *  \ingroup hardware_sync
+ *
+ * The DSB (data synchronization barrier) acts as a special kind of data
+ * memory barrier (DMB). The DSB operation completes when all explicit memory
+ * accesses before this instruction complete.
+ */
+__force_inline static void __dsb(void) {
+    pico_default_asm_volatile("dsb" : : : "memory");
 }
 
 /*! \brief Insert a ISB instruction in to the code path.
@@ -121,14 +171,14 @@ inline static void __dmb() {
  * so that all instructions following the ISB are fetched from cache or memory again, after
  * the ISB instruction has been completed.
  */
-inline static void __isb() {
-    __asm volatile ("isb");
+__force_inline static void __isb(void) {
+    pico_default_asm_volatile("isb" ::: "memory");
 }
 
 /*! \brief Acquire a memory fence
  *  \ingroup hardware_sync
  */
-inline static void __mem_fence_acquire() {
+__force_inline static void __mem_fence_acquire(void) {
     // the original code below makes it hard for us to be included from C++ via a header
     // which itself is in an extern "C", so just use __dmb instead, which is what
     // is required on Cortex M0+
@@ -144,7 +194,7 @@ inline static void __mem_fence_acquire() {
  *  \ingroup hardware_sync
  *
  */
-inline static void __mem_fence_release() {
+__force_inline static void __mem_fence_release(void) {
     // the original code below makes it hard for us to be included from C++ via a header
     // which itself is in an extern "C", so just use __dmb instead, which is what
     // is required on Cortex M0+
@@ -161,10 +211,12 @@ inline static void __mem_fence_release() {
  *
  * \return The prior interrupt enable status for restoration later via restore_interrupts()
  */
-inline static uint32_t save_and_disable_interrupts() {
+__force_inline static uint32_t save_and_disable_interrupts(void) {
     uint32_t status;
-    __asm volatile ("mrs %0, PRIMASK" : "=r" (status)::);
-    __asm volatile ("cpsid i");
+    pico_default_asm_volatile(
+            "mrs %0, PRIMASK\n"
+            "cpsid i"
+            : "=r" (status) ::);
     return status;
 }
 
@@ -173,8 +225,8 @@ inline static uint32_t save_and_disable_interrupts() {
  *
  * \param status Previous interrupt status from save_and_disable_interrupts()
   */
-inline static void restore_interrupts(uint32_t status) {
-    __asm volatile ("msr PRIMASK,%0"::"r" (status) : );
+__force_inline static void restore_interrupts(uint32_t status) {
+    pico_default_asm_volatile("msr PRIMASK,%0"::"r" (status) : );
 }
 
 /*! \brief Get HW Spinlock instance from number
@@ -183,7 +235,8 @@ inline static void restore_interrupts(uint32_t status) {
  * \param lock_num Spinlock ID
  * \return The spinlock instance
  */
-inline static spin_lock_t *spin_lock_instance(uint lock_num) {
+__force_inline static spin_lock_t *spin_lock_instance(uint lock_num) {
+    invalid_params_if(SYNC, lock_num >= NUM_SPIN_LOCKS);
     return (spin_lock_t *) (SIO_BASE + SIO_SPINLOCK0_OFFSET + lock_num * 4);
 }
 
@@ -193,8 +246,11 @@ inline static spin_lock_t *spin_lock_instance(uint lock_num) {
  * \param lock The Spinlock instance
  * \return The Spinlock ID
  */
-inline static uint spin_lock_get_num(spin_lock_t *lock) {
-    return lock - (spin_lock_t *) (SIO_BASE + SIO_SPINLOCK0_OFFSET);
+__force_inline static uint spin_lock_get_num(spin_lock_t *lock) {
+    invalid_params_if(SYNC, (uint) lock < SIO_BASE + SIO_SPINLOCK0_OFFSET ||
+                            (uint) lock >= NUM_SPIN_LOCKS * sizeof(spin_lock_t) + SIO_BASE + SIO_SPINLOCK0_OFFSET ||
+                            ((uint) lock - SIO_BASE + SIO_SPINLOCK0_OFFSET) % sizeof(spin_lock_t) != 0);
+    return (uint) (lock - (spin_lock_t *) (SIO_BASE + SIO_SPINLOCK0_OFFSET));
 }
 
 /*! \brief Acquire a spin lock without disabling interrupts (hence unsafe)
@@ -202,7 +258,7 @@ inline static uint spin_lock_get_num(spin_lock_t *lock) {
  *
  * \param lock Spinlock instance
  */
-inline static void spin_lock_unsafe_blocking(spin_lock_t *lock) {
+__force_inline static void spin_lock_unsafe_blocking(spin_lock_t *lock) {
     // Note we don't do a wfe or anything, because by convention these spin_locks are VERY SHORT LIVED and NEVER BLOCK and run
     // with INTERRUPTS disabled (to ensure that)... therefore nothing on our core could be blocking us, so we just need to wait on another core
     // anyway which should be finished soon
@@ -215,7 +271,7 @@ inline static void spin_lock_unsafe_blocking(spin_lock_t *lock) {
  *
  * \param lock Spinlock instance
  */
-inline static void spin_unlock_unsafe(spin_lock_t *lock) {
+__force_inline static void spin_unlock_unsafe(spin_lock_t *lock) {
     __mem_fence_release();
     *lock = 0;
 }
@@ -228,7 +284,7 @@ inline static void spin_unlock_unsafe(spin_lock_t *lock) {
  * \param lock Spinlock instance
  * \return interrupt status to be used when unlocking, to restore to original state
  */
-inline static uint32_t spin_lock_blocking(spin_lock_t *lock) {
+__force_inline static uint32_t spin_lock_blocking(spin_lock_t *lock) {
     uint32_t save = save_and_disable_interrupts();
     spin_lock_unsafe_blocking(lock);
     return save;
@@ -239,9 +295,9 @@ inline static uint32_t spin_lock_blocking(spin_lock_t *lock) {
  *
  * \param lock Spinlock instance
  */
-inline static bool is_spin_locked(const spin_lock_t *lock) {
+inline static bool is_spin_locked(spin_lock_t *lock) {
     check_hw_size(spin_lock_t, 4);
-    uint32_t lock_num = lock - spin_lock_instance(0);
+    uint lock_num = spin_lock_get_num(lock);
     return 0 != (*(io_ro_32 *) (SIO_BASE + SIO_SPINLOCK_ST_OFFSET) & (1u << lock_num));
 }
 
@@ -252,22 +308,12 @@ inline static bool is_spin_locked(const spin_lock_t *lock) {
  *
  * \param lock Spinlock instance
  * \param saved_irq Return value from the \ref spin_lock_blocking() function.
- * \return interrupt status to be used when unlocking, to restore to original state
  *
  * \sa spin_lock_blocking()
  */
-inline static void spin_unlock(spin_lock_t *lock, uint32_t saved_irq) {
+__force_inline static void spin_unlock(spin_lock_t *lock, uint32_t saved_irq) {
     spin_unlock_unsafe(lock);
     restore_interrupts(saved_irq);
-}
-
-/*! \brief Get the current core number
- *  \ingroup hardware_sync
- *
- * \return The core number the call was made from
- */
-static inline uint get_core_num() {
-    return (*(uint32_t *) (SIO_BASE + SIO_CPUID_OFFSET));
 }
 
 /*! \brief Initialise a spin lock
@@ -285,8 +331,22 @@ spin_lock_t *spin_lock_init(uint lock_num);
  */
 void spin_locks_reset(void);
 
-// this number is not claimed
-uint next_striped_spin_lock_num();
+/*! \brief Return a spin lock number from the _striped_ range
+ *  \ingroup hardware_sync
+ *
+ * Returns a spin lock number in the range PICO_SPINLOCK_ID_STRIPED_FIRST to PICO_SPINLOCK_ID_STRIPED_LAST
+ * in a round robin fashion. This does not grant the caller exclusive access to the spin lock, so the caller
+ * must:
+ *
+ * -# Abide (with other callers) by the contract of only holding this spin lock briefly (and with IRQs disabled - the default via \ref spin_lock_blocking()),
+ * and not whilst holding other spin locks.
+ * -# Be OK with any contention caused by the - brief due to the above requirement - contention with other possible users of the spin lock.
+ *
+ * \return lock_num a spin lock number the caller may use (non exclusively)
+ * \see PICO_SPINLOCK_ID_STRIPED_FIRST
+ * \see PICO_SPINLOCK_ID_STRIPED_LAST
+ */
+uint next_striped_spin_lock_num(void);
 
 /*! \brief Mark a spin lock as used
  *  \ingroup hardware_sync
@@ -327,7 +387,18 @@ void spin_lock_unclaim(uint lock_num);
  */
 int spin_lock_claim_unused(bool required);
 
-#define remove_volatile_cast(t, x) ({__mem_fence_acquire(); (t)(x); })
+/*! \brief Determine if a spin lock is claimed
+ *  \ingroup hardware_sync
+ *
+ * \param lock_num the spin lock number
+ * \return true if claimed, false otherwise
+ * \see spin_lock_claim
+ * \see spin_lock_claim_mask
+ */
+bool spin_lock_is_claimed(uint lock_num);
+
+// no longer use __mem_fence_acquire here, as it is overkill on cortex M0+
+#define remove_volatile_cast(t, x) ({__compiler_memory_barrier(); Clang_Pragma("clang diagnostic push"); Clang_Pragma("clang diagnostic ignored \"-Wcast-qual\""); (t)(x); Clang_Pragma("clang diagnostic pop"); })
 
 #ifdef __cplusplus
 }

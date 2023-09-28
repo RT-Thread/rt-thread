@@ -13,7 +13,7 @@
 #endif
 
 // in our case not a busy wait
-PICO_WEAK_FUNCTION_DEF(busy_wait_us)
+PICO_WEAK_FUNCTION_DEF(busy_wait_us_32)
 void PICO_WEAK_FUNCTION_IMPL_NAME(busy_wait_us_32)(uint32_t delay_us) {
 #if defined(__unix__) || defined(__APPLE__)
     usleep(delay_us);
@@ -21,11 +21,21 @@ void PICO_WEAK_FUNCTION_IMPL_NAME(busy_wait_us_32)(uint32_t delay_us) {
     assert(false);
 #endif
 }
+
 PICO_WEAK_FUNCTION_DEF(busy_wait_us)
 void PICO_WEAK_FUNCTION_IMPL_NAME(busy_wait_us)(uint64_t delay_us) {
     absolute_time_t t;
     update_us_since_boot(&t, time_us_64() + delay_us);
     busy_wait_until(t);
+}
+
+PICO_WEAK_FUNCTION_DEF(busy_wait_ms)
+void PICO_WEAK_FUNCTION_IMPL_NAME(busy_wait_ms)(uint32_t delay_ms) {
+#if defined(__unix__) || defined(__APPLE__)
+    usleep(delay_ms * 1000);
+#else
+    assert(false);
+#endif
 }
 
 // this may or may not wrap
@@ -51,7 +61,6 @@ uint32_t PICO_WEAK_FUNCTION_IMPL_NAME(timer_us_32)() {
 PICO_WEAK_FUNCTION_DEF(time_reached)
 bool PICO_WEAK_FUNCTION_IMPL_NAME(time_reached)(absolute_time_t t) {
     uint64_t target = to_us_since_boot(t);
-    if (target > 0xffffffffu) return false;
     return time_us_64() >= target;
 }
 
@@ -66,12 +75,12 @@ void PICO_WEAK_FUNCTION_IMPL_NAME(busy_wait_until)(absolute_time_t target) {
     const int chunk = 1u<<30u;
     uint64_t target_us = to_us_since_boot(target);
     uint64_t time_us = time_us_64();
-    while (target_us - time_us >= chunk) {
+    while ((int64_t)(target_us - time_us) >= chunk) {
         busy_wait_us_32(chunk);
         time_us = time_us_64();
     }
-    if (target_us != time_us) {
-        busy_wait_us_32(target_us - chunk);
+    if (target_us > time_us) {
+        busy_wait_us_32(target_us - time_us);
     }
 #endif
 }
@@ -88,6 +97,13 @@ void hardware_alarm_unclaim(uint alarm_num) {
     claimed_alarms &= ~(1u <<alarm_num);
 }
 
+int hardware_alarm_claim_unused(bool required) {
+    int alarm_id = claimed_alarms ? __builtin_clz(~claimed_alarms) : 1;
+    if (alarm_id >= NUM_TIMERS) return -1;
+    claimed_alarms |= 1u << alarm_id;
+    return alarm_id;
+}
+
 PICO_WEAK_FUNCTION_DEF(hardware_alarm_set_callback)
 void PICO_WEAK_FUNCTION_IMPL_NAME(hardware_alarm_set_callback)(uint alarm_num, hardware_alarm_callback_t callback) {
     panic_unsupported();
@@ -100,5 +116,10 @@ bool PICO_WEAK_FUNCTION_IMPL_NAME(hardware_alarm_set_target)(uint alarm_num, abs
 
 PICO_WEAK_FUNCTION_DEF(hardware_alarm_cancel)
 void PICO_WEAK_FUNCTION_IMPL_NAME(hardware_alarm_cancel)(uint alarm_num) {
+    panic_unsupported();
+}
+
+PICO_WEAK_FUNCTION_DEF(hardware_alarm_force_irq)
+void PICO_WEAK_FUNCTION_IMPL_NAME(hardware_alarm_force_irq)(uint alarm_num) {
     panic_unsupported();
 }

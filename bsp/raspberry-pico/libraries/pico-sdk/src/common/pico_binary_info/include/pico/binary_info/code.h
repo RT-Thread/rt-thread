@@ -7,16 +7,21 @@
 #ifndef _PICO_BINARY_INFO_CODE_H
 #define _PICO_BINARY_INFO_CODE_H
 
+// pico.h is not available when PICO_NO_BINARY_INFO=1 is used for builds outside of the SDK (e.g. picotool)
+// and only needed anyway (because of macro definitions) in PICO_NO_BINARY_INFO=0 builds
+#if !PICO_NO_BINARY_INFO
 #include "pico.h"
+#endif
+
 #include "pico/binary_info/structure.h"
 
 #if !PICO_NO_BINARY_INFO
-#define __bi_decl(name, bi, section_prefix, attr) static const attr __attribute__((section(section_prefix __STRING(name)))) struct _binary_info_core *name = bi
+#define __bi_decl(name, bi, section_prefix, attr) static const attr __attribute__((section(section_prefix __STRING(name)))) struct _binary_info_core *const name = bi
 #define __bi_lineno_var_name __CONCAT(__bi_, __LINE__)
 #define __bi_ptr_lineno_var_name __CONCAT(__bi_ptr, __LINE__)
 #define __bi_enclosure_check_lineno_var_name __CONCAT(_error_bi_is_missing_enclosing_decl_,__LINE__)
 #define __bi_mark_enclosure static const __unused int __bi_enclosure_check_lineno_var_name=0;
-#if !defined(__GNUC__) || __cplusplus || __GNUC__ >= 8
+#if __cplusplus || __GNUC__ >= 8
 #define __bi_enclosure_check(x) (x + __bi_enclosure_check_lineno_var_name)
 #else
 // skip the version check on older GCC non C++, as it doesn't compile.. this is only here to catch the
@@ -25,17 +30,19 @@
 #endif
 /**
  * Declare some binary information that will be included if the contain source file/line is compiled into the binary
+ * \ingroup pico_binary_info
  */
 #define bi_decl(_decl) __bi_mark_enclosure _decl; __bi_decl(__bi_ptr_lineno_var_name, &__bi_lineno_var_name.core, ".binary_info.keep.", __used);
 /**
  * Declare some binary information that will be included if the function containing the decl is linked into the binary.
  * The SDK uses --gc-sections, so functions that are never called will be removed by the linker, and any associated
  * binary information declared this way will also be stripped
+ * \ingroup pico_binary_info
  */
-#define bi_decl_if_func_used(_decl) ({__bi_mark_enclosure _decl; __bi_decl(__bi_ptr_lineno_var_name, &__bi_lineno_var_name.core, ".binary_info.", ); *(volatile uint8_t *)&__bi_ptr_lineno_var_name;});
+#define bi_decl_if_func_used(_decl) ({__bi_mark_enclosure _decl; __bi_decl(__bi_ptr_lineno_var_name, &__bi_lineno_var_name.core, ".binary_info.", ); *(const volatile uint8_t *)&__bi_ptr_lineno_var_name;});
 
 #define bi_decl_with_attr(_decl, _attr) __bi_mark_enclosure _attr _decl; __bi_decl(__bi_ptr_lineno_var_name, &__bi_lineno_var_name.core, ".binary_info.keep.", __used);
-#define bi_decl_if_func_used_with_attr(_decl, _attr) ({__bi_mark_enclosure _attr _decl; __bi_decl(__bi_ptr_lineno_var_name, &__bi_lineno_var_name.core, ".binary_info.", ); *(volatile uint8_t *)&__bi_ptr_lineno_var_name;});
+#define bi_decl_if_func_used_with_attr(_decl, _attr) ({__bi_mark_enclosure _attr _decl; __bi_decl(__bi_ptr_lineno_var_name, &__bi_lineno_var_name.core, ".binary_info.", ); *(const volatile uint8_t *)&__bi_ptr_lineno_var_name;});
 #else
 #define __bi_decl(bi, name, attr)
 #define bi_decl_with_attr(_decl, _attr)
@@ -129,7 +136,7 @@ static const struct _binary_info_named_group __bi_lineno_var_name = { \
 #define bi_pin_range_with_func(plo, phi, func)       __bi_encoded_pins_with_func(BI_PINS_ENCODING_RANGE | ((func << 3)) | ((plo) << 7) | ((phi) << 12))
 
 #define bi_pin_mask_with_name(pmask, label)          __bi_pins_with_name((pmask), (label))
-// names are sperated by | ... i.e. "name1|name2|name3"
+// names are separated by | ... i.e. "name1|name2|name3"
 #define bi_pin_mask_with_names(pmask, label)          __bi_pins_with_name((pmask), (label))
 #define bi_1pin_with_name(p0, name)                   bi_pin_mask_with_name(1u << (p0), name)
 #define bi_2pins_with_names(p0, name0, p1, name1)     bi_pin_mask_with_names((1u << (p0)) | (1u << (p1)), name0 "|" name1)

@@ -4,22 +4,21 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-// For MHZ definitions etc
+// For frequency and PLL definitions etc.
 #include "hardware/clocks.h"
 #include "hardware/pll.h"
+#include "hardware/resets.h"
 
 /// \tag::pll_init_calculations[]
-void pll_init(PLL pll, uint32_t refdiv, uint32_t vco_freq, uint32_t post_div1, uint8_t post_div2) {
-    // Turn off PLL in case it is already running
-    pll->pwr = 0xffffffff;
-    pll->fbdiv_int = 0;
+void pll_init(PLL pll, uint refdiv, uint vco_freq, uint post_div1, uint post_div2) {
+    uint32_t ref_freq = XOSC_KHZ * KHZ / refdiv;
 
-    uint32_t ref_mhz = XOSC_MHZ / refdiv;
-    pll->cs = refdiv;
+    // Check vco freq is in an acceptable range
+    assert(vco_freq >= (PICO_PLL_VCO_MIN_FREQ_KHZ * KHZ) && vco_freq <= (PICO_PLL_VCO_MAX_FREQ_KHZ * KHZ));
 
     // What are we multiplying the reference clock by to get the vco freq
     // (The regs are called div, because you divide the vco output and compare it to the refclk)
-    uint32_t fbdiv = vco_freq / (ref_mhz * MHZ);
+    uint32_t fbdiv = vco_freq / ref_freq;
 /// \end::pll_init_calculations[]
 
     // fbdiv
@@ -30,15 +29,30 @@ void pll_init(PLL pll, uint32_t refdiv, uint32_t vco_freq, uint32_t post_div1, u
 
     // post_div1 should be >= post_div2
     // from appnote page 11
-    // postdiv1 is designed to operate with a higher input frequency
-    // than postdiv2
-    assert(post_div2 <= post_div1);
+    // postdiv1 is designed to operate with a higher input frequency than postdiv2
+
+    // Check that reference frequency is no greater than vco / 16
+    assert(ref_freq <= (vco_freq / 16));
+
+    // div1 feeds into div2 so if div1 is 5 and div2 is 2 then you get a divide by 10
+    uint32_t pdiv = (post_div1 << PLL_PRIM_POSTDIV1_LSB) |
+                    (post_div2 << PLL_PRIM_POSTDIV2_LSB);
 
 /// \tag::pll_init_finish[]
-    // Check that reference frequency is no greater than vco / 16
-    assert(ref_mhz <= (vco_freq / 16));
+    if ((pll->cs & PLL_CS_LOCK_BITS) &&
+        (refdiv == (pll->cs & PLL_CS_REFDIV_BITS)) &&
+        (fbdiv  == (pll->fbdiv_int & PLL_FBDIV_INT_BITS)) &&
+        (pdiv   == (pll->prim & (PLL_PRIM_POSTDIV1_BITS | PLL_PRIM_POSTDIV2_BITS)))) {
+        // do not disrupt PLL that is already correctly configured and operating
+        return;
+    }
 
-    // Put calculated value into feedback divider
+    uint32_t pll_reset = (pll_usb_hw == pll) ? RESETS_RESET_PLL_USB_BITS : RESETS_RESET_PLL_SYS_BITS;
+    reset_block(pll_reset);
+    unreset_block_wait(pll_reset);
+
+    // Load VCO-related dividers before starting VCO
+    pll->cs = refdiv;
     pll->fbdiv_int = fbdiv;
 
     // Turn on PLL
@@ -50,9 +64,7 @@ void pll_init(PLL pll, uint32_t refdiv, uint32_t vco_freq, uint32_t post_div1, u
     // Wait for PLL to lock
     while (!(pll->cs & PLL_CS_LOCK_BITS)) tight_loop_contents();
 
-    // Set up post dividers - div1 feeds into div2 so if div1 is 5 and div2 is 2 then you get a divide by 10
-    uint32_t pdiv = (post_div1 << PLL_PRIM_POSTDIV1_LSB) |
-                    (post_div2 << PLL_PRIM_POSTDIV2_LSB);
+    // Set up post dividers
     pll->prim = pdiv;
 
     // Turn on post divider

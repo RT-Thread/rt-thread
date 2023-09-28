@@ -77,13 +77,12 @@ struct compiled_source {
 };
 
 struct output_format {
-    static std::vector<std::shared_ptr<output_format>> output_formats;
     static std::string default_name;
 
     std::string name;
 
     static void add(output_format *lang) {
-        output_formats.push_back(std::shared_ptr<output_format>(lang));
+        all().push_back(std::shared_ptr<output_format>(lang));
     }
 
     virtual int output(std::string destination, std::vector<std::string> output_options,
@@ -93,6 +92,11 @@ struct output_format {
 
     FILE *open_single_output(std::string destination);
     virtual ~output_format() = default;
+
+    static std::vector<std::shared_ptr<output_format>>& all() {
+        static std::vector<std::shared_ptr<output_format>> output_formats;
+        return output_formats;
+    }
 protected:
     output_format(std::string name) : name(std::move(name)) {}
 };

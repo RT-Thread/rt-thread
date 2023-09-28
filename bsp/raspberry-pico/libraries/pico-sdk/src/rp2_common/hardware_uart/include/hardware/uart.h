@@ -9,6 +9,7 @@
 
 #include "pico.h"
 #include "hardware/structs/uart.h"
+#include "hardware/regs/dreq.h"
 
 // PICO_CONFIG: PARAM_ASSERTIONS_ENABLED_UART, Enable/disable assertions in the UART module, type=bool, default=0, group=hardware_uart
 #ifndef PARAM_ASSERTIONS_ENABLED_UART
@@ -29,24 +30,13 @@ extern "C" {
 #define PICO_UART_DEFAULT_CRLF 0
 #endif
 
-// PICO_CONFIG: PICO_DEFAULT_UART, Define the default UART used for printf etc, default=0, group=hardware_uart
-#ifndef PICO_DEFAULT_UART
-#define PICO_DEFAULT_UART 0     ///< Default UART instance
-#endif
+// PICO_CONFIG: PICO_DEFAULT_UART, Define the default UART used for printf etc, min=0, max=1, group=hardware_uart
+// PICO_CONFIG: PICO_DEFAULT_UART_TX_PIN, Define the default UART TX pin, min=0, max=29, group=hardware_uart
+// PICO_CONFIG: PICO_DEFAULT_UART_RX_PIN, Define the default UART RX pin, min=0, max=29, group=hardware_uart
 
 // PICO_CONFIG: PICO_DEFAULT_UART_BAUD_RATE, Define the default UART baudrate, max=921600, default=115200, group=hardware_uart
 #ifndef PICO_DEFAULT_UART_BAUD_RATE
 #define PICO_DEFAULT_UART_BAUD_RATE 115200   ///< Default baud rate
-#endif
-
-// PICO_CONFIG: PICO_DEFAULT_UART_TX_PIN, Define the default UART TX pin, min=0, max=29, default=0, group=hardware_uart
-#ifndef PICO_DEFAULT_UART_TX_PIN
-#define PICO_DEFAULT_UART_TX_PIN 0           ///< Default TX pin
-#endif
-
-// PICO_CONFIG: PICO_DEFAULT_UART_RX_PIN, Define the default UART RX pin, min=0, max=29, default=1, group=hardware_uart
-#ifndef PICO_DEFAULT_UART_RX_PIN
-#define PICO_DEFAULT_UART_RX_PIN 1           ///< Default RX pin
 #endif
 
 /** \file hardware/uart.h
@@ -88,16 +78,18 @@ typedef struct uart_inst uart_inst_t;
  *  \ingroup hardware_uart
  * @{
  */
-#define uart0 ((uart_inst_t * const)uart0_hw) ///< Identifier for UART instance 0
-#define uart1 ((uart_inst_t * const)uart1_hw) ///< Identifier for UART instance 1
+#define uart0 ((uart_inst_t *)uart0_hw) ///< Identifier for UART instance 0
+#define uart1 ((uart_inst_t *)uart1_hw) ///< Identifier for UART instance 1
 
 /** @} */
 
-#ifndef PICO_DEFAULT_UART_INSTANCE
+#if !defined(PICO_DEFAULT_UART_INSTANCE) && defined(PICO_DEFAULT_UART)
 #define PICO_DEFAULT_UART_INSTANCE (__CONCAT(uart,PICO_DEFAULT_UART))
 #endif
 
+#ifdef PICO_DEFAULT_UART_INSTANCE
 #define uart_default PICO_DEFAULT_UART_INSTANCE
+#endif
 
 /*! \brief Convert UART instance to hardware instance number
  *  \ingroup hardware_uart
@@ -108,6 +100,12 @@ typedef struct uart_inst uart_inst_t;
 static inline uint uart_get_index(uart_inst_t *uart) {
     invalid_params_if(UART, uart != uart0 && uart != uart1);
     return uart == uart1 ? 1 : 0;
+}
+
+static inline uart_inst_t *uart_get_instance(uint instance) {
+    static_assert(NUM_UARTS == 2, "");
+    invalid_params_if(UART, instance >= NUM_UARTS);
+    return instance ? uart1 : uart0;
 }
 
 static inline uart_hw_t *uart_get_hw(uart_inst_t *uart) {
@@ -133,6 +131,13 @@ typedef enum {
  * Put the UART into a known state, and enable it. Must be called before other
  * functions.
  *
+ * This function always enables the FIFOs, and configures the UART for the
+ * following default line format:
+ *
+ * - 8 data bits
+ * - No parity bit
+ * - One stop bit
+ *
  * \note There is no guarantee that the baudrate requested will be possible, the nearest will be chosen,
  * and this function will return the configured baud rate.
  *
@@ -157,8 +162,20 @@ void uart_deinit(uart_inst_t *uart);
  *
  * Set baud rate as close as possible to requested, and return actual rate selected.
  *
+ * The UART is paused for around two character periods whilst the settings are
+ * changed. Data received during this time may be dropped by the UART.
+ *
+ * Any characters still in the transmit buffer will be sent using the new
+ * updated baud rate. uart_tx_wait_blocking() can be called before this
+ * function to ensure all characters at the old baud rate have been sent
+ * before the rate is changed.
+ *
+ * This function should not be called from an interrupt context, and the UART
+ * interrupt should be disabled before calling this function.
+ *
  * \param uart UART instance. \ref uart0 or \ref uart1
  * \param baudrate Baudrate in Hz
+ * \return Actual set baudrate
  */
 uint uart_set_baudrate(uart_inst_t *uart, uint baudrate);
 
@@ -171,34 +188,32 @@ uint uart_set_baudrate(uart_inst_t *uart, uint baudrate);
  */
 static inline void uart_set_hw_flow(uart_inst_t *uart, bool cts, bool rts) {
     hw_write_masked(&uart_get_hw(uart)->cr,
-                   (!!cts << UART_UARTCR_CTSEN_LSB) | (!!rts << UART_UARTCR_RTSEN_LSB),
+                   (bool_to_bit(cts) << UART_UARTCR_CTSEN_LSB) | (bool_to_bit(rts) << UART_UARTCR_RTSEN_LSB),
                    UART_UARTCR_RTSEN_BITS | UART_UARTCR_CTSEN_BITS);
 }
 
 /*! \brief Set UART data format
  *  \ingroup hardware_uart
  *
- * Configure the data format (bits etc() for the UART
+ * Configure the data format (bits etc) for the UART.
+ *
+ * The UART is paused for around two character periods whilst the settings are
+ * changed. Data received during this time may be dropped by the UART.
+ *
+ * Any characters still in the transmit buffer will be sent using the new
+ * updated data format. uart_tx_wait_blocking() can be called before this
+ * function to ensure all characters needing the old format have been sent
+ * before the format is changed.
+ *
+ * This function should not be called from an interrupt context, and the UART
+ * interrupt should be disabled before calling this function.
  *
  * \param uart UART instance. \ref uart0 or \ref uart1
  * \param data_bits Number of bits of data. 5..8
  * \param stop_bits Number of stop bits 1..2
  * \param parity Parity option.
  */
-static inline void uart_set_format(uart_inst_t *uart, uint data_bits, uint stop_bits, uart_parity_t parity) {
-    invalid_params_if(UART, data_bits < 5 || data_bits > 8);
-    invalid_params_if(UART, stop_bits != 1 && stop_bits != 2);
-    invalid_params_if(UART, parity != UART_PARITY_NONE && parity != UART_PARITY_EVEN && parity != UART_PARITY_ODD);
-    hw_write_masked(&uart_get_hw(uart)->lcr_h,
-                   ((data_bits - 5) << UART_UARTLCR_H_WLEN_LSB) |
-                   ((stop_bits - 1) << UART_UARTLCR_H_STP2_LSB) |
-                   ((parity != UART_PARITY_NONE) << UART_UARTLCR_H_PEN_LSB) |
-                   ((parity == UART_PARITY_EVEN) << UART_UARTLCR_H_EPS_LSB),
-                   UART_UARTLCR_H_WLEN_BITS |
-                   UART_UARTLCR_H_STP2_BITS |
-                   UART_UARTLCR_H_PEN_BITS |
-                   UART_UARTLCR_H_EPS_BITS);
-}
+void uart_set_format(uart_inst_t *uart, uint data_bits, uint stop_bits, uart_parity_t parity);
 
 /*! \brief Setup UART interrupts
  *  \ingroup hardware_uart
@@ -207,12 +222,17 @@ static inline void uart_set_format(uart_inst_t *uart, uint data_bits, uint stop_
  * this function.
  *
  * \param uart UART instance. \ref uart0 or \ref uart1
- * \param rx_has_data If true an interrupt will be fired when the RX FIFO contain data.
+ * \param rx_has_data If true an interrupt will be fired when the RX FIFO contains data.
  * \param tx_needs_data If true an interrupt will be fired when the TX FIFO needs data.
  */
 static inline void uart_set_irq_enables(uart_inst_t *uart, bool rx_has_data, bool tx_needs_data) {
-    uart_get_hw(uart)->imsc = (!!tx_needs_data << UART_UARTIMSC_TXIM_LSB) |
-                              (!!rx_has_data << UART_UARTIMSC_RXIM_LSB);
+    // Both UARTRXINTR (RX) and UARTRTINTR (RX timeout) interrupts are
+    // required for rx_has_data. RX asserts when >=4 characters are in the RX
+    // FIFO (for RXIFLSEL=0). RT asserts when there are >=1 characters and no
+    // more have been received for 32 bit periods.
+    uart_get_hw(uart)->imsc = (bool_to_bit(tx_needs_data) << UART_UARTIMSC_TXIM_LSB) |
+                              (bool_to_bit(rx_has_data) << UART_UARTIMSC_RXIM_LSB) |
+                              (bool_to_bit(rx_has_data) << UART_UARTIMSC_RTIM_LSB);
     if (rx_has_data) {
         // Set minimum threshold
         hw_write_masked(&uart_get_hw(uart)->ifls, 0 << UART_UARTIFLS_RXIFLSEL_LSB,
@@ -238,15 +258,20 @@ static inline bool uart_is_enabled(uart_inst_t *uart) {
 /*! \brief Enable/Disable the FIFOs on specified UART
  *  \ingroup hardware_uart
  *
+ * The UART is paused for around two character periods whilst the settings are
+ * changed. Data received during this time may be dropped by the UART.
+ *
+ * Any characters still in the transmit FIFO will be lost if the FIFO is
+ * disabled. uart_tx_wait_blocking() can be called before this
+ * function to avoid this.
+ *
+ * This function should not be called from an interrupt context, and the UART
+ * interrupt should be disabled when calling this function.
+ *
  * \param uart UART instance. \ref uart0 or \ref uart1
  * \param enabled true to enable FIFO (default), false to disable
  */
-static inline void uart_set_fifo_enabled(uart_inst_t *uart, bool enabled) {
-    hw_write_masked(&uart_get_hw(uart)->lcr_h,
-                   (!!enabled << UART_UARTLCR_H_FEN_LSB),
-                   UART_UARTLCR_H_FEN_BITS);
-}
-
+void uart_set_fifo_enabled(uart_inst_t *uart, bool enabled);
 
 // ----------------------------------------------------------------------------
 // Generic input/output
@@ -274,9 +299,8 @@ static inline void uart_tx_wait_blocking(uart_inst_t *uart) {
  *  \ingroup hardware_uart
  *
  * \param uart UART instance. \ref uart0 or \ref uart1
- * \return 0 if no data available, otherwise the number of bytes, at least, that can be read
+ * \return true if the RX FIFO is not empty, otherwise false.
  *
- * \note HW limitations mean this function will return either 0 or 1.
  */
 static inline bool uart_is_readable(uart_inst_t *uart) {
     // PL011 doesn't expose levels directly, so return values are only 0 or 1
@@ -303,7 +327,7 @@ static inline void uart_write_blocking(uart_inst_t *uart, const uint8_t *src, si
 /*! \brief  Read from the UART
  *  \ingroup hardware_uart
  *
- * This function will block until all the data has been received from the UART
+ * This function blocks until len characters have been read from the UART
  *
  * \param uart UART instance. \ref uart0 or \ref uart1
  * \param dst Buffer to accept received bytes
@@ -313,7 +337,7 @@ static inline void uart_read_blocking(uart_inst_t *uart, uint8_t *dst, size_t le
     for (size_t i = 0; i < len; ++i) {
         while (!uart_is_readable(uart))
             tight_loop_contents();
-        *dst++ = uart_get_hw(uart)->dr;
+        *dst++ = (uint8_t) uart_get_hw(uart)->dr;
     }
 }
 
@@ -323,7 +347,7 @@ static inline void uart_read_blocking(uart_inst_t *uart, uint8_t *dst, size_t le
 /*! \brief  Write single character to UART for transmission.
  *  \ingroup hardware_uart
  *
- * This function will block until all the character has been sent
+ * This function will block until the entire character has been sent
  *
  * \param uart UART instance. \ref uart0 or \ref uart1
  * \param c The character  to send
@@ -374,10 +398,10 @@ static inline void uart_puts(uart_inst_t *uart, const char *s) {
 #endif
 }
 
-/*! \brief  Read a single character to UART
+/*! \brief  Read a single character from the UART
  *  \ingroup hardware_uart
  *
- * This function will block until the character has been read
+ * This function will block until a character has been read
  *
  * \param uart UART instance. \ref uart0 or \ref uart1
  * \return The character read.
@@ -394,12 +418,7 @@ static inline char uart_getc(uart_inst_t *uart) {
  * \param uart UART instance. \ref uart0 or \ref uart1
  * \param en Assert break condition (TX held low) if true. Clear break condition if false.
  */
-static inline void uart_set_break(uart_inst_t *uart, bool en) {
-    if (en)
-        hw_set_bits(&uart_get_hw(uart)->lcr_h, UART_UARTLCR_H_BRK_BITS);
-    else
-        hw_clear_bits(&uart_get_hw(uart)->lcr_h, UART_UARTLCR_H_BRK_BITS);
-}
+void uart_set_break(uart_inst_t *uart, bool en);
 
 /*! \brief Set CR/LF conversion on UART
  *  \ingroup hardware_uart
@@ -409,11 +428,15 @@ static inline void uart_set_break(uart_inst_t *uart, bool en) {
  */
 void uart_set_translate_crlf(uart_inst_t *uart, bool translate);
 
-/*! \brief Wait for the default UART'S TX fifo to be drained
+/*! \brief Wait for the default UART's TX FIFO to be drained
  *  \ingroup hardware_uart
  */
-static inline void uart_default_tx_wait_blocking() {
+static inline void uart_default_tx_wait_blocking(void) {
+#ifdef uart_default
     uart_tx_wait_blocking(uart_default);
+#else
+    assert(false);
+#endif
 }
 
 /*! \brief Wait for up to a certain number of microseconds for the RX FIFO to be non empty
@@ -424,6 +447,19 @@ static inline void uart_default_tx_wait_blocking() {
  * \return true if the RX FIFO became non empty before the timeout, false otherwise
  */
 bool uart_is_readable_within_us(uart_inst_t *uart, uint32_t us);
+
+/*! \brief Return the DREQ to use for pacing transfers to/from a particular UART instance
+ *  \ingroup hardware_uart
+ *
+ * \param uart UART instance. \ref uart0 or \ref uart1
+ * \param is_tx true for sending data to the UART instance, false for receiving data from the UART instance
+ */
+static inline uint uart_get_dreq(uart_inst_t *uart, bool is_tx) {
+    static_assert(DREQ_UART0_RX == DREQ_UART0_TX + 1, "");
+    static_assert(DREQ_UART1_RX == DREQ_UART1_TX + 1, "");
+    static_assert(DREQ_UART1_TX == DREQ_UART0_TX + 2, "");
+    return DREQ_UART0_TX + uart_get_index(uart) * 2 + !is_tx;
+}
 
 #ifdef __cplusplus
 }

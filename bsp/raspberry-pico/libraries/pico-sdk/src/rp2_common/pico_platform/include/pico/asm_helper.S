@@ -4,13 +4,16 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#include "hardware/platform_defs.h"
-#include "pico/config.h"
+#include "pico.h"
 
-#define WRAPPER_FUNC_NAME(x) __wrap_##x
-#define SECTION_NAME(x) .text.##x
-#define RAM_SECTION_NAME(x) .time_critical.##x
-#define rom_table_code(c1, c2) ((c1) | ((c2) << 8))
+# note we don't do this by default in this file for backwards comaptibility with user code
+# that may include this file, but not use unified syntax. Note that this macro does equivalent
+# setup to the pico_default_asm macro for inline assembly in C code.
+.macro pico_default_asm_setup
+.syntax unified
+.cpu cortex-m0plus
+.thumb
+.endm
 
 // do not put align in here as it is used mid function sometimes
 .macro regular_func x

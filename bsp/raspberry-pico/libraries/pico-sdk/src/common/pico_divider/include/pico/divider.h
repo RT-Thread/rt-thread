@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef _PICO_DIVIDER_H_
-#define _PICO_DIVIDER_H_
+#ifndef _PICO_DIVIDER_H
+#define _PICO_DIVIDER_H
 
 #include "pico.h"
 #include "hardware/divider.h"

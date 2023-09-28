@@ -22,11 +22,14 @@ if (NOT Pioasm_FOUND)
     set(Pioasm_TARGET Pioasm)
 
     if (NOT TARGET ${PioasmBuild_TARGET})
-        message("PIOASM will need to be built")
+        pico_message_debug("PIOASM will need to be built")
 #        message("Adding external project ${PioasmBuild_Target} in ${CMAKE_CURRENT_LIST_DIR}}")
         ExternalProject_Add(${PioasmBuild_TARGET}
-                PREFIX pioasm SOURCE_DIR ${PIOASM_SOURCE_DIR}
+                PREFIX pioasm
+                SOURCE_DIR ${PIOASM_SOURCE_DIR}
                 BINARY_DIR ${PIOASM_BINARY_DIR}
+                CMAKE_ARGS "-DCMAKE_MAKE_PROGRAM:FILEPATH=${CMAKE_MAKE_PROGRAM}"
+                CMAKE_CACHE_ARGS "-DPIOASM_EXTRA_SOURCE_FILES:STRING=${PIOASM_EXTRA_SOURCE_FILES}"
                 BUILD_ALWAYS 1 # force dependency checking
                 INSTALL_COMMAND ""
                 )

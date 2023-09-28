@@ -16,7 +16,7 @@
 */
 
 // PICO_CONFIG: PICO_USE_MALLOC_MUTEX, Whether to protect malloc etc with a mutex, type=bool, default=1 with pico_multicore, 0 otherwise, group=pico_malloc
-#if PICO_MULTICORE && !defined(PICO_USE_MALLOC_MUTEX)
+#if LIB_PICO_MULTICORE && !defined(PICO_USE_MALLOC_MUTEX)
 #define PICO_USE_MALLOC_MUTEX 1
 #endif
 

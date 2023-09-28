@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#ifndef _PICO_MEMORY_H
-#define _PICO_MEMORY_H
+#ifndef _PICO_MEM_OPS_H
+#define _PICO_MEM_OPS_H
 
 #include "pico/types.h"
 

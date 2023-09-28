@@ -24,7 +24,7 @@ void pio_sm_claim(PIO pio, uint sm) {
     check_sm_param(sm);
     uint which = pio_get_index(pio);
     if (which) {
-        hw_claim_or_assert(&claimed, NUM_PIO_STATE_MACHINES + sm, "PIO 1 SM %d already claimed");
+        hw_claim_or_assert(&claimed, NUM_PIO_STATE_MACHINES + sm, "PIO 1 SM (%d - 4) already claimed");
     } else {
         hw_claim_or_assert(&claimed, sm, "PIO 0 SM %d already claimed");
     }
@@ -35,6 +35,7 @@ void pio_claim_sm_mask(PIO pio, uint sm_mask) {
         if (sm_mask & 1u) pio_sm_claim(pio, i);
     }
 }
+
 void pio_sm_unclaim(PIO pio, uint sm) {
     check_sm_param(sm);
     uint which = pio_get_index(pio);
@@ -42,25 +43,25 @@ void pio_sm_unclaim(PIO pio, uint sm) {
 }
 
 int pio_claim_unused_sm(PIO pio, bool required) {
+    // PIO index is 0 or 1.
     uint which = pio_get_index(pio);
     uint base = which * NUM_PIO_STATE_MACHINES;
     int index = hw_claim_unused_from_range((uint8_t*)&claimed, required, base,
                                       base + NUM_PIO_STATE_MACHINES - 1, "No PIO state machines are available");
-    return index >= base ? index - base : -1;
+    return index >= (int)base ? index - (int)base : -1;
 }
 
-void pio_load_program(PIO pio, const uint16_t *prog, uint8_t prog_len, uint8_t load_offset) {
-    // instructions are only 16 bits, but instruction memory locations are spaced 32 bits apart
-    // Adjust the addresses of any jump instructions to respect load offset
-    assert(load_offset + prog_len <= PIO_INSTRUCTION_COUNT);
-
+bool pio_sm_is_claimed(PIO pio, uint sm) {
+    check_sm_param(sm);
+    uint which = pio_get_index(pio);
+    return hw_is_claimed(&claimed, which * NUM_PIO_STATE_MACHINES + sm);
 }
 
 static_assert(PIO_INSTRUCTION_COUNT <= 32, "");
 static uint32_t _used_instruction_space[2];
 
 static int _pio_find_offset_for_program(PIO pio, const pio_program_t *program) {
-    assert(program->length < PIO_INSTRUCTION_COUNT);
+    assert(program->length <= PIO_INSTRUCTION_COUNT);
     uint32_t used_mask = _used_instruction_space[pio_get_index(pio)];
     uint32_t program_mask = (1u << program->length) - 1;
     if (program->origin >= 0) {
@@ -85,9 +86,9 @@ bool pio_can_add_program(PIO pio, const pio_program_t *program) {
 }
 
 static bool _pio_can_add_program_at_offset(PIO pio, const pio_program_t *program, uint offset) {
-    assert(offset < PIO_INSTRUCTION_COUNT);
-    assert(offset + program->length <= PIO_INSTRUCTION_COUNT);
-    if (program->origin >= 0 && program->origin != offset) return false;
+    valid_params_if(PIO, offset < PIO_INSTRUCTION_COUNT);
+    valid_params_if(PIO, offset + program->length <= PIO_INSTRUCTION_COUNT);
+    if (program->origin >= 0 && (uint)program->origin != offset) return false;
     uint32_t used_mask = _used_instruction_space[pio_get_index(pio)];
     uint32_t program_mask = (1u << program->length) - 1;
     return !(used_mask & (program_mask << offset));
@@ -119,9 +120,15 @@ uint pio_add_program(PIO pio, const pio_program_t *program) {
     if (offset < 0) {
         panic("No program space");
     }
+    _pio_add_program_at_offset(pio, program, (uint)offset);
+    hw_claim_unlock(save);
+    return (uint)offset;
+}
+
+void pio_add_program_at_offset(PIO pio, const pio_program_t *program, uint offset) {
+    uint32_t save = hw_claim_lock();
     _pio_add_program_at_offset(pio, program, offset);
     hw_claim_unlock(save);
-    return offset;
 }
 
 void pio_remove_program(PIO pio, const pio_program_t *program, uint loaded_offset) {
@@ -147,7 +154,11 @@ void pio_clear_instruction_memory(PIO pio) {
 // which is not currently running a program. This is intended for one-time
 // setup of initial pin states.
 void pio_sm_set_pins(PIO pio, uint sm, uint32_t pins) {
+    check_pio_param(pio);
+    check_sm_param(sm);
     uint32_t pinctrl_saved = pio->sm[sm].pinctrl;
+    uint32_t execctrl_saved = pio->sm[sm].execctrl;
+    hw_clear_bits(&pio->sm[sm].execctrl, 1u << PIO_SM0_EXECCTRL_OUT_STICKY_LSB);
     uint remaining = 32;
     uint base = 0;
     while (remaining) {
@@ -161,12 +172,17 @@ void pio_sm_set_pins(PIO pio, uint sm, uint32_t pins) {
         pins >>= 5;
     }
     pio->sm[sm].pinctrl = pinctrl_saved;
+    pio->sm[sm].execctrl = execctrl_saved;
 }
 
 void pio_sm_set_pins_with_mask(PIO pio, uint sm, uint32_t pinvals, uint32_t pin_mask) {
+    check_pio_param(pio);
+    check_sm_param(sm);
     uint32_t pinctrl_saved = pio->sm[sm].pinctrl;
+    uint32_t execctrl_saved = pio->sm[sm].execctrl;
+    hw_clear_bits(&pio->sm[sm].execctrl, 1u << PIO_SM0_EXECCTRL_OUT_STICKY_LSB);
     while (pin_mask) {
-        uint base = __builtin_ctz(pin_mask);
+        uint base = (uint)__builtin_ctz(pin_mask);
         pio->sm[sm].pinctrl =
                 (1u << PIO_SM0_PINCTRL_SET_COUNT_LSB) |
                 (base << PIO_SM0_PINCTRL_SET_BASE_LSB);
@@ -174,12 +190,17 @@ void pio_sm_set_pins_with_mask(PIO pio, uint sm, uint32_t pinvals, uint32_t pin_
         pin_mask &= pin_mask - 1;
     }
     pio->sm[sm].pinctrl = pinctrl_saved;
+    pio->sm[sm].execctrl = execctrl_saved;
 }
 
 void pio_sm_set_pindirs_with_mask(PIO pio, uint sm, uint32_t pindirs, uint32_t pin_mask) {
+    check_pio_param(pio);
+    check_sm_param(sm);
     uint32_t pinctrl_saved = pio->sm[sm].pinctrl;
+    uint32_t execctrl_saved = pio->sm[sm].execctrl;
+    hw_clear_bits(&pio->sm[sm].execctrl, 1u << PIO_SM0_EXECCTRL_OUT_STICKY_LSB);
     while (pin_mask) {
-        uint base = __builtin_ctz(pin_mask);
+        uint base = (uint)__builtin_ctz(pin_mask);
         pio->sm[sm].pinctrl =
                 (1u << PIO_SM0_PINCTRL_SET_COUNT_LSB) |
                 (base << PIO_SM0_PINCTRL_SET_BASE_LSB);
@@ -187,11 +208,16 @@ void pio_sm_set_pindirs_with_mask(PIO pio, uint sm, uint32_t pindirs, uint32_t p
         pin_mask &= pin_mask - 1;
     }
     pio->sm[sm].pinctrl = pinctrl_saved;
+    pio->sm[sm].execctrl = execctrl_saved;
 }
 
 void pio_sm_set_consecutive_pindirs(PIO pio, uint sm, uint pin, uint count, bool is_out) {
-    assert(pin < 32u);
+    check_pio_param(pio);
+    check_sm_param(sm);
+    valid_params_if(PIO, pin < 32u);
     uint32_t pinctrl_saved = pio->sm[sm].pinctrl;
+    uint32_t execctrl_saved = pio->sm[sm].execctrl;
+    hw_clear_bits(&pio->sm[sm].execctrl, 1u << PIO_SM0_EXECCTRL_OUT_STICKY_LSB);
     uint pindir_val = is_out ? 0x1f : 0;
     while (count > 5) {
         pio->sm[sm].pinctrl = (5u << PIO_SM0_PINCTRL_SET_COUNT_LSB) | (pin << PIO_SM0_PINCTRL_SET_BASE_LSB);
@@ -202,9 +228,11 @@ void pio_sm_set_consecutive_pindirs(PIO pio, uint sm, uint pin, uint count, bool
     pio->sm[sm].pinctrl = (count << PIO_SM0_PINCTRL_SET_COUNT_LSB) | (pin << PIO_SM0_PINCTRL_SET_BASE_LSB);
     pio_sm_exec(pio, sm, pio_encode_set(pio_pindirs, pindir_val));
     pio->sm[sm].pinctrl = pinctrl_saved;
+    pio->sm[sm].execctrl = execctrl_saved;
 }
 
 void pio_sm_init(PIO pio, uint sm, uint initial_pc, const pio_sm_config *config) {
+    valid_params_if(PIO, initial_pc < PIO_INSTRUCTION_COUNT);
     // Halt the machine, set some sensible defaults
     pio_sm_set_enabled(pio, sm, false);
 

@@ -1,13 +1,9 @@
 if (NOT TARGET pico_mem_ops)
     #shims for ROM functions for -lgcc functions  (listed below)
-    add_library(pico_mem_ops INTERFACE)
+    pico_add_library(pico_mem_ops)
 
     # no custom implementation; falls thru to compiler
-    add_library(pico_mem_ops_compiler INTERFACE)
-    # PICO_BUILD_DEFINE: PICO_MEM_OPS_COMPILER, whether compiler provided mem_ops memcpy etc. support is being used, type=bool, default=0, but dependent on CMake options, group=pico_mem_ops
-    target_compile_definitions(pico_mem_ops_compiler INTERFACE
-            PICO_MEM_OPS_COMPILER=1
-            )
+    pico_add_library(pico_mem_ops_compiler)
 
     # add alias "default" which is just pico.
     add_library(pico_mem_ops_default INTERFACE)
@@ -15,20 +11,15 @@ if (NOT TARGET pico_mem_ops)
 
     set(PICO_DEFAULT_MEM_OPS_IMPL pico_mem_ops_default)
 
-    add_library(pico_mem_ops_pico INTERFACE)
+    pico_add_library(pico_mem_ops_pico)
     target_link_libraries(pico_mem_ops INTERFACE
             $<IF:$<BOOL:$<TARGET_PROPERTY:PICO_TARGET_MEM_OPS_IMPL>>,$<TARGET_PROPERTY:PICO_TARGET_MEM_OPS_IMPL>,${PICO_DEFAULT_MEM_OPS_IMPL}>)
-
-    # PICO_BUILD_DEFINE: PICO_MEM_OPS_PICO, whether optimized pico/bootrom provided mem_ops memcpy etc. support is being used, type=bool, default=1, but dependent on CMake options, group=pico_mem_ops
-    target_compile_definitions(pico_mem_ops_pico INTERFACE
-            PICO_MEM_OPS_PICO=1
-            )
-
 
     target_sources(pico_mem_ops_pico INTERFACE
             ${CMAKE_CURRENT_LIST_DIR}/mem_ops_aeabi.S
             )
-
+    target_include_directories(pico_mem_ops_pico_headers INTERFACE ${CMAKE_CURRENT_LIST_DIR}/include)
+    pico_mirrored_target_link_libraries(pico_mem_ops_pico INTERFACE pico_base)
 
     target_link_libraries(pico_mem_ops INTERFACE pico_bootrom)
 

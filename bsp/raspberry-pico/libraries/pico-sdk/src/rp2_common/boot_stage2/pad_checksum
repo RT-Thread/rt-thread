@@ -31,7 +31,7 @@ try:
 except:
     sys.exit("Could not open input file '{}'".format(args.ifile))
 
-if len(idata) >= args.pad - 4:
+if len(idata) > args.pad - 4:
     sys.exit("Input file size ({} bytes) too large for final size ({} bytes)".format(len(idata), args.pad))
 
 idata_padded = idata + bytes(args.pad - 4 - len(idata))
@@ -45,7 +45,9 @@ odata = idata_padded + struct.pack("<L", checksum)
 try:
     with open(args.ofile, "w") as ofile:
         ofile.write("// Padded and checksummed version of: {}\n\n".format(args.ifile))
-        ofile.write(".section .boot2, \"a\"\n\n")
+        ofile.write(".cpu cortex-m0plus\n")
+        ofile.write(".thumb\n\n")
+        ofile.write(".section .boot2, \"ax\"\n\n")
         for offs in range(0, len(odata), 16):
             chunk = odata[offs:min(offs + 16, len(odata))]
             ofile.write(".byte {}\n".format(", ".join("0x{:02x}".format(b) for b in chunk)))

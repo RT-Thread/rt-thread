@@ -15,7 +15,6 @@
 
 using syntax_error = yy::parser::syntax_error;
 
-std::vector<std::shared_ptr<output_format>> output_format::output_formats;
 std::string output_format::default_name = "c-sdk";
 
 pio_assembler::pio_assembler() {
@@ -128,7 +127,7 @@ void program::set_wrap(const yy::location &l) {
         throw syntax_error(l, msg.str());
     }
     if (instructions.empty()) {
-        throw syntax_error(l, ".wrap cannot be pleaced before the first program instruction");
+        throw syntax_error(l, ".wrap cannot be placed before the first program instruction");
     }
     wrap = resolvable_int(l, instructions.size() - 1);
 }
@@ -304,7 +303,7 @@ raw_encoding instr_wait::raw_encode(const program &program) {
 raw_encoding instr_irq::raw_encode(const program &program) {
     uint arg2 = num->resolve(program);
     if (arg2 > 7) throw syntax_error(num->location, "irq number must be must be >= 0 and <= 7");
-    if (relative) arg2 |= 0x20u;
+    if (relative) arg2 |= 0x10u;
     return {inst_type::irq, (uint)modifiers, arg2};
 }
 
@@ -324,7 +323,7 @@ std::vector<compiled_source::symbol> pio_assembler::public_symbols(program &prog
 
 int pio_assembler::write_output() {
     std::set<std::string> known_output_formats;
-    std::transform(output_format::output_formats.begin(), output_format::output_formats.end(),
+    std::transform(output_format::all().begin(), output_format::all().end(),
                    std::inserter(known_output_formats, known_output_formats.begin()),
                    [&](std::shared_ptr<output_format> &f) {
                        return f->name;

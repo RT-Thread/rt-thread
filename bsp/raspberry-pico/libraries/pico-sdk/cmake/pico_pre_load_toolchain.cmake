@@ -1,6 +1,5 @@
 # PICO_CMAKE_CONFIG: PICO_TOOLCHAIN_PATH, Path to search for compiler, default=none (i.e. search system paths), group=build
-# Set your compiler path here if it's not in the PATH environment variable.
-set(PICO_TOOLCHAIN_PATH "" CACHE INTERNAL "")
+set(PICO_TOOLCHAIN_PATH "${PICO_TOOLCHAIN_PATH}" CACHE INTERNAL "")
 
 # Set a default build type if none was specified
 set(default_build_type "Release")
@@ -37,8 +36,8 @@ if (DEFINED PICO_COMPILER)
                 select one from \"cmake/toolchains\" folder.")
         endif ()
     endif ()
+    message("PICO compiler is ${PICO_COMPILER}")
 endif ()
 
-message("PICO compiler is ${PICO_COMPILER}")
 unset(PICO_COMPILER CACHE)
 

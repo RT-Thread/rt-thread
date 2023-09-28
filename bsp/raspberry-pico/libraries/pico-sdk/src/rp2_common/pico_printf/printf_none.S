@@ -7,9 +7,7 @@
 #include "pico/asm_helper.S"
 #include "pico/bootrom/sf_table.h"
 
-.syntax unified
-.cpu cortex-m0plus
-.thumb
+pico_default_asm_setup
 
 wrapper_func sprintf
 wrapper_func snprintf
