@@ -194,6 +194,7 @@ void rt_hw_stack_guard_init(rt_thread_t thread)
     stack_bottom_region.attr = RT_MEM_REGION_P_NA_U_NA;
     rt_mem_protection_add_region(thread, &stack_top_region);
     rt_mem_protection_add_region(thread, &stack_bottom_region);
+    thread->stack_buf = thread->stack_addr;
     thread->stack_addr = (void *)(stack_bottom_region_start + MPU_MIN_REGION_SIZE);
     thread->stack_size = (rt_uint32_t)(stack_top_region_start - stack_bottom_region_start - MPU_MIN_REGION_SIZE);
 }

@@ -970,6 +970,9 @@ struct rt_thread
 
 #ifdef RT_USING_MEM_PROTECTION
     void *mem_regions;
+#ifdef RT_USING_HW_STACK_GUARD
+    void *stack_buf;
+#endif
 #endif
     rt_ubase_t                  user_data;              /**< private user data beyond this thread */
 };

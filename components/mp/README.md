@@ -53,6 +53,8 @@ typedef struct {
 - `rt_err_t rt_mem_protection_add_exclusive_region(void *start, rt_size_t size)`：添加内存区域
 - `rt_err_t rt_mem_protection_delete_exclusive_region(void *start, rt_size_t size)`：删除内存区域
 
+调用了`rt_mem_protection_add_exclusive_region`的任务在退出前必须调用`rt_mem_protection_delete_exclusive_region`删除内存区域。
+
 ## 初始化
 使用MPU抽象层之前需要在`board.h`文件定义固定的MPU区域数量：
 ```

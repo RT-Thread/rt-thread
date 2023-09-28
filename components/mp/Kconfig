@@ -3,6 +3,7 @@ menu "Memory protection"
 config RT_USING_MEM_PROTECTION
     bool "Enable memory protection"
     default n
+    select RT_USING_HEAP
 
 config RT_USING_HW_STACK_GUARD
     bool "Enable hardware stack guard"
