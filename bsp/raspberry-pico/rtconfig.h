@@ -23,6 +23,7 @@
 #define RT_USING_DEBUG
 #define RT_DEBUGING_COLOR
 #define RT_DEBUGING_CONTEXT
+#define RT_DEBUGING_INIT
 
 /* Inter-Thread communication */
 
@@ -129,6 +130,9 @@
 /* Wiced WiFi */
 
 
+/* CYW43012 WiFi */
+
+
 /* IoT Cloud */
 
 
@@ -178,6 +182,8 @@
 
 /* Kendryte SDK */
 
+#define PKG_USING_RASPBERRYPI_PICO_SDK
+#define PKG_USING_RASPBERRYPI_PICO_SDK_LATEST_VERSION
 
 /* AI packages */
 
