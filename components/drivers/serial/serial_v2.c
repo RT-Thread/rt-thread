@@ -533,16 +533,19 @@ static rt_ssize_t _serial_fifo_tx_blocking_buf(struct rt_device        *dev,
                                                (rt_uint8_t *)buffer + offset,
                                                size);
 
-        offset += tx_fifo->put_size;
-        size -= tx_fifo->put_size;
         /* Call the transmit interface for transmission */
         serial->ops->transmit(serial,
                              (rt_uint8_t *)buffer + offset,
                              tx_fifo->put_size,
                              RT_SERIAL_TX_BLOCKING);
+
+        offset += tx_fifo->put_size;
+        size -= tx_fifo->put_size;
         /* Waiting for the transmission to complete */
         rt_completion_wait(&(tx_fifo->tx_cpt), RT_WAITING_FOREVER);
     }
+    /* Finally Inactivate the tx->fifo */
+    tx_fifo->activated = RT_FALSE;
 
     return length;
 }
@@ -598,7 +601,7 @@ static rt_ssize_t _serial_fifo_tx_nonblocking(struct rt_device        *dev,
         return length;
     }
 
-    /* If the activated mode is RT_FALSE, it means that serial device is transmitting,
+    /* If the activated mode is RT_TRUE, it means that serial device is transmitting,
      * where only the data in the ringbuffer and there is no need to call the transmit() API.
      * Note that this part of the code requires disable interrupts
      * to prevent multi thread reentrant */
@@ -1551,13 +1554,20 @@ void rt_hw_serial_isr(struct rt_serial_device *serial, int event)
              * then the transmit completion callback is triggered*/
             if (tx_length == 0)
             {
-                tx_fifo->activated = RT_FALSE;
                 /* Trigger the transmit completion callback */
                 if (serial->parent.tx_complete != RT_NULL)
                     serial->parent.tx_complete(&serial->parent, RT_NULL);
 
+                /* Maybe some datas left in the buffer still need to be sent in block mode,
+                 * so tx_fifo->activated should be RT_TRUE */
                 if (serial->parent.open_flag & RT_SERIAL_TX_BLOCKING)
+                {
                     rt_completion_done(&(tx_fifo->tx_cpt));
+                }
+                else
+                {
+                    tx_fifo->activated = RT_FALSE;
+                }
 
                 break;
             }
