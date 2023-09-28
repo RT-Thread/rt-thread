@@ -1,7 +1,8 @@
-
 /*
- * Copyright (c) 2011-2023, Shanghai Real-Thread Electronic Technology Co.,Ltd
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
+ * SPDX-License-Identifier: Apache-2.0
+ * 
  * Change Logs:
  * Date           Author          Notes
  * 2023-09-24     fang-jianzhou   first version
@@ -15,7 +16,7 @@ static void dump_dts(int argc, char** argv)
 {
     if(ofw_node_root == RT_NULL)
     {
-        rt_kprintf("\"/\" path not found.");
+        rt_kprintf("no device tree found.\n");
         return;
     }
 
