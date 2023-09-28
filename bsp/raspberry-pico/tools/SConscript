@@ -1,0 +1,14 @@
+import rtconfig
+Import('RTT_ROOT')
+from building import *
+
+# get current directory
+cwd = GetCurrentDir()
+
+path = [
+    cwd + '/generated/pico_base'
+    ]
+
+group = DefineGroup('generated', ['generated/bs2_default_padded_checksummed.S'], depend = [''], CPPPATH = path)
+
+Return('group')
