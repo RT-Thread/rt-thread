@@ -42,6 +42,52 @@ Each peripheral supporting condition for this BSP is as follows:
 | GPIO                     | Support         |                                                              |
 | UART                     | Support         | Using LUATOS_ESP32C3 development board requires connecting serial port to USB chip UART0_TX and UART0_RX (such as CP2102) |
 | JTAG debug               | Support         | ESP32C3 usb-linked development boards can be debugged        |
+| WIFI | Partial support | There are currently some problems, such as `rt_mq_recive` cannot be used in ISR, etc., and we are still trying to solve it |
+| BLE | Partially supported | There are currently some problems, such as running errors caused by the same `PC` and `SP` pointers after `NimBLE` is started for a period of time |
+| GDBStub | Support | You can use the GDB provided by ESP-IDF by turning on the `BSP_ENABLE_GDBSTUB` switch, which will enter GDB mode after a chip error |
+
+Note:
+
+1. WIFI and BLE cannot be enabled at the same time. When using the BLE driver, be sure to turn off the `RT_USING_WIFI` and `LWIP` switches in `menuconfig`. In addition, due to limited personal abilities and lack of debugging equipment, there are problems with the operation of WIFI and BLE drivers. If you can solve it, please contact me [timwcx@qq.com](mailto:timwcx@qq.com), I will be grateful.
+
+2. The BLE driver only supports `NimBLE` and is provided by the `bluetooth` component in `esp-idf`. To use the BLE driver, please refer to `bsp/ESP32_C3/packages/ESP-IDF-latest/examples/bluetooth/nimble` Sample program, please note that the `esp_timer_init()` function must be called to initialize the clock driver before calling the `NimBLE` related interface.
+
+One way to run the BLE sample is to add the sample program to `scons` compilation and call the clock initialization program and sample program entry in `bsp/ESP32_C3/main/main.c`.
+
+```c
+int main(void) {
+   ...
+#ifdef BSP_USING_BLE
+     esp_timer_init(); //Call clock initialization program
+     app_main(); //Call the BLE sample program entry
+#endif
+   ...
+}
+```
+
+3、 Regarding the use of the GDBStub component, please see [ESP-IDF official documentation on GDBStub](https://docs.espressif.com/projects/esp-idf/zh_CN/latest/esp32c3/api-guides/tools/idf- monitor.html?#gdbstub-gdb), currently I have provided a debugging script `esp32c3.gdb`, the specific usage method is as follows.
+
+```sh
+wcx@tim  ~/rt-thread/bsp/ESP32_C3   esp32 ±  sudo riscv32-esp-elf-gdb # Enter gdb debugging
+GNU gdb (crosstool-NG esp-2022r1-RC1) 9.2.90.20200913-git
+Copyright (C) 2020 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+Type "show copying" and "show warranty" for details.
+This GDB was configured as "--host=x86_64-build_pc-linux-gnu --target=riscv32-esp-elf".
+Type "show configuration" for configuration details.
+For bug reporting instructions, please see:
+<http://www.gnu.org/software/gdb/bugs/>.
+Find the GDB manual and other documentation resources online at:
+    <http://www.gnu.org/software/gdb/documentation/>.
+
+For help, type "help".
+Type "apropos word" to search for commands related to "word".
+(gdb) source esp32c3.gpb  # Load gdb script
+0x3fca8c30 in __stack_start__ ()
+(gdb) 
+```
 
 ## Environment construction and compilation
 
