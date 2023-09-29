@@ -150,8 +150,8 @@ menu "On-chip Peripheral Drivers"
             menuconfig BSP_USING_UART1
                 bool "Enable UART1"
                 default n
-				if BSP_USING_UART1
-					config BSP_UART1_RX_USING_DMA
+                if BSP_USING_UART1
+                    config BSP_UART1_RX_USING_DMA
                         bool "Enable UART1 RX DMA"
                         depends on BSP_USING_UART1 && RT_SERIAL_USING_DMA
                         default n
@@ -173,7 +173,7 @@ menu "On-chip Peripheral Drivers"
                         depends on BSP_USING_UART1
                         default 0
 
-				endif
+                endif
 
             menuconfig BSP_USING_UART3
                 bool "Enable UART3"
@@ -184,13 +184,13 @@ menu "On-chip Peripheral Drivers"
                         range 64 65535
                         depends on BSP_USING_UART3
                         default 256
-		
+
                     config BSP_UART3_TX_BUFSIZE
                         int "Set UART3 TX buffer size"
                         range 0 65535
                         depends on BSP_USING_UART3
                         default 0
-				endif
+                endif
 
             menuconfig BSP_USING_UART4
                 bool "Enable UART4"
@@ -201,13 +201,13 @@ menu "On-chip Peripheral Drivers"
                         range 64 65535
                         depends on BSP_USING_UART4
                         default 256
-		
+
                     config BSP_UART4_TX_BUFSIZE
                         int "Set UART4 TX buffer size"
                         range 0 65535
                         depends on BSP_USING_UART4
                         default 0
-				endif
+                endif
 
             menuconfig BSP_USING_UART6
                 bool "Enable UART6"
@@ -225,7 +225,7 @@ menu "On-chip Peripheral Drivers"
                         depends on BSP_USING_UART6
                         default 0
 
-				endif
+                endif
         endif
 
     menuconfig BSP_USING_SPI
