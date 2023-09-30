@@ -117,11 +117,19 @@ static rt_err_t pico_uart_configure(struct rt_serial_device *serial, struct seri
     gpio_set_function(uart->rx_pin, GPIO_FUNC_UART);
     gpio_set_function(uart->tx_pin, GPIO_FUNC_UART);
 
-    // Set UART flow control CTS/RTS, we don't want these, so turn them off
-    uart_set_hw_flow(uart->instance, false, false);
+    // Set UART flow control CTS/RTS
+    if (cfg->flowcontrol == RT_SERIAL_FLOWCONTROL_CTSRTS)
+        uart_set_hw_flow(uart->instance, true, true);
+    else
+        uart_set_hw_flow(uart->instance, false, false);
 
     // Set our data format
-    uart_set_format(uart->instance, cfg->data_bits, cfg->stop_bits, UART_PARITY_NONE);
+    uart_parity_t uart_parity = UART_PARITY_NONE;
+    if (cfg->parity == PARITY_ODD)
+        uart_parity = UART_PARITY_ODD;
+    else if (cfg->parity == PARITY_EVEN)
+        uart_parity = UART_PARITY_EVEN;
+    uart_set_format(uart->instance, cfg->data_bits, cfg->stop_bits, uart_parity);
 
     // Turn off FIFO's - we want to do this character by character
     uart_set_fifo_enabled(uart->instance, false);
