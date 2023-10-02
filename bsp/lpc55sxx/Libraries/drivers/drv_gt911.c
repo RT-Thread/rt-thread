@@ -181,7 +181,7 @@ int drv_capt_hw_init(void)
     capt_obj.bus = (struct rt_i2c_bus_device*)rt_device_find(BSP_TOUCH_I2C_BUS);
     if(capt_obj.bus == RT_NULL)
     {
-        LOG_E("no %s device\r\n", BSP_TOUCH_I2C_BUS);
+        LOG_E("no %s device", BSP_TOUCH_I2C_BUS);
         return -RT_ERROR;
     }
 
