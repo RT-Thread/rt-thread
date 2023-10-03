@@ -284,9 +284,9 @@ jobs:
         shell: bash
         run: |
           sudo apt-get update
-          sudo apt-get -qq install gcc-multilib libncurses5-dev scons
-          sudo python -m pip install --upgrade pip -qq
-          pip install requests -qq
+          wget https://raw.githubusercontent.com/RT-Thread/env/master/install_ubuntu.sh
+          chmod 777 install_ubuntu.sh
+          ./install_ubuntu.sh
           git config --global http.postBuffer 524288000
           python -c "import tools.menuconfig; tools.menuconfig.touch_env()"
           echo "RTT_ROOT=${{ github.workspace }}" >> $GITHUB_ENV
@@ -346,7 +346,7 @@ jobs:
           wget -q https://github.com/espressif/crosstool-NG/releases/download/esp-2022r1-RC1/riscv32-esp-elf-gcc11_2_0-esp-2022r1-RC1-linux-amd64.tar.xz
           sudo tar xf riscv32-esp-elf-gcc11_2_0-esp-2022r1-RC1-linux-amd64.tar.xz -C /opt
           /opt/riscv32-esp-elf/bin/riscv32-esp-elf-gcc --version
-          /usr/bin/pip install esptool
+          pip3 install esptool
           echo "RTT_EXEC_PATH=/opt/riscv32-esp-elf/bin" >> $GITHUB_ENV
           
       - name: Bsp Scons Compile

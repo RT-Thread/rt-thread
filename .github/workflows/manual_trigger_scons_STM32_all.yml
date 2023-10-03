@@ -135,9 +135,9 @@ jobs:
         shell: bash
         run: |
           sudo apt-get update
-          sudo apt-get -qq install gcc-multilib libncurses5-dev scons
-          sudo python -m pip install --upgrade pip -qq
-          pip install requests -qq
+          wget https://raw.githubusercontent.com/RT-Thread/env/master/install_ubuntu.sh
+          chmod 777 install_ubuntu.sh
+          ./install_ubuntu.sh
           git config --global http.postBuffer 524288000
           python -c "import tools.menuconfig; tools.menuconfig.touch_env()"
           echo "RTT_ROOT=${{ github.workspace }}" >> $GITHUB_ENV
