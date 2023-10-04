@@ -71,6 +71,8 @@ jobs:
                 - "hk32/hk32f030c8-mini"
                 - "acm32/acm32f0x0-nucleo"
                 - "acm32/acm32f4xx-nucleo"
+                - "efm32"
+                - "rm48x56"
          -  RTT_BSP: "stm32l4_f0_f1" 
             RTT_TOOL_CHAIN: "sourcery-arm"
             SUB_RTT_BSP: 
@@ -270,7 +272,6 @@ jobs:
                 - "microchip/same70"
                 - "smartfusion2"
                 - "maxim/max32660-evsys"
-               # - "efm32"
          -  RTT_BSP: "mips" 
             RTT_TOOL_CHAIN: "sourcery-mips"
             SUB_RTT_BSP:  
