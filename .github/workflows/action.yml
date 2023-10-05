@@ -72,7 +72,7 @@ jobs:
                 - "acm32/acm32f0x0-nucleo"
                 - "acm32/acm32f4xx-nucleo"
                 - "efm32"
-                - "rm48x56"
+                - "rm48x50"
          -  RTT_BSP: "stm32l4_f0_f1" 
             RTT_TOOL_CHAIN: "sourcery-arm"
             SUB_RTT_BSP: 
