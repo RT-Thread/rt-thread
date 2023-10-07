@@ -235,7 +235,7 @@ int rt_hw_wdt_init(void)
 
     if (ret != RT_EOK)
     {
-        LOG_E("rt device register failed %d\n", ret);
+        LOG_E("rt device register failed %d", ret);
     }
 #endif /* BSP_USING_WDT */
 

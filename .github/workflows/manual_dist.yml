@@ -86,9 +86,9 @@ jobs:
         shell: bash
         run: |
           sudo apt-get update
-          sudo apt-get -qq install gcc-multilib libncurses5 libncurses5-dev libncursesw5-dev scons
-          sudo python -m pip install --upgrade pip -qq
-          pip install requests -qq
+          wget https://raw.githubusercontent.com/RT-Thread/env/master/install_ubuntu.sh
+          chmod 777 install_ubuntu.sh
+          ./install_ubuntu.sh
           git config --global http.postBuffer 524288000
           python -c "import tools.menuconfig; tools.menuconfig.touch_env()"
           echo "RTT_ROOT=${{ github.workspace }}" >> $GITHUB_ENV
@@ -109,10 +109,11 @@ jobs:
         run: |
           wget -q https://github.com/ARM-software/LLVM-embedded-toolchain-for-Arm/releases/download/release-16.0.0/LLVMEmbeddedToolchainForArm-16.0.0-Linux-x86_64.tar.gz
           sudo tar zxf LLVMEmbeddedToolchainForArm-16.0.0-Linux-x86_64.tar.gz -C /opt
+          sudo apt-get -qq install libncurses5 libncurses5-dev libncursesw5-dev
           /opt/LLVMEmbeddedToolchainForArm-16.0.0-Linux-x86_64/bin/clang --version
           echo "RTT_CC=llvm-arm" >> $GITHUB_ENV
           echo "RTT_EXEC_PATH=/opt/LLVMEmbeddedToolchainForArm-16.0.0-Linux-x86_64/bin" >> $GITHUB_ENV
-
+          
       - name: Install AArch64 ToolChains
         if: ${{ github.event.inputs.bsp_tool_chain == 'sourcery-aarch64' && success() }}
         shell: bash
@@ -147,8 +148,17 @@ jobs:
           /opt/xpack-riscv-none-embed-gcc-8.3.0-2.3/bin/riscv-none-embed-gcc --version
           echo "RTT_EXEC_PATH=/opt/xpack-riscv-none-embed-gcc-8.3.0-2.3/bin" >> $GITHUB_ENV
 
-      - name: Install Simulator Tools
-        if: ${{ github.event.inputs.bsp_options == 'simulator' && success() }}
+      - name: Install riscv32-esp-elf ToolChains
+        if: ${{ github.event.inputs.bsp_tool_chain == 'sourcery-riscv32-esp32' && success() }}
+        run: |
+          wget -q https://github.com/espressif/crosstool-NG/releases/download/esp-2022r1-RC1/riscv32-esp-elf-gcc11_2_0-esp-2022r1-RC1-linux-amd64.tar.xz
+          sudo tar xf riscv32-esp-elf-gcc11_2_0-esp-2022r1-RC1-linux-amd64.tar.xz -C /opt
+          /opt/riscv32-esp-elf/bin/riscv32-esp-elf-gcc --version
+          pip3 install esptool
+          echo "RTT_EXEC_PATH=/opt/riscv32-esp-elf/bin" >> $GITHUB_ENV
+
+      - name: Install GCC Tools
+        if: ${{ github.event.inputs.bsp_tool_chain == 'gcc' && success() }}
         run: |
           sudo apt-get -qq install libsdl2-dev
 

@@ -1,5 +1,5 @@
 <project>
-  <fileVersion>3</fileVersion>
+  <fileVersion>4</fileVersion>
   <configuration>
     <name>rtthread</name>
     <toolchain>
@@ -10,7 +10,7 @@
       <name>General</name>
       <archiveVersion>3</archiveVersion>
       <data>
-        <version>35</version>
+        <version>36</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>1</debug>
         <option>
@@ -69,7 +69,7 @@
         </option>
         <option>
           <name>OGLastSavedByProductVersion</name>
-          <state>9.30.1.50052</state>
+          <state>9.40.1.63870</state>
         </option>
         <option>
           <name>OGChipSelectEditMenu</name>
@@ -97,7 +97,7 @@
         </option>
         <option>
           <name>GBECoreSlave</name>
-          <version>32</version>
+          <version>33</version>
           <state>41</state>
         </option>
         <option>
@@ -114,7 +114,7 @@
         </option>
         <option>
           <name>CoreVariant</name>
-          <version>32</version>
+          <version>33</version>
           <state>41</state>
         </option>
         <option>
@@ -137,7 +137,7 @@
         </option>
         <option>
           <name>GFPUCoreSlave2</name>
-          <version>32</version>
+          <version>33</version>
           <state>41</state>
         </option>
         <option>
@@ -210,13 +210,18 @@
           <name>FPU64</name>
           <state>1</state>
         </option>
+        <option>
+          <name>OG_32_64DeviceCoreSlave</name>
+          <version>33</version>
+          <state>41</state>
+        </option>
       </data>
     </settings>
     <settings>
       <name>ICCARM</name>
       <archiveVersion>2</archiveVersion>
       <data>
-        <version>37</version>
+        <version>38</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>1</debug>
         <option>
@@ -237,7 +242,6 @@
           <state>XIP_EXTERNAL_FLASH=1</state>
           <state>ARM_MATH_CM7</state>
           <state>USE_SDRAM</state>
-          <state>SOC_IMXRT1170_SERIES</state>
           <state>ENDIANNESS</state>
           <state>USE_RTOS</state>
           <state>__RTTHREAD__</state>
@@ -367,8 +371,8 @@
           <state>$PROJ_DIR$\..\..\libraries\MIMXRT1170\CMSIS\Include</state>
           <state>$PROJ_DIR$\..\..\..\..\components\libc\compilers\common\extension\fcntl\octal</state>
           <state>$PROJ_DIR$\..\..\..\..\components\drivers\usb\usbhost\include</state>
-          <state>$PROJ_DIR$\..\..\..\..\components\libc\posix\io\stdio</state>
           <state>$PROJ_DIR$\..\..\..\..\components\libc\posix\io\poll</state>
+          <state>$PROJ_DIR$\..\..\..\..\components\libc\posix\io\epoll</state>
           <state>$PROJ_DIR$\..\..\libraries\MIMXRT1170\MIMXRT1176\drivers\cm7</state>
           <state>$PROJ_DIR$\..\..\libraries\drivers</state>
           <state>$PROJ_DIR$\..\..\..\..\libcpu\arm\cortex-m7</state>
@@ -383,6 +387,7 @@
           <state>$PROJ_DIR$\..\..\..\..\components\drivers\usb\usbhost\class</state>
           <state>$PROJ_DIR$\board\ports</state>
           <state>$PROJ_DIR$\applications</state>
+          <state>$PROJ_DIR$\..\..\..\..\components\libc\posix\io\eventfd</state>
           <state>$PROJ_DIR$\..\..\..\..\include</state>
           <state>$PROJ_DIR$\..\..\..\..\components\libc\compilers\common\include</state>
           <state>$PROJ_DIR$\..\..\..\..\components\libc\posix\ipc</state>
@@ -500,13 +505,21 @@
           <name>CCStackProtection</name>
           <state>0</state>
         </option>
+        <option>
+          <name>CCPointerAutentiction</name>
+          <state>0</state>
+        </option>
+        <option>
+          <name>CCBranchTargetIdentification</name>
+          <state>0</state>
+        </option>
       </data>
     </settings>
     <settings>
       <name>AARM</name>
       <archiveVersion>2</archiveVersion>
       <data>
-        <version>11</version>
+        <version>12</version>
         <wantNonLocal>1</wantNonLocal>
         <debug>1</debug>
         <option>
@@ -666,6 +679,10 @@
           <name>PreInclude</name>
           <state />
         </option>
+        <option>
+          <name>A_32_64Device</name>
+          <state>1</state>
+        </option>
       </data>
     </settings>
     <settings>
@@ -704,16 +721,8 @@
       <data>
         <extensions />
         <cmdline />
-        <hasPrio>208</hasPrio>
+        <hasPrio>1</hasPrio>
         <buildSequence>inputOutputBased</buildSequence>
-      </data>
-    </settings>
-    <settings>
-      <name>BUILDACTION</name>
-      <archiveVersion>1</archiveVersion>
-      <data>
-        <prebuild />
-        <postbuild />
       </data>
     </settings>
     <settings>
@@ -797,7 +806,7 @@
         </option>
         <option>
           <name>IlinkIcfFile</name>
-          <state>$PROJ_DIR$\board\linker_scripts\link.icf</state>
+          <state>$PROJ_DIR$\board\linker_scripts\link_ram.icf</state>
         </option>
         <option>
           <name>IlinkIcfFileSlave</name>
@@ -1111,6 +1120,11 @@
         </option>
       </data>
     </settings>
+    <settings>
+      <name>BUILDACTION</name>
+      <archiveVersion>2</archiveVersion>
+      <data />
+    </settings>
   </configuration>
   <group>
     <name>Applications</name>
@@ -1127,9 +1141,6 @@
       <name>$PROJ_DIR$\..\..\..\..\components\libc\compilers\common\cctype.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\components\libc\compilers\common\cstdio.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\..\..\..\components\libc\compilers\common\cstdlib.c</name>
     </file>
     <file>
@@ -1137,6 +1148,9 @@
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\..\components\libc\compilers\common\ctime.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\..\components\libc\compilers\common\cunistd.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\..\components\libc\compilers\common\cwchar.c</name>
@@ -1172,6 +1186,9 @@
   <group>
     <name>CPU</name>
     <file>
+      <name>$PROJ_DIR$\..\..\..\..\libcpu\arm\common\atomic_arm.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\..\..\..\libcpu\arm\common\div0.c</name>
     </file>
     <file>
@@ -1189,6 +1206,9 @@
   </group>
   <group>
     <name>DeviceDrivers</name>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\..\components\drivers\core\device.c</name>
+    </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\..\components\drivers\ipc\completion.c</name>
     </file>
@@ -1286,9 +1306,6 @@
       <name>$PROJ_DIR$\..\..\..\..\src\components.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\src\device.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\..\..\..\src\idle.c</name>
     </file>
     <file>
@@ -1382,10 +1399,10 @@
   <group>
     <name>SAL</name>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\components\net\netdev\src\netdev_ipaddr.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\components\net\netdev\src\netdev.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\components\net\netdev\src\netdev.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\components\net\netdev\src\netdev_ipaddr.c</name>
     </file>
   </group>
   <group>
