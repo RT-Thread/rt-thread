@@ -6408,6 +6408,21 @@ sysret_t sys_memfd_create()
 {
     return 0;
 }
+sysret_t sys_setitimer(int which, const struct itimerspec *restrict new, struct itimerspec *restrict old)
+{
+    int ret = 0;
+    timer_t timerid = 0;
+    struct sigevent sevp_k = {0};
+
+    sevp_k.sigev_notify = SIGEV_SIGNAL;
+    sevp_k.sigev_signo = SIGALRM;
+    ret = timer_create(CLOCK_REALTIME_ALARM, &sevp_k, &timerid);
+    if (ret != 0)
+    {
+        return GET_ERRNO();
+    }
+    return sys_timer_settime(timerid,0,new,old);
+}
 
 const static struct rt_syscall_def func_table[] =
 {
@@ -6651,6 +6666,7 @@ const static struct rt_syscall_def func_table[] =
     SYSCALL_SIGN(sys_signalfd),
     SYSCALL_SIGN(sys_memfd_create),                     /* 200 */
     SYSCALL_SIGN(sys_ftruncate),
+    SYSCALL_SIGN(sys_setitimer),
 };
 
 const void *lwp_get_sys_api(rt_uint32_t number)
