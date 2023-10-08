@@ -25,11 +25,10 @@
 #include <mm_page.h>
 #include <interrupt.h>
 
-#ifdef RT_USING_FDT
-#include "interrupt.h"
-#include "dtb_node.h"
-#include <psci_api.h>
-#include <cpu.h>
+#ifdef RT_USING_OFW
+#include <drivers/ofw_raw.h>
+#include <drivers/ofw.h>
+#include <drivers/ofw_fdt.h>
 #endif
 
 #ifdef RT_USING_SMART
@@ -65,10 +64,6 @@ void idle_wfi(void)
     asm volatile ("wfi");
 }
 
-/**
- * This function will initialize board
- */
-
 extern size_t MMUTable[];
 
 #ifdef RT_USING_SMART
@@ -83,8 +78,17 @@ rt_region_t init_page_region = {
 };
 #endif
 
+/**
+ * This function will initialize board
+ */
 void rt_hw_board_init(void)
 {
+#ifdef RT_USING_OFW
+    // TODO 0x44000000 should be replace by a variable
+    void * fdt_start = (void *)0x44000000 - PV_OFFSET;
+    rt_fdt_prefetch(fdt_start);
+#endif
+
 #ifdef RT_USING_SMART
     rt_hw_mmu_map_init(&rt_kernel_space, (void*)0xfffffffff0000000, 0x10000000, MMUTable, PV_OFFSET);
 #else
@@ -96,6 +100,10 @@ void rt_hw_board_init(void)
     /* initialize system heap */
     rt_system_heap_init((void *)HEAP_BEGIN, (void *)HEAP_END);
 
+#ifdef RT_USING_OFW
+    rt_fdt_unflatten();
+#endif
+
     /* initialize hardware interrupt */
     rt_hw_interrupt_init();
 
@@ -103,18 +111,11 @@ void rt_hw_board_init(void)
 
     /* support debug feature before components init */
     rt_hw_uart_init();
-    rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
 
-#ifdef RT_USING_FDT
-    // TODO 0x44000000 should be replace by a variable
-    void * fdt_start = (void *)0x44000000 - PV_OFFSET;
-    device_tree_setup(fdt_start);
-
-#ifdef RT_USING_SMP
-    rt_hw_cpu_init();
+#ifdef RT_USING_OFW
+    rt_ofw_console_setup();
 #else
-    psci_init();
-#endif /* RT_USING_SMP */
+    rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
 #endif
 
     rt_components_board_init();
