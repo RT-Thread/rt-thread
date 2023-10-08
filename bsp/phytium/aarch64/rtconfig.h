@@ -57,14 +57,7 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uart1"
-#define RT_VER_NUM 0x50001
-#define ARCH_CPU_64BIT
-#define RT_USING_CACHE
-#define ARCH_ARM_BOOTWITH_FLUSH_CACHE
-#define ARCH_MM_MMU
-#define ARCH_ARM
-#define ARCH_ARM_MMU
-#define ARCH_ARMV8
+#define RT_VER_NUM 0x50002
 
 /* AArch64 Architecture Configuration */
 
@@ -72,6 +65,13 @@
 #define ARCH_RAM_OFFSET 0x80000000
 #define ARCH_SECONDARY_CPU_STACK_SIZE 4096
 #define ARCH_HAVE_EFFICIENT_UNALIGNED_ACCESS
+#define ARCH_CPU_64BIT
+#define RT_USING_CACHE
+#define ARCH_ARM_BOOTWITH_FLUSH_CACHE
+#define ARCH_MM_MMU
+#define ARCH_ARM
+#define ARCH_ARM_MMU
+#define ARCH_ARMV8
 
 /* RT-Thread Components */
 
@@ -92,6 +92,7 @@
 #define MSH_USING_BUILT_IN_COMMANDS
 #define FINSH_USING_DESCRIPTION
 #define FINSH_ARG_MAX 10
+#define FINSH_USING_OPTION_COMPLETION
 
 /* DFS: device virtual file system */
 
@@ -141,6 +142,7 @@
 #define RT_MMCSD_STACK_SIZE 4096
 #define RT_MMCSD_THREAD_PREORITY 22
 #define RT_MMCSD_MAX_PARTITION 16
+#define RT_USING_KTIME
 
 /* Using USB */
 
@@ -240,7 +242,6 @@
 #define RT_USING_ADT_BITMAP
 #define RT_USING_ADT_HASHMAP
 #define RT_USING_ADT_REF
-#define RT_USING_KTIME
 
 /* RT-Thread Utestcases */
 
@@ -330,7 +331,7 @@
 /* Arduino libraries */
 
 
-/* Projects */
+/* Projects and Demos */
 
 
 /* Sensors */
@@ -375,6 +376,7 @@
 #define BSP_USING_GIC
 #define BSP_USING_GICV3
 #define PHYTIUM_ARCH_AARCH64
+#define ARM_SPI_BIND_CPU_ID 2
 
 /* Standalone Setting */
 

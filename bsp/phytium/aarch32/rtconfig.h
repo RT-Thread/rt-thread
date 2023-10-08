@@ -59,7 +59,7 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 256
 #define RT_CONSOLE_DEVICE_NAME "uart1"
-#define RT_VER_NUM 0x50001
+#define RT_VER_NUM 0x50002
 #define RT_USING_CACHE
 #define RT_USING_HW_ATOMIC
 #define RT_USING_CPU_FFS
@@ -89,6 +89,7 @@
 #define MSH_USING_BUILT_IN_COMMANDS
 #define FINSH_USING_DESCRIPTION
 #define FINSH_ARG_MAX 10
+#define FINSH_USING_OPTION_COMPLETION
 
 /* DFS: device virtual file system */
 
@@ -149,6 +150,7 @@
 #define RT_MMCSD_THREAD_PREORITY 22
 #define RT_MMCSD_MAX_PARTITION 16
 #define RT_USING_DEV_BUS
+#define RT_USING_KTIME
 
 /* Using USB */
 
@@ -256,7 +258,6 @@
 #define RT_USING_ADT_BITMAP
 #define RT_USING_ADT_HASHMAP
 #define RT_USING_ADT_REF
-#define RT_USING_KTIME
 
 /* RT-Thread Utestcases */
 
@@ -343,7 +344,7 @@
 /* Arduino libraries */
 
 
-/* Projects */
+/* Projects and Demos */
 
 
 /* Sensors */
@@ -385,6 +386,7 @@
 #define BSP_USING_SDIO
 #define BSP_USING_SDCARD_FATFS
 #define USING_SDIO0
+#define SDCARD_OFFSET 0x0
 
 /* Board extended module Drivers */
 

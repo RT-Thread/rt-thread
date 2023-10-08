@@ -335,7 +335,7 @@
               <MiscControls />
               <Define>__STDC_LIMIT_MACROS, RT_USING_ARMLIBC, RT_USING_LIBC, GD32E230, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__</Define>
               <Undefine />
-              <IncludePath>..\..\components\libc\compilers\common\extension;..\..\components\drivers\include;..\..\include;..\..\components\finsh;.;..\..\components\drivers\include;drivers;..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\components\libc\posix\io\stdio;..\..\components\drivers\spi;applications;Libraries\GD32E230_standard_peripheral\Include;..\..\components\drivers\include;Libraries\CMSIS;..\..\components\drivers\include;..\..\libcpu\arm\common;..\..\components\libc\posix\ipc;..\..\components\drivers\include;..\..\components\libc\posix\io\poll;..\..\components\libc\compilers\common\include;Libraries\CMSIS\GD\GD32E230\Include;..\..\components\drivers\spi\sfud\inc;..\..\libcpu\arm\cortex-m23</IncludePath>
+              <IncludePath>..\..\components\drivers\include;Libraries\CMSIS;..\..\components\libc\posix\io\poll;..\..\components\libc\compilers\common\extension;Libraries\GD32E230_standard_peripheral\Include;..\..\components\libc\compilers\common\include;..\..\components\drivers\spi\sfud\inc;applications;..\..\include;..\..\components\drivers\spi;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\libc\posix\ipc;..\..\components\libc\posix\io\eventfd;..\..\components\drivers\include;drivers;..\..\libcpu\arm\common;..\..\components\libc\compilers\common\extension\fcntl\octal;Libraries\CMSIS\GD\GD32E230\Include;.;..\..\components\libc\posix\io\epoll;..\..\libcpu\arm\cortex-m23;..\..\components\finsh</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -411,13 +411,6 @@
           </Files>
           <Files>
             <File>
-              <FileName>cstdio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\libc\compilers\common\cstdio.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>cstdlib.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\libc\compilers\common\cstdlib.c</FilePath>
@@ -435,6 +428,13 @@
               <FileName>ctime.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\libc\compilers\common\ctime.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cunistd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\compilers\common\cunistd.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -478,6 +478,25 @@
         </Group>
         <Group>
           <GroupName>DeviceDrivers</GroupName>
+          <Files>
+            <File>
+              <FileName>device.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\core\device.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls>  -std=c99</MiscControls>
+                      <Define> </Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
           <Files>
             <File>
               <FileName>i2c_core.c</FileName>
@@ -851,13 +870,6 @@
           </Files>
           <Files>
             <File>
-              <FileName>device.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\device.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>idle.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\idle.c</FilePath>
@@ -931,114 +943,9 @@
           <GroupName>Libraries</GroupName>
           <Files>
             <File>
-              <FileName>startup_gd32e230.s</FileName>
-              <FileType>2</FileType>
-              <FilePath>Libraries\CMSIS\GD\GD32E230\Source\ARM\startup_gd32e230.s</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>gd32e230_pmu.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\GD32E230_standard_peripheral\Source\gd32e230_pmu.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>gd32e230_misc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\GD32E230_standard_peripheral\Source\gd32e230_misc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>gd32e230_i2c.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\GD32E230_standard_peripheral\Source\gd32e230_i2c.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>gd32e230_timer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\GD32E230_standard_peripheral\Source\gd32e230_timer.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>gd32e230_fmc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\GD32E230_standard_peripheral\Source\gd32e230_fmc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>gd32e230_gpio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\GD32E230_standard_peripheral\Source\gd32e230_gpio.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>gd32e230_syscfg.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\GD32E230_standard_peripheral\Source\gd32e230_syscfg.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>system_gd32e230.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\CMSIS\GD\GD32E230\Source\system_gd32e230.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>gd32e230_cmp.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\GD32E230_standard_peripheral\Source\gd32e230_cmp.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>gd32e230_adc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\GD32E230_standard_peripheral\Source\gd32e230_adc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>gd32e230_rtc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\GD32E230_standard_peripheral\Source\gd32e230_rtc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>gd32e230_rcu.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\GD32E230_standard_peripheral\Source\gd32e230_rcu.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>gd32e230_dbg.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\GD32E230_standard_peripheral\Source\gd32e230_dbg.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>gd32e230_spi.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\GD32E230_standard_peripheral\Source\gd32e230_spi.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>gd32e230_crc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\GD32E230_standard_peripheral\Source\gd32e230_crc.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1050,6 +957,13 @@
           </Files>
           <Files>
             <File>
+              <FileName>system_gd32e230.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\CMSIS\GD\GD32E230\Source\system_gd32e230.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>gd32e230_dma.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\GD32E230_standard_peripheral\Source\gd32e230_dma.c</FilePath>
@@ -1057,9 +971,23 @@
           </Files>
           <Files>
             <File>
-              <FileName>gd32e230_wwdgt.c</FileName>
+              <FileName>startup_gd32e230.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>Libraries\CMSIS\GD\GD32E230\Source\ARM\startup_gd32e230.s</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>gd32e230_fwdgt.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\GD32E230_standard_peripheral\Source\gd32e230_wwdgt.c</FilePath>
+              <FilePath>Libraries\GD32E230_standard_peripheral\Source\gd32e230_fwdgt.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>gd32e230_pmu.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\GD32E230_standard_peripheral\Source\gd32e230_pmu.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1071,9 +999,93 @@
           </Files>
           <Files>
             <File>
-              <FileName>gd32e230_fwdgt.c</FileName>
+              <FileName>gd32e230_spi.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\GD32E230_standard_peripheral\Source\gd32e230_fwdgt.c</FilePath>
+              <FilePath>Libraries\GD32E230_standard_peripheral\Source\gd32e230_spi.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>gd32e230_syscfg.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\GD32E230_standard_peripheral\Source\gd32e230_syscfg.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>gd32e230_rcu.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\GD32E230_standard_peripheral\Source\gd32e230_rcu.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>gd32e230_gpio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\GD32E230_standard_peripheral\Source\gd32e230_gpio.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>gd32e230_adc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\GD32E230_standard_peripheral\Source\gd32e230_adc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>gd32e230_crc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\GD32E230_standard_peripheral\Source\gd32e230_crc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>gd32e230_dbg.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\GD32E230_standard_peripheral\Source\gd32e230_dbg.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>gd32e230_fmc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\GD32E230_standard_peripheral\Source\gd32e230_fmc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>gd32e230_wwdgt.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\GD32E230_standard_peripheral\Source\gd32e230_wwdgt.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>gd32e230_rtc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\GD32E230_standard_peripheral\Source\gd32e230_rtc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>gd32e230_misc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\GD32E230_standard_peripheral\Source\gd32e230_misc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>gd32e230_cmp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\GD32E230_standard_peripheral\Source\gd32e230_cmp.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>gd32e230_timer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\GD32E230_standard_peripheral\Source\gd32e230_timer.c</FilePath>
             </File>
           </Files>
         </Group>

@@ -357,9 +357,9 @@
             <useXO>0</useXO>
             <VariousControls>
               <MiscControls />
-              <Define>CY_USING_HAL, __STDC_LIMIT_MACROS, RT_USING_ARMLIBC, COMPONENT_CAT1A, RT_USING_LIBC, CY8C6347BZI_BLD53, __CLK_TCK=RT_TICK_PER_SECOND, COMPONENT_BSP_DESIGN_MODUS, __RTTHREAD__, COMPONENT_CAT1</Define>
+              <Define>CY_USING_HAL, __STDC_LIMIT_MACROS, RT_USING_ARMLIBC, CORE_NAME_CM0P_0, COMPONENT_CAT1A, RT_USING_LIBC, CY8C6347BZI_BLD53, __CLK_TCK=RT_TICK_PER_SECOND, COMPONENT_BSP_DESIGN_MODUS, CY_USING_PREBUILT_CM0P_IMAGE, __RTTHREAD__, COMPONENT_CAT1, CORE_NAME_CM4_0</Define>
               <Undefine />
-              <IncludePath>..\libraries\IFX_PSOC6_HAL\retarget-io;..\..\..\components\libc\compilers\common\extension;..\libraries\IFX_PSOC6_HAL\mtb_shared\serial-flash;..\..\..\include;.;..\..\..\components\finsh;..\..\..\components\drivers\include;..\libraries\IFX_PSOC6_HAL\mtb_shared\usbdev;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\include_pvt;..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\include;..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\COMPONENT_CAT1A\include;board\ports;..\libraries\IFX_PSOC6_HAL\capsense;..\libraries\IFX_PSOC6_HAL\core-lib\include;..\..\..\components\drivers\include;..\libraries\HAL_Drivers;..\..\..\libcpu\arm\cortex-m4;..\..\..\components\drivers\include;..\..\..\libcpu\arm\common;..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\cmsis\include;libs\TARGET_CY8CKIT-062-BLE\COMPONENT_BSP_DESIGN_MODUS\GeneratedSource;..\libraries\IFX_PSOC6_HAL\mtb_shared\csdidac;..\..\..\components\libc\posix\ipc;libs\TARGET_CY8CKIT-062-BLE;..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\devices\COMPONENT_CAT1A\include;applications;board;..\..\..\components\libc\posix\io\stdio;..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\compilers\common\include;..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\drivers\include;..\libraries\HAL_Drivers\config;..\libraries\IFX_PSOC6_HAL\psoc6cm0p</IncludePath>
+              <IncludePath>..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\devices\COMPONENT_CAT1A\include;..\libraries\IFX_PSOC6_HAL\mtb_shared\serial-flash;..\..\..\components\libc\compilers\common\extension;..\libraries\IFX_PSOC6_HAL\mtb_shared\usbdev;applications;libs\TARGET_CY8CKIT-062-BLE\config\GeneratedSource;..\libraries\IFX_PSOC6_HAL\mtb_shared\csdidac;..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\include_pvt;..\..\..\components\libc\compilers\common\include;..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\include;..\..\..\libcpu\arm\cortex-m4;board;..\..\..\include;..\libraries\IFX_PSOC6_HAL\psoc6cm0p;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\libraries\IFX_PSOC6_HAL\capsense;board\ports;..\libraries\IFX_PSOC6_HAL\core-lib\include;..\..\..\components\drivers\include;.;..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\drivers\include;..\libraries\HAL_Drivers\config;..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\posix\ipc;..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\COMPONENT_CAT1A\include;libs\TARGET_CY8CKIT-062-BLE;..\libraries\HAL_Drivers;..\..\..\components\drivers\include;..\libraries\IFX_PSOC6_HAL\retarget-io;..\..\..\libcpu\arm\common;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\components\libc\posix\io\eventfd;..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\cmsis\include;..\..\..\components\libc\posix\io\epoll;..\..\..\components\finsh</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -434,13 +434,6 @@
           </Files>
           <Files>
             <File>
-              <FileName>cstdio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\compilers\common\cstdio.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>cstdlib.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\libc\compilers\common\cstdlib.c</FilePath>
@@ -458,6 +451,13 @@
               <FileName>ctime.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\libc\compilers\common\ctime.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cunistd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\libc\compilers\common\cunistd.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -501,6 +501,13 @@
         </Group>
         <Group>
           <GroupName>DeviceDrivers</GroupName>
+          <Files>
+            <File>
+              <FileName>device.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\core\device.c</FilePath>
+            </File>
+          </Files>
           <Files>
             <File>
               <FileName>completion.c</FileName>
@@ -569,9 +576,9 @@
           <GroupName>Drivers</GroupName>
           <Files>
             <File>
-              <FileName>cy_syslib_mdk.S</FileName>
+              <FileName>cy_syslib_ext.S</FileName>
               <FileType>2</FileType>
-              <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\drivers\source\TOOLCHAIN_ARM\cy_syslib_mdk.S</FilePath>
+              <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\drivers\source\TOOLCHAIN_ARM\cy_syslib_ext.S</FilePath>
             </File>
           </Files>
           <Files>
@@ -652,13 +659,6 @@
           </Files>
           <Files>
             <File>
-              <FileName>device.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\device.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>idle.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\idle.c</FilePath>
@@ -732,16 +732,9 @@
           <GroupName>Libraries</GroupName>
           <Files>
             <File>
-              <FileName>psoc6_01_cm0p_sleep.c</FileName>
+              <FileName>psoc6_02_cm0p_sleep.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\IFX_PSOC6_HAL\psoc6cm0p\COMPONENT_CM0P_SLEEP\psoc6_01_cm0p_sleep.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cy_sysint.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\drivers\source\cy_sysint.c</FilePath>
+              <FilePath>..\libraries\IFX_PSOC6_HAL\psoc6cm0p\COMPONENT_CM0P_SLEEP\psoc6_02_cm0p_sleep.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -749,6 +742,13 @@
               <FileName>cy_retarget_io.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\IFX_PSOC6_HAL\retarget-io\cy_retarget_io.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>psoc6_03_cm0p_sleep.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\IFX_PSOC6_HAL\psoc6cm0p\COMPONENT_CM0P_SLEEP\psoc6_03_cm0p_sleep.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -763,6 +763,13 @@
               <FileName>cy_gpio.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\drivers\source\cy_gpio.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cyhal_irq_impl.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\source\cyhal_irq_impl.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -802,9 +809,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>cy_prot.c</FileName>
+              <FileName>cyhal_utils_impl.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\drivers\source\cy_prot.c</FilePath>
+              <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\source\cyhal_utils_impl.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -812,13 +819,6 @@
               <FileName>cyhal_gpio.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\source\cyhal_gpio.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>psoc6_04_cm0p_sleep.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\IFX_PSOC6_HAL\psoc6cm0p\COMPONENT_CM0P_SLEEP\psoc6_04_cm0p_sleep.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -833,13 +833,6 @@
               <FileName>cy_ipc_sema.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\drivers\source\cy_ipc_sema.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cyhal_utils_psoc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\source\cyhal_utils_psoc.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -886,9 +879,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>cyhal_irq_psoc.c</FileName>
+              <FileName>psoc6_01_cm0p_sleep.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\source\cyhal_irq_psoc.c</FilePath>
+              <FilePath>..\libraries\IFX_PSOC6_HAL\psoc6cm0p\COMPONENT_CM0P_SLEEP\psoc6_01_cm0p_sleep.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cy_prot.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\drivers\source\cy_prot.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -907,9 +907,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>cyhal_syspm.c</FileName>
+              <FileName>cy_sysint.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\source\cyhal_syspm.c</FilePath>
+              <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\drivers\source\cy_sysint.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -921,9 +921,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>cyhal_uart.c</FileName>
+              <FileName>cyhal_syspm.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\source\cyhal_uart.c</FilePath>
+              <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\source\cyhal_syspm.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -931,13 +931,6 @@
               <FileName>cy_systick.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\drivers\source\cy_systick.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>psoc6_02_cm0p_sleep.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\IFX_PSOC6_HAL\psoc6cm0p\COMPONENT_CM0P_SLEEP\psoc6_02_cm0p_sleep.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -970,9 +963,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>psoc6_03_cm0p_sleep.c</FileName>
+              <FileName>psoc6_04_cm0p_sleep.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\IFX_PSOC6_HAL\psoc6cm0p\COMPONENT_CM0P_SLEEP\psoc6_03_cm0p_sleep.c</FilePath>
+              <FilePath>..\libraries\IFX_PSOC6_HAL\psoc6cm0p\COMPONENT_CM0P_SLEEP\psoc6_04_cm0p_sleep.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -989,21 +982,35 @@
               <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\drivers\source\cy_syspm.c</FilePath>
             </File>
           </Files>
+          <Files>
+            <File>
+              <FileName>cyhal_uart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\source\cyhal_uart.c</FilePath>
+            </File>
+          </Files>
         </Group>
         <Group>
           <GroupName>libs</GroupName>
           <Files>
             <File>
-              <FileName>cybsp.c</FileName>
+              <FileName>cycfg_qspi_memslot.c</FileName>
               <FileType>1</FileType>
-              <FilePath>libs\TARGET_CY8CKIT-062-BLE\cybsp.c</FilePath>
+              <FilePath>libs\TARGET_CY8CKIT-062-BLE\config\GeneratedSource\cycfg_qspi_memslot.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>cycfg_qspi_memslot.c</FileName>
+              <FileName>cycfg_routing.c</FileName>
               <FileType>1</FileType>
-              <FilePath>libs\TARGET_CY8CKIT-062-BLE\COMPONENT_BSP_DESIGN_MODUS\GeneratedSource\cycfg_qspi_memslot.c</FilePath>
+              <FilePath>libs\TARGET_CY8CKIT-062-BLE\config\GeneratedSource\cycfg_routing.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cycfg.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libs\TARGET_CY8CKIT-062-BLE\config\GeneratedSource\cycfg.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1022,51 +1029,44 @@
           </Files>
           <Files>
             <File>
-              <FileName>cycfg.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libs\TARGET_CY8CKIT-062-BLE\COMPONENT_BSP_DESIGN_MODUS\GeneratedSource\cycfg.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cycfg_pins.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libs\TARGET_CY8CKIT-062-BLE\COMPONENT_BSP_DESIGN_MODUS\GeneratedSource\cycfg_pins.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cycfg_routing.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libs\TARGET_CY8CKIT-062-BLE\COMPONENT_BSP_DESIGN_MODUS\GeneratedSource\cycfg_routing.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cycfg_capsense.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libs\TARGET_CY8CKIT-062-BLE\COMPONENT_BSP_DESIGN_MODUS\GeneratedSource\cycfg_capsense.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>cycfg_clocks.c</FileName>
               <FileType>1</FileType>
-              <FilePath>libs\TARGET_CY8CKIT-062-BLE\COMPONENT_BSP_DESIGN_MODUS\GeneratedSource\cycfg_clocks.c</FilePath>
+              <FilePath>libs\TARGET_CY8CKIT-062-BLE\config\GeneratedSource\cycfg_clocks.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cybsp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libs\TARGET_CY8CKIT-062-BLE\cybsp.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>cycfg_peripherals.c</FileName>
               <FileType>1</FileType>
-              <FilePath>libs\TARGET_CY8CKIT-062-BLE\COMPONENT_BSP_DESIGN_MODUS\GeneratedSource\cycfg_peripherals.c</FilePath>
+              <FilePath>libs\TARGET_CY8CKIT-062-BLE\config\GeneratedSource\cycfg_peripherals.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cycfg_capsense.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libs\TARGET_CY8CKIT-062-BLE\config\GeneratedSource\cycfg_capsense.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cycfg_pins.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libs\TARGET_CY8CKIT-062-BLE\config\GeneratedSource\cycfg_pins.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>cycfg_system.c</FileName>
               <FileType>1</FileType>
-              <FilePath>libs\TARGET_CY8CKIT-062-BLE\COMPONENT_BSP_DESIGN_MODUS\GeneratedSource\cycfg_system.c</FilePath>
+              <FilePath>libs\TARGET_CY8CKIT-062-BLE\config\GeneratedSource\cycfg_system.c</FilePath>
             </File>
           </Files>
         </Group>

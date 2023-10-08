@@ -372,7 +372,7 @@
               <MiscControls />
               <Define>__STDC_LIMIT_MACROS, RT_USING_ARMLIBC, USE_STDPERIPH_DRIVER, GD32F470, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__</Define>
               <Undefine />
-              <IncludePath>..\..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\libraries\GD32F4xx_Firmware_Library\CMSIS;..\libraries\GD32F4xx_Firmware_Library\GD32F4xx_standard_peripheral\Include;..\..\..\..\include;.;..\..\..\..\components\dfs\include;..\..\..\..\components\libc\compilers\common\extension;..\..\..\..\components\drivers\include;..\..\..\..\components\libc\posix\io\stdio;..\..\..\..\components\libc\posix\io\poll;..\..\..\..\libcpu\arm\cortex-m4;..\..\..\..\components\libc\compilers\common\include;..\..\..\..\components\drivers\include;..\libraries\gd32_drivers;..\..\..\..\components\finsh;..\..\..\..\libcpu\arm\common;..\..\..\..\components\libc\posix\ipc;board;..\..\..\..\components\drivers\include;applications;..\libraries\GD32F4xx_Firmware_Library\CMSIS\GD\GD32F4xx\Include</IncludePath>
+              <IncludePath>..\..\..\..\components\libc\posix\io\poll;..\..\..\..\components\libc\compilers\common\extension;..\libraries\GD32F4xx_Firmware_Library\CMSIS;board;..\..\..\..\components\libc\compilers\common\include;applications;..\..\..\..\libcpu\arm\cortex-m4;..\..\..\..\include;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;..\..\..\..\components\dfs\dfs_v1\include;..\..\..\..\components\drivers\include;..\..\..\..\components\libc\posix\ipc;..\..\..\..\components\libc\posix\io\eventfd;..\libraries\gd32_drivers;..\libraries\GD32F4xx_Firmware_Library\CMSIS\GD\GD32F4xx\Include;..\..\..\..\components\drivers\include;..\..\..\..\libcpu\arm\common;..\..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\libraries\GD32F4xx_Firmware_Library\GD32F4xx_standard_peripheral\Include;..\..\..\..\components\libc\posix\io\epoll;.;..\..\..\..\components\finsh</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -448,13 +448,6 @@
           </Files>
           <Files>
             <File>
-              <FileName>cstdio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\libc\compilers\common\cstdio.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>cstdlib.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\components\libc\compilers\common\cstdlib.c</FilePath>
@@ -472,6 +465,13 @@
               <FileName>ctime.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\components\libc\compilers\common\ctime.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cunistd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\components\libc\compilers\common\cunistd.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -515,6 +515,13 @@
         </Group>
         <Group>
           <GroupName>DeviceDrivers</GroupName>
+          <Files>
+            <File>
+              <FileName>device.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\components\drivers\core\device.c</FilePath>
+            </File>
+          </Files>
           <Files>
             <File>
               <FileName>completion.c</FileName>
@@ -616,28 +623,28 @@
             <File>
               <FileName>dfs_posix.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\dfs\src\dfs_posix.c</FilePath>
+              <FilePath>..\..\..\..\components\dfs\dfs_v1\src\dfs_posix.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>dfs_fs.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\dfs\src\dfs_fs.c</FilePath>
+              <FilePath>..\..\..\..\components\dfs\dfs_v1\src\dfs_fs.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>dfs.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\dfs\src\dfs.c</FilePath>
+              <FilePath>..\..\..\..\components\dfs\dfs_v1\src\dfs.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>dfs_file.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\dfs\src\dfs_file.c</FilePath>
+              <FilePath>..\..\..\..\components\dfs\dfs_v1\src\dfs_file.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -693,13 +700,6 @@
               <FileName>components.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\src\components.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>device.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\src\device.c</FilePath>
             </File>
           </Files>
           <Files>

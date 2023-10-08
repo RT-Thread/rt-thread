@@ -358,7 +358,6 @@
         <option>
           <name>CCIncludePath2</name>
           <state />
-          <state>$PROJ_DIR$\..\..\..\components\dfs\filesystems\devfs</state>
           <state>$PROJ_DIR$\..\..\..\components\finsh</state>
           <state>$PROJ_DIR$\..\..\..\components\drivers\include</state>
           <state>$PROJ_DIR$\..\libraries\STM32H7xx_HAL\STM32H7xx_HAL_Driver\Inc</state>
@@ -366,7 +365,6 @@
           <state>$PROJ_DIR$\..\libraries\HAL_Drivers\drv_flash</state>
           <state>$PROJ_DIR$\board\CubeMX_Config\Inc</state>
           <state>$PROJ_DIR$\..\..\..\components\libc\posix\ipc</state>
-          <state>$PROJ_DIR$\..\..\..\components\dfs\include</state>
           <state>$PROJ_DIR$\..\libraries\HAL_Drivers\CMSIS\Include</state>
           <state>$PROJ_DIR$\..\..\..\components\fal\inc</state>
           <state>$PROJ_DIR$\.</state>
@@ -375,17 +373,20 @@
           <state>$PROJ_DIR$\..\libraries\STM32H7xx_HAL\CMSIS\Device\ST\STM32H7xx\Include</state>
           <state>$PROJ_DIR$\..\..\..\components\drivers\spi</state>
           <state>$PROJ_DIR$\..\libraries\HAL_Drivers</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\eventfd</state>
           <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\extension\fcntl\octal</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\epoll</state>
           <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\include</state>
           <state>$PROJ_DIR$\applications</state>
           <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\poll</state>
           <state>$PROJ_DIR$\..\..\..\include</state>
+          <state>$PROJ_DIR$\..\..\..\components\dfs\dfs_v1\include</state>
           <state>$PROJ_DIR$\board\port</state>
           <state>$PROJ_DIR$\..\..\..\libcpu\arm\common</state>
           <state>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m7</state>
           <state>$PROJ_DIR$\..\..\..\components\drivers\spi\sfud\inc</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\stdio</state>
           <state>$PROJ_DIR$\board\port\st7735</state>
+          <state>$PROJ_DIR$\..\..\..\components\dfs\dfs_v1\filesystems\devfs</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -1430,7 +1431,6 @@
         <option>
           <name>CCIncludePath2</name>
           <state />
-          <state>$PROJ_DIR$\..\..\..\components\dfs\filesystems\devfs</state>
           <state>$PROJ_DIR$\..\..\..\components\finsh</state>
           <state>$PROJ_DIR$\..\..\..\components\drivers\include</state>
           <state>$PROJ_DIR$\..\libraries\STM32H7xx_HAL\STM32H7xx_HAL_Driver\Inc</state>
@@ -1438,7 +1438,6 @@
           <state>$PROJ_DIR$\..\libraries\HAL_Drivers\drv_flash</state>
           <state>$PROJ_DIR$\board\CubeMX_Config\Inc</state>
           <state>$PROJ_DIR$\..\..\..\components\libc\posix\ipc</state>
-          <state>$PROJ_DIR$\..\..\..\components\dfs\include</state>
           <state>$PROJ_DIR$\..\libraries\HAL_Drivers\CMSIS\Include</state>
           <state>$PROJ_DIR$\..\..\..\components\fal\inc</state>
           <state>$PROJ_DIR$\.</state>
@@ -1447,17 +1446,20 @@
           <state>$PROJ_DIR$\..\libraries\STM32H7xx_HAL\CMSIS\Device\ST\STM32H7xx\Include</state>
           <state>$PROJ_DIR$\..\..\..\components\drivers\spi</state>
           <state>$PROJ_DIR$\..\libraries\HAL_Drivers</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\eventfd</state>
           <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\extension\fcntl\octal</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\epoll</state>
           <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\include</state>
           <state>$PROJ_DIR$\applications</state>
           <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\poll</state>
           <state>$PROJ_DIR$\..\..\..\include</state>
+          <state>$PROJ_DIR$\..\..\..\components\dfs\dfs_v1\include</state>
           <state>$PROJ_DIR$\board\port</state>
           <state>$PROJ_DIR$\..\..\..\libcpu\arm\common</state>
           <state>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m7</state>
           <state>$PROJ_DIR$\..\..\..\components\drivers\spi\sfud\inc</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\stdio</state>
           <state>$PROJ_DIR$\board\port\st7735</state>
+          <state>$PROJ_DIR$\..\..\..\components\dfs\dfs_v1\filesystems\devfs</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -2156,9 +2158,6 @@
       <name>$PROJ_DIR$\..\..\..\components\libc\compilers\common\cctype.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\common\cstdio.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\..\..\components\libc\compilers\common\cstdlib.c</name>
     </file>
     <file>
@@ -2166,6 +2165,9 @@
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\components\libc\compilers\common\ctime.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\common\cunistd.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\components\libc\compilers\common\cwchar.c</name>
@@ -2221,6 +2223,9 @@
   </group>
   <group>
     <name>DeviceDrivers</name>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\drivers\core\device.c</name>
+    </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\components\drivers\ipc\completion.c</name>
     </file>
@@ -2330,37 +2335,37 @@
   <group>
     <name>Fal</name>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\fal\samples\porting\fal_flash_sfud_port.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\fal\src\fal_flash.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\fal\src\fal_rtt.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\fal\src\fal.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\components\fal\src\fal_partition.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\fal\src\fal.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\fal\samples\porting\fal_flash_sfud_port.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\fal\src\fal_rtt.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\fal\src\fal_flash.c</name>
     </file>
   </group>
   <group>
     <name>Filesystem</name>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\dfs\filesystems\devfs\devfs.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\dfs\dfs_v1\filesystems\devfs\devfs.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\dfs\src\dfs.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\dfs\dfs_v1\src\dfs.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\dfs\src\dfs_file.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\dfs\dfs_v1\src\dfs_file.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\dfs\src\dfs_fs.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\dfs\dfs_v1\src\dfs_fs.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\dfs\src\dfs_posix.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\dfs\dfs_v1\src\dfs_posix.c</name>
     </file>
   </group>
   <group>
@@ -2388,9 +2393,6 @@
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\src\components.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\src\device.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\src\idle.c</name>
