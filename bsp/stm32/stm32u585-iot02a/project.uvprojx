@@ -337,7 +337,7 @@
               <MiscControls />
               <Define>__STDC_LIMIT_MACROS, STM32U575xx, USE_HAL_DRIVER, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__, RT_USING_ARMLIBC</Define>
               <Undefine />
-              <IncludePath>..\..\..\components\drivers\include;applications;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\libraries\HAL_Drivers\config;..\..\..\components\libc\posix\io\stdio;..\..\..\components\libc\compilers\common\include;board;..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Inc;board\CubeMX_Config\Inc;..\..\..\components\finsh;..\..\..\libcpu\arm\common;..\libraries\HAL_Drivers;..\..\..\include;.;..\..\..\components\libc\posix\io\poll;..\..\..\libcpu\arm\cortex-m33;..\..\..\components\drivers\include;..\libraries\HAL_Drivers\CMSIS\Include;..\..\..\components\libc\compilers\common\extension;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\libc\posix\ipc;..\libraries\STM32U5xx_HAL\CMSIS\Device\ST\STM32U5xx\Include</IncludePath>
+              <IncludePath>..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\compilers\common\include;..\libraries\HAL_Drivers\CMSIS\Include;..\libraries\HAL_Drivers\config;..\libraries\HAL_Drivers;..\..\..\components\libc\compilers\common\extension;..\..\..\include;board\CubeMX_Config\Inc;..\..\..\components\drivers\include;..\..\..\components\drivers\include;.;applications;..\..\..\libcpu\arm\cortex-m33;..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Inc;..\libraries\STM32U5xx_HAL\CMSIS\Device\ST\STM32U5xx\Include;..\..\..\components\drivers\include;..\..\..\components\libc\posix\ipc;..\..\..\components\libc\posix\io\eventfd;..\..\..\components\drivers\include;..\..\..\libcpu\arm\common;..\..\..\components\libc\compilers\common\extension\fcntl\octal;board;..\..\..\components\libc\posix\io\epoll;..\..\..\components\finsh</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -413,13 +413,6 @@
           </Files>
           <Files>
             <File>
-              <FileName>cstdio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\compilers\common\cstdio.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>cstdlib.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\libc\compilers\common\cstdlib.c</FilePath>
@@ -437,6 +430,13 @@
               <FileName>ctime.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\libc\compilers\common\ctime.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cunistd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\libc\compilers\common\cunistd.c</FilePath>
             </File>
           </Files>
           <Files>
