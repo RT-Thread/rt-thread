@@ -1,3 +1,9 @@
 menuconfig RT_USING_KTIME
     bool "Ktime: kernel time"
     default n
+
+if RT_USING_KTIME
+    config KTIME_CPUTIMER_FREQ
+        int "ktime cputimer freq(if cannot get it)"
+        default 10000000
+endif

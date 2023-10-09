@@ -14,12 +14,12 @@ static volatile unsigned long _init_cnt = 0;
 
 unsigned long rt_ktime_cputimer_getres(void)
 {
-    return ((1000UL * 1000 * 1000) * RT_KTIME_RESMUL) / CPUTIME_TIMER_FREQ;
+    return ((1000UL * 1000 * 1000) * RT_KTIME_RESMUL) / KTIME_CPUTIMER_FREQ;
 }
 
 unsigned long rt_ktime_cputimer_getfrq(void)
 {
-    return CPUTIME_TIMER_FREQ;
+    return KTIME_CPUTIMER_FREQ;
 }
 
 unsigned long rt_ktime_cputimer_getcnt(void)
