@@ -908,7 +908,7 @@ static struct dfs_vnode *dfs_elm_lookup(struct dfs_dentry *dentry)
         }
         else
         {
-            vnode->mode = S_IFREG | (S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH);
+            vnode->mode = S_IFREG | S_IXUSR | (S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH);
             vnode->type = FT_REGULAR;
         }
 
@@ -939,7 +939,6 @@ static struct dfs_vnode *dfs_elm_create_vnode(struct dfs_dentry *dentry, int typ
         }
         else
         {
-
             vnode->mode = S_IFREG | mode;
             vnode->type = FT_REGULAR;
         }
