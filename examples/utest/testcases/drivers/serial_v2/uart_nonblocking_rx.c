@@ -9,14 +9,7 @@
 static rt_bool_t nonblock_read(rt_device_t uart_dev)
 {
     rt_size_t total_length, recv_length;
-    rt_uint8_t *uart_read_buffer = NULL;
-    rt_uint8_t *log_buffer = NULL;
-
-    uart_read_buffer = (rt_uint8_t *)rt_malloc(1024);
-    log_buffer = (rt_uint8_t *)rt_malloc(64);
-
-    uassert_not_null(uart_read_buffer);
-    uassert_not_null(log_buffer);
+    rt_uint8_t uart_read_buffer[1024], log_buffer[64];
 
     /* make sure device is closed and reopen it */
     while(rt_device_close(uart_dev) != -RT_ERROR);
@@ -79,7 +72,6 @@ static rt_bool_t nonblock_read(rt_device_t uart_dev)
     rt_sprintf(log_buffer, "BLOCKING READ END");
     rt_device_write(uart_dev, 0, log_buffer, rt_strlen(log_buffer));
 
-    rt_free(uart_read_buffer);
     return RT_TRUE;
 }
 

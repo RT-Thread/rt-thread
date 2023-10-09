@@ -12,10 +12,7 @@ static rt_bool_t nonblock_write(rt_device_t uart_dev)
 {
     rt_size_t wr_sz = 0, tmp = 0, i, write_num_array[UART_TEST_NUMBER], total_write_num[UART_TEST_NUMBER], index;
     rt_tick_t tick1, tick2, tick_array[UART_TEST_NUMBER];
-    rt_uint8_t *uart_write_buffer = RT_NULL;
-
-    uart_write_buffer = (rt_uint8_t *)rt_malloc(1024);
-    uassert_not_null(uart_write_buffer);
+    rt_uint8_t uart_write_buffer[1024];
 
     for (i = 0; i < 1024; i++)
         uart_write_buffer[i] = '0' + (i % 50);
@@ -96,7 +93,6 @@ static rt_bool_t nonblock_write(rt_device_t uart_dev)
         rt_thread_mdelay(1000);
     }
 
-    rt_free(uart_write_buffer);
     return RT_TRUE;
 }
 
