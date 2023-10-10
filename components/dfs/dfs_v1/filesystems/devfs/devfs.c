@@ -286,11 +286,10 @@ int dfs_device_fs_unlink(struct dfs_filesystem *fs, const char *path)
 
 int dfs_device_fs_stat(struct dfs_filesystem *fs, const char *path, struct stat *st)
 {
+    st->st_dev = (dev_t)((size_t)dfs_filesystem_lookup(fs->path));
     /* stat root directory */
     if ((path[0] == '/') && (path[1] == '\0'))
     {
-        st->st_dev = 0;
-
         st->st_mode = S_IFREG | S_IRUSR | S_IRGRP | S_IROTH |
                       S_IWUSR | S_IWGRP | S_IWOTH;
         st->st_mode &= ~S_IFREG;
@@ -308,8 +307,6 @@ int dfs_device_fs_stat(struct dfs_filesystem *fs, const char *path, struct stat 
         dev_id = rt_device_find(&path[1]);
         if (dev_id != RT_NULL)
         {
-            st->st_dev = 0;
-
             st->st_mode = S_IRUSR | S_IRGRP | S_IROTH |
                           S_IWUSR | S_IWGRP | S_IWOTH;
 

@@ -50,10 +50,12 @@
 arch_start_umode:
     mov sp, x3
     mov x4, #(SPSR_Mode(0) | SPSR_A64)
-    mov x3, x2 ;/* user stack top */
     msr daifset, #3
     dsb sy
     mrs x30, sp_el0
+    /* user stack top */
+    msr sp_el0, x2
+    mov x3, x2
     msr spsr_el1, x4
     msr elr_el1, x1
     eret

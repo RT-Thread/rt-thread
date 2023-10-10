@@ -32,6 +32,24 @@
 #include <dfs_file.h>
 #include <dfs_mnt.h>
 
+#ifdef RT_USING_PAGECACHE
+#include "dfs_pcache.h"
+#endif
+
+
+static int dfs_elm_free_vnode(struct dfs_vnode *vnode);
+
+#ifdef RT_USING_PAGECACHE
+static ssize_t dfs_elm_page_read(struct dfs_file *file, struct dfs_page *page);
+static ssize_t dfs_elm_page_write(struct dfs_page *page);
+
+static struct dfs_aspace_ops dfs_elm_aspace_ops =
+{
+    .read = dfs_elm_page_read,
+    .write = dfs_elm_page_write,
+};
+#endif
+
 #undef SS
 #if FF_MAX_SS == FF_MIN_SS
 #define SS(fs) ((UINT)FF_MAX_SS) /* Fixed sector size */
@@ -361,7 +379,7 @@ int dfs_elm_open(struct dfs_file *file)
     extern int elm_get_vol(FATFS * fat);
 
     RT_ASSERT(file->vnode->ref_count > 0);
-    if (file->vnode->ref_count > 1)
+    if (file->vnode->data)
     {
         if (file->vnode->type == FT_DIRECTORY
                 && !(file->flags & O_DIRECTORY))
@@ -425,6 +443,7 @@ int dfs_elm_open(struct dfs_file *file)
         }
 
         file->vnode->data = dir;
+        rt_mutex_init(&file->vnode->lock, file->dentry->pathname, RT_IPC_FLAG_PRIO);
         return RT_EOK;
     }
     else
@@ -465,6 +484,7 @@ int dfs_elm_open(struct dfs_file *file)
             file->vnode->size = f_size(fd);
             file->vnode->type = FT_REGULAR;
             file->vnode->data = fd;
+            rt_mutex_init(&file->vnode->lock, file->dentry->pathname, RT_IPC_FLAG_PRIO);
 
             if (file->flags & O_APPEND)
             {
@@ -516,6 +536,9 @@ int dfs_elm_close(struct dfs_file *file)
         rt_free(fd);
     }
 
+    file->vnode->data = RT_NULL;
+    rt_mutex_detach(&file->vnode->lock);
+
     return elm_result_to_dfs(result);
 }
 
@@ -558,7 +581,7 @@ int dfs_elm_ioctl(struct dfs_file *file, int cmd, void *args)
 ssize_t dfs_elm_read(struct dfs_file *file, void *buf, size_t len, off_t *pos)
 {
     FIL *fd;
-    FRESULT result;
+    FRESULT result = FR_OK;
     UINT byte_read;
 
     if (file->vnode->type == FT_DIRECTORY)
@@ -566,14 +589,19 @@ ssize_t dfs_elm_read(struct dfs_file *file, void *buf, size_t len, off_t *pos)
         return -EISDIR;
     }
 
-    fd = (FIL *)(file->vnode->data);
-    RT_ASSERT(fd != RT_NULL);
-
-    result = f_read(fd, buf, len, &byte_read);
-    /* update position */
-    *pos = fd->fptr;
-    if (result == FR_OK)
-        return byte_read;
+    if (file->vnode->size > *pos)
+    {
+        fd = (FIL *)(file->vnode->data);
+        RT_ASSERT(fd != RT_NULL);
+        rt_mutex_take(&file->vnode->lock, RT_WAITING_FOREVER);
+        f_lseek(fd, *pos);
+        result = f_read(fd, buf, len, &byte_read);
+        /* update position */
+        *pos = fd->fptr;
+        rt_mutex_release(&file->vnode->lock);
+        if (result == FR_OK)
+            return byte_read;
+    }
 
     return elm_result_to_dfs(result);
 }
@@ -591,11 +619,13 @@ ssize_t dfs_elm_write(struct dfs_file *file, const void *buf, size_t len, off_t 
 
     fd = (FIL *)(file->vnode->data);
     RT_ASSERT(fd != RT_NULL);
-
+    rt_mutex_take(&file->vnode->lock, RT_WAITING_FOREVER);
+    f_lseek(fd, *pos);
     result = f_write(fd, buf, len, &byte_write);
     /* update position and file size */
     *pos = fd->fptr;
     file->vnode->size = f_size(fd);
+    rt_mutex_release(&file->vnode->lock);
     if (result == FR_OK)
         return byte_write;
 
@@ -642,8 +672,9 @@ off_t dfs_elm_lseek(struct dfs_file *file, off_t offset, int wherece)
         /* regular file type */
         fd = (FIL *)(file->vnode->data);
         RT_ASSERT(fd != RT_NULL);
-
+        rt_mutex_take(&file->vnode->lock, RT_WAITING_FOREVER);
         result = f_lseek(fd, offset);
+        rt_mutex_release(&file->vnode->lock);
         if (result == FR_OK)
         {
             /* return current position */
@@ -657,8 +688,9 @@ off_t dfs_elm_lseek(struct dfs_file *file, off_t offset, int wherece)
 
         dir = (DIR *)(file->vnode->data);
         RT_ASSERT(dir != RT_NULL);
-
+        rt_mutex_take(&file->vnode->lock, RT_WAITING_FOREVER);
         result = f_seekdir(dir, offset / sizeof(struct dirent));
+        rt_mutex_release(&file->vnode->lock);
         if (result == FR_OK)
         {
             /* update file position */
@@ -827,21 +859,35 @@ int dfs_elm_stat(struct dfs_dentry *dentry, struct stat *st)
         st->st_dev = (dev_t)(size_t)(dentry->mnt->dev_id);
         st->st_ino = (ino_t)dfs_dentry_full_path_crc32(dentry);
 
-        st->st_mode = S_IFREG | S_IRUSR | S_IRGRP | S_IROTH |
-                      S_IWUSR | S_IWGRP | S_IWOTH;
         if (file_info.fattrib & AM_DIR)
         {
-            st->st_mode &= ~S_IFREG;
-            st->st_mode |= S_IFDIR | S_IXUSR | S_IXGRP | S_IXOTH;
+            st->st_mode = S_IFDIR | (S_IRUSR | S_IXUSR | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH);
         }
+        else
+        {
+            st->st_mode = S_IFREG | (S_IRWXU | S_IRWXG | S_IRWXO);
+        }
+
         if (file_info.fattrib & AM_RDO)
             st->st_mode &= ~(S_IWUSR | S_IWGRP | S_IWOTH);
 
-        st->st_size  = file_info.fsize;
+        if (S_IFDIR & st->st_mode)
+        {
+            st->st_size = file_info.fsize;
+        }
+        else
+        {
+#ifdef RT_USING_PAGECACHE
+            st->st_size = (dentry->vnode && dentry->vnode->aspace) ? dentry->vnode->size : file_info.fsize;
+#else
+            st->st_size = file_info.fsize;
+#endif
+        }
+
         st->st_blksize = fat->csize * SS(fat);
         if (file_info.fattrib & AM_ARC)
         {
-            st->st_blocks = file_info.fsize ? ((file_info.fsize - 1) / SS(fat) / fat->csize + 1) : 0;
+            st->st_blocks = st->st_size ? ((st->st_size - 1) / SS(fat) / fat->csize + 1) : 0;
             st->st_blocks *= (st->st_blksize / 512);  // man say st_blocks is number of 512B blocks allocated
         }
         else
@@ -901,20 +947,23 @@ static struct dfs_vnode *dfs_elm_lookup(struct dfs_dentry *dentry)
     vnode = dfs_vnode_create();
     if (vnode)
     {
+        vnode->mnt = dentry->mnt;
+        vnode->size = st.st_size;
+        vnode->data = NULL;
+
         if (S_ISDIR(st.st_mode))
         {
-            vnode->mode = S_IFDIR | (S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH);
+            vnode->mode = S_IFDIR | (S_IRUSR | S_IXUSR | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH);
             vnode->type = FT_DIRECTORY;
         }
         else
         {
-            vnode->mode = S_IFREG | S_IXUSR | (S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH);
+            vnode->mode = S_IFREG | (S_IRWXU | S_IRWXG | S_IRWXO);
             vnode->type = FT_REGULAR;
+#ifdef RT_USING_PAGECACHE
+            vnode->aspace = dfs_aspace_create(dentry, vnode, &dfs_elm_aspace_ops);
+#endif
         }
-
-        vnode->mnt = dentry->mnt;
-        vnode->data = NULL;
-        vnode->size = 0;
     }
 
     return vnode;
@@ -934,13 +983,18 @@ static struct dfs_vnode *dfs_elm_create_vnode(struct dfs_dentry *dentry, int typ
     {
         if (type == FT_DIRECTORY)
         {
-            vnode->mode = S_IFDIR | mode;
+            /* fat directory force mode 0555 */
+            vnode->mode = S_IFDIR | (S_IRUSR | S_IXUSR | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH);
             vnode->type = FT_DIRECTORY;
         }
         else
         {
-            vnode->mode = S_IFREG | mode;
+            /* fat REGULAR file mode force mode 0777 */
+            vnode->mode = S_IFREG | (S_IRWXU | S_IRWXG | S_IRWXO);
             vnode->type = FT_REGULAR;
+#ifdef RT_USING_PAGECACHE
+            vnode->aspace = dfs_aspace_create(dentry, vnode, &dfs_elm_aspace_ops);
+#endif
         }
 
         vnode->mnt = dentry->mnt;
@@ -961,6 +1015,46 @@ static int dfs_elm_free_vnode(struct dfs_vnode *vnode)
 
     return 0;
 }
+
+#ifdef RT_USING_PAGECACHE
+static ssize_t dfs_elm_page_read(struct dfs_file *file, struct dfs_page *page)
+{
+    int ret = -EINVAL;
+
+    if (page->page)
+    {
+        off_t fpos = page->fpos;
+        ret = dfs_elm_read(file, page->page, page->size, &fpos);
+    }
+
+    return ret;
+}
+
+ssize_t dfs_elm_page_write(struct dfs_page *page)
+{
+    FIL *fd;
+    FRESULT result;
+    UINT byte_write;
+
+    if (page->aspace->vnode->type == FT_DIRECTORY)
+    {
+        return -EISDIR;
+    }
+
+    fd = (FIL *)(page->aspace->vnode->data);
+    RT_ASSERT(fd != RT_NULL);
+    rt_mutex_take(&page->aspace->vnode->lock, RT_WAITING_FOREVER);
+    f_lseek(fd, page->fpos);
+    result = f_write(fd, page->page, page->len, &byte_write);
+    rt_mutex_release(&page->aspace->vnode->lock);
+    if (result == FR_OK)
+    {
+        return byte_write;
+    }
+
+    return elm_result_to_dfs(result);
+}
+#endif
 
 static const struct dfs_file_ops dfs_elm_fops =
 {

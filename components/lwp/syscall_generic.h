@@ -13,6 +13,9 @@
 
 #include <rtthread.h>
 
+#include <errno.h>
+#include <stdlib.h>
+
 typedef long sysret_t;
 
 struct rt_syscall_def
@@ -39,5 +42,37 @@ struct rt_syscall_def
 #define GET_ERRNO() ({int _errno = rt_get_errno(); _errno > 0 ? -_errno : _errno;})
 
 #define _SYS_WRAP(func) ({int _ret = func; _ret < 0 ? GET_ERRNO() : _ret;})
+
+rt_inline sysret_t lwp_errno_to_posix(rt_err_t error)
+{
+    sysret_t posix_rc;
+
+    switch (labs(error))
+    {
+        case RT_EOK:
+            posix_rc = 0;
+            break;
+        case RT_ETIMEOUT:
+            posix_rc = -ETIMEDOUT;
+            break;
+        case RT_EINVAL:
+            posix_rc = -EINVAL;
+            break;
+        case RT_ENOENT:
+            posix_rc = -ENOENT;
+            break;
+        case RT_ENOSPC:
+            posix_rc = -ENOSPC;
+            break;
+        case RT_EPERM:
+            posix_rc = -EPERM;
+            break;
+        default:
+            posix_rc = -1;
+            break;
+    }
+
+    return posix_rc;
+}
 
 #endif /* __SYSCALL_DATA_H__ */

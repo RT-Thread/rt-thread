@@ -624,10 +624,10 @@ void rt_interrupt_leave(void);
 rt_base_t rt_cpus_lock(void);
 void rt_cpus_unlock(rt_base_t level);
 
+#endif /* RT_USING_SMP */
+
 struct rt_cpu *rt_cpu_self(void);
 struct rt_cpu *rt_cpu_index(int index);
-
-#endif /* RT_USING_SMP */
 
 /*
  * the number of nested interrupts.

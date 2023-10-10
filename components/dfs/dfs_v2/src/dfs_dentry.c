@@ -197,7 +197,7 @@ struct dfs_dentry *dfs_dentry_lookup(struct dfs_mnt *mnt, const char *path, uint
             path = "/";
         }
     }
-
+    dfs_file_lock();
     dentry = _dentry_hash_lookup(mnt, path);
     if (!dentry)
     {
@@ -252,7 +252,7 @@ struct dfs_dentry *dfs_dentry_lookup(struct dfs_mnt *mnt, const char *path, uint
     {
         DLOG(note, "dentry", "found dentry");
     }
-
+    dfs_file_unlock();
     return dentry;
 }
 

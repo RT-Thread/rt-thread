@@ -66,8 +66,7 @@ config RT_USING_SMP
 
 config RT_CPUS_NR
     int "Number of CPUs"
-    default 2
-    depends on RT_USING_SMP || RT_USING_AMP
+    default 1
     help
         Number of CPUs in the system
 

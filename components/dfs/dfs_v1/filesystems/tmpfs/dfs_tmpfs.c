@@ -198,9 +198,11 @@ int dfs_tmpfs_ioctl(struct dfs_file *file, int cmd, void *args)
             {
                 return -RT_ENOMEM;
             }
+            else if (mmap2->lwp == RT_NULL)
+                return -RT_EINVAL;
 
             LOG_D("tmpfile mmap ptr:%x , size:%d\n", d_file->data, mmap2->length);
-            mmap2->ret = lwp_map_user_phy(lwp_self(), RT_NULL, d_file->data, mmap2->length, 0);
+            mmap2->ret = lwp_map_user_phy(mmap2->lwp, mmap2->addr, d_file->data, mmap2->length, 0);
         }
         return RT_EOK;
         break;

@@ -31,22 +31,20 @@ int arch_user_space_init(struct rt_lwp *lwp)
 {
     size_t *mmu_table;
 
-    mmu_table = (size_t *)rt_pages_alloc_ext(0, PAGE_ANY_AVAILABLE);
-    if (!mmu_table)
+    mmu_table = rt_hw_mmu_pgtbl_create();
+    if (mmu_table)
+    {
+        lwp->end_heap = USER_HEAP_VADDR;
+        lwp->aspace = rt_aspace_create(
+            (void *)USER_VADDR_START, USER_VADDR_TOP - USER_VADDR_START, mmu_table);
+        if (!lwp->aspace)
+        {
+            return -RT_ERROR;
+        }
+    }
+    else
     {
         return -RT_ENOMEM;
-    }
-
-    lwp->end_heap = USER_HEAP_VADDR;
-
-    memset(mmu_table, 0, ARCH_PAGE_SIZE);
-    rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, mmu_table, ARCH_PAGE_SIZE);
-
-    lwp->aspace = rt_aspace_create(
-        (void *)USER_VADDR_START, USER_VADDR_TOP - USER_VADDR_START, mmu_table);
-    if (!lwp->aspace)
-    {
-        return -RT_ERROR;
     }
 
     return 0;

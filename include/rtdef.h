@@ -726,10 +726,10 @@ enum
 #define RT_THREAD_CTRL_INFO             0x03                /**< Get thread information. */
 #define RT_THREAD_CTRL_BIND_CPU         0x04                /**< Set thread bind cpu. */
 
-#ifdef RT_USING_SMP
-
 #define RT_CPU_DETACHED                 RT_CPUS_NR          /**< The thread not running on cpu. */
 #define RT_CPU_MASK                     ((1 << RT_CPUS_NR) - 1) /**< All CPUs mask bit. */
+
+#ifdef RT_USING_SMP
 
 #ifndef RT_SCHEDULE_IPI
 #define RT_SCHEDULE_IPI                 0
@@ -739,6 +739,17 @@ enum
 #define RT_STOP_IPI                     1
 #endif /* RT_STOP_IPI */
 
+#endif /* RT_USING_SMP */
+
+struct rt_cpu_usage_stats
+{
+    rt_uint64_t user;
+    rt_uint64_t system;
+    rt_uint64_t irq;
+    rt_uint64_t idle;
+};
+typedef struct rt_cpu_usage_stats *rt_cpu_usage_stats_t;
+
 /**
  * CPUs definitions
  *
@@ -746,7 +757,7 @@ enum
 struct rt_cpu
 {
     struct rt_thread *current_thread;
-
+    struct rt_thread *idle_thread;
     rt_uint16_t irq_nest;
     rt_uint8_t  irq_switch_flag;
 
@@ -760,9 +771,11 @@ struct rt_cpu
 #endif /* RT_THREAD_PRIORITY_MAX > 32 */
 
     rt_tick_t tick;
+#ifdef RT_USING_SMART
+    struct rt_cpu_usage_stats cpu_stat;
+#endif
 };
-
-#endif /* RT_USING_SMP */
+typedef struct rt_cpu *rt_cpu_t;
 
 struct rt_thread;
 
@@ -936,6 +949,9 @@ struct rt_thread
     int                         exit_request;
     int                         tid;
 
+    rt_uint64_t                 user_time;
+    rt_uint64_t                 system_time;
+
 #ifndef ARCH_MM_MMU
     lwp_sighandler_t            signal_handler[32];
 #else
@@ -948,10 +964,13 @@ struct rt_thread
     int                         *clear_child_tid;
 #endif /* ARCH_MM_MMU */
 #endif /* RT_USING_SMART */
-
     rt_ubase_t                  user_data;              /**< private user data beyond this thread */
 };
 typedef struct rt_thread *rt_thread_t;
+
+#ifdef RT_USING_SMART
+#define IS_USER_MODE(t) ((t)->user_ctx.ctx == RT_NULL)
+#endif /* RT_USING_SMART */
 
 /**@}*/
 

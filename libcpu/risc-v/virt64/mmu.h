@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2021-01-30     lizhirui     first version
+ * 2023-10-12     Shell        Add permission control API
  */
 
 #ifndef __MMU_H__
@@ -69,5 +70,8 @@ void *rt_hw_mmu_v2p(rt_aspace_t aspace, void *vaddr);
 
 int rt_hw_mmu_control(struct rt_aspace *aspace, void *vaddr, size_t size,
                       enum rt_mmu_cntl cmd);
+
+void *rt_hw_mmu_pgtbl_create(void);
+void rt_hw_mmu_pgtbl_delete(void *pgtbl);
 
 #endif

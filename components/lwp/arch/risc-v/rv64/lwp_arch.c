@@ -93,17 +93,13 @@ int arch_user_space_init(struct rt_lwp *lwp)
 {
     rt_ubase_t *mmu_table;
 
-    mmu_table = (rt_ubase_t *)rt_pages_alloc_ext(0, PAGE_ANY_AVAILABLE);
+    mmu_table = rt_hw_mmu_pgtbl_create();
     if (!mmu_table)
     {
         return -RT_ENOMEM;
     }
 
     lwp->end_heap = USER_HEAP_VADDR;
-
-    rt_memcpy(mmu_table, rt_kernel_space.page_table, ARCH_PAGE_SIZE);
-    rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, mmu_table, ARCH_PAGE_SIZE);
-
     lwp->aspace = rt_aspace_create(
         (void *)USER_VADDR_START, USER_VADDR_TOP - USER_VADDR_START, mmu_table);
     if (!lwp->aspace)
@@ -129,7 +125,7 @@ void arch_user_space_free(struct rt_lwp *lwp)
         rt_aspace_delete(lwp->aspace);
 
         /* must be freed after aspace delete, pgtbl is required for unmap */
-        rt_pages_free(pgtbl, 0);
+        rt_hw_mmu_pgtbl_delete(pgtbl);
         lwp->aspace = RT_NULL;
     }
     else

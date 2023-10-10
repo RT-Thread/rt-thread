@@ -1,11 +1,12 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
  * 2012-01-10     bernard      porting to AM1808
+ * 2023-10-10     Shell        Add permission control API
  */
 
 #include <rthw.h>
@@ -439,4 +440,26 @@ int rt_hw_mmu_control(struct rt_aspace *aspace, void *vaddr, size_t size,
                       enum rt_mmu_cntl cmd)
 {
     return -RT_ENOSYS;
+}
+
+#define KPTE_START (KERNEL_VADDR_START >> ARCH_SECTION_SHIFT)
+
+void *rt_hw_mmu_pgtbl_create(void)
+{
+    size_t *mmu_table;
+    mmu_table = (size_t *)rt_pages_alloc_ext(2, PAGE_ANY_AVAILABLE);
+    if (!mmu_table)
+    {
+        return RT_NULL;
+    }
+    rt_memcpy(mmu_table + KPTE_START, (size_t *)rt_kernel_space.page_table + KPTE_START, ARCH_PAGE_SIZE);
+    rt_memset(mmu_table, 0, 3 * ARCH_PAGE_SIZE);
+    rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, mmu_table, 4 * ARCH_PAGE_SIZE);
+
+    return mmu_table;
+}
+
+void rt_hw_mmu_pgtbl_delete(void *pgtbl)
+{
+    rt_pages_free(pgtbl, 2);
 }

@@ -27,7 +27,7 @@ void rt_kmem_list(void) __attribute__((alias("list_kmem")));
 
 static rt_ubase_t rt_pv_offset;
 
-rt_ubase_t rt_kmem_pvoff(void)
+const rt_ubase_t rt_kmem_pvoff(void)
 {
     return rt_pv_offset;
 }
@@ -77,4 +77,30 @@ int rt_kmem_map_phy(void *va, void *pa, rt_size_t length, rt_size_t attr)
 void *rt_kmem_v2p(void *vaddr)
 {
     return rt_hw_mmu_v2p(&rt_kernel_space, vaddr);
+}
+
+void *rt_kmem_p2v(void *paddr)
+{
+    char *rc;
+    char *linear_va;
+    char *linear_pa;
+    if (paddr != ARCH_MAP_FAILED)
+    {
+        linear_va = (char *)paddr - PV_OFFSET;
+        linear_pa = rt_kmem_v2p(linear_va);
+        if (linear_pa != paddr)
+        {
+            rc = RT_NULL;
+        }
+        else
+        {
+            rc = linear_va;
+        }
+    }
+    else
+    {
+        rc = RT_NULL;
+    }
+
+    return rc;
 }

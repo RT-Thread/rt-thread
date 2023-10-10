@@ -18,6 +18,10 @@
 
 #include <backtrace.h>
 
+#define DBG_TAG "libcpu.trap"
+#define DBG_LVL DBG_LOG
+#include <rtdbg.h>
+
 void rt_unwind(struct rt_hw_exp_stack *regs, int pc_adj)
 {
 }
@@ -40,7 +44,7 @@ static void _check_fault(struct rt_hw_exp_stack *regs, uint32_t pc_adj, char *in
 
     if ((mode & 0x1f) == 0x00)
     {
-        rt_kprintf("%s! pc = 0x%08x\n", info, regs->pc - pc_adj);
+        rt_kprintf("%s! pc = 0x%x\n", info, regs->pc - pc_adj);
 
         /* user stack backtrace */
     #ifdef RT_USING_LWP
@@ -79,7 +83,7 @@ static void _check_fault(struct rt_hw_exp_stack *regs, uint32_t pc_adj, char *in
     }
 }
 
-int _get_type(unsigned long esr)
+rt_inline int _get_type(unsigned long esr)
 {
     int ret;
     int fsc = esr & 0x3f;
@@ -91,19 +95,31 @@ int _get_type(unsigned long esr)
         case 0x7:
             ret = MM_FAULT_TYPE_PAGE_FAULT;
             break;
+        case 0xc:
+        case 0xd:
+        case 0xe:
+        case 0xf:
+            ret = MM_FAULT_TYPE_ACCESS_FAULT;
+            break;
+        case 0x8:
         case 0x9:
         case 0xa:
         case 0xb:
-            ret = MM_FAULT_TYPE_ACCESS_FAULT;
-            break;
+            /* access flag fault */
         default:
             ret = MM_FAULT_TYPE_GENERIC;
     }
     return ret;
 }
 
-int check_user_stack(unsigned long esr, struct rt_hw_exp_stack *regs)
+rt_inline long _irq_is_disable(long cpsr)
 {
+    return !!(cpsr & 0x80);
+}
+
+static int user_fault_fixable(unsigned long esr, struct rt_hw_exp_stack *regs)
+{
+    rt_ubase_t level;
     unsigned char ec;
     void *dfar;
     int ret = 0;
@@ -130,20 +146,24 @@ int check_user_stack(unsigned long esr, struct rt_hw_exp_stack *regs)
         break;
     }
 
-    if (fault_op)
+    /* page fault exception only allow from user space */
+    lwp = lwp_self();
+    if (lwp && fault_op)
     {
-        asm volatile("mrs %0, far_el1":"=r"(dfar));
+        __asm__ volatile("mrs %0, far_el1":"=r"(dfar));
         struct rt_aspace_fault_msg msg = {
             .fault_op = fault_op,
             .fault_type = fault_type,
             .fault_vaddr = dfar,
         };
-        lwp = lwp_self();
-        RT_ASSERT(lwp);
+
+        lwp_user_setting_save(rt_thread_self());
+        __asm__ volatile("mrs %0, daif\nmsr daifclr, 0x3\nisb\n":"=r"(level));
         if (rt_aspace_fault_try_fix(lwp->aspace, &msg))
         {
             ret = 1;
         }
+        __asm__ volatile("msr daif, %0\nisb\n"::"r"(level));
     }
     return ret;
 }
@@ -269,6 +289,12 @@ void rt_hw_trap_irq(void)
 #endif
 }
 
+#ifdef RT_USING_SMART
+#define DBG_CHECK_EVENT(regs, esr) dbg_check_event(regs, esr)
+#else
+#define DBG_CHECK_EVENT(regs, esr) (0)
+#endif
+
 void rt_hw_trap_fiq(void)
 {
     void *param;
@@ -292,7 +318,7 @@ void rt_hw_trap_fiq(void)
     rt_hw_interrupt_ack(ir);
 }
 
-void process_exception(unsigned long esr, unsigned long epc);
+void print_exception(unsigned long esr, unsigned long epc);
 void SVC_Handler(struct rt_hw_exp_stack *regs);
 void rt_hw_trap_exception(struct rt_hw_exp_stack *regs)
 {
@@ -302,27 +328,43 @@ void rt_hw_trap_exception(struct rt_hw_exp_stack *regs)
     asm volatile("mrs %0, esr_el1":"=r"(esr));
     ec = (unsigned char)((esr >> 26) & 0x3fU);
 
-#ifdef RT_USING_LWP
-    if (dbg_check_event(regs, esr))
+    if (DBG_CHECK_EVENT(regs, esr))
     {
         return;
     }
-    else
-#endif
-    if (ec == 0x15) /* is 64bit syscall ? */
+    else if (ec == 0x15) /* is 64bit syscall ? */
     {
         SVC_Handler(regs);
         /* never return here */
     }
-#ifdef RT_USING_LWP
-    if (check_user_stack(esr, regs))
+
+#ifdef RT_USING_SMART
+    /**
+     * Note: check_user_stack will take lock and it will possibly be a dead-lock
+     * if exception comes from kernel.
+     */
+    if ((regs->cpsr & 0x1f) == 0)
     {
-        return;
+        if (user_fault_fixable(esr, regs))
+            return;
+    }
+    else
+    {
+        if (_irq_is_disable(regs->cpsr))
+        {
+            LOG_E("Kernel fault from interrupt/critical section");
+        }
+        if (rt_critical_level() != 0)
+        {
+            LOG_E("scheduler is not available");
+        }
+        else if (user_fault_fixable(esr, regs))
+            return;
     }
 #endif
-    process_exception(esr, regs->pc);
+    print_exception(esr, regs->pc);
     rt_hw_show_register(regs);
-    rt_kprintf("current: %s\n", rt_thread_self()->parent.name);
+    LOG_E("current thread: %s\n", rt_thread_self()->parent.name);
 
 #ifdef RT_USING_FINSH
     list_thread();

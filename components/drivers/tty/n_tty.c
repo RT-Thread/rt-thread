@@ -2008,12 +2008,22 @@ static int job_control(struct tty_struct *tty)
     return __tty_check_change(tty, SIGTTIN);
 }
 
+static struct rt_wqueue *_wait_queue_current_get(struct tty_struct *tty)
+{
+    struct rt_lwp *lwp;
+
+    lwp = lwp_self();
+    if (!lwp || !lwp->tty)
+        lwp = RT_NULL;
+
+    return wait_queue_get(lwp, tty);
+}
+
 static int n_tty_read(struct dfs_file *fd, void *buf, size_t count)
 {
     int level = 0;
     char *b = (char *)buf;
     struct tty_struct *tty = RT_NULL;
-    struct rt_lwp *lwp = RT_NULL;
     struct rt_wqueue *wq = RT_NULL;
     int wait_ret = 0;
     int retval = 0;
@@ -2031,8 +2041,7 @@ static int n_tty_read(struct dfs_file *fd, void *buf, size_t count)
 
     struct n_tty_data *ldata = tty->disc_data;
 
-    lwp = (struct rt_lwp *)(rt_thread_self()->lwp);
-    wq = wait_queue_get(lwp, tty);
+    wq = _wait_queue_current_get(tty);
 
     while(count)
     {
@@ -2171,15 +2180,13 @@ static int n_tty_poll(struct dfs_file *fd, struct rt_pollreq *req)
     int mask = POLLOUT;
     struct tty_struct *tty = RT_NULL;
     struct rt_wqueue *wq = RT_NULL;
-    struct rt_lwp *lwp = RT_NULL;
 
     tty = (struct tty_struct *)fd->vnode->data;
     RT_ASSERT(tty != RT_NULL);
 
     RT_ASSERT(tty->init_flag == TTY_INIT_FLAG_INITED);
 
-    lwp = (struct rt_lwp *)(rt_thread_self()->lwp);
-    wq = wait_queue_get(lwp, tty);
+    wq = _wait_queue_current_get(tty);
     rt_poll_add(wq, req);
 
     level = rt_hw_interrupt_disable();
