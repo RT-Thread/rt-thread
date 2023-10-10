@@ -27,7 +27,7 @@
 
 ## Supported compiler
 
-Support GCC 6 and above compilers. CMake and Scons is needed.
+Support GCC 6 and above compilers.
 
 ## Program firmware
 
@@ -37,19 +37,7 @@ Support GCC 6 and above compilers. CMake and Scons is needed.
 pkgs --update
 ```
 
-### Step 2: generate necessary files
-
-```bash
-python ./tools/generate_files.py
-```
-
-Use PICO_TOOLCHAIN_PATH to specify the compilation toolchain location, for example:
-
-```bash
-env PICO_TOOLCHAIN_PATH=/opt/rt-gcc-arm-none-eabi/bin ./tools/generate_files.py
-``
-
-### Step 3: build
+### Step 2: build
 
 ```bash
 scons -c
@@ -58,7 +46,7 @@ scons
 
 **gcc version >= 6.x.x**
 
-### Step 4: flash
+### Step 3: flash
 
 scons generates a UF2 file:
 
