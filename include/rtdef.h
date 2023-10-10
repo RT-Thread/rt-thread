@@ -50,6 +50,7 @@
  * 2023-04-01     Chushicheng  change version number to v5.0.1
  * 2023-05-20     Bernard      add stdc atomic detection.
  * 2023-09-17     Meco Man     add RT_USING_LIBC_ISO_ONLY macro
+ * 2023-10-10     Chushicheng  change version number to v5.1.0
  */
 
 #ifndef __RT_DEF_H__
@@ -87,8 +88,8 @@ extern "C" {
 
 /* RT-Thread version information */
 #define RT_VERSION_MAJOR                5               /**< Major version number (X.x.x) */
-#define RT_VERSION_MINOR                0               /**< Minor version number (x.X.x) */
-#define RT_VERSION_PATCH                2               /**< Patch version number (x.x.X) */
+#define RT_VERSION_MINOR                1               /**< Minor version number (x.X.x) */
+#define RT_VERSION_PATCH                0               /**< Patch version number (x.x.X) */
 
 /* e.g. #if (RTTHREAD_VERSION >= RT_VERSION_CHECK(4, 1, 0) */
 #define RT_VERSION_CHECK(major, minor, revise)          ((major * 10000) + (minor * 100) + revise)
