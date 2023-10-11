@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2017-12-04     ZYH          first implementation
+ * 2023-10-11     ChuShicheng  change rt_size_t to rt_ssize_t
  */
 #include <usb/include/usb_device_config.h>
 #include <usb/include/usb.h>
@@ -161,7 +162,7 @@ static rt_err_t _ehci0_ep_disable(uep_t ep)
     return RT_EOK;
 }
 
-static rt_size_t _ehci0_ep_read(rt_uint8_t address, void *buffer)
+static rt_ssize_t _ehci0_ep_read(rt_uint8_t address, void *buffer)
 {
     rt_size_t size = 0;
 
@@ -170,13 +171,13 @@ static rt_size_t _ehci0_ep_read(rt_uint8_t address, void *buffer)
     return size;
 }
 
-static rt_size_t _ehci0_ep_read_prepare(rt_uint8_t address, void *buffer, rt_size_t size)
+static rt_ssize_t _ehci0_ep_read_prepare(rt_uint8_t address, void *buffer, rt_size_t size)
 {
     USB_DeviceRecvRequest(ehci0_handle, address, buffer, size);
     return size;
 }
 
-static rt_size_t _ehci0_ep_write(rt_uint8_t address, void *buffer, rt_size_t size)
+static rt_ssize_t _ehci0_ep_write(rt_uint8_t address, void *buffer, rt_size_t size)
 {
     USB_DeviceSendRequest(ehci0_handle, address, buffer, size);
     return size;
