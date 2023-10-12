@@ -230,12 +230,17 @@ int utimensat(int __fd, const char *__path, const struct timespec __times[2], in
                 else
                 {
                     fullpath = link_fn;
+                    if (_SYS_WRAP(dfs_file_stat(fullpath, &buffer)) != 0)
+                    {
+                        rt_free(link_fn);
+                        return -ENOENT;
+                    }
                 }
             }
 
         }
     }
-
+    attr.st_mode = buffer.st_mode;
     ret = dfs_file_setattr(fullpath, &attr);
     rt_free(link_fn);
 
