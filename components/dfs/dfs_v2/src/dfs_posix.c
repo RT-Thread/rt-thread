@@ -134,12 +134,6 @@ int openat(int dirfd, const char *path, int flag, ...)
 #ifndef AT_SYMLINK_NOFOLLOW
 #define AT_SYMLINK_NOFOLLOW 0x100
 #endif
-#ifndef GET_ERRNO
-#define GET_ERRNO() ({int _errno = rt_get_errno(); _errno > 0 ? -_errno : _errno;})
-#endif
-#ifndef _SYS_WRAP
-#define _SYS_WRAP(func) ({int _ret = func; _ret < 0 ? GET_ERRNO() : _ret;})
-#endif
 #ifndef UTIME_NOW
 #define UTIME_NOW  0x3fffffff
 #endif
@@ -221,7 +215,7 @@ int utimensat(int __fd, const char *__path, const struct timespec __times[2], in
         attr.ia_valid &= ~ATTR_MTIME_SET;
     }
 
-    if (_SYS_WRAP(dfs_file_lstat(fullpath, &buffer)) == 0)
+    if (dfs_file_lstat(fullpath, &buffer) == 0)
     {
         if (S_ISLNK(buffer.st_mode) && (__flags != AT_SYMLINK_NOFOLLOW))
         {
