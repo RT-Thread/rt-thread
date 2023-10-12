@@ -16,6 +16,8 @@
 #include <dfs_dentry.h>
 #include <dfs_mnt.h>
 #include "dfs_private.h"
+#include <sys/stat.h>
+#include "syscall_generic.h"
 
 #ifdef RT_USING_SMART
 #include <lwp.h>
@@ -130,6 +132,9 @@ int openat(int dirfd, const char *path, int flag, ...)
 #endif
 #ifndef ATTR_MTIME_SET
 #define ATTR_MTIME_SET	(1 << 8)
+#endif
+#ifndef AT_SYMLINK_NOFOLLOW
+#define AT_SYMLINK_NOFOLLOW 0x100
 #endif
 int utimensat(int __fd, const char *__path, const struct timespec __times[2], int __flags)
 {
