@@ -17,7 +17,6 @@
 #include <dfs_mnt.h>
 #include "dfs_private.h"
 #include <sys/stat.h>
-#include "syscall_generic.h"
 
 #ifdef RT_USING_SMART
 #include <lwp.h>
@@ -135,6 +134,9 @@ int openat(int dirfd, const char *path, int flag, ...)
 #endif
 #ifndef AT_SYMLINK_NOFOLLOW
 #define AT_SYMLINK_NOFOLLOW 0x100
+#endif
+#ifndef _SYS_WRAP
+#define _SYS_WRAP(func) ({int _ret = func; _ret < 0 ? GET_ERRNO() : _ret;})
 #endif
 int utimensat(int __fd, const char *__path, const struct timespec __times[2], int __flags)
 {
