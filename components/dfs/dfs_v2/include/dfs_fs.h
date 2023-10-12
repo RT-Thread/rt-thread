@@ -31,7 +31,7 @@ struct dfs_partition
 
 struct dfs_attr
 {
-    unsigned int	ia_valid;
+    unsigned int ia_valid;
     mode_t  st_mode;
     struct timespec ia_atime;
     struct timespec ia_mtime;
