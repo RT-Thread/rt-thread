@@ -16,7 +16,6 @@
 #include <dfs_dentry.h>
 #include <dfs_mnt.h>
 #include "dfs_private.h"
-#include <sys/stat.h>
 
 #ifdef RT_USING_SMART
 #include <lwp.h>
@@ -135,8 +134,17 @@ int openat(int dirfd, const char *path, int flag, ...)
 #ifndef AT_SYMLINK_NOFOLLOW
 #define AT_SYMLINK_NOFOLLOW 0x100
 #endif
+#ifndef GET_ERRNO
+#define GET_ERRNO() ({int _errno = rt_get_errno(); _errno > 0 ? -_errno : _errno;})
+#endif
 #ifndef _SYS_WRAP
 #define _SYS_WRAP(func) ({int _ret = func; _ret < 0 ? GET_ERRNO() : _ret;})
+#endif
+#ifndef UTIME_NOW
+#define UTIME_NOW  0x3fffffff
+#endif
+#ifndef UTIME_OMIT
+#define UTIME_OMIT 0x3ffffffe
 #endif
 int utimensat(int __fd, const char *__path, const struct timespec __times[2], int __flags)
 {
@@ -162,7 +170,7 @@ int utimensat(int __fd, const char *__path, const struct timespec __times[2], in
         }
         else
         {
-            fullpath = __path;
+            fullpath = (char*)__path;
         }
     }
     else
