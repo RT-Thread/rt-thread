@@ -432,6 +432,7 @@ void lwp_free(struct rt_lwp* lwp)
 #ifdef ARCH_MM_MMU
     lwp_unmap_user_space(lwp);
 #endif
+    timer_list_free(&lwp->timer);
 
     level = rt_hw_interrupt_disable();
     /* for children */
@@ -513,7 +514,6 @@ void lwp_free(struct rt_lwp* lwp)
         }
     }
 
-    timer_list_free(&lwp->timer);
     lwp_pid_put(lwp_to_pid(lwp));
     rt_hw_interrupt_enable(level);
     rt_free(lwp);
@@ -713,6 +713,7 @@ pid_t waitpid(pid_t pid, int *status, int options)
         }
         (*lwp_node) = lwp->sibling;
         lwp->parent = RT_NULL;
+        lwp_pid_put(pid);
     }
 
 quit:
