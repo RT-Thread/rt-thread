@@ -180,11 +180,11 @@ int utimensat(int __fd, const char *__path, const struct timespec __times[2], in
     //update time
     attr.ia_valid = ATTR_ATIME_SET | ATTR_MTIME_SET;
     time(&current_time);
-    if (UTIME_NOW == __times[0].tv_sec)
+    if (UTIME_NOW == __times[0].tv_nsec)
     {
         attr.ia_atime.tv_sec = current_time;
     }
-    else if (UTIME_OMIT != __times[0].tv_sec)
+    else if (UTIME_OMIT != __times[0].tv_nsec)
     {
         attr.ia_atime.tv_sec = __times[0].tv_sec;
     }
@@ -193,11 +193,11 @@ int utimensat(int __fd, const char *__path, const struct timespec __times[2], in
         attr.ia_valid &= ~ATTR_ATIME_SET;
     }
 
-    if (UTIME_NOW == __times[1].tv_sec)
+    if (UTIME_NOW == __times[1].tv_nsec)
     {
         attr.ia_mtime.tv_sec = current_time;
     }
-    else if (UTIME_OMIT == __times[1].tv_sec)
+    else if (UTIME_OMIT == __times[1].tv_nsec)
     {
         attr.ia_mtime.tv_sec = __times[1].tv_sec;
     }
