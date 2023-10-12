@@ -6,7 +6,7 @@
  */
 
 #include "fsl_dc_fb_lcdifv2.h"
-#if defined(SDK_OS_RTOS)
+#if defined(USE_RTOS)
 #include "rtthread.h"
 #endif
 
@@ -144,7 +144,7 @@ status_t DC_FB_LCDIFV2_EnableLayer(const dc_fb_t *dc, uint8_t layer)
 
         while (true == dcHandle->layers[layer].shadowLoadPending)
         {
-#if defined(SDK_OS_RTOS)
+#if defined(USE_RTOS)
             rt_thread_delay(1);
 #endif
         }

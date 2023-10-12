@@ -1315,10 +1315,10 @@ void imxrt_flexspi_pins_init(void)
 }
 #endif
 
-#ifdef BSP_USING_VGLITE
-void imxrt_lcd_pins_init(void)
+#ifdef BSP_USING_LCD_MIPI
+void imxrt_mipi_dsi_pins_init(void)
 {
-#ifdef BSP_USING_VGLITE
+#ifdef BSP_USING_LCD_MIPI
     CLOCK_EnableClock(kCLOCK_Iomuxc); /* LPCG on: LPCG is ON. */
 
     IOMUXC_SetPinMux(
@@ -1379,8 +1379,8 @@ void rt_hw_board_init()
     imxrt_flexspi_pins_init();
 #endif
 
-#ifdef BSP_USING_VGLITE
-    imxrt_lcd_pins_init();
+#ifdef BSP_USING_LCD_MIPI
+    imxrt_mipi_dsi_pins_init();
 #endif
 }
 

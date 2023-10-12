@@ -10,11 +10,11 @@
 #include "mf_rlefont.h"
 
 /* Compute the kerning adjustment when c1 is followed by c2.
- *
+ * 
  * font: Pointer to the font definition.
  * c1: The previous character.
  * c2: The next character to render.
- *
+ * 
  * Returns the offset to add to the x position for c2.
  */
 #if MF_USE_KERNING

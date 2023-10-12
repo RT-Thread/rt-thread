@@ -2,9 +2,12 @@ from building import *
 
 src = []
 cwd = []
+
 CPPDEFINES = []
 
 cwd = GetCurrentDir()
+
+path =  [cwd]
 
 if GetDepend('BSP_USING_GPIO'):
     src += ['drv_gpio.c']
@@ -80,8 +83,23 @@ if GetDepend('BSP_USING_PULSE_ENCODER'):
 if GetDepend('BSP_USING_FLEXSPI'):
     src += ['drv_flexspi.c']
 
+if GetDepend('BSP_USING_LCD_MIPI'):
+    src += ['drv_lcd_mipi.c']
+
+if GetDepend(['BSP_USING_VGLITE']):
+    src += Glob('vglite/font/*.c')
+    src += Glob('vglite/font/mcufont/decoder/*.c')
+    src += Glob('vglite/VGLite/rtos/*.c')
+    src += Glob('vglite/VGLite/*.c')
+    src += Glob('vglite/VGLiteKernel/rtos/*.c')
+    src += Glob('vglite/VGLiteKernel/*.c')
+    path += [cwd + '/vglite/font', cwd + '/vglite/font/mcufont/decoder', cwd + '/vglite/inc', cwd + '/vglite/VGLite', cwd + '/vglite/VGLite/rtos', cwd + '/vglite/VGLiteKernel', cwd + '/vglite/VGLiteKernel/rtos']
+
+    if GetDepend(['VGLITE_USING_ELM']):
+        src += Glob('vglite/elementary/src/*.c')
+        path += [cwd + '/vglite/elementary/inc', cwd + '/vglite/elementary/src']
+
 src += ['drv_common.c']
-path =  [cwd]
 
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path, CPPDEFINES=CPPDEFINES)
 
