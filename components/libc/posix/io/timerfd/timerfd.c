@@ -35,9 +35,9 @@ struct rt_timerfd
     rt_timer_t timer;
     struct rt_mutex lock;
     struct timespec pre_time;
-    rt_uint64_t timeout_num;
+    rt_atomic_t timeout_num;
     struct rt_wqueue_node wqn;
-    int ticks;
+    rt_atomic_t ticks;
     int clockid;
     int isperiodic;
     int tick_out;
