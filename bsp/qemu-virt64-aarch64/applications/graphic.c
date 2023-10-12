@@ -221,8 +221,4 @@ int graphic_init(void)
 
     return -RT_ERROR;
 }
-#ifdef RT_USING_SMP
-INIT_ENV_EXPORT(graphic_init);
-#else
 MSH_CMD_EXPORT(graphic_init, Graphic initialize);
-#endif
