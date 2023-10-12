@@ -257,11 +257,11 @@ const uint32_t *dtb_node_get_address(const struct dtb_node *dev, int index,
 
 #define dtb_node_string_list(string, ...) ((char *[]){string, ##__VA_ARGS__, NULL})
 
-#define for_each_property_string(node_ptr, property_name, str, size)            \
+#define for_each_property_string(node_ptr, property_name, str, stre, size)            \
     for (str = dtb_node_get_dtb_node_property_value(node_ptr, property_name, &size), \
-        size += (typeof(size))(size_t)str;                                      \
+        stre = size + str;                                      \
          str && *str;                                                           \
-         str = dtb_node_get_dtb_string_list_value_next((void *)str, (void *)(size_t)size))
+         str = dtb_node_get_dtb_string_list_value_next((void *)str, (void *)(size_t)stre))
 
 #define for_each_property_cell(node_ptr, property_name, value, list, size)       \
     for (list = dtb_node_get_dtb_node_property_value(node_ptr, property_name, &size), \

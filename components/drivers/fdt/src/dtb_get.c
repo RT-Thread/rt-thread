@@ -760,10 +760,10 @@ rt_bool_t dtb_node_get_dtb_node_compatible_match(const struct dtb_node *dtb_node
     {
         if (compatibles != NULL)
         {
-            char *str_ptr;
+            char *str_ptr, *end_ptr;
             int prop_sz;
 
-            for_each_property_string(dtb_node, "compatible", str_ptr, prop_sz)
+            for_each_property_string(dtb_node, "compatible", str_ptr, end_ptr, prop_sz)
             {
                 if (!strcmp(compatibles, str_ptr))
                 {

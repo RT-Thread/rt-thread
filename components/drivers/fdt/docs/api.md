@@ -379,7 +379,7 @@ rt_uint8_t fdt_get_dtb_byte_value(void *value)
 
 ## 遍历属性中字符串宏
 ```c
-for_each_property_string(node_ptr, property_name, str, size)
+for_each_property_string(node_ptr, property_name, str, stre, size)
 ```
 
 | 参数 | 描述 |

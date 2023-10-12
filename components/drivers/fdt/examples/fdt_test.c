@@ -19,7 +19,7 @@ int dtb_test()
                 int property_size;
                 rt_uint32_t u32_value;
                 rt_uint32_t *u32_ptr;
-                char *str_ptr;
+                char *str_ptr, *end_ptr;
 
                 rt_kprintf("name = %s\n", serial0->name);
 
@@ -31,7 +31,7 @@ int dtb_test()
                 rt_kputs("\b>;\n");
 
                 rt_kputs("compatible = ");
-                for_each_property_string(serial0, "compatible", str_ptr, property_size)
+                for_each_property_string(serial0, "compatible", str_ptr, end_ptr, property_size)
                 {
                     rt_kprintf("\"%s\",", str_ptr);
                 }
