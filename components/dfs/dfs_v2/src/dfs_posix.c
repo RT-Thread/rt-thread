@@ -125,6 +125,114 @@ int openat(int dirfd, const char *path, int flag, ...)
     return fd;
 }
 
+#ifndef ATTR_ATIME_SET
+#define ATTR_ATIME_SET	(1 << 7)
+#endif
+#ifndef ATTR_MTIME_SET
+#define ATTR_MTIME_SET	(1 << 8)
+#endif
+int utimensat(int __fd, const char *__path, const struct timespec __times[2], int __flags)
+{
+    int ret;
+    struct stat buffer;
+    struct dfs_file *d;
+    char *fullpath;
+    struct dfs_attr attr;
+    time_t current_time;
+    char *link_fn = (char *)rt_malloc(DFS_PATH_MAX);
+    int err;
+
+    if (__path == NULL)
+    {
+        return -EFAULT;
+    }
+
+    if (__path[0] == '/' || __fd == AT_FDCWD)
+    {
+        if (stat(__path, &buffer) < 0)
+        {
+            return -ENOENT;
+        }
+        else
+        {
+            fullpath = __path;
+        }
+    }
+    else
+    {
+        if (__fd != AT_FDCWD)
+        {
+            d = fd_get(__fd);
+            if (!d || !d->vnode)
+            {
+                return -EBADF;
+            }
+
+            fullpath = dfs_dentry_full_path(d->dentry);
+            if (!fullpath)
+            {
+                rt_set_errno(-ENOMEM);
+                return -1;
+            }
+        }
+    }
+
+    //update time
+    attr.ia_valid = ATTR_ATIME_SET | ATTR_MTIME_SET;
+    time(&current_time);
+    if (UTIME_NOW == __times[0].tv_sec)
+    {
+        attr.ia_atime.tv_sec = current_time;
+    }
+    else if (UTIME_OMIT != __times[0].tv_sec)
+    {
+        attr.ia_atime.tv_sec = __times[0].tv_sec;
+    }
+    else
+    {
+        attr.ia_valid &= ~ATTR_ATIME_SET;
+    }
+
+    if (UTIME_NOW == __times[1].tv_sec)
+    {
+        attr.ia_mtime.tv_sec = current_time;
+    }
+    else if (UTIME_OMIT == __times[1].tv_sec)
+    {
+        attr.ia_mtime.tv_sec = __times[1].tv_sec;
+    }
+    else
+    {
+        attr.ia_valid &= ~ATTR_MTIME_SET;
+    }
+
+    if (_SYS_WRAP(dfs_file_lstat(fullpath, &buffer)) == 0)
+    {
+        if (S_ISLNK(buffer.st_mode) && (__flags != AT_SYMLINK_NOFOLLOW))
+        {
+            if (link_fn)
+            {
+                err = dfs_file_readlink(fullpath, link_fn, DFS_PATH_MAX);
+                if (err < 0)
+                {
+                    rt_free(link_fn);
+                    return -ENOENT;
+                }
+                else
+                {
+                    fullpath = link_fn;
+                }
+            }
+
+        }
+    }
+
+    ret = dfs_file_setattr(fullpath, &attr);
+    rt_free(link_fn);
+
+    return ret;
+}
+
 /**
  * this function is a POSIX compliant version,
  * which will create a new file or rewrite an existing one
