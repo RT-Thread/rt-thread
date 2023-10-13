@@ -6135,6 +6135,45 @@ sysret_t sys_ftruncate(int fd, off_t length)
     return (ret < 0 ? GET_ERRNO() : ret);
 }
 
+sysret_t sys_utimensat(int __fd, const char *__path, const struct timespec __times[2], int __flags)
+{
+#ifdef RT_USING_DFS_V2
+#ifdef ARCH_MM_MMU
+    int ret = -1;
+    rt_size_t len = 0;
+    char *kpath = RT_NULL;
+
+    len = lwp_user_strlen(__path);
+    if (len <= 0)
+    {
+        return -EINVAL;
+    }
+
+    kpath = (char *)kmem_get(len + 1);
+    if (!kpath)
+    {
+        return -ENOMEM;
+    }
+
+    lwp_get_from_user(kpath, (void *)__path, len + 1);
+    ret = utimensat(__fd, kpath, __times, __flags);
+
+    kmem_put(kpath);
+
+    return ret;
+#else
+    if (!lwp_user_accessable((void *)__path, 1))
+    {
+        return -EFAULT;
+    }
+    int ret = utimensat(__fd, __path, __times, __flags);
+    return ret;
+#endif
+#else
+    return -1;
+#endif
+}
+
 sysret_t sys_chmod(const char *fileName, mode_t mode)
 {
     char *copy_fileName;
@@ -6661,6 +6700,7 @@ const static struct rt_syscall_def func_table[] =
     SYSCALL_SIGN(sys_memfd_create),                     /* 200 */
     SYSCALL_SIGN(sys_ftruncate),
     SYSCALL_SIGN(sys_setitimer),
+    SYSCALL_SIGN(sys_utimensat),
 };
 
 const void *lwp_get_sys_api(rt_uint32_t number)
