@@ -125,21 +125,6 @@ int openat(int dirfd, const char *path, int flag, ...)
     return fd;
 }
 
-#ifndef ATTR_ATIME_SET
-#define ATTR_ATIME_SET	(1 << 7)
-#endif
-#ifndef ATTR_MTIME_SET
-#define ATTR_MTIME_SET	(1 << 8)
-#endif
-#ifndef AT_SYMLINK_NOFOLLOW
-#define AT_SYMLINK_NOFOLLOW 0x100
-#endif
-#ifndef UTIME_NOW
-#define UTIME_NOW  0x3fffffff
-#endif
-#ifndef UTIME_OMIT
-#define UTIME_OMIT 0x3ffffffe
-#endif
 int utimensat(int __fd, const char *__path, const struct timespec __times[2], int __flags)
 {
     int ret;
