@@ -36,7 +36,7 @@ void rt_hw_secondary_cpu_up(void)
     char *entry = (char *)rt_secondary_cpu_entry;
 
 #ifdef RT_USING_SMART
-    plat_boot_reg = (volatile void **)rt_hw_mmu_map(&mmu_info, 0, (void *)plat_boot_reg, 0x1000, MMU_MAP_K_RW);
+    plat_boot_reg = (volatile void **)rt_ioremap_nocache((void *)plat_boot_reg, 0x1000);
     if (!plat_boot_reg)
     {
         /* failed */
