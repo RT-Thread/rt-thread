@@ -18,6 +18,8 @@
 #include "drivers/lcd.h"
 #include <dfs_file.h>
 
+#ifdef RT_USING_VIRTIO_GPU
+
 static struct rt_device_graphic_info _graphic_info;
 static struct rt_device_rect_info    _rect_info;
 static struct rt_device              _fb      = {};
@@ -131,3 +133,5 @@ static int fb_init()
     return RT_EOK;
 }
 INIT_COMPONENT_EXPORT(fb_init);
+
+#endif
