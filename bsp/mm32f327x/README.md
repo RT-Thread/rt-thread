@@ -69,7 +69,7 @@ MM32F3270 EVB 开发板特性：
 
 维护人：
 
--[Mazhiyuan](https://github.com/cndabai) email: 1468728718@qq.com
+- [Mazhiyuan](https://github.com/cndabai) email: 1468728718@qq.com
 
 ## 5. 参考
 
