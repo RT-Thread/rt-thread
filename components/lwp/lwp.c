@@ -1090,7 +1090,7 @@ static void _lwp_thread_entry(void *parameter)
 
     if (lwp->debug)
     {
-        lwp->bak_first_ins = *(uint32_t *)lwp->text_entry;
+        lwp->bak_first_inst = *(uint32_t *)lwp->text_entry;
         *(uint32_t *)lwp->text_entry = dbg_get_ins();
         rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, lwp->text_entry, sizeof(uint32_t));
         icache_invalid_all();
