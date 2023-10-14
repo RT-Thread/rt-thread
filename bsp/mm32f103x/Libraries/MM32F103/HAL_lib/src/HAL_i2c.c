@@ -645,7 +645,7 @@ ErrorStatus I2C_CheckEvent(I2C_TypeDef* I2Cx, uint32_t I2C_EVENT)
 FlagStatus I2C_GetFlagStatus(I2C_TypeDef* I2Cx, uint32_t I2C_FLAG)
 {
     FlagStatus bitstatus = RESET;
-    __IO uint32_t i2creg = 0, i2cxbase = 0;
+    //__IO uint32_t i2creg = 0, i2cxbase = 0;
     /* Check the parameters */
     assert_param(IS_I2C_ALL_PERIPH(I2Cx));
     assert_param(IS_I2C_GET_FLAG(I2C_FLAG));
