@@ -513,9 +513,9 @@ ssize_t sys_write(int fd, const void *buf, size_t nbyte)
 }
 
 /* syscall: "lseek" ret: "off_t" args: "int" "off_t" "int" */
-off_t sys_lseek(int fd, off_t offset, int whence)
+size_t sys_lseek(int fd, size_t offset, int whence)
 {
-    off_t ret = lseek(fd, offset, whence);
+    size_t ret = lseek(fd, offset, whence);
     return (ret < 0 ? GET_ERRNO() : ret);
 }
 
@@ -1303,7 +1303,7 @@ rt_base_t sys_brk(void *addr)
 }
 
 void *sys_mmap2(void *addr, size_t length, int prot,
-        int flags, int fd, off_t pgoffset)
+        int flags, int fd, size_t pgoffset)
 {
     return lwp_mmap2(addr, length, prot, flags, fd, pgoffset);
 }
@@ -6126,7 +6126,7 @@ sysret_t sys_epoll_pwait(int fd,
     return (ret < 0 ? GET_ERRNO() : ret);
 }
 
-sysret_t sys_ftruncate(int fd, off_t length)
+sysret_t sys_ftruncate(int fd, size_t length)
 {
     int ret;
 
@@ -6215,10 +6215,10 @@ sysret_t sys_reboot(int magic)
     return 0;
 }
 
-ssize_t sys_pread64(int fd, void *buf, int size, off_t offset)
+ssize_t sys_pread64(int fd, void *buf, int size, size_t offset)
 #ifdef RT_USING_DFS_V2
 {
-    ssize_t pread(int fd, void *buf, size_t len, off_t offset);
+    ssize_t pread(int fd, void *buf, size_t len, size_t offset);
 #ifdef ARCH_MM_MMU
     ssize_t ret = -1;
     void *kmem = RT_NULL;
@@ -6269,10 +6269,10 @@ ssize_t sys_pread64(int fd, void *buf, int size, off_t offset)
 }
 #endif
 
-ssize_t sys_pwrite64(int fd, void *buf, int size, off_t offset)
+ssize_t sys_pwrite64(int fd, void *buf, int size, size_t offset)
 #ifdef RT_USING_DFS_V2
 {
-    ssize_t pwrite(int fd, const void *buf, size_t len, off_t offset);
+    ssize_t pwrite(int fd, const void *buf, size_t len, size_t offset);
 #ifdef ARCH_MM_MMU
     ssize_t ret = -1;
     void *kmem = RT_NULL;
