@@ -6,6 +6,10 @@ menuconfig RT_USING_LWP
         The lwP is a light weight process running in user mode.
 
 if RT_USING_LWP
+    config LWP_DEBUG
+        bool "Enable debugging features of LwP"
+        default n
+
     config RT_LWP_MAX_NR
         int "The max number of light-weight process"
         default 30
