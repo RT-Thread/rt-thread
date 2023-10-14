@@ -44,7 +44,7 @@ MM32F3270 EVB 开发板特性：
 - 4-36pin0.1 英寸间距双排连接器, 管脚顺序与 MCU 相同
 - PCB 板面尺寸：6.4*3.2 英寸
 
-更多详细信息请咨询[灵动微电子技术支持](https://www.mindmotion.com.cn/)
+更多详细信息请咨询[上海灵动微电子](https://www.mindmotion.com.cn/)
 
 ## 2. 编译说明
 
