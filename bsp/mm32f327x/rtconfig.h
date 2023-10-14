@@ -47,7 +47,7 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uart1"
-#define RT_VER_NUM 0x50002
+#define RT_VER_NUM 0x50100
 
 /* RT-Thread Components */
 
@@ -125,6 +125,9 @@
 
 
 /* Wiced WiFi */
+
+
+/* CYW43012 WiFi */
 
 
 /* IoT Cloud */

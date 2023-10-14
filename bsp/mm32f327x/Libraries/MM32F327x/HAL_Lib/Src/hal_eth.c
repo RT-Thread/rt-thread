@@ -150,7 +150,7 @@ u32 ETH_Init(ETH_InitTypeDef* ptr, u16 phy_addr)
     }
 
     ////////////////////////////////////////////////////////////////////////////
-    ETH->MACCR = ETH->MACCR & MACCR_CLEAR_MASK |   (ptr->ETH_Watchdog |
+    ETH->MACCR = (ETH->MACCR & MACCR_CLEAR_MASK) |   (ptr->ETH_Watchdog |
                  ptr->ETH_Jabber |
                  ptr->ETH_InterFrameGap |
                  ptr->ETH_CarrierSense |
@@ -175,7 +175,7 @@ u32 ETH_Init(ETH_InitTypeDef* ptr, u16 phy_addr)
     ETH->MACHTHR = ptr->ETH_HashTableHigh;
     ETH->MACHTLR = ptr->ETH_HashTableLow;
 
-    ETH->MACFCR = ETH->MACFCR & MACFCR_CLEAR_MASK | ((ptr->ETH_PauseTime << ETH_MACFCR_PT_Pos) |
+    ETH->MACFCR = (ETH->MACFCR & MACFCR_CLEAR_MASK) | ((ptr->ETH_PauseTime << ETH_MACFCR_PT_Pos) |
                   ptr->ETH_ZeroQuantaPause |
                   ptr->ETH_PauseLowThreshold |
                   ptr->ETH_UnicastPauseFrameDetect |
