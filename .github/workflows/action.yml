@@ -67,6 +67,7 @@ jobs:
                 - "hc32/ev_hc32f460_lqfp100_v2"
                 - "hc32l196"
                 - "mm32/mm32f3270-100ask-pitaya"
+                - "mm32f327x"
                 - "sam7x"
                 - "hk32/hk32f030c8-mini"
                 - "acm32/acm32f0x0-nucleo"
