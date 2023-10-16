@@ -15,6 +15,7 @@
  * 2018-11-22     Jesven       add per cpu tick
  * 2020-12-29     Meco Man     implement rt_tick_get_millisecond()
  * 2021-06-01     Meco Man     add critical section projection for rt_tick_increase()
+ * 2023-10-16     RiceChen     fix: only the main core detection rt_timer_check(), in SMP mode
  */
 
 #include <rthw.h>
@@ -123,6 +124,12 @@ void rt_tick_increase(void)
     }
 
     /* check timer */
+#ifdef RT_USING_SMP
+    if(rt_hw_cpu_id() != 0)
+    {
+        return;
+    }
+#endif
     rt_timer_check();
 }
 
