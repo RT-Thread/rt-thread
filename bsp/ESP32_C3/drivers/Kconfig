@@ -66,7 +66,21 @@ menu "On-chip Peripheral Drivers"
         bool "Enable I2C0"
         select RT_USING_I2C
         default n        
+    
+    config BSP_USING_WIFI
+        bool "Enable WIFI"
+        select RT_USING_WIFI
+        default n
+    
+    config BSP_USING_BLE
+        bool "Enable BLE"
+        default n
+
 endmenu
+
+config BSP_ENABLE_GDBSTUB
+    bool "Enable ESP_GDBSTUB compontent"
+    default n
 
 endmenu
 
