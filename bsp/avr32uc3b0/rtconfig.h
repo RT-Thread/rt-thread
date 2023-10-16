@@ -47,8 +47,8 @@
 #define RT_USING_DEVICE
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
-#define RT_CONSOLE_DEVICE_NAME "uart"
-#define RT_VER_NUM 0x50002
+#define RT_CONSOLE_DEVICE_NAME "uart1"
+#define RT_VER_NUM 0x50100
 
 /* RT-Thread Components */
 
@@ -76,7 +76,6 @@
 #define RT_UNAMED_PIPE_NUMBER 64
 #define RT_USING_SERIAL
 #define RT_USING_SERIAL_V1
-#define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 64
 #define RT_USING_PIN
 
@@ -225,5 +224,16 @@
 
 /* Uncategorized */
 
+/* On-chip Peripheral Drivers */
+
+#define BSP_USING_PIN
+#define BSP_USING_UART
+#define BSP_USING_UART1
+#define BSP_UART1_TX_PIN_34
+#define BSP_UART1_TX_PIN 34
+#define BSP_UART1_TX_PIN_FUNCTION 2
+#define BSP_UART1_RX_PIN_35
+#define BSP_UART1_RX_PIN 35
+#define BSP_UART1_RX_PIN_FUNCTION 2
 
 #endif
