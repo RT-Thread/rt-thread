@@ -334,7 +334,7 @@
               <MiscControls />
               <Define>RT_USING_LIBC, RT_USING_ARMLIBC, __STDC_LIMIT_MACROS, __RTTHREAD__, __CLK_TCK=RT_TICK_PER_SECOND</Define>
               <Undefine />
-              <IncludePath>..\..\..\components\libc\compilers\common\extension\fcntl\octal;drivers;Libraries\core;..\..\..\components\drivers\include;..\..\..\libcpu\arm\cortex-m0;..\..\..\components\drivers\include;.;Libraries\sdk;..\..\..\components\libc\compilers\common\include;..\..\..\include;..\..\..\components\libc\posix\io\stdio;applications;..\..\..\components\libc\posix\ipc;..\..\..\components\finsh;..\..\..\libcpu\arm\common;..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\compilers\common\extension;..\..\..\components\drivers\include;Libraries</IncludePath>
+              <IncludePath>..\..\..\components\libc\posix\io\poll;applications;Libraries\core;..\..\..\include;..\..\..\components\libc\compilers\common\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\libc\posix\ipc;..\..\..\libcpu\arm\common;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\components\finsh;..\..\..\components\libc\posix\io\eventfd;..\..\..\components\libc\posix\io\epoll;..\..\..\components\drivers\include;drivers;.;..\..\..\libcpu\arm\cortex-m0;Libraries\sdk;Libraries;..\..\..\components\libc\compilers\common\extension</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -410,13 +410,6 @@
           </Files>
           <Files>
             <File>
-              <FileName>cstdio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\compilers\common\cstdio.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>cstdlib.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\libc\compilers\common\cstdlib.c</FilePath>
@@ -434,6 +427,13 @@
               <FileName>ctime.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\libc\compilers\common\ctime.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cunistd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\libc\compilers\common\cunistd.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -477,6 +477,13 @@
         </Group>
         <Group>
           <GroupName>DeviceDrivers</GroupName>
+          <Files>
+            <File>
+              <FileName>device.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\core\device.c</FilePath>
+            </File>
+          </Files>
           <Files>
             <File>
               <FileName>completion.c</FileName>
@@ -614,13 +621,6 @@
           </Files>
           <Files>
             <File>
-              <FileName>device.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\device.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>idle.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\idle.c</FilePath>
@@ -701,23 +701,9 @@
           <GroupName>Libraries</GroupName>
           <Files>
             <File>
-              <FileName>yc_dma.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\sdk\yc_dma.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>startup.s</FileName>
               <FileType>2</FileType>
               <FilePath>Libraries\startup\startup.s</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>yc_gpio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\sdk\yc_gpio.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -729,6 +715,27 @@
           </Files>
           <Files>
             <File>
+              <FileName>system.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\core\system.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>yc_dma.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\sdk\yc_dma.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>yc_wdt.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\sdk\yc_wdt.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>yc_systick.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\sdk\yc_systick.c</FilePath>
@@ -736,9 +743,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>yc_uart.c</FileName>
+              <FileName>yc_gpio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\sdk\yc_uart.c</FilePath>
+              <FilePath>Libraries\sdk\yc_gpio.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -750,16 +757,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>system.c</FileName>
+              <FileName>yc_uart.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\core\system.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>yc_wdt.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\sdk\yc_wdt.c</FilePath>
+              <FilePath>Libraries\sdk\yc_uart.c</FilePath>
             </File>
           </Files>
         </Group>

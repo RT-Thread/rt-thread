@@ -41,6 +41,9 @@ if GetDepend(['BSP_USING_SPI']):
 if GetDepend(['BSP_USING_SCI_SPI']):
     src += ['drv_sci_spi.c']
 
+if GetDepend(['BSP_USING_SCI']):
+    src += ['drv_sci.c']
+
 if GetDepend(['BSP_USING_ADC']):
     src += ['drv_adc.c']
 

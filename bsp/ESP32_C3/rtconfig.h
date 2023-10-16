@@ -18,6 +18,9 @@
 
 /* kservice optimization */
 
+#define RT_USING_DEBUG
+#define RT_DEBUGING_COLOR
+#define RT_DEBUGING_CONTEXT
 
 /* Inter-Thread communication */
 
@@ -40,7 +43,7 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 256
 #define RT_CONSOLE_DEVICE_NAME "uart"
-#define RT_VER_NUM 0x50001
+#define RT_VER_NUM 0x50002
 
 /* RT-Thread Components */
 

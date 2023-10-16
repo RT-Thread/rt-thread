@@ -343,7 +343,7 @@
               <MiscControls />
               <Define>RT_USING_LIBC, RT_USING_ARMLIBC, __STDC_LIMIT_MACROS, __RTTHREAD__, __CLK_TCK=RT_TICK_PER_SECOND</Define>
               <Undefine />
-              <IncludePath>..\..\components\libc\posix\ipc;..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\components\net\lwip\lwip-2.0.3\src\include\ipv4;..\..\include;.;..\..\components\libc\compilers\common\extension;..\..\components\libc\posix\io\stdio;..\..\components\libc\posix\io\poll;..\..\libcpu\arm\AT91SAM7X;..\..\components\libc\compilers\common\include;drivers;..\..\components\drivers\include;..\..\components\net\lwip\lwip-2.0.3\src\include\posix;..\..\components\finsh;..\..\libcpu\arm\common;..\..\components\net\lwip\port;applications;..\..\components\net\lwip\lwip-2.0.3\src\include;..\..\components\net\lwip\lwip-2.0.3\src\include\netif</IncludePath>
+              <IncludePath>..\..\components\libc\posix\io\poll;..\..\include;..\..\components\libc\compilers\common\extension;..\..\components\drivers\include;applications;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\libc\posix\ipc;..\..\libcpu\arm\common;..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\components\libc\posix\io\eventfd;..\..\components\finsh;..\..\components\libc\posix\io\epoll;..\..\components\libc\compilers\common\include;.;drivers;..\..\libcpu\arm\AT91SAM7X;..\..\components\drivers\include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -384,16 +384,16 @@
           <GroupName>Applications</GroupName>
           <Files>
             <File>
-              <FileName>application.c</FileName>
+              <FileName>startup.c</FileName>
               <FileType>1</FileType>
-              <FilePath>applications\application.c</FilePath>
+              <FilePath>applications\startup.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>startup.c</FileName>
+              <FileName>application.c</FileName>
               <FileType>1</FileType>
-              <FilePath>applications\startup.c</FilePath>
+              <FilePath>applications\application.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -422,13 +422,6 @@
           </Files>
           <Files>
             <File>
-              <FileName>cstdio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\libc\compilers\common\cstdio.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>cstdlib.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\libc\compilers\common\cstdlib.c</FilePath>
@@ -446,6 +439,13 @@
               <FileName>ctime.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\libc\compilers\common\ctime.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cunistd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\compilers\common\cunistd.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -519,37 +519,9 @@
           <GroupName>DeviceDrivers</GroupName>
           <Files>
             <File>
-              <FileName>workqueue.c</FileName>
+              <FileName>device.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\ipc\workqueue.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ringbuffer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\ipc\ringbuffer.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>pipe.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\ipc\pipe.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>waitqueue.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\ipc\waitqueue.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ringblk_buf.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\ipc\ringblk_buf.c</FilePath>
+              <FilePath>..\..\components\drivers\core\device.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -566,28 +538,70 @@
               <FilePath>..\..\components\drivers\ipc\dataqueue.c</FilePath>
             </File>
           </Files>
-        </Group>
-        <Group>
-          <GroupName>Drivers</GroupName>
           <Files>
             <File>
-              <FileName>sam7x_emac.c</FileName>
+              <FileName>pipe.c</FileName>
               <FileType>1</FileType>
-              <FilePath>drivers\sam7x_emac.c</FilePath>
+              <FilePath>..\..\components\drivers\ipc\pipe.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ringblk_buf.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\ipc\ringblk_buf.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ringbuffer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\ipc\ringbuffer.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>waitqueue.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\ipc\waitqueue.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>workqueue.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\ipc\workqueue.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>pin.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\misc\pin.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>serial.c</FileName>
               <FileType>1</FileType>
-              <FilePath>drivers\serial.c</FilePath>
+              <FilePath>..\..\components\drivers\serial\serial.c</FilePath>
             </File>
           </Files>
+        </Group>
+        <Group>
+          <GroupName>Drivers</GroupName>
           <Files>
             <File>
               <FileName>board.c</FileName>
               <FileType>1</FileType>
               <FilePath>drivers\board.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>drivers_serial.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>drivers\serial.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -614,6 +628,13 @@
               <FilePath>..\..\components\finsh\msh_parse.c</FilePath>
             </File>
           </Files>
+          <Files>
+            <File>
+              <FileName>cmd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\finsh\cmd.c</FilePath>
+            </File>
+          </Files>
         </Group>
         <Group>
           <GroupName>Kernel</GroupName>
@@ -629,13 +650,6 @@
               <FileName>components.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\components.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>device.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\device.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -706,261 +720,6 @@
               <FileName>timer.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\timer.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>lwIP</GroupName>
-          <Files>
-            <File>
-              <FileName>api_lib.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\net\lwip\lwip-2.0.3\src\api\api_lib.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>api_msg.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\net\lwip\lwip-2.0.3\src\api\api_msg.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>err.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\net\lwip\lwip-2.0.3\src\api\err.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>netbuf.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\net\lwip\lwip-2.0.3\src\api\netbuf.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>netdb.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\net\lwip\lwip-2.0.3\src\api\netdb.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>netifapi.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\net\lwip\lwip-2.0.3\src\api\netifapi.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>sockets.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\net\lwip\lwip-2.0.3\src\api\sockets.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>tcpip.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\net\lwip\lwip-2.0.3\src\api\tcpip.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>def.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\net\lwip\lwip-2.0.3\src\core\def.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>dns.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\net\lwip\lwip-2.0.3\src\core\dns.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>inet_chksum.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\net\lwip\lwip-2.0.3\src\core\inet_chksum.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>init.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\net\lwip\lwip-2.0.3\src\core\init.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ip.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\net\lwip\lwip-2.0.3\src\core\ip.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>autoip.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\net\lwip\lwip-2.0.3\src\core\ipv4\autoip.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>dhcp.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\net\lwip\lwip-2.0.3\src\core\ipv4\dhcp.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>etharp.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\net\lwip\lwip-2.0.3\src\core\ipv4\etharp.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>icmp.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\net\lwip\lwip-2.0.3\src\core\ipv4\icmp.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>igmp.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\net\lwip\lwip-2.0.3\src\core\ipv4\igmp.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ip4.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\net\lwip\lwip-2.0.3\src\core\ipv4\ip4.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ip4_addr.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\net\lwip\lwip-2.0.3\src\core\ipv4\ip4_addr.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ip4_frag.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\net\lwip\lwip-2.0.3\src\core\ipv4\ip4_frag.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>memp.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\net\lwip\lwip-2.0.3\src\core\memp.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>netif.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\net\lwip\lwip-2.0.3\src\core\netif.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>pbuf.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\net\lwip\lwip-2.0.3\src\core\pbuf.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>raw.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\net\lwip\lwip-2.0.3\src\core\raw.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>stats.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\net\lwip\lwip-2.0.3\src\core\stats.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>sys.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\net\lwip\lwip-2.0.3\src\core\sys.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>tcp.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\net\lwip\lwip-2.0.3\src\core\tcp.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>tcp_in.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\net\lwip\lwip-2.0.3\src\core\tcp_in.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>tcp_out.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\net\lwip\lwip-2.0.3\src\core\tcp_out.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>timeouts.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\net\lwip\lwip-2.0.3\src\core\timeouts.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>udp.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\net\lwip\lwip-2.0.3\src\core\udp.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ethernet.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\net\lwip\lwip-2.0.3\src\netif\ethernet.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>lowpan6.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\net\lwip\lwip-2.0.3\src\netif\lowpan6.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>ethernetif.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\net\lwip\port\ethernetif.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>sys_arch.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\net\lwip\port\sys_arch.c</FilePath>
             </File>
           </Files>
         </Group>

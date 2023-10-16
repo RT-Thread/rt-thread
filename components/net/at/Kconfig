@@ -22,6 +22,10 @@ if RT_USING_AT
             int "The maximum length of server data accepted"
             default 256
 
+        config AT_SERVER_SEND_BUFF_LEN
+            int "The maximum length of server commands buffer"
+            default 256
+
         choice
             prompt "The commands new line sign"
             help
@@ -80,10 +84,6 @@ if RT_USING_AT
        config AT_PRINT_RAW_CMD
             bool "Enable print RAW format AT command communication data"
             default n
-
-        config AT_CMD_MAX_LEN
-            int "The maximum length of AT Commands buffer"
-            default 128
 
     endif
 

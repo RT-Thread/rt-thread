@@ -357,13 +357,13 @@
           <name>CCIncludePath2</name>
           <state />
           <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\extension\fcntl\octal</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\epoll</state>
           <state>$PROJ_DIR$\..\..\..\components\finsh</state>
           <state>$PROJ_DIR$\..\..\..\libcpu\arm\common</state>
           <state>$PROJ_DIR$\..\..\..\components\libc\posix\ipc</state>
           <state>$PROJ_DIR$\..\libraries\HAL_Drivers\CMSIS\Include</state>
-          <state>$PROJ_DIR$\..\..\..\include</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\eventfd</state>
           <state>$PROJ_DIR$\..\..\..\components\drivers\include</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\stdio</state>
           <state>$PROJ_DIR$\.</state>
           <state>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m33</state>
           <state>$PROJ_DIR$\applications</state>
@@ -373,7 +373,7 @@
           <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\include</state>
           <state>$PROJ_DIR$\board\CubeMX_Config\Inc</state>
           <state>$PROJ_DIR$\..\libraries\STM32U5xx_HAL\CMSIS\Device\ST\STM32U5xx\Include</state>
-          <state>$PROJ_DIR$\..\..\..\components\drivers\spi</state>
+          <state>$PROJ_DIR$\..\..\..\include</state>
           <state>$PROJ_DIR$\..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Inc</state>
           <state>$PROJ_DIR$\..\libraries\HAL_Drivers</state>
           <state>$PROJ_DIR$\board</state>
@@ -1436,13 +1436,13 @@
           <name>CCIncludePath2</name>
           <state />
           <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\extension\fcntl\octal</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\epoll</state>
           <state>$PROJ_DIR$\..\..\..\components\finsh</state>
           <state>$PROJ_DIR$\..\..\..\libcpu\arm\common</state>
           <state>$PROJ_DIR$\..\..\..\components\libc\posix\ipc</state>
           <state>$PROJ_DIR$\..\libraries\HAL_Drivers\CMSIS\Include</state>
-          <state>$PROJ_DIR$\..\..\..\include</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\eventfd</state>
           <state>$PROJ_DIR$\..\..\..\components\drivers\include</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\stdio</state>
           <state>$PROJ_DIR$\.</state>
           <state>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m33</state>
           <state>$PROJ_DIR$\applications</state>
@@ -1452,7 +1452,7 @@
           <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\include</state>
           <state>$PROJ_DIR$\board\CubeMX_Config\Inc</state>
           <state>$PROJ_DIR$\..\libraries\STM32U5xx_HAL\CMSIS\Device\ST\STM32U5xx\Include</state>
-          <state>$PROJ_DIR$\..\..\..\components\drivers\spi</state>
+          <state>$PROJ_DIR$\..\..\..\include</state>
           <state>$PROJ_DIR$\..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Inc</state>
           <state>$PROJ_DIR$\..\libraries\HAL_Drivers</state>
           <state>$PROJ_DIR$\board</state>
@@ -2170,9 +2170,6 @@
       <name>$PROJ_DIR$\..\..\..\components\libc\compilers\common\cctype.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\common\cstdio.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\..\..\components\libc\compilers\common\cstdlib.c</name>
     </file>
     <file>
@@ -2180,6 +2177,9 @@
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\components\libc\compilers\common\ctime.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\common\cunistd.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\components\libc\compilers\common\cwchar.c</name>
@@ -2242,15 +2242,6 @@
       <name>$PROJ_DIR$\..\..\..\components\drivers\core\device.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\i2c\i2c-bit-ops.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\i2c\i2c_core.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\i2c\i2c_dev.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\..\..\components\drivers\ipc\completion.c</name>
     </file>
     <file>
@@ -2272,37 +2263,19 @@
       <name>$PROJ_DIR$\..\..\..\components\drivers\ipc\workqueue.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\misc\adc.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\..\..\components\drivers\misc\pin.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\misc\rt_drv_pwm.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\..\..\components\drivers\serial\serial.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\spi\spi_core.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\spi\spi_dev.c</name>
     </file>
   </group>
   <group>
     <name>Drivers</name>
     <file>
-      <name>$PROJ_DIR$\..\libraries\HAL_Drivers\drv_adc.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\libraries\HAL_Drivers\drv_common.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\libraries\HAL_Drivers\drv_gpio.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\HAL_Drivers\drv_spi.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\libraries\HAL_Drivers\drv_usart.c</name>
@@ -2380,13 +2353,7 @@
       <name>$PROJ_DIR$\..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_spi.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_crc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_spi_ex.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_icache.c</name>
@@ -2413,13 +2380,7 @@
       <name>$PROJ_DIR$\..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_rng.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_tim.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_cortex.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_ospi.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_cryp.c</name>
@@ -2428,13 +2389,7 @@
       <name>$PROJ_DIR$\..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_crc_ex.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_lptim.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_rcc_ex.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_i2c.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_usart_ex.c</name>
@@ -2452,19 +2407,7 @@
       <name>$PROJ_DIR$\..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_comp.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_i2c_ex.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_adc_ex.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_tim_ex.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_dma_ex.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_adc.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\libraries\STM32U5xx_HAL\STM32U5xx_HAL_Driver\Src\stm32u5xx_hal_exti.c</name>

@@ -1,0 +1,71 @@
+/**
+ * \file
+ *
+ * \brief Linker script for running in internal FLASH on the SAMD51J19A
+ *
+ * Copyright (c) 2019 Microchip Technology Inc.
+ *
+ * \asf_license_start
+ *
+ * \page License
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may
+ * not use this file except in compliance with the License.
+ * You may obtain a copy of the Licence at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an AS IS BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * \asf_license_stop
+ *
+ */
+
+/*###ICF### Section handled by ICF editor, don't touch! ****/
+/*-Editor annotation file-*/
+/* IcfEditorFile="$TOOLKIT_DIR$\config\ide\IcfEditor\cortex_v1_0.xml" */
+/*-Specials-*/
+define symbol __ICFEDIT_intvec_start__        = 0x00000000;
+/*-Memory Regions-*/
+define symbol __ICFEDIT_region_RAM_start__    = 0x20000000;
+define symbol __ICFEDIT_region_RAM_end__      = 0x2002FFFF;
+define symbol __ICFEDIT_region_BKUPRAM_start__ = 0x47000000;
+define symbol __ICFEDIT_region_BKUPRAM_end__  = 0x47001FFF;
+define symbol __ICFEDIT_region_QSPI_start__   = 0x04000000;
+define symbol __ICFEDIT_region_QSPI_end__     = 0x04FFFFFF;
+define symbol __ICFEDIT_region_ROM_start__    = 0x00000000;
+define symbol __ICFEDIT_region_ROM_end__      = 0x0007FFFF;
+/*-Sizes-*/
+if (!isdefinedsymbol(__ICFEDIT_size_cstack__)) {
+  define symbol __ICFEDIT_size_cstack__    = 0xC000;
+}
+if (!isdefinedsymbol(__ICFEDIT_size_heap__)) {
+  define symbol __ICFEDIT_size_heap__      = 0x0;
+}
+/**** End of ICF editor section. ###ICF###*/
+
+define memory mem with size = 4G;
+define region RAM_region    = mem:[from __ICFEDIT_region_RAM_start__ to __ICFEDIT_region_RAM_end__];
+define region BKUPRAM_region = mem:[from __ICFEDIT_region_BKUPRAM_start__ to __ICFEDIT_region_BKUPRAM_end__];
+define region QSPI_region   = mem:[from __ICFEDIT_region_QSPI_start__ to __ICFEDIT_region_QSPI_end__];
+define region ROM_region    = mem:[from __ICFEDIT_region_ROM_start__ to __ICFEDIT_region_ROM_end__];
+
+define block CSTACK with alignment = 8, size = __ICFEDIT_size_cstack__ { };
+define block HEAP   with alignment = 8, size = __ICFEDIT_size_heap__   { };
+
+initialize by copy  { readwrite };
+do not initialize   { section .noinit };
+initialize manually { section .qspi };
+
+place at address mem:__ICFEDIT_intvec_start__ { readonly section .intvec };
+place in ROM_region                           { readonly };
+place in RAM_region                           { readwrite };
+place at end of RAM_region                    { block CSTACK, block HEAP };
+place in BKUPRAM_region                       { section .bkupram };
+place in QSPI_region                          { section .qspi };

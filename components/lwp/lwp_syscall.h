@@ -48,7 +48,7 @@ void sys_exit(int value);
 sysret_t sys_exit_group(int status);
 ssize_t sys_read(int fd, void *buf, size_t nbyte);
 ssize_t sys_write(int fd, const void *buf, size_t nbyte);
-off_t sys_lseek(int fd, off_t offset, int whence);
+size_t sys_lseek(int fd, size_t offset, int whence);
 sysret_t sys_open(const char *name, int mode, ...);
 sysret_t sys_close(int fd);
 sysret_t sys_ioctl(int fd, unsigned long cmd, void* data);

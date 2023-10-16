@@ -85,7 +85,7 @@ struct rt_lwp
 #ifdef ARCH_MM_MPU
     struct rt_mpu_info mpu_info;
 #endif /* ARCH_MM_MPU */
-#endif
+#endif /* ARCH_MM_MMU */
 
 #ifdef RT_USING_SMP
     int bind_cpu;
@@ -109,7 +109,7 @@ struct rt_lwp
     void *data_entry;
     uint32_t data_size;
 
-    int ref;
+    rt_atomic_t ref;
     void *args;
     uint32_t args_length;
     pid_t pid;
@@ -119,7 +119,7 @@ struct rt_lwp
     rt_list_t t_grp;
     rt_list_t timer; /* POSIX timer object binding to a process */
 
-    int leader; /*boolean value for session group_leader*/
+    int leader; /* boolean value for session group_leader*/
     struct dfs_fdtable fdt;
     char cmd[RT_NAME_MAX];
 
@@ -135,8 +135,11 @@ struct rt_lwp
 
     struct lwp_avl_struct *address_search_head; /* for addressed object fast search */
     char working_directory[DFS_PATH_MAX];
+
     int debug;
-    uint32_t bak_first_ins;
+    rt_uint32_t bak_first_inst; /* backup of first instruction */
+
+    struct rt_mutex lwp_lock;
 
     rt_slist_t signalfd_notify_head;
 
@@ -145,6 +148,7 @@ struct rt_lwp
     unsigned int asid;
 #endif
 };
+typedef struct rt_lwp *rt_lwp_t;
 
 struct rt_lwp *lwp_self(void);
 
@@ -184,6 +188,9 @@ int lwp_setaffinity(pid_t pid, int cpu);
 
 /* ctime lwp API */
 int timer_list_free(rt_list_t *timer_list);
+
+struct rt_futex;
+rt_err_t lwp_futex(struct rt_lwp *lwp, struct rt_futex *futex, int *uaddr, int op, int val, const struct timespec *timeout);
 
 #ifdef ARCH_MM_MMU
 struct __pthread {
@@ -228,16 +235,6 @@ struct __pthread {
     uintptr_t *dtv_copy;
 };
 #endif
-
-/* for futex op */
-#define FUTEX_WAIT  0
-#define FUTEX_WAKE  1
-
-/* for pmutex op */
-#define PMUTEX_INIT    0
-#define PMUTEX_LOCK    1
-#define PMUTEX_UNLOCK  2
-#define PMUTEX_DESTROY 3
 
 #ifdef __cplusplus
 }

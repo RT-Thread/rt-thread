@@ -372,7 +372,7 @@
               <MiscControls />
               <Define>GD32F10X_CL, __STDC_LIMIT_MACROS, RT_USING_ARMLIBC, USE_STDPERIPH_DRIVER, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__</Define>
               <Undefine />
-              <IncludePath>board;..\..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\libraries\GD32F10x_Firmware_Library\CMSIS;..\..\..\..\include;..\..\..\..\components\libc\posix\io\stdio;..\..\..\..\components\libc\compilers\common\extension;applications;..\..\..\..\components\libc\posix\io\poll;..\..\..\..\components\libc\compilers\common\include;..\libraries\gd32_drivers;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;..\..\..\..\components\finsh;..\..\..\..\libcpu\arm\common;..\..\..\..\components\libc\posix\ipc;..\..\..\..\components\drivers\include;..\libraries\GD32F10x_Firmware_Library\CMSIS\GD\GD32F10x\Include;..\..\..\..\libcpu\arm\cortex-m3;.;..\libraries\GD32F10x_Firmware_Library\GD32F10x_standard_peripheral\Include</IncludePath>
+              <IncludePath>..\..\..\..\components\drivers\include;..\..\..\..\components\libc\compilers\common\include;..\libraries\GD32F10x_Firmware_Library\CMSIS\GD\GD32F10x\Include;..\..\..\..\components\libc\compilers\common\extension;..\..\..\..\include;..\..\..\..\libcpu\arm\cortex-m3;applications;..\..\..\..\components\drivers\include;..\..\..\..\components\libc\posix\io\poll;.;..\..\..\..\components\drivers\include;..\..\..\..\components\libc\posix\ipc;..\..\..\..\components\libc\posix\io\eventfd;..\..\..\..\components\drivers\include;..\libraries\gd32_drivers;board;..\libraries\GD32F10x_Firmware_Library\CMSIS;..\..\..\..\libcpu\arm\common;..\..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\libraries\GD32F10x_Firmware_Library\GD32F10x_standard_peripheral\Include;..\..\..\..\components\libc\posix\io\epoll;..\..\..\..\components\finsh</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -448,13 +448,6 @@
           </Files>
           <Files>
             <File>
-              <FileName>cstdio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\libc\compilers\common\cstdio.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>cstdlib.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\components\libc\compilers\common\cstdlib.c</FilePath>
@@ -472,6 +465,13 @@
               <FileName>ctime.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\components\libc\compilers\common\ctime.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cunistd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\components\libc\compilers\common\cunistd.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -515,6 +515,13 @@
         </Group>
         <Group>
           <GroupName>DeviceDrivers</GroupName>
+          <Files>
+            <File>
+              <FileName>device.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\components\drivers\core\device.c</FilePath>
+            </File>
+          </Files>
           <Files>
             <File>
               <FileName>completion.c</FileName>
@@ -655,13 +662,6 @@
               <FileName>components.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\src\components.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>device.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\src\device.c</FilePath>
             </File>
           </Files>
           <Files>

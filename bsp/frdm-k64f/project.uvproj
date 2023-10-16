@@ -359,7 +359,7 @@
               <MiscControls />
               <Define>__STDC_LIMIT_MACROS, CPU_MK64FN1M0VLL12, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__, RT_USING_ARMLIBC</Define>
               <Undefine />
-              <IncludePath>..\..\components\libc\compilers\common\extension;..\..\components\drivers\include;..\..\include;device\MK64F12;..\..\components\net\lwip\lwip-2.0.3\src\include\posix;..\..\components\finsh;..\..\components\drivers\include;..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\components\libc\posix\io\stdio;device;.;applications;..\..\components\net\lwip\lwip-2.0.3\src\include\ipv4;..\..\libcpu\arm\cortex-m4;board;..\..\components\net\lwip\port;..\..\libcpu\arm\common;..\..\components\net\lwip\lwip-2.0.3\src\include\netif;..\..\components\libc\posix\ipc;..\..\components\drivers\include;..\..\components\libc\posix\io\poll;..\..\components\libc\compilers\common\include;..\..\components\net\lwip\lwip-2.0.3\src\include</IncludePath>
+              <IncludePath>..\..\components\drivers\include;..\..\components\libc\compilers\common\extension;applications;..\..\components\net\lwip\lwip-2.0.3\src\include\ipv4;..\..\components\libc\compilers\common\include;..\..\libcpu\arm\cortex-m4;..\..\include;..\..\components\net\lwip\lwip-2.0.3\src\include;..\..\components\drivers\include;board;device;..\..\components\net\lwip\port;..\..\components\drivers\include;..\..\components\net\lwip\lwip-2.0.3\src\include\posix;..\..\components\net\lwip\lwip-2.0.3\src\include\netif;..\..\components\libc\posix\ipc;..\..\components\libc\posix\io\eventfd;.;..\..\components\drivers\include;device\MK64F12;..\..\libcpu\arm\common;..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\components\libc\posix\io\poll;..\..\components\libc\posix\io\epoll;..\..\components\finsh</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -441,13 +441,6 @@
           </Files>
           <Files>
             <File>
-              <FileName>cstdio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\libc\compilers\common\cstdio.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>cstdlib.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\libc\compilers\common\cstdlib.c</FilePath>
@@ -465,6 +458,13 @@
               <FileName>ctime.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\libc\compilers\common\ctime.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cunistd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\compilers\common\cunistd.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -515,6 +515,13 @@
         </Group>
         <Group>
           <GroupName>DeviceDrivers</GroupName>
+          <Files>
+            <File>
+              <FileName>device.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\core\device.c</FilePath>
+            </File>
+          </Files>
           <Files>
             <File>
               <FileName>completion.c</FileName>
@@ -949,13 +956,6 @@
               <FileName>components.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\components.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>device.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\device.c</FilePath>
             </File>
           </Files>
           <Files>

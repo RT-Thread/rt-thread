@@ -359,7 +359,7 @@
               <MiscControls />
               <Define>RT_USING_LIBC, RT_USING_ARMLIBC, __STDC_LIMIT_MACROS, __RTTHREAD__, __CLK_TCK=RT_TICK_PER_SECOND</Define>
               <Undefine />
-              <IncludePath>..\..\components\libc\compilers\common\extension\fcntl\octal;drivers;..\..\components\libc\compilers\common\extension;..\..\components\drivers\include;..\..\components\libc\posix\io\stdio;..\..\components\libc\posix\io\poll;..\..\components\libc\compilers\common\include;..\..\include;..\..\components\drivers\include;..\..\components\libc\posix\ipc;..\..\components\finsh;..\..\libcpu\arm\common;.;platform;..\..\libcpu\arm\arm926;applications</IncludePath>
+              <IncludePath>..\..\components\libc\posix\io\poll;drivers;..\..\include;..\..\components\libc\compilers\common\include;applications;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\libc\posix\ipc;..\..\libcpu\arm\common;..\..\components\libc\compilers\common\extension\fcntl\octal;platform;..\..\components\libc\posix\io\eventfd;.;..\..\components\finsh;..\..\components\libc\posix\io\epoll;..\..\components\libc\compilers\common\extension;..\..\libcpu\arm\arm926;..\..\components\drivers\include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -434,13 +434,6 @@
           </Files>
           <Files>
             <File>
-              <FileName>cstdio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\libc\compilers\common\cstdio.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>cstdlib.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\libc\compilers\common\cstdlib.c</FilePath>
@@ -458,6 +451,13 @@
               <FileName>ctime.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\libc\compilers\common\ctime.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cunistd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\compilers\common\cunistd.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -536,6 +536,13 @@
         </Group>
         <Group>
           <GroupName>DeviceDrivers</GroupName>
+          <Files>
+            <File>
+              <FileName>device.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\core\device.c</FilePath>
+            </File>
+          </Files>
           <Files>
             <File>
               <FileName>completion.c</FileName>
@@ -711,13 +718,6 @@
               <FileName>components.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\components.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>device.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\device.c</FilePath>
             </File>
           </Files>
           <Files>

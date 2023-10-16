@@ -362,7 +362,7 @@
               <MiscControls />
               <Define>__STDC_LIMIT_MACROS, RT_USING_ARMLIBC, STM32F103xE, USE_HAL_DRIVER, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__</Define>
               <Undefine />
-              <IncludePath>board\CubeMX_Config\Inc;..\..\..\components\libc\compilers\common\extension;..\..\..\libcpu\arm\cortex-m3;board;..\..\..\include;..\..\..\components\drivers\include;..\..\..\components\finsh;.;..\..\..\components\drivers\include;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\components\libc\posix\io\stdio;..\libraries\HAL_Drivers\CMSIS\Include;..\libraries\HAL_Drivers;..\..\..\components\drivers\include;..\..\..\libcpu\arm\common;..\libraries\HAL_Drivers\config;..\..\..\components\libc\posix\ipc;..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\compilers\common\include;applications;..\libraries\STM32F1xx_HAL\STM32F1xx_HAL_Driver\Inc;..\libraries\STM32F1xx_HAL\CMSIS\Device\ST\STM32F1xx\Include</IncludePath>
+              <IncludePath>..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\compilers\common\include;..\libraries\STM32F1xx_HAL\CMSIS\Device\ST\STM32F1xx\Include;..\libraries\HAL_Drivers\CMSIS\Include;..\libraries\HAL_Drivers\config;.;..\..\..\components\libc\compilers\common\extension;board;..\..\..\include;..\..\..\libcpu\arm\cortex-m3;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\libraries\STM32F1xx_HAL\STM32F1xx_HAL_Driver\Inc;..\..\..\components\drivers\include;..\..\..\components\libc\posix\ipc;..\..\..\components\libc\posix\io\eventfd;board\CubeMX_Config\Inc;..\..\..\components\drivers\include;applications;..\..\..\libcpu\arm\common;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\libraries\HAL_Drivers;..\..\..\components\libc\posix\io\epoll;..\..\..\components\finsh</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -437,13 +437,6 @@
           </Files>
           <Files>
             <File>
-              <FileName>cstdio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\compilers\common\cstdio.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>cstdlib.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\libc\compilers\common\cstdlib.c</FilePath>
@@ -461,6 +454,13 @@
               <FileName>ctime.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\libc\compilers\common\ctime.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cunistd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\libc\compilers\common\cunistd.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -511,6 +511,13 @@
         </Group>
         <Group>
           <GroupName>DeviceDrivers</GroupName>
+          <Files>
+            <File>
+              <FileName>device.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\core\device.c</FilePath>
+            </File>
+          </Files>
           <Files>
             <File>
               <FileName>completion.c</FileName>
@@ -579,27 +586,6 @@
           <GroupName>Drivers</GroupName>
           <Files>
             <File>
-              <FileName>startup_stm32f103xe.s</FileName>
-              <FileType>2</FileType>
-              <FilePath>..\libraries\STM32F1xx_HAL\CMSIS\Device\ST\STM32F1xx\Source\Templates\arm\startup_stm32f103xe.s</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>stm32f1xx_hal_msp.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>board\CubeMX_Config\Src\stm32f1xx_hal_msp.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>board.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>board\board.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>drv_common.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\HAL_Drivers\drv_common.c</FilePath>
@@ -617,6 +603,27 @@
               <FileName>drv_usart.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\HAL_Drivers\drv_usart.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>startup_stm32f103xe.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>..\libraries\STM32F1xx_HAL\CMSIS\Device\ST\STM32F1xx\Source\Templates\arm\startup_stm32f103xe.s</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>stm32f1xx_hal_msp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>board\CubeMX_Config\Src\stm32f1xx_hal_msp.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>board.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>board\board.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -665,13 +672,6 @@
               <FileName>components.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\components.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>device.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\device.c</FilePath>
             </File>
           </Files>
           <Files>

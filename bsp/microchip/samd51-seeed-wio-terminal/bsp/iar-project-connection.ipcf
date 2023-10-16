@@ -1,0 +1,464 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<iarProjectConnection name="src" oneShot="false">
+    <device>
+        <name>ATSAMD51P19A</name>
+    </device>
+
+    <includePath>
+        <path>$PROJ_DIR$\</path>
+        <path>$PROJ_DIR$\config</path>
+        <path>$PROJ_DIR$\examples</path>
+        <path>$PROJ_DIR$\hal\include</path>
+        <path>$PROJ_DIR$\hal\utils\include</path>
+        <path>$PROJ_DIR$\hpl\cmcc</path>
+        <path>$PROJ_DIR$\hpl\core</path>
+        <path>$PROJ_DIR$\hpl\dmac</path>
+        <path>$PROJ_DIR$\hpl\gclk</path>
+        <path>$PROJ_DIR$\hpl\mclk</path>
+        <path>$PROJ_DIR$\hpl\osc32kctrl</path>
+        <path>$PROJ_DIR$\hpl\oscctrl</path>
+        <path>$PROJ_DIR$\hpl\pm</path>
+        <path>$PROJ_DIR$\hpl\port</path>
+        <path>$PROJ_DIR$\hpl\ramecc</path>
+        <path>$PROJ_DIR$\hpl\sercom</path>
+        <path>$PROJ_DIR$\hpl\usb</path>
+        <path>$PROJ_DIR$\hri</path>
+        <path>$PROJ_DIR$\</path>
+        <path>$PROJ_DIR$\config</path>
+        <path>$PROJ_DIR$\usb</path>
+        <path>$PROJ_DIR$\usb\class\cdc</path>
+        <path>$PROJ_DIR$\usb\class\cdc\device</path>
+        <path>$PROJ_DIR$\usb\device</path>
+        <path>$PROJ_DIR$\</path>
+        <path>$PROJ_DIR$\CMSIS\Core\Include</path>
+        <path>$PROJ_DIR$\samd51a\include</path>
+    </includePath>
+
+    <asmIncludePath>
+        <path>$PROJ_DIR$\</path>
+        <path>$PROJ_DIR$\config</path>
+        <path>$PROJ_DIR$\examples</path>
+        <path>$PROJ_DIR$\hal\include</path>
+        <path>$PROJ_DIR$\hal\utils\include</path>
+        <path>$PROJ_DIR$\hpl\cmcc</path>
+        <path>$PROJ_DIR$\hpl\core</path>
+        <path>$PROJ_DIR$\hpl\dmac</path>
+        <path>$PROJ_DIR$\hpl\gclk</path>
+        <path>$PROJ_DIR$\hpl\mclk</path>
+        <path>$PROJ_DIR$\hpl\osc32kctrl</path>
+        <path>$PROJ_DIR$\hpl\oscctrl</path>
+        <path>$PROJ_DIR$\hpl\pm</path>
+        <path>$PROJ_DIR$\hpl\port</path>
+        <path>$PROJ_DIR$\hpl\ramecc</path>
+        <path>$PROJ_DIR$\hpl\sercom</path>
+        <path>$PROJ_DIR$\hpl\usb</path>
+        <path>$PROJ_DIR$\hri</path>
+        <path>$PROJ_DIR$\</path>
+        <path>$PROJ_DIR$\config</path>
+        <path>$PROJ_DIR$\usb</path>
+        <path>$PROJ_DIR$\usb\class\cdc</path>
+        <path>$PROJ_DIR$\usb\class\cdc\device</path>
+        <path>$PROJ_DIR$\usb\device</path>
+        <path>$PROJ_DIR$\</path>
+        <path>$PROJ_DIR$\CMSIS\Core\Include</path>
+        <path>$PROJ_DIR$\samd51a\include</path>
+    </asmIncludePath>
+
+    <defines>
+        <define>__SAMD51P19A__</define>
+        <define>F_CPU=48000000</define>
+    </defines>
+
+    <asmDefines>
+        <define>__SAMD51P19A__</define>
+    </asmDefines>
+
+    <linkerFile>
+		<override>True</override>
+		<path>$PROJ_DIR$\samd51a\iar\iar\samd51p19a_flash.icf</path>
+    </linkerFile>
+
+    <files>
+
+            <path>atmel_start.c</path>
+            <path>atmel_start.h</path>
+            <path>atmel_start_pins.h</path>
+            <path>driver_init.c</path>
+            <path>driver_init.h</path>
+            <path>main.c</path>
+            <path>usb_start.c</path>
+            <path>usb_start.h</path>
+    
+
+        <group name="CMSIS/Core/Include">
+            <path>CMSIS/Core/Include/cmsis_armcc.h</path>
+            <path>CMSIS/Core/Include/cmsis_armclang.h</path>
+            <path>CMSIS/Core/Include/cmsis_compiler.h</path>
+            <path>CMSIS/Core/Include/cmsis_gcc.h</path>
+            <path>CMSIS/Core/Include/cmsis_iccarm.h</path>
+            <path>CMSIS/Core/Include/cmsis_version.h</path>
+            <path>CMSIS/Core/Include/core_armv8mbl.h</path>
+            <path>CMSIS/Core/Include/core_armv8mml.h</path>
+            <path>CMSIS/Core/Include/core_cm0.h</path>
+            <path>CMSIS/Core/Include/core_cm0plus.h</path>
+            <path>CMSIS/Core/Include/core_cm1.h</path>
+            <path>CMSIS/Core/Include/core_cm23.h</path>
+            <path>CMSIS/Core/Include/core_cm3.h</path>
+            <path>CMSIS/Core/Include/core_cm33.h</path>
+            <path>CMSIS/Core/Include/core_cm4.h</path>
+            <path>CMSIS/Core/Include/core_cm7.h</path>
+            <path>CMSIS/Core/Include/core_sc000.h</path>
+            <path>CMSIS/Core/Include/core_sc300.h</path>
+            <path>CMSIS/Core/Include/mpu_armv7.h</path>
+            <path>CMSIS/Core/Include/mpu_armv8.h</path>
+            <path>CMSIS/Core/Include/tz_context.h</path>
+        </group>
+
+        <group name="config">
+            <path>config/hpl_cmcc_config.h</path>
+            <path>config/hpl_dmac_config.h</path>
+            <path>config/hpl_gclk_config.h</path>
+            <path>config/hpl_mclk_config.h</path>
+            <path>config/hpl_osc32kctrl_config.h</path>
+            <path>config/hpl_oscctrl_config.h</path>
+            <path>config/hpl_port_config.h</path>
+            <path>config/hpl_sercom_config.h</path>
+            <path>config/hpl_usb_config.h</path>
+            <path>config/peripheral_clk_config.h</path>
+            <path>config/usbd_config.h</path>
+        </group>
+
+        <group name="examples">
+            <path>examples/driver_examples.c</path>
+            <path>examples/driver_examples.h</path>
+        </group>
+
+        <group name="hal/include">
+            <path>hal/include/hal_atomic.h</path>
+            <path>hal/include/hal_cache.h</path>
+            <path>hal/include/hal_delay.h</path>
+            <path>hal/include/hal_gpio.h</path>
+            <path>hal/include/hal_init.h</path>
+            <path>hal/include/hal_io.h</path>
+            <path>hal/include/hal_sleep.h</path>
+            <path>hal/include/hal_usart_async.h</path>
+            <path>hal/include/hal_usb_device.h</path>
+            <path>hal/include/hpl_cmcc.h</path>
+            <path>hal/include/hpl_core.h</path>
+            <path>hal/include/hpl_delay.h</path>
+            <path>hal/include/hpl_dma.h</path>
+            <path>hal/include/hpl_gpio.h</path>
+            <path>hal/include/hpl_i2c_m_async.h</path>
+            <path>hal/include/hpl_i2c_m_sync.h</path>
+            <path>hal/include/hpl_i2c_s_async.h</path>
+            <path>hal/include/hpl_i2c_s_sync.h</path>
+            <path>hal/include/hpl_init.h</path>
+            <path>hal/include/hpl_irq.h</path>
+            <path>hal/include/hpl_missing_features.h</path>
+            <path>hal/include/hpl_ramecc.h</path>
+            <path>hal/include/hpl_reset.h</path>
+            <path>hal/include/hpl_sleep.h</path>
+            <path>hal/include/hpl_spi.h</path>
+            <path>hal/include/hpl_spi_async.h</path>
+            <path>hal/include/hpl_spi_m_async.h</path>
+            <path>hal/include/hpl_spi_m_dma.h</path>
+            <path>hal/include/hpl_spi_m_sync.h</path>
+            <path>hal/include/hpl_spi_s_async.h</path>
+            <path>hal/include/hpl_spi_s_sync.h</path>
+            <path>hal/include/hpl_spi_sync.h</path>
+            <path>hal/include/hpl_usart.h</path>
+            <path>hal/include/hpl_usart_async.h</path>
+            <path>hal/include/hpl_usart_sync.h</path>
+            <path>hal/include/hpl_usb.h</path>
+            <path>hal/include/hpl_usb_device.h</path>
+            <path>hal/include/hpl_usb_host.h</path>
+        </group>
+
+        <group name="hal/src">
+            <path>hal/src/hal_atomic.c</path>
+            <path>hal/src/hal_cache.c</path>
+            <path>hal/src/hal_delay.c</path>
+            <path>hal/src/hal_gpio.c</path>
+            <path>hal/src/hal_init.c</path>
+            <path>hal/src/hal_io.c</path>
+            <path>hal/src/hal_sleep.c</path>
+            <path>hal/src/hal_usart_async.c</path>
+            <path>hal/src/hal_usb_device.c</path>
+        </group>
+
+        <group name="hal/utils/include">
+            <path>hal/utils/include/compiler.h</path>
+            <path>hal/utils/include/err_codes.h</path>
+            <path>hal/utils/include/events.h</path>
+            <path>hal/utils/include/parts.h</path>
+            <path>hal/utils/include/utils.h</path>
+            <path>hal/utils/include/utils_assert.h</path>
+            <path>hal/utils/include/utils_event.h</path>
+            <path>hal/utils/include/utils_increment_macro.h</path>
+            <path>hal/utils/include/utils_list.h</path>
+            <path>hal/utils/include/utils_repeat_macro.h</path>
+            <path>hal/utils/include/utils_ringbuffer.h</path>
+        </group>
+
+        <group name="hal/utils/src">
+            <path>hal/utils/src/utils_assert.c</path>
+            <path>hal/utils/src/utils_event.c</path>
+            <path>hal/utils/src/utils_list.c</path>
+            <path>hal/utils/src/utils_ringbuffer.c</path>
+        </group>
+
+        <group name="hpl/cmcc">
+            <path>hpl/cmcc/hpl_cmcc.c</path>
+        </group>
+
+        <group name="hpl/core">
+            <path>hpl/core/hpl_core_m4.c</path>
+            <path>hpl/core/hpl_core_port.h</path>
+            <path>hpl/core/hpl_init.c</path>
+        </group>
+
+        <group name="hpl/dmac">
+            <path>hpl/dmac/hpl_dmac.c</path>
+        </group>
+
+        <group name="hpl/gclk">
+            <path>hpl/gclk/hpl_gclk.c</path>
+            <path>hpl/gclk/hpl_gclk_base.h</path>
+        </group>
+
+        <group name="hpl/mclk">
+            <path>hpl/mclk/hpl_mclk.c</path>
+        </group>
+
+        <group name="hpl/osc32kctrl">
+            <path>hpl/osc32kctrl/hpl_osc32kctrl.c</path>
+        </group>
+
+        <group name="hpl/oscctrl">
+            <path>hpl/oscctrl/hpl_oscctrl.c</path>
+        </group>
+
+        <group name="hpl/pm">
+            <path>hpl/pm/hpl_pm.c</path>
+            <path>hpl/pm/hpl_pm_base.h</path>
+        </group>
+
+        <group name="hpl/port">
+            <path>hpl/port/hpl_gpio_base.h</path>
+        </group>
+
+        <group name="hpl/ramecc">
+            <path>hpl/ramecc/hpl_ramecc.c</path>
+        </group>
+
+        <group name="hpl/sercom">
+            <path>hpl/sercom/hpl_sercom.c</path>
+        </group>
+
+        <group name="hpl/usb">
+            <path>hpl/usb/hpl_usb.c</path>
+        </group>
+
+        <group name="hri">
+            <path>hri/hri_ac_d51.h</path>
+            <path>hri/hri_adc_d51.h</path>
+            <path>hri/hri_aes_d51.h</path>
+            <path>hri/hri_ccl_d51.h</path>
+            <path>hri/hri_cmcc_d51.h</path>
+            <path>hri/hri_d51.h</path>
+            <path>hri/hri_dac_d51.h</path>
+            <path>hri/hri_dmac_d51.h</path>
+            <path>hri/hri_dsu_d51.h</path>
+            <path>hri/hri_eic_d51.h</path>
+            <path>hri/hri_evsys_d51.h</path>
+            <path>hri/hri_freqm_d51.h</path>
+            <path>hri/hri_gclk_d51.h</path>
+            <path>hri/hri_hmatrixb_d51.h</path>
+            <path>hri/hri_i2s_d51.h</path>
+            <path>hri/hri_icm_d51.h</path>
+            <path>hri/hri_mclk_d51.h</path>
+            <path>hri/hri_nvmctrl_d51.h</path>
+            <path>hri/hri_osc32kctrl_d51.h</path>
+            <path>hri/hri_oscctrl_d51.h</path>
+            <path>hri/hri_pac_d51.h</path>
+            <path>hri/hri_pcc_d51.h</path>
+            <path>hri/hri_pdec_d51.h</path>
+            <path>hri/hri_pm_d51.h</path>
+            <path>hri/hri_port_d51.h</path>
+            <path>hri/hri_qspi_d51.h</path>
+            <path>hri/hri_ramecc_d51.h</path>
+            <path>hri/hri_rstc_d51.h</path>
+            <path>hri/hri_rtc_d51.h</path>
+            <path>hri/hri_sdhc_d51.h</path>
+            <path>hri/hri_sercom_d51.h</path>
+            <path>hri/hri_supc_d51.h</path>
+            <path>hri/hri_tc_d51.h</path>
+            <path>hri/hri_tcc_d51.h</path>
+            <path>hri/hri_trng_d51.h</path>
+            <path>hri/hri_usb_d51.h</path>
+            <path>hri/hri_wdt_d51.h</path>
+        </group>
+
+        <group name="samd51a/iar">
+            <path>samd51a/iar/system_samd51.c</path>
+        </group>
+
+        <group name="samd51a/iar/iar">
+            <path>samd51a/iar/iar/startup_samd51.c</path>
+        </group>
+
+        <group name="samd51a/include">
+            <path>samd51a/include/component-version.h</path>
+            <path>samd51a/include/sam.h</path>
+            <path>samd51a/include/sam.h</path>
+            <path>samd51a/include/samd51.h</path>
+            <path>samd51a/include/samd51g18a.h</path>
+            <path>samd51a/include/samd51g19a.h</path>
+            <path>samd51a/include/samd51j18a.h</path>
+            <path>samd51a/include/samd51j19a.h</path>
+            <path>samd51a/include/samd51j20a.h</path>
+            <path>samd51a/include/samd51n19a.h</path>
+            <path>samd51a/include/samd51n20a.h</path>
+            <path>samd51a/include/samd51p19a.h</path>
+            <path>samd51a/include/samd51p20a.h</path>
+            <path>samd51a/include/system_samd51.h</path>
+        </group>
+
+        <group name="samd51a/include/component">
+            <path>samd51a/include/component/ac.h</path>
+            <path>samd51a/include/component/adc.h</path>
+            <path>samd51a/include/component/aes.h</path>
+            <path>samd51a/include/component/can.h</path>
+            <path>samd51a/include/component/ccl.h</path>
+            <path>samd51a/include/component/cmcc.h</path>
+            <path>samd51a/include/component/dac.h</path>
+            <path>samd51a/include/component/dmac.h</path>
+            <path>samd51a/include/component/dsu.h</path>
+            <path>samd51a/include/component/eic.h</path>
+            <path>samd51a/include/component/evsys.h</path>
+            <path>samd51a/include/component/freqm.h</path>
+            <path>samd51a/include/component/gclk.h</path>
+            <path>samd51a/include/component/hmatrixb.h</path>
+            <path>samd51a/include/component/i2s.h</path>
+            <path>samd51a/include/component/icm.h</path>
+            <path>samd51a/include/component/mclk.h</path>
+            <path>samd51a/include/component/nvmctrl.h</path>
+            <path>samd51a/include/component/osc32kctrl.h</path>
+            <path>samd51a/include/component/oscctrl.h</path>
+            <path>samd51a/include/component/pac.h</path>
+            <path>samd51a/include/component/pcc.h</path>
+            <path>samd51a/include/component/pdec.h</path>
+            <path>samd51a/include/component/pm.h</path>
+            <path>samd51a/include/component/port.h</path>
+            <path>samd51a/include/component/qspi.h</path>
+            <path>samd51a/include/component/ramecc.h</path>
+            <path>samd51a/include/component/rstc.h</path>
+            <path>samd51a/include/component/rtc.h</path>
+            <path>samd51a/include/component/sdhc.h</path>
+            <path>samd51a/include/component/sercom.h</path>
+            <path>samd51a/include/component/supc.h</path>
+            <path>samd51a/include/component/tc.h</path>
+            <path>samd51a/include/component/tcc.h</path>
+            <path>samd51a/include/component/trng.h</path>
+            <path>samd51a/include/component/usb.h</path>
+            <path>samd51a/include/component/wdt.h</path>
+        </group>
+
+        <group name="samd51a/include/instance">
+            <path>samd51a/include/instance/ac.h</path>
+            <path>samd51a/include/instance/adc0.h</path>
+            <path>samd51a/include/instance/adc1.h</path>
+            <path>samd51a/include/instance/aes.h</path>
+            <path>samd51a/include/instance/can0.h</path>
+            <path>samd51a/include/instance/can1.h</path>
+            <path>samd51a/include/instance/ccl.h</path>
+            <path>samd51a/include/instance/cmcc.h</path>
+            <path>samd51a/include/instance/dac.h</path>
+            <path>samd51a/include/instance/dmac.h</path>
+            <path>samd51a/include/instance/dsu.h</path>
+            <path>samd51a/include/instance/eic.h</path>
+            <path>samd51a/include/instance/evsys.h</path>
+            <path>samd51a/include/instance/freqm.h</path>
+            <path>samd51a/include/instance/gclk.h</path>
+            <path>samd51a/include/instance/hmatrix.h</path>
+            <path>samd51a/include/instance/i2s.h</path>
+            <path>samd51a/include/instance/icm.h</path>
+            <path>samd51a/include/instance/mclk.h</path>
+            <path>samd51a/include/instance/nvmctrl.h</path>
+            <path>samd51a/include/instance/osc32kctrl.h</path>
+            <path>samd51a/include/instance/oscctrl.h</path>
+            <path>samd51a/include/instance/pac.h</path>
+            <path>samd51a/include/instance/pcc.h</path>
+            <path>samd51a/include/instance/pdec.h</path>
+            <path>samd51a/include/instance/pm.h</path>
+            <path>samd51a/include/instance/port.h</path>
+            <path>samd51a/include/instance/pukcc.h</path>
+            <path>samd51a/include/instance/qspi.h</path>
+            <path>samd51a/include/instance/ramecc.h</path>
+            <path>samd51a/include/instance/rstc.h</path>
+            <path>samd51a/include/instance/rtc.h</path>
+            <path>samd51a/include/instance/sdhc0.h</path>
+            <path>samd51a/include/instance/sdhc1.h</path>
+            <path>samd51a/include/instance/sercom0.h</path>
+            <path>samd51a/include/instance/sercom1.h</path>
+            <path>samd51a/include/instance/sercom2.h</path>
+            <path>samd51a/include/instance/sercom3.h</path>
+            <path>samd51a/include/instance/sercom4.h</path>
+            <path>samd51a/include/instance/sercom5.h</path>
+            <path>samd51a/include/instance/sercom6.h</path>
+            <path>samd51a/include/instance/sercom7.h</path>
+            <path>samd51a/include/instance/supc.h</path>
+            <path>samd51a/include/instance/tc0.h</path>
+            <path>samd51a/include/instance/tc1.h</path>
+            <path>samd51a/include/instance/tc2.h</path>
+            <path>samd51a/include/instance/tc3.h</path>
+            <path>samd51a/include/instance/tc4.h</path>
+            <path>samd51a/include/instance/tc5.h</path>
+            <path>samd51a/include/instance/tc6.h</path>
+            <path>samd51a/include/instance/tc7.h</path>
+            <path>samd51a/include/instance/tcc0.h</path>
+            <path>samd51a/include/instance/tcc1.h</path>
+            <path>samd51a/include/instance/tcc2.h</path>
+            <path>samd51a/include/instance/tcc3.h</path>
+            <path>samd51a/include/instance/tcc4.h</path>
+            <path>samd51a/include/instance/trng.h</path>
+            <path>samd51a/include/instance/usb.h</path>
+            <path>samd51a/include/instance/wdt.h</path>
+        </group>
+
+        <group name="samd51a/include/pio">
+            <path>samd51a/include/pio/samd51g18a.h</path>
+            <path>samd51a/include/pio/samd51g19a.h</path>
+            <path>samd51a/include/pio/samd51j18a.h</path>
+            <path>samd51a/include/pio/samd51j19a.h</path>
+            <path>samd51a/include/pio/samd51j20a.h</path>
+            <path>samd51a/include/pio/samd51n19a.h</path>
+            <path>samd51a/include/pio/samd51n20a.h</path>
+            <path>samd51a/include/pio/samd51p19a.h</path>
+            <path>samd51a/include/pio/samd51p20a.h</path>
+        </group>
+
+        <group name="usb">
+            <path>usb/usb_atmel.h</path>
+            <path>usb/usb_debug.h</path>
+            <path>usb/usb_includes.h</path>
+            <path>usb/usb_protocol.c</path>
+            <path>usb/usb_protocol.h</path>
+        </group>
+
+        <group name="usb/class/cdc">
+            <path>usb/class/cdc/usb_protocol_cdc.h</path>
+        </group>
+
+        <group name="usb/class/cdc/device">
+            <path>usb/class/cdc/device/cdcdf_acm.c</path>
+            <path>usb/class/cdc/device/cdcdf_acm.h</path>
+            <path>usb/class/cdc/device/cdcdf_acm_desc.h</path>
+        </group>
+
+        <group name="usb/device">
+            <path>usb/device/usbdc.c</path>
+            <path>usb/device/usbdc.h</path>
+        </group>
+    </files>
+</iarProjectConnection>

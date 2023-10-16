@@ -96,7 +96,7 @@ int rt_hw_adc_init(void)
 
     if (result != RT_EOK)
     {
-        LOG_E("register adc0 device failed error code = %d\n", result);
+        LOG_E("register adc0 device failed error code = %d", result);
     }
 
 #endif /* BSP_USING_ADC0_CH0 */

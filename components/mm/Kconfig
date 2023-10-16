@@ -1,0 +1,19 @@
+menu "Memory management"
+
+config RT_USING_MEMBLOCK
+    bool "Using memblock"
+    default n
+    help
+        Using memblock to record memory infomation in init time
+
+config RT_INIT_MEMORY_REGIONS
+    int "The max number of memory block regions in init time"
+    depends on RT_USING_MEMBLOCK
+    range 1 1024
+    default 128
+    help
+        During the system initialization phase, the kernel divides
+        memory into different types of regions. This variable specifies
+        the maximum number of regions supported by the system.
+
+endmenu

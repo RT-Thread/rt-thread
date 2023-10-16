@@ -44,7 +44,7 @@ MM32F3270 EVB 开发板特性：
 - 4-36pin0.1 英寸间距双排连接器, 管脚顺序与 MCU 相同
 - PCB 板面尺寸：6.4*3.2 英寸
 
-更多详细信息请咨询[灵动微电子技术支持][http://www.mm32.com.cn]
+更多详细信息请咨询[上海灵动微电子](https://www.mindmotion.com.cn/)
 
 ## 2. 编译说明
 
@@ -73,13 +73,15 @@ MM32F3270 EVB 开发板特性：
 
 ## 5. 参考
 
-- [MM32F3270系列数据手册]([DS_MM32F3270_V1.02_SC.pdf (mindmotion.com.cn)](http://www.mindmotion.com.cn/userfiles/images/MM32F3270XiLieWenDang/DS_MM32F3270_V1.02_SC.pdf))
+- [MM32F3270系列数据手册](https://www.mindmotion.com.cn/download/products/DS_MM32F3270_SC.pdf)
 
-- [MM32F3270系列用户手册]([www.mindmotion.com.cn/userfiles/images/MM32F3270XiLieWenDang/UM_MM32F3270_V0.93_SC.pdf](http://www.mindmotion.com.cn/userfiles/images/MM32F3270XiLieWenDang/UM_MM32F3270_V0.93_SC.pdf))
+- [MM32F3270系列用户手册](https://www.mindmotion.com.cn/download/products/UM_MM32F3270_SC.pdf)
 
-- [MiniBoardStartKit资料包](http://www.mm32.com.cn/download.aspx?cid=2545)
+- [MiniBoard(MM32F3273G6P)资料包](https://www.mindmotion.com.cn/support/development_tools/evaluation_boards/miniboard/mm32f3273g6p/)
 
-- [keil pack安装包](http://www.mm32.com.cn/download.aspx?cid=2546)
+- [KEIL Pack 设备支持包](https://www.mindmotion.com.cn/support/software/keil_pack/)
 
-- [MM32 支持工具包](http://www.mm32.com.cn/download.aspx?cid=2547)
+- [IAR Pack 设备支持包](https://www.mindmotion.com.cn/support/software/iar_pack/)
+
+- [MM32 支持工具包](https://www.mindmotion.com.cn/support/development_tools/debug_and_programming_tools/)
 

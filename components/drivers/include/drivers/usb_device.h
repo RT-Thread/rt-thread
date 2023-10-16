@@ -9,6 +9,7 @@
  * 2012-12-12     heyuanjie87  change endpoint and function handler
  * 2013-04-26     aozima       add DEVICEQUALIFIER support.
  * 2017-11-15     ZYH          fix ep0 transform error
+ * 2023-10-11     ChuShicheng  change rt_size_t to rt_ssize_t
  */
 
 #ifndef  __USB_DEVICE_H__
@@ -86,9 +87,9 @@ struct udcd_ops
     rt_err_t (*ep_clear_stall)(rt_uint8_t address);
     rt_err_t (*ep_enable)(struct uendpoint* ep);
     rt_err_t (*ep_disable)(struct uendpoint* ep);
-    rt_size_t (*ep_read_prepare)(rt_uint8_t address, void *buffer, rt_size_t size);
-    rt_size_t (*ep_read)(rt_uint8_t address, void *buffer);
-    rt_size_t (*ep_write)(rt_uint8_t address, void *buffer, rt_size_t size);
+    rt_ssize_t (*ep_read_prepare)(rt_uint8_t address, void *buffer, rt_size_t size);
+    rt_ssize_t (*ep_read)(rt_uint8_t address, void *buffer);
+    rt_ssize_t (*ep_write)(rt_uint8_t address, void *buffer, rt_size_t size);
     rt_err_t (*ep0_send_status)(void);
     rt_err_t (*suspend)(void);
     rt_err_t (*wakeup)(void);

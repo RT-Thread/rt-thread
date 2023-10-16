@@ -334,9 +334,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls>-xc -std=gnu99 -mimplicit-float </MiscControls>
-              <Define>CPU_MIMXRT1176DVMAA_cm7, USE_SDRAM, __STDC_LIMIT_MACROS, RT_USING_ARMLIBC, ENDIANNESS, XIP_BOOT_HEADER_DCD_ENABLE=1, ARM_MATH_CM7, RT_USING_LIBC, USE_RTOS, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__, SOC_IMXRT1170_SERIES, XIP_BOOT_HEADER_ENABLE=1, FSL_SDK_ENABLE_DRIVER_CACHE_CONTROL=1, XIP_EXTERNAL_FLASH=1</Define>
+              <Define>CPU_MIMXRT1176DVMAA_cm7, USE_SDRAM, __STDC_LIMIT_MACROS, RT_USING_ARMLIBC, ENDIANNESS, XIP_BOOT_HEADER_DCD_ENABLE=1, ARM_MATH_CM7, RT_USING_LIBC, USE_RTOS, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__, XIP_BOOT_HEADER_ENABLE=1, FSL_SDK_ENABLE_DRIVER_CACHE_CONTROL=1, XIP_EXTERNAL_FLASH=1</Define>
               <Undefine />
-              <IncludePath>..\..\libraries\drivers;..\..\..\..\components\libc\compilers\common\extension;..\..\..\..\components\drivers\include;..\..\..\..\include;..\..\..\..\libcpu\arm\cortex-m7;..\..\..\..\components\finsh;board\ports;..\..\..\..\components\drivers\include;..\..\libraries\MIMXRT1170\MIMXRT1176\drivers;..\..\..\..\components\net\netdev\include;..\..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\libraries\MIMXRT1170\MIMXRT1176\drivers\cm7;board;..\..\libraries\MIMXRT1170\CMSIS\Include;applications;board\MCUX_Config;..\..\libraries\MIMXRT1170\MIMXRT1176;..\..\..\..\components\drivers\usb\usbhost;..\..\..\..\components\drivers\include;..\..\..\..\libcpu\arm\common;..\..\..\..\components\libc\posix\ipc;.;xip;..\..\..\..\components\libc\posix\io\stdio;..\..\..\..\components\libc\posix\io\poll;..\..\..\..\components\libc\compilers\common\include;..\..\..\..\components\drivers\usb\usbhost\class;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\usb\usbhost\core;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\usb\usbhost\include</IncludePath>
+              <IncludePath>..\..\..\..\components\drivers\usb\usbhost\core;..\..\..\..\components\libc\posix\io\poll;..\..\..\..\components\libc\compilers\common\extension;..\..\libraries\MIMXRT1170\MIMXRT1176\drivers;board;..\..\..\..\components\drivers\usb\usbhost\include;..\..\libraries\MIMXRT1170\CMSIS\Include;..\..\..\..\components\libc\compilers\common\include;..\..\..\..\components\drivers\usb\usbhost\class;..\..\..\..\libcpu\arm\cortex-m7;..\..\..\..\include;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\usb\usbhost;.;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;board\ports;..\..\..\..\components\libc\posix\ipc;board\MCUX_Config;..\..\libraries\MIMXRT1170\MIMXRT1176\drivers\cm7;..\..\..\..\components\net\netdev\include;..\..\..\..\components\libc\posix\io\eventfd;..\..\libraries\MIMXRT1170\MIMXRT1176;xip;..\..\libraries\drivers;..\..\..\..\components\drivers\include;..\..\..\..\libcpu\arm\common;..\..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\..\components\drivers\include;..\..\..\..\components\libc\posix\io\epoll;applications;..\..\..\..\components\finsh</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -381,16 +381,16 @@
           <GroupName>Applications</GroupName>
           <Files>
             <File>
-              <FileName>mnt.c</FileName>
+              <FileName>main.c</FileName>
               <FileType>1</FileType>
-              <FilePath>applications\mnt.c</FilePath>
+              <FilePath>applications\main.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>main.c</FileName>
+              <FileName>mnt.c</FileName>
               <FileType>1</FileType>
-              <FilePath>applications\main.c</FilePath>
+              <FilePath>applications\mnt.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -419,13 +419,6 @@
           </Files>
           <Files>
             <File>
-              <FileName>cstdio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\libc\compilers\common\cstdio.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>cstdlib.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\components\libc\compilers\common\cstdlib.c</FilePath>
@@ -447,6 +440,13 @@
           </Files>
           <Files>
             <File>
+              <FileName>cunistd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\components\libc\compilers\common\cunistd.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>cwchar.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\components\libc\compilers\common\cwchar.c</FilePath>
@@ -455,6 +455,13 @@
         </Group>
         <Group>
           <GroupName>CPU</GroupName>
+          <Files>
+            <File>
+              <FileName>atomic_arm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\libcpu\arm\common\atomic_arm.c</FilePath>
+            </File>
+          </Files>
           <Files>
             <File>
               <FileName>div0.c</FileName>
@@ -493,6 +500,13 @@
         </Group>
         <Group>
           <GroupName>DeviceDrivers</GroupName>
+          <Files>
+            <File>
+              <FileName>device.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\components\drivers\core\device.c</FilePath>
+            </File>
+          </Files>
           <Files>
             <File>
               <FileName>completion.c</FileName>
@@ -707,13 +721,6 @@
           </Files>
           <Files>
             <File>
-              <FileName>device.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\src\device.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>idle.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\src\idle.c</FilePath>
@@ -912,16 +919,16 @@
           <GroupName>SAL</GroupName>
           <Files>
             <File>
-              <FileName>netdev_ipaddr.c</FileName>
+              <FileName>netdev.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\net\netdev\src\netdev_ipaddr.c</FilePath>
+              <FilePath>..\..\..\..\components\net\netdev\src\netdev.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>netdev.c</FileName>
+              <FileName>netdev_ipaddr.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\net\netdev\src\netdev.c</FilePath>
+              <FilePath>..\..\..\..\components\net\netdev\src\netdev_ipaddr.c</FilePath>
             </File>
           </Files>
         </Group>

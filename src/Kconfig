@@ -213,7 +213,7 @@ menuconfig RT_USING_DEBUG
 
         config RT_DEBUGING_INIT
             bool "Enable debugging of components initialization"
-            default y
+            default n
 
         config RT_DEBUGING_PAGE_LEAK
             bool "Enable page leaking tracer"
@@ -432,7 +432,7 @@ endmenu
 
 config RT_VER_NUM
     hex
-    default 0x50001
+    default 0x50100
     help
         RT-Thread version number
 

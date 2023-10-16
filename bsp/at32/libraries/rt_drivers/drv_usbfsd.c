@@ -1,11 +1,12 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
  * 2023-02-28     leo          first version
+ * 2023-10-11     ChuShicheng  change rt_size_t to rt_ssize_t
  */
 
 #include <rtthread.h>
@@ -175,20 +176,20 @@ static rt_err_t _ep_disable(uep_t ep)
     return RT_EOK;
 }
 
-static rt_size_t _ep_read(rt_uint8_t address, void *buffer)
+static rt_ssize_t _ep_read(rt_uint8_t address, void *buffer)
 {
     rt_size_t size = 0;
     RT_ASSERT(buffer != RT_NULL);
     return size;
 }
 
-static rt_size_t _ep_read_prepare(rt_uint8_t address, void *buffer, rt_size_t size)
+static rt_ssize_t _ep_read_prepare(rt_uint8_t address, void *buffer, rt_size_t size)
 {
     usbd_ept_recv(&p_usbfs_instance->p_otg_core->dev, address, buffer, size);
     return size;
 }
 
-static rt_size_t _ep_write(rt_uint8_t address, void *buffer, rt_size_t size)
+static rt_ssize_t _ep_write(rt_uint8_t address, void *buffer, rt_size_t size)
 {
     usbd_ept_send(&p_usbfs_instance->p_otg_core->dev, address, buffer, size);
     return size;

@@ -359,7 +359,7 @@
               <MiscControls />
               <Define>RT_USING_LIBC, RT_USING_ARMLIBC, __STDC_LIMIT_MACROS, __RTTHREAD__, __CLK_TCK=RT_TICK_PER_SECOND</Define>
               <Undefine />
-              <IncludePath>platform;..\..\..\components\dfs\filesystems\devfs;..\..\..\components\libc\compilers\common\extension;..\..\..\components\drivers\include;..\..\..\include;..\..\..\components\finsh;..\..\..\components\drivers\include;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\components\libc\posix\io\stdio;..\..\..\components\libc\posix\pthreads;..\..\..\components\libc\cplusplus;..\..\..\libcpu\arm\arm926;..\..\..\components\dfs\include;..\..\..\components\drivers\include;.;..\..\..\components\libc\posix\delay;drivers;..\..\..\components\libc\posix\ipc;applications;..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\compilers\common\include;..\..\..\libcpu\arm\common</IncludePath>
+              <IncludePath>..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\compilers\common\include;drivers;..\..\..\components\libc\posix\pthreads;..\..\..\components\drivers\ktime\inc;..\..\..\components\libc\compilers\common\extension;..\..\..\components\drivers\ktime;..\..\..\include;..\..\..\components\libc\posix\delay;..\..\..\components\drivers\include;..\..\..\components\drivers\include;applications;..\..\..\components\dfs\dfs_v1\include;..\..\..\libcpu\arm\arm926;..\..\..\components\drivers\include;..\..\..\components\libc\cplusplus;..\..\..\components\libc\posix\io\eventfd;..\..\..\components\drivers\include;.;..\..\..\components\libc\posix\ipc;..\..\..\libcpu\arm\common;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\components\dfs\dfs_v1\filesystems\devfs;..\..\..\components\libc\posix\io\epoll;platform;..\..\..\components\finsh</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -434,13 +434,6 @@
           </Files>
           <Files>
             <File>
-              <FileName>cstdio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\libc\compilers\common\cstdio.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>cstdlib.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\libc\compilers\common\cstdlib.c</FilePath>
@@ -462,6 +455,13 @@
           </Files>
           <Files>
             <File>
+              <FileName>cunistd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\libc\compilers\common\cunistd.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>cwchar.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\libc\compilers\common\cwchar.c</FilePath>
@@ -469,7 +469,7 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>CPlusPlus</GroupName>
+          <GroupName>CPP</GroupName>
           <Files>
             <File>
               <FileName>cxx_crt.cpp</FileName>
@@ -479,30 +479,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>cxx_Mutex.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\..\components\libc\cplusplus\cxx_Mutex.cpp</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cxx_Semaphore.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\..\components\libc\cplusplus\cxx_Semaphore.cpp</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>cxx_crt_init.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\libc\cplusplus\cxx_crt_init.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cxx_Thread.cpp</FileName>
-              <FileType>8</FileType>
-              <FilePath>..\..\..\components\libc\cplusplus\cxx_Thread.cpp</FilePath>
             </File>
           </Files>
         </Group>
@@ -574,6 +553,13 @@
         </Group>
         <Group>
           <GroupName>DeviceDrivers</GroupName>
+          <Files>
+            <File>
+              <FileName>device.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\core\device.c</FilePath>
+            </File>
+          </Files>
           <Files>
             <File>
               <FileName>completion.c</FileName>
@@ -668,35 +654,35 @@
             <File>
               <FileName>devfs.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\dfs\filesystems\devfs\devfs.c</FilePath>
+              <FilePath>..\..\..\components\dfs\dfs_v1\filesystems\devfs\devfs.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>dfs.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\dfs\src\dfs.c</FilePath>
+              <FilePath>..\..\..\components\dfs\dfs_v1\src\dfs.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>dfs_file.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\dfs\src\dfs_file.c</FilePath>
+              <FilePath>..\..\..\components\dfs\dfs_v1\src\dfs_file.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>dfs_fs.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\dfs\src\dfs_fs.c</FilePath>
+              <FilePath>..\..\..\components\dfs\dfs_v1\src\dfs_fs.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>dfs_posix.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\dfs\src\dfs_posix.c</FilePath>
+              <FilePath>..\..\..\components\dfs\dfs_v1\src\dfs_posix.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -752,13 +738,6 @@
               <FileName>components.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\components.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>device.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\src\device.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -833,21 +812,31 @@
           </Files>
         </Group>
         <Group>
+          <GroupName>ktime</GroupName>
+          <Files>
+            <File>
+              <FileName>hrtimer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\ktime\src\hrtimer.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cputimer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\ktime\src\cputimer.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>boottime.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\ktime\src\boottime.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
           <GroupName>Platform</GroupName>
-          <Files>
-            <File>
-              <FileName>interrupt.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>platform\interrupt.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>rt_low_level_init.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>platform\rt_low_level_init.c</FilePath>
-            </File>
-          </Files>
           <Files>
             <File>
               <FileName>system_clock.c</FileName>
@@ -860,6 +849,20 @@
               <FileName>reset.c</FileName>
               <FileType>1</FileType>
               <FilePath>platform\reset.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>interrupt.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>platform\interrupt.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>rt_low_level_init.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>platform\rt_low_level_init.c</FilePath>
             </File>
           </Files>
         </Group>

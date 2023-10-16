@@ -48,7 +48,7 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uart1"
-#define RT_VER_NUM 0x50001
+#define RT_VER_NUM 0x50002
 #define RT_USING_CACHE
 #define RT_USING_HW_ATOMIC
 #define RT_USING_CPU_FFS
@@ -76,6 +76,7 @@
 #define MSH_USING_BUILT_IN_COMMANDS
 #define FINSH_USING_DESCRIPTION
 #define FINSH_ARG_MAX 10
+#define FINSH_USING_OPTION_COMPLETION
 
 /* DFS: device virtual file system */
 
@@ -143,9 +144,6 @@
 
 
 /* Wiced WiFi */
-
-
-/* CYW43012 WiFi */
 
 
 /* IoT Cloud */
