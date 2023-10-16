@@ -317,6 +317,13 @@ static char *dfs_nolink_path(struct dfs_mnt **mnt, char *fullpath, int mode)
                     {
                         rt_kprintf("link error: %s\n", path);
                     }
+
+                    char *_fullpath = dfs_normalize_path(RT_NULL, path);
+                    if (_fullpath)
+                    {
+                        strncpy(path, _fullpath, DFS_PATH_MAX);
+                        rt_free(_fullpath);
+                    }
                 }
                 dfs_dentry_unref(dentry);
             }
