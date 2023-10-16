@@ -18,7 +18,6 @@
 #ifdef RT_USING_SMART
 #include <mmu.h>
 #include <ioremap.h>
-#include <lwp_user_mm.h>
 #endif
 
 #if RT_NAME_MAX < 16

@@ -324,11 +324,13 @@ void virtio_fill_desc(struct virtio_device *dev, rt_uint32_t queue_index, rt_uin
     desc->next = next;
 }
 
+#ifdef RT_USING_SMART
 #ifdef RT_USING_VIRTIO_GPU
 
 #include <virtio_gpu.h>
 #include "drivers/lcd.h"
 #include <dfs_file.h>
+#include <lwp_user_mm.h>
 
 static struct rt_device_graphic_info _graphic_info;
 static struct rt_device_rect_info    _rect_info;
@@ -443,4 +445,5 @@ static int fb_init()
     return RT_EOK;
 }
 INIT_COMPONENT_EXPORT(fb_init);
+#endif
 #endif
