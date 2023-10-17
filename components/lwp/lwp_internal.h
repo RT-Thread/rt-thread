@@ -11,8 +11,10 @@
 #ifndef __LWP_INTERNAL_H__
 #define __LWP_INTERNAL_H__
 
-#include <rtthread.h>
 #include "lwp.h"
+#include "lwp_user_mm.h"
+
+#include <rtthread.h>
 #include "libc_musl.h"
 
 struct rt_lwp;

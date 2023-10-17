@@ -16,15 +16,9 @@
 #include "interrupt.h"
 #include "mm_aspace.h"
 
-#include <backtrace.h>
-
 #define DBG_TAG "libcpu.trap"
 #define DBG_LVL DBG_LOG
 #include <rtdbg.h>
-
-void rt_unwind(struct rt_hw_exp_stack *regs, int pc_adj)
-{
-}
 
 #ifdef RT_USING_FINSH
 extern long list_thread(void);
@@ -54,7 +48,7 @@ static void _check_fault(struct rt_hw_exp_stack *regs, uint32_t pc_adj, char *in
             th = rt_thread_self();
             if (th && th->lwp)
             {
-                rt_backtrace_user_thread(th);
+                arch_backtrace_uthread(th);
             }
         }
     #endif
@@ -74,12 +68,17 @@ static void _check_fault(struct rt_hw_exp_stack *regs, uint32_t pc_adj, char *in
             th = rt_thread_self();
             if (th && th->lwp)
             {
-                rt_backtrace_user_thread(th);
+                arch_backtrace_uthread(th);
             }
         }
     #endif
+
         /* kernel stack backtrace */
-        backtrace((unsigned long)regs->pc, (unsigned long)regs->x30, (unsigned long)regs->x29);
+        struct rt_hw_backtrace_frame frame = {
+            .fp = regs->x29,
+            .pc = regs->pc
+        };
+        rt_backtrace_frame(&frame);
     }
 }
 
@@ -373,6 +372,9 @@ void rt_hw_trap_exception(struct rt_hw_exp_stack *regs)
 #ifdef RT_USING_LWP
     _check_fault(regs, 0, "user fault");
 #endif
+
+    struct rt_hw_backtrace_frame frame = {.fp = regs->x29, .pc = regs->pc};
+    rt_backtrace_frame(&frame);
     rt_hw_cpu_shutdown();
 }
 

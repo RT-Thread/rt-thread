@@ -60,8 +60,9 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 256
 #define RT_CONSOLE_DEVICE_NAME "uart0"
-#define RT_VER_NUM 0x50002
+#define RT_VER_NUM 0x50100
 #define RT_USING_STDC_ATOMIC
+#define RT_BACKTRACE_LEVEL_MAX_NR 32
 
 /* AArch64 Architecture Configuration */
 
@@ -199,6 +200,9 @@
 #define RT_USING_ADT_HASHMAP
 #define RT_USING_ADT_REF
 
+/* Memory management */
+
+
 /* RT-Thread Utestcases */
 
 
@@ -237,6 +241,9 @@
 /* u8g2: a monochrome graphic library */
 
 
+/* PainterEngine: A cross-platform graphics application framework written in C language */
+
+
 /* tools packages */
 
 
@@ -256,19 +263,11 @@
 
 /* peripheral libraries and drivers */
 
-/* sensors drivers */
-
-
-/* touch drivers */
-
 
 /* Kendryte SDK */
 
 
 /* AI packages */
-
-
-/* Signal Processing and Control Algorithm Packages */
 
 
 /* miscellaneous packages */
@@ -284,7 +283,7 @@
 /* Arduino libraries */
 
 
-/* Projects and Demos */
+/* Projects */
 
 
 /* Sensors */
@@ -308,7 +307,6 @@
 
 
 /* Other */
-
 
 /* Signal IO */
 

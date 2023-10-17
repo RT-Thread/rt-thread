@@ -19,6 +19,7 @@
  * 2022-06-04     Meco Man     remove strnlen
  * 2023-05-20     Bernard      add rtatomic.h header file to included files.
  * 2023-06-30     ChuShicheng  move debug check from the rtdebug.h
+ * 2023-10-16     Shell        Support a new backtrace framework
  */
 
 #ifndef __RT_THREAD_H__
@@ -658,6 +659,11 @@ void rt_components_board_init(void);
 #else
 int rt_kprintf(const char *fmt, ...);
 void rt_kputs(const char *str);
+
+rt_err_t rt_backtrace(void);
+rt_err_t rt_backtrace_thread(rt_thread_t thread);
+rt_err_t rt_backtrace_frame(struct rt_hw_backtrace_frame *frame);
+
 #endif /* RT_USING_CONSOLE */
 
 int rt_vsprintf(char *dest, const char *format, va_list arg_ptr);

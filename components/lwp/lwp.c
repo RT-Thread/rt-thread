@@ -11,6 +11,7 @@
  * 2021-08-26     linzhenxing  add lwp_setcwd\lwp_getcwd
  * 2023-02-20     wangxiaoyao  inv icache before new app startup
  * 2023-02-20     wangxiaoyao  fix bug on foreground app switch
+ * 2023-10-16     Shell        Support a new backtrace framework
  */
 
 #define DBG_TAG "LWP"
@@ -1418,6 +1419,35 @@ void lwp_uthread_ctx_restore(void)
     rt_thread_t thread;
     thread = rt_thread_self();
     thread->user_ctx.ctx = RT_NULL;
+}
+
+rt_err_t lwp_backtrace_frame(rt_thread_t uthread, struct rt_hw_backtrace_frame *frame)
+{
+    long nesting = 0;
+    char **argv;
+
+    argv = lwp_get_command_line_args(uthread->lwp);
+    if (argv)
+    {
+        LOG_RAW("please use: addr2line -e %s -a -f", argv[0]);
+        lwp_free_command_line_args(argv);
+    }
+    else
+    {
+        LOG_RAW("please use: addr2line -e %s -a -f", uthread->lwp);
+    }
+
+    while (nesting < RT_BACKTRACE_LEVEL_MAX_NR)
+    {
+        LOG_RAW(" 0x%lx", frame->pc);
+        if (rt_hw_backtrace_frame_unwind(uthread, frame))
+        {
+            break;
+        }
+        nesting++;
+    }
+    LOG_RAW("\n");
+    return RT_EOK;
 }
 
 void rt_update_process_times(void)

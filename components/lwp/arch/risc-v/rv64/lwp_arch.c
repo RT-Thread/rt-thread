@@ -15,6 +15,7 @@
  * 2021-11-22     JasonHu      add lwp_set_thread_context
  * 2021-11-30     JasonHu      add clone/fork support
  * 2023-07-16     Shell        Move part of the codes to C from asm in signal handling
+ * 2023-10-16     Shell        Support a new backtrace framework
  */
 #include <rthw.h>
 #include <rtthread.h>
@@ -27,7 +28,7 @@
 #define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
-#include <lwp.h>
+#include <lwp_internal.h>
 #include <lwp_arch.h>
 #include <lwp_user_mm.h>
 #include <page.h>
@@ -325,3 +326,25 @@ void lwp_exec_user(void *args, void *kernel_stack, void *user_entry)
 }
 
 #endif /* ARCH_MM_MMU */
+
+int arch_backtrace_uthread(rt_thread_t thread)
+{
+    struct rt_hw_backtrace_frame frame;
+    struct rt_hw_stack_frame *stack;
+
+    if (thread && thread->lwp)
+    {
+        stack = thread->user_ctx.ctx;
+        if ((long)stack > (unsigned long)thread->stack_addr
+            && (long)stack < (unsigned long)thread->stack_addr + thread->stack_size)
+        {
+            frame.pc = stack->epc;
+            frame.fp = stack->s0_fp;
+            lwp_backtrace_frame(thread, &frame);
+            return 0;
+        }
+        else
+            return -1;
+    }
+    return -1;
+}

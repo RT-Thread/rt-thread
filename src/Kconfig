@@ -421,4 +421,8 @@ config RT_USING_STDC_ATOMIC
     bool "Use atomic implemented in stdatomic.h"
     default n
 
+config RT_BACKTRACE_LEVEL_MAX_NR
+    int "Max number of backtrace level"
+    default 32
+
 endmenu

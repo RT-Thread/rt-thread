@@ -7,179 +7,122 @@
  * Date           Author       Notes
  * 2022-06-02     Jesven       the first version
  * 2023-06-24     WangXiaoyao  Support backtrace for non-active thread
+ * 2023-10-16     Shell        Support a new backtrace framework
  */
+
+
+#include <rtthread.h>
+#include <rthw.h>
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 #include "mm_aspace.h"
 #include "mmu.h"
 
-#include <rtthread.h>
-#include <backtrace.h>
-#include <stdlib.h>
+#define INST_WORD_BYTES                 4
+#define WORD                            sizeof(rt_base_t)
+#define ARCH_CONTEXT_FETCH(pctx, id)    (*(((unsigned long *)pctx) + (id)))
 
-#define BT_NESTING_MAX 100
-
-static int unwind_frame(struct bt_frame *frame)
+rt_inline rt_err_t _bt_kaddr(rt_ubase_t *fp, struct rt_hw_backtrace_frame *frame)
 {
-    unsigned long fp = frame->fp;
+    rt_err_t rc;
+    frame->fp = *fp;
+    frame->pc = *(fp + 1) - INST_WORD_BYTES;
 
-    if ((fp & 0x7)
-#ifdef RT_USING_LWP
-        || (rt_kmem_v2p((void *)fp) == ARCH_MAP_FAILED)
-#endif
-            )
+    if ((rt_ubase_t)fp == frame->fp)
     {
-        return 1;
-    }
-    frame->fp = *(unsigned long *)fp;
-    frame->pc = *(unsigned long *)(fp + 8);
-
-    if ((rt_kmem_v2p((void *)frame->pc) == ARCH_MAP_FAILED))
-        return 1;
-    return 0;
-}
-
-static void walk_unwind(unsigned long pc, unsigned long fp)
-{
-    struct bt_frame frame = {fp, 1};
-    unsigned long lr = pc;
-    int nesting = 0;
-
-    while (nesting < BT_NESTING_MAX)
-    {
-        rt_kprintf(" %p", (void *)lr);
-        if (unwind_frame(&frame))
-        {
-            break;
-        }
-        lr = frame.pc;
-        nesting++;
-    }
-}
-
-void backtrace(unsigned long pc, unsigned long lr, unsigned long fp)
-{
-    rt_kprintf("please use: addr2line -e rtthread.elf -a -f");
-    if (pc)
-        rt_kprintf(" %p", (void *)pc);
-
-    if (lr && fp)
-        walk_unwind(lr, fp);
-    rt_kprintf("\n");
-}
-
-int rt_backtrace(void)
-{
-    unsigned long ra = (unsigned long)__builtin_return_address(0U);
-    unsigned long fr = (unsigned long)__builtin_frame_address(0U);
-
-    backtrace(0, ra, fr);
-    return 0;
-}
-MSH_CMD_EXPORT_ALIAS(rt_backtrace, bt_test, backtrace test);
-
-#define ARCH_CONTEXT_FETCH(pctx, id) (*(((unsigned long *)pctx) + (id)))
-
-int rt_backtrace_thread(rt_thread_t thread)
-{
-    unsigned long lr;
-    unsigned long fp;
-
-    if (thread == rt_thread_self())
-    {
-        return -RT_EINVAL;
+        rc = -RT_ERROR;
     }
     else
     {
-        lr = ARCH_CONTEXT_FETCH(thread->sp, 3);
-        fp = ARCH_CONTEXT_FETCH(thread->sp, 7);
-        backtrace(0, lr, fp);
-        return 0;
+        rc = RT_EOK;
     }
+    return rc;
 }
 
 #ifdef RT_USING_SMART
-
-int rt_backtrace_user_thread(rt_thread_t thread)
+#include <lwp_user_mm.h>
+rt_inline rt_err_t _bt_uaddr(rt_lwp_t lwp, rt_ubase_t *fp, struct rt_hw_backtrace_frame *frame)
 {
-    unsigned long pc;
-    unsigned long lr;
-    unsigned long fp;
-    unsigned long ctx = (unsigned long)thread->user_ctx.ctx;
-
-    if (ctx > (unsigned long)thread->stack_addr
-        && ctx < (unsigned long)thread->stack_addr + thread->stack_size)
+    rt_err_t rc;
+    if (lwp_data_get(lwp, &frame->fp, fp, WORD) != WORD)
     {
-        pc = ARCH_CONTEXT_FETCH(thread->user_ctx.ctx, 0);
-        lr = ARCH_CONTEXT_FETCH(thread->user_ctx.ctx, 3);
-        fp = ARCH_CONTEXT_FETCH(thread->user_ctx.ctx, 7);
-        backtrace(pc, lr, fp);
-        return 0;
+        rc = -RT_EFAULT;
+    }
+    else if (lwp_data_get(lwp, &frame->pc, fp + 1, WORD) != WORD)
+    {
+        rc = -RT_EFAULT;
+    }
+    else if ((rt_base_t)fp == frame->fp)
+    {
+        rc = -RT_ERROR;
     }
     else
-        return -1;
+    {
+        frame->pc -= INST_WORD_BYTES;
+        rc = RT_EOK;
+    }
+    return rc;
 }
-
 #endif /* RT_USING_SMART */
 
-static long custom_hex_to_long(const char* hex)
+rt_err_t rt_hw_backtrace_frame_unwind(rt_thread_t thread, struct rt_hw_backtrace_frame *frame)
 {
-    long result = 0;
-    int i = 0;
+    rt_err_t rc = -RT_ERROR;
+    rt_ubase_t *fp = (rt_ubase_t *)frame->fp;
 
-    // Skip the "0x" prefix
-    if (hex[0] == '0' && (hex[1] == 'x' || hex[1] == 'X'))
+    if (fp && !((long)fp & 0x7))
     {
-        i = 2;
-    }
-
-    // Convert each hex digit to its decimal value
-    for (; hex[i] != '\0'; i++)
-    {
-        char digit = hex[i];
-        if (digit >= '0' && digit <= '9')
+#ifdef RT_USING_SMART
+        if (thread->lwp)
         {
-            result = result * 16 + (digit - '0');
+            rt_lwp_t lwp = thread->lwp;
+            void *this_lwp = lwp_self();
+            if (this_lwp == lwp && rt_kmem_v2p(fp) != ARCH_MAP_FAILED)
+            {
+                rc = _bt_kaddr(fp, frame);
+            }
+            else if (lwp_user_accessible_ext(lwp, fp, sizeof(rt_base_t)))
+            {
+                rc = _bt_uaddr(lwp, fp, frame);
+            }
+            else
+            {
+                rc = -RT_EFAULT;
+            }
         }
-        else if (digit >= 'a' && digit <= 'f')
+        else
+#endif
+        if (rt_kmem_v2p(fp) != ARCH_MAP_FAILED)
         {
-            result = result * 16 + (digit - 'a' + 10);
-        }
-        else if (digit >= 'A' && digit <= 'F')
-        {
-            result = result * 16 + (digit - 'A' + 10);
+            rc = _bt_kaddr(fp, frame);
         }
         else
         {
-            // Invalid hex digit
-            return 0;
+            rc = -RT_EFAULT;
         }
-    }
-
-    return result;
-}
-
-static void cmd_backtrace(int argc, char** argv)
-{
-    long pid;
-
-    if (argc < 2)
-    {
-        rt_kprintf("please use: backtrace pid\n");
-        return;
-    }
-
-    if (strncmp(argv[1], "0x", 2) == 0)
-    {
-        pid = custom_hex_to_long(argv[1]);
     }
     else
     {
-        pid = atol(argv[1]);
+        rc = -RT_EFAULT;
     }
-    if (pid)
-    {
-        rt_kprintf("backtrace %s(0x%lx), from %s\n", ((rt_thread_t)pid)->parent.name, pid, argv[1]);
-        rt_backtrace_thread((rt_thread_t)pid);
-    }
+    return rc;
 }
-MSH_CMD_EXPORT_ALIAS(cmd_backtrace, backtrace, print backtrace of a thread);
+
+rt_err_t rt_hw_backtrace_frame_get(rt_thread_t thread, struct rt_hw_backtrace_frame *frame)
+{
+    rt_err_t rc;
+    if (!thread || !frame)
+    {
+        rc = -RT_EINVAL;
+    }
+    else
+    {
+        frame->pc = ARCH_CONTEXT_FETCH(thread->sp, 3);
+        frame->fp = ARCH_CONTEXT_FETCH(thread->sp, 7);
+        rc = RT_EOK;
+    }
+    return rc;
+}
