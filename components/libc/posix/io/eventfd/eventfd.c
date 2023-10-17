@@ -14,6 +14,7 @@
 #include <stdint.h>
 #include <unistd.h>
 #include <dfs_file.h>
+#include <dfs.h>
 #include "poll.h"
 #include "eventfd.h"
 

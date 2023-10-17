@@ -28,6 +28,20 @@
 #define DBG_TAG              "tmpfs"
 #define DBG_LVL              DBG_INFO
 #include <rtdbg.h>
+#ifdef RT_USING_PAGECACHE
+#include "dfs_pcache.h"
+#endif
+
+#ifdef RT_USING_PAGECACHE
+static ssize_t dfs_tmp_page_read(struct dfs_file *file, struct dfs_page *page);
+static ssize_t dfs_tmp_page_write(struct dfs_page *page);
+
+static struct dfs_aspace_ops dfs_tmp_aspace_ops =
+{
+    .read = dfs_tmp_page_read,
+    .write = dfs_tmp_page_write,
+};
+#endif
 
 static int _path_separate(const char *path, char *parent_path, char *file_name)
 {
@@ -285,6 +299,8 @@ static ssize_t dfs_tmpfs_read(struct dfs_file *file, void *buf, size_t count, of
     d_file = (struct tmpfs_file *)file->vnode->data;
     RT_ASSERT(d_file != NULL);
 
+    rt_mutex_take(&file->vnode->lock, RT_WAITING_FOREVER);
+
     if (count < file->vnode->size - *pos)
         length = count;
     else
@@ -295,6 +311,8 @@ static ssize_t dfs_tmpfs_read(struct dfs_file *file, void *buf, size_t count, of
 
     /* update file current position */
     *pos += length;
+
+    rt_mutex_release(&file->vnode->lock);
 
     return length;
 }
@@ -310,12 +328,15 @@ static ssize_t dfs_tmpfs_write(struct dfs_file *file, const void *buf, size_t co
     superblock = d_file->sb;
     RT_ASSERT(superblock != NULL);
 
+    rt_mutex_take(&file->vnode->lock, RT_WAITING_FOREVER);
+
     if (count + *pos > file->vnode->size)
     {
         rt_uint8_t *ptr;
         ptr = rt_realloc(d_file->data, *pos + count);
         if (ptr == NULL)
         {
+            rt_mutex_release(&file->vnode->lock);
             rt_set_errno(-ENOMEM);
             return 0;
         }
@@ -335,6 +356,7 @@ static ssize_t dfs_tmpfs_write(struct dfs_file *file, const void *buf, size_t co
 
     /* update file current position */
     *pos += count;
+    rt_mutex_release(&file->vnode->lock);
 
     return count;
 }
@@ -371,6 +393,7 @@ static int dfs_tmpfs_close(struct dfs_file *file)
     struct tmpfs_file *d_file;
 
     RT_ASSERT(file->vnode->ref_count > 0);
+
     if (file->vnode->ref_count != 1)
         return 0;
 
@@ -389,6 +412,8 @@ static int dfs_tmpfs_close(struct dfs_file *file)
 
         rt_free(d_file);
     }
+
+    rt_mutex_detach(&file->vnode->lock);
 
     return RT_EOK;
 }
@@ -424,6 +449,12 @@ static int dfs_tmpfs_open(struct dfs_file *file)
         file->fpos = 0;
     }
 
+    RT_ASSERT(file->vnode->ref_count > 0);
+    if(file->vnode->ref_count == 1)
+    {
+        rt_mutex_init(&file->vnode->lock, file->dentry->pathname, RT_IPC_FLAG_PRIO);
+    }
+
     return 0;
 }
 
@@ -442,12 +473,13 @@ static int dfs_tmpfs_stat(struct dfs_dentry *dentry, struct stat *st)
     st->st_dev = (dev_t)(size_t)(dentry->mnt->dev_id);
     st->st_ino = (ino_t)dfs_dentry_full_path_crc32(dentry);
 
-    st->st_mode = S_IFREG | S_IRUSR | S_IRGRP | S_IROTH |
-                  S_IWUSR | S_IWGRP | S_IWOTH;
     if (d_file->type == TMPFS_TYPE_DIR)
     {
-        st->st_mode &= ~S_IFREG;
-        st->st_mode |= S_IFDIR | S_IXUSR | S_IXGRP | S_IXOTH;
+        st->st_mode = S_IFDIR | (S_IRUSR | S_IXUSR | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH);
+    }
+    else
+    {
+        st->st_mode = S_IFREG | (S_IRWXU | S_IRWXG | S_IRWXO);
     }
 
     st->st_size = d_file->size;
@@ -468,13 +500,18 @@ static int dfs_tmpfs_getdents(struct dfs_file *file,
 
     d_file = (struct tmpfs_file *)file->vnode->data;
 
+    rt_mutex_take(&file->vnode->lock, RT_WAITING_FOREVER);
+
     superblock  = d_file->sb;
     RT_ASSERT(superblock != RT_NULL);
 
     /* make integer count */
     count = (count / sizeof(struct dirent));
     if (count == 0)
+    {
+        rt_mutex_release(&file->vnode->lock);
         return -EINVAL;
+    }
 
     end = file->fpos + count;
     index = 0;
@@ -507,6 +544,7 @@ static int dfs_tmpfs_getdents(struct dfs_file *file,
             break;
         }
     }
+    rt_mutex_release(&file->vnode->lock);
 
     return count * sizeof(struct dirent);
 }
@@ -607,13 +645,16 @@ static struct dfs_vnode *_dfs_tmpfs_lookup(struct dfs_dentry *dentry)
         {
             if (d_file->type == TMPFS_TYPE_DIR)
             {
-                vnode->mode = S_IFDIR | S_IRUSR | S_IWUSR | S_IXUSR;
+                vnode->mode = S_IFDIR | (S_IRUSR | S_IXUSR | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH);
                 vnode->type = FT_DIRECTORY;
             }
             else
             {
-                vnode->mode = S_IFREG | S_IRUSR | S_IWUSR | S_IXUSR;
+                vnode->mode = S_IFREG | (S_IRWXU | S_IRWXG | S_IRWXO);
                 vnode->type = FT_REGULAR;
+#ifdef RT_USING_PAGECACHE
+                vnode->aspace = dfs_aspace_create(dentry, vnode, &dfs_tmp_aspace_ops);
+#endif
             }
 
             vnode->mnt = dentry->mnt;
@@ -681,14 +722,17 @@ static struct dfs_vnode *dfs_tmpfs_create_vnode(struct dfs_dentry *dentry, int t
         if (type == FT_DIRECTORY)
         {
             d_file->type = TMPFS_TYPE_DIR;
-            vnode->mode = S_IFDIR | mode;
+            vnode->mode = S_IFDIR | (S_IRUSR | S_IXUSR | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH);
             vnode->type = FT_DIRECTORY;
         }
         else
         {
             d_file->type = TMPFS_TYPE_FILE;
-            vnode->mode = S_IFREG | mode;
+            vnode->mode = S_IFREG | (S_IRWXU | S_IRWXG | S_IRWXO);
             vnode->type = FT_REGULAR;
+#ifdef RT_USING_PAGECACHE
+            vnode->aspace = dfs_aspace_create(dentry, vnode, &dfs_tmp_aspace_ops);
+#endif
         }
         rt_spin_lock(&superblock->lock);
         rt_list_insert_after(&(p_file->subdirs), &(d_file->sibling));
@@ -712,6 +756,41 @@ static int dfs_tmpfs_free_vnode(struct dfs_vnode *vnode)
 
     return 0;
 }
+
+#ifdef RT_USING_PAGECACHE
+static ssize_t dfs_tmp_page_read(struct dfs_file *file, struct dfs_page *page)
+{
+    int ret = -EINVAL;
+
+    if (page->page)
+    {
+        off_t fpos = page->fpos;
+        ret = dfs_tmpfs_read(file, page->page, page->size, &fpos);
+    }
+
+    return ret;
+}
+
+ssize_t dfs_tmp_page_write(struct dfs_page *page)
+{
+    struct tmpfs_file *d_file;
+
+    if (page->aspace->vnode->type == FT_DIRECTORY)
+    {
+        return -EISDIR;
+    }
+
+    d_file = (struct tmpfs_file *)(page->aspace->vnode->data);
+    RT_ASSERT(d_file != RT_NULL);
+    rt_mutex_take(&page->aspace->vnode->lock, RT_WAITING_FOREVER);
+    if (page->len > 0)
+        memcpy(d_file->data + page->fpos, page->page, page->len);
+
+    rt_mutex_release(&page->aspace->vnode->lock);
+
+    return F_OK;
+}
+#endif
 
 static int dfs_tmpfs_truncate(struct dfs_file *file, off_t offset)
 {

@@ -700,7 +700,7 @@ pid_t waitpid(pid_t pid, int *status, int options)
         /* delete from sibling list of its parent */
         struct rt_lwp **lwp_node;
 
-        *status = lwp->lwp_ret;
+        lwp_data_put(this_lwp, status, &lwp->lwp_ret, sizeof(*status));
         lwp_node = &this_lwp->first_child;
         while (*lwp_node != lwp)
         {

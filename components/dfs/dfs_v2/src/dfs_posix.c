@@ -1216,53 +1216,46 @@ FINSH_FUNCTION_EXPORT_ALIAS(chdir, cd, change current working directory);
  */
 int access(const char *path, int amode)
 {
-    int fd, ret = -1, flags = 0;
-    struct stat sb;
+    struct stat st;
 
     if (path == NULL)
     {
-        rt_set_errno(-EBADF);
+        rt_set_errno(-EINVAL);
+        return -1;
+    }
+
+    if (stat(path, &st) < 0)
+    {
+        rt_set_errno(-ENOENT);
         return -1;
     }
 
     if (amode == F_OK)
     {
-        if (stat(path, &sb) < 0)
-            return -1; /* already sets errno */
-        else
-            return 0;
+        return 0;
     }
 
-    /* ignore R_OK,W_OK,X_OK condition */
-    if (dfs_file_isdir(path) == 0)
+    if ((amode & R_OK) && !(st.st_mode & S_IRUSR))
     {
-        flags |= O_DIRECTORY;
+        rt_set_errno(-EACCES);
+        return -1;
     }
 
-    if (amode & R_OK)
+    if ((amode & W_OK) && !(st.st_mode & S_IWUSR))
     {
-        flags |= O_RDONLY;
+        rt_set_errno(-EACCES);
+        return -1;
     }
 
-    if (amode & W_OK)
+    if ((amode & X_OK) && !(st.st_mode & S_IXUSR))
     {
-        flags |= O_WRONLY;
+        rt_set_errno(-EACCES);
+        return -1;
     }
 
-    if (amode & X_OK)
-    {
-        flags |= O_EXEC;
-    }
-
-    fd = open(path, flags, 0);
-    if (fd >= 0)
-    {
-        ret = 0;
-        close(fd);
-    }
-
-    return ret;
+    return 0;
 }
+
 /**
  * this function is a POSIX compliant version, which will set current
  * working directory.

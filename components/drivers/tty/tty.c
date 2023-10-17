@@ -15,6 +15,7 @@
 #include <rtthread.h>
 #include <tty.h>
 #include <tty_ldisc.h>
+#include <shell.h>
 
 #if defined(RT_USING_POSIX_DEVIO)
 #include <termios.h>
@@ -272,9 +273,97 @@ static int tiocsctty(struct tty_struct *tty, int arg)
     return 0;
 }
 
+static int tiocswinsz(struct tty_struct *tty, struct winsize *p_winsize)
+{
+    rt_kprintf("\x1b[8;%d;%dt", p_winsize->ws_col, p_winsize->ws_row);
+    return 0;
+}
+
+static int tiocgwinsz(struct tty_struct *tty, struct winsize *p_winsize)
+{
+    if(rt_thread_self() != rt_thread_find(FINSH_THREAD_NAME))
+    {
+        /* only can be used in tshell thread; otherwise, return default size */
+        p_winsize->ws_col = 80;
+        p_winsize->ws_row = 24;
+    }
+    else
+    {
+        #define _TIO_BUFLEN 20
+        char _tio_buf[_TIO_BUFLEN];
+        unsigned char cnt1, cnt2, cnt3, i;
+        char row_s[4], col_s[4];
+        char *p;
+
+        rt_memset(_tio_buf, 0, _TIO_BUFLEN);
+
+        /* send the command to terminal for getting the window size of the terminal */
+        rt_kprintf("\033[18t");
+
+        /* waiting for the response from the terminal */
+        i = 0;
+        while(i < _TIO_BUFLEN)
+        {
+            _tio_buf[i] = finsh_getchar();
+            if(_tio_buf[i] != 't')
+            {
+                i ++;
+            }
+            else
+            {
+                break;
+            }
+        }
+        if(i == _TIO_BUFLEN)
+        {
+            /* buffer overloaded, and return default size */
+            p_winsize->ws_col = 80;
+            p_winsize->ws_row = 24;
+            return 0;
+        }
+
+        /* interpreting data eg: "\033[8;1;15t" which means row is 1 and col is 15 (unit: size of ONE character) */
+        rt_memset(row_s,0,4);
+        rt_memset(col_s,0,4);
+        cnt1 = 0;
+        while(cnt1 < _TIO_BUFLEN && _tio_buf[cnt1] != ';')
+        {
+            cnt1++;
+        }
+        cnt2 = ++cnt1;
+        while(cnt2 < _TIO_BUFLEN && _tio_buf[cnt2] != ';')
+        {
+            cnt2++;
+        }
+        p = row_s;
+        while(cnt1 < cnt2)
+        {
+            *p++ = _tio_buf[cnt1++];
+        }
+        p = col_s;
+        cnt2++;
+        cnt3 = rt_strlen(_tio_buf) - 1;
+        while(cnt2 < cnt3)
+        {
+            *p++ = _tio_buf[cnt2++];
+        }
+
+        /* load the window size date */
+        p_winsize->ws_col = atoi(col_s);
+        p_winsize->ws_row = atoi(row_s);
+    #undef _TIO_BUFLEN
+    }
+
+    p_winsize->ws_xpixel = 0;/* unused */
+    p_winsize->ws_ypixel = 0;/* unused */
+
+    return 0;
+}
+
 static int tty_ioctl(struct dfs_file *fd, int cmd, void *args)
 {
     int ret = 0;
+    void *p = (void *)args;
     struct tty_struct *tty = RT_NULL;
     struct tty_struct *real_tty = RT_NULL;
     struct tty_ldisc *ld = RT_NULL;
@@ -295,6 +384,10 @@ static int tty_ioctl(struct dfs_file *fd, int cmd, void *args)
     {
     case TIOCSCTTY:
         return tiocsctty(real_tty, 1);
+    case TIOCGWINSZ:
+        return tiocgwinsz(real_tty, p);
+    case TIOCSWINSZ:
+        return tiocswinsz(real_tty, p);
     }
 
     ld = tty->ldisc;

@@ -240,7 +240,9 @@ struct __pthread {
 }
 #endif
 
-#define AUX_ARRAY_ITEMS_NR 6
+#ifndef AUX_ARRAY_ITEMS_NR
+#define AUX_ARRAY_ITEMS_NR 32
+#endif
 
 /* aux key */
 #define AT_NULL 0

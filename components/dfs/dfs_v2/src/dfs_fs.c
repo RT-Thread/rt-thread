@@ -19,6 +19,10 @@
 #include <dfs_mnt.h>
 #include "dfs_private.h"
 
+#ifdef RT_USING_PAGECACHE
+#include "dfs_pcache.h"
+#endif
+
 #define DBG_TAG "DFS.fs"
 #define DBG_LVL DBG_INFO
 #include <rtdbg.h>
@@ -314,6 +318,9 @@ int dfs_umount(const char *specialfile, int flags)
 
                 if (!(mnt->flags & MNT_IS_LOCKED) && rt_list_isempty(&mnt->child) && (ref_count == 1 || (flags & MNT_FORCE)))
                 {
+#ifdef RT_USING_PAGECACHE
+                    dfs_pcache_unmount(mnt);
+#endif
                     /* destroy this mount point */
                     DLOG(msg, "dfs", "mnt", DLOG_MSG, "dfs_mnt_destroy(mnt)");
                     ret = dfs_mnt_destroy(mnt);
@@ -396,6 +403,18 @@ int dfs_mkfs(const char *fs_name, const char *device_name)
     if (type->fs_ops->mkfs)
     {
         ret = type->fs_ops->mkfs(dev_id, type->fs_ops->name);
+#ifdef RT_USING_PAGECACHE
+        if (ret == RT_EOK)
+        {
+            struct dfs_mnt *mnt = RT_NULL;
+
+            mnt = dfs_mnt_dev_lookup(dev_id);
+            if (mnt)
+            {
+                dfs_pcache_unmount(mnt);
+            }
+        }
+#endif
     }
 
     return ret;

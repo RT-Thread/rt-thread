@@ -54,6 +54,10 @@ static void data_abort(unsigned long far, unsigned long iss)
         rt_kprintf("Translation fault, third level\n");
         break;
 
+    case 0b001000:
+        rt_kprintf("Access flag fault, zeroth level\n");
+        break;
+
     case 0b001001:
         rt_kprintf("Access flag fault, first level\n");
         break;
@@ -64,6 +68,10 @@ static void data_abort(unsigned long far, unsigned long iss)
 
     case 0b001011:
         rt_kprintf("Access flag fault, third level\n");
+        break;
+
+    case 0b001100:
+        rt_kprintf("Permission fault, zeroth level\n");
         break;
 
     case 0b001101:
@@ -148,7 +156,7 @@ static void data_abort(unsigned long far, unsigned long iss)
     }
 }
 
-void process_exception(unsigned long esr, unsigned long epc)
+void print_exception(unsigned long esr, unsigned long epc)
 {
     rt_uint8_t ec;
     rt_uint32_t iss;

@@ -35,7 +35,7 @@
 
 
 #ifdef RT_DEBUGING_PAGE_LEAK
-#define DEBUG_FIELD {           \
+#define DEBUG_FIELD struct {    \
     /* trace list */            \
     struct rt_page *tl_next;    \
     struct rt_page *tl_prev;    \
@@ -50,7 +50,7 @@ DEF_PAGE_T(
     struct rt_page *next;   /* same level next */
     struct rt_page *pre;    /* same level pre  */
 
-    DEBUG_FIELD
+    DEBUG_FIELD;
 
     rt_uint32_t size_bits;     /* if is ARCH_ADDRESS_WIDTH_BITS, means not free */
     rt_uint32_t ref_cnt;       /* page group ref count */

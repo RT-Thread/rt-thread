@@ -68,7 +68,6 @@ static void _cpu_preempt_enable(void)
     /* enable interrupt */
     rt_hw_local_irq_enable(level);
 }
-#endif /* RT_USING_SMP */
 
 /**
  * @brief   Initialize a static spinlock object.
@@ -77,9 +76,7 @@ static void _cpu_preempt_enable(void)
  */
 void rt_spin_lock_init(struct rt_spinlock *lock)
 {
-#ifdef RT_USING_SMP
     rt_hw_spin_lock_init(&lock->lock);
-#endif
 }
 RTM_EXPORT(rt_spin_lock_init)
 
@@ -93,12 +90,8 @@ RTM_EXPORT(rt_spin_lock_init)
  */
 void rt_spin_lock(struct rt_spinlock *lock)
 {
-#ifdef RT_USING_SMP
     _cpu_preempt_disable();
     rt_hw_spin_lock(&lock->lock);
-#else
-    rt_enter_critical();
-#endif
 }
 RTM_EXPORT(rt_spin_lock)
 
@@ -109,12 +102,8 @@ RTM_EXPORT(rt_spin_lock)
  */
 void rt_spin_unlock(struct rt_spinlock *lock)
 {
-#ifdef RT_USING_SMP
     rt_hw_spin_unlock(&lock->lock);
     _cpu_preempt_enable();
-#else
-    rt_exit_critical();
-#endif
 }
 RTM_EXPORT(rt_spin_unlock)
 
@@ -130,7 +119,6 @@ RTM_EXPORT(rt_spin_unlock)
  */
 rt_base_t rt_spin_lock_irqsave(struct rt_spinlock *lock)
 {
-#ifdef RT_USING_SMP
     unsigned long level;
 
     _cpu_preempt_disable();
@@ -139,9 +127,6 @@ rt_base_t rt_spin_lock_irqsave(struct rt_spinlock *lock)
     rt_hw_spin_lock(&lock->lock);
 
     return level;
-#else
-    return rt_hw_interrupt_disable();
-#endif
 }
 RTM_EXPORT(rt_spin_lock_irqsave)
 
@@ -154,14 +139,10 @@ RTM_EXPORT(rt_spin_lock_irqsave)
  */
 void rt_spin_unlock_irqrestore(struct rt_spinlock *lock, rt_base_t level)
 {
-#ifdef RT_USING_SMP
     rt_hw_spin_unlock(&lock->lock);
     rt_hw_local_irq_enable(level);
 
     _cpu_preempt_enable();
-#else
-    rt_hw_interrupt_enable(level);
-#endif
 }
 RTM_EXPORT(rt_spin_unlock_irqrestore)
 
@@ -261,3 +242,4 @@ void rt_cpus_lock_status_restore(struct rt_thread *thread)
     }
 }
 RTM_EXPORT(rt_cpus_lock_status_restore);
+#endif

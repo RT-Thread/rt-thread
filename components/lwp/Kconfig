@@ -68,4 +68,20 @@ if RT_USING_LWP
             bool "The unix98 PTY debug output"
             default n
     endif
+
+    menuconfig RT_USING_LDSO
+        bool "LDSO: dynamic load shared objects"
+        default n
+
+    if RT_USING_LDSO
+        config ELF_DEBUG_ENABLE
+            bool "Enable ldso debug"
+            default n
+
+        config ELF_LOAD_RANDOMIZE
+            bool "Enable random load address"
+            default n
+    endif
+
 endif
+

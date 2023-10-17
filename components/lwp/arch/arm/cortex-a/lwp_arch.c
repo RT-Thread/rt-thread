@@ -23,13 +23,11 @@
 #include <lwp_arch.h>
 #include <lwp_user_mm.h>
 
-#define KPTE_START (KERNEL_VADDR_START >> ARCH_SECTION_SHIFT)
-
 int arch_user_space_init(struct rt_lwp *lwp)
 {
     size_t *mmu_table;
 
-    mmu_table = (size_t *)rt_pages_alloc(2);
+    mmu_table = rt_hw_mmu_pgtbl_create();
     if (!mmu_table)
     {
         return -RT_ENOMEM;
@@ -37,9 +35,6 @@ int arch_user_space_init(struct rt_lwp *lwp)
 
     lwp->end_heap = USER_HEAP_VADDR;
 
-    rt_memcpy(mmu_table + KPTE_START, (size_t *)rt_kernel_space.page_table + KPTE_START, ARCH_PAGE_SIZE);
-    rt_memset(mmu_table, 0, 3 * ARCH_PAGE_SIZE);
-    rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, mmu_table, 4 * ARCH_PAGE_SIZE);
 
     lwp->aspace = rt_aspace_create((void *)USER_VADDR_START, USER_VADDR_TOP - USER_VADDR_START, mmu_table);
     if (!lwp->aspace)
@@ -87,7 +82,7 @@ void arch_user_space_free(struct rt_lwp *lwp)
         rt_aspace_delete(lwp->aspace);
 
         /* must be freed after aspace delete, pgtbl is required for unmap */
-        rt_pages_free(pgtbl, 2);
+        rt_hw_mmu_pgtbl_delete(pgtbl);
         lwp->aspace = RT_NULL;
     }
     else

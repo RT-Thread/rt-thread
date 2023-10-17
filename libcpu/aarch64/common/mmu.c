@@ -204,7 +204,7 @@ static int _kernel_map_2M(unsigned long *lv0_tbl, void *vaddr, void *paddr, unsi
     {
         return MMU_MAP_ERROR_VANOTALIGN;
     }
-    if (pa & ARCH_SECTION_MASK)
+    if (pa & ARCH_PAGE_MASK)
     {
         return MMU_MAP_ERROR_PANOTALIGN;
     }
@@ -556,7 +556,7 @@ static int _map_single_page_2M(unsigned long *lv0_tbl, unsigned long va,
     {
         return MMU_MAP_ERROR_VANOTALIGN;
     }
-    if (pa & ARCH_SECTION_MASK)
+    if (pa & ARCH_PAGE_MASK)
     {
         return MMU_MAP_ERROR_PANOTALIGN;
     }
@@ -803,8 +803,8 @@ void rt_hw_mem_setup_early(unsigned long *tbl0, unsigned long *tbl1,
 #ifdef RT_USING_SMART
     unsigned long va = KERNEL_VADDR_START;
 #else
-    extern unsigned char _start;
-    unsigned long va = (unsigned long) &_start;
+    extern unsigned char __start;
+    unsigned long va = (unsigned long) &__start;
     va = RT_ALIGN_DOWN(va, 0x200000);
 #endif
 
@@ -825,4 +825,23 @@ void rt_hw_mem_setup_early(unsigned long *tbl0, unsigned long *tbl1,
     {
         while (1);
     }
+}
+
+void *rt_hw_mmu_pgtbl_create(void)
+{
+    size_t *mmu_table;
+    mmu_table = (size_t *)rt_pages_alloc_ext(0, PAGE_ANY_AVAILABLE);
+    if (!mmu_table)
+    {
+        return RT_NULL;
+    }
+
+    memset(mmu_table, 0, ARCH_PAGE_SIZE);
+    rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, mmu_table, ARCH_PAGE_SIZE);
+    return mmu_table;
+}
+
+void rt_hw_mmu_pgtbl_delete(void *pgtbl)
+{
+    rt_pages_free(pgtbl, 0);
 }

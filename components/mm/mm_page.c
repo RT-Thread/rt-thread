@@ -91,10 +91,13 @@ static rt_page_t _trace_head;
 #define TRACE_ALLOC(pg, size)       _trace_alloc(pg, __builtin_return_address(0), size)
 #define TRACE_FREE(pgaddr, size)    _trace_free(pgaddr, __builtin_return_address(0), size)
 
+static long _alloc_cnt;
+
 void rt_page_leak_trace_start()
 {
     // TODO multicore safety
     _trace_head = NULL;
+    _alloc_cnt = 0;
     enable = 1;
 }
 MSH_CMD_EXPORT(rt_page_leak_trace_start, start page leak tracer);
@@ -104,16 +107,18 @@ static void _collect()
     rt_page_t page = _trace_head;
     if (!page)
     {
-        rt_kputs("ok!\n");
+        LOG_RAW("ok! ALLOC CNT %ld\n", _alloc_cnt);
     }
-
-    while (page)
+    else
     {
-        rt_page_t next = page->next;
-        void *pg_va = rt_page_page2addr(page);
-        LOG_W("LEAK: %p, allocator: %p, size bits: %lx", pg_va, page->caller, page->trace_size);
-        rt_pages_free(pg_va, page->trace_size);
-        page = next;
+        while (page)
+        {
+            rt_page_t next = page->tl_next;
+            void *pg_va = rt_page_page2addr(page);
+            LOG_W("LEAK: %p, allocator: %p, size bits: %lx", pg_va, page->caller, page->trace_size);
+            rt_pages_free(pg_va, page->trace_size);
+            page = next;
+        }
     }
 }
 
@@ -129,11 +134,13 @@ static void _trace_alloc(rt_page_t page, void *caller, size_t size_bits)
 {
     if (enable)
     {
+        char *page_va = rt_page_page2addr(page);
         page->caller = caller;
         page->trace_size = size_bits;
         page->tl_prev = NULL;
         page->tl_next = NULL;
 
+        _alloc_cnt++;
         if (_trace_head == NULL)
         {
             _trace_head = page;
@@ -147,12 +154,12 @@ static void _trace_alloc(rt_page_t page, void *caller, size_t size_bits)
     }
 }
 
-void _report(rt_page_t page, size_bits, char *msg)
+void _report(rt_page_t page, size_t size_bits, char *msg)
 {
     void *pg_va = rt_page_page2addr(page);
     LOG_W("%s: %p, allocator: %p, size bits: %lx", msg, pg_va, page->caller, page->trace_size);
-    rt_kputs("backtrace\n");
-    rt_hw_backtrace(0, 0);
+    LOG_RAW("backtrace\n");
+    rt_backtrace();
 }
 
 static void _trace_free(rt_page_t page, void *caller, size_t size_bits)
@@ -162,25 +169,26 @@ static void _trace_free(rt_page_t page, void *caller, size_t size_bits)
         /* free after free */
         if (page->trace_size == 0xabadcafe)
         {
-            _report("free after free")
+            _report(page, size_bits, "free after free");
             return ;
         }
         else if (page->trace_size != size_bits)
         {
-            rt_kprintf("free with size bits %lx\n", size_bits);
-            _report("incompatible size bits parameter");
+            LOG_RAW("free with size bits %lx\n", size_bits);
+            _report(page, size_bits, "incompatible size bits parameter");
             return ;
         }
 
-        if (page->ref_cnt == 1)
+        if (page->ref_cnt == 0)
         {
+            _alloc_cnt--;
             if (page->tl_prev)
                 page->tl_prev->tl_next = page->tl_next;
             if (page->tl_next)
                 page->tl_next->tl_prev = page->tl_prev;
 
             if (page == _trace_head)
-                _trace_head = page->next;
+                _trace_head = page->tl_next;
 
             page->tl_prev = NULL;
             page->tl_next = NULL;
@@ -531,7 +539,7 @@ static rt_page_t *_flag_to_page_list(size_t flags)
     return page_list;
 }
 
-static void *_do_pages_alloc(rt_uint32_t size_bits, size_t flags)
+rt_inline void *_do_pages_alloc(rt_uint32_t size_bits, size_t flags)
 {
     void *alloc_buf = RT_NULL;
     struct rt_page *p;
@@ -613,27 +621,27 @@ void list_page(void)
         struct rt_page *lp = page_list_low[i];
         struct rt_page *hp = page_list_high[i];
 
-        rt_kprintf("level %d ", i);
+        LOG_RAW("level %d ", i);
 
         while (lp)
         {
             free += (1UL << i);
-            rt_kprintf("[0x%08p]", rt_page_page2addr(lp));
+            LOG_RAW("[0x%08p]", rt_page_page2addr(lp));
             lp = lp->next;
         }
         while (hp)
         {
             free += (1UL << i);
-            rt_kprintf("[0x%08p]", rt_page_page2addr(hp));
+            LOG_RAW("[0x%08p]", rt_page_page2addr(hp));
             hp = hp->next;
         }
-        rt_kprintf("\n");
+        LOG_RAW("\n");
     }
 
     rt_hw_interrupt_enable(level);
-    rt_kprintf("-------------------------------\n");
-    rt_kprintf("Page Summary:\n => free/installed: 0x%lx/0x%lx (%ld/%ld KB)\n", free, installed, PGNR2SIZE(free), PGNR2SIZE(installed));
-    rt_kprintf("-------------------------------\n");
+    LOG_RAW("-------------------------------\n");
+    LOG_RAW("Page Summary:\n => free/installed: 0x%lx/0x%lx (%ld/%ld KB)\n", free, installed, PGNR2SIZE(free), PGNR2SIZE(installed));
+    LOG_RAW("-------------------------------\n");
 }
 MSH_CMD_EXPORT(list_page, show page info);
 

@@ -427,7 +427,6 @@ static int _ipc_msg_fd_new(void *file)
 #endif
 
 
-
     return fd;
 }
 

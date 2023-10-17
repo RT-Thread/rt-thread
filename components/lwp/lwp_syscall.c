@@ -1305,12 +1305,41 @@ rt_base_t sys_brk(void *addr)
 void *sys_mmap2(void *addr, size_t length, int prot,
         int flags, int fd, size_t pgoffset)
 {
-    return lwp_mmap2(addr, length, prot, flags, fd, pgoffset);
+    sysret_t rc = 0;
+    long offset = 0;
+
+    /* aligned for user addr */
+    if ((rt_base_t)addr & ARCH_PAGE_MASK)
+    {
+        if (flags & MAP_FIXED)
+            rc = -EINVAL;
+        else
+        {
+            offset = (char *)addr - (char *)RT_ALIGN_DOWN((rt_base_t)addr, ARCH_PAGE_SIZE);
+            length += offset;
+            addr = (void *)RT_ALIGN_DOWN((rt_base_t)addr, ARCH_PAGE_SIZE);
+        }
+    }
+
+    if (rc == 0)
+    {
+        /* fix parameter passing (both along have same effect) */
+        if (fd == -1 || flags & MAP_ANONYMOUS)
+        {
+            fd = -1;
+            /* MAP_SHARED has no effect and treated as nothing */
+            flags &= ~MAP_SHARED;
+            flags |= MAP_PRIVATE | MAP_ANONYMOUS;
+        }
+        rc = (sysret_t)lwp_mmap2(lwp_self(), addr, length, prot, flags, fd, pgoffset);
+    }
+
+    return (char *)rc + offset;
 }
 
 sysret_t sys_munmap(void *addr, size_t length)
 {
-    return lwp_munmap(addr);
+    return lwp_munmap(lwp_self(), addr, length);
 }
 
 void *sys_mremap(void *old_address, size_t old_size,
@@ -1999,17 +2028,6 @@ rt_weak long sys_clone(void *arg[])
     return _sys_clone(arg);
 }
 
-int lwp_dup_user(rt_varea_t varea, void *arg);
-
-static int _copy_process(struct rt_lwp *dest_lwp, struct rt_lwp *src_lwp)
-{
-    int err;
-    dest_lwp->lwp_obj->source = src_lwp->aspace;
-    err = rt_aspace_traversal(src_lwp->aspace, lwp_dup_user, dest_lwp);
-    dest_lwp->lwp_obj->source = NULL;
-    return err;
-}
-
 static void lwp_struct_copy(struct rt_lwp *dst, struct rt_lwp *src)
 {
 #ifdef ARCH_MM_MMU
@@ -2106,8 +2124,8 @@ sysret_t _sys_fork(void)
 
     self_lwp = lwp_self();
 
-    /* copy process */
-    if (_copy_process(lwp, self_lwp) != 0)
+    /* copy address space of process from this proc to forked one */
+    if (lwp_fork_aspace(lwp, self_lwp) != 0)
     {
         SET_ERRNO(ENOMEM);
         goto fail;
@@ -4222,13 +4240,27 @@ sysret_t sys_getaddrinfo(const char *nodename,
             SET_ERRNO(EFAULT);
             goto exit;
         }
-#endif
+
+        k_nodename = (char *)kmem_get(len + 1);
+        if (!k_nodename)
+        {
+            SET_ERRNO(ENOMEM);
+            goto exit;
+        }
+
+        if (lwp_get_from_user(k_nodename, (void *)nodename, len + 1) != len + 1)
+        {
+            SET_ERRNO(EFAULT);
+            goto exit;
+        }
+#else
         k_nodename = rt_strdup(nodename);
         if (!k_nodename)
         {
             SET_ERRNO(ENOMEM);
             goto exit;
         }
+#endif
     }
     if (servname)
     {
@@ -4239,13 +4271,27 @@ sysret_t sys_getaddrinfo(const char *nodename,
             SET_ERRNO(EFAULT);
             goto exit;
         }
-#endif
+
+        k_servname = (char *)kmem_get(len + 1);
+        if (!k_servname)
+        {
+            SET_ERRNO(ENOMEM);
+            goto exit;
+        }
+
+        if (lwp_get_from_user(k_servname, (void *)servname, len + 1) < 0)
+        {
+            SET_ERRNO(EFAULT);
+            goto exit;
+        }
+#else
         k_servname = rt_strdup(servname);
         if (!k_servname)
         {
             SET_ERRNO(ENOMEM);
             goto exit;
         }
+#endif
     }
 
     if (hints)
@@ -4300,15 +4346,28 @@ exit:
     {
         ret = GET_ERRNO();
     }
-
+#ifdef ARCH_MM_MMU
+    if (k_nodename)
+    {
+        kmem_put(k_nodename);
+    }
+#else
     if (k_nodename)
     {
         rt_free(k_nodename);
     }
+#endif
+#ifdef ARCH_MM_MMU
+    if (k_servname)
+    {
+        kmem_put(k_servname);
+    }
+#else
     if (k_servname)
     {
         rt_free(k_servname);
     }
+#endif
     if (k_hints)
     {
         rt_free(k_hints);
@@ -4324,7 +4383,7 @@ sysret_t sys_gethostbyname2_r(const char *name, int af, struct hostent *ret,
 {
     int ret_val = -1;
     int sal_ret = -1 , sal_err = -1;
-    struct hostent sal_he;
+    struct hostent sal_he, sal_tmp;
     struct hostent *sal_result = NULL;
     char *sal_buf = NULL;
     char *k_name  = NULL;
@@ -4354,18 +4413,31 @@ sysret_t sys_gethostbyname2_r(const char *name, int af, struct hostent *ret,
         SET_ERRNO(EFAULT);
         goto __exit;
     }
-#endif
 
-    *result = ret;
-    sal_buf = (char *)malloc(HOSTENT_BUFSZ);
-    if (sal_buf == NULL)
+    k_name = (char *)kmem_get(len + 1);
+    if (!k_name)
     {
         SET_ERRNO(ENOMEM);
         goto __exit;
     }
 
+    if (lwp_get_from_user(k_name, (void *)name, len + 1) < 0)
+    {
+        SET_ERRNO(EFAULT);
+        goto __exit;
+    }
+#else
     k_name = rt_strdup(name);
     if (k_name == NULL)
+    {
+        SET_ERRNO(ENOMEM);
+        goto __exit;
+    }
+#endif
+
+    *result = ret;
+    sal_buf = (char *)malloc(HOSTENT_BUFSZ);
+    if (sal_buf == NULL)
     {
         SET_ERRNO(ENOMEM);
         goto __exit;
@@ -4386,6 +4458,28 @@ sysret_t sys_gethostbyname2_r(const char *name, int af, struct hostent *ret,
         }
         cnt = index + 1;
 
+#ifdef ARCH_MM_MMU
+        /* update user space hostent */
+        lwp_put_to_user(buf, k_name, buflen - (ptr - buf));
+        lwp_memcpy(&sal_tmp, &sal_he, sizeof(sal_he));
+        sal_tmp.h_name = ptr;
+        ptr += rt_strlen(k_name);
+
+        sal_tmp.h_addr_list = (char**)ptr;
+        ptr += cnt * sizeof(char *);
+
+        index = 0;
+        while (sal_he.h_addr_list[index] != NULL)
+        {
+            sal_tmp.h_addr_list[index] = ptr;
+            lwp_memcpy(ptr, sal_he.h_addr_list[index], sal_he.h_length);
+
+            ptr += sal_he.h_length;
+            index++;
+        }
+        sal_tmp.h_addr_list[index] = NULL;
+        lwp_put_to_user(ret, &sal_tmp, sizeof(sal_tmp));
+#else
         /* update user space hostent */
         ret->h_addrtype = sal_he.h_addrtype;
         ret->h_length   = sal_he.h_length;
@@ -4407,9 +4501,9 @@ sysret_t sys_gethostbyname2_r(const char *name, int af, struct hostent *ret,
             index++;
         }
         ret->h_addr_list[index] = NULL;
+#endif
+        ret_val = 0;
     }
-
-    ret_val = 0;
 
 __exit:
     if (ret_val < 0)
@@ -4422,10 +4516,17 @@ __exit:
     {
         free(sal_buf);
     }
+#ifdef ARCH_MM_MMU
+    if (k_name)
+    {
+        kmem_put(k_name);
+    }
+#else
     if (k_name)
     {
         free(k_name);
     }
+#endif
 
     return ret_val;
 }
