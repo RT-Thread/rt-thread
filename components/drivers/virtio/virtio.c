@@ -430,7 +430,12 @@ static int fb_init()
         rt_device_control(_gpu_dev, RTGRAPHIC_CTRL_RECT_UPDATE, &_rect_info);
     }
 
-    RT_ASSERT(!rt_device_find("fb0"));
+    if(rt_device_find("fb0") != RT_NULL)
+    {
+        rt_kprintf("a device named fb0 already exists\n");
+        return -RT_ERROR;
+    }
+    
     _fb.type = RT_Device_Class_Miscellaneous;
 
 #ifdef RT_USING_DEVICE_OPS
