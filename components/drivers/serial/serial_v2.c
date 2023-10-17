@@ -1498,6 +1498,7 @@ void rt_hw_serial_isr(struct rt_serial_device *serial, int event)
     switch (event & 0xff)
     {
         /* Interrupt receive event */
+        case RT_SERIAL_EVENT_RX_TIMEOUT:
         case RT_SERIAL_EVENT_RX_IND:
         case RT_SERIAL_EVENT_RX_DMADONE:
         {

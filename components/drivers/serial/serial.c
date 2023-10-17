@@ -1318,8 +1318,11 @@ rt_err_t rt_hw_serial_register(struct rt_serial_device *serial,
 /* ISR for serial interrupt */
 void rt_hw_serial_isr(struct rt_serial_device *serial, int event)
 {
+    serial->event = event;
+
     switch (event & 0xff)
     {
+        case RT_SERIAL_EVENT_RX_TIMEOUT:
         case RT_SERIAL_EVENT_RX_IND:
         {
             int ch = -1;
