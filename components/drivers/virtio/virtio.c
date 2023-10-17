@@ -370,6 +370,16 @@ static rt_err_t fb_control(rt_device_t dev, int cmd, void *args)
             info->bits_per_pixel           = _graphic_info.bits_per_pixel;
             info->xres                     = _graphic_info.width;
             info->yres                     = _graphic_info.height;
+            info->yres_virtual             = _graphic_info.height;
+            info->xres_virtual             = _graphic_info.width;
+            info->transp.offset            = 24;
+            info->transp.length            = 8;
+            info->red.offset               = 0;
+            info->red.length               = 8;
+            info->green.offset             = 8;
+            info->green.length             = 8;
+            info->blue.offset              = 16;
+            info->blue.length              = 8;
             break;
         }
         case RT_FIOMMAP2:
