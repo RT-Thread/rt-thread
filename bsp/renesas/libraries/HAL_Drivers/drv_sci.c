@@ -65,39 +65,50 @@ struct ra_sci_param
     const void  *ops;
 };
 
-rt_weak const struct rt_i2c_bus_device_ops sci_ops_i2c;
-rt_weak const struct rt_spi_ops            sci_ops_spi;
-rt_weak const struct rt_uart_ops           sci_ops_uart;
+#ifdef RT_USING_I2C
+    rt_weak const struct rt_i2c_bus_device_ops sci_ops_i2c;
+#endif
+#ifdef RT_USING_SPI
+    rt_weak const struct rt_spi_ops            sci_ops_spi;
+#endif
+#ifdef RT_USING_UART
+    rt_weak const struct rt_uart_ops           sci_ops_uart;
+#endif
 
 struct ra_sci_object
 {
     union
     {
+#ifdef RT_USING_SPI
         struct
         {
             struct rt_spi_bus           sbus;
             struct rt_spi_configuration *spi_cfg;
         };
+#endif
+#ifdef RT_USING_I2C
         struct
         {
             struct rt_i2c_bus_device    ibus;
         };
+#endif
+#ifdef RT_USING_UART
         struct
         {
             struct rt_serial_device     ubus;
         };
-
+#endif
     };
     const struct ra_sci_param *param;
     struct rt_event event;
 };
 
 #ifndef BIT
-#define BIT(idx)            (1ul << (idx))
+    #define BIT(idx)            (1ul << (idx))
 #endif
 
 #ifndef BITS
-#define BITS(b,e)                   ((((uint32_t)-1)<<(b))&(((uint32_t)-1)>>(31-(e))))
+    #define BITS(b,e)                   ((((uint32_t)-1)<<(b))&(((uint32_t)-1)>>(31-(e))))
 #endif
 
 #define _TO_STR(_a)                 #_a
@@ -218,11 +229,11 @@ static struct ra_sci_object sci_obj[RA_SCI_INDEX_MAX] = {0};
 rt_used static rt_err_t ra_wait_complete(struct ra_sci_object *obj)
 {
     rt_uint32_t event = 0;
-    if(RT_EOK != rt_event_recv(&obj->event, RA_SCI_EVENT_ALL, RT_EVENT_FLAG_OR|RT_EVENT_FLAG_CLEAR, (rt_int32_t)rt_tick_from_millisecond(400), &event))
+    if (RT_EOK != rt_event_recv(&obj->event, RA_SCI_EVENT_ALL, RT_EVENT_FLAG_OR | RT_EVENT_FLAG_CLEAR, (rt_int32_t)rt_tick_from_millisecond(400), &event))
     {
         return -RT_ETIMEOUT;
     }
-    if((event & (RA_SCI_EVENT_ABORTED|RA_SCI_EVENT_ERROR)) == 0)
+    if ((event & (RA_SCI_EVENT_ABORTED | RA_SCI_EVENT_ERROR)) == 0)
     {
         return RT_EOK;
     }
@@ -238,42 +249,42 @@ rt_used static rt_err_t ra_wait_complete(struct ra_sci_object *obj)
 const static int uart_buff_size[][2] =
 {
 #ifdef        BSP_USING_SCI0_UART
-    {BSP_SCI0_UART_RX_BUFSIZE,BSP_SCI0_UART_TX_BUFSIZE},
+    {BSP_SCI0_UART_RX_BUFSIZE, BSP_SCI0_UART_TX_BUFSIZE},
 #endif
 #ifdef        BSP_USING_SCI1_UART
-    {BSP_SCI1_UART_RX_BUFSIZE,BSP_SCI1_UART_TX_BUFSIZE},
+    {BSP_SCI1_UART_RX_BUFSIZE, BSP_SCI1_UART_TX_BUFSIZE},
 #endif
 #ifdef        BSP_USING_SCI2_UART
-    {BSP_SCI2_UART_RX_BUFSIZE,BSP_SCI2_UART_TX_BUFSIZE},
+    {BSP_SCI2_UART_RX_BUFSIZE, BSP_SCI2_UART_TX_BUFSIZE},
 #endif
 #ifdef        BSP_USING_SCI3_UART
-    {BSP_SCI3_UART_RX_BUFSIZE,BSP_SCI3_UART_TX_BUFSIZE},
+    {BSP_SCI3_UART_RX_BUFSIZE, BSP_SCI3_UART_TX_BUFSIZE},
 #endif
 #ifdef        BSP_USING_SCI4_UART
-    {BSP_SCI4_UART_RX_BUFSIZE,BSP_SCI4_UART_TX_BUFSIZE},
+    {BSP_SCI4_UART_RX_BUFSIZE, BSP_SCI4_UART_TX_BUFSIZE},
 #endif
 #ifdef        BSP_USING_SCI5_UART
-    {BSP_SCI5_UART_RX_BUFSIZE,BSP_SCI5_UART_TX_BUFSIZE},
+    {BSP_SCI5_UART_RX_BUFSIZE, BSP_SCI5_UART_TX_BUFSIZE},
 #endif
 #ifdef        BSP_USING_SCI6_UART
-    {BSP_SCI6_UART_RX_BUFSIZE,BSP_SCI6_UART_TX_BUFSIZE},
+    {BSP_SCI6_UART_RX_BUFSIZE, BSP_SCI6_UART_TX_BUFSIZE},
 #endif
 #ifdef        BSP_USING_SCI7_UART
-    {BSP_SCI7_UART_RX_BUFSIZE,BSP_SCI7_UART_TX_BUFSIZE},
+    {BSP_SCI7_UART_RX_BUFSIZE, BSP_SCI7_UART_TX_BUFSIZE},
 #endif
 #ifdef        BSP_USING_SCI8_UART
-    {BSP_SCI8_UART_RX_BUFSIZE,BSP_SCI8_UART_TX_BUFSIZE},
+    {BSP_SCI8_UART_RX_BUFSIZE, BSP_SCI8_UART_TX_BUFSIZE},
 #endif
 #ifdef        BSP_USING_SCI9_UART
-    {BSP_SCI9_UART_RX_BUFSIZE,BSP_SCI9_UART_TX_BUFSIZE},
+    {BSP_SCI9_UART_RX_BUFSIZE, BSP_SCI9_UART_TX_BUFSIZE},
 #endif
-    {0,0},
+    {0, 0},
 };
 
 void sci_uart_irq_callback(uart_callback_args_t *p_args)
 {
     rt_interrupt_enter();
-    if(NULL != p_args)
+    if (NULL != p_args)
     {
         struct ra_sci_object *obj = (struct ra_sci_object *)p_args->p_context;
         RT_ASSERT(obj != RT_NULL);
@@ -306,13 +317,13 @@ static rt_err_t ra_uart_configure(struct rt_serial_device *serial, struct serial
     param = obj->param;
     RT_ASSERT(param != RT_NULL);
 
-    err = R_SCI_UART_Open((uart_ctrl_t * const)param->sci_ctrl, (uart_cfg_t * const)param->sci_cfg);
+    err = R_SCI_UART_Open((uart_ctrl_t *const)param->sci_ctrl, (uart_cfg_t *const)param->sci_cfg);
     if (FSP_SUCCESS != err)
     {
         return -RT_ERROR;
     }
 
-    err = R_SCI_UART_CallbackSet((uart_ctrl_t * const)param->sci_ctrl, sci_uart_irq_callback, obj, NULL);
+    err = R_SCI_UART_CallbackSet((uart_ctrl_t *const)param->sci_ctrl, sci_uart_irq_callback, obj, NULL);
     if (FSP_SUCCESS != err)
     {
         //LOG_W("R_SCI_UART_CallbackSet API failed,%d", err);
@@ -350,9 +361,9 @@ static int ra_uart_getc(struct rt_serial_device *serial)
 }
 
 static rt_ssize_t ra_uart_transmit(struct rt_serial_device     *serial,
-                                  rt_uint8_t           *buf,
-                                  rt_size_t             size,
-                                  rt_uint32_t           tx_flag)
+                                   rt_uint8_t           *buf,
+                                   rt_size_t             size,
+                                   rt_uint32_t           tx_flag)
 {
     RT_ASSERT(serial != RT_NULL);
     RT_ASSERT(buf != RT_NULL);
@@ -392,15 +403,15 @@ void sci_i2c_irq_callback(i2c_master_callback_args_t *p_args)
         struct ra_sci_object *obj = (struct ra_sci_object *)p_args->p_context;
         uint32_t event = 0;
         RT_ASSERT(obj != RT_NULL);
-        switch(p_args->event)
+        switch (p_args->event)
         {
-            case I2C_MASTER_EVENT_ABORTED:
+        case I2C_MASTER_EVENT_ABORTED:
             event |= RA_SCI_EVENT_ABORTED;
             break;
-            case I2C_MASTER_EVENT_RX_COMPLETE:
+        case I2C_MASTER_EVENT_RX_COMPLETE:
             event |= RA_SCI_EVENT_RX_COMPLETE;
             break;
-            case I2C_MASTER_EVENT_TX_COMPLETE:
+        case I2C_MASTER_EVENT_TX_COMPLETE:
             event |= RA_SCI_EVENT_TX_COMPLETE;
             break;
         }
@@ -412,8 +423,8 @@ void sci_i2c_irq_callback(i2c_master_callback_args_t *p_args)
 }
 
 static rt_ssize_t ra_i2c_mst_xfer(struct rt_i2c_bus_device *bus,
-                                struct rt_i2c_msg msgs[],
-                                rt_uint32_t num)
+                                  struct rt_i2c_msg msgs[],
+                                  rt_uint32_t num)
 {
     rt_size_t i;
     RT_ASSERT(bus != RT_NULL);
@@ -438,27 +449,43 @@ static rt_ssize_t ra_i2c_mst_xfer(struct rt_i2c_bus_device *bus,
         {
             //LOG_E("10Bit not support");
             //break;
+#ifdef SOC_SERIES_R7FA8M85
+            R_SCI_B_I2C_SlaveAddressSet(master_ctrl, msg->addr, I2C_MASTER_ADDR_MODE_10BIT);
+#else
             R_SCI_I2C_SlaveAddressSet(master_ctrl, msg->addr, I2C_MASTER_ADDR_MODE_10BIT);
+#endif
         }
         else
         {
             //master_ctrl->slave = msg->addr;
+#ifdef SOC_SERIES_R7FA8M85
+            R_SCI_B_I2C_SlaveAddressSet(master_ctrl, msg->addr, I2C_MASTER_ADDR_MODE_7BIT);
+#else
             R_SCI_I2C_SlaveAddressSet(master_ctrl, msg->addr, I2C_MASTER_ADDR_MODE_7BIT);
+#endif
         }
 
         if (msg->flags & RT_I2C_RD)
         {
+#ifdef SOC_SERIES_R7FA8M85
+            err = R_SCI_B_I2C_Read(master_ctrl, msg->buf, msg->len, restart);
+#else
             err = R_SCI_I2C_Read(master_ctrl, msg->buf, msg->len, restart);
+#endif
         }
         else
         {
+#ifdef SOC_SERIES_R7FA8M85
+            err = R_SCI_B_I2C_Write(master_ctrl, msg->buf, msg->len, restart);
+#else
             err = R_SCI_I2C_Write(master_ctrl, msg->buf, msg->len, restart);
+#endif
         }
         if (FSP_SUCCESS == err)
         {
             /* handle error */
             err = ra_wait_complete(obj);
-            if(RT_EOK != err)
+            if (RT_EOK != err)
             {
                 //LOG_E("POWER_CTL reg I2C write failed,%d,%d", err, i);
                 break;
@@ -481,10 +508,6 @@ const struct rt_i2c_bus_device_ops sci_ops_i2c =
     .slave_xfer         = RT_NULL,
     .i2c_bus_control    = RT_NULL
 };
-#else
-void sci_i2c_irq_callback(i2c_master_callback_args_t *p_args)
-{
-}
 #endif
 /**
  * @}
@@ -504,20 +527,20 @@ void sci_spi_irq_callback(spi_callback_args_t *p_args)
         /* capture callback event for validating the i2c transfer event*/
         struct ra_sci_object *obj = (struct ra_sci_object *)p_args->p_context;
         uint32_t event = 0;
-        switch(p_args->event)
+        switch (p_args->event)
         {
-            case SPI_EVENT_ERR_MODE_FAULT   :
-            case SPI_EVENT_ERR_READ_OVERFLOW:
-            case SPI_EVENT_ERR_PARITY       :
-            case SPI_EVENT_ERR_OVERRUN      :
-            case SPI_EVENT_ERR_FRAMING      :
-            case SPI_EVENT_ERR_MODE_UNDERRUN:
+        case SPI_EVENT_ERR_MODE_FAULT   :
+        case SPI_EVENT_ERR_READ_OVERFLOW:
+        case SPI_EVENT_ERR_PARITY       :
+        case SPI_EVENT_ERR_OVERRUN      :
+        case SPI_EVENT_ERR_FRAMING      :
+        case SPI_EVENT_ERR_MODE_UNDERRUN:
             event |= RA_SCI_EVENT_ERROR;
             break;
-            case SPI_EVENT_TRANSFER_ABORTED :
+        case SPI_EVENT_TRANSFER_ABORTED :
             event |= RA_SCI_EVENT_ABORTED;
             break;
-            case SPI_EVENT_TRANSFER_COMPLETE:
+        case SPI_EVENT_TRANSFER_COMPLETE:
             event |= RA_SCI_EVENT_TX_COMPLETE;
             break;
         }
@@ -531,11 +554,11 @@ void sci_spi_irq_callback(spi_callback_args_t *p_args)
 static spi_bit_width_t ra_width_shift(rt_uint8_t data_width)
 {
     spi_bit_width_t bit_width = SPI_BIT_WIDTH_8_BITS;
-    if(data_width == 1)
+    if (data_width == 1)
         bit_width = SPI_BIT_WIDTH_8_BITS;
-    else if(data_width == 2)
+    else if (data_width == 2)
         bit_width = SPI_BIT_WIDTH_16_BITS;
-    else if(data_width == 4)
+    else if (data_width == 4)
         bit_width = SPI_BIT_WIDTH_32_BITS;
 
     return bit_width;
@@ -636,7 +659,8 @@ static rt_err_t ra_hw_spi_configure(struct rt_spi_device *device,
     /**< init */
     err = R_SCI_SPI_Open((spi_ctrl_t *)param->sci_ctrl, cfg);
     /* handle error */
-    if(err == FSP_ERR_IN_USE) {
+    if (err == FSP_ERR_IN_USE)
+    {
         R_SCI_SPI_Close((spi_ctrl_t *)param->sci_ctrl);
         err = R_SCI_SPI_Open((spi_ctrl_t *)param->sci_ctrl, cfg);
     }
@@ -703,10 +727,6 @@ const struct rt_spi_ops sci_ops_spi =
     .configure = ra_hw_spi_configure,
     .xfer = ra_spixfer,
 };
-#else
-void sci_spi_irq_callback(spi_callback_args_t *p_args)
-{
-}
 #endif
 /**
  * @}
@@ -714,15 +734,14 @@ void sci_spi_irq_callback(spi_callback_args_t *p_args)
 
 static int ra_hw_sci_init(void)
 {
-    int bufsz_idx = 0;
     for (rt_uint8_t idx = 0; idx < RA_SCI_INDEX_MAX; idx++)
     {
         struct ra_sci_object *obj = &sci_obj[idx];
         const struct ra_sci_param *param = &sci_param[idx];
         obj->param = param;
         rt_err_t err;
-        #ifdef BSP_USING_SCIn_SPI
-        if((uint32_t)param->ops == (uint32_t)&sci_ops_spi)
+#ifdef BSP_USING_SCIn_SPI
+        if ((uint32_t)param->ops == (uint32_t)&sci_ops_spi)
         {
             /**< register spi bus */
             err = rt_spi_bus_register(&obj->sbus, param->bus_name, param->ops);
@@ -733,56 +752,64 @@ static int ra_hw_sci_init(void)
             }
         }
         else
-        #endif
-        #ifdef BSP_USING_SCIn_I2C
-        if((uint32_t)param->ops == (uint32_t)&sci_ops_i2c)
-        {
-            obj->ibus.ops = param->ops;
-            obj->ibus.priv = 0;
-            /* opening IIC master module */
-            err = R_SCI_I2C_Open((i2c_master_ctrl_t *)param->sci_ctrl, param->sci_cfg);
-            if(err != FSP_SUCCESS)
+#endif
+#ifdef BSP_USING_SCIn_I2C
+            if ((uint32_t)param->ops == (uint32_t)&sci_ops_i2c)
             {
-                LOG_E("R_IIC_MASTER_Open API failed,%d", err);
-                continue;
-            }
-            err = R_SCI_I2C_CallbackSet((i2c_master_ctrl_t *)param->sci_ctrl, sci_i2c_irq_callback, obj, NULL);
-            /* handle error */
-            if (FSP_SUCCESS != err)
-            {
-                LOG_E("R_SCI_I2C_CallbackSet API failed,%d", err);
-                continue;
-            }
+                obj->ibus.ops = param->ops;
+                obj->ibus.priv = 0;
+                /* opening IIC master module */
+#ifdef SOC_SERIES_R7FA8M85
+                err = R_SCI_B_I2C_Open((i2c_master_ctrl_t *)param->sci_ctrl, param->sci_cfg);
+#else
+                err = R_SCI_I2C_Open((i2c_master_ctrl_t *)param->sci_ctrl, param->sci_cfg);
+#endif
+                if (err != FSP_SUCCESS)
+                {
+                    LOG_E("R_IIC_MASTER_Open API failed,%d", err);
+                    continue;
+                }
+#ifdef SOC_SERIES_R7FA8M85
+                err = R_SCI_B_I2C_CallbackSet((i2c_master_ctrl_t *)param->sci_ctrl, sci_i2c_irq_callback, obj, NULL);
+#else
+                err = R_SCI_I2C_CallbackSet((i2c_master_ctrl_t *)param->sci_ctrl, sci_i2c_irq_callback, obj, NULL);
+#endif
+                /* handle error */
+                if (FSP_SUCCESS != err)
+                {
+                    LOG_E("R_SCI_I2C_CallbackSet API failed,%d", err);
+                    continue;
+                }
 
-            err = rt_i2c_bus_device_register(&obj->ibus, param->bus_name);
-            if (RT_EOK != err)
-            {
-                LOG_E("i2c bus %s register failed,%d", param->bus_name, err);
-                continue;
+                err = rt_i2c_bus_device_register(&obj->ibus, param->bus_name);
+                if (RT_EOK != err)
+                {
+                    LOG_E("i2c bus %s register failed,%d", param->bus_name, err);
+                    continue;
+                }
             }
-        }
-        else
-        #endif
-        #ifdef BSP_USING_SCIn_UART
-        if((uint32_t)param->ops == (uint32_t)&sci_ops_uart)
-        {
-            if(rt_device_find(param->bus_name) != RT_NULL)
-            {
-                continue;
-            }
-            struct rt_serial_device *serial = &obj->ubus;
-            obj->ubus.ops = param->ops;
-            serial->config.rx_bufsz = uart_buff_size[bufsz_idx][0];
-            serial->config.tx_bufsz = uart_buff_size[bufsz_idx][1];
-            bufsz_idx ++;
-            err = rt_hw_serial_register(serial, param->bus_name, RT_DEVICE_FLAG_RDWR, RT_NULL);
-            if (RT_EOK != err)
-            {
-                LOG_E("uart %s register failed,%d", param->bus_name, err);
-                continue;
-            }
-        }
-        #endif
+            else
+#endif
+#ifdef BSP_USING_SCIn_UART
+                if ((uint32_t)param->ops == (uint32_t)&sci_ops_uart)
+                {
+                    if (rt_device_find(param->bus_name) != RT_NULL)
+                    {
+                        continue;
+                    }
+                    struct rt_serial_device *serial = &obj->ubus;
+                    obj->ubus.ops = param->ops;
+                    serial->config.rx_bufsz = uart_buff_size[bufsz_idx][0];
+                    serial->config.tx_bufsz = uart_buff_size[bufsz_idx][1];
+                    bufsz_idx ++;
+                    err = rt_hw_serial_register(serial, param->bus_name, RT_DEVICE_FLAG_RDWR, RT_NULL);
+                    if (RT_EOK != err)
+                    {
+                        LOG_E("uart %s register failed,%d", param->bus_name, err);
+                        continue;
+                    }
+                }
+#endif
         {
         }
         if (RT_EOK != rt_event_init(&obj->event, param->bus_name, RT_IPC_FLAG_PRIO))
@@ -806,9 +833,9 @@ rt_weak int rt_hw_usart_init(void)
         const struct ra_sci_param *param = &sci_param[idx];
         obj->param = param;
         rt_err_t err;
-        if((uint32_t)param->ops == (uint32_t)&sci_ops_uart)
+        if ((uint32_t)param->ops == (uint32_t)&sci_ops_uart)
         {
-            if(rt_device_find(param->bus_name) != RT_NULL)
+            if (rt_device_find(param->bus_name) != RT_NULL)
             {
                 continue;
             }
