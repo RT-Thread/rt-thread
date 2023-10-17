@@ -409,7 +409,11 @@ const static struct rt_device_ops fb_ops =
 static int fb_init()
 {
     _gpu_dev = rt_device_find("virtio-gpu0");
-    RT_ASSERT(_gpu_dev);
+    
+    if(_gpu_dev == RT_NULL)
+    {
+        return -RT_ERROR;
+    }
 
     if(_gpu_dev != RT_NULL && rt_device_open(_gpu_dev, 0) == RT_EOK)
     {
