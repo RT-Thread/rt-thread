@@ -1,0 +1,16 @@
+# RT-Thread building script for component
+
+from building import *
+
+Import('rtconfig')
+
+cwd     = GetCurrentDir()
+src     = Glob('*.c')
+CPPPATH = [cwd]
+
+if rtconfig.PLATFORM in ['gcc', 'armclang', 'llvm-arm']:
+    src += Glob('*context_gcc.S')
+
+group = DefineGroup('CPU', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')
