@@ -423,7 +423,7 @@ static int fb_init()
         _rect_info.width  = _graphic_info.width;
         _rect_info.height = _graphic_info.height;
         memset(_graphic_info.framebuffer, 0xff, _graphic_info.smem_len);
-        rt_device_control(_gpu_dev, RTGRAPHIC_CTRL_RECT_UPDATE, &_rect_info); 
+        rt_device_control(_gpu_dev, RTGRAPHIC_CTRL_RECT_UPDATE, &_rect_info);
     }
 
     RT_ASSERT(!rt_device_find("fb0"));
