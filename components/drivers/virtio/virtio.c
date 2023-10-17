@@ -419,7 +419,7 @@ const static struct rt_device_ops fb_ops =
 static int fb_init()
 {
     _gpu_dev = rt_device_find("virtio-gpu0");
-    
+
     if(_gpu_dev == RT_NULL)
     {
         return -RT_ERROR;
@@ -445,7 +445,7 @@ static int fb_init()
         rt_kprintf("a device named fb0 already exists\n");
         return -RT_ERROR;
     }
-    
+
     _fb.type = RT_Device_Class_Miscellaneous;
 
 #ifdef RT_USING_DEVICE_OPS
