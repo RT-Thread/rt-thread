@@ -210,7 +210,7 @@ static char *dfs_nolink_path(struct dfs_mnt **mnt, char *fullpath, int mode)
     char link_fn[DFS_PATH_MAX] = {0};
     struct dfs_dentry *dentry = RT_NULL;
 
-    path = (char *)rt_malloc(DFS_PATH_MAX);
+    path = (char *)rt_malloc((DFS_PATH_MAX * 2) + 1); // path + syslink + \0
     if (!path)
     {
         return path;
@@ -316,6 +316,13 @@ static char *dfs_nolink_path(struct dfs_mnt **mnt, char *fullpath, int mode)
                     else
                     {
                         rt_kprintf("link error: %s\n", path);
+                    }
+
+                    char *_fullpath = dfs_normalize_path(RT_NULL, path);
+                    if (_fullpath)
+                    {
+                        strncpy(path, _fullpath, DFS_PATH_MAX);
+                        rt_free(_fullpath);
                     }
                 }
                 dfs_dentry_unref(dentry);
