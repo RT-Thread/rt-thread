@@ -7,6 +7,7 @@
  * Date           Author       Notes
  */
 #include <rtthread.h>
+#include <rtdevice.h>
 
 #include "LPC177x_8x.h"
 #include "lpc177x_8x_pinsel.h"

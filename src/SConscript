@@ -30,9 +30,6 @@ if GetDepend('RT_USING_SMP') == False:
 if GetDepend('RT_USING_SMP') == True:
     SrcRemove(src, ['scheduler_up.c'])
 
-if GetDepend('RT_USING_DM') == False:
-    SrcRemove(src, ['driver.c'])
-
 group = DefineGroup('Kernel', src, depend = [''], CPPPATH = inc, CPPDEFINES = ['__RTTHREAD__'])
 
 Return('group')

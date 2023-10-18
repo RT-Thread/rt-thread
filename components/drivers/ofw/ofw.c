@@ -10,6 +10,8 @@
 
 #include <rtthread.h>
 #include <rtdevice.h>
+#include <drivers/platform.h>
+#include <drivers/core/bus.h>
 
 #define DBG_TAG "rtdm.ofw"
 #define DBG_LVL DBG_INFO

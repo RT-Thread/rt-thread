@@ -12,7 +12,15 @@
 #ifndef __RT_DEVICE_H__
 #define __RT_DEVICE_H__
 
+#include <rtdef.h>
 #include <rtthread.h>
+#include <drivers/core/driver.h>
+
+#include <drivers/classes/block.h>
+#include <drivers/classes/char.h>
+#include <drivers/classes/graphic.h>
+#include <drivers/classes/mtd.h>
+#include <drivers/classes/net.h>
 
 #include "ipc/ringbuffer.h"
 #include "ipc/completion.h"

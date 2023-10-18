@@ -11,7 +11,9 @@
 #ifndef __CORE_DRIVER_H__
 #define __CORE_DRIVER_H__
 
-#include <drivers/core/device.h>
+#include <rtdef.h>
+
+struct rt_bus;
 
 struct rt_driver
 {
@@ -39,6 +41,7 @@ struct rt_driver
 
     void *priv;
 };
+typedef struct rt_driver* rt_driver_t;
 
 int rt_driver_probe_device(struct rt_driver *drv, struct rt_device *dev);
 

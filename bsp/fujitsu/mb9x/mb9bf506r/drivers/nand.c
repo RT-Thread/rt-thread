@@ -8,6 +8,8 @@
  * 2011-05-25     Bernard      first version
  */
 
+#include <rtdevice.h>
+
 #include "nand.h"
 #include "mb9bf506r.h"
 

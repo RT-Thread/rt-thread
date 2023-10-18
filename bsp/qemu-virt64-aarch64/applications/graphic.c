@@ -9,6 +9,7 @@
  */
 
 #include <rtthread.h>
+#include <rtdevice.h>
 
 #include <virtio_gpu.h>
 #include <virtio_input.h>
