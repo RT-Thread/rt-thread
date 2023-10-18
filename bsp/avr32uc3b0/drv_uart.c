@@ -223,8 +223,7 @@ static rt_err_t avr32uc3b_uart_control(struct rt_serial_device *serial, int cmd,
         // And set up and enable the interrupt handlers
         //INTC_init_interrupts();
         INTC_register_interrupt(uart->uart_isr, uart->irqno, uart->irq_level);
-        //*(uart->instance)->ier = AVR32_USART_IER_RXRDY_MASK;
-        AVR32_USART1.ier = AVR32_USART_IER_RXRDY_MASK;
+        uart->instance->ier = AVR32_USART_IER_RXRDY_MASK;
         break;
     }
     return RT_EOK;
