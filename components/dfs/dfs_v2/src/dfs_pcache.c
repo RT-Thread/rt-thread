@@ -1153,7 +1153,25 @@ int dfs_aspace_write(struct dfs_file *file, const void *buf, size_t count, off_t
                     aspace->vnode->size = *pos;
                 }
 
-                dfs_page_dirty(page);
+                if (file->flags & O_SYNC)
+                {
+                    if (aspace->vnode->size < page->fpos + page->size)
+                    {
+                        page->len = aspace->vnode->size - page->fpos;
+                    }
+                    else
+                    {
+                        page->len = page->size;
+                    }
+
+                    aspace->ops->write(page);
+                    page->is_dirty = 0;
+                }
+                else
+                {
+                    dfs_page_dirty(page);
+                }
+
                 dfs_page_release(page);
                 dfs_aspace_unlock(aspace);
             }
