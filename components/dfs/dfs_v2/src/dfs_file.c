@@ -30,6 +30,8 @@
 
 #define MAX_RW_COUNT 0xfffc0000
 
+#define F_DUPFD_CLOEXEC 1030
+
 /*
  * rw_verify_area doesn't like huge counts. We limit
  * them to something that fits in "int" so that others
