@@ -97,7 +97,7 @@ static rt_bool_t platform_match(rt_driver_t drv, rt_device_t dev)
 static rt_err_t platform_probe(rt_device_t dev)
 {
     rt_err_t err;
-    
+
     struct rt_platform_driver *pdrv = rt_container_of(dev->drv, struct rt_platform_driver, parent);
     struct rt_platform_device *pdev = rt_container_of(dev, struct rt_platform_device, parent);
 #ifdef RT_USING_OFW
