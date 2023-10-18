@@ -370,6 +370,16 @@ static rt_err_t fb_control(rt_device_t dev, int cmd, void *args)
             info->bits_per_pixel           = _graphic_info.bits_per_pixel;
             info->xres                     = _graphic_info.width;
             info->yres                     = _graphic_info.height;
+            info->yres_virtual             = _graphic_info.height;
+            info->xres_virtual             = _graphic_info.width;
+            info->transp.offset            = 24;
+            info->transp.length            = 8;
+            info->red.offset               = 0;
+            info->red.length               = 8;
+            info->green.offset             = 8;
+            info->green.length             = 8;
+            info->blue.offset              = 16;
+            info->blue.length              = 8;
             break;
         }
         case RT_FIOMMAP2:
@@ -409,7 +419,11 @@ const static struct rt_device_ops fb_ops =
 static int fb_init()
 {
     _gpu_dev = rt_device_find("virtio-gpu0");
-    RT_ASSERT(_gpu_dev);
+
+    if(_gpu_dev == RT_NULL)
+    {
+        return -RT_ERROR;
+    }
 
     if(_gpu_dev != RT_NULL && rt_device_open(_gpu_dev, 0) == RT_EOK)
     {
@@ -426,7 +440,12 @@ static int fb_init()
         rt_device_control(_gpu_dev, RTGRAPHIC_CTRL_RECT_UPDATE, &_rect_info);
     }
 
-    RT_ASSERT(!rt_device_find("fb0"));
+    if(rt_device_find("fb0") != RT_NULL)
+    {
+        rt_kprintf("a device named fb0 already exists\n");
+        return -RT_ERROR;
+    }
+
     _fb.type = RT_Device_Class_Miscellaneous;
 
 #ifdef RT_USING_DEVICE_OPS
