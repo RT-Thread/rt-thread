@@ -17,7 +17,7 @@
 #define THREAD_TIMESLICE   10
 
 rt_align(RT_ALIGN_SIZE)
-static char thread2_stack[1024];
+static char thread2_stack[UTEST_THR_STACK_SIZE];
 static struct rt_thread thread2;
 #ifdef RT_USING_HEAP
     static rt_thread_t tid1 = RT_NULL;

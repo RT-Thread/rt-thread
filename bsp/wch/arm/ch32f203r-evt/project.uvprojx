@@ -335,7 +335,7 @@
               <MiscControls />
               <Define>RT_USING_LIBC, RT_USING_ARMLIBC, __STDC_LIMIT_MACROS, __RTTHREAD__, __CLK_TCK=RT_TICK_PER_SECOND</Define>
               <Undefine />
-              <IncludePath>..\Libraries\CH32F20x_StdPeriph_Driver\CMSIS;..\..\..\..\libcpu\arm\cortex-m3;..\..\..\..\components\libc\compilers\common\extension;..\Libraries\CH32F20x_StdPeriph_Driver\StdPeriph_Driver\inc;..\..\..\..\include;.;..\..\..\..\components\finsh;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\spi;..\..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\..\components\libc\posix\io\stdio;..\..\..\..\components\drivers\include;board;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;..\Libraries\ch32_drivers\config;..\..\..\..\components\drivers\include;..\Libraries\ch32_drivers;..\..\..\..\libcpu\arm\common;..\..\..\..\components\drivers\include;..\..\..\..\components\libc\posix\ipc;..\Libraries\CH32F20x_StdPeriph_Driver\CMSIS\WCH\CH32F20x\Include;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;..\..\..\..\components\libc\posix\io\poll;..\..\..\..\components\libc\compilers\common\include;applications</IncludePath>
+              <IncludePath>..\..\..\..\components\drivers\include;applications;.;..\..\..\..\components\libc\compilers\common\extension;..\Libraries\CH32F20x_StdPeriph_Driver\StdPeriph_Driver\inc;..\..\..\..\components\libc\compilers\common\include;..\Libraries\ch32_drivers;..\..\..\..\components\drivers\include;..\..\..\..\include;..\..\..\..\components\drivers\spi;..\..\..\..\libcpu\arm\cortex-m3;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;..\Libraries\CH32F20x_StdPeriph_Driver\CMSIS;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;board;..\Libraries\CH32F20x_StdPeriph_Driver\CMSIS\WCH\CH32F20x\Include;..\..\..\..\components\libc\posix\ipc;..\..\..\..\components\libc\posix\io\eventfd;..\..\..\..\components\drivers\include;..\Libraries\ch32_drivers\config;..\..\..\..\libcpu\arm\common;..\..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\..\components\libc\posix\io\poll;..\..\..\..\components\libc\posix\io\epoll;..\..\..\..\components\finsh</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -561,13 +561,6 @@
           </Files>
           <Files>
             <File>
-              <FileName>cstdio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\libc\compilers\common\cstdio.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>cstdlib.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\components\libc\compilers\common\cstdlib.c</FilePath>
@@ -585,6 +578,13 @@
               <FileName>ctime.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\components\libc\compilers\common\ctime.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cunistd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\components\libc\compilers\common\cunistd.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -635,6 +635,13 @@
         </Group>
         <Group>
           <GroupName>DeviceDrivers</GroupName>
+          <Files>
+            <File>
+              <FileName>device.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\components\drivers\core\device.c</FilePath>
+            </File>
+          </Files>
           <Files>
             <File>
               <FileName>hwtimer.c</FileName>
@@ -880,13 +887,6 @@
               <FileName>components.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\src\components.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>device.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\src\device.c</FilePath>
             </File>
           </Files>
           <Files>

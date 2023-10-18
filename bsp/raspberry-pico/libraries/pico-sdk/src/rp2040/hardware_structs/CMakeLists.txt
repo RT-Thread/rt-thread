@@ -1,3 +1,0 @@
-add_library(hardware_structs INTERFACE)
-target_include_directories(hardware_structs INTERFACE include)
-target_link_libraries(hardware_structs INTERFACE hardware_regs)

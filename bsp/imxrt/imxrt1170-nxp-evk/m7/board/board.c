@@ -258,26 +258,7 @@ void imxrt_uart_pins_init(void)
         IOMUXC_SetPinMux(
             IOMUXC_GPIO_AD_25_LPUART1_RXD,        /* GPIO_AD_B0_13 is configured as LPUART1_RX */
             0U);                                    /* Software Input On Field: Input Path is determined by functionality */
-        IOMUXC_SetPinConfig(
-            IOMUXC_GPIO_AD_24_LPUART1_TXD,        /* GPIO_AD_B0_12 PAD functional properties : */
-            0x10B0u);                               /* Slew Rate Field: Slow Slew Rate
-                                                     Drive Strength Field: R0/6
-                                                     Speed Field: medium(100MHz)
-                                                     Open Drain Enable Field: Open Drain Disabled
-                                                     Pull / Keep Enable Field: Pull/Keeper Enabled
-                                                     Pull / Keep Select Field: Keeper
-                                                     Pull Up / Down Config. Field: 100K Ohm Pull Down
-                                                     Hyst. Enable Field: Hysteresis Disabled */
-        IOMUXC_SetPinConfig(
-            IOMUXC_GPIO_AD_25_LPUART1_RXD,        /* GPIO_AD_B0_13 PAD functional properties : */
-            0x10B0u);                               /* Slew Rate Field: Slow Slew Rate
-                                                     Drive Strength Field: R0/6
-                                                     Speed Field: medium(100MHz)
-                                                     Open Drain Enable Field: Open Drain Disabled
-                                                     Pull / Keep Enable Field: Pull/Keeper Enabled
-                                                     Pull / Keep Select Field: Keeper
-                                                     Pull Up / Down Config. Field: 100K Ohm Pull Down
-                                                     Hyst. Enable Field: Hysteresis Disabled */
+
 #endif
 #ifdef BSP_USING_LPUART2
 
@@ -1334,6 +1315,25 @@ void imxrt_flexspi_pins_init(void)
 }
 #endif
 
+#ifdef BSP_USING_LCD_MIPI
+void imxrt_mipi_dsi_pins_init(void)
+{
+#ifdef BSP_USING_LCD_MIPI
+    CLOCK_EnableClock(kCLOCK_Iomuxc); /* LPCG on: LPCG is ON. */
+
+    IOMUXC_SetPinMux(
+        IOMUXC_GPIO_AD_02_GPIO9_IO01,           /* GPIO_AD_02 is configured as GPIO9_IO01 */
+        0U);                                    /* Software Input On Field: Input Path is determined by functionality */
+    IOMUXC_SetPinMux(
+        IOMUXC_GPIO_AD_30_GPIO9_IO29,           /* GPIO_AD_30 is configured as GPIO9_IO29 */
+        0U);                                    /* Software Input On Field: Input Path is determined by functionality */
+    IOMUXC_SetPinMux(
+        IOMUXC_GPIO_DISP_B2_15_GPIO11_IO16,     /* GPIO_DISP_B2_15 is configured as GPIO11_IO16 */
+        0U);                                    /* Software Input On Field: Input Path is determined by functionality */
+#endif
+}
+#endif
+
 void rt_hw_board_init()
 {
     BOARD_ConfigMPU();
@@ -1377,6 +1377,10 @@ void rt_hw_board_init()
 
 #ifdef BSP_USING_FLEXSPI
     imxrt_flexspi_pins_init();
+#endif
+
+#ifdef BSP_USING_LCD_MIPI
+    imxrt_mipi_dsi_pins_init();
 #endif
 }
 

@@ -370,6 +370,7 @@
           <state>$PROJ_DIR$\..\..\..\components\drivers\spi</state>
           <state>$PROJ_DIR$\..\libraries\HAL_Drivers</state>
           <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\extension\fcntl\octal</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\epoll</state>
           <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\include</state>
           <state>$PROJ_DIR$\applications</state>
           <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\poll</state>
@@ -378,7 +379,7 @@
           <state>$PROJ_DIR$\..\..\..\libcpu\arm\common</state>
           <state>$PROJ_DIR$\..\..\..\components\drivers\touch</state>
           <state>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m7</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\stdio</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\eventfd</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -1435,6 +1436,7 @@
           <state>$PROJ_DIR$\..\..\..\components\drivers\spi</state>
           <state>$PROJ_DIR$\..\libraries\HAL_Drivers</state>
           <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\extension\fcntl\octal</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\epoll</state>
           <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\include</state>
           <state>$PROJ_DIR$\applications</state>
           <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\poll</state>
@@ -1443,7 +1445,7 @@
           <state>$PROJ_DIR$\..\..\..\libcpu\arm\common</state>
           <state>$PROJ_DIR$\..\..\..\components\drivers\touch</state>
           <state>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m7</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\stdio</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\eventfd</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -2142,9 +2144,6 @@
       <name>$PROJ_DIR$\..\..\..\components\libc\compilers\common\cctype.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\common\cstdio.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\..\..\components\libc\compilers\common\cstdlib.c</name>
     </file>
     <file>
@@ -2152,6 +2151,9 @@
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\components\libc\compilers\common\ctime.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\common\cunistd.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\components\libc\compilers\common\cwchar.c</name>
@@ -2207,6 +2209,9 @@
   </group>
   <group>
     <name>DeviceDrivers</name>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\drivers\core\device.c</name>
+    </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\components\drivers\i2c\i2c-bit-ops.c</name>
     </file>
@@ -2302,9 +2307,6 @@
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\src\components.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\src\device.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\src\idle.c</name>

@@ -7,6 +7,7 @@
  * Date           Author       Notes
  * 2021-01-30     lizhirui     first version
  * 2022-12-13     WangXiaoyao  Port to new mm
+ * 2023-10-12     Shell        Add permission control API
  */
 
 #include <rtthread.h>
@@ -566,4 +567,23 @@ void rt_hw_mmu_kernel_map_init(rt_aspace_t aspace, rt_size_t vaddr_start, rt_siz
     }
 
     rt_hw_tlb_invalidate_all_local();
+}
+
+void *rt_hw_mmu_pgtbl_create(void)
+{
+    size_t *mmu_table;
+    mmu_table = (rt_ubase_t *)rt_pages_alloc_ext(0, PAGE_ANY_AVAILABLE);
+    if (!mmu_table)
+    {
+        return -RT_ENOMEM;
+    }
+    rt_memcpy(mmu_table, rt_kernel_space.page_table, ARCH_PAGE_SIZE);
+    rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, mmu_table, ARCH_PAGE_SIZE);
+
+    return mmu_table;
+}
+
+void rt_hw_mmu_pgtbl_delete(void *pgtbl)
+{
+    rt_pages_free(pgtbl, 0);
 }

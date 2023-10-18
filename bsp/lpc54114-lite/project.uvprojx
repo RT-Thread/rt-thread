@@ -335,7 +335,7 @@
               <MiscControls>--library_interface=armcc --library_type=standardlib --diag_suppress=66,1296,186</MiscControls>
               <Define>__STDC_LIMIT_MACROS, RT_USING_ARMLIBC, SDK_DEBUGCONSOLE=0, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, CPU_LPC54114, __RTTHREAD__, CPU_LPC54114J256BD64_cm4=1, CORE_M4</Define>
               <Undefine />
-              <IncludePath>Libraries\CMSIS\Include;..\..\components\drivers\include;drivers;..\..\components\dfs\filesystems\devfs;..\..\components\libc\compilers\common\extension;..\..\components\drivers\include;..\..\include;..\..\components\finsh;..\..\components\drivers\include;..\..\components\drivers\spi;..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\components\libc\posix\io\stdio;..\..\components\dfs\filesystems\romfs;Libraries\devices\LPC54114;..\..\components\dfs\filesystems\elmfat;Libraries\devices\LPC54114\drivers;Libraries\devices\LPC54114\utilities;applications;..\..\components\dfs\include;..\..\libcpu\arm\cortex-m4;..\..\components\drivers\include;..\..\libcpu\arm\common;..\..\components\libc\posix\ipc;.;..\..\components\drivers\include;..\..\components\libc\posix\io\poll;..\..\components\libc\compilers\common\include;..\..\components\drivers\spi\sfud\inc</IncludePath>
+              <IncludePath>..\..\components\drivers\include;..\..\components\libc\posix\io\poll;..\..\components\libc\compilers\common\extension;Libraries\devices\LPC54114\utilities;Libraries\devices\LPC54114\drivers;..\..\components\dfs\dfs_v1\filesystems\romfs;Libraries\devices\LPC54114;..\..\components\libc\compilers\common\include;..\..\components\drivers\spi\sfud\inc;..\..\libcpu\arm\cortex-m4;..\..\include;..\..\components\drivers\spi;..\..\components\drivers\include;..\..\components\drivers\include;.;..\..\components\dfs\dfs_v1\include;Libraries\CMSIS\Include;drivers;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\libc\posix\io\epoll;..\..\components\libc\posix\ipc;..\..\components\libc\posix\io\eventfd;..\..\components\drivers\include;..\..\components\dfs\dfs_v1\filesystems\elmfat;..\..\libcpu\arm\common;..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\components\dfs\dfs_v1\filesystems\devfs;applications;..\..\components\finsh</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -380,16 +380,16 @@
           <GroupName>Applications</GroupName>
           <Files>
             <File>
-              <FileName>main.c</FileName>
+              <FileName>mnt.c</FileName>
               <FileType>1</FileType>
-              <FilePath>applications\main.c</FilePath>
+              <FilePath>applications\mnt.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>mnt.c</FileName>
+              <FileName>main.c</FileName>
               <FileType>1</FileType>
-              <FilePath>applications\mnt.c</FilePath>
+              <FilePath>applications\main.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -418,13 +418,6 @@
           </Files>
           <Files>
             <File>
-              <FileName>cstdio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\libc\compilers\common\cstdio.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>cstdlib.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\libc\compilers\common\cstdlib.c</FilePath>
@@ -442,6 +435,13 @@
               <FileName>ctime.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\libc\compilers\common\ctime.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cunistd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\libc\compilers\common\cunistd.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -492,6 +492,25 @@
         </Group>
         <Group>
           <GroupName>DeviceDrivers</GroupName>
+          <Files>
+            <File>
+              <FileName>device.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\core\device.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls>  --c99</MiscControls>
+                      <Define> </Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
           <Files>
             <File>
               <FileName>i2c-bit-ops.c</FileName>
@@ -888,70 +907,70 @@
             <File>
               <FileName>devfs.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\dfs\filesystems\devfs\devfs.c</FilePath>
+              <FilePath>..\..\components\dfs\dfs_v1\filesystems\devfs\devfs.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>dfs_elm.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\dfs\filesystems\elmfat\dfs_elm.c</FilePath>
+              <FilePath>..\..\components\dfs\dfs_v1\filesystems\elmfat\dfs_elm.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>ff.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\dfs\filesystems\elmfat\ff.c</FilePath>
+              <FilePath>..\..\components\dfs\dfs_v1\filesystems\elmfat\ff.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>ffunicode.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\dfs\filesystems\elmfat\ffunicode.c</FilePath>
+              <FilePath>..\..\components\dfs\dfs_v1\filesystems\elmfat\ffunicode.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>dfs_romfs.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\dfs\filesystems\romfs\dfs_romfs.c</FilePath>
+              <FilePath>..\..\components\dfs\dfs_v1\filesystems\romfs\dfs_romfs.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>romfs.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\dfs\filesystems\romfs\romfs.c</FilePath>
+              <FilePath>..\..\components\dfs\dfs_v1\filesystems\romfs\romfs.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>dfs.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\dfs\src\dfs.c</FilePath>
+              <FilePath>..\..\components\dfs\dfs_v1\src\dfs.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>dfs_file.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\dfs\src\dfs_file.c</FilePath>
+              <FilePath>..\..\components\dfs\dfs_v1\src\dfs_file.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>dfs_fs.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\dfs\src\dfs_fs.c</FilePath>
+              <FilePath>..\..\components\dfs\dfs_v1\src\dfs_fs.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>dfs_posix.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\dfs\src\dfs_posix.c</FilePath>
+              <FilePath>..\..\components\dfs\dfs_v1\src\dfs_posix.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1007,13 +1026,6 @@
               <FileName>components.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\components.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>device.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\src\device.c</FilePath>
             </File>
           </Files>
           <Files>

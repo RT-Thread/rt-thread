@@ -7,6 +7,7 @@
  * Date           Author       Notes
  * 2019-10-28     Jesven       first version
  * 2021-02-12     lizhirui     add 64-bit support for lwp_brk
+ * 2023-09-19     Shell        add lwp_user_memory_remap_to_kernel
  */
 #ifndef  __LWP_USER_MM_H__
 #define  __LWP_USER_MM_H__
@@ -27,6 +28,8 @@ extern "C" {
 
 #define LWP_MAP_FLAG_NONE       0x0000
 #define LWP_MAP_FLAG_NOCACHE    0x0001
+#define LWP_MAP_FLAG_MAP_FIXED  0x00010000ul
+#define LWP_MAP_FLAG_PREFETCH   0x00020000ul
 
 /**
  * @brief Map files or devices into memory
@@ -41,7 +44,7 @@ extern "C" {
  * @param pgoffset offset to fd in 4096 bytes unit
  * @return void* the address is successful, otherwise return MAP_FAILED
  */
-void* lwp_mmap2(void *addr, size_t length, int prot, int flags, int fd, off_t pgoffset);
+void* lwp_mmap2(struct rt_lwp *lwp, void *addr, size_t length, int prot, int flags, int fd, off_t pgoffset);
 
 /**
  * @brief Unmap memory region in user space
@@ -51,7 +54,7 @@ void* lwp_mmap2(void *addr, size_t length, int prot, int flags, int fd, off_t pg
  * @param length length in bytes of unmapping
  * @return int errno
  */
-int lwp_munmap(void *addr);
+int lwp_munmap(struct rt_lwp *lwp, void *addr, size_t length);
 
 /**
  * @brief Test if address from user is accessible address by user
@@ -145,6 +148,9 @@ void lwp_unmap_user_space(struct rt_lwp *lwp);
 int lwp_unmap_user(struct rt_lwp *lwp, void *va);
 void *lwp_map_user(struct rt_lwp *lwp, void *map_va, size_t map_size, rt_bool_t text);
 
+void lwp_free_command_line_args(char** argv);
+char** lwp_get_command_line_args(struct rt_lwp *lwp);
+
 rt_varea_t lwp_map_user_varea(struct rt_lwp *lwp, void *map_va, size_t map_size);
 
 /* check LWP_MAP_FLAG_* */
@@ -154,6 +160,11 @@ void *lwp_map_user_phy(struct rt_lwp *lwp, void *map_va, void *map_pa, size_t ma
 int lwp_unmap_user_phy(struct rt_lwp *lwp, void *va);
 
 rt_base_t lwp_brk(void *addr);
+
+size_t lwp_user_strlen(const char *s);
+size_t lwp_user_strlen_ext(struct rt_lwp *lwp, const char *s);
+
+int lwp_fork_aspace(struct rt_lwp *dest_lwp, struct rt_lwp *src_lwp);
 
 void lwp_data_cache_flush(struct rt_lwp *lwp, void *vaddr, size_t size);
 
@@ -168,6 +179,49 @@ static inline void *lwp_v2p(struct rt_lwp *lwp, void *vaddr)
     void *paddr = _lwp_v2p(lwp, vaddr);
     RD_UNLOCK(lwp->aspace);
     return paddr;
+}
+
+/**
+ * @brief Remapping user space memory region to kernel
+ *
+ * @warning the remapped region in kernel should be unmapped after usage
+ *
+ * @param lwp target process
+ * @param uaddr user space address where the data writes to
+ * @param length the bytes to redirect
+ * @return void * the redirection address in kernel space
+ */
+void *lwp_user_memory_remap_to_kernel(rt_lwp_t lwp, void *uaddr, size_t length);
+
+rt_inline rt_size_t lwp_user_mm_flag_to_kernel(int flags)
+{
+    rt_size_t k_flags = 0;
+    if (flags & MAP_FIXED)
+        k_flags |= MMF_MAP_FIXED;
+    if (flags & (MAP_PRIVATE | MAP_ANON | MAP_ANONYMOUS))
+        k_flags |= MMF_MAP_PRIVATE;
+    if (flags & MAP_SHARED)
+        k_flags |= MMF_MAP_SHARED;
+    return k_flags;
+}
+
+rt_inline rt_size_t lwp_user_mm_attr_to_kernel(int prot)
+{
+    rt_size_t k_attr = 0;
+
+#ifdef IMPL_MPROTECT
+    if ((prot & PROT_EXEC) || (prot & PROT_WRITE) ||
+        ((prot & PROT_READ) && (prot & PROT_WRITE)))
+        k_attr = MMU_MAP_U_RWCB;
+    else if (prot == PROT_NONE)
+        k_attr = MMU_MAP_K_RWCB;
+    else
+        k_attr = MMU_MAP_U_ROCB;
+#else
+    k_attr = MMU_MAP_U_RWCB;
+#endif /* IMPL_MPROTECT */
+
+    return k_attr;
 }
 
 #ifdef __cplusplus

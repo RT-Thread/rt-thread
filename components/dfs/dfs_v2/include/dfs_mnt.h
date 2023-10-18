@@ -53,6 +53,7 @@ int dfs_mnt_destroy(struct dfs_mnt* mnt);
 int dfs_mnt_list(struct dfs_mnt* mnt);
 int dfs_mnt_insert(struct dfs_mnt* mnt, struct dfs_mnt* child);
 
+struct dfs_mnt *dfs_mnt_dev_lookup(rt_device_t dev_id);
 struct dfs_mnt *dfs_mnt_lookup(const char *path);
 const char *dfs_mnt_get_mounted_path(struct rt_device *device);
 

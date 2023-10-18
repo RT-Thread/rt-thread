@@ -131,6 +131,53 @@ int dfs_mnt_remove(struct dfs_mnt* mnt)
     return ret;
 }
 
+static struct dfs_mnt *_dfs_mnt_dev_lookup(struct dfs_mnt *mnt, rt_device_t dev_id)
+{
+    struct dfs_mnt *ret = RT_NULL, *iter = RT_NULL;
+
+    rt_list_for_each_entry(iter, &mnt->child, sibling)
+    {
+        if (iter->dev_id == dev_id)
+        {
+            ret = iter;
+            break;
+        }
+        else
+        {
+            ret = _dfs_mnt_dev_lookup(iter, dev_id);
+            if (ret)
+            {
+                break;
+            }
+        }
+    }
+
+    return ret;
+}
+
+struct dfs_mnt *dfs_mnt_dev_lookup(rt_device_t dev_id)
+{
+    struct dfs_mnt *mnt = _root_mnt;
+    struct dfs_mnt *ret = RT_NULL;
+
+    if (mnt)
+    {
+        dfs_lock();
+
+        if (mnt->dev_id == dev_id)
+        {
+            dfs_unlock();
+            return mnt;
+        }
+
+        ret = _dfs_mnt_dev_lookup(mnt, dev_id);
+
+        dfs_unlock();
+    }
+
+    return ret;
+}
+
 /**
  * this function will return the file system mounted on specified path.
  *
@@ -139,24 +186,26 @@ int dfs_mnt_remove(struct dfs_mnt* mnt)
  * @return the found file system or NULL if no file system mounted on
  * specified path
  */
-struct dfs_mnt* dfs_mnt_lookup(const char* fullpath)
+struct dfs_mnt *dfs_mnt_lookup(const char *fullpath)
 {
     struct dfs_mnt *mnt = _root_mnt;
     struct dfs_mnt *iter = RT_NULL;
 
     if (mnt)
     {
+        int mnt_len = rt_strlen(mnt->fullpath);
+
         dfs_lock();
-        if (strncmp(mnt->fullpath, fullpath, strlen(fullpath))!= 0)
+        if ((strncmp(mnt->fullpath, fullpath, mnt_len) == 0) &&
+            (mnt_len == 1 || (fullpath[mnt_len] == '\0') || (fullpath[mnt_len] == '/')))
         {
             while (!rt_list_isempty(&mnt->child))
             {
                 rt_list_for_each_entry(iter, &mnt->child, sibling)
                 {
-                    int mnt_len = rt_strlen(iter->fullpath);
+                    mnt_len = rt_strlen(iter->fullpath);
                     if ((strncmp(iter->fullpath, fullpath, mnt_len) == 0) &&
-                        ((fullpath[mnt_len] == '\0') ||
-                        (fullpath[mnt_len] == '/')))
+                        ((fullpath[mnt_len] == '\0') || (fullpath[mnt_len] == '/')))
                     {
                         mnt = iter;
                         break;
@@ -165,6 +214,10 @@ struct dfs_mnt* dfs_mnt_lookup(const char* fullpath)
 
                 if (mnt != iter) break;
             }
+        }
+        else
+        {
+            mnt = RT_NULL;
         }
         dfs_unlock();
 

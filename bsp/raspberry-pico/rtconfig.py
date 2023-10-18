@@ -66,8 +66,8 @@ if PLATFORM == 'gcc':
 
     POST_ACTION = OBJCPY + ' -O binary $TARGET rtthread.bin\n' + SIZE + ' $TARGET \n'
     if "linux" in sys.platform:
-        elf2uf2_path = os.path.join(os.getcwd(), "libraries", "generated", "elf2uf2")
+        elf2uf2_path = os.path.join(os.getcwd(), "tools", "elf2uf2")
         os.system("chmod +x {0}".format(elf2uf2_path))
     else:
-        elf2uf2_path = os.path.join(os.getcwd(), "libraries", "generated", "elf2uf2.exe")
+        elf2uf2_path = os.path.join(os.getcwd(), "tools", "elf2uf2.exe")
     POST_ACTION += "{0} rtthread-pico.elf rtthread-pico.uf2".format(elf2uf2_path) 

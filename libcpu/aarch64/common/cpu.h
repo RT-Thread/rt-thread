@@ -13,10 +13,6 @@
 #include <rtthread.h>
 #include <stdbool.h>
 
-#ifndef RT_CPUS_NR
-#define RT_CPUS_NR 1
-#endif /* RT_CPUS_NR */
-
 #ifdef RT_USING_SMP
 struct cpu_ops_t
 {

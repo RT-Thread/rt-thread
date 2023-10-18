@@ -19,8 +19,8 @@ static rt_uint8_t mq_buf[RT_MQ_BUF_SIZE(MSG_SIZE, MAX_MSGS)];
 
 static struct rt_thread mq_send_thread;
 static struct rt_thread mq_recv_thread;
-static rt_uint8_t mq_send_stack[1024];
-static rt_uint8_t mq_recv_stack[1024];
+static rt_uint8_t mq_send_stack[UTEST_THR_STACK_SIZE];
+static rt_uint8_t mq_recv_stack[UTEST_THR_STACK_SIZE];
 
 static struct rt_event finish_e;
 #define MQSEND_FINISH   0x01

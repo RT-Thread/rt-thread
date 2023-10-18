@@ -9,12 +9,13 @@
  * 2022/12/18     bernard      fix the _m_lock to tid in user land.
  */
 
+#include "lwp_internal.h"
 #include <rtthread.h>
-#include <lwp.h>
 #ifdef ARCH_MM_MMU
 #include <lwp_user_mm.h>
 #endif
 #include <sys/time.h>
+#include <syscall_generic.h>
 
 #define PMUTEX_NORMAL     0 /* Unable to recursion */
 #define PMUTEX_RECURSIVE  1 /* Can be recursion */
@@ -422,8 +423,6 @@ static int _pthread_mutex_destroy(void *umutex)
 
     return 0;
 }
-
-#include <syscall_generic.h>
 
 sysret_t sys_pmutex(void *umutex, int op, void *arg)
 {

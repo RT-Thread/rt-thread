@@ -10,6 +10,9 @@
 
 #include <dfs_file.h>
 #include <dfs_mnt.h>
+#ifdef RT_USING_PAGECACHE
+#include "dfs_pcache.h"
+#endif
 
 #define DBG_TAG    "DFS.vnode"
 #define DBG_LVL    DBG_WARNING
@@ -58,7 +61,12 @@ int dfs_vnode_destroy(struct dfs_vnode* vnode)
             if (rt_atomic_load(&(vnode->ref_count)) == 1)
             {
                 LOG_I("free a vnode: %p", vnode);
-
+#ifdef RT_USING_PAGECACHE
+                if (vnode->aspace)
+                {
+                    dfs_aspace_destroy(vnode->aspace);
+                }
+#endif
                 if (vnode->mnt)
                 {
                     DLOG(msg, "vnode", vnode->mnt->fs_ops->name, DLOG_MSG, "fs_ops->free_vnode");
@@ -106,7 +114,12 @@ void dfs_vnode_unref(struct dfs_vnode *vnode)
         {
             rt_atomic_sub(&(vnode->ref_count), 1);
             DLOG(note, "vnode", "vnode ref_count=%d", rt_atomic_load(&(vnode->ref_count)));
-
+#ifdef RT_USING_PAGECACHE
+            if (vnode->aspace)
+            {
+                dfs_aspace_destroy(vnode->aspace);
+            }
+#endif
             if (rt_atomic_load(&(vnode->ref_count)) == 0)
             {
                 LOG_I("free a vnode: %p", vnode);

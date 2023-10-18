@@ -67,8 +67,7 @@ config RT_USING_SMP
 
 config RT_CPUS_NR
     int "Number of CPUs"
-    default 2
-    depends on RT_USING_SMP || RT_USING_AMP
+    default 1
     help
         Number of CPUs in the system
 
@@ -214,7 +213,7 @@ menuconfig RT_USING_DEBUG
 
         config RT_DEBUGING_INIT
             bool "Enable debugging of components initialization"
-            default y
+            default n
 
         config RT_DEBUGING_PAGE_LEAK
             bool "Enable page leaking tracer"
@@ -414,7 +413,7 @@ endif
 
 config RT_VER_NUM
     hex
-    default 0x50001
+    default 0x50100
     help
         RT-Thread version number
 

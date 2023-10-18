@@ -39,11 +39,7 @@
 #endif /* (RT_USING_IDLE_HOOK) || defined(RT_USING_HEAP) */
 #endif /* IDLE_THREAD_STACK_SIZE */
 
-#ifdef RT_USING_SMP
 #define _CPUS_NR                RT_CPUS_NR
-#else
-#define _CPUS_NR                1
-#endif /* RT_USING_SMP */
 
 static rt_list_t _rt_thread_defunct = RT_LIST_OBJECT_INIT(_rt_thread_defunct);
 
@@ -335,6 +331,8 @@ void rt_thread_idle_init(void)
                 32);
 #ifdef RT_USING_SMP
         rt_thread_control(&idle_thread[i], RT_THREAD_CTRL_BIND_CPU, (void*)i);
+
+        rt_cpu_index(i)->idle_thread = &idle_thread[i];
 #endif /* RT_USING_SMP */
         /* startup */
         rt_thread_startup(&idle_thread[i]);

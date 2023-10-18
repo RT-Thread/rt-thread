@@ -49,6 +49,53 @@
 | GPIO              |     支持     |  |
 | UART              |     支持     | 使用LUATOS_ESP32C3开发板需要在UART0_TX和UART0_RX连接串口转USB芯片（如CP2102）|
 | JTAG调试          |     支持     | ESP32C3采用USB方式和PC链接的开发板可以调试                                |
+| WIFI              | 部分支持 | 目前存在一些问题，例如不能在ISR中使用`rt_mq_recive`等，还在尝试解决中 |
+| BLE             | 部分支持 | 目前存在一些问题，例如`NimBLE`启动一段时间后`PC`和`SP`指针相同导致运行错误 |
+| GDBStub         | 支持 | 通过开启`BSP_ENABLE_GDBSTUB`开关即可使用ESP-IDF所提供的GDB，其会在芯片出错后进入GDB模式 |
+
+注：
+
+1、WIFI和BLE不能同时启用，在使用BLE驱动时注意在`menuconfig`中关闭`RT_USING_WIFI`和`LWIP`开关。另外由于个人能力有限且缺乏调试设备，WIFI和BLE驱动运行都有问题，如果可以解决联系我[timwcx@qq.com](mailto:timwcx@qq.com)，本人感激不尽。
+
+2、BLE驱动仅支持`NimBLE`，并且由`esp-idf`中的`bluetooth`组件提供，使用BLE驱动可以参考`bsp/ESP32_C3/packages/ESP-IDF-latest/examples/bluetooth/nimble`下的样例程序，注意在调用`NimBLE`相关接口之前要调用`esp_timer_init()`函数初始化时钟驱动。
+
+一种运行BLE样例的方案是将样例程序加入到`scons`编译并在`bsp/ESP32_C3/main/main.c`中调用时钟初始化程序和样例程序入口。
+
+```c
+int main(void) {
+  ...
+#ifdef BSP_USING_BLE
+    esp_timer_init(); //调用时钟初始化程序
+    app_main();   //调用BLE样例程序入口
+#endif
+  ...
+}
+```
+
+3、关于GDBStub组件的使用，文档见[ESP-IDF关于GDBStub官方文档](https://docs.espressif.com/projects/esp-idf/zh_CN/latest/esp32c3/api-guides/tools/idf-monitor.html?#gdbstub-gdb)，目前个人提供了一个调试脚本`esp32c3.gdb`，具体使用方法如下。
+
+```sh
+wcx@tim  ~/rt-thread/bsp/ESP32_C3   esp32 ±  sudo riscv32-esp-elf-gdb # 进入gdb调试
+GNU gdb (crosstool-NG esp-2022r1-RC1) 9.2.90.20200913-git
+Copyright (C) 2020 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+Type "show copying" and "show warranty" for details.
+This GDB was configured as "--host=x86_64-build_pc-linux-gnu --target=riscv32-esp-elf".
+Type "show configuration" for configuration details.
+For bug reporting instructions, please see:
+<http://www.gnu.org/software/gdb/bugs/>.
+Find the GDB manual and other documentation resources online at:
+    <http://www.gnu.org/software/gdb/documentation/>.
+
+For help, type "help".
+Type "apropos word" to search for commands related to "word".
+(gdb) source esp32c3.gpb  # 加载gdb脚本
+0x3fca8c30 in __stack_start__ ()
+(gdb) 
+```
+
 
 ## 环境搭建及编译
 

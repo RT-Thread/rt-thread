@@ -25,7 +25,9 @@
 
 #define RT_KSERVICE_USING_STDLIB
 #define RT_KPRINTF_USING_LONGLONG
-#define RT_DEBUG
+#define RT_USING_DEBUG
+#define RT_DEBUGING_COLOR
+#define RT_DEBUGING_CONTEXT
 
 /* Inter-Thread communication */
 
@@ -50,7 +52,7 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 256
 #define RT_CONSOLE_DEVICE_NAME "uart"
-#define RT_VER_NUM 0x50000
+#define RT_VER_NUM 0x50002
 #define ARCH_CPU_64BIT
 #define RT_USING_CACHE
 #define ARCH_MM_MMU
@@ -77,12 +79,17 @@
 #define MSH_USING_BUILT_IN_COMMANDS
 #define FINSH_USING_DESCRIPTION
 #define FINSH_ARG_MAX 10
+#define FINSH_USING_OPTION_COMPLETION
+
+/* DFS: device virtual file system */
+
 #define RT_USING_DFS
 #define DFS_USING_POSIX
 #define DFS_USING_WORKDIR
+#define DFS_FD_MAX 32
+#define RT_USING_DFS_V1
 #define DFS_FILESYSTEMS_MAX 8
 #define DFS_FILESYSTEM_TYPES_MAX 4
-#define DFS_FD_MAX 32
 #define RT_USING_DFS_ELMFAT
 
 /* elm-chan's FatFs, Generic FAT Filesystem Module */
@@ -136,16 +143,28 @@
 #define RT_USING_WDT
 #define RT_USING_TOUCH
 #define RT_USING_DEV_BUS
+#define RT_USING_KTIME
 
 /* Using USB */
 
 
 /* C/C++ and POSIX layer */
 
-#define RT_LIBC_DEFAULT_TIMEZONE 8
+/* ISO-ANSI C layer */
+
+/* Timezone and Daylight Saving Time */
+
+#define RT_LIBC_USING_LIGHT_TZ_DST
+#define RT_LIBC_TZ_DEFAULT_HOUR 8
+#define RT_LIBC_TZ_DEFAULT_MIN 0
+#define RT_LIBC_TZ_DEFAULT_SEC 0
 
 /* POSIX (Portable Operating System Interface) layer */
 
+#define RT_USING_POSIX_FS
+#define RT_USING_POSIX_DEVIO
+#define RT_USING_POSIX_STDIO
+#define RT_USING_POSIX_TERMIOS
 #define RT_USING_POSIX_DELAY
 #define RT_USING_POSIX_CLOCK
 #define RT_USING_POSIX_TIMER
@@ -218,8 +237,12 @@
 
 /* Utilities */
 
+#define RT_USING_RESOURCE_ID
 #define RT_USING_ADT
 #define RT_USING_ADT_AVL
+#define RT_USING_ADT_BITMAP
+#define RT_USING_ADT_HASHMAP
+#define RT_USING_ADT_REF
 
 /* RT-Thread Utestcases */
 
@@ -306,7 +329,7 @@
 /* Arduino libraries */
 
 
-/* Projects */
+/* Projects and Demos */
 
 
 /* Sensors */

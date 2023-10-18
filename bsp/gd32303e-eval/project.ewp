@@ -304,27 +304,28 @@
         <option>
           <name>CCIncludePath2</name>
           <state>$PROJ_DIR$\Libraries\CMSIS\GD\GD32F30x\Include</state>
+          <state>$PROJ_DIR$\..\..\components\dfs\dfs_v1\include</state>
           <state>$PROJ_DIR$\..\..\include</state>
           <state>$PROJ_DIR$\..\..\libcpu\arm\common</state>
           <state>$PROJ_DIR$\..\..\components\drivers\include</state>
-          <state>$PROJ_DIR$\..\..\components\dfs\filesystems\devfs</state>
+          <state>$PROJ_DIR$\..\..\components\libc\posix\io\poll</state>
           <state>$PROJ_DIR$\..\..\components\libc\posix\ipc</state>
           <state>$PROJ_DIR$\drivers</state>
           <state>$PROJ_DIR$\.</state>
+          <state>$PROJ_DIR$\..\..\components\dfs\dfs_v1\filesystems\devfs</state>
           <state>$PROJ_DIR$\..\..\libcpu\arm\cortex-m4</state>
           <state>$PROJ_DIR$\..\..\components\drivers\spi\sfud\inc</state>
           <state>$PROJ_DIR$\Libraries\CMSIS</state>
-          <state>$PROJ_DIR$\..\..\components\dfs\include</state>
+          <state>$PROJ_DIR$\..\..\components\dfs\dfs_v1\filesystems\elmfat</state>
+          <state>$PROJ_DIR$\..\..\components\libc\posix\io\eventfd</state>
           <state>$PROJ_DIR$\..\..\components\libc\compilers\common\include</state>
           <state>$PROJ_DIR$\..\..\components\drivers\spi</state>
           <state>$PROJ_DIR$\applications</state>
           <state>$PROJ_DIR$\..\..\components\libc\compilers\common\extension\fcntl\octal</state>
           <state>$PROJ_DIR$\Libraries\GD32F30x_standard_peripheral\Include</state>
           <state>$PROJ_DIR$\..\..\components\finsh</state>
-          <state>$PROJ_DIR$\..\..\components\dfs\filesystems\elmfat</state>
           <state>$PROJ_DIR$\..\..\components\libc\compilers\common\extension</state>
-          <state>$PROJ_DIR$\..\..\components\libc\posix\io\poll</state>
-          <state>$PROJ_DIR$\..\..\components\libc\posix\io\stdio</state>
+          <state>$PROJ_DIR$\..\..\components\libc\posix\io\epoll</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -1277,27 +1278,28 @@
           <name>CCIncludePath2</name>
           <state />
           <state>$PROJ_DIR$\Libraries\CMSIS\GD\GD32F30x\Include</state>
+          <state>$PROJ_DIR$\..\..\components\dfs\dfs_v1\include</state>
           <state>$PROJ_DIR$\..\..\include</state>
           <state>$PROJ_DIR$\..\..\libcpu\arm\common</state>
           <state>$PROJ_DIR$\..\..\components\drivers\include</state>
-          <state>$PROJ_DIR$\..\..\components\dfs\filesystems\devfs</state>
+          <state>$PROJ_DIR$\..\..\components\libc\posix\io\poll</state>
           <state>$PROJ_DIR$\..\..\components\libc\posix\ipc</state>
           <state>$PROJ_DIR$\drivers</state>
           <state>$PROJ_DIR$\.</state>
+          <state>$PROJ_DIR$\..\..\components\dfs\dfs_v1\filesystems\devfs</state>
           <state>$PROJ_DIR$\..\..\libcpu\arm\cortex-m4</state>
           <state>$PROJ_DIR$\..\..\components\drivers\spi\sfud\inc</state>
           <state>$PROJ_DIR$\Libraries\CMSIS</state>
-          <state>$PROJ_DIR$\..\..\components\dfs\include</state>
+          <state>$PROJ_DIR$\..\..\components\dfs\dfs_v1\filesystems\elmfat</state>
+          <state>$PROJ_DIR$\..\..\components\libc\posix\io\eventfd</state>
           <state>$PROJ_DIR$\..\..\components\libc\compilers\common\include</state>
           <state>$PROJ_DIR$\..\..\components\drivers\spi</state>
           <state>$PROJ_DIR$\applications</state>
           <state>$PROJ_DIR$\..\..\components\libc\compilers\common\extension\fcntl\octal</state>
           <state>$PROJ_DIR$\Libraries\GD32F30x_standard_peripheral\Include</state>
           <state>$PROJ_DIR$\..\..\components\finsh</state>
-          <state>$PROJ_DIR$\..\..\components\dfs\filesystems\elmfat</state>
           <state>$PROJ_DIR$\..\..\components\libc\compilers\common\extension</state>
-          <state>$PROJ_DIR$\..\..\components\libc\posix\io\poll</state>
-          <state>$PROJ_DIR$\..\..\components\libc\posix\io\stdio</state>
+          <state>$PROJ_DIR$\..\..\components\libc\posix\io\epoll</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -1956,9 +1958,6 @@
       <name>$PROJ_DIR$\..\..\components\libc\compilers\common\cctype.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\libc\compilers\common\cstdio.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\..\components\libc\compilers\common\cstdlib.c</name>
     </file>
     <file>
@@ -1966,6 +1965,9 @@
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\components\libc\compilers\common\ctime.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\libc\compilers\common\cunistd.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\components\libc\compilers\common\cwchar.c</name>
@@ -2015,6 +2017,9 @@
   </group>
   <group>
     <name>DeviceDrivers</name>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\drivers\core\device.c</name>
+    </file>
     <file>
       <name>$PROJ_DIR$\..\..\components\drivers\i2c\i2c_core.c</name>
     </file>
@@ -2085,28 +2090,28 @@
   <group>
     <name>Filesystem</name>
     <file>
-      <name>$PROJ_DIR$\..\..\components\dfs\filesystems\devfs\devfs.c</name>
+      <name>$PROJ_DIR$\..\..\components\dfs\dfs_v1\filesystems\devfs\devfs.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\dfs\filesystems\elmfat\dfs_elm.c</name>
+      <name>$PROJ_DIR$\..\..\components\dfs\dfs_v1\filesystems\elmfat\dfs_elm.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\dfs\filesystems\elmfat\ff.c</name>
+      <name>$PROJ_DIR$\..\..\components\dfs\dfs_v1\filesystems\elmfat\ff.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\dfs\filesystems\elmfat\ffunicode.c</name>
+      <name>$PROJ_DIR$\..\..\components\dfs\dfs_v1\filesystems\elmfat\ffunicode.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\dfs\src\dfs.c</name>
+      <name>$PROJ_DIR$\..\..\components\dfs\dfs_v1\src\dfs.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\dfs\src\dfs_file.c</name>
+      <name>$PROJ_DIR$\..\..\components\dfs\dfs_v1\src\dfs_file.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\dfs\src\dfs_fs.c</name>
+      <name>$PROJ_DIR$\..\..\components\dfs\dfs_v1\src\dfs_fs.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\dfs\src\dfs_posix.c</name>
+      <name>$PROJ_DIR$\..\..\components\dfs\dfs_v1\src\dfs_posix.c</name>
     </file>
   </group>
   <group>
@@ -2134,9 +2139,6 @@
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\src\components.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\src\device.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\src\idle.c</name>
@@ -2172,70 +2174,37 @@
   <group>
     <name>Libraries</name>
     <file>
-      <name>$PROJ_DIR$\Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_rtc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_wwdgt.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_adc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_exmc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_bkp.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_dac.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_rcu.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_enet.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_timer.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_crc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\CMSIS\GD\GD32F30x\Source\system_gd32f30x.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_pmu.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_i2c.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_can.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_gpio.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_exti.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_misc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_ctc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_fmc.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_dma.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_spi.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_usart.c</name>
+      <name>$PROJ_DIR$\Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_i2c.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_rcu.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_exmc.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_wwdgt.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_exti.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_bkp.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_fmc.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_can.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_dbg.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_sdio.c</name>
@@ -2244,10 +2213,43 @@
       <name>$PROJ_DIR$\Libraries\CMSIS\GD\GD32F30x\Source\IAR\startup_gd32f30x_hd.s</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_adc.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_fwdgt.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_dbg.c</name>
+      <name>$PROJ_DIR$\Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_misc.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_timer.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\CMSIS\GD\GD32F30x\Source\system_gd32f30x.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_gpio.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_ctc.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_pmu.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_usart.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_dac.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_enet.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_crc.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\GD32F30x_standard_peripheral\Source\gd32f30x_rtc.c</name>
     </file>
   </group>
   <group>

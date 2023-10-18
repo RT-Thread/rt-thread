@@ -153,6 +153,9 @@ struct process_aux *lwp_argscopy(struct rt_lwp *lwp, int argc, char **argv, char
     int len;
     size_t *args_k;
     struct process_aux *aux;
+    size_t prot = PROT_READ | PROT_WRITE;
+    size_t flags = MAP_FIXED | MAP_PRIVATE;
+    size_t zero = 0;
 
     for (i = 0; i < argc; i++)
     {
@@ -179,9 +182,8 @@ struct process_aux *lwp_argscopy(struct rt_lwp *lwp, int argc, char **argv, char
         return RT_NULL;
     }
 
-    /* args = (int *)lwp_map_user(lwp, 0, size); */
-    args = (int *)lwp_map_user(lwp, (void *)(USER_VADDR_TOP - ARCH_PAGE_SIZE), size, 0);
-    if (args == RT_NULL)
+    args = lwp_mmap2(lwp, (void *)(USER_STACK_VEND), size, prot, flags, -1, 0);
+    if (args == RT_NULL || lwp_data_put(lwp, args, &zero, sizeof(zero)) != sizeof(zero))
     {
         return RT_NULL;
     }
@@ -1090,7 +1092,7 @@ static void _lwp_thread_entry(void *parameter)
 
     if (lwp->debug)
     {
-        lwp->bak_first_ins = *(uint32_t *)lwp->text_entry;
+        lwp->bak_first_inst = *(uint32_t *)lwp->text_entry;
         *(uint32_t *)lwp->text_entry = dbg_get_ins();
         rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, lwp->text_entry, sizeof(uint32_t));
         icache_invalid_all();
@@ -1152,7 +1154,7 @@ pid_t lwp_execve(char *filename, int debug, int argc, char **argv, char **envp)
         return -EACCES;
     }
 
-    lwp = lwp_new();
+    lwp = lwp_create(LWP_CREATE_FLAG_ALLOC_PID);
 
     if (lwp == RT_NULL)
     {
@@ -1416,4 +1418,38 @@ void lwp_uthread_ctx_restore(void)
     rt_thread_t thread;
     thread = rt_thread_self();
     thread->user_ctx.ctx = RT_NULL;
+}
+
+void rt_update_process_times(void)
+{
+    struct rt_thread *thread;
+#ifdef RT_USING_SMP
+    struct rt_cpu* pcpu;
+
+    pcpu = rt_cpu_self();
+#endif
+
+    thread = rt_thread_self();
+
+    if (!IS_USER_MODE(thread))
+    {
+        thread->user_time += 1;
+#ifdef RT_USING_SMP
+        pcpu->cpu_stat.user += 1;
+#endif
+    }
+    else
+    {
+        thread->system_time += 1;
+#ifdef RT_USING_SMP
+        if (thread == pcpu->idle_thread)
+        {
+            pcpu->cpu_stat.idle += 1;
+        }
+        else
+        {
+            pcpu->cpu_stat.system += 1;
+        }
+#endif
+    }
 }

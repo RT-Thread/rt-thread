@@ -374,6 +374,7 @@
           <state>$PROJ_DIR$\board</state>
           <state>$PROJ_DIR$\..\libraries\HAL_Drivers</state>
           <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\extension\fcntl\octal</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\epoll</state>
           <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\include</state>
           <state>$PROJ_DIR$\board\ports</state>
           <state>$PROJ_DIR$\applications</state>
@@ -382,8 +383,8 @@
           <state>$PROJ_DIR$\..\libraries\STM32MPxx_HAL\CMSIS\Device\ST\STM32MP1xx\Include</state>
           <state>$PROJ_DIR$\..\..\..\libcpu\arm\common</state>
           <state>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m4</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\stdio</state>
           <state>$PROJ_DIR$\..\libraries\STM32MPxx_HAL\STM32MP1xx_HAL_Driver\Inc</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\eventfd</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -1460,6 +1461,7 @@
           <state>$PROJ_DIR$\board</state>
           <state>$PROJ_DIR$\..\libraries\HAL_Drivers</state>
           <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\extension\fcntl\octal</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\epoll</state>
           <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\include</state>
           <state>$PROJ_DIR$\board\ports</state>
           <state>$PROJ_DIR$\applications</state>
@@ -1468,8 +1470,8 @@
           <state>$PROJ_DIR$\..\libraries\STM32MPxx_HAL\CMSIS\Device\ST\STM32MP1xx\Include</state>
           <state>$PROJ_DIR$\..\..\..\libcpu\arm\common</state>
           <state>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m4</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\stdio</state>
           <state>$PROJ_DIR$\..\libraries\STM32MPxx_HAL\STM32MP1xx_HAL_Driver\Inc</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\eventfd</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -2184,9 +2186,6 @@
       <name>$PROJ_DIR$\..\..\..\components\libc\compilers\common\cctype.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\common\cstdio.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\..\..\components\libc\compilers\common\cstdlib.c</name>
     </file>
     <file>
@@ -2194,6 +2193,9 @@
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\components\libc\compilers\common\ctime.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\common\cunistd.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\components\libc\compilers\common\cwchar.c</name>
@@ -2247,6 +2249,9 @@
   <group>
     <name>DeviceDrivers</name>
     <file>
+      <name>$PROJ_DIR$\..\..\..\components\drivers\core\device.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\..\..\components\drivers\ipc\completion.c</name>
     </file>
     <file>
@@ -2277,6 +2282,15 @@
   <group>
     <name>Drivers</name>
     <file>
+      <name>$PROJ_DIR$\..\libraries\HAL_Drivers\drv_common.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\libraries\HAL_Drivers\drv_gpio.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\libraries\HAL_Drivers\drv_usart.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\libraries\STM32MPxx_HAL\CMSIS\Device\ST\STM32MP1xx\Source\Templates\iar\startup_stm32mp15xx.s</name>
     </file>
     <file>
@@ -2287,15 +2301,6 @@
     </file>
     <file>
       <name>$PROJ_DIR$\board\board.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\HAL_Drivers\drv_common.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\HAL_Drivers\drv_gpio.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\HAL_Drivers\drv_usart.c</name>
     </file>
   </group>
   <group>
@@ -2320,9 +2325,6 @@
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\src\components.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\src\device.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\src\idle.c</name>

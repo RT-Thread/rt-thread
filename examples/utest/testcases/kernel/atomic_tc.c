@@ -16,7 +16,7 @@
 
 #define THREAD_PRIORITY         25
 #define THREAD_TIMESLICE        1
-#define THREAD_STACKSIZE        1024
+#define THREAD_STACKSIZE        UTEST_THR_STACK_SIZE
 
 /* convenience macro - return either 64-bit or 32-bit value */
 #define ATOMIC_WORD(val_if_64, val_if_32)                                           \

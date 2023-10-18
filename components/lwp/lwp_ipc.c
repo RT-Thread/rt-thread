@@ -18,6 +18,10 @@
 #include <dfs_file.h>
 #include <poll.h>
 
+#ifdef RT_USING_DFS_V2
+#include <dfs_dentry.h>
+#endif
+
 /**
  * the IPC channel states
  */
@@ -371,7 +375,6 @@ static void *_ipc_msg_get_file(int fd)
     if (!d->vnode)
         return RT_NULL;
 
-    d->vnode->ref_count++;
     return (void *)d;
 }
 
@@ -404,16 +407,25 @@ static int _ipc_msg_fd_new(void *file)
         return -1;
     }
 
-#ifdef RT_USING_DFS_V2
-    d->fops = df->fops;
-    d->mode = df->mode;
-    d->dentry = df->dentry;
-#endif
-
     d->vnode = df->vnode;
     d->flags = df->flags;
     d->data = df->data;
     d->magic = df->magic;
+
+#ifdef RT_USING_DFS_V2
+    d->fops = df->fops;
+    d->mode = df->mode;
+    d->dentry = df->dentry;
+    if (d->dentry)
+        rt_atomic_add(&(d->dentry->ref_count), 1);
+
+    if (d->vnode)
+        rt_atomic_add(&(d->vnode->ref_count), 1);
+#else
+    if (d->vnode)
+        d->vnode->ref_count ++;
+#endif
+
 
     return fd;
 }

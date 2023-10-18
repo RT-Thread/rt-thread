@@ -269,6 +269,10 @@ static rt_err_t _thread_init(struct rt_thread *thread,
     rt_list_init(&thread->signal.sig_queue.siginfo_list);
 
     rt_memset(&thread->user_ctx, 0, sizeof thread->user_ctx);
+
+    /* initialize user_time and system_time */
+    thread->user_time = 0;
+    thread->system_time = 0;
 #endif
 
 #ifdef RT_USING_CPU_USAGE

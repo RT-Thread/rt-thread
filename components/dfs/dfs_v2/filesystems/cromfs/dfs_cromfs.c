@@ -50,8 +50,12 @@ typedef struct
     uint8_t padding[CROMFS_PATITION_HEAD_SIZE - sizeof(partition_head_data)];
 } partition_head;
 
-#define CROMFS_DIRENT_ATTR_DIR  0x1UL
-#define CROMFS_DIRENT_ATTR_FILE 0x0UL
+enum
+{
+    CROMFS_DIRENT_ATTR_FILE    = 0x0UL,
+    CROMFS_DIRENT_ATTR_DIR     = 0x1UL,
+    CROMFS_DIRENT_ATTR_SYMLINK = 0x2UL,
+};
 
 typedef struct
 {
@@ -607,12 +611,12 @@ static int dfs_cromfs_unmount(struct dfs_mnt *mnt)
     return RT_EOK;
 }
 
-static uint32_t cromfs_lookup(cromfs_info *ci, const char *path, int* is_dir, uint32_t *size, uint32_t *osize)
+static uint32_t cromfs_lookup(cromfs_info *ci, const char *path, int* file_type, uint32_t *size, uint32_t *osize)
 {
     uint32_t cur_size = 0, cur_pos = 0, cur_osize = 0;
     const char *subpath = NULL, *subpath_end = NULL;
     void *di_mem = NULL;
-    int isdir = 0;
+    int _file_type = 0;
 
     if (path[0] == '\0')
     {
@@ -622,7 +626,7 @@ static uint32_t cromfs_lookup(cromfs_info *ci, const char *path, int* is_dir, ui
     cur_size = ci->part_info.root_dir_size;
     cur_osize = 0;
     cur_pos = ci->part_info.root_dir_pos;
-    isdir = 1;
+    _file_type = CROMFS_DIRENT_ATTR_DIR;
 
     subpath_end = path;
     while (1)
@@ -646,7 +650,7 @@ static uint32_t cromfs_lookup(cromfs_info *ci, const char *path, int* is_dir, ui
         }
 
         /* if not dir or empty dir, error */
-        if (!isdir || !cur_size)
+        if (_file_type != CROMFS_DIRENT_ATTR_DIR || !cur_size)
         {
             return CROMFS_POS_ERROR;
         }
@@ -673,13 +677,21 @@ static uint32_t cromfs_lookup(cromfs_info *ci, const char *path, int* is_dir, ui
                     cur_size = di_iter->dirent.file_size;
                     cur_osize = di_iter->dirent.file_origin_size;
                     cur_pos = di_iter->dirent.parition_pos;
-                    if (di_iter->dirent.attr == CROMFS_DIRENT_ATTR_DIR)
+                    if (di_iter->dirent.attr == CROMFS_DIRENT_ATTR_FILE)
                     {
-                        isdir = 1;
+                        _file_type = CROMFS_DIRENT_ATTR_FILE;
+                    }
+                    else if (di_iter->dirent.attr == CROMFS_DIRENT_ATTR_DIR)
+                    {
+                        _file_type = CROMFS_DIRENT_ATTR_DIR;
+                    }
+                    else if (di_iter->dirent.attr == CROMFS_DIRENT_ATTR_SYMLINK)
+                    {
+                        _file_type = CROMFS_DIRENT_ATTR_SYMLINK;
                     }
                     else
                     {
-                        isdir = 0;
+                        RT_ASSERT(0);
                     }
                     break;
                 }
@@ -698,11 +710,11 @@ static uint32_t cromfs_lookup(cromfs_info *ci, const char *path, int* is_dir, ui
     }
     *size = cur_size;
     *osize = cur_osize;
-    *is_dir = isdir;
+    *file_type = _file_type;
     return cur_pos;
 }
 
-static uint32_t __dfs_cromfs_lookup(cromfs_info *ci, const char *path, int* is_dir, uint32_t *size, uint32_t *osize)
+static uint32_t __dfs_cromfs_lookup(cromfs_info *ci, const char *path, int* file_type, uint32_t *size, uint32_t *osize)
 {
     rt_err_t result = RT_EOK;
     uint32_t ret = 0;
@@ -712,7 +724,7 @@ static uint32_t __dfs_cromfs_lookup(cromfs_info *ci, const char *path, int* is_d
     {
         return CROMFS_POS_ERROR;
     }
-    ret = cromfs_lookup(ci, path, is_dir, size, osize);
+    ret = cromfs_lookup(ci, path, file_type, size, osize);
     rt_mutex_release(&ci->lock);
     return ret;
 }
@@ -839,7 +851,7 @@ static file_info *get_file_info(cromfs_info *ci, uint32_t partition_pos, int inc
     return NULL;
 }
 
-static file_info *inset_file_info(cromfs_info *ci, uint32_t partition_pos, int is_dir, uint32_t size, uint32_t osize)
+static file_info *inset_file_info(cromfs_info *ci, uint32_t partition_pos, int file_type, uint32_t size, uint32_t osize)
 {
     file_info *fi = NULL;
     void *file_buff = NULL;
@@ -852,7 +864,7 @@ static file_info *inset_file_info(cromfs_info *ci, uint32_t partition_pos, int i
     }
     fi->partition_pos = partition_pos;
     fi->ci = ci;
-    if (is_dir)
+    if (file_type == CROMFS_DIRENT_ATTR_DIR)
     {
         fi->size = size;
     }
@@ -949,7 +961,7 @@ static int dfs_cromfs_open(struct dfs_file *file)
     cromfs_info *ci = NULL;
     uint32_t file_pos = 0;
     uint32_t size = 0, osize = 0;
-    int is_dir = 0;
+    int file_type = 0;
     rt_err_t result = RT_EOK;
 
     if (file->flags & (O_CREAT | O_WRONLY | O_APPEND | O_TRUNC | O_RDWR))
@@ -971,7 +983,7 @@ static int dfs_cromfs_open(struct dfs_file *file)
 
     ci = (cromfs_info *)file->dentry->mnt->data;
 
-    file_pos = __dfs_cromfs_lookup(ci, file->dentry->pathname, &is_dir, &size, &osize);
+    file_pos = __dfs_cromfs_lookup(ci, file->dentry->pathname, &file_type, &size, &osize);
     if (file_pos == CROMFS_POS_ERROR)
     {
         ret = -ENOENT;
@@ -979,7 +991,7 @@ static int dfs_cromfs_open(struct dfs_file *file)
     }
 
     /* entry is a directory file type */
-    if (is_dir)
+    if (file_type == CROMFS_DIRENT_ATTR_DIR)
     {
         if (!(file->flags & O_DIRECTORY))
         {
@@ -987,6 +999,10 @@ static int dfs_cromfs_open(struct dfs_file *file)
             goto end;
         }
         file->vnode->type = FT_DIRECTORY;
+    }
+    else if (file_type == CROMFS_DIRENT_ATTR_SYMLINK)
+    {
+        file->vnode->type = FT_SYMLINK;
     }
     else
     {
@@ -1009,7 +1025,7 @@ static int dfs_cromfs_open(struct dfs_file *file)
     fi = get_file_info(ci, file_pos, 1);
     if (!fi)
     {
-        fi = inset_file_info(ci, file_pos, is_dir, size, osize);
+        fi = inset_file_info(ci, file_pos, file_type, size, osize);
     }
     rt_mutex_release(&ci->lock);
     if (!fi)
@@ -1019,7 +1035,7 @@ static int dfs_cromfs_open(struct dfs_file *file)
     }
 
     file->vnode->data = fi;
-    if (is_dir)
+    if (file_type)
     {
         file->vnode->size = size;
     }
@@ -1037,13 +1053,13 @@ end:
 static int dfs_cromfs_stat(struct dfs_dentry *dentry, struct stat *st)
 {
     uint32_t size = 0, osize = 0;
-    int is_dir = 0;
+    int file_type = 0;
     cromfs_info *ci = NULL;
     uint32_t file_pos = 0;
 
     ci = (cromfs_info *)dentry->mnt->data;
 
-    file_pos = __dfs_cromfs_lookup(ci, dentry->pathname, &is_dir, &size, &osize);
+    file_pos = __dfs_cromfs_lookup(ci, dentry->pathname, &file_type, &size, &osize);
     if (file_pos == CROMFS_POS_ERROR)
     {
         return -ENOENT;
@@ -1053,11 +1069,17 @@ static int dfs_cromfs_stat(struct dfs_dentry *dentry, struct stat *st)
     st->st_mode = S_IFREG | S_IRUSR | S_IRGRP | S_IROTH |
         S_IWUSR | S_IWGRP | S_IWOTH;
 
-    if (is_dir)
+    if (file_type == CROMFS_DIRENT_ATTR_DIR)
     {
         st->st_mode &= ~S_IFREG;
         st->st_mode |= S_IFDIR | S_IXUSR | S_IXGRP | S_IXOTH;
         st->st_size = size;
+    }
+    else if(file_type == CROMFS_DIRENT_ATTR_SYMLINK)
+    {
+        st->st_mode &= ~S_IFREG;
+        st->st_mode |= S_IFLNK | S_IXUSR | S_IXGRP | S_IXOTH;
+        st->st_size = osize;
     }
     else
     {
@@ -1167,8 +1189,8 @@ static struct dfs_vnode *dfs_cromfs_lookup (struct dfs_dentry *dentry)
     if (ci)
     {
         uint32_t size = 0, osize = 0;
-        int is_dir = 0;
-        uint32_t file_pos = __dfs_cromfs_lookup(ci, dentry->pathname, &is_dir, &size, &osize);
+        int file_type = 0;
+        uint32_t file_pos = __dfs_cromfs_lookup(ci, dentry->pathname, &file_type, &size, &osize);
 
         if (file_pos != CROMFS_POS_ERROR)
         {
@@ -1177,11 +1199,17 @@ static struct dfs_vnode *dfs_cromfs_lookup (struct dfs_dentry *dentry)
             {
                 vnode->nlink = 1;
 
-                if (is_dir)
+                if (file_type == CROMFS_DIRENT_ATTR_DIR)
                 {
                     vnode->mode = S_IFDIR | (0555);
                     vnode->type = FT_DIRECTORY;
                     vnode->size = size;
+                }
+                else if (file_type == CROMFS_DIRENT_ATTR_SYMLINK)
+                {
+                    vnode->mode = S_IFLNK | (0555);
+                    vnode->type = FT_SYMLINK;
+                    vnode->size = osize;
                 }
                 else
                 {
@@ -1203,6 +1231,85 @@ static int dfs_cromfs_free_vnode(struct dfs_vnode *vnode)
     return 0;
 }
 
+static int cromfs_readlink(cromfs_info *ci, char *path, char *buf, int len)
+{
+    int ret = 0;
+    file_info *fi = NULL;
+    uint32_t file_pos = 0;
+    int file_type = 0;
+    uint32_t size = 0, osize = 0;
+    rt_err_t result = RT_EOK;
+
+    file_pos = __dfs_cromfs_lookup(ci, path, &file_type, &size, &osize);
+    if (file_pos == CROMFS_POS_ERROR)
+    {
+        ret = -ENOENT;
+        goto end1;
+    }
+
+    result = rt_mutex_take(&ci->lock, RT_WAITING_FOREVER);
+    if (result != RT_EOK)
+    {
+        ret = -EINTR;
+        goto end;
+    }
+
+    fi = get_file_info(ci, file_pos, 1);
+    if (!fi)
+    {
+        fi = inset_file_info(ci, file_pos, file_type, size, osize);
+    }
+    rt_mutex_release(&ci->lock);
+    if (!fi)
+    {
+        ret = -ENOENT;
+        goto end;
+    }
+
+    if (len > 0)
+    {
+        RT_ASSERT(fi->size != 0);
+        RT_ASSERT(fi->buff);
+
+        int fill_ret = 0;
+        fill_ret = fill_file_data(fi);
+        if (fill_ret < 0)
+        {
+            ret = -ENOENT;
+            deref_file_info(ci, fi->partition_pos);
+            goto end;
+        }
+        len = len - 1;
+        osize = osize < len ? osize : len;
+        memcpy(buf, fi->buff, osize);
+    }
+
+    if (ret == 0)
+    {
+        buf[osize] = '\0';
+        ret = osize;
+    }
+
+    deref_file_info(ci, fi->partition_pos);
+end:
+    rt_mutex_release(&ci->lock);
+end1:
+    return ret;
+}
+
+static int dfs_cromfs_readlink(struct dfs_dentry *dentry, char *buf, int len)
+{
+    cromfs_info *ci = NULL;
+
+    if (dentry && buf)
+    {
+        ci = (cromfs_info *)dentry->mnt->data;
+        return cromfs_readlink(ci, dentry->pathname, buf, len);
+    }
+
+    return -EBADF;
+}
+
 static const struct dfs_file_ops _crom_fops =
 {
     .open           = dfs_cromfs_open,
@@ -1219,6 +1326,9 @@ static const struct dfs_filesystem_ops _cromfs_ops =
     .default_fops   = &_crom_fops,
     .mount          = dfs_cromfs_mount,
     .umount         = dfs_cromfs_unmount,
+
+    .readlink       = dfs_cromfs_readlink,
+
     .stat           = dfs_cromfs_stat,
     .lookup         = dfs_cromfs_lookup,
     .free_vnode     = dfs_cromfs_free_vnode

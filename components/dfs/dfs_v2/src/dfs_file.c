@@ -19,6 +19,10 @@
 #include "dfs_mnt.h"
 #include "dfs_private.h"
 
+#ifdef RT_USING_PAGECACHE
+#include "dfs_pcache.h"
+#endif
+
 #define DBG_TAG    "DFS.file"
 #define DBG_LVL    DBG_WARNING
 #include <rtdbg.h>
@@ -114,7 +118,7 @@ static void dfs_file_unref(struct dfs_file *file)
             {
                 if (file->vnode->ref_count > 1)
                 {
-                    file->vnode->ref_count--;
+                    rt_atomic_sub(&(file->vnode->ref_count), 1);
                 }
                 else if (file->vnode->ref_count == 1)
                 {
@@ -210,7 +214,7 @@ static char *dfs_nolink_path(struct dfs_mnt **mnt, char *fullpath, int mode)
     char link_fn[DFS_PATH_MAX] = {0};
     struct dfs_dentry *dentry = RT_NULL;
 
-    path = (char *)rt_malloc(DFS_PATH_MAX);
+    path = (char *)rt_malloc((DFS_PATH_MAX * 2) + 1); // path + syslink + \0
     if (!path)
     {
         return path;
@@ -316,6 +320,13 @@ static char *dfs_nolink_path(struct dfs_mnt **mnt, char *fullpath, int mode)
                     else
                     {
                         rt_kprintf("link error: %s\n", path);
+                    }
+
+                    char *_fullpath = dfs_normalize_path(RT_NULL, path);
+                    if (_fullpath)
+                    {
+                        strncpy(path, _fullpath, DFS_PATH_MAX);
+                        rt_free(_fullpath);
                     }
                 }
                 dfs_dentry_unref(dentry);
@@ -441,6 +452,7 @@ int dfs_file_open(struct dfs_file *file, const char *path, int oflags, mode_t mo
                             struct dfs_vnode *vnode = RT_NULL;
 
                             DLOG(msg, "dfs_file", "dentry", DLOG_MSG, "dfs_dentry_create(%s)", fullpath);
+                            dfs_file_lock();
                             dentry = dfs_dentry_create(mnt, fullpath);
                             if (dentry)
                             {
@@ -465,6 +477,7 @@ int dfs_file_open(struct dfs_file *file, const char *path, int oflags, mode_t mo
                                     dentry = RT_NULL;
                                 }
                             }
+                            dfs_file_unlock();
                         }
                     }
                 }
@@ -511,7 +524,9 @@ int dfs_file_open(struct dfs_file *file, const char *path, int oflags, mode_t mo
 
                         if (dfs_is_mounted(file->vnode->mnt) == 0)
                         {
+                            dfs_file_lock();
                             ret = file->fops->open(file);
+                            dfs_file_unlock();
                         }
                         else
                         {
@@ -565,6 +580,12 @@ int dfs_file_open(struct dfs_file *file, const char *path, int oflags, mode_t mo
 
                     if (dfs_is_mounted(file->vnode->mnt) == 0)
                     {
+#ifdef RT_USING_PAGECACHE
+                        if (file->vnode->aspace)
+                        {
+                            dfs_aspace_clean(file->vnode->aspace);
+                        }
+#endif
                         ret = file->fops->truncate(file, 0);
                     }
                     else
@@ -605,7 +626,12 @@ int dfs_file_close(struct dfs_file *file)
             if (ref_count == 1 && file->fops && file->fops->close)
             {
                 DLOG(msg, "dfs_file", file->dentry->mnt->fs_ops->name, DLOG_MSG, "fops->close(file)");
-
+#ifdef RT_USING_PAGECACHE
+                if (file->vnode->aspace)
+                {
+                    dfs_aspace_flush(file->vnode->aspace);
+                }
+#endif
                 ret = file->fops->close(file);
 
                 if (ret == 0) /* close file sucessfully */
@@ -658,7 +684,16 @@ ssize_t dfs_file_read(struct dfs_file *file, void *buf, size_t len)
 
                 if (dfs_is_mounted(file->vnode->mnt) == 0)
                 {
-                    ret = file->fops->read(file, buf, len, &pos);
+#ifdef RT_USING_PAGECACHE
+                    if (file->vnode->aspace)
+                    {
+                        ret = dfs_aspace_read(file, buf, len, &pos);
+                    }
+                    else
+#endif
+                    {
+                        ret = file->fops->read(file, buf, len, &pos);
+                    }
                 }
                 else
                 {
@@ -703,7 +738,16 @@ ssize_t dfs_file_write(struct dfs_file *file, const void *buf, size_t len)
 
                 if (dfs_is_mounted(file->vnode->mnt) == 0)
                 {
-                    ret = file->fops->write(file, buf, len, &pos);
+#ifdef RT_USING_PAGECACHE
+                    if (file->vnode->aspace)
+                    {
+                        ret = dfs_aspace_write(file, buf, len, &pos);
+                    }
+                    else
+#endif
+                    {
+                        ret = file->fops->write(file, buf, len, &pos);
+                    }
                 }
                 else
                 {
@@ -1040,6 +1084,12 @@ int dfs_file_fsync(struct dfs_file *file)
         {
             if (dfs_is_mounted(file->vnode->mnt) == 0)
             {
+#ifdef RT_USING_PAGECACHE
+                if (file->vnode->aspace)
+                {
+                    dfs_aspace_flush(file->vnode->aspace);
+                }
+#endif
                 ret = file->fops->flush(file);
             }
             else
@@ -1082,7 +1132,15 @@ int dfs_file_unlink(const char *path)
                     rt_bool_t has_child = RT_FALSE;
 
                     has_child = dfs_mnt_has_child_mnt(mnt, fullpath);
-                    if (has_child == RT_FALSE && rt_atomic_load(&(dentry->ref_count)) == 1)
+#ifdef RT_USING_PAGECACHE
+                    if (dentry->vnode->aspace)
+                    {
+                        dfs_aspace_clean(dentry->vnode->aspace);
+                    }
+#endif
+                    dfs_file_lock();
+
+                    if (has_child == RT_FALSE)
                     {
                         /* no child mnt point, unlink it */
                         ret = -RT_ERROR;
@@ -1099,6 +1157,7 @@ int dfs_file_unlink(const char *path)
                     {
                         ret = -EBUSY;
                     }
+                    dfs_file_unlock();
 
                     /* release this dentry */
                     dfs_dentry_unref(dentry);
@@ -1460,6 +1519,12 @@ int dfs_file_rename(const char *old_file, const char *new_file)
             {
                 if (dfs_is_mounted(mnt) == 0)
                 {
+#ifdef RT_USING_PAGECACHE
+                    if (old_dentry->vnode->aspace)
+                    {
+                        dfs_aspace_clean(old_dentry->vnode->aspace);
+                    }
+#endif
                     ret = mnt->fs_ops->rename(old_dentry, new_dentry);
                 }
             }
@@ -1492,6 +1557,12 @@ int dfs_file_ftruncate(struct dfs_file *file, off_t length)
         {
             if (dfs_is_mounted(file->vnode->mnt) == 0)
             {
+#ifdef RT_USING_PAGECACHE
+                if (file->vnode->aspace)
+                {
+                    dfs_aspace_clean(file->vnode->aspace);
+                }
+#endif
                 ret = file->fops->truncate(file, length);
             }
             else
@@ -1522,6 +1593,12 @@ int dfs_file_flush(struct dfs_file *file)
         {
             if (dfs_is_mounted(file->vnode->mnt) == 0)
             {
+#ifdef RT_USING_PAGECACHE
+                if (file->vnode->aspace)
+                {
+                    dfs_aspace_flush(file->vnode->aspace);
+                }
+#endif
                 ret = file->fops->flush(file);
             }
             else
@@ -1662,13 +1739,23 @@ int dfs_file_access(const char *path, mode_t mode)
     return ret;
 }
 
+#ifdef RT_USING_SMART
 int dfs_file_mmap2(struct dfs_file *file, struct dfs_mmap2_args *mmap2)
 {
-    int ret = 0;
+    int ret = RT_EOK;
 
     if (file && mmap2)
     {
-        if (file->vnode->type != FT_DEVICE || !file->vnode->fops->ioctl)
+        if (file->vnode->type == FT_REGULAR)
+        {
+            ret = dfs_file_mmap(file, mmap2);
+            if (ret != 0)
+            {
+                ret = ret > 0 ? ret : -ret;
+                rt_set_errno(ret);
+            }
+        }
+        else if (file->vnode->type != FT_DEVICE || !file->vnode->fops->ioctl)
         {
             rt_set_errno(EINVAL);
         }
@@ -1693,6 +1780,7 @@ int dfs_file_mmap2(struct dfs_file *file, struct dfs_mmap2_args *mmap2)
 
     return ret;
 }
+#endif
 
 #ifdef RT_USING_FINSH
 

@@ -690,7 +690,7 @@ rt_err_t lwp_signal_kill(struct rt_lwp *lwp, long signo, long code, long value)
     /** must be able to be suspended */
     RT_DEBUG_SCHEDULER_AVAILABLE(RT_TRUE);
 
-    if (!lwp || signo < 0 || signo >= _LWP_NSIG)
+    if (!lwp || signo <= 0 || signo > _LWP_NSIG)
     {
         ret = -RT_EINVAL;
     }
@@ -1021,7 +1021,7 @@ rt_err_t lwp_thread_signal_timedwait(rt_thread_t thread, lwp_sigset_t *sigset,
         ret = rt_thread_suspend_with_flag(thread, RT_INTERRUPTIBLE);
         rt_timer_control(&(thread->thread_timer),
                          RT_TIMER_CTRL_SET_TIME,
-                         &timeout);
+                         &time);
         rt_timer_start(&(thread->thread_timer));
 
     }

@@ -322,7 +322,7 @@ int drv_st7796_init(void)
     lcd_spi_obj.spi_dev = (struct rt_spi_device *)rt_device_find(LCD_DEVICE_NAME);
     if (!lcd_spi_obj.spi_dev)
     {
-        LOG_E("lcd init run failed! can't find %s device!\n", LCD_DEVICE_NAME);
+        LOG_E("lcd init run failed! can't find %s device!", LCD_DEVICE_NAME);
         return -RT_ERROR;
     }
     struct rt_spi_configuration cfg;

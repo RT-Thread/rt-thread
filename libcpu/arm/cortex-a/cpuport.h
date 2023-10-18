@@ -10,8 +10,6 @@
 #ifndef  CPUPORT_H__
 #define  CPUPORT_H__
 
-#include <rtthread.h>
-
 /* the exception stack without VFP registers */
 struct rt_hw_exp_stack
 {

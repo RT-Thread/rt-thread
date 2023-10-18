@@ -100,6 +100,7 @@ struct at_server
     rt_err_t (*get_char)(struct at_server *server, char *ch, rt_int32_t timeout);
     rt_bool_t echo_mode;
 
+    char send_buffer[AT_SERVER_SEND_BUFF_LEN];
     char recv_buffer[AT_SERVER_RECV_BUFF_LEN];
     rt_size_t cur_recv_len;
     rt_sem_t rx_notice;
@@ -166,6 +167,12 @@ struct at_client
     at_status_t status;
     char end_sign;
 
+    char *send_buf;
+    /* The maximum supported send cmd length */
+    rt_size_t send_bufsz;
+    /* The length of last cmd */
+    rt_size_t last_cmd_len;
+
     /* the current received one line data buffer */
     char *recv_line_buf;
     /* The length of the currently received one line data */
@@ -181,6 +188,7 @@ struct at_client
 
     struct at_urc_table *urc_table;
     rt_size_t urc_table_size;
+    const struct at_urc *urc;
 
     rt_thread_t parser;
 };
@@ -205,7 +213,7 @@ int at_req_parse_args(const char *req_args, const char *req_expr, ...);
 #ifdef AT_USING_CLIENT
 
 /* AT client initialize and start*/
-int at_client_init(const char *dev_name,  rt_size_t recv_bufsz);
+int at_client_init(const char *dev_name, rt_size_t recv_bufsz, rt_size_t send_bufsz);
 
 /* ========================== multiple AT client function ============================ */
 

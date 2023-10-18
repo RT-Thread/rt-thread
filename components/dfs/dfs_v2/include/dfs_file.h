@@ -33,6 +33,7 @@ struct rt_pollreq;
 struct dirent;
 struct lwp_avl_struct;
 struct file_lock;
+struct dfs_aspace;
 
 struct dfs_file_ops
 {
@@ -73,6 +74,9 @@ struct dfs_vnode
     struct timespec mtime;
     struct timespec ctime;
 
+    struct dfs_aspace *aspace;
+    struct rt_mutex lock;
+
     void *data;             /* private data of this file system */
 };
 
@@ -92,6 +96,8 @@ struct dfs_file
     const struct dfs_file_ops *fops;
     struct dfs_dentry *dentry;  /* dentry of this file */
     struct dfs_vnode *vnode;    /* vnode of this file */
+
+    void *mmap_context;         /* used by mmap routine */
 
     void *data;
 };
@@ -122,7 +128,7 @@ struct dfs_vnode *dfs_vnode_ref(struct dfs_vnode *vnode);
 void dfs_vnode_unref(struct dfs_vnode *vnode);
 
 /*dfs_file.c*/
-
+#ifdef RT_USING_SMART
 struct dfs_mmap2_args
 {
     void *addr;
@@ -131,8 +137,10 @@ struct dfs_mmap2_args
     int flags;
     off_t pgoffset;
 
+    struct rt_lwp *lwp;
     void *ret;
 };
+#endif
 
 void dfs_file_init(struct dfs_file *file);
 void dfs_file_deinit(struct dfs_file *file);
@@ -166,7 +174,12 @@ int dfs_file_isdir(const char *path);
 int dfs_file_access(const char *path, mode_t mode);
 int dfs_file_chdir(const char *path);
 char *dfs_file_getcwd(char *buf, size_t size);
+
+#ifdef RT_USING_SMART
 int dfs_file_mmap2(struct dfs_file *file, struct dfs_mmap2_args *mmap2);
+
+int dfs_file_mmap(struct dfs_file *file, struct dfs_mmap2_args *mmap2);
+#endif
 
 /* 0x5254 is just a magic number to make these relatively unique ("RT") */
 #define RT_FIOFTRUNCATE  0x52540000U

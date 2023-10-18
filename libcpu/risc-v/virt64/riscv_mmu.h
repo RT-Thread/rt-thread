@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2021-01-30     lizhirui     first version
+ * 2023-10-12     Shell        Add permission control API
  */
 
 #ifndef __RISCV_MMU_H__
@@ -92,5 +93,75 @@
 void mmu_set_pagetable(rt_ubase_t addr);
 void mmu_enable_user_page_access();
 void mmu_disable_user_page_access();
+
+enum rt_hw_mmu_prot_t {
+    RT_HW_MMU_PROT_READ,
+    RT_HW_MMU_PROT_WRITE,
+    RT_HW_MMU_PROT_EXECUTE,
+    RT_HW_MMU_PROT_KERNEL,
+    RT_HW_MMU_PROT_USER,
+    RT_HW_MMU_PROT_CACHE,
+};
+
+/**
+ * @brief Remove permission from attribution
+ *
+ * @param attr architecture specified mmu attribution
+ * @param prot protect that will be removed
+ * @return size_t returned attribution
+ */
+rt_inline size_t rt_hw_mmu_attr_rm_perm(size_t attr, enum rt_hw_mmu_prot_t prot)
+{
+    switch (prot)
+    {
+        /* remove write permission for user */
+        case RT_HW_MMU_PROT_WRITE | RT_HW_MMU_PROT_USER:
+            attr &= ~PTE_W;
+        default:
+            RT_ASSERT(0);
+    }
+    return attr;
+}
+
+/**
+ * @brief Add permission from attribution
+ *
+ * @param attr architecture specified mmu attribution
+ * @param prot protect that will be added
+ * @return size_t returned attribution
+ */
+rt_inline size_t rt_hw_mmu_attr_add_perm(size_t attr, enum rt_hw_mmu_prot_t prot)
+{
+    switch (prot)
+    {
+        /* add write permission for user */
+        case RT_HW_MMU_PROT_WRITE | RT_HW_MMU_PROT_USER:
+            attr |= PTE_W;
+        default:
+            RT_ASSERT(0);
+    }
+    return attr;
+}
+
+/**
+ * @brief Test permission from attribution
+ *
+ * @param attr architecture specified mmu attribution
+ * @param prot protect that will be test
+ * @return rt_bool_t RT_TRUE if the prot is allowed, otherwise RT_FALSE
+ */
+rt_inline rt_bool_t rt_hw_mmu_attr_test_perm(size_t attr, enum rt_hw_mmu_prot_t prot)
+{
+    rt_bool_t rc = 0;
+    switch (prot)
+    {
+        /* test write permission for user */
+        case RT_HW_MMU_PROT_WRITE | RT_HW_MMU_PROT_USER:
+            rc = !!(attr & PTE_W);
+        default:
+            RT_ASSERT(0);
+    }
+    return rc;
+}
 
 #endif

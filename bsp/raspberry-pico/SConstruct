@@ -27,6 +27,15 @@ Export('rtconfig')
 # prepare building environment
 objs = PrepareBuilding(env, RTT_ROOT)
 
+ocwd = os.getcwd()
+os.chdir('packages/raspberrypi-pico-sdk-latest')
+print("Enter " + os.getcwd())
+if GetOption('clean'):
+    os.system("scons -c")
+else:
+    os.system("scons")
+os.chdir(ocwd)
+
 objs.extend(SConscript(os.path.join(os.getcwd(), 'board', 'ports', 'SConscript')))
 
 # make a building

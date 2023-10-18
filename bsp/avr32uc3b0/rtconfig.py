@@ -5,6 +5,7 @@ ARCH     = 'avr32'
 CPU      = 'uc3'
 PART     = 'uc3b0256'
 BOARD    = 'USERBOARD'
+ATOMICS  = ' -D__STDC_NO_ATOMICS__'
 
 CROSS_TOOL 	= 'gcc'
 
@@ -13,7 +14,7 @@ if os.getenv('RTT_CC'):
 
 if  CROSS_TOOL == 'gcc':
 	PLATFORM 	= 'gcc'
-	EXEC_PATH 	= 'C:/Program Files/Atmel/AVR Tools/AVR Toolchain/bin'
+	EXEC_PATH 	= 'C:/Program Files (x86)/Atmel/AVR Tools/AVR Toolchain/bin'
 elif CROSS_TOOL == 'keil':
     print('================ERROR============================')
     print('Not support keil yet!')
@@ -44,7 +45,7 @@ if PLATFORM == 'gcc':
     OBJCPY = PREFIX + 'objcopy'
 
     DEVICE = ' -mpart=' + PART
-    CFLAGS = DEVICE + ' -DBOARD=' + BOARD + ' -fmessage-length=0 -ffunction-sections -masm-addr-pseudos'
+    CFLAGS = DEVICE + ' -DBOARD=' + BOARD + ATOMICS + ' -fmessage-length=0 -ffunction-sections -masm-addr-pseudos'
     AFLAGS = ' -c -x assembler-with-cpp' + DEVICE
     LFLAGS = DEVICE + ' -Wl,--gc-sections --rodata-writable -Wl,--direct-data -LSOFTWARE_FRAMEWORK/UTILS/LIBS/NEWLIB_ADDONS -T avr32elf_uc3b0256.lds'
 

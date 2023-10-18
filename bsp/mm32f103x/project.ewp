@@ -355,14 +355,15 @@
         <option>
           <name>CCIncludePath2</name>
           <state />
-          <state>$PROJ_DIR$\..\..\components\libc\posix\ipc</state>
+          <state>$PROJ_DIR$\..\..\components\libc\posix\io\eventfd</state>
           <state>$PROJ_DIR$\Libraries\MM32F103\Source</state>
           <state>$PROJ_DIR$\..\..\components\libc\compilers\common\extension</state>
           <state>$PROJ_DIR$\..\..\include</state>
           <state>$PROJ_DIR$\Libraries\CMSIS\KEIL_CORE</state>
           <state>$PROJ_DIR$\drivers</state>
           <state>$PROJ_DIR$\..\..\components\libc\compilers\common\include</state>
-          <state>$PROJ_DIR$\..\..\components\libc\posix\io\stdio</state>
+          <state>$PROJ_DIR$\..\..\components\libc\posix\ipc</state>
+          <state>$PROJ_DIR$\..\..\components\libc\posix\io\epoll</state>
           <state>$PROJ_DIR$\.</state>
           <state>$PROJ_DIR$\applications</state>
           <state>$PROJ_DIR$\..\..\components\libc\compilers\common\extension\fcntl\octal</state>
@@ -1430,14 +1431,15 @@
         <option>
           <name>CCIncludePath2</name>
           <state />
-          <state>$PROJ_DIR$\..\..\components\libc\posix\ipc</state>
+          <state>$PROJ_DIR$\..\..\components\libc\posix\io\eventfd</state>
           <state>$PROJ_DIR$\Libraries\MM32F103\Source</state>
           <state>$PROJ_DIR$\..\..\components\libc\compilers\common\extension</state>
           <state>$PROJ_DIR$\..\..\include</state>
           <state>$PROJ_DIR$\Libraries\CMSIS\KEIL_CORE</state>
           <state>$PROJ_DIR$\drivers</state>
           <state>$PROJ_DIR$\..\..\components\libc\compilers\common\include</state>
-          <state>$PROJ_DIR$\..\..\components\libc\posix\io\stdio</state>
+          <state>$PROJ_DIR$\..\..\components\libc\posix\ipc</state>
+          <state>$PROJ_DIR$\..\..\components\libc\posix\io\epoll</state>
           <state>$PROJ_DIR$\.</state>
           <state>$PROJ_DIR$\applications</state>
           <state>$PROJ_DIR$\..\..\components\libc\compilers\common\extension\fcntl\octal</state>
@@ -2159,9 +2161,6 @@
       <name>$PROJ_DIR$\..\..\components\libc\compilers\common\cctype.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\libc\compilers\common\cstdio.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\..\components\libc\compilers\common\cstdlib.c</name>
     </file>
     <file>
@@ -2169,6 +2168,9 @@
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\components\libc\compilers\common\ctime.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\libc\compilers\common\cunistd.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\components\libc\compilers\common\cwchar.c</name>
@@ -2218,6 +2220,9 @@
   </group>
   <group>
     <name>DeviceDrivers</name>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\drivers\core\device.c</name>
+    </file>
     <file>
       <name>$PROJ_DIR$\..\..\components\drivers\ipc\completion.c</name>
     </file>
@@ -2282,9 +2287,6 @@
       <name>$PROJ_DIR$\..\..\src\components.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\src\device.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\..\src\idle.c</name>
     </file>
     <file>
@@ -2321,34 +2323,34 @@
   <group>
     <name>Libraries</name>
     <file>
-      <name>$PROJ_DIR$\Libraries\MM32F103\HAL_lib\src\HAL_uart.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\Libraries\MM32F103\Source\system_MM32F103.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\MM32F103\HAL_lib\src\HAL_rtc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\MM32F103\HAL_lib\src\HAL_iwdg.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\MM32F103\Source\IAR_StartAsm\startup_MM32F103.s</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\MM32F103\HAL_lib\src\HAL_can.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\MM32F103\HAL_lib\src\HAL_pwr.c</name>
+      <name>$PROJ_DIR$\Libraries\MM32F103\HAL_lib\src\HAL_wwdg.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\Libraries\MM32F103\HAL_lib\src\HAL_exti.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\MM32F103\HAL_lib\src\HAL_i2c.c</name>
+      <name>$PROJ_DIR$\Libraries\MM32F103\HAL_lib\src\HAL_rtc.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\MM32F103\HAL_lib\src\HAL_flash.c</name>
+      <name>$PROJ_DIR$\Libraries\MM32F103\HAL_lib\src\HAL_gpio.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\MM32F103\HAL_lib\src\HAL_dma.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\MM32F103\HAL_lib\src\HAL_can.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\MM32F103\HAL_lib\src\HAL_tim.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\MM32F103\Source\IAR_StartAsm\startup_MM32F103.s</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\MM32F103\HAL_lib\src\HAL_rcc.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\Libraries\MM32F103\HAL_lib\src\HAL_spi.c</name>
@@ -2357,28 +2359,28 @@
       <name>$PROJ_DIR$\Libraries\MM32F103\HAL_lib\src\HAL_bkp.c</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\Libraries\MM32F103\HAL_lib\src\HAL_misc.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\Libraries\MM32F103\HAL_lib\src\HAL_crc.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\MM32F103\HAL_lib\src\HAL_dma.c</name>
+      <name>$PROJ_DIR$\Libraries\MM32F103\HAL_lib\src\HAL_iwdg.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\MM32F103\HAL_lib\src\HAL_gpio.c</name>
+      <name>$PROJ_DIR$\Libraries\MM32F103\HAL_lib\src\HAL_uart.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\MM32F103\HAL_lib\src\HAL_rcc.c</name>
+      <name>$PROJ_DIR$\Libraries\MM32F103\HAL_lib\src\HAL_i2c.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\Libraries\MM32F103\HAL_lib\src\HAL_adc.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\MM32F103\HAL_lib\src\HAL_wwdg.c</name>
+      <name>$PROJ_DIR$\Libraries\MM32F103\HAL_lib\src\HAL_flash.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\MM32F103\HAL_lib\src\HAL_tim.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\MM32F103\HAL_lib\src\HAL_misc.c</name>
+      <name>$PROJ_DIR$\Libraries\MM32F103\HAL_lib\src\HAL_pwr.c</name>
     </file>
   </group>
   <group>
