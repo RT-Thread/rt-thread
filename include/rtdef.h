@@ -726,10 +726,10 @@ enum
 #define RT_THREAD_CTRL_INFO             0x03                /**< Get thread information. */
 #define RT_THREAD_CTRL_BIND_CPU         0x04                /**< Set thread bind cpu. */
 
+#ifdef RT_USING_SMP
+
 #define RT_CPU_DETACHED                 RT_CPUS_NR          /**< The thread not running on cpu. */
 #define RT_CPU_MASK                     ((1 << RT_CPUS_NR) - 1) /**< All CPUs mask bit. */
-
-#ifdef RT_USING_SMP
 
 #ifndef RT_SCHEDULE_IPI
 #define RT_SCHEDULE_IPI                 0
@@ -738,8 +738,6 @@ enum
 #ifndef RT_STOP_IPI
 #define RT_STOP_IPI                     1
 #endif /* RT_STOP_IPI */
-
-#endif /* RT_USING_SMP */
 
 struct rt_cpu_usage_stats
 {
@@ -776,6 +774,8 @@ struct rt_cpu
 #endif
 };
 typedef struct rt_cpu *rt_cpu_t;
+
+#endif /* RT_USING_SMP */
 
 struct rt_thread;
 
