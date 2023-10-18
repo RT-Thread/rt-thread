@@ -70,7 +70,7 @@ comes with Microchip Studio. I didn't have to do much here. Just make sure
 `atprogram.exe' is in your PATH.
 
 ```bash
-atprogram -t atmelice -i jtag -d at32uc3a0512 program -f rtthread-uc3b0256.elf
+atprogram -t atmelice -i jtag -d at32uc3b0256 program -f rtthread-uc3b0256.elf
 ```
 
 Note that you should already see the on-board LEDs (PA7, PA8) blink if your
