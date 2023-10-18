@@ -29,6 +29,7 @@
 
 
 #define MAX_RW_COUNT 0xfffc0000
+#define F_DUPFD_CLOEXEC 1030
 
 /*
  * rw_verify_area doesn't like huge counts. We limit
@@ -1060,6 +1061,9 @@ int dfs_file_fcntl(int fd, int cmd, unsigned long arg)
             break;
         case F_SETLK:
         case F_SETLKW:
+            break;
+        case F_DUPFD_CLOEXEC:
+            ret = -EINVAL;
             break;
         default:
             ret = -EPERM;

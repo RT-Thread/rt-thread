@@ -65,6 +65,9 @@ static rt_err_t uart_control(struct rt_serial_device *serial, int cmd, void *arg
         UART_IMSC(uart->hw_base) |= UARTIMSC_RXIM;
         rt_hw_interrupt_umask(uart->irqno);
         break;
+
+    default:
+        return -1;
     }
 
     return RT_EOK;
