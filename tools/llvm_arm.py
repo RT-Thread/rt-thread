@@ -34,11 +34,11 @@ def GetLLVM_ARMRoot(rtconfig):
 
 def CheckHeader(rtconfig, filename):
     root = GetLLVM_ARMRoot(rtconfig)
-    config = re.findall(r"--config (.*)\.cfg", rtconfig.CFLAGS)
-    if config:
-        fn = os.path.join(root, config[0], 'include', filename)
-        if os.path.isfile(fn):
-            return True
+    if os.path.isdir(root):
+        for config in os.listdir(root):
+            fn = os.path.join(root, config, 'include', filename)
+            if os.path.isfile(fn):
+                return True
 
     return False
 
@@ -46,12 +46,13 @@ def GetPicoLibcVersion(rtconfig):
     version = None
     root = GetLLVM_ARMRoot(rtconfig)
     if CheckHeader(rtconfig, 'picolibc.h'): # get version from picolibc.h file
-        config = re.findall(r"--config (.*)\.cfg", rtconfig.CFLAGS)
-        fn = os.path.join(root, config[0], 'include', 'picolibc.h')
-        f = open(fn, 'r')
-        if f:
-            for line in f:
-                if line.find('__PICOLIBC_VERSION__') != -1 and line.find('"') != -1:
-                    version = re.search(r'\"([^"]+)\"', line).groups()[0]
-            f.close()
+        for config in os.listdir(root):
+            fn = os.path.join(root, config, 'include', 'picolibc.h')
+            f = open(fn, 'r')
+            if f:
+                for line in f:
+                    if line.find('__PICOLIBC_VERSION__') != -1 and line.find('"') != -1:
+                        version = re.search(r'\"([^"]+)\"', line).groups()[0]
+                f.close()
+                return version
     return version
