@@ -12,6 +12,8 @@ bsp_path = Dir('#').abspath
 
 if not os.path.exists(bsp_path + "/link.lds"):
     Env['LINKFLAGS'] = Env['LINKFLAGS'].replace('link.lds', cwd + "/link.lds")
+    # fix the linker with crtx.o
+    env['LINKFLAGS'] += ' -nostartfiles'
     Preprocessing("link.lds.S", ".lds", CPPPATH=[bsp_path])
 
 # add common code files
