@@ -43,6 +43,12 @@ menu "Onboard Peripheral Drivers"
             select PKG_USING_LV_MUSIC_DEMO
             default y
     endif
+
+    config BSP_USING_ON_CHIP_FLASH
+        bool "Enable On-Chip FLASH"
+        select FAL_DEBUG_CONFIG
+        select FAL_PART_HAS_TABLE_CFG
+        default n
 endmenu
 
 menu "On-chip Peripheral Drivers"
