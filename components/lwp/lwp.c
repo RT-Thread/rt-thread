@@ -1423,31 +1423,38 @@ void lwp_uthread_ctx_restore(void)
 
 rt_err_t lwp_backtrace_frame(rt_thread_t uthread, struct rt_hw_backtrace_frame *frame)
 {
+    rt_err_t rc = -RT_ERROR;
     long nesting = 0;
     char **argv;
+    rt_lwp_t lwp;
 
-    argv = lwp_get_command_line_args(uthread->lwp);
-    if (argv)
+    if (uthread->lwp)
     {
-        LOG_RAW("please use: addr2line -e %s -a -f", argv[0]);
-        lwp_free_command_line_args(argv);
-    }
-    else
-    {
-        LOG_RAW("please use: addr2line -e %s -a -f", uthread->lwp);
-    }
-
-    while (nesting < RT_BACKTRACE_LEVEL_MAX_NR)
-    {
-        LOG_RAW(" 0x%lx", frame->pc);
-        if (rt_hw_backtrace_frame_unwind(uthread, frame))
+        lwp = uthread->lwp;
+        argv = lwp_get_command_line_args(lwp);
+        if (argv)
         {
-            break;
+            LOG_RAW("please use: addr2line -e %s -a -f", argv[0]);
+            lwp_free_command_line_args(argv);
         }
-        nesting++;
+        else
+        {
+            LOG_RAW("please use: addr2line -e %s -a -f", lwp->cmd);
+        }
+
+        while (nesting < RT_BACKTRACE_LEVEL_MAX_NR)
+        {
+            LOG_RAW(" 0x%lx", frame->pc);
+            if (rt_hw_backtrace_frame_unwind(uthread, frame))
+            {
+                break;
+            }
+            nesting++;
+        }
+        LOG_RAW("\n");
+        rc = RT_EOK;
     }
-    LOG_RAW("\n");
-    return RT_EOK;
+    return rc;
 }
 
 void rt_update_process_times(void)
