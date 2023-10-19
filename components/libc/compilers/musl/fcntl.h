@@ -21,8 +21,4 @@
 #define O_BINARY 0x10000
 #endif
 
-#ifndef F_DUPFD_CLOEXEC
-#define F_DUPFD_CLOEXEC 1030
-#endif
-
 #endif

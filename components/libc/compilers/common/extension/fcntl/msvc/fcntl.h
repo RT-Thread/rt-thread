@@ -62,6 +62,7 @@ extern "C" {
 #define F_GETOWN_EX 16
 
 #define F_GETOWNER_UIDS 17
+#define F_DUPFD_CLOEXEC 1030
 
 int open(const char *file, int flags, ...);
 int fcntl(int fildes, int cmd, ...);

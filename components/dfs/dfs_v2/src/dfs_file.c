@@ -10,6 +10,7 @@
 
 #include "errno.h"
 #include "fcntl.h"
+#include <fcntl.h>
 
 #include <dfs.h>
 
