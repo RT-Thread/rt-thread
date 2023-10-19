@@ -24,7 +24,7 @@ elif CROSS_TOOL == 'iar':
     EXEC_PATH   = r'C:/Program Files/IAR Systems/Embedded Workbench 8.0'
 elif CROSS_TOOL == 'llvm-arm':
     PLATFORM    = 'llvm-arm'
-    EXEC_PATH   = r'D:\Progrem\LLVMEmbeddedToolchainForArm-16.0.0-Windows-x86_64\bin'
+    EXEC_PATH   = r'D:\Progrem\LLVMEmbeddedToolchainForArm-17.0.1-Windows-x86_64\bin'
 
 if os.getenv('RTT_EXEC_PATH'):
     EXEC_PATH = os.getenv('RTT_EXEC_PATH')
@@ -109,12 +109,11 @@ elif PLATFORM == 'llvm-arm':
     SIZE = PREFIX + 'size'
     OBJDUMP = PREFIX + 'objdump'
     OBJCPY = PREFIX + 'objcopy'
-    DEVICE = ' --config armv7em_hard_fpv4_sp_d16.cfg'
-    DEVICE += ' -ffunction-sections -fdata-sections'
+    DEVICE = ' --target=arm-none-eabihf -mfloat-abi=hard -march=armv7em -mfpu=fpv4-sp-d16'
+    DEVICE += ' -ffunction-sections -fdata-sections -fno-exceptions -fno-rtti'
     CFLAGS = DEVICE
-    CFLAGS += ' -mfloat-abi=hard -march=armv7em -mfpu=fpv4-sp-d16'
     AFLAGS = ' -c' + DEVICE + ' -Wa,-mimplicit-it=thumb ' ## -x assembler-with-cpp
-    LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rt-thread.map,-u,Reset_Handler  -T script/fsp.ld -L script/'
+    LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rt-thread.map,-u,Reset_Handler -lcrt0 -T script/fsp.ld -L script/'
 
     CPATH = ''
     LPATH = ''
