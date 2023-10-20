@@ -49,13 +49,13 @@
 | GPIO              |     支持     |  |
 | UART              |     支持     | 使用LUATOS_ESP32C3开发板需要在UART0_TX和UART0_RX连接串口转USB芯片（如CP2102）|
 | JTAG调试          |     支持     | ESP32C3采用USB方式和PC链接的开发板可以调试                                |
-| WIFI              | 部分支持 | 目前存在一些问题，例如不能在ISR中使用`rt_mq_recive`等，还在尝试解决中 |
-| BLE             | 部分支持 | 目前存在一些问题，例如`NimBLE`启动一段时间后`PC`和`SP`指针相同导致运行错误 |
+| WIFI              | 部分支持 | 目前存在一些问题，例如不能在ISR中使用`rt_mq_recive`等 |
+| BLE             | 部分支持 | 目前存在一些问题，例如`NimBLE`启动一段时间后运行错误 |
 | GDBStub         | 支持 | 通过开启`BSP_ENABLE_GDBSTUB`开关即可使用ESP-IDF所提供的GDB，其会在芯片出错后进入GDB模式 |
 
 注：
 
-1、WIFI和BLE不能同时启用，在使用BLE驱动时注意在`menuconfig`中关闭`RT_USING_WIFI`和`LWIP`开关。另外由于个人能力有限且缺乏调试设备，WIFI和BLE驱动运行都有问题，如果可以解决联系我[timwcx@qq.com](mailto:timwcx@qq.com)，本人感激不尽。
+1、WIFI和BLE不能同时启用，在使用BLE驱动时注意在`menuconfig`中关闭`RT_USING_WIFI`和`LWIP`开关。另外由于能力有限且缺乏调试设备，WIFI和BLE驱动运行都有问题，如果可以解决联系[timwcx@qq.com](mailto:timwcx@qq.com)。
 
 2、BLE驱动仅支持`NimBLE`，并且由`esp-idf`中的`bluetooth`组件提供，使用BLE驱动可以参考`bsp/ESP32_C3/packages/ESP-IDF-latest/examples/bluetooth/nimble`下的样例程序，注意在调用`NimBLE`相关接口之前要调用`esp_timer_init()`函数初始化时钟驱动。
 

@@ -4,9 +4,10 @@
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
- * Date           Author       Notes
- * 2022-04-24     supperthomas first version
- * 2022-06-02     supperthomas fix version
+ * Date           Author        Notes
+ * 2022-04-24     supperthomas  first version
+ * 2022-06-02     supperthomas  fix version
+ * 2023-10-20     WCX1024979076 add wifi application
  */
 
 #include <rtthread.h>
@@ -21,8 +22,8 @@ int main(void)
 #ifdef BSP_USING_BLE
     extern void app_main(void);
     esp_timer_init();
-    app_main(); //该函数为esp-wifi样例程序入口
-#endif
+    app_main(); //该函数为nimble样例程序入口
+#endif /* BSP_USING_BLE */
 
 #ifdef RT_USING_WIFI
     /* set wifi work mode */
