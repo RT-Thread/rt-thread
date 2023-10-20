@@ -10,7 +10,6 @@
 
 #include "errno.h"
 #include "fcntl.h"
-#include <fcntl.h>
 
 #include <dfs.h>
 
@@ -1062,9 +1061,11 @@ int dfs_file_fcntl(int fd, int cmd, unsigned long arg)
         case F_SETLK:
         case F_SETLKW:
             break;
+#ifdef RT_USING_MUSLLIBC
         case F_DUPFD_CLOEXEC:
             ret = -EINVAL;
             break;
+#endif
         default:
             ret = -EPERM;
             break;
