@@ -204,6 +204,7 @@ void handle_user(rt_size_t scause, rt_size_t stval, rt_size_t sepc, struct rt_hw
 
     if (fault_op)
     {
+        rt_base_t saved_stat;
         lwp = lwp_self();
         struct rt_aspace_fault_msg msg = {
             .fault_op = fault_op,
@@ -211,10 +212,13 @@ void handle_user(rt_size_t scause, rt_size_t stval, rt_size_t sepc, struct rt_hw
             .fault_vaddr = (void *)stval,
         };
 
+        __asm__ volatile ("csrrsi %0, sstatus, 2":"=r"(saved_stat));
         if (lwp && rt_aspace_fault_try_fix(lwp->aspace, &msg))
         {
+            __asm__ volatile ("csrw sstatus, %0"::"r"(saved_stat));
             return;
         }
+        __asm__ volatile ("csrw sstatus, %0"::"r"(saved_stat));
     }
     LOG_E("[FATAL ERROR] Exception %ld:%s\n", id, get_exception_msg(id));
     LOG_E("scause:0x%p,stval:0x%p,sepc:0x%p\n", scause, stval, sepc);

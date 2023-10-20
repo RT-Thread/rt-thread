@@ -30,14 +30,12 @@ struct mem_desc
     struct rt_varea varea;
 };
 
-enum rt_hw_mmu_prot_t {
-    RT_HW_MMU_PROT_READ,
-    RT_HW_MMU_PROT_WRITE,
-    RT_HW_MMU_PROT_EXECUTE,
-    RT_HW_MMU_PROT_KERNEL,
-    RT_HW_MMU_PROT_USER,
-    RT_HW_MMU_PROT_CACHE,
-};
+#define RT_HW_MMU_PROT_READ 1
+#define RT_HW_MMU_PROT_WRITE 2
+#define RT_HW_MMU_PROT_EXECUTE 4
+#define RT_HW_MMU_PROT_KERNEL 8
+#define RT_HW_MMU_PROT_USER 16
+#define RT_HW_MMU_PROT_CACHE 32
 
 #define MMU_AF_SHIFT     10
 #define MMU_SHARED_SHIFT 8
@@ -142,7 +140,7 @@ static inline void *rt_hw_mmu_kernel_v2p(void *v_addr)
  * @param prot protect that will be added
  * @return size_t returned attribution
  */
-rt_inline size_t rt_hw_mmu_attr_add_perm(size_t attr, enum rt_hw_mmu_prot_t prot)
+rt_inline size_t rt_hw_mmu_attr_add_perm(size_t attr, rt_base_t prot)
 {
     switch (prot)
     {
@@ -163,7 +161,7 @@ rt_inline size_t rt_hw_mmu_attr_add_perm(size_t attr, enum rt_hw_mmu_prot_t prot
  * @param prot protect that will be removed
  * @return size_t returned attribution
  */
-rt_inline size_t rt_hw_mmu_attr_rm_perm(size_t attr, enum rt_hw_mmu_prot_t prot)
+rt_inline size_t rt_hw_mmu_attr_rm_perm(size_t attr, rt_base_t prot)
 {
     switch (prot)
     {
@@ -185,7 +183,7 @@ rt_inline size_t rt_hw_mmu_attr_rm_perm(size_t attr, enum rt_hw_mmu_prot_t prot)
  * @param prot protect that will be test
  * @return rt_bool_t RT_TRUE if the prot is allowed, otherwise RT_FALSE
  */
-rt_inline rt_bool_t rt_hw_mmu_attr_test_perm(size_t attr, enum rt_hw_mmu_prot_t prot)
+rt_inline rt_bool_t rt_hw_mmu_attr_test_perm(size_t attr, rt_base_t prot)
 {
     rt_bool_t rc;
     switch (prot)

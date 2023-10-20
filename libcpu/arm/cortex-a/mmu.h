@@ -101,14 +101,12 @@ struct mem_desc
  */
 #define ARCH_MAP_FAILED ((void *)-1)
 
-enum rt_hw_mmu_prot_t {
-    RT_HW_MMU_PROT_READ,
-    RT_HW_MMU_PROT_WRITE,
-    RT_HW_MMU_PROT_EXECUTE,
-    RT_HW_MMU_PROT_KERNEL,
-    RT_HW_MMU_PROT_USER,
-    RT_HW_MMU_PROT_CACHE,
-};
+#define RT_HW_MMU_PROT_READ 1
+#define RT_HW_MMU_PROT_WRITE 2
+#define RT_HW_MMU_PROT_EXECUTE 4
+#define RT_HW_MMU_PROT_KERNEL 8
+#define RT_HW_MMU_PROT_USER 16
+#define RT_HW_MMU_PROT_CACHE 32
 
 int rt_hw_mmu_ioremap_init(struct rt_aspace *aspace, void *v_address, size_t size);
 void rt_hw_init_mmu_table(struct mem_desc *mdesc, rt_uint32_t size);
@@ -142,7 +140,7 @@ void rt_hw_mmu_pgtbl_delete(void *pgtbl);
  * @param prot protect that will be removed
  * @return size_t returned attribution
  */
-rt_inline size_t rt_hw_mmu_attr_rm_perm(size_t attr, enum rt_hw_mmu_prot_t prot)
+rt_inline size_t rt_hw_mmu_attr_rm_perm(size_t attr, rt_base_t prot)
 {
     switch (prot)
     {
@@ -176,7 +174,7 @@ rt_inline size_t rt_hw_mmu_attr_rm_perm(size_t attr, enum rt_hw_mmu_prot_t prot)
  * @param prot protect that will be added
  * @return size_t returned attribution
  */
-rt_inline size_t rt_hw_mmu_attr_add_perm(size_t attr, enum rt_hw_mmu_prot_t prot)
+rt_inline size_t rt_hw_mmu_attr_add_perm(size_t attr, rt_base_t prot)
 {
     switch (prot)
     {
@@ -199,7 +197,7 @@ rt_inline size_t rt_hw_mmu_attr_add_perm(size_t attr, enum rt_hw_mmu_prot_t prot
  * @param prot protect that will be test
  * @return rt_bool_t RT_TRUE if the prot is allowed, otherwise RT_FALSE
  */
-rt_inline rt_bool_t rt_hw_mmu_attr_test_perm(size_t attr, enum rt_hw_mmu_prot_t prot)
+rt_inline rt_bool_t rt_hw_mmu_attr_test_perm(size_t attr, rt_base_t prot)
 {
     rt_bool_t rc = 0;
     switch (prot)
