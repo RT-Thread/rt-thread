@@ -685,7 +685,7 @@ ssize_t dfs_file_read(struct dfs_file *file, void *buf, size_t len)
                 if (dfs_is_mounted(file->vnode->mnt) == 0)
                 {
 #ifdef RT_USING_PAGECACHE
-                    if (file->vnode->aspace)
+                    if (file->vnode->aspace && !(file->flags & O_DIRECT))
                     {
                         ret = dfs_aspace_read(file, buf, len, &pos);
                     }
@@ -739,7 +739,7 @@ ssize_t dfs_file_write(struct dfs_file *file, const void *buf, size_t len)
                 if (dfs_is_mounted(file->vnode->mnt) == 0)
                 {
 #ifdef RT_USING_PAGECACHE
-                    if (file->vnode->aspace)
+                    if (file->vnode->aspace && !(file->flags & O_DIRECT))
                     {
                         ret = dfs_aspace_write(file, buf, len, &pos);
                     }
@@ -747,6 +747,11 @@ ssize_t dfs_file_write(struct dfs_file *file, const void *buf, size_t len)
 #endif
                     {
                         ret = file->fops->write(file, buf, len, &pos);
+                    }
+
+                    if (file->flags & O_SYNC)
+                    {
+                        file->fops->flush(file);
                     }
                 }
                 else
