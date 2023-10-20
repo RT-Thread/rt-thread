@@ -2,7 +2,7 @@ import rtconfig
 Import('RTT_ROOT')
 from building import *
 
-src_bsp = ['application.c', 'startup.c', 'board.c', 'drv_uart.c']
+src_bsp = ['application.c', 'startup.c', 'board.c', 'drv_uart.c', 'drv_gpio.c']
 
 src = File(src_bsp)
 CPPPATH = [RTT_ROOT + '/bsp/avr32uc3b0']
