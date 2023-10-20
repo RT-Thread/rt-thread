@@ -38,8 +38,8 @@ boot_arg1 .req x23
 boot_arg2 .req x24
 stack_top .req x25
 
-.global __start
-__start:
+.global _start
+_start:
 /*
  * Boot CPU general-purpose register settings:
  *   x0 = physical address of device tree blob (dtb) in system RAM.
@@ -165,8 +165,8 @@ __start:
     dsb sy
 
 #ifdef RT_USING_SMART
-    ldr     x2, =__start
-    GET_PHY x3, __start
+    ldr     x2, =_start
+    GET_PHY x3, _start
     sub     x3, x3, x2
 #else
     mov     x3,0
