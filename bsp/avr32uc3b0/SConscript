@@ -2,7 +2,16 @@ import rtconfig
 Import('RTT_ROOT')
 from building import *
 
-src_bsp = ['application.c', 'startup.c', 'board.c', 'drv_uart.c', 'drv_gpio.c']
+src_bsp = ['application.c', 'startup.c', 'board.c']
+
+if GetDepend(['RT_USING_PIN']):
+    src_bsp += ['drv_gpio.c']
+
+if GetDepend(['RT_USING_SERIAL']):
+    if GetDepend(['RT_USING_SERIAL_V2']):
+        src_bsp += ['drv_uart_v2.c']
+    else:
+        src_bsp += ['drv_uart.c']
 
 src = File(src_bsp)
 CPPPATH = [RTT_ROOT + '/bsp/avr32uc3b0']
