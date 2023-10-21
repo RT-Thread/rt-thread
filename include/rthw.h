@@ -13,12 +13,17 @@
  * 2018-11-17     Jesven       add rt_hw_spinlock_t
  *                             add smp support
  * 2019-05-18     Bernard      add empty definition for not enable cache case
+ * 2023-10-16     Shell        Support a new backtrace framework
  */
 
 #ifndef __RT_HW_H__
 #define __RT_HW_H__
 
 #include <rtdef.h>
+
+#if defined (RT_USING_CACHE) || defined(RT_USING_SMP)
+#include <cpuport.h> /* include spinlock, cache ops, etc. */
+#endif
 
 #ifdef __cplusplus
 extern "C" {
@@ -145,9 +150,20 @@ void rt_hw_context_switch_to(rt_ubase_t to);
 void rt_hw_context_switch_interrupt(rt_ubase_t from, rt_ubase_t to, rt_thread_t from_thread, rt_thread_t to_thread);
 #endif /*RT_USING_SMP*/
 
+/**
+ * Hardware Layer Backtrace Service
+ */
+struct rt_hw_backtrace_frame {
+    rt_base_t fp;
+    rt_base_t pc;
+};
+
+rt_err_t rt_hw_backtrace_frame_get(rt_thread_t thread, struct rt_hw_backtrace_frame *frame);
+
+rt_err_t rt_hw_backtrace_frame_unwind(rt_thread_t thread, struct rt_hw_backtrace_frame *frame);
+
 void rt_hw_console_output(const char *str);
 
-void rt_hw_backtrace(rt_uint32_t *fp, rt_ubase_t thread_entry);
 void rt_hw_show_memory(rt_uint32_t addr, rt_size_t size);
 
 /*
@@ -170,7 +186,6 @@ void rt_hw_ipi_send(int ipi_vector, unsigned int cpu_mask);
 #endif
 
 #ifdef RT_USING_SMP
-#include <cpuport.h> /* for spinlock from arch */
 
 struct rt_spinlock
 {
@@ -216,9 +231,7 @@ struct rt_spinlock
 };
 #endif
 
-#ifdef RT_USING_CACHE
-#include <cpuport.h>
-#else
+#ifndef RT_USING_CACHE
 #define rt_hw_isb()
 #define rt_hw_dmb()
 #define rt_hw_dsb()

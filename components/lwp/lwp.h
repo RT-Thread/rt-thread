@@ -321,4 +321,7 @@ void dbg_attach_req(void *pc);
 int dbg_check_suspend(void);
 void rt_hw_set_process_id(int pid);
 
+/* backtrace service */
+rt_err_t lwp_backtrace_frame(rt_thread_t uthread, struct rt_hw_backtrace_frame *frame);
+
 #endif

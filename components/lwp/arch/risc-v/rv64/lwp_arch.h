@@ -27,13 +27,13 @@
 #define LDSO_LOAD_VADDR     USER_LOAD_VADDR
 #else
 #define USER_HEAP_VADDR     0x300000000UL
-#define USER_HEAP_VEND      0xffffffffffff0000UL
-#define USER_STACK_VSTART   0x270000000UL
-#define USER_STACK_VEND     USER_HEAP_VADDR
+#define USER_HEAP_VEND      USER_STACK_VSTART
+#define USER_STACK_VSTART   0x370000000UL
+#define USER_STACK_VEND     0x400000000UL
 #define USER_VADDR_START    0x200000000UL
 #define USER_VADDR_TOP      0xfffffffffffff000UL
-#define USER_LOAD_VADDR     0x200000000
-#define LDSO_LOAD_VADDR     0x200000000
+#define USER_LOAD_VADDR     0x200000000UL
+#define LDSO_LOAD_VADDR     0x200000000UL
 #endif
 
 /* this attribution is cpu specified, and it should be defined in riscv_mmu.h */

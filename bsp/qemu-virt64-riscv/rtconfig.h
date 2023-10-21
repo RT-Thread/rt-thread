@@ -7,6 +7,7 @@
 /* RT-Thread Kernel */
 
 #define RT_NAME_MAX 24
+#define RT_CPUS_NR 1
 #define RT_ALIGN_SIZE 8
 #define RT_THREAD_PRIORITY_32
 #define RT_THREAD_PRIORITY_MAX 32
@@ -54,7 +55,8 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 256
 #define RT_CONSOLE_DEVICE_NAME "uart0"
-#define RT_VER_NUM 0x50002
+#define RT_VER_NUM 0x50100
+#define RT_BACKTRACE_LEVEL_MAX_NR 32
 #define ARCH_CPU_64BIT
 #define RT_USING_CACHE
 #define RT_USING_HW_ATOMIC
@@ -244,6 +246,9 @@
 #define RT_USING_ADT_HASHMAP
 #define RT_USING_ADT_REF
 
+/* Memory management */
+
+
 /* RT-Thread Utestcases */
 
 
@@ -282,6 +287,9 @@
 /* u8g2: a monochrome graphic library */
 
 
+/* PainterEngine: A cross-platform graphics application framework written in C language */
+
+
 /* tools packages */
 
 
@@ -301,19 +309,11 @@
 
 /* peripheral libraries and drivers */
 
-/* sensors drivers */
-
-
-/* touch drivers */
-
 
 /* Kendryte SDK */
 
 
 /* AI packages */
-
-
-/* Signal Processing and Control Algorithm Packages */
 
 
 /* miscellaneous packages */
@@ -329,7 +329,7 @@
 /* Arduino libraries */
 
 
-/* Projects and Demos */
+/* Projects */
 
 
 /* Sensors */
@@ -353,7 +353,6 @@
 
 
 /* Other */
-
 
 /* Signal IO */
 

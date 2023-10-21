@@ -87,7 +87,6 @@ void assert_handler(const char *ex_string, const char *func, rt_size_t line)
 {
     volatile char dummy = 0;
     extern int list_thread(void);
-    extern void rt_backtrace(void);
 
     list_thread();
     rt_backtrace();

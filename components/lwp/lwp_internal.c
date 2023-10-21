@@ -56,6 +56,7 @@ static rt_err_t _mutex_take_safe(rt_mutex_t mtx, rt_int32_t timeout, rt_bool_t i
                 if (rt_mutex_get_hold(mtx) > 1)
                 {
                     LOG_W("Already hold the lock");
+                    rt_backtrace();
                 }
             }
             else if (rc == -RT_ETIMEOUT)
@@ -109,6 +110,7 @@ rt_err_t lwp_mutex_release_safe(rt_mutex_t mtx)
     if (rc)
     {
         LOG_I("%s: release failed with code %ld", __func__, rc);
+        rt_backtrace();
     }
 
     RETURN(rc);
