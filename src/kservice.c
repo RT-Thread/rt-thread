@@ -142,10 +142,12 @@ static struct _errno_str_t  rt_errno_strs[] =
  */
 const char *rt_strerror(rt_err_t error)
 {
+    int i = 0;
+
     if (error < 0)
         error = -error;
 
-    for (int i = 0; i < sizeof(rt_errno_strs) / sizeof(rt_errno_strs[0]); i++)
+    for (i = 0; i < sizeof(rt_errno_strs) / sizeof(rt_errno_strs[0]); i++)
     {
         if (rt_errno_strs[i].error == error)
             return rt_errno_strs[i].str;
