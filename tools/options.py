@@ -80,6 +80,10 @@ def AddOptions():
                       dest = 'target',
                       type = 'string',
                       help = 'set target project: mdk/mdk4/mdk5/iar/vs/vsc/ua/cdk/ses/makefile/eclipse/codelite/cmake')
+    AddOption('--pack',
+                      dest = 'cmsispack',
+                      type = 'string',
+                      help = 'set pack: <cmsispack path>')
     AddOption('--strict',
                 dest='strict-compiling',
                 help='Compiling project with strict mode and ALL warning will be errors',

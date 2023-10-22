@@ -872,6 +872,9 @@ def GenTargetProject(program = None):
     if GetOption('target') == 'vsc':
         from vsc import GenerateVSCode
         GenerateVSCode(Env)
+        if GetOption('cmsispack'):
+            from vscpyocd import GenerateVSCodePyocdConfig
+            GenerateVSCodePyocdConfig(GetOption('cmsispack'))
 
     if GetOption('target') == 'cdk':
         from cdk import CDKProject
