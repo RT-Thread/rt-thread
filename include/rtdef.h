@@ -1381,7 +1381,6 @@ struct rt_device
 
     void                     *user_data;                /**< device private data */
 };
-typedef struct rt_device *rt_device_t;
 
 /**
  * Notify structure
