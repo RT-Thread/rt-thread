@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2023/06/25     flyingcys    first version
+ * 2023/10/25     flyingcys    update uart configure
  */
 #include <rthw.h>
 #include <rtthread.h>
@@ -19,46 +20,22 @@
 #include <rtdbg.h>
 
 /*
- * The Synopsys DesignWare 8250 has an extra feature whereby it detects if the
- * LCR is written whilst busy. If it is, then a busy detect interrupt is
- * raised, the LCR needs to be rewritten and the uart status register read.
+ * Divide positive or negative dividend by positive divisor and round
+ * to closest integer. Result is undefined for negative divisors and
+ * for negative dividends if the divisor variable type is unsigned.
  */
+#define DIV_ROUND_CLOSEST(x, divisor)(          \
+{                           \
+    typeof(x) __x = x;              \
+    typeof(divisor) __d = divisor;          \
+    (((typeof(x))-1) > 0 ||             \
+     ((typeof(divisor))-1) > 0 || (__x) > 0) ?  \
+        (((__x) + ((__d) / 2)) / (__d)) :   \
+        (((__x) - ((__d) / 2)) / (__d));    \
+}                           \
+)
 
-#define UART_RX             0    /* In: Receive buffer */
-#define UART_TX             0    /* Out: Transmit buffer */
-
-#define UART_DLL            0    /* Out: Divisor Latch Low */
-#define UART_DLM            1    /* Out: Divisor Latch High */
-
-#define UART_IER            1    /* Out: Interrupt Enable Register */
-#define UART_IER_RDI        0x01 /* Enable receiver data interrupt */
-
-#define UART_SSR            0x22 /* In: Software Reset Register */
-#define UART_USR            0x1f /* UART Status Register */
-
-#define UART_LCR            3    /* Out: Line Control Register */
-#define UART_LCR_DLAB       0x80 /* Divisor latch access bit */
-#define UART_LCR_SPAR       0x20 /* Stick parity (?) */
-#define UART_LCR_PARITY     0x8  /* Parity Enable */
-#define UART_LCR_STOP       0x4  /* Stop bits: 0=1 bit, 1=2 bits */
-#define UART_LCR_WLEN8      0x3  /* Wordlength: 8 bits */
-
-#define UART_MCR            4    /* Out: Modem Control Register */
-#define UART_MCR_RTS        0x02 /* RTS complement */
-
-#define UART_LSR            5    /* In: Line Status Register */
-#define UART_LSR_BI         0x10 /* Break interrupt indicator */
-#define UART_LSR_DR         0x01 /* Receiver data ready */
-
-#define UART_IIR            2    /* In: Interrupt ID Register */
-#define UART_IIR_NO_INT     0x01 /* No interrupts pending */
-#define UART_IIR_BUSY       0x07 /* DesignWare APB Busy Detect */
-#define UART_IIR_RX_TIMEOUT 0x0c /* OMAP RX Timeout interrupt */
-
-#define UART_FCR            2    /* Out: FIFO Control Register */
-#define UART_FCR_EN_FIFO    0x01 /* Enable the FIFO */
-#define UART_FCR_CLEAR_RCVR 0x02 /* Clear the RCVR FIFO */
-#define UART_FCR_CLEAR_XMIT 0x04 /* Clear the XMIT FIFO */
+#define BOTH_EMPTY (UART_LSR_TEMT | UART_LSR_THRE)
 
 struct hw_uart_device
 {
@@ -108,12 +85,12 @@ rt_inline void dw8250_write32(rt_ubase_t addr, rt_ubase_t offset, rt_uint32_t va
         {
             unsigned int lcr = dw8250_read32(addr, UART_LCR);
 
-            if ((value & ~UART_LCR_SPAR) == (lcr & ~UART_LCR_SPAR))
+            if ((value & ~UART_LCR_STKP) == (lcr & ~UART_LCR_STKP))
             {
                 return;
             }
 
-            dw8250_write32(addr, UART_FCR, UART_FCR_EN_FIFO | UART_FCR_CLEAR_RCVR | UART_FCR_CLEAR_XMIT);
+            dw8250_write32(addr, UART_FCR, UART_FCR_DEFVAL);
             dw8250_read32(addr, UART_RX);
 
             *((volatile rt_uint32_t *)(addr + (offset << UART_REG_SHIFT))) = value;
@@ -121,41 +98,39 @@ rt_inline void dw8250_write32(rt_ubase_t addr, rt_ubase_t offset, rt_uint32_t va
     }
 }
 
+static void dw8250_uart_setbrg(rt_ubase_t addr, int baud_divisor)
+{
+    /* to keep serial format, read lcr before writing BKSE */
+    int lcr_val = dw8250_read32(addr, UART_LCR) & ~UART_LCR_BKSE;
+
+    dw8250_write32(addr, UART_LCR, UART_LCR_BKSE | lcr_val);
+    dw8250_write32(addr, UART_DLL, baud_divisor & 0xff);
+
+    dw8250_write32(addr, UART_DLM, (baud_divisor >> 8) & 0xff);
+    dw8250_write32(addr, UART_LCR, lcr_val);
+}
+
 static rt_err_t dw8250_uart_configure(struct rt_serial_device *serial, struct serial_configure *cfg)
 {
-    rt_base_t base, rate;
+    rt_base_t base;
     struct hw_uart_device *uart;
+    int clock_divisor;
 
     RT_ASSERT(serial != RT_NULL);
     uart = (struct hw_uart_device *)serial->parent.user_data;
     base = uart->hw_base;
 
-    /* Resset UART */
-    dw8250_write32(base, UART_SSR, 1);
-    dw8250_write32(base, UART_SSR, 0);
+    while (!(dw8250_read32(base, UART_LSR) & UART_LSR_TEMT));
 
-    dw8250_write32(base, UART_IER, !UART_IER_RDI);
-    dw8250_write32(base, UART_FCR, UART_FCR_EN_FIFO | UART_FCR_CLEAR_RCVR | UART_FCR_CLEAR_XMIT);
+    dw8250_write32(base, UART_IER, 0);
+    dw8250_write32(base, UART_MCR, UART_MCRVAL);
+    dw8250_write32(base, UART_FCR, UART_FCR_DEFVAL);
 
-    /* Disable flow ctrl */
-    dw8250_write32(base, UART_MCR, 0);
-    /* Clear RTS */
-    dw8250_write32(base, UART_MCR, dw8250_read32(base, UART_MCR) | UART_MCR_RTS);
+    /* initialize serial config to 8N1 before writing baudrate */
+    dw8250_write32(base, UART_LCR, UART_LCR_8N1);
 
-    rate = UART_INPUT_CLK / 16 / serial->config.baud_rate;
-
-    /* Enable access DLL & DLH */
-    dw8250_write32(base, UART_LCR, dw8250_read32(base, UART_LCR) | UART_LCR_DLAB);
-    dw8250_write32(base, UART_DLL, (rate & 0xff));
-    dw8250_write32(base, UART_DLM, (rate & 0xff00) >> 8);
-    /* Clear DLAB bit */
-    dw8250_write32(base, UART_LCR, dw8250_read32(base, UART_LCR) & (~UART_LCR_DLAB));
-
-    dw8250_write32(base, UART_LCR, (dw8250_read32(base, UART_LCR) & (~UART_LCR_WLEN8)) | UART_LCR_WLEN8);
-    dw8250_write32(base, UART_LCR, dw8250_read32(base, UART_LCR) & (~UART_LCR_STOP));
-    dw8250_write32(base, UART_LCR, dw8250_read32(base, UART_LCR) & (~UART_LCR_PARITY));
-
-    dw8250_write32(base, UART_IER, UART_IER_RDI);
+    clock_divisor = DIV_ROUND_CLOSEST(UART_INPUT_CLK, 16 * serial->config.baud_rate);
+    dw8250_uart_setbrg(base, clock_divisor);
 
     return RT_EOK;
 }
@@ -194,9 +169,7 @@ static int dw8250_uart_putc(struct rt_serial_device *serial, char c)
     uart = (struct hw_uart_device *)serial->parent.user_data;
     base = uart->hw_base;
 
-    while ((dw8250_read32(base, UART_USR) & 0x2) == 0)
-    {
-    }
+    while ((dw8250_read32(base, UART_LSR) & BOTH_EMPTY) != BOTH_EMPTY);
 
     dw8250_write32(base, UART_TX, c);
 
@@ -213,7 +186,7 @@ static int dw8250_uart_getc(struct rt_serial_device *serial)
     uart = (struct hw_uart_device *)serial->parent.user_data;
     base = uart->hw_base;
 
-    if ((dw8250_read32(base, UART_LSR) & 0x1))
+    if (dw8250_read32(base, UART_LSR) & UART_LSR_DR)
     {
         ch = dw8250_read32(base, UART_RX) & 0xff;
     }
