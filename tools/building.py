@@ -782,6 +782,7 @@ def DoBuilding(target, objects):
 
         return False
 
+    PreBuilding()
     objects = one_list(objects)
 
     program = None
