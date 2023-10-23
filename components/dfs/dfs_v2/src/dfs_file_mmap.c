@@ -272,7 +272,7 @@ rt_err_t on_varea_shrink(struct rt_varea *varea, void *new_vaddr, rt_size_t size
         rm_start = varea_start + size;
         rm_end = varea_start + varea->size;
     }
-    else if (varea_start < (char *)new_vaddr)
+    else
     {
         rm_start = varea_start;
         rm_end = new_vaddr;
@@ -293,6 +293,7 @@ rt_err_t on_varea_expand(struct rt_varea *varea, void *new_vaddr, rt_size_t size
 
 rt_err_t on_varea_split(struct rt_varea *existed, void *unmap_start, rt_size_t unmap_len, struct rt_varea *subset)
 {
+    rt_err_t rc;
     struct dfs_file *file = dfs_mem_obj_get_file(existed->mem_obj);
 
     if (file)
@@ -307,12 +308,15 @@ rt_err_t on_varea_split(struct rt_varea *existed, void *unmap_start, rt_size_t u
             LOG_I("file: %s%s", file->dentry->mnt->fullpath, file->dentry->pathname);
         }
 
-        unmap_pages(existed, unmap_start, (char *)unmap_start + unmap_len);
+        rc = unmap_pages(existed, unmap_start, (char *)unmap_start + unmap_len);
+        if (!rc)
+        {
+            rc = unmap_pages(existed, subset->start, (char *)subset->start + subset->size);
+            if (!rc)
+                on_varea_open(subset);
+        }
 
-        subset->data = existed->data;
-        rt_atomic_add(&(file->ref_count), 1);
-
-        return RT_EOK;
+        return rc;
     }
     else
     {
@@ -338,8 +342,7 @@ rt_err_t on_varea_merge(struct rt_varea *merge_to, struct rt_varea *merge_from)
         }
 
         dfs_aspace_unmap(file, merge_from);
-        merge_from->data = RT_NULL;
-        rt_atomic_sub(&(file->ref_count), 1);
+        on_varea_close(merge_from);
 
         return RT_EOK;
     }
@@ -406,27 +409,30 @@ int dfs_file_mmap(struct dfs_file *file, struct dfs_mmap2_args *mmap2)
 
     LOG_I("mmap2 args addr: %p length: 0x%x prot: %d flags: 0x%x pgoffset: 0x%x",
            mmap2->addr, mmap2->length, mmap2->prot, mmap2->flags, mmap2->pgoffset);
-    if (file && file->vnode && file->vnode->aspace)
+    if (file && file->vnode)
     {
-        /* create a va area in user space (lwp) */
-        rt_varea_t varea = dfs_map_user_varea_data(mmap2, file);
-        if (varea)
+        if (file->vnode->aspace)
         {
-            mmap2->ret = varea->start;
-            LOG_I("%s varea: %p", __func__, varea);
-            LOG_I("varea start: %p size: 0x%x offset: 0x%x attr: 0x%x flag: 0x%x",
-                varea->start, varea->size, varea->offset, varea->attr, varea->flag);
-            LOG_I("file: %s%s", file->dentry->mnt->fullpath, file->dentry->pathname);
-            ret = RT_EOK;
+            /* create a va area in user space (lwp) */
+            rt_varea_t varea = dfs_map_user_varea_data(mmap2, file);
+            if (varea)
+            {
+                mmap2->ret = varea->start;
+                LOG_I("%s varea: %p", __func__, varea);
+                LOG_I("varea start: %p size: 0x%x offset: 0x%x attr: 0x%x flag: 0x%x",
+                    varea->start, varea->size, varea->offset, varea->attr, varea->flag);
+                LOG_I("file: %s%s", file->dentry->mnt->fullpath, file->dentry->pathname);
+                ret = RT_EOK;
+            }
+            else
+            {
+                ret = -ENOMEM;
+            }
         }
         else
         {
-            ret = -ENOMEM;
+            LOG_E("File mapping is not supported, file: %s%s", file->dentry->mnt->fullpath, file->dentry->pathname);
         }
-    }
-    else if (file->vnode->aspace == RT_NULL)
-    {
-        LOG_E("File mapping is not supported, file: %s%s", file->dentry->mnt->fullpath, file->dentry->pathname);
     }
 
     return ret;
