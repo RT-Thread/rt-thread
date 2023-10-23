@@ -1332,7 +1332,7 @@ int sal_ioctlsocket(int socket, long cmd, void *arg)
                 netdev = rt_list_entry(node, struct netdev, list);
                 if (!strcmp(ifr->ifr_ifrn.ifrn_name, netdev->name))
                 {
-                    if ((ifr->ifr_ifru.ifru_flags & 1) == 0)
+                    if ((ifr->ifr_ifru.ifru_flags & IFF_UP) == 0)
                     {
                         netdev_set_down(netdev);
                     }
