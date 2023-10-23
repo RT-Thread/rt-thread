@@ -7,6 +7,7 @@
  * Date           Author          Notes
  * 2010-03-30     Kyle            First version
  * 2023-10-13     Raman Gopalan   Move UART specific code sections into the drv_uart files
+ * 2023-10-20     Raman Gopalan   Initialize GPIO sub-system
  */
 
 #include <rtthread.h>
@@ -16,6 +17,7 @@
 #include "usart.h"
 #include "intc.h"
 #include "drv_uart.h"
+#include "drv_gpio.h"
 
 /**
  * System tick interrupt handler.
@@ -70,6 +72,10 @@ void rt_hw_board_init(void)
 
 #ifdef RT_USING_SERIAL
     rt_hw_uart_init();
+#endif
+
+#ifdef RT_USING_PIN
+    rt_hw_gpio_init();
 #endif
 
 #ifdef RT_USING_CONSOLE
