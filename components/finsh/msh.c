@@ -893,7 +893,7 @@ void msh_opt_auto_complete(char *prefix)
     char *opt_str = RT_NULL;
     msh_cmd_opt_t *opt = RT_NULL;
 
-    if ((argc = msh_get_argc(prefix, &opt_str)) != RT_NULL)
+    if ((argc = msh_get_argc(prefix, &opt_str)) != 0)
     {
         opt = msh_get_cmd_opt(prefix);
     }

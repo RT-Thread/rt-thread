@@ -26,7 +26,6 @@
 
 #ifdef BSP_USING_WIFI
 
-#define WIFI_IMAGE_PARTITION_NAME       "wifi_image"
 #define WIFI_INIT_THREAD_STACK_SIZE      (1024 * 4)
 #define WIFI_INIT_THREAD_PRIORITY        (RT_THREAD_PRIORITY_MAX/2)
 #define WIFI_INIT_WAIT_TIME              (rt_tick_from_millisecond(100))
@@ -35,7 +34,6 @@
 extern int wifi_hw_init(void);
 extern void wwd_thread_notify_irq(void);
 
-static const struct fal_partition *partition = RT_NULL;
 static rt_uint32_t init_flag = 0;
 
 struct rt_wlan_device *bcm_hw_wlan_dev_alloc(void)

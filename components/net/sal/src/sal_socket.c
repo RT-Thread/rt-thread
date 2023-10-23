@@ -9,7 +9,6 @@
  * 2018-11-12     ChenYong     Add TLS support
  */
 
-#include <string.h>
 #include <rtthread.h>
 #include <rthw.h>
 #include <sys/time.h>
@@ -1072,7 +1071,7 @@ int sal_ioctlsocket(int socket, long cmd, void *arg)
         switch (cmd)
         {
         case SIOCGIFADDR:
-            if (!strcmp(ifr->ifr_ifrn.ifrn_name, sock->netdev->name))
+            if (!rt_strcmp(ifr->ifr_ifrn.ifrn_name, sock->netdev->name))
             {
                 addr_in = (struct sockaddr_in *)&(ifr->ifr_ifru.ifru_addr);
             #if NETDEV_IPV4 && NETDEV_IPV6
@@ -1095,7 +1094,7 @@ int sal_ioctlsocket(int socket, long cmd, void *arg)
                 for (node = &(cur_netdev_list->list); node; node = rt_slist_next(node))
                 {
                     netdev = rt_list_entry(node, struct netdev, list);
-                    if (!strcmp(ifr->ifr_ifrn.ifrn_name, netdev->name))
+                    if (!rt_strcmp(ifr->ifr_ifrn.ifrn_name, netdev->name))
                     {
                         addr_in = (struct sockaddr_in *)&(ifr->ifr_ifru.ifru_addr);
                     #if NETDEV_IPV4 && NETDEV_IPV6
@@ -1113,7 +1112,7 @@ int sal_ioctlsocket(int socket, long cmd, void *arg)
             }
 
         case SIOCSIFADDR:
-            if (!strcmp(ifr->ifr_ifrn.ifrn_name, sock->netdev->name))
+            if (!rt_strcmp(ifr->ifr_ifrn.ifrn_name, sock->netdev->name))
             {
                 addr = (struct sockaddr *)&(ifr->ifr_ifru.ifru_addr);
                 sal_sockaddr_to_ipaddr(addr, &input_ipaddr);
@@ -1131,7 +1130,7 @@ int sal_ioctlsocket(int socket, long cmd, void *arg)
                 for (node = &(cur_netdev_list->list); node; node = rt_slist_next(node))
                 {
                     netdev = rt_list_entry(node, struct netdev, list);
-                    if (!strcmp(ifr->ifr_ifrn.ifrn_name, netdev->name))
+                    if (!rt_strcmp(ifr->ifr_ifrn.ifrn_name, netdev->name))
                     {
                         addr = (struct sockaddr *)&(ifr->ifr_ifru.ifru_addr);
                         sal_sockaddr_to_ipaddr(addr, &input_ipaddr);
@@ -1143,7 +1142,7 @@ int sal_ioctlsocket(int socket, long cmd, void *arg)
             }
 
         case SIOCGIFNETMASK:
-            if (!strcmp(ifr->ifr_ifrn.ifrn_name, sock->netdev->name))
+            if (!rt_strcmp(ifr->ifr_ifrn.ifrn_name, sock->netdev->name))
             {
                 addr_in = (struct sockaddr_in *)&(ifr->ifr_ifru.ifru_netmask);
             #if NETDEV_IPV4 && NETDEV_IPV6
@@ -1166,7 +1165,7 @@ int sal_ioctlsocket(int socket, long cmd, void *arg)
                 for (node = &(cur_netdev_list->list); node; node = rt_slist_next(node))
                 {
                     netdev = rt_list_entry(node, struct netdev, list);
-                    if (!strcmp(ifr->ifr_ifrn.ifrn_name, netdev->name))
+                    if (!rt_strcmp(ifr->ifr_ifrn.ifrn_name, netdev->name))
                     {
                         addr_in = (struct sockaddr_in *)&(ifr->ifr_ifru.ifru_netmask);
                     #if NETDEV_IPV4 && NETDEV_IPV6
@@ -1183,7 +1182,7 @@ int sal_ioctlsocket(int socket, long cmd, void *arg)
             }
 
         case SIOCSIFNETMASK:
-            if (!strcmp(ifr->ifr_ifrn.ifrn_name, sock->netdev->name))
+            if (!rt_strcmp(ifr->ifr_ifrn.ifrn_name, sock->netdev->name))
             {
                 addr = (struct sockaddr *)&(ifr->ifr_ifru.ifru_netmask);
                 sal_sockaddr_to_ipaddr(addr, &input_ipaddr);
@@ -1201,7 +1200,7 @@ int sal_ioctlsocket(int socket, long cmd, void *arg)
                 for (node = &(cur_netdev_list->list); node; node = rt_slist_next(node))
                 {
                     netdev = rt_list_entry(node, struct netdev, list);
-                    if (!strcmp(ifr->ifr_ifrn.ifrn_name, netdev->name))
+                    if (!rt_strcmp(ifr->ifr_ifrn.ifrn_name, netdev->name))
                     {
                         addr = (struct sockaddr *)&(ifr->ifr_ifru.ifru_netmask);
                         sal_sockaddr_to_ipaddr(addr, &input_ipaddr);
@@ -1213,11 +1212,11 @@ int sal_ioctlsocket(int socket, long cmd, void *arg)
             }
 
         case SIOCGIFHWADDR:
-            if (!strcmp(ifr->ifr_ifrn.ifrn_name,sock->netdev->name))
+            if (!rt_strcmp(ifr->ifr_ifrn.ifrn_name,sock->netdev->name))
             {
                 addr = (struct sockaddr *)&(ifr->ifr_ifru.ifru_hwaddr);
 #ifdef RT_USING_LWP
-                if (!strcmp("lo", sock->netdev->name))
+                if (!rt_strcmp("lo", sock->netdev->name))
                 {
                     struct musl_ifreq * musl_ifreq_tmp = (struct musl_ifreq *)arg;
                     musl_ifreq_tmp->ifr_ifru.ifru_hwaddr.sa_family = ARPHRD_LOOPBACK;
@@ -1242,11 +1241,11 @@ int sal_ioctlsocket(int socket, long cmd, void *arg)
                 for (node = &(cur_netdev_list->list); node; node = rt_slist_next(node))
                 {
                     netdev = rt_list_entry(node, struct netdev, list);
-                    if (!strcmp(ifr->ifr_ifrn.ifrn_name, netdev->name))
+                    if (!rt_strcmp(ifr->ifr_ifrn.ifrn_name, netdev->name))
                     {
                         addr = (struct sockaddr *)&(ifr->ifr_ifru.ifru_hwaddr);
 #ifdef RT_USING_LWP
-                        if (!strcmp("lo", netdev->name))
+                        if (!rt_strcmp("lo", netdev->name))
                         {
                             struct musl_ifreq * musl_ifreq_tmp = (struct musl_ifreq *)arg;
                             musl_ifreq_tmp->ifr_ifru.ifru_hwaddr.sa_family = ARPHRD_LOOPBACK;
@@ -1265,7 +1264,7 @@ int sal_ioctlsocket(int socket, long cmd, void *arg)
             }
 
         case SIOCGIFMTU:
-            if (!strcmp(ifr->ifr_ifrn.ifrn_name, sock->netdev->name))
+            if (!rt_strcmp(ifr->ifr_ifrn.ifrn_name, sock->netdev->name))
             {
                 ifr->ifr_ifru.ifru_mtu = sock->netdev->mtu;
                 return 0;
@@ -1281,7 +1280,7 @@ int sal_ioctlsocket(int socket, long cmd, void *arg)
                 for (node = &(cur_netdev_list->list); node; node = rt_slist_next(node))
                 {
                     netdev = rt_list_entry(node, struct netdev, list);
-                    if (!strcmp(ifr->ifr_ifrn.ifrn_name, netdev->name))
+                    if (!rt_strcmp(ifr->ifr_ifrn.ifrn_name, netdev->name))
                     {
                         ifr->ifr_ifru.ifru_mtu = netdev->mtu;
                         return 0;
@@ -1290,7 +1289,7 @@ int sal_ioctlsocket(int socket, long cmd, void *arg)
                 return -1;
             }
         case SIOCGIFFLAGS:
-            if (!strcmp(ifr->ifr_ifrn.ifrn_name, sock->netdev->name))
+            if (!rt_strcmp(ifr->ifr_ifrn.ifrn_name, sock->netdev->name))
             {
                 uint16_t flags_tmp = 0;
                 if (sock->netdev->flags & NETDEV_FLAG_UP)
@@ -1312,7 +1311,7 @@ int sal_ioctlsocket(int socket, long cmd, void *arg)
                 for (node = &(cur_netdev_list->list); node; node = rt_slist_next(node))
                 {
                     netdev = rt_list_entry(node, struct netdev, list);
-                    if (!strcmp(ifr->ifr_ifrn.ifrn_name, netdev->name))
+                    if (!rt_strcmp(ifr->ifr_ifrn.ifrn_name, netdev->name))
                     {
                         uint16_t flags_tmp = 0;
                         if (sock->netdev->flags & NETDEV_FLAG_UP)
