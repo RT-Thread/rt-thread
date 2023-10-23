@@ -717,7 +717,6 @@ static int ipaddr_to_ipstr(const struct sockaddr *sockaddr, char *ipstr)
 }
 
 #ifdef AT_USING_SOCKET_SERVER
-static int (*store_at_socket_temporary)(struct at_device *device, enum at_socket_type type);
 static void at_connect_notice_cb(struct at_socket *sock, at_socket_evt_t event, const char *buff, size_t bfsz)
 {
     RT_ASSERT(buff);
@@ -756,8 +755,6 @@ static void at_connect_notice_cb(struct at_socket *sock, at_socket_evt_t event, 
     }
 
     /* avoid use bottom driver to alloc "socket" */
-    store_at_socket_temporary = device->class->socket_ops->at_socket;
-    device->class->socket_ops->at_socket = RT_NULL;
     new_sock = alloc_socket_by_device(device, AT_SOCKET_TCP);
     if (new_sock == RT_NULL)
     {
@@ -770,7 +767,6 @@ static void at_connect_notice_cb(struct at_socket *sock, at_socket_evt_t event, 
     new_sock->ops->at_set_event_cb(AT_SOCKET_EVT_RECV, at_recv_notice_cb);
     new_sock->ops->at_set_event_cb(AT_SOCKET_EVT_CLOSED, at_closed_notice_cb);
     new_sock->ops->at_set_event_cb(AT_SOCKET_EVT_CONNECTED, at_connect_notice_cb);
-    device->class->socket_ops->at_socket = store_at_socket_temporary;
 
     /* put incoming "socket" to the listen socket receiver packet list */
     sscanf(buff, "SOCKET:%d", &base_socket);

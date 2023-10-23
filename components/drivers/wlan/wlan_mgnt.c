@@ -837,7 +837,7 @@ rt_wlan_mode_t rt_wlan_get_mode(const char *dev_name)
     return mode;
 }
 
-
+#ifdef RT_WLAN_JOIN_SCAN_BY_MGNT
 static void rt_wlan_join_scan_callback(int event, struct rt_wlan_buff *buff, void *parameter)
 {
     struct rt_wlan_info *info = RT_NULL;
@@ -871,6 +871,7 @@ static void rt_wlan_join_scan_callback(int event, struct rt_wlan_buff *buff, voi
         }
     }
 }
+#endif
 
 rt_err_t rt_wlan_connect(const char *ssid, const char *password)
 {

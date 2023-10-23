@@ -146,7 +146,7 @@ struct rt_sensor_intf
 {
     char                       *dev_name;   /* The name of the communication device */
     rt_uint8_t                  type;       /* Communication interface type */
-    void                       *user_data;  /* Private data for the sensor. ex. i2c addr,spi cs,control I/O */
+    void                       *arg;        /* Interface argument for the sensor. ex. i2c addr,spi cs,control I/O */
 };
 
 struct rt_sensor_config
@@ -238,7 +238,7 @@ struct rt_sensor_data
 
 struct rt_sensor_ops
 {
-    rt_size_t (*fetch_data)(struct rt_sensor_device *sensor, void *buf, rt_size_t len);
+    rt_ssize_t (*fetch_data)(struct rt_sensor_device *sensor, void *buf, rt_size_t len);
     rt_err_t (*control)(struct rt_sensor_device *sensor, int cmd, void *arg);
 };
 

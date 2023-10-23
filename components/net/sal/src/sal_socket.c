@@ -9,6 +9,7 @@
  * 2018-11-12     ChenYong     Add TLS support
  */
 
+#include <string.h>
 #include <rtthread.h>
 #include <rthw.h>
 #include <sys/time.h>

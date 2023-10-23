@@ -107,21 +107,6 @@ static struct udevice_descriptor dev_desc =
     USB_DYNAMIC,                //bNumConfigurations;
 };
 
-//FS and HS needed
-rt_align(4)
-static struct usb_qualifier_descriptor dev_qualifier =
-{
-    sizeof(dev_qualifier),          //bLength
-    USB_DESC_TYPE_DEVICEQUALIFIER,  //bDescriptorType
-    0x0200,                         //bcdUSB
-    USB_CLASS_AUDIO,                //bDeviceClass
-    0x00,                           //bDeviceSubClass
-    0x00,                           //bDeviceProtocol
-    64,                             //bMaxPacketSize0
-    0x01,                           //bNumConfigurations
-    0,
-};
-
 rt_align(4)
 const static char *_ustring[] =
 {
@@ -507,8 +492,6 @@ ufunction_t rt_usbd_function_uac_mic_create(udevice_t device)
 #endif
     /* create a uac function */
     func = rt_usbd_function_new(device, &dev_desc, &ops);
-    //not support HS
-    //rt_usbd_device_set_qualifier(device, &dev_qualifier);
 
     /* create interface */
     intf_ac = rt_usbd_interface_new(device, RT_NULL);
