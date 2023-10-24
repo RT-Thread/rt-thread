@@ -55,13 +55,13 @@ extern "C" {
 
 struct stat
 {
-    struct rt_device *st_dev;
+    dev_t     st_dev;
     uint16_t  st_ino;
     uint16_t  st_mode;
     uint16_t  st_nlink;
     uint16_t  st_uid;
     uint16_t  st_gid;
-    struct rt_device *st_rdev;
+    dev_t     st_rdev;
     uint32_t  st_size;
     time_t    st_atime;
     long      st_spare1;
