@@ -1218,41 +1218,37 @@ DWORD get_fattime(void)
 }
 
 #if FF_FS_REENTRANT
-int ff_cre_syncobj(BYTE drv, FF_SYNC_t *m)
+
+static rt_mutex_t Mutex[FF_VOLUMES + 1];
+
+int ff_mutex_create (int vol)
 {
-    char name[8];
     rt_mutex_t mutex;
 
-    rt_snprintf(name, sizeof(name), "fat%d", drv);
-    mutex = rt_mutex_create(name, RT_IPC_FLAG_PRIO);
+    mutex = rt_mutex_create("mmutex", RT_IPC_FLAG_PRIO);
     if (mutex != RT_NULL)
     {
-        *m = mutex;
+        Mutex[vol] = mutex;
         return RT_TRUE;
     }
 
     return RT_FALSE;
 }
-
-int ff_del_syncobj(FF_SYNC_t m)
+void ff_mutex_delete (int vol)
 {
-    if (m != RT_NULL)
-        rt_mutex_delete(m);
-
-    return RT_TRUE;
+    if (Mutex[vol] != RT_NULL)
+        rt_mutex_delete(Mutex[vol]);
 }
-
-int ff_req_grant(FF_SYNC_t m)
+int ff_mutex_take (int vol)
 {
-    if (rt_mutex_take(m, FF_FS_TIMEOUT) == RT_EOK)
+    if (rt_mutex_take(Mutex[vol], FF_FS_TIMEOUT) == RT_EOK)
         return RT_TRUE;
 
     return RT_FALSE;
 }
-
-void ff_rel_grant(FF_SYNC_t m)
+void ff_mutex_give (int vol)
 {
-    rt_mutex_release(m);
+    rt_mutex_release(Mutex[vol]);
 }
 
 #endif
