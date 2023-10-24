@@ -8,7 +8,7 @@
  * 2023-09-25     tangzz98     the first version
  */
 
-#include "mp.h"
+#include "mprotect.h"
 
 #define DBG_ENABLE
 #define DBG_SECTION_NAME "MEMORY PROTECTION"
@@ -17,7 +17,7 @@
 
 rt_mem_exclusive_region_t exclusive_regions[NUM_EXCLUSIVE_REGIONS] = {};
 
-rt_mem_region_t *rt_mem_protection_find_free_region(rt_thread_t thread)
+rt_mem_region_t *rt_mprotect_find_free_region(rt_thread_t thread)
 {
     rt_uint8_t i;
     rt_mem_region_t *free_region = RT_NULL;
@@ -36,7 +36,7 @@ rt_mem_region_t *rt_mem_protection_find_free_region(rt_thread_t thread)
     return free_region;
 }
 
-rt_mem_region_t *rt_mem_protection_find_region(rt_thread_t thread, rt_mem_region_t *region)
+rt_mem_region_t *rt_mprotect_find_region(rt_thread_t thread, rt_mem_region_t *region)
 {
     rt_uint8_t i;
     rt_mem_region_t *found_region = RT_NULL;
@@ -61,9 +61,9 @@ rt_mem_region_t *rt_mem_protection_find_region(rt_thread_t thread, rt_mem_region
  * @return   Return the operation status. When the return value is RT_EOK, the initialization is successful.
  *           When the return value is any other values, it means the initialization failed.
  */
-int rt_mem_protection_init(void)
+int rt_mprotect_init(void)
 {
-    return (int)rt_hw_mp_init();
+    return (int)rt_hw_mpu_init();
 }
 
 /**
@@ -76,7 +76,7 @@ int rt_mem_protection_init(void)
  * @return   Return the operation status. When the return value is RT_EOK, the operation is successful.
  *           If the return value is any other values, it represents the operation failed.
  */
-rt_err_t rt_mem_protection_add_region(rt_thread_t thread, rt_mem_region_t *region)
+rt_err_t rt_mprotect_add_region(rt_thread_t thread, rt_mem_region_t *region)
 {
     if (thread == RT_NULL)
     {
@@ -91,7 +91,7 @@ rt_err_t rt_mem_protection_add_region(rt_thread_t thread, rt_mem_region_t *regio
         }
         rt_memset(thread->mem_regions, 0U, sizeof(rt_mem_region_t ) * NUM_DYNAMIC_REGIONS);
     }
-    return rt_hw_mp_add_region(thread, region);
+    return rt_hw_mpu_add_region(thread, region);
 }
 
 /**
@@ -104,13 +104,13 @@ rt_err_t rt_mem_protection_add_region(rt_thread_t thread, rt_mem_region_t *regio
  * @return   Return the operation status. When the return value is RT_EOK, the operation is successful.
  *           If the return value is any other values, it represents the operation failed.
  */
-rt_err_t rt_mem_protection_delete_region(rt_thread_t thread, rt_mem_region_t *region)
+rt_err_t rt_mprotect_delete_region(rt_thread_t thread, rt_mem_region_t *region)
 {
     if (thread == RT_NULL)
     {
         thread = rt_thread_self();
     }
-    return rt_hw_mp_delete_region(thread, region);
+    return rt_hw_mpu_delete_region(thread, region);
 }
 
 /**
@@ -123,13 +123,13 @@ rt_err_t rt_mem_protection_delete_region(rt_thread_t thread, rt_mem_region_t *re
  * @return   Return the operation status. When the return value is RT_EOK, the operation is successful.
  *           If the return value is any other values, it represents the operation failed.
  */
-rt_err_t rt_mem_protection_update_region(rt_thread_t thread, rt_mem_region_t *region)
+rt_err_t rt_mprotect_update_region(rt_thread_t thread, rt_mem_region_t *region)
 {
     if (thread == RT_NULL)
     {
         thread = rt_thread_self();
     }
-    return rt_hw_mp_update_region(thread, region);
+    return rt_hw_mpu_update_region(thread, region);
 }
 
 /**
@@ -142,7 +142,7 @@ rt_err_t rt_mem_protection_update_region(rt_thread_t thread, rt_mem_region_t *re
  * @return   Return the operation status. When the return value is RT_EOK, the operation is successful.
  *           If the return value is any other values, it represents the operation failed.
  */
-rt_err_t rt_mem_protection_add_exclusive_region(void *start, rt_size_t size)
+rt_err_t rt_mprotect_add_exclusive_region(void *start, rt_size_t size)
 {
     rt_uint8_t i;
     rt_mem_exclusive_region_t region;
@@ -150,7 +150,7 @@ rt_err_t rt_mem_protection_add_exclusive_region(void *start, rt_size_t size)
     region.region.start = start;
     region.region.size = size;
     region.region.attr = RT_MEM_REGION_P_NA_U_NA;
-    if (rt_hw_mp_add_region(RT_NULL, (rt_mem_region_t *)(&(region.region))) != RT_EOK)
+    if (rt_hw_mpu_add_region(RT_NULL, (rt_mem_region_t *)(&(region.region))) != RT_EOK)
     {
         return RT_ERROR;
     }
@@ -180,7 +180,7 @@ rt_err_t rt_mem_protection_add_exclusive_region(void *start, rt_size_t size)
  * @return   Return the operation status. When the return value is RT_EOK, the operation is successful.
  *           If the return value is any other values, it represents the operation failed.
  */
-rt_err_t rt_mem_protection_delete_exclusive_region(void *start, rt_size_t size)
+rt_err_t rt_mprotect_delete_exclusive_region(void *start, rt_size_t size)
 {
     rt_uint8_t i;
     rt_enter_critical();
@@ -198,4 +198,4 @@ rt_err_t rt_mem_protection_delete_exclusive_region(void *start, rt_size_t size)
     return RT_ERROR;
 }
 
-INIT_BOARD_EXPORT(rt_mem_protection_init);
+INIT_BOARD_EXPORT(rt_mprotect_init);

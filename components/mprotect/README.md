@@ -1,5 +1,5 @@
 # RT-Thread MPU抽象层
-MP（Memory Protection）组件是为不同处理器架构的内存保护单元提供的一套通用框架，让用户能使用这套框架解决一些常见的内存问题。
+Mprotect（Memory Protection）组件是为不同处理器架构的内存保护单元提供的一套通用框架，让用户能使用这套框架解决一些常见的内存问题。
 
 # 内存保护单元
 内存保护单元是一个可编程的设备，用来指定一块特定内存区域的访问权限，比如读，写，和从该区域执行代码的权限。内存保护单元可以增加系统的健壮性，预防一些黑客的攻击。ARMV7-M和ARMV8-M都提供了内存保护单元，简称MPU（Memory Protection Unit）。[论坛里的这篇文章](https://club.rt-thread.org/ask/article/610305c1379b9e5e.html)提供了ARM MPU更详细的介绍。RISC-V也提供了相似的功能，简称PMP（Physical Memory Protection），具体可参考[RISC-V架构手册](https://riscv.org/wp-content/uploads/2017/05/riscv-privileged-v1.10.pdf)。
@@ -22,15 +22,15 @@ RT-Thread操作系统的任务和内核使用同一个地址空间，全部运�
 - `RT_USING_MEM_PROTECTION`：开启MPU抽象层
 - `RT_USING_HW_STACK_GUARD`：使用MPU检测栈溢出。具体实现原理是在任务栈顶和栈底各设置一个MPU区域，权限设置为不可访问。如果发生栈溢出，代码访问了MPU保护的地址，会触发异常
 - `NUM_MEM_REGIONS`：硬件支持的MPU区域数量
-- `NUM_EXCLUSIVE_REGIONS`：使用`rt_mem_protection_add_exclusive_region`函数配置的内存区域数量
-- `NUM_CONFIGURABLE_REGIONS`：各任务可以通过`rt_mem_protection_add_region`函数配置的内存区域数量
+- `NUM_EXCLUSIVE_REGIONS`：使用`rt_mprotect_add_exclusive_region`函数配置的内存区域数量
+- `NUM_CONFIGURABLE_REGIONS`：各任务可以通过`rt_mprotect_add_region`函数配置的内存区域数量
 
 ## 内存区域配置
 MPU抽象层提供了以下的API来配置任务对内存区域的权限：
 
-- `rt_err_t rt_mem_protection_add_region(rt_thread_t thread, rt_mem_region_t *region)`：添加内存区域
-- `rt_err_t rt_mem_protection_delete_region(rt_thread_t thread, rt_mem_region_t *region)`：删除内存区域
-- `rt_err_t rt_mem_protection_update_region(rt_thread_t thread, rt_mem_region_t *region)`：更新内存区域配置
+- `rt_err_t rt_mprotect_add_region(rt_thread_t thread, rt_mem_region_t *region)`：添加内存区域
+- `rt_err_t rt_mprotect_delete_region(rt_thread_t thread, rt_mem_region_t *region)`：删除内存区域
+- `rt_err_t rt_mprotect_update_region(rt_thread_t thread, rt_mem_region_t *region)`：更新内存区域配置
 
 内存区域的特性由`rt_mem_region_t`结构体定义：
 ```
@@ -50,10 +50,10 @@ typedef struct {
 
 通常程序需要定义一块内存区域只能由一个特定的任务访问。允许访问该内存区域的任务可以调用以下函数实现这个功能：
 
-- `rt_err_t rt_mem_protection_add_exclusive_region(void *start, rt_size_t size)`：添加内存区域
-- `rt_err_t rt_mem_protection_delete_exclusive_region(void *start, rt_size_t size)`：删除内存区域
+- `rt_err_t rt_mprotect_add_exclusive_region(void *start, rt_size_t size)`：添加内存区域
+- `rt_err_t rt_mprotect_delete_exclusive_region(void *start, rt_size_t size)`：删除内存区域
 
-调用了`rt_mem_protection_add_exclusive_region`的任务在退出前必须调用`rt_mem_protection_delete_exclusive_region`删除内存区域。
+调用了`rt_mprotect_add_exclusive_region`的任务在退出前必须调用`rt_mprotect_delete_exclusive_region`删除内存区域。
 
 ## 初始化
 使用MPU抽象层之前需要在`board.h`文件定义固定的MPU区域数量：
@@ -86,11 +86,11 @@ rt_mem_region_t static_regions[NUM_STATIC_REGIONS] = {
 ## 异常检测
 程序可以注册钩子函数，用来检测内存异常：
 ```
-rt_err_t rt_hw_mp_exception_set_hook(rt_hw_mp_exception_hook_t hook)
+rt_err_t rt_hw_mpu_exception_set_hook(rt_hw_mpu_exception_hook_t hook)
 ```
 `hook`函数会在发生内存异常时被调用。函数声明如下：
 ```
-typedef void (*rt_hw_mp_exception_hook_t)(rt_mem_exception_info_t *)
+typedef void (*rt_hw_mpu_exception_hook_t)(rt_mem_exception_info_t *)
 ```
 `rt_mem_exception_info_t`结构体根据处理器机构定义，对于ARM架构，提供以下用来诊断内存异常的信息：
 ```
@@ -100,4 +100,56 @@ typedef struct {
 	rt_mem_region_t region;	/* 地址对应的内存区域 */
 	rt_uint8_t mmfsr;		/* MemManage Status寄存器的值 */
 } rt_mem_exception_info_t;
+```
+
+# 对RT-Thread内核的影响
+## 线程内存区域的保存
+Mprotect组件在`rt_thread_t`结构体添加了`mem_regions`成员变量，用于保存线程内存区域的配置。
+```
+struct rt_thread
+{
+  ......
+#ifdef RT_USING_MEM_PROTECTION
+    void *mem_regions;
+#endif
+  ......
+}
+```
+`mem_regions`的内存采用动态分配，并在删除线程时释放。
+在切换线程时调用`rt_hw_mpu_table_switch`，切换线程的内存区域配置。
+```
+#if defined (RT_USING_MEM_PROTECTION)
+    PUSH    {r0-r3, r12, lr}
+    LDR     r1, =rt_current_thread
+    LDR     r0, [r1]
+    BL      rt_hw_mpu_table_switch
+    POP     {r0-r3, r12, lr}
+#endif
+```
+
+## 栈溢出检测的实现原理
+线程创建时内核会根据用户指定的参数为栈分配内存，之后调用`rt_hw_stack_guard_init`配置栈溢出检测。栈溢出检测的实现原理是在线程栈底和栈顶分配两块不可读写的内存区域，如果代码访问这块内存，就会触发异常。
+![stack guard](image/stack_guard.png)
+这种方法会改变内核代码可以操作的栈的起始地址和大小。因此`rt_hw_stack_guard_init`会调整`rt_thread_t->stack_addr`，指向允许访问的栈内存的起始地址，调整`rt_thread_t->stack_size`反映允许操作的内存大小，并在`rt_thread_t`添加成员变量`stack_buf`，指向原本为栈分配的内存的起始地址。这样，内核代码可以对栈进行正常操作，无需改动。
+
+应用程序需要注意，如果开启了栈溢出检测，线程实际可以使用的栈空间会比分配的内存更小。因此在创建线程时，需要考虑增加`stack_size`参数。
+
+在删除线程时要使用`stack_buf`变量，正确释放为栈分配的内存。
+```
+static void rt_defunct_execute(void)
+{
+  ......
+  if (object_is_systemobject == RT_FALSE)
+    {
+        /* release thread's stack */
+#ifdef RT_USING_HW_STACK_GUARD
+        RT_KERNEL_FREE(thread->stack_buf);
+#else
+        RT_KERNEL_FREE(thread->stack_addr);
+#endif
+        /* delete thread object */
+        rt_object_delete((rt_object_t)thread);
+    }
+  ......
+}
 ```

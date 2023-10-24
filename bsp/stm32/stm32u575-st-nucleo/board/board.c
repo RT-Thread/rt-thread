@@ -11,7 +11,7 @@
 #include "board.h"
 
 #ifdef RT_USING_MEM_PROTECTION
-#include "mp.h"
+#include "mprotect.h"
 
 rt_mem_region_t static_regions[NUM_STATIC_REGIONS] = {
   /* Flash region, read only */

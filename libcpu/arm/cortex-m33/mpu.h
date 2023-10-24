@@ -8,13 +8,13 @@
  * 2023-09-25     tangzz98     the first version
  */
 
-#ifndef __MPPORT_H__
-#define __MPPORT_H__
+#ifndef __MPU_H__
+#define __MPU_H__
 
 #ifdef RT_USING_MEM_PROTECTION
 
 #include <board.h>
-#include <mp.h>
+#include <mprotect.h>
 
 #define MPU_MIN_REGION_SIZE 32U
 
@@ -66,7 +66,7 @@ typedef struct
     rt_uint8_t mmfsr;       /* Content of MemManage Status Register */
 } rt_mem_exception_info_t;
 
-typedef void (*rt_hw_mp_exception_hook_t)(rt_mem_exception_info_t *);
+typedef void (*rt_hw_mpu_exception_hook_t)(rt_mem_exception_info_t *);
 
 #define RT_ARM_MEM_ATTR(perm, type) ((rt_mem_attr_t){ .rbar = (perm), .mair_attr = (type) })
 
@@ -76,7 +76,7 @@ typedef void (*rt_hw_mp_exception_hook_t)(rt_mem_exception_info_t *);
 #define RT_MEM_REGION_P_RO_U_NA     RT_ARM_MEM_ATTR(P_RO_U_NA_NON_SHAREABLE, RT_ARM_DEFAULT_MAIR_ATTR)
 #define RT_MEM_REGION_P_RO_U_RO     RT_ARM_MEM_ATTR(P_RO_U_RO_NON_SHAREABLE, RT_ARM_DEFAULT_MAIR_ATTR)
 /* ARM-V8M does not support P_NA_U_NA.
-   For compatibility with rt_mem_protection_add_exclusive_region,
+   For compatibility with rt_mprotect_add_exclusive_region,
    define RT_MEM_REGION_P_NA_U_NA as the lowest privilege supported.
 */
 #define RT_MEM_REGION_P_NA_U_NA     RT_MEM_REGION_P_RO_U_NA
@@ -87,13 +87,13 @@ typedef void (*rt_hw_mp_exception_hook_t)(rt_mem_exception_info_t *);
 #define RT_MEM_REGION_P_RX_U_NA     RT_ARM_MEM_ATTR(P_RX_U_NA_NON_SHAREABLE, RT_ARM_DEFAULT_MAIR_ATTR)
 #define RT_MEM_REGION_P_RX_U_RX     RT_ARM_MEM_ATTR(P_RX_U_RX_NON_SHAREABLE, RT_ARM_DEFAULT_MAIR_ATTR)
 
-rt_bool_t rt_hw_mp_region_valid(rt_mem_region_t *region);
-rt_err_t rt_hw_mp_init(void);
-rt_err_t rt_hw_mp_add_region(rt_thread_t thread, rt_mem_region_t *region);
-rt_err_t rt_hw_mp_delete_region(rt_thread_t thread, rt_mem_region_t *region);
-rt_err_t rt_hw_mp_update_region(rt_thread_t thread, rt_mem_region_t *region);
-rt_err_t rt_hw_mp_exception_set_hook(rt_hw_mp_exception_hook_t hook);
+rt_bool_t rt_hw_mpu_region_valid(rt_mem_region_t *region);
+rt_err_t rt_hw_mpu_init(void);
+rt_err_t rt_hw_mpu_add_region(rt_thread_t thread, rt_mem_region_t *region);
+rt_err_t rt_hw_mpu_delete_region(rt_thread_t thread, rt_mem_region_t *region);
+rt_err_t rt_hw_mpu_update_region(rt_thread_t thread, rt_mem_region_t *region);
+rt_err_t rt_hw_mpu_exception_set_hook(rt_hw_mpu_exception_hook_t hook);
 
 #endif /* RT_USING_MEM_PROTECTION */
 
-#endif /* __MPPORT_H__ */
+#endif /* __MPU_H__ */

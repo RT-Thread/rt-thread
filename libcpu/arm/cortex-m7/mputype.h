@@ -8,8 +8,8 @@
  * 2023-09-25     tangzz98     the first version
  */
 
-#ifndef __MPPORTTYPE_H__
-#define __MPPORTTYPE_H__
+#ifndef __MPUTYPE_H__
+#define __MPUTYPE_H__
 
 #ifdef RT_USING_MEM_PROTECTION
 
@@ -21,14 +21,9 @@
 
 typedef struct
 {
-    rt_uint32_t rbar;
-    union
-    {
-        rt_uint32_t mair_attr;
-        rt_uint32_t rlar;
-    };
+    rt_uint32_t rasr;
 } rt_mem_attr_t;
 
 #endif /* RT_USING_MEM_PROTECTION */
 
-#endif /* __MPPORTTYPE_H__ */
+#endif /* __MPUTYPE_H__ */

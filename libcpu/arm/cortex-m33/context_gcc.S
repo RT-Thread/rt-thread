@@ -198,7 +198,7 @@ contex_ns_load:
     PUSH    {r0-r3, r12, lr}
     LDR     r1, =rt_current_thread
     LDR     r0, [r1]
-    BL      rt_hw_mp_table_switch
+    BL      rt_hw_mpu_table_switch
     POP     {r0-r3, r12, lr}
 #endif
 

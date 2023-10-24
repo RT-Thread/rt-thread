@@ -9,7 +9,7 @@
  */
 
 #include <rtdef.h>
-#include <mp.h>
+#include <mprotect.h>
 
 #define DBG_ENABLE
 #define DBG_SECTION_NAME "MEMORY PROTECTION"
@@ -18,12 +18,12 @@
 
 #define MEM_REGION_TO_MPU_INDEX(thread, region) ((((rt_size_t)region - (rt_size_t)(thread->mem_regions)) / sizeof(rt_mem_region_t)) + NUM_STATIC_REGIONS)
 
-extern rt_mem_region_t *rt_mem_protection_find_free_region(rt_thread_t thread);
-extern rt_mem_region_t *rt_mem_protection_find_region(rt_thread_t thread, rt_mem_region_t *region);
+extern rt_mem_region_t *rt_mprotect_find_free_region(rt_thread_t thread);
+extern rt_mem_region_t *rt_mprotect_find_region(rt_thread_t thread, rt_mem_region_t *region);
 
-static rt_hw_mp_exception_hook_t mem_manage_hook = RT_NULL;
+static rt_hw_mpu_exception_hook_t mem_manage_hook = RT_NULL;
 
-rt_weak rt_uint32_t rt_hw_mp_region_default_attr(rt_mem_region_t *region)
+rt_weak rt_uint32_t rt_hw_mpu_region_default_attr(rt_mem_region_t *region)
 {
     static rt_uint32_t default_mem_attr[] =
     {
@@ -52,7 +52,7 @@ static rt_uint32_t _mpu_rasr(rt_mem_region_t *region)
     rt_uint32_t rasr = 0U;
     if ((region->attr.rasr & RESERVED) == RESERVED)
     {
-        rasr |= rt_hw_mp_region_default_attr(region);
+        rasr |= rt_hw_mpu_region_default_attr(region);
         rasr |= region->attr.rasr & (MPU_RASR_XN_Msk | MPU_RASR_AP_Msk);
     }
     else
@@ -64,7 +64,7 @@ static rt_uint32_t _mpu_rasr(rt_mem_region_t *region)
     return rasr;
 }
 
-rt_bool_t rt_hw_mp_region_valid(rt_mem_region_t *region)
+rt_bool_t rt_hw_mpu_region_valid(rt_mem_region_t *region)
 {
     if (region->size < MPU_MIN_REGION_SIZE)
     {
@@ -84,7 +84,7 @@ rt_bool_t rt_hw_mp_region_valid(rt_mem_region_t *region)
     return RT_TRUE;
 }
 
-rt_err_t rt_hw_mp_init(void)
+rt_err_t rt_hw_mpu_init(void)
 {
     extern rt_mem_region_t static_regions[NUM_STATIC_REGIONS];
     rt_uint8_t num_mpu_regions;
@@ -118,7 +118,7 @@ rt_err_t rt_hw_mp_init(void)
     ARM_MPU_Disable();
     for (index = 0U; index < NUM_STATIC_REGIONS; index++)
     {
-        if (rt_hw_mp_region_valid(&(static_regions[index])) == RT_FALSE)
+        if (rt_hw_mpu_region_valid(&(static_regions[index])) == RT_FALSE)
         {
             return RT_ERROR;
         }
@@ -131,11 +131,11 @@ rt_err_t rt_hw_mp_init(void)
     return RT_EOK;
 }
 
-rt_err_t rt_hw_mp_add_region(rt_thread_t thread, rt_mem_region_t *region)
+rt_err_t rt_hw_mpu_add_region(rt_thread_t thread, rt_mem_region_t *region)
 {
     rt_uint8_t index;
     rt_mem_region_t *free_region;
-    if (rt_hw_mp_region_valid(region) == RT_FALSE)
+    if (rt_hw_mpu_region_valid(region) == RT_FALSE)
     {
         return RT_ERROR;
     }
@@ -145,7 +145,7 @@ rt_err_t rt_hw_mp_add_region(rt_thread_t thread, rt_mem_region_t *region)
         return RT_EOK;
     }
     rt_enter_critical();
-    free_region = rt_mem_protection_find_free_region(thread);
+    free_region = rt_mprotect_find_free_region(thread);
     if (free_region == RT_NULL)
     {
         rt_exit_critical();
@@ -162,11 +162,11 @@ rt_err_t rt_hw_mp_add_region(rt_thread_t thread, rt_mem_region_t *region)
     return RT_EOK;
 }
 
-rt_err_t rt_hw_mp_delete_region(rt_thread_t thread, rt_mem_region_t *region)
+rt_err_t rt_hw_mpu_delete_region(rt_thread_t thread, rt_mem_region_t *region)
 {
     rt_uint8_t index;
     rt_enter_critical();
-    rt_mem_region_t *found_region = rt_mem_protection_find_region(thread, region);
+    rt_mem_region_t *found_region = rt_mprotect_find_region(thread, region);
     if (found_region == RT_NULL)
     {
         rt_exit_critical();
@@ -183,16 +183,16 @@ rt_err_t rt_hw_mp_delete_region(rt_thread_t thread, rt_mem_region_t *region)
     return RT_EOK;
 }
 
-rt_err_t rt_hw_mp_update_region(rt_thread_t thread, rt_mem_region_t *region)
+rt_err_t rt_hw_mpu_update_region(rt_thread_t thread, rt_mem_region_t *region)
 {
     rt_uint8_t index;
-    if (rt_hw_mp_region_valid(region) == RT_FALSE)
+    if (rt_hw_mpu_region_valid(region) == RT_FALSE)
     {
         return RT_ERROR;
     }
     region->attr.rasr = _mpu_rasr(region);
     rt_enter_critical();
-    rt_mem_region_t *old_region = rt_mem_protection_find_region(thread, region);
+    rt_mem_region_t *old_region = rt_mprotect_find_region(thread, region);
     if (old_region == RT_NULL)
     {
         rt_exit_critical();
@@ -209,13 +209,13 @@ rt_err_t rt_hw_mp_update_region(rt_thread_t thread, rt_mem_region_t *region)
     return RT_EOK;
 }
 
-rt_err_t rt_hw_mp_exception_set_hook(rt_hw_mp_exception_hook_t hook)
+rt_err_t rt_hw_mpu_exception_set_hook(rt_hw_mpu_exception_hook_t hook)
 {
     mem_manage_hook = hook;
     return RT_EOK;
 }
 
-void rt_hw_mp_table_switch(rt_thread_t thread)
+void rt_hw_mpu_table_switch(rt_thread_t thread)
 {
     extern rt_mem_exclusive_region_t exclusive_regions[NUM_EXCLUSIVE_REGIONS];
     rt_uint8_t i;

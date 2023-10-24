@@ -9,7 +9,7 @@
  */
 
 #include <rtthread.h>
-#include <mp.h>
+#include <mprotect.h>
 
 #define THREAD_PRIORITY      25
 #define THREAD_STACK_SIZE    512
@@ -22,7 +22,7 @@ static void thread1_entry(void *parameter)
     (void)parameter;
     /* Thread 1 configures thread1_private_data for exclusive access */
     rt_kprintf("Thread 1 configures private data\n");
-    rt_mem_protection_add_exclusive_region((void *)thread1_private_data, MPU_MIN_REGION_SIZE);
+    rt_mprotect_add_exclusive_region((void *)thread1_private_data, MPU_MIN_REGION_SIZE);
     rt_kprintf("Thread 1 private data address: %p - %p\n", &thread1_private_data[0], &thread1_private_data[MPU_MIN_REGION_SIZE]);
     rt_kprintf("Thread 1 reads and writes to its private data\n");
     for (int i = 0; i < MPU_MIN_REGION_SIZE; i++)
@@ -47,10 +47,10 @@ static void thread2_entry(void *parameter)
     }
 }
 
-int mp_example_exclusive_region()
+int mprotect_example_exclusive_region()
 {
-    extern void mp_example_exception_hook(rt_mem_exception_info_t *info);
-    rt_hw_mp_exception_set_hook(mp_example_exception_hook);
+    extern void mprotect_example_exception_hook(rt_mem_exception_info_t *info);
+    rt_hw_mpu_exception_set_hook(mprotect_example_exception_hook);
     rt_thread_t tid1 = RT_NULL;
     tid1 = rt_thread_create("thread1",
                            thread1_entry, RT_NULL,
@@ -72,4 +72,4 @@ int mp_example_exclusive_region()
     return 0;
 }
 
-MSH_CMD_EXPORT(mp_example_exclusive_region, Memory protection example (exclusive_region));
+MSH_CMD_EXPORT(mprotect_example_exclusive_region, Memory protection example (exclusive_region));

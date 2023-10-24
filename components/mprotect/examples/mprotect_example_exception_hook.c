@@ -9,9 +9,9 @@
  */
 
 #include <rtthread.h>
-#include <mp.h>
+#include <mprotect.h>
 
-void mp_example_exception_hook(rt_mem_exception_info_t *info)
+void mprotect_example_exception_hook(rt_mem_exception_info_t *info)
 {
     rt_kprintf("Memory manage exception\n");
     rt_kprintf("Faulting thread: %s\n", info->thread->parent.name);

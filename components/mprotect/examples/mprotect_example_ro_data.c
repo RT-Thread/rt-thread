@@ -9,7 +9,7 @@
  */
 
 #include <rtthread.h>
-#include <mp.h>
+#include <mprotect.h>
 
 #define THREAD_PRIORITY      25
 #define THREAD_STACK_SIZE    512
@@ -36,7 +36,7 @@ static void thread1_entry(void *parameter)
     };
     /* Thread 1 configures ro_data as read only. */
     rt_kprintf("Thread 1 configures ro_data for read-only access for thread 1\n");
-    rt_mem_protection_add_region(RT_NULL, &ro_region);
+    rt_mprotect_add_region(RT_NULL, &ro_region);
     rt_kprintf("Thread 1 reads ro_data\n");
     for (int i = 0; i < MPU_MIN_REGION_SIZE; i++)
     {
@@ -63,10 +63,10 @@ static void thread2_entry(void *parameter)
     }
 }
 
-int mp_example_ro_data()
+int mprotect_example_ro_data()
 {
-    extern void mp_example_exception_hook(rt_mem_exception_info_t *info);
-    rt_hw_mp_exception_set_hook(mp_example_exception_hook);
+    extern void mprotect_example_exception_hook(rt_mem_exception_info_t *info);
+    rt_hw_mpu_exception_set_hook(mprotect_example_exception_hook);
     rt_thread_t tid1 = RT_NULL;
     tid1 = rt_thread_create("thread1",
                            thread1_entry, RT_NULL,
@@ -85,4 +85,4 @@ int mp_example_ro_data()
     return 0;
 }
 
-MSH_CMD_EXPORT(mp_example_ro_data, Memory protection example (read-only data));
+MSH_CMD_EXPORT(mprotect_example_ro_data, Memory protection example (read-only data));
