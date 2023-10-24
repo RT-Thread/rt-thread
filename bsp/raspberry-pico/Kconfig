@@ -237,6 +237,44 @@ menu "On-chip Peripheral Drivers"
                 default n
         endif
 
+    menuconfig BSP_USING_PWM
+        bool "Enable PWM(A:CH_0 B:CH_1)"
+        default n
+        select RT_USING_PWM
+        if BSP_USING_PWM
+            config BSP_USING_PWM0
+                bool "Enable PWM0"
+                default n
+
+            config BSP_USING_PWM1
+                bool "Enable PWM1"
+                default n
+
+            config BSP_USING_PWM2
+                bool "Enable PWM2"
+                default n
+
+            config BSP_USING_PWM3
+                bool "Enable PWM3"
+                default n
+
+            config BSP_USING_PWM4
+                bool "Enable PWM4"
+                default n
+                
+            config BSP_USING_PWM5
+                bool "Enable PWM5"
+                default n
+
+            config BSP_USING_PWM6
+                bool "Enable PWM6"
+                default n
+
+            config BSP_USING_PWM7
+                bool "Enable PWM7"
+                default n
+        endif
+
     menuconfig BSP_USING_I2C
         bool "Enable I2C"
         select RT_USING_I2C
