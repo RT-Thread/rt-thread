@@ -40,9 +40,9 @@ static rt_err_t utest_tc_cleanup(void)
 
 static void testcase(void)
 {
-    UTEST_UNIT_RUN(aspace_tc);
-    UTEST_UNIT_RUN(ioremap_tc);
-    UTEST_UNIT_RUN(flag_tc);
+    aspace_tc();
+    ioremap_tc();
+    flag_tc();
 }
 UTEST_TC_EXPORT(testcase, "testcases.mm.api_tc", utest_tc_init, utest_tc_cleanup, 20);
 

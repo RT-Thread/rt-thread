@@ -2780,7 +2780,6 @@ sysret_t sys_execve(const char *path, char *const argv[], char *const envp[])
 
 #ifdef ARCH_MM_MMU
         _swap_lwp_data(lwp, new_lwp, struct rt_aspace *, aspace);
-        _swap_lwp_data(lwp, new_lwp, struct rt_lwp_objs *, lwp_obj);
 
         _swap_lwp_data(lwp, new_lwp, size_t, end_heap);
 #endif

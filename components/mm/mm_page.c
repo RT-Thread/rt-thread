@@ -134,7 +134,6 @@ static void _trace_alloc(rt_page_t page, void *caller, size_t size_bits)
 {
     if (enable)
     {
-        char *page_va = rt_page_page2addr(page);
         page->caller = caller;
         page->trace_size = size_bits;
         page->tl_prev = NULL;

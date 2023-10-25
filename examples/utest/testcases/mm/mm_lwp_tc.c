@@ -13,6 +13,7 @@
 #include "lwp_arch.h"
 #include "lwp_user_mm.h"
 #include "mm_aspace.h"
+#include "mm_flag.h"
 #include "mmu.h"
 
 /**
@@ -62,7 +63,7 @@ static void test_user_map_varea(void)
     uassert_true(varea->attr == (MMU_MAP_U_RWCB));
     uassert_true(varea->size == buf_sz);
     uassert_true(varea->aspace == lwp->aspace);
-    uassert_true(varea->flag == 0);
+    uassert_true(varea->flag == MMF_MAP_PRIVATE);
     uassert_true(varea->start != 0);
     uassert_true(varea->start >= (void *)USER_VADDR_START && varea->start < (void *)USER_VADDR_TOP);
 
@@ -86,7 +87,7 @@ static void test_user_map_varea_ext(void)
     uassert_true(varea->attr == (MMU_MAP_U_RW));
     uassert_true(varea->size == buf_sz);
     uassert_true(varea->aspace == lwp->aspace);
-    uassert_true(varea->flag == 0);
+    uassert_true(varea->flag == MMF_MAP_PRIVATE);
     uassert_true(varea->start != 0);
     uassert_true(varea->start >= (void *)USER_VADDR_START && varea->start < (void *)USER_VADDR_TOP);
 
