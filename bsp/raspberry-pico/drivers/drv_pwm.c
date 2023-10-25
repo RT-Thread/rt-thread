@@ -145,7 +145,7 @@ static rt_err_t _pwm_set(rt_uint8_t slice_num, struct rt_pwm_configuration *conf
     uint32_t pulse = 1000000000 / configuration->pulse;
 
     pwm_config config = pwm_get_default_config();
-    pwm_config_set_clkdiv(&config, 1.25f);
+    pwm_config_set_clkdiv(&config, 1.33f);
     pwm_init(slice_num, &config, true);
     pwm_set_wrap(slice_num, 100000000 / period_hz);
     pwm_set_chan_level(slice_num, configuration->channel, 100000000 / pulse);
