@@ -6,12 +6,14 @@
  * Change Logs:
  * Date           Author       Notes
  * 2021-08-15     liukang     the first version
+ * 2023-09-15     xqyjlj       change stack size in cpu64
  */
 
 #include <rtthread.h>
 #include "utest.h"
 #include <stdlib.h>
 
+#define THREAD_STACKSIZE UTEST_THR_STACK_SIZE
 #define EVENT_FLAG3 (1 << 3)
 #define EVENT_FLAG5 (1 << 5)
 

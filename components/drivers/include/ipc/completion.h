@@ -22,6 +22,7 @@ struct rt_completion
 
     /* suspended list */
     rt_list_t suspended_list;
+    struct rt_spinlock spinlock;
 };
 
 void rt_completion_init(struct rt_completion *completion);

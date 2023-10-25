@@ -23,6 +23,7 @@
  * 2023-07-16     Shell        update signal generation routine for lwp
  *                             adapt to new api and do the signal handling in thread context
  * 2023-08-12     Meco Man     re-implement RT-Thread lightweight timezone API
+ * 2023-09-15     xqyjlj       perf rt_hw_interrupt_disable/enable
  */
 
 #include "sys/time.h"
@@ -136,21 +137,12 @@ static volatile int32_t _current_tz_offset_sec = \
 /* return current timezone offset in seconds */
 void rt_tz_set(int32_t offset_sec)
 {
-    rt_base_t level;
-    level = rt_hw_interrupt_disable();
     _current_tz_offset_sec = offset_sec;
-    rt_hw_interrupt_enable(level);
 }
 
 int32_t rt_tz_get(void)
 {
-    int32_t offset_sec;
-    rt_base_t level;
-
-    level = rt_hw_interrupt_disable();
-    offset_sec = _current_tz_offset_sec;
-    rt_hw_interrupt_enable(level);
-    return offset_sec;
+    return _current_tz_offset_sec;
 }
 
 int8_t rt_tz_is_dst(void)
@@ -796,11 +788,15 @@ static void _lwp_timer_event_from_tid(struct rt_work *work, void *param)
 
     RT_ASSERT(data->tid);
 
-    thread = lwp_tid_get_thread(data->tid);
+    /* stop others from delete thread */
+    thread = lwp_tid_get_thread_and_inc_ref(data->tid);
+    /** The tid of thread is a READ ONLY value, but here still facing the risk of thread already been delete error */
     ret = lwp_thread_signal_kill(thread, data->signo, SI_TIMER, 0);
+    lwp_tid_dec_ref(thread);
+
     if (ret)
     {
-        LOG_W("%s: Do kill failed(tid %d) returned %d", __func__, data->tid, ret);
+        LOG_D("%s: Do kill failed(tid %d) returned %d", __func__, data->tid, ret);
     }
 }
 
@@ -808,11 +804,21 @@ static void _lwp_timer_event_from_pid(struct rt_work *work, void *param)
 {
     rt_err_t ret;
     struct lwp_timer_event_param *data = rt_container_of(work, struct lwp_timer_event_param, work);
+    struct rt_lwp *lwp;
 
-    ret = lwp_signal_kill(lwp_from_pid(data->pid), data->signo, SI_TIMER, 0);
+    lwp_pid_lock_take();
+    lwp = lwp_from_pid_locked(data->pid);
+    if (lwp)
+        lwp_ref_inc(lwp);
+    lwp_pid_lock_release();
+
+    ret = lwp_signal_kill(lwp, data->signo, SI_TIMER, 0);
+    if (lwp)
+        lwp_ref_dec(lwp);
+
     if (ret)
     {
-        LOG_W("%s: Do kill failed(pid %d) returned %d", __func__, data->pid, ret);
+        LOG_D("%s: Do kill failed(pid %d) returned %d", __func__, data->pid, ret);
     }
 }
 

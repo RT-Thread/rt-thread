@@ -9,10 +9,14 @@
  * 2023-06-24     WangXiaoyao  Support backtrace for user thread
  */
 
+#ifndef __ASSEMBLY__
+#define __ASSEMBLY__
+#endif
+
 #include "rtconfig.h"
 #include "asm-generic.h"
-
 #include "asm-fpu.h"
+#include "armv8.h"
 
 .text
 .weak rt_hw_cpu_id_set
@@ -279,12 +283,30 @@ START_POINT_END(_thread_start)
 1:
 .endm
 
+.macro RESTORE_USER_CTX, ctx
+    LDR     X1, [\ctx, #CONTEXT_OFFSET_SPSR_EL1]
+    AND     X1, X1, 0x1f
+    CMP     X1, XZR
+
+    BNE     1f
+    BL      lwp_uthread_ctx_restore
+1:
+.endm
+
 #ifdef RT_USING_SMP
 #define rt_hw_interrupt_disable rt_hw_local_irq_disable
 #define rt_hw_interrupt_enable rt_hw_local_irq_enable
 #endif
 
 .text
+
+.global rt_hw_interrupt_is_disabled
+rt_hw_interrupt_is_disabled:
+    MRS     X0, DAIF
+    TST     X0, #0xc0
+    CSET    X0, NE
+    RET
+
 /*
  * rt_base_t rt_hw_interrupt_disable();
  */
@@ -387,8 +409,7 @@ rt_hw_context_switch_interrupt:
 vector_fiq:
     B       .
 
-.globl vector_irq
-vector_irq:
+START_POINT(vector_irq)
     SAVE_CONTEXT
     STP     X0, X1, [SP, #-0x10]!   /* X0 is thread sp */
 
@@ -399,13 +420,15 @@ vector_irq:
 #endif
     BL      rt_hw_trap_irq
 #ifdef RT_USING_LWP
-    BL      lwp_uthread_ctx_restore
+    LDP     X0, X1, [SP]
+    RESTORE_USER_CTX X0
 #endif
     BL      rt_interrupt_leave
 
     LDP     X0, X1, [SP], #0x10
     BL      rt_scheduler_do_irq_switch
     B       rt_hw_context_switch_exit
+START_POINT_END(vector_irq)
 
 .global rt_hw_context_switch_exit
 rt_hw_context_switch_exit:
@@ -540,7 +563,8 @@ START_POINT(vector_exception)
 
     BL      rt_hw_trap_exception
 #ifdef RT_USING_LWP
-    BL      lwp_uthread_ctx_restore
+    LDP     X0, X1, [SP]
+    RESTORE_USER_CTX X0
 #endif
 
     LDP     X0, X1, [SP], #0x10

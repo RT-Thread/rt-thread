@@ -7,6 +7,7 @@
  * Date           Author       Notes
  * 2022-07-27     flybreak     the first version
  * 2023-03-21     WangShun     add atomic test
+ * 2023-09-15     xqyjlj       change stack size in cpu64
  */
 
 #include <rtthread.h>

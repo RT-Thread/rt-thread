@@ -39,7 +39,7 @@ static int set_termios(struct tty_struct *tty, void *arg, int opt)
     struct termios old_termios;
     struct tty_ldisc *ld = RT_NULL;
     struct termios *new_termios = (struct termios *)arg;
-    int level = 0;
+    rt_base_t level = 0;
     int retval = tty_check_change(tty);
 
     if (retval)
@@ -47,10 +47,10 @@ static int set_termios(struct tty_struct *tty, void *arg, int opt)
         return retval;
     }
 
-    rt_memcpy(&old_termios, &(tty->init_termios), sizeof(struct termios));
-    level = rt_hw_interrupt_disable();
+    memcpy(&old_termios, &(tty->init_termios), sizeof(struct termios));
+    level = rt_spin_lock_irqsave(&tty->spinlock);
     tty->init_termios = *new_termios;
-    rt_hw_interrupt_enable(level);
+    rt_spin_unlock_irqrestore(&tty->spinlock, level);
     ld = tty->ldisc;
     if (ld != NULL)
     {
@@ -88,7 +88,7 @@ int n_tty_ioctl_extend(struct tty_struct *tty, int cmd, void *args)
             return -RT_EINVAL;
         }
 
-        rt_memcpy(tio, &real_tty->init_termios, sizeof(real_tty->init_termios));
+        memcpy(tio, &real_tty->init_termios, sizeof(real_tty->init_termios));
         return ret;
     }
     case TCSETSF:

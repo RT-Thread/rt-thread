@@ -274,6 +274,9 @@ void rt_hw_trap_irq(void)
     isr_func = isr_table[ir_self].handler;
 #ifdef RT_USING_INTERRUPT_INFO
     isr_table[ir_self].counter++;
+#ifdef RT_USING_SMP
+    isr_table[ir_self].cpu_counter[rt_hw_cpu_id()]++;
+#endif
 #endif
     if (isr_func)
     {

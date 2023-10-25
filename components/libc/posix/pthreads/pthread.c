@@ -17,13 +17,12 @@
 #include <sys/time.h>
 #include "pthread_internal.h"
 
-RT_DEFINE_SPINLOCK(pth_lock);
+RT_DEFINE_HW_SPINLOCK(pth_lock);
 _pthread_data_t *pth_table[PTHREAD_NUM_MAX] = {NULL};
 static int concurrency_level;
 
 _pthread_data_t *_pthread_get_data(pthread_t thread)
 {
-    RT_DECLARE_SPINLOCK(pth_lock);
     _pthread_data_t *ptd;
 
     if (thread >= PTHREAD_NUM_MAX) return NULL;
@@ -40,7 +39,6 @@ _pthread_data_t *_pthread_get_data(pthread_t thread)
 pthread_t _pthread_data_get_pth(_pthread_data_t *ptd)
 {
     int index;
-    RT_DECLARE_SPINLOCK(pth_lock);
 
     rt_hw_spin_lock(&pth_lock);
     for (index = 0; index < PTHREAD_NUM_MAX; index ++)
@@ -56,7 +54,6 @@ pthread_t _pthread_data_create(void)
 {
     int index;
     _pthread_data_t *ptd = NULL;
-    RT_DECLARE_SPINLOCK(pth_lock);
 
     ptd = (_pthread_data_t*)rt_malloc(sizeof(_pthread_data_t));
     if (!ptd) return PTHREAD_NUM_MAX;
@@ -90,8 +87,6 @@ pthread_t _pthread_data_create(void)
 
 void _pthread_data_destroy(_pthread_data_t *ptd)
 {
-    RT_DECLARE_SPINLOCK(pth_lock);
-
     extern _pthread_key_data_t _thread_keys[PTHREAD_KEY_MAX];
     pthread_t pth;
 

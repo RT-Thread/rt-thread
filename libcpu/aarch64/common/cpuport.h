@@ -14,12 +14,8 @@
 #include <rtdef.h>
 
 #ifdef RT_USING_SMP
-typedef union {
-    unsigned long slock;
-    struct __arch_tickets {
-        unsigned short owner;
-        unsigned short next;
-    } tickets;
+typedef struct {
+    volatile unsigned int lock;
 } rt_hw_spinlock_t;
 #endif
 

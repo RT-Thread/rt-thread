@@ -142,29 +142,27 @@ int __tty_check_change(struct tty_struct *tty, int sig)
 {
     pid_t pgrp = 0, tty_pgrp = 0;
     int ret = 0;
-    int level = 0;
+    struct rt_lwp *lwp;
 
-    level = rt_hw_interrupt_disable();
-    if (current == RT_NULL)
+    lwp = lwp_self();
+
+    if (lwp == RT_NULL)
     {
-        rt_hw_interrupt_enable(level);
         return 0;
     }
 
-    if (current->tty != tty)
+    if (lwp->tty != tty)
     {
-        rt_hw_interrupt_enable(level);
         return 0;
     }
 
-    pgrp = current->__pgrp;
+    pgrp = lwp->__pgrp;
     tty_pgrp = tty->pgrp;
 
     if (tty_pgrp && (pgrp != tty->pgrp))
     {
-        lwp_signal_kill(current, sig, SI_USER, 0);
+        lwp_signal_kill(lwp, sig, SI_USER, 0);
     }
-    rt_hw_interrupt_enable(level);
 
     if (!tty_pgrp)
     {
@@ -494,6 +492,7 @@ int tty_init(struct tty_struct *tty, int type, int subtype, struct rt_device *io
 
             rt_mutex_init(&tty->lock, "ttyLock", RT_IPC_FLAG_PRIO);
             rt_wqueue_init(&tty->wait_queue);
+            rt_spin_lock_init(&tty->spinlock);
 
             tty_ldisc_init(tty);
             tty->init_termios = tty_std_termios;

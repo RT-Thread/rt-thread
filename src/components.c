@@ -15,6 +15,7 @@
  *                             in some IDEs.
  * 2015-07-29     Arda.Fu      Add support to use RT_USING_USER_MAIN with IAR
  * 2018-11-22     Jesven       Add secondary cpu boot up
+ * 2023-09-15     xqyjlj       perf rt_hw_interrupt_disable/enable
  */
 
 #include <rthw.h>
@@ -235,7 +236,10 @@ void rt_application_init(void)
  */
 int rtthread_startup(void)
 {
-    rt_hw_interrupt_disable();
+#ifdef RT_USING_SMP
+    rt_hw_spin_lock_init(&_cpus_lock);
+#endif
+    rt_hw_local_irq_disable();
 
     /* board level initialization
      * NOTE: please initialize heap inside board initialization.

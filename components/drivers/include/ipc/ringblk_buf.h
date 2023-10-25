@@ -78,6 +78,7 @@ struct rt_rbb
     rt_slist_t *tail;
     /* free node list */
     rt_slist_t free_list;
+    struct rt_spinlock spinlock;
 };
 typedef struct rt_rbb *rt_rbb_t;
 

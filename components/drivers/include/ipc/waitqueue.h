@@ -26,6 +26,7 @@ struct rt_wqueue_node
     rt_thread_t polling_thread;
     rt_list_t   list;
 
+    rt_wqueue_t *wqueue;
     rt_wqueue_func_t wakeup;
     rt_uint32_t key;
 };
@@ -39,6 +40,7 @@ rt_inline void rt_wqueue_init(rt_wqueue_t *queue)
 
     queue->flag = RT_WQ_FLAG_CLEAN;
     rt_list_init(&(queue->waiting_list));
+    rt_spin_lock_init(&(queue->spinlock));
 }
 
 void rt_wqueue_add(rt_wqueue_t *queue, struct rt_wqueue_node *node);
