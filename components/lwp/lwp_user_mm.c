@@ -47,8 +47,6 @@
 
 #define STACK_OBJ _null_object
 
-static void _init_lwp_objs(struct rt_lwp_objs *lwp_objs, rt_aspace_t aspace);
-
 static const char *_null_get_name(rt_varea_t varea)
 {
     return "null";
@@ -123,20 +121,15 @@ int lwp_user_space_init(struct rt_lwp *lwp, rt_bool_t is_fork)
     int err = -RT_ENOMEM;
     const size_t flags = MMF_MAP_PRIVATE;
 
-    lwp->lwp_obj = rt_malloc(sizeof(struct rt_lwp_objs));
-    if (lwp->lwp_obj)
+    err = arch_user_space_init(lwp);
+    if (err == RT_EOK)
     {
-        err = arch_user_space_init(lwp);
-        if (err == RT_EOK)
+        if (!is_fork)
         {
-            _init_lwp_objs(lwp->lwp_obj, lwp->aspace);
-            if (!is_fork)
-            {
-                stk_addr = (void *)USER_STACK_VSTART;
-                err = rt_aspace_map(lwp->aspace, &stk_addr,
-                                    USER_STACK_VEND - USER_STACK_VSTART,
-                                    MMU_MAP_U_RWCB, flags, &STACK_OBJ, 0);
-            }
+            stk_addr = (void *)USER_STACK_VSTART;
+            err = rt_aspace_map(lwp->aspace, &stk_addr,
+                                USER_STACK_VEND - USER_STACK_VSTART,
+                                MMU_MAP_U_RWCB, flags, &STACK_OBJ, 0);
         }
     }
 
@@ -167,107 +160,8 @@ void lwp_aspace_switch(struct rt_thread *thread)
 void lwp_unmap_user_space(struct rt_lwp *lwp)
 {
     arch_user_space_free(lwp);
-    rt_free(lwp->lwp_obj);
 }
 
-static const char *_user_get_name(rt_varea_t varea)
-{
-    char *name;
-    if (varea->flag & MMF_TEXT)
-    {
-        name = "user.text";
-    }
-    else
-    {
-        if (varea->start == (void *)USER_STACK_VSTART)
-        {
-            name = "user.stack";
-        }
-        else if (varea->start >= (void *)USER_HEAP_VADDR &&
-                 varea->start < (void *)USER_HEAP_VEND)
-        {
-            name = "user.heap";
-        }
-        else
-        {
-            name = "user.data";
-        }
-    }
-    return name;
-}
-
-#define NO_AUTO_FETCH               0x1
-#define VAREA_CAN_AUTO_FETCH(varea) (!((rt_ubase_t)((varea)->data) & NO_AUTO_FETCH))
-
-static void _user_do_page_fault(struct rt_varea *varea,
-                                struct rt_aspace_fault_msg *msg)
-{
-    struct rt_lwp_objs *lwp_objs;
-    lwp_objs = rt_container_of(varea->mem_obj, struct rt_lwp_objs, mem_obj);
-
-    if (lwp_objs->source)
-    {
-        char *paddr = rt_hw_mmu_v2p(lwp_objs->source, msg->fault_vaddr);
-        if (paddr != ARCH_MAP_FAILED)
-        {
-            void *vaddr;
-            vaddr = paddr - PV_OFFSET;
-
-            if (!(varea->flag & MMF_TEXT))
-            {
-                void *cp = rt_pages_alloc_ext(0, PAGE_ANY_AVAILABLE);
-                if (cp)
-                {
-                    memcpy(cp, vaddr, ARCH_PAGE_SIZE);
-                    rt_varea_pgmgr_insert(varea, cp);
-                    msg->response.status = MM_FAULT_STATUS_OK;
-                    msg->response.vaddr = cp;
-                    msg->response.size = ARCH_PAGE_SIZE;
-                }
-                else
-                {
-                    LOG_W("%s: page alloc failed at %p", __func__,
-                          varea->start);
-                }
-            }
-            else
-            {
-                rt_page_t page = rt_page_addr2page(vaddr);
-                page->ref_cnt += 1;
-                rt_varea_pgmgr_insert(varea, vaddr);
-                msg->response.status = MM_FAULT_STATUS_OK;
-                msg->response.vaddr = vaddr;
-                msg->response.size = ARCH_PAGE_SIZE;
-            }
-        }
-        else if (!(varea->flag & MMF_TEXT))
-        {
-            /* if data segment not exist in source do a fallback */
-            rt_mm_dummy_mapper.on_page_fault(varea, msg);
-        }
-    }
-    else if (VAREA_CAN_AUTO_FETCH(varea))
-    {
-        /* if (!lwp_objs->source), no aspace as source data */
-        rt_mm_dummy_mapper.on_page_fault(varea, msg);
-    }
-}
-
-static void _init_lwp_objs(struct rt_lwp_objs *lwp_objs, rt_aspace_t aspace)
-{
-    if (lwp_objs)
-    {
-        /**
-         * @brief one lwp_obj represent an base layout of page based memory in user space
-         * This is useful on duplication. Where we only have a (lwp_objs and offset) to
-         * provide identical memory. This is implemented by lwp_objs->source.
-         */
-        lwp_objs->source = NULL;
-        memcpy(&lwp_objs->mem_obj, &rt_mm_dummy_mapper, sizeof(struct rt_mem_obj));
-        lwp_objs->mem_obj.get_name = _user_get_name;
-        lwp_objs->mem_obj.on_page_fault = _user_do_page_fault;
-    }
-}
 
 static void *_lwp_map_user(struct rt_lwp *lwp, void *map_va, size_t map_size,
                            int text)

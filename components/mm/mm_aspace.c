@@ -495,7 +495,6 @@ static inline void _varea_post_install(rt_varea_t varea, rt_aspace_t aspace,
     varea->mem_obj = mem_obj;
     varea->flag = flags;
     varea->offset = offset;
-    varea->frames = NULL;
 
     if (varea->mem_obj && varea->mem_obj->on_varea_open)
         varea->mem_obj->on_varea_open(varea);
@@ -565,11 +564,11 @@ void _varea_uninstall_locked(rt_varea_t varea)
 
     if (varea->mem_obj && varea->mem_obj->on_varea_close)
         varea->mem_obj->on_varea_close(varea);
-
-    rt_hw_mmu_unmap(aspace, varea->start, varea->size);
-    rt_hw_tlb_invalidate_range(aspace, varea->start, varea->size, ARCH_PAGE_SIZE);
-
-    rt_varea_pgmgr_pop_all(varea);
+    else
+    {
+        rt_hw_mmu_unmap(aspace, varea->start, varea->size);
+        rt_hw_tlb_invalidate_range(aspace, varea->start, varea->size, ARCH_PAGE_SIZE);
+    }
 
     _aspace_bst_remove(aspace, varea);
 }
@@ -960,7 +959,6 @@ static rt_err_t _split_varea(rt_varea_t existed, char *ex_end, char *unmap_start
             subset->mem_obj = existed->mem_obj;
             subset->flag = existed->flag & ~MMF_STATIC_ALLOC;
             subset->offset = existed->offset + rela_offset;
-            subset->frames = NULL;
 
             error = existed->mem_obj->on_varea_split(existed, unmap_start, unmap_len, subset);
             if (error == RT_EOK)

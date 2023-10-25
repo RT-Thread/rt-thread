@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -7,6 +7,7 @@
  * Date           Author       Notes
  * 2022-11-30     WangXiaoyao  the first version
  * 2023-08-19     Shell        Support varea modification handler
+ * 2023-10-13     Shell        Replace the page management algorithm of pgmgr
  */
 
 #define DBG_TAG "mm.object"
@@ -30,79 +31,28 @@ static const char *get_name(rt_varea_t varea)
     return "dummy-mapper";
 }
 
-static rt_bool_t _varea_pgmgr_frame_is_member(rt_varea_t varea, rt_page_t frame)
-{
-    rt_page_t iter;
-    rt_bool_t rc = RT_FALSE;
-
-    if (varea->frames)
-    {
-        iter = varea->frames;
-        do
-        {
-            if (iter == frame)
-            {
-                rc = RT_TRUE;
-                break;
-            }
-            iter = iter->next;
-        } while (iter);
-    }
-
-    return rc;
-}
-
 void rt_varea_pgmgr_insert(rt_varea_t varea, void *page_addr)
 {
-    rt_page_t page = rt_page_addr2page(page_addr);
-
-    if (varea->frames == NULL)
-    {
-        varea->frames = page;
-        page->pre = RT_NULL;
-        page->next = RT_NULL;
-    }
-    else
-    {
-        page->pre = RT_NULL;
-        varea->frames->pre = page;
-        page->next = varea->frames;
-        varea->frames = page;
-    }
+    /* each mapping of page frame in the varea is binding with a reference */
+    rt_page_ref_inc(page_addr, 0);
 }
 
+/* resource recycling of page frames */
 void rt_varea_pgmgr_pop_all(rt_varea_t varea)
 {
-    rt_page_t page = varea->frames;
+    rt_aspace_t aspace = varea->aspace;
+    char *end_addr = varea->start + varea->size;
+    RT_ASSERT(!((long)end_addr & ARCH_PAGE_MASK));
 
-    while (page)
+    for (char *iter = varea->start; iter != end_addr; iter += ARCH_PAGE_SIZE)
     {
-        rt_page_t next = page->next;
-        void *pg_va = rt_page_page2addr(page);
-        rt_pages_free(pg_va, 0);
-        page = next;
-    }
-
-    varea->frames = RT_NULL;
-}
-
-void rt_varea_pgmgr_pop(rt_varea_t varea, void *vaddr, rt_size_t size)
-{
-    void *vend = (char *)vaddr + size;
-    while (vaddr != vend)
-    {
-        rt_page_t page = rt_page_addr2page(vaddr);
-        if (_varea_pgmgr_frame_is_member(varea, page))
+        void *page_pa = rt_hw_mmu_v2p(aspace, iter);
+        char *page_va = rt_kmem_p2v(page_pa);
+        if (page_pa != ARCH_MAP_FAILED && page_va)
         {
-            if (page->pre)
-                page->pre->next = page->next;
-            if (page->next)
-                page->next->pre = page->pre;
-            if (varea->frames == page)
-                varea->frames = page->next;
-            rt_pages_free(vaddr, 0);
+            rt_hw_mmu_unmap(aspace, iter, ARCH_PAGE_SIZE);
+            rt_pages_free(page_va, 0);
         }
-        vaddr = (char *)vaddr + ARCH_PAGE_SIZE;
     }
 }
 
@@ -120,8 +70,6 @@ static void on_page_fault(struct rt_varea *varea, struct rt_aspace_fault_msg *ms
     msg->response.status = MM_FAULT_STATUS_OK;
     msg->response.size = ARCH_PAGE_SIZE;
     msg->response.vaddr = page;
-
-    rt_varea_pgmgr_insert(varea, page);
 }
 
 static void on_varea_open(struct rt_varea *varea)
@@ -131,6 +79,8 @@ static void on_varea_open(struct rt_varea *varea)
 
 static void on_varea_close(struct rt_varea *varea)
 {
+    /* unmap and dereference page frames in the varea region */
+    rt_varea_pgmgr_pop_all(varea);
 }
 
 static rt_err_t on_varea_expand(struct rt_varea *varea, void *new_vaddr, rt_size_t size)
@@ -153,7 +103,7 @@ static void _remove_pages(rt_varea_t varea, void *rm_start, void *rm_end)
             page_va -= PV_OFFSET;
             LOG_D("%s: free page %p", __func__, page_va);
             rt_varea_unmap_page(varea, rm_start);
-            rt_varea_pgmgr_pop(varea, page_va, ARCH_PAGE_SIZE);
+            rt_pages_free(page_va, 0);
         }
         rm_start += ARCH_PAGE_SIZE;
     }
@@ -183,70 +133,15 @@ static rt_err_t on_varea_shrink(rt_varea_t varea, void *new_start, rt_size_t siz
 
 static rt_err_t on_varea_split(struct rt_varea *existed, void *unmap_start, rt_size_t unmap_len, struct rt_varea *subset)
 {
-    void *sub_start = subset->start;
-    void *sub_end = sub_start + subset->size;
-    void *page_va;
-
+    /* remove the resource in the unmap region, and do nothing for the subset */
     _remove_pages(existed, unmap_start, (char *)unmap_start + unmap_len);
-
-    RT_ASSERT(!((rt_ubase_t)sub_start & ARCH_PAGE_MASK));
-    RT_ASSERT(!((rt_ubase_t)sub_end & ARCH_PAGE_MASK));
-    while (sub_start != sub_end)
-    {
-        page_va = rt_hw_mmu_v2p(existed->aspace, sub_start);
-
-        if (page_va != ARCH_MAP_FAILED)
-        {
-            rt_page_t frame;
-            page_va = rt_kmem_p2v(page_va);
-            if (page_va)
-            {
-                frame = rt_page_addr2page(page_va);
-                if (frame && _varea_pgmgr_frame_is_member(existed, frame))
-                {
-                    LOG_D("%s: free page %p", __func__, page_va);
-                    rt_page_ref_inc(page_va, 0);
-                    rt_varea_pgmgr_pop(existed, page_va, ARCH_PAGE_SIZE);
-                    rt_varea_pgmgr_insert(subset, page_va);
-                }
-            }
-        }
-        sub_start += ARCH_PAGE_SIZE;
-    }
 
     return RT_EOK;
 }
 
 static rt_err_t on_varea_merge(struct rt_varea *merge_to, struct rt_varea *merge_from)
 {
-    /* transport page */
-    void *mr_start = merge_from->start;
-    void *mr_end = mr_start + merge_from->size;
-    void *page_va;
-
-    RT_ASSERT(!((rt_ubase_t)mr_start & ARCH_PAGE_MASK));
-    RT_ASSERT(!((rt_ubase_t)mr_end & ARCH_PAGE_MASK));
-    while (mr_start != mr_end)
-    {
-        page_va = rt_hw_mmu_v2p(merge_from->aspace, mr_start);
-        if (page_va != ARCH_MAP_FAILED)
-        {
-            rt_page_t frame;
-            page_va = rt_kmem_p2v(page_va);
-            if (page_va)
-            {
-                frame = rt_page_addr2page(page_va);
-                if (frame && _varea_pgmgr_frame_is_member(merge_from, frame))
-                {
-                    LOG_D("%s: free page %p", __func__, page_va);
-                    rt_page_ref_inc(page_va, 0);
-                    rt_varea_pgmgr_pop(merge_from, page_va, ARCH_PAGE_SIZE);
-                    rt_varea_pgmgr_insert(merge_to, page_va);
-                }
-            }
-        }
-        mr_start += ARCH_PAGE_SIZE;
-    }
+    /* do nothing for the migration */
     return RT_EOK;
 }
 

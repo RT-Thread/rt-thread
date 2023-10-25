@@ -35,10 +35,10 @@
 static rt_mem_obj_t dfs_get_mem_obj(struct dfs_file *file);
 static void *dfs_mem_obj_get_file(rt_mem_obj_t mem_obj);
 
-static rt_varea_t _dfs_map_user_varea_data(struct rt_lwp *lwp, void *map_vaddr, size_t map_size, size_t attr, mm_flag_t flags, off_t pgoffset, void *data)
+static void *_do_mmap(struct rt_lwp *lwp, void *map_vaddr, size_t map_size, size_t attr,
+                      mm_flag_t flags, off_t pgoffset, void *data, rt_err_t *code)
 {
     int ret = 0;
-    rt_varea_t varea;
     void *vaddr = map_vaddr;
     rt_mem_obj_t mem_obj = dfs_get_mem_obj(data);
 
@@ -46,25 +46,21 @@ static rt_varea_t _dfs_map_user_varea_data(struct rt_lwp *lwp, void *map_vaddr, 
                         attr, flags, mem_obj, pgoffset);
     if (ret != RT_EOK)
     {
-        varea = RT_NULL;
-    }
-    else
-    {
-        varea = rt_aspace_query(lwp->aspace, vaddr);
-    }
-
-    if (ret != RT_EOK)
-    {
+        vaddr = RT_NULL;
         LOG_E("failed to map %lx with size %lx with errno %d", map_vaddr,
               map_size, ret);
     }
 
-    return varea;
+    if (code)
+    {
+        *code = ret;
+    }
+
+    return vaddr;
 }
 
-static rt_varea_t dfs_map_user_varea_data(struct dfs_mmap2_args *mmap2, void *data)
+static void *_map_data_to_uspace(struct dfs_mmap2_args *mmap2, void *data, rt_err_t *code)
 {
-    rt_varea_t varea = RT_NULL;
     size_t offset = 0;
     void *map_vaddr = mmap2->addr;
     size_t map_size = mmap2->length;
@@ -82,10 +78,10 @@ static rt_varea_t dfs_map_user_varea_data(struct dfs_mmap2_args *mmap2, void *da
         k_flags = lwp_user_mm_flag_to_kernel(mmap2->flags);
         k_attr = lwp_user_mm_attr_to_kernel(mmap2->prot);
 
-        varea = _dfs_map_user_varea_data(lwp, map_vaddr, map_size, k_attr, k_flags, mmap2->pgoffset, data);
+        map_vaddr = _do_mmap(lwp, map_vaddr, map_size, k_attr, k_flags, mmap2->pgoffset, data, code);
     }
 
-    return varea;
+    return map_vaddr;
 }
 
 static void hint_free(rt_mm_va_hint_t hint)
@@ -405,7 +401,8 @@ static void *dfs_mem_obj_get_file(rt_mem_obj_t mem_obj)
 
 int dfs_file_mmap(struct dfs_file *file, struct dfs_mmap2_args *mmap2)
 {
-    int ret = -EINVAL;
+    rt_err_t ret = -EINVAL;
+    void *map_vaddr;
 
     LOG_I("mmap2 args addr: %p length: 0x%x prot: %d flags: 0x%x pgoffset: 0x%x",
            mmap2->addr, mmap2->length, mmap2->prot, mmap2->flags, mmap2->pgoffset);
@@ -414,19 +411,11 @@ int dfs_file_mmap(struct dfs_file *file, struct dfs_mmap2_args *mmap2)
         if (file->vnode->aspace)
         {
             /* create a va area in user space (lwp) */
-            rt_varea_t varea = dfs_map_user_varea_data(mmap2, file);
-            if (varea)
+            map_vaddr = _map_data_to_uspace(mmap2, file, &ret);
+            if (map_vaddr)
             {
-                mmap2->ret = varea->start;
-                LOG_I("%s varea: %p", __func__, varea);
-                LOG_I("varea start: %p size: 0x%x offset: 0x%x attr: 0x%x flag: 0x%x",
-                    varea->start, varea->size, varea->offset, varea->attr, varea->flag);
+                mmap2->ret = map_vaddr;
                 LOG_I("file: %s%s", file->dentry->mnt->fullpath, file->dentry->pathname);
-                ret = RT_EOK;
-            }
-            else
-            {
-                ret = -ENOMEM;
             }
         }
         else

@@ -80,7 +80,6 @@ struct rt_lwp
 #ifdef ARCH_MM_MMU
     size_t end_heap;
     rt_aspace_t aspace;
-    struct rt_lwp_objs *lwp_obj;
 #else
 #ifdef ARCH_MM_MPU
     struct rt_mpu_info mpu_info;
