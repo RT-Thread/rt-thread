@@ -55,7 +55,7 @@ static rt_ipc_msg_t _ipc_msg_free_list = (rt_ipc_msg_t)RT_NULL; /* released chai
 static int rt_ipc_msg_used = 0;                                 /* first unallocated entry */
 static struct rt_ipc_msg ipc_msg_pool[RT_CH_MSG_MAX_NR];        /* initial message array */
 
-static rt_spinlock_t ipc_big_lock;
+static struct rt_spinlock ipc_big_lock;
 #define ipc_list_lock   ipc_big_lock
 #define ipc_ch_lock     ipc_big_lock
 
