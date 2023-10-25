@@ -129,7 +129,7 @@ scons
 ### Step 3: flash
 
 If everything went well, scons should have generated an elf file:
-rtthread-uc3a0256.elf. Let us program the file. The program `atprogram'
+rtthread-uc3a0256.elf. Let us program the file. The program 'atprogram'
 comes with Microchip Studio. I didn't have to do much here. Just make sure
 `atprogram.exe' is in your PATH.
 
