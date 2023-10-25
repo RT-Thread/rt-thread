@@ -759,7 +759,7 @@ up_one:
 
     /* remove '/' in the end of path if exist */
     dst--;
-    if ((dst != fullpath) && (*dst == '/'))
+    if (dst >= fullpath && (dst != fullpath) && (*dst == '/'))
         *dst = '\0';
 
     /* final check fullpath is not empty, for the special path of lwext "/.." */

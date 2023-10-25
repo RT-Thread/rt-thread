@@ -345,10 +345,10 @@ rt_inline rt_err_t _migrate_and_release_varea(rt_aspace_t aspace, rt_varea_t to,
     {
         /* uninstall operand & release the varea */
         _aspace_bst_remove(aspace, from);
-        if (!(from->flag & MMF_STATIC_ALLOC))
-            rt_free(from);
-
         to->size += from->size;
+
+        if (VAREA_NOT_STATIC(from))
+            rt_free(from);
     }
     return error;
 }
@@ -1377,12 +1377,14 @@ int rt_aspace_traversal(rt_aspace_t aspace,
                         int (*fn)(rt_varea_t varea, void *arg), void *arg)
 {
     rt_varea_t varea;
+    rt_varea_t next;
     WR_LOCK(aspace);
     varea = ASPACE_VAREA_FIRST(aspace);
     while (varea)
     {
+        next = ASPACE_VAREA_NEXT(varea);
         fn(varea, arg);
-        varea = ASPACE_VAREA_NEXT(varea);
+        varea = next;
     }
     WR_UNLOCK(aspace);
 
