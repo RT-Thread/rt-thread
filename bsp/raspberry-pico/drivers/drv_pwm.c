@@ -21,6 +21,10 @@ struct pico_pwm
 {
     struct rt_device_pwm pwm_device;
     rt_uint8_t slice_num;
+    rt_uint8_t pin_a;
+    rt_uint8_t pin_b;
+    rt_uint8_t a_all_flag;   /* 1: Two pins simultaneously output PWM A channel */
+    rt_uint8_t b_all_flag;   /* 1: Two pins simultaneously output PWM B channel */
     char *name;
 };
 
@@ -30,50 +34,108 @@ static struct pico_pwm pico_pwm_obj[] =
     {
         .name = "pwm0",
         .slice_num = 0,
+        .pin_a = BSP_PWM0_A_PIN,
+        .pin_b = BSP_PWM0_B_PIN,
+#ifdef BSP_PWM0_A_ALL
+        .a_all_flag = 1,
+#endif /* BSP_PWM0_A_ALL */
+#ifdef BSP_PWM0_B_ALL
+        .b_all_flag = 1,
+#endif /* BSP_PWM0_B_ALL */
     },
-#endif
+#endif /* BSP_USING_PWM0 */
 #ifdef BSP_USING_PWM1
     {
         .name = "pwm1",
         .slice_num = 1,
+        .pin_a = BSP_PWM1_A_PIN,
+        .pin_b = BSP_PWM1_B_PIN,
+#ifdef BSP_PWM1_A_ALL
+        .a_all_flag = 1,
+#endif /* BSP_PWM1_A_ALL */
+#ifdef BSP_PWM1_B_ALL
+        .b_all_flag = 1,
+#endif /* BSP_PWM1_B_ALL */
     },
-#endif
+#endif /* BSP_USING_PWM1 */
 #ifdef BSP_USING_PWM2
     {
         .name = "pwm2",
         .slice_num = 2,
+        .pin_a = BSP_PWM2_A_PIN,
+        .pin_b = BSP_PWM2_B_PIN,
+#ifdef BSP_PWM2_A_ALL
+        .a_all_flag = 1,
+#endif /* BSP_PWM2_A_ALL */
+#ifdef BSP_PWM2_B_ALL
+        .b_all_flag = 1,
+#endif /* BSP_PWM2_B_ALL */
     },
-#endif
+#endif /* BSP_USING_PWM2 */
 #ifdef BSP_USING_PWM3
     {
         .name = "pwm3",
         .slice_num = 3,
+        .pin_a = BSP_PWM3_A_PIN,
+        .pin_b = BSP_PWM3_B_PIN,
+#ifdef BSP_PWM3_A_ALL
+        .a_all_flag = 1,
+#endif /* BSP_PWM3_A_ALL */
+#ifdef BSP_PWM3_B_ALL
+        .b_all_flag = 1,
+#endif /* BSP_PWM3_B_ALL */
     },
-#endif
+#endif /* BSP_USING_PWM3 */
 #ifdef BSP_USING_PWM4
     {
         .name = "pwm4",
         .slice_num = 4,
+        .pin_a = BSP_PWM4_A_PIN,
+        .pin_b = BSP_PWM4_B_PIN,
+#ifdef BSP_PWM4_A_ALL
+        .a_all_flag = 1,
+#endif /* BSP_PWM4_A_ALL */
+#ifdef BSP_PWM4_B_ALL
+        .b_all_flag = 1,
+#endif /* BSP_PWM4_B_ALL */
     },
-#endif
+#endif /* BSP_USING_PWM4 */
 #ifdef BSP_USING_PWM5
     {
         .name = "pwm5",
         .slice_num = 5,
+        .pin_a = BSP_PWM5_A_PIN,
+        .pin_b = BSP_PWM5_B_PIN,
+#ifdef BSP_PWM5_A_ALL
+        .a_all_flag = 1,
+#endif /* BSP_PWM5_A_ALL */
+#ifdef BSP_PWM5_B_ALL
+        .b_all_flag = 1,
+#endif /* BSP_PWM5_B_ALL */
     },
-#endif
+#endif /* BSP_USING_PWM5 */
 #ifdef BSP_USING_PWM6
     {
         .name = "pwm6",
         .slice_num = 6,
+        .pin_a = BSP_PWM6_A_PIN,
+        .pin_b = BSP_PWM6_B_PIN,
+#ifdef BSP_PWM6_A_ALL
+        .a_all_flag = 1,
+#endif /* BSP_PWM6_A_ALL */
+#ifdef BSP_PWM6_B_ALL
+        .b_all_flag = 1,
+#endif /* BSP_PWM6_B_ALL */
     },
-#endif
+#endif /* BSP_USING_PWM6 */
 #ifdef BSP_USING_PWM7
     {
         .name = "pwm7",
         .slice_num = 7,
+        .pin_a = BSP_PWM7_A_PIN,
+        .pin_b = BSP_PWM7_B_PIN,
     },
-#endif
+#endif /* BSP_USING_PWM7 */
 };
 
 
@@ -135,8 +197,24 @@ int rt_hw_pwm_init(void)
 
     for (int i = 0; i < sizeof(pico_pwm_obj) / sizeof(pico_pwm_obj[0]); i++)
     {
-        gpio_set_function(pico_pwm_obj[i].slice_num * 2, GPIO_FUNC_PWM);
-        gpio_set_function(pico_pwm_obj[i].slice_num * 2 + 1, GPIO_FUNC_PWM);
+        if(pico_pwm_obj[i].a_all_flag)
+        {
+            gpio_set_function(pico_pwm_obj[i].slice_num * 2, GPIO_FUNC_PWM);
+            gpio_set_function(pico_pwm_obj[i].slice_num * 2 + 16, GPIO_FUNC_PWM);
+        }
+        else
+        {
+            gpio_set_function(pico_pwm_obj[i].pin_a, GPIO_FUNC_PWM);
+        }
+        if(pico_pwm_obj[i].b_all_flag)
+        {
+            gpio_set_function(pico_pwm_obj[i].slice_num * 2 + 1, GPIO_FUNC_PWM);
+            gpio_set_function(pico_pwm_obj[i].slice_num * 2 + 17, GPIO_FUNC_PWM);
+        }
+        else
+        {
+            gpio_set_function(pico_pwm_obj[i].pin_b, GPIO_FUNC_PWM);
+        }
         result = rt_device_pwm_register(&pico_pwm_obj[i].pwm_device, pico_pwm_obj[i].name, &_pwm_ops, 0);
         if(result != RT_EOK)
         {
