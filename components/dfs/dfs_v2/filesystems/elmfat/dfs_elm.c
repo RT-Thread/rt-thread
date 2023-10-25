@@ -1223,9 +1223,11 @@ static rt_mutex_t Mutex[FF_VOLUMES + 1];
 
 int ff_mutex_create (int vol)
 {
+    char name[8];
     rt_mutex_t mutex;
 
-    mutex = rt_mutex_create("mmutex", RT_IPC_FLAG_PRIO);
+    rt_snprintf(name, sizeof(name), "fat%d", vol);
+    mutex = rt_mutex_create("name", RT_IPC_FLAG_PRIO);
     if (mutex != RT_NULL)
     {
         Mutex[vol] = mutex;
