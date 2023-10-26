@@ -35,7 +35,6 @@
 #define PMUTEX_DESTROY 3
 
 /* for sys/mman.h */
-#define MAP_FAILED ((void *)-1)
 
 #define MAP_SHARED          0x01
 #define MAP_PRIVATE         0x02
