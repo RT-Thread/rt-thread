@@ -1822,7 +1822,7 @@ rt_weak void rt_system_heap_init(void *begin_addr, void *end_addr)
     RT_ASSERT(end_align > begin_align);
 
     /* Initialize system memory heap */
-    _MEM_INIT("heap", begin_addr, end_align - begin_align);
+    _MEM_INIT("heap", begin_align, end_align - begin_align);
     /* Initialize multi thread contention lock */
     _heap_lock_init();
 }
