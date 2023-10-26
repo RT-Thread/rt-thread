@@ -881,7 +881,7 @@ static void rtthread_timer_wrapper(void *timerobj)
 }
 
 #define TIMER_ID_MAX 50
-static struct rt_spinlock _timer_id_lock = RT_SPIN_LOCK_INIT;
+static struct rt_spinlock _timer_id_lock = RT_SPINLOCK_INIT;
 static struct timer_obj *_g_timerid[TIMER_ID_MAX];
 static void *timer_id[TIMER_ID_MAX];
 static resource_id_t id_timer = RESOURCE_ID_INIT(TIMER_ID_MAX, timer_id);
