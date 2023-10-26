@@ -24,6 +24,7 @@
  *                             adapt to new api and do the signal handling in thread context
  * 2023-08-12     Meco Man     re-implement RT-Thread lightweight timezone API
  * 2023-09-15     xqyjlj       perf rt_hw_interrupt_disable/enable
+ * 2023-10-23     Shell        add lock for _g_timerid
  */
 
 #include "sys/time.h"
@@ -880,6 +881,7 @@ static void rtthread_timer_wrapper(void *timerobj)
 }
 
 #define TIMER_ID_MAX 50
+static struct rt_spinlock _timer_id_lock = RT_SPINLOCK_INIT;
 static struct timer_obj *_g_timerid[TIMER_ID_MAX];
 static void *timer_id[TIMER_ID_MAX];
 static resource_id_t id_timer = RESOURCE_ID_INIT(TIMER_ID_MAX, timer_id);
@@ -975,8 +977,14 @@ int timer_create(clockid_t clockid, struct sigevent *evp, timer_t *timerid)
     _timerid = resource_id_get(&id_timer);
     if (_timerid < 0)
     {
-        LOG_E("_timerid overflow!");
-        return -1; /* todo:memory leak */
+#ifdef RT_USING_SMART
+        rt_free(param);
+#endif /* RT_USING_SMART */
+
+        rt_ktime_hrtimer_detach(&timer->hrtimer);
+        rt_free(timer);
+        rt_set_errno(ENOMEM);
+        return -1;
     }
     _g_timerid[_timerid] = timer;
 
@@ -1005,17 +1013,20 @@ int timer_delete(timer_t timerid)
         return -1;
     }
 
-    if (_g_timerid[ktimerid] == NULL)
-    {
-        rt_set_errno(EINVAL);
-        LOG_E("can not find timer!");
-        return -1;
-    }
+    RT_DEBUG_NOT_IN_INTERRUPT;
+    rt_spin_lock(&_timer_id_lock);
     timer = _g_timerid[ktimerid];
-    resource_id_put(&id_timer, ktimerid);
+    if (timer != NULL)
+    {
+        _g_timerid[ktimerid] = RT_NULL;
+        resource_id_put(&id_timer, ktimerid);
+    }
+    rt_spin_unlock(&_timer_id_lock);
+
     if (timer == RT_NULL)
     {
         rt_set_errno(EINVAL);
+        LOG_D("can not find timer %ld", ktimerid);
         return -1;
     }
 
