@@ -881,7 +881,7 @@ static void rtthread_timer_wrapper(void *timerobj)
 }
 
 #define TIMER_ID_MAX 50
-static struct rt_spinlock _timer_id_lock = RT_HW_SPIN_LOCK_INIT;
+static struct rt_spinlock _timer_id_lock = RT_SPIN_LOCK_INIT;
 static struct timer_obj *_g_timerid[TIMER_ID_MAX];
 static void *timer_id[TIMER_ID_MAX];
 static resource_id_t id_timer = RESOURCE_ID_INIT(TIMER_ID_MAX, timer_id);
@@ -974,11 +974,7 @@ int timer_create(clockid_t clockid, struct sigevent *evp, timer_t *timerid)
     rt_ktime_hrtimer_init(&timer->hrtimer, timername, 0, RT_TIMER_FLAG_ONE_SHOT | RT_TIMER_FLAG_HARD_TIMER,
                           rtthread_timer_wrapper, timer);
 
-    RT_DEBUG_NOT_IN_INTERRUPT;
-    rt_spin_lock(&_timer_id_lock);
     _timerid = resource_id_get(&id_timer);
-    rt_spin_unlock(&_timer_id_lock);
-
     if (_timerid < 0)
     {
 #ifdef RT_USING_SMART
@@ -987,7 +983,8 @@ int timer_create(clockid_t clockid, struct sigevent *evp, timer_t *timerid)
 
         rt_ktime_hrtimer_detach(&timer->hrtimer);
         rt_free(timer);
-        return -ENOSPC;
+        rt_set_errno(ENOMEM);
+        return -1;
     }
     _g_timerid[_timerid] = timer;
 
@@ -1016,23 +1013,20 @@ int timer_delete(timer_t timerid)
         return -1;
     }
 
-    if (_g_timerid[ktimerid] == NULL)
-    {
-        rt_set_errno(EINVAL);
-        LOG_D("can not find timer %ld", ktimerid);
-        return -1;
-    }
-
     RT_DEBUG_NOT_IN_INTERRUPT;
     rt_spin_lock(&_timer_id_lock);
     timer = _g_timerid[ktimerid];
-    _g_timerid[ktimerid] = RT_NULL;
-    resource_id_put(&id_timer, ktimerid);
+    if (timer != NULL)
+    {
+        _g_timerid[ktimerid] = RT_NULL;
+        resource_id_put(&id_timer, ktimerid);
+    }
     rt_spin_unlock(&_timer_id_lock);
 
     if (timer == RT_NULL)
     {
         rt_set_errno(EINVAL);
+        LOG_D("can not find timer %ld", ktimerid);
         return -1;
     }
 

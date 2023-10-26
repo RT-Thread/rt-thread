@@ -197,8 +197,8 @@ void rt_hw_ipi_send(int ipi_vector, unsigned int cpu_mask);
 #endif
 
 /* cpuport.h not defined, than use {0} as default */
-#ifndef RT_HW_SPIN_LOCK_INIT
-#define RT_HW_SPIN_LOCK_INIT {0}
+#ifndef RT_SPIN_LOCK_INIT
+#define RT_SPIN_LOCK_INIT {0}
 #endif
 
 #ifdef RT_USING_SMP

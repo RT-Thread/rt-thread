@@ -553,11 +553,11 @@ void rt_spin_unlock(struct rt_spinlock *lock);
 rt_base_t rt_spin_lock_irqsave(struct rt_spinlock *lock);
 void rt_spin_unlock_irqrestore(struct rt_spinlock *lock, rt_base_t level);
 #else
-rt_inline void rt_spin_lock_init(struct rt_spinlock *lock)                          {RT_UNUSED(lock);}
-rt_inline void rt_spin_lock(struct rt_spinlock *lock)                               {RT_UNUSED(lock);}
-rt_inline void rt_spin_unlock(struct rt_spinlock *lock)                             {RT_UNUSED(lock);}
-rt_inline rt_base_t rt_spin_lock_irqsave(struct rt_spinlock *lock)                  {RT_UNUSED(lock);return rt_hw_interrupt_disable();}
-rt_inline void rt_spin_unlock_irqrestore(struct rt_spinlock *lock, rt_base_t level) {RT_UNUSED(lock);rt_hw_interrupt_enable(level);}
+#define rt_spin_lock_init(lock)                                     do {RT_UNUSED(lock);} while (0)
+#define rt_spin_lock(lock)                                          do {RT_UNUSED(lock);} while (0)
+#define rt_spin_unlock(lock)                                        do {RT_UNUSED(lock);} while (0)
+rt_inline rt_base_t rt_spin_lock_irqsave(struct rt_spinlock *lock)  {RT_UNUSED(lock);return rt_hw_interrupt_disable();}
+#define rt_spin_unlock_irqrestore(lock, level)                      do {RT_UNUSED(lock); rt_hw_interrupt_enable(level);} while (0)
 #endif /* RT_USING_SMP */
 
 /**@}*/
