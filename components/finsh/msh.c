@@ -66,7 +66,7 @@ int cmd_ps(int argc, char **argv)
         list_module();
     else
 #endif
-        list_thread();
+    list_thread();
     return 0;
 }
 MSH_CMD_EXPORT_ALIAS(cmd_ps, ps, List threads in the system.);

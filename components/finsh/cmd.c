@@ -172,20 +172,20 @@ long list_thread(void)
 
     maxlen = RT_NAME_MAX;
 
-    rt_kprintf("%-*.*s ", tcb_strlen, tcb_strlen, "rt_thread_t");
-
 #ifdef RT_USING_SMP
-    rt_kprintf("%-*.*s cpu bind pri  status      sp     stack size max used left tick  error\n", maxlen, maxlen, item_title);
-    object_split(tcb_strlen);
-    rt_kprintf(" ");
+    rt_kprintf("%-*.*s cpu bind pri  status      sp     stack size max used left tick   error  tcb addr\n", maxlen, maxlen, item_title);
     object_split(maxlen);
-    rt_kprintf(" --- ---- ---  ------- ---------- ----------  ------  ---------- ---\n");
+    rt_kprintf(" --- ---- ---  ------- ---------- ----------  ------  ---------- -------");
+    rt_kprintf(" ");
+    object_split(tcb_strlen);
+    rt_kprintf("\n");
 #else
-    rt_kprintf("%-*.*s pri  status      sp     stack size max used left tick  error\n", maxlen, maxlen, item_title);
-    object_split(tcb_strlen);
-    rt_kprintf(" ");
+    rt_kprintf("%-*.*s pri  status      sp     stack size max used left tick   error  tcb addr\n", maxlen, maxlen, item_title);
     object_split(maxlen);
-    rt_kprintf(" ---  ------- ---------- ----------  ------  ---------- ---\n");
+    rt_kprintf(" ---  ------- ---------- ----------  ------  ---------- -------");
+    rt_kprintf(" ");
+    object_split(tcb_strlen);
+    rt_kprintf("\n");
 #endif /*RT_USING_SMP*/
 
     do
@@ -215,7 +215,6 @@ long list_thread(void)
                     rt_uint8_t stat;
                     rt_uint8_t *ptr;
 
-                    rt_kprintf("%p ", thread);
 #ifdef RT_USING_SMP
                     if (thread->oncpu != RT_CPU_DETACHED)
                         rt_kprintf("%-*.*s %3d %3d %4d ", maxlen, RT_NAME_MAX, thread->parent.name, thread->oncpu, thread->bind_cpu, thread->current_priority);
@@ -236,22 +235,24 @@ long list_thread(void)
                     ptr = (rt_uint8_t *)thread->stack_addr + thread->stack_size - 1;
                     while (*ptr == '#')ptr --;
 
-                    rt_kprintf(" 0x%08x 0x%08x    %02d%%   0x%08x %03d\n",
+                    rt_kprintf(" 0x%08x 0x%08x    %02d%%   0x%08x %s %p\n",
                                ((rt_ubase_t)thread->sp - (rt_ubase_t)thread->stack_addr),
                                thread->stack_size,
                                ((rt_ubase_t)ptr - (rt_ubase_t)thread->stack_addr) * 100 / thread->stack_size,
                                thread->remaining_tick,
-                               thread->error);
+                               rt_strerror(thread->error),
+                               thread);
 #else
                     ptr = (rt_uint8_t *)thread->stack_addr;
                     while (*ptr == '#') ptr ++;
-                    rt_kprintf(" 0x%08x 0x%08x    %02d%%   0x%08x %s\n",
+                    rt_kprintf(" 0x%08x 0x%08x    %02d%%   0x%08x %s %p\n",
                                thread->stack_size + ((rt_ubase_t)thread->stack_addr - (rt_ubase_t)thread->sp),
                                thread->stack_size,
                                (thread->stack_size - ((rt_ubase_t) ptr - (rt_ubase_t) thread->stack_addr)) * 100
                                / thread->stack_size,
                                thread->remaining_tick,
-                               rt_strerror(thread->error));
+                               rt_strerror(thread->error),
+                               thread);
 #endif
                 }
             }
