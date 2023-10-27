@@ -66,8 +66,8 @@ void dfs_unlock(void)
 }
 
 /** @addtogroup DFS
- *  
- *  
+ *
+ *
  *  @{
  */
 rt_err_t dfs_file_lock(void)
@@ -789,5 +789,5 @@ MSH_CMD_EXPORT(dfs_dlog, dfs dlog on|off);
 #endif
 
 #endif
-/** @} */ 
+/** @} */
 
