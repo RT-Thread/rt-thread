@@ -396,7 +396,7 @@ typedef int (*init_fn_t)(void);
 #endif
 
 /**
- * @addtogroup Error Code
+ * @addtogroup Error_Code
  */
 
 /**@{*/

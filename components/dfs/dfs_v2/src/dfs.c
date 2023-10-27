@@ -65,12 +65,11 @@ void dfs_unlock(void)
     rt_mutex_release(&fslock);
 }
 
-/**
- * @addtogroup DFS
+/** @addtogroup DFS
+ *  
+ *  
+ *  @{
  */
-
-/*@{*/
-
 rt_err_t dfs_file_lock(void)
 {
     rt_err_t result = -RT_EBUSY;
@@ -790,5 +789,5 @@ MSH_CMD_EXPORT(dfs_dlog, dfs dlog on|off);
 #endif
 
 #endif
-/**@}*/
+/** @} */ 
 
