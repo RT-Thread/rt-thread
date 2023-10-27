@@ -36,3 +36,4 @@ jobs:
         run: |
           cd documentation/doxygen
           doxygen Doxyfile
+          cat Doxyfile
