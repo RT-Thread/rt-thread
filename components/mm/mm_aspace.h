@@ -76,7 +76,6 @@ typedef struct rt_varea
 
     struct _aspace_node node;
 
-    struct rt_page *frames;
     void *data;
 } *rt_varea_t;
 

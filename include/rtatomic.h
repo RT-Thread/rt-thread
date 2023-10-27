@@ -27,13 +27,6 @@ void rt_hw_atomic_flag_clear(volatile rt_atomic_t *ptr);
 rt_atomic_t rt_hw_atomic_flag_test_and_set(volatile rt_atomic_t *ptr);
 rt_atomic_t rt_hw_atomic_compare_exchange_strong(volatile rt_atomic_t *ptr, rt_atomic_t *expected, rt_atomic_t desired);
 
-/* To detect stdatomic */
-#if !defined(RT_USING_HW_ATOMIC) && !defined(RT_USING_STDC_ATOMIC)
-#if defined(__GNUC__) && defined(RT_USING_LIBC) && !defined(__STDC_NO_ATOMICS__)
-#define RT_USING_STDC_ATOMIC
-#endif /* __GNUC__ && .. */
-#endif /* !RT_USING_HW_ATOMIC && !RT_USING_STDC_ATOMIC */
-
 #if defined(RT_USING_HW_ATOMIC)
 #define rt_atomic_load(ptr) rt_hw_atomic_load(ptr)
 #define rt_atomic_store(ptr, v) rt_hw_atomic_store(ptr, v)

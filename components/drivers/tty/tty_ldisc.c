@@ -14,27 +14,29 @@ static struct tty_ldisc_ops *tty_ldiscs[NR_LDISCS] = {
     &n_tty_ops, /* N_TTY = 0 */
 };
 
+static struct rt_spinlock _spinlock = RT_SPINLOCK_INIT;
+
 static struct tty_ldisc_ops *get_ldops(int disc)
 {
     struct tty_ldisc_ops *ldops = RT_NULL;
-    int level = 0;
-    level = rt_hw_interrupt_disable();
+    rt_base_t level = 0;
+    level = rt_spin_lock_irqsave(&_spinlock);
     ldops = tty_ldiscs[disc];
     if (ldops)
     {
         ldops->refcount++;
     }
-    rt_hw_interrupt_enable(level);
+    rt_spin_unlock_irqrestore(&_spinlock, level);
     return ldops;
 }
 
 static void put_ldops(struct tty_ldisc_ops *ldops)
 {
-    int level = 0;
+    rt_base_t level = 0;
 
-    level = rt_hw_interrupt_disable();
+    level = rt_spin_lock_irqsave(&_spinlock);
     ldops->refcount--;
-    rt_hw_interrupt_enable(level);
+    rt_spin_unlock_irqrestore(&_spinlock, level);
 }
 
 static struct tty_ldisc *tty_ldisc_get(struct tty_struct *tty, int disc)
@@ -120,18 +122,18 @@ void tty_ldisc_kill(struct tty_struct *tty)
 int tty_register_ldisc(int disc, struct tty_ldisc_ops *new_ldisc)
 {
     int ret = 0;
-    int level = 0;
+    rt_base_t level = 0;
 
     if (disc < N_TTY || disc >= NR_LDISCS)
     {
         return -EINVAL;
     }
 
-    level = rt_hw_interrupt_disable();
+    level = rt_spin_lock_irqsave(&_spinlock);
     tty_ldiscs[disc] = new_ldisc;
     new_ldisc->num = disc;
     new_ldisc->refcount = 0;
-    rt_hw_interrupt_enable(level);
+    rt_spin_unlock_irqrestore(&_spinlock, level);
 
     return ret;
 }
@@ -146,20 +148,17 @@ int tty_register_ldisc(int disc, struct tty_ldisc_ops *new_ldisc)
 
 void tty_ldisc_release(struct tty_struct *tty)
 {
-    int level = 0;
     struct tty_struct *o_tty = tty->other_struct;
 
     /*
      * Shutdown this line discipline. As this is the final close,
      * it does not race with the set_ldisc code path.
      */
-    level = rt_hw_interrupt_disable();
     tty_ldisc_kill(tty);
     if (o_tty)
     {
         tty_ldisc_kill(o_tty);
     }
-    rt_hw_interrupt_enable(level);
 }
 
 /**

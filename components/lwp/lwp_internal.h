@@ -82,7 +82,7 @@ rt_err_t lwp_critical_exit(struct rt_lwp *lwp);
 #endif /* LWP_OVERRIDE_CPUS_LOCK */
 
 /**
- * @brief Return code with safety check
+ * Brief: Return code with safety check
  * There tend to be chances where a return value is returned without correctly init
  */
 #ifndef LWP_DEBUG
@@ -90,9 +90,9 @@ rt_err_t lwp_critical_exit(struct rt_lwp *lwp);
 #define RETURN(name)            return name
 
 #else
-#define UNINITIALIZED 0xbeefcafe
-#define DEF_RETURN_CODE(name)   rt_err_t name = UNINITIALIZED
-#define RETURN(name)            {RT_ASSERT(name != UNINITIALIZED);return name;}
+#define _LWP_UNINITIALIZED_RC   0xbeefcafe
+#define DEF_RETURN_CODE(name)   rt_err_t name = _LWP_UNINITIALIZED_RC
+#define RETURN(name)            {RT_ASSERT(name != _LWP_UNINITIALIZED_RC);return name;}
 #endif /* LWP_DEBUG */
 
 #endif /* __LWP_INTERNAL_H__ */

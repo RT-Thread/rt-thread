@@ -345,10 +345,10 @@ rt_inline rt_err_t _migrate_and_release_varea(rt_aspace_t aspace, rt_varea_t to,
     {
         /* uninstall operand & release the varea */
         _aspace_bst_remove(aspace, from);
-        if (!(from->flag & MMF_STATIC_ALLOC))
-            rt_free(from);
-
         to->size += from->size;
+
+        if (VAREA_NOT_STATIC(from))
+            rt_free(from);
     }
     return error;
 }
@@ -495,7 +495,6 @@ static inline void _varea_post_install(rt_varea_t varea, rt_aspace_t aspace,
     varea->mem_obj = mem_obj;
     varea->flag = flags;
     varea->offset = offset;
-    varea->frames = NULL;
 
     if (varea->mem_obj && varea->mem_obj->on_varea_open)
         varea->mem_obj->on_varea_open(varea);
@@ -565,11 +564,11 @@ void _varea_uninstall_locked(rt_varea_t varea)
 
     if (varea->mem_obj && varea->mem_obj->on_varea_close)
         varea->mem_obj->on_varea_close(varea);
-
-    rt_hw_mmu_unmap(aspace, varea->start, varea->size);
-    rt_hw_tlb_invalidate_range(aspace, varea->start, varea->size, ARCH_PAGE_SIZE);
-
-    rt_varea_pgmgr_pop_all(varea);
+    else
+    {
+        rt_hw_mmu_unmap(aspace, varea->start, varea->size);
+        rt_hw_tlb_invalidate_range(aspace, varea->start, varea->size, ARCH_PAGE_SIZE);
+    }
 
     _aspace_bst_remove(aspace, varea);
 }
@@ -960,7 +959,6 @@ static rt_err_t _split_varea(rt_varea_t existed, char *ex_end, char *unmap_start
             subset->mem_obj = existed->mem_obj;
             subset->flag = existed->flag & ~MMF_STATIC_ALLOC;
             subset->offset = existed->offset + rela_offset;
-            subset->frames = NULL;
 
             error = existed->mem_obj->on_varea_split(existed, unmap_start, unmap_len, subset);
             if (error == RT_EOK)
@@ -1379,12 +1377,14 @@ int rt_aspace_traversal(rt_aspace_t aspace,
                         int (*fn)(rt_varea_t varea, void *arg), void *arg)
 {
     rt_varea_t varea;
+    rt_varea_t next;
     WR_LOCK(aspace);
     varea = ASPACE_VAREA_FIRST(aspace);
     while (varea)
     {
+        next = ASPACE_VAREA_NEXT(varea);
         fn(varea, arg);
-        varea = ASPACE_VAREA_NEXT(varea);
+        varea = next;
     }
     WR_UNLOCK(aspace);
 

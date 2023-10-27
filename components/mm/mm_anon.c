@@ -127,6 +127,7 @@ static void _anon_varea_open(struct rt_varea *varea)
 static void _anon_varea_close(struct rt_varea *varea)
 {
     rt_aspace_anon_ref_dec(varea->mem_obj);
+    rt_mm_dummy_mapper.on_varea_close(varea);
 }
 
 static rt_err_t _anon_varea_expand(struct rt_varea *varea, void *new_vaddr, rt_size_t size)
@@ -154,14 +155,14 @@ static rt_err_t _anon_varea_merge(struct rt_varea *merge_to, struct rt_varea *me
 rt_inline void _map_page_in_varea(rt_aspace_t asapce, rt_varea_t varea,
                                   struct rt_aspace_fault_msg *msg, char *fault_addr)
 {
-    if (rt_varea_map_page(varea, fault_addr, msg->response.vaddr) == RT_EOK)
+    char *page_va = msg->response.vaddr;
+    if (rt_varea_map_page(varea, fault_addr, page_va) == RT_EOK)
     {
         msg->response.status = MM_FAULT_STATUS_OK_MAPPED;
+        rt_varea_pgmgr_insert(varea, page_va);
     }
     else
     {
-        /* revoke the allocated page */
-        rt_varea_pgmgr_pop(varea, msg->response.vaddr, ARCH_PAGE_SIZE);
         msg->response.status = MM_FAULT_STATUS_UNRECOVERABLE;
         LOG_W("%s: failed to map page into varea", __func__);
     }
@@ -201,6 +202,7 @@ static void *_get_page_from_backup(rt_aspace_t backup, rt_base_t offset_in_mobj)
                 {
                     rc = msg.response.vaddr;
                 }
+                rt_pages_free(msg.response.vaddr, 0);
             }
         }
         else
@@ -221,28 +223,33 @@ static void *_get_page_from_backup(rt_aspace_t backup, rt_base_t offset_in_mobj)
 }
 
 /* get the backup page in kernel for the address in user space */
-static void _anon_page_fault(struct rt_varea *varea, struct rt_aspace_fault_msg *msg)
+static void _fetch_page_for_varea(struct rt_varea *varea, struct rt_aspace_fault_msg *msg, rt_bool_t need_map)
 {
     void *paddr;
     char *frame_ka;
-    rt_aspace_t from_aspace = varea->aspace;
+    rt_aspace_t curr_aspace = varea->aspace;
     rt_aspace_t backup = _anon_obj_get_backup(varea->mem_obj);
 
-    RDWR_LOCK(from_aspace);
+    RDWR_LOCK(curr_aspace);
 
     /**
      * if the page is already mapped(this may caused by data race while other
      * thread success to take the lock and mapped the page before this), return okay
      */
-    paddr = rt_hw_mmu_v2p(from_aspace, msg->fault_vaddr);
+    paddr = rt_hw_mmu_v2p(curr_aspace, msg->fault_vaddr);
     if (paddr == ARCH_MAP_FAILED)
     {
-        if (backup == from_aspace)
+        if (backup == curr_aspace)
         {
             rt_mm_dummy_mapper.on_page_fault(varea, msg);
             if (msg->response.status != MM_FAULT_STATUS_UNRECOVERABLE)
             {
+                /* if backup == curr_aspace, a page fetch always binding with a pte filling */
                 _map_page_in_varea(backup, varea, msg, msg->fault_vaddr);
+                if (msg->response.status != MM_FAULT_STATUS_UNRECOVERABLE)
+                {
+                    rt_pages_free(msg->response.vaddr, 0);
+                }
             }
         }
         else
@@ -252,7 +259,14 @@ static void _anon_page_fault(struct rt_varea *varea, struct rt_aspace_fault_msg 
             {
                 msg->response.vaddr = frame_ka;
                 msg->response.size = ARCH_PAGE_SIZE;
-                _map_page_in_varea(from_aspace, varea, msg, msg->fault_vaddr);
+                if (!need_map)
+                {
+                    msg->response.status = MM_FAULT_STATUS_OK;
+                }
+                else
+                {
+                    _map_page_in_varea(curr_aspace, varea, msg, msg->fault_vaddr);
+                }
             }
         }
     }
@@ -260,7 +274,12 @@ static void _anon_page_fault(struct rt_varea *varea, struct rt_aspace_fault_msg 
     {
         msg->response.status = MM_FAULT_STATUS_OK_MAPPED;
     }
-    RDWR_UNLOCK(from_aspace);
+    RDWR_UNLOCK(curr_aspace);
+}
+
+static void _anon_page_fault(struct rt_varea *varea, struct rt_aspace_fault_msg *msg)
+{
+    _fetch_page_for_varea(varea, msg, RT_TRUE);
 }
 
 static void read_by_mte(rt_aspace_t aspace, struct rt_aspace_io_msg *iomsg)
@@ -271,9 +290,10 @@ static void read_by_mte(rt_aspace_t aspace, struct rt_aspace_io_msg *iomsg)
 
 static void _anon_page_read(struct rt_varea *varea, struct rt_aspace_io_msg *iomsg)
 {
-    rt_aspace_t from_aspace = varea->aspace;
+    rt_aspace_t curr_aspace = varea->aspace;
+    rt_aspace_t backup = _anon_obj_get_backup(varea->mem_obj);
 
-    if (rt_hw_mmu_v2p(from_aspace, iomsg->fault_vaddr) == ARCH_MAP_FAILED)
+    if (rt_hw_mmu_v2p(curr_aspace, iomsg->fault_vaddr) == ARCH_MAP_FAILED)
     {
         struct rt_aspace_fault_msg msg;
         msg.fault_op = MM_FAULT_OP_READ;
@@ -282,15 +302,18 @@ static void _anon_page_read(struct rt_varea *varea, struct rt_aspace_io_msg *iom
         msg.off = iomsg->off;
         rt_mm_fault_res_init(&msg.response);
 
-        _anon_page_fault(varea, &msg);
+        _fetch_page_for_varea(varea, &msg, RT_FALSE);
         if (msg.response.status != MM_FAULT_STATUS_UNRECOVERABLE)
         {
-            read_by_mte(from_aspace, iomsg);
+            void *saved_fault_va = iomsg->fault_vaddr;
+            iomsg->fault_vaddr = (void *)(iomsg->off << MM_PAGE_SHIFT);
+            read_by_mte(backup, iomsg);
+            iomsg->fault_vaddr = saved_fault_va;
         }
     }
     else
     {
-        read_by_mte(from_aspace, iomsg);
+        read_by_mte(curr_aspace, iomsg);
     }
 }
 
@@ -303,8 +326,14 @@ static void write_by_mte(rt_aspace_t aspace, struct rt_aspace_io_msg *iomsg)
 static void _anon_page_write(struct rt_varea *varea, struct rt_aspace_io_msg *iomsg)
 {
     rt_aspace_t from_aspace = varea->aspace;
+    rt_aspace_t backup = _anon_obj_get_backup(varea->mem_obj);
 
-    if (rt_hw_mmu_v2p(from_aspace, iomsg->fault_vaddr) == ARCH_MAP_FAILED)
+    if (from_aspace != backup)
+    {
+        /* varea in guest aspace cannot modify the page */
+        iomsg->response.status = MM_FAULT_STATUS_UNRECOVERABLE;
+    }
+    else if (rt_hw_mmu_v2p(from_aspace, iomsg->fault_vaddr) == ARCH_MAP_FAILED)
     {
         struct rt_aspace_fault_msg msg;
         msg.fault_op = MM_FAULT_OP_WRITE;
@@ -313,15 +342,20 @@ static void _anon_page_write(struct rt_varea *varea, struct rt_aspace_io_msg *io
         msg.off = iomsg->off;
         rt_mm_fault_res_init(&msg.response);
 
-        _anon_page_fault(varea, &msg);
-        if (msg.response.status != MM_FAULT_STATUS_UNRECOVERABLE)
+        _fetch_page_for_varea(varea, &msg, RT_TRUE);
+        if (msg.response.status == MM_FAULT_STATUS_OK_MAPPED)
         {
-            write_by_mte(from_aspace, iomsg);
+            write_by_mte(backup, iomsg);
+        }
+        else
+        {
+            /* mapping failed, report an error */
+            iomsg->response.status = MM_FAULT_STATUS_UNRECOVERABLE;
         }
     }
     else
     {
-        write_by_mte(from_aspace, iomsg);
+        write_by_mte(backup, iomsg);
     }
 }
 
@@ -413,6 +447,7 @@ static int _override_map(rt_varea_t varea, rt_aspace_t aspace, void *fault_vaddr
             RT_ASSERT(rt_hw_mmu_v2p(aspace, msg->fault_vaddr) == (page + PV_OFFSET));
             rc = MM_FAULT_FIXABLE_TRUE;
             rt_varea_pgmgr_insert(map_varea, page);
+            rt_pages_free(page, 0);
         }
         else
         {

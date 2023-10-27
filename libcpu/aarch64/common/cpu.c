@@ -59,52 +59,65 @@ rt_weak rt_uint64_t rt_cpu_mpidr_early[] =
 };
 #endif /* RT_USING_SMART */
 
-void rt_hw_spin_lock_init(rt_hw_spinlock_t *lock)
-{
-    lock->slock = 0;
-}
+typedef rt_hw_spinlock_t arch_spinlock_t;
 
-#define TICKET_SHIFT 16
-void rt_hw_spin_lock(rt_hw_spinlock_t *lock)
+static inline void arch_spin_lock(arch_spinlock_t *lock)
 {
     unsigned int tmp;
-    struct __arch_tickets lockval, newval;
 
     asm volatile(
-        /* Atomically increment the next ticket. */
-        "   prfm    pstl1strm, %3\n"
-        "1: ldaxr   %w0, %3\n"
-        "   add %w1, %w0, %w5\n"
-        "   stxr    %w2, %w1, %3\n"
-        "   cbnz    %w2, 1b\n"
-        /* Did we get the lock? */
-        "   eor %w1, %w0, %w0, ror #16\n"
-        "   cbz %w1, 3f\n"
-        /*
-         * No: spin on the owner. Send a local event to avoid missing an
-         * unlock before the exclusive load.
-         */
-        "   sevl\n"
-        "2: wfe\n"
-        "   ldaxrh  %w2, %4\n"
-        "   eor %w1, %w2, %w0, lsr #16\n"
-        "   cbnz    %w1, 2b\n"
-        /* We got the lock. Critical section starts here. */
-        "3:"
-        : "=&r"(lockval), "=&r"(newval), "=&r"(tmp), "+Q"(*lock)
-        : "Q"(lock->tickets.owner), "I"(1 << TICKET_SHIFT)
-        : "memory");
-    rt_hw_dmb();
+    "   sevl\n"
+    "1: wfe\n"
+    "2: ldaxr   %w0, %1\n"
+    "   cbnz    %w0, 1b\n"
+    "   stxr    %w0, %w2, %1\n"
+    "   cbnz    %w0, 2b\n"
+    : "=&r" (tmp), "+Q" (lock->lock)
+    : "r" (1)
+    : "cc", "memory");
+}
+
+static inline int arch_spin_trylock(arch_spinlock_t *lock)
+{
+    unsigned int tmp;
+
+    asm volatile(
+    "  ldaxr   %w0, %1\n"
+    "  cbnz    %w0, 1f\n"
+    "  stxr    %w0, %w2, %1\n"
+    "1:\n"
+    : "=&r" (tmp), "+Q" (lock->lock)
+    : "r" (1)
+    : "cc", "memory");
+
+    return !tmp;
+}
+
+static inline void arch_spin_unlock(arch_spinlock_t *lock)
+{
+    asm volatile(
+    " stlr    %w1, %0\n"
+    : "=Q" (lock->lock) : "r" (0) : "memory");
+}
+
+void rt_hw_spin_lock_init(arch_spinlock_t *lock)
+{
+    lock->lock = 0;
+}
+
+void rt_hw_spin_lock(rt_hw_spinlock_t *lock)
+{
+    arch_spin_lock(lock);
 }
 
 void rt_hw_spin_unlock(rt_hw_spinlock_t *lock)
 {
-    rt_hw_dmb();
-    asm volatile(
-        "   stlrh   %w1, %0\n"
-        : "=Q"(lock->tickets.owner)
-        : "r"(lock->tickets.owner + 1)
-        : "memory");
+    arch_spin_unlock(lock);
+}
+
+rt_bool_t rt_hw_spin_trylock(rt_hw_spinlock_t *lock)
+{
+    return arch_spin_trylock(lock);
 }
 
 static int _cpus_init_data_hardcoded(int num_cpus, rt_uint64_t *cpu_hw_ids, struct cpu_ops_t *cpu_ops[])

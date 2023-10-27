@@ -34,6 +34,7 @@ struct netdev *netdev_default = RT_NULL;
 /* The global network register callback */
 static netdev_callback_fn g_netdev_register_callback = RT_NULL;
 static netdev_callback_fn g_netdev_default_change_callback = RT_NULL;
+static RT_DEFINE_SPINLOCK(_spinlock);
 
 /**
  * This function will register network interface device and
@@ -96,7 +97,7 @@ int netdev_register(struct netdev *netdev, const char *name, void *user_data)
     /* initialize current network interface device single list */
     rt_slist_init(&(netdev->list));
 
-    level = rt_hw_interrupt_disable();
+    level = rt_spin_lock_irqsave(&_spinlock);
 
     if (netdev_list == RT_NULL)
     {
@@ -108,7 +109,7 @@ int netdev_register(struct netdev *netdev, const char *name, void *user_data)
         rt_slist_append(&(netdev_list->list), &(netdev->list));
     }
 
-    rt_hw_interrupt_enable(level);
+    rt_spin_unlock_irqrestore(&_spinlock, level);
 
     if (netdev_default == RT_NULL)
     {
@@ -146,7 +147,7 @@ int netdev_unregister(struct netdev *netdev)
         return -RT_ERROR;
     }
 
-    level = rt_hw_interrupt_disable();
+    level = rt_spin_lock_irqsave(&_spinlock);
 
     for (node = &(netdev_list->list); node; node = rt_slist_next(node))
     {
@@ -169,7 +170,7 @@ int netdev_unregister(struct netdev *netdev)
             break;
         }
     }
-    rt_hw_interrupt_enable(level);
+    rt_spin_unlock_irqrestore(&_spinlock, level);
 
     if (netdev_default == RT_NULL)
     {
@@ -219,19 +220,19 @@ struct netdev *netdev_get_first_by_flags(uint16_t flags)
         return RT_NULL;
     }
 
-    level = rt_hw_interrupt_disable();
+    level = rt_spin_lock_irqsave(&_spinlock);
 
     for (node = &(netdev_list->list); node; node = rt_slist_next(node))
     {
         netdev = rt_slist_entry(node, struct netdev, list);
         if (netdev && (netdev->flags & flags) != 0)
         {
-            rt_hw_interrupt_enable(level);
+            rt_spin_unlock_irqrestore(&_spinlock, level);
             return netdev;
         }
     }
 
-    rt_hw_interrupt_enable(level);
+    rt_spin_unlock_irqrestore(&_spinlock, level);
 
     return RT_NULL;
 }
@@ -256,19 +257,19 @@ struct netdev *netdev_get_by_ipaddr(ip_addr_t *ip_addr)
         return RT_NULL;
     }
 
-    level = rt_hw_interrupt_disable();
+    level = rt_spin_lock_irqsave(&_spinlock);
 
     for (node = &(netdev_list->list); node; node = rt_slist_next(node))
     {
         netdev = rt_slist_entry(node, struct netdev, list);
         if (netdev && ip_addr_cmp(&(netdev->ip_addr), ip_addr))
         {
-            rt_hw_interrupt_enable(level);
+            rt_spin_unlock_irqrestore(&_spinlock, level);
             return netdev;
         }
     }
 
-    rt_hw_interrupt_enable(level);
+    rt_spin_unlock_irqrestore(&_spinlock, level);
 
     return RT_NULL;
 }
@@ -293,19 +294,19 @@ struct netdev *netdev_get_by_name(const char *name)
         return RT_NULL;
     }
 
-    level = rt_hw_interrupt_disable();
+    level = rt_spin_lock_irqsave(&_spinlock);
 
     for (node = &(netdev_list->list); node; node = rt_slist_next(node))
     {
         netdev = rt_slist_entry(node, struct netdev, list);
         if (netdev && (rt_strncmp(netdev->name, name, rt_strlen(netdev->name) < RT_NAME_MAX ? rt_strlen(netdev->name) : RT_NAME_MAX) == 0))
         {
-            rt_hw_interrupt_enable(level);
+            rt_spin_unlock_irqrestore(&_spinlock, level);
             return netdev;
         }
     }
 
-    rt_hw_interrupt_enable(level);
+    rt_spin_unlock_irqrestore(&_spinlock, level);
 
     return RT_NULL;
 }
@@ -332,7 +333,7 @@ struct netdev *netdev_get_by_family(int family)
         return RT_NULL;
     }
 
-    level = rt_hw_interrupt_disable();
+    level = rt_spin_lock_irqsave(&_spinlock);
 
     for (node = &(netdev_list->list); node; node = rt_slist_next(node))
     {
@@ -340,7 +341,7 @@ struct netdev *netdev_get_by_family(int family)
         pf = (struct sal_proto_family *) netdev->sal_user_data;
         if (pf && pf->skt_ops && pf->family == family && netdev_is_up(netdev))
         {
-            rt_hw_interrupt_enable(level);
+            rt_spin_unlock_irqrestore(&_spinlock, level);
             return netdev;
         }
     }
@@ -351,12 +352,12 @@ struct netdev *netdev_get_by_family(int family)
         pf = (struct sal_proto_family *) netdev->sal_user_data;
         if (pf && pf->skt_ops && pf->sec_family == family && netdev_is_up(netdev))
         {
-            rt_hw_interrupt_enable(level);
+            rt_spin_unlock_irqrestore(&_spinlock, level);
             return netdev;
         }
     }
 
-    rt_hw_interrupt_enable(level);
+    rt_spin_unlock_irqrestore(&_spinlock, level);
 
     return RT_NULL;
 }

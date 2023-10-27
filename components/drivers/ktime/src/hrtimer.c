@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2023-07-10     xqyjlj       The first version.
+ * 2023-09-15     xqyjlj       perf rt_hw_interrupt_disable/enable
  */
 
 #include <rtdevice.h>
@@ -22,7 +23,7 @@
 
 static rt_list_t          _timer_list = RT_LIST_OBJECT_INIT(_timer_list);
 static rt_ktime_hrtimer_t _nowtimer   = RT_NULL;
-static struct rt_spinlock _spinlock;
+static RT_DEFINE_SPINLOCK(_spinlock);
 
 rt_weak unsigned long rt_ktime_hrtimer_getres(void)
 {
@@ -389,11 +390,3 @@ rt_err_t rt_ktime_hrtimer_mdelay(unsigned long ms)
 {
     return rt_ktime_hrtimer_ndelay(ms * 1000000);
 }
-
-static int rt_ktime_hrtimer_lock_init(void)
-{
-    RT_UNUSED(_spinlock);
-    rt_spin_lock_init(&_spinlock);
-    return 0;
-}
-INIT_BOARD_EXPORT(rt_ktime_hrtimer_lock_init);

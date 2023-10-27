@@ -148,6 +148,11 @@ endif
             range 0 1000000
             default 3000
             depends on RT_DFS_ELM_REENTRANT
+
+        config RT_DFS_ELM_USE_EXFAT
+            bool "Enable RT_DFS_ELM_USE_EXFAT"
+            default n
+            depends on RT_DFS_ELM_USE_LFN >= 1
         endmenu
     endif
 

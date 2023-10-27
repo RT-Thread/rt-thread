@@ -511,16 +511,18 @@ sys_thread_t sys_thread_new(const char    *name,
     return t;
 }
 
+static RT_DEFINE_SPINLOCK(_spinlock);
+
 sys_prot_t sys_arch_protect(void)
 {
     rt_base_t level;
-    level = rt_hw_interrupt_disable(); /* disable interrupt */
+    level = rt_spin_lock_irqsave(&_spinlock); /* disable interrupt */
     return level;
 }
 
 void sys_arch_unprotect(sys_prot_t pval)
 {
-    rt_hw_interrupt_enable(pval); /* enable interrupt */
+    rt_spin_unlock_irqrestore(&_spinlock, pval); /* enable interrupt */
 }
 
 void sys_arch_assert(const char *file, int line)

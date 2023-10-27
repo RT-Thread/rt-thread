@@ -79,6 +79,8 @@ struct lwip_sock {
 };
 #endif /* LWIP_VERSION >= 0x20100ff */
 
+static RT_DEFINE_SPINLOCK(_spinlock);
+
 extern struct lwip_sock *lwip_tryget_socket(int s);
 
 static void event_callback(struct netconn *conn, enum netconn_evt evt, u16_t len)
@@ -262,7 +264,7 @@ static int inet_poll(struct dfs_file *file, struct rt_pollreq *req)
 
         rt_poll_add(&sock->wait_head, req);
 
-        level = rt_hw_interrupt_disable();
+        level = rt_spin_lock_irqsave(&_spinlock);
 
 #if LWIP_VERSION >= 0x20100ff
         if ((void*)(sock->lastdata.pbuf) || sock->rcvevent)
@@ -282,7 +284,7 @@ static int inet_poll(struct dfs_file *file, struct rt_pollreq *req)
             /* clean error event */
             sock->errevent = 0;
         }
-        rt_hw_interrupt_enable(level);
+        rt_spin_unlock_irqrestore(&_spinlock, level);
     }
 
     return mask;

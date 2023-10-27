@@ -6,11 +6,14 @@
  * Change Logs:
  * Date           Author       Notes
  * 2021-09-08     liukang     the first version
+ * 2023-09-15     xqyjlj       change stack size in cpu64
  */
 
 #include <rtthread.h>
 #include "utest.h"
 #include <stdlib.h>
+
+#define THREAD_STACKSIZE UTEST_THR_STACK_SIZE
 
 static struct rt_mailbox test_static_mb;
 static char mb_pool[128];

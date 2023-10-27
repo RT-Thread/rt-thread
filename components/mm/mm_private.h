@@ -105,8 +105,6 @@ void _aspace_bst_insert(struct rt_aspace *aspace, struct rt_varea *varea);
  */
 void _aspace_bst_remove(struct rt_aspace *aspace, struct rt_varea *varea);
 
-void rt_varea_pgmgr_pop(rt_varea_t varea, void *vaddr, rt_size_t size);
-
 void rt_varea_pgmgr_pop_all(rt_varea_t varea);
 
 int rt_varea_fix_private_locked(rt_varea_t ex_varea, void *pa,

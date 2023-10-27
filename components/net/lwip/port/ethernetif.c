@@ -564,6 +564,7 @@ rt_err_t eth_device_init_with_flag(struct eth_device *dev, const char *name, rt_
         return -RT_ERROR;
     }
 
+    rt_spin_lock_init(&(dev->spinlock));
     /* set netif */
     dev->netif = netif;
     dev->flags = flags;
@@ -838,13 +839,13 @@ rt_err_t eth_device_linkchange(struct eth_device* dev, rt_bool_t up)
 
     RT_ASSERT(dev != RT_NULL);
 
-    level = rt_hw_interrupt_disable();
+    level = rt_spin_lock_irqsave(&(dev->spinlock));
     dev->link_changed = 0x01;
     if (up == RT_TRUE)
         dev->link_status = 0x01;
     else
         dev->link_status = 0x00;
-    rt_hw_interrupt_enable(level);
+    rt_spin_unlock_irqrestore(&(dev->spinlock), level);
 
     /* post message to ethernet thread */
     return rt_mb_send(&eth_rx_thread_mb, (rt_ubase_t)dev);
@@ -912,10 +913,10 @@ static void eth_rx_thread_entry(void* parameter)
             {
                 int status;
 
-                level = rt_hw_interrupt_disable();
+                level = rt_spin_lock_irqsave(&(device->spinlock));
                 status = device->link_status;
                 device->link_changed = 0x00;
-                rt_hw_interrupt_enable(level);
+                rt_spin_unlock_irqrestore(&(device->spinlock), level);
 
                 if (status)
                     netifapi_netif_set_link_up(device->netif);
@@ -923,10 +924,10 @@ static void eth_rx_thread_entry(void* parameter)
                     netifapi_netif_set_link_down(device->netif);
             }
 
-            level = rt_hw_interrupt_disable();
+            level = rt_spin_lock_irqsave(&(device->spinlock));
             /* 'rx_notice' will be modify in the interrupt or here */
             device->rx_notice = RT_FALSE;
-            rt_hw_interrupt_enable(level);
+            rt_spin_unlock_irqrestore(&(device->spinlock), level);
 
             /* receive all of buffer */
             while (1)

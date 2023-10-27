@@ -6,10 +6,14 @@
  * Change Logs:
  * Date           Author       Notes
  * 2021-08-28     Sherman      the first version
+ * 2023-09-15     xqyjlj       change stack size in cpu64
+ *                             fix in smp
  */
 
 #include <rtthread.h>
 #include "utest.h"
+
+#define THREAD_STACKSIZE UTEST_THR_STACK_SIZE
 
 #define MSG_SIZE    4
 #define MAX_MSGS    5
@@ -201,6 +205,11 @@ static rt_err_t utest_tc_init(void)
     ret = rt_thread_init(&mq_recv_thread, "mq_recv", mq_recv_entry, RT_NULL, mq_recv_stack, sizeof(mq_recv_stack), 23, 20);
     if(ret != RT_EOK)
         return -RT_ERROR;
+
+#ifdef RT_USING_SMP
+    rt_thread_control(&mq_send_thread, RT_THREAD_CTRL_BIND_CPU, (void *)0);
+    rt_thread_control(&mq_recv_thread, RT_THREAD_CTRL_BIND_CPU, (void *)0);
+#endif
 
     ret = rt_event_init(&finish_e, "finish", RT_IPC_FLAG_FIFO);
     if(ret != RT_EOK)
