@@ -863,8 +863,7 @@ int rt_page_install(rt_region_t region)
 {
     int err = -RT_EINVAL;
     if (region.end != region.start && !(region.start & ARCH_PAGE_MASK) &&
-        !(region.end & ARCH_PAGE_MASK) &&
-        !((region.end - region.start) & shadow_mask))
+        !(region.end & ARCH_PAGE_MASK))
     {
         void *head = addr_to_page(page_start, (void *)region.start);
         void *tail = addr_to_page(page_start, (void *)region.end);
