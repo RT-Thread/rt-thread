@@ -32,6 +32,7 @@ on:
           - "sourcery-riscv-none-embed"
           - "sourcery-riscv64-unknown-elf"
           - "gcc"
+          - "sourcery-riscv32-esp32"
       bsp_config:
         description: 'Type a config you want mannual test in .config, like CONFIG_BSP_USING_I2C CONFIG_BSP_USING_WDT '
         required: false
