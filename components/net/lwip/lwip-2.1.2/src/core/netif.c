@@ -459,6 +459,35 @@ netif_do_ip_addr_changed(const ip_addr_t *old_addr, const ip_addr_t *new_addr)
 #endif /* LWIP_RAW */
 }
 
+#ifdef RT_USING_NETDEV
+/**
+ * @brief    This function will get network interface device
+ *           in network interface device list by network interface(netif).
+ * 
+ * @note     Do not use `netdev_get_by_name(netif->name)` to directly get a `netdev` object
+ *           by the name of network interface. Because `netif->name` is a 2-byte char array,
+ *           which may not end with '\0', causing the function `netdev_get_by_name()` to not
+ *           work correctly. Instead, use this function, which ensure the name passing to
+ *           `netdev_get_by_name()` is a string ended with '\0'.
+ * 
+ * @see      netdev_get_by_name()
+ *
+ * @param    netif the network interface used to find the network interface device 
+ *
+ * @return != NULL: network interface device object
+ *            NULL: get failed
+ */
+static struct netdev*
+netif_get_netdev(struct netif *netif)
+{
+  /* currently, sizeof(netif->name) should be 2 */
+  char temp[sizeof(netif->name) + 1] = {0}; /* one more byte to ensure the name is ended with '\0' */
+  rt_strncpy(temp, netif->name, sizeof(netif->name));
+
+  return netdev_get_by_name(temp);
+}
+#endif /* RT_USING_NETDEV */
+
 #if LWIP_IPV4
 static int
 netif_do_set_ipaddr(struct netif *netif, const ip4_addr_t *ipaddr, ip_addr_t *old_addr)
@@ -491,7 +520,7 @@ netif_do_set_ipaddr(struct netif *netif, const ip4_addr_t *ipaddr, ip_addr_t *ol
 
 #ifdef RT_USING_NETDEV
   /* rt-thread sal network interface device set IP address operations */
-  netdev_low_level_set_ipaddr(netdev_get_by_name(netif->name), &netif->ip_addr);
+  netdev_low_level_set_ipaddr(netif_get_netdev(netif), &netif->ip_addr);
 #endif /* RT_USING_NETDEV */
 
     return 1; /* address changed */
@@ -557,7 +586,7 @@ netif_do_set_netmask(struct netif *netif, const ip4_addr_t *netmask, ip_addr_t *
 
 #ifdef RT_USING_NETDEV
   /* rt-thread network interface device set netmask address */
-  netdev_low_level_set_netmask(netdev_get_by_name(netif->name), &netif->netmask);
+  netdev_low_level_set_netmask(netif_get_netdev(netif), &netif->netmask);
 #endif /* RT_USING_NETDEV */
 
     return 1; /* netmask changed */
@@ -625,7 +654,7 @@ netif_do_set_gw(struct netif *netif, const ip4_addr_t *gw, ip_addr_t *old_gw)
 
 #ifdef RT_USING_NETDEV
     /* rt_thread network interface device set gateway address */
-    netdev_low_level_set_gw(netdev_get_by_name(netif->name), &netif->gw);
+    netdev_low_level_set_gw(netif_get_netdev(netif), &netif->gw);
 #endif /* RT_USING_NETDEV */
 
     return 1; /* gateway changed */
@@ -894,7 +923,7 @@ netif_set_up(struct netif *netif)
 
 #ifdef RT_USING_NETDEV
     /* rt-thread network interface device set up status */
-    netdev_low_level_set_status(netdev_get_by_name(netif->name), RT_TRUE);
+    netdev_low_level_set_status(netif_get_netdev(netif), RT_TRUE);
 #endif /* RT_USING_NETDEV */
   }
 }
@@ -978,7 +1007,7 @@ netif_set_down(struct netif *netif)
 
 #ifdef RT_USING_NETDEV
     /* rt-thread network interface device set down status */
-    netdev_low_level_set_status(netdev_get_by_name(netif->name), RT_FALSE);
+    netdev_low_level_set_status(netif_get_netdev(netif), RT_FALSE);
 #endif /* RT_USING_NETDEV */
   }
 }
@@ -1053,7 +1082,7 @@ netif_set_link_up(struct netif *netif)
 
 #ifdef RT_USING_NETDEV
     /* rt-thread network interface device set link up status */
-    netdev_low_level_set_link_status(netdev_get_by_name(netif->name), RT_TRUE);
+    netdev_low_level_set_link_status(netif_get_netdev(netif), RT_TRUE);
 #endif /* RT_USING_NETDEV */
   }
 }
@@ -1082,7 +1111,7 @@ netif_set_link_down(struct netif *netif)
 
 #ifdef RT_USING_NETDEV
     /* rt-thread network interface device set link down status */
-    netdev_low_level_set_link_status(netdev_get_by_name(netif->name), RT_FALSE);
+    netdev_low_level_set_link_status(netif_get_netdev(netif), RT_FALSE);
 #endif /* RT_USING_NETDEV */
   }
 }
@@ -1588,7 +1617,7 @@ netif_create_ip6_linklocal_address(struct netif *netif, u8_t from_mac_48bit)
 
 #ifdef RT_USING_NETDEV
     /* rt-thread network interface device set ipv6 address */
-    ip_addr_copy(netdev_get_by_name(netif->name)->ip6_addr[0], netif->ip6_addr[0]);
+    ip_addr_copy(netif_get_netdev(netif)->ip6_addr[0], netif->ip6_addr[0]);
 #endif /* RT_USING_NETDEV */
 
   /* Set address state. */
@@ -1636,7 +1665,7 @@ netif_add_ip6_address(struct netif *netif, const ip6_addr_t *ip6addr, s8_t *chos
       ip_addr_copy_from_ip6(netif->ip6_addr[i], *ip6addr);
 #ifdef RT_USING_NETDEV
       /* rt-thread network interface device set ipv6 address */
-      ip_addr_copy(netdev_get_by_name(netif->name)->ip6_addr[i], netif->ip6_addr[i]);
+      ip_addr_copy(netif_get_netdev(netif)->ip6_addr[i], netif->ip6_addr[i]);
 #endif /* RT_USING_NETDEV */
       ip6_addr_assign_zone(ip_2_ip6(&netif->ip6_addr[i]), IP6_UNICAST, netif);
       netif_ip6_addr_set_state(netif, i, IP6_ADDR_TENTATIVE);

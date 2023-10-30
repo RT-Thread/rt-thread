@@ -9,6 +9,7 @@
 | :---- | :---- | :---- |
 | 2019-09-02 | MurphyZhao | 增加 lwip 2.1.2 移植说明 |
 | 2020-06-18 | xiangxistu | 增加部分 lwIP 2.1.2 移植说明 |
+| 2023-10-30 | windsgo | 增加src/core/netif.c的修复说明 |
 
 ## 修改内容
 
@@ -54,6 +55,7 @@
 
 - 在 `src/core/dns.c` 的 `dns_setserver` 函数中增加 RT-Thread netdev 相关的移植
 - 在 `src/core/netif.c` 中增加 RT-Thread netdev 相关的移植
+  - 增加`netif_get_netdev`函数，修复使用`netif->name`查询`netdev`可能产生的错误
 
 ### src/include
 

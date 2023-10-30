@@ -62,6 +62,7 @@ Change Log Since v5.0.1 Release
 * **net**
   * **sal/socket:** Fixed a BUG where calling closesocket interface triggered assertions when RT_DEBUG is enabled; Fixed duplicate free on allocated buffer.
   * **sal:** Fixed the IPv4 & v6 compiling issue.
+  * **lwip/core:** Fixed a BUG when getting an RT-Thread netdev by the lwip netif's name.
 * **ktime**
   * Added RT_USING_KTIME to Kconfig build.
   * Fixed some bugs with ktime.

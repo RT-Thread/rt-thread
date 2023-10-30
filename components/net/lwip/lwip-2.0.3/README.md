@@ -1,5 +1,10 @@
 Porting network interface device for RT-Thread in lwIP.
 
+Fix a bug in src/core/netif.c. The netif->name variable is a 2-byte char array, which may not end with '\0' and may cause a bug when it's directly passed to the function `netdev_get_by_name`. Use the newly added function `netif_get_netdev` to get a netdev object by netif's name.
+
+by windsgo 2023/10/30 11:03 AM
+18221102427@163.com
+
 The major jobs following RT-Thread Team. Only update the origin code of lwip 2.0.2 to lwip 2.0.3.
 And keep the difference between on the change of RT-Thread Team.
 
