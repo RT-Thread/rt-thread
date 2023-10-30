@@ -14,31 +14,56 @@
 #include <stdlib.h>
 
 /**
- * @brief erases the data in the n bytes of the memory starting at the
+ * @brief Erases the data in the n bytes of the memory starting at the
  *        location pointed to by s, by writing zeros (bytes containing '\0') to that area.
  *
  * @note  The bzero() function is deprecated (marked as LEGACY in POSIX. 1-2001).
+ *
+ * @param    s is a pointer to the memory area to be cleared.
+ * @param    n is the number of bytes to clear.
  */
 #ifndef RT_USING_PICOLIBC
-void bzero(void* s, size_t n)
+void bzero(void *s, size_t n)
 {
     rt_memset(s, 0, n);
 }
 #endif
 
-void bcopy(const void* src, void* dest, size_t n)
+/**
+ * @brief Copies data from a source memory area to a destination memory area.
+ *
+ * @param    src is a pointer to the source memory area.
+ * @param    dest is a pointer to the destination memory area.
+ * @param    n is the number of bytes to copy.
+ */
+void bcopy(const void *src, void *dest, size_t n)
 {
     rt_memcpy(dest, src, n);
 }
 
-int bcmp(const void* s1, const void* s2, size_t n)
+/**
+ * @brief Compares two memory areas.
+ *
+ * @param    s1 is a pointer to the first memory area.
+ * @param    s2 is a pointer to the second memory area.
+ * @param    n is the number of bytes to compare.
+ *
+ * @return   0 if both memory areas are equal, non-zero otherwise.
+ */
+int bcmp(const void *s1, const void *s2, size_t n)
 {
     return rt_memcmp(s1, s2, n);
 }
 
-void explicit_bzero(void* s, size_t n)
+/**
+ * @brief Clears the data in the memory area by overwriting it with zeros.
+ *
+ * @param    s is a pointer to the memory area to be cleared.
+ * @param    n is the number of bytes to clear.
+ */
+void explicit_bzero(void *s, size_t n)
 {
-    volatile char* vs = (volatile char*)s;
+    volatile char *vs = (volatile char *)s;
     while (n)
     {
         *vs++ = 0;
@@ -46,16 +71,39 @@ void explicit_bzero(void* s, size_t n)
     }
 }
 
-char* index(const char* s, int c)
+/**
+ * @brief Locates the first occurrence of a character in a string.
+ *
+ * @param    s is a pointer to the string.
+ * @param    c is the character to be found.
+ *
+ * @return   A pointer to the first occurrence of the character in the string, or NULL if not found.
+ */
+char *index(const char *s, int c)
 {
     return strchr(s, c);
 }
 
-char* rindex(const char* s, int c)
+/**
+ * @brief Locates the last occurrence of a character in a string.
+ *
+ * @param    s is a pointer to the string.
+ * @param    c is the character to be found.
+ *
+ * @return   A pointer to the last occurrence of the character in the string, or NULL if not found.
+ */
+char *rindex(const char *s, int c)
 {
     return strrchr(s, c);
 }
 
+/**
+ * @brief Finds the position of the first set bit in an integer.
+ *
+ * @param    i is the integer to search for the first set bit.
+ *
+ * @return   The position (1-based) of the first set bit, or 0 if no bits are set.
+ */
 int ffs(int i)
 {
     int bit;
@@ -68,6 +116,13 @@ int ffs(int i)
     return bit;
 }
 
+/**
+ * @brief Finds the position of the first set bit in a long integer.
+ *
+ * @param    i is the long integer to search for the first set bit.
+ *
+ * @return   The position (1-based) of the first set bit, or 0 if no bits are set.
+ */
 int ffsl(long i)
 {
     int bit;
@@ -80,6 +135,13 @@ int ffsl(long i)
     return bit;
 }
 
+/**
+ * @brief Finds the position of the first set bit in a long long integer.
+ *
+ * @param    i is the long long integer to search for the first set bit.
+ *
+ * @return   The position (1-based) of the first set bit, or 0 if no bits are set.
+ */
 int ffsll(long long i)
 {
     int bit;
@@ -93,15 +155,17 @@ int ffsll(long long i)
 }
 
 /**
- * @brief The memchr() function scans the initial n bytes of the memory area pointed to
- *        by s for the first instance of c. Both c and the bytes of the memory area
- *        pointed to by s are interpreted as unsigned char.
+ * @brief Searches for the last occurrence of a character in a memory area.
  *
- * @note  This function is GNU extension, available since glibc 2.1.91.
+ * @param    ptr is a pointer to the memory area.
+ * @param    ch is the character to search for.
+ * @param    pos is the maximum position to search within the memory area.
+ *
+ * @return   A pointer to the last occurrence of the character in the memory area, or NULL if not found.
  */
-void* memrchr(const void* ptr, int ch, size_t pos)
+void *memrchr(const void *ptr, int ch, size_t pos)
 {
-    char* end = (char*)ptr + pos - 1;
+    char *end = (char *)ptr + pos - 1;
     while (end != ptr)
     {
         if (*end == ch)
@@ -111,24 +175,52 @@ void* memrchr(const void* ptr, int ch, size_t pos)
     return (*end == ch) ? (end) : (NULL);
 }
 
+/**
+ * @brief Calculates the length of a string up to a maximum length.
+ *
+ * @param    s is a pointer to the string.
+ * @param    maxlen is the maximum number of characters to consider.
+ *
+ * @return   The length of the string, up to a maximum of maxlen.
+ */
 size_t strnlen(const char *s, size_t maxlen)
 {
     const char *sc;
-    for (sc = s; maxlen != 0 && *sc != '\0'; maxlen--, ++sc);
+    for (sc = s; maxlen != 0 && *sc != '\0'; maxlen--, ++sc)
+        ;
     return sc - s;
 }
 
-char* strchrnul(const char* s, int c)
+/**
+ * @brief Locates the first occurrence of a character in a string, or returns a pointer
+ *        to the null-terminating character if the character is not found.
+ *
+ * @param    s is a pointer to the string.
+ * @param    c is the character to be found.
+ *
+ * @return   A pointer to the first occurrence of the character in the string, or a pointer
+ *           to the null-terminating character if the character is not found.
+ */
+char *strchrnul(const char *s, int c)
 {
     while (*s != '\0' && *s != c)
         s++;
-    return (char*)s;
+    return (char *)s;
 }
 
-int strcasecmp(const char* s1, const char* s2)
+/**
+ * @brief Compares two strings, ignoring case.
+ *
+ * @param    s1 is a pointer to the first string.
+ * @param    s2 is a pointer to the second string.
+ *
+ * @return   An integer less than, equal to, or greater than 0 if s1 is found to be less than,
+ *           equal to, or greater than s2, respectively, ignoring case.
+ */
+int strcasecmp(const char *s1, const char *s2)
 {
-    const unsigned char* u1 = (const unsigned char*)s1;
-    const unsigned char* u2 = (const unsigned char*)s2;
+    const unsigned char *u1 = (const unsigned char *)s1;
+    const unsigned char *u2 = (const unsigned char *)s2;
     int result;
 
     while ((result = tolower(*u1) - tolower(*u2)) == 0 && *u1 != 0)
@@ -140,10 +232,21 @@ int strcasecmp(const char* s1, const char* s2)
     return result;
 }
 
-int strncasecmp(const char* s1, const char* s2, size_t n)
+/**
+ * @brief Compares two strings, ignoring case, up to a specified maximum number of characters.
+ *
+ * @param    s1 is a pointer to the first string.
+ * @param    s2 is a pointer to the second string.
+ * @param    n is the maximum number of characters to compare.
+ *
+ * @return   An integer less than, equal to, or greater than 0 if the first n characters of s1
+ *           is found to be less than, equal to, or greater than the first n characters of s2,
+ *           respectively, ignoring case.
+ */
+int strncasecmp(const char *s1, const char *s2, size_t n)
 {
-    const unsigned char* u1 = (const unsigned char*)s1;
-    const unsigned char* u2 = (const unsigned char*)s2;
+    const unsigned char *u1 = (const unsigned char *)s1;
+    const unsigned char *u2 = (const unsigned char *)s2;
     int result;
 
     for (; n != 0; n--)
@@ -159,6 +262,13 @@ int strncasecmp(const char* s1, const char* s2, size_t n)
     return 0;
 }
 
+/**
+ * @brief Duplicates a string in a new memory area.
+ *
+ * @param    s is a pointer to the string to be duplicated.
+ *
+ * @return   A pointer to the duplicated string in a new memory area.
+ */
 char *strdup(const char *s)
 {
     char *news = (char *)malloc(strlen(s) + 1);
@@ -171,6 +281,14 @@ char *strdup(const char *s)
     return news;
 }
 
+/**
+ * @brief Duplicates a string up to a specified maximum length in a new memory area.
+ *
+ * @param    s is a pointer to the string to be duplicated.
+ * @param    size is the maximum number of characters to duplicate.
+ *
+ * @return   A pointer to the duplicated string in a new memory area.
+ */
 char *strndup(const char *s, size_t size)
 {
     size_t nsize = strnlen(s, size);
@@ -184,6 +302,15 @@ char *strndup(const char *s, size_t size)
     return news;
 }
 
+/**
+ * @brief A reentrant version of the strtok function for splitting strings.
+ *
+ * @param    str is a pointer to the string to be split.
+ * @param    delim is a pointer to the delimiters to use for splitting.
+ * @param    saveptr is a pointer to the save position for reentrancy.
+ *
+ * @return   A pointer to the next token in the string, or NULL if no more tokens are found.
+ */
 rt_weak char *strtok_r(char *str, const char *delim, char **saveptr)
 {
     char *pbegin;
@@ -202,14 +329,16 @@ rt_weak char *strtok_r(char *str, const char *delim, char **saveptr)
         return NULL;
     }
 
-    for (;*pbegin && strchr(delim, *pbegin) != NULL; pbegin++);
+    for (; *pbegin && strchr(delim, *pbegin) != NULL; pbegin++)
+        ;
 
     if (!*pbegin)
     {
         return NULL;
     }
 
-    for (pend = pbegin + 1; *pend && strchr(delim, *pend) == NULL; pend++);
+    for (pend = pbegin + 1; *pend && strchr(delim, *pend) == NULL; pend++)
+        ;
 
     if (*pend)
     {

@@ -43,28 +43,28 @@
 #include <ktime.h>
 #endif
 
-#define DBG_TAG    "time"
-#define DBG_LVL    DBG_INFO
+#define DBG_TAG "time"
+#define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
 #define _WARNING_NO_RTC "Cannot find a RTC device!"
 
 /* days per month -- nonleap! */
 static const short __spm[13] =
-{
-    0,
-    (31),
-    (31 + 28),
-    (31 + 28 + 31),
-    (31 + 28 + 31 + 30),
-    (31 + 28 + 31 + 30 + 31),
-    (31 + 28 + 31 + 30 + 31 + 30),
-    (31 + 28 + 31 + 30 + 31 + 30 + 31),
-    (31 + 28 + 31 + 30 + 31 + 30 + 31 + 31),
-    (31 + 28 + 31 + 30 + 31 + 30 + 31 + 31 + 30),
-    (31 + 28 + 31 + 30 + 31 + 30 + 31 + 31 + 30 + 31),
-    (31 + 28 + 31 + 30 + 31 + 30 + 31 + 31 + 30 + 31 + 30),
-    (31 + 28 + 31 + 30 + 31 + 30 + 31 + 31 + 30 + 31 + 30 + 31),
+    {
+        0,
+        (31),
+        (31 + 28),
+        (31 + 28 + 31),
+        (31 + 28 + 31 + 30),
+        (31 + 28 + 31 + 30 + 31),
+        (31 + 28 + 31 + 30 + 31 + 30),
+        (31 + 28 + 31 + 30 + 31 + 30 + 31),
+        (31 + 28 + 31 + 30 + 31 + 30 + 31 + 31),
+        (31 + 28 + 31 + 30 + 31 + 30 + 31 + 31 + 30),
+        (31 + 28 + 31 + 30 + 31 + 30 + 31 + 31 + 30 + 31),
+        (31 + 28 + 31 + 30 + 31 + 30 + 31 + 31 + 30 + 31 + 30),
+        (31 + 28 + 31 + 30 + 31 + 30 + 31 + 31 + 30 + 31 + 30 + 31),
 };
 
 rt_align(RT_ALIGN_SIZE) static const char *days = "Sun Mon Tue Wed Thu Fri Sat ";
@@ -121,18 +121,18 @@ static rt_err_t _control_rtc(int cmd, void *arg)
 /* lightweight timezone and daylight saving time */
 #ifdef RT_LIBC_USING_LIGHT_TZ_DST
 #ifndef RT_LIBC_TZ_DEFAULT_HOUR
-#define RT_LIBC_TZ_DEFAULT_HOUR   (8U)
+#define RT_LIBC_TZ_DEFAULT_HOUR (8U)
 #endif /* RT_LIBC_TZ_DEFAULT_HOUR */
 
 #ifndef RT_LIBC_TZ_DEFAULT_MIN
-#define RT_LIBC_TZ_DEFAULT_MIN    (0U)
+#define RT_LIBC_TZ_DEFAULT_MIN (0U)
 #endif /* RT_LIBC_TZ_DEFAULT_MIN */
 
 #ifndef RT_LIBC_TZ_DEFAULT_SEC
-#define RT_LIBC_TZ_DEFAULT_SEC    (0U)
+#define RT_LIBC_TZ_DEFAULT_SEC (0U)
 #endif /* RT_LIBC_TZ_DEFAULT_SEC */
 
-static volatile int32_t _current_tz_offset_sec = \
+static volatile int32_t _current_tz_offset_sec =
     RT_LIBC_TZ_DEFAULT_HOUR * 3600U + RT_LIBC_TZ_DEFAULT_MIN * 60U + RT_LIBC_TZ_DEFAULT_SEC;
 
 /* return current timezone offset in seconds */
@@ -157,7 +157,7 @@ struct tm *gmtime_r(const time_t *timep, struct tm *r)
     int i;
     int work;
 
-    if(timep == RT_NULL || r == RT_NULL)
+    if (timep == RT_NULL || r == RT_NULL)
     {
         rt_set_errno(EFAULT);
         return RT_NULL;
@@ -165,12 +165,12 @@ struct tm *gmtime_r(const time_t *timep, struct tm *r)
 
     rt_memset(r, RT_NULL, sizeof(struct tm));
 
-    work = *timep % (24*60*60);
+    work = *timep % (24 * 60 * 60);
     r->tm_sec = work % 60;
     work /= 60;
     r->tm_min = work % 60;
     r->tm_hour = work / 60;
-    work = (int)(*timep / (24*60*60));
+    work = (int)(*timep / (24 * 60 * 60));
     r->tm_wday = (4 + work) % 7;
     for (i = 1970;; ++i)
     {
@@ -191,7 +191,8 @@ struct tm *gmtime_r(const time_t *timep, struct tm *r)
         work -= 1;
     }
 
-    for (i = 11; i && (__spm[i] > work); --i);
+    for (i = 11; i && (__spm[i] > work); --i)
+        ;
 
     r->tm_mon = i;
     r->tm_mday += work - __spm[i];
@@ -204,14 +205,14 @@ struct tm *gmtime_r(const time_t *timep, struct tm *r)
 }
 RTM_EXPORT(gmtime_r);
 
-struct tm* gmtime(const time_t* t)
+struct tm *gmtime(const time_t *t)
 {
     static struct tm tmp;
     return gmtime_r(t, &tmp);
 }
 RTM_EXPORT(gmtime);
 
-struct tm* localtime_r(const time_t* t, struct tm* r)
+struct tm *localtime_r(const time_t *t, struct tm *r)
 {
     time_t local_tz;
 #if defined(RT_LIBC_USING_LIGHT_TZ_DST)
@@ -223,14 +224,14 @@ struct tm* localtime_r(const time_t* t, struct tm* r)
 }
 RTM_EXPORT(localtime_r);
 
-struct tm* localtime(const time_t* t)
+struct tm *localtime(const time_t *t)
 {
     static struct tm tmp;
     return localtime_r(t, &tmp);
 }
 RTM_EXPORT(localtime);
 
-time_t mktime(struct tm * const t)
+time_t mktime(struct tm *const t)
 {
     time_t timestamp;
 
@@ -244,9 +245,9 @@ time_t mktime(struct tm * const t)
 }
 RTM_EXPORT(mktime);
 
-char* asctime_r(const struct tm *t, char *buf)
+char *asctime_r(const struct tm *t, char *buf)
 {
-    if(t == RT_NULL || buf == RT_NULL)
+    if (t == RT_NULL || buf == RT_NULL)
     {
         rt_set_errno(EFAULT);
         return RT_NULL;
@@ -258,8 +259,8 @@ char* asctime_r(const struct tm *t, char *buf)
     if ((int)rt_strlen(days) <= (t->tm_wday << 2) || (int)rt_strlen(months) <= (t->tm_mon << 2))
     {
         LOG_W("asctime_r: the input parameters exceeded the limit, please check it.");
-        *(int*) buf = *(int*) days;
-        *(int*) (buf + 4) = *(int*) months;
+        *(int *)buf = *(int *)days;
+        *(int *)(buf + 4) = *(int *)months;
         num2str(buf + 8, t->tm_mday);
         if (buf[8] == '0')
             buf[8] = ' ';
@@ -278,8 +279,8 @@ char* asctime_r(const struct tm *t, char *buf)
     }
 
     /* "Wed Jun 30 21:49:08 1993\n" */
-    *(int*) buf = *(int*) (days + (t->tm_wday << 2));
-    *(int*) (buf + 4) = *(int*) (months + (t->tm_mon << 2));
+    *(int *)buf = *(int *)(days + (t->tm_wday << 2));
+    *(int *)(buf + 4) = *(int *)(months + (t->tm_mon << 2));
     num2str(buf + 8, t->tm_mday);
     if (buf[8] == '0')
         buf[8] = ' ';
@@ -305,7 +306,7 @@ char *asctime(const struct tm *timeptr)
 }
 RTM_EXPORT(asctime);
 
-char *ctime_r(const time_t * tim_p, char * result)
+char *ctime_r(const time_t *tim_p, char *result)
 {
     struct tm tm;
     return asctime_r(localtime_r(tim_p, &tm), result);
@@ -356,7 +357,7 @@ RTM_EXPORT(time);
 
 rt_weak clock_t clock(void)
 {
-    return rt_tick_get();  // TODO should return cpu usage time
+    return rt_tick_get(); // TODO should return cpu usage time
 }
 RTM_EXPORT(clock);
 
@@ -372,35 +373,35 @@ int stime(const time_t *t)
 }
 RTM_EXPORT(stime);
 
-time_t timegm(struct tm * const t)
+time_t timegm(struct tm *const t)
 {
     time_t day;
     time_t i;
     time_t years;
 
-    if(t == RT_NULL)
+    if (t == RT_NULL)
     {
         rt_set_errno(EFAULT);
         return (time_t)-1;
     }
 
     years = (time_t)t->tm_year - 70;
-    if (t->tm_sec > 60)         /* seconds after the minute - [0, 60] including leap second */
+    if (t->tm_sec > 60) /* seconds after the minute - [0, 60] including leap second */
     {
         t->tm_min += t->tm_sec / 60;
         t->tm_sec %= 60;
     }
-    if (t->tm_min >= 60)        /* minutes after the hour - [0, 59] */
+    if (t->tm_min >= 60) /* minutes after the hour - [0, 59] */
     {
         t->tm_hour += t->tm_min / 60;
         t->tm_min %= 60;
     }
-    if (t->tm_hour >= 24)       /* hours since midnight - [0, 23] */
+    if (t->tm_hour >= 24) /* hours since midnight - [0, 23] */
     {
         t->tm_mday += t->tm_hour / 24;
         t->tm_hour %= 24;
     }
-    if (t->tm_mon >= 12)        /* months since January - [0, 11] */
+    if (t->tm_mon >= 12) /* months since January - [0, 11] */
     {
         t->tm_year += t->tm_mon / 12;
         t->tm_mon %= 12;
@@ -423,7 +424,7 @@ time_t timegm(struct tm * const t)
     if (t->tm_year < 70)
     {
         rt_set_errno(EINVAL);
-        return (time_t) -1;
+        return (time_t)-1;
     }
 
     /* Days since 1970 is 365 * number of years + number of leap years since 1970 */
@@ -464,7 +465,7 @@ int gettimeofday(struct timeval *tv, struct timezone *tz)
      * The tz_dsttime field has never been used under Linux.
      * Thus, the following is purely of historic interest.
      */
-    if(tz != RT_NULL)
+    if (tz != RT_NULL)
     {
         tz->tz_dsttime = DST_NONE;
 #if defined(RT_LIBC_USING_LIGHT_TZ_DST)
@@ -476,7 +477,7 @@ int gettimeofday(struct timeval *tv, struct timezone *tz)
 
     if (tv != RT_NULL)
     {
-        tv->tv_sec  = 0;
+        tv->tv_sec = 0;
         tv->tv_usec = 0;
 
         if (_control_rtc(RT_DEVICE_CTRL_RTC_GET_TIMEVAL, tv) == RT_EOK)
@@ -507,6 +508,18 @@ int settimeofday(const struct timeval *tv, const struct timezone *tz)
 RTM_EXPORT(settimeofday);
 
 #if defined(RT_USING_POSIX_DELAY) && defined(RT_USING_KTIME)
+/**
+ * @brief   Suspend the calling thread for a specified time interval.
+ *
+ * @param   rqtp  Pointer to the structure specifying the desired time interval.
+ * @param   rmtp  Pointer to the structure to store the remaining time if interrupted.
+ *
+ * @return  0 if the requested time interval has elapsed, or -1 on error with errno set.
+ *
+ * @note    This function is similar to the standard POSIX 'nanosleep' function.
+ *          It suspends the calling thread for the specified time interval, and if interrupted, it can store the
+ *          remaining time in 'rmtp'. The clock used for the suspension depends on 'clockid'.
+ */
 int nanosleep(const struct timespec *rqtp, struct timespec *rmtp)
 {
     struct timespec old_ts = {0};
@@ -551,7 +564,18 @@ RTM_EXPORT(nanosleep);
 #endif /* RT_USING_POSIX_DELAY && RT_USING_KTIME */
 
 #if defined(RT_USING_POSIX_CLOCK) && defined(RT_USING_KTIME)
-
+/**
+ * @brief   Get the clock resolution for a specific clock ID.
+ *
+ * @param   clockid  The ID of the clock to inquire about.
+ * @param   res      Pointer to the structure to store the clock resolution.
+ *
+ * @return  0 on success, or -1 on error with errno set.
+ *
+ * @note    This function retrieves the resolution of the specified clock, which may be one of CLOCK_REALTIME,
+ *          CLOCK_REALTIME_COARSE, CLOCK_MONOTONIC, CLOCK_MONOTONIC_COARSE, CLOCK_MONOTONIC_RAW, CLOCK_BOOTTIME,
+ *          CLOCK_PROCESS_CPUTIME_ID, or CLOCK_THREAD_CPUTIME_ID.
+ */
 int clock_getres(clockid_t clockid, struct timespec *res)
 {
     if (res == RT_NULL)
@@ -562,27 +586,38 @@ int clock_getres(clockid_t clockid, struct timespec *res)
 
     switch (clockid)
     {
-        case CLOCK_REALTIME:  // use RTC
-        case CLOCK_REALTIME_COARSE:
-            return _control_rtc(RT_DEVICE_CTRL_RTC_GET_TIMERES, res);
+    case CLOCK_REALTIME: // use RTC
+    case CLOCK_REALTIME_COARSE:
+        return _control_rtc(RT_DEVICE_CTRL_RTC_GET_TIMERES, res);
 
-        case CLOCK_MONOTONIC:  // use cputimer
-        case CLOCK_MONOTONIC_COARSE:
-        case CLOCK_MONOTONIC_RAW:
-        case CLOCK_BOOTTIME:
-        case CLOCK_PROCESS_CPUTIME_ID:
-        case CLOCK_THREAD_CPUTIME_ID:
-            res->tv_sec  = 0;
-            res->tv_nsec = (rt_ktime_cputimer_getres() / RT_KTIME_RESMUL);
-            return 0;
+    case CLOCK_MONOTONIC: // use cputimer
+    case CLOCK_MONOTONIC_COARSE:
+    case CLOCK_MONOTONIC_RAW:
+    case CLOCK_BOOTTIME:
+    case CLOCK_PROCESS_CPUTIME_ID:
+    case CLOCK_THREAD_CPUTIME_ID:
+        res->tv_sec = 0;
+        res->tv_nsec = (rt_ktime_cputimer_getres() / RT_KTIME_RESMUL);
+        return 0;
 
-        default:
-            rt_set_errno(EINVAL);
-            return -1;
+    default:
+        rt_set_errno(EINVAL);
+        return -1;
     }
 }
 RTM_EXPORT(clock_getres);
-
+/**
+ * @brief   Get the current time of the specified clock.
+ *
+ * @param   clockid  The ID of the clock to inquire about.
+ * @param   tp      Pointer to the structure to store the current time.
+ *
+ * @return  0 on success, or -1 on error with errno set.
+ *
+ * @note    This function retrieves the current time of the specified clock, which may be one of CLOCK_REALTIME,
+ *          CLOCK_REALTIME_COARSE, CLOCK_MONOTONIC, CLOCK_MONOTONIC_COARSE, CLOCK_MONOTONIC_RAW, CLOCK_BOOTTIME,
+ *          CLOCK_PROCESS_CPUTIME_ID, or CLOCK_THREAD_CPUTIME_ID.
+ */
 int clock_gettime(clockid_t clockid, struct timespec *tp)
 {
     if (tp == RT_NULL)
@@ -593,29 +628,41 @@ int clock_gettime(clockid_t clockid, struct timespec *tp)
 
     switch (clockid)
     {
-        case CLOCK_REALTIME:  // use RTC
-        case CLOCK_REALTIME_COARSE:
-            return _control_rtc(RT_DEVICE_CTRL_RTC_GET_TIMESPEC, tp);
+    case CLOCK_REALTIME: // use RTC
+    case CLOCK_REALTIME_COARSE:
+        return _control_rtc(RT_DEVICE_CTRL_RTC_GET_TIMESPEC, tp);
 
-        case CLOCK_MONOTONIC:  // use boottime
-        case CLOCK_MONOTONIC_COARSE:
-        case CLOCK_MONOTONIC_RAW:
-        case CLOCK_BOOTTIME:
-            return rt_ktime_boottime_get_ns(tp);
+    case CLOCK_MONOTONIC: // use boottime
+    case CLOCK_MONOTONIC_COARSE:
+    case CLOCK_MONOTONIC_RAW:
+    case CLOCK_BOOTTIME:
+        return rt_ktime_boottime_get_ns(tp);
 
-        case CLOCK_PROCESS_CPUTIME_ID:
-        case CLOCK_THREAD_CPUTIME_ID:
-            return rt_ktime_boottime_get_ns(tp);  // TODO not yet implemented
+    case CLOCK_PROCESS_CPUTIME_ID:
+    case CLOCK_THREAD_CPUTIME_ID:
+        return rt_ktime_boottime_get_ns(tp); // TODO not yet implemented
 
-        default:
-            tp->tv_sec  = 0;
-            tp->tv_nsec = 0;
-            rt_set_errno(EINVAL);
-            return -1;
+    default:
+        tp->tv_sec = 0;
+        tp->tv_nsec = 0;
+        rt_set_errno(EINVAL);
+        return -1;
     }
 }
 RTM_EXPORT(clock_gettime);
-
+/**
+ * @brief   Sleep for a specified time interval with a specific clock ID.
+ *
+ * @param   clockid  The ID of the clock to use for timing.
+ * @param   flags    Flags to control the sleep behavior.
+ * @param   rqtp     Pointer to the structure specifying the desired time interval.
+ * @param   rmtp     Pointer to the structure to store the remaining time if interrupted.
+ *
+ * @return  0 if the requested time interval has elapsed, or -1 on error with errno set.
+ *
+ * @note    This function allows sleeping for a specific time interval with a chosen clock ID and additional flags.
+ *          It is similar to 'nanosleep' but allows specifying the clock used for timing.
+ */
 int clock_nanosleep(clockid_t clockid, int flags, const struct timespec *rqtp, struct timespec *rmtp)
 {
     struct timespec ts = {0};
@@ -635,20 +682,20 @@ int clock_nanosleep(clockid_t clockid, int flags, const struct timespec *rqtp, s
 
     switch (clockid)
     {
-        case CLOCK_REALTIME:  // use RTC
-            if (flags & TIMER_ABSTIME)
-                err = _control_rtc(RT_DEVICE_CTRL_RTC_GET_TIMESPEC, &ts);
-            break;
+    case CLOCK_REALTIME: // use RTC
+        if (flags & TIMER_ABSTIME)
+            err = _control_rtc(RT_DEVICE_CTRL_RTC_GET_TIMESPEC, &ts);
+        break;
 
-        case CLOCK_MONOTONIC:  // use boottime
-        case CLOCK_PROCESS_CPUTIME_ID:
-            if (flags & TIMER_ABSTIME)
-                err = rt_ktime_boottime_get_ns(&ts);
-            break;
+    case CLOCK_MONOTONIC: // use boottime
+    case CLOCK_PROCESS_CPUTIME_ID:
+        if (flags & TIMER_ABSTIME)
+            err = rt_ktime_boottime_get_ns(&ts);
+        break;
 
-        default:
-            rt_set_errno(EINVAL);
-            return -1;
+    default:
+        rt_set_errno(EINVAL);
+        return -1;
     }
 
     if (err != RT_EOK)
@@ -661,7 +708,7 @@ int clock_nanosleep(clockid_t clockid, int flags, const struct timespec *rqtp, s
     if (flags & TIMER_ABSTIME)
     {
         ts.tv_nsec = ns % NANOSECOND_PER_SECOND;
-        ts.tv_sec  = ns / NANOSECOND_PER_SECOND;
+        ts.tv_sec = ns / NANOSECOND_PER_SECOND;
         return nanosleep(&ts, rmtp);
     }
     else
@@ -671,6 +718,17 @@ int clock_nanosleep(clockid_t clockid, int flags, const struct timespec *rqtp, s
 }
 RTM_EXPORT(clock_nanosleep);
 
+/**
+ * @brief   Set the time of the specified clock.
+ *
+ * @param   clockid  The ID of the clock to set.
+ * @param   tp      Pointer to the structure specifying the new time.
+ *
+ * @return  0 on success, or -1 on error with errno set.
+ *
+ * @note    This function is used to set the time of a specific clock, such as CLOCK_REALTIME. Setting some clocks
+ *          may require special permissions.
+ */
 int clock_settime(clockid_t clockid, const struct timespec *tp)
 {
     if (tp == RT_NULL)
@@ -687,26 +745,35 @@ int clock_settime(clockid_t clockid, const struct timespec *tp)
 
     switch (clockid)
     {
-        case CLOCK_REALTIME:
-            return _control_rtc(RT_DEVICE_CTRL_RTC_SET_TIMESPEC, (void *)tp);
+    case CLOCK_REALTIME:
+        return _control_rtc(RT_DEVICE_CTRL_RTC_SET_TIMESPEC, (void *)tp);
 
-        case CLOCK_REALTIME_COARSE:
-        case CLOCK_MONOTONIC:
-        case CLOCK_MONOTONIC_COARSE:
-        case CLOCK_MONOTONIC_RAW:
-        case CLOCK_BOOTTIME:
-        case CLOCK_PROCESS_CPUTIME_ID:
-        case CLOCK_THREAD_CPUTIME_ID:
-            rt_set_errno(EPERM);
-            return -1;
+    case CLOCK_REALTIME_COARSE:
+    case CLOCK_MONOTONIC:
+    case CLOCK_MONOTONIC_COARSE:
+    case CLOCK_MONOTONIC_RAW:
+    case CLOCK_BOOTTIME:
+    case CLOCK_PROCESS_CPUTIME_ID:
+    case CLOCK_THREAD_CPUTIME_ID:
+        rt_set_errno(EPERM);
+        return -1;
 
-        default:
-            rt_set_errno(EINVAL);
-            return -1;
+    default:
+        rt_set_errno(EINVAL);
+        return -1;
     }
 }
 RTM_EXPORT(clock_settime);
-
+/**
+ * @brief   Convert a timespec structure to ticks.
+ *
+ * @param   time  Pointer to the timespec structure to convert.
+ *
+ * @return  The time in ticks, or RT_WAITING_FOREVER if 'time' is NULL or the conversion fails.
+ *
+ * @note    This function is used to convert a timespec structure to ticks based on the system time.
+ *          It calculates the time difference and returns the corresponding ticks value.
+ */
 int rt_timespec_to_tick(const struct timespec *time)
 {
     int tick;
@@ -724,16 +791,17 @@ int rt_timespec_to_tick(const struct timespec *time)
         if ((time->tv_nsec - tp.tv_nsec) < 0)
         {
             nsecond = NANOSECOND_PER_SECOND - (tp.tv_nsec - time->tv_nsec);
-            second  = time->tv_sec - tp.tv_sec - 1;
+            second = time->tv_sec - tp.tv_sec - 1;
         }
         else
         {
             nsecond = time->tv_nsec - tp.tv_nsec;
-            second  = time->tv_sec - tp.tv_sec;
+            second = time->tv_sec - tp.tv_sec;
         }
 
         tick = second * RT_TICK_PER_SECOND + nsecond * RT_TICK_PER_SECOND / NANOSECOND_PER_SECOND;
-        if (tick < 0) tick = 0;
+        if (tick < 0)
+            tick = 0;
     }
 
     return tick;
@@ -754,9 +822,9 @@ struct timer_obj
     struct rt_ktime_hrtimer hrtimer;
     void (*sigev_notify_function)(union sigval val);
     union sigval val;
-    struct timespec interval;              /* Reload value */
-    struct timespec value;                 /* Reload value */
-    unsigned long reload;                    /* Reload value in ms */
+    struct timespec interval; /* Reload value */
+    struct timespec value;    /* Reload value */
+    unsigned long reload;     /* Reload value in ms */
     rt_uint32_t status;
     int sigev_signo;
     clockid_t clockid;
@@ -873,7 +941,7 @@ static void rtthread_timer_wrapper(void *timerobj)
     if (rt_work_submit(timer->work, 0))
         RT_ASSERT(0);
 #else
-    if(timer->sigev_notify_function != RT_NULL)
+    if (timer->sigev_notify_function != RT_NULL)
     {
         (timer->sigev_notify_function)(timer->val);
     }
@@ -907,7 +975,7 @@ int timer_create(clockid_t clockid, struct sigevent *evp, timer_t *timerid)
         return -1;
     }
 
-    if (evp->sigev_notify == SIGEV_THREAD)  // TODO need to implement
+    if (evp->sigev_notify == SIGEV_THREAD) // TODO need to implement
     {
         rt_set_errno(EINVAL);
         return -1;
@@ -915,21 +983,21 @@ int timer_create(clockid_t clockid, struct sigevent *evp, timer_t *timerid)
 
     switch (clockid)
     {
-        case CLOCK_REALTIME:
-        case CLOCK_REALTIME_ALARM:
-        case CLOCK_MONOTONIC:
-        case CLOCK_BOOTTIME:
-        case CLOCK_BOOTTIME_ALARM:
-        case CLOCK_PROCESS_CPUTIME_ID:
-        case CLOCK_THREAD_CPUTIME_ID:
-            break;  // Only these ids are supported
-        default:
-            rt_set_errno(EINVAL);
-            return -1;
+    case CLOCK_REALTIME:
+    case CLOCK_REALTIME_ALARM:
+    case CLOCK_MONOTONIC:
+    case CLOCK_BOOTTIME:
+    case CLOCK_BOOTTIME_ALARM:
+    case CLOCK_PROCESS_CPUTIME_ID:
+    case CLOCK_THREAD_CPUTIME_ID:
+        break; // Only these ids are supported
+    default:
+        rt_set_errno(EINVAL);
+        return -1;
     }
 
     timer = rt_malloc(sizeof(struct timer_obj));
-    if(timer == RT_NULL)
+    if (timer == RT_NULL)
     {
         rt_set_errno(ENOMEM);
         return -1;
@@ -1087,7 +1155,7 @@ int timer_gettime(timer_t timerid, struct itimerspec *its)
         unsigned long remain_cnt;
         rt_ktime_hrtimer_control(&timer->hrtimer, RT_TIMER_CTRL_GET_REMAIN_TIME, &remain_cnt);
         nanoseconds = ((remain_cnt - rt_ktime_cputimer_getcnt()) * rt_ktime_cputimer_getres()) / RT_KTIME_RESMUL;
-        seconds     = nanoseconds / NANOSECOND_PER_SECOND;
+        seconds = nanoseconds / NANOSECOND_PER_SECOND;
         nanoseconds = nanoseconds % NANOSECOND_PER_SECOND;
         its->it_value.tv_sec = (rt_int32_t)seconds;
         its->it_value.tv_nsec = (rt_int32_t)nanoseconds;
@@ -1114,7 +1182,7 @@ int timer_settime(timer_t timerid, int flags, const struct itimerspec *value,
                   struct itimerspec *ovalue)
 {
     struct timespec ts = {0};
-    rt_err_t        err = RT_EOK;
+    rt_err_t err = RT_EOK;
 
     struct timer_obj *timer;
     timer = _g_timerid[(rt_ubase_t)timerid];
@@ -1150,22 +1218,22 @@ int timer_settime(timer_t timerid, int flags, const struct itimerspec *value,
 
     switch (timer->clockid)
     {
-        case CLOCK_REALTIME:
-        case CLOCK_REALTIME_ALARM:
-            if (flags & TIMER_ABSTIME)
-                err = _control_rtc(RT_DEVICE_CTRL_RTC_GET_TIMESPEC, &ts);
-            break;
-        case CLOCK_MONOTONIC:
-        case CLOCK_BOOTTIME:
-        case CLOCK_BOOTTIME_ALARM:
-        case CLOCK_PROCESS_CPUTIME_ID:
-        case CLOCK_THREAD_CPUTIME_ID:
-            if (flags & TIMER_ABSTIME)
-                err = rt_ktime_boottime_get_ns(&ts);
-            break;
-        default:
-            rt_set_errno(EINVAL);
-            return -1;
+    case CLOCK_REALTIME:
+    case CLOCK_REALTIME_ALARM:
+        if (flags & TIMER_ABSTIME)
+            err = _control_rtc(RT_DEVICE_CTRL_RTC_GET_TIMESPEC, &ts);
+        break;
+    case CLOCK_MONOTONIC:
+    case CLOCK_BOOTTIME:
+    case CLOCK_BOOTTIME_ALARM:
+    case CLOCK_PROCESS_CPUTIME_ID:
+    case CLOCK_THREAD_CPUTIME_ID:
+        if (flags & TIMER_ABSTIME)
+            err = rt_ktime_boottime_get_ns(&ts);
+        break;
+    default:
+        rt_set_errno(EINVAL);
+        return -1;
     }
 
     if (err != RT_EOK)
@@ -1176,12 +1244,12 @@ int timer_settime(timer_t timerid, int flags, const struct itimerspec *value,
     if (ns <= 0)
         return 0;
 
-    unsigned long res       = rt_ktime_cputimer_getres();
-    timer->reload           = (ns * RT_KTIME_RESMUL) / res;
-    timer->interval.tv_sec  = value->it_interval.tv_sec;
+    unsigned long res = rt_ktime_cputimer_getres();
+    timer->reload = (ns * RT_KTIME_RESMUL) / res;
+    timer->interval.tv_sec = value->it_interval.tv_sec;
     timer->interval.tv_nsec = value->it_interval.tv_nsec;
-    timer->value.tv_sec     = value->it_value.tv_sec;
-    timer->value.tv_nsec    = value->it_value.tv_nsec;
+    timer->value.tv_sec = value->it_value.tv_sec;
+    timer->value.tv_nsec = value->it_value.tv_nsec;
 
     if (timer->status == ACTIVE)
     {
