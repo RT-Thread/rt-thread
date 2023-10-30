@@ -233,11 +233,21 @@ static void rt_defunct_execute(void)
         }
 
 #ifdef RT_USING_HEAP
+#ifdef RT_USING_MEM_PROTECTION
+        if (thread->mem_regions != RT_NULL)
+        {
+            RT_KERNEL_FREE(thread->mem_regions);
+        }
+#endif
         /* if need free, delete it */
         if (object_is_systemobject == RT_FALSE)
         {
             /* release thread's stack */
+#ifdef RT_USING_HW_STACK_GUARD
+            RT_KERNEL_FREE(thread->stack_buf);
+#else
             RT_KERNEL_FREE(thread->stack_addr);
+#endif
             /* delete thread object */
             rt_object_delete((rt_object_t)thread);
         }

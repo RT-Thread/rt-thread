@@ -157,6 +157,10 @@ static rt_err_t _thread_init(struct rt_thread *thread,
     rt_list_init(&(thread->tlist));
     rt_list_init(&(thread->tlist_schedule));
 
+#ifdef RT_USING_MEM_PROTECTION
+    thread->mem_regions = RT_NULL;
+#endif
+
 #ifdef RT_USING_SMART
     thread->wakeup.func = RT_NULL;
 #endif
@@ -170,6 +174,9 @@ static rt_err_t _thread_init(struct rt_thread *thread,
 
     /* init thread stack */
     rt_memset(thread->stack_addr, '#', thread->stack_size);
+#ifdef RT_USING_HW_STACK_GUARD
+    rt_hw_stack_guard_init(thread);
+#endif
 #ifdef ARCH_CPU_STACK_GROWS_UPWARD
     thread->sp = (void *)rt_hw_stack_init(thread->entry, thread->parameter,
                                           (void *)((char *)thread->stack_addr),

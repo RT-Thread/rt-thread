@@ -42,6 +42,10 @@ extern int __bss_end;
 
 #define HEAP_END                       STM32_SRAM1_END
 
+#ifdef RT_USING_MEM_PROTECTION
+#define NUM_STATIC_REGIONS 1
+#endif
+
 void SystemClock_Config(void);
 
 #ifdef __cplusplus

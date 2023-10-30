@@ -7,6 +7,7 @@
 /* RT-Thread Kernel */
 
 #define RT_NAME_MAX 8
+#define RT_CPUS_NR 1
 #define RT_ALIGN_SIZE 8
 #define RT_THREAD_PRIORITY_32
 #define RT_THREAD_PRIORITY_MAX 32
@@ -42,14 +43,12 @@
 #define RT_USING_SMALL_MEM
 #define RT_USING_SMALL_MEM_AS_HEAP
 #define RT_USING_HEAP
-
-/* Kernel Device Object */
-
 #define RT_USING_DEVICE
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 256
 #define RT_CONSOLE_DEVICE_NAME "uart1"
-#define RT_VER_NUM 0x50002
+#define RT_VER_NUM 0x50100
+#define RT_BACKTRACE_LEVEL_MAX_NR 32
 #define RT_USING_HW_ATOMIC
 #define RT_USING_CPU_FFS
 #define ARCH_ARM
@@ -126,6 +125,18 @@
 /* Utilities */
 
 
+/* Memory management */
+
+
+/* Memory protection */
+
+#define RT_USING_MEM_PROTECTION
+#define RT_USING_HW_STACK_GUARD
+#define USE_MEM_PROTECTION_EXAMPLES
+#define NUM_MEM_REGIONS 8
+#define NUM_EXCLUSIVE_REGIONS 2
+#define NUM_CONFIGURABLE_REGIONS 3
+
 /* RT-Thread Utestcases */
 
 
@@ -164,6 +175,9 @@
 /* u8g2: a monochrome graphic library */
 
 
+/* PainterEngine: A cross-platform graphics application framework written in C language */
+
+
 /* tools packages */
 
 
@@ -195,9 +209,6 @@
 /* AI packages */
 
 
-/* Signal Processing and Control Algorithm Packages */
-
-
 /* miscellaneous packages */
 
 /* project laboratory */
@@ -211,7 +222,7 @@
 /* Arduino libraries */
 
 
-/* Projects and Demos */
+/* Projects */
 
 
 /* Sensors */
@@ -235,7 +246,6 @@
 
 
 /* Other */
-
 
 /* Signal IO */
 
