@@ -1,8 +1,4 @@
 /**
- * @file    heap_override.c
- *
- * @brief   Heap memory allocation functions override for RT-Thread without dynamic memory heap.
- *
  * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0

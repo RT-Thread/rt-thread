@@ -1,8 +1,4 @@
 /**
- * @file    rt_sys.c
- *
- * @brief   System-level syscall implementations for RT-Thread.
- *
  * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
