@@ -13,14 +13,12 @@
 
 /**
  * @brief Set the attributes of a message queue.
- *
  * This function sets the attributes of a message queue referred to by the mqd_t (id).
  * If the (mqstat) parameter is NULL, it retrieves the attributes and stores them in (omqstat).
  *
  * @param   id      The message queue descriptor.
  * @param   mqstat  Pointer to the new attributes for the message queue (can be NULL).
  * @param   omqstat Pointer to store the old attributes (used when (mqstat) is NULL).
- *
  * @return  0 on success, -1 on failure.
  */
 int mq_setattr(mqd_t id,
@@ -44,7 +42,6 @@ RTM_EXPORT(mq_setattr);
  *
  * @param   id      The message queue descriptor.
  * @param   mqstat  Pointer to the structure where attributes will be stored.
- *
  * @return  0 on success, -1 on failure.
  */
 int mq_getattr(mqd_t id, struct mq_attr *mqstat)
