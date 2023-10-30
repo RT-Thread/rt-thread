@@ -5,6 +5,9 @@ src = Glob('*.c')
 cwd = GetCurrentDir()
 CPPPATH = [cwd + "/include"]
 
+if GetDepend('RT_USING_SYSRQ') == False:
+    SrcRemove(src, ['sysrq.c'])
+
 group = DefineGroup('tty', src, depend = ['RT_USING_SMART', 'RT_USING_TTY'], CPPPATH = CPPPATH)
 
 Return('group')

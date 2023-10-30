@@ -12,6 +12,10 @@
 #include <dfs_fs.h>
 #include <tty.h>
 
+#ifdef RT_USING_SYSRQ
+#include <sysrq.h>
+#endif
+
 #define DBG_TAG               "CONSOLE"
 #ifdef RT_TTY_DEBUG
 #define DBG_LVL               DBG_LOG
@@ -85,6 +89,9 @@ INIT_COMPONENT_EXPORT(rx_thread_init);
 static void console_rx_notify(struct rt_device *dev)
 {
     struct tty_struct *console = NULL;
+#ifdef RT_USING_SYSRQ
+    rt_err_t sysrq_err = -RT_ERROR;
+#endif
     int len = 0;
     int lens = 0;
     char ch = 0;
@@ -100,14 +107,28 @@ static void console_rx_notify(struct rt_device *dev)
             break;
         }
         lens += len;
+#ifdef RT_USING_SYSRQ
+        sysrq_err = sysrq_trigger(ch);
+        if(sysrq_err != RT_EOK)
+        {
+#endif
         rt_ringbuffer_put(&console_rx_ringbuffer, (void *)&ch, sizeof(ch));
         if (lens > rb_bufsz)
         {
             break;
         }
+#ifdef RT_USING_SYSRQ
+        }
+#endif
     }
+#ifdef RT_USING_SYSRQ
+    if (console_rx_thread && sysrq_err != RT_EOK)
+#else
     if (console_rx_thread)
+#endif
+    {
         rt_wqueue_wakeup(&console_rx_wqueue, 0);
+    }
 }
 
 struct tty_struct *console_tty_get(void)

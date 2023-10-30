@@ -411,12 +411,18 @@ vector_fiq:
 
 START_POINT(vector_irq)
     SAVE_CONTEXT
+#ifdef RT_USING_SYSRQ
+    MOV     X19, SP
+#endif
     STP     X0, X1, [SP, #-0x10]!   /* X0 is thread sp */
 
     BL      rt_interrupt_enter
     LDP     X0, X1, [SP]
 #ifdef RT_USING_LWP
     SAVE_USER_CTX
+#endif
+#ifdef RT_USING_SYSRQ
+    MOV     X0, X19
 #endif
     BL      rt_hw_trap_irq
 #ifdef RT_USING_LWP

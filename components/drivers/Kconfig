@@ -65,6 +65,10 @@ if RT_USING_TTY
     config RT_TTY_DEBUG
         bool "Using TTY DEBUG"
         default n
+
+    config RT_USING_SYSRQ
+        bool "Using SYSRQ"
+        default n
 endif
 
 config RT_USING_CAN

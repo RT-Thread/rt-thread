@@ -189,7 +189,7 @@ void rt_hw_show_register(struct rt_hw_exp_stack *regs)
     rt_kprintf("EPC   :0x%16.16p\n", (void *)regs->pc);
 }
 
-void rt_hw_trap_irq(void)
+void rt_hw_trap_irq(struct rt_hw_exp_stack *regs)
 {
 #ifdef SOC_BCM283x
     extern rt_uint8_t core_timer_flag;
@@ -283,7 +283,14 @@ void rt_hw_trap_irq(void)
         /* Interrupt for myself. */
         param = isr_table[ir_self].param;
         /* turn to interrupt service routine */
+#ifdef RT_USING_SYSRQ
+        if(param)
+            isr_func(ir_self, param);
+        else
+            isr_func(ir_self, regs);
+#else
         isr_func(ir_self, param);
+#endif
     }
 
     /* end of interrupt */
@@ -394,3 +401,57 @@ void rt_hw_trap_serror(struct rt_hw_exp_stack *regs)
 #endif
     rt_hw_cpu_shutdown();
 }
+
+
+#ifdef RT_USING_SYSRQ
+
+#define _SYSRQ_IPI_NUM 2
+
+#include <sysrq.h>
+
+static struct rt_spinlock _spinlock = RT_SPINLOCK_INIT;
+
+static void _dump_cpuregs_ipi_handler(int vector, void *param)
+{
+    rt_base_t level;
+    level = rt_spin_lock_irqsave(&_spinlock);
+    rt_kprintf("dump cpuregs for cpu: <%d>\n", rt_hw_cpu_id());
+    rt_hw_show_register(param);
+    rt_kprintf("\n");
+    rt_spin_unlock_irqrestore(&_spinlock, level);
+}
+
+static int sysrq_show_cpuregs(const char key)
+{
+    RT_UNUSED(key);
+
+    struct rt_thread *current_thread = RT_NULL;
+    rt_base_t         level;
+
+    rt_kprintf("dump cpuregs for cpu: <%d>\n", rt_hw_cpu_id());
+
+    level          = rt_spin_lock_irqsave(&_spinlock);
+    current_thread = rt_cpu_self()->current_thread;
+    rt_spin_unlock_irqrestore(&_spinlock, level);
+
+    rt_hw_show_register((struct rt_hw_exp_stack *)(current_thread->sp));
+    rt_kprintf("\n");
+
+    rt_hw_ipi_send(_SYSRQ_IPI_NUM, ((1 << RT_CPUS_NR) - 1) & (~(1 << rt_hw_cpu_id())));
+    return 0;
+}
+
+static const struct sysrq_opt _show_cpuregs = {.handler    = sysrq_show_cpuregs,
+                                               .help_str   = "Show Cpu Registers (p)",
+                                               .action_str = "Show Cpu Registers"};
+
+int sysrq_show_cpuregs_init()
+{
+    rt_hw_ipi_handler_install(_SYSRQ_IPI_NUM, _dump_cpuregs_ipi_handler);
+    sysrq_register('p', &_show_cpuregs);
+    return 0;
+}
+
+INIT_BOARD_EXPORT(sysrq_show_cpuregs_init);
+
+#endif
