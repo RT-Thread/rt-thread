@@ -12,6 +12,14 @@
 #include <poll.h>
 #include <sys/select.h>
 
+/**
+ * @brief Helper function to zero an fd_set structure.
+ *
+ * This function clears an fd_set structure by setting its fd_mask fields to zero.
+ *
+ * @param set   Pointer to the fd_set structure to be cleared.
+ * @param nfds  The number of file descriptors.
+ */
 static void fdszero(fd_set *set, int nfds)
 {
     fd_mask *m;
@@ -25,10 +33,25 @@ static void fdszero(fd_set *set, int nfds)
     for (n = 0; n < nfds; n += (sizeof(fd_mask) * 8))
     {
         rt_memset(m, 0, sizeof(fd_mask));
-        m ++;
+        m++;
     }
 }
 
+/**
+ * @brief Custom implementation of the select function.
+ *
+ * This function simulates the behavior of the select function. It monitors multiple file descriptors
+ * for read, write, and exception events and provides a timeout feature. It allocates and initializes
+ * a list of pollfd structures based on the specified file descriptors.
+ *
+ * @param nfds      The highest-numbered file descriptor in any of the sets, plus 1.
+ * @param readfds   A set of file descriptors to monitor for read events.
+ * @param writefds  A set of file descriptors to monitor for write events.
+ * @param exceptfds A set of file descriptors to monitor for exceptions.
+ * @param timeout   The maximum time to wait for an event in microseconds.
+ *
+ * @return The number of file descriptors that have events set, or 0 on timeout, or -1 on error.
+ */
 int select(int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds, struct timeval *timeout)
 {
     int fd;
@@ -42,8 +65,8 @@ int select(int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds, struc
     for (fd = 0, npfds = 0; fd < nfds; fd++)
     {
         /* Check if any monitor operation is requested on this fd */
-        if ((readfds   && FD_ISSET(fd, readfds))  ||
-            (writefds  && FD_ISSET(fd, writefds)) ||
+        if ((readfds && FD_ISSET(fd, readfds)) ||
+            (writefds && FD_ISSET(fd, writefds)) ||
             (exceptfds && FD_ISSET(fd, exceptfds)))
         {
             npfds++;
@@ -74,14 +97,14 @@ int select(int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds, struc
 
         if (readfds && FD_ISSET(fd, readfds))
         {
-            pollset[ndx].fd         = fd;
+            pollset[ndx].fd = fd;
             pollset[ndx].events |= POLLIN;
             incr = 1;
         }
 
         if (writefds && FD_ISSET(fd, writefds))
         {
-            pollset[ndx].fd      = fd;
+            pollset[ndx].fd = fd;
             pollset[ndx].events |= POLLOUT;
             incr = 1;
         }
@@ -171,7 +194,8 @@ int select(int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds, struc
         }
     }
 
-    if (pollset) rt_free(pollset);
+    if (pollset)
+        rt_free(pollset);
 
     return ret;
 }
