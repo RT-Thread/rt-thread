@@ -22,7 +22,7 @@
 #define EFD_SHARED_EPOLL_TYPE (EPOLL_CTL_ADD | EPOLL_CTL_DEL | EPOLL_CTL_MOD)
 #define EPOLLINOUT_BITS (EPOLLIN | EPOLLOUT | EPOLLRDNORM | EPOLLWRNORM)
 #define EPOLLEXCLUSIVE_BITS (EPOLLINOUT_BITS | EPOLLERR | EPOLLHUP | \
-                EPOLLET | EPOLLEXCLUSIVE)
+                             EPOLLET | EPOLLEXCLUSIVE)
 
 static struct rt_spinlock spinlock;
 
@@ -42,19 +42,19 @@ struct rt_fd_list
 
 struct rt_ready_list
 {
-    int exclusive;/* If triggered horizontally, a check is made to see if the data has been read, and if there is any data left to read, the readability event is returned in the next epoll_wait */
+    int exclusive;                /* If triggered horizontally, a check is made to see if the data has been read, and if there is any data left to read, the readability event is returned in the next epoll_wait */
     struct rt_fd_list *rdl_event; /* rdl: ready list */
     struct rt_ready_list *next;
 };
 
 struct rt_eventpoll
 {
-    rt_uint32_t tirggered;      /* the waited thread whether triggered */
+    rt_uint32_t tirggered; /* the waited thread whether triggered */
     rt_wqueue_t epoll_read;
     rt_thread_t polling_thread;
     struct rt_mutex lock;
-    struct rt_fd_list *fdlist;  /* Monitor list */
-    int eventpoll_num;          /* Number of ready lists */
+    struct rt_fd_list *fdlist; /* Monitor list */
+    int eventpoll_num;         /* Number of ready lists */
     rt_pollreq_t req;
     struct rt_ready_list *rdlist; /* ready list */
 };
@@ -65,9 +65,9 @@ static int epoll_get_event(struct rt_fd_list *fl, rt_pollreq_t *req);
 static int epoll_do_ctl(int epfd, int op, int fd, struct epoll_event *event);
 
 static const struct dfs_file_ops epoll_fops =
-{
-    .close      = epoll_close,
-    .poll       = epoll_poll,
+    {
+        .close = epoll_close,
+        .poll = epoll_poll,
 };
 
 static int epoll_close_fdlist(struct rt_fd_list *fdlist)
@@ -191,7 +191,7 @@ static int epoll_rdlist_add(struct rt_fd_list *fdl, rt_uint32_t revents)
 
     if (revents & ep->req._key)
     {
-        rt_wqueue_wakeup(&ep->epoll_read, (void*)POLLIN);
+        rt_wqueue_wakeup(&ep->epoll_read, (void *)POLLIN);
     }
 
     rt_mutex_take(&ep->lock, RT_WAITING_FOREVER);
@@ -229,7 +229,7 @@ static int epoll_rdlist_add(struct rt_fd_list *fdl, rt_uint32_t revents)
             rdlist->next = ep->rdlist->next;
             rdlist->exclusive = 0;
             ep->rdlist->next = rdlist;
-            ep->eventpoll_num ++;
+            ep->eventpoll_num++;
             res = 0;
         }
     }
@@ -241,6 +241,14 @@ static int epoll_rdlist_add(struct rt_fd_list *fdl, rt_uint32_t revents)
     return res;
 }
 
+/**
+ * @brief   Callback function for waking up the epoll wqueue.
+ *
+ * @param   wait    Pointer to the wait queue node.
+ * @param   key     The polling key.
+ *
+ * @return  0 on success, -1 on failure.
+ */
 static int epoll_wqueue_callback(struct rt_wqueue_node *wait, void *key)
 {
     struct rt_fd_list *fdlist;
@@ -250,6 +258,7 @@ static int epoll_wqueue_callback(struct rt_wqueue_node *wait, void *key)
 
     fdlist = rt_container_of(wait, struct rt_fd_list, wqn);
 
+    // Check if the fdlist has any revents and add it to the rdlist
     if (fdlist->revents)
     {
         epoll_rdlist_add(fdlist, (rt_ubase_t)key);
@@ -258,6 +267,12 @@ static int epoll_wqueue_callback(struct rt_wqueue_node *wait, void *key)
     return __wqueue_default_wake(wait, key);
 }
 
+/**
+ * @brief   Add a callback to the epoll wqueue.
+ *
+ * @param   wq      Pointer to the wait queue.
+ * @param   req     Pointer to the poll request.
+ */
 static void epoll_wqueue_add_callback(rt_wqueue_t *wq, rt_pollreq_t *req)
 {
     struct rt_fd_list *fdlist;
@@ -270,11 +285,18 @@ static void epoll_wqueue_add_callback(rt_wqueue_t *wq, rt_pollreq_t *req)
 
     rt_list_init(&(fdlist->wqn.list));
 
+    // Set the polling thread and callback function for the wqueue
     fdlist->wqn.polling_thread = ep->polling_thread;
     fdlist->wqn.wakeup = epoll_wqueue_callback;
     rt_wqueue_add(wq, &fdlist->wqn);
 }
 
+/**
+ * @brief   Install an epoll control for the given fdlist and eventpoll.
+ *
+ * @param   fdlist  Pointer to the file descriptor list.
+ * @param   ep      Pointer to the eventpoll.
+ */
 static void epoll_ctl_install(struct rt_fd_list *fdlist, struct rt_eventpoll *ep)
 {
     rt_uint32_t mask = 0;
@@ -283,12 +305,18 @@ static void epoll_ctl_install(struct rt_fd_list *fdlist, struct rt_eventpoll *ep
 
     mask = epoll_get_event(fdlist, &fdlist->req);
 
+    // Check if the mask indicates any matching events and add to the rdlist
     if (mask & fdlist->revents)
     {
         epoll_rdlist_add(fdlist, mask);
     }
 }
 
+/**
+ * @brief   Initialize the members of an eventpoll structure.
+ *
+ * @param   ep  Pointer to the eventpoll structure.
+ */
 static void epoll_member_init(struct rt_eventpoll *ep)
 {
     ep->tirggered = 0;
@@ -301,6 +329,15 @@ static void epoll_member_init(struct rt_eventpoll *ep)
     rt_spin_lock_init(&spinlock);
 }
 
+/**
+ * @brief   Initialize an epoll file descriptor (epfd).
+ *
+ * This function initializes an epoll file descriptor (epfd) and associated data structures.
+ *
+ * @param   fd  The file descriptor to be initialized as an epoll file descriptor.
+ *
+ * @return  0 on success, a negative error code on failure.
+ */
 static int epoll_epf_init(int fd)
 {
     struct dfs_file *df;
@@ -318,9 +355,9 @@ static int epoll_epf_init(int fd)
 
             rt_mutex_init(&ep->lock, EPOLL_MUTEX_NAME, RT_IPC_FLAG_FIFO);
 
-            #ifdef RT_USING_DFS_V2
+#ifdef RT_USING_DFS_V2
             df->fops = &epoll_fops;
-            #endif
+#endif
 
             df->vnode = (struct dfs_vnode *)rt_malloc(sizeof(struct dfs_vnode));
             if (df->vnode)
@@ -356,6 +393,15 @@ static int epoll_epf_init(int fd)
     return ret;
 }
 
+/**
+ * @brief   Create a new epoll file descriptor and initialize it.
+ *
+ * This function creates a new epoll file descriptor with the given size and initializes it.
+ *
+ * @param   size    The size of the epoll file descriptor.
+ *
+ * @return  The new epoll file descriptor (epfd) on success, or a negative error code on failure.
+ */
 static int epoll_do_create(int size)
 {
     rt_err_t ret = -1;
@@ -388,6 +434,17 @@ static int epoll_do_create(int size)
     return ret;
 }
 
+/**
+ * @brief   Add a file descriptor to the epoll set.
+ *
+ * This function adds a file descriptor (fd) to the epoll set associated with the given epoll file descriptor (df).
+ *
+ * @param   df      The epoll file descriptor where the fd will be added.
+ * @param   fd      The file descriptor to add to the epoll set.
+ * @param   event   The epoll event structure that specifies the events to monitor.
+ *
+ * @return  0 on success, a negative error code on failure.
+ */
 static int epoll_ctl_add(struct dfs_file *df, int fd, struct epoll_event *event)
 {
     struct rt_fd_list *fdlist;
@@ -432,6 +489,16 @@ static int epoll_ctl_add(struct dfs_file *df, int fd, struct epoll_event *event)
     return ret;
 }
 
+/**
+ * @brief   Remove a file descriptor from the epoll set.
+ *
+ * This function removes a file descriptor (fd) from the epoll set associated with the given epoll file descriptor (df).
+ *
+ * @param   df  The epoll file descriptor where the fd will be removed from.
+ * @param   fd  The file descriptor to remove from the epoll set.
+ *
+ * @return  0 on success, a negative error code on failure.
+ */
 static int epoll_ctl_del(struct dfs_file *df, int fd)
 {
     struct rt_fd_list *fdlist, *fre_fd;
@@ -472,7 +539,7 @@ static int epoll_ctl_del(struct dfs_file *df, int fd)
                 {
                     fre_rdl = rdlist->next;
                     rdlist->next = rdlist->next->next;
-                    ep->eventpoll_num --;
+                    ep->eventpoll_num--;
                     rt_free(fre_rdl);
                     break;
                 }
@@ -489,6 +556,17 @@ static int epoll_ctl_del(struct dfs_file *df, int fd)
     return ret;
 }
 
+/**
+ * @brief   Modify a file descriptor's events in the epoll set.
+ *
+ * This function modifies the events of a file descriptor (fd) in the epoll set associated with the given epoll file descriptor (df).
+ *
+ * @param   df      The epoll file descriptor where the fd is modified.
+ * @param   fd      The file descriptor to modify in the epoll set.
+ * @param   event   The epoll event structure specifying the modified events.
+ *
+ * @return  0 on success, a negative error code on failure.
+ */
 static int epoll_ctl_mod(struct dfs_file *df, int fd, struct epoll_event *event)
 {
     struct rt_fd_list *fdlist;
@@ -520,6 +598,18 @@ static int epoll_ctl_mod(struct dfs_file *df, int fd, struct epoll_event *event)
     return ret;
 }
 
+/**
+ * @brief   Perform an epoll control operation (EPOLL_CTL_ADD/EPOLL_CTL_DEL/EPOLL_CTL_MOD).
+ *
+ * This function performs an epoll control operation, which can be EPOLL_CTL_ADD, EPOLL_CTL_DEL, or EPOLL_CTL_MOD.
+ *
+ * @param   epfd    The epoll file descriptor to operate on.
+ * @param   op      The operation to perform (EPOLL_CTL_ADD, EPOLL_CTL_DEL, or EPOLL_CTL_MOD).
+ * @param   fd      The file descriptor to add, remove, or modify.
+ * @param   event   The epoll event structure specifying the events to monitor or modify.
+ *
+ * @return  0 on success, a negative error code on failure.
+ */
 static int epoll_do_ctl(int epfd, int op, int fd, struct epoll_event *event)
 {
     struct dfs_file *epdf;
@@ -555,7 +645,7 @@ static int epoll_do_ctl(int epfd, int op, int fd, struct epoll_event *event)
     if (epdf->vnode->data)
     {
         ep = epdf->vnode->data;
-        event->events  |= EPOLLERR | EPOLLHUP;
+        event->events |= EPOLLERR | EPOLLHUP;
         rt_mutex_take(&ep->lock, RT_WAITING_FOREVER);
 
         switch (op)
@@ -590,6 +680,16 @@ static int epoll_do_ctl(int epfd, int op, int fd, struct epoll_event *event)
     return ret;
 }
 
+/**
+ * @brief   Wait for events on an epoll file descriptor with a timeout.
+ *
+ * This function waits for events on an epoll file descriptor (epfd) with a specified timeout.
+ *
+ * @param   ep      The epoll file descriptor to wait for events on.
+ * @param   msec    The timeout duration in milliseconds.
+ *
+ * @return  0 if events occurred within the timeout, 1 if no events occurred within the timeout.
+ */
 static int epoll_wait_timeout(struct rt_eventpoll *ep, int msec)
 {
     rt_int32_t timeout;
@@ -610,8 +710,8 @@ static int epoll_wait_timeout(struct rt_eventpoll *ep, int msec)
             if (timeout > 0)
             {
                 rt_timer_control(&(thread->thread_timer),
-                        RT_TIMER_CTRL_SET_TIME,
-                        &timeout);
+                                 RT_TIMER_CTRL_SET_TIME,
+                                 &timeout);
                 rt_timer_start(&(thread->thread_timer));
             }
 
@@ -629,6 +729,16 @@ static int epoll_wait_timeout(struct rt_eventpoll *ep, int msec)
     return ret;
 }
 
+/**
+ * @brief   Get the events for a file descriptor in the epoll set.
+ *
+ * This function retrieves the events for a file descriptor (fd) in the epoll set and stores them in the poll request structure (req).
+ *
+ * @param   fl  The file descriptor list structure.
+ * @param   req The poll request structure to store the events.
+ *
+ * @return  The retrieved events for the file descriptor or a negative error code on failure.
+ */
 static int epoll_get_event(struct rt_fd_list *fl, rt_pollreq_t *req)
 {
     struct dfs_file *df;
@@ -656,6 +766,18 @@ static int epoll_get_event(struct rt_fd_list *fl, rt_pollreq_t *req)
     return mask;
 }
 
+/**
+ * @brief   Wait for events on an epoll file descriptor.
+ *
+ * This function waits for events on an epoll file descriptor (ep) and stores the events in the events array.
+ *
+ * @param   ep          The epoll file descriptor to wait for events on.
+ * @param   events      The array to store the retrieved epoll events.
+ * @param   maxevents   The maximum number of events to retrieve.
+ * @param   timeout     The timeout duration in milliseconds.
+ *
+ * @return  The number of events retrieved, or 0 if the timeout expired, or a negative error code on failure.
+ */
 static int epoll_do(struct rt_eventpoll *ep, struct epoll_event *events, int maxevents, int timeout)
 {
     struct rt_ready_list *rdlist, *pre_rdlist;
@@ -716,14 +838,14 @@ static int epoll_do(struct rt_eventpoll *ep, struct epoll_event *events, int max
                     if (!isn_add)
                     {
                         memcpy(&events[event_num], &rdlist->rdl_event->epev, sizeof(rdlist->rdl_event->epev));
-                        event_num ++;
+                        event_num++;
                     }
 
                     if (isfree)
                     {
                         pre_rdlist->next = rdlist->next;
                         rt_free(rdlist);
-                        ep->eventpoll_num --;
+                        ep->eventpoll_num--;
                         rdlist = pre_rdlist;
                     }
                 }
@@ -751,6 +873,19 @@ static int epoll_do(struct rt_eventpoll *ep, struct epoll_event *events, int max
     return event_num;
 }
 
+/**
+ * @brief   Wait for events on an epoll file descriptor with timeout and signal mask.
+ *
+ * This function waits for events on an epoll file descriptor (epfd) with a specified timeout and signal mask.
+ *
+ * @param   epfd        The epoll file descriptor to wait for events on.
+ * @param   events      The array to store the retrieved epoll events.
+ * @param   maxevents   The maximum number of events to retrieve.
+ * @param   timeout     The timeout duration in milliseconds.
+ * @param   ss          The signal mask for the waiting thread (can be NULL).
+ *
+ * @return  The number of events retrieved, or 0 if the timeout expired, or a negative error code on failure.
+ */
 static int epoll_do_wait(int epfd, struct epoll_event *events, int maxevents, int timeout, const sigset_t *ss)
 {
     struct rt_eventpoll *ep;
@@ -764,7 +899,7 @@ static int epoll_do_wait(int epfd, struct epoll_event *events, int maxevents, in
         lwp_thread_signal_mask(rt_thread_self(), LWP_SIG_MASK_CMD_BLOCK, &new_sig, &old_sig);
     }
 
-    if ((maxevents > 0) && (epfd >=0))
+    if ((maxevents > 0) && (epfd >= 0))
     {
         df = fd_get(epfd);
         if (df && df->vnode)
@@ -791,26 +926,85 @@ static int epoll_do_wait(int epfd, struct epoll_event *events, int maxevents, in
     return ret;
 }
 
+/**
+ * @brief   Create an epoll instance.
+ *
+ * This function creates an epoll instance and returns a file descriptor for it.
+ *
+ * @param   size The size parameter is ignored in this implementation.
+ *
+ * @return  A file descriptor for the epoll instance, or a negative error code on failure.
+ */
 int epoll_create(int size)
 {
     return epoll_do_create(size);
 }
 
+/**
+ * @brief   Control an epoll instance.
+ *
+ * This function allows adding, modifying, or deleting file descriptors from an epoll instance.
+ *
+ * @param   epfd    The file descriptor of the epoll instance.
+ * @param   op      The operation to be performed (EPOLL_CTL_ADD, EPOLL_CTL_MOD, EPOLL_CTL_DEL).
+ * @param   fd      The file descriptor to be added, modified, or deleted.
+ * @param   event   The event structure specifying the events to monitor.
+ *
+ * @return  0 on success, or a negative error code on failure.
+ */
 int epoll_ctl(int epfd, int op, int fd, struct epoll_event *event)
 {
     return epoll_do_ctl(epfd, op, fd, event);
 }
 
+/**
+ * @brief   Wait for events on an epoll instance.
+ *
+ * This function waits for events on an epoll instance and stores the events in the events array.
+ *
+ * @param   epfd        The file descriptor of the epoll instance to wait on.
+ * @param   events      The array to store the retrieved epoll events.
+ * @param   maxevents   The maximum number of events to retrieve.
+ * @param   timeout     The timeout duration in milliseconds.
+ *
+ * @return  The number of events retrieved, or 0 if the timeout expired, or a negative error code on failure.
+ */
 int epoll_wait(int epfd, struct epoll_event *events, int maxevents, int timeout)
 {
     return epoll_do_wait(epfd, events, maxevents, timeout, RT_NULL);
 }
 
+/**
+ * @brief   Wait for events on an epoll instance with signal mask.
+ *
+ * This function waits for events on an epoll instance with a specified signal mask and stores the events in the events array.
+ *
+ * @param   epfd        The file descriptor of the epoll instance to wait on.
+ * @param   events      The array to store the retrieved epoll events.
+ * @param   maxevents   The maximum number of events to retrieve.
+ * @param   timeout     The timeout duration in milliseconds.
+ * @param   ss          The signal mask for the waiting thread.
+ *
+ * @return  The number of events retrieved, or 0 if the timeout expired, or a negative error code on failure.
+ */
 int epoll_pwait(int epfd, struct epoll_event *events, int maxevents, int timeout, const sigset_t *ss)
 {
     return epoll_do_wait(epfd, events, maxevents, timeout, ss);
 }
 
+/**
+ * @brief   Wait for events on an epoll instance with signal mask.
+ *
+ * This function is equivalent to epoll_pwait and provides compatibility with some systems that use this name.
+ *
+ * @param   epfd        The file descriptor of the epoll instance to wait on.
+ * @param   events      The array to store the retrieved epoll events.
+ * @param   maxevents   The maximum number of events to retrieve.
+ * @param   timeout     The timeout duration in milliseconds.
+ * @param   ss          The signal mask for the waiting thread.
+ *
+ * @return  The number of events retrieved, or 0 if the timeout expired, or a negative error code on failure.
+ */
 int epoll_pwait2(int epfd, struct epoll_event *events, int maxevents, int timeout, const sigset_t *ss)
 {
     return epoll_do_wait(epfd, events, maxevents, timeout, ss);
