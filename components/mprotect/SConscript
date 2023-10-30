@@ -1,0 +1,11 @@
+from building import *
+
+cwd  = GetCurrentDir()
+src = Glob('*.c')
+if GetDepend("USE_MEM_PROTECTION_EXAMPLES"):
+    src += Glob('examples/*.c')
+CPPPATH = [cwd]
+
+group = DefineGroup('mprotect', src, depend = ['RT_USING_MEM_PROTECTION'], CPPPATH = CPPPATH)
+
+Return('group')

@@ -107,6 +107,7 @@ static void _scheduler_stack_check(struct rt_thread *thread)
 #endif /* not defined ARCH_MM_MMU */
 #endif /* RT_USING_SMART */
 
+#ifndef RT_USING_HW_STACK_GUARD
 #ifdef ARCH_CPU_STACK_GROWS_UPWARD
     if (*((rt_uint8_t *)((rt_ubase_t)thread->stack_addr + thread->stack_size - 1)) != '#' ||
 #else
@@ -124,14 +125,23 @@ static void _scheduler_stack_check(struct rt_thread *thread)
         rt_spin_lock(&_spinlock);
         while (level);
     }
+#endif
 #ifdef ARCH_CPU_STACK_GROWS_UPWARD
+#ifndef RT_USING_HW_STACK_GUARD
     else if ((rt_ubase_t)thread->sp > ((rt_ubase_t)thread->stack_addr + thread->stack_size))
+#else
+    if ((rt_ubase_t)thread->sp > ((rt_ubase_t)thread->stack_addr + thread->stack_size))
+#endif
     {
         rt_kprintf("warning: %s stack is close to the top of stack address.\n",
                    thread->parent.name);
     }
 #else
+#ifndef RT_USING_HW_STACK_GUARD
     else if ((rt_ubase_t)thread->sp <= ((rt_ubase_t)thread->stack_addr + 32))
+#else
+    if ((rt_ubase_t)thread->sp <= ((rt_ubase_t)thread->stack_addr + 32))
+#endif
     {
         rt_kprintf("warning: %s stack is close to end of stack address.\n",
                    thread->parent.name);

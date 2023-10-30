@@ -997,6 +997,14 @@ struct rt_thread
     int                         *clear_child_tid;
 #endif /* ARCH_MM_MMU */
 #endif /* RT_USING_SMART */
+
+#ifdef RT_USING_MEM_PROTECTION
+    void *mem_regions;
+#ifdef RT_USING_HW_STACK_GUARD
+    void *stack_buf;
+#endif
+#endif
+
     rt_atomic_t                 ref_count;
     struct rt_spinlock          spinlock;
     rt_ubase_t                  user_data;              /**< private user data beyond this thread */

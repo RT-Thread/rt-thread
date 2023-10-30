@@ -1,0 +1,28 @@
+menu "Memory protection"
+
+config RT_USING_MEM_PROTECTION
+    bool "Enable memory protection"
+    default n
+    select RT_USING_HEAP
+
+config RT_USING_HW_STACK_GUARD
+    bool "Enable hardware stack guard"
+    default n
+    select RT_USING_MEM_PROTECTION
+
+if RT_USING_MEM_PROTECTION
+    config USE_MEM_PROTECTION_EXAMPLES
+    bool "Use memory protection examples"
+    default y
+
+    config NUM_MEM_REGIONS
+    int "Total number of memory protection regions supported by hardware"
+
+    config NUM_EXCLUSIVE_REGIONS
+    int "Total number of exclusive memory regions added using rt_mprotect_add_exclusive_region API"
+
+    config NUM_CONFIGURABLE_REGIONS
+    int "Maximum number of configurable memory regions for each thread, excluding stack guard and exclusive regions added using rt_mprotect_add_exclusive_region API"
+endif
+
+endmenu
