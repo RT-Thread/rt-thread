@@ -5,7 +5,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2023-07-20   zmq810150896   first version
+ * 2023-07-20   zmq810150896   First version
  */
 
 #include <rtthread.h>
@@ -25,7 +25,7 @@
 #define EFD_SHARED_FCNTL_FLAGS (O_CLOEXEC | O_NONBLOCK)
 #define EFD_FLAGS_SET (EFD_SHARED_FCNTL_FLAGS | EFD_SEMAPHORE)
 
-#define ULLONG_MAX  (~0ULL)
+#define ULLONG_MAX (~0ULL)
 
 #define EVENTFD_MUTEX_NAME "eventfd"
 
@@ -51,13 +51,22 @@ static ssize_t eventfd_write(struct dfs_file *file, const void *buf, size_t coun
 #endif
 
 static const struct dfs_file_ops eventfd_fops =
-{
-    .close      = eventfd_close,
-    .poll       = eventfd_poll,
-    .read       = eventfd_read,
-    .write      = eventfd_write,
+    {
+        .close = eventfd_close,
+        .poll = eventfd_poll,
+        .read = eventfd_read,
+        .write = eventfd_write,
 };
 
+/**
+ * @brief Close the eventfd file descriptor.
+ *
+ * This function closes the eventfd file descriptor, releasing associated resources when the reference count reaches zero.
+ *
+ * @param   file    The eventfd file descriptor to close.
+ *
+ * @return  0 on success.
+ */
 static int eventfd_close(struct dfs_file *file)
 {
     struct eventfd_ctx *ctx = file->vnode->data;
@@ -71,6 +80,16 @@ static int eventfd_close(struct dfs_file *file)
     return 0;
 }
 
+/**
+ * @brief Perform polling on the eventfd file descriptor.
+ *
+ * This function is called when polling (e.g., select, poll) is performed on the eventfd file descriptor.
+ *
+ * @param   file    The eventfd file descriptor to poll.
+ * @param   req     The polling request.
+ *
+ * @return  A bitmask of events that are ready (e.g., POLLIN, POLLOUT).
+ */
 static int eventfd_poll(struct dfs_file *file, struct rt_pollreq *req)
 {
     struct eventfd_ctx *ctx = (struct eventfd_ctx *)file->vnode->data;
@@ -94,8 +113,31 @@ static int eventfd_poll(struct dfs_file *file, struct rt_pollreq *req)
 }
 
 #ifndef RT_USING_DFS_V2
+/**
+ * @brief Read from the eventfd file descriptor.
+ *
+ * This function reads from the eventfd file descriptor, returning the current event count.
+ *
+ * @param   file    The eventfd file descriptor to read from.
+ * @param   buf     The buffer to store the read data.
+ * @param   count   The number of bytes to read.
+ *
+ * @return  The number of bytes read (sizeof(rt_uint64_t)) on success, a negative error code on failure.
+ */
 static ssize_t eventfd_read(struct dfs_file *file, void *buf, size_t count)
 #else
+/**
+ * @brief Read from the eventfd file descriptor.
+ *
+ * This function reads from the eventfd file descriptor, returning the current event count.
+ *
+ * @param   file    The eventfd file descriptor to read from.
+ * @param   buf     The buffer to store the read data.
+ * @param   count   The number of bytes to read.
+ * @param   pos     A pointer to the current file position (not used for eventfd).
+ *
+ * @return  The number of bytes read (sizeof(rt_uint64_t)) on success, a negative error code on failure.
+ */
 static ssize_t eventfd_read(struct dfs_file *file, void *buf, size_t count, off_t *pos)
 #endif
 {
@@ -114,7 +156,7 @@ static ssize_t eventfd_read(struct dfs_file *file, void *buf, size_t count, off_
     {
         if (file->flags & O_NONBLOCK)
         {
-            rt_wqueue_wakeup(&ctx->writer_queue, (void*)POLLOUT);
+            rt_wqueue_wakeup(&ctx->writer_queue, (void *)POLLOUT);
             rt_mutex_release(&ctx->lock);
             return -EAGAIN;
         }
@@ -122,7 +164,7 @@ static ssize_t eventfd_read(struct dfs_file *file, void *buf, size_t count, off_
         {
             /* In this case, when the data is read in blocked mode, when ctx->count is 0, the mutex needs to be released and wait for writing */
             rt_mutex_release(&ctx->lock);
-            rt_wqueue_wakeup(&ctx->writer_queue, (void*)POLLOUT);
+            rt_wqueue_wakeup(&ctx->writer_queue, (void *)POLLOUT);
             rt_wqueue_wait(&ctx->reader_queue, 0, RT_WAITING_FOREVER);
             rt_mutex_take(&ctx->lock, RT_WAITING_FOREVER);
         }
@@ -146,8 +188,31 @@ static ssize_t eventfd_read(struct dfs_file *file, void *buf, size_t count, off_
 }
 
 #ifndef RT_USING_DFS_V2
+/**
+ * @brief Write to the eventfd file descriptor.
+ *
+ * This function writes to the eventfd file descriptor, incrementing the event count.
+ *
+ * @param   file    The eventfd file descriptor to write to.
+ * @param   buf     The buffer containing the data to write (a rt_uint64_t value).
+ * @param   count   The number of bytes to write (sizeof(rt_uint64_t)).
+ *
+ * @return  The number of bytes written (sizeof(rt_uint64_t)) on success, a negative error code on failure.
+ */
 static ssize_t eventfd_write(struct dfs_file *file, const void *buf, size_t count)
 #else
+/**
+ * @brief Write to the eventfd file descriptor.
+ *
+ * This function writes to the eventfd file descriptor, incrementing the event count.
+ *
+ * @param   file    The eventfd file descriptor to write to.
+ * @param   buf     The buffer containing the data to write (a rt_uint64_t value).
+ * @param   count   The number of bytes to write (sizeof(rt_uint64_t)).
+ * @param   pos     A pointer to the current file position (not used for eventfd).
+ *
+ * @return  The number of bytes written (sizeof(rt_uint64_t)) on success, a negative error code on failure.
+ */
 static ssize_t eventfd_write(struct dfs_file *file, const void *buf, size_t count, off_t *pos)
 #endif
 {
@@ -199,6 +264,17 @@ static ssize_t eventfd_write(struct dfs_file *file, const void *buf, size_t coun
     return ret;
 }
 
+/**
+ * @brief Create an eventfd instance.
+ *
+ * This function creates an eventfd instance with the specified count and flags.
+ *
+ * @param   df      Pointer to the DFS file structure.
+ * @param   count   The initial value for the event count.
+ * @param   flags   Flags for configuring the eventfd (e.g., EFD_SEMAPHORE, EFD_CLOEXEC, EFD_NONBLOCK).
+ *
+ * @return  0 on success, a negative error code on failure.
+ */
 static int rt_eventfd_create(struct dfs_file *df, unsigned int count, int flags)
 {
     struct eventfd_ctx *ctx = RT_NULL;
@@ -234,15 +310,24 @@ static int rt_eventfd_create(struct dfs_file *df, unsigned int count, int flags)
             ret = -ENOMEM;
         }
 
-        #ifdef RT_USING_DFS_V2
+#ifdef RT_USING_DFS_V2
         df->fops = &eventfd_fops;
-        #endif
-
+#endif
     }
 
     return ret;
 }
 
+/**
+ * @brief Create a new eventfd instance.
+ *
+ * This function creates a new eventfd instance with the specified count and flags.
+ *
+ * @param   count   The initial value for the event count.
+ * @param   flags   Flags for configuring the eventfd (e.g., EFD_SEMAPHORE, EFD_CLOEXEC, EFD_NONBLOCK).
+ *
+ * @return  The file descriptor of the newly created eventfd instance on success, -1 on failure.
+ */
 static int do_eventfd(unsigned int count, int flags)
 {
     struct dfs_file *file;
@@ -279,6 +364,16 @@ static int do_eventfd(unsigned int count, int flags)
     return ret;
 }
 
+/**
+ * @brief Create a new eventfd instance.
+ *
+ * This function creates a new eventfd instance with the specified count and flags.
+ *
+ * @param   count   The initial value for the event count.
+ * @param   flags   Flags for configuring the eventfd (e.g., EFD_SEMAPHORE, EFD_CLOEXEC, EFD_NONBLOCK).
+ *
+ * @return  The file descriptor of the newly created eventfd instance on success, -1 on failure.
+ */
 int eventfd(unsigned int count, int flags)
 {
     return do_eventfd(count, flags);
