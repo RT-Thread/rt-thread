@@ -17,7 +17,7 @@ menu "Hardware Drivers Config"
             select BSP_USING_TIM
             select BSP_USING_TIM2
             select BSP_USING_ADC
-            select BSP_USING_ADC1
+            select BSP_USING_ADC0
             select BSP_USING_PWM
             select BSP_USING_PWM2
             select BSP_USING_PWM2_CH2
@@ -482,8 +482,8 @@ menu "Hardware Drivers Config"
         default n
         select RT_USING_ADC
         if BSP_USING_ADC
-            config BSP_USING_ADC1
-                bool "Enable ADC1"
+            config BSP_USING_ADC0
+                bool "Enable ADC0"
                 default n
         endif
 
