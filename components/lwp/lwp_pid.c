@@ -80,11 +80,13 @@ static pid_t lwp_pid_get_locked(void)
 {
     struct lwp_avl_struct *p;
     pid_t pid = 0;
+    int head_recover_flag = 0;
 
     p = lwp_pid_free_head;
     if (p)
     {
         lwp_pid_free_head = (struct lwp_avl_struct *)p->avl_right;
+        head_recover_flag = 1;
     }
     else if (lwp_pid_ary_alloced < RT_LWP_MAX_NR)
     {
@@ -115,9 +117,22 @@ static pid_t lwp_pid_get_locked(void)
                 }
             }
         }
-        p->avl_key = pid;
-        lwp_avl_insert(p, &lwp_pid_root);
-        current_pid = pid;
+
+        if (found_noused == 1)
+        {
+            p->avl_key = pid;
+            lwp_avl_insert(p, &lwp_pid_root);
+            current_pid = pid;
+        }
+        else
+        {
+            pid = 0;
+            if (head_recover_flag == 1)
+            {
+                /* recover lwp_pid_free_head */
+                lwp_pid_free_head = p;
+            }
+        }
     }
     return pid;
 }

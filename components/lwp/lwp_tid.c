@@ -46,12 +46,14 @@ int lwp_tid_get(void)
 {
     struct lwp_avl_struct *p;
     int tid = 0;
+    int head_recover_flag = 0;
 
     lwp_mutex_take_safe(&tid_lock, RT_WAITING_FOREVER, 0);
     p = lwp_tid_free_head;
     if (p)
     {
         lwp_tid_free_head = (struct lwp_avl_struct *)p->avl_right;
+        head_recover_flag = 1;
     }
     else if (lwp_tid_ary_alloced < LWP_TID_MAX_NR)
     {
@@ -82,9 +84,22 @@ int lwp_tid_get(void)
                 }
             }
         }
-        p->avl_key = tid;
-        lwp_avl_insert(p, &lwp_tid_root);
-        current_tid = tid;
+
+        if (found_noused == 1)
+        {
+            p->avl_key = tid;
+            lwp_avl_insert(p, &lwp_tid_root);
+            current_tid = tid;
+        }
+        else
+        {
+            tid = 0;
+            if (head_recover_flag == 1)
+            {
+                /* recover lwp_tid_free_head */
+                lwp_tid_free_head = p;
+            }
+        }
     }
     lwp_mutex_release_safe(&tid_lock);
     return tid;
