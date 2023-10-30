@@ -17,7 +17,11 @@
 static sem_t *posix_sem_list = RT_NULL;
 static struct rt_semaphore posix_sem_lock;
 
-/* initialize posix semaphore */
+/**
+ * @brief   Initialize the POSIX semaphore system.
+ *
+ * @return  0 on success, or an error code on failure.
+ */
 static int posix_sem_system_init(void)
 {
     rt_sem_init(&posix_sem_lock, "psem", 1, RT_IPC_FLAG_FIFO);
@@ -25,12 +29,22 @@ static int posix_sem_system_init(void)
 }
 INIT_COMPONENT_EXPORT(posix_sem_system_init);
 
+/**
+ * @brief   Insert a POSIX semaphore into the list of semaphores.
+ *
+ * @param   psem    is the POSIX semaphore to be inserted.
+ */
 rt_inline void posix_sem_insert(sem_t *psem)
 {
     psem->next = posix_sem_list;
     posix_sem_list = psem;
 }
 
+/**
+ * @brief   Delete a POSIX semaphore.
+ *
+ * @param   psem    is the POSIX semaphore to be deleted.
+ */
 static void posix_sem_delete(sem_t *psem)
 {
     sem_t *iter;
@@ -40,7 +54,7 @@ static void posix_sem_delete(sem_t *psem)
 
         rt_sem_delete(psem->sem);
 
-        if(psem->unamed == 0)
+        if (psem->unamed == 0)
             rt_free(psem);
 
         return;
@@ -49,24 +63,31 @@ static void posix_sem_delete(sem_t *psem)
     {
         if (iter->next == psem)
         {
-            /* delete this mq */
+            /* Delete this semaphore */
             if (psem->next != RT_NULL)
                 iter->next = psem->next;
             else
                 iter->next = RT_NULL;
 
-            /* delete RT-Thread mqueue */
+            /* Delete RT-Thread semaphore */
             rt_sem_delete(psem->sem);
 
-            if(psem->unamed == 0)
+            if (psem->unamed == 0)
                 rt_free(psem);
 
-            return ;
+            return;
         }
     }
 }
 
-static sem_t *posix_sem_find(const char* name)
+/**
+ * @brief   Find a POSIX semaphore by name.
+ *
+ * @param   name    is the name of the semaphore to find.
+ *
+ * @return  A pointer to the found semaphore, or RT_NULL if not found.
+ */
+static sem_t *posix_sem_find(const char *name)
 {
     sem_t *iter;
     rt_object_t object;
@@ -84,21 +105,27 @@ static sem_t *posix_sem_find(const char* name)
     return RT_NULL;
 }
 
+/**
+ * @brief   Close a POSIX semaphore.
+ *
+ * @param   sem     is the POSIX semaphore to be closed.
+ *
+ * @return  0 on success, or -1 on failure.
+ */
 int sem_close(sem_t *sem)
 {
     if (sem == RT_NULL)
     {
         rt_set_errno(EINVAL);
-
         return -1;
     }
 
-    /* lock posix semaphore list */
+    /* Lock the POSIX semaphore list */
     rt_sem_take(&posix_sem_lock, RT_WAITING_FOREVER);
-    sem->refcount --;
+    sem->refcount--;
     if (sem->refcount == 0)
     {
-        /* delete from posix semaphore list */
+        /* Delete from the POSIX semaphore list */
         if (sem->unlinked)
             posix_sem_delete(sem);
         sem = RT_NULL;
@@ -109,26 +136,31 @@ int sem_close(sem_t *sem)
 }
 RTM_EXPORT(sem_close);
 
+/**
+ * @brief   Destroy an unnamed POSIX semaphore.
+ *
+ * @param   sem     is the POSIX semaphore to be destroyed.
+ *
+ * @return  0 on success, or -1 on failure.
+ */
 int sem_destroy(sem_t *sem)
 {
     if ((!sem) || !(sem->unamed))
     {
         rt_set_errno(EINVAL);
-
         return -1;
     }
 
-    /* lock posix semaphore list */
+    /* Lock the POSIX semaphore list */
     rt_sem_take(&posix_sem_lock, RT_WAITING_FOREVER);
-    if(rt_list_len(&sem->sem->parent.suspend_thread) != 0)
+    if (rt_list_len(&sem->sem->parent.suspend_thread) != 0)
     {
         rt_sem_release(&posix_sem_lock);
         rt_set_errno(EBUSY);
-
         return -1;
     }
 
-    /* destroy an unamed posix semaphore */
+    /* Destroy an unnamed POSIX semaphore */
     posix_sem_delete(sem);
     rt_sem_release(&posix_sem_lock);
 
@@ -136,11 +168,18 @@ int sem_destroy(sem_t *sem)
 }
 RTM_EXPORT(sem_destroy);
 
+/**
+ * @brief   Unlink (remove) a named POSIX semaphore by name.
+ *
+ * @param   name    is the name of the semaphore to be unlinked.
+ *
+ * @return  0 on success, or -1 on failure.
+ */
 int sem_unlink(const char *name)
 {
     sem_t *psem;
 
-    /* lock posix semaphore list */
+    /* Lock the POSIX semaphore list */
     rt_sem_take(&posix_sem_lock, RT_WAITING_FOREVER);
     psem = posix_sem_find(name);
     if (psem != RT_NULL)
@@ -148,22 +187,30 @@ int sem_unlink(const char *name)
         psem->unlinked = 1;
         if (psem->refcount == 0)
         {
-            /* remove this semaphore */
+            /* Remove this semaphore */
             posix_sem_delete(psem);
         }
         rt_sem_release(&posix_sem_lock);
-
         return 0;
     }
     rt_sem_release(&posix_sem_lock);
 
-    /* no this entry */
+    /* No such entry */
     rt_set_errno(ENOENT);
 
     return -1;
 }
+
 RTM_EXPORT(sem_unlink);
 
+/**
+ * @brief   Get the value of a POSIX semaphore.
+ *
+ * @param   sem     is the POSIX semaphore.
+ * @param   sval    is a pointer to store the value.
+ *
+ * @return  0 on success, or -1 on failure.
+ */
 int sem_getvalue(sem_t *sem, int *sval)
 {
     if (!sem || !sval)
@@ -178,6 +225,15 @@ int sem_getvalue(sem_t *sem, int *sval)
 }
 RTM_EXPORT(sem_getvalue);
 
+/**
+ * @brief   Initialize a POSIX semaphore.
+ *
+ * @param   sem     is the POSIX semaphore to be initialized.
+ * @param   pshared is not used in this implementation.
+ * @param   value   is the initial value of the semaphore.
+ *
+ * @return  0 on success, or -1 on failure.
+ */
 int sem_init(sem_t *sem, int pshared, unsigned int value)
 {
     char name[RT_NAME_MAX];
@@ -212,9 +268,17 @@ int sem_init(sem_t *sem, int pshared, unsigned int value)
 }
 RTM_EXPORT(sem_init);
 
+/**
+ * @brief   Open or create a POSIX semaphore by name.
+ *
+ * @param   name    is the name of the semaphore.
+ * @param   oflag   specifies the flags for opening or creating.
+ *
+ * @return  A pointer to the semaphore on success, or RT_NULL on failure.
+ */
 sem_t *sem_open(const char *name, int oflag, ...)
 {
-    sem_t* sem;
+    sem_t *sem;
     va_list arg;
     mode_t mode;
     unsigned int value;
@@ -226,8 +290,9 @@ sem_t *sem_open(const char *name, int oflag, ...)
     if (oflag & O_CREAT)
     {
         va_start(arg, oflag);
-        mode = (mode_t) va_arg( arg, unsigned int); mode = mode;
-        value = va_arg( arg, unsigned int);
+        mode = (mode_t)va_arg(arg, unsigned int);
+        mode = mode;
+        value = va_arg(arg, unsigned int);
         va_end(arg);
 
         if (oflag & O_EXCL)
@@ -238,7 +303,7 @@ sem_t *sem_open(const char *name, int oflag, ...)
                 goto __return;
             }
         }
-        sem = (sem_t*) rt_malloc (sizeof(struct posix_sem));
+        sem = (sem_t *)rt_malloc(sizeof(struct posix_sem));
         if (sem == RT_NULL)
         {
             rt_set_errno(ENFILE);
@@ -266,7 +331,7 @@ sem_t *sem_open(const char *name, int oflag, ...)
         sem = posix_sem_find(name);
         if (sem != RT_NULL)
         {
-            sem->refcount ++; /* increase reference count */
+            sem->refcount++; /* increase reference count */
         }
         else
         {
@@ -295,6 +360,13 @@ __return:
 }
 RTM_EXPORT(sem_open);
 
+/**
+ * @brief   Post (unlock) a POSIX semaphore.
+ *
+ * @param   sem     is the POSIX semaphore to be posted.
+ *
+ * @return  0 on success, or -1 on failure.
+ */
 int sem_post(sem_t *sem)
 {
     rt_err_t result;
@@ -316,6 +388,14 @@ int sem_post(sem_t *sem)
 }
 RTM_EXPORT(sem_post);
 
+/**
+ * @brief   Wait for a POSIX semaphore with a timeout.
+ *
+ * @param   sem             is the POSIX semaphore to wait for.
+ * @param   abs_timeout      is the absolute timeout.
+ *
+ * @return  0 on success, or -1 on failure.
+ */
 int sem_timedwait(sem_t *sem, const struct timespec *abs_timeout)
 {
     rt_err_t result;
@@ -343,6 +423,13 @@ int sem_timedwait(sem_t *sem, const struct timespec *abs_timeout)
 }
 RTM_EXPORT(sem_timedwait);
 
+/**
+ * @brief   Try to wait for a POSIX semaphore without blocking.
+ *
+ * @param   sem     is the POSIX semaphore to wait for.
+ *
+ * @return  0 on success, or -1 on failure.
+ */
 int sem_trywait(sem_t *sem)
 {
     rt_err_t result;
@@ -370,6 +457,13 @@ int sem_trywait(sem_t *sem)
 }
 RTM_EXPORT(sem_trywait);
 
+/**
+ * @brief   Wait for a POSIX semaphore indefinitely.
+ *
+ * @param   sem     is the POSIX semaphore to wait for.
+ *
+ * @return  0 on success, or -1 on failure.
+ */
 int sem_wait(sem_t *sem)
 {
     rt_err_t result;
@@ -390,4 +484,3 @@ int sem_wait(sem_t *sem)
     return -1;
 }
 RTM_EXPORT(sem_wait);
-

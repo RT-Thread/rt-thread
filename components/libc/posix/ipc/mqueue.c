@@ -11,9 +11,21 @@
 #include <unistd.h>
 #include "mqueue.h"
 
-int mq_setattr(mqd_t                 id,
+/**
+ * @brief Set the attributes of a message queue.
+ *
+ * This function sets the attributes of a message queue referred to by the mqd_t (id).
+ * If the (mqstat) parameter is NULL, it retrieves the attributes and stores them in (omqstat).
+ *
+ * @param   id      The message queue descriptor.
+ * @param   mqstat  Pointer to the new attributes for the message queue (can be NULL).
+ * @param   omqstat Pointer to store the old attributes (used when (mqstat) is NULL).
+ *
+ * @return  0 on success, -1 on failure.
+ */
+int mq_setattr(mqd_t id,
                const struct mq_attr *mqstat,
-               struct mq_attr       *omqstat)
+               struct mq_attr *omqstat)
 {
     if (mqstat == RT_NULL)
         return mq_getattr(id, omqstat);
@@ -24,6 +36,17 @@ int mq_setattr(mqd_t                 id,
 }
 RTM_EXPORT(mq_setattr);
 
+/**
+ * @brief Get the attributes of a message queue.
+ *
+ * This function retrieves the attributes of a message queue referred to by the mqd_t (id)
+ * and stores them in the (mqstat) structure.
+ *
+ * @param   id      The message queue descriptor.
+ * @param   mqstat  Pointer to the structure where attributes will be stored.
+ *
+ * @return  0 on success, -1 on failure.
+ */
 int mq_getattr(mqd_t id, struct mq_attr *mqstat)
 {
     rt_mq_t mq;
@@ -45,6 +68,16 @@ int mq_getattr(mqd_t id, struct mq_attr *mqstat)
 }
 RTM_EXPORT(mq_getattr);
 
+/**
+ * @brief Open or create a message queue.
+ *
+ * This function opens or creates a message queue specified by the given name (name).
+ *
+ * @param   name    The name of the message queue.
+ * @param   oflag   The open flags (e.g., O_CREAT, O_EXCL).
+ *
+ * @return  The message queue descriptor (mqd_t) on success, -1 on failure.
+ */
 mqd_t mq_open(const char *name, int oflag, ...)
 {
     int mq_fd;
@@ -57,7 +90,7 @@ mqd_t mq_open(const char *name, int oflag, ...)
     attr = (struct mq_attr *)va_arg(arg, struct mq_attr *);
     attr = (struct mq_attr *)attr; /* self-assignment avoids compiler optimization */
     va_end(arg);
-    if(*name == '/')
+    if (*name == '/')
     {
         name++;
     }
@@ -71,7 +104,7 @@ mqd_t mq_open(const char *name, int oflag, ...)
     rt_size_t size;
     struct mqueue_file *mq_file;
     mq_file = dfs_mqueue_lookup(name, &size);
-    if(mq_file != RT_NULL)
+    if (mq_file != RT_NULL)
     {
         if (oflag & O_CREAT && oflag & O_EXCL)
         {
@@ -87,7 +120,7 @@ mqd_t mq_open(const char *name, int oflag, ...)
             return (mqd_t)(-1);
         }
         struct mqueue_file *mq_file;
-        mq_file = (struct mqueue_file *) rt_malloc (sizeof(struct mqueue_file));
+        mq_file = (struct mqueue_file *)rt_malloc(sizeof(struct mqueue_file));
 
         if (mq_file == RT_NULL)
         {
@@ -106,7 +139,7 @@ mqd_t mq_open(const char *name, int oflag, ...)
         return (mqd_t)(-1);
     }
 
-    const char* mq_path = "/dev/mqueue/";
+    const char *mq_path = "/dev/mqueue/";
     char mq_name[RT_NAME_MAX + 12] = {0};
     rt_sprintf(mq_name, "%s%s", mq_path, name);
     mq_fd = open(mq_name, oflag);
@@ -115,6 +148,19 @@ mqd_t mq_open(const char *name, int oflag, ...)
 }
 RTM_EXPORT(mq_open);
 
+/**
+ * @brief Receive a message from a message queue.
+ *
+ * This function receives a message from the message queue identified by (id)
+ * and stores it in the buffer (msg_ptr).
+ *
+ * @param   id       The message queue descriptor.
+ * @param   msg_ptr  Pointer to the buffer where the received message will be stored.
+ * @param   msg_len  The size of the buffer.
+ * @param   msg_prio Pointer to store the priority of the received message (can be NULL).
+ *
+ * @return  The number of bytes received on success, -1 on failure.
+ */
 ssize_t mq_receive(mqd_t id, char *msg_ptr, size_t msg_len, unsigned *msg_prio)
 {
     rt_mq_t mq;
@@ -137,6 +183,18 @@ ssize_t mq_receive(mqd_t id, char *msg_ptr, size_t msg_len, unsigned *msg_prio)
 }
 RTM_EXPORT(mq_receive);
 
+/**
+ * @brief Send a message to a message queue.
+ *
+ * This function sends a message to the message queue identified by (id).
+ *
+ * @param   id       The message queue descriptor.
+ * @param   msg_ptr  Pointer to the message to be sent.
+ * @param   msg_len  The size of the message.
+ * @param   msg_prio The priority of the message.
+ *
+ * @return  0 on success, -1 on failure.
+ */
 int mq_send(mqd_t id, const char *msg_ptr, size_t msg_len, unsigned msg_prio)
 {
     rt_mq_t mq;
@@ -160,10 +218,23 @@ int mq_send(mqd_t id, const char *msg_ptr, size_t msg_len, unsigned msg_prio)
 }
 RTM_EXPORT(mq_send);
 
-ssize_t mq_timedreceive(mqd_t                  id,
-                        char                  *msg_ptr,
-                        size_t                 msg_len,
-                        unsigned              *msg_prio,
+/**
+ * @brief Receive a message from a message queue with a timeout.
+ *
+ * This function receives a message from the message queue identified by (id) with a specified timeout.
+ *
+ * @param   id           The message queue descriptor.
+ * @param   msg_ptr      Pointer to the buffer where the received message will be stored.
+ * @param   msg_len      The size of the buffer.
+ * @param   msg_prio     Pointer to store the priority of the received message (can be NULL).
+ * @param   abs_timeout  Pointer to a timespec structure specifying the timeout.
+ *
+ * @return  The number of bytes received on success, -1 on failure.
+ */
+ssize_t mq_timedreceive(mqd_t id,
+                        char *msg_ptr,
+                        size_t msg_len,
+                        unsigned *msg_prio,
                         const struct timespec *abs_timeout)
 {
     rt_mq_t mq;
@@ -199,10 +270,23 @@ ssize_t mq_timedreceive(mqd_t                  id,
 }
 RTM_EXPORT(mq_timedreceive);
 
-int mq_timedsend(mqd_t                  id,
-                 const char            *msg_ptr,
-                 size_t                 msg_len,
-                 unsigned               msg_prio,
+/**
+ * @brief Send a message to a message queue with a timeout (not supported in RT-Thread).
+ *
+ * This function is not supported in RT-Thread and behaves the same as mq_send.
+ *
+ * @param   id           The message queue descriptor.
+ * @param   msg_ptr      Pointer to the message to be sent.
+ * @param   msg_len      The size of the message.
+ * @param   msg_prio     The priority of the message.
+ * @param   abs_timeout  Pointer to a timespec structure specifying the timeout.
+ *
+ * @return  0 on success, -1 on failure.
+ */
+int mq_timedsend(mqd_t id,
+                 const char *msg_ptr,
+                 size_t msg_len,
+                 unsigned msg_prio,
                  const struct timespec *abs_timeout)
 {
     /* RT-Thread does not support timed send */
@@ -210,6 +294,16 @@ int mq_timedsend(mqd_t                  id,
 }
 RTM_EXPORT(mq_timedsend);
 
+/**
+ * @brief Set a notification for a message queue (not supported in RT-Thread).
+ *
+ * This function is not supported in RT-Thread and will always return an error.
+ *
+ * @param   id            The message queue descriptor.
+ * @param   notification  Pointer to a sigevent structure specifying the notification.
+ *
+ * @return  -1 with errno set to indicate the error.
+ */
 int mq_notify(mqd_t id, const struct sigevent *notification)
 {
     rt_mq_t mq;
@@ -227,6 +321,15 @@ int mq_notify(mqd_t id, const struct sigevent *notification)
 }
 RTM_EXPORT(mq_notify);
 
+/**
+ * @brief Close a message queue.
+ *
+ * This function closes a message queue identified by (id).
+ *
+ * @param   id  The message queue descriptor.
+ *
+ * @return  0 on success, -1 on failure.
+ */
 int mq_close(mqd_t id)
 {
     return close(id);
@@ -269,7 +372,7 @@ RTM_EXPORT(mq_close);
  */
 int mq_unlink(const char *name)
 {
-    if(*name == '/')
+    if (*name == '/')
     {
         name++;
     }
