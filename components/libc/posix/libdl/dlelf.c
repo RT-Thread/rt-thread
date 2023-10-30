@@ -12,14 +12,22 @@
 #include "dlmodule.h"
 #include "dlelf.h"
 
-#define DBG_TAG    "DLMD"
-#define DBG_LVL    DBG_INFO
-#include <rtdbg.h>          // must after of DEBUG_ENABLE or some other options
+#define DBG_TAG "DLMD"
+#define DBG_LVL DBG_INFO
+#include <rtdbg.h> // must after of DEBUG_ENABLE or some other options
 
-rt_err_t dlmodule_load_shared_object(struct rt_dlmodule* module, void *module_ptr)
+/**
+ * @brief Load a shared object (dynamic link library) into memory.
+ *
+ * @param module      Pointer to the dynamic link module structure.
+ * @param module_ptr  Pointer to the module data.
+ *
+ * @return RT_EOK on success, or an error code on failure.
+ */
+rt_err_t dlmodule_load_shared_object(struct rt_dlmodule *module, void *module_ptr)
 {
-    rt_bool_t linked   = RT_FALSE;
-    rt_ubase_t  index, module_size = 0;
+    rt_bool_t linked = RT_FALSE;
+    rt_ubase_t index, module_size = 0;
     Elf_Addr vstart_addr, vend_addr;
     rt_bool_t has_vstart;
 
@@ -55,7 +63,7 @@ rt_err_t dlmodule_load_shared_object(struct rt_dlmodule* module, void *module_pt
             if (vend_addr < vstart_addr)
             {
                 LOG_E("invalid elf: segment %d: p_vaddr: %d, p_memsz: %d\n",
-                           index, phdr[index].p_vaddr, phdr[index].p_memsz);
+                      index, phdr[index].p_vaddr, phdr[index].p_memsz);
                 return RT_NULL;
             }
         }
@@ -76,7 +84,8 @@ rt_err_t dlmodule_load_shared_object(struct rt_dlmodule* module, void *module_pt
             if (vend_addr < phdr[index].p_vaddr)
             {
                 LOG_E("invalid elf: "
-                           "segment %d address overflow\n", index);
+                      "segment %d address overflow\n",
+                      index);
                 return RT_NULL;
             }
         }
@@ -118,42 +127,42 @@ rt_err_t dlmodule_load_shared_object(struct rt_dlmodule* module, void *module_pt
     module->entry_addr = module->mem_space + elf_module->e_entry - vstart_addr;
 
     /* handle relocation section */
-    for (index = 0; index < elf_module->e_shnum; index ++)
+    for (index = 0; index < elf_module->e_shnum; index++)
     {
         rt_ubase_t i, nr_reloc;
         Elf_Sym *symtab;
         Elf_Rel *rel;
         rt_uint8_t *strtab;
         static rt_bool_t unsolved = RT_FALSE;
-        #if (defined(__arm__) || defined(__i386__) || (__riscv_xlen == 32))
+#if (defined(__arm__) || defined(__i386__) || (__riscv_xlen == 32))
         if (!IS_REL(shdr[index]))
             continue;
-        #elif (defined(__aarch64__) || defined(__x86_64__) || (__riscv_xlen == 64))
+#elif (defined(__aarch64__) || defined(__x86_64__) || (__riscv_xlen == 64))
         if (!IS_RELA(shdr[index]))
             continue;
-        #endif
+#endif
 
         /* get relocate item */
         rel = (Elf_Rel *)((rt_uint8_t *)module_ptr + shdr[index].sh_offset);
 
         /* locate .rel.plt and .rel.dyn section */
         symtab = (Elf_Sym *)((rt_uint8_t *)module_ptr +
-                               shdr[shdr[index].sh_link].sh_offset);
+                             shdr[shdr[index].sh_link].sh_offset);
         strtab = (rt_uint8_t *)module_ptr +
                  shdr[shdr[shdr[index].sh_link].sh_link].sh_offset;
         nr_reloc = (rt_ubase_t)(shdr[index].sh_size / sizeof(Elf_Rel));
 
         /* relocate every items */
-        for (i = 0; i < nr_reloc; i ++)
+        for (i = 0; i < nr_reloc; i++)
         {
-            #if (defined(__arm__) || defined(__i386__) || (__riscv_xlen == 32))
+#if (defined(__arm__) || defined(__i386__) || (__riscv_xlen == 32))
             Elf_Sym *sym = &symtab[ELF32_R_SYM(rel->r_info)];
-            #elif (defined(__aarch64__) || defined(__x86_64__) || (__riscv_xlen == 64))
+#elif (defined(__aarch64__) || defined(__x86_64__) || (__riscv_xlen == 64))
             Elf_Sym *sym = &symtab[ELF64_R_SYM(rel->r_info)];
-            #endif
+#endif
             LOG_D("relocate symbol %s shndx %d", strtab + sym->st_name, sym->st_shndx);
 
-            if ((sym->st_shndx != SHT_NULL) ||(ELF_ST_BIND(sym->st_info) == STB_LOCAL))
+            if ((sym->st_shndx != SHT_NULL) || (ELF_ST_BIND(sym->st_info) == STB_LOCAL))
             {
                 Elf_Addr addr;
 
@@ -177,7 +186,7 @@ rt_err_t dlmodule_load_shared_object(struct rt_dlmodule* module, void *module_pt
                     dlmodule_relocate(module, rel, addr);
                 }
             }
-            rel ++;
+            rel++;
         }
 
         if (unsolved)
@@ -185,7 +194,7 @@ rt_err_t dlmodule_load_shared_object(struct rt_dlmodule* module, void *module_pt
     }
 
     /* construct module symbol table */
-    for (index = 0; index < elf_module->e_shnum; index ++)
+    for (index = 0; index < elf_module->e_shnum; index++)
     {
         /* find .dynsym section */
         rt_uint8_t *shstrab;
@@ -199,7 +208,7 @@ rt_err_t dlmodule_load_shared_object(struct rt_dlmodule* module, void *module_pt
     if (index != elf_module->e_shnum)
     {
         int i, count = 0;
-        Elf_Sym  *symtab = RT_NULL;
+        Elf_Sym *symtab = RT_NULL;
         rt_uint8_t *strtab = RT_NULL;
 
         symtab = (Elf_Sym *)((rt_uint8_t *)module_ptr + shdr[index].sh_offset);
@@ -209,11 +218,10 @@ rt_err_t dlmodule_load_shared_object(struct rt_dlmodule* module, void *module_pt
         {
             if ((ELF_ST_BIND(symtab[i].st_info) == STB_GLOBAL) &&
                 (ELF_ST_TYPE(symtab[i].st_info) == STT_FUNC))
-                count ++;
+                count++;
         }
 
-        module->symtab = (struct rt_module_symtab *)rt_malloc
-                         (count * sizeof(struct rt_module_symtab));
+        module->symtab = (struct rt_module_symtab *)rt_malloc(count * sizeof(struct rt_module_symtab));
         module->nsym = count;
         for (i = 0, count = 0; i < shdr[index].sh_size / sizeof(Elf_Sym); i++)
         {
@@ -232,7 +240,7 @@ rt_err_t dlmodule_load_shared_object(struct rt_dlmodule* module, void *module_pt
             rt_memcpy((void *)module->symtab[count].name,
                       strtab + symtab[i].st_name,
                       length);
-            count ++;
+            count++;
         }
 
         /* get priority & stack size params*/
@@ -245,7 +253,7 @@ rt_err_t dlmodule_load_shared_object(struct rt_dlmodule* module, void *module_pt
                 (rt_strcmp((const char *)(strtab + symtab[i].st_name), "dlmodule_thread_priority") == 0))
             {
                 flag |= 0x01;
-                priority = *(rt_uint16_t*)(module->mem_space + symtab[i].st_value - module->vstart_addr);
+                priority = *(rt_uint16_t *)(module->mem_space + symtab[i].st_value - module->vstart_addr);
                 if (priority < RT_THREAD_PRIORITY_MAX)
                 {
                     module->priority = priority;
@@ -256,7 +264,7 @@ rt_err_t dlmodule_load_shared_object(struct rt_dlmodule* module, void *module_pt
                 (rt_strcmp((const char *)(strtab + symtab[i].st_name), "dlmodule_thread_stacksize") == 0))
             {
                 flag |= 0x02;
-                stacksize = *(rt_uint32_t*)(module->mem_space + symtab[i].st_value - module->vstart_addr);
+                stacksize = *(rt_uint32_t *)(module->mem_space + symtab[i].st_value - module->vstart_addr);
                 if ((stacksize < 2048) || (stacksize > 1024 * 32))
                 {
                     module->stack_size = stacksize;
@@ -273,14 +281,24 @@ rt_err_t dlmodule_load_shared_object(struct rt_dlmodule* module, void *module_pt
     return RT_EOK;
 }
 
-rt_err_t dlmodule_load_relocated_object(struct rt_dlmodule* module, void *module_ptr)
+/**
+ * @brief Load a relocated object into the module.
+ *
+ * This function loads an ELF object into a module, performs relocations, and prepares the module for execution.
+ *
+ * @param module The module structure to load the object into.
+ * @param module_ptr Pointer to the ELF object.
+ *
+ * @return RT_EOK on success, or an error code on failure.
+ */
+rt_err_t dlmodule_load_relocated_object(struct rt_dlmodule *module, void *module_ptr)
 {
     rt_ubase_t index, rodata_addr = 0, bss_addr = 0, data_addr = 0;
     rt_ubase_t module_addr = 0, module_size = 0;
     rt_uint8_t *ptr, *strtab, *shstrab;
 
     /* get the ELF image size */
-    for (index = 0; index < elf_module->e_shnum; index ++)
+    for (index = 0; index < elf_module->e_shnum; index++)
     {
         /* text */
         if (IS_PROG(shdr[index]) && IS_AX(shdr[index]))
@@ -306,7 +324,8 @@ rt_err_t dlmodule_load_relocated_object(struct rt_dlmodule* module, void *module
     }
 
     /* no text, data and bss on image */
-    if (module_size == 0) return RT_NULL;
+    if (module_size == 0)
+        return RT_NULL;
 
     module->vstart_addr = 0;
 
@@ -324,7 +343,7 @@ rt_err_t dlmodule_load_relocated_object(struct rt_dlmodule* module, void *module
     rt_memset(ptr, 0, module_size);
 
     /* load text and data section */
-    for (index = 0; index < elf_module->e_shnum; index ++)
+    for (index = 0; index < elf_module->e_shnum; index++)
     {
         /* load text section */
         if (IS_PROG(shdr[index]) && IS_AX(shdr[index]))
@@ -344,7 +363,7 @@ rt_err_t dlmodule_load_relocated_object(struct rt_dlmodule* module, void *module
                       shdr[index].sh_size);
             rodata_addr = (rt_uint32_t)ptr;
             LOG_D("load rodata 0x%x, size %d, rodata 0x%x", ptr,
-                shdr[index].sh_size, *(rt_uint32_t *)data_addr);
+                  shdr[index].sh_size, *(rt_uint32_t *)data_addr);
             ptr += shdr[index].sh_size;
         }
 
@@ -356,7 +375,7 @@ rt_err_t dlmodule_load_relocated_object(struct rt_dlmodule* module, void *module
                       shdr[index].sh_size);
             data_addr = (rt_uint32_t)ptr;
             LOG_D("load data 0x%x, size %d, data 0x%x", ptr,
-                shdr[index].sh_size, *(rt_uint32_t *)data_addr);
+                  shdr[index].sh_size, *(rt_uint32_t *)data_addr);
             ptr += shdr[index].sh_size;
         }
 
@@ -373,41 +392,40 @@ rt_err_t dlmodule_load_relocated_object(struct rt_dlmodule* module, void *module
     module->entry_addr = (rt_dlmodule_entry_func_t)((rt_uint8_t *)module->mem_space + elf_module->e_entry - module_addr);
 
     /* handle relocation section */
-    for (index = 0; index < elf_module->e_shnum; index ++)
+    for (index = 0; index < elf_module->e_shnum; index++)
     {
         rt_ubase_t i, nr_reloc;
         Elf_Sym *symtab;
         Elf_Rel *rel;
 
-        #if (defined(__arm__) || defined(__i386__) || (__riscv_xlen == 32))
+#if (defined(__arm__) || defined(__i386__) || (__riscv_xlen == 32))
         if (!IS_REL(shdr[index]))
             continue;
-        #elif (defined(__aarch64__) || defined(__x86_64__) || (__riscv_xlen == 64))
+#elif (defined(__aarch64__) || defined(__x86_64__) || (__riscv_xlen == 64))
         if (!IS_RELA(shdr[index]))
             continue;
-        #endif
-
+#endif
 
         /* get relocate item */
         rel = (Elf_Rel *)((rt_uint8_t *)module_ptr + shdr[index].sh_offset);
 
         /* locate .dynsym and .dynstr */
-        symtab   = (Elf_Sym *)((rt_uint8_t *)module_ptr +
-                                 shdr[shdr[index].sh_link].sh_offset);
-        strtab   = (rt_uint8_t *)module_ptr +
-                   shdr[shdr[shdr[index].sh_link].sh_link].sh_offset;
-        shstrab  = (rt_uint8_t *)module_ptr +
-                   shdr[elf_module->e_shstrndx].sh_offset;
+        symtab = (Elf_Sym *)((rt_uint8_t *)module_ptr +
+                             shdr[shdr[index].sh_link].sh_offset);
+        strtab = (rt_uint8_t *)module_ptr +
+                 shdr[shdr[shdr[index].sh_link].sh_link].sh_offset;
+        shstrab = (rt_uint8_t *)module_ptr +
+                  shdr[elf_module->e_shstrndx].sh_offset;
         nr_reloc = (rt_uint32_t)(shdr[index].sh_size / sizeof(Elf_Rel));
 
         /* relocate every items */
-        for (i = 0; i < nr_reloc; i ++)
+        for (i = 0; i < nr_reloc; i++)
         {
-            #if (defined(__arm__) || defined(__i386__) || (__riscv_xlen == 32))
+#if (defined(__arm__) || defined(__i386__) || (__riscv_xlen == 32))
             Elf_Sym *sym = &symtab[ELF32_R_SYM(rel->r_info)];
-            #elif (defined(__aarch64__) || defined(__x86_64__) || (__riscv_xlen == 64))
+#elif (defined(__aarch64__) || defined(__x86_64__) || (__riscv_xlen == 64))
             Elf_Sym *sym = &symtab[ELF64_R_SYM(rel->r_info)];
-            #endif
+#endif
 
             LOG_D("relocate symbol: %s", strtab + sym->st_name);
 
@@ -419,14 +437,14 @@ rt_err_t dlmodule_load_relocated_object(struct rt_dlmodule* module, void *module
                     (ELF_ST_TYPE(sym->st_info) == STT_OBJECT))
                 {
                     if (rt_strncmp((const char *)(shstrab +
-                                                  shdr[sym->st_shndx].sh_name), ELF_RODATA, 8) == 0)
+                                                  shdr[sym->st_shndx].sh_name),
+                                   ELF_RODATA, 8) == 0)
                     {
                         /* relocate rodata section */
                         LOG_D("rodata");
                         addr = (Elf_Addr)(rodata_addr + sym->st_value);
                     }
-                    else if (rt_strncmp((const char *)
-                                        (shstrab + shdr[sym->st_shndx].sh_name), ELF_BSS, 5) == 0)
+                    else if (rt_strncmp((const char *)(shstrab + shdr[sym->st_shndx].sh_name), ELF_BSS, 5) == 0)
                     {
                         /* relocate bss section */
                         LOG_D("bss");
@@ -440,11 +458,12 @@ rt_err_t dlmodule_load_relocated_object(struct rt_dlmodule* module, void *module
                         addr = (Elf_Addr)data_addr + sym->st_value;
                     }
 
-                    if (addr != 0) dlmodule_relocate(module, rel, addr);
+                    if (addr != 0)
+                        dlmodule_relocate(module, rel, addr);
                 }
                 else if (ELF_ST_TYPE(sym->st_info) == STT_FUNC)
                 {
-                    addr = (Elf_Addr)((rt_uint8_t *) module->mem_space - module_addr + sym->st_value);
+                    addr = (Elf_Addr)((rt_uint8_t *)module->mem_space - module_addr + sym->st_value);
 
                     /* relocate function */
                     dlmodule_relocate(module, rel, addr);
@@ -454,10 +473,9 @@ rt_err_t dlmodule_load_relocated_object(struct rt_dlmodule* module, void *module
             {
                 /* relocate function */
                 dlmodule_relocate(module, rel,
-                                       (Elf_Addr)((rt_uint8_t *)
-                                                    module->mem_space
-                                                    - module_addr
-                                                    + sym->st_value));
+                                  (Elf_Addr)((rt_uint8_t *)
+                                                 module->mem_space -
+                                             module_addr + sym->st_value));
             }
             else
             {
@@ -476,16 +494,16 @@ rt_err_t dlmodule_load_relocated_object(struct rt_dlmodule* module, void *module
                     }
                     else
                         LOG_E("Module: can't find %s in kernel symbol table",
-                                   strtab + sym->st_name);
+                              strtab + sym->st_name);
                 }
                 else
                 {
-                    addr = (Elf_Addr)((rt_uint8_t *) module->mem_space - module_addr + sym->st_value);
+                    addr = (Elf_Addr)((rt_uint8_t *)module->mem_space - module_addr + sym->st_value);
                     dlmodule_relocate(module, rel, addr);
                 }
             }
 
-            rel ++;
+            rel++;
         }
     }
 

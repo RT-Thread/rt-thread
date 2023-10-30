@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
@@ -13,7 +13,17 @@
 
 #include "dlmodule.h"
 
-void* dlsym(void *handle, const char* symbol)
+/**
+ * @brief   Get the address of a symbol in a dynamic link library module.
+ *
+ * @param   handle   is a pointer to the dynamic link library module handle obtained from dlopen.
+ * @param   symbol   is the name of the symbol to retrieve the address.
+ *
+ * @return  A pointer to the symbol's address if found, or RT_NULL if the symbol is not found in the module.
+ *
+ * @note    This function allows you to retrieve the address of a symbol in a dynamic link library module.
+ */
+void *dlsym(void *handle, const char *symbol)
 {
     int i;
     struct rt_dlmodule *module;
@@ -22,10 +32,10 @@ void* dlsym(void *handle, const char* symbol)
 
     module = (struct rt_dlmodule *)handle;
 
-    for(i=0; i<module->nsym; i++)
+    for (i = 0; i < module->nsym; i++)
     {
         if (rt_strcmp(module->symtab[i].name, symbol) == 0)
-            return (void*)module->symtab[i].addr;
+            return (void *)module->symtab[i].addr;
     }
 
     return RT_NULL;
