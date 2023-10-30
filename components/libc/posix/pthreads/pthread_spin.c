@@ -10,7 +10,15 @@
 
 #include <pthread.h>
 
-int pthread_spin_init (pthread_spinlock_t *lock, int pshared)
+/**
+ * @brief   Initialize a spin lock.
+ *
+ * @param   lock    is the pointer to the spin lock to be initialized.
+ * @param   pshared is not used in this implementation, reserved for compatibility.
+ *
+ * @return  0 on success, or an error code on failure.
+ */
+int pthread_spin_init(pthread_spinlock_t *lock, int pshared)
 {
     if (!lock)
         return EINVAL;
@@ -20,7 +28,14 @@ int pthread_spin_init (pthread_spinlock_t *lock, int pshared)
     return 0;
 }
 
-int pthread_spin_destroy (pthread_spinlock_t *lock)
+/**
+ * @brief   Destroy a spin lock.
+ *
+ * @param   lock    is the pointer to the spin lock to be destroyed.
+ *
+ * @return  0 on success, or an error code on failure.
+ */
+int pthread_spin_destroy(pthread_spinlock_t *lock)
 {
     if (!lock)
         return EINVAL;
@@ -28,7 +43,14 @@ int pthread_spin_destroy (pthread_spinlock_t *lock)
     return 0;
 }
 
-int pthread_spin_lock (pthread_spinlock_t *lock)
+/**
+ * @brief   Acquire a spin lock.
+ *
+ * @param   lock    is the pointer to the spin lock to be locked.
+ *
+ * @return  0 on success, or an error code on failure.
+ */
+int pthread_spin_lock(pthread_spinlock_t *lock)
 {
     if (!lock)
         return EINVAL;
@@ -41,7 +63,14 @@ int pthread_spin_lock (pthread_spinlock_t *lock)
     return 0;
 }
 
-int pthread_spin_trylock (pthread_spinlock_t *lock)
+/**
+ * @brief   Attempt to acquire a spin lock.
+ *
+ * @param   lock    is the pointer to the spin lock to be locked.
+ *
+ * @return  0 on success (lock acquired), EBUSY if the lock is already held.
+ */
+int pthread_spin_trylock(pthread_spinlock_t *lock)
 {
     if (!lock)
         return EINVAL;
@@ -49,14 +78,20 @@ int pthread_spin_trylock (pthread_spinlock_t *lock)
     if (!(lock->lock))
     {
         lock->lock = 1;
-
         return 0;
     }
 
     return EBUSY;
 }
 
-int pthread_spin_unlock (pthread_spinlock_t *lock)
+/**
+ * @brief   Release a spin lock.
+ *
+ * @param   lock    is the pointer to the spin lock to be unlocked.
+ *
+ * @return  0 on success, EPERM if the lock is not held by the caller.
+ */
+int pthread_spin_unlock(pthread_spinlock_t *lock)
 {
     if (!lock)
         return EINVAL;
