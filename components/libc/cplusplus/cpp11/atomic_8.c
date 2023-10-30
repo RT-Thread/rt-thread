@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
@@ -12,10 +12,21 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-/*
-* override gcc builtin atomic function for std::atomic<int64_t>, std::atomic<uint64_t>
-* @see https://gcc.gnu.org/onlinedocs/gcc/_005f_005fatomic-Builtins.html
-*/
+/**
+ * @brief   Override GCC built-in atomic functions for std::atomic<int64_t> and std::atomic<uint64_t>.
+ *
+ * These functions provide atomic operations on 64-bit integers.
+ * For more information, see: https://gcc.gnu.org/onlinedocs/gcc/__atomic-Builtins.html
+ */
+
+/**
+ * @brief   Load a 64-bit value atomically.
+ *
+ * @param   ptr         is a pointer to the value to be loaded.
+ * @param   memorder    is the memory order for the operation.
+ *
+ * @return  The loaded 64-bit value.
+ */
 uint64_t __atomic_load_8(volatile void *ptr, int memorder)
 {
     volatile uint64_t *val_ptr = (volatile uint64_t *)ptr;
@@ -27,6 +38,13 @@ uint64_t __atomic_load_8(volatile void *ptr, int memorder)
     return tmp;
 }
 
+/**
+ * @brief   Store a 64-bit value atomically.
+ *
+ * @param   ptr         is a pointer to the location where the value should be stored.
+ * @param   val         is the 64-bit value to be stored.
+ * @param   memorder    is the memory order for the operation.
+ */
 void __atomic_store_8(volatile void *ptr, uint64_t val, int memorder)
 {
     volatile uint64_t *val_ptr = (volatile uint64_t *)ptr;
@@ -36,6 +54,15 @@ void __atomic_store_8(volatile void *ptr, uint64_t val, int memorder)
     rt_hw_interrupt_enable(level);
 }
 
+/**
+ * @brief   Exchange the 64-bit value atomically.
+ *
+ * @param   ptr         is a pointer to the value to be exchanged.
+ * @param   val         is the new 64-bit value to be stored.
+ * @param   memorder    is the memory order for the operation.
+ *
+ * @return  The original 64-bit value.
+ */
 uint64_t __atomic_exchange_8(volatile void *ptr, uint64_t val, int memorder)
 {
     volatile uint64_t *val_ptr = (volatile uint64_t *)ptr;
@@ -48,6 +75,18 @@ uint64_t __atomic_exchange_8(volatile void *ptr, uint64_t val, int memorder)
     return tmp;
 }
 
+/**
+ * @brief   Compare and exchange the 64-bit value atomically.
+ *
+ * @param   ptr             is a pointer to the value to be compared and exchanged.
+ * @param   expected        is a pointer to the expected value.
+ * @param   desired         is the new 64-bit value to be stored if the values match.
+ * @param   weak            is a flag indicating whether a weak or strong comparison is used.
+ * @param   success_memorder    is the memory order for the success case.
+ * @param   failure_memorder    is the memory order for the failure case.
+ *
+ * @return  True if the comparison and exchange succeeded, false otherwise.
+ */
 bool __atomic_compare_exchange_8(volatile void *ptr, volatile void *expected, uint64_t desired, bool weak, int success_memorder, int failure_memorder)
 {
     volatile uint64_t *val_ptr = (volatile uint64_t *)ptr;
@@ -69,20 +108,34 @@ bool __atomic_compare_exchange_8(volatile void *ptr, volatile void *expected, ui
     return exchanged;
 }
 
-#define __atomic_fetch_op_8(OPNAME, OP) \
-uint64_t __atomic_fetch_##OPNAME##_8(volatile void *ptr, uint64_t val, int memorder) {\
-    volatile uint64_t* val_ptr = (volatile uint64_t*)ptr;\
-    rt_base_t level;\
-    uint64_t tmp;\
-    level = rt_hw_interrupt_disable();\
-    tmp = *val_ptr;\
-    *val_ptr OP##= val;\
-    rt_hw_interrupt_enable(level);\
-    return tmp;\
-}
+/**
+ * @brief   Atomic fetch-and-apply operations on 64-bit values.
+ *
+ * These functions perform atomic operations that fetch the current value,
+ * apply the specified operation (add, subtract, bitwise AND, OR, XOR),
+ * and store the result atomically.
+ *
+ * @param   ptr         is a pointer to the value to operate on.
+ * @param   val         is the value to apply to the current value.
+ * @param   memorder    is the memory order for the operation.
+ *
+ * @return  The original value before the operation.
+ */
+#define __atomic_fetch_op_8(OPNAME, OP)                                                  \
+    uint64_t __atomic_fetch_##OPNAME##_8(volatile void *ptr, uint64_t val, int memorder) \
+    {                                                                                    \
+        volatile uint64_t *val_ptr = (volatile uint64_t *)ptr;                           \
+        rt_base_t level;                                                                 \
+        uint64_t tmp;                                                                    \
+        level = rt_hw_interrupt_disable();                                               \
+        tmp = *val_ptr;                                                                  \
+        *val_ptr OP## = val;                                                             \
+        rt_hw_interrupt_enable(level);                                                   \
+        return tmp;                                                                      \
+    }
 
 __atomic_fetch_op_8(add, +)
-__atomic_fetch_op_8(sub, -)
-__atomic_fetch_op_8( and, &)
-__atomic_fetch_op_8( or, |)
-__atomic_fetch_op_8(xor, ^)
+    __atomic_fetch_op_8(sub, -)
+        __atomic_fetch_op_8(and, &)
+            __atomic_fetch_op_8(or, |)
+                __atomic_fetch_op_8(xor, ^)
