@@ -32,17 +32,17 @@ Hardware Drivers Config --->
 | 7 (D7) | P208 | 是 |  |
 | 8 (D8) | P207 | 是 |  |
 | 9 (D9) | P009 | 是 |  |
-| 10 (D10) | P712 | 是 | PWM2-CH2,默认被RT-Thread的PWM设备框架pwm2接管 |
+| 10 (D10) | P712 | 是 | PWM2-CH2,默认被RT-Thread的PWM设备框架pwm2的channel2接管 |
 | 11 (D11) | P512 | 是 | I2C2-SCL,默认被RT-Thread的I2C设备框架i2c2接管 |
 | 12 (D12) | P511 | 是 | I2C2-SDA,默认被RT-Thread的I2C设备框架i2c2接管 |
 | 13 (D13) | P204 | 是 |  |
 | 14 (D14) | P203 | 是 |  |
 | 15 (D15) | P202 | 是 |  |
-| 16 (A0) | P000 | 是 | ADC1-CH0-EXTVOL(外部电压),默认被RT-Thread的ADC设备框架adc1接管 |
-| 17 (A1) | P001 | 是 | ADC1-CH1-EXTVOL(外部电压),默认被RT-Thread的ADC设备框架adc1接管 |
-| 18 (A2) | P002 | 是 | ADC1-CH2-EXTVOL(外部电压),默认被RT-Thread的ADC设备框架adc1接管 |
-| 19 (A3) | P003 | 是 | ADC1-CH7-EXTVOL(外部电压),默认被RT-Thread的ADC设备框架adc1接管 |
-| 20 (A4) | P508 | 是 | ADC1-CH19-EXTVOL(外部电压),默认被RT-Thread的ADC设备框架adc1接管 |
-| 21 (A5) | P014 | 是 | ADC1-CH5-EXTVOL(外部电压),默认被RT-Thread的ADC设备框架adc1接管 |
+| 16 (A0) | P000 | 是 | ADC1-CH0-EXTVOL(外部电压),默认被RT-Thread的ADC设备框架adc0的channel0接管 |
+| 17 (A1) | P001 | 是 | ADC1-CH1-EXTVOL(外部电压),默认被RT-Thread的ADC设备框架adc0的channel1接管 |
+| 18 (A2) | P002 | 是 | ADC1-CH2-EXTVOL(外部电压),默认被RT-Thread的ADC设备框架adc0的channel2接管 |
+| 19 (A3) | P003 | 是 | ADC1-CH7-EXTVOL(外部电压),默认被RT-Thread的ADC设备框架adc0的channel7接管 |
+| 20 (A4) | P508 | 是 | ADC1-CH19-EXTVOL(外部电压),默认被RT-Thread的ADC设备框架adc0的channel20接管 |
+| 21 (A5) | P014 | 是 | ADC1-CH5-EXTVOL(外部电压),默认被RT-Thread的ADC设备框架adc0的channel5接管 |
 
 > 注意：RTduino暂时不对MDK支持，建议使用GNU GCC工具链编译
