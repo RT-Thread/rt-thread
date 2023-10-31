@@ -464,18 +464,52 @@ menu "Hardware Drivers Config"
             endif
 
         menuconfig BSP_USING_I2C
-            bool "Enable I2C BUS (software simulation)"
-            default n
+            bool "Enable software I2C bus"
             select RT_USING_I2C
             select RT_USING_I2C_BITOPS
             select RT_USING_PIN
-            if BSP_USING_I2C2
-                config BSP_I2C2_SCL_PIN
-                    string "i2c2 scl pin number (P512)"
-                    default "p512"
-                config BSP_I2C2_SDA_PIN
-                    string "i2c2 sda pin number (P511)"
-                    default "p512"
+            default n
+
+            if BSP_USING_I2C
+                config BSP_USING_I2C
+                menuconfig BSP_USING_I2C0
+                    bool "Enable I2C0 Bus (software simulation)"
+                    default n
+                    if BSP_USING_I2C0
+                        comment "Please select your i2c analog pin, e.g. 'P512'"
+                        config BSP_I2C0_SCL_PIN
+                            string "i2c0 scl pin number (Pxxx)"
+                            default "pxxx"
+                        config BSP_I2C0_SDA_PIN
+                            string "i2c0 sda pin number (Pxxx)"
+                            default "pxxx"
+                    endif
+
+                menuconfig BSP_USING_I2C1
+                    bool "Enable I2C1 Bus (software simulation)"
+                    default n
+                    if BSP_USING_I2C1
+                        comment "Please select your i2c analog pin, e.g. 'P512'"
+                        config BSP_I2C1_SCL_PIN
+                            string "i2c1 scl pin number (Pxxx)"
+                            default "pxxx"
+                        config BSP_I2C1_SDA_PIN
+                            string "i2c1 sda pin number (Pxxx)"
+                            default "pxxx"
+                    endif
+
+                menuconfig BSP_USING_I2C2
+                    bool "Enable I2C2 Bus (software simulation)"
+                    default n
+                    if BSP_USING_I2C2
+                        comment "Please select your i2c analog pin, e.g. 'P512'"
+                        config BSP_I2C2_SCL_PIN
+                            string "i2c2 scl pin number (P512)"
+                            default "p512"
+                        config BSP_I2C2_SDA_PIN
+                            string "i2c2 sda pin number (P511)"
+                            default "p511"
+                    endif
             endif
 
     menuconfig BSP_USING_ADC
