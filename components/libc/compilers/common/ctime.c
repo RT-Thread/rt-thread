@@ -777,7 +777,8 @@ RTM_EXPORT(clock_settime);
 int rt_timespec_to_tick(const struct timespec *time)
 {
     int tick;
-    int nsecond, second;
+    int second;
+    long long nsecond;
     struct timespec tp = {0};
 
     RT_ASSERT(time != RT_NULL);

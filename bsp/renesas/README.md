@@ -15,6 +15,8 @@ RA 系列 BSP 目前支持情况如下表所示：
 | [ra4m2-eco](ra4m2-eco)             | Renesas 官方 RA-Eco-RA4M2 开发板              |
 | **RA2 系列**                       |                                               |
 | [ra2l1-cpk](ra2l1-cpk)             | Renesas 官方 CPK-RA2L1 开发板                 |
+| **RA8 系列**                       |                                               |
+| [ra8m1-ek](ra8m1-ek)               | Renesas 官方 EK-RA8M1 开发板                  |
 
 可以通过阅读相应 BSP 下的 README 来快速上手，如果想要使用 BSP 更多功能可参考 docs 文件夹下提供的说明文档，如下表所示：
 

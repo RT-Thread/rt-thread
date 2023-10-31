@@ -397,6 +397,28 @@ menu "On-chip Peripheral Drivers"
                 endif
         endif
 
+    menuconfig BSP_USING_HWTIMER
+        bool "Enable HWTIMER"
+        default n
+        select RT_USING_HWTIMER
+        if BSP_USING_HWTIMER
+            config BSP_USING_TIMER0
+                bool "Enable HWTIMER0"
+                default n
+
+            config BSP_USING_TIMER1
+                bool "Enable HWTIMER1"
+                default n
+
+            config BSP_USING_TIMER2
+                bool "Enable HWTIMER2"
+                default n
+
+            config BSP_USING_TIMER3
+                bool "Enable HWTIMER3"
+                default n
+        endif
+
     menuconfig BSP_USING_I2C
         bool "Enable I2C"
         select RT_USING_I2C
