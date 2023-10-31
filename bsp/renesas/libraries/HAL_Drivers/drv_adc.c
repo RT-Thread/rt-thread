@@ -41,7 +41,7 @@ struct rt_adc_device adc1_device;
 struct ra_dev _ra_adc1_device = {.ra_adc_device_t = &adc1_device, .ra_adc_dev = &ra_adc[1]};
 #endif
 
-static rt_err_t ra_adc_enabled(struct rt_adc_device *device, rt_uint32_t channel, rt_bool_t enabled)
+static rt_err_t ra_adc_enabled(struct rt_adc_device *device, rt_int8_t channel, rt_bool_t enabled)
 {
     RT_ASSERT(device != RT_NULL);
     struct ra_adc_map *adc = (struct ra_adc_map *)device->parent.user_data;
@@ -78,7 +78,7 @@ rt_err_t ra_adc_close(struct rt_adc_device *device)
     return RT_EOK;
 }
 
-static rt_err_t ra_get_adc_value(struct rt_adc_device *device, rt_uint32_t channel, rt_uint32_t *value)
+static rt_err_t ra_get_adc_value(struct rt_adc_device *device, rt_int8_t channel, rt_uint32_t *value)
 {
     RT_ASSERT(device != RT_NULL);
     struct ra_adc_map *adc = (struct ra_adc_map *)device->parent.user_data;

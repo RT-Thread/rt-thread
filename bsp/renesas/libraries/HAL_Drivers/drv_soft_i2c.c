@@ -21,7 +21,7 @@
     #define DBG_LVL               DBG_INFO
 #endif /* DRV_DEBUG */
 
-#if !defined(BSP_USING_I2C0) && !defined(BSP_USING_I2C1)
+#if !defined(BSP_USING_I2C0) && !defined(BSP_USING_I2C1) && !defined(BSP_USING_I2C2)
     #error "Please define at least one BSP_USING_I2Cx"
     /* this driver can be disabled at menuconfig -> RT-Thread Components -> Device Drivers */
 #endif
@@ -33,6 +33,9 @@ static const struct ra_soft_i2c_config soft_i2c_config[] =
 #endif
 #ifdef BSP_USING_I2C1
     I2C1_BUS_CONFIG,
+#endif
+#ifdef BSP_USING_I2C2
+    I2C2_BUS_CONFIG,
 #endif
 };
 
