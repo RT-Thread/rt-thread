@@ -223,6 +223,14 @@ SECTIONS
 
         KEEP(*(.eh_frame*))
 
+        /* new GCC version uses .init_array */
+        PROVIDE(__ctors_start__ = .);
+        KEEP (*(SORT(.init_array.*)))
+        KEEP (*(.init_array))
+        PROVIDE(__ctors_end__ = .);
+
+        . = ALIGN(4);
+
         __ROM_End = .;
     } > FLASH = 0xFF
 
@@ -324,6 +332,14 @@ SECTIONS
         PROVIDE_HIDDEN (__fini_array_end = .);
 
         KEEP(*(.jcr*))
+
+        . = ALIGN(4);
+
+        /* .data section which is used for initialized data */
+        PROVIDE(__dtors_start__ = .);
+        KEEP(*(SORT(.dtors.*)))
+        KEEP(*(.dtors))
+        PROVIDE(__dtors_end__ = .);
 
         . = ALIGN(4);
 

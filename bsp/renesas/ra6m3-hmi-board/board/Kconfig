@@ -26,6 +26,7 @@ menu "Hardware Drivers Config"
             imply RTDUINO_USING_SERVO
             imply RTDUINO_USING_WIRE
             default n
+            
     endmenu
 
     menu "On-chip Peripheral Drivers"
