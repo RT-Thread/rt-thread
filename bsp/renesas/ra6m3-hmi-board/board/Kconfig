@@ -505,10 +505,10 @@ menu "Hardware Drivers Config"
                         comment "Please select your i2c analog pin, e.g. 'P512'"
                         config BSP_I2C2_SCL_PIN
                             string "i2c2 scl pin number (P512)"
-                            default "p512"
+                            default "BSP_IO_PORT_05_PIN_12"
                         config BSP_I2C2_SDA_PIN
                             string "i2c2 sda pin number (P511)"
-                            default "p511"
+                            default "BSP_IO_PORT_05_PIN_11"
                     endif
             endif
 

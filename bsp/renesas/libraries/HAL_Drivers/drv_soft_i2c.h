@@ -30,6 +30,15 @@ struct ra_i2c
     struct rt_i2c_bus_device i2c2_bus;
 };
 
+#ifdef BSP_USING_I2C0
+#define I2C0_BUS_CONFIG                                  \
+    {                                                    \
+        .scl = BSP_I2C0_SCL_PIN,                         \
+        .sda = BSP_I2C0_SDA_PIN,                         \
+        .bus_name = "i2c0",                              \
+    }
+#endif
+
 #ifdef BSP_USING_I2C1
 #define I2C1_BUS_CONFIG                                  \
     {                                                    \
