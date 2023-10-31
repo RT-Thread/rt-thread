@@ -15,6 +15,7 @@
  * 2021-06-25     liuxianliang port to v2.0.3
  * 2022-01-18     Meco Man     remove v2.0.2
  * 2022-02-20     Meco Man     integrate v1.4.1 v2.0.3 and v2.1.2 porting layer
+ * 2023-10-31     xqyjlj       fix spinlock`s deadlock
  */
 
 #include <rtthread.h>
@@ -35,6 +36,10 @@
 #include <lwip/inet.h>
 #include <netif/ethernetif.h>
 #include <netif/etharp.h>
+
+#ifdef RT_USING_SMP
+static struct rt_mutex _mutex = {0};
+#endif
 
 /*
  * Initialize the ethernetif layer and set network interface device up
@@ -58,6 +63,9 @@ int lwip_system_init(void)
         rt_kprintf("lwip system already init.\n");
         return 0;
     }
+#ifdef RT_USING_SMP
+    rt_mutex_init(&_mutex, "sys_arch", RT_IPC_FLAG_FIFO);
+#endif
 
     extern int eth_system_device_init_private(void);
     eth_system_device_init_private();
@@ -511,18 +519,26 @@ sys_thread_t sys_thread_new(const char    *name,
     return t;
 }
 
-static RT_DEFINE_SPINLOCK(_spinlock);
-
 sys_prot_t sys_arch_protect(void)
 {
+#ifdef RT_USING_SMP
+    rt_mutex_take(&_mutex, RT_WAITING_FOREVER);
+    return 0;
+#else
     rt_base_t level;
-    level = rt_spin_lock_irqsave(&_spinlock); /* disable interrupt */
+    level = rt_hw_interrupt_disable(); /* disable interrupt */
     return level;
+#endif
 }
 
 void sys_arch_unprotect(sys_prot_t pval)
 {
-    rt_spin_unlock_irqrestore(&_spinlock, pval); /* enable interrupt */
+#ifdef RT_USING_SMP
+    RT_UNUSED(pval);
+    rt_mutex_release(&_mutex);
+#else
+    rt_hw_interrupt_enable(pval); /* enable interrupt */
+#endif
 }
 
 void sys_arch_assert(const char *file, int line)
