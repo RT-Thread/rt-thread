@@ -373,6 +373,8 @@ void rt_hw_trap_exception(struct rt_hw_exp_stack *regs)
 #endif
 
 #ifdef RT_USING_LWP
+    /* restore normal execution environment */
+    __asm__ volatile("msr daifclr, 0x3\ndmb ishst\nisb\n");
     _check_fault(regs, 0, "user fault");
 #endif
 

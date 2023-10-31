@@ -328,136 +328,35 @@ static void _crt_thread_entry(void *parameter)
 /* exit group */
 sysret_t sys_exit_group(int value)
 {
-    rt_thread_t tid, main_thread;
-    struct rt_lwp *lwp;
+    sysret_t rc = 0;
+    struct rt_lwp *lwp = lwp_self();
 
-    tid = rt_thread_self();
-    lwp = (struct rt_lwp *)tid->lwp;
-    LOG_D("process(%p) exit.", lwp);
-
-#ifdef ARCH_MM_MMU
-    if (tid->clear_child_tid)
+    if (lwp)
+        lwp_exit(lwp, value);
+    else
     {
-        int t = 0;
-        int *clear_child_tid = tid->clear_child_tid;
-
-        tid->clear_child_tid = RT_NULL;
-        lwp_put_to_user(clear_child_tid, &t, sizeof t);
-        sys_futex(clear_child_tid, FUTEX_WAKE | FUTEX_PRIVATE, 1, RT_NULL, RT_NULL, 0);
+        LOG_E("Can't find matching process of current thread");
+        rc = -EINVAL;
     }
 
-    LWP_LOCK(lwp);
-    /**
-     * Brief: only one thread should calls exit_group(),
-     * but we can not ensured that during run-time
-     */
-    lwp->lwp_ret = LWP_CREATE_STAT(value);
-    LWP_UNLOCK(lwp);
-
-    lwp_terminate(lwp);
-
-    main_thread = rt_list_entry(lwp->t_grp.prev, struct rt_thread, sibling);
-    if (main_thread == tid)
-    {
-        lwp_wait_subthread_exit();
-        lwp_pid_put(lwp);
-        /**
-         * @brief Wakeup parent if it's waiting for this lwp, otherwise a signal
-         *        will be sent to parent
-         *
-         * @note Critical Section
-         * - the parent lwp (RW.)
-         */
-        if (lwp->parent)
-        {
-            struct rt_thread *thread;
-            if (!rt_list_isempty(&lwp->wait_list))
-            {
-                thread = rt_list_entry(lwp->wait_list.next, struct rt_thread, tlist);
-                thread->error = RT_EOK;
-                thread->msg_ret = (void*)(rt_size_t)lwp->lwp_ret;
-                rt_thread_resume(thread);
-            }
-            else
-            {
-                /* children cannot detach itself and must wait for parent to take care of it */
-                lwp_signal_kill(lwp->parent, SIGCHLD, CLD_EXITED, 0);
-            }
-        }
-    }
-#else
-    main_thread = rt_list_entry(lwp->t_grp.prev, struct rt_thread, sibling);
-    if (main_thread == tid)
-    {
-        rt_thread_t sub_thread;
-        rt_list_t *list;
-
-        lwp_terminate(lwp);
-
-        /* delete all subthread */
-        while ((list = tid->sibling.prev) != &lwp->t_grp)
-        {
-            sub_thread = rt_list_entry(list, struct rt_thread, sibling);
-            rt_list_remove(&sub_thread->sibling);
-            rt_thread_delete(sub_thread);
-        }
-        lwp->lwp_ret = value;
-    }
-#endif /* ARCH_MM_MMU */
-
-    /**
-     * Note: the tid tree always hold a reference to thread, hence the tid must
-     * be release before cleanup of thread
-     */
-    lwp_tid_put(tid->tid);
-    tid->tid = 0;
-    rt_list_remove(&tid->sibling);
-    rt_thread_delete(tid);
-    rt_schedule();
-
-    /* never reach here */
-    RT_ASSERT(0);
-    return 0;
+    return rc;
 }
 
 /* thread exit */
-void sys_exit(int status)
+sysret_t sys_exit(int status)
 {
-    rt_thread_t tid, header_thr;
-    struct rt_lwp *lwp;
-
-    LOG_D("thread exit");
+    sysret_t rc = 0;
+    rt_thread_t tid;
 
     tid = rt_thread_self();
-    lwp = (struct rt_lwp *)tid->lwp;
-
-#ifdef ARCH_MM_MMU
-    if (tid->clear_child_tid)
+    if (tid && tid->lwp)
+        lwp_thread_exit(tid, status);
     {
-        int t = 0;
-        int *clear_child_tid = tid->clear_child_tid;
-
-        tid->clear_child_tid = RT_NULL;
-        lwp_put_to_user(clear_child_tid, &t, sizeof t);
-        sys_futex(clear_child_tid, FUTEX_WAKE, 1, RT_NULL, RT_NULL, 0);
+        LOG_E("Can't find matching process of current thread");
+        rc = -EINVAL;
     }
 
-    header_thr = rt_list_entry(lwp->t_grp.prev, struct rt_thread, sibling);
-    if (header_thr == tid && tid->sibling.prev == &lwp->t_grp)
-    {
-        lwp_terminate(lwp);
-        lwp_wait_subthread_exit();
-        lwp->lwp_ret = LWP_CREATE_STAT(status);
-    }
-#endif /* ARCH_MM_MMU */
-
-    lwp_tid_put(tid->tid);
-    tid->tid = 0;
-    rt_list_remove(&tid->sibling);
-    rt_thread_delete(tid);
-    rt_schedule();
-
-    return;
+    return rc;
 }
 
 /* syscall: "read" ret: "ssize_t" args: "int" "void *" "size_t" */
