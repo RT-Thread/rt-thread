@@ -45,7 +45,4 @@ Hardware Drivers Config --->
 | 20 (A4) | P508 | 是 | ADC1-CH19-EXTVOL(外部电压),默认被RT-Thread的ADC设备框架adc1接管 |
 | 21 (A5) | P014 | 是 | ADC1-CH5-EXTVOL(外部电压),默认被RT-Thread的ADC设备框架adc1接管 |
 
-> 注意：
->
-> 1. xxxxxxxxx
-> 2. xxxxxxxxx
+> 注意：RTduino暂时不对MDK支持，建议使用GNU GCC工具链编译
