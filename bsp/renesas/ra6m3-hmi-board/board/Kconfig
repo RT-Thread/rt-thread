@@ -476,7 +476,7 @@ menu "Hardware Drivers Config"
                     bool "Enable I2C0 Bus (software simulation)"
                     default n
                     if BSP_USING_I2C0
-                        comment "Please select your i2c analog pin, e.g. 'P512'"
+                        comment "Please select your i2c analog pin, e.g. 'P512': BSP_IO_PORT_05_PIN_12"
                         config BSP_I2C0_SCL_PIN
                             string "i2c0 scl pin number (Pxxx)"
                             default "pxxx"
@@ -489,7 +489,7 @@ menu "Hardware Drivers Config"
                     bool "Enable I2C1 Bus (software simulation)"
                     default n
                     if BSP_USING_I2C1
-                        comment "Please select your i2c analog pin, e.g. 'P512'"
+                        comment "Please select your i2c analog pin, e.g. 'P512': BSP_IO_PORT_05_PIN_12"
                         config BSP_I2C1_SCL_PIN
                             string "i2c1 scl pin number (Pxxx)"
                             default "pxxx"
@@ -502,7 +502,7 @@ menu "Hardware Drivers Config"
                     bool "Enable I2C2 Bus (software simulation)"
                     default n
                     if BSP_USING_I2C2
-                        comment "Please select your i2c analog pin, e.g. 'P512'"
+                        comment "Please select your i2c analog pin, e.g. 'P512': BSP_IO_PORT_05_PIN_12"
                         config BSP_I2C2_SCL_PIN
                             string "i2c2 scl pin number (P512)"
                             default "BSP_IO_PORT_05_PIN_12"
