@@ -10,6 +10,13 @@
 
 #include <pthread.h>
 
+/**
+ * @brief   Initialize a read-write lock attributes object.
+ *
+ * @param   attr    is the pointer to the read-write lock attributes object to be initialized.
+ *
+ * @return  0 on success, or an error code on failure.
+ */
 int pthread_rwlockattr_init(pthread_rwlockattr_t *attr)
 {
     if (!attr)
@@ -20,6 +27,13 @@ int pthread_rwlockattr_init(pthread_rwlockattr_t *attr)
 }
 RTM_EXPORT(pthread_rwlockattr_init);
 
+/**
+ * @brief   Destroy a read-write lock attributes object.
+ *
+ * @param   attr    is the pointer to the read-write lock attributes object to be destroyed.
+ *
+ * @return  0 on success, or an error code on failure.
+ */
 int pthread_rwlockattr_destroy(pthread_rwlockattr_t *attr)
 {
     if (!attr)
@@ -29,8 +43,16 @@ int pthread_rwlockattr_destroy(pthread_rwlockattr_t *attr)
 }
 RTM_EXPORT(pthread_rwlockattr_destroy);
 
+/**
+ * @brief   Get the process-shared attribute of a read-write lock attributes object.
+ *
+ * @param   attr        is the pointer to the read-write lock attributes object to query.
+ * @param   pshared     is the pointer to an integer where the process-shared attribute is stored.
+ *
+ * @return  0 on success, or an error code on failure.
+ */
 int pthread_rwlockattr_getpshared(const pthread_rwlockattr_t *attr,
-                                  int                        *pshared)
+                                  int *pshared)
 {
     if (!attr || !pshared)
         return EINVAL;
@@ -41,6 +63,14 @@ int pthread_rwlockattr_getpshared(const pthread_rwlockattr_t *attr,
 }
 RTM_EXPORT(pthread_rwlockattr_getpshared);
 
+/**
+ * @brief   Set the process-shared attribute of a read-write lock attributes object.
+ *
+ * @param   attr    is the pointer to the read-write lock attributes object to modify.
+ * @param   pshared is the new process-shared attribute value.
+ *
+ * @return  0 on success, or an error code on failure.
+ */
 int pthread_rwlockattr_setpshared(pthread_rwlockattr_t *attr, int pshared)
 {
     if (!attr || pshared != PTHREAD_PROCESS_PRIVATE)
@@ -50,7 +80,15 @@ int pthread_rwlockattr_setpshared(pthread_rwlockattr_t *attr, int pshared)
 }
 RTM_EXPORT(pthread_rwlockattr_setpshared);
 
-int pthread_rwlock_init(pthread_rwlock_t           *rwlock,
+/**
+ * @brief   Initialize a read-write lock object.
+ *
+ * @param   rwlock  is the pointer to the read-write lock object to be initialized.
+ * @param   attr    is the pointer to read-write lock attributes (ignored).
+ *
+ * @return  0 on success, or an error code on failure.
+ */
+int pthread_rwlock_init(pthread_rwlock_t *rwlock,
                         const pthread_rwlockattr_t *attr)
 {
     if (!rwlock)
@@ -69,7 +107,14 @@ int pthread_rwlock_init(pthread_rwlock_t           *rwlock,
 }
 RTM_EXPORT(pthread_rwlock_init);
 
-int pthread_rwlock_destroy (pthread_rwlock_t *rwlock)
+/**
+ * @brief   Destroy a read-write lock object.
+ *
+ * @param   rwlock  is the pointer to the read-write lock object to be destroyed.
+ *
+ * @return  0 on success, or an error code on failure.
+ */
+int pthread_rwlock_destroy(pthread_rwlock_t *rwlock)
 {
     int result;
 
@@ -78,8 +123,8 @@ int pthread_rwlock_destroy (pthread_rwlock_t *rwlock)
     if (rwlock->attr == -1)
         return 0; /* rwlock is not initialized */
 
-    if ( (result = pthread_mutex_lock(&rwlock->rw_mutex)) != 0)
-        return(result);
+    if ((result = pthread_mutex_lock(&rwlock->rw_mutex)) != 0)
+        return (result);
 
     if (rwlock->rw_refcount != 0 ||
         rwlock->rw_nwaitreaders != 0 ||
@@ -122,6 +167,13 @@ int pthread_rwlock_destroy (pthread_rwlock_t *rwlock)
 }
 RTM_EXPORT(pthread_rwlock_destroy);
 
+/**
+ * @brief   Acquire a read lock on a read-write lock.
+ *
+ * @param   rwlock  is the pointer to the read-write lock object.
+ *
+ * @return  0 on success, or an error code on failure.
+ */
 int pthread_rwlock_rdlock(pthread_rwlock_t *rwlock)
 {
     int result;
@@ -132,7 +184,7 @@ int pthread_rwlock_rdlock(pthread_rwlock_t *rwlock)
         pthread_rwlock_init(rwlock, NULL);
 
     if ((result = pthread_mutex_lock(&rwlock->rw_mutex)) != 0)
-        return(result);
+        return (result);
 
     /* give preference to waiting writers */
     while (rwlock->rw_refcount < 0 || rwlock->rw_nwaitwriters > 0)
@@ -156,6 +208,13 @@ int pthread_rwlock_rdlock(pthread_rwlock_t *rwlock)
 }
 RTM_EXPORT(pthread_rwlock_rdlock);
 
+/**
+ * @brief   Try to acquire a read lock on a read-write lock.
+ *
+ * @param   rwlock  is the pointer to the read-write lock object.
+ *
+ * @return  0 on success (read lock acquired), or EBUSY if the lock is held by a writer or waiting writers.
+ */
 int pthread_rwlock_tryrdlock(pthread_rwlock_t *rwlock)
 {
     int result;
@@ -166,20 +225,28 @@ int pthread_rwlock_tryrdlock(pthread_rwlock_t *rwlock)
         pthread_rwlock_init(rwlock, NULL);
 
     if ((result = pthread_mutex_lock(&rwlock->rw_mutex)) != 0)
-        return(result);
+        return (result);
 
     if (rwlock->rw_refcount < 0 || rwlock->rw_nwaitwriters > 0)
-        result = EBUSY;                 /* held by a writer or waiting writers */
+        result = EBUSY; /* held by a writer or waiting writers */
     else
-        rwlock->rw_refcount++;          /* increment count of reader locks */
+        rwlock->rw_refcount++; /* increment count of reader locks */
 
     pthread_mutex_unlock(&rwlock->rw_mutex);
 
-    return(result);
+    return (result);
 }
 RTM_EXPORT(pthread_rwlock_tryrdlock);
 
-int pthread_rwlock_timedrdlock(pthread_rwlock_t      *rwlock,
+/**
+ * @brief   Acquire a read lock on a read-write lock with a timeout.
+ *
+ * @param   rwlock    is the pointer to the read-write lock object.
+ * @param   abstime   is the absolute timeout time.
+ *
+ * @return  0 on success (read lock acquired), or an error code on failure.
+ */
+int pthread_rwlock_timedrdlock(pthread_rwlock_t *rwlock,
                                const struct timespec *abstime)
 {
     int result;
@@ -189,8 +256,8 @@ int pthread_rwlock_timedrdlock(pthread_rwlock_t      *rwlock,
     if (rwlock->attr == -1)
         pthread_rwlock_init(rwlock, NULL);
 
-    if ( (result = pthread_mutex_lock(&rwlock->rw_mutex)) != 0)
-        return(result);
+    if ((result = pthread_mutex_lock(&rwlock->rw_mutex)) != 0)
+        return (result);
 
     /* give preference to waiting writers */
     while (rwlock->rw_refcount < 0 || rwlock->rw_nwaitwriters > 0)
@@ -214,7 +281,15 @@ int pthread_rwlock_timedrdlock(pthread_rwlock_t      *rwlock,
 }
 RTM_EXPORT(pthread_rwlock_timedrdlock);
 
-int pthread_rwlock_timedwrlock(pthread_rwlock_t      *rwlock,
+/**
+ * @brief   Acquire a write lock on a read-write lock with a timeout.
+ *
+ * @param   rwlock    is the pointer to the read-write lock object.
+ * @param   abstime   is the absolute timeout time.
+ *
+ * @return  0 on success (write lock acquired), or an error code on failure.
+ */
+int pthread_rwlock_timedwrlock(pthread_rwlock_t *rwlock,
                                const struct timespec *abstime)
 {
     int result;
@@ -225,7 +300,7 @@ int pthread_rwlock_timedwrlock(pthread_rwlock_t      *rwlock,
         pthread_rwlock_init(rwlock, NULL);
 
     if ((result = pthread_mutex_lock(&rwlock->rw_mutex)) != 0)
-        return(result);
+        return (result);
 
     while (rwlock->rw_refcount != 0)
     {
@@ -244,10 +319,17 @@ int pthread_rwlock_timedwrlock(pthread_rwlock_t      *rwlock,
 
     pthread_mutex_unlock(&rwlock->rw_mutex);
 
-    return(result);
+    return (result);
 }
 RTM_EXPORT(pthread_rwlock_timedwrlock);
 
+/**
+ * @brief   Try to acquire a write lock on a read-write lock.
+ *
+ * @param   rwlock  is the pointer to the read-write lock object.
+ *
+ * @return  0 on success (write lock acquired), or EBUSY if the lock is held by either a writer or reader(s).
+ */
 int pthread_rwlock_trywrlock(pthread_rwlock_t *rwlock)
 {
     int result;
@@ -258,19 +340,26 @@ int pthread_rwlock_trywrlock(pthread_rwlock_t *rwlock)
         pthread_rwlock_init(rwlock, NULL);
 
     if ((result = pthread_mutex_lock(&rwlock->rw_mutex)) != 0)
-        return(result);
+        return (result);
 
     if (rwlock->rw_refcount != 0)
-        result = EBUSY;                 /* held by either writer or reader(s) */
+        result = EBUSY; /* held by either writer or reader(s) */
     else
-        rwlock->rw_refcount = -1;       /* available, indicate a writer has it */
+        rwlock->rw_refcount = -1; /* available, indicate a writer has it */
 
     pthread_mutex_unlock(&rwlock->rw_mutex);
 
-    return(result);
+    return (result);
 }
 RTM_EXPORT(pthread_rwlock_trywrlock);
 
+/**
+ * @brief   Release a read or write lock on a read-write lock.
+ *
+ * @param   rwlock  is the pointer to the read-write lock object.
+ *
+ * @return  0 on success, or an error code on failure.
+ */
 int pthread_rwlock_unlock(pthread_rwlock_t *rwlock)
 {
     int result;
@@ -280,13 +369,13 @@ int pthread_rwlock_unlock(pthread_rwlock_t *rwlock)
     if (rwlock->attr == -1)
         pthread_rwlock_init(rwlock, NULL);
 
-    if ( (result = pthread_mutex_lock(&rwlock->rw_mutex)) != 0)
-        return(result);
+    if ((result = pthread_mutex_lock(&rwlock->rw_mutex)) != 0)
+        return (result);
 
     if (rwlock->rw_refcount > 0)
-        rwlock->rw_refcount--;              /* releasing a reader */
+        rwlock->rw_refcount--; /* releasing a reader */
     else if (rwlock->rw_refcount == -1)
-        rwlock->rw_refcount = 0;            /* releasing a writer */
+        rwlock->rw_refcount = 0; /* releasing a writer */
 
     /* give preference to waiting writers over waiting readers */
     if (rwlock->rw_nwaitwriters > 0)
@@ -301,10 +390,17 @@ int pthread_rwlock_unlock(pthread_rwlock_t *rwlock)
 
     pthread_mutex_unlock(&rwlock->rw_mutex);
 
-    return(result);
+    return (result);
 }
 RTM_EXPORT(pthread_rwlock_unlock);
 
+/**
+ * @brief   Acquire a write lock on a reader-writer lock.
+ *
+ * @param   rwlock  is the pointer to the reader-writer lock to be locked for writing.
+ *
+ * @return  0 on success, or an error code on failure.
+ */
 int pthread_rwlock_wrlock(pthread_rwlock_t *rwlock)
 {
     int result;
@@ -315,7 +411,7 @@ int pthread_rwlock_wrlock(pthread_rwlock_t *rwlock)
         pthread_rwlock_init(rwlock, NULL);
 
     if ((result = pthread_mutex_lock(&rwlock->rw_mutex)) != 0)
-        return(result);
+        return (result);
 
     while (rwlock->rw_refcount != 0)
     {
@@ -334,7 +430,6 @@ int pthread_rwlock_wrlock(pthread_rwlock_t *rwlock)
 
     pthread_mutex_unlock(&rwlock->rw_mutex);
 
-    return(result);
+    return (result);
 }
 RTM_EXPORT(pthread_rwlock_wrlock);
-

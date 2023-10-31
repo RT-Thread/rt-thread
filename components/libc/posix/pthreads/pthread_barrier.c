@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
@@ -10,6 +10,13 @@
 
 #include <pthread.h>
 
+/**
+ * @brief   Destroy a barrier attributes object.
+ *
+ * @param   attr    is the pointer to the barrier attributes object to be destroyed.
+ *
+ * @return  0 on success, or an error code on failure.
+ */
 int pthread_barrierattr_destroy(pthread_barrierattr_t *attr)
 {
     if (!attr)
@@ -19,6 +26,13 @@ int pthread_barrierattr_destroy(pthread_barrierattr_t *attr)
 }
 RTM_EXPORT(pthread_barrierattr_destroy);
 
+/**
+ * @brief   Initialize a barrier attributes object.
+ *
+ * @param   attr    is the pointer to the barrier attributes object to be initialized.
+ *
+ * @return  0 on success, or an error code on failure.
+ */
 int pthread_barrierattr_init(pthread_barrierattr_t *attr)
 {
     if (!attr)
@@ -29,8 +43,16 @@ int pthread_barrierattr_init(pthread_barrierattr_t *attr)
 }
 RTM_EXPORT(pthread_barrierattr_init);
 
+/**
+ * @brief   Get the process-shared attribute of a barrier attributes object.
+ *
+ * @param   attr        is the pointer to the barrier attributes object to query.
+ * @param   pshared     is the pointer to an integer where the process-shared attribute is stored.
+ *
+ * @return  0 on success, or an error code on failure.
+ */
 int pthread_barrierattr_getpshared(const pthread_barrierattr_t *attr,
-                                   int                         *pshared)
+                                   int *pshared)
 {
     if (!attr)
         return EINVAL;
@@ -40,6 +62,14 @@ int pthread_barrierattr_getpshared(const pthread_barrierattr_t *attr,
 }
 RTM_EXPORT(pthread_barrierattr_getpshared);
 
+/**
+ * @brief   Set the process-shared attribute of a barrier attributes object.
+ *
+ * @param   attr    is the pointer to the barrier attributes object to modify.
+ * @param   pshared is the new process-shared attribute value.
+ *
+ * @return  0 on success, or an error code on failure.
+ */
 int pthread_barrierattr_setpshared(pthread_barrierattr_t *attr, int pshared)
 {
     if (!attr)
@@ -51,6 +81,13 @@ int pthread_barrierattr_setpshared(pthread_barrierattr_t *attr, int pshared)
 }
 RTM_EXPORT(pthread_barrierattr_setpshared);
 
+/**
+ * @brief   Destroy a barrier object.
+ *
+ * @param   barrier is the pointer to the barrier object to be destroyed.
+ *
+ * @return  0 on success, or an error code on failure.
+ */
 int pthread_barrier_destroy(pthread_barrier_t *barrier)
 {
     rt_err_t result;
@@ -64,9 +101,18 @@ int pthread_barrier_destroy(pthread_barrier_t *barrier)
 }
 RTM_EXPORT(pthread_barrier_destroy);
 
-int pthread_barrier_init(pthread_barrier_t           *barrier,
+/**
+ * @brief   Initialize a barrier object.
+ *
+ * @param   barrier is the pointer to the barrier object to be initialized.
+ * @param   attr    is the pointer to barrier attributes (ignored).
+ * @param   count   is the count of threads required to trigger the barrier.
+ *
+ * @return  0 on success, or an error code on failure.
+ */
+int pthread_barrier_init(pthread_barrier_t *barrier,
                          const pthread_barrierattr_t *attr,
-                         unsigned                     count)
+                         unsigned count)
 {
     if (!barrier)
         return EINVAL;
@@ -83,6 +129,13 @@ int pthread_barrier_init(pthread_barrier_t           *barrier,
 }
 RTM_EXPORT(pthread_barrier_init);
 
+/**
+ * @brief   Wait on a barrier.
+ *
+ * @param   barrier is the pointer to the barrier object to wait on.
+ *
+ * @return  0 on success, or an error code on failure.
+ */
 int pthread_barrier_wait(pthread_barrier_t *barrier)
 {
     rt_err_t result;
@@ -109,4 +162,3 @@ int pthread_barrier_wait(pthread_barrier_t *barrier)
     return result;
 }
 RTM_EXPORT(pthread_barrier_wait);
-

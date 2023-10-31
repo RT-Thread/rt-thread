@@ -22,7 +22,7 @@
 #define MSEC_TO_NSEC 1000000
 #define SEC_TO_NSEC 1000000000
 
-#define TIME_INT32_MAX   0x7FFFFFFF
+#define TIME_INT32_MAX 0x7FFFFFFF
 
 #define TIMERFD_MUTEX_NAME "TIMERFD"
 
@@ -43,8 +43,40 @@ struct rt_timerfd
     int tick_out;
 };
 
+/**
+ * @brief Close a timerfd instance.
+ *
+ * This function closes a timerfd instance and performs cleanup.
+ *
+ * @param   file    Pointer to the DFS file structure.
+ *
+ * @return  0 on success, a negative error code on failure.
+ */
 static int timerfd_close(struct dfs_file *file);
+
+/**
+ * @brief Poll a timerfd instance.
+ *
+ * This function polls a timerfd instance to check if events are available for reading.
+ *
+ * @param   file    Pointer to the DFS file structure.
+ * @param   req     Pointer to the poll request structure.
+ *
+ * @return  The events that are available for reading.
+ */
 static int timerfd_poll(struct dfs_file *file, struct rt_pollreq *req);
+
+/**
+ * @brief Read from a timerfd instance.
+ *
+ * This function reads data from a timerfd instance.
+ *
+ * @param   file    Pointer to the DFS file structure.
+ * @param   buf     Pointer to the buffer where data is read into.
+ * @param   count   The number of bytes to read.
+ *
+ * @return  The number of bytes read on success, -1 on failure.
+ */
 #ifndef RT_USING_DFS_V2
 static ssize_t timerfd_read(struct dfs_file *file, void *buf, size_t count);
 #else
@@ -52,10 +84,10 @@ static ssize_t timerfd_read(struct dfs_file *file, void *buf, size_t count, off_
 #endif
 
 static const struct dfs_file_ops timerfd_fops =
-{
-    .close      = timerfd_close,
-    .poll       = timerfd_poll,
-    .read       = timerfd_read,
+    {
+        .close = timerfd_close,
+        .poll = timerfd_poll,
+        .read = timerfd_read,
 };
 
 static int timerfd_close(struct dfs_file *file)
@@ -168,6 +200,16 @@ static int timerfd_wqueue_callback(struct rt_wqueue_node *wait, void *key)
     return 0;
 }
 
+/**
+ * @brief Create a new timerfd instance.
+ *
+ * This function creates a new timerfd instance based on the specified clock ID and flags.
+ *
+ * @param   clockid Clock ID for the timerfd.
+ * @param   flags   Flags for configuring the timerfd (e.g., TFD_CLOEXEC, TFD_NONBLOCK).
+ *
+ * @return  The file descriptor of the newly created timerfd instance on success, -1 on failure.
+ */
 static int timerfd_do_create(int clockid, int flags)
 {
     struct rt_timerfd *tfd = RT_NULL;
@@ -294,7 +336,7 @@ static void timerfd_timeout(void *parameter)
 
     if (tfd == RT_NULL)
     {
-        return ;
+        return;
     }
 
     rt_wqueue_wakeup(&tfd->timerfd_queue, (void *)POLLIN);
@@ -315,8 +357,8 @@ static void timerfd_timeout(void *parameter)
         }
         tfd->isperiodic = ENTER_PERIODIC;
         tfd->timer = rt_timer_create(TIMERFD_MUTEX_NAME, timerfd_timeout,
-                        tfd, tfd->tick_out,
-                        RT_TIMER_FLAG_PERIODIC | RT_TIMER_FLAG_SOFT_TIMER);
+                                     tfd, tfd->tick_out,
+                                     RT_TIMER_FLAG_PERIODIC | RT_TIMER_FLAG_SOFT_TIMER);
         rt_timer_start(tfd->timer);
     }
 
@@ -341,6 +383,18 @@ static void timerfd_time_operation(time_t *sec, long *nsec)
     }
 }
 
+/**
+ * @brief Set the time for a timerfd instance.
+ *
+ * This function sets the timer specification for a timerfd instance, either one-shot or periodic.
+ *
+ * @param   fd      The file descriptor of the timerfd instance.
+ * @param   flags   Flags for configuring the timer (e.g., TFD_TIMER_ABSTIME).
+ * @param   new     Pointer to the new timer specification.
+ * @param   old     Pointer to store the old timer specification.
+ *
+ * @return  0 on success, a negative error code on failure.
+ */
 static int timerfd_do_settime(int fd, int flags, const struct itimerspec *new, struct itimerspec *old)
 {
     int ret = 0;
@@ -392,8 +446,8 @@ static int timerfd_do_settime(int fd, int flags, const struct itimerspec *new, s
             return 0;
         }
 
-        value_msec = (new->it_value.tv_nsec / MSEC_TO_NSEC) + (new->it_value.tv_sec * SEC_TO_MSEC);
-        interval_msec = (new->it_interval.tv_nsec / MSEC_TO_NSEC) + (new->it_interval.tv_sec * SEC_TO_MSEC);
+        value_msec = (new->it_value.tv_nsec / MSEC_TO_NSEC) + (new->it_value.tv_sec *SEC_TO_MSEC);
+        interval_msec = (new->it_interval.tv_nsec / MSEC_TO_NSEC) + (new->it_interval.tv_sec *SEC_TO_MSEC);
 
         current_time.tv_nsec = 0;
         current_time.tv_sec = 0;
@@ -435,9 +489,9 @@ static int timerfd_do_settime(int fd, int flags, const struct itimerspec *new, s
                 return -EINVAL;
 
             tfd->timer = rt_timer_create(TIMERFD_MUTEX_NAME, timerfd_timeout,
-                            tfd, tick_out,
-                            RT_TIMER_FLAG_ONE_SHOT | RT_TIMER_FLAG_SOFT_TIMER);
-             rt_timer_start(tfd->timer);
+                                         tfd, tick_out,
+                                         RT_TIMER_FLAG_ONE_SHOT | RT_TIMER_FLAG_SOFT_TIMER);
+            rt_timer_start(tfd->timer);
         }
         else
         {
@@ -455,6 +509,16 @@ static int timerfd_do_settime(int fd, int flags, const struct itimerspec *new, s
     return ret;
 }
 
+/**
+ * @brief Get the current time for a timerfd instance.
+ *
+ * This function retrieves the current timer specification for a timerfd instance.
+ *
+ * @param   fd  The file descriptor of the timerfd instance.
+ * @param   cur Pointer to the current timer specification.
+ *
+ * @return  0 on success, a negative error code on failure.
+ */
 static int timerfd_do_gettime(int fd, struct itimerspec *cur)
 {
     struct rt_timerfd *tfd;
@@ -509,16 +573,48 @@ static int timerfd_do_gettime(int fd, struct itimerspec *cur)
     return 0;
 }
 
+/**
+ * @brief Create a timer file descriptor.
+ *
+ * This function creates a timer file descriptor based on the specified clock and flags.
+ *
+ * @param   clockid     The identifier of the clock to be used for the timer.
+ * @param   flags       Flags for configuring the timerfd (e.g., TFD_NONBLOCK, TFD_CLOEXEC).
+ *
+ * @return  The file descriptor of the newly created timerfd on success, -1 on failure.
+ */
 int timerfd_create(int clockid, int flags)
 {
     return timerfd_do_create(clockid, flags);
 }
 
+/**
+ * @brief Set the timer expiration and intervals for a timer file descriptor.
+ *
+ * This function sets the expiration and intervals for a timer file descriptor based on the specified parameters.
+ *
+ * @param   fd      The file descriptor of the timerfd.
+ * @param   flags   Flags for setting the timer (e.g., TFD_TIMER_ABSTIME).
+ * @param   new     A pointer to the structure containing the new timer settings.
+ * @param   old     A pointer to the structure to store the previous timer settings.
+ *
+ * @return  0 on success, -1 on failure.
+ */
 int timerfd_settime(int fd, int flags, const struct itimerspec *new, struct itimerspec *old)
 {
     return timerfd_do_settime(fd, flags, new, old);
 }
 
+/**
+ * @brief Get the current timer settings for a timer file descriptor.
+ *
+ * This function retrieves the current timer settings for a timer file descriptor.
+ *
+ * @param   fd  The file descriptor of the timerfd.
+ * @param   cur A pointer to the structure to store the current timer settings.
+ *
+ * @return  0 on success, -1 on failure.
+ */
 int timerfd_gettime(int fd, struct itimerspec *cur)
 {
     return timerfd_do_gettime(fd, cur);

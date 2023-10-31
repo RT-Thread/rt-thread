@@ -20,10 +20,20 @@
 #include <sys/errno.h>
 #include "posix/stdio.h"
 
-#define STDIO_DEVICE_NAME_MAX   32
+#define STDIO_DEVICE_NAME_MAX 32
 
 int sys_dup2(int oldfd, int new);
 
+/**
+ * @brief Set the console device for standard I/O.
+ *
+ * This function sets the console device as the standard input and output for POSIX standard I/O.
+ *
+ * @param device_name  The name of the console device.
+ * @param mode         The mode (O_RDONLY, O_WRONLY, O_RDWR) for standard I/O.
+ *
+ * @return The file descriptor of the console device or -1 on failure.
+ */
 int rt_posix_stdio_init(void)
 {
     rt_device_t dev_console;
@@ -49,8 +59,16 @@ INIT_ENV_EXPORT(rt_posix_stdio_init);
 
 #define NEWLIB_VERSION_NUM (__NEWLIB__ * 10000U + __NEWLIB_MINOR__ * 100U + __NEWLIB_PATCHLEVEL__)
 
-static FILE* std_console = NULL;
-int rt_posix_stdio_set_console(const char* device_name, int mode)
+static FILE *std_console = NULL;
+
+/**
+ * @brief Get the console device for standard I/O.
+ *
+ * This function gets the file descriptor of the console device used for standard I/O.
+ *
+ * @return The file descriptor of the console device or -1 if not set.
+ */
+int rt_posix_stdio_set_console(const char *device_name, int mode)
 {
     FILE *fp;
     char name[STDIO_DEVICE_NAME_MAX];
@@ -86,11 +104,11 @@ int rt_posix_stdio_set_console(const char* device_name, int mode)
 
         if (mode == O_RDWR)
         {
-            _GLOBAL_REENT->_stdin  = std_console;
+            _GLOBAL_REENT->_stdin = std_console;
         }
         else
         {
-            _GLOBAL_REENT->_stdin  = NULL;
+            _GLOBAL_REENT->_stdin = NULL;
         }
 
         if (mode == O_RDONLY)
@@ -125,9 +143,19 @@ int rt_posix_stdio_get_console(void)
 
 #elif defined(RT_USING_MUSLLIBC)
 
-static FILE* std_console = NULL;
+static FILE *std_console = NULL;
 
-int rt_posix_stdio_set_console(const char* device_name, int mode)
+/**
+ * @brief Set the console device for standard I/O.
+ *
+ * This function sets the console device as the standard input and output for POSIX standard I/O.
+ *
+ * @param device_name  The name of the console device.
+ * @param mode         The mode (O_RDONLY, O_WRONLY, O_RDWR) for standard I/O.
+ *
+ * @return The file descriptor of the console device or -1 on failure.
+ */
+int rt_posix_stdio_set_console(const char *device_name, int mode)
 {
     FILE *fp;
     char name[STDIO_DEVICE_NAME_MAX];
@@ -136,9 +164,12 @@ int rt_posix_stdio_set_console(const char* device_name, int mode)
     rt_snprintf(name, sizeof(name) - 1, "/dev/%s", device_name);
     name[STDIO_DEVICE_NAME_MAX - 1] = '\0';
 
-    if (mode == O_RDWR) file_mode = "r+";
-    else if (mode == O_WRONLY) file_mode = "wb";
-    else file_mode = "rb";
+    if (mode == O_RDWR)
+        file_mode = "r+";
+    else if (mode == O_WRONLY)
+        file_mode = "wb";
+    else
+        file_mode = "rb";
 
     fp = fopen(name, file_mode);
     if (fp)
@@ -163,6 +194,13 @@ int rt_posix_stdio_set_console(const char* device_name, int mode)
     return -1;
 }
 
+/**
+ * @brief Get the console device for standard I/O.
+ *
+ * This function gets the file descriptor of the console device used for standard I/O.
+ *
+ * @return The file descriptor of the console device or -1 if not set.
+ */
 int rt_posix_stdio_get_console(void)
 {
     int ret = -1;
@@ -177,7 +215,18 @@ int rt_posix_stdio_get_console(void)
 #else
 
 static int std_fd = -1;
-int rt_posix_stdio_set_console(const char* device_name, int mode)
+
+/**
+ * @brief Set the console device for standard I/O.
+ *
+ * This function sets the console device as the standard input and output for POSIX standard I/O.
+ *
+ * @param device_name  The name of the console device.
+ * @param mode         The mode (O_RDONLY, O_WRONLY, O_RDWR) for standard I/O.
+ *
+ * @return The file descriptor of the console device or -1 on failure.
+ */
+int rt_posix_stdio_set_console(const char *device_name, int mode)
 {
     int fd;
     char name[STDIO_DEVICE_NAME_MAX];
@@ -198,11 +247,31 @@ int rt_posix_stdio_set_console(const char* device_name, int mode)
     return std_fd;
 }
 
-int rt_posix_stdio_get_console(void) {
+/**
+ * @brief Get the console device for standard I/O.
+ *
+ * This function gets the file descriptor of the console device used for standard I/O.
+ *
+ * @return The file descriptor of the console device or -1 if not set.
+ */
+int rt_posix_stdio_get_console(void)
+{
     return std_fd;
 }
 #endif /* defined(RT_USING_NEWLIBC) */
 
+/**
+ * @brief Read a line from a stream into a buffer.
+ *
+ * This function reads a line from a stream (up to a delimiter character) into a buffer.
+ *
+ * @param lineptr  A pointer to a pointer to the buffer.
+ * @param n        A pointer to the size of the buffer.
+ * @param delim    The delimiter character.
+ * @param stream   The input stream.
+ *
+ * @return The number of characters read, -1 on failure.
+ */
 ssize_t getdelim(char **lineptr, size_t *n, int delim, FILE *stream)
 {
     char *cur_pos, *new_lineptr;
@@ -269,6 +338,17 @@ ssize_t getdelim(char **lineptr, size_t *n, int delim, FILE *stream)
     return (ssize_t)(cur_pos - *lineptr);
 }
 
+/**
+ * @brief Read a line from a stream into a buffer until a newline character is found.
+ *
+ * This function reads a line from a stream (up to a newline character) into a buffer.
+ *
+ * @param lineptr  A pointer to a pointer to the buffer.
+ * @param n        A pointer to the size of the buffer.
+ * @param stream   The input stream.
+ *
+ * @return The number of characters read, -1 on failure.
+ */
 ssize_t getline(char **lineptr, size_t *n, FILE *stream)
 {
     return getdelim(lineptr, n, '\n', stream);

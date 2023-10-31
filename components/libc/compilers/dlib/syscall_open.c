@@ -1,28 +1,31 @@
-/*
+/**
  * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
-* Change Logs:
-* Date           Author       Notes
-* 2015-01-28     Bernard      first version
-*/
+ * Change Logs:
+ * Date           Author       Notes
+ * 2015-01-28     Bernard      first version
+ */
 
 #include <rtthread.h>
 #include <LowLevelIOInterface.h>
 #include <fcntl.h>
 #include <compiler_private.h>
-#define DBG_TAG    "dlib.syscall.open"
-#define DBG_LVL    DBG_INFO
+
+#define DBG_TAG "dlib.syscall.open"
+#define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
-/*
- * The "__open" function opens the file named "filename" as specified
- * by "mode".
+/**
+ * @brief   The "__open" function opens the file named "filename" as specified by "mode".
+ *
+ * @param   filename    is the name of the file to open.
+ * @param   mode        is the mode specifying how the file should be opened.
+ *
+ * @return  The function returns a file descriptor if the file is successfully opened, or _LLIO_ERROR if an error occurs.
  */
-
 #pragma module_name = "?__open"
-
 int __open(const char *filename, int mode)
 {
 #ifdef DFS_USING_POSIX
@@ -42,14 +45,14 @@ int __open(const char *filename, int mode)
 
         if (mode & _LLIO_TRUNC)
         {
-            /* Truncate the existsing file. */
+            /* Truncate the existing file. */
             open_mode |= O_TRUNC;
         }
     }
 
     if (mode & _LLIO_TEXT)
     {
-        /* we didn't support text mode */
+        /* Text mode is not supported in this implementation. */
     }
 
     switch (mode & _LLIO_RDWRMASK)

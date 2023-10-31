@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright (c) 2006-2022, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
@@ -6,13 +6,11 @@
  * Change Logs:
  * Date           Author       Notes
  * 2012-11-23     Yihui        The first version
- * 2013-11-24     aozima       fixed _sys_read()/_sys_write() issues.
- * 2014-08-03     bernard      If using msh, use system() implementation
- *                             in msh.
- * 2020-08-05     Meco Man     fixed _sys_flen() compiling-warning when
- *                             RT_USING_DFS is not defined
- * 2020-02-13     Meco Man     re-implement exit() and abort()
- * 2020-02-14     Meco Man     implement _sys_tmpnam()
+ * 2013-11-24     aozima       Fixed _sys_read()/_sys_write() issues.
+ * 2014-08-03     bernard      If using msh, use system() implementation in msh.
+ * 2020-08-05     Meco Man     Fixed _sys_flen() compiling-warning when RT_USING_DFS is not defined
+ * 2020-02-13     Meco Man     Re-implement exit() and abort()
+ * 2020-02-14     Meco Man     Implement _sys_tmpnam()
  */
 
 #include <rt_sys.h>
@@ -26,33 +24,33 @@
 #include <posix/stdio.h>
 #endif /* RT_USING_POSIX_STDIO */
 
-#define DBG_TAG    "armlibc.syscalls"
-#define DBG_LVL    DBG_INFO
+#define DBG_TAG "armlibc.syscalls"
+#define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
 #ifdef __clang__
-    __asm(".global __use_no_semihosting\n\t");
+__asm(".global __use_no_semihosting\n\t");
 #else
-    #pragma import(__use_no_semihosting_swi)
+#pragma import(__use_no_semihosting_swi)
 #endif
 
 /* Standard IO device handles. */
-#define STDIN       0
-#define STDOUT      1
-#define STDERR      2
+#define STDIN 0
+#define STDOUT 1
+#define STDERR 2
 
 /* Standard IO device name defines. */
-const char __stdin_name[]  = "STDIN";
+const char __stdin_name[] = "STDIN";
 const char __stdout_name[] = "STDOUT";
 const char __stderr_name[] = "STDERR";
 
 /**
- * required by fopen() and freopen().
+ * Required by fopen() and freopen().
  *
  * @param name - file name with path.
- * @param openmode - a bitmap hose bits mostly correspond directly to
+ * @param openmode - a bitmap whose bits mostly correspond directly to
  *                     the ISO mode specification.
- * @return  -1 if an error occurs.
+ * @return -1 if an error occurs.
  */
 FILEHANDLE _sys_open(const char *name, int openmode)
 {
@@ -120,31 +118,6 @@ int _sys_close(FILEHANDLE fh)
 #endif /* DFS_USING_POSIX */
 }
 
-/*
- * Read from a file. Can return:
- *  - zero if the read was completely successful
- *  - the number of bytes _not_ read, if the read was partially successful
- *  - the number of bytes not read, plus the top bit set (0x80000000), if
- *    the read was partially successful due to end of file
- *  - -1 if some error other than EOF occurred
- *
- * It is also legal to signal EOF by returning no data but
- * signalling no error (i.e. the top-bit-set mechanism need never
- * be used).
- *
- * So if (for example) the user is trying to read 8 bytes at a time
- * from a file in which only 5 remain, this routine can do three
- * equally valid things:
- *
- *  - it can return 0x80000003 (3 bytes not read due to EOF)
- *  - OR it can return 3 (3 bytes not read), and then return
- *    0x80000008 (8 bytes not read due to EOF) on the next attempt
- *  - OR it can return 3 (3 bytes not read), and then return
- *    8 (8 bytes not read, meaning 0 read, meaning EOF) on the next
- *    attempt
- *
- * `mode' exists for historical reasons and must be ignored.
- */
 int _sys_read(FILEHANDLE fh, unsigned char *buf, unsigned len, int mode)
 {
 #ifdef DFS_USING_POSIX
@@ -183,19 +156,10 @@ int _sys_read(FILEHANDLE fh, unsigned char *buf, unsigned len, int mode)
     }
 #else
     LOG_W("%s: %s", __func__, _WARNING_WITHOUT_FS);
-    return 0; /* error */
+    return 0;     /* error */
 #endif /* DFS_USING_POSIX */
 }
 
-/*
- * Write to a file. Returns 0 on success, negative on error, and
- * the number of characters _not_ written on partial success.
- * `mode' exists for historical reasons and must be ignored.
- * The return value is either:
- * A positive number representing the number of characters not written
- * (so any nonzero return value denotes a failure of some sort).
- * A negative number indicating an error.
- */
 int _sys_write(FILEHANDLE fh, const unsigned char *buf, unsigned len, int mode)
 {
 #ifdef DFS_USING_POSIX
@@ -244,13 +208,6 @@ int _sys_write(FILEHANDLE fh, const unsigned char *buf, unsigned len, int mode)
     }
 }
 
-/*
- * Flush any OS buffers associated with fh, ensuring that the file
- * is up to date on disk. Result is >=0 if OK, negative for an
- * error.
- * This function is deprecated. It is never called by any other library function,
- * and you are not required to re-implement it if you are retargeting standard I/O (stdio).
- */
 int _sys_ensure(FILEHANDLE fh)
 {
 #ifdef DFS_USING_POSIX
@@ -261,10 +218,6 @@ int _sys_ensure(FILEHANDLE fh)
 #endif /* DFS_USING_POSIX */
 }
 
-/*
- * Move the file position to a given offset from the file start.
- * Returns >=0 on success, <0 on failure.
- */
 int _sys_seek(FILEHANDLE fh, long pos)
 {
 #ifdef DFS_USING_POSIX
@@ -279,9 +232,6 @@ int _sys_seek(FILEHANDLE fh, long pos)
 #endif /* DFS_USING_POSIX */
 }
 
-/**
- * used by tmpnam() or tmpfile()
- */
 #if __ARMCC_VERSION >= 6190000
 void _sys_tmpnam(char *name, int fileno, unsigned maxlength)
 {
@@ -297,11 +247,10 @@ int _sys_tmpnam(char *name, int fileno, unsigned maxlength)
 
 char *_sys_command_string(char *cmd, int len)
 {
-    /* no support */
+    /* No support. */
     return RT_NULL;
 }
 
-/* This function writes a character to the console. */
 void _ttywrch(int ch)
 {
 #ifdef RT_USING_CONSOLE
@@ -309,20 +258,14 @@ void _ttywrch(int ch)
 #endif /* RT_USING_CONSOLE */
 }
 
-/* for exit() and abort() */
 rt_weak void _sys_exit(int return_code)
 {
     extern void __rt_libc_exit(int status);
     __rt_libc_exit(return_code);
-    while (1);
+    while (1)
+        ;
 }
 
-/**
- * return current length of file.
- *
- * @param fh - file handle
- * @return file length, or -1 on failed
- */
 long _sys_flen(FILEHANDLE fh)
 {
 #ifdef DFS_USING_POSIX
@@ -366,7 +309,7 @@ int fputc(int c, FILE *f)
     rt_kprintf("%c", (char)c);
     return 1;
 #else
-    return 0; /* error */
+    return 0;     /* error */
 #endif /* RT_USING_CONSOLE */
 }
 
@@ -387,5 +330,4 @@ int fgetc(FILE *f)
     LOG_W("%s: %s", __func__, _WARNING_WITHOUT_STDIO);
     return 0; /* error */
 }
-
 #endif /* __MICROLIB */

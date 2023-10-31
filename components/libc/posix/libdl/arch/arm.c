@@ -13,19 +13,26 @@
 
 #ifdef __arm__
 
-#define DBG_TAG           "posix.libdl.arch"
-#define DBG_LVL           DBG_INFO
+#define DBG_TAG "posix.libdl.arch"
+#define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
+/**
+ * @brief   Relocate a symbol in a module.
+ *
+ * @param   module    The module containing the symbol to be relocated.
+ * @param   rel       A pointer to the relocation entry.
+ * @param   sym_val   The value of the symbol.
+ *
+ * @return  0 on success, or -1 on failure.
+ */
 int dlmodule_relocate(struct rt_dlmodule *module, Elf32_Rel *rel, Elf32_Addr sym_val)
 {
     Elf32_Addr *where, tmp;
     Elf32_Sword addend, offset;
     rt_uint32_t upper, lower, sign, j1, j2;
 
-    where = (Elf32_Addr *)((rt_uint8_t *)module->mem_space
-                           + rel->r_offset
-                           - module->vstart_addr);
+    where = (Elf32_Addr *)((rt_uint8_t *)module->mem_space + rel->r_offset - module->vstart_addr);
     switch (ELF32_R_TYPE(rel->r_info))
     {
     case R_ARM_NONE:
@@ -64,7 +71,7 @@ int dlmodule_relocate(struct rt_dlmodule *module, Elf32_Rel *rel, Elf32_Addr sym
         LOG_D("R_ARM_JUMP_SLOT: 0x%x -> 0x%x 0x%x",
               where, *where, sym_val);
         break;
-#if 0        /* To do */
+#if 0 /* To do */
     case R_ARM_GOT_BREL:
         temp   = (Elf32_Addr)sym_val;
         *where = (Elf32_Addr)&temp;
@@ -80,12 +87,12 @@ int dlmodule_relocate(struct rt_dlmodule *module, Elf32_Rel *rel, Elf32_Addr sym
         break;
     case R_ARM_THM_CALL:
     case R_ARM_THM_JUMP24:
-        upper  = *(rt_uint16_t *)where;
-        lower  = *(rt_uint16_t *)((Elf32_Addr)where + 2);
+        upper = *(rt_uint16_t *)where;
+        lower = *(rt_uint16_t *)((Elf32_Addr)where + 2);
 
-        sign   = (upper >> 10) & 1;
-        j1     = (lower >> 13) & 1;
-        j2     = (lower >> 11) & 1;
+        sign = (upper >> 10) & 1;
+        j1 = (lower >> 13) & 1;
+        j2 = (lower >> 11) & 1;
         offset = (sign << 24) |
                  ((~(j1 ^ sign) & 1) << 23) |
                  ((~(j2 ^ sign) & 1) << 22) |
@@ -105,8 +112,8 @@ int dlmodule_relocate(struct rt_dlmodule *module, Elf32_Rel *rel, Elf32_Addr sym
         }
 
         sign = (offset >> 24) & 1;
-        j1   = sign ^ (~(offset >> 23) & 1);
-        j2   = sign ^ (~(offset >> 22) & 1);
+        j1 = sign ^ (~(offset >> 23) & 1);
+        j2 = sign ^ (~(offset >> 22) & 1);
         *(rt_uint16_t *)where = (rt_uint16_t)((upper & 0xf800) |
                                               (sign << 10) |
                                               ((offset >> 12) & 0x03ff));

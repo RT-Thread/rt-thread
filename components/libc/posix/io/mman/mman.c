@@ -20,8 +20,25 @@
 
 #include "sys/mman.h"
 
+/**
+ * @brief Map a file into memory.
+ *
+ * This function maps a file into memory, creating a new memory mapping in the address space
+ * of the calling process. It allocates memory of the specified length and reads data from
+ * the file descriptor 'fd' into the memory region. The 'offset' parameter specifies the
+ * starting offset in the file.
+ *
+ * @param addr    The starting address of the mapping (ignored in this implementation).
+ * @param length  The length of the memory region to map.
+ * @param prot    The protection (permissions) of the mapped memory (ignored in this implementation).
+ * @param flags   Flags for mapping type and options (ignored in this implementation).
+ * @param fd      The file descriptor of the file to be mapped.
+ * @param offset  The offset in the file where the mapping starts.
+ *
+ * @return On success, a pointer to the newly mapped memory is returned. On failure, MAP_FAILED is returned.
+ */
 void *mmap(void *addr, size_t length, int prot, int flags,
-    int fd, off_t offset)
+           int fd, off_t offset)
 {
     uint8_t *mem;
 
@@ -29,7 +46,8 @@ void *mmap(void *addr, size_t length, int prot, int flags,
     {
         mem = addr;
     }
-    else mem = (uint8_t *)malloc(length);
+    else
+        mem = (uint8_t *)malloc(length);
 
     if (mem)
     {
@@ -59,6 +77,17 @@ void *mmap(void *addr, size_t length, int prot, int flags,
     return MAP_FAILED;
 }
 
+/**
+ * @brief Unmap a memory region.
+ *
+ * This function unmaps a memory region previously mapped with the mmap function.
+ * It deallocates the memory region.
+ *
+ * @param addr    The starting address of the memory region to unmap.
+ * @param length  The length of the memory region to unmap.
+ *
+ * @return 0 on success, -1 on failure.
+ */
 int munmap(void *addr, size_t length)
 {
     if (addr)

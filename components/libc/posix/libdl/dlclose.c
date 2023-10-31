@@ -13,6 +13,13 @@
 
 #include "dlmodule.h"
 
+/**
+ * @brief   Close a dynamic link library.
+ *
+ * @param   handle  A handle to the dynamic link library.
+ *
+ * @return  RT_TRUE on success, or an error code on failure.
+ */
 int dlclose(void *handle)
 {
     struct rt_dlmodule *module;

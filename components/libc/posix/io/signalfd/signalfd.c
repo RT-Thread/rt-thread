@@ -24,6 +24,12 @@
 
 static int is_head_init = 0;
 
+/**
+ * @struct rt_signalfd_ctx
+ * @brief Structure to hold signalfd context information.
+ *
+ * This structure is used to hold the context information for signalfd.
+ */
 struct rt_signalfd_ctx
 {
     sigset_t sigmask;
@@ -34,8 +40,39 @@ struct rt_signalfd_ctx
     struct rt_lwp *lwp[SIGNALFD_SHART_MAX];
 };
 
+/**
+ * @brief Close a signalfd file.
+ *
+ * This function is called to close a signalfd file. It detaches the mutex and releases resources.
+ *
+ * @param file The signalfd file to be closed.
+ * @return 0 on success, -1 on failure.
+ */
 static int signalfd_close(struct dfs_file *file);
+
+/**
+ * @brief Poll a signalfd file for events.
+ *
+ * This function is called to poll a signalfd file for events. It returns the events currently available.
+ *
+ * @param file The signalfd file to be polled.
+ * @param req  The poll request.
+ * @return The events available for the signalfd file.
+ */
 static int signalfd_poll(struct dfs_file *file, struct rt_pollreq *req);
+
+/**
+ * @brief Read signals from a signalfd file.
+ *
+ * This function is called to read signals from a signalfd file.
+ * It reads pending signals into the provided buffer.
+ *
+ * @param file  The signalfd file to be read.
+ * @param buf   The buffer to store signal information.
+ * @param count The size of the buffer.
+ * @param pos   The position (ignored in this implementation).
+ * @return The number of bytes read on success, -1 on failure.
+ */
 #ifndef RT_USING_DFS_V2
 static ssize_t signalfd_read(struct dfs_file *file, void *buf, size_t count);
 #else
@@ -44,10 +81,10 @@ static ssize_t signalfd_read(struct dfs_file *file, void *buf, size_t count, off
 static int signalfd_add_notify(struct rt_signalfd_ctx *sfd);
 
 static const struct dfs_file_ops signalfd_fops =
-{
-    .close      = signalfd_close,
-    .poll       = signalfd_poll,
-    .read       = signalfd_read,
+    {
+        .close = signalfd_close,
+        .poll = signalfd_poll,
+        .read = signalfd_read,
 };
 
 static int signalfd_close(struct dfs_file *file)
@@ -144,9 +181,9 @@ static ssize_t signalfd_read(struct dfs_file *file, void *buf, size_t count, off
                 }
             }
 
-            for (int j = 0; j < sfd->sig_num; j ++)
+            for (int j = 0; j < sfd->sig_num; j++)
             {
-                memcpy(&sfd->info[j], &sfd->info[i ++], sizeof(struct signalfd_siginfo));
+                memcpy(&sfd->info[j], &sfd->info[i++], sizeof(struct signalfd_siginfo));
             }
 
             rt_mutex_release(&sfd->lock);
@@ -158,6 +195,14 @@ static ssize_t signalfd_read(struct dfs_file *file, void *buf, size_t count, off
     return ret;
 }
 
+/**
+ * @brief Signal notification callback.
+ *
+ * This function is called when a signal is received. It adds the signal information to the signalfd queue.
+ *
+ * @param signalfd_queue The signalfd queue to notify.
+ * @param signum        The signal number received.
+ */
 static void signalfd_callback(rt_wqueue_t *signalfd_queue, int signum)
 {
     struct rt_signalfd_ctx *sfd;
@@ -175,11 +220,19 @@ static void signalfd_callback(rt_wqueue_t *signalfd_queue, int signum)
                 sfd->sig_num += 1;
             }
             rt_mutex_release(&sfd->lock);
-            rt_wqueue_wakeup(signalfd_queue, (void*)POLLIN);
+            rt_wqueue_wakeup(signalfd_queue, (void *)POLLIN);
         }
     }
 }
 
+/**
+ * @brief Add signal notification to the signalfd context.
+ *
+ * This function adds signal notification to the signalfd context.
+ *
+ * @param sfd The signalfd context to which notification is added.
+ * @return 0 on success, -1 on failure.
+ */
 static int signalfd_add_notify(struct rt_signalfd_ctx *sfd)
 {
     struct rt_lwp_notify *lwp_notify;
@@ -216,7 +269,7 @@ static int signalfd_add_notify(struct rt_signalfd_ctx *sfd)
             lwp_notify->signalfd_queue = &sfd->signalfd_queue;
             rt_slist_append(&sfd->lwp[is_head_init]->signalfd_notify_head, &(lwp_notify->list_node));
 
-            is_head_init ++;
+            is_head_init++;
             ret = 0;
         }
         else
@@ -236,6 +289,19 @@ static int signalfd_add_notify(struct rt_signalfd_ctx *sfd)
     return ret;
 }
 
+/**
+ * @brief Create or modify a signalfd file descriptor.
+ *
+ * This function creates a new signalfd file descriptor or modifies an existing one.
+ * It associates a signal mask provided in 'mask' with the file descriptor.
+ * 'flags' is used to set additional options for the file descriptor.
+ *
+ * @param fd     The file descriptor to create or modify (-1 to create a new one).
+ * @param mask   A pointer to a signal set to associate with the file descriptor.
+ * @param flags  Additional flags to set for the file descriptor.
+ *
+ * @return The file descriptor on success or -1 on failure.
+ */
 static int signalfd_do(int fd, const sigset_t *mask, int flags)
 {
     struct dfs_file *df;
@@ -285,9 +351,9 @@ static int signalfd_do(int fd, const sigset_t *mask, int flags)
 
                     df->flags |= flags;
 
-                    #ifdef RT_USING_DFS_V2
+#ifdef RT_USING_DFS_V2
                     df->fops = &signalfd_fops;
-                    #endif
+#endif
                 }
                 else
                 {
@@ -328,6 +394,17 @@ static int signalfd_do(int fd, const sigset_t *mask, int flags)
     return ret;
 }
 
+/**
+ * @brief Create or modify a signalfd file descriptor.
+ *
+ * This is the public interface for creating or modifying a signalfd file descriptor.
+ *
+ * @param fd     The file descriptor to create or modify.
+ * @param mask   A pointer to a signal set to associate with the file descriptor.
+ * @param flags  Additional flags to set for the file descriptor.
+ *
+ * @return The file descriptor on success or -1 on failure.
+ */
 int signalfd(int fd, const sigset_t *mask, int flags)
 {
     return signalfd_do(fd, mask, flags);

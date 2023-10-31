@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
@@ -13,6 +13,13 @@
 #include <pthread.h>
 #include "pthread_internal.h"
 
+/**
+ * @brief   Destroy a condition variable attributes object.
+ *
+ * @param   attr    is the pointer to the condition variable attributes object to be destroyed.
+ *
+ * @return  0 on success, or an error code on failure.
+ */
 int pthread_condattr_destroy(pthread_condattr_t *attr)
 {
     if (!attr)
@@ -22,6 +29,13 @@ int pthread_condattr_destroy(pthread_condattr_t *attr)
 }
 RTM_EXPORT(pthread_condattr_destroy);
 
+/**
+ * @brief   Initialize a condition variable attributes object.
+ *
+ * @param   attr    is the pointer to the condition variable attributes object to be initialized.
+ *
+ * @return  0 on success, or an error code on failure.
+ */
 int pthread_condattr_init(pthread_condattr_t *attr)
 {
     if (!attr)
@@ -32,6 +46,14 @@ int pthread_condattr_init(pthread_condattr_t *attr)
 }
 RTM_EXPORT(pthread_condattr_init);
 
+/**
+ * @brief   Get the clock ID associated with a condition variable attributes object.
+ *
+ * @param   attr        is the pointer to the condition variable attributes object to query.
+ * @param   clock_id    is the pointer to a variable where the clock ID is stored.
+ *
+ * @return  0 on success, or an error code on failure.
+ */
 int pthread_condattr_getclock(const pthread_condattr_t *attr,
                               clockid_t *clock_id)
 {
@@ -39,6 +61,14 @@ int pthread_condattr_getclock(const pthread_condattr_t *attr,
 }
 RTM_EXPORT(pthread_condattr_getclock);
 
+/**
+ * @brief   Set the clock ID associated with a condition variable attributes object.
+ *
+ * @param   attr        is the pointer to the condition variable attributes object to modify.
+ * @param   clock_id    is the new clock ID value.
+ *
+ * @return  0 on success, or an error code on failure.
+ */
 int pthread_condattr_setclock(pthread_condattr_t *attr,
                               clockid_t clock_id)
 {
@@ -46,6 +76,14 @@ int pthread_condattr_setclock(pthread_condattr_t *attr,
 }
 RTM_EXPORT(pthread_condattr_setclock);
 
+/**
+ * @brief   Get the process-shared attribute of a condition variable attributes object.
+ *
+ * @param   attr    is the pointer to the condition variable attributes object to query.
+ * @param   pshared is the pointer to an integer where the process-shared attribute is stored.
+ *
+ * @return  0 on success, or an error code on failure.
+ */
 int pthread_condattr_getpshared(const pthread_condattr_t *attr, int *pshared)
 {
     if (!attr || !pshared)
@@ -57,10 +95,17 @@ int pthread_condattr_getpshared(const pthread_condattr_t *attr, int *pshared)
 }
 RTM_EXPORT(pthread_condattr_getpshared);
 
+/**
+ * @brief   Set the process-shared attribute of a condition variable attributes object.
+ *
+ * @param   attr    is the pointer to the condition variable attributes object to modify.
+ * @param   pshared is the new process-shared attribute value.
+ *
+ * @return  0 on success, or an error code on failure.
+ */
 int pthread_condattr_setpshared(pthread_condattr_t *attr, int pshared)
 {
-    if ((pshared != PTHREAD_PROCESS_PRIVATE) &&
-        (pshared != PTHREAD_PROCESS_SHARED))
+    if ((pshared != PTHREAD_PROCESS_PRIVATE) && (pshared != PTHREAD_PROCESS_SHARED))
     {
         return EINVAL;
     }
@@ -72,13 +117,21 @@ int pthread_condattr_setpshared(pthread_condattr_t *attr, int pshared)
 }
 RTM_EXPORT(pthread_condattr_setpshared);
 
+/**
+ * @brief   Initialize a condition variable.
+ *
+ * @param   cond    is the pointer to the condition variable to be initialized.
+ * @param   attr    is the pointer to condition variable attributes (ignored).
+ *
+ * @return  0 on success, or an error code on failure.
+ */
 int pthread_cond_init(pthread_cond_t *cond, const pthread_condattr_t *attr)
 {
     rt_err_t result;
     char cond_name[RT_NAME_MAX];
     static rt_uint16_t cond_num = 0;
 
-    /* parameter check */
+    /* Parameter check */
     if (cond == RT_NULL)
         return EINVAL;
     if ((attr != RT_NULL) && (*attr != PTHREAD_PROCESS_PRIVATE))
@@ -86,7 +139,7 @@ int pthread_cond_init(pthread_cond_t *cond, const pthread_condattr_t *attr)
 
     rt_snprintf(cond_name, sizeof(cond_name), "cond%02d", cond_num++);
 
-    /* use default value */
+    /* Use default value */
     if (attr == RT_NULL)
     {
         cond->attr = PTHREAD_PROCESS_PRIVATE;
@@ -102,7 +155,7 @@ int pthread_cond_init(pthread_cond_t *cond, const pthread_condattr_t *attr)
         return EINVAL;
     }
 
-    /* detach the object from system object container */
+    /* Detach the object from the system object container */
     rt_object_detach(&(cond->sem.parent.parent));
     cond->sem.parent.parent.type = RT_Object_Class_Semaphore;
 
@@ -110,6 +163,13 @@ int pthread_cond_init(pthread_cond_t *cond, const pthread_condattr_t *attr)
 }
 RTM_EXPORT(pthread_cond_init);
 
+/**
+ * @brief   Destroy a condition variable.
+ *
+ * @param   cond    is the pointer to the condition variable to be destroyed.
+ *
+ * @return  0 on success, or an error code on failure.
+ */
 int pthread_cond_destroy(pthread_cond_t *cond)
 {
     rt_err_t result;
@@ -117,7 +177,7 @@ int pthread_cond_destroy(pthread_cond_t *cond)
     {
         return EINVAL;
     }
-    /* which is not initialized */
+    /* Which is not initialized */
     if (cond->attr == -1)
     {
         return 0;
@@ -127,6 +187,7 @@ int pthread_cond_destroy(pthread_cond_t *cond)
     {
         return EBUSY;
     }
+
 __retry:
     result = rt_sem_trytake(&(cond->sem));
     if (result == EBUSY)
@@ -135,7 +196,7 @@ __retry:
         goto __retry;
     }
 
-    /* clean condition */
+    /* Clean the condition */
     rt_memset(cond, 0, sizeof(pthread_cond_t));
     cond->attr = -1;
 
@@ -143,6 +204,13 @@ __retry:
 }
 RTM_EXPORT(pthread_cond_destroy);
 
+/**
+ * @brief   Wake up all threads waiting on a condition variable.
+ *
+ * @param   cond    is the pointer to the condition variable.
+ *
+ * @return  0 on success, or an error code on failure.
+ */
 int pthread_cond_broadcast(pthread_cond_t *cond)
 {
     rt_err_t result;
@@ -154,16 +222,16 @@ int pthread_cond_broadcast(pthread_cond_t *cond)
 
     while (1)
     {
-        /* try to take condition semaphore */
+        /* Try to take the condition semaphore */
         result = rt_sem_trytake(&(cond->sem));
         if (result == -RT_ETIMEOUT)
         {
-            /* it's timeout, release this semaphore */
+            /* It's timeout, release this semaphore */
             rt_sem_release(&(cond->sem));
         }
         else if (result == RT_EOK)
         {
-            /* has taken this semaphore, release it */
+            /* Has taken this semaphore, release it */
             rt_sem_release(&(cond->sem));
             break;
         }
@@ -177,6 +245,13 @@ int pthread_cond_broadcast(pthread_cond_t *cond)
 }
 RTM_EXPORT(pthread_cond_broadcast);
 
+/**
+ * @brief   Wake up one thread waiting on a condition variable.
+ *
+ * @param   cond    is the pointer to the condition variable.
+ *
+ * @return  0 on success, or an error code on failure.
+ */
 int pthread_cond_signal(pthread_cond_t *cond)
 {
     rt_base_t temp;
@@ -187,17 +262,17 @@ int pthread_cond_signal(pthread_cond_t *cond)
     if (cond->attr == -1)
         pthread_cond_init(cond, RT_NULL);
 
-    /* disable interrupt */
+    /* Disable interrupts */
     temp = rt_hw_interrupt_disable();
     if (rt_list_isempty(&cond->sem.parent.suspend_thread))
     {
-        /* enable interrupt */
+        /* Enable interrupts */
         rt_hw_interrupt_enable(temp);
         return 0;
     }
     else
     {
-        /* enable interrupt */
+        /* Enable interrupts */
         rt_hw_interrupt_enable(temp);
         result = rt_sem_release(&(cond->sem));
         if (result == RT_EOK)
@@ -210,9 +285,16 @@ int pthread_cond_signal(pthread_cond_t *cond)
 }
 RTM_EXPORT(pthread_cond_signal);
 
-rt_err_t _pthread_cond_timedwait(pthread_cond_t *cond,
-                                 pthread_mutex_t *mutex,
-                                 rt_int32_t timeout)
+/**
+ * @brief   Wait on a condition variable with a timeout.
+ *
+ * @param   cond    is the pointer to the condition variable.
+ * @param   mutex   is the pointer to the associated mutex.
+ * @param   timeout is the timeout value in ticks.
+ *
+ * @return  0 on success, or an error code on failure.
+ */
+rt_err_t _pthread_cond_timedwait(pthread_cond_t *cond, pthread_mutex_t *mutex, rt_int32_t timeout)
 {
     rt_err_t result = RT_EOK;
     rt_sem_t sem;
@@ -229,7 +311,7 @@ rt_err_t _pthread_cond_timedwait(pthread_cond_t *cond,
     {
         return -RT_ERROR;
     }
-    /* check whether initialized */
+    /* Check whether initialized */
     if (cond->attr == -1)
     {
         pthread_cond_init(cond, RT_NULL);
@@ -245,24 +327,24 @@ rt_err_t _pthread_cond_timedwait(pthread_cond_t *cond,
         register rt_base_t temp;
         struct rt_thread *thread;
 
-        /* parameter check */
+        /* Parameter check */
         RT_ASSERT(sem != RT_NULL);
         RT_ASSERT(rt_object_get_type(&sem->parent.parent) == RT_Object_Class_Semaphore);
 
-        /* disable interrupt */
+        /* Disable interrupts */
         temp = rt_hw_interrupt_disable();
 
         if (sem->value > 0)
         {
-            /* semaphore is available */
+            /* Semaphore is available */
             sem->value--;
 
-            /* enable interrupt */
+            /* Enable interrupts */
             rt_hw_interrupt_enable(temp);
         }
         else
         {
-            /* no waiting, return with timeout */
+            /* No waiting, return with timeout */
             if (time == 0)
             {
                 rt_hw_interrupt_enable(temp);
@@ -271,53 +353,45 @@ rt_err_t _pthread_cond_timedwait(pthread_cond_t *cond,
             }
             else
             {
-                /* current context checking */
+                /* Current context checking */
                 RT_DEBUG_IN_THREAD_CONTEXT;
 
-                /* semaphore is unavailable, push to suspend list */
-                /* get current thread */
+                /* Semaphore is unavailable, push to suspend list */
+                /* Get current thread */
                 thread = rt_thread_self();
 
-                /* reset thread error number */
+                /* Reset thread error number */
                 thread->error = RT_EOK;
 
-                /* suspend thread */
+                /* Suspend thread */
                 rt_thread_suspend(thread);
 
                 /* Only support FIFO */
                 rt_list_insert_before(&(sem->parent.suspend_thread), &(thread->tlist));
 
-                /**
-                rt_ipc_list_suspend(&(sem->parent.suspend_thread),
-                                    thread,
-                                    sem->parent.parent.flag);
-                */
-
-                /* has waiting time, start thread timer */
+                /* Has waiting time, start thread timer */
                 if (time > 0)
                 {
-                    /* reset the timeout of thread timer and start it */
-                    rt_timer_control(&(thread->thread_timer),
-                                     RT_TIMER_CTRL_SET_TIME,
-                                     &time);
+                    /* Reset the timeout of thread timer and start it */
+                    rt_timer_control(&(thread->thread_timer), RT_TIMER_CTRL_SET_TIME, &time);
                     rt_timer_start(&(thread->thread_timer));
                 }
 
-                /* to avoid the lost of singal< cond->sem > */
+                /* To avoid the loss of signal< cond->sem > */
                 if (pthread_mutex_unlock(mutex) != 0)
                 {
                     return -RT_ERROR;
                 }
 
-                /* enable interrupt */
+                /* Enable interrupts */
                 rt_hw_interrupt_enable(temp);
 
-                /* do schedule */
+                /* Do schedule */
                 rt_schedule();
 
                 result = thread->error;
 
-                /* lock mutex again */
+                /* Lock the mutex again */
                 pthread_mutex_lock(mutex);
             }
         }
@@ -327,6 +401,14 @@ rt_err_t _pthread_cond_timedwait(pthread_cond_t *cond,
 }
 RTM_EXPORT(_pthread_cond_timedwait);
 
+/**
+ * @brief   Wait on a condition variable.
+ *
+ * @param   cond    is the pointer to the condition variable.
+ * @param   mutex   is the pointer to the associated mutex.
+ *
+ * @return  0 on success, or an error code on failure.
+ */
 int pthread_cond_wait(pthread_cond_t *cond, pthread_mutex_t *mutex)
 {
     rt_err_t result;
@@ -339,9 +421,7 @@ __retry:
     }
     else if (result == -RT_EINTR)
     {
-        /* https://pubs.opengroup.org/onlinepubs/9699919799/functions/pthread_cond_wait.html
-         * These functions shall not return an error code of [EINTR].
-         */
+        /* These functions shall not return an error code of [EINTR]. */
         goto __retry;
     }
 
@@ -349,9 +429,17 @@ __retry:
 }
 RTM_EXPORT(pthread_cond_wait);
 
-int pthread_cond_timedwait(pthread_cond_t *cond,
-                           pthread_mutex_t *mutex,
-                           const struct timespec *abstime)
+/**
+ * @brief   Wait on a condition variable with an absolute timeout.
+ *
+ * @param   cond    is the pointer to the condition variable.
+ * @param   mutex   is the pointer to the associated mutex.
+ * @param   abstime is the absolute timeout value.
+ *
+ * @return  0 on success, or an error code on failure.
+ */
+
+int pthread_cond_timedwait(pthread_cond_t *cond, pthread_mutex_t *mutex, const struct timespec *abstime)
 {
     int timeout;
     rt_err_t result;

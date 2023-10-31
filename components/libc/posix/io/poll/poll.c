@@ -34,6 +34,17 @@ struct rt_poll_node
 
 static RT_DEFINE_SPINLOCK(_spinlock);
 
+/**
+ * @brief Callback to wake up a waiting thread in the poll table.
+ *
+ * This function is called when a waiting thread is woken up. It sets the 'triggered' flag
+ * in the associated poll table to indicate that the thread has been triggered.
+ *
+ * @param wait The wait queue node of the waiting thread.
+ * @param key  A key used for matching (ignored in this implementation).
+ *
+ * @return 0 on success, -1 on failure.
+ */
 static int __wqueue_pollwake(struct rt_wqueue_node *wait, void *key)
 {
     struct rt_poll_node *pn;
@@ -47,6 +58,15 @@ static int __wqueue_pollwake(struct rt_wqueue_node *wait, void *key)
     return __wqueue_default_wake(wait, key);
 }
 
+/**
+ * @brief Add a node to the poll table's list.
+ *
+ * This function adds a new node to the list of nodes in the poll table. Each node
+ * represents a file descriptor to be polled.
+ *
+ * @param wq  The wait queue for the polling thread.
+ * @param req The poll request structure.
+ */
 static void _poll_add(rt_wqueue_t *wq, rt_pollreq_t *req)
 {
     struct rt_poll_table *pt;
@@ -68,6 +88,13 @@ static void _poll_add(rt_wqueue_t *wq, rt_pollreq_t *req)
     rt_wqueue_add(wq, &node->wqn);
 }
 
+/**
+ * @brief Initialize a poll table.
+ *
+ * This function initializes a poll table structure.
+ *
+ * @param pt The poll table to initialize.
+ */
 static void poll_table_init(struct rt_poll_table *pt)
 {
     pt->req._proc = _poll_add;
@@ -76,6 +103,16 @@ static void poll_table_init(struct rt_poll_table *pt)
     pt->polling_thread = rt_thread_self();
 }
 
+/**
+ * @brief Wait for polling with a timeout.
+ *
+ * This function waits for the polling to complete or a specified timeout to occur.
+ *
+ * @param pt   The poll table to wait on.
+ * @param msec The timeout in milliseconds.
+ *
+ * @return 0 if the polling is successful, -1 if the polling times out.
+ */
 static int poll_wait_timeout(struct rt_poll_table *pt, int msec)
 {
     rt_int32_t timeout;
@@ -96,8 +133,8 @@ static int poll_wait_timeout(struct rt_poll_table *pt, int msec)
             if (timeout > 0)
             {
                 rt_timer_control(&(thread->thread_timer),
-                        RT_TIMER_CTRL_SET_TIME,
-                        &timeout);
+                                 RT_TIMER_CTRL_SET_TIME,
+                                 &timeout);
                 rt_timer_start(&(thread->thread_timer));
             }
 
@@ -115,6 +152,17 @@ static int poll_wait_timeout(struct rt_poll_table *pt, int msec)
     return ret;
 }
 
+/**
+ * @brief Perform polling for a single file descriptor.
+ *
+ * This function performs polling for a single file descriptor and sets the
+ * revents field in the pollfd structure with the events that have occurred.
+ *
+ * @param pollfd The pollfd structure to store results.
+ * @param req    The poll request structure.
+ *
+ * @return The number of events detected, -1 on error.
+ */
 static int do_pollfd(struct pollfd *pollfd, rt_pollreq_t *req)
 {
     int mask = 0;
@@ -152,13 +200,26 @@ static int do_pollfd(struct pollfd *pollfd, rt_pollreq_t *req)
     return mask;
 }
 
+/**
+ * @brief Perform polling on multiple file descriptors.
+ *
+ * This function performs polling for multiple file descriptors and sets the
+ * revents field in the pollfd structures with the events that have occurred.
+ *
+ * @param fds    Array of pollfd structures to be polled.
+ * @param nfds   The number of file descriptors in the array.
+ * @param pt     The poll table to use for polling.
+ * @param msec   The polling timeout in milliseconds.
+ *
+ * @return The number of file descriptors with events detected, -1 on error.
+ */
 static int poll_do(struct pollfd *fds, nfds_t nfds, struct rt_poll_table *pt, int msec)
 {
     int num;
     int istimeout = 0;
     nfds_t n;
     struct pollfd *pf;
-    int  ret = 0;
+    int ret = 0;
 
     if (msec == 0)
     {
@@ -172,21 +233,21 @@ static int poll_do(struct pollfd *fds, nfds_t nfds, struct rt_poll_table *pt, in
         num = 0;
         pt->triggered = 0;
 
-        for (n = 0; n < nfds; n ++)
+        for (n = 0; n < nfds; n++)
         {
             ret = do_pollfd(pf, &pt->req);
-            if(ret < 0)
+            if (ret < 0)
             {
                 /*dealwith the device return error -1  */
                 pt->req._proc = RT_NULL;
                 return ret;
             }
-            else if(ret > 0)
+            else if (ret > 0)
             {
-                num ++;
+                num++;
                 pt->req._proc = RT_NULL;
             }
-            pf ++;
+            pf++;
         }
 
         pt->req._proc = RT_NULL;
@@ -200,7 +261,14 @@ static int poll_do(struct pollfd *fds, nfds_t nfds, struct rt_poll_table *pt, in
 
     return num;
 }
-
+/**
+ * @brief Cleanup and release resources associated with the poll table.
+ *
+ * This function releases the resources associated with the poll table, including
+ * deallocating memory used for poll nodes and removing them from the wait queue.
+ *
+ * @param pt Pointer to the poll table structure to clean up.
+ */
 static void poll_teardown(struct rt_poll_table *pt)
 {
     struct rt_poll_node *node, *next;
@@ -215,6 +283,18 @@ static void poll_teardown(struct rt_poll_table *pt)
     }
 }
 
+/**
+ * @brief Poll a set of file descriptors.
+ *
+ * This function performs polling on a set of file descriptors and returns the number of events.
+ * It initializes a poll table, performs the polling, and then cleans up the table.
+ *
+ * @param fds    An array of pollfd structures representing file descriptors to poll.
+ * @param nfds   The number of file descriptors in the 'fds' array.
+ * @param timeout The maximum time to wait for an event in milliseconds.
+ *
+ * @return The number of file descriptors with available events, or 0 on timeout, or -1 on error.
+ */
 int poll(struct pollfd *fds, nfds_t nfds, int timeout)
 {
     int num;
