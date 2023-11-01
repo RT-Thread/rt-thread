@@ -39,6 +39,8 @@
 
 #ifdef RT_USING_SMP
 static struct rt_mutex _mutex = {0};
+#else
+static RT_DEFINE_SPINLOCK(_spinlock);
 #endif
 
 /*
@@ -526,7 +528,7 @@ sys_prot_t sys_arch_protect(void)
     return 0;
 #else
     rt_base_t level;
-    level = rt_hw_interrupt_disable(); /* disable interrupt */
+    level = rt_spin_lock_irqsave(&_spinlock);
     return level;
 #endif
 }
@@ -537,7 +539,7 @@ void sys_arch_unprotect(sys_prot_t pval)
     RT_UNUSED(pval);
     rt_mutex_release(&_mutex);
 #else
-    rt_hw_interrupt_enable(pval); /* enable interrupt */
+    rt_spin_unlock_irqrestore(&_spinlock, pval);
 #endif
 }
 
