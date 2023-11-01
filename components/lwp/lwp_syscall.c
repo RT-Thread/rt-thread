@@ -5259,20 +5259,24 @@ ssize_t sys_readlink(char* path, char *buf, size_t bufsz)
     return bufsz;
 }
 
-sysret_t sys_setaffinity(pid_t pid, size_t size, void *set)
+sysret_t sys_sched_setaffinity(pid_t pid, size_t size, void *set)
 {
     void *kset = RT_NULL;
 
-    if (!lwp_user_accessable((void *)set, sizeof(cpu_set_t)))
+    if (size <= 0 || size > sizeof(cpu_set_t))
+    {
+        return -EINVAL;
+    }
+    if (!lwp_user_accessable((void *)set, size))
         return -EFAULT;
 
-    kset = kmem_get(sizeof(*kset));
+    kset = kmem_get(size);
     if (kset == RT_NULL)
     {
         return -ENOMEM;
     }
 
-    if (lwp_get_from_user(kset, set, sizeof(cpu_set_t)) != sizeof(cpu_set_t))
+    if (lwp_get_from_user(kset, set, size) != size)
     {
         kmem_put(kset);
         return -EINVAL;
@@ -5280,7 +5284,7 @@ sysret_t sys_setaffinity(pid_t pid, size_t size, void *set)
 
     for (int i = 0;i < size * 8; i++)
     {
-        if (CPU_ISSET(i, (cpu_set_t *)kset))
+        if (CPU_ISSET_S(i, size, kset))
         {
             kmem_put(kset);
             return lwp_setaffinity(pid, i);
@@ -5292,11 +5296,11 @@ sysret_t sys_setaffinity(pid_t pid, size_t size, void *set)
     return -1;
 }
 
-sysret_t sys_getaffinity(const pid_t pid, size_t size, void *set)
+sysret_t sys_sched_getaffinity(const pid_t pid, size_t size, void *set)
 {
 #ifdef ARCH_MM_MMU
     DEF_RETURN_CODE(rc);
-    cpu_set_t mask;
+    void *mask;
     struct rt_lwp *lwp;
     rt_bool_t need_release = RT_FALSE;
 
@@ -5308,6 +5312,13 @@ sysret_t sys_getaffinity(const pid_t pid, size_t size, void *set)
     {
         return -EFAULT;
     }
+    mask = kmem_get(size);
+    if (!mask)
+    {
+        return -ENOMEM;
+    }
+
+    CPU_ZERO_S(size, mask);
 
     if (pid == 0)
     {
@@ -5326,28 +5337,33 @@ sysret_t sys_getaffinity(const pid_t pid, size_t size, void *set)
     }
     else
     {
-    #ifdef RT_USING_SMP
+#ifdef RT_USING_SMP
         if (lwp->bind_cpu == RT_CPUS_NR)    /* not bind */
         {
-            CPU_ZERO_S(size, &mask);
+            for(int i = 0; i < RT_CPUS_NR; i++)
+            {
+                CPU_SET_S(i, size, mask);
+            }
         }
         else /* set bind cpu */
         {
             /* TODO: only single-core bindings are now supported of rt-smart */
-            CPU_SET_S(lwp->bind_cpu, size, &mask);
+            CPU_SET_S(lwp->bind_cpu, size, mask);
         }
-    #else
-        CPU_SET_S(0, size, &mask);
-    #endif
+#else
+        CPU_SET_S(0, size, mask);
+#endif
 
-        if (lwp_put_to_user(set, &mask, size) != size)
+        if (lwp_put_to_user(set, mask, size) != size)
             rc = -EFAULT;
         else
-            rc = 0;
+            rc = size;
     }
 
     if (need_release)
         lwp_pid_lock_release();
+
+    kmem_put(mask);
 
     RETURN(rc);
 #else
@@ -6803,7 +6819,7 @@ const static struct rt_syscall_def func_table[] =
     SYSCALL_SIGN(sys_sched_get_priority_min),
     SYSCALL_SIGN(sys_sched_setscheduler),
     SYSCALL_SIGN(sys_sched_getscheduler),
-    SYSCALL_SIGN(sys_setaffinity),
+    SYSCALL_SIGN(sys_sched_setaffinity),
     SYSCALL_SIGN(sys_fsync),                            /* 155 */
     SYSCALL_SIGN(sys_clock_nanosleep),
     SYSCALL_SIGN(sys_timer_create),
@@ -6829,7 +6845,7 @@ const static struct rt_syscall_def func_table[] =
     SYSCALL_SIGN(sys_umount2),
     SYSCALL_SIGN(sys_link),
     SYSCALL_SIGN(sys_symlink),
-    SYSCALL_SIGN(sys_getaffinity),                      /* 180 */
+    SYSCALL_SIGN(sys_sched_getaffinity),                      /* 180 */
     SYSCALL_SIGN(sys_sysinfo),
     SYSCALL_SIGN(sys_chmod),
     SYSCALL_SIGN(sys_reboot),
