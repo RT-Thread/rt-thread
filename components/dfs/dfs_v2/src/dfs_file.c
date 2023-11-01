@@ -710,7 +710,7 @@ ssize_t dfs_file_read(struct dfs_file *file, void *buf, size_t len)
 
 ssize_t dfs_file_write(struct dfs_file *file, const void *buf, size_t len)
 {
-    size_t ret = -EBADF;
+    ssize_t ret = -EBADF;
 
     if (file)
     {
@@ -918,7 +918,7 @@ int dfs_file_lstat(const char *path, struct stat *buf)
 
 int dfs_file_fstat(struct dfs_file *file, struct stat *buf)
 {
-    size_t ret = -EBADF;
+    int ret = -EBADF;
 
     if (file)
     {
@@ -991,7 +991,7 @@ int dfs_file_setattr(const char *path, struct dfs_attr *attr)
 
 int dfs_file_ioctl(struct dfs_file *file, int cmd, void *args)
 {
-    size_t ret = 0;
+    int ret = 0;
 
     if (file)
     {

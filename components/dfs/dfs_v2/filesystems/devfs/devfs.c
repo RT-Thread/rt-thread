@@ -175,11 +175,13 @@ static struct dfs_vnode *dfs_devfs_lookup(struct dfs_dentry *dentry)
                 vnode->mode = _device_to_mode(device);
                 vnode->size = device->ref_count;
                 vnode->nlink = 1;
+#ifdef RT_USING_POSIX_DEVIO
                 if (device->fops)
                 {
                     vnode->fops = device->fops;
                 }
                 else
+#endif /* RT_USING_POSIX_DEVIO */
                 {
                     vnode->fops = &_dev_fops;
                 }
