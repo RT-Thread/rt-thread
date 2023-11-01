@@ -10,8 +10,8 @@
 
 #include <rtthread.h>
 
-#define DBG_TAG "stdlib"
-#define DBG_LVL DBG_INFO
+#define DBG_TAG    "stdlib"
+#define DBG_LVL    DBG_INFO
 #include <rtdbg.h>
 
 /**
