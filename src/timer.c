@@ -20,6 +20,7 @@
  * 2022-01-07     Gabriel      Moving __on_rt_xxxxx_hook to timer.c
  * 2022-04-19     Stanley      Correct descriptions
  * 2023-09-15     xqyjlj       perf rt_hw_interrupt_disable/enable
+ * 2023-11-01     xqyjlj       use rt_raw_spinlock
  */
 
 #include <rtthread.h>
@@ -303,13 +304,13 @@ rt_err_t rt_timer_detach(rt_timer_t timer)
         spinlock = &_hard_spinlock;
     }
 
-    level = rt_spin_lock_irqsave(spinlock);
+    level = rt_raw_spin_lock_irqsave(spinlock);
 
     _timer_remove(timer);
     /* stop timer */
     timer->parent.flag &= ~RT_TIMER_FLAG_ACTIVATED;
 
-    rt_spin_unlock_irqrestore(spinlock, level);
+    rt_raw_spin_unlock_irqrestore(spinlock, level);
     rt_object_detach(&(timer->parent));
 
     return RT_EOK;
@@ -396,12 +397,12 @@ rt_err_t rt_timer_delete(rt_timer_t timer)
         spinlock = &_hard_spinlock;
     }
 
-    level = rt_spin_lock_irqsave(spinlock);
+    level = rt_raw_spin_lock_irqsave(spinlock);
 
     _timer_remove(timer);
     /* stop timer */
     timer->parent.flag &= ~RT_TIMER_FLAG_ACTIVATED;
-    rt_spin_unlock_irqrestore(spinlock, level);
+    rt_raw_spin_unlock_irqrestore(spinlock, level);
     rt_object_delete(&(timer->parent));
 
     return RT_EOK;
@@ -447,7 +448,7 @@ rt_err_t rt_timer_start(rt_timer_t timer)
     }
 
     /* stop timer firstly */
-    level = rt_spin_lock_irqsave(spinlock);
+    level = rt_raw_spin_lock_irqsave(spinlock);
     /* remove timer from list */
     _timer_remove(timer);
     /* change status of timer */
@@ -523,7 +524,7 @@ rt_err_t rt_timer_start(rt_timer_t timer)
     }
 #endif /* RT_USING_TIMER_SOFT */
 
-    rt_spin_unlock_irqrestore(spinlock, level);
+    rt_raw_spin_unlock_irqrestore(spinlock, level);
 
 
     return RT_EOK;
@@ -556,11 +557,11 @@ rt_err_t rt_timer_stop(rt_timer_t timer)
     {
         spinlock = &_hard_spinlock;
     }
-    level = rt_spin_lock_irqsave(spinlock);
+    level = rt_raw_spin_lock_irqsave(spinlock);
 
     if (!(timer->parent.flag & RT_TIMER_FLAG_ACTIVATED))
     {
-        rt_spin_unlock_irqrestore(spinlock, level);
+        rt_raw_spin_unlock_irqrestore(spinlock, level);
         return -RT_ERROR;
     }
     RT_OBJECT_HOOK_CALL(rt_object_put_hook, (&(timer->parent)));
@@ -568,7 +569,7 @@ rt_err_t rt_timer_stop(rt_timer_t timer)
     _timer_remove(timer);
     /* change status */
     timer->parent.flag &= ~RT_TIMER_FLAG_ACTIVATED;
-    rt_spin_unlock_irqrestore(spinlock, level);
+    rt_raw_spin_unlock_irqrestore(spinlock, level);
 
     return RT_EOK;
 }
@@ -674,7 +675,7 @@ void rt_timer_check(void)
 
     current_tick = rt_tick_get();
 
-    level = rt_spin_lock_irqsave(&_hard_spinlock);
+    level = rt_raw_spin_lock_irqsave(&_hard_spinlock);
 
     while (!rt_list_isempty(&_timer_list[RT_TIMER_SKIP_LIST_LEVEL - 1]))
     {
@@ -697,7 +698,7 @@ void rt_timer_check(void)
             }
             /* add timer to temporary list  */
             rt_list_insert_after(&list, &(t->row[RT_TIMER_SKIP_LIST_LEVEL - 1]));
-            rt_spin_unlock_irqrestore(&_hard_spinlock, level);
+            rt_raw_spin_unlock_irqrestore(&_hard_spinlock, level);
             /* call timeout function */
             t->timeout_func(t->parameter);
 
@@ -706,7 +707,7 @@ void rt_timer_check(void)
 
             RT_OBJECT_HOOK_CALL(rt_timer_exit_hook, (t));
             LOG_D("current tick: %d", current_tick);
-            level = rt_spin_lock_irqsave(&_hard_spinlock);
+            level = rt_raw_spin_lock_irqsave(&_hard_spinlock);
             /* Check whether the timer object is detached or started again */
             if (rt_list_isempty(&list))
             {
@@ -723,7 +724,7 @@ void rt_timer_check(void)
         }
         else break;
     }
-    rt_spin_unlock_irqrestore(&_hard_spinlock, level);
+    rt_raw_spin_unlock_irqrestore(&_hard_spinlock, level);
     LOG_D("timer check leave");
 }
 
@@ -737,9 +738,9 @@ rt_tick_t rt_timer_next_timeout_tick(void)
     rt_base_t level;
     rt_tick_t next_timeout = RT_TICK_MAX;
 
-    level = rt_spin_lock_irqsave(&_hard_spinlock);
+    level = rt_raw_spin_lock_irqsave(&_hard_spinlock);
     _timer_list_next_timeout(_timer_list, &next_timeout);
-    rt_spin_unlock_irqrestore(&_hard_spinlock, level);
+    rt_raw_spin_unlock_irqrestore(&_hard_spinlock, level);
 
     return next_timeout;
 }
@@ -758,7 +759,7 @@ void rt_soft_timer_check(void)
 
     rt_list_init(&list);
     LOG_D("software timer check enter");
-    level = rt_spin_lock_irqsave(&_soft_spinlock);
+    level = rt_raw_spin_lock_irqsave(&_soft_spinlock);
 
     while (!rt_list_isempty(&_soft_timer_list[RT_TIMER_SKIP_LIST_LEVEL - 1]))
     {
@@ -786,7 +787,7 @@ void rt_soft_timer_check(void)
 
             _soft_timer_status = RT_SOFT_TIMER_BUSY;
 
-            rt_spin_unlock_irqrestore(&_soft_spinlock, level);
+            rt_raw_spin_unlock_irqrestore(&_soft_spinlock, level);
 
             /* call timeout function */
             t->timeout_func(t->parameter);
@@ -794,7 +795,7 @@ void rt_soft_timer_check(void)
             RT_OBJECT_HOOK_CALL(rt_timer_exit_hook, (t));
             LOG_D("current tick: %d", current_tick);
 
-            level = rt_spin_lock_irqsave(&_soft_spinlock);
+            level = rt_raw_spin_lock_irqsave(&_soft_spinlock);
 
             _soft_timer_status = RT_SOFT_TIMER_IDLE;
             /* Check whether the timer object is detached or started again */
@@ -814,7 +815,7 @@ void rt_soft_timer_check(void)
         else break; /* not check anymore */
     }
 
-    rt_spin_unlock_irqrestore(&_soft_spinlock, level);
+    rt_raw_spin_unlock_irqrestore(&_soft_spinlock, level);
 
     LOG_D("software timer check leave");
 }
@@ -833,9 +834,9 @@ static void _timer_thread_entry(void *parameter)
     while (1)
     {
         /* get the next timeout tick */
-        level = rt_spin_lock_irqsave(&_soft_spinlock);
+        level = rt_raw_spin_lock_irqsave(&_soft_spinlock);
         ret = _timer_list_next_timeout(_soft_timer_list, &next_timeout);
-        rt_spin_unlock_irqrestore(&_soft_spinlock, level);
+        rt_raw_spin_unlock_irqrestore(&_soft_spinlock, level);
 
         if (ret != RT_EOK)
         {

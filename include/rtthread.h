@@ -20,6 +20,7 @@
  * 2023-05-20     Bernard      add rtatomic.h header file to included files.
  * 2023-06-30     ChuShicheng  move debug check from the rtdebug.h
  * 2023-10-16     Shell        Support a new backtrace framework
+ * 2023-11-01     xqyjlj       add rt_raw_spinlock
  */
 
 #ifndef __RT_THREAD_H__
@@ -548,16 +549,24 @@ struct rt_spinlock;
 #ifdef RT_USING_SMP
 
 void rt_spin_lock_init(struct rt_spinlock *lock);
-void rt_spin_lock(struct rt_spinlock *lock);
-void rt_spin_unlock(struct rt_spinlock *lock);
-rt_base_t rt_spin_lock_irqsave(struct rt_spinlock *lock);
-void rt_spin_unlock_irqrestore(struct rt_spinlock *lock, rt_base_t level);
+void rt_spin_lock(struct rt_spinlock *lock);                                /* will lock the thread scheduler. */
+void rt_spin_unlock(struct rt_spinlock *lock);                              /* will unlock the thread scheduler. */
+rt_base_t rt_spin_lock_irqsave(struct rt_spinlock *lock);                   /* will lock the thread scheduler. */
+void rt_spin_unlock_irqrestore(struct rt_spinlock *lock, rt_base_t level);  /* will unlock the thread scheduler. */
+void rt_raw_spin_lock(struct rt_spinlock *lock);
+void rt_raw_spin_unlock(struct rt_spinlock *lock);
+rt_base_t rt_raw_spin_lock_irqsave(struct rt_spinlock *lock);
+void rt_raw_spin_unlock_irqrestore(struct rt_spinlock *lock, rt_base_t level);
 #else
-#define rt_spin_lock_init(lock)                                     do {RT_UNUSED(lock);} while (0)
-#define rt_spin_lock(lock)                                          do {RT_UNUSED(lock);} while (0)
-#define rt_spin_unlock(lock)                                        do {RT_UNUSED(lock);} while (0)
-rt_inline rt_base_t rt_spin_lock_irqsave(struct rt_spinlock *lock)  {RT_UNUSED(lock);return rt_hw_interrupt_disable();}
-#define rt_spin_unlock_irqrestore(lock, level)                      do {RT_UNUSED(lock); rt_hw_interrupt_enable(level);} while (0)
+#define rt_spin_lock_init(lock)                                         do {RT_UNUSED(lock);} while (0)
+#define rt_spin_lock(lock)                                              do {RT_UNUSED(lock); rt_enter_critical();} while (0)
+#define rt_spin_unlock(lock)                                            do {RT_UNUSED(lock); rt_exit_critical();} while (0)
+rt_inline rt_base_t rt_spin_lock_irqsave(struct rt_spinlock *lock)      {RT_UNUSED(lock);return rt_hw_interrupt_disable();}
+#define rt_spin_unlock_irqrestore(lock, level)                          do {RT_UNUSED(lock); rt_hw_interrupt_enable(level);} while (0)
+#define rt_raw_spin_lock(lock)                                          do {RT_UNUSED(lock);} while (0)
+#define rt_raw_spin_unlock(lock)                                        do {RT_UNUSED(lock);} while (0)
+rt_inline rt_base_t rt_raw_spin_lock_irqsave(struct rt_spinlock *lock)  {RT_UNUSED(lock);return rt_hw_interrupt_disable();}
+#define rt_raw_spin_unlock_irqrestore(lock, level)                      do {RT_UNUSED(lock); rt_hw_interrupt_enable(level);} while (0)
 #endif /* RT_USING_SMP */
 
 /**@}*/

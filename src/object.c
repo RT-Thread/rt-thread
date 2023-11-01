@@ -15,6 +15,7 @@
  * 2018-01-25     Bernard      Fix the object find issue when enable MODULE.
  * 2022-01-07     Gabriel      Moving __on_rt_xxxxx_hook to object.c
  * 2023-09-15     xqyjlj       perf rt_hw_interrupt_disable/enable
+ * 2023-11-01     xqyjlj       use rt_raw_spinlock
  */
 
 #include <rtthread.h>
@@ -285,12 +286,12 @@ int rt_object_get_length(enum rt_object_class_type type)
     information = rt_object_get_information((enum rt_object_class_type)type);
     if (information == RT_NULL) return 0;
 
-    level = rt_spin_lock_irqsave(&(information->spinlock));
+    level = rt_raw_spin_lock_irqsave(&(information->spinlock));
     rt_list_for_each(node, &(information->object_list))
     {
         count ++;
     }
-    rt_spin_unlock_irqrestore(&(information->spinlock), level);
+    rt_raw_spin_unlock_irqrestore(&(information->spinlock), level);
 
     return count;
 }
@@ -323,7 +324,7 @@ int rt_object_get_pointers(enum rt_object_class_type type, rt_object_t *pointers
     information = rt_object_get_information((enum rt_object_class_type)type);
     if (information == RT_NULL) return 0;
 
-    level = rt_spin_lock_irqsave(&(information->spinlock));
+    level = rt_raw_spin_lock_irqsave(&(information->spinlock));
     /* retrieve pointer of object */
     rt_list_for_each(node, &(information->object_list))
     {
@@ -334,7 +335,7 @@ int rt_object_get_pointers(enum rt_object_class_type type, rt_object_t *pointers
 
         if (index >= maxlen) break;
     }
-    rt_spin_unlock_irqrestore(&(information->spinlock), level);
+    rt_raw_spin_unlock_irqrestore(&(information->spinlock), level);
 
     return index;
 }
@@ -371,7 +372,7 @@ void rt_object_init(struct rt_object         *object,
     /* check object type to avoid re-initialization */
 
     /* enter critical */
-    level = rt_spin_lock_irqsave(&(information->spinlock));
+    level = rt_raw_spin_lock_irqsave(&(information->spinlock));
     /* try to find object */
     for (node  = information->object_list.next;
             node != &(information->object_list);
@@ -383,7 +384,7 @@ void rt_object_init(struct rt_object         *object,
         RT_ASSERT(obj != object);
     }
     /* leave critical */
-    rt_spin_unlock_irqrestore(&(information->spinlock), level);
+    rt_raw_spin_unlock_irqrestore(&(information->spinlock), level);
 #endif
 
     /* initialize object's parameters */
@@ -397,7 +398,7 @@ void rt_object_init(struct rt_object         *object,
 
     RT_OBJECT_HOOK_CALL(rt_object_attach_hook, (object));
 
-    level = rt_spin_lock_irqsave(&(information->spinlock));
+    level = rt_raw_spin_lock_irqsave(&(information->spinlock));
 
 #ifdef RT_USING_MODULE
     if (module)
@@ -411,7 +412,7 @@ void rt_object_init(struct rt_object         *object,
         /* insert object into information object list */
         rt_list_insert_after(&(information->object_list), &(object->list));
     }
-    rt_spin_unlock_irqrestore(&(information->spinlock), level);
+    rt_raw_spin_unlock_irqrestore(&(information->spinlock), level);
 }
 
 /**
@@ -433,10 +434,10 @@ void rt_object_detach(rt_object_t object)
     information = rt_object_get_information(object->type);
     RT_ASSERT(information != RT_NULL);
 
-    level = rt_spin_lock_irqsave(&(information->spinlock));
+    level = rt_raw_spin_lock_irqsave(&(information->spinlock));
     /* remove from old list */
     rt_list_remove(&(object->list));
-    rt_spin_unlock_irqrestore(&(information->spinlock), level);
+    rt_raw_spin_unlock_irqrestore(&(information->spinlock), level);
 
     object->type = 0;
 }
@@ -492,7 +493,7 @@ rt_object_t rt_object_allocate(enum rt_object_class_type type, const char *name)
 
     RT_OBJECT_HOOK_CALL(rt_object_attach_hook, (object));
 
-    level = rt_spin_lock_irqsave(&(information->spinlock));
+    level = rt_raw_spin_lock_irqsave(&(information->spinlock));
 
 #ifdef RT_USING_MODULE
     if (module)
@@ -506,7 +507,7 @@ rt_object_t rt_object_allocate(enum rt_object_class_type type, const char *name)
         /* insert object into information object list */
         rt_list_insert_after(&(information->object_list), &(object->list));
     }
-    rt_spin_unlock_irqrestore(&(information->spinlock), level);
+    rt_raw_spin_unlock_irqrestore(&(information->spinlock), level);
 
     return object;
 }
@@ -531,12 +532,12 @@ void rt_object_delete(rt_object_t object)
     information = rt_object_get_information(object->type);
     RT_ASSERT(information != RT_NULL);
 
-    level = rt_spin_lock_irqsave(&(information->spinlock));
+    level = rt_raw_spin_lock_irqsave(&(information->spinlock));
 
     /* remove from old list */
     rt_list_remove(&(object->list));
 
-    rt_spin_unlock_irqrestore(&(information->spinlock), level);
+    rt_raw_spin_unlock_irqrestore(&(information->spinlock), level);
 
     /* reset object type */
     object->type = RT_Object_Class_Null;
@@ -612,7 +613,7 @@ rt_object_t rt_object_find(const char *name, rt_uint8_t type)
     RT_DEBUG_NOT_IN_INTERRUPT;
 
     /* enter critical */
-    level = rt_spin_lock_irqsave(&(information->spinlock));
+    level = rt_raw_spin_lock_irqsave(&(information->spinlock));
 
     /* try to find object */
     rt_list_for_each(node, &(information->object_list))
@@ -620,13 +621,13 @@ rt_object_t rt_object_find(const char *name, rt_uint8_t type)
         object = rt_list_entry(node, struct rt_object, list);
         if (rt_strncmp(object->name, name, RT_NAME_MAX) == 0)
         {
-            rt_spin_unlock_irqrestore(&(information->spinlock), level);
+            rt_raw_spin_unlock_irqrestore(&(information->spinlock), level);
 
             return object;
         }
     }
 
-    rt_spin_unlock_irqrestore(&(information->spinlock), level);
+    rt_raw_spin_unlock_irqrestore(&(information->spinlock), level);
 
     return RT_NULL;
 }

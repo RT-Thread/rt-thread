@@ -17,6 +17,7 @@
  * 2021-06-01     Meco Man     add critical section projection for rt_tick_increase()
  * 2023-09-15     xqyjlj       perf rt_hw_interrupt_disable/enable
  * 2023-10-16     RiceChen     fix: only the main core detection rt_timer_check(), in SMP mode
+ * 2023-11-01     xqyjlj       use rt_raw_spinlock
  */
 
 #include <rthw.h>
@@ -104,18 +105,18 @@ void rt_tick_increase(void)
     /* check time slice */
     thread = rt_thread_self();
     rt_get_thread_struct(thread);
-    level = rt_spin_lock_irqsave(&(thread->spinlock));
+    level = rt_raw_spin_lock_irqsave(&(thread->spinlock));
     rt_atomic_sub(&(thread->remaining_tick), 1);
     if (rt_atomic_compare_exchange_strong(&(thread->remaining_tick), &oldval, thread->init_tick))
     {
         thread->stat |= RT_THREAD_STAT_YIELD;
-        rt_spin_unlock_irqrestore(&(thread->spinlock), level);
+        rt_raw_spin_unlock_irqrestore(&(thread->spinlock), level);
         rt_put_thread_struct(thread);
         rt_schedule();
     }
     else
     {
-        rt_spin_unlock_irqrestore(&(thread->spinlock), level);
+        rt_raw_spin_unlock_irqrestore(&(thread->spinlock), level);
         rt_put_thread_struct(thread);
     }
 
