@@ -1,0 +1,16 @@
+menuconfig RT_CLK_ROCKCHIP
+    bool "Rockchip clock controller common"
+    depends on RT_USING_CLK
+    select RT_USING_OFW
+    select RT_USING_RESET
+    default n
+
+config RT_CLK_ROCKCHIP_RK3308
+    bool "Rockchip RK3308 clock controller support"
+    depends on RT_CLK_ROCKCHIP
+    default n
+
+config RT_CLK_ROCKCHIP_RK3568
+    bool "Rockchip RK3568 clock controller support"
+    depends on RT_CLK_ROCKCHIP
+    default n

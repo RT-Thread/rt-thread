@@ -1,0 +1,21 @@
+from building import *
+
+group = []
+
+if not GetDepend(['RT_CLK_ROCKCHIP']):
+    Return('group')
+
+cwd = GetCurrentDir()
+CPPPATH = [cwd + '/../../include']
+
+src = []
+
+if GetDepend(['RT_CLK_ROCKCHIP_RK3308']):
+    src += ['clk-rk3308.c']
+
+if GetDepend(['RT_CLK_ROCKCHIP_RK3568']):
+    src += ['clk-rk3568.c']
+
+group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

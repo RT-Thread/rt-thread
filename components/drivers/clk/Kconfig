@@ -1,0 +1,7 @@
+menuconfig RT_USING_CLK
+    bool "Using Common Clock Framework (CLK)"
+    depends on RT_USING_DM
+    select RT_USING_ADT_REF
+    default y
+
+source "$RTT_DIR/components/drivers/clk/rockchip/Kconfig"
