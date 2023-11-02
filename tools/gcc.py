@@ -20,6 +20,7 @@
 # Change Logs:
 # Date           Author       Notes
 # 2018-05-22     Bernard      The first version
+# 2023-11-03     idings       return file path in GetHeader
 
 import os
 import re
@@ -39,12 +40,12 @@ def GetGCCRoot(rtconfig):
 
     return root_path
 
-def CheckHeader(rtconfig, filename):
+def GetHeader(rtconfig, filename):
     root = GetGCCRoot(rtconfig)
 
     fn = os.path.join(root, 'include', filename)
     if os.path.isfile(fn):
-        return True
+        return fn
 
     # Usually the cross compiling gcc toolchain has directory as:
     #
@@ -62,13 +63,34 @@ def CheckHeader(rtconfig, filename):
 
     fn = os.path.join(root, prefix, 'include', filename)
     if os.path.isfile(fn):
-        return True
+        return fn
 
-    return False
+    return None
 
 # GCC like means the toolchains which are compatible with GCC
 def GetGCCLikePLATFORM():
     return ['gcc', 'armclang', 'llvm-arm']
+
+def GetPicoLibcVersion(rtconfig):
+    version = None
+    try:
+        rtconfig.PREFIX
+    except:
+        return version
+
+    root = GetGCCRoot(rtconfig)
+    # get version from picolibc.h
+    fn = GetHeader(rtconfig, 'picolibc.h')
+
+    if fn:
+        f = open(fn, 'r')
+        if f:
+            for line in f:
+                if line.find('__PICOLIBC_VERSION__') != -1 and line.find('"') != -1:
+                    version = re.search(r'\"([^"]+)\"', line).groups()[0]
+            f.close()
+
+    return version
 
 def GetNewLibVersion(rtconfig):
     version = None
@@ -79,20 +101,20 @@ def GetNewLibVersion(rtconfig):
         return version
 
     root = GetGCCRoot(rtconfig)
-    if CheckHeader(rtconfig, '_newlib_version.h'): # get version from _newlib_version.h file
-        f = open(os.path.join(root, 'include', '_newlib_version.h'), 'r')
-        if f:
-            for line in f:
-                if line.find('_NEWLIB_VERSION') != -1 and line.find('"') != -1:
-                    version = re.search(r'\"([^"]+)\"', line).groups()[0]
-            f.close()
-    elif CheckHeader(rtconfig, 'newlib.h'): # get version from newlib.h
-        f = open(os.path.join(root, 'include', 'newlib.h'), 'r')
-        if f:
-            for line in f:
-                if line.find('_NEWLIB_VERSION') != -1 and line.find('"') != -1:
-                    version = re.search(r'\"([^"]+)\"', line).groups()[0]
-            f.close()
+    # get version from _newlib_version.h file
+    fn = GetHeader(rtconfig, '_newlib_version.h')
+
+    # get version from newlib.h
+    if not fn:
+        fn = GetHeader(rtconfig, 'newlib.h')
+
+    if fn:
+        f = open(fn, 'r')
+        for line in f:
+            if line.find('_NEWLIB_VERSION') != -1 and line.find('"') != -1:
+                version = re.search(r'\"([^"]+)\"', line).groups()[0]
+        f.close()
+
     return version
 
 # FIXME: there is no musl version or musl macros can be found officially

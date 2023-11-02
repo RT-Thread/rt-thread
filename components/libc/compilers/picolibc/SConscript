@@ -1,9 +1,16 @@
 import os
 from building import *
-from llvm_arm import *
 Import('rtconfig')
 
 group = []
+
+if rtconfig.PLATFORM == 'gcc':
+  from gcc import *
+elif rtconfig.PLATFORM == 'llvm-arm':
+  from llvm_arm import *
+else:
+  print('ignore picolibc: not supported on ' + rtconfig.PLATFORM)
+  Return('group')
 
 picolibc_version = GetPicoLibcVersion(rtconfig)
 
