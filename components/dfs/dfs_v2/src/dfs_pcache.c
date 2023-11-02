@@ -271,7 +271,9 @@ static void dfs_pcache_thread(void *parameter)
                                 }
                                 //rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, page->page, page->size);
                                 if (aspace->ops->write)
+                                {
                                     aspace->ops->write(page);
+                                }
 
                                 page->is_dirty = 0;
 
@@ -741,7 +743,9 @@ static void dfs_page_release(struct dfs_page *page)
             }
             //rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, page->page, page->size);
             if (aspace->ops->write)
+            {
                 aspace->ops->write(page);
+            }
             page->is_dirty = 0;
         }
         RT_ASSERT(page->is_dirty == 0);
@@ -1220,7 +1224,9 @@ int dfs_aspace_flush(struct dfs_aspace *aspace)
                     }
                     //rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, page->page, page->size);
                     if (aspace->ops->write)
+                    {
                         aspace->ops->write(page);
+                    }
 
                     page->is_dirty = 0;
                 }
