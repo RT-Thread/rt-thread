@@ -270,7 +270,8 @@ static void dfs_pcache_thread(void *parameter)
                                     page->len = page->size;
                                 }
                                 //rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, page->page, page->size);
-                                aspace->ops->write(page);
+                                if (aspace->ops->write)
+                                    aspace->ops->write(page);
 
                                 page->is_dirty = 0;
 
@@ -739,7 +740,8 @@ static void dfs_page_release(struct dfs_page *page)
                 page->len = page->size;
             }
             //rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, page->page, page->size);
-            aspace->ops->write(page);
+            if (aspace->ops->write)
+                aspace->ops->write(page);
             page->is_dirty = 0;
         }
         RT_ASSERT(page->is_dirty == 0);
@@ -1066,6 +1068,8 @@ int dfs_aspace_read(struct dfs_file *file, void *buf, size_t count, off_t *pos)
 
     if (file && file->vnode && file->vnode->aspace)
     {
+        if (!(file->vnode->aspace->ops->read))
+            return ret;
         struct dfs_vnode *vnode = file->vnode;
         struct dfs_aspace *aspace = vnode->aspace;
 
@@ -1126,6 +1130,8 @@ int dfs_aspace_write(struct dfs_file *file, const void *buf, size_t count, off_t
 
     if (file && file->vnode && file->vnode->aspace)
     {
+        if (!(file->vnode->aspace->ops->write))
+            return ret;
         struct dfs_vnode *vnode = file->vnode;
         struct dfs_aspace *aspace = vnode->aspace;
 
@@ -1213,8 +1219,8 @@ int dfs_aspace_flush(struct dfs_aspace *aspace)
                         page->len = page->size;
                     }
                     //rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, page->page, page->size);
-
-                    aspace->ops->write(page);
+                    if (aspace->ops->write)
+                        aspace->ops->write(page);
 
                     page->is_dirty = 0;
                 }
