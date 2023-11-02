@@ -655,6 +655,7 @@ int rt_hw_can_init(void)
 
         /* register CAN device */
         rt_hw_board_can_init(g_can_dev_array[i].instance);
+        CAN_IntCmd(g_can_dev_array[i].instance, CAN_INT_ALL, DISABLE);
         rt_hw_can_register(&g_can_dev_array[i].rt_can,
                            g_can_dev_array[i].init.name,
                            &_can_ops,
