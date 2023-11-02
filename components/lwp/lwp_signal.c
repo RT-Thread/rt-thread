@@ -764,7 +764,6 @@ rt_err_t lwp_signal_action(struct rt_lwp *lwp, int signo,
     rt_list_t *thread_list;
     rt_err_t ret = RT_EOK;
 
-
     if (lwp)
     {
         /** acquire READ access to lwp */

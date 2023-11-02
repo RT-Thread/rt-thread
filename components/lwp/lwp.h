@@ -171,7 +171,6 @@ char *lwp_getcwd(void);
 void lwp_request_thread_exit(rt_thread_t thread_to_exit);
 int  lwp_check_exit_request(void);
 void lwp_terminate(struct rt_lwp *lwp);
-void lwp_wait_subthread_exit(void);
 
 int lwp_tid_init(void);
 int lwp_tid_get(void);

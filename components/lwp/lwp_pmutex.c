@@ -298,12 +298,12 @@ static int _pthread_mutex_lock_timeout(void *umutex, struct timespec *timeout)
             lwp_mutex_release_safe(&_pmutex_lock);
             return -EDEADLK;
         }
+        lwp_mutex_release_safe(&_pmutex_lock);
         lock_ret = rt_mutex_take_interruptible(pmutex->lock.kmutex, time);
         if (lock_ret == RT_EOK)
         {
             umutex_p->_m_lock = rt_thread_self()->tid;
         }
-        lwp_mutex_release_safe(&_pmutex_lock);
         break;
     default: /* unknown type */
         return -EINVAL;

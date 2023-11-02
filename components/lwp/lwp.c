@@ -1157,6 +1157,10 @@ rt_err_t lwp_children_register(struct rt_lwp *parent, struct rt_lwp *child)
     LWP_UNLOCK(parent);
 
     LOG_D("%s(parent=%p, child=%p)", __func__, parent, child);
+    /* parent holds reference to child */
+    lwp_ref_inc(parent);
+    /* child holds reference to parent */
+    lwp_ref_inc(child);
 
     return 0;
 }
@@ -1178,6 +1182,8 @@ rt_err_t lwp_children_unregister(struct rt_lwp *parent, struct rt_lwp *child)
     LWP_UNLOCK(parent);
 
     LOG_D("%s(parent=%p, child=%p)", __func__, parent, child);
+    lwp_ref_dec(child);
+    lwp_ref_dec(parent);
 
     return 0;
 }
@@ -1195,7 +1201,7 @@ pid_t lwp_execve(char *filename, int debug, int argc, char **argv, char **envp)
 
     if (filename == RT_NULL)
     {
-        return -RT_ERROR;
+        return -EINVAL;
     }
 
     if (access(filename, X_OK) != 0)
@@ -1208,7 +1214,7 @@ pid_t lwp_execve(char *filename, int debug, int argc, char **argv, char **envp)
     if (lwp == RT_NULL)
     {
         dbg_log(DBG_ERROR, "lwp struct out of memory!\n");
-        return -RT_ENOMEM;
+        return -ENOMEM;
     }
     LOG_D("lwp malloc : %p, size: %d!", lwp, sizeof(struct rt_lwp));
 

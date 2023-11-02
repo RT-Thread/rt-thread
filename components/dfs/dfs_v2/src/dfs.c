@@ -295,6 +295,10 @@ void fdt_fd_release(struct dfs_fdtable *fdt, int fd)
         if (file && file->ref_count == 1)
         {
             rt_mutex_detach(&file->pos_lock);
+            if (file->mmap_context)
+            {
+                rt_free(file->mmap_context);
+            }
             rt_free(file);
         }
         else

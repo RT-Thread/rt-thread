@@ -85,6 +85,9 @@ rt_inline void lwp_from_pid_release_lock(struct rt_lwp *lwp)
         lwp_ref_dec(lwp);
 }
 
+void lwp_thread_exit(rt_thread_t thread, rt_base_t status);
+void lwp_exit(struct rt_lwp *lwp, rt_base_t status);
+
 #ifdef __cplusplus
 }
 #endif

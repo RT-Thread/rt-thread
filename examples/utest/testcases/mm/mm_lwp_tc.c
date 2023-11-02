@@ -67,7 +67,7 @@ static void test_user_map_varea(void)
     uassert_true(varea->start != 0);
     uassert_true(varea->start >= (void *)USER_VADDR_START && varea->start < (void *)USER_VADDR_TOP);
 
-    uassert_true(!lwp_ref_dec(lwp));
+    uassert_true(!(lwp_ref_dec(lwp) - 1));
 }
 
 static void test_user_map_varea_ext(void)
@@ -91,7 +91,7 @@ static void test_user_map_varea_ext(void)
     uassert_true(varea->start != 0);
     uassert_true(varea->start >= (void *)USER_VADDR_START && varea->start < (void *)USER_VADDR_TOP);
 
-    uassert_true(!lwp_ref_dec(lwp));
+    uassert_true(!(lwp_ref_dec(lwp) - 1));
 }
 
 static void user_map_varea_tc(void)

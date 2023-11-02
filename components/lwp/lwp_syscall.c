@@ -328,104 +328,35 @@ static void _crt_thread_entry(void *parameter)
 /* exit group */
 sysret_t sys_exit_group(int value)
 {
-    rt_thread_t tid, main_thread;
-    struct rt_lwp *lwp;
+    sysret_t rc = 0;
+    struct rt_lwp *lwp = lwp_self();
 
-    tid = rt_thread_self();
-    lwp = (struct rt_lwp *)tid->lwp;
-    LOG_D("process(%p) exit.", lwp);
-
-#ifdef ARCH_MM_MMU
-    if (tid->clear_child_tid)
+    if (lwp)
+        lwp_exit(lwp, value);
+    else
     {
-        int t = 0;
-        int *clear_child_tid = tid->clear_child_tid;
-
-        tid->clear_child_tid = RT_NULL;
-        lwp_put_to_user(clear_child_tid, &t, sizeof t);
-        sys_futex(clear_child_tid, FUTEX_WAKE | FUTEX_PRIVATE, 1, RT_NULL, RT_NULL, 0);
+        LOG_E("Can't find matching process of current thread");
+        rc = -EINVAL;
     }
-    lwp_terminate(lwp);
 
-    main_thread = rt_list_entry(lwp->t_grp.prev, struct rt_thread, sibling);
-    if (main_thread == tid)
-    {
-        lwp_wait_subthread_exit();
-        lwp->lwp_ret = LWP_CREATE_STAT(value);
-    }
-#else
-    main_thread = rt_list_entry(lwp->t_grp.prev, struct rt_thread, sibling);
-    if (main_thread == tid)
-    {
-        rt_thread_t sub_thread;
-        rt_list_t *list;
-
-        lwp_terminate(lwp);
-
-        /* delete all subthread */
-        while ((list = tid->sibling.prev) != &lwp->t_grp)
-        {
-            sub_thread = rt_list_entry(list, struct rt_thread, sibling);
-            rt_list_remove(&sub_thread->sibling);
-            rt_thread_delete(sub_thread);
-        }
-        lwp->lwp_ret = value;
-    }
-#endif /* ARCH_MM_MMU */
-
-    /**
-     * Note: the tid tree always hold a reference to thread, hence the tid must
-     * be release before cleanup of thread
-     */
-    lwp_tid_put(tid->tid);
-    tid->tid = 0;
-    rt_list_remove(&tid->sibling);
-    rt_thread_delete(tid);
-    rt_schedule();
-
-    /* never reach here */
-    RT_ASSERT(0);
-    return 0;
+    return rc;
 }
 
 /* thread exit */
-void sys_exit(int status)
+sysret_t sys_exit(int status)
 {
-    rt_thread_t tid, main_thread;
-    struct rt_lwp *lwp;
-
-    LOG_D("thread exit");
+    sysret_t rc = 0;
+    rt_thread_t tid;
 
     tid = rt_thread_self();
-    lwp = (struct rt_lwp *)tid->lwp;
-
-#ifdef ARCH_MM_MMU
-    if (tid->clear_child_tid)
+    if (tid && tid->lwp)
+        lwp_thread_exit(tid, status);
     {
-        int t = 0;
-        int *clear_child_tid = tid->clear_child_tid;
-
-        tid->clear_child_tid = RT_NULL;
-        lwp_put_to_user(clear_child_tid, &t, sizeof t);
-        sys_futex(clear_child_tid, FUTEX_WAKE, 1, RT_NULL, RT_NULL, 0);
+        LOG_E("Can't find matching process of current thread");
+        rc = -EINVAL;
     }
 
-    main_thread = rt_list_entry(lwp->t_grp.prev, struct rt_thread, sibling);
-    if (main_thread == tid && tid->sibling.prev == &lwp->t_grp)
-    {
-        lwp_terminate(lwp);
-        lwp_wait_subthread_exit();
-        lwp->lwp_ret = LWP_CREATE_STAT(status);
-    }
-#endif /* ARCH_MM_MMU */
-
-    lwp_tid_put(tid->tid);
-    tid->tid = 0;
-    rt_list_remove(&tid->sibling);
-    rt_thread_delete(tid);
-    rt_schedule();
-
-    return;
+    return rc;
 }
 
 /* syscall: "read" ret: "ssize_t" args: "int" "void *" "size_t" */
@@ -1174,18 +1105,28 @@ sysret_t sys_getpid(void)
 /* syscall: "getpriority" ret: "int" args: "int" "id_t" */
 sysret_t sys_getpriority(int which, id_t who)
 {
+    long prio = 0xff;
+
     if (which == PRIO_PROCESS)
     {
-        rt_thread_t tid;
+        struct rt_lwp *lwp = RT_NULL;
 
-        tid = rt_thread_self();
-        if (who == (id_t)(rt_size_t)tid || who == 0xff)
+        lwp_pid_lock_take();
+        if(who == 0)
+            lwp = lwp_self();
+        else
+            lwp = lwp_from_pid_locked(who);
+
+        if (lwp)
         {
-            return tid->current_priority;
+            rt_thread_t thread = rt_list_entry(lwp->t_grp.prev, struct rt_thread, sibling);
+            prio = thread->current_priority;
         }
+
+        lwp_pid_lock_release();
     }
 
-    return 0xff;
+    return prio;
 }
 
 /* syscall: "setpriority" ret: "int" args: "int" "id_t" "int" */
@@ -1193,13 +1134,29 @@ sysret_t sys_setpriority(int which, id_t who, int prio)
 {
     if (which == PRIO_PROCESS)
     {
-        rt_thread_t tid;
+        struct rt_lwp *lwp = RT_NULL;
 
-        tid = rt_thread_self();
-        if ((who == (id_t)(rt_size_t)tid || who == 0xff) && (prio >= 0 && prio < RT_THREAD_PRIORITY_MAX))
+        lwp_pid_lock_take();
+        if(who == 0)
+            lwp = lwp_self();
+        else
+            lwp = lwp_from_pid_locked(who);
+
+        if (lwp && prio >= 0 && prio < RT_THREAD_PRIORITY_MAX)
         {
-            rt_thread_control(tid, RT_THREAD_CTRL_CHANGE_PRIORITY, &prio);
+            rt_list_t *list;
+            rt_thread_t thread;
+            for (list = lwp->t_grp.next; list != &lwp->t_grp; list = list->next)
+            {
+                thread = rt_list_entry(list, struct rt_thread, sibling);
+                rt_thread_control(thread, RT_THREAD_CTRL_CHANGE_PRIORITY, &prio);
+            }
+            lwp_pid_lock_release();
             return 0;
+        }
+        else
+        {
+            lwp_pid_lock_release();
         }
     }
 
@@ -2790,6 +2747,7 @@ sysret_t sys_execve(const char *path, char *const argv[], char *const envp[])
          * Since no other threads can access the lwp field, it't uneccessary to
          * take a lock here
          */
+        RT_ASSERT(rt_list_entry(lwp->t_grp.prev, struct rt_thread, sibling) == thread);
 
         strncpy(thread->parent.name, run_name + last_backslash, RT_NAME_MAX);
         strncpy(lwp->cmd, new_lwp->cmd, RT_NAME_MAX);
@@ -5559,7 +5517,6 @@ sysret_t sys_sched_getscheduler(int tid, int *policy, void *param)
 {
     struct sched_param *sched_param = RT_NULL;
     rt_thread_t thread = RT_NULL;
-
 
     if (!lwp_user_accessable(param, sizeof(struct sched_param)))
     {
