@@ -37,7 +37,7 @@
 #define CTX_REG_NR  (CTX_GENERAL_REG_NR + CTX_FPU_REG_NR)
 
 #ifndef __ASSEMBLY__
-#include <rtthread.h>
+#include <rtdef.h>
 
 rt_inline void rt_hw_dsb()
 {
