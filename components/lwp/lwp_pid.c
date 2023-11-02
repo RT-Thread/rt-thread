@@ -350,6 +350,9 @@ rt_lwp_t lwp_create(rt_base_t flags)
         /* minimal setup of lwp object */
         new_lwp->session = -1;
         new_lwp->ref = 1;
+#ifdef RT_USING_SMP
+        new_lwp->bind_cpu = RT_CPUS_NR;
+#endif
         rt_list_init(&new_lwp->wait_list);
         rt_list_init(&new_lwp->t_grp);
         rt_list_init(&new_lwp->timer);
