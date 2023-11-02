@@ -187,6 +187,48 @@ static rt_err_t drv_pwm_set(CM_TMRA_TypeDef *TMRAx, struct rt_pwm_configuration 
     return RT_EOK;
 }
 
+static rt_err_t drv_pwm_set_period(CM_TMRA_TypeDef *TMRAx, struct rt_pwm_configuration *configuration)
+{
+    rt_uint32_t u32clkFreq;
+    rt_uint64_t u64clk_ns;
+    rt_uint64_t u64val;
+    //
+    u32clkFreq = get_tmra_clk_freq(TMRAx);
+    u64clk_ns = (rt_uint64_t)1000000000ul / u32clkFreq;
+    u64val = (rt_uint64_t)configuration->period / u64clk_ns;
+    if ((configuration->period <= u64clk_ns) || (u64val > 0xFFFF))
+    {
+        // clk not match, need change div
+        uint32_t div_bit;
+        u32clkFreq = get_tmra_clk_freq_not_div(TMRAx);
+        u64clk_ns = (rt_uint64_t)1000000000ul / u32clkFreq;
+        u64val = (rt_uint64_t)configuration->period / u64clk_ns;
+        for (div_bit=0; div_bit<= 10; div_bit++)
+        {
+            if (u64val < 0xFFFF) break;
+            u64val /= 2;
+        }
+        if (div_bit > 10) return -RT_ERROR;
+        //
+        TMRA_SetClockDiv(TMRAx, div_bit << TMRA_BCSTR_CKDIV_POS);
+        u32clkFreq = get_tmra_clk_freq(TMRAx);
+        u64clk_ns = (rt_uint64_t)1000000000ul / u32clkFreq;
+    }
+    TMRA_SetPeriodValue(TMRAx, configuration->period / u64clk_ns);
+    return RT_EOK;
+}
+
+static rt_err_t drv_pwm_set_pulse(CM_TMRA_TypeDef *TMRAx, struct rt_pwm_configuration *configuration)
+{
+    rt_uint32_t u32clkFreq;
+    rt_uint64_t u64clk_ns;
+    //
+    u32clkFreq = get_tmra_clk_freq(TMRAx);
+    u64clk_ns = (rt_uint64_t)1000000000ul / u32clkFreq;
+    TMRA_SetCompareValue(TMRAx, configuration->channel, configuration->pulse / u64clk_ns);
+    return RT_EOK;
+}
+
 static rt_err_t drv_pwm_control(struct rt_device_pwm *device, int cmd, void *arg)
 {
     struct rt_pwm_configuration *configuration = (struct rt_pwm_configuration *)arg;
@@ -208,6 +250,10 @@ static rt_err_t drv_pwm_control(struct rt_device_pwm *device, int cmd, void *arg
         return drv_pwm_set(TMRAx, configuration);
     case PWM_CMD_GET:
         return drv_pwm_get(TMRAx, configuration);
+    case PWM_CMD_SET_PERIOD:
+        return drv_pwm_set_period(TMRAx, configuration);
+    case PWM_CMD_SET_PULSE:
+        return drv_pwm_set_pulse(TMRAx, configuration);
     default:
         return -RT_EINVAL;
     }
