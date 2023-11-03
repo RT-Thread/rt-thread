@@ -209,6 +209,11 @@ after_mmu_enable:
     adr     x1, .el_stack_top
     mov     sp, x1           /* sp_el1 set to _start */
 
+#ifdef RT_USING_OFW
+    /* Save devicetree info */
+    mov     x0, dtb_paddr
+    bl      rt_hw_fdt_install_early
+#endif
     b  rtthread_startup
 
 #ifdef RT_USING_SMP

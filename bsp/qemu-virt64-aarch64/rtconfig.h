@@ -51,9 +51,6 @@
 #define RT_USING_MEMHEAP_AUTO_BINDING
 #define RT_USING_MEMTRACE
 #define RT_USING_HEAP
-
-/* Kernel Device Object */
-
 #define RT_USING_DEVICE
 #define RT_USING_DEVICE_OPS
 #define RT_USING_INTERRUPT_INFO
@@ -72,6 +69,7 @@
 #define ARCH_HAVE_EFFICIENT_UNALIGNED_ACCESS
 #define ARCH_CPU_64BIT
 #define RT_USING_CACHE
+#define RT_USING_CPU_FFS
 #define ARCH_MM_MMU
 #define ARCH_ARM
 #define ARCH_ARM_MMU
@@ -127,6 +125,7 @@
 
 /* Device Drivers */
 
+#define RT_USING_DM
 #define RT_USING_DEVICE_IPC
 #define RT_UNAMED_PIPE_NUMBER 64
 #define RT_USING_SYSTEM_WORKQUEUE
@@ -140,8 +139,6 @@
 #define RT_USING_NULL
 #define RT_USING_ZERO
 #define RT_USING_RANDOM
-#define RT_USING_FDT
-#define RT_USING_FDTLIB
 #define RT_USING_RTC
 #define RT_USING_SOFT_RTC
 #define RT_USING_DEV_BUS
@@ -153,6 +150,10 @@
 #define RT_USING_VIRTIO_CONSOLE_PORT_MAX_NR 4
 #define RT_USING_VIRTIO_GPU
 #define RT_USING_VIRTIO_INPUT
+#define RT_USING_FIRMWARE
+#define RT_FIRMWARE_PSCI
+#define RT_USING_OFW
+#define RT_FDT_EARLYCON_MSG_SIZE 128
 #define RT_USING_KTIME
 
 /* Using USB */
@@ -203,6 +204,9 @@
 /* Memory management */
 
 
+/* Memory protection */
+
+
 /* RT-Thread Utestcases */
 
 
@@ -217,6 +221,9 @@
 
 
 /* Wiced WiFi */
+
+
+/* CYW43012 WiFi */
 
 
 /* IoT Cloud */
@@ -241,9 +248,6 @@
 /* u8g2: a monochrome graphic library */
 
 
-/* PainterEngine: A cross-platform graphics application framework written in C language */
-
-
 /* tools packages */
 
 
@@ -263,11 +267,19 @@
 
 /* peripheral libraries and drivers */
 
+/* sensors drivers */
+
+
+/* touch drivers */
+
 
 /* Kendryte SDK */
 
 
 /* AI packages */
+
+
+/* Signal Processing and Control Algorithm Packages */
 
 
 /* miscellaneous packages */
@@ -283,7 +295,7 @@
 /* Arduino libraries */
 
 
-/* Projects */
+/* Projects and Demos */
 
 
 /* Sensors */
@@ -307,6 +319,7 @@
 
 
 /* Other */
+
 
 /* Signal IO */
 

@@ -8,6 +8,8 @@ cwd     = GetCurrentDir()
 src     = Glob('*.c') + Glob('*.cpp') + Glob('*.S')
 CPPPATH = [cwd]
 
+if GetDepend('RT_USING_OFW') == False:
+    SrcRemove(src, ['setup.c'])
 group = DefineGroup('common', src, depend = [''], CPPPATH = CPPPATH)
 
 # build for sub-directory
