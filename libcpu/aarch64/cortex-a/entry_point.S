@@ -209,6 +209,11 @@ after_mmu_enable:
     adr     x1, .el_stack_top
     mov     sp, x1           /* sp_el1 set to _start */
 
+#ifdef RT_USING_OFW
+    /* Save devicetree info */
+    mov     x0, dtb_paddr
+    bl      rt_hw_fdt_install_early
+#endif
     b  rtthread_startup
 
 #ifdef RT_USING_SMP
@@ -327,8 +332,9 @@ after_mmu_enable_cpux:
     adr     x1, .el_stack_top
     sub     x1, x1, x0, lsl #13
     mov     sp, x1                  /* in EL1. Set sp to _start */
-
-    b rt_hw_secondary_cpu_bsp_start
+#ifdef RT_USING_OFW
+    b secondary_cpu_c_start
+#endif
 #endif
 
 #ifndef RT_CPUS_NR

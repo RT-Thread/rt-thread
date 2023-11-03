@@ -15,6 +15,7 @@
 #include <rtthread.h>
 #include <mmu.h>
 #include <gtimer.h>
+#include <setup.h>
 
 #ifdef RT_USING_SMART
 #include <lwp_arch.h>
@@ -24,13 +25,6 @@
 #include <mm_aspace.h>
 #include <mm_page.h>
 #include <interrupt.h>
-
-#ifdef RT_USING_FDT
-#include "interrupt.h"
-#include "dtb_node.h"
-#include <psci_api.h>
-#include <cpu.h>
-#endif
 
 #ifdef RT_USING_SMART
 struct mem_desc platform_mem_desc[] = {
@@ -105,16 +99,8 @@ void rt_hw_board_init(void)
     rt_hw_uart_init();
     rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
 
-#ifdef RT_USING_FDT
-    // TODO 0x44000000 should be replace by a variable
-    void * fdt_start = (void *)0x44000000 - PV_OFFSET;
-    device_tree_setup(fdt_start);
-
-#ifdef RT_USING_SMP
-    rt_hw_cpu_init();
-#else
-    psci_init();
-#endif /* RT_USING_SMP */
+#ifdef RT_USING_OFW
+    rt_hw_common_setup();
 #endif
 
     rt_components_board_init();

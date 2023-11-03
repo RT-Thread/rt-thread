@@ -187,7 +187,9 @@ void main_thread_entry(void *parameter)
 #endif /* RT_USING_COMPONENTS_INIT */
 
 #ifdef RT_USING_SMP
+#ifdef RT_USING_OFW
     rt_hw_secondary_cpu_up();
+#endif
 #endif /* RT_USING_SMP */
     /* invoke system main function */
 #ifdef __ARMCC_VERSION
