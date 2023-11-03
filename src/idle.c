@@ -253,9 +253,7 @@ static void idle_thread_entry(void *parameter)
     {
         while (1)
         {
-        #ifdef RT_USING_OFW
             rt_hw_secondary_cpu_idle_exec();
-        #endif
         }
     }
 #endif /* RT_USING_SMP */

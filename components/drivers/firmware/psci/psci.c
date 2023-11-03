@@ -90,12 +90,6 @@ static rt_uint32_t psci_0_2_get_version(void)
     return (rt_uint32_t)psci_call(PSCI_0_2_FN_PSCI_VERSION, 0, 0, 0);
 }
 
-/* PSCI FEATURES */
-static rt_uint32_t psci_get_features(rt_uint32_t psci_func_id)
-{
-    return (rt_uint32_t)psci_call(PSCI_1_0_FN_PSCI_FEATURES, psci_func_id, 0, 0);
-}
-
 /* PSCI CPU_ON */
 static rt_uint32_t psci_cpu_on(rt_uint32_t func_id, int cpuid, rt_ubase_t entry_point)
 {
@@ -188,31 +182,6 @@ static rt_uint32_t psci_affinity_info(rt_ubase_t target_affinity, rt_ubase_t low
 static rt_uint32_t psci_migrate_info_type(void)
 {
     return (rt_uint32_t)psci_call(PSCI_0_2_FN_MIGRATE_INFO_TYPE, 0, 0, 0);
-}
-
-/* PSCI SYSTEM_OFF */
-static void psci_system_off(void)
-{
-    psci_call(PSCI_0_2_FN_SYSTEM_OFF, 0, 0, 0);
-}
-
-/* PSCI SYSTEM_RESET */
-static void psci_system_reboot(void)
-{
-    if (psci_get_features(PSCI_FNC_ID(1, 1, SYSTEM_RESET2)) != PSCI_RET_NOT_SUPPORTED)
-    {
-        /*
-         * reset_type[31] = 0 (architectural)
-         * reset_type[30:0] = 0 (SYSTEM_WARM_RESET)
-         * cookie = 0 (ignored by the implementation)
-         */
-        psci_call(PSCI_FNC_ID(1, 1, SYSTEM_RESET2), 0, 0, 0);
-    }
-    else
-    {
-        psci_call(PSCI_0_2_FN_SYSTEM_RESET, 0, 0, 0);
-    }
-
 }
 
 #define PSCI_CALL_FN_RET(fn, ...)       \
