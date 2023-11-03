@@ -8,8 +8,6 @@
  * 2022-08-25     GuEe-GUI     first version
  */
 
-#define _GNU_SOURCE
-
 #include <rthw.h>
 #include <rtthread.h>
 
@@ -22,6 +20,8 @@
 #include <rtdbg.h>
 
 #include "ofw_internal.h"
+
+extern char* strchrnul(const char* s, int c);
 
 struct rt_fdt_earlycon fdt_earlycon rt_section(".bss.noclean.earlycon");
 

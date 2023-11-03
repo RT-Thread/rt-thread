@@ -14,6 +14,7 @@
 #include <rtthread.h>
 #include <rtdevice.h>
 
+void (*system_off)(void);
 #ifdef RT_USING_SMP
 typedef rt_hw_spinlock_t arch_spinlock_t;
 
@@ -94,7 +95,8 @@ rt_weak void rt_hw_cpu_shutdown(void)
     register rt_ubase_t level;
 
     rt_kprintf("shutdown...\n");
-
+    if(system_off)
+        system_off();
     level = rt_hw_interrupt_disable();
     while (level)
     {

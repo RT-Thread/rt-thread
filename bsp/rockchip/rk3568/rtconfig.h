@@ -7,6 +7,7 @@
 /* RT-Thread Kernel */
 
 #define RT_NAME_MAX 8
+#define RT_CPUS_NR 1
 #define RT_ALIGN_SIZE 8
 #define RT_THREAD_PRIORITY_32
 #define RT_THREAD_PRIORITY_MAX 32
@@ -46,15 +47,13 @@
 #define RT_USING_SMALL_MEM_AS_HEAP
 #define RT_USING_MEMTRACE
 #define RT_USING_HEAP
-
-/* Kernel Device Object */
-
 #define RT_USING_DEVICE
 #define RT_USING_DEVICE_OPS
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uart2"
-#define RT_VER_NUM 0x50002
+#define RT_VER_NUM 0x50100
+#define RT_BACKTRACE_LEVEL_MAX_NR 32
 
 /* AArch64 Architecture Configuration */
 
@@ -101,12 +100,19 @@
 
 /* Device Drivers */
 
+#define RT_USING_DM
 #define RT_USING_DEVICE_IPC
 #define RT_UNAMED_PIPE_NUMBER 64
 #define RT_USING_SERIAL
 #define RT_USING_SERIAL_V1
 #define RT_SERIAL_RB_BUFSZ 64
 #define RT_USING_PIN
+#define RT_USING_PM
+#define PM_TICKLESS_THRESHOLD_TIME 2
+#define RT_USING_FIRMWARE
+#define RT_FIRMWARE_PSCI
+#define RT_USING_OFW
+#define RT_FDT_EARLYCON_MSG_SIZE 128
 
 /* Using USB */
 
@@ -142,6 +148,12 @@
 #define RT_USING_ADT_HASHMAP
 #define RT_USING_ADT_REF
 
+/* Memory management */
+
+
+/* Memory protection */
+
+
 /* RT-Thread Utestcases */
 
 
@@ -156,6 +168,9 @@
 
 
 /* Wiced WiFi */
+
+
+/* CYW43012 WiFi */
 
 
 /* IoT Cloud */

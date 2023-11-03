@@ -13,6 +13,8 @@ OUTPUT_ARCH(aarch64)
 
 SECTIONS
 {
+    _text_offset = 0x20000000;
+
     . = 0x20000000;
     . = ALIGN(4096);
     .text :

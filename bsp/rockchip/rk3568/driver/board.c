@@ -12,13 +12,12 @@
 #include <rtthread.h>
 
 #include <mmu.h>
-#include <psci.h>
+#include <rtdevice.h>
 #include <gicv3.h>
 #include <gtimer.h>
 #include <cpuport.h>
 #include <interrupt.h>
 #include <ioremap.h>
-#include <psci_api.h>
 
 #include <board.h>
 #include <drv_uart.h>
@@ -77,9 +76,6 @@ void rt_hw_board_init(void)
 
     rt_thread_idle_sethook(idle_wfi);
 
-    // TODO porting to FDT-driven PSCI: arm_psci_init(PSCI_METHOD_SMC, RT_NULL, RT_NULL);
-    psci_init();
-
 #if defined(RT_USING_CONSOLE) && defined(RT_USING_DEVICE)
     /* set console device */
     rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
@@ -104,9 +100,9 @@ void rt_hw_board_init(void)
 void reboot(void)
 {
     // TODO poring to FDT to use new PSCI: arm_psci_system_reboot();
-    if (psci_ops.system_reset)
+    if (rt_pm_machine_reset)
     {
-        psci_ops.system_reset();
+        rt_pm_machine_reset();
     }
     else
     {
@@ -127,21 +123,15 @@ MSH_CMD_EXPORT_ALIAS(print_cpu_id, cpuid, print_cpu_id);
 void start_cpu(int argc, char *argv[])
 {
     rt_uint32_t status;
-    if (psci_ops.cpu_on)
-    {
-        status = psci_ops.cpu_on(0x3, (rt_uint64_t) 0x7A000000);
-        rt_kprintf("arm_psci_cpu_on 0x%X\n", status);
-    }
+    status = rt_psci_cpu_on(0x3, (rt_uint64_t) 0x7A000000);
+    rt_kprintf("arm_psci_cpu_on 0x%X\n", status);
 }
 MSH_CMD_EXPORT(start_cpu, start_cpu);
 
 #ifdef RT_AMP_SLAVE
 void rt_hw_cpu_shutdown(void)
 {
-    if (psci_ops.cpu_off)
-    {
-        psci_ops.cpu_off(0);
-    }
+    rt_psci_cpu_off(0);
 }
 #endif /* RT_AMP_SLAVE */
 #endif /* RT_USING_AMP */
@@ -165,7 +155,7 @@ void rt_hw_secondary_cpu_up(void)
 
     for (i = 1; i < RT_CPUS_NR; ++i)
     {
-        arm_psci_cpu_on(rt_cpu_mpidr_early[i], (rt_uint64_t) secondary_cpu_start);
+        rt_psci_cpu_on(rt_cpu_mpidr_early[i], (rt_uint64_t) secondary_cpu_start);
     }
 }
 

@@ -6,5 +6,6 @@ menuconfig RT_USING_FIRMWARE
 config RT_FIRMWARE_PSCI
     bool "Power State Coordination Interface (PSCI)"
     depends on RT_USING_FIRMWARE
+    select RT_USING_PM
     select RT_USING_OFW
     default n

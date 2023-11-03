@@ -30,7 +30,6 @@
 #include <interrupt.h>
 
 #if defined(TARGET_ARMV8_AARCH64)
-    #include "psci.h"
     extern void _secondary_cpu_entry(void);
 #else
     extern void rt_secondary_cpu_entry(void);

@@ -27,6 +27,7 @@ struct cpu_ops_t
     void    (*cpu_shutdown)(void);
 };
 
+extern void (*system_off)(void);
 extern rt_uint64_t rt_cpu_mpidr_table[];
 
 #endif /* __RT_HW_CPU_H__ */
