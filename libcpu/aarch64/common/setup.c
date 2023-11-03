@@ -166,7 +166,7 @@ rt_weak void rt_hw_secondary_cpu_up(void)
     }
 }
 
-rt_weak void secondary_cpu_c_start(void)
+rt_weak void rt_hw_secondary_cpu_bsp_start(void)
 {
     int cpu_id = rt_hw_cpu_id();
 

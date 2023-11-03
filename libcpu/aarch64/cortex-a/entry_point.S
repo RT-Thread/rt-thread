@@ -332,8 +332,7 @@ after_mmu_enable_cpux:
     adr     x1, .el_stack_top
     sub     x1, x1, x0, lsl #13
     mov     sp, x1                  /* in EL1. Set sp to _start */
-    
-    b secondary_cpu_c_start
+    b rt_hw_secondary_cpu_bsp_start
 #endif
 
 #ifndef RT_CPUS_NR
