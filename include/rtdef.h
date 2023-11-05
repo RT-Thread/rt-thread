@@ -62,6 +62,7 @@
 
 #ifdef RT_USING_LIBC
 #if !defined(RT_USING_LIBC_ISO_ONLY) && !defined(RT_VER_NUM)
+/* If RT_VER_NUM is not defined, there is no extra libc support. */
 #define RT_USING_LIBC_ISO_ONLY  (1)
 #else
 #define RT_USING_LIBC_ISO_ONLY  (0)
