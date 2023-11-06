@@ -311,6 +311,10 @@ jobs:
             RTT_TOOL_CHAIN: "sourcery-riscv32-esp32"
             SUB_RTT_BSP:  
                 - "ESP32_C3"
+         -  RTT_BSP: "i386-unknown" 
+            RTT_TOOL_CHAIN: "sourcery-i386-unknown-elf"
+            SUB_RTT_BSP:  
+                - "x86"
     steps:
       - uses: actions/checkout@v3
       - name: Set up Python
@@ -397,6 +401,14 @@ jobs:
         if: ${{ matrix.legs.RTT_TOOL_CHAIN == 'gcc' && success() }}
         run: |
           sudo apt-get -qq install libsdl2-dev
+
+      - name: Install i386-unknown-elf Tools
+        if: ${{ matrix.legs.RTT_TOOL_CHAIN == 'sourcery-i386-unknown-elf' && success() }}
+        run: |
+          wget -q https://github.com/zhkag/toolchains/releases/download/i386-unknown/i386-unknown-elf_for_x86_64-pc-linux-gnu_latest.tar.bz2
+          sudo tar -jxvf i386-unknown-elf_for_x86_64-pc-linux-gnu_latest.tar.bz2 -C /opt
+          /opt/i386-unknown-elf_for_x86_64-pc-linux-gnu/bin/i386-unknown-elf-gcc --version
+          echo "RTT_EXEC_PATH=/opt/i386-unknown-elf_for_x86_64-pc-linux-gnu/bin" >> $GITHUB_ENV
 
       - name: Bsp Scons Compile
         if: ${{ success() }}
