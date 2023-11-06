@@ -53,17 +53,6 @@ static void _signal_entry(void *parameter)
     rt_thread_handle_sig(RT_FALSE);
 
 #ifdef RT_USING_SMP
-    {
-        struct rt_cpu* pcpu = rt_cpu_self();
-
-        RT_ASSERT(pcpu->current_thread->cpus_lock_nest > 0);
-        pcpu->current_thread->cpus_lock_nest--;
-        if (pcpu->current_thread->cpus_lock_nest == 0)
-        {
-            pcpu->current_thread->scheduler_lock_nest--;
-        }
-
-    }
 #else
     /* return to thread */
     tid->sp = tid->sig_ret;

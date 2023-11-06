@@ -12,6 +12,7 @@
 #define DRV_SDMMC_H__
 
 #include <rtdef.h>
+#include <rtdevice.h>
 
 #define SDMMC_CARD_NR 2
 

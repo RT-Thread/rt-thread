@@ -47,6 +47,7 @@
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uart9"
 #define RT_VER_NUM 0x50100
+#define RT_BACKTRACE_LEVEL_MAX_NR 32
 #define RT_USING_HW_ATOMIC
 #define RT_USING_CPU_FFS
 #define ARCH_ARM
@@ -84,7 +85,11 @@
 #define RT_USING_SERIAL
 #define RT_USING_SERIAL_V2
 #define RT_SERIAL_USING_DMA
+#define RT_USING_I2C
+#define RT_USING_I2C_BITOPS
 #define RT_USING_PIN
+#define RT_USING_ADC
+#define RT_USING_PWM
 
 /* Using USB */
 
@@ -108,6 +113,7 @@
 
 /* Socket is in the 'Network' category */
 
+#define RT_USING_CPLUSPLUS
 
 /* Network */
 
@@ -175,6 +181,8 @@
 
 /* Micrium: Micrium software products porting for RT-Thread */
 
+#define PKG_USING_PERF_COUNTER
+#define PKG_USING_PERF_COUNTER_LATEST_VERSION
 
 /* peripheral libraries and drivers */
 
@@ -205,6 +213,14 @@
 
 /* Arduino libraries */
 
+#define PKG_USING_RTDUINO
+#define RTDUINO_THREAD_SIZE 2048
+#define RTDUINO_THREAD_PRIO 30
+#define RTDUINO_SUPPORT_HIGH_PRECISION_MICROS
+#define RTDUINO_USING_WIRE
+#define RTDUINO_WIRE_BUFFER_LENGTH 32
+#define RTDUINO_USING_SERVO
+#define PKG_USING_RTDUINO_LATEST_VERSION
 
 /* Projects and Demos */
 
@@ -246,13 +262,24 @@
 
 /* Onboard Peripheral Drivers */
 
+#define BSP_USING_ARDUINO
+
 /* On-chip Peripheral Drivers */
 
 #define BSP_USING_GPIO
 #define BSP_USING_UART
+#define BSP_USING_UART4
+#define BSP_UART4_RX_BUFSIZE 256
+#define BSP_UART4_TX_BUFSIZE 0
 #define BSP_USING_UART9
 #define BSP_UART9_RX_BUFSIZE 256
 #define BSP_UART9_TX_BUFSIZE 0
+#define BSP_USING_I2C
+#define BSP_USING_ADC
+#define BSP_USING_ADC0
+#define BSP_USING_PWM
+#define BSP_USING_PWM2
+#define BSP_USING_PWM2_CH2
 
 /* Board extended module Drivers */
 

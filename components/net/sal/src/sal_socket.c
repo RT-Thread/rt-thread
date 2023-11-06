@@ -1315,9 +1315,9 @@ int sal_ioctlsocket(int socket, long cmd, void *arg)
                     if (!strcmp(ifr->ifr_ifrn.ifrn_name, netdev->name))
                     {
                         uint16_t flags_tmp = 0;
-                        if (sock->netdev->flags & NETDEV_FLAG_UP)
+                        if (netdev->flags & NETDEV_FLAG_UP)
                             flags_tmp = flags_tmp | IFF_UP;
-                        if (!(sock->netdev->flags & NETDEV_FLAG_ETHARP))
+                        if (!(netdev->flags & NETDEV_FLAG_ETHARP))
                             flags_tmp = flags_tmp | IFF_NOARP;
                         ifr->ifr_ifru.ifru_flags = flags_tmp;
                         return 0;
@@ -1328,8 +1328,24 @@ int sal_ioctlsocket(int socket, long cmd, void *arg)
 
 
         case SIOCSIFFLAGS:
-            sock->netdev->flags = ifr->ifr_ifru.ifru_flags;
-            return 0;
+            for (node = &(cur_netdev_list->list); node; node = rt_slist_next(node))
+            {
+                netdev = rt_list_entry(node, struct netdev, list);
+                if (!strcmp(ifr->ifr_ifrn.ifrn_name, netdev->name))
+                {
+                    if ((ifr->ifr_ifru.ifru_flags & IFF_UP) == 0)
+                    {
+                        netdev_set_down(netdev);
+                    }
+                    else
+                    {
+                        netdev_set_up(netdev);
+                    }
+                    return 0;
+                }
+            }
+            return -1;
+
         case SIOCGIFCONF:
         {
             struct ifconf *ifconf_tmp;

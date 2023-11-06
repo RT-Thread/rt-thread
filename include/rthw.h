@@ -13,6 +13,7 @@
  * 2018-11-17     Jesven       add rt_hw_spinlock_t
  *                             add smp support
  * 2019-05-18     Bernard      add empty definition for not enable cache case
+ * 2023-09-15     xqyjlj       perf rt_hw_interrupt_disable/enable
  * 2023-10-16     Shell        Support a new backtrace framework
  */
 
@@ -98,6 +99,10 @@ rt_uint8_t *rt_hw_stack_init(void       *entry,
                              rt_uint8_t *stack_addr,
                              void       *exit);
 
+#ifdef RT_USING_HW_STACK_GUARD
+void rt_hw_stack_guard_init(rt_thread_t thread);
+#endif
+
 /*
  * Interrupt handler definition
  */
@@ -111,6 +116,9 @@ struct rt_irq_desc
 #ifdef RT_USING_INTERRUPT_INFO
     char             name[RT_NAME_MAX];
     rt_uint32_t      counter;
+#ifdef RT_USING_SMP
+    rt_ubase_t       cpu_counter[RT_CPUS_NR];
+#endif
 #endif
 };
 
@@ -129,11 +137,18 @@ rt_isr_handler_t rt_hw_interrupt_install(int              vector,
 rt_base_t rt_hw_local_irq_disable();
 void rt_hw_local_irq_enable(rt_base_t level);
 
+rt_base_t rt_cpus_lock(void);
+void rt_cpus_unlock(rt_base_t level);
+
 #define rt_hw_interrupt_disable rt_cpus_lock
 #define rt_hw_interrupt_enable rt_cpus_unlock
 #else
 rt_base_t rt_hw_interrupt_disable(void);
 void rt_hw_interrupt_enable(rt_base_t level);
+
+#define rt_hw_local_irq_disable rt_hw_interrupt_disable
+#define rt_hw_local_irq_enable rt_hw_interrupt_enable
+
 #endif /*RT_USING_SMP*/
 rt_bool_t rt_hw_interrupt_is_disabled(void);
 
@@ -187,25 +202,18 @@ void rt_hw_ipi_send(int ipi_vector, unsigned int cpu_mask);
 
 #ifdef RT_USING_SMP
 
-struct rt_spinlock
-{
-    rt_hw_spinlock_t lock;
-};
-
 void rt_hw_spin_lock_init(rt_hw_spinlock_t *lock);
 void rt_hw_spin_lock(rt_hw_spinlock_t *lock);
 void rt_hw_spin_unlock(rt_hw_spinlock_t *lock);
 
 extern rt_hw_spinlock_t _cpus_lock;
-extern rt_hw_spinlock_t _rt_critical_lock;
 
 #define __RT_HW_SPIN_LOCK_INITIALIZER(lockname) {0}
 
 #define __RT_HW_SPIN_LOCK_UNLOCKED(lockname)    \
     (rt_hw_spinlock_t) __RT_HW_SPIN_LOCK_INITIALIZER(lockname)
 
-#define RT_DEFINE_SPINLOCK(x)  rt_hw_spinlock_t x = __RT_HW_SPIN_LOCK_UNLOCKED(x)
-#define RT_DECLARE_SPINLOCK(x)
+#define RT_DEFINE_HW_SPINLOCK(x)  rt_hw_spinlock_t x = __RT_HW_SPIN_LOCK_UNLOCKED(x)
 
 /**
  * boot secondary cpu
@@ -218,17 +226,12 @@ void rt_hw_secondary_cpu_up(void);
 void rt_hw_secondary_cpu_idle_exec(void);
 #else
 
-#define RT_DEFINE_SPINLOCK(x)    rt_ubase_t x
-#define RT_DECLARE_SPINLOCK(x)
+#define RT_DEFINE_HW_SPINLOCK(x)    rt_ubase_t x
 
 #define rt_hw_spin_lock(lock)     *(lock) = rt_hw_interrupt_disable()
 #define rt_hw_spin_unlock(lock)   rt_hw_interrupt_enable(*(lock))
 
-typedef rt_ubase_t rt_spinlock_t;
-struct rt_spinlock
-{
-    rt_spinlock_t lock;
-};
+
 #endif
 
 #ifndef RT_USING_CACHE

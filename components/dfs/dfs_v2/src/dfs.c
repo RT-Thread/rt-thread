@@ -65,12 +65,11 @@ void dfs_unlock(void)
     rt_mutex_release(&fslock);
 }
 
-/**
- * @addtogroup DFS
+/** @addtogroup DFS
+ *
+ *
+ *  @{
  */
-
-/*@{*/
-
 rt_err_t dfs_file_lock(void)
 {
     rt_err_t result = -RT_EBUSY;
@@ -296,6 +295,10 @@ void fdt_fd_release(struct dfs_fdtable *fdt, int fd)
         if (file && file->ref_count == 1)
         {
             rt_mutex_detach(&file->pos_lock);
+            if (file->mmap_context)
+            {
+                rt_free(file->mmap_context);
+            }
             rt_free(file);
         }
         else
@@ -401,11 +404,13 @@ struct dfs_fdtable *dfs_fdtable_get_pid(int pid)
     struct rt_lwp *lwp = RT_NULL;
     struct dfs_fdtable *fdt = RT_NULL;
 
-    lwp = lwp_from_pid(pid);
+    lwp_pid_lock_take();
+    lwp = lwp_from_pid_locked(pid);
     if (lwp)
     {
         fdt = &lwp->fdt;
     }
+    lwp_pid_lock_release();
 
     return fdt;
 }
@@ -668,7 +673,7 @@ char *dfs_normalize_path(const char *directory, const char *filename)
 
     /* remove '/' in the end of path if exist */
     dst--;
-    if ((dst != fullpath) && (*dst == '/'))
+    if (dst > fullpath && (*dst == '/'))
         *dst = '\0';
 
     /* final check fullpath is not empty, for the special path of lwext "/.." */
@@ -788,5 +793,5 @@ MSH_CMD_EXPORT(dfs_dlog, dfs dlog on|off);
 #endif
 
 #endif
-/**@}*/
+/** @} */
 

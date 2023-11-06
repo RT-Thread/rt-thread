@@ -50,6 +50,8 @@
 #define ECHO_BLOCK      256
 #define ECHO_DISCARD_WATERMARK  RT_TTY_BUF - (ECHO_BLOCK + 32)
 
+static struct rt_spinlock _spinlock = RT_SPINLOCK_INIT;
+
 struct n_tty_data
 {
     /* producer-published */
@@ -87,27 +89,29 @@ struct n_tty_data
 
 rt_inline int set_bit(int nr,int *addr)
 {
-    int mask, retval, level;
+    int mask, retval;
+    rt_base_t level;
 
     addr += nr >> 5;
     mask = 1 << (nr & 0x1f);
-    level = rt_hw_interrupt_disable();
+    level = rt_spin_lock_irqsave(&_spinlock);
     retval = (mask & *addr) != 0;
     *addr |= mask;
-    rt_hw_interrupt_enable(level);
+    rt_spin_unlock_irqrestore(&_spinlock, level);
     return retval;
 }
 
 rt_inline int clear_bit(int nr, int *addr)
 {
-    int mask, retval, level;
+    int mask, retval;
+    rt_base_t level;
 
     addr += nr >> 5;
     mask = 1 << (nr & 0x1f);
-    level = rt_hw_interrupt_disable();
+    level = rt_spin_lock_irqsave(&_spinlock);
     retval = (mask & *addr) != 0;
     *addr &= ~mask;
-    rt_hw_interrupt_enable(level);
+    rt_spin_unlock_irqrestore(&_spinlock, level);
     return retval;
 }
 
@@ -122,15 +126,16 @@ rt_inline int test_bit(int nr, int *addr)
 
 rt_inline int test_and_clear_bit(int nr, volatile void *addr)
 {
-    int mask, retval, level;
+    int mask, retval;
+    rt_base_t level;
     volatile unsigned int *a = addr;
 
     a += nr >> 5;
     mask = 1 << (nr & 0x1f);
-    level = rt_hw_interrupt_disable();
+    level = rt_spin_lock_irqsave(&_spinlock);
     retval = (mask & *a) != 0;
     *a &= ~mask;
-    rt_hw_interrupt_enable(level);
+    rt_spin_unlock_irqrestore(&_spinlock, level);
 
     return retval;
 }
@@ -1358,7 +1363,7 @@ static int copy_from_read_buf(struct tty_struct *tty,char *b,size_t nr)
     if (n)
     {
         const char *from = read_buf_addr(ldata, tail);
-        rt_memcpy(b, from, n);
+        memcpy(b, from, n);
         is_eof = n == 1 && *from == EOF_CHAR(tty);
         ldata->read_tail += n;
         /* Turn single EOF into zero-length read */
@@ -1445,12 +1450,12 @@ static int canon_copy_from_read_buf(struct tty_struct *tty, char *b, size_t nr)
     size_t temp_n = n;
     if (n > buf_size)
     {
-        rt_memcpy(b, from, buf_size);
+        memcpy(b, from, buf_size);
         b += buf_size;
         temp_n -= buf_size;
         from = ldata->read_buf;
     }
-    rt_memcpy(b, from, temp_n);
+    memcpy(b, from, temp_n);
 
     if (found)
     {
@@ -2021,7 +2026,7 @@ static struct rt_wqueue *_wait_queue_current_get(struct tty_struct *tty)
 
 static int n_tty_read(struct dfs_file *fd, void *buf, size_t count)
 {
-    int level = 0;
+    rt_base_t level = 0;
     char *b = (char *)buf;
     struct tty_struct *tty = RT_NULL;
     struct rt_wqueue *wq = RT_NULL;
@@ -2029,13 +2034,11 @@ static int n_tty_read(struct dfs_file *fd, void *buf, size_t count)
     int retval = 0;
     int c = 0;
 
-    level = rt_hw_interrupt_disable();
     tty = (struct tty_struct *)fd->vnode->data;
     RT_ASSERT(tty != RT_NULL);
     c = job_control(tty);
     if (c < 0)
     {
-        rt_hw_interrupt_enable(level);
         return c;
     }
 
@@ -2054,12 +2057,14 @@ static int n_tty_read(struct dfs_file *fd, void *buf, size_t count)
             }
 
             wait_ret = rt_wqueue_wait_interruptible(wq, 0, RT_WAITING_FOREVER);
+
             if (wait_ret != 0)
             {
                 break;
             }
         }
 
+        level = rt_spin_lock_irqsave(&tty->spinlock);
         if (ldata->icanon && !L_EXTPROC(tty))
         {
             retval = canon_copy_from_read_buf(tty, b, count);
@@ -2068,13 +2073,14 @@ static int n_tty_read(struct dfs_file *fd, void *buf, size_t count)
         {
             retval = copy_from_read_buf(tty, b, count);
         }
+        rt_spin_unlock_irqrestore(&tty->spinlock, level);
 
         if (retval >= 1)
         {
             break;
         }
     }
-    rt_hw_interrupt_enable(level);
+
     return retval;
 }
 
@@ -2189,12 +2195,12 @@ static int n_tty_poll(struct dfs_file *fd, struct rt_pollreq *req)
     wq = _wait_queue_current_get(tty);
     rt_poll_add(wq, req);
 
-    level = rt_hw_interrupt_disable();
+    level = rt_spin_lock_irqsave(&tty->spinlock);
     if (input_available_p(tty, 1))
     {
         mask |= POLLIN;
     }
-    rt_hw_interrupt_enable(level);
+    rt_spin_unlock_irqrestore(&tty->spinlock, level);
 
     return mask;
 }

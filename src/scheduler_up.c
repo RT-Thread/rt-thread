@@ -29,6 +29,7 @@
  *                             new task directly
  * 2022-01-07     Gabriel      Moving __on_rt_xxxxx_hook to scheduler.c
  * 2023-03-27     rose_man     Split into scheduler upc and scheduler_mp.c
+ * 2023-10-17     ChuShicheng  Modify the timing of clearing RT_THREAD_STAT_YIELD flag bits
  */
 
 #include <rtthread.h>
@@ -110,6 +111,7 @@ static void _scheduler_stack_check(struct rt_thread *thread)
 #endif /* not defined ARCH_MM_MMU */
 #endif /* RT_USING_SMART */
 
+#ifndef RT_USING_HW_STACK_GUARD
 #ifdef ARCH_CPU_STACK_GROWS_UPWARD
     if (*((rt_uint8_t *)((rt_ubase_t)thread->stack_addr + thread->stack_size - 1)) != '#' ||
 #else
@@ -126,14 +128,23 @@ static void _scheduler_stack_check(struct rt_thread *thread)
         level = rt_hw_interrupt_disable();
         while (level);
     }
+#endif
 #ifdef ARCH_CPU_STACK_GROWS_UPWARD
+#ifndef RT_USING_HW_STACK_GUARD
     else if ((rt_ubase_t)thread->sp > ((rt_ubase_t)thread->stack_addr + thread->stack_size))
+#else
+    if ((rt_ubase_t)thread->sp > ((rt_ubase_t)thread->stack_addr + thread->stack_size))
+#endif
     {
         rt_kprintf("warning: %s stack is close to the top of stack address.\n",
                    thread->parent.name);
     }
 #else
+#ifndef RT_USING_HW_STACK_GUARD
     else if ((rt_ubase_t)thread->sp <= ((rt_ubase_t)thread->stack_addr + 32))
+#else
+    if ((rt_ubase_t)thread->sp <= ((rt_ubase_t)thread->stack_addr + 32))
+#endif
     {
         rt_kprintf("warning: %s stack is close to end of stack address.\n",
                    thread->parent.name);
@@ -260,7 +271,6 @@ void rt_schedule(void)
                 {
                     need_insert_from_thread = 1;
                 }
-                rt_current_thread->stat &= ~RT_THREAD_STAT_YIELD_MASK;
             }
 
             if (to_thread != rt_current_thread)
@@ -275,6 +285,11 @@ void rt_schedule(void)
                 if (need_insert_from_thread)
                 {
                     rt_schedule_insert_thread(from_thread);
+                }
+
+                if ((from_thread->stat & RT_THREAD_STAT_YIELD_MASK) != 0)
+                {
+                    from_thread->stat &= ~RT_THREAD_STAT_YIELD_MASK;
                 }
 
                 rt_schedule_remove_thread(to_thread);

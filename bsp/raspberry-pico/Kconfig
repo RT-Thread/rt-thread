@@ -237,6 +237,188 @@ menu "On-chip Peripheral Drivers"
                 default n
         endif
 
+    menuconfig BSP_USING_PWM
+        bool "Enable PWM(A:CH_0 B:CH_1)"
+        default n
+        select RT_USING_PWM
+        if BSP_USING_PWM
+            config BSP_USING_PWM0
+                bool "Enable PWM0"
+                default n
+                if BSP_USING_PWM0
+                    config BSP_PWM0_A_PIN
+                        int "pwm slice A pin number (GP)"
+                        range 0 29
+                        default 0
+                    config BSP_PWM0_B_PIN
+                        int "pwm slice B pin number (GP)"
+                        range 0 29
+                        default 1
+                    config BSP_PWM0_A_ALL
+                        bool "pwm slice use all A pin"
+                        default n
+                    config BSP_PWM0_B_ALL
+                        bool "pwm slice use all B pin"
+                        default n
+                endif
+
+            config BSP_USING_PWM1
+                bool "Enable PWM1"
+                default n
+                if BSP_USING_PWM1
+                    config BSP_PWM_A_PIN
+                        int "pwm slice A pin number (GP)"
+                        range 0 29
+                        default 2
+                    config BSP_PWM1_B_PIN
+                        int "pwm slice B pin number (GP)"
+                        range 0 29
+                        default 3
+                    config BSP_PWM1_A_ALL
+                        bool "pwm slice use all A pin"
+                        default n
+                    config BSP_PWM1_B_ALL
+                        bool "pwm slice use all B pin"
+                        default n
+                endif
+
+            config BSP_USING_PWM2
+                bool "Enable PWM2"
+                default n
+                if BSP_USING_PWM2
+                    config BSP_PWM2_A_PIN
+                        int "pwm slice A pin number (GP)"
+                        range 0 29
+                        default 4
+                    config BSP_PWM2_B_PIN
+                        int "pwm slice B pin number (GP)"
+                        range 0 29
+                        default 5
+                    config BSP_PWM2_A_ALL
+                        bool "pwm slice use all A pin"
+                        default n
+                    config BSP_PWM2_B_ALL
+                        bool "pwm slice use all B pin"
+                        default n
+                endif
+
+            config BSP_USING_PWM3
+                bool "Enable PWM3"
+                default n
+                if BSP_USING_PWM3
+                    config BSP_PWM3_A_PIN
+                        int "pwm slice A pin number (GP)"
+                        range 0 29
+                        default 6
+                    config BSP_PWM3_B_PIN
+                        int "pwm slice B pin number (GP)"
+                        range 0 29
+                        default 7
+                    config BSP_PWM3_A_ALL
+                        bool "pwm slice use all A pin"
+                        default n
+                    config BSP_PWM3_B_ALL
+                        bool "pwm slice use all B pin"
+                        default n
+                endif
+
+            config BSP_USING_PWM4
+                bool "Enable PWM4"
+                default n
+                if BSP_USING_PWM4
+                    config BSP_PWM4_A_PIN
+                        int "pwm slice A pin number (GP)"
+                        range 0 29
+                        default 8
+                    config BSP_PWM4_B_PIN
+                        int "pwm slice B pin number (GP)"
+                        range 0 29
+                        default 9
+                    config BSP_PWM4_A_ALL
+                        bool "pwm slice use all A pin"
+                        default n
+                    config BSP_PWM4_B_ALL
+                        bool "pwm slice use all B pin"
+                        default n
+                endif
+                
+            config BSP_USING_PWM5
+                bool "Enable PWM5"
+                default n
+                if BSP_USING_PWM5
+                    config BSP_PWM5_A_PIN
+                        int "pwm slice A pin number (GP)"
+                        range 0 29
+                        default 10
+                    config BSP_PWM5_B_PIN
+                        int "pwm slice B pin number (GP)"
+                        range 0 29
+                        default 11
+                    config BSP_PWM5_A_ALL
+                        bool "pwm slice use all A pin"
+                        default n
+                    config BSP_PWM5_B_ALL
+                        bool "pwm slice use all B pin"
+                        default n
+                endif
+
+            config BSP_USING_PWM6
+                bool "Enable PWM6"
+                default n
+                if BSP_USING_PWM6
+                    config BSP_PWM6_A_PIN
+                        int "pwm slice A pin number (GP)"
+                        range 0 29
+                        default 12
+                    config BSP_PWM6_B_PIN
+                        int "pwm slice B pin number (GP)"
+                        range 0 29
+                        default 13
+                    config BSP_PWM6_A_ALL
+                        bool "pwm slice use all A pin"
+                        default n
+                    config BSP_PWM6_B_ALL
+                        bool "pwm slice use all B pin"
+                        default n
+                endif
+
+            config BSP_USING_PWM7
+                bool "Enable PWM7"
+                default n
+                if BSP_USING_PWM7
+                    config BSP_PWM7_A_PIN
+                        int "pwm slice A pin number (GP)"
+                        range 0 29
+                        default 14
+                    config BSP_PWM7_B_PIN
+                        int "pwm slice B pin number (GP)"
+                        range 0 29
+                        default 15
+                endif
+        endif
+
+    menuconfig BSP_USING_HWTIMER
+        bool "Enable HWTIMER"
+        default n
+        select RT_USING_HWTIMER
+        if BSP_USING_HWTIMER
+            config BSP_USING_TIMER0
+                bool "Enable HWTIMER0"
+                default n
+
+            config BSP_USING_TIMER1
+                bool "Enable HWTIMER1"
+                default n
+
+            config BSP_USING_TIMER2
+                bool "Enable HWTIMER2"
+                default n
+
+            config BSP_USING_TIMER3
+                bool "Enable HWTIMER3"
+                default n
+        endif
+
     menuconfig BSP_USING_I2C
         bool "Enable I2C"
         select RT_USING_I2C

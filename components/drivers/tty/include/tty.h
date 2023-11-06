@@ -166,6 +166,7 @@ struct tty_struct
 
 #define RT_TTY_BUF 1024
     rt_list_t tty_drivers;
+    struct rt_spinlock spinlock;
 };
 
 enum

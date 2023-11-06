@@ -65,15 +65,14 @@ INIT_PREV_EXPORT(pmutex_system_init);
 static rt_err_t pmutex_destory(void *data)
 {
     rt_err_t ret = -1;
-    rt_base_t level = 0;
     struct rt_pmutex *pmutex = (struct rt_pmutex *)data;
 
     if (pmutex)
     {
-        level = rt_hw_interrupt_disable();
+        lwp_mutex_take_safe(&_pmutex_lock, RT_WAITING_FOREVER, 0);
         /* remove pmutex from pmutext avl */
         lwp_avl_remove(&pmutex->node, (struct lwp_avl_struct **)pmutex->node.data);
-        rt_hw_interrupt_enable(level);
+        lwp_mutex_release_safe(&_pmutex_lock);
 
         if (pmutex->type == PMUTEX_NORMAL)
         {
@@ -214,8 +213,7 @@ static int _pthread_mutex_init(void *umutex)
     }
     else
     {
-        rt_base_t level = rt_hw_interrupt_disable();
-
+        lwp_mutex_take_safe(&_pmutex_lock, RT_WAITING_FOREVER, 1);
         if (pmutex->type == PMUTEX_NORMAL)
         {
             pmutex->lock.ksem->value = 1;
@@ -227,7 +225,7 @@ static int _pthread_mutex_init(void *umutex)
             pmutex->lock.kmutex->hold     = 0;
             pmutex->lock.kmutex->ceiling_priority = 0xFF;
         }
-        rt_hw_interrupt_enable(level);
+        lwp_mutex_release_safe(&_pmutex_lock);
     }
 
     rt_mutex_release(&_pmutex_lock);
@@ -242,7 +240,6 @@ static int _pthread_mutex_lock_timeout(void *umutex, struct timespec *timeout)
     struct rt_umutex *umutex_p = (struct rt_umutex*)umutex;
     rt_err_t lock_ret = 0;
     rt_int32_t time = RT_WAITING_FOREVER;
-    register rt_base_t temp;
 
     if (!lwp_user_accessable((void *)umutex, sizeof(struct rt_umutex)))
     {
@@ -291,19 +288,22 @@ static int _pthread_mutex_lock_timeout(void *umutex, struct timespec *timeout)
         }
         break;
     case PMUTEX_ERRORCHECK:
-        temp = rt_hw_interrupt_disable();
+        lock_ret = lwp_mutex_take_safe(&_pmutex_lock, RT_WAITING_FOREVER, 1);
+        if (lock_ret != RT_EOK)
+        {
+            return -EINTR;
+        }
         if (pmutex->lock.kmutex->owner == rt_thread_self())
         {
-            /* enable interrupt */
-            rt_hw_interrupt_enable(temp);
+            lwp_mutex_release_safe(&_pmutex_lock);
             return -EDEADLK;
         }
+        lwp_mutex_release_safe(&_pmutex_lock);
         lock_ret = rt_mutex_take_interruptible(pmutex->lock.kmutex, time);
         if (lock_ret == RT_EOK)
         {
             umutex_p->_m_lock = rt_thread_self()->tid;
         }
-        rt_hw_interrupt_enable(temp);
         break;
     default: /* unknown type */
         return -EINVAL;

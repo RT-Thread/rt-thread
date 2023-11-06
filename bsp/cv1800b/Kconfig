@@ -22,6 +22,7 @@ source "drivers/Kconfig"
 config BSP_USING_CV1800B
     bool
     select ARCH_RISCV64
+    select RT_USING_SYSTEM_WORKQUEUE
     select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN
     select RT_USING_CACHE

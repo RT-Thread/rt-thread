@@ -7,6 +7,7 @@
  * Date           Author       Notes
  * 2012-09-30     Bernard      first version.
  * 2016-10-31     armink       fix some resume push and pop thread bugs
+ * 2023-09-15     xqyjlj       perf rt_hw_interrupt_disable/enable
  */
 
 #include <rthw.h>
@@ -57,6 +58,8 @@ rt_data_queue_init(struct rt_data_queue *queue,
     queue->is_empty = 1;
     queue->is_full = 0;
 
+    rt_spin_lock_init(&(queue->spinlock));
+
     rt_list_init(&(queue->suspended_push_list));
     rt_list_init(&(queue->suspended_pop_list));
 
@@ -103,7 +106,7 @@ rt_err_t rt_data_queue_push(struct rt_data_queue *queue,
     result = RT_EOK;
     thread = rt_thread_self();
 
-    level = rt_hw_interrupt_disable();
+    level = rt_spin_lock_irqsave(&(queue->spinlock));
     while (queue->is_full)
     {
         /* queue is full */
@@ -131,14 +134,14 @@ rt_err_t rt_data_queue_push(struct rt_data_queue *queue,
         }
 
         /* enable interrupt */
-        rt_hw_interrupt_enable(level);
+        rt_spin_unlock_irqrestore(&(queue->spinlock), level);
 
         /* do schedule */
         rt_schedule();
 
         /* thread is waked up */
         result = thread->error;
-        level = rt_hw_interrupt_disable();
+        level = rt_spin_lock_irqsave(&(queue->spinlock));
         if (result != RT_EOK) goto __exit;
     }
 
@@ -165,7 +168,7 @@ rt_err_t rt_data_queue_push(struct rt_data_queue *queue,
 
         /* resume it */
         rt_thread_resume(thread);
-        rt_hw_interrupt_enable(level);
+        rt_spin_unlock_irqrestore(&(queue->spinlock), level);
 
         /* perform a schedule */
         rt_schedule();
@@ -174,7 +177,7 @@ rt_err_t rt_data_queue_push(struct rt_data_queue *queue,
     }
 
 __exit:
-    rt_hw_interrupt_enable(level);
+    rt_spin_unlock_irqrestore(&(queue->spinlock), level);
     if ((result == RT_EOK) && queue->evt_notify != RT_NULL)
     {
         queue->evt_notify(queue, RT_DATAQUEUE_EVENT_PUSH);
@@ -222,7 +225,7 @@ rt_err_t rt_data_queue_pop(struct rt_data_queue *queue,
     result = RT_EOK;
     thread = rt_thread_self();
 
-    level = rt_hw_interrupt_disable();
+    level = rt_spin_lock_irqsave(&(queue->spinlock));
     while (queue->is_empty)
     {
         /* queue is empty */
@@ -249,14 +252,14 @@ rt_err_t rt_data_queue_pop(struct rt_data_queue *queue,
         }
 
         /* enable interrupt */
-        rt_hw_interrupt_enable(level);
+        rt_spin_unlock_irqrestore(&(queue->spinlock), level);
 
         /* do schedule */
         rt_schedule();
 
         /* thread is waked up */
         result = thread->error;
-        level  = rt_hw_interrupt_disable();
+        level  = rt_spin_lock_irqsave(&(queue->spinlock));
         if (result != RT_EOK)
             goto __exit;
     }
@@ -286,14 +289,14 @@ rt_err_t rt_data_queue_pop(struct rt_data_queue *queue,
 
             /* resume it */
             rt_thread_resume(thread);
-            rt_hw_interrupt_enable(level);
+            rt_spin_unlock_irqrestore(&(queue->spinlock), level);
 
             /* perform a schedule */
             rt_schedule();
         }
         else
         {
-            rt_hw_interrupt_enable(level);
+            rt_spin_unlock_irqrestore(&(queue->spinlock), level);
         }
 
         if (queue->evt_notify != RT_NULL)
@@ -303,7 +306,7 @@ rt_err_t rt_data_queue_pop(struct rt_data_queue *queue,
     }
 
 __exit:
-    rt_hw_interrupt_enable(level);
+    rt_spin_unlock_irqrestore(&(queue->spinlock), level);
     if ((result == RT_EOK) && (queue->evt_notify != RT_NULL))
     {
         queue->evt_notify(queue, RT_DATAQUEUE_EVENT_POP);
@@ -339,12 +342,12 @@ rt_err_t rt_data_queue_peek(struct rt_data_queue *queue,
         return -RT_EEMPTY;
     }
 
-    level = rt_hw_interrupt_disable();
+    level = rt_spin_lock_irqsave(&(queue->spinlock));
 
     *data_ptr = queue->queue[queue->get_index].data_ptr;
     *size     = queue->queue[queue->get_index].data_size;
 
-    rt_hw_interrupt_enable(level);
+    rt_spin_unlock_irqrestore(&(queue->spinlock), level);
 
     return RT_EOK;
 }
@@ -366,14 +369,14 @@ void rt_data_queue_reset(struct rt_data_queue *queue)
     RT_ASSERT(queue != RT_NULL);
     RT_ASSERT(queue->magic == DATAQUEUE_MAGIC);
 
-    level = rt_hw_interrupt_disable();
+    level = rt_spin_lock_irqsave(&(queue->spinlock));
 
     queue->get_index = 0;
     queue->put_index = 0;
     queue->is_empty = 1;
     queue->is_full = 0;
 
-    rt_hw_interrupt_enable(level);
+    rt_spin_unlock_irqrestore(&(queue->spinlock), level);
 
     rt_enter_critical();
     /* wakeup all suspend threads */
@@ -382,7 +385,7 @@ void rt_data_queue_reset(struct rt_data_queue *queue)
     while (!rt_list_isempty(&(queue->suspended_pop_list)))
     {
         /* disable interrupt */
-        level = rt_hw_interrupt_disable();
+        level = rt_spin_lock_irqsave(&(queue->spinlock));
 
         /* get next suspend thread */
         thread = rt_list_entry(queue->suspended_pop_list.next,
@@ -399,14 +402,14 @@ void rt_data_queue_reset(struct rt_data_queue *queue)
         rt_thread_resume(thread);
 
         /* enable interrupt */
-        rt_hw_interrupt_enable(level);
+        rt_spin_unlock_irqrestore(&(queue->spinlock), level);
     }
 
     /* resume on push list */
     while (!rt_list_isempty(&(queue->suspended_push_list)))
     {
         /* disable interrupt */
-        level = rt_hw_interrupt_disable();
+        level = rt_spin_lock_irqsave(&(queue->spinlock));
 
         /* get next suspend thread */
         thread = rt_list_entry(queue->suspended_push_list.next,
@@ -423,7 +426,7 @@ void rt_data_queue_reset(struct rt_data_queue *queue)
         rt_thread_resume(thread);
 
         /* enable interrupt */
-        rt_hw_interrupt_enable(level);
+        rt_spin_unlock_irqrestore(&(queue->spinlock), level);
     }
     rt_exit_critical();
 
@@ -448,9 +451,9 @@ rt_err_t rt_data_queue_deinit(struct rt_data_queue *queue)
     /* wakeup all suspend threads */
     rt_data_queue_reset(queue);
 
-    level = rt_hw_interrupt_disable();
+    level = rt_spin_lock_irqsave(&(queue->spinlock));
     queue->magic = 0;
-    rt_hw_interrupt_enable(level);
+    rt_spin_unlock_irqrestore(&(queue->spinlock), level);
 
     rt_free(queue->queue);
 
@@ -478,7 +481,7 @@ rt_uint16_t rt_data_queue_len(struct rt_data_queue *queue)
         return 0;
     }
 
-    level = rt_hw_interrupt_disable();
+    level = rt_spin_lock_irqsave(&(queue->spinlock));
 
     if (queue->put_index > queue->get_index)
     {
@@ -489,7 +492,7 @@ rt_uint16_t rt_data_queue_len(struct rt_data_queue *queue)
         len = queue->size + queue->put_index - queue->get_index;
     }
 
-    rt_hw_interrupt_enable(level);
+    rt_spin_unlock_irqrestore(&(queue->spinlock), level);
 
     return len;
 }

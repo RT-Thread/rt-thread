@@ -15,6 +15,7 @@
  * 2011-01-24     Bernard      add object allocation check.
  * 2012-03-22     Bernard      fix align issue in rt_mp_init and rt_mp_create.
  * 2022-01-07     Gabriel      Moving __on_rt_xxxxx_hook to mempool.c
+ * 2023-09-15     xqyjlj       perf rt_hw_interrupt_disable/enable
  */
 
 #include <rthw.h>
@@ -131,6 +132,7 @@ rt_err_t rt_mp_init(struct rt_mempool *mp,
         RT_NULL;
 
     mp->block_list = block_ptr;
+    rt_spin_lock_init(&(mp->spinlock));
 
     return RT_EOK;
 }
@@ -153,11 +155,10 @@ rt_err_t rt_mp_detach(struct rt_mempool *mp)
     RT_ASSERT(rt_object_get_type(&mp->parent) == RT_Object_Class_MemPool);
     RT_ASSERT(rt_object_is_systemobject(&mp->parent));
 
+    level = rt_spin_lock_irqsave(&(mp->spinlock));
     /* wake up all suspended threads */
     while (!rt_list_isempty(&(mp->suspend_thread)))
     {
-        /* disable interrupt */
-        level = rt_hw_interrupt_disable();
 
         /* get next suspend thread */
         thread = rt_list_entry(mp->suspend_thread.next, struct rt_thread, tlist);
@@ -170,13 +171,11 @@ rt_err_t rt_mp_detach(struct rt_mempool *mp)
          * suspend list
          */
         rt_thread_resume(thread);
-
-        /* enable interrupt */
-        rt_hw_interrupt_enable(level);
     }
 
     /* detach object */
     rt_object_detach(&(mp->parent));
+    rt_spin_unlock_irqrestore(&(mp->spinlock), level);
 
     return RT_EOK;
 }
@@ -249,6 +248,7 @@ rt_mp_t rt_mp_create(const char *name,
         = RT_NULL;
 
     mp->block_list = block_ptr;
+    rt_spin_lock_init(&(mp->spinlock));
 
     return mp;
 }
@@ -273,12 +273,10 @@ rt_err_t rt_mp_delete(rt_mp_t mp)
     RT_ASSERT(rt_object_get_type(&mp->parent) == RT_Object_Class_MemPool);
     RT_ASSERT(rt_object_is_systemobject(&mp->parent) == RT_FALSE);
 
+    level = rt_spin_lock_irqsave(&(mp->spinlock));
     /* wake up all suspended threads */
     while (!rt_list_isempty(&(mp->suspend_thread)))
     {
-        /* disable interrupt */
-        level = rt_hw_interrupt_disable();
-
         /* get next suspend thread */
         thread = rt_list_entry(mp->suspend_thread.next, struct rt_thread, tlist);
         /* set error code to -RT_ERROR */
@@ -290,9 +288,6 @@ rt_err_t rt_mp_delete(rt_mp_t mp)
          * suspend list
          */
         rt_thread_resume(thread);
-
-        /* enable interrupt */
-        rt_hw_interrupt_enable(level);
     }
 
     /* release allocated room */
@@ -300,6 +295,7 @@ rt_err_t rt_mp_delete(rt_mp_t mp)
 
     /* detach object */
     rt_object_delete(&(mp->parent));
+    rt_spin_unlock_irqrestore(&(mp->spinlock), level);
 
     return RT_EOK;
 }
@@ -329,16 +325,14 @@ void *rt_mp_alloc(rt_mp_t mp, rt_int32_t time)
     /* get current thread */
     thread = rt_thread_self();
 
-    /* disable interrupt */
-    level = rt_hw_interrupt_disable();
+    level = rt_spin_lock_irqsave(&(mp->spinlock));
 
     while (mp->block_free_count == 0)
     {
         /* memory block is unavailable. */
         if (time == 0)
         {
-            /* enable interrupt */
-            rt_hw_interrupt_enable(level);
+            rt_spin_unlock_irqrestore(&(mp->spinlock), level);
 
             rt_set_errno(-RT_ETIMEOUT);
 
@@ -366,7 +360,7 @@ void *rt_mp_alloc(rt_mp_t mp, rt_int32_t time)
         }
 
         /* enable interrupt */
-        rt_hw_interrupt_enable(level);
+        rt_spin_unlock_irqrestore(&(mp->spinlock), level);
 
         /* do a schedule */
         rt_schedule();
@@ -380,8 +374,7 @@ void *rt_mp_alloc(rt_mp_t mp, rt_int32_t time)
             if (time < 0)
                 time = 0;
         }
-        /* disable interrupt */
-        level = rt_hw_interrupt_disable();
+        level = rt_spin_lock_irqsave(&(mp->spinlock));
     }
 
     /* memory block is available. decrease the free block counter */
@@ -397,8 +390,7 @@ void *rt_mp_alloc(rt_mp_t mp, rt_int32_t time)
     /* point to memory pool */
     *(rt_uint8_t **)block_ptr = (rt_uint8_t *)mp;
 
-    /* enable interrupt */
-    rt_hw_interrupt_enable(level);
+    rt_spin_unlock_irqrestore(&(mp->spinlock), level);
 
     RT_OBJECT_HOOK_CALL(rt_mp_alloc_hook,
                         (mp, (rt_uint8_t *)(block_ptr + sizeof(rt_uint8_t *))));
@@ -428,8 +420,7 @@ void rt_mp_free(void *block)
 
     RT_OBJECT_HOOK_CALL(rt_mp_free_hook, (mp, block));
 
-    /* disable interrupt */
-    level = rt_hw_interrupt_disable();
+    level = rt_spin_lock_irqsave(&(mp->spinlock));
 
     /* increase the free block count */
     mp->block_free_count ++;
@@ -451,17 +442,14 @@ void rt_mp_free(void *block)
         /* resume thread */
         rt_thread_resume(thread);
 
-        /* enable interrupt */
-        rt_hw_interrupt_enable(level);
+        rt_spin_unlock_irqrestore(&(mp->spinlock), level);
 
         /* do a schedule */
         rt_schedule();
 
         return;
     }
-
-    /* enable interrupt */
-    rt_hw_interrupt_enable(level);
+    rt_spin_unlock_irqrestore(&(mp->spinlock), level);
 }
 RTM_EXPORT(rt_mp_free);
 

@@ -374,12 +374,11 @@ static rt_err_t air32_pin_irq_enable(struct rt_device *device, rt_base_t pin,
         NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;
         NVIC_Init(&NVIC_InitStructure);
 
+        gpio_port_souce=PIN_PORT(pin);
         GPIO_EXTILineConfig(gpio_port_souce,(rt_uint8_t)irqindex);
         EXTI_InitStructure.EXTI_Line = irqmap->irqbit;
         EXTI_InitStructure.EXTI_Mode = EXTI_Mode_Interrupt;
         EXTI_InitStructure.EXTI_LineCmd = ENABLE;
-
-        gpio_port_souce=PIN_PORT(pin);
 
         EXTI_Init(&EXTI_InitStructure);
 

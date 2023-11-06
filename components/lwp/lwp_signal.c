@@ -12,17 +12,15 @@
  *                             update the generation, pending and delivery routines
  */
 
-#define DBG_TAG    "LWP_SIGNAL"
-#define DBG_LVL    DBG_INFO
+#define DBG_TAG "lwp.signal"
+#define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
 #include <rthw.h>
 #include <rtthread.h>
 #include <string.h>
 
-#include "lwp.h"
-#include "lwp_arch.h"
-#include "lwp_signal.h"
+#include "lwp_internal.h"
 #include "sys/signal.h"
 #include "syscall_generic.h"
 
@@ -362,7 +360,7 @@ static void _thread_signal_mask(rt_thread_t thread, lwp_sig_mask_cmd_t how,
     lwp_sigset_t new_set;
 
     /**
-     * @note POSIX wants this API to be capable to query the current mask
+     * Note: POSIX wants this API to be capable to query the current mask
      *       by passing NULL in `sigset`
      */
     if (oset)
@@ -408,28 +406,24 @@ static void lwp_signal_notify(rt_slist_t *list_head, lwp_siginfo_t siginfo)
 
 rt_err_t lwp_signal_init(struct lwp_signal *sig)
 {
-    rt_err_t rc;
-    rc = rt_mutex_init(&sig->sig_lock, "lwpsig", RT_IPC_FLAG_FIFO);
-    if (rc == RT_EOK)
-    {
-        memset(&sig->sig_dispatch_thr, 0, sizeof(sig->sig_dispatch_thr));
+    rt_err_t rc = RT_EOK;
 
-        memset(&sig->sig_action, 0, sizeof(sig->sig_action));
-        memset(&sig->sig_action_nodefer, 0, sizeof(sig->sig_action_nodefer));
-        memset(&sig->sig_action_onstack, 0, sizeof(sig->sig_action_onstack));
-        memset(&sig->sig_action_restart, 0, sizeof(sig->sig_action_restart));
-        memset(&sig->sig_action_siginfo, 0, sizeof(sig->sig_action_siginfo));
-        lwp_sigqueue_init(&sig->sig_queue);
-    }
+    memset(&sig->sig_dispatch_thr, 0, sizeof(sig->sig_dispatch_thr));
+
+    memset(&sig->sig_action, 0, sizeof(sig->sig_action));
+    memset(&sig->sig_action_nodefer, 0, sizeof(sig->sig_action_nodefer));
+    memset(&sig->sig_action_onstack, 0, sizeof(sig->sig_action_onstack));
+    memset(&sig->sig_action_restart, 0, sizeof(sig->sig_action_restart));
+    memset(&sig->sig_action_siginfo, 0, sizeof(sig->sig_action_siginfo));
+    lwp_sigqueue_init(&sig->sig_queue);
     return rc;
 }
 
 rt_err_t lwp_signal_detach(struct lwp_signal *signal)
 {
-    rt_err_t ret;
+    rt_err_t ret = RT_EOK;
 
     lwp_sigqueue_clear(&signal->sig_queue);
-    ret = rt_mutex_detach(&signal->sig_lock);
 
     return ret;
 }
@@ -475,7 +469,6 @@ int lwp_thread_signal_suspend_check(rt_thread_t thread, int suspend_flag)
 
 void lwp_thread_signal_catch(void *exp_frame)
 {
-    rt_base_t level;
     int signo = 0;
     struct rt_thread *thread;
     struct rt_lwp *lwp;
@@ -492,7 +485,7 @@ void lwp_thread_signal_catch(void *exp_frame)
     lwp = (struct rt_lwp*)thread->lwp;
 
     RT_ASSERT(!!lwp);
-    level = rt_hw_interrupt_disable();
+    LWP_LOCK(lwp);
 
     /* check if signal exist */
     if (!sigqueue_isempty(_SIGQ(thread)))
@@ -541,7 +534,7 @@ void lwp_thread_signal_catch(void *exp_frame)
                 p_usi = RT_NULL;
         }
     }
-    rt_hw_interrupt_enable(level);
+    LWP_UNLOCK(lwp);
 
     if (pending && signo)
     {
@@ -556,7 +549,7 @@ void lwp_thread_signal_catch(void *exp_frame)
 
         /**
          * enter signal action of user
-         * @note that the p_usi is release before entering signal action by
+         * Note: that the p_usi is release before entering signal action by
          * reseting the kernel sp.
          */
         LOG_D("%s: enter signal handler(signo=%d) at %p", __func__, signo, handler);
@@ -611,7 +604,7 @@ static rt_thread_t _signal_find_catcher(struct rt_lwp *lwp, int signo)
     {
         candidate = rt_thread_self();
 
-        /** @note: lwp of current is a const value that can be safely read */
+        /** Note: lwp of current is a const value that can be safely read */
         if (candidate->lwp == lwp &&
             !_sigismember(&candidate->signal.sigset_mask, signo))
         {
@@ -682,7 +675,7 @@ rt_inline rt_bool_t _sighandler_cannot_caught(struct rt_lwp *lwp, int signo)
 rt_err_t lwp_signal_kill(struct rt_lwp *lwp, long signo, long code, long value)
 {
     rt_err_t ret = -1;
-    rt_base_t level;
+
     lwp_siginfo_t siginfo;
     rt_bool_t terminated;
     rt_bool_t need_schedule;
@@ -701,8 +694,7 @@ rt_err_t lwp_signal_kill(struct rt_lwp *lwp, long signo, long code, long value)
 
         need_schedule = RT_FALSE;
 
-        /* FIXME: acquire READ lock to lwp */
-        level = rt_hw_interrupt_disable();
+        LWP_LOCK(lwp);
         terminated = lwp->terminated;
 
         /* short-circuit code for inactive task, ignored signals */
@@ -727,7 +719,7 @@ rt_err_t lwp_signal_kill(struct rt_lwp *lwp, long signo, long code, long value)
             }
         }
 
-        rt_hw_interrupt_enable(level);
+        LWP_UNLOCK(lwp);
 
         if (need_schedule)
             rt_schedule();
@@ -771,12 +763,11 @@ rt_err_t lwp_signal_action(struct rt_lwp *lwp, int signo,
     lwp_sigqueue_t thread_sigq;
     rt_list_t *thread_list;
     rt_err_t ret = RT_EOK;
-    rt_base_t level;
 
     if (lwp)
     {
         /** acquire READ access to lwp */
-        level = rt_hw_interrupt_disable();
+        LWP_LOCK(lwp);
 
         if (oact)
         {
@@ -788,7 +779,7 @@ rt_err_t lwp_signal_action(struct rt_lwp *lwp, int signo,
         if (act)
         {
             /**
-             * @note POSIX.1-2017 requires calls to sigaction() that supply a NULL act
+             * Note: POSIX.1-2017 requires calls to sigaction() that supply a NULL act
              * argument succeed, even in the case of signals that cannot be caught or ignored
              */
             if (_sighandler_cannot_caught(lwp, signo))
@@ -805,9 +796,9 @@ rt_err_t lwp_signal_action(struct rt_lwp *lwp, int signo,
                 _signal_action_flag_u2k(signo, &lwp->signal, act);
 
                 /**
-                 * @brief Discard the pending signal if signal action is set to SIG_IGN
+                 * Brief: Discard the pending signal if signal action is set to SIG_IGN
                  *
-                 * @note POSIX.1-2017: Setting a signal action to SIG_IGN for a signal
+                 * Note: POSIX.1-2017: Setting a signal action to SIG_IGN for a signal
                  * that is pending shall cause the pending signal to be discarded,
                  * whether or not it is blocked.
                  */
@@ -826,7 +817,7 @@ rt_err_t lwp_signal_action(struct rt_lwp *lwp, int signo,
             }
         }
 
-        rt_hw_interrupt_enable(level);
+        LWP_UNLOCK(lwp);
     }
     else
         ret = -RT_EINVAL;
@@ -837,13 +828,15 @@ rt_err_t lwp_signal_action(struct rt_lwp *lwp, int signo,
 rt_err_t lwp_thread_signal_kill(rt_thread_t thread, long signo, long code, long value)
 {
     rt_err_t ret = -1;
-    rt_base_t level;
+
     struct rt_lwp *lwp;
     lwp_siginfo_t siginfo;
     rt_bool_t need_schedule;
 
     /** must be able to be suspended */
     RT_DEBUG_SCHEDULER_AVAILABLE(RT_TRUE);
+
+    LOG_D("%s(signo=%d)", __func__, signo);
 
     if (!thread || signo < 0 || signo >= _LWP_NSIG)
     {
@@ -856,8 +849,7 @@ rt_err_t lwp_thread_signal_kill(rt_thread_t thread, long signo, long code, long 
 
         RT_ASSERT(lwp);
 
-        /* FIXME: acquire READ lock to lwp */
-        level = rt_hw_interrupt_disable();
+        LWP_LOCK(lwp);
 
         if (!lwp)
             ret = -RT_EPERM;
@@ -870,8 +862,8 @@ rt_err_t lwp_thread_signal_kill(rt_thread_t thread, long signo, long code, long 
             if (siginfo)
             {
                 need_schedule = _siginfo_deliver_to_thread(thread, siginfo);
-                ret = 0;
                 lwp_signal_notify(&lwp->signalfd_notify_head, siginfo);
+                ret = 0;
             }
             else
             {
@@ -880,7 +872,7 @@ rt_err_t lwp_thread_signal_kill(rt_thread_t thread, long signo, long code, long 
             }
         }
 
-        rt_hw_interrupt_enable(level);
+        LWP_UNLOCK(lwp);
 
         if (need_schedule)
             rt_schedule();
@@ -906,15 +898,13 @@ rt_err_t lwp_thread_signal_mask(rt_thread_t thread, lwp_sig_mask_cmd_t how,
                                 const lwp_sigset_t *sigset, lwp_sigset_t *oset)
 {
     rt_err_t ret = -1;
-    rt_base_t level;
     struct rt_lwp *lwp;
 
     if (thread)
     {
-        /** FIXME: acquire READ access to rt_thread */
-        level = rt_hw_interrupt_disable();
-
         lwp = (struct rt_lwp*)thread->lwp;
+        LWP_LOCK(lwp);
+
         if (!lwp)
         {
             ret = -RT_EPERM;
@@ -925,7 +915,7 @@ rt_err_t lwp_thread_signal_mask(rt_thread_t thread, lwp_sig_mask_cmd_t how,
             _thread_signal_mask(thread, how, sigset, oset);
         }
 
-        rt_hw_interrupt_enable(level);
+        LWP_UNLOCK(lwp);
     }
     else
         ret = -RT_EINVAL;
@@ -968,14 +958,14 @@ static int _dequeue_signal(rt_thread_t thread, lwp_sigset_t *mask, siginfo_t *us
 rt_err_t lwp_thread_signal_timedwait(rt_thread_t thread, lwp_sigset_t *sigset,
                                      siginfo_t *usi, struct timespec *timeout)
 {
-    rt_base_t level;
     rt_err_t ret;
     lwp_sigset_t saved_sigset;
     lwp_sigset_t blocked_sigset;
     int sig;
+    struct rt_lwp *lwp = thread->lwp;
 
     /**
-     * @brief POSIX
+     * Brief: POSIX
      * If one of the signals in set is already pending for the calling thread,
      * sigwaitinfo() will return immediately
      */
@@ -985,21 +975,19 @@ rt_err_t lwp_thread_signal_timedwait(rt_thread_t thread, lwp_sigset_t *sigset,
     _sigdelset(sigset, SIGSTOP);
     _signotsets(sigset, sigset);
 
-
-    /* FIXME: acquire READ lock to lwp */
-    level = rt_hw_interrupt_disable();
+    LWP_LOCK(lwp);
     sig = _dequeue_signal(thread, sigset, usi);
-    rt_hw_interrupt_enable(level);
+    LWP_UNLOCK(lwp);
     if (sig)
         return sig;
 
     /**
-     * @brief POSIX
+     * Brief: POSIX
      * if none of the signals specified by set are pending, sigtimedwait() shall
      * wait for the time interval specified in the timespec structure referenced
      * by timeout.
      *
-     * @note If the pending signal arrives before thread suspend, the suspend
+     * Note: If the pending signal arrives before thread suspend, the suspend
      * operation will return a failure
      */
     _sigandsets(&blocked_sigset, &thread->signal.sigset_mask, sigset);
@@ -1010,7 +998,7 @@ rt_err_t lwp_thread_signal_timedwait(rt_thread_t thread, lwp_sigset_t *sigset,
         time = rt_timespec_to_tick(timeout);
 
         /**
-         * @brief POSIX
+         * Brief: POSIX
          * If the timespec structure pointed to by timeout is zero-valued and
          * if none of the signals specified by set are pending, then
          * sigtimedwait() shall return immediately with an error
@@ -1043,17 +1031,15 @@ rt_err_t lwp_thread_signal_timedwait(rt_thread_t thread, lwp_sigset_t *sigset,
     /* else ret == -EINTR */
     _thread_signal_mask(thread, LWP_SIG_MASK_CMD_SET_MASK, &saved_sigset, RT_NULL);
 
-    /* FIXME: acquire READ lock to lwp */
-    level = rt_hw_interrupt_disable();
+    LWP_LOCK(lwp);
     sig = _dequeue_signal(thread, sigset, usi);
-    rt_hw_interrupt_enable(level);
+    LWP_UNLOCK(lwp);
 
     return sig ? sig : ret;
 }
 
 void lwp_thread_signal_pending(rt_thread_t thread, lwp_sigset_t *pending)
 {
-    rt_base_t level;
     struct rt_lwp *lwp;
     lwp = thread->lwp;
 
@@ -1061,10 +1047,10 @@ void lwp_thread_signal_pending(rt_thread_t thread, lwp_sigset_t *pending)
     {
         memset(pending, 0, sizeof(*pending));
 
-        level = rt_hw_interrupt_disable();
+        LWP_LOCK(lwp);
         sigqueue_examine(_SIGQ(thread), pending);
         sigqueue_examine(_SIGQ(lwp), pending);
-        rt_hw_interrupt_enable(level);
+        LWP_UNLOCK(lwp);
 
         _sigandsets(pending, pending, &thread->signal.sigset_mask);
     }

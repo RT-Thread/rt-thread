@@ -21,6 +21,10 @@
 
 #include "zlib.h"
 
+#ifdef RT_USING_PAGECACHE
+#include "dfs_pcache.h"
+#endif
+
 /**********************************/
 
 #define CROMFS_PATITION_HEAD_SIZE 256
@@ -501,6 +505,15 @@ static void cromfs_dirent_cache_destroy(cromfs_info *ci)
 }
 
 /**********************************/
+
+#ifdef RT_USING_PAGECACHE
+static ssize_t dfs_cromfs_page_read(struct dfs_file *file, struct dfs_page *page);
+
+static struct dfs_aspace_ops dfs_cromfs_aspace_ops =
+{
+    .read = dfs_cromfs_page_read
+};
+#endif
 
 static int dfs_cromfs_mount(struct dfs_mnt *mnt, unsigned long rwflag, const void *data)
 {
@@ -1066,24 +1079,27 @@ static int dfs_cromfs_stat(struct dfs_dentry *dentry, struct stat *st)
     }
 
     st->st_dev = 0;
-    st->st_mode = S_IFREG | S_IRUSR | S_IRGRP | S_IROTH |
-        S_IWUSR | S_IWGRP | S_IWOTH;
+    st->st_mode = S_IFREG | (0777);
 
     if (file_type == CROMFS_DIRENT_ATTR_DIR)
     {
         st->st_mode &= ~S_IFREG;
-        st->st_mode |= S_IFDIR | S_IXUSR | S_IXGRP | S_IXOTH;
+        st->st_mode |= S_IFDIR;
         st->st_size = size;
     }
     else if(file_type == CROMFS_DIRENT_ATTR_SYMLINK)
     {
         st->st_mode &= ~S_IFREG;
-        st->st_mode |= S_IFLNK | S_IXUSR | S_IXGRP | S_IXOTH;
+        st->st_mode |= S_IFLNK;
         st->st_size = osize;
     }
     else
     {
+#ifdef RT_USING_PAGECACHE
+        st->st_size = (dentry->vnode && dentry->vnode->aspace) ? dentry->vnode->size : osize;
+#else
         st->st_size = osize;
+#endif
     }
 
     st->st_mtime = 0;
@@ -1201,21 +1217,24 @@ static struct dfs_vnode *dfs_cromfs_lookup (struct dfs_dentry *dentry)
 
                 if (file_type == CROMFS_DIRENT_ATTR_DIR)
                 {
-                    vnode->mode = S_IFDIR | (0555);
+                    vnode->mode = S_IFDIR | (0777);
                     vnode->type = FT_DIRECTORY;
                     vnode->size = size;
                 }
                 else if (file_type == CROMFS_DIRENT_ATTR_SYMLINK)
                 {
-                    vnode->mode = S_IFLNK | (0555);
+                    vnode->mode = S_IFLNK | (0777);
                     vnode->type = FT_SYMLINK;
                     vnode->size = osize;
                 }
                 else
                 {
-                    vnode->mode = S_IFREG | (0555);
+                    vnode->mode = S_IFREG | (0777);
                     vnode->type = FT_REGULAR;
                     vnode->size = osize;
+#ifdef RT_USING_PAGECACHE
+                    vnode->aspace = dfs_aspace_create(dentry, vnode, &dfs_cromfs_aspace_ops);
+#endif
                 }
 
                 vnode->mnt = dentry->mnt;
@@ -1296,6 +1315,21 @@ end:
 end1:
     return ret;
 }
+
+#ifdef RT_USING_PAGECACHE
+static ssize_t dfs_cromfs_page_read(struct dfs_file *file, struct dfs_page *page)
+{
+    int ret = -EINVAL;
+
+    if (page->page)
+    {
+        off_t fpos = page->fpos;
+        ret = dfs_cromfs_read(file, page->page, page->size, &fpos);
+    }
+
+    return ret;
+}
+#endif
 
 static int dfs_cromfs_readlink(struct dfs_dentry *dentry, char *buf, int len)
 {

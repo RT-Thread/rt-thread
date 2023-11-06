@@ -142,10 +142,12 @@ static struct _errno_str_t  rt_errno_strs[] =
  */
 const char *rt_strerror(rt_err_t error)
 {
+    int i = 0;
+
     if (error < 0)
         error = -error;
 
-    for (int i = 0; i < sizeof(rt_errno_strs) / sizeof(rt_errno_strs[0]); i++)
+    for (i = 0; i < sizeof(rt_errno_strs) / sizeof(rt_errno_strs[0]); i++)
     {
         if (rt_errno_strs[i].error == error)
             return rt_errno_strs[i].str;
@@ -1820,7 +1822,7 @@ rt_weak void rt_system_heap_init(void *begin_addr, void *end_addr)
     RT_ASSERT(end_align > begin_align);
 
     /* Initialize system memory heap */
-    _MEM_INIT("heap", begin_addr, end_align - begin_align);
+    _MEM_INIT("heap", (void *)begin_align, end_align - begin_align);
     /* Initialize multi thread contention lock */
     _heap_lock_init();
 }

@@ -40,8 +40,6 @@ typedef enum {
  * LwP implementation of POSIX signal
  */
 struct lwp_signal {
-    struct rt_mutex sig_lock;
-
     struct lwp_sigqueue sig_queue;
     rt_thread_t sig_dispatch_thr[_LWP_NSIG];
 

@@ -42,6 +42,7 @@ static struct rt_varea mpr_varea;
 
 static struct rt_page *page_list_low[RT_PAGE_MAX_ORDER];
 static struct rt_page *page_list_high[RT_PAGE_MAX_ORDER];
+static RT_DEFINE_SPINLOCK(_spinlock);
 
 #define page_start ((rt_page_t)rt_mpr_start)
 
@@ -134,7 +135,6 @@ static void _trace_alloc(rt_page_t page, void *caller, size_t size_bits)
 {
     if (enable)
     {
-        char *page_va = rt_page_page2addr(page);
         page->caller = caller;
         page->trace_size = size_bits;
         page->tl_prev = NULL;
@@ -503,9 +503,9 @@ int rt_page_ref_get(void *addr, rt_uint32_t size_bits)
     int ref;
 
     p = rt_page_addr2page(addr);
-    level = rt_hw_interrupt_disable();
+    level = rt_spin_lock_irqsave(&_spinlock);
     ref = _pages_ref_get(p, size_bits);
-    rt_hw_interrupt_enable(level);
+    rt_spin_unlock_irqrestore(&_spinlock, level);
     return ref;
 }
 
@@ -515,9 +515,9 @@ void rt_page_ref_inc(void *addr, rt_uint32_t size_bits)
     rt_base_t level;
 
     p = rt_page_addr2page(addr);
-    level = rt_hw_interrupt_disable();
+    level = rt_spin_lock_irqsave(&_spinlock);
     _pages_ref_inc(p, size_bits);
-    rt_hw_interrupt_enable(level);
+    rt_spin_unlock_irqrestore(&_spinlock, level);
 }
 
 static rt_page_t (*pages_alloc_handler)(rt_page_t page_list[], rt_uint32_t size_bits);
@@ -546,18 +546,18 @@ rt_inline void *_do_pages_alloc(rt_uint32_t size_bits, size_t flags)
     rt_base_t level;
     rt_page_t *page_list = _flag_to_page_list(flags);
 
-    level = rt_hw_interrupt_disable();
+    level = rt_spin_lock_irqsave(&_spinlock);
     p = pages_alloc_handler(page_list, size_bits);
-    rt_hw_interrupt_enable(level);
+    rt_spin_unlock_irqrestore(&_spinlock, level);
 
     if (!p && page_list != page_list_low)
     {
         /* fall back */
         page_list = page_list_low;
 
-        level = rt_hw_interrupt_disable();
+        level = rt_spin_lock_irqsave(&_spinlock);
         p = pages_alloc_handler(page_list, size_bits);
-        rt_hw_interrupt_enable(level);
+        rt_spin_unlock_irqrestore(&_spinlock, level);
     }
 
     if (p)
@@ -565,9 +565,9 @@ rt_inline void *_do_pages_alloc(rt_uint32_t size_bits, size_t flags)
         alloc_buf = page_to_addr(p);
 
         #ifdef RT_DEBUGING_PAGE_LEAK
-            level = rt_hw_interrupt_disable();
+            level = rt_spin_lock_irqsave(&_spinlock);
             TRACE_ALLOC(p, size_bits);
-            rt_hw_interrupt_enable(level);
+            rt_spin_unlock_irqrestore(&_spinlock, level);
         #endif
     }
     return alloc_buf;
@@ -593,11 +593,11 @@ int rt_pages_free(void *addr, rt_uint32_t size_bits)
     if (p)
     {
         rt_base_t level;
-        level = rt_hw_interrupt_disable();
+        level = rt_spin_lock_irqsave(&_spinlock);
         real_free = _pages_free(page_list, p, size_bits);
         if (real_free)
             TRACE_FREE(p, size_bits);
-        rt_hw_interrupt_enable(level);
+        rt_spin_unlock_irqrestore(&_spinlock, level);
     }
 
     return real_free;
@@ -614,7 +614,7 @@ void list_page(void)
     rt_size_t installed = page_nr;
 
     rt_base_t level;
-    level = rt_hw_interrupt_disable();
+    level = rt_spin_lock_irqsave(&_spinlock);
 
     for (i = 0; i < RT_PAGE_MAX_ORDER; i++)
     {
@@ -638,7 +638,7 @@ void list_page(void)
         LOG_RAW("\n");
     }
 
-    rt_hw_interrupt_enable(level);
+    rt_spin_unlock_irqrestore(&_spinlock, level);
     LOG_RAW("-------------------------------\n");
     LOG_RAW("Page Summary:\n => free/installed: 0x%lx/0x%lx (%ld/%ld KB)\n", free, installed, PGNR2SIZE(free), PGNR2SIZE(installed));
     LOG_RAW("-------------------------------\n");
@@ -651,7 +651,7 @@ void rt_page_get_info(rt_size_t *total_nr, rt_size_t *free_nr)
     rt_size_t total_free = 0;
     rt_base_t level;
 
-    level = rt_hw_interrupt_disable();
+    level = rt_spin_lock_irqsave(&_spinlock);
     for (i = 0; i < RT_PAGE_MAX_ORDER; i++)
     {
         struct rt_page *p = page_list_low[i];
@@ -672,7 +672,7 @@ void rt_page_get_info(rt_size_t *total_nr, rt_size_t *free_nr)
             p = p->next;
         }
     }
-    rt_hw_interrupt_enable(level);
+    rt_spin_unlock_irqrestore(&_spinlock, level);
     *total_nr = page_nr;
     *free_nr = total_free;
 }
@@ -683,7 +683,7 @@ void rt_page_high_get_info(rt_size_t *total_nr, rt_size_t *free_nr)
     rt_size_t total_free = 0;
     rt_base_t level;
 
-    level = rt_hw_interrupt_disable();
+    level = rt_spin_lock_irqsave(&_spinlock);
     for (i = 0; i < RT_PAGE_MAX_ORDER; i++)
     {
         struct rt_page *p = page_list_high[i];
@@ -694,7 +694,7 @@ void rt_page_high_get_info(rt_size_t *total_nr, rt_size_t *free_nr)
             p = p->next;
         }
     }
-    rt_hw_interrupt_enable(level);
+    rt_spin_unlock_irqrestore(&_spinlock, level);
     *total_nr = _high_pages_nr;
     *free_nr = total_free;
 }
@@ -863,8 +863,7 @@ int rt_page_install(rt_region_t region)
 {
     int err = -RT_EINVAL;
     if (region.end != region.start && !(region.start & ARCH_PAGE_MASK) &&
-        !(region.end & ARCH_PAGE_MASK) &&
-        !((region.end - region.start) & shadow_mask))
+        !(region.end & ARCH_PAGE_MASK))
     {
         void *head = addr_to_page(page_start, (void *)region.start);
         void *tail = addr_to_page(page_start, (void *)region.end);

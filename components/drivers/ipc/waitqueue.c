@@ -8,6 +8,7 @@
  * 2018/06/26     Bernard      Fix the wait queue issue when wakeup a soon
  *                             to blocked thread.
  * 2022-01-24     THEWON       let rt_wqueue_wait return thread->error when using signal
+ * 2023-09-15     xqyjlj       perf rt_hw_interrupt_disable/enable
  */
 
 #include <stdint.h>
@@ -25,9 +26,10 @@ void rt_wqueue_add(rt_wqueue_t *queue, struct rt_wqueue_node *node)
 {
     rt_base_t level;
 
-    level = rt_hw_interrupt_disable();
+    level = rt_spin_lock_irqsave(&(queue->spinlock));
+    node->wqueue = queue;
     rt_list_insert_before(&(queue->waiting_list), &(node->list));
-    rt_hw_interrupt_enable(level);
+    rt_spin_unlock_irqrestore(&(queue->spinlock), level);
 }
 
 /**
@@ -39,9 +41,11 @@ void rt_wqueue_remove(struct rt_wqueue_node *node)
 {
     rt_base_t level;
 
-    level = rt_hw_interrupt_disable();
+    RT_ASSERT(node->wqueue != RT_NULL);
+
+    level = rt_spin_lock_irqsave(&(node->wqueue->spinlock));
     rt_list_remove(&(node->list));
-    rt_hw_interrupt_enable(level);
+    rt_spin_unlock_irqrestore(&(node->wqueue->spinlock), level);
 }
 
 /**
@@ -79,7 +83,7 @@ void rt_wqueue_wakeup(rt_wqueue_t *queue, void *key)
 
     queue_list = &(queue->waiting_list);
 
-    level = rt_hw_interrupt_disable();
+    level = rt_spin_lock_irqsave(&(queue->spinlock));
     /* set wakeup flag in the queue */
     queue->flag = RT_WQ_FLAG_WAKEUP;
 
@@ -93,13 +97,12 @@ void rt_wqueue_wakeup(rt_wqueue_t *queue, void *key)
                 rt_thread_resume(entry->polling_thread);
                 need_schedule = 1;
 
-                rt_wqueue_remove(entry);
+                rt_list_remove(&(entry->list));
                 break;
             }
         }
     }
-    rt_hw_interrupt_enable(level);
-
+    rt_spin_unlock_irqrestore(&(queue->spinlock), level);
     if (need_schedule)
         rt_schedule();
 }
@@ -136,9 +139,10 @@ static int _rt_wqueue_wait(rt_wqueue_t *queue, int condition, int msec, int susp
     __wait.polling_thread = rt_thread_self();
     __wait.key = 0;
     __wait.wakeup = __wqueue_default_wake;
+    __wait.wqueue = queue;
     rt_list_init(&__wait.list);
 
-    level = rt_hw_interrupt_disable();
+    level = rt_spin_lock_irqsave(&(queue->spinlock));
 
     /* reset thread error */
     tid->error = RT_EOK;
@@ -152,11 +156,12 @@ static int _rt_wqueue_wait(rt_wqueue_t *queue, int condition, int msec, int susp
     ret = rt_thread_suspend_with_flag(tid, suspend_flag);
     if (ret != RT_EOK)
     {
-        rt_hw_interrupt_enable(level);
+        rt_spin_unlock_irqrestore(&(queue->spinlock), level);
         /* suspend failed */
         return -RT_EINTR;
     }
-    rt_wqueue_add(queue, &__wait);
+
+    rt_list_insert_before(&(queue->waiting_list), &(__wait.list));
 
     /* start timer */
     if (tick != RT_WAITING_FOREVER)
@@ -167,15 +172,15 @@ static int _rt_wqueue_wait(rt_wqueue_t *queue, int condition, int msec, int susp
 
         rt_timer_start(tmr);
     }
-    rt_hw_interrupt_enable(level);
+    rt_spin_unlock_irqrestore(&(queue->spinlock), level);
 
     rt_schedule();
 
-    level = rt_hw_interrupt_disable();
+    level = rt_spin_lock_irqsave(&(queue->spinlock));
 
 __exit_wakeup:
     queue->flag = RT_WQ_FLAG_CLEAN;
-    rt_hw_interrupt_enable(level);
+    rt_spin_unlock_irqrestore(&(queue->spinlock), level);
 
     rt_wqueue_remove(&__wait);
 

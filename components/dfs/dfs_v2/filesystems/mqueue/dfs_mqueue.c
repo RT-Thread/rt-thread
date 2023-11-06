@@ -230,6 +230,12 @@ static struct dfs_filesystem_type _mqueue = {
 
 int dfs_mqueue_init(void) {
     /* register mqueue file system */
-    return dfs_register(&_mqueue);
+    dfs_register(&_mqueue);
+    mkdir("/dev/mqueue", 0x777);
+    if (dfs_mount(RT_NULL, "/dev/mqueue", "mqueue", 0, 0) != 0)
+    {
+        rt_kprintf("Dir /dev/mqueue mount failed!\n");
+    }
+    return 0;
 }
-INIT_COMPONENT_EXPORT(dfs_mqueue_init);
+INIT_ENV_EXPORT(dfs_mqueue_init);

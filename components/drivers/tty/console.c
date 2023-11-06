@@ -149,14 +149,7 @@ static rt_err_t iodev_open(struct tty_struct *console)
 
 struct rt_device *console_get_iodev(void)
 {
-    rt_base_t level = 0;
-    struct rt_device *iodev = RT_NULL;
-
-    level = rt_hw_interrupt_disable();
-    iodev = console_dev.io_dev;
-    rt_hw_interrupt_enable(level);
-
-    return iodev;
+    return console_dev.io_dev;
 }
 
 struct rt_device *console_set_iodev(struct rt_device *iodev)
@@ -169,7 +162,7 @@ struct rt_device *console_set_iodev(struct rt_device *iodev)
 
     console = &console_dev;
 
-    level = rt_hw_interrupt_disable();
+    level = rt_spin_lock_irqsave(&console->spinlock);
 
     RT_ASSERT(console->init_flag >= TTY_INIT_FLAG_REGED);
 
@@ -195,7 +188,7 @@ struct rt_device *console_set_iodev(struct rt_device *iodev)
     }
 
 exit:
-    rt_hw_interrupt_enable(level);
+    rt_spin_unlock_irqrestore(&console->spinlock, level);
     return io_before;
 }
 
@@ -213,7 +206,7 @@ static rt_err_t rt_console_init(struct rt_device *dev)
 
     console = (struct tty_struct *)dev;
 
-    level = rt_hw_interrupt_disable();
+    level = rt_spin_lock_irqsave(&console->spinlock);
 
     RT_ASSERT(console->init_flag == TTY_INIT_FLAG_REGED);
 
@@ -225,7 +218,7 @@ static rt_err_t rt_console_init(struct rt_device *dev)
 
     console->init_flag = TTY_INIT_FLAG_INITED;
 exit:
-    rt_hw_interrupt_enable(level);
+    rt_spin_unlock_irqrestore(&console->spinlock, level);
     return result;
 }
 

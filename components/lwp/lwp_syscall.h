@@ -11,7 +11,11 @@
 #ifndef __LWP_SYSCALL_H__
 #define __LWP_SYSCALL_H__
 
-#include <syscall_generic.h>
+#ifdef RT_USING_MUSLLIBC
+#include "libc_musl.h"
+#endif
+
+#include "syscall_generic.h"
 
 #include <stdint.h>
 #include <rtthread.h>
@@ -44,7 +48,7 @@ typedef uint32_t id_t;          /* may contain pid, uid or gid */
 const char *lwp_get_syscall_name(rt_uint32_t number);
 const void *lwp_get_sys_api(rt_uint32_t number);
 
-void sys_exit(int value);
+sysret_t sys_exit(int value);
 sysret_t sys_exit_group(int status);
 ssize_t sys_read(int fd, void *buf, size_t nbyte);
 ssize_t sys_write(int fd, const void *buf, size_t nbyte);

@@ -152,6 +152,8 @@ struct rt_serial_device
     void *serial_rx;
     void *serial_tx;
 
+    struct rt_spinlock spinlock;
+
     struct rt_device_notify rx_notify;
 };
 typedef struct rt_serial_device rt_serial_t;

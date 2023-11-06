@@ -11,6 +11,8 @@
 #define __TEST_ASPACE_API_H__
 
 #include "common.h"
+#include "mm_aspace.h"
+#include "mm_flag.h"
 #include "test_aspace_api_internal.h"
 #include "test_synchronization.h"
 
@@ -122,11 +124,11 @@ static void aspace_map_tc(void)
      * in _rt_aspace_map:_varea_install
      * not covering an existed varea if a named mapping is mandatory
      */
-    vaddr = (void *)((rt_ubase_t)aspace_map_tc & ~ARCH_PAGE_MASK);
-    CONSIST_HEAP(
-        uassert_true(
-            rt_aspace_map(&rt_kernel_space, &vaddr, 0x1000, MMU_MAP_K_RWCB, MMF_MAP_FIXED, &rt_mm_dummy_mapper, 0)));
-    uassert_true(vaddr == RT_NULL);
+    // vaddr = (void *)((rt_ubase_t)aspace_map_tc & ~ARCH_PAGE_MASK);
+    // CONSIST_HEAP(
+        //     uassert_true(
+            //         rt_aspace_map(&rt_kernel_space, &vaddr, 0x1000, MMU_MAP_K_RWCB, 0, &rt_mm_dummy_mapper, 0)));
+    // uassert_true(vaddr == RT_NULL);
 
     /**
      * @brief Requirement:

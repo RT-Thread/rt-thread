@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2023-05-05     RTT          Implement mnt in dfs v2.0
+ * 2023-10-23     Shell        fix synchronization of data to icache
  */
 
 #include "dfs_pcache.h"
@@ -14,6 +15,8 @@
 #include "mm_page.h"
 #include <mmu.h>
 #include <tlb.h>
+
+#include <rthw.h>
 
 #ifdef RT_USING_PAGECACHE
 
@@ -267,7 +270,10 @@ static void dfs_pcache_thread(void *parameter)
                                     page->len = page->size;
                                 }
                                 //rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, page->page, page->size);
-                                aspace->ops->write(page);
+                                if (aspace->ops->write)
+                                {
+                                    aspace->ops->write(page);
+                                }
 
                                 page->is_dirty = 0;
 
@@ -736,7 +742,10 @@ static void dfs_page_release(struct dfs_page *page)
                 page->len = page->size;
             }
             //rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, page->page, page->size);
-            aspace->ops->write(page);
+            if (aspace->ops->write)
+            {
+                aspace->ops->write(page);
+            }
             page->is_dirty = 0;
         }
         RT_ASSERT(page->is_dirty == 0);
@@ -1063,6 +1072,8 @@ int dfs_aspace_read(struct dfs_file *file, void *buf, size_t count, off_t *pos)
 
     if (file && file->vnode && file->vnode->aspace)
     {
+        if (!(file->vnode->aspace->ops->read))
+            return ret;
         struct dfs_vnode *vnode = file->vnode;
         struct dfs_aspace *aspace = vnode->aspace;
 
@@ -1123,6 +1134,8 @@ int dfs_aspace_write(struct dfs_file *file, const void *buf, size_t count, off_t
 
     if (file && file->vnode && file->vnode->aspace)
     {
+        if (!(file->vnode->aspace->ops->write))
+            return ret;
         struct dfs_vnode *vnode = file->vnode;
         struct dfs_aspace *aspace = vnode->aspace;
 
@@ -1210,8 +1223,10 @@ int dfs_aspace_flush(struct dfs_aspace *aspace)
                         page->len = page->size;
                     }
                     //rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, page->page, page->size);
-
-                    aspace->ops->write(page);
+                    if (aspace->ops->write)
+                    {
+                        aspace->ops->write(page);
+                    }
 
                     page->is_dirty = 0;
                 }
@@ -1270,6 +1285,21 @@ void *dfs_aspace_mmap(struct dfs_file *file, struct rt_varea *varea, void *vaddr
             int err = rt_varea_map_range(varea, vaddr, pg_paddr, page->size);
             if (err == RT_EOK)
             {
+                /**
+                 * Note: While the page is mapped into user area, the data writing into the page
+                 * is not guaranteed to be visible for machines with the *weak* memory model and
+                 * those Harvard architecture (especially for those ARM64) cores for their
+                 * out-of-order pipelines of data buffer. Besides if the instruction cache in the
+                 * L1 memory system is a VIPT cache, there are chances to have the alias matching
+                 * entry if we reuse the same page frame and map it into the same virtual address
+                 * of the previous one.
+                 *
+                 * That's why we have to do synchronization and cleanup manually to ensure that
+                 * fetching of the next instruction can see the coherent data with the data cache,
+                 * TLB, MMU, main memory, and all the other observers in the computer system.
+                 */
+                rt_hw_cpu_icache_ops(RT_HW_CACHE_INVALIDATE, vaddr, ARCH_PAGE_SIZE);
+
                 ret = page->page;
                 map->varea = varea;
                 dfs_aspace_lock(aspace);
@@ -1358,6 +1388,7 @@ int dfs_aspace_page_unmap(struct dfs_file *file, struct rt_varea *varea, void *v
         {
             rt_list_t *node, *tmp;
             struct dfs_mmap *map;
+            rt_varea_unmap_page(varea, vaddr);
 
             node = page->mmap_head.next;
 
