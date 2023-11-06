@@ -93,13 +93,13 @@ rt_weak void rt_hw_cpu_shutdown(void)
 
 rt_weak rt_err_t rt_hw_backtrace_frame_get(rt_thread_t thread, struct rt_hw_backtrace_frame *frame)
 {
-    LOG_W("%s: not implemented");
+    LOG_W("not implemented");
     return -RT_ENOSYS;
 }
 
 rt_weak rt_err_t rt_hw_backtrace_frame_unwind(rt_thread_t thread, struct rt_hw_backtrace_frame *frame)
 {
-    LOG_W("%s: not implemented");
+    LOG_W("not implemented");
     return -RT_ENOSYS;
 }
 
@@ -1565,7 +1565,7 @@ rt_weak rt_err_t rt_backtrace(void)
 #else /* otherwise not implemented */
 rt_weak rt_err_t rt_backtrace(void)
 {
-    LOG_W("%s: not implemented");
+    rt_kprintf("not implemented\n");
     return -RT_ENOSYS;
 }
 #endif
@@ -1573,18 +1573,19 @@ rt_weak rt_err_t rt_backtrace(void)
 rt_err_t rt_backtrace_frame(struct rt_hw_backtrace_frame *frame)
 {
     long nesting = 0;
-    LOG_RAW("please use: addr2line -e rtthread.elf -a -f");
+
+    rt_kprintf("please use: addr2line -e rtthread.elf -a -f");
 
     while (nesting < RT_BACKTRACE_LEVEL_MAX_NR)
     {
-        LOG_RAW(" 0x%lx", (rt_ubase_t)frame->pc);
+        rt_kprintf(" 0x%lx", (rt_ubase_t)frame->pc);
         if (rt_hw_backtrace_frame_unwind(rt_thread_self(), frame))
         {
             break;
         }
         nesting++;
     }
-    LOG_RAW("\n");
+    rt_kprintf("\n");
     return RT_EOK;
 }
 
@@ -1619,7 +1620,7 @@ static void cmd_backtrace(int argc, char** argv)
     {
         if (argc == 1)
         {
-            LOG_RAW("[INFO] No thread specified\n"
+            rt_kprintf("[INFO] No thread specified\n"
                 "[HELP] You can use commands like: backtrace %p\n"
                 "Printing backtrace of calling stack...\n",
                 rt_thread_self());
@@ -1628,7 +1629,7 @@ static void cmd_backtrace(int argc, char** argv)
         }
         else
         {
-            LOG_RAW("please use: backtrace [thread_address]\n");
+            rt_kprintf("please use: backtrace [thread_address]\n");
             return;
         }
     }
@@ -1636,18 +1637,18 @@ static void cmd_backtrace(int argc, char** argv)
     pid = strtoul(argv[1], &end_ptr, 0);
     if (end_ptr == argv[1])
     {
-        LOG_RAW("Invalid input: %s\n", argv[1]);
+        rt_kprintf("Invalid input: %s\n", argv[1]);
         return ;
     }
 
     if (pid && rt_object_get_type((void *)pid) == RT_Object_Class_Thread)
     {
         rt_thread_t target = (rt_thread_t)pid;
-        LOG_RAW("backtrace %s(0x%lx), from %s\n", target->parent.name, pid, argv[1]);
+        rt_kprintf("backtrace %s(0x%lx), from %s\n", target->parent.name, pid, argv[1]);
         rt_backtrace_thread(target);
     }
     else
-        LOG_RAW("Invalid pid: %ld\n", pid);
+        rt_kprintf("Invalid pid: %ld\n", pid);
 }
 MSH_CMD_EXPORT_ALIAS(cmd_backtrace, backtrace, print backtrace of a thread);
 
