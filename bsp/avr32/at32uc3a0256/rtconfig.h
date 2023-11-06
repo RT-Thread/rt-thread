@@ -110,6 +110,9 @@
 /* Memory management */
 
 
+/* Memory protection */
+
+
 /* RT-Thread Utestcases */
 
 
@@ -225,6 +228,11 @@
 
 
 /* Uncategorized */
+
+/* Hardware Drivers Config */
+
+#define SOC_AVR32
+#define BSP_BOARD_MIZAR32B
 
 /* On-chip Peripheral Drivers */
 
