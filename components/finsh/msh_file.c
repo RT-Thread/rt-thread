@@ -171,7 +171,7 @@ static int cmd_ls(int argc, char **argv)
 
     return 0;
 }
-MSH_CMD_EXPORT_ALIAS(cmd_ls, ls, List information about the FILEs.);
+MSH_CMD_EXPORT_ALIAS(cmd_ls, ls, List information about the FILEs);
 
 #ifdef RT_USING_DFS_V2
 static int cmd_ln(int argc, char **argv)
@@ -229,7 +229,7 @@ static int cmd_cp(int argc, char **argv)
 
     return 0;
 }
-MSH_CMD_EXPORT_ALIAS(cmd_cp, cp, Copy SOURCE to DEST.);
+MSH_CMD_EXPORT_ALIAS(cmd_cp, cp, Copy SOURCE to DEST);
 
 static int cmd_mv(int argc, char **argv)
 {
@@ -288,7 +288,7 @@ static int cmd_mv(int argc, char **argv)
 
     return 0;
 }
-MSH_CMD_EXPORT_ALIAS(cmd_mv, mv, Rename SOURCE to DEST.);
+MSH_CMD_EXPORT_ALIAS(cmd_mv, mv, Rename SOURCE to DEST);
 
 static int cmd_cat(int argc, char **argv)
 {
@@ -449,7 +449,7 @@ static int cmd_rm(int argc, char **argv)
     }
     return 0;
 }
-MSH_CMD_EXPORT_ALIAS(cmd_rm, rm, Remove(unlink) the FILE(s).);
+MSH_CMD_EXPORT_ALIAS(cmd_rm, rm, Remove(unlink) the FILE(s));
 
 #ifdef DFS_USING_WORKDIR
 static int cmd_cd(int argc, char **argv)
@@ -468,14 +468,14 @@ static int cmd_cd(int argc, char **argv)
 
     return 0;
 }
-MSH_CMD_EXPORT_ALIAS(cmd_cd, cd, Change the shell working directory.);
+MSH_CMD_EXPORT_ALIAS(cmd_cd, cd, Change the shell working directory);
 
 static int cmd_pwd(int argc, char **argv)
 {
     rt_kprintf("%s\n", working_directory);
     return 0;
 }
-MSH_CMD_EXPORT_ALIAS(cmd_pwd, pwd, Print the name of the current working directory.);
+MSH_CMD_EXPORT_ALIAS(cmd_pwd, pwd, Print the name of the current working directory);
 #endif
 
 static int cmd_mkdir(int argc, char **argv)
@@ -492,7 +492,7 @@ static int cmd_mkdir(int argc, char **argv)
 
     return 0;
 }
-MSH_CMD_EXPORT_ALIAS(cmd_mkdir, mkdir, Create the DIRECTORY.);
+MSH_CMD_EXPORT_ALIAS(cmd_mkdir, mkdir, Create the DIRECTORY);
 
 static int cmd_mkfs(int argc, char **argv)
 {
@@ -1119,7 +1119,7 @@ static int cmd_chmod(int argc, char **argv)
 
     return 0;
 }
-MSH_CMD_EXPORT_ALIAS(cmd_chmod, chmod, Change the file attr.);
+MSH_CMD_EXPORT_ALIAS(cmd_chmod, chmod, Change the file attr);
 
 #endif
 
