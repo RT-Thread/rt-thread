@@ -11,6 +11,7 @@
  * 2010-03-29     Bernard         cleanup code.
  * 2010-03-30     Kyle            Ported from STM32 to AVR32.
  * 2023-10-25     Raman Gopalan   UART driver for at32uc3a: Initial version
+ * 2023-11-06     Raman Gopalan   Driver abstractions for uc3a and uc3b devices
  */
 
 #include <rthw.h>
@@ -31,19 +32,19 @@
 #endif
 
 #ifdef BSP_USING_UART0
-    void avr32uc3b_uart0_isr(void);
+    void avr32uc3_uart0_isr(void);
 #endif
 
 #ifdef BSP_USING_UART1
-    void avr32uc3b_uart1_isr(void);
+    void avr32uc3_uart1_isr(void);
 #endif
 
 #ifdef BSP_USING_UART2
-    void avr32uc3b_uart2_isr(void);
+    void avr32uc3_uart2_isr(void);
 #endif
 
 /* AVR32UC3B uart driver */
-struct avr32uc3b_uart_dev
+struct avr32uc3_uart_dev
 {
     rt_serial_t parent;
     avr32_usart_t *instance;
@@ -56,7 +57,7 @@ struct avr32uc3b_uart_dev
     void (*uart_isr)(void);
 };
 
-static struct avr32uc3b_uart_dev uart_dev[] =
+static struct avr32uc3_uart_dev uart_dev[] =
 {
 #ifdef BSP_USING_UART0
     {
@@ -67,7 +68,7 @@ static struct avr32uc3b_uart_dev uart_dev[] =
         .tx_pin_function = BSP_UART0_TX_PIN_FUNCTION,
         .rx_pin = BSP_UART0_RX_PIN,
         .rx_pin_function = BSP_UART0_RX_PIN_FUNCTION,
-        .uart_isr = avr32uc3b_uart0_isr,
+        .uart_isr = avr32uc3_uart0_isr,
     },
 #endif
 
@@ -80,7 +81,7 @@ static struct avr32uc3b_uart_dev uart_dev[] =
         .tx_pin_function = BSP_UART1_TX_PIN_FUNCTION,
         .rx_pin = BSP_UART1_RX_PIN,
         .rx_pin_function = BSP_UART1_RX_PIN_FUNCTION,
-        .uart_isr = avr32uc3b_uart1_isr,
+        .uart_isr = avr32uc3_uart1_isr,
     },
 #endif
 
@@ -93,7 +94,7 @@ static struct avr32uc3b_uart_dev uart_dev[] =
         .tx_pin_function = BSP_UART2_TX_PIN_FUNCTION,
         .rx_pin = BSP_UART2_RX_PIN,
         .rx_pin_function = BSP_UART2_RX_PIN_FUNCTION,
-        .uart_isr = avr32uc3b_uart2_isr,
+        .uart_isr = avr32uc3_uart2_isr,
     },
 #endif
 };
@@ -114,7 +115,7 @@ enum
 };
 
 #ifdef BSP_USING_UART0
-void avr32uc3b_uart0_isr(void)
+void avr32uc3_uart0_isr(void)
 {
     rt_interrupt_enter();
     /* read interrupt status and clear it */
@@ -128,7 +129,7 @@ void avr32uc3b_uart0_isr(void)
 #endif
 
 #ifdef BSP_USING_UART1
-void avr32uc3b_uart1_isr(void)
+void avr32uc3_uart1_isr(void)
 {
     rt_interrupt_enter();
     /* read interrupt status and clear it */
@@ -142,7 +143,7 @@ void avr32uc3b_uart1_isr(void)
 #endif
 
 #ifdef BSP_USING_UART2
-void avr32uc3b_uart2_isr(void)
+void avr32uc3_uart2_isr(void)
 {
     rt_interrupt_enter();
     /* read interrupt status and clear it */
@@ -160,9 +161,9 @@ void avr32uc3b_uart2_isr(void)
  */
 /*@{*/
 
-static rt_err_t avr32uc3b_uart_configure(struct rt_serial_device *serial, struct serial_configure *cfg)
+static rt_err_t avr32uc3_uart_configure(struct rt_serial_device *serial, struct serial_configure *cfg)
 {
-    struct avr32uc3b_uart_dev *uart = RT_NULL;
+    struct avr32uc3_uart_dev *uart = RT_NULL;
     unsigned char l_parity;
     unsigned short l_stop;
     unsigned long l_baud;
@@ -171,7 +172,7 @@ static rt_err_t avr32uc3b_uart_configure(struct rt_serial_device *serial, struct
     RT_ASSERT(serial != RT_NULL);
     RT_ASSERT(cfg != RT_NULL);
 
-    uart = rt_container_of(serial, struct avr32uc3b_uart_dev, parent);
+    uart = rt_container_of(serial, struct avr32uc3_uart_dev, parent);
     // Set the TX and RX pins by using the function select on the GPIO
     // Set datasheet for more information on function select
     gpio_enable_module_pin(uart->tx_pin, uart->tx_pin_function);
@@ -208,11 +209,11 @@ static rt_err_t avr32uc3b_uart_configure(struct rt_serial_device *serial, struct
     return RT_EOK;
 }
 
-static rt_err_t avr32uc3b_uart_control(struct rt_serial_device *serial, int cmd, void *arg)
+static rt_err_t avr32uc3_uart_control(struct rt_serial_device *serial, int cmd, void *arg)
 {
-    struct avr32uc3b_uart_dev *uart = RT_NULL;
+    struct avr32uc3_uart_dev *uart = RT_NULL;
     RT_ASSERT(serial != RT_NULL);
-    uart = rt_container_of(serial, struct avr32uc3b_uart_dev, parent);
+    uart = rt_container_of(serial, struct avr32uc3_uart_dev, parent);
 
     switch (cmd)
     {
@@ -229,21 +230,21 @@ static rt_err_t avr32uc3b_uart_control(struct rt_serial_device *serial, int cmd,
     return RT_EOK;
 }
 
-static int avr32uc3b_uart_putc(struct rt_serial_device *serial, char c)
+static int avr32uc3_uart_putc(struct rt_serial_device *serial, char c)
 {
-    struct avr32uc3b_uart_dev *uart = RT_NULL;
+    struct avr32uc3_uart_dev *uart = RT_NULL;
     RT_ASSERT(serial != RT_NULL);
-    uart = rt_container_of(serial, struct avr32uc3b_uart_dev, parent);
+    uart = rt_container_of(serial, struct avr32uc3_uart_dev, parent);
     usart_putchar(uart->instance, c);
 
     return 1;
 }
 
-static int avr32uc3b_uart_getc(struct rt_serial_device *serial)
+static int avr32uc3_uart_getc(struct rt_serial_device *serial)
 {
-    struct avr32uc3b_uart_dev *uart = RT_NULL;
+    struct avr32uc3_uart_dev *uart = RT_NULL;
     RT_ASSERT(serial != RT_NULL);
-    uart = rt_container_of(serial, struct avr32uc3b_uart_dev, parent);
+    uart = rt_container_of(serial, struct avr32uc3_uart_dev, parent);
 
     int ch;
     if (usart_read_char(uart->instance, &ch) == USART_SUCCESS)
@@ -254,10 +255,10 @@ static int avr32uc3b_uart_getc(struct rt_serial_device *serial)
 
 const static struct rt_uart_ops _uart_ops =
 {
-    avr32uc3b_uart_configure,
-    avr32uc3b_uart_control,
-    avr32uc3b_uart_putc,
-    avr32uc3b_uart_getc,
+    avr32uc3_uart_configure,
+    avr32uc3_uart_control,
+    avr32uc3_uart_putc,
+    avr32uc3_uart_getc,
     RT_NULL,
 };
 

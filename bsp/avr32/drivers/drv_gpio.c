@@ -6,18 +6,20 @@
  * Change Logs:
  * Date           Author              Notes
  * 2023-10-25     Raman Gopalan       Initial version
+ * 2023-11-06     Raman Gopalan       Abstraction for GPIO driver boilerplate
  */
 
 #include <rtthread.h>
 #include <rtdevice.h>
 #include "gpio.h"
 #include <rtdbg.h>
+#include "drv_gpio.h"
 
 #ifdef RT_USING_PIN
 
-static void at32uc3b0_pin_mode(struct rt_device *dev, rt_base_t pin, rt_uint8_t mode)
+static void at32uc3_pin_mode(struct rt_device *dev, rt_base_t pin, rt_uint8_t mode)
 {
-    RT_ASSERT((AVR32_PIN_PA00 <= pin) && (pin <= AVR32_PIN_PX11));
+    RT_ASSERT((AVR32_BSP_GPIO_PMIN <= pin) && (pin <= AVR32_BSP_GPIO_PMAX));
     /* Pointer to the register set for this GPIO port */
     volatile avr32_gpio_port_t *gpio_regs = &AVR32_GPIO.port[pin >> 5];
 
@@ -36,7 +38,7 @@ static void at32uc3b0_pin_mode(struct rt_device *dev, rt_base_t pin, rt_uint8_t 
         gpio_regs->puers = 1 << (pin & 0x1F);
         break;
     case PIN_MODE_INPUT_PULLDOWN:
-	LOG_W("Pull-down enable register not defined for AT32UC3B.");
+	LOG_W("Pull-down enable register not defined for this SOC.");
         break;
     case PIN_MODE_OUTPUT_OD:
 	LOG_W("The open-drain mode is not synthesized on the current AVR32 products.");
@@ -44,9 +46,9 @@ static void at32uc3b0_pin_mode(struct rt_device *dev, rt_base_t pin, rt_uint8_t 
     }
 }
 
-static void at32uc3b0_pin_write(struct rt_device *dev, rt_base_t pin, rt_uint8_t value)
+static void at32uc3_pin_write(struct rt_device *dev, rt_base_t pin, rt_uint8_t value)
 {
-    RT_ASSERT((AVR32_PIN_PA00 <= pin) && (pin <= AVR32_PIN_PX11));
+    RT_ASSERT((AVR32_BSP_GPIO_PMIN <= pin) && (pin <= AVR32_BSP_GPIO_PMAX));
     if (value == PIN_HIGH)
     {
         gpio_set_gpio_pin(pin);
@@ -57,17 +59,17 @@ static void at32uc3b0_pin_write(struct rt_device *dev, rt_base_t pin, rt_uint8_t
     }
 }
 
-static rt_int8_t at32uc3b0_pin_read(struct rt_device *device, rt_base_t pin)
+static rt_int8_t at32uc3_pin_read(struct rt_device *device, rt_base_t pin)
 {
-    RT_ASSERT((AVR32_PIN_PA00 <= pin) && (pin <= AVR32_PIN_PX11));
+    RT_ASSERT((AVR32_BSP_GPIO_PMIN <= pin) && (pin <= AVR32_BSP_GPIO_PMAX));
     return (gpio_get_pin_value(pin) ? PIN_HIGH : PIN_LOW);
 }
 
 static const struct rt_pin_ops ops =
 {
-    at32uc3b0_pin_mode,
-    at32uc3b0_pin_write,
-    at32uc3b0_pin_read,
+    at32uc3_pin_mode,
+    at32uc3_pin_write,
+    at32uc3_pin_read,
     RT_NULL,
     RT_NULL,
     RT_NULL,
