@@ -175,6 +175,8 @@ Linux 下可以使用先前下载的 esptool 进行烧录
   esptool.py -b 115200 --before default_reset --after hard_reset write_flash --flash_mode dio --flash_size detect --flash_freq 80m 0x0 path/to/your/bootloader.bin 0x08000 path/to/your/partition-table.bin 0x010000 path/to/your/rtthread.bin
 ```
 
+当多个 ESP 设备连接时，可以使用 -p 指定某个设备
+
 如果失败，可考虑是否是因为 user 权限不够，无法直接访问串口。
 或参考乐鑫[官方文档](https://docs.espressif.com/projects/esptool/en/latest/esp32/troubleshooting.html)进行查错。
 

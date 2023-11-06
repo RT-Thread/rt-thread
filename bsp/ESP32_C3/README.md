@@ -166,6 +166,7 @@ In Linux, we can use the esptool, which we have downloaded serval steps
 ```sh
 esptool.py -b 115200 --before default_reset --after hard_reset write_flash --flash_mode dio --flash_size detect --flash_freq 80m 0x0 path/to/your/bootloader.bin 0x08000 path/to/your/partition-table.bin 0x010000 path/to/your/rtthread.bin
 ```
+if you have more than one ESP device connected, you can use -p to choose which device to use.
 
 if the command failed, check whether user ave enough privilige to access the serials. 
 
