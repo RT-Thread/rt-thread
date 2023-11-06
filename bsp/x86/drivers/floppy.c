@@ -6,6 +6,7 @@
  * Change Logs:
  */
 #include <rtthread.h>
+#include <rtdevice.h>
 #include <rthw.h>
 
 #include <bsp.h>
