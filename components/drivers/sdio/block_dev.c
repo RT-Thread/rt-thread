@@ -614,7 +614,7 @@ static int rt_mmcsd_fops_poll(struct dfs_file *file, struct rt_pollreq *req)
     return mask;
 }
 
-int rt_mmcsd_fops_flush(struct dfs_file *file)
+static int rt_mmcsd_fops_flush(struct dfs_file *file)
 {
     return RT_EOK;
 }
