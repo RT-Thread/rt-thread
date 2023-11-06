@@ -1633,7 +1633,7 @@ static void cmd_backtrace(int argc, char** argv)
         }
     }
 
-    pid = strtol(argv[1], &end_ptr, 0);
+    pid = strtoul(argv[1], &end_ptr, 0);
     if (end_ptr == argv[1])
     {
         LOG_RAW("Invalid input: %s\n", argv[1]);
