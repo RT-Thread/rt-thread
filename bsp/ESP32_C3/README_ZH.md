@@ -143,11 +143,15 @@ Type "apropos word" to search for commands related to "word".
 
 ## 下载烧录
 
+Windows 下可以使用「乐鑫科技」提供的 flash 工具进行烧录
+
+Linux 下可以使用先前下载的 esptool 进行烧录
+
+### Windows
+
 1. 烧录工具下载
 
-    当前bsp测试使用`flash_download_tool_3.9.4`工具进行烧录无误。
-
-    烧录工具下载地址：[https://www.espressif.com.cn/sites/default/files/tools/flash_download_tool_3.9.4_0.zip](https://www.espressif.com.cn/sites/default/files/tools/flash_download_tool_3.9.4_0.zip)
+    当前bsp测试使用 [Flash Download Tools](https://www.espressif.com.cn/sites/default/files/tools/flash_download_tool_3.9.4_0.zip) 工具进行烧录无误。
 
 2. 烧录工具配置
 
@@ -164,6 +168,15 @@ Type "apropos word" to search for commands related to "word".
     其中`bootloader.bin`和`partition-table.bin`可在`bsp/ESP32_C3/builtin_imgs`文件夹下找到，配置完成后截图如下，之后点击`START`即可下载。
 
     ![flash_download_tools](images/flash_download_tools.png)
+
+### Linux 下进行烧录
+
+```sh
+  esptool.py -b 115200 --before default_reset --after hard_reset write_flash --flash_mode dio --flash_size detect --flash_freq 80m 0x0 path/to/your/bootloader.bin 0x08000 path/to/your/partition-table.bin 0x010000 path/to/your/rtthread.bin
+```
+
+如果失败，可考虑是否是因为 user 权限不够，无法直接访问串口。
+或参考乐鑫[官方文档](https://docs.espressif.com/projects/esptool/en/latest/esp32/troubleshooting.html)进行查错。
 
 ## 注意事项
 

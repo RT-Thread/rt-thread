@@ -135,11 +135,15 @@ Type "apropos word" to search for commands related to "word".
 
 ## Download and program
 
+In Windows, we can use *flash* supported by ESPRESSIF.
+
+In Linux, we can use the esptool, which we have downloaded serval steps
+
+### Windows
+
 1. Programming tool download
 
-     The current bsp test uses the `flash_download_tool_3.9.4` tool to program without errors.
-
-     Programming tool download address: [https://www.espressif.com.cn/sites/default/files/tools/flash_download_tool_3.9.4_0.zip](https://www.espressif.com.cn/sites/default/files/tools/flash_download_tool_3.9.4_0.zip)
+     The current bsp test uses the [Flash Download Tools](https://www.espressif.com.cn/sites/default/files/tools/flash_download_tool_3.9.4_0.zip) tool to program without errors.
 
 2. Programming tool configuration
 
@@ -156,6 +160,16 @@ Type "apropos word" to search for commands related to "word".
      Among them, `bootloader.bin` and `partition-table.bin` can be found in the `bsp/ESP32_C3/builtin_imgs` folder. After the configuration is completed, the screenshot is as follows, and then click `START` to download.
 
      ![flash_download_tools](images/flash_download_tools.png)
+
+### Linux 下进行烧录
+
+```sh
+esptool.py -b 115200 --before default_reset --after hard_reset write_flash --flash_mode dio --flash_size detect --flash_freq 80m 0x0 path/to/your/bootloader.bin 0x08000 path/to/your/partition-table.bin 0x010000 path/to/your/rtthread.bin
+```
+
+if the command failed, check whether user ave enough privilige to access the serials. 
+
+or we can check ESPRESSIF's [Troubleshooting](https://docs.espressif.com/projects/esptool/en/latest/esp32/troubleshooting.html) to get more help.
 
 ## Notes
 
