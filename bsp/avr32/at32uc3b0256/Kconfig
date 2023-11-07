@@ -8,7 +8,7 @@ config BSP_DIR
 config RTT_DIR
     string
     option env="RTT_ROOT"
-    default "../.."
+    default "../../.."
 
 # you can change the RTT_ROOT default "../.." to your rtthread_root,
 # example : default "F:/git_repositories/rt-thread"
@@ -25,6 +25,20 @@ config ENV_DIR
 
 source "$RTT_DIR/Kconfig"
 source "$PKGS_DIR/Kconfig"
+
+menu "Hardware Drivers Config"
+
+config SOC_AVR32
+    bool
+    default y
+
+choice
+    prompt "Select BSP board"
+    default BSP_BOARD_MCUZONE_AVR32DEV1
+
+    config BSP_BOARD_MCUZONE_AVR32DEV1
+        bool "MCUZone AVR32DEV1 Kit"
+endchoice
 
 menu "On-chip Peripheral Drivers"
 
@@ -118,4 +132,5 @@ menu "On-chip Peripheral Drivers"
                     default 0 if BSP_UART1_RX_PIN_24
             endif
         endif
+endmenu
 endmenu

@@ -17,7 +17,7 @@
 #define RT_HOOK_USING_FUNC_PTR
 #define RT_USING_IDLE_HOOK
 #define RT_IDLE_HOOK_LIST_SIZE 4
-#define IDLE_THREAD_STACK_SIZE 256
+#define IDLE_THREAD_STACK_SIZE 512
 #define RT_USING_TIMER_SOFT
 #define RT_TIMER_THREAD_PRIO 4
 #define RT_TIMER_THREAD_STACK_SIZE 512
@@ -26,7 +26,6 @@
 
 #define RT_USING_DEBUG
 #define RT_DEBUGING_COLOR
-#define RT_DEBUGING_CONTEXT
 
 /* Inter-Thread communication */
 
@@ -108,6 +107,9 @@
 
 
 /* Memory management */
+
+
+/* Memory protection */
 
 
 /* RT-Thread Utestcases */
@@ -225,6 +227,11 @@
 
 
 /* Uncategorized */
+
+/* Hardware Drivers Config */
+
+#define SOC_AVR32
+#define BSP_BOARD_MCUZONE_AVR32DEV1
 
 /* On-chip Peripheral Drivers */
 
