@@ -146,7 +146,7 @@ int ash_syslog(int type, char *buf, int len)
 
         case SYSLOG_ACTION_READ_ALL:
             if (!buf || len < 0)
-			    return -EINVAL;
+                return -EINVAL;
             if (!len)
                 return 0;
             ret = get_dmesg_buf(buf, len);
