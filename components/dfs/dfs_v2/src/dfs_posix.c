@@ -124,7 +124,7 @@ int openat(int dirfd, const char *path, int flag, ...)
 
     return fd;
 }
-#ifdef RT_USING_DFS_V2
+
 #include "ulog_def.h"
 struct ulog_backend* get_ulog_backend(void);
 int get_dmesg_buf(char *buf, int len);
@@ -181,7 +181,6 @@ int ash_syslog(int type, char *buf, int len)
     }
     return ret;
 }
-#endif
 
 int utimensat(int __fd, const char *__path, const struct timespec __times[2], int __flags)
 {
