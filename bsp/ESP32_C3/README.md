@@ -161,7 +161,7 @@ In Linux, we can use the esptool, which we have downloaded serval steps
 
      ![flash_download_tools](images/flash_download_tools.png)
 
-### Linux 下进行烧录
+### Linux
 
 ```sh
 esptool.py -b 115200 --before default_reset --after hard_reset write_flash --flash_mode dio --flash_size detect --flash_freq 80m 0x0 path/to/your/bootloader.bin 0x08000 path/to/your/partition-table.bin 0x010000 path/to/your/rtthread.bin
