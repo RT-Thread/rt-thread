@@ -231,10 +231,136 @@ menu "On-chip Peripheral Drivers"
             config BSP_USING_SPI0
                 bool "Enable SPI0"
                 default n
+            if BSP_USING_SPI0
+                choice
+                    prompt "spi0 tx pin number (GP)"
+                    depends on BSP_USING_SPI0
+                    default BSP_SPI0_TX_PIN_3
+                    config BSP_SPI0_TX_PIN_3
+                        bool "3"
+                    config BSP_SPI0_TX_PIN_7
+                        bool "7"
+                    config BSP_SPI0_TX_PIN_19
+                        bool "19"            
+                endchoice
+                config BSP_SPI0_TX_PIN
+                    int 
+                    default 3 if BSP_SPI0_TX_PIN_3
+                    default 7 if BSP_SPI0_TX_PIN_7
+                    default 19 if BSP_SPI0_TX_PIN_19
 
+                choice
+                    prompt "spi0 rx pin number (GP)"
+                    depends on BSP_USING_SPI0
+                    default BSP_SPI0_RX_PIN_4
+                    config BSP_SPI0_RX_PIN_0
+                        bool "0"
+                    config BSP_SPI0_RX_PIN_4
+                        bool "4"
+                    config BSP_SPI0_RX_PIN_16
+                        bool "16"            
+                endchoice
+                config BSP_SPI0_RX_PIN
+                    int 
+                    default 0 if BSP_SPI0_RX_PIN_0
+                    default 4 if BSP_SPI0_RX_PIN_4
+                    default 16 if BSP_SPI0_RX_PIN_16
+                
+                choice
+                    prompt "spi0 sck pin number (GP)"
+                    depends on BSP_USING_SPI0
+                    default BSP_SPI0_SCK_PIN_2
+                    config BSP_SPI0_SCK_PIN_2
+                        bool "2"
+                    config BSP_SPI0_SCK_PIN_6
+                        bool "6"
+                    config BSP_SPI0_SCK_PIN_8
+                        bool "8"            
+                endchoice
+                config BSP_SPI0_SCK_PIN
+                    int 
+                    default 2 if BSP_SPI0_SCK_PIN_2
+                    default 6 if BSP_SPI0_SCK_PIN_6
+                    default 8 if BSP_SPI0_SCK_PIN_8
+                
+                choice
+                    prompt "spi0 cs pin number (GP)"
+                    depends on BSP_USING_SPI0
+                    default BSP_SPI0_CS_PIN_5
+                    config BSP_SPI0_CS_PIN_1
+                        bool "1"
+                    config BSP_SPI0_CS_PIN_5
+                        bool "5"
+                    config BSP_SPI0_CS_PIN_17
+                        bool "17"
+                endchoice
+                config BSP_SPI0_CS_PIN
+                    int 
+                    default 1 if BSP_SPI0_CS_PIN_1
+                    default 5 if BSP_SPI0_CS_PIN_5
+                    default 17 if BSP_SPI0_CS_PIN_17
+            endif
+                    
             config BSP_USING_SPI1
                 bool "Enable SPI1"
                 default n
+            if BSP_USING_SPI1
+                choice
+                    prompt "spi1 tx pin number (GP)"
+                    depends on BSP_USING_SPI1
+                    default BSP_SPI1_TX_PIN_11
+                    config BSP_SPI1_TX_PIN_11
+                        bool "11"
+                    config BSP_SPI1_TX_PIN_15
+                        bool "15"
+                endchoice
+                config BSP_SPI1_TX_PIN
+                    int
+                    default 11 if BSP_SPI1_TX_PIN_11
+                    default 15 if BSP_SPI1_TX_PIN_15
+
+                choice
+                    prompt "spi1 rx pin number (GP)"
+                    depends on BSP_USING_SPI1
+                    default BSP_SPI1_RX_PIN_12
+                    config BSP_SPI1_RX_PIN_8
+                        bool "8"
+                    config BSP_SPI1_RX_PIN_12
+                        bool "12"
+                endchoice
+                config BSP_SPI1_RX_PIN
+                    int
+                    default 8 if BSP_SPI1_RX_PIN_8
+                    default 12 if BSP_SPI1_RX_PIN_12
+                
+                choice
+                    prompt "spi1 sck pin number (GP)"
+                    depends on BSP_USING_SPI0
+                    default BSP_SPI1_SCK_PIN_10
+                    config BSP_SPI1_SCK_PIN_10
+                        bool "10"
+                    config BSP_SPI1_SCK_PIN_14
+                        bool "14"
+                endchoice
+                config BSP_SPI1_SCK_PIN
+                    int
+                    default 10 if BSP_SPI1_SCK_PIN_10
+                    default 14 if BSP_SPI1_SCK_PIN_14
+                
+                choice
+                    prompt "spi1 cs pin number (GP)"
+                    depends on BSP_USING_SPI0
+                    default BSP_SPI1_CS_PIN_13
+                    config BSP_SPI1_CS_PIN_9
+                        bool "9"
+                    config BSP_SPI1_CS_PIN_13
+                        bool "13"
+                endchoice
+                config BSP_SPI1_CS_PIN
+                    int
+                    default 9 if BSP_SPI1_CS_PIN_9
+                    default 13 if BSP_SPI1_CS_PIN_13
+            endif
         endif
 
     menuconfig BSP_USING_PWM

@@ -1308,9 +1308,17 @@ static void _resr_cleanup(struct rt_lwp *lwp)
         /** @note safe since the slist node is release */
         LWP_UNLOCK(lwp);
         LWP_LOCK(child);
-        child->sibling = RT_NULL;
-        /* info: this may cause an orphan lwp */
-        child->parent = RT_NULL;
+        if (child->terminated)
+        {
+            lwp_pid_put(child);
+        }
+        else
+        {
+            child->sibling = RT_NULL;
+            /* info: this may cause an orphan lwp */
+            child->parent = RT_NULL;
+        }
+
         LWP_UNLOCK(child);
         lwp_ref_dec(child);
         lwp_ref_dec(lwp);
