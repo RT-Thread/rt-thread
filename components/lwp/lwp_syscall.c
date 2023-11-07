@@ -6582,6 +6582,35 @@ sysret_t sys_setitimer(int which, const struct itimerspec *restrict new, struct 
     return sys_timer_settime(timerid,0,new,old);
 }
 
+int ash_syslog(int type, char *buf, int len);
+sysret_t sys_syslog(int type, char *buf, int len)
+{
+#ifdef RT_USING_DFS_V2
+    char *tmp;
+    int ret = -1;
+
+    if (!lwp_user_accessable((void *)buf, len))
+    {
+        return RT_NULL;
+    }
+
+    tmp = (char *)rt_malloc(len);
+    if (!tmp)
+    {
+        return RT_NULL;
+    }
+
+    ret = ash_syslog(type, tmp, len);
+
+    lwp_put_to_user(buf, tmp, len);
+    rt_free(tmp);
+
+    return ret;
+#else
+    return 0;
+#endif
+}
+
 const static struct rt_syscall_def func_table[] =
 {
     SYSCALL_SIGN(sys_exit),            /* 01 */
@@ -6826,6 +6855,7 @@ const static struct rt_syscall_def func_table[] =
     SYSCALL_SIGN(sys_ftruncate),
     SYSCALL_SIGN(sys_setitimer),
     SYSCALL_SIGN(sys_utimensat),
+    SYSCALL_SIGN(sys_syslog),
 };
 
 const void *lwp_get_sys_api(rt_uint32_t number)

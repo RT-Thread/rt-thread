@@ -47,6 +47,19 @@
 #include <console.h>
 #endif
 
+rt_weak struct ulog_backend* get_ulog_backend(void)
+{
+    return RT_NULL;
+}
+rt_weak int get_dmesg_buf(char *buf, int len)
+{
+    return -1;
+}
+rt_weak void ulog_dele(void)
+{
+    return ;
+}
+
 /* use precision */
 #define RT_PRINTF_PRECISION
 #define RT_PRINTF_SPECIAL

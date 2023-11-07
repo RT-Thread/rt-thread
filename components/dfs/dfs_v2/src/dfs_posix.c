@@ -125,6 +125,63 @@ int openat(int dirfd, const char *path, int flag, ...)
     return fd;
 }
 
+#include "ulog_def.h"
+struct ulog_backend* get_ulog_backend(void);
+int get_dmesg_buf(char *buf, int len);
+void ulog_dele(void);
+#define SYSLOG_ACTION_READ_CLEAR 4
+#define SYSLOG_ACTION_READ_ALL 3
+#define SYSLOG_ACTION_CONSOLE_LEVEL 8
+#define SYSLOG_ACTION_SIZE_BUFFER 10
+
+int ash_syslog(int type, char *buf, int len)
+{
+    rt_bool_t clear = RT_FALSE;
+    int ret = -1;
+
+    switch (type)
+    {
+        case SYSLOG_ACTION_READ_CLEAR:
+            clear = RT_TRUE;
+
+        case SYSLOG_ACTION_READ_ALL:
+            if (!buf || len < 0)
+			    return -EINVAL;
+            if (!len)
+                return 0;
+            ret = get_dmesg_buf(buf, len);
+
+            if (clear == RT_TRUE)
+            {
+                ulog_dele();
+            }
+            break;
+
+        case SYSLOG_ACTION_CONSOLE_LEVEL:
+            if (len < 1)
+                return -EINVAL;
+            struct ulog_backend *ulog_buffer_tmp = get_ulog_backend();
+            if(!ulog_buffer_tmp)
+            {
+                return -1;
+            }
+            else
+            {
+                ulog_buffer_tmp->out_level = len;
+                ret = 0;
+            }
+            break;
+
+        case SYSLOG_ACTION_SIZE_BUFFER:
+            ret = ULOG_ASYNC_OUTPUT_BUF_SIZE;
+
+        default:
+            ret = -EINVAL;
+            break;
+    }
+    return ret;
+}
+
 int utimensat(int __fd, const char *__path, const struct timespec __times[2], int __flags)
 {
     int ret;
