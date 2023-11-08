@@ -32,7 +32,6 @@
 | UART              |     支持     | UART1 打印输出 |
 | GPIO              |     支持     | GPIO 引脚电平输入输出，中断 |
 | XMAC              |     支持     | XMAC 网卡初始化和运行 |
-| SDMMC             |     支持     | SD0/SD1 读写 SD 卡或 eMMC 颗粒 |
 | PWM               |     支持     | PWM 脉宽调制电压输出        |
 | I2C               |     支持     | I2C设备通信 |
 
