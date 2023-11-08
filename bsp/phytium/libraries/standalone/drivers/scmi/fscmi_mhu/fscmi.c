@@ -212,7 +212,7 @@ FError FScmiProtocolTxPrepare(FScmi *instance_p, u8 pro_id)
     struct FScmiSharedMem  *mem = (struct FScmiSharedMem *) instance_p->config.share_mem;
     struct FScmiTransferInfo *trans_info;
     u32 index_id = 0;
-    u32 time_out;
+    u32 time_out = 0;
     FError ret;
     static int is_init = 0;
     ret = FScmiProtocolMapping(pro_id, &index_id);
