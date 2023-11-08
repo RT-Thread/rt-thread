@@ -63,6 +63,8 @@ rt_err_t rt_raw_channel_recv(rt_channel_t ch, rt_channel_msg_t data);
 rt_err_t rt_raw_channel_recv_timeout(rt_channel_t ch, rt_channel_msg_t data, rt_int32_t time);
 rt_err_t rt_raw_channel_peek(rt_channel_t ch, rt_channel_msg_t data);
 
+rt_err_t rt_channel_component_init(void);
+
 #ifdef __cplusplus
 }
 #endif
