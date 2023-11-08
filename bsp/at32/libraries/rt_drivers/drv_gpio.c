@@ -8,6 +8,7 @@
  * 2022-05-16     shelton       first version
  * 2023-01-31     shelton       add support f421/f425
  * 2023-04-08     shelton       add support f423
+ * 2023-10-18     shelton       add support f402/f405
  */
 
 #include "drv_common.h"
@@ -21,7 +22,8 @@
 
 #if defined (SOC_SERIES_AT32F435) || defined (SOC_SERIES_AT32F437) || \
     defined (SOC_SERIES_AT32F421) || defined (SOC_SERIES_AT32F425) || \
-    defined (SOC_SERIES_AT32F423)
+    defined (SOC_SERIES_AT32F423) || defined (SOC_SERIES_AT32F402) || \
+    defined (SOC_SERIES_AT32F405)
 #define PIN_ATPORTSOURCE(pin)           (scfg_port_source_type)((uint8_t)(((pin) & 0xF0u) >> 4))
 #define PIN_ATPINSOURCE(pin)            (scfg_pins_source_type)((uint8_t)((pin) & 0xFu))
 #else
@@ -426,7 +428,8 @@ static rt_err_t at32_pin_irq_enable(struct rt_device *device, rt_base_t pin,
 
 #if defined (SOC_SERIES_AT32F435) || defined (SOC_SERIES_AT32F437) || \
     defined (SOC_SERIES_AT32F421) || defined (SOC_SERIES_AT32F425) || \
-    defined (SOC_SERIES_AT32F423)
+    defined (SOC_SERIES_AT32F423) || defined (SOC_SERIES_AT32F402) || \
+    defined (SOC_SERIES_AT32F405)
         scfg_exint_line_config(PIN_ATPORTSOURCE(pin), PIN_ATPINSOURCE(pin));
 #else
         gpio_exint_line_config(PIN_ATPORTSOURCE(pin), PIN_ATPINSOURCE(pin));
@@ -710,7 +713,8 @@ int rt_hw_pin_init(void)
 
 #if defined (SOC_SERIES_AT32F435) || defined (SOC_SERIES_AT32F437) || \
     defined (SOC_SERIES_AT32F421) || defined (SOC_SERIES_AT32F425) || \
-    defined (SOC_SERIES_AT32F423)
+    defined (SOC_SERIES_AT32F423) || defined (SOC_SERIES_AT32F402) || \
+    defined (SOC_SERIES_AT32F405)
     crm_periph_clock_enable(CRM_SCFG_PERIPH_CLOCK, TRUE);
 #else
     crm_periph_clock_enable(CRM_IOMUX_PERIPH_CLOCK, TRUE);
