@@ -236,7 +236,7 @@ extern "C"
 #define FIOCTRL_QSPI_CSN3_PAD             (FIOCtrlPinIndex)FIOCTRL_INDEX(0x214, 4)  /* spi1_csn2: func 1 */
 
 #define FIOCTRL_LPC_LAD0_PAD              (FIOCtrlPinIndex)FIOCTRL_INDEX(0x218, 12) /* gpio_1_a_3: func 1 */
-#define FIOCTRL_LPC_LAD1_PAD              (FIOCtrlPinIndex)FIOCTRL_INDEX(0x218, 8)  /* gpio_1_a_4: func 1 */  
+#define FIOCTRL_LPC_LAD1_PAD              (FIOCtrlPinIndex)FIOCTRL_INDEX(0x218, 8)  /* gpio_1_a_4: func 1 */
 
 /* SPI */
 #define FSPI0_BASE_ADDR 0x2800c000

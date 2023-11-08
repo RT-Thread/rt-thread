@@ -251,9 +251,9 @@ s32 FNandCorrectEcc(uintptr_t base_address, u32 ecc_step_size, u32 hw_ecc_steps,
     for (i = 0; i < hw_ecc_steps; i++)
     {
         for (j = 0; j < 4; j++)
-        {        
+        {
             value = FNAND_READREG(base_address, 0xB8 + 0x10 * i + 4 * j);
-         
+
             tmp = value & 0xFFFF;
             if (tmp && (tmp <= 4096))
             {

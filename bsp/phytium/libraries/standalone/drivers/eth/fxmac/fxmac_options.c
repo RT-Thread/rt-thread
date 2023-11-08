@@ -273,7 +273,7 @@ FError FXmacSetOptions(FXmac *instance_p, u32 options, u32 queue_num)
             FXMAC_WRITEREG32(config_p->base_address,
                              FXMAC_JUMBOMAXLEN_OFFSET, FXMAC_MAX_FRAME_SIZE_JUMBO);
             FXMAC_WRITEREG32(config_p->base_address,
-                            FXMAC_TXQSEGALLOC_QLOWER_OFFSET,FXMAC_TXQSEGALLOC_QLOWER_MASK);
+                             FXMAC_TXQSEGALLOC_QLOWER_OFFSET, FXMAC_TXQSEGALLOC_QLOWER_MASK);
             if (queue_num == 0)
             {
                 u32 rx_buf_size = 0;
@@ -459,7 +459,7 @@ FError FXmacClearOptions(FXmac *instance_p, u32 options, u32 queue_num)
         {
             reg_new_net_cfg &= (u32)(~FXMAC_NWCFG_UCASTHASHEN_MASK);
         }
-        
+
         /* Disallow multicast address filtering */
         if ((options & FXMAC_MULTICAST_OPTION) != 0x00000000U)
         {
@@ -484,7 +484,7 @@ FError FXmacClearOptions(FXmac *instance_p, u32 options, u32 queue_num)
                                   FXMAC_DMACR_OFFSET);
             reg &= ~FXMAC_DMACR_RXBUF_MASK;
             FXMAC_WRITEREG32(config_p->base_address,
-                            FXMAC_TXQSEGALLOC_QLOWER_OFFSET,FXMAC_TXQSEGALLOC_QLOWER_CLEAN_MASK);
+                             FXMAC_TXQSEGALLOC_QLOWER_OFFSET, FXMAC_TXQSEGALLOC_QLOWER_CLEAN_MASK);
 
             if (queue_num == 0)
             {

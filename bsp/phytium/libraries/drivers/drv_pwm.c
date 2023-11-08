@@ -98,7 +98,7 @@ static rt_err_t drv_pwm_enable(struct phytium_pwm *pwm_dev, struct rt_pwm_config
     RT_ASSERT(pwm_dev);
     RT_ASSERT(configuration);
     u32 channel = configuration->channel;
-    
+
     if (enable_pwm == RT_TRUE)
     {
         FPwmEnable(&pwm_dev->pwm_handle, channel);
@@ -126,15 +126,15 @@ static rt_err_t drv_pwm_set(struct phytium_pwm *pwm_dev, int cmd, struct rt_pwm_
     switch (cmd)
     {
         case PWM_CMD_SET:
-        pwm_cfg.pwm_period = configuration->period / 1000;
-        pwm_cfg.pwm_pulse = configuration->pulse / 1000;
-        break;
+            pwm_cfg.pwm_period = configuration->period / 1000;
+            pwm_cfg.pwm_pulse = configuration->pulse / 1000;
+            break;
         case PWM_CMD_SET_PERIOD:
-        pwm_cfg.pwm_period = configuration->period / 1000;
-        break;
+            pwm_cfg.pwm_period = configuration->period / 1000;
+            break;
         case PWM_CMD_SET_PULSE:
-        pwm_cfg.pwm_pulse = configuration->pulse / 1000;
-        break;
+            pwm_cfg.pwm_pulse = configuration->pulse / 1000;
+            break;
     }
     /* Can be modified according to function */
     pwm_cfg.pwm_mode = FPWM_OUTPUT_COMPARE;
@@ -217,22 +217,22 @@ static rt_err_t _pwm_control(struct rt_device_pwm *device, int cmd, void *arg)
 
     switch (cmd)
     {
-    case PWM_CMD_ENABLE:
-        return drv_pwm_enable(pwm_dev, configuration, RT_TRUE);
-    case PWM_CMD_DISABLE:
-        return drv_pwm_enable(pwm_dev, configuration, RT_FALSE);
-    case PWM_CMD_SET:
-        return drv_pwm_set(pwm_dev, PWM_CMD_SET, configuration);
-    case PWM_CMD_GET:
-        return drv_pwm_get(pwm_dev, configuration);
-    case PWM_CMD_SET_DEAD_TIME:
-        return drv_pwm_set_dead_time(pwm_dev, configuration);
-    case PWM_CMD_SET_PERIOD:
-        return drv_pwm_set(pwm_dev, PWM_CMD_SET_PERIOD, configuration);
-    case PWM_CMD_SET_PULSE:
-        return drv_pwm_set(pwm_dev, PWM_CMD_SET_PULSE, configuration);
-    default:
-        return -RT_EINVAL;
+        case PWM_CMD_ENABLE:
+            return drv_pwm_enable(pwm_dev, configuration, RT_TRUE);
+        case PWM_CMD_DISABLE:
+            return drv_pwm_enable(pwm_dev, configuration, RT_FALSE);
+        case PWM_CMD_SET:
+            return drv_pwm_set(pwm_dev, PWM_CMD_SET, configuration);
+        case PWM_CMD_GET:
+            return drv_pwm_get(pwm_dev, configuration);
+        case PWM_CMD_SET_DEAD_TIME:
+            return drv_pwm_set_dead_time(pwm_dev, configuration);
+        case PWM_CMD_SET_PERIOD:
+            return drv_pwm_set(pwm_dev, PWM_CMD_SET_PERIOD, configuration);
+        case PWM_CMD_SET_PULSE:
+            return drv_pwm_set(pwm_dev, PWM_CMD_SET_PULSE, configuration);
+        default:
+            return -RT_EINVAL;
     }
 }
 
@@ -248,12 +248,12 @@ static rt_err_t pwm_controller_init(u32 pwm_id)
     if (ret != FPWM_SUCCESS)
     {
         LOG_E("Pwm config failed.\n");
-        
+
         return RT_ERROR;
     }
-    ret = rt_device_pwm_register(&pwm_dev[pwm_id].device, 
-                                  pwm_dev[pwm_id].name, 
-                                 &_pwm_ops, 
+    ret = rt_device_pwm_register(&pwm_dev[pwm_id].device,
+                                 pwm_dev[pwm_id].name,
+                                 &_pwm_ops,
                                  &pwm_dev[pwm_id]);
     RT_ASSERT(ret == RT_EOK);
 
@@ -299,4 +299,4 @@ int rt_hw_pwm_init(void)
     return 0;
 }
 INIT_DEVICE_EXPORT(rt_hw_pwm_init);
- #endif
+#endif

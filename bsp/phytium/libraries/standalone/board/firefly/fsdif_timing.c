@@ -42,9 +42,13 @@ static void FSdifSetSDIFDelay(u32 sdif_id)
     u32 reg;
 
     if (FSDIF0_ID == sdif_id)
+    {
         reg = FSDIF_0_SD_CCLK_OUT_DELAY;
+    }
     else
+    {
         reg = FSDIF_1_SD_CCLK_OUT_DELAY;
+    }
 
     FIOPadSetDelay(&iopad_ctrl, reg, FIOPAD_OUTPUT_DELAY, FIOPAD_DELAY_COARSE_TUNING, FIOPAD_DELAY_1);
     FIOPadSetDelay(&iopad_ctrl, reg, FIOPAD_OUTPUT_DELAY, FIOPAD_DELAY_FINE_TUNING, FIOPAD_DELAY_7);
@@ -61,9 +65,13 @@ static void FSdifUnsetSDIFDelay(u32 sdif_id)
     u32 reg;
 
     if (FSDIF0_ID == sdif_id)
+    {
         reg = FSDIF_0_SD_CCLK_OUT_DELAY;
+    }
     else
+    {
         reg = FSDIF_1_SD_CCLK_OUT_DELAY;
+    }
 
     FIOPadSetDelay(&iopad_ctrl, reg, FIOPAD_OUTPUT_DELAY, FIOPAD_DELAY_COARSE_TUNING, FIOPAD_DELAY_NONE);
     FIOPadSetDelay(&iopad_ctrl, reg, FIOPAD_OUTPUT_DELAY, FIOPAD_DELAY_FINE_TUNING, FIOPAD_DELAY_NONE);
@@ -71,7 +79,7 @@ static void FSdifUnsetSDIFDelay(u32 sdif_id)
 }
 
 /* default timing settings in e2000q demo board */
-static FSdifTiming mmc_sd_400khz = 
+static FSdifTiming mmc_sd_400khz =
 {
     .use_hold = 1,
     .clk_div = 0x7e7dfa,
@@ -80,7 +88,7 @@ static FSdifTiming mmc_sd_400khz =
     .pad_delay = FSdifUnsetSDIFDelay,
 };
 
-static FSdifTiming sd_25mhz = 
+static FSdifTiming sd_25mhz =
 {
     .use_hold = 1,
     .clk_div = 0x030204,
@@ -89,7 +97,7 @@ static FSdifTiming sd_25mhz =
     .pad_delay = FSdifUnsetSDIFDelay,
 };
 
-static FSdifTiming sd_50mhz = 
+static FSdifTiming sd_50mhz =
 {
     .use_hold = 0,
     .clk_div = 0x050408,
@@ -116,7 +124,7 @@ static FSdifTiming mmc_26mhz =
     .pad_delay = FSdifSetSDIFDelay,
 };
 
-static FSdifTiming mmc_52mhz = 
+static FSdifTiming mmc_52mhz =
 {
     .use_hold = 0,
     .clk_div = 0x030204,
@@ -127,7 +135,7 @@ static FSdifTiming mmc_52mhz =
 
 const FSdifTiming *FSdifGetTimingSetting(FSdifClkSpeed clock_freq, boolean non_removable)
 {
-    const FSdifTiming * tuning = NULL;
+    const FSdifTiming *tuning = NULL;
 
     if (clock_freq == FSDIF_CLK_SPEED_400KHZ)
     {
@@ -145,7 +153,7 @@ const FSdifTiming *FSdifGetTimingSetting(FSdifClkSpeed clock_freq, boolean non_r
             case FSDIF_CLK_SPEED_52_MHZ:
                 tuning = &mmc_52mhz;
                 break;
-            /* TODO: more clock freq for tuning */
+                /* TODO: more clock freq for tuning */
         }
     }
     else
@@ -162,7 +170,7 @@ const FSdifTiming *FSdifGetTimingSetting(FSdifClkSpeed clock_freq, boolean non_r
             case FSDIF_CLK_SPEED_100_MHZ:
                 tuning = &sd_100mhz;
                 break;
-            /* TODO: more clock freq for tuning */
+                /* TODO: more clock freq for tuning */
         }
     }
 

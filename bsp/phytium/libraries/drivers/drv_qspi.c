@@ -169,18 +169,18 @@ static FError QspiFlashWriteData(FQspiCtrl *pctrl, u8 command, uintptr addr, con
     /* set addr_sel region, FQSPI_ADDR_SEL_3 or FQSPI_ADDR_SEL_4 */
     switch (command)
     {
-    case FQSPI_FLASH_CMD_PP:
-    case FQSPI_FLASH_CMD_QPP:
-        pctrl->wr_cfg.wr_addr_sel = FQSPI_ADDR_SEL_3;
-        break;
-    case FQSPI_FLASH_CMD_4PP:
-    case FQSPI_FLASH_CMD_4QPP:
-        pctrl->wr_cfg.wr_addr_sel = FQSPI_ADDR_SEL_4;
-        break;
-    default:
-        ret |= FQSPI_NOT_SUPPORT;
-        return ret;
-        break;
+        case FQSPI_FLASH_CMD_PP:
+        case FQSPI_FLASH_CMD_QPP:
+            pctrl->wr_cfg.wr_addr_sel = FQSPI_ADDR_SEL_3;
+            break;
+        case FQSPI_FLASH_CMD_4PP:
+        case FQSPI_FLASH_CMD_4QPP:
+            pctrl->wr_cfg.wr_addr_sel = FQSPI_ADDR_SEL_4;
+            break;
+        default:
+            ret |= FQSPI_NOT_SUPPORT;
+            return ret;
+            break;
     }
 
     /*write wr_cfg to Write config register 0x08 */
@@ -373,7 +373,7 @@ static rt_ssize_t phytium_qspi_xfer(struct rt_spi_device *device, struct rt_spi_
 
     /*Distinguish the read mode according to different commands*/
     if (cmd == FQSPI_FLASH_CMD_READ || cmd == FQSPI_FLASH_CMD_4READ || cmd == FQSPI_FLASH_CMD_FAST_READ || cmd == FQSPI_FLASH_CMD_4FAST_READ ||
-            cmd == FQSPI_FLASH_CMD_DUAL_READ || cmd == FQSPI_FLASH_CMD_QIOR || cmd == FQSPI_FLASH_CMD_4QIOR)
+        cmd == FQSPI_FLASH_CMD_DUAL_READ || cmd == FQSPI_FLASH_CMD_QIOR || cmd == FQSPI_FLASH_CMD_4QIOR)
     {
         ret |= FQspiFlashReadDataConfig(&(qspi_bus->fqspi), cmd);
         if (FT_SUCCESS != ret)

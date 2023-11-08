@@ -71,7 +71,7 @@ rt_region_t init_page_region =
 void FIOMuxInit(void)
 {
     FIOPadCfgInitialize(&iopad_ctrl, FIOPadLookupConfig(FIOPAD0_ID));
- #ifdef RT_USING_SMART
+#ifdef RT_USING_SMART
     iopad_ctrl.config.base_address = (uintptr)rt_ioremap((void *)iopad_ctrl.config.base_address, 0x2000);
 #endif
 
@@ -235,7 +235,7 @@ void rt_hw_board_aarch32_init(void)
     rt_uint32_t redist_addr = 0;
 
     FEarlyUartProbe();
-    
+
     FIOMuxInit();
 
 #if defined(RT_USING_SMART)

@@ -14,7 +14,7 @@
  * FilePath: fpcie_common.h
  * Date: 2022-08-10 14:55:11
  * LastEditTime: 2022-08-18 08:57:24
- * Description: This file is for pcie common features definition. 
+ * Description: This file is for pcie common features definition.
  *
  * Modify History:
  *  Ver   Who        Date         Changes
@@ -74,9 +74,9 @@ extern "C"
 #define FPCIE_CCR_CAPBILITIES_PONINTERS_REGS   0xdU  /* Capabilities Pointers */
 
 
-#define FPCIE_CCR_INVALID_DATA              0xffffffffU  
+#define FPCIE_CCR_INVALID_DATA              0xffffffffU
 #define FPCIE_BAR_ADDR_MASK                 0xffffffffU
-#define FPCIE_DEVICE_NOT_PRESENT    0xffff  
+#define FPCIE_DEVICE_NOT_PRESENT    0xffff
 
 /* FPCIE_CCR_ID_REG */
 #define FPCIE_CCR_VENDOR_ID_MASK(ccr_id)     (u16)(ccr_id & 0xFFFFU) /* Mask for extracting Vendor ID from CCR ID */
@@ -101,7 +101,7 @@ extern "C"
 #define FPCIE_CCR_CMD_SERR_ENABLE_ENABLED        (1 << 8)      /* Device SERR Enable */
 #define FPCIE_CCR_CMD_FAST_BACK_TO_BACK_ENABLE_ENABLED  (1 << 9)   /* Device Fast Back-to-Back Enable */
 #define FPCIE_CCR_CMD_INTX_DISABLED               (1U << 10)
-#define FPCIE_CCR_STATUS_INTERRUT                 ((1U << 3) << 16)            
+#define FPCIE_CCR_STATUS_INTERRUT                 ((1U << 3) << 16)
 
 
 /* FPCIE_CCR_BAR_ADDR0_REGS */
@@ -145,7 +145,7 @@ extern "C"
 #define FPCIE_CCR_CLASS_CODE_MASK(ccr_value) (u8)((ccr_value>>24) & 0xFF)
 
 /* FPCIE_CCR_CAPBILITIES_PONINTERS_REGS */
-#define FPCIE_CCR_CAP_PONINTERS_MASK(cap_value) (u8)(cap_value & 0xff) 
+#define FPCIE_CCR_CAP_PONINTERS_MASK(cap_value) (u8)(cap_value & 0xff)
 
 /* FPCIE_CCR_INTX_LAT_GNT_REGS */
 #define FPCIE_CCR_INTX_PIN_MASK(ccr_value)  (u8)((ccr_value>>8) & 0xff)

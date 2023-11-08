@@ -147,18 +147,18 @@ static void drv_pin_mode(struct rt_device *device, rt_base_t pin, rt_uint8_t mod
 
     switch (mode)
     {
-    case PIN_MODE_OUTPUT:
-        pin_config->direction =  FGPIO_DIR_OUTPUT;
-        pin_config->en_irq = FALSE;
-        break;
-    case PIN_MODE_INPUT:
-        pin_config->direction =  FGPIO_DIR_INPUT;
-        pin_config->en_irq = TRUE;
-        pin_config->irq_type = FGPIO_IRQ_TYPE_EDGE_RISING;
-        break;
-    default:
-        rt_kprintf("Not support mode %d!!!\n", mode);
-        break;
+        case PIN_MODE_OUTPUT:
+            pin_config->direction =  FGPIO_DIR_OUTPUT;
+            pin_config->en_irq = FALSE;
+            break;
+        case PIN_MODE_INPUT:
+            pin_config->direction =  FGPIO_DIR_INPUT;
+            pin_config->en_irq = TRUE;
+            pin_config->irq_type = FGPIO_IRQ_TYPE_EDGE_RISING;
+            break;
+        default:
+            rt_kprintf("Not support mode %d!!!\n", mode);
+            break;
     }
 
     FGpioSetDirection(pin_instance, pin_config->direction);
@@ -249,21 +249,21 @@ rt_err_t drv_pin_attach_irq(struct rt_device *device, rt_base_t pin,
 
         switch (mode)
         {
-        case PIN_IRQ_MODE_RISING:
-            pin_config->irq_type = FGPIO_IRQ_TYPE_EDGE_RISING;
-            break;
-        case PIN_IRQ_MODE_FALLING:
-            pin_config->irq_type = FGPIO_IRQ_TYPE_EDGE_FALLING;
-            break;
-        case PIN_IRQ_MODE_LOW_LEVEL:
-            pin_config->irq_type = FGPIO_IRQ_TYPE_LEVEL_LOW;
-            break;
-        case PIN_IRQ_MODE_HIGH_LEVEL:
-            pin_config->irq_type = FGPIO_IRQ_TYPE_LEVEL_HIGH;
-            break;
-        default:
-            LOG_E("Do not spport irq_mode: %d\n", mode);
-            break;
+            case PIN_IRQ_MODE_RISING:
+                pin_config->irq_type = FGPIO_IRQ_TYPE_EDGE_RISING;
+                break;
+            case PIN_IRQ_MODE_FALLING:
+                pin_config->irq_type = FGPIO_IRQ_TYPE_EDGE_FALLING;
+                break;
+            case PIN_IRQ_MODE_LOW_LEVEL:
+                pin_config->irq_type = FGPIO_IRQ_TYPE_LEVEL_LOW;
+                break;
+            case PIN_IRQ_MODE_HIGH_LEVEL:
+                pin_config->irq_type = FGPIO_IRQ_TYPE_LEVEL_HIGH;
+                break;
+            default:
+                LOG_E("Do not spport irq_mode: %d\n", mode);
+                break;
         }
         FGpioSetInterruptType(pin_instance, pin_config->irq_type);
         FGpioRegisterInterruptCB(pin_instance, pin_config->irq_handler,
@@ -341,4 +341,4 @@ int ft_pin_init(void)
     return ret;
 }
 INIT_DEVICE_EXPORT(ft_pin_init);
-#endif 
+#endif

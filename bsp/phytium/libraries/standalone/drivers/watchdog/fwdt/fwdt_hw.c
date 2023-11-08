@@ -53,15 +53,15 @@
  */
 void FWdtDump(uintptr base_addr)
 {
-	FWDT_DEBUG("Off[0x%x]: = 0x%08x\r\n", base_addr + FWDT_GWDT_WRR, FWDT_READ_REG32(base_addr, FWDT_GWDT_WRR));
-	FWDT_DEBUG("Off[0x%x]: = 0x%08x\r\n", base_addr + FWDT_GWDT_W_IIR, FWDT_READ_REG32(base_addr, FWDT_GWDT_W_IIR));
+    FWDT_DEBUG("Off[0x%x]: = 0x%08x\r\n", base_addr + FWDT_GWDT_WRR, FWDT_READ_REG32(base_addr, FWDT_GWDT_WRR));
+    FWDT_DEBUG("Off[0x%x]: = 0x%08x\r\n", base_addr + FWDT_GWDT_W_IIR, FWDT_READ_REG32(base_addr, FWDT_GWDT_W_IIR));
 
     base_addr = FWDT_CONTROL_BASE_ADDR(base_addr);
-	FWDT_DEBUG("Off[0x%x]: = 0x%08x\r\n", base_addr + FWDT_GWDT_WCS, FWDT_READ_REG32(base_addr, FWDT_GWDT_WCS));
-	FWDT_DEBUG("Off[0x%x]: = 0x%08x\r\n", base_addr + FWDT_GWDT_WOR, FWDT_READ_REG32(base_addr, FWDT_GWDT_WOR));
-	FWDT_DEBUG("Off[0x%x]: = 0x%08x\r\n", base_addr + FWDT_GWDT_WCVL, FWDT_READ_REG32(base_addr, FWDT_GWDT_WCVL));
-	FWDT_DEBUG("Off[0x%x]: = 0x%08x\r\n", base_addr + FWDT_GWDT_WCVH, FWDT_READ_REG32(base_addr, FWDT_GWDT_WCVH));
+    FWDT_DEBUG("Off[0x%x]: = 0x%08x\r\n", base_addr + FWDT_GWDT_WCS, FWDT_READ_REG32(base_addr, FWDT_GWDT_WCS));
+    FWDT_DEBUG("Off[0x%x]: = 0x%08x\r\n", base_addr + FWDT_GWDT_WOR, FWDT_READ_REG32(base_addr, FWDT_GWDT_WOR));
+    FWDT_DEBUG("Off[0x%x]: = 0x%08x\r\n", base_addr + FWDT_GWDT_WCVL, FWDT_READ_REG32(base_addr, FWDT_GWDT_WCVL));
+    FWDT_DEBUG("Off[0x%x]: = 0x%08x\r\n", base_addr + FWDT_GWDT_WCVH, FWDT_READ_REG32(base_addr, FWDT_GWDT_WCVH));
 
-	FWDT_DEBUG("\r\n");
-   
+    FWDT_DEBUG("\r\n");
+
 }

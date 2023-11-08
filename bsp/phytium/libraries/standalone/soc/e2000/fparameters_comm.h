@@ -167,12 +167,12 @@ extern "C"
 #define FSCMI_MEM_RX_OFSET  0x1000
 #define FSCMI_SHR_MEM_SIZE  0x400
 
-#define FSCMI_MSG_SIZE			128	
-#define FSCMI_MAX_STR_SIZE		16
-#define FSCMI_MAX_NUM_SENSOR	16
-#define FSCMI_MAX_PROTOCOLS_IMP	16
+#define FSCMI_MSG_SIZE          128
+#define FSCMI_MAX_STR_SIZE      16
+#define FSCMI_MAX_NUM_SENSOR    16
+#define FSCMI_MAX_PROTOCOLS_IMP 16
 #define FSCMI_MAX_PERF_DOMAINS  3
-#define FSCMI_MAX_OPPS		    4
+#define FSCMI_MAX_OPPS          4
 
 /* UART */
 #define FUART_NUM 4U
@@ -230,7 +230,7 @@ extern "C"
 /* GPIO */
 #define FGPIO0_ID   0
 #define FGPIO1_ID   1
-#define FGPIO2_ID   2   
+#define FGPIO2_ID   2
 #define FGPIO3_ID   3
 #define FGPIO4_ID   4
 #define FGPIO5_ID   5
@@ -366,22 +366,22 @@ extern "C"
 #define FTIMER_TACHO_BASE_ADDR(n) (0x28054000U + 0x1000U * (n))
 
 
-#define FTACHO0_ID 0 
-#define FTACHO1_ID 1 
-#define FTACHO2_ID 2 
-#define FTACHO3_ID 3 
-#define FTACHO4_ID 4 
-#define FTACHO5_ID 5 
-#define FTACHO6_ID 6 
-#define FTACHO7_ID 7 
-#define FTACHO8_ID 8 
-#define FTACHO9_ID 9 
-#define FTACHO10_ID 10 
-#define FTACHO11_ID 11 
-#define FTACHO12_ID 12 
-#define FTACHO13_ID 13 
-#define FTACHO14_ID 14 
-#define FTACHO15_ID 15 
+#define FTACHO0_ID 0
+#define FTACHO1_ID 1
+#define FTACHO2_ID 2
+#define FTACHO3_ID 3
+#define FTACHO4_ID 4
+#define FTACHO5_ID 5
+#define FTACHO6_ID 6
+#define FTACHO7_ID 7
+#define FTACHO8_ID 8
+#define FTACHO9_ID 9
+#define FTACHO10_ID 10
+#define FTACHO11_ID 11
+#define FTACHO12_ID 12
+#define FTACHO13_ID 13
+#define FTACHO14_ID 14
+#define FTACHO15_ID 15
 #define FTACHO_NUM  16
 
 /* GDMA */
@@ -390,7 +390,7 @@ extern "C"
 #define FGDMA0_CHANNEL0_IRQ_NUM      266U
 #define FGDMA_NUM_OF_CHAN   16
 #define FGDMA_INSTANCE_NUM  1U
-#define FGDMA0_CAPACITY (1U<<0) 
+#define FGDMA0_CAPACITY (1U<<0)
 
 /* CANFD */
 #define FCAN_CLK_FREQ_HZ 200000000U
@@ -429,22 +429,22 @@ extern "C"
 #define FMIO_CLK_FREQ_HZ 50000000 /* 50MHz */
 
 
-#define  FMIO0_ID 0 
-#define  FMIO1_ID 1 
-#define  FMIO2_ID 2 
-#define  FMIO3_ID 3 
-#define  FMIO4_ID 4 
-#define  FMIO5_ID 5 
-#define  FMIO6_ID 6 
-#define  FMIO7_ID 7 
-#define  FMIO8_ID 8 
-#define  FMIO9_ID 9 
-#define  FMIO10_ID 10 
-#define  FMIO11_ID 11 
-#define  FMIO12_ID 12 
-#define  FMIO13_ID 13 
-#define  FMIO14_ID 14 
-#define  FMIO15_ID 15 
+#define  FMIO0_ID 0
+#define  FMIO1_ID 1
+#define  FMIO2_ID 2
+#define  FMIO3_ID 3
+#define  FMIO4_ID 4
+#define  FMIO5_ID 5
+#define  FMIO6_ID 6
+#define  FMIO7_ID 7
+#define  FMIO8_ID 8
+#define  FMIO9_ID 9
+#define  FMIO10_ID 10
+#define  FMIO11_ID 11
+#define  FMIO12_ID 12
+#define  FMIO13_ID 13
+#define  FMIO14_ID 14
+#define  FMIO15_ID 15
 #define  FMIO_NUM 16
 
 /*I2C0 -> PMBUS0
@@ -495,27 +495,27 @@ extern "C"
 #define FDDMA0_ID                0U
 #define FDDMA0_BASE_ADDR         0x28003000U
 #define FDDMA0_IRQ_NUM           107U
-#define FDDMA0_CAPACITY          (1U<<1) 
+#define FDDMA0_CAPACITY          (1U<<1)
 
 #define FDDMA1_ID                1U
 #define FDDMA1_BASE_ADDR         0x28004000U
 #define FDDMA1_IRQ_NUM           108U
-#define FDDMA1_CAPACITY          (1U<<1) 
+#define FDDMA1_CAPACITY          (1U<<1)
 
 #define FDDMA2_I2S_ID            2U
 #define FDDMA2_BASE_ADDR         0x28005000U
 #define FDDMA2_IRQ_NUM           109U
-#define FDDMA2_CAPACITY          (1U<<0) 
+#define FDDMA2_CAPACITY          (1U<<0)
 
 #define FDDMA3_DP0_I2S_ID        3U
 #define FDDMA3_BASE_ADDR         0x32008000U
 #define FDDMA3_IRQ_NUM           79U
-#define FDDMA3_CAPACITY          (1U<<0) 
+#define FDDMA3_CAPACITY          (1U<<0)
 
 #define FDDMA4_DP1_I2S_ID        4U
 #define FDDMA4_BASE_ADDR         0x3200A000U
 #define FDDMA4_IRQ_NUM           80U
-#define FDDMA4_CAPACITY          (1U<<0) 
+#define FDDMA4_CAPACITY          (1U<<0)
 
 #define FDDMA_INSTANCE_NUM       5U
 
@@ -667,7 +667,7 @@ typedef enum
 #define FI2S2_ID 2U
 #define FI2S_NUM 3U
 
-#define FI2S0_BASE_ADDR 0x28009000 
+#define FI2S0_BASE_ADDR 0x28009000
 #define FI2S0_IRQ_NUM 112
 
 #define FI2S1_BASE_ADDR 0x32009000 /*i2s for dp0*/

@@ -1,21 +1,21 @@
 /*
  * Copyright : (C) 2023 Phytium Information Technology, Inc.
  * All Rights Reserved.
- * 
+ *
  * This program is OPEN SOURCE software: you can redistribute it and/or modify it
  * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
  * either version 1.0 of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the Phytium Public License for more details.
- * 
- * 
+ *
+ *
  * FilePath: fpcie_c_dma.c
  * Created Date: 2023-08-02 09:39:56
  * Last Modified: 2023-08-06 09:53:25
  * Description:  This file is for pciec dma implementation
- * 
+ *
  * Modify History:
  *  Ver      Who        Date               Changes
  * -----  ----------  --------  ---------------------------------
@@ -43,15 +43,15 @@
  * @param {u32} channel_index - DMA channel index.
  * @return {u32} - The status of the DMA channel.
  */
-u32 FPcieCDmaStatusGet(FPcieC *instance_p,u32 channel_index)
+u32 FPcieCDmaStatusGet(FPcieC *instance_p, u32 channel_index)
 {
     uintptr_t dma_engine_base = 0 ;
     FASSERT(instance_p != NULL);
     dma_engine_base = instance_p->config.dma_engine_base ;
     FASSERT(dma_engine_base != (uintptr_t)NULL) ;
-    FASSERT(channel_index + 1 < instance_p->config.dma_max_num ) ;
-    
-    return FPCIEC_HW_READW(dma_engine_base,FPCIEC_DMA_CH_ENGINE_OFFSET(channel_index) + FPCIEC_DMA_STATUS_OFFSET)  ;
+    FASSERT(channel_index + 1 < instance_p->config.dma_max_num) ;
+
+    return FPCIEC_HW_READW(dma_engine_base, FPCIEC_DMA_CH_ENGINE_OFFSET(channel_index) + FPCIEC_DMA_STATUS_OFFSET)  ;
 }
 
 
@@ -65,7 +65,7 @@ u32 FPcieCDmaStatusGet(FPcieC *instance_p,u32 channel_index)
  * @param {u32} channel_index - DMA channel index.
  * @return {FError} - FT_SUCCESS if successful, error code otherwise.
  */
-FError FPcieCDmaStart(FPcieC *instance_p,u32 channel_index)
+FError FPcieCDmaStart(FPcieC *instance_p, u32 channel_index)
 {
     u32 reg ;
 
@@ -73,14 +73,14 @@ FError FPcieCDmaStart(FPcieC *instance_p,u32 channel_index)
     FASSERT(instance_p != NULL);
     dma_engine_base = instance_p->config.dma_engine_base ;
     FASSERT(dma_engine_base != (uintptr_t)NULL) ;
-    FASSERT(channel_index + 1 < instance_p->config.dma_max_num ) ;
+    FASSERT(channel_index + 1 < instance_p->config.dma_max_num) ;
 
     /* DMA_CONTROL */
 
     /* start transfer */
-    reg = FPCIEC_HW_READW(dma_engine_base,FPCIEC_DMA_CH_ENGINE_OFFSET(channel_index) + FPCIEC_DMA_CONTROL_OFFSET) ;
+    reg = FPCIEC_HW_READW(dma_engine_base, FPCIEC_DMA_CH_ENGINE_OFFSET(channel_index) + FPCIEC_DMA_CONTROL_OFFSET) ;
     reg |= FPCIEC_DMA_START_MASK ;
-    FPCIEC_HW_WRITEW(dma_engine_base,FPCIEC_DMA_CH_ENGINE_OFFSET(channel_index) + FPCIEC_DMA_CONTROL_OFFSET,reg) ;
+    FPCIEC_HW_WRITEW(dma_engine_base, FPCIEC_DMA_CH_ENGINE_OFFSET(channel_index) + FPCIEC_DMA_CONTROL_OFFSET, reg) ;
     return  FT_SUCCESS;
 }
 
@@ -97,17 +97,17 @@ FError FPcieCDmaStart(FPcieC *instance_p,u32 channel_index)
  * @param {u32} direct - Transfer direction (FPCIEC_DMA_TYPE_READ or FPCIEC_DMA_TYPE_WRITE).
  * @return {FError} - FT_SUCCESS if successful, error code otherwise.
  */
-FError FPcieCDmaDirectConfig(FPcieC *instance_p,u32 channel_index,uintptr_t src_addr,uintptr_t dest_addr,u32 length,u32 direct)
+FError FPcieCDmaDirectConfig(FPcieC *instance_p, u32 channel_index, uintptr_t src_addr, uintptr_t dest_addr, u32 length, u32 direct)
 {
     u32 reg ;
     uintptr_t dma_engine_base = 0 ;
     FASSERT(instance_p != NULL);
     dma_engine_base = instance_p->config.dma_engine_base ;
     FASSERT(dma_engine_base != (uintptr_t)NULL) ;
-    FASSERT(channel_index + 1 < instance_p->config.dma_max_num ) ;
-    
+    FASSERT(channel_index + 1 < instance_p->config.dma_max_num) ;
+
     /* DMA_CONTROL */
-    reg = FPCIEC_HW_READW(dma_engine_base,FPCIEC_DMA_CONTROL_OFFSET + FPCIEC_DMA_CH_ENGINE_OFFSET(channel_index)) ;
+    reg = FPCIEC_HW_READW(dma_engine_base, FPCIEC_DMA_CONTROL_OFFSET + FPCIEC_DMA_CH_ENGINE_OFFSET(channel_index)) ;
 
     reg &= ~(FPCIEC_DMA_START_MASK) ; /* disable transfer */
     reg &= ~FPCIEC_DMA_ENABLE_SG_MODE_MASK ; /* direct <=====> direct */
@@ -116,34 +116,34 @@ FError FPcieCDmaDirectConfig(FPcieC *instance_p,u32 channel_index,uintptr_t src_
     reg &= ~FPCIEC_DMA_SG2_ID_MASK; /* pcie interface */
     reg &= ~FPCIEC_DMA_IRQ_MASK ;   /* no irq */
 
-    reg |=  FPCIEC_DMA_IRQ_END_MASK|FPCIEC_DMA_IRQ_ERROR_MASK|FPCIEC_DMA_IRQ_AXI_STREAM_EOP_MASK ;
+    reg |=  FPCIEC_DMA_IRQ_END_MASK | FPCIEC_DMA_IRQ_ERROR_MASK | FPCIEC_DMA_IRQ_AXI_STREAM_EOP_MASK ;
 
     reg |= FPCIEC_DMA_IRQ_LOCAL_PROC_MASK ;
 
-    reg |= (FPCIEC_DMA_STOP_DMA_LENGTH_MASK|FPCIEC_DMA_STOP_AXI_STREAM_EOP_MASK|FPCIEC_DMA_ABORT_ON_ERROR_MASK) ;
+    reg |= (FPCIEC_DMA_STOP_DMA_LENGTH_MASK | FPCIEC_DMA_STOP_AXI_STREAM_EOP_MASK | FPCIEC_DMA_ABORT_ON_ERROR_MASK) ;
 
-    
-    FPCIEC_HW_WRITEW(dma_engine_base,FPCIEC_DMA_CH_ENGINE_OFFSET(channel_index) + FPCIEC_DMA_CONTROL_OFFSET,reg) ;
-    
+
+    FPCIEC_HW_WRITEW(dma_engine_base, FPCIEC_DMA_CH_ENGINE_OFFSET(channel_index) + FPCIEC_DMA_CONTROL_OFFSET, reg) ;
+
     /* DMA_SRCADDR */
-    FPCIEC_HW_WRITEW(dma_engine_base,FPCIEC_DMA_CH_ENGINE_OFFSET(channel_index) + FPCIEC_DMA_SRCADDR_UPPER32_OFFSET,UPPER_32_BITS(src_addr)) ;
-    FPCIEC_HW_WRITEW(dma_engine_base,FPCIEC_DMA_CH_ENGINE_OFFSET(channel_index) + FPCIEC_DMA_SRCADDR_OFFSET,LOWER_32_BITS(src_addr)) ;
+    FPCIEC_HW_WRITEW(dma_engine_base, FPCIEC_DMA_CH_ENGINE_OFFSET(channel_index) + FPCIEC_DMA_SRCADDR_UPPER32_OFFSET, UPPER_32_BITS(src_addr)) ;
+    FPCIEC_HW_WRITEW(dma_engine_base, FPCIEC_DMA_CH_ENGINE_OFFSET(channel_index) + FPCIEC_DMA_SRCADDR_OFFSET, LOWER_32_BITS(src_addr)) ;
 
-    FPCIEC_HW_WRITEW(dma_engine_base,FPCIEC_DMA_CH_ENGINE_OFFSET(channel_index) + FPCIEC_DMA_DMA_DESTADDR_OFFSET,LOWER_32_BITS(dest_addr)) ;
-    FPCIEC_HW_WRITEW(dma_engine_base,FPCIEC_DMA_CH_ENGINE_OFFSET(channel_index) + FPCIEC_DMA_DMA_DESTADDR_UPEER32_OFFSET,UPPER_32_BITS(dest_addr)) ;
+    FPCIEC_HW_WRITEW(dma_engine_base, FPCIEC_DMA_CH_ENGINE_OFFSET(channel_index) + FPCIEC_DMA_DMA_DESTADDR_OFFSET, LOWER_32_BITS(dest_addr)) ;
+    FPCIEC_HW_WRITEW(dma_engine_base, FPCIEC_DMA_CH_ENGINE_OFFSET(channel_index) + FPCIEC_DMA_DMA_DESTADDR_UPEER32_OFFSET, UPPER_32_BITS(dest_addr)) ;
 
-    FPCIEC_HW_WRITEW(dma_engine_base,FPCIEC_DMA_CH_ENGINE_OFFSET(channel_index) + FPCIEC_DMA_DMA_LENGTH_OFFSET,length) ;
+    FPCIEC_HW_WRITEW(dma_engine_base, FPCIEC_DMA_CH_ENGINE_OFFSET(channel_index) + FPCIEC_DMA_DMA_LENGTH_OFFSET, length) ;
 
-    if(FPCIEC_DMA_TYPE_READ == direct)
+    if (FPCIEC_DMA_TYPE_READ == direct)
     {
-        FPCIEC_HW_WRITEW(dma_engine_base,FPCIEC_DMA_CH_ENGINE_OFFSET(channel_index) + FPCIEC_DMA_SRCPARAM_OFFSET,FPCIEC_DMA_SRCID_PCIE) ;
-        FPCIEC_HW_WRITEW(dma_engine_base,FPCIEC_DMA_CH_ENGINE_OFFSET(channel_index) + FPCIEC_DMA_DMA_DESTPARAM_OFFSET,(FPCIEC_DMA_DEST_ID_AXI_MASTER_X(0))) ;        
+        FPCIEC_HW_WRITEW(dma_engine_base, FPCIEC_DMA_CH_ENGINE_OFFSET(channel_index) + FPCIEC_DMA_SRCPARAM_OFFSET, FPCIEC_DMA_SRCID_PCIE) ;
+        FPCIEC_HW_WRITEW(dma_engine_base, FPCIEC_DMA_CH_ENGINE_OFFSET(channel_index) + FPCIEC_DMA_DMA_DESTPARAM_OFFSET, (FPCIEC_DMA_DEST_ID_AXI_MASTER_X(0))) ;
     }
     else
     {
-        
-        FPCIEC_HW_WRITEW(dma_engine_base,FPCIEC_DMA_CH_ENGINE_OFFSET(channel_index) + FPCIEC_DMA_SRCPARAM_OFFSET,(FPCIEC_DMA_SRC_ID_AXI_MASTER_X(0))) ;
-        FPCIEC_HW_WRITEW(dma_engine_base,FPCIEC_DMA_CH_ENGINE_OFFSET(channel_index) + FPCIEC_DMA_DMA_DESTPARAM_OFFSET,FPCIEC_DMA_SRCID_PCIE) ;
+
+        FPCIEC_HW_WRITEW(dma_engine_base, FPCIEC_DMA_CH_ENGINE_OFFSET(channel_index) + FPCIEC_DMA_SRCPARAM_OFFSET, (FPCIEC_DMA_SRC_ID_AXI_MASTER_X(0))) ;
+        FPCIEC_HW_WRITEW(dma_engine_base, FPCIEC_DMA_CH_ENGINE_OFFSET(channel_index) + FPCIEC_DMA_DMA_DESTPARAM_OFFSET, FPCIEC_DMA_SRCID_PCIE) ;
     }
     return  FT_SUCCESS;
 }

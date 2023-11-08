@@ -14,7 +14,7 @@
  * FilePath: fspim_hw.h
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-18 09:08:05
- * Description:  This file is for providing spim Hardware interaction api 
+ * Description:  This file is for providing spim Hardware interaction api
  *               and some predefined variables.
  *
  * Modify History:

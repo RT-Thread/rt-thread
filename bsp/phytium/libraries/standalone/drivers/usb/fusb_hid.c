@@ -522,7 +522,7 @@ void FUsbHidInit(FUsbDev *dev)
                     countrycode = 0;
                 }
                 FUSB_INFO("  Keyboard has %s layout (country code %02x)\n",
-                       countries[countrycode][0], countrycode);
+                          countries[countrycode][0], countrycode);
 
                 /* Set keyboard layout accordingly */
                 FUsbHidSetLayout(countries[countrycode][1]);

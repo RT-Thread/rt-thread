@@ -15,7 +15,7 @@
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-18 09:00:41
  * Description:  This file is for the qspi register related functions
- * 
+ *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------

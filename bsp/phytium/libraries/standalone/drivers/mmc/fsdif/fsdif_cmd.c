@@ -21,7 +21,7 @@
  * ----- ------     --------    --------------------------------------
  * 1.1   zhugengyu  2022/6/6     modify according to tech manual.
  * 2.0   zhugengyu  2023/9/16    rename as sdif, support SD 3.0 and rework clock timing
- * 2.1   zhugengyu  2023/10/23   add sdio interrupt handler 
+ * 2.1   zhugengyu  2023/10/23   add sdio interrupt handler
  */
 /***************************** Include Files *********************************/
 
@@ -127,7 +127,7 @@ FError FSdifTransferCmd(FSdif *const instance_p, FSdifCmdData *const cmd_data_p)
     uintptr base_addr = instance_p->config.base_addr;
     u32 cmd_flag = cmd_data_p->flag;
     u32 raw_cmd = 0U;
-    
+
     if ((instance_p->curr_timing == NULL) || (instance_p->curr_timing->use_hold))
     {
         raw_cmd |= FSDIF_CMD_USE_HOLD_REG;

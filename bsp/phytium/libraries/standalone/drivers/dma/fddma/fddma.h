@@ -139,7 +139,7 @@ typedef struct
     u32 timeout;                /* timeout = 0 means no use DMA timeout */
     FDdmaBurstSize     rd_align;
     FDdmaBurstSize     wr_align;
-       /*bdl 模式*/
+    /*bdl 模式*/
     u32       total_desc_num;       /*总的条目数*/
     u32       valid_desc_num;       /*有效条目数*/
     FDdmaBdlDesc  *descs;           /*BDL 描述符*/

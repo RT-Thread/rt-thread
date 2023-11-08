@@ -15,7 +15,7 @@
  * Date: 2022-07-06 14:19:15
  * LastEditTime: 2022-07-06 14:19:15
  * Description:  This file is for functions in this file are the read id required functions
- * for this driver. 
+ * for this driver.
  *
  * Modify History:
  *  Ver   Who  Date   Changes

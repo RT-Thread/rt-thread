@@ -1,21 +1,21 @@
 /*
  * Copyright : (C) 2023 Phytium Information Technology, Inc.
  * All Rights Reserved.
- * 
+ *
  * This program is OPEN SOURCE software: you can redistribute it and/or modify it
  * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
  * either version 1.0 of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the Phytium Public License for more details.
- * 
- * 
+ *
+ *
  * FilePath: fpciec_dma.h
  * Created Date: 2023-08-02 09:40:08
  * Last Modified: 2023-08-02 10:38:44
  * Description:  This file is for
- * 
+ *
  * Modify History:
  *  Ver      Who        Date               Changes
  * -----  ----------  --------  ---------------------------------
@@ -34,7 +34,7 @@ extern "C"
 {
 #endif
 #define FPCIEC_DMA_ENGINE_OFFSET             0x400
-#define FPCIEC_DMA_CH_ENGINE_OFFSET(x)		(x*0x40) 
+#define FPCIEC_DMA_CH_ENGINE_OFFSET(x)      (x*0x40)
 
 #define FPCIEC_DMA_SRCPARAM_OFFSET 0
 #define FPCIEC_DMA_DMA_DESTPARAM_OFFSET      0x4
@@ -45,13 +45,13 @@ extern "C"
 #define FPCIEC_DMA_DMA_LENGTH_OFFSET         0x18
 #define FPCIEC_DMA_CONTROL_OFFSET            0x1c
 #define FPCIEC_DMA_STATUS_OFFSET             0x20
-#define FPCIEC_DMA_PRC_LENGTH_OFFSET               0X24    
-#define FPCIEC_DMA_SHARE_ACCESS_OFFSET             0x28  
+#define FPCIEC_DMA_PRC_LENGTH_OFFSET               0X24
+#define FPCIEC_DMA_SHARE_ACCESS_OFFSET             0x28
 #define FPCIEC_DMA_PASID_OFFSET              0x2c
 #define FPCIEC_DMA_REG_LENGTH                0x40
 
 /* FPCIEC_DMA_SRCPARAM_OFFSET */
-#define FPCIEC_DMA_SRCID_PCIE 0   
+#define FPCIEC_DMA_SRCID_PCIE 0
 #define FPCIEC_DMA_SRCID_AXI_MASTER(num) ((num) &0xf)
 /* Master Interface */
 #define FPCIEC_DMA_SRC_ID_AXI_MASTER_X(x) FPCIEC_DMA_SRCID_AXI_MASTER(0x4 + x)
@@ -65,7 +65,7 @@ extern "C"
 
 
 /* FPCIEC_DMA_DMA_DESTPARAM_OFFSET */
-#define FPCIEC_DMA_DESTID_PCIE 0   
+#define FPCIEC_DMA_DESTID_PCIE 0
 #define FPCIEC_DMA_DESTID_AXI_MASTER(num) ((num) &0xff)
 /* Master Interface */
 #define FPCIEC_DMA_DEST_ID_AXI_MASTER_X(x) FPCIEC_DMA_DESTID_AXI_MASTER(x + 0x4)
@@ -264,16 +264,17 @@ extern "C"
 #define FPCIEC_DMA_PASID_VALUE_OFFSET 3
 #define FPCIEC_DMA_PASID_MASK (0x3FFFFF << FPCIEC_DMA_PASID_VALUE_OFFSET)
 
-struct FPcieDmaChanDesc {
-	u32 desc_status;
-	u32 desc_control;
-	u32 desc_next_addr_l;
-	u32 desc_next_addr_h;
-	u32 desc_src_addr_l;
-	u32 desc_src_addr_h;
-	u32 desc_dst_addr_l;
-	u32 desc_dst_addr_h;
-} __attribute__ ((__packed__));
+struct FPcieDmaChanDesc
+{
+    u32 desc_status;
+    u32 desc_control;
+    u32 desc_next_addr_l;
+    u32 desc_next_addr_h;
+    u32 desc_src_addr_l;
+    u32 desc_src_addr_h;
+    u32 desc_dst_addr_l;
+    u32 desc_dst_addr_h;
+} __attribute__((__packed__));
 
 
 #ifdef __cplusplus

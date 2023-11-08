@@ -239,7 +239,7 @@ FError FDdmaAllocateChan(FDdma *const instance, FDdmaChan *const dma_chan, const
     FDDMA_INFO("dev addr: 0x%x", FDdmaReadReg(base_addr, FDDMA_CHAN_DEV_ADDR_OFFSET(chan_idx)));
     FDDMA_INFO("transfer len: %d", FDdmaReadReg(base_addr, FDDMA_CHAN_TS_OFFSET(chan_idx)));
 
-    FDdmaEnableChanIrq(base_addr, chan_idx,instance->config.caps);
+    FDdmaEnableChanIrq(base_addr, chan_idx, instance->config.caps);
 
     if (FDDMA_SUCCESS == ret)
     {

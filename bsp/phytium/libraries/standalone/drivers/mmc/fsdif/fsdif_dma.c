@@ -106,7 +106,7 @@ static FError FSdifSetupDMADescriptor(FSdif *const instance_p, FSdifData *data_p
     if (data_p->datalen > instance_p->desc_list.desc_trans_sz)
     {
         desc_num = ((data_p->datalen / instance_p->desc_list.desc_trans_sz) +
-                (data_p->datalen % instance_p->desc_list.desc_trans_sz));
+                    (data_p->datalen % instance_p->desc_list.desc_trans_sz));
     }
 
     if (desc_num > desc_list->desc_num)
@@ -116,7 +116,7 @@ static FError FSdifSetupDMADescriptor(FSdif *const instance_p, FSdifData *data_p
         return FSDIF_ERR_SHORT_BUF;
     }
 
-    FSDIF_DEBUG("DMA transfer 0x%x use %d desc, total %d", 
+    FSDIF_DEBUG("DMA transfer 0x%x use %d desc, total %d",
                 data_p->buf_dma, desc_num, desc_list->desc_num);
 
     /* setup DMA descriptor list, so that we just need to update buffer address
@@ -125,7 +125,7 @@ static FError FSdifSetupDMADescriptor(FSdif *const instance_p, FSdifData *data_p
 
     for (loop = 0; loop < desc_num; loop++)
     {
-        trans_blocks = (remain_blocks <= desc_blocks )? remain_blocks : desc_blocks;
+        trans_blocks = (remain_blocks <= desc_blocks) ? remain_blocks : desc_blocks;
         cur_desc = &(desc_list->first_desc[loop]); /* virtual addr of current descriptor */
         next_desc_addr = desc_list->first_desc_dma + (loop + 1) * sizeof(FSdifIDmaDesc); /* physical addr of next descriptor */
 
@@ -154,7 +154,7 @@ static FError FSdifSetupDMADescriptor(FSdif *const instance_p, FSdifData *data_p
 #else
         cur_desc->addr_hi = 0U;
         cur_desc->addr_lo = (u32)(buff_addr);
-#endif    
+#endif
 
         /* set address of next descriptor entry, NULL for last entry */
         next_desc_addr = is_last ? 0U : next_desc_addr;
@@ -170,7 +170,7 @@ static FError FSdifSetupDMADescriptor(FSdif *const instance_p, FSdifData *data_p
 #else
         cur_desc->desc_hi = 0U;
         cur_desc->desc_lo = (u32)(next_desc_addr);
-#endif        
+#endif
 
         buff_addr += cur_desc->len;
         remain_blocks -= trans_blocks;
@@ -180,7 +180,7 @@ static FError FSdifSetupDMADescriptor(FSdif *const instance_p, FSdifData *data_p
     FSDIF_DATA_BARRIER();
 
     FSdifDumpDMADescriptor(instance_p, desc_num);
-    return FSDIF_SUCCESS;                
+    return FSDIF_SUCCESS;
 }
 
 /**

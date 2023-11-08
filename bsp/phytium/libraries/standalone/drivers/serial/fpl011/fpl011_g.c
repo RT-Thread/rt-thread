@@ -73,6 +73,6 @@ const FPl011Config FPl011ConfigTable[FUART_NUM] =
         .irq_num = FUART3_IRQ_NUM,
         .baudrate = 115200
     }
-#endif 
+#endif
 
 };

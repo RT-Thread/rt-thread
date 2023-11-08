@@ -136,7 +136,7 @@ void FIOPadSetSdMux(u32 sd_id)
  * @name: FIOMuxInit
  * @msg: init io mux
  * @return {void}
- * @note: 
+ * @note:
  */
 _WEAK void FIOMuxInit(void)
 {

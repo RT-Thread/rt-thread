@@ -582,7 +582,7 @@ FError FPwmDbVariableSet(FPwmCtrl *pctrl, FPwmDbVariableConfig *db_cfg_p)
     ret = FPwmDbReset(pctrl);
     if (ret != FPWM_SUCCESS)
     {
-        FPWM_ERROR("%s ,The FPwmDbReset call failed",__func__);
+        FPWM_ERROR("%s ,The FPwmDbReset call failed", __func__);
         return FPWM_ERR_CMD_FAILED;
     }
 
@@ -593,7 +593,7 @@ FError FPwmDbVariableSet(FPwmCtrl *pctrl, FPwmDbVariableConfig *db_cfg_p)
     ret = FPwmDbPolaritySet(pctrl, db_cfg_p->db_polarity_sel);
     if (ret != FPWM_SUCCESS)
     {
-        FPWM_ERROR("%s ,The FPwmDbPolaritySet call failed",__func__);
+        FPWM_ERROR("%s ,The FPwmDbPolaritySet call failed", __func__);
         return FPWM_ERR_CMD_FAILED;
     }
 
@@ -663,7 +663,7 @@ FError FPwmVariableSet(FPwmCtrl *pctrl, u32 channel, FPwmVariableConfig *pwm_cfg
     ret = FPwmReset(pctrl, channel);
     if (ret != FPWM_SUCCESS)
     {
-        FPWM_ERROR("%s ,FPwmReset  call failed",__func__);
+        FPWM_ERROR("%s ,FPwmReset  call failed", __func__);
         return FPWM_ERR_CMD_FAILED;
     }
 
@@ -699,7 +699,7 @@ FError FPwmVariableSet(FPwmCtrl *pctrl, u32 channel, FPwmVariableConfig *pwm_cfg
     ret = FPwmPulseSet(pctrl, channel, pwm_cfg_p->pwm_pulse);
     if (ret != FPWM_SUCCESS)
     {
-        FPWM_ERROR("%s , FPwmPulseSet failed",__func__);
+        FPWM_ERROR("%s , FPwmPulseSet failed", __func__);
         return FPWM_ERR_CMD_FAILED;
     }
 
@@ -796,7 +796,7 @@ FError FPwmCfgInitialize(FPwmCtrl *pctrl, const FPwmConfig *input_config_p)
     FPwmDeInitialize(pctrl);
 
     pctrl->config = *input_config_p;
-#if defined(SOC_TARGET_E2000) 
+#if defined(SOC_TARGET_E2000)
     ret = FPwmDbReset(pctrl);
     if (ret != FPWM_SUCCESS)
     {
@@ -824,10 +824,14 @@ void FPwmGpioSet(FPwmCtrl *pctrl, u32 channel, u32 output)
     uintptr base_addr = pctrl->config.pwm_base_addr + FPWM_N(channel);
 
     reg_val = FPWM_READ_REG32(base_addr, FPWM_CCR_OFFSET);
-    if(output)
-	    reg_val |= FPWM_CCR_GPIO;
+    if (output)
+    {
+        reg_val |= FPWM_CCR_GPIO;
+    }
     else
-        reg_val &= (~FPWM_CCR_GPIO);        
-	FPWM_WRITE_REG32(base_addr, FPWM_CCR_OFFSET, reg_val);
-    
+    {
+        reg_val &= (~FPWM_CCR_GPIO);
+    }
+    FPWM_WRITE_REG32(base_addr, FPWM_CCR_OFFSET, reg_val);
+
 }

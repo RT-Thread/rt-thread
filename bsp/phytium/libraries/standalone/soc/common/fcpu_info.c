@@ -25,7 +25,7 @@
 #include "ferror_code.h"
 #include "fparameters.h"
 
-extern u32 GetAffinity(void); 
+extern u32 GetAffinity(void);
 
 FError GetCpuId(u32 *cpu_id_p)
 {

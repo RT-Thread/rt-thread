@@ -66,8 +66,8 @@ FError FQspiFlashDetect(FQspiCtrl *pctrl)
     u8 i = 0;
     u32 index;
     u32 cs_number = 0;
-    u32 min_detected_cs  = FQSPI_CS_NUM ; 
-    
+    u32 min_detected_cs  = FQSPI_CS_NUM ;
+
     for (index = 0; index < FQSPI_CS_NUM ; index++)
     {
         /* read id to flash_id */
@@ -97,7 +97,7 @@ FError FQspiFlashDetect(FQspiCtrl *pctrl)
                 pctrl->config.capacity = flash_info_table[i].capacity;
                 cs_number++;
                 /*get the min detected flash channel*/
-                min_detected_cs = (min_detected_cs > index)?index:min_detected_cs ; 
+                min_detected_cs = (min_detected_cs > index) ? index : min_detected_cs ;
                 FQSPI_INFO("CSN%d Find a %s flash chip.\n", index, flash_info_table[i].name);
                 break;
             }
@@ -501,7 +501,7 @@ FError FQspiFlashReadDataConfig(FQspiCtrl *pctrl, u8 command)
             pctrl->rd_cfg.rd_addr_sel = FQSPI_ADDR_SEL_3;
             pctrl->rd_cfg.rd_transfer = FQSPI_TRANSFER_1_4_4;
             pctrl->rd_cfg.rd_latency = FQSPI_CMD_LATENCY_ENABLE;
-            
+
             pctrl->rd_cfg.dummy = 6;
 
             if (pctrl->mf_id == FQSPI_FLASH_MF_ID_CYPRESS)

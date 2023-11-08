@@ -38,9 +38,10 @@ extern "C" {
 #include "fparameters.h"
 
 
-struct reg_default {
-	unsigned int reg;
-	unsigned int def;
+struct reg_default
+{
+    unsigned int reg;
+    unsigned int def;
 };
 
 
@@ -79,10 +80,10 @@ typedef enum
     ES836_BYTES_OF_MEMORY
 } FEs8336SizeofRegister;
 
-typedef struct 
+typedef struct
 {
     void *pram;
-}FEs8336;
+} FEs8336;
 
 #define FES8336_SUCCESS FT_SUCCESS
 /* ES8336 register space */

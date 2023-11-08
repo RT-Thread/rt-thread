@@ -555,7 +555,7 @@ FError FSataAhciInit(FSataCtrl *instance_p)
         ret = FSataAhciLinkUp(instance_p, i);
         if (ret)
         {
-            FSATA_DEBUG("sata host %d, port %d link timeout.", instance_p->config.instance_id, i);    
+            FSATA_DEBUG("sata host %d, port %d link timeout.", instance_p->config.instance_id, i);
             continue;
         }
         else
@@ -607,7 +607,7 @@ FError FSataAhciInit(FSataCtrl *instance_p)
     {
         FSATA_ERROR("Sata ports link failed.\n");
         return FSATA_UNKNOWN_DEVICE;
-    }       
+    }
 
     /* host interrupt enable */
     reg_val = FSATA_READ_REG32(base_addr, FSATA_HOST_CTL);
@@ -702,7 +702,7 @@ static int FSataAhciFillCmdTablePrdt(FSataCtrl *instance_p, u8 port,
 {
     FASSERT(instance_p != NULL);
     FASSERT(instance_p->is_ready == FT_COMPONENT_IS_READY);
-    if (!IS_ALIGNED((unsigned long)buf, SATA_ALIGNED_BYTE)) 
+    if (!IS_ALIGNED((unsigned long)buf, SATA_ALIGNED_BYTE))
     {
         FSATA_ERROR("Sata do not suopport unaligned address access.");
         return -1;

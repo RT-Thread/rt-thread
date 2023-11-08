@@ -14,7 +14,7 @@
  * FilePath: fgpio_selftest.c
  * Date: 2022-06-17 14:32:12
  * LastEditTime: 2022-06-17 14:32:12
- * Description:  This files is for dumping gpio register info 
+ * Description:  This files is for dumping gpio register info
  *
  * Modify History:
  *  Ver   Who        Date         Changes

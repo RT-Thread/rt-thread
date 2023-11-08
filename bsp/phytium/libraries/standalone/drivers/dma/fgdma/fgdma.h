@@ -183,7 +183,7 @@ typedef struct
     uintptr           dst_addr;         /* GDMA传输目的地址-物理地址 */
     fsize_t           trans_length;     /* GDMA传输总数据量 */
     FGdmaBurstType    rd_type;          /* GDMA通道读操作burst type */
-    FGdmaBurstType    wr_type;          /* GDMA通道写操作burst type */    
+    FGdmaBurstType    wr_type;          /* GDMA通道写操作burst type */
     FGdmaBurstSize    rd_size;          /* GDMA通道读操作burst size */
     FGdmaBurstSize    wr_size;          /* GDMA通道写操作burst size */
     FGdmaBurstLength  rd_length;        /* GDMA通道读操作burst length */
@@ -201,7 +201,7 @@ typedef struct
     uintptr           dst_addr;         /* GDMA传输目的地址-物理地址 */
     fsize_t           trans_length;     /* 单个描述符所负责的传输数据量 */
     FGdmaBurstType    rd_type;          /* GDMA通道读操作burst type */
-    FGdmaBurstType    wr_type;          /* GDMA通道写操作burst type */    
+    FGdmaBurstType    wr_type;          /* GDMA通道写操作burst type */
     FGdmaBurstSize    rd_size;          /* GDMA通道读操作burst size */
     FGdmaBurstSize    wr_size;          /* GDMA通道写操作burst size */
     FGdmaBurstLength  rd_length;        /* GDMA通道读操作burst length */
@@ -211,7 +211,7 @@ typedef struct
 
 typedef void (*FGdmaChanEvtHandler)(FGdmaChanIrq *const chan_irq_info_p, void *args);
 typedef struct _FGdmaChanIrq
-{   
+{
     FGdmaChanIndex      chan_id;                                  /* 信息所属GDMA通道的ID */
     FGdma               *gdma_instance;                           /* 信息所属GDMA通道所属的GDMA控制器实例 */
     void                *evt_handler_args[FGDMA_CHAN_NUM_OF_EVT]; /* GDMA通道事件回调函数输入参数 */
@@ -276,7 +276,7 @@ void FGdmaDeInitialize(FGdma *const instance_p);
 FError FGdmaBDLSetDesc(FGdmaBdlDesc *const first_desc_addr_p, FGdmaBdlDescConfig const *bdl_desc_config_p);
 
 /* 配置GDMA通道 */
-FError FGdmaChanConfigure(FGdma *const instance_p, FGdmaChanIndex channel_id, FGdmaChanConfig const* channel_config_p);
+FError FGdmaChanConfigure(FGdma *const instance_p, FGdmaChanIndex channel_id, FGdmaChanConfig const *channel_config_p);
 
 /* 释放GDMA通道 */
 FError FGdmaChanDeconfigure(FGdma *const instance_p, FGdmaChanIndex channel_id);
@@ -301,7 +301,7 @@ void FGdmaIrqHandlerPrivateChannel(s32 vector, void *args);
 void FGdmaChanRegisterEvtHandler(FGdma *const instance_p,
                                  FGdmaChanIndex channel_id,
                                  FGdmaChanEvtType evt,
-                                 FGdmaChanEvtHandler handler, 
+                                 FGdmaChanEvtHandler handler,
                                  void *handler_arg);
 
 /* 打印当前的GDMA寄存器值, DEBUG模式下有效 */

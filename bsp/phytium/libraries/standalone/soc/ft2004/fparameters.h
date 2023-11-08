@@ -84,7 +84,7 @@ extern "C"
 #define FPCI_ECAM_MEM64_BASE_ADDR 0x1000000000       /* mmio 64 */
 #define FPCI_ECAM_MEM64_REG_LENGTH 0x1fffffffff
 
-#define FPCIE_NEED_SKIP_TYPE0   
+#define FPCIE_NEED_SKIP_TYPE0
 
 
 /* platform ahci host */

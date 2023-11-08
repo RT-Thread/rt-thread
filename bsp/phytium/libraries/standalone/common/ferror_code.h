@@ -88,7 +88,7 @@ typedef enum
     ErrBspMEDIA,
     ErrBspMhu,
     ErrBspIOPad,
-	ErrBspI2s,
+    ErrBspI2s,
     ErrBspModMaxMask = 255
 } FtErrCodeBspMask;
 

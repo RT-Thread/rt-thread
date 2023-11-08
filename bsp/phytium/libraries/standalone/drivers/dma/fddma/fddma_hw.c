@@ -114,13 +114,13 @@ void FDdmaDisableGlobalIrq(uintptr base_addr, u32 caps)
     if (caps & FDDMA_CAP_W1_ENABLE_IRQ)
     {
         u32 reg_val = FDdmaReadReg(base_addr, FDDMA_MASK_INTR_OFFSET);
-        reg_val |= FDDMA_MASK_EN_GLOBAL_INTR; 
+        reg_val |= FDDMA_MASK_EN_GLOBAL_INTR;
         FDdmaWriteReg(base_addr, FDDMA_MASK_INTR_OFFSET, reg_val);
     }
     else
     {
         u32 reg_val = FDdmaReadReg(base_addr, FDDMA_MASK_INTR_OFFSET);
-        reg_val &= ~ FDDMA_MASK_EN_GLOBAL_INTR; 
+        reg_val &= ~ FDDMA_MASK_EN_GLOBAL_INTR;
         FDdmaWriteReg(base_addr, FDDMA_MASK_INTR_OFFSET, reg_val);
     }
     return;
@@ -138,13 +138,13 @@ void FDdmaEnableGlobalIrq(uintptr base_addr, u32 caps)
     if (caps & FDDMA_CAP_W1_ENABLE_IRQ)
     {
         u32 reg_val = FDdmaReadReg(base_addr, FDDMA_MASK_INTR_OFFSET);
-        reg_val &= ~ FDDMA_MASK_EN_GLOBAL_INTR; 
+        reg_val &= ~ FDDMA_MASK_EN_GLOBAL_INTR;
         FDdmaWriteReg(base_addr, FDDMA_MASK_INTR_OFFSET, reg_val);
     }
     else
     {
         u32 reg_val = FDdmaReadReg(base_addr, FDDMA_MASK_INTR_OFFSET);
-        reg_val |= FDDMA_MASK_EN_GLOBAL_INTR; 
+        reg_val |= FDDMA_MASK_EN_GLOBAL_INTR;
         FDdmaWriteReg(base_addr, FDDMA_MASK_INTR_OFFSET, reg_val);
     }
 
@@ -265,15 +265,15 @@ void FDdmaClearChanIrq(uintptr base_addr, u32 chan, u32 caps)
 {
     FASSERT_MSG((FDDMA_NUM_OF_CHAN > chan), "Channel %d is not supported", chan);
     /* write 1 to clear irq status of channel */
-      if (caps & FDDMA_CAP_W1_ENABLE_IRQ)
-      {
+    if (caps & FDDMA_CAP_W1_ENABLE_IRQ)
+    {
         FDdmaWriteReg(base_addr, FDDMA_STA_OFFSET, FDDMA_STA_CHAN_REQ_DONE(chan));
-      }
-      else
-      {
-       FDdmaWriteReg(base_addr, FDDMA_STA_OFFSET, FDDMA_BDL_STA_CHAN_REQ_DONE(chan));
-      }
-  
+    }
+    else
+    {
+        FDdmaWriteReg(base_addr, FDDMA_STA_OFFSET, FDDMA_BDL_STA_CHAN_REQ_DONE(chan));
+    }
+
 }
 
 /**

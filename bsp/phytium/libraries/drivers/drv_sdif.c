@@ -48,7 +48,7 @@
 #define SDIF_MAX_BLK_TRANS    20U
 
 #ifndef CONFIG_SDCARD_OFFSET
-#define CONFIG_SDCARD_OFFSET 0x0U
+    #define CONFIG_SDCARD_OFFSET 0x0U
 #endif
 /**************************** Type Definitions *******************************/
 typedef struct
@@ -280,13 +280,17 @@ static void mmc_request_send(struct rt_mmcsd_host *host, struct rt_mmcsd_req *re
         {
             req_stop.flag |= FSDIF_CMD_FLAG_READ_DATA;
             if (resp_type(req->stop) == RESP_R2)
+            {
                 req_stop.flag |= FSDIF_CMD_FLAG_EXP_LONG_RESP;
+            }
         }
         req->stop->err = (private_data_t->transfer)(host, req, &req_stop);
     }
 
     if (data_buf_aligned)
+    {
         rt_free_align(data_buf_aligned);
+    }
 
 skip_cmd:
     mmcsd_req_complete(host);
@@ -310,18 +314,18 @@ static void mmc_set_iocfg(struct rt_mmcsd_host *host, struct rt_mmcsd_io_cfg *io
 
     switch (io_cfg->bus_width)
     {
-    case MMCSD_BUS_WIDTH_1:
-        FSdifSetBusWidth(base_addr, 1U);
-        break;
-    case MMCSD_BUS_WIDTH_4:
-        FSdifSetBusWidth(base_addr, 4U);
-        break;
-    case MMCSD_BUS_WIDTH_8:
-        FSdifSetBusWidth(base_addr, 8U);
-        break;
-    default:
-        LOG_E("Invalid bus width %d", io_cfg->bus_width);
-        break;
+        case MMCSD_BUS_WIDTH_1:
+            FSdifSetBusWidth(base_addr, 1U);
+            break;
+        case MMCSD_BUS_WIDTH_4:
+            FSdifSetBusWidth(base_addr, 4U);
+            break;
+        case MMCSD_BUS_WIDTH_8:
+            FSdifSetBusWidth(base_addr, 8U);
+            break;
+        default:
+            LOG_E("Invalid bus width %d", io_cfg->bus_width);
+            break;
     }
 }
 
@@ -381,13 +385,21 @@ int ft_mmcsd_init(void)
 
 err_free:
     if (host)
+    {
         rt_free(host);
+    }
     if (private_data->mmcsd_instance)
+    {
         rt_free(private_data->mmcsd_instance);
+    }
     if (private_data->rw_desc)
+    {
         rt_free_align(private_data->rw_desc);
+    }
     if (private_data)
+    {
         rt_free(private_data);
+    }
 
     return -RT_EOK;
 }

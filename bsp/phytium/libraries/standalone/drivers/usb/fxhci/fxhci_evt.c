@@ -303,7 +303,9 @@ FXhciTransCode FXhciWaitForCmdAborted(FXhci *const xhci, const FXhciTrb *const a
         FXhciHandleCmdCompletionEvt(xhci);
     }
     if (timeout_us == 0)
+    {
         FUSB_INFO("Warning: timeout waiting for COMMAND_RING_STOPPED.");
+    }
 
 update_and_return:
     FXhciUpdateEvtDQ(xhci);

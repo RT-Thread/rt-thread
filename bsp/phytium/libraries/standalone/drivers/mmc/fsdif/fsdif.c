@@ -125,8 +125,8 @@ FError FSdifSetClkFreq(FSdif *const instance_p, u32 input_clk_hz)
     u32 mci_cmd_bits = FSDIF_CMD_UPD_CLK;
     FError ret = FSDIF_SUCCESS;
     const FSdifTiming *target_timing;
-	u32 cmd_reg;
-	u32 cur_cmd_index;
+    u32 cmd_reg;
+    u32 cur_cmd_index;
 
     cmd_reg = FSDIF_READ_REG(base_addr, FSDIF_CMD_OFFSET);
     cur_cmd_index = FSDIF_CMD_INDX_GET(cmd_reg);
@@ -140,8 +140,8 @@ FError FSdifSetClkFreq(FSdif *const instance_p, u32 input_clk_hz)
     if ((input_clk_hz > 0) && (instance_p->config.get_tuning))
     {
         /* select board-related time-tuning configurations */
-        target_timing = instance_p->config.get_tuning(input_clk_hz, 
-                                                      instance_p->config.non_removable);
+        target_timing = instance_p->config.get_tuning(input_clk_hz,
+                        instance_p->config.non_removable);
         if (NULL == target_timing)
         {
             FSDIF_ERROR("No available timeing !!!");
@@ -182,15 +182,15 @@ FError FSdifSetClkFreq(FSdif *const instance_p, u32 input_clk_hz)
 
         /* set clock divider */
         FSDIF_WRITE_REG(base_addr, FSDIF_CLKDIV_OFFSET, target_timing->clk_div);
-    
+
         FSDIF_WRITE_REG(base_addr, FSDIF_ENABLE_SHIFT_OFFSET, target_timing->shift);
 
         FSDIF_INFO("clk_src: 0x%x clk_div: 0x%x, shift: 0x%x",
-                FSDIF_READ_REG(base_addr, FSDIF_CLK_SRC_OFFSET),
-                FSDIF_READ_REG(base_addr, FSDIF_CLKDIV_OFFSET),
-                FSDIF_READ_REG(base_addr, FSDIF_ENABLE_SHIFT_OFFSET));
+                   FSDIF_READ_REG(base_addr, FSDIF_CLK_SRC_OFFSET),
+                   FSDIF_READ_REG(base_addr, FSDIF_CLKDIV_OFFSET),
+                   FSDIF_READ_REG(base_addr, FSDIF_ENABLE_SHIFT_OFFSET));
 
-        FSdifSetClock(base_addr, TRUE);      
+        FSdifSetClock(base_addr, TRUE);
 
         /* update clock for clock divider */
         if (FSDIF_SWITCH_VOLTAGE == cur_cmd_index)
@@ -218,13 +218,13 @@ FError FSdifSetClkFreq(FSdif *const instance_p, u32 input_clk_hz)
             ret = FSdifSendPrivateCmd(base_addr, mci_cmd_bits, 0);
         }
 
-        FSDIF_CLR_BIT(base_addr, FSDIF_CLK_SRC_OFFSET, FSDIF_UHS_EXT_CLK_ENA);  
-    
+        FSDIF_CLR_BIT(base_addr, FSDIF_CLK_SRC_OFFSET, FSDIF_UHS_EXT_CLK_ENA);
+
         instance_p->curr_timing = NULL;
     }
 
     FSDIF_INFO("Update clock freq done.");
-    return ret;   
+    return ret;
 }
 
 /**
@@ -298,8 +298,9 @@ FError FSdifResetCtrl(uintptr base_addr, u32 reset_bits)
         do
         {
             reg_val = FSDIF_READ_REG(base_addr, FSDIF_STATUS_OFFSET);
-        } while (!FSDIF_STATUS_FIFO_EMPTY & reg_val);
-         
+        }
+        while (!FSDIF_STATUS_FIFO_EMPTY & reg_val);
+
         if (retries <= 0)
         {
             FSDIF_ERROR("Fifo not empty !!!");

@@ -139,7 +139,7 @@ extern "C"
      (u32)FXMAC_RECEIVER_ENABLE_OPTION |    \
      (u32)FXMAC_RX_CHKSUM_ENABLE_OPTION |   \
      (u32)FXMAC_TX_CHKSUM_ENABLE_OPTION)
-     
+
 typedef enum
 {
     FXMAC_LINKDOWN = 0,
@@ -235,7 +235,7 @@ typedef enum
     FXMAC_PHY_INTERFACE_MODE_RGMII,
     FXMAC_PHY_INTERFACE_MODE_XGMII,
     FXMAC_PHY_INTERFACE_MODE_USXGMII,
-    FXMAC_PHY_INTERFACE_MODE_5GBASER ,
+    FXMAC_PHY_INTERFACE_MODE_5GBASER,
     FXMAC_PHY_INTERFACE_MODE_2500BASEX
 } FXmacPhyInterface;
 
@@ -272,7 +272,7 @@ typedef struct
     u32 is_ready; /* Device is ininitialized and ready*/
     u32 is_started;
     u32 link_status; /* indicates link status ,FXMAC_LINKUP is link up ,FXMAC_LINKDOWN is link down,FXMAC_NEGOTIATING is need to negotiating*/
-    u32 options; 
+    u32 options;
     u32 mask; /* indicates intr mask */
     u32 caps; /*  Capability mask bits */
 

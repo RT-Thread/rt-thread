@@ -125,7 +125,7 @@ typedef enum
 typedef struct
 {
     u32 instance_id; /* Device instance id */
-    uintptr base_address; 
+    uintptr base_address;
 
 } FIOPadConfig;
 
@@ -133,8 +133,8 @@ typedef struct
 {
     FIOPadConfig config;
     u32 is_ready;
-    
-} FIOPadCtrl; 
+
+} FIOPadCtrl;
 /************************** Variable Definitions *****************************/
 
 /***************** Macros (Inline Functions) Definitions *********************/

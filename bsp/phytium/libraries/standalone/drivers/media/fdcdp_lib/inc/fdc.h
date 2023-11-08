@@ -125,7 +125,7 @@ typedef struct
 typedef struct
 {
     u32 total_line;        /*  Total Number of  lines. */
-    u32 visble_line;       /*  Visible Number of  lines */     
+    u32 visble_line;       /*  Visible Number of  lines */
     u32 sync_start;        /* Start of  sync pulse. */
     u32 sync_end;          /* End of  sync pulse. */
     boolean sync_polarity; /* Polarity of the  sync pulse.1 - positive , 0 - negative.  */

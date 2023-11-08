@@ -75,7 +75,7 @@ void FI2sIntrHandler(s32 vector, void *args)
         FI2S_READ_REG32(base_addr, FI2S_R0R0(index));
         FI2S_CALL_INTR_EVENT_HANDLDER(instance_p, FI2S_INTR_RECEIVE_FO);
     }
-    if ((status & FI2S_INTR_RECRIVE_FE_MASK) )
+    if ((status & FI2S_INTR_RECRIVE_FE_MASK))
     {
         FI2S_READ_REG32(base_addr, FI2S_R0R0(index));
         FI2S_CALL_INTR_EVENT_HANDLDER(instance_p, FI2S_INTR_RECEIVE_FE);

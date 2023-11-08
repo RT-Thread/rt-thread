@@ -187,43 +187,43 @@ extern "C"
 /* Can timming */
 #if defined(SOC_TARGET_FT2004) || defined(SOC_TARGET_D2000)
 
-    #define FCAN_ARB_TSEG1_MIN  1
-    #define FCAN_ARB_TSEG1_MAX  16
-    #define FCAN_ARB_TSEG2_MIN  1
-    #define FCAN_ARB_TSEG2_MAX  8
-    #define FCAN_ARB_SJW_MAX    4
-    #define FCAN_ARB_BRP_MIN    1
-    #define FCAN_ARB_BRP_MAX    512
-    #define FCAN_ARB_BRP_INC    1
+#define FCAN_ARB_TSEG1_MIN  1
+#define FCAN_ARB_TSEG1_MAX  16
+#define FCAN_ARB_TSEG2_MIN  1
+#define FCAN_ARB_TSEG2_MAX  8
+#define FCAN_ARB_SJW_MAX    4
+#define FCAN_ARB_BRP_MIN    1
+#define FCAN_ARB_BRP_MAX    512
+#define FCAN_ARB_BRP_INC    1
 
-    #define FCAN_DATA_TSEG1_MIN 1
-    #define FCAN_DATA_TSEG1_MAX 16
-    #define FCAN_DATA_TSEG2_MIN 1
-    #define FCAN_DATA_TSEG2_MAX 8
-    #define FCAN_DATA_SJW_MAX   4
-    #define FCAN_DATA_BRP_MIN   1
-    #define FCAN_DATA_BRP_MAX   512
-    #define FCAN_DATA_BRP_INC   1
+#define FCAN_DATA_TSEG1_MIN 1
+#define FCAN_DATA_TSEG1_MAX 16
+#define FCAN_DATA_TSEG2_MIN 1
+#define FCAN_DATA_TSEG2_MAX 8
+#define FCAN_DATA_SJW_MAX   4
+#define FCAN_DATA_BRP_MIN   1
+#define FCAN_DATA_BRP_MAX   512
+#define FCAN_DATA_BRP_INC   1
 
 #elif defined(SOC_TARGET_E2000) || defined(TARDIGRADE) || defined(SOC_TARGET_PHYTIUMPI)
 
-    #define FCAN_ARB_TSEG1_MIN  1
-    #define FCAN_ARB_TSEG1_MAX  16
-    #define FCAN_ARB_TSEG2_MIN  1
-    #define FCAN_ARB_TSEG2_MAX  8
-    #define FCAN_ARB_SJW_MAX    4
-    #define FCAN_ARB_BRP_MIN    1
-    #define FCAN_ARB_BRP_MAX    8192
-    #define FCAN_ARB_BRP_INC    1
+#define FCAN_ARB_TSEG1_MIN  1
+#define FCAN_ARB_TSEG1_MAX  16
+#define FCAN_ARB_TSEG2_MIN  1
+#define FCAN_ARB_TSEG2_MAX  8
+#define FCAN_ARB_SJW_MAX    4
+#define FCAN_ARB_BRP_MIN    1
+#define FCAN_ARB_BRP_MAX    8192
+#define FCAN_ARB_BRP_INC    1
 
-    #define FCAN_DATA_TSEG1_MIN 1
-    #define FCAN_DATA_TSEG1_MAX 16
-    #define FCAN_DATA_TSEG2_MIN 1
-    #define FCAN_DATA_TSEG2_MAX 8
-    #define FCAN_DATA_SJW_MAX   4
-    #define FCAN_DATA_BRP_MIN   1
-    #define FCAN_DATA_BRP_MAX   8192
-    #define FCAN_DATA_BRP_INC   1
+#define FCAN_DATA_TSEG1_MIN 1
+#define FCAN_DATA_TSEG1_MAX 16
+#define FCAN_DATA_TSEG2_MIN 1
+#define FCAN_DATA_TSEG2_MAX 8
+#define FCAN_DATA_SJW_MAX   4
+#define FCAN_DATA_BRP_MIN   1
+#define FCAN_DATA_BRP_MAX   8192
+#define FCAN_DATA_BRP_INC   1
 
 #endif
 

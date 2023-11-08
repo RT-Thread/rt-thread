@@ -208,10 +208,10 @@ FError FDdmaDisableChan(uintptr base_addr, u32 chan);
 void FDdmaEnableChan(uintptr base_addr, u32 chan);
 
 /* 关闭DDMA全局中断 */
-void FDdmaDisableGlobalIrq(uintptr base_addr,u32 caps);
+void FDdmaDisableGlobalIrq(uintptr base_addr, u32 caps);
 
 /* 打开DDMA全局中断 */
-void FDdmaEnableGlobalIrq(uintptr base_addr,u32 caps);
+void FDdmaEnableGlobalIrq(uintptr base_addr, u32 caps);
 
 /* 关闭DDMA通道中断 */
 void FDdmaDisableChanIrq(uintptr base_addr, u32 chan, u32 caps);

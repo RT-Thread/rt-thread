@@ -95,10 +95,10 @@ void FPwmDump(uintptr base_addr)
     printf("Off[0x%x]: FPWM_PERIOD_OFFSET = 0x%08x\r\n", pwm_base_addr + FPWM_PERIOD_OFFSET, FPWM_READ_REG32(pwm_base_addr, FPWM_PERIOD_OFFSET));
     printf("Off[0x%x]: FPWM_CTRL_OFFSET = 0x%08x\r\n", pwm_base_addr + FPWM_CTRL_OFFSET, FPWM_READ_REG32(pwm_base_addr, FPWM_CTRL_OFFSET));
     printf("Off[0x%x]: FPWM_CCR_OFFSET  = 0x%08x\r\n", pwm_base_addr + FPWM_CCR_OFFSET, FPWM_READ_REG32(pwm_base_addr, FPWM_CCR_OFFSET));
-	
+
 #if defined(FLSD_CONFIG_BASE)
     printf("Off[0x%x]: FPWM_LSD_OFFSET  = 0x%08x\r\n", FLSD_CONFIG_BASE + FLSD_MIO_PWM_SYN_OFFSET, FPWM_READ_REG32(FLSD_CONFIG_BASE, FLSD_MIO_PWM_SYN_OFFSET));
 #endif
     printf("\r\n");
-   
+
 }

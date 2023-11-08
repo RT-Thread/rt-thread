@@ -127,7 +127,7 @@ static void FGdmaReset(FGdma *const instance_p)
             FGdmaClearChanStatus(base_addr, chan_id, FGDMA_CHX_INT_STATE_ALL);
             FGdmaChanSoftReset(base_addr, chan_id);
             FGdmaSetChanClock(base_addr, chan_id, FALSE);
-            instance_p->chan_ready_flag |~ BIT(chan_id);
+            instance_p->chan_ready_flag | ~ BIT(chan_id);
         }
     }
     FGDMA_INFO("Reset all GDMA chans.");
@@ -140,13 +140,15 @@ static void FGdmaReset(FGdma *const instance_p)
  * @param FGdma *const instance_p, GDMA控制器实例
  * @param FGdmaConfig const *input_config, GDMA控制器配置
  */
-FError FGdmaCfgInitialize(FGdma *const instance_p, const FGdmaConfig* controller_config_p)
+FError FGdmaCfgInitialize(FGdma *const instance_p, const FGdmaConfig *controller_config_p)
 {
     FASSERT(instance_p);
     FASSERT(controller_config_p);
 
     if (instance_p->gdma_ready == FT_COMPONENT_IS_READY)
+    {
         FGdmaDeInitialize(instance_p);
+    }
 
     instance_p->config = *controller_config_p;
 
@@ -186,9 +188,9 @@ void FGdmaDeInitialize(FGdma *const instance_p)
  * @param FGdmaOperPriority rd_qos GDMA通道读操作QoS优先级
  * @param FGdmaOperPriority wr_qos GDMA通道写操作QoS优先级
  */
-static void FGdmaChanSetQos(FGdma *const instance_p, 
-                            FGdmaChanIndex channel_id, 
-                            FGdmaOperPriority rd_qos, 
+static void FGdmaChanSetQos(FGdma *const instance_p,
+                            FGdmaChanIndex channel_id,
+                            FGdmaOperPriority rd_qos,
                             FGdmaOperPriority wr_qos)
 {
     FASSERT(instance_p);
@@ -199,7 +201,7 @@ static void FGdmaChanSetQos(FGdma *const instance_p,
     {
         reg_val &= ~FGDMA_CHX_MODE_RD_QOS_EN;
     }
-    else 
+    else
     {
         reg_val &= ~FGDMA_CHX_MODE_RD_QOS_MASK;
         reg_val |= FGDMA_CHX_MODE_RD_QOS_EN |
@@ -233,7 +235,7 @@ static FError FGdmaChanDirectSetBasic(FGdma *const instance_p, FGdmaChanIndex ch
     FASSERT(instance_p);
     FASSERT(channel_config_p);
     FASSERT(channel_id < FGDMA_NUM_OF_CHAN);
-    
+
     uintptr base_addr = instance_p->config.base_addr;
 
     /* set chan mode */
@@ -278,13 +280,13 @@ static FError FGdmaChanDirectSetBasic(FGdma *const instance_p, FGdmaChanIndex ch
  * @param uintptr dst_addr 传输目的地址
  * @param fsize_t data_len 传输的总数据量
  */
-static FError FGdmaChanDirectSetTrans(FGdma *const instance_p, FGdmaChanIndex channel_id,uintptr src_addr, uintptr dst_addr, fsize_t data_len)
+static FError FGdmaChanDirectSetTrans(FGdma *const instance_p, FGdmaChanIndex channel_id, uintptr src_addr, uintptr dst_addr, fsize_t data_len)
 {
     FASSERT(instance_p);
     FASSERT(channel_id < FGDMA_NUM_OF_CHAN);
 
     uintptr base_addr = instance_p->config.base_addr;
-    
+
     /* src address */
 #ifdef __aarch64__
     FGDMA_WRITEREG(base_addr, FGDMA_CHX_UPSADDR_OFFSET(channel_id), UPPER_32_BITS(src_addr));
@@ -337,11 +339,11 @@ FError FGdmaBDLSetDesc(FGdmaBdlDesc *const first_desc_addr_p, FGdmaBdlDescConfig
     FGdmaBdlDesc *bdl_desc_p = &first_desc_addr_p[bdl_desc_config_p->current_desc_num];
     uintptr src_addr = bdl_desc_config_p->src_addr;
     uintptr dst_addr = bdl_desc_config_p->dst_addr;
-    fsize_t trans_length = bdl_desc_config_p->trans_length;  
+    fsize_t trans_length = bdl_desc_config_p->trans_length;
     FGdmaBurstSize rd_size = bdl_desc_config_p->rd_size;
     FGdmaBurstSize wr_size = bdl_desc_config_p->wr_size;
 
-    if (src_addr == 0 || 
+    if (src_addr == 0 ||
         dst_addr == 0 ||
         (0U != (src_addr % FGDMA_GET_BURST_BYTE(rd_size))) ||
         (0U != (dst_addr % FGDMA_GET_BURST_BYTE(wr_size)))) /* 报文传输的首地址需要与burst size所代表的单次burst传输的最大数据字节数对齐 */
@@ -458,7 +460,7 @@ static FError FGdmaChanBDLSetTrans(FGdma *const instance_p, FGdmaChanIndex chann
     for (fsize_t loop = 0; loop < channel_config_p->valid_desc_num; loop++)
     {
         if (first_desc_addr_p[loop].src_addr_l == 0 && first_desc_addr_p[loop].src_addr_h == 0)
-        {   
+        {
             FGDMA_ERROR("BDL descriptor-%d has not been set.", loop + 1);
             return FGDMA_ERR_COMMON;
         }
@@ -540,9 +542,9 @@ static FError FGdmaChanDirectConfiguration(FGdma *const instance_p, FGdmaChanInd
     }
 
     ret = FGdmaChanDirectSetTrans(instance_p,
-                                  channel_id, 
-                                  channel_config_p->src_addr, 
-                                  channel_config_p->dst_addr, 
+                                  channel_id,
+                                  channel_config_p->src_addr,
+                                  channel_config_p->dst_addr,
                                   channel_config_p->trans_length);
     if (ret)
     {
@@ -601,7 +603,7 @@ static FError FGdmaChanBDLConfiguration(FGdma *const instance_p, FGdmaChanIndex 
  * @param FGdmaChanIndex channel_id 操作的GDMA通道的ID
  * @param FGdmaChanConfig const *channel_config_p, GDMA通道配置
  */
-FError FGdmaChanConfigure(FGdma *const instance_p, FGdmaChanIndex channel_id, FGdmaChanConfig const* channel_config_p)
+FError FGdmaChanConfigure(FGdma *const instance_p, FGdmaChanIndex channel_id, FGdmaChanConfig const *channel_config_p)
 {
     FASSERT(instance_p);
     FASSERT(instance_p->gdma_ready);
@@ -655,7 +657,9 @@ FError FGdmaChanDeconfigure(FGdma *const instance_p, FGdmaChanIndex channel_id)
     FASSERT(channel_id < FGDMA_NUM_OF_CHAN);
 
     if (!(instance_p->chan_ready_flag & BIT(channel_id))) /* if chan not init, directly return */
+    {
         return 0;
+    }
 
     uintptr base_addr = instance_p->config.base_addr;
 
@@ -722,7 +726,9 @@ void FGdmaGlobalStartTrans(FGdma *const instance_p)
     for (fsize_t chan_id = 0; chan_id < FGDMA_NUM_OF_CHAN; chan_id++)
     {
         if (instance_p->chan_ready_flag & BIT(chan_id))
+        {
             FGdmaChanEnable(base_addr, chan_id);
+        }
     }
 
     if (FGDMA_TRANS_NEED_RESET_MASK & instance_p->config.caps)
@@ -749,7 +755,9 @@ FError FGdmaChanAbort(FGdma *const instance_p, FGdmaChanIndex channel_id)
     FASSERT(channel_id < FGDMA_NUM_OF_CHAN);
 
     if (!(instance_p->chan_ready_flag & BIT(channel_id))) /* if chan not init, directly return */
+    {
         return FGDMA_SUCCESS;
+    }
 
     uintptr base_addr = instance_p->config.base_addr;
     fsize_t timeout = 10000;
@@ -800,7 +808,9 @@ FError FGdmaGlobalStop(FGdma *const instance_p)
     for (fsize_t chan_id = 0; chan_id < FGDMA_NUM_OF_CHAN; chan_id++)
     {
         if (!(instance_p->chan_ready_flag & BIT(chan_id))) /* if chan not init, directly break */
+        {
             break;
+        }
 
         timeout = 10000;
         FGdmaChanDisable(base_addr, chan_id); /* 停止通道传输 */

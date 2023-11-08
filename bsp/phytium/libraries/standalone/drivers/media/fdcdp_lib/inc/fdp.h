@@ -123,12 +123,12 @@ typedef struct
 
 typedef struct
 {
- u32 sample_rate; /*the sample rate of audio */
- u32 sample_width; /*the sample width of audio*/
- u32 link_rate; /*the link rate of media audio*/
- u16 m; /*the audio freq of Dp */
- u16 n; /*the audio freq of Dp */
-}FDpAudioConfig;
+    u32 sample_rate; /*the sample rate of audio */
+    u32 sample_width; /*the sample width of audio*/
+    u32 link_rate; /*the link rate of media audio*/
+    u16 m; /*the audio freq of Dp */
+    u16 n; /*the audio freq of Dp */
+} FDpAudioConfig;
 
 typedef struct
 {

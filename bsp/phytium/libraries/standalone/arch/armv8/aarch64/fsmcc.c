@@ -1,21 +1,21 @@
 /*
  * Copyright : (C) 2023 Phytium Information Technology, Inc.
  * All Rights Reserved.
- * 
+ *
  * This program is OPEN SOURCE software: you can redistribute it and/or modify it
  * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
  * either version 1.0 of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the Phytium Public License for more details.
- * 
- * 
+ *
+ *
  * FilePath: fsmcc.c
  * Created Date: 2023-06-19 11:12:23
  * Last Modified: 2023-10-25 11:28:58
  * Description:  This file is for
- * 
+ *
  * Modify History:
  *  Ver      Who        Date               Changes
  * -----  ----------  --------  ---------------------------------
@@ -41,10 +41,10 @@
 @note: 此函数执行SMC（Secure Monitor Call）指令，并将结果保存在提供的结构体指针中。
 */
 void FSmcccSmcCall(unsigned long arg0, unsigned long arg1,
-                                   unsigned long arg2, unsigned long arg3,
-                                   unsigned long arg4, unsigned long arg5,
-                                   unsigned long arg6, unsigned long arg7,
-                                   struct FSmcccRes *res)
+                   unsigned long arg2, unsigned long arg3,
+                   unsigned long arg4, unsigned long arg5,
+                   unsigned long arg6, unsigned long arg7,
+                   struct FSmcccRes *res)
 {
     register unsigned long x0 __asm__("x0") = arg0;
     register unsigned long x1 __asm__("x1") = arg1;
@@ -58,7 +58,7 @@ void FSmcccSmcCall(unsigned long arg0, unsigned long arg1,
     __asm__ volatile(
         "smc #0\n"
         : "+r"(x0), "+r"(x1), "+r"(x2), "+r"(x3),
-          "+r"(x4), "+r"(x5), "+r"(x6), "+r"(x7)
+        "+r"(x4), "+r"(x5), "+r"(x6), "+r"(x7)
         :
         : "memory");
 
@@ -83,10 +83,10 @@ void FSmcccSmcCall(unsigned long arg0, unsigned long arg1,
 @note: 此函数执行SMC（虚拟化监管CALL）指令，并将结果保存在提供的结构体指针中。
 */
 void FSmcccHvcCall(unsigned long arg0, unsigned long arg1,
-                                   unsigned long arg2, unsigned long arg3,
-                                   unsigned long arg4, unsigned long arg5,
-                                   unsigned long arg6, unsigned long arg7,
-                                   struct FSmcccRes *res)
+                   unsigned long arg2, unsigned long arg3,
+                   unsigned long arg4, unsigned long arg5,
+                   unsigned long arg6, unsigned long arg7,
+                   struct FSmcccRes *res)
 {
     register unsigned long x0 __asm__("x0") = arg0;
     register unsigned long x1 __asm__("x1") = arg1;
@@ -100,7 +100,7 @@ void FSmcccHvcCall(unsigned long arg0, unsigned long arg1,
     __asm__ volatile(
         "hvc #0\n"
         : "+r"(x0), "+r"(x1), "+r"(x2), "+r"(x3),
-          "+r"(x4), "+r"(x5), "+r"(x6), "+r"(x7)
+        "+r"(x4), "+r"(x5), "+r"(x6), "+r"(x7)
         :
         : "memory");
 

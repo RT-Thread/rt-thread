@@ -131,11 +131,11 @@ const FPwmConfig FPwmConfigTbl[FPWM_NUM] =
 
 };
 
-#elif defined(TARDIGRADE) 
+#elif defined(TARDIGRADE)
 /* default configs of pwm ctrl */
 const FPwmConfig FPwmConfigTbl[FPWM_NUM] =
 {
-    [FPWM0_ID] = 
+    [FPWM0_ID] =
     {
         .instance_id = FPWM0_ID,
         .pwm_base_addr = FPWM0_BASE_ADR,

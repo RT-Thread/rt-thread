@@ -247,7 +247,7 @@ FError FIOPadSetConfig(FIOPadCtrl *instance_p, const u32 pin_reg_off, FIOPadFunc
     u32 ret = FIOPAD_SUCCESS;
     uintptr base_addr = instance_p->config.base_address;
     u32 reg_val = FIOPAD_READ_REG32(base_addr, pin_reg_off);
-    
+
     reg_val &= ~FIOPAD_REG0_FUNC_MASK;
     reg_val |= FIOPAD_REG0_FUNC_SET(func);
 
@@ -473,6 +473,6 @@ FError FIOPadDeInitialize(FIOPadCtrl *instance_p)
     FError ret = FIOPAD_SUCCESS;
     instance_p->is_ready = 0;
     memset(instance_p, 0, sizeof(*instance_p));
-    
+
     return ret;
 }

@@ -41,7 +41,7 @@ extern "C"
 #define FT_GIC_REDISTRUBUTIOR_OFFSET 2
 
 /* register offset of iopad function / pull / driver strength */
-#define FIOPAD_AN55_REG0_OFFSET       0x0000U       
+#define FIOPAD_AN55_REG0_OFFSET       0x0000U
 #define FIOPAD_AW43_REG0_OFFSET       0x0004U
 #define FIOPAD_AR51_REG0_OFFSET       0x0020U
 #define FIOPAD_AJ51_REG0_OFFSET       0x0024U

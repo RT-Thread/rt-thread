@@ -26,7 +26,7 @@
 /***************************** Include Files *********************************/
 #include "rtconfig.h"
 #ifdef RT_USING_SMART
-#include <ioremap.h>
+    #include <ioremap.h>
 #endif
 
 #include "fkernel.h"
@@ -43,7 +43,7 @@ void FEarlyUartProbe(void)
     FPl011Config config;
     config = *FPl011LookupConfig(EARLY_UART_CTRL_ID);
 #ifdef RT_USING_SMART
-    config.base_address = (uintptr)rt_ioremap((void*)config.base_address, 0x2000);
+    config.base_address = (uintptr)rt_ioremap((void *)config.base_address, 0x2000);
 #endif
     FPl011CfgInitialize(&early_uart, &config);
     return;

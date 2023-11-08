@@ -97,7 +97,7 @@ typedef struct
     void *param;
 } FMediaIntrConfig;
 
-typedef struct 
+typedef struct
 {
     u32 width;
     u32 height;
@@ -106,7 +106,7 @@ typedef struct
     u32 multi_mode;
     uintptr fb_phy;
     uintptr fb_virtual;
-} FDcDpUserConfig; 
+} FDcDpUserConfig;
 
 typedef struct
 {
@@ -116,12 +116,12 @@ typedef struct
     FDpCtrl dp_instance_p[FDCDP_INSTANCE_NUM];
     /* u8 *fb_config[FDCDP_INSTANCE_NUM];*/
     FDcDpUserConfig  user_config[FDCDP_INSTANCE_NUM];
-   /*the intr config of dcdp*/
+    /*the intr config of dcdp*/
     FMediaIntrConfig intr_event[FDCDP_INTR_MAX_NUM];
     /*connect status ,1 :connected,0:disconnected*/
     u32 connect_flg[FDCDP_INSTANCE_NUM];
     /* Device is ininitialized and ready*/
-     u32 is_ready; 
+    u32 is_ready;
 } FDcDp;
 
 /************************** Function Prototypes ******************************/
@@ -135,19 +135,19 @@ const FDcConfig *FDcLookupConfig(u32 instance_id);
 FError FDcDpCfgInitialize(FDcDp *instance_p);
 
 /*init the dcdp*/
-FError FDcDpInitialize(FDcDp *instance_p,u32 channel);
+FError FDcDpInitialize(FDcDp *instance_p, u32 channel);
 
 /* deinit the DcDp */
 FError FDcDpDeInitialize(FDcDp *instance_p, u32 id);
 
 /*register the interrupt*/
-void FDcDpRegisterHandler(FDcDp *instance_p, FDcDpIntrEventType type,FMediaIntrHandler  handler,void *param);
+void FDcDpRegisterHandler(FDcDp *instance_p, FDcDpIntrEventType type, FMediaIntrHandler  handler, void *param);
 
 /*the interrupt handler*/
 void FDcDpInterruptHandler(s32 vector, void *args);
 
 /*enable the interrupt*/
-void FDcDpIrqEnable(FDcDp *instance_p,u32 index, FDcDpIntrEventType intr_event_p);
+void FDcDpIrqEnable(FDcDp *instance_p, u32 index, FDcDpIntrEventType intr_event_p);
 
 /*the hotplug information*/
 void FDcDpHotPlug(FDcDp *instance_p, u32 index, FDcDpConnectStatus connect_status);

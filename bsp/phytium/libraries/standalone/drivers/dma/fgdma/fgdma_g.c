@@ -43,27 +43,27 @@ const FGdmaConfig fgdma_cfg_tbl[FGDMA_INSTANCE_NUM] =
     [FGDMA0_ID] =
     {
         .instance_id = FGDMA0_ID,
-        .irq_num ={
-                    FGDMA0_CHANNEL0_IRQ_NUM,
-                    #if defined(FGDMA0_CHANNEL1_IRQ_NUM)
-                    FGDMA0_CHANNEL1_IRQ_NUM,
-                    #endif
-                    #if defined(FGDMA0_CHANNEL2_IRQ_NUM)
-                    FGDMA0_CHANNEL2_IRQ_NUM,
-                    #endif
-                    #if defined(FGDMA0_CHANNEL3_IRQ_NUM)
-                    FGDMA0_CHANNEL3_IRQ_NUM,
-                    #endif
-                    #if defined(FGDMA0_CHANNEL4_IRQ_NUM)
-                    FGDMA0_CHANNEL4_IRQ_NUM,
-                    #endif
-                    #if defined(FGDMA0_CHANNEL5_IRQ_NUM)
-                    FGDMA0_CHANNEL5_IRQ_NUM,
-                    #endif
-                    #if defined(FGDMA0_CHANNEL6_IRQ_NUM)
-                    FGDMA0_CHANNEL6_IRQ_NUM,
-                    #endif
-                } , 
+        .irq_num = {
+            FGDMA0_CHANNEL0_IRQ_NUM,
+#if defined(FGDMA0_CHANNEL1_IRQ_NUM)
+            FGDMA0_CHANNEL1_IRQ_NUM,
+#endif
+#if defined(FGDMA0_CHANNEL2_IRQ_NUM)
+            FGDMA0_CHANNEL2_IRQ_NUM,
+#endif
+#if defined(FGDMA0_CHANNEL3_IRQ_NUM)
+            FGDMA0_CHANNEL3_IRQ_NUM,
+#endif
+#if defined(FGDMA0_CHANNEL4_IRQ_NUM)
+            FGDMA0_CHANNEL4_IRQ_NUM,
+#endif
+#if defined(FGDMA0_CHANNEL5_IRQ_NUM)
+            FGDMA0_CHANNEL5_IRQ_NUM,
+#endif
+#if defined(FGDMA0_CHANNEL6_IRQ_NUM)
+            FGDMA0_CHANNEL6_IRQ_NUM,
+#endif
+        },
         .irq_prority = 0,
         .caps = FGDMA0_CAPACITY,
         .base_addr = FGDMA0_BASE_ADDR,

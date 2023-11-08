@@ -1,21 +1,21 @@
 /*
  * Copyright : (C) 2023 Phytium Information Technology, Inc.
  * All Rights Reserved.
- * 
+ *
  * This program is OPEN SOURCE software: you can redistribute it and/or modify it
  * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
  * either version 1.0 of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the Phytium Public License for more details.
- * 
- * 
+ *
+ *
  * FilePath: fpcie_ecam.h
  * Created Date: 2023-08-01 08:43:09
  * Last Modified: 2023-11-01 09:36:20
  * Description:  This file is for
- * 
+ *
  * Modify History:
  *  Ver      Who        Date               Changes
  * -----  ----------  --------  ---------------------------------
@@ -38,7 +38,7 @@ extern "C"
 
 
 #define FPCIE_EXCEED_BUS FT_CODE_ERR(ErrModBsp, ErrPcie, 0x1u)
-#define FPCIE_READCONFIG_ERROR  FT_CODE_ERR(ErrModBsp, ErrPcie, 0x2u) 
+#define FPCIE_READCONFIG_ERROR  FT_CODE_ERR(ErrModBsp, ErrPcie, 0x2u)
 #define FPCIE_CONFIG_REGION_ERROR FT_CODE_ERR(ErrModBsp, ErrPcie, 0x3u)
 #define FPCIE_TYPE_NOT_FIT FT_CODE_ERR(ErrModBsp, ErrPcie, 0x4u)
 #define FPCIE_DEVICE_NOT_FOUND FT_CODE_ERR(ErrModBsp, ErrPcie, 0x5u)
@@ -51,8 +51,8 @@ extern "C"
 #endif
 
 #ifdef CONFIG_SYS_PCI_64BIT
-    typedef u64 fpciaddr_t;
-    typedef u64 fpcisize_t;
+typedef u64 fpciaddr_t;
+typedef u64 fpcisize_t;
 #else
 typedef u32 fpciaddr_t;
 typedef u32 fpcisize_t;
@@ -61,9 +61,9 @@ typedef u32 fpcisize_t;
 
 
 #if defined(__aarch64__)
-    typedef u64 FPcieAddr;
-    typedef u64 FPcieSize;
-    typedef u64 FPciePhysAddr;
+typedef u64 FPcieAddr;
+typedef u64 FPcieSize;
+typedef u64 FPciePhysAddr;
 #else
 typedef u32 FPcieAddr;
 typedef u32 FPcieSize;
@@ -77,7 +77,7 @@ typedef u32 FPciePhysAddr;
 
 #define FPCIE_REGION_EXIST_FLG 1
 
-typedef int (*FPcieEcamNeedSkip)(void *instance_p,u8 bus,u8 device,u8 function) ;
+typedef int (*FPcieEcamNeedSkip)(void *instance_p, u8 bus, u8 device, u8 function) ;
 
 
 struct FPcieRegion
@@ -172,18 +172,18 @@ typedef struct
 
 
 /* Ecam */
-FError FPcieEcamCfgInitialize(FPcieEcam *instance_p, FPcieEcamConfig *config_p,FPcieEcamNeedSkip need_skip_fun) ;
-FError FPcieEcamEnumerateBus(FPcieEcam *instance_p,u8 bus) ;
-FError FPcieEcamReadConfigSpace(FPcieEcam *instance_p,u8 bus, u8 device, u8 function, u16 offset,u32 *data) ;
-FError FPcieEcamWriteConfigSpace(FPcieEcam *instance_p,u8 bus, u8 device, u8 function, u16 offset,u32 data) ;
+FError FPcieEcamCfgInitialize(FPcieEcam *instance_p, FPcieEcamConfig *config_p, FPcieEcamNeedSkip need_skip_fun) ;
+FError FPcieEcamEnumerateBus(FPcieEcam *instance_p, u8 bus) ;
+FError FPcieEcamReadConfigSpace(FPcieEcam *instance_p, u8 bus, u8 device, u8 function, u16 offset, u32 *data) ;
+FError FPcieEcamWriteConfigSpace(FPcieEcam *instance_p, u8 bus, u8 device, u8 function, u16 offset, u32 data) ;
 FPcieEcamConfig *FPcieEcamLookupConfig(u32 instance_id) ;
 
 /* capability */
-u32 FPcieEcamHasExtendCapability(FPcieEcam *instance_p, u8 bus, u8 device, u8 function,u16 capid) ;
-u32 FPcieEcamHasCapability(FPcieEcam *instance_p, u8 bus, u8 device, u8 function,u8 capid) ;
+u32 FPcieEcamHasExtendCapability(FPcieEcam *instance_p, u8 bus, u8 device, u8 function, u16 capid) ;
+u32 FPcieEcamHasCapability(FPcieEcam *instance_p, u8 bus, u8 device, u8 function, u8 capid) ;
 
 /* intx */
-FError FPcieEcamIntxRegister(FPcieEcam *instance_p,u8 bus, u8 device, u8 function,FPcieIntxFun *func_p) ;
+FError FPcieEcamIntxRegister(FPcieEcam *instance_p, u8 bus, u8 device, u8 function, FPcieIntxFun *func_p) ;
 void FPcieEcamIntxIrqHandler(s32 vector, void *args)  ;
 
 /* debug */

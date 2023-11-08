@@ -1,21 +1,21 @@
 /*
  * Copyright : (C) 2023 Phytium Information Technology, Inc.
  * All Rights Reserved.
- * 
+ *
  * This program is OPEN SOURCE software: you can redistribute it and/or modify it
  * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
  * either version 1.0 of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the Phytium Public License for more details.
- * 
- * 
+ *
+ *
  * FilePath: fpcie_debug.c
  * Created Date: 2023-07-11 08:42:27
  * Last Modified: 2023-08-01 13:38:50
  * Description:  This file is for
- * 
+ *
  * Modify History:
  *  Ver      Who        Date               Changes
  * -----  ----------  --------  ---------------------------------
@@ -232,10 +232,10 @@ const char *FPcieEcamClassStr(u8 class)
 
 
 void FPcieEcamInfoPrint(FPcieEcam *instance_p)
-{   
+{
     u32 config_reg ;
     u32 vendor, device;
-    u8 bus,dev,function;
+    u8 bus, dev, function;
     u32 class_code ;
     char buf_bdf_print[20];
     FPCIE_DEBUG_DEBUG_I("\tB:D:F\t\t\tVID:PID\t\t\tclass_code\n");
@@ -246,32 +246,32 @@ void FPcieEcamInfoPrint(FPcieEcam *instance_p)
         dev =  instance_p->scans_bdf[i].device;
         function = instance_p->scans_bdf[i].function;
 
-        if(FPcieEcamReadConfigSpace(instance_p,bus,dev,function,FPCIE_CCR_ID_REG,&config_reg) != FT_SUCCESS)
+        if (FPcieEcamReadConfigSpace(instance_p, bus, dev, function, FPCIE_CCR_ID_REG, &config_reg) != FT_SUCCESS)
         {
             FPCIE_DEBUG_DEBUG_E("%s:%d,Failed to read config space", __FUNCTION__, __LINE__) ;
             return ;
-        } 
-        
+        }
+
         vendor = FPCIE_CCR_VENDOR_ID_MASK(config_reg);
         device = FPCIE_CCR_DEVICE_ID_MASK(config_reg);
-        
-        if(FPcieEcamReadConfigSpace(instance_p,bus,dev,function,FPCIE_CCR_REV_CLASSID_REGS,&config_reg) != FT_SUCCESS)
+
+        if (FPcieEcamReadConfigSpace(instance_p, bus, dev, function, FPCIE_CCR_REV_CLASSID_REGS, &config_reg) != FT_SUCCESS)
         {
             FPCIE_DEBUG_DEBUG_E("%s:%d,Failed to read config space", __FUNCTION__, __LINE__) ;
             return ;
-        } 
+        }
         class_code = FPCIE_CCR_CLASS_CODE_MASK(config_reg) ;
-        
+
         /* code */
         sprintf(buf_bdf_print, "pci_%x:%x:%x",
-                bus,dev,function);
+                bus, dev, function);
 
         FPCIE_DEBUG_DEBUG_I("\t%02x:%02x.%02x\t\t%04lx:%04lx\t\t%s",
-               bus,dev,function, vendor, device,
-               buf_bdf_print);
+                            bus, dev, function, vendor, device,
+                            buf_bdf_print);
 
         FPCIE_DEBUG_DEBUG_I("\t\t\t0x%.2x (%s)\n", (int)class_code, FPcieEcamClassStr(class_code));
     }
-    
+
 
 }

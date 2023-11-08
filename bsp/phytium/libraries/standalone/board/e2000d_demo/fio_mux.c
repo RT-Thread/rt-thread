@@ -1,22 +1,22 @@
 /*
- * @Copyright : (C) 2022 Phytium Information Technology, Inc. 
+ * @Copyright : (C) 2022 Phytium Information Technology, Inc.
  * All Rights Reserved.
- *  
- * This program is OPEN SOURCE software: you can redistribute it and/or modify it  
- * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,  
- * either version 1.0 of the License, or (at your option) any later version. 
- *  
- * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;  
+ *
+ * This program is OPEN SOURCE software: you can redistribute it and/or modify it
+ * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
+ * either version 1.0 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the Phytium Public License for more details. 
- *  
- * 
+ * See the Phytium Public License for more details.
+ *
+ *
  * @FilePath: fio_mux.c
  * @Date: 2023-07-24 14:22:35
  * @LastEditTime: 2023-07-24 14:22:35
- * @Description:  This file is for io-pad function 
- * 
- * @Modify History: 
+ * @Description:  This file is for io-pad function
+ *
+ * @Modify History:
  *  Ver   Who    Date           Changes
  * ----- ------  --------       --------------------------------------
  * 1.0   liusm   2023/7/24      first release
@@ -132,15 +132,15 @@ void FIOPadSetCanMux(u32 can_id)
 {
     if (can_id == FCAN0_ID)
     {
-		/* can0 */
+        /* can0 */
         FIOPadSetFunc(&iopad_ctrl, FIOPAD_A37_REG0_OFFSET, FIOPAD_FUNC0);/* can0-tx: func 0 */
         FIOPadSetFunc(&iopad_ctrl, FIOPAD_A39_REG0_OFFSET, FIOPAD_FUNC0);/* can0-rx: func 0 */
     }
     else if (can_id == FCAN1_ID)
     {
-		/* can1 */
+        /* can1 */
         FIOPadSetFunc(&iopad_ctrl, FIOPAD_A41_REG0_OFFSET, FIOPAD_FUNC0);/* can1-tx: func 0 */
-        FIOPadSetFunc(&iopad_ctrl, FIOPAD_C41_REG0_OFFSET, FIOPAD_FUNC0);/* can1-rx: func 0 */ 
+        FIOPadSetFunc(&iopad_ctrl, FIOPAD_C41_REG0_OFFSET, FIOPAD_FUNC0);/* can1-rx: func 0 */
     }
     else
     {
@@ -195,7 +195,7 @@ void FIOPadSetPwmMux(u32 pwm_id, u32 pwm_channel)
 {
     FASSERT(pwm_id < FPWM_NUM);
     FASSERT(pwm_channel < FPWM_CHANNEL_NUM);
-    
+
     switch (pwm_id)
     {
         case FPWM0_ID:
@@ -310,7 +310,7 @@ void FIOPadSetAdcMux(u32 adc_id, u32 adc_channel)
                 FIOPadSetFunc(&iopad_ctrl, FIOPAD_R47_REG0_OFFSET, FIOPAD_FUNC7);/* adc0-0: func 7 */
                 break;
             case FADC_CHANNEL_1:
-                FIOPadSetFunc(&iopad_ctrl, FIOPAD_R45_REG0_OFFSET, FIOPAD_FUNC7);/* adc0-1: func 7 */ 
+                FIOPadSetFunc(&iopad_ctrl, FIOPAD_R45_REG0_OFFSET, FIOPAD_FUNC7);/* adc0-1: func 7 */
                 break;
             case FADC_CHANNEL_2:
                 FIOPadSetFunc(&iopad_ctrl, FIOPAD_N47_REG0_OFFSET, FIOPAD_FUNC7);/* adc0-2: func 7 */
@@ -580,12 +580,12 @@ void FIOPadSetSdMux(u32 sd_id)
  * @name: FIOMuxInit
  * @msg: init io mux
  * @return {void}
- * @note: 
+ * @note:
  */
 _WEAK void FIOMuxInit(void)
 {
     FIOPadCfgInitialize(&iopad_ctrl, FIOPadLookupConfig(FIOPAD0_ID));
-    
+
     return;
 }
 
@@ -593,7 +593,7 @@ _WEAK void FIOMuxInit(void)
  * @name: FIOMuxDeInit
  * @msg: deinit io mux
  * @return {void}
- * @note: 
+ * @note:
  */
 _WEAK void FIOMuxDeInit(void)
 {

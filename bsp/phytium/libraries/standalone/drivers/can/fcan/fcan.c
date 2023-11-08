@@ -662,7 +662,7 @@ FError FCanSend(FCanCtrl *instance_p, FCanFrame *frame_p)
     /* 根据use_canfd判断dlc是否有效 */
     if (instance_p->use_canfd == FALSE)
     {
-        if(can_send_dlc <= 8)
+        if (can_send_dlc <= 8)
         {
             FCAN_DEBUG("FCanSend protocol is:%s\n", "can");
             FASSERT(can_send_dlc <= 8);
@@ -1022,7 +1022,7 @@ FError FCanIdMaskFilterSet(FCanCtrl *instance_p, FCanIdMaskConfig *id_mask_p)
         id = id_mask_p->id;
         mask = id_mask_p->mask;
     }
-    
+
     FCAN_WRITE_REG32(base_address, id_reg_offset, id);
     FCAN_WRITE_REG32(base_address, mask_reg_offset, mask);
 

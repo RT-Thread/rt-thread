@@ -70,47 +70,49 @@ static void FGdmaChanIrqHandler(FGdmaChanIrq *const chan_irq_info_p)
     FASSERT(channel_id < FGDMA_NUM_OF_CHAN);
 
     if (!(instance_p->chan_ready_flag & BIT(channel_id)))
+    {
         return;
+    }
 
     u32 chan_status = FGdmaReadChanStatus(base_addr, channel_id);
     FGDMA_INFO("DMA_Cx_STATE(0x2C): 0x%x", chan_status);
     if (FGDMA_CHX_INT_STATE_BUSY & chan_status)
     {
         FGDMA_CALL_EVT_HANDLER(chan_irq_info_p->evt_handlers[FGDMA_CHAN_EVT_BUSY],
-                               chan_irq_info_p, 
+                               chan_irq_info_p,
                                chan_irq_info_p->evt_handler_args[FGDMA_CHAN_EVT_BUSY]);
     }
 
     if (FGDMA_CHX_INT_STATE_TRANS_END & chan_status)
     {
         FGDMA_CALL_EVT_HANDLER(chan_irq_info_p->evt_handlers[FGDMA_CHAN_EVT_TRANS_END],
-                               chan_irq_info_p, 
+                               chan_irq_info_p,
                                chan_irq_info_p->evt_handler_args[FGDMA_CHAN_EVT_TRANS_END]);
     }
 
     if (FGDMA_CHX_INT_STATE_BDL_END & chan_status)
     {
         FGDMA_CALL_EVT_HANDLER(chan_irq_info_p->evt_handlers[FGDMA_CHAN_EVT_BDL_END],
-                               chan_irq_info_p, 
+                               chan_irq_info_p,
                                chan_irq_info_p->evt_handler_args[FGDMA_CHAN_EVT_BDL_END]);
     }
 
     if (FGDMA_CHX_INT_STATE_FIFO_FULL & chan_status)
     {
         FGDMA_CALL_EVT_HANDLER(chan_irq_info_p->evt_handlers[FGDMA_CHAN_EVT_FIFO_FULL],
-                               chan_irq_info_p, 
+                               chan_irq_info_p,
                                chan_irq_info_p->evt_handler_args[FGDMA_CHAN_EVT_FIFO_FULL]);
     }
 
     if (FGDMA_CHX_INT_STATE_FIFO_EMPTY & chan_status)
     {
         FGDMA_CALL_EVT_HANDLER(chan_irq_info_p->evt_handlers[FGDMA_CHAN_EVT_FIFO_EMPTY],
-                               chan_irq_info_p, 
+                               chan_irq_info_p,
                                chan_irq_info_p->evt_handler_args[FGDMA_CHAN_EVT_FIFO_EMPTY]);
     }
 
     FGdmaClearChanStatus(base_addr, channel_id, chan_status);
-    
+
     chan_status = FGdmaReadChanStatus(base_addr, channel_id);
     FGDMA_INFO("After clear, DMA_Cx_STATE(0x2C): 0x%x", chan_status);
     return;
@@ -126,7 +128,7 @@ static void FGdmaChanIrqHandler(FGdmaChanIrq *const chan_irq_info_p)
 void FGdmaIrqHandler(s32 vector, void *args)
 {
     FASSERT(args);
-    
+
     FGdma *const instance_p = (FGdma * const)args;
     uintptr base_addr = instance_p->config.base_addr;
 
@@ -137,7 +139,9 @@ void FGdmaIrqHandler(s32 vector, void *args)
     for (fsize_t chan_id = 0; chan_id < FGDMA_NUM_OF_CHAN; chan_id++)
     {
         if (!(instance_p->chan_ready_flag & BIT(chan_id)) || !(status & FGDMA_CHX_INTR_STATE(chan_id))) /* if chan not init or no intr come in, directly return */
+        {
             continue;
+        }
 
         FGdmaChanIrqHandler(&instance_p->chan_irq_info[chan_id]); /* if channel interrupt happens, go irq handler */
     }
@@ -164,17 +168,19 @@ void FGdmaIrqHandlerPrivateChannel(s32 vector, void *args)
     FGdma *instance_p = chan_irq_info_p->gdma_instance;
 
     FASSERT(channel_id < FGDMA_NUM_OF_CHAN);
-    
+
     if (!(instance_p->chan_ready_flag & BIT(channel_id)))
+    {
         return;
+    }
 
     u32 status = FGdmaReadStatus(instance_p->config.base_addr);
     FGDMA_INFO("FGdmaIrqHandlerPrivateChannel is here %d \r\n", vector);
     FGDMA_INFO("DMA_STATE(0x04): 0x%x", status);
 
-    if(!(FGDMA_CHX_INTR_STATE(channel_id) & status))
+    if (!(FGDMA_CHX_INTR_STATE(channel_id) & status))
     {
-        FGDMA_WARN("The interrupt state does not match the interrupt chan_id, chan_id: %d, interrupt state: 0x%x ",channel_id, status);
+        FGDMA_WARN("The interrupt state does not match the interrupt chan_id, chan_id: %d, interrupt state: 0x%x ", channel_id, status);
     }
 
     FGdmaChanIrqHandler(chan_irq_info_p);
@@ -198,7 +204,7 @@ void FGdmaIrqHandlerPrivateChannel(s32 vector, void *args)
 void FGdmaChanRegisterEvtHandler(FGdma *const instance_p,
                                  FGdmaChanIndex channel_id,
                                  FGdmaChanEvtType evt,
-                                 FGdmaChanEvtHandler handler, 
+                                 FGdmaChanEvtHandler handler,
                                  void *handler_arg)
 {
     FASSERT(instance_p);

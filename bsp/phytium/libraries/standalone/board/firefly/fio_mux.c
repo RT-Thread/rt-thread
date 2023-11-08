@@ -1,22 +1,22 @@
 /*
- * @Copyright : (C) 2022 Phytium Information Technology, Inc. 
+ * @Copyright : (C) 2022 Phytium Information Technology, Inc.
  * All Rights Reserved.
- *  
- * This program is OPEN SOURCE software: you can redistribute it and/or modify it  
- * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,  
- * either version 1.0 of the License, or (at your option) any later version. 
- *  
- * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;  
+ *
+ * This program is OPEN SOURCE software: you can redistribute it and/or modify it
+ * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
+ * either version 1.0 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- * See the Phytium Public License for more details. 
- *  
- * 
+ * See the Phytium Public License for more details.
+ *
+ *
  * @FilePath: fio_mux.c
  * @Date: 2023-07-28 16:20:15
  * @LastEditTime: 2023-07-28 16:20:15
  * @Description:  This file is for io mux
- * 
- * @Modify History: 
+ *
+ * @Modify History:
  *  Ver   Who        Date       Changes
  * ----- ------     --------    --------------------------------------
  * 1.0   liusm    2023/7/28     init commit
@@ -51,15 +51,15 @@ void FIOPadSetSpimMux(u32 spim_id)
     if (FSPI0_ID == spim_id)
     {
         FBOARD_IO_INFO("%d-%d-%d-%d", FIOPadGetFunc(&iopad_ctrl, FIOPAD_W55_REG0_OFFSET),
-                    FIOPadGetFunc(&iopad_ctrl, FIOPAD_W53_REG0_OFFSET), FIOPadGetFunc(&iopad_ctrl, FIOPAD_U55_REG0_OFFSET),
-                    FIOPadGetFunc(&iopad_ctrl, FIOPAD_U53_REG0_OFFSET));
+                       FIOPadGetFunc(&iopad_ctrl, FIOPAD_W53_REG0_OFFSET), FIOPadGetFunc(&iopad_ctrl, FIOPAD_U55_REG0_OFFSET),
+                       FIOPadGetFunc(&iopad_ctrl, FIOPAD_U53_REG0_OFFSET));
         FIOPadSetFunc(&iopad_ctrl, FIOPAD_W55_REG0_OFFSET, FIOPAD_FUNC2); /* sclk */
         FIOPadSetFunc(&iopad_ctrl, FIOPAD_W53_REG0_OFFSET, FIOPAD_FUNC2); /* txd */
         FIOPadSetFunc(&iopad_ctrl, FIOPAD_U55_REG0_OFFSET, FIOPAD_FUNC2); /* rxd */
         FIOPadSetFunc(&iopad_ctrl, FIOPAD_U53_REG0_OFFSET, FIOPAD_FUNC2); /* csn0 */
         FBOARD_IO_INFO("%d-%d-%d-%d", FIOPadGetFunc(&iopad_ctrl, FIOPAD_W55_REG0_OFFSET),
-                    FIOPadGetFunc(&iopad_ctrl, FIOPAD_W53_REG0_OFFSET), FIOPadGetFunc(&iopad_ctrl, FIOPAD_U55_REG0_OFFSET),
-                    FIOPadGetFunc(&iopad_ctrl, FIOPAD_U53_REG0_OFFSET));
+                       FIOPadGetFunc(&iopad_ctrl, FIOPAD_W53_REG0_OFFSET), FIOPadGetFunc(&iopad_ctrl, FIOPAD_U55_REG0_OFFSET),
+                       FIOPadGetFunc(&iopad_ctrl, FIOPAD_U53_REG0_OFFSET));
     }
     else
     {
@@ -86,7 +86,7 @@ void FIOPadSetGpioMux(u32 gpio_id, u32 pin_id)
             default:
                 FBOARD_IO_ERROR("pin_id error.");
                 break;
-            }
+        }
     }
     else if (FGPIO1_ID == gpio_id)
     {
@@ -174,13 +174,13 @@ void FIOPadSetCanMux(u32 can_id)
 {
     if (can_id == FCAN0_ID)
     {
-		/* can0 */
+        /* can0 */
         FIOPadSetFunc(&iopad_ctrl, FIOPAD_A41_REG0_OFFSET, FIOPAD_FUNC0); /* can0-tx: func 0 */
         FIOPadSetFunc(&iopad_ctrl, FIOPAD_A43_REG0_OFFSET, FIOPAD_FUNC0); /* can0-rx: func 0 */
     }
     else if (can_id == FCAN1_ID)
     {
-		/* can1 */
+        /* can1 */
         FIOPadSetFunc(&iopad_ctrl, FIOPAD_A45_REG0_OFFSET, FIOPAD_FUNC0); /* can1-tx: func 0 */
         FIOPadSetFunc(&iopad_ctrl, FIOPAD_C45_REG0_OFFSET, FIOPAD_FUNC0); /* can1-rx: func 0 */
     }
@@ -350,19 +350,19 @@ void FIOPadSetSdMux(u32 sd_id)
         case FSDIF1_ID:
             FIOPadSetFunc(&iopad_ctrl, FIOPAD_N45_REG0_OFFSET, FIOPAD_FUNC5);
             break;
-    }    
+    }
 }
 
 /**
  * @name: FIOMuxInit
  * @msg: init io mux
  * @return {void}
- * @note: 
+ * @note:
  */
 _WEAK void FIOMuxInit(void)
 {
     FIOPadCfgInitialize(&iopad_ctrl, FIOPadLookupConfig(FIOPAD0_ID));
-    
+
     return;
 }
 
@@ -370,7 +370,7 @@ _WEAK void FIOMuxInit(void)
  * @name: FIOMuxDeInit
  * @msg: deinit io mux
  * @return {void}
- * @note: 
+ * @note:
  */
 _WEAK void FIOMuxDeInit(void)
 {

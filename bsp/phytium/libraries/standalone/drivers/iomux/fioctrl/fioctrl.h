@@ -77,7 +77,7 @@ typedef enum
     FIOCTRL_NUM_OF_DELAY_TYPE
 } FIOCtrlDelayType; /* Pin delay tuning type */
 
-typedef enum 
+typedef enum
 {
     FIOCTRL_DELAY_NONE = 0,
     FIOCTRL_DELAY_1,
@@ -100,7 +100,7 @@ typedef struct
 typedef struct
 {
     u32 instance_id; /* Device instance id */
-    uintptr base_address; 
+    uintptr base_address;
 } FIOCtrlConfig;
 
 typedef struct

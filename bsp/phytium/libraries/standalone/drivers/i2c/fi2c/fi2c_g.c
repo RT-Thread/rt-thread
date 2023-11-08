@@ -89,7 +89,7 @@ const FI2cConfig FI2C_CONFIG_TBL[FI2C_NUM] =
         .use_7bit_addr = TRUE,
         .speed_rate = FI2C_SPEED_STANDARD_RATE
     },
-#endif     
+#endif
 
 #if defined(FI2C3_ID)
     [FI2C3_ID] =
@@ -104,5 +104,5 @@ const FI2cConfig FI2C_CONFIG_TBL[FI2C_NUM] =
         .use_7bit_addr = TRUE,
         .speed_rate = FI2C_SPEED_STANDARD_RATE
     }
-#endif    
+#endif
 };

@@ -15,7 +15,7 @@
  * Date: 2022-05-07 15:40:42
  * LastEditTime: 2022-05-07 15:40:42
  * Description:  This file is for  functions in this file are the minimum required functions
- * for this driver. 
+ * for this driver.
  *
  * Modify History:
  *  Ver   Who        Date         Changes

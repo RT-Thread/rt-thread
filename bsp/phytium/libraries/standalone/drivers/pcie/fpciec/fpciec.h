@@ -1,21 +1,21 @@
 /*
  * Copyright : (C) 2023 Phytium Information Technology, Inc.
  * All Rights Reserved.
- * 
+ *
  * This program is OPEN SOURCE software: you can redistribute it and/or modify it
  * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
  * either version 1.0 of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the Phytium Public License for more details.
- * 
- * 
+ *
+ *
  * FilePath: fpcie.h
  * Created Date: 2023-08-01 22:10:24
  * Last Modified: 2023-08-11 15:05:24
  * Description:  This file is for fpciec struct and application interface
- * 
+ *
  * Modify History:
  *  Ver      Who        Date               Changes
  * -----  ----------  --------  ---------------------------------
@@ -38,9 +38,9 @@ extern "C"
 
 
 #if defined(FAARCH64_USE)
-    typedef u64 FPcieCAddr;
-    typedef u64 FPcieCSize;
-    typedef u64 FPcieCPhysAddr;
+typedef u64 FPcieCAddr;
+typedef u64 FPcieCSize;
+typedef u64 FPcieCPhysAddr;
 #else
 typedef u32 FPcieCAddr;
 typedef u32 FPcieCSize;
@@ -74,7 +74,7 @@ typedef u32 FPcieCPhysAddr;
 #define FPCIEC_MISC_TYPE_DMA7_ERROR (7 + 8)
 
 /* mem type */
-#define FPCIEC_EP_MEM_32_TYPE        (1<<1) 
+#define FPCIEC_EP_MEM_32_TYPE        (1<<1)
 #define FPCIEC_EP_MEM_PREFETCH_TYPE  (1<<2)
 #define FPCIEC_EP_IO_TYPE            (1<<3)
 #define FPCIEC_EP_MEM_64_TYPE        (1<<4)
@@ -84,12 +84,12 @@ typedef u32 FPcieCPhysAddr;
 #define FPCIEC_DMA_TYPE_WRITE 1
 
 /* A typedef for a callback function which takes a misc type and some arguments */
-    typedef void (*FPcieCMiscIrqCallBack)(u32 misc_type,void *args);
+typedef void (*FPcieCMiscIrqCallBack)(u32 misc_type, void *args);
 
 /* Enumeration of possible PCIe interrupts */
 typedef enum
 {
-    FPCIE_INTERRUPT_UNKNOWN ,
+    FPCIE_INTERRUPT_UNKNOWN,
     FPCIE_INTERRUPT_INTA,
     FPCIE_INTERRUPT_INTB,
     FPCIE_INTERRUPT_INTC,
@@ -151,7 +151,7 @@ typedef struct
 } FPcieCConfig;
 
 /* Structure defining PCIe EndPoint memory ranges */
-typedef struct 
+typedef struct
 {
     uintptr_t pref_start;          /* Start address of prefetch memory */
     uintptr_t pref_end;            /* End address of prefetch memory */
@@ -181,25 +181,25 @@ FError FPcieCCfgInitialize(FPcieC *instance_p, FPcieCConfig *config_p) ;
 FPcieCConfig *FPcieCLookupConfig(u32 instance_id) ;
 
 /* endpoint */
-void FPcieCEpPioInit(FPcieC *instance_p,FPcieCEpPioMemRange * mem_range) ;
-FError FPcieCUnmapEpAddr(FPcieC *instance_p,u32 fun_num ,uintptr_t addr) ;
-FError FPcieCMapEpAddr(FPcieC *instance_p,u32 fun_num ,uintptr_t addr , u64 pci_addr,FPcieCSize size ) ;
-FError FPcieCClearEpBar(FPcieC *instance_p,u32 fun_num ,FPcieCBarNo bar_no) ;
-FError FPcieCSetEpBar(FPcieC *instance_p,u32 fun_num ,FPcieCEpBar *ep_bar) ;
-FError FPcieCWriteEpHeader(FPcieC *instance_p,u32 fun_num ,FPcieCEpHeader *header_p)  ;
+void FPcieCEpPioInit(FPcieC *instance_p, FPcieCEpPioMemRange *mem_range) ;
+FError FPcieCUnmapEpAddr(FPcieC *instance_p, u32 fun_num, uintptr_t addr) ;
+FError FPcieCMapEpAddr(FPcieC *instance_p, u32 fun_num, uintptr_t addr, u64 pci_addr, FPcieCSize size) ;
+FError FPcieCClearEpBar(FPcieC *instance_p, u32 fun_num, FPcieCBarNo bar_no) ;
+FError FPcieCSetEpBar(FPcieC *instance_p, u32 fun_num, FPcieCEpBar *ep_bar) ;
+FError FPcieCWriteEpHeader(FPcieC *instance_p, u32 fun_num, FPcieCEpHeader *header_p)  ;
 
 
 /* dma */
-u32 FPcieCDmaStatusGet(FPcieC *instance_p,u32 channel_index) ;
-FError FPcieCDmaStart(FPcieC *instance_p,u32 channel_index) ;
-FError FPcieCDmaDirectConfig(FPcieC *instance_p,u32 channel_index,uintptr_t src_addr,uintptr_t dest_addr,u32 length,u32 direct) ;
+u32 FPcieCDmaStatusGet(FPcieC *instance_p, u32 channel_index) ;
+FError FPcieCDmaStart(FPcieC *instance_p, u32 channel_index) ;
+FError FPcieCDmaDirectConfig(FPcieC *instance_p, u32 channel_index, uintptr_t src_addr, uintptr_t dest_addr, u32 length, u32 direct) ;
 
 
 /* misc */
 void FPcieCMiscIrqInit(FPcieC *instance_p) ;
-FError FPcieCMiscIrqRegister(FPcieC *instance_p,FPcieCMiscIrqCallBack misc_irq,void *args) ;
+FError FPcieCMiscIrqRegister(FPcieC *instance_p, FPcieCMiscIrqCallBack misc_irq, void *args) ;
 void FPcieCMiscIrq(s32 vector, void *args) ;
-FError FPcieCMiscIrqConfig(FPcieC *instance_p,u32 irq_type,bool set) ;
+FError FPcieCMiscIrqConfig(FPcieC *instance_p, u32 irq_type, bool set) ;
 
 
 #ifdef __cplusplus

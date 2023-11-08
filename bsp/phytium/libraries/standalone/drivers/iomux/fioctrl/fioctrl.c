@@ -124,7 +124,7 @@ FIOCtrlFunc FIOCtrlGetFunc(FIOCtrl *instance_p, const FIOCtrlPinIndex pin)
     u32 func = GET_REG32_BITS(reg_val, func_end, func_beg);
     FIOCTRL_ASSERT_FUNC(func);
 
-    return (FIOCtrlFunc)GET_REG32_BITS(reg_val, func_end, func_beg);    
+    return (FIOCtrlFunc)GET_REG32_BITS(reg_val, func_end, func_beg);
 }
 
 /**
@@ -151,7 +151,7 @@ FError FIOCtrlSetFunc(FIOCtrl *instance_p, const FIOCtrlPinIndex pin, FIOCtrlFun
     reg_val |= SET_REG32_BITS(func, func_end, func_beg);
 
     FtOut32(base_addr + pin.reg_off, reg_val);
-    return FIOCTRL_SUCCESS;    
+    return FIOCTRL_SUCCESS;
 }
 
 /**
@@ -198,7 +198,7 @@ FError FIOCtrlSetPull(FIOCtrl *instance_p, const FIOCtrlPinIndex pin, FIOCtrlPul
     reg_val |= SET_REG32_BITS(pull, pull_end, pull_beg);
 
     FtOut32(base_addr + pin.reg_off, reg_val);
-    return FIOCTRL_SUCCESS;    
+    return FIOCTRL_SUCCESS;
 }
 
 /**
@@ -232,7 +232,7 @@ FError FIOCtrlGetConfig(FIOCtrl *instance_p, const FIOCtrlPinIndex pin, FIOCtrlF
         *pull = GET_REG32_BITS(reg_val, pull_end, pull_beg);
     }
 
-    return FIOCTRL_SUCCESS;    
+    return FIOCTRL_SUCCESS;
 }
 
 /**
@@ -262,7 +262,7 @@ FError FIOCtrlSetConfig(FIOCtrl *instance_p, const FIOCtrlPinIndex pin, FIOCtrlF
     reg_val |= SET_REG32_BITS(pull, pull_end, pull_beg);
 
     FtOut32(base_addr + pin.reg_off, reg_val);
-    return FIOCTRL_SUCCESS;    
+    return FIOCTRL_SUCCESS;
 }
 
 /**
@@ -310,7 +310,7 @@ FIOCtrlDelay FIOCtrlGetDelay(FIOCtrl *instance_p, const FIOCtrlPinIndex pin, FIO
     }
 
     FIOCTRL_ASSERT_DELAY(delay);
-    return (FIOCtrlDelay)delay;    
+    return (FIOCtrlDelay)delay;
 }
 
 /**
@@ -361,7 +361,7 @@ FError FIOCtrlSetDelay(FIOCtrl *instance_p, const FIOCtrlPinIndex pin, FIOCtrlDe
     }
 
     FtOut32(base_addr + pin.reg_off, reg_val);
-    return FIOCTRL_SUCCESS;    
+    return FIOCTRL_SUCCESS;
 }
 
 /**
@@ -401,5 +401,5 @@ FError FIOCtrlSetDelayEn(FIOCtrl *instance_p, const FIOCtrlPinIndex pin, FIOCtrl
     }
 
     FtOut32(base_addr + pin.reg_off, reg_val);
-    return FIOCTRL_SUCCESS;    
+    return FIOCTRL_SUCCESS;
 }

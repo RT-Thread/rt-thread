@@ -87,7 +87,7 @@ typedef enum
     FSDIF_CLK_SPEED_50_MHZ = 50000000U,
     FSDIF_CLK_SPEED_52_MHZ = 52000000U, /* mmc */
     FSDIF_CLK_SPEED_100_MHZ = 100000000U,
-    FSDIF_CLK_SPEED_200_MHZ = 200000000U,    
+    FSDIF_CLK_SPEED_200_MHZ = 200000000U,
 } FSdifClkSpeed;
 
 /**************************** Type Definitions *******************************/
@@ -112,7 +112,7 @@ typedef struct
     u32 non2; /* des3 --> unused */
     u32 addr_lo; /* des4 Lower 32-bits of Buffer Address Pointer 1 --> buffer 1 */
     u32 addr_hi; /* des5 Upper 32-bits of Buffer Address Pointer 1 */
-/* Each descriptor can transfer up to 4KB of data in chained mode */
+    /* Each descriptor can transfer up to 4KB of data in chained mode */
 #define FSDIF_IDMAC_MAX_BUF_SIZE        0x1000U
     u32 desc_lo; /* des6 Lower 32-bits of Next Descriptor Address --> buffer 2 */
     u32 desc_hi; /* des7 Upper 32-bits of Next Descriptor Address */
@@ -153,7 +153,7 @@ typedef struct
 #define FSDIF_CMD_FLAG_NEED_AUTO_STOP    BIT(8) /* need auto stop after command */
 #define FSDIF_CMD_FLAG_ADTC              BIT(9) /* need ADTC */
 #define FSDIF_CMD_FLAG_SWITCH_VOLTAGE    BIT(10) /* need switch voltage */
-#define FSDIF_CMD_FLAG_ABORT             BIT(11) 
+#define FSDIF_CMD_FLAG_ABORT             BIT(11)
     FSdifData *data_p; /* SDIF trans data */
     volatile boolean success; /* TRUE: comand and data transfer success */
 } FSdifCmdData; /* SDIF trans command and data */
@@ -166,7 +166,7 @@ typedef struct _FSdifTiming
     u32       clk_div;  /* for reg 0x8 */
     u32       clk_src;  /* for reg 0x108 */
     u32       shift;    /* for reg 0x110 */
-    void      (*pad_delay)(u32 id); /* method to adjust pad delay */
+    void (*pad_delay)(u32 id);      /* method to adjust pad delay */
 } FSdifTiming; /* SDIF timing configuration */
 
 typedef struct

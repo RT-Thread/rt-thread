@@ -70,7 +70,7 @@ FError FDdmaAppendBDLEntry(FDdmaChan *const chan_p, uintptr src_addr,  fsize_t d
 #endif
     desc_entry->total_bytes = data_len ;
     desc_entry->ioc = 1U;
-  
+
     chan_p->config.valid_desc_num++;
     return FDDMA_SUCCESS;
 }
@@ -113,7 +113,7 @@ FError FDdmaBDLTransfer(FDdmaChan *const chan_p)
     chan_p->config.descs[desc_idx].ioc = 1U;/* get the last BDL entry */
 
 #ifdef __aarch64__
-    FDdmaWriteReg(base_addr, FDDMA_CHAN_DDR_LOW_ADDR_OFFSET(chan_index),LOWER_32_BITS ((uintptr)descs));
+    FDdmaWriteReg(base_addr, FDDMA_CHAN_DDR_LOW_ADDR_OFFSET(chan_index), LOWER_32_BITS((uintptr)descs));
     FDdmaWriteReg(base_addr, FDDMA_CHAN_DDR_UP_ADDR_OFFSET(chan_index), UPPER_32_BITS((uintptr)descs));
 #else
     FDdmaWriteReg(base_addr, FDDMA_CHAN_DDR_UP_ADDR_OFFSET(chan_index), 0x0U);
@@ -124,9 +124,9 @@ FError FDdmaBDLTransfer(FDdmaChan *const chan_p)
         FDDMA_ERROR("BDL addr %p not aligned with %d bytes", chan_p, FDDMA_BDL_VALID_NUM);
         return FDDMA_ERR_BDL_INVALID_SIZE;
     }
-   FDdmaWriteReg(base_addr, FDDMA_CHAN_DEV_ADDR_OFFSET(chan_index), chan_p->config.dev_addr);
+    FDdmaWriteReg(base_addr, FDDMA_CHAN_DEV_ADDR_OFFSET(chan_index), chan_p->config.dev_addr);
     FDdmaWriteReg(base_addr, FDDMA_CHAN_BUFFER_SIZE(chan_index), chan_p->config.trans_len);
-    FDdmaWriteReg(base_addr, FDDMA_CHAN_BDL_VALID_NUM(chan_index),chan_p->config.valid_desc_num - 1);
+    FDdmaWriteReg(base_addr, FDDMA_CHAN_BDL_VALID_NUM(chan_index), chan_p->config.valid_desc_num - 1);
 
     if (chan_p->config.req_mode == FDDMA_CHAN_REQ_TX)
     {

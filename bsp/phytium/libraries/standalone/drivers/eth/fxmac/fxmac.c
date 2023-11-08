@@ -42,7 +42,7 @@ static void FXmacReset(FXmac *instance_p);
 extern FError FXmacSetTypeIdCheck(FXmac *instance_p, u32 id_check, u8 index);
 
 
-static void FXmacHighSpeedConfiguration(FXmac *instance_p,u32 speed)
+static void FXmacHighSpeedConfiguration(FXmac *instance_p, u32 speed)
 {
     u32 reg_value;
     s32 set_speed = 0;
@@ -104,7 +104,7 @@ void FXmacSelectClk(FXmac *instance_p)
             FXMAC_WRITEREG32(instance_p->config.base_address, FXMAC_GEM_DIV_SEL1_LN, 0x1);
             FXMAC_WRITEREG32(instance_p->config.base_address, FXMAC_GEM_PMA_XCVR_POWER_STATE, 0x1);
         }
-        else if(speed == FXMAC_SPEED_5000)
+        else if (speed == FXMAC_SPEED_5000)
         {
             FXMAC_WRITEREG32(instance_p->config.base_address, FXMAC_GEM_SRC_SEL_LN, 0x1);
             FXMAC_WRITEREG32(instance_p->config.base_address, FXMAC_GEM_DIV_SEL0_LN, 0x8);
@@ -112,9 +112,9 @@ void FXmacSelectClk(FXmac *instance_p)
             FXMAC_WRITEREG32(instance_p->config.base_address, FXMAC_GEM_PMA_XCVR_POWER_STATE, 0);
         }
     }
-    else if(instance_p->config.interface == FXMAC_PHY_INTERFACE_MODE_5GBASER)
+    else if (instance_p->config.interface == FXMAC_PHY_INTERFACE_MODE_5GBASER)
     {
-        if(speed == FXMAC_SPEED_5000)
+        if (speed == FXMAC_SPEED_5000)
         {
             FXMAC_WRITEREG32(instance_p->config.base_address, FXMAC_GEM_SRC_SEL_LN, 0x1);
             FXMAC_WRITEREG32(instance_p->config.base_address, FXMAC_GEM_DIV_SEL0_LN, 0x8);
@@ -122,9 +122,9 @@ void FXmacSelectClk(FXmac *instance_p)
             FXMAC_WRITEREG32(instance_p->config.base_address, FXMAC_GEM_PMA_XCVR_POWER_STATE, 0x0);
         }
     }
-    else if(instance_p->config.interface == FXMAC_PHY_INTERFACE_MODE_2500BASEX)
+    else if (instance_p->config.interface == FXMAC_PHY_INTERFACE_MODE_2500BASEX)
     {
-        if(speed == FXMAC_SPEED_25000)
+        if (speed == FXMAC_SPEED_25000)
         {
             FXMAC_WRITEREG32(instance_p->config.base_address, FXMAC_GEM_DIV_SEL0_LN, 0x1);
             FXMAC_WRITEREG32(instance_p->config.base_address, FXMAC_GEM_DIV_SEL1_LN, 0x2);
@@ -251,7 +251,7 @@ void FXmacSelectClk(FXmac *instance_p)
         FXMAC_WRITEREG32(instance_p->config.base_address, FXMAC_GEM_RX_CLK_SEL5, 0x1); /*0x1c48*/
     }
 
-    FXmacHighSpeedConfiguration(instance_p,speed);
+    FXmacHighSpeedConfiguration(instance_p, speed);
 }
 #else
 void FXmacSelectClk(FXmac *instance_p)
@@ -267,19 +267,19 @@ void FXmacSelectClk(FXmac *instance_p)
         FXMAC_PRINT_I("FXMAC_PHY_INTERFACE_MODE_SGMII init");
         if ((speed == FXMAC_SPEED_100) || (speed == FXMAC_SPEED_10))
         {
-            FXMAC_PRINT_I("speed is %d \r\n",speed);
+            FXMAC_PRINT_I("speed is %d \r\n", speed);
             FXMAC_WRITEREG32(instance_p->config.base_address, FXMAC_GEM_DIV_SEL1_LN, 0x1);
             FXMAC_WRITEREG32(instance_p->config.base_address, FXMAC_GEM_SRC_SEL_LN, 0x1);
         }
     }
 
-    if(speed == FXMAC_SPEED_10000)
+    if (speed == FXMAC_SPEED_10000)
     {
         FXMAC_PRINT_I("FXMAC_SPEED_10000 is not set high speed\r\n");
     }
     else
     {
-        FXmacHighSpeedConfiguration(instance_p,speed);
+        FXmacHighSpeedConfiguration(instance_p, speed);
     }
 }
 #endif
@@ -468,7 +468,7 @@ static u32 FXmacConfigureCaps(FXmac *instance_p)
     instance_p->caps = 0;
     config_p = &instance_p->config;
     read_regs = FXMAC_READREG32(config_p->base_address, FXMAC_DESIGNCFG_DEBUG1_OFFSET);
-    if((read_regs&FXMAC_DESIGNCFG_DEBUG1_BUS_IRQCOR_MASK) == 0)
+    if ((read_regs & FXMAC_DESIGNCFG_DEBUG1_BUS_IRQCOR_MASK) == 0)
     {
         instance_p->caps |= FXMAC_CAPS_ISR_CLEAR_ON_WRITE;
         FXMAC_PRINT_I("Has FXMAC_CAPS_ISR_CLEAR_ON_WRITE feature");
@@ -681,7 +681,7 @@ void FXmacInitInterface(FXmac *instance_p)
     FXmacConfig *config_p;
     config_p = &instance_p->config;
 
-    if (config_p->interface == FXMAC_PHY_INTERFACE_MODE_XGMII )
+    if (config_p->interface == FXMAC_PHY_INTERFACE_MODE_XGMII)
     {
         config = FXMAC_READREG32(config_p->base_address, FXMAC_NWCFG_OFFSET);
         config &= ~FXMAC_NWCFG_PCSSEL_MASK;
@@ -695,7 +695,7 @@ void FXmacInitInterface(FXmac *instance_p)
     }
     else if (config_p->interface == FXMAC_PHY_INTERFACE_MODE_USXGMII || config_p->interface == FXMAC_PHY_INTERFACE_MODE_5GBASER)
     {
-        FXMAC_PRINT_I("usx interface is %d",config_p->interface);
+        FXMAC_PRINT_I("usx interface is %d", config_p->interface);
         /*  network_config */
         config_p->duplex = 1;
         config = FXMAC_READREG32(config_p->base_address, FXMAC_NWCFG_OFFSET);
@@ -707,18 +707,18 @@ void FXmacInitInterface(FXmac *instance_p)
             FXMAC_PRINT_I("is duplex");
             config |= FXMAC_NWCFG_FDEN_MASK;
         }
-    
+
         FXMAC_WRITEREG32(config_p->base_address, FXMAC_NWCFG_OFFSET, config);
 
         /* network_control */
         control = FXMAC_READREG32(config_p->base_address, FXMAC_NWCTRL_OFFSET);
         control |= FXMAC_NWCTRL_ENABLE_HS_MAC_MASK; /* Use high speed MAC */
         FXMAC_WRITEREG32(config_p->base_address, FXMAC_NWCTRL_OFFSET, control);
-        
-        
+
+
         /* High speed PCS control register */
         control = FXMAC_READREG32(config_p->base_address, FXMAC_GEM_USX_CONTROL_OFFSET);
-        
+
         if (config_p->speed == FXMAC_SPEED_10000)
         {
             FXMAC_PRINT_I("is 10G");
@@ -737,12 +737,12 @@ void FXmacInitInterface(FXmac *instance_p)
         {
             control |= FXMAC_GEM_USX_HS_MAC_SPEED_100M;
         }
-        else if(config_p->speed == FXMAC_SPEED_5000)
+        else if (config_p->speed == FXMAC_SPEED_5000)
         {
             control |= FXMAC_GEM_USX_HS_MAC_SPEED_5G;
             control |= FXMAC_GEM_USX_SERDES_RATE_5G;
         }
-        
+
         control &= ~(FXMAC_GEM_USX_TX_SCR_BYPASS | FXMAC_GEM_USX_RX_SCR_BYPASS);
         control |= FXMAC_GEM_USX_RX_SYNC_RESET;
         FXMAC_WRITEREG32(config_p->base_address, FXMAC_GEM_USX_CONTROL_OFFSET, control);
@@ -755,14 +755,14 @@ void FXmacInitInterface(FXmac *instance_p)
         FXMAC_WRITEREG32(config_p->base_address, FXMAC_GEM_USX_CONTROL_OFFSET, control);
 
     }
-    else if(config_p->interface == FXMAC_PHY_INTERFACE_MODE_2500BASEX)
+    else if (config_p->interface == FXMAC_PHY_INTERFACE_MODE_2500BASEX)
     {
         /*  network_config */
         config_p->duplex = 1;
         config = FXMAC_READREG32(config_p->base_address, FXMAC_NWCFG_OFFSET);
         config |= FXMAC_NWCFG_PCSSEL_MASK | FXMAC_NWCFG_SGMII_MODE_ENABLE_MASK;
         config &= ~FXMAC_NWCFG_100_MASK;
-        
+
         if (config_p->duplex == 1)
         {
             config |= FXMAC_NWCFG_FDEN_MASK;
@@ -777,12 +777,12 @@ void FXmacInitInterface(FXmac *instance_p)
 
         /* High speed PCS control register */
         control = FXMAC_READREG32(config_p->base_address, FXMAC_GEM_USX_CONTROL_OFFSET);
-        
+
         if (config_p->speed == FXMAC_SPEED_25000)
         {
             control |= FXMAC_GEM_USX_HS_MAC_SPEED_2_5G;
         }
-        
+
         control &= ~(FXMAC_GEM_USX_TX_SCR_BYPASS | FXMAC_GEM_USX_RX_SCR_BYPASS);
         control |= FXMAC_GEM_USX_RX_SYNC_RESET;
         FXMAC_WRITEREG32(config_p->base_address, FXMAC_GEM_USX_CONTROL_OFFSET, control);
@@ -800,7 +800,7 @@ void FXmacInitInterface(FXmac *instance_p)
         config = FXMAC_READREG32(config_p->base_address, FXMAC_NWCFG_OFFSET);
         config |= FXMAC_NWCFG_PCSSEL_MASK | FXMAC_NWCFG_SGMII_MODE_ENABLE_MASK;
 
-        config &= ~(FXMAC_NWCFG_100_MASK | FXMAC_NWCFG_FDEN_MASK|FXMAC_NWCFG_LENGTH_FIELD_ERROR_FRAME_DISCARD_MASK);
+        config &= ~(FXMAC_NWCFG_100_MASK | FXMAC_NWCFG_FDEN_MASK | FXMAC_NWCFG_LENGTH_FIELD_ERROR_FRAME_DISCARD_MASK);
 
         if (instance_p->moudle_id >= 2)
         {
@@ -1062,52 +1062,61 @@ void FXmacSetQueuePtr(FXmac *instance_p, uintptr queue_p, u8 queue_num,
 FError FXmac_SetHash(FXmac *intance_p, void *mac_address)
 {
     u32 HashAddr;
-	u8 *Aptr = (u8 *)(void *)mac_address;
-	u8 Temp1, Temp2, Temp3, Temp4, Temp5, Temp6, Temp7, Temp8;
-	u32 Result;
-	FError Status;
+    u8 *Aptr = (u8 *)(void *)mac_address;
+    u8 Temp1, Temp2, Temp3, Temp4, Temp5, Temp6, Temp7, Temp8;
+    u32 Result;
+    FError Status;
 
-	FASSERT(intance_p != NULL);
-	FASSERT(mac_address != NULL);
-	FASSERT(intance_p->is_ready == (u32)FT_COMPONENT_IS_READY);
+    FASSERT(intance_p != NULL);
+    FASSERT(mac_address != NULL);
+    FASSERT(intance_p->is_ready == (u32)FT_COMPONENT_IS_READY);
 
-	/* Be sure device has been stopped */
-	if (intance_p->is_started == (u32)FT_COMPONENT_IS_STARTED) {
-		Status = (FError)(FXMAC_ERR_MAC_IS_PROCESSING);
-	} else {
-		Temp1 = (*(Aptr+0)) & 0x3FU;
-		Temp2 = ((*(Aptr+0) >> 6U) & 0x03U) | ((*(Aptr+1) & 0x0FU) << 2U);
+    /* Be sure device has been stopped */
+    if (intance_p->is_started == (u32)FT_COMPONENT_IS_STARTED)
+    {
+        Status = (FError)(FXMAC_ERR_MAC_IS_PROCESSING);
+    }
+    else
+    {
+        Temp1 = (*(Aptr + 0)) & 0x3FU;
+        Temp2 = ((*(Aptr + 0) >> 6U) & 0x03U) | ((*(Aptr + 1) & 0x0FU) << 2U);
 
-		Temp3 = ((*(Aptr+1) >> 4U) & 0x0FU) | ((*(Aptr+2) & 0x3U) << 4U);
-		Temp4 = ((*(Aptr+2) >> 2U) & 0x3FU);
-		Temp5 =   (*(Aptr+3)) & 0x3FU;
-		Temp6 = ((*(Aptr+3) >> 6U) & 0x03U) | ((*(Aptr+4) & 0x0FU) << 2U);
-		Temp7 = ((*(Aptr+4) >> 4U) & 0x0FU) | ((*(Aptr+5) & 0x03U) << 4U);
-		Temp8 = ((*(Aptr+5) >> 2U) & 0x3FU);
+        Temp3 = ((*(Aptr + 1) >> 4U) & 0x0FU) | ((*(Aptr + 2) & 0x3U) << 4U);
+        Temp4 = ((*(Aptr + 2) >> 2U) & 0x3FU);
+        Temp5 = (*(Aptr + 3)) & 0x3FU;
+        Temp6 = ((*(Aptr + 3) >> 6U) & 0x03U) | ((*(Aptr + 4) & 0x0FU) << 2U);
+        Temp7 = ((*(Aptr + 4) >> 4U) & 0x0FU) | ((*(Aptr + 5) & 0x03U) << 4U);
+        Temp8 = ((*(Aptr + 5) >> 2U) & 0x3FU);
 
-		Result = (u32)((u32)Temp1 ^ (u32)Temp2 ^ (u32)Temp3 ^ (u32)Temp4 ^
-				(u32)Temp5 ^ (u32)Temp6 ^ (u32)Temp7 ^ (u32)Temp8);
-		if (Result >= (u32)FXMAC_MAX_HASH_BITS) {
-			Status = (FError)(FXMAC_ERR_INVALID_PARAM);
-		} else {
+        Result = (u32)((u32)Temp1 ^ (u32)Temp2 ^ (u32)Temp3 ^ (u32)Temp4 ^
+                       (u32)Temp5 ^ (u32)Temp6 ^ (u32)Temp7 ^ (u32)Temp8);
+        if (Result >= (u32)FXMAC_MAX_HASH_BITS)
+        {
+            Status = (FError)(FXMAC_ERR_INVALID_PARAM);
+        }
+        else
+        {
 
-			if (Result < (u32)32) {
-		HashAddr = FXMAC_READREG32(intance_p->config.base_address,
-				FXMAC_HASHL_OFFSET);
-				HashAddr |= (u32)(0x00000001U << Result);
-		FXMAC_WRITEREG32(intance_p->config.base_address,
-			FXMAC_HASHL_OFFSET, HashAddr);
-	} else {
-		HashAddr = FXMAC_READREG32(intance_p->config.base_address,
-				FXMAC_HASHH_OFFSET);
-				HashAddr |= (u32)(0x00000001U << (u32)(Result - (u32)32));
-		FXMAC_WRITEREG32(intance_p->config.base_address,
-			FXMAC_HASHH_OFFSET, HashAddr);
-	}
-			Status = FT_SUCCESS;
-		}
-	}
-	return Status;
+            if (Result < (u32)32)
+            {
+                HashAddr = FXMAC_READREG32(intance_p->config.base_address,
+                                           FXMAC_HASHL_OFFSET);
+                HashAddr |= (u32)(0x00000001U << Result);
+                FXMAC_WRITEREG32(intance_p->config.base_address,
+                                 FXMAC_HASHL_OFFSET, HashAddr);
+            }
+            else
+            {
+                HashAddr = FXMAC_READREG32(intance_p->config.base_address,
+                                           FXMAC_HASHH_OFFSET);
+                HashAddr |= (u32)(0x00000001U << (u32)(Result - (u32)32));
+                FXMAC_WRITEREG32(intance_p->config.base_address,
+                                 FXMAC_HASHH_OFFSET, HashAddr);
+            }
+            Status = FT_SUCCESS;
+        }
+    }
+    return Status;
 }
 
 
@@ -1130,50 +1139,59 @@ FError FXmac_SetHash(FXmac *intance_p, void *mac_address)
 */
 FError FXmac_DeleteHash(FXmac *intance_p, void *mac_address)
 {
-	u32 HashAddr;
-	u8 *Aptr = (u8 *)(void *)mac_address;
-	u8 Temp1, Temp2, Temp3, Temp4, Temp5, Temp6, Temp7, Temp8;
-	u32 Result;
-	FError Status;
+    u32 HashAddr;
+    u8 *Aptr = (u8 *)(void *)mac_address;
+    u8 Temp1, Temp2, Temp3, Temp4, Temp5, Temp6, Temp7, Temp8;
+    u32 Result;
+    FError Status;
 
-	FASSERT(intance_p != NULL);
-	FASSERT(mac_address != NULL);
-	FASSERT(intance_p->is_ready == (u32)FT_COMPONENT_IS_READY);
+    FASSERT(intance_p != NULL);
+    FASSERT(mac_address != NULL);
+    FASSERT(intance_p->is_ready == (u32)FT_COMPONENT_IS_READY);
 
-	/* Be sure device has been stopped */
-	if (intance_p->is_started == (u32)FT_COMPONENT_IS_STARTED) {
-		Status = (FError)(FXMAC_ERR_MAC_IS_PROCESSING);
-	} else {
-		Temp1 = (*(Aptr+0)) & 0x3FU;
-		Temp2 = ((*(Aptr+0) >> 6U) & 0x03U) | ((*(Aptr+1) & 0x0FU) << 2U);
-		Temp3 = ((*(Aptr+1) >> 4U) & 0x0FU) | ((*(Aptr+2) & 0x03U) << 4U);
-		Temp4 = ((*(Aptr+2) >> 2U) & 0x3FU);
-		Temp5 =   (*(Aptr+3)) & 0x3FU;
-		Temp6 = ((*(Aptr+3) >> 6U) & 0x03U) | ((*(Aptr+4) & 0x0FU) << 2U);
-		Temp7 = ((*(Aptr+4) >> 4U) & 0x0FU) | ((*(Aptr+5) & 0x03U) << 4U);
-		Temp8 = ((*(Aptr+5) >> 2U) & 0x3FU);
+    /* Be sure device has been stopped */
+    if (intance_p->is_started == (u32)FT_COMPONENT_IS_STARTED)
+    {
+        Status = (FError)(FXMAC_ERR_MAC_IS_PROCESSING);
+    }
+    else
+    {
+        Temp1 = (*(Aptr + 0)) & 0x3FU;
+        Temp2 = ((*(Aptr + 0) >> 6U) & 0x03U) | ((*(Aptr + 1) & 0x0FU) << 2U);
+        Temp3 = ((*(Aptr + 1) >> 4U) & 0x0FU) | ((*(Aptr + 2) & 0x03U) << 4U);
+        Temp4 = ((*(Aptr + 2) >> 2U) & 0x3FU);
+        Temp5 = (*(Aptr + 3)) & 0x3FU;
+        Temp6 = ((*(Aptr + 3) >> 6U) & 0x03U) | ((*(Aptr + 4) & 0x0FU) << 2U);
+        Temp7 = ((*(Aptr + 4) >> 4U) & 0x0FU) | ((*(Aptr + 5) & 0x03U) << 4U);
+        Temp8 = ((*(Aptr + 5) >> 2U) & 0x3FU);
 
-		Result = (u32)((u32)Temp1 ^ (u32)Temp2 ^ (u32)Temp3 ^ (u32)Temp4 ^
-					(u32)Temp5 ^ (u32)Temp6 ^ (u32)Temp7 ^ (u32)Temp8);
+        Result = (u32)((u32)Temp1 ^ (u32)Temp2 ^ (u32)Temp3 ^ (u32)Temp4 ^
+                       (u32)Temp5 ^ (u32)Temp6 ^ (u32)Temp7 ^ (u32)Temp8);
 
-		if (Result >= (u32)FXMAC_MAX_HASH_BITS) {
-			Status = (FError)(FXMAC_ERR_INVALID_PARAM);
-		} else {
-			if (Result < (u32)32) {
-		HashAddr = FXMAC_READREG32(intance_p->config.base_address,
-				FXMAC_HASHL_OFFSET);
-				HashAddr &= (u32)(~(0x00000001U << Result));
-		FXMAC_WRITEREG32(intance_p->config.base_address,
-			FXMAC_HASHL_OFFSET, HashAddr);
-	} else {
-		HashAddr = FXMAC_READREG32(intance_p->config.base_address,
-				FXMAC_HASHH_OFFSET);
-				HashAddr &= (u32)(~(0x00000001U << (u32)(Result - (u32)32)));
-		FXMAC_WRITEREG32(intance_p->config.base_address,
-			FXMAC_HASHH_OFFSET, HashAddr);
-	}
-			Status = FT_SUCCESS;
-		}
-	}
-	return Status;
+        if (Result >= (u32)FXMAC_MAX_HASH_BITS)
+        {
+            Status = (FError)(FXMAC_ERR_INVALID_PARAM);
+        }
+        else
+        {
+            if (Result < (u32)32)
+            {
+                HashAddr = FXMAC_READREG32(intance_p->config.base_address,
+                                           FXMAC_HASHL_OFFSET);
+                HashAddr &= (u32)(~(0x00000001U << Result));
+                FXMAC_WRITEREG32(intance_p->config.base_address,
+                                 FXMAC_HASHL_OFFSET, HashAddr);
+            }
+            else
+            {
+                HashAddr = FXMAC_READREG32(intance_p->config.base_address,
+                                           FXMAC_HASHH_OFFSET);
+                HashAddr &= (u32)(~(0x00000001U << (u32)(Result - (u32)32)));
+                FXMAC_WRITEREG32(intance_p->config.base_address,
+                                 FXMAC_HASHH_OFFSET, HashAddr);
+            }
+            Status = FT_SUCCESS;
+        }
+    }
+    return Status;
 }

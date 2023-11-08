@@ -14,7 +14,7 @@
  * FilePath: fxmac_hw.h
  * Date: 2022-04-06 14:46:52
  * LastEditTime: 2022-04-06 14:46:58
- * Description:  This file is hardware definition file. 
+ * Description:  This file is hardware definition file.
  *
  * Modify History:
  *  Ver   Who        Date         Changes
@@ -482,7 +482,7 @@ matched */
                                (u32)FXMAC_TXSR_USEDREAD_MASK)
 /** @name transmit SRAM segment allocation by queue 0 to 7  register bit definitions
  * @{
- */                                
+ */
 #define FXMAC_TXQSEGALLOC_QLOWER_MASK BIT(2)  /* 16 segments are distributed to queue 0*/
 #define FXMAC_TXQSEGALLOC_QLOWER_CLEAN_MASK 0x0U
 /**

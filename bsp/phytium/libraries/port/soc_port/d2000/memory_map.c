@@ -21,7 +21,8 @@
 #if defined(TARGET_ARMV8_AARCH64)
 struct mem_desc platform_mem_desc[] =
 {
-    {   KERNEL_VADDR_START,
+    {
+        KERNEL_VADDR_START,
         KERNEL_VADDR_START + 0x0fffffff,
         (rt_size_t)ARCH_MAP_FAILED,
         NORMAL_MEM
@@ -30,7 +31,8 @@ struct mem_desc platform_mem_desc[] =
 #else
 struct mem_desc platform_mem_desc[] =
 {
-    {   KERNEL_VADDR_START,
+    {
+        KERNEL_VADDR_START,
         KERNEL_VADDR_START + 0x10000000,
         (rt_size_t)ARCH_MAP_FAILED,
         NORMAL_MEM

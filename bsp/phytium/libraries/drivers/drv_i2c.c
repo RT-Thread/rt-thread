@@ -11,7 +11,7 @@
  *
  */
 #include "rtconfig.h"
-#if defined BSP_USING_I2C 
+#if defined BSP_USING_I2C
 
 #include <rtdbg.h>
 #include "drv_i2c.h"
@@ -29,7 +29,7 @@
 #define FI2C_DEFAULT_ID 0
 #define I2C_USE_MIO
 #if defined(I2C_USE_MIO)
-static FMioCtrl mio_handle;
+    static FMioCtrl mio_handle;
 #endif
 
 struct phytium_i2c_bus
@@ -156,12 +156,12 @@ static rt_err_t i2c_config(struct phytium_i2c_bus *i2c_bus)
     const FI2cConfig *config_p = NULL;
     FI2c *instance_p = &i2c_bus->i2c_handle;
     FError ret = FI2C_SUCCESS;
-    
+
     /* Lookup default configs by instance id */
     config_p = FI2cLookupConfig(instance_p->config.instance_id);
     input_cfg = *config_p;
 #ifdef RT_USING_SMART
-    input_cfg.base_addr = (uintptr)rt_ioremap((void *)input_cfg.base_addr , 0x1000);
+    input_cfg.base_addr = (uintptr)rt_ioremap((void *)input_cfg.base_addr, 0x1000);
 #endif
     input_cfg.speed_rate = FI2C_SPEED_STANDARD_RATE;
     input_cfg.work_mode = FI2C_MASTER;
@@ -190,7 +190,7 @@ static rt_err_t i2c_mio_config(struct phytium_i2c_bus *i2c_bus)
 
     mio_handle.config = *FMioLookupConfig(instance_p->config.instance_id);
 #ifdef RT_USING_SMART
-    mio_handle.config.func_base_addr = (uintptr)rt_ioremap((void *)mio_handle.config.func_base_addr , 0x1200);
+    mio_handle.config.func_base_addr = (uintptr)rt_ioremap((void *)mio_handle.config.func_base_addr, 0x1200);
     mio_handle.config.mio_base_addr = (uintptr)rt_ioremap((void *)mio_handle.config.mio_base_addr, 0x200);
 #endif
     ret = FMioFuncInit(&mio_handle, FMIO_FUNC_SET_I2C);
@@ -255,7 +255,7 @@ static rt_err_t i2c_bus_control(struct rt_i2c_bus_device *device, int cmd, void 
             break;
         case RT_I2C_DEV_CTRL_10BIT:
             FI2cConfig *config_p = &i2c_bus->i2c_handle.config;
-            config_p->use_7bit_addr= FALSE;
+            config_p->use_7bit_addr = FALSE;
             FI2cCfgInitialize(&i2c_bus->i2c_handle, config_p);
             break;
         default:
@@ -289,7 +289,7 @@ static rt_ssize_t i2c_master_xfer(struct rt_i2c_bus_device *device, struct rt_i2
         }
         else
         {
-            ret = FI2cMasterWritePoll(&i2c_bus->i2c_handle, mem_addr, 1, &pmsg->buf[1], sizeof(pmsg->buf)-1);
+            ret = FI2cMasterWritePoll(&i2c_bus->i2c_handle, mem_addr, 1, &pmsg->buf[1], sizeof(pmsg->buf) - 1);
             if (ret != FI2C_SUCCESS)
             {
                 LOG_E("I2C master write failed!\n");
@@ -319,7 +319,7 @@ static int i2c_controller_init(u32 i2c_id)
 
         return RT_ERROR;
     }
-    i2c_bus[i2c_id].device.ops=&_i2c_ops;
+    i2c_bus[i2c_id].device.ops = &_i2c_ops;
     ret = rt_i2c_bus_device_register(&i2c_bus[i2c_id].device, i2c_bus[i2c_id].name);
     LOG_D("I2C bus reg success.\n");
     RT_ASSERT(RT_EOK == ret);
@@ -339,7 +339,7 @@ static int i2c_mio_init(u32 i2c_mio_id)
 
         return RT_ERROR;
     }
-    i2c_mio_bus[i2c_mio_id].device.ops=&_i2c_ops;
+    i2c_mio_bus[i2c_mio_id].device.ops = &_i2c_ops;
     ret = rt_i2c_bus_device_register(&i2c_mio_bus[i2c_mio_id].device, i2c_mio_bus[i2c_mio_id].name);
     LOG_D("I2C mio bus reg success.\n");
     RT_ASSERT(RT_EOK == ret);

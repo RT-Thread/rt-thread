@@ -1,21 +1,21 @@
 /*
  * Copyright : (C) 2023 Phytium Information Technology, Inc.
  * All Rights Reserved.
- * 
+ *
  * This program is OPEN SOURCE software: you can redistribute it and/or modify it
  * under the terms of the Phytium Public License as published by the Phytium Technology Co.,Ltd,
  * either version 1.0 of the License, or (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,but WITHOUT ANY WARRANTY;
  * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
  * See the Phytium Public License for more details.
- * 
- * 
+ *
+ *
  * FilePath: fpsci.h
  * Created Date: 2023-06-21 16:13:14
  * Last Modified: 2023-06-27 15:33:23
  * Description:  This file is for
- * 
+ *
  * Modify History:
  *  Ver      Who        Date               Changes
  * -----  ----------  --------  ---------------------------------
@@ -61,16 +61,16 @@ extern "C"
 
 /* 定义PSCI 错误码 */
 
-#define FPSCI_SUCCESS			0
-#define FPSCI_NOT_SUPPORTED			-1
-#define FPSCI_INVALID_PARAMS			-2
-#define FPSCI_DENIED				-3
-#define FPSCI_ALREADY_ON			-4
-#define FPSCI_ON_PENDING			-5
-#define FPSCI_INTERNAL_FAILURE		-6
-#define FPSCI_NOT_PRESENT			-7
-#define FPSCI_DISABLED			-8
-#define FPSCI_INVALID_ADDRESS		-9
+#define FPSCI_SUCCESS           0
+#define FPSCI_NOT_SUPPORTED         -1
+#define FPSCI_INVALID_PARAMS            -2
+#define FPSCI_DENIED                -3
+#define FPSCI_ALREADY_ON            -4
+#define FPSCI_ON_PENDING            -5
+#define FPSCI_INTERNAL_FAILURE      -6
+#define FPSCI_NOT_PRESENT           -7
+#define FPSCI_DISABLED          -8
+#define FPSCI_INVALID_ADDRESS       -9
 
 int FPsciInit(void) ;
 int FPsciVersion(void) ;

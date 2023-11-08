@@ -37,7 +37,7 @@ extern "C"
 static inline void FNandEnableHwEcc(uintptr_t base_address)
 {
     FNAND_SETBIT(base_address, FNAND_CTRL0_OFFSET, FNAND_CTRL0_ECC_EN_MASK);
-    
+
 }
 
 

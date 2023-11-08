@@ -119,7 +119,7 @@ void FSpimSelSlaveDev(uintptr base_addr, u32 slave_dev_id)
  * @param {u32} speed, SPI传输速度设置
  */
 FError FSpimSetSpeed(uintptr base_addr, u32 speed)
-{   
+{
     FASSERT(speed != 0);
     u32 clk_div;
     boolean enabled = FSpimGetEnable(base_addr);
@@ -157,7 +157,7 @@ u32 FSpimGetSpeed(uintptr base_addr)
 {
     u32 clk_div;
     u32 spim_speed;
-    
+
     return FSPIM_READ_REG32(base_addr, FSPIM_BAUD_R_OFFSET);
 }
 
@@ -252,7 +252,7 @@ FSpimCphaType FSpimGetCpha(uintptr base_addr)
     {
         return FSPIM_CPHA_2_EDGE;
     }
-    else 
+    else
     {
         return FSPIM_CPHA_1_EDGE;
     }
