@@ -99,7 +99,7 @@ rt_weak rt_err_t rt_hw_backtrace_frame_get(rt_thread_t thread, struct rt_hw_back
 
 rt_weak rt_err_t rt_hw_backtrace_frame_unwind(rt_thread_t thread, struct rt_hw_backtrace_frame *frame)
 {
-    LOG_W("not implemented");
+    LOG_W("%s is not implemented", __func__);
     return -RT_ENOSYS;
 }
 
