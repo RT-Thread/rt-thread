@@ -90,10 +90,6 @@ rt_region_t init_page_region = {
  */
 void rt_hw_board_init(void)
 {
-    extern void (*system_off)(void);
-    extern void reboot(void);
-    system_off = reboot;
-
     /* io device remap */
 #ifdef RT_USING_SMART
     rt_hw_mmu_map_init(&rt_kernel_space, (void*)0xfffffffff0000000, 0x10000000, MMUTable, PV_OFFSET);

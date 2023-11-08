@@ -22,7 +22,6 @@
 
 #include "ofw_internal.h"
 
-extern char* strchrnul(const char* s, int c);
 struct rt_ofw_node *ofw_node_root = RT_NULL;
 struct rt_ofw_node *ofw_node_cpus = RT_NULL;
 struct rt_ofw_node *ofw_node_chosen = RT_NULL;

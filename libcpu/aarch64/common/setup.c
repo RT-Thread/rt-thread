@@ -26,6 +26,12 @@
 #include <drivers/ofw_raw.h>
 #include <drivers/core/dm.h>
 
+#define rt_sysreg_write(sysreg, val) \
+    __asm__ volatile ("msr "RT_STRINGIFY(sysreg)", %0"::"r"((rt_uint64_t)(val)))
+
+#define rt_sysreg_read(sysreg, val) \
+    __asm__ volatile ("mrs %0, "RT_STRINGIFY(sysreg)"":"=r"((val)))
+
 extern void _secondary_cpu_entry(void);
 extern size_t MMUTable[];
 extern void *system_vectors;
@@ -78,7 +84,7 @@ rt_inline void cpu_info_init(void)
     struct rt_ofw_node *np;
 
     /* get boot cpu info */
-    sysreg_read(mpidr_el1, mpidr);
+    rt_sysreg_read(mpidr_el1, mpidr);
 
     rt_ofw_foreach_cpu_node(np)
     {
@@ -184,7 +190,7 @@ rt_weak void rt_hw_secondary_cpu_bsp_start(void)
     rt_hw_spin_lock(&_cpus_lock);
 
     /* Save all mpidr */
-    sysreg_read(mpidr_el1, rt_cpu_mpidr_table[cpu_id]);
+    rt_sysreg_read(mpidr_el1, rt_cpu_mpidr_table[cpu_id]);
 
     rt_hw_mmu_ktbl_set((unsigned long)MMUTable);
 

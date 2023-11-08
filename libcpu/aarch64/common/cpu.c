@@ -89,37 +89,6 @@ const char *rt_hw_cpu_arch(void)
     return "aarch64";
 }
 
-/** shutdown CPU */
-rt_weak void rt_hw_cpu_shutdown(void)
-{
-    register rt_ubase_t level;
-
-    rt_kprintf("shutdown...\n");
-    if(system_off)
-        system_off();
-    level = rt_hw_interrupt_disable();
-    while (level)
-    {
-        RT_ASSERT(0);
-    }
-}
-MSH_CMD_EXPORT_ALIAS(rt_hw_cpu_shutdown, shutdown, shutdown machine);
-
-/** reset CPU */
-rt_weak void rt_hw_cpu_reset()
-{
-    register rt_ubase_t level;
-
-    rt_kprintf("reset...\n");
-
-    level = rt_hw_interrupt_disable();
-    while (level)
-    {
-        RT_ASSERT(0);
-    }
-}
-MSH_CMD_EXPORT_ALIAS(rt_hw_cpu_reset, reset, reset...);
-
 #ifdef RT_USING_CPU_FFS
 /**
  * This function finds the first bit set (beginning with the least significant bit)
