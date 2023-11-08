@@ -450,7 +450,6 @@ static rt_ssize_t hc32_spi_xfer(struct rt_spi_device *device, struct rt_spi_mess
         {
             recv_buf = (rt_uint8_t *)message->recv_buf + already_send_length;
         }
-        
         if (message->send_buf && message->recv_buf)
         {
             if ((spi_drv->spi_dma_flag & RT_DEVICE_FLAG_DMA_TX) && (spi_drv->spi_dma_flag & RT_DEVICE_FLAG_DMA_RX))
