@@ -54,8 +54,7 @@ extern "C"
 
 #define FXMAC_BD_ALIGNMENT 4U /* Minimum buffer descriptor alignment on the local bus */
 #endif
-#define FXMAC_RX_BUF_ALIGNMENT 4U /* Minimum buffer alignment when using options that impose 
-                                    alignment  restrictions on the buffer data on the local bus */
+#define FXMAC_RX_BUF_ALIGNMENT 4U /* Minimum buffer alignment when using options that impose alignment  restrictions on the buffer data on the local bus */
 
 #define FXMAC_NWCTRL_OFFSET 0x00000000U  /* Network Control reg */
 #define FXMAC_NWCFG_OFFSET 0x00000004U   /* Network Config reg */
