@@ -88,7 +88,7 @@ extern "C"
 
 /* tacho result */
 #define FTACHO_REG_RESU_MASK GENMASK(30, 0)         /*bit [30:0], tacho result*/
-#define FTACHO_REG_RESU_ISVALID (0x1 << 31)         /*tacho result is valid*/
+#define FTACHO_REG_RESU_ISVALID (0x1U << 31)         /*tacho result is valid*/
 
 /* tacho over */
 #define FTACHO_REG_OVER_MASK GENMASK(30, 0)         /*tacho max value mask*/
