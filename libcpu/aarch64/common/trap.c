@@ -34,51 +34,28 @@ extern long list_thread(void);
 
 static void _check_fault(struct rt_hw_exp_stack *regs, uint32_t pc_adj, char *info)
 {
-    uint32_t mode = regs->cpsr;
+    uint32_t is_user_fault;
+    rt_thread_t th;
 
-    if ((mode & 0x1f) == 0x00)
+    is_user_fault = !(regs->cpsr & 0x1f);
+    if (is_user_fault)
     {
         rt_kprintf("%s! pc = 0x%x\n", info, regs->pc - pc_adj);
+    }
 
-        /* user stack backtrace */
-    #ifdef RT_USING_LWP
-        {
-            rt_thread_t th;
+    /* user stack backtrace */
+    th = rt_thread_self();
+    if (th && th->lwp)
+    {
+        arch_backtrace_uthread(th);
+    }
 
-            th = rt_thread_self();
-            if (th && th->lwp)
-            {
-                arch_backtrace_uthread(th);
-            }
-        }
-    #endif
-
+    if (is_user_fault)
+    {
 #ifdef LWP_USING_CORE_DUMP
         lwp_core_dump(regs, pc_adj);
 #endif
         sys_exit_group(-1);
-    }
-    else
-    {
-        /* user stack backtrace */
-    #ifdef RT_USING_LWP
-        {
-            rt_thread_t th;
-
-            th = rt_thread_self();
-            if (th && th->lwp)
-            {
-                arch_backtrace_uthread(th);
-            }
-        }
-    #endif
-
-        /* kernel stack backtrace */
-        struct rt_hw_backtrace_frame frame = {
-            .fp = regs->x29,
-            .pc = regs->pc
-        };
-        rt_backtrace_frame(&frame);
     }
 }
 
@@ -382,7 +359,6 @@ void rt_hw_trap_exception(struct rt_hw_exp_stack *regs)
     rt_backtrace_frame(&frame);
     rt_hw_cpu_shutdown();
 }
-
 
 void rt_hw_trap_serror(struct rt_hw_exp_stack *regs)
 {
