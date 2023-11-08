@@ -229,59 +229,59 @@ typedef struct
 
 /* shorcut to access TRB */
 #define FXHCI_TRB_PORT_FIELD    ptr_low     /* Pointer field of Port TRB */
-#define FXHCI_TRB_PORT_START    24
-#define FXHCI_TRB_PORT_LEN      8
+#define FXHCI_TRB_PORT_START    24U
+#define FXHCI_TRB_PORT_LEN      8U
 #define FXHCI_TRB_TL_FIELD      status      /* TL - Transfer Length */
-#define FXHCI_TRB_TL_START      0
-#define FXHCI_TRB_TL_LEN        17
+#define FXHCI_TRB_TL_START      0U
+#define FXHCI_TRB_TL_LEN        17U
 #define FXHCI_TRB_EVTL_FIELD    status      /* EVTL - (Event TRB) Transfer Length */
-#define FXHCI_TRB_EVTL_START    0
-#define FXHCI_TRB_EVTL_LEN      24
+#define FXHCI_TRB_EVTL_START    0U
+#define FXHCI_TRB_EVTL_LEN      24U
 #define FXHCI_TRB_TDS_FIELD     status      /* TDS - TD Size */
-#define FXHCI_TRB_TDS_START     17
-#define FXHCI_TRB_TDS_LEN       5
+#define FXHCI_TRB_TDS_START     17U
+#define FXHCI_TRB_TDS_LEN       5U
 #define FXHCI_TRB_CC_FIELD      status      /* CC - Completion Code */
-#define FXHCI_TRB_CC_START      24
-#define FXHCI_TRB_CC_LEN        8
+#define FXHCI_TRB_CC_START      24U
+#define FXHCI_TRB_CC_LEN        8U
 #define FXHCI_TRB_C_FIELD       control     /* C - Cycle Bit */
-#define FXHCI_TRB_C_START       0
-#define FXHCI_TRB_C_LEN         1
+#define FXHCI_TRB_C_START       0U
+#define FXHCI_TRB_C_LEN         1U
 #define FXHCI_TRB_TC_FIELD      control     /* TC - Toggle Cycle */
-#define FXHCI_TRB_TC_START      1
-#define FXHCI_TRB_TC_LEN        1
+#define FXHCI_TRB_TC_START      1U
+#define FXHCI_TRB_TC_LEN        1U
 #define FXHCI_TRB_ENT_FIELD     control     /* ENT - Evaluate Next TRB */
-#define FXHCI_TRB_ENT_START     1
-#define FXHCI_TRB_ENT_LEN       1
+#define FXHCI_TRB_ENT_START     1U
+#define FXHCI_TRB_ENT_LEN       1U
 #define FXHCI_TRB_ISP_FIELD     control     /* ISP - Interrupt-on Short Packet */
-#define FXHCI_TRB_ISP_START     2
-#define FXHCI_TRB_ISP_LEN       1
+#define FXHCI_TRB_ISP_START     2U
+#define FXHCI_TRB_ISP_LEN       1U
 #define FXHCI_TRB_CH_FIELD      control     /* CH - Chain Bit */
-#define FXHCI_TRB_CH_START      4
-#define FXHCI_TRB_CH_LEN        1
+#define FXHCI_TRB_CH_START      4U
+#define FXHCI_TRB_CH_LEN        1U
 #define FXHCI_TRB_IOC_FIELD     control     /* IOC - Interrupt On Completion */
-#define FXHCI_TRB_IOC_START     5
-#define FXHCI_TRB_IOC_LEN       1
+#define FXHCI_TRB_IOC_START     5U
+#define FXHCI_TRB_IOC_LEN       1U
 #define FXHCI_TRB_IDT_FIELD     control     /* IDT - Immediate Data */
-#define FXHCI_TRB_IDT_START     6
-#define FXHCI_TRB_IDT_LEN       1
+#define FXHCI_TRB_IDT_START     6U
+#define FXHCI_TRB_IDT_LEN       1U
 #define FXHCI_TRB_DC_FIELD      control     /* DC - Deconfigure */
-#define FXHCI_TRB_DC_START      9
-#define FXHCI_TRB_DC_LEN        1
+#define FXHCI_TRB_DC_START      9U
+#define FXHCI_TRB_DC_LEN        1U
 #define FXHCI_TRB_TT_FIELD      control     /* TT - TRB Type */
-#define FXHCI_TRB_TT_START      10
-#define FXHCI_TRB_TT_LEN        6
+#define FXHCI_TRB_TT_START      10U
+#define FXHCI_TRB_TT_LEN        6U
 #define FXHCI_TRB_TRT_FIELD     control     /* TRT - Transfer Type */
-#define FXHCI_TRB_TRT_START     16
-#define FXHCI_TRB_TRT_LEN       2
+#define FXHCI_TRB_TRT_START     16U
+#define FXHCI_TRB_TRT_LEN       2U
 #define FXHCI_TRB_DIR_FIELD     control     /* DIR - Direction */
-#define FXHCI_TRB_DIR_START     16
-#define FXHCI_TRB_DIR_LEN       1
+#define FXHCI_TRB_DIR_START     16U
+#define FXHCI_TRB_DIR_LEN       1U
 #define FXHCI_TRB_EP_FIELD      control     /* EP - Endpoint ID */
-#define FXHCI_TRB_EP_START      16
-#define FXHCI_TRB_EP_LEN        5
+#define FXHCI_TRB_EP_START      16U
+#define FXHCI_TRB_EP_LEN        5U
 #define FXHCI_TRB_ID_FIELD      control     /* ID - Slot ID */
-#define FXHCI_TRB_ID_START      24
-#define FXHCI_TRB_ID_LEN        8
+#define FXHCI_TRB_ID_START      24U
+#define FXHCI_TRB_ID_LEN        8U
 #define FXHCI_TRB_MASK(tok)     FXHCI_MASK(FXHCI_TRB_##tok##_START, FXHCI_TRB_##tok##_LEN)
 #define FXHCI_TRB_GET(tok, trb) (((trb)->FXHCI_TRB_##tok##_FIELD & FXHCI_TRB_MASK(tok)) \
                                  >> FXHCI_TRB_##tok##_START)
