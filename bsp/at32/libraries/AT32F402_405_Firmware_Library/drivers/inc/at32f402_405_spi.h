@@ -285,8 +285,8 @@ typedef struct
   i2s_data_channel_format_type           data_channel_format;        /*!< data bit num and channel bit num selection */
   i2s_clock_polarity_type                clock_polarity;             /*!< clock polarity selection */
   confirm_state                          mclk_output_enable;         /*!< mclk_output selection */
-  uint32_t                               i2s_ckin_value;             /*!< i2s clock input walue£ºthis parameter only used in i2sf */
-  i2s_pcm_sample_clock_type              pcm_sample_clock_selection; /*!< i2s pcm mode sample clock selection£ºthis parameter only used in i2sf */
+  uint32_t                               i2s_ckin_value;             /*!< i2s clock input walue: this parameter only used in i2sf */
+  i2s_pcm_sample_clock_type              pcm_sample_clock_selection; /*!< i2s pcm mode sample clock selection: this parameter only used in i2sf */
 } i2s_init_type;
 
 /**
