@@ -9,7 +9,6 @@ if rtconfig.PLATFORM == 'gcc':
 elif rtconfig.PLATFORM == 'llvm-arm':
   from llvm_arm import *
 else:
-  print('ignore picolibc: not supported on ' + rtconfig.PLATFORM)
   Return('group')
 
 picolibc_version = GetPicoLibcVersion(rtconfig)
