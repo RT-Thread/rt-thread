@@ -1565,7 +1565,8 @@ rt_weak rt_err_t rt_backtrace(void)
 #else /* otherwise not implemented */
 rt_weak rt_err_t rt_backtrace(void)
 {
-    rt_kprintf("not implemented\n");
+   /* LOG_W cannot work under this environment */
+    rt_kprintf("%s is not implemented\n", __func__);
     return -RT_ENOSYS;
 }
 #endif
