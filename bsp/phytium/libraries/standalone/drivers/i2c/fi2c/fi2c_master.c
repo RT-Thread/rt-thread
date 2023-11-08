@@ -337,7 +337,7 @@ FError FI2cMasterReadIntr(FI2c *instance_p, u32 mem_addr, u8 mem_byte_len, u8 *b
     {
         /* code */
         FDriverMdelay(1);
-        if (FI2C_TIMEOUT < (++trans_timeout))
+        if (FI2C_TIMEOUT < (trans_timeout++))
         {
             ret = FI2C_ERR_TIMEOUT;
             FI2C_ERROR("Timeout in i2c master read intr.");

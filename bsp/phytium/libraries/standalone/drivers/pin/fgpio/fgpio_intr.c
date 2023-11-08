@@ -27,6 +27,7 @@
 /***************************** Include Files *********************************/
 #include "fdrivers_port.h"
 #include "fparameters.h"
+#include "fassert.h"
 
 #include "fgpio_hw.h"
 #include "fgpio.h"
