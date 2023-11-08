@@ -294,41 +294,41 @@ typedef struct
 
 /* shortcut to access slot context */
 #define FXHCI_SC_ROUTE_FIELD        f1      /* ROUTE - Route String */
-#define FXHCI_SC_ROUTE_START        0
-#define FXHCI_SC_ROUTE_LEN          20
+#define FXHCI_SC_ROUTE_START        0U
+#define FXHCI_SC_ROUTE_LEN          20U
 #define FXHCI_SC_SPEED1_FIELD       f1      /* SPEED - Port speed plus one (compared to FUsbSpeed enum) */
-#define FXHCI_SC_SPEED1_START       20
-#define FXHCI_SC_SPEED1_LEN         4
+#define FXHCI_SC_SPEED1_START       20U
+#define FXHCI_SC_SPEED1_LEN         4U
 #define FXHCI_SC_MTT_FIELD          f1      /* MTT - Multi Transaction Translator */
-#define FXHCI_SC_MTT_START          25
-#define FXHCI_SC_MTT_LEN            1
+#define FXHCI_SC_MTT_START          25U
+#define FXHCI_SC_MTT_LEN            1U
 #define FXHCI_SC_HUB_FIELD          f1      /* HUB - Is this a hub? */
-#define FXHCI_SC_HUB_START          26
-#define FXHCI_SC_HUB_LEN            1
+#define FXHCI_SC_HUB_START          26U
+#define FXHCI_SC_HUB_LEN            1U
 #define FXHCI_SC_CTXENT_FIELD       f1      /* CTXENT - Context Entries (number of following ep contexts) */
-#define FXHCI_SC_CTXENT_START       27
-#define FXHCI_SC_CTXENT_LEN         5
+#define FXHCI_SC_CTXENT_START       27U
+#define FXHCI_SC_CTXENT_LEN         5U
 #define FXHCI_SC_RHPORT_FIELD       f2      /* RHPORT - Root Hub Port Number */
-#define FXHCI_SC_RHPORT_START       16
-#define FXHCI_SC_RHPORT_LEN         8
+#define FXHCI_SC_RHPORT_START       16U
+#define FXHCI_SC_RHPORT_LEN         8U
 #define FXHCI_SC_NPORTS_FIELD       f2      /* NPORTS - Number of Ports */
-#define FXHCI_SC_NPORTS_START       24
-#define FXHCI_SC_NPORTS_LEN         8
+#define FXHCI_SC_NPORTS_START       24U
+#define FXHCI_SC_NPORTS_LEN         8U
 #define FXHCI_SC_TTID_FIELD         f3      /* TTID - TT Hub Slot ID */
-#define FXHCI_SC_TTID_START         0
-#define FXHCI_SC_TTID_LEN           8
+#define FXHCI_SC_TTID_START         0U
+#define FXHCI_SC_TTID_LEN           8U
 #define FXHCI_SC_TTPORT_FIELD       f3      /* TTPORT - TT Port Number */
-#define FXHCI_SC_TTPORT_START       8
-#define FXHCI_SC_TTPORT_LEN         8
+#define FXHCI_SC_TTPORT_START       8U
+#define FXHCI_SC_TTPORT_LEN         8U
 #define FXHCI_SC_TTT_FIELD          f3      /* TTT - TT Think Time */
-#define FXHCI_SC_TTT_START          16
-#define FXHCI_SC_TTT_LEN            2
+#define FXHCI_SC_TTT_START          16U
+#define FXHCI_SC_TTT_LEN            2U
 #define FXHCI_SC_UADDR_FIELD        f4      /* UADDR - USB Device Address */
-#define FXHCI_SC_UADDR_START        0
-#define FXHCI_SC_UADDR_LEN          8
+#define FXHCI_SC_UADDR_START        0U
+#define FXHCI_SC_UADDR_LEN          8U
 #define FXHCI_SC_STATE_FIELD        f4      /* STATE - Slot State */
-#define FXHCI_SC_STATE_START        27
-#define FXHCI_SC_STATE_LEN          5
+#define FXHCI_SC_STATE_START        27U
+#define FXHCI_SC_STATE_LEN          5U
 #define FXHCI_SC_MASK(tok)          FXHCI_MASK(FXHCI_SC_##tok##_START, FXHCI_SC_##tok##_LEN)
 #define FXHCI_SC_GET(tok, sc)       (((sc)->FXHCI_SC_##tok##_FIELD & FXHCI_SC_MASK(tok)) \
                                      >> FXHCI_SC_##tok##_START)
@@ -339,38 +339,38 @@ typedef struct
 
 /* shortcut to access endpoint context */
 #define FXHCI_EC_STATE_FIELD        f1      /* STATE - Endpoint State */
-#define FXHCI_EC_STATE_START        0
-#define FXHCI_EC_STATE_LEN          3
+#define FXHCI_EC_STATE_START        0U
+#define FXHCI_EC_STATE_LEN          3U
 #define FXHCI_EC_INTVAL_FIELD       f1      /* INTVAL - Interval */
-#define FXHCI_EC_INTVAL_START       16
-#define FXHCI_EC_INTVAL_LEN         8
+#define FXHCI_EC_INTVAL_START       16U
+#define FXHCI_EC_INTVAL_LEN         8U
 #define FXHCI_EC_CERR_FIELD         f2      /* CERR - Error Count */
-#define FXHCI_EC_CERR_START         1
-#define FXHCI_EC_CERR_LEN           2
+#define FXHCI_EC_CERR_START         1U
+#define FXHCI_EC_CERR_LEN           2U
 #define FXHCI_EC_TYPE_FIELD         f2      /* TYPE - EP Type */
-#define FXHCI_EC_TYPE_START         3
-#define FXHCI_EC_TYPE_LEN           3
+#define FXHCI_EC_TYPE_START         3U
+#define FXHCI_EC_TYPE_LEN           3U
 #define FXHCI_EC_MBS_FIELD          f2      /* MBS - Max Burst Size */
-#define FXHCI_EC_MBS_START          8
-#define FXHCI_EC_MBS_LEN            8
+#define FXHCI_EC_MBS_START          8U
+#define FXHCI_EC_MBS_LEN            8U
 #define FXHCI_EC_MPS_FIELD          f2      /* MPS - Max Packet Size */
-#define FXHCI_EC_MPS_START          16
-#define FXHCI_EC_MPS_LEN            16
+#define FXHCI_EC_MPS_START          16U
+#define FXHCI_EC_MPS_LEN            16U
 #define FXHCI_EC_DCS_FIELD          tr_dq_low   /* DCS - Dequeue Cycle State */
-#define FXHCI_EC_DCS_START          0
-#define FXHCI_EC_DCS_LEN            1
+#define FXHCI_EC_DCS_START          0U
+#define FXHCI_EC_DCS_LEN            1U
 #define FXHCI_EC_AVRTRB_FIELD       f5      /* AVRTRB - Average TRB Length */
-#define FXHCI_EC_AVRTRB_START       0
-#define FXHCI_EC_AVRTRB_LEN         16
+#define FXHCI_EC_AVRTRB_START       0U
+#define FXHCI_EC_AVRTRB_LEN         16U
 #define FXHCI_EC_MXESIT_FIELD       f5      /* MXESIT - Max ESIT Payload */
-#define FXHCI_EC_MXESIT_START       16
-#define FXHCI_EC_MXESIT_LEN         16
+#define FXHCI_EC_MXESIT_START       16U
+#define FXHCI_EC_MXESIT_LEN         16U
 #define FXHCI_EC_BPKTS_FIELD        rsvd[0]     /* BPKTS - packets tx in scheduled uframe */
-#define FXHCI_EC_BPKTS_START        0
-#define FXHCI_EC_BPKTS_LEN          6
+#define FXHCI_EC_BPKTS_START        0U
+#define FXHCI_EC_BPKTS_LEN          6U
 #define FXHCI_EC_BBM_FIELD          rsvd[0]     /* BBM - burst mode for scheduling */
-#define FXHCI_EC_BBM_START          11
-#define FXHCI_EC_BBM_LEN            1
+#define FXHCI_EC_BBM_START          11U
+#define FXHCI_EC_BBM_LEN            1U
 
 #define FXHCI_EC_MASK(tok)          FXHCI_MASK(FXHCI_EC_##tok##_START, FXHCI_EC_##tok##_LEN)
 #define FXHCI_EC_GET(tok, ec)       (((ec)->FXHCI_EC_##tok##_FIELD & FXHCI_EC_MASK(tok)) \
