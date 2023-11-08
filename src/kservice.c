@@ -1575,7 +1575,7 @@ rt_err_t rt_backtrace_frame(struct rt_hw_backtrace_frame *frame)
 {
     long nesting = 0;
 
-    rt_kprintf("please use: addr2line -e rtthread.elf -a -f");
+    rt_kprintf("please use: addr2line -e rtthread.elf -a -f\n");
 
     while (nesting < RT_BACKTRACE_LEVEL_MAX_NR)
     {
