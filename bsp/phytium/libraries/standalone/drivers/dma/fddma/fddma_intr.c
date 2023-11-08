@@ -28,11 +28,10 @@
 #include "fkernel.h"
 #include "fparameters.h"
 #include "fassert.h"
-#include "fdebug.h"
+#include "fdrivers_port.h"
 
 #include "fddma_hw.h"
 #include "fddma.h"
-
 /************************** Constant Definitions *****************************/
 
 /**************************** Type Definitions *******************************/
@@ -51,7 +50,6 @@
     {                                                  \
         express(dma_chan, args);                       \
     }
-
 /************************** Function Prototypes ******************************/
 
 /****************************************************************************/
@@ -65,12 +63,12 @@
 static void FDdmaChanIrqHandler(FDdma *const instance, FDdmaChanIndex chan_idx)
 {
     FASSERT(instance && instance->chan[chan_idx]);
+
     FDdmaChan *const dma_chan = instance->chan[chan_idx];
     uintptr base_addr = instance->config.base_addr;
     u32 status = FDdmaReadChanStatus(base_addr, chan_idx);
 
     FDDMA_INFO("chan-%d irq status: 0x%x", chan_idx, status);
-
     FDDMA_CALL_EVT_HANDLER(dma_chan->evt_handler[FDDMA_CHAN_EVT_REQ_DONE], dma_chan,
                            dma_chan->evt_handler_args[FDDMA_CHAN_EVT_REQ_DONE]);
 
@@ -86,7 +84,6 @@ static void FDdmaChanIrqHandler(FDdma *const instance, FDdmaChanIndex chan_idx)
                                dma_chan->evt_handler_args[FDDMA_CHAN_EVT_FIFO_FULL]);
     }
 
-    /* submit queued descriptor after processing the completed ones */
     return;
 }
 
@@ -103,25 +100,40 @@ void FDdmaIrqHandler(s32 vector, void *args)
     FDdma *const instance = (FDdma * const)args;
     uintptr base_addr = instance->config.base_addr;
     u32 status = FDdmaReadStatus(base_addr);
-    u32 chan;
-
+    u32 chan ;
     FDDMA_INFO("ddma irq 0x%x", status);
-    FDdmaDisableGlobalIrq(base_addr); /* disable interrupt from occur again */
-
+    /*DDMA 2 的中断与DDMA的使能是相反的情况*/
     /* poll, clear and process every chanel interrupt status */
-    for (chan = FDDMA_CHAN_0; chan < FDDMA_NUM_OF_CHAN; chan++)
+    FDdmaDisableGlobalIrq(base_addr, instance->config.caps); /* disable interrupt from occur again */
+    if (instance->config.caps & FDDMA_CAP_W1_ENABLE_IRQ)
     {
-        if (0 == (FDDMA_STA_CHAN_REQ_DONE(chan) & status))
+        for (chan = FDDMA_CHAN_0; chan < FDDMA_NUM_OF_CHAN; chan++)
         {
-            continue;
+            if (0 == (FDDMA_STA_CHAN_REQ_DONE(chan) & status))
+            {
+                continue;
+            }
+            FDDMA_INFO("handle chan %d", chan);
+            FDdmaClearChanIrq(base_addr, chan, instance->config.caps);  /* clear interrupt status */
+            FDdmaChanIrqHandler(instance, chan); /* channel interrupt handle */
         }
+    }
+    else
+    {
+        for (chan = FDDMA_CHAN_0; chan < FDDMA_NUM_OF_CHAN; chan++)
+        {
+            if (0 == (FDDMA_BDL_STA_CHAN_REQ_DONE(chan) & status))
+            {
+                continue;
+            }
+            FDDMA_INFO("handle chan %d", chan);
+            FDdmaClearChanIrq(base_addr, chan, instance->config.caps);  /* clear interrupt status */
+            FDdmaChanIrqHandler(instance, chan); /* channel interrupt handle */
 
-        FDDMA_INFO("handle chan %d", chan);
-        FDdmaClearChanIrq(base_addr, chan);  /* clear interrupt status */
-        FDdmaChanIrqHandler(instance, chan); /* channel interrupt handle */
+        }
     }
 
-    FDdmaEnableGlobalIrq(base_addr); /* re-enable interrupt */
+    FDdmaEnableGlobalIrq(base_addr, instance->config.caps); /* re-enable interrupt */
     return;
 }
 

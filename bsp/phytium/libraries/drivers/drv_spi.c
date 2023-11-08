@@ -11,12 +11,14 @@
  * 2023-03-08  liqiaozhong  support 4 spis and qspi working together
  *
  */
+#include"rtconfig.h"
+#ifdef BSP_USING_SPI
+
 #include <rtthread.h>
 #include <rtdevice.h>
 #include "interrupt.h"
-
+#include "rtdbg.h"
 #include <string.h>
-#include "fdebug.h"
 
 #if defined(TARGET_E2000)
 #include "fparameters.h"
@@ -25,9 +27,7 @@
 #include "fcpu_info.h"
 #include "fkernel.h"
 #include "ftypes.h"
-#include "fsleep.h"
 
-#ifdef RT_USING_SPI
 
 #include <dfs_file.h>
 
@@ -56,11 +56,6 @@
 static struct rt_spi_device *spi_device = RT_NULL;
 static struct rt_event rx_done_event;
 /***************** Macros (Inline Functions) Definitions *********************/
-#define FSPIM_DEBUG_TAG "SPIM"
-#define FSPIM_ERROR(format, ...)   FT_DEBUG_PRINT_E(FSPIM_DEBUG_TAG, format, ##__VA_ARGS__)
-#define FSPIM_WARN(format, ...)   FT_DEBUG_PRINT_W(FSPIM_DEBUG_TAG, format, ##__VA_ARGS__)
-#define FSPIM_INFO(format, ...)    FT_DEBUG_PRINT_I(FSPIM_DEBUG_TAG, format, ##__VA_ARGS__)
-#define FSPIM_DEBUG(format, ...)   FT_DEBUG_PRINT_D(FSPIM_DEBUG_TAG, format, ##__VA_ARGS__)
 
 #define EVENT_RX_DONE (1 << 1)
 /*******************************Api Functions*********************************/
@@ -75,7 +70,7 @@ static FError FSpimSetupInterrupt(FSpim *instance_p)
     u32 cpu_id = 0;
 
     GetCpuId(&cpu_id);
-    FSPIM_DEBUG("cpu_id is %d, irq_num is %d\n", cpu_id, config_p->irq_num);
+    LOG_D("cpu_id is %d, irq_num is %d\n", cpu_id, config_p->irq_num);
     config_p->irq_prority = 0xd0;
     rt_hw_interrupt_set_target_cpus(config_p->irq_num, cpu_id);
     rt_hw_interrupt_set_priority(config_p->irq_num, config_p->irq_prority);
@@ -338,4 +333,5 @@ static void fspim_test_sample(int argc, char *argv[])
     }
 }
 MSH_CMD_EXPORT(fspim_test_sample, "fspim test sample");
+
 #endif

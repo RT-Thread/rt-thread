@@ -26,7 +26,7 @@
 /***************************** Include Files *********************************/
 #include "fassert.h"
 #include "fio.h"
-#include "fdebug.h"
+#include "fdrivers_port.h"
 
 #include "fsdmmc_hw.h"
 #include "fsdmmc.h"
@@ -315,7 +315,6 @@ FError FSdmmcInterruptTransfer(FSdmmc *instance_p, FSdmmcCmd *cmd_data_p)
     if (cmd_data_p->flag & FSDMMC_CMD_FLAG_EXP_DATA)
     {
         /* transfer data */
-        FSDMMC_INFO("====DATA [%d] START: buf: %p=====", cmd_data_p->cmdidx, cmd_data_p->data_p);
         ret = FSdmmcSendData(base_addr,
                              (FSDMMC_CMD_FLAG_READ_DATA == (cmd_data_p->flag & FSDMMC_CMD_FLAG_READ_DATA)),
                              cmd_data_p);

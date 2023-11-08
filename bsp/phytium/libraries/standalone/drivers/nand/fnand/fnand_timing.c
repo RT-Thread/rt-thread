@@ -25,7 +25,7 @@
 #include "fnand.h"
 #include "fnand_hw.h"
 
-#include "fdebug.h"
+#include "fdrivers_port.h"
 #define FNAND_TIMING_DEBUG_TAG "FNAND_TIMING"
 #define FNAND_TIMING_DEBUG_I(format, ...) FT_DEBUG_PRINT_I(FNAND_TIMING_DEBUG_TAG, format, ##__VA_ARGS__)
 #define FNAND_TIMING_DEBUG_W(format, ...) FT_DEBUG_PRINT_W(FNAND_TIMING_DEBUG_TAG, format, ##__VA_ARGS__)

@@ -1,9 +1,0 @@
-
-config USE_FSPIM
-    bool
-    prompt "Use FSPIM"
-    default n
-    depends on USE_SPI
-    help
-        Select FSPIM driver component
-

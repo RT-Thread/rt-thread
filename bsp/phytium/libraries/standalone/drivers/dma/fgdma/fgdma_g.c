@@ -24,13 +24,11 @@
  */
 
 /***************************** Include Files *********************************/
-
 #include "ftypes.h"
 #include "fparameters.h"
 
 #include "fgdma.h"
 #include "fgdma_hw.h"
-
 /************************** Constant Definitions *****************************/
 
 /**************************** Type Definitions *******************************/
@@ -40,13 +38,11 @@
 /************************** Function Prototypes ******************************/
 
 /************************** Variable Definitions *****************************/
-
 const FGdmaConfig fgdma_cfg_tbl[FGDMA_INSTANCE_NUM] =
 {
     [FGDMA0_ID] =
     {
         .instance_id = FGDMA0_ID,
-        .base_addr = FGDMA0_BASE_ADDR,
         .irq_num ={
                     FGDMA0_CHANNEL0_IRQ_NUM,
                     #if defined(FGDMA0_CHANNEL1_IRQ_NUM)
@@ -69,9 +65,11 @@ const FGdmaConfig fgdma_cfg_tbl[FGDMA_INSTANCE_NUM] =
                     #endif
                 } , 
         .irq_prority = 0,
+        .caps = FGDMA0_CAPACITY,
+        .base_addr = FGDMA0_BASE_ADDR,
         .rd_qos = FGDMA_OPER_NONE_PRIORITY_POLL,
         .wr_qos = FGDMA_OPER_NONE_PRIORITY_POLL,
-        .caps = FGDMA0_CAPACITY | FGDMA_TRANS_NEED_RESET_MASK
+        .wait_mode = FGDMA_WAIT_INTR
     }
 };
 

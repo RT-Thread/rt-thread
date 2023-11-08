@@ -140,6 +140,11 @@ enum
     FGMAC_INTR_EVT_NUM
 }; /* interrupt event type */
 
+typedef enum
+{
+    FGMAC_LINKDOWN = 0,
+    FGMAC_LINKUP = 1,
+} FGmacLinkStatus;
 
 /**************************** Type Definitions *******************************/
 
@@ -151,7 +156,7 @@ typedef struct
     u32     instance_id;  /* device instance id */
     uintptr base_addr;    /* device base address */
     u32     irq_num;      /* irq num */
-    u32     irq_prority;  /* device intrrupt priority */
+    u32     irq_prority;  /* device interrupt priority */
     u32     cheksum_mode; /* hardware or software checksum */
     u32     duplex_mode;         /* selects the MAC duplex mode: Half-Duplex or Full-Duplex mode */
     u32     max_packet_size;  /* max num of bytes in frame transfer */
@@ -189,6 +194,7 @@ typedef struct
 {
     FGmacConfig config;      /* Current active configs */
     u32         is_ready;    /* Device is initialized and ready */
+    u32         phy_link_status;/* indicates link status ,FGMAC_LINKUP is link up ,FGMAC_LINKDOWN is link down*/
     FGmacRingDescData rx_ring;  /* RX DMA descriptor data (idx, length) */
     volatile FGmacDmaDesc *rx_desc;  /* RX DMA descriptor table in ring */
     FGmacRingDescData tx_ring; /* TX DMA descriptor data (idx, length) */
@@ -252,6 +258,8 @@ void FGmacControllerDuplexConfig(FGmac *instance_p, u32 duplex);
 /*fgmac speed configuration */
 void FGmacControllerSpeedConfig(FGmac *instance_p, u32 speed);
 
+/* 停止FGMAC控制器寄存器 */
+void FGmacStop(FGmac *instance_p);
 #ifdef __cplusplus
 }
 #endif

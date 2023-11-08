@@ -26,7 +26,6 @@
 
 #if defined(TARGET_E2000)
 #define MAX_HANDLERS 270
-#define ARM_GIC_CPU_NUM 4
 #endif
 
 #define GIC_IRQ_START 0

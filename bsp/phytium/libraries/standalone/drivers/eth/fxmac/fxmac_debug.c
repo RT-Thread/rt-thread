@@ -25,7 +25,7 @@
 #include "fxmac_hw.h"
 #include "fxmac.h"
 #include "fio.h"
-#include "fdebug.h"
+#include "fdrivers_port.h"
 
 #define FXMAC_DEBUG_TAG "FXMAC_DEBUG"
 #define FXMAC_ERROR(format, ...) FT_DEBUG_PRINT_E(FXMAC_DEBUG_TAG, format, ##__VA_ARGS__)

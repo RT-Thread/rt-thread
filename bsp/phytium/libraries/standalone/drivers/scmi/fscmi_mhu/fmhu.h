@@ -49,8 +49,8 @@ typedef struct
 {
     u32         mhu_chan_id;    /* Mhu chan id */
     uintptr     base_addr;      /* Device base address */
-    u32         irq_num;        /* Device intrrupt id */
-    u32         irq_prority;    /* Device intrrupt priority */
+    u32         irq_num;        /* Device interrupt id */
+    u32         irq_prority;    /* Device interrupt priority */
     u32         work_mode;      /* Device work mode intr or poll */
 } FMhuConfig;
 

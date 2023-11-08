@@ -27,8 +27,6 @@
 #ifndef  FGPIO_HW_H
 #define  FGPIO_HW_H
 
-#include "fio.h"
-#include "fkernel.h"
 
 /***************************** Include Files *********************************/
 #include "fio.h"

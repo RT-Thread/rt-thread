@@ -27,13 +27,18 @@
 #define FASSERT_H
 
 /***************************** Include Files *********************************/
-#include "fprintk.h"
+
 #include "ferror_code.h"
 #include "ftypes.h"
 
 #ifdef __cplusplus
 extern "C"
 {
+#endif
+
+#ifndef FASSERT_PRINT
+#include <stdio.h>
+#define FASSERT_PRINT printf
 #endif
 
 /**************************** Type Definitions *******************************/
@@ -58,7 +63,7 @@ typedef void (*FAssertCB)(const char *file, s32 line, int ret);
         else                                    \
         {                                       \
             FAssertSetStatus(FASSERT_OCCURRED); \
-            f_printk(fmt, ##__VA_ARGS__);       \
+            FASSERT_PRINT(fmt, ##__VA_ARGS__);       \
             FAssert(__FILE__, __LINE__, 0xff);  \
         }                                       \
     }

@@ -46,7 +46,7 @@ source ./smart-env.sh aarch64
 
 ## 2. 如何选择芯片
 
-- 以 E2000Q RT-Smart为例，Linux 环境下，运行 make load_e2000q_rtsmart 加载默认的 rtconfig, 然后输入下列命令，进入 menuconfig 进一步配置，
+- 以 E2000Q RT-Smart为例，Linux 环境下，运行 make load_e2000q_demo_rtsmart 加载默认的 rtconfig, 然后输入下列命令，进入 menuconfig 进一步配置，
 
 ```shell
     scons --menuconfig

@@ -29,7 +29,6 @@
 #include "fqspi_flash.h"
 #include "fqspi_hw.h"
 #include "fqspi.h"
-#include "sdkconfig.h"
 
 #define FQSPI_DEBUG_TAG "FQSPI_FLASH"
 #define FQSPI_ERROR(format, ...)    FT_DEBUG_PRINT_E(FQSPI_DEBUG_TAG, format, ##__VA_ARGS__)

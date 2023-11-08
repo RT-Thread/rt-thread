@@ -26,7 +26,7 @@
 #include "fcan_hw.h"
 #include "fparameters.h"
 #include "fassert.h"
-#include "fdebug.h"
+#include "fdrivers_port.h"
 
 #define CAN_HW_DEBUG_TAG "CAN_HW"
 #define FCAN_DEBUG(format, ...) FT_DEBUG_PRINT_D(CAN_HW_DEBUG_TAG, format, ##__VA_ARGS__)

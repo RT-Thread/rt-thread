@@ -28,11 +28,10 @@
 #include "fkernel.h"
 #include "fparameters.h"
 #include "fassert.h"
-#include "fdebug.h"
+#include "fdrivers_port.h"
 
 #include "fddma_hw.h"
 #include "fddma.h"
-
 /************************** Constant Definitions *****************************/
 
 /**************************** Type Definitions *******************************/
@@ -45,10 +44,8 @@
 #define FDDMA_WARN(format, ...)   FT_DEBUG_PRINT_W(FDDMA_DEBUG_TAG, format, ##__VA_ARGS__)
 #define FDDMA_INFO(format, ...)    FT_DEBUG_PRINT_I(FDDMA_DEBUG_TAG, format, ##__VA_ARGS__)
 #define FDDMA_DEBUG(format, ...)   FT_DEBUG_PRINT_D(FDDMA_DEBUG_TAG, format, ##__VA_ARGS__)
-
 /************************** Function Prototypes ******************************/
 static FError FDdmaReset(FDdma *const instance);
-
 /****************************************************************************/
 /**
  * @name: FDdmaCfgInitialization
@@ -99,7 +96,7 @@ FError FDdmaStart(FDdma *const instance)
         return FDDMA_ERR_NOT_INIT;
     }
 
-    FDdmaEnableGlobalIrq(base_addr); /* enable ddma irq */
+    FDdmaEnableGlobalIrq(base_addr, instance->config.caps); /* enable ddma irq */
     FDdmaEnable(base_addr);
     return FDDMA_SUCCESS;
 }
@@ -122,7 +119,7 @@ FError FDdmaStop(FDdma *const instance)
         return FDDMA_ERR_NOT_INIT;
     }
 
-    FDdmaDisableGlobalIrq(base_addr); /* enable ddma irq */
+    FDdmaDisableGlobalIrq(base_addr, instance->config.caps);
     FDdmaDisable(base_addr);
     return FDDMA_SUCCESS;
 }
@@ -215,6 +212,7 @@ FError FDdmaAllocateChan(FDdma *const instance, FDdmaChan *const dma_chan, const
     }
 
     FDdmaResetChan(base_addr, chan_idx); /* reset channel */
+
     FDdmaSetChanSelection(base_addr, chan_idx, dma_chan->config.slave_id); /* select channel */
     FDdmaSetChanBind(base_addr, chan_idx, TRUE); /* bind channel */
 
@@ -241,8 +239,7 @@ FError FDdmaAllocateChan(FDdma *const instance, FDdmaChan *const dma_chan, const
     FDDMA_INFO("dev addr: 0x%x", FDdmaReadReg(base_addr, FDDMA_CHAN_DEV_ADDR_OFFSET(chan_idx)));
     FDDMA_INFO("transfer len: %d", FDdmaReadReg(base_addr, FDDMA_CHAN_TS_OFFSET(chan_idx)));
 
-    FDdmaSetChanTimeout(base_addr, chan_idx, 0xffff);
-    FDdmaEnableChanIrq(base_addr, chan_idx);
+    FDdmaEnableChanIrq(base_addr, chan_idx,instance->config.caps);
 
     if (FDDMA_SUCCESS == ret)
     {
@@ -251,9 +248,10 @@ FError FDdmaAllocateChan(FDdma *const instance, FDdmaChan *const dma_chan, const
         FDDMA_INFO("Allocate channel %d", chan_idx);
     }
 
+    FDdmaEnableChanIrq(base_addr, chan_idx, instance->config.caps);
     return ret;
-}
 
+}
 /**
  * @name: FDdmaDellocateChan
  * @msg: 释放之前分配的DDMA通道
@@ -290,7 +288,7 @@ FError FDdmaDellocateChan(FDdmaChan *const dma_chan)
         return ret;
     }
 
-    FDdmaDisableChanIrq(base_addr, chan_idx); /* disable channel irq */
+    FDdmaDisableChanIrq(base_addr, chan_idx, instance->config.caps); /* disable channel irq */
 
     instance->bind_status &= ~BIT(chan_idx); /* set bind status */
     instance->chan[chan_idx] = NULL;
@@ -321,7 +319,7 @@ FError FDdmaActiveChan(FDdmaChan *const dma_chan)
     }
 
     FDdmaEnableChan(base_addr, dma_chan->config.id);
-    FDdmaClearChanIrq(base_addr, dma_chan->config.id);  /* clear interrupt status */
+    FDdmaClearChanIrq(base_addr, dma_chan->config.id, instance->config.caps);  /* clear interrupt status */
     return FDDMA_SUCCESS;
 }
 
@@ -361,7 +359,7 @@ static FError FDdmaReset(FDdma *const instance)
 
     FDdmaDisable(base_addr); /* disable ddma  */
     FDdmaSoftwareReset(base_addr); /* do software reset */
-    FDdmaDisableGlobalIrq(base_addr);
+    FDdmaDisableGlobalIrq(base_addr, instance->config.caps);
 
     /* disable channel and its irq */
     for (u32 chan = FDDMA_CHAN_0; chan < FDDMA_NUM_OF_CHAN; chan++)
@@ -379,3 +377,4 @@ static FError FDdmaReset(FDdma *const instance)
 
     return ret;
 }
+

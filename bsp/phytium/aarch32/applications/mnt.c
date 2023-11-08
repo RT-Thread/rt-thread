@@ -18,9 +18,6 @@
 #include <dfs_fs.h>
 #include <dfs_file.h>
 
-#define DBG_TAG "app.filesystem"
-#define DBG_LVL DBG_INFO
-
 #ifdef BSP_USING_SDCARD_FATFS
 #define SD_DEIVCE_NAME "sd"
 static int filesystem_mount(void)

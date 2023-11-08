@@ -25,8 +25,8 @@
 #include <string.h>
 
 #include "fkernel.h"
-#include "fdebug.h"
-#include "fsleep.h"
+#include "fdrivers_port.h"
+
 
 #include "fusb.h"
 #include "fusb_hid.h"
@@ -580,7 +580,7 @@ int FUsbHidCheckInput(FUsbDev *dev, int times)
             FUSB_INFO("%c", ret);
         }
 
-        fsleep_millisec(10);
+        FDriverMdelay(10);
     }
 
     FUSB_INFO("\r\n");

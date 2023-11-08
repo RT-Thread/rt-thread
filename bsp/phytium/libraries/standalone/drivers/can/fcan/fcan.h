@@ -22,6 +22,7 @@
  * 1.0   wangxiaodong  2022/5/26  first release
  * 1.1   wangxiaodong  2022/9/23  improve functions
  * 1.2   zhangyan      2022/12/7  improve functions
+ * 1.3   huangjin      2023/11/01 improve functions
  */
 
 
@@ -33,6 +34,7 @@
 #include "fparameters.h"
 #include "fkernel.h"
 #include "fcan_hw.h"
+#include "sdkconfig.h"
 
 #ifdef __cplusplus
 extern "C"
@@ -57,11 +59,7 @@ typedef enum
 #define FCAN_FAILURE        FT_MAKE_ERRCODE(ErrModBsp, ErrBspCan, 2)   /* failed */
 #define FCAN_INVAL_PARAM    FT_MAKE_ERRCODE(ErrModBsp, ErrBspCan, 3)  /* invalid parameters */
 
-#if defined(CONFIG_FCAN_USE_CANFD)
-    #define FCAN_DATA_LENGTH 64U
-#else
-    #define FCAN_DATA_LENGTH 8U
-#endif
+#define FCAN_DATA_LENGTH 64U
 
 /* CAN payload length and DLC definitions according to ISO 11898-1 */
 #define CAN_MAX_DLC     8

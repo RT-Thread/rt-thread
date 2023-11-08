@@ -151,7 +151,77 @@ extern "C"
 #define FDPTX_EDP_CRC_GREEN 0x01D8
 #define FDPTX_EDP_CRC_BLUE 0x01DC
 
+/* FDCDP AUDIO*/
+#define FDP_AUDIO_ENABLE   0x300
+#define FDP_AUDIO_SEC_INPUT_SOURCE   0x304
+#define FDP_AUDIO_CHANNEL_COUNT   0x308
+#define FDP_AUDIO_DIRECT_CLKDIV   0x30C
+#define FDP_AUDIO_INFOFRAME_ENABLE   0x310
+#define FDP_AUDIO_INFOFRAME_RATE   0x314
+#define FDP_AUDIO_MAUD   0x318
+#define FDP_AUDIO_NAUD   0x31C
+#define FDP_AUDIO_CLOCK_MODE   0x320
+#define FDP_AUDIO_3D_VSC_DATA   0x324
+#define FDP_AUDIO_INPUT_FIFO   0x328
+#define FDP_AUDIO_INPUT_FIFO_DEPTH   0x32C
+#define FDP_AUDIO_INPUT_FIFO_READY   0x330
+#define FDP_AUDIO_INFOFRAME_SELECT   0x334
+#define FDP_AUDIO_INFOFRAME_DATA   0x338
+#define FDP_AUDIO_TIMESTAMP_INTERVAL  0x33C
+#define FDP_AUDIO_CS_SOURCE_FORMAT  0x340
+#define FDP_AUDIO_CATEGORY_CODE  0x344
+#define FDP_AUDIO_CS_LENGTH_ORIG_FREQ  0x348
+#define FDP_AUDIO_CS_FREQ_CLOCK_ACCURACY 0x34C
+#define FDP_AUDIO_CS_COPYRIGHT 0x350
+#define FDP_AUDIO_GTC_COUNT_CONFIG 0x354
+#define FDP_AUDIO_GTC_COMMAND_EDGE 0x358
+#define FDP_AUDIO_CHANNEL_MAP 0x35C
+#define FDP_AUDIO_DB_LANE_SELECT 0x3E0
+#define FDP_AUDIO_DB_WRITE_INDEX 0x3E4
+#define FDP_AUDIO_DB_DATA_COUNT 0x3E8
+#define FDP_AUDIO_DB_DATA 0x3EC
+#define FDP_AUDIO_DB_READY 0x3F0
+#define FDP_AUDIO_DB_BUSY 0x3F4
+#define FDP_AUDIO_DB_ENABLE 0x3F8
 
+#define FDP_AUDIO_CLOCK_MODE_MASK BIT(0)
+#define FDP_TX_ENABLE_SEC_STREAM_MASK BIT(0)
+
+#define FDP_AUDIO_ENABLE_MUTE BIT(1)
+#define FDP_AUDIO_ENABLE_MASK BIT(0)
+
+#define ORIG_FREQ_32000                 0xc
+#define ORIG_FREQ_44100                 0xf
+#define ORIG_FREQ_48000                 0xd
+#define ORIG_FREQ_88200                 0x7
+#define ORIG_FREQ_96000                 0x5
+#define ORIG_FREQ_176400                0x3
+#define ORIG_FREQ_192000                0x1
+#define ORIG_FREQ_MASK                  0xf
+#define ORIG_FREQ_SHIFT                 0
+
+#define WORD_LENGTH_16                  0x4
+#define WORD_LENGTH_18                  0x2
+#define WORD_LENGTH_20                  0xc
+#define WORD_LENGTH_24                  0xd
+#define WORD_LENGTH_MASK                0xf
+#define WORD_LENGTH_SHIFT               4
+
+#define SAMPLING_FREQ_32000             0xc
+#define SAMPLING_FREQ_44100             0x0
+#define SAMPLING_FREQ_48000             0x4
+#define SAMPLING_FREQ_88200             0x1
+#define SAMPLING_FREQ_96000             0x5
+#define SAMPLING_FREQ_176400            0x3
+#define SAMPLING_FREQ_192000            0x7
+#define SAMPLING_FREQ_MASK              0xf
+#define SAMPLING_FREQ_SHIFT             4
+
+#define AUDIO_INFOFRAME_VENDOR_SPECIFIC   0x0
+#define AUDIO_INFOFRAME_AUX_VIDEO         0x1
+#define AUDIO_INFOFRAME_SOURCE_PRODUCT    0x2
+#define AUDIO_INFOFRAME_AUDIO_DESCRIPTION 0x3
+#define AUDIO_INFOFRAME_NTSC_VBI          0x4
 /************************** Function Prototypes ******************************/
 
 /* write the data to the channel of dp */

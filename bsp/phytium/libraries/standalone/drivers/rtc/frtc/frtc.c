@@ -23,12 +23,11 @@
  */
 
 #include <string.h>
-#include "fgeneric_timer.h"
+
 #include "ftypes.h"
 #include "fassert.h"
 
-#include "fdebug.h"
-#include "fsleep.h"
+#include "fdrivers_port.h"
 
 #include "frtc.h"
 #include "frtc_hw.h"
@@ -172,13 +171,13 @@ void FRtcReadTimeStamp(FRtcCtrl *pctrl, time_t *sec_p, time_t *msec_p)
     uintptr base_addr = pctrl->config.control_base_addr;
 
     /* tick = 1/32.768k = 0.03ms = 30us, delay more than 4 ticks */
-    fsleep_microsec(FRTC_COUNTER_DELAY);
+    FDriverUdelay(FRTC_COUNTER_DELAY);
 
     /* write AES_SEL register, to read CCVR and CDR register */
     FRTC_WRITE_AES_SEL(base_addr, FRTC_AES_SEL_COUNTER);
 
     /* tick = 1/32.768k = 0.03ms = 30us, delay more than 4 ticks */
-    fsleep_microsec(FRTC_COUNTER_DELAY);
+    FDriverUdelay(FRTC_COUNTER_DELAY);
 
     /* read high 32 bit first */
     sec = FRTC_READ_CCVR(base_addr);

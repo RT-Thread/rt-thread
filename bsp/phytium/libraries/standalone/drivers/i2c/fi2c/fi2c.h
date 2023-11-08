@@ -33,7 +33,6 @@
 #include "ftypes.h"
 #include "fassert.h"
 #include "ferror_code.h"
-#include "sdkconfig.h"
 
 #ifdef __cplusplus
 extern "C"
@@ -98,8 +97,8 @@ typedef struct
 {
     u32         instance_id; /* Device instance id */
     uintptr     base_addr;   /* Device base address */
-    u32         irq_num;     /* Device intrrupt id */
-    u32         irq_prority;  /* Device intrrupt priority */
+    u32         irq_num;     /* Device interrupt id */
+    u32         irq_prority;  /* Device interrupt priority */
     u32         ref_clk_hz;   /* Input reference clock frequency in Hz */
     u32         work_mode;   /* Device work mode Slave or Master */
     u32         slave_addr;  /*Master mode Slave Address writing/reading to/from ,Slave mode set local address*/
@@ -134,11 +133,11 @@ typedef struct
     FI2cFrameTX     txframe;
     FI2cFrameRX     rxframe;
     /** only apply to master device **/
-    /* Master intrrupt handler */
+    /* Master interrupt handler */
     FI2cEvtHandler master_evt_handlers[FI2C_MASTER_INTR_EVT_NUM];
 
     /** only apply to slave device **/
-    /* Slave intrrupt handler */
+    /* Slave interrupt handler */
     FI2cEvtHandler slave_evt_handlers[FI2C_SLAVE_INTR_EVT_NUM];
 
 } FI2c; /* Device instance */

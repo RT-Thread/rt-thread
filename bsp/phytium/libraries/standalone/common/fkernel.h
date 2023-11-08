@@ -130,7 +130,9 @@ extern "C"
     #define BITS_PER_LONG_LONG 64
 #endif
 
+#ifndef BIT /* in case third-party project also defined marco BIT */
 #define BIT(nr) (1ULL << (nr))
+#endif
 #define BIT_ULL(nr) (1ULL << (nr))
 #define BIT_MASK(nr) (BIT(nr) - 1UL)
 #define BIT_WORD(nr) ((nr) / BITS_PER_LONG)
@@ -219,7 +221,10 @@ extern "C"
  * Note that do not input signed int 'n'
  */
 #define LOWER_32_BITS(n) ((uint32_t)((n)&0xffffffff))
+#define UPPER_32_BITS(n) ((uint32_t)(((n) >> 16) >> 16))
 #define IS_ALIGNED(x, a) (((x) & ((typeof(x))(a)-1)) == 0)
+#define ALIGN(size, alignment) (((size) + (alignment) - 1) & ~((alignment) - 1))
+
 
 #ifndef __aligned
     #define __aligned(x) __attribute__((__aligned__(x)))

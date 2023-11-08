@@ -22,8 +22,7 @@
  * 1.0   zhugengyu  2022/2/7    init commit
  */
 
-#include "fsleep.h"
-#include "fdebug.h"
+#include "fdrivers_port.h"
 #include "fusb.h"
 #include "fusb_generic_hub.h"
 
@@ -79,7 +78,7 @@ static int FUsbGenericHubDebounce(FUsbDev *const dev, const int port)
     int stable_ms = 0;
     while (stable_ms < at_least_ms && total_ms < timeout_ms)
     {
-        fsleep_millisec(step_ms);
+        FDriverMdelay(step_ms);
 
         const int changed = hub->ops->port_status_changed(dev, port);
         const int connected = hub->ops->port_connected(dev, port);
@@ -124,7 +123,7 @@ int FUsbGenericHubWaitForPort(FUsbDev *const dev, const int port,
         {
             return timeout_steps;
         }
-        fsleep_microsec(step_us);
+        FDriverUdelay(step_us);
         --timeout_steps;
     }
     while (timeout_steps);
@@ -142,7 +141,7 @@ int FUsbGenericHubResetPort(FUsbDev *const dev, const int port)
     }
 
     /* wait for 10ms (usb20 spec 11.5.1.5: reset should take 10 to 20ms) */
-    fsleep_millisec(10);
+    FDriverMdelay(10);
 
     /* now wait 12ms for the hub to finish the reset */
     const int ret = FUsbGenericHubWaitForPort(
@@ -215,7 +214,7 @@ static int FUsbGenericHubAttachDev(FUsbDev *const dev, const int port)
         FUSB_DEBUG("Generic hub: Success at port %d ", port);
         if (hub->ops->reset_port)
         {
-            fsleep_millisec(10);
+            FDriverMdelay(10);
         } /* Reset recovery time
                        (usb20 spec 7.1.7.5) */
         hub->ports[port] = FUsbAttachDev(
@@ -324,7 +323,7 @@ int FUsbGenericHubInit(FUsbDev *const dev, const int num_ports,
         }
 
         /* wait once for all ports */
-        fsleep_millisec(20);
+        FDriverMdelay(20);
     }
 
     return 0;

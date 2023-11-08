@@ -77,7 +77,7 @@ extern "C"
 #define FGDMA_CTL_RD_ARB                BIT(5) /* dma 读请求仲裁模式: 0：轮询模式，1：采用Qos判断模式 */
 #define FGDMA_CTL_WR_ARB                BIT(4) /* dma 写请求仲裁模式: 0：轮询模式，1：采用Qos判断模式 */
 #define FGDMA_CTL_SOFT_RESET            BIT(1) /* dma 软件复位信号，1表示进行复位，写0退出 */
-#define FGDMA_CTL_ENABLE                BIT(0) /* dma 使能信号，1表示使能，写0表示disable */
+#define FGDMA_CTL_ENABLE                BIT(0) /* dma 使能信号，1表示使能，写0表示不使能 */
 
 /** @name FGDMA_INTR_STATE_OFFSET Register
  */
@@ -102,24 +102,23 @@ extern "C"
 /** @name FGDMA_CHX_CTL_OFFSET Register
  */
 #define FGDMA_CHX_CTL_SOFT_RESET        BIT(4) /* 软复位信号，1 表示进行软复位，写 0 退出 */
-#define FGDMA_CHX_CTL_ENABLE            BIT(0) /* 使能控制信号，1 表示使能该通道，0 表示不使能 */
+#define FGDMA_CHX_CTL_ENABLE            BIT(0) /* 使能控制信号，1 表示使能该通道，0 表示关闭 */
 
 /** @name FGDMA_CHX_MODE_OFFSET Register
  */
 #define FGDMA_CHX_MODE_RD_QOS_MASK          GENMASK(23, 20)
 #define FGDMA_CHX_MODE_RD_QOS_SET(qos)      SET_REG32_BITS((qos), 23, 20) /* CHX 读请求 Qos 配置 */
 #define FGDMA_CHX_MODE_RD_QOS_GET(qos)      GET_REG32_BITS((qos), 23, 20)
-/* 是否用 cd_rd_qos 的值替换该通道的去请求 QoSS，1 表示替换, 0 不替换 */
-#define FGDMA_CHX_MODE_RD_QOS_EN            BIT(16)
+
+#define FGDMA_CHX_MODE_RD_QOS_EN            BIT(16) /* 是否用 cd_rd_qos 的值替换该通道的去请求 QoS: 1 表示替换, 0 不替换 */
 
 #define FGDMA_CHX_MODE_WR_QOS_MASK          GENMASK(15, 12)
 #define FGDMA_CHX_MODE_WR_QOS_SET(qos)      SET_REG32_BITS((qos), 15, 12) /* CHX 写请求 Qos 配置 */
 #define FGDMA_CHX_MODE_WR_QOS_GET(qos)      GET_REG32_BITS((qos), 15, 12)
-/* 是否用 cx_wr_qos 中的值替换该通道写请求的 QoS：1 表示替换, 0 不替换 */
-#define FGDMA_CHX_MODE_WR_QOS_EN            BIT(8)
 
-/* 是否用CHX qos cfg 中的值替换该读请求的 Qos：1 表示替换 ，0 不替换 */
-#define FGDMA_CHX_MODE_BDL_ROLL_EN          BIT(4)
+#define FGDMA_CHX_MODE_WR_QOS_EN            BIT(8) /* 是否用 cx_wr_qos 中的值替换该通道写请求的 QoS：1 表示替换, 0 不替换 */
+
+#define FGDMA_CHX_MODE_BDL_ROLL_EN          BIT(4)  /* 是否循环使用链表进行数据搬移，1表示使用 */
 #define FGDMA_CHX_MODE_BDL_EN               BIT(0)  /* 配置当前采用direct 或者BDL 链表模式, 0 采用Direct 模式, 1 采用BDL 模式 */
 
 /** @name FGDMA_CHX_INT_CTRL_OFFSET Register
@@ -171,11 +170,6 @@ extern "C"
 #define FGDMA_CHX_XFER_CFG_AW_SIZE_SET(size)    SET_REG32_BITS((size), 6, 4) /* CHX 写请求 Burst size 大小， 支持 1、2、8、16 Byte */
 #define FGDMA_CHX_XFER_CFG_AW_BRUST_SET(type)   SET_REG32_BITS((type), 1, 0) /* CHX 写请求 Brust 类型： 0：fix ，1：incr */
 
-#define FGDMA_INCR                      1U
-#define FGDMA_FIX                       0U
-
-#define FGDMA_BURST_LEN                 7U /* burst lenth = FGDMA_BURST_LEN + 1，写入寄存器的最大合法值为7，burst length最大值为8 */
-
 /** @name FGDMA_CHX_LCP_OFFSET Register
  */
 #define FGDMA_CHX_LCP_GET(reg_val)   GET_REG32_BITS((reg_val), 31, 0) /* 当前操作的BDL列表数  */
@@ -215,7 +209,6 @@ extern "C"
 #define FGDMA_CHX_SECRSP                         BIT(0) /* response 安全控制位 */
 
 #define FGDMA_OUTSTANDING                        0xfU  /* 实际outstanding数目为0xf + 1 */
-
 /**************************** Type Definitions *******************************/
 
 /************************** Variable Definitions *****************************/
@@ -229,7 +222,7 @@ extern "C"
 
 /**
  * @name: FGdmaDisable
- * @msg: 去使能GDMA控制器
+ * @msg: 关闭GDMA控制器
  * @return {void} 无
  * @param {uintptr} base_addr, GDMA控制器基地址
  */
@@ -254,12 +247,12 @@ static inline void FGdmaEnable(uintptr base_addr)
 }
 
 /**
- * @name: FGdmaSoftwareReset
+ * @name: FGdmaSoftReset
  * @msg: 完成GDMA控制器软复位
  * @return {void} 无
  * @param {uintptr} base_addr, GDMA控制器基地址
  */
-static inline void FGdmaSoftwareReset(uintptr base_addr)
+static inline void FGdmaSoftReset(uintptr base_addr)
 {
     int delay = 100;
     u32 reg_val = FGDMA_READREG(base_addr, FGDMA_CTL_OFFSET);
@@ -302,7 +295,7 @@ static inline void FGdmaIrqDisable(uintptr base_addr)
 
 /**
  * @name: FGdmaChanDisable
- * @msg: 去使能GDMA通道
+ * @msg: 关闭GDMA通道
  * @return {void} 无
  * @param {uintptr} base_addr, GDMA控制器基地址
  * @param {u32} chan, GDMA通道号
@@ -310,12 +303,12 @@ static inline void FGdmaIrqDisable(uintptr base_addr)
 static inline void FGdmaChanDisable(uintptr base_addr, u32 chan)
 {
     u32 reg_val = FGDMA_READREG(base_addr, FGDMA_CHX_CTL_OFFSET(chan));
-    reg_val &= ~FGDMA_CHX_CTL_ENABLE; /* 禁用通道 */
+    reg_val &= ~FGDMA_CHX_CTL_ENABLE; /* 关闭通道 */
     FGDMA_WRITEREG(base_addr, FGDMA_CHX_CTL_OFFSET(chan), reg_val);
 }
 
 /**
- * @name: FGdmaChanEnable
+ * @name FGdmaChanEnable
  * @msg: 使能GDMA通道
  * @return {void} 无
  * @param {uintptr} base_addr, GDMA控制器基地址
@@ -345,7 +338,7 @@ static inline void FGdmaChanIrqDisable(uintptr base_addr, u32 chan)
 
 /**
  * @name: FGdmaChanIrqEnable
- * @msg: 打开GDMA通道中断
+ * @msg: 使能GDMA通道中断
  * @return {void} 无
  * @param {uintptr} base_addr, GDMA控制器基地址
  * @param {u32} chan, GDMA通道号
@@ -360,22 +353,26 @@ static inline void FGdmaChanIrqEnable(uintptr base_addr, u32 chan, u32 umask)
 }
 
 /**
- * @name: FGdmaChanReset
+ * @name: FGdmaChanSoftReset
  * @msg: 完成GDMA通道软复位
  * @return {void} 无
  * @param {uintptr} base_addr, GDMA控制器基地址
  * @param {u32} chan, GDMA通道号
  */
-static inline void FGdmaChanReset(uintptr base_addr, u32 chan)
+static inline void FGdmaChanSoftReset(uintptr base_addr, u32 chan)
 {
     int delay = 100;
+
+    /* 启动通道软复位 */
     u32 reg_val = FGDMA_READREG(base_addr, FGDMA_CHX_CTL_OFFSET(chan));
     reg_val |= FGDMA_CHX_CTL_SOFT_RESET;
     FGDMA_WRITEREG(base_addr, FGDMA_CHX_CTL_OFFSET(chan), reg_val);
 
+    /* 等待软复位结束 */
     while (--delay > 0)
         ;
 
+    /* 退出软复位 */
     reg_val = FGDMA_READREG(base_addr, FGDMA_CHX_CTL_OFFSET(chan));
     reg_val &= ~FGDMA_CHX_CTL_SOFT_RESET;
     FGDMA_WRITEREG(base_addr, FGDMA_CHX_CTL_OFFSET(chan), reg_val);

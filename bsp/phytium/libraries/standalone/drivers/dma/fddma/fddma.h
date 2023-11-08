@@ -35,6 +35,25 @@ extern "C"
 /***************************** Include Files *********************************/
 
 /************************** Constant Definitions *****************************/
+/* ddma capacity mask  */
+
+#define FDDMA_CAP_W0_ENABLE_IRQ  BIT(0)   /* the ddma have a different interrupt control,1: disable,0:enable*/
+#define FDDMA_CAP_W1_ENABLE_IRQ  BIT(1)   /* the ddma have a different interrupt control,1: enable,0:disable  */
+
+#define FDDMA_SUCCESS                   FT_SUCCESS
+#define FDDMA_ERR_NOT_INIT              FT_MAKE_ERRCODE(ErrModBsp, ErrDdma, 0)
+#define FDDMA_ERR_CHAN_BINDED           FT_MAKE_ERRCODE(ErrModBsp, ErrDdma, 1)
+#define FDDMA_ERR_CHAN_RUNNING          FT_MAKE_ERRCODE(ErrModBsp, ErrDdma, 2)
+#define FDDMA_ERR_INVALID_TRANS_SIZE    FT_MAKE_ERRCODE(ErrModBsp, ErrDdma, 3)
+#define FDDMA_ERR_WAIT_TIMEOUT          FT_MAKE_ERRCODE(ErrModBsp, ErrDdma, 4)
+#define FDDMA_ERR_INVALID_DDR_ADDR      FT_MAKE_ERRCODE(ErrModBsp, ErrDdma, 5)
+#define FDDMA_ERR_BDL_NOT_ENOUGH         FT_MAKE_ERRCODE(ErrModBsp, ErrDdma, 6)
+#define FDDMA_ERR_BDL_INVALID_ADDR         FT_MAKE_ERRCODE(ErrModBsp, ErrDdma, 7)
+#define FDDMA_ERR_BDL_INVALID_SIZE         FT_MAKE_ERRCODE(ErrModBsp, ErrDdma, 8)
+#define FDDMA_ERR_BDL_NO_INVALID_BLOCK        FT_MAKE_ERRCODE(ErrModBsp, ErrDdma, 9)
+
+typedef struct FDdma_ FDdma;
+typedef struct FDdmaChan_ FDdmaChan;
 typedef enum
 {
     FDDMA_CHAN_0 = 0,
@@ -84,7 +103,29 @@ typedef struct
     uintptr base_addr;          /* DDMA ctrl base address */
     u32 irq_num;                /* DDMA ctrl interrupt id */
     u32 irq_prority;            /* DDMA ctrl interrupt priority */
+    u32 caps;
 } FDdmaConfig; /* DDMA instance configuration */
+typedef enum
+{
+    FDDMA_BURST_LENTH_1 = 0,
+    FDDMA_BURST_LENTH_2 = 1,
+    FDDMA_BURST_LENTH_4 = 3,
+} FDdmaBurstLenth;
+
+typedef enum
+{
+    FDDMA_BURST_SIZE_4_BYTE = 0,
+    FDDMA_BURST_SIZE_1_BYTE = 1,
+    FDDMA_BURST_SIZE_2_BYTE = 2,
+} FDdmaBurstSize;
+
+typedef struct
+{
+    u32 src_addr_l; /* 0x0, 数据源地址低32位 */
+    u32 src_addr_h; /* 0x4, 数据源地址高32位 */
+    u32 total_bytes; /*0x08, 传输数据总量*/
+    u32 ioc;        /* 0x0c, 该条目传输完成中断产生控制位  */
+} __attribute__((__packed__)) FDdmaBdlDesc; /* BDL描述符 */
 
 typedef struct
 {
@@ -96,6 +137,12 @@ typedef struct
     u32 trans_len;              /* DMA channel transfer length */
 #define FDDMA_MIN_TRANSFER_LEN      4  /* min bytes in transfer */
     u32 timeout;                /* timeout = 0 means no use DMA timeout */
+    FDdmaBurstSize     rd_align;
+    FDdmaBurstSize     wr_align;
+       /*bdl 模式*/
+    u32       total_desc_num;       /*总的条目数*/
+    u32       valid_desc_num;       /*有效条目数*/
+    FDdmaBdlDesc  *descs;           /*BDL 描述符*/
 } FDdmaChanConfig;  /* DDMA channel instance */
 
 typedef struct FDdmaChan_
@@ -120,6 +167,10 @@ typedef struct FDdma_
 /***************** Macros (Inline Functions) Definitions *********************/
 #define FDDMA_DDR_ADDR_ALIGMENT         128 /* DMA DDR Buffer need align wiht 128 bytes */
 
+#define FDDMA_GET_BURST_SIZE(brust_align)   (1U << brust_align)
+
+#define FDDMA_BDL_ADDR_ALIGMENT                      128U  /* BDL模式的地址需要按128位对齐 */
+#define FDDMA_BDL_VALID_NUM                          4U    /*BDL模式下所有条目数据总量必须为4的倍数*/
 /************************** Function Prototypes ******************************/
 /* 获取DDMA实例默认配置 */
 const FDdmaConfig *FDdmaLookupConfig(u32 instance_id);

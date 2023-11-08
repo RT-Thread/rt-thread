@@ -25,7 +25,7 @@
 
 #include "fparameters.h"
 #include "fqspi.h"
-#include "sdkconfig.h"
+
 
 FQspiConfig FQspiConfigTbl[FQSPI_NUM] =
 {

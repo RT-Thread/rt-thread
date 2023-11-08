@@ -1,6 +1,10 @@
 menu "Hardware Drivers"
 
 menu "On-chip Peripheral Drivers"
+    menuconfig BSP_USING_IOPAD
+        bool "Enable IOPAD"
+        default n
+
     menuconfig BSP_USING_UART
         bool "Enable UART"
         default y
@@ -20,21 +24,17 @@ menu "On-chip Peripheral Drivers"
     menuconfig BSP_USING_SPI
         bool "Enable Spi"
         default n
-        select USE_SPI # sdk spi component
         select RT_USING_SPI
         if BSP_USING_SPI
             config RT_USING_SPIM0
                 bool "Enable spim0"
                 default n
-
             config RT_USING_SPIM1
                 bool "Enable spim1"
                 default n
-            
             config RT_USING_SPIM2
                 bool "Enable spim2"
-                default y
-
+                default n
             config RT_USING_SPIM3
                 bool "Enable spim3"
                 default n
@@ -46,6 +46,17 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_CAN
         select RT_CAN_USING_HDR
         select RT_CAN_USING_CANFD
+        if BSP_USING_CAN
+            config RT_USING_CAN0
+            bool "Enable can0"
+            default n
+            config RT_USING_CAN1
+            bool "Enable can1"
+            default n
+            config RT_USING_CAN2
+            bool "Enable can2"
+            default n
+        endif
 
     menuconfig BSP_USING_GPIO
         bool "Enable GPIO"
@@ -70,38 +81,141 @@ menu "On-chip Peripheral Drivers"
 
     menuconfig BSP_USING_ETH
         bool "Enable ETH"
-        default y
-        select USE_ETH 
+        default n
         if BSP_USING_ETH
             config RT_LWIP_PBUF_POOL_BUFSIZE
                         int "The size of each pbuf in the pbuf pool"
                         range 1500 2000
                         default 1700
         endif
-       
 
-           
+    menuconfig BSP_USING_PWM
+        bool "Enable PWM"
+        default n
+        select RT_USING_PWM
+        if BSP_USING_PWM
+            config RT_USING_PWM0
+                bool "Enable pwm0"
+                default n
+            config RT_USING_PWM1
+                bool "Enable pwm1"
+                default n
+            config RT_USING_PWM2
+                bool "Enable pwm2"
+                default n
+            config RT_USING_PWM3
+                bool "Enable pwm3"
+                default n
+            config RT_USING_PWM4
+                bool "Enable pwm4"
+                default n
+            config RT_USING_PWM5
+                bool "Enable pwm5"
+                default n
+            config RT_USING_PWM6
+                bool "Enable pwm6"
+                default n
+        endif
+
+    menuconfig BSP_USING_I2C
+        bool "Enable I2C"
+        default n
+        select RT_USING_I2C
+        if BSP_USING_I2C
+            config I2C_USE_MIO
+            bool "using i2c mio"
+            default n
+            select USE_MIO
+            select ENABLE_MIO
+
+            if I2C_USE_MIO
+            config RT_USING_MIO0
+                bool "Enable mio0"
+                default n
+            config RT_USING_MIO1
+                bool "Enable mio1"
+                default n
+            config RT_USING_MIO2
+                bool "Enable mio2"
+                default n
+            config RT_USING_MIO3
+                bool "Enable mio3"
+                default n
+            config RT_USING_MIO4
+                bool "Enable mio4"
+                default n
+            config RT_USING_MIO5
+                bool "Enable mio5"
+                default n
+            config RT_USING_MIO6
+                bool "Enable mio6"
+                default n
+            config RT_USING_MIO7
+                bool "Enable mio7"
+                default n
+            config RT_USING_MIO8
+                bool "Enable mio8"
+                default n
+            config RT_USING_MIO9
+                bool "Enable mio9"
+                default n
+            config RT_USING_MIO10
+                bool "Enable mio10"
+                default n
+            config RT_USING_MIO11
+                bool "Enable mio11"
+                default n
+            config RT_USING_MIO12
+                bool "Enable mio12"
+                default n
+            config RT_USING_MIO13
+                bool "Enable mio13"
+                default n
+            config RT_USING_MIO14
+                bool "Enable mio14"
+                default n
+            config RT_USING_MIO15
+                bool "Enable mio15"
+                default n
+            endif
     
-    menuconfig BSP_USING_SDIO
+            config I2C_USE_CONTROLLER
+            bool "using i2c controller"
+            default n
+            if I2C_USE_CONTROLLER
+            config RT_USING_I2C0
+                bool "Enable i2c0"
+                default n
+            config RT_USING_I2C1
+                bool "Enable i2c1"
+                default n
+            config RT_USING_I2C2
+                bool "Enable i2c2"
+                default n
+            endif
+
+        endif
+       
+    menuconfig BSP_USING_SDIF
         bool "Enable SDIO"
-        default y
+        default n
         select RT_USING_SDIO
     
-        if BSP_USING_SDIO
+        if BSP_USING_SDIF
                 config BSP_USING_SDCARD_FATFS
                     bool "Enable SDCARD (FATFS)"
                     select RT_USING_DFS_ELMFAT
-                    default y
+                    default n
     
                 choice
                     prompt "Choose a card to mount"
-                    default USING_SDIO1
+                    default USING_SDIF1
 
-                    config USING_SDIO0
-                        bool "Use SDIO0"
+                    config USING_SDIF0
+                        bool "Use SDIF0"
 
-                    config USING_SDIO1
-                        bool "Use SDIO1"
+                    config USING_SDIF1
+                        bool "Use SDIF1"
 
                     config USING_EMMC
                         bool "Use EMMC"

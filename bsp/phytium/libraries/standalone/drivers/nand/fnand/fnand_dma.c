@@ -26,23 +26,18 @@
 #include "fnand_dma.h"
 #include "fnand.h"
 #include "ferror_code.h"
-#include "fdebug.h"
 #include <string.h>
 #include <stdio.h>
-#include "fcache.h"
-#include "fnand_toggle.h"
-#include "sdkconfig.h"
 
-#ifdef CONFIG_FNAND_DMA_DEBUG_EN
-    #define FNAND_DMA_DEBUG_TAG "FNAND_DMA"
-    #define FNAND_DMA_DEBUG_I(format, ...) FT_DEBUG_PRINT_I(FNAND_DMA_DEBUG_TAG, format, ##__VA_ARGS__)
-    #define FNAND_DMA_DEBUG_W(format, ...) FT_DEBUG_PRINT_W(FNAND_DMA_DEBUG_TAG, format, ##__VA_ARGS__)
-    #define FNAND_DMA_DEBUG_E(format, ...) FT_DEBUG_PRINT_E(FNAND_DMA_DEBUG_TAG, format, ##__VA_ARGS__)
-#else
-    #define FNAND_DMA_DEBUG_I(format, ...)
-    #define FNAND_DMA_DEBUG_W(format, ...)
-    #define FNAND_DMA_DEBUG_E(format, ...)
-#endif
+#include "fdrivers_port.h"
+#include "fnand_toggle.h"
+
+
+
+#define FNAND_DMA_DEBUG_TAG "FNAND_DMA"
+#define FNAND_DMA_DEBUG_I(format, ...) FT_DEBUG_PRINT_I(FNAND_DMA_DEBUG_TAG, format, ##__VA_ARGS__)
+#define FNAND_DMA_DEBUG_W(format, ...) FT_DEBUG_PRINT_W(FNAND_DMA_DEBUG_TAG, format, ##__VA_ARGS__)
+#define FNAND_DMA_DEBUG_E(format, ...) FT_DEBUG_PRINT_E(FNAND_DMA_DEBUG_TAG, format, ##__VA_ARGS__)
 
 
 void FNandDmaDump(struct FNandDmaDescriptor *descriptor_p)
@@ -148,8 +143,8 @@ FError FNandDmaPack(FNandCmdFormat *cmd_format,
     }
 
     /* invalid descriptor and buffer */
-    FCacheDCacheInvalidateRange((intptr)descriptor_p, sizeof(struct FNandDmaDescriptor));
-    FCacheDCacheInvalidateRange((intptr)pack_data_p->addr_p, pack_data_p->addr_length);
+    FDriverDCacheRangeInvalidate((intptr)descriptor_p, sizeof(struct FNandDmaDescriptor));
+    FDriverDCacheRangeInvalidate((intptr)pack_data_p->addr_p, pack_data_p->addr_length);
 
     FNandDmaDump(descriptor_p);
 

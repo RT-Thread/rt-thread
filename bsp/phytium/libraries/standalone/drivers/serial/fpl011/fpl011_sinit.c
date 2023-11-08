@@ -27,7 +27,6 @@
 
 #include "fpl011.h"
 #include "fparameters.h"
-#include "sdkconfig.h"
 
 extern FPl011Config FPl011ConfigTable[FUART_NUM];
 /************************** Constant Definitions *****************************/

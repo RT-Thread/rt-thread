@@ -24,12 +24,10 @@
  */
 
 /***************************** Include Files *********************************/
-
 #include "ftypes.h"
 #include "fparameters.h"
 
 #include "fgdma.h"
-
 /************************** Constant Definitions *****************************/
 
 /**************************** Type Definitions *******************************/
@@ -38,7 +36,6 @@
 
 /************************** Variable Definitions *****************************/
 extern const FGdmaConfig fgdma_cfg_tbl[FGDMA_INSTANCE_NUM];
-
 /************************** Function Prototypes ******************************/
 /**
  * @name: FGdmaLookupConfig
@@ -49,9 +46,8 @@ extern const FGdmaConfig fgdma_cfg_tbl[FGDMA_INSTANCE_NUM];
 const FGdmaConfig *FGdmaLookupConfig(u32 instance_id)
 {
     const FGdmaConfig *ptr = NULL;
-    u32 index;
 
-    for (index = 0; index < (u32)FGDMA_INSTANCE_NUM; index++)
+    for (int index = 0; index < (u32)FGDMA_INSTANCE_NUM; index++)
     {
         if (fgdma_cfg_tbl[index].instance_id == instance_id)
         {

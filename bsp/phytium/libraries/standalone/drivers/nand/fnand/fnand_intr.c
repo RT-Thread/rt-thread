@@ -28,7 +28,7 @@
 #include "fassert.h"
 #include "ferror_code.h"
 
-#include "fdebug.h"
+#include "fdrivers_port.h"
 #define FNAND_INTR_DEBUG_TAG "FNAND_INTR"
 #define FNAND_INTR_ERROR(format, ...) FT_DEBUG_PRINT_E(FNAND_INTR_DEBUG_TAG, format, ##__VA_ARGS__)
 #define FNAND_INTR_DEBUG_I(format, ...) FT_DEBUG_PRINT_I(FNAND_INTR_DEBUG_TAG, format, ##__VA_ARGS__)

@@ -23,9 +23,8 @@
  */
 
 #include <string.h>
-#include "fsleep.h"
-#include "fcache.h"
-#include "fdebug.h"
+
+#include "fdrivers_port.h"
 
 #include "fxhci_private.h"
 
@@ -256,7 +255,7 @@ FUsbDev *FXhciSetAddress(FUsbHc *controller, FUsbSpeed speed, int hubport, int h
 
     xhci->dcbaa[slot_id] = (uintptr)(di->ctx.raw);
 
-    FCacheDCacheInvalidateRange((uintptr)ic, sizeof(*ic)); /* flush cache of input address */
+    FDriverDCacheRangeInvalidate((uintptr)ic, sizeof(*ic)); /* flush cache of input address */
 
     cc = FXhciCmdAddressDevice(xhci, slot_id, ic);
     if (cc == FXHCI_CC_RESOURCE_ERROR)
@@ -276,7 +275,7 @@ FUsbDev *FXhciSetAddress(FUsbHc *controller, FUsbSpeed speed, int hubport, int h
                   slot_id, FXHCI_SC_GET(UADDR, di->ctx.slot));
     }
 
-    fsleep_millisec(FUSB_SET_ADDRESS_MDELAY);
+    FDriverMdelay(FUSB_SET_ADDRESS_MDELAY);
 
     dev = FUsbInitDevEntry(controller, slot_id);
     if (!dev)
@@ -309,7 +308,7 @@ FUsbDev *FXhciSetAddress(FUsbHc *controller, FUsbSpeed speed, int hubport, int h
         FXHCI_EC_SET(MPS, ic->dev.ep0, dev->endpoints[0].maxpacketsize);
 
         /* flush cache of input context before send command */
-        FCacheDCacheInvalidateRange((uintptr)ic, sizeof(*ic));
+        FDriverDCacheRangeInvalidate((uintptr)ic, sizeof(*ic));
 
         cc = FXhciCmdEvaluateCtx(xhci, slot_id, ic);
         if (cc == FXHCI_CC_RESOURCE_ERROR)
@@ -510,7 +509,7 @@ FXhciTransCode FXhciFinishDevConfig(FUsbDev *const dev)
     ic->dev.slot->f3 = di->ctx.slot->f3;
     /* f4 *must* be 0 in the Input Context... yeah, it's weird, I know. */
 
-    FCacheDCacheInvalidateRange((uintptr)ic, sizeof(*ic));
+    FDriverDCacheRangeInvalidate((uintptr)ic, sizeof(*ic));
 
     if (dev->descriptor->bDeviceClass == FUSB_HUB_DEVICE)
     {
@@ -602,7 +601,7 @@ void FXhciDestoryDev(FUsbHc *const controller, const int slot_id)
     *ic->drop = (1 << num_eps) - 1;  /* Drop all endpoints we can. */
     *ic->drop &= ~(1 << 1 | 1 << 0); /* Not allowed to drop EP0 or Slot. */
 
-    FCacheDCacheInvalidateRange((uintptr)ic, sizeof(*ic));
+    FDriverDCacheRangeInvalidate((uintptr)ic, sizeof(*ic));
 
     FXhciTransCode cc = FXhciCmdEvaluateCtx(xhci, slot_id, ic);
 

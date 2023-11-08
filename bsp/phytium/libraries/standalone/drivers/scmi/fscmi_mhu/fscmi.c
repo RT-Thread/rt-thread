@@ -26,8 +26,7 @@
 #include "fmhu_hw.h"
 #include "fio.h"
 #include "fkernel.h"
-#include "fdebug.h"
-#include "fsleep.h"
+#include "fdrivers_port.h"
 #include "fassert.h"
 #include "fscmi_base.h"
 #include "fscmi_sensors.h"
@@ -76,7 +75,7 @@ FError FScmiDoTransport(FScmi *instance_p,struct FScmiTransferInfo *info, u32 pr
         }
         else
         {
-            fsleep_millisec(10);
+            FDriverMdelay(10);
             delay_out++;
             if (delay_out == 10)
             {
@@ -232,7 +231,7 @@ FError FScmiProtocolTxPrepare(FScmi *instance_p,u8 pro_id)
     while (0 == (FtIn32((uintptr)&mem->channel_status) &SCMI_SHMEM_CHAN_STAT_CHANNEL_FREE))
     {
         time_out++;
-        fsleep_millisec(10);
+        FDriverMdelay(10);
         if (time_out == 10)
         {
             FSCMI_ERROR("Memory of scmi status error,please check mhu channel set or memory addrs...");

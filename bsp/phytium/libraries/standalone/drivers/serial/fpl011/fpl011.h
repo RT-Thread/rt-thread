@@ -29,7 +29,6 @@
 #include "ftypes.h"
 #include "fassert.h"
 #include "fpl011_hw.h"
-#include "sdkconfig.h"
 
 
 #ifdef __cplusplus

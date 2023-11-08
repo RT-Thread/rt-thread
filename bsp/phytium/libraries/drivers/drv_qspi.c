@@ -12,7 +12,7 @@
  */
 #include "rtconfig.h"
 
-#ifdef RT_USING_QSPI
+#ifdef BSP_USING_QSPI
 #include <rtthread.h>
 #ifdef RT_USING_SMART
     #include <ioremap.h>
@@ -45,21 +45,11 @@ rt_err_t FQspiInit(phytium_qspi_bus *phytium_qspi_bus)
     FError ret = FT_SUCCESS;
     rt_uint32_t qspi_id = phytium_qspi_bus->fqspi_id;
 
-#ifdef USING_QSPI_CHANNEL0
-#if defined CONFIG_TARGET_E2000D
-    FIOPadSetFunc(&iopad_ctrl, FIOPAD_AR51_REG0_OFFSET, FIOPAD_FUNC0);
-#elif defined CONFIG_TARGET_E2000Q
-    FIOPadSetFunc(&iopad_ctrl, FIOPAD_AR55_REG0_OFFSET, FIOPAD_FUNC0);
-#endif
-#elif defined USING_QSPI_CHANNEL1
-#if defined CONFIG_TARGET_E2000D
-    FIOPadSetFunc(&iopad_ctrl, FIOPAD_AR45_REG0_OFFSET, FIOPAD_FUNC0);
-#elif defined CONFIG_TARGET_E2000Q
-    FIOPadSetFunc(&iopad_ctrl, FIOPAD_AR49_REG0_OFFSET, FIOPAD_FUNC0);
-#endif
-#endif
+    FIOPadSetQspiMux(qspi_id, FQSPI_CS_0);
+    FIOPadSetQspiMux(qspi_id, FQSPI_CS_1);
 
     FQspiDeInitialize(&(phytium_qspi_bus->fqspi));
+
     FQspiConfig pconfig = *FQspiLookupConfig(qspi_id);
 
 #ifdef RT_USING_SMART
@@ -91,6 +81,36 @@ rt_err_t FQspiInit(phytium_qspi_bus *phytium_qspi_bus)
     }
 
     return RT_EOK;
+}
+
+#define __is_print(ch) ((unsigned int)((ch) - ' ') < 127u - ' ')
+void FtDumpHexByte(const u8 *ptr, u32 buflen)
+{
+    u8 *buf = (u8 *)ptr;
+    fsize_t i, j;
+
+    for (i = 0; i < buflen; i += 16)
+    {
+        rt_kprintf("%p: ", ptr + i);
+
+        for (j = 0; j < 16; j++)
+            if (i + j < buflen)
+            {
+                rt_kprintf("%02X ", buf[i + j]);
+            }
+            else
+            {
+                rt_kprintf("   ");
+            }
+        rt_kprintf(" ");
+
+        for (j = 0; j < 16; j++)
+            if (i + j < buflen)
+            {
+                rt_kprintf("%c", (char)(__is_print(buf[i + j]) ? buf[i + j] : '.'));
+            }
+        rt_kprintf("\r\n");
+    }
 }
 
 static rt_err_t phytium_qspi_configure(struct rt_spi_device *device, struct rt_spi_configuration *configuration)

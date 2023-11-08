@@ -64,7 +64,7 @@ rt_uint64_t rt_cpu_mpidr_early[] =
 };
 
 extern int rt_hw_timer_init(void);
-#include "fcache.h"
+
 void rt_hw_secondary_cpu_up(void)
 {
     rt_uint32_t i;

@@ -28,7 +28,7 @@
 #include "fkernel.h"
 #include "fparameters.h"
 #include "fassert.h"
-#include "fdebug.h"
+#include "fdrivers_port.h"
 
 #include "fddma_hw.h"
 #include "fddma.h"
@@ -107,12 +107,22 @@ void FDdmaSoftwareReset(uintptr base_addr)
  * @msg: 关闭DDMA全局中断
  * @return {*}
  * @param {uintptr} base_addr, DDMA控制器基地址
+ * @param {u32} caps,  ddma 中断控制特性
  */
-void FDdmaDisableGlobalIrq(uintptr base_addr)
+void FDdmaDisableGlobalIrq(uintptr base_addr, u32 caps)
 {
-    u32 reg_val = FDdmaReadReg(base_addr, FDDMA_MASK_INTR_OFFSET);
-    reg_val |= FDDMA_MASK_EN_GLOBAL_INTR; /* write 1 and disable interrupt */
-    FDdmaWriteReg(base_addr, FDDMA_MASK_INTR_OFFSET, reg_val);
+    if (caps & FDDMA_CAP_W1_ENABLE_IRQ)
+    {
+        u32 reg_val = FDdmaReadReg(base_addr, FDDMA_MASK_INTR_OFFSET);
+        reg_val |= FDDMA_MASK_EN_GLOBAL_INTR; 
+        FDdmaWriteReg(base_addr, FDDMA_MASK_INTR_OFFSET, reg_val);
+    }
+    else
+    {
+        u32 reg_val = FDdmaReadReg(base_addr, FDDMA_MASK_INTR_OFFSET);
+        reg_val &= ~ FDDMA_MASK_EN_GLOBAL_INTR; 
+        FDdmaWriteReg(base_addr, FDDMA_MASK_INTR_OFFSET, reg_val);
+    }
     return;
 }
 
@@ -121,12 +131,23 @@ void FDdmaDisableGlobalIrq(uintptr base_addr)
  * @msg: 打开DDMA全局中断
  * @return {*}
  * @param {uintptr} base_addr, DDMA控制器基地址
+ * @param {u32} caps,  ddma 中断控制特性
  */
-void FDdmaEnableGlobalIrq(uintptr base_addr)
+void FDdmaEnableGlobalIrq(uintptr base_addr, u32 caps)
 {
-    u32 reg_val = FDdmaReadReg(base_addr, FDDMA_MASK_INTR_OFFSET);
-    reg_val &= ~FDDMA_MASK_EN_GLOBAL_INTR; /* write 0 and enable interrupt */
-    FDdmaWriteReg(base_addr, FDDMA_MASK_INTR_OFFSET, reg_val);
+    if (caps & FDDMA_CAP_W1_ENABLE_IRQ)
+    {
+        u32 reg_val = FDdmaReadReg(base_addr, FDDMA_MASK_INTR_OFFSET);
+        reg_val &= ~ FDDMA_MASK_EN_GLOBAL_INTR; 
+        FDdmaWriteReg(base_addr, FDDMA_MASK_INTR_OFFSET, reg_val);
+    }
+    else
+    {
+        u32 reg_val = FDdmaReadReg(base_addr, FDDMA_MASK_INTR_OFFSET);
+        reg_val |= FDDMA_MASK_EN_GLOBAL_INTR; 
+        FDdmaWriteReg(base_addr, FDDMA_MASK_INTR_OFFSET, reg_val);
+    }
+
     return;
 }
 
@@ -136,13 +157,25 @@ void FDdmaEnableGlobalIrq(uintptr base_addr)
  * @return {*}
  * @param {uintptr} base_addr, DDMA控制器基地址
  * @param {u32} chan, DDMA通道号
+ * @param {u32} caps, ddma 中断控制特性
  */
-void FDdmaDisableChanIrq(uintptr base_addr, u32 chan)
+void FDdmaDisableChanIrq(uintptr base_addr, u32 chan, u32 caps)
 {
     FASSERT_MSG((FDDMA_NUM_OF_CHAN > chan), "Channel %d is not supported", chan);
-    u32 reg_val = FDdmaReadReg(base_addr, FDDMA_MASK_INTR_OFFSET);
-    reg_val |= FDDMA_MASK_EN_CHAN_INTR(chan);
-    FDdmaWriteReg(base_addr, FDDMA_MASK_INTR_OFFSET, reg_val);
+
+    if (caps & FDDMA_CAP_W1_ENABLE_IRQ)
+    {
+        u32 reg_val = FDdmaReadReg(base_addr, FDDMA_MASK_INTR_OFFSET);
+        reg_val |= FDDMA_MASK_EN_CHAN_INTR(chan);
+        FDdmaWriteReg(base_addr, FDDMA_MASK_INTR_OFFSET, reg_val);
+    }
+    else
+    {
+        u32 reg_val = FDdmaReadReg(base_addr, FDDMA_MASK_INTR_OFFSET);
+        reg_val &= ~FDDMA_MASK_EN_CHAN_INTR(chan);
+        FDdmaWriteReg(base_addr, FDDMA_MASK_INTR_OFFSET, reg_val);
+    }
+
     return;
 }
 
@@ -152,13 +185,24 @@ void FDdmaDisableChanIrq(uintptr base_addr, u32 chan)
  * @return {*}
  * @param {uintptr} base_addr, DDMA控制器基地址
  * @param {u32} chan, DDMA通道号
+ * @param {u32} caps, ddma 中断控制特性
  */
-void FDdmaEnableChanIrq(uintptr base_addr, u32 chan)
+void FDdmaEnableChanIrq(uintptr base_addr, u32 chan, u32 caps)
 {
     FASSERT_MSG((FDDMA_NUM_OF_CHAN > chan), "Channel %d is not supported", chan);
-    u32 reg_val  = FDdmaReadReg(base_addr, FDDMA_MASK_INTR_OFFSET);
-    reg_val &= ~FDDMA_MASK_EN_CHAN_INTR(chan); /* write 0 and enable  */
-    FDdmaWriteReg(base_addr, FDDMA_MASK_INTR_OFFSET, reg_val);
+
+    if (caps & FDDMA_CAP_W1_ENABLE_IRQ)
+    {
+        u32 reg_val = FDdmaReadReg(base_addr, FDDMA_MASK_INTR_OFFSET);
+        reg_val &= ~ FDDMA_MASK_EN_CHAN_INTR(chan);
+        FDdmaWriteReg(base_addr, FDDMA_MASK_INTR_OFFSET, reg_val);
+    }
+    else
+    {
+        u32 reg_val = FDdmaReadReg(base_addr, FDDMA_MASK_INTR_OFFSET);
+        reg_val |= FDDMA_MASK_EN_CHAN_INTR(chan);
+        FDdmaWriteReg(base_addr, FDDMA_MASK_INTR_OFFSET, reg_val);
+    }
     return;
 }
 
@@ -215,12 +259,21 @@ void FDdmaEnableChan(uintptr base_addr, u32 chan)
  * @return {*}
  * @param {uintptr} base_addr, DDMA控制器基地址
  * @param {u32} chan, DDMA通道号
+ * @param {u32} caps, ddma 中断控制特性
  */
-void FDdmaClearChanIrq(uintptr base_addr, u32 chan)
+void FDdmaClearChanIrq(uintptr base_addr, u32 chan, u32 caps)
 {
     FASSERT_MSG((FDDMA_NUM_OF_CHAN > chan), "Channel %d is not supported", chan);
     /* write 1 to clear irq status of channel */
-    FDdmaWriteReg(base_addr, FDDMA_STA_OFFSET, FDDMA_STA_CHAN_REQ_DONE(chan));
+      if (caps & FDDMA_CAP_W1_ENABLE_IRQ)
+      {
+        FDdmaWriteReg(base_addr, FDDMA_STA_OFFSET, FDDMA_STA_CHAN_REQ_DONE(chan));
+      }
+      else
+      {
+       FDdmaWriteReg(base_addr, FDDMA_STA_OFFSET, FDDMA_BDL_STA_CHAN_REQ_DONE(chan));
+      }
+  
 }
 
 /**

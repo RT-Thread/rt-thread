@@ -28,7 +28,7 @@
 #include "fparameters.h"
 
 #include <string.h>
-#include "fdebug.h"
+#include "fdrivers_port.h"
 #define FNAND_BBM_DEBUG_TAG "FNAND_BBM"
 #define FNAND_BBM_DEBUG_I(format, ...) FT_DEBUG_PRINT_I(FNAND_BBM_DEBUG_TAG, format, ##__VA_ARGS__)
 #define FNAND_BBM_DEBUG_W(format, ...) FT_DEBUG_PRINT_W(FNAND_BBM_DEBUG_TAG, format, ##__VA_ARGS__)

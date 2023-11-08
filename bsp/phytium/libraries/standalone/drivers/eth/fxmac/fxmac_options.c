@@ -252,6 +252,11 @@ FError FXmacSetOptions(FXmac *instance_p, u32 options, u32 queue_num)
             reg_new_netcfg |= FXMAC_NWCFG_MCASTHASHEN_MASK;
         }
 
+        if ((options & FXMAC_UNICAST_OPTION) != 0x00000000U)
+        {
+            reg_new_netcfg |= FXMAC_NWCFG_UCASTHASHEN_MASK;
+        }
+
         /* enable RX checksum offload */
         if ((options & FXMAC_RX_CHKSUM_ENABLE_OPTION) != 0x00000000U)
         {
@@ -449,6 +454,12 @@ FError FXmacClearOptions(FXmac *instance_p, u32 options, u32 queue_num)
             reg_new_net_cfg |= FXMAC_NWCFG_BCASTDI_MASK;
         }
 
+        /* Disallow unicast address filtering */
+        if ((options & FXMAC_UNICAST_OPTION) != 0x00000000U)
+        {
+            reg_new_net_cfg &= (u32)(~FXMAC_NWCFG_UCASTHASHEN_MASK);
+        }
+        
         /* Disallow multicast address filtering */
         if ((options & FXMAC_MULTICAST_OPTION) != 0x00000000U)
         {

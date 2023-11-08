@@ -294,7 +294,7 @@ extern "C"
 
 
 
-/** @name network configuration register bit definitions
+/** @name network configuration register bit definitions FXMAC_NWCFG_OFFSET
  * @{
  */
 #define FXMAC_NWCFG_BADPREAMBEN_MASK BIT(29)       /* disable rejection of non-standard preamble */
@@ -353,6 +353,7 @@ extern "C"
  * @{
  */
 #define FXMAC_RXBUF_BCAST_MASK BIT(31)            /* Broadcast frame */
+#define FXMAC_RXBUF_HASH_MASK GENMASK(30, 29)
 #define FXMAC_RXBUF_MULTIHASH_MASK BIT(30)        /* Multicast hashed frame */
 #define FXMAC_RXBUF_UNIHASH_MASK BIT(29)          /* Unicast hashed frame */
 #define FXMAC_RXBUF_EXH_MASK BIT(27)              /* buffer exhausted */
@@ -530,7 +531,7 @@ matched */
  */
 #define FXMAC_GEM_SAB_MASK GENMASK(15, 0) /* Address bits[47:32] bit[31:0] are in BOTTOM */
 
-/* USXGMII control register */
+/* USXGMII control register FXMAC_GEM_USX_CONTROL_OFFSET */
 #define FXMAC_GEM_USX_HS_MAC_SPEED_100M (0x0 << 14) /* 100M operation */
 #define FXMAC_GEM_USX_HS_MAC_SPEED_1G (0x1 << 14)   /* 1G operation */
 #define FXMAC_GEM_USX_HS_MAC_SPEED_2_5G (0x2 << 14) /* 2.5G operation */

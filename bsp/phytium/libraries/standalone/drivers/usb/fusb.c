@@ -24,8 +24,7 @@
 
 #include <string.h>
 
-#include "fdebug.h"
-#include "fsleep.h"
+#include "fdrivers_port.h"
 
 #include "fusb_private.h"
 #include "fxhci.h"
@@ -545,7 +544,7 @@ FUsbTransCode FUsbGetDescriptor(FUsbDev *dev, int rtype, FUsbDescriptorType desc
             break;
         }
 
-        fsleep_microsec(10);
+        FDriverUdelay(10);
     }
 
     return ret;
@@ -584,7 +583,7 @@ FUsbTransCode FUsbGetStringDescriptor(FUsbDev *dev, int rtype, FUsbDescriptorTyp
             break;
         }
 
-        fsleep_microsec(10);
+        FDriverUdelay(10);
     }
 
     return ret;
@@ -776,7 +775,7 @@ static FUsbDevAddr FUsbSetAddress(FUsbHc *controller, FUsbSpeed speed, int hubpo
 
     /* workaround for some USB devices: wait until they're ready, or
      * they send a NAK when they're not allowed to do. 1ms is enough */
-    fsleep_millisec(1);
+    FDriverMdelay(1);
     FASSERT(NULL == dev->configuration);
     dev->configuration = FUSB_ALLOCATE(instace, buf[1], FUSB_DEFAULT_ALIGN);
     if (NULL == dev->configuration)

@@ -28,7 +28,7 @@
 
 #include "fxmac_bd.h"
 #include "ftypes.h"
-
+#include "ferror_code.h"
 #ifdef __cplusplus
 extern "C"
 {

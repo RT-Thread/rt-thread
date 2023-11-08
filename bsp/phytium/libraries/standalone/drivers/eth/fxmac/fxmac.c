@@ -28,7 +28,7 @@
 #include "fxmac_hw.h"
 #include "stdio.h"
 
-#include "fdebug.h"
+#include "fdrivers_port.h"
 
 
 #define FXMAC_DEBUG_TAG "FXMAC"
@@ -103,6 +103,13 @@ void FXmacSelectClk(FXmac *instance_p)
             FXMAC_WRITEREG32(instance_p->config.base_address, FXMAC_GEM_DIV_SEL0_LN, 0x4);
             FXMAC_WRITEREG32(instance_p->config.base_address, FXMAC_GEM_DIV_SEL1_LN, 0x1);
             FXMAC_WRITEREG32(instance_p->config.base_address, FXMAC_GEM_PMA_XCVR_POWER_STATE, 0x1);
+        }
+        else if(speed == FXMAC_SPEED_5000)
+        {
+            FXMAC_WRITEREG32(instance_p->config.base_address, FXMAC_GEM_SRC_SEL_LN, 0x1);
+            FXMAC_WRITEREG32(instance_p->config.base_address, FXMAC_GEM_DIV_SEL0_LN, 0x8);
+            FXMAC_WRITEREG32(instance_p->config.base_address, FXMAC_GEM_DIV_SEL1_LN, 0x2);
+            FXMAC_WRITEREG32(instance_p->config.base_address, FXMAC_GEM_PMA_XCVR_POWER_STATE, 0);
         }
     }
     else if(instance_p->config.interface == FXMAC_PHY_INTERFACE_MODE_5GBASER)
@@ -260,7 +267,7 @@ void FXmacSelectClk(FXmac *instance_p)
         FXMAC_PRINT_I("FXMAC_PHY_INTERFACE_MODE_SGMII init");
         if ((speed == FXMAC_SPEED_100) || (speed == FXMAC_SPEED_10))
         {
-            FXMAC_PRINT_I("speed IS %d \r\n",speed);
+            FXMAC_PRINT_I("speed is %d \r\n",speed);
             FXMAC_WRITEREG32(instance_p->config.base_address, FXMAC_GEM_DIV_SEL1_LN, 0x1);
             FXMAC_WRITEREG32(instance_p->config.base_address, FXMAC_GEM_SRC_SEL_LN, 0x1);
         }
@@ -993,4 +1000,180 @@ void FXmacSetQueuePtr(FXmac *instance_p, uintptr queue_p, u8 queue_num,
                          (u32)((queue_p & ULONG64_HI_MASK) >> 32U));
     }
 #endif
+}
+
+/**
+ * Set 48-bit MAC addresses in hash table.
+ * The device must be stopped before calling this function.
+ *
+ * The hash address register is 64 bits long and takes up two locations in
+ * the memory map. The least significant bits are stored in hash register
+ * bottom and the most significant bits in hash register top.
+ *
+ * The unicast hash enable and the multicast hash enable bits in the network
+ * configuration register enable the reception of hash matched frames. The
+ * destination address is reduced to a 6 bit index into the 64 bit hash
+ * register using the following hash function. The hash function is an XOR
+ * of every sixth bit of the destination address.
+ *
+ * <pre>
+ * hash_index[05] = da[05]^da[11]^da[17]^da[23]^da[29]^da[35]^da[41]^da[47]
+ * hash_index[04] = da[04]^da[10]^da[16]^da[22]^da[28]^da[34]^da[40]^da[46]
+ * hash_index[03] = da[03]^da[09]^da[15]^da[21]^da[27]^da[33]^da[39]^da[45]
+ * hash_index[02] = da[02]^da[08]^da[14]^da[20]^da[26]^da[32]^da[38]^da[44]
+ * hash_index[01] = da[01]^da[07]^da[13]^da[19]^da[25]^da[31]^da[37]^da[43]
+ * hash_index[00] = da[00]^da[06]^da[12]^da[18]^da[24]^da[30]^da[36]^da[42]
+ * </pre>
+ *
+ * da[0] represents the least significant bit of the first byte received,
+ * that is, the multicast/unicast indicator, and da[47] represents the most
+ * significant bit of the last byte received.
+ *
+ * If the hash index points to a bit that is set in the hash register then
+ * the frame will be matched according to whether the frame is multicast
+ * or unicast.
+ *
+ * A multicast match will be signaled if the multicast hash enable bit is
+ * set, da[0] is logic 1 and the hash index points to a bit set in the hash
+ * register.
+ *
+ * A unicast match will be signaled if the unicast hash enable bit is set,
+ * da[0] is logic 0 and the hash index points to a bit set in the hash
+ * register.
+ *
+ * To receive all multicast frames, the hash register should be set with
+ * all ones and the multicast hash enable bit should be set in the network
+ * configuration register.
+ *
+ *
+ * @param intance_p is a pointer to the FXmac instance to be worked on.
+ * @param mac_address is a pointer to a 6-byte MAC address.
+ *
+ * @return
+ * - FT_SUCCESS if the HASH MAC address was set successfully
+ * - FXMAC_ERR_MAC_IS_PROCESSING if the device has not yet been stopped
+ * - FXMAC_ERR_INVALID_PARAM if the HASH MAC address passed in does not meet
+ *   requirement after calculation
+ *
+ * @note
+ * Having Aptr be unsigned type prevents the following operations from sign
+ * extending.
+*/
+FError FXmac_SetHash(FXmac *intance_p, void *mac_address)
+{
+    u32 HashAddr;
+	u8 *Aptr = (u8 *)(void *)mac_address;
+	u8 Temp1, Temp2, Temp3, Temp4, Temp5, Temp6, Temp7, Temp8;
+	u32 Result;
+	FError Status;
+
+	FASSERT(intance_p != NULL);
+	FASSERT(mac_address != NULL);
+	FASSERT(intance_p->is_ready == (u32)FT_COMPONENT_IS_READY);
+
+	/* Be sure device has been stopped */
+	if (intance_p->is_started == (u32)FT_COMPONENT_IS_STARTED) {
+		Status = (FError)(FXMAC_ERR_MAC_IS_PROCESSING);
+	} else {
+		Temp1 = (*(Aptr+0)) & 0x3FU;
+		Temp2 = ((*(Aptr+0) >> 6U) & 0x03U) | ((*(Aptr+1) & 0x0FU) << 2U);
+
+		Temp3 = ((*(Aptr+1) >> 4U) & 0x0FU) | ((*(Aptr+2) & 0x3U) << 4U);
+		Temp4 = ((*(Aptr+2) >> 2U) & 0x3FU);
+		Temp5 =   (*(Aptr+3)) & 0x3FU;
+		Temp6 = ((*(Aptr+3) >> 6U) & 0x03U) | ((*(Aptr+4) & 0x0FU) << 2U);
+		Temp7 = ((*(Aptr+4) >> 4U) & 0x0FU) | ((*(Aptr+5) & 0x03U) << 4U);
+		Temp8 = ((*(Aptr+5) >> 2U) & 0x3FU);
+
+		Result = (u32)((u32)Temp1 ^ (u32)Temp2 ^ (u32)Temp3 ^ (u32)Temp4 ^
+				(u32)Temp5 ^ (u32)Temp6 ^ (u32)Temp7 ^ (u32)Temp8);
+		if (Result >= (u32)FXMAC_MAX_HASH_BITS) {
+			Status = (FError)(FXMAC_ERR_INVALID_PARAM);
+		} else {
+
+			if (Result < (u32)32) {
+		HashAddr = FXMAC_READREG32(intance_p->config.base_address,
+				FXMAC_HASHL_OFFSET);
+				HashAddr |= (u32)(0x00000001U << Result);
+		FXMAC_WRITEREG32(intance_p->config.base_address,
+			FXMAC_HASHL_OFFSET, HashAddr);
+	} else {
+		HashAddr = FXMAC_READREG32(intance_p->config.base_address,
+				FXMAC_HASHH_OFFSET);
+				HashAddr |= (u32)(0x00000001U << (u32)(Result - (u32)32));
+		FXMAC_WRITEREG32(intance_p->config.base_address,
+			FXMAC_HASHH_OFFSET, HashAddr);
+	}
+			Status = FT_SUCCESS;
+		}
+	}
+	return Status;
+}
+
+
+/**
+ * Delete 48-bit MAC addresses in hash table.
+ * The device must be stopped before calling this function.
+ *
+ * @param intance_p is a pointer to the FXmac instance to be worked on.
+ * @param mac_address is a pointer to a 6-byte MAC address.
+ *
+ * @return
+ * - FT_SUCCESS if the HASH MAC address was set successfully
+ * - FXMAC_ERR_MAC_IS_PROCESSING if the device has not yet been stopped
+ * - FXMAC_ERR_INVALID_PARAM if the HASH MAC address passed in does not meet
+ *   requirement after calculation
+ *
+ * @note
+ * Having Aptr be unsigned type prevents the following operations from sign
+ * extending.
+*/
+FError FXmac_DeleteHash(FXmac *intance_p, void *mac_address)
+{
+	u32 HashAddr;
+	u8 *Aptr = (u8 *)(void *)mac_address;
+	u8 Temp1, Temp2, Temp3, Temp4, Temp5, Temp6, Temp7, Temp8;
+	u32 Result;
+	FError Status;
+
+	FASSERT(intance_p != NULL);
+	FASSERT(mac_address != NULL);
+	FASSERT(intance_p->is_ready == (u32)FT_COMPONENT_IS_READY);
+
+	/* Be sure device has been stopped */
+	if (intance_p->is_started == (u32)FT_COMPONENT_IS_STARTED) {
+		Status = (FError)(FXMAC_ERR_MAC_IS_PROCESSING);
+	} else {
+		Temp1 = (*(Aptr+0)) & 0x3FU;
+		Temp2 = ((*(Aptr+0) >> 6U) & 0x03U) | ((*(Aptr+1) & 0x0FU) << 2U);
+		Temp3 = ((*(Aptr+1) >> 4U) & 0x0FU) | ((*(Aptr+2) & 0x03U) << 4U);
+		Temp4 = ((*(Aptr+2) >> 2U) & 0x3FU);
+		Temp5 =   (*(Aptr+3)) & 0x3FU;
+		Temp6 = ((*(Aptr+3) >> 6U) & 0x03U) | ((*(Aptr+4) & 0x0FU) << 2U);
+		Temp7 = ((*(Aptr+4) >> 4U) & 0x0FU) | ((*(Aptr+5) & 0x03U) << 4U);
+		Temp8 = ((*(Aptr+5) >> 2U) & 0x3FU);
+
+		Result = (u32)((u32)Temp1 ^ (u32)Temp2 ^ (u32)Temp3 ^ (u32)Temp4 ^
+					(u32)Temp5 ^ (u32)Temp6 ^ (u32)Temp7 ^ (u32)Temp8);
+
+		if (Result >= (u32)FXMAC_MAX_HASH_BITS) {
+			Status = (FError)(FXMAC_ERR_INVALID_PARAM);
+		} else {
+			if (Result < (u32)32) {
+		HashAddr = FXMAC_READREG32(intance_p->config.base_address,
+				FXMAC_HASHL_OFFSET);
+				HashAddr &= (u32)(~(0x00000001U << Result));
+		FXMAC_WRITEREG32(intance_p->config.base_address,
+			FXMAC_HASHL_OFFSET, HashAddr);
+	} else {
+		HashAddr = FXMAC_READREG32(intance_p->config.base_address,
+				FXMAC_HASHH_OFFSET);
+				HashAddr &= (u32)(~(0x00000001U << (u32)(Result - (u32)32)));
+		FXMAC_WRITEREG32(intance_p->config.base_address,
+			FXMAC_HASHH_OFFSET, HashAddr);
+	}
+			Status = FT_SUCCESS;
+		}
+	}
+	return Status;
 }

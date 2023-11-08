@@ -1,0 +1,78 @@
+menu "IO mux configuration when board start up"
+
+    config USE_SPI_IOPAD
+        bool
+        prompt "Use Spi iopad"
+        default n
+        help
+            Include spi iopad running functions
+
+    config USE_GPIO_IOPAD
+        bool
+        prompt "Use Gpio iopad"
+        default n
+        help
+            Include iopad iopad running functions
+
+    config USE_CAN_IOPAD
+        bool
+        prompt "Use Can iopad"
+        default n
+        help
+            Include can iopad running functions
+    
+    config USE_QSPI_IOPAD
+        bool
+        prompt "Use Qspi"
+        default n
+        help
+            Include qspi iopad running functions
+    
+    config USE_PWM_IOPAD
+        bool
+        prompt "Use Pwm"
+        default n
+        help
+            Include pwm iopad running functions
+
+    config USE_ADC_IOPAD
+        bool
+        prompt "Use Adc"
+        default n
+        help
+            Include adc iopad running functions
+    
+    config USE_MIO_IOPAD
+        bool
+        prompt "Use Mio"
+        default n
+        help
+            Include mio iopad running functions
+    
+    config USE_TACHO_IOPAD
+        bool
+        prompt "Use Tacho"
+        default n
+        help
+            Include tacho running functions
+
+    config USE_UART_IOPAD
+        bool
+        prompt "Use Uart"
+        default n
+        help
+            Include uart iopad running functions
+
+    config USE_THIRD_PARTY_IOPAD
+        bool
+        prompt "Use Third_party"
+        default n
+        help
+            Include third-party iopad running functions
+        if USE_THIRD_PARTY_IOPAD
+            menu "Third_party iopad Configuration"
+                
+            endmenu
+        endif
+
+endmenu

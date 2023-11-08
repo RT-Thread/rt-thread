@@ -26,11 +26,10 @@
 #include "fkernel.h"
 #include "ftypes.h"
 #include "ferror_code.h"
-#include "fdebug.h"
+#include "fdrivers_port.h"
 #include "fpwm.h"
 #include "fpwm_hw.h"
 #include "fparameters.h"
-#include "fsleep.h"
 
 #define FPWM_DEBUG_TAG "PWM"
 #define FPWM_ERROR(format, ...)     FT_DEBUG_PRINT_E(FPWM_DEBUG_TAG, format, ##__VA_ARGS__)
@@ -797,7 +796,7 @@ FError FPwmCfgInitialize(FPwmCtrl *pctrl, const FPwmConfig *input_config_p)
     FPwmDeInitialize(pctrl);
 
     pctrl->config = *input_config_p;
-#if defined(CONFIG_TARGET_E2000) 
+#if defined(SOC_TARGET_E2000) 
     ret = FPwmDbReset(pctrl);
     if (ret != FPWM_SUCCESS)
     {

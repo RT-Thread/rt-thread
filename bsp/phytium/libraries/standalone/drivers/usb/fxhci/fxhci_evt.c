@@ -22,8 +22,7 @@
  * 1.0   zhugengyu  2022/2/7    init commit
  */
 
-#include "fsleep.h"
-#include "fdebug.h"
+#include "fdrivers_port.h"
 
 #include "fxhci_private.h"
 
@@ -222,7 +221,7 @@ static unsigned long FXhciWaitForEvt(const FXhciEvtRing *const er,
     while (!FXhciEvtReady(er) && *timeout_us)
     {
         --*timeout_us;
-        fsleep_microsec(1);
+        FDriverUdelay(1);
     }
     return *timeout_us;
 }

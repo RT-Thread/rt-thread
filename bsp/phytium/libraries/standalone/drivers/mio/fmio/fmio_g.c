@@ -79,49 +79,63 @@ const FMioConfig FMioConfigTbl[FMIO_NUM] =
         .irq_num = FMIO_IRQ_NUM(FMIO7_ID),
         .mio_base_addr = FMIO_BASE_SET_ADDR(FMIO7_ID)
     },
-#if defined(CONFIG_TARGET_E2000)
+#if defined(FMIO8_ID)
     {
         .instance_id = FMIO8_ID,
         .func_base_addr = FMIO_BASE_ADDR(FMIO8_ID),
         .irq_num = FMIO_IRQ_NUM(FMIO8_ID),
         .mio_base_addr = FMIO_BASE_SET_ADDR(FMIO8_ID)
     },
+#endif
+#if defined(FMIO9_ID)
     {
         .instance_id = FMIO9_ID,
         .func_base_addr = FMIO_BASE_ADDR(FMIO9_ID),
         .irq_num = FMIO_IRQ_NUM(FMIO9_ID),
         .mio_base_addr = FMIO_BASE_SET_ADDR(FMIO9_ID)
     },
+#endif
+#if defined(FMIO10_ID)
     {
         .instance_id = FMIO10_ID,
         .func_base_addr = FMIO_BASE_ADDR(FMIO10_ID),
         .irq_num = FMIO_IRQ_NUM(FMIO10_ID),
         .mio_base_addr = FMIO_BASE_SET_ADDR(FMIO10_ID)
     },
+#endif
+#if defined(FMIO11_ID)
     {
         .instance_id = FMIO11_ID,
         .func_base_addr = FMIO_BASE_ADDR(FMIO11_ID),
         .irq_num = FMIO_IRQ_NUM(FMIO11_ID),
         .mio_base_addr = FMIO_BASE_SET_ADDR(FMIO11_ID)
     },
+#endif
+#if defined(FMIO12_ID)
     {
         .instance_id = FMIO12_ID,
         .func_base_addr = FMIO_BASE_ADDR(FMIO12_ID),
         .irq_num = FMIO_IRQ_NUM(FMIO12_ID),
         .mio_base_addr = FMIO_BASE_SET_ADDR(FMIO12_ID)
     },
+#endif
+#if defined(FMIO13_ID)
     {
         .instance_id = FMIO13_ID,
         .func_base_addr = FMIO_BASE_ADDR(FMIO13_ID),
         .irq_num = FMIO_IRQ_NUM(FMIO13_ID),
         .mio_base_addr = FMIO_BASE_SET_ADDR(FMIO13_ID)
     },
+#endif
+#if defined(FMIO14_ID)
     {
         .instance_id = FMIO14_ID,
         .func_base_addr = FMIO_BASE_ADDR(FMIO14_ID),
         .irq_num = FMIO_IRQ_NUM(FMIO14_ID),
         .mio_base_addr = FMIO_BASE_SET_ADDR(FMIO14_ID)
     },
+#endif
+#if defined(FMIO15_ID)
     {
         .instance_id = FMIO15_ID,
         .func_base_addr = FMIO_BASE_ADDR(FMIO15_ID),

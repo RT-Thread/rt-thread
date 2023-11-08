@@ -23,16 +23,15 @@
  */
 
 #include <string.h>
-#include "fgeneric_timer.h"
+
 #include "fkernel.h"
 #include "ftypes.h"
 #include "ferror_code.h"
-#include "fdebug.h"
 #include "fadc.h"
 #include "fadc_hw.h"
 #include "fparameters.h"
 #include "fassert.h"
-#include "fsleep.h"
+#include "fdrivers_port.h"
 
 #define FADC_DEBUG_TAG "FT_ADC"
 #define FADC_DEBUG(format, ...)     FT_DEBUG_PRINT_D(FADC_DEBUG_TAG, format, ##__VA_ARGS__)
@@ -426,7 +425,7 @@ FError FAdcReadConvertResult(FAdcCtrl *pctrl, FAdcChannel channel, u16 *val)
 
     do
     {
-        fsleep_millisec(10);
+        FDriverMdelay(10);
     }
     while ((!pctrl->convert_complete[channel]) && (0 <= --timeout));
 

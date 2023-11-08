@@ -27,7 +27,7 @@
 #include "fcan_hw.h"
 #include "fassert.h"
 #include "ftypes.h"
-#include "fdebug.h"
+#include "fdrivers_port.h"
 
 #define FT_CAN_DEBUG_TAG "FT_CAN_INTR"
 #define FCAN_DEBUG(format, ...) FT_DEBUG_PRINT_D(FT_CAN_DEBUG_TAG, format, ##__VA_ARGS__)

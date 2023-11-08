@@ -22,7 +22,7 @@
  * 1.0   zhugengyu  2022/2/7    init commit
  */
 
-#include "fdebug.h"
+#include "fdrivers_port.h"
 #include "fxhci_private.h"
 
 #define FUSB_DEBUG_TAG "FXHCI_CMD"
@@ -45,7 +45,7 @@ void FXhciPostCmd(FXhci *const xhci)
     ++xhci->cr.cur;
 
     /* pass command trb to hardware */
-    WMB();
+    FDRIVER_DSB();
 
     /* Ring the doorbell */
     FXhciWriteDb32(&xhci->mmio, FXHCI_REG_DB_HOST_CONTROLLER, FXHCI_REG_DB_TARGET_HC_COMMAND);

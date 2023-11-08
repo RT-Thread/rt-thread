@@ -26,7 +26,7 @@
 #define FTIMER_TACHO_H
 
 #include "ftypes.h"
-#include "fdebug.h"
+#include "fdrivers_port.h"
 #include "ferror_code.h"
 
 #ifdef __cplusplus

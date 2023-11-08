@@ -26,7 +26,7 @@
 #include "fnand_ecc.h"
 #include "fnand.h"
 #include "fnand_hw.h"
-#include "fdebug.h"
+#include "fdrivers_port.h"
 #define FNAND_ECC_DEBUG_TAG "FNAND_ECC"
 #define FNAND_ECC_DEBUG_I(format, ...) FT_DEBUG_PRINT_I(FNAND_ECC_DEBUG_TAG, format, ##__VA_ARGS__)
 #define FNAND_ECC_DEBUG_W(format, ...) FT_DEBUG_PRINT_W(FNAND_ECC_DEBUG_TAG, format, ##__VA_ARGS__)

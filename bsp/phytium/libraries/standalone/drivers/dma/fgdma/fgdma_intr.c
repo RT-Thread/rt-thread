@@ -26,7 +26,7 @@
 /***************************** Include Files *********************************/
 #include <string.h>
 
-#include "fdebug.h"
+#include "fdrivers_port.h"
 #include "fassert.h"
 
 #include "fgdma_hw.h"
@@ -44,66 +44,81 @@
 #define FGDMA_INFO(format, ...)    FT_DEBUG_PRINT_I(FGDMA_DEBUG_TAG, format, ##__VA_ARGS__)
 #define FGDMA_DEBUG(format, ...)   FT_DEBUG_PRINT_D(FGDMA_DEBUG_TAG, format, ##__VA_ARGS__)
 
-#define FGDMA_CALL_EVT_HANDLER(express, dma_chan, args) \
+#define FGDMA_CALL_EVT_HANDLER(express, chan_irq_info_p, args) \
     do                                                  \
     {                                                   \
         if (express)                                    \
         {                                               \
-            express(dma_chan, args);                    \
+            express(chan_irq_info_p, args);             \
         }                                               \
     } while (0)
-
 /************************** Function Prototypes ******************************/
 /**
- * @name: FGdmaChanIrqHandler
+ * @name FGdmaChanIrqHandler
  * @msg: GDMA通道中断处理函数
  * @return {void} 无
- * @param {FGdmaChan} *chan_p, GDMA通道实例
+ * @param FGdmaChanIrq *const chan_irq_info_p 通道中断回调信息
  */
-static void FGdmaChanIrqHandler(FGdmaChan *const chan_p)
+static void FGdmaChanIrqHandler(FGdmaChanIrq *const chan_irq_info_p)
 {
-    FGdma *const instance_p = chan_p->gdma;
-    FASSERT(instance_p);
-    uintptr base_addr = instance_p->config.base_addr;
-    u32 chan_status = FGdmaReadChanStatus(base_addr, chan_p->config.chan_id);
+    FASSERT(chan_irq_info_p);
 
+    FGdmaChanIndex channel_id = chan_irq_info_p->chan_id;
+    FGdma *instance_p = chan_irq_info_p->gdma_instance;
+    uintptr base_addr = instance_p->config.base_addr;
+
+    FASSERT(channel_id < FGDMA_NUM_OF_CHAN);
+
+    if (!(instance_p->chan_ready_flag & BIT(channel_id)))
+        return;
+
+    u32 chan_status = FGdmaReadChanStatus(base_addr, channel_id);
+    FGDMA_INFO("DMA_Cx_STATE(0x2C): 0x%x", chan_status);
     if (FGDMA_CHX_INT_STATE_BUSY & chan_status)
     {
-        FGDMA_CALL_EVT_HANDLER(chan_p->evt_handlers[FGDMA_CHAN_EVT_BUSY],
-                               chan_p, chan_p->evt_handler_args[FGDMA_CHAN_EVT_BUSY]);
+        FGDMA_CALL_EVT_HANDLER(chan_irq_info_p->evt_handlers[FGDMA_CHAN_EVT_BUSY],
+                               chan_irq_info_p, 
+                               chan_irq_info_p->evt_handler_args[FGDMA_CHAN_EVT_BUSY]);
     }
 
     if (FGDMA_CHX_INT_STATE_TRANS_END & chan_status)
     {
-        FGDMA_CALL_EVT_HANDLER(chan_p->evt_handlers[FGDMA_CHAN_EVT_TRANS_END],
-                               chan_p, chan_p->evt_handler_args[FGDMA_CHAN_EVT_TRANS_END]);
+        FGDMA_CALL_EVT_HANDLER(chan_irq_info_p->evt_handlers[FGDMA_CHAN_EVT_TRANS_END],
+                               chan_irq_info_p, 
+                               chan_irq_info_p->evt_handler_args[FGDMA_CHAN_EVT_TRANS_END]);
     }
 
     if (FGDMA_CHX_INT_STATE_BDL_END & chan_status)
     {
-        FGDMA_CALL_EVT_HANDLER(chan_p->evt_handlers[FGDMA_CHAN_EVT_BDL_END],
-                               chan_p, chan_p->evt_handler_args[FGDMA_CHAN_EVT_BDL_END]);
+        FGDMA_CALL_EVT_HANDLER(chan_irq_info_p->evt_handlers[FGDMA_CHAN_EVT_BDL_END],
+                               chan_irq_info_p, 
+                               chan_irq_info_p->evt_handler_args[FGDMA_CHAN_EVT_BDL_END]);
     }
 
     if (FGDMA_CHX_INT_STATE_FIFO_FULL & chan_status)
     {
-        FGDMA_CALL_EVT_HANDLER(chan_p->evt_handlers[FGDMA_CHAN_EVT_FIFO_FULL],
-                               chan_p, chan_p->evt_handler_args[FGDMA_CHAN_EVT_FIFO_FULL]);
+        FGDMA_CALL_EVT_HANDLER(chan_irq_info_p->evt_handlers[FGDMA_CHAN_EVT_FIFO_FULL],
+                               chan_irq_info_p, 
+                               chan_irq_info_p->evt_handler_args[FGDMA_CHAN_EVT_FIFO_FULL]);
     }
 
     if (FGDMA_CHX_INT_STATE_FIFO_EMPTY & chan_status)
     {
-        FGDMA_CALL_EVT_HANDLER(chan_p->evt_handlers[FGDMA_CHAN_EVT_FIFO_EMPTY],
-                               chan_p, chan_p->evt_handler_args[FGDMA_CHAN_EVT_FIFO_EMPTY]);
+        FGDMA_CALL_EVT_HANDLER(chan_irq_info_p->evt_handlers[FGDMA_CHAN_EVT_FIFO_EMPTY],
+                               chan_irq_info_p, 
+                               chan_irq_info_p->evt_handler_args[FGDMA_CHAN_EVT_FIFO_EMPTY]);
     }
 
-    FGdmaClearChanStatus(base_addr, chan_p->config.chan_id, chan_status);
+    FGdmaClearChanStatus(base_addr, channel_id, chan_status);
+    
+    chan_status = FGdmaReadChanStatus(base_addr, channel_id);
+    FGDMA_INFO("After clear, DMA_Cx_STATE(0x2C): 0x%x", chan_status);
     return;
 }
 
 /**
  * @name: FGdmaIrqHandler
- * @msg: 当instance_p->config.caps 具有FGDMA_IRQ1_MASK特性时,此函数作为GDMA中断处理函数
+ * @msg: 当instance_p->caps 具有FGDMA_IRQ1_MASK特性即共享中断时,此函数作为GDMA中断处理函数
  * @return {void} 无
  * @param {s32} vector, 中断号
  * @param {void} *args, 中断参数
@@ -111,85 +126,87 @@ static void FGdmaChanIrqHandler(FGdmaChan *const chan_p)
 void FGdmaIrqHandler(s32 vector, void *args)
 {
     FASSERT(args);
+    
     FGdma *const instance_p = (FGdma * const)args;
-    FASSERT(FT_COMPONENT_IS_READY == instance_p->is_ready);
-    FASSERT(FGDMA_IRQ1_MASK & instance_p->config.caps);
     uintptr base_addr = instance_p->config.base_addr;
-    u32 chan_id;
 
     u32 status = FGdmaReadStatus(base_addr);
-    FGDMA_INFO("status: 0x%x", status);
+    FGDMA_INFO("DMA_STATE(0x04): 0x%x", status);
 
     FGdmaIrqDisable(base_addr);
-    for (chan_id = 0; chan_id < FGDMA_NUM_OF_CHAN; chan_id++)
+    for (fsize_t chan_id = 0; chan_id < FGDMA_NUM_OF_CHAN; chan_id++)
     {
-        if (!(FGDMA_CHX_INTR_STATE(chan_id) & status)) 
-        {
+        if (!(instance_p->chan_ready_flag & BIT(chan_id)) || !(status & FGDMA_CHX_INTR_STATE(chan_id))) /* if chan not init or no intr come in, directly return */
             continue;
-        }
 
-        /* channel interrupt happens */
-        FASSERT_MSG((NULL != instance_p->chans[chan_id]), "invalid chan interrupt event !!!");
-        FGdmaChanIrqHandler(instance_p->chans[chan_id]);
+        FGdmaChanIrqHandler(&instance_p->chan_irq_info[chan_id]); /* if channel interrupt happens, go irq handler */
     }
     FGdmaIrqEnable(base_addr);
+
     status = FGdmaReadStatus(base_addr);
-    FGDMA_INFO("after status: 0x%x", status);
+    FGDMA_INFO("After irq handler DMA_STATE(0x04): 0x%x", status);
     return;
 }
 
 /**
- * @name: FGdmaIrqHandlerPrivateChannel
- * @msg: 当instance_p->config.caps 具有FGDMA_IRQ2_MASK特性时,此函数作为GDMA中断处理函数
+ * @name FGdmaIrqHandlerPrivateChannel
+ * @msg: 当instance_p->caps具有FGDMA_IRQ2_MASK特性时，此函数作为GDMA中断处理函数
  * @return {void} 无
- * @param {s32} vector, 中断号
- * @param {void} *args, 中断参数
+ * @param {s32} vector 中断号
+ * @param {void} *args 中断参数
  */
 void FGdmaIrqHandlerPrivateChannel(s32 vector, void *args)
 {
     FASSERT(args);
-    FGdmaChan *gdma_chan = (FGdmaChan *)args;
-    FASSERT(gdma_chan);
-    FGdma *const instance_p = (FGdma *const)gdma_chan->gdma;
-    FASSERT(FT_COMPONENT_IS_READY == instance_p->is_ready);
-    FASSERT(FGDMA_IRQ2_MASK & instance_p->config.caps);
-    uintptr base_addr = instance_p->config.base_addr;
-    u32 chan_id;
-    FGDMA_INFO("FGdmaIrqHandlerPrivateChannel is here %d \r\n",vector);
-    chan_id = gdma_chan->config.chan_id ;
-    FASSERT(chan_id <= FGDMA_NUM_OF_CHAN);
-    u32 status = FGdmaReadStatus(base_addr);
-    FGDMA_INFO("status: 0x%x", status);
-    if(!(FGDMA_CHX_INTR_STATE(chan_id) & status))
-    {
-        FGDMA_WARN("The interrupt state does not match the interrupt chan_id ,chan_id is %d, interrupt state is 0x%x ",chan_id,status);
-    }
+
+    FGdmaChanIrq *chan_irq_info_p = (FGdmaChanIrq *)args;
+    FGdmaChanIndex channel_id = chan_irq_info_p->chan_id;
+    FGdma *instance_p = chan_irq_info_p->gdma_instance;
+
+    FASSERT(channel_id < FGDMA_NUM_OF_CHAN);
     
-    FASSERT_MSG((NULL != instance_p->chans[chan_id]), "invalid chan interrupt event !!!");
-    FGdmaChanIrqHandler(instance_p->chans[chan_id]);
-    status = FGdmaReadStatus(base_addr);
-    FGDMA_INFO("after status: 0x%x", status);
+    if (!(instance_p->chan_ready_flag & BIT(channel_id)))
+        return;
+
+    u32 status = FGdmaReadStatus(instance_p->config.base_addr);
+    FGDMA_INFO("FGdmaIrqHandlerPrivateChannel is here %d \r\n", vector);
+    FGDMA_INFO("DMA_STATE(0x04): 0x%x", status);
+
+    if(!(FGDMA_CHX_INTR_STATE(channel_id) & status))
+    {
+        FGDMA_WARN("The interrupt state does not match the interrupt chan_id, chan_id: %d, interrupt state: 0x%x ",channel_id, status);
+    }
+
+    FGdmaChanIrqHandler(chan_irq_info_p);
+
+    status = FGdmaReadStatus(instance_p->config.base_addr);
+    FGDMA_INFO("After FGdmaIrqHandlerPrivateChannel() => DMA_STATE(0x04): 0x%x", status);
+
     return;
 }
-
 
 /**
  * @name: FGdmaChanRegisterEvtHandler
  * @msg: 注册GDMA通道事件回调函数
  * @return {void} 无
- * @param {FGdmaChan} *chan_p, GDMA通道实例
- * @param {FGdmaChanEvtType} evt, 通道事件
- * @param {FGdmaChanEvtHandler} handler, 事件回调函数
- * @param {void} *handler_arg, 事件回调函数输入参数
+ * @param FGdma *const instance_p GDMA控制器实例
+ * @param FGdmaChanIndex channel_id 事件产生的GDMA通道的通道号
+ * @param FGdmaChanEvtType evt, 通道事件
+ * @param FGdmaChanEvtHandler handler, 事件回调函数
+ * @param void *handler_arg, 事件回调函数输入参数
  */
-void FGdmaChanRegisterEvtHandler(FGdmaChan *const chan_p, FGdmaChanEvtType evt,
-                                 FGdmaChanEvtHandler handler, void *handler_arg)
+void FGdmaChanRegisterEvtHandler(FGdma *const instance_p,
+                                 FGdmaChanIndex channel_id,
+                                 FGdmaChanEvtType evt,
+                                 FGdmaChanEvtHandler handler, 
+                                 void *handler_arg)
 {
-    FASSERT(chan_p);
-    FASSERT(FGDMA_CHAN_NUM_OF_EVT > evt);
+    FASSERT(instance_p);
+    FASSERT(channel_id < FGDMA_NUM_OF_CHAN);
+    FASSERT(evt < FGDMA_CHAN_NUM_OF_EVT);
 
-    chan_p->evt_handlers[evt] = handler;
-    chan_p->evt_handler_args[evt] = handler_arg;
+    instance_p->chan_irq_info[channel_id].evt_handlers[evt] = handler;
+    instance_p->chan_irq_info[channel_id].evt_handler_args[evt] = handler_arg;
 
     return;
 }

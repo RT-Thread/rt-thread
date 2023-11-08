@@ -11,18 +11,11 @@
  *
  */
 
+#include "rtconfig.h"
+#ifdef BSP_USING_CAN
+
 #include "drv_can.h"
-#include "sdkconfig.h"
-
-#ifdef RT_USING_CAN
-#include "fdebug.h"
-#include "fpinctrl.h"
-
-#define FCAN_TEST_DEBUG_TAG "FCAN_TEST"
-#define FCAN_TEST_DEBUG(format, ...) FT_DEBUG_PRINT_D(FCAN_TEST_DEBUG_TAG, format, ##__VA_ARGS__)
-#define FCAN_TEST_INFO(format, ...) FT_DEBUG_PRINT_I(FCAN_TEST_DEBUG_TAG, format, ##__VA_ARGS__)
-#define FCAN_TEST_WARN(format, ...) FT_DEBUG_PRINT_W(FCAN_TEST_DEBUG_TAG, format, ##__VA_ARGS__)
-#define FCAN_TEST_ERROR(format, ...) FT_DEBUG_PRINT_E(FCAN_TEST_DEBUG_TAG, format, ##__VA_ARGS__)
+#include "fio_mux.h"
 
 struct phytium_can
 {
@@ -42,7 +35,7 @@ static struct phytium_can drv_can[FCAN_NUM] =
     .name = "CAN1",
     .can_handle.config.instance_id = 1,
 },
-#if defined(CONFIG_TARGET_F2000_4) || defined(CONFIG_TARGET_D2000)
+#if defined(TARGET_F2000_4) || defined(TARGET_D2000)
 {
     .name = "CAN2",
     .can_handle.config.instance_id = 2,
@@ -54,24 +47,24 @@ static void CanRxIrqCallback(void *args)
 {
     FCanCtrl *instance_p = (FCanCtrl *)args;
     rt_hw_can_isr(&drv_can[instance_p->config.instance_id].device, RT_CAN_EVENT_RX_IND);
-    FCAN_TEST_DEBUG("CAN%d irq recv frame callback.", instance_p->config.instance_id);
+    LOG_D("CAN%d irq recv frame callback.", instance_p->config.instance_id);
 }
 
 static void CanErrorCallback(void *args)
 {
     FCanCtrl *instance_p = (FCanCtrl *)args;
     uintptr base_addr = instance_p->config.base_address;
-    FCAN_TEST_DEBUG("CAN %d is under error.", instance_p->config.instance_id);
-    FCAN_TEST_DEBUG("error_status is %x.", FCAN_READ_REG32(base_addr, FCAN_INTR_OFFSET));
-    FCAN_TEST_DEBUG("rxerr_cnt is %x.", FCAN_ERR_CNT_RFN_GET(FCAN_READ_REG32(base_addr, FCAN_ERR_CNT_OFFSET)));
-    FCAN_TEST_DEBUG("txerr_cnt is %x.", FCAN_ERR_CNT_TFN_GET(FCAN_READ_REG32(base_addr, FCAN_ERR_CNT_OFFSET)));
+    LOG_D("CAN %d is under error.", instance_p->config.instance_id);
+    LOG_D("error_status is %x.", FCAN_READ_REG32(base_addr, FCAN_INTR_OFFSET));
+    LOG_D("rxerr_cnt is %x.", FCAN_ERR_CNT_RFN_GET(FCAN_READ_REG32(base_addr, FCAN_ERR_CNT_OFFSET)));
+    LOG_D("txerr_cnt is %x.", FCAN_ERR_CNT_TFN_GET(FCAN_READ_REG32(base_addr, FCAN_ERR_CNT_OFFSET)));
 }
 
 static void CanTxIrqCallback(void *args)
 {
     FCanCtrl *instance_p = (FCanCtrl *)args;
     rt_hw_can_isr(&drv_can[instance_p->config.instance_id].device, RT_CAN_EVENT_TX_DONE);
-    FCAN_TEST_DEBUG("CAN%d irq send frame callback.", instance_p->config.instance_id);
+    LOG_D("CAN%d irq send frame callback.", instance_p->config.instance_id);
 }
 
 static rt_err_t _can_config(struct rt_can_device *can, struct can_configure *cfg)
@@ -84,7 +77,7 @@ static rt_err_t _can_config(struct rt_can_device *can, struct can_configure *cfg
     FError status = FT_SUCCESS;
     rt_kprintf("CAN%d begin to config.\n", drv_can->can_handle.config.instance_id);
 
-#if defined(CONFIG_TARGET_F2000_4) || defined(CONFIG_TARGET_D2000)
+#if defined(TARGET_F2000_4) || defined(TARGET_D2000)
     if(drv_can->can_handle.config.instance_id == FCAN_INSTANCE_0)
     {
         FPinSetFunc(FIOCTRL_TJTAG_TDI_PAD, FPIN_FUNC1); /* can0-tx: func 1 */
@@ -97,10 +90,10 @@ static rt_err_t _can_config(struct rt_can_device *can, struct can_configure *cfg
     }
     else
     {
-        FCAN_TEST_ERROR("CAN id is under error.");
+        LOG_E("CAN id is under error.");
         return RT_ERROR;
     }
-#elif defined(CONFIG_TARGET_E2000)
+#elif defined(TARGET_E2000)
     FIOPadSetCanMux(drv_can->can_handle.config.instance_id);
 #endif
 
@@ -108,7 +101,7 @@ static rt_err_t _can_config(struct rt_can_device *can, struct can_configure *cfg
     status = FCanCfgInitialize(&(drv_can->can_handle), FCanLookupConfig(drv_can->can_handle.config.instance_id));
     if (status != FT_SUCCESS)
     {
-        FCAN_TEST_DEBUG("CAN %d initialize error, status = %#x.", drv_can->can_handle.config.instance_id, status);
+        LOG_D("CAN %d initialize error, status = %#x.", drv_can->can_handle.config.instance_id, status);
         return RT_ERROR;
     }
 
@@ -124,7 +117,7 @@ static rt_err_t _can_config(struct rt_can_device *can, struct can_configure *cfg
     status = FCanBaudrateSet(&(drv_can->can_handle), &arb_segment_config);
     if (status != RT_EOK)
     {
-        FCAN_TEST_DEBUG("CAN%d set arb segment baudrate failed.", drv_can->can_handle.config.instance_id);
+        LOG_D("CAN%d set arb segment baudrate failed.", drv_can->can_handle.config.instance_id);
         return RT_ERROR;
     }
     data_segment_config.auto_calc = TRUE;
@@ -133,7 +126,7 @@ static rt_err_t _can_config(struct rt_can_device *can, struct can_configure *cfg
     status = FCanBaudrateSet(&(drv_can->can_handle), &data_segment_config);
     if (status != RT_EOK)
     {
-        FCAN_TEST_DEBUG("CAN%d set data segment baudrate failed.", drv_can->can_handle.config.instance_id);
+        LOG_D("CAN%d set data segment baudrate failed.", drv_can->can_handle.config.instance_id);
         return RT_ERROR;
     }
 #else
@@ -143,7 +136,7 @@ static rt_err_t _can_config(struct rt_can_device *can, struct can_configure *cfg
     status = FCanBaudrateSet(&(drv_can->can_handle), &arb_segment_config);
     if (status != FT_SUCCESS)
     {
-        FCAN_TEST_DEBUG("CAN%d set arb segment baudrate failed.", drv_can->can_handle.config.instance_id);
+        LOG_D("CAN%d set arb segment baudrate failed.", drv_can->can_handle.config.instance_id);
         return RT_ERROR;
     }
     data_segment_config.auto_calc = TRUE;
@@ -152,7 +145,7 @@ static rt_err_t _can_config(struct rt_can_device *can, struct can_configure *cfg
     status = FCanBaudrateSet(&(drv_can->can_handle), &data_segment_config);
     if (status != FT_SUCCESS)
     {
-        FCAN_TEST_DEBUG("CAN%d set data segment baudrate failed.", drv_can->can_handle.config.instance_id);
+        LOG_D("CAN%d set data segment baudrate failed.", drv_can->can_handle.config.instance_id);
         return RT_ERROR;
     }
 #endif
@@ -167,7 +160,7 @@ static rt_err_t _can_config(struct rt_can_device *can, struct can_configure *cfg
     }
     if (status != FT_SUCCESS)
     {
-        FCAN_TEST_ERROR("CAN%d set mask filter failed.", drv_can->can_handle.config.instance_id);
+        LOG_E("CAN%d set mask filter failed.", drv_can->can_handle.config.instance_id);
         return RT_ERROR;
     }
     /* Identifier mask enable */
@@ -275,7 +268,7 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
             status = FCanBaudrateSet(&(drv_can->can_handle), &arb_segment_config);
             if (status != FT_SUCCESS)
             {
-                FCAN_TEST_DEBUG("CAN%d set arb segment baudrate failed.", drv_can->can_handle.config.instance_id);
+                LOG_D("CAN%d set arb segment baudrate failed.", drv_can->can_handle.config.instance_id);
                 return RT_ERROR;
             }
             data_segment_config.auto_calc = TRUE;
@@ -284,7 +277,7 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
             status = FCanBaudrateSet(&(drv_can->can_handle), &data_segment_config);
             if (status != FT_SUCCESS)
             {
-                FCAN_TEST_DEBUG("CAN%d set data segment baudrate failed.", drv_can->can_handle.config.instance_id);
+                LOG_D("CAN%d set data segment baudrate failed.", drv_can->can_handle.config.instance_id);
                 return RT_ERROR;
             }
             FCanEnable(&(drv_can->can_handle), RT_TRUE);
@@ -308,7 +301,7 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
             status = FCanBaudrateSet(&(drv_can->can_handle), &arb_segment_config);
             if (status != FT_SUCCESS)
             {
-                FCAN_TEST_DEBUG("CAN%d set arb segment baudrate failed.", drv_can->can_handle.config.instance_id);
+                LOG_D("CAN%d set arb segment baudrate failed.", drv_can->can_handle.config.instance_id);
                 return RT_ERROR;
             }
             data_segment_config.auto_calc = TRUE;
@@ -317,7 +310,7 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
             status = FCanBaudrateSet(&(drv_can->can_handle), &data_segment_config);
             if (status != FT_SUCCESS)
             {
-                FCAN_TEST_DEBUG("CAN%d set data segment baudrate failed.", drv_can->can_handle.config.instance_id);
+                LOG_D("CAN%d set data segment baudrate failed.", drv_can->can_handle.config.instance_id);
                 return RT_ERROR;
             }
             FCanEnable(&(drv_can->can_handle), RT_TRUE);
@@ -338,7 +331,7 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
             status = FCanIdMaskFilterSet(&(drv_can->can_handle), &(drv_can->filter));
             if (status != FT_SUCCESS)
             {
-                FCAN_TEST_ERROR("CAN%d set mask filter failed.", drv_can->can_handle.config.instance_id);
+                LOG_E("CAN%d set mask filter failed.", drv_can->can_handle.config.instance_id);
                 return RT_ERROR;
             }
         }
@@ -401,7 +394,7 @@ static int _can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t fifo)
     status = FCanRecv(&(drv_can->can_handle), &recv_frame);
     if (status != FT_SUCCESS)
     {
-        FCAN_TEST_DEBUG("CAN%d recv data failed.", drv_can->can_handle.config.instance_id);
+        LOG_D("CAN%d recv data failed.", drv_can->can_handle.config.instance_id);
         return RT_ERROR;
     }
     if (CAN_EFF_FLAG & recv_frame.canid)
@@ -445,29 +438,44 @@ static const struct rt_can_ops _can_ops =
     _can_recvmsg,
 };
 
-int rt_hw_can_init(void)
+static int can_init(u32 can_id)
 {
     rt_err_t ret = RT_EOK;
-    for (int i = 0; i < (u32)FCAN_NUM; i++)
-    {
-        drv_can[i].device.config.ticks = 20000;
-        drv_can[i].device.config.baud_rate = 800000;
-    #ifdef RT_CAN_USING_CANFD
-        drv_can[i].device.config.baud_rate_fd = 800000;
-    #endif
-        drv_can[i].device.config.mode = RT_CAN_MODE_NORMAL;
-        drv_can[i].device.config.sndboxnumber = 1;
-        drv_can[i].device.config.msgboxsz = 1;
-    #ifdef RT_CAN_USING_HDR
-        drv_can[i].device.config.maxhdr = 1;
-    #endif
-        ret = rt_hw_can_register(&drv_can[i].device,
-                       drv_can[i].name,
-                       &_can_ops,
-                       &drv_can[i]);
-        RT_ASSERT(ret == RT_EOK);
-    }
-    return (int)ret;
+
+    drv_can[can_id].device.config.ticks = 20000;
+    drv_can[can_id].device.config.baud_rate = 800000;
+#ifdef RT_CAN_USING_CANFD
+    drv_can[can_id].device.config.baud_rate_fd = 800000;
+#endif
+    drv_can[can_id].device.config.mode = RT_CAN_MODE_NORMAL;
+    drv_can[can_id].device.config.sndboxnumber = 1;
+    drv_can[can_id].device.config.msgboxsz = 1;
+#ifdef RT_CAN_USING_HDR
+    drv_can[can_id].device.config.maxhdr = 1;
+#endif
+    ret = rt_hw_can_register(&drv_can[can_id].device,
+                   drv_can[can_id].name,
+                   &_can_ops,
+                   &drv_can[can_id]);
+    RT_ASSERT(ret == RT_EOK);
+
+    return ret;
+}
+
+int rt_hw_can_init(void)
+{
+    
+#if defined(RT_USING_CAN0)
+    can_init(FCAN0_ID);
+#endif
+#if defined(RT_USING_CAN1)
+    can_init(FCAN1_ID);
+#endif
+#if defined(RT_USING_CAN2)
+    can_init(FCAN2_ID);
+#endif
+
+    return 0;
 }
 INIT_BOARD_EXPORT(rt_hw_can_init);
 

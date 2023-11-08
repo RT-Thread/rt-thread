@@ -23,14 +23,13 @@
  */
 
 #include "fxmac_hw.h"
-#include "fxmac.h"
 #include "fxmac_bdring.h"
 #include "fxmac_bd.h"
 #include "ftypes.h"
 #include "fxmac.h"
 #include "string.h"
-#include "fprintk.h"
-#include "fdebug.h"
+
+#include "fdrivers_port.h"
 
 static void FXmacBdSetRxWrap(uintptr bdptr);
 static void FXmacBdSetTxWrap(uintptr bdptr);

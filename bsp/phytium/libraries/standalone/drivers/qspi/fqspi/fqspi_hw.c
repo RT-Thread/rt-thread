@@ -24,7 +24,7 @@
 #include "ftypes.h"
 #include "ferror_code.h"
 #include "fassert.h"
-#include "fdebug.h"
+#include "fdrivers_port.h"
 #include "fqspi_hw.h"
 
 #define FQSPI_DEBUG_TAG "FQSPI-HW"

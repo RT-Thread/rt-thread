@@ -32,7 +32,7 @@
 #include "ftypes.h"
 #include "fparameters.h"
 #include "fi2c.h"
-#include "sdkconfig.h"
+
 /************************** Constant Definitions *****************************/
 
 /**************************** Type Definitions *******************************/
@@ -60,7 +60,7 @@ const FI2cConfig FI2C_CONFIG_TBL[FI2C_NUM] =
         .use_7bit_addr = TRUE,
         .speed_rate = FI2C_SPEED_STANDARD_RATE
     },
-#if defined(CONFIG_TARGET_E2000) || defined(CONFIG_TARGET_D2000) || defined(CONFIG_TARGET_F2000_4) 
+#if defined(FI2C1_ID)
     [FI2C1_ID] =
     {
         .instance_id  = FI2C1_ID,
@@ -73,6 +73,9 @@ const FI2cConfig FI2C_CONFIG_TBL[FI2C_NUM] =
         .use_7bit_addr = TRUE,
         .speed_rate = FI2C_SPEED_STANDARD_RATE
     },
+#endif
+
+#if defined(FI2C2_ID)
 
     [FI2C2_ID] =
     {
@@ -86,8 +89,9 @@ const FI2cConfig FI2C_CONFIG_TBL[FI2C_NUM] =
         .use_7bit_addr = TRUE,
         .speed_rate = FI2C_SPEED_STANDARD_RATE
     },
-#endif      
-#if defined(CONFIG_TARGET_D2000) || defined(CONFIG_TARGET_F2000_4) 
+#endif     
+
+#if defined(FI2C3_ID)
     [FI2C3_ID] =
     {
         .instance_id  = FI2C3_ID,

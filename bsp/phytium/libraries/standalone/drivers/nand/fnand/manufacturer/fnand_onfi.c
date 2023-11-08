@@ -32,26 +32,18 @@
 #include "fnand_onfi.h"
 #include "fnand_timing.h"
 #include "fnand_ecc.h"
-#include "fcache.h"
-// #include "fsleep.h"
-#include "fdebug.h"
-#include "sdkconfig.h"
+
+#include "fdrivers_port.h"
 
 
 #define FNAND_ONFI_DEBUG_TAG "FNAND_ONFI"
 
-#ifdef CONFIG_FNAND_ONFI_DEBUG_EN
 
-    #define FNAND_ONFI_DEBUG_I(format, ...) FT_DEBUG_PRINT_I(FNAND_ONFI_DEBUG_TAG, format, ##__VA_ARGS__)
-    #define FNAND_ONFI_DEBUG_W(format, ...) FT_DEBUG_PRINT_W(FNAND_ONFI_DEBUG_TAG, format, ##__VA_ARGS__)
-    #define FNAND_ONFI_DEBUG_E(format, ...) FT_DEBUG_PRINT_E(FNAND_ONFI_DEBUG_TAG, format, ##__VA_ARGS__)
-    #define FNAND_ONFI_DEBUG_D(format, ...) FT_DEBUG_PRINT_D(FNAND_ONFI_DEBUG_TAG, format, ##__VA_ARGS__)
-#else
-    #define FNAND_ONFI_DEBUG_I(format, ...)
-    #define FNAND_ONFI_DEBUG_W(format, ...)
-    #define FNAND_ONFI_DEBUG_E(format, ...)
-    #define FNAND_ONFI_DEBUG_D(format, ...)
-#endif
+#define FNAND_ONFI_DEBUG_I(format, ...) FT_DEBUG_PRINT_I(FNAND_ONFI_DEBUG_TAG, format, ##__VA_ARGS__)
+#define FNAND_ONFI_DEBUG_W(format, ...) FT_DEBUG_PRINT_W(FNAND_ONFI_DEBUG_TAG, format, ##__VA_ARGS__)
+#define FNAND_ONFI_DEBUG_E(format, ...) FT_DEBUG_PRINT_E(FNAND_ONFI_DEBUG_TAG, format, ##__VA_ARGS__)
+#define FNAND_ONFI_DEBUG_D(format, ...) FT_DEBUG_PRINT_D(FNAND_ONFI_DEBUG_TAG, format, ##__VA_ARGS__)
+
 
 #define FNAND_ADDR_CYCLE_NUM0 0
 #define FNAND_ADDR_CYCLE_NUM1 1
@@ -231,7 +223,7 @@ static FError FNandOnfiReadParamPage(FNand *instance_p,  u8 *id_buffer, u32 buff
     if (buffer_length && id_buffer)
     {
         memcpy_length = (buffer_length > pack_data.phy_bytes_length) ? pack_data.phy_bytes_length : buffer_length;
-        FCacheDCacheFlushRange((intptr)instance_p->dma_data_buffer.data_buffer, memcpy_length);
+        FDriverDCacheRangeFlush((intptr)instance_p->dma_data_buffer.data_buffer, memcpy_length);
         memcpy(id_buffer, instance_p->dma_data_buffer.data_buffer, memcpy_length);
     }
     return FT_SUCCESS;

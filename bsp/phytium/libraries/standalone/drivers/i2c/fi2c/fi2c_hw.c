@@ -25,8 +25,7 @@
 
 /***************************** Include Files *********************************/
 #include <string.h>
-#include "fsleep.h"
-#include "fdebug.h"
+#include "fdrivers_port.h"
 #include "ferror_code.h"
 #include "fassert.h"
 #include "fi2c_hw.h"
@@ -285,7 +284,7 @@ FError FI2cWaitStatus(uintptr addr, u32 stat_bit)
     /* wait until statbit was set or timeout */
     do
     {
-        fsleep_millisec(2); /*wait 2 ms*/
+        FDriverMdelay(2); /*wait 2 ms*/
     }
     while (!((FI2C_READ_REG32(addr, FI2C_STATUS_OFFSET)) & stat_bit) && (FI2C_TIMEOUT > ++timeout));
 
@@ -422,7 +421,7 @@ u32 FI2cClearIntrBits(uintptr addr, u32 *last_err_p)
 
     const u32 stat = FI2C_READ_INTR_STAT(addr);
 
-    /* read to clr intrrupt status bits */
+    /* read to clr interrupt status bits */
     if (stat & FI2C_INTR_TX_ABRT)
     {
         *last_err_p = FI2C_READ_REG32(addr, FI2C_TX_ABRT_SOURCE_OFFSET); /* read out abort sources */

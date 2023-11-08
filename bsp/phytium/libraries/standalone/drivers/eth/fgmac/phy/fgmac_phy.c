@@ -31,12 +31,11 @@
 #include "fio.h"
 #include "ferror_code.h"
 #include "ftypes.h"
-#include "fdebug.h"
 #include "fparameters.h"
 #include "fgmac_hw.h"
 #include "fgmac_phy.h"
 #include "fgmac.h"
-#include "fsleep.h"
+#include "fdrivers_port.h"
 #include "sdkconfig.h"
 
 #ifdef  CONFIG_FGMAC_PHY_AR803X
@@ -91,7 +90,7 @@ static FError FGmacWaitPhyAutoNegotiationEnd(FGmac *instance_p, u32 phy_address)
         {
             break;
         }
-        fsleep_millisec(20);
+        FDriverMdelay(20);
     }
     while ((FGMAC_PHY_MII_SR_AUTO_NEGOT_COMPLETE != (FGMAC_PHY_MII_SR_AUTO_NEGOT_COMPLETE & reg_val)) &&
            (0 < --timeout));
@@ -134,7 +133,7 @@ static FError FGmacPhyAutoNegotiation(FGmac *instance_p, u32 phy_address)
         {
             break;
         }
-        fsleep_millisec(20);
+        FDriverMdelay(20);
 
     }
     while (!(reg_val & FGMAC_PHY_MII_SR_LSTATUS) && (0 <= --timeout));

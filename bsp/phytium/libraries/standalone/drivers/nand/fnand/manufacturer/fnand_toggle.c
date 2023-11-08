@@ -31,10 +31,9 @@
 #include "fnand_timing.h"
 #include "fnand_ecc.h"
 #include "fnand_common_cmd.h"
-#include "fcache.h"
-// #include "fsleep.h"
-#include "fdebug.h"
-#include "sdkconfig.h"
+
+#include "fdrivers_port.h"
+
 
 #define CONFIG_FNAND_TOGGLE_DEBUG_EN
 #define FNAND_TOGGLE_DEBUG_TAG "FNAND_TOGGLE"
@@ -177,7 +176,7 @@ static FError FNandToggleReadParamPage(FNand *instance_p,  u8 *id_buffer, u32 bu
     if (buffer_length && id_buffer)
     {
         memcpy_length = (buffer_length > pack_data.phy_bytes_length) ? pack_data.phy_bytes_length : buffer_length;
-        FCacheDCacheFlushRange((intptr)instance_p->dma_data_buffer.data_buffer, memcpy_length);
+        FDriverDCacheRangeFlush((intptr)instance_p->dma_data_buffer.data_buffer, memcpy_length);
         memcpy(id_buffer, instance_p->dma_data_buffer.data_buffer, memcpy_length);
     }
 

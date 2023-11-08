@@ -33,13 +33,11 @@
     #include <gtimer.h>
     #include <cpuport.h>
 #else
-    #include "fgeneric_timer.h" /* for aarch32 */
+    #include <gtimer.h>
 #endif
 #include <interrupt.h>
 #include <board.h>
 
-#include "fdebug.h"
-#include "fprintk.h"
 #include "fearly_uart.h"
 #include "fcpu_info.h"
 #include "fiopad.h"
@@ -48,13 +46,8 @@
     #include "fpsci.h"
 #endif
 
-#define LOG_DEBUG_TAG "BOARD"
-#define BSP_LOG_ERROR(format, ...) FT_DEBUG_PRINT_E(LOG_DEBUG_TAG, format, ##__VA_ARGS__)
-#define BSP_LOG_WARN(format, ...)  FT_DEBUG_PRINT_W(LOG_DEBUG_TAG, format, ##__VA_ARGS__)
-#define BSP_LOG_INFO(format, ...)  FT_DEBUG_PRINT_I(LOG_DEBUG_TAG, format, ##__VA_ARGS__)
-#define BSP_LOG_DEBUG(format, ...) FT_DEBUG_PRINT_D(LOG_DEBUG_TAG, format, ##__VA_ARGS__)
-
-FIOPadCtrl iopad_ctrl;
+extern FIOPadCtrl iopad_ctrl;
+uintptr flsd_config_base = FLSD_CONFIG_BASE;
 /* mmu config */
 extern struct mem_desc platform_mem_desc[];
 extern const rt_uint32_t platform_mem_desc_size;
@@ -75,6 +68,16 @@ rt_region_t init_page_region =
     PAGE_END
 };
 
+void FIOMuxInit(void)
+{
+    FIOPadCfgInitialize(&iopad_ctrl, FIOPadLookupConfig(FIOPAD0_ID));
+ #ifdef RT_USING_SMART
+    iopad_ctrl.config.base_address = (uintptr)rt_ioremap((void *)iopad_ctrl.config.base_address, 0x2000);
+#endif
+
+    return;
+}
+
 #if defined(TARGET_ARMV8_AARCH64) /* AARCH64 */
 
 /* aarch64 use kernel gtimer */
@@ -84,9 +87,33 @@ rt_region_t init_page_region =
 /* aarch32 implment gtimer by bsp */
 static rt_uint32_t timer_step;
 
+#define CNTP_CTL_ENABLE     (1U << 0)    /* Enables the timer */
+#define CNTP_CTL_IMASK      (1U << 1)    /* Timer interrupt mask bit */
+#define CNTP_CTL_ISTATUS    (1U << 2)    /* The status of the timer */
+void GenericTimerInterruptEnable(u32 id)
+{
+    u64 ctrl = gtimer_get_control();
+    if (ctrl & CNTP_CTL_IMASK)
+    {
+        ctrl &= ~CNTP_CTL_IMASK;
+        gtimer_set_control(ctrl);
+    }
+}
+
+void GenericTimerStart(u32 id)
+{
+    u32 ctrl = gtimer_get_control(); /* get CNTP_CTL */
+
+    if (!(ctrl & CNTP_CTL_ENABLE))
+    {
+        ctrl |= CNTP_CTL_ENABLE; /* enable gtimer if off */
+        gtimer_set_control(ctrl); /* set CNTP_CTL */
+    }
+}
+
 void rt_hw_timer_isr(int vector, void *parameter)
 {
-    GenericTimerSetTimerCompareValue(GENERIC_TIMER_ID0, timer_step);
+    gtimer_set_load_value(timer_step);
     rt_tick_increase();
 }
 
@@ -94,15 +121,17 @@ int rt_hw_timer_init(void)
 {
     rt_hw_interrupt_install(GENERIC_TIMER_NS_IRQ_NUM, rt_hw_timer_isr, RT_NULL, "tick");
     rt_hw_interrupt_umask(GENERIC_TIMER_NS_IRQ_NUM);
-    timer_step = GenericTimerFrequecy();
+    timer_step = gtimer_get_counter_frequency();
+    FASSERT_MSG((timer_step > 1000000), "invalid freqency %ud", timer_step);
     timer_step /= RT_TICK_PER_SECOND;
 
-    GenericTimerSetTimerCompareValue(GENERIC_TIMER_ID0, timer_step);
+    gtimer_set_load_value(timer_step);
     GenericTimerInterruptEnable(GENERIC_TIMER_ID0);
     GenericTimerStart(GENERIC_TIMER_ID0);
     return 0;
 }
 INIT_BOARD_EXPORT(rt_hw_timer_init);
+
 #endif
 
 #ifdef RT_USING_SMP
@@ -135,10 +164,11 @@ void rt_hw_board_aarch64_init(void)
 
     FEarlyUartProbe();
 
-    FIOPadCfgInitialize(&iopad_ctrl, FIOPadLookupConfig(FIOPAD0_ID));
-
+    FIOMuxInit();
 #ifdef RT_USING_SMART
-    iopad_ctrl.config.base_address = (uintptr)rt_ioremap((void *)iopad_ctrl.config.base_address, 0x2000);
+#if defined(FLSD_CONFIG_BASE)
+    flsd_config_base = (uintptr)rt_ioremap((void *)flsd_config_base, 0x1000);
+#endif
 #endif
 
     /* compoent init */
@@ -161,8 +191,6 @@ void rt_hw_board_aarch64_init(void)
     rt_hw_ipi_handler_install(RT_SCHEDULE_IPI, rt_scheduler_ipi_handler);
     rt_hw_interrupt_umask(RT_SCHEDULE_IPI);
 #endif
-
-
 
 }
 #else
@@ -207,12 +235,14 @@ void rt_hw_board_aarch32_init(void)
     rt_uint32_t redist_addr = 0;
 
     FEarlyUartProbe();
-
-    FIOPadCfgInitialize(&iopad_ctrl, FIOPadLookupConfig(FIOPAD0_ID));
+    
+    FIOMuxInit();
 
 #if defined(RT_USING_SMART)
     redist_addr = (uint32_t)rt_ioremap(GICV3_RD_BASE_ADDR, 4 * 128 * 1024);
-    iopad_ctrl.config.base_address = (uintptr)rt_ioremap((void *)iopad_ctrl.config.base_address, 0x2000);
+#if defined(FLSD_CONFIG_BASE)
+    flsd_config_base = (uintptr)rt_ioremap((void *)flsd_config_base, 0x1000);
+#endif
 #else
     redist_addr = GICV3_RD_BASE_ADDR;
 #endif

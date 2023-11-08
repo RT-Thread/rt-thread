@@ -11,17 +11,14 @@
  * 2023-04-27  huanghe      support RT-Smart
  */
 
+#include "rtconfig.h"
+#ifdef BSP_USING_UART
+
 #include "board.h"
-
 #include <mmu.h>
-
 #include "drv_usart.h"
 #include "interrupt.h"
 #include "fpl011.h"
-#include "rtconfig.h"
-#include "fprintk.h"
-
-#ifdef RT_USING_SERIAL
 
 extern u32 FUart_GetInterruptMask(FPl011 *uart_ptr);
 
@@ -258,4 +255,4 @@ int rt_hw_uart_init(void)
 }
 INIT_BOARD_EXPORT(rt_hw_uart_init);
 
-#endif /* RT_USING_SERIAL */
+#endif 

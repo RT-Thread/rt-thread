@@ -29,7 +29,7 @@
 #include "ferror_code.h"
 #include "ftypes.h"
 #include "fassert.h"
-#include "fdebug.h"
+#include "fdrivers_port.h"
 #include "fspim_hw.h"
 #include "fspim.h"
 
@@ -38,7 +38,7 @@
 /**************************** Type Definitions *******************************/
 
 /***************** Macros (Inline Functions) Definitions *********************/
-/* be very careful to use print log in intrrupt handler */
+/* be very careful to use print log in interrupt handler */
 #define FSPIM_DEBUG_TAG "SPIM-INTR"
 #define FSPIM_ERROR(format, ...)   FT_DEBUG_PRINT_E(FSPIM_DEBUG_TAG, format, ##__VA_ARGS__)
 #define FSPIM_WARN(format, ...)    FT_DEBUG_PRINT_W(FSPIM_DEBUG_TAG, format, ##__VA_ARGS__)

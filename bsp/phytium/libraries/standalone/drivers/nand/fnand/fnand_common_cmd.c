@@ -30,26 +30,20 @@
 #include "fnand_onfi.h"
 #include "fnand_timing.h"
 #include "fnand_ecc.h"
-#include "fcache.h"
-#include "fsleep.h"
-#include "fdebug.h"
-#include "sdkconfig.h"
+
+#include "fdrivers_port.h"
+
 
 
 #define FNAND_COMMON_DEBUG_TAG "FNAND_COMMON"
 
 
-#ifdef CONFIG_FNAND_COMMON_DEBUG_EN
-    #define FNAND_COMMON_DEBUG_I(format, ...) FT_DEBUG_PRINT_I(FNAND_COMMON_DEBUG_TAG, format, ##__VA_ARGS__)
-    #define FNAND_COMMON_DEBUG_W(format, ...) FT_DEBUG_PRINT_W(FNAND_COMMON_DEBUG_TAG, format, ##__VA_ARGS__)
-    #define FNAND_COMMON_DEBUG_E(format, ...) FT_DEBUG_PRINT_E(FNAND_COMMON_DEBUG_TAG, format, ##__VA_ARGS__)
-    #define FNAND_COMMON_DEBUG_D(format, ...) FT_DEBUG_PRINT_D(FNAND_COMMON_DEBUG_TAG, format, ##__VA_ARGS__)
-#else
-    #define FNAND_COMMON_DEBUG_I(format, ...)
-    #define FNAND_COMMON_DEBUG_W(format, ...)
-    #define FNAND_COMMON_DEBUG_E(format, ...)
-    #define FNAND_COMMON_DEBUG_D(format, ...)
-#endif
+
+#define FNAND_COMMON_DEBUG_I(format, ...) FT_DEBUG_PRINT_I(FNAND_COMMON_DEBUG_TAG, format, ##__VA_ARGS__)
+#define FNAND_COMMON_DEBUG_W(format, ...) FT_DEBUG_PRINT_W(FNAND_COMMON_DEBUG_TAG, format, ##__VA_ARGS__)
+#define FNAND_COMMON_DEBUG_E(format, ...) FT_DEBUG_PRINT_E(FNAND_COMMON_DEBUG_TAG, format, ##__VA_ARGS__)
+#define FNAND_COMMON_DEBUG_D(format, ...) FT_DEBUG_PRINT_D(FNAND_COMMON_DEBUG_TAG, format, ##__VA_ARGS__)
+
 
 #define FNAND_ADDR_CYCLE_NUM0 0
 #define FNAND_ADDR_CYCLE_NUM1 1
@@ -155,7 +149,7 @@ FError FNandFlashReadId(FNand *instance_p, u8 address, u8 *id_buffer, u32 buffer
     if (buffer_length && id_buffer)
     {
         memcpy_length = (buffer_length > pack_data.phy_bytes_length) ? pack_data.phy_bytes_length : buffer_length;
-        FCacheDCacheFlushRange((intptr)instance_p->dma_data_buffer.data_buffer, memcpy_length);
+        FDriverDCacheRangeFlush((intptr)instance_p->dma_data_buffer.data_buffer, memcpy_length);
         memcpy(id_buffer, instance_p->dma_data_buffer.data_buffer, memcpy_length);
     }
 
@@ -281,7 +275,7 @@ static FError FNandPageRead(FNand *instance_p, u32 page_addr, u8 *buf, u32 page_
     if (length && buf)
     {
         memcpy_length = (length > (pack_data.phy_bytes_length - page_copy_offset)) ? (pack_data.phy_bytes_length - page_copy_offset) : length;
-        FCacheDCacheFlushRange((intptr)(instance_p->dma_data_buffer.data_buffer + page_copy_offset), memcpy_length);
+        FDriverDCacheRangeFlush((intptr)(instance_p->dma_data_buffer.data_buffer + page_copy_offset), memcpy_length);
         memcpy(buf, instance_p->dma_data_buffer.data_buffer + page_copy_offset, memcpy_length);
     }
 
@@ -423,7 +417,7 @@ static FError FNandPageReadOOb(FNand *instance_p, u32 page_addr, u8 *buf, u32 pa
     if (length && buf)
     {
         memcpy_length = (length > (spare_bytes_per_page - page_copy_offset)) ? (spare_bytes_per_page - page_copy_offset) : length;
-        FCacheDCacheFlushRange((intptr)(instance_p->dma_data_buffer.data_buffer + page_copy_offset), memcpy_length);
+        FDriverDCacheRangeFlush((intptr)(instance_p->dma_data_buffer.data_buffer + page_copy_offset), memcpy_length);
         memcpy(buf, instance_p->dma_data_buffer.data_buffer + page_copy_offset, memcpy_length);
     }
 
@@ -518,7 +512,7 @@ static FError FNandPageReadHwEcc(FNand *instance_p, u32 page_addr, u8 *buf, u32 
         return FNAND_ERR_OPERATION;
     }
 
-    fsleep_microsec(100);
+    FDriverUdelay(100);
     /* 增加判断bit(16) 是否ecc 正忙 */
     nand_state = FNAND_READREG(instance_p->config.base_address, FNAND_STATE_OFFSET);
 
@@ -552,7 +546,7 @@ static FError FNandPageReadHwEcc(FNand *instance_p, u32 page_addr, u8 *buf, u32 
     if (length && buf)
     {
         memcpy_length = (length > (pack_data.phy_bytes_length - page_copy_offset)) ? (pack_data.phy_bytes_length - page_copy_offset) : length;
-        FCacheDCacheFlushRange((intptr)(instance_p->dma_data_buffer.data_buffer + page_copy_offset), memcpy_length);
+        FDriverDCacheRangeFlush((intptr)(instance_p->dma_data_buffer.data_buffer + page_copy_offset), memcpy_length);
         memcpy(buf, instance_p->dma_data_buffer.data_buffer + page_copy_offset, memcpy_length);
     }
 

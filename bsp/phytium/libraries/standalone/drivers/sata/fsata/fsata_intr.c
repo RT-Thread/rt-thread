@@ -14,7 +14,7 @@
  * FilePath: fsata_intr.c
  * Date: 2022-02-10 14:55:11
  * LastEditTime: 2022-02-18 09:03:57
- * Description:  This file is for intrrupt function of Sata ctrl
+ * Description:  This file is for interrupt function of Sata ctrl
  *
  * Modify History:
  *  Ver   Who        Date         Changes
@@ -24,7 +24,7 @@
  */
 
 #include "fassert.h"
-#include "fdebug.h"
+#include "fdrivers_port.h"
 #include "fsata.h"
 #include "fsata_hw.h"
 

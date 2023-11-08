@@ -27,7 +27,6 @@
 #include "ftypes.h"
 #include "fparameters.h"
 #include "fi2c.h"
-#include "sdkconfig.h"
 /************************** Constant Definitions *****************************/
 
 /**************************** Type Definitions *******************************/

@@ -25,13 +25,15 @@
 #ifndef FDCDP_H
 #define FDCDP_H
 
-#include "ftypes.h"
-#include "fparameters.h"
 #include "fdc.h"
 #include "fdp.h"
+#include "ftypes.h"
+#include "fparameters.h"
+
 
 /************************** Constant Definitions *****************************/
 #define FMEDIA_DEFAULT_PARAM_ERR FT_MAKE_ERRCODE(ErrModBsp, ErrBspMEDIA, 1)
+#define FMEDIA_ERR_PARA FT_MAKE_ERRCODE(ErrModBsp, ErrBspMEDIA, 2)
 #define FMEDIA_ERR_PIXEL FT_MAKE_ERRCODE(ErrModBsp, ErrBspMEDIA, 3)
 #define FMEDIA_ERR_EDID FT_MAKE_ERRCODE(ErrModBsp, ErrBspMEDIA, 4)
 #define FMEDIA_ERR_HPD_DISCONNECTED  FT_MAKE_ERRCODE(ErrModBsp, ErrBspMEDIA, 5)
@@ -58,7 +60,6 @@
 #define FDP_CMD_STATE_OFFSET 28
 #define FDP_LIGHT_VALUE_OFFSET 21
 
-#define FDP_MRAM_SIZE (3840 * 2160 * 4)
 
 #ifdef __cplusplus
 extern "C"
@@ -96,6 +97,17 @@ typedef struct
     void *param;
 } FMediaIntrConfig;
 
+typedef struct 
+{
+    u32 width;
+    u32 height;
+    u32 color_depth;
+    u32 refresh_rate;
+    u32 multi_mode;
+    uintptr fb_phy;
+    uintptr fb_virtual;
+} FDcDpUserConfig; 
+
 typedef struct
 {
     /* fdc instace object */
@@ -103,7 +115,7 @@ typedef struct
     /* fdp instace object */
     FDpCtrl dp_instance_p[FDCDP_INSTANCE_NUM];
     /* u8 *fb_config[FDCDP_INSTANCE_NUM];*/
-    u8 *fb_config[FDCDP_INSTANCE_NUM];
+    FDcDpUserConfig  user_config[FDCDP_INSTANCE_NUM];
    /*the intr config of dcdp*/
     FMediaIntrConfig intr_event[FDCDP_INTR_MAX_NUM];
     /*connect status ,1 :connected,0:disconnected*/
@@ -119,18 +131,12 @@ const FDpConfig *FDpLookupConfig(u32 instance_id);
 /*set the dc static params*/
 const FDcConfig *FDcLookupConfig(u32 instance_id);
 
-/*init the dcdp*/
+/*set the dcdp can use*/
 FError FDcDpCfgInitialize(FDcDp *instance_p);
 
-/*get the default config*/
-FError FDcDpGetDefaultConfig(FDcDp *instance_p);
+/*init the dcdp*/
+FError FDcDpInitialize(FDcDp *instance_p,u32 channel);
 
-/*the basic params init*/
-FError FDcDpSetBasicParam(FDcDp *instance_p, u32 width, u32 height,u32 color_depth, u32 refresh_rate);
-
-/* init the DcDp */
-
-FError FDcDpInitial(FDcDp *instance_p, u32 channel, u32 width, u32 height, u32 color_depth, u32 multi_mode);
 /* deinit the DcDp */
 FError FDcDpDeInitialize(FDcDp *instance_p, u32 id);
 
@@ -146,6 +152,8 @@ void FDcDpIrqEnable(FDcDp *instance_p,u32 index, FDcDpIntrEventType intr_event_p
 /*the hotplug information*/
 void FDcDpHotPlug(FDcDp *instance_p, u32 index, FDcDpConnectStatus connect_status);
 
+/*the hotplug */
+FError FDcDpHotPlugConnect(FDcDp *instance_p, u32 channel);
 #ifdef __cplusplus
 }
 #endif
