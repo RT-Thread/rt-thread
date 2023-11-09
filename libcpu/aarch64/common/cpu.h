@@ -17,6 +17,7 @@
 #include <drivers/ofw.h>
 #endif
 
+#define ID_ERROR __INT64_MAX__
 #define MPIDR_AFFINITY_MASK         0x000000ff00ffffffUL
 
 struct cpu_ops_t
@@ -27,7 +28,6 @@ struct cpu_ops_t
     void    (*cpu_shutdown)(void);
 };
 
-extern void (*system_off)(void);
 extern rt_uint64_t rt_cpu_mpidr_table[];
 
 #endif /* __RT_HW_CPU_H__ */
