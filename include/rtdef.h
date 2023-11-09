@@ -288,7 +288,7 @@ typedef __gnuc_va_list              va_list;
 typedef int (*init_fn_t)(void);
 #ifdef _MSC_VER
 #pragma section("rti_fn$f",read)
-    #ifdef RT_DEBUGING_INIT
+    #ifdef RT_DEBUGING_AUTO_INIT
         struct rt_init_desc
         {
             const char* level;
@@ -312,9 +312,9 @@ typedef int (*init_fn_t)(void);
                                 __declspec(allocate("rti_fn$f"))                        \
                                 rt_used const struct rt_init_desc __rt_init_msc_##fn =  \
                                 {__rti_level_##fn, fn };
-    #endif
+    #endif /* RT_DEBUGING_AUTO_INIT */
 #else
-    #ifdef RT_DEBUGING_INIT
+    #ifdef RT_DEBUGING_AUTO_INIT
         struct rt_init_desc
         {
             const char* fn_name;
@@ -327,7 +327,7 @@ typedef int (*init_fn_t)(void);
     #else
         #define INIT_EXPORT(fn, level)                                                       \
             rt_used const init_fn_t __rt_init_##fn rt_section(".rti_fn." level) = fn
-    #endif
+    #endif /* RT_DEBUGING_AUTO_INIT */
 #endif
 #else
 #define INIT_EXPORT(fn, level)

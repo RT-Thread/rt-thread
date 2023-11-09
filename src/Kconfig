@@ -211,8 +211,8 @@ menuconfig RT_USING_DEBUG
             bool "Enable debugging of environment and context check"
             default y
 
-        config RT_DEBUGING_INIT
-            bool "Enable debugging of components initialization"
+        config RT_DEBUGING_AUTO_INIT
+            bool "Enable debugging of components automatic initialization"
             default n
 
         config RT_DEBUGING_PAGE_LEAK

@@ -579,7 +579,7 @@ Configuration is mainly done by modifying the file under project directory - rtc
 /* Define this macro to enable debug mode, if not defined, close.  */
 #define RT_USING_DEBUG
 /* When debug mode is enabled: Define this macro to enable the print component initialization information, if not defined, close.  */
-#define RT_DEBUGING_INIT
+#define RT_DEBUGING_AUTO_INIT
 
 /* Defining this macro means the use of the hook function is started, if not defined, close. */
 #define RT_USING_HOOK
