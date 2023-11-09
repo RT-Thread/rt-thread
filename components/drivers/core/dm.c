@@ -27,7 +27,7 @@ INIT_EXPORT(rti_secondary_cpu_end, "7.end");
 
 void rt_dm_secondary_cpu_init(void)
 {
-#ifdef RT_DEBUGING_INIT
+#ifdef RT_DEBUGING_AUTO_INIT
     int result;
     const struct rt_init_desc *desc;
 
@@ -45,7 +45,7 @@ void rt_dm_secondary_cpu_init(void)
     {
         (*fn_ptr)();
     }
-#endif /* RT_DEBUGING_INIT */
+#endif /* RT_DEBUGING_AUTO_INIT */
 }
 #endif /* RT_USING_SMP */
 
