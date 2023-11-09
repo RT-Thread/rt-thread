@@ -151,17 +151,20 @@ rt_uint64_t rt_cpu_mpidr_early[] =
 void rt_hw_secondary_cpu_up(void)
 {
     int i;
-    extern void secondary_cpu_start(void);
+    extern void _secondary_cpu_entry(void);
+    rt_uint64_t entry = (rt_uint64_t)rt_kmem_v2p(_secondary_cpu_entry);
 
     for (i = 1; i < RT_CPUS_NR; ++i)
     {
-        rt_psci_cpu_on(rt_cpu_mpidr_early[i], (rt_uint64_t) secondary_cpu_start);
+        rt_psci_cpu_on(rt_cpu_mpidr_early[i], entry);
     }
 }
 
+extern unsigned long MMUTable[];
+
 void secondary_cpu_c_start(void)
 {
-    rt_hw_mmu_init();
+    rt_hw_mmu_ktbl_set((unsigned long)MMUTable);
     rt_hw_spin_lock(&_cpus_lock);
 
     arm_gic_cpu_init(0, platform_get_gic_cpu_base());
@@ -177,6 +180,6 @@ void secondary_cpu_c_start(void)
 
 void rt_hw_secondary_cpu_idle_exec(void)
 {
-    __WFE();
+    rt_hw_wfe();
 }
 #endif

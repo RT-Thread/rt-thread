@@ -188,7 +188,7 @@ extern "C" {
 #include "drivers/ofw_raw.h"
 #endif /* RT_USING_OFW */
 
-#ifdef RT_USING_FIRMWARE
+#ifdef RT_USING_DM_FIRMWARE
 #ifdef RT_FIRMWARE_PSCI
 #include "drivers/psci.h"
 #endif
