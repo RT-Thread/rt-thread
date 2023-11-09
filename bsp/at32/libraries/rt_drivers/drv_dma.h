@@ -38,7 +38,8 @@ struct dma_config {
     rt_uint32_t request_id;
 #endif
 #if defined (SOC_SERIES_AT32F435) || defined (SOC_SERIES_AT32F437) || \
-    defined (SOC_SERIES_AT32F423)
+    defined (SOC_SERIES_AT32F423) || defined (SOC_SERIES_AT32F402) || \
+    defined (SOC_SERIES_AT32F405)
     dmamux_channel_type *dmamux_channel;
     rt_uint32_t request_id;
 #endif

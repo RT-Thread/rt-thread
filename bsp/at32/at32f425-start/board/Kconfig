@@ -28,20 +28,20 @@ menu "On-chip Peripheral Drivers"
         bool "Enable on-chip FLASH"
         default n
 
-    menuconfig BSP_USING_USBFS
+    menuconfig BSP_USING_USBOTG
         bool "Enable USB BUS"
         default n
-        if BSP_USING_USBFS
-            menuconfig BSP_USING_USBFS1
+        if BSP_USING_USBOTG
+            menuconfig BSP_USING_USBOTG1
                 bool "Enable USB BUS1"
                 default n
-                if BSP_USING_USBFS1
-                    config BSP_USING_DEVICE_USBFS1
+                if BSP_USING_USBOTG1
+                    config BSP_USING_DEVICE_USBOTG1
                         bool "Enable USB1 Deivce"
                         select RT_USING_USB_DEVICE
                         default n
 
-                    config BSP_USING_HOST_USBFS1
+                    config BSP_USING_HOST_USBOTG1
                         bool "Enable USB1 Host"
                         select RT_USING_USB_HOST
                         default n

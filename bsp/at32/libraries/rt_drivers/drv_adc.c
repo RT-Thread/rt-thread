@@ -8,6 +8,7 @@
  * 2022-05-16     shelton      first version
  * 2023-01-31     shelton      add support f421/f425
  * 2023-04-08     shelton      add support f423
+ * 2023-10-18     shelton      add support f402/f405
  */
 
 #include "drv_common.h"
@@ -42,7 +43,7 @@ static struct at32_adc at32_adc_obj[] =
 #endif
 };
 
-static rt_err_t at32_adc_enabled(struct rt_adc_device *device, rt_uint32_t channel, rt_bool_t enabled)
+static rt_err_t at32_adc_enabled(struct rt_adc_device *device, rt_int8_t channel, rt_bool_t enabled)
 {
     adc_type *adc_x;
     adc_base_config_type adc_config_struct;
@@ -81,7 +82,8 @@ static rt_err_t at32_adc_enabled(struct rt_adc_device *device, rt_uint32_t chann
     adc_common_config(&adc_common_struct);
 #else
 #if !defined (SOC_SERIES_AT32F415) && !defined (SOC_SERIES_AT32F421) && \
-    !defined (SOC_SERIES_AT32F425)
+    !defined (SOC_SERIES_AT32F425) && !defined (SOC_SERIES_AT32F402) && \
+    !defined (SOC_SERIES_AT32F405)
     adc_combine_mode_select(ADC_INDEPENDENT_MODE);
 #endif
     adc_ordinary_conversion_trigger_set(adc_x, ADC12_ORDINARY_TRIG_SOFTWARE, TRUE);
@@ -122,7 +124,7 @@ static rt_err_t at32_adc_enabled(struct rt_adc_device *device, rt_uint32_t chann
     return RT_EOK;
 }
 
-static rt_err_t at32_get_adc_value(struct rt_adc_device *device, rt_uint32_t channel, rt_uint32_t *value)
+static rt_err_t at32_get_adc_value(struct rt_adc_device *device, rt_int8_t channel, rt_uint32_t *value)
 {
     adc_type *adc_x;
     rt_uint32_t timeout = 0;

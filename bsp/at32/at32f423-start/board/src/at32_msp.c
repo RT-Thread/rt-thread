@@ -264,7 +264,7 @@ void at32_msp_can_init(void *instance)
 }
 #endif /* BSP_USING_CAN */
 
-#ifdef BSP_USING_USBFS
+#ifdef BSP_USING_USBOTG
 void at32_msp_usb_init(void *instance)
 {
     /* defalut usb clock from hext */
@@ -316,7 +316,7 @@ void at32_msp_usb_init(void *instance)
         }
     }
 }
-#endif /* BSP_USING_USBFS */
+#endif /* BSP_USING_USBOTG */
 
 #ifdef BSP_USING_DAC
 void at32_msp_dac_init(void *instance)

@@ -24,14 +24,9 @@
 #define LOG_TAG                         "drv.qspi"
 #include <drv_log.h>
 
-struct at32_hw_spi_cs
-{
-    rt_uint16_t pin;
-};
-
 struct at32_qspi_bus
 {
-    struct rt_spi_bus qspi_device;
+    struct rt_spi_bus bus;
 
     qspi_type *qspi_x;
     char *bus_name;
@@ -332,7 +327,7 @@ static error_status qspi_data_receive(struct at32_qspi_bus *qspi_bus, rt_uint8_t
     return SUCCESS;
 }
 
-static rt_uint32_t qspi_xfer(struct rt_spi_device *device, struct rt_spi_message *message)
+static rt_ssize_t qspi_xfer(struct rt_spi_device *device, struct rt_spi_message *message)
 {
     rt_size_t len = 0;
 
@@ -341,18 +336,15 @@ static rt_uint32_t qspi_xfer(struct rt_spi_device *device, struct rt_spi_message
 
     struct rt_qspi_message *qspi_message = (struct rt_qspi_message *)message;
     struct at32_qspi_bus *qspi_bus = device->bus->parent.user_data;
-#ifdef BSP_QSPI_USING_SOFTCS
-    struct at32_hw_spi_cs *cs = device->parent.user_data;
-#endif
 
     const rt_uint8_t *sndb = message->send_buf;
     rt_uint8_t *rcvb = message->recv_buf;
     rt_int32_t length = message->length;
 
 #ifdef BSP_QSPI_USING_SOFTCS
-    if (message->cs_take)
+    if (message->cs_take && (device->cs_pin != PIN_NONE))
     {
-        rt_pin_write(cs->pin, 0);
+        rt_pin_write(device->cs_pin, PIN_LOW);
     }
 #endif
 
@@ -422,19 +414,18 @@ static const struct rt_spi_ops at32_qspi_ops =
 };
 
 /**
-  * @brief  this function attach device to qspi bus.
-  * @param  device_name      qspi device name
-  * @param  pin              qspi cs pin number
-  * @param  data_line_width  qspi data lines width, such as 1, 2, 4
-  * @param  enter_qspi_mode  callback function that lets flash enter qspi mode
-  * @param  exit_qspi_mode   callback function that lets flash exit qspi mode
+  * @brief  This function attach device to QSPI bus.
+  * @param  device_name      QSPI device name
+  * @param  cs_pin           QSPI cs pin number
+  * @param  data_line_width  QSPI data lines width, such as 1, 2, 4
+  * @param  enter_qspi_mode  Callback function that lets FLASH enter QSPI mode
+  * @param  exit_qspi_mode   Callback function that lets FLASH exit QSPI mode
   * @retval 0 : success
   *        -1 : failed
   */
-rt_err_t at32_qspi_bus_attach_device(const char *bus_name, const char *device_name, rt_uint32_t pin, rt_uint8_t data_line_width, void (*enter_qspi_mode)(), void (*exit_qspi_mode)())
+rt_err_t rt_hw_qspi_device_attach(const char *bus_name, const char *device_name, rt_base_t cs_pin, rt_uint8_t data_line_width, void (*enter_qspi_mode)(), void (*exit_qspi_mode)())
 {
     struct rt_qspi_device *qspi_device = RT_NULL;
-    struct at32_hw_spi_cs *cs_pin = RT_NULL;
     rt_err_t result = RT_EOK;
 
     RT_ASSERT(bus_name != RT_NULL);
@@ -448,25 +439,16 @@ rt_err_t at32_qspi_bus_attach_device(const char *bus_name, const char *device_na
         result = -RT_ENOMEM;
         goto __exit;
     }
-    cs_pin = (struct at32_hw_spi_cs *)rt_malloc(sizeof(struct at32_hw_spi_cs));
-    if (cs_pin == RT_NULL)
-    {
-        LOG_E("no memory, qspi bus attach device failed!");
-        result = -RT_ENOMEM;
-        goto __exit;
-    }
 
     qspi_device->enter_qspi_mode = enter_qspi_mode;
     qspi_device->exit_qspi_mode = exit_qspi_mode;
     qspi_device->config.qspi_dl_width = data_line_width;
 
-    cs_pin->pin = pin;
 #ifdef BSP_QSPI_USING_SOFTCS
-    rt_pin_mode(pin, PIN_MODE_OUTPUT);
-    rt_pin_write(pin, 1);
-#endif
-
-    result = rt_spi_bus_attach_device(&qspi_device->parent, device_name, bus_name, (void *)cs_pin);
+    result = rt_spi_bus_attach_device_cspin(&qspi_device->parent, device_name, bus_name, cs_pin, RT_NULL);
+#else
+    result = rt_spi_bus_attach_device_cspin(&qspi_device->parent, device_name, bus_name, PIN_NONE, RT_NULL);
+#endif /* BSP_QSPI_USING_SOFTCS */
 
 __exit:
     if (result != RT_EOK)
@@ -474,11 +456,6 @@ __exit:
         if (qspi_device)
         {
             rt_free(qspi_device);
-        }
-
-        if (cs_pin)
-        {
-            rt_free(cs_pin);
         }
     }
 
@@ -492,9 +469,9 @@ static int rt_hw_qspi_bus_init(void)
 
     for(i = 0; i < sizeof(at32_qspi_obj) / sizeof(at32_qspi_obj[0]); i++)
     {
-        at32_qspi_obj[i].qspi_device.parent.user_data = &at32_qspi_obj[i];
+        at32_qspi_obj[i].bus.parent.user_data = &at32_qspi_obj[i];
 
-        if(rt_qspi_bus_register(&at32_qspi_obj[i].qspi_device, at32_qspi_obj[i].bus_name, &at32_qspi_ops) == RT_EOK)
+        if(rt_qspi_bus_register(&at32_qspi_obj[i].bus, at32_qspi_obj[i].bus_name, &at32_qspi_ops) == RT_EOK)
         {
             LOG_D("%s register success", at32_qspi_obj[i].bus_name);
         }

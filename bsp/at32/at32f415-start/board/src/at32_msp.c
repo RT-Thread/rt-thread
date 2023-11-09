@@ -284,7 +284,7 @@ void at32_msp_can_init(void *instance)
 }
 #endif /* BSP_USING_CAN */
 
-#ifdef BSP_USING_USBFS
+#ifdef BSP_USING_USBOTG
 void at32_msp_usb_init(void *instance)
 {
     /* enable usb clock */
@@ -322,4 +322,4 @@ void at32_msp_usb_init(void *instance)
     }
 }
 
-#endif /* BSP_USING_USBFS */
+#endif /* BSP_USING_USBOTG */

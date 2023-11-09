@@ -1,12 +1,11 @@
 /*
- * Copyright (c) 2006-2023, RT-Thread Development Team
+ * Copyright (c) 2006-2021, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
  * 2023-02-28     leo          first version
- * 2023-10-11     ChuShicheng  change rt_size_t to rt_ssize_t
  */
 
 #include <rtthread.h>
