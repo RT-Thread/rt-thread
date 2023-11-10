@@ -157,6 +157,7 @@ static rt_err_t i2c_config(struct phytium_i2c_bus *i2c_bus)
     const FI2cConfig *config_p = NULL;
     FI2c *instance_p = &i2c_bus->i2c_handle;
     FError ret = FI2C_SUCCESS;
+    u32 *cpu_id;
 
     /* Lookup default configs by instance id */
     config_p = FI2cLookupConfig(instance_p->config.instance_id);
@@ -176,6 +177,13 @@ static rt_err_t i2c_config(struct phytium_i2c_bus *i2c_bus)
         return RT_ERROR;
     }
 
+    /*Enable i2c interrupt*/
+    GetCpuId(&cpu_id);
+    rt_hw_interrupt_set_target_cpus(i2c_bus->i2c_handle.config.irq_num, cpu_id);
+    rt_hw_interrupt_set_priority(i2c_bus->i2c_handle.config.irq_num, 16);
+    rt_hw_interrupt_install(i2c_bus->i2c_handle.config.irq_num, FI2cMasterIntrHandler, &(i2c_bus->i2c_handle), i2c_bus->name);
+    rt_hw_interrupt_umask(i2c_bus->i2c_handle.config.irq_num);
+
     return RT_EOK;
 }
 #endif
@@ -188,6 +196,7 @@ static rt_err_t i2c_mio_config(struct phytium_i2c_bus *i2c_bus)
     const FI2cConfig *config_p = NULL;
     FI2c *instance_p = &i2c_bus->i2c_handle;
     FError ret = FI2C_SUCCESS;
+    u32 *cpu_id;
 
     mio_handle.config = *FMioLookupConfig(instance_p->config.instance_id);
 #ifdef RT_USING_SMART
@@ -222,6 +231,13 @@ static rt_err_t i2c_mio_config(struct phytium_i2c_bus *i2c_bus)
         LOG_E("Init mio master failed, ret: 0x%x", ret);
         return RT_ERROR;
     }
+
+    /*Enable i2c interrupt*/
+    GetCpuId(&cpu_id);
+    rt_hw_interrupt_set_target_cpus(i2c_bus->i2c_handle.config.irq_num, cpu_id);
+    rt_hw_interrupt_set_priority(i2c_bus->i2c_handle.config.irq_num, 16);
+    rt_hw_interrupt_install(i2c_bus->i2c_handle.config.irq_num, FI2cMasterIntrHandler, &(i2c_bus->i2c_handle), i2c_bus->name);
+    rt_hw_interrupt_umask(i2c_bus->i2c_handle.config.irq_num);
 
     return RT_EOK;
 }
@@ -281,7 +297,8 @@ static rt_ssize_t i2c_master_xfer(struct rt_i2c_bus_device *device, struct rt_i2
         i2c_bus->i2c_handle.config.slave_addr = pmsg->addr;
         if (pmsg->flags & RT_I2C_RD)
         {
-            ret = FI2cMasterReadPoll(&i2c_bus->i2c_handle, mem_addr, 1, &pmsg->buf[0], sizeof(pmsg->buf));
+            /*Under the default configuration of interrupts, only one byte can be read or written at a time*/
+            ret = FI2cMasterReadIntr(&i2c_bus->i2c_handle, mem_addr, 1, &pmsg->buf[0], 1);
             if (ret != FI2C_SUCCESS)
             {
                 LOG_E("I2C master read failed!\n");
@@ -290,7 +307,8 @@ static rt_ssize_t i2c_master_xfer(struct rt_i2c_bus_device *device, struct rt_i2
         }
         else
         {
-            ret = FI2cMasterWritePoll(&i2c_bus->i2c_handle, mem_addr, 1, &pmsg->buf[1], sizeof(pmsg->buf) - 1);
+            /*Under the default configuration of interrupts, only one byte can be read or written at a time*/
+            ret = FI2cMasterWriteIntr(&i2c_bus->i2c_handle, mem_addr, 1, &pmsg->buf[1], 1);
             if (ret != FI2C_SUCCESS)
             {
                 LOG_E("I2C master write failed!\n");
@@ -423,8 +441,6 @@ int rt_hw_i2c_init(void)
 }
 INIT_DEVICE_EXPORT(rt_hw_i2c_init);
 
-
-
 static struct rt_i2c_bus_device *i2c_test_bus = RT_NULL;     /* I2C总线设备句柄 */
 
 int i2c_sample(int argc, char *argv[])
@@ -433,6 +449,7 @@ int i2c_sample(int argc, char *argv[])
     rt_strncpy(name, "MIO15", RT_NAME_MAX);
     i2c_test_bus = (struct rt_i2c_bus_device *)rt_device_find(name);
 
+    /*0x02 is the mem_addr, need to be written in buf[0]*/
     rt_uint8_t read_buf[2] = {0x02, 0x0};
     rt_uint8_t write_buf[2] = {0x02, 0x01};
     if (i2c_test_bus == RT_NULL)
@@ -450,6 +467,7 @@ int i2c_sample(int argc, char *argv[])
     read_msgs.buf = read_buf;
     read_msgs.len = 1;
     rt_i2c_transfer(i2c_test_bus, &read_msgs, 1);
+    rt_thread_mdelay(5);
     rt_kprintf("read_buf = %x\n", *read_msgs.buf);
 
     struct rt_i2c_msg write_msgs;
@@ -458,8 +476,10 @@ int i2c_sample(int argc, char *argv[])
     write_msgs.buf = write_buf;
     write_msgs.len = 1;
     rt_i2c_transfer(i2c_test_bus, &write_msgs, 1);
+    rt_thread_mdelay(5);
     read_buf[0] = 0x02;
     rt_i2c_transfer(i2c_test_bus, &read_msgs, 1);
+    rt_thread_mdelay(5);
     rt_kprintf("read_buf = %x\n", *read_msgs.buf);
 
     return RT_EOK;
