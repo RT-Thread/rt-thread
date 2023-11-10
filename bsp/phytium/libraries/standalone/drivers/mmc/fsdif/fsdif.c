@@ -298,8 +298,9 @@ FError FSdifResetCtrl(uintptr base_addr, u32 reset_bits)
         do
         {
             reg_val = FSDIF_READ_REG(base_addr, FSDIF_STATUS_OFFSET);
-        } while (!(FSDIF_STATUS_FIFO_EMPTY & reg_val));
-         
+        }
+        while (!(FSDIF_STATUS_FIFO_EMPTY & reg_val));
+
         if (retries <= 0)
         {
             FSDIF_ERROR("Fifo not empty !!!");

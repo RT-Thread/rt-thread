@@ -23,7 +23,7 @@
 #include <drivers/mmcsd_core.h>
 
 #ifdef RT_USING_SMART
-#include "ioremap.h"
+    #include "ioremap.h"
 #endif
 #include "mm_aspace.h"
 #include "interrupt.h"
@@ -142,13 +142,13 @@ static void fsdif_ctrl_setup_interrupt(struct rt_mmcsd_host *host)
                             NULL);
 
     /* enable irq */
-    rt_hw_interrupt_umask(config_p->irq_num);  
+    rt_hw_interrupt_umask(config_p->irq_num);
 
-    FSdifRegisterEvtHandler(mmcsd_instance, FSDIF_EVT_CARD_DETECTED, fsdif_card_detect_callback, host);  
-    FSdifRegisterEvtHandler(mmcsd_instance, FSDIF_EVT_ERR_OCCURE, fsdif_error_occur_callback, host);  
-    FSdifRegisterEvtHandler(mmcsd_instance, FSDIF_EVT_CMD_DONE, fsdif_command_done_callback, host);  
-    FSdifRegisterEvtHandler(mmcsd_instance, FSDIF_EVT_DATA_DONE, fsdif_data_done_callback, host);  
-    FSdifRegisterEvtHandler(mmcsd_instance, FSDIF_EVT_SDIO_IRQ, fsdif_sdio_irq_callback, host);  
+    FSdifRegisterEvtHandler(mmcsd_instance, FSDIF_EVT_CARD_DETECTED, fsdif_card_detect_callback, host);
+    FSdifRegisterEvtHandler(mmcsd_instance, FSDIF_EVT_ERR_OCCURE, fsdif_error_occur_callback, host);
+    FSdifRegisterEvtHandler(mmcsd_instance, FSDIF_EVT_CMD_DONE, fsdif_command_done_callback, host);
+    FSdifRegisterEvtHandler(mmcsd_instance, FSDIF_EVT_DATA_DONE, fsdif_data_done_callback, host);
+    FSdifRegisterEvtHandler(mmcsd_instance, FSDIF_EVT_SDIO_IRQ, fsdif_sdio_irq_callback, host);
 
     return;
 }
@@ -240,22 +240,22 @@ rt_inline rt_err_t fsdif_dma_transfer(struct rt_mmcsd_host *host, struct rt_mmcs
 
     while (TRUE)
     {
-        if (rt_event_recv(&private_data->event, 
-                        (wait_event),
-                        (RT_EVENT_FLAG_AND | RT_EVENT_FLAG_CLEAR | RT_WAITING_NO), 
-                        rt_tick_from_millisecond(5000),
-                        &event) == RT_EOK)
+        if (rt_event_recv(&private_data->event,
+                          (wait_event),
+                          (RT_EVENT_FLAG_AND | RT_EVENT_FLAG_CLEAR | RT_WAITING_NO),
+                          rt_tick_from_millisecond(5000),
+                          &event) == RT_EOK)
         {
             (void)FSdifGetCmdResponse(mmcsd_instance, req_cmd);
             break;
         }
         else
         {
-            if (rt_event_recv(&private_data->event, 
-                            (SDIF_EVENT_ERROR_OCCUR),
-                            (RT_EVENT_FLAG_CLEAR | RT_WAITING_NO),
-                            rt_tick_from_millisecond(5000),
-                            &event) == RT_EOK)
+            if (rt_event_recv(&private_data->event,
+                              (SDIF_EVENT_ERROR_OCCUR),
+                              (RT_EVENT_FLAG_CLEAR | RT_WAITING_NO),
+                              rt_tick_from_millisecond(5000),
+                              &event) == RT_EOK)
             {
                 LOG_E("Sdif DMA transfer endup with error !!!");
                 return -RT_EIO;
