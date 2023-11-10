@@ -23,7 +23,7 @@
  */
 
 #include "phy_yt.h"
-#include "fdebug.h"
+#include "fdrivers_port.h"
 
 #define PHY_YT_DEBUG_TAG "PHY_YT"
 #define PHY_YT_ERROR(format, ...) FT_DEBUG_PRINT_E(PHY_YT_DEBUG_TAG, format, ##__VA_ARGS__)

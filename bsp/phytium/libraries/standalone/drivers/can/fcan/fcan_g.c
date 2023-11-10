@@ -22,7 +22,7 @@
  * 1.0   wangxiaodong  2022/5/26  first release
  */
 
-#include "sdkconfig.h"
+
 #include "fcan.h"
 #include "fparameters.h"
 
@@ -38,7 +38,7 @@ const FCanConfig FCanConfigTbl[FCAN_NUM] =
         .base_address = FCAN1_BASE_ADDR,  /* Can base Address */
         .irq_num = FCAN1_IRQ_NUM,
     },
-#if defined(CONFIG_TARGET_F2000_4) || defined(CONFIG_TARGET_D2000)
+#if defined(FCAN2_ID)
     {
         .instance_id = FCAN2_ID,  /* Id of device */
         .base_address = FCAN2_BASE_ADDR, /* Can base Address */

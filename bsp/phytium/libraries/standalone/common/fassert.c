@@ -80,7 +80,7 @@ FAssertStatus FAssertGetStatus(void)
  */
 static void FAssertCallback(const char *file, s32 line, int ret)
 {
-    f_printk("Assert Error at %s : %ld \r\n", file, line);
+    FASSERT_PRINT("Assert Error at %s : %ld \r\n", file, line);
 }
 
 /**

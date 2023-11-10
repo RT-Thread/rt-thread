@@ -25,7 +25,7 @@
 
 #include "fparameters.h"
 #include "fsata.h"
-#include "sdkconfig.h"
+
 
 /************************** Constant Definitions *****************************/
 
@@ -78,7 +78,7 @@ const FSataConfig FSataPcieConfigTbl[PLAT_AHCI_HOST_MAX_COUNT] =
     },
 };
 
-#if defined(CONFIG_TARGET_E2000)
+#if defined(SOC_TARGET_E2000)
 
 /* configs of controller ahci ctrl */
 const FSataConfig FSataControllerConfigTbl[FSATA_NUM] =

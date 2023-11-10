@@ -33,12 +33,12 @@ extern "C"
 #endif
 
 #ifdef __ASSEMBLY__
-    #define _AC(X, Y) X
-    #define _AT(T, X) X
+#define _AC(X, Y) X
+#define _AT(T, X) X
 #else
-    #define __AC(X, Y) (X##Y)
-    #define _AC(X, Y) __AC(X, Y)
-    #define _AT(T, X) ((T)(X))
+#define __AC(X, Y) (X##Y)
+#define _AC(X, Y) __AC(X, Y)
+#define _AT(T, X) ((T)(X))
 #endif
 
 #define _UL(x) (_AC(x, UL))
@@ -121,16 +121,18 @@ extern "C"
 #define DIV_ROUND_UP(n, d) (((n) + (d)-1) / (d))
 
 #if defined(__aarch64__)
-    #define BITS_PER_LONG 64
+#define BITS_PER_LONG 64
 #else
-    #define BITS_PER_LONG 32
+#define BITS_PER_LONG 32
 #endif
 
 #ifndef BITS_PER_LONG_LONG
-    #define BITS_PER_LONG_LONG 64
+#define BITS_PER_LONG_LONG 64
 #endif
 
+#ifndef BIT /* in case third-party project also defined marco BIT */
 #define BIT(nr) (1ULL << (nr))
+#endif
 #define BIT_ULL(nr) (1ULL << (nr))
 #define BIT_MASK(nr) (BIT(nr) - 1UL)
 #define BIT_WORD(nr) ((nr) / BITS_PER_LONG)
@@ -143,9 +145,9 @@ extern "C"
 #define DIV_ROUND_UP_ULL(ll, d)     DIV_ROUND_DOWN_ULL((ll) + (d) - 1, (d))
 
 #if BITS_PER_LONG == 32
-    #define DIV_ROUND_UP_SECTOR_T(ll,d) DIV_ROUND_UP_ULL(ll, d)
+#define DIV_ROUND_UP_SECTOR_T(ll,d) DIV_ROUND_UP_ULL(ll, d)
 #else
-    #define DIV_ROUND_UP_SECTOR_T(ll,d) DIV_ROUND_UP(ll,d)
+#define DIV_ROUND_UP_SECTOR_T(ll,d) DIV_ROUND_UP(ll,d)
 #endif
 
 /*
@@ -219,10 +221,13 @@ extern "C"
  * Note that do not input signed int 'n'
  */
 #define LOWER_32_BITS(n) ((uint32_t)((n)&0xffffffff))
+#define UPPER_32_BITS(n) ((uint32_t)(((n) >> 16) >> 16))
 #define IS_ALIGNED(x, a) (((x) & ((typeof(x))(a)-1)) == 0)
+#define ALIGN(size, alignment) (((size) + (alignment) - 1) & ~((alignment) - 1))
+
 
 #ifndef __aligned
-    #define __aligned(x) __attribute__((__aligned__(x)))
+#define __aligned(x) __attribute__((__aligned__(x)))
 #endif
 
 /**
@@ -233,7 +238,7 @@ extern "C"
     ((type *)((char *)(ptr) - (unsigned long)(&((type *)0)->member)))
 
 #ifndef ARRAY_SIZE
-    #define ARRAY_SIZE(a) (sizeof(a) / sizeof((a)[0]))
+#define ARRAY_SIZE(a) (sizeof(a) / sizeof((a)[0]))
 #endif
 
 /* set 32-bit register [a:b] as x, where a is high bit, b is low bit, x is setting/getting value */
@@ -247,10 +252,10 @@ extern "C"
 
 #define BUILD_BUG_ON(condition) ((void)sizeof(char[1 - 2*!!(condition)]))
 
-#define __BUILD_BUG_ON_NOT_POWER_OF_2(n)	\
-	BUILD_BUG_ON(((n) & ((n) - 1)) != 0)
-#define BUILD_BUG_ON_NOT_POWER_OF_2(n)			\
-	BUILD_BUG_ON((n) == 0 || (((n) & ((n) - 1)) != 0))
+#define __BUILD_BUG_ON_NOT_POWER_OF_2(n)    \
+    BUILD_BUG_ON(((n) & ((n) - 1)) != 0)
+#define BUILD_BUG_ON_NOT_POWER_OF_2(n)          \
+    BUILD_BUG_ON((n) == 0 || (((n) & ((n) - 1)) != 0))
 
 /**
  * COMILETIME_ASSERT - break build and emit msg if condition is false
@@ -261,16 +266,16 @@ extern "C"
  * supplied condition is *false*, emitting the supplied error message if the
  * compiler has support to do so.
  */
-# define COMILETIME_ASSERT(condition, msg, prefix, suffix)		\
-	do {								\
-		extern void prefix ## suffix(void) __attribute__((error(msg))); \
-		if (!(condition))					\
-			prefix ## suffix();				\
-	} while (0)
- 
+# define COMILETIME_ASSERT(condition, msg, prefix, suffix)      \
+    do {                                \
+        extern void prefix ## suffix(void) __attribute__((error(msg))); \
+        if (!(condition))                   \
+            prefix ## suffix();             \
+    } while (0)
+
 /**
  * BUILD_BUG_ON_MSG - break compile if a condition is true & emit supplied
- *		      error message.
+ *            error message.
  * @condition: the condition which the compiler should know is false.
  *
  * See BUILD_BUG_ON for description.
@@ -297,9 +302,9 @@ extern "C"
  *
  * Set:
  *  reg = FIELD_PREP(REG_FIELD_A, 1) |
- *	  FIELD_PREP(REG_FIELD_B, 0) |
- *	  FIELD_PREP(REG_FIELD_C, c) |
- *	  FIELD_PREP(REG_FIELD_D, 0x40);
+ *    FIELD_PREP(REG_FIELD_B, 0) |
+ *    FIELD_PREP(REG_FIELD_C, c) |
+ *    FIELD_PREP(REG_FIELD_D, 0x40);
  *
  * Modify:
  *  reg &= ~REG_FIELD_C;
@@ -308,19 +313,19 @@ extern "C"
 
 #define BF_SHF(x) (__builtin_ffsll(x) - 1)
 
-#define BF_FIELD_CHECK(mask, reg, val, pfx)			\
-	({								\
-		BUILD_BUG_ON_MSG(!__builtin_constant_p(mask),		\
-				 pfx "mask is not constant");		\
-		BUILD_BUG_ON_MSG((mask) == 0, pfx "mask is zero");	\
-		BUILD_BUG_ON_MSG(__builtin_constant_p(val) ?		\
-				 ~((mask) >> BF_SHF(mask)) & (val) : 0, \
-				 pfx "value too large for the field"); \
-		BUILD_BUG_ON_MSG((mask) > (typeof(reg))~0ull,		\
-				 pfx "type of reg too small for mask"); \
-		__BUILD_BUG_ON_NOT_POWER_OF_2((mask) +			\
-					      (1ULL << BF_SHF(mask))); \
-	})
+#define BF_FIELD_CHECK(mask, reg, val, pfx)         \
+    ({                              \
+        BUILD_BUG_ON_MSG(!__builtin_constant_p(mask),       \
+                 pfx "mask is not constant");       \
+        BUILD_BUG_ON_MSG((mask) == 0, pfx "mask is zero");  \
+        BUILD_BUG_ON_MSG(__builtin_constant_p(val) ?        \
+                 ~((mask) >> BF_SHF(mask)) & (val) : 0, \
+                 pfx "value too large for the field"); \
+        BUILD_BUG_ON_MSG((mask) > (typeof(reg))~0ull,       \
+                 pfx "type of reg too small for mask"); \
+        __BUILD_BUG_ON_NOT_POWER_OF_2((mask) +          \
+                          (1ULL << BF_SHF(mask))); \
+    })
 
 
 /**
@@ -331,11 +336,11 @@ extern "C"
  * FIELD_PREP() masks and shifts up the value.  The result should
  * be combined with other fields of the bitfield using logical OR.
  */
-#define FIELD_PREP(mask, val)						\
-	({								\
-		BF_FIELD_CHECK(mask, 0ULL, val, "FIELD_PREP: ");	\
-		((typeof(mask))(val) << BF_SHF(mask)) & (mask);	\
-	})
+#define FIELD_PREP(mask, val)                       \
+    ({                              \
+        BF_FIELD_CHECK(mask, 0ULL, val, "FIELD_PREP: ");    \
+        ((typeof(mask))(val) << BF_SHF(mask)) & (mask); \
+    })
 
 #ifdef __cplusplus
 }

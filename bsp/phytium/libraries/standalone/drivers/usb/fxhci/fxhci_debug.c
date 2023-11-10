@@ -23,7 +23,7 @@
  */
 
 #include <inttypes.h>
-#include "fdebug.h"
+#include "fdrivers_port.h"
 #include "fxhci_private.h"
 
 #define FUSB_DEBUG_TAG "FXHCI_DEBUG"

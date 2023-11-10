@@ -40,7 +40,8 @@ const FDdmaConfig fddma_cfg_tbl[FDDMA_INSTANCE_NUM] =
         .id = FDDMA0_ID,
         .base_addr = FDDMA0_BASE_ADDR,
         .irq_num = FDDMA0_IRQ_NUM,
-        .irq_prority = 0
+        .irq_prority = 0,
+        .caps = FDDMA0_CAPACITY
     },
 
     [FDDMA1_ID] =
@@ -48,7 +49,32 @@ const FDdmaConfig fddma_cfg_tbl[FDDMA_INSTANCE_NUM] =
         .id = FDDMA1_ID,
         .base_addr = FDDMA1_BASE_ADDR,
         .irq_num = FDDMA1_IRQ_NUM,
-        .irq_prority = 0
+        .irq_prority = 0,
+        .caps = FDDMA1_CAPACITY
+    },
+    [FDDMA2_I2S_ID] =
+    {
+        .id = FDDMA2_I2S_ID,
+        .base_addr = FDDMA2_BASE_ADDR,
+        .irq_num = FDDMA2_IRQ_NUM,
+        .irq_prority = 1,
+        .caps = FDDMA2_CAPACITY
+    },
+    [FDDMA3_DP0_I2S_ID] =
+    {
+        .id = FDDMA3_DP0_I2S_ID,
+        .base_addr = FDDMA3_BASE_ADDR,
+        .irq_num = FDDMA3_IRQ_NUM,
+        .irq_prority = 1,
+        .caps = FDDMA3_CAPACITY
+    },
+    [FDDMA4_DP1_I2S_ID] =
+    {
+        .id = FDDMA4_DP1_I2S_ID,
+        .base_addr = FDDMA4_BASE_ADDR,
+        .irq_num = FDDMA4_IRQ_NUM,
+        .irq_prority = 1,
+        .caps = FDDMA4_CAPACITY
     }
 }; /* DDMA控制器默认配置 */
 

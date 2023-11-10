@@ -30,7 +30,7 @@
 #include "fparameters.h"
 #include "ftypes.h"
 #include "fio.h"
-#include "sdkconfig.h"
+
 
 #ifdef __cplusplus
 extern "C"
@@ -58,6 +58,7 @@ extern "C"
 #define FCAN_FRM_INFO_OFFSET        0x48 /* Frame valid number register */
 #define FCAN_TX_FIFO_OFFSET         0x100/* TX FIFO shadow register */
 #define FCAN_RX_FIFO_OFFSET         0x200/* RX FIFO shadow register */
+#define FCAN_RX_INFO_FIFO_OFFSET    0X300/* Current frame status register */
 
 /*----------------------------------------------------------------------------*/
 /* CAN register bit masks - FCAN_<REG>_<BIT>_MASK                            */
@@ -147,6 +148,10 @@ extern "C"
 #define FCANFD_IDR_GET_EDLC_SHIFT   12
 #define FCANFD_IDR1_SDLC_SHIFT      11
 
+/* CAN_DMA_CTRL */
+#define FCAN_DMA_CTRL_TFRE_SET      BIT(22)
+#define FCAN_DMA_CTRL_RFRE_SET      BIT(6)
+
 /* can */
 #define FCAN_IDR_ID2_GET(x)   GET_REG32_BITS((x), 18, 1)  /* Get extended message ident */
 #define FCAN_IDR_ID2_SET(x)   SET_REG32_BITS((x), 18, 1)  /* Set extended message ident */
@@ -173,46 +178,52 @@ extern "C"
 
 #define FTCAN_INTR_EN (FTCAN_INTR_TEIE_MASK | FTCAN_INTR_REIE_MASK | FTCAN_INTR_RFIE_MASK)
 
+/* Current frame status */
+#define FCAN_IORF_STS_RS_GET(x)        GET_REG32_BITS((x), 7, 7)    /* Whether it is an extended frame */
+#define FCAN_FORF_STS_RS_GET(x)        GET_REG32_BITS((x), 6, 6)    /* Whether it is an canfd */
+#define FCAN_RORF_STS_RS_GET(x)        GET_REG32_BITS((x), 5, 5)    /* Whether it is an remote frame */
+#define FCAN_WNORF_STS_RS_GET(x)       GET_REG32_BITS((x), 4, 0)    /* The number of words of the currently received frame */
+
 /* Can timming */
-#if defined(CONFIG_TARGET_F2000_4) || defined(CONFIG_TARGET_D2000)
+#if defined(SOC_TARGET_FT2004) || defined(SOC_TARGET_D2000)
 
-    #define FCAN_ARB_TSEG1_MIN  1
-    #define FCAN_ARB_TSEG1_MAX  16
-    #define FCAN_ARB_TSEG2_MIN  1
-    #define FCAN_ARB_TSEG2_MAX  8
-    #define FCAN_ARB_SJW_MAX    4
-    #define FCAN_ARB_BRP_MIN    1
-    #define FCAN_ARB_BRP_MAX    512
-    #define FCAN_ARB_BRP_INC    1
+#define FCAN_ARB_TSEG1_MIN  1
+#define FCAN_ARB_TSEG1_MAX  16
+#define FCAN_ARB_TSEG2_MIN  1
+#define FCAN_ARB_TSEG2_MAX  8
+#define FCAN_ARB_SJW_MAX    4
+#define FCAN_ARB_BRP_MIN    1
+#define FCAN_ARB_BRP_MAX    512
+#define FCAN_ARB_BRP_INC    1
 
-    #define FCAN_DATA_TSEG1_MIN 1
-    #define FCAN_DATA_TSEG1_MAX 16
-    #define FCAN_DATA_TSEG2_MIN 1
-    #define FCAN_DATA_TSEG2_MAX 8
-    #define FCAN_DATA_SJW_MAX   4
-    #define FCAN_DATA_BRP_MIN   1
-    #define FCAN_DATA_BRP_MAX   512
-    #define FCAN_DATA_BRP_INC   1
+#define FCAN_DATA_TSEG1_MIN 1
+#define FCAN_DATA_TSEG1_MAX 16
+#define FCAN_DATA_TSEG2_MIN 1
+#define FCAN_DATA_TSEG2_MAX 8
+#define FCAN_DATA_SJW_MAX   4
+#define FCAN_DATA_BRP_MIN   1
+#define FCAN_DATA_BRP_MAX   512
+#define FCAN_DATA_BRP_INC   1
 
-#elif defined(CONFIG_TARGET_E2000) || defined(TARDIGRADE)
+#elif defined(SOC_TARGET_E2000) || defined(TARDIGRADE) || defined(SOC_TARGET_PHYTIUMPI)
 
-    #define FCAN_ARB_TSEG1_MIN  1
-    #define FCAN_ARB_TSEG1_MAX  16
-    #define FCAN_ARB_TSEG2_MIN  1
-    #define FCAN_ARB_TSEG2_MAX  8
-    #define FCAN_ARB_SJW_MAX    4
-    #define FCAN_ARB_BRP_MIN    1
-    #define FCAN_ARB_BRP_MAX    8192
-    #define FCAN_ARB_BRP_INC    1
+#define FCAN_ARB_TSEG1_MIN  1
+#define FCAN_ARB_TSEG1_MAX  16
+#define FCAN_ARB_TSEG2_MIN  1
+#define FCAN_ARB_TSEG2_MAX  8
+#define FCAN_ARB_SJW_MAX    4
+#define FCAN_ARB_BRP_MIN    1
+#define FCAN_ARB_BRP_MAX    8192
+#define FCAN_ARB_BRP_INC    1
 
-    #define FCAN_DATA_TSEG1_MIN 1
-    #define FCAN_DATA_TSEG1_MAX 16
-    #define FCAN_DATA_TSEG2_MIN 1
-    #define FCAN_DATA_TSEG2_MAX 8
-    #define FCAN_DATA_SJW_MAX   4
-    #define FCAN_DATA_BRP_MIN   1
-    #define FCAN_DATA_BRP_MAX   8192
-    #define FCAN_DATA_BRP_INC   1
+#define FCAN_DATA_TSEG1_MIN 1
+#define FCAN_DATA_TSEG1_MAX 16
+#define FCAN_DATA_TSEG2_MIN 1
+#define FCAN_DATA_TSEG2_MAX 8
+#define FCAN_DATA_SJW_MAX   4
+#define FCAN_DATA_BRP_MIN   1
+#define FCAN_DATA_BRP_MAX   8192
+#define FCAN_DATA_BRP_INC   1
 
 #endif
 

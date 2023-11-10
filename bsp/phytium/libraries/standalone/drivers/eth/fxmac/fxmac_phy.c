@@ -24,7 +24,7 @@
 
 #include "fxmac.h"
 #include "eth_ieee_reg.h"
-#include "fdebug.h"
+#include "fdrivers_port.h"
 #include "sdkconfig.h"
 
 #if defined(CONFIG_FXMAC_PHY_YT)

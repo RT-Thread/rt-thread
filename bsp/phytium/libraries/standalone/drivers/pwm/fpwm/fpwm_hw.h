@@ -115,7 +115,7 @@ extern "C"
 
 /* pwm_ccr field */
 #define FPWM_CCR_MASK           GENMASK(15, 0)
-#define FPWM_CCR_GPIO	        BIT(16)
+#define FPWM_CCR_GPIO           BIT(16)
 
 /* pwm lsd cfg, lsd pwm sync control */
 #define FLSD_MIO_PWM_SYN_OFFSET 0x20

@@ -44,8 +44,8 @@ FError FDcReqChangePixel(FDcCtrl *instance_p, u32 pixel_clk);
 /* soft reset DC by configurating register */
 void FDcHwFramebufferReset(FDcCtrl *instance_p, u32 num, FDcRestType type);
 
-/* Get mode number by width and height */
-FError FDcResToModeNum(u32 width, u32 height);
+/* Get mode number  */
+FError FDcResToModeNum(FDcCtrl *instance_p);
 
 #ifdef __cplusplus
 }

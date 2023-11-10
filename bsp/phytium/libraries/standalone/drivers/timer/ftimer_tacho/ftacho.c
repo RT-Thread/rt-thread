@@ -27,7 +27,7 @@
 #include <string.h>
 #include "fassert.h"
 #include "fkernel.h"
-#include "fsleep.h"
+#include "fdrivers_port.h"
 #include "ftimer_tacho_hw.h"
 #include "ftimer_tacho.h"
 #include "fparameters.h"
@@ -160,7 +160,7 @@ FError FTachoGetFanRPM(FTimerTachoCtrl *instance_p, u32 *rpm)
 
         if (loop_cnt < 300)
         {
-            fsleep_millisec(20); //20ms
+            FDriverMdelay(20); //20ms
         }
         else
         {

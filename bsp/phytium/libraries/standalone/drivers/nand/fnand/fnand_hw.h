@@ -27,7 +27,6 @@
 #define FNAND_HW_H
 
 
-#include "fkernel.h"
 #include "ftypes.h"
 #include "fio.h"
 #include "fkernel.h"

@@ -329,7 +329,7 @@ void FDpLinkPhyChangeRate(FDpCtrl *instance_p, u32 link_rate);
 u8 FDpTxPhyGetEnhancedFrameCap(FDpCtrl *instance_p);
 
 /* configure the PHY for the specified link rate */
-FError FDpTxPhyUpdateLinkRate(FDpCtrl *instance_p, u32 link_rate);
+void FDpTxPhyUpdateLinkRate(FDpCtrl *instance_p, u32 link_rate);
 
 /* set the lane count in the PHY */
 void FDpTxPhySetLaneCount(FDpCtrl *instance_p, u8 lane_count);
@@ -347,7 +347,7 @@ u8 FDpTxPhyTps4Supported(FDpCtrl *instance_p);
 u8 FDpTxPhyTps3Supported(FDpCtrl *instance_p);
 
 /*  Get Swing and pre-emphasis level form sink*/
-FError FDpTxPhyGetAdjustRequest(FDpCtrl *instance_p, u8 *swing, u8 *pre_emphasis);
+void FDpTxPhyGetAdjustRequest(FDpCtrl *instance_p, u8 *swing, u8 *pre_emphasis);
 
 /*Display phy initialization */
 void FDpLinkPhyInit(FDpCtrl *instance_p, u32 link_rate);

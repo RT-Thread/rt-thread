@@ -50,7 +50,7 @@ typedef struct
 {
     u32     instance_id;    /*mio id*/
     uintptr func_base_addr; /*I2C or UART function address*/
-    u32     irq_num;        /* Device intrrupt id */
+    u32     irq_num;        /* Device interrupt id */
     uintptr mio_base_addr;  /*MIO control address*/
 } FMioConfig;               /*mio configs*/
 

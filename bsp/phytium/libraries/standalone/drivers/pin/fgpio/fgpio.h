@@ -31,7 +31,7 @@
 #include "ftypes.h"
 #include "fassert.h"
 #include "ferror_code.h"
-#include "sdkconfig.h"
+
 
 #ifdef __cplusplus
 extern "C"
@@ -45,14 +45,14 @@ extern "C"
 #define FGPIO_ERR_NOT_INIT       FT_MAKE_ERRCODE(ErrModBsp, ErrBspGpio, 0x2)
 #define FGPIO_ERR_ALREADY_INIT   FT_MAKE_ERRCODE(ErrModBsp, ErrBspGpio, 0x3)
 
-#if defined(CONFIG_TARGET_F2000_4) || defined(CONFIG_TARGET_D2000)
+#if defined(SOC_TARGET_FT2004) || defined(SOC_TARGET_D2000)
 #define FGPIO_VERSION_1 /* 用于FT2000/4和D2000平台的GPIO 0 ~ 1 */
-#elif defined(CONFIG_TARGET_E2000)
+#elif defined(SOC_TARGET_E2000) || defined(SOC_TARGET_PHYTIUMPI)
 #define FGPIO_VERSION_2 /* 用于E2000平台的GPIO 3 ~ 5 */
 #elif defined(TARDIGRADE)
 
 #else
-#error "Invalid target board !!!"
+#error "Invalid target soc !!!"
 #endif
 
 typedef enum

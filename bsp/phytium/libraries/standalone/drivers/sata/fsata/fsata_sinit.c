@@ -27,7 +27,6 @@
 
 #include "fsata.h"
 #include "fparameters.h"
-#include "sdkconfig.h"
 #include "fassert.h"
 
 /************************** Constant Definitions *****************************/
@@ -42,7 +41,7 @@
 
 extern const FSataConfig FSataPcieConfigTbl[PLAT_AHCI_HOST_MAX_COUNT];
 
-#if defined(CONFIG_TARGET_E2000)
+#if defined(SOC_TARGET_E2000)
     extern const FSataConfig FSataControllerConfigTbl[FSATA_NUM];
 #endif
 
@@ -58,7 +57,7 @@ const FSataConfig *FSataLookupConfig(u32 instance_id, u8 type)
     const FSataConfig *pconfig = NULL;
     if (type == FSATA_TYPE_CONTROLLER)
     {
-#if defined(CONFIG_TARGET_E2000)
+#if defined(SOC_TARGET_E2000)
         FASSERT(instance_id < FSATA_NUM);
         pconfig = &FSataControllerConfigTbl[instance_id];
 #endif

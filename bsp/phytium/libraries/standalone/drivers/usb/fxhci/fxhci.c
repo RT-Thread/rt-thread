@@ -23,11 +23,10 @@
  */
 
 #include <string.h>
-#include "fsleep.h"
-#include "fcache.h"
+
 
 #include "fparameters.h"
-#include "fdebug.h"
+#include "fdrivers_port.h"
 
 #include "fxhci_private.h"
 
@@ -501,7 +500,7 @@ static void FXhciReinit(FUsbHc *controller)
     xhci->ev_ring_table[0].seg_size = FXHCI_EVENT_RING_SIZE;
 
     /* pass event ring table to hardware */
-    WMB();
+    FDRIVER_DSB();
 
     /* Initialize primary interrupter */
     FXhciWriteRt32(&xhci->mmio, 0, FXHCI_REG_RT_IR_ERSTSZ, FXHCI_REG_RT_IR_ERSTSZ_MASK & 1); /* Segment Table Size = 1 */
@@ -713,7 +712,7 @@ static void FXhciEnqueueTrb(FXhciTransRing *const tr)
         const int tc = FXHCI_TRB_GET(TC, tr->cur);
         FXHCI_TRB_SET(CH, tr->cur, chain); /* Chain Bit */
 
-        WMB();
+        FDRIVER_DSB();
 
         FXHCI_TRB_SET(C, tr->cur, tr->pcs); /* Cycle Bit */
         tr->cur = (void *)(uintptr)(tr->cur->ptr_low);
@@ -740,7 +739,7 @@ static void FXhciRingDoorbell(FUsbEndpoint *const ep)
     FXhci *xhci = FXHCI_INST_GET(ep->dev->controller);
 
     /* Ensure all TRB changes are written to memory. */
-    WMB();
+    FDRIVER_DSB();
 
     FXhciWriteDb32(&xhci->mmio, ep->dev->address, FXhciEpId(ep));
 
@@ -914,8 +913,8 @@ static FXhciTransCode FXhciControl(FUsbDev *const dev, const FUsbDirection dir,
     /* flush cache of request data / transfer data before transfer */
     if (dalen > 0)
     {
-        FCacheDCacheInvalidateRange((uintptr)data, dalen);
-        FCacheDCacheInvalidateRange((uintptr)devreq, drlen);
+        FDriverDCacheRangeInvalidate((uintptr)data, dalen);
+        FDriverDCacheRangeInvalidate((uintptr)devreq, drlen);
     }
 
     for (i = 0; i < n_stages; ++i)
@@ -948,8 +947,8 @@ static FXhciTransCode FXhciControl(FUsbDev *const dev, const FUsbDirection dir,
     /* flush cache of request data / transfer data after transfer */
     if (dalen > 0)
     {
-        FCacheDCacheInvalidateRange((uintptr)data, dalen);
-        FCacheDCacheInvalidateRange((uintptr)devreq, drlen);
+        FDriverDCacheRangeInvalidate((uintptr)data, dalen);
+        FDriverDCacheRangeInvalidate((uintptr)devreq, drlen);
     }
 
     return transferred;
@@ -997,7 +996,7 @@ static FXhciTransCode FXhciBulk(FUsbEndpoint *const ep, const int size, u8 *cons
         }
     }
 
-    FCacheDCacheInvalidateRange((uintptr)data, size);
+    FDriverDCacheRangeInvalidate((uintptr)data, size);
 
     /* Enqueue transfer and ring doorbell */
     const unsigned mps = FXHCI_EC_GET(MPS, epctx);

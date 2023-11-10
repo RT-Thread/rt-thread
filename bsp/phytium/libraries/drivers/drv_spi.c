@@ -11,23 +11,24 @@
  * 2023-03-08  liqiaozhong  support 4 spis and qspi working together
  *
  */
+#include"rtconfig.h"
+#ifdef BSP_USING_SPI
+
 #include <rtthread.h>
 #include <rtdevice.h>
 #include "interrupt.h"
-
+#define LOG_TAG      "spi_drv"
+#include "drv_log.h"
 #include <string.h>
-#include "fdebug.h"
 
 #if defined(TARGET_E2000)
-#include "fparameters.h"
+    #include "fparameters.h"
 #endif
 
 #include "fcpu_info.h"
 #include "fkernel.h"
 #include "ftypes.h"
-#include "fsleep.h"
 
-#ifdef RT_USING_SPI
 
 #include <dfs_file.h>
 
@@ -56,16 +57,11 @@
 static struct rt_spi_device *spi_device = RT_NULL;
 static struct rt_event rx_done_event;
 /***************** Macros (Inline Functions) Definitions *********************/
-#define FSPIM_DEBUG_TAG "SPIM"
-#define FSPIM_ERROR(format, ...)   FT_DEBUG_PRINT_E(FSPIM_DEBUG_TAG, format, ##__VA_ARGS__)
-#define FSPIM_WARN(format, ...)   FT_DEBUG_PRINT_W(FSPIM_DEBUG_TAG, format, ##__VA_ARGS__)
-#define FSPIM_INFO(format, ...)    FT_DEBUG_PRINT_I(FSPIM_DEBUG_TAG, format, ##__VA_ARGS__)
-#define FSPIM_DEBUG(format, ...)   FT_DEBUG_PRINT_D(FSPIM_DEBUG_TAG, format, ##__VA_ARGS__)
 
 #define EVENT_RX_DONE (1 << 1)
 /*******************************Api Functions*********************************/
-static rt_err_t spim_configure(struct rt_spi_device* device, struct rt_spi_configuration* configuration);
-static rt_uint32_t spim_xfer(struct rt_spi_device* device, struct rt_spi_message* message);
+static rt_err_t spim_configure(struct rt_spi_device *device, struct rt_spi_configuration *configuration);
+static rt_uint32_t spim_xfer(struct rt_spi_device *device, struct rt_spi_message *message);
 
 static FError FSpimSetupInterrupt(FSpim *instance_p)
 {
@@ -75,16 +71,16 @@ static FError FSpimSetupInterrupt(FSpim *instance_p)
     u32 cpu_id = 0;
 
     GetCpuId(&cpu_id);
-    FSPIM_DEBUG("cpu_id is %d, irq_num is %d\n", cpu_id, config_p->irq_num);
+    LOG_D("cpu_id is %d, irq_num is %d\n", cpu_id, config_p->irq_num);
     config_p->irq_prority = 0xd0;
     rt_hw_interrupt_set_target_cpus(config_p->irq_num, cpu_id);
     rt_hw_interrupt_set_priority(config_p->irq_num, config_p->irq_prority);
 
     /* register intr callback */
     rt_hw_interrupt_install(config_p->irq_num,
-                    FSpimInterruptHandler,
-                    instance_p,
-                    NULL);
+                            FSpimInterruptHandler,
+                            instance_p,
+                            NULL);
 
     /* enable tx fifo overflow / rx overflow / rx full */
     FSpimMaskIrq(base_addr, FSPIM_IMR_ALL_BITS);
@@ -109,7 +105,7 @@ static const struct rt_spi_ops spim_ops =
 };
 
 static rt_err_t spim_configure(struct rt_spi_device *device,
-                              struct rt_spi_configuration *configuration)
+                               struct rt_spi_configuration *configuration)
 {
     FError ret = FSPIM_SUCCESS;
     RT_ASSERT(device != RT_NULL);
@@ -117,7 +113,7 @@ static rt_err_t spim_configure(struct rt_spi_device *device,
     struct drv_spi *user_data_cfg = device->parent.user_data;
     FSpimConfig input_cfg = *FSpimLookupConfig(user_data_cfg->spi_id);
 #ifdef RT_USING_SMART
-    input_cfg.base_addr = (uintptr)rt_ioremap((void*)input_cfg.base_addr, 0x1000);
+    input_cfg.base_addr = (uintptr)rt_ioremap((void *)input_cfg.base_addr, 0x1000);
 #endif
     FSpimConfig *set_input_cfg = &input_cfg;
 
@@ -151,12 +147,16 @@ static rt_err_t spim_configure(struct rt_spi_device *device,
     /* send spi_cfg to RT-Thread sys */
     ret = FSpimCfgInitialize(&user_data_cfg->spim_instance, &input_cfg);
     if (FSPIM_SUCCESS != ret)
+    {
         return RT_ERROR;
+    }
 
     /* irq setting */
     ret = FSpimSetupInterrupt(&user_data_cfg->spim_instance);
     if (FSPIM_SUCCESS != ret)
+    {
         return RT_ERROR;
+    }
     FSpimRegisterIntrruptHandler(&user_data_cfg->spim_instance, FSPIM_INTR_EVT_RX_DONE, rt_ft_send_event_done, NULL);
 
     return ret;
@@ -244,53 +244,53 @@ int ft_spi_init(void)
     rt_kprintf("Spi bus spi0 init\n");
 
     /* spi device init and attach to bus */
-    #ifdef RT_USING_SPIM0
-        _RTSpim0.spi_id = FSPI0_ID;
-        result = rt_spi_bus_attach_device(&_RTSpim0.device, "spi00", "spi0", &_RTSpim0);
-        spi_device = (struct rt_spi_device *)rt_device_find("spi00");
-        if (RT_NULL == spi_device)
-        {
-            rt_kprintf("Spi init failed -> can't find spi00 device!\n");
-            return RT_ERROR;
-        }
-        rt_kprintf("Spi master device spi00 init.\n");
-    #endif
+#ifdef RT_USING_SPIM0
+    _RTSpim0.spi_id = FSPI0_ID;
+    result = rt_spi_bus_attach_device(&_RTSpim0.device, "spi00", "spi0", &_RTSpim0);
+    spi_device = (struct rt_spi_device *)rt_device_find("spi00");
+    if (RT_NULL == spi_device)
+    {
+        rt_kprintf("Spi init failed -> can't find spi00 device!\n");
+        return RT_ERROR;
+    }
+    rt_kprintf("Spi master device spi00 init.\n");
+#endif
 
-    #ifdef RT_USING_SPIM1
-        _RTSpim1.spi_id = FSPI1_ID;
-        result = rt_spi_bus_attach_device(&_RTSpim1.device, "spi01", "spi0", &_RTSpim1);
-        spi_device = (struct rt_spi_device *)rt_device_find("spi01");
-        if (RT_NULL == spi_device)
-        {
-            rt_kprintf("Spi init failed -> can't find spi01 device!\n");
-            return RT_ERROR;
-        }
-        rt_kprintf("Spi master device spi01 init.\n");
-    #endif
+#ifdef RT_USING_SPIM1
+    _RTSpim1.spi_id = FSPI1_ID;
+    result = rt_spi_bus_attach_device(&_RTSpim1.device, "spi01", "spi0", &_RTSpim1);
+    spi_device = (struct rt_spi_device *)rt_device_find("spi01");
+    if (RT_NULL == spi_device)
+    {
+        rt_kprintf("Spi init failed -> can't find spi01 device!\n");
+        return RT_ERROR;
+    }
+    rt_kprintf("Spi master device spi01 init.\n");
+#endif
 
-    #ifdef RT_USING_SPIM2
-        _RTSpim2.spi_id = FSPI2_ID;
-        result = rt_spi_bus_attach_device(&_RTSpim2.device, "spi02", "spi0", &_RTSpim2);
-        spi_device = (struct rt_spi_device *)rt_device_find("spi02");
-        if (RT_NULL == spi_device)
-        {
-            rt_kprintf("Spi init failed -> can't find spi02 device!\n");
-            return RT_ERROR;
-        }
-        rt_kprintf("Spi master device spi02 init.\n");
-    #endif
+#ifdef RT_USING_SPIM2
+    _RTSpim2.spi_id = FSPI2_ID;
+    result = rt_spi_bus_attach_device(&_RTSpim2.device, "spi02", "spi0", &_RTSpim2);
+    spi_device = (struct rt_spi_device *)rt_device_find("spi02");
+    if (RT_NULL == spi_device)
+    {
+        rt_kprintf("Spi init failed -> can't find spi02 device!\n");
+        return RT_ERROR;
+    }
+    rt_kprintf("Spi master device spi02 init.\n");
+#endif
 
-    #ifdef RT_USING_SPIM3
-        _RTSpim3.spi_id = FSPI3_ID;
-        result = rt_spi_bus_attach_device(&_RTSpim3.device, "spi03", "spi0", &_RTSpim3);
-        spi_device = (struct rt_spi_device *)rt_device_find("spi03");
-        if (RT_NULL == spi_device)
-        {
-            rt_kprintf("Spi init failed -> can't find spi03 device!\n");
-            return RT_ERROR;
-        }
-        rt_kprintf("Spi master device spi03 init.\n");
-    #endif
+#ifdef RT_USING_SPIM3
+    _RTSpim3.spi_id = FSPI3_ID;
+    result = rt_spi_bus_attach_device(&_RTSpim3.device, "spi03", "spi0", &_RTSpim3);
+    spi_device = (struct rt_spi_device *)rt_device_find("spi03");
+    if (RT_NULL == spi_device)
+    {
+        rt_kprintf("Spi init failed -> can't find spi03 device!\n");
+        return RT_ERROR;
+    }
+    rt_kprintf("Spi master device spi03 init.\n");
+#endif
 
 
     return result;
@@ -338,4 +338,5 @@ static void fspim_test_sample(int argc, char *argv[])
     }
 }
 MSH_CMD_EXPORT(fspim_test_sample, "fspim test sample");
+
 #endif

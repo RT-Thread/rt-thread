@@ -29,7 +29,6 @@
 #include "fassert.h"
 #include "fqspi.h"
 #include "fqspi_hw.h"
-#include "fsleep.h"
 #include "fqspi_flash.h"
 
 #define FQSPI_DEBUG_TAG "FQSPI"

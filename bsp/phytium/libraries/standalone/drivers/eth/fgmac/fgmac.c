@@ -29,7 +29,7 @@
 #include "fio.h"
 #include "ferror_code.h"
 #include "ftypes.h"
-#include "fdebug.h"
+#include "fdrivers_port.h"
 #include "fassert.h"
 #include "fgmac_hw.h"
 #include "fgmac_phy.h"
@@ -507,4 +507,151 @@ static FError FGmacDmaConfigure(FGmac *instance_p)
     FGMAC_WRITE_REG32(base_addr, FGMAC_DMA_AXI_BUS_MOD_OFFSET, reg_val);
 
     return ret;
+}
+
+FError FGmacMulticastHashEnable(FGmac *instance_p)
+{
+    FASSERT(instance_p);
+    uintptr base_addr = instance_p->config.base_addr;
+    FError ret = FGMAC_SUCCESS;
+    u32 reg_val = 0;
+
+    /* MAC帧过滤寄存器 */
+    reg_val = FGMAC_READ_REG32(base_addr, FGMAC_FRAME_FILTER_OFFSET);
+
+    /* 去使能全部接收RA */
+    reg_val &= (~FGMAC_FRAME_FILTER_RA);
+
+    /* 开启散列多播*/
+    reg_val |= FGMAC_FRAME_FILTER_HMC;
+
+    FGMAC_WRITE_REG32(base_addr, FGMAC_FRAME_FILTER_OFFSET, reg_val);
+    return ret;
+
+}
+
+void FGmacClearIntrStatus(FGmac *instance_p)
+{
+    FASSERT(instance_p);
+    uintptr base_addr = instance_p->config.base_addr;
+    u32 reg_val = 0;
+
+    FGMAC_WRITE_REG32(base_addr, FGMAC_INTR_STATUS_OFFSET, reg_val);
+
+}
+/* reverse a u32 number */
+u32 Rev32(u32 x)
+{
+    u32 y = 0;
+
+    for (int i = 0; i < 32; i++)
+    {
+        if (x & (1 << i))
+        {
+            y |= 1 << (31 - i);
+        }
+    }
+    return (y);
+}
+
+FError FGmac_SetHash(FGmac *instance_p, void *mac_address)
+{
+
+    FASSERT(instance_p != NULL);
+    FASSERT(mac_address != NULL);
+    FASSERT(instance_p->is_ready == (u32)FT_COMPONENT_IS_READY);
+
+    u32 hash_addr;
+    u8 *aptr = (u8 *)(void *)mac_address;
+    u32 crc;
+    u32 hash_index;
+    FError status = FT_SUCCESS;
+    uintptr base_addr = instance_p->config.base_addr;
+
+    /* Be sure device has been stopped */
+    crc = 0xFFFFFFFF;
+
+    for (int j = 0; j < 6; j++)
+    {
+        crc = crc ^ (u32)aptr[j];
+
+        for (int i = 0; i < 8; i++)
+            if (crc & 1)
+            {
+                crc = (crc >> 1) ^ 0xEDB88320;    // Reversed 0x04C11DB7
+            }
+            else
+            {
+                crc = (crc >> 1);
+            }
+    }
+
+    hash_index = (Rev32(~crc) >> 26); // Get High order 6-bit in reversed/inverted crc
+
+    if (hash_index < (u32)32)
+    {
+        hash_addr = FGMAC_READ_REG32(base_addr, FGMAC_HASH_LOW_OFFSET);
+        hash_addr |= BIT(hash_index);
+        FGMAC_WRITE_REG32(base_addr, FGMAC_HASH_LOW_OFFSET, hash_addr);
+    }
+    else
+    {
+        hash_addr = FGMAC_READ_REG32(base_addr, FGMAC_HASH_HIGH_OFFSET);
+        hash_index -= 32;
+        hash_addr |= BIT(hash_index);
+        FGMAC_WRITE_REG32(base_addr, FGMAC_HASH_HIGH_OFFSET, hash_addr);
+    }
+
+    return status;
+
+}
+
+FError FGmac_DeleteHash(FGmac *instance_p, void *mac_address)
+{
+    FASSERT(instance_p != NULL);
+    FASSERT(mac_address != NULL);
+    FASSERT(instance_p->is_ready == (u32)FT_COMPONENT_IS_READY);
+
+    u32 hash_addr;
+    u8 *aptr = (u8 *)(void *)mac_address;
+    u32 crc;
+    u32 hash_index;
+    FError status = FT_SUCCESS;
+    uintptr base_addr = instance_p->config.base_addr;
+
+    /* Be sure device has been stopped */
+    crc = 0xFFFFFFFF;
+
+    for (int j = 0; j < 6; j++)
+    {
+        crc = crc ^ (u32)aptr[j];
+
+        for (int i = 0; i < 8; i++)
+            if (crc & 1)
+            {
+                crc = (crc >> 1) ^ 0xEDB88320;    // Reversed 0x04C11DB7
+            }
+            else
+            {
+                crc = (crc >> 1);
+            }
+    }
+
+    hash_index = (Rev32(~crc) >> 26); // Get High order 6-bit in reversed/inverted crc
+
+    if (hash_index < (u32)32)
+    {
+        hash_addr = FGMAC_READ_REG32(base_addr, FGMAC_HASH_LOW_OFFSET);
+        hash_addr &= (~BIT(hash_index));
+        FGMAC_WRITE_REG32(base_addr, FGMAC_HASH_LOW_OFFSET, hash_addr);
+    }
+    else
+    {
+        hash_addr = FGMAC_READ_REG32(base_addr, FGMAC_HASH_HIGH_OFFSET);
+        hash_index -= 32;
+        hash_addr &= (~BIT(hash_index));
+        FGMAC_WRITE_REG32(base_addr, FGMAC_HASH_HIGH_OFFSET, hash_addr);
+    }
+
+    return status;
 }

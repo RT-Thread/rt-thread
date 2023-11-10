@@ -28,7 +28,7 @@
 /***************************** Include Files *********************************/
 
 #include "ftypes.h"
-#include "fparameters_comm.h"
+#include "fparameters.h"
 #include "fdc.h"
 #include "ferror_code.h"
 #ifdef __cplusplus
@@ -123,10 +123,23 @@ typedef struct
 
 typedef struct
 {
-    /* 设置参数 */
+    u32 sample_rate; /*the sample rate of audio */
+    u32 sample_width; /*the sample width of audio*/
+    u32 link_rate; /*the link rate of media audio*/
+    u16 m; /*the audio freq of Dp */
+    u16 n; /*the audio freq of Dp */
+} FDpAudioConfig;
+
+typedef struct
+{
+    /* set the parameters of sync */
     FDpSyncParameter sync_parameter[DP_GOP_MAX_MODENUM];
 
+    /*the trans config*/
     FDpTransmissionConfig transmission_config;
+
+    /*audio config*/
+    FDpAudioConfig audio_config;
 
     /* 当前状态 */
     FDpStatus status;
@@ -153,38 +166,38 @@ typedef struct
 } FDpCtrl;
 
 /************************** Function Prototypes ******************************/
-
-/* dp init */
+/*Dp init */
 FError FDpInit(FDcCtrl *dc_config, FDpCtrl *dp_config, FDcDisplaySetting *gop_mode, u32 mode_id);
 
-/* Initialization of dp configuration parameter */
+/*Initialization of dp configuration parameter */
 void FDpConfigInit(FDpCtrl *instance_p, FDcDisplaySetting *gop_mode);
 
-/* Dp connect to sink */
+/*Dp connect to sink */
 FError FDpConnect(FDpCtrl *instance_p);
 
-/* Convert display resolution number to pixel clock frequence in megahertz unit */
+/*Convert display resolution number to pixel clock frequence in megahertz unit */
 FError FDpDistypeToPixelClock(u8 mode_Num);
 
-/* sets the output of the transmitter core to the specified training pattern */
+/*Sets the output of the transmitter core to the specified training pattern */
 void FDpConfigTxTrainingPattern(FDpCtrl *instance_p, FDpTrainPattern train_pattern);
 
-/* Force the transmitter core to use the alternate scrambler reset value */
+/*Force the transmitter core to use the alternate scrambler reset value */
 FError FDpConfigTraingPattern(FDpCtrl *instance_p);
 
-/* Config Main Stream Attributes.It is must to reset reset phy link after main
-  stream attributes configuration*/
+/*Config Main Stream Attributes.It is must to reset reset phy link after main
+stream attributes configuration*/
 void FDpConfigMainStreamAttr(FDpCtrl *instance_p, FDpTransmissionConfig *fdp_trans_config, FDpSyncParameter *fdp_sync_config);
 
 /*Set sink device to D0(normal operation mode).*/
 FError FDpWakeUpSink(FDpCtrl *instance_p);
 
+/*Dp link train.*/
 FError FDpStartLinkTrain(FDpCtrl *instance_p, u8 lane_count, u32 link_rate);
 
-/* Get the status of all lanes */
-FError FDpTxGetTrainingStatus(FDpCtrl *instance_p, u8 *train_status);
+/*Get the status of all lanes */
+void FDpTxGetTrainingStatus(FDpCtrl *instance_p, u8 *train_status);
 
-/* Determine whether retraining is needed at present.*/
+/*Determine whether retraining is needed at present.*/
 FError FDpSinkNeedReTrain(FDpCtrl *instance_p); /* not use*/
 
 /*Check the overall training status of the specified nameber of lanes and Tps type.*/

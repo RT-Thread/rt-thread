@@ -37,14 +37,7 @@ extern "C"
 /************************** Constant Definitions *****************************/
 #define FMEDIA_DC_SUCCESS FT_SUCCESS
 
-#define FDC_FALSE 0
-#define FDC_TRUE 1
-
-
-#define FDC_GOP_MAX_MODENUM 11
-
-#define FDC_PCCON_BUFFER_SIZE (1 * 1024 * 1024)
-
+#define FDC_GOP_MAX_MODENUM 11 /*the max num of dc sync table */
 /**************************** Type Definitions *******************************/
 typedef enum
 {
@@ -53,7 +46,7 @@ typedef enum
     FDC_MULTI_MODE_VERTICAL,
 
     FDC_MULTI_MODE
-} FDcMultiMode;
+} FDcMultiMode;/*the multimode of dc*/
 
 typedef enum
 {
@@ -64,15 +57,13 @@ typedef enum
     FDC_ROT_90,
     FDC_ROT_180,
     FDC_ROT_270,
-} FDcRotType;
-
+} FDcRotType;/*the rot angle of dc , use the default 0*/
 typedef enum
 {
     FDC_RESET_CORE = 0,
     FDC_RESET_AXI,
     FDC_RESET_AHB,
-} FDcRestType;
-
+} FDcRestType;/*the rest type*/
 typedef enum
 {
     FDC_PHY_DPI,
@@ -80,7 +71,6 @@ typedef enum
 } FDcPhyOutPutType;
 /*
  * Frame buffer mode.
- * Used in ConfFramebufferSetConfig()
  */
 typedef enum
 {
@@ -126,16 +116,16 @@ typedef enum
 
 typedef struct
 {
-    u32 instance_id;         /* dc id */
+    u32 instance_id;         /* DC id */
     uintptr dcch_baseaddr;   /* DC channel register address*/
     uintptr dcctrl_baseaddr; /* DC control register address */
-    u32 irq_num;             /* Device intrrupt id */
+    u32 irq_num;             /* Device interrupt id */
 } FDcConfig;
 
 typedef struct
 {
     u32 total_line;        /*  Total Number of  lines. */
-    u32 visble_line;       /*  Visible Number of  lines */     
+    u32 visble_line;       /*  Visible Number of  lines */
     u32 sync_start;        /* Start of  sync pulse. */
     u32 sync_end;          /* End of  sync pulse. */
     boolean sync_polarity; /* Polarity of the  sync pulse.1 - positive , 0 - negative.  */
@@ -145,7 +135,7 @@ typedef struct
 {
     FDcDisplayTimmingConfig horizontal;
     FDcDisplayTimmingConfig vertical;
-    boolean timing_dirty;      /* if value is FDC_TRUE , when using the FDcCoreCommit interface, the parameters will be updated  */
+    boolean timing_dirty;      /* if value is TRUE, when using the FDcCoreCommit interface, the parameters will be updated  */
 } FDcSyncParameter; /* horizontal and vertical  timing parameter */
 
 typedef struct
@@ -156,7 +146,7 @@ typedef struct
     u32 yuv_type;          /* unused , reserved */
     u32 stride;            /* memory image line span , --- FDcWidthToStride */
     u32 a_stride;          /* Processing is consistent with memory image line spans */
-    boolean fb_dirty;      /* if value is FDC_TRUE , when using the FDcCoreCommit interface, the parameters will be updated  */
+    boolean fb_dirty;      /* if value is TRUE , when using the FDcCoreCommit interface, the parameters will be updated  */
 } FDcDisplayFramebuffer;
 
 typedef struct
@@ -164,7 +154,7 @@ typedef struct
     boolean data_enable_polarity; /* Data Enable polarity , 1 - positive , 0 - negative. */
     boolean data_polarity;        /* Data polarity , 1 - positive , 0 - negative. */
     boolean clock_polarity;       /* Clock polarity , 1 - positive , 0 - negative. */
-    boolean panel_dirty;          /* if value is FDC_TRUE , when using the FDcCoreCommit interface, the parameters will be updated  */
+    boolean panel_dirty;          /* if value is TRUE, when using the FDcCoreCommit interface, the parameters will be updated  */
 } FDcDisplayPanel;
 
 typedef struct
@@ -172,7 +162,7 @@ typedef struct
 #define gama_index_max 256
     boolean gamma_enable; /*enable the gamma*/
     u32 gamma;
-    boolean gamma_dirty; /* if value is FDC_TRUE , when using the FDcCoreCommit interface, the parameters will be updated  */
+    boolean gamma_dirty; /* if value is TRUE, when using the FDcCoreCommit interface, the parameters will be updated  */
 } FDcDisplayGamma;
 
 typedef struct
@@ -183,7 +173,7 @@ typedef struct
     u32 blue_channel;     /* blue channel of dither*/
     u32 table_low;        /* the low level of dither*/
     u32 table_high;       /* the high level of dither*/
-    boolean dither_dirty; /* if value is FDC_TRUE , when using the FDcCoreCommit interface, the parameters will be updated  */
+    boolean dither_dirty; /* if value is TRUE, when using the FDcCoreCommit interface, the parameters will be updated  */
 } FDcDisplayDither;
 
 typedef struct
@@ -202,7 +192,7 @@ typedef struct
     u32 dpi_eor_assert[2]; /* params, unused*/
     u32 dpi_cs_assert[2];  /* params, unused*/
     boolean dpi_polarity;  /*the polarity of output data */
-    boolean output_dirty;  /* if value is FDC_TRUE , when using the FDcCoreCommit interface, the parameters will be updated  */
+    boolean output_dirty;  /* if value is TRUE, when using the FDcCoreCommit interface, the parameters will be updated  */
 
 } FDcDisplayDpMode;
 
@@ -217,7 +207,7 @@ typedef struct
     u32 hot_y;            /* Horizontal offset to cursor hotspot. */
     u32 bg_color;         /* The background color for Masked cursors . Format is ARGB8888. */
     u32 fg_color;         /* The foreground color for Masked cursors . Format is ARGB8888. */
-    boolean cursor_dirty; /* if value is FDC_TRUE , when using the FDcCoreCommit interface, the parameters will be updated  */
+    boolean cursor_dirty; /* if value is TRUE, when using the FDcCoreCommit interface, the parameters will be updated  */
 } FDcDisplayCursor;
 
 typedef struct
@@ -301,7 +291,7 @@ typedef struct
     FDcDisplayDpMode dp_mode;
     FDcDisplayVideoMode video_mode; /*the params of video*/
     FDcDisplayCursor cursor;
-    FDcDisplaySetting  display_setting[FDC_DISPLAY_ID_MAX_NUM];
+    FDcDisplaySetting  display_setting;
 } FDcCurrentConfig;
 
 typedef struct
@@ -314,7 +304,7 @@ typedef struct
 /************************** Function Prototypes ******************************/
 
 /*Initialization of dc configuration parameter */
-FError FDcConfigInit(FDcCtrl *instance_p, FDcDisplaySetting *gop_mode, u32 mode_id);
+FError FDcConfigInit(FDcCtrl *instance_p);
 
 /*config the panel data of core data */
 void FDcPanelSetConfig(FDcCtrl *instance_p, boolean data_enable_polarity, boolean data_polarity, boolean clock_Polarity);
@@ -345,7 +335,7 @@ void FDcGammaEnable(FDcCtrl *instance_p, boolean enable);
 
 /* config register about all dc parameters include video framebuffer  address and stride
 the main function interface to set the dc parameters*/
-FError FDcCoreCommit(FDcCtrl *instance_p, u32 mode_id);
+void FDcCoreCommit(FDcCtrl *instance_p, u32 mode_id);
 
 /* commit display configuration about timing parameter*/
 void FDcDisplayCommit(FDcCtrl *instance_p, u32 mode_id);
@@ -373,6 +363,13 @@ void FDcFramebufferCommit(FDcCtrl *instance_p);
 
 /* according to the width, calculate the stride */
 FError FDcWidthToStride(u32 width, u32 color_depth, u32 multi_mode);
+
+/* set the framebuffer config */
+void FDcModeChangeConfigBegin(FDcCtrl *instance_p);
+
+/* read the framebuffer config */
+void FDcModeChangeConfigEnd(FDcCtrl *instance_p);
+
 
 #ifdef __cplusplus
 }

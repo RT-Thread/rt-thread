@@ -47,12 +47,12 @@
  */
 
 #include <string.h>
-#include "fgeneric_timer.h"
+
 #include "fkernel.h"
 #include "fparameters.h"
 #include "ftypes.h"
 #include "ferror_code.h"
-#include "fdebug.h"
+#include "fdrivers_port.h"
 #include "fwdt.h"
 #include "fwdt_hw.h"
 
@@ -139,38 +139,6 @@ FError FWdtSetTimeout(FWdtCtrl *pctrl, u32 timeout)
     FWDT_WRITE_REG32(base_addr, FWDT_GWDT_WOR, (u32)(FWDT_CLK_FREQ_HZ * timeout));
 
     return FWDT_SUCCESS;
-}
-
-/**
- * @name: WdtGetTimeleft
- * @msg: Get Timeout countdown, in seconds
- * @param {FWdtCtrl} *pctrl, pointer to a WdtCtrl structure that contains
- *                the configuration information for the specified wdt module.
- * @return {u32} Timeout countdown, in seconds
- */
-u32 FWdtGetTimeleft(FWdtCtrl *pctrl)
-{
-    FASSERT(pctrl != NULL);
-    u64 timeleft = 0;
-    uintptr base_addr = pctrl->config.control_base_addr;
-
-    /* if the ws0 bit of register WCS is zero，indicates that there is one more timeout opportunity */
-    if (!(FWdtReadWCS(base_addr) & FWDT_GWDT_WCS_WS0))
-    {
-        timeleft += FWdtReadWOR(base_addr);
-    }
-
-    u32 wcvh = (u32)FWdtReadWCVH(base_addr);
-    u32 wcvl = (u32)FWdtReadWCVL(base_addr);
-    u64 wcv = (((u64)wcvh << 32) | wcvl);
-
-    timeleft += (wcv - GenericTimerRead(GENERIC_TIMER_ID0));
-
-    FWDT_DEBUG("wcvh=%llx, wcvl=%llx, wcv=%llx, timeleft=%llx\n", wcvh, wcvl, wcv, timeleft);
-
-    do_div(timeleft, FWDT_CLK_FREQ_HZ);
-
-    return (u32)timeleft;
 }
 
 /**

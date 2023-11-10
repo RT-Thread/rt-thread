@@ -11,10 +11,13 @@
  * 2023-07-14  liuzhihong   support RT-Smart
  */
 
-#include "board.h"
+#include"rtconfig.h"
 
 #ifdef BSP_USING_ETH
 
+#include "board.h"
+#define LOG_TAG      "xmac_drv"
+#include "drv_log.h"
 #include "mm_aspace.h"
 #ifdef RT_USING_SMART
     #include "ioremap.h"
@@ -27,17 +30,6 @@
 #endif
 
 #include "drv_xmac.h"
-
-
-#define FXMAC_OS_XMAC_DEBUG_TAG "FXMAC_OS_XMAC"
-#define FXMAC_OS_XMAC_PRINT_E(format, ...) FT_DEBUG_PRINT_E(FXMAC_OS_XMAC_DEBUG_TAG, format, ##__VA_ARGS__)
-#define FXMAC_OS_XMAC_PRINT_I(format, ...) FT_DEBUG_PRINT_I(FXMAC_OS_XMAC_DEBUG_TAG, format, ##__VA_ARGS__)
-#define FXMAC_OS_XMAC_PRINT_D(format, ...) FT_DEBUG_PRINT_D(FXMAC_OS_XMAC_DEBUG_TAG, format, ##__VA_ARGS__)
-#define FXMAC_OS_XMAC_PRINT_W(format, ...) FT_DEBUG_PRINT_W(FXMAC_OS_XMAC_DEBUG_TAG, format, ##__VA_ARGS__)
-
-#define LOG_E(format, ...) FT_DEBUG_PRINT_E(FXMAC_OS_XMAC_DEBUG_TAG, format, ##__VA_ARGS__)
-#define LOG_I(format, ...) FT_DEBUG_PRINT_I(FXMAC_OS_XMAC_DEBUG_TAG, format, ##__VA_ARGS__)
-#define LOG_D(format, ...) FT_DEBUG_PRINT_D(FXMAC_OS_XMAC_DEBUG_TAG, format, ##__VA_ARGS__)
 
 #define FXMAC_BD_TO_INDEX(ringptr, bdptr) \
     (((uintptr)bdptr - (uintptr)(ringptr)->base_bd_addr) / (ringptr)->separation)
@@ -182,7 +174,7 @@ void FXmacProcessSentBds(FXmacOs *instance_p, FXmacBdRing *txring)
         status = FXmacBdRingFree(txring, n_bds, txbdset);
         if (status != FT_SUCCESS)
         {
-            FXMAC_OS_XMAC_PRINT_I("Failure while freeing in Tx Done ISR.");
+            LOG_I("Failure while freeing in Tx Done ISR.");
         }
     }
     return;
@@ -228,7 +220,7 @@ FError FXmacSgsend(FXmacOs *instance_p, struct pbuf *p)
     status = FXmacBdRingAlloc(txring, n_pbufs, &txbdset);
     if (status != FT_SUCCESS)
     {
-        FXMAC_OS_XMAC_PRINT_I("sgsend: Error allocating TxBD.");
+        LOG_I("sgsend: Error allocating TxBD.");
         return ERR_GENERAL;
     }
 
@@ -238,9 +230,9 @@ FError FXmacSgsend(FXmacOs *instance_p, struct pbuf *p)
 
         if (instance_p->buffer.tx_pbufs_storage[bdindex])
         {
-            FXMAC_OS_XMAC_PRINT_I("txbd %p, txring->base_bd_addr %p", txbd, txring->base_bd_addr);
-            FXMAC_OS_XMAC_PRINT_I("PBUFS not available bdindex is %d ", bdindex);
-            FXMAC_OS_XMAC_PRINT_I("instance_p->buffer.tx_pbufs_storage[bdindex] %p ", instance_p->buffer.tx_pbufs_storage[bdindex]);
+            LOG_I("txbd %p, txring->base_bd_addr %p", txbd, txring->base_bd_addr);
+            LOG_I("PBUFS not available bdindex is %d ", bdindex);
+            LOG_I("instance_p->buffer.tx_pbufs_storage[bdindex] %p ", instance_p->buffer.tx_pbufs_storage[bdindex]);
             return ERR_GENERAL;
         }
 
@@ -298,7 +290,7 @@ FError FXmacSgsend(FXmacOs *instance_p, struct pbuf *p)
     status = FXmacBdRingToHw(txring, n_pbufs, txbdset);
     if (status != FT_SUCCESS)
     {
-        FXMAC_OS_XMAC_PRINT_I("sgsend: Error submitting TxBD.");
+        LOG_I("sgsend: Error submitting TxBD.");
         return ERR_GENERAL;
     }
     /* Start transmit */
@@ -340,27 +332,27 @@ void SetupRxBds(FXmacOs *instance_p, FXmacBdRing *rxring)
             lwip_stats.link.memerr++;
             lwip_stats.link.drop++;
 #endif
-            FXMAC_OS_XMAC_PRINT_I("Unable to alloc pbuf in recv_handler.");
+            LOG_I("Unable to alloc pbuf in recv_handler.");
             return;
         }
         status = FXmacBdRingAlloc(rxring, 1, &rxbd);
         if (status != FT_SUCCESS)
         {
-            FXMAC_OS_XMAC_PRINT_I("SetupRxBds: Error allocating RxBD.");
+            LOG_I("SetupRxBds: Error allocating RxBD.");
             pbuf_free(p);
             return;
         }
         status = FXmacBdRingToHw(rxring, 1, rxbd);
         if (status != FT_SUCCESS)
         {
-            FXMAC_OS_XMAC_PRINT_I("Error committing RxBD to hardware: ");
+            LOG_I("Error committing RxBD to hardware: ");
             if (status == FXMAC_ERR_SG_LIST)
             {
-                FXMAC_OS_XMAC_PRINT_I("XST_DMA_SG_LIST_ERROR: this function was called out of sequence with FXmacBdRingAlloc().");
+                LOG_I("XST_DMA_SG_LIST_ERROR: this function was called out of sequence with FXmacBdRingAlloc().");
             }
             else
             {
-                FXMAC_OS_XMAC_PRINT_I("Set of BDs was rejected because the first BD did not have its start-of-packet bit set, or the last BD did not have its end-of-packet bit set, or any one of the BD set has 0 as length value.");
+                LOG_I("Set of BDs was rejected because the first BD did not have its start-of-packet bit set, or the last BD did not have its end-of-packet bit set, or any one of the BD set has 0 as length value.");
             }
 
             pbuf_free(p);
@@ -525,11 +517,11 @@ FError FXmacInitDma(FXmacOs *instance_p)
 
     rxringptr = &FXMAC_GET_RXRING(instance_p->instance);
     txringptr = &FXMAC_GET_TXRING(instance_p->instance);
-    FXMAC_OS_XMAC_PRINT_I("rxringptr: 0x%08x", rxringptr);
-    FXMAC_OS_XMAC_PRINT_I("txringptr: 0x%08x", txringptr);
+    LOG_I("rxringptr: 0x%08x", rxringptr);
+    LOG_I("txringptr: 0x%08x", txringptr);
 
-    FXMAC_OS_XMAC_PRINT_I("rx_bdspace: %p ", instance_p->buffer.rx_bdspace);
-    FXMAC_OS_XMAC_PRINT_I("tx_bdspace: %p ", instance_p->buffer.tx_bdspace);
+    LOG_I("rx_bdspace: %p ", instance_p->buffer.rx_bdspace);
+    LOG_I("tx_bdspace: %p ", instance_p->buffer.tx_bdspace);
 
     /* Setup RxBD space. */
     FXMAC_BD_CLEAR(&bdtemplate);
@@ -545,14 +537,14 @@ FError FXmacInitDma(FXmacOs *instance_p)
 
     if (status != FT_SUCCESS)
     {
-        FXMAC_OS_XMAC_PRINT_I("Error setting up RxBD space.");
+        LOG_I("Error setting up RxBD space.");
         return ERR_IF;
     }
 
     status = FXmacBdRingClone(rxringptr, &bdtemplate, FXMAC_RECV);
     if (status != FT_SUCCESS)
     {
-        FXMAC_OS_XMAC_PRINT_I("Error initializing RxBD space.");
+        LOG_I("Error initializing RxBD space.");
         return ERR_IF;
     }
 
@@ -600,13 +592,13 @@ FError FXmacInitDma(FXmacOs *instance_p)
             lwip_stats.link.memerr++;
             lwip_stats.link.drop++;
 #endif
-            FXMAC_OS_XMAC_PRINT_E("Unable to alloc pbuf in InitDma.");
+            LOG_E("Unable to alloc pbuf in InitDma.");
             return ERR_IF;
         }
         status = FXmacBdRingAlloc(rxringptr, 1, &rxbd);
         if (status != FT_SUCCESS)
         {
-            FXMAC_OS_XMAC_PRINT_E("InitDma: Error allocating RxBD.");
+            LOG_E("InitDma: Error allocating RxBD.");
             pbuf_free(p);
             return ERR_IF;
         }
@@ -614,7 +606,7 @@ FError FXmacInitDma(FXmacOs *instance_p)
         status = FXmacBdRingToHw(rxringptr, 1, rxbd);
         if (status != FT_SUCCESS)
         {
-            FXMAC_OS_XMAC_PRINT_E("Error: committing RxBD to HW.");
+            LOG_E("Error: committing RxBD to HW.");
             pbuf_free(p);
             FXmacBdRingUnAlloc(rxringptr, 1, rxbd);
             return ERR_IF;
@@ -692,7 +684,7 @@ static void FreeTxRxPbufs(FXmacOs *instance_p)
         /* return one packet from receive q */
         p = (struct pbuf *)FXmacPqDequeue(&instance_p->recv_q);
         pbuf_free(p);
-        FXMAC_OS_XMAC_PRINT_E("Delete queue %p", p);
+        LOG_E("Delete queue %p", p);
         rx_queue_len--;
     }
     FreeOnlyTxPbufs(instance_p);
@@ -711,7 +703,7 @@ static void FXmacHandleDmaTxError(FXmacOs *instance_p)
 
     if (status != FT_SUCCESS)
     {
-        FXMAC_OS_XMAC_PRINT_E("In %s:EmacPs Configuration Failed....", __func__);
+        LOG_E("In %s:EmacPs Configuration Failed....", __func__);
     }
 
     /* initialize the mac */
@@ -757,52 +749,52 @@ void FXmacErrorHandler(void *arg, u8 direction, u32 error_word)
     {
         switch (direction)
         {
-        case FXMAC_RECV:
-            if (error_word & FXMAC_RXSR_HRESPNOK_MASK)
-            {
-                FXMAC_OS_XMAC_PRINT_I("Receive DMA error.");
-                FXmacHandleDmaTxError(instance_p);
-            }
-            if (error_word & FXMAC_RXSR_RXOVR_MASK)
-            {
-                FXMAC_OS_XMAC_PRINT_I("Receive over run.");
-                FXmacRecvHandler(instance_p);
-                SetupRxBds(instance_p, rxring);
-            }
-            if (error_word & FXMAC_RXSR_BUFFNA_MASK)
-            {
-                FXMAC_OS_XMAC_PRINT_I("Receive buffer not available.");
-                FXmacRecvHandler(arg);
-                SetupRxBds(instance_p, rxring);
-            }
-            break;
-        case FXMAC_SEND:
-            if (error_word & FXMAC_TXSR_HRESPNOK_MASK)
-            {
-                FXMAC_OS_XMAC_PRINT_I("Transmit DMA error.");
-                FXmacHandleDmaTxError(instance_p);
-            }
-            if (error_word & FXMAC_TXSR_URUN_MASK)
-            {
-                FXMAC_OS_XMAC_PRINT_I("Transmit under run.");
-                FXmacHandleTxErrors(instance_p);
-            }
-            if (error_word & FXMAC_TXSR_BUFEXH_MASK)
-            {
-                FXMAC_OS_XMAC_PRINT_I("Transmit buffer exhausted.");
-                FXmacHandleTxErrors(instance_p);
-            }
-            if (error_word & FXMAC_TXSR_RXOVR_MASK)
-            {
-                FXMAC_OS_XMAC_PRINT_I("Transmit retry excessed limits.");
-                FXmacHandleTxErrors(instance_p);
-            }
-            if (error_word & FXMAC_TXSR_FRAMERX_MASK)
-            {
-                FXMAC_OS_XMAC_PRINT_I("Transmit collision.");
-                FXmacProcessSentBds(instance_p, txring);
-            }
-            break;
+            case FXMAC_RECV:
+                if (error_word & FXMAC_RXSR_HRESPNOK_MASK)
+                {
+                    LOG_I("Receive DMA error.");
+                    FXmacHandleDmaTxError(instance_p);
+                }
+                if (error_word & FXMAC_RXSR_RXOVR_MASK)
+                {
+                    LOG_I("Receive over run.");
+                    FXmacRecvHandler(instance_p);
+                    SetupRxBds(instance_p, rxring);
+                }
+                if (error_word & FXMAC_RXSR_BUFFNA_MASK)
+                {
+                    LOG_I("Receive buffer not available.");
+                    FXmacRecvHandler(arg);
+                    SetupRxBds(instance_p, rxring);
+                }
+                break;
+            case FXMAC_SEND:
+                if (error_word & FXMAC_TXSR_HRESPNOK_MASK)
+                {
+                    LOG_I("Transmit DMA error.");
+                    FXmacHandleDmaTxError(instance_p);
+                }
+                if (error_word & FXMAC_TXSR_URUN_MASK)
+                {
+                    LOG_I("Transmit under run.");
+                    FXmacHandleTxErrors(instance_p);
+                }
+                if (error_word & FXMAC_TXSR_BUFEXH_MASK)
+                {
+                    LOG_I("Transmit buffer exhausted.");
+                    FXmacHandleTxErrors(instance_p);
+                }
+                if (error_word & FXMAC_TXSR_RXOVR_MASK)
+                {
+                    LOG_I("Transmit retry excessed limits.");
+                    FXmacHandleTxErrors(instance_p);
+                }
+                if (error_word & FXMAC_TXSR_FRAMERX_MASK)
+                {
+                    LOG_I("Transmit collision.");
+                    FXmacProcessSentBds(instance_p, txring);
+                }
+                break;
         }
     }
 }
@@ -822,34 +814,34 @@ void FXmacLinkChange(void *arg)
 
     if (xmac_p->config.interface == FXMAC_PHY_INTERFACE_MODE_SGMII)
     {
-        FXMAC_OS_XMAC_PRINT_I("xmac_p->config.base_address is %p", xmac_p->config.base_address);
+        LOG_I("xmac_p->config.base_address is %p", xmac_p->config.base_address);
         ctrl = FXMAC_READREG32(xmac_p->config.base_address, FXMAC_PCS_AN_LP_OFFSET);
         link = (ctrl & FXMAC_PCS_LINK_PARTNER_NEXT_PAGE_STATUS) >> 15;
-        FXMAC_OS_XMAC_PRINT_I("Link status is 0x%x", link);
+        LOG_I("Link status is 0x%x", link);
 
         switch (link)
         {
-        case 0:
-            link_status = FXMAC_LINKDOWN;
-            break;
-        case 1:
-            link_status = FXMAC_LINKUP;
-            break;
-        default:
-            FXMAC_OS_XMAC_PRINT_E("Link status is error 0x%x ", link);
-            return;
+            case 0:
+                link_status = FXMAC_LINKDOWN;
+                break;
+            case 1:
+                link_status = FXMAC_LINKUP;
+                break;
+            default:
+                LOG_E("Link status is error 0x%x ", link);
+                return;
         }
 
         if (xmac_p->config.auto_neg == 0)
         {
             if (link_status == FXMAC_LINKUP)
             {
-                FXMAC_OS_XMAC_PRINT_I("No neg link up (%d/%s)", xmac_p->config.speed, xmac_p->config.duplex == 1 ? "FULL" : "Half");
+                LOG_I("No neg link up (%d/%s)", xmac_p->config.speed, xmac_p->config.duplex == 1 ? "FULL" : "Half");
                 xmac_p->link_status = FXMAC_NEGOTIATING;
             }
             else
             {
-                FXMAC_OS_XMAC_PRINT_I("No neg link down.");
+                LOG_I("No neg link down.");
                 xmac_p->link_status = FXMAC_LINKDOWN;
             }
         }
@@ -874,14 +866,14 @@ void FXmacLinkChange(void *arg)
 
         if (link_status != xmac_p->link_status)
         {
-            FXMAC_OS_XMAC_PRINT_I("Sgmii link_status has changed.");
+            LOG_I("Sgmii link_status has changed.");
         }
 
         /* add erase NCFGR config */
         if ((speed != xmac_p->config.speed) || (duplex != xmac_p->config.duplex))
         {
-            FXMAC_OS_XMAC_PRINT_I("Sgmii link_status has changed.");
-            FXMAC_OS_XMAC_PRINT_I("New speed is %d, duplex is %d", speed, duplex);
+            LOG_I("Sgmii link_status has changed.");
+            LOG_I("New speed is %d, duplex is %d", speed, duplex);
         }
 
         if (link_status == FXMAC_LINKUP)
@@ -889,13 +881,13 @@ void FXmacLinkChange(void *arg)
             if (link_status != xmac_p->link_status)
             {
                 xmac_p->link_status = FXMAC_NEGOTIATING;
-                FXMAC_OS_XMAC_PRINT_I("Need NEGOTIATING.");
+                LOG_I("Need NEGOTIATING.");
             }
         }
         else
         {
             xmac_p->link_status = link_status;
-            FXMAC_OS_XMAC_PRINT_I("Change status is 0x%x", link_status);
+            LOG_I("Change status is 0x%x", link_status);
         }
     }
 }
@@ -962,34 +954,34 @@ enum lwip_port_link_status FXmacLwipPortLinkDetect(FXmacOs *instance_p)
 
     switch (xmac_p->link_status)
     {
-    case FXMAC_LINKUP:
-        return ETH_LINK_UP;
-    case FXMAC_LINKDOWN:
-        xmac_p->link_status = FXMAC_NEGOTIATING;
-        FXMAC_OS_XMAC_PRINT_D("Ethernet Link down.");
-        return ETH_LINK_DOWN;
-    case FXMAC_NEGOTIATING:
-        if ((phy_link_status == FXMAC_LINKUP) && FXmacPhyAutonegStatus(xmac_p, xmac_p->phy_address))
-        {
-            err_t phy_ret;
-            phy_ret = FXmacPhyInit(xmac_p, xmac_p->config.speed, xmac_p->config.duplex, xmac_p->config.auto_neg);
-
-            if (phy_ret != FT_SUCCESS)
-            {
-                FXMAC_OS_XMAC_PRINT_E("FXmacPhyInit is error.");
-                return ETH_LINK_DOWN;
-            }
-            FXmacSelectClk(xmac_p);
-            FXmacInitInterface(xmac_p);
-
-            /* Initiate Phy setup to get link speed */
-            xmac_p->link_status = FXMAC_LINKUP;
-            FXMAC_OS_XMAC_PRINT_D("Ethernet Link up.");
+        case FXMAC_LINKUP:
             return ETH_LINK_UP;
-        }
-        return ETH_LINK_DOWN;
-    default:
-        return ETH_LINK_DOWN;
+        case FXMAC_LINKDOWN:
+            xmac_p->link_status = FXMAC_NEGOTIATING;
+            LOG_D("Ethernet Link down.");
+            return ETH_LINK_DOWN;
+        case FXMAC_NEGOTIATING:
+            if ((phy_link_status == FXMAC_LINKUP) && FXmacPhyAutonegStatus(xmac_p, xmac_p->phy_address))
+            {
+                err_t phy_ret;
+                phy_ret = FXmacPhyInit(xmac_p, xmac_p->config.speed, xmac_p->config.duplex, xmac_p->config.auto_neg);
+
+                if (phy_ret != FT_SUCCESS)
+                {
+                    LOG_E("FXmacPhyInit is error.");
+                    return ETH_LINK_DOWN;
+                }
+                FXmacSelectClk(xmac_p);
+                FXmacInitInterface(xmac_p);
+
+                /* Initiate Phy setup to get link speed */
+                xmac_p->link_status = FXMAC_LINKUP;
+                LOG_D("Ethernet Link up.");
+                return ETH_LINK_UP;
+            }
+            return ETH_LINK_DOWN;
+        default:
+            return ETH_LINK_DOWN;
     }
 }
 
@@ -1009,7 +1001,7 @@ enum lwip_port_link_status FXmacPhyReconnect(FXmacOs *instance_p)
             phy_ret = FXmacPhyInit(xmac_p, xmac_p->config.speed, xmac_p->config.duplex, xmac_p->config.auto_neg);
             if (phy_ret != FT_SUCCESS)
             {
-                FXMAC_OS_XMAC_PRINT_I("FXmacPhyInit is error.");
+                LOG_I("FXmacPhyInit is error.");
                 rt_hw_interrupt_umask(xmac_p->config.queue_irq_num[0]);
                 return ETH_LINK_DOWN;
             }
@@ -1022,12 +1014,12 @@ enum lwip_port_link_status FXmacPhyReconnect(FXmacOs *instance_p)
 
         switch (xmac_p->link_status)
         {
-        case FXMAC_LINKDOWN:
-            return ETH_LINK_DOWN;
-        case FXMAC_LINKUP:
-            return ETH_LINK_UP;
-        default:
-            return ETH_LINK_DOWN;
+            case FXMAC_LINKDOWN:
+                return ETH_LINK_DOWN;
+            case FXMAC_LINKUP:
+                return ETH_LINK_UP;
+            default:
+                return ETH_LINK_DOWN;
         }
     }
     else if ((xmac_p->config.interface == FXMAC_PHY_INTERFACE_MODE_RMII) || (xmac_p->config.interface == FXMAC_PHY_INTERFACE_MODE_RGMII))
@@ -1038,12 +1030,12 @@ enum lwip_port_link_status FXmacPhyReconnect(FXmacOs *instance_p)
     {
         switch (xmac_p->link_status)
         {
-        case FXMAC_LINKDOWN:
-            return ETH_LINK_DOWN;
-        case FXMAC_LINKUP:
-            return ETH_LINK_UP;
-        default:
-            return ETH_LINK_DOWN;
+            case FXMAC_LINKDOWN:
+                return ETH_LINK_DOWN;
+            case FXMAC_LINKUP:
+                return ETH_LINK_UP;
+            default:
+                return ETH_LINK_DOWN;
         }
     }
 }
@@ -1082,7 +1074,7 @@ static void FXmacInitOnError(FXmacOs *instance_p)
     status = FXmacSetMacAddress(xmac_p, (void *)(instance_p->hwaddr), 1);
     if (status != FT_SUCCESS)
     {
-        FXMAC_OS_XMAC_PRINT_E("In %s:Emac Mac Address set failed...", __func__);
+        LOG_E("In %s:Emac Mac Address set failed...", __func__);
     }
 }
 
@@ -1107,11 +1099,11 @@ FError FXmacOsInit(FXmacOs *instance_p)
     FASSERT(instance_p->mac_config.instance_id < FXMAC_NUM);
 
     xmac_p = &instance_p->instance;
-    FXMAC_OS_XMAC_PRINT_I("instance_id IS %d", instance_p->mac_config.instance_id);
+    LOG_I("instance_id IS %d", instance_p->mac_config.instance_id);
     mac_config_p = FXmacLookupConfig(instance_p->mac_config.instance_id);
     if (mac_config_p == NULL)
     {
-        FXMAC_OS_XMAC_PRINT_E("FXmacLookupConfig is error , instance_id is %d", instance_p->mac_config.instance_id);
+        LOG_E("FXmacLookupConfig is error , instance_id is %d", instance_p->mac_config.instance_id);
         return FREERTOS_XMAC_INIT_ERROR;
     }
 #ifdef RT_USING_SMART
@@ -1120,21 +1112,21 @@ FError FXmacOsInit(FXmacOs *instance_p)
     mac_config = *mac_config_p;
     switch (instance_p->mac_config.interface)
     {
-    case FXMAC_OS_INTERFACE_SGMII:
-        interface = FXMAC_PHY_INTERFACE_MODE_SGMII;
-        FXMAC_OS_XMAC_PRINT_I("SGMII select.");
-        break;
-    case FXMAC_OS_INTERFACE_RMII:
-        interface = FXMAC_PHY_INTERFACE_MODE_RMII;
-        FXMAC_OS_XMAC_PRINT_I("RMII select.");
-        break;
-    case FXMAC_OS_INTERFACE_RGMII:
-        FXMAC_OS_XMAC_PRINT_I("RGMII select.");
-        interface = FXMAC_PHY_INTERFACE_MODE_RGMII;
-        break;
-    default:
-        FXMAC_OS_XMAC_PRINT_E("Update interface is error , interface is %d", instance_p->mac_config.instance_id);
-        return FREERTOS_XMAC_INIT_ERROR;
+        case FXMAC_OS_INTERFACE_SGMII:
+            interface = FXMAC_PHY_INTERFACE_MODE_SGMII;
+            LOG_I("SGMII select.");
+            break;
+        case FXMAC_OS_INTERFACE_RMII:
+            interface = FXMAC_PHY_INTERFACE_MODE_RMII;
+            LOG_I("RMII select.");
+            break;
+        case FXMAC_OS_INTERFACE_RGMII:
+            LOG_I("RGMII select.");
+            interface = FXMAC_PHY_INTERFACE_MODE_RGMII;
+            break;
+        default:
+            LOG_E("Update interface is error , interface is %d", instance_p->mac_config.instance_id);
+            return FREERTOS_XMAC_INIT_ERROR;
     }
     mac_config.interface = interface;
 
@@ -1149,34 +1141,34 @@ FError FXmacOsInit(FXmacOs *instance_p)
 
     switch (instance_p->mac_config.phy_speed)
     {
-    case FXMAC_PHY_SPEED_10M:
-        mac_config.speed = FXMAC_SPEED_10;
-        break;
-    case FXMAC_PHY_SPEED_100M:
-        mac_config.speed = FXMAC_SPEED_100;
-        break;
-    case FXMAC_PHY_SPEED_1000M:
-        mac_config.speed = FXMAC_SPEED_1000;
-        break;
-    default:
-        FXMAC_OS_XMAC_PRINT_E("Setting speed is not valid , speed is %d", instance_p->mac_config.phy_speed);
-        return FREERTOS_XMAC_INIT_ERROR;
+        case FXMAC_PHY_SPEED_10M:
+            mac_config.speed = FXMAC_SPEED_10;
+            break;
+        case FXMAC_PHY_SPEED_100M:
+            mac_config.speed = FXMAC_SPEED_100;
+            break;
+        case FXMAC_PHY_SPEED_1000M:
+            mac_config.speed = FXMAC_SPEED_1000;
+            break;
+        default:
+            LOG_E("Setting speed is not valid , speed is %d", instance_p->mac_config.phy_speed);
+            return FREERTOS_XMAC_INIT_ERROR;
     }
 
     switch (instance_p->mac_config.phy_duplex)
     {
-    case FXMAC_PHY_HALF_DUPLEX:
-        mac_config.duplex = 0;
-        break;
-    case FXMAC_PHY_FULL_DUPLEX:
-        mac_config.duplex = 1;
-        break;
+        case FXMAC_PHY_HALF_DUPLEX:
+            mac_config.duplex = 0;
+            break;
+        case FXMAC_PHY_FULL_DUPLEX:
+            mac_config.duplex = 1;
+            break;
     }
 
     status = FXmacCfgInitialize(xmac_p, &mac_config);
     if (status != FT_SUCCESS)
     {
-        FXMAC_OS_XMAC_PRINT_E("In %s:EmacPs Configuration Failed....", __func__);
+        LOG_E("In %s:EmacPs Configuration Failed....", __func__);
     }
 
     if (instance_p->config & FXMAC_OS_CONFIG_JUMBO)
@@ -1198,7 +1190,7 @@ FError FXmacOsInit(FXmacOs *instance_p)
     status = FXmacSetMacAddress(xmac_p, (void *)(instance_p->hwaddr), 0);
     if (status != FT_SUCCESS)
     {
-        FXMAC_OS_XMAC_PRINT_E("In %s:Emac Mac Address set failed...", __func__);
+        LOG_E("In %s:Emac Mac Address set failed...", __func__);
     }
 
     /* close fcs check */
@@ -1211,7 +1203,7 @@ FError FXmacOsInit(FXmacOs *instance_p)
     status = FXmacPhyInit(xmac_p, xmac_p->config.speed, xmac_p->config.duplex, xmac_p->config.auto_neg);
     if (status != FT_SUCCESS)
     {
-        FXMAC_OS_XMAC_PRINT_W("FXmacPhyInit is error.");
+        LOG_W("FXmacPhyInit is error.");
     }
 
     FXmacSelectClk(xmac_p);
@@ -1285,7 +1277,7 @@ FError FXmacOsTx(FXmacOs *instance_p, void *tx_buf)
     FASSERT(instance_p != NULL);
     if (tx_buf == NULL)
     {
-        FXMAC_OS_XMAC_PRINT_E("tx_buf is null.");
+        LOG_E("tx_buf is null.");
         return FREERTOS_XMAC_PARAM_ERROR;
     }
 
@@ -1310,7 +1302,7 @@ FError FXmacOsTx(FXmacOs *instance_p, void *tx_buf)
 #if LINK_STATS
         lwip_stats.link.drop++;
 #endif
-        FXMAC_OS_XMAC_PRINT_E("Pack dropped, no space.");
+        LOG_E("Pack dropped, no space.");
         ret = FREERTOS_XMAC_NO_VALID_SPACE;
     }
 
@@ -1421,19 +1413,21 @@ static rt_err_t rt_xmac_control(rt_device_t dev, int cmd, void *args)
     }
     switch (cmd)
     {
-    case NIOCTL_GADDR:
-        /* get mac address */
-        if (args)
-        {
-            rt_memcpy(args, pOsMac->hwaddr, 6);
-        }
+        case NIOCTL_GADDR:
+            /* get mac address */
+            if (args)
+            {
+                rt_memcpy(args, pOsMac->hwaddr, 6);
+            }
 
-        else
-            return -RT_ERROR;
-        break;
+            else
+            {
+                return -RT_ERROR;
+            }
+            break;
 
-    default:
-        break;
+        default:
+            break;
     }
 
     return RT_EOK;
@@ -1535,23 +1529,23 @@ static void ethernet_link_thread(void *Args)
 
         switch (eth_link_detect(pOsMac))
         {
-        case ETH_LINK_UP:
-            if (is_link_up == 0)
-            {
-                rt_kprintf("link up\n");
-                is_link_up = 1;
-                eth_device_linkchange(&pOsMac->parent, RT_TRUE);
-            }
-            break;
-        case ETH_LINK_DOWN:
-        default:
-            if (is_link_up == 1)
-            {
-                rt_kprintf("link down\n");
-                is_link_up = 0;
-                eth_device_linkchange(&pOsMac->parent, RT_FALSE);
-            }
-            break;
+            case ETH_LINK_UP:
+                if (is_link_up == 0)
+                {
+                    rt_kprintf("link up\n");
+                    is_link_up = 1;
+                    eth_device_linkchange(&pOsMac->parent, RT_TRUE);
+                }
+                break;
+            case ETH_LINK_DOWN:
+            default:
+                if (is_link_up == 1)
+                {
+                    rt_kprintf("link down\n");
+                    is_link_up = 0;
+                    eth_device_linkchange(&pOsMac->parent, RT_FALSE);
+                }
+                break;
         }
         rt_thread_mdelay(10);
     }

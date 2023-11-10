@@ -13,12 +13,12 @@ OD = $(RTT_EXEC_PATH)/$(RTT_CC_PREFIX)objdump
 
 include .config
 
-ifdef CONFIG_TARGET_E2000Q
-RTCONFIG := e2000q
+ifdef CONFIG_E2000Q_DEMO_BOARD
+RTCONFIG := e2000q_demo
 endif
 
-ifdef CONFIG_TARGET_E2000D
-RTCONFIG := e2000d
+ifdef CONFIG_E2000D_DEMO_BOARD
+RTCONFIG := e2000d_demo
 endif
 
 ifdef CONFIG_TARGET_PHYTIUMPI
@@ -61,52 +61,52 @@ saveconfig:
 	@cp ./.config ./configs/$(RTCONFIG) -f
 	@cp ./rtconfig.h ./configs/$(RTCONFIG).h -f
 
-load_e2000q_rtsmart:
-	@echo "Load configs from ./configs/e2000q_rtsmart"
-	@cp ./configs/e2000q_rtsmart ./.config -f
-	@cp ./configs/e2000q_rtsmart.h ./rtconfig.h -f
+load_e2000q_demo_rtsmart:
+	@echo "Load configs from ./configs/e2000q_demo_rtsmart"
+	@cp ./configs/e2000q_demo_rtsmart ./.config -f
+	@cp ./configs/e2000q_demo_rtsmart.h ./rtconfig.h -f
 	@scons -c
 
-load_e2000q_rtsmart_test:
-	@echo "Load configs from ./configs/e2000q_rtsmart_test"
-	@cp ./configs/e2000q_rtsmart_test ./.config -f
-	@cp ./configs/e2000q_rtsmart_test.h ./rtconfig.h -f
+load_e2000q_demo_rtsmart_test:
+	@echo "Load configs from ./configs/e2000q_demo_rtsmart_test"
+	@cp ./configs/e2000q_demo_rtsmart_test ./.config -f
+	@cp ./configs/e2000q_demo_rtsmart_test.h ./rtconfig.h -f
 	@scons -c
 
-load_e2000q_rtthread:
-	@echo "Load configs from ./configs/e2000q_rtthread"
-	@cp ./configs/e2000q_rtthread ./.config -f
-	@cp ./configs/e2000q_rtthread.h ./rtconfig.h -f
+load_e2000q_demo_rtthread:
+	@echo "Load configs from ./configs/e2000q_demo_rtthread"
+	@cp ./configs/e2000q_demo_rtthread ./.config -f
+	@cp ./configs/e2000q_demo_rtthread.h ./rtconfig.h -f
 	@scons -c
 
-load_e2000q_rtthread_test:
-	@echo "Load configs from ./configs/e2000q_rtthread_test"
-	@cp ./configs/e2000q_rtthread_test ./.config -f
-	@cp ./configs/e2000q_rtthread_test.h ./rtconfig.h -f
+load_e2000q_demo_rtthread_test:
+	@echo "Load configs from ./configs/e2000q_demo_rtthread_test"
+	@cp ./configs/e2000q_demo_rtthread_test ./.config -f
+	@cp ./configs/e2000q_demo_rtthread_test.h ./rtconfig.h -f
 	@scons -c
 
-load_e2000d_rtsmart:
-	@echo "Load configs from ./configs/e2000d_rtsmart"
-	@cp ./configs/e2000d_rtsmart ./.config -f
-	@cp ./configs/e2000d_rtsmart.h ./rtconfig.h -f
+load_e2000d_demo_rtsmart:
+	@echo "Load configs from ./configs/e2000d_demo_rtsmart"
+	@cp ./configs/e2000d_demo_rtsmart ./.config -f
+	@cp ./configs/e2000d_demo_rtsmart.h ./rtconfig.h -f
 	@scons -c
 
-load_e2000d_rtsmart_test:
-	@echo "Load configs from ./configs/e2000d_rtsmart_test"
-	@cp ./configs/e2000d_rtsmart_test ./.config -f
-	@cp ./configs/e2000d_rtsmart_test.h ./rtconfig.h -f
+load_e2000d_demo_rtsmart_test:
+	@echo "Load configs from ./configs/e2000d_demo_rtsmart_test"
+	@cp ./configs/e2000d_demo_rtsmart_test ./.config -f
+	@cp ./configs/e2000d_demo_rtsmart_test.h ./rtconfig.h -f
 	@scons -c
 
-load_e2000d_rtthread:
-	@echo "Load configs from ./configs/e2000d_rtthread"
-	@cp ./configs/e2000d_rtthread ./.config -f
-	@cp ./configs/e2000d_rtthread.h ./rtconfig.h -f
+load_e2000d_demo_rtthread:
+	@echo "Load configs from ./configs/e2000d_demo_rtthread"
+	@cp ./configs/e2000d_demo_rtthread ./.config -f
+	@cp ./configs/e2000d_demo_rtthread.h ./rtconfig.h -f
 	scons -c
 
-load_e2000d_rtthread_test:
-	@echo "Load configs from ./configs/e2000d_rtthread_test"
-	@cp ./configs/e2000d_rtthread_test ./.config -f
-	@cp ./configs/e2000d_rtthread_test.h ./rtconfig.h -f
+load_e2000d_demo_rtthread_test:
+	@echo "Load configs from ./configs/e2000d_demo_rtthread_test"
+	@cp ./configs/e2000d_demo_rtthread_test ./.config -f
+	@cp ./configs/e2000d_demo_rtthread_test.h ./rtconfig.h -f
 	scons -c
 
 load_phytium_pi_rtthread:

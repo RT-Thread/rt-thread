@@ -26,8 +26,7 @@
 /***************************** Include Files *********************************/
 
 #include "fio.h"
-#include "fsleep.h"
-#include "fdebug.h"
+#include "fdrivers_port.h"
 #include "fi2c_hw.h"
 #include "fi2c.h"
 /************************** Constant Definitions *****************************/
@@ -321,7 +320,7 @@ FError FI2cMasterReadIntr(FI2c *instance_p, u32 mem_addr, u8 mem_byte_len, u8 *b
     FASSERT(instance_p);
     u32 mask;
     u32 reg_val;
-    u32 trans_timeout;
+    u32 trans_timeout = 0;
 
     if (FT_COMPONENT_IS_READY != instance_p->is_ready)
     {
@@ -337,7 +336,7 @@ FError FI2cMasterReadIntr(FI2c *instance_p, u32 mem_addr, u8 mem_byte_len, u8 *b
     while (instance_p->status != STATUS_IDLE)
     {
         /* code */
-        fsleep_millisec(1);
+        FDriverMdelay(1);
         if (FI2C_TIMEOUT < (++trans_timeout))
         {
             ret = FI2C_ERR_TIMEOUT;
@@ -396,7 +395,7 @@ FError FI2cMasterWriteIntr(FI2c *instance_p, u32 mem_addr, u8 mem_byte_len, cons
     while (instance_p->status != STATUS_IDLE)
     {
         /* code */
-        fsleep_millisec(1);
+        FDriverMdelay(1);
         if (FI2C_TIMEOUT < (++trans_timeout))
         {
             ret = FI2C_ERR_TIMEOUT;

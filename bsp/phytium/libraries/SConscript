@@ -4,106 +4,130 @@ from building import *
 objs = []
 cwd  = GetCurrentDir()
 
+PORT_DRV_DIR = cwd + '/drivers'
 STANDALONE_DIR = cwd + '/standalone'
+COMMON_DIR = cwd + '/common'
 
 # common source
 src  = Glob(STANDALONE_DIR+'/common/*.c')
 path = [STANDALONE_DIR + '/common']
 
-# port
-src += Glob(STANDALONE_DIR+'/port/*.c')
-path += [STANDALONE_DIR + '/port'] + [STANDALONE_DIR + '/port/arch']
+src  += Glob(COMMON_DIR+'/*.c')
+path += [COMMON_DIR ]
+
+# arch port
+path += [STANDALONE_DIR + '/arch/armv8/gcc']
 
 if GetDepend(['TARGET_ARMV8_AARCH32']):
-    src += Glob(STANDALONE_DIR+'/port/arch/armv8/aarch32/*.c') + Glob(STANDALONE_DIR+'/port/arch/armv8/aarch32/*.S')
-    path += [STANDALONE_DIR + '/port/arch/armv8/aarch32']
+    src += Glob(STANDALONE_DIR+'/arch/armv8/aarch32/*.c') + Glob(STANDALONE_DIR+'/arch/armv8/aarch32/gcc/*.S')
+    path += [STANDALONE_DIR + '/arch/armv8/aarch32']
 elif GetDepend(['TARGET_ARMV8_AARCH64']):
-    src += Glob(STANDALONE_DIR+'/port/arch/armv8/aarch64/*.c') + Glob(STANDALONE_DIR+'/port/arch/armv8/aarch64/*.S')
-    path += [STANDALONE_DIR + '/port/arch/armv8/aarch64']
+    src += Glob(STANDALONE_DIR+'/arch/armv8/aarch64/*.c') + Glob(STANDALONE_DIR+'/arch/armv8/aarch64/gcc/*.S')
+    path += [STANDALONE_DIR + '/arch/armv8/aarch64']
 
-    src += Glob(STANDALONE_DIR+'/port/*.c')
-    path += [STANDALONE_DIR + '/port/*.h']      
-
-# board
-src += Glob(STANDALONE_DIR+'/board/common/*.c') + Glob(STANDALONE_DIR+'/board/common/*.S')
-path += [STANDALONE_DIR + '/board/common'] 
+# soc & soc_port
+src += Glob(STANDALONE_DIR+'/soc/common/*.c')
+path += [STANDALONE_DIR + '/soc/common'] 
 
 if GetDepend(['TARGET_F2000_4']):
-    src += Glob(STANDALONE_DIR+'/board/ft2004/*.c')
-    path += [STANDALONE_DIR + '/board/ft2004'] 
+    src += Glob(cwd+'/port/soc_port/ft2004/*.c')
+    path += [STANDALONE_DIR + '/soc/ft2004'] 
 
 if GetDepend(['TARGET_E2000Q']):
-    src += Glob(STANDALONE_DIR+'/board/e2000/*.c')
-    path += [STANDALONE_DIR + '/board/e2000'] 
-    src += Glob(STANDALONE_DIR+'/board/e2000/q/*.c')
-    path += [STANDALONE_DIR + '/board/e2000/q'] 
+    src += Glob(cwd+'/port/soc_port/e2000/*.c') + Glob(cwd+'/port/soc_port/e2000/q/*.c')
+    path += [STANDALONE_DIR + '/soc/e2000'] + [STANDALONE_DIR + '/soc/e2000/q']
 
 if GetDepend(['TARGET_E2000D']):
-    src += Glob(STANDALONE_DIR+'/board/e2000/*.c')
-    path += [STANDALONE_DIR + '/board/e2000'] 
-    src += Glob(STANDALONE_DIR+'/board/e2000/d/*.c')
-    path += [STANDALONE_DIR + '/board/e2000/d'] 
-
-if GetDepend(['ARGET_E2000S']):
-    src += Glob(STANDALONE_DIR+'/board/e2000/*.c')
-    path += [STANDALONE_DIR + '/board/e2000'] 
-    src += Glob(STANDALONE_DIR+'/board/e2000/s/*.c')
-    path += [STANDALONE_DIR + '/board/e2000/s'] 
+    src += Glob(cwd+'/port/soc_port/e2000/*.c') + Glob(cwd+'/port/soc_port/e2000/d/*.c')
+    path += [STANDALONE_DIR + '/soc/e2000'] + [STANDALONE_DIR + '/soc/e2000/d']
     
 if GetDepend(['TARGET_PHYTIUMPI']):
-    src += Glob(STANDALONE_DIR+'/board/phytium-pi/*.c')
-    path += [STANDALONE_DIR + '/board/phytium-pi'] 
+    src += Glob(cwd+'/port/soc_port/phytiumpi/*.c')
+    path += [STANDALONE_DIR + '/soc/phytiumpi'] 
 
 if GetDepend(['TARGET_D2000']):
-    path += [STANDALONE_DIR + '/board/d2000'] 
+    src += Glob(cwd+'/port/soc_port/d2000/*.c')
+    path += [STANDALONE_DIR + '/soc/d2000'] 
 
 # driver
 
+path += [PORT_DRV_DIR]
+
 ## spim
 if GetDepend(['BSP_USING_SPI']):
-    src += Glob(STANDALONE_DIR+'/drivers/spi/fspim/*.c')
+    src += Glob(STANDALONE_DIR+'/drivers/spi/fspim/*.c') + Glob(PORT_DRV_DIR+'/drv_spi.c')
     path += [STANDALONE_DIR + '/drivers/spi/fspim'] 
 
 ## serial
 if GetDepend(['BSP_USING_UART']):
-    src += Glob(STANDALONE_DIR+'/drivers/serial/fpl011/*.c')
+    src += Glob(STANDALONE_DIR+'/drivers/serial/fpl011/*.c') + Glob(PORT_DRV_DIR+'/drv_usart.c')
     path += [STANDALONE_DIR + '/drivers/serial/fpl011'] 
 
 ## can
 if GetDepend(['BSP_USING_CAN']):
-    src += Glob(STANDALONE_DIR+'/drivers/can/fcan/*.c') + Glob(STANDALONE_DIR+'/drivers/can/fcan/*.S')
+    src += Glob(STANDALONE_DIR+'/drivers/can/fcan/*.c') + Glob(PORT_DRV_DIR+'/drv_can.c')
     path += [STANDALONE_DIR + '/drivers/can/fcan/'] 
 
 ## qspi
 if GetDepend(['BSP_USING_QSPI']):
-    src += Glob(STANDALONE_DIR+'/drivers/qspi/fqspi/*.c') + Glob(STANDALONE_DIR+'/drivers/qspi/fqspi/*.S')
+    src += Glob(STANDALONE_DIR+'/drivers/qspi/fqspi/*.c') + Glob(PORT_DRV_DIR+'/drv_qspi.c')
     path += [STANDALONE_DIR + '/drivers/qspi/fqspi/']
 
 ## eth
 if GetDepend(['BSP_USING_ETH']):
-    src += Glob(STANDALONE_DIR+'/drivers/eth/fxmac/*.c') + Glob(STANDALONE_DIR+'/drivers/eth/fxmac/*.S')
+    src += Glob(STANDALONE_DIR+'/drivers/eth/fxmac/*.c') + Glob(PORT_DRV_DIR+'/drv_xmac.c')
     path += [STANDALONE_DIR + '/drivers/eth/fxmac/'] + [STANDALONE_DIR + '/drivers/eth/fxmac/phy/']
 
-## sdio
-if GetDepend(['BSP_USING_SDIO']):
-    src += Glob(STANDALONE_DIR+'/drivers/mmc/fsdio/*.c') + Glob(STANDALONE_DIR+'/drivers/mmc/fsdio/*.S')
-    path += [STANDALONE_DIR + '/drivers/mmc/fsdio/']
+## sdif
+if GetDepend(['BSP_USING_SDIF']):
+    src += Glob(STANDALONE_DIR+'/drivers/mmc/fsdif/*.c') + Glob(STANDALONE_DIR+'/drivers/mmc/fsdif/*.S')
+    path += [STANDALONE_DIR + '/drivers/mmc/fsdif/']
 
 ## gpio
 if GetDepend(['BSP_USING_GPIO']):
-    src += Glob(STANDALONE_DIR+'/drivers/pin/fgpio/*.c') + Glob(STANDALONE_DIR+'/drivers/pin/fgpio/*.S')
+    src += Glob(STANDALONE_DIR+'/drivers/pin/fgpio/*.c') + Glob(PORT_DRV_DIR+'/drv_gpio.c')
     path += [STANDALONE_DIR + '/drivers/pin/fgpio/']
 
+## pwm
+if GetDepend(['BSP_USING_PWM']):
+    src += Glob(STANDALONE_DIR+'/drivers/pwm/fpwm/*.c') + Glob(PORT_DRV_DIR+'/drv_pwm.c')
+    path += [STANDALONE_DIR + '/drivers/pwm/fpwm/']
+
+## i2C
+if GetDepend(['BSP_USING_I2C']):
+    src += Glob(STANDALONE_DIR+'/drivers/i2c/fi2c/*.c') + Glob(PORT_DRV_DIR+'/drv_i2c.c')
+    path += [STANDALONE_DIR + '/drivers/i2c/fi2c/']
+
 ## iopad
-if GetDepend(['ENABLE_IOPAD']):
-    src += Glob(STANDALONE_DIR+'/drivers/iopad/fiopad/*.c') + Glob(STANDALONE_DIR+'/drivers/iopad/fiopad/*.S')
-    path += [STANDALONE_DIR + '/drivers/iopad/fiopad/']
+if GetDepend(['BSP_USING_IOPAD']):
+    src += Glob(STANDALONE_DIR+'/drivers/iomux/fiopad/*.c')
+    path += [STANDALONE_DIR + '/drivers/iomux/fiopad/']
 
-# phytium ports rt-thread drivers
-PORT_DRV_DIR = cwd + '/drivers'
+## mio
+if GetDepend(['I2C_USE_MIO']):
+    src += Glob(STANDALONE_DIR+'/drivers/mio/fmio/*.c')
+    path += [STANDALONE_DIR + '/drivers/mio/fmio/']
 
-src += Glob(PORT_DRV_DIR + '/*.S')
-src	+= Glob(PORT_DRV_DIR + '/*.c')
+## board
+if GetDepend(['E2000D_DEMO_BOARD']):
+    src += Glob(STANDALONE_DIR+'/board/e2000d_demo/fio_mux.c')
+    path += [STANDALONE_DIR + '/board/e2000d_demo/']
+
+if GetDepend(['E2000Q_DEMO_BOARD']):
+    src += Glob(STANDALONE_DIR+'/board/e2000q_demo/fio_mux.c')
+    path += [STANDALONE_DIR + '/board/e2000q_demo/']
+
+if GetDepend(['FIREFLY_DEMO_BOARD']):
+    src += Glob(STANDALONE_DIR+'/board/firefly/fio_mux.c')
+    path += [STANDALONE_DIR + '/board/firefly/']
+
+## fdriver port
+src += Glob(cwd+'/port/fdriver_port/*.c')
+path += [cwd + '/port/fdriver_port']
+
+## fboard port
+src += Glob(cwd+'/port/fboard_port/*.c')
+path += [cwd + '/port/fboard_port']
 
 # phytium ports rt-thread examples
 PORT_DRV_DIR = cwd + '/examples'

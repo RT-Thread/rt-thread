@@ -11,10 +11,14 @@
  *
  */
 
+#include "rtconfig.h"
+#ifdef BSP_USING_PIN
+
 #include <rtthread.h>
 #include <rtdevice.h>
 #include "interrupt.h"
-#include "rtdbg.h"
+#define LOG_TAG      "gpio_drv"
+#include "drv_log.h"
 #ifdef RT_USING_SMART
     #include "ioremap.h"
 #endif
@@ -25,12 +29,10 @@
     #include "fparameters.h"
 #endif
 #include "fkernel.h"
-#include "fpinctrl.h"
 #include "fcpu_info.h"
 #include "ftypes.h"
 #include "board.h"
 
-#ifdef RT_USING_PIN
 #include "fiopad.h"
 #include "fgpio.h"
 #include "drv_gpio.h"
@@ -87,57 +89,6 @@ static void FGpioOpsSetupPinIRQ(FGpio *ctrl, FGpioPin *const pin, FGpioOpsPinCon
     rt_hw_interrupt_install(irq_num, FGpioInterruptHandler, config->irq_args, NULL); /* register intr handler */
     rt_hw_interrupt_umask(irq_num);
     return;
-}
-
-void FIOPadSetGpioMux(u32 ctrl_id_p, u32 pin_id_p)
-{
-#if defined(TARGET_E2000D)
-    if (ctrl_id_p == FGPIO4_ID)
-    {
-        switch (pin_id_p)
-        {
-        case 11: /* gpio 4-a-11 */
-            FIOPadSetFunc(&iopad_ctrl, FIOPAD_AC45_REG0_OFFSET, FIOPAD_FUNC6);
-            break;
-        case 12: /* gpio 4-a-12 */
-            FIOPadSetFunc(&iopad_ctrl, FIOPAD_AE43_REG0_OFFSET, FIOPAD_FUNC6);
-            break;
-        default:
-            LOG_E("Unsupported ctrl pin.");
-            RT_ASSERT(0);
-            break;
-        }
-    }
-    else
-    {
-        LOG_E("Unsupported ctrl.");
-        RT_ASSERT(0);
-    }
-#endif
-
-#if defined(TARGET_E2000Q) || defined(TARGET_PHYTIUMPI)
-    if (ctrl_id_p == FGPIO4_ID)
-    {
-        switch (pin_id_p)
-        {
-        case 11: /* gpio 4-a-11 */
-            FIOPadSetFunc(&iopad_ctrl, FIOPAD_AC49_REG0_OFFSET, FIOPAD_FUNC6);
-            break;
-        case 12: /* gpio 4-a-12 */
-            FIOPadSetFunc(&iopad_ctrl, FIOPAD_AE47_REG0_OFFSET, FIOPAD_FUNC6);
-            break;
-        default:
-            LOG_E("Unsupported ctrl pin.");
-            RT_ASSERT(0);
-            break;
-        }
-    }
-    else
-    {
-        LOG_E("Unsupported ctrl.");
-        RT_ASSERT(0);
-    }
-#endif
 }
 
 /* on E2000, if u want use GPIO-4-11, set pin = FGPIO_OPS_PIN_INDEX(4, 0, 11) */
@@ -197,18 +148,18 @@ static void drv_pin_mode(struct rt_device *device, rt_base_t pin, rt_uint8_t mod
 
     switch (mode)
     {
-    case PIN_MODE_OUTPUT:
-        pin_config->direction =  FGPIO_DIR_OUTPUT;
-        pin_config->en_irq = FALSE;
-        break;
-    case PIN_MODE_INPUT:
-        pin_config->direction =  FGPIO_DIR_INPUT;
-        pin_config->en_irq = TRUE;
-        pin_config->irq_type = FGPIO_IRQ_TYPE_EDGE_RISING;
-        break;
-    default:
-        rt_kprintf("Not support mode %d!!!\n", mode);
-        break;
+        case PIN_MODE_OUTPUT:
+            pin_config->direction =  FGPIO_DIR_OUTPUT;
+            pin_config->en_irq = FALSE;
+            break;
+        case PIN_MODE_INPUT:
+            pin_config->direction =  FGPIO_DIR_INPUT;
+            pin_config->en_irq = TRUE;
+            pin_config->irq_type = FGPIO_IRQ_TYPE_EDGE_RISING;
+            break;
+        default:
+            rt_kprintf("Not support mode %d!!!\n", mode);
+            break;
     }
 
     FGpioSetDirection(pin_instance, pin_config->direction);
@@ -299,21 +250,21 @@ rt_err_t drv_pin_attach_irq(struct rt_device *device, rt_base_t pin,
 
         switch (mode)
         {
-        case PIN_IRQ_MODE_RISING:
-            pin_config->irq_type = FGPIO_IRQ_TYPE_EDGE_RISING;
-            break;
-        case PIN_IRQ_MODE_FALLING:
-            pin_config->irq_type = FGPIO_IRQ_TYPE_EDGE_FALLING;
-            break;
-        case PIN_IRQ_MODE_LOW_LEVEL:
-            pin_config->irq_type = FGPIO_IRQ_TYPE_LEVEL_LOW;
-            break;
-        case PIN_IRQ_MODE_HIGH_LEVEL:
-            pin_config->irq_type = FGPIO_IRQ_TYPE_LEVEL_HIGH;
-            break;
-        default:
-            LOG_E("Do not spport irq_mode: %d\n", mode);
-            break;
+            case PIN_IRQ_MODE_RISING:
+                pin_config->irq_type = FGPIO_IRQ_TYPE_EDGE_RISING;
+                break;
+            case PIN_IRQ_MODE_FALLING:
+                pin_config->irq_type = FGPIO_IRQ_TYPE_EDGE_FALLING;
+                break;
+            case PIN_IRQ_MODE_LOW_LEVEL:
+                pin_config->irq_type = FGPIO_IRQ_TYPE_LEVEL_LOW;
+                break;
+            case PIN_IRQ_MODE_HIGH_LEVEL:
+                pin_config->irq_type = FGPIO_IRQ_TYPE_LEVEL_HIGH;
+                break;
+            default:
+                LOG_E("Do not spport irq_mode: %d\n", mode);
+                break;
         }
         FGpioSetInterruptType(pin_instance, pin_config->irq_type);
         FGpioRegisterInterruptCB(pin_instance, pin_config->irq_handler,
@@ -391,4 +342,4 @@ int ft_pin_init(void)
     return ret;
 }
 INIT_DEVICE_EXPORT(ft_pin_init);
-#endif /* RT_USING_PIN */
+#endif

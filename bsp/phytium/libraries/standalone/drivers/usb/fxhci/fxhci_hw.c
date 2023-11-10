@@ -23,9 +23,8 @@
  */
 
 /***************************** Include Files *********************************/
-#include "fdebug.h"
-#include "fgeneric_timer.h"
-#include "fsleep.h"
+
+#include "fdrivers_port.h"
 
 #include "fxhci_private.h"
 
@@ -208,7 +207,7 @@ FError FXhciWaitOper32(FXhciMMIO *mmio, u32 offset, u32 mask, u32 exp_val, u32 t
             ret = FUSB_SUCCESS;
             break;
         }
-        fsleep_millisec(10);
+        FDriverMdelay(10);
     }
     while (tick++ < timeout_tick);
 

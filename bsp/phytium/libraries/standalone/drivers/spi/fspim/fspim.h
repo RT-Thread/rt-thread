@@ -39,7 +39,6 @@ extern "C"
 #include "ftypes.h"
 #include "ferror_code.h"
 #include "fassert.h"
-#include "sdkconfig.h"
 
 /************************** Constant Definitions *****************************/
 
@@ -57,13 +56,13 @@ extern "C"
 #define FSPIM_CPHATYPE_OPTION  1
 #define FSPIM_FREQUENCY_OPTION  2
 
-#if defined(CONFIG_TARGET_F2000_4) || defined(CONFIG_TARGET_D2000) || defined(TARDIGRADE)
+#if defined(SOC_TARGET_FT2004) || defined(SOC_TARGET_D2000) || defined(TARDIGRADE)
 #define FSPIM_VERSION_1 /* SPIM for FT2000/4 and D2000 */
-#elif defined(CONFIG_TARGET_E2000)
+#elif defined(SOC_TARGET_E2000) || defined(SOC_TARGET_PHYTIUMPI)
 #define FSPIM_VERSION_2 /* SPIM for E2000 */
 
 #else
-#error "Invalid target board !!!"
+#error "Invalid target soc !!!"
 #endif
 
 /* add up new error code above and plust FSPIM_ERR_CODE_MAX by ONE*/
@@ -141,8 +140,8 @@ typedef struct
 {
     u32                  instance_id;  /* Device instance id */
     uintptr              base_addr;    /* Device base address */
-    u32                  irq_num;      /* Device intrrupt id */
-    u32                  irq_prority;  /* Device intrrupt priority */
+    u32                  irq_num;      /* Device interrupt id */
+    u32                  irq_prority;  /* Device interrupt priority */
     FSpimWorkMode        work_mode;    /* Device work mode */
     FSpimSlaveDevice     slave_dev_id; /* Slave device id */
     u32                  max_freq_hz;  /* Clock frequency in Hz */

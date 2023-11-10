@@ -16,7 +16,7 @@
  * LastEditTime: 2022-02-18 08:55:09
  * Description:  This file contains the implementation of the fsdmmc driver's static
  * initialization functionality.
- * 
+ *
  * Modify History:
  *  Ver   Who        Date         Changes
  * ----- ------     --------    --------------------------------------

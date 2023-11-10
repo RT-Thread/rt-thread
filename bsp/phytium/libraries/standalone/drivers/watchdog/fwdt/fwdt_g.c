@@ -36,10 +36,10 @@ const FWdtConfig FWdtConfigTbl[FWDT_NUM] =
         .control_base_addr = FWDT_CONTROL_BASE_ADDR(FWDT0_REFRESH_BASE_ADDR),
         .irq_num = FWDT0_IRQ_NUM,
         .irq_prority = 0,
-        #if defined(TARDIGRADE)
+#if defined(TARDIGRADE)
         .irq_twice_num = FWDT0_TWICE_IRQ_NUM,
         .irq_twice_prority = 0,
-        #endif
+#endif
         .instance_name = "WDT-0"
     },
     [FWDT1_ID] =
@@ -49,14 +49,14 @@ const FWdtConfig FWdtConfigTbl[FWDT_NUM] =
         .control_base_addr = FWDT_CONTROL_BASE_ADDR(FWDT1_REFRESH_BASE_ADDR),
         .irq_num = FWDT1_IRQ_NUM,
         .irq_prority = 0,
-        #if defined(TARDIGRADE)
+#if defined(TARDIGRADE)
         .irq_twice_num = FWDT1_TWICE_IRQ_NUM,
         .irq_twice_prority = 0,
-        #endif
+#endif
         .instance_name = "WDT-1"
     },
 
-    #if defined(TARDIGRADE)
+#if defined(TARDIGRADE)
     [FWDT2_ID] =
     {
         .instance_id = FWDT2_ID,
@@ -123,5 +123,5 @@ const FWdtConfig FWdtConfigTbl[FWDT_NUM] =
         .irq_twice_prority = 0,
         .instance_name = "WDT-7"
     },
-    #endif // TARDIGRADE
+#endif // TARDIGRADE
 };

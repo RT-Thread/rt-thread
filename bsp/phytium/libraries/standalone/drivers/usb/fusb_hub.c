@@ -24,7 +24,7 @@
  */
 
 #include "fkernel.h"
-#include "fdebug.h"
+#include "fdrivers_port.h"
 #include "fassert.h"
 
 #include "fusb_private.h"
@@ -449,7 +449,7 @@ static void FUsbHubDestory(FUsbDev *const dev)
 void FUsbHubInit(FUsbDev *dev)
 {
     FASSERT(dev);
-    FUsbEndpoint *const intr_ep = FUsbHubIntrEp(dev); /* get the first intrrupt ep found */
+    FUsbEndpoint *const intr_ep = FUsbHubIntrEp(dev); /* get the first interrupt ep found */
     if (NULL == intr_ep)
     {
         FUSB_ERROR("No interrupt-in endpoint found ");

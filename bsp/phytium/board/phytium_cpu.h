@@ -21,12 +21,11 @@
 #define ARM_GIC_MAX_NR 1
 
 #if defined(TARGET_FT2000_4) || defined(TARGET_D2000)
-#define MAX_HANDLERS 160
+    #define MAX_HANDLERS 160
 #endif
 
 #if defined(TARGET_E2000)
-#define MAX_HANDLERS 270
-#define ARM_GIC_CPU_NUM 4
+    #define MAX_HANDLERS 270
 #endif
 
 #define GIC_IRQ_START 0
@@ -59,18 +58,18 @@ rt_inline rt_uint32_t platform_get_gic_redist_base(void)
 
     switch (cpu_id)
     {
-    case 0:
-    case 1:
-        cpu_offset = 2;
-        break;
-    case 2:
-    case 3:
-        cpu_offset = -2;
-    default:
-        break;
+        case 0:
+        case 1:
+            cpu_offset = 2;
+            break;
+        case 2:
+        case 3:
+            cpu_offset = -2;
+        default:
+            break;
     }
 
-    rt_kprintf("cpu_id is %d \r\n",cpu_id);
+    rt_kprintf("cpu_id is %d \r\n", cpu_id);
 #endif
     rt_kprintf("offset  is %d\n", cpu_offset);
 

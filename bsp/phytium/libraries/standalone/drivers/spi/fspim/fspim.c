@@ -32,7 +32,7 @@
 #include "fio.h"
 #include "ferror_code.h"
 #include "ftypes.h"
-#include "fdebug.h"
+#include "fdrivers_port.h"
 #include "fspim_hw.h"
 #include "fspim.h"
 
@@ -166,7 +166,7 @@ FError FSpimReset(FSpim *instance_p)
     /* 选择串行时钟极性和相位 */
     FSpimSetCpha(base_addr, instance_p->config.cpha);
     FSpimSetCpol(base_addr, instance_p->config.cpol);
-    
+
     /* 设置传输模式 */
     FSpimSetTransMode(base_addr, FSPIM_TRANS_MODE_RX_TX);
 
@@ -251,7 +251,7 @@ FError FSpimSetOption(FSpim *instance_p, u32 option, u32 value)
     }
 
     FSpimSetEnable(base_addr, FALSE);
-    
+
     if (option == FSPIM_CPOLTYPE_OPTION)
     {
         if (value == FSPIM_CPOL_HIGH || value == FSPIM_CPOL_LOW)

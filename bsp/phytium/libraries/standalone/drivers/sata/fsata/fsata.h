@@ -276,6 +276,8 @@ FError FSataSetHandler(FSataCtrl *instance_p, u32 handler_type,
 
 /* set sata irq mask */
 void FSataIrqEnable(FSataCtrl *instance_p, u32 int_mask);
+/* disable sata irq mask */
+void FSataIrqDisable(FSataCtrl *instance_p, u32 int_mask);
 
 #ifdef __cplusplus
 }

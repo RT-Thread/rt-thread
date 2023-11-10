@@ -40,9 +40,9 @@
 
 /************************** Variable Definitions *****************************/
 #if defined(FGPIO_VERSION_1)|| defined(TARDIGRADE) /* FT2000-4, D2000 */
-extern const FGpioConfig fgpio_cfg_tbl[FGPIO_NUM];
+    extern const FGpioConfig fgpio_cfg_tbl[FGPIO_NUM];
 #elif defined(FGPIO_VERSION_2) /* E2000 GPIO 0 ~ 5 */
-extern FGpioConfig fgpio_cfg_tbl[FGPIO_NUM];
+    extern FGpioConfig fgpio_cfg_tbl[FGPIO_NUM];
 #endif
 
 /*****************************************************************************/

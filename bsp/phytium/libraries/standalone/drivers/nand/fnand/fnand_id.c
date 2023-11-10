@@ -15,35 +15,28 @@
  * Date: 2022-07-06 08:34:27
  * LastEditTime: 2022-07-06 08:34:27
  * Description:  This file is for functions in this file are the read id required functions
- * for this driver. 
+ * for this driver.
  *
  * Modify History:
  *  Ver   Who  Date   Changes
  * ----- ------  -------- --------------------------------------
  * 1.0   huanghe    2022/05/10    first release
  */
-#include "fdebug.h"
 #include "fnand.h"
 #include "fnand_id.h"
 #include "fnand_common_cmd.h"
-#include "fdebug.h"
+#include "fdrivers_port.h"
 #include "fkernel.h"
-#include "sdkconfig.h"
 
-#define CONFIG_FNAND_ID_DEBUG_EN
+
+
 #define FNAND_ID_DEBUG_TAG "FNAND_ID"
-#ifdef CONFIG_FNAND_ID_DEBUG_EN
 
-    #define FNAND_ID_DEBUG_I(format, ...) FT_DEBUG_PRINT_I(FNAND_ID_DEBUG_TAG, format, ##__VA_ARGS__)
-    #define FNAND_ID_DEBUG_W(format, ...) FT_DEBUG_PRINT_W(FNAND_ID_DEBUG_TAG, format, ##__VA_ARGS__)
-    #define FNAND_ID_DEBUG_E(format, ...) FT_DEBUG_PRINT_E(FNAND_ID_DEBUG_TAG, format, ##__VA_ARGS__)
-    #define FNAND_ID_DEBUG_D(format, ...) FT_DEBUG_PRINT_D(FNAND_ID_DEBUG_TAG, format, ##__VA_ARGS__)
-#else
-    #define FNAND_ID_DEBUG_I(format, ...)
-    #define FNAND_ID_DEBUG_W(format, ...)
-    #define FNAND_ID_DEBUG_E(format, ...)
-    #define FNAND_ID_DEBUG_D(format, ...)
-#endif
+#define FNAND_ID_DEBUG_I(format, ...) FT_DEBUG_PRINT_I(FNAND_ID_DEBUG_TAG, format, ##__VA_ARGS__)
+#define FNAND_ID_DEBUG_W(format, ...) FT_DEBUG_PRINT_W(FNAND_ID_DEBUG_TAG, format, ##__VA_ARGS__)
+#define FNAND_ID_DEBUG_E(format, ...) FT_DEBUG_PRINT_E(FNAND_ID_DEBUG_TAG, format, ##__VA_ARGS__)
+#define FNAND_ID_DEBUG_D(format, ...) FT_DEBUG_PRINT_D(FNAND_ID_DEBUG_TAG, format, ##__VA_ARGS__)
+
 
 
 /*

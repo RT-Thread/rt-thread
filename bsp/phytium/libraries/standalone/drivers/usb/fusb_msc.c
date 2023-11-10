@@ -25,10 +25,9 @@
 #include <string.h>
 #include "fparameters.h"
 #include "fswap.h"
-#include "fsleep.h"
 #include "fassert.h"
-#include "fgeneric_timer.h"
-#include "fdebug.h"
+
+#include "fdrivers_port.h"
 
 #include "fusb.h"
 #include "fusb_msc.h"
@@ -689,7 +688,7 @@ static int FUsbMscWaitReady(FUsbDev *dev)
             case MSC_COMMAND_OK:
                 break;
             case MSC_COMMAND_FAIL:
-                fsleep_millisec(100);
+                FDriverMdelay(100);
                 FUSB_INFO(".");
                 continue;
             default:
@@ -723,7 +722,7 @@ static int FUsbMscWaitReady(FUsbDev *dev)
                 FUSB_INFO(" OK.");
                 break;
             case MSC_COMMAND_FAIL:
-                fsleep_millisec(100);
+                FDriverMdelay(100);
                 continue;
             default:
                 /* Device detached, return immediately */
@@ -857,7 +856,7 @@ static void FUsbMassStorageForceInit(FUsbDev *dev, u32 quirks)
               MSC_INST(dev)->bulk_out->endpoint);
 
     /* Some sticks need a little more time to get ready after SET_CONFIG. */
-    fsleep_microsec(50);
+    FDriverUdelay(50);
 
     FUsbMscInitLuns(dev);
     FUSB_INFO("Has %d luns.", MSC_INST(dev)->num_luns);

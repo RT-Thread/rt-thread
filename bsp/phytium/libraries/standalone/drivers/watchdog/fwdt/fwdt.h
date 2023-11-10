@@ -27,7 +27,7 @@
 #define FWDT_H
 
 #include "ftypes.h"
-#include "fdebug.h"
+#include "fdrivers_port.h"
 #include "ferror_code.h"
 #include "fkernel.h"
 #include "fassert.h"
@@ -84,7 +84,6 @@ void FWdtDeInitialize(FWdtCtrl *pctrl);
 /* set wdt timeout value*/
 FError FWdtSetTimeout(FWdtCtrl *pCtrl, u32 timeout);
 
-u32 FWdtGetTimeleft(FWdtCtrl *pctrl);
 
 /* fresh the wdt */
 FError FWdtRefresh(FWdtCtrl *pCtrl);

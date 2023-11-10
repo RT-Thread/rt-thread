@@ -27,10 +27,10 @@
 #include <string.h>
 #include "fassert.h"
 #include "fkernel.h"
-#include "fcache.h"
-#include "fdebug.h"
+
 #include "fgmac.h"
 #include "fgmac_hw.h"
+#include "fdrivers_port.h"
 
 /************************** Constant Definitions *****************************/
 #if defined(__aarch64__)
@@ -98,7 +98,7 @@ FError FGmacSetupRxDescRing(FGmac *instance_p, volatile FGmacDmaDesc *rx_desc_tb
         cur_rx_desc = rx_desc_tbl + i;
         cur_rx_desc->status = FGMAC_DMA_RDES0_OWN;
         cur_rx_desc->ctrl   = (FGMAC_DMA_RDES1_BUFFER1_SIZE_MASK & rx_pre_buf_len);
-        FCacheDCacheInvalidateRange((uintptr)&rx_buf[i * rx_pre_buf_len], rx_pre_buf_len);
+        FDriverDCacheRangeInvalidate((uintptr)&rx_buf[i * rx_pre_buf_len], rx_pre_buf_len);
         cur_rx_desc->buf_addr = (u32)((uintptr)&rx_buf[i * rx_pre_buf_len]);
 
         if ((rx_buf_num - 1) == i)
@@ -109,7 +109,7 @@ FError FGmacSetupRxDescRing(FGmac *instance_p, volatile FGmacDmaDesc *rx_desc_tb
 
     /* flush descriptor */
     instance_p->rx_desc = rx_desc_tbl;
-    FCacheDCacheInvalidateRange((uintptr)instance_p->rx_desc, sizeof(FGmacDmaDesc) * rx_buf_num);
+    FDriverDCacheRangeInvalidate((uintptr)instance_p->rx_desc, sizeof(FGmacDmaDesc) * rx_buf_num);
 
     FGMAC_WRITE_REG32(base_addr, FGMAC_DMA_RX_LIST_BASE_OFFSET, (u32)(uintptr)rx_desc_tbl);
     return FGMAC_SUCCESS;
@@ -159,14 +159,14 @@ FError FGmacSetupTxDescRing(FGmac *instance_p, volatile FGmacDmaDesc *tx_desc_tb
     for (i = 0; i < tx_buf_num; i++)
     {
         cur_tx_desc = tx_desc_tbl + i;
-        FCacheDCacheInvalidateRange((uintptr)&tx_buf[i * tx_pre_buf_len], tx_pre_buf_len);
+        FDriverDCacheRangeInvalidate((uintptr)&tx_buf[i * tx_pre_buf_len], tx_pre_buf_len);
         cur_tx_desc->buf_addr = (u32)((uintptr)&tx_buf[i * tx_pre_buf_len]);
         cur_tx_desc->status  = 0;
     }
 
     /* flush descriptor */
     instance_p->tx_desc = tx_desc_tbl;
-    FCacheDCacheInvalidateRange((uintptr)instance_p->tx_desc, tx_buf_num * sizeof(FGmacDmaDesc));
+    FDriverDCacheRangeInvalidate((uintptr)instance_p->tx_desc, tx_buf_num * sizeof(FGmacDmaDesc));
 
     FGMAC_WRITE_REG32(base_addr, FGMAC_DMA_TX_LIST_BASE_OFFSET, (u32)(uintptr)tx_desc_tbl);
     return FGMAC_SUCCESS;

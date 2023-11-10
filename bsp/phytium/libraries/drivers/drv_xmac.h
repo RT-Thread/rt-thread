@@ -15,17 +15,17 @@
 #include <rtthread.h>
 #include <rtdevice.h>
 
+#ifdef BSP_USING_ETH
+
 #include <netif/ethernetif.h>
 
 #include "fxmac.h"
 #include "fkernel.h"
 #include "ferror_code.h"
 #include "fassert.h"
-#include "fcache.h"
 #include "fxmac_bdring.h"
 #include "eth_ieee_reg.h"
 #include "fcpu_info.h"
-#include "fdebug.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -140,3 +140,5 @@ enum lwip_port_link_status
 #endif
 
 #endif // !
+
+#endif

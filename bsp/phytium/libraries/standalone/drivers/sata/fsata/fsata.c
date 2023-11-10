@@ -22,15 +22,15 @@
  * 1.0   wangxiaodong  2022/2/10    first release
  * 1.1   wangxiaodong  2022/9/9     improve functions
  * 1.2   wangxiaodong  2022/10/21   improve functions
+ * 1.3   zhangyan      2023/8/14    improve functions
  */
 
 #include <string.h>
 #include <stdlib.h>
 #include "ftypes.h"
 #include "fassert.h"
-#include "fcache.h"
-#include "fdebug.h"
-#include "fsleep.h"
+
+#include "fdrivers_port.h"
 #include "fswap.h"
 #include "fsata.h"
 #include "fsata_hw.h"
@@ -61,6 +61,7 @@
 #define WAIT_MS_DATAIO  20000
 #define WAIT_MS_LINKUP  200
 
+#define SATA_ALIGNED_BYTE 4
 
 static FError FSataAhciDataIO(FSataCtrl *instance_p, u8 port, u8 *fis,
                               int fis_len, u8 *buf, int buf_len, boolean is_ncq, boolean is_write);
@@ -91,7 +92,7 @@ static int FSataWaitCmdCompleted(uintptr reg, int timeout_msec, u32 sign)
 
     for (i = 0; (FtIn32(reg)& sign) && (i < timeout_msec); i++)
     {
-        fsleep_millisec(1);
+        FDriverMdelay(1);
     }
 
     return (i < timeout_msec) ? 0 : -1;
@@ -122,7 +123,7 @@ static FError FSataAhciLinkUp(FSataCtrl *instance_p, u8 port)
         {
             return FSATA_SUCCESS;
         }
-        fsleep_microsec(1000);
+        FDriverUdelay(1000);
         i++;
     }
 
@@ -468,7 +469,7 @@ static FError FSataAhciReset(FSataCtrl *instance_p)
     /* reset must complete within 1 millisecond, or the hardware should be considered fried.*/
     do
     {
-        fsleep_microsec(1000);
+        FDriverUdelay(1000);
         reg_val = FSATA_READ_REG32(base_addr, FSATA_HOST_CTL);
         i--;
     }
@@ -541,7 +542,7 @@ FError FSataAhciInit(FSataCtrl *instance_p)
             FSATA_WRITE_REG32(port_base_addr, FSATA_PORT_CMD, reg_val);
 
             /* spec says 500 msecs for each bit, so this is slightly incorrect.*/
-            fsleep_millisec(500);
+            FDriverMdelay(500);
         }
 
         /* Add the spinup command to whatever mode bits may
@@ -554,7 +555,7 @@ FError FSataAhciInit(FSataCtrl *instance_p)
         ret = FSataAhciLinkUp(instance_p, i);
         if (ret)
         {
-            FSATA_DEBUG("sata host %d, port %d link timeout.", instance_p->config.instance_id, i);    
+            FSATA_DEBUG("sata host %d, port %d link timeout.", instance_p->config.instance_id, i);
             continue;
         }
         else
@@ -606,7 +607,7 @@ FError FSataAhciInit(FSataCtrl *instance_p)
     {
         FSATA_ERROR("Sata ports link failed.\n");
         return FSATA_UNKNOWN_DEVICE;
-    }       
+    }
 
     /* host interrupt enable */
     reg_val = FSATA_READ_REG32(base_addr, FSATA_HOST_CTL);
@@ -701,12 +702,16 @@ static int FSataAhciFillCmdTablePrdt(FSataCtrl *instance_p, u8 port,
 {
     FASSERT(instance_p != NULL);
     FASSERT(instance_p->is_ready == FT_COMPONENT_IS_READY);
+    if (!IS_ALIGNED((unsigned long)buf, SATA_ALIGNED_BYTE))
+    {
+        FSATA_ERROR("Sata do not suopport unaligned address access.");
+        return -1;
+    }
 
     FSataAhciPorts *port_info = &(instance_p->port[port]);
     FSataAhciCommandTablePrdt *command_table_prdt = port_info->cmd_tbl_prdt;
     int item_count;
     int i;
-
     item_count = ((buf_len - 1) / MAX_DATA_BYTE_COUNT) + 1;
     if (item_count > FSATA_AHCI_PRTD_ITEM_NUM)
     {
@@ -802,8 +807,8 @@ static FError FSataAhciDataIO(FSataCtrl *instance_p, u8 port, u8 *fis,
     /* copy data to command list struct */
     FSataAhciFillCmdList(port_info, description_info);
 
-    FCacheDCacheFlushRange((unsigned long)port_info->cmd_list, FSATA_AHCI_PORT_PRIV_DMA_SZ);
-    FCacheDCacheFlushRange((unsigned long)buf, (unsigned long)buf_len);
+    FDriverDCacheRangeFlush((unsigned long)port_info->cmd_list, FSATA_AHCI_PORT_PRIV_DMA_SZ);
+    FDriverDCacheRangeFlush((unsigned long)buf, (unsigned long)buf_len);
 
     /* set tag bit in SACT register before write CI register when use native cmd */
     if (is_ncq == TRUE)

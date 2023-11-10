@@ -75,11 +75,6 @@ FError FDpSinkDpcdWrite(FDpCtrl *instance_p, uintptr addr, u8 data);
 /* Read phy register through aux channel. */
 FError FDpSinkDpcdRead(FDpCtrl *instance_p, uintptr addr, u8 *data);
 
-/* Get edid information form sink*/
-FError FDpGetEdid(FDpCtrl *instance_p, u8 *buffer);
-
-/*translate the edid information to the struct*/
-FError FDpParseDpEdidDtdList(u8 *buffer, Auxtable *list);
 
 #ifdef __cplusplus
 }

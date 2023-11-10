@@ -179,6 +179,9 @@ extern "C"
     (FXMAC_BD_READ((bd_ptr), FXMAC_BD_STAT_OFFSET) & \
      FXMAC_TXBUF_LEN_MASK)
 
+#define FXMAC_BD_GET_HASH_MATCH(bd_ptr)                   \
+    ((FXMAC_BD_READ((bd_ptr), FXMAC_BD_STAT_OFFSET) & \
+     FXMAC_RXBUF_HASH_MASK)>>29)
 
 /**
  * @name: FXMAC_GET_RX_FRAME_SIZE

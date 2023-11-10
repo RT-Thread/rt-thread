@@ -57,7 +57,7 @@ extern "C"
         {"GD25Q32E", FQSPI_FLASH_MF_ID_GIGADEVICE, 0x60, 0x16, FQSPI_FLASH_CAP_4MB},            \
         {"GD25Q64B", FQSPI_FLASH_MF_ID_GIGADEVICE, 0x40, 0x17, FQSPI_FLASH_CAP_8MB},            \
         {"GD25LQ128E", FQSPI_FLASH_MF_ID_GIGADEVICE, 0x40, 0x18, FQSPI_FLASH_CAP_16MB},         \
-    	{"GD25LQ128E", FQSPI_FLASH_MF_ID_GIGADEVICE, 0x60, 0x18, FQSPI_FLASH_CAP_16MB},         \
+        {"GD25LQ128E", FQSPI_FLASH_MF_ID_GIGADEVICE, 0x60, 0x18, FQSPI_FLASH_CAP_16MB},         \
         {"GD25QL256D", FQSPI_FLASH_MF_ID_GIGADEVICE, 0x60, 0x19, FQSPI_FLASH_CAP_32MB},         \
         {"BY25Q64BS", FQSPI_FLASH_MF_ID_BOYA, 0x40, 0x17, FQSPI_FLASH_CAP_8MB},                 \
         {"BY25Q128BS", FQSPI_FLASH_MF_ID_BOYA, 0x40, 0x18, FQSPI_FLASH_CAP_16MB},               \
@@ -109,8 +109,8 @@ extern "C"
 #define FQSPI_BUSY_TIMEOUT_US           1000000
 #define FQSPI_NOR_FLASH_STATE_BUSY      BIT(0)
 
-#define FQSPI_FLASH_WP_ENABLE 0x7c      
-#define FQSPI_FLASH_WP_DISABLE 0x00     
+#define FQSPI_FLASH_WP_ENABLE 0x7c
+#define FQSPI_FLASH_WP_DISABLE 0x00
 /* Read some flash information */
 FError FQspiFlashSpecialInstruction(FQspiCtrl *pctrl, u8 cmd, u8 *buf, size_t len);
 

@@ -142,7 +142,7 @@ void FXmacIntrHandler(s32 vector, void *args)
                 }
 
                 /* add */
-                if(instance_p->caps& FXMAC_CAPS_ISR_CLEAR_ON_WRITE)
+                if (instance_p->caps & FXMAC_CAPS_ISR_CLEAR_ON_WRITE)
                 {
                     FXMAC_WRITEREG32(instance_p->config.base_address, FXMAC_ISR_OFFSET, FXMAC_IXR_TXCOMPL_MASK);
                 }
@@ -160,7 +160,7 @@ void FXmacIntrHandler(s32 vector, void *args)
                     instance_p->error_irq_handler(instance_p->error_args, FXMAC_SEND, reg_temp);
                 }
                 /* add */
-                if(instance_p->caps& FXMAC_CAPS_ISR_CLEAR_ON_WRITE)
+                if (instance_p->caps & FXMAC_CAPS_ISR_CLEAR_ON_WRITE)
                 {
                     FXMAC_WRITEREG32(instance_p->config.base_address, FXMAC_ISR_OFFSET, FXMAC_IXR_TX_ERR_MASK);
                 }
@@ -170,7 +170,7 @@ void FXmacIntrHandler(s32 vector, void *args)
             if ((reg_isr & FXMAC_IXR_TXUSED_MASK) != 0x00000000U)
             {
                 /* add */
-                if(instance_p->caps& FXMAC_CAPS_ISR_CLEAR_ON_WRITE)
+                if (instance_p->caps & FXMAC_CAPS_ISR_CLEAR_ON_WRITE)
                 {
                     FXMAC_WRITEREG32(instance_p->config.base_address, FXMAC_ISR_OFFSET, FXMAC_IXR_TXUSED_MASK);
                 }
@@ -180,7 +180,7 @@ void FXmacIntrHandler(s32 vector, void *args)
                     instance_p->restart_handler(instance_p->restart_args);
                 }
             }
-            
+
             /* link changed */
             if ((reg_isr & FXMAC_IXR_LINKCHANGE_MASK) != 0x00000000U)
             {
@@ -189,7 +189,7 @@ void FXmacIntrHandler(s32 vector, void *args)
                     instance_p->link_change_handler(instance_p->link_change_args);
                 }
 
-                if(instance_p->caps& FXMAC_CAPS_ISR_CLEAR_ON_WRITE)
+                if (instance_p->caps & FXMAC_CAPS_ISR_CLEAR_ON_WRITE)
                 {
                     FXMAC_WRITEREG32(instance_p->config.base_address, FXMAC_ISR_OFFSET, FXMAC_IXR_LINKCHANGE_MASK);
                 }
@@ -244,7 +244,7 @@ void FXmacIntrHandler(s32 vector, void *args)
                 instance_p->recv_irq_handler(instance_p->recv_args);
 
                 /* add */
-                if(instance_p->caps& FXMAC_CAPS_ISR_CLEAR_ON_WRITE)
+                if (instance_p->caps & FXMAC_CAPS_ISR_CLEAR_ON_WRITE)
                 {
                     FXMAC_WRITEREG32(instance_p->config.base_address, FXMAC_ISR_OFFSET, FXMAC_IXR_RXCOMPL_MASK);
                 }
@@ -282,7 +282,7 @@ void FXmacIntrHandler(s32 vector, void *args)
                 /* add */
                 if ((reg_isr & FXMAC_IXR_RXOVR_MASK) != 0x00000000U)
                 {
-                    if(instance_p->caps& FXMAC_CAPS_ISR_CLEAR_ON_WRITE)
+                    if (instance_p->caps & FXMAC_CAPS_ISR_CLEAR_ON_WRITE)
                     {
                         FXMAC_WRITEREG32(instance_p->config.base_address, FXMAC_ISR_OFFSET, FXMAC_IXR_RXOVR_MASK);
                     }
@@ -291,7 +291,7 @@ void FXmacIntrHandler(s32 vector, void *args)
                 /* add */
                 if ((reg_isr & FXMAC_IXR_HRESPNOK_MASK) != 0x00000000U)
                 {
-                    if(instance_p->caps& FXMAC_CAPS_ISR_CLEAR_ON_WRITE)
+                    if (instance_p->caps & FXMAC_CAPS_ISR_CLEAR_ON_WRITE)
                     {
                         FXMAC_WRITEREG32(instance_p->config.base_address, FXMAC_ISR_OFFSET, FXMAC_IXR_HRESPNOK_MASK);
                     }

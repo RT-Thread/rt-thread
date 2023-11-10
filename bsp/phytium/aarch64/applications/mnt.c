@@ -18,9 +18,6 @@
 #include <dfs_fs.h>
 #include <dfs_file.h>
 
-#define DBG_TAG "app.filesystem"
-#define DBG_LVL DBG_INFO
-
 #ifdef BSP_USING_SDCARD_FATFS
 #define SD_DEIVCE_NAME "sd"
 static int filesystem_mount(void)
@@ -51,12 +48,18 @@ static int filesystem_mount(void)
 
     pool = rt_malloc(size);
     if (pool == RT_NULL)
+    {
         LOG_E("Malloc fail!");
+    }
 
     if (dfs_mount(RT_NULL, "/ram", "ram", 0, (const void *)dfs_ramfs_create(pool, size)) == 0)
+    {
         LOG_I("RAM file system initializated!");
+    }
     else
+    {
         LOG_E("RAM file system initializate failed!");
+    }
 #endif
     return RT_EOK;
 }
@@ -72,12 +75,18 @@ static int filesystem_mount(void)
 
     pool = rt_malloc(size);
     if (pool == RT_NULL)
+    {
         LOG_E("Malloc fail!");
+    }
 
     if (dfs_mount(RT_NULL, "/", "ram", 0, (const void *)dfs_ramfs_create(pool, size)) == 0)
+    {
         LOG_I("RAM file system initializated!");
+    }
     else
+    {
         LOG_E("RAM file system initializate failed!");
+    }
 #endif
 
     return RT_EOK;

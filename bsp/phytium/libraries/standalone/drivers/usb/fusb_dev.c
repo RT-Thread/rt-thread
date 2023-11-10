@@ -23,7 +23,7 @@
  */
 
 #include <string.h>
-#include "fdebug.h"
+#include "fdrivers_port.h"
 #include "fusb_private.h"
 
 #define FUSB_DEBUG_TAG "FUSB-DEV"

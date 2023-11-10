@@ -22,6 +22,7 @@
  * 1.0   wangxiaodong  2022/5/26  first release
  * 1.1   wangxiaodong  2022/9/23  improve functions
  * 1.2   zhangyan      2022/12/7  improve functions
+ * 1.3   huangjin      2023/10/31 improve functions
  */
 
 #include "string.h"
@@ -31,10 +32,9 @@
 #include "fcan.h"
 #include "fcan_hw.h"
 #include "fassert.h"
-#include "fdebug.h"
 #include "fswap.h"
 #include "fparameters.h"
-#include "fsleep.h"
+#include "fdrivers_port.h"
 
 
 #define FT_CAN_DEBUG_TAG "FT_CAN"
@@ -659,6 +659,20 @@ FError FCanSend(FCanCtrl *instance_p, FCanFrame *frame_p)
     while (FCAN_TX_FIFO_FULL(instance_p));
 
     u32 can_send_dlc = FCanSetDlcLen(frame_p->candlc);
+    /* 根据use_canfd判断dlc是否有效 */
+    if (instance_p->use_canfd == FALSE)
+    {
+        if (can_send_dlc <= 8)
+        {
+            FCAN_DEBUG("FCanSend protocol is:%s\n", "can");
+            FASSERT(can_send_dlc <= 8);
+        }
+    }
+    else
+    {
+        FCAN_DEBUG("FCanSend protocol is:%s\n", "canfd");
+        FASSERT(instance_p->use_canfd == TRUE);
+    }
 
     if (frame_p->canid & CAN_EFF_FLAG)
     {
@@ -871,7 +885,7 @@ FError FCanBaudrateSet(FCanCtrl *instance_p, FCanBaudrateConfig *baudrate_p)
     u32 sample_point = baudrate_p->sample_point;
     if (baudrate_p->auto_calc == TRUE)
     {
-#if defined(CONFIG_TARGET_F2000_4) || defined(CONFIG_TARGET_D2000)
+#if defined(SOC_TARGET_FT2004) || defined(SOC_TARGET_D2000)
         if ((segment == FCAN_ARB_SEGMENT) && ((baudrate > FCAN_BAUDRATE_1000K) || (baudrate < FCAN_BAUDRATE_50K)))
         {
             FCAN_ERROR("FCanBaudrateSet FCAN_ARB_SEGMENT baudrate = %d invalid", baudrate);
@@ -882,7 +896,7 @@ FError FCanBaudrateSet(FCanCtrl *instance_p, FCanBaudrateConfig *baudrate_p)
             FCAN_ERROR("FCanBaudrateSet FCAN_DATA_SEGMENT baudrate = %d invalid", baudrate);
             return FCAN_INVAL_PARAM;
         }
-#elif defined(CONFIG_TARGET_E2000) || defined(TARDIGRADE)
+#elif defined(SOC_TARGET_E2000) || defined(TARDIGRADE) || defined(SOC_TARGET_PHYTIUMPI)
         if ((segment == FCAN_ARB_SEGMENT) && ((baudrate > FCAN_BAUDRATE_1000K) || (baudrate < FCAN_BAUDRATE_10K)))
         {
             FCAN_ERROR("FCanBaudrateSet FCAN_ARB_SEGMENT baudrate = %d invalid", baudrate);
@@ -931,7 +945,7 @@ FError FCanBaudrateSet(FCanCtrl *instance_p, FCanBaudrateConfig *baudrate_p)
 }
 
 /**
- * @name: FCanFdEnable
+ * @name: FCanEnable
  * @msg:  Enable or disable can.
  * @param {FCanCtrl} *instance_p, instance of FCanCtrl controller
  * @param {boolean} enable, TRUE-enable canfd, FALSE-disable canfd.
@@ -1002,6 +1016,11 @@ FError FCanIdMaskFilterSet(FCanCtrl *instance_p, FCanIdMaskConfig *id_mask_p)
     {
         id = id_mask_p->id << FCAN_ACC_IDN_SHIFT;
         mask = id_mask_p->mask << FCAN_ACC_IDN_SHIFT;
+    }
+    else
+    {
+        id = id_mask_p->id;
+        mask = id_mask_p->mask;
     }
 
     FCAN_WRITE_REG32(base_address, id_reg_offset, id);
@@ -1150,4 +1169,3 @@ FError FCanSetMode(FCanCtrl *instance_p, u32 tran_mode)
 
     return FCAN_SUCCESS;
 }
-

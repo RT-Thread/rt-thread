@@ -14,7 +14,7 @@
  * FilePath: fnand_dma.h
  * Date: 2022-02-10 14:53:42
  * LastEditTime: 2022-02-18 08:56:27
- * Description:  This file is dma descriptor management API. 
+ * Description:  This file is dma descriptor management API.
  *
  * Modify History:
  *  Ver   Who        Date         Changes

@@ -27,7 +27,6 @@
 
 #include "ftypes.h"
 #include "fparameters.h"
-#include "sdkconfig.h"
 
 #include "fspim.h"
 #include "fspim_hw.h"
@@ -70,7 +69,7 @@ const FSpimConfig FSPIM_CONFIG_TBL[FSPI_NUM] =
         .en_test = FALSE,
         .en_dma  = FALSE
     },
-#if defined(CONFIG_TARGET_E2000)
+#if defined(FSPI2_ID)
     [FSPI2_ID] =
     {
         .instance_id  = FSPI2_ID, /* Id of device*/
@@ -84,6 +83,9 @@ const FSpimConfig FSPIM_CONFIG_TBL[FSPI_NUM] =
         .en_test = FALSE,
         .en_dma  = FALSE
     },
+#endif
+
+#if defined(FSPI3_ID)
     [FSPI3_ID] =
     {
         .instance_id  = FSPI3_ID, /* Id of device*/

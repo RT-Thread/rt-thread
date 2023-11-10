@@ -26,24 +26,16 @@
 #include "fnand.h"
 #include "fnand_id.h"
 #include "fnand_ecc.h"
-#include "fdebug.h"
-#include "sdkconfig.h"
+#include "fdrivers_port.h"
 
 
-#define FNAND_T_NAND_DEBUG_TAG "FNAND_T_NAND"
 #define CONFIG_FNAND_T_NAND_DEBUG_EN
-// #define CONFIG_FNAND_T_NAND_DEBUG_EN
-#ifdef CONFIG_FNAND_T_NAND_DEBUG_EN
-    #define FNAND_T_NAND_DEBUG_I(format, ...) FT_DEBUG_PRINT_I(FNAND_T_NAND_DEBUG_TAG, format, ##__VA_ARGS__)
-    #define FNAND_T_NAND_DEBUG_W(format, ...) FT_DEBUG_PRINT_W(FNAND_T_NAND_DEBUG_TAG, format, ##__VA_ARGS__)
-    #define FNAND_T_NAND_DEBUG_E(format, ...) FT_DEBUG_PRINT_E(FNAND_T_NAND_DEBUG_TAG, format, ##__VA_ARGS__)
-    #define FNAND_T_NAND_DEBUG_D(format, ...) FT_DEBUG_PRINT_D(FNAND_T_NAND_DEBUG_TAG, format, ##__VA_ARGS__)
-#else
-    #define FNAND_T_NAND_DEBUG_I(format, ...)
-    #define FNAND_T_NAND_DEBUG_W(format, ...)
-    #define FNAND_T_NAND_DEBUG_E(format, ...)
-    #define FNAND_T_NAND_DEBUG_D(format, ...)
-#endif
+
+#define FNAND_T_NAND_DEBUG_I(format, ...) FT_DEBUG_PRINT_I(FNAND_T_NAND_DEBUG_TAG, format, ##__VA_ARGS__)
+#define FNAND_T_NAND_DEBUG_W(format, ...) FT_DEBUG_PRINT_W(FNAND_T_NAND_DEBUG_TAG, format, ##__VA_ARGS__)
+#define FNAND_T_NAND_DEBUG_E(format, ...) FT_DEBUG_PRINT_E(FNAND_T_NAND_DEBUG_TAG, format, ##__VA_ARGS__)
+#define FNAND_T_NAND_DEBUG_D(format, ...) FT_DEBUG_PRINT_D(FNAND_T_NAND_DEBUG_TAG, format, ##__VA_ARGS__)
+
 
 static FError TC58NVM9S3ETAI0_CHECK(FNand *instance_p, FNandId *id_p, u32 chip_addr)
 {

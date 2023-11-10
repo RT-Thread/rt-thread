@@ -30,12 +30,7 @@
 #include "fparameters.h"
 #include "fio.h"
 #include "fkernel.h"
-
-#ifdef __aarch64__
-#include "faarch64.h"
-#else
-#include "faarch32.h"
-#endif
+#include "fdrivers_port.h"
 
 #ifdef __cplusplus
 extern "C"
@@ -295,7 +290,7 @@ extern "C"
 /**************************** Type Definitions *******************************/
 
 /************************** Variable Definitions *****************************/
-#define FSDMMC_DATA_BARRIER()                    WMB()
+#define FSDMMC_DATA_BARRIER()                    FDRIVER_DSB()
 
 /***************** Macros (Inline Functions) Definitions *********************/
 

@@ -27,7 +27,6 @@
 
 #include "fpl011.h"
 #include "fparameters.h"
-#include "sdkconfig.h"
 
 /************************** Constant Definitions *****************************/
 
@@ -55,7 +54,8 @@ const FPl011Config FPl011ConfigTable[FUART_NUM] =
         .irq_num = FUART1_IRQ_NUM,
         .baudrate = 115200
     },
-#ifndef TARDIGRADE
+
+#if defined(FUART2_ID)
     {
         .instance_id = FUART2_ID,
         .base_address = FUART2_BASE_ADDR,
@@ -63,6 +63,9 @@ const FPl011Config FPl011ConfigTable[FUART_NUM] =
         .irq_num = FUART2_IRQ_NUM,
         .baudrate = 115200
     },
+#endif
+
+#if defined(FUART3_ID)
     {
         .instance_id = FUART3_ID,
         .base_address = FUART3_BASE_ADDR,
@@ -70,6 +73,6 @@ const FPl011Config FPl011ConfigTable[FUART_NUM] =
         .irq_num = FUART3_IRQ_NUM,
         .baudrate = 115200
     }
-#endif // !TARDIGRADE 
+#endif
 
 };

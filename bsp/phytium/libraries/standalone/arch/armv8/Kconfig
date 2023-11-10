@@ -1,0 +1,231 @@
+menu "Arm architecture configuration"
+
+
+choice
+    prompt "Execution state"
+    default ARCH_ARMV8_AARCH64
+
+config ARCH_ARMV8_AARCH64
+    bool "Armv8 aarch64 execution state"
+    help
+        AArch64 is a 64-bit Execution state. It supports the A64 instruction set. The standard
+        register width is 64 bits.
+
+config ARCH_ARMV8_AARCH32
+    bool "Armv8 aarch32 execution state"
+    help
+        AArch32 is a 32-bit Execution state. Operation in this state is backward compatible with
+        previous architectures. It supports the T32 and A32 instruction sets. The standard register
+        width is 32 bits.
+
+endchoice
+
+menu "Compiler configuration"
+
+choice 
+	prompt "Toolchain selection"
+	default ARM_GCC_SELECT 
+
+config ARM_GCC_SELECT
+	bool "Gcc"
+
+config ARM_CLANG_SELECT
+	bool "Clang"
+
+endchoice
+
+config TOOLCHAIN_NAME
+	string
+	default "gcc" if ARM_GCC_SELECT
+	default "clang" if ARM_CLANG_SELECT
+	
+
+
+
+
+    config TARGET_ARMV8_AARCH32
+        bool
+        default y if ARCH_ARMV8_AARCH32
+    
+    config TARGET_ARMV8_AARCH64
+        bool
+        default y if ARCH_ARMV8_AARCH64
+
+
+
+
+config ARCH_EXECUTION_STATE
+	string
+	default "aarch32" if ARCH_ARMV8_AARCH32
+	default "aarch64" if ARCH_ARMV8_AARCH64
+
+
+# FPU config
+menu "Fpu configuration"
+
+if ARCH_ARMV8_AARCH32
+
+choice
+	prompt "Fpu vfpu instruction"
+	default ARCH_FPU_VFP_V4
+	help
+		Floating-point arithmetic instruction set architecture
+
+config ARCH_FPU_VFP_V3
+	bool "Vfpv3"
+	help
+		VFPv3U is a variant of VFPv3 that supports the trapping of floating-point exceptions to support code.
+
+config ARCH_FPU_VFP_V4
+	bool "Vfpv4"
+	help
+		VFPv4U is a variant of VFPv4 that supports the trapping of floating-point exceptions to support code.VFPv4 and VFPv4U add both the Half-precision Extension and the fused multiply-add instructions to the features of VFPv3.
+
+endchoice
+
+config ARM_DPFPU32
+	bool "Fpu with 32 double-precision register"
+	default y
+	depends on ARCH_FPU
+
+config ARM_FPU_ABI_SOFT
+	bool "Soft float abi"
+	default n
+	depends on ARCH_FPU
+	help
+		Pass float value via integer register (-mfloat-abi=softfp)
+
+config ARM_FPU_SYMBOL
+	string
+	depends on ARCH_FPU
+    default "crypto-neon-fp-armv8" if ARCH_ARMV8_AARCH32 && ARM_NEON # according to gcc message, this is the auto option for arm-none-eabi armv8-a
+	default "vfpv3"	if ARCH_ARMV8_AARCH32 && ARCH_FPU_VFP_V3 && ARM_DPFPU32 
+	default "vfpv3-d16"	if ARCH_ARMV8_AARCH32 && ARCH_FPU_VFP_V3 && ARM_DPFPU32
+	default "vfpv4" if ARCH_ARMV8_AARCH32 && ARCH_FPU_VFP_V4 && ARM_DPFPU32
+	default	"vfpv4-d16" if ARCH_ARMV8_AARCH32 && ARCH_FPU_VFP_V4
+	default "neon" if ARCH_ARMV8_AARCH64 && ARM_NEON
+
+config ARM_NEON
+	bool "Advanced SIMD (NEON) Extension"
+	depends on ARCH_FPU
+    default y
+
+config ARCH_FPU
+	bool "Fpu support"
+	default y
+	help
+		Build in support for the Floating Point Unit (FPU).
+		Check your chip specifications first; not all chips support the FPU.
+
+endif
+endmenu
+
+if ARCH_ARMV8_AARCH64
+
+
+config ARM_NEON
+	bool "Advanced SIMD (NEON) Extension"
+	default y
+
+config ARM_CRC
+    bool "Cyclic Redundancy Check (CRC) Extension"
+    default y
+
+config ARM_CRYPTO
+    bool "Cryptographic (CRPTO) Extension"
+    default y
+
+config ARM_FLOAT_POINT
+    bool "Float Point (FP)"
+    default y
+
+choice
+	prompt "Code Model"
+	default GCC_CODE_MODEL_SMALL
+	help
+		Select code model type for generation
+
+config GCC_CODE_MODEL_TINY
+	bool "Tiny"
+	help
+        Generate code for the tiny code model, symobls must be within 1MB of 
+        each other
+
+config GCC_CODE_MODEL_SMALL
+	bool "Small"
+	help
+        Generate code for the small code model, symobls must be within 4GB of 
+        each other
+
+config GCC_CODE_MODEL_LARGE
+    bool "Large"
+    help
+        Generate code for the large code model, no assumptions about addresses 
+        and sizes of sections. Programs can be statically linked only
+
+endchoice
+
+endif
+
+endmenu
+
+
+
+config USE_CACHE
+    bool
+    prompt "Use cache"
+    default n
+    help
+        Activate the MMU and TLB functions
+    
+    if USE_CACHE
+        config USE_L3CACHE
+            bool
+            prompt "Use external l3 cache"
+            depends on TARGET_FT2004 || TARGET_D2000
+            default n
+            help
+                Include L3 Cache and enable 
+
+        config USE_MMU
+            bool
+            prompt "Use mmu"
+            default n
+            help
+                Include platform mmu setting
+    endif
+
+if TARGET_ARMV8_AARCH32
+
+config USE_AARCH64_L1_TO_AARCH32
+    bool
+    prompt "Use aarch64 l1 to aarch32 code"
+    default y
+    help
+        Use the Aarch64 to Aarch32 mode function
+endif
+
+
+if TARGET_ARMV8_AARCH64
+
+config BOOT_WITH_FLUSH_CACHE
+    bool
+    prompt "Flush cache when bootup"
+    default y
+    depends on USE_AARCH64_L1_TO_AARCH32 || TARGET_ARMV8_AARCH64
+    help
+        Enable Cache flush when bootup, basically used when bootloader load elf/bin without cache flush
+
+endif
+
+config MMU_DEBUG_PRINTS
+    bool
+    prompt "MMU debug"
+    default n
+    depends on TARGET_ARMV8_AARCH64
+    help
+        Enable MMU debug printing 
+
+
+
+endmenu

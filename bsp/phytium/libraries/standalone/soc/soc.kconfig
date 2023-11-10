@@ -1,0 +1,105 @@
+menu "Soc configuration"
+
+    choice
+        prompt "Soc select"
+        default TARGET_E2000Q
+
+        config TARGET_PHYTIUMPI
+            bool "Phytiumpi"
+
+        config TARGET_E2000Q
+            bool "E2000Q"
+
+        config TARGET_E2000D
+            bool "E2000D"
+
+        config TARGET_E2000S
+            bool "E2000S"
+
+        config TARGET_FT2004
+            bool "Ft2004"
+
+        config TARGET_D2000
+            bool "D2000"
+        
+    endchoice
+
+
+    config SOC_NAME
+        string
+        default "e2000" if TARGET_E2000Q || TARGET_E2000D || TARGET_E2000S
+        default "ft2004"  if TARGET_FT2004
+        default "d2000"   if TARGET_D2000
+        default "phytiumpi"   if TARGET_PHYTIUMPI
+
+    config TARGET_TYPE_NAME
+        string
+        depends on TARGET_E2000Q || TARGET_E2000D || TARGET_E2000S
+        default "q" if TARGET_E2000Q
+        default "d" if TARGET_E2000D
+        default "s" if TARGET_E2000S
+        default ""
+
+    config SOC_CORE_NUM
+        int
+        default 4 if TARGET_E2000Q || TARGET_FT2004 || TARGET_PHYTIUMPI
+        default 2 if TARGET_E2000D
+        default 1 if TARGET_E2000S
+        default 8 if TARGET_D2000
+        default 0
+
+
+    config  F32BIT_MEMORY_ADDRESS    
+        hex
+        default 0x80000000 if TARGET_E2000Q || TARGET_FT2004 || TARGET_E2000D || TARGET_E2000S || TARGET_D2000 || TARGET_PHYTIUMPI
+
+    config  F32BIT_MEMORY_LENGTH
+        hex
+        default 0x80000000 if TARGET_E2000Q || TARGET_FT2004 || TARGET_E2000D || TARGET_E2000S || TARGET_D2000 || TARGET_PHYTIUMPI
+
+    config  F64BIT_MEMORY_ADDRESS    
+        hex
+        default 0x2000000000 if TARGET_E2000Q || TARGET_FT2004 || TARGET_E2000D || TARGET_E2000S || TARGET_D2000 || TARGET_PHYTIUMPI
+
+    config  F64BIT_MEMORY_LENGTH     
+        hex 
+        default 0x800000000 if TARGET_E2000Q || TARGET_FT2004 || TARGET_E2000D || TARGET_E2000S || TARGET_D2000 || TARGET_PHYTIUMPI
+
+
+    # an invisible config to define common code of E2000 Q/D/S
+    config TARGET_E2000
+            bool
+            default y if TARGET_E2000Q || TARGET_E2000D || TARGET_E2000S || TARGET_PHYTIUMPI
+
+
+    config USE_SPINLOCK
+        prompt "Use spinlock"
+        bool
+        default n
+
+
+    # debug print
+
+    choice DEBUG_PRINT_UART
+    prompt "Select debug uart instance"
+    default DEFAULT_DEBUG_PRINT_UART1
+    help
+        Select arch for build
+    config DEFAULT_DEBUG_PRINT_UART1
+        bool "Use uart1"
+    config DEFAULT_DEBUG_PRINT_UART0
+        bool "Use uart0"
+    config DEFAULT_DEBUG_PRINT_UART2
+        bool "Use uart2"
+    endchoice # DEBUG_PRINT_UART
+
+
+    # spinlock
+
+    config SPIN_MEM
+        hex "Spin-lock shared memory"
+        depends on USE_AMP
+        default 0x80000000
+
+
+endmenu

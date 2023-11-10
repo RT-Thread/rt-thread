@@ -35,7 +35,7 @@ extern "C"
 #include "fkernel.h"
 #include "ftypes.h"
 #include "ferror_code.h"
-#include "fdebug.h"
+#include "fdrivers_port.h"
 #include "fparameters.h"
 
 #define FQSPI_SUCCESS      FT_SUCCESS
