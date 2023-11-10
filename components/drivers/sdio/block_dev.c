@@ -614,6 +614,11 @@ static int rt_mmcsd_fops_poll(struct dfs_file *file, struct rt_pollreq *req)
     return mask;
 }
 
+static int rt_mmcsd_fops_flush(struct dfs_file *file)
+{
+    return RT_EOK;
+}
+
 const static struct dfs_file_ops mmcsd_blk_fops =
 {
     rt_mmcsd_fops_open,
@@ -621,7 +626,7 @@ const static struct dfs_file_ops mmcsd_blk_fops =
     rt_mmcsd_fops_ioctl,
     rt_mmcsd_fops_read,
     rt_mmcsd_fops_write,
-    RT_NULL,
+    rt_mmcsd_fops_flush,
     generic_dfs_lseek,
     RT_NULL,
     RT_NULL,
