@@ -38,7 +38,6 @@ static struct phytium_can drv_can[FCAN_NUM] =
         .name = "CAN1",
         .can_handle.config.instance_id = 1,
     },
-#endif
 };
 
 static void CanRxIrqCallback(void *args)
