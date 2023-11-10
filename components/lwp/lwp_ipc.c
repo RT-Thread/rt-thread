@@ -45,19 +45,17 @@ enum
  */
 struct rt_ipc_msg
 {
-    struct rt_channel_msg msg;                           /**< the payload of msg */
-    rt_list_t mlist;                                     /**< the msg list */
-    rt_uint8_t need_reply;                               /**< whether msg wait reply*/
+    struct rt_channel_msg msg; /**< the payload of msg */
+    rt_list_t mlist;           /**< the msg list */
+    rt_uint8_t need_reply;     /**< whether msg wait reply*/
 };
 typedef struct rt_ipc_msg *rt_ipc_msg_t;
 
 static rt_ipc_msg_t _ipc_msg_free_list = (rt_ipc_msg_t)RT_NULL; /* released chain */
 static int rt_ipc_msg_used = 0;                                 /* first unallocated entry */
 static struct rt_ipc_msg ipc_msg_pool[RT_CH_MSG_MAX_NR];        /* initial message array */
-
-static struct rt_spinlock ipc_big_lock;
-#define ipc_list_lock   ipc_big_lock
-#define ipc_ch_lock     ipc_big_lock
+static struct rt_mutex _chn_obj_lock;
+static struct rt_spinlock _msg_list_lock; /* lock protect of _ipc_msg_free_list */
 
 /**
  * Allocate an IPC message from the statically-allocated array.
@@ -65,8 +63,10 @@ static struct rt_spinlock ipc_big_lock;
 static rt_ipc_msg_t _ipc_msg_alloc(void)
 {
     rt_ipc_msg_t p = (rt_ipc_msg_t)RT_NULL;
+    rt_base_t level;
 
-    if (_ipc_msg_free_list)                         /* use the released chain first */
+    level = rt_spin_lock_irqsave(&_msg_list_lock);
+    if (_ipc_msg_free_list) /* use the released chain first */
     {
         p = _ipc_msg_free_list;
         _ipc_msg_free_list = (rt_ipc_msg_t)p->msg.sender; /* emtry payload as a pointer */
@@ -76,6 +76,7 @@ static rt_ipc_msg_t _ipc_msg_alloc(void)
         p = &ipc_msg_pool[rt_ipc_msg_used];
         rt_ipc_msg_used++;
     }
+    rt_spin_unlock_irqrestore(&_msg_list_lock, level);
     return p;
 }
 
@@ -84,8 +85,12 @@ static rt_ipc_msg_t _ipc_msg_alloc(void)
  */
 static void _ipc_msg_free(rt_ipc_msg_t p_msg)
 {
-    p_msg->msg.sender = (void*)_ipc_msg_free_list;
+    rt_base_t level;
+
+    level = rt_spin_lock_irqsave(&_msg_list_lock);
+    p_msg->msg.sender = (void *)_ipc_msg_free_list;
     _ipc_msg_free_list = p_msg;
+    rt_spin_unlock_irqrestore(&_msg_list_lock, level);
 }
 
 /**
@@ -97,7 +102,7 @@ static void rt_ipc_msg_init(rt_ipc_msg_t msg, struct rt_channel_msg *data, rt_ui
 
     msg->need_reply = need_reply;
     msg->msg = *data;
-    msg->msg.sender = (void*)rt_thread_self();
+    msg->msg.sender = (void *)rt_thread_self();
     rt_list_init(&msg->mlist);
 }
 
@@ -106,7 +111,7 @@ static void rt_ipc_msg_init(rt_ipc_msg_t msg, struct rt_channel_msg *data, rt_ui
  */
 rt_inline rt_err_t rt_channel_object_init(struct rt_ipc_object *ipc)
 {
-    rt_list_init(&(ipc->suspend_thread));   /* receiver list */
+    rt_list_init(&(ipc->suspend_thread)); /* receiver list */
 
     return RT_EOK;
 }
@@ -154,12 +159,11 @@ rt_inline rt_err_t rt_channel_list_suspend(rt_list_t *list, struct rt_thread *th
 
     if (ret == RT_EOK)
     {
-        rt_list_insert_before(list, &(thread->tlist));  /* list end */
+        rt_list_insert_before(list, &(thread->tlist)); /* list end */
     }
 
     return ret;
 }
-
 
 static void _rt_channel_check_wq_wakup_locked(rt_channel_t ch)
 {
@@ -171,6 +175,11 @@ static void _rt_channel_check_wq_wakup_locked(rt_channel_t ch)
     rt_wqueue_wakeup(&ch->reader_queue, 0);
 }
 
+rt_err_t rt_channel_component_init(void)
+{
+    return rt_mutex_init(&_chn_obj_lock, "rt_chnannel", RT_IPC_FLAG_PRIO);
+}
+
 /**
  * Create a new or open an existing IPC channel.
  */
@@ -178,7 +187,7 @@ rt_channel_t rt_raw_channel_open(const char *name, int flags)
 {
     rt_err_t err = RT_EOK;
     rt_channel_t ch = RT_NULL;
-
+    rt_base_t level;
     struct rt_object *object;
     struct rt_list_node *node;
     struct rt_object_information *information;
@@ -194,9 +203,14 @@ rt_channel_t rt_raw_channel_open(const char *name, int flags)
      * - Channel Object list (RW; this may write to a channel if needed, and
      *   the RCU operation of the routine should be atomic)
      */
-    rt_spin_lock(&ipc_list_lock);
     information = rt_object_get_information(RT_Object_Class_Channel);
     RT_ASSERT(information != RT_NULL);
+
+    err = rt_mutex_take_interruptible(&_chn_obj_lock, RT_WAITING_FOREVER);
+    if (err != RT_EOK)
+    {
+        return RT_NULL;
+    }
 
     for (node = information->object_list.next;
          node != &(information->object_list);
@@ -212,7 +226,9 @@ rt_channel_t rt_raw_channel_open(const char *name, int flags)
             }
             /* find the IPC channel with the specific name */
             ch = (rt_channel_t)object;
-            ch->ref++;      /* increase the reference count */
+            level = rt_spin_lock_irqsave(&ch->slock);
+            ch->ref++; /* increase the reference count */
+            rt_spin_unlock_irqrestore(&ch->slock, level);
             break;
         }
     }
@@ -228,17 +244,18 @@ rt_channel_t rt_raw_channel_open(const char *name, int flags)
 
         if (ch)
         {
-            rt_channel_object_init(&ch->parent);    /* suspended receivers */
-            rt_list_init(&ch->wait_msg);            /* unhandled messages */
-            rt_list_init(&ch->wait_thread);         /* suspended senders */
-            rt_wqueue_init(&ch->reader_queue);      /* reader poll queue */
+            rt_channel_object_init(&ch->parent); /* suspended receivers */
+            rt_spin_lock_init(&ch->slock);
+            rt_list_init(&ch->wait_msg);       /* unhandled messages */
+            rt_list_init(&ch->wait_thread);    /* suspended senders */
+            rt_wqueue_init(&ch->reader_queue); /* reader poll queue */
             ch->reply = RT_NULL;
-            ch->stat = RT_IPC_STAT_IDLE;            /* no suspended threads */
+            ch->stat = RT_IPC_STAT_IDLE; /* no suspended threads */
             ch->ref = 1;
         }
     }
 
-    rt_spin_unlock(&ipc_list_lock);
+    rt_mutex_release(&_chn_obj_lock);
 
     return ch;
 }
@@ -248,23 +265,25 @@ rt_channel_t rt_raw_channel_open(const char *name, int flags)
  */
 rt_err_t rt_raw_channel_close(rt_channel_t ch)
 {
-    rt_err_t rc = RT_EOK;
+    rt_err_t rc = -RT_EIO;
+    rt_base_t level;
 
     RT_DEBUG_NOT_IN_INTERRUPT;
 
-    if (ch == RT_NULL)
+    if (ch != RT_NULL)
     {
-        rc = -RT_EIO;
-    }
-    else
-    {
+        rc = rt_mutex_take_interruptible(&_chn_obj_lock, RT_WAITING_FOREVER);
+        if (rc != RT_EOK)
+        {
+            return rc;
+        }
         /**
          * Brief: Remove the channel from object list
          *
          * Note: Critical Section
          * - the channel
          */
-        rt_spin_lock(&ipc_ch_lock);
+        level = rt_spin_lock_irqsave(&ch->slock);
 
         if (rt_object_get_type(&ch->parent.parent) != RT_Object_Class_Channel)
         {
@@ -281,6 +300,13 @@ rt_err_t rt_raw_channel_close(rt_channel_t ch)
         else
         {
             ch->ref--;
+
+            rc = RT_EOK;
+        }
+        rt_spin_unlock_irqrestore(&ch->slock, level);
+
+        if (rc == RT_EOK)
+        {
             if (ch->ref == 0)
             {
                 /* wakeup all the suspended receivers and senders */
@@ -290,11 +316,11 @@ rt_err_t rt_raw_channel_close(rt_channel_t ch)
                 /* all ipc msg will lost */
                 rt_list_init(&ch->wait_msg);
 
-                rt_object_delete(&ch->parent.parent);   /* release the IPC channel structure */
+                rt_object_delete(&ch->parent.parent); /* release the IPC channel structure */
             }
-            rc = RT_EOK;
         }
-        rt_spin_unlock(&ipc_ch_lock);
+
+        rt_mutex_release(&_chn_obj_lock);
     }
 
     return rc;
@@ -321,7 +347,7 @@ static rt_err_t wakeup_sender_wait_recv(void *object, struct rt_thread *thread)
             msg = rt_list_entry(l, struct rt_ipc_msg, mlist);
             if (msg->need_reply && msg->msg.sender == thread)
             {
-                rt_list_remove(&msg->mlist);  /* remove the msg from the channel */
+                rt_list_remove(&msg->mlist); /* remove the msg from the channel */
                 _ipc_msg_free(msg);
                 break;
             }
@@ -329,7 +355,7 @@ static rt_err_t wakeup_sender_wait_recv(void *object, struct rt_thread *thread)
         }
     }
     thread->error = -RT_EINTR;
-    return rt_thread_resume(thread);       /* wake up the sender */
+    return rt_thread_resume(thread); /* wake up the sender */
 }
 
 static rt_err_t wakeup_sender_wait_reply(void *object, struct rt_thread *thread)
@@ -341,12 +367,12 @@ static rt_err_t wakeup_sender_wait_reply(void *object, struct rt_thread *thread)
     ch->stat = RT_IPC_STAT_IDLE;
     ch->reply = RT_NULL;
     thread->error = -RT_EINTR;
-    return rt_thread_resume(thread);       /* wake up the sender */
+    return rt_thread_resume(thread); /* wake up the sender */
 }
 
 static void sender_timeout(void *parameter)
 {
-    struct rt_thread *thread = (struct rt_thread*)parameter;
+    struct rt_thread *thread = (struct rt_thread *)parameter;
     rt_channel_t ch;
 
     ch = (rt_channel_t)(thread->wakeup.user_data);
@@ -366,7 +392,7 @@ static void sender_timeout(void *parameter)
             msg = rt_list_entry(l, struct rt_ipc_msg, mlist);
             if (msg->need_reply && msg->msg.sender == thread)
             {
-                rt_list_remove(&msg->mlist);  /* remove the msg from the channel */
+                rt_list_remove(&msg->mlist); /* remove the msg from the channel */
                 _ipc_msg_free(msg);
                 break;
             }
@@ -445,9 +471,8 @@ static int _ipc_msg_fd_new(void *file)
         rt_atomic_add(&(d->vnode->ref_count), 1);
 #else
     if (d->vnode)
-        d->vnode->ref_count ++;
+        d->vnode->ref_count++;
 #endif
-
 
     return fd;
 }
@@ -501,6 +526,7 @@ static rt_err_t _do_send_recv_timeout(rt_channel_t ch, rt_channel_msg_t data, in
     rt_thread_t thread_recv;
     rt_thread_t thread_send = 0;
     void (*old_timeout_func)(void *) = 0;
+    rt_base_t level;
 
     /* IPC message : file descriptor */
     if (data->type == RT_CHANNEL_FD)
@@ -516,97 +542,99 @@ static rt_err_t _do_send_recv_timeout(rt_channel_t ch, rt_channel_msg_t data, in
         thread_send->error = RT_EOK;
     }
 
-    rt_spin_lock(&ipc_ch_lock);
+    rc = RT_EOK;
+
+    level = rt_spin_lock_irqsave(&ch->slock);
 
     switch (ch->stat)
     {
-        case RT_IPC_STAT_IDLE:
-        case RT_IPC_STAT_ACTIVE:
-            if (need_reply)
+    case RT_IPC_STAT_IDLE:
+    case RT_IPC_STAT_ACTIVE:
+        if (need_reply)
+        {
+            rc = rt_channel_list_suspend(&ch->wait_thread, thread_send);
+            if (rc != RT_EOK)
             {
-                rc = rt_channel_list_suspend(&ch->wait_thread, thread_send);
-                if (rc != RT_EOK)
-                {
-                    _ipc_msg_free(msg);
-                }
-                else
-                {
-                    rt_thread_wakeup_set(thread_send, wakeup_sender_wait_recv, (void*)ch);
-                    if (time > 0)
-                    {
-                        rt_timer_control(&(thread_send->thread_timer),
-                                RT_TIMER_CTRL_GET_FUNC,
-                                &old_timeout_func);
-                        rt_timer_control(&(thread_send->thread_timer),
-                                RT_TIMER_CTRL_SET_FUNC,
-                                sender_timeout);
-                        /* reset the timeout of thread timer and start it */
-                        rt_timer_control(&(thread_send->thread_timer),
-                                RT_TIMER_CTRL_SET_TIME,
-                                &time);
-                        rt_timer_start(&(thread_send->thread_timer));
-                    }
-                }
-            }
-
-            /**
-             * If there is no thread waiting for messages, chain the message
-             * into the list.
-             */
-            if (rc == RT_EOK)
-                rt_list_insert_before(&ch->wait_msg, &msg->mlist);
-            break;
-        case RT_IPC_STAT_WAIT:
-            /**
-             * If there are suspended receivers on the IPC channel, transfer the
-             * pointer of the message to the first receiver directly and wake it
-             * up.
-             */
-            RT_ASSERT(ch->parent.suspend_thread.next != &ch->parent.suspend_thread);
-
-            if (need_reply)
-            {
-                rc = rt_channel_list_suspend(&ch->wait_thread, thread_send);
-                if (rc != RT_EOK)
-                {
-                    _ipc_msg_free(msg);
-                }
-                else
-                {
-                    ch->reply = thread_send;    /* record the current waiting sender */
-                    ch->stat = RT_IPC_STAT_ACTIVE;
-                    rt_thread_wakeup_set(thread_send, wakeup_sender_wait_reply, (void*)ch);
-                    if (time > 0)
-                    {
-                        rt_timer_control(&(thread_send->thread_timer),
-                                RT_TIMER_CTRL_GET_FUNC,
-                                &old_timeout_func);
-                        rt_timer_control(&(thread_send->thread_timer),
-                                RT_TIMER_CTRL_SET_FUNC,
-                                sender_timeout);
-                        /* reset the timeout of thread timer and start it */
-                        rt_timer_control(&(thread_send->thread_timer),
-                                RT_TIMER_CTRL_SET_TIME,
-                                &time);
-                        rt_timer_start(&(thread_send->thread_timer));
-                    }
-                }
+                _ipc_msg_free(msg);
             }
             else
             {
-                ch->stat = RT_IPC_STAT_IDLE;
+                rt_thread_wakeup_set(thread_send, wakeup_sender_wait_recv, (void *)ch);
+                if (time > 0)
+                {
+                    rt_timer_control(&(thread_send->thread_timer),
+                                     RT_TIMER_CTRL_GET_FUNC,
+                                     &old_timeout_func);
+                    rt_timer_control(&(thread_send->thread_timer),
+                                     RT_TIMER_CTRL_SET_FUNC,
+                                     sender_timeout);
+                    /* reset the timeout of thread timer and start it */
+                    rt_timer_control(&(thread_send->thread_timer),
+                                     RT_TIMER_CTRL_SET_TIME,
+                                     &time);
+                    rt_timer_start(&(thread_send->thread_timer));
+                }
             }
+        }
 
-            if (!need_reply || rc == RT_EOK)
+        /**
+         * If there is no thread waiting for messages, chain the message
+         * into the list.
+         */
+        if (rc == RT_EOK)
+            rt_list_insert_before(&ch->wait_msg, &msg->mlist);
+        break;
+    case RT_IPC_STAT_WAIT:
+        /**
+         * If there are suspended receivers on the IPC channel, transfer the
+         * pointer of the message to the first receiver directly and wake it
+         * up.
+         */
+        RT_ASSERT(ch->parent.suspend_thread.next != &ch->parent.suspend_thread);
+
+        if (need_reply)
+        {
+            rc = rt_channel_list_suspend(&ch->wait_thread, thread_send);
+            if (rc != RT_EOK)
             {
-                thread_recv = rt_list_entry(ch->parent.suspend_thread.next, struct rt_thread, tlist);
-                thread_recv->msg_ret = msg;     /* to the first suspended receiver */
-                thread_recv->error = RT_EOK;
-                rt_channel_list_resume(&ch->parent.suspend_thread);
+                _ipc_msg_free(msg);
             }
-            break;
-        default:
-            break;
+            else
+            {
+                ch->reply = thread_send; /* record the current waiting sender */
+                ch->stat = RT_IPC_STAT_ACTIVE;
+                rt_thread_wakeup_set(thread_send, wakeup_sender_wait_reply, (void *)ch);
+                if (time > 0)
+                {
+                    rt_timer_control(&(thread_send->thread_timer),
+                                     RT_TIMER_CTRL_GET_FUNC,
+                                     &old_timeout_func);
+                    rt_timer_control(&(thread_send->thread_timer),
+                                     RT_TIMER_CTRL_SET_FUNC,
+                                     sender_timeout);
+                    /* reset the timeout of thread timer and start it */
+                    rt_timer_control(&(thread_send->thread_timer),
+                                     RT_TIMER_CTRL_SET_TIME,
+                                     &time);
+                    rt_timer_start(&(thread_send->thread_timer));
+                }
+            }
+        }
+        else
+        {
+            ch->stat = RT_IPC_STAT_IDLE;
+        }
+
+        if (!need_reply || rc == RT_EOK)
+        {
+            thread_recv = rt_list_entry(ch->parent.suspend_thread.next, struct rt_thread, tlist);
+            thread_recv->msg_ret = msg; /* to the first suspended receiver */
+            thread_recv->error = RT_EOK;
+            rt_channel_list_resume(&ch->parent.suspend_thread);
+        }
+        break;
+    default:
+        break;
     }
 
     if (rc == RT_EOK)
@@ -615,19 +643,18 @@ static rt_err_t _do_send_recv_timeout(rt_channel_t ch, rt_channel_msg_t data, in
         {
             _rt_channel_check_wq_wakup_locked(ch);
         }
-        rt_spin_unlock(&ipc_ch_lock);
+        rt_spin_unlock_irqrestore(&ch->slock, level);
 
         /* reschedule in order to let the potential receivers run */
         rt_schedule();
 
-        rt_spin_lock(&ipc_ch_lock);
         if (need_reply)
         {
             if (old_timeout_func)
             {
                 rt_timer_control(&(thread_send->thread_timer),
-                        RT_TIMER_CTRL_SET_FUNC,
-                        old_timeout_func);
+                                 RT_TIMER_CTRL_SET_FUNC,
+                                 old_timeout_func);
             }
             rc = thread_send->error;
 
@@ -635,14 +662,17 @@ static rt_err_t _do_send_recv_timeout(rt_channel_t ch, rt_channel_msg_t data, in
             {
                 /* If the sender gets the chance to run, the requested reply must be valid. */
                 RT_ASSERT(data_ret != RT_NULL);
-                *data_ret = ((rt_ipc_msg_t)(thread_send->msg_ret))->msg;   /* extract data */
-                _ipc_msg_free(thread_send->msg_ret);    /* put back the message to kernel */
+                *data_ret = ((rt_ipc_msg_t)(thread_send->msg_ret))->msg; /* extract data */
+                _ipc_msg_free(thread_send->msg_ret);                     /* put back the message to kernel */
 
                 thread_send->msg_ret = RT_NULL;
             }
         }
     }
-    rt_spin_unlock(&ipc_ch_lock);
+    else
+    {
+        rt_spin_unlock_irqrestore(&ch->slock, level);
+    }
 
     return rc;
 }
@@ -679,6 +709,7 @@ rt_err_t rt_raw_channel_reply(rt_channel_t ch, rt_channel_msg_t data)
     DEF_RETURN_CODE(rc);
     rt_ipc_msg_t msg;
     struct rt_thread *thread;
+    rt_base_t level;
 
     if (ch == RT_NULL)
     {
@@ -686,7 +717,7 @@ rt_err_t rt_raw_channel_reply(rt_channel_t ch, rt_channel_msg_t data)
     }
     else
     {
-        rt_spin_lock(&ipc_ch_lock);
+        level = rt_spin_lock_irqsave(&ch->slock);
 
         if (rt_object_get_type(&ch->parent.parent) != RT_Object_Class_Channel)
         {
@@ -713,8 +744,8 @@ rt_err_t rt_raw_channel_reply(rt_channel_t ch, rt_channel_msg_t data)
                 rt_ipc_msg_init(msg, data, 0);
 
                 thread = ch->reply;
-                thread->msg_ret = msg;          /* transfer the reply to the sender */
-                rt_thread_resume(thread);       /* wake up the sender */
+                thread->msg_ret = msg;    /* transfer the reply to the sender */
+                rt_thread_resume(thread); /* wake up the sender */
                 ch->stat = RT_IPC_STAT_IDLE;
                 ch->reply = RT_NULL;
 
@@ -722,7 +753,7 @@ rt_err_t rt_raw_channel_reply(rt_channel_t ch, rt_channel_msg_t data)
                 rc = RT_EOK;
             }
         }
-        rt_spin_unlock(&ipc_ch_lock);
+        rt_spin_unlock_irqrestore(&ch->slock, level);
 
         rt_schedule();
     }
@@ -734,37 +765,39 @@ static rt_err_t wakeup_receiver(void *object, struct rt_thread *thread)
 {
     rt_channel_t ch;
     rt_err_t ret;
+    rt_base_t level;
 
     ch = (rt_channel_t)object;
+
+    level = rt_spin_lock_irqsave(&ch->slock);
     ch->stat = RT_IPC_STAT_IDLE;
     thread->error = -RT_EINTR;
     ret = rt_channel_list_resume(&ch->parent.suspend_thread);
-
-    rt_spin_lock(&ipc_ch_lock);
     _rt_channel_check_wq_wakup_locked(ch);
-    rt_spin_unlock(&ipc_ch_lock);
+    rt_spin_unlock_irqrestore(&ch->slock, level);
 
     return ret;
 }
 
 static void receiver_timeout(void *parameter)
 {
-    struct rt_thread *thread = (struct rt_thread*)parameter;
+    struct rt_thread *thread = (struct rt_thread *)parameter;
     rt_channel_t ch;
+    rt_base_t level;
 
     ch = (rt_channel_t)(thread->wakeup.user_data);
 
+    level = rt_spin_lock_irqsave(&ch->slock);
     ch->stat = RT_IPC_STAT_IDLE;
     thread->error = -RT_ETIMEOUT;
     thread->wakeup.func = RT_NULL;
 
-    rt_spin_lock(&ipc_ch_lock);
     rt_list_remove(&(thread->tlist));
     /* insert to schedule ready list */
     rt_schedule_insert_thread(thread);
 
     _rt_channel_check_wq_wakup_locked(ch);
-    rt_spin_unlock(&ipc_ch_lock);
+    rt_spin_unlock_irqrestore(&ch->slock, level);
 
     /* do schedule */
     rt_schedule();
@@ -779,6 +812,7 @@ static rt_err_t _rt_raw_channel_recv_timeout(rt_channel_t ch, rt_channel_msg_t d
     struct rt_thread *thread;
     rt_ipc_msg_t msg_ret;
     void (*old_timeout_func)(void *) = 0;
+    rt_base_t level;
 
     RT_DEBUG_NOT_IN_INTERRUPT;
 
@@ -787,7 +821,7 @@ static rt_err_t _rt_raw_channel_recv_timeout(rt_channel_t ch, rt_channel_msg_t d
         return -RT_EIO;
     }
 
-    rt_spin_lock(&ipc_ch_lock);
+    level = rt_spin_lock_irqsave(&ch->slock);
 
     if (rt_object_get_type(&ch->parent.parent) != RT_Object_Class_Channel)
     {
@@ -802,22 +836,22 @@ static rt_err_t _rt_raw_channel_recv_timeout(rt_channel_t ch, rt_channel_msg_t d
         if (ch->wait_msg.next != &ch->wait_msg) /* there exist unhandled messages */
         {
             msg_ret = rt_list_entry(ch->wait_msg.next, struct rt_ipc_msg, mlist);
-            rt_list_remove(ch->wait_msg.next);  /* remove the message from the channel */
+            rt_list_remove(ch->wait_msg.next); /* remove the message from the channel */
             if (msg_ret->need_reply)
             {
                 RT_ASSERT(ch->wait_thread.next != &ch->wait_thread);
 
                 thread = rt_list_entry(ch->wait_thread.next, struct rt_thread, tlist);
                 rt_list_remove(ch->wait_thread.next);
-                ch->reply = thread;             /* record the waiting sender */
-                ch->stat = RT_IPC_STAT_ACTIVE;  /* no valid suspened receivers */
+                ch->reply = thread;            /* record the waiting sender */
+                ch->stat = RT_IPC_STAT_ACTIVE; /* no valid suspened receivers */
             }
-            *data = msg_ret->msg;      /* extract the transferred data */
+            *data = msg_ret->msg; /* extract the transferred data */
             if (data->type == RT_CHANNEL_FD)
             {
                 data->u.fd.fd = _ipc_msg_fd_new(data->u.fd.file);
             }
-            _ipc_msg_free(msg_ret);     /* put back the message to kernel */
+            _ipc_msg_free(msg_ret); /* put back the message to kernel */
             rc = RT_EOK;
         }
         else if (time == 0)
@@ -832,51 +866,52 @@ static rt_err_t _rt_raw_channel_recv_timeout(rt_channel_t ch, rt_channel_msg_t d
             rc = rt_channel_list_suspend(&ch->parent.suspend_thread, thread);
             if (rc == RT_EOK)
             {
-                rt_thread_wakeup_set(thread, wakeup_receiver, (void*)ch);
-                ch->stat = RT_IPC_STAT_WAIT;/* no valid suspended senders */
+                rt_thread_wakeup_set(thread, wakeup_receiver, (void *)ch);
+                ch->stat = RT_IPC_STAT_WAIT; /* no valid suspended senders */
                 thread->error = RT_EOK;
                 if (time > 0)
                 {
                     rt_timer_control(&(thread->thread_timer),
-                            RT_TIMER_CTRL_GET_FUNC,
-                            &old_timeout_func);
+                                     RT_TIMER_CTRL_GET_FUNC,
+                                     &old_timeout_func);
                     rt_timer_control(&(thread->thread_timer),
-                            RT_TIMER_CTRL_SET_FUNC,
-                            receiver_timeout);
+                                     RT_TIMER_CTRL_SET_FUNC,
+                                     receiver_timeout);
                     /* reset the timeout of thread timer and start it */
                     rt_timer_control(&(thread->thread_timer),
-                            RT_TIMER_CTRL_SET_TIME,
-                            &time);
+                                     RT_TIMER_CTRL_SET_TIME,
+                                     &time);
                     rt_timer_start(&(thread->thread_timer));
                 }
-                rt_spin_unlock(&ipc_ch_lock);
+                rt_spin_unlock_irqrestore(&ch->slock, level);
 
-                rt_schedule();              /* let the senders run */
+                rt_schedule(); /* let the senders run */
 
-                rt_spin_lock(&ipc_ch_lock);
                 if (old_timeout_func)
                 {
                     rt_timer_control(&(thread->thread_timer),
-                            RT_TIMER_CTRL_SET_FUNC,
-                            old_timeout_func);
+                                     RT_TIMER_CTRL_SET_FUNC,
+                                     old_timeout_func);
                 }
                 rc = thread->error;
                 if (rc == RT_EOK)
                 {
                     /* If waked up, the received message has been store into the thread. */
-                    *data = ((rt_ipc_msg_t)(thread->msg_ret))->msg;    /* extract data */
+                    *data = ((rt_ipc_msg_t)(thread->msg_ret))->msg; /* extract data */
                     if (data->type == RT_CHANNEL_FD)
                     {
                         data->u.fd.fd = _ipc_msg_fd_new(data->u.fd.file);
                     }
-                    _ipc_msg_free(thread->msg_ret);     /* put back the message to kernel */
+                    _ipc_msg_free(thread->msg_ret); /* put back the message to kernel */
                     thread->msg_ret = RT_NULL;
                 }
+                level = rt_spin_lock_irqsave(&ch->slock);
             }
         }
     }
 
-    rt_spin_unlock(&ipc_ch_lock);
+    rt_spin_unlock_irqrestore(&ch->slock, level);
+
     RETURN(rc);
 }
 
@@ -976,28 +1011,36 @@ static int channel_fops_poll(struct dfs_file *file, struct rt_pollreq *req)
 {
     int mask = POLLOUT;
     rt_channel_t ch;
+    rt_base_t level;
 
     ch = (rt_channel_t)file->vnode->data;
+
+    level = rt_spin_lock_irqsave(&ch->slock);
     rt_poll_add(&(ch->reader_queue), req);
     if (ch->stat != RT_IPC_STAT_IDLE)
     {
+        rt_spin_unlock_irqrestore(&ch->slock, level);
         return mask;
     }
     if (!rt_list_isempty(&ch->wait_msg))
     {
         mask |= POLLIN;
     }
+    rt_spin_unlock_irqrestore(&ch->slock, level);
+
     return mask;
 }
 
 static int channel_fops_close(struct dfs_file *file)
 {
     rt_channel_t ch;
+    rt_base_t level;
     RT_DEBUG_NOT_IN_INTERRUPT;
 
-    rt_spin_lock(&ipc_ch_lock);
-
     ch = (rt_channel_t)file->vnode->data;
+
+    level = rt_spin_lock_irqsave(&ch->slock);
+
     if (file->vnode->ref_count == 1)
     {
         ch->ref--;
@@ -1010,18 +1053,27 @@ static int channel_fops_close(struct dfs_file *file)
             /* all ipc msg will lost */
             rt_list_init(&ch->wait_msg);
 
-            rt_object_delete(&ch->parent.parent);   /* release the IPC channel structure */
+            rt_spin_unlock_irqrestore(&ch->slock, level);
+
+            rt_object_delete(&ch->parent.parent); /* release the IPC channel structure */
+        }
+        else
+        {
+            rt_spin_unlock_irqrestore(&ch->slock, level);
         }
     }
+    else
+    {
+        rt_spin_unlock_irqrestore(&ch->slock, level);
+    }
 
-    rt_spin_unlock(&ipc_ch_lock);
     return 0;
 }
 
 static const struct dfs_file_ops channel_fops =
 {
-    .close = channel_fops_close,    /* close */
-    .poll = channel_fops_poll,      /* poll */
+    .close = channel_fops_close, /* close */
+    .poll = channel_fops_poll,   /* poll */
 };
 
 int lwp_channel_open(int fdt_type, const char *name, int flags)
@@ -1030,11 +1082,12 @@ int lwp_channel_open(int fdt_type, const char *name, int flags)
     rt_channel_t ch = RT_NULL;
     struct dfs_file *d;
 
-    fd = _chfd_alloc(fdt_type);     /* allocate an IPC channel descriptor */
+    fd = _chfd_alloc(fdt_type); /* allocate an IPC channel descriptor */
     if (fd == -1)
     {
         goto quit;
     }
+
     d = lwp_fd_get(fdt_type, fd);
     d->vnode = (struct dfs_vnode *)rt_malloc(sizeof(struct dfs_vnode));
     if (!d->vnode)
@@ -1119,6 +1172,7 @@ rt_err_t lwp_channel_close(int fdt_type, int fd)
 rt_err_t lwp_channel_send(int fdt_type, int fd, rt_channel_msg_t data)
 {
     rt_channel_t ch;
+
     ch = fd_2_channel(fdt_type, fd);
     if (ch)
     {
@@ -1130,6 +1184,7 @@ rt_err_t lwp_channel_send(int fdt_type, int fd, rt_channel_msg_t data)
 rt_err_t lwp_channel_send_recv_timeout(int fdt_type, int fd, rt_channel_msg_t data, rt_channel_msg_t data_ret, rt_int32_t time)
 {
     rt_channel_t ch;
+
     ch = fd_2_channel(fdt_type, fd);
     if (ch)
     {
@@ -1141,6 +1196,7 @@ rt_err_t lwp_channel_send_recv_timeout(int fdt_type, int fd, rt_channel_msg_t da
 rt_err_t lwp_channel_reply(int fdt_type, int fd, rt_channel_msg_t data)
 {
     rt_channel_t ch;
+
     ch = fd_2_channel(fdt_type, fd);
     if (ch)
     {
@@ -1152,6 +1208,7 @@ rt_err_t lwp_channel_reply(int fdt_type, int fd, rt_channel_msg_t data)
 rt_err_t lwp_channel_recv_timeout(int fdt_type, int fd, rt_channel_msg_t data, rt_int32_t time)
 {
     rt_channel_t ch;
+
     ch = fd_2_channel(fdt_type, fd);
     if (ch)
     {
@@ -1215,44 +1272,45 @@ static int list_channel(void)
 
     RT_DEBUG_NOT_IN_INTERRUPT;
 
-    const char* stat_strs[] = {"idle", "wait", "active"};
+    const char *stat_strs[] = {"idle", "wait", "active"};
 
     information = rt_object_get_information(RT_Object_Class_Channel);
     RT_ASSERT(information != RT_NULL);
 
     count = 0;
-    rt_spin_lock(&ipc_list_lock);
+    rt_mutex_take(&_chn_obj_lock, RT_WAITING_FOREVER);
     /* get the count of IPC channels */
-    for (node  = information->object_list.next;
-            node != &(information->object_list);
-            node  = node->next)
-    {
-        count ++;
-    }
-    rt_spin_unlock(&ipc_list_lock);
-
-    if (count == 0) return 0;
-
-    channels = (rt_channel_t *) rt_calloc(count, sizeof(rt_channel_t));
-    if (channels == RT_NULL) return 0; /* out of memory */
-
-    index = 0;
-    rt_spin_lock(&ipc_list_lock);
-    /* retrieve pointer of IPC channels */
     for (node = information->object_list.next;
-         count > 0 && node != &(information->object_list);
-         count--, node = node->next)
+         node != &(information->object_list);
+         node = node->next)
+    {
+        count++;
+    }
+    rt_mutex_release(&_chn_obj_lock);
+
+    if (count == 0)
+        return 0;
+
+    channels = (rt_channel_t *)rt_calloc(count, sizeof(rt_channel_t));
+    if (channels == RT_NULL)
+        return 0; /* out of memory */
+
+    rt_mutex_take(&_chn_obj_lock, RT_WAITING_FOREVER);
+    /* retrieve pointer of IPC channels */
+    for (index = 0, node = information->object_list.next;
+         index < count && node != &(information->object_list);
+         node = node->next)
     {
         object = rt_list_entry(node, struct rt_object, list);
 
         channels[index] = (rt_channel_t)object;
-        index ++;
+        index++;
     }
-    rt_spin_unlock(&ipc_list_lock);
+    rt_mutex_release(&_chn_obj_lock);
 
     rt_kprintf(" channel state\n");
     rt_kprintf("-------- -------\n");
-    for (index = 0; index < count; index ++)
+    for (index = 0; index < count; index++)
     {
         if (channels[index] != RT_NULL)
         {
@@ -1267,4 +1325,3 @@ static int list_channel(void)
     return 0;
 }
 MSH_CMD_EXPORT(list_channel, list IPC channel information);
-

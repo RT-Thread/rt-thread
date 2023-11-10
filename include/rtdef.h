@@ -1449,6 +1449,7 @@ struct rt_channel
 {
     struct rt_ipc_object parent;                        /**< inherit from object */
     struct rt_thread *reply;                            /**< the thread will be reply */
+    struct rt_spinlock slock;                           /**< spinlock of this channel */
     rt_list_t wait_msg;                                 /**< the wait queue of sender msg */
     rt_list_t wait_thread;                              /**< the wait queue of sender thread */
     rt_wqueue_t reader_queue;                           /**< channel poll queue */
