@@ -206,7 +206,7 @@ menu "On-chip Peripheral Drivers"
         endif
        
     menuconfig BSP_USING_SDIF
-        bool "Enable SDIO"
+        bool "Enable SDIF"
         default n
         select RT_USING_SDIO
     
@@ -216,6 +216,12 @@ menu "On-chip Peripheral Drivers"
                     select RT_USING_DFS_ELMFAT
                     default n
     
+                if BSP_USING_SDCARD_FATFS
+                    config BSP_USING_SDCARD_PARTITION
+                        string "Set SDCARD (FATFS) partition index"
+                        default "sd0"
+                endif
+
                 choice
                     prompt "Choose a card to mount"
                     default USING_SDIF1
@@ -230,11 +236,6 @@ menu "On-chip Peripheral Drivers"
                         bool "Use EMMC"
                 endchoice 
 
-                config SDCARD_OFFSET
-                    hex "Block Offset"
-                    default 0x0 
-                    help 
-                        Skip access start paration of SD Card to protect BIOS
         endif
 endmenu
 

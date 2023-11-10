@@ -18,28 +18,8 @@
 #include <dfs_fs.h>
 #include <dfs_file.h>
 
-#ifdef BSP_USING_SDCARD_FATFS
-#define SD_DEIVCE_NAME "sd"
-static int filesystem_mount(void)
+static int ram_disk_mount(const char *mount_point)
 {
-    while (rt_device_find(SD_DEIVCE_NAME) == RT_NULL)
-    {
-        rt_thread_mdelay(1);
-    }
-
-    if (dfs_mount(SD_DEIVCE_NAME, "/", "elm", 0, 0) == 0)
-    {
-        LOG_I("file system initialization done!\n");
-    }
-    else
-    {
-        LOG_E("[sd] File System on SD initialization failed!");
-        LOG_E("[sd] Please format SD Card as FAT32!!!...");
-        return -1;
-    }
-
-    mkdir("/ram", 0x777);
-
 #ifdef RT_USING_DFS_RAMFS
     extern struct dfs_ramfs *dfs_ramfs_create(rt_uint8_t *pool, rt_size_t size);
 
@@ -48,50 +28,107 @@ static int filesystem_mount(void)
 
     pool = rt_malloc(size);
     if (pool == RT_NULL)
-    {
         LOG_E("Malloc fail!");
+
+    if (dfs_mount(RT_NULL, mount_point, "ram", 0, (const void *)dfs_ramfs_create(pool, size)) == 0)
+        LOG_I("RAM file system initializated!");
+    else
+        LOG_E("RAM file system initializate failed!");
+#endif
+
+    return RT_EOK;
+}
+
+#ifdef BSP_USING_SDCARD_FATFS
+extern void fsdif_change(void);
+static int sd_disk_try_mount(char *device_name, char *mount_point, char *fs_type_name, int mkfs_count)
+{
+    struct statfs fs_stat;
+    int rc = 0;
+
+    LOG_I("mount(\"%s\",\"%s\",\"%s\");", device_name, mount_point, fs_type_name);
+
+    if (rt_device_find(device_name) == NULL)
+    {
+        LOG_I("%s not find!!!", device_name);
+        return -RT_EIO;
     }
 
-    if (dfs_mount(RT_NULL, "/ram", "ram", 0, (const void *)dfs_ramfs_create(pool, size)) == 0)
+    mkdir(mount_point, 0);
+_remount:
+    rc = dfs_mount(device_name, mount_point, fs_type_name, 0, 0);
+    if (rc == 0)
     {
-        LOG_I("RAM file system initializated!");
+        LOG_I("mounted %s on %s", device_name, mount_point);
+        if (dfs_statfs(mount_point, &fs_stat) >= 0)
+        {
+            LOG_I("%s size:%d, total: %d, free: %d", mount_point,
+                  fs_stat.f_bsize, fs_stat.f_blocks, fs_stat.f_bfree);
+        }
     }
     else
     {
-        LOG_E("RAM file system initializate failed!");
+        if (mkfs_count > 0)
+        {
+            /* LOG_I("[%s]try mkfs -t %s %s ", mkfs_count, fs_type_name, device_name);
+            dfs_mkfs(fs_type_name, device_name); */
+            mkfs_count--; 
+            LOG_E("%s is not in %s, please format first !!!", device_name, fs_type_name);
+            goto _remount;
+        }
+
+        LOG_I("mount failed :%d ", rc);
+        return -RT_EIO;
     }
-#endif
+
     return RT_EOK;
 }
-INIT_ENV_EXPORT(filesystem_mount);
+
+static void sd_filesytem_task_entry(void *parameter)
+{
+    int result;
+    LOG_D("sdio host change: %d", change);
+    mmcsd_wait_cd_changed(0); /* clear */
+    fsdif_change();        /* send cd change to host */
+
+    /* block until plug/unplug event happens */
+    result = mmcsd_wait_cd_changed(RT_WAITING_FOREVER);
+    if (result == MMCSD_HOST_PLUGED)
+    {
+        rt_kprintf("mmcsd change pluged \n");
+        /* mount sdcard partition as / */
+        if (RT_EOK == sd_disk_try_mount(BSP_USING_SDCARD_PARTITION, "/", "elm", 0))
+        {
+            ram_disk_mount("/ram"); /* mount ramdisk if configured */
+        }
+    }
+}
+
+int filesystem_mount(void)
+{
+    rt_thread_t tid;
+    tid = rt_thread_create("sd_filesytem", sd_filesytem_task_entry, 
+                           RT_NULL,
+                           4096, 
+                           RT_THREAD_PRIORITY_MAX - 2, 20);
+    if (tid != RT_NULL)
+    {
+        rt_thread_startup(tid);
+    }
+    else
+    {
+        LOG_E("create sd mount task error!");
+    }
+
+    return RT_EOK;
+}
+INIT_APP_EXPORT(filesystem_mount);
 
 #else
 static int filesystem_mount(void)
 {
-#ifdef RT_USING_DFS_RAMFS
-    extern struct dfs_ramfs *dfs_ramfs_create(rt_uint8_t *pool, rt_size_t size);
-
-    rt_uint8_t *pool = RT_NULL;
-    rt_size_t size = 8 * 1024 * 1024;
-
-    pool = rt_malloc(size);
-    if (pool == RT_NULL)
-    {
-        LOG_E("Malloc fail!");
-    }
-
-    if (dfs_mount(RT_NULL, "/", "ram", 0, (const void *)dfs_ramfs_create(pool, size)) == 0)
-    {
-        LOG_I("RAM file system initializated!");
-    }
-    else
-    {
-        LOG_E("RAM file system initializate failed!");
-    }
-#endif
-
-    return RT_EOK;
+    return ram_disk_mount("/"); /* mount ramdisk as / */
 }
-INIT_ENV_EXPORT(filesystem_mount);
+INIT_APP_EXPORT(filesystem_mount);
 #endif // #ifdef BSP_USING_SDCARD_FATFS
 #endif // #if defined(RT_USING_DFS)

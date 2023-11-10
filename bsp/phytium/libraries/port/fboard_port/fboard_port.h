@@ -24,6 +24,7 @@
 #ifndef FBOARD_PORT_H
 #define FBOARD_PORT_H
 
+#include <rtthread.h>
 #include <rtdbg.h>
 #include "rtconfig.h"
 

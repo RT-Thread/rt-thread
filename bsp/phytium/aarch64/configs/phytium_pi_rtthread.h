@@ -132,6 +132,12 @@
 #define RT_USING_ZERO
 #define RT_USING_RANDOM
 #define RT_USING_RTC
+#define RT_USING_SDIO
+#define RT_SDIO_STACK_SIZE 8192
+#define RT_SDIO_THREAD_PRIORITY 15
+#define RT_MMCSD_STACK_SIZE 8192
+#define RT_MMCSD_THREAD_PREORITY 22
+#define RT_MMCSD_MAX_PARTITION 16
 #define RT_USING_KTIME
 
 /* Using USB */
@@ -208,7 +214,7 @@
 #define RT_LWIP_TCPTHREAD_MBOX_SIZE 8
 #define RT_LWIP_TCPTHREAD_STACKSIZE 16184
 #define RT_LWIP_ETHTHREAD_PRIORITY 12
-#define RT_LWIP_ETHTHREAD_STACKSIZE 2048
+#define RT_LWIP_ETHTHREAD_STACKSIZE 8192
 #define RT_LWIP_ETHTHREAD_MBOX_SIZE 8
 #define LWIP_NETIF_STATUS_CALLBACK 1
 #define LWIP_NETIF_LINK_CALLBACK 1
@@ -367,6 +373,10 @@
 #define BSP_USING_IOPAD
 #define BSP_USING_UART
 #define RT_USING_UART1
+#define BSP_USING_SDIF
+#define BSP_USING_SDCARD_FATFS
+#define BSP_USING_SDCARD_PARTITION "sd1"
+#define USING_SDIF0
 
 /* Board extended module Drivers */
 
@@ -401,7 +411,7 @@
 
 /* Sdk common configuration */
 
-#define LOG_ERROR
+#define LOG_DEBUG
 
 /* Image information configuration */
 

@@ -43,6 +43,7 @@
 | E2000Q              |     支持     | 支持SMP |
 | E2000S              |     支持     | |
 
+- Phytium PI 上使用 RT-Thread 要注意读写操作不能影响 SD 卡的固件，具体使用方法可以[参考](./doc/use_phytium_pi_sd_image.md)
 
 ##  如何在Ubuntu/Windows 环境下使用此BSP
 

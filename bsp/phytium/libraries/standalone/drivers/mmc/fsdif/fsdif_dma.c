@@ -379,7 +379,6 @@ FError FSdifSetIDMAList(FSdif *const instance_p, volatile FSdifIDmaDesc *desc, u
 {
     FASSERT(instance_p);
     FError ret = FSDIF_SUCCESS;
-    uintptr base_addr = instance_p->config.base_addr;
 
     if (FT_COMPONENT_IS_READY != instance_p->is_ready)
     {

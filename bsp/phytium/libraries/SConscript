@@ -80,7 +80,7 @@ if GetDepend(['BSP_USING_ETH']):
 
 ## sdif
 if GetDepend(['BSP_USING_SDIF']):
-    src += Glob(STANDALONE_DIR+'/drivers/mmc/fsdif/*.c') + Glob(STANDALONE_DIR+'/drivers/mmc/fsdif/*.S')
+    src += Glob(STANDALONE_DIR+'/drivers/mmc/fsdif/*.c') + Glob(PORT_DRV_DIR+'/drv_sdif.c')
     path += [STANDALONE_DIR + '/drivers/mmc/fsdif/']
 
 ## gpio
@@ -113,13 +113,22 @@ if GetDepend(['E2000D_DEMO_BOARD']):
     src += Glob(STANDALONE_DIR+'/board/e2000d_demo/fio_mux.c')
     path += [STANDALONE_DIR + '/board/e2000d_demo/']
 
+    if GetDepend(['BSP_USING_SDIF']):
+        src += Glob(STANDALONE_DIR+'/board/e2000d_demo/fsdif_timing.c')
+
 if GetDepend(['E2000Q_DEMO_BOARD']):
     src += Glob(STANDALONE_DIR+'/board/e2000q_demo/fio_mux.c')
     path += [STANDALONE_DIR + '/board/e2000q_demo/']
 
+    if GetDepend(['BSP_USING_SDIF']):
+        src += Glob(STANDALONE_DIR+'/board/e2000q_demo/fsdif_timing.c')
+
 if GetDepend(['FIREFLY_DEMO_BOARD']):
     src += Glob(STANDALONE_DIR+'/board/firefly/fio_mux.c')
     path += [STANDALONE_DIR + '/board/firefly/']
+
+    if GetDepend(['BSP_USING_SDIF']):
+        src += Glob(STANDALONE_DIR+'/board/firefly/fsdif_timing.c')
 
 ## fdriver port
 src += Glob(cwd+'/port/fdriver_port/*.c')

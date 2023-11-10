@@ -153,7 +153,9 @@ const FSdifTiming *FSdifGetTimingSetting(FSdifClkSpeed clock_freq, boolean non_r
             case FSDIF_CLK_SPEED_52_MHZ:
                 tuning = &mmc_52mhz;
                 break;
-                /* TODO: more clock freq for tuning */
+            /* TODO: more clock freq for tuning */
+            default:
+                break;
         }
     }
     else
@@ -170,7 +172,9 @@ const FSdifTiming *FSdifGetTimingSetting(FSdifClkSpeed clock_freq, boolean non_r
             case FSDIF_CLK_SPEED_100_MHZ:
                 tuning = &sd_100mhz;
                 break;
-                /* TODO: more clock freq for tuning */
+            /* TODO: more clock freq for tuning */
+            default:
+                break;
         }
     }
 

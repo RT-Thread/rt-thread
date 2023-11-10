@@ -158,7 +158,7 @@ typedef struct
     volatile boolean success; /* TRUE: comand and data transfer success */
 } FSdifCmdData; /* SDIF trans command and data */
 
-typedef const FSdifTiming *(*FSdifGetTuning)(FSdifClkSpeed clock_freq, u32 non_removable);
+typedef const FSdifTiming *(*FSdifGetTuning)(FSdifClkSpeed clock_freq, boolean non_removable);
 
 typedef struct _FSdifTiming
 {

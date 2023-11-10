@@ -61,6 +61,10 @@ if TARGET_PHYTIUMPI
         default 2
 endif
 
+if RT_USING_SMP
+
+endif
+
 menu "Standalone Setting"
     config TARGET_ARMV8_AARCH64
         bool "Armv8 Aarch64"
