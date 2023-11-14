@@ -74,6 +74,10 @@ def GetGccDefaultSearchDirs(rtconfig):
     device_flags = rtconfig.DEVICE.split()
     args = [gcc_cmd] + device_flags + ['-xc', '-E', '-v', os.devnull]
 
+    # if gcc_cmd can not access , return empty list
+    if not os.access(gcc_cmd, os.X_OK):
+        return []
+
     proc = subprocess.run(args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
     lines = proc.stdout.splitlines()
 
