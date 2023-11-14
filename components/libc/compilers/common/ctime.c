@@ -480,7 +480,16 @@ int gettimeofday(struct timeval *tv, struct timezone *tz)
         tv->tv_usec = 0;
 
         if (_control_rtc(RT_DEVICE_CTRL_RTC_GET_TIMEVAL, tv) == RT_EOK)
+        {
             return 0;
+        }
+        else
+        {
+            if (_control_rtc(RT_DEVICE_CTRL_RTC_GET_TIME, (void *)&tv->tv_sec) == RT_EOK)
+            {
+                return 0;
+            }
+        }
     }
 
     rt_set_errno(EINVAL);
@@ -498,7 +507,16 @@ int settimeofday(const struct timeval *tv, const struct timezone *tz)
     if (tv != RT_NULL && (long)tv->tv_usec >= 0 && (long)tv->tv_sec >= 0)
     {
         if (_control_rtc(RT_DEVICE_CTRL_RTC_SET_TIMEVAL, (void *)tv) == RT_EOK)
+        {
             return 0;
+        }
+        else
+        {
+            if (_control_rtc(RT_DEVICE_CTRL_RTC_SET_TIME, (void *)&tv->tv_sec) == RT_EOK)
+            {
+                return 0;
+            }
+        }
     }
 
     rt_set_errno(EINVAL);
