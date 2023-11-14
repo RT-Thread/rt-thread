@@ -18,10 +18,10 @@
 /* support cpu mpidr and smccc from libcpu */
 #include <cpu.h>
 #include <smccc.h>
+#include <psci.h>
 
 #include <drivers/pm.h>
 #include <drivers/ofw.h>
-#include <drivers/psci.h>
 #include <drivers/platform.h>
 #include <drivers/core/dm.h>
 

@@ -18,7 +18,7 @@
 #include <cpuport.h>
 #include <interrupt.h>
 #include <ioremap.h>
-
+#include <psci.h>
 #include <board.h>
 #include <drv_uart.h>
 

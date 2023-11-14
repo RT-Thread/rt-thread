@@ -16,9 +16,7 @@
 
 #include <cpu.h>
 #include <cpuport.h>
-
-#ifdef RT_FIRMWARE_PSCI
-#include <drivers/psci.h>
+#include <psci.h>
 
 static int psci_cpu_boot(rt_uint32_t cpuid, rt_uint64_t entry)
 {
@@ -33,13 +31,10 @@ static void psci_cpu_shutdown(void)
 
     rt_psci_cpu_off(state);
 }
-#endif /* RT_FIRMWARE_PSCI */
 
 struct cpu_ops_t cpu_psci_ops =
 {
-#ifdef RT_FIRMWARE_PSCI
     .method = "psci",
     .cpu_boot = psci_cpu_boot,
     .cpu_shutdown = psci_cpu_shutdown,
-#endif /* RT_FIRMWARE_PSCI */
 };
