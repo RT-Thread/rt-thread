@@ -362,7 +362,7 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
     return RT_EOK;
 }
 
-static int _can_sendmsg(struct rt_can_device *can, const void *buf, rt_uint32_t box_num)
+static rt_ssize_t _can_sendmsg(struct rt_can_device *can, const void *buf, rt_uint32_t box_num)
 {
     struct rt_can_msg *pmsg = (struct rt_can_msg *) buf;
     stc_can_tx_frame_t stc_tx_frame = {0};
@@ -398,7 +398,7 @@ static int _can_sendmsg(struct rt_can_device *can, const void *buf, rt_uint32_t 
     return RT_EOK;
 }
 
-static int _can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t fifo)
+static rt_ssize_t _can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t fifo)
 {
     int32_t ll_ret;
     struct rt_can_msg *pmsg;
@@ -655,6 +655,7 @@ int rt_hw_can_init(void)
 
         /* register CAN device */
         rt_hw_board_can_init(g_can_dev_array[i].instance);
+        CAN_IntCmd(g_can_dev_array[i].instance, CAN_INT_ALL, DISABLE);
         rt_hw_can_register(&g_can_dev_array[i].rt_can,
                            g_can_dev_array[i].init.name,
                            &_can_ops,
