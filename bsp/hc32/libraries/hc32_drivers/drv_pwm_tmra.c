@@ -160,13 +160,12 @@ static rt_err_t drv_pwm_set(CM_TMRA_TypeDef *TMRAx, struct rt_pwm_configuration 
     rt_uint32_t u32clkFreq;
     rt_uint64_t u64clk_ns;
     rt_uint64_t u64val;
-    //
     u32clkFreq = get_tmra_clk_freq(TMRAx);
     u64clk_ns = (rt_uint64_t)1000000000ul / u32clkFreq;
     u64val = (rt_uint64_t)configuration->period / u64clk_ns;
     if ((configuration->period <= u64clk_ns) || (u64val > 0xFFFF))
     {
-        // clk not match, need change div
+        /* clk not match, need change div */
         uint32_t div_bit;
         u32clkFreq = get_tmra_clk_freq_not_div(TMRAx);
         u64clk_ns = (rt_uint64_t)1000000000ul / u32clkFreq;
@@ -177,7 +176,6 @@ static rt_err_t drv_pwm_set(CM_TMRA_TypeDef *TMRAx, struct rt_pwm_configuration 
             u64val /= 2;
         }
         if (div_bit > 10) return -RT_ERROR;
-        //
         TMRA_SetClockDiv(TMRAx, div_bit << TMRA_BCSTR_CKDIV_POS);
         u32clkFreq = get_tmra_clk_freq(TMRAx);
         u64clk_ns = (rt_uint64_t)1000000000ul / u32clkFreq;
@@ -192,13 +190,12 @@ static rt_err_t drv_pwm_set_period(CM_TMRA_TypeDef *TMRAx, struct rt_pwm_configu
     rt_uint32_t u32clkFreq;
     rt_uint64_t u64clk_ns;
     rt_uint64_t u64val;
-    //
     u32clkFreq = get_tmra_clk_freq(TMRAx);
     u64clk_ns = (rt_uint64_t)1000000000ul / u32clkFreq;
     u64val = (rt_uint64_t)configuration->period / u64clk_ns;
     if ((configuration->period <= u64clk_ns) || (u64val > 0xFFFF))
     {
-        // clk not match, need change div
+        /* clk not match, need change div */
         uint32_t div_bit;
         u32clkFreq = get_tmra_clk_freq_not_div(TMRAx);
         u64clk_ns = (rt_uint64_t)1000000000ul / u32clkFreq;
@@ -209,7 +206,6 @@ static rt_err_t drv_pwm_set_period(CM_TMRA_TypeDef *TMRAx, struct rt_pwm_configu
             u64val /= 2;
         }
         if (div_bit > 10) return -RT_ERROR;
-        //
         TMRA_SetClockDiv(TMRAx, div_bit << TMRA_BCSTR_CKDIV_POS);
         u32clkFreq = get_tmra_clk_freq(TMRAx);
         u64clk_ns = (rt_uint64_t)1000000000ul / u32clkFreq;
@@ -222,7 +218,6 @@ static rt_err_t drv_pwm_set_pulse(CM_TMRA_TypeDef *TMRAx, struct rt_pwm_configur
 {
     rt_uint32_t u32clkFreq;
     rt_uint64_t u64clk_ns;
-    //
     u32clkFreq = get_tmra_clk_freq(TMRAx);
     u64clk_ns = (rt_uint64_t)1000000000ul / u32clkFreq;
     TMRA_SetCompareValue(TMRAx, configuration->channel, configuration->pulse / u64clk_ns);
@@ -235,7 +230,6 @@ static rt_err_t drv_pwm_control(struct rt_device_pwm *device, int cmd, void *arg
     struct hc32_pwm_tmra *pwm;
     pwm = rt_container_of(device, struct hc32_pwm_tmra, pwm_device);
     CM_TMRA_TypeDef *TMRAx = pwm->instance;
-
     switch (cmd)
     {
     case PWMN_CMD_ENABLE:
@@ -263,7 +257,6 @@ static rt_err_t _pwm_tmra_init(struct hc32_pwm_tmra *device)
 {
     CM_TMRA_TypeDef *TMRAx;
     uint32_t i;
-    //
     RT_ASSERT(device != RT_NULL);
     TMRAx = device->instance;
     TMRA_Init(TMRAx, &device->stcTmraInit);
