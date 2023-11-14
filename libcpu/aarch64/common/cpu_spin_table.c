@@ -20,9 +20,10 @@
 #include <ioremap.h>
 #include <drivers/core/dm.h>
 
+#ifdef RT_USING_OFW
+
 static rt_uint64_t cpu_release_addr[RT_CPUS_NR];
 
-#ifdef RT_USING_OFW
 static int spin_table_cpu_init(rt_uint32_t cpuid, void *param)
 {
    struct rt_ofw_node *cpu_np = param;
