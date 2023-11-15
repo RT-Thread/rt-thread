@@ -546,6 +546,9 @@ void rt_schedule(void)
                 _rt_schedule_remove_thread(to_thread, RT_FALSE);
                 to_thread->stat = RT_THREAD_RUNNING | (to_thread->stat & ~RT_THREAD_STAT_MASK);
 
+#ifdef PICOLIBC_TLS
+                _set_tls(to_thread->tls);
+#endif
                 /* switch to new thread */
                 LOG_D("[%d]switch to priority#%d "
                          "thread:%.*s(sp:0x%08x), "
@@ -700,6 +703,9 @@ void rt_scheduler_do_irq_switch(void *context)
                 _rt_schedule_remove_thread(to_thread, RT_FALSE);
                 to_thread->stat = RT_THREAD_RUNNING | (to_thread->stat & ~RT_THREAD_STAT_MASK);
 
+#ifdef PICOLIBC_TLS
+                _set_tls(to_thread->tls);
+#endif
 #ifdef RT_USING_OVERFLOW_CHECK
                 _scheduler_stack_check(to_thread);
 #endif /* RT_USING_OVERFLOW_CHECK */

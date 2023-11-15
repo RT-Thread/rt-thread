@@ -184,6 +184,15 @@ static rt_err_t _thread_init(struct rt_thread *thread,
     thread->entry = (void *)entry;
     thread->parameter = parameter;
 
+#ifdef PICOLIBC_TLS
+#define TLS_ALIGN       (_tls_align() > 8 ? _tls_align() : 8)
+    char *tls = (char *)stack_start + stack_size - _tls_size();
+    thread->tls = (void *)RT_ALIGN_DOWN((rt_ubase_t)tls, TLS_ALIGN);
+    stack_size = (char *)thread->tls - (char *)stack_start;
+
+    _init_tls(thread->tls);
+#endif
+
     /* stack init */
     thread->stack_addr = stack_start;
     thread->stack_size = stack_size;
