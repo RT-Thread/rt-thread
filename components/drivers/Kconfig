@@ -962,6 +962,10 @@ menuconfig RT_USING_VIRTIO
             bool "Using VirtIO GPU"
             default y
 
+        config RT_USING_DRM
+            bool "Using DRM drivers"
+            default n
+    
         config RT_USING_VIRTIO_INPUT
             bool "Using VirtIO Input"
             default y

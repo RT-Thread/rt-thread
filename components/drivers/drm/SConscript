@@ -1,0 +1,11 @@
+# RT-Thread building script for component
+
+from building import *
+
+cwd     = GetCurrentDir()
+src     = Glob('*.c') +   Glob('src/*.c')
+CPPPATH = [cwd] 
+
+
+group = DefineGroup('drm', src, depend = ['RT_USING_DRM'], CPPPATH = CPPPATH)
+Return('group')

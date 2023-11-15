@@ -4,8 +4,9 @@
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
- * Date           Author       Notes
- * 2021-11-11     GuEe-GUI     the first version
+ * Date           Author        Notes
+ * 2021-11-11     GuEe-GUI      the first version
+ * 2023-11-11     zhangxianshun add drm
  */
 
 #ifndef __VIRTIO_GPU_H__
@@ -14,6 +15,10 @@
 #include <rtdef.h>
 
 #include <virtio.h>
+
+#ifdef RT_USING_DRM
+#include "inc/drm_device.h"
+#endif
 
 #define VIRTIO_GPU_QUEUE_CTRL       0
 #define VIRTIO_GPU_QUEUE_CURSOR     1
@@ -365,7 +370,9 @@ struct virtio_gpu_device
     struct rt_device parent;
 
     struct virtio_device virtio_dev;
-
+#ifdef RT_USING_DRM
+    struct drm_device drm_dev;
+#endif
     /* Current display's info */
     struct virtio_gpu_display_one pmode;
     enum virtio_gpu_formats format;
