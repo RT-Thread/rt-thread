@@ -270,7 +270,7 @@ static rt_err_t ra_hw_spi_configure(struct rt_spi_device *device,
 #ifdef R_SCI_B_SPI_H
     R_SCI_B_SPI_CalculateBitrate(spi_dev->rt_spi_cfg_t->max_hz, SCI_B_SPI_SOURCE_CLOCK_PCLK, &spi_cfg.clk_div);
 #else
-    R_SCI_SPI_CalculateBitrate(spi_dev->rt_spi_cfg_t->max_hz, &spi_cfg.clk_div, false);
+    R_SCI_SPI_CalculateBitrate(spi_dev->rt_spi_cfg_t->max_hz, &spi_cfg->clk_div, false);
 #endif
 
     /**< init */
