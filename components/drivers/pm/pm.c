@@ -53,6 +53,10 @@
 #endif
 #endif
 
+/*
+ * Callbacks for platform drivers to implement. This is a function called
+ * at the end of the SoC power down procedure
+ */
 void (*rt_pm_machine_shutdown)(void) = RT_NULL;
 void (*rt_pm_machine_reset)(void)    = RT_NULL;
 
