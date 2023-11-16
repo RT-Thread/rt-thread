@@ -258,7 +258,5 @@
 
 #define BSP_USING_GPIO
 #define BSP_USING_UART
-#define BSP_USING_HWTIMER
-#define BSP_USING_TIMER0
 
 #endif
