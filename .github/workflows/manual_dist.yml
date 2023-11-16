@@ -94,6 +94,7 @@ jobs:
           python -c "import tools.menuconfig; tools.menuconfig.touch_env()"
           echo "RTT_ROOT=${{ github.workspace }}" >> $GITHUB_ENV
           echo "RTT_CC=gcc" >> $GITHUB_ENV
+          pip install esptool
 
       - name: Install Arm ToolChains
         if: ${{ github.event.inputs.bsp_tool_chain == 'sourcery-arm' && success() }}
