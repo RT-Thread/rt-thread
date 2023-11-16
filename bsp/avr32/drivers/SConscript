@@ -1,0 +1,23 @@
+Import('RTT_ROOT')
+Import('rtconfig')
+from building import *
+
+cwd = GetCurrentDir()
+
+# add the general drivers.
+src = []
+
+if GetDepend(['RT_USING_PIN']):
+    src += ['drv_gpio.c']
+
+if GetDepend(['RT_USING_SERIAL']):
+    if GetDepend(['RT_USING_SERIAL_V2']):
+        src += ['drv_uart_v2.c']
+    else:
+        src += ['drv_uart.c']
+
+path =  [cwd]
+
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path)
+
+Return('group')
