@@ -76,6 +76,16 @@ menu "On-chip Peripheral Drivers"
         bool "Enable BLE"
         default n
 
+    config BSP_USING_HWTIMER
+        bool "Enable HWTIMER"
+        select RT_USING_HWTIMER
+        default n
+        if BSP_USING_HWTIMER
+            config BSP_USING_TIMER0
+                bool "Enable HWTIMER0"
+                default n
+        endif
+
 endmenu
 
 config BSP_ENABLE_GDBSTUB

@@ -45,7 +45,7 @@ Each peripheral supporting condition for this BSP is as follows:
 | WIFI | Partial support | There are currently some problems, such as `rt_mq_recive` cannot be used in ISR, etc. |
 | BLE | Partially supported | There are currently some problems, such as `NimBLE` running errors after starting for a while |
 | GDBStub | Support | You can use the GDB provided by ESP-IDF by turning on the `BSP_ENABLE_GDBSTUB` switch, which will enter GDB mode after a chip error |
-
+| HWTIMER | Support |
 Note:
 
 1. WIFI and BLE cannot be enabled at the same time. When using the BLE driver, be sure to turn off the `RT_USING_WIFI` and `LWIP` switches in `menuconfig`. In addition, due to limited capabilities and lack of debugging equipment, there are problems with WIFI and BLE driver operation. If it can be solved, please contact [timwcx@qq.com](mailto:timwcx@qq.com).
