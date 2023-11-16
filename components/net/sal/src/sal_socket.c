@@ -11,6 +11,8 @@
 
 #include <rtthread.h>
 #include <rthw.h>
+
+#include <string.h>
 #include <sys/time.h>
 #include <sys/ioctl.h>
 
