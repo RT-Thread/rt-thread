@@ -114,7 +114,6 @@ int _flash_write(rt_uint32_t addr, const rt_uint8_t *buf, size_t size)
     if (size % FLASH_CF_WRITE_SIZE)
     {
         LOG_E("Flash Write size must be an integer multiple of %d", FLASH_CF_WRITE_SIZE);
-        return -RT_EINVAL;
     }
 
     while (written_size < size)
@@ -143,6 +142,58 @@ int _flash_write(rt_uint32_t addr, const rt_uint8_t *buf, size_t size)
     return size;
 }
 
+typedef bool (*block_func)(int no, size_t addr, size_t size, void *parm1, void *parm2, void *parm3);
+void fal_block_iter(const struct fal_flash_dev *flash, block_func func, void *parm1, void *parm2, void *parm3)
+{
+    int no = 0;
+    size_t addr = flash->addr;
+    for (int i = 0; i < FAL_DEV_BLK_MAX; i++)
+    {
+        /* blocks[i] */
+        const struct flash_blk *cur_blk = &flash->blocks[i];
+        if (cur_blk->size == 0 || cur_blk->count == 0)
+        {
+            break;
+        }
+        int j = cur_blk->count;
+        while (j--)
+        {
+            /* block_no */
+            if (func(no, addr, cur_blk->size, parm1, parm2, parm3) == true)
+            {
+                return;
+            }
+            addr += cur_blk->size;
+            no ++;
+        }
+    }
+}
+
+bool calculate_block_num(int no, size_t addr, size_t size, void *erase_addr, void *erase_size, void *number)
+{
+    rt_uint32_t e_addr = (rt_uint32_t)erase_addr;
+    size_t e_size = (size_t)erase_size;
+    int *i = (int *)number;
+
+    LOG_D("block_num: no: %d, addr is (0x%p), size: %d\n, i:%d", no, addr, size, *i);
+    LOG_D("erase_addr: (0x%p), erase_size: %d\n", e_addr, e_size);
+    if (e_addr >= addr && e_addr < addr + size)
+    {
+        (*i) ++;
+        return false;
+    }
+    else if (addr > e_addr && addr < e_addr + e_size)
+    {
+        (*i) ++;
+        return false;
+    }
+    else if (addr >= e_addr + e_size)
+    {
+        return true;
+    }
+    return false;
+}
+
 /**
  * Erase data on flash.
  * @note This operation is irreversible.
@@ -161,12 +212,9 @@ int _flash_write(rt_uint32_t addr, const rt_uint8_t *buf, size_t size)
 {
     fsp_err_t err = FSP_SUCCESS;
     rt_base_t level;
+    int block_num = 0;
 
-#if BSP_FEATURE_FLASH_HP_VERSION
-    if ((addr + size) > BSP_FEATURE_FLASH_HP_CF_REGION0_SIZE)
-#else
-    if ((addr + size) > BSP_ROM_SIZE_BYTES)
-#endif
+    if ((addr + size) > BSP_FEATURE_FLASH_CODE_FLASH_START + BSP_ROM_SIZE_BYTES)
     {
         LOG_E("ERROR: erase outrange flash size! addr is (0x%p)\n", (void *)(addr + size));
         return -RT_EINVAL;
@@ -179,11 +227,14 @@ int _flash_write(rt_uint32_t addr, const rt_uint8_t *buf, size_t size)
 
     level = rt_hw_interrupt_disable();
     R_FLASH_Reset(&g_flash_ctrl);
+
+    fal_block_iter(&_onchip_flash_hp0, &calculate_block_num, (void *)addr, (void *)size, &block_num);
+
     /* Erase Block */
 #if BSP_FEATURE_FLASH_HP_VERSION
     err = R_FLASH_Erase(&g_flash_ctrl,
                         RT_ALIGN_DOWN(addr, BSP_FEATURE_FLASH_HP_CF_REGION0_BLOCK_SIZE),
-                        ((size - 1) / BSP_FEATURE_FLASH_HP_CF_REGION0_BLOCK_SIZE + 1));
+                        block_num);
 #else
     err = R_FLASH_Erase(&g_flash_ctrl,
                         RT_ALIGN_DOWN(addr, BSP_FEATURE_FLASH_LP_CF_BLOCK_SIZE),
@@ -201,37 +252,7 @@ int _flash_write(rt_uint32_t addr, const rt_uint8_t *buf, size_t size)
     return size;
 }
 
-#if BSP_FEATURE_FLASH_HP_VERSION
-int _flash_hp1_erase(rt_uint32_t addr, size_t size)
-{
-    fsp_err_t err = FSP_SUCCESS;
-    rt_base_t level;
-
-    if (size < 1)
-    {
-        return -RT_EINVAL;
-    }
-
-    level = rt_hw_interrupt_disable();
-    R_FLASH_Reset(&g_flash_ctrl);
-    /* Erase Block */
-    err = R_FLASH_Erase(&g_flash_ctrl, RT_ALIGN_DOWN(addr, BSP_FEATURE_FLASH_HP_CF_REGION1_BLOCK_SIZE), (size - 1) / BSP_FEATURE_FLASH_HP_CF_REGION1_BLOCK_SIZE + 1);
-    rt_hw_interrupt_enable(level);
-
-    if (err != FSP_SUCCESS)
-    {
-        LOG_E("Erase API failed");
-        return -RT_EIO;
-    }
-
-    LOG_D("erase done: addr (0x%p), size %d", (void *)addr, size);
-    return size;
-}
-#endif
-
 #if defined(RT_USING_FAL)
-
-#define FLASH_START_ADDRESS     0x00000000
 
 #if BSP_FEATURE_FLASH_HP_VERSION
 
@@ -239,15 +260,11 @@ static int fal_flash_hp0_read(long offset, rt_uint8_t *buf, size_t size);
 static int fal_flash_hp0_write(long offset, const rt_uint8_t *buf, size_t size);
 static int fal_flash_hp0_erase(long offset, size_t size);
 
-static int fal_flash_hp1_read(long offset, rt_uint8_t *buf, size_t size);
-static int fal_flash_hp1_write(long offset, const rt_uint8_t *buf, size_t size);
-static int fal_flash_hp1_erase(long offset, size_t size);
-
 const struct fal_flash_dev _onchip_flash_hp0 =
 {
     "onchip_flash_hp0",
-    FLASH_START_ADDRESS,
-    BSP_FEATURE_FLASH_HP_CF_REGION0_SIZE,
+    BSP_FEATURE_FLASH_CODE_FLASH_START,
+    BSP_ROM_SIZE_BYTES,
     BSP_FEATURE_FLASH_HP_CF_REGION0_BLOCK_SIZE,
     {
         _flash_init,
@@ -256,20 +273,16 @@ const struct fal_flash_dev _onchip_flash_hp0 =
         fal_flash_hp0_erase
     },
     (BSP_FEATURE_FLASH_HP_CF_WRITE_SIZE * 8)
-};
-const struct fal_flash_dev _onchip_flash_hp1 =
-{
-    "onchip_flash_hp1",
-    BSP_FEATURE_FLASH_HP_CF_REGION0_SIZE,
-    (BSP_ROM_SIZE_BYTES - BSP_FEATURE_FLASH_HP_CF_REGION0_SIZE),
-    BSP_FEATURE_FLASH_HP_CF_REGION1_BLOCK_SIZE,
-    {
-        _flash_init,
-        fal_flash_hp1_read,
-        fal_flash_hp1_write,
-        fal_flash_hp1_erase
-    },
-    (BSP_FEATURE_FLASH_HP_CF_WRITE_SIZE * 8)
+    , {
+        {
+            .size = BSP_FEATURE_FLASH_HP_CF_REGION0_BLOCK_SIZE,
+            .count = BSP_FEATURE_FLASH_HP_CF_REGION0_SIZE / BSP_FEATURE_FLASH_HP_CF_REGION0_BLOCK_SIZE
+        },
+        {
+            .size = BSP_FEATURE_FLASH_HP_CF_REGION1_BLOCK_SIZE,
+            .count = (BSP_ROM_SIZE_BYTES - BSP_FEATURE_FLASH_HP_CF_REGION0_SIZE) / BSP_FEATURE_FLASH_HP_CF_REGION1_BLOCK_SIZE
+        },
+    }
 };
 
 /* code flash region0 */
@@ -286,21 +299,6 @@ static int fal_flash_hp0_write(long offset, const rt_uint8_t *buf, size_t size)
 static int fal_flash_hp0_erase(long offset, size_t size)
 {
     return _flash_hp0_erase(_onchip_flash_hp0.addr + offset, size);
-}
-/* code flash region1 */
-static int fal_flash_hp1_read(long offset, rt_uint8_t *buf, size_t size)
-{
-    return _flash_read(_onchip_flash_hp1.addr + offset, buf, size);
-}
-
-static int fal_flash_hp1_write(long offset, const rt_uint8_t *buf, size_t size)
-{
-    return _flash_write(_onchip_flash_hp1.addr + offset, buf, size);
-}
-
-static int fal_flash_hp1_erase(long offset, size_t size)
-{
-    return _flash_hp1_erase(_onchip_flash_hp1.addr + offset, size);
 }
 
 #else /* flash lp code flash */
@@ -340,62 +338,5 @@ static int fal_flash_lp_erase(long offset, size_t size)
 }
 
 #endif
-
-int flash_test(void)
-{
-#if BSP_FEATURE_FLASH_HP_VERSION
-#define TEST_OFF (_onchip_flash_hp1.len - BSP_FEATURE_FLASH_HP_CF_REGION1_BLOCK_SIZE)
-#else
-#define TEST_OFF (_onchip_flash_lp.len - BSP_FEATURE_FLASH_LP_CF_BLOCK_SIZE)
-#endif
-    const struct fal_partition *param;
-    uint8_t write_buffer[FLASH_CF_WRITE_SIZE] = {0};
-    uint8_t read_buffer[FLASH_CF_WRITE_SIZE] = {0};
-
-    /* Set write buffer, clear read buffer */
-    for (uint8_t index = 0; index < FLASH_CF_WRITE_SIZE; index++)
-    {
-        write_buffer[index] = index;
-        read_buffer[index] = 0;
-    }
-
-    fal_init();
-#if BSP_FEATURE_FLASH_HP_VERSION
-    param = fal_partition_find("param");
-#else
-    param = fal_partition_find("app");
-#endif
-    if (param == RT_NULL)
-    {
-        LOG_E("not find partition param!");
-        return -1;
-    }
-    LOG_I("Erase Start...");
-#if BSP_FEATURE_FLASH_HP_VERSION
-    fal_partition_erase(param, TEST_OFF, BSP_FEATURE_FLASH_HP_CF_REGION1_BLOCK_SIZE);
-#else
-    fal_partition_erase(param, TEST_OFF, BSP_FEATURE_FLASH_LP_CF_BLOCK_SIZE);
-#endif
-    LOG_I("Erase succeeded!");
-    LOG_I("Write Start...");
-    fal_partition_write(param, TEST_OFF, write_buffer, sizeof(write_buffer));
-    LOG_I("Write succeeded!");
-    LOG_I("Read Start...");
-    fal_partition_read(param, TEST_OFF, read_buffer, FLASH_CF_WRITE_SIZE);
-    LOG_I("Read succeeded!");
-
-    for (int i = 0; i < FLASH_CF_WRITE_SIZE; i++)
-    {
-        if (read_buffer[i] != write_buffer[i])
-        {
-            LOG_E("Data verification failed!");
-            return -1;
-        }
-    }
-
-    LOG_I("Data verification succeeded!");
-    return 0;
-}
-MSH_CMD_EXPORT(flash_test, "drv flash test.");
 
 #endif
