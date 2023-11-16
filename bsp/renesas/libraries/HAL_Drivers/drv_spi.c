@@ -29,6 +29,14 @@
 #define RA_SPI1_EVENT 0x02
 static struct rt_event complete_event = {0};
 
+#ifdef SOC_SERIES_R7FA8M85
+#define R_SPI_Write R_SPI_B_Write
+#define R_SPI_Read  R_SPI_B_Read
+#define R_SPI_WriteRead R_SPI_B_WriteRead
+#define R_SPI_Open R_SPI_B_Open
+#define spi_extended_cfg_t spi_b_extended_cfg_t
+#endif
+
 static struct ra_spi_handle spi_handle[] =
 {
 #ifdef BSP_USING_SPI0
@@ -177,13 +185,17 @@ static rt_err_t ra_hw_spi_configure(struct rt_spi_device *device,
     configuration->data_width = configuration->data_width / 8;
     spi_dev->rt_spi_cfg_t = configuration;
 
-    spi_extended_cfg_t *spi_cfg = (spi_extended_cfg_t *)spi_dev->ra_spi_handle_t->spi_cfg_t->p_extend;
+    spi_extended_cfg_t spi_cfg = *(spi_extended_cfg_t *)spi_dev->ra_spi_handle_t->spi_cfg_t->p_extend;
 
     /**< Configure Select Line */
     rt_pin_write(device->cs_pin, PIN_HIGH);
 
     /**< config bitrate */
-    R_SPI_CalculateBitrate(spi_dev->rt_spi_cfg_t->max_hz, &spi_cfg->spck_div);
+#ifdef SOC_SERIES_R7FA8M85
+    R_SPI_B_CalculateBitrate(spi_dev->rt_spi_cfg_t->max_hz, SPI_B_CLOCK_SOURCE_PCLK, &spi_cfg.spck_div);
+#else
+    R_SPI_CalculateBitrate(spi_dev->rt_spi_cfg_t->max_hz, &spi_cfg.spck_div);
+#endif
 
     /**< init */
     err = R_SPI_Open((spi_ctrl_t *)spi_dev->ra_spi_handle_t->spi_ctrl_t, (spi_cfg_t const * const)spi_dev->ra_spi_handle_t->spi_cfg_t);
