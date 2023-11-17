@@ -42,7 +42,6 @@
 #define RT_CONSOLEBUF_SIZE 256
 #define RT_CONSOLE_DEVICE_NAME "uart"
 #define RT_VER_NUM 0x50100
-#define RT_BACKTRACE_LEVEL_MAX_NR 32
 
 /* RT-Thread Components */
 
@@ -78,7 +77,6 @@
 #define RT_USING_SERIAL
 #define RT_USING_SERIAL_V1
 #define RT_SERIAL_RB_BUFSZ 64
-#define RT_USING_HWTIMER
 #define RT_USING_PIN
 
 /* Using USB */
@@ -111,9 +109,6 @@
 
 
 /* Memory management */
-
-
-/* Memory protection */
 
 
 /* RT-Thread Utestcases */
