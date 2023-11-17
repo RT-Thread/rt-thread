@@ -52,9 +52,9 @@ extern "C" {
   */
 typedef enum
 {
-  USB_LOW_SPEED_CORE_ID,          /*!< usb low speed core id */
+  USB_HIGH_SPEED_CORE_ID,         /*!< usb low speed core id */
   USB_FULL_SPEED_CORE_ID,         /*!< usb full speed core id */
-  USB_HIGH_SPEED_CORE_ID,         /*!< usb high speed core id */
+  USB_LOW_SPEED_CORE_ID           /*!< usb high speed core id */
 } usb_speed_type;
 
 /**

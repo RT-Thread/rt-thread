@@ -24,8 +24,8 @@ extern "C" {
 #define UART4_IRQHandler      USART4_IRQHandler
 #define UART5_IRQHandler      USART5_IRQHandler
 #define UART6_IRQHandler      USART6_IRQHandler
-#define UART7_IRQHandler      USART7_IRQHandler
-#define UART8_IRQHandler      USART8_IRQHandler
+#define UART7_IRQHandler      UART7_IRQHandler
+#define UART8_IRQHandler      UART8_IRQHandler
 
 #if defined(BSP_USING_UART1)
 #define UART1_CONFIG                                                \
@@ -217,8 +217,8 @@ extern "C" {
 #define UART7_CONFIG                                                \
     {                                                               \
         .name = "uart7",                                            \
-        .uart_x = USART7,                                           \
-        .irqn = USART7_IRQn,                                        \
+        .uart_x = UART7,                                            \
+        .irqn = UART7_IRQn,                                         \
     }
 
 #if defined(BSP_UART7_RX_USING_DMA)
@@ -248,8 +248,8 @@ extern "C" {
 #define UART8_CONFIG                                                \
     {                                                               \
         .name = "uart8",                                            \
-        .uart_x = USART8,                                           \
-        .irqn = USART8_IRQn,                                        \
+        .uart_x = UART8,                                            \
+        .irqn = UART8_IRQn,                                         \
     }
 #endif /* BSP_USING_UART8 */
 
