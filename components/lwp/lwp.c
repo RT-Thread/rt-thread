@@ -12,6 +12,7 @@
  * 2023-02-20     wangxiaoyao  inv icache before new app startup
  * 2023-02-20     wangxiaoyao  fix bug on foreground app switch
  * 2023-10-16     Shell        Support a new backtrace framework
+ * 2023-11-17     xqyjlj       add process group and session support
  */
 
 #define DBG_TAG "lwp"
@@ -1294,15 +1295,32 @@ pid_t lwp_execve(char *filename, int debug, int argc, char **argv, char **envp)
             {
                 //lwp->tgroup_leader = &thread; //add thread group leader for lwp
                 lwp->__pgrp = tid;
-                lwp->session = self_lwp->session;
+                lwp->session = self_lwp->session; // TODO: should be delete
                 /* lwp add to children link */
-                lwp_children_register(self_lwp, lwp);
+                // lwp_children_register(self_lwp, lwp);
             }
             else
             {
                 //lwp->tgroup_leader = &thread; //add thread group leader for lwp
-                lwp->__pgrp = tid;
+                lwp->__pgrp = tid; // TODO: should be delete
             }
+
+            rt_session_t session = RT_NULL;
+            rt_processgroup_t group = RT_NULL;
+
+            group = lwp_pgrp_create(lwp);
+            lwp_pgrp_insert(group, lwp);
+            if (self_lwp == RT_NULL)
+            {
+                session = lwp_session_find(lwp_sid_get_byprocess(self_lwp));
+                lwp_session_insert(session, group);
+            }
+            else
+            {
+                session = lwp_session_create(group);
+                lwp_session_insert(session, group);
+            }
+
             if (!bg)
             {
                 if (lwp->session == -1)
@@ -1380,6 +1398,8 @@ pid_t lwp_execve(char *filename, int debug, int argc, char **argv, char **envp)
             rt_memset(thread->user_stack, '#', thread->user_stack_size);
 #endif /* not defined ARCH_MM_MMU */
             rt_list_insert_after(&lwp->t_grp, &thread->sibling);
+
+            lwp->did_exec = RT_TRUE;
 
             if (debug && rt_dbg_ops)
             {

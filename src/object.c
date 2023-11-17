@@ -15,6 +15,7 @@
  * 2018-01-25     Bernard      Fix the object find issue when enable MODULE.
  * 2022-01-07     Gabriel      Moving __on_rt_xxxxx_hook to object.c
  * 2023-09-15     xqyjlj       perf rt_hw_interrupt_disable/enable
+ * 2023-11-17     xqyjlj       add process group and session support
  */
 
 #include <rtthread.h>
@@ -73,7 +74,9 @@ enum rt_object_info_type
     RT_Object_Info_Memory,                             /**< The object is a memory. */
 #endif
 #ifdef RT_USING_SMART
-    RT_Object_Info_Channel,                            /**< The object is a IPC channel */
+    RT_Object_Info_Channel,                             /**< The object is a IPC channel */
+    RT_Object_Info_ProcessGroup,                        /**< The object is a process group */
+    RT_Object_Info_Session,                             /**< The object is a session */
 #endif
 #ifdef RT_USING_HEAP
     RT_Object_Info_Custom,                             /**< The object is a custom object */
@@ -133,6 +136,10 @@ static struct rt_object_information _object_container[RT_Object_Info_Unknown] =
 #ifdef RT_USING_SMART
     /* initialize object container - module */
     {RT_Object_Class_Channel, _OBJ_CONTAINER_LIST_INIT(RT_Object_Info_Channel), sizeof(struct rt_channel), RT_SPINLOCK_INIT},
+    {RT_Object_Class_ProcessGroup, _OBJ_CONTAINER_LIST_INIT(RT_Object_Info_ProcessGroup), sizeof(struct rt_processgroup), RT_SPINLOCK_INIT},
+    {RT_Object_Class_Session, _OBJ_CONTAINER_LIST_INIT(RT_Object_Info_Session), sizeof(struct rt_session), RT_SPINLOCK_INIT},
+#endif
+#ifdef RT_USING_HEAP
     {RT_Object_Class_Custom, _OBJ_CONTAINER_LIST_INIT(RT_Object_Info_Custom), sizeof(struct rt_custom_object), RT_SPINLOCK_INIT},
 #endif
 };

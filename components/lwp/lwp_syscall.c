@@ -14,8 +14,6 @@
  * 2023-07-06     Shell        adapt the signal API, and clone, fork to new implementation of lwp signal
  * 2023-07-27     Shell        Move tid_put() from lwp_free() to sys_exit()
  * 2023-11-16     xqyjlj       fix some syscalls (about sched_*, get/setpriority)
- * 2023-11-17     xqyjlj       add process group and session support
- * 2023-11-30     Shell        Fix sys_setitimer() and exit(status)
  */
 #define __RT_IPC_SOURCE__
 #define _GNU_SOURCE
@@ -938,42 +936,15 @@ sysret_t sys_kill(int pid, int signo)
             lwp_ref_dec(lwp);
         }
     }
-    else if (pid < -1 || pid == 0)
+    else if (pid == 0)
     {
-        pid_t pgid = 0;
-        rt_processgroup_t group;
-
-        if (pid == 0)
-        {
-            /**
-             * sig shall be sent to all processes (excluding an unspecified set
-             * of system processes) whose process group ID is equal to the process
-             * group ID of the sender, and for which the process has permission to
-             * send a signal.
-             */
-            pgid = lwp_pgid_get_byprocess(lwp_self());
-        }
-        else
-        {
-            /**
-             * sig shall be sent to all processes (excluding an unspecified set
-             * of system processes) whose process group ID is equal to the absolute
-             * value of pid, and for which the process has permission to send a signal.
-             */
-            pgid = -pid;
-        }
-
-        group = lwp_pgrp_find(pgid);
-        if (group != RT_NULL)
-        {
-            PGRP_LOCK(group);
-            kret = lwp_pgrp_signal_kill(group, signo, SI_USER, 0);
-            PGRP_UNLOCK(group);
-        }
-        else
-        {
-            kret = -ECHILD;
-        }
+        /**
+         * sig shall be sent to all processes (excluding an unspecified set
+         * of system processes) whose process group ID is equal to the process
+         * group ID of the sender, and for which the process has permission to
+         * send a signal.
+         */
+        kret = -RT_ENOSYS;
     }
     else if (pid == -1)
     {
@@ -983,6 +954,22 @@ sysret_t sys_kill(int pid, int signo)
          * that signal.
          */
         kret = -RT_ENOSYS;
+    }
+    else if (pid == -1)
+    {
+        /**
+         * sig shall be sent to all processes (excluding an unspecified set
+         * of system processes) for which the process has permission to send
+         * that signal.
+         */
+        kret = -RT_ENOSYS;
+    }
+
+    if (lwp)
+    {
+        kret = lwp_signal_kill(lwp, signo, SI_USER, 0);
+        lwp_ref_dec(lwp);
+        kret = 0;
     }
 
     switch (kret)
@@ -1013,22 +1000,6 @@ sysret_t sys_kill(int pid, int signo)
 sysret_t sys_getpid(void)
 {
     return lwp_getpid();
-}
-
-sysret_t sys_getppid(void)
-{
-    rt_lwp_t process;
-
-    process = lwp_self();
-    if (process->parent == RT_NULL)
-    {
-        LOG_E("%s: process %d has no parent process", __func__, lwp_to_pid(process));
-        return 0;
-    }
-    else
-    {
-        return lwp_to_pid(process->parent);
-    }
 }
 
 /* syscall: "getpriority" ret: "int" args: "int" "id_t" */
@@ -2109,17 +2080,6 @@ sysret_t _sys_fork(void)
     LWP_UNLOCK(self_lwp);
 
     lwp_children_register(self_lwp, lwp);
-
-    /* set pgid and sid */
-    group = lwp_pgrp_find(lwp_pgid_get_byprocess(self_lwp));
-    if (group)
-    {
-        lwp_pgrp_insert(group, lwp);
-    }
-    else
-    {
-        LOG_W("the process group of pid: %d cannot be found", lwp_pgid_get_byprocess(self_lwp));
-    }
 
     /* copy kernel stack context from self thread */
     lwp_memcpy(thread->stack_addr, self_thread->stack_addr, self_thread->stack_size);
@@ -7079,12 +7039,6 @@ const static struct rt_syscall_def func_table[] =
     SYSCALL_SIGN(sys_wait4),
     SYSCALL_SIGN(sys_set_robust_list),
     SYSCALL_SIGN(sys_get_robust_list),
-    SYSCALL_SIGN(sys_setpgid),
-    SYSCALL_SIGN(sys_getpgid),                          /* 210 */
-    SYSCALL_SIGN(sys_getsid),
-    SYSCALL_SIGN(sys_getppid),
-    SYSCALL_SIGN(sys_fchdir),
-    SYSCALL_SIGN(sys_chown),
 };
 
 const void *lwp_get_sys_api(rt_uint32_t number)
