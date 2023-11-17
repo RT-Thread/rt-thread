@@ -19,8 +19,6 @@
 #include <cpu.h>
 #include <smccc.h>
 #include <psci.h>
-
-#include <drivers/pm.h>
 #include <drivers/ofw.h>
 #include <drivers/platform.h>
 #include <drivers/core/dm.h>
@@ -192,13 +190,13 @@ static rt_uint32_t psci_migrate_info_type(void)
 }
 
 /* PSCI SYSTEM_OFF */
-static void psci_system_off(void)
+void psci_system_off(void)
 {
     psci_call(PSCI_0_2_FN_SYSTEM_OFF, 0, 0, 0);
 }
 
 /* PSCI SYSTEM_RESET */
-static void psci_system_reboot(void)
+void psci_system_reboot(void)
 {
     if (psci_get_features(PSCI_FNC_ID(1, 1, SYSTEM_RESET2)) != PSCI_RET_NOT_SUPPORTED)
     {
@@ -318,16 +316,6 @@ static rt_err_t psci_0_2_init(struct rt_ofw_node *np)
         _psci_ops.migrate           = psci_0_2_migrate;
         _psci_ops.get_affinity_info = psci_affinity_info;
         _psci_ops.migrate_info_type = psci_migrate_info_type;
-
-        if (!rt_pm_machine_shutdown)
-        {
-            rt_pm_machine_shutdown = psci_system_off;
-        }
-
-        if (!rt_pm_machine_reset)
-        {
-            rt_pm_machine_reset = psci_system_reboot;
-        }
     }
     else
     {

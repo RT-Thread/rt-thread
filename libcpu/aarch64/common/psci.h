@@ -138,6 +138,8 @@
 #define PSCI_RET_DISABLED                   (-8)
 #define PSCI_RET_INVALID_ADDRESS            (-9)
 
+void psci_system_off(void);
+void psci_system_reboot(void);
 rt_uint32_t rt_psci_get_version(void);
 rt_uint32_t rt_psci_cpu_on(int cpuid, rt_ubase_t entry_point);
 rt_uint32_t rt_psci_cpu_off(rt_uint32_t state);

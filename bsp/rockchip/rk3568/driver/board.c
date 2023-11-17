@@ -99,17 +99,11 @@ void rt_hw_board_init(void)
 
 void reboot(void)
 {
-    // TODO poring to FDT to use new PSCI: arm_psci_system_reboot();
-    if (rt_pm_machine_reset)
-    {
-        rt_pm_machine_reset();
-    }
-    else
-    {
-        void *cur_base = rt_ioremap((void *) CRU_BASE, 0x100);
-        HWREG32(cur_base + 0x00D4) = 0xfdb9;
-        HWREG32(cur_base + 0x00D8) = 0xeca8;
-    }
+    psci_system_reboot();
+
+    void *cur_base = rt_ioremap((void *) CRU_BASE, 0x100);
+    HWREG32(cur_base + 0x00D4) = 0xfdb9;
+    HWREG32(cur_base + 0x00D8) = 0xeca8;
 }
 MSH_CMD_EXPORT(reboot, reboot...);
 

@@ -19,9 +19,6 @@
 #include <rtthread.h>
 #include <drivers/lptimer.h>
 
-extern void (*rt_pm_machine_shutdown)(void);
-extern void (*rt_pm_machine_reset)(void);
-
 /* All modes used for rt_pm_request() and rt_pm_release() */
 enum
 {
