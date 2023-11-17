@@ -53,6 +53,7 @@
  * 2023-10-10     Chushicheng  change version number to v5.1.0
  * 2023-10-11     zmshahaha    move specific devices related and driver to components/drivers
  * 2023-11-21     Meco Man     add RT_USING_NANO macro
+ * 2023-11-17     xqyjlj       add process group and session support
  * 2023-12-18     xqyjlj       add rt_always_inline
  * 2023-12-22     Shell        Support hook list
  * 2024-01-18     Shell        Seperate basical types to a rttypes.h
@@ -384,8 +385,10 @@ enum rt_object_class_type
     RT_Object_Class_Module        = 0x0b,      /**< The object is a module. */
     RT_Object_Class_Memory        = 0x0c,      /**< The object is a memory. */
     RT_Object_Class_Channel       = 0x0d,      /**< The object is a channel */
-    RT_Object_Class_Custom        = 0x0e,      /**< The object is a custom object */
-    RT_Object_Class_Unknown       = 0x0f,      /**< The object is unknown. */
+    RT_Object_Class_ProcessGroup  = 0x0e,      /**< The object is a process group */
+    RT_Object_Class_Session       = 0x0f,      /**< The object is a session */
+    RT_Object_Class_Custom        = 0x10,      /**< The object is a custom object */
+    RT_Object_Class_Unknown       = 0x11,      /**< The object is unknown. */
     RT_Object_Class_Static        = 0x80       /**< The object is a static object. */
 };
 

@@ -22,6 +22,10 @@
 #include <dfs_mnt.h>
 #endif
 
+#ifdef RT_USING_SMART
+#include "lwp.h"
+#endif /* RT_USING_SMART */
+
 static int msh_readline(int fd, char *line_buf, int size)
 {
     char ch;
@@ -159,7 +163,11 @@ static int cmd_ls(int argc, char **argv)
     if (argc == 1)
     {
 #ifdef DFS_USING_WORKDIR
+#ifdef RT_USING_SMART
+        ls(lwp_getcwd());
+#else
         ls(working_directory);
+#endif
 #else
         ls("/");
 #endif
