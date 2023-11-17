@@ -186,7 +186,7 @@ extern "C" {
 #define UART7_RX_DMA_CHANNEL            DMA2_CHANNEL6
 #define UART7_RX_DMA_IRQ                DMA2_Channel6_IRQn
 #define UART7_RX_DMA_MUX_CHANNEL        DMA2MUX_CHANNEL6
-#define UART7_RX_DMA_REQ_ID             DMAMUX_DMAREQ_ID_USART7_RX
+#define UART7_RX_DMA_REQ_ID             DMAMUX_DMAREQ_ID_UART7_RX
 #endif
 
 /* DMA2 channel7 */
@@ -196,7 +196,7 @@ extern "C" {
 #define UART7_TX_DMA_CHANNEL            DMA2_CHANNEL7
 #define UART7_TX_DMA_IRQ                DMA2_Channel7_IRQn
 #define UART7_TX_DMA_MUX_CHANNEL        DMA2MUX_CHANNEL7
-#define UART7_TX_DMA_REQ_ID             DMAMUX_DMAREQ_ID_USART7_TX
+#define UART7_TX_DMA_REQ_ID             DMAMUX_DMAREQ_ID_UART7_TX
 #endif
 
 #ifdef __cplusplus

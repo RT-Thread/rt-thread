@@ -7,6 +7,7 @@
  * Date           Author       Notes
  * 2023-02-23     Jonas        first version
  * 2023-04-16     shelton      update for perfection of drv_usart_v2
+ * 2023-11-16     shelton      add support at32f402/405 series
  */
 
 #include "drv_common.h"
@@ -365,7 +366,8 @@ static void at32_dma_config(struct rt_serial_device *serial, rt_ubase_t flag)
                        (dma_flexible_request_type)dma_config->request_id);
 #endif
 #if defined (SOC_SERIES_AT32F435) || defined (SOC_SERIES_AT32F437) || \
-    defined (SOC_SERIES_AT32F423)
+    defined (SOC_SERIES_AT32F423) || defined (SOC_SERIES_AT32F402) || \
+    defined (SOC_SERIES_AT32F405)
     dmamux_enable(dma_config->dma_x, TRUE);
     dmamux_init(dma_config->dmamux_channel, (dmamux_requst_id_sel_type)dma_config->request_id);
 #endif

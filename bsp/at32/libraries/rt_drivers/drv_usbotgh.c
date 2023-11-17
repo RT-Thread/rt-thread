@@ -350,7 +350,7 @@ static rt_err_t at32_hcd_init(rt_device_t device)
 
     /* init usb */
     usbh_init(p_usbotg_instance->p_otg_core,
-              USB_FULL_SPEED_CORE_ID,
+              p_usbotg_instance->dev_spd,
               p_usbotg_instance->id);
     return RT_EOK;
 }
