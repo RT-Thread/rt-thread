@@ -14,6 +14,8 @@
  *                             error
  * 2023-10-27     shell        Format codes of sys_exit(). Fix the data racing where lock is missed
  *                             Add reference on pid/tid, so the resource is not freed while using.
+ * 2023-11-16     xqyjlj       Fix the case where pid is 0
+ * 2023-11-17     xqyjlj       add process group and session support
  * 2024-01-25     shell        porting to new sched API
  */
 
@@ -357,8 +359,12 @@ rt_lwp_t lwp_create(rt_base_t flags)
 #ifdef RT_USING_SMP
         new_lwp->bind_cpu = RT_CPUS_NR;
 #endif
+        new_lwp->pgid = 0;
+        new_lwp->sid = 0;
+        new_lwp->did_exec = RT_FALSE;
         rt_list_init(&new_lwp->wait_list);
         rt_list_init(&new_lwp->t_grp);
+        rt_list_init(&new_lwp->pgrp_node);
         rt_list_init(&new_lwp->timer);
         lwp_user_object_lock_init(new_lwp);
         rt_wqueue_init(&new_lwp->wait_queue);
@@ -393,6 +399,8 @@ rt_lwp_t lwp_create(rt_base_t flags)
 /** when reference is 0, a lwp can be released */
 void lwp_free(struct rt_lwp* lwp)
 {
+    rt_processgroup_t group = RT_NULL;
+
     if (lwp == RT_NULL)
     {
         return;
@@ -408,6 +416,9 @@ void lwp_free(struct rt_lwp* lwp)
     LOG_D("lwp free: %p", lwp);
 
     LWP_LOCK(lwp);
+
+    group = lwp_pgrp_find(lwp_pgid_get_byprocess(lwp));
+    lwp_pgrp_remove(group, lwp);
 
     if (lwp->args != RT_NULL)
     {
@@ -837,6 +848,7 @@ pid_t lwp_waitpid(const pid_t pid, int *status, int options)
     struct rt_thread *thread;
     struct rt_lwp *child;
     struct rt_lwp *self_lwp;
+    rt_processgroup_t group;
 
     thread = rt_thread_self();
     self_lwp = lwp_self();
@@ -867,12 +879,35 @@ pid_t lwp_waitpid(const pid_t pid, int *status, int options)
             LWP_UNLOCK(self_lwp);
             RT_ASSERT(!child || child->parent == self_lwp);
 
-            rc = _lwp_wait_and_recycle(child, thread, self_lwp, status, options);
+            rc = _lwp_wait_and_recycle(child, thread, self_lwp, status, options, ru);
         }
-        else
+        else if (pid < -1 || pid == 0)
         {
-            /* not supported yet */
-            rc = -RT_EINVAL;
+            rt_list_t *node = RT_NULL;
+            pid_t pgid = 0;
+
+            if (pid == 0)
+            {
+                pgid = lwp_pgid_get_byprocess(self_lwp);
+            }
+            else
+            {
+                pgid = -pid;
+            }
+
+            group = lwp_pgrp_find(pgid);
+            if (group != RT_NULL)
+            {
+                rt_mutex_take_interruptible(&group->mutex, RT_WAITING_FOREVER);
+                node = &(group->process);
+                child = (rt_lwp_t)rt_list_entry(node, struct rt_lwp, pgrp_node);
+                rt_mutex_release(&group->mutex);
+                rc = _lwp_wait_and_recycle(child, thread, self_lwp, status, options, ru);
+            }
+            else
+            {
+                rc = -ECHILD;
+            }
         }
     }
 

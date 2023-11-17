@@ -201,7 +201,7 @@ struct rt_lwp
 #endif
     struct rusage rt_rusage;
 };
-typedef struct rt_lwp *rt_lwp_t;
+
 
 struct rt_lwp *lwp_self(void);
 rt_err_t lwp_children_register(struct rt_lwp *parent, struct rt_lwp *child);
