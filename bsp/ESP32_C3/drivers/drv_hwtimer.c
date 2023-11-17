@@ -39,7 +39,7 @@ static void mcu_hwtimer_init(rt_hwtimer_t *timer, rt_uint32_t state)
 {
     gptimer_handle_t gptimer = (gptimer_handle_t)timer->parent.user_data;
 
-    // let the gptimer into enable status 
+    // let the gptimer into enable status
     ESP_ERROR_CHECK(gptimer_enable(gptimer));
 }
 
