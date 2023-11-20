@@ -56,9 +56,6 @@ jobs:
         - {RTT_BSP_NAME: "essemi_es32f365x", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "essemi/es32f365x"}   #GCC link文件没支持好
         - {RTT_BSP_NAME: "fm33lc026", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "fm33lc026"}   #GCC
         - {RTT_BSP_NAME: "ft2004", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "ft2004"}   #编译错误
-        - {RTT_BSP_NAME: "gd32105c-eval", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "gd32105c-eval"}  #编译错误
-        - {RTT_BSP_NAME: "gd32107c-eval", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "gd32107c-eval"}  #编译错误
-        - {RTT_BSP_NAME: "gd32350r-eval", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "gd32350r-eval"}  #编译错误
         - {RTT_BSP_NAME: "hc32l136", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "hc32l136"}  #编译错误
         - {RTT_BSP_NAME: "hk32_hk32f030c8-mini", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "hk32/hk32f030c8-mini"}  #scons dist有问题
         - {RTT_BSP_NAME: "imx_imx6ull-smart", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "imx/imx6ull-smart"} # toolchain还没支持
