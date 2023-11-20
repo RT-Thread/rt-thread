@@ -13,7 +13,7 @@ config BSP_DIR
 config SDK_DIR
     string
     option env="SDK_DIR"
-    default ".././libraries/standalone"
+    default ".././libraries/phytium_standalone_sdk"
 
 config PKGS_DIR
     string

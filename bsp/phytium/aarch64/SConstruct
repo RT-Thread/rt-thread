@@ -1,6 +1,7 @@
 import os
 import sys
 import rtconfig
+import subprocess
 
 IS_EXPORTED = False
 
@@ -42,6 +43,34 @@ env['ASCOM'] = env['ASPPCOM']
 Export('RTT_ROOT')
 Export('BSP_ROOT')
 Export('rtconfig')
+
+def is_phytium_sdk_installed():
+    py_target_folder = os.getcwd() + "/../libraries/phytium_standalone_sdk"
+    return os.path.exists(py_target_folder)
+
+def install_phytium_sdk():
+    print("Checking for the presence of phytium_standalone_sdk_install.py script...")
+    sconstruct_dir = os.getcwd()
+    install_script_path = os.path.join(sconstruct_dir, "phytium_standalone_sdk_install.py")
+
+    try:
+        subprocess.call(["wget", "https://gitee.com/phytium_embedded/phytium-standalone-sdk/raw/Standalone-Sdk_RT-thread/phytium_standalone_sdk_install.py"])
+    except:
+        print("Please refer to the ./README and manual download phytium_standalone_sdk_install.py, place in current folder")
+    if os.path.exists(install_script_path):
+        try:
+            subprocess.call(["python", install_script_path])
+        except:
+            subprocess.call(["python3", install_script_path])
+        
+        if not is_phytium_sdk_installed():
+            print("Error: phytium_standalone_sdk install failed")
+            exit(0)
+    else:
+        print("Error: phytium_standalone_sdk_install.py is not exists, exit compilation")
+        exit(0)
+            
+install_phytium_sdk()
 
 # prepare building environment
 objs = PrepareBuilding(env, RTT_ROOT, has_libcpu = False)
