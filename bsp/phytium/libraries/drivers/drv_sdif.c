@@ -528,5 +528,5 @@ err_free:
 
     return -RT_EOK;
 }
-INIT_DEVICE_EXPORT(rt_hw_fsdif_init)
+INIT_DEVICE_EXPORT(rt_hw_fsdif_init);
 #endif // #ifdef RT_USING_SDIO
