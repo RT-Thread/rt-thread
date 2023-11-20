@@ -117,13 +117,6 @@ jobs:
           - {RTT_BSP_NAME: "gd32_arm_gd32470z-lckfb", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "gd32/arm/gd32470z-lckfb"}
           - {RTT_BSP_NAME: "gd32_risc-v_gd32vf103r-start", RTT_TOOL_CHAIN: "sourcery-riscv-none-embed", RTT_BSP: "gd32/risc-v/gd32vf103r-start"}
           - {RTT_BSP_NAME: "gd32_risc-v_gd32vf103v-eval", RTT_TOOL_CHAIN: "sourcery-riscv-none-embed", RTT_BSP: "gd32/risc-v/gd32vf103v-eval"}
-         #- {RTT_BSP_NAME: "gd32105c-eval", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "gd32105c-eval"}  #编译错误
-         #- {RTT_BSP_NAME: "gd32107c-eval", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "gd32107c-eval"}  #编译错误
-          - {RTT_BSP_NAME: "gd32303e-eval", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "gd32303e-eval"}
-         #- {RTT_BSP_NAME: "gd32350r-eval", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "gd32350r-eval"}  #编译错误
-          - {RTT_BSP_NAME: "gd32450z-eval", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "gd32450z-eval"}
-          - {RTT_BSP_NAME: "gd32e230k-start", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "gd32e230k-start"}
-          - {RTT_BSP_NAME: "gd32vf103v-eval", RTT_TOOL_CHAIN: "sourcery-riscv-none-embed", RTT_BSP: "gd32vf103v-eval"}
           - {RTT_BSP_NAME: "hc32_ev_hc32f460_lqfp100_v2", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "hc32/ev_hc32f460_lqfp100_v2"}
           - {RTT_BSP_NAME: "hc32_ev_hc32f4a0_lqfp176", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "hc32/ev_hc32f4a0_lqfp176"}
          #- {RTT_BSP_NAME: "hc32l136", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "hc32l136"}  #编译错误

@@ -216,9 +216,6 @@ jobs:
                 - "gd32/arm/gd32407v-start"
                 - "gd32/arm/gd32450z-eval" 
                 - "gd32/arm/gd32470z-lckfb"
-                - "gd32e230k-start"        
-                - "gd32303e-eval"
-                - "gd32450z-eval"
                 - "n32/n32g43xcl-stb"
                 - "n32/n32g45xcl-stb"
                 - "n32/n32g45xml-stb"
@@ -292,7 +289,6 @@ jobs:
          -  RTT_BSP: "riscv-none" 
             RTT_TOOL_CHAIN: "sourcery-riscv-none-embed"
             SUB_RTT_BSP:  
-                - "gd32vf103v-eval"
                 - "k210"
          -  RTT_BSP: "riscv64-unknown" 
             RTT_TOOL_CHAIN: "sourcery-riscv64-unknown-elf"
