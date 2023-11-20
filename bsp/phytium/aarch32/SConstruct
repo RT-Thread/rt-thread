@@ -49,6 +49,8 @@ def is_phytium_sdk_installed():
     return os.path.exists(py_target_folder)
 
 def install_phytium_sdk():
+    if is_phytium_sdk_installed():
+        return 0
     print("Checking for the presence of phytium_standalone_sdk_install.py script...")
     sconstruct_dir = os.getcwd()
     install_script_path = os.path.join(sconstruct_dir, "phytium_standalone_sdk_install.py")
