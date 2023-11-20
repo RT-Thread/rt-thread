@@ -1,10 +1,11 @@
 from building import *
+import os
 Import('rtconfig')
 
 src   = []
 cwd   = GetCurrentDir()
 group = []
-CPPPATH = [cwd + '/include']
+CPPPATH = [os.path.join(cwd, 'include')]
 CPPDEFINES = []
 
 if rtconfig.PLATFORM in ['armcc', 'armclang']:
@@ -13,6 +14,9 @@ elif rtconfig.PLATFORM in ['iccarm']:
     CPPDEFINES += ['CLOCKS_PER_SEC=RT_TICK_PER_SECOND'] # forcly revert to 1 by IAR
 elif rtconfig.PLATFORM in ['gcc'] and rtconfig.CPU in ['posix']:
     CPPDEFINES += ['_GNU_SOURCE'] # linux x86 platform gcc use!
+
+if not GetDepend('RT_USING_SMART'):
+    CPPPATH += [os.path.join(cwd, 'include', 'rt-thread')]
 
 src += Glob('*.c')
 

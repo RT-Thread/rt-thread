@@ -27,7 +27,7 @@
  * 2023-10-23     Shell        add lock for _g_timerid
  */
 
-#include "sys/time.h"
+#include <rt-thread/sys/time.h>
 #include <rthw.h>
 #include <rtdevice.h>
 #include <drivers/rtc.h>

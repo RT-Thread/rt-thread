@@ -12,18 +12,19 @@
 #ifndef __DFS_H__
 #define __DFS_H__
 
+#include <rtatomic.h>
+#include <rtdevice.h>
+
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
-#include "../../libc/compilers/common/include/dirent.h"
 #include <fcntl.h>
 #include <sys/stat.h>
-#include <sys/statfs.h>
-#include <sys/time.h>
 #include <sys/errno.h>
-#include <rtatomic.h>
-#include <rtdevice.h>
+#include <rt-thread/sys/time.h>
+#include <rt-thread/sys/statfs.h>
+#include <rt-thread/dirent.h>
 
 #ifndef ATTR_ATIME_SET
 #define ATTR_ATIME_SET	(1 << 7)

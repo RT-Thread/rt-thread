@@ -11,16 +11,17 @@
 #ifndef __DFS_H__
 #define __DFS_H__
 
+#include <rtdevice.h>
+
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
-#include <dirent.h>
 #include <fcntl.h>
 #include <sys/stat.h>
-#include <sys/statfs.h>
-#include <sys/time.h>
-#include <rtdevice.h>
+#include <rt-thread/dirent.h>
+#include <rt-thread/sys/statfs.h>
+#include <rt-thread/sys/time.h>
 
 #ifdef __cplusplus
 extern "C" {
