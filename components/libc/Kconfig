@@ -1,5 +1,9 @@
 menu "C/C++ and POSIX layer"
 
+# This is for external libc(e.g. mlib),
+# and NOT for newlib or picolibc which are inherent in the toolchains.
+# Usually, the external libc should be a software package and select
+# RT_USING_EXTERNAL_LIBC in software package's Kconfig
 config RT_USING_EXTERNAL_LIBC
     bool
 
