@@ -10,10 +10,6 @@
 
 #include <rtconfig.h>
 
-#ifdef RT_USING_VMM
-#include <vmm.h>
-#endif
-
 .section .text, "ax"
 /*
  * rt_base_t rt_hw_interrupt_disable();
@@ -71,67 +67,6 @@ rt_hw_context_switch:
     str sp, [r0]            @ store sp in preempted tasks TCB
     ldr sp, [r1]            @ get new task stack pointer
 
-#ifdef RT_USING_VMM
-#ifdef RT_VMM_USING_DOMAIN
-    @ need to make sure we are in vmm domain as we would use rt_current_thread
-    ldr     r2, =vmm_domain_val
-    ldr     r7, [r2]
-    mcr     p15, 0, r7, c3, c0
-#endif
-
-    /* check whether vmm thread, otherwise, update vIRQ */
-    ldr     r3, =rt_current_thread
-    ldr     r4, [r3]
-    ldr     r5, =vmm_thread
-    cmp     r4, r5
-    beq     switch_to_guest
-
-    @ not falling into guest. Simple task ;-)
-    ldmfd sp!, {r6}         @ pop new task cpsr to spsr
-    msr spsr_cxsf, r6
-    ldmfd sp!, {r0-r12, lr, pc}^
-
-switch_to_guest:
-#ifdef RT_VMM_USING_DOMAIN
-    @ the stack is saved in the guest domain so we need to
-    @ come back to the guest domain to get the registers.
-    ldr     r1, =super_domain_val
-    ldr     r0, [r1]
-    mcr     p15, 0, r0, c3, c0
-#endif
-    /* The user can do nearly anything in rt_thread_idle_excute because it will
-    call the thread->cleanup. One common thing is sending events and wake up
-    threads. So the guest thread will be preempted. This is the only point that
-    the guest thread would call rt_hw_context_switch and "yield".
-
-    More over, rt_schedule will call this function and this function *will*
-    reentrant. If that happens, we need to make sure that call the
-    rt_thread_idle_excute and vmm_virq_update again and we are in super domain.
-    I use a "reference count" to achieve such behaviour. If you have better
-    idea, tell me. */
-    ldr     r4, =_guest_switch_lvl
-    ldr     r5, [r4]
-    add     r5, r5, #1
-    str     r5, [r4]
-    cmp     r5, #1
-    bne     _switch_through
-
-    bl      rt_thread_idle_excute
-    bl      vmm_virq_update
-
-    /* we need _guest_switch_lvl to protect until _switch_through, but it's OK
-     * to cleanup the reference count here because the code below will not be
-     * reentrant. */
-    sub     r5, r5, #1
-    str     r5, [r4]
-
-#ifdef RT_VMM_USING_DOMAIN
-    ldr     r1, =guest_domain_val
-    ldr     r0, [r1]
-    mcr     p15, 0, r0, c3, c0
-#endif
-_switch_through:
-#endif /* RT_USING_VMM */
     ldmfd sp!, {r4}         @ pop new task cpsr to spsr
     msr spsr_cxsf, r4
     ldmfd sp!, {r0-r12, lr, pc}^  @ pop new task r0-r12, lr & pc, copy spsr to cpsr
