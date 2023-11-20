@@ -24,13 +24,13 @@
 
 /* check if SMP related setting ok */
 #ifndef RT_USING_SMP
-ASSERT_STATIC(RT_CPUS_NR == 1U); /* please set RT_CPUS_NR = 1 when SMP off */
+    ASSERT_STATIC(RT_CPUS_NR == 1U); /* please set RT_CPUS_NR = 1 when SMP off */
 #else
-#if defined(TARGET_E2000D)
-ASSERT_STATIC(RT_CPUS_NR <= 2U); /* use 2 cores at most */
-#elif defined(TARGET_E2000Q) || defined(TARGET_PHYTIUMPI)
-ASSERT_STATIC(RT_CPUS_NR <= 4U); /* use 4 cores at most */
-#endif
+    #if defined(TARGET_E2000D)
+        ASSERT_STATIC(RT_CPUS_NR <= 2U); /* use 2 cores at most */
+    #elif defined(TARGET_E2000Q) || defined(TARGET_PHYTIUMPI)
+        ASSERT_STATIC(RT_CPUS_NR <= 4U); /* use 4 cores at most */
+    #endif
 #endif
 
 #ifdef RT_USING_SMP

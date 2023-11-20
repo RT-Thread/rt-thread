@@ -28,12 +28,18 @@ static int ram_disk_mount(const char *mount_point)
 
     pool = rt_malloc(size);
     if (pool == RT_NULL)
+    {
         LOG_E("Malloc fail!");
+    }
 
     if (dfs_mount(RT_NULL, mount_point, "ram", 0, (const void *)dfs_ramfs_create(pool, size)) == 0)
+    {
         LOG_I("RAM file system initializated!");
+    }
     else
+    {
         LOG_E("RAM file system initializate failed!");
+    }
 #endif
 
     return RT_EOK;
@@ -72,7 +78,7 @@ _remount:
         {
             /* LOG_I("[%s]try mkfs -t %s %s ", mkfs_count, fs_type_name, device_name);
             dfs_mkfs(fs_type_name, device_name); */
-            mkfs_count--; 
+            mkfs_count--;
             LOG_E("%s is not in %s, please format first !!!", device_name, fs_type_name);
             goto _remount;
         }
@@ -107,9 +113,9 @@ static void sd_filesytem_task_entry(void *parameter)
 int filesystem_mount(void)
 {
     rt_thread_t tid;
-    tid = rt_thread_create("sd_filesytem", sd_filesytem_task_entry, 
+    tid = rt_thread_create("sd_filesytem", sd_filesytem_task_entry,
                            RT_NULL,
-                           4096, 
+                           4096,
                            RT_THREAD_PRIORITY_MAX - 2, 20);
     if (tid != RT_NULL)
     {

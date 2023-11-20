@@ -27,9 +27,9 @@
 
 #include "ftypes.h"
 #ifdef __aarch64__
-#include "faarch64.h"
+    #include "faarch64.h"
 #else
-#include "faarch32.h"
+    #include "faarch32.h"
 #endif
 #include <rtthread.h>
 /***************************** Include Files *********************************/
