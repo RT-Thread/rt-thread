@@ -16,6 +16,8 @@
 
 #include <rtthread.h>
 #include "rtdevice.h"
+#ifdef BSP_USING_UART
+
 #include "fpl011.h"
 #include "fpl011_hw.h"
 
@@ -27,7 +29,6 @@
 #define RTOS_UART_ISR_TXIM_MASK FPL011IMSC_TXIM   /* Transmit interrupt mask.  */
 #define RTOS_UART_ISR_RXIM_MASK FPL011IMSC_RXIM   /*  Receive interrupt mask.  */
 
-
 typedef struct
 {
     u32 uart_instance; /* select uart global object */
@@ -35,7 +36,6 @@ typedef struct
     u32 isr_event_mask; /* followed by RTOS_UART_ISR_XX */
     u32 uart_baudrate;
 }  FtFreertosUartConfig;
-
 
 struct drv_usart
 {
@@ -45,3 +45,5 @@ struct drv_usart
 };
 
 #endif // !
+
+#endif

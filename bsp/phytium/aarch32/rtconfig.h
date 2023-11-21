@@ -7,7 +7,6 @@
 /* RT-Thread Kernel */
 
 #define RT_NAME_MAX 16
-#define RT_USING_SMART
 #define RT_USING_SMP
 #define RT_CPUS_NR 4
 #define RT_ALIGN_SIZE 4
@@ -52,21 +51,18 @@
 #define RT_USING_SLAB_AS_HEAP
 #define RT_USING_HEAP_ISR
 #define RT_USING_HEAP
-
-/* Kernel Device Object */
-
 #define RT_USING_DEVICE
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 256
 #define RT_CONSOLE_DEVICE_NAME "uart1"
-#define RT_VER_NUM 0x50002
+#define RT_VER_NUM 0x50100
+#define RT_BACKTRACE_LEVEL_MAX_NR 32
 #define RT_USING_CACHE
 #define RT_USING_HW_ATOMIC
 #define RT_USING_CPU_FFS
 #define ARCH_MM_MMU
 #define ARCH_ARM
 #define ARCH_ARM_MMU
-#define KERNEL_VADDR_START 0xc0000000
 #define ARCH_ARM_CORTEX_A
 #define RT_USING_GIC_V3
 
@@ -118,14 +114,6 @@
 #define RT_USING_DFS_DEVFS
 #define RT_USING_DFS_RAMFS
 #define RT_USING_DFS_MQUEUE
-#define RT_USING_LWP
-#define RT_LWP_MAX_NR 30
-#define LWP_TASK_STACK_SIZE 16384
-#define RT_CH_MSG_MAX_NR 1024
-#define LWP_CONSOLE_INPUT_BUFFER_SIZE 1024
-#define LWP_TID_MAX_NR 64
-#define LWP_ENABLE_ASID
-#define RT_LWP_SHM_MAX_NR 64
 
 /* Device Drivers */
 
@@ -138,15 +126,14 @@
 #define RT_USING_SERIAL_V1
 #define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 1024
-#define RT_USING_TTY
 #define RT_USING_NULL
 #define RT_USING_ZERO
 #define RT_USING_RANDOM
 #define RT_USING_RTC
 #define RT_USING_SDIO
-#define RT_SDIO_STACK_SIZE 512
+#define RT_SDIO_STACK_SIZE 4096
 #define RT_SDIO_THREAD_PRIORITY 15
-#define RT_MMCSD_STACK_SIZE 1024
+#define RT_MMCSD_STACK_SIZE 4096
 #define RT_MMCSD_THREAD_PREORITY 22
 #define RT_MMCSD_MAX_PARTITION 16
 #define RT_USING_DEV_BUS
@@ -259,6 +246,9 @@
 #define RT_USING_ADT_HASHMAP
 #define RT_USING_ADT_REF
 
+/* Memory management */
+
+
 /* RT-Thread Utestcases */
 
 
@@ -273,6 +263,9 @@
 
 
 /* Wiced WiFi */
+
+
+/* CYW43012 WiFi */
 
 
 /* IoT Cloud */
@@ -377,16 +370,16 @@
 
 /* Hardware Drivers */
 
+
 /* On-chip Peripheral Drivers */
 
+#define BSP_USING_IOPAD
 #define BSP_USING_UART
 #define RT_USING_UART1
-#define BSP_USING_ETH
-#define RT_LWIP_PBUF_POOL_BUFSIZE 1700
-#define BSP_USING_SDIO
+#define BSP_USING_SDIF
 #define BSP_USING_SDCARD_FATFS
-#define USING_SDIO0
-#define SDCARD_OFFSET 0x0
+#define BSP_USING_SDCARD_PARTITION "sd1"
+#define USING_SDIF0
 
 /* Board extended module Drivers */
 
@@ -397,34 +390,33 @@
 #define TARGET_ARMV8_AARCH32
 #define USE_AARCH64_L1_TO_AARCH32
 
-/* Board Configuration */
+/* Soc configuration */
 
 #define TARGET_PHYTIUMPI
+#define SOC_NAME "phytiumpi"
+#define SOC_CORE_NUM 4
+#define F32BIT_MEMORY_ADDRESS 0x80000000
+#define F32BIT_MEMORY_LENGTH 0x80000000
+#define F64BIT_MEMORY_ADDRESS 0x2000000000
+#define F64BIT_MEMORY_LENGTH 0x800000000
 #define TARGET_E2000
 #define DEFAULT_DEBUG_PRINT_UART1
 
-/* Components Configuration */
+/* Board Configuration */
 
-#define USE_GIC
-#define ENABLE_GICV3
-#define USE_IOPAD
-#define ENABLE_IOPAD
-#define USE_SERIAL
+#define BOARD_NAME "firefly"
+#define FIREFLY_DEMO_BOARD
 
-/* Usart Configuration */
+/* IO mux configuration when board start up */
 
-#define ENABLE_Pl011_UART
-#define USE_ETH
-
-/* Eth Configuration */
-
-#define ENABLE_FXMAC
-#define FXMAC_PHY_COMMON
 
 /* Sdk common configuration */
 
 #define LOG_ERROR
 #define USE_DEFAULT_INTERRUPT_CONFIG
 #define INTERRUPT_ROLE_MASTER
+
+/* Image information configuration */
+
 
 #endif

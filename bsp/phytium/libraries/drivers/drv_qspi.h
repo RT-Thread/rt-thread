@@ -11,12 +11,12 @@
  *
  */
 
-#ifndef __DRT_QSPI_H__
-#define __DRT_QSPI_H__
+#ifndef __DRV_QSPI_H__
+#define __DRV_QSPI_H__
 
 #include "rtconfig.h"
 
-#ifdef RT_USING_QSPI
+#ifdef BSP_USING_QSPI
 #include <rtthread.h>
 #include "rtdevice.h"
 #include "fqspi_flash.h"
