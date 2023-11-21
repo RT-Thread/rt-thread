@@ -659,12 +659,11 @@ void rt_components_board_init(void);
 #else
 int rt_kprintf(const char *fmt, ...);
 void rt_kputs(const char *str);
+#endif /* RT_USING_CONSOLE */
 
 rt_err_t rt_backtrace(void);
 rt_err_t rt_backtrace_thread(rt_thread_t thread);
 rt_err_t rt_backtrace_frame(struct rt_hw_backtrace_frame *frame);
-
-#endif /* RT_USING_CONSOLE */
 
 int rt_vsprintf(char *dest, const char *format, va_list arg_ptr);
 int rt_vsnprintf(char *buf, rt_size_t size, const char *fmt, va_list args);
