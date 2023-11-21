@@ -28,6 +28,7 @@ struct stm32_soft_spi_config
 struct stm32_soft_spi
 {
     struct rt_spi_bit_obj spi;
+    struct rt_spi_bit_ops ops;
     struct stm32_soft_spi_config *cfg;
 };
 

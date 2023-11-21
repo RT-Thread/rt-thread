@@ -209,11 +209,12 @@ int rt_hw_softspi_init(void)
 
     for (int i = 0; i < obj_num; i++)
     {
-        stm32_soft_spi_ops.data = (void *)&soft_spi_config[i];
+        memcpy(&spi_obj[i].ops, &stm32_soft_spi_ops, sizeof(struct rt_spi_bit_ops));
+        spi_obj[i].ops.data = (void *)&soft_spi_config[i];
         spi_obj[i].spi.ops = &stm32_soft_spi_ops;
         spi_obj[i].cfg = (void *)&soft_spi_config[i];
         stm32_spi_gpio_init(&spi_obj[i]);
-        result = rt_spi_bit_add_bus(&spi_obj[i].spi, soft_spi_config[i].bus_name, &stm32_soft_spi_ops);
+        result = rt_spi_bit_add_bus(&spi_obj[i].spi, soft_spi_config[i].bus_name, &spi_obj[i].ops);
         RT_ASSERT(result == RT_EOK);
     }
 
