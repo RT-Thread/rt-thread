@@ -137,7 +137,7 @@ void hal_entry(void)
 
 • How to use the ENV tool: [RT-Thread env tool user manual](https://www.rt-thread.io/document/site/programming-manual/env/env/). 
 
-This BSP only enables the function of UART7 by default. If you're looking for more advanced functions such as components and software packages, ENV tool for configuration is available.
+This BSP only enables the function of UART9 by default. If you're looking for more advanced functions such as components and software packages, ENV tool for configuration is available.
 
 The steps are as follows:
 
