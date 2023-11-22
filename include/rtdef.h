@@ -50,9 +50,9 @@
  * 2023-04-01     Chushicheng  change version number to v5.0.1
  * 2023-05-20     Bernard      add stdc atomic detection.
  * 2023-09-15     xqyjlj       perf rt_hw_interrupt_disable/enable
- * 2023-09-17     Meco Man     add RT_USING_LIBC_ISO_ONLY macro
  * 2023-10-10     Chushicheng  change version number to v5.1.0
  * 2023-10-11     zmshahaha    move specific devices related and driver to components/drivers
+ * 2023-11-21     Meco Man     add RT_USING_INTERNAL_LIBC_ONLY macro
  */
 
 #ifndef __RT_DEF_H__
@@ -60,24 +60,26 @@
 
 #include <rtconfig.h>
 
-#ifdef RT_USING_LIBC
-#if !defined(RT_USING_LIBC_ISO_ONLY) && !defined(RT_VER_NUM)
-/* If RT_VER_NUM is not defined, there is no extra libc support. */
-#define RT_USING_LIBC_ISO_ONLY  (1)
+/*
+ * If RT_VER_NUM is not defined or RT_USING_INTERNAL_LIBC_ONLY is defined,
+ * there is no extra libc support, only internal libc can be used.
+ */
+#if defined(RT_USING_INTERNAL_LIBC_ONLY) || !defined(RT_VER_NUM)
+#define __RT_USING_INTERNAL_LIBC_ONLY  (1)
 #else
-#define RT_USING_LIBC_ISO_ONLY  (0)
-#endif /* !defined(RT_USING_LIBC_ISO_ONLY) && !defined(RT_VER_NUM) */
+#define __RT_USING_INTERNAL_LIBC_ONLY  (0)
+#endif /* defined(RT_USING_INTERNAL_LIBC_ONLY) && !defined(RT_VER_NUM) */
+
 #include <stdint.h>
 #include <stddef.h>
 #include <stdarg.h>
-#if !RT_USING_LIBC_ISO_ONLY
+#if !__RT_USING_INTERNAL_LIBC_ONLY
 #include <sys/types.h>
 #include <sys/errno.h>
 #if defined(RT_USING_SIGNALS) || defined(RT_USING_SMART)
 #include <sys/signal.h>
 #endif /* defined(RT_USING_SIGNALS) || defined(RT_USING_SMART) */
-#endif /* !RT_USING_LIBC_ISO_ONLY */
-#endif /* RT_USING_LIBC */
+#endif /* !__RT_USING_INTERNAL_LIBC_ONLY */
 
 #ifdef __cplusplus
 extern "C" {
@@ -133,13 +135,13 @@ typedef unsigned long long              rt_uint64_t;    /**< 64bit unsigned inte
 #endif /* RT_USING_LIBC */
 #endif /* RT_USING_ARCH_DATA_TYPE */
 
-#if defined(RT_USING_LIBC) && !RT_USING_LIBC_ISO_ONLY
+#if defined(RT_USING_LIBC) && !__RT_USING_INTERNAL_LIBC_ONLY
 typedef size_t                          rt_size_t;      /**< Type for size number */
 typedef ssize_t                         rt_ssize_t;     /**< Used for a count of bytes or an error indication */
 #else
 typedef rt_ubase_t                      rt_size_t;      /**< Type for size number */
 typedef rt_base_t                       rt_ssize_t;     /**< Used for a count of bytes or an error indication */
-#endif /* defined(RT_USING_LIBC) && !RT_USING_LIBC_ISO_ONLY */
+#endif /* defined(RT_USING_LIBC) && !__RT_USING_INTERNAL_LIBC_ONLY */
 
 typedef rt_base_t                       rt_err_t;       /**< Type for error number */
 typedef rt_uint32_t                     rt_time_t;      /**< Type for time stamp */
@@ -403,7 +405,7 @@ typedef int (*init_fn_t)(void);
 /**@{*/
 
 /* RT-Thread error code definitions */
-#if defined(RT_USING_LIBC) && !RT_USING_LIBC_ISO_ONLY
+#if defined(RT_USING_LIBC) && !__RT_USING_INTERNAL_LIBC_ONLY
 /* POSIX error code compatible */
 #define RT_EOK                          0               /**< There is no error */
 #define RT_ERROR                        255             /**< A generic/unknown error happens */
@@ -438,7 +440,7 @@ typedef int (*init_fn_t)(void);
 #define RT_EPERM                        13              /**< Operation not permitted */
 #define RT_ETRAP                        14              /**< Trap event */
 #define RT_EFAULT                       15              /**< Bad address */
-#endif /* defined(RT_USING_LIBC) && !RT_USING_LIBC_ISO_ONLY */
+#endif /* defined(RT_USING_LIBC) && !__RT_USING_INTERNAL_LIBC_ONLY */
 
 /**@}*/
 
