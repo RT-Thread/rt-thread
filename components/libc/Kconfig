@@ -1,11 +1,27 @@
 menu "C/C++ and POSIX layer"
 
-# This is for external libc(e.g. mlib),
-# and NOT for newlib or picolibc which are inherent in the toolchains.
-# Usually, the external libc should be a software package and select
-# RT_USING_EXTERNAL_LIBC in software package's Kconfig
+config RT_USING_INTERNAL_LIBC_ONLY
+    bool "Only use tool chain internal libc"
+    default n
+    help
+        This option is for RT-Thread Nano version.
+        If select this option, it will not compile components/libc
+        folder and only use tool chain internal libc. Normally, the
+        tool chain internal is only cover ISO standard (e.g. armcc),
+        but some tool chains' internal libc will cover more than
+        ISO standard (e.g. newlib). However, no matter the cover level
+        it is, the rt-thread libc leveling layer will not be involved
+        at all if select this option.
+
 config RT_USING_EXTERNAL_LIBC
+    depends on !RT_USING_INTERNAL_LIBC_ONLY
     bool
+    help
+        This is for external libc(e.g. mlib),
+        and NOT for newlib or picolibc which are inherent in the toolchains.
+        Usually, the external libc should be a software package and select
+        RT_USING_EXTERNAL_LIBC in software package's Kconfig
+        This option is not available for users to select.
 
 source "$RTT_DIR/components/libc/compilers/common/Kconfig"
 source "$RTT_DIR/components/libc/posix/Kconfig"
