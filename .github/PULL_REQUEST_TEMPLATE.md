@@ -19,23 +19,23 @@ And confirm in which case or board has been tested. -->
 
 #### 请提供验证的bsp和config (provide the config and bsp) 
 
-请填写验证bsp目录下面的目录比如bsp/stm32/stm32l496-st-nucleo
+<!-- 请填写验证bsp目录下面的目录比如bsp/stm32/stm32l496-st-nucleo
 
-Please provide the path of verfied bsp. Like bsp/stm32/stm32l496-st-nucleo  bsp/ESP32_C3
+Please provide the path of verfied bsp. Like bsp/stm32/stm32l496-st-nucleo  bsp/ESP32_C3 -->
 
 - BSP:
 
-请填写.config 文件中需要改动的config
+<!-- 请填写.config 文件中需要改动的config
 
-Please provide the changed config of .config file to how to verify the PR file like CONFIG_BSP_USING_I2C CONFIG_BSP_USING_WDT
+Please provide the changed config of .config file to how to verify the PR file like CONFIG_BSP_USING_I2C CONFIG_BSP_USING_WDT -->
 
 - .config:
 
-请提供自己仓库的PR branch的action的编译链接相关PR文件成功的链接：
+<!-- 请提供自己仓库的PR branch的action的编译链接相关PR文件成功的链接：
 
 Please provide the link of action triggered by your own repo's action  
 
-https://github.com/RT-Thread/rt-thread/actions/workflows/manual_dist.yml
+https://github.com/RT-Thread/rt-thread/actions/workflows/manual_dist.yml -->
 
 - action:
 
