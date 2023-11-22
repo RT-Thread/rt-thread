@@ -258,7 +258,7 @@ rt_object_get_information(enum rt_object_class_type type)
 {
     int index;
 
-    type = type& ~RT_Object_Class_Static;
+    type = (enum rt_object_class_type)(type & ~RT_Object_Class_Static);
 
     for (index = 0; index < RT_Object_Info_Unknown; index ++)
         if (_object_container[index].type == type) return &_object_container[index];
@@ -320,7 +320,7 @@ int rt_object_get_pointers(enum rt_object_class_type type, rt_object_t *pointers
 
     if (maxlen <= 0) return 0;
 
-    information = rt_object_get_information((enum rt_object_class_type)type);
+    information = rt_object_get_information(type);
     if (information == RT_NULL) return 0;
 
     level = rt_spin_lock_irqsave(&(information->spinlock));
@@ -430,7 +430,7 @@ void rt_object_detach(rt_object_t object)
 
     RT_OBJECT_HOOK_CALL(rt_object_detach_hook, (object));
 
-    information = rt_object_get_information(object->type);
+    information = rt_object_get_information((enum rt_object_class_type)object->type);
     RT_ASSERT(information != RT_NULL);
 
     level = rt_spin_lock_irqsave(&(information->spinlock));
@@ -528,7 +528,7 @@ void rt_object_delete(rt_object_t object)
     RT_OBJECT_HOOK_CALL(rt_object_detach_hook, (object));
 
 
-    information = rt_object_get_information(object->type);
+    information = rt_object_get_information((enum rt_object_class_type)object->type);
     RT_ASSERT(information != RT_NULL);
 
     level = rt_spin_lock_irqsave(&(information->spinlock));
