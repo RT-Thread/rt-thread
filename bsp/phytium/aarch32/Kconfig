@@ -10,10 +10,10 @@ config BSP_DIR
     option env="BSP_ROOT"
     default "../."
 
-config STANDALONE_DIR
+config SDK_DIR
     string
-    option env="STANDALONE_DIR"
-    default ".././libraries/standalone"
+    option env="SDK_DIR"
+    default ".././libraries/phytium_standalone_sdk"
 
 config PKGS_DIR
     string
@@ -27,6 +27,7 @@ source "$BSP_DIR/libraries/drivers/Kconfig"
 config PHYTIUM_ARCH_AARCH32
     bool
     select ARCH_ARM_CORTEX_A
+    select RT_USING_CACHE
     select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN
     select RT_USING_GIC_V3
@@ -45,8 +46,11 @@ menu "Standalone Setting"
         default y
         help
             Use the Aarch64 to Aarch32 mode function
-    
-    source "$STANDALONE_DIR/board/Kconfig"
-    source "$STANDALONE_DIR/drivers/Kconfig"
-    source "$STANDALONE_DIR/common/Kconfig"
+
+    source "$SDK_DIR/soc/soc.kconfig"
+    source "$BSP_DIR/board/board.kconfig"
+    source "$SDK_DIR/common/common.kconfig"
 endmenu
+
+
+

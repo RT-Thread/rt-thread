@@ -11,17 +11,14 @@
  * 2023-04-27  huanghe      support RT-Smart
  */
 
+#include "rtconfig.h"
+#ifdef BSP_USING_UART
+
 #include "board.h"
-
 #include <mmu.h>
-
 #include "drv_usart.h"
 #include "interrupt.h"
 #include "fpl011.h"
-#include "rtconfig.h"
-#include "fprintk.h"
-
-#ifdef RT_USING_SERIAL
 
 extern u32 FUart_GetInterruptMask(FPl011 *uart_ptr);
 
@@ -46,7 +43,7 @@ static rt_err_t uart_configure(struct rt_serial_device *serial, struct serial_co
     config = *(const FPl011Config *)FPl011LookupConfig(uart->config.uart_instance);
 
 #ifdef RT_USING_SMART
-    config.base_address = (uintptr)rt_ioremap((void*)config.base_address, 0x1000);
+    config.base_address = (uintptr)rt_ioremap((void *)config.base_address, 0x1000);
 #endif
 
     RT_ASSERT(FPl011CfgInitialize(uart_hw, &config) == FT_SUCCESS);
@@ -78,15 +75,15 @@ static rt_err_t uart_control(struct rt_serial_device *serial, int cmd, void *arg
 
     switch (cmd)
     {
-    case RT_DEVICE_CTRL_CLR_INT:
-        /* disable rx irq */
-        rt_hw_interrupt_mask(uart_ptr->config.irq_num);
-        break;
+        case RT_DEVICE_CTRL_CLR_INT:
+            /* disable rx irq */
+            rt_hw_interrupt_mask(uart_ptr->config.irq_num);
+            break;
 
-    case RT_DEVICE_CTRL_SET_INT:
-        /* enable rx irq */
-        rt_hw_interrupt_umask(uart_ptr->config.irq_num);
-        break;
+        case RT_DEVICE_CTRL_SET_INT:
+            /* enable rx irq */
+            rt_hw_interrupt_umask(uart_ptr->config.irq_num);
+            break;
     }
 
     return RT_EOK;
@@ -99,7 +96,9 @@ static void Ft_Os_Uart_Callback(void *Args, u32 Event, u32 EventData)
     if (FPL011_EVENT_RECV_DATA == Event || FPL011_EVENT_RECV_TOUT == Event)
     {
         if (serial->serial_rx)
+        {
             rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_IND);
+        }
     }
     else if (FPL011_EVENT_RECV_ERROR == Event)
     {
@@ -258,4 +257,4 @@ int rt_hw_uart_init(void)
 }
 INIT_BOARD_EXPORT(rt_hw_uart_init);
 
-#endif /* RT_USING_SERIAL */
+#endif

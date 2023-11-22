@@ -16,9 +16,7 @@
 
 #include <rtdevice.h>
 
-#ifdef RT_USING_CAN
-
-#include "fcan.h"
+#ifdef BSP_USING_CAN
 
 #ifdef __cplusplus
 extern "C"

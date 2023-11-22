@@ -33,6 +33,9 @@
 | GPIO              |     支持     | GPIO 引脚电平输入输出，中断 |
 | XMAC              |     支持     | XMAC 网卡初始化和运行 |
 | SDMMC             |     支持     | SD0/SD1 读写 SD 卡或 eMMC 颗粒 |
+| PWM               |     支持     | PWM 脉宽调制电压输出        |
+| CAN               |     支持     | CAN/CANFD设备通信 |
+| I2C               |     支持     | I2C设备通信 |
 
 | **芯片**      | **支持情况** | **备注**                              |
 | :----------------- | :----------: | :------------------------------------- |
@@ -41,6 +44,7 @@
 | E2000Q              |     支持     | 支持SMP |
 | E2000S              |     支持     | |
 
+- Phytium PI 上使用 RT-Thread 要注意读写操作不能影响 SD 卡的固件，具体使用方法可以[参考](./doc/use_phytium_pi_sd_image.md)
 
 ##  如何在Ubuntu/Windows 环境下使用此BSP
 
@@ -61,6 +65,9 @@
 4. 使用 export_project.py 导出 BSP 工程到其他目录进行开发
 5. 使用 RT-Studio 导入 BSP 工程进行开发
 
+## 如何添加开发板
+
+- [CUS BOARD ADD](./board/README.md)
 
 ## 如何进行编译与实验
 

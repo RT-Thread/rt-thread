@@ -14,6 +14,7 @@
 #define __DRV_SPI_H__
 
 #include <rtthread.h>
+#ifdef BSP_USING_SPI
 
 struct drv_spi
 {
@@ -22,6 +23,7 @@ struct drv_spi
     struct rt_spi_device device;
 };
 
+#endif
 
 #endif
 

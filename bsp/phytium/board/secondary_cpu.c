@@ -64,7 +64,7 @@ rt_uint64_t rt_cpu_mpidr_early[] =
 };
 
 extern int rt_hw_timer_init(void);
-#include "fcache.h"
+
 void rt_hw_secondary_cpu_up(void)
 {
     rt_uint32_t i;
@@ -72,9 +72,9 @@ void rt_hw_secondary_cpu_up(void)
     int cpu_id;
     cpu_id = rt_hw_cpu_id();
     rt_kprintf("rt_hw_secondary_cpu_up is processing \r\n");
-    for (i = 0; i < RT_CPUS_NR;i++)
+    for (i = 0; i < RT_CPUS_NR; i++)
     {
-        if(i == cpu_id)
+        if (i == cpu_id)
         {
             continue;
         }
@@ -89,7 +89,7 @@ void rt_hw_secondary_cpu_up(void)
         FPsciCpuMaskOn(cpu_mask, (uintptr)entry);
         __DSB();
 #else
-            /* code */
+        /* code */
         FPsciCpuMaskOn(cpu_mask, (uintptr)rt_secondary_cpu_entry);
         __asm__ volatile("dsb" ::: "memory");
 #endif
