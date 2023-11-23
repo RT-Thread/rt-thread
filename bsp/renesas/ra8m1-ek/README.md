@@ -62,6 +62,14 @@
 * armclang（AC6 V6.19）
 * LLVM（V16/17）[ARM-software/LLVM-embedded-toolchain-for-Arm (github.com)](https://github.com/ARM-software/LLVM-embedded-toolchain-for-Arm/releases/tag/release-17.0.1)
 
+## FSP版本说明
+
+本BSP使用的是FSP5.0.0版本，进行外设相关开发需要下载并安装。
+
+* 下载链接：[rasc-5.0.0](https://github.com/renesas/fsp/releases/download/v5.0.0/setup_fsp_v5_0_0_rasc_v2023-10.exe)
+
+* 注意：BSP默认是最小系统，若需添加/使能其他外设需参考：[外设驱动使用教程 (rt-thread.org)](https://www.rt-thread.org/document/site/#/rt-thread-version/rt-thread-standard/tutorial/make-bsp/renesas-ra/RA系列BSP外设驱动使用教程)
+
 ### 快速上手
 
 #### 1、使用 MDK 编译：
