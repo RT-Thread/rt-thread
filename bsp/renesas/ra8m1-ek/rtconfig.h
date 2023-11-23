@@ -27,7 +27,6 @@
 #define RT_USING_DEBUG
 #define RT_DEBUGING_COLOR
 #define RT_DEBUGING_CONTEXT
-#define RT_DEBUGING_INIT
 
 /* Inter-Thread communication */
 
@@ -257,5 +256,8 @@
 #define BSP_USING_UART9
 #define BSP_UART9_RX_BUFSIZE 256
 #define BSP_UART9_TX_BUFSIZE 0
+
+/* Board extended module Drivers */
+
 
 #endif
