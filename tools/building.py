@@ -872,7 +872,7 @@ def GenTargetProject(program = None):
 
     if GetOption('target') == 'vsc':
         from vsc import GenerateVSCode
-        GenerateVSCode(Env)
+        GenerateVSCode(Env, GetOption('vsc-dist'))
         if GetOption('cmsispack'):
             from vscpyocd import GenerateVSCodePyocdConfig
             GenerateVSCodePyocdConfig(GetOption('cmsispack'))

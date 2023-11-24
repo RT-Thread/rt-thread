@@ -74,6 +74,11 @@ def AddOptions():
                 dest = 'target',
                 type = 'string',
                 help = 'set target project: mdk/mdk4/mdk5/iar/vs/vsc/ua/cdk/ses/makefile/eclipse/codelite/cmake')
+    AddOption('--vsc-dist',
+                      dest = 'vsc-dist',
+                      type = 'string',
+                      default = '.',
+                      help = 'root dir of .vscode')
     AddOption('--cmsispack',
                 dest = 'cmsispack',
                 type = 'string',

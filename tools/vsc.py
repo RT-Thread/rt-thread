@@ -37,14 +37,14 @@ def delete_repeatelist(data):
     data = [eval(i) for i in temp_dict]
     return data
 
-def GenerateCFiles(env):
+def GenerateCFiles(env, dist_dir = '.'):
     """
     Generate c_cpp_properties files
     """
-    if not os.path.exists('.vscode'):
-        os.mkdir('.vscode')
+    if not os.path.exists(os.path.join(dist_dir, '.vscode')):
+        os.mkdir(os.path.join(dist_dir, '.vscode'))
 
-    vsc_file = open('.vscode/c_cpp_properties.json', 'w')
+    vsc_file = open(os.path.join(dist_dir, '.vscode', 'c_cpp_properties.json'), 'w')
     if vsc_file:
         info = utils.ProjectInfo(env)
 
@@ -59,13 +59,15 @@ def GenerateCFiles(env):
         config_obj['cStandard'] = "c99"
         config_obj['cppStandard'] = "c++11"
 
+        dist_dir = os.path.abspath(dist_dir)
+
         # format "a/b," to a/b. remove first quotation mark("),and remove end (",)
         includePath = []
         for i in info['CPPPATH']:
             if i[0] == '\"' and i[len(i) - 2:len(i)] == '\",':
-                includePath.append(_make_path_relative(os.getcwd(), i[1:len(i) - 2]))
+                includePath.append(_make_path_relative(dist_dir, i[1:len(i) - 2]))
             else:
-                includePath.append(_make_path_relative(os.getcwd(), i))
+                includePath.append(_make_path_relative(dist_dir, i))
         config_obj['includePath'] = includePath
 
         json_obj = {}
@@ -106,9 +108,9 @@ def GenerateCFiles(env):
         vsc_space_file.close()    
     return
 
-def GenerateVSCode(env):
+def GenerateVSCode(env, dist_dir = '.'):
     print('Update setting files for VSCode...')
-    GenerateCFiles(env)
+    GenerateCFiles(env, dist_dir)
     print('Done!')
 
     return
