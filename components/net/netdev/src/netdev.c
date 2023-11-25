@@ -31,6 +31,8 @@
 struct netdev *netdev_list = RT_NULL;
 /* The default network interface device */
 struct netdev *netdev_default = RT_NULL;
+/* The local virtual network device */
+struct netdev *netdev_lo = RT_NULL;
 /* The global network register callback */
 static netdev_callback_fn g_netdev_register_callback = RT_NULL;
 static netdev_callback_fn g_netdev_default_change_callback = RT_NULL;
