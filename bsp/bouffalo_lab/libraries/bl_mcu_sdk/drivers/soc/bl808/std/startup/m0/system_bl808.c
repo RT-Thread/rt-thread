@@ -119,6 +119,15 @@ void System_Post_Init(void)
     /* make D0 all ram avalable for mcu usage */
     GLB_Set_DSP_L2SRAM_Available_Size(3, 1, 1, 1);
 
+    extern uint32_t __drambss_start__;
+    extern uint32_t __drambss_end__;
+    uint32_t *pDest;
+    pDest = &__drambss_start__;
+
+    for (; pDest < &__drambss_end__;) {
+        *pDest++ = 0ul;
+    }
+
     /* global IRQ enable */
     __enable_irq();
 }

@@ -6,14 +6,20 @@
  * Change Logs:
  * Date           Author       Notes
  * 2022/12/25     flyingcys    first version
- */
+ * 2023/11/23     flyingcys    add wifi driver
+  */
 
 #include <rtthread.h>
 #include <stdio.h>
+#include <rtdevice.h>
 
 int main(void)
 {
     rt_kprintf("Hello, RISC-V!\n");
+
+    /* set wifi work mode */
+    rt_wlan_set_mode(RT_WLAN_DEVICE_STA_NAME, RT_WLAN_STATION);
+    rt_wlan_set_mode(RT_WLAN_DEVICE_AP_NAME, RT_WLAN_AP);
 
     return 0;
 }
