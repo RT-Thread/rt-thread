@@ -20,6 +20,7 @@ on:
       - documentation/**
       - '**/README.md'
       - '**/README_zh.md'
+  workflow_dispatch:
 
 permissions:
   contents: read # to fetch code (actions/checkout)
