@@ -174,7 +174,7 @@ int dfs_file_isdir(const char *path);
 int dfs_file_access(const char *path, mode_t mode);
 int dfs_file_chdir(const char *path);
 char *dfs_file_getcwd(char *buf, size_t size);
-
+char *dfs_nolink_path(struct dfs_mnt **mnt, char *fullpath, int mode);
 #ifdef RT_USING_SMART
 int dfs_file_mmap2(struct dfs_file *file, struct dfs_mmap2_args *mmap2);
 
