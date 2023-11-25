@@ -142,22 +142,31 @@ void rt_hw_board_init(void)
 
     bflb_mtimer_config(CPU_Get_MTimer_Clock() / RT_TICK_PER_SECOND, systick_isr);
 
+#ifdef BSP_USING_PSRAM
+    if (uhs_psram_init() < 0)
+    {
+        rt_kprintf("uhs_psram_init failed!\n");
+        return;
+    }
+
+    extern uint32_t __psrambss_start__;
+    extern uint32_t __psrambss_end__;
+    uint32_t *pDest;
+    pDest = &__psrambss_start__;
+
+    for (; pDest < &__psrambss_end__;) {
+        *pDest++ = 0ul;
+    }
+#endif
+
 #ifdef RT_USING_HEAP
     /* initialize memory system */
-    rt_kprintf("RT_HW_HEAP_BEGIN:%x RT_HW_HEAP_END:%x size: %d\r\n", RT_HW_HEAP_BEGIN, RT_HW_HEAP_END, RT_HW_HEAP_END - RT_HW_HEAP_BEGIN);
     rt_system_heap_init(RT_HW_HEAP_BEGIN, RT_HW_HEAP_END);
 #endif
 
     /* UART driver initialization is open by default */
 #ifdef RT_USING_SERIAL
     rt_hw_uart_init();
-#endif
-
-#ifdef BSP_USING_PSRAM
-    if (uhs_psram_init() < 0)
-    {
-        rt_kprintf("uhs_psram_init failed!\n");
-    }
 #endif
 
     /* Set the shell console output device */
@@ -188,6 +197,10 @@ void rt_hw_board_init(void)
     BL_WR_WORD(IPC_SYNC_ADDR1, IPC_SYNC_FLAG);
     BL_WR_WORD(IPC_SYNC_ADDR2, IPC_SYNC_FLAG);
     L1C_DCache_Clean_By_Addr(IPC_SYNC_ADDR1, 8);
+#endif
+
+#ifdef RT_USING_HEAP
+    rt_kprintf("RT_HW_HEAP_BEGIN:%x RT_HW_HEAP_END:%x size: %d\r\n", RT_HW_HEAP_BEGIN, RT_HW_HEAP_END, RT_HW_HEAP_END - RT_HW_HEAP_BEGIN);
 #endif
 }
 

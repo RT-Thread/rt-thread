@@ -88,5 +88,11 @@ void start_load(void)
         *pDest++ = 0ul;
     }
 
+    extern uint32_t __wifi_bss_start;
+    extern uint32_t __wifi_bss_end;
+    pDest = &__wifi_bss_start;
+    for ( ; pDest < &__wifi_bss_end ; ) {
+        *pDest++ = 0ul;
+    }
 #endif
 }
