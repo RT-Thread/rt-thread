@@ -221,8 +221,9 @@ int rt_soft_i2c_init(void)
 {
     int err = RT_EOK;
     struct rt_soft_i2c *obj;
+    int i;
 
-    for(int i = 0; i < sizeof(i2c_bus_obj) / sizeof(i2c_bus_obj[0]); i++)
+    for(i = 0; i < sizeof(i2c_bus_obj) / sizeof(i2c_bus_obj[0]); i++)
     {
         struct soft_i2c_config *cfg = &i2c_cfg[i];
 
