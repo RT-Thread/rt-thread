@@ -143,7 +143,7 @@ rt_int32_t pulse_encoder_get_count(struct rt_pulse_encoder_device *pulse_encoder
 {
     struct stm32_pulse_encoder_device *stm32_device;
     stm32_device = (struct stm32_pulse_encoder_device*)pulse_encoder;
-    return (rt_int32_t)((rt_int16_t)__HAL_TIM_GET_COUNTER(&stm32_device->tim_handler) + stm32_device->over_under_flowcount * AUTO_RELOAD_VALUE);
+    return (rt_int32_t)((rt_int16_t)__HAL_TIM_GET_COUNTER(&stm32_device->tim_handler) + stm32_device->over_under_flowcount * (AUTO_RELOAD_VALUE + 1));
 }
 
 rt_err_t pulse_encoder_control(struct rt_pulse_encoder_device *pulse_encoder, rt_uint32_t cmd, void *args)
