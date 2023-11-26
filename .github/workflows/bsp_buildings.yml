@@ -1,11 +1,11 @@
 name: RT-Thread BSP build check
 
 # Controls when the action will run. Triggers the workflow on push or pull request
-# events but only for the master branch
+# events but only for the RT-Thread organization master branch
 on:
-  # Runs at 16:00 UTC (BeiJing 00:00) on the 1st of every month
+  # Runs at 16:00 UTC (BeiJing 00:00) every day
   schedule:
-    - cron:  '0 16 1 * *'
+    - cron:  '0 16 * * *'
   push:
     branches:
       - master
