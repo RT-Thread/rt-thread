@@ -346,7 +346,7 @@ config RT_USING_PHY
 
 config RT_USING_PIN
     bool "Using generic GPIO device drivers"
-    default y
+    default n
 
 config RT_USING_ADC
     bool "Using ADC device drivers"
@@ -771,7 +771,7 @@ endif
 config RT_USING_DEV_BUS
     bool "Using Device Bus device drivers"
     default y if RT_USING_SMART
-    default n if !RT_USING_SMART
+    default n
 
 menuconfig RT_USING_WIFI
     bool "Using Wi-Fi framework"
