@@ -32,4 +32,4 @@ jobs:
           cppcheck --version
           ls
           git branch -a
-          python tools/ci/cpp_check.py check
+          python .github/workflows/scripts/cpp_check.py check

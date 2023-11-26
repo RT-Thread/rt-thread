@@ -68,4 +68,4 @@ jobs:
         shell: bash
         run: |
           source ~/.env/env.sh
-          #python tools/ci/compile_bsp_with_drivers.py
+          #python .github/workflows/scripts/compile_bsp_with_drivers.py
