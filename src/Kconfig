@@ -37,8 +37,16 @@ config RT_USING_SMART
     select RT_USING_POSIX_TERMIOS
     select RT_USING_KTIME
     depends on ARCH_ARM_CORTEX_M || ARCH_ARM_ARM9 || ARCH_ARM_CORTEX_A || ARCH_ARMV8 || ARCH_RISCV64
+    depends on !RT_USING_NANO
     help
         RT-Thread Smart is a microkernel based operating system on RT-Thread.
+
+config RT_USING_NANO
+    bool "Enable RT-Thread Nano"
+    default n
+    help
+        RT-Thread Nano with a very small size and refined hard real-time kernel,
+        which is very suited for the resource-constrained MCU system.
 
 config RT_USING_AMP
     bool "Enable AMP (Asymmetric Multi-Processing)"
