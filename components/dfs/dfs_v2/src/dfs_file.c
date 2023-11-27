@@ -27,8 +27,23 @@
 #define DBG_LVL    DBG_WARNING
 #include <rtdbg.h>
 
-
 #define MAX_RW_COUNT 0xfffc0000
+
+rt_inline int _find_path_node(const char *path)
+{
+    int i = 0;
+
+    while (path[i] != '\0')
+    {
+        if ('/' == path[i++])
+        {
+            break;
+        }
+    }
+
+    /* return path-note length */
+    return i;
+}
 
 /*
  * rw_verify_area doesn't like huge counts. We limit
@@ -143,7 +158,7 @@ struct dfs_dentry* dfs_file_follow_link(struct dfs_dentry *dentry)
     {
         char *buf = NULL;
 
-        buf = (char *) rt_malloc (DFS_PATH_MAX);
+        buf = (char *)rt_malloc(DFS_PATH_MAX);
         if (buf)
         {
             do
@@ -211,130 +226,83 @@ static char *dfs_nolink_path(struct dfs_mnt **mnt, char *fullpath, int mode)
 {
     int index = 0;
     char *path = RT_NULL;
-    char link_fn[DFS_PATH_MAX] = {0};
+    char *link_fn;
     struct dfs_dentry *dentry = RT_NULL;
 
-    path = (char *)rt_malloc((DFS_PATH_MAX * 2) + 1); // path + syslink + \0
+    path = (char *)rt_malloc((DFS_PATH_MAX * 2) + 2); // path + \0 + link_fn + \0
     if (!path)
     {
         return path;
     }
+    link_fn = path + DFS_PATH_MAX + 1;
 
     if (*mnt && fullpath)
     {
         int i = 0;
         char *fp = fullpath;
 
-        while (*fp != '\0')
+        while ((i = _find_path_node(fp)) > 0)
         {
-            fp++;
-            i++;
-            if (*fp == '/')
+            if (i + index > DFS_PATH_MAX)
             {
-                rt_memcpy(path + index, fp - i, i);
-                path[index + i] = '\0';
+                goto _ERR_RET;
+            }
 
-                dentry = dfs_dentry_lookup(*mnt, path, 0);
-                if (dentry && dentry->vnode->type == FT_SYMLINK)
+            rt_memcpy(path + index, fp, i);
+            path[index + i] = '\0';
+            fp += i;
+
+            dentry = dfs_dentry_lookup(*mnt, path, 0);
+            if (dentry && dentry->vnode->type == FT_SYMLINK)
+            {
+                int ret = -1;
+
+                if ((*mnt)->fs_ops->readlink)
                 {
-                    int ret = -1;
-
-                    if ((*mnt)->fs_ops->readlink)
+                    if (dfs_is_mounted((*mnt)) == 0)
                     {
-                        if (dfs_is_mounted((*mnt)) == 0)
-                        {
-                            ret = (*mnt)->fs_ops->readlink(dentry, link_fn, DFS_PATH_MAX);
-                        }
+                        ret = (*mnt)->fs_ops->readlink(dentry, link_fn, DFS_PATH_MAX);
                     }
+                }
 
-                    if (ret > 0)
+                if (ret > 0)
+                {
+                    int len = rt_strlen(link_fn);
+
+                    if (link_fn[0] != '/')
                     {
-                        int len = rt_strlen(link_fn);
-                        if (link_fn[0] == '/')
-                        {
-                            rt_memcpy(path, link_fn, len);
-                            index = len;
-                        }
-                        else
-                        {
-                            path[index] = '/';
-                            index++;
-                            rt_memcpy(path + index, link_fn, len);
-                            index += len;
-                        }
-                        path[index] = '\0';
-                        *mnt = dfs_mnt_lookup(path);
+                        path[index] = '/';
                     }
                     else
                     {
-                        rt_kprintf("link error: %s\n", path);
+                        index = 0;
                     }
+
+                    if (len + index + 1 >= DFS_PATH_MAX)
+                    {
+                        goto _ERR_RET;
+                    }
+
+                    rt_memcpy(path + index, link_fn, len);
+                    index += len;
+                    path[index] = '\0';
+                    *mnt = dfs_mnt_lookup(path);
                 }
                 else
                 {
-                    index += i;
+                    goto _ERR_RET;
                 }
-                dfs_dentry_unref(dentry);
-                i = 0;
             }
-        }
-
-        if (i)
-        {
-            rt_memcpy(path + index, fp - i, i);
-            path[index + i] = '\0';
-
-            if (mode)
+            else
             {
-                dentry = dfs_dentry_lookup(*mnt, path, 0);
-                if (dentry && dentry->vnode->type == FT_SYMLINK)
-                {
-                    int ret = -1;
-
-                    if ((*mnt)->fs_ops->readlink)
-                    {
-                        if (dfs_is_mounted((*mnt)) == 0)
-                        {
-                            ret = (*mnt)->fs_ops->readlink(dentry, link_fn, DFS_PATH_MAX);
-                        }
-                    }
-
-                    if (ret > 0)
-                    {
-                        int len = rt_strlen(link_fn);
-                        if (link_fn[0] == '/')
-                        {
-                            rt_memcpy(path, link_fn, len);
-                            index = len;
-                        }
-                        else
-                        {
-                            path[index] = '/';
-                            index++;
-                            rt_memcpy(path + index, link_fn, len);
-                            index += len;
-                        }
-                        path[index] = '\0';
-                        *mnt = dfs_mnt_lookup(path);
-                    }
-                    else
-                    {
-                        rt_kprintf("link error: %s\n", path);
-                    }
-
-                    char *_fullpath = dfs_normalize_path(RT_NULL, path);
-                    if (_fullpath)
-                    {
-                        strncpy(path, _fullpath, DFS_PATH_MAX);
-                        rt_free(_fullpath);
-                    }
-                }
-                dfs_dentry_unref(dentry);
+                index += i;
             }
+            dfs_dentry_unref(dentry);
         }
     }
     else
     {
+_ERR_RET:
         rt_free(path);
         path = RT_NULL;
     }
@@ -1837,7 +1805,7 @@ void ls(const char *pathname)
     DLOG(msg, "dfs", "dfs_file", DLOG_MSG, "dfs_file_open(%s, O_DIRECTORY, 0)", path);
     if (dfs_file_open(&file, path, O_DIRECTORY, 0) >= 0)
     {
-        char *link_fn = (char *) rt_malloc (DFS_PATH_MAX);
+        char *link_fn = (char *)rt_malloc(DFS_PATH_MAX);
         if (link_fn)
         {
             rt_kprintf("Directory %s:\n", path);
