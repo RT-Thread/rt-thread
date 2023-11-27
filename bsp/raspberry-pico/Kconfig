@@ -44,6 +44,18 @@ menu "Onboard Peripheral Drivers"
             default y
     endif
 
+    config BSP_USING_ARDUINO
+        bool "Compatible with Arduino Ecosystem (RTduino)"
+        select PKG_USING_RTDUINO
+        select BSP_USING_UART0
+        select BSP_UART0_TX_PIN_0
+        select BSP_UART0_RX_PIN_1
+        select BSP_USING_UART1
+        select BSP_UART1_TX_PIN_8
+        select BSP_UART1_RX_PIN_9
+        select BSP_USING_GPIO
+        default n
+
     config BSP_USING_ON_CHIP_FLASH
         bool "Enable On-Chip FLASH"
         select FAL_DEBUG_CONFIG
