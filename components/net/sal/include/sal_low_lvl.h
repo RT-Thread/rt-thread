@@ -45,6 +45,9 @@ typedef uint32_t socklen_t;
 #define SAL_SOCKET_OFFSET              0
 #endif
 
+struct sockaddr;
+struct msghdr;
+struct addrinfo;
 struct sal_socket
 {
     uint32_t magic;                    /* SAL socket magic word */
@@ -72,6 +75,8 @@ struct sal_socket_ops
     int (*connect)    (int s, const struct sockaddr *name, socklen_t namelen);
     int (*accept)     (int s, struct sockaddr *addr, socklen_t *addrlen);
     int (*sendto)     (int s, const void *data, size_t size, int flags, const struct sockaddr *to, socklen_t tolen);
+    int (*sendmsg)    (int s, const struct msghdr *message, int flags);
+    int (*recvmsg)    (int s, struct msghdr *message, int flags);
     int (*recvfrom)   (int s, void *mem, size_t len, int flags, struct sockaddr *from, socklen_t *fromlen);
     int (*getsockopt) (int s, int level, int optname, void *optval, socklen_t *optlen);
     int (*setsockopt) (int s, int level, int optname, const void *optval, socklen_t optlen);
@@ -79,6 +84,7 @@ struct sal_socket_ops
     int (*getpeername)(int s, struct sockaddr *name, socklen_t *namelen);
     int (*getsockname)(int s, struct sockaddr *name, socklen_t *namelen);
     int (*ioctlsocket)(int s, long cmd, void *arg);
+    int (*socketpair) (int s, int type, int protocol, int *fds);
 #ifdef SAL_USING_POSIX
     int (*poll)       (struct dfs_file *file, struct rt_pollreq *req);
 #endif

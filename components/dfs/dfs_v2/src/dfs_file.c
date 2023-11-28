@@ -207,7 +207,7 @@ struct dfs_dentry* dfs_file_follow_link(struct dfs_dentry *dentry)
  *
  * @return new path.
  */
-static char *dfs_nolink_path(struct dfs_mnt **mnt, char *fullpath, int mode)
+char *dfs_nolink_path(struct dfs_mnt **mnt, char *fullpath, int mode)
 {
     int index = 0;
     char *path = RT_NULL;
