@@ -589,7 +589,8 @@ static int dfs_tmpfs_rename(struct dfs_dentry *old_dentry, struct dfs_dentry *ne
     struct tmpfs_file *d_file, *p_file;
     struct tmpfs_sb *superblock;
     rt_size_t size;
-    char parent_path[DFS_PATH_MAX], file_name[TMPFS_NAME_MAX];
+    char *parent_path;
+    char file_name[TMPFS_NAME_MAX];
 
     superblock = (struct tmpfs_sb *)old_dentry->mnt->data;
     RT_ASSERT(superblock != NULL);
@@ -602,10 +603,19 @@ static int dfs_tmpfs_rename(struct dfs_dentry *old_dentry, struct dfs_dentry *ne
     if (d_file == NULL)
         return -ENOENT;
 
+    parent_path = rt_malloc(DFS_PATH_MAX);
+    if (!parent_path)
+    {
+        return -ENOMEM;
+    }
+
     /* find parent file */
     _path_separate(new_dentry->pathname, parent_path, file_name);
     if (file_name[0] == '\0') /* it's root dir */
+    {
+        rt_free(parent_path);
         return -ENOENT;
+    }
     /* open parent directory */
     p_file = dfs_tmpfs_lookup(superblock, parent_path, &size);
     RT_ASSERT(p_file != NULL);
@@ -619,6 +629,8 @@ static int dfs_tmpfs_rename(struct dfs_dentry *old_dentry, struct dfs_dentry *ne
     rt_spin_lock(&superblock->lock);
     rt_list_insert_after(&(p_file->subdirs), &(d_file->sibling));
     rt_spin_unlock(&superblock->lock);
+
+    rt_free(parent_path);
 
     return RT_EOK;
 }
@@ -672,7 +684,8 @@ static struct dfs_vnode *dfs_tmpfs_create_vnode(struct dfs_dentry *dentry, int t
     rt_size_t size;
     struct tmpfs_sb *superblock;
     struct tmpfs_file *d_file, *p_file;
-    char parent_path[DFS_PATH_MAX], file_name[TMPFS_NAME_MAX];
+    char *parent_path;
+    char file_name[TMPFS_NAME_MAX];
 
     if (dentry == NULL || dentry->mnt == NULL || dentry->mnt->data == NULL)
     {
@@ -682,6 +695,12 @@ static struct dfs_vnode *dfs_tmpfs_create_vnode(struct dfs_dentry *dentry, int t
     superblock = (struct tmpfs_sb *)dentry->mnt->data;
     RT_ASSERT(superblock != NULL);
 
+    parent_path = rt_malloc(DFS_PATH_MAX);
+    if (!parent_path)
+    {
+        return NULL;
+    }
+
     vnode = dfs_vnode_create();
     if (vnode)
     {
@@ -689,6 +708,7 @@ static struct dfs_vnode *dfs_tmpfs_create_vnode(struct dfs_dentry *dentry, int t
         _path_separate(dentry->pathname, parent_path, file_name);
         if (file_name[0] == '\0') /* it's root dir */
         {
+            rt_free(parent_path);
             dfs_vnode_destroy(vnode);
             return NULL;
         }
@@ -697,6 +717,7 @@ static struct dfs_vnode *dfs_tmpfs_create_vnode(struct dfs_dentry *dentry, int t
         p_file = dfs_tmpfs_lookup(superblock, parent_path, &size);
         if (p_file == NULL)
         {
+            rt_free(parent_path);
             dfs_vnode_destroy(vnode);
             return NULL;
         }
@@ -705,6 +726,7 @@ static struct dfs_vnode *dfs_tmpfs_create_vnode(struct dfs_dentry *dentry, int t
         d_file = (struct tmpfs_file *)rt_calloc(1, sizeof(struct tmpfs_file));
         if (d_file == NULL)
         {
+            rt_free(parent_path);
             dfs_vnode_destroy(vnode);
             return NULL;
         }
@@ -742,6 +764,8 @@ static struct dfs_vnode *dfs_tmpfs_create_vnode(struct dfs_dentry *dentry, int t
         vnode->data = d_file;
         vnode->size = d_file->size;
     }
+
+    rt_free(parent_path);
 
     return vnode;
 }

@@ -337,7 +337,7 @@ int dfs_romfs_getdents(struct dfs_file *file, struct dirent *dirp, uint32_t coun
         RT_ASSERT(len <= RT_UINT8_MAX);
         d->d_namlen = (rt_uint8_t)len;
         d->d_reclen = (rt_uint16_t)sizeof(struct dirent);
-        rt_strncpy(d->d_name, name, DFS_PATH_MAX);
+        rt_strncpy(d->d_name, name, DIRENT_NAME_MAX);
 
         /* move to next position */
         ++ file->pos;

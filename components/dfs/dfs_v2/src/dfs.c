@@ -583,10 +583,19 @@ char *dfs_normalize_path(const char *directory, const char *filename)
 
     if (filename[0] != '/') /* it's a absolute path, use it directly */
     {
-        fullpath = (char *)rt_malloc(strlen(directory) + strlen(filename) + 2);
+        int path_len;
 
-        if (fullpath == NULL)
+        path_len = strlen(directory) + strlen(filename) + 2;
+        if (path_len > DFS_PATH_MAX)
+        {
             return NULL;
+        }
+
+        fullpath = (char *)rt_malloc(path_len);
+        if (fullpath == NULL)
+        {
+            return NULL;
+        }
 
         /* join path and file name */
         rt_snprintf(fullpath, strlen(directory) + strlen(filename) + 2,

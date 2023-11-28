@@ -53,15 +53,15 @@
  * skip stdin/stdout/stderr normally
  */
 #ifndef DFS_STDIO_OFFSET
-#define DFS_STDIO_OFFSET           3
+#define DFS_STDIO_OFFSET        3
 #endif
 
 #ifndef DFS_PATH_MAX
-#define DFS_PATH_MAX             DIRENT_NAME_MAX
+#define DFS_PATH_MAX            4096
 #endif
 
 #ifndef SECTOR_SIZE
-#define SECTOR_SIZE              512
+#define SECTOR_SIZE             512
 #endif
 
 #define DFS_FS_FLAG_DEFAULT     0x00    /* default flag */

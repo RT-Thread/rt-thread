@@ -4874,7 +4874,7 @@ struct libc_dirent {
     off_t d_off;
     unsigned short d_reclen;
     unsigned char d_type;
-    char d_name[256];
+    char d_name[DIRENT_NAME_MAX];
 };
 
 sysret_t sys_getdents(int fd, struct libc_dirent *dirp, size_t nbytes)

@@ -343,6 +343,11 @@ static void directory_delete_for_msh(const char *pathname, char f, char v)
         if (rt_strcmp(".", dirent->d_name) != 0 &&
                 rt_strcmp("..", dirent->d_name) != 0)
         {
+            if (strlen(pathname) + 1 + strlen(dirent->d_name) > DFS_PATH_MAX)
+            {
+                rt_kprintf("cannot remove '%s/%s', path too long.\n", pathname, dirent->d_name);
+                continue;
+            }
             rt_sprintf(full_path, "%s/%s", pathname, dirent->d_name);
             if (dirent->d_type != DT_DIR)
             {
@@ -862,6 +867,11 @@ static void directory_setattr(const char *pathname, struct dfs_attr *attr, char 
         if (rt_strcmp(".", dirent->d_name) != 0 &&
             rt_strcmp("..", dirent->d_name) != 0)
         {
+            if (strlen(pathname) + 1 + strlen(dirent->d_name) > DFS_PATH_MAX)
+            {
+                rt_kprintf("'%s/%s' setattr failed, path too long.\n", pathname, dirent->d_name);
+                continue;
+            }
             rt_sprintf(full_path, "%s/%s", pathname, dirent->d_name);
             if (dirent->d_type == DT_REG)
             {
