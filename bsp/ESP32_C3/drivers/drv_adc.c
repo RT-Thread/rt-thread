@@ -25,7 +25,7 @@
 #define GET_UNIT(x)        ((x>>3) & 0x1)
 
 /* esp i2c dirver class */
-static struct esp_adc
+struct esp_adc
 {
     struct rt_adc_ops ops;
     struct rt_adc_device adc_device;
