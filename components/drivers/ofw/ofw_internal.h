@@ -12,7 +12,7 @@
 #define __OFW_INTERNAL_H__
 
 #include <rtthread.h>
-
+#include <posix/string.h>
 #include <drivers/ofw.h>
 
 #define OFW_PHANDLE_MIN     1
@@ -23,7 +23,6 @@
 
 #define OFW_ROOT_NODE_ADDR_CELLS_DEFAULT    1
 #define OFW_ROOT_NODE_SIZE_CELLS_DEFAULT    1
-
 struct fdt_info
 {
     /* Always "/", because we save "ofw" information in root node. */

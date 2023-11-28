@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2019, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -9,49 +9,25 @@
 #ifndef __RT_HW_CPU_H__
 #define __RT_HW_CPU_H__
 
-#include <rthw.h>
-#include <rtthread.h>
-#include <stdbool.h>
+#include <rtdef.h>
+#include <cpuport.h>
+#include <mm_aspace.h>
 
-#ifdef RT_USING_SMP
+#ifdef RT_USING_OFW
+#include <drivers/ofw.h>
+#endif
+
+#define ID_ERROR __INT64_MAX__
+#define MPIDR_AFFINITY_MASK         0x000000ff00ffffffUL
+
 struct cpu_ops_t
 {
     const char *method;
-    int     (*cpu_init)(rt_uint32_t id);
-    int     (*cpu_boot)(rt_uint32_t id);
+    int     (*cpu_init)(rt_uint32_t id, void *param);
+    int     (*cpu_boot)(rt_uint32_t id, rt_uint64_t entry);
     void    (*cpu_shutdown)(void);
 };
 
-/**
- * Identifier to mark a wrong CPU MPID.
- * All elements in rt_cpu_mpidr_early[] should be initialized with this value
- */
-#define ID_ERROR __INT64_MAX__
-
-extern rt_uint64_t rt_cpu_mpidr_early[];
-extern struct dtb_node *_cpu_node[];
-
-#define cpuid_to_hwid(cpuid) \
-    ((((cpuid) >= 0) && ((cpuid) < RT_CPUS_NR)) ? rt_cpu_mpidr_early[cpuid] : ID_ERROR)
-#define set_hwid(cpuid, hwid) \
-    ((((cpuid) >= 0) && ((cpuid) < RT_CPUS_NR)) ? (rt_cpu_mpidr_early[cpuid] = (hwid)) : ID_ERROR)
-#define get_cpu_node(cpuid) \
-    ((((cpuid) >= 0) && ((cpuid) < RT_CPUS_NR)) ? _cpu_node[cpuid] : NULL)
-#define set_cpu_node(cpuid, node) \
-    ((((cpuid) >= 0) && ((cpuid) < RT_CPUS_NR)) ? (_cpu_node[cpuid] = node) : NULL)
-
-extern int rt_hw_cpu_init();
-
-extern int rt_hw_cpu_boot_secondary(int num_cpus, rt_uint64_t *cpu_hw_ids, struct cpu_ops_t *cpu_ops[]);
-
-extern void rt_hw_secondary_cpu_idle_exec(void);
-
-extern struct cpu_ops_t cpu_ops_psci;
-
-extern struct cpu_ops_t cpu_ops_spin_tbl;
-
-#endif /* RT_USING_SMP */
-
-extern void (*system_off)(void);
+extern rt_uint64_t rt_cpu_mpidr_table[];
 
 #endif /* __RT_HW_CPU_H__ */

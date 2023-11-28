@@ -8,8 +8,6 @@
  * 2022-08-25     GuEe-GUI     first version
  */
 
-#define _GNU_SOURCE
-
 #include <rthw.h>
 #include <rtthread.h>
 
