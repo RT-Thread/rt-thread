@@ -96,6 +96,36 @@ menu "On-chip Peripheral Drivers"
                 default n
         endif
 
+    menuconfig BSP_USING_PWM
+        bool "Enable PWM"
+        default n
+        select RT_USING_PWM
+        if BSP_USING_PWM
+            menuconfig BSP_USING_PWM0
+                bool "Enable PWM0"
+                default n
+                if BSP_USING_PWM0
+                    config BSP_LEDC_CH0_GPIO
+                        int "LEDC CH0 GPIO PIN SET"
+                        default 12
+                    config BSP_LEDC_CH1_GPIO
+                        int "LEDC CH1 GPIO PIN SET"
+                        default 6
+                    config BSP_LEDC_CH2_GPIO
+                        int "LEDC CH2 GPIO PIN SET"
+                        default 2
+                    config BSP_LEDC_CH3_GPIO
+                        int "LEDC CH3 GPIO PIN SET"
+                        default 10
+                    config BSP_LEDC_CH4_GPIO
+                        int "LEDC CH4 GPIO PIN SET"
+                        default 8
+                    config BSP_LEDC_CH5_GPIO
+                        int "LEDC CH5 GPIO PIN SET"
+                        default 18
+                endif
+        endif
+
 endmenu
 
 config BSP_ENABLE_GDBSTUB
