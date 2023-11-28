@@ -29,6 +29,7 @@
 
 #include <gicv3.h>
 #if defined(TARGET_ARMV8_AARCH64)
+    #include <psci.h>
     #include <gtimer.h>
     #include <cpuport.h>
 #else
