@@ -9,6 +9,7 @@
  * 2022-12-13     WangXiaoyao  Hot-pluggable, extensible
  *                             page management algorithm
  * 2023-02-20     WangXiaoyao  Multi-list page-management
+ * 2023-11-28     Shell        Bugs fix for page_install on shadow region
  */
 #include <rtthread.h>
 
@@ -862,11 +863,16 @@ static int _load_mpr_area(void *head, void *tail)
 int rt_page_install(rt_region_t region)
 {
     int err = -RT_EINVAL;
+    rt_region_t shadow;
+    void *head, *tail;
+
     if (region.end != region.start && !(region.start & ARCH_PAGE_MASK) &&
         !(region.end & ARCH_PAGE_MASK))
     {
-        void *head = addr_to_page(page_start, (void *)region.start);
-        void *tail = addr_to_page(page_start, (void *)region.end);
+        shadow.start = region.start & ~shadow_mask;
+        shadow.end = FLOOR(region.end, shadow_mask + 1);
+        head = addr_to_page(page_start, (void *)shadow.start);
+        tail = addr_to_page(page_start, (void *)shadow.end);
 
         page_nr += ((region.end - region.start) >> ARCH_PAGE_SHIFT);
 
