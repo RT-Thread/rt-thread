@@ -3953,7 +3953,7 @@ out:
 }
 
 sysret_t sys_socketpair(int domain, int type, int protocol, int fd[2])
-{   
+{
 #ifdef RT_USING_SAL
     int ret = 0;
     int k_fd[2];
@@ -7045,8 +7045,13 @@ const static struct rt_syscall_def func_table[] =
     SYSCALL_SIGN(sys_ftruncate),
     SYSCALL_SIGN(sys_setitimer),
     SYSCALL_SIGN(sys_utimensat),
+#ifdef RT_USING_POSIX_SOCKET
     SYSCALL_SIGN(sys_notimpl),
     SYSCALL_SIGN(sys_socketpair),                        /* 205 */
+#else
+    SYSCALL_SIGN(sys_notimpl),
+    SYSCALL_SIGN(sys_notimpl),
+#endif
 };
 
 const void *lwp_get_sys_api(rt_uint32_t number)
