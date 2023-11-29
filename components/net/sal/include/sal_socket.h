@@ -186,10 +186,10 @@ struct sockaddr
 /* Structure describing the address of an AF_LOCAL (aka AF_UNIX) socket.  */
 struct sockaddr_un
 {
-    unsigned short sa_family;
+    uint8_t        sa_len;
+    sa_family_t    sa_family;
     char sun_path[108];         /* Path name.  */
 };
-
 
 #if NETDEV_IPV4
 /* members are in network byte order */
@@ -227,16 +227,6 @@ struct sockaddr_storage
 #endif /* NETDEV_IPV6 */
 };
 
-/* LWIPPTP_SWREQ_0036 */
-#ifndef __DEFINED_struct_iovec
-struct iovec
-{
-    void *iov_base;
-    size_t iov_len;
-};
-#endif
-
-/* LWIPPTP_SWREQ_0036 */
 struct msghdr
 {
     void            *msg_name;
@@ -248,7 +238,6 @@ struct msghdr
     int              msg_flags;
 };
 
-/* LWIPPTP_SWREQ_0036 */
 /* RFC 3542, Section 20: Ancillary Data */
 struct cmsghdr
 {
@@ -257,7 +246,6 @@ struct cmsghdr
     int     cmsg_type;  /* protocol-specific type */
 };
 
-/* LWIPPTP_SWREQ_0036 */
 #define CMSG_NXTHDR(mhdr, cmsg) cmsg_nxthdr((mhdr), (cmsg))
 
 #define CMSG_ALIGN(len) (((len) + sizeof(long) - 1) & ~(sizeof(long)-1))
@@ -297,7 +285,7 @@ static inline struct cmsghdr *cmsg_nxthdr(struct msghdr *_msg, struct cmsghdr *_
 }
 
 #define IFNAMSIZ	16
-struct sal_ifmap 
+struct sal_ifmap
 {
     unsigned long int mem_start;
     unsigned long int mem_end;
@@ -307,13 +295,13 @@ struct sal_ifmap
     unsigned char port;
 };
 
-struct sal_ifreq 
+struct sal_ifreq
 {
-    union 
+    union
     {
         char ifrn_name[IFNAMSIZ];
     } ifr_ifrn;
-    union 
+    union
     {
         struct sockaddr ifru_addr;
         struct sockaddr ifru_dstaddr;

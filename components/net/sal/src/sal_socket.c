@@ -445,7 +445,7 @@ static int socket_init(int family, int type, int protocol, struct sal_socket **r
     rt_bool_t flag = RT_FALSE;
 
     if (family == AF_UNIX)
-    {   
+    {
         netdv_def = netdev_lo;
     }
 
@@ -685,7 +685,7 @@ int sal_bind(int socket, const struct sockaddr *name, socklen_t namelen)
     addr_un = (struct sockaddr_un *)name;
 
     if (addr_un->sa_family != AF_UNIX)
-    {      
+    {
         /* bind network interface by ip address */
         sal_sockaddr_to_ipaddr(name, &input_ipaddr);
 
