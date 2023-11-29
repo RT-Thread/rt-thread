@@ -62,10 +62,15 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_SERIAL_V1
         default y
 
-    config BSP_USING_I2C0
-        bool "Enable I2C0"
+    menuconfig BSP_USING_I2C
+        bool "Enable I2C"
+        default n
         select RT_USING_I2C
-        default n        
+        if BSP_USING_I2C
+            config BSP_USING_I2C0
+                bool "Enable I2C0"
+                default n
+        endif   
     
     config BSP_USING_WIFI
         bool "Enable WIFI"
@@ -76,7 +81,7 @@ menu "On-chip Peripheral Drivers"
         bool "Enable BLE"
         default n
 
-    config BSP_USING_HWTIMER
+    menuconfig BSP_USING_HWTIMER
         bool "Enable HWTIMER"
         select RT_USING_HWTIMER
         default n
