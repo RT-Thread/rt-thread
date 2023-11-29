@@ -186,8 +186,7 @@ struct sockaddr
 /* Structure describing the address of an AF_LOCAL (aka AF_UNIX) socket.  */
 struct sockaddr_un
 {
-    uint8_t        sa_len;
-    sa_family_t    sa_family;
+    unsigned short sa_family;
     char sun_path[108];         /* Path name.  */
 };
 
@@ -227,6 +226,16 @@ struct sockaddr_storage
 #endif /* NETDEV_IPV6 */
 };
 
+/* LWIPPTP_SWREQ_0036 */
+#ifndef __DEFINED_struct_iovec
+struct iovec
+{
+    void *iov_base;
+    size_t iov_len;
+};
+#endif
+
+/* LWIPPTP_SWREQ_0036 */
 struct msghdr
 {
     void            *msg_name;
@@ -238,6 +247,7 @@ struct msghdr
     int              msg_flags;
 };
 
+/* LWIPPTP_SWREQ_0036 */
 /* RFC 3542, Section 20: Ancillary Data */
 struct cmsghdr
 {
@@ -246,6 +256,7 @@ struct cmsghdr
     int     cmsg_type;  /* protocol-specific type */
 };
 
+/* LWIPPTP_SWREQ_0036 */
 #define CMSG_NXTHDR(mhdr, cmsg) cmsg_nxthdr((mhdr), (cmsg))
 
 #define CMSG_ALIGN(len) (((len) + sizeof(long) - 1) & ~(sizeof(long)-1))
