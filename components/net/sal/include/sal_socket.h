@@ -186,7 +186,8 @@ struct sockaddr
 /* Structure describing the address of an AF_LOCAL (aka AF_UNIX) socket.  */
 struct sockaddr_un
 {
-    unsigned short sa_family;
+    uint8_t        sa_len;
+    sa_family_t    sa_family;
     char sun_path[108];         /* Path name.  */
 };
 

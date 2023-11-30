@@ -9,6 +9,7 @@
  */
 #include "drv_dma.h"
 #include "raspi4.h"
+#include <rtthread.h>
 
 volatile unsigned int __attribute__((aligned(256))) dma_disc[32];
 //https://www.raspberrypi.org/forums/viewtopic.php?f=72&t=10276

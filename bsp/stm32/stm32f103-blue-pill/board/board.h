@@ -13,8 +13,8 @@
 
 #include <rtthread.h>
 #include <stm32f1xx.h>
-#include "drv_common.h"
-#include "drv_gpio.h"
+#include <drv_common.h>
+#include <drv_gpio.h>
 
 #ifdef __cplusplus
 extern "C" {
