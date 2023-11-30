@@ -15,7 +15,7 @@
 #include <rthw.h>
 #ifdef RT_USING_DEVICE
 #include <rtdevice.h>
-#endif
+#endif /* RT_USING_DEVICE */
 
 #ifdef __cplusplus
 extern "C" {

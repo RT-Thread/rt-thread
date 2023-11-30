@@ -4,14 +4,13 @@ from building import *
 
 cwd = GetCurrentDir()
 group = []
-src = []
+src = ['drv_common.c']
 path = [cwd]
 
 if not GetDepend('PKG_CMSIS_CORE'):
     path += [cwd + '/CMSIS/Include']
 
 if not GetDepend(['RT_USING_NANO']):
-    src += ['drv_common.c']
     if GetDepend(['RT_USING_PIN']):
         src += ['drv_gpio.c']
 
