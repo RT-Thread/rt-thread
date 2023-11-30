@@ -400,10 +400,12 @@ endmenu
 
 config RT_USING_DEVICE
     bool "Using device object"
+    depends on !RT_USING_NANO
     default y
 
 config RT_USING_DEVICE_OPS
     bool "Using ops for each device object"
+    depends on RT_USING_DEVICE
     default n
 
 config RT_USING_INTERRUPT_INFO
@@ -423,6 +425,7 @@ if RT_USING_CONSOLE
 
     config RT_CONSOLE_DEVICE_NAME
         string "the device name for console"
+        depends on RT_USING_DEVICE
         default "uart"
 endif
 
