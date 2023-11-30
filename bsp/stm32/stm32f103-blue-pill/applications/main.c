@@ -12,6 +12,7 @@
 #include <rtdevice.h>
 #include <board.h>
 
+#ifndef RT_USING_NANO
 /* defined the LED0 pin: PC13 */
 #define LED0_PIN    GET_PIN(C, 13)
 
@@ -28,3 +29,12 @@ int main(void)
         rt_thread_mdelay(500);
     }
 }
+#else
+int main(void)
+{
+    while (1)
+    {
+        rt_thread_mdelay(500);
+    }
+}
+#endif
