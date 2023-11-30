@@ -51,3 +51,10 @@ void SystemClock_Config(void)
     Error_Handler();
   }
 }
+
+#ifdef RT_USING_NANO
+void rt_hw_board_init(void)
+{
+
+}
+#endif
