@@ -25,7 +25,9 @@ config RT_USING_LEGACY
     bool "Support legacy version for compatibility"
     default n
 
+if RT_USING_CONSOLE
 source "$RTT_DIR/components/finsh/Kconfig"
+endif
 
 if !RT_USING_NANO
 source "$RTT_DIR/components/dfs/Kconfig"
