@@ -39,9 +39,20 @@
 本 BSP 目前对外设的支持情况如下：
 
 | **片上外设** | **支持情况** | **备注** |
-| :----------------: | :----------------: | :------------- |
+| :----------------: | :----------------: | :------------: |
 | UART               | 支持               | UART9 为默认日志输出端口 |
 | GPIO               | 支持               |                |
+| USB | 支持 | TinyUSB |
+| Camera | 支持 | ov2640、ov7725、ov7670... |
+| SDHC | 支持 | 1bit、4bit |
+| ADC | 支持 | |
+| DAC | 支持 | |
+| SPI | 支持 | |
+| PWM | 支持 | |
+| RTC | 支持 | |
+| FLASH | 支持 | 片上flash |
+| WDT | 支持 | |
+| IIC | 支持 | |
 
 * 注意：仓库刚拉下来是最小系统，若需添加/使能其他外设需参考：[外设驱动使用教程 (rt-thread.org)](https://www.rt-thread.org/document/site/#/rt-thread-version/rt-thread-standard/tutorial/make-bsp/renesas-ra/RA系列BSP外设驱动使用教程)
 
