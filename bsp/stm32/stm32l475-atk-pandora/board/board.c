@@ -243,4 +243,4 @@ void SystemClock_ReConfig(uint8_t mode)
     // SystemClock_MSI_OFF();
 }
 
-#endif
+#endif /* RT_USING_PM */
