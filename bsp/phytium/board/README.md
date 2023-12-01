@@ -41,7 +41,9 @@ $ touch fio_mux.c
 
 ![board_select](./../figures/board_select.png)
 
-6. 编译测试
+6. 在bsp/libraries/drivers中，驱动实例开启受Kconfig控制，如有更多需求，请自行修改.c文件和Kconfig文件
+
+7. 编译测试
 
 
 
