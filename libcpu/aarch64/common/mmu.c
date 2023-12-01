@@ -48,7 +48,7 @@
 #define MMU_TBL_LEVEL_NR       4
 
 #ifndef KERNEL_VADDR_START
-#define KERNEL_VADDR_START ARCH_RAM_OFFSET
+#define KERNEL_VADDR_START ARCH_TEXT_OFFSET
 #endif
 
 volatile unsigned long MMUTable[512] __attribute__((aligned(4 * 1024)));
@@ -444,7 +444,7 @@ static void _init_region(void *vaddr, size_t size)
  * @param v_address  virtual address
  * @param size       map size
  * @param vtable     mmu table
- * @param pv_off pv offset in kernel space
+ * @param pv_off     pv offset in kernel space
  *
  * @return 0 on successful and -1 for fail
  */

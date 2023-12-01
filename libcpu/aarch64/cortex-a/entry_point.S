@@ -77,7 +77,7 @@ boot_arg1 .req x23
 boot_arg2 .req x24
 stack_top .req x25
 
-.global _start
+    .global _start
 _start:
 /*
  * Boot CPU general-purpose register settings:
@@ -123,6 +123,7 @@ cpu_idle:
 #ifdef RT_USING_SMP
     .globl _secondary_cpu_entry
 _secondary_cpu_entry:
+#ifdef RT_USING_OFW
     /* Read cpu id */
     mrs     x5, mpidr_el1
     ldr     x1, =rt_cpu_mpidr_table
@@ -147,6 +148,10 @@ _secondary_cpu_entry:
     /* Get cpu id success */
     sub     x0, x2, #1
     msr     tpidr_el1, x0           /* Save cpu id global */
+#else
+    bl      rt_hw_cpu_id_set
+    mrs     x0, tpidr_el1
+#endif
 
     /* Set current cpu's stack top */
     sub     x0, x0, #1
