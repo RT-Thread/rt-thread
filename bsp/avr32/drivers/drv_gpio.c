@@ -7,6 +7,7 @@
  * Date           Author              Notes
  * 2023-10-25     Raman Gopalan       Initial version
  * 2023-11-06     Raman Gopalan       Abstraction for GPIO driver boilerplate
+ * 2023-12-01     Raman Gopalan       Use Microchip's updated drivers for abstraction
  */
 
 #include <rtthread.h>
@@ -20,30 +21,29 @@
 static void at32uc3_pin_mode(struct rt_device *dev, rt_base_t pin, rt_uint8_t mode)
 {
     RT_ASSERT((AVR32_BSP_GPIO_PMIN <= pin) && (pin <= AVR32_BSP_GPIO_PMAX));
-    /* Pointer to the register set for this GPIO port */
-    volatile avr32_gpio_port_t *gpio_regs = &AVR32_GPIO.port[pin >> 5];
+    uint32_t gpio_flag = GPIO_DIR_INPUT;
 
+    gpio_enable_gpio_pin(pin);
     /* Decide based on required mode */
     switch (mode)
     {
     case PIN_MODE_OUTPUT:
-        gpio_regs->oders = 1 << (pin & 0x1F); /* Enable output driver */
-        gpio_regs->gpers = 1 << (pin & 0x1F); /* Make GPIO control this pin */
+        gpio_flag = GPIO_DIR_OUTPUT;
         break;
     case PIN_MODE_INPUT:
-        gpio_regs->oderc = 1 << (pin & 0x1F);
-        gpio_regs->gpers = 1 << (pin & 0x1F);
+        gpio_flag = GPIO_DIR_INPUT;
         break;
     case PIN_MODE_INPUT_PULLUP:
-        gpio_regs->puers = 1 << (pin & 0x1F);
+        gpio_flag = GPIO_PULL_UP;
         break;
     case PIN_MODE_INPUT_PULLDOWN:
-	LOG_W("Pull-down enable register not defined for this SOC.");
+        gpio_flag = GPIO_PULL_DOWN;
         break;
     case PIN_MODE_OUTPUT_OD:
-	LOG_W("The open-drain mode is not synthesized on the current AVR32 products.");
+        gpio_flag = GPIO_OPEN_DRAIN;
         break;
     }
+    gpio_configure_pin(pin, gpio_flag);
 }
 
 static void at32uc3_pin_write(struct rt_device *dev, rt_base_t pin, rt_uint8_t value)
