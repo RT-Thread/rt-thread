@@ -102,9 +102,7 @@ const static struct rt_device_ops pl031_rtc_ops =
 
 int rt_hw_rtc_init(void)
 {
-#ifdef RT_USING_LWP
     pl031_rtc_base = (rt_size_t)rt_ioremap((void *)pl031_rtc_base, PL031_RTC_SIZE);
-#endif
 
     rt_memset(&rtc_device, 0, sizeof(rtc_device));
 

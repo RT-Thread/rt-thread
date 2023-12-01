@@ -11,6 +11,8 @@
 #ifndef __MMU_H_
 #define __MMU_H_
 
+#ifndef __ASSEMBLY__
+
 #include <rtthread.h>
 #include <mm_aspace.h>
 
@@ -29,6 +31,8 @@ struct mem_desc
     unsigned long attr;
     struct rt_varea varea;
 };
+
+#endif /* !__ASSEMBLY__ */
 
 #define RT_HW_MMU_PROT_READ 1
 #define RT_HW_MMU_PROT_WRITE 2
@@ -85,6 +89,8 @@ struct mem_desc
 
 #define ARCH_MAP_FAILED ((void *)0x1ffffffffffff)
 
+#ifndef __ASSEMBLY__
+
 struct rt_aspace;
 
 void rt_hw_mmu_ktbl_set(unsigned long tbl);
@@ -93,8 +99,7 @@ void rt_hw_mem_setup_early(unsigned long *tbl0, unsigned long *tbl1,
 void rt_hw_mmu_setup(struct rt_aspace *aspace, struct mem_desc *mdesc,
                      int desc_nr);
 
-int rt_hw_mmu_map_init(struct rt_aspace *aspace, void *v_address,
-                       rt_size_t size, rt_size_t *vtable, rt_size_t pv_off);
+int rt_hw_mmu_map_init(rt_aspace_t aspace, void *v_address, size_t size, size_t *vtable, rt_size_t pv_off);
 void *rt_hw_mmu_map(struct rt_aspace *aspace, void *v_addr, void *p_addr,
                     size_t size, size_t attr);
 void rt_hw_mmu_unmap(struct rt_aspace *aspace, void *v_addr, size_t size);
@@ -203,5 +208,7 @@ rt_inline rt_bool_t rt_hw_mmu_attr_test_perm(size_t attr, rt_base_t prot)
 
 int rt_hw_mmu_control(struct rt_aspace *aspace, void *vaddr, size_t size,
                       enum rt_mmu_cntl cmd);
+
+#endif /* !__ASSEMBLY__ */
 
 #endif

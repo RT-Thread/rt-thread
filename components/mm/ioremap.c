@@ -18,8 +18,9 @@ void *rt_ioremap_start;
 size_t rt_ioremap_size;
 
 #ifdef RT_USING_SMART
-
 #include <lwp_mm.h>
+#endif
+
 #define DBG_TAG "mm.ioremap"
 #define DBG_LVL DBG_LOG
 #include <rtdbg.h>
@@ -111,23 +112,3 @@ void rt_iounmap(volatile void *vaddr)
     rt_aspace_unmap(&rt_kernel_space, (void *)vaddr);
 }
 
-#else
-void *rt_ioremap(void *paddr, size_t size)
-{
-    return paddr;
-}
-
-void *rt_ioremap_nocache(void *paddr, size_t size)
-{
-    return paddr;
-}
-
-void *rt_ioremap_cached(void *paddr, size_t size)
-{
-    return paddr;
-}
-
-void rt_iounmap(volatile void *vaddr)
-{
-}
-#endif

@@ -62,14 +62,12 @@ int rt_virtio_devices_init(void)
         return 0;
     }
 
-#ifdef RT_USING_LWP
     mmio_base = (rt_ubase_t)rt_ioremap((void *)mmio_base, VIRTIO_MMIO_SIZE * VIRTIO_MAX_NR);
 
     if (mmio_base == RT_NULL)
     {
         return -RT_ERROR;
     }
-#endif
 
     for (i = 0; i < VIRTIO_MAX_NR; ++i, ++irq, mmio_base += VIRTIO_MMIO_SIZE)
     {
