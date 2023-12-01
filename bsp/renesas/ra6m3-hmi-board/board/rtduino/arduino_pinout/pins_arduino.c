@@ -34,7 +34,7 @@ const pin_map_t pin_map_table[]=
     {D7, BSP_IO_PORT_02_PIN_08},
     {D8, BSP_IO_PORT_02_PIN_07},
     {D9, BSP_IO_PORT_00_PIN_09},                                 /* SPI-SS */
-    {D10, BSP_IO_PORT_07_PIN_12, "pwm2", 2},                     /* PWM */
+    {D10, BSP_IO_PORT_07_PIN_12, "pwm2", 0},                     /* PWM */
     {D11, BSP_IO_PORT_05_PIN_12, "i2c2"},                        /* I2C-SCL (Wire) */
     {D12, BSP_IO_PORT_05_PIN_11, "i2c2"},                        /* I2C-SDA (Wire) */
     {D13, BSP_IO_PORT_02_PIN_04},
