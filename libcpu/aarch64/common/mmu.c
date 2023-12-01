@@ -17,6 +17,8 @@
 
 #define __MMU_INTERNAL
 
+#define __MMU_INTERNAL
+
 #include "mm_aspace.h"
 #include "mm_page.h"
 #include "mmu.h"
@@ -46,6 +48,10 @@
 #define MMU_TBL_BLOCK_2M_LEVEL 2
 #define MMU_TBL_PAGE_4k_LEVEL  3
 #define MMU_TBL_LEVEL_NR       4
+
+#ifndef KERNEL_VADDR_START
+#define KERNEL_VADDR_START ARCH_RAM_OFFSET
+#endif
 
 #ifndef KERNEL_VADDR_START
 #define KERNEL_VADDR_START ARCH_RAM_OFFSET
@@ -444,7 +450,7 @@ static void _init_region(void *vaddr, size_t size)
  * @param v_address  virtual address
  * @param size       map size
  * @param vtable     mmu table
- * @param pv_off pv offset in kernel space
+ * @param pv_off     pv offset in kernel space
  *
  * @return 0 on successful and -1 for fail
  */

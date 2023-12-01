@@ -77,7 +77,7 @@ boot_arg1 .req x23
 boot_arg2 .req x24
 stack_top .req x25
 
-.global _start
+    .global _start
 _start:
 /*
  * Boot CPU general-purpose register settings:
