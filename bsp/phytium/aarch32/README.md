@@ -100,7 +100,7 @@ Hardware Drivers > On-chip Peripheral Drivers
 
 ```
 
-![1682477587050](figures/1682477587050.png)
+![rtsmart_config](figures/rtsmart_config.png)
 
 开发者通过以上配置开启RT-Thread Smart 功能
 
@@ -163,17 +163,17 @@ config BSP_DIR
     option env="BSP_ROOT"
     default "."
 
-config STANDALONE_DIR
+config SDK_DIR
     string
-    option env="STANDALONE_DIR"
-    default "libraries/standalone"
+    option env="SDK_DIR"
+    default "./libraries/phytium_standalone_sdk"
 ```
 
 - 输入 menuconfig 和 scons 完成编译
 
 ## 9. 将工程导入 RT-Studio
 
-- 在 RT-Studio 使用功能 `RT-Thread Bsp 到工作空间`，导入 5. 中导出的 BSP 工程
+- 在 RT-Studio 使用功能 `RT-Thread Bsp 到工作空间`，导入 8. 中导出的 BSP 工程
 - 设置 BSP 工程的交叉编译链后进行后续开发
 
 ![](./figures/import_project.png)

@@ -15,17 +15,15 @@
 
 #include <rtdevice.h>
 
-#ifdef BSP_USING_I2C
-
 #ifdef __cplusplus
 extern "C"
 {
 #endif
 
+int rt_hw_i2c_init(void);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif
 #endif /* __DRV_CAN_H__ */

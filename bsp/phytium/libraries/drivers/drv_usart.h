@@ -16,7 +16,6 @@
 
 #include <rtthread.h>
 #include "rtdevice.h"
-#ifdef BSP_USING_UART
 
 #include "fpl011.h"
 #include "fpl011_hw.h"
@@ -35,15 +34,14 @@ typedef struct
     u32 isr_priority;  /* irq Priority */
     u32 isr_event_mask; /* followed by RTOS_UART_ISR_XX */
     u32 uart_baudrate;
-}  FtFreertosUartConfig;
+}  FtRtthreadUartConfig;
 
 struct drv_usart
 {
+    const char *name;
     FPl011 *handle;
-    FtFreertosUartConfig config;
+    FtRtthreadUartConfig config;
     struct rt_serial_device serial;
 };
 
 #endif // !
-
-#endif

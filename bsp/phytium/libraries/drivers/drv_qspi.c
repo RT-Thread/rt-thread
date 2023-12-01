@@ -11,19 +11,18 @@
  *
  */
 #include "rtconfig.h"
-
-#ifdef BSP_USING_QSPI
+#include "rtdevice.h"
+#define LOG_TAG      "qspi_drv"
+#include "drv_log.h"
 #include <rtthread.h>
 #ifdef RT_USING_SMART
     #include <ioremap.h>
 #endif
-#include "rtdevice.h"
 #include "drv_qspi.h"
 #include "fqspi_flash.h"
-#define LOG_TAG      "qspi_drv"
-#include "drv_log.h"
 #include "fiopad.h"
 #include "fqspi_hw.h"
+#include "fio_mux.h"
 
 
 #define DAT_LENGTH 128
@@ -31,15 +30,14 @@
 static rt_uint8_t rd_buf[DAT_LENGTH];
 static rt_uint8_t wr_buf[DAT_LENGTH];
 
-static phytium_qspi_bus phytium_qspi =
+typedef struct
 {
-    .fqspi_id = FQSPI0_ID,
-};
-
-static struct rt_qspi_device *qspi_device;        /* phytium device bus handle */
-static char qspi_bus_name[RT_NAME_MAX] = "QSPIBUS";
-static char qspi_dev_name[RT_NAME_MAX] = "QSPIDEV";
-extern FIOPadCtrl iopad_ctrl;
+    rt_uint32_t fqspi_id;
+    const char *name;
+    rt_uint32_t init; /* 0 is init already */
+    FQspiCtrl fqspi;
+    struct rt_spi_bus qspi_bus;
+} phytium_qspi_bus;
 
 rt_err_t FQspiInit(phytium_qspi_bus *phytium_qspi_bus)
 {
@@ -452,6 +450,7 @@ rt_err_t phytium_qspi_bus_attach_device(const char *bus_name, const char *device
     RT_ASSERT(device_name != RT_NULL);
 
     qspi_device = (struct rt_qspi_device *)rt_malloc(sizeof(struct rt_qspi_device));
+    rt_kprintf("qspi_device addr == %p\n", qspi_device);
     if (qspi_device == RT_NULL)
     {
         LOG_E("Qspi bus attach device failed.");
@@ -471,13 +470,13 @@ __exit:
     return  result;
 }
 
-int rt_hw_qspi_init(void)
+static int rt_qspi_init(phytium_qspi_bus *phytium_qspi)
 {
     int result = RT_EOK;
 
-    phytium_qspi.qspi_bus.parent.user_data = &phytium_qspi;
+    phytium_qspi->qspi_bus.parent.user_data = phytium_qspi;
 
-    if (rt_qspi_bus_register(&phytium_qspi.qspi_bus, qspi_bus_name, &phytium_qspi_ops) == RT_EOK)
+    if (rt_qspi_bus_register(&phytium_qspi->qspi_bus, phytium_qspi->name, &phytium_qspi_ops) == RT_EOK)
     {
         rt_kprintf("Qspi bus register successfully!!!\n");
     }
@@ -489,81 +488,17 @@ int rt_hw_qspi_init(void)
 
     return result;
 }
-INIT_BOARD_EXPORT(rt_hw_qspi_init);
 
-/*example*/
-struct rt_spi_message write_message;
-struct rt_spi_message read_message;
-
-rt_err_t qspi_init()
-{
-    rt_err_t res = RT_EOK;
-    res = phytium_qspi_bus_attach_device(qspi_bus_name, qspi_dev_name);
-    RT_ASSERT(res == RT_EOK);
-    qspi_device = (struct rt_qspi_device *)rt_device_find(qspi_dev_name);
-
-    return res;
-}
-
-/*read cmd example message improvement*/
-void ReadCmd(struct rt_spi_message *spi_message)
-{
-    struct rt_qspi_message *message = (struct rt_qspi_message *) spi_message;
-    message->address.content = 0x360000 ;/*Flash address*/
-    message->instruction.content = 0x03 ;/*read cmd*/
-
-    rt_qspi_transfer_message(qspi_device, message);
-}
-
-/*write cmd example message improvement*/
-void WriteCmd(struct rt_spi_message *spi_message)
-{
-    struct rt_qspi_message *message = (struct rt_qspi_message *) spi_message;
-    message->address.content = 0x360000 ;/*Flash address*/
-    message->instruction.content = 0x02 ;/*write cmd*/
-    rt_qspi_transfer_message(qspi_device, message);
-}
-
-/*write cmd example message improvement*/
-void qspi_thread(void *parameter)
-{
-    rt_err_t res;
-
-    qspi_init();
-    /*Read and write flash chip fixed area repeatedly*/
-    write_message.send_buf = "phytium";
-    write_message.length = strlen((char *)write_message.send_buf) + 1;
-    WriteCmd(&write_message);
-    ReadCmd(&read_message);
-
-    write_message.send_buf = "phytium hello world!";
-    write_message.length = strlen((char *)write_message.send_buf) + 1;
-    WriteCmd(&write_message);
-    ReadCmd(&read_message);
-
-    write_message.send_buf = "Welcome to phytium chip";
-    write_message.length = strlen((char *)write_message.send_buf) + 1;
-    WriteCmd(&write_message);
-    ReadCmd(&read_message);
-
-    rt_uint8_t recv;
-    rt_uint8_t cmd = 0x9F;/*read the flash status reg2*/
-    res = rt_qspi_send_then_recv(qspi_device, &cmd, sizeof(cmd), &recv, sizeof(recv));
-    RT_ASSERT(res != RT_EOK);
-
-    rt_kprintf("The status reg = %x \n", recv);
-}
-
-rt_err_t qspi_sample(int argc, char *argv[])
-{
-    rt_thread_t thread;
-    rt_err_t res;
-    thread = rt_thread_create("qspi_thread", qspi_thread, RT_NULL, 4096, 25, 10);
-    res = rt_thread_startup(thread);
-    RT_ASSERT(res == RT_EOK);
-
-    return res;
-}
-/* Enter qspi_sample command for testing */
-MSH_CMD_EXPORT(qspi_sample, qspi sample);
+#if defined(RT_USING_QSPI0)
+static phytium_qspi_bus phytium_qspi0_bus;
 #endif
+
+int rt_hw_qspi_init(void)
+{
+#if defined(RT_USING_QSPI0)
+    phytium_qspi0_bus.name = "QSPI0";
+    phytium_qspi0_bus.fqspi_id = FQSPI0_ID;
+    rt_qspi_init(&phytium_qspi0_bus);
+#endif
+}
+INIT_BOARD_EXPORT(rt_hw_qspi_init);

@@ -7,8 +7,8 @@
 /* RT-Thread Kernel */
 
 #define RT_NAME_MAX 16
-#define RT_USING_SMP
-#define RT_CPUS_NR 4
+#define RT_USING_SMART
+#define RT_CPUS_NR 1
 #define RT_ALIGN_SIZE 4
 #define RT_THREAD_PRIORITY_32
 #define RT_THREAD_PRIORITY_MAX 32
@@ -19,7 +19,6 @@
 #define RT_USING_IDLE_HOOK
 #define RT_IDLE_HOOK_LIST_SIZE 4
 #define IDLE_THREAD_STACK_SIZE 4096
-#define SYSTEM_THREAD_STACK_SIZE 4096
 #define RT_USING_TIMER_SOFT
 #define RT_TIMER_THREAD_PRIO 4
 #define RT_TIMER_THREAD_STACK_SIZE 4096
@@ -31,7 +30,6 @@
 #define RT_USING_DEBUG
 #define RT_DEBUGING_COLOR
 #define RT_DEBUGING_CONTEXT
-#define RT_DEBUGING_INIT
 
 /* Inter-Thread communication */
 
@@ -63,6 +61,7 @@
 #define ARCH_MM_MMU
 #define ARCH_ARM
 #define ARCH_ARM_MMU
+#define KERNEL_VADDR_START 0xc0000000
 #define ARCH_ARM_CORTEX_A
 #define RT_USING_GIC_V3
 
@@ -114,6 +113,14 @@
 #define RT_USING_DFS_DEVFS
 #define RT_USING_DFS_RAMFS
 #define RT_USING_DFS_MQUEUE
+#define RT_USING_LWP
+#define RT_LWP_MAX_NR 30
+#define LWP_TASK_STACK_SIZE 16384
+#define RT_CH_MSG_MAX_NR 1024
+#define LWP_CONSOLE_INPUT_BUFFER_SIZE 1024
+#define LWP_TID_MAX_NR 64
+#define LWP_ENABLE_ASID
+#define RT_LWP_SHM_MAX_NR 64
 
 /* Device Drivers */
 
@@ -126,9 +133,17 @@
 #define RT_USING_SERIAL_V1
 #define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 1024
+#define RT_USING_TTY
+#define RT_USING_CAN
+#define RT_CAN_USING_HDR
+#define RT_CAN_USING_CANFD
+#define RT_USING_I2C
+#define RT_USING_I2C_BITOPS
+#define RT_USING_PIN
 #define RT_USING_NULL
 #define RT_USING_ZERO
 #define RT_USING_RANDOM
+#define RT_USING_PWM
 #define RT_USING_RTC
 #define RT_USING_SDIO
 #define RT_SDIO_STACK_SIZE 4096
@@ -136,6 +151,8 @@
 #define RT_MMCSD_STACK_SIZE 4096
 #define RT_MMCSD_THREAD_PREORITY 22
 #define RT_MMCSD_MAX_PARTITION 16
+#define RT_USING_SPI
+#define RT_USING_QSPI
 #define RT_USING_DEV_BUS
 #define RT_USING_KTIME
 
@@ -143,6 +160,7 @@
 
 
 /* C/C++ and POSIX layer */
+
 
 /* ISO-ANSI C layer */
 
@@ -249,6 +267,9 @@
 /* Memory management */
 
 
+/* Memory protection */
+
+
 /* RT-Thread Utestcases */
 
 
@@ -266,6 +287,12 @@
 
 
 /* CYW43012 WiFi */
+
+
+/* BL808 WiFi */
+
+
+/* CYW43439 WiFi */
 
 
 /* IoT Cloud */
@@ -375,11 +402,30 @@
 
 #define BSP_USING_IOPAD
 #define BSP_USING_UART
+#define RT_USING_UART0
 #define RT_USING_UART1
+#define BSP_USING_SPI
+#define RT_USING_SPIM2
+#define BSP_USING_CAN
+#define RT_USING_CANFD
+#define RT_USING_FILTER
+#define RT_USING_CAN0
+#define RT_USING_CAN1
+#define BSP_USING_GPIO
+#define BSP_USING_QSPI
+#define RT_USING_QSPI0
+#define USING_QSPI_CHANNEL0
+#define BSP_USING_PWM
+#define RT_USING_PWM6
+#define BSP_USING_I2C
+#define I2C_USE_MIO
+#define RT_USING_MIO15
+#define I2C_USE_CONTROLLER
+#define RT_USING_I2C0
 #define BSP_USING_SDIF
 #define BSP_USING_SDCARD_FATFS
-#define BSP_USING_SDCARD_PARTITION "sd1"
-#define USING_SDIF0
+#define BSP_USING_SDCARD_PARTITION "sd0"
+#define USING_SDIF1
 
 /* Board extended module Drivers */
 
@@ -392,9 +438,10 @@
 
 /* Soc configuration */
 
-#define TARGET_PHYTIUMPI
-#define SOC_NAME "phytiumpi"
-#define SOC_CORE_NUM 4
+#define TARGET_E2000D
+#define SOC_NAME "e2000"
+#define TARGET_TYPE_NAME "d"
+#define SOC_CORE_NUM 2
 #define F32BIT_MEMORY_ADDRESS 0x80000000
 #define F32BIT_MEMORY_LENGTH 0x80000000
 #define F64BIT_MEMORY_ADDRESS 0x2000000000
@@ -404,8 +451,8 @@
 
 /* Board Configuration */
 
-#define BOARD_NAME "firefly"
-#define FIREFLY_DEMO_BOARD
+#define E2000D_DEMO_BOARD
+#define BOARD_NAME "demo"
 
 /* IO mux configuration when board start up */
 

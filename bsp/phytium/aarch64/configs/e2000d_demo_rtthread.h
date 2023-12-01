@@ -31,7 +31,6 @@
 #define RT_USING_DEBUG
 #define RT_DEBUGING_COLOR
 #define RT_DEBUGING_CONTEXT
-#define RT_DEBUGING_INIT
 
 /* Inter-Thread communication */
 
@@ -65,7 +64,9 @@
 #define ARCH_HAVE_EFFICIENT_UNALIGNED_ACCESS
 #define ARCH_CPU_64BIT
 #define RT_USING_CACHE
+#define RT_USING_HW_ATOMIC
 #define ARCH_ARM_BOOTWITH_FLUSH_CACHE
+#define RT_USING_CPU_FFS
 #define ARCH_MM_MMU
 #define ARCH_ARM
 #define ARCH_ARM_MMU
@@ -130,12 +131,33 @@
 #define RT_USING_SERIAL_V1
 #define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 64
+#define RT_USING_CAN
+#define RT_CAN_USING_HDR
+#define RT_CAN_USING_CANFD
+#define RT_USING_I2C
+#define RT_USING_I2C_BITOPS
+#define RT_USING_PIN
+#define RT_USING_NULL
+#define RT_USING_ZERO
+#define RT_USING_RANDOM
+#define RT_USING_PWM
+#define RT_USING_RTC
+#define RT_USING_SDIO
+#define RT_SDIO_STACK_SIZE 8192
+#define RT_SDIO_THREAD_PRIORITY 15
+#define RT_MMCSD_STACK_SIZE 8192
+#define RT_MMCSD_THREAD_PREORITY 22
+#define RT_MMCSD_MAX_PARTITION 16
+#define RT_USING_SPI
+#define RT_USING_QSPI
+#define RT_USING_DEV_BUS
 #define RT_USING_KTIME
 
 /* Using USB */
 
 
 /* C/C++ and POSIX layer */
+
 
 /* ISO-ANSI C layer */
 
@@ -206,7 +228,7 @@
 #define RT_LWIP_TCPTHREAD_MBOX_SIZE 8
 #define RT_LWIP_TCPTHREAD_STACKSIZE 16184
 #define RT_LWIP_ETHTHREAD_PRIORITY 12
-#define RT_LWIP_ETHTHREAD_STACKSIZE 2048
+#define RT_LWIP_ETHTHREAD_STACKSIZE 8192
 #define RT_LWIP_ETHTHREAD_MBOX_SIZE 8
 #define LWIP_NETIF_STATUS_CALLBACK 1
 #define LWIP_NETIF_LINK_CALLBACK 1
@@ -234,6 +256,9 @@
 /* Memory management */
 
 
+/* Memory protection */
+
+
 /* RT-Thread Utestcases */
 
 
@@ -251,6 +276,12 @@
 
 
 /* CYW43012 WiFi */
+
+
+/* BL808 WiFi */
+
+
+/* CYW43439 WiFi */
 
 
 /* IoT Cloud */
@@ -358,13 +389,36 @@
 
 /* Hardware Drivers */
 
-#define DRV_DEBUG
+#define BSP_USING_IOPAD
 
 /* On-chip Peripheral Drivers */
 
-#define BSP_USING_IOPAD
 #define BSP_USING_UART
+#define RT_USING_UART0
 #define RT_USING_UART1
+#define BSP_USING_SPI
+#define RT_USING_SPIM0
+#define RT_USING_SPIM1
+#define RT_USING_SPIM2
+#define RT_USING_SPIM3
+#define BSP_USING_CAN
+#define RT_USING_CANFD
+#define RT_USING_FILTER
+#define RT_USING_CAN0
+#define RT_USING_CAN1
+#define BSP_USING_GPIO
+#define BSP_USING_QSPI
+#define RT_USING_QSPI0
+#define USING_QSPI_CHANNEL0
+#define BSP_USING_PWM
+#define RT_USING_PWM6
+#define BSP_USING_I2C
+#define I2C_USE_MIO
+#define RT_USING_MIO15
+#define BSP_USING_SDIF
+#define BSP_USING_SDCARD_FATFS
+#define BSP_USING_SDCARD_PARTITION "sd0"
+#define USING_SDIF1
 
 /* Board extended module Drivers */
 
@@ -400,7 +454,7 @@
 
 /* Sdk common configuration */
 
-#define LOG_ERROR
+#define LOG_DEBUG
 
 /* Image information configuration */
 

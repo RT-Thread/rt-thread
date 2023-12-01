@@ -15,9 +15,6 @@
 #define __DRV_CAN_H__
 
 #include <rtdevice.h>
-
-#ifdef BSP_USING_CAN
-
 #ifdef __cplusplus
 extern "C"
 {
@@ -27,7 +24,5 @@ int rt_hw_can_init(void);
 
 #ifdef __cplusplus
 }
-#endif
-
 #endif
 #endif /* __DRV_CAN_H__ */

@@ -12,8 +12,6 @@
  */
 
 #include "rtconfig.h"
-#ifdef BSP_USING_PIN
-
 #include <rtthread.h>
 #include <rtdevice.h>
 #include "interrupt.h"
@@ -31,6 +29,7 @@
 #include "fkernel.h"
 #include "fcpu_info.h"
 #include "ftypes.h"
+#include "fio_mux.h"
 #include "board.h"
 
 #include "fiopad.h"
@@ -342,4 +341,3 @@ int ft_pin_init(void)
     return ret;
 }
 INIT_DEVICE_EXPORT(ft_pin_init);
-#endif
