@@ -3290,26 +3290,37 @@ sysret_t sys_accept(int socket, struct musl_sockaddr *addr, socklen_t *addrlen)
 
 sysret_t sys_bind(int socket, const struct musl_sockaddr *name, socklen_t namelen)
 {
+    rt_err_t ret = 0;
     struct sockaddr sa;
     struct musl_sockaddr kname;
+    struct sockaddr_un addr_un;
+    rt_uint16_t family = 0;
 
     if (!lwp_user_accessable((void *)name, namelen))
     {
         return -EFAULT;
     }
 
-#ifdef SAL_USING_AF_UNIX
-    if (name->sa_family  == AF_UNIX)
+    lwp_get_from_user(&family, (void *)name, 2);
+    if (family == AF_UNIX)
     {
-        namelen = sizeof(struct sockaddr);
+        if (!lwp_user_accessable((void *)name, sizeof(struct sockaddr_un)))
+        {
+            return -EFAULT;
+        }
+
+        lwp_get_from_user(&addr_un, (void *)name, sizeof(struct sockaddr_un));
+
+        ret = bind(socket, (struct sockaddr *)(&addr_un), namelen);
     }
-#endif /* SAL_USING_AF_UNIX */
+    else
+    {
+        lwp_get_from_user(&kname, (void *)name, namelen);
+        sockaddr_tolwip(&kname, &sa);
+        ret = bind(socket, &sa, namelen);
+    }
 
-    lwp_get_from_user(&kname, (void *)name, namelen);
-
-    sockaddr_tolwip(&kname, &sa);
-
-    return bind(socket, &sa, namelen);
+    return (ret < 0 ? GET_ERRNO() : ret);
 }
 
 sysret_t sys_shutdown(int socket, int how)
@@ -3473,28 +3484,36 @@ sysret_t sys_setsockopt(int socket, int level, int optname, const void *optval, 
 
 sysret_t sys_connect(int socket, const struct musl_sockaddr *name, socklen_t namelen)
 {
-    int ret;
+    int ret = 0;
+    rt_uint16_t family = 0;
     struct sockaddr sa;
     struct musl_sockaddr kname;
+    struct sockaddr_un addr_un;
 
     if (!lwp_user_accessable((void *)name, namelen))
     {
         return -EFAULT;
     }
 
-#ifdef SAL_USING_AF_UNIX
-    if (name->sa_family  == AF_UNIX)
+    lwp_get_from_user(&family, (void *)name, 2);
+    if (family == AF_UNIX)
     {
-        namelen = sizeof(struct sockaddr);
+        if (!lwp_user_accessable((void *)name, sizeof(struct sockaddr_un)))
+        {
+            return -EFAULT;
+        }
+
+        lwp_get_from_user(&addr_un, (void *)name, sizeof(struct sockaddr_un));
+        ret = connect(socket, (struct sockaddr *)(&addr_un), namelen);
     }
-#endif /* SAL_USING_AF_UNIX */
+    else
+    {
+        lwp_get_from_user(&kname, (void *)name, namelen);
+        sockaddr_tolwip(&kname, &sa);
+        ret = connect(socket, &sa, namelen);
+    }
 
-    lwp_get_from_user(&kname, (void *)name, namelen);
-
-    sockaddr_tolwip(&kname, &sa);
-
-    ret = connect(socket, &sa, namelen);
-    return (ret < 0 ? GET_ERRNO() : ret);
+    return ret;
 }
 
 sysret_t sys_listen(int socket, int backlog)
