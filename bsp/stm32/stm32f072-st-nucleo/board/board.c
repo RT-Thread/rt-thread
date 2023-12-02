@@ -8,7 +8,8 @@
  * 2018-12-21     zylx         first version
  */
 
-#include "board.h"
+#include <board.h>
+#include <drv_common.h>
 
 void SystemClock_Config(void)
 {

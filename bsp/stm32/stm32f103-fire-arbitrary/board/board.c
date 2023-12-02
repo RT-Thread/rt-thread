@@ -8,8 +8,8 @@
  * 2018-11-06     balanceTWK   first version
  */
 
-#include <rtthread.h>
-#include "board.h"
+#include <board.h>
+#include <drv_common.h>
 
 void SystemClock_Config(void)
 {

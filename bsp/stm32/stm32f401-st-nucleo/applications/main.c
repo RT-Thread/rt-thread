@@ -6,13 +6,17 @@
  * Change Logs:
  * Date           Author       Notes
  * 2018-11-06     SummerGift   first version
+ * 2023-12-03     Meco Man     support nano version
  */
 
-#include <rtthread.h>
-#include <rtdevice.h>
 #include <board.h>
+#include <rtthread.h>
+#include <drv_gpio.h>
+#ifndef RT_USING_NANO
+#include <rtdevice.h>
+#endif /* RT_USING_NANO */
 
-/* defined the LD2 (user LED) pin: PB1 */
+/* defined the LD2 (user LED) pin: PA5 */
 #define LED2_PIN    GET_PIN(A, 5)
 
 int main(void)

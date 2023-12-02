@@ -12,8 +12,6 @@
 #define __BOARD_H__
 
 #include <stm32f1xx.h>
-#include "drv_common.h"
-#include "drv_gpio.h"
 
 #ifdef __cplusplus
 extern "C" {

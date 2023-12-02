@@ -22,10 +22,14 @@ config SOC_STM32L475VE
     select RT_USING_USER_MAIN
     default y
 
+config BOARD_STM32L475_ATK_PANDORA
+    bool
+    default y
+
 source "$RTT_DIR/Kconfig"
 source "$PKGS_DIR/Kconfig"
+source "../libraries/Kconfig"
 
 if !RT_USING_NANO
-source "../libraries/Kconfig"
 source "board/Kconfig"
 endif

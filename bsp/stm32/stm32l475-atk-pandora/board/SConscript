@@ -43,8 +43,6 @@ if not GetDepend(['RT_USING_NANO']):
 
     if GetDepend(['BSP_USING_AUDIO']):
         path += [cwd + os.path.join('ports', 'audio')]
-else:
-    src += [os.path.join('nano', 'drv_console.c')]
 
 startup_path_prefix = SDK_LIB
 
