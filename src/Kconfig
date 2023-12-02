@@ -23,7 +23,6 @@ config RT_USING_SMART
     default n
     select RT_USING_LWP
     select RT_USING_DFS
-    select RT_USING_LIBC
     select RT_USING_POSIX_CLOCKTIME
     select RT_USING_DEVICE
     select RT_USING_TTY
@@ -228,12 +227,10 @@ menuconfig RT_USING_DEBUG
             depends on ARCH_MM_MMU
             default n
 
-        if RT_USING_SMP
-            config RT_DEBUGING_SPINLOCK
+        config RT_DEBUGING_SPINLOCK
             bool "Enable spinlock debugging"
+            depends on RT_USING_SMP
             default n
-        endif
-
     endif
 
 menu "Inter-Thread communication"
@@ -258,11 +255,10 @@ menu "Inter-Thread communication"
         bool "Enable message queue"
         default y
 
-    if RT_USING_MESSAGEQUEUE
-        config RT_USING_MESSAGEQUEUE_PRIORITY
-            bool "Enable message queue priority"
-            default n
-    endif
+    config RT_USING_MESSAGEQUEUE_PRIORITY
+        bool "Enable message queue priority"
+        depends on RT_USING_MESSAGEQUEUE
+        default n
 
     config RT_USING_SIGNALS
         bool "Enable signals"
@@ -425,8 +421,7 @@ if RT_USING_CONSOLE
 
     config RT_CONSOLE_DEVICE_NAME
         string "the device name for console"
-        depends on RT_USING_DEVICE
-        default "uart"
+        default "uart1"
 endif
 
 config RT_VER_NUM
