@@ -66,7 +66,7 @@
 #define PIN_STPORT_MAX __STM32_PORT_MAX
 
 static const struct pin_irq_map pin_irq_map[] =
-    {
+{
 #if defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32L0) || defined(SOC_SERIES_STM32G0)
         {GPIO_PIN_0, EXTI0_1_IRQn},
         {GPIO_PIN_1, EXTI0_1_IRQn},
@@ -139,7 +139,7 @@ static const struct pin_irq_map pin_irq_map[] =
 };
 
 static struct rt_pin_irq_hdr pin_irq_hdr_tab[] =
-    {
+{
         {-1, 0, RT_NULL, RT_NULL},
         {-1, 0, RT_NULL, RT_NULL},
         {-1, 0, RT_NULL, RT_NULL},
@@ -245,7 +245,6 @@ static void stm32_pin_mode(rt_device_t dev, rt_base_t pin, rt_uint8_t mode)
     /* Configure GPIO_InitStructure */
     GPIO_InitStruct.Pin = PIN_STPIN(pin);
     GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
-    GPIO_InitStruct.Pull = GPIO_NOPULL;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
 
     if (mode == PIN_MODE_OUTPUT)
@@ -503,7 +502,7 @@ static rt_err_t stm32_pin_irq_enable(struct rt_device *device, rt_base_t pin,
     return RT_EOK;
 }
 static const struct rt_pin_ops _stm32_pin_ops =
-    {
+{
         stm32_pin_mode,
         stm32_pin_write,
         stm32_pin_read,

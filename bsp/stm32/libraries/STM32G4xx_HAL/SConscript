@@ -23,7 +23,7 @@ STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_rng.c
 STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_gpio.c
 ''')
 
-if GetDepend(['RT_USING_SERIAL']):
+if GetDepend(['RT_USING_SERIAL']) or GetDepend(['RT_USING_NANO', 'RT_USING_CONSOLE']):
     src += ['STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_uart.c']
     src += ['STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_uart_ex.c']
     src += ['STM32G4xx_HAL_Driver/Src/stm32g4xx_hal_usart.c']

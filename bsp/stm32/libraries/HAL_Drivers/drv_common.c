@@ -11,11 +11,15 @@
 #include "drv_common.h"
 #include <board.h>
 
+#ifdef RT_USING_PIN
+#include <drv_gpio.h>
+#endif
+
 #ifdef RT_USING_SERIAL
 #ifdef RT_USING_SERIAL_V2
-#include "drv_usart_v2.h"
+#include <drv_usart_v2.h>
 #else
-#include "drv_usart.h"
+#include <drv_usart.h>
 #endif /* RT_USING_SERIAL */
 #endif /* RT_USING_SERIAL_V2 */
 
