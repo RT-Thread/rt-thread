@@ -162,9 +162,9 @@ def bsp_update_kconfig_library(dist_dir):
         data = f.readlines()
     with open(os.path.join(dist_dir, 'board/Kconfig'), 'w') as f:
         for line in data:
-            if line.find('../libraries/HAL_Drivers/Kconfig') != -1:
-                position = line.find('../libraries/HAL_Drivers/Kconfig')
-                line = line[0:position] + 'libraries/HAL_Drivers/Kconfig"\n'
+            if line.find('../libraries/HAL_Drivers/drivers/Kconfig') != -1:
+                position = line.find('../libraries/HAL_Drivers/drivers/Kconfig')
+                line = line[0:position] + 'libraries/HAL_Drivers/drivers/Kconfig"\n'
             f.write(line)
 
 def zip_dist(dist_dir, dist_name):

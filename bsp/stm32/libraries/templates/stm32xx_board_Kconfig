@@ -175,7 +175,7 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_USB_DEVICE
         default n
    
-    source "../libraries/HAL_Drivers/Kconfig"
+    source "../libraries/HAL_Drivers/drivers/Kconfig"
     
 endmenu
 
