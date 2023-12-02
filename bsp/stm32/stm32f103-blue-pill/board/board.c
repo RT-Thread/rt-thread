@@ -8,7 +8,8 @@
  * 2019-03-08     obito0   first version
  */
 
-#include "board.h"
+#include <board.h>
+#include <drv_common.h>
 
 void SystemClock_Config(void)
 {
@@ -51,10 +52,3 @@ void SystemClock_Config(void)
     Error_Handler();
   }
 }
-
-#ifdef RT_USING_NANO
-void rt_hw_board_init(void)
-{
-
-}
-#endif

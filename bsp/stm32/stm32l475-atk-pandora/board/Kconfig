@@ -1,9 +1,5 @@
 menu "Hardware Drivers Config"
 
-config BOARD_STM32L475_ATK_PANDORA
-    bool
-    default y
-
 menu "Onboard Peripheral Drivers"
 
     config BSP_USING_STLINK_TO_USART
@@ -576,7 +572,7 @@ menu "On-chip Peripheral Drivers"
             BSP_USING_STM32_SDIO use drv_sdio_adapter.c,and
             BSP_USING_SDIO use drv_sdio.c
 
-    source "../libraries/HAL_Drivers/Kconfig"
+    source "$BSP_DIR/../libraries/HAL_Drivers/drivers/Kconfig"
 
 endmenu
 

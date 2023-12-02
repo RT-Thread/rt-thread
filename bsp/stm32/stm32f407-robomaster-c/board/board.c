@@ -9,7 +9,8 @@
  * 2021-06-30     crazt        modify for robomaster C board
  */
 
-#include "board.h"
+#include <board.h>
+#include <drv_common.h>
 
 void SystemClock_Config(void)
 {

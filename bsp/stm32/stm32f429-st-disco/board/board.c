@@ -9,7 +9,8 @@
  * 2019-10-13     xuzhuoyi     add stm32f429-st-disco bsp
  */
 
-#include "board.h"
+#include <board.h>
+#include <drv_common.h>
 
 void SystemClock_Config(void)
 {

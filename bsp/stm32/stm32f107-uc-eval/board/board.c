@@ -8,7 +8,8 @@
  * 2018-11-06     SummerGift   change to new framework
  */
 
-#include "board.h"
+#include <board.h>
+#include <drv_common.h>
 
 void SystemClock_Config(void)
 {

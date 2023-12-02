@@ -15,8 +15,18 @@ config PKGS_DIR
     option env="PKGS_ROOT"
     default "packages"
 
+config SOC_STM32F103ZE
+    bool
+    select SOC_SERIES_STM32F1
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+    default y
+
 source "$RTT_DIR/Kconfig"
 source "$PKGS_DIR/Kconfig"
 source "../libraries/Kconfig"
+
+if !RT_USING_NANO
 source "board/Kconfig"
+endif
 

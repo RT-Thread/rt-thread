@@ -5,13 +5,16 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2018-11-06     SummerGift   first version
- * 2021-06-30     crazt        modify for robomaster C board
+ * 2021-06-30     crazt        first version
+ * 2023-12-03     Meco Man     support nano version
  */
 
-#include <rtthread.h>
-#include <rtdevice.h>
 #include <board.h>
+#include <rtthread.h>
+#include <drv_gpio.h>
+#ifndef RT_USING_NANO
+#include <rtdevice.h>
+#endif /* RT_USING_NANO */
 
 /* defined the LED Blue pin: PH10 */
 #define LED_B_PIN    GET_PIN(H, 10)

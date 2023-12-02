@@ -11,12 +11,7 @@
 #ifndef __BOARD_H__
 #define __BOARD_H__
 
-#include <rtthread.h>
 #include <stm32l4xx.h>
-#include <drv_common.h>
-#ifndef RT_USING_NANO
-#include <drv_gpio.h>
-#endif /* RT_USING_NANO */
 
 #ifdef __cplusplus
 extern "C" {
