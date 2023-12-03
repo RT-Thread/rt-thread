@@ -10,6 +10,7 @@
 
 #include <board.h>
 #include <drv_lptim.h>
+#include <rtdevice.h>
 
 static void uart_console_reconfig(void)
 {

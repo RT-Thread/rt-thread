@@ -6,11 +6,15 @@
  * Change Logs:
  * Date           Author       Notes
  * 2021-12-05     supperthomas      first version
+ * 2023-12-03     Meco Man     support nano version
  */
 
-#include <rtthread.h>
-#include <rtdevice.h>
 #include <board.h>
+#include <rtthread.h>
+#include <drv_gpio.h>
+#ifndef RT_USING_NANO
+#include <rtdevice.h>
+#endif /* RT_USING_NANO */
 
 #define LED1_PIN                       GET_PIN(B, 2)
 int main(void)

@@ -8,7 +8,8 @@
  * 2023-12-04     Supperthomas First version
  */
 
-#include "board.h"
+#include <board.h>
+#include <drv_common.h>
 
 void SystemClock_Config(void)
 {
