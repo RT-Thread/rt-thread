@@ -10,7 +10,7 @@
  */
 
 #include <board.h>
-#include <rtthread.h>
+#include <drv_common.h>
 
 void SystemClock_Config(void)
 {
