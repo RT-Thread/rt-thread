@@ -137,6 +137,10 @@ path += [cwd + '/port/fdriver_port']
 src += Glob(cwd+'/port/fboard_port/*.c')
 path += [cwd + '/port/fboard_port']
 
+## lwip port
+src += Glob(cwd+'/port/lwip_port/*.c')
+path += [cwd + '/port/lwip_port']
+
 # phytium ports rt-thread examples
 PORT_DRV_DIR = cwd + '/examples'
 
