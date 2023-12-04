@@ -121,6 +121,8 @@ typedef struct rt_mem_obj
     void (*page_write)(struct rt_varea *varea, struct rt_aspace_io_msg *msg);
 
     const char *(*get_name)(rt_varea_t varea);
+
+    void *(*on_varea_mremap)(struct rt_varea *varea, rt_size_t new_size, int flags, void *new_address);
 } *rt_mem_obj_t;
 
 extern struct rt_mem_obj rt_mm_dummy_mapper;
@@ -226,26 +228,8 @@ int rt_aspace_unmap(rt_aspace_t aspace, void *addr);
  */
 int rt_aspace_unmap_range(rt_aspace_t aspace, void *addr, size_t length);
 
-/**
- * @brief Remove pages of existed mappings in the range [addr, addr+length)
- * Length is automatically rounded up to the next multiple of the page size.
- *
- * @param aspace target virtual address space
- * @param addr the beginning of the range of pages to be unmapped
- * @param length length of range in bytes
- * @return int rt errno
- */
-int rt_aspace_unmap_range(rt_aspace_t aspace, void *addr, size_t length);
-
-/**
- * @brief Remove pages of existed mappings in the range [addr, addr+length)
- * Length is automatically rounded up to the next multiple of the page size.
- *
- * @param aspace target virtual address space
- * @param addr
- * @return int
- */
-int rt_aspace_unmap_range(rt_aspace_t aspace, void *addr, size_t length);
+void *rt_aspace_mremap_range(rt_aspace_t aspace, void *old_address, size_t old_size,
+                                size_t new_size, int flags, void *new_address);
 
 int rt_aspace_control(rt_aspace_t aspace, void *addr, enum rt_mmu_cntl cmd);
 
