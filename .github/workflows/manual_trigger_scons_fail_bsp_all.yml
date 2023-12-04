@@ -36,6 +36,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     name: ${{ matrix.legs.RTT_BSP }}
+    if: github.repository_owner == 'RT-Thread'
     strategy:
       fail-fast: false
       matrix:
