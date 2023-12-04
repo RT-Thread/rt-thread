@@ -151,6 +151,7 @@ jobs:
                 - "stm32/stm32g070-st-nucleo"
                 - "stm32/stm32g071-st-nucleo"
                 - "stm32/stm32g431-st-nucleo"
+                - "stm32/stm32g491-st-nucleo"
                 - "stm32/stm32g474-st-nucleo"
                 - "stm32/stm32h563-st-nucleo"
                 - "stm32/stm32h743-armfly-v7"
