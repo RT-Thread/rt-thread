@@ -87,6 +87,7 @@ jobs:
         - {RTT_BSP_NAME: "stm32_stm32g070-st-nucleo", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "stm32/stm32g070-st-nucleo"}
         - {RTT_BSP_NAME: "stm32_stm32g071-st-nucleo", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "stm32/stm32g071-st-nucleo"}
         - {RTT_BSP_NAME: "stm32_stm32g431-st-nucleo", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "stm32/stm32g431-st-nucleo"}
+        - {RTT_BSP_NAME: "stm32_stm32g491-st-nucleo", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "stm32/stm32g491-st-nucleo"}
         - {RTT_BSP_NAME: "stm32_stm32g474-st-nucleo", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "stm32/stm32g474-st-nucleo"}
         - {RTT_BSP_NAME: "stm32_stm32h743-armfly-v7", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "stm32/stm32h743-armfly-v7"}
         - {RTT_BSP_NAME: "stm32_stm32h743-atk-apollo", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "stm32/stm32h743-atk-apollo"}
