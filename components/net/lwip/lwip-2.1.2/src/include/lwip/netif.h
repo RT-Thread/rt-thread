@@ -67,7 +67,9 @@ extern "C" {
  * netif can be identified by in APIs. Composed of
  * 2 chars, 3 (max) digits, and 1 \0
  */
+#ifndef NETIF_NAMESIZE
 #define NETIF_NAMESIZE 6
+#endif
 
 /**
  * @defgroup netif_flags Flags
@@ -344,8 +346,8 @@ struct netif {
   /** flags (@see @ref netif_flags) */
   u8_t flags;
   /** descriptive abbreviation */
-  char name[2];
-  /** number of this interface. Used for @ref if_api and @ref netifapi_netif, 
+  char name[NETIF_NAMESIZE];
+  /** number of this interface. Used for @ref if_api and @ref netifapi_netif,
    * as well as for IPv6 zones */
   u8_t num;
 #if LWIP_IPV6_AUTOCONFIG

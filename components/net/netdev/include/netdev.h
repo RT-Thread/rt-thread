@@ -137,7 +137,7 @@ struct netdev_ops
 
 #ifdef RT_USING_FINSH
     /* set network interface device common network interface device operations */
-    int (*ping)(struct netdev *netdev, const char *host, size_t data_len, uint32_t timeout, struct netdev_ping_resp *ping_resp);
+    int (*ping)(struct netdev *netdev, const char *host, size_t data_len, uint32_t timeout, struct netdev_ping_resp *ping_resp, rt_bool_t isbind);
     void (*netstat)(struct netdev *netdev);
 #endif
 

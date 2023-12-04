@@ -34,6 +34,10 @@
 #include <lwp_sys_socket.h>
 #endif
 
+#if defined(RT_USING_DFS_V2) && defined(SAL_USING_AF_UNIX)
+#include <af_unix.h>
+#endif
+
 /* check system workqueue stack size */
 #if defined(SAL_INTERNET_CHECK) && RT_SYSTEM_WORKQUEUE_STACKSIZE < 1536
 #error "The system workqueue stack size must more than 1536 bytes"
@@ -684,7 +688,7 @@ int sal_bind(int socket, const struct sockaddr *name, socklen_t namelen)
 
     addr_un = (struct sockaddr_un *)name;
 
-    if (addr_un->sa_family != AF_UNIX)
+    if ((addr_un->sa_family != AF_UNIX) && (addr_un->sa_family != AF_NETLINK))
     {
         /* bind network interface by ip address */
         sal_sockaddr_to_ipaddr(name, &input_ipaddr);

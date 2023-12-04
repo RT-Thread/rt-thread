@@ -48,17 +48,17 @@ typedef uint16_t in_port_t;
 #define SO_KEEPALIVE    0x0008 /* keep connections alive */
 #define SO_BROADCAST    0x0020 /* permit to send and to receive broadcast messages (see IP_SOF_BROADCAST option) */
 
-#define SO_PASSCRED	    16
-#define SO_PEERCRED	    17
+#define SO_PASSCRED     16
+#define SO_PEERCRED     17
 
-#define SO_BINDTODEVICE	    25
-#define SO_ATTACH_FILTER	26
-#define SO_DETACH_FILTER	27
+#define SO_BINDTODEVICE     25
+#define SO_ATTACH_FILTER    26
+#define SO_DETACH_FILTER    27
 
-#define SO_SNDBUFFORCE	32
-#define SO_RCVBUFFORCE	33
-#define SO_PROTOCOL		38
-#define SO_DOMAIN		39
+#define SO_SNDBUFFORCE  32
+#define SO_RCVBUFFORCE  33
+#define SO_PROTOCOL     38
+#define SO_DOMAIN       39
 
 /* Additional options, not kept in so_options */
 #define SO_DEBUG        0x0001 /* Unimplemented: turn on debugging info recording */
@@ -81,18 +81,21 @@ typedef uint16_t in_port_t;
 #define SO_NO_CHECK     0x100a /* don't create UDP checksum */
 
 /* Level number for (get/set)sockopt() to apply to socket itself */
-#define  SOL_SOCKET     0xfff    /* options for socket level */
+#define SOL_SOCKET      0xfff  /* options for socket level */
+#define SOL_NETLINK     270
 
 #define AF_UNSPEC       0
 #define AF_UNIX         1
 #define AF_INET         2
 #define AF_INET6        10
+#define AF_NETLINK      16
 #define AF_CAN          29  /* Controller Area Network      */
 #define AF_AT           45  /* AT socket */
 #define AF_WIZ          46  /* WIZnet socket */
 #define PF_UNIX         AF_UNIX
 #define PF_INET         AF_INET
 #define PF_INET6        AF_INET6
+#define PF_NETLINK      AF_NETLINK
 #define PF_UNSPEC       AF_UNSPEC
 #define PF_CAN          AF_CAN
 #define PF_AT           AF_AT
@@ -165,9 +168,9 @@ typedef struct ip_mreq
 #define IPTOS_PREC_PRIORITY            0x20
 #define IPTOS_PREC_ROUTINE             0x00
 
-#define	SCM_RIGHTS	0x01		    /* rw: access rights (array of int) */
-#define SCM_CREDENTIALS 0x02		/* rw: struct ucred		*/
-#define SCM_SECURITY	0x03		/* rw: security label		*/
+#define SCM_RIGHTS      0x01        /* rw: access rights (array of int) */
+#define SCM_CREDENTIALS 0x02        /* rw: struct ucred */
+#define SCM_SECURITY    0x03        /* rw: security label */
 
 /* Options for shatdown type */
 #ifndef SHUT_RD
@@ -283,7 +286,7 @@ static inline struct cmsghdr *cmsg_nxthdr(struct msghdr *_msg, struct cmsghdr *_
     return __cmsg_nxthdr(_msg->msg_control, _msg->msg_controllen, _cmsg);
 }
 
-#define IFNAMSIZ	16
+#define IFNAMSIZ    16
 struct sal_ifmap
 {
     unsigned long int mem_start;
