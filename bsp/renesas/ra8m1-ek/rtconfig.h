@@ -112,13 +112,10 @@
 /* Network */
 
 
-/* Utilities */
-
-
-/* Memory management */
-
-
 /* Memory protection */
+
+
+/* Utilities */
 
 
 /* RT-Thread Utestcases */
