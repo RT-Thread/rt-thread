@@ -47,7 +47,6 @@
 #endif
 
 extern FIOPadCtrl iopad_ctrl;
-uintptr flsd_config_base = FLSD_CONFIG_BASE;
 /* mmu config */
 extern struct mem_desc platform_mem_desc[];
 extern const rt_uint32_t platform_mem_desc_size;
@@ -165,11 +164,6 @@ void rt_hw_board_aarch64_init(void)
     FEarlyUartProbe();
 
     FIOMuxInit();
-#ifdef RT_USING_SMART
-#if defined(FLSD_CONFIG_BASE)
-    flsd_config_base = (uintptr)rt_ioremap((void *)flsd_config_base, 0x1000);
-#endif
-#endif
 
     /* compoent init */
 #ifdef RT_USING_COMPONENTS_INIT
@@ -240,9 +234,6 @@ void rt_hw_board_aarch32_init(void)
 
 #if defined(RT_USING_SMART)
     redist_addr = (uint32_t)rt_ioremap(GICV3_RD_BASE_ADDR, 4 * 128 * 1024);
-#if defined(FLSD_CONFIG_BASE)
-    flsd_config_base = (uintptr)rt_ioremap((void *)flsd_config_base, 0x1000);
-#endif
 #else
     redist_addr = GICV3_RD_BASE_ADDR;
 #endif

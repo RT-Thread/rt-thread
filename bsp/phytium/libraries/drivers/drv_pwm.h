@@ -15,16 +15,15 @@
 
 #include <rtdevice.h>
 
-#ifdef BSP_USING_PWM
-
 #ifdef __cplusplus
 extern "C"
 {
 #endif
 
+int rt_hw_pwm_init(void);
+
 #ifdef __cplusplus
 }
 #endif
 
-#endif
 #endif /* __DRV_CAN_H__ */

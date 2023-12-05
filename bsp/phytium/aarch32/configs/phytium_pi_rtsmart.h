@@ -8,8 +8,7 @@
 
 #define RT_NAME_MAX 16
 #define RT_USING_SMART
-#define RT_USING_SMP
-#define RT_CPUS_NR 4
+#define RT_CPUS_NR 1
 #define RT_ALIGN_SIZE 4
 #define RT_THREAD_PRIORITY_32
 #define RT_THREAD_PRIORITY_MAX 32
@@ -20,7 +19,6 @@
 #define RT_USING_IDLE_HOOK
 #define RT_IDLE_HOOK_LIST_SIZE 4
 #define IDLE_THREAD_STACK_SIZE 4096
-#define SYSTEM_THREAD_STACK_SIZE 4096
 #define RT_USING_TIMER_SOFT
 #define RT_TIMER_THREAD_PRIO 4
 #define RT_TIMER_THREAD_STACK_SIZE 4096
@@ -32,7 +30,6 @@
 #define RT_USING_DEBUG
 #define RT_DEBUGING_COLOR
 #define RT_DEBUGING_CONTEXT
-#define RT_DEBUGING_INIT
 
 /* Inter-Thread communication */
 
@@ -137,9 +134,15 @@
 #define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 1024
 #define RT_USING_TTY
+#define RT_USING_CAN
+#define RT_CAN_USING_CANFD
+#define RT_USING_I2C
+#define RT_USING_I2C_BITOPS
+#define RT_USING_PIN
 #define RT_USING_NULL
 #define RT_USING_ZERO
 #define RT_USING_RANDOM
+#define RT_USING_PWM
 #define RT_USING_RTC
 #define RT_USING_SDIO
 #define RT_SDIO_STACK_SIZE 4096
@@ -147,6 +150,8 @@
 #define RT_MMCSD_STACK_SIZE 4096
 #define RT_MMCSD_THREAD_PREORITY 22
 #define RT_MMCSD_MAX_PARTITION 16
+#define RT_USING_SPI
+#define RT_USING_QSPI
 #define RT_USING_DEV_BUS
 #define RT_USING_KTIME
 
@@ -154,6 +159,7 @@
 
 
 /* C/C++ and POSIX layer */
+
 
 /* ISO-ANSI C layer */
 
@@ -260,6 +266,9 @@
 /* Memory management */
 
 
+/* Memory protection */
+
+
 /* RT-Thread Utestcases */
 
 
@@ -274,9 +283,6 @@
 
 
 /* Wiced WiFi */
-
-
-/* CYW43012 WiFi */
 
 
 /* IoT Cloud */
@@ -386,11 +392,19 @@
 
 #define BSP_USING_IOPAD
 #define BSP_USING_UART
+#define RT_USING_UART0
 #define RT_USING_UART1
-#define BSP_USING_SDIF
-#define BSP_USING_SDCARD_FATFS
-#define BSP_USING_SDCARD_PARTITION "sd1"
-#define USING_SDIF0
+#define BSP_USING_SPI
+#define RT_USING_SPIM0
+#define BSP_USING_GPIO
+#define BSP_USING_ETH
+#define RT_LWIP_PBUF_POOL_BUFSIZE 1700
+#define BSP_USING_PWM
+#define RT_USING_PWM2
+#define BSP_USING_I2C
+#define I2C_USE_MIO
+#define RT_USING_MIO0
+#define RT_USING_MIO1
 
 /* Board extended module Drivers */
 

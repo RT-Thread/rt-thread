@@ -11,8 +11,7 @@
  *
  */
 #include "rtconfig.h"
-#if defined BSP_USING_I2C
-
+#include <rtdevice.h>
 #define LOG_TAG      "i2c_drv"
 #include "drv_log.h"
 #include "drv_i2c.h"
@@ -40,114 +39,6 @@ struct phytium_i2c_bus
     struct rt_i2c_msg *msg;
     const char *name;
 };
-
-#if defined(I2C_USE_CONTROLLER)
-static struct phytium_i2c_bus i2c_bus[FI2C_NUM] =
-{
-    {
-        .name = "I2C0",
-        .i2c_handle.config.instance_id = 0,
-    },
-    {
-        .name = "I2C1",
-        .i2c_handle.config.instance_id = 1,
-    },
-    {
-        .name = "I2C2",
-        .i2c_handle.config.instance_id = 2,
-    },
-};
-#endif
-
-#if defined(I2C_USE_MIO)
-static struct phytium_i2c_bus i2c_mio_bus[FMIO_NUM] =
-{
-#if defined(TARGET_E2000D) ||defined(TARGET_E2000Q)
-    {
-        .name = "MIO0",
-        .i2c_handle.config.instance_id = 0,
-    },
-    {
-        .name = "MIO1",
-        .i2c_handle.config.instance_id = 1,
-    },
-    {
-        .name = "MIO2",
-        .i2c_handle.config.instance_id = 2,
-    },
-    {
-        .name = "MIO3",
-        .i2c_handle.config.instance_id = 3,
-    },
-    {
-        .name = "MIO4",
-        .i2c_handle.config.instance_id = 4,
-    },
-    {
-        .name = "MIO5",
-        .i2c_handle.config.instance_id = 5,
-    },
-    {
-        .name = "MIO6",
-        .i2c_handle.config.instance_id = 6,
-    },
-    {
-        .name = "MIO7",
-        .i2c_handle.config.instance_id = 7,
-    },
-    {
-        .name = "MIO8",
-        .i2c_handle.config.instance_id = 8,
-    },
-    {
-        .name = "MIO9",
-        .i2c_handle.config.instance_id = 9,
-    },
-    {
-        .name = "MIO10",
-        .i2c_handle.config.instance_id = 10,
-    },
-    {
-        .name = "MIO11",
-        .i2c_handle.config.instance_id = 11,
-    },
-    {
-        .name = "MIO12",
-        .i2c_handle.config.instance_id = 12,
-    },
-    {
-        .name = "MIO13",
-        .i2c_handle.config.instance_id = 13,
-    },
-    {
-        .name = "MIO14",
-        .i2c_handle.config.instance_id = 14,
-    },
-    {
-        .name = "MIO15",
-        .i2c_handle.config.instance_id = 15,
-    },
-#elif defined(TARGET_PHYTIUMPI)
-    {
-        .name = "MIO0",
-        .i2c_handle.config.instance_id = 0,
-    },
-    {
-        .name = "MIO1",
-        .i2c_handle.config.instance_id = 1,
-    },
-    {
-        .name = "MIO2",
-        .i2c_handle.config.instance_id = 2,
-    },
-    {
-        .name = "MIO10",
-        .i2c_handle.config.instance_id = 10,
-    },
-#endif
-};
-
-#endif
 
 #if defined(I2C_USE_CONTROLLER)
 static rt_err_t i2c_config(struct phytium_i2c_bus *i2c_bus)
@@ -222,6 +113,8 @@ static rt_err_t i2c_mio_config(struct phytium_i2c_bus *i2c_bus)
         LOG_E("Init mio master failed, ret: 0x%x", ret);
         return RT_ERROR;
     }
+    mio_handle.is_ready = 0;
+    memset(&mio_handle, 0, sizeof(mio_handle));
 
     return RT_EOK;
 }
@@ -248,6 +141,7 @@ static rt_err_t i2c_bus_control(struct rt_i2c_bus_device *device, int cmd, void 
     RT_ASSERT(device);
     struct phytium_i2c_bus *i2c_bus;
     i2c_bus = (struct phytium_i2c_bus *)(device);
+    FI2cConfig *config_p;
 
     switch (cmd)
     {
@@ -255,7 +149,7 @@ static rt_err_t i2c_bus_control(struct rt_i2c_bus_device *device, int cmd, void 
             phytium_i2c_set_speed(i2c_bus, *(rt_uint32_t *)args);
             break;
         case RT_I2C_DEV_CTRL_10BIT:
-            FI2cConfig *config_p = &i2c_bus->i2c_handle.config;
+            config_p = &i2c_bus->i2c_handle.config;
             config_p->use_7bit_addr = FALSE;
             FI2cCfgInitialize(&i2c_bus->i2c_handle, config_p);
             break;
@@ -310,161 +204,203 @@ static const struct rt_i2c_bus_device_ops _i2c_ops =
 };
 
 #if defined(I2C_USE_CONTROLLER)
-static int i2c_controller_init(u32 i2c_id)
+static int i2c_controller_init(struct phytium_i2c_bus *i2c_controller_bus)
 {
-    u32 ret = RT_EOK;
-    ret = i2c_config(&i2c_bus[i2c_id]);
-    if (ret != FI2C_SUCCESS)
+    rt_err_t ret = RT_EOK;
+    ret = i2c_config(i2c_controller_bus);
+    if (ret != RT_EOK)
     {
         LOG_E("I2C config failed.\n");
 
         return RT_ERROR;
     }
-    i2c_bus[i2c_id].device.ops = &_i2c_ops;
-    ret = rt_i2c_bus_device_register(&i2c_bus[i2c_id].device, i2c_bus[i2c_id].name);
-    LOG_D("I2C bus reg success.\n");
+    i2c_controller_bus->device.ops = &_i2c_ops;
+    ret = rt_i2c_bus_device_register(&i2c_controller_bus->device, i2c_controller_bus->name);
     RT_ASSERT(RT_EOK == ret);
+    LOG_D("I2C bus reg success.\n");
 
     return ret;
 }
 #endif
 
 #if defined(I2C_USE_MIO)
-static int i2c_mio_init(u32 i2c_mio_id)
+static int i2c_mio_init(struct phytium_i2c_bus *i2c_mio_bus)
 {
-    u32 ret = RT_EOK;
-    ret = i2c_mio_config(&i2c_mio_bus[i2c_mio_id]);
-    if (ret != FI2C_SUCCESS)
+    rt_err_t ret = RT_EOK;
+    ret = i2c_mio_config(i2c_mio_bus);
+    if (ret != RT_EOK)
     {
         LOG_E("I2C mio config failed.\n");
 
         return RT_ERROR;
     }
-    i2c_mio_bus[i2c_mio_id].device.ops = &_i2c_ops;
-    ret = rt_i2c_bus_device_register(&i2c_mio_bus[i2c_mio_id].device, i2c_mio_bus[i2c_mio_id].name);
-    LOG_D("I2C mio bus reg success.\n");
+    i2c_mio_bus->device.ops = &_i2c_ops;
+    ret = rt_i2c_bus_device_register(&i2c_mio_bus->device, i2c_mio_bus->name);
     RT_ASSERT(RT_EOK == ret);
+    LOG_D("I2C mio bus reg success.\n");
 
     return ret;
 }
 #endif
 
-int rt_hw_i2c_init(void)
-{
-    rt_err_t ret = RT_EOK;
-#if defined(I2C_USE_CONTROLLER)
-
 #if defined(RT_USING_I2C0)
-    i2c_controller_init(FI2C0_ID);
+static struct phytium_i2c_bus i2c_controller0_bus;
 #endif
 #if defined(RT_USING_I2C1)
-    i2c_controller_init(FI2C1_ID);
+static struct phytium_i2c_bus i2c_controller1_bus;
 #endif
 #if defined(RT_USING_I2C2)
-    i2c_controller_init(FI2C2_ID);
+static struct phytium_i2c_bus i2c_controller2_bus;
 #endif
-
-#endif
-
-#if defined(I2C_USE_MIO)
 
 #if defined(RT_USING_MIO0)
-    i2c_mio_init(FMIO0_ID);
+static struct phytium_i2c_bus i2c_mio0_bus;
 #endif
 #if defined(RT_USING_MIO1)
-    i2c_mio_init(FMIO1_ID);
+static struct phytium_i2c_bus i2c_mio1_bus;
 #endif
 #if defined(RT_USING_MIO2)
-    i2c_mio_init(FMIO2_ID);
+static struct phytium_i2c_bus i2c_mio2_bus;
 #endif
 #if defined(RT_USING_MIO3)
-    i2c_mio_init(FMIO3_ID);
+static struct phytium_i2c_bus i2c_mio3_bus;
 #endif
 #if defined(RT_USING_MIO4)
-    i2c_mio_init(FMIO4_ID);
+static struct phytium_i2c_bus i2c_mio4_bus;
 #endif
 #if defined(RT_USING_MIO5)
-    i2c_mio_init(FMIO5_ID);
+static struct phytium_i2c_bus i2c_mio5_bus;
 #endif
 #if defined(RT_USING_MIO6)
-    i2c_mio_init(FMIO6_ID);
+static struct phytium_i2c_bus i2c_mio6_bus;
 #endif
 #if defined(RT_USING_MIO7)
-    i2c_mio_init(FMIO7_ID);
+static struct phytium_i2c_bus i2c_mio7_bus;
 #endif
 #if defined(RT_USING_MIO8)
-    i2c_mio_init(FMIO8_ID);
+static struct phytium_i2c_bus i2c_mio8_bus;
 #endif
 #if defined(RT_USING_MIO9)
-    i2c_mio_init(FMIO9_ID);
+static struct phytium_i2c_bus i2c_mio9_bus;
 #endif
 #if defined(RT_USING_MIO10)
-    i2c_mio_init(FMIO10_ID);
+static struct phytium_i2c_bus i2c_mio10_bus;
 #endif
 #if defined(RT_USING_MIO11)
-    i2c_mio_init(FMIO11_ID);
+static struct phytium_i2c_bus i2c_mio11_bus;
 #endif
 #if defined(RT_USING_MIO12)
-    i2c_mio_init(FMIO12_ID);
+static struct phytium_i2c_bus i2c_mio12_bus;
 #endif
 #if defined(RT_USING_MIO13)
-    i2c_mio_init(FMIO13_ID);
+static struct phytium_i2c_bus i2c_mio13_bus;
 #endif
 #if defined(RT_USING_MIO14)
-    i2c_mio_init(FMIO14_ID);
+static struct phytium_i2c_bus i2c_mio14_bus;
 #endif
 #if defined(RT_USING_MIO15)
-    i2c_mio_init(FMIO15_ID);
+static struct phytium_i2c_bus i2c_mio15_bus;
 #endif
 
+int rt_hw_i2c_init(void)
+{
+#if defined(RT_USING_I2C0)
+    i2c_controller0_bus.name = "I2C0";
+    i2c_controller0_bus.i2c_handle.config.instance_id = FI2C0_ID;
+    i2c_controller_init(&i2c_controller0_bus);
+#endif
+#if defined(RT_USING_I2C1)
+    i2c_controller1_bus.name = "I2C1";
+    i2c_controller1_bus.i2c_handle.config.instance_id = FI2C1_ID;
+    i2c_controller_init(&i2c_controller1_bus);
+#endif
+#if defined(RT_USING_I2C2)
+    i2c_controller2_bus.name = "I2C2";
+    i2c_controller2_bus.i2c_handle.config.instance_id = FI2C2_ID;
+    i2c_controller_init(&i2c_controller2_bus);
+#endif
+
+#if defined(RT_USING_MIO0)
+    i2c_mio0_bus.name = "MIO0";
+    i2c_mio0_bus.i2c_handle.config.instance_id = FMIO0_ID;
+    i2c_mio_init(&i2c_mio0_bus);
+#endif
+#if defined(RT_USING_MIO1)
+    i2c_mio1_bus.name = "MIO1";
+    i2c_mio1_bus.i2c_handle.config.instance_id = FMIO1_ID;
+    i2c_mio_init(&i2c_mio1_bus);
+#endif
+#if defined(RT_USING_MIO2)
+    i2c_mio2_bus.name = "MIO2";
+    i2c_mio2_bus.i2c_handle.config.instance_id = FMIO2_ID;
+    i2c_mio_init(&i2c_mio2_bus);
+#endif
+#if defined(RT_USING_MIO3)
+    i2c_mio3_bus.name = "MIO3";
+    i2c_mio3_bus.i2c_handle.config.instance_id = FMIO3_ID;
+    i2c_mio_init(&i2c_mio3_bus);
+#endif
+#if defined(RT_USING_MIO4)
+    i2c_mio4_bus.name = "MIO4";
+    i2c_mio4_bus.i2c_handle.config.instance_id = FMIO4_ID;
+    i2c_mio_init(&i2c_mio4_bus);
+#endif
+#if defined(RT_USING_MIO5)
+    i2c_mio5_bus.name = "MIO5";
+    i2c_mio5_bus.i2c_handle.config.instance_id = FMIO5_ID;
+    i2c_mio_init(&i2c_mio5_bus);
+#endif
+#if defined(RT_USING_MIO6)
+    i2c_mio6_bus.name = "MIO6";
+    i2c_mio6_bus.i2c_handle.config.instance_id = FMIO6_ID;
+    i2c_mio_init(&i2c_mio6_bus);
+#endif
+#if defined(RT_USING_MIO7)
+    i2c_mio7_bus.name = "MIO2";
+    i2c_mio7_bus.i2c_handle.config.instance_id = FMIO7_ID;
+    i2c_mio_init(&i2c_mio7_bus);
+#endif
+#if defined(RT_USING_MIO8)
+    i2c_mio8_bus.name = "MIO8";
+    i2c_mio8_bus.i2c_handle.config.instance_id = FMIO8_ID;
+    i2c_mio_init(&i2c_mio8_bus);
+#endif
+#if defined(RT_USING_MIO9)
+    i2c_mio9_bus.name = "MIO9";
+    i2c_mio9_bus.i2c_handle.config.instance_id = FMIO9_ID;
+    i2c_mio_init(&i2c_mio9_bus);
+#endif
+#if defined(RT_USING_MIO10)
+    i2c_mio10_bus.name = "MIO10";
+    i2c_mio10_bus.i2c_handle.config.instance_id = FMIO10_ID;
+    i2c_mio_init(&i2c_mio10_bus);
+#endif
+#if defined(RT_USING_MIO11)
+    i2c_mio11_bus.name = "MIO11";
+    i2c_mio11_bus.i2c_handle.config.instance_id = FMIO11_ID;
+    i2c_mio_init(&i2c_mio11_bus);
+#endif
+#if defined(RT_USING_MIO12)
+    i2c_mio12_bus.name = "MIO12";
+    i2c_mio12_bus.i2c_handle.config.instance_id = FMIO12_ID;
+    i2c_mio_init(&i2c_mio12_bus);
+#endif
+#if defined(RT_USING_MIO13)
+    i2c_mio13_bus.name = "MIO13";
+    i2c_mio13_bus.i2c_handle.config.instance_id = FMIO13_ID;
+    i2c_mio_init(&i2c_mio13_bus);
+#endif
+#if defined(RT_USING_MIO14)
+    i2c_mio14_bus.name = "MIO14";
+    i2c_mio14_bus.i2c_handle.config.instance_id = FMIO14_ID;
+    i2c_mio_init(&i2c_mio14_bus);
+#endif
+#if defined(RT_USING_MIO15)
+    i2c_mio15_bus.name = "MIO15";
+    i2c_mio15_bus.i2c_handle.config.instance_id = FMIO15_ID;
+    i2c_mio_init(&i2c_mio15_bus);
 #endif
 
     return 0;
 }
 INIT_DEVICE_EXPORT(rt_hw_i2c_init);
-
-
-
-static struct rt_i2c_bus_device *i2c_test_bus = RT_NULL;     /* I2C总线设备句柄 */
-
-int i2c_sample(int argc, char *argv[])
-{
-    char name[RT_NAME_MAX];
-    rt_strncpy(name, "MIO15", RT_NAME_MAX);
-    i2c_test_bus = (struct rt_i2c_bus_device *)rt_device_find(name);
-
-    rt_uint8_t read_buf[2] = {0x02, 0x0};
-    rt_uint8_t write_buf[2] = {0x02, 0x01};
-    if (i2c_test_bus == RT_NULL)
-    {
-        rt_kprintf("can't find %s device!\n", name);
-    }
-    else
-    {
-        rt_kprintf("find %s device!!!!\n", name);
-    }
-
-    struct rt_i2c_msg read_msgs;
-    read_msgs.addr = 0x6B;
-    read_msgs.flags = RT_I2C_RD;
-    read_msgs.buf = read_buf;
-    read_msgs.len = 1;
-    rt_i2c_transfer(i2c_test_bus, &read_msgs, 1);
-    rt_kprintf("read_buf = %x\n", *read_msgs.buf);
-
-    struct rt_i2c_msg write_msgs;
-    write_msgs.addr = 0x6B;
-    write_msgs.flags = RT_I2C_WR;
-    write_msgs.buf = write_buf;
-    write_msgs.len = 1;
-    rt_i2c_transfer(i2c_test_bus, &write_msgs, 1);
-    read_buf[0] = 0x02;
-    rt_i2c_transfer(i2c_test_bus, &read_msgs, 1);
-    rt_kprintf("read_buf = %x\n", *read_msgs.buf);
-
-    return RT_EOK;
-}
-
-MSH_CMD_EXPORT(i2c_sample, i2c device sample);
-
-#endif
