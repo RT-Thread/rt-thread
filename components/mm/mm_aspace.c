@@ -1068,6 +1068,61 @@ int rt_aspace_unmap_range(rt_aspace_t aspace, void *addr, size_t length)
     return error;
 }
 
+void *rt_aspace_mremap_range(rt_aspace_t aspace, void *old_address, size_t old_size,
+                                size_t new_size, int flags, void *new_address)
+{
+    void *ret = RT_NULL;
+
+    if (!aspace)
+    {
+        LOG_I("%s: Invalid input", __func__);
+    }
+    else if (_not_in_range(old_address, old_size, aspace->start, aspace->size))
+    {
+        LOG_I("%s: %lx not in range of aspace[%lx:%lx]", __func__, old_address,
+              aspace->start, (char *)aspace->start + aspace->size);
+    }
+    else if (!ALIGNED(old_address))
+    {
+        LOG_I("%s(old_address=%p): Unaligned address", __func__, old_address);
+    }
+    else
+    {
+        /**
+         * Brief: re-arrange the address space to remove existing pages mapping
+         * in [unmap_start, unmap_start + unmap_len)
+         */
+        old_size = RT_ALIGN(old_size, ARCH_PAGE_SIZE);
+
+        WR_LOCK(aspace);
+        {
+            rt_varea_t existed;
+            struct _mm_range unmap_range;
+
+            unmap_range.start = old_address;
+            unmap_range.end = old_address + old_size - 1;
+
+            existed = _aspace_bst_search_overlap(aspace, unmap_range);
+            if (existed && existed->mem_obj && existed->mem_obj->on_varea_mremap)
+            {
+                ret = existed->mem_obj->on_varea_mremap(existed, new_size, flags, new_address);
+            }
+        }
+        WR_UNLOCK(aspace);
+
+        if (ret)
+        {
+            int error = rt_aspace_unmap_range(aspace, old_address, old_size);
+            if (error != RT_EOK)
+            {
+                LOG_I("%s: unmap old failed, addr %p size %p", __func__, old_address, old_size);
+            }
+        }
+    }
+
+    return ret;
+}
+
 static inline void *_lower(void *a, void *b)
 {
     return a < b ? a : b;
