@@ -54,6 +54,8 @@ def install_phytium_sdk():
     print("Checking for the presence of phytium_standalone_sdk_install.py script...")
     sconstruct_dir = os.getcwd()
     install_script_path = os.path.join(sconstruct_dir, "phytium_standalone_sdk_install.py")
+    if os.path.exists(install_script_path):
+        subprocess.call(["rm","-rf", install_script_path])
 
     try:
         subprocess.call(["wget", "https://gitee.com/phytium_embedded/phytium-standalone-sdk/raw/Standalone-Sdk_RT-thread/phytium_standalone_sdk_install.py"])

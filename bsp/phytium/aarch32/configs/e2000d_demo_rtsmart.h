@@ -286,15 +286,6 @@
 /* Wiced WiFi */
 
 
-/* CYW43012 WiFi */
-
-
-/* BL808 WiFi */
-
-
-/* CYW43439 WiFi */
-
-
 /* IoT Cloud */
 
 
@@ -397,10 +388,10 @@
 
 /* Hardware Drivers */
 
-#define BSP_USING_IOPAD
 
 /* On-chip Peripheral Drivers */
 
+#define BSP_USING_IOPAD
 #define BSP_USING_UART
 #define RT_USING_UART0
 #define RT_USING_UART1
@@ -410,15 +401,20 @@
 #define RT_USING_CANFD
 #define RT_USING_FILTER
 #define RT_USING_CAN0
+#define RT_USING_CAN1
 #define BSP_USING_GPIO
 #define BSP_USING_QSPI
 #define RT_USING_QSPI0
 #define USING_QSPI_CHANNEL0
+#define BSP_USING_ETH
+#define RT_LWIP_PBUF_POOL_BUFSIZE 1700
 #define BSP_USING_PWM
 #define RT_USING_PWM6
 #define BSP_USING_I2C
 #define I2C_USE_MIO
 #define RT_USING_MIO15
+#define I2C_USE_CONTROLLER
+#define RT_USING_I2C0
 #define BSP_USING_SDIF
 #define BSP_USING_SDCARD_FATFS
 #define BSP_USING_SDCARD_PARTITION "sd0"
