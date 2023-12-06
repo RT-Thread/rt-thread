@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -34,10 +34,6 @@
 #include <lwp_sys_socket.h>
 #endif
 
-#if defined(RT_USING_DFS_V2) && defined(SAL_USING_AF_UNIX)
-#include <af_unix.h>
-#endif
-
 /* check system workqueue stack size */
 #if defined(SAL_INTERNET_CHECK) && RT_SYSTEM_WORKQUEUE_STACKSIZE < 1536
 #error "The system workqueue stack size must more than 1536 bytes"
@@ -65,7 +61,7 @@ struct sal_netdev_res_table
 
 struct ifconf
 {
-    int	ifc_len;            /* Size of buffer.  */
+    int ifc_len;            /* Size of buffer.  */
     union
     {
         char* ifcu_buf;
@@ -1158,7 +1154,7 @@ int sal_closesocket(int socket)
 
 #define ARPHRD_ETHER    1      /* Ethernet 10/100Mbps. */
 #define ARPHRD_LOOPBACK 772    /* Loopback device.  */
-#define IFF_UP	0x1
+#define IFF_UP  0x1
 #define IFF_RUNNING 0x40
 #define IFF_NOARP 0x80
 

@@ -48,17 +48,17 @@ typedef uint16_t in_port_t;
 #define SO_KEEPALIVE    0x0008 /* keep connections alive */
 #define SO_BROADCAST    0x0020 /* permit to send and to receive broadcast messages (see IP_SOF_BROADCAST option) */
 
-#define SO_PASSCRED     16
-#define SO_PEERCRED     17
+#define SO_PASSCRED         16
+#define SO_PEERCRED         17
 
 #define SO_BINDTODEVICE     25
 #define SO_ATTACH_FILTER    26
 #define SO_DETACH_FILTER    27
 
-#define SO_SNDBUFFORCE  32
-#define SO_RCVBUFFORCE  33
-#define SO_PROTOCOL     38
-#define SO_DOMAIN       39
+#define SO_SNDBUFFORCE      32
+#define SO_RCVBUFFORCE      33
+#define SO_PROTOCOL         38
+#define SO_DOMAIN           39
 
 /* Additional options, not kept in so_options */
 #define SO_DEBUG        0x0001 /* Unimplemented: turn on debugging info recording */
@@ -81,7 +81,7 @@ typedef uint16_t in_port_t;
 #define SO_NO_CHECK     0x100a /* don't create UDP checksum */
 
 /* Level number for (get/set)sockopt() to apply to socket itself */
-#define SOL_SOCKET      0xfff  /* options for socket level */
+#define SOL_SOCKET      0xfff    /* options for socket level */
 #define SOL_NETLINK     270
 
 #define AF_UNSPEC       0
@@ -118,7 +118,7 @@ typedef uint16_t in_port_t;
 #define MSG_OOB         0x04    /* Unimplemented: Requests out-of-band data. The significance and semantics of out-of-band data are protocol-specific */
 #define MSG_DONTWAIT    0x08    /* Nonblocking i/o for this operation only */
 #define MSG_MORE        0x10    /* Sender will send more */
-/* LWIPPTP_SWREQ_0036 */
+
 #define MSG_ERRQUEUE    0x2000  /* Fetch message from error queue */
 #define MSG_CONFIRM     0x0800  /* Confirm path validity */
 
@@ -169,8 +169,8 @@ typedef struct ip_mreq
 #define IPTOS_PREC_ROUTINE             0x00
 
 #define SCM_RIGHTS      0x01        /* rw: access rights (array of int) */
-#define SCM_CREDENTIALS 0x02        /* rw: struct ucred */
-#define SCM_SECURITY    0x03        /* rw: security label */
+#define SCM_CREDENTIALS 0x02        /* rw: struct ucred     */
+#define SCM_SECURITY    0x03        /* rw: security label       */
 
 /* Options for shatdown type */
 #ifndef SHUT_RD
@@ -228,6 +228,16 @@ struct sockaddr_storage
     uint32_t       s2_data3[3];
 #endif /* NETDEV_IPV6 */
 };
+
+#ifdef RT_USING_MUSLLIBC
+#ifndef __DEFINED_struct_iovec
+struct iovec
+{
+    void *iov_base;
+    size_t iov_len;
+};
+#endif
+#endif
 
 struct msghdr
 {

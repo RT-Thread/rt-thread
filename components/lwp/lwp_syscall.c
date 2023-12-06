@@ -3293,7 +3293,6 @@ sysret_t sys_bind(int socket, const struct musl_sockaddr *name, socklen_t namele
     rt_err_t ret = 0;
     struct sockaddr sa;
     struct musl_sockaddr kname;
-    struct sockaddr_un addr_un;
     rt_uint16_t family = 0;
 
     if (!lwp_user_accessable((void *)name, namelen))
@@ -3302,16 +3301,16 @@ sysret_t sys_bind(int socket, const struct musl_sockaddr *name, socklen_t namele
     }
 
     lwp_get_from_user(&family, (void *)name, 2);
-    if (family == AF_UNIX)
+    if ((family == AF_UNIX) || (family == AF_NETLINK))
     {
-        if (!lwp_user_accessable((void *)name, sizeof(struct sockaddr_un)))
+        if (!lwp_user_accessable((void *)name, sizeof(struct sockaddr)))
         {
             return -EFAULT;
         }
 
-        lwp_get_from_user(&addr_un, (void *)name, sizeof(struct sockaddr_un));
+        lwp_get_from_user(&sa, (void *)name, sizeof(struct sockaddr));
 
-        ret = bind(socket, (struct sockaddr *)(&addr_un), namelen);
+        ret = bind(socket, &sa, namelen);
     }
     else
     {
