@@ -288,18 +288,18 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
     if rtconfig.PLATFORM in ['gcc'] and str(env['LINKFLAGS']).find('nano.specs') != -1:
         env.AppendUnique(CPPDEFINES = ['_REENT_SMALL'])
 
-    add_rtconfig = GetOption('add_rtconfig')
-    if add_rtconfig:
-        add_rtconfig = add_rtconfig.split(',')
-        if isinstance(add_rtconfig, list):
-            for config in add_rtconfig:
+    attach_global_macros = GetOption('global-macros')
+    if attach_global_macros:
+        attach_global_macros = attach_global_macros.split(',')
+        if isinstance(attach_global_macros, list):
+            for config in attach_global_macros:
                 if isinstance(config, str):
-                    AddDepend(add_rtconfig)
+                    AddDepend(attach_global_macros)
                     env.Append(CFLAGS=' -D' + config, CXXFLAGS=' -D' + config, AFLAGS=' -D' + config)
                 else:
-                    print('add_rtconfig arguements are illegal!')
+                    print('--global-macros arguments are illegal!')
         else:
-            print('add_rtconfig arguements are illegal!')
+            print('--global-macros arguments are illegal!')
 
     if GetOption('genconfig'):
         from genconf import genconfig
@@ -316,7 +316,7 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
             menuconfig(Rtt_Root)
             exit(0)
 
-    if GetOption('pyconfig_silent'):
+    if GetOption('pyconfig-silent'):
         from menuconfig import guiconfig_silent
         guiconfig_silent(Rtt_Root)
         exit(0)
