@@ -120,10 +120,19 @@ class FormatCheck:
     def __init__(self, file_list):
         self.file_list = file_list
 
+    def __check_rt_errorcode(self, line):
+        pattern = re.compile(r'return\s+(RT_ERROR|RT_ETIMEOUT|RT_EFULL|RT_EEMPTY|RT_ENOMEM|RT_ENOSYS|RT_EBUSY|RT_EIO|RT_EINTR|RT_EINVAL|RT_ENOENT|RT_ENOSPC|RT_EPERM|RT_ETRAP|RT_EFAULT)')  
+        match = pattern.search(line)
+        if match:
+            return False
+        else:
+            return True
+
     def __check_file(self, file_lines, file_path):
-        line_num = 1
+        line_num = 0
         check_result = True
         for line in file_lines:
+            line_num += 1
             # check line start
             line_start = line.replace(' ', '')
             # find tab
@@ -131,12 +140,13 @@ class FormatCheck:
                 logging.error("{} line[{}]: please use space replace tab at the start of this line.".format(file_path, line_num))
                 check_result = False
             # check line end
-            lin_end = line.split('\n')[0]
-            if lin_end.endswith(' ') or lin_end.endswith('\t'):
+            line_end = line.split('\n')[0]
+            if line_end.endswith(' ') or line_end.endswith('\t'):
                 logging.error("{} line[{}]: please delete extra space at the end of this line.".format(file_path, line_num))
                 check_result = False
-            line_num += 1
-
+            if self.__check_rt_errorcode(line) == False:
+                logging.error("{} line[{}]: the RT-Thread error code should return negative value. e.g. return -RT_ERROR".format(file_path, line_num))
+                check_result = False
         return check_result
 
     def check(self):
