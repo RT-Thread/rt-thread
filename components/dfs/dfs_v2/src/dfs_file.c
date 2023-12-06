@@ -250,6 +250,13 @@ char *dfs_nolink_path(struct dfs_mnt **mnt, char *fullpath, int mode)
 
             rt_memcpy(path + index, fp, i);
             path[index + i] = '\0';
+
+            /* the last should by mode process. */
+            if ((fp[i] == '\0') && (!mode))
+            {
+                break;
+            }
+
             fp += i;
 
             dentry = dfs_dentry_lookup(*mnt, path, 0);
@@ -306,8 +313,6 @@ _ERR_RET:
         rt_free(path);
         path = RT_NULL;
     }
-
-    //rt_kprintf("%s: %s => %s\n", __FUNCTION__, fullpath, path);
 
     return path;
 }
