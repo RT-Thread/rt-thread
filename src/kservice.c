@@ -726,8 +726,10 @@ RTM_EXPORT(rt_strdup);
 void rt_show_version(void)
 {
     rt_kprintf("\n \\ | /\n");
-#ifdef RT_USING_SMART
+#if defined(RT_USING_SMART)
     rt_kprintf("- RT -     Thread Smart Operating System\n");
+#elif defined(RT_USING_NANO)
+    rt_kprintf("- RT -     Thread Nano Operating System\n");
 #else
     rt_kprintf("- RT -     Thread Operating System\n");
 #endif
