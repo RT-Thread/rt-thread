@@ -9,7 +9,7 @@
  */
 
 #include <board.h>
-#include <drv_common.h>
+
 
 void SystemClock_Config(void)
 {
@@ -52,4 +52,3 @@ void SystemClock_Config(void)
     Error_Handler();
   }
 }
-
