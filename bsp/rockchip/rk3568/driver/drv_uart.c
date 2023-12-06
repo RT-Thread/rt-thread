@@ -307,7 +307,7 @@ int rt_hw_uart_init(void)
     struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT;
     RT_UNUSED(value);
 
-    config.baud_rate = 115200;
+    config.baud_rate = 1500000;
 
 #define BSP_INSTALL_UART_DEVICE(no)     \
     uart = &_uart##no##_device;         \
