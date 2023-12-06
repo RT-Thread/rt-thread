@@ -444,6 +444,7 @@ rt_err_t rt_thread_detach(rt_thread_t thread)
     thread->stat = RT_THREAD_CLOSE;
 
 #ifdef RT_USING_MUTEX
+    _free_owned_mutex(thread);
     if ((thread->pending_object) &&
         (rt_object_get_type(thread->pending_object) == RT_Object_Class_Mutex))
     {
