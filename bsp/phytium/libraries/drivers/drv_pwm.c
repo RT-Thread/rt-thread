@@ -46,7 +46,7 @@ static rt_err_t drv_pwm_config(struct phytium_pwm *pwm_dev)
     {
         LOG_E("Pwm config init failed.\n");
 
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     return RT_EOK;
@@ -107,7 +107,7 @@ static rt_err_t drv_pwm_set(struct phytium_pwm *pwm_dev, int cmd, struct rt_pwm_
     {
         LOG_E("Pwm variable set failed.\n");
 
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     FPwmEnable(&pwm_dev->pwm_handle, channel);
@@ -129,7 +129,7 @@ static rt_err_t drv_pwm_get(struct phytium_pwm *pwm_dev, struct rt_pwm_configura
     {
         LOG_E("Pwm variable get failed.\n");
 
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     configuration->period = pwm_cfg.pwm_period * 1000;
@@ -161,7 +161,7 @@ static rt_err_t drv_pwm_set_dead_time(struct phytium_pwm *pwm_dev, struct rt_pwm
     {
         LOG_E("FPwmDbVariableSet failed.");
 
-        return RT_ERROR;
+        return -RT_ERROR;
     }
     FPwmEnable(&pwm_dev->pwm_handle, channel);
 
@@ -208,7 +208,7 @@ static rt_err_t pwm_controller_init(struct phytium_pwm *pwm_dev)
     {
         LOG_E("Pwm config failed.\n");
 
-        return RT_ERROR;
+        return -RT_ERROR;
     }
     ret = rt_device_pwm_register(&pwm_dev->device,
                                  pwm_dev->name,

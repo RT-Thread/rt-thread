@@ -60,7 +60,7 @@ rt_err_t FQspiInit(phytium_qspi_bus *phytium_qspi_bus)
     if (FT_SUCCESS != ret)
     {
         LOG_E("Qspi init failed.\n");
-        return RT_ERROR;
+        return -RT_ERROR;
     }
     else
     {
@@ -72,7 +72,7 @@ rt_err_t FQspiInit(phytium_qspi_bus *phytium_qspi_bus)
     if (FT_SUCCESS != ret)
     {
         LOG_E("Qspi flash detect failed.\n");
-        return RT_ERROR;
+        return -RT_ERROR;
     }
     else
     {
@@ -125,7 +125,7 @@ static rt_err_t phytium_qspi_configure(struct rt_spi_device *device, struct rt_s
     {
         qspi_bus->init = RT_FALSE;
         rt_kprintf("Qspi init failed!!!\n");
-        return RT_ERROR;
+        return -RT_ERROR;
     }
     qspi_bus->init = RT_EOK;
 
@@ -352,7 +352,7 @@ static rt_ssize_t phytium_qspi_xfer(struct rt_spi_device *device, struct rt_spi_
         if (FT_SUCCESS != ret)
         {
             LOG_E("Failed to erase mem, test result 0x%x.\r\n", ret);
-            return RT_ERROR;
+            return -RT_ERROR;
         }
         /* write norflash data */
         ret = QspiFlashWriteData(&(qspi_bus->fqspi), cmd, addr, (u8 *)&wr_buf, len);
@@ -360,7 +360,7 @@ static rt_ssize_t phytium_qspi_xfer(struct rt_spi_device *device, struct rt_spi_
         if (FT_SUCCESS != ret)
         {
             LOG_E("Failed to write mem, test result 0x%x.\r\n", ret);
-            return RT_ERROR;
+            return -RT_ERROR;
         }
         else
         {
@@ -378,7 +378,7 @@ static rt_ssize_t phytium_qspi_xfer(struct rt_spi_device *device, struct rt_spi_
         if (FT_SUCCESS != ret)
         {
             rt_kprintf("Failed to config read, test result 0x%x.\r\n", ret);
-            return RT_ERROR;
+            return -RT_ERROR;
         }
         /* read norflash data */
         size_t read_len = QspiFlashReadData(&(qspi_bus->fqspi), addr, (u8 *)&rd_buf, DAT_LENGTH);
@@ -386,7 +386,7 @@ static rt_ssize_t phytium_qspi_xfer(struct rt_spi_device *device, struct rt_spi_
         if (read_len != DAT_LENGTH)
         {
             rt_kprintf("Failed to read mem, read len = %d.\r\n", read_len);
-            return RT_ERROR;
+            return -RT_ERROR;
         }
         else
         {
@@ -407,7 +407,7 @@ static rt_ssize_t phytium_qspi_xfer(struct rt_spi_device *device, struct rt_spi_
             if (FT_SUCCESS != ret)
             {
                 LOG_E("Failed to read flash information.\n");
-                return RT_ERROR;
+                return -RT_ERROR;
             }
         }
 
@@ -420,14 +420,14 @@ static rt_ssize_t phytium_qspi_xfer(struct rt_spi_device *device, struct rt_spi_
         if (FT_SUCCESS != ret)
         {
             LOG_E("Failed to enable flash reg write.\n");
-            return RT_ERROR;
+            return -RT_ERROR;
         }
 
         ret |= FQspiFlashWriteReg(&(qspi_bus->fqspi), cmd, (u8 *)sndb, 1);
         if (FT_SUCCESS != ret)
         {
             LOG_E("Failed to write flash reg.\n");
-            return RT_ERROR;
+            return -RT_ERROR;
         }
 
         return RT_EOK;
@@ -483,7 +483,7 @@ static int rt_qspi_init(phytium_qspi_bus *phytium_qspi)
     else
     {
         LOG_E("Qspi bus register Failed!!!\n");
-        result = -RT_ERROR;
+        result = --RT_ERROR;
     }
 
     return result;
@@ -500,5 +500,6 @@ int rt_hw_qspi_init(void)
     phytium_qspi0_bus.fqspi_id = FQSPI0_ID;
     rt_qspi_init(&phytium_qspi0_bus);
 #endif
+    return 0;
 }
 INIT_BOARD_EXPORT(rt_hw_qspi_init);

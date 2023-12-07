@@ -37,27 +37,27 @@ static void FXmacSetupIsr(FXmacOs *instance_p);
 
 static FXmacOs fxmac_os_instace[FXMAC_NUM] =
 {
-    [FXMAC0_ID] = 
+    [FXMAC0_ID] =
     {
         .config = (0),
-        .hwaddr={0x98, 0x0e, 0x24, 0x00, 0x11, 0x0},
-    
+        .hwaddr = {0x98, 0x0e, 0x24, 0x00, 0x11, 0x0},
+
     },
-    [FXMAC1_ID] = 
+    [FXMAC1_ID] =
     {
         .config = (0),
-        .hwaddr={0x98, 0x0e, 0x24, 0x00, 0x11, 0x1},
-    
+        .hwaddr = {0x98, 0x0e, 0x24, 0x00, 0x11, 0x1},
+
     },
-    [FXMAC2_ID] = 
+    [FXMAC2_ID] =
     {
         .config = (0),
-        .hwaddr={0x98, 0x0e, 0x24, 0x00, 0x11, 0x2},
+        .hwaddr = {0x98, 0x0e, 0x24, 0x00, 0x11, 0x2},
     },
-    [FXMAC3_ID] = 
+    [FXMAC3_ID] =
     {
         .config = (0),
-        .hwaddr={0x98, 0x0e, 0x24, 0x00, 0x11, 0x3},
+        .hwaddr = {0x98, 0x0e, 0x24, 0x00, 0x11, 0x3},
     },
 };
 
@@ -1280,17 +1280,19 @@ FError FXmacOsTx(FXmacOs *instance_p, void *tx_buf)
     }
 
     p = tx_buf;
-    txring = &(FXMAC_GET_TXRING(instance_p->instance)); 
+    txring = &(FXMAC_GET_TXRING(instance_p->instance));
 
     for (q = p, n_pbufs = 0; q != NULL; q = q->next)
+    {
         n_pbufs++;
-        
+    }
+
     /* check if space is available to send */
-    if(txring->free_cnt < n_pbufs )
+    if (txring->free_cnt < n_pbufs)
     {
         FXmacProcessSentBds(instance_p, txring);
     }
-    
+
     if (IsTxSpaceAvailable(instance_p))
     {
         FXmacOsOutput(instance_p, p);
@@ -1453,7 +1455,7 @@ rt_err_t rt_xmac_tx(rt_device_t dev, struct pbuf *p)
     }
 
 
-    
+
 #if RT_LWIP_ETH_PAD_SIZE
     pbuf_header(p, -RT_LWIP_ETH_PAD_SIZE); /* reclaim the padding word */
 #endif
@@ -1461,7 +1463,7 @@ rt_err_t rt_xmac_tx(rt_device_t dev, struct pbuf *p)
 #if RT_LWIP_ETH_PAD_SIZE
     pbuf_header(p, ETH_PAD_SIZE); /* reclaim the padding word */
 #endif
-    
+
 
     if (ret != FT_SUCCESS)
     {
@@ -1554,7 +1556,7 @@ static void ethernet_link_thread(void *Args)
 
 
 
-static int rt_hw_xmac_init(FXmacOs *pOsMac, const char *name,const char * link_thread_name)
+static int rt_hw_xmac_init(FXmacOs *pOsMac, const char *name, const char *link_thread_name)
 {
     rt_err_t state = RT_EOK;
 
@@ -1577,10 +1579,10 @@ static int rt_hw_xmac_init(FXmacOs *pOsMac, const char *name,const char * link_t
         LOG_E("xmac device init faild: %d", state);
         return -RT_ERROR;
     }
-    rt_kprintf("Xmac %s Initiailized!\n",name);
+    rt_kprintf("Xmac %s Initiailized!\n", name);
 
-  
-    
+
+
     state = rt_thread_init(&pOsMac->_link_thread,
                            link_thread_name,
                            ethernet_link_thread,
@@ -1607,7 +1609,7 @@ static int rt_hw_xmac_eth_init(void)
     rt_err_t state = RT_EOK;
     FXmacOsControl os_config;
     FXmacOs *pOsMac;
-   
+
 #if defined(MAC_NUM0)
     /* os_config initialize，need to be set manually here */
     os_config.instance_id = MAC_NUM0_CONTROLLER;
@@ -1624,12 +1626,12 @@ static int rt_hw_xmac_eth_init(void)
     }
 
     const char *os_drv_xmac0_name = "e0";
-    const char * e0_thread_name = "e0_link_detect";
+    const char *e0_thread_name = "e0_link_detect";
 
-    state = rt_hw_xmac_init(pOsMac, os_drv_xmac0_name,e0_thread_name);
+    state = rt_hw_xmac_init(pOsMac, os_drv_xmac0_name, e0_thread_name);
     extern void set_if(const char *netif_name, const char *ip_addr, const char *gw_addr, const char *nm_addr);
 
-    rt_kprintf("Set netif %s ip addr!\n",os_drv_xmac0_name);
+    rt_kprintf("Set netif %s ip addr!\n", os_drv_xmac0_name);
     set_if(os_drv_xmac0_name, "192.168.4.10", "192.168.4.1", "255.255.255.0");
     if (RT_EOK != state)
     {
@@ -1651,10 +1653,10 @@ static int rt_hw_xmac_eth_init(void)
     }
 
     const char *os_drv_xmac1_name = "e1";
-    const char * e1_thread_name = "e1_link_detect";
+    const char *e1_thread_name = "e1_link_detect";
 
-    state = rt_hw_xmac_init(pOsMac, os_drv_xmac1_name,e1_thread_name);
-    rt_kprintf("Set Xmac %s ip addr!\n",os_drv_xmac1_name);
+    state = rt_hw_xmac_init(pOsMac, os_drv_xmac1_name, e1_thread_name);
+    rt_kprintf("Set Xmac %s ip addr!\n", os_drv_xmac1_name);
     set_if(os_drv_xmac1_name, "192.168.4.11", "192.168.4.1", "255.255.255.0");
     if (RT_EOK != state)
     {

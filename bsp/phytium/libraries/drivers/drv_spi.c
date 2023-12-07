@@ -134,14 +134,14 @@ static rt_err_t spim_configure(struct rt_spi_device *device,
     ret = FSpimCfgInitialize(&user_data_cfg->spim_instance, &input_cfg);
     if (FSPIM_SUCCESS != ret)
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     /* irq setting */
     ret = FSpimSetupInterrupt(&user_data_cfg->spim_instance);
     if (FSPIM_SUCCESS != ret)
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
     FSpimRegisterIntrruptHandler(&user_data_cfg->spim_instance, FSPIM_INTR_EVT_RX_DONE, rt_ft_send_event_done, NULL);
 
@@ -239,7 +239,7 @@ int rt_hw_spi_init(void)
     if (RT_EOK != rt_event_init(&rx_done_event, "rx_done_event", RT_IPC_FLAG_FIFO))
     {
         rt_kprintf("Create event failed.\n");
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 #ifdef RT_USING_SPIM0
     spi0_bus.name = "SPI0";

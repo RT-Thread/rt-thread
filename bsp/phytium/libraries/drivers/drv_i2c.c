@@ -64,7 +64,7 @@ static rt_err_t i2c_config(struct phytium_i2c_bus *i2c_bus)
     {
         LOG_E("Init master I2c failed, ret: 0x%x", ret);
 
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     return RT_EOK;
@@ -89,7 +89,7 @@ static rt_err_t i2c_mio_config(struct phytium_i2c_bus *i2c_bus)
     if (ret != FT_SUCCESS)
     {
         LOG_E("MIO initialize error.");
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     FIOPadSetMioMux(instance_p->config.instance_id);
@@ -98,7 +98,7 @@ static rt_err_t i2c_mio_config(struct phytium_i2c_bus *i2c_bus)
     if (NULL == config_p)
     {
         LOG_E("Config of mio instance %d non found.", instance_p->config.instance_id);
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     input_cfg = *config_p;
@@ -111,7 +111,7 @@ static rt_err_t i2c_mio_config(struct phytium_i2c_bus *i2c_bus)
     if (FI2C_SUCCESS != ret)
     {
         LOG_E("Init mio master failed, ret: 0x%x", ret);
-        return RT_ERROR;
+        return -RT_ERROR;
     }
     mio_handle.is_ready = 0;
     memset(&mio_handle, 0, sizeof(mio_handle));
@@ -130,7 +130,7 @@ static rt_err_t phytium_i2c_set_speed(struct phytium_i2c_bus *i2c_bus, rt_uint32
     if (ret != FI2C_SUCCESS)
     {
         LOG_E("Set i2c speed failed!\n");
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     return RT_EOK;
@@ -179,7 +179,7 @@ static rt_ssize_t i2c_master_xfer(struct rt_i2c_bus_device *device, struct rt_i2
             if (ret != FI2C_SUCCESS)
             {
                 LOG_E("I2C master read failed!\n");
-                return RT_ERROR;
+                return -RT_ERROR;
             }
         }
         else
@@ -188,7 +188,7 @@ static rt_ssize_t i2c_master_xfer(struct rt_i2c_bus_device *device, struct rt_i2
             if (ret != FI2C_SUCCESS)
             {
                 LOG_E("I2C master write failed!\n");
-                return RT_ERROR;
+                return -RT_ERROR;
             }
         }
     }
@@ -212,7 +212,7 @@ static int i2c_controller_init(struct phytium_i2c_bus *i2c_controller_bus)
     {
         LOG_E("I2C config failed.\n");
 
-        return RT_ERROR;
+        return -RT_ERROR;
     }
     i2c_controller_bus->device.ops = &_i2c_ops;
     ret = rt_i2c_bus_device_register(&i2c_controller_bus->device, i2c_controller_bus->name);
@@ -232,7 +232,7 @@ static int i2c_mio_init(struct phytium_i2c_bus *i2c_mio_bus)
     {
         LOG_E("I2C mio config failed.\n");
 
-        return RT_ERROR;
+        return -RT_ERROR;
     }
     i2c_mio_bus->device.ops = &_i2c_ops;
     ret = rt_i2c_bus_device_register(&i2c_mio_bus->device, i2c_mio_bus->name);

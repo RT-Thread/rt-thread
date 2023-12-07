@@ -88,7 +88,7 @@ static rt_err_t _can_config(struct rt_can_device *can, struct can_configure *cfg
     if (status != FT_SUCCESS)
     {
         LOG_D("CAN %d initialize error, status = %#x.", drv_can->can_handle.config.instance_id, status);
-        return RT_ERROR;
+        return -RT_ERROR;
     }
     /*Set the baudrate*/
     FCanBaudrateConfig arb_segment_config;
@@ -104,7 +104,7 @@ static rt_err_t _can_config(struct rt_can_device *can, struct can_configure *cfg
     if (status != RT_EOK)
     {
         LOG_D("CAN%d set arb segment baudrate failed.", drv_can->can_handle.config.instance_id);
-        return RT_ERROR;
+        return -RT_ERROR;
     }
     data_segment_config.auto_calc = TRUE;
     data_segment_config.baudrate = cfg->baud_rate_fd;
@@ -113,7 +113,7 @@ static rt_err_t _can_config(struct rt_can_device *can, struct can_configure *cfg
     if (status != RT_EOK)
     {
         LOG_D("CAN%d set data segment baudrate failed.", drv_can->can_handle.config.instance_id);
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 #else
     arb_segment_config.auto_calc = TRUE;
@@ -123,7 +123,7 @@ static rt_err_t _can_config(struct rt_can_device *can, struct can_configure *cfg
     if (status != FT_SUCCESS)
     {
         LOG_D("CAN%d set arb segment baudrate failed.", drv_can->can_handle.config.instance_id);
-        return RT_ERROR;
+        return -RT_ERROR;
     }
     data_segment_config.auto_calc = TRUE;
     data_segment_config.baudrate = cfg->baud_rate;
@@ -132,7 +132,7 @@ static rt_err_t _can_config(struct rt_can_device *can, struct can_configure *cfg
     if (status != FT_SUCCESS)
     {
         LOG_D("CAN%d set data segment baudrate failed.", drv_can->can_handle.config.instance_id);
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 #endif
 
@@ -147,7 +147,7 @@ static rt_err_t _can_config(struct rt_can_device *can, struct can_configure *cfg
     if (status != FT_SUCCESS)
     {
         LOG_E("CAN%d set mask filter failed.", drv_can->can_handle.config.instance_id);
-        return RT_ERROR;
+        return -RT_ERROR;
     }
     /* Identifier mask enable */
     FCanIdMaskFilterEnable(&(drv_can->can_handle));
@@ -238,7 +238,7 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
                 argval != CAN20kBaud  &&
                 argval != CAN10kBaud)
             {
-                return RT_ERROR;
+                return -RT_ERROR;
             }
             if (argval != drv_can->device.config.baud_rate)
             {
@@ -255,7 +255,7 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
                 if (status != FT_SUCCESS)
                 {
                     LOG_D("CAN%d set arb segment baudrate failed.", drv_can->can_handle.config.instance_id);
-                    return RT_ERROR;
+                    return -RT_ERROR;
                 }
                 data_segment_config.auto_calc = TRUE;
                 data_segment_config.baudrate = drv_can->device.config.baud_rate;
@@ -264,7 +264,7 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
                 if (status != FT_SUCCESS)
                 {
                     LOG_D("CAN%d set data segment baudrate failed.", drv_can->can_handle.config.instance_id);
-                    return RT_ERROR;
+                    return -RT_ERROR;
                 }
                 FCanEnable(&(drv_can->can_handle), RT_TRUE);
             }
@@ -288,7 +288,7 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
                 if (status != FT_SUCCESS)
                 {
                     LOG_D("CAN%d set arb segment baudrate failed.", drv_can->can_handle.config.instance_id);
-                    return RT_ERROR;
+                    return -RT_ERROR;
                 }
                 data_segment_config.auto_calc = TRUE;
                 data_segment_config.baudrate = drv_can->device.config.baud_rate_fd;
@@ -297,7 +297,7 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
                 if (status != FT_SUCCESS)
                 {
                     LOG_D("CAN%d set data segment baudrate failed.", drv_can->can_handle.config.instance_id);
-                    return RT_ERROR;
+                    return -RT_ERROR;
                 }
                 FCanEnable(&(drv_can->can_handle), RT_TRUE);
             }
@@ -318,7 +318,7 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
                 if (status != FT_SUCCESS)
                 {
                     LOG_E("CAN%d set mask filter failed.", drv_can->can_handle.config.instance_id);
-                    return RT_ERROR;
+                    return -RT_ERROR;
                 }
             }
             FCanEnable(&(drv_can->can_handle), RT_TRUE);
@@ -363,7 +363,7 @@ static int _can_sendmsg(struct rt_can_device *can, const void *buf, rt_uint32_t 
     can_frame.candlc = pmsg->len ;
 
     memcpy(can_frame.data, pmsg->data, 8);
-    return (FCanSend(&drv_can->can_handle, &can_frame) == RT_EOK) ? RT_EOK : -RT_ERROR;
+    return (FCanSend(&drv_can->can_handle, &can_frame) == RT_EOK) ? RT_EOK : --RT_ERROR;
 }
 
 static int _can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t fifo)
@@ -381,7 +381,7 @@ static int _can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t fifo)
     if (status != FT_SUCCESS)
     {
         LOG_D("CAN%d recv data failed.", drv_can->can_handle.config.instance_id);
-        return RT_ERROR;
+        return -RT_ERROR;
     }
     if (CAN_EFF_FLAG & recv_frame.canid)
     {
