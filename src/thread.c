@@ -146,7 +146,7 @@ static void _thread_timeout(void *parameter)
 
 /* release the mutex held by a thread when thread is reclaimed */
 #ifdef RT_USING_MUTEX
-void _free_owned_mutex(rt_thread_t thread)
+static void _free_owned_mutex(rt_thread_t thread)
 {
     rt_list_t *node;
     rt_list_t *tmp_list;
