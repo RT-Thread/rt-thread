@@ -16,7 +16,7 @@
 
 #define usb_malloc(size)                    rt_malloc(size)
 #define usb_free(ptr)                       rt_free(ptr)
-#define usb_align(align, size)              rt_malloc_align(size, align)  
+#define usb_align(align, size)              rt_malloc_align(size, align)
 
 #ifndef CONFIG_USB_DBG_LEVEL
 #define CONFIG_USB_DBG_LEVEL USB_DBG_ERROR

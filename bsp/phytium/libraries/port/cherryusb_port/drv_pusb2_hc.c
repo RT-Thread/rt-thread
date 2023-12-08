@@ -59,7 +59,7 @@ static void usb_pusb2_interrupt_handler(rt_int32_t vector, void *args)
     USBH_IRQHandler(args);
 }
 
-static void usb_pusb2_setup_interrupt(struct usb_pusb2_config *config)    
+static void usb_pusb2_setup_interrupt(struct usb_pusb2_config *config)
 {
     RT_ASSERT(config);
     rt_uint32_t irq_num = config->irq;
