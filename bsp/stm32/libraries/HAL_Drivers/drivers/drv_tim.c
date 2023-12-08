@@ -359,7 +359,7 @@ static void timer_init(struct rt_hwtimer_device *timer, rt_uint32_t state)
             tim->Init.CounterMode   = TIM_COUNTERMODE_DOWN;
         }
         tim->Init.RepetitionCounter = 0;
-#if defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32G0) || defined(SOC_SERIES_STM32MP1) || defined(SOC_SERIES_STM32WB)
+#if defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32G4) || defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32G0) || defined(SOC_SERIES_STM32MP1) || defined(SOC_SERIES_STM32WB)
         tim->Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
 #endif
         if (HAL_TIM_Base_Init(tim) != HAL_OK)
@@ -442,7 +442,7 @@ static rt_err_t timer_ctrl(rt_hwtimer_t *timer, rt_uint32_t cmd, void *arg)
     case HWTIMER_CTRL_FREQ_SET:
     {
         rt_uint32_t freq;
-        rt_uint16_t val;
+        rt_uint16_t val=0;
 
         /* set timer frequence */
         freq = *((rt_uint32_t *)arg);
@@ -451,7 +451,7 @@ static rt_err_t timer_ctrl(rt_hwtimer_t *timer, rt_uint32_t cmd, void *arg)
 
 #if defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7)
         if (tim->Instance == TIM1 || tim->Instance == TIM8 || tim->Instance == TIM9 || tim->Instance == TIM10 || tim->Instance == TIM11)
-#elif defined(SOC_SERIES_STM32L4)
+#elif defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32G4)
         if (tim->Instance == TIM15 || tim->Instance == TIM16 || tim->Instance == TIM17)
 #elif defined(SOC_SERIES_STM32WB)
         if (tim->Instance == TIM16 || tim->Instance == TIM17)
@@ -616,7 +616,7 @@ void TIM1_BRK_TIM15_IRQHandler(void)
 }
 #endif
 #ifdef BSP_USING_TIM16
-#if defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32WB)
+#if defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32WB)|| defined(SOC_SERIES_STM32G4)
     void TIM1_UP_TIM16_IRQHandler(void)
 #elif defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32MP1)
     void TIM16_IRQHandler(void)
@@ -630,7 +630,7 @@ void TIM1_BRK_TIM15_IRQHandler(void)
 }
 #endif
 #ifdef BSP_USING_TIM17
-#if defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32WB)
+#if defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32WB) || defined(SOC_SERIES_STM32G4)
     void TIM1_TRG_COM_TIM17_IRQHandler(void)
 #elif defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32MP1)
     void TIM17_IRQHandler(void)
