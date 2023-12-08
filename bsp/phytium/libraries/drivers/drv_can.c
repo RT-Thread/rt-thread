@@ -363,7 +363,7 @@ static int _can_sendmsg(struct rt_can_device *can, const void *buf, rt_uint32_t 
     can_frame.candlc = pmsg->len ;
 
     memcpy(can_frame.data, pmsg->data, 8);
-    return (FCanSend(&drv_can->can_handle, &can_frame) == RT_EOK) ? RT_EOK : --RT_ERROR;
+    return (FCanSend(&drv_can->can_handle, &can_frame) == RT_EOK) ? RT_EOK : -RT_ERROR;
 }
 
 static int _can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t fifo)

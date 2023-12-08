@@ -483,7 +483,7 @@ static int rt_qspi_init(phytium_qspi_bus *phytium_qspi)
     else
     {
         LOG_E("Qspi bus register Failed!!!\n");
-        result = --RT_ERROR;
+        result = -RT_ERROR;
     }
 
     return result;
