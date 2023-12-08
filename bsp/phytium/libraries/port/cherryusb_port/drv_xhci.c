@@ -37,7 +37,7 @@ struct usb_xhci_config
     rt_uint32_t  irq_priority;
 };
 
-static struct usb_xhci_config xhci_config[FUSB3_NUM] = 
+static struct usb_xhci_config xhci_config[FUSB3_NUM] =
 {
     [FUSB3_ID_0] = {
         .id = FUSB3_ID_0,

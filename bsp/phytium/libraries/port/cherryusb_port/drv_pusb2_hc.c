@@ -37,9 +37,9 @@ struct usb_pusb2_config
     rt_uint32_t  irq_priority;
 };
 
-static struct usb_pusb2_config pusb2_config[1U] = 
+static struct usb_pusb2_config pusb2_config[1U] =
 {
-    [FUSB2_ID_VHUB_0] = 
+    [FUSB2_ID_VHUB_0] =
     {
         .id = FUSB2_ID_VHUB_0,
         .base_addr = FUSB2_0_VHUB_BASE_ADDR,
