@@ -14,4 +14,4 @@
 /aarch64/smart-env.bat
 **/**/makefile
 /libraries/tests/*
-/libraries/phytium_standalone_sdk/*
+/libraries/phytium_standalone_sdk/

@@ -14,15 +14,15 @@
 #define __DRV_SPI_H__
 
 #include <rtthread.h>
-#ifdef BSP_USING_SPI
-
-struct drv_spi
+#ifdef __cplusplus
+extern "C"
 {
-    u32 spi_id;
-    FSpim spim_instance;
-    struct rt_spi_device device;
-};
+#endif
 
+int rt_hw_spi_init(void);
+
+#ifdef __cplusplus
+}
 #endif
 
 #endif

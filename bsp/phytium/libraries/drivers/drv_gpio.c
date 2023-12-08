@@ -12,8 +12,6 @@
  */
 
 #include "rtconfig.h"
-#ifdef BSP_USING_PIN
-
 #include <rtthread.h>
 #include <rtdevice.h>
 #include "interrupt.h"
@@ -31,6 +29,7 @@
 #include "fkernel.h"
 #include "fcpu_info.h"
 #include "ftypes.h"
+#include "fio_mux.h"
 #include "board.h"
 
 #include "fiopad.h"
@@ -200,7 +199,7 @@ rt_int8_t drv_pin_read(struct rt_device *device, rt_base_t pin)
                    ctrl_id,
                    port_id == 0 ? 'a' : 'b',
                    pin_id);
-        return RT_ERROR;
+        return -RT_ERROR;
     }
     return FGpioGetInputValue(pin_instance) == FGPIO_PIN_HIGH ? PIN_HIGH : PIN_LOW;
 }
@@ -224,7 +223,7 @@ rt_err_t drv_pin_attach_irq(struct rt_device *device, rt_base_t pin,
     if (pin_instance == RT_NULL)
     {
         LOG_E("GPIO%d-%c-%d not init yet.\n", ctrl_id, port_id == 0 ? 'a' : 'b', pin_id);
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     if (pin_config->en_irq)
@@ -290,7 +289,7 @@ rt_err_t drv_pin_detach_irq(struct rt_device *device, rt_base_t pin)
                    ctrl_id,
                    port_id == 0 ? 'a' : 'b',
                    pin_id);
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     level = rt_hw_interrupt_disable();
@@ -314,7 +313,7 @@ rt_err_t drv_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_uint8_t 
                    ctrl_id,
                    port_id == 0 ? 'a' : 'b',
                    pin_id);
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     FGpioSetInterruptMask(pin_instance, enabled);
@@ -342,4 +341,3 @@ int ft_pin_init(void)
     return ret;
 }
 INIT_DEVICE_EXPORT(ft_pin_init);
-#endif

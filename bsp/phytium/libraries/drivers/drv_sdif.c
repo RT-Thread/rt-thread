@@ -165,14 +165,14 @@ static rt_err_t fsdif_ctrl_init(struct rt_mmcsd_host *host)
     if (!mmcsd_instance)
     {
         LOG_E("Malloc mmcsd_instance failed");
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     rw_desc = rt_malloc_align(SDIF_MAX_BLK_TRANS * sizeof(FSdifIDmaDesc), SDIF_MALLOC_CAP_DESC);
     if (!rw_desc)
     {
         LOG_E("Malloc rw_desc failed");
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     rt_memset(mmcsd_instance, 0, sizeof(FSdif));
@@ -195,13 +195,13 @@ static rt_err_t fsdif_ctrl_init(struct rt_mmcsd_host *host)
     if (FSDIF_SUCCESS != FSdifCfgInitialize(mmcsd_instance, &mmcsd_config))
     {
         LOG_E("SDIF controller init failed.");
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     if (FSDIF_SUCCESS != FSdifSetIDMAList(mmcsd_instance, rw_desc, (uintptr)rw_desc + PV_OFFSET, SDIF_MAX_BLK_TRANS))
     {
         LOG_E("SDIF controller setup DMA failed.");
-        return RT_ERROR;
+        return -RT_ERROR;
     }
     mmcsd_instance->desc_list.first_desc_dma = (uintptr)rw_desc + PV_OFFSET;
 

@@ -5,7 +5,7 @@ choice
 	default FIREFLY_DEMO_BOARD
 
     config E2000D_DEMO_BOARD
-        select USE_IOMUX
+        select BSP_USING_IOPAD
         bool
         prompt "Use E2000D demo board"
         depends on TARGET_E2000D
@@ -19,7 +19,7 @@ choice
         endif
 
     config E2000Q_DEMO_BOARD
-        select USE_IOMUX
+        select BSP_USING_IOPAD
         bool
         prompt "Use E2000Q demo board"
         depends on TARGET_E2000Q
@@ -31,37 +31,9 @@ choice
 				default "demo"
             source "$SDK_DIR/board/e2000q_demo/e2000q_demo.kconfig"
         endif
-
-    config D2000_TEST_BOARD
-        select USE_IOMUX
-        bool
-        prompt "Use D2000 test board"
-        depends on TARGET_D2000
-        help
-            select D2000 test board config
-        if D2000_TEST_BOARD
-            config BOARD_NAME
-				string
-				default "test"
-            source "$SDK_DIR/board/d2000_test/d2000_test.kconfig"
-        endif
-
-    config FT2004_DSK_BOARD
-        select USE_IOMUX
-        bool
-        prompt "Use FT2004 dsk board"
-        depends on TARGET_FT2004
-        help
-            select FT2004 dsk board config
-        if FT2004_DSK_BOARD
-            config BOARD_NAME
-				string
-				default "dsk"
-            source "$SDK_DIR/board/ft2004_dsk/ft2004_dsk.kconfig"
-        endif
         
     config FIREFLY_DEMO_BOARD
-        select USE_IOMUX
+        select BSP_USING_IOPAD
         bool
         prompt "Use firefly board"
         depends on TARGET_PHYTIUMPI

@@ -5,7 +5,8 @@ menu "Hardware Drivers"
         default n
 
 menu "On-chip Peripheral Drivers"
-    menuconfig BSP_USING_IOPAD
+
+    config BSP_USING_IOPAD
         bool "Enable IOPAD"
         default y
 
@@ -15,14 +16,18 @@ menu "On-chip Peripheral Drivers"
         select USE_SERIAL # sdk serial component
         select RT_USING_SERIAL
         if BSP_USING_UART
-            config RT_USING_UART1
-                bool "Enable UART1"
-                default y
-            
             config RT_USING_UART0
                 bool "Enable UART0"
                 default n
-
+            config RT_USING_UART1
+                bool "Enable UART1"
+                default y
+            config RT_USING_UART2
+                bool "Enable UART2"
+                default n
+            config RT_USING_UART3
+                bool "Enable UART3"
+                default n
         endif
 
     menuconfig BSP_USING_SPI
@@ -63,9 +68,6 @@ menu "On-chip Peripheral Drivers"
             config RT_USING_CAN1
             bool "Enable can1"
             default n
-            config RT_USING_CAN2
-            bool "Enable can2"
-            default n
         endif
 
     menuconfig BSP_USING_GPIO
@@ -80,12 +82,17 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_SPI
         select RT_USING_PIN
         if BSP_USING_QSPI
-            config USING_QSPI_CHANNEL0
-                bool "using qspi channel_0"
-                default n
-            config USING_QSPI_CHANNEL1
-                bool "using qspi channel_1"
-                default n
+            config RT_USING_QSPI0
+            bool "Enable qspi0"
+            default n
+            if RT_USING_QSPI0
+                config USING_QSPI_CHANNEL0
+                    bool "using qspi channel_0"
+                    default n
+                config USING_QSPI_CHANNEL1
+                    bool "using qspi channel_1"
+                    default n
+            endif
         endif
 
     menuconfig BSP_USING_ETH
@@ -124,6 +131,9 @@ menu "On-chip Peripheral Drivers"
             config RT_USING_PWM6
                 bool "Enable pwm6"
                 default n
+            config RT_USING_PWM7
+                bool "Enable pwm7"
+                default n
         endif
 
     menuconfig BSP_USING_I2C
@@ -138,72 +148,74 @@ menu "On-chip Peripheral Drivers"
             select ENABLE_MIO
 
             if I2C_USE_MIO
-            config RT_USING_MIO0
-                bool "Enable mio0"
-                default n
-            config RT_USING_MIO1
-                bool "Enable mio1"
-                default n
-            config RT_USING_MIO2
-                bool "Enable mio2"
-                default n
-            config RT_USING_MIO3
-                bool "Enable mio3"
-                default n
-            config RT_USING_MIO4
-                bool "Enable mio4"
-                default n
-            config RT_USING_MIO5
-                bool "Enable mio5"
-                default n
-            config RT_USING_MIO6
-                bool "Enable mio6"
-                default n
-            config RT_USING_MIO7
-                bool "Enable mio7"
-                default n
-            config RT_USING_MIO8
-                bool "Enable mio8"
-                default n
-            config RT_USING_MIO9
-                bool "Enable mio9"
-                default n
-            config RT_USING_MIO10
-                bool "Enable mio10"
-                default n
-            config RT_USING_MIO11
-                bool "Enable mio11"
-                default n
-            config RT_USING_MIO12
-                bool "Enable mio12"
-                default n
-            config RT_USING_MIO13
-                bool "Enable mio13"
-                default n
-            config RT_USING_MIO14
-                bool "Enable mio14"
-                default n
-            config RT_USING_MIO15
-                bool "Enable mio15"
-                default n
+                config RT_USING_MIO0
+                    bool "Enable mio0"
+                    default n
+                config RT_USING_MIO1
+                    bool "Enable mio1"
+                    default n
+                config RT_USING_MIO2
+                    bool "Enable mio2"
+                    default n
+                config RT_USING_MIO3
+                    bool "Enable mio3"
+                    default n
+                config RT_USING_MIO4
+                    bool "Enable mio4"
+                    default n
+                config RT_USING_MIO5
+                    bool "Enable mio5"
+                    default n
+                config RT_USING_MIO6
+                    bool "Enable mio6"
+                    default n
+                config RT_USING_MIO7
+                    bool "Enable mio7"
+                    default n
+                config RT_USING_MIO8
+                    bool "Enable mio8"
+                    default n
+                config RT_USING_MIO9
+                    bool "Enable mio9"
+                    default n
+                config RT_USING_MIO10
+                    bool "Enable mio10"
+                    default n
+                config RT_USING_MIO11
+                    bool "Enable mio11"
+                    default n
+                config RT_USING_MIO12
+                    bool "Enable mio12"
+                    default n
+                config RT_USING_MIO13
+                    bool "Enable mio13"
+                    default n
+                config RT_USING_MIO14
+                    bool "Enable mio14"
+                    default n
+                config RT_USING_MIO15
+                    bool "Enable mio15"
+                    default n
             endif
     
             config I2C_USE_CONTROLLER
             bool "using i2c controller"
             default n
             if I2C_USE_CONTROLLER
-            config RT_USING_I2C0
-                bool "Enable i2c0"
-                default n
-            config RT_USING_I2C1
-                bool "Enable i2c1"
-                default n
-            config RT_USING_I2C2
-                bool "Enable i2c2"
-                default n
+                config RT_USING_I2C0
+                    bool "Enable i2c0"
+                    default n
+                config RT_USING_I2C1
+                    bool "Enable i2c1"
+                    default n
+                config RT_USING_I2C2
+                    bool "Enable i2c2"
+                    default n
+                config RT_USING_I2C3
+                    bool "Enable i2c3"
+                    default n
+                endif
             endif
-
-        endif
        
     menuconfig BSP_USING_SDIF
         bool "Enable SDIF"

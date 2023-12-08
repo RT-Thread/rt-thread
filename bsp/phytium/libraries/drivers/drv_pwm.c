@@ -11,7 +11,7 @@
  *
  */
 #include "rtconfig.h"
-#ifdef BSP_USING_PWM
+#include <rtdevice.h>
 #define LOG_TAG      "pwm_drv"
 #include "drv_log.h"
 #include "drv_pwm.h"
@@ -27,68 +27,26 @@ struct phytium_pwm
     struct rt_device_pwm device; /* inherit from can device */
 };
 
-static struct phytium_pwm pwm_dev[FPWM_NUM] =
-{
-#if defined(TARGET_E2000)
-    {
-        .name = "PWM0",
-        .pwm_handle.config.instance_id = 0,
-    },
-    {
-        .name = "PWM1",
-        .pwm_handle.config.instance_id = 1,
-    },
-    {
-        .name = "PWM2",
-        .pwm_handle.config.instance_id = 2,
-    },
-    {
-        .name = "PWM3",
-        .pwm_handle.config.instance_id = 3,
-    },
-    {
-        .name = "PWM4",
-        .pwm_handle.config.instance_id = 4,
-    },
-    {
-        .name = "PWM5",
-        .pwm_handle.config.instance_id = 5,
-    },
-    {
-        .name = "PWM6",
-        .pwm_handle.config.instance_id = 6,
-    },
-    {
-        .name = "PWM7",
-        .pwm_handle.config.instance_id = 7,
-    },
-#elif defined(TARGET_PHYTIUMPI)
-    {
-        .name = "PWM2",
-        .pwm_handle.config.instance_id = 2,
-    },
-#endif
-};
-
 static rt_err_t drv_pwm_config(struct phytium_pwm *pwm_dev)
 {
     RT_ASSERT(pwm_dev);
     u32 ret;
-    FPwmConfig *config = NULL;
+    FPwmConfig config;
     FPwmCtrl *pwm_handle = &pwm_dev->pwm_handle;
     FIOPadSetPwmMux(pwm_handle->config.instance_id, 0);
     FIOPadSetPwmMux(pwm_handle->config.instance_id, 1);
-    config = FPwmLookupConfig(pwm_handle->config.instance_id);
+    config = *FPwmLookupConfig(pwm_handle->config.instance_id);
 #ifdef RT_USING_SMART
-    config->pwm_base_addr = (uintptr)rt_ioremap((void *)config->pwm_base_addr, 0x1000);
-    config->db_base_addr = (uintptr)rt_ioremap((void *)config->db_base_addr, 0x100);
+    config.lsd_config_addr = (uintptr)rt_ioremap((void *)config.lsd_config_addr, 0x100);
+    config.pwm_base_addr = (uintptr)rt_ioremap((void *)config.pwm_base_addr, 0x1000);
+    config.db_base_addr = (uintptr)rt_ioremap((void *)config.db_base_addr, 0x100);
 #endif
-    ret = FPwmCfgInitialize(pwm_handle, config);
+    ret = FPwmCfgInitialize(pwm_handle, &config);
     if (ret != FPWM_SUCCESS)
     {
         LOG_E("Pwm config init failed.\n");
 
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     return RT_EOK;
@@ -149,7 +107,7 @@ static rt_err_t drv_pwm_set(struct phytium_pwm *pwm_dev, int cmd, struct rt_pwm_
     {
         LOG_E("Pwm variable set failed.\n");
 
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     FPwmEnable(&pwm_dev->pwm_handle, channel);
@@ -171,7 +129,7 @@ static rt_err_t drv_pwm_get(struct phytium_pwm *pwm_dev, struct rt_pwm_configura
     {
         LOG_E("Pwm variable get failed.\n");
 
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 
     configuration->period = pwm_cfg.pwm_period * 1000;
@@ -203,7 +161,7 @@ static rt_err_t drv_pwm_set_dead_time(struct phytium_pwm *pwm_dev, struct rt_pwm
     {
         LOG_E("FPwmDbVariableSet failed.");
 
-        return RT_ERROR;
+        return -RT_ERROR;
     }
     FPwmEnable(&pwm_dev->pwm_handle, channel);
 
@@ -242,62 +200,93 @@ static const struct rt_pwm_ops _pwm_ops =
     _pwm_control,
 };
 
-static rt_err_t pwm_controller_init(u32 pwm_id)
+static rt_err_t pwm_controller_init(struct phytium_pwm *pwm_dev)
 {
     u32 ret = RT_EOK;
-    ret = drv_pwm_config(&pwm_dev[pwm_id]);
+    ret = drv_pwm_config(pwm_dev);
     if (ret != FPWM_SUCCESS)
     {
         LOG_E("Pwm config failed.\n");
 
-        return RT_ERROR;
+        return -RT_ERROR;
     }
-    ret = rt_device_pwm_register(&pwm_dev[pwm_id].device,
-                                 pwm_dev[pwm_id].name,
+    ret = rt_device_pwm_register(&pwm_dev->device,
+                                 pwm_dev->name,
                                  &_pwm_ops,
-                                 &pwm_dev[pwm_id]);
+                                 pwm_dev);
     RT_ASSERT(ret == RT_EOK);
 
     return ret;
 }
 
-int rt_hw_pwm_init(void)
-{
-#if defined(TARGET_E2000)
-
 #if defined(RT_USING_PWM0)
-    pwm_controller_init(FPWM0_ID);
+static struct phytium_pwm pwm0_dev;
 #endif
 #if defined(RT_USING_PWM1)
-    pwm_controller_init(FPWM1_ID);
+static struct phytium_pwm pwm1_dev;
 #endif
 #if defined(RT_USING_PWM2)
-    pwm_controller_init(FPWM2_ID);
+static struct phytium_pwm pwm2_dev;
 #endif
 #if defined(RT_USING_PWM3)
-    pwm_controller_init(FPWM3_ID);
+static struct phytium_pwm pwm3_dev;
 #endif
 #if defined(RT_USING_PWM4)
-    pwm_controller_init(FPWM4_ID);
+static struct phytium_pwm pwm4_dev;
 #endif
 #if defined(RT_USING_PWM5)
-    pwm_controller_init(FPWM5_ID);
+static struct phytium_pwm pwm5_dev;
 #endif
 #if defined(RT_USING_PWM6)
-    pwm_controller_init(FPWM6_ID);
+static struct phytium_pwm pwm6_dev;
 #endif
 #if defined(RT_USING_PWM7)
-    pwm_controller_init(FPWM7_ID);
+static struct phytium_pwm pwm7_dev;
 #endif
 
-#elif defined(TARGET_PHYTIUMPI)
-
+int rt_hw_pwm_init(void)
+{
+#if defined(RT_USING_PWM0)
+    pwm0_dev.name = "PWM0";
+    pwm0_dev.pwm_handle.config.instance_id = FPWM0_ID;
+    pwm_controller_init(&pwm0_dev);
+#endif
+#if defined(RT_USING_PWM1)
+    pwm1_dev.name = "PWM1";
+    pwm1_dev.pwm_handle.config.instance_id = FPWM1_ID;
+    pwm_controller_init(&pwm1_dev);
+#endif
 #if defined(RT_USING_PWM2)
-    pwm_controller_init(FPWM2_ID);
+    pwm2_dev.name = "PWM2";
+    pwm2_dev.pwm_handle.config.instance_id = FPWM2_ID;
+    pwm_controller_init(&pwm2_dev);
+#endif
+#if defined(RT_USING_PWM3)
+    pwm3_dev.name = "PWM3";
+    pwm3_dev.pwm_handle.config.instance_id = FPWM3_ID;
+    pwm_controller_init(&pwm3_dev);
+#endif
+#if defined(RT_USING_PWM4)
+    pwm4_dev.name = "PWM4";
+    pwm4_dev.pwm_handle.config.instance_id = FPWM4_ID;
+    pwm_controller_init(&pwm4_dev);
+#endif
+#if defined(RT_USING_PWM5)
+    pwm5_dev.name = "PWM5";
+    pwm5_dev.pwm_handle.config.instance_id = FPWM5_ID;
+    pwm_controller_init(&pwm5_dev);
+#endif
+#if defined(RT_USING_PWM6)
+    pwm6_dev.name = "PWM6";
+    pwm6_dev.pwm_handle.config.instance_id = FPWM6_ID;
+    pwm_controller_init(&pwm6_dev);
+#endif
+#if defined(RT_USING_PWM7)
+    pwm7_dev.name = "PWM7";
+    pwm7_dev.pwm_handle.config.instance_id = FPWM7_ID;
+    pwm_controller_init(&pwm7_dev);
 #endif
 
-#endif
     return 0;
 }
 INIT_DEVICE_EXPORT(rt_hw_pwm_init);
-#endif
