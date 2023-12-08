@@ -500,9 +500,6 @@ int rt_hw_qspi_init(void)
     phytium_qspi0_bus.fqspi_id = FQSPI0_ID;
     rt_qspi_init(&phytium_qspi0_bus);
 #endif
-<<<<<<< HEAD
     return 0;
-=======
->>>>>>> master_gitlab_231208
 }
 INIT_BOARD_EXPORT(rt_hw_qspi_init);
