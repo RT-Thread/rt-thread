@@ -80,7 +80,7 @@ void rt_hw_board_init(void)
     rt_hw_gpio_init();
 #endif
 
-#ifdef RT_USING_I2C
+#ifdef BSP_USING_SOFT_I2C
     rt_sw_i2c_init();
 #endif
 

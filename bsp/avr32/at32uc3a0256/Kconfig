@@ -142,7 +142,7 @@ menu "On-chip Peripheral Drivers"
         if BSP_USING_SOFT_I2C
             config BSP_USING_SOFT_I2C1
                 bool "Enable I2C1 Bus (software simulation)"
-                default y
+                default n
                 if BSP_USING_SOFT_I2C1
                     config BSP_SOFT_I2C1_SCL_PIN
                         int "I2C1 SCL pin number (GP)"
