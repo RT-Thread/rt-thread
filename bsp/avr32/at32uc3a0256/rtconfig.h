@@ -24,8 +24,6 @@
 
 /* kservice optimization */
 
-#define RT_USING_DEBUG
-#define RT_DEBUGING_COLOR
 
 /* Inter-Thread communication */
 
@@ -103,13 +101,10 @@
 /* Network */
 
 
-/* Utilities */
-
-
-/* Memory management */
-
-
 /* Memory protection */
+
+
+/* Utilities */
 
 
 /* RT-Thread Utestcases */
