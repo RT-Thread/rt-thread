@@ -73,15 +73,12 @@
 #define RT_USING_SERIAL
 #define RT_USING_SERIAL_V1
 #define RT_SERIAL_RB_BUFSZ 64
-#define RT_USING_I2C
-#define RT_USING_I2C_BITOPS
 #define RT_USING_PIN
 
 /* Using USB */
 
 
 /* C/C++ and POSIX layer */
-
 
 /* ISO-ANSI C layer */
 
@@ -104,13 +101,10 @@
 /* Network */
 
 
-/* Utilities */
-
-
-/* Memory management */
-
-
 /* Memory protection */
+
+
+/* Utilities */
 
 
 /* RT-Thread Utestcases */
@@ -245,9 +239,5 @@
 #define BSP_UART1_RX_PIN_5
 #define BSP_UART1_RX_PIN 5
 #define BSP_UART1_RX_PIN_FUNCTION 0
-#define BSP_USING_SOFT_I2C
-#define BSP_USING_SOFT_I2C1
-#define BSP_SOFT_I2C1_SCL_PIN 30
-#define BSP_SOFT_I2C1_SDA_PIN 29
 
 #endif
