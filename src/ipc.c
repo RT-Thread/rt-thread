@@ -1307,7 +1307,11 @@ static rt_err_t _rt_mutex_take(rt_mutex_t mutex, rt_int32_t timeout, int suspend
 
                 if (thread->error == RT_EOK)
                 {
-                    /* get mutex successfully */
+                    /**
+                     * get mutex successfully
+                     * Note: assert to avoid an unexpected resume
+                     */
+                    RT_ASSERT(mutex->owner == thread);
                 }
                 else
                 {
