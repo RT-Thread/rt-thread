@@ -24,7 +24,7 @@
  * 2022-08-24     Yunjie       make rt_memset word-independent to adapt to ti c28x (16bit word)
  * 2022-08-30     Yunjie       make rt_vsnprintf adapt to ti c28x (16bit int)
  * 2023-02-02     Bernard      add Smart ID for logo version show
- * 2023-12-10     xqyjlj       perf rt_hw_interrupt_disable/enable
+ * 2023-12-10     xqyjlj       perf rt_hw_interrupt_disable/enable, fix memheap lock
  */
 
 #include <rtthread.h>
@@ -1776,7 +1776,10 @@ void *_memheap_alloc(struct rt_memheap *heap, rt_size_t size);
 void _memheap_free(void *rmem);
 void *_memheap_realloc(struct rt_memheap *heap, void *rmem, rt_size_t newsize);
 #define _MEM_INIT(_name, _start, _size) \
-    rt_memheap_init(&system_heap, _name, _start, _size)
+    do {\
+        rt_memheap_init(&system_heap, _name, _start, _size); \
+        system_heap.locked = RT_TRUE; \
+    } while(0)
 #define _MEM_MALLOC(_size)  \
     _memheap_alloc(&system_heap, _size)
 #define _MEM_REALLOC(_ptr, _newsize)    \
