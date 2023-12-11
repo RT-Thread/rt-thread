@@ -581,7 +581,7 @@ static rt_err_t _rt_sem_take(rt_sem_t sem, rt_int32_t timeout, int suspend_flag)
 
             if (thread->error != RT_EOK)
             {
-                return thread->error;
+                return thread->error > 0 ? -thread->error : thread->error;
             }
         }
     }
