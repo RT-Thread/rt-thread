@@ -7,6 +7,7 @@
  * Date           Author       Notes
  * 2018-10-30     Bernard      The first version
  * 2023-09-15     xqyjlj       perf rt_hw_interrupt_disable/enable
+ * 2023-12-10     xqyjlj       add rt_arch_spinlock
  */
 #include <rthw.h>
 #include <rtthread.h>
@@ -44,7 +45,7 @@ void rt_spin_lock_init(struct rt_spinlock *lock)
 RTM_EXPORT(rt_spin_lock_init)
 
 /**
- * @brief   This function will lock the spinlock.
+ * @brief   This function will lock the spinlock, will lock the thread scheduler.
  *
  * @note    If the spinlock is locked, the current CPU will keep polling the spinlock state
  *          until the spinlock is unlocked.
@@ -53,6 +54,7 @@ RTM_EXPORT(rt_spin_lock_init)
  */
 void rt_spin_lock(struct rt_spinlock *lock)
 {
+    rt_enter_critical();
     rt_hw_spin_lock(&lock->lock);
 #if defined(RT_DEBUGING_SPINLOCK)
     if (rt_cpu_self() != RT_NULL)
@@ -65,7 +67,7 @@ void rt_spin_lock(struct rt_spinlock *lock)
 RTM_EXPORT(rt_spin_lock)
 
 /**
- * @brief   This function will unlock the spinlock.
+ * @brief   This function will unlock the spinlock, will unlock the thread scheduler.
  *
  * @param   lock is a pointer to the spinlock.
  */
@@ -76,8 +78,92 @@ void rt_spin_unlock(struct rt_spinlock *lock)
     lock->owner = __OWNER_MAGIC;
     lock->pc = RT_NULL;
 #endif /* RT_DEBUGING_SPINLOCK */
+    rt_exit_critical();
 }
 RTM_EXPORT(rt_spin_unlock)
+
+/**
+ * @brief   This function will lock the spinlock.
+ *
+ * @note    If the spinlock is locked, the current CPU will keep polling the spinlock state
+ *          until the spinlock is unlocked.
+ *
+ * @param   lock is a pointer to the spinlock.
+ */
+void rt_arch_spin_lock(struct rt_spinlock *lock)
+{
+    rt_hw_spin_lock(&lock->lock);
+#if defined(RT_DEBUGING_SPINLOCK)
+    if (rt_cpu_self() != RT_NULL)
+    {
+        lock->owner = rt_cpu_self()->current_thread;
+    }
+    lock->pc = __GET_RETURN_ADDRESS;
+#endif /* RT_DEBUGING_SPINLOCK */
+}
+RTM_EXPORT(rt_arch_spin_lock)
+
+/**
+ * @brief   This function will unlock the spinlock.
+ *
+ * @param   lock is a pointer to the spinlock.
+ */
+void rt_arch_spin_unlock(struct rt_spinlock *lock)
+{
+    rt_hw_spin_unlock(&lock->lock);
+#if defined(RT_DEBUGING_SPINLOCK)
+    lock->owner = __OWNER_MAGIC;
+    lock->pc = RT_NULL;
+#endif /* RT_DEBUGING_SPINLOCK */
+}
+RTM_EXPORT(rt_arch_spin_unlock)
+
+/**
+ * @brief   This function will disable the local interrupt and then lock the spinlock, will lock the thread scheduler.
+ *
+ * @note    If the spinlock is locked, the current CPU will keep polling the spinlock state
+ *          until the spinlock is unlocked.
+ *
+ * @param   lock is a pointer to the spinlock.
+ *
+ * @return  Return current cpu interrupt status.
+ */
+rt_base_t rt_spin_lock_irqsave(struct rt_spinlock *lock)
+{
+    unsigned long level;
+
+    level = rt_hw_local_irq_disable();
+    rt_enter_critical();
+    rt_hw_spin_lock(&lock->lock);
+#if defined(RT_DEBUGING_SPINLOCK)
+    if (rt_cpu_self() != RT_NULL)
+    {
+        lock->owner = rt_cpu_self()->current_thread;
+        lock->pc = __GET_RETURN_ADDRESS;
+    }
+#endif /* RT_DEBUGING_SPINLOCK */
+    return level;
+}
+RTM_EXPORT(rt_spin_lock_irqsave)
+
+/**
+ * @brief   This function will unlock the spinlock and then restore current cpu interrupt status, will unlock the thread scheduler.
+ *
+ * @param   lock is a pointer to the spinlock.
+ *
+ * @param   level is interrupt status returned by rt_spin_lock_irqsave().
+ */
+void rt_spin_unlock_irqrestore(struct rt_spinlock *lock, rt_base_t level)
+{
+#if defined(RT_DEBUGING_SPINLOCK)
+    lock->owner = __OWNER_MAGIC;
+    lock->pc = RT_NULL;
+#endif /* RT_DEBUGING_SPINLOCK */
+    rt_hw_spin_unlock(&lock->lock);
+    rt_hw_local_irq_enable(level);
+    rt_exit_critical();
+}
+RTM_EXPORT(rt_spin_unlock_irqrestore)
 
 /**
  * @brief   This function will disable the local interrupt and then lock the spinlock.
@@ -89,7 +175,7 @@ RTM_EXPORT(rt_spin_unlock)
  *
  * @return  Return current cpu interrupt status.
  */
-rt_base_t rt_spin_lock_irqsave(struct rt_spinlock *lock)
+rt_base_t rt_arch_spin_lock_irqsave(struct rt_spinlock *lock)
 {
     unsigned long level;
 
@@ -104,16 +190,16 @@ rt_base_t rt_spin_lock_irqsave(struct rt_spinlock *lock)
 #endif /* RT_DEBUGING_SPINLOCK */
     return level;
 }
-RTM_EXPORT(rt_spin_lock_irqsave)
+RTM_EXPORT(rt_arch_spin_lock_irqsave)
 
 /**
  * @brief   This function will unlock the spinlock and then restore current cpu interrupt status.
  *
  * @param   lock is a pointer to the spinlock.
  *
- * @param   level is interrupt status returned by rt_spin_lock_irqsave().
+ * @param   level is interrupt status returned by rt_arch_spin_lock_irqsave().
  */
-void rt_spin_unlock_irqrestore(struct rt_spinlock *lock, rt_base_t level)
+void rt_arch_spin_unlock_irqrestore(struct rt_spinlock *lock, rt_base_t level)
 {
 #if defined(RT_DEBUGING_SPINLOCK)
     lock->owner = __OWNER_MAGIC;
@@ -122,7 +208,7 @@ void rt_spin_unlock_irqrestore(struct rt_spinlock *lock, rt_base_t level)
     rt_hw_spin_unlock(&lock->lock);
     rt_hw_local_irq_enable(level);
 }
-RTM_EXPORT(rt_spin_unlock_irqrestore)
+RTM_EXPORT(rt_arch_spin_unlock_irqrestore)
 
 /**
  * @brief   This fucntion will return current cpu object.
@@ -221,7 +307,7 @@ void rt_cpus_lock_status_restore(struct rt_thread *thread)
 #endif
     if (pcpu->current_thread != RT_NULL )
     {
-        rt_spin_unlock(&(pcpu->current_thread->spinlock));
+        rt_arch_spin_unlock(&(pcpu->current_thread->spinlock));
         if ((pcpu->current_thread->stat & RT_THREAD_STAT_MASK) == RT_THREAD_RUNNING)
         {
             rt_schedule_insert_thread(pcpu->current_thread);

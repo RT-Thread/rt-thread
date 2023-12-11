@@ -18,6 +18,7 @@
  * 2021-11-15     THEWON       Remove duplicate work between idle and _thread_exit
  * 2023-09-15     xqyjlj       perf rt_hw_interrupt_disable/enable
  * 2023-11-07     xqyjlj       fix thread exit
+ * 2023-12-10     xqyjlj       use rt_arch_spinlock
  */
 
 #include <rthw.h>
@@ -136,9 +137,9 @@ void rt_thread_defunct_enqueue(rt_thread_t thread)
     {
         return;
     }
-    level = rt_spin_lock_irqsave(&_spinlock);
+    level = rt_arch_spin_lock_irqsave(&_spinlock);
     rt_list_insert_after(&_rt_thread_defunct, &thread->tlist);
-    rt_spin_unlock_irqrestore(&_spinlock, level);
+    rt_arch_spin_unlock_irqrestore(&_spinlock, level);
 #ifdef RT_USING_SMP
     rt_sem_release(&system_sem);
 #endif
@@ -154,7 +155,7 @@ rt_thread_t rt_thread_defunct_dequeue(void)
     rt_list_t *l = &_rt_thread_defunct;
 
 #ifdef RT_USING_SMP
-    level = rt_spin_lock_irqsave(&_spinlock);
+    level = rt_arch_spin_lock_irqsave(&_spinlock);
     if (l->next != l)
     {
         thread = rt_list_entry(l->next,
@@ -162,7 +163,7 @@ rt_thread_t rt_thread_defunct_dequeue(void)
                 tlist);
         rt_list_remove(&(thread->tlist));
     }
-    rt_spin_unlock_irqrestore(&_spinlock, level);
+    rt_arch_spin_unlock_irqrestore(&_spinlock, level);
 #else
     if (l->next != l)
     {
