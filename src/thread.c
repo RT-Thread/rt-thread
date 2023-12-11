@@ -34,6 +34,7 @@
  * 2022-10-15     Bernard      add nested mutex feature
  * 2023-09-15     xqyjlj       perf rt_hw_interrupt_disable/enable
  * 2023-12-10     xqyjlj       fix thread_exit/detach/delete
+ *                             fix rt_thread_delay
  */
 
 #include <rthw.h>
@@ -642,7 +643,7 @@ RTM_EXPORT(rt_thread_yield);
  */
 rt_err_t rt_thread_sleep(rt_tick_t tick)
 {
-    rt_base_t level, level_local;
+    rt_base_t level;
     struct rt_thread *thread;
     int err;
 
@@ -660,10 +661,10 @@ rt_err_t rt_thread_sleep(rt_tick_t tick)
     RT_DEBUG_SCHEDULER_AVAILABLE(RT_TRUE);
     /* reset thread error */
     thread->error = RT_EOK;
-    level_local = rt_hw_local_irq_disable();
+    level = rt_hw_local_irq_disable();
     /* suspend thread */
     err = rt_thread_suspend_with_flag(thread, RT_INTERRUPTIBLE);
-    level = rt_spin_lock_irqsave(&(thread->spinlock));
+    rt_spin_lock(&(thread->spinlock));
     /* reset the timeout of thread timer and start it */
     if (err == RT_EOK)
     {
@@ -671,8 +672,9 @@ rt_err_t rt_thread_sleep(rt_tick_t tick)
         rt_timer_start(&(thread->thread_timer));
 
         /* enable interrupt */
-        rt_spin_unlock_irqrestore(&(thread->spinlock), level);
-        rt_hw_local_irq_enable(level_local);
+        rt_hw_local_irq_enable(level);
+        rt_spin_unlock(&(thread->spinlock));
+
         thread->error = -RT_EINTR;
 
         rt_schedule();
@@ -683,8 +685,8 @@ rt_err_t rt_thread_sleep(rt_tick_t tick)
     }
     else
     {
-        rt_spin_unlock_irqrestore(&(thread->spinlock), level);
-        rt_hw_local_irq_enable(level_local);
+        rt_hw_local_irq_enable(level);
+        rt_spin_unlock(&(thread->spinlock));
     }
 
     return err;
@@ -728,7 +730,7 @@ rt_err_t rt_thread_delay_until(rt_tick_t *tick, rt_tick_t inc_tick)
     RT_ASSERT(rt_object_get_type((rt_object_t)thread) == RT_Object_Class_Thread);
 
     /* disable interrupt */
-    level = rt_spin_lock_irqsave(&(thread->spinlock));
+    level = rt_hw_local_irq_disable();
 
     /* reset thread error */
     thread->error = RT_EOK;
@@ -740,14 +742,18 @@ rt_err_t rt_thread_delay_until(rt_tick_t *tick, rt_tick_t inc_tick)
 
         *tick += inc_tick;
         left_tick = *tick - cur_tick;
-        rt_spin_unlock_irqrestore(&(thread->spinlock), level);
+
         /* suspend thread */
         rt_thread_suspend_with_flag(thread, RT_UNINTERRUPTIBLE);
-        level = rt_spin_lock_irqsave(&(thread->spinlock));
+
+        rt_spin_lock(&(thread->spinlock));
+
         /* reset the timeout of thread timer and start it */
         rt_timer_control(&(thread->thread_timer), RT_TIMER_CTRL_SET_TIME, &left_tick);
         rt_timer_start(&(thread->thread_timer));
-        rt_spin_unlock_irqrestore(&(thread->spinlock), level);
+
+        rt_hw_local_irq_enable(level);
+        rt_spin_unlock(&(thread->spinlock));
 
         rt_schedule();
 
@@ -760,7 +766,7 @@ rt_err_t rt_thread_delay_until(rt_tick_t *tick, rt_tick_t inc_tick)
     else
     {
         *tick = cur_tick;
-        rt_spin_unlock_irqrestore(&(thread->spinlock), level);
+        rt_hw_local_irq_enable(level);
     }
 
     return thread->error;
