@@ -584,11 +584,24 @@ rt_inline rt_base_t rt_spin_lock_irqsave(struct rt_spinlock *lock)
 rt_inline rt_base_t rt_arch_spin_lock_irqsave(struct rt_spinlock *lock)     {RT_UNUSED(lock); return rt_hw_interrupt_disable();}
 #define rt_arch_spin_unlock_irqrestore(lock, level)                         do {RT_UNUSED(lock); rt_hw_interrupt_enable(level);} while (0)
 
-#define rt_spin_lock_nested_init                                            rt_spin_lock_init
-#define rt_spin_lock_irqsave_nested                                         rt_spin_lock_irqsave
-#define rt_spin_unlock_irqrestore_nested                                    rt_spin_unlock_irqrestore
-#define rt_arch_spin_lock_irqsave_nested                                    rt_arch_spin_lock_irqsave
-#define rt_arch_spin_unlock_irqrestore_nested                               rt_arch_spin_unlock_irqrestore
+#define rt_spin_lock_nested_init(lock)                                      do {RT_UNUSED(lock);} while (0)
+rt_inline rt_base_t rt_spin_lock_irqsave_nested(struct rt_spinlock_nested *lock)
+{
+    rt_base_t level;
+    RT_UNUSED(lock);
+    level = rt_hw_interrupt_disable();
+    rt_enter_critical();
+    return level;
+}
+#define rt_spin_unlock_irqrestore_nested(lock, level)                       do {RT_UNUSED(lock); rt_hw_interrupt_enable(level); rt_exit_critical();} while (0)
+rt_inline rt_base_t rt_arch_spin_lock_irqsave_nested(struct rt_spinlock_nested *lock)
+{
+    RT_UNUSED(lock);
+    return rt_hw_interrupt_disable();
+}
+#define rt_arch_spin_unlock_irqrestore_nested(lock, level)                  do {RT_UNUSED(lock); rt_hw_interrupt_enable(level);} while (0)
+#define rt_arch_spin_lock_nested(lock)                                      do {RT_UNUSED(lock);} while (0)
+#define rt_arch_spin_unlock_nested(lock)                                    do {RT_UNUSED(lock);} while (0)
 
 #endif /* RT_USING_SMP */
 
