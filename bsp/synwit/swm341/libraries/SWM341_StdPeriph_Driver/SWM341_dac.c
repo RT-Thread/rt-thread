@@ -39,6 +39,9 @@ void DAC_Init(DAC_TypeDef * DACx, uint32_t format)
         break;
     }
 
+    SYS->DACCR &= ~SYS_DACCR_VRADJ_Msk;
+    SYS->DACCR |= ((SYS->BACKUP[2] & 0x1F) << SYS_DACCR_VRADJ_Pos);
+
     DACx->CR = (format << DAC_CR_DHRFMT_Pos);
 }
 
@@ -51,11 +54,11 @@ void DAC_Init(DAC_TypeDef * DACx, uint32_t format)
 ******************************************************************************************************************************************/
 void DAC_Open(DAC_TypeDef * DACx)
 {
-    DACx->CR |= (1 << ADC_CR_EN_Pos);
+    DACx->CR |= (1 << DAC_CR_EN_Pos);
 }
 
 /******************************************************************************************************************************************
-* 函数名称: DAC_Init()
+* 函数名称: DAC_Close()
 * 功能说明: DAC 关闭
 * 输    入: DAC_TypeDef * DACx    指定要被设置的DAC接口，有效值包括DAC
 * 输    出: 无

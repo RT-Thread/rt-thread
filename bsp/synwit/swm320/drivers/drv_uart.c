@@ -277,7 +277,7 @@ static void rt_hw_uart_isr(struct rt_serial_device *serial_device)
     uart_cfg = serial_device->parent.user_data;
 
     /* UART in mode Receiver -------------------------------------------------*/
-    if (UART_INTRXThresholdStat(uart_cfg->UARTx) || UART_INTTimeoutStat(uart_cfg->UARTx))
+    if (UART_INTStat(uart_cfg->UARTx, UART_IT_RX_THR) || UART_INTStat(uart_cfg->UARTx, UART_IT_RX_TOUT))
     {
         rt_hw_serial_isr(serial_device, RT_SERIAL_EVENT_RX_IND);
     }

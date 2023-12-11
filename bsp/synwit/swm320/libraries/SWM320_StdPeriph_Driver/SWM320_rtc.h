@@ -40,6 +40,15 @@ typedef struct {
     uint8_t  Second;
 } RTC_DateTime;
 
+
+/* Interrupt Type */
+#define RTC_IT_SECOND       (1 << 0)    //Second Interrupt
+#define RTC_IT_MINUTE       (1 << 1)
+#define RTC_IT_HOUR         (1 << 2)
+#define RTC_IT_DATE         (1 << 3)
+#define RTC_IT_ALARM        (1 << 4)
+
+
 void RTC_Init(RTC_TypeDef * RTCx, RTC_InitStructure * initStruct);
 void RTC_Start(RTC_TypeDef * RTCx);
 void RTC_Stop(RTC_TypeDef * RTCx);
@@ -49,25 +58,9 @@ void RTC_GetDateTime(RTC_TypeDef * RTCx, RTC_DateTime * dateTime);
 void RTC_AlarmSetup(RTC_TypeDef * RTCx, RTC_AlarmStructure * alarmStruct);
 
 
-void RTC_IntSecondEn(RTC_TypeDef * RTCx);
-void RTC_IntSecondDis(RTC_TypeDef * RTCx);
-void RTC_IntSecondClr(RTC_TypeDef * RTCx);
-uint32_t RTC_IntSecondStat(RTC_TypeDef * RTCx);
-void RTC_IntMinuteEn(RTC_TypeDef * RTCx);
-void RTC_IntMinuteDis(RTC_TypeDef * RTCx);
-void RTC_IntMinuteClr(RTC_TypeDef * RTCx);
-uint32_t RTC_IntMinuteStat(RTC_TypeDef * RTCx);
-void RTC_IntHourEn(RTC_TypeDef * RTCx);
-void RTC_IntHourDis(RTC_TypeDef * RTCx);
-void RTC_IntHourClr(RTC_TypeDef * RTCx);
-uint32_t RTC_IntHourStat(RTC_TypeDef * RTCx);
-void RTC_IntDateEn(RTC_TypeDef * RTCx);
-void RTC_IntDateDis(RTC_TypeDef * RTCx);
-void RTC_IntDateClr(RTC_TypeDef * RTCx);
-uint32_t RTC_IntDateStat(RTC_TypeDef * RTCx);
-void RTC_IntAlarmEn(RTC_TypeDef * RTCx);
-void RTC_IntAlarmDis(RTC_TypeDef * RTCx);
-void RTC_IntAlarmClr(RTC_TypeDef * RTCx);
-uint32_t RTC_IntAlarmStat(RTC_TypeDef * RTCx);
+void RTC_INTEn(RTC_TypeDef * RTCx, uint32_t it);
+void RTC_INTDis(RTC_TypeDef * RTCx, uint32_t it);
+void RTC_INTClr(RTC_TypeDef * RTCx, uint32_t it);
+uint32_t RTC_INTStat(RTC_TypeDef * RTCx, uint32_t it);
 
 #endif //__SWM320_RTC_H__

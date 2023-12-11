@@ -157,11 +157,6 @@ msh />
 | NOR FLASH          |     支持     | NOR FLASH                             |
 | CAN                |    暂不支持   |                                       |
 
-## 维护人信息
-
-- [yanmowudi](https://github.com/yanmowudi)
-- [邮箱](lik@synwit.cn)
-
 ## 参考资料
 
 * [RT-Thread 文档中心](https://www.rt-thread.org/document/site/)

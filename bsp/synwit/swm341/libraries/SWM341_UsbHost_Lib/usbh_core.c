@@ -204,7 +204,8 @@ void USBH_Process(void)
 }
 
 
-uint8_t Cfg_Desc_Buffer[USBH_MAX_CFG_SIZE];
+uint8_t  USBH_Cfg_Desc_Buffer[USBH_MAX_CFG_SIZE];
+uint16_t USBH_Cfg_Desc_Length;
 /******************************************************************************************************************************************
 * 函数名称: USBH_HandleEnum()
 * 功能说明: Handle the USB device enumeration state machine
@@ -264,11 +265,12 @@ USBH_Status USBH_HandleEnum(USBH_Info_t *phost)
         break;
 
     case ENUM_GET_FULL_CFG_DESC:
-        if(USBH_GetDescriptor(phost, USB_DESC_CONFIG, 0, Cfg_Desc_Buffer, phost->Device.Cfg_Desc.wTotalLength) == USBH_OK)
+        if(USBH_GetDescriptor(phost, USB_DESC_CONFIG, 0, USBH_Cfg_Desc_Buffer, phost->Device.Cfg_Desc.wTotalLength) == USBH_OK)
         {
             phost->EnumState = ENUM_GET_VENDOR_STRING_DESC;
 
-            USBH_ParseCfgDesc(phost, Cfg_Desc_Buffer, phost->Device.Cfg_Desc.wTotalLength);
+            USBH_Cfg_Desc_Length = phost->Device.Cfg_Desc.wTotalLength;
+            USBH_ParseCfgDesc(phost, USBH_Cfg_Desc_Buffer, USBH_Cfg_Desc_Length);
 
             if(phost->usr_cb->ConfigDescAvailable)
                 phost->usr_cb->ConfigDescAvailable(&phost->Device.Cfg_Desc, phost->Device.Intf_Desc, phost->Device.Ep_Desc[0]);
@@ -278,12 +280,17 @@ USBH_Status USBH_HandleEnum(USBH_Info_t *phost)
     case ENUM_GET_VENDOR_STRING_DESC:
         if(phost->Device.Dev_Desc.iManufacturer != 0)
         {
-            if(USBH_GetDescriptor(phost, USB_DESC_STRING, phost->Device.Dev_Desc.iManufacturer, (uint8_t *)phost->Device.strVender, sizeof(phost->Device.strVender)) == USBH_OK)
+            USBH_Status stat = USBH_GetDescriptor(phost, USB_DESC_STRING, phost->Device.Dev_Desc.iManufacturer, (uint8_t *)phost->Device.strVender, sizeof(phost->Device.strVender));
+            if(stat == USBH_OK)
             {
                 phost->EnumState = ENUM_GET_PRODUCT_STRING_DESC;
 
                 if(phost->usr_cb->VendorString)
                     phost->usr_cb->VendorString(phost->Device.strVender);
+            }
+            else if(stat == USBH_NOT_SUPPORTED)
+            {
+                phost->EnumState = ENUM_GET_PRODUCT_STRING_DESC;
             }
         }
         else
@@ -295,12 +302,17 @@ USBH_Status USBH_HandleEnum(USBH_Info_t *phost)
     case ENUM_GET_PRODUCT_STRING_DESC:
         if(phost->Device.Dev_Desc.iProduct != 0)
         {
-            if(USBH_GetDescriptor(phost, USB_DESC_STRING, phost->Device.Dev_Desc.iProduct, (uint8_t *)phost->Device.strProduct, sizeof(phost->Device.strProduct)) == USBH_OK)
+            USBH_Status stat = USBH_GetDescriptor(phost, USB_DESC_STRING, phost->Device.Dev_Desc.iProduct, (uint8_t *)phost->Device.strProduct, sizeof(phost->Device.strProduct));
+            if(stat == USBH_OK)
             {
                 phost->EnumState = ENUM_GET_SERIALNUM_STRING_DESC;
 
                 if(phost->usr_cb->ProductString)
                     phost->usr_cb->ProductString(phost->Device.strProduct);
+            }
+            else if(stat == USBH_NOT_SUPPORTED)
+            {
+                phost->EnumState = ENUM_GET_SERIALNUM_STRING_DESC;
             }
         }
         else
@@ -312,12 +324,17 @@ USBH_Status USBH_HandleEnum(USBH_Info_t *phost)
     case ENUM_GET_SERIALNUM_STRING_DESC:
         if(phost->Device.Dev_Desc.iSerialNumber != 0)
         {
-            if(USBH_GetDescriptor(phost, USB_DESC_STRING, phost->Device.Dev_Desc.iSerialNumber, (uint8_t *)phost->Device.strSerialNumber, sizeof(phost->Device.strSerialNumber)) == USBH_OK)
+            USBH_Status stat = USBH_GetDescriptor(phost, USB_DESC_STRING, phost->Device.Dev_Desc.iSerialNumber, (uint8_t *)phost->Device.strSerialNumber, sizeof(phost->Device.strSerialNumber));
+            if(stat == USBH_OK)
             {
                 phost->EnumState = ENUM_SET_CONFIGURATION;
 
                 if(phost->usr_cb->SerialNumString)
                     phost->usr_cb->SerialNumString(phost->Device.strSerialNumber);
+            }
+            else if(stat == USBH_NOT_SUPPORTED)
+            {
+                phost->EnumState = ENUM_SET_CONFIGURATION;
             }
         }
         else

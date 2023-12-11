@@ -392,7 +392,8 @@ void CAN_SetFilter16b(CAN_TypeDef * CANx, uint32_t filter, uint16_t check1, uint
 * 函数名称: CAN_INTEn()
 * 功能说明: 使能指定中断
 * 输    入: CAN_TypeDef * CANx    指定要被设置的CAN接口，有效值包括CAN0、CAN1
-*           uint32_t it         interrupt type，有效值包括CAN_INT_RX_NOTEMPTY、CAN_INT_RX_OVERFLOW、CAN_INT_TX_EMPTY、...
+*           uint32_t it         interrupt type，有效值包括 CAN_IT_RX_NOTEMPTY、CAN_IT_RX_OVERFLOW、CAN_IT_TX_EMPTY、CAN_IT_ARBLOST、
+*                               CAN_IT_ERR、CAN_IT_ERR_WARN、CAN_IT_ERR_PASS、CAN_IT_WAKEUP 及其“或”
 * 输    出: 无
 * 注意事项: 无
 ******************************************************************************************************************************************/
@@ -405,7 +406,8 @@ void CAN_INTEn(CAN_TypeDef * CANx, uint32_t it)
 * 函数名称: CAN_INTDis()
 * 功能说明: 关闭指定中断
 * 输    入: CAN_TypeDef * CANx    指定要被设置的CAN接口，有效值包括CAN0、CAN1
-*           uint32_t it         interrupt type，有效值包括CAN_INT_RX_NOTEMPTY、CAN_INT_RX_OVERFLOW、CAN_INT_TX_EMPTY、...
+*           uint32_t it         interrupt type，有效值包括 CAN_IT_RX_NOTEMPTY、CAN_IT_RX_OVERFLOW、CAN_IT_TX_EMPTY、CAN_IT_ARBLOST、
+*                               CAN_IT_ERR、CAN_IT_ERR_WARN、CAN_IT_ERR_PASS、CAN_IT_WAKEUP 及其“或”
 * 输    出: 无
 * 注意事项: 无
 ******************************************************************************************************************************************/
@@ -415,8 +417,21 @@ void CAN_INTDis(CAN_TypeDef * CANx, uint32_t it)
 }
 
 /******************************************************************************************************************************************
+* 函数名称: CAN_INTClr()
+* 功能说明: 清除中断标志
+* 输    入: CAN_TypeDef * CANx    指定要被设置的CAN接口，有效值包括CAN0、CAN1
+*           uint32_t it         interrupt type，有效值包括 CAN_IT_RX_OVERFLOW
+* 输    出: 无
+* 注意事项: 无
+******************************************************************************************************************************************/
+void CAN_INTClr(CAN_TypeDef * CANx, uint32_t it)
+{
+    CANx->CMD = (1 << CAN_CMD_CLROV_Pos);
+}
+
+/******************************************************************************************************************************************
 * 函数名称: CAN_INTStat()
-* 功能说明: 查询指定中断状态
+* 功能说明: 查询中断状态
 * 输    入: CAN_TypeDef * CANx    指定要被设置的CAN接口，有效值包括CAN0、CAN1
 * 输    出: uint32_t          当前中断状态
 * 注意事项: CANx->IF读取清零，因此在中断ISR中只能读取一次，不能多次读取

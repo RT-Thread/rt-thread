@@ -42,7 +42,7 @@ void SDRAM_Init(SDRAM_InitStructure * initStruct)
 
     SDRAMC->CR1 = (initStruct->CellSize << SDRAMC_CR1_CELLSIZE_Pos) |
                   (initStruct->CellWidth << SDRAMC_CR1_CELL32BIT_Pos) |
-                  (initStruct->CellBank << SDRAMC_CR1_BANK_Pos) |
+                  ((initStruct->CellSize == SDRAM_CELLSIZE_16Mb ? SDRAM_CELLBANK_2 : SDRAM_CELLBANK_4) << SDRAMC_CR1_BANK_Pos) |
                   (0 << SDRAMC_CR1_32BIT_Pos) |
                   (initStruct->TimeTMRD << SDRAMC_CR1_TMRD_Pos) |
                   (initStruct->TimeTRRD << SDRAMC_CR1_TRRD_Pos) |
@@ -63,7 +63,7 @@ void SDRAM_Init(SDRAM_InitStructure * initStruct)
     }
 
     SDRAMC->REFRESH = (1 << SDRAMC_REFRESH_EN_Pos) |
-                      (((SystemCoreClock/2)/1000*64 / (1 << row_n)) << SDRAMC_REFRESH_RATE_Pos);
+                      (((SystemCoreClock/2)/1000 * initStruct->RefreshTime / (1 << row_n)) << SDRAMC_REFRESH_RATE_Pos);
 
     while(SDRAMC->REFDONE == 0);
 }

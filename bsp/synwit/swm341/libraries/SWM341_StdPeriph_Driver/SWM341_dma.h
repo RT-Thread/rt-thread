@@ -21,7 +21,7 @@ typedef struct {
 
     uint8_t  Priority;      //DMA_PRI_LOW、DMA_PRI_HIGH
 
-    uint8_t  DoneIE;        //传输完成中断使能
+    uint32_t  INTEn;        //中断使能，有效值有 DMA_IT_DONE、DMA_IT_DSTSG_HALF、DMA_IT_DSTSG_DONE、DMA_IT_SRCSG_HALF、DMA_IT_SRCSG_DONE 及其“或”
 } DMA_InitStructure;
 
 
@@ -97,15 +97,28 @@ typedef struct {
 #define DMA_EXHS_TRIG1      (6 | DMA_HS_EXT | DMA_DIR_RX)   // DMA_TRIG1引脚
 
 
+/* Interrupt Type */
+#define DMA_IT_DONE         (1 <<  0)   //Transfer Done
+#define DMA_IT_DSTSG_HALF   (1 <<  8)   //Destination Scatter-Gather Transfer Half
+#define DMA_IT_DSTSG_DONE   (1 <<  9)   //Destination Scatter-Gather Transfer Done
+#define DMA_IT_SRCSG_HALF   (1 << 16)   //Source      Scatter-Gather Transfer Half
+#define DMA_IT_SRCSG_DONE   (1 << 17)   //Source      Scatter-Gather Transfer Done
+
+
 
 void DMA_CH_Init(uint32_t chn, DMA_InitStructure * initStruct); //DMA通道配置
 void DMA_CH_Open(uint32_t chn);
 void DMA_CH_Close(uint32_t chn);
 
-void DMA_CH_INTEn(uint32_t chn);                //DMA中断使能，数据搬运完成后触发中断
-void DMA_CH_INTDis(uint32_t chn);               //DMA中断禁止，数据搬运完成后不触发中断
-void DMA_CH_INTClr(uint32_t chn);               //DMA中断标志清除
-uint32_t DMA_CH_INTStat(uint32_t chn);          //DMA中断状态查询，1 数据搬运完成    0 数据搬运未完成
+void DMA_CH_SetCount(uint32_t chn, uint32_t count);
+void DMA_CH_SetSrcAddress(uint32_t chn, uint32_t address);
+void DMA_CH_SetDstAddress(uint32_t chn, uint32_t address);
+uint32_t DMA_CH_GetRemaining(uint32_t chn);
+
+void DMA_CH_INTEn(uint32_t chn, uint32_t it);                   //DMA中断使能
+void DMA_CH_INTDis(uint32_t chn, uint32_t it);                  //DMA中断禁止
+void DMA_CH_INTClr(uint32_t chn, uint32_t it);                  //DMA中断标志清除
+uint32_t DMA_CH_INTStat(uint32_t chn, uint32_t it);             //DMA中断状态查询
 
 
 #endif //__SWM341_DMA_H__

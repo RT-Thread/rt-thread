@@ -36,7 +36,7 @@ USBH_Status USBH_GetDescriptor(USBH_Info_t *phost, uint8_t type, uint8_t index, 
     phost->Ctrl.setup.bRequestType = USB_REQ_D2H | USB_REQ_STANDARD | USB_REQ_TO_DEVICE;
     phost->Ctrl.setup.bRequest = USB_GET_DESCRIPTOR;
     phost->Ctrl.setup.wValue = (type << 8) | index;
-    phost->Ctrl.setup.wIndex = 0;
+    phost->Ctrl.setup.wIndex = (type == USB_DESC_STRING) ? 0x0409 : 0;
     phost->Ctrl.setup.wLength = size;
 
     return USBH_CtrlTransfer(phost, buff, size);
@@ -113,7 +113,7 @@ USBH_Status USBH_SetConfiguration(USBH_Info_t *phost, uint8_t cfg)
 ******************************************************************************************************************************************/
 USBH_Status USBH_SetInterface(USBH_Info_t *phost, uint8_t intf, uint8_t altSetting)
 {
-    phost->Ctrl.setup.bRequestType = USB_REQ_H2D | USB_REQ_STANDARD | USB_REQ_TO_DEVICE;
+    phost->Ctrl.setup.bRequestType = USB_REQ_H2D | USB_REQ_STANDARD | USB_REQ_TO_INTERFACE;
     phost->Ctrl.setup.bRequest = USB_SET_INTERFACE;
     phost->Ctrl.setup.wValue = altSetting;
     phost->Ctrl.setup.wIndex = intf;
