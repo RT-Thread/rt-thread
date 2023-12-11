@@ -53,6 +53,7 @@
  * 2023-10-10     Chushicheng  change version number to v5.1.0
  * 2023-10-11     zmshahaha    move specific devices related and driver to components/drivers
  * 2023-11-21     Meco Man     add RT_USING_NANO macro
+ * 2023-12-10     xqyjlj       add rt_spinlock_nested
  */
 
 #ifndef __RT_DEF_H__
@@ -499,6 +500,22 @@ typedef struct rt_spinlock rt_spinlock_t;
 #define RT_SPINLOCK_INIT {{0}} // default
 #endif /* RT_SPINLOCK_INIT */
 
+struct rt_spinlock_nested
+{
+    rt_hw_spinlock_t lock;
+    struct rt_thread *thread;
+    rt_atomic_t lock_nested;
+#if defined(RT_DEBUGING_SPINLOCK)
+    void *owner;
+    void *pc;
+#endif /* RT_DEBUGING_SPINLOCK */
+};
+typedef struct rt_spinlock_nested rt_spinlock_nested_t;
+
+#ifndef RT_SPINLOCK_NESTED_INIT
+#define RT_SPINLOCK_NESTED_INIT {{0}} // default
+#endif /* RT_SPINLOCK_NESTED_INIT */
+
 #else
 typedef rt_ubase_t rt_spinlock_t;
 struct rt_spinlock
@@ -506,6 +523,13 @@ struct rt_spinlock
     rt_spinlock_t lock;
 };
 #define RT_SPINLOCK_INIT {0}
+
+struct rt_spinlock_nested
+{
+    rt_spinlock_t lock;
+};
+#define RT_SPINLOCK_NESTED_INIT {0}
+
 #endif /* RT_USING_SMP */
 
 #define RT_DEFINE_SPINLOCK(x)  struct rt_spinlock x = RT_SPINLOCK_INIT
