@@ -109,6 +109,9 @@ void dfs_unlock(void);
 rt_err_t dfs_file_lock(void);
 void dfs_file_unlock(void);
 
+int dfs_fdtable_dup(struct dfs_fdtable *fdt_dst, struct dfs_fdtable *fdt_src, int fd_src);
+int dfs_fdtable_drop_fd(struct dfs_fdtable *fdtab, int fd);
+
 #ifdef DFS_USING_POSIX
 /* FD APIs */
 int fdt_fd_new(struct dfs_fdtable *fdt);
