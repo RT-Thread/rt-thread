@@ -372,7 +372,7 @@ uint32_t UART_LINIsGenerated(UART_TypeDef * UARTx)
 ******************************************************************************************************************************************/
 void UART_ABRStart(UART_TypeDef * UARTx, uint32_t detectChar)
 {
-    uint32_t bits;
+    uint32_t bits = 0;
 
     if((detectChar == 0xFF) || (detectChar == 0x1FF))      bits = 0;
     else if((detectChar == 0xFE) || (detectChar == 0x1FE)) bits = 1;
