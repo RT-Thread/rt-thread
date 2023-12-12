@@ -144,11 +144,6 @@ msh >
 | SDIO        |     支持     | SDIO                                       |
 | SDRAM       |     支持     | SDRAM                                      |
 
-## 维护人信息
-
-- [yanmowudi](https://github.com/yanmowudi)
-- [邮箱](lik@synwit.cn)
-
 ## 参考资料
 
 * [RT-Thread 文档中心](https://www.rt-thread.org/document/site/)

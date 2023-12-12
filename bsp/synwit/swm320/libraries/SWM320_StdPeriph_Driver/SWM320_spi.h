@@ -33,6 +33,15 @@ typedef struct {
 #define SPI_CLKDIV_512          7
 
 
+/* Interrupt Type */
+#define SPI_IT_RX_OVF       (1 << 0)    //RX FIFO Overflow
+#define SPI_IT_RX_FULL      (1 << 1)    //RX FIFO Full
+#define SPI_IT_RX_HFULL     (1 << 2)    //RX FIFO Half Full
+#define SPI_IT_TX_EMPTY     (1 << 3)    //TX FIFO Empty
+#define SPI_IT_TX_HFULL     (1 << 4)    //TX FIFO Half Full
+#define SPI_IT_TX_DONE      (1 << 9)    //TX Done（发送FIFO空且发送移位寄存器空）
+
+
 
 void SPI_Init(SPI_TypeDef * SPIx, SPI_InitStructure * initStruct);      //SPI初始化
 void SPI_Open(SPI_TypeDef * SPIx);                                      //SPI打开，允许收发
@@ -48,36 +57,10 @@ uint32_t SPI_IsTXFull(SPI_TypeDef * SPIx);              //发送FIFO是否满，
 uint32_t SPI_IsTXEmpty(SPI_TypeDef * SPIx);             //发送FIFO是否空
 
 
-void SPI_INTRXHalfFullEn(SPI_TypeDef * SPIx);
-void SPI_INTRXHalfFullDis(SPI_TypeDef * SPIx);
-void SPI_INTRXHalfFullClr(SPI_TypeDef * SPIx);
-uint32_t SPI_INTRXHalfFullStat(SPI_TypeDef * SPIx);
-void SPI_INTRXFullEn(SPI_TypeDef * SPIx);
-void SPI_INTRXFullDis(SPI_TypeDef * SPIx);
-void SPI_INTRXFullClr(SPI_TypeDef * SPIx);
-uint32_t SPI_INTRXFullStat(SPI_TypeDef * SPIx);
-void SPI_INTRXOverflowEn(SPI_TypeDef * SPIx);
-void SPI_INTRXOverflowDis(SPI_TypeDef * SPIx);
-void SPI_INTRXOverflowClr(SPI_TypeDef * SPIx);
-uint32_t SPI_INTRXOverflowStat(SPI_TypeDef * SPIx);
-
-void SPI_INTTXHalfFullEn(SPI_TypeDef * SPIx);
-void SPI_INTTXHalfFullDis(SPI_TypeDef * SPIx);
-void SPI_INTTXHalfFullClr(SPI_TypeDef * SPIx);
-uint32_t SPI_INTTXHalfFullStat(SPI_TypeDef * SPIx);
-void SPI_INTTXEmptyEn(SPI_TypeDef * SPIx);
-void SPI_INTTXEmptyDis(SPI_TypeDef * SPIx);
-void SPI_INTTXEmptyClr(SPI_TypeDef * SPIx);
-uint32_t SPI_INTTXEmptyStat(SPI_TypeDef * SPIx);
-void SPI_INTTXCompleteEn(SPI_TypeDef * SPIx);
-void SPI_INTTXCompleteDis(SPI_TypeDef * SPIx);
-void SPI_INTTXCompleteClr(SPI_TypeDef * SPIx);
-uint32_t SPI_INTTXCompleteStat(SPI_TypeDef * SPIx);
-
-void SPI_INTTXWordCompleteEn(SPI_TypeDef * SPIx);
-void SPI_INTTXWordCompleteDis(SPI_TypeDef * SPIx);
-void SPI_INTTXWordCompleteClr(SPI_TypeDef * SPIx);
-uint32_t SPI_INTTXWordCompleteStat(SPI_TypeDef * SPIx);
+void SPI_INTEn(SPI_TypeDef * SPIx, uint32_t it);        //中断使能
+void SPI_INTDis(SPI_TypeDef * SPIx, uint32_t it);       //中断禁止
+void SPI_INTClr(SPI_TypeDef * SPIx, uint32_t it);       //中断标志清除
+uint32_t SPI_INTStat(SPI_TypeDef * SPIx, uint32_t it);  //中断状态查询
 
 
 #endif //__SWM320_SPI_H__
