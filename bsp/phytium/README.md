@@ -117,9 +117,10 @@ $ sudo service tftpd-hpa start
 
 - 修改主机`tftp`配置，指向`tftboot`目录
   修改/etc/default/tftpd-hpa
-
 ```
 $ sudo nano /etc/default/tftpd-hpa
+```
+```
 # /etc/default/tftpd-hpa
 
 TFTP_USERNAME="tftp"
