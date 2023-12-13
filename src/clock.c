@@ -169,6 +169,10 @@ RTM_EXPORT(rt_tick_from_millisecond);
  */
 rt_weak rt_tick_t rt_tick_get_millisecond(void)
 {
+#if RT_TICK_PER_SECOND == 0 // make cppcheck happy
+#error "RT_TICK_PER_SECOND must be greater than zero"
+#endif
+
 #if 1000 % RT_TICK_PER_SECOND == 0u
     return rt_tick_get() * (1000u / RT_TICK_PER_SECOND);
 #else
