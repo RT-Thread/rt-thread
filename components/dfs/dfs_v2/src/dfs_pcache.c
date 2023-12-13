@@ -9,6 +9,10 @@
  * 2023-10-23     Shell        fix synchronization of data to icache
  */
 
+#define DBG_TAG "dfs.pcache"
+#define DBG_LVL DBG_WARNING
+#include <rtdbg.h>
+
 #include "dfs_pcache.h"
 #include "dfs_dentry.h"
 #include "dfs_mnt.h"
@@ -19,10 +23,6 @@
 #include <rthw.h>
 
 #ifdef RT_USING_PAGECACHE
-
-#define DBG_TAG "dfs.pcache"
-#define DBG_LVL DBG_WARNING
-#include <rtdbg.h>
 
 #ifndef RT_PAGECACHE_COUNT
 #define RT_PAGECACHE_COUNT          4096
