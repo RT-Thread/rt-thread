@@ -13,6 +13,7 @@
 
 #include <stdint.h>
 #include "drv_usart.h"
+#include "drv_gpio.h"
 
 #include <rthw.h>
 #include <rtthread.h>
@@ -75,6 +76,10 @@ void rt_hw_board_init()
     /* System Tick Configuration, systick clock is HCLK/8 */
     _SysTick_Config(SystemCoreClock / 8 / RT_TICK_PER_SECOND);
     /* Call components board initial (use INIT_BOARD_EXPORT()) */
+#ifdef RT_USING_PIN
+    /* pin must initialized before i2c */
+    rt_hw_pin_init();
+#endif
 #ifdef RT_USING_COMPONENTS_INIT
     rt_components_board_init();
 #endif
