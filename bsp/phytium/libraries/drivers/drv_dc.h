@@ -21,7 +21,6 @@ extern "C"
 {
 #endif
 
-
 #define FB_XSIZE        1024
 #define FB_YSIZE        768
 #define DISPLAY_COLOR_DEPTH     32
