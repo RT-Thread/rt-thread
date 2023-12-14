@@ -11,6 +11,7 @@
 #include "board.h"
 #include <stdint.h>
 #include "drv_usart.h"
+#include "drv_gpio.h"
 #include <rthw.h>
 #include <rtthread.h>
 
@@ -61,6 +62,10 @@ void rt_hw_board_init()
 #endif
 #ifdef RT_USING_CONSOLE
     rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
+#endif
+#ifdef RT_USING_PIN
+    /* pin must initialized before i2c */
+    rt_hw_pin_init();
 #endif
     /* Call components board initial (use INIT_BOARD_EXPORT()) */
 #ifdef RT_USING_COMPONENTS_INIT
