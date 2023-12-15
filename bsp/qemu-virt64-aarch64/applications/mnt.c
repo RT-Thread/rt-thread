@@ -17,20 +17,33 @@ int mnt_init(void)
 {
     if (rt_device_find("virtio-blk0"))
     {
-        /* mount virtio-blk as root directory */
-        if (dfs_mount("virtio-blk0", "/", "elm", 0, RT_NULL) == 0)
+        if (dfs_mount("virtio-blk0", "/", "ext", 0, RT_NULL))
         {
-            rt_kprintf("file system initialization done!\n");
+            rt_kprintf("ext4 initialization fail!\n");
         }
-        else
+
+        mkdir("/dev/shm", 0x777);
+        if (dfs_mount(RT_NULL, "/dev/shm", "tmp", 0, 0) != 0)
         {
-            if (dfs_mount("virtio-blk0", "/", "ext", 0, RT_NULL) == 0)
+            rt_kprintf("dir /dev/shm mount failed!\n");
+        }
+        if (dfs_mount(RT_NULL, "/tmp", "tmp", 0, 0) != 0)
+        {
+            rt_kprintf("dir /tmp mount failed!\n");
+        }
+        if (dfs_mount(RT_NULL, "/run", "tmp", 0, 0) != 0)
+        {
+            rt_kprintf("dir /run mount failed!\n");
+        }
+
+        if (rt_device_find("virtio-blk1"))
+        {
+            if (dfs_mount("virtio-blk1", "/root", "elm", 0, RT_NULL))
             {
-                rt_kprintf("file system initialization done!\n");
-            }
-            else
-            {
-                rt_kprintf("file system initialization fail!\n");
+                if (dfs_mount("virtio-blk1", "/root", "ext", 0, RT_NULL))
+                {
+                    rt_kprintf("dir /root mount failed!\\n");
+                }
             }
         }
     }
