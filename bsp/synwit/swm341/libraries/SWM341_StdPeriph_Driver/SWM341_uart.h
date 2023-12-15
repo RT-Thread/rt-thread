@@ -46,6 +46,14 @@ typedef struct {
 #define UART_ERR_NOISE      3
 
 
+/* Interrupt Type */
+#define UART_IT_RX_THR      (1 << UART_CTRL_RXIE_Pos)   //RX FIFO Threshold, RX FIFO中数据个数 >  RXThreshold
+#define UART_IT_RX_TOUT     (1 << UART_CTRL_TOIE_Pos)   //RX Timeout, 超过 TimeoutTime/(Baudrate/10) 秒没有在RX线上接收到数据
+#define UART_IT_TX_THR      (1 << UART_CTRL_TXIE_Pos)   //TX FIFO Threshold, TX FIFO中数据个数 <= TXThreshold
+#define UART_IT_TX_DONE     (1 << UART_CTRL_TXDOIE_Pos) //TX Done, 发送FIFO空且发送发送移位寄存器已将最后一位发送出去
+
+
+
 void UART_Init(UART_TypeDef * UARTx, UART_InitStructure * initStruct);  //UART串口初始化
 void UART_Open(UART_TypeDef * UARTx);
 void UART_Close(UART_TypeDef * UARTx);
@@ -75,19 +83,10 @@ uint32_t UART_LINIsGenerated(UART_TypeDef * UARTx);
 void UART_ABRStart(UART_TypeDef * UARTx, uint32_t detectChar);
 uint32_t UART_ABRIsDone(UART_TypeDef * UARTx);
 
+void UART_INTEn(UART_TypeDef * UARTx, uint32_t it);
+void UART_INTDis(UART_TypeDef * UARTx, uint32_t it);
+void UART_INTClr(UART_TypeDef * UARTx, uint32_t it);
+uint32_t UART_INTStat(UART_TypeDef * UARTx, uint32_t it);
 
-void UART_INTRXThresholdEn(UART_TypeDef * UARTx);
-void UART_INTRXThresholdDis(UART_TypeDef * UARTx);
-uint32_t UART_INTRXThresholdStat(UART_TypeDef * UARTx);
-void UART_INTTXThresholdEn(UART_TypeDef * UARTx);
-void UART_INTTXThresholdDis(UART_TypeDef * UARTx);
-uint32_t UART_INTTXThresholdStat(UART_TypeDef * UARTx);
-void UART_INTTimeoutEn(UART_TypeDef * UARTx);
-void UART_INTTimeoutDis(UART_TypeDef * UARTx);
-uint32_t UART_INTTimeoutStat(UART_TypeDef * UARTx);
-
-void UART_INTTXDoneEn(UART_TypeDef * UARTx);
-void UART_INTTXDoneDis(UART_TypeDef * UARTx);
-uint32_t UART_INTTXDoneStat(UART_TypeDef * UARTx);
 
 #endif //__SWM341_UART_H__

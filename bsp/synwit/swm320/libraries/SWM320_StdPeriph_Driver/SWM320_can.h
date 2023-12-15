@@ -78,6 +78,18 @@ typedef struct {
 } CAN_RXMessage;
 
 
+/* Interrupt Type */
+#define CAN_IT_RX_NOTEMPTY  (0x01 << 0)     //RX Buffer Not Empty
+#define CAN_IT_RX_OVERFLOW  (0x01 << 3)     //RX Buffer Overflow
+#define CAN_IT_TX_EMPTY     (0x01 << 1)     //TX Buffer Empty
+#define CAN_IT_ARBLOST      (0x01 << 6)     //Arbitration lost
+#define CAN_IT_ERR          (0x01 << 7)
+#define CAN_IT_ERR_WARN     (0x01 << 2)     //TXERR/RXERR计数值达到Error Warning Limit
+#define CAN_IT_ERR_PASS     (0x01 << 5)     //TXERR/RXERR计数值达到127
+#define CAN_IT_WAKEUP       (0x01 << 4)
+
+
+
 void CAN_Init(CAN_TypeDef * CANx, CAN_InitStructure * initStruct);
 void CAN_Open(CAN_TypeDef * CANx);
 void CAN_Close(CAN_TypeDef * CANx);
@@ -100,31 +112,9 @@ void CAN_SetFilter32b(CAN_TypeDef * CANx, uint32_t check, uint32_t mask);
 void CAN_SetFilter16b(CAN_TypeDef * CANx, uint16_t check1, uint16_t mask1, uint16_t check2, uint16_t mask2);
 
 
-void CAN_INTRXNotEmptyEn(CAN_TypeDef * CANx);
-void CAN_INTRXNotEmptyDis(CAN_TypeDef * CANx);
-
-void CAN_INTTXBufEmptyEn(CAN_TypeDef * CANx);
-void CAN_INTTXBufEmptyDis(CAN_TypeDef * CANx);
-
-void CAN_INTErrWarningEn(CAN_TypeDef * CANx);
-void CAN_INTErrWarningDis(CAN_TypeDef * CANx);
-
-void CAN_INTRXOverflowEn(CAN_TypeDef * CANx);
-void CAN_INTRXOverflowDis(CAN_TypeDef * CANx);
-void CAN_INTRXOverflowClear(CAN_TypeDef * CANx);
-
-void CAN_INTWakeupEn(CAN_TypeDef * CANx);
-void CAN_INTWakeupDis(CAN_TypeDef * CANx);
-
-void CAN_INTErrPassiveEn(CAN_TypeDef * CANx);
-void CAN_INTErrPassiveDis(CAN_TypeDef * CANx);
-
-void CAN_INTArbitrLostEn(CAN_TypeDef * CANx);
-void CAN_INTArbitrLostDis(CAN_TypeDef * CANx);
-
-void CAN_INTBusErrorEn(CAN_TypeDef * CANx);
-void CAN_INTBusErrorDis(CAN_TypeDef * CANx);
-
+void CAN_INTEn(CAN_TypeDef * CANx, uint32_t it);
+void CAN_INTDis(CAN_TypeDef * CANx, uint32_t it);
+void CAN_INTClr(CAN_TypeDef * CANx, uint32_t it);
 uint32_t CAN_INTStat(CAN_TypeDef * CANx);
 
 #endif //__SWM320_CAN_H__

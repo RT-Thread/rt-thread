@@ -89,6 +89,8 @@ typedef struct {
     char strSerialNumber[USBH_MAX_STR_SIZE];
 } USBH_Device_t;
 
+extern uint8_t  USBH_Cfg_Desc_Buffer[USBH_MAX_CFG_SIZE];
+extern uint16_t USBH_Cfg_Desc_Length;
 
 struct USBH_Info_T;
 typedef struct {

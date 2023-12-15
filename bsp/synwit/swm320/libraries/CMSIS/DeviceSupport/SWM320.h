@@ -105,6 +105,7 @@ typedef enum IRQn
 #endif
 
 #include <stdio.h>
+#include <stdbool.h>
 #include "core_cm4.h"                  /* Cortex-M0 processor and core peripherals           */
 #include "system_SWM320.h"
 
@@ -177,8 +178,6 @@ typedef struct {
 
     __IO uint32_t BODIE;
     __IO uint32_t BODIF;
-
-    __IO uint32_t ADC1IN7;
 } SYS_TypeDef;
 
 
@@ -358,11 +357,6 @@ typedef struct {
 
 #define SYS_BODIF_2V2_Pos           1       //BOD 2.2V等级触发中断状态，写1清零
 #define SYS_BODIF_2V2_Msk           (0x01 << SYS_BODIF_2V2_Pos)
-
-#define SYS_ADC1IN7_SEL_Pos         0       //ADC1模块模拟通道7，1 温度传感器    2 电池电压    3 RTC电源域BG    4 主电源域BG   5 PDM33
-#define SYS_ADC1IN7_SEL_Msk         (0x0F << SYS_ADC1IN7_SEL_Pos)
-#define SYS_ADC1IN7_IOON_Pos        4       //ADC1模块模拟通道7所用IO开关
-#define SYS_ADC1IN7_IOON_Msk        (0x01 << SYS_ADC1IN7_IOON_Pos)
 
 
 
@@ -1472,11 +1466,11 @@ typedef struct {
 #define SPI_IE_RFOVF_Msk            (0x01 << SPI_IE_RFOVF_Pos)
 #define SPI_IE_RFF_Pos              1
 #define SPI_IE_RFF_Msk              (0x01 << SPI_IE_RFF_Pos)
-#define SPI_IE_RFHF_Pos             2
+#define SPI_IE_RFHF_Pos             2       //~rxfifo_full & (rxfifo_level == 4)
 #define SPI_IE_RFHF_Msk             (0x01 << SPI_IE_RFHF_Pos)
 #define SPI_IE_TFE_Pos              3
 #define SPI_IE_TFE_Msk              (0x01 << SPI_IE_TFE_Pos)
-#define SPI_IE_TFHF_Pos             4
+#define SPI_IE_TFHF_Pos             4       //~txfifo_full & (txfifo_level == 4)
 #define SPI_IE_TFHF_Msk             (0x01 << SPI_IE_TFHF_Pos)
 #define SPI_IE_WTC_Pos              8       //Word Transmit Complete
 #define SPI_IE_WTC_Msk              (0x01 << SPI_IE_WTC_Pos)
@@ -2712,7 +2706,7 @@ typedef struct {
 typedef struct {
     __IO uint32_t DATA;
     __IO uint32_t ADDR;
-    __IO uint32_t FLASH_ERASE;
+    __IO uint32_t ERASE;
     __IO uint32_t CACHE;
     __IO uint32_t CFG0;
     __IO uint32_t CFG1;
@@ -3176,6 +3170,54 @@ typedef void (* Func_void_void) (void);
 #include "SWM320_crc.h"
 #include "SWM320_rtc.h"
 #include "SWM320_wdt.h"
+
+
+
+#ifdef  SW_LOG_RTT
+#define log_printf(...)     SEGGER_RTT_printf(0, __VA_ARGS__)
+#else
+#define log_printf(...)     printf(__VA_ARGS__)
+#endif
+
+
+#ifndef SW_LOG_LEVEL
+#define SW_LOG_LEVEL        0
+#endif
+
+#if (SW_LOG_LEVEL > 0)
+#define SW_LOG_ERR(...)     {                        \
+                            log_printf("ERROR: ");   \
+                            log_printf(__VA_ARGS__); \
+                            log_printf("\n");        \
+                            }
+
+#if (SW_LOG_LEVEL > 1)
+#define SW_LOG_WARN(...)    {                        \
+                            log_printf("WARN : ");   \
+                            log_printf(__VA_ARGS__); \
+                            log_printf("\n");        \
+                            }
+
+#if (SW_LOG_LEVEL > 2)
+#define SW_LOG_INFO(...)    {                        \
+                            log_printf("INFO : ");   \
+                            log_printf(__VA_ARGS__); \
+                            log_printf("\n");        \
+                            }
+#else
+#define SW_LOG_INFO(...)
+#endif
+
+#else
+#define SW_LOG_WARN(...)
+#define SW_LOG_INFO(...)
+#endif
+
+#else
+#define SW_LOG_ERR(...)
+#define SW_LOG_WARN(...)
+#define SW_LOG_INFO(...)
+#endif
 
 
 #endif //__SWM320_H__

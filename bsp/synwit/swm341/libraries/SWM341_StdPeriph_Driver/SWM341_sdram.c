@@ -35,9 +35,9 @@ void SDRAM_Init(SDRAM_InitStructure * initStruct)
 
     SYS->CLKEN1 |= (1 << SYS_CLKEN1_SDRAM_Pos);
 
-    SDRAMC->TIM = (initStruct->TimeTRP  << SDRAMC_TIM_TRP_Pos) |
+    SDRAMC->TIM = (initStruct->TimeTRP  << SDRAMC_TIM_TRP_Pos)  |
                   (initStruct->TimeTRCD << SDRAMC_TIM_TRCD_Pos) |
-                  (initStruct->TimeTRFC << SDRAMC_TIM_TRFC_Pos) |
+                  (initStruct->TimeTRC  << SDRAMC_TIM_TRC_Pos)  |
                   ((cyclesPerUs * 200)  << SDRAMC_TIM_T100US_Pos);  // 要求大于100us
 
     SDRAMC->CFG = (initStruct->Size       << SDRAMC_CFG_SIZE_Pos)     |
@@ -54,7 +54,7 @@ void SDRAM_Init(SDRAM_InitStructure * initStruct)
     default:              row_n = 4096; break;
     }
 
-    SDRAMC->T64 = (64*1000 / row_n + 1) * cyclesPerUs;
+    SDRAMC->T64 = (initStruct->RefreshTime * 1000 / row_n + 1) * cyclesPerUs;
 
     SDRAMC->CR = (1 << SDRAMC_CR_PWRON_Pos);
 

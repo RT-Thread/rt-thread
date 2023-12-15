@@ -135,8 +135,8 @@ void ADC_SEQ_Init(ADC_TypeDef * ADCx, uint32_t seq, ADC_SEQ_InitStructure * init
     ADCx->SEQCOV &= ~(0xFFu << pos);
     ADCx->SEQCOV |= ((initStruct->conv_cnt ? initStruct->conv_cnt - 1 : 0) << pos);
 
-    ADCx->SEQSMP &= ~(0xFFu << pos);
-    ADCx->SEQSMP |= (initStruct->samp_tim << pos);
+    ADCx->SEQSMP &= ~(0x0Fu << (pos >> 1));
+    ADCx->SEQSMP |= (initStruct->samp_tim << (pos >> 1));
 }
 
 /******************************************************************************************************************************************

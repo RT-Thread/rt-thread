@@ -38,6 +38,7 @@
 
 
 static int dfs_elm_free_vnode(struct dfs_vnode *vnode);
+static int dfs_elm_truncate(struct dfs_file *file, off_t offset);
 
 #ifdef RT_USING_PAGECACHE
 static ssize_t dfs_elm_page_read(struct dfs_file *file, struct dfs_page *page);
@@ -547,33 +548,14 @@ int dfs_elm_ioctl(struct dfs_file *file, int cmd, void *args)
     switch (cmd)
     {
     case RT_FIOFTRUNCATE:
-        {
-            FIL *fd;
-            FSIZE_t fptr, length;
-            FRESULT result = FR_OK;
-            fd = (FIL *)(file->vnode->data);
-            RT_ASSERT(fd != RT_NULL);
-
-            /* save file read/write point */
-            fptr = fd->fptr;
-            length = *(off_t*)args;
-            if (length <= fd->obj.objsize)
-            {
-                fd->fptr = length;
-                result = f_truncate(fd);
-            }
-            else
-            {
-                result = f_lseek(fd, length);
-            }
-            /* restore file read/write point */
-            fd->fptr = fptr;
-            return elm_result_to_dfs(result);
-        }
+    {
+        off_t offset = (off_t)(size_t)(args);
+        return dfs_elm_truncate(file, offset);
+    }
     case F_GETLK:
-            return 0;
+        return 0;
     case F_SETLK:
-            return 0;
+        return 0;
     }
     return -ENOSYS;
 }
@@ -698,6 +680,30 @@ off_t dfs_elm_lseek(struct dfs_file *file, off_t offset, int wherece)
         }
     }
 
+    return elm_result_to_dfs(result);
+}
+
+static int dfs_elm_truncate(struct dfs_file *file, off_t offset)
+{
+    FIL *fd;
+    FSIZE_t fptr;
+    FRESULT result = FR_OK;
+    fd = (FIL *)(file->vnode->data);
+    RT_ASSERT(fd != RT_NULL);
+
+    /* save file read/write point */
+    fptr = fd->fptr;
+    if (offset <= fd->obj.objsize)
+    {
+        fd->fptr = offset;
+        result = f_truncate(fd);
+    }
+    else
+    {
+        result = f_lseek(fd, offset);
+    }
+    /* restore file read/write point */
+    fd->fptr = fptr;
     return elm_result_to_dfs(result);
 }
 
@@ -1065,6 +1071,7 @@ static const struct dfs_file_ops dfs_elm_fops =
     .write = dfs_elm_write,
     .flush = dfs_elm_flush,
     .lseek = dfs_elm_lseek,
+    .truncate = dfs_elm_truncate,
     .getdents = dfs_elm_getdents,
 };
 

@@ -421,6 +421,99 @@ struct dfs_fdtable *dfs_fdtable_get_global(void)
     return &_fdtab;
 }
 
+
+/**
+ * @brief  Dup the specified fd_src from fdt_src to fdt_dst.
+ *
+ * @param  fdt_dst is the fd table for destination, if empty, use global (_fdtab).
+ *
+ * @param  fdt_src is the fd table for source, if empty, use global (_fdtab).
+ *
+ * @param  fd_src is the fd in the designate fdt_src table.
+ *
+ * @return -1 on failed or the allocated file descriptor.
+ */
+int dfs_fdtable_dup(struct dfs_fdtable *fdt_dst, struct dfs_fdtable *fdt_src, int fd_src)
+{
+    int newfd = -1;
+
+    dfs_file_lock();
+
+    if (fdt_src == NULL)
+    {
+        fdt_src = &_fdtab;
+    }
+
+    if (fdt_dst == NULL)
+    {
+        fdt_dst = &_fdtab;
+    }
+
+    /* check fd */
+    if ((fd_src < 0) || (fd_src >= fdt_src->maxfd))
+    {
+        goto _EXIT;
+    }
+    if (!fdt_src->fds[fd_src])
+    {
+        goto _EXIT;
+    }
+
+    /* get a new fd*/
+    newfd = fdt_fd_new(fdt_dst);
+    if (newfd >= 0)
+    {
+        fdt_dst->fds[newfd]->mode = fdt_src->fds[fd_src]->mode;
+        fdt_dst->fds[newfd]->flags = fdt_src->fds[fd_src]->flags;
+        fdt_dst->fds[newfd]->fops = fdt_src->fds[fd_src]->fops;
+        fdt_dst->fds[newfd]->dentry = dfs_dentry_ref(fdt_src->fds[fd_src]->dentry);
+        fdt_dst->fds[newfd]->vnode = fdt_src->fds[fd_src]->vnode;
+        fdt_dst->fds[newfd]->mmap_context = RT_NULL;
+        fdt_dst->fds[newfd]->data = fdt_src->fds[fd_src]->data;
+
+        /*
+        * dma-buf/socket fd is without dentry, so should used the vnode reference.
+        */
+        if (!fdt_dst->fds[newfd]->dentry)
+        {
+            rt_atomic_add(&(fdt_dst->fds[newfd]->vnode->ref_count), 1);
+        }
+    }
+_EXIT:
+    dfs_file_unlock();
+
+    return newfd;
+}
+
+/**
+ * @brief  drop fd from the fd table.
+ *
+ * @param  fdt is the fd table, if empty, use global (_fdtab).
+ *
+ * @param  fd is the fd in the designate fd table.
+ *
+ * @return -1 on failed the drop file descriptor.
+ */
+int dfs_fdtable_drop_fd(struct dfs_fdtable *fdt, int fd)
+{
+    int err = 0;
+
+    if (fdt == NULL)
+    {
+        fdt = &_fdtab;
+    }
+
+    dfs_file_lock();
+    err = dfs_file_close(fdt->fds[fd]);
+    if (!err)
+    {
+        fdt_fd_release(fdt, fd);
+    }
+    dfs_file_unlock();
+
+    return err;
+}
+
 int dfs_dup(int oldfd, int startfd)
 {
     int newfd = -1;

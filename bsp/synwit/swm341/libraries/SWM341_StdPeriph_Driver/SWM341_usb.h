@@ -53,6 +53,7 @@ typedef struct {
 #define USB_DESC_OTG                0x09
 #define USB_DESC_BOS                0x0F
 #define USB_DESC_CAPABILITY         0x10
+#define USB_DESC_CS_INTERFACE       0x24    // Class Specific Interface
 
 /* USB HID Descriptor Type */
 #define USB_DESC_HID                0x21
@@ -90,12 +91,17 @@ typedef struct {
 #define USB_CDC_CTRL_CLASS          0x02    // for Interface
 #define USB_CDC_DATA_CLASS          0x0A    // for Interface
 #define USB_HID_CLASS               0x03    // for Interface
+#define USB_MTP_CLASS               0x06    // for Interface
 #define USB_MSC_CLASS               0x08    // for Interface
+#define USB_UVC_CLASS               0x0E    // for Interface
 
 
 /* SubClass */
 #define USB_CDC_ACM                 0x02    // Abstract Control Model
 #define USB_HID_BOOT                0x01
+#define USB_UVC_VIDEOCONTROL                0x01
+#define USB_UVC_VIDEOSTREAMING              0x02
+#define USB_UVC_VIDEO_INTERFACE_COLLECTION  0x03
 
 /* Protocol */
 #define USB_CDC_ATCMD               0x01    // AT Commands defined by ITU-T V.250

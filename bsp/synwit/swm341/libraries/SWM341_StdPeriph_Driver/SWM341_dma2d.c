@@ -135,14 +135,14 @@ void DMA2D_PixelBlend(DMA2D_LayerSetting * fgLayer, DMA2D_LayerSetting * bgLayer
 {
     DMA2D->L[DMA2D_LAYER_FG].MAR = fgLayer->Address;
     DMA2D->L[DMA2D_LAYER_FG].OR  = fgLayer->LineOffset;
-    DMA2D->L[DMA2D_LAYER_FG].PFCCR = (fgLayer->ColorMode << DMA2D_PFCCR_CFMT_Pos)  |
-                                     (fgLayer->AlphaMode << DAM2D_PFCCR_AMODE_Pos) |
+    DMA2D->L[DMA2D_LAYER_FG].PFCCR = (fgLayer->ColorMode << DMA2D_PFCCR_CFMT_Pos) |
+                                     (fgLayer->AlphaMode << DMA2D_PFCCR_AINV_Pos) |
                                      (fgLayer->Alpha     << DMA2D_PFCCR_ALPHA_Pos);
 
     DMA2D->L[DMA2D_LAYER_BG].MAR = bgLayer->Address;
     DMA2D->L[DMA2D_LAYER_BG].OR  = bgLayer->LineOffset;
-    DMA2D->L[DMA2D_LAYER_BG].PFCCR = (bgLayer->ColorMode << DMA2D_PFCCR_CFMT_Pos)  |
-                                     (bgLayer->AlphaMode << DAM2D_PFCCR_AMODE_Pos) |
+    DMA2D->L[DMA2D_LAYER_BG].PFCCR = (bgLayer->ColorMode << DMA2D_PFCCR_CFMT_Pos) |
+                                     (bgLayer->AlphaMode << DMA2D_PFCCR_AINV_Pos) |
                                      (bgLayer->Alpha     << DMA2D_PFCCR_ALPHA_Pos);
 
     DMA2D->L[DMA2D_LAYER_OUT].MAR = outLayer->Address;

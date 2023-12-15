@@ -1355,6 +1355,10 @@ int dfs_aspace_unmap(struct dfs_file *file, struct rt_varea *varea)
 
                             if (map && varea == map->varea)
                             {
+                                void *vaddr = dfs_aspace_vaddr(map->varea, page->fpos);
+
+                                rt_varea_unmap_page(map->varea, vaddr);
+
                                 if (varea->attr == MMU_MAP_U_RWCB && page->fpos < page->aspace->vnode->size)
                                 {
                                     dfs_page_dirty(page);

@@ -69,14 +69,17 @@ typedef struct {
 #define CAN_FILTER_15       14
 #define CAN_FILTER_16       15
 
-#define CAN_INT_RX_NOTEMPTY (0x01 << 0)     //RX Buffer Not Empty
-#define CAN_INT_RX_OVERFLOW (0x01 << 3)     //RX Buffer Overflow
-#define CAN_INT_TX_EMPTY    (0x01 << 1)     //TX Buffer Empty
-#define CAN_INT_ARBLOST     (0x01 << 6)     //Arbitration lost
-#define CAN_INT_ERR         (0x01 << 7)
-#define CAN_INT_ERR_WARN    (0x01 << 2)     //TXERR/RXERR计数值达到Error Warning Limit
-#define CAN_INT_ERR_PASS    (0x01 << 5)     //TXERR/RXERR计数值达到127
-#define CAN_INT_WAKEUP      (0x01 << 4)
+
+/* Interrupt Type */
+#define CAN_IT_RX_NOTEMPTY  (0x01 << 0)     //RX Buffer Not Empty
+#define CAN_IT_RX_OVERFLOW  (0x01 << 3)     //RX Buffer Overflow
+#define CAN_IT_TX_EMPTY     (0x01 << 1)     //TX Buffer Empty
+#define CAN_IT_ARBLOST      (0x01 << 6)     //Arbitration lost
+#define CAN_IT_ERR          (0x01 << 7)
+#define CAN_IT_ERR_WARN     (0x01 << 2)     //TXERR/RXERR计数值达到Error Warning Limit
+#define CAN_IT_ERR_PASS     (0x01 << 5)     //TXERR/RXERR计数值达到127
+#define CAN_IT_WAKEUP       (0x01 << 4)
+
 
 
 typedef struct {
@@ -111,6 +114,7 @@ void CAN_SetFilter16b(CAN_TypeDef * CANx, uint32_t filter, uint16_t check1, uint
 
 void CAN_INTEn(CAN_TypeDef * CANx, uint32_t it);
 void CAN_INTDis(CAN_TypeDef * CANx, uint32_t it);
+void CAN_INTClr(CAN_TypeDef * CANx, uint32_t it);
 uint32_t CAN_INTStat(CAN_TypeDef * CANx);
 
 

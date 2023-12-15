@@ -57,7 +57,7 @@ void SPI_Init(SPI_TypeDef * SPIx, SPI_InitStructure * initStruct)
         no_sync = 1;
     }
 
-    SPIx->CTRL &= ~(SPI_CTRL_FFS_Msk | SPI_CTRL_CPHA_Msk | SPI_CTRL_CPOL_Msk | SPI_CTRL_SIZE_Msk | SPI_CTRL_MSTR_Msk |
+    SPIx->CTRL &= ~(SPI_CTRL_FFS_Msk | SPI_CTRL_CPHA_Msk | SPI_CTRL_CPOL_Msk | SPI_CTRL_SIZE_Msk | SPI_CTRL_MSTR_Msk | SPI_CTRL_FAST_Msk | SPI_CTRL_NSYNC_Msk |
                     SPI_CTRL_CLKDIV_Msk | SPI_CTRL_SSN_H_Msk | SPI_CTRL_RFTHR_Msk | SPI_CTRL_TFTHR_Msk);
     SPIx->CTRL |= (initStruct->FrameFormat     << SPI_CTRL_FFS_Pos)    |
                   (initStruct->SampleEdge      << SPI_CTRL_CPHA_Pos)   |
@@ -313,12 +313,13 @@ void I2S_Init(SPI_TypeDef * SPIx, I2S_InitStructure * initStruct)
                   (1                           << SPI_CTRL_TFCLR_Pos);
     SPIx->CTRL &= ~(SPI_CTRL_RFCLR_Msk | SPI_CTRL_TFCLR_Msk);
 
-    SPIx->I2SCR &= ~(SPI_I2SCR_MSTR_Msk | SPI_I2SCR_DIEN_Msk | SPI_I2SCR_DOEN_Msk | SPI_I2SCR_FFMT_Msk | SPI_I2SCR_DLEN_Msk | SPI_I2SCR_PCMSYNW_Msk);
+    SPIx->I2SCR &= ~(SPI_I2SCR_MSTR_Msk | SPI_I2SCR_DIEN_Msk | SPI_I2SCR_DOEN_Msk | SPI_I2SCR_FFMT_Msk | SPI_I2SCR_DLEN_Msk | SPI_I2SCR_CHLEN_Msk | SPI_I2SCR_PCMSYNW_Msk);
     SPIx->I2SCR |= ((initStruct->Mode & 0x04 ? 1 : 0) << SPI_I2SCR_MSTR_Pos) |
                    ((initStruct->Mode & 0x02 ? 1 : 0) << SPI_I2SCR_DOEN_Pos) |
                    ((initStruct->Mode & 0x01 ? 1 : 0) << SPI_I2SCR_DIEN_Pos) |
                    ((initStruct->FrameFormat & 0x03)  << SPI_I2SCR_FFMT_Pos) |
                    (initStruct->DataLen               << SPI_I2SCR_DLEN_Pos) |
+                   (initStruct->ChannelLen            << SPI_I2SCR_CHLEN_Pos) |
                    ((initStruct->FrameFormat & 0x04 ? 1 : 0) << SPI_I2SCR_PCMSYNW_Pos);
 
     SPIx->I2SPR &= ~SPI_I2SPR_SCLKDIV_Msk;
@@ -380,28 +381,4 @@ void I2S_Close(SPI_TypeDef * SPIx)
 {
     SPIx->CTRL &= ~SPI_CTRL_EN_Msk;
     SPIx->I2SCR &= ~SPI_I2SCR_EN_Msk;
-}
-
-/******************************************************************************************************************************************
-* 函数名称: I2S_MCLKConfig()
-* 功能说明: I2S MCLK时钟输出配置
-* 输    入: SPI_TypeDef * SPIx        指定要被设置的SPI，有效值包括SPI0、SPI1
-*           uint32_t output_enable  是否输出MCLK时钟
-*           uint32_t mclk_freq      MCLK时钟频率
-* 输    出: 无
-* 注意事项: 无
-******************************************************************************************************************************************/
-void I2S_MCLKConfig(SPI_TypeDef * SPIx, uint32_t output_enable, uint32_t mclk_freq)
-{
-    if(output_enable)
-    {
-        SPIx->I2SPR &= ~SPI_I2SPR_MCLKDIV_Msk;
-        SPIx->I2SPR |= (SystemCoreClock / mclk_freq / 2 - 1) << SPI_I2SPR_MCLKDIV_Pos;
-
-        SPIx->I2SCR |= (1 << SPI_I2SCR_MCLKOE_Pos);
-    }
-    else
-    {
-        SPIx->I2SCR &= ~(1 << SPI_I2SCR_MCLKOE_Pos);
-    }
 }

@@ -429,7 +429,6 @@ int dfs_file_open(struct dfs_file *file, const char *path, int oflags, mode_t mo
                             dentry = dfs_dentry_create(mnt, fullpath);
                             if (dentry)
                             {
-                                mode &= ~S_IFMT;
                                 DLOG(msg, "dfs_file", mnt->fs_ops->name, DLOG_MSG, "fs_ops->create_vnode");
 
                                 if (dfs_is_mounted(mnt) == 0)
@@ -565,7 +564,6 @@ int dfs_file_open(struct dfs_file *file, const char *path, int oflags, mode_t mo
                     {
                         ret = -EINVAL;
                     }
-
                 }
             }
 

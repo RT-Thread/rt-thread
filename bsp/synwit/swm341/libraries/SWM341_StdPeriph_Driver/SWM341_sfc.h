@@ -26,6 +26,8 @@ typedef struct {
 
 #define SFC_CMD_READ_JEDEC          0x9F
 #define SFC_CMD_ERASE_CHIP          0x60
+#define SFC_CMD_WRITE_ENABLE        0x06
+#define SFC_CMD_PAGE_PROGRAM        0x02
 #define SFC_CMD_ERASE_SECTOR        0x20
 #define SFC_CMD_ERASE_BLOCK32KB     0x52
 #define SFC_CMD_ERASE_BLOCK64KB     0xD8    //W25Q32
@@ -46,6 +48,7 @@ uint32_t SFC_ReadJEDEC(void);
 void SFC_Erase(uint32_t addr, uint8_t wait);
 void SFC_EraseEx(uint32_t addr, uint8_t cmd, uint8_t wait);
 void SFC_Write(uint32_t addr, uint32_t buff[], uint32_t cnt);
+void SFC_GPIOWrite(uint32_t addr, uint32_t buff[], uint32_t cnt);
 void SFC_Read(uint32_t addr, uint32_t buff[], uint32_t cnt);
 
 

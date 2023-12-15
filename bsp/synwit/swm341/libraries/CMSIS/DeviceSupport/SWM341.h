@@ -274,8 +274,6 @@ typedef struct {
 #define SYS_CLKSEL_SDIO_Msk         (0x03 << SYS_CLKSEL_SDIO_Pos)
 #define SYS_CLKSEL_WDT_Pos          12      //看门狗时钟选择  0 HRC   1 XTAL   2 LRC   3 XTAL_32K
 #define SYS_CLKSEL_WDT_Msk          (0x03 << SYS_CLKSEL_WDT_Pos)
-#define SYS_CLKSEL_RTCTRIM_Pos      14      //RTC Trim参考时钟  0 XTAL   1 XTAL/2   2 XTAL/4   3 XTAL/8
-#define SYS_CLKSEL_RTCTRIM_Msk      (0x03 << SYS_CLKSEL_RTCTRIM_Pos)
 #define SYS_CLKSEL_AD0_Pos          16      //ADC0时钟选择  0 HRC   1 XTAL   2 PLL
 #define SYS_CLKSEL_AD0_Msk          (0x03 << SYS_CLKSEL_AD0_Pos)
 #define SYS_CLKSEL_AD0DIV_Pos       18      //ADC0时钟分频  0 1分频   1 1分频   2 4分频   3 8分频
@@ -477,12 +475,14 @@ typedef struct {
 
 #define SYS_PRSTR1_GPIOE_Pos        0
 #define SYS_PRSTR1_GPIOE_Msk        (0x01 << SYS_PRSTR1_GPIOE_Pos)
-#define SYS_PRSTR1_SPI2_Pos         8
-#define SYS_PRSTR1_SPI2_Msk         (0x01 << SYS_PRSTR1_SPI2_Pos)
 #define SYS_PRSTR1_SDRAM_Pos        12
 #define SYS_PRSTR1_SDRAM_Msk        (0x01 << SYS_PRSTR1_SDRAM_Pos)
+#define SYS_PRSTR1_SFC_Pos          13
+#define SYS_PRSTR1_SFC_Msk          (0x01 << SYS_PRSTR1_SFC_Pos)
 #define SYS_PRSTR1_ADC1_Pos         16
 #define SYS_PRSTR1_ADC1_Msk         (0x01 << SYS_PRSTR1_ADC1_Pos)
+#define SYS_PRSTR1_CAN1_Pos         17
+#define SYS_PRSTR1_CAN1_Msk         (0x01 << SYS_PRSTR1_CAN1_Pos)
 #define SYS_PRSTR1_RTC_Pos          19
 #define SYS_PRSTR1_RTC_Msk          (0x01 << SYS_PRSTR1_RTC_Pos)
 #define SYS_PRSTR1_IOFILT_Pos       20
@@ -491,6 +491,10 @@ typedef struct {
 #define SYS_PRSTR1_BTIMR_Msk        (0x01 << SYS_PRSTR1_BTIMR_Pos)
 #define SYS_PRSTR1_JPEG_Pos         25
 #define SYS_PRSTR1_JPEG_Msk         (0x01 << SYS_PRSTR1_JPEG_Pos)
+#define SYS_PRSTR1_DAC_Pos          26
+#define SYS_PRSTR1_DAC_Msk          (0x01 << SYS_PRSTR1_DAC_Pos)
+#define SYS_PRSTR1_QEI_Pos          27
+#define SYS_PRSTR1_QEI_Msk          (0x01 << SYS_PRSTR1_QEI_Pos)
 
 #define SYS_HRCCR_ON_Pos            0       //High speed RC ON
 #define SYS_HRCCR_ON_Msk            (0x01 << SYS_HRCCR_ON_Pos)
@@ -612,12 +616,12 @@ typedef struct {
 #define SYS_ACMPSR_CMP2IF_Pos       10
 #define SYS_ACMPSR_CMP2IF_Msk       (0x01 << SYS_ACMPSR_CMP2IF_Pos)
 
-#define SYS_ACMPCR2_HALL0_Pos       0       //1 ACMP0输出连接HALL0输入
-#define SYS_ACMPCR2_HALL0_Msk       (0x01 << SYS_ACMPCR2_HALL0_Pos)
-#define SYS_ACMPCR2_HALL1_Pos       1
-#define SYS_ACMPCR2_HALL1_Msk       (0x01 << SYS_ACMPCR2_HALL1_Pos)
-#define SYS_ACMPCR2_HALL2_Pos       2
-#define SYS_ACMPCR2_HALL2_Msk       (0x01 << SYS_ACMPCR2_HALL2_Pos)
+#define SYS_ACMPCR2_BRK0_Pos        0       //1 ACMP0输出连接用作PWM_BRK0
+#define SYS_ACMPCR2_BRK0_Msk        (0x01 << SYS_ACMPCR2_BRK0_Pos)
+#define SYS_ACMPCR2_BRK1_Pos        1       //1 ACMP1输出连接用作PWM_BRK1
+#define SYS_ACMPCR2_BRK1_Msk        (0x01 << SYS_ACMPCR2_BRK1_Pos)
+#define SYS_ACMPCR2_BRK2_Pos        2
+#define SYS_ACMPCR2_BRK2_Msk        (0x01 << SYS_ACMPCR2_BRK2_Pos)
 #define SYS_ACMPCR2_VREF_Pos        3       //ACMP内部基准电压VREF，电压值为 0.6 + 0.04*VREF
 #define SYS_ACMPCR2_VREF_Msk        (0x3F << SYS_ACMPCR2_VREF_Pos)
 
@@ -626,10 +630,6 @@ typedef struct {
 
 #define SYS_TEMPCR_EN_Pos           0
 #define SYS_TEMPCR_EN_Msk           (0x01 << SYS_TEMPCR_EN_Pos)
-#define SYS_TEMPCR_TRIM_Pos         4
-#define SYS_TEMPCR_TRIM_Msk         (0x3F << SYS_TEMPCR_TRIM_Pos)
-#define SYS_TEMPCR_AD0CH7_Pos       16      //ADC0 CH7通道测量信号选择，0 外部输入   1 温度传感器输出
-#define SYS_TEMPCR_AD0CH7_Msk       (0x03 << SYS_TEMPCR_AD0CH7_Pos)
 
 
 
@@ -753,6 +753,11 @@ typedef struct {
     __IO uint32_t PREDIV;                   //预分频，8位
 } TIMR_TypeDef;
 
+
+#define TIMR_LOAD_VALUE_Pos         0
+#define TIMR_LOAD_VALUE_Msk         (0xFFFFFF << TIMR_LOAD_VALUE_Pos)
+#define TIMR_LOAD_RELOAD_Pos        24      //reload VALUE to TIMR's internal Counter immediately. only for BTIMRx, not for TIMRx.
+#define TIMR_LOAD_RELOAD_Msk        (0x01 << TIMR_LOAD_RELOAD_Pos)
 
 #define TIMR_CR_CLKSRC_Pos          0       //时钟源：  0 内部系统时钟    2 外部引脚脉冲计数
 #define TIMR_CR_CLKSRC_Msk          (0x03 << TIMR_CR_CLKSRC_Pos)
@@ -1001,6 +1006,8 @@ typedef struct {
 #define UART_RTSCR_STAT_Pos         8       //RTS信号的当前状态
 #define UART_RTSCR_STAT_Msk         (0x01 << UART_RTSCR_STAT_Pos)
 
+#define UART_CFG_RXEN_Pos           0       //RX Enable
+#define UART_CFG_RXEN_Msk           (0x01 << UART_CFG_RXEN_Pos)
 #define UART_CFG_MSBF_Pos           1       //接收发送MSB First
 #define UART_CFG_MSBF_Msk           (0x01 << UART_CFG_MSBF_Pos)
 #define UART_CFG_BRKTXLEN_Pos       2       //1表示1bit，以此类推，默认值13
@@ -1366,7 +1373,7 @@ typedef struct {
 #define ADC_GO_SEQ1_Pos             1
 #define ADC_GO_SEQ1_Msk             (0x01 << ADC_GO_SEQ1_Pos)
 #define ADC_GO_SEQ2_Pos             2
-#define ADC_GO_SEQ2_Msk             (0x01 << ADC_GO_SEQ3_Pos)
+#define ADC_GO_SEQ2_Msk             (0x01 << ADC_GO_SEQ2_Pos)
 #define ADC_GO_SEQ3_Pos             3
 #define ADC_GO_SEQ3_Msk             (0x01 << ADC_GO_SEQ3_Pos)
 #define ADC_GO_BUSY_Pos             4
@@ -1493,7 +1500,7 @@ typedef struct {
 #define ADC_CMP_MIN_Pos             16
 #define ADC_CMP_MIN_Msk             (0xFFF<< ADC_CMP_MIN_Pos)
 
-#define ADC_SEQCHN0_SEQ0_Pos        0       //序列0通道选择，8位对应8个通道，bitx置位表示将通道x加入序列0
+#define ADC_SEQCHN0_SEQ0_Pos        0       //序列0通道选择，12位对应12个通道，bitx置位表示将通道x加入序列0
 #define ADC_SEQCHN0_SEQ0_Msk        (0xFFF << ADC_SEQCHN0_SEQ0_Pos)
 #define ADC_SEQCHN0_SEQ1_Pos        16
 #define ADC_SEQCHN0_SEQ1_Msk        (0xFFF << ADC_SEQCHN0_SEQ1_Pos)
@@ -2558,6 +2565,8 @@ typedef struct {
 #define LCD_CR_CLKALW_Msk           (0x01 << LCD_CR_CLKALW_Pos)
 #define LCD_CR_BURSTEN_Pos          8       //Burst Enable，0 只进行SINGLE读   1 优先Burst读
 #define LCD_CR_BURSTEN_Msk          (0x01 << LCD_CR_BURSTEN_Pos)
+#define LCD_CR_BURSTLEN_Pos         9       //Burst Length，0 Burst INCR4   1 Burst INCR8
+#define LCD_CR_BURSTLEN_Msk         (0x01 << LCD_CR_BURSTLEN_Pos)
 #define LCD_CR_AUTORESTA_Pos        13      //Auto Restart，1 刷新完一帧后自动重启刷新
 #define LCD_CR_AUTORESTA_Msk        (0x01 << LCD_CR_AUTORESTA_Pos)
 #define LCD_CR_IMMRELOAD_Pos        14      //Immediate Reload，立即将层配置寄存器的值加载到层工作寄存器
@@ -2574,8 +2583,6 @@ typedef struct {
 #define LCD_CR_VSYNCINV_Msk         (0x01 << LCD_CR_VSYNCINV_Pos)
 #define LCD_CR_HSYNCINV_Pos         20      //1 HSYNC反相输出
 #define LCD_CR_HSYNCINV_Msk         (0x01 << LCD_CR_HSYNCINV_Pos)
-#define LCD_CR_BURSTLEN_Pos         21      //Burst Length，0 Burst INCR4   1 Burst INCR8   2 Burst INCR16
-#define LCD_CR_BURSTLEN_Msk         (0x03 << LCD_CR_BURSTLEN_Pos)
 
 #define LCD_CRH_HSW_Pos             0       //Hsync Width, 输出HSYNC低电平持续多少个DOTCLK周期，0表示1个周期
 #define LCD_CRH_HSW_Msk             (0xFF << LCD_CRH_HSW_Pos)
@@ -2675,8 +2682,8 @@ typedef struct {
 #define DMA2D_PFCCR_AINV_Msk        (0x01 << DMA2D_PFCCR_AINV_Pos)
 #define DMA2D_PFCCR_RBSWAP_Pos      4       //RB Swap, 0 RGB   1 BGR
 #define DMA2D_PFCCR_RBSWAP_Msk      (0x01 << DMA2D_PFCCR_RBSWAP_Pos)
-#define DAM2D_PFCCR_AMODE_Pos       8       //Alpha Mode, 0 使用像素点自带Alpha值   1 使用PFCCR.ALPHA值   2 使用像素点自带Alpha值与PFCCR.ALPHA值的乘积
-#define DMA2D_PFCCR_AMODE_Msk       (0x03 << DAM2D_PFCCR_AMODE_Pos)
+#define DMA2D_PFCCR_AMODE_Pos       8       //Alpha Mode, 0 使用像素点自带Alpha值   1 使用PFCCR.ALPHA值   2 使用像素点自带Alpha值与PFCCR.ALPHA值的乘积
+#define DMA2D_PFCCR_AMODE_Msk       (0x03 << DMA2D_PFCCR_AMODE_Pos)
 #define DMA2D_PFCCR_ALPHA_Pos       24
 #define DMA2D_PFCCR_ALPHA_Msk       (0xFFu<< DMA2D_PFCCR_ALPHA_Pos)
 
@@ -2703,8 +2710,8 @@ typedef struct {
 
 #define SDRAMC_TIM_TRCD_Pos         0       //Row to column delay, Ie. Activate to Command delay
 #define SDRAMC_TIM_TRCD_Msk         (0x03 << SDRAMC_TIM_TRCD_Pos)
-#define SDRAMC_TIM_TRFC_Pos         2       //Refresh Cycle
-#define SDRAMC_TIM_TRFC_Msk         (0x0F << SDRAMC_TIM_TRFC_Pos)
+#define SDRAMC_TIM_TRC_Pos          2       //Activate to Activate on same bank
+#define SDRAMC_TIM_TRC_Msk          (0x0F << SDRAMC_TIM_TRC_Pos)
 #define SDRAMC_TIM_TRP_Pos          6       //Row precharge time,  Ie. Precharge to Activate delay
 #define SDRAMC_TIM_TRP_Msk          (0x03 << SDRAMC_TIM_TRP_Pos)
 #define SDRAMC_TIM_T100US_Pos       8
@@ -2856,7 +2863,7 @@ typedef struct {
 
     __IO uint32_t ADDR;
 
-    __IO uint32_t FMC_ERASE;
+    __IO uint32_t ERASE;
 
     __IO uint32_t CACHE;
 
@@ -4003,6 +4010,53 @@ typedef struct {
 #include "SWM341_jpeg.h"
 #include "SWM341_dma2d.h"
 #include "SWM341_iofilt.h"
+
+
+#ifdef  SW_LOG_RTT
+#define log_printf(...)     SEGGER_RTT_printf(0, __VA_ARGS__)
+#else
+#define log_printf(...)     printf(__VA_ARGS__)
+#endif
+
+
+#ifndef SW_LOG_LEVEL
+#define SW_LOG_LEVEL        0
+#endif
+
+#if (SW_LOG_LEVEL > 0)
+#define SW_LOG_ERR(...)     {                        \
+                            log_printf("ERROR: ");   \
+                            log_printf(__VA_ARGS__); \
+                            log_printf("\n");        \
+                            }
+
+#if (SW_LOG_LEVEL > 1)
+#define SW_LOG_WARN(...)    {                        \
+                            log_printf("WARN : ");   \
+                            log_printf(__VA_ARGS__); \
+                            log_printf("\n");        \
+                            }
+
+#if (SW_LOG_LEVEL > 2)
+#define SW_LOG_INFO(...)    {                        \
+                            log_printf("INFO : ");   \
+                            log_printf(__VA_ARGS__); \
+                            log_printf("\n");        \
+                            }
+#else
+#define SW_LOG_INFO(...)
+#endif
+
+#else
+#define SW_LOG_WARN(...)
+#define SW_LOG_INFO(...)
+#endif
+
+#else
+#define SW_LOG_ERR(...)
+#define SW_LOG_WARN(...)
+#define SW_LOG_INFO(...)
+#endif
 
 
 #endif //__SWM341_H__
