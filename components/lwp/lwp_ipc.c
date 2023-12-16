@@ -961,7 +961,7 @@ static struct dfs_file *lwp_fd_get(int fdt_type, int fd)
     {
         fdt = dfs_fdtable_get();
     }
-    return fdt_fd_get(fdt, fd);
+    return fdt_get_file(fdt, fd);
 }
 
 static void lwp_fd_release(int fdt_type, int fd)
