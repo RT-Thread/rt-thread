@@ -13,6 +13,7 @@
 
 #include "board.h"
 #include <sys/time.h>
+#include <rtdevice.h>
 
 #ifdef BSP_USING_ONCHIP_RTC
 
