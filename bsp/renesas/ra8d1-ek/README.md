@@ -1,10 +1,10 @@
-# 瑞萨 EK-RA8M1 开发板 BSP 说明
+# 瑞萨 EK-RA8D1 开发板 BSP 说明
 
 中文|[English](README_EN.md)
 
 ## 简介
 
-本文档为 EK-RA8M1 开发板提供的 BSP (板级支持包) 说明。通过阅读快速上手章节开发者可以快速地上手该 BSP，将 RT-Thread 运行在开发板上。
+本文档为 EK-RA8D1 开发板提供的 BSP (板级支持包) 说明。通过阅读快速上手章节开发者可以快速地上手该 BSP，将 RT-Thread 运行在开发板上。
 
 主要内容如下：
 
@@ -13,7 +13,7 @@
 
 ## 开发板介绍
 
-基于瑞萨 RA8M1 MCU 开发的 EK-RA8M1 评估板，通过灵活配置软件包和 IDE，可帮助用户对 RA8 MCU 群组的特性轻松进行评估，并对嵌入系统应用程序进行开发。
+基于瑞萨 RA8D1 MCU 开发的 EK-RA8D1 评估板，通过灵活配置软件包和 IDE，可帮助用户对 RA8 MCU 群组的特性轻松进行评估，并对嵌入系统应用程序进行开发。
 
 开发板正面外观如下图： 
 
@@ -21,7 +21,7 @@
 
 该开发板常用 **板载资源** 如下：
 
-- MCU：R7FA8M1AH，480MHz，**Arm®Cortex®-M85** 内核，2MB 代码闪存, 1MB SRAM
+- MCU：R7FA8D1BH，480MHz，**Arm®Cortex®-M85** 内核，2MB 代码闪存, 1MB SRAM
 - Jlink OB
 - OSPI FLASH（64MX8）
 - USB-Host
@@ -75,9 +75,9 @@
 
 ## FSP版本说明
 
-本BSP使用的是FSP5.0.0版本，进行外设相关开发需要下载并安装。
+本BSP使用的是FSP5.1.0版本，进行外设相关开发需要下载并安装。
 
-* 下载链接：[rasc-5.0.0](https://github.com/renesas/fsp/releases/download/v5.0.0/setup_fsp_v5_0_0_rasc_v2023-10.exe)
+* 下载链接：[rasc-5.1.0](https://github.com/renesas/fsp/releases/download/v5.1.0/setup_fsp_v5_1_0_rasc_v2023-10.exe)
 
 * 注意：BSP默认是最小系统，若需添加/使能其他外设需参考：[外设驱动使用教程 (rt-thread.org)](https://www.rt-thread.org/document/site/#/rt-thread-version/rt-thread-standard/tutorial/make-bsp/renesas-ra/RA系列BSP外设驱动使用教程)
 
@@ -130,7 +130,7 @@ msh >
 
 **应用入口函数**
 
-应用层的入口函数在 **bsp\renesas\ra8m1-ek\src\hal_entry.c** 中 的 `void hal_entry(void)` 。用户编写的源文件可直接放在 src 目录下。
+应用层的入口函数在 **bsp\renesas\ra8d1-ek\src\hal_entry.c** 中 的 `void hal_entry(void)` 。用户编写的源文件可直接放在 src 目录下。
 
 ```c
 void hal_entry(void)
@@ -139,9 +139,9 @@ void hal_entry(void)
 
     while (1)
     {
-        rt_pin_write(LED3_PIN, PIN_HIGH);
+        rt_pin_write(LED_PIN, PIN_HIGH);
         rt_thread_mdelay(500);
-        rt_pin_write(LED3_PIN, PIN_LOW);
+        rt_pin_write(LED_PIN, PIN_LOW);
         rt_thread_mdelay(500);
     }
 }
@@ -151,8 +151,8 @@ void hal_entry(void)
 
 **资料及文档**
 
-- [开发板官网主页](https://www.renesas.cn/cn/zh/products/microcontrollers-microprocessors/ra-cortex-m-mcus/ek-ra8m1-evaluation-kit-ra8m1-mcu-group)
-- [开发板用户手册](https://www.renesas.cn/cn/zh/document/mat/ek-ra8m1-users-manual?r=25448206)
+- [开发板官网主页](https://www.renesas.cn/cn/zh/products/microcontrollers-microprocessors/ra-cortex-m-mcus/ek-ra8d1-evaluation-kit-ra8d1-mcu-group#overview)
+- [开发板用户手册](https://www.renesas.cn/cn/zh/document/mat/ek-ra8d1-v1-users-manual?r=25452351)
 - [瑞萨RA MCU 基础知识](https://www2.renesas.cn/cn/zh/document/gde/1520091)
 
 **ENV 配置**
@@ -173,4 +173,4 @@ void hal_entry(void)
 
 ## 贡献代码
 
-如果您对  EK-RA8M1 感兴趣，并且有一些好玩的项目愿意与大家分享的话欢迎给我们贡献代码，您可以参考 [如何向 RT-Thread 代码贡献](https://www.rt-thread.org/document/site/#/rt-thread-version/rt-thread-standard/development-guide/github/github)。
+如果您对  EK-RA8D1 感兴趣，并且有一些好玩的项目愿意与大家分享的话欢迎给我们贡献代码，您可以参考 [如何向 RT-Thread 代码贡献](https://www.rt-thread.org/document/site/#/rt-thread-version/rt-thread-standard/development-guide/github/github)。
