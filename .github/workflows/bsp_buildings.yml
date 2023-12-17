@@ -202,6 +202,7 @@ jobs:
                 - "renesas/ra4m2-eco"
                 - "renesas/ra2l1-cpk"
                 - "renesas/ra8m1-ek"
+                - "renesas/ra8d1-ek"
          -  RTT_BSP: "gd32_n32_apm32"   
             RTT_TOOL_CHAIN: "sourcery-arm"
             SUB_RTT_BSP:             
