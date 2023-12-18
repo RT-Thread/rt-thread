@@ -20,6 +20,19 @@ chmod +x get_toolchain.py ci.py
 python3 ./get_toolchain.py arm
 ```
 
+- 注：若拉取aarch32交叉编译链失败，请在网站下载压缩包
+```shell
+https://github.com/RT-Thread/toolchains-ci/releases/tag/v1.7
+```
+![aarch32_tools](./figures/aarch32_tools.png)
+
+- 在tools/目录下新建gnu_gcc文件夹，将下载好的压缩包移至该文件夹下，并使用tar命令解压缩
+```shell
+mkdir gun_gcc
+cd ./gun_gcc
+tar jxvf arm-linux-musleabi_for_x86_64-pc-linux-gnu_stable.tar.bz2
+```
+
 > RT-Thread 5.0 后必须使用这个带 musl-libc 的编译链，不能使用`arm-none-eabi`
 
 - 在 aarch32 目录下下载脚本 smart-env.sh ，然后运行脚本生效环境变量
