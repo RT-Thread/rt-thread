@@ -20,7 +20,7 @@ chmod +x get_toolchain.py ci.py
 python3 ./get_toolchain.py arm
 ```
 
-- 注：若拉取aarch32交叉编译链失败，请在网站下载
+- 注：若拉取aarch32交叉编译链失败，请在网站下载压缩包
 ```shell
 https://github.com/RT-Thread/toolchains-ci/releases/tag/v1.7
 ```
