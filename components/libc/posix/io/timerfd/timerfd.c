@@ -14,6 +14,10 @@
 #include <poll.h>
 #include <sys/timerfd.h>
 
+#define DBG_TAG    "TIMERFD"
+#define DBG_LVL    DBG_INFO
+#include <rtdbg.h>
+
 #define INIT_PERIODIC 0
 #define OPEN_PERIODIC 1
 #define ENTER_PERIODIC 2
@@ -164,7 +168,7 @@ static ssize_t timerfd_read(struct dfs_file *file, void *buf, size_t count, off_
         }
 
         (*buffer) = rt_atomic_load(&(tfd->timeout_num));
-
+        rt_atomic_store(&(tfd->timeout_num), 0);
         rt_atomic_store(&(tfd->ticks), 0);
     }
 
@@ -325,7 +329,13 @@ static void timerfd_timeout(void *parameter)
         tfd->timer = rt_timer_create(TIMERFD_MUTEX_NAME, timerfd_timeout,
                         tfd, tfd->tick_out,
                         RT_TIMER_FLAG_PERIODIC | RT_TIMER_FLAG_SOFT_TIMER);
-        RT_ASSERT(tfd->timer);
+
+        if (tfd->timer == RT_NULL)
+        {
+            LOG_E("rt_timer_create fail \n");
+            rt_mutex_release(&tfd->lock);
+            return ;
+        }
         rt_timer_start(tfd->timer);
     }
 
@@ -458,7 +468,12 @@ static int timerfd_do_settime(int fd, int flags, const struct itimerspec *new, s
             tfd->timer = rt_timer_create(TIMERFD_MUTEX_NAME, timerfd_timeout,
                             tfd, tick_out,
                             RT_TIMER_FLAG_ONE_SHOT | RT_TIMER_FLAG_SOFT_TIMER);
-            RT_ASSERT(tfd->timer);
+            if (tfd->timer == RT_NULL)
+            {
+                LOG_E("rt_timer_create fail \n");
+                rt_mutex_release(&tfd->lock);
+                return -ENOMEM;
+            }
             rt_timer_start(tfd->timer);
         }
         else
