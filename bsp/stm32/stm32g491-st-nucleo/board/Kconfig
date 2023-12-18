@@ -163,7 +163,9 @@ menu "On-chip Peripheral Drivers"
             config BSP_USING_TIM7
                 bool "Enable TIM7"
                 default n
-
+            config BSP_USING_TIM8
+                bool "Enable TIM8"
+                default n
             config BSP_USING_TIM15
                 bool "Enable TIM15"
                 default n
