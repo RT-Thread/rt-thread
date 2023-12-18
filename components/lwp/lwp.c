@@ -1089,11 +1089,11 @@ static void lwp_copy_stdio_fdt(struct rt_lwp *lwp)
     {
         lwp_fdt->maxfd = 4;
         d = fd_get(0);
-        fd_associate(lwp_fdt, 0, d);
+        fdt_fd_associate_file(lwp_fdt, 0, d);
         d = fd_get(1);
-        fd_associate(lwp_fdt, 1, d);
+        fdt_fd_associate_file(lwp_fdt, 1, d);
         d = fd_get(2);
-        fd_associate(lwp_fdt, 2, d);
+        fdt_fd_associate_file(lwp_fdt, 2, d);
     }
 
     return;
