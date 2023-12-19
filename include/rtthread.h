@@ -20,6 +20,7 @@
  * 2023-05-20     Bernard      add rtatomic.h header file to included files.
  * 2023-06-30     ChuShicheng  move debug check from the rtdebug.h
  * 2023-10-16     Shell        Support a new backtrace framework
+ * 2023-12-10     xqyjlj       add rt_arch_spinlock, fix spinlock in up
  */
 
 #ifndef __RT_THREAD_H__
@@ -552,12 +553,39 @@ void rt_spin_lock(struct rt_spinlock *lock);
 void rt_spin_unlock(struct rt_spinlock *lock);
 rt_base_t rt_spin_lock_irqsave(struct rt_spinlock *lock);
 void rt_spin_unlock_irqrestore(struct rt_spinlock *lock, rt_base_t level);
+void rt_arch_spin_lock(struct rt_spinlock *lock);
+void rt_arch_spin_unlock(struct rt_spinlock *lock);
+rt_base_t rt_arch_spin_lock_irqsave(struct rt_spinlock *lock);
+void rt_arch_spin_unlock_irqrestore(struct rt_spinlock *lock, rt_base_t level);
 #else
-#define rt_spin_lock_init(lock)                                     do {RT_UNUSED(lock);} while (0)
-#define rt_spin_lock(lock)                                          do {RT_UNUSED(lock);} while (0)
-#define rt_spin_unlock(lock)                                        do {RT_UNUSED(lock);} while (0)
-rt_inline rt_base_t rt_spin_lock_irqsave(struct rt_spinlock *lock)  {RT_UNUSED(lock);return rt_hw_interrupt_disable();}
-#define rt_spin_unlock_irqrestore(lock, level)                      do {RT_UNUSED(lock); rt_hw_interrupt_enable(level);} while (0)
+
+rt_inline void rt_spin_lock_init(struct rt_spinlock *lock)
+{
+    RT_UNUSED(lock);
+}
+rt_inline void rt_spin_lock(struct rt_spinlock *lock)
+{
+    RT_UNUSED(lock);
+    rt_enter_critical();
+}
+rt_inline void rt_spin_unlock(struct rt_spinlock *lock)
+{
+    RT_UNUSED(lock);
+    rt_exit_critical();
+}
+rt_inline rt_base_t rt_spin_lock_irqsave(struct rt_spinlock *lock)
+{
+    rt_base_t level;
+    RT_UNUSED(lock);
+    level = rt_hw_interrupt_disable();
+    return level;
+}
+rt_inline void rt_spin_unlock_irqrestore(struct rt_spinlock *lock, rt_base_t level)
+{
+    RT_UNUSED(lock);
+    rt_hw_interrupt_enable(level);
+}
+
 #endif /* RT_USING_SMP */
 
 /**@}*/
