@@ -1092,6 +1092,32 @@ struct rt_ofw_node *rt_ofw_get_alias_node(const char *tag, int id)
     return np;
 }
 
+int ofw_alias_node_id(struct rt_ofw_node *np)
+{
+    int id;
+    struct alias_info *info;
+
+    if (np)
+    {
+        id = -1;
+
+        rt_list_for_each_entry(info, &_aliases_nodes, list)
+        {
+            if (info->np == np)
+            {
+                id = info->id;
+                break;
+            }
+        }
+    }
+    else
+    {
+        id = -RT_EINVAL;
+    }
+
+    return id;
+}
+
 int rt_ofw_get_alias_id(struct rt_ofw_node *np, const char *tag)
 {
     int id;
