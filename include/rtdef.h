@@ -53,6 +53,7 @@
  * 2023-10-10     Chushicheng  change version number to v5.1.0
  * 2023-10-11     zmshahaha    move specific devices related and driver to components/drivers
  * 2023-11-21     Meco Man     add RT_USING_NANO macro
+ * 2023-12-18     xqyjlj       add rt_always_inline
  */
 
 #ifndef __RT_DEF_H__
@@ -198,6 +199,7 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
 #define rt_align(n)                 __attribute__((aligned(n)))
 #define rt_weak                     __attribute__((weak))
 #define rt_inline                   static __inline
+#define rt_always_inline            rt_inline
 /* module compiling */
 #ifdef RT_USING_MODULE
 #define RTT_API                     __declspec(dllimport)
@@ -211,6 +213,7 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
 #define rt_align(n)                    PRAGMA(data_alignment=n)
 #define rt_weak                     __weak
 #define rt_inline                   static inline
+#define rt_always_inline            rt_inline
 #define RTT_API
 #elif defined (__GNUC__)                /* GNU GCC Compiler */
 #ifndef RT_USING_LIBC
@@ -229,6 +232,7 @@ typedef __gnuc_va_list              va_list;
 #define rt_weak                     __attribute__((weak))
 #define rt_noreturn                 __attribute__ ((noreturn))
 #define rt_inline                   static __inline
+#define rt_always_inline            static inline __attribute__((always_inline))
 #define RTT_API
 #elif defined (__ADSPBLACKFIN__)        /* for VisualDSP++ Compiler */
 #define rt_section(x)               __attribute__((section(x)))
@@ -236,6 +240,7 @@ typedef __gnuc_va_list              va_list;
 #define rt_align(n)                 __attribute__((aligned(n)))
 #define rt_weak                     __attribute__((weak))
 #define rt_inline                   static inline
+#define rt_always_inline            rt_inline
 #define RTT_API
 #elif defined (_MSC_VER)
 #define rt_section(x)
@@ -243,6 +248,7 @@ typedef __gnuc_va_list              va_list;
 #define rt_align(n)                 __declspec(align(n))
 #define rt_weak
 #define rt_inline                   static __inline
+#define rt_always_inline            rt_inline
 #define RTT_API
 #elif defined (__TI_COMPILER_VERSION__)
 /* The way that TI compiler set section is different from other(at least
@@ -262,6 +268,7 @@ typedef __gnuc_va_list              va_list;
 #define rt_weak
 #endif
 #define rt_inline                   static inline
+#define rt_always_inline            rt_inline
 #define RTT_API
 #elif defined (__TASKING__)
 #define rt_section(x)               __attribute__((section(x)))
@@ -270,6 +277,7 @@ typedef __gnuc_va_list              va_list;
 #define rt_align(n)                 __attribute__((__align(n)))
 #define rt_weak                     __attribute__((weak))
 #define rt_inline                   static inline
+#define rt_always_inline            rt_inline
 #define RTT_API
 #else
     #error not supported tool chain
