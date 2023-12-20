@@ -523,7 +523,7 @@ static int ofw_map_irq(struct rt_ofw_cell_args *irq_args)
 {
     int irq;
     struct rt_ofw_node *ic_np = irq_args->data;
-    struct rt_pic *pic = rt_ofw_data(ic_np);
+    struct rt_pic *pic = rt_pic_dynamic_cast(rt_ofw_data(ic_np));
 
     /* args.data is "interrupt-controller" */
     if (pic)
@@ -611,7 +611,26 @@ int rt_ofw_get_irq(struct rt_ofw_node *np, int index)
 
         if (irq >= 0)
         {
+            rt_phandle cpu_phandle;
+
             irq = ofw_map_irq(&irq_args);
+
+            if (irq >= 0 && !rt_ofw_prop_read_u32_index(np, "interrupt-affinity", index, &cpu_phandle))
+            {
+                rt_uint64_t cpuid = rt_ofw_get_cpu_id(rt_ofw_find_node_by_phandle(cpu_phandle));
+
+                if ((rt_int64_t)cpuid >= 0)
+                {
+                    RT_DECLARE_BITMAP(affinity, RT_CPUS_NR) = { 0 };
+
+                    rt_bitmap_set_bit(affinity, cpuid);
+
+                    if (rt_pic_irq_set_affinity(irq, affinity) == -RT_ENOSYS)
+                    {
+                        LOG_W("%s irq affinity init fail", np->full_name);
+                    }
+                }
+            }
         }
     }
     else

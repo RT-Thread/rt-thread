@@ -9,3 +9,22 @@ config MAX_HANDLERS
     depends on RT_USING_PIC
     range 1 4294967294
     default 256
+
+config RT_PIC_ARM_GIC
+    bool "ARM GICv2/v1"
+    depends on RT_USING_PIC
+    select RT_USING_OFW
+    default n
+
+config RT_PIC_ARM_GIC_V3
+    bool "ARM GICv3"
+    depends on RT_USING_PIC
+    select RT_USING_OFW
+    default n
+
+config RT_PIC_ARM_GIC_MAX_NR
+    int
+    depends on RT_USING_PIC
+    depends on RT_PIC_ARM_GIC
+    default 2 if SOC_REALVIEW
+    default 1

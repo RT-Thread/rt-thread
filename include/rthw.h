@@ -197,7 +197,12 @@ int rt_hw_cpu_id(void);
 /**
  *  ipi function
  */
+#ifndef RT_USING_PIC
 void rt_hw_ipi_send(int ipi_vector, unsigned int cpu_mask);
+#else
+extern void rt_pic_irq_send_ipi(int irq, unsigned int cpumask);
+#define rt_hw_ipi_send(ipi_vector, cpu_mask) rt_pic_irq_send_ipi(ipi_vector, cpu_mask)
+#endif
 #endif
 
 #ifdef RT_USING_SMP

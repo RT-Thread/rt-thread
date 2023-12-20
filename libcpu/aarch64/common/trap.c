@@ -166,6 +166,7 @@ void rt_hw_show_register(struct rt_hw_exp_stack *regs)
     rt_kprintf("EPC   :0x%16.16p\n", (void *)regs->pc);
 }
 
+#ifndef RT_USING_PIC
 void rt_hw_trap_irq(void)
 {
 #ifdef SOC_BCM283x
@@ -267,6 +268,12 @@ void rt_hw_trap_irq(void)
     rt_hw_interrupt_ack(ir);
 #endif
 }
+#else
+void rt_hw_trap_irq(void)
+{
+    rt_pic_do_traps();
+}
+#endif
 
 #ifdef RT_USING_SMART
 #define DBG_CHECK_EVENT(regs, esr) dbg_check_event(regs, esr)
@@ -274,6 +281,7 @@ void rt_hw_trap_irq(void)
 #define DBG_CHECK_EVENT(regs, esr) (0)
 #endif
 
+#ifndef RT_USING_PIC
 void rt_hw_trap_fiq(void)
 {
     void *param;
@@ -296,6 +304,12 @@ void rt_hw_trap_fiq(void)
     /* end of interrupt */
     rt_hw_interrupt_ack(ir);
 }
+#else
+void rt_hw_trap_fiq(void)
+{
+    rt_pic_do_traps();
+}
+#endif
 
 void print_exception(unsigned long esr, unsigned long epc);
 void SVC_Handler(struct rt_hw_exp_stack *regs);
