@@ -151,7 +151,7 @@ void hal_entry(void)
 
 **资料及文档**
 
-- [开发板官网主页]([EK-RA8M1 - RA8M1 MCU 群组评估套件 | Renesas](https://www.renesas.cn/cn/zh/products/microcontrollers-microprocessors/ra-cortex-m-mcus/ek-ra8m1-evaluation-kit-ra8m1-mcu-group))
+- [开发板官网主页](https://www.renesas.cn/cn/zh/products/microcontrollers-microprocessors/ra-cortex-m-mcus/ek-ra8m1-evaluation-kit-ra8m1-mcu-group)
 - [开发板用户手册](https://www.renesas.cn/cn/zh/document/mat/ek-ra8m1-users-manual?r=25448206)
 - [瑞萨RA MCU 基础知识](https://www2.renesas.cn/cn/zh/document/gde/1520091)
 

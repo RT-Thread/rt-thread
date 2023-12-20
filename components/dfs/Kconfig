@@ -41,6 +41,7 @@ endif
 
         config RT_USING_DFS_V1
             bool "DFS v1.0"
+            depends on !RT_USING_SMART
 
         config RT_USING_DFS_V2
             bool "DFS v2.0"
@@ -201,7 +202,8 @@ endif
 if RT_USING_DFS_V2
     config RT_USING_PAGECACHE
         bool "Enable page cache"
-        default n
+        default y if RT_USING_SMART
+        depends on RT_USING_SMART
 
     if RT_USING_PAGECACHE
         menu "page cache config"
