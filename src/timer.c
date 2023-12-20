@@ -486,19 +486,6 @@ static rt_err_t _timer_start(rt_list_t *timer_list, rt_timer_t timer)
 
     timer->parent.flag |= RT_TIMER_FLAG_ACTIVATED;
 
-#ifdef RT_USING_TIMER_SOFT
-    if (timer->parent.flag & RT_TIMER_FLAG_SOFT_TIMER)
-    {
-        /* check whether timer thread is ready */
-        if ((_soft_timer_status == RT_SOFT_TIMER_IDLE) &&
-           ((_timer_thread.stat & RT_THREAD_SUSPEND_MASK) == RT_THREAD_SUSPEND_MASK))
-        {
-            /* resume timer thread to check soft timer */
-            rt_thread_resume(&_timer_thread);
-        }
-    }
-#endif /* RT_USING_TIMER_SOFT */
-
     return RT_EOK;
 }
 
@@ -533,9 +520,20 @@ rt_err_t rt_timer_start(rt_timer_t timer)
         spinlock = &_hard_spinlock;
     }
 
-    /* stop timer firstly */
     level = rt_spin_lock_irqsave(spinlock);
+
     err = _timer_start(timer_list, timer);
+
+#ifdef RT_USING_TIMER_SOFT
+    if (err == RT_EOK)
+    {
+        if (timer->parent.flag & RT_TIMER_FLAG_SOFT_TIMER)
+        {
+            rt_sem_release(&_soft_timer_sem);
+        }
+    }
+#endif /* RT_USING_TIMER_SOFT */
+
     rt_spin_unlock_irqrestore(spinlock, level);
 
     return err;

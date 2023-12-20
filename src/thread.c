@@ -1059,15 +1059,17 @@ rt_err_t rt_thread_resume(rt_thread_t thread)
 
     LOG_D("thread resume:  %s", thread->parent.name);
 
+    level = rt_spin_lock_irqsave(&(thread->spinlock)); //TODO need lock for cpu
+
     if ((thread->stat & RT_THREAD_SUSPEND_MASK) != RT_THREAD_SUSPEND_MASK)
     {
+        rt_spin_unlock_irqrestore(&(thread->spinlock), level);
+
         LOG_D("thread resume: thread disorder, %d",
               thread->stat);
 
         return -RT_ERROR;
     }
-
-    level = rt_spin_lock_irqsave(&(thread->spinlock)); //TODO need lock for cpu
 
     /* remove from suspend list */
     rt_list_remove(&(thread->tlist));
