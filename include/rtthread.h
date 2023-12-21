@@ -20,6 +20,7 @@
  * 2023-05-20     Bernard      add rtatomic.h header file to included files.
  * 2023-06-30     ChuShicheng  move debug check from the rtdebug.h
  * 2023-10-16     Shell        Support a new backtrace framework
+ * 2023-12-21     K-kune       add RT_USING_EVENT_LIST
  */
 
 #ifndef __RT_THREAD_H__
@@ -426,6 +427,19 @@ rt_err_t rt_event_recv_killable(rt_event_t   event,
                        rt_uint32_t *recved);
 rt_err_t rt_event_control(rt_event_t event, int cmd, void *arg);
 #endif /* RT_USING_EVENT */
+
+#ifdef RT_USING_EVENT_LIST
+/*
+ * event_list interface
+ */
+rt_err_t rt_event_list_init(rt_event_list_t event, const char* name, rt_uint8_t flag);
+rt_err_t rt_event_list_send(rt_event_list_t event, rt_uint32_t set);
+rt_err_t rt_event_list_recv(rt_event_list_t   event,
+                            rt_uint32_t  set,
+                            rt_uint8_t   opt,
+                            rt_int32_t   timeout,
+                            rt_uint32_t* recved);
+#endif /* RT_USING_EVENT_LIST */
 
 #ifdef RT_USING_MAILBOX
 /*

@@ -46,6 +46,7 @@
  * 2022-10-16     Bernard      add prioceiling feature in mutex
  * 2023-04-16     Xin-zheqi    redesigen queue recv and send function return real message size
  * 2023-09-15     xqyjlj       perf rt_hw_interrupt_disable/enable
+ * 2023-12-21     K-kune       add event_list code
  */
 
 #include <rtthread.h>
@@ -3854,4 +3855,333 @@ RTM_EXPORT(rt_mq_control);
 
 /**@}*/
 #endif /* RT_USING_MESSAGEQUEUE */
+
+#ifdef RT_USING_EVENT_LIST
+/**
+ * @addtogroup event
+ * @{
+ */
+
+ /**
+  * @brief    The function will initialize a static event_list object.
+  *
+  * @note     For the static event_list object, its memory space is allocated by the compiler during compiling,
+  *           and shall placed on the read-write data segment or on the uninitialized data segment.
+  *
+  *
+  * @param    event is a list to the event to initialize. It is assumed that storage for the event_list
+  *           will be allocated in your application.
+  *
+  * @param    name is a pointer to the name that given to the event.
+  *
+  * @param    flag is the event flag, which determines the queuing way of how multiple threads wait
+  *           when the event_list is not available.
+  *           The event flag can be ONE of the following values:
+  *
+  *               RT_IPC_FLAG_PRIO          The pending threads will queue in order of priority.
+  *
+  *               RT_IPC_FLAG_FIFO          The pending threads will queue in the first-in-first-out method
+  *                                         (also known as first-come-first-served (FCFS) scheduling strategy).
+  *
+  *               NOTE: RT_IPC_FLAG_FIFO is a non-real-time scheduling mode. It is strongly recommended to
+  *               use RT_IPC_FLAG_PRIO to ensure the thread is real-time UNLESS your applications concern about
+  *               the first-in-first-out principle, and you clearly understand that all threads involved in
+  *               this event_list will become non-real-time threads.
+  *
+  * @return   Return the operation status. When the return value is RT_EOK, the initialization is successful.
+  *           If the return value is any other values, it represents the initialization failed.
+  *
+  * @warning  This function can ONLY be called from threads.
+  */
+rt_err_t rt_event_list_init(rt_event_list_t event, const char* name, rt_uint8_t flag)
+{
+    /* parameter check */
+    RT_ASSERT(event != RT_NULL);
+
+    /* init object */
+    rt_object_init(&(event->parent.parent), RT_Object_Class_Event, name);
+
+    /* set parent flag */
+    event->parent.parent.flag = flag;
+
+    /* init ipc object */
+    rt_ipc_object_init(&(event->parent));
+
+    rt_list_init(&(event->elist.event_list));
+    /* init event */
+    event->elist.set = 0;
+
+    return RT_EOK;
+}
+RTM_EXPORT(rt_event_list_init);
+
+/**
+ * @brief    This function will send an event to the event_list object.
+ *           If there is a thread suspended on the event, the thread will be resumed.
+ *
+ * @note     When using this function, you need to use the parameter (set) to specify the event flag of the event_list object,
+ *           then the function will traverse the list of suspended threads waiting on the event_list object.
+ *           If there is a thread suspended on the event, and the thread's event_info and the event flag of
+ *           the current event object matches, the thread will be resumed.
+ *
+ * @param    event is a list to the event_list object to be sent.
+ *
+ * @param    set is a flag that you will set for this event's flag.
+ *           You can set an event flag.
+ *
+ * @return   Return the operation status. When the return value is RT_EOK, the operation is successful.
+ *           If the return value is any other values, it means that the event detach failed.
+ */
+rt_err_t rt_event_list_send(rt_event_list_t event, rt_uint32_t set)
+{
+    struct rt_list_node* n;
+    struct rt_list_node* l;
+    struct rt_thread* thread;
+    struct rt_event_l* event_l;
+    register rt_ubase_t level;
+    register rt_base_t status;
+    register rt_base_t lstatus;
+    rt_bool_t need_schedule;
+
+    /* parameter check */
+    RT_ASSERT(event != RT_NULL);
+    RT_ASSERT(rt_object_get_type(&event->parent.parent) == RT_Object_Class_Event);
+
+    if (set == 0)
+        return -RT_ERROR;
+
+    need_schedule = RT_FALSE;
+
+    /* disable interrupt */
+    level = rt_hw_interrupt_disable();
+
+    /* set event_list */
+    lstatus = -RT_ERROR;
+    if (!rt_list_isempty(&event->elist.event_list))
+    {
+        l = event->elist.event_list.next;
+        while (l != &(event->elist.event_list))
+        {
+            event_l = rt_list_entry(l, struct rt_event_l, event_list);
+            if (event_l->set == set)
+            {
+                lstatus = RT_EOK;
+                break;
+            }
+            l = l->next;
+        }
+    }
+    if (lstatus != RT_EOK)
+    {
+        struct rt_event_l* llist;
+        llist = (struct rt_event_l*)RT_KERNEL_MALLOC(sizeof(llist));
+
+        llist->set = set;
+        rt_list_insert_after(&(event->elist.event_list), &(llist->event_list));
+    }
+
+    RT_OBJECT_HOOK_CALL(rt_object_put_hook, (&(event->parent.parent)));
+
+    if (!rt_list_isempty(&event->parent.suspend_thread))
+    {
+        /* search thread list to resume thread */
+        n = event->parent.suspend_thread.next;
+        while (n != &(event->parent.suspend_thread))
+        {
+            /* get thread */
+            thread = rt_list_entry(n, struct rt_thread, tlist);
+
+            status = -RT_ERROR;
+            if (!rt_list_isempty(&event->elist.event_list))
+            {
+                l = event->elist.event_list.next;
+                while (l != &(event->elist.event_list))
+                {
+                    event_l = rt_list_entry(l, struct rt_event_l, event_list);
+                    if (event_l->set == thread->event_set)
+                    {
+                        status = RT_EOK;
+                        break;
+                    }
+                    l = l->next;
+                }
+            }
+
+            /* move node to the next */
+            n = n->next;
+
+            /* condition is satisfied, resume thread */
+            if (status == RT_EOK)
+            {
+                /* clear event */
+                if (thread->event_info & RT_EVENT_FLAG_CLEAR)
+                {
+                    rt_list_remove(&(event_l->event_list));
+                    RT_KERNEL_FREE(event_l);
+                }
+                /* resume thread, and thread list breaks out */
+                rt_thread_resume(thread);
+
+                /* need do a scheduling */
+                need_schedule = RT_TRUE;
+            }
+        }
+    }
+    /* enable interrupt */
+    rt_hw_interrupt_enable(level);
+
+    /* do a schedule */
+    if (need_schedule == RT_TRUE)
+        rt_schedule();
+
+    return RT_EOK;
+}
+RTM_EXPORT(rt_event_list_send);
+
+
+/**
+ * @brief  This function will receive an event from event_list object. if the event is unavailable, the thread shall wait for
+ *         the event up to a specified time.
+ *
+ * @note   If there are threads suspended on this semaphore, the first thread in the list of this semaphore object
+ *         will be resumed, and a thread scheduling (rt_schedule) will be executed.
+ *         If no threads are suspended on this semaphore, the count value sem->value of this semaphore will increase by 1.
+ *
+ * @param    event is a list to the event_list object to be received.
+ *
+ * @param    set is a flag that you will set for this event's flag.
+ *           You can set an event flag.
+ *
+ * @param    option is the option of this receiving event, it indicates how the receiving event is operated.
+ *           The option can be one of the following values.
+ *           
+ *               RT_EVENT_FLAG_CLEAR        When the thread receives the corresponding event, the function
+ *                                          determines whether to clear the event flag.
+ *
+ * @param    timeout is a timeout period (unit: an OS tick).
+ *
+ * @param    recved is a pointer to the received event. If you don't care about this value, you can use RT_NULL to set.
+ *
+ * @return   Return the operation status. When the return value is RT_EOK, the operation is successful.
+ *           If the return value is any other values, it means that the semaphore release failed.
+ */
+rt_err_t rt_event_list_recv(rt_event_list_t   event,
+    rt_uint32_t  set,
+    rt_uint8_t   option,
+    rt_int32_t   timeout,
+    rt_uint32_t* recved)
+{
+    struct rt_thread* thread;
+    register rt_ubase_t level;
+    register rt_base_t status;
+    struct rt_list_node* l;
+    struct rt_event_l* event_l;
+
+    RT_DEBUG_IN_THREAD_CONTEXT;
+
+    /* parameter check */
+    RT_ASSERT(event != RT_NULL);
+    RT_ASSERT(rt_object_get_type(&event->parent.parent) == RT_Object_Class_Event);
+
+    if (set == 0)
+        return -RT_ERROR;
+
+    /* init status */
+    status = -RT_ERROR;
+    /* get current thread */
+    thread = rt_thread_self();
+    /* reset thread error */
+    thread->error = RT_EOK;
+
+    RT_OBJECT_HOOK_CALL(rt_object_trytake_hook, (&(event->parent.parent)));
+
+    /* disable interrupt */
+    level = rt_hw_interrupt_disable();
+
+    /* check event set */
+    if (!rt_list_isempty(&event->elist.event_list))
+    {
+        l = event->elist.event_list.next;
+        while (l != &(event->elist.event_list))
+        {
+            event_l = rt_list_entry(l, struct rt_event_l, event_list);
+            if (event_l->set == set)
+            {
+                status = RT_EOK;
+                break;
+            }
+            l = l->next;
+        }
+    }
+
+    if (status == RT_EOK)
+    {
+        /* set received event */
+        if (recved)
+            *recved = event_l->set;
+
+        /* received event */
+        if (option & RT_EVENT_FLAG_CLEAR)
+        {
+
+            rt_list_remove(&(event_l->event_list));
+            RT_KERNEL_FREE(event_l);
+        }
+    }
+    else if (timeout == 0)
+    {
+        /* no waiting */
+        thread->error = -RT_ETIMEOUT;
+    }
+    else
+    {
+        /* fill thread event info */
+        thread->event_set = set;
+        thread->event_info = option;
+
+        /* put thread to suspended thread list */
+        rt_ipc_list_suspend(&(event->parent.suspend_thread),
+            thread,
+            event->parent.parent.flag);
+
+        /* if there is a waiting timeout, active thread timer */
+        if (timeout > 0)
+        {
+            /* reset the timeout of thread timer and start it */
+            rt_timer_control(&(thread->thread_timer),
+                RT_TIMER_CTRL_SET_TIME,
+                &timeout);
+            rt_timer_start(&(thread->thread_timer));
+        }
+
+        /* enable interrupt */
+        rt_hw_interrupt_enable(level);
+
+        /* do a schedule */
+        rt_schedule();
+
+        if (thread->error != RT_EOK)
+        {
+            /* return error */
+            return thread->error;
+        }
+
+        /* received an event, disable interrupt to protect */
+        level = rt_hw_interrupt_disable();
+
+        /* set received event */
+        if (recved)
+            *recved = thread->event_set;
+    }
+
+    /* enable interrupt */
+    rt_hw_interrupt_enable(level);
+
+    RT_OBJECT_HOOK_CALL(rt_object_take_hook, (&(event->parent.parent)));
+
+    return thread->error;
+}
+RTM_EXPORT(rt_event_list_recv);
+ /**@}*/
+#endif /* RT_USING_EVENT_LIST */
 /**@}*/

@@ -53,6 +53,7 @@
  * 2023-10-10     Chushicheng  change version number to v5.1.0
  * 2023-10-11     zmshahaha    move specific devices related and driver to components/drivers
  * 2023-11-21     Meco Man     add RT_USING_NANO macro
+ * 2023-12-21     K-kune       add RT_USING_EVENT_LIST
  */
 
 #ifndef __RT_DEF_H__
@@ -1099,6 +1100,24 @@ struct rt_event
 };
 typedef struct rt_event *rt_event_t;
 #endif /* RT_USING_EVENT */
+
+#ifdef RT_USING_EVENT_LIST
+/*
+ * event_list structure
+ */
+struct rt_event_l
+{
+    rt_uint32_t          set;
+    rt_list_t        event_list;
+};
+struct rt_event_list
+{
+    struct rt_ipc_object parent;                        /**< inherit from ipc_object */
+
+    struct rt_event_l       elist;                           /**< event set */
+};
+typedef struct rt_event_list* rt_event_list_t;
+#endif/* RT_USING_EVENT_LIST */
 
 #ifdef RT_USING_MAILBOX
 /**
