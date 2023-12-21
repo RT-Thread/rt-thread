@@ -611,6 +611,40 @@ SECTIONS
         __bss_end__ = .;
     } > RAM
 
+    .tdata :
+    {
+        *(.tdata .tdata.* .gnu.linkonce.td.*)
+        __tdata_end = .;
+    } > RAM AT > FLASH
+    PROVIDE( __tls_base = ADDR(.tdata));
+    PROVIDE( __tdata_start = ADDR(.tdata));
+    PROVIDE( __tdata_source = LOADADDR(.tdata) );
+    PROVIDE( __tdata_source_end = LOADADDR(.tdata) + SIZEOF(.tdata) );
+    PROVIDE( __data_source_end = __tdata_source_end );
+    PROVIDE( __tdata_size = SIZEOF(.tdata) );
+
+    /*
+     * TLS zeroed data is relocated as if it immediately followed
+     * the tdata values. However, the linker 'magically' erases the
+     * memory allocation so that no ROM is consumed by this
+     * section
+     */
+    .tbss :
+    {
+        *(.tbss .tbss.* .gnu.linkonce.tb.*)
+        *(.tcommon)
+        PROVIDE( __tls_end = . );
+        PROVIDE( __tbss_end = . );
+    } > RAM
+    PROVIDE( __tbss_start = ADDR(.tbss));
+    PROVIDE( __tbss_offset = ADDR(.tbss) - ADDR(.tdata) );
+    PROVIDE( __tbss_size = SIZEOF(.tbss) );
+    PROVIDE( __tls_size = __tls_end - __tls_base );
+    PROVIDE( __tls_align = MAX(ALIGNOF(.tdata), ALIGNOF(.tbss)) );
+    PROVIDE( __tls_size_align = (__tls_size + __tls_align - 1) & ~(__tls_align - 1));
+    PROVIDE( __arm32_tls_tcb_offset = MAX(8, __tls_align) );
+    PROVIDE( __arm64_tls_tcb_offset = MAX(16, __tls_align) );
+
     .heap (NOLOAD):
     {
         . = ALIGN(8);
