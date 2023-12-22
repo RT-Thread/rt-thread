@@ -20,7 +20,7 @@
  * 2023-05-20     Bernard      add rtatomic.h header file to included files.
  * 2023-06-30     ChuShicheng  move debug check from the rtdebug.h
  * 2023-10-16     Shell        Support a new backtrace framework
- * 2023-12-10     xqyjlj       add rt_arch_spinlock, fix spinlock in up
+ * 2023-12-10     xqyjlj       fix spinlock in up
  */
 
 #ifndef __RT_THREAD_H__
@@ -553,10 +553,6 @@ void rt_spin_lock(struct rt_spinlock *lock);
 void rt_spin_unlock(struct rt_spinlock *lock);
 rt_base_t rt_spin_lock_irqsave(struct rt_spinlock *lock);
 void rt_spin_unlock_irqrestore(struct rt_spinlock *lock, rt_base_t level);
-void rt_arch_spin_lock(struct rt_spinlock *lock);
-void rt_arch_spin_unlock(struct rt_spinlock *lock);
-rt_base_t rt_arch_spin_lock_irqsave(struct rt_spinlock *lock);
-void rt_arch_spin_unlock_irqrestore(struct rt_spinlock *lock, rt_base_t level);
 #else
 
 rt_inline void rt_spin_lock_init(struct rt_spinlock *lock)
