@@ -9,6 +9,11 @@
  * 2021-11-28     GuEe-GUI     first version
  * 2022-12-10     WangXiaoyao  porting to MM
  */
+
+#define DBG_TAG "hw.mmu"
+#define DBG_LVL DBG_LOG
+#include <rtdbg.h>
+
 #include <rthw.h>
 #include <rtthread.h>
 #include <stddef.h>
@@ -27,9 +32,8 @@
 #include <lwp_mm.h>
 #endif
 
-#define DBG_TAG "hw.mmu"
-#define DBG_LVL DBG_LOG
-#include <rtdbg.h>
+#define TCR_CONFIG_TBI0     rt_hw_mmu_config_tbi(0)
+#define TCR_CONFIG_TBI1     rt_hw_mmu_config_tbi(1)
 
 #define MMU_LEVEL_MASK   0x1ffUL
 #define MMU_LEVEL_SHIFT  9
@@ -482,6 +486,11 @@ int rt_hw_mmu_map_init(rt_aspace_t aspace, void *v_address, size_t size,
     return 0;
 }
 
+rt_weak long rt_hw_mmu_config_tbi(int tbi_index)
+{
+    return 0;
+}
+
 /************ setting el1 mmu register**************
   MAIR_EL1
   index 0 : memory outer writeback, write/read alloc
@@ -500,25 +509,25 @@ void mmu_tcr_init(void)
     pa_range = val64 & 0xf; /* PARange */
 
     /* TCR_EL1 */
-    val64 = (16UL << 0)      /* t0sz 48bit */
-            | (0x0UL << 6)   /* reserved */
-            | (0x0UL << 7)   /* epd0 */
-            | (0x3UL << 8)   /* t0 wb cacheable */
-            | (0x3UL << 10)  /* inner shareable */
-            | (0x2UL << 12)  /* t0 outer shareable */
-            | (0x0UL << 14)  /* t0 4K */
-            | (16UL << 16)   /* t1sz 48bit */
-            | (0x0UL << 22)  /* define asid use ttbr0.asid */
-            | (0x0UL << 23)  /* epd1 */
-            | (0x3UL << 24)  /* t1 inner wb cacheable */
-            | (0x3UL << 26)  /* t1 outer wb cacheable */
-            | (0x2UL << 28)  /* t1 outer shareable */
-            | (0x2UL << 30)  /* t1 4k */
-            | (pa_range << 32)  /* PA range */
-            | (0x0UL << 35)  /* reserved */
-            | (0x1UL << 36)  /* as: 0:8bit 1:16bit */
-            | (0x0UL << 37)  /* tbi0 */
-            | (0x0UL << 38); /* tbi1 */
+    val64 = (16UL << 0)                /* t0sz 48bit */
+            | (0x0UL << 6)             /* reserved */
+            | (0x0UL << 7)             /* epd0 */
+            | (0x3UL << 8)             /* t0 wb cacheable */
+            | (0x3UL << 10)            /* inner shareable */
+            | (0x2UL << 12)            /* t0 outer shareable */
+            | (0x0UL << 14)            /* t0 4K */
+            | (16UL << 16)             /* t1sz 48bit */
+            | (0x0UL << 22)            /* define asid use ttbr0.asid */
+            | (0x0UL << 23)            /* epd1 */
+            | (0x3UL << 24)            /* t1 inner wb cacheable */
+            | (0x3UL << 26)            /* t1 outer wb cacheable */
+            | (0x2UL << 28)            /* t1 outer shareable */
+            | (0x2UL << 30)            /* t1 4k */
+            | (pa_range << 32)         /* PA range */
+            | (0x0UL << 35)            /* reserved */
+            | (0x1UL << 36)            /* as: 0:8bit 1:16bit */
+            | (TCR_CONFIG_TBI0 << 37)  /* tbi0 */
+            | (TCR_CONFIG_TBI1 << 38); /* tbi1 */
     __asm__ volatile("msr TCR_EL1, %0\n" ::"r"(val64));
 }
 

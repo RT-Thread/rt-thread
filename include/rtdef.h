@@ -198,6 +198,7 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
 #define rt_used                     __attribute__((used))
 #define rt_align(n)                 __attribute__((aligned(n)))
 #define rt_weak                     __attribute__((weak))
+#define rt_noreturn
 #define rt_inline                   static __inline
 #define rt_always_inline            rt_inline
 #elif defined (__IAR_SYSTEMS_ICC__)     /* for IAR Compiler */
@@ -206,6 +207,7 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
 #define PRAGMA(x)                   _Pragma(#x)
 #define rt_align(n)                    PRAGMA(data_alignment=n)
 #define rt_weak                     __weak
+#define rt_noreturn
 #define rt_inline                   static inline
 #define rt_always_inline            rt_inline
 #elif defined (__GNUC__)                /* GNU GCC Compiler */
@@ -223,6 +225,7 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
 #define rt_used                     __attribute__((used))
 #define rt_align(n)                 __attribute__((aligned(n)))
 #define rt_weak                     __attribute__((weak))
+#define rt_noreturn
 #define rt_inline                   static inline
 #define rt_always_inline            rt_inline
 #elif defined (_MSC_VER)
@@ -230,6 +233,7 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
 #define rt_used
 #define rt_align(n)                 __declspec(align(n))
 #define rt_weak
+#define rt_noreturn
 #define rt_inline                   static __inline
 #define rt_always_inline            rt_inline
 #elif defined (__TI_COMPILER_VERSION__)
@@ -400,6 +404,7 @@ typedef int (*init_fn_t)(void);
 #define RT_ENOSPC                       ENOSPC          /**< No space left */
 #define RT_EPERM                        EPERM           /**< Operation not permitted */
 #define RT_EFAULT                       EFAULT          /**< Bad address */
+#define RT_ENOBUFS                      ENOBUFS         /**< No buffer space is available */
 #define RT_ETRAP                        254             /**< Trap event */
 #else
 #define RT_EOK                          0               /**< There is no error */
@@ -418,6 +423,7 @@ typedef int (*init_fn_t)(void);
 #define RT_EPERM                        13              /**< Operation not permitted */
 #define RT_ETRAP                        14              /**< Trap event */
 #define RT_EFAULT                       15              /**< Bad address */
+#define RT_ENOBUFS                      16              /**< No buffer space is available */
 #endif /* defined(RT_USING_LIBC) && !defined(RT_USING_NANO) */
 
 /**@}*/
@@ -603,6 +609,12 @@ struct rt_object_information
 #endif
 #ifndef __on_rt_malloc_hook
     #define __on_rt_malloc_hook(addr, size)         __ON_HOOK_ARGS(rt_malloc_hook, (addr, size))
+#endif
+#ifndef __on_rt_realloc_entry_hook
+    #define __on_rt_realloc_entry_hook(addr, size)  __ON_HOOK_ARGS(rt_realloc_entry_hook, (addr, size))
+#endif
+#ifndef __on_rt_realloc_exit_hook
+    #define __on_rt_realloc_exit_hook(addr, size)   __ON_HOOK_ARGS(rt_realloc_exit_hook, (addr, size))
 #endif
 #ifndef __on_rt_free_hook
     #define __on_rt_free_hook(rmem)                 __ON_HOOK_ARGS(rt_free_hook, (rmem))
