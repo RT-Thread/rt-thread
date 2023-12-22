@@ -684,6 +684,9 @@ static rt_err_t rt_serial_tx_enable(struct rt_device        *dev,
                     (sizeof(struct rt_serial_tx_fifo));
             RT_ASSERT(tx_fifo != RT_NULL);
 
+            /* Init rb.buffer_ptr to RT_NULL, in rt_serial_write() need check it
+             * otherwise buffer_ptr maybe a random value, as rt_malloc not init memory */
+            tx_fifo->rb.buffer_ptr = RT_NULL;
             serial->serial_tx = tx_fifo;
 
 #ifndef RT_USING_DEVICE_OPS
