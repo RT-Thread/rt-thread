@@ -663,6 +663,7 @@ rt_err_t rt_thread_sleep(rt_tick_t tick)
     thread->error = RT_EOK;
     level = rt_hw_local_irq_disable();
     /* suspend thread */
+    rt_enter_critical();
     err = rt_thread_suspend_with_flag(thread, RT_INTERRUPTIBLE);
     rt_spin_lock(&(thread->spinlock));
     /* reset the timeout of thread timer and start it */
@@ -674,6 +675,7 @@ rt_err_t rt_thread_sleep(rt_tick_t tick)
         /* enable interrupt */
         rt_hw_local_irq_enable(level);
         rt_spin_unlock(&(thread->spinlock));
+        rt_exit_critical();
 
         thread->error = -RT_EINTR;
 
@@ -687,6 +689,7 @@ rt_err_t rt_thread_sleep(rt_tick_t tick)
     {
         rt_hw_local_irq_enable(level);
         rt_spin_unlock(&(thread->spinlock));
+        rt_exit_critical();
     }
 
     return err;
@@ -743,6 +746,7 @@ rt_err_t rt_thread_delay_until(rt_tick_t *tick, rt_tick_t inc_tick)
         *tick += inc_tick;
         left_tick = *tick - cur_tick;
 
+        rt_enter_critical();
         /* suspend thread */
         rt_thread_suspend_with_flag(thread, RT_UNINTERRUPTIBLE);
 
@@ -754,6 +758,7 @@ rt_err_t rt_thread_delay_until(rt_tick_t *tick, rt_tick_t inc_tick)
 
         rt_hw_local_irq_enable(level);
         rt_spin_unlock(&(thread->spinlock));
+        rt_exit_critical();
 
         rt_schedule();
 
