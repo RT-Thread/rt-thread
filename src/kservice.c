@@ -24,6 +24,7 @@
  * 2022-08-24     Yunjie       make rt_memset word-independent to adapt to ti c28x (16bit word)
  * 2022-08-30     Yunjie       make rt_vsnprintf adapt to ti c28x (16bit int)
  * 2023-02-02     Bernard      add Smart ID for logo version show
+ * 2023-10-16     Shell        Add hook point for rt_malloc services
  * 2023-12-10     xqyjlj       perf rt_hw_interrupt_disable/enable, fix memheap lock
  */
 
@@ -1660,8 +1661,10 @@ MSH_CMD_EXPORT_ALIAS(cmd_backtrace, backtrace, print backtrace of a thread);
 
 #if defined(RT_USING_HEAP) && !defined(RT_USING_USERHEAP)
 #ifdef RT_USING_HOOK
-static void (*rt_malloc_hook)(void *ptr, rt_size_t size);
-static void (*rt_free_hook)(void *ptr);
+static void (*rt_malloc_hook)(void **ptr, rt_size_t size);
+static void (*rt_realloc_entry_hook)(void **ptr, rt_size_t size);
+static void (*rt_realloc_exit_hook)(void **ptr, rt_size_t size);
+static void (*rt_free_hook)(void **ptr);
 
 /**
  * @addtogroup Hook
@@ -1674,9 +1677,31 @@ static void (*rt_free_hook)(void *ptr);
  *
  * @param hook the hook function.
  */
-void rt_malloc_sethook(void (*hook)(void *ptr, rt_size_t size))
+void rt_malloc_sethook(void (*hook)(void **ptr, rt_size_t size))
 {
     rt_malloc_hook = hook;
+}
+
+/**
+ * @brief This function will set a hook function, which will be invoked when a memory
+ *        block is allocated from heap memory.
+ *
+ * @param hook the hook function.
+ */
+void rt_realloc_set_entry_hook(void (*hook)(void **ptr, rt_size_t size))
+{
+    rt_realloc_entry_hook = hook;
+}
+
+/**
+ * @brief This function will set a hook function, which will be invoked when a memory
+ *        block is allocated from heap memory.
+ *
+ * @param hook the hook function.
+ */
+void rt_realloc_set_exit_hook(void (*hook)(void **ptr, rt_size_t size))
+{
+    rt_realloc_exit_hook = hook;
 }
 
 /**
@@ -1685,7 +1710,7 @@ void rt_malloc_sethook(void (*hook)(void *ptr, rt_size_t size))
  *
  * @param hook the hook function
  */
-void rt_free_sethook(void (*hook)(void *ptr))
+void rt_free_sethook(void (*hook)(void **ptr))
 {
     rt_free_hook = hook;
 }
@@ -1817,14 +1842,7 @@ rt_inline void _slab_info(rt_size_t *total,
 #define _MEM_INFO(...)
 #endif
 
-/**
- * @brief This function will init system heap.
- *
- * @param begin_addr the beginning address of system page.
- *
- * @param end_addr the end address of system page.
- */
-rt_weak void rt_system_heap_init(void *begin_addr, void *end_addr)
+void _rt_system_heap_init(void *begin_addr, void *end_addr)
 {
     rt_ubase_t begin_align = RT_ALIGN((rt_ubase_t)begin_addr, RT_ALIGN_SIZE);
     rt_ubase_t end_align   = RT_ALIGN_DOWN((rt_ubase_t)end_addr, RT_ALIGN_SIZE);
@@ -1835,6 +1853,18 @@ rt_weak void rt_system_heap_init(void *begin_addr, void *end_addr)
     _MEM_INIT("heap", (void *)begin_align, end_align - begin_align);
     /* Initialize multi thread contention lock */
     _heap_lock_init();
+}
+
+/**
+ * @brief This function will init system heap.
+ *
+ * @param begin_addr the beginning address of system page.
+ *
+ * @param end_addr the end address of system page.
+ */
+rt_weak void rt_system_heap_init(void *begin_addr, void *end_addr)
+{
+    _rt_system_heap_init(begin_addr, end_addr);
 }
 
 /**
@@ -1856,7 +1886,7 @@ rt_weak void *rt_malloc(rt_size_t size)
     /* Exit critical zone */
     _heap_unlock(level);
     /* call 'rt_malloc' hook */
-    RT_OBJECT_HOOK_CALL(rt_malloc_hook, (ptr, size));
+    RT_OBJECT_HOOK_CALL(rt_malloc_hook, (&ptr, size));
     return ptr;
 }
 RTM_EXPORT(rt_malloc);
@@ -1875,12 +1905,16 @@ rt_weak void *rt_realloc(void *ptr, rt_size_t newsize)
     rt_base_t level;
     void *nptr;
 
+    /* Entry hook */
+    RT_OBJECT_HOOK_CALL(rt_realloc_entry_hook, (&ptr, newsize));
     /* Enter critical zone */
     level = _heap_lock();
     /* Change the size of previously allocated memory block */
     nptr = _MEM_REALLOC(ptr, newsize);
     /* Exit critical zone */
     _heap_unlock(level);
+    /* Exit hook */
+    RT_OBJECT_HOOK_CALL(rt_realloc_exit_hook, (&nptr, newsize));
     return nptr;
 }
 RTM_EXPORT(rt_realloc);
@@ -1924,7 +1958,7 @@ rt_weak void rt_free(void *ptr)
     rt_base_t level;
 
     /* call 'rt_free' hook */
-    RT_OBJECT_HOOK_CALL(rt_free_hook, (ptr));
+    RT_OBJECT_HOOK_CALL(rt_free_hook, (&ptr));
     /* NULL check */
     if (ptr == RT_NULL) return;
     /* Enter critical zone */

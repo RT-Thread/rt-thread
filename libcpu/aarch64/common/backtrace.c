@@ -24,10 +24,19 @@
 #define INST_WORD_BYTES                 4
 #define WORD                            sizeof(rt_base_t)
 #define ARCH_CONTEXT_FETCH(pctx, id)    (*(((unsigned long *)pctx) + (id)))
+#define PTR_NORMALIZE(ptr)              (ptr = rt_backtrace_ptr_normalize(ptr))
+
+rt_weak void *rt_backtrace_ptr_normalize(void *ptr)
+{
+    return ptr;
+}
 
 rt_inline rt_err_t _bt_kaddr(rt_ubase_t *fp, struct rt_hw_backtrace_frame *frame)
 {
     rt_err_t rc;
+
+    PTR_NORMALIZE(fp);
+
     frame->fp = *fp;
     frame->pc = *(fp + 1) - INST_WORD_BYTES;
 
