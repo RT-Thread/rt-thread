@@ -416,38 +416,13 @@ RTM_EXPORT(rt_timer_delete);
  *
  * @return the operation status, RT_EOK on OK, -RT_ERROR on error
  */
-rt_err_t rt_timer_start(rt_timer_t timer)
+static rt_err_t _timer_start(rt_list_t *timer_list, rt_timer_t timer)
 {
     unsigned int row_lvl;
-    rt_list_t *timer_list;
-    rt_base_t level;
     rt_list_t *row_head[RT_TIMER_SKIP_LIST_LEVEL];
     unsigned int tst_nr;
     static unsigned int random_nr;
-    struct rt_spinlock *spinlock;
 
-    /* parameter check */
-    RT_ASSERT(timer != RT_NULL);
-    RT_ASSERT(rt_object_get_type(&timer->parent) == RT_Object_Class_Timer);
-
-
-#ifdef RT_USING_TIMER_SOFT
-    if (timer->parent.flag & RT_TIMER_FLAG_SOFT_TIMER)
-    {
-        /* insert timer to soft timer list */
-        timer_list = _soft_timer_list;
-        spinlock = &_soft_spinlock;
-    }
-    else
-#endif /* RT_USING_TIMER_SOFT */
-    {
-        /* insert timer to system timer list */
-        timer_list = _timer_list;
-        spinlock = &_hard_spinlock;
-    }
-
-    /* stop timer firstly */
-    level = rt_spin_lock_irqsave(spinlock);
     /* remove timer from list */
     _timer_remove(timer);
     /* change status of timer */
@@ -523,10 +498,46 @@ rt_err_t rt_timer_start(rt_timer_t timer)
     }
 #endif /* RT_USING_TIMER_SOFT */
 
+    return RT_EOK;
+}
+
+/**
+ * @brief This function will start the timer
+ *
+ * @param timer the timer to be started
+ *
+ * @return the operation status, RT_EOK on OK, -RT_ERROR on error
+ */
+rt_err_t rt_timer_start(rt_timer_t timer)
+{
+    struct rt_spinlock *spinlock;
+    rt_list_t *timer_list;
+    rt_base_t level;
+    rt_err_t err;
+
+    /* parameter check */
+    RT_ASSERT(timer != RT_NULL);
+    RT_ASSERT(rt_object_get_type(&timer->parent) == RT_Object_Class_Timer);
+
+#ifdef RT_USING_TIMER_SOFT
+    if (timer->parent.flag & RT_TIMER_FLAG_SOFT_TIMER)
+    {
+        timer_list = _soft_timer_list;
+        spinlock = &_soft_spinlock;
+    }
+    else
+#endif /* RT_USING_TIMER_SOFT */
+    {
+        timer_list = _timer_list;
+        spinlock = &_hard_spinlock;
+    }
+
+    /* stop timer firstly */
+    level = rt_spin_lock_irqsave(spinlock);
+    err = _timer_start(timer_list, timer);
     rt_spin_unlock_irqrestore(spinlock, level);
 
-
-    return RT_EOK;
+    return err;
 }
 RTM_EXPORT(rt_timer_start);
 
@@ -718,7 +729,7 @@ void rt_timer_check(void)
             {
                 /* start it */
                 t->parent.flag &= ~RT_TIMER_FLAG_ACTIVATED;
-                rt_timer_start(t);
+                _timer_start(_timer_list, t);
             }
         }
         else break;
@@ -808,7 +819,7 @@ void rt_soft_timer_check(void)
             {
                 /* start it */
                 t->parent.flag &= ~RT_TIMER_FLAG_ACTIVATED;
-                rt_timer_start(t);
+                _timer_start(_soft_timer_list, t);
             }
         }
         else break; /* not check anymore */
