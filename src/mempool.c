@@ -24,13 +24,6 @@
 
 #ifdef RT_USING_MEMPOOL
 
-#ifndef __on_rt_mp_alloc_hook
-    #define __on_rt_mp_alloc_hook(mp, block)        __ON_HOOK_ARGS(rt_mp_alloc_hook, (mp, block))
-#endif
-#ifndef __on_rt_mp_free_hook
-    #define __on_rt_mp_free_hook(mp, block)         __ON_HOOK_ARGS(rt_mp_free_hook, (mp, block))
-#endif
-
 #if defined(RT_USING_HOOK) && defined(RT_HOOK_USING_FUNC_PTR)
 static void (*rt_mp_alloc_hook)(struct rt_mempool *mp, void *block);
 static void (*rt_mp_free_hook)(struct rt_mempool *mp, void *block);

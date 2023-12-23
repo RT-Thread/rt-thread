@@ -132,6 +132,13 @@ config RT_USING_HOOK
             default y
     endif
 
+config RT_USING_HOOKLIST
+    bool "Enable hook list"
+    default n
+    help
+        Enable the hook list feature for rt-thread packages. With this, they can
+        plug in to the system on run-time.
+
 config RT_USING_IDLE_HOOK
     bool "Enable IDLE Task hook"
     default y if RT_USING_HOOK

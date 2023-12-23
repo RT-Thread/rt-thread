@@ -45,20 +45,9 @@
 #define DBG_LVL           DBG_INFO
 #include <rtdbg.h>
 
-#ifndef __on_rt_thread_inited_hook
-    #define __on_rt_thread_inited_hook(thread)      __ON_HOOK_ARGS(rt_thread_inited_hook, (thread))
-#endif
-#ifndef __on_rt_thread_suspend_hook
-    #define __on_rt_thread_suspend_hook(thread)     __ON_HOOK_ARGS(rt_thread_suspend_hook, (thread))
-#endif
-#ifndef __on_rt_thread_resume_hook
-    #define __on_rt_thread_resume_hook(thread)      __ON_HOOK_ARGS(rt_thread_resume_hook, (thread))
-#endif
-
 #if defined(RT_USING_HOOK) && defined(RT_HOOK_USING_FUNC_PTR)
 static void (*rt_thread_suspend_hook)(rt_thread_t thread);
 static void (*rt_thread_resume_hook) (rt_thread_t thread);
-static void (*rt_thread_inited_hook) (rt_thread_t thread);
 
 /**
  * @brief   This function sets a hook function when the system suspend a thread.
@@ -84,15 +73,7 @@ void rt_thread_resume_sethook(void (*hook)(rt_thread_t thread))
     rt_thread_resume_hook = hook;
 }
 
-/**
- * @brief   This function sets a hook function when a thread is initialized.
- *
- * @param   hook is the specified hook function.
- */
-void rt_thread_inited_sethook(void (*hook)(rt_thread_t thread))
-{
-    rt_thread_inited_hook = hook;
-}
+RT_OBJECT_HOOKLIST_DEFINE(rt_thread_inited);
 #endif /* defined(RT_USING_HOOK) && defined(RT_HOOK_USING_FUNC_PTR) */
 
 static void _thread_exit(void)
@@ -313,7 +294,7 @@ static rt_err_t _thread_init(struct rt_thread *thread,
     rt_atomic_store(&thread->ref_count, 0);
     rt_spin_lock_init(&thread->spinlock);
 
-    RT_OBJECT_HOOK_CALL(rt_thread_inited_hook, (thread));
+    RT_OBJECT_HOOKLIST_CALL(rt_thread_inited, (thread));
 
     return RT_EOK;
 }

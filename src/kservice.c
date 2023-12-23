@@ -1579,7 +1579,7 @@ rt_err_t rt_backtrace_frame(struct rt_hw_backtrace_frame *frame)
 {
     long nesting = 0;
 
-    rt_kprintf("please use: addr2line -e rtthread.elf -a -f\n");
+    rt_kprintf("please use: addr2line -e rtthread.elf -a -f");
 
     while (nesting < RT_BACKTRACE_LEVEL_MAX_NR)
     {
@@ -2176,10 +2176,6 @@ int __rt_ffs(int value)
 }
 #endif /* RT_USING_TINY_FFS */
 #endif /* RT_USING_CPU_FFS */
-
-#ifndef __on_rt_assert_hook
-    #define __on_rt_assert_hook(ex, func, line)         __ON_HOOK_ARGS(rt_assert_hook, (ex, func, line))
-#endif
 
 #ifdef RT_USING_DEBUG
 /* RT_ASSERT(EX)'s hook */

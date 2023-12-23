@@ -29,10 +29,6 @@
 static volatile rt_atomic_t rt_tick = 0;
 #endif /* RT_USING_SMP */
 
-#ifndef __on_rt_tick_hook
-    #define __on_rt_tick_hook()          __ON_HOOK_ARGS(rt_tick_hook, ())
-#endif
-
 #if defined(RT_USING_HOOK) && defined(RT_HOOK_USING_FUNC_PTR)
 static void (*rt_tick_hook)(void);
 

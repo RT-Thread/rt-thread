@@ -22,13 +22,6 @@
 #define DBG_LVL           DBG_INFO
 #include <rtdbg.h>
 
-#ifndef __on_rt_interrupt_enter_hook
-    #define __on_rt_interrupt_enter_hook()          __ON_HOOK_ARGS(rt_interrupt_enter_hook, ())
-#endif
-#ifndef __on_rt_interrupt_leave_hook
-    #define __on_rt_interrupt_leave_hook()          __ON_HOOK_ARGS(rt_interrupt_leave_hook, ())
-#endif
-
 #if defined(RT_USING_HOOK) && defined(RT_HOOK_USING_FUNC_PTR)
 
 static void (*rt_interrupt_enter_hook)(void);

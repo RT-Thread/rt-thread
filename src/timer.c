@@ -57,19 +57,6 @@ rt_align(RT_ALIGN_SIZE)
 static rt_uint8_t _timer_thread_stack[RT_TIMER_THREAD_STACK_SIZE];
 #endif /* RT_USING_TIMER_SOFT */
 
-#ifndef __on_rt_object_take_hook
-    #define __on_rt_object_take_hook(parent)        __ON_HOOK_ARGS(rt_object_take_hook, (parent))
-#endif
-#ifndef __on_rt_object_put_hook
-    #define __on_rt_object_put_hook(parent)         __ON_HOOK_ARGS(rt_object_put_hook, (parent))
-#endif
-#ifndef __on_rt_timer_enter_hook
-    #define __on_rt_timer_enter_hook(t)             __ON_HOOK_ARGS(rt_timer_enter_hook, (t))
-#endif
-#ifndef __on_rt_timer_exit_hook
-    #define __on_rt_timer_exit_hook(t)              __ON_HOOK_ARGS(rt_timer_exit_hook, (t))
-#endif
-
 #if defined(RT_USING_HOOK) && defined(RT_HOOK_USING_FUNC_PTR)
 extern void (*rt_object_take_hook)(struct rt_object *object);
 extern void (*rt_object_put_hook)(struct rt_object *object);
