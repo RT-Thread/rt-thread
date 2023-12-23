@@ -26,25 +26,6 @@ if RT_USING_AT
             int "The maximum length of server commands buffer"
             default 256
 
-        choice
-            prompt "The commands new line sign"
-            help
-                This end mark can used for AT server determine the end of commands ,
-                it can choose "\r", "\n" or "\r\n"
-
-            default AT_CMD_END_MARK_CRLF
-
-            config AT_CMD_END_MARK_CRLF
-                bool "\\r\\n"
-
-            config AT_CMD_END_MARK_CR
-                bool "\\r"
-
-            config AT_CMD_END_MARK_LF
-                bool "\\n"
-
-        endchoice
-
     endif
 
     config AT_USING_CLIENT
