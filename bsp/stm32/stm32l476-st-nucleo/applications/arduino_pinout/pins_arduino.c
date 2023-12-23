@@ -10,6 +10,7 @@
 
 #include <Arduino.h>
 #include "pins_arduino.h"
+#include <drv_gpio.h>
 
 #define DBG_TAG    "RTduino.pins_arduino"
 #define DBG_LVL    DBG_INFO
