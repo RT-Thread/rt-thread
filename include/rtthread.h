@@ -179,7 +179,15 @@ int  rt_thread_kill(rt_thread_t tid, int sig);
 #ifdef RT_USING_HOOK
 void rt_thread_suspend_sethook(void (*hook)(rt_thread_t thread));
 void rt_thread_resume_sethook (void (*hook)(rt_thread_t thread));
-void rt_thread_inited_sethook (void (*hook)(rt_thread_t thread));
+
+/**
+ * @brief Sets a hook function when a thread is initialized.
+ *
+ * @param thread is the target thread that initializing
+ */
+typedef void (*rt_thread_inited_hookproto_t)(rt_thread_t thread);
+RT_OBJECT_HOOKLIST_DECLARE(rt_thread_inited_hookproto_t, rt_thread_inited);
+
 #endif /* RT_USING_HOOK */
 
 /*

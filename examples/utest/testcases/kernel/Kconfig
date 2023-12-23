@@ -59,5 +59,10 @@ config UTEST_THREAD_TC
 config UTEST_ATOMIC_TC
     bool "atomic test"
     default n
-    
+
+config UTEST_HOOKLIST_TC
+    bool "hook list test"
+    select RT_USING_HOOKLIST
+    default n
+
 endmenu
