@@ -13,7 +13,7 @@
 #define __DRV_CONFIG_H__
 
 #include <board.h>
-#include <rtconfig.h>
+#include <rtdevice.h>
 
 #ifdef __cplusplus
 extern "C" {
