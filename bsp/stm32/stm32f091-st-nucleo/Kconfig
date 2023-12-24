@@ -22,6 +22,11 @@ config SOC_STM32F091RC
     select RT_USING_USER_MAIN
     default y
 
+config BOARD_STM32F091_NUCLEO
+    bool
+    select BOARD_SERIES_STM32_NUCLEO_64
+    default y
+
 source "$RTT_DIR/Kconfig"
 source "$PKGS_DIR/Kconfig"
 source "../libraries/Kconfig"
