@@ -13,7 +13,7 @@
 #define __DRV_CONFIG_H__
 
 #include <board.h>
-#include <rtthread.h>
+#include <rtconfig.h>
 
 #ifdef __cplusplus
 extern "C" {
