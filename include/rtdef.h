@@ -200,12 +200,6 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
 #define rt_weak                     __attribute__((weak))
 #define rt_inline                   static __inline
 #define rt_always_inline            rt_inline
-/* module compiling */
-#ifdef RT_USING_MODULE
-#define RTT_API                     __declspec(dllimport)
-#else
-#define RTT_API                     __declspec(dllexport)
-#endif /* RT_USING_MODULE */
 #elif defined (__IAR_SYSTEMS_ICC__)     /* for IAR Compiler */
 #define rt_section(x)               @ x
 #define rt_used                     __root
@@ -214,16 +208,7 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
 #define rt_weak                     __weak
 #define rt_inline                   static inline
 #define rt_always_inline            rt_inline
-#define RTT_API
 #elif defined (__GNUC__)                /* GNU GCC Compiler */
-#ifndef RT_USING_LIBC
-/* the version of GNU GCC must be greater than 4.x */
-typedef __builtin_va_list           __gnuc_va_list;
-typedef __gnuc_va_list              va_list;
-#define va_start(v,l)               __builtin_va_start(v,l)
-#define va_end(v)                   __builtin_va_end(v)
-#define va_arg(v,l)                 __builtin_va_arg(v,l)
-#endif /* RT_USING_LIBC */
 #define __RT_STRINGIFY(x...)        #x
 #define RT_STRINGIFY(x...)          __RT_STRINGIFY(x)
 #define rt_section(x)               __attribute__((section(x)))
@@ -233,7 +218,6 @@ typedef __gnuc_va_list              va_list;
 #define rt_noreturn                 __attribute__ ((noreturn))
 #define rt_inline                   static __inline
 #define rt_always_inline            static inline __attribute__((always_inline))
-#define RTT_API
 #elif defined (__ADSPBLACKFIN__)        /* for VisualDSP++ Compiler */
 #define rt_section(x)               __attribute__((section(x)))
 #define rt_used                     __attribute__((used))
@@ -241,7 +225,6 @@ typedef __gnuc_va_list              va_list;
 #define rt_weak                     __attribute__((weak))
 #define rt_inline                   static inline
 #define rt_always_inline            rt_inline
-#define RTT_API
 #elif defined (_MSC_VER)
 #define rt_section(x)
 #define rt_used
@@ -249,7 +232,6 @@ typedef __gnuc_va_list              va_list;
 #define rt_weak
 #define rt_inline                   static __inline
 #define rt_always_inline            rt_inline
-#define RTT_API
 #elif defined (__TI_COMPILER_VERSION__)
 /* The way that TI compiler set section is different from other(at least
     * GCC and MDK) compilers. See ARM Optimizing C/C++ Compiler 5.9.3 for more
@@ -269,7 +251,6 @@ typedef __gnuc_va_list              va_list;
 #endif
 #define rt_inline                   static inline
 #define rt_always_inline            rt_inline
-#define RTT_API
 #elif defined (__TASKING__)
 #define rt_section(x)               __attribute__((section(x)))
 #define rt_used                     __attribute__((used, protect))
@@ -278,7 +259,6 @@ typedef __gnuc_va_list              va_list;
 #define rt_weak                     __attribute__((weak))
 #define rt_inline                   static inline
 #define rt_always_inline            rt_inline
-#define RTT_API
 #else
     #error not supported tool chain
 #endif /* __ARMCC_VERSION */
