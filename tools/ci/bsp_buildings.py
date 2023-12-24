@@ -16,8 +16,8 @@ def run_cmd(cmd):
     """
     run command and return output and result.
     """
-    print(cmd)
-    res = os.system(cmd + " > output.txt")
+    print('\033[1;32m' + cmd + '\033[0m')
+    res = os.system(cmd + " > output.txt 2>&1")
     with open("output.txt", "r") as file:
         output = file.readlines()
     for line in output:
