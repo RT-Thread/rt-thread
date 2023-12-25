@@ -18,7 +18,7 @@ if RT_USING_VBUS
             Operating System.
 
     config RT_VBUS_USING_TESTS
-        bool "Enable tests on VBus "
+        bool "Enable tests on VBus"
         default n
 
     config _RT_VBUS_RING_BASE
@@ -33,8 +33,6 @@ if RT_USING_VBUS
 
     config RT_VBUS_GUEST_VIRQ
         int "RT_VBUS_GUEST_VIRQ"
-        help
-            RT_VBUS_GUEST_VIRQ
         help
             The interrupt number used to notify the client on a particular system.
 
