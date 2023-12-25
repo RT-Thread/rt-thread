@@ -31,6 +31,7 @@ jobs:
         post_comment: 0
         extra_dictionaries:
           cspell:en_US/src/en_US.txt
+        check_extra_dictionaries: ''
 
     - name: output Success info
       run: |
