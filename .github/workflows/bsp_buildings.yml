@@ -9,6 +9,7 @@ on:
   push:
     branches:
       - master
+      - ci_attach_remove_output
     paths-ignore:
       - documentation/**
       - '**/README.md'
@@ -29,7 +30,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     name: ${{ matrix.legs.RTT_BSP }}
-    if: github.repository_owner == 'RT-Thread'
+    # if: github.repository_owner == 'RT-Thread'
     strategy:
       fail-fast: false
       matrix:
