@@ -34,7 +34,6 @@ def build_bsp(bsp):
     scons -C bsp/{bsp} --pyconfig-silent
 
     cd {rtt_root}/bsp/{bsp}
-    pkgs --upgrade-script-force
     pkgs --update
     pkgs --list
 
@@ -58,15 +57,8 @@ def build_bsp(bsp):
 
         nproc = multiprocessing.cpu_count()
         os.chdir(rtt_root)
-        output, res = run_cmd(f'scons -C bsp/{bsp} -j{nproc} --debug=time')
+        __, res = run_cmd(f'scons -C bsp/{bsp} -j{nproc}')
 
-        total_time = 0
-        for line in output:
-            pattern = r"Total command execution time: (\d+\.\d+) seconds"
-            match = re.search(pattern, line)
-            if match:
-                total_time = match.group(1)
-                break
         if res != 0:
             success = False
 
@@ -76,7 +68,7 @@ def build_bsp(bsp):
     pkg_dir = os.path.join(rtt_root, 'bsp', bsp, 'packages')
     shutil.rmtree(pkg_dir, ignore_errors=True)
 
-    return success, total_time
+    return success
 
 
 def append_file(source_file, destination_file):
@@ -108,12 +100,12 @@ def build_bsp_attachconfig(bsp, attach_file):
 
     append_file(attach_file, config_file)
 
-    res, total_time = build_bsp(bsp)
+    res = build_bsp(bsp)
 
     shutil.copyfile(config_bacakup, config_file)
     os.remove(config_bacakup)
 
-    return res, total_time
+    return res
 
 
 if __name__ == "__main__":
@@ -133,13 +125,13 @@ if __name__ == "__main__":
     for bsp in srtt_bsp:
         count += 1
         print(f"::group::Compiling BSP: =={count}=== {bsp} ====")
-        res, total_time = build_bsp(bsp)
+        res = build_bsp(bsp)
         if not res:
             print(f"::error::build {bsp} failed")
-            add_summary(f"- ❌ build {bsp} failed in {total_time} s.")
+            add_summary(f"- ❌ build {bsp} failed.")
             failed += 1
         else:
-            add_summary(f'- ✅ build {bsp} success in {total_time} s.')
+            add_summary(f'- ✅ build {bsp} success.')
         print("::endgroup::")
 
         attach_dir = os.path.join(rtt_root, 'bsp', bsp, '.ci/attachconfig')
@@ -148,13 +140,13 @@ if __name__ == "__main__":
             count += 1
             attach = os.path.basename(attach_file)
             print(f"::group::\tCompiling BSP: =={count}=== {bsp} {attach}===")
-            res, total_time = build_bsp_attachconfig(bsp, attach_file)
+            res = build_bsp_attachconfig(bsp, attach_file)
             if not res:
                 print(f"::error::build {bsp} {attach} failed.")
-                add_summary(f'\t- ❌ build {attach} failed in {total_time} s.')
+                add_summary(f'\t- ❌ build {attach} failed.')
                 failed += 1
             else:
-                add_summary(f'\t- ✅ build {attach} success in {total_time} s.')
+                add_summary(f'\t- ✅ build {attach} success.')
             print("::endgroup::")
 
     exit(failed)
