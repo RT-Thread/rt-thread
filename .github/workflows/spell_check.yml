@@ -2,17 +2,7 @@ name: Check Spelling
 
 on:
   push:
-    branches:
-    - "**"
-    tags-ignore:
-    - "**"
-  pull_request_target:
-    branches:
-    - "**"
-    types:
-    - 'opened'
-    - 'reopened'
-    - 'synchronize'
+  pull_request:
 
 jobs:
   spelling:
