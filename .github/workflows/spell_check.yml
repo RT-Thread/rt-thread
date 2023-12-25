@@ -23,14 +23,15 @@ jobs:
         echo "> If any words shown as incorrect are spelled correctly, please add them to .github/actions/spelling/allow.txt." >> $GITHUB_STEP_SUMMARY
     - name: check spelling
       id: spelling
-      uses: check-spelling/check-spelling@prerelease
+      uses: check-spelling/check-spelling@v0.0.20
       with:
         checkout: true
         check_file_names: 0
         only_check_changed_files: 1
         post_comment: 0
         extra_dictionaries:
-          cspell:software-terms/dict/softwareTerms.txt
+          cspell:en_US/src/en_US.txt
+
     - name: output Success info
       run: |
         echo "✅ Check spelling success." >> $GITHUB_STEP_SUMMARY
