@@ -53,7 +53,6 @@ def build_bsp(bsp):
         run_cmd(f'scons -C bsp/{bsp} --pyconfig-silent')
 
         os.chdir(f'{rtt_root}/bsp/{bsp}')
-        run_cmd('pkgs --upgrade-script-force')
         run_cmd('pkgs --update')
         run_cmd('pkgs --list')
 
