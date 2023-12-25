@@ -1,0 +1,41 @@
+name: Check Spelling
+
+on:
+  push:
+    branches:
+    - "**"
+    tags-ignore:
+    - "**"
+  pull_request_target:
+    branches:
+    - "**"
+    types:
+    - 'opened'
+    - 'reopened'
+    - 'synchronize'
+
+jobs:
+  spelling:
+    name: Check Spelling
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+      actions: read
+      security-events: write
+    steps:
+    - uses: actions/checkout@v4.0.0
+    - name: output ignore info
+      run: |
+        echo "> If any words shown as incorrect are spelled correctly, please add them to .github/actions/spelling/allow.txt." >> $GITHUB_STEP_SUMMARY
+    - name: check spelling
+      id: spelling
+      uses: check-spelling/check-spelling@main
+      with:
+        only_check_changed_files: 1
+        post_comment: 0
+        extra_dictionaries:
+          cspell:software-terms/dict/softwareTerms.txt
+    - name: output Success info
+      run: |
+        echo "✅ Check spelling success." >> $GITHUB_STEP_SUMMARY
