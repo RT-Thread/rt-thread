@@ -44,11 +44,11 @@ def build_bsp(bsp):
     scons -C bsp/{bsp} --pyconfig-silent > /dev/null
 
     cd {rtt_root}/bsp/{bsp}
-    pkgs --update
+    pkgs --update > /dev/null
     pkgs --list
 
     cd {rtt_root}
-    scons -C bsp/{bsp} -j{nproc} --debug=time
+    scons -C bsp/{bsp} -j{nproc}
 
     cd {rtt_root}/bsp/{bsp}
     scons -c > /dev/null
@@ -62,7 +62,7 @@ def build_bsp(bsp):
         run_cmd(f'scons -C bsp/{bsp} --pyconfig-silent', output_info=False)
 
         os.chdir(f'{rtt_root}/bsp/{bsp}')
-        run_cmd('pkgs --update')
+        run_cmd('pkgs --update', output_info=False)
         run_cmd('pkgs --list')
 
         nproc = multiprocessing.cpu_count()
