@@ -34,7 +34,7 @@
 #define PHY_AUTONEG_ADVERTISE_REG   0x04U
 
 
-#ifdef PHY_USING_LAN8720A
+#if defined(PHY_USING_LAN8720A) || defined(PHY_USING_LAN8742A)
 /*  The PHY interrupt source flag register. */
 #define PHY_INTERRUPT_FLAG_REG      0x1DU
 /*  The PHY interrupt mask register. */
@@ -83,24 +83,23 @@
 /*  The PHY interrupt mask register. */
 #define PHY_INTERRUPT_MASK_REG      0x12U
 #define PHY_INT_MASK                (1<<5)
-#endif
 
-#ifdef PHY_USING_LAN8742A
+#elif defined(PHY_USING_YT8512C)
 /*  The PHY interrupt source flag register. */
-#define PHY_INTERRUPT_FLAG_REG      0x1DU
+#define PHY_INTERRUPT_FLAG_REG      0x13U
 /*  The PHY interrupt mask register. */
-#define PHY_INTERRUPT_MASK_REG      0x1EU
-#define PHY_LINK_DOWN_MASK          (1<<4)
-#define PHY_AUTO_NEGO_COMPLETE_MASK (1<<6)
+#define PHY_INTERRUPT_MASK_REG      0x12U
+/*  The PHY auto nego and link change mask. */
+#define PHY_INT_MASK                (1<<15)|(3<<10)
 
 /*  The PHY status register. */
-#define PHY_Status_REG              0x1FU
-#define PHY_10M_MASK                (1<<2)
-#define PHY_100M_MASK               (1<<3)
-#define PHY_FULL_DUPLEX_MASK        (1<<4)
-#define PHY_Status_SPEED_10M(sr)    ((sr) & PHY_10M_MASK)
+#define PHY_Status_REG              0x11U
+#define PHY_100M_MASK               (1<<14)
+#define PHY_FULL_DUPLEX_MASK        (1<<13)
+#define PHY_Status_SPEED_10M(sr)    (!PHY_Status_SPEED_100M(sr))
 #define PHY_Status_SPEED_100M(sr)   ((sr) & PHY_100M_MASK)
 #define PHY_Status_FULL_DUPLEX(sr)  ((sr) & PHY_FULL_DUPLEX_MASK)
+
 #endif /* PHY_USING_LAN8742A */
 
 #endif /* __DRV_ETH_H__ */
