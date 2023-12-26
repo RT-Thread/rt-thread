@@ -118,13 +118,13 @@ static void swm_sdio_wait_completed(struct swm_sdio_device *sdio)
             SDIO->CR2 |= (1 << SDIO_CR2_RSTCMD_Pos);
             data->err = -RT_ERROR;
         }
-        
+
         if (status & SDIO_IF_CMDTIMEOUT_Msk)
         {
             SDIO->CR2 |= (1 << SDIO_CR2_RSTCMD_Pos);
             cmd->err = -RT_ETIMEOUT;
         }
-        
+
         if (status & SDIO_IF_DATCRCERR_Msk)
         {
             SDIO->CR2 |= (1 << SDIO_CR2_RSTDAT_Pos);

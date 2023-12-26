@@ -107,7 +107,7 @@ static rt_err_t swm_rtc_configure(void)
     rtc_initstruct.MinuteIEn = 0;
     RTC_Init(RTC, &rtc_initstruct);
     RTC_Start(RTC);
-    
+
     return RT_EOK;
 }
 
@@ -148,7 +148,7 @@ int swm_rtc_init(void)
     rt_err_t result;
 
     swm_rtc_configure();
-    
+
     swm_rtc_device.ops = &swm_rtc_ops;
     result = rt_hw_rtc_register(&swm_rtc_device, "rtc", RT_DEVICE_FLAG_RDWR,RT_NULL);
     if (result != RT_EOK)
