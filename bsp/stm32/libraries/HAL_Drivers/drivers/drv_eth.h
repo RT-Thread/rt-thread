@@ -100,6 +100,6 @@
 #define PHY_Status_SPEED_100M(sr)   ((sr) & PHY_100M_MASK)
 #define PHY_Status_FULL_DUPLEX(sr)  ((sr) & PHY_FULL_DUPLEX_MASK)
 
-#endif
+#endif /* defined(PHY_USING_LAN8720A) || defined(PHY_USING_LAN8742A) */
 
 #endif /* __DRV_ETH_H__ */
