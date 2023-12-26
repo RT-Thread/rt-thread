@@ -133,7 +133,7 @@ static void tcpserv(void *arg)
             bytes_received = recv(connected, recv_data, BUFSZ, 0);
             if (bytes_received < 0)
             {
-                LOG_E("Received error, close the connect.");
+                LOG_E("Received error(%d), close the connect.", errno);
                 closesocket(connected);
                 connected = -1;
                 break;
@@ -180,7 +180,7 @@ static void tcpserv(void *arg)
             ret = send(connected, send_data, rt_strlen(send_data), 0);
             if (ret < 0)
             {
-                LOG_E("send error, close the connect.");
+                LOG_E("send error(%d), close the connect.", errno);
                 closesocket(connected);
                 connected = -1;
                 break;
