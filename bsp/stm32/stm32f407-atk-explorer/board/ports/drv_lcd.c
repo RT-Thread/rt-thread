@@ -12,7 +12,8 @@
 
 #include <board.h>
 #include "drv_lcd.h"
-#include "string.h"
+#include <drv_gpio.h>
+#include <string.h>
 
 //#define DRV_DEBUG
 #define LOG_TAG "drv.lcd"
