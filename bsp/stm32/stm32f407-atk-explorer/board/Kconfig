@@ -127,6 +127,7 @@ menu "Onboard Peripheral Drivers"
         bool "Enable File System"
         select RT_USING_DFS
         select RT_USING_DFS_ROMFS
+        select RT_USING_DFS_ROMFS_USER_ROOT
         default n
 
         if BSP_USING_FS

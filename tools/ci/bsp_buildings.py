@@ -67,7 +67,7 @@ def build_bsp(bsp):
 
         nproc = multiprocessing.cpu_count()
         os.chdir(rtt_root)
-        __, res = run_cmd(f'scons -C bsp/{bsp} -j{nproc}')
+        __, res = run_cmd(f'scons -C bsp/{bsp} -j{nproc}', output_info=False)
 
         if res != 0:
             success = False
