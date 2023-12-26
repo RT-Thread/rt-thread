@@ -84,7 +84,7 @@ uint32_t FLASH_Write(uint32_t addr, uint32_t buff[], uint32_t count)
 ******************************************************************************************************************************************/
 void Flash_Param_at_xMHz(uint32_t x)
 {
-    __disable_irq();
+//    __disable_irq();
     switch(x)
     {
         case 30:
@@ -108,5 +108,5 @@ void Flash_Param_at_xMHz(uint32_t x)
             IAP_Flash_Param(0x16589, 0x4C74, 0x0B11FFAC);
             break;
     }
-    __enable_irq();
+//    __enable_irq();
 }

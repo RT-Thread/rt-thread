@@ -7,11 +7,6 @@
  * Date           Author       Notes
  */
 
-/***************************************************************
-由于和mmcsd_cmd.h中的ERASE重名，
-修改SWM341.h中 FMC_TpyeDef中ERASE寄存器为FMC_ERASE
-***************************************************************/
-
 #include <rtthread.h>
 #include <rtdevice.h>
 #include "board.h"

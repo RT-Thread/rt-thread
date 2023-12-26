@@ -275,7 +275,17 @@ static void swm_uart_isr(struct rt_serial_device *serial_device)
     /* UART in mode Receiver -------------------------------------------------*/
     if (UART_INTStat(uart_cfg->UARTx, UART_IT_RX_THR) || UART_INTStat(uart_cfg->UARTx, UART_IT_RX_TOUT))
     {
-        rt_hw_serial_isr(serial_device, RT_SERIAL_EVENT_RX_IND);
+		if(!UART_IsRXFIFOEmpty(uart_cfg->UARTx))
+		{
+			rt_hw_serial_isr(serial_device, RT_SERIAL_EVENT_RX_IND);
+		}
+		
+		if(UART_INTStat(uart_cfg->UARTx, UART_IT_RX_TOUT))
+		{
+			UART_INTClr(uart_cfg->UARTx, UART_IT_RX_TOUT);
+			
+			rt_hw_serial_isr(serial_device, RT_SERIAL_EVENT_RX_TIMEOUT);
+		}
     }
 }
 
