@@ -301,7 +301,7 @@ rt_err_t rt_pwm_get(struct rt_device_pwm *device, struct rt_pwm_configuration *c
 #include <string.h>
 #include <finsh.h>
 
-static enum pwm_list_parameters
+enum pwm_list_parameters
 {
     PWM_LIST_PROBE = 1,
     PWM_LIST_ENABLE,
@@ -310,7 +310,7 @@ static enum pwm_list_parameters
     PWM_LIST_SET,
     PWM_LIST_PHASE,
     PWM_LIST_DEAD_TIME,
-} pwm_list_parameters;
+};
 
 CMD_OPTIONS_STATEMENT(pwm_list)
 int pwm_list(int argc, char **argv)
