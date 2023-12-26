@@ -10,6 +10,7 @@
 
 #include <rtthread.h>
 #include <string.h>
+#include <stdlib.h>
 
 #if !defined(SAL_USING_POSIX)
 #error "Please enable SAL_USING_POSIX!"
@@ -139,10 +140,12 @@ static void tcpserv(void *arg)
             }
             else if (bytes_received == 0)
             {
-                /* Print warning message when recv function returns 0 */
-                /* 打印recv函数返回值为0的警告信息 */
-                LOG_W("Received warning, recv function returns 0.");
-                continue;
+                /* Socket has performed an orderly shutdown */
+                /* 连接已断开 */
+                LOG_E("Socket has performed an orderly shutdown.");
+                closesocket(connected);
+                connected = -1;
+                break;
             }
             else
             {   /* Receive data successfully and append '\0' at the end of message */
@@ -184,9 +187,16 @@ static void tcpserv(void *arg)
             }
             else if (ret == 0)
             {
-                /* Print warning message when send function returns 0 */
-                /* 打印send函数返回值为0的警告信息 */
-                LOG_W("Send warning, send function returns 0.");
+                /* Socket has performed an orderly shutdown */
+                /* 连接已断开 */
+                LOG_E("Socket has performed an orderly shutdown.");
+                closesocket(connected);
+                connected = -1;
+                break;
+            }
+            else if (ret != rt_strlen(send_data))
+            {
+                LOG_W("%d out of %d bytes sent.", ret, rt_strlen(send_data));
             }
         }
     }
