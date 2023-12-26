@@ -3,20 +3,19 @@ name: Check Spelling
 on:
   push:
     branches:
-    - master
+      - master
+    paths:
+      - 'documentation/**'
   pull_request:
     branches:
-    - master
-
+      - master
+    paths:
+      - 'documentation/**'
 jobs:
   spelling:
     name: Check Spelling
     runs-on: ubuntu-latest
     if: github.repository_owner == 'RT-Thread'
-    permissions:
-      contents: read
-      pull-requests: read
-      actions: read
     steps:
     - name: output ignore words info
       run: |
@@ -34,9 +33,7 @@ jobs:
           cspell:software-terms/softwareTerms.txt
           cspell:python/python.txt
           cspell:cpp/cpp.txt
-
         check_extra_dictionaries: ''
-
     - name: output Success info
       run: |
         echo "✅ Check spelling success." >> $GITHUB_STEP_SUMMARY
