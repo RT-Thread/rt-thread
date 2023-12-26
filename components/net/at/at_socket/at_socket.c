@@ -972,7 +972,7 @@ __exit:
 int at_recvfrom(int socket, void *mem, size_t len, int flags, struct sockaddr *from, socklen_t *fromlen)
 {
     struct at_socket *sock = RT_NULL;
-    int timeout;
+    int timeout, result = 0;
     size_t recv_len = 0;
 
     if (mem == RT_NULL || len == 0)
@@ -1011,7 +1011,8 @@ int at_recvfrom(int socket, void *mem, size_t len, int flags, struct sockaddr *f
         if (sock->state == AT_SOCKET_CLOSED)
         {
             /* socket passively closed, receive function return 0 */
-            return 0;
+            result = 0;
+            break;
         }
 
         rt_sem_control(sock->recv_notice, RT_IPC_CMD_RESET, RT_NULL);
@@ -1026,30 +1027,41 @@ int at_recvfrom(int socket, void *mem, size_t len, int flags, struct sockaddr *f
                 at_do_event_clean(sock, AT_EVENT_RECV);
             }
             errno = 0;
-            return recv_len;
+            result = recv_len;
+            break;
         }
 
         if (flags & MSG_DONTWAIT)
         {
             errno = EAGAIN;
-            return -1;
+            result = -1;
+            break;
         }
 
         /* set AT socket receive timeout */
-        if ((timeout = sock->recv_timeout) == 0)
+        if (sock->recv_timeout == 0)
         {
             timeout = RT_WAITING_FOREVER;
         }
         else
         {
-            timeout = rt_tick_from_millisecond(timeout);
+            timeout = rt_tick_from_millisecond(sock->recv_timeout);
         }
         if (rt_sem_take(sock->recv_notice, timeout) != RT_EOK)
         {
+            LOG_D("AT socket (%d) receive timeout (%d)!", socket, timeout);
             errno = EAGAIN;
-            return -1;
+            result = -1;
+            break;
         }
     }
+
+    if (result <= 0)
+    {
+        at_do_event_changes(sock, AT_EVENT_ERROR, RT_TRUE);
+    }
+
+    return result;
 }
 
 int at_recv(int s, void *mem, size_t len, int flags)
