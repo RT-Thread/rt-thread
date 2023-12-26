@@ -36,6 +36,12 @@ ssize_t dfs_devfs_write(struct dfs_file *file, const void *buf, size_t count, of
 int dfs_devfs_ioctl(struct dfs_file *file, int cmd, void *args);
 int dfs_devfs_getdents(struct dfs_file *file, struct dirent *dirp, uint32_t count);
 static int dfs_devfs_poll(struct dfs_file *file, struct rt_pollreq *req);
+int dfs_devfs_flush(struct dfs_file *file);
+off_t dfs_devfs_lseek(struct dfs_file *file, off_t offset, int wherece);
+int dfs_devfs_truncate(struct dfs_file *file, off_t offset);
+int dfs_devfs_mmap(struct dfs_file *file, struct lwp_avl_struct *mmap);
+int dfs_devfs_lock(struct dfs_file *file, struct file_lock *flock);
+int dfs_devfs_flock(struct dfs_file *file, int operation, struct file_lock *flock);
 
 int dfs_devfs_mount(struct dfs_mnt *mnt, unsigned long rwflag, const void *data);
 int dfs_devfs_umount(struct dfs_mnt *mnt);
@@ -48,14 +54,21 @@ static int dfs_devfs_free_vnode(struct dfs_vnode *vnode);
 
 static const struct dfs_file_ops _dev_fops =
 {
-    .open = dfs_devfs_open,
-    .close = dfs_devfs_close,
-    .lseek = generic_dfs_lseek,
-    .read = dfs_devfs_read,
-    .write = dfs_devfs_write,
-    .ioctl = dfs_devfs_ioctl,
-    .getdents = dfs_devfs_getdents,
-    .poll = dfs_devfs_poll,
+    .open       = dfs_devfs_open,
+    .close      = dfs_devfs_close,
+    .lseek      = generic_dfs_lseek,
+    .read       = dfs_devfs_read,
+    .write      = dfs_devfs_write,
+    .ioctl      = dfs_devfs_ioctl,
+    .getdents   = dfs_devfs_getdents,
+    .poll       = dfs_devfs_poll,
+
+    .flush      = dfs_devfs_flush,
+    .lseek      = dfs_devfs_lseek,
+    .truncate   = dfs_devfs_truncate,
+    .mmap       = dfs_devfs_mmap,
+    .lock       = dfs_devfs_lock,
+    .flock      = dfs_devfs_flock,
 };
 
 static const struct dfs_filesystem_ops _devfs_ops =
@@ -175,14 +188,7 @@ static struct dfs_vnode *dfs_devfs_lookup(struct dfs_dentry *dentry)
                 vnode->mode = _device_to_mode(device);
                 vnode->size = device->ref_count;
                 vnode->nlink = 1;
-                if (device->fops)
-                {
-                    vnode->fops = device->fops;
-                }
-                else
-                {
-                    vnode->fops = &_dev_fops;
-                }
+                vnode->fops = &_dev_fops;
                 vnode->data = device;
                 vnode->mnt = dentry->mnt;
                 vnode->type = FT_DEVICE;
@@ -259,64 +265,94 @@ int dfs_devfs_statfs(struct dfs_mnt *mnt, struct statfs *buf)
 
 int dfs_devfs_ioctl(struct dfs_file *file, int cmd, void *args)
 {
-    rt_err_t result;
-    rt_device_t dev_id;
+    rt_err_t result = RT_EOK;
+    rt_device_t device;
 
     RT_ASSERT(file != RT_NULL);
 
     /* get device handler */
-    dev_id = (rt_device_t)file->vnode->data;
-    RT_ASSERT(dev_id != RT_NULL);
+    device = (rt_device_t)file->vnode->data;
+    RT_ASSERT(device != RT_NULL);
 
     if ((file->dentry->pathname[0] == '/') && (file->dentry->pathname[1] == '\0'))
         return -RT_ENOSYS;
 
-    /* close device handler */
-    result = rt_device_control(dev_id, cmd, args);
-    if (result == RT_EOK)
-        return RT_EOK;
+#ifdef RT_USING_POSIX_DEVIO
+    if (device->fops && device->fops->ioctl)
+    {
+        result = device->fops->ioctl(file, cmd, args);
+    }
+    else if (device->ops)
+#else
+    if (device->ops)
+#endif /* RT_USING_POSIX_DEVIO */
+    {
+        result = rt_device_control(device, cmd, args);
+    }
 
     return result;
 }
 
 ssize_t dfs_devfs_read(struct dfs_file *file, void *buf, size_t count, off_t *pos)
 {
-    int result;
-    rt_device_t dev_id;
+    int result = -RT_EIO;
+    rt_device_t device;
 
     RT_ASSERT(file != RT_NULL);
 
     /* get device handler */
-    dev_id = (rt_device_t)file->vnode->data;
-    RT_ASSERT(dev_id != RT_NULL);
+    device = (rt_device_t)file->vnode->data;
+    RT_ASSERT(device != RT_NULL);
 
     if ((file->dentry->pathname[0] == '/') && (file->dentry->pathname[1] == '\0'))
         return -RT_ENOSYS;
 
-    /* read device data */
-    result = rt_device_read(dev_id, *pos, buf, count);
-    *pos += result;
+#ifdef RT_USING_POSIX_DEVIO
+    if (device->fops && device->fops->read)
+    {
+        result = device->fops->read(file, buf, count, pos);
+    }
+    else if (device->ops)
+#else
+    if (device->ops)
+#endif /* RT_USING_POSIX_DEVIO */
+    {
+        /* read device data */
+        result = rt_device_read(device, *pos, buf, count);
+        *pos += result;
+    }
 
     return result;
 }
 
 ssize_t dfs_devfs_write(struct dfs_file *file, const void *buf, size_t count, off_t *pos)
 {
-    int result;
-    rt_device_t dev_id;
+    int result = -RT_EIO;
+    rt_device_t device;
 
     RT_ASSERT(file != RT_NULL);
 
     /* get device handler */
-    dev_id = (rt_device_t)file->vnode->data;
-    RT_ASSERT(dev_id != RT_NULL);
+    device = (rt_device_t)file->vnode->data;
+    RT_ASSERT(device != RT_NULL);
 
     if ((file->dentry->pathname[0] == '/') && (file->dentry->pathname[1] == '\0'))
         return -RT_ENOSYS;
 
-    /* read device data */
-    result = rt_device_write(dev_id, *pos, buf, count);
-    *pos += result;
+#ifdef RT_USING_POSIX_DEVIO
+    if (device->fops && device->fops->write)
+    {
+        result = device->fops->write(file, buf, count, pos);
+    }
+    else if (device->ops)
+#else
+    if (device->ops)
+#endif /* RT_USING_POSIX_DEVIO */
+    {
+        /* read device data */
+        result = rt_device_write(device, *pos, buf, count);
+        *pos += result;
+    }
 
     return result;
 }
@@ -334,8 +370,19 @@ int dfs_devfs_close(struct dfs_file *file)
         device = (rt_device_t)file->vnode->data;
         RT_ASSERT(device != RT_NULL);
 
-        /* close device handler */
-        result = rt_device_close(device);
+#ifdef RT_USING_POSIX_DEVIO
+        if (device->fops && device->fops->close)
+        {
+            result = device->fops->close(file);
+        }
+        else if (device->ops)
+#else
+        if (device->ops)
+#endif /* RT_USING_POSIX_DEVIO */
+        {
+            /* close device handler */
+            result = rt_device_close(device);
+        }
     }
 
     return result;
@@ -361,21 +408,18 @@ int dfs_devfs_open(struct dfs_file *file)
         if (device)
         {
 #ifdef RT_USING_POSIX_DEVIO
-            if (device->fops)
+            if (device->fops && device->fops->open)
             {
-                /* use device fops */
-                file->fops = device->fops;
-                /* use fops->open */
-                if (file->vnode->fops->open)
+                result = device->fops->open(file);
+                if (result == RT_EOK || result == -RT_ENOSYS)
                 {
-                    result = file->vnode->fops->open(file);
-                    if (result == RT_EOK || result == -RT_ENOSYS)
-                    {
-                        return RT_EOK;
-                    }
+                    file->fops = &_dev_fops;
+                    return RT_EOK;
                 }
             }
-            else
+            else if (device->ops)
+#else
+            if (device->ops)
 #endif /* RT_USING_POSIX_DEVIO */
             {
                 result = rt_device_open(device, RT_DEVICE_OFLAG_RDWR);
@@ -395,18 +439,18 @@ int dfs_devfs_open(struct dfs_file *file)
 int dfs_devfs_unlink(struct dfs_dentry *dentry)
 {
 #ifdef RT_USING_DEV_BUS
-    rt_device_t dev_id;
+    rt_device_t device;
 
-    dev_id = rt_device_find(&dentry->pathname[1]);
-    if (dev_id == RT_NULL)
+    device = rt_device_find(&dentry->pathname[1]);
+    if (device == RT_NULL)
     {
         return -1;
     }
-    if (dev_id->type != RT_Device_Class_Bus)
+    if (device->type != RT_Device_Class_Bus)
     {
         return -1;
     }
-    rt_device_bus_destroy(dev_id);
+    rt_device_bus_destroy(device);
 #endif
     return RT_EOK;
 }
@@ -441,10 +485,10 @@ int dfs_devfs_stat(struct dfs_dentry *dentry, struct stat *st)
         }
         else
         {
-            rt_device_t dev_id;
+            rt_device_t device;
 
-            dev_id = rt_device_find(&path[1]);
-            if (dev_id != RT_NULL)
+            device = rt_device_find(&path[1]);
+            if (device != RT_NULL)
             {
                 st->st_dev = 0;
                 st->st_gid = vnode->gid;
@@ -505,8 +549,134 @@ int dfs_devfs_getdents(struct dfs_file *file, struct dirent *dirp, uint32_t coun
 static int dfs_devfs_poll(struct dfs_file *file, struct rt_pollreq *req)
 {
     int mask = 0;
+    rt_device_t device;
+
+    /* get device handler */
+    device = (rt_device_t)file->vnode->data;
+    RT_ASSERT(device != RT_NULL);
+
+#ifdef RT_USING_POSIX_DEVIO
+    if (device->fops && device->fops->poll)
+    {
+        mask = device->fops->poll(file, req);
+    }
+#endif /* RT_USING_POSIX_DEVIO */
 
     return mask;
+}
+
+int dfs_devfs_flush(struct dfs_file *file)
+{
+    int ret = 0;
+    rt_device_t device;
+
+    /* get device handler */
+    device = (rt_device_t)file->vnode->data;
+    RT_ASSERT(device != RT_NULL);
+
+#ifdef RT_USING_POSIX_DEVIO
+    if (device->fops && device->fops->flush)
+    {
+        ret = device->fops->flush(file);
+    }
+#endif /* RT_USING_POSIX_DEVIO */
+
+    return ret;
+}
+
+off_t dfs_devfs_lseek(struct dfs_file *file, off_t offset, int wherece)
+{
+    off_t ret = 0;
+    rt_device_t device;
+
+    /* get device handler */
+    device = (rt_device_t)file->vnode->data;
+    RT_ASSERT(device != RT_NULL);
+
+#ifdef RT_USING_POSIX_DEVIO
+    if (device->fops && device->fops->lseek)
+    {
+        ret = device->fops->lseek(file, offset, wherece);
+    }
+#endif /* RT_USING_POSIX_DEVIO */
+
+    return ret;
+}
+
+int dfs_devfs_truncate(struct dfs_file *file, off_t offset)
+{
+    int ret = 0;
+    rt_device_t device;
+
+    /* get device handler */
+    device = (rt_device_t)file->vnode->data;
+    RT_ASSERT(device != RT_NULL);
+
+#ifdef RT_USING_POSIX_DEVIO
+    if (device->fops && device->fops->truncate)
+    {
+        ret = device->fops->truncate(file, offset);
+    }
+#endif /* RT_USING_POSIX_DEVIO */
+
+    return ret;
+}
+
+int dfs_devfs_mmap(struct dfs_file *file, struct lwp_avl_struct *mmap)
+{
+    int ret = 0;
+    rt_device_t device;
+
+    /* get device handler */
+    device = (rt_device_t)file->vnode->data;
+    RT_ASSERT(device != RT_NULL);
+
+#ifdef RT_USING_POSIX_DEVIO
+    if (device->fops && device->fops->mmap)
+    {
+        ret = device->fops->mmap(file, mmap);
+    }
+#endif /* RT_USING_POSIX_DEVIO */
+
+    return ret;
+}
+
+int dfs_devfs_lock(struct dfs_file *file, struct file_lock *flock)
+{
+    int ret = 0;
+    rt_device_t device;
+
+    /* get device handler */
+    device = (rt_device_t)file->vnode->data;
+    RT_ASSERT(device != RT_NULL);
+
+#ifdef RT_USING_POSIX_DEVIO
+    if (device->fops && device->fops->lock)
+    {
+        ret = device->fops->lock(file, flock);
+    }
+#endif /* RT_USING_POSIX_DEVIO */
+
+    return ret;
+}
+
+int dfs_devfs_flock(struct dfs_file *file, int operation, struct file_lock *flock)
+{
+    int ret = 0;
+    rt_device_t device;
+
+    /* get device handler */
+    device = (rt_device_t)file->vnode->data;
+    RT_ASSERT(device != RT_NULL);
+
+#ifdef RT_USING_POSIX_DEVIO
+    if (device->fops && device->fops->flock)
+    {
+        ret = device->fops->flock(file, operation, flock);
+    }
+#endif /* RT_USING_POSIX_DEVIO */
+
+    return ret;
 }
 
 int dfs_devfs_init(void)

@@ -427,14 +427,14 @@ static int cmd_rm(int argc, char **argv)
         if (stat(argv[index], &s) == 0)
 #endif
         {
-            if (s.st_mode & S_IFDIR)
+            if (S_ISDIR(s.st_mode))
             {
                 if (r == 0)
                     rt_kprintf("cannot remove '%s': Is a directory\n", argv[index]);
                 else
                     directory_delete_for_msh(argv[index], f, v);
             }
-            else if (s.st_mode & S_IFREG)
+            else
             {
                 if (unlink(argv[index]) != 0)
                 {
@@ -1099,7 +1099,7 @@ static int cmd_chmod(int argc, char **argv)
                     struct stat s;
                     if (stat(argv[i], &s) == 0)
                     {
-                        if (s.st_mode & S_IFDIR)
+                        if (S_ISDIR(s.st_mode))
                         {
                             directory_setattr(argv[i], &attr, f, v);
                         }

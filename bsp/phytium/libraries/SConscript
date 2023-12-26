@@ -129,6 +129,20 @@ if GetDepend(['FIREFLY_DEMO_BOARD']):
     if GetDepend(['BSP_USING_SDIF']):
         src += Glob(PHYTIUM_SDK_DIR+'/board/firefly/fsdif_timing.c')
 
+
+LIBS    = []
+LIBPATH = []
+# fdriver dc
+if GetDepend(['BSP_USING_DC']):
+     src += Glob(PORT_DRV_DIR+'/drv_dc.c')
+     path += [PHYTIUM_SDK_DIR + '/drivers/media/fdcdp_lib/inc']
+     if GetDepend(['TARGET_ARMV8_AARCH64']):
+        LIBPATH = [PHYTIUM_SDK_DIR + '/drivers/media/fdcdp_lib/']
+        LIBS = ['libfdcdp_standalone_a64.a']
+
+     elif GetDepend(['TARGET_ARMV8_AARCH32']):
+        LIBPATH = [PHYTIUM_SDK_DIR + '/drivers/media/fdcdp_lib/']
+        LIBS = ['libfdcdp_standalone_soft_a32.a']  
 ## fdriver port
 src += Glob(cwd+'/port/fdriver_port/*.c')
 path += [cwd + '/port/fdriver_port']
@@ -141,6 +155,18 @@ path += [cwd + '/port/fboard_port']
 src += Glob(cwd+'/port/lwip_port/*.c')
 path += [cwd + '/port/lwip_port']
 
+## cherryusb port
+if GetDepend(['BSP_USING_XHCI']):
+    src += Glob(cwd +'/port/cherryusb_port/drv_xhci.c')
+    path += [cwd + '/port/cherryusb_port']
+
+if GetDepend(['BSP_USING_PUSB2']):
+    if GetDepend(['PKG_CHERRYUSB_HOST_PUSB2']):
+        src += Glob(cwd +'/port/cherryusb_port/drv_pusb2_hc.c')
+    if GetDepend(['PKG_CHERRYUSB_DEVICE_PUSB2']):
+        src += Glob(cwd +'/port/cherryusb_port/drv_pusb2_dc.c')
+    path += [cwd + '/port/cherryusb_port']
+
 # phytium ports rt-thread examples
 PORT_DRV_DIR = cwd + '/examples'
 
@@ -152,7 +178,7 @@ path += [cwd]
 # add group
 ASFLAGS = ''
 group = DefineGroup('FT_DRIVER', src, depend=[
-                    ''], CPPPATH=path, ASFLAGS = ASFLAGS)
+                    ''],LIBS = LIBS,LIBPATH=LIBPATH, CPPPATH=path, ASFLAGS = ASFLAGS)
 
 
 Return('group')

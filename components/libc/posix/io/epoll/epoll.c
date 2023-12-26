@@ -35,6 +35,7 @@ struct rt_fd_list
     struct rt_eventpoll *ep;
     struct rt_wqueue_node wqn;
     int exclusive;/* If triggered horizontally, a check is made to see if the data has been read, and if there is any data left to read, the readability event is returned in the next epoll_wait */
+    rt_bool_t is_rdl_node;
     int fd;
     struct rt_fd_list *next;
     rt_slist_t rdl_node;
@@ -121,6 +122,7 @@ static int epoll_poll(struct dfs_file *file, struct rt_pollreq *req)
 {
     struct rt_eventpoll *ep;
     int events = 0;
+    rt_base_t level;
 
     if (file->vnode->data)
     {
@@ -130,12 +132,12 @@ static int epoll_poll(struct dfs_file *file, struct rt_pollreq *req)
         rt_mutex_take(&ep->lock, RT_WAITING_FOREVER);
         rt_poll_add(&ep->epoll_read, req);
 
-        rt_spin_lock(&ep->spinlock);
+        level = rt_spin_lock_irqsave(&ep->spinlock);
 
         if (!rt_slist_isempty(&ep->rdl_head))
             events |= POLLIN | EPOLLRDNORM | POLLOUT;
 
-        rt_spin_unlock(&ep->spinlock);
+        rt_spin_unlock_irqrestore(&ep->spinlock, level);
         rt_mutex_release(&ep->lock);
     }
 
@@ -146,6 +148,7 @@ static int epoll_wqueue_callback(struct rt_wqueue_node *wait, void *key)
 {
     struct rt_fd_list *fdlist;
     struct rt_eventpoll *ep;
+    rt_base_t level;
 
     if (key && !((rt_ubase_t)key & wait->key))
         return -1;
@@ -155,13 +158,17 @@ static int epoll_wqueue_callback(struct rt_wqueue_node *wait, void *key)
     ep = fdlist->ep;
     if (ep)
     {
-        rt_spin_lock(&ep->spinlock);
-        rt_slist_append(&ep->rdl_head, &fdlist->rdl_node);
-        fdlist->exclusive = 0;
-        ep->tirggered = 1;
-        ep->eventpoll_num ++;
-        rt_wqueue_wakeup(&ep->epoll_read, (void *)POLLIN);
-        rt_spin_unlock(&ep->spinlock);
+        level = rt_spin_lock_irqsave(&ep->spinlock);
+        if (fdlist->is_rdl_node == RT_FALSE)
+        {
+            rt_slist_append(&ep->rdl_head, &fdlist->rdl_node);
+            fdlist->exclusive = 0;
+            fdlist->is_rdl_node = RT_TRUE;
+            ep->tirggered = 1;
+            ep->eventpoll_num ++;
+            rt_wqueue_wakeup(&ep->epoll_read, (void *)POLLIN);
+        }
+        rt_spin_unlock_irqrestore(&ep->spinlock, level);
     }
 
     return __wqueue_default_wake(wait, key);
@@ -187,6 +194,7 @@ static void epoll_wqueue_add_callback(rt_wqueue_t *wq, rt_pollreq_t *req)
 static void epoll_ctl_install(struct rt_fd_list *fdlist, struct rt_eventpoll *ep)
 {
     rt_uint32_t mask = 0;
+    rt_base_t level;
 
     fdlist->req._key = fdlist->revents;
 
@@ -197,12 +205,13 @@ static void epoll_ctl_install(struct rt_fd_list *fdlist, struct rt_eventpoll *ep
         if (ep)
         {
             rt_mutex_take(&ep->lock, RT_WAITING_FOREVER);
-            rt_spin_lock(&ep->spinlock);
+            level = rt_spin_lock_irqsave(&ep->spinlock);
             rt_slist_append(&ep->rdl_head, &fdlist->rdl_node);
             fdlist->exclusive = 0;
+            fdlist->is_rdl_node = RT_TRUE;
             ep->tirggered = 1;
             ep->eventpoll_num ++;
-            rt_spin_unlock(&ep->spinlock);
+            rt_spin_unlock_irqrestore(&ep->spinlock, level);
             rt_mutex_release(&ep->lock);
         }
     }
@@ -250,6 +259,7 @@ static int epoll_epf_init(int fd)
                     ep->fdlist->fd = fd;
                     ep->fdlist->ep = ep;
                     ep->fdlist->exclusive = 0;
+                    ep->fdlist->is_rdl_node = RT_FALSE;
                     dfs_vnode_init(df->vnode, FT_REGULAR, &epoll_fops);
                     df->vnode->data = ep;
                     rt_slist_init(&ep->fdlist->rdl_node);
@@ -340,6 +350,7 @@ static int epoll_ctl_add(struct dfs_file *df, int fd, struct epoll_event *event)
             fdlist->epev.events = 0;
             fdlist->ep = ep;
             fdlist->exclusive = 0;
+            fdlist->is_rdl_node = RT_FALSE;
             fdlist->req._proc = epoll_wqueue_add_callback;
             fdlist->revents = event->events;
             rt_mutex_take(&ep->lock, RT_WAITING_FOREVER);
@@ -365,6 +376,7 @@ static int epoll_ctl_del(struct dfs_file *df, int fd)
     struct rt_eventpoll *ep = RT_NULL;
     rt_slist_t *node = RT_NULL;
     rt_err_t ret = -EINVAL;
+    rt_base_t level;
 
     if (df->vnode->data)
     {
@@ -373,14 +385,14 @@ static int epoll_ctl_del(struct dfs_file *df, int fd)
         if (ep)
         {
             rt_mutex_take(&ep->lock, RT_WAITING_FOREVER);
-            rt_spin_lock(&ep->spinlock);
+            level = rt_spin_lock_irqsave(&ep->spinlock);
             rt_slist_for_each(node, &ep->rdl_head)
             {
                 rdlist = rt_slist_entry(node, struct rt_fd_list, rdl_node);
                 if (rdlist->fd == fd)
                     rt_slist_remove(&ep->rdl_head, node);
             }
-            rt_spin_unlock(&ep->spinlock);
+            rt_spin_unlock_irqrestore(&ep->spinlock, level);
 
             fdlist = ep->fdlist;
             while (fdlist->next != RT_NULL)
@@ -591,18 +603,22 @@ static int epoll_do(struct rt_eventpoll *ep, struct epoll_event *events, int max
     int isn_add = 0;
     int isfree = 0;
     int mask = 0;
+    rt_base_t level;
 
     while (1)
     {
         rt_mutex_take(&ep->lock, RT_WAITING_FOREVER);
-        rt_spin_lock(&ep->spinlock);
+        level = rt_spin_lock_irqsave(&ep->spinlock);
         if (ep->eventpoll_num > 0)
         {
             rt_slist_for_each(node,&ep->rdl_head)
             {
                 rdlist = rt_slist_entry(node, struct rt_fd_list, rdl_node);
+                ep->eventpoll_num --;
+                rt_slist_remove(&ep->rdl_head, &rdlist->rdl_node);
+                rdlist->is_rdl_node = RT_FALSE;
 
-                rt_spin_unlock(&ep->spinlock);
+                rt_spin_unlock_irqrestore(&ep->spinlock, level);
 
                 isfree = 0;
                 isn_add = 0;
@@ -640,12 +656,12 @@ static int epoll_do(struct rt_eventpoll *ep, struct epoll_event *events, int max
                         }
                         else
                         {
-                            rt_spin_lock(&ep->spinlock);
+                            level = rt_spin_lock_irqsave(&ep->spinlock);
                             if (rdlist->exclusive != 1)
                             {
                                 rdlist->exclusive = 1;
                             }
-                            rt_spin_unlock(&ep->spinlock);
+                            rt_spin_unlock_irqrestore(&ep->spinlock, level);
                         }
                     }
 
@@ -655,32 +671,45 @@ static int epoll_do(struct rt_eventpoll *ep, struct epoll_event *events, int max
                         event_num ++;
                     }
 
-                    if (isfree)
+                    if (!isfree)
                     {
-                        rt_spin_lock(&ep->spinlock);
-                        ep->eventpoll_num --;
-                        rt_slist_remove(&ep->rdl_head, &rdlist->rdl_node);
-                        rt_spin_unlock(&ep->spinlock);
+                        if (rdlist->is_rdl_node == RT_FALSE)
+                        {
+                            level = rt_spin_lock_irqsave(&ep->spinlock);
+                            ep->eventpoll_num ++;
+                            rt_slist_append(&ep->rdl_head, &rdlist->rdl_node);
+                            rdlist->is_rdl_node = RT_TRUE;
+                            rt_spin_unlock_irqrestore(&ep->spinlock, level);
+                        }
+                        else
+                        {
+                            level = rt_spin_lock_irqsave(&ep->spinlock);
+                            if (!rdlist->wqn.wqueue)
+                            {
+                                epoll_get_event(rdlist, &rdlist->req);
+                            }
+                            rt_spin_unlock_irqrestore(&ep->spinlock, level);
+                        }
                     }
                 }
                 else
                 {
-                    rt_spin_lock(&ep->spinlock);
+                    level = rt_spin_lock_irqsave(&ep->spinlock);
                     break;
                 }
 
-                rt_spin_lock(&ep->spinlock);
+                level = rt_spin_lock_irqsave(&ep->spinlock);
             }
         }
 
-        rt_spin_unlock(&ep->spinlock);
+        rt_spin_unlock_irqrestore(&ep->spinlock, level);
         rt_mutex_release(&ep->lock);
 
         if (event_num || istimeout)
         {
-            rt_spin_lock(&ep->spinlock);
+            level = rt_spin_lock_irqsave(&ep->spinlock);
             ep->tirggered = 0;
-            rt_spin_unlock(&ep->spinlock);
+            rt_spin_unlock_irqrestore(&ep->spinlock, level);
             if ((timeout >= 0) || (event_num > 0))
                 break;
         }

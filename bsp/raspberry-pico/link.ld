@@ -87,6 +87,8 @@ SECTIONS
         __rt_init_start = .;
         KEEP(*(SORT(.rti_fn*)))
         __rt_init_end = .;
+
+        . = ALIGN(4);
         
         /* Pull all c'tors into .text */
         *crtbegin.o(.ctors)
@@ -102,7 +104,15 @@ SECTIONS
         *(.dtors)
 
         *(.eh_frame*)
+
+        PROVIDE(__ctors_start__ = .);
+        KEEP (*(SORT(.init_array.*)))
+        KEEP (*(.init_array))
+        PROVIDE(__ctors_end__ = .);
+
         . = ALIGN(4);
+        
+        _etext = .;
     } > FLASH
 
     .rodata : {

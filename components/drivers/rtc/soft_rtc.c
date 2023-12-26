@@ -268,7 +268,7 @@ INIT_DEVICE_EXPORT(rt_soft_rtc_init);
 
 #ifdef RT_USING_SYSTEM_WORKQUEUE
 
-rt_err_t rt_soft_rtc_sync()
+rt_err_t rt_soft_rtc_sync(void)
 {
     time_t time = 0;
 

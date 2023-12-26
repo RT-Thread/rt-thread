@@ -350,6 +350,38 @@ rt_err_t on_varea_merge(struct rt_varea *merge_to, struct rt_varea *merge_from)
     return -RT_ERROR;
 }
 
+void *on_varea_mremap(struct rt_varea *varea, rt_size_t new_size, int flags, void *new_address)
+{
+    void *vaddr = RT_NULL;
+    struct dfs_file *file = dfs_mem_obj_get_file(varea->mem_obj);
+
+#ifndef MREMAP_MAYMOVE
+#define MREMAP_MAYMOVE 1
+#endif
+
+    if (file && flags == MREMAP_MAYMOVE)
+    {
+        int ret;
+        rt_mem_obj_t mem_obj = dfs_get_mem_obj(file);
+
+        vaddr = new_address ? new_address : varea->start;
+        new_size = (new_size + ARCH_PAGE_SIZE - 1);
+        new_size &= ~ARCH_PAGE_MASK;
+        ret = rt_aspace_map(varea->aspace, &vaddr, new_size, varea->attr, varea->flag, mem_obj, varea->offset);
+        if (ret != RT_EOK)
+        {
+            LOG_E("failed to map %lx with size %lx with errno %d", vaddr, new_size, ret);
+            vaddr = RT_NULL;
+        }
+        else
+        {
+            LOG_I("old: %p size: %p new: %p size: %p", varea->start, varea->size, vaddr, new_size);
+        }
+    }
+
+    return vaddr;
+}
+
 static struct rt_mem_obj _mem_obj =
 {
     .hint_free      = hint_free,
@@ -365,6 +397,8 @@ static struct rt_mem_obj _mem_obj =
     .on_varea_expand    = on_varea_expand,
     .on_varea_split     = on_varea_split,
     .on_varea_merge     = on_varea_merge,
+
+    .on_varea_mremap    = on_varea_mremap,
 };
 
 struct dfs_mem_obj {

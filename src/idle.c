@@ -18,6 +18,7 @@
  * 2021-11-15     THEWON       Remove duplicate work between idle and _thread_exit
  * 2023-09-15     xqyjlj       perf rt_hw_interrupt_disable/enable
  * 2023-11-07     xqyjlj       fix thread exit
+ * 2023-12-10     xqyjlj       add _hook_spinlock
  */
 
 #include <rthw.h>
@@ -44,8 +45,7 @@
 #define _CPUS_NR                RT_CPUS_NR
 
 static rt_list_t _rt_thread_defunct = RT_LIST_OBJECT_INIT(_rt_thread_defunct);
-static struct rt_spinlock _spinlock = RT_SPINLOCK_INIT;
-static rt_atomic_t _idle_inited = 0;
+static struct rt_spinlock _defunct_spinlock;
 static struct rt_thread idle_thread[_CPUS_NR];
 rt_align(RT_ALIGN_SIZE)
 static rt_uint8_t idle_thread_stack[_CPUS_NR][IDLE_THREAD_STACK_SIZE];
@@ -66,6 +66,7 @@ static struct rt_semaphore system_sem;
 #endif /* RT_IDLE_HOOK_LIST_SIZE */
 
 static void (*idle_hook_list[RT_IDLE_HOOK_LIST_SIZE])(void);
+static struct rt_spinlock _hook_spinlock;
 
 /**
  * @brief This function sets a hook function to idle thread loop. When the system performs
@@ -82,6 +83,9 @@ rt_err_t rt_thread_idle_sethook(void (*hook)(void))
 {
     rt_size_t i;
     rt_err_t ret = -RT_EFULL;
+    rt_base_t level;
+
+    level = rt_spin_lock_irqsave(&_hook_spinlock);
 
     for (i = 0; i < RT_IDLE_HOOK_LIST_SIZE; i++)
     {
@@ -92,6 +96,9 @@ rt_err_t rt_thread_idle_sethook(void (*hook)(void))
             break;
         }
     }
+
+    rt_spin_unlock_irqrestore(&_hook_spinlock, level);
+
     return ret;
 }
 
@@ -107,6 +114,9 @@ rt_err_t rt_thread_idle_delhook(void (*hook)(void))
 {
     rt_size_t i;
     rt_err_t ret = -RT_ENOSYS;
+    rt_base_t level;
+
+    level = rt_spin_lock_irqsave(&_hook_spinlock);
 
     for (i = 0; i < RT_IDLE_HOOK_LIST_SIZE; i++)
     {
@@ -117,6 +127,9 @@ rt_err_t rt_thread_idle_delhook(void (*hook)(void))
             break;
         }
     }
+
+    rt_spin_unlock_irqrestore(&_hook_spinlock, level);
+
     return ret;
 }
 
@@ -132,13 +145,9 @@ rt_err_t rt_thread_idle_delhook(void (*hook)(void))
 void rt_thread_defunct_enqueue(rt_thread_t thread)
 {
     rt_base_t level;
-    if (rt_atomic_load(&_idle_inited) == 0)
-    {
-        return;
-    }
-    level = rt_spin_lock_irqsave(&_spinlock);
+    level = rt_spin_lock_irqsave(&_defunct_spinlock);
     rt_list_insert_after(&_rt_thread_defunct, &thread->tlist);
-    rt_spin_unlock_irqrestore(&_spinlock, level);
+    rt_spin_unlock_irqrestore(&_defunct_spinlock, level);
 #ifdef RT_USING_SMP
     rt_sem_release(&system_sem);
 #endif
@@ -154,7 +163,7 @@ rt_thread_t rt_thread_defunct_dequeue(void)
     rt_list_t *l = &_rt_thread_defunct;
 
 #ifdef RT_USING_SMP
-    level = rt_spin_lock_irqsave(&_spinlock);
+    level = rt_spin_lock_irqsave(&_defunct_spinlock);
     if (l->next != l)
     {
         thread = rt_list_entry(l->next,
@@ -162,7 +171,7 @@ rt_thread_t rt_thread_defunct_dequeue(void)
                 tlist);
         rt_list_remove(&(thread->tlist));
     }
-    rt_spin_unlock_irqrestore(&_spinlock, level);
+    rt_spin_unlock_irqrestore(&_defunct_spinlock, level);
 #else
     if (l->next != l)
     {
@@ -351,6 +360,9 @@ void rt_thread_idle_init(void)
 #ifdef RT_USING_SMP
     RT_ASSERT(RT_THREAD_PRIORITY_MAX > 2);
 
+    rt_spin_lock_init(&_defunct_spinlock);
+    rt_spin_lock_init(&_hook_spinlock);
+
     rt_sem_init(&system_sem, "defunct", 0, RT_IPC_FLAG_FIFO);
 
     /* create defunct thread */
@@ -365,8 +377,6 @@ void rt_thread_idle_init(void)
     /* startup */
     rt_thread_startup(&rt_system_thread);
 #endif
-    rt_spin_lock_init(&_spinlock);
-    rt_atomic_store(&(_idle_inited), 1);
 }
 
 /**

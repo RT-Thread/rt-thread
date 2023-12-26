@@ -57,10 +57,12 @@ def install_phytium_sdk():
     if os.path.exists(install_script_path):
         subprocess.call(["rm","-rf", install_script_path])
 
-    try:
-        subprocess.call(["wget", "https://gitee.com/phytium_embedded/phytium-standalone-sdk/raw/Standalone-Sdk_RT-thread/phytium_standalone_sdk_install.py"])
-    except:
-        print("Please refer to the ./README and manual download phytium_standalone_sdk_install.py, place in current folder")
+    if not os.path.exists(install_script_path):
+        try:
+            subprocess.call(["wget", "https://gitee.com/phytium_embedded/phytium-standalone-sdk/raw/Standalone-Sdk_RT-thread/phytium_standalone_sdk_install.py"])
+        except:
+            print("Please refer to the ./README and manual download phytium_standalone_sdk_install.py, place in current folder")
+    
     if os.path.exists(install_script_path):
         try:
             subprocess.call(["python", install_script_path])
