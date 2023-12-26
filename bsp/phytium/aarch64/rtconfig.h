@@ -132,7 +132,6 @@
 #define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 64
 #define RT_USING_CAN
-#define RT_CAN_USING_HDR
 #define RT_CAN_USING_CANFD
 #define RT_USING_I2C
 #define RT_USING_I2C_BITOPS
@@ -297,6 +296,9 @@
 /* u8g2: a monochrome graphic library */
 
 
+/* PainterEngine: A cross-platform graphics application framework written in C language */
+
+
 /* tools packages */
 
 
@@ -328,9 +330,6 @@
 /* AI packages */
 
 
-/* Signal Processing and Control Algorithm Packages */
-
-
 /* miscellaneous packages */
 
 /* project laboratory */
@@ -347,7 +346,7 @@
 /* Arduino libraries */
 
 
-/* Projects and Demos */
+/* Projects */
 
 
 /* Sensors */
@@ -372,7 +371,6 @@
 
 /* Other */
 
-
 /* Signal IO */
 
 
@@ -392,11 +390,6 @@
 #define RT_USING_SPIM1
 #define RT_USING_SPIM2
 #define RT_USING_SPIM3
-#define BSP_USING_CAN
-#define RT_USING_CANFD
-#define RT_USING_FILTER
-#define RT_USING_CAN0
-#define RT_USING_CAN1
 #define BSP_USING_GPIO
 #define BSP_USING_QSPI
 #define RT_USING_QSPI0
@@ -404,14 +397,15 @@
 #define BSP_USING_ETH
 #define RT_LWIP_PBUF_POOL_BUFSIZE 1700
 #define BSP_USING_PWM
-#define RT_USING_PWM6
+#define RT_USING_PWM2
 #define BSP_USING_I2C
 #define I2C_USE_MIO
-#define RT_USING_MIO15
-#define BSP_USING_SDIF
-#define BSP_USING_SDCARD_FATFS
-#define BSP_USING_SDCARD_PARTITION "sd0"
-#define USING_SDIF1
+#define RT_USING_MIO0
+#define RT_USING_MIO1
+#define RT_USING_MIO2
+#define RT_USING_MIO10
+#define BSP_USING_DC
+#define RT_USING_DC_CHANNEL1
 
 /* Board extended module Drivers */
 
@@ -426,9 +420,8 @@
 
 /* Soc configuration */
 
-#define TARGET_E2000Q
-#define SOC_NAME "e2000"
-#define TARGET_TYPE_NAME "q"
+#define TARGET_PHYTIUMPI
+#define SOC_NAME "phytiumpi"
 #define SOC_CORE_NUM 4
 #define F32BIT_MEMORY_ADDRESS 0x80000000
 #define F32BIT_MEMORY_LENGTH 0x80000000
@@ -439,8 +432,8 @@
 
 /* Board Configuration */
 
-#define BOARD_NAME "demo"
-#define E2000Q_DEMO_BOARD
+#define BOARD_NAME "firefly"
+#define FIREFLY_DEMO_BOARD
 
 /* IO mux configuration when board start up */
 

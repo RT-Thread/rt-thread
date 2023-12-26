@@ -21,16 +21,16 @@ int *pico_get_errno(void)
     if (rt_interrupt_get_nest() != 0)
     {
         /* it's in interrupt context */
-        return &__pico_errno;
+        return (int *)&__pico_errno;
     }
 
     tid = rt_thread_self();
     if (tid == RT_NULL)
     {
-        return &__pico_errno;
+        return (int *)&__pico_errno;
     }
 
-    return &tid->error;
+    return (int *)&tid->error;
 }
 
 #ifdef RT_USING_HEAP

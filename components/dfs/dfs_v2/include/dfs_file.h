@@ -181,6 +181,8 @@ int dfs_file_mmap2(struct dfs_file *file, struct dfs_mmap2_args *mmap2);
 int dfs_file_mmap(struct dfs_file *file, struct dfs_mmap2_args *mmap2);
 #endif
 
+char *dfs_nolink_path(struct dfs_mnt **mnt, char *fullpath, int mode);
+
 /* 0x5254 is just a magic number to make these relatively unique ("RT") */
 #define RT_FIOFTRUNCATE  0x52540000U
 #define RT_FIOGETADDR    0x52540001U

@@ -271,6 +271,23 @@ rt_inline rt_err_t _ipc_list_resume_all(rt_list_t *list)
  * @{
  */
 
+static void _sem_object_init(rt_sem_t       sem,
+                             rt_uint16_t    value,
+                             rt_uint8_t     flag,
+                             rt_uint16_t    max_value)
+{
+    /* initialize ipc object */
+    _ipc_object_init(&(sem->parent));
+
+    sem->max_value = max_value;
+    /* set initial value */
+    sem->value = value;
+
+    /* set parent */
+    sem->parent.parent.flag = flag;
+    rt_spin_lock_init(&(sem->spinlock));
+}
+
 /**
  * @brief    This function will initialize a static semaphore object.
  *
@@ -321,15 +338,7 @@ rt_err_t rt_sem_init(rt_sem_t    sem,
     /* initialize object */
     rt_object_init(&(sem->parent.parent), RT_Object_Class_Semaphore, name);
 
-    /* initialize ipc object */
-    _ipc_object_init(&(sem->parent));
-
-    /* set initial value */
-    sem->value = (rt_uint16_t)value;
-
-    /* set parent */
-    sem->parent.parent.flag = flag;
-    rt_spin_lock_init(&(sem->spinlock));
+    _sem_object_init(sem, value, flag, RT_SEM_VALUE_MAX);
 
     return RT_EOK;
 }
@@ -422,15 +431,7 @@ rt_sem_t rt_sem_create(const char *name, rt_uint32_t value, rt_uint8_t flag)
     if (sem == RT_NULL)
         return sem;
 
-    /* initialize ipc object */
-    _ipc_object_init(&(sem->parent));
-
-    /* set initial value */
-    sem->value = value;
-
-    /* set parent */
-    sem->parent.parent.flag = flag;
-    rt_spin_lock_init(&(sem->spinlock));
+    _sem_object_init(sem, value, flag, RT_SEM_VALUE_MAX);
 
     return sem;
 }
@@ -670,7 +671,7 @@ rt_err_t rt_sem_release(rt_sem_t sem)
     }
     else
     {
-        if(sem->value < RT_SEM_VALUE_MAX)
+        if(sem->value < sem->max_value)
         {
             sem->value ++; /* increase value */
         }
@@ -729,6 +730,38 @@ rt_err_t rt_sem_control(rt_sem_t sem, int cmd, void *arg)
         sem->value = (rt_uint16_t)value;
         rt_spin_unlock_irqrestore(&(sem->spinlock), level);
         rt_schedule();
+
+        return RT_EOK;
+    }
+    else if (cmd == RT_IPC_CMD_SET_VLIMIT)
+    {
+        rt_ubase_t max_value;
+        rt_bool_t need_schedule = RT_FALSE;
+
+        max_value = (rt_uint16_t)((rt_ubase_t)arg);
+        if (max_value > RT_SEM_VALUE_MAX || max_value < 1)
+        {
+            return -RT_EINVAL;
+        }
+
+        level = rt_spin_lock_irqsave(&(sem->spinlock));
+        if (max_value < sem->value)
+        {
+            if (!rt_list_isempty(&sem->parent.suspend_thread))
+            {
+                /* resume all waiting thread */
+                _ipc_list_resume_all(&sem->parent.suspend_thread);
+                need_schedule = RT_TRUE;
+            }
+        }
+        /* set new value */
+        sem->max_value = max_value;
+        rt_spin_unlock_irqrestore(&(sem->spinlock), level);
+
+        if (need_schedule)
+        {
+            rt_schedule();
+        }
 
         return RT_EOK;
     }

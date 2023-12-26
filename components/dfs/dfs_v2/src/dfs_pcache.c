@@ -9,6 +9,10 @@
  * 2023-10-23     Shell        fix synchronization of data to icache
  */
 
+#define DBG_TAG "dfs.pcache"
+#define DBG_LVL DBG_WARNING
+#include <rtdbg.h>
+
 #include "dfs_pcache.h"
 #include "dfs_dentry.h"
 #include "dfs_mnt.h"
@@ -19,10 +23,6 @@
 #include <rthw.h>
 
 #ifdef RT_USING_PAGECACHE
-
-#define DBG_TAG "dfs.pcache"
-#define DBG_LVL DBG_WARNING
-#include <rtdbg.h>
 
 #ifndef RT_PAGECACHE_COUNT
 #define RT_PAGECACHE_COUNT          4096
@@ -1355,6 +1355,10 @@ int dfs_aspace_unmap(struct dfs_file *file, struct rt_varea *varea)
 
                             if (map && varea == map->varea)
                             {
+                                void *vaddr = dfs_aspace_vaddr(map->varea, page->fpos);
+
+                                rt_varea_unmap_page(map->varea, vaddr);
+
                                 if (varea->attr == MMU_MAP_U_RWCB && page->fpos < page->aspace->vnode->size)
                                 {
                                     dfs_page_dirty(page);

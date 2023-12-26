@@ -19,28 +19,31 @@ if RT_USING_POSIX_FS
 
     config RT_USING_POSIX_POLL
         bool "Enable I/O Multiplexing poll() <poll.h>"
+        default y if RT_USING_SMART
         default n
 
     config RT_USING_POSIX_SELECT
         bool "Enable I/O Multiplexing select() <sys/select.h>"
         select RT_USING_POSIX_POLL
+        default y if RT_USING_SMART
         default n
     
     config RT_USING_POSIX_EVENTFD
         bool "Enable I/O event eventfd <sys/eventfd.h>"
         select RT_USING_POSIX_POLL
+        default y if RT_USING_SMART
         default n
 
     if RT_USING_SMART
         config RT_USING_POSIX_EPOLL
             bool "Enable I/O Multiplexing epoll <sys/epoll.h>"
             select RT_USING_POSIX_POLL
-            default n
+            default y
 
         config RT_USING_POSIX_SIGNALFD
             bool "Enable Signalfd <sys/signalfd.h>"
             select RT_USING_POSIX_POLL
-            default n
+            default y
 
         if RT_USING_POSIX_SIGNALFD
             config RT_SIGNALFD_MAX_NUM
@@ -52,6 +55,7 @@ if RT_USING_POSIX_FS
 
     config RT_USING_POSIX_TIMERFD
             bool "Enable I/O timerfd <sys/timerfd.h>"
+            default y if RT_USING_SMART
             default n
 
     config RT_USING_POSIX_SOCKET

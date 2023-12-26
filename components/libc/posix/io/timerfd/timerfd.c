@@ -14,6 +14,10 @@
 #include <poll.h>
 #include <sys/timerfd.h>
 
+#define DBG_TAG    "TIMERFD"
+#define DBG_LVL    DBG_INFO
+#include <rtdbg.h>
+
 #define INIT_PERIODIC 0
 #define OPEN_PERIODIC 1
 #define ENTER_PERIODIC 2
@@ -76,7 +80,10 @@ static int timerfd_close(struct dfs_file *file)
             tfd->timer = RT_NULL;
         }
 
-        rt_wqueue_remove(&tfd->wqn);
+        if (tfd->wqn.wqueue)
+        {
+            rt_wqueue_remove(&tfd->wqn);
+        }
 
         rt_mutex_detach(&tfd->lock);
         rt_free(tfd);
@@ -99,7 +106,9 @@ static int timerfd_poll(struct dfs_file *file, struct rt_pollreq *req)
     rt_mutex_release(&tfd->lock);
 
     if (rt_atomic_load(&(tfd->ticks)) > 0)
+    {
         events |= POLLIN;
+    }
 
     return events;
 }
@@ -141,7 +150,10 @@ static ssize_t timerfd_read(struct dfs_file *file, void *buf, size_t count, off_
         {
             tfd->wqn.polling_thread = rt_thread_self();
 
-            rt_wqueue_remove(&tfd->wqn);
+            if (tfd->wqn.wqueue)
+            {
+                rt_wqueue_remove(&tfd->wqn);
+            }
             rt_wqueue_add(&tfd->timerfd_queue, &tfd->wqn);
 
             ret = rt_thread_suspend_with_flag(tfd->wqn.polling_thread, RT_INTERRUPTIBLE);
@@ -156,7 +168,7 @@ static ssize_t timerfd_read(struct dfs_file *file, void *buf, size_t count, off_
         }
 
         (*buffer) = rt_atomic_load(&(tfd->timeout_num));
-
+        rt_atomic_store(&(tfd->timeout_num), 0);
         rt_atomic_store(&(tfd->ticks), 0);
     }
 
@@ -207,7 +219,7 @@ static int timerfd_do_create(int clockid, int flags)
     {
         df->flags |= flags;
 
-        tfd = (struct rt_timerfd *)rt_malloc(sizeof(struct rt_timerfd));
+        tfd = (struct rt_timerfd *)rt_calloc(1, sizeof(struct rt_timerfd));
 
         if (tfd)
         {
@@ -317,6 +329,13 @@ static void timerfd_timeout(void *parameter)
         tfd->timer = rt_timer_create(TIMERFD_MUTEX_NAME, timerfd_timeout,
                         tfd, tfd->tick_out,
                         RT_TIMER_FLAG_PERIODIC | RT_TIMER_FLAG_SOFT_TIMER);
+
+        if (tfd->timer == RT_NULL)
+        {
+            LOG_E("rt_timer_create fail \n");
+            rt_mutex_release(&tfd->lock);
+            return ;
+        }
         rt_timer_start(tfd->timer);
     }
 
@@ -389,6 +408,7 @@ static int timerfd_do_settime(int fd, int flags, const struct itimerspec *new, s
 
         if (new->it_value.tv_nsec == 0 && new->it_value.tv_sec == 0)
         {
+            rt_mutex_release(&tfd->lock);
             return 0;
         }
 
@@ -403,7 +423,10 @@ static int timerfd_do_settime(int fd, int flags, const struct itimerspec *new, s
             ret = get_current_time(tfd, &current_time);
 
             if (ret < 0)
+            {
+                rt_mutex_release(&tfd->lock);
                 return ret;
+            }
 
             cur_time = current_time.tv_sec * SEC_TO_MSEC + (current_time.tv_nsec / MSEC_TO_NSEC);
             value_msec = value_msec - cur_time;
@@ -419,7 +442,10 @@ static int timerfd_do_settime(int fd, int flags, const struct itimerspec *new, s
         {
             tfd->tick_out = rt_tick_from_millisecond(interval_msec);
             if (tfd->tick_out < 0)
+            {
+                rt_mutex_release(&tfd->lock);
                 return -EINVAL;
+            }
             tfd->isperiodic = OPEN_PERIODIC;
         }
 
@@ -428,16 +454,27 @@ static int timerfd_do_settime(int fd, int flags, const struct itimerspec *new, s
         if (value_msec > 0)
         {
             if (value_msec > TIME_INT32_MAX)
+            {
+                rt_mutex_release(&tfd->lock);
                 return -EINVAL;
+            }
 
             tick_out = rt_tick_from_millisecond(value_msec);
             if (tick_out < 0)
+            {
+                rt_mutex_release(&tfd->lock);
                 return -EINVAL;
-
+            }
             tfd->timer = rt_timer_create(TIMERFD_MUTEX_NAME, timerfd_timeout,
                             tfd, tick_out,
                             RT_TIMER_FLAG_ONE_SHOT | RT_TIMER_FLAG_SOFT_TIMER);
-             rt_timer_start(tfd->timer);
+            if (tfd->timer == RT_NULL)
+            {
+                LOG_E("rt_timer_create fail \n");
+                rt_mutex_release(&tfd->lock);
+                return -ENOMEM;
+            }
+            rt_timer_start(tfd->timer);
         }
         else
         {

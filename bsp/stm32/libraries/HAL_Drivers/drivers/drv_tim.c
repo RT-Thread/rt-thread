@@ -11,6 +11,7 @@
  * 2020-10-14     Dozingfiretruck   Porting for stm32wbxx
  * 2020-11-18     leizhixiong  add STM32H7 series support
  * 2023-08-21     Donocean     fix the MCU crash when using timer6
+ * 2023-12-24     Meco Man     add TIMx existing check
  */
 
 #include <rtdevice.h>
@@ -19,6 +20,64 @@
 //#define DRV_DEBUG
 #define LOG_TAG             "drv.tim"
 #include <drv_log.h>
+
+#if defined(BSP_USING_TIM1) && !defined(TIM1)
+#error "timer1 doesn't exist in this STM32 series, but you enabled the BSP_USING_TIM1"
+#endif
+#if defined(BSP_USING_TIM2) && !defined(TIM2)
+#error "timer2 doesn't exist in this STM32 series, but you enabled the BSP_USING_TIM2"
+#endif
+#if defined(BSP_USING_TIM3) && !defined(TIM3)
+#error "timer3 doesn't exist in this STM32 series, but you enabled the BSP_USING_TIM3"
+#endif
+#if defined(BSP_USING_TIM4) && !defined(TIM4)
+#error "timer4 doesn't exist in this STM32 series, but you enabled the BSP_USING_TIM4"
+#endif
+#if defined(BSP_USING_TIM5) && !defined(TIM5)
+#error "timer5 doesn't exist in this STM32 series, but you enabled the BSP_USING_TIM5"
+#endif
+#if defined(BSP_USING_TIM6) && !defined(TIM6)
+#error "timer6 doesn't exist in this STM32 series, but you enabled the BSP_USING_TIM6"
+#endif
+#if defined(BSP_USING_TIM7) && !defined(TIM7)
+#error "timer7 doesn't exist in this STM32 series, but you enabled the BSP_USING_TIM7"
+#endif
+#if defined(BSP_USING_TIM8) && !defined(TIM8)
+#error "timer8 doesn't exist in this STM32 series, but you enabled the BSP_USING_TIM8"
+#endif
+#if defined(BSP_USING_TIM9) && !defined(TIM9)
+#error "timer9 doesn't exist in this STM32 series, but you enabled the BSP_USING_TIM9"
+#endif
+#if defined(BSP_USING_TIM10) && !defined(TIM10)
+#error "timer10 doesn't exist in this STM32 series, but you enabled the BSP_USING_TIM10"
+#endif
+#if defined(BSP_USING_TIM11) && !defined(TIM11)
+#error "timer11 doesn't exist in this STM32 series, but you enabled the BSP_USING_TIM11"
+#endif
+#if defined(BSP_USING_TIM12) && !defined(TIM12)
+#error "timer12 doesn't exist in this STM32 series, but you enabled the BSP_USING_TIM12"
+#endif
+#if defined(BSP_USING_TIM13) && !defined(TIM13)
+#error "timer13 doesn't exist in this STM32 series, but you enabled the BSP_USING_TIM13"
+#endif
+#if defined(BSP_USING_TIM14) && !defined(TIM14)
+#error "timer14 doesn't exist in this STM32 series, but you enabled the BSP_USING_TIM14"
+#endif
+#if defined(BSP_USING_TIM15) && !defined(TIM15)
+#error "timer15 doesn't exist in this STM32 series, but you enabled the BSP_USING_TIM15"
+#endif
+#if defined(BSP_USING_TIM16) && !defined(TIM16)
+#error "timer16 doesn't exist in this STM32 series, but you enabled the BSP_USING_TIM16"
+#endif
+#if defined(BSP_USING_TIM17) && !defined(TIM17)
+#error "timer17 doesn't exist in this STM32 series, but you enabled the BSP_USING_TIM17"
+#endif
+#if defined(BSP_USING_TIM18) && !defined(TIM18)
+#error "timer18 doesn't exist in this STM32 series, but you enabled the BSP_USING_TIM18"
+#endif
+#if defined(BSP_USING_TIM19) && !defined(TIM19)
+#error "timer19 doesn't exist in this STM32 series, but you enabled the BSP_USING_TIM19"
+#endif
 
 /* APBx timer clocks frequency doubler state related to APB1CLKDivider value */
 void stm32_tim_pclkx_doubler_get(rt_uint32_t *pclk1_doubler, rt_uint32_t *pclk2_doubler)
@@ -450,22 +509,65 @@ static rt_err_t timer_ctrl(rt_hwtimer_t *timer, rt_uint32_t cmd, void *arg)
         stm32_tim_pclkx_doubler_get(&pclk1_doubler, &pclk2_doubler);
 
 #if defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7)
-        if (tim->Instance == TIM1 || tim->Instance == TIM8 || tim->Instance == TIM9 || tim->Instance == TIM10 || tim->Instance == TIM11)
+        if (0
+#ifdef TIM1
+        || tim->Instance == TIM1
+#endif /* TIM1 */
+#ifdef TIM8
+        || tim->Instance == TIM8
+#endif /* TIM8 */
+#ifdef TIM9
+        || tim->Instance == TIM9
+#endif /* TIM9 */
+#ifdef TIM10
+        || tim->Instance == TIM10
+#endif /* TIM10 */
+#ifdef TIM11
+        || tim->Instance == TIM11
+#endif /* TIM11 */
+        )
 #elif defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32G4)
-        if (tim->Instance == TIM15 || tim->Instance == TIM16 || tim->Instance == TIM17)
+        if (0
+#ifdef TIM15
+        || tim->Instance == TIM15
+#endif /* TIM15 */
+#ifdef TIM16
+        || tim->Instance == TIM16
+#endif /* TIM16 */
+#ifdef TIM17
+        || tim->Instance == TIM17
+#endif /* TIM17 */
+        )
 #elif defined(SOC_SERIES_STM32WB)
-        if (tim->Instance == TIM16 || tim->Instance == TIM17)
+        if (0
+#ifdef TIM16
+        || tim->Instance == TIM16
+#endif /* TIM16 */
+#ifdef TIM17
+        || tim->Instance == TIM17
+#endif /* TIM17 */
+        )
 #elif defined(SOC_SERIES_STM32MP1)
-        if(tim->Instance == TIM14 || tim->Instance == TIM16 || tim->Instance == TIM17)
+        if(0
+#ifdef TIM14
+        || tim->Instance == TIM14
+#endif /* TIM14 */
+#ifdef TIM16
+        || tim->Instance == TIM16
+#endif /* TIM16 */
+#ifdef TIM17
+        || tim->Instance == TIM17
+#endif /* TIM17 */
+        )
 #elif defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32F0) || defined(SOC_SERIES_STM32G0) || defined(SOC_SERIES_STM32H7)
         if (0)
 #else
 #error "This driver has not supported this series yet!"
-#endif
+#endif /* defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7) */
         {
 #if !defined(SOC_SERIES_STM32F0) && !defined(SOC_SERIES_STM32G0)
             val = HAL_RCC_GetPCLK2Freq() * pclk2_doubler / freq;
-#endif
+#endif /* !defined(SOC_SERIES_STM32F0) && !defined(SOC_SERIES_STM32G0) */
         }
         else
         {
@@ -567,6 +669,16 @@ void TIM7_IRQHandler(void)
     /* enter interrupt */
     rt_interrupt_enter();
     HAL_TIM_IRQHandler(&stm32_hwtimer_obj[TIM7_INDEX].tim_handle);
+    /* leave interrupt */
+    rt_interrupt_leave();
+}
+#endif
+#ifdef BSP_USING_TIM8
+void TIM8_UP_IRQHandler(void)
+{
+    /* enter interrupt */
+    rt_interrupt_enter();
+    HAL_TIM_IRQHandler(&stm32_hwtimer_obj[TIM8_INDEX].tim_handle);
     /* leave interrupt */
     rt_interrupt_leave();
 }
@@ -680,6 +792,12 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
     if (htim->Instance == TIM7)
     {
         rt_device_hwtimer_isr(&stm32_hwtimer_obj[TIM7_INDEX].time_device);
+    }
+#endif
+#ifdef BSP_USING_TIM8
+    if (htim->Instance == TIM8)
+    {
+        rt_device_hwtimer_isr(&stm32_hwtimer_obj[TIM8_INDEX].time_device);
     }
 #endif
 #ifdef BSP_USING_TIM11

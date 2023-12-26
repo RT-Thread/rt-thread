@@ -296,6 +296,9 @@
 /* u8g2: a monochrome graphic library */
 
 
+/* PainterEngine: A cross-platform graphics application framework written in C language */
+
+
 /* tools packages */
 
 
@@ -327,9 +330,6 @@
 /* AI packages */
 
 
-/* Signal Processing and Control Algorithm Packages */
-
-
 /* miscellaneous packages */
 
 /* project laboratory */
@@ -343,7 +343,7 @@
 /* Arduino libraries */
 
 
-/* Projects and Demos */
+/* Projects */
 
 
 /* Sensors */
@@ -367,7 +367,6 @@
 
 
 /* Other */
-
 
 /* Signal IO */
 
@@ -394,6 +393,8 @@
 #define I2C_USE_MIO
 #define RT_USING_MIO0
 #define RT_USING_MIO1
+#define BSP_USING_DC
+#define RT_USING_DC_CHANNEL1
 
 /* Board extended module Drivers */
 

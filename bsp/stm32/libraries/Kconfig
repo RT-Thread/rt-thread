@@ -91,4 +91,11 @@ config SOC_SERIES_STM32WB
     select ARCH_ARM_CORTEX_M4
     select SOC_FAMILY_STM32
 
+config BOARD_SERIES_STM32_NUCLEO_32
+    bool
 
+config BOARD_SERIES_STM32_NUCLEO_64
+    bool
+
+config BOARD_SERIES_STM32_NUCLEO_144
+    bool
