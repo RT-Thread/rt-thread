@@ -11,8 +11,9 @@
 #ifndef _FAL_CFG_H_
 #define _FAL_CFG_H_
 
-#include <rtthread.h>
 #include <board.h>
+#include <fal_def.h>
+
 #define FLASH_SIZE_GRANULARITY_16K   (4 * 16 * 1024)
 #define FLASH_SIZE_GRANULARITY_64K   (8 * 64 * 1024)
 #define FLASH_SIZE_GRANULARITY_128K  (8 * 128 * 1024)
