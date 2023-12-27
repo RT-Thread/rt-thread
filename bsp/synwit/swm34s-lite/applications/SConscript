@@ -1,0 +1,12 @@
+from building import *
+
+cwd = GetCurrentDir()
+src = Glob('*.c') + Glob('*.cpp')
+
+group = DefineGroup('Applications', src, depend = [''], CPPPATH = [cwd])
+
+for name in os.listdir(cwd):
+    if os.path.isfile(os.path.join(cwd, name, 'SConscript')):
+        group += SConscript(os.path.join(name, 'SConscript'))
+
+Return('group')
