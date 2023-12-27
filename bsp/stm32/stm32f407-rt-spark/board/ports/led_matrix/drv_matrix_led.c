@@ -32,7 +32,7 @@
 TIM_HandleTypeDef htim3;
 DMA_HandleTypeDef hdma_tim3_ch2;
 
-ALIGN(4)
+rt_align(4)
 uint8_t led_buffer[LED_NUM * 24 * 2];
 
 extern void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
