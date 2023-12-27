@@ -14,12 +14,12 @@
 #include "board.h"
 
 #define PIN_NRF_IRQ             GET_PIN(E,2)
-
+#define PIN_SPI_CS              GET_PIN(A,4)
 
 int enc28j60_init(void)
 {
     __HAL_RCC_GPIOD_CLK_ENABLE();
-    rt_hw_spi_device_attach("spi1", "spi11", GPIOA, GPIO_PIN_4);
+    rt_hw_spi_device_attach("spi1", "spi11", PIN_SPI_CS);
 
     /* attach enc28j60 to spi. spi11 cs - PA4 */
     enc28j60_attach("spi11");
