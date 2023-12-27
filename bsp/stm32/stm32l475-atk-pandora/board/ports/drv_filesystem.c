@@ -10,6 +10,7 @@
  */
 
 #include <rtthread.h>
+#include <drv_gpio.h>
 #include <dfs_elm.h>
 #include <dfs_fs.h>
 #include <dfs_file.h>
