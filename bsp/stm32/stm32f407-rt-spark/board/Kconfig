@@ -91,6 +91,7 @@ menu "Onboard Peripheral Drivers"
     if BSP_USING_LVGL
         config BSP_USING_LVGL_DEMO
             bool "Enable LVGL demo"
+            select PKG_LVGL_USING_DEMOS
             default y
     endif
 
