@@ -238,8 +238,8 @@ jobs:
           - {RTT_BSP_NAME: "smartfusion2", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "smartfusion2"}
           - {RTT_BSP_NAME: "sparkfun-redv", RTT_TOOL_CHAIN: "sourcery-riscv64-unknown-elf", RTT_BSP: "sparkfun-redv"}
          #- {RTT_BSP_NAME: "synopsys_boards", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "synopsys/boards"} #不支持的toolchain
-          - {RTT_BSP_NAME: "synwit_swm320", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "synwit/swm320"}
-          - {RTT_BSP_NAME: "synwit_swm341", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "synwit/swm341"}
+          - {RTT_BSP_NAME: "synwit_swm320-mini", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "synwit/swm320-mini"}
+          - {RTT_BSP_NAME: "synwit_swm341-mini", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "synwit/swm341-mini"}
          #- {RTT_BSP_NAME: "tae32f5300", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "tae32f5300"}  #musl toolchain 未支持
          #- {RTT_BSP_NAME: "taihu", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "taihu"} #powerpc-eabi-gcc 未支持
          #- {RTT_BSP_NAME: "thead-smart", RTT_TOOL_CHAIN: "sourcery-riscv64-unknown-elf", RTT_BSP: "thead-smart"} #menuconfig有问题
