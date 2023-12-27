@@ -12,11 +12,13 @@
  * 2021-3-3       zhuyf233     fix some bugs
  */
 
-#include "board.h"
+#include <rtconfig.h>
+#include <rtdef.h>
 
 #ifdef BSP_USING_ON_CHIP_FLASH
 #include "drv_config.h"
 #include "drv_flash.h"
+#include <board.h>
 
 #if defined(RT_USING_FAL)
 #include "fal.h"

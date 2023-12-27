@@ -8,10 +8,11 @@
  * 2018-08-27     ZYLX              the first version
  */
 
-#include <drivers/pin.h>
+#include <rtdevice.h>
 #include <enc28j60.h>
-#include "drv_spi.h"
-#include "board.h"
+#include <drv_spi.h>
+#include <drv_gpio.h>
+#include <board.h>
 
 #define PIN_NRF_IRQ             GET_PIN(E,2)
 #define PIN_SPI_CS              GET_PIN(A,4)

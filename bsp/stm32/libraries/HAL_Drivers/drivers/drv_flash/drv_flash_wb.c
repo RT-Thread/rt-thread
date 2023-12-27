@@ -8,11 +8,13 @@
  * 2020-10-14     Dozingfiretruck   first version
  */
 
-#include "board.h"
+#include <rtconfig.h>
+#include <rtdef.h>
 
 #ifdef BSP_USING_ON_CHIP_FLASH
 #include "drv_config.h"
 #include "drv_flash.h"
+#include <board.h>
 
 #if defined(RT_USING_FAL)
 #include "fal.h"

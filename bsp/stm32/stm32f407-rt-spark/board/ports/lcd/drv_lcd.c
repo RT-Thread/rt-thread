@@ -13,7 +13,8 @@
 
 #include <rtdevice.h>
 #include <board.h>
-#include "string.h"
+#include <string.h>
+#include <drv_gpio.h>
 #include "drv_lcd.h"
 #include "drv_lcd_font.h"
 
