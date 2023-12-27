@@ -375,10 +375,10 @@ rt_err_t rt_sem_detach(rt_sem_t sem)
     level = rt_spin_lock_irqsave(&(sem->spinlock));
     /* wakeup all suspended threads */
     _ipc_list_resume_all(&(sem->parent.suspend_thread));
+    rt_spin_unlock_irqrestore(&(sem->spinlock), level);
 
     /* detach semaphore object */
     rt_object_detach(&(sem->parent.parent));
-    rt_spin_unlock_irqrestore(&(sem->spinlock), level);
 
     return RT_EOK;
 }
@@ -458,6 +458,8 @@ RTM_EXPORT(rt_sem_create);
  */
 rt_err_t rt_sem_delete(rt_sem_t sem)
 {
+    rt_ubase_t level;
+
     /* parameter check */
     RT_ASSERT(sem != RT_NULL);
     RT_ASSERT(rt_object_get_type(&sem->parent.parent) == RT_Object_Class_Semaphore);
@@ -465,8 +467,10 @@ rt_err_t rt_sem_delete(rt_sem_t sem)
 
     RT_DEBUG_NOT_IN_INTERRUPT;
 
+    level = rt_spin_lock_irqsave(&(sem->spinlock));
     /* wakeup all suspended threads */
     _ipc_list_resume_all(&(sem->parent.suspend_thread));
+    rt_spin_unlock_irqrestore(&(sem->spinlock), level);
 
     /* delete semaphore object */
     rt_object_delete(&(sem->parent.parent));
@@ -582,7 +586,7 @@ static rt_err_t _rt_sem_take(rt_sem_t sem, rt_int32_t timeout, int suspend_flag)
 
             if (thread->error != RT_EOK)
             {
-                return thread->error;
+                return thread->error > 0 ? -thread->error : thread->error;
             }
         }
     }
@@ -1340,7 +1344,11 @@ static rt_err_t _rt_mutex_take(rt_mutex_t mutex, rt_int32_t timeout, int suspend
 
                 if (thread->error == RT_EOK)
                 {
-                    /* get mutex successfully */
+                    /**
+                     * get mutex successfully
+                     * Note: assert to avoid an unexpected resume
+                     */
+                    RT_ASSERT(mutex->owner == thread);
                 }
                 else
                 {
@@ -1698,10 +1706,10 @@ rt_err_t rt_event_detach(rt_event_t event)
     level = rt_spin_lock_irqsave(&(event->spinlock));
     /* resume all suspended thread */
     _ipc_list_resume_all(&(event->parent.suspend_thread));
+    rt_spin_unlock_irqrestore(&(event->spinlock), level);
 
     /* detach event object */
     rt_object_detach(&(event->parent.parent));
-    rt_spin_unlock_irqrestore(&(event->spinlock), level);
 
     return RT_EOK;
 }
@@ -1794,10 +1802,10 @@ rt_err_t rt_event_delete(rt_event_t event)
     rt_spin_lock(&(event->spinlock));
     /* resume all suspended thread */
     _ipc_list_resume_all(&(event->parent.suspend_thread));
+    rt_spin_unlock(&(event->spinlock));
 
     /* delete event object */
     rt_object_delete(&(event->parent.parent));
-    rt_spin_unlock(&(event->spinlock));
 
     return RT_EOK;
 }
@@ -2263,10 +2271,10 @@ rt_err_t rt_mb_detach(rt_mailbox_t mb)
     _ipc_list_resume_all(&(mb->parent.suspend_thread));
     /* also resume all mailbox private suspended thread */
     _ipc_list_resume_all(&(mb->suspend_sender_thread));
+    rt_spin_unlock_irqrestore(&(mb->spinlock), level);
 
     /* detach mailbox object */
     rt_object_detach(&(mb->parent.parent));
-    rt_spin_unlock_irqrestore(&(mb->spinlock), level);
 
     return RT_EOK;
 }
@@ -3043,10 +3051,10 @@ rt_err_t rt_mq_detach(rt_mq_t mq)
     _ipc_list_resume_all(&mq->parent.suspend_thread);
     /* also resume all message queue private suspended thread */
     _ipc_list_resume_all(&(mq->suspend_sender_thread));
+    rt_spin_unlock_irqrestore(&(mq->spinlock), level);
 
     /* detach message queue object */
     rt_object_detach(&(mq->parent.parent));
-    rt_spin_unlock_irqrestore(&(mq->spinlock), level);
 
     return RT_EOK;
 }
