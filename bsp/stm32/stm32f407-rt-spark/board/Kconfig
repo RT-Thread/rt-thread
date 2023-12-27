@@ -91,6 +91,7 @@ menu "Onboard Peripheral Drivers"
     if BSP_USING_LVGL
         config BSP_USING_LVGL_DEMO
             bool "Enable LVGL demo"
+            select PKG_LVGL_USING_DEMOS
             default y
     endif
 
@@ -150,6 +151,7 @@ menu "Onboard Peripheral Drivers"
 		select FAL_DEBUG_CONFIG
 		select FAL_PART_HAS_TABLE_CFG
 		select FAL_USING_SFUD_PORT
+        select BSP_USING_ON_CHIP_FLASH
 		
 	if BSP_USING_FAL
 		menuconfig BSP_USING_BOOTLOADER
@@ -221,12 +223,6 @@ menu "Onboard Peripheral Drivers"
         select RT_USB_DEVICE_HID
         select RT_USB_DEVICE_HID_MOUSE
         select BSP_USING_ICM20608
-
-    config BSP_USING_EASYFLASH
-        bool "Enable Easy Flash base on FAL"
-        select BSP_USING_FAL
-        select PKG_USING_EASYFLASH
-        default n
 
     menuconfig BSP_USING_CAN
         bool "Enable On Board CAN"

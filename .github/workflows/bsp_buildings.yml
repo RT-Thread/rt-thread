@@ -125,6 +125,7 @@ jobs:
                 - "stm32/stm32f407-atk-explorer"
                 - "stm32/stm32f407-robomaster-c"
                 - "stm32/stm32f407-st-discovery"
+                - "stm32/stm32f407-rt-spark"
                 - "stm32/stm32f410-st-nucleo"
                 - "stm32/stm32f411-atk-nano"
                 - "stm32/stm32f411-st-nucleo"
