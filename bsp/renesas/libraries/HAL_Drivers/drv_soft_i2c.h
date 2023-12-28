@@ -27,8 +27,14 @@ struct ra_soft_i2c_config
 struct ra_i2c
 {
     struct rt_i2c_bit_ops ops;
-    struct rt_i2c_bus_device i2c2_bus;
+    struct rt_i2c_bus_device i2c_bus;
 };
+
+#ifdef BSP_USING_I2C0
+    #define BSP_I2C0_SCL_PIN    BSP_IO_PORT_02_PIN_02
+    #define BSP_I2C0_SDA_PIN    BSP_IO_PORT_02_PIN_03
+#endif
+
 
 #ifdef BSP_USING_I2C0
 #define I2C0_BUS_CONFIG                                  \

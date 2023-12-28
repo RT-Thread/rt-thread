@@ -61,7 +61,7 @@ struct swm_soft_i2c_cfg
 struct swm_soft_i2c_device
 {
     struct rt_i2c_bit_ops ops;
-    struct rt_i2c_bus_device i2c2_bus;
+    struct rt_i2c_bus_device i2c_bus;
 };
 static const struct swm_soft_i2c_cfg swm_soft_i2c_cfg[] =
     {
@@ -210,9 +210,9 @@ int swm_i2c_init(void)
     {
         i2c_obj[i].ops = swm_i2c_bit_ops;
         i2c_obj[i].ops.data = (void *)&swm_soft_i2c_cfg[i];
-        i2c_obj[i].i2c2_bus.priv = &i2c_obj[i].ops;
+        i2c_obj[i].i2c_bus.priv = &i2c_obj[i].ops;
         swm_i2c_gpio_init(&i2c_obj[i]);
-        result = rt_i2c_bit_add_bus(&i2c_obj[i].i2c2_bus, swm_soft_i2c_cfg[i].name);
+        result = rt_i2c_bit_add_bus(&i2c_obj[i].i2c_bus, swm_soft_i2c_cfg[i].name);
         RT_ASSERT(result == RT_EOK);
 
         LOG_D("software simulation %s init done, pin scl: %d, pin sda %d",
