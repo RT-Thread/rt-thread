@@ -1,22 +1,12 @@
 # RT-Thread building script for component
 
-import os
 from building import *
 
 Import('rtconfig')
 
-if os.getenv('BSP_ROOT'):
-    BSP_ROOT = os.getenv('BSP_ROOT')
-else:
-    BSP_ROOT = os.path.normpath(os.getcwd() + '../../../../../../')
-
 cwd     = GetCurrentDir()
 src     = Glob('*.c') + Glob('*.cpp')
-CPPPATH = [cwd, BSP_ROOT]
-
-ASFLAGS = ''
-for path in CPPPATH:
-    ASFLAGS = ASFLAGS + ' -I ' + path
+CPPPATH = [cwd]
 
 if rtconfig.PLATFORM in ['armcc', 'armclang']:
     src += Glob('*_rvds.S')
@@ -31,6 +21,6 @@ if rtconfig.PLATFORM in ['iccarm']:
 if not GetDepend('RT_USING_MEM_PROTECTION') and not GetDepend('RT_USING_HW_STACK_GUARD'):
     SrcRemove(src, 'mpu.c')
 
-group = DefineGroup('CPU', src, depend = [''], CPPPATH = CPPPATH, ASFLAGS = ASFLAGS)
+group = DefineGroup('CPU', src, depend = [''], CPPPATH = CPPPATH)
 
 Return('group')

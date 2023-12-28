@@ -207,6 +207,7 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
         env['LINK'] = rtconfig.LINK
     if exec_path:
         env.PrependENVPath('PATH', rtconfig.EXEC_PATH)
+    env['ASCOM']= env['ASPPCOM']
 
     if GetOption('strict-compiling'):
         STRICT_FLAGS = ''
