@@ -40,10 +40,10 @@ objs = PrepareBuilding(env, RTT_ROOT, has_libcpu=False)
 libraries_path = os.path.join(GetCurrentDir(), '..', 'libraries')
 
 # include libraries
-objs += SConscript(os.path.join(libraries_path, 'SWM320_CSL', 'SConscript'))
+objs += SConscript(os.path.join(libraries_path, 'SWM320_CSL', 'SConscript'), variant_dir='build/libraries/SWM320_CSL', duplicate=0)
 
 # include drivers
-objs += SConscript(os.path.join(libraries_path, 'SWM320_drivers', 'SConscript'))
+objs += SConscript(os.path.join(libraries_path, 'SWM320_drivers', 'SConscript'), variant_dir='build/libraries/SWM320_drivers', duplicate=0)
 
 # make a building
 DoBuilding(TARGET, objs)

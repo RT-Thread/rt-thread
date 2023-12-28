@@ -3,7 +3,7 @@ import os
 # toolchains options
 ARCH='arm'
 CPU='cortex-m33'
-CROSS_TOOL='keil'
+CROSS_TOOL='gcc'
 
 if os.getenv('RTT_CC'):
     CROSS_TOOL = os.getenv('RTT_CC')
@@ -29,20 +29,20 @@ BUILD = 'debug'
 #BUILD = 'release'
 
 if PLATFORM == 'gcc':
-    # toolchains
     PREFIX = 'arm-none-eabi-'
     CC = PREFIX + 'gcc'
     AS = PREFIX + 'gcc'
     AR = PREFIX + 'ar'
     CXX = PREFIX + 'g++'
     LINK = PREFIX + 'gcc'
-    TARGET_EXT = 'elf'
     SIZE = PREFIX + 'size'
     OBJDUMP = PREFIX + 'objdump'
     OBJCPY = PREFIX + 'objcopy'
 
-    DEVICE = ' -mcpu=' + CPU + ' -mthumb -mfpu=fpv4-sp-d16 -mfloat-abi=hard -ffunction-sections -fdata-sections'
-    CFLAGS = DEVICE + ' -Dgcc -fstack-usage -fdump-rtl-dfinish'
+    TARGET_EXT = 'elf'
+
+    DEVICE = ' -mcpu=cortex-m33 -mthumb -mfpu=fpv4-sp-d16 -mfloat-abi=hard -ffunction-sections -fdata-sections'
+    CFLAGS = DEVICE + ' -Dgcc'
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp -Wa,-mimplicit-it=thumb -I.'
     LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread.map,-cref,-u,Reset_Handler -T board/linker_scripts/link.lds'
 
