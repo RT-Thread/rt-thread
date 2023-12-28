@@ -24,7 +24,7 @@ struct lpc55s69_soft_i2c_config
 struct lpc55s69_i2c
 {
     struct rt_i2c_bit_ops ops;
-    struct rt_i2c_bus_device i2c2_bus;
+    struct rt_i2c_bus_device i2c_bus;
 };
 
 #ifdef BSP_USING_SOFT_I2C1

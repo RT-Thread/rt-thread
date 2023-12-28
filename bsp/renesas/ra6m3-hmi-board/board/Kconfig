@@ -14,15 +14,14 @@ menu "Hardware Drivers Config"
             select PKG_USING_RTDUINO
             select BSP_USING_UART4
             select BSP_USING_GPIO
-            select BSP_USING_TIM
-            select BSP_USING_TIM2
             select BSP_USING_ADC
             select BSP_USING_ADC0
             select BSP_USING_PWM
+            select BSP_USING_PWM0
             select BSP_USING_PWM2
-            select BSP_USING_PWM2_CH2
-            select BSP_USING_I2C
-            select BSP_USING_I2C2
+            select BSP_USING_PWM8
+            select BSP_USING_SOFT_I2C
+            select BSP_USING_I2C0
             imply RTDUINO_USING_SERVO
             imply RTDUINO_USING_WIRE
             default n
@@ -463,53 +462,22 @@ menu "Hardware Drivers Config"
                     default n
             endif
 
-        menuconfig BSP_USING_I2C
+        menuconfig BSP_USING_SOFT_I2C
             bool "Enable software I2C bus"
             select RT_USING_I2C
             select RT_USING_I2C_BITOPS
             select RT_USING_PIN
             default n
-
-            if BSP_USING_I2C
-                config BSP_USING_I2C
-                menuconfig BSP_USING_I2C0
+            if BSP_USING_SOFT_I2C
+                config BSP_USING_I2C0
                     bool "Enable I2C0 Bus (software simulation)"
                     default n
-                    if BSP_USING_I2C0
-                        comment "Please select your i2c analog pin, e.g. 'P512': BSP_IO_PORT_05_PIN_12"
-                        config BSP_I2C0_SCL_PIN
-                            string "i2c0 scl pin number (Pxxx)"
-                            default "pxxx"
-                        config BSP_I2C0_SDA_PIN
-                            string "i2c0 sda pin number (Pxxx)"
-                            default "pxxx"
-                    endif
-
-                menuconfig BSP_USING_I2C1
+                config BSP_USING_I2C1
                     bool "Enable I2C1 Bus (software simulation)"
                     default n
-                    if BSP_USING_I2C1
-                        comment "Please select your i2c analog pin, e.g. 'P512': BSP_IO_PORT_05_PIN_12"
-                        config BSP_I2C1_SCL_PIN
-                            string "i2c1 scl pin number (Pxxx)"
-                            default "pxxx"
-                        config BSP_I2C1_SDA_PIN
-                            string "i2c1 sda pin number (Pxxx)"
-                            default "pxxx"
-                    endif
-
-                menuconfig BSP_USING_I2C2
+                config BSP_USING_I2C2
                     bool "Enable I2C2 Bus (software simulation)"
                     default n
-                    if BSP_USING_I2C2
-                        comment "Please select your i2c analog pin, e.g. 'P512': BSP_IO_PORT_05_PIN_12"
-                        config BSP_I2C2_SCL_PIN
-                            string "i2c2 scl pin number (P512)"
-                            default "BSP_IO_PORT_05_PIN_12"
-                        config BSP_I2C2_SDA_PIN
-                            string "i2c2 sda pin number (P511)"
-                            default "BSP_IO_PORT_05_PIN_11"
-                    endif
             endif
 
     menuconfig BSP_USING_ADC
@@ -568,18 +536,17 @@ menu "Hardware Drivers Config"
             default n
             select RT_USING_PWM
             if BSP_USING_PWM
-            config BSP_USING_PWM12
-                bool "Enable GPT12 (16-Bits) output PWM"
+            config BSP_USING_PWM0
+                bool "Enable GPT0 (32-Bits) output PWM"
                 default n
 
-            menuconfig BSP_USING_PWM2
-                bool "Enable timer2 output PWM"
+            config BSP_USING_PWM2
+                bool "Enable GPT2 (32-Bits) output PWM"
                 default n
-                if BSP_USING_PWM2
-                    config BSP_USING_PWM2_CH2
-                        bool "Enable PWM2 channel2"
-                        default n
-                endif
+
+            config BSP_USING_PWM8
+                bool "Enable GPT8 (32-Bits) output PWM"
+                default n
 
             endif
 

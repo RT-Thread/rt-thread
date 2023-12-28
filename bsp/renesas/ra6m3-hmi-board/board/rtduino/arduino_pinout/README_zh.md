@@ -29,14 +29,14 @@ Hardware Drivers Config --->
 | 2 (D2) | P008 | 是 |  |
 | 3 (D3) | P506 | 是 |  |
 | 4 (D4) | P603 | 是 |  |
-| 5 (D5) | P604 | 是 |  |
-| 6 (D6) | P605 | 是 |  |
+| 5 (D5) | P604 | 是 | PWM8-CH0,默认被RT-Thread的PWM设备框架pwm8的channel0接管 |
+| 6 (D6) | P605 | 是 | PWM8-CH0,默认被RT-Thread的PWM设备框架pwm8的channel0接管 |
 | 7 (D7) | P208 | 是 |  |
 | 8 (D8) | P207 | 是 |  |
 | 9 (D9) | P009 | 是 |  |
-| 10 (D10) | P712 | 是 | PWM2-CH2,默认被RT-Thread的PWM设备框架pwm2的channel2接管 |
-| 11 (D11) | P512 | 是 | I2C2-SCL,默认被RT-Thread的I2C设备框架i2c2接管 |
-| 12 (D12) | P511 | 是 | I2C2-SDA,默认被RT-Thread的I2C设备框架i2c2接管 |
+| 10 (D10) | P712 | 是 | PWM2-CH0,默认被RT-Thread的PWM设备框架pwm2的channel0接管 |
+| 11 (D11) | P512 | 是 | PWM0-CH0,默认被RT-Thread的PWM设备框架pwm0的channel0接管 |
+| 12 (D12) | P511 | 是 |  |
 | 13 (D13) | P204 | 是 |  |
 | 14 (D14) | P203 | 是 |  |
 | 15 (D15) | P202 | 是 |  |
@@ -47,4 +47,6 @@ Hardware Drivers Config --->
 | 20 (A4) | P508 | 是 | ADC1-CH19-EXTVOL(外部电压),默认被RT-Thread的ADC设备框架adc0的channel20接管 |
 | 21 (A5) | P014 | 是 | ADC1-CH5-EXTVOL(外部电压),默认被RT-Thread的ADC设备框架adc0的channel5接管 |
 
-> 注意：RTduino暂时不对MDK支持，建议使用GNU GCC工具链编译
+> 注意：
+> 1.RTduino暂时不对MDK支持，建议使用GNU GCC工具链编译
+> 2.renesas的pwm通道默认使用channel0，详细驱动细节请查阅`bsp\renesas\libraries\HAL_Drivers\drv_pwm.c`文件
