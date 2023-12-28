@@ -1,4 +1,4 @@
-name: RT-Thread BSP build check
+name: RT-Thread BSP Static Build Check
 
 # Controls when the action will run. Triggers the workflow on push or pull request
 # events but only for the RT-Thread organization master branch
@@ -34,6 +34,14 @@ jobs:
       fail-fast: false
       matrix:
        legs:
+         -  RTT_BSP: "RT-Thread Online Packages"
+            RTT_TOOL_CHAIN: "sourcery-arm"
+            SUB_RTT_BSP:
+                - "stm32/stm32f407-rt-spark"
+         -  RTT_BSP: "RTduino/Arduino Libraries"
+            RTT_TOOL_CHAIN: "sourcery-arm"
+            SUB_RTT_BSP:
+                - "stm32/stm32f411-st-nucleo"
          -  RTT_BSP: "others_at32_hc32"
             RTT_TOOL_CHAIN: "sourcery-arm"
             SUB_RTT_BSP: 
@@ -125,10 +133,8 @@ jobs:
                 - "stm32/stm32f407-atk-explorer"
                 - "stm32/stm32f407-robomaster-c"
                 - "stm32/stm32f407-st-discovery"
-                - "stm32/stm32f407-rt-spark"
                 - "stm32/stm32f410-st-nucleo"
                 - "stm32/stm32f411-atk-nano"
-                - "stm32/stm32f411-st-nucleo"
                 - "stm32/stm32f411-weact-blackpill" 
                 - "stm32/stm32f412-st-nucleo"
                 - "stm32/stm32f413-st-nucleo"
