@@ -1,6 +1,4 @@
 import os
-import re
-import glob
 import shutil
 import multiprocessing
 
@@ -108,7 +106,10 @@ def build_bsp_attachconfig(bsp, attach_file):
     config_bacakup = config_file+'.origin'
     shutil.copyfile(config_file, config_bacakup)
 
-    append_file(attach_file, config_file)
+    attachconfig_dir = os.path.join(rtt_root, 'bsp', bsp, '.ci/attachconfig')
+    attach_path = os.path.join(attachconfig_dir, attach_file)
+
+    append_file(attach_path, config_file)
 
     res = build_bsp(bsp)
 
@@ -145,18 +146,23 @@ if __name__ == "__main__":
         print("::endgroup::")
 
         attach_dir = os.path.join(rtt_root, 'bsp', bsp, '.ci/attachconfig')
-        attach_files = glob.glob(os.path.join(attach_dir, '*.attach'))
-        for attach_file in attach_files:
+        attach_list = []
+        for root, dirs, files in os.walk(attach_dir):
+            for file in files:
+                file_path = os.path.join(root, file)
+                relative_path = os.path.relpath(file_path, attach_dir)
+                attach_list.append(relative_path)
+
+        for attach_file in attach_list:
             count += 1
-            attach = os.path.basename(attach_file)
-            print(f"::group::\tCompiling BSP: =={count}=== {bsp} {attach}===")
+            print(f"::group::\tCompiling BSP: =={count}=== {bsp} {attach_file}===")
             res = build_bsp_attachconfig(bsp, attach_file)
             if not res:
-                print(f"::error::build {bsp} {attach} failed.")
-                add_summary(f'\t- ❌ build {attach} failed.')
+                print(f"::error::build {bsp} {attach_file} failed.")
+                add_summary(f'\t- ❌ build {attach_file} failed.')
                 failed += 1
             else:
-                add_summary(f'\t- ✅ build {attach} success.')
+                add_summary(f'\t- ✅ build {attach_file} success.')
             print("::endgroup::")
 
     exit(failed)
