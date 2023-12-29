@@ -159,7 +159,7 @@ if RT_USING_I2C
                     default 2
                 config RT_SOFT_I2C1_BUS_NAME
                     string "Bus name"
-                    default i2c1
+                    default "i2c1"
                 config RT_SOFT_I2C1_TIMING_DELAY
                     int "Timing delay (us)"
                     range 0 32767
@@ -183,7 +183,7 @@ if RT_USING_I2C
                     default 4
                 config RT_SOFT_I2C2_BUS_NAME
                     string "Bus name"
-                    default i2c2
+                    default "i2c2"
                 config RT_SOFT_I2C2_TIMING_DELAY
                     int "Timing delay (us)"
                     range 0 32767
@@ -207,7 +207,7 @@ if RT_USING_I2C
                     default 6
                 config RT_SOFT_I2C3_BUS_NAME
                     string "Bus name"
-                    default i2c3
+                    default "i2c3"
                 config RT_SOFT_I2C3_TIMING_DELAY
                     int "Timing delay (us)"
                     range 0 32767
@@ -231,7 +231,7 @@ if RT_USING_I2C
                     default 8
                 config RT_SOFT_I2C4_BUS_NAME
                     string "Bus name"
-                    default i2c4
+                    default "i2c4"
                 config RT_SOFT_I2C4_TIMING_DELAY
                     int "Timing delay (us)"
                     range 0 32767
@@ -255,7 +255,7 @@ if RT_USING_I2C
                     default 10
                 config RT_SOFT_I2C5_BUS_NAME
                     string "Bus name"
-                    default i2c5
+                    default "i2c5"
                 config RT_SOFT_I2C5_TIMING_DELAY
                     int "Timing delay (us)"
                     range 0 32767
@@ -279,7 +279,7 @@ if RT_USING_I2C
                     default 12
                 config RT_SOFT_I2C6_BUS_NAME
                     string "Bus name"
-                    default i2c6
+                    default "i2c6"
                 config RT_SOFT_I2C6_TIMING_DELAY
                     int "Timing delay (us)"
                     range 0 32767
@@ -303,7 +303,7 @@ if RT_USING_I2C
                     default 14
                 config RT_SOFT_I2C7_BUS_NAME
                     string "Bus name"
-                    default i2c7
+                    default "i2c7"
                 config RT_SOFT_I2C7_TIMING_DELAY
                     int "Timing delay (us)"
                     range 0 32767
@@ -327,7 +327,7 @@ if RT_USING_I2C
                     default 16
                 config RT_SOFT_I2C8_BUS_NAME
                     string "Bus name"
-                    default i2c8
+                    default "i2c8"
                 config RT_SOFT_I2C8_TIMING_DELAY
                     int "Timing delay (us)"
                     range 0 32767
@@ -565,9 +565,9 @@ config RT_USING_SENSOR
     default n
 
 if RT_USING_SENSOR
-    config RT_USING_SENSOR_V2
-        bool "Enable Sensor Framework v2"
-        default n
+    # config RT_USING_SENSOR_V2
+    #     bool "Enable Sensor Framework v2"
+    #     default n
 
     config RT_USING_SENSOR_CMD
         bool "Using Sensor cmd"
@@ -971,6 +971,7 @@ menuconfig RT_USING_VIRTIO
 source "$RTT_DIR/components/drivers/ofw/Kconfig"
 source "$RTT_DIR/components/drivers/pic/Kconfig"
 source "$RTT_DIR/components/drivers/ktime/Kconfig"
+source "$RTT_DIR/components/drivers/clk/Kconfig"
 
 menu "Using USB"
     config RT_USING_USB

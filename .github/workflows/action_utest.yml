@@ -55,7 +55,7 @@ jobs:
       TEST_CONFIG_FILE: ${{ matrix.legs.CONFIG_FILE }}
       TEST_SD_FILE: ${{ matrix.legs.SD_FILE }}
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - name: Install Tools
       shell: bash

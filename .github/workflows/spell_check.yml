@@ -1,0 +1,39 @@
+name: Check Spelling
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - 'documentation/**'
+  pull_request:
+    branches:
+      - master
+    paths:
+      - 'documentation/**'
+jobs:
+  spelling:
+    name: Check Spelling
+    runs-on: ubuntu-latest
+    if: github.repository_owner == 'RT-Thread'
+    steps:
+    - name: output ignore words info
+      run: |
+        echo "> If any words shown as incorrect are spelled correctly, please add them to .github/actions/spelling/allow.txt." >> $GITHUB_STEP_SUMMARY
+    - name: check spelling
+      id: spelling
+      uses: check-spelling/check-spelling@v0.0.20
+      with:
+        checkout: true
+        check_file_names: 0
+        only_check_changed_files: 1
+        post_comment: 0
+        extra_dictionaries:
+          cspell:en_US/src/en_US.txt
+          cspell:software-terms/softwareTerms.txt
+          cspell:python/python.txt
+          cspell:cpp/cpp.txt
+        check_extra_dictionaries: ''
+    - name: output Success info
+      run: |
+        echo "✅ Check spelling success." >> $GITHUB_STEP_SUMMARY

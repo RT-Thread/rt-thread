@@ -1,0 +1,23 @@
+from building import *
+import rtconfig
+
+cwd  = GetCurrentDir()
+
+src  = Glob('CMSIS/DeviceSupport/*.c')
+src += Glob('SWM341_StdPeriph_Driver/*.c')
+
+if rtconfig.CROSS_TOOL == 'gcc':
+    src += ['CMSIS/DeviceSupport/startup/gcc/startup_SWM341.s']
+elif rtconfig.CROSS_TOOL == 'keil':
+    src += ['CMSIS/DeviceSupport/startup/arm/startup_SWM341.s']
+elif rtconfig.CROSS_TOOL == 'iar':
+    src += ['CMSIS/DeviceSupport/startup/iar/startup_SWM341.s']
+
+inc  = [cwd + '/CMSIS/CoreSupport',
+        cwd + '/CMSIS/DeviceSupport',
+        cwd + '/SWM341_StdPeriph_Driver'
+]
+
+group = DefineGroup('Libraries', src, depend = [''], CPPPATH = inc)
+
+Return('group')

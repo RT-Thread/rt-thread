@@ -52,6 +52,7 @@ static rt_uint8_t _soft_timer_status = RT_SOFT_TIMER_IDLE;
 static rt_list_t _soft_timer_list[RT_TIMER_SKIP_LIST_LEVEL];
 static struct rt_spinlock _soft_spinlock;
 static struct rt_thread _timer_thread;
+static struct rt_semaphore _soft_timer_sem;
 rt_align(RT_ALIGN_SIZE)
 static rt_uint8_t _timer_thread_stack[RT_TIMER_THREAD_STACK_SIZE];
 #endif /* RT_USING_TIMER_SOFT */
@@ -485,19 +486,6 @@ static rt_err_t _timer_start(rt_list_t *timer_list, rt_timer_t timer)
 
     timer->parent.flag |= RT_TIMER_FLAG_ACTIVATED;
 
-#ifdef RT_USING_TIMER_SOFT
-    if (timer->parent.flag & RT_TIMER_FLAG_SOFT_TIMER)
-    {
-        /* check whether timer thread is ready */
-        if ((_soft_timer_status == RT_SOFT_TIMER_IDLE) &&
-           ((_timer_thread.stat & RT_THREAD_SUSPEND_MASK) == RT_THREAD_SUSPEND_MASK))
-        {
-            /* resume timer thread to check soft timer */
-            rt_thread_resume(&_timer_thread);
-        }
-    }
-#endif /* RT_USING_TIMER_SOFT */
-
     return RT_EOK;
 }
 
@@ -532,9 +520,20 @@ rt_err_t rt_timer_start(rt_timer_t timer)
         spinlock = &_hard_spinlock;
     }
 
-    /* stop timer firstly */
     level = rt_spin_lock_irqsave(spinlock);
+
     err = _timer_start(timer_list, timer);
+
+#ifdef RT_USING_TIMER_SOFT
+    if (err == RT_EOK)
+    {
+        if (timer->parent.flag & RT_TIMER_FLAG_SOFT_TIMER)
+        {
+            rt_sem_release(&_soft_timer_sem);
+        }
+    }
+#endif /* RT_USING_TIMER_SOFT */
+
     rt_spin_unlock_irqrestore(spinlock, level);
 
     return err;
@@ -841,6 +840,8 @@ static void _timer_thread_entry(void *parameter)
     rt_tick_t next_timeout;
     rt_base_t level;
 
+    rt_sem_control(&_soft_timer_sem, RT_IPC_CMD_SET_VLIMIT, (void*)1);
+
     while (1)
     {
         /* get the next timeout tick */
@@ -850,9 +851,7 @@ static void _timer_thread_entry(void *parameter)
 
         if (ret != RT_EOK)
         {
-            /* no software timer exist, suspend self. */
-            rt_thread_suspend_with_flag(rt_thread_self(), RT_UNINTERRUPTIBLE);
-            rt_schedule();
+            rt_sem_take(&_soft_timer_sem, RT_WAITING_FOREVER);
         }
         else
         {
@@ -865,7 +864,7 @@ static void _timer_thread_entry(void *parameter)
             {
                 /* get the delta timeout tick */
                 next_timeout = next_timeout - current_tick;
-                rt_thread_delay(next_timeout);
+                rt_sem_take(&_soft_timer_sem, next_timeout);
             }
         }
 
@@ -908,7 +907,7 @@ void rt_system_timer_thread_init(void)
         rt_list_init(_soft_timer_list + i);
     }
     rt_spin_lock_init(&_soft_spinlock);
-
+    rt_sem_init(&_soft_timer_sem, "stimer", 0, RT_IPC_FLAG_PRIO);
     /* start software timer thread */
     rt_thread_init(&_timer_thread,
                    "timer",

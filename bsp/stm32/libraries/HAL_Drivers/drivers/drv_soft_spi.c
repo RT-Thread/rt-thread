@@ -8,6 +8,7 @@
  * 2022-6-14      solar        first version
  */
 #include <board.h>
+#include <string.h>
 #include "drv_soft_spi.h"
 #include "drv_config.h"
 

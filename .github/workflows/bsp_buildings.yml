@@ -50,8 +50,8 @@ jobs:
                 - "at91/at91sam9260"
                 - "wch/arm/ch32f103c8-core"
                 - "wch/arm/ch32f203r-evt"
-                - "synwit/swm320"
-                - "synwit/swm341"
+                - "synwit/swm320-mini"
+                - "synwit/swm341-mini"
                 - "beaglebone"
                 - "zynqmp-r5-axu4ev"
                 - "at32/at32f402-start"
@@ -125,6 +125,7 @@ jobs:
                 - "stm32/stm32f407-atk-explorer"
                 - "stm32/stm32f407-robomaster-c"
                 - "stm32/stm32f407-st-discovery"
+                - "stm32/stm32f407-rt-spark"
                 - "stm32/stm32f410-st-nucleo"
                 - "stm32/stm32f411-atk-nano"
                 - "stm32/stm32f411-st-nucleo"
@@ -154,6 +155,7 @@ jobs:
                 - "stm32/stm32g491-st-nucleo"
                 - "stm32/stm32g474-st-nucleo"
                 - "stm32/stm32h563-st-nucleo"
+                - "stm32/stm32h503-st-nucleo"
                 - "stm32/stm32h743-armfly-v7"
                 - "stm32/stm32h743-atk-apollo"
                 - "stm32/stm32h743-openmv-h7plus"
@@ -317,7 +319,7 @@ jobs:
             SUB_RTT_BSP:  
                 - "x86"
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Set up Python
         uses: actions/setup-python@v3
         with:
@@ -420,19 +422,4 @@ jobs:
           SRTT_BSP: ${{ join(matrix.legs.SUB_RTT_BSP, ',') }}
         run: |
           source ~/.env/env.sh
-          failed=0
-          count=0
-          for bsp in $(echo $SRTT_BSP | tr ',' '\n'); do
-            count=$((count+1))
-            echo "::group::Compiling BSP: ==$count=== $bsp ===="
-            echo bsp/$bsp
-            ls bsp/$bsp/Kconfig && scons -C bsp/$bsp --pyconfig-silent
-            pushd bsp/$bsp && pkgs --update && popd
-            scons -C bsp/$bsp -j$(nproc) --debug=time | tee output.log || \
-            { total_time=$(grep "Total command execution time" output.log | awk '{print $5}'); \
-              failed=$((failed+1)) ; echo "::endgroup::" ; echo "::error::build $bsp failed" ; \
-              echo "- ❌ build $bsp failed in $total_time seconds " >> $GITHUB_STEP_SUMMARY ; } && \
-            { total_time=$(grep "Total command execution time" output.log | awk '{print $5}'); \
-              echo "- ✅ build $bsp success in $total_time seconds " >> $GITHUB_STEP_SUMMARY ; echo "::endgroup::" ; }
-          done
-          exit $failed
+          python tools/ci/bsp_buildings.py

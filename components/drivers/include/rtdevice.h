@@ -177,6 +177,10 @@ extern "C" {
 #include "drivers/lcd.h"
 #endif
 
+#ifdef RT_USING_CLK
+#include "drivers/clk.h"
+#endif /* RT_USING_CLK */
+
 #ifdef RT_USING_DM
 #include "drivers/core/dm.h"
 

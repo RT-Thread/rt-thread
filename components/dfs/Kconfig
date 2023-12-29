@@ -165,6 +165,11 @@ endif
         bool "Enable ReadOnly file system on flash"
         default n
 
+    config RT_USING_DFS_ROMFS_USER_ROOT
+        bool "Use user's romfs root"
+        depends on RT_USING_DFS_ROMFS
+        default n
+
     config RT_USING_DFS_CROMFS
         bool "Enable ReadOnly compressed file system on flash"
         default n
