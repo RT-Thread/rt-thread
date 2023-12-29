@@ -78,11 +78,10 @@ def AddOptions():
                 dest = 'cmsispack',
                 type = 'string',
                 help = 'set pack: <cmsispack path>')
-    AddOption('--strict',
-                dest='strict-compiling',
-                help='Compiling project with strict mode and ALL warning will be errors',
-                action='store_true',
-                default=False)
+    AddOption('--extra-cxxflags',
+                dest='extra-cxxflags',
+                type = 'string',
+                help='Compiling project attaches extra CFLAGS and CXXFLAGS')
     AddOption('--verbose',
                 dest = 'verbose',
                 action = 'store_true',

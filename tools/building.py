@@ -209,11 +209,10 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
         env.PrependENVPath('PATH', rtconfig.EXEC_PATH)
     env['ASCOM']= env['ASPPCOM']
 
-    if GetOption('strict-compiling'):
-        STRICT_FLAGS = ''
-        if rtconfig.PLATFORM in ['gcc']:
-            STRICT_FLAGS += ' -Werror' #-Wextra
-            env.Append(CFLAGS=STRICT_FLAGS, CXXFLAGS=STRICT_FLAGS)
+    extra_cxxflags = GetOption('extra-cxxflags')
+    if extra_cxxflags and rtconfig.PLATFORM in ['gcc']:
+        extra_cxxflags = ' ' + extra_cxxflags
+        env.Append(CFLAGS=extra_cxxflags, CXXFLAGS=extra_cxxflags)
 
     # add compability with Keil MDK 4.6 which changes the directory of armcc.exe
     if rtconfig.PLATFORM in ['armcc', 'armclang']:
