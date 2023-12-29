@@ -76,6 +76,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     name: ${{ github.event.inputs.bsp_options }}
+    if: github.repository_owner == 'RT-Thread'
     steps:
       - uses: actions/checkout@v4
       - name: Set up Python

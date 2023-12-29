@@ -24,7 +24,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    name: doxygen_doc generate 
+    name: doxygen_doc generate
+    if: github.repository_owner == 'RT-Thread'
     steps:
       - uses: actions/checkout@v4
         with:

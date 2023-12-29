@@ -20,6 +20,7 @@ on:
 jobs:
     change:
         uses: RT-Thread/pkgs-test/.github/workflows/pkgs-action.yml@main
+        if: github.repository_owner == 'RT-Thread'
         with:
             rt-thread-versions: "branch:master"
             test-specific-pkgs: true
