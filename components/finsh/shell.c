@@ -448,7 +448,7 @@ static void shell_push_history(struct finsh_shell *shell)
 }
 #endif
 
-void finsh_thread_entry(void *parameter)
+static void finsh_thread_entry(void *parameter)
 {
     int ch;
 
@@ -690,7 +690,7 @@ void finsh_thread_entry(void *parameter)
     } /* end of device read */
 }
 
-void finsh_system_function_init(const void *begin, const void *end)
+static void finsh_system_function_init(const void *begin, const void *end)
 {
     _syscall_table_begin = (struct finsh_syscall *) begin;
     _syscall_table_end = (struct finsh_syscall *) end;

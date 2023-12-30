@@ -25,6 +25,7 @@
 #ifdef RT_USING_POSIX_STDIO
 #include <posix/stdio.h>
 #endif /* RT_USING_POSIX_STDIO */
+#include <posix/stdlib.h>
 
 #define DBG_TAG    "armlibc.syscalls"
 #define DBG_LVL    DBG_INFO
@@ -312,7 +313,6 @@ void _ttywrch(int ch)
 /* for exit() and abort() */
 rt_weak void _sys_exit(int return_code)
 {
-    extern void __rt_libc_exit(int status);
     __rt_libc_exit(return_code);
     while (1);
 }
