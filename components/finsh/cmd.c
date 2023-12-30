@@ -51,14 +51,13 @@ static long clear(void)
 }
 MSH_CMD_EXPORT(clear, clear the terminal screen);
 
-extern void rt_show_version(void);
-long version(void)
+static long rtthread_version(void)
 {
     rt_show_version();
 
     return 0;
 }
-MSH_CMD_EXPORT(version, show RT-Thread version information);
+MSH_CMD_EXPORT(rtthread_version, show RT-Thread version information);
 
 rt_inline void object_split(int len)
 {
@@ -929,7 +928,7 @@ long list_device(void)
 #endif /* RT_USING_DEVICE */
 
 #ifndef FINSH_USING_OPTION_COMPLETION
-int cmd_list(int argc, char **argv)
+static int cmd_list(int argc, char **argv)
 {
     if(argc == 2)
     {
@@ -1042,7 +1041,7 @@ _usage:
 
 #else
 CMD_OPTIONS_STATEMENT(cmd_list)
-int cmd_list(int argc, char **argv)
+static int cmd_list(int argc, char **argv)
 {
     if (argc == 2)
     {

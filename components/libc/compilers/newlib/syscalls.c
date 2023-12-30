@@ -23,6 +23,7 @@
 #ifdef RT_USING_POSIX_STDIO
 #include <posix/stdio.h>
 #endif /* RT_USING_POSIX_STDIO */
+#include <posix/stdlib.h>
 #ifdef RT_USING_MODULE
 #include <dlmodule.h>
 #endif /* RT_USING_MODULE */
@@ -326,7 +327,6 @@ _ssize_t _write_r(struct _reent *ptr, int fd, const void *buf, size_t nbytes)
 /* for exit() and abort() */
 __attribute__ ((noreturn)) void _exit (int status)
 {
-    extern void __rt_libc_exit(int status);
     __rt_libc_exit(status);
     while(1);
 }
