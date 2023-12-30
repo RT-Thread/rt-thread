@@ -24,6 +24,7 @@
  * 2022-08-24     Yunjie       make rt_memset word-independent to adapt to ti c28x (16bit word)
  * 2022-08-30     Yunjie       make rt_vsnprintf adapt to ti c28x (16bit int)
  * 2023-02-02     Bernard      add Smart ID for logo version show
+ * 2023-12-10     xqyjlj       perf rt_hw_interrupt_disable/enable, fix memheap lock
  */
 
 #include <rtthread.h>
@@ -1694,6 +1695,7 @@ void rt_free_sethook(void (*hook)(void *ptr))
 #endif /* RT_USING_HOOK */
 
 #if defined(RT_USING_HEAP_ISR)
+static struct rt_spinlock _heap_spinlock;
 #elif defined(RT_USING_MUTEX)
 static struct rt_mutex _lock;
 #endif
@@ -1701,6 +1703,7 @@ static struct rt_mutex _lock;
 rt_inline void _heap_lock_init(void)
 {
 #if defined(RT_USING_HEAP_ISR)
+    rt_spin_lock_init(&_heap_spinlock);
 #elif defined(RT_USING_MUTEX)
     rt_mutex_init(&_lock, "heap", RT_IPC_FLAG_PRIO);
 #endif
@@ -1709,7 +1712,7 @@ rt_inline void _heap_lock_init(void)
 rt_inline rt_base_t _heap_lock(void)
 {
 #if defined(RT_USING_HEAP_ISR)
-    return rt_hw_interrupt_disable();
+    return rt_spin_lock_irqsave(&_heap_spinlock);
 #elif defined(RT_USING_MUTEX)
     if (rt_thread_self())
         return rt_mutex_take(&_lock, RT_WAITING_FOREVER);
@@ -1724,7 +1727,7 @@ rt_inline rt_base_t _heap_lock(void)
 rt_inline void _heap_unlock(rt_base_t level)
 {
 #if defined(RT_USING_HEAP_ISR)
-    rt_hw_interrupt_enable(level);
+    rt_spin_unlock_irqrestore(&_heap_spinlock, level);
 #elif defined(RT_USING_MUTEX)
     RT_ASSERT(level == RT_EOK);
     if (rt_thread_self())
@@ -1773,7 +1776,10 @@ void *_memheap_alloc(struct rt_memheap *heap, rt_size_t size);
 void _memheap_free(void *rmem);
 void *_memheap_realloc(struct rt_memheap *heap, void *rmem, rt_size_t newsize);
 #define _MEM_INIT(_name, _start, _size) \
-    rt_memheap_init(&system_heap, _name, _start, _size)
+    do {\
+        rt_memheap_init(&system_heap, _name, _start, _size); \
+        system_heap.locked = RT_TRUE; \
+    } while(0)
 #define _MEM_MALLOC(_size)  \
     _memheap_alloc(&system_heap, _size)
 #define _MEM_REALLOC(_ptr, _newsize)    \
