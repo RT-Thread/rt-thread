@@ -11,7 +11,7 @@ extern int __bss_end;
 
 #define HEAP_END        (void*)(0x20100000-1)
 #define GIC_IRQ_START  0
-#define MAX_HANDLERS 94
+#define MAX_HANDLERS 96
 #define GIC_ACK_INTID_MASK 0x000003ff
 #define ARM_GIC_MAX_NR 1
 #define ARM_GIC_NR_IRQS MAX_HANDLERS

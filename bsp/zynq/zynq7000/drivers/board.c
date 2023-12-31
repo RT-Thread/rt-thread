@@ -4,6 +4,7 @@
 #include "rtdevice.h"
 #include "drv_gpio.h"
 #include <mmu.h>
+#include "interrupt.h"
 
 extern rt_uint32_t __text_start;
 

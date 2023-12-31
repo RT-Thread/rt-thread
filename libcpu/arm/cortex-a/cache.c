@@ -124,6 +124,8 @@ void rt_hw_cpu_dcache_clean_and_invalidate(void *addr, int size)
     asm volatile ("dsb":::"memory");
 }
 
+#ifdef RT_USING_CACHE
+
 void rt_hw_cpu_icache_ops(int ops, void *addr, int size)
 {
     if (ops == RT_HW_CACHE_INVALIDATE)
@@ -153,3 +155,5 @@ rt_base_t rt_hw_cpu_dcache_status(void)
 {
     return 0;
 }
+
+#endif
