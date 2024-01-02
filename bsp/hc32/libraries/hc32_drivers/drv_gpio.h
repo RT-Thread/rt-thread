@@ -27,6 +27,8 @@ struct hc32_pin_irq_map
     struct hc32_irq_config  irq_config;
 };
 
+int rt_hw_pin_init(void);
+
 #endif
 
 #endif /* __DRV_GPIO_H__ */

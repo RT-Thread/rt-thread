@@ -11,6 +11,18 @@
 
 #include "board.h"
 
+#ifdef RT_USING_PIN
+#include <drv_gpio.h>
+#endif
+
+#ifdef RT_USING_SERIAL
+#ifdef RT_USING_SERIAL_V2
+#include <drv_usart_v2.h>
+#else
+#include <drv_usart.h>
+#endif /* RT_USING_SERIAL */
+#endif /* RT_USING_SERIAL_V2 */
+
 /* unlock/lock peripheral */
 #define EXAMPLE_PERIPH_WE               (LL_PERIPH_GPIO | LL_PERIPH_EFM | LL_PERIPH_FCG | \
                                          LL_PERIPH_PWC_CLK_RMU | LL_PERIPH_SRAM)
@@ -152,13 +164,23 @@ void rt_hw_board_init()
     rt_system_heap_init((void *)HEAP_BEGIN, (void *)HEAP_END);
 #endif
 
-    /* Board underlying hardware initialization */
-#ifdef RT_USING_COMPONENTS_INIT
-    rt_components_board_init();
+    /* Pin driver initialization is open by default */
+#ifdef RT_USING_PIN
+    rt_hw_pin_init();
+#endif
+
+    /* USART driver initialization is open by default */
+#ifdef RT_USING_SERIAL
+    rt_hw_usart_init();
 #endif
 
 #if defined(RT_USING_CONSOLE) && defined(RT_USING_DEVICE)
     rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
+#endif
+
+    /* Board underlying hardware initialization */
+#ifdef RT_USING_COMPONENTS_INIT
+    rt_components_board_init();
 #endif
 }
 
