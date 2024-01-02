@@ -310,7 +310,7 @@ static rt_err_t _thread_init(struct rt_thread *thread,
 #ifdef RT_USING_MODULE
     thread->parent.module_id = 0;
 #endif /* RT_USING_MODULE */
-    rt_atomic_store(&thread->ref_count, 0);
+
     rt_spin_lock_init(&thread->spinlock);
 
     RT_OBJECT_HOOK_CALL(rt_thread_inited_hook, (thread));

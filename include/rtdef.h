@@ -986,7 +986,6 @@ struct rt_thread
 #endif
 #endif
 
-    rt_atomic_t                 ref_count;
     struct rt_spinlock          spinlock;
     rt_ubase_t                  user_data;              /**< private user data beyond this thread */
 };
@@ -997,11 +996,6 @@ typedef struct rt_thread *rt_thread_t;
 #endif /* RT_USING_SMART */
 
 /**@}*/
-
-#define rt_atomic_inc(v)                rt_atomic_add((v), 1)
-#define rt_atomic_dec(v)                rt_atomic_sub((v), 1)
-#define rt_get_thread_struct(object)    do { rt_atomic_inc(&(object)->ref_count); } while(0)
-#define rt_put_thread_struct(object)    do { rt_atomic_dec(&(object)->ref_count); } while(0)
 
 /**
  * @addtogroup IPC

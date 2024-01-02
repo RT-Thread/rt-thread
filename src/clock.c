@@ -103,20 +103,17 @@ void rt_tick_increase(void)
 
     /* check time slice */
     thread = rt_thread_self();
-    rt_get_thread_struct(thread);
     level = rt_spin_lock_irqsave(&(thread->spinlock));
     rt_atomic_sub(&(thread->remaining_tick), 1);
     if (rt_atomic_compare_exchange_strong(&(thread->remaining_tick), &oldval, thread->init_tick))
     {
         thread->stat |= RT_THREAD_STAT_YIELD;
         rt_spin_unlock_irqrestore(&(thread->spinlock), level);
-        rt_put_thread_struct(thread);
         rt_schedule();
     }
     else
     {
         rt_spin_unlock_irqrestore(&(thread->spinlock), level);
-        rt_put_thread_struct(thread);
     }
 
     /* check timer */

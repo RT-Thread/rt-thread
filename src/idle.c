@@ -209,10 +209,6 @@ static void rt_defunct_execute(void)
             break;
         }
 
-        while (rt_atomic_load(&(thread->ref_count)))
-        {
-            rt_thread_delay(5);
-        }
 #ifdef RT_USING_MODULE
         module = (struct rt_dlmodule*)thread->parent.module_id;
         if (module)
