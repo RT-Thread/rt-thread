@@ -40,4 +40,8 @@ menu "On-chip Peripheral Drivers"
         endif
 endmenu
 
+config BSP_USING_SDK_SRC
+    bool "Using zynq sdk bsp src"
+    default n
+
 endmenu

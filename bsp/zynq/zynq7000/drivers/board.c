@@ -34,6 +34,20 @@ static void rt_xil_assert_callback(const char8 *File, s32 Line)
     RT_ASSERT(0);
 }
 
+#ifdef BSP_USING_SDK_SRC
+
+int usleep(unsigned long useconds)
+{
+    useconds /= 1000;
+    if (useconds == 0)
+        useconds = 1;
+
+    rt_thread_mdelay(useconds);
+
+    return 0;
+}
+#else
+
 typedef void (*usleep_hook_t) (unsigned long useconds);
 
 // note: should edit usleep.c in bsp to fix it
@@ -83,6 +97,8 @@ static int setup_zynq_usleep_hook(void)
     return 0;
 }
 INIT_BOARD_EXPORT(setup_zynq_usleep_hook);
+
+#endif // #ifndef BSP_USING_SDK_SRC end
 
 static void _assert_hook (const char *ex, const char *func, rt_size_t line)
 {
