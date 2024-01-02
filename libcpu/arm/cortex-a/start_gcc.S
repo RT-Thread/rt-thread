@@ -89,10 +89,10 @@ continue:
 #endif
 
 #ifdef SOC_ZYNQ_7000
-	/*invalidate scu*/
-	ldr	r7, =0xf8f0000c
-	ldr	r6, =0xffff
-	str	r6, [r7]
+    /*invalidate scu*/
+    ldr	r7, =0xf8f0000c
+    ldr	r6, =0xffff
+    str	r6, [r7]
 #endif
 
     /* invalid tlb before enable mmu */
@@ -109,11 +109,11 @@ continue:
     isb
 
 #ifdef SOC_ZYNQ_7000
-	/*set scu enable bit in scu*/
-	ldr	r7, =0xf8f00000
-	ldr	r0, [r7]
-	orr	r0, r0, #0x1
-	str	r0, [r7]
+    /*set scu enable bit in scu*/
+    ldr	r7, =0xf8f00000
+    ldr	r0, [r7]
+    orr	r0, r0, #0x1
+    str	r0, [r7]
 #endif
 
 #ifdef RT_USING_SMART

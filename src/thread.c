@@ -657,7 +657,6 @@ rt_err_t rt_thread_sleep(rt_tick_t tick)
         rt_spin_unlock(&(thread->spinlock));
         rt_hw_local_irq_enable(level);
         rt_exit_critical();
-        rt_hw_local_irq_enable(level);
 
         thread->error = -RT_EINTR;
 
@@ -672,7 +671,6 @@ rt_err_t rt_thread_sleep(rt_tick_t tick)
         rt_spin_unlock(&(thread->spinlock));
         rt_hw_local_irq_enable(level);
         rt_exit_critical();
-        rt_hw_local_irq_enable(level);
     }
 
     return err;
