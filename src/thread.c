@@ -673,8 +673,8 @@ rt_err_t rt_thread_sleep(rt_tick_t tick)
         rt_timer_start(&(thread->thread_timer));
 
         /* enable interrupt */
-        rt_hw_local_irq_enable(level);
         rt_spin_unlock(&(thread->spinlock));
+        rt_hw_local_irq_enable(level);
         rt_exit_critical();
 
         thread->error = -RT_EINTR;
@@ -687,8 +687,8 @@ rt_err_t rt_thread_sleep(rt_tick_t tick)
     }
     else
     {
-        rt_hw_local_irq_enable(level);
         rt_spin_unlock(&(thread->spinlock));
+        rt_hw_local_irq_enable(level);
         rt_exit_critical();
     }
 
@@ -756,8 +756,8 @@ rt_err_t rt_thread_delay_until(rt_tick_t *tick, rt_tick_t inc_tick)
         rt_timer_control(&(thread->thread_timer), RT_TIMER_CTRL_SET_TIME, &left_tick);
         rt_timer_start(&(thread->thread_timer));
 
-        rt_hw_local_irq_enable(level);
         rt_spin_unlock(&(thread->spinlock));
+        rt_hw_local_irq_enable(level);
         rt_exit_critical();
 
         rt_schedule();
