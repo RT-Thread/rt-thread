@@ -34,12 +34,15 @@ on:
           - "gcc"
           - "sourcery-riscv32-esp32"
       bsp_config:
-        description: 'Type a config you want mannual test in .config, like CONFIG_BSP_USING_I2C CONFIG_BSP_USING_WDT '
+        description: 'Type a config you want mannual test in .config, like: CONFIG_RT_USING_DEBUG=y
+CONFIG_RT_DEBUGING_COLOR=y
+CONFIG_RT_DEBUGING_CONTEXT=y'
         required: false
         type: string
-        default: 'CONFIG_RT_USING_NULL=y
-CONFIG_RT_USING_ZERO=y
-CONFIG_RT_USING_RANDOM=y'
+        default: 
+        'CONFIG_RT_USING_DEBUG=y
+CONFIG_RT_DEBUGING_COLOR=y
+CONFIG_RT_DEBUGING_CONTEXT=y'
       dist_flag:
         description: 'True to dist all bsp, False not dist'
         required: true
