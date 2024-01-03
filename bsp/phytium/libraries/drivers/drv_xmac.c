@@ -815,63 +815,21 @@ void FXmacLinkChange(void *arg)
         LOG_I("xmac_p->config.base_address is %p", xmac_p->config.base_address);
         ctrl = FXMAC_READREG32(xmac_p->config.base_address, FXMAC_PCS_AN_LP_OFFSET);
         link = (ctrl & FXMAC_PCS_LINK_PARTNER_NEXT_PAGE_STATUS) >> 15;
-        LOG_I("Link status is 0x%x", link);
+        
 
         switch (link)
         {
             case 0:
+                LOG_I("Link status is down");
                 link_status = FXMAC_LINKDOWN;
                 break;
             case 1:
+                LOG_I("Link status is up");
                 link_status = FXMAC_LINKUP;
                 break;
             default:
                 LOG_E("Link status is error 0x%x ", link);
                 return;
-        }
-
-        if (xmac_p->config.auto_neg == 0)
-        {
-            if (link_status == FXMAC_LINKUP)
-            {
-                LOG_I("No neg link up (%d/%s)", xmac_p->config.speed, xmac_p->config.duplex == 1 ? "FULL" : "Half");
-                xmac_p->link_status = FXMAC_NEGOTIATING;
-            }
-            else
-            {
-                LOG_I("No neg link down.");
-                xmac_p->link_status = FXMAC_LINKDOWN;
-            }
-        }
-
-        /* read sgmii reg to get status */
-        ctrl = FXMAC_READREG32(xmac_p->config.base_address, FXMAC_PCS_AN_LP_OFFSET);
-        speed_bit = (ctrl & FXMAC_PCS_AN_LP_SPEED) >> FXMAC_PCS_AN_LP_SPEED_OFFSET;
-        duplex = (ctrl & FXMAC_PCS_AN_LP_DUPLEX) >> FXMAC_PCS_AN_LP_DUPLEX_OFFSET;
-
-        if (speed_bit == 2)
-        {
-            speed = FXMAC_SPEED_1000;
-        }
-        else if (speed_bit == 1)
-        {
-            speed = FXMAC_SPEED_100;
-        }
-        else
-        {
-            speed = FXMAC_SPEED_10;
-        }
-
-        if (link_status != xmac_p->link_status)
-        {
-            LOG_I("Sgmii link_status has changed.");
-        }
-
-        /* add erase NCFGR config */
-        if ((speed != xmac_p->config.speed) || (duplex != xmac_p->config.duplex))
-        {
-            LOG_I("Sgmii link_status has changed.");
-            LOG_I("New speed is %d, duplex is %d", speed, duplex);
         }
 
         if (link_status == FXMAC_LINKUP)
@@ -885,7 +843,6 @@ void FXmacLinkChange(void *arg)
         else
         {
             xmac_p->link_status = link_status;
-            LOG_I("Change status is 0x%x", link_status);
         }
     }
 }
@@ -1514,13 +1471,13 @@ enum lwip_port_link_status eth_link_detect(FXmacOs *instance_p)
 
 static void ethernet_link_thread(void *Args)
 {
-    FXmacOs *pOsMac;
-    static int is_link_up = 0;
+    
     if (RT_NULL == Args)
     {
         return;
     }
 
+    FXmacOs *pOsMac;
     pOsMac = (FXmacOs *)Args;
 
     while (1)
@@ -1532,19 +1489,19 @@ static void ethernet_link_thread(void *Args)
         switch (eth_link_detect(pOsMac))
         {
             case ETH_LINK_UP:
-                if (is_link_up == 0)
+                if (pOsMac->is_link_up == 0)
                 {
-                    rt_kprintf("link up\n");
-                    is_link_up = 1;
+                    LOG_I("netif flag is link_up\n");
+                    pOsMac->is_link_up = 1;
                     eth_device_linkchange(&pOsMac->parent, RT_TRUE);
                 }
                 break;
             case ETH_LINK_DOWN:
             default:
-                if (is_link_up == 1)
+                if (pOsMac->is_link_up == 1)
                 {
-                    rt_kprintf("link down\n");
-                    is_link_up = 0;
+                    LOG_I("netif flag is link_down\n");
+                    pOsMac->is_link_up = 0;
                     eth_device_linkchange(&pOsMac->parent, RT_FALSE);
                 }
                 break;
