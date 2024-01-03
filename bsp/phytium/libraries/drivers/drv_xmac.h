@@ -118,7 +118,7 @@ typedef struct
 
     /* configuration */
     u32 config;
-
+    u32 is_link_up;
     rt_uint8_t hwaddr[FXMAX_MAX_HARDWARE_ADDRESS_LENGTH]; /* MAC address */
 
     struct rt_thread _link_thread; /* link detect thread */
