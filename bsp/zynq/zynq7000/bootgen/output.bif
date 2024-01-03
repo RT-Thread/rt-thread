@@ -1,6 +1,0 @@
-//arch = zynq; split = false; format = BIN
-the_ROM_image:
-{
-	[bootloader]fsbl.elf
-	..\rtthread-zynq7000.elf
-}
