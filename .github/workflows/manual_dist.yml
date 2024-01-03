@@ -41,6 +41,8 @@ on:
       dist_flag:
         description: 'True to dist all bsp, False not dist'
         required: true
+        type: boolean
+        default: false
 
 permissions:
   contents: read # to fetch code (actions/checkout)
