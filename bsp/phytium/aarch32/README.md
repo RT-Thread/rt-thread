@@ -28,8 +28,8 @@ https://github.com/RT-Thread/toolchains-ci/releases/tag/v1.7
 
 - 在tools/目录下新建gnu_gcc文件夹，将下载好的压缩包移至该文件夹下，并使用tar命令解压缩
 ```shell
-mkdir gun_gcc
-cd ./gun_gcc
+mkdir gnu_gcc
+cd ./gnu_gcc
 tar jxvf arm-linux-musleabi_for_x86_64-pc-linux-gnu_stable.tar.bz2
 ```
 
