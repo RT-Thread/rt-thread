@@ -842,7 +842,7 @@ void FXmacLinkChange(void *arg)
         }
         else
         {
-            xmac_p->link_status = link_status;
+            xmac_p->link_status = FXMAC_LINKDOWN;
         }
     }
 }
