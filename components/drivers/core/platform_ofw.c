@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2023, RT-Thread Development Team
+ * Copyright (c) 2006-2024, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -14,6 +14,8 @@
 #define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
+#include <drivers/ofw_io.h>
+#include <drivers/ofw_fdt.h>
 #include <drivers/platform.h>
 #include <drivers/core/dm.h>
 
@@ -37,9 +39,52 @@ static const struct rt_ofw_node_id platform_ofw_ids[] =
 #endif
     { /* sentinel */ }
 };
+
+static void ofw_device_rename(struct rt_device *dev)
+{
+    rt_uint32_t mask;
+    rt_uint64_t addr;
+    const char *dev_name = dev->parent.name;
+    struct rt_ofw_node *np = dev->ofw_node;
+
+#if RT_NAME_MAX > 0
+    if (dev_name[0] == '\0')
+    {
+        dev_name = RT_NULL;
+    }
+#endif
+
+    while (np->parent)
+    {
+        if (!rt_ofw_get_address(np, 0, &addr, RT_NULL))
+        {
+            const char *node_name = rt_fdt_node_name(np->full_name);
+            rt_size_t tag_len = strchrnul(node_name, '@') - node_name;
+
+            if (!rt_ofw_prop_read_u32(np, "mask", &mask))
+            {
+                rt_dm_dev_set_name(dev, dev_name ? "%lx.%x.%.*s:%s" : "%lx.%x.%.*s",
+                    addr, __rt_ffs(mask) - 1, tag_len, node_name, dev_name);
+            }
+            else
+            {
+                rt_dm_dev_set_name(dev, dev_name ? "%lx.%.*s:%s" : "%lx.%.*s",
+                    addr, tag_len, node_name, dev_name);
+            }
+
+            return;
+        }
+
+        rt_dm_dev_set_name(dev, dev_name ? "%s:%s" : "%s",
+                rt_fdt_node_name(np->full_name), dev_name);
+
+        np = np->parent;
+    }
+}
+
 static struct rt_platform_device *alloc_ofw_platform_device(struct rt_ofw_node *np)
 {
-    struct rt_platform_device *pdev = rt_platform_device_alloc(np->name);
+    struct rt_platform_device *pdev = rt_platform_device_alloc("");
 
     if (pdev)
     {
@@ -50,6 +95,8 @@ static struct rt_platform_device *alloc_ofw_platform_device(struct rt_ofw_node *
 #ifdef RT_USING_OFW
         pdev->parent.ofw_node = np;
 #endif
+
+        ofw_device_rename(&pdev->parent);
     }
     else
     {

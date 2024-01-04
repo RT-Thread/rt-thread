@@ -44,6 +44,8 @@ struct rt_platform_driver
 #endif
 
     rt_err_t (*probe)(struct rt_platform_device *pdev);
+    rt_err_t (*remove)(struct rt_platform_device *pdev);
+    rt_err_t (*shutdown)(struct rt_platform_device *pdev);
 };
 
 struct rt_platform_device *rt_platform_device_alloc(const char *name);

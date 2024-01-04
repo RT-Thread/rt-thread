@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2024, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -85,6 +85,41 @@ static const char *ofw_console_serial_find(char *dst_con, struct rt_ofw_node *np
     return ofw_name;
 }
 
+static int tty_device_compare(rt_device_t dev, void *data)
+{
+    rt_ubase_t *args_list;
+    char *dst_con;
+    const char *console, **ofw_name;
+    const struct rt_ofw_node_id *id;
+    struct rt_platform_device *pdev;
+    int *tty_idx, tty_id, tty_name_len;
+
+    pdev = rt_container_of(dev, struct rt_platform_device, parent);
+    id = pdev->id;
+
+    args_list = data;
+    tty_idx = (int *)args_list[0];
+    tty_id = args_list[1];
+    console = (const char *)args_list[2];
+    tty_name_len = args_list[3];
+    dst_con = (char *)args_list[4];
+    ofw_name = (const char **)args_list[5];
+
+    if (id && id->type[0] && !strncmp(id->type, console, tty_name_len))
+    {
+        if (*tty_idx == tty_id)
+        {
+            *ofw_name = ofw_console_serial_find(dst_con, pdev->parent.ofw_node);
+
+            return RT_EOK;
+        }
+
+        ++*tty_idx;
+    }
+
+    return -RT_EEMPTY;
+}
+
 static const char *ofw_console_tty_find(char *dst_con, const char *con)
 {
     const char *ofw_name = RT_NULL;
@@ -97,8 +132,7 @@ static const char *ofw_console_tty_find(char *dst_con, const char *con)
 
     if (platform_bus)
     {
-        rt_device_t dev;
-        rt_ubase_t level;
+        rt_ubase_t args_list[6];
         const char *console = con;
         int tty_idx = 0, tty_id = 0, tty_name_len;
 
@@ -119,27 +153,13 @@ static const char *ofw_console_tty_find(char *dst_con, const char *con)
             ++con;
         }
 
-        level = rt_spin_lock_irqsave(&platform_bus->spinlock);
-
-        rt_list_for_each_entry(dev, &platform_bus->dev_list, node)
-        {
-            struct rt_platform_device *pdev = rt_container_of(dev, struct rt_platform_device, parent);
-            const struct rt_ofw_node_id *id = pdev->id;
-
-            if (id && id->type[0] && !rt_strncmp(id->type, console, tty_name_len))
-            {
-                if (tty_idx == tty_id)
-                {
-                    ofw_name = ofw_console_serial_find(dst_con, pdev->parent.ofw_node);
-
-                    break;
-                }
-
-                ++tty_idx;
-            }
-        }
-
-        rt_spin_unlock_irqrestore(&platform_bus->spinlock, level);
+        args_list[0] = (rt_ubase_t)&tty_idx;
+        args_list[1] = tty_id;
+        args_list[2] = (rt_ubase_t)console;
+        args_list[3] = tty_name_len;
+        args_list[4] = (rt_ubase_t)dst_con;
+        args_list[5] = (rt_ubase_t)&ofw_name;
+        rt_bus_for_each_dev(platform_bus, &args_list, tty_device_compare);
     }
 
     return ofw_name;
@@ -462,6 +482,11 @@ static void ofw_node_dump_dts(struct rt_ofw_node *np, rt_bool_t sibling_too)
         {
             dts_put_depth(depth);
             rt_kputs("};\n");
+
+            if (!sibling_too && org_np == np)
+            {
+                break;
+            }
 
             while (np->parent && !np->sibling)
             {
