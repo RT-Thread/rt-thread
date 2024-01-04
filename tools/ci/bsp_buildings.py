@@ -1,5 +1,6 @@
 import os
 import shutil
+import re
 import multiprocessing
 
 
@@ -17,6 +18,7 @@ def run_cmd(cmd, output_info=True):
     print('\033[1;32m' + cmd + '\033[0m')
 
     output_str_list = []
+    res = 0
 
     if output_info:
         res = os.system(cmd + " > output.txt 2>&1")
@@ -34,7 +36,7 @@ def run_cmd(cmd, output_info=True):
     return output_str_list, res
 
 
-def build_bsp(bsp):
+def build_bsp(bsp, scons_args=''):
     """
     build bsp.
 
@@ -65,7 +67,8 @@ def build_bsp(bsp):
 
         nproc = multiprocessing.cpu_count()
         os.chdir(rtt_root)
-        __, res = run_cmd(f'scons -C bsp/{bsp} -j{nproc}', output_info=False)
+        cmd = f'scons -C bsp/{bsp} -j{nproc} {scons_args}'
+        __, res = run_cmd(cmd, output_info=False)
 
         if res != 0:
             success = False
@@ -87,6 +90,16 @@ def append_file(source_file, destination_file):
         with open(destination_file, 'a') as destination:
             for line in source:
                 destination.write(line)
+
+
+def check_scons_args(file_path):
+    args = []
+    with open(file_path, 'r') as file:
+        for line in file:
+            match = re.search(r'#\s*scons:\s*(.*)', line)
+            if match:
+                args.append(match.group(1).strip())
+    return ' '.join(args)
 
 
 def build_bsp_attachconfig(bsp, attach_file):
@@ -111,7 +124,9 @@ def build_bsp_attachconfig(bsp, attach_file):
 
     append_file(attach_path, config_file)
 
-    res = build_bsp(bsp)
+    scons_args = check_scons_args(attach_path)
+
+    res = build_bsp(bsp, scons_args)
 
     shutil.copyfile(config_bacakup, config_file)
     os.remove(config_bacakup)
