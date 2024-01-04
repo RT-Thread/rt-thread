@@ -48,7 +48,7 @@ def build_bsp(bsp, scons_args=''):
     pkgs --list
 
     cd {rtt_root}
-    scons -C bsp/{bsp} -j{nproc}
+    scons -C bsp/{bsp} -j{nproc} {scons_args}
 
     cd {rtt_root}/bsp/{bsp}
     scons -c > /dev/null
