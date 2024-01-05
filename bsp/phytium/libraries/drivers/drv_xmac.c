@@ -919,7 +919,7 @@ enum lwip_port_link_status FXmacLwipPortLinkDetect(FXmacOs *instance_p)
             if ((phy_link_status == FXMAC_LINKUP) && FXmacPhyAutonegStatus(xmac_p, xmac_p->phy_address))
             {
                 err_t phy_ret;
-                phy_ret = FXmacPhyInit(xmac_p, xmac_p->config.speed, xmac_p->config.duplex, xmac_p->config.auto_neg);
+                phy_ret = FXmacPhyInit(xmac_p, xmac_p->config.speed, xmac_p->config.duplex, xmac_p->config.auto_neg,XMAC_PHY_RESET_DISABLE);
 
                 if (phy_ret != FT_SUCCESS)
                 {
@@ -953,7 +953,7 @@ enum lwip_port_link_status FXmacPhyReconnect(FXmacOs *instance_p)
         {
             /* auto negotiation again*/
             err_t phy_ret;
-            phy_ret = FXmacPhyInit(xmac_p, xmac_p->config.speed, xmac_p->config.duplex, xmac_p->config.auto_neg);
+            phy_ret = FXmacPhyInit(xmac_p, xmac_p->config.speed, xmac_p->config.duplex, xmac_p->config.auto_neg,XMAC_PHY_RESET_DISABLE);
             if (phy_ret != FT_SUCCESS)
             {
                 LOG_I("FXmacPhyInit is error.");
@@ -1154,7 +1154,7 @@ FError FXmacOsInit(FXmacOs *instance_p)
     }
 
     /* initialize phy */
-    status = FXmacPhyInit(xmac_p, xmac_p->config.speed, xmac_p->config.duplex, xmac_p->config.auto_neg);
+    status = FXmacPhyInit(xmac_p, xmac_p->config.speed, xmac_p->config.duplex, xmac_p->config.auto_neg,XMAC_PHY_RESET_ENABLE);
     if (status != FT_SUCCESS)
     {
         LOG_W("FXmacPhyInit is error.");

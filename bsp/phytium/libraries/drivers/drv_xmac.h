@@ -43,6 +43,9 @@ extern "C" {
 
 #define FXMAX_MAX_HARDWARE_ADDRESS_LENGTH 6
 
+#define XMAC_PHY_RESET_ENABLE 1
+#define XMAC_PHY_RESET_DISABLE 0
+
 /* configuration */
 #define FXMAC_OS_CONFIG_JUMBO  BIT(0)
 #define FXMAC_OS_CONFIG_MULTICAST_ADDRESS_FILITER  BIT(1) /* Allow multicast address filtering  */
