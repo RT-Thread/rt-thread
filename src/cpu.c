@@ -232,11 +232,8 @@ void rt_cpus_lock_status_restore(struct rt_thread *thread)
         {
             rt_schedule_insert_thread(pcpu->current_thread);
         }
-        rt_put_thread_struct(pcpu->current_thread);
-
     }
     pcpu->current_thread = thread;
-    rt_get_thread_struct(thread);
 }
 RTM_EXPORT(rt_cpus_lock_status_restore);
 #endif /* RT_USING_SMP */
