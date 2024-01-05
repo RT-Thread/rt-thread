@@ -85,6 +85,35 @@ SECTIONS
     }
     __data_end = .;
 
+    . = ALIGN(8);
+    .tdata :
+    {
+         __tdata_start = .;
+        *(.tdata .tdata.* .gnu.linkonce.td.*)
+        __tdata_end = .;
+    }
+    __tdata_source = LOADADDR(.tdata);
+    __tdata_size = SIZEOF(.tdata);
+
+    /*
+     * TLS zeroed data is relocated as if it immediately followed
+     * the tdata values. However, the linker 'magically' erases the
+     * memory allocation so that no ROM is consumed by this
+     * section
+     */
+    .tbss :
+    {
+        *(.tbss .tbss.* .gnu.linkonce.tb.*)
+        *(.tcommon)
+        __tbss_end = .;
+    }
+    __tls_size = __tbss_end - __tdata_start;
+    __tbss_size = __tls_size - __tdata_size;
+    PROVIDE( __tbss_offset = ADDR(.tbss) - ADDR(.tdata) );
+    PROVIDE( __tls_align = MAX(ALIGNOF(.tdata), ALIGNOF(.tbss)) );
+    PROVIDE( __arm32_tls_tcb_offset = MAX(8, __tls_align) );
+    PROVIDE( __arm64_tls_tcb_offset = MAX(16, __tls_align) );
+
     . = ALIGN(4);
     __bss_start = .;
     .bss       :

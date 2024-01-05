@@ -49,7 +49,9 @@ if PLATFORM == 'gcc':
     STRIP   = PREFIX + 'strip'
     CFPFLAGS = ' -msoft-float'
     AFPFLAGS = ' -mfloat-abi=softfp -mfpu=neon'
-    DEVICE   = ' -march=armv7-a -mtune=cortex-a7 -ftree-vectorize -ffast-math -funwind-tables -fno-strict-aliasing'
+    DEVICE = ''
+    #DEVICE += ' --specs=picolibc.specs --picolibc-prefix=' + EXEC_PATH + '/../'
+    DEVICE += ' -march=armv7-a -mtune=cortex-a7 -ftree-vectorize -ffast-math -funwind-tables -fno-strict-aliasing'
 
     CXXFLAGS= DEVICE + CFPFLAGS + ' -Wall -fdiagnostics-color=always'
     CFLAGS  = DEVICE + CFPFLAGS + ' -Wall -Wno-cpp -std=gnu99 -D_POSIX_SOURCE -fdiagnostics-color=always'

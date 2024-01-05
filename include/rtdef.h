@@ -73,6 +73,13 @@
 #endif /* defined(RT_USING_SIGNALS) || defined(RT_USING_SMART) */
 #endif /* RT_USING_NANO */
 
+#ifdef RT_USING_PICOLIBC
+#include <picolibc.h>
+#ifdef PICOLIBC_TLS
+#include <picotls.h>
+#endif
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -1125,6 +1132,10 @@ struct rt_thread
 #ifdef RT_USING_HW_STACK_GUARD
     void *stack_buf;
 #endif
+#endif
+
+#ifdef PICOLIBC_TLS
+    void *tls;
 #endif
 
     rt_atomic_t                 ref_count;

@@ -288,6 +288,9 @@ void rt_schedule(void)
                 rt_schedule_remove_thread(to_thread);
                 to_thread->stat = RT_THREAD_RUNNING | (to_thread->stat & ~RT_THREAD_STAT_MASK);
 
+#ifdef PICOLIBC_TLS
+                _set_tls(to_thread->tls);
+#endif
                 /* switch to new thread */
                 LOG_D("[%d]switch to priority#%d "
                          "thread:%.*s(sp:0x%08x), "
