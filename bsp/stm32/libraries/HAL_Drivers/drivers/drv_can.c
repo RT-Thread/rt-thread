@@ -17,6 +17,7 @@
  */
 
 #include "drv_can.h"
+
 #ifdef BSP_USING_CAN
 
 #define LOG_TAG    "drv_can"

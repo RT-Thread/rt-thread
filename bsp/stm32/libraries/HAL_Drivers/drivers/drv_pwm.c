@@ -10,6 +10,7 @@
  */
 
 #include <board.h>
+#include <rtthread.h>
 
 #ifdef BSP_USING_PWM
 #include "drv_config.h"

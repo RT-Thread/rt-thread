@@ -21,7 +21,6 @@ extern "C" {
 
 #include <board.h>
 #include <rtdevice.h>
-#include <rtthread.h>
 
 #define BS1SHIFT        16
 #define BS2SHIFT        20
