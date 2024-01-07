@@ -221,7 +221,7 @@ static rt_int8_t stm32_pin_read(rt_device_t dev, rt_base_t pin)
 {
     GPIO_TypeDef *gpio_port;
     uint16_t gpio_pin;
-    GPIO_PinState state = PIN_LOW;
+    GPIO_PinState state = GPIO_PIN_RESET;
 
     if (PIN_PORT(pin) < PIN_STPORT_MAX)
     {
