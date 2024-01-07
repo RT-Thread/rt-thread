@@ -14,7 +14,7 @@
 #ifndef __DRV_GPIO_H__
 #define __DRV_GPIO_H__
 
-#include <drv_common.h>
+#include <rtdevice.h>
 #include <board.h>
 
 #ifdef __cplusplus
