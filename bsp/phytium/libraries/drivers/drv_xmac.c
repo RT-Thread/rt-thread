@@ -815,7 +815,6 @@ void FXmacLinkChange(void *arg)
         LOG_I("xmac_p->config.base_address is %p", xmac_p->config.base_address);
         ctrl = FXMAC_READREG32(xmac_p->config.base_address, FXMAC_PCS_AN_LP_OFFSET);
         link = (ctrl & FXMAC_PCS_LINK_PARTNER_NEXT_PAGE_STATUS) >> 15;
-        
 
         switch (link)
         {
@@ -1471,7 +1470,7 @@ enum lwip_port_link_status eth_link_detect(FXmacOs *instance_p)
 
 static void ethernet_link_thread(void *Args)
 {
-    
+
     if (RT_NULL == Args)
     {
         return;
