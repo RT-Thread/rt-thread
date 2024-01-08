@@ -4,8 +4,6 @@
 /* Automatically generated file; DO NOT EDIT. */
 /* RT-Thread Configuration */
 
-#define BSP_DIR "$(BSP_ROOT)"
-
 /* RT-Thread Kernel */
 
 #define RT_NAME_MAX 8
@@ -166,8 +164,6 @@
 
 /* tools packages */
 
-#define PKG_USING_VCONSOLE
-#define PKG_USING_VCONSOLE_LATEST_VERSION
 
 /* system packages */
 
@@ -182,13 +178,6 @@
 
 /* Micrium: Micrium software products porting for RT-Thread */
 
-#define PKG_USING_CHERRYUSB
-#define PKG_CHERRYUSB_DEVICE
-#define PKG_CHERRYUSB_DEVICE_FS
-#define PKG_CHERRYUSB_DEVICE_CH32
-#define PKG_CHERRYUSB_DEVICE_CH32_CH32V307
-#define PKG_CHERRYUSB_DEVICE_CDC
-#define PKG_USING_CHERRYUSB_LATEST_VERSION
 
 /* peripheral libraries and drivers */
 
@@ -265,7 +254,7 @@
 #define BSP_USING_GPIO
 #define BSP_USING_UART
 #define BSP_USING_UART1
-#define LSI_VALUE 40000
+#define LSI_VALUE 39000
 
 /* Board extended module Drivers */
 
