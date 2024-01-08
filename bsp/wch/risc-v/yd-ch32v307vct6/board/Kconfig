@@ -1,0 +1,574 @@
+menu "Hardware Drivers Config"
+
+config SOC_CH32V307VC
+    bool
+    select SOC_RISCV_SERIES_CH32V3
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+    default y
+
+menu "Onboard Peripheral Drivers"
+endmenu
+
+menu "On-chip Peripheral Drivers"
+    config BSP_USING_GPIO
+        bool "Enable GPIO"
+        select RT_USING_PIN
+        default y
+
+    menuconfig BSP_USING_UART
+        bool "Enable UART"
+        select RT_USING_SERIAL
+        default n
+
+        if BSP_USING_UART
+            config BSP_USING_UART1
+                bool "Enable UART1"
+                default n
+
+            config BSP_USING_UART2
+                bool "Enable UART2"
+                default n
+
+            config BSP_USING_UART3
+                bool "Enable UART3"
+                default n
+
+            config BSP_USING_UART4
+                bool "Enable UART4"
+                default n
+
+            config BSP_USING_UART5
+                bool "Enable UART5"
+                default n
+
+            config BSP_USING_UART6
+                bool "Enable UART6"
+                default n
+
+            config BSP_USING_UART7
+                bool "Enable UART7"
+                default n
+
+            config BSP_USING_UART8
+                bool "Enable UART8"
+                default n
+        endif
+
+    menuconfig BSP_USING_ADC
+        bool "Enable ADC"
+        select RT_USING_ADC
+        default n
+
+        if BSP_USING_ADC
+            config BSP_USING_ADC1
+                bool "Enable ADC1"
+                default n
+
+            config BSP_USING_ADC2
+                bool "Enable ADC2"
+                default n
+
+            config ADC_CHANNEL_16
+                bool "Enable ADC CHANNEL 16 (inside temperature)"
+                default n
+
+            config ADC_CHANNEL_17
+                bool "Enable ADC CHANNEL 17 (inside Verf)"
+                default n
+        endif
+
+    menuconfig BSP_USING_DAC
+        bool "Enable DAC"
+        select RT_USING_DAC
+        default n
+
+        if BSP_USING_DAC
+            config BSP_USING_DAC_CHANNEL1
+                bool "Enable DAC CHANNEL1"
+                default n
+            config BSP_USING_DAC_CHANNEL2
+                bool "Enable DAC CHANNEL2"
+                default n
+        endif
+
+    menuconfig BSP_USING_SOFT_I2C
+        bool "Enable I2C Bus"
+        select RT_USING_I2C
+        select RT_USING_I2C_BITOPS
+        select RT_USING_PIN
+        default n
+
+        if BSP_USING_SOFT_I2C
+            config BSP_USING_I2C1
+                bool "Enable I2C1 Bus (software simulation)"
+                default n
+
+                if BSP_USING_I2C1
+                    comment "Notice: PB10 --> 26; PB11 --> 27"
+
+                    config BSP_I2C1_SCL_PIN
+                        int "i2c1 SCL pin number"
+                        range 0 79
+                        default 26
+                    config BSP_I2C1_SDA_PIN
+                        int "i2c1 SDA pin number"
+                        range 0 79
+                        default 27
+                endif
+
+            config BSP_USING_I2C2
+                bool "Enable I2C2 Bus (software simulation)"
+                default n
+
+                if BSP_USING_I2C2
+                    comment "Notice: PC1 --> 33; PC0 --> 32"
+                    config BSP_I2C2_SCL_PIN
+                        int "i2c2 SCL pin number"
+                        range 0 79
+                        default 32
+                    config BSP_I2C2_SDA_PIN
+                        int "i2c2 SDA pin number"
+                        range 0 79
+                        default 33
+                endif
+        endif
+
+    menuconfig BSP_USING_SPI
+        bool "Enable SPI"
+        select RT_USING_SPI
+
+        if BSP_USING_SPI
+            config BSP_USING_SPI1
+                bool "Enable SPI1"
+                default n
+
+            config BSP_USING_SPI2
+                bool "Enable SPI2"
+                default n
+
+            config BSP_USING_SPI3
+                bool "Enable SPI3"
+                default n
+
+            if  BSP_USING_SPI3
+                config BSP_USING_SPI_FLASH
+                bool "Enable SPI Flash"
+                default n
+            endif
+
+        endif
+
+    menuconfig BSP_USING_SOFT_SPI
+        bool "Enable SOFT SPI"
+        select RT_USING_SPI_BITOPS
+
+        if BSP_USING_SOFT_SPI
+            config BSP_USING_SOFT_SPI1
+                bool "Enable SSPI1 Bus (User SPI)"
+                default n
+                if BSP_USING_SOFT_SPI1
+                    comment "Notice: PB9 --> 25; PB8 --> 24; PB7 --> 23"
+                    config BSP_S_SPI1_SCK_PIN
+                        int "sspi1 SCL pin number"
+                        range 1 79
+                        default 25
+                    config BSP_S_SPI1_MOSI_PIN
+                        int "sspi1 MISO pin number"
+                        range 1 79
+                        default 24
+                    config BSP_S_SPI1_MISO_PIN
+                        int "sspi1 MOSI pin number"
+                        range 1 79
+                        default 23
+                endif
+
+            config BSP_USING_SOFT_SPI2
+                bool "Enable SSPI2 Bus (soft SPI)"
+                default n
+                if BSP_USING_SOFT_SPI2
+                    comment "Notice: PE0 --> 64; PE1 --> 65; PE2 --> 66"
+                    config BSP_S_SPI2_SCK_PIN
+                        int "sspi2 SCL pin number"
+                        range 1 79
+                        default 64
+                    config BSP_S_SPI2_MOSI_PIN
+                        int "sspi2 MISO pin number"
+                        range 1 79
+                        default 65
+                    config BSP_S_SPI2_MISO_PIN
+                        int "sspi2 MOSI pin number"
+                        range 1 79
+                        default 66
+                endif
+        endif
+
+    menuconfig BSP_USING_RTC
+        bool "Enable RTC"
+        select RT_USING_RTC
+        default n
+
+        if BSP_USING_RTC
+            choice
+                prompt "Using clock for RTC"
+                default BSP_USING_RTC_LSI
+                
+                config BSP_USING_RTC_LSI
+                    bool "LSI"
+                    
+                config BSP_USING_RTC_LSE
+                    bool "LSE"
+                    
+                config BSP_USING_RTC_HSE_128
+                    bool "HSE div 128"
+                    
+            endchoice
+        endif
+
+    config LSI_VALUE
+        int
+        default 39000
+
+    config BSP_USING_IWDT
+        bool "Enable IWDT"
+        select RT_USING_WDT
+        default n
+
+    menuconfig BSP_USING_CAN
+            bool "Enable CAN"
+            default n
+            select RT_USING_CAN
+            if BSP_USING_CAN
+                config BSP_USING_CAN1
+                    bool "Using CAN1"
+                    default n
+                config BSP_USING_CAN2
+                    bool "Using CAN2"
+                    default n
+            endif
+
+    config BSP_USING_TIM
+        bool "Using TIMx"
+        default n
+
+        if BSP_USING_TIM
+            config BSP_USING_HWTIMER
+                bool
+                select RT_USING_HWTIMER
+                default n
+
+            config BSP_USING_PWM
+                bool
+                select RT_USING_PWM
+                default n
+
+            config BSP_USING_TIM1
+                bool "using TIM1"
+                default n
+
+                if BSP_USING_TIM1
+                    config BSP_USING_TIM1_HWTIMER
+                        bool "Using TIM1 as hwtimer mode"
+                        select BSP_USING_HWTIMER
+
+                    config BSP_USING_TIM1_PWM
+                        bool "Using TIM1 as PWM mode"
+                        select BSP_USING_PWM
+
+                    if BSP_USING_TIM1_PWM
+                        config BSP_USING_TIM1_PWM_CH1
+                            bool "Using TIM1 channel 1"
+                            default n
+
+                        config BSP_USING_TIM1_PWM_CH2
+                            bool "Using TIM1 channel 2"
+                            default n
+
+                        config BSP_USING_TIM1_PWM_CH3
+                            bool "Using TIM1 channel 3"
+
+                        config BSP_USING_TIM1_PWM_CH4
+                            bool "Using TIM1 channel 4"
+                    endif
+
+                    if BSP_USING_TIM1_HWTIMER && BSP_USING_TIM1_PWM
+                        comment "BSP_USING_TIM1_HWTIMER and BSP_USING_TIM1_PWM can only be chosen for one!"
+                    endif
+
+                endif
+
+            config BSP_USING_TIM2
+                    bool "Using TIM2"
+                    default n
+
+                if BSP_USING_TIM2
+                    config BSP_USING_TIM2_HWTIMER
+                        bool "Using TIM2 as hwtimer mode"
+                        select BSP_USING_HWTIMER
+
+                    config BSP_USING_TIM2_PWM
+                        bool "Using TIM2 as PWM mode"
+                        select BSP_USING_PWM
+
+                    if BSP_USING_TIM2_PWM
+                        config BSP_USING_TIM2_PWM_CH1
+                            bool "Using TIM2 channel 1"
+                            default n
+
+                        config BSP_USING_TIM2_PWM_CH2
+                            bool "Using TIM2 channel 2"
+                            default n
+
+                        config BSP_USING_TIM2_PWM_CH3
+                            bool "Using TIM2 channel 3"
+
+                        config BSP_USING_TIM2_PWM_CH4
+                            bool "Using TIM2 channel 4"
+                    endif
+
+                    if BSP_USING_TIM2_HWTIMER && BSP_USING_TIM2_PWM
+                        comment "BSP_USING_TIM2_HWTIMER and BSP_USING_TIM2_PWM can only be chosen for one!"
+                    endif
+
+                endif
+
+            config BSP_USING_TIM3
+                    bool "Using TIM3"
+                    default n
+
+                if BSP_USING_TIM3
+                    config BSP_USING_TIM3_HWTIMER
+                        bool "Using TIM3 as hwtimer mode"
+                        select BSP_USING_HWTIMER
+
+                    config BSP_USING_TIM3_PWM
+                        bool "Using TIM3 as PWM mode"
+                        select BSP_USING_PWM
+
+                    if BSP_USING_TIM3_PWM
+                        config BSP_USING_TIM3_PWM_CH1
+                            bool "Using TIM3 channel 1"
+                            default n
+
+                        config BSP_USING_TIM3_PWM_CH2
+                            bool "Using TIM3 channel 2"
+                            default n
+
+                        config BSP_USING_TIM3_PWM_CH3
+                            bool "Using TIM3 channel 3"
+
+                        config BSP_USING_TIM3_PWM_CH4
+                            bool "Using TIM3 channel 4"
+                    endif
+
+                    if BSP_USING_TIM3_HWTIMER && BSP_USING_TIM3_PWM
+                        comment "BSP_USING_TIM3_HWTIMER and BSP_USING_TIM3_PWM can only be chosen for one!"
+                    endif
+
+                endif
+
+            config BSP_USING_TIM4
+                    bool "Using TIM4"
+                    default n
+
+                if BSP_USING_TIM4
+                    config BSP_USING_TIM4_HWTIMER
+                        bool "Using TIM4 as hwtimer mode"
+                        select BSP_USING_HWTIMER
+
+                    config BSP_USING_TIM4_PWM
+                        bool "Using TIM4 as PWM mode"
+                        select BSP_USING_PWM
+
+                    if BSP_USING_TIM4_PWM
+                        config BSP_USING_TIM4_PWM_CH1
+                            bool "Using TIM4 channel 1"
+                            default n
+
+                        config BSP_USING_TIM4_PWM_CH2
+                            bool "Using TIM4 channel 2"
+                            default n
+
+                        config BSP_USING_TIM4_PWM_CH3
+                            bool "Using TIM4 channel 3"
+
+                        config BSP_USING_TIM4_PWM_CH4
+                            bool "Using TIM4 channel 4"
+                    endif
+
+                    if BSP_USING_TIM4_HWTIMER && BSP_USING_TIM4_PWM
+                        comment "BSP_USING_TIM4_HWTIMER and BSP_USING_TIM4_PWM can only be chosen for one!"
+                    endif
+
+                endif
+
+            config BSP_USING_TIM5
+                    bool "Using TIM5"
+                    default n
+
+                if BSP_USING_TIM5
+                    config BSP_USING_TIM5_HWTIMER
+                        bool "Using TIM5 as hwtimer mode"
+                        select BSP_USING_HWTIMER
+
+                    config BSP_USING_TIM5_PWM
+                        bool "Using TIM5 as PWM mode"
+                        select BSP_USING_PWM
+
+                    if BSP_USING_TIM5_PWM
+                        config BSP_USING_TIM5_PWM_CH1
+                            bool "Using TIM5 channel 1"
+                            default n
+
+                        config BSP_USING_TIM5_PWM_CH2
+                            bool "Using TIM5 channel 2"
+                            default n
+
+                        config BSP_USING_TIM5_PWM_CH3
+                            bool "Using TIM5 channel 3"
+
+                        config BSP_USING_TIM5_PWM_CH4
+                            bool "Using TIM5 channel 4"
+                    endif
+
+                    if BSP_USING_TIM5_HWTIMER && BSP_USING_TIM5_PWM
+                        comment "BSP_USING_TIM5_HWTIMER and BSP_USING_TIM5_PWM can only be chosen for one!"
+                    endif
+
+                endif
+
+            config BSP_USING_TIM6
+                    bool "Using TIM6"
+                    default n
+
+                if BSP_USING_TIM6
+                    config BSP_USING_TIM6_HWTIMER
+                        bool "Using TIM6 as hwtimer mode"
+                        select BSP_USING_HWTIMER
+                endif
+
+            config BSP_USING_TIM7
+                    bool "Using TIM7"
+                    default n
+
+                if BSP_USING_TIM7
+                    config BSP_USING_TIM7_HWTIMER
+                        bool "Using TIM7 as hwtimer mode"
+                        select BSP_USING_HWTIMER
+                endif
+
+            config BSP_USING_TIM8
+                    bool "Using TIM8"
+                    default n
+
+                if BSP_USING_TIM8
+                    config BSP_USING_TIM8_HWTIMER
+                        bool "Using TIM8 as hwtimer mode"
+                        select BSP_USING_HWTIMER
+
+                    config BSP_USING_TIM8_PWM
+                        bool "Using TIM8 as PWM mode"
+                        select BSP_USING_PWM
+
+                    if BSP_USING_TIM8_PWM
+                        config BSP_USING_TIM8_PWM_CH1
+                            bool "Using TIM8 channel 1"
+                            default n
+
+                        config BSP_USING_TIM8_PWM_CH2
+                            bool "Using TIM8 channel 2"
+                            default n
+
+                        config BSP_USING_TIM8_PWM_CH3
+                            bool "Using TIM8 channel 3"
+
+                        config BSP_USING_TIM8_PWM_CH4
+                            bool "Using TIM8 channel 4"
+                    endif
+
+                    if BSP_USING_TIM8_HWTIMER && BSP_USING_TIM8_PWM
+                        comment "BSP_USING_TIM8_HWTIMER and BSP_USING_TIM8_PWM can only be chosen for one!"
+                    endif
+
+                endif
+
+            config BSP_USING_TIM9
+                    bool "Using TIM9"
+                    default n
+
+                if BSP_USING_TIM9
+                    config BSP_USING_TIM9_HWTIMER
+                        bool "Using TIM9 as hwtimer mode"
+                        select BSP_USING_HWTIMER
+
+                    config BSP_USING_TIM9_PWM
+                        bool "Using TIM9 as PWM mode"
+                        select BSP_USING_PWM
+
+                    if BSP_USING_TIM9_PWM
+                        config BSP_USING_TIM9_PWM_CH1
+                            bool "Using TIM9 channel 1"
+                            default n
+
+                        config BSP_USING_TIM9_PWM_CH2
+                            bool "Using TIM9 channel 2"
+                            default n
+
+                        config BSP_USING_TIM9_PWM_CH3
+                            bool "Using TIM9 channel 3"
+
+                        config BSP_USING_TIM9_PWM_CH4
+                            bool "Using TIM9 channel 4"
+                    endif
+
+                    if BSP_USING_TIM9_HWTIMER && BSP_USING_TIM9_PWM
+                        comment "BSP_USING_TIM9_HWTIMER and BSP_USING_TIM9_PWM can only be chosen for one!"
+                    endif
+
+                endif
+
+            config BSP_USING_TIM10
+                    bool "Using TIM10"
+                    default n
+
+                if BSP_USING_TIM10
+                    config BSP_USING_TIM10_HWTIMER
+                        bool "Using TIM10 as hwtimer mode"
+                        select BSP_USING_HWTIMER
+
+                    config BSP_USING_TIM10_PWM
+                        bool "Using TIM10 as PWM mode"
+                        select BSP_USING_PWM
+
+                    if BSP_USING_TIM10_PWM
+                        config BSP_USING_TIM10_PWM_CH1
+                            bool "Using TIM10 channel 1"
+                            default n
+
+                        config BSP_USING_TIM10_PWM_CH2
+                            bool "Using TIM10 channel 2"
+                            default n
+
+                        config BSP_USING_TIM10_PWM_CH3
+                            bool "Using TIM10 channel 3"
+
+                        config BSP_USING_TIM10_PWM_CH4
+                            bool "Using TIM10 channel 4"
+                    endif
+
+                    if BSP_USING_TIM10_HWTIMER && BSP_USING_TIM10_PWM
+                        comment "BSP_USING_TIM10_HWTIMER and BSP_USING_TIM10_PWM can only be chosen for one!"
+                    endif
+
+                endif
+
+        endif
+
+endmenu
+
+menu "Board extended module Drivers"
+
+endmenu
+
+endmenu
+
