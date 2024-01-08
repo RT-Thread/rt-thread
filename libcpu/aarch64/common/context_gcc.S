@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2024, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -7,6 +7,7 @@
  * Date           Author       Notes
  * 2021-05-18     Jesven       the first version
  * 2023-06-24     WangXiaoyao  Support backtrace for user thread
+ * 2024-01-06     Shell        Fix barrier on irq_disable/enable
  */
 
 #ifndef __ASSEMBLY__
@@ -36,8 +37,8 @@ int rt_hw_cpu_id(void)
 .weak rt_hw_cpu_id
 .type rt_hw_cpu_id, @function
 rt_hw_cpu_id:
-   mrs x0, tpidr_el1           /* MPIDR_EL1: Multi-Processor Affinity Register */
-   ret
+    mrs x0, tpidr_el1
+    ret
 
 /*
 void rt_hw_set_process_id(size_t id)
@@ -314,7 +315,8 @@ rt_hw_interrupt_is_disabled:
 rt_hw_interrupt_disable:
     MRS     X0, DAIF
     MSR     DAIFSet, #3
-    DSB     SY
+    DSB     NSH
+    ISB
     RET
 
 /*
@@ -322,7 +324,8 @@ rt_hw_interrupt_disable:
  */
 .globl rt_hw_interrupt_enable
 rt_hw_interrupt_enable:
-    DSB     SY
+    ISB
+    DSB     NSH
     AND     X0, X0, #0xc0
     MRS     X1, DAIF
     BIC     X1, X1, #0xc0
@@ -580,4 +583,4 @@ START_POINT(vector_serror)
     STP     X0, X1, [SP, #-0x10]!
     BL      rt_hw_trap_serror
     b .
-START_POINT_END(vector_exception)
+START_POINT_END(vector_serror)

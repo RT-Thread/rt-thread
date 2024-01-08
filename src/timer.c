@@ -658,6 +658,8 @@ void rt_timer_check(void)
     rt_base_t level;
     rt_list_t list;
 
+    RT_ASSERT(rt_interrupt_get_nest() > 0);
+
 #ifdef RT_USING_SMP
     if (rt_hw_cpu_id() != 0)
     {
