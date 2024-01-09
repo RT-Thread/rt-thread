@@ -218,7 +218,7 @@ static rt_err_t tmra_pwm_enable(struct rt_device_pwm *device, struct rt_pwm_conf
     rt_uint32_t compare_value = TMRA_GetCompareValue(TMRAx, configuration->channel) + 1;
     if (configuration->complementary)
     {
-        return RT_EPERM;
+        return -RT_EPERM;
     }
 
     tmra_duyt100or0_output(TMRAx, configuration->channel, compare_value);
@@ -649,7 +649,7 @@ static rt_err_t _tmra_pwm_control(struct rt_device_pwm *device, int cmd, void *a
 {
     struct rt_pwm_configuration *configuration = (struct rt_pwm_configuration *)arg;
 
-    if (!configuration->channel)    return RT_EINVAL;
+    if (!configuration->channel)    return -RT_EINVAL;
 
     configuration->channel = (configuration->channel - 1) % TMRA_CHANNEL_NUM_MAX;
 
@@ -668,7 +668,7 @@ static rt_err_t _tmra_pwm_control(struct rt_device_pwm *device, int cmd, void *a
     case PWM_CMD_SET_PULSE:
         return tmra_pwm_set_pulse(device, configuration);
     default:
-        return RT_EINVAL;
+        return -RT_EINVAL;
     }
 }
 
@@ -797,7 +797,7 @@ static rt_err_t tmr4_pwm_enable(struct rt_device_pwm *device, struct rt_pwm_conf
 
     if (configuration->complementary)
     {
-        return RT_EPERM;
+        return -RT_EPERM;
     }
 
     if (enable)
@@ -1044,7 +1044,7 @@ static rt_err_t _tmr4_pwm_control(struct rt_device_pwm *device, int cmd, void *a
 {
     struct rt_pwm_configuration *configuration = (struct rt_pwm_configuration *)arg;
 
-    if (!configuration->channel) return RT_EPERM;
+    if (!configuration->channel) return -RT_EPERM;
 
     configuration->channel = (configuration->channel - 1) % TMR4_CHANNEL_NUM_MAX;
 
@@ -1063,7 +1063,7 @@ static rt_err_t _tmr4_pwm_control(struct rt_device_pwm *device, int cmd, void *a
     case PWM_CMD_SET_PULSE:
         return tmr4_pwm_set_pulse(device, configuration);
     default:
-        return RT_EINVAL;
+        return -RT_EINVAL;
     }
 }
 
@@ -1246,7 +1246,7 @@ static rt_err_t tmr6_pwm_enable(struct rt_device_pwm *device, struct rt_pwm_conf
 
     if (configuration->complementary)
     {
-        return RT_EPERM;
+        return -RT_EPERM;
     }
 
     compare_value = TMR6_GetCompareValue(TMR6x, configuration->channel) + 1;
@@ -1488,7 +1488,7 @@ static rt_err_t _tmr6_pwm_control(struct rt_device_pwm *device, int cmd, void *a
 {
     struct rt_pwm_configuration *configuration = (struct rt_pwm_configuration *)arg;
 
-    if (!configuration->channel)    return RT_EINVAL;
+    if (!configuration->channel)    return -RT_EINVAL;
 
     configuration->channel = (configuration->channel - 1) % TMR6_CHANNEL_NUM_MAX;
 
@@ -1507,7 +1507,7 @@ static rt_err_t _tmr6_pwm_control(struct rt_device_pwm *device, int cmd, void *a
     case PWM_CMD_SET_PULSE:
         return tmr6_pwm_set_pulse(device, configuration);
     default:
-        return RT_EINVAL;
+        return -RT_EINVAL;
     }
 }
 

@@ -333,7 +333,7 @@ static int I2C_Master_Transmit_DMA(struct hc32_i2c *i2c_obj, struct rt_i2c_msg *
         }
         if (timeCnt >= i2c_obj->config->timeout)
         {
-            return RT_ETIMEOUT;
+            return -RT_ETIMEOUT;
         }
     }
     /* wait last I2C data transfer completed */
@@ -345,7 +345,7 @@ static int I2C_Master_Transmit_DMA(struct hc32_i2c *i2c_obj, struct rt_i2c_msg *
     }
     if (timeCnt >= i2c_obj->config->timeout)
     {
-        return RT_ETIMEOUT;
+        return -RT_ETIMEOUT;
     }
     return RT_EOK;
 }
@@ -378,7 +378,7 @@ static int I2C_Master_Receive_DMA(struct hc32_i2c *i2c_obj, struct rt_i2c_msg *m
         }
         if (timeCnt >= i2c_obj->config->timeout)
         {
-            return RT_ETIMEOUT;
+            return -RT_ETIMEOUT;
         }
     }
     if (msg->len > 1U)
@@ -392,7 +392,7 @@ static int I2C_Master_Receive_DMA(struct hc32_i2c *i2c_obj, struct rt_i2c_msg *m
         }
         if (timeCnt >= i2c_obj->config->timeout)
         {
-            return RT_ETIMEOUT;
+            return -RT_ETIMEOUT;
         }
         I2C_AckConfig(i2c_obj->config->Instance, I2C_NACK);
         msg->buf[msg->len - 2U] = I2C_ReadData(i2c_obj->config->Instance);
@@ -406,7 +406,7 @@ static int I2C_Master_Receive_DMA(struct hc32_i2c *i2c_obj, struct rt_i2c_msg *m
     }
     if (timeCnt >= i2c_obj->config->timeout)
     {
-        return RT_ETIMEOUT;
+        return -RT_ETIMEOUT;
     }
     /* Stop before read last data */
     I2C_ClearStatus(i2c_obj->config->Instance, I2C_FLAG_STOP);
@@ -421,7 +421,7 @@ static int I2C_Master_Receive_DMA(struct hc32_i2c *i2c_obj, struct rt_i2c_msg *m
     }
     if (timeCnt >= i2c_obj->config->timeout)
     {
-        return RT_ETIMEOUT;
+        return -RT_ETIMEOUT;
     }
     I2C_AckConfig(i2c_obj->config->Instance, I2C_ACK);
     return RT_EOK;
