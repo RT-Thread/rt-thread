@@ -1470,6 +1470,7 @@ enum rt_device_class_type
  */
 #define RT_DEVICE_CTRL_BASE(Type)        ((RT_Device_Class_##Type + 1) * 0x100)
 
+typedef struct rt_driver *rt_driver_t;
 typedef struct rt_device *rt_device_t;
 
 #ifdef RT_USING_DEVICE_OPS
