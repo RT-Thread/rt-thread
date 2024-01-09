@@ -65,4 +65,8 @@ config UTEST_HOOKLIST_TC
     select RT_USING_HOOKLIST
     default n
 
+config UTEST_MTSAFE_KPRINT_TC
+    bool "mtsafe kprint test"
+    default n
+
 endmenu

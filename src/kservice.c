@@ -1485,6 +1485,100 @@ rt_weak void rt_hw_console_output(const char *str)
 }
 RTM_EXPORT(rt_hw_console_output);
 
+#ifdef RT_USING_THREDSAFE_PRINTF
+
+static struct rt_spinlock _pr_lock = RT_SPINLOCK_INIT;
+static struct rt_spinlock _prf_lock = RT_SPINLOCK_INIT;
+/* current user of system console */
+static rt_thread_t _pr_curr_user;
+/* nested level of current user */
+static int _pr_curr_user_nested;
+
+rt_thread_t rt_console_current_user(void)
+{
+    return _pr_curr_user;
+}
+
+static void _acquire_console(void)
+{
+    rt_ubase_t level = rt_spin_lock_irqsave(&_pr_lock);
+    rt_thread_t self_thread = rt_thread_self();
+
+    while (_pr_curr_user != self_thread)
+    {
+        if (_pr_curr_user == RT_NULL)
+        {
+            /* no preemption is allowed to avoid dead lock */
+            rt_enter_critical();
+            _pr_curr_user = self_thread;
+            break;
+        }
+        else
+        {
+            rt_spin_unlock_irqrestore(&_pr_lock, level);
+            rt_thread_yield();
+            level = rt_spin_lock_irqsave(&_pr_lock);
+        }
+    }
+
+    _pr_curr_user_nested++;
+
+    rt_spin_unlock_irqrestore(&_pr_lock, level);
+}
+
+static void _release_console(void)
+{
+    rt_ubase_t level = rt_spin_lock_irqsave(&_pr_lock);
+    rt_thread_t self_thread = rt_thread_self();
+
+    RT_ASSERT(_pr_curr_user == self_thread);
+
+    _pr_curr_user_nested--;
+    if (!_pr_curr_user_nested)
+    {
+        _pr_curr_user = RT_NULL;
+        rt_exit_critical();
+    }
+    rt_spin_unlock_irqrestore(&_pr_lock, level);
+}
+
+#define ACQUIRE_CONSOLE       _acquire_console()
+#define RELEASE_CONSOLE       _release_console()
+#define ACQUIRE_PRINTF_BUFFER rt_ubase_t level = rt_spin_lock_irqsave(&_prf_lock)
+#define RELEASE_PRINTF_BUFFER rt_spin_unlock_irqrestore(&_prf_lock, level)
+#else
+
+#define ACQUIRE_CONSOLE
+#define RELEASE_CONSOLE
+#define ACQUIRE_PRINTF_BUFFER
+#define RELEASE_PRINTF_BUFFER
+#endif /* RT_USING_THREDSAFE_PRINTF */
+
+/**
+ * @brief This function will put string to the console.
+ *
+ * @param str is the string output to the console.
+ */
+static void _kputs(const char *str, long len)
+{
+    ACQUIRE_CONSOLE;
+
+#ifdef RT_USING_DEVICE
+    if (_console_device == RT_NULL)
+    {
+        rt_hw_console_output(str);
+    }
+    else
+    {
+        rt_device_write(_console_device, 0, str, len);
+    }
+#else
+    rt_hw_console_output(str);
+#endif /* RT_USING_DEVICE */
+
+    RELEASE_CONSOLE;
+}
+
 /**
  * @brief This function will put string to the console.
  *
@@ -1497,18 +1591,7 @@ void rt_kputs(const char *str)
         return;
     }
 
-#ifdef RT_USING_DEVICE
-    if (_console_device == RT_NULL)
-    {
-        rt_hw_console_output(str);
-    }
-    else
-    {
-        rt_device_write(_console_device, 0, str, rt_strlen(str));
-    }
-#else
-    rt_hw_console_output(str);
-#endif /* RT_USING_DEVICE */
+    _kputs(str, rt_strlen(str));
 }
 
 /**
@@ -1525,6 +1608,8 @@ rt_weak int rt_kprintf(const char *fmt, ...)
     static char rt_log_buf[RT_CONSOLEBUF_SIZE];
 
     va_start(args, fmt);
+    ACQUIRE_PRINTF_BUFFER;
+
     /* the return value of vsnprintf is the number of bytes that would be
      * written to buffer had if the size of the buffer been sufficiently
      * large excluding the terminating null byte. If the output string
@@ -1536,18 +1621,9 @@ rt_weak int rt_kprintf(const char *fmt, ...)
         length = RT_CONSOLEBUF_SIZE - 1;
     }
 
-#ifdef RT_USING_DEVICE
-    if (_console_device == RT_NULL)
-    {
-        rt_hw_console_output(rt_log_buf);
-    }
-    else
-    {
-        rt_device_write(_console_device, 0, rt_log_buf, length);
-    }
-#else
-    rt_hw_console_output(rt_log_buf);
-#endif /* RT_USING_DEVICE */
+    _kputs(rt_log_buf, length);
+
+    RELEASE_PRINTF_BUFFER;
     va_end(args);
 
     return length;

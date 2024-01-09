@@ -707,6 +707,11 @@ int rt_snprintf(char *buf, rt_size_t size, const char *format, ...);
 #if defined(RT_USING_DEVICE) && defined(RT_USING_CONSOLE)
 rt_device_t rt_console_set_device(const char *name);
 rt_device_t rt_console_get_device(void);
+#ifdef RT_USING_THREDSAFE_PRINTF
+    rt_thread_t rt_console_current_user(void);
+#else
+    rt_inline void *rt_console_current_user(void) { return RT_NULL; }
+#endif /* RT_USING_THREDSAFE_PRINTF */
 #endif /* defined(RT_USING_DEVICE) && defined(RT_USING_CONSOLE) */
 
 rt_err_t rt_get_errno(void);
