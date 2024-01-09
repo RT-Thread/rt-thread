@@ -8,7 +8,7 @@
    2022-03-31       CDT             First version
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -78,9 +78,8 @@ uint32_t STL_FullRamTestStartup(uint32_t u32StartAddr, uint32_t u32EndAddr);
  */
 
 #ifdef __cplusplus
-{
+}
 #endif
-
 
 #endif /* __STL_TEST_RAM_H__ */
 

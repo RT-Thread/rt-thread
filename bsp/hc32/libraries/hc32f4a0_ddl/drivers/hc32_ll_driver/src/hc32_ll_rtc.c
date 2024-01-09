@@ -9,7 +9,7 @@
    2022-03-31       CDT             First version
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -51,8 +51,7 @@
  */
 
 /* RTC TPCR register Mask */
-#define RTC_TPCR_CLR_MASK                   (RTC_TPCR0_TPCT0   | RTC_TPCR0_TPNF0 | \
-                                             RTC_TPCR0_TPRSTE0 | RTC_TPCR0_TSTPE0)
+#define RTC_TPCR_CLR_MASK                   (RTC_TPCR0_TPCT0 | RTC_TPCR0_TPNF0 | RTC_TPCR0_TPRSTE0 | RTC_TPCR0_TSTPE0)
 /* Get the specified register address of the RTC Intrusion Control */
 #define RTC_TPCRx(__CH__)                   ((uint32_t)(&(CM_RTC->TPCR0)) + (uint32_t)(__CH__))
 
@@ -152,6 +151,7 @@
 #define IS_RTC_ALARM_WEEKDAY(x)                     (((x) >= 0x01U) && ((x) <= 0x7FU))
 
 #define IS_RTC_COMPEN_VALUE(x)                      ((x) <= 0x1FFU)
+
 /**
  * @}
  */
@@ -426,8 +426,7 @@ void RTC_SetIntPeriod(uint8_t u8Period)
  * @brief  Set the RTC clock source.
  * @param  [in] u8Src                   Specifies the clock source.
  *         This parameter can be one of the following values:
- *           @arg RTC_CLK_SRC_XTAL32:   XTAL32 Cloc
- *           @arg RTC_CLK_SRC_LRC:      LRC/RTCLRC Clock
+ *           @arg @ref RTC_Clock_Source
  * @retval None
  */
 void RTC_SetClockSrc(uint8_t u8Src)
@@ -679,7 +678,7 @@ int32_t RTC_SetTime(uint8_t u8Format, stc_rtc_time_t *pstcRtcTime)
                 pstcRtcTime->u8Second = RTC_DEC2BCD(pstcRtcTime->u8Second);
             }
             if ((RTC_HOUR_FMT_12H == READ_REG32(bCM_RTC->CR1_b.AMPM)) &&
-                    (RTC_HOUR_12H_PM == pstcRtcTime->u8AmPm)) {
+                (RTC_HOUR_12H_PM == pstcRtcTime->u8AmPm)) {
                 SET_REG8_BIT(pstcRtcTime->u8Hour, RTC_HOUR_12H_PM);
             }
 
@@ -800,7 +799,7 @@ int32_t RTC_SetAlarm(uint8_t u8Format, stc_rtc_alarm_t *pstcRtcAlarm)
             pstcRtcAlarm->u8AlarmMinute = RTC_DEC2BCD(pstcRtcAlarm->u8AlarmMinute);
         }
         if ((RTC_HOUR_FMT_12H == READ_REG32(bCM_RTC->CR1_b.AMPM)) &&
-                (RTC_HOUR_12H_PM == pstcRtcAlarm->u8AlarmAmPm)) {
+            (RTC_HOUR_12H_PM == pstcRtcAlarm->u8AlarmAmPm)) {
             SET_REG8_BIT(pstcRtcAlarm->u8AlarmHour, RTC_HOUR_12H_PM);
         }
 
@@ -1131,8 +1130,8 @@ void RTC_ClearStatus(uint32_t u32Flag)
  */
 
 /**
-* @}
-*/
+ * @}
+ */
 
 /******************************************************************************
  * EOF (not truncated)

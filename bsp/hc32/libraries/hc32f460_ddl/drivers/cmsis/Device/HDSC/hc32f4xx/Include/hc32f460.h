@@ -5,10 +5,13 @@
  @verbatim
    Change Logs:
    Date             Author          Notes
-   2022-03-31       CDT          First version
+   2022-03-31       CDT             First version
+   2023-01-15       CDT             Modify headfile based on reference manual Rev1.5
+   2023-09-30       CDT             Modify headfile based on reference manual Rev1.6
+                                    Optimze for the unused bit definitions
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -28,11 +31,11 @@ extern "C" {
 /*******************************************************************************
  * Configuration of the Cortex-M4 Processor and Core Peripherals
  ******************************************************************************/
-#define __MPU_PRESENT             1       /*!< HC32F460 provides MPU                            */
+#define __MPU_PRESENT             1       /*!< HC32F460 provides MPU                                */
 #define __VTOR_PRESENT            1       /*!< HC32F460 supported vector table registers            */
 #define __NVIC_PRIO_BITS          4       /*!< HC32F460 uses 4 Bits for the Priority Levels         */
-#define __Vendor_SysTickConfig    0       /*!< Set to 1 if different SysTick Config is used              */
-#define __FPU_PRESENT             1       /*!< FPU present                                               */
+#define __Vendor_SysTickConfig    0       /*!< Set to 1 if different SysTick Config is used         */
+#define __FPU_PRESENT             1       /*!< FPU present                                          */
 
 /*******************************************************************************
  * Interrupt Number Definition
@@ -393,24 +396,24 @@ typedef enum {
     EVT_SRC_AOS_STRG            = 319U,     /* AOS_STRG */
 
     /* TIMER 4 */
-    EVT_SRC_TMR4_1_SCMP_UH      = 368U,     /* TMR41_SCMUH */
-    EVT_SRC_TMR4_1_SCMP_UL      = 369U,     /* TMR41_SCMUL */
-    EVT_SRC_TMR4_1_SCMP_VH      = 370U,     /* TMR41_SCMVH */
-    EVT_SRC_TMR4_1_SCMP_VL      = 371U,     /* TMR41_SCMVL */
-    EVT_SRC_TMR4_1_SCMP_WH      = 372U,     /* TMR41_SCMWH */
-    EVT_SRC_TMR4_1_SCMP_WL      = 373U,     /* TMR41_SCMWL */
-    EVT_SRC_TMR4_2_SCMP_UH      = 374U,     /* TMR42_SCMUH */
-    EVT_SRC_TMR4_2_SCMP_UL      = 375U,     /* TMR42_SCMUL */
-    EVT_SRC_TMR4_2_SCMP_VH      = 376U,     /* TMR42_SCMVH */
-    EVT_SRC_TMR4_2_SCMP_VL      = 377U,     /* TMR42_SCMVL */
-    EVT_SRC_TMR4_2_SCMP_WH      = 378U,     /* TMR42_SCMWH */
-    EVT_SRC_TMR4_2_SCMP_WL      = 379U,     /* TMR42_SCMWL */
-    EVT_SRC_TMR4_3_SCMP_UH      = 384U,     /* TMR43_SCMUH */
-    EVT_SRC_TMR4_3_SCMP_UL      = 385U,     /* TMR43_SCMUL */
-    EVT_SRC_TMR4_3_SCMP_VH      = 386U,     /* TMR43_SCMVH */
-    EVT_SRC_TMR4_3_SCMP_VL      = 387U,     /* TMR43_SCMVL */
-    EVT_SRC_TMR4_3_SCMP_WH      = 388U,     /* TMR43_SCMWH */
-    EVT_SRC_TMR4_3_SCMP_WL      = 389U,     /* TMR43_SCMWL */
+    EVT_SRC_TMR4_1_SCMP0        = 368U,     /* TMR41_SCM0 */
+    EVT_SRC_TMR4_1_SCMP1        = 369U,     /* TMR41_SCM1 */
+    EVT_SRC_TMR4_1_SCMP2        = 370U,     /* TMR41_SCM2 */
+    EVT_SRC_TMR4_1_SCMP3        = 371U,     /* TMR41_SCM3 */
+    EVT_SRC_TMR4_1_SCMP4        = 372U,     /* TMR41_SCM4 */
+    EVT_SRC_TMR4_1_SCMP5        = 373U,     /* TMR41_SCM5 */
+    EVT_SRC_TMR4_2_SCMP0        = 374U,     /* TMR42_SCM0 */
+    EVT_SRC_TMR4_2_SCMP1        = 375U,     /* TMR42_SCM1 */
+    EVT_SRC_TMR4_2_SCMP2        = 376U,     /* TMR42_SCM2 */
+    EVT_SRC_TMR4_2_SCMP3        = 377U,     /* TMR42_SCM3 */
+    EVT_SRC_TMR4_2_SCMP4        = 378U,     /* TMR42_SCM4 */
+    EVT_SRC_TMR4_2_SCMP5        = 379U,     /* TMR42_SCM5 */
+    EVT_SRC_TMR4_3_SCMP0        = 384U,     /* TMR43_SCM0 */
+    EVT_SRC_TMR4_3_SCMP1        = 385U,     /* TMR43_SCM1 */
+    EVT_SRC_TMR4_3_SCMP2        = 386U,     /* TMR43_SCM2 */
+    EVT_SRC_TMR4_3_SCMP3        = 387U,     /* TMR43_SCM3 */
+    EVT_SRC_TMR4_3_SCMP4        = 388U,     /* TMR43_SCM4 */
+    EVT_SRC_TMR4_3_SCMP5        = 389U,     /* TMR43_SCM5 */
 
     /* EVENT PORT */
     EVT_SRC_EVENT_PORT1         = 394U,     /* EVENT_PORT1 */
@@ -922,19 +925,19 @@ typedef struct {
     __IO uint32_t DMA2_TRGSEL1;
     __IO uint32_t DMA2_TRGSEL2;
     __IO uint32_t DMA2_TRGSEL3;
-    __IO uint32_t DMA_TRGSELRC;
-    __IO uint32_t TMR6_HTSSR0;
-    __IO uint32_t TMR6_HTSSR1;
-    __IO uint32_t TMR0_HTSSR;
-    __IO uint32_t PEVNTTRGSR12;
-    __IO uint32_t PEVNTTRGSR34;
-    __IO uint32_t TMRA_HTSSR0;
-    __IO uint32_t TMRA_HTSSR1;
-    __IO uint32_t OTS_TRG;
-    __IO uint32_t ADC1_ITRGSELR0;
-    __IO uint32_t ADC1_ITRGSELR1;
-    __IO uint32_t ADC2_ITRGSELR0;
-    __IO uint32_t ADC2_ITRGSELR1;
+    __IO uint32_t DMA_RC_TRGSEL;
+    __IO uint32_t TMR6_TRGSEL0;
+    __IO uint32_t TMR6_TRGSEL1;
+    __IO uint32_t TMR0_TRGSEL;
+    __IO uint32_t PEVNT_TRGSEL12;
+    __IO uint32_t PEVNT_TRGSEL34;
+    __IO uint32_t TMRA_TRGSEL0;
+    __IO uint32_t TMRA_TRGSEL1;
+    __IO uint32_t OTS_TRGSEL;
+    __IO uint32_t ADC1_TRGSEL0;
+    __IO uint32_t ADC1_TRGSEL1;
+    __IO uint32_t ADC2_TRGSEL0;
+    __IO uint32_t ADC2_TRGSEL1;
     __IO uint32_t COMTRG1;
     __IO uint32_t COMTRG2;
     uint8_t RESERVED0[144];
@@ -944,28 +947,28 @@ typedef struct {
     __IO uint32_t PEVNTORR1;
     __IO uint32_t PEVNTOSR1;
     __IO uint32_t PEVNTRISR1;
-    __IO uint32_t PEVNTFAL1;
+    __IO uint32_t PEVNTFALR1;
     __IO uint32_t PEVNTDIRR2;
     __I  uint32_t PEVNTIDR2;
     __IO uint32_t PEVNTODR2;
     __IO uint32_t PEVNTORR2;
     __IO uint32_t PEVNTOSR2;
     __IO uint32_t PEVNTRISR2;
-    __IO uint32_t PEVNTFAL2;
+    __IO uint32_t PEVNTFALR2;
     __IO uint32_t PEVNTDIRR3;
     __I  uint32_t PEVNTIDR3;
     __IO uint32_t PEVNTODR3;
     __IO uint32_t PEVNTORR3;
     __IO uint32_t PEVNTOSR3;
     __IO uint32_t PEVNTRISR3;
-    __IO uint32_t PEVNTFAL3;
+    __IO uint32_t PEVNTFALR3;
     __IO uint32_t PEVNTDIRR4;
     __I  uint32_t PEVNTIDR4;
     __IO uint32_t PEVNTODR4;
     __IO uint32_t PEVNTORR4;
     __IO uint32_t PEVNTOSR4;
     __IO uint32_t PEVNTRISR4;
-    __IO uint32_t PEVNTFAL4;
+    __IO uint32_t PEVNTFALR4;
     __IO uint32_t PEVNTNFCR;
 } CM_AOS_TypeDef;
 
@@ -1053,8 +1056,8 @@ typedef struct {
     __IO uint8_t  MRCCR;
     uint8_t RESERVED8[3];
     __IO uint8_t  OSCSTBSR;
-    __IO uint8_t  MCOCFGR1;
-    __IO uint8_t  MCOCFGR2;
+    __IO uint8_t  MCO1CFGR;
+    __IO uint8_t  MCO2CFGR;
     __IO uint8_t  TPIUCKCFGR;
     __IO uint8_t  XTALSTDCR;
     __IO uint8_t  XTALSTDSR;
@@ -1129,10 +1132,10 @@ typedef struct {
     __IO uint32_t AUTHID0;
     __IO uint32_t AUTHID1;
     __IO uint32_t AUTHID2;
-    __IO uint32_t RESV0;
+    uint8_t RESERVED0[4];
     __IO uint32_t MCUSTAT;
-    __IO uint32_t MCUCTL;
-    __IO uint32_t FMCCTL;
+    uint8_t RESERVED1[4];
+    __IO uint32_t FERSCTL;
     __IO uint32_t MCUDBGSTAT;
     __IO uint32_t MCUSTPCTL;
     __IO uint32_t MCUTRACECTL;
@@ -1148,7 +1151,7 @@ typedef struct {
     __IO uint32_t DATA1;
     __IO uint32_t DATA2;
     __O  uint32_t FLAGCLR;
-    __IO uint32_t INTSEL;
+    __IO uint32_t INTEVTSEL;
 } CM_DCU_TypeDef;
 
 /**
@@ -1648,8 +1651,8 @@ typedef struct {
     __IO uint32_t EIRQCR14;
     __IO uint32_t EIRQCR15;
     __IO uint32_t WUPEN;
-    __IO uint32_t EIRQFR;
-    __IO uint32_t EIRQCFR;
+    __IO uint32_t EIFR;
+    __IO uint32_t EIFCR;
     __IO uint32_t SEL0;
     __IO uint32_t SEL1;
     __IO uint32_t SEL2;
@@ -1860,7 +1863,6 @@ typedef struct {
     __IO uint16_t DR1;
     __IO uint16_t DR2;
     __IO uint16_t ECR;
-    __I  uint32_t LPR;
 } CM_OTS_TypeDef;
 
 /**
@@ -2230,7 +2232,8 @@ typedef struct {
     uint8_t RESERVED8[2];
     __IO uint16_t CMPAR8;
     uint8_t RESERVED9[34];
-    __IO uint16_t BCSTR;
+    __IO uint8_t  BCSTRL;
+    __IO uint8_t  BCSTRH;
     uint8_t RESERVED10[2];
     __IO uint16_t HCONR;
     uint8_t RESERVED11[2];
@@ -2303,7 +2306,8 @@ typedef struct {
  */
 typedef struct {
     __I  uint32_t SR;
-    __IO uint32_t DR;
+    __IO uint16_t TDR;
+    __I  uint16_t RDR;
     __IO uint32_t BRR;
     __IO uint32_t CR1;
     __IO uint32_t CR2;
@@ -2320,7 +2324,7 @@ typedef struct {
     __IO uint32_t GAHBCFG;
     __IO uint32_t GUSBCFG;
     __IO uint32_t GRSTCTL;
-    __I  uint32_t GINTSTS;
+    __IO uint32_t GINTSTS;
     __IO uint32_t GINTMSK;
     __I  uint32_t GRXSTSR;
     __I  uint32_t GRXSTSP;
@@ -2345,7 +2349,7 @@ typedef struct {
     __I  uint32_t HAINT;
     __IO uint32_t HAINTMSK;
     uint8_t RESERVED5[36];
-    __I  uint32_t HPRT;
+    __IO uint32_t HPRT;
     uint8_t RESERVED6[188];
     __IO uint32_t HCCHAR0;
     uint8_t RESERVED7[4];
@@ -2732,9 +2736,6 @@ typedef struct {
 #define ADC_CR0_DFMT                                   (0x0080U)
 #define ADC_CR0_AVCNT_POS                              (8U)
 #define ADC_CR0_AVCNT                                  (0x0700U)
-#define ADC_CR0_AVCNT_0                                (0x0100U)
-#define ADC_CR0_AVCNT_1                                (0x0200U)
-#define ADC_CR0_AVCNT_2                                (0x0400U)
 
 /*  Bit definition for ADC_CR1 register  */
 #define ADC_CR1_RSCHSEL_POS                            (2U)
@@ -2817,106 +2818,42 @@ typedef struct {
 /*  Bit definition for ADC_CHMUXR0 register  */
 #define ADC_CHMUXR0_CH00MUX_POS                        (0U)
 #define ADC_CHMUXR0_CH00MUX                            (0x000FU)
-#define ADC_CHMUXR0_CH00MUX_0                          (0x0001U)
-#define ADC_CHMUXR0_CH00MUX_1                          (0x0002U)
-#define ADC_CHMUXR0_CH00MUX_2                          (0x0004U)
-#define ADC_CHMUXR0_CH00MUX_3                          (0x0008U)
 #define ADC_CHMUXR0_CH01MUX_POS                        (4U)
 #define ADC_CHMUXR0_CH01MUX                            (0x00F0U)
-#define ADC_CHMUXR0_CH01MUX_0                          (0x0010U)
-#define ADC_CHMUXR0_CH01MUX_1                          (0x0020U)
-#define ADC_CHMUXR0_CH01MUX_2                          (0x0040U)
-#define ADC_CHMUXR0_CH01MUX_3                          (0x0080U)
 #define ADC_CHMUXR0_CH02MUX_POS                        (8U)
 #define ADC_CHMUXR0_CH02MUX                            (0x0F00U)
-#define ADC_CHMUXR0_CH02MUX_0                          (0x0100U)
-#define ADC_CHMUXR0_CH02MUX_1                          (0x0200U)
-#define ADC_CHMUXR0_CH02MUX_2                          (0x0400U)
-#define ADC_CHMUXR0_CH02MUX_3                          (0x0800U)
 #define ADC_CHMUXR0_CH03MUX_POS                        (12U)
 #define ADC_CHMUXR0_CH03MUX                            (0xF000U)
-#define ADC_CHMUXR0_CH03MUX_0                          (0x1000U)
-#define ADC_CHMUXR0_CH03MUX_1                          (0x2000U)
-#define ADC_CHMUXR0_CH03MUX_2                          (0x4000U)
-#define ADC_CHMUXR0_CH03MUX_3                          (0x8000U)
 
 /*  Bit definition for ADC_CHMUXR1 register  */
 #define ADC_CHMUXR1_CH04MUX_POS                        (0U)
 #define ADC_CHMUXR1_CH04MUX                            (0x000FU)
-#define ADC_CHMUXR1_CH04MUX_0                          (0x0001U)
-#define ADC_CHMUXR1_CH04MUX_1                          (0x0002U)
-#define ADC_CHMUXR1_CH04MUX_2                          (0x0004U)
-#define ADC_CHMUXR1_CH04MUX_3                          (0x0008U)
 #define ADC_CHMUXR1_CH05MUX_POS                        (4U)
 #define ADC_CHMUXR1_CH05MUX                            (0x00F0U)
-#define ADC_CHMUXR1_CH05MUX_0                          (0x0010U)
-#define ADC_CHMUXR1_CH05MUX_1                          (0x0020U)
-#define ADC_CHMUXR1_CH05MUX_2                          (0x0040U)
-#define ADC_CHMUXR1_CH05MUX_3                          (0x0080U)
 #define ADC_CHMUXR1_CH06MUX_POS                        (8U)
 #define ADC_CHMUXR1_CH06MUX                            (0x0F00U)
-#define ADC_CHMUXR1_CH06MUX_0                          (0x0100U)
-#define ADC_CHMUXR1_CH06MUX_1                          (0x0200U)
-#define ADC_CHMUXR1_CH06MUX_2                          (0x0400U)
-#define ADC_CHMUXR1_CH06MUX_3                          (0x0800U)
 #define ADC_CHMUXR1_CH07MUX_POS                        (12U)
 #define ADC_CHMUXR1_CH07MUX                            (0xF000U)
-#define ADC_CHMUXR1_CH07MUX_0                          (0x1000U)
-#define ADC_CHMUXR1_CH07MUX_1                          (0x2000U)
-#define ADC_CHMUXR1_CH07MUX_2                          (0x4000U)
-#define ADC_CHMUXR1_CH07MUX_3                          (0x8000U)
 
 /*  Bit definition for ADC_CHMUXR2 register  */
 #define ADC_CHMUXR2_CH08MUX_POS                        (0U)
 #define ADC_CHMUXR2_CH08MUX                            (0x000FU)
-#define ADC_CHMUXR2_CH08MUX_0                          (0x0001U)
-#define ADC_CHMUXR2_CH08MUX_1                          (0x0002U)
-#define ADC_CHMUXR2_CH08MUX_2                          (0x0004U)
-#define ADC_CHMUXR2_CH08MUX_3                          (0x0008U)
 #define ADC_CHMUXR2_CH09MUX_POS                        (4U)
 #define ADC_CHMUXR2_CH09MUX                            (0x00F0U)
-#define ADC_CHMUXR2_CH09MUX_0                          (0x0010U)
-#define ADC_CHMUXR2_CH09MUX_1                          (0x0020U)
-#define ADC_CHMUXR2_CH09MUX_2                          (0x0040U)
-#define ADC_CHMUXR2_CH09MUX_3                          (0x0080U)
 #define ADC_CHMUXR2_CH10MUX_POS                        (8U)
 #define ADC_CHMUXR2_CH10MUX                            (0x0F00U)
-#define ADC_CHMUXR2_CH10MUX_0                          (0x0100U)
-#define ADC_CHMUXR2_CH10MUX_1                          (0x0200U)
-#define ADC_CHMUXR2_CH10MUX_2                          (0x0400U)
-#define ADC_CHMUXR2_CH10MUX_3                          (0x0800U)
 #define ADC_CHMUXR2_CH11MUX_POS                        (12U)
 #define ADC_CHMUXR2_CH11MUX                            (0xF000U)
-#define ADC_CHMUXR2_CH11MUX_0                          (0x1000U)
-#define ADC_CHMUXR2_CH11MUX_1                          (0x2000U)
-#define ADC_CHMUXR2_CH11MUX_2                          (0x4000U)
-#define ADC_CHMUXR2_CH11MUX_3                          (0x8000U)
 
 /*  Bit definition for ADC_CHMUXR3 register  */
 #define ADC_CHMUXR3_CH12MUX_POS                        (0U)
 #define ADC_CHMUXR3_CH12MUX                            (0x000FU)
-#define ADC_CHMUXR3_CH12MUX_0                          (0x0001U)
-#define ADC_CHMUXR3_CH12MUX_1                          (0x0002U)
-#define ADC_CHMUXR3_CH12MUX_2                          (0x0004U)
-#define ADC_CHMUXR3_CH12MUX_3                          (0x0008U)
 #define ADC_CHMUXR3_CH13MUX_POS                        (4U)
 #define ADC_CHMUXR3_CH13MUX                            (0x00F0U)
-#define ADC_CHMUXR3_CH13MUX_0                          (0x0010U)
-#define ADC_CHMUXR3_CH13MUX_1                          (0x0020U)
-#define ADC_CHMUXR3_CH13MUX_2                          (0x0040U)
-#define ADC_CHMUXR3_CH13MUX_3                          (0x0080U)
 #define ADC_CHMUXR3_CH14MUX_POS                        (8U)
 #define ADC_CHMUXR3_CH14MUX                            (0x0F00U)
-#define ADC_CHMUXR3_CH14MUX_0                          (0x0100U)
-#define ADC_CHMUXR3_CH14MUX_1                          (0x0200U)
-#define ADC_CHMUXR3_CH14MUX_2                          (0x0400U)
-#define ADC_CHMUXR3_CH14MUX_3                          (0x0800U)
 #define ADC_CHMUXR3_CH15MUX_POS                        (12U)
 #define ADC_CHMUXR3_CH15MUX                            (0xF000U)
-#define ADC_CHMUXR3_CH15MUX_0                          (0x1000U)
-#define ADC_CHMUXR3_CH15MUX_1                          (0x2000U)
-#define ADC_CHMUXR3_CH15MUX_2                          (0x4000U)
-#define ADC_CHMUXR3_CH15MUX_3                          (0x8000U)
 
 /*  Bit definition for ADC_ISR register  */
 #define ADC_ISR_EOCAF_POS                              (0U)
@@ -2935,19 +2872,8 @@ typedef struct {
 #define ADC_SYNCCR_SYNCEN                              (0x0001U)
 #define ADC_SYNCCR_SYNCMD_POS                          (4U)
 #define ADC_SYNCCR_SYNCMD                              (0x0070U)
-#define ADC_SYNCCR_SYNCMD_0                            (0x0010U)
-#define ADC_SYNCCR_SYNCMD_1                            (0x0020U)
-#define ADC_SYNCCR_SYNCMD_2                            (0x0040U)
 #define ADC_SYNCCR_SYNCDLY_POS                         (8U)
 #define ADC_SYNCCR_SYNCDLY                             (0xFF00U)
-#define ADC_SYNCCR_SYNCDLY_0                           (0x0100U)
-#define ADC_SYNCCR_SYNCDLY_1                           (0x0200U)
-#define ADC_SYNCCR_SYNCDLY_2                           (0x0400U)
-#define ADC_SYNCCR_SYNCDLY_3                           (0x0800U)
-#define ADC_SYNCCR_SYNCDLY_4                           (0x1000U)
-#define ADC_SYNCCR_SYNCDLY_5                           (0x2000U)
-#define ADC_SYNCCR_SYNCDLY_6                           (0x4000U)
-#define ADC_SYNCCR_SYNCDLY_7                           (0x8000U)
 
 /*  Bit definition for ADC_DR0 register  */
 #define ADC_DR0                                        (0xFFFFU)
@@ -3026,17 +2952,9 @@ typedef struct {
 
 /*  Bit definition for ADC_PGACR register  */
 #define ADC_PGACR_PGACTL                               (0x000FU)
-#define ADC_PGACR_PGACTL_0                             (0x0001U)
-#define ADC_PGACR_PGACTL_1                             (0x0002U)
-#define ADC_PGACR_PGACTL_2                             (0x0004U)
-#define ADC_PGACR_PGACTL_3                             (0x0008U)
 
 /*  Bit definition for ADC_PGAGSR register  */
 #define ADC_PGAGSR_GAIN                                (0x000FU)
-#define ADC_PGAGSR_GAIN_0                              (0x0001U)
-#define ADC_PGAGSR_GAIN_1                              (0x0002U)
-#define ADC_PGAGSR_GAIN_2                              (0x0004U)
-#define ADC_PGAGSR_GAIN_3                              (0x0008U)
 
 /*  Bit definition for ADC_PGAINSR0 register  */
 #define ADC_PGAINSR0_PGAINSEL                          (0x01FFU)
@@ -3095,334 +3013,117 @@ typedef struct {
 /*  Bit definition for AOS_DCU_TRGSEL register  */
 #define AOS_DCU_TRGSEL_TRGSEL_POS                      (0U)
 #define AOS_DCU_TRGSEL_TRGSEL                          (0x000001FFUL)
-#define AOS_DCU_TRGSEL_COMTRG_EN_POS                   (30U)
-#define AOS_DCU_TRGSEL_COMTRG_EN                       (0xC0000000UL)
-#define AOS_DCU_TRGSEL_COMTRG_EN_0                     (0x40000000UL)
-#define AOS_DCU_TRGSEL_COMTRG_EN_1                     (0x80000000UL)
+#define AOS_DCU_TRGSEL_COMEN_POS                       (30U)
+#define AOS_DCU_TRGSEL_COMEN                           (0xC0000000UL)
+#define AOS_DCU_TRGSEL_COMEN_0                         (0x40000000UL)
+#define AOS_DCU_TRGSEL_COMEN_1                         (0x80000000UL)
 
 /*  Bit definition for AOS_DMA1_TRGSEL register  */
 #define AOS_DMA1_TRGSEL_TRGSEL_POS                     (0U)
 #define AOS_DMA1_TRGSEL_TRGSEL                         (0x000001FFUL)
-#define AOS_DMA1_TRGSEL_COMTRG_EN_POS                  (30U)
-#define AOS_DMA1_TRGSEL_COMTRG_EN                      (0xC0000000UL)
-#define AOS_DMA1_TRGSEL_COMTRG_EN_0                    (0x40000000UL)
-#define AOS_DMA1_TRGSEL_COMTRG_EN_1                    (0x80000000UL)
+#define AOS_DMA1_TRGSEL_COMEN_POS                      (30U)
+#define AOS_DMA1_TRGSEL_COMEN                          (0xC0000000UL)
+#define AOS_DMA1_TRGSEL_COMEN_0                        (0x40000000UL)
+#define AOS_DMA1_TRGSEL_COMEN_1                        (0x80000000UL)
 
 /*  Bit definition for AOS_DMA2_TRGSEL register  */
 #define AOS_DMA2_TRGSEL_TRGSEL_POS                     (0U)
 #define AOS_DMA2_TRGSEL_TRGSEL                         (0x000001FFUL)
-#define AOS_DMA2_TRGSEL_COMTRG_EN_POS                  (30U)
-#define AOS_DMA2_TRGSEL_COMTRG_EN                      (0xC0000000UL)
-#define AOS_DMA2_TRGSEL_COMTRG_EN_0                    (0x40000000UL)
-#define AOS_DMA2_TRGSEL_COMTRG_EN_1                    (0x80000000UL)
+#define AOS_DMA2_TRGSEL_COMEN_POS                      (30U)
+#define AOS_DMA2_TRGSEL_COMEN                          (0xC0000000UL)
+#define AOS_DMA2_TRGSEL_COMEN_0                        (0x40000000UL)
+#define AOS_DMA2_TRGSEL_COMEN_1                        (0x80000000UL)
 
-/*  Bit definition for AOS_DMA_TRGSELRC register  */
-#define AOS_DMA_TRGSELRC_TRGSEL_POS                    (0U)
-#define AOS_DMA_TRGSELRC_TRGSEL                        (0x000001FFUL)
-#define AOS_DMA_TRGSELRC_COMTRG_EN_POS                 (30U)
-#define AOS_DMA_TRGSELRC_COMTRG_EN                     (0xC0000000UL)
-#define AOS_DMA_TRGSELRC_COMTRG_EN_0                   (0x40000000UL)
-#define AOS_DMA_TRGSELRC_COMTRG_EN_1                   (0x80000000UL)
+/*  Bit definition for AOS_DMA_RC_TRGSEL register  */
+#define AOS_DMA_RC_TRGSEL_TRGSEL_POS                   (0U)
+#define AOS_DMA_RC_TRGSEL_TRGSEL                       (0x000001FFUL)
+#define AOS_DMA_RC_TRGSEL_COMEN_POS                    (30U)
+#define AOS_DMA_RC_TRGSEL_COMEN                        (0xC0000000UL)
+#define AOS_DMA_RC_TRGSEL_COMEN_0                      (0x40000000UL)
+#define AOS_DMA_RC_TRGSEL_COMEN_1                      (0x80000000UL)
 
-/*  Bit definition for AOS_TMR6_HTSSR register  */
-#define AOS_TMR6_HTSSR_TRGSEL_POS                      (0U)
-#define AOS_TMR6_HTSSR_TRGSEL                          (0x000001FFUL)
-#define AOS_TMR6_HTSSR_COMTRG_EN_POS                   (30U)
-#define AOS_TMR6_HTSSR_COMTRG_EN                       (0xC0000000UL)
-#define AOS_TMR6_HTSSR_COMTRG_EN_0                     (0x40000000UL)
-#define AOS_TMR6_HTSSR_COMTRG_EN_1                     (0x80000000UL)
+/*  Bit definition for AOS_TMR6_TRGSEL register  */
+#define AOS_TMR6_TRGSEL_TRGSEL_POS                     (0U)
+#define AOS_TMR6_TRGSEL_TRGSEL                         (0x000001FFUL)
+#define AOS_TMR6_TRGSEL_COMEN_POS                      (30U)
+#define AOS_TMR6_TRGSEL_COMEN                          (0xC0000000UL)
+#define AOS_TMR6_TRGSEL_COMEN_0                        (0x40000000UL)
+#define AOS_TMR6_TRGSEL_COMEN_1                        (0x80000000UL)
 
-/*  Bit definition for AOS_TMR0_HTSSR register  */
-#define AOS_TMR0_HTSSR_TRGSEL_POS                      (0U)
-#define AOS_TMR0_HTSSR_TRGSEL                          (0x000001FFUL)
-#define AOS_TMR0_HTSSR_COMTRG_EN_POS                   (30U)
-#define AOS_TMR0_HTSSR_COMTRG_EN                       (0xC0000000UL)
-#define AOS_TMR0_HTSSR_COMTRG_EN_0                     (0x40000000UL)
-#define AOS_TMR0_HTSSR_COMTRG_EN_1                     (0x80000000UL)
+/*  Bit definition for AOS_TMR0_TRGSEL register  */
+#define AOS_TMR0_TRGSEL_TRGSEL_POS                     (0U)
+#define AOS_TMR0_TRGSEL_TRGSEL                         (0x000001FFUL)
+#define AOS_TMR0_TRGSEL_COMEN_POS                      (30U)
+#define AOS_TMR0_TRGSEL_COMEN                          (0xC0000000UL)
+#define AOS_TMR0_TRGSEL_COMEN_0                        (0x40000000UL)
+#define AOS_TMR0_TRGSEL_COMEN_1                        (0x80000000UL)
 
-/*  Bit definition for AOS_PEVNTTRGSR register  */
-#define AOS_PEVNTTRGSR_TRGSEL_POS                      (0U)
-#define AOS_PEVNTTRGSR_TRGSEL                          (0x000001FFUL)
-#define AOS_PEVNTTRGSR_COMTRG_EN_POS                   (30U)
-#define AOS_PEVNTTRGSR_COMTRG_EN                       (0xC0000000UL)
-#define AOS_PEVNTTRGSR_COMTRG_EN_0                     (0x40000000UL)
-#define AOS_PEVNTTRGSR_COMTRG_EN_1                     (0x80000000UL)
+/*  Bit definition for AOS_PEVNT_TRGSEL register  */
+#define AOS_PEVNT_TRGSEL_TRGSEL_POS                    (0U)
+#define AOS_PEVNT_TRGSEL_TRGSEL                        (0x000001FFUL)
+#define AOS_PEVNT_TRGSEL_COMEN_POS                     (30U)
+#define AOS_PEVNT_TRGSEL_COMEN                         (0xC0000000UL)
+#define AOS_PEVNT_TRGSEL_COMEN_0                       (0x40000000UL)
+#define AOS_PEVNT_TRGSEL_COMEN_1                       (0x80000000UL)
 
-/*  Bit definition for AOS_TMRA_HTSSR register  */
-#define AOS_TMRA_HTSSR_TRGSEL_POS                      (0U)
-#define AOS_TMRA_HTSSR_TRGSEL                          (0x000001FFUL)
-#define AOS_TMRA_HTSSR_COMTRG_EN_POS                   (30U)
-#define AOS_TMRA_HTSSR_COMTRG_EN                       (0xC0000000UL)
-#define AOS_TMRA_HTSSR_COMTRG_EN_0                     (0x40000000UL)
-#define AOS_TMRA_HTSSR_COMTRG_EN_1                     (0x80000000UL)
+/*  Bit definition for AOS_TMRA_TRGSEL register  */
+#define AOS_TMRA_TRGSEL_TRGSEL_POS                     (0U)
+#define AOS_TMRA_TRGSEL_TRGSEL                         (0x000001FFUL)
+#define AOS_TMRA_TRGSEL_COMEN_POS                      (30U)
+#define AOS_TMRA_TRGSEL_COMEN                          (0xC0000000UL)
+#define AOS_TMRA_TRGSEL_COMEN_0                        (0x40000000UL)
+#define AOS_TMRA_TRGSEL_COMEN_1                        (0x80000000UL)
 
-/*  Bit definition for AOS_OTS_TRG register  */
-#define AOS_OTS_TRG_TRGSEL_POS                         (0U)
-#define AOS_OTS_TRG_TRGSEL                             (0x000001FFUL)
-#define AOS_OTS_TRG_COMTRG_EN_POS                      (30U)
-#define AOS_OTS_TRG_COMTRG_EN                          (0xC0000000UL)
-#define AOS_OTS_TRG_COMTRG_EN_0                        (0x40000000UL)
-#define AOS_OTS_TRG_COMTRG_EN_1                        (0x80000000UL)
+/*  Bit definition for AOS_OTS_TRGSEL register  */
+#define AOS_OTS_TRGSEL_TRGSEL_POS                      (0U)
+#define AOS_OTS_TRGSEL_TRGSEL                          (0x000001FFUL)
+#define AOS_OTS_TRGSEL_COMEN_POS                       (30U)
+#define AOS_OTS_TRGSEL_COMEN                           (0xC0000000UL)
+#define AOS_OTS_TRGSEL_COMEN_0                         (0x40000000UL)
+#define AOS_OTS_TRGSEL_COMEN_1                         (0x80000000UL)
 
-/*  Bit definition for AOS_ADC1_ITRGSELR register  */
-#define AOS_ADC1_ITRGSELR_TRGSEL_POS                   (0U)
-#define AOS_ADC1_ITRGSELR_TRGSEL                       (0x000001FFUL)
-#define AOS_ADC1_ITRGSELR_COMTRG_EN_POS                (30U)
-#define AOS_ADC1_ITRGSELR_COMTRG_EN                    (0xC0000000UL)
-#define AOS_ADC1_ITRGSELR_COMTRG_EN_0                  (0x40000000UL)
-#define AOS_ADC1_ITRGSELR_COMTRG_EN_1                  (0x80000000UL)
+/*  Bit definition for AOS_ADC1_TRGSEL register  */
+#define AOS_ADC1_TRGSEL_TRGSEL_POS                     (0U)
+#define AOS_ADC1_TRGSEL_TRGSEL                         (0x000001FFUL)
+#define AOS_ADC1_TRGSEL_COMEN_POS                      (30U)
+#define AOS_ADC1_TRGSEL_COMEN                          (0xC0000000UL)
+#define AOS_ADC1_TRGSEL_COMEN_0                        (0x40000000UL)
+#define AOS_ADC1_TRGSEL_COMEN_1                        (0x80000000UL)
 
-/*  Bit definition for AOS_ADC2_ITRGSELR register  */
-#define AOS_ADC2_ITRGSELR_TRGSEL_POS                   (0U)
-#define AOS_ADC2_ITRGSELR_TRGSEL                       (0x000001FFUL)
-#define AOS_ADC2_ITRGSELR_COMTRG_EN_POS                (30U)
-#define AOS_ADC2_ITRGSELR_COMTRG_EN                    (0xC0000000UL)
-#define AOS_ADC2_ITRGSELR_COMTRG_EN_0                  (0x40000000UL)
-#define AOS_ADC2_ITRGSELR_COMTRG_EN_1                  (0x80000000UL)
+/*  Bit definition for AOS_ADC2_TRGSEL register  */
+#define AOS_ADC2_TRGSEL_TRGSEL_POS                     (0U)
+#define AOS_ADC2_TRGSEL_TRGSEL                         (0x000001FFUL)
+#define AOS_ADC2_TRGSEL_COMEN_POS                      (30U)
+#define AOS_ADC2_TRGSEL_COMEN                          (0xC0000000UL)
+#define AOS_ADC2_TRGSEL_COMEN_0                        (0x40000000UL)
+#define AOS_ADC2_TRGSEL_COMEN_1                        (0x80000000UL)
 
 /*  Bit definition for AOS_COMTRG1 register  */
-#define AOS_COMTRG1_TRGSEL                             (0x000001FFUL)
+#define AOS_COMTRG1_COMTRG                             (0x000001FFUL)
 
 /*  Bit definition for AOS_COMTRG2 register  */
-#define AOS_COMTRG2_TRGSEL                             (0x000001FFUL)
+#define AOS_COMTRG2_COMTRG                             (0x000001FFUL)
 
 /*  Bit definition for AOS_PEVNTDIRR register  */
-#define AOS_PEVNTDIRR_PDIR00_POS                       (0U)
-#define AOS_PEVNTDIRR_PDIR00                           (0x00000001UL)
-#define AOS_PEVNTDIRR_PDIR01_POS                       (1U)
-#define AOS_PEVNTDIRR_PDIR01                           (0x00000002UL)
-#define AOS_PEVNTDIRR_PDIR02_POS                       (2U)
-#define AOS_PEVNTDIRR_PDIR02                           (0x00000004UL)
-#define AOS_PEVNTDIRR_PDIR03_POS                       (3U)
-#define AOS_PEVNTDIRR_PDIR03                           (0x00000008UL)
-#define AOS_PEVNTDIRR_PDIR04_POS                       (4U)
-#define AOS_PEVNTDIRR_PDIR04                           (0x00000010UL)
-#define AOS_PEVNTDIRR_PDIR05_POS                       (5U)
-#define AOS_PEVNTDIRR_PDIR05                           (0x00000020UL)
-#define AOS_PEVNTDIRR_PDIR06_POS                       (6U)
-#define AOS_PEVNTDIRR_PDIR06                           (0x00000040UL)
-#define AOS_PEVNTDIRR_PDIR07_POS                       (7U)
-#define AOS_PEVNTDIRR_PDIR07                           (0x00000080UL)
-#define AOS_PEVNTDIRR_PDIR08_POS                       (8U)
-#define AOS_PEVNTDIRR_PDIR08                           (0x00000100UL)
-#define AOS_PEVNTDIRR_PDIR09_POS                       (9U)
-#define AOS_PEVNTDIRR_PDIR09                           (0x00000200UL)
-#define AOS_PEVNTDIRR_PDIR10_POS                       (10U)
-#define AOS_PEVNTDIRR_PDIR10                           (0x00000400UL)
-#define AOS_PEVNTDIRR_PDIR11_POS                       (11U)
-#define AOS_PEVNTDIRR_PDIR11                           (0x00000800UL)
-#define AOS_PEVNTDIRR_PDIR12_POS                       (12U)
-#define AOS_PEVNTDIRR_PDIR12                           (0x00001000UL)
-#define AOS_PEVNTDIRR_PDIR13_POS                       (13U)
-#define AOS_PEVNTDIRR_PDIR13                           (0x00002000UL)
-#define AOS_PEVNTDIRR_PDIR14_POS                       (14U)
-#define AOS_PEVNTDIRR_PDIR14                           (0x00004000UL)
-#define AOS_PEVNTDIRR_PDIR15_POS                       (15U)
-#define AOS_PEVNTDIRR_PDIR15                           (0x00008000UL)
+#define AOS_PEVNTDIRR_PDIR                             (0x0000FFFFUL)
 
 /*  Bit definition for AOS_PEVNTIDR register  */
-#define AOS_PEVNTIDR_PIN00_POS                         (0U)
-#define AOS_PEVNTIDR_PIN00                             (0x00000001UL)
-#define AOS_PEVNTIDR_PIN01_POS                         (1U)
-#define AOS_PEVNTIDR_PIN01                             (0x00000002UL)
-#define AOS_PEVNTIDR_PIN02_POS                         (2U)
-#define AOS_PEVNTIDR_PIN02                             (0x00000004UL)
-#define AOS_PEVNTIDR_PIN03_POS                         (3U)
-#define AOS_PEVNTIDR_PIN03                             (0x00000008UL)
-#define AOS_PEVNTIDR_PIN04_POS                         (4U)
-#define AOS_PEVNTIDR_PIN04                             (0x00000010UL)
-#define AOS_PEVNTIDR_PIN05_POS                         (5U)
-#define AOS_PEVNTIDR_PIN05                             (0x00000020UL)
-#define AOS_PEVNTIDR_PIN06_POS                         (6U)
-#define AOS_PEVNTIDR_PIN06                             (0x00000040UL)
-#define AOS_PEVNTIDR_PIN07_POS                         (7U)
-#define AOS_PEVNTIDR_PIN07                             (0x00000080UL)
-#define AOS_PEVNTIDR_PIN08_POS                         (8U)
-#define AOS_PEVNTIDR_PIN08                             (0x00000100UL)
-#define AOS_PEVNTIDR_PIN09_POS                         (9U)
-#define AOS_PEVNTIDR_PIN09                             (0x00000200UL)
-#define AOS_PEVNTIDR_PIN10_POS                         (10U)
-#define AOS_PEVNTIDR_PIN10                             (0x00000400UL)
-#define AOS_PEVNTIDR_PIN11_POS                         (11U)
-#define AOS_PEVNTIDR_PIN11                             (0x00000800UL)
-#define AOS_PEVNTIDR_PIN12_POS                         (12U)
-#define AOS_PEVNTIDR_PIN12                             (0x00001000UL)
-#define AOS_PEVNTIDR_PIN13_POS                         (13U)
-#define AOS_PEVNTIDR_PIN13                             (0x00002000UL)
-#define AOS_PEVNTIDR_PIN14_POS                         (14U)
-#define AOS_PEVNTIDR_PIN14                             (0x00004000UL)
-#define AOS_PEVNTIDR_PIN15_POS                         (15U)
-#define AOS_PEVNTIDR_PIN15                             (0x00008000UL)
+#define AOS_PEVNTIDR_PIN                               (0x0000FFFFUL)
 
 /*  Bit definition for AOS_PEVNTODR register  */
-#define AOS_PEVNTODR_POUT00_POS                        (0U)
-#define AOS_PEVNTODR_POUT00                            (0x00000001UL)
-#define AOS_PEVNTODR_POUT01_POS                        (1U)
-#define AOS_PEVNTODR_POUT01                            (0x00000002UL)
-#define AOS_PEVNTODR_POUT02_POS                        (2U)
-#define AOS_PEVNTODR_POUT02                            (0x00000004UL)
-#define AOS_PEVNTODR_POUT03_POS                        (3U)
-#define AOS_PEVNTODR_POUT03                            (0x00000008UL)
-#define AOS_PEVNTODR_POUT04_POS                        (4U)
-#define AOS_PEVNTODR_POUT04                            (0x00000010UL)
-#define AOS_PEVNTODR_POUT05_POS                        (5U)
-#define AOS_PEVNTODR_POUT05                            (0x00000020UL)
-#define AOS_PEVNTODR_POUT06_POS                        (6U)
-#define AOS_PEVNTODR_POUT06                            (0x00000040UL)
-#define AOS_PEVNTODR_POUT07_POS                        (7U)
-#define AOS_PEVNTODR_POUT07                            (0x00000080UL)
-#define AOS_PEVNTODR_POUT08_POS                        (8U)
-#define AOS_PEVNTODR_POUT08                            (0x00000100UL)
-#define AOS_PEVNTODR_POUT09_POS                        (9U)
-#define AOS_PEVNTODR_POUT09                            (0x00000200UL)
-#define AOS_PEVNTODR_POUT10_POS                        (10U)
-#define AOS_PEVNTODR_POUT10                            (0x00000400UL)
-#define AOS_PEVNTODR_POUT11_POS                        (11U)
-#define AOS_PEVNTODR_POUT11                            (0x00000800UL)
-#define AOS_PEVNTODR_POUT12_POS                        (12U)
-#define AOS_PEVNTODR_POUT12                            (0x00001000UL)
-#define AOS_PEVNTODR_POUT13_POS                        (13U)
-#define AOS_PEVNTODR_POUT13                            (0x00002000UL)
-#define AOS_PEVNTODR_POUT14_POS                        (14U)
-#define AOS_PEVNTODR_POUT14                            (0x00004000UL)
-#define AOS_PEVNTODR_POUT15_POS                        (15U)
-#define AOS_PEVNTODR_POUT15                            (0x00008000UL)
+#define AOS_PEVNTODR_POUT                              (0x0000FFFFUL)
 
 /*  Bit definition for AOS_PEVNTORR register  */
-#define AOS_PEVNTORR_POR00_POS                         (0U)
-#define AOS_PEVNTORR_POR00                             (0x00000001UL)
-#define AOS_PEVNTORR_POR01_POS                         (1U)
-#define AOS_PEVNTORR_POR01                             (0x00000002UL)
-#define AOS_PEVNTORR_POR02_POS                         (2U)
-#define AOS_PEVNTORR_POR02                             (0x00000004UL)
-#define AOS_PEVNTORR_POR03_POS                         (3U)
-#define AOS_PEVNTORR_POR03                             (0x00000008UL)
-#define AOS_PEVNTORR_POR04_POS                         (4U)
-#define AOS_PEVNTORR_POR04                             (0x00000010UL)
-#define AOS_PEVNTORR_POR05_POS                         (5U)
-#define AOS_PEVNTORR_POR05                             (0x00000020UL)
-#define AOS_PEVNTORR_POR06_POS                         (6U)
-#define AOS_PEVNTORR_POR06                             (0x00000040UL)
-#define AOS_PEVNTORR_POR07_POS                         (7U)
-#define AOS_PEVNTORR_POR07                             (0x00000080UL)
-#define AOS_PEVNTORR_POR08_POS                         (8U)
-#define AOS_PEVNTORR_POR08                             (0x00000100UL)
-#define AOS_PEVNTORR_POR09_POS                         (9U)
-#define AOS_PEVNTORR_POR09                             (0x00000200UL)
-#define AOS_PEVNTORR_POR10_POS                         (10U)
-#define AOS_PEVNTORR_POR10                             (0x00000400UL)
-#define AOS_PEVNTORR_POR11_POS                         (11U)
-#define AOS_PEVNTORR_POR11                             (0x00000800UL)
-#define AOS_PEVNTORR_POR12_POS                         (12U)
-#define AOS_PEVNTORR_POR12                             (0x00001000UL)
-#define AOS_PEVNTORR_POR13_POS                         (13U)
-#define AOS_PEVNTORR_POR13                             (0x00002000UL)
-#define AOS_PEVNTORR_POR14_POS                         (14U)
-#define AOS_PEVNTORR_POR14                             (0x00004000UL)
-#define AOS_PEVNTORR_POR15_POS                         (15U)
-#define AOS_PEVNTORR_POR15                             (0x00008000UL)
+#define AOS_PEVNTORR_POR                               (0x0000FFFFUL)
 
 /*  Bit definition for AOS_PEVNTOSR register  */
-#define AOS_PEVNTOSR_POS00_POS                         (0U)
-#define AOS_PEVNTOSR_POS00                             (0x00000001UL)
-#define AOS_PEVNTOSR_POS01_POS                         (1U)
-#define AOS_PEVNTOSR_POS01                             (0x00000002UL)
-#define AOS_PEVNTOSR_POS02_POS                         (2U)
-#define AOS_PEVNTOSR_POS02                             (0x00000004UL)
-#define AOS_PEVNTOSR_POS03_POS                         (3U)
-#define AOS_PEVNTOSR_POS03                             (0x00000008UL)
-#define AOS_PEVNTOSR_POS04_POS                         (4U)
-#define AOS_PEVNTOSR_POS04                             (0x00000010UL)
-#define AOS_PEVNTOSR_POS05_POS                         (5U)
-#define AOS_PEVNTOSR_POS05                             (0x00000020UL)
-#define AOS_PEVNTOSR_POS06_POS                         (6U)
-#define AOS_PEVNTOSR_POS06                             (0x00000040UL)
-#define AOS_PEVNTOSR_POS07_POS                         (7U)
-#define AOS_PEVNTOSR_POS07                             (0x00000080UL)
-#define AOS_PEVNTOSR_POS08_POS                         (8U)
-#define AOS_PEVNTOSR_POS08                             (0x00000100UL)
-#define AOS_PEVNTOSR_POS09_POS                         (9U)
-#define AOS_PEVNTOSR_POS09                             (0x00000200UL)
-#define AOS_PEVNTOSR_POS10_POS                         (10U)
-#define AOS_PEVNTOSR_POS10                             (0x00000400UL)
-#define AOS_PEVNTOSR_POS11_POS                         (11U)
-#define AOS_PEVNTOSR_POS11                             (0x00000800UL)
-#define AOS_PEVNTOSR_POS12_POS                         (12U)
-#define AOS_PEVNTOSR_POS12                             (0x00001000UL)
-#define AOS_PEVNTOSR_POS13_POS                         (13U)
-#define AOS_PEVNTOSR_POS13                             (0x00002000UL)
-#define AOS_PEVNTOSR_POS14_POS                         (14U)
-#define AOS_PEVNTOSR_POS14                             (0x00004000UL)
-#define AOS_PEVNTOSR_POS15_POS                         (15U)
-#define AOS_PEVNTOSR_POS15                             (0x00008000UL)
+#define AOS_PEVNTOSR_POS                               (0x0000FFFFUL)
 
 /*  Bit definition for AOS_PEVNTRISR register  */
-#define AOS_PEVNTRISR_RIS00_POS                        (0U)
-#define AOS_PEVNTRISR_RIS00                            (0x00000001UL)
-#define AOS_PEVNTRISR_RIS01_POS                        (1U)
-#define AOS_PEVNTRISR_RIS01                            (0x00000002UL)
-#define AOS_PEVNTRISR_RIS02_POS                        (2U)
-#define AOS_PEVNTRISR_RIS02                            (0x00000004UL)
-#define AOS_PEVNTRISR_RIS03_POS                        (3U)
-#define AOS_PEVNTRISR_RIS03                            (0x00000008UL)
-#define AOS_PEVNTRISR_RIS04_POS                        (4U)
-#define AOS_PEVNTRISR_RIS04                            (0x00000010UL)
-#define AOS_PEVNTRISR_RIS05_POS                        (5U)
-#define AOS_PEVNTRISR_RIS05                            (0x00000020UL)
-#define AOS_PEVNTRISR_RIS06_POS                        (6U)
-#define AOS_PEVNTRISR_RIS06                            (0x00000040UL)
-#define AOS_PEVNTRISR_RIS07_POS                        (7U)
-#define AOS_PEVNTRISR_RIS07                            (0x00000080UL)
-#define AOS_PEVNTRISR_RIS08_POS                        (8U)
-#define AOS_PEVNTRISR_RIS08                            (0x00000100UL)
-#define AOS_PEVNTRISR_RIS09_POS                        (9U)
-#define AOS_PEVNTRISR_RIS09                            (0x00000200UL)
-#define AOS_PEVNTRISR_RIS10_POS                        (10U)
-#define AOS_PEVNTRISR_RIS10                            (0x00000400UL)
-#define AOS_PEVNTRISR_RIS11_POS                        (11U)
-#define AOS_PEVNTRISR_RIS11                            (0x00000800UL)
-#define AOS_PEVNTRISR_RIS12_POS                        (12U)
-#define AOS_PEVNTRISR_RIS12                            (0x00001000UL)
-#define AOS_PEVNTRISR_RIS13_POS                        (13U)
-#define AOS_PEVNTRISR_RIS13                            (0x00002000UL)
-#define AOS_PEVNTRISR_RIS14_POS                        (14U)
-#define AOS_PEVNTRISR_RIS14                            (0x00004000UL)
-#define AOS_PEVNTRISR_RIS15_POS                        (15U)
-#define AOS_PEVNTRISR_RIS15                            (0x00008000UL)
+#define AOS_PEVNTRISR_RIS                              (0x0000FFFFUL)
 
-/*  Bit definition for AOS_PEVNTFAL register  */
-#define AOS_PEVNTFAL_FAL00_POS                         (0U)
-#define AOS_PEVNTFAL_FAL00                             (0x00000001UL)
-#define AOS_PEVNTFAL_FAL01_POS                         (1U)
-#define AOS_PEVNTFAL_FAL01                             (0x00000002UL)
-#define AOS_PEVNTFAL_FAL02_POS                         (2U)
-#define AOS_PEVNTFAL_FAL02                             (0x00000004UL)
-#define AOS_PEVNTFAL_FAL03_POS                         (3U)
-#define AOS_PEVNTFAL_FAL03                             (0x00000008UL)
-#define AOS_PEVNTFAL_FAL04_POS                         (4U)
-#define AOS_PEVNTFAL_FAL04                             (0x00000010UL)
-#define AOS_PEVNTFAL_FAL05_POS                         (5U)
-#define AOS_PEVNTFAL_FAL05                             (0x00000020UL)
-#define AOS_PEVNTFAL_FAL06_POS                         (6U)
-#define AOS_PEVNTFAL_FAL06                             (0x00000040UL)
-#define AOS_PEVNTFAL_FAL07_POS                         (7U)
-#define AOS_PEVNTFAL_FAL07                             (0x00000080UL)
-#define AOS_PEVNTFAL_FAL08_POS                         (8U)
-#define AOS_PEVNTFAL_FAL08                             (0x00000100UL)
-#define AOS_PEVNTFAL_FAL09_POS                         (9U)
-#define AOS_PEVNTFAL_FAL09                             (0x00000200UL)
-#define AOS_PEVNTFAL_FAL10_POS                         (10U)
-#define AOS_PEVNTFAL_FAL10                             (0x00000400UL)
-#define AOS_PEVNTFAL_FAL11_POS                         (11U)
-#define AOS_PEVNTFAL_FAL11                             (0x00000800UL)
-#define AOS_PEVNTFAL_FAL12_POS                         (12U)
-#define AOS_PEVNTFAL_FAL12                             (0x00001000UL)
-#define AOS_PEVNTFAL_FAL13_POS                         (13U)
-#define AOS_PEVNTFAL_FAL13                             (0x00002000UL)
-#define AOS_PEVNTFAL_FAL14_POS                         (14U)
-#define AOS_PEVNTFAL_FAL14                             (0x00004000UL)
-#define AOS_PEVNTFAL_FAL15_POS                         (15U)
-#define AOS_PEVNTFAL_FAL15                             (0x00008000UL)
+/*  Bit definition for AOS_PEVNTFALR register  */
+#define AOS_PEVNTFALR_FAL                              (0x0000FFFFUL)
 
 /*  Bit definition for AOS_PEVNTNFCR register  */
 #define AOS_PEVNTNFCR_NFEN1_POS                        (0U)
@@ -3570,70 +3271,24 @@ typedef struct {
 /*  Bit definition for CAN_LIMIT register  */
 #define CAN_LIMIT_EWL_POS                              (0U)
 #define CAN_LIMIT_EWL                                  (0x0FU)
-#define CAN_LIMIT_EWL_0                                (0x01U)
-#define CAN_LIMIT_EWL_1                                (0x02U)
-#define CAN_LIMIT_EWL_2                                (0x04U)
-#define CAN_LIMIT_EWL_3                                (0x08U)
 #define CAN_LIMIT_AFWL_POS                             (4U)
 #define CAN_LIMIT_AFWL                                 (0xF0U)
-#define CAN_LIMIT_AFWL_0                               (0x10U)
-#define CAN_LIMIT_AFWL_1                               (0x20U)
-#define CAN_LIMIT_AFWL_2                               (0x40U)
-#define CAN_LIMIT_AFWL_3                               (0x80U)
 
 /*  Bit definition for CAN_SBT register  */
 #define CAN_SBT_S_SEG_1_POS                            (0U)
 #define CAN_SBT_S_SEG_1                                (0x000000FFUL)
-#define CAN_SBT_S_SEG_1_0                              (0x00000001UL)
-#define CAN_SBT_S_SEG_1_1                              (0x00000002UL)
-#define CAN_SBT_S_SEG_1_2                              (0x00000004UL)
-#define CAN_SBT_S_SEG_1_3                              (0x00000008UL)
-#define CAN_SBT_S_SEG_1_4                              (0x00000010UL)
-#define CAN_SBT_S_SEG_1_5                              (0x00000020UL)
-#define CAN_SBT_S_SEG_1_6                              (0x00000040UL)
-#define CAN_SBT_S_SEG_1_7                              (0x00000080UL)
 #define CAN_SBT_S_SEG_2_POS                            (8U)
 #define CAN_SBT_S_SEG_2                                (0x00007F00UL)
-#define CAN_SBT_S_SEG_2_0                              (0x00000100UL)
-#define CAN_SBT_S_SEG_2_1                              (0x00000200UL)
-#define CAN_SBT_S_SEG_2_2                              (0x00000400UL)
-#define CAN_SBT_S_SEG_2_3                              (0x00000800UL)
-#define CAN_SBT_S_SEG_2_4                              (0x00001000UL)
-#define CAN_SBT_S_SEG_2_5                              (0x00002000UL)
-#define CAN_SBT_S_SEG_2_6                              (0x00004000UL)
 #define CAN_SBT_S_SJW_POS                              (16U)
 #define CAN_SBT_S_SJW                                  (0x007F0000UL)
-#define CAN_SBT_S_SJW_0                                (0x00010000UL)
-#define CAN_SBT_S_SJW_1                                (0x00020000UL)
-#define CAN_SBT_S_SJW_2                                (0x00040000UL)
-#define CAN_SBT_S_SJW_3                                (0x00080000UL)
-#define CAN_SBT_S_SJW_4                                (0x00100000UL)
-#define CAN_SBT_S_SJW_5                                (0x00200000UL)
-#define CAN_SBT_S_SJW_6                                (0x00400000UL)
 #define CAN_SBT_S_PRESC_POS                            (24U)
 #define CAN_SBT_S_PRESC                                (0xFF000000UL)
-#define CAN_SBT_S_PRESC_0                              (0x01000000UL)
-#define CAN_SBT_S_PRESC_1                              (0x02000000UL)
-#define CAN_SBT_S_PRESC_2                              (0x04000000UL)
-#define CAN_SBT_S_PRESC_3                              (0x08000000UL)
-#define CAN_SBT_S_PRESC_4                              (0x10000000UL)
-#define CAN_SBT_S_PRESC_5                              (0x20000000UL)
-#define CAN_SBT_S_PRESC_6                              (0x40000000UL)
-#define CAN_SBT_S_PRESC_7                              (0x80000000UL)
 
 /*  Bit definition for CAN_EALCAP register  */
 #define CAN_EALCAP_ALC_POS                             (0U)
 #define CAN_EALCAP_ALC                                 (0x1FU)
-#define CAN_EALCAP_ALC_0                               (0x01U)
-#define CAN_EALCAP_ALC_1                               (0x02U)
-#define CAN_EALCAP_ALC_2                               (0x04U)
-#define CAN_EALCAP_ALC_3                               (0x08U)
-#define CAN_EALCAP_ALC_4                               (0x10U)
 #define CAN_EALCAP_KOER_POS                            (5U)
 #define CAN_EALCAP_KOER                                (0xE0U)
-#define CAN_EALCAP_KOER_0                              (0x20U)
-#define CAN_EALCAP_KOER_1                              (0x40U)
-#define CAN_EALCAP_KOER_2                              (0x80U)
 
 /*  Bit definition for CAN_RECNT register  */
 #define CAN_RECNT                                      (0xFFU)
@@ -3644,10 +3299,6 @@ typedef struct {
 /*  Bit definition for CAN_ACFCTRL register  */
 #define CAN_ACFCTRL_ACFADR_POS                         (0U)
 #define CAN_ACFCTRL_ACFADR                             (0x0FU)
-#define CAN_ACFCTRL_ACFADR_0                           (0x01U)
-#define CAN_ACFCTRL_ACFADR_1                           (0x02U)
-#define CAN_ACFCTRL_ACFADR_2                           (0x04U)
-#define CAN_ACFCTRL_ACFADR_3                           (0x08U)
 #define CAN_ACFCTRL_SELMASK_POS                        (5U)
 #define CAN_ACFCTRL_SELMASK                            (0x20U)
 
@@ -3672,35 +3323,6 @@ typedef struct {
 /*  Bit definition for CAN_ACF register  */
 #define CAN_ACF_ACODEORAMASK_POS                       (0U)
 #define CAN_ACF_ACODEORAMASK                           (0x1FFFFFFFUL)
-#define CAN_ACF_ACODEORAMASK_0                         (0x00000001UL)
-#define CAN_ACF_ACODEORAMASK_1                         (0x00000002UL)
-#define CAN_ACF_ACODEORAMASK_2                         (0x00000004UL)
-#define CAN_ACF_ACODEORAMASK_3                         (0x00000008UL)
-#define CAN_ACF_ACODEORAMASK_4                         (0x00000010UL)
-#define CAN_ACF_ACODEORAMASK_5                         (0x00000020UL)
-#define CAN_ACF_ACODEORAMASK_6                         (0x00000040UL)
-#define CAN_ACF_ACODEORAMASK_7                         (0x00000080UL)
-#define CAN_ACF_ACODEORAMASK_8                         (0x00000100UL)
-#define CAN_ACF_ACODEORAMASK_9                         (0x00000200UL)
-#define CAN_ACF_ACODEORAMASK_10                        (0x00000400UL)
-#define CAN_ACF_ACODEORAMASK_11                        (0x00000800UL)
-#define CAN_ACF_ACODEORAMASK_12                        (0x00001000UL)
-#define CAN_ACF_ACODEORAMASK_13                        (0x00002000UL)
-#define CAN_ACF_ACODEORAMASK_14                        (0x00004000UL)
-#define CAN_ACF_ACODEORAMASK_15                        (0x00008000UL)
-#define CAN_ACF_ACODEORAMASK_16                        (0x00010000UL)
-#define CAN_ACF_ACODEORAMASK_17                        (0x00020000UL)
-#define CAN_ACF_ACODEORAMASK_18                        (0x00040000UL)
-#define CAN_ACF_ACODEORAMASK_19                        (0x00080000UL)
-#define CAN_ACF_ACODEORAMASK_20                        (0x00100000UL)
-#define CAN_ACF_ACODEORAMASK_21                        (0x00200000UL)
-#define CAN_ACF_ACODEORAMASK_22                        (0x00400000UL)
-#define CAN_ACF_ACODEORAMASK_23                        (0x00800000UL)
-#define CAN_ACF_ACODEORAMASK_24                        (0x01000000UL)
-#define CAN_ACF_ACODEORAMASK_25                        (0x02000000UL)
-#define CAN_ACF_ACODEORAMASK_26                        (0x04000000UL)
-#define CAN_ACF_ACODEORAMASK_27                        (0x08000000UL)
-#define CAN_ACF_ACODEORAMASK_28                        (0x10000000UL)
 #define CAN_ACF_AIDE_POS                               (29U)
 #define CAN_ACF_AIDE                                   (0x20000000UL)
 #define CAN_ACF_AIDEE_POS                              (30U)
@@ -3709,12 +3331,6 @@ typedef struct {
 /*  Bit definition for CAN_TBSLOT register  */
 #define CAN_TBSLOT_TBPTR_POS                           (0U)
 #define CAN_TBSLOT_TBPTR                               (0x3FU)
-#define CAN_TBSLOT_TBPTR_0                             (0x01U)
-#define CAN_TBSLOT_TBPTR_1                             (0x02U)
-#define CAN_TBSLOT_TBPTR_2                             (0x04U)
-#define CAN_TBSLOT_TBPTR_3                             (0x08U)
-#define CAN_TBSLOT_TBPTR_4                             (0x10U)
-#define CAN_TBSLOT_TBPTR_5                             (0x20U)
 #define CAN_TBSLOT_TBF_POS                             (6U)
 #define CAN_TBSLOT_TBF                                 (0x40U)
 #define CAN_TBSLOT_TBE_POS                             (7U)
@@ -3741,47 +3357,12 @@ typedef struct {
 /*  Bit definition for CAN_REF_MSG register  */
 #define CAN_REF_MSG_REF_ID_POS                         (0U)
 #define CAN_REF_MSG_REF_ID                             (0x1FFFFFFFUL)
-#define CAN_REF_MSG_REF_ID_0                           (0x00000001UL)
-#define CAN_REF_MSG_REF_ID_1                           (0x00000002UL)
-#define CAN_REF_MSG_REF_ID_2                           (0x00000004UL)
-#define CAN_REF_MSG_REF_ID_3                           (0x00000008UL)
-#define CAN_REF_MSG_REF_ID_4                           (0x00000010UL)
-#define CAN_REF_MSG_REF_ID_5                           (0x00000020UL)
-#define CAN_REF_MSG_REF_ID_6                           (0x00000040UL)
-#define CAN_REF_MSG_REF_ID_7                           (0x00000080UL)
-#define CAN_REF_MSG_REF_ID_8                           (0x00000100UL)
-#define CAN_REF_MSG_REF_ID_9                           (0x00000200UL)
-#define CAN_REF_MSG_REF_ID_10                          (0x00000400UL)
-#define CAN_REF_MSG_REF_ID_11                          (0x00000800UL)
-#define CAN_REF_MSG_REF_ID_12                          (0x00001000UL)
-#define CAN_REF_MSG_REF_ID_13                          (0x00002000UL)
-#define CAN_REF_MSG_REF_ID_14                          (0x00004000UL)
-#define CAN_REF_MSG_REF_ID_15                          (0x00008000UL)
-#define CAN_REF_MSG_REF_ID_16                          (0x00010000UL)
-#define CAN_REF_MSG_REF_ID_17                          (0x00020000UL)
-#define CAN_REF_MSG_REF_ID_18                          (0x00040000UL)
-#define CAN_REF_MSG_REF_ID_19                          (0x00080000UL)
-#define CAN_REF_MSG_REF_ID_20                          (0x00100000UL)
-#define CAN_REF_MSG_REF_ID_21                          (0x00200000UL)
-#define CAN_REF_MSG_REF_ID_22                          (0x00400000UL)
-#define CAN_REF_MSG_REF_ID_23                          (0x00800000UL)
-#define CAN_REF_MSG_REF_ID_24                          (0x01000000UL)
-#define CAN_REF_MSG_REF_ID_25                          (0x02000000UL)
-#define CAN_REF_MSG_REF_ID_26                          (0x04000000UL)
-#define CAN_REF_MSG_REF_ID_27                          (0x08000000UL)
-#define CAN_REF_MSG_REF_ID_28                          (0x10000000UL)
 #define CAN_REF_MSG_REF_IDE_POS                        (31U)
 #define CAN_REF_MSG_REF_IDE                            (0x80000000UL)
 
 /*  Bit definition for CAN_TRG_CFG register  */
 #define CAN_TRG_CFG_TTPTR_POS                          (0U)
 #define CAN_TRG_CFG_TTPTR                              (0x003FU)
-#define CAN_TRG_CFG_TTPTR_0                            (0x0001U)
-#define CAN_TRG_CFG_TTPTR_1                            (0x0002U)
-#define CAN_TRG_CFG_TTPTR_2                            (0x0004U)
-#define CAN_TRG_CFG_TTPTR_3                            (0x0008U)
-#define CAN_TRG_CFG_TTPTR_4                            (0x0010U)
-#define CAN_TRG_CFG_TTPTR_5                            (0x0020U)
 #define CAN_TRG_CFG_TTYPE_POS                          (8U)
 #define CAN_TRG_CFG_TTYPE                              (0x0700U)
 #define CAN_TRG_CFG_TTYPE_0                            (0x0100U)
@@ -3789,10 +3370,6 @@ typedef struct {
 #define CAN_TRG_CFG_TTYPE_2                            (0x0400U)
 #define CAN_TRG_CFG_TEW_POS                            (12U)
 #define CAN_TRG_CFG_TEW                                (0xF000U)
-#define CAN_TRG_CFG_TEW_0                              (0x1000U)
-#define CAN_TRG_CFG_TEW_1                              (0x2000U)
-#define CAN_TRG_CFG_TEW_2                              (0x4000U)
-#define CAN_TRG_CFG_TEW_3                              (0x8000U)
 
 /*  Bit definition for CAN_TT_TRIG register  */
 #define CAN_TT_TRIG                                    (0xFFFFU)
@@ -3806,9 +3383,6 @@ typedef struct {
 /*  Bit definition for CMP_CTRL register  */
 #define CMP_CTRL_FLTSL_POS                             (0U)
 #define CMP_CTRL_FLTSL                                 (0x0007U)
-#define CMP_CTRL_FLTSL_0                               (0x0001U)
-#define CMP_CTRL_FLTSL_1                               (0x0002U)
-#define CMP_CTRL_FLTSL_2                               (0x0004U)
 #define CMP_CTRL_EDGSL_POS                             (5U)
 #define CMP_CTRL_EDGSL                                 (0x0060U)
 #define CMP_CTRL_EDGSL_0                               (0x0020U)
@@ -3850,28 +3424,12 @@ typedef struct {
 #define CMP_OUTMON_OMON                                (0x0001U)
 #define CMP_OUTMON_CVST_POS                            (8U)
 #define CMP_OUTMON_CVST                                (0x0F00U)
-#define CMP_OUTMON_CVST_0                              (0x0100U)
-#define CMP_OUTMON_CVST_1                              (0x0200U)
-#define CMP_OUTMON_CVST_2                              (0x0400U)
-#define CMP_OUTMON_CVST_3                              (0x0800U)
 
 /*  Bit definition for CMP_CVSSTB register  */
 #define CMP_CVSSTB_STB                                 (0x000FU)
-#define CMP_CVSSTB_STB_0                               (0x0001U)
-#define CMP_CVSSTB_STB_1                               (0x0002U)
-#define CMP_CVSSTB_STB_2                               (0x0004U)
-#define CMP_CVSSTB_STB_3                               (0x0008U)
 
 /*  Bit definition for CMP_CVSPRD register  */
 #define CMP_CVSPRD_PRD                                 (0x00FFU)
-#define CMP_CVSPRD_PRD_0                               (0x0001U)
-#define CMP_CVSPRD_PRD_1                               (0x0002U)
-#define CMP_CVSPRD_PRD_2                               (0x0004U)
-#define CMP_CVSPRD_PRD_3                               (0x0008U)
-#define CMP_CVSPRD_PRD_4                               (0x0010U)
-#define CMP_CVSPRD_PRD_5                               (0x0020U)
-#define CMP_CVSPRD_PRD_6                               (0x0040U)
-#define CMP_CVSPRD_PRD_7                               (0x0080U)
 
 /*******************************************************************************
                 Bit definition for Peripheral CMPCR
@@ -4076,22 +3634,6 @@ typedef struct {
 /*  Bit definition for CRC_RESLT register  */
 #define CRC_RESLT_CRC_REG_POS                          (0U)
 #define CRC_RESLT_CRC_REG                              (0x0000FFFFUL)
-#define CRC_RESLT_CRC_REG_0                            (0x00000001UL)
-#define CRC_RESLT_CRC_REG_1                            (0x00000002UL)
-#define CRC_RESLT_CRC_REG_2                            (0x00000004UL)
-#define CRC_RESLT_CRC_REG_3                            (0x00000008UL)
-#define CRC_RESLT_CRC_REG_4                            (0x00000010UL)
-#define CRC_RESLT_CRC_REG_5                            (0x00000020UL)
-#define CRC_RESLT_CRC_REG_6                            (0x00000040UL)
-#define CRC_RESLT_CRC_REG_7                            (0x00000080UL)
-#define CRC_RESLT_CRC_REG_8                            (0x00000100UL)
-#define CRC_RESLT_CRC_REG_9                            (0x00000200UL)
-#define CRC_RESLT_CRC_REG_10                           (0x00000400UL)
-#define CRC_RESLT_CRC_REG_11                           (0x00000800UL)
-#define CRC_RESLT_CRC_REG_12                           (0x00001000UL)
-#define CRC_RESLT_CRC_REG_13                           (0x00002000UL)
-#define CRC_RESLT_CRC_REG_14                           (0x00004000UL)
-#define CRC_RESLT_CRC_REG_15                           (0x00008000UL)
 #define CRC_RESLT_CRCFLAG_16_POS                       (16U)
 #define CRC_RESLT_CRCFLAG_16                           (0x00010000UL)
 
@@ -4206,38 +3748,21 @@ typedef struct {
 /*  Bit definition for DBGC_AUTHID2 register  */
 #define DBGC_AUTHID2                                   (0xFFFFFFFFUL)
 
-/*  Bit definition for DBGC_RESV0 register  */
-#define DBGC_RESV0                                     (0xFFFFFFFFUL)
-
 /*  Bit definition for DBGC_MCUSTAT register  */
-#define DBGC_MCUSTAT_AUTH_POS                          (0U)
-#define DBGC_MCUSTAT_AUTH                              (0x00000001UL)
-#define DBGC_MCUSTAT_REMVLOCK_POS                      (1U)
-#define DBGC_MCUSTAT_REMVLOCK                          (0x00000002UL)
-#define DBGC_MCUSTAT_SAFTYLOCK1_POS                    (2U)
-#define DBGC_MCUSTAT_SAFTYLOCK1                        (0x00000004UL)
-#define DBGC_MCUSTAT_SAFTYLOCK2_POS                    (3U)
-#define DBGC_MCUSTAT_SAFTYLOCK2                        (0x00000008UL)
-#define DBGC_MCUSTAT_CPUSTOP_POS                       (8U)
-#define DBGC_MCUSTAT_CPUSTOP                           (0x00000100UL)
-#define DBGC_MCUSTAT_CPUSLEEP_POS                      (9U)
-#define DBGC_MCUSTAT_CPUSLEEP                          (0x00000200UL)
+#define DBGC_MCUSTAT_AUTHFG_POS                        (0U)
+#define DBGC_MCUSTAT_AUTHFG                            (0x00000001UL)
+#define DBGC_MCUSTAT_PRTLV1_POS                        (2U)
+#define DBGC_MCUSTAT_PRTLV1                            (0x00000004UL)
+#define DBGC_MCUSTAT_PRTLV2_POS                        (3U)
+#define DBGC_MCUSTAT_PRTLV2                            (0x00000008UL)
 
-/*  Bit definition for DBGC_MCUCTL register  */
-#define DBGC_MCUCTL_EDBGRQ_POS                         (0U)
-#define DBGC_MCUCTL_EDBGRQ                             (0x00000001UL)
-#define DBGC_MCUCTL_RESTART_POS                        (1U)
-#define DBGC_MCUCTL_RESTART                            (0x00000002UL)
-#define DBGC_MCUCTL_DIRQ_POS                           (8U)
-#define DBGC_MCUCTL_DIRQ                               (0x00000100UL)
-
-/*  Bit definition for DBGC_FMCCTL register  */
-#define DBGC_FMCCTL_ERASEREQ_POS                       (0U)
-#define DBGC_FMCCTL_ERASEREQ                           (0x00000001UL)
-#define DBGC_FMCCTL_ERASEACK_POS                       (1U)
-#define DBGC_FMCCTL_ERASEACK                           (0x00000002UL)
-#define DBGC_FMCCTL_ERASEERR_POS                       (2U)
-#define DBGC_FMCCTL_ERASEERR                           (0x00000004UL)
+/*  Bit definition for DBGC_FERSCTL register  */
+#define DBGC_FERSCTL_ERASEREQ_POS                      (0U)
+#define DBGC_FERSCTL_ERASEREQ                          (0x00000001UL)
+#define DBGC_FERSCTL_ERASEACK_POS                      (1U)
+#define DBGC_FERSCTL_ERASEACK                          (0x00000002UL)
+#define DBGC_FERSCTL_ERASEERR_POS                      (2U)
+#define DBGC_FERSCTL_ERASEERR                          (0x00000004UL)
 
 /*  Bit definition for DBGC_MCUDBGSTAT register  */
 #define DBGC_MCUDBGSTAT_CDBGPWRUPREQ_POS               (0U)
@@ -4252,12 +3777,6 @@ typedef struct {
 #define DBGC_MCUSTPCTL_WDTSTP                          (0x00000002UL)
 #define DBGC_MCUSTPCTL_RTCSTP_POS                      (2U)
 #define DBGC_MCUSTPCTL_RTCSTP                          (0x00000004UL)
-#define DBGC_MCUSTPCTL_PVD0STP_POS                     (3U)
-#define DBGC_MCUSTPCTL_PVD0STP                         (0x00000008UL)
-#define DBGC_MCUSTPCTL_PVD1STP_POS                     (4U)
-#define DBGC_MCUSTPCTL_PVD1STP                         (0x00000010UL)
-#define DBGC_MCUSTPCTL_PVD2STP_POS                     (5U)
-#define DBGC_MCUSTPCTL_PVD2STP                         (0x00000020UL)
 #define DBGC_MCUSTPCTL_TMR01STP_POS                    (14U)
 #define DBGC_MCUSTPCTL_TMR01STP                        (0x00004000UL)
 #define DBGC_MCUSTPCTL_TMR02STP_POS                    (15U)
@@ -4301,15 +3820,12 @@ typedef struct {
 /*  Bit definition for DCU_CTL register  */
 #define DCU_CTL_MODE_POS                               (0U)
 #define DCU_CTL_MODE                                   (0x00000007UL)
-#define DCU_CTL_MODE_0                                 (0x00000001UL)
-#define DCU_CTL_MODE_1                                 (0x00000002UL)
-#define DCU_CTL_MODE_2                                 (0x00000004UL)
 #define DCU_CTL_DATASIZE_POS                           (3U)
 #define DCU_CTL_DATASIZE                               (0x00000018UL)
 #define DCU_CTL_DATASIZE_0                             (0x00000008UL)
 #define DCU_CTL_DATASIZE_1                             (0x00000010UL)
-#define DCU_CTL_COMP_TRG_POS                           (8U)
-#define DCU_CTL_COMP_TRG                               (0x00000100UL)
+#define DCU_CTL_COMPTRG_POS                            (8U)
+#define DCU_CTL_COMPTRG                                (0x00000100UL)
 #define DCU_CTL_INTEN_POS                              (31U)
 #define DCU_CTL_INTEN                                  (0x80000000UL)
 
@@ -4354,25 +3870,25 @@ typedef struct {
 #define DCU_FLAGCLR_CLR_GT1_POS                        (6U)
 #define DCU_FLAGCLR_CLR_GT1                            (0x00000040UL)
 
-/*  Bit definition for DCU_INTSEL register  */
-#define DCU_INTSEL_INT_OP_POS                          (0U)
-#define DCU_INTSEL_INT_OP                              (0x00000001UL)
-#define DCU_INTSEL_INT_LS2_POS                         (1U)
-#define DCU_INTSEL_INT_LS2                             (0x00000002UL)
-#define DCU_INTSEL_INT_EQ2_POS                         (2U)
-#define DCU_INTSEL_INT_EQ2                             (0x00000004UL)
-#define DCU_INTSEL_INT_GT2_POS                         (3U)
-#define DCU_INTSEL_INT_GT2                             (0x00000008UL)
-#define DCU_INTSEL_INT_LS1_POS                         (4U)
-#define DCU_INTSEL_INT_LS1                             (0x00000010UL)
-#define DCU_INTSEL_INT_EQ1_POS                         (5U)
-#define DCU_INTSEL_INT_EQ1                             (0x00000020UL)
-#define DCU_INTSEL_INT_GT1_POS                         (6U)
-#define DCU_INTSEL_INT_GT1                             (0x00000040UL)
-#define DCU_INTSEL_INT_WIN_POS                         (7U)
-#define DCU_INTSEL_INT_WIN                             (0x00000180UL)
-#define DCU_INTSEL_INT_WIN_0                           (0x00000080UL)
-#define DCU_INTSEL_INT_WIN_1                           (0x00000100UL)
+/*  Bit definition for DCU_INTEVTSEL register  */
+#define DCU_INTEVTSEL_SEL_OP_POS                       (0U)
+#define DCU_INTEVTSEL_SEL_OP                           (0x00000001UL)
+#define DCU_INTEVTSEL_SEL_LS2_POS                      (1U)
+#define DCU_INTEVTSEL_SEL_LS2                          (0x00000002UL)
+#define DCU_INTEVTSEL_SEL_EQ2_POS                      (2U)
+#define DCU_INTEVTSEL_SEL_EQ2                          (0x00000004UL)
+#define DCU_INTEVTSEL_SEL_GT2_POS                      (3U)
+#define DCU_INTEVTSEL_SEL_GT2                          (0x00000008UL)
+#define DCU_INTEVTSEL_SEL_LS1_POS                      (4U)
+#define DCU_INTEVTSEL_SEL_LS1                          (0x00000010UL)
+#define DCU_INTEVTSEL_SEL_EQ1_POS                      (5U)
+#define DCU_INTEVTSEL_SEL_EQ1                          (0x00000020UL)
+#define DCU_INTEVTSEL_SEL_GT1_POS                      (6U)
+#define DCU_INTEVTSEL_SEL_GT1                          (0x00000040UL)
+#define DCU_INTEVTSEL_SEL_WIN_POS                      (7U)
+#define DCU_INTEVTSEL_SEL_WIN                          (0x00000180UL)
+#define DCU_INTEVTSEL_SEL_WIN_0                        (0x00000080UL)
+#define DCU_INTEVTSEL_SEL_WIN_1                        (0x00000100UL)
 
 /*******************************************************************************
                 Bit definition for Peripheral DMA
@@ -4517,11 +4033,11 @@ typedef struct {
 #define DMA_RCFGCTL_CNTMD_0                            (0x00100000UL)
 #define DMA_RCFGCTL_CNTMD_1                            (0x00200000UL)
 
-/*  Bit definition for DMA_SAR0 register  */
-#define DMA_SAR0                                       (0xFFFFFFFFUL)
+/*  Bit definition for DMA_SAR register  */
+#define DMA_SAR                                        (0xFFFFFFFFUL)
 
-/*  Bit definition for DMA_DAR0 register  */
-#define DMA_DAR0                                       (0xFFFFFFFFUL)
+/*  Bit definition for DMA_DAR register  */
+#define DMA_DAR                                        (0xFFFFFFFFUL)
 
 /*  Bit definition for DMA_DTCTL register  */
 #define DMA_DTCTL_BLKSIZE_POS                          (0U)
@@ -4681,11 +4197,11 @@ typedef struct {
 #define DMA_CHCTL_IE_POS                               (12U)
 #define DMA_CHCTL_IE                                   (0x00001000UL)
 
-/*  Bit definition for DMA_MONSAR0 register  */
-#define DMA_MONSAR0                                    (0xFFFFFFFFUL)
+/*  Bit definition for DMA_MONSAR register  */
+#define DMA_MONSAR                                     (0xFFFFFFFFUL)
 
-/*  Bit definition for DMA_MONDAR0 register  */
-#define DMA_MONDAR0                                    (0xFFFFFFFFUL)
+/*  Bit definition for DMA_MONDAR register  */
+#define DMA_MONDAR                                     (0xFFFFFFFFUL)
 
 /*  Bit definition for DMA_MONDTCTL register  */
 #define DMA_MONDTCTL_BLKSIZE_POS                       (0U)
@@ -4710,42 +4226,6 @@ typedef struct {
 #define DMA_MONDNSEQCTL_DOFFSET                        (0x000FFFFFUL)
 #define DMA_MONDNSEQCTL_DNSCNT_POS                     (20U)
 #define DMA_MONDNSEQCTL_DNSCNT                         (0xFFF00000UL)
-
-/*  Bit definition for DMA_SAR1 register  */
-#define DMA_SAR1                                       (0xFFFFFFFFUL)
-
-/*  Bit definition for DMA_DAR1 register  */
-#define DMA_DAR1                                       (0xFFFFFFFFUL)
-
-/*  Bit definition for DMA_MONSAR1 register  */
-#define DMA_MONSAR1                                    (0xFFFFFFFFUL)
-
-/*  Bit definition for DMA_MONDAR1 register  */
-#define DMA_MONDAR1                                    (0xFFFFFFFFUL)
-
-/*  Bit definition for DMA_SAR2 register  */
-#define DMA_SAR2                                       (0xFFFFFFFFUL)
-
-/*  Bit definition for DMA_DAR2 register  */
-#define DMA_DAR2                                       (0xFFFFFFFFUL)
-
-/*  Bit definition for DMA_MONSAR2 register  */
-#define DMA_MONSAR2                                    (0xFFFFFFFFUL)
-
-/*  Bit definition for DMA_MONDAR2 register  */
-#define DMA_MONDAR2                                    (0xFFFFFFFFUL)
-
-/*  Bit definition for DMA_SAR3 register  */
-#define DMA_SAR3                                       (0xFFFFFFFFUL)
-
-/*  Bit definition for DMA_DAR3 register  */
-#define DMA_DAR3                                       (0xFFFFFFFFUL)
-
-/*  Bit definition for DMA_MONSAR3 register  */
-#define DMA_MONSAR3                                    (0xFFFFFFFFUL)
-
-/*  Bit definition for DMA_MONDAR3 register  */
-#define DMA_MONDAR3                                    (0xFFFFFFFFUL)
 
 /*******************************************************************************
                 Bit definition for Peripheral EFM
@@ -4773,9 +4253,6 @@ typedef struct {
 #define EFM_FWMC_PEMODE                                (0x00000001UL)
 #define EFM_FWMC_PEMOD_POS                             (4U)
 #define EFM_FWMC_PEMOD                                 (0x00000070UL)
-#define EFM_FWMC_PEMOD_0                               (0x00000010UL)
-#define EFM_FWMC_PEMOD_1                               (0x00000020UL)
-#define EFM_FWMC_PEMOD_2                               (0x00000040UL)
 #define EFM_FWMC_BUSHLDCTL_POS                         (8U)
 #define EFM_FWMC_BUSHLDCTL                             (0x00000100UL)
 
@@ -4852,12 +4329,12 @@ typedef struct {
 /*  Bit definition for EMB_CTL register  */
 #define EMB_CTL_PORTINEN_POS                           (0U)
 #define EMB_CTL_PORTINEN                               (0x00000001UL)
-#define EMB_CTL_CMPEN0_POS                             (1U)
-#define EMB_CTL_CMPEN0                                 (0x00000002UL)
-#define EMB_CTL_CMPEN1_POS                             (2U)
-#define EMB_CTL_CMPEN1                                 (0x00000004UL)
-#define EMB_CTL_CMPEN2_POS                             (3U)
-#define EMB_CTL_CMPEN2                                 (0x00000008UL)
+#define EMB_CTL_CMPEN1_POS                             (1U)
+#define EMB_CTL_CMPEN1                                 (0x00000002UL)
+#define EMB_CTL_CMPEN2_POS                             (2U)
+#define EMB_CTL_CMPEN2                                 (0x00000004UL)
+#define EMB_CTL_CMPEN3_POS                             (3U)
+#define EMB_CTL_CMPEN3                                 (0x00000008UL)
 #define EMB_CTL_OSCSTPEN_POS                           (5U)
 #define EMB_CTL_OSCSTPEN                               (0x00000020UL)
 #define EMB_CTL_PWMSEN0_POS                            (6U)
@@ -4909,10 +4386,10 @@ typedef struct {
 #define EMB_STATCLR_OSFCLR                             (0x00000008UL)
 
 /*  Bit definition for EMB_INTEN register  */
-#define EMB_INTEN_PORTINTEN_POS                        (0U)
-#define EMB_INTEN_PORTINTEN                            (0x00000001UL)
-#define EMB_INTEN_PWMINTEN_POS                         (1U)
-#define EMB_INTEN_PWMINTEN                             (0x00000002UL)
+#define EMB_INTEN_PORTININTEN_POS                      (0U)
+#define EMB_INTEN_PORTININTEN                          (0x00000001UL)
+#define EMB_INTEN_PWMSINTEN_POS                        (1U)
+#define EMB_INTEN_PWMSINTEN                            (0x00000002UL)
 #define EMB_INTEN_CMPINTEN_POS                         (2U)
 #define EMB_INTEN_CMPINTEN                             (0x00000004UL)
 #define EMB_INTEN_OSINTEN_POS                          (3U)
@@ -4923,60 +4400,12 @@ typedef struct {
 *******************************************************************************/
 /*  Bit definition for FCM_LVR register  */
 #define FCM_LVR_LVR                                    (0x0000FFFFUL)
-#define FCM_LVR_LVR_0                                  (0x00000001UL)
-#define FCM_LVR_LVR_1                                  (0x00000002UL)
-#define FCM_LVR_LVR_2                                  (0x00000004UL)
-#define FCM_LVR_LVR_3                                  (0x00000008UL)
-#define FCM_LVR_LVR_4                                  (0x00000010UL)
-#define FCM_LVR_LVR_5                                  (0x00000020UL)
-#define FCM_LVR_LVR_6                                  (0x00000040UL)
-#define FCM_LVR_LVR_7                                  (0x00000080UL)
-#define FCM_LVR_LVR_8                                  (0x00000100UL)
-#define FCM_LVR_LVR_9                                  (0x00000200UL)
-#define FCM_LVR_LVR_10                                 (0x00000400UL)
-#define FCM_LVR_LVR_11                                 (0x00000800UL)
-#define FCM_LVR_LVR_12                                 (0x00001000UL)
-#define FCM_LVR_LVR_13                                 (0x00002000UL)
-#define FCM_LVR_LVR_14                                 (0x00004000UL)
-#define FCM_LVR_LVR_15                                 (0x00008000UL)
 
 /*  Bit definition for FCM_UVR register  */
 #define FCM_UVR_UVR                                    (0x0000FFFFUL)
-#define FCM_UVR_UVR_0                                  (0x00000001UL)
-#define FCM_UVR_UVR_1                                  (0x00000002UL)
-#define FCM_UVR_UVR_2                                  (0x00000004UL)
-#define FCM_UVR_UVR_3                                  (0x00000008UL)
-#define FCM_UVR_UVR_4                                  (0x00000010UL)
-#define FCM_UVR_UVR_5                                  (0x00000020UL)
-#define FCM_UVR_UVR_6                                  (0x00000040UL)
-#define FCM_UVR_UVR_7                                  (0x00000080UL)
-#define FCM_UVR_UVR_8                                  (0x00000100UL)
-#define FCM_UVR_UVR_9                                  (0x00000200UL)
-#define FCM_UVR_UVR_10                                 (0x00000400UL)
-#define FCM_UVR_UVR_11                                 (0x00000800UL)
-#define FCM_UVR_UVR_12                                 (0x00001000UL)
-#define FCM_UVR_UVR_13                                 (0x00002000UL)
-#define FCM_UVR_UVR_14                                 (0x00004000UL)
-#define FCM_UVR_UVR_15                                 (0x00008000UL)
 
 /*  Bit definition for FCM_CNTR register  */
 #define FCM_CNTR_CNTR                                  (0x0000FFFFUL)
-#define FCM_CNTR_CNTR_0                                (0x00000001UL)
-#define FCM_CNTR_CNTR_1                                (0x00000002UL)
-#define FCM_CNTR_CNTR_2                                (0x00000004UL)
-#define FCM_CNTR_CNTR_3                                (0x00000008UL)
-#define FCM_CNTR_CNTR_4                                (0x00000010UL)
-#define FCM_CNTR_CNTR_5                                (0x00000020UL)
-#define FCM_CNTR_CNTR_6                                (0x00000040UL)
-#define FCM_CNTR_CNTR_7                                (0x00000080UL)
-#define FCM_CNTR_CNTR_8                                (0x00000100UL)
-#define FCM_CNTR_CNTR_9                                (0x00000200UL)
-#define FCM_CNTR_CNTR_10                               (0x00000400UL)
-#define FCM_CNTR_CNTR_11                               (0x00000800UL)
-#define FCM_CNTR_CNTR_12                               (0x00001000UL)
-#define FCM_CNTR_CNTR_13                               (0x00002000UL)
-#define FCM_CNTR_CNTR_14                               (0x00004000UL)
-#define FCM_CNTR_CNTR_15                               (0x00008000UL)
 
 /*  Bit definition for FCM_STR register  */
 #define FCM_STR_START                                  (0x00000001UL)
@@ -4988,10 +4417,6 @@ typedef struct {
 #define FCM_MCCR_MDIVS_1                               (0x00000002UL)
 #define FCM_MCCR_MCKS_POS                              (4U)
 #define FCM_MCCR_MCKS                                  (0x000000F0UL)
-#define FCM_MCCR_MCKS_0                                (0x00000010UL)
-#define FCM_MCCR_MCKS_1                                (0x00000020UL)
-#define FCM_MCCR_MCKS_2                                (0x00000040UL)
-#define FCM_MCCR_MCKS_3                                (0x00000080UL)
 
 /*  Bit definition for FCM_RCCR register  */
 #define FCM_RCCR_RDIVS_POS                             (0U)
@@ -5000,10 +4425,6 @@ typedef struct {
 #define FCM_RCCR_RDIVS_1                               (0x00000002UL)
 #define FCM_RCCR_RCKS_POS                              (3U)
 #define FCM_RCCR_RCKS                                  (0x00000078UL)
-#define FCM_RCCR_RCKS_0                                (0x00000008UL)
-#define FCM_RCCR_RCKS_1                                (0x00000010UL)
-#define FCM_RCCR_RCKS_2                                (0x00000020UL)
-#define FCM_RCCR_RCKS_3                                (0x00000040UL)
 #define FCM_RCCR_INEXS_POS                             (7U)
 #define FCM_RCCR_INEXS                                 (0x00000080UL)
 #define FCM_RCCR_DNFS_POS                              (8U)
@@ -5474,8 +4895,8 @@ typedef struct {
 #define I2C_CR1_SMBDEFAULTEN                           (0x00000008UL)
 #define I2C_CR1_SMBHOSTEN_POS                          (4U)
 #define I2C_CR1_SMBHOSTEN                              (0x00000010UL)
-#define I2C_CR1_GCEN_POS                               (6U)
-#define I2C_CR1_GCEN                                   (0x00000040UL)
+#define I2C_CR1_ENGC_POS                               (6U)
+#define I2C_CR1_ENGC                                   (0x00000040UL)
 #define I2C_CR1_RESTART_POS                            (7U)
 #define I2C_CR1_RESTART                                (0x00000080UL)
 #define I2C_CR1_START_POS                              (8U)
@@ -5534,16 +4955,6 @@ typedef struct {
 /*  Bit definition for I2C_SLR0 register  */
 #define I2C_SLR0_SLADDR0_POS                           (0U)
 #define I2C_SLR0_SLADDR0                               (0x000003FFUL)
-#define I2C_SLR0_SLADDR0_0                             (0x00000001UL)
-#define I2C_SLR0_SLADDR0_1                             (0x00000002UL)
-#define I2C_SLR0_SLADDR0_2                             (0x00000004UL)
-#define I2C_SLR0_SLADDR0_3                             (0x00000008UL)
-#define I2C_SLR0_SLADDR0_4                             (0x00000010UL)
-#define I2C_SLR0_SLADDR0_5                             (0x00000020UL)
-#define I2C_SLR0_SLADDR0_6                             (0x00000040UL)
-#define I2C_SLR0_SLADDR0_7                             (0x00000080UL)
-#define I2C_SLR0_SLADDR0_8                             (0x00000100UL)
-#define I2C_SLR0_SLADDR0_9                             (0x00000200UL)
 #define I2C_SLR0_SLADDR0EN_POS                         (12U)
 #define I2C_SLR0_SLADDR0EN                             (0x00001000UL)
 #define I2C_SLR0_ADDRMOD0_POS                          (15U)
@@ -5552,16 +4963,6 @@ typedef struct {
 /*  Bit definition for I2C_SLR1 register  */
 #define I2C_SLR1_SLADDR1_POS                           (0U)
 #define I2C_SLR1_SLADDR1                               (0x000003FFUL)
-#define I2C_SLR1_SLADDR1_0                             (0x00000001UL)
-#define I2C_SLR1_SLADDR1_1                             (0x00000002UL)
-#define I2C_SLR1_SLADDR1_2                             (0x00000004UL)
-#define I2C_SLR1_SLADDR1_3                             (0x00000008UL)
-#define I2C_SLR1_SLADDR1_4                             (0x00000010UL)
-#define I2C_SLR1_SLADDR1_5                             (0x00000020UL)
-#define I2C_SLR1_SLADDR1_6                             (0x00000040UL)
-#define I2C_SLR1_SLADDR1_7                             (0x00000080UL)
-#define I2C_SLR1_SLADDR1_8                             (0x00000100UL)
-#define I2C_SLR1_SLADDR1_9                             (0x00000200UL)
 #define I2C_SLR1_SLADDR1EN_POS                         (12U)
 #define I2C_SLR1_SLADDR1EN                             (0x00001000UL)
 #define I2C_SLR1_ADDRMOD1_POS                          (15U)
@@ -5570,40 +4971,8 @@ typedef struct {
 /*  Bit definition for I2C_SLTR register  */
 #define I2C_SLTR_TOUTLOW_POS                           (0U)
 #define I2C_SLTR_TOUTLOW                               (0x0000FFFFUL)
-#define I2C_SLTR_TOUTLOW_0                             (0x00000001UL)
-#define I2C_SLTR_TOUTLOW_1                             (0x00000002UL)
-#define I2C_SLTR_TOUTLOW_2                             (0x00000004UL)
-#define I2C_SLTR_TOUTLOW_3                             (0x00000008UL)
-#define I2C_SLTR_TOUTLOW_4                             (0x00000010UL)
-#define I2C_SLTR_TOUTLOW_5                             (0x00000020UL)
-#define I2C_SLTR_TOUTLOW_6                             (0x00000040UL)
-#define I2C_SLTR_TOUTLOW_7                             (0x00000080UL)
-#define I2C_SLTR_TOUTLOW_8                             (0x00000100UL)
-#define I2C_SLTR_TOUTLOW_9                             (0x00000200UL)
-#define I2C_SLTR_TOUTLOW_10                            (0x00000400UL)
-#define I2C_SLTR_TOUTLOW_11                            (0x00000800UL)
-#define I2C_SLTR_TOUTLOW_12                            (0x00001000UL)
-#define I2C_SLTR_TOUTLOW_13                            (0x00002000UL)
-#define I2C_SLTR_TOUTLOW_14                            (0x00004000UL)
-#define I2C_SLTR_TOUTLOW_15                            (0x00008000UL)
 #define I2C_SLTR_TOUTHIGH_POS                          (16U)
 #define I2C_SLTR_TOUTHIGH                              (0xFFFF0000UL)
-#define I2C_SLTR_TOUTHIGH_0                            (0x00010000UL)
-#define I2C_SLTR_TOUTHIGH_1                            (0x00020000UL)
-#define I2C_SLTR_TOUTHIGH_2                            (0x00040000UL)
-#define I2C_SLTR_TOUTHIGH_3                            (0x00080000UL)
-#define I2C_SLTR_TOUTHIGH_4                            (0x00100000UL)
-#define I2C_SLTR_TOUTHIGH_5                            (0x00200000UL)
-#define I2C_SLTR_TOUTHIGH_6                            (0x00400000UL)
-#define I2C_SLTR_TOUTHIGH_7                            (0x00800000UL)
-#define I2C_SLTR_TOUTHIGH_8                            (0x01000000UL)
-#define I2C_SLTR_TOUTHIGH_9                            (0x02000000UL)
-#define I2C_SLTR_TOUTHIGH_10                           (0x04000000UL)
-#define I2C_SLTR_TOUTHIGH_11                           (0x08000000UL)
-#define I2C_SLTR_TOUTHIGH_12                           (0x10000000UL)
-#define I2C_SLTR_TOUTHIGH_13                           (0x20000000UL)
-#define I2C_SLTR_TOUTHIGH_14                           (0x40000000UL)
-#define I2C_SLTR_TOUTHIGH_15                           (0x80000000UL)
 
 /*  Bit definition for I2C_SR register  */
 #define I2C_SR_STARTF_POS                              (0U)
@@ -5675,46 +5044,17 @@ typedef struct {
 
 /*  Bit definition for I2C_DTR register  */
 #define I2C_DTR_DT                                     (0xFFU)
-#define I2C_DTR_DT_0                                   (0x01U)
-#define I2C_DTR_DT_1                                   (0x02U)
-#define I2C_DTR_DT_2                                   (0x04U)
-#define I2C_DTR_DT_3                                   (0x08U)
-#define I2C_DTR_DT_4                                   (0x10U)
-#define I2C_DTR_DT_5                                   (0x20U)
-#define I2C_DTR_DT_6                                   (0x40U)
-#define I2C_DTR_DT_7                                   (0x80U)
 
 /*  Bit definition for I2C_DRR register  */
 #define I2C_DRR_DR                                     (0xFFU)
-#define I2C_DRR_DR_0                                   (0x01U)
-#define I2C_DRR_DR_1                                   (0x02U)
-#define I2C_DRR_DR_2                                   (0x04U)
-#define I2C_DRR_DR_3                                   (0x08U)
-#define I2C_DRR_DR_4                                   (0x10U)
-#define I2C_DRR_DR_5                                   (0x20U)
-#define I2C_DRR_DR_6                                   (0x40U)
-#define I2C_DRR_DR_7                                   (0x80U)
 
 /*  Bit definition for I2C_CCR register  */
 #define I2C_CCR_SLOWW_POS                              (0U)
 #define I2C_CCR_SLOWW                                  (0x0000001FUL)
-#define I2C_CCR_SLOWW_0                                (0x00000001UL)
-#define I2C_CCR_SLOWW_1                                (0x00000002UL)
-#define I2C_CCR_SLOWW_2                                (0x00000004UL)
-#define I2C_CCR_SLOWW_3                                (0x00000008UL)
-#define I2C_CCR_SLOWW_4                                (0x00000010UL)
 #define I2C_CCR_SHIGHW_POS                             (8U)
 #define I2C_CCR_SHIGHW                                 (0x00001F00UL)
-#define I2C_CCR_SHIGHW_0                               (0x00000100UL)
-#define I2C_CCR_SHIGHW_1                               (0x00000200UL)
-#define I2C_CCR_SHIGHW_2                               (0x00000400UL)
-#define I2C_CCR_SHIGHW_3                               (0x00000800UL)
-#define I2C_CCR_SHIGHW_4                               (0x00001000UL)
 #define I2C_CCR_FREQ_POS                               (16U)
 #define I2C_CCR_FREQ                                   (0x00070000UL)
-#define I2C_CCR_FREQ_0                                 (0x00010000UL)
-#define I2C_CCR_FREQ_1                                 (0x00020000UL)
-#define I2C_CCR_FREQ_2                                 (0x00040000UL)
 
 /*  Bit definition for I2C_FLTR register  */
 #define I2C_FLTR_DNF_POS                               (0U)
@@ -5748,14 +5088,8 @@ typedef struct {
 #define I2S_CTRL_MCKOE                                 (0x00000080UL)
 #define I2S_CTRL_TXBIRQWL_POS                          (8U)
 #define I2S_CTRL_TXBIRQWL                              (0x00000700UL)
-#define I2S_CTRL_TXBIRQWL_0                            (0x00000100UL)
-#define I2S_CTRL_TXBIRQWL_1                            (0x00000200UL)
-#define I2S_CTRL_TXBIRQWL_2                            (0x00000400UL)
 #define I2S_CTRL_RXBIRQWL_POS                          (12U)
 #define I2S_CTRL_RXBIRQWL                              (0x00007000UL)
-#define I2S_CTRL_RXBIRQWL_0                            (0x00001000UL)
-#define I2S_CTRL_RXBIRQWL_1                            (0x00002000UL)
-#define I2S_CTRL_RXBIRQWL_2                            (0x00004000UL)
 #define I2S_CTRL_FIFOR_POS                             (16U)
 #define I2S_CTRL_FIFOR                                 (0x00010000UL)
 #define I2S_CTRL_CODECRC_POS                           (17U)
@@ -5815,14 +5149,6 @@ typedef struct {
 
 /*  Bit definition for I2S_PR register  */
 #define I2S_PR_I2SDIV                                  (0x000000FFUL)
-#define I2S_PR_I2SDIV_0                                (0x00000001UL)
-#define I2S_PR_I2SDIV_1                                (0x00000002UL)
-#define I2S_PR_I2SDIV_2                                (0x00000004UL)
-#define I2S_PR_I2SDIV_3                                (0x00000008UL)
-#define I2S_PR_I2SDIV_4                                (0x00000010UL)
-#define I2S_PR_I2SDIV_5                                (0x00000020UL)
-#define I2S_PR_I2SDIV_6                                (0x00000040UL)
-#define I2S_PR_I2SDIV_7                                (0x00000080UL)
 
 /*******************************************************************************
                 Bit definition for Peripheral ICG
@@ -5838,16 +5164,8 @@ typedef struct {
 #define ICG_ICG0_SWDTPERI_1                            (0x00000008UL)
 #define ICG_ICG0_SWDTCKS_POS                           (4U)
 #define ICG_ICG0_SWDTCKS                               (0x000000F0UL)
-#define ICG_ICG0_SWDTCKS_0                             (0x00000010UL)
-#define ICG_ICG0_SWDTCKS_1                             (0x00000020UL)
-#define ICG_ICG0_SWDTCKS_2                             (0x00000040UL)
-#define ICG_ICG0_SWDTCKS_3                             (0x00000080UL)
 #define ICG_ICG0_SWDTWDPT_POS                          (8U)
 #define ICG_ICG0_SWDTWDPT                              (0x00000F00UL)
-#define ICG_ICG0_SWDTWDPT_0                            (0x00000100UL)
-#define ICG_ICG0_SWDTWDPT_1                            (0x00000200UL)
-#define ICG_ICG0_SWDTWDPT_2                            (0x00000400UL)
-#define ICG_ICG0_SWDTWDPT_3                            (0x00000800UL)
 #define ICG_ICG0_SWDTSLPOFF_POS                        (12U)
 #define ICG_ICG0_SWDTSLPOFF                            (0x00001000UL)
 #define ICG_ICG0_WDTAUTS_POS                           (16U)
@@ -5860,16 +5178,8 @@ typedef struct {
 #define ICG_ICG0_WDTPERI_1                             (0x00080000UL)
 #define ICG_ICG0_WDTCKS_POS                            (20U)
 #define ICG_ICG0_WDTCKS                                (0x00F00000UL)
-#define ICG_ICG0_WDTCKS_0                              (0x00100000UL)
-#define ICG_ICG0_WDTCKS_1                              (0x00200000UL)
-#define ICG_ICG0_WDTCKS_2                              (0x00400000UL)
-#define ICG_ICG0_WDTCKS_3                              (0x00800000UL)
 #define ICG_ICG0_WDTWDPT_POS                           (24U)
 #define ICG_ICG0_WDTWDPT                               (0x0F000000UL)
-#define ICG_ICG0_WDTWDPT_0                             (0x01000000UL)
-#define ICG_ICG0_WDTWDPT_1                             (0x02000000UL)
-#define ICG_ICG0_WDTWDPT_2                             (0x04000000UL)
-#define ICG_ICG0_WDTWDPT_3                             (0x08000000UL)
 #define ICG_ICG0_WDTSLPOFF_POS                         (28U)
 #define ICG_ICG0_WDTSLPOFF                             (0x10000000UL)
 
@@ -6038,73 +5348,73 @@ typedef struct {
 #define INTC_WUPEN_RXWUEN_POS                          (25U)
 #define INTC_WUPEN_RXWUEN                              (0x02000000UL)
 
-/*  Bit definition for INTC_EIRQFR register  */
-#define INTC_EIRQFR_EIRQFR0_POS                        (0U)
-#define INTC_EIRQFR_EIRQFR0                            (0x00000001UL)
-#define INTC_EIRQFR_EIRQFR1_POS                        (1U)
-#define INTC_EIRQFR_EIRQFR1                            (0x00000002UL)
-#define INTC_EIRQFR_EIRQFR2_POS                        (2U)
-#define INTC_EIRQFR_EIRQFR2                            (0x00000004UL)
-#define INTC_EIRQFR_EIRQFR3_POS                        (3U)
-#define INTC_EIRQFR_EIRQFR3                            (0x00000008UL)
-#define INTC_EIRQFR_EIRQFR4_POS                        (4U)
-#define INTC_EIRQFR_EIRQFR4                            (0x00000010UL)
-#define INTC_EIRQFR_EIRQFR5_POS                        (5U)
-#define INTC_EIRQFR_EIRQFR5                            (0x00000020UL)
-#define INTC_EIRQFR_EIRQFR6_POS                        (6U)
-#define INTC_EIRQFR_EIRQFR6                            (0x00000040UL)
-#define INTC_EIRQFR_EIRQFR7_POS                        (7U)
-#define INTC_EIRQFR_EIRQFR7                            (0x00000080UL)
-#define INTC_EIRQFR_EIRQFR8_POS                        (8U)
-#define INTC_EIRQFR_EIRQFR8                            (0x00000100UL)
-#define INTC_EIRQFR_EIRQFR9_POS                        (9U)
-#define INTC_EIRQFR_EIRQFR9                            (0x00000200UL)
-#define INTC_EIRQFR_EIRQFR10_POS                       (10U)
-#define INTC_EIRQFR_EIRQFR10                           (0x00000400UL)
-#define INTC_EIRQFR_EIRQFR11_POS                       (11U)
-#define INTC_EIRQFR_EIRQFR11                           (0x00000800UL)
-#define INTC_EIRQFR_EIRQFR12_POS                       (12U)
-#define INTC_EIRQFR_EIRQFR12                           (0x00001000UL)
-#define INTC_EIRQFR_EIRQFR13_POS                       (13U)
-#define INTC_EIRQFR_EIRQFR13                           (0x00002000UL)
-#define INTC_EIRQFR_EIRQFR14_POS                       (14U)
-#define INTC_EIRQFR_EIRQFR14                           (0x00004000UL)
-#define INTC_EIRQFR_EIRQFR15_POS                       (15U)
-#define INTC_EIRQFR_EIRQFR15                           (0x00008000UL)
+/*  Bit definition for INTC_EIFR register  */
+#define INTC_EIFR_EIFR0_POS                            (0U)
+#define INTC_EIFR_EIFR0                                (0x00000001UL)
+#define INTC_EIFR_EIFR1_POS                            (1U)
+#define INTC_EIFR_EIFR1                                (0x00000002UL)
+#define INTC_EIFR_EIFR2_POS                            (2U)
+#define INTC_EIFR_EIFR2                                (0x00000004UL)
+#define INTC_EIFR_EIFR3_POS                            (3U)
+#define INTC_EIFR_EIFR3                                (0x00000008UL)
+#define INTC_EIFR_EIFR4_POS                            (4U)
+#define INTC_EIFR_EIFR4                                (0x00000010UL)
+#define INTC_EIFR_EIFR5_POS                            (5U)
+#define INTC_EIFR_EIFR5                                (0x00000020UL)
+#define INTC_EIFR_EIFR6_POS                            (6U)
+#define INTC_EIFR_EIFR6                                (0x00000040UL)
+#define INTC_EIFR_EIFR7_POS                            (7U)
+#define INTC_EIFR_EIFR7                                (0x00000080UL)
+#define INTC_EIFR_EIFR8_POS                            (8U)
+#define INTC_EIFR_EIFR8                                (0x00000100UL)
+#define INTC_EIFR_EIFR9_POS                            (9U)
+#define INTC_EIFR_EIFR9                                (0x00000200UL)
+#define INTC_EIFR_EIFR10_POS                           (10U)
+#define INTC_EIFR_EIFR10                               (0x00000400UL)
+#define INTC_EIFR_EIFR11_POS                           (11U)
+#define INTC_EIFR_EIFR11                               (0x00000800UL)
+#define INTC_EIFR_EIFR12_POS                           (12U)
+#define INTC_EIFR_EIFR12                               (0x00001000UL)
+#define INTC_EIFR_EIFR13_POS                           (13U)
+#define INTC_EIFR_EIFR13                               (0x00002000UL)
+#define INTC_EIFR_EIFR14_POS                           (14U)
+#define INTC_EIFR_EIFR14                               (0x00004000UL)
+#define INTC_EIFR_EIFR15_POS                           (15U)
+#define INTC_EIFR_EIFR15                               (0x00008000UL)
 
-/*  Bit definition for INTC_EIRQCFR register  */
-#define INTC_EIRQCFR_EIRQCFR0_POS                      (0U)
-#define INTC_EIRQCFR_EIRQCFR0                          (0x00000001UL)
-#define INTC_EIRQCFR_EIRQCFR1_POS                      (1U)
-#define INTC_EIRQCFR_EIRQCFR1                          (0x00000002UL)
-#define INTC_EIRQCFR_EIRQCFR2_POS                      (2U)
-#define INTC_EIRQCFR_EIRQCFR2                          (0x00000004UL)
-#define INTC_EIRQCFR_EIRQCFR3_POS                      (3U)
-#define INTC_EIRQCFR_EIRQCFR3                          (0x00000008UL)
-#define INTC_EIRQCFR_EIRQCFR4_POS                      (4U)
-#define INTC_EIRQCFR_EIRQCFR4                          (0x00000010UL)
-#define INTC_EIRQCFR_EIRQCFR5_POS                      (5U)
-#define INTC_EIRQCFR_EIRQCFR5                          (0x00000020UL)
-#define INTC_EIRQCFR_EIRQCFR6_POS                      (6U)
-#define INTC_EIRQCFR_EIRQCFR6                          (0x00000040UL)
-#define INTC_EIRQCFR_EIRQCFR7_POS                      (7U)
-#define INTC_EIRQCFR_EIRQCFR7                          (0x00000080UL)
-#define INTC_EIRQCFR_EIRQCFR8_POS                      (8U)
-#define INTC_EIRQCFR_EIRQCFR8                          (0x00000100UL)
-#define INTC_EIRQCFR_EIRQCFR9_POS                      (9U)
-#define INTC_EIRQCFR_EIRQCFR9                          (0x00000200UL)
-#define INTC_EIRQCFR_EIRQCFR10_POS                     (10U)
-#define INTC_EIRQCFR_EIRQCFR10                         (0x00000400UL)
-#define INTC_EIRQCFR_EIRQCFR11_POS                     (11U)
-#define INTC_EIRQCFR_EIRQCFR11                         (0x00000800UL)
-#define INTC_EIRQCFR_EIRQCFR12_POS                     (12U)
-#define INTC_EIRQCFR_EIRQCFR12                         (0x00001000UL)
-#define INTC_EIRQCFR_EIRQCFR13_POS                     (13U)
-#define INTC_EIRQCFR_EIRQCFR13                         (0x00002000UL)
-#define INTC_EIRQCFR_EIRQCFR14_POS                     (14U)
-#define INTC_EIRQCFR_EIRQCFR14                         (0x00004000UL)
-#define INTC_EIRQCFR_EIRQCFR15_POS                     (15U)
-#define INTC_EIRQCFR_EIRQCFR15                         (0x00008000UL)
+/*  Bit definition for INTC_EIFCR register  */
+#define INTC_EIFCR_EIFCR0_POS                          (0U)
+#define INTC_EIFCR_EIFCR0                              (0x00000001UL)
+#define INTC_EIFCR_EIFCR1_POS                          (1U)
+#define INTC_EIFCR_EIFCR1                              (0x00000002UL)
+#define INTC_EIFCR_EIFCR2_POS                          (2U)
+#define INTC_EIFCR_EIFCR2                              (0x00000004UL)
+#define INTC_EIFCR_EIFCR3_POS                          (3U)
+#define INTC_EIFCR_EIFCR3                              (0x00000008UL)
+#define INTC_EIFCR_EIFCR4_POS                          (4U)
+#define INTC_EIFCR_EIFCR4                              (0x00000010UL)
+#define INTC_EIFCR_EIFCR5_POS                          (5U)
+#define INTC_EIFCR_EIFCR5                              (0x00000020UL)
+#define INTC_EIFCR_EIFCR6_POS                          (6U)
+#define INTC_EIFCR_EIFCR6                              (0x00000040UL)
+#define INTC_EIFCR_EIFCR7_POS                          (7U)
+#define INTC_EIFCR_EIFCR7                              (0x00000080UL)
+#define INTC_EIFCR_EIFCR8_POS                          (8U)
+#define INTC_EIFCR_EIFCR8                              (0x00000100UL)
+#define INTC_EIFCR_EIFCR9_POS                          (9U)
+#define INTC_EIFCR_EIFCR9                              (0x00000200UL)
+#define INTC_EIFCR_EIFCR10_POS                         (10U)
+#define INTC_EIFCR_EIFCR10                             (0x00000400UL)
+#define INTC_EIFCR_EIFCR11_POS                         (11U)
+#define INTC_EIFCR_EIFCR11                             (0x00000800UL)
+#define INTC_EIFCR_EIFCR12_POS                         (12U)
+#define INTC_EIFCR_EIFCR12                             (0x00001000UL)
+#define INTC_EIFCR_EIFCR13_POS                         (13U)
+#define INTC_EIFCR_EIFCR13                             (0x00002000UL)
+#define INTC_EIFCR_EIFCR14_POS                         (14U)
+#define INTC_EIFCR_EIFCR14                             (0x00004000UL)
+#define INTC_EIFCR_EIFCR15_POS                         (15U)
+#define INTC_EIFCR_EIFCR15                             (0x00008000UL)
 
 /*  Bit definition for INTC_SEL register  */
 #define INTC_SEL_INTSEL                                (0x000001FFUL)
@@ -6388,52 +5698,22 @@ typedef struct {
 /*  Bit definition for KEYSCAN_SCR register  */
 #define KEYSCAN_SCR_KEYINSEL_POS                       (0U)
 #define KEYSCAN_SCR_KEYINSEL                           (0x0000FFFFUL)
-#define KEYSCAN_SCR_KEYINSEL_0                         (0x00000001UL)
-#define KEYSCAN_SCR_KEYINSEL_1                         (0x00000002UL)
-#define KEYSCAN_SCR_KEYINSEL_2                         (0x00000004UL)
-#define KEYSCAN_SCR_KEYINSEL_3                         (0x00000008UL)
-#define KEYSCAN_SCR_KEYINSEL_4                         (0x00000010UL)
-#define KEYSCAN_SCR_KEYINSEL_5                         (0x00000020UL)
-#define KEYSCAN_SCR_KEYINSEL_6                         (0x00000040UL)
-#define KEYSCAN_SCR_KEYINSEL_7                         (0x00000080UL)
-#define KEYSCAN_SCR_KEYINSEL_8                         (0x00000100UL)
-#define KEYSCAN_SCR_KEYINSEL_9                         (0x00000200UL)
-#define KEYSCAN_SCR_KEYINSEL_10                        (0x00000400UL)
-#define KEYSCAN_SCR_KEYINSEL_11                        (0x00000800UL)
-#define KEYSCAN_SCR_KEYINSEL_12                        (0x00001000UL)
-#define KEYSCAN_SCR_KEYINSEL_13                        (0x00002000UL)
-#define KEYSCAN_SCR_KEYINSEL_14                        (0x00004000UL)
-#define KEYSCAN_SCR_KEYINSEL_15                        (0x00008000UL)
 #define KEYSCAN_SCR_KEYOUTSEL_POS                      (16U)
 #define KEYSCAN_SCR_KEYOUTSEL                          (0x00070000UL)
-#define KEYSCAN_SCR_KEYOUTSEL_0                        (0x00010000UL)
-#define KEYSCAN_SCR_KEYOUTSEL_1                        (0x00020000UL)
-#define KEYSCAN_SCR_KEYOUTSEL_2                        (0x00040000UL)
 #define KEYSCAN_SCR_CKSEL_POS                          (20U)
 #define KEYSCAN_SCR_CKSEL                              (0x00300000UL)
 #define KEYSCAN_SCR_CKSEL_0                            (0x00100000UL)
 #define KEYSCAN_SCR_CKSEL_1                            (0x00200000UL)
 #define KEYSCAN_SCR_T_LLEVEL_POS                       (24U)
 #define KEYSCAN_SCR_T_LLEVEL                           (0x1F000000UL)
-#define KEYSCAN_SCR_T_LLEVEL_0                         (0x01000000UL)
-#define KEYSCAN_SCR_T_LLEVEL_1                         (0x02000000UL)
-#define KEYSCAN_SCR_T_LLEVEL_2                         (0x04000000UL)
-#define KEYSCAN_SCR_T_LLEVEL_3                         (0x08000000UL)
-#define KEYSCAN_SCR_T_LLEVEL_4                         (0x10000000UL)
 #define KEYSCAN_SCR_T_HIZ_POS                          (29U)
 #define KEYSCAN_SCR_T_HIZ                              (0xE0000000UL)
-#define KEYSCAN_SCR_T_HIZ_0                            (0x20000000UL)
-#define KEYSCAN_SCR_T_HIZ_1                            (0x40000000UL)
-#define KEYSCAN_SCR_T_HIZ_2                            (0x80000000UL)
 
 /*  Bit definition for KEYSCAN_SER register  */
 #define KEYSCAN_SER_SEN                                (0x00000001UL)
 
 /*  Bit definition for KEYSCAN_SSR register  */
 #define KEYSCAN_SSR_INDEX                              (0x00000007UL)
-#define KEYSCAN_SSR_INDEX_0                            (0x00000001UL)
-#define KEYSCAN_SSR_INDEX_1                            (0x00000002UL)
-#define KEYSCAN_SSR_INDEX_2                            (0x00000004UL)
 
 /*******************************************************************************
                 Bit definition for Peripheral MPU
@@ -6441,40 +5721,8 @@ typedef struct {
 /*  Bit definition for MPU_RGD register  */
 #define MPU_RGD_MPURGSIZE_POS                          (0U)
 #define MPU_RGD_MPURGSIZE                              (0x0000001FUL)
-#define MPU_RGD_MPURGSIZE_0                            (0x00000001UL)
-#define MPU_RGD_MPURGSIZE_1                            (0x00000002UL)
-#define MPU_RGD_MPURGSIZE_2                            (0x00000004UL)
-#define MPU_RGD_MPURGSIZE_3                            (0x00000008UL)
-#define MPU_RGD_MPURGSIZE_4                            (0x00000010UL)
 #define MPU_RGD_MPURGADDR_POS                          (5U)
 #define MPU_RGD_MPURGADDR                              (0xFFFFFFE0UL)
-#define MPU_RGD_MPURGADDR_0                            (0x00000020UL)
-#define MPU_RGD_MPURGADDR_1                            (0x00000040UL)
-#define MPU_RGD_MPURGADDR_2                            (0x00000080UL)
-#define MPU_RGD_MPURGADDR_3                            (0x00000100UL)
-#define MPU_RGD_MPURGADDR_4                            (0x00000200UL)
-#define MPU_RGD_MPURGADDR_5                            (0x00000400UL)
-#define MPU_RGD_MPURGADDR_6                            (0x00000800UL)
-#define MPU_RGD_MPURGADDR_7                            (0x00001000UL)
-#define MPU_RGD_MPURGADDR_8                            (0x00002000UL)
-#define MPU_RGD_MPURGADDR_9                            (0x00004000UL)
-#define MPU_RGD_MPURGADDR_10                           (0x00008000UL)
-#define MPU_RGD_MPURGADDR_11                           (0x00010000UL)
-#define MPU_RGD_MPURGADDR_12                           (0x00020000UL)
-#define MPU_RGD_MPURGADDR_13                           (0x00040000UL)
-#define MPU_RGD_MPURGADDR_14                           (0x00080000UL)
-#define MPU_RGD_MPURGADDR_15                           (0x00100000UL)
-#define MPU_RGD_MPURGADDR_16                           (0x00200000UL)
-#define MPU_RGD_MPURGADDR_17                           (0x00400000UL)
-#define MPU_RGD_MPURGADDR_18                           (0x00800000UL)
-#define MPU_RGD_MPURGADDR_19                           (0x01000000UL)
-#define MPU_RGD_MPURGADDR_20                           (0x02000000UL)
-#define MPU_RGD_MPURGADDR_21                           (0x04000000UL)
-#define MPU_RGD_MPURGADDR_22                           (0x08000000UL)
-#define MPU_RGD_MPURGADDR_23                           (0x10000000UL)
-#define MPU_RGD_MPURGADDR_24                           (0x20000000UL)
-#define MPU_RGD_MPURGADDR_25                           (0x40000000UL)
-#define MPU_RGD_MPURGADDR_26                           (0x80000000UL)
 
 /*  Bit definition for MPU_RGCR register  */
 #define MPU_RGCR_S2RGRP_POS                            (0U)
@@ -6549,21 +5797,6 @@ typedef struct {
 #define MPU_WP_MPUWE                                   (0x00000001UL)
 #define MPU_WP_WKEY_POS                                (1U)
 #define MPU_WP_WKEY                                    (0x0000FFFEUL)
-#define MPU_WP_WKEY_0                                  (0x00000002UL)
-#define MPU_WP_WKEY_1                                  (0x00000004UL)
-#define MPU_WP_WKEY_2                                  (0x00000008UL)
-#define MPU_WP_WKEY_3                                  (0x00000010UL)
-#define MPU_WP_WKEY_4                                  (0x00000020UL)
-#define MPU_WP_WKEY_5                                  (0x00000040UL)
-#define MPU_WP_WKEY_6                                  (0x00000080UL)
-#define MPU_WP_WKEY_7                                  (0x00000100UL)
-#define MPU_WP_WKEY_8                                  (0x00000200UL)
-#define MPU_WP_WKEY_9                                  (0x00000400UL)
-#define MPU_WP_WKEY_10                                 (0x00000800UL)
-#define MPU_WP_WKEY_11                                 (0x00001000UL)
-#define MPU_WP_WKEY_12                                 (0x00002000UL)
-#define MPU_WP_WKEY_13                                 (0x00004000UL)
-#define MPU_WP_WKEY_14                                 (0x00008000UL)
 
 /*  Bit definition for MPU_IPPR register  */
 #define MPU_IPPR_AESRDP_POS                            (0U)
@@ -6646,44 +5879,6 @@ typedef struct {
 
 /*  Bit definition for OTS_ECR register  */
 #define OTS_ECR                                        (0xFFFFU)
-
-/*  Bit definition for OTS_LPR register  */
-#define OTS_LPR_TSOFS_POS                              (0U)
-#define OTS_LPR_TSOFS                                  (0x000000FFUL)
-#define OTS_LPR_TSOFS_0                                (0x00000001UL)
-#define OTS_LPR_TSOFS_1                                (0x00000002UL)
-#define OTS_LPR_TSOFS_2                                (0x00000004UL)
-#define OTS_LPR_TSOFS_3                                (0x00000008UL)
-#define OTS_LPR_TSOFS_4                                (0x00000010UL)
-#define OTS_LPR_TSOFS_5                                (0x00000020UL)
-#define OTS_LPR_TSOFS_6                                (0x00000040UL)
-#define OTS_LPR_TSOFS_7                                (0x00000080UL)
-#define OTS_LPR_TSSLP_POS                              (8U)
-#define OTS_LPR_TSSLP                                  (0xFFFFFF00UL)
-#define OTS_LPR_TSSLP_0                                (0x00000100UL)
-#define OTS_LPR_TSSLP_1                                (0x00000200UL)
-#define OTS_LPR_TSSLP_2                                (0x00000400UL)
-#define OTS_LPR_TSSLP_3                                (0x00000800UL)
-#define OTS_LPR_TSSLP_4                                (0x00001000UL)
-#define OTS_LPR_TSSLP_5                                (0x00002000UL)
-#define OTS_LPR_TSSLP_6                                (0x00004000UL)
-#define OTS_LPR_TSSLP_7                                (0x00008000UL)
-#define OTS_LPR_TSSLP_8                                (0x00010000UL)
-#define OTS_LPR_TSSLP_9                                (0x00020000UL)
-#define OTS_LPR_TSSLP_10                               (0x00040000UL)
-#define OTS_LPR_TSSLP_11                               (0x00080000UL)
-#define OTS_LPR_TSSLP_12                               (0x00100000UL)
-#define OTS_LPR_TSSLP_13                               (0x00200000UL)
-#define OTS_LPR_TSSLP_14                               (0x00400000UL)
-#define OTS_LPR_TSSLP_15                               (0x00800000UL)
-#define OTS_LPR_TSSLP_16                               (0x01000000UL)
-#define OTS_LPR_TSSLP_17                               (0x02000000UL)
-#define OTS_LPR_TSSLP_18                               (0x04000000UL)
-#define OTS_LPR_TSSLP_19                               (0x08000000UL)
-#define OTS_LPR_TSSLP_20                               (0x10000000UL)
-#define OTS_LPR_TSSLP_21                               (0x20000000UL)
-#define OTS_LPR_TSSLP_22                               (0x40000000UL)
-#define OTS_LPR_TSSLP_23                               (0x80000000UL)
 
 /*******************************************************************************
                 Bit definition for Peripheral PERIC
@@ -6828,22 +6023,6 @@ typedef struct {
 #define PWC_FCG0PC_PRT0                                (0x00000001UL)
 #define PWC_FCG0PC_FCG0PCWE_POS                        (16U)
 #define PWC_FCG0PC_FCG0PCWE                            (0xFFFF0000UL)
-#define PWC_FCG0PC_FCG0PCWE_0                          (0x00010000UL)
-#define PWC_FCG0PC_FCG0PCWE_1                          (0x00020000UL)
-#define PWC_FCG0PC_FCG0PCWE_2                          (0x00040000UL)
-#define PWC_FCG0PC_FCG0PCWE_3                          (0x00080000UL)
-#define PWC_FCG0PC_FCG0PCWE_4                          (0x00100000UL)
-#define PWC_FCG0PC_FCG0PCWE_5                          (0x00200000UL)
-#define PWC_FCG0PC_FCG0PCWE_6                          (0x00400000UL)
-#define PWC_FCG0PC_FCG0PCWE_7                          (0x00800000UL)
-#define PWC_FCG0PC_FCG0PCWE_8                          (0x01000000UL)
-#define PWC_FCG0PC_FCG0PCWE_9                          (0x02000000UL)
-#define PWC_FCG0PC_FCG0PCWE_10                         (0x04000000UL)
-#define PWC_FCG0PC_FCG0PCWE_11                         (0x08000000UL)
-#define PWC_FCG0PC_FCG0PCWE_12                         (0x10000000UL)
-#define PWC_FCG0PC_FCG0PCWE_13                         (0x20000000UL)
-#define PWC_FCG0PC_FCG0PCWE_14                         (0x40000000UL)
-#define PWC_FCG0PC_FCG0PCWE_15                         (0x80000000UL)
 
 /*  Bit definition for PWC_WKTCR register  */
 #define PWC_WKTCR_WKTMCMP_POS                          (0U)
@@ -7113,9 +6292,6 @@ typedef struct {
 /*  Bit definition for QSPI_CR register  */
 #define QSPI_CR_MDSEL_POS                              (0U)
 #define QSPI_CR_MDSEL                                  (0x00000007UL)
-#define QSPI_CR_MDSEL_0                                (0x00000001UL)
-#define QSPI_CR_MDSEL_1                                (0x00000002UL)
-#define QSPI_CR_MDSEL_2                                (0x00000004UL)
 #define QSPI_CR_PFE_POS                                (3U)
 #define QSPI_CR_PFE                                    (0x00000008UL)
 #define QSPI_CR_PFSAE_POS                              (4U)
@@ -7140,20 +6316,10 @@ typedef struct {
 #define QSPI_CR_DPRSL_1                                (0x00002000UL)
 #define QSPI_CR_DIV_POS                                (16U)
 #define QSPI_CR_DIV                                    (0x003F0000UL)
-#define QSPI_CR_DIV_0                                  (0x00010000UL)
-#define QSPI_CR_DIV_1                                  (0x00020000UL)
-#define QSPI_CR_DIV_2                                  (0x00040000UL)
-#define QSPI_CR_DIV_3                                  (0x00080000UL)
-#define QSPI_CR_DIV_4                                  (0x00100000UL)
-#define QSPI_CR_DIV_5                                  (0x00200000UL)
 
 /*  Bit definition for QSPI_CSCR register  */
 #define QSPI_CSCR_SSHW_POS                             (0U)
 #define QSPI_CSCR_SSHW                                 (0x0000000FUL)
-#define QSPI_CSCR_SSHW_0                               (0x00000001UL)
-#define QSPI_CSCR_SSHW_1                               (0x00000002UL)
-#define QSPI_CSCR_SSHW_2                               (0x00000004UL)
-#define QSPI_CSCR_SSHW_3                               (0x00000008UL)
 #define QSPI_CSCR_SSNW_POS                             (4U)
 #define QSPI_CSCR_SSNW                                 (0x00000030UL)
 #define QSPI_CSCR_SSNW_0                               (0x00000010UL)
@@ -7174,10 +6340,6 @@ typedef struct {
 #define QSPI_FCR_WPOL                                  (0x00000040UL)
 #define QSPI_FCR_DMCYCN_POS                            (8U)
 #define QSPI_FCR_DMCYCN                                (0x00000F00UL)
-#define QSPI_FCR_DMCYCN_0                              (0x00000100UL)
-#define QSPI_FCR_DMCYCN_1                              (0x00000200UL)
-#define QSPI_FCR_DMCYCN_2                              (0x00000400UL)
-#define QSPI_FCR_DMCYCN_3                              (0x00000800UL)
 #define QSPI_FCR_DUTY_POS                              (15U)
 #define QSPI_FCR_DUTY                                  (0x00008000UL)
 
@@ -7190,11 +6352,6 @@ typedef struct {
 #define QSPI_SR_RAER                                   (0x00000080UL)
 #define QSPI_SR_PFNUM_POS                              (8U)
 #define QSPI_SR_PFNUM                                  (0x00001F00UL)
-#define QSPI_SR_PFNUM_0                                (0x00000100UL)
-#define QSPI_SR_PFNUM_1                                (0x00000200UL)
-#define QSPI_SR_PFNUM_2                                (0x00000400UL)
-#define QSPI_SR_PFNUM_3                                (0x00000800UL)
-#define QSPI_SR_PFNUM_4                                (0x00001000UL)
 #define QSPI_SR_PFFUL_POS                              (14U)
 #define QSPI_SR_PFFUL                                  (0x00004000UL)
 #define QSPI_SR_PFAN_POS                               (15U)
@@ -7202,36 +6359,12 @@ typedef struct {
 
 /*  Bit definition for QSPI_DCOM register  */
 #define QSPI_DCOM_DCOM                                 (0x000000FFUL)
-#define QSPI_DCOM_DCOM_0                               (0x00000001UL)
-#define QSPI_DCOM_DCOM_1                               (0x00000002UL)
-#define QSPI_DCOM_DCOM_2                               (0x00000004UL)
-#define QSPI_DCOM_DCOM_3                               (0x00000008UL)
-#define QSPI_DCOM_DCOM_4                               (0x00000010UL)
-#define QSPI_DCOM_DCOM_5                               (0x00000020UL)
-#define QSPI_DCOM_DCOM_6                               (0x00000040UL)
-#define QSPI_DCOM_DCOM_7                               (0x00000080UL)
 
 /*  Bit definition for QSPI_CCMD register  */
 #define QSPI_CCMD_RIC                                  (0x000000FFUL)
-#define QSPI_CCMD_RIC_0                                (0x00000001UL)
-#define QSPI_CCMD_RIC_1                                (0x00000002UL)
-#define QSPI_CCMD_RIC_2                                (0x00000004UL)
-#define QSPI_CCMD_RIC_3                                (0x00000008UL)
-#define QSPI_CCMD_RIC_4                                (0x00000010UL)
-#define QSPI_CCMD_RIC_5                                (0x00000020UL)
-#define QSPI_CCMD_RIC_6                                (0x00000040UL)
-#define QSPI_CCMD_RIC_7                                (0x00000080UL)
 
 /*  Bit definition for QSPI_XCMD register  */
 #define QSPI_XCMD_XIPMC                                (0x000000FFUL)
-#define QSPI_XCMD_XIPMC_0                              (0x00000001UL)
-#define QSPI_XCMD_XIPMC_1                              (0x00000002UL)
-#define QSPI_XCMD_XIPMC_2                              (0x00000004UL)
-#define QSPI_XCMD_XIPMC_3                              (0x00000008UL)
-#define QSPI_XCMD_XIPMC_4                              (0x00000010UL)
-#define QSPI_XCMD_XIPMC_5                              (0x00000020UL)
-#define QSPI_XCMD_XIPMC_6                              (0x00000040UL)
-#define QSPI_XCMD_XIPMC_7                              (0x00000080UL)
 
 /*  Bit definition for QSPI_SR2 register  */
 #define QSPI_SR2_RAERCLR_POS                           (7U)
@@ -7240,12 +6373,6 @@ typedef struct {
 /*  Bit definition for QSPI_EXAR register  */
 #define QSPI_EXAR_EXADR_POS                            (26U)
 #define QSPI_EXAR_EXADR                                (0xFC000000UL)
-#define QSPI_EXAR_EXADR_0                              (0x04000000UL)
-#define QSPI_EXAR_EXADR_1                              (0x08000000UL)
-#define QSPI_EXAR_EXADR_2                              (0x10000000UL)
-#define QSPI_EXAR_EXADR_3                              (0x20000000UL)
-#define QSPI_EXAR_EXADR_4                              (0x40000000UL)
-#define QSPI_EXAR_EXADR_5                              (0x80000000UL)
 
 /*******************************************************************************
                 Bit definition for Peripheral RMU
@@ -7293,9 +6420,6 @@ typedef struct {
 /*  Bit definition for RTC_CR1 register  */
 #define RTC_CR1_PRDS_POS                               (0U)
 #define RTC_CR1_PRDS                                   (0x07U)
-#define RTC_CR1_PRDS_0                                 (0x01U)
-#define RTC_CR1_PRDS_1                                 (0x02U)
-#define RTC_CR1_PRDS_2                                 (0x04U)
 #define RTC_CR1_AMPM_POS                               (3U)
 #define RTC_CR1_AMPM                                   (0x08U)
 #define RTC_CR1_ALMFCLR_POS                            (4U)
@@ -7378,10 +6502,6 @@ typedef struct {
 /*  Bit definition for RTC_ALMHOUR register  */
 #define RTC_ALMHOUR_ALMHOURU_POS                       (0U)
 #define RTC_ALMHOUR_ALMHOURU                           (0x0FU)
-#define RTC_ALMHOUR_ALMHOURU_0                         (0x01U)
-#define RTC_ALMHOUR_ALMHOURU_1                         (0x02U)
-#define RTC_ALMHOUR_ALMHOURU_2                         (0x04U)
-#define RTC_ALMHOUR_ALMHOURU_3                         (0x08U)
 #define RTC_ALMHOUR_ALMHOURD_POS                       (4U)
 #define RTC_ALMHOUR_ALMHOURD                           (0x30U)
 #define RTC_ALMHOUR_ALMHOURD_0                         (0x10U)
@@ -7411,18 +6531,6 @@ typedef struct {
 *******************************************************************************/
 /*  Bit definition for SDIOC_BLKSIZE register  */
 #define SDIOC_BLKSIZE_TBS                              (0x0FFFU)
-#define SDIOC_BLKSIZE_TBS_0                            (0x0001U)
-#define SDIOC_BLKSIZE_TBS_1                            (0x0002U)
-#define SDIOC_BLKSIZE_TBS_2                            (0x0004U)
-#define SDIOC_BLKSIZE_TBS_3                            (0x0008U)
-#define SDIOC_BLKSIZE_TBS_4                            (0x0010U)
-#define SDIOC_BLKSIZE_TBS_5                            (0x0020U)
-#define SDIOC_BLKSIZE_TBS_6                            (0x0040U)
-#define SDIOC_BLKSIZE_TBS_7                            (0x0080U)
-#define SDIOC_BLKSIZE_TBS_8                            (0x0100U)
-#define SDIOC_BLKSIZE_TBS_9                            (0x0200U)
-#define SDIOC_BLKSIZE_TBS_10                           (0x0400U)
-#define SDIOC_BLKSIZE_TBS_11                           (0x0800U)
 
 /*  Bit definition for SDIOC_BLKCNT register  */
 #define SDIOC_BLKCNT                                   (0xFFFFU)
@@ -7462,12 +6570,6 @@ typedef struct {
 #define SDIOC_CMD_TYP_1                                (0x0080U)
 #define SDIOC_CMD_IDX_POS                              (8U)
 #define SDIOC_CMD_IDX                                  (0x3F00U)
-#define SDIOC_CMD_IDX_0                                (0x0100U)
-#define SDIOC_CMD_IDX_1                                (0x0200U)
-#define SDIOC_CMD_IDX_2                                (0x0400U)
-#define SDIOC_CMD_IDX_3                                (0x0800U)
-#define SDIOC_CMD_IDX_4                                (0x1000U)
-#define SDIOC_CMD_IDX_5                                (0x2000U)
 
 /*  Bit definition for SDIOC_RESP0 register  */
 #define SDIOC_RESP0                                    (0xFFFFU)
@@ -7574,10 +6676,6 @@ typedef struct {
 
 /*  Bit definition for SDIOC_TOUTCON register  */
 #define SDIOC_TOUTCON_DTO                              (0x0FU)
-#define SDIOC_TOUTCON_DTO_0                            (0x01U)
-#define SDIOC_TOUTCON_DTO_1                            (0x02U)
-#define SDIOC_TOUTCON_DTO_2                            (0x04U)
-#define SDIOC_TOUTCON_DTO_3                            (0x08U)
 
 /*  Bit definition for SDIOC_SFTRST register  */
 #define SDIOC_SFTRST_RSTA_POS                          (0U)
@@ -7798,19 +6896,10 @@ typedef struct {
 #define SPI_CFG1_SS3PV                                 (0x00000800UL)
 #define SPI_CFG1_MSSI_POS                              (20U)
 #define SPI_CFG1_MSSI                                  (0x00700000UL)
-#define SPI_CFG1_MSSI_0                                (0x00100000UL)
-#define SPI_CFG1_MSSI_1                                (0x00200000UL)
-#define SPI_CFG1_MSSI_2                                (0x00400000UL)
 #define SPI_CFG1_MSSDL_POS                             (24U)
 #define SPI_CFG1_MSSDL                                 (0x07000000UL)
-#define SPI_CFG1_MSSDL_0                               (0x01000000UL)
-#define SPI_CFG1_MSSDL_1                               (0x02000000UL)
-#define SPI_CFG1_MSSDL_2                               (0x04000000UL)
 #define SPI_CFG1_MIDI_POS                              (28U)
 #define SPI_CFG1_MIDI                                  (0x70000000UL)
-#define SPI_CFG1_MIDI_0                                (0x10000000UL)
-#define SPI_CFG1_MIDI_1                                (0x20000000UL)
-#define SPI_CFG1_MIDI_2                                (0x40000000UL)
 
 /*  Bit definition for SPI_SR register  */
 #define SPI_SR_OVRERF_POS                              (0U)
@@ -7835,9 +6924,6 @@ typedef struct {
 #define SPI_CFG2_CPOL                                  (0x00000002UL)
 #define SPI_CFG2_MBR_POS                               (2U)
 #define SPI_CFG2_MBR                                   (0x0000001CUL)
-#define SPI_CFG2_MBR_0                                 (0x00000004UL)
-#define SPI_CFG2_MBR_1                                 (0x00000008UL)
-#define SPI_CFG2_MBR_2                                 (0x00000010UL)
 #define SPI_CFG2_SSA_POS                               (5U)
 #define SPI_CFG2_SSA                                   (0x000000E0UL)
 #define SPI_CFG2_SSA_0                                 (0x00000020UL)
@@ -7845,10 +6931,6 @@ typedef struct {
 #define SPI_CFG2_SSA_2                                 (0x00000080UL)
 #define SPI_CFG2_DSIZE_POS                             (8U)
 #define SPI_CFG2_DSIZE                                 (0x00000F00UL)
-#define SPI_CFG2_DSIZE_0                               (0x00000100UL)
-#define SPI_CFG2_DSIZE_1                               (0x00000200UL)
-#define SPI_CFG2_DSIZE_2                               (0x00000400UL)
-#define SPI_CFG2_DSIZE_3                               (0x00000800UL)
 #define SPI_CFG2_LSBF_POS                              (12U)
 #define SPI_CFG2_LSBF                                  (0x00001000UL)
 #define SPI_CFG2_MIDIE_POS                             (13U)
@@ -7864,57 +6946,26 @@ typedef struct {
 /*  Bit definition for SRAMC_WTCR register  */
 #define SRAMC_WTCR_SRAM12_RWT_POS                      (0U)
 #define SRAMC_WTCR_SRAM12_RWT                          (0x00000007UL)
-#define SRAMC_WTCR_SRAM12_RWT_0                        (0x00000001UL)
-#define SRAMC_WTCR_SRAM12_RWT_1                        (0x00000002UL)
-#define SRAMC_WTCR_SRAM12_RWT_2                        (0x00000004UL)
 #define SRAMC_WTCR_SRAM12_WWT_POS                      (4U)
 #define SRAMC_WTCR_SRAM12_WWT                          (0x00000070UL)
-#define SRAMC_WTCR_SRAM12_WWT_0                        (0x00000010UL)
-#define SRAMC_WTCR_SRAM12_WWT_1                        (0x00000020UL)
-#define SRAMC_WTCR_SRAM12_WWT_2                        (0x00000040UL)
 #define SRAMC_WTCR_SRAM3_RWT_POS                       (8U)
 #define SRAMC_WTCR_SRAM3_RWT                           (0x00000700UL)
-#define SRAMC_WTCR_SRAM3_RWT_0                         (0x00000100UL)
-#define SRAMC_WTCR_SRAM3_RWT_1                         (0x00000200UL)
-#define SRAMC_WTCR_SRAM3_RWT_2                         (0x00000400UL)
 #define SRAMC_WTCR_SRAM3_WWT_POS                       (12U)
 #define SRAMC_WTCR_SRAM3_WWT                           (0x00007000UL)
-#define SRAMC_WTCR_SRAM3_WWT_0                         (0x00001000UL)
-#define SRAMC_WTCR_SRAM3_WWT_1                         (0x00002000UL)
-#define SRAMC_WTCR_SRAM3_WWT_2                         (0x00004000UL)
 #define SRAMC_WTCR_SRAMH_RWT_POS                       (16U)
 #define SRAMC_WTCR_SRAMH_RWT                           (0x00070000UL)
-#define SRAMC_WTCR_SRAMH_RWT_0                         (0x00010000UL)
-#define SRAMC_WTCR_SRAMH_RWT_1                         (0x00020000UL)
-#define SRAMC_WTCR_SRAMH_RWT_2                         (0x00040000UL)
 #define SRAMC_WTCR_SRAMH_WWT_POS                       (20U)
 #define SRAMC_WTCR_SRAMH_WWT                           (0x00700000UL)
-#define SRAMC_WTCR_SRAMH_WWT_0                         (0x00100000UL)
-#define SRAMC_WTCR_SRAMH_WWT_1                         (0x00200000UL)
-#define SRAMC_WTCR_SRAMH_WWT_2                         (0x00400000UL)
 #define SRAMC_WTCR_SRAMR_RWT_POS                       (24U)
 #define SRAMC_WTCR_SRAMR_RWT                           (0x07000000UL)
-#define SRAMC_WTCR_SRAMR_RWT_0                         (0x01000000UL)
-#define SRAMC_WTCR_SRAMR_RWT_1                         (0x02000000UL)
-#define SRAMC_WTCR_SRAMR_RWT_2                         (0x04000000UL)
 #define SRAMC_WTCR_SRAMR_WWT_POS                       (28U)
 #define SRAMC_WTCR_SRAMR_WWT                           (0x70000000UL)
-#define SRAMC_WTCR_SRAMR_WWT_0                         (0x10000000UL)
-#define SRAMC_WTCR_SRAMR_WWT_1                         (0x20000000UL)
-#define SRAMC_WTCR_SRAMR_WWT_2                         (0x40000000UL)
 
 /*  Bit definition for SRAMC_WTPR register  */
 #define SRAMC_WTPR_WTPRC_POS                           (0U)
 #define SRAMC_WTPR_WTPRC                               (0x00000001UL)
 #define SRAMC_WTPR_WTPRKW_POS                          (1U)
 #define SRAMC_WTPR_WTPRKW                              (0x000000FEUL)
-#define SRAMC_WTPR_WTPRKW_0                            (0x00000002UL)
-#define SRAMC_WTPR_WTPRKW_1                            (0x00000004UL)
-#define SRAMC_WTPR_WTPRKW_2                            (0x00000008UL)
-#define SRAMC_WTPR_WTPRKW_3                            (0x00000010UL)
-#define SRAMC_WTPR_WTPRKW_4                            (0x00000020UL)
-#define SRAMC_WTPR_WTPRKW_5                            (0x00000040UL)
-#define SRAMC_WTPR_WTPRKW_6                            (0x00000080UL)
 
 /*  Bit definition for SRAMC_CKCR register  */
 #define SRAMC_CKCR_PYOAD_POS                           (0U)
@@ -7931,13 +6982,6 @@ typedef struct {
 #define SRAMC_CKPR_CKPRC                               (0x00000001UL)
 #define SRAMC_CKPR_CKPRKW_POS                          (1U)
 #define SRAMC_CKPR_CKPRKW                              (0x000000FEUL)
-#define SRAMC_CKPR_CKPRKW_0                            (0x00000002UL)
-#define SRAMC_CKPR_CKPRKW_1                            (0x00000004UL)
-#define SRAMC_CKPR_CKPRKW_2                            (0x00000008UL)
-#define SRAMC_CKPR_CKPRKW_3                            (0x00000010UL)
-#define SRAMC_CKPR_CKPRKW_4                            (0x00000020UL)
-#define SRAMC_CKPR_CKPRKW_5                            (0x00000040UL)
-#define SRAMC_CKPR_CKPRKW_6                            (0x00000080UL)
 
 /*  Bit definition for SRAMC_CKSR register  */
 #define SRAMC_CKSR_SRAM3_1ERR_POS                      (0U)
@@ -7957,22 +7001,6 @@ typedef struct {
 /*  Bit definition for SWDT_SR register  */
 #define SWDT_SR_CNT_POS                                (0U)
 #define SWDT_SR_CNT                                    (0x0000FFFFUL)
-#define SWDT_SR_CNT_0                                  (0x00000001UL)
-#define SWDT_SR_CNT_1                                  (0x00000002UL)
-#define SWDT_SR_CNT_2                                  (0x00000004UL)
-#define SWDT_SR_CNT_3                                  (0x00000008UL)
-#define SWDT_SR_CNT_4                                  (0x00000010UL)
-#define SWDT_SR_CNT_5                                  (0x00000020UL)
-#define SWDT_SR_CNT_6                                  (0x00000040UL)
-#define SWDT_SR_CNT_7                                  (0x00000080UL)
-#define SWDT_SR_CNT_8                                  (0x00000100UL)
-#define SWDT_SR_CNT_9                                  (0x00000200UL)
-#define SWDT_SR_CNT_10                                 (0x00000400UL)
-#define SWDT_SR_CNT_11                                 (0x00000800UL)
-#define SWDT_SR_CNT_12                                 (0x00001000UL)
-#define SWDT_SR_CNT_13                                 (0x00002000UL)
-#define SWDT_SR_CNT_14                                 (0x00004000UL)
-#define SWDT_SR_CNT_15                                 (0x00008000UL)
 #define SWDT_SR_UDF_POS                                (16U)
 #define SWDT_SR_UDF                                    (0x00010000UL)
 #define SWDT_SR_REF_POS                                (17U)
@@ -7980,101 +7008,21 @@ typedef struct {
 
 /*  Bit definition for SWDT_RR register  */
 #define SWDT_RR_RF                                     (0x0000FFFFUL)
-#define SWDT_RR_RF_0                                   (0x00000001UL)
-#define SWDT_RR_RF_1                                   (0x00000002UL)
-#define SWDT_RR_RF_2                                   (0x00000004UL)
-#define SWDT_RR_RF_3                                   (0x00000008UL)
-#define SWDT_RR_RF_4                                   (0x00000010UL)
-#define SWDT_RR_RF_5                                   (0x00000020UL)
-#define SWDT_RR_RF_6                                   (0x00000040UL)
-#define SWDT_RR_RF_7                                   (0x00000080UL)
-#define SWDT_RR_RF_8                                   (0x00000100UL)
-#define SWDT_RR_RF_9                                   (0x00000200UL)
-#define SWDT_RR_RF_10                                  (0x00000400UL)
-#define SWDT_RR_RF_11                                  (0x00000800UL)
-#define SWDT_RR_RF_12                                  (0x00001000UL)
-#define SWDT_RR_RF_13                                  (0x00002000UL)
-#define SWDT_RR_RF_14                                  (0x00004000UL)
-#define SWDT_RR_RF_15                                  (0x00008000UL)
 
 /*******************************************************************************
                 Bit definition for Peripheral TMR0
 *******************************************************************************/
 /*  Bit definition for TMR0_CNTAR register  */
 #define TMR0_CNTAR_CNTA                                (0x0000FFFFUL)
-#define TMR0_CNTAR_CNTA_0                              (0x00000001UL)
-#define TMR0_CNTAR_CNTA_1                              (0x00000002UL)
-#define TMR0_CNTAR_CNTA_2                              (0x00000004UL)
-#define TMR0_CNTAR_CNTA_3                              (0x00000008UL)
-#define TMR0_CNTAR_CNTA_4                              (0x00000010UL)
-#define TMR0_CNTAR_CNTA_5                              (0x00000020UL)
-#define TMR0_CNTAR_CNTA_6                              (0x00000040UL)
-#define TMR0_CNTAR_CNTA_7                              (0x00000080UL)
-#define TMR0_CNTAR_CNTA_8                              (0x00000100UL)
-#define TMR0_CNTAR_CNTA_9                              (0x00000200UL)
-#define TMR0_CNTAR_CNTA_10                             (0x00000400UL)
-#define TMR0_CNTAR_CNTA_11                             (0x00000800UL)
-#define TMR0_CNTAR_CNTA_12                             (0x00001000UL)
-#define TMR0_CNTAR_CNTA_13                             (0x00002000UL)
-#define TMR0_CNTAR_CNTA_14                             (0x00004000UL)
-#define TMR0_CNTAR_CNTA_15                             (0x00008000UL)
 
 /*  Bit definition for TMR0_CNTBR register  */
 #define TMR0_CNTBR_CNTB                                (0x0000FFFFUL)
-#define TMR0_CNTBR_CNTB_0                              (0x00000001UL)
-#define TMR0_CNTBR_CNTB_1                              (0x00000002UL)
-#define TMR0_CNTBR_CNTB_2                              (0x00000004UL)
-#define TMR0_CNTBR_CNTB_3                              (0x00000008UL)
-#define TMR0_CNTBR_CNTB_4                              (0x00000010UL)
-#define TMR0_CNTBR_CNTB_5                              (0x00000020UL)
-#define TMR0_CNTBR_CNTB_6                              (0x00000040UL)
-#define TMR0_CNTBR_CNTB_7                              (0x00000080UL)
-#define TMR0_CNTBR_CNTB_8                              (0x00000100UL)
-#define TMR0_CNTBR_CNTB_9                              (0x00000200UL)
-#define TMR0_CNTBR_CNTB_10                             (0x00000400UL)
-#define TMR0_CNTBR_CNTB_11                             (0x00000800UL)
-#define TMR0_CNTBR_CNTB_12                             (0x00001000UL)
-#define TMR0_CNTBR_CNTB_13                             (0x00002000UL)
-#define TMR0_CNTBR_CNTB_14                             (0x00004000UL)
-#define TMR0_CNTBR_CNTB_15                             (0x00008000UL)
 
 /*  Bit definition for TMR0_CMPAR register  */
 #define TMR0_CMPAR_CMPA                                (0x0000FFFFUL)
-#define TMR0_CMPAR_CMPA_0                              (0x00000001UL)
-#define TMR0_CMPAR_CMPA_1                              (0x00000002UL)
-#define TMR0_CMPAR_CMPA_2                              (0x00000004UL)
-#define TMR0_CMPAR_CMPA_3                              (0x00000008UL)
-#define TMR0_CMPAR_CMPA_4                              (0x00000010UL)
-#define TMR0_CMPAR_CMPA_5                              (0x00000020UL)
-#define TMR0_CMPAR_CMPA_6                              (0x00000040UL)
-#define TMR0_CMPAR_CMPA_7                              (0x00000080UL)
-#define TMR0_CMPAR_CMPA_8                              (0x00000100UL)
-#define TMR0_CMPAR_CMPA_9                              (0x00000200UL)
-#define TMR0_CMPAR_CMPA_10                             (0x00000400UL)
-#define TMR0_CMPAR_CMPA_11                             (0x00000800UL)
-#define TMR0_CMPAR_CMPA_12                             (0x00001000UL)
-#define TMR0_CMPAR_CMPA_13                             (0x00002000UL)
-#define TMR0_CMPAR_CMPA_14                             (0x00004000UL)
-#define TMR0_CMPAR_CMPA_15                             (0x00008000UL)
 
 /*  Bit definition for TMR0_CMPBR register  */
 #define TMR0_CMPBR_CMPB                                (0x0000FFFFUL)
-#define TMR0_CMPBR_CMPB_0                              (0x00000001UL)
-#define TMR0_CMPBR_CMPB_1                              (0x00000002UL)
-#define TMR0_CMPBR_CMPB_2                              (0x00000004UL)
-#define TMR0_CMPBR_CMPB_3                              (0x00000008UL)
-#define TMR0_CMPBR_CMPB_4                              (0x00000010UL)
-#define TMR0_CMPBR_CMPB_5                              (0x00000020UL)
-#define TMR0_CMPBR_CMPB_6                              (0x00000040UL)
-#define TMR0_CMPBR_CMPB_7                              (0x00000080UL)
-#define TMR0_CMPBR_CMPB_8                              (0x00000100UL)
-#define TMR0_CMPBR_CMPB_9                              (0x00000200UL)
-#define TMR0_CMPBR_CMPB_10                             (0x00000400UL)
-#define TMR0_CMPBR_CMPB_11                             (0x00000800UL)
-#define TMR0_CMPBR_CMPB_12                             (0x00001000UL)
-#define TMR0_CMPBR_CMPB_13                             (0x00002000UL)
-#define TMR0_CMPBR_CMPB_14                             (0x00004000UL)
-#define TMR0_CMPBR_CMPB_15                             (0x00008000UL)
 
 /*  Bit definition for TMR0_BCONR register  */
 #define TMR0_BCONR_CSTA_POS                            (0U)
@@ -8085,10 +7033,6 @@ typedef struct {
 #define TMR0_BCONR_INTENA                              (0x00000004UL)
 #define TMR0_BCONR_CKDIVA_POS                          (4U)
 #define TMR0_BCONR_CKDIVA                              (0x000000F0UL)
-#define TMR0_BCONR_CKDIVA_0                            (0x00000010UL)
-#define TMR0_BCONR_CKDIVA_1                            (0x00000020UL)
-#define TMR0_BCONR_CKDIVA_2                            (0x00000040UL)
-#define TMR0_BCONR_CKDIVA_3                            (0x00000080UL)
 #define TMR0_BCONR_SYNSA_POS                           (8U)
 #define TMR0_BCONR_SYNSA                               (0x00000100UL)
 #define TMR0_BCONR_SYNCLKA_POS                         (9U)
@@ -8111,10 +7055,6 @@ typedef struct {
 #define TMR0_BCONR_INTENB                              (0x00040000UL)
 #define TMR0_BCONR_CKDIVB_POS                          (20U)
 #define TMR0_BCONR_CKDIVB                              (0x00F00000UL)
-#define TMR0_BCONR_CKDIVB_0                            (0x00100000UL)
-#define TMR0_BCONR_CKDIVB_1                            (0x00200000UL)
-#define TMR0_BCONR_CKDIVB_2                            (0x00400000UL)
-#define TMR0_BCONR_CKDIVB_3                            (0x00800000UL)
 #define TMR0_BCONR_SYNSB_POS                           (24U)
 #define TMR0_BCONR_SYNSB                               (0x01000000UL)
 #define TMR0_BCONR_SYNCLKB_POS                         (25U)
@@ -8314,10 +7254,6 @@ typedef struct {
 /*  Bit definition for TMR4_CCSR register  */
 #define TMR4_CCSR_CKDIV_POS                            (0U)
 #define TMR4_CCSR_CKDIV                                (0x000FU)
-#define TMR4_CCSR_CKDIV_0                              (0x0001U)
-#define TMR4_CCSR_CKDIV_1                              (0x0002U)
-#define TMR4_CCSR_CKDIV_2                              (0x0004U)
-#define TMR4_CCSR_CKDIV_3                              (0x0008U)
 #define TMR4_CCSR_CLEAR_POS                            (4U)
 #define TMR4_CCSR_CLEAR                                (0x0010U)
 #define TMR4_CCSR_MODE_POS                             (5U)
@@ -8340,28 +7276,12 @@ typedef struct {
 /*  Bit definition for TMR4_CVPR register  */
 #define TMR4_CVPR_ZIM_POS                              (0U)
 #define TMR4_CVPR_ZIM                                  (0x000FU)
-#define TMR4_CVPR_ZIM_0                                (0x0001U)
-#define TMR4_CVPR_ZIM_1                                (0x0002U)
-#define TMR4_CVPR_ZIM_2                                (0x0004U)
-#define TMR4_CVPR_ZIM_3                                (0x0008U)
 #define TMR4_CVPR_PIM_POS                              (4U)
 #define TMR4_CVPR_PIM                                  (0x00F0U)
-#define TMR4_CVPR_PIM_0                                (0x0010U)
-#define TMR4_CVPR_PIM_1                                (0x0020U)
-#define TMR4_CVPR_PIM_2                                (0x0040U)
-#define TMR4_CVPR_PIM_3                                (0x0080U)
 #define TMR4_CVPR_ZIC_POS                              (8U)
 #define TMR4_CVPR_ZIC                                  (0x0F00U)
-#define TMR4_CVPR_ZIC_0                                (0x0100U)
-#define TMR4_CVPR_ZIC_1                                (0x0200U)
-#define TMR4_CVPR_ZIC_2                                (0x0400U)
-#define TMR4_CVPR_ZIC_3                                (0x0800U)
 #define TMR4_CVPR_PIC_POS                              (12U)
 #define TMR4_CVPR_PIC                                  (0xF000U)
-#define TMR4_CVPR_PIC_0                                (0x1000U)
-#define TMR4_CVPR_PIC_1                                (0x2000U)
-#define TMR4_CVPR_PIC_2                                (0x4000U)
-#define TMR4_CVPR_PIC_3                                (0x8000U)
 
 /*  Bit definition for TMR4_PFSRU register  */
 #define TMR4_PFSRU                                     (0xFFFFU)
@@ -8393,9 +7313,6 @@ typedef struct {
 /*  Bit definition for TMR4_POCR register  */
 #define TMR4_POCR_DIVCK_POS                            (0U)
 #define TMR4_POCR_DIVCK                                (0x0007U)
-#define TMR4_POCR_DIVCK_0                              (0x0001U)
-#define TMR4_POCR_DIVCK_1                              (0x0002U)
-#define TMR4_POCR_DIVCK_2                              (0x0004U)
 #define TMR4_POCR_PWMMD_POS                            (4U)
 #define TMR4_POCR_PWMMD                                (0x0030U)
 #define TMR4_POCR_PWMMD_0                              (0x0010U)
@@ -8462,9 +7379,6 @@ typedef struct {
 #define TMR4_SCSR_BUFEN_1                              (0x0002U)
 #define TMR4_SCSR_EVTOS_POS                            (2U)
 #define TMR4_SCSR_EVTOS                                (0x001CU)
-#define TMR4_SCSR_EVTOS_0                              (0x0004U)
-#define TMR4_SCSR_EVTOS_1                              (0x0008U)
-#define TMR4_SCSR_EVTOS_2                              (0x0010U)
 #define TMR4_SCSR_LMC_POS                              (5U)
 #define TMR4_SCSR_LMC                                  (0x0020U)
 #define TMR4_SCSR_EVTMS_POS                            (8U)
@@ -8483,10 +7397,6 @@ typedef struct {
 /*  Bit definition for TMR4_SCMR register  */
 #define TMR4_SCMR_AMC_POS                              (0U)
 #define TMR4_SCMR_AMC                                  (0x000FU)
-#define TMR4_SCMR_AMC_0                                (0x0001U)
-#define TMR4_SCMR_AMC_1                                (0x0002U)
-#define TMR4_SCMR_AMC_2                                (0x0004U)
-#define TMR4_SCMR_AMC_3                                (0x0008U)
 #define TMR4_SCMR_MZCE_POS                             (6U)
 #define TMR4_SCMR_MZCE                                 (0x0040U)
 #define TMR4_SCMR_MPCE_POS                             (7U)
@@ -8519,397 +7429,71 @@ typedef struct {
 *******************************************************************************/
 /*  Bit definition for TMR6_CNTER register  */
 #define TMR6_CNTER_CNT                                 (0x0000FFFFUL)
-#define TMR6_CNTER_CNT_0                               (0x00000001UL)
-#define TMR6_CNTER_CNT_1                               (0x00000002UL)
-#define TMR6_CNTER_CNT_2                               (0x00000004UL)
-#define TMR6_CNTER_CNT_3                               (0x00000008UL)
-#define TMR6_CNTER_CNT_4                               (0x00000010UL)
-#define TMR6_CNTER_CNT_5                               (0x00000020UL)
-#define TMR6_CNTER_CNT_6                               (0x00000040UL)
-#define TMR6_CNTER_CNT_7                               (0x00000080UL)
-#define TMR6_CNTER_CNT_8                               (0x00000100UL)
-#define TMR6_CNTER_CNT_9                               (0x00000200UL)
-#define TMR6_CNTER_CNT_10                              (0x00000400UL)
-#define TMR6_CNTER_CNT_11                              (0x00000800UL)
-#define TMR6_CNTER_CNT_12                              (0x00001000UL)
-#define TMR6_CNTER_CNT_13                              (0x00002000UL)
-#define TMR6_CNTER_CNT_14                              (0x00004000UL)
-#define TMR6_CNTER_CNT_15                              (0x00008000UL)
 
 /*  Bit definition for TMR6_PERAR register  */
 #define TMR6_PERAR_PERA                                (0x0000FFFFUL)
-#define TMR6_PERAR_PERA_0                              (0x00000001UL)
-#define TMR6_PERAR_PERA_1                              (0x00000002UL)
-#define TMR6_PERAR_PERA_2                              (0x00000004UL)
-#define TMR6_PERAR_PERA_3                              (0x00000008UL)
-#define TMR6_PERAR_PERA_4                              (0x00000010UL)
-#define TMR6_PERAR_PERA_5                              (0x00000020UL)
-#define TMR6_PERAR_PERA_6                              (0x00000040UL)
-#define TMR6_PERAR_PERA_7                              (0x00000080UL)
-#define TMR6_PERAR_PERA_8                              (0x00000100UL)
-#define TMR6_PERAR_PERA_9                              (0x00000200UL)
-#define TMR6_PERAR_PERA_10                             (0x00000400UL)
-#define TMR6_PERAR_PERA_11                             (0x00000800UL)
-#define TMR6_PERAR_PERA_12                             (0x00001000UL)
-#define TMR6_PERAR_PERA_13                             (0x00002000UL)
-#define TMR6_PERAR_PERA_14                             (0x00004000UL)
-#define TMR6_PERAR_PERA_15                             (0x00008000UL)
 
 /*  Bit definition for TMR6_PERBR register  */
 #define TMR6_PERBR_PERB                                (0x0000FFFFUL)
-#define TMR6_PERBR_PERB_0                              (0x00000001UL)
-#define TMR6_PERBR_PERB_1                              (0x00000002UL)
-#define TMR6_PERBR_PERB_2                              (0x00000004UL)
-#define TMR6_PERBR_PERB_3                              (0x00000008UL)
-#define TMR6_PERBR_PERB_4                              (0x00000010UL)
-#define TMR6_PERBR_PERB_5                              (0x00000020UL)
-#define TMR6_PERBR_PERB_6                              (0x00000040UL)
-#define TMR6_PERBR_PERB_7                              (0x00000080UL)
-#define TMR6_PERBR_PERB_8                              (0x00000100UL)
-#define TMR6_PERBR_PERB_9                              (0x00000200UL)
-#define TMR6_PERBR_PERB_10                             (0x00000400UL)
-#define TMR6_PERBR_PERB_11                             (0x00000800UL)
-#define TMR6_PERBR_PERB_12                             (0x00001000UL)
-#define TMR6_PERBR_PERB_13                             (0x00002000UL)
-#define TMR6_PERBR_PERB_14                             (0x00004000UL)
-#define TMR6_PERBR_PERB_15                             (0x00008000UL)
 
 /*  Bit definition for TMR6_PERCR register  */
 #define TMR6_PERCR_PERC                                (0x0000FFFFUL)
-#define TMR6_PERCR_PERC_0                              (0x00000001UL)
-#define TMR6_PERCR_PERC_1                              (0x00000002UL)
-#define TMR6_PERCR_PERC_2                              (0x00000004UL)
-#define TMR6_PERCR_PERC_3                              (0x00000008UL)
-#define TMR6_PERCR_PERC_4                              (0x00000010UL)
-#define TMR6_PERCR_PERC_5                              (0x00000020UL)
-#define TMR6_PERCR_PERC_6                              (0x00000040UL)
-#define TMR6_PERCR_PERC_7                              (0x00000080UL)
-#define TMR6_PERCR_PERC_8                              (0x00000100UL)
-#define TMR6_PERCR_PERC_9                              (0x00000200UL)
-#define TMR6_PERCR_PERC_10                             (0x00000400UL)
-#define TMR6_PERCR_PERC_11                             (0x00000800UL)
-#define TMR6_PERCR_PERC_12                             (0x00001000UL)
-#define TMR6_PERCR_PERC_13                             (0x00002000UL)
-#define TMR6_PERCR_PERC_14                             (0x00004000UL)
-#define TMR6_PERCR_PERC_15                             (0x00008000UL)
 
 /*  Bit definition for TMR6_GCMAR register  */
 #define TMR6_GCMAR_GCMA                                (0x0000FFFFUL)
-#define TMR6_GCMAR_GCMA_0                              (0x00000001UL)
-#define TMR6_GCMAR_GCMA_1                              (0x00000002UL)
-#define TMR6_GCMAR_GCMA_2                              (0x00000004UL)
-#define TMR6_GCMAR_GCMA_3                              (0x00000008UL)
-#define TMR6_GCMAR_GCMA_4                              (0x00000010UL)
-#define TMR6_GCMAR_GCMA_5                              (0x00000020UL)
-#define TMR6_GCMAR_GCMA_6                              (0x00000040UL)
-#define TMR6_GCMAR_GCMA_7                              (0x00000080UL)
-#define TMR6_GCMAR_GCMA_8                              (0x00000100UL)
-#define TMR6_GCMAR_GCMA_9                              (0x00000200UL)
-#define TMR6_GCMAR_GCMA_10                             (0x00000400UL)
-#define TMR6_GCMAR_GCMA_11                             (0x00000800UL)
-#define TMR6_GCMAR_GCMA_12                             (0x00001000UL)
-#define TMR6_GCMAR_GCMA_13                             (0x00002000UL)
-#define TMR6_GCMAR_GCMA_14                             (0x00004000UL)
-#define TMR6_GCMAR_GCMA_15                             (0x00008000UL)
 
 /*  Bit definition for TMR6_GCMBR register  */
 #define TMR6_GCMBR_GCMB                                (0x0000FFFFUL)
-#define TMR6_GCMBR_GCMB_0                              (0x00000001UL)
-#define TMR6_GCMBR_GCMB_1                              (0x00000002UL)
-#define TMR6_GCMBR_GCMB_2                              (0x00000004UL)
-#define TMR6_GCMBR_GCMB_3                              (0x00000008UL)
-#define TMR6_GCMBR_GCMB_4                              (0x00000010UL)
-#define TMR6_GCMBR_GCMB_5                              (0x00000020UL)
-#define TMR6_GCMBR_GCMB_6                              (0x00000040UL)
-#define TMR6_GCMBR_GCMB_7                              (0x00000080UL)
-#define TMR6_GCMBR_GCMB_8                              (0x00000100UL)
-#define TMR6_GCMBR_GCMB_9                              (0x00000200UL)
-#define TMR6_GCMBR_GCMB_10                             (0x00000400UL)
-#define TMR6_GCMBR_GCMB_11                             (0x00000800UL)
-#define TMR6_GCMBR_GCMB_12                             (0x00001000UL)
-#define TMR6_GCMBR_GCMB_13                             (0x00002000UL)
-#define TMR6_GCMBR_GCMB_14                             (0x00004000UL)
-#define TMR6_GCMBR_GCMB_15                             (0x00008000UL)
 
 /*  Bit definition for TMR6_GCMCR register  */
 #define TMR6_GCMCR_GCMC                                (0x0000FFFFUL)
-#define TMR6_GCMCR_GCMC_0                              (0x00000001UL)
-#define TMR6_GCMCR_GCMC_1                              (0x00000002UL)
-#define TMR6_GCMCR_GCMC_2                              (0x00000004UL)
-#define TMR6_GCMCR_GCMC_3                              (0x00000008UL)
-#define TMR6_GCMCR_GCMC_4                              (0x00000010UL)
-#define TMR6_GCMCR_GCMC_5                              (0x00000020UL)
-#define TMR6_GCMCR_GCMC_6                              (0x00000040UL)
-#define TMR6_GCMCR_GCMC_7                              (0x00000080UL)
-#define TMR6_GCMCR_GCMC_8                              (0x00000100UL)
-#define TMR6_GCMCR_GCMC_9                              (0x00000200UL)
-#define TMR6_GCMCR_GCMC_10                             (0x00000400UL)
-#define TMR6_GCMCR_GCMC_11                             (0x00000800UL)
-#define TMR6_GCMCR_GCMC_12                             (0x00001000UL)
-#define TMR6_GCMCR_GCMC_13                             (0x00002000UL)
-#define TMR6_GCMCR_GCMC_14                             (0x00004000UL)
-#define TMR6_GCMCR_GCMC_15                             (0x00008000UL)
 
 /*  Bit definition for TMR6_GCMDR register  */
 #define TMR6_GCMDR_GCMD                                (0x0000FFFFUL)
-#define TMR6_GCMDR_GCMD_0                              (0x00000001UL)
-#define TMR6_GCMDR_GCMD_1                              (0x00000002UL)
-#define TMR6_GCMDR_GCMD_2                              (0x00000004UL)
-#define TMR6_GCMDR_GCMD_3                              (0x00000008UL)
-#define TMR6_GCMDR_GCMD_4                              (0x00000010UL)
-#define TMR6_GCMDR_GCMD_5                              (0x00000020UL)
-#define TMR6_GCMDR_GCMD_6                              (0x00000040UL)
-#define TMR6_GCMDR_GCMD_7                              (0x00000080UL)
-#define TMR6_GCMDR_GCMD_8                              (0x00000100UL)
-#define TMR6_GCMDR_GCMD_9                              (0x00000200UL)
-#define TMR6_GCMDR_GCMD_10                             (0x00000400UL)
-#define TMR6_GCMDR_GCMD_11                             (0x00000800UL)
-#define TMR6_GCMDR_GCMD_12                             (0x00001000UL)
-#define TMR6_GCMDR_GCMD_13                             (0x00002000UL)
-#define TMR6_GCMDR_GCMD_14                             (0x00004000UL)
-#define TMR6_GCMDR_GCMD_15                             (0x00008000UL)
 
 /*  Bit definition for TMR6_GCMER register  */
 #define TMR6_GCMER_GCME                                (0x0000FFFFUL)
-#define TMR6_GCMER_GCME_0                              (0x00000001UL)
-#define TMR6_GCMER_GCME_1                              (0x00000002UL)
-#define TMR6_GCMER_GCME_2                              (0x00000004UL)
-#define TMR6_GCMER_GCME_3                              (0x00000008UL)
-#define TMR6_GCMER_GCME_4                              (0x00000010UL)
-#define TMR6_GCMER_GCME_5                              (0x00000020UL)
-#define TMR6_GCMER_GCME_6                              (0x00000040UL)
-#define TMR6_GCMER_GCME_7                              (0x00000080UL)
-#define TMR6_GCMER_GCME_8                              (0x00000100UL)
-#define TMR6_GCMER_GCME_9                              (0x00000200UL)
-#define TMR6_GCMER_GCME_10                             (0x00000400UL)
-#define TMR6_GCMER_GCME_11                             (0x00000800UL)
-#define TMR6_GCMER_GCME_12                             (0x00001000UL)
-#define TMR6_GCMER_GCME_13                             (0x00002000UL)
-#define TMR6_GCMER_GCME_14                             (0x00004000UL)
-#define TMR6_GCMER_GCME_15                             (0x00008000UL)
 
 /*  Bit definition for TMR6_GCMFR register  */
 #define TMR6_GCMFR_GCMF                                (0x0000FFFFUL)
-#define TMR6_GCMFR_GCMF_0                              (0x00000001UL)
-#define TMR6_GCMFR_GCMF_1                              (0x00000002UL)
-#define TMR6_GCMFR_GCMF_2                              (0x00000004UL)
-#define TMR6_GCMFR_GCMF_3                              (0x00000008UL)
-#define TMR6_GCMFR_GCMF_4                              (0x00000010UL)
-#define TMR6_GCMFR_GCMF_5                              (0x00000020UL)
-#define TMR6_GCMFR_GCMF_6                              (0x00000040UL)
-#define TMR6_GCMFR_GCMF_7                              (0x00000080UL)
-#define TMR6_GCMFR_GCMF_8                              (0x00000100UL)
-#define TMR6_GCMFR_GCMF_9                              (0x00000200UL)
-#define TMR6_GCMFR_GCMF_10                             (0x00000400UL)
-#define TMR6_GCMFR_GCMF_11                             (0x00000800UL)
-#define TMR6_GCMFR_GCMF_12                             (0x00001000UL)
-#define TMR6_GCMFR_GCMF_13                             (0x00002000UL)
-#define TMR6_GCMFR_GCMF_14                             (0x00004000UL)
-#define TMR6_GCMFR_GCMF_15                             (0x00008000UL)
 
 /*  Bit definition for TMR6_SCMAR register  */
 #define TMR6_SCMAR_SCMA                                (0x0000FFFFUL)
-#define TMR6_SCMAR_SCMA_0                              (0x00000001UL)
-#define TMR6_SCMAR_SCMA_1                              (0x00000002UL)
-#define TMR6_SCMAR_SCMA_2                              (0x00000004UL)
-#define TMR6_SCMAR_SCMA_3                              (0x00000008UL)
-#define TMR6_SCMAR_SCMA_4                              (0x00000010UL)
-#define TMR6_SCMAR_SCMA_5                              (0x00000020UL)
-#define TMR6_SCMAR_SCMA_6                              (0x00000040UL)
-#define TMR6_SCMAR_SCMA_7                              (0x00000080UL)
-#define TMR6_SCMAR_SCMA_8                              (0x00000100UL)
-#define TMR6_SCMAR_SCMA_9                              (0x00000200UL)
-#define TMR6_SCMAR_SCMA_10                             (0x00000400UL)
-#define TMR6_SCMAR_SCMA_11                             (0x00000800UL)
-#define TMR6_SCMAR_SCMA_12                             (0x00001000UL)
-#define TMR6_SCMAR_SCMA_13                             (0x00002000UL)
-#define TMR6_SCMAR_SCMA_14                             (0x00004000UL)
-#define TMR6_SCMAR_SCMA_15                             (0x00008000UL)
 
 /*  Bit definition for TMR6_SCMBR register  */
 #define TMR6_SCMBR_SCMB                                (0x0000FFFFUL)
-#define TMR6_SCMBR_SCMB_0                              (0x00000001UL)
-#define TMR6_SCMBR_SCMB_1                              (0x00000002UL)
-#define TMR6_SCMBR_SCMB_2                              (0x00000004UL)
-#define TMR6_SCMBR_SCMB_3                              (0x00000008UL)
-#define TMR6_SCMBR_SCMB_4                              (0x00000010UL)
-#define TMR6_SCMBR_SCMB_5                              (0x00000020UL)
-#define TMR6_SCMBR_SCMB_6                              (0x00000040UL)
-#define TMR6_SCMBR_SCMB_7                              (0x00000080UL)
-#define TMR6_SCMBR_SCMB_8                              (0x00000100UL)
-#define TMR6_SCMBR_SCMB_9                              (0x00000200UL)
-#define TMR6_SCMBR_SCMB_10                             (0x00000400UL)
-#define TMR6_SCMBR_SCMB_11                             (0x00000800UL)
-#define TMR6_SCMBR_SCMB_12                             (0x00001000UL)
-#define TMR6_SCMBR_SCMB_13                             (0x00002000UL)
-#define TMR6_SCMBR_SCMB_14                             (0x00004000UL)
-#define TMR6_SCMBR_SCMB_15                             (0x00008000UL)
 
 /*  Bit definition for TMR6_SCMCR register  */
 #define TMR6_SCMCR_SCMC                                (0x0000FFFFUL)
-#define TMR6_SCMCR_SCMC_0                              (0x00000001UL)
-#define TMR6_SCMCR_SCMC_1                              (0x00000002UL)
-#define TMR6_SCMCR_SCMC_2                              (0x00000004UL)
-#define TMR6_SCMCR_SCMC_3                              (0x00000008UL)
-#define TMR6_SCMCR_SCMC_4                              (0x00000010UL)
-#define TMR6_SCMCR_SCMC_5                              (0x00000020UL)
-#define TMR6_SCMCR_SCMC_6                              (0x00000040UL)
-#define TMR6_SCMCR_SCMC_7                              (0x00000080UL)
-#define TMR6_SCMCR_SCMC_8                              (0x00000100UL)
-#define TMR6_SCMCR_SCMC_9                              (0x00000200UL)
-#define TMR6_SCMCR_SCMC_10                             (0x00000400UL)
-#define TMR6_SCMCR_SCMC_11                             (0x00000800UL)
-#define TMR6_SCMCR_SCMC_12                             (0x00001000UL)
-#define TMR6_SCMCR_SCMC_13                             (0x00002000UL)
-#define TMR6_SCMCR_SCMC_14                             (0x00004000UL)
-#define TMR6_SCMCR_SCMC_15                             (0x00008000UL)
 
 /*  Bit definition for TMR6_SCMDR register  */
 #define TMR6_SCMDR_SCMD                                (0x0000FFFFUL)
-#define TMR6_SCMDR_SCMD_0                              (0x00000001UL)
-#define TMR6_SCMDR_SCMD_1                              (0x00000002UL)
-#define TMR6_SCMDR_SCMD_2                              (0x00000004UL)
-#define TMR6_SCMDR_SCMD_3                              (0x00000008UL)
-#define TMR6_SCMDR_SCMD_4                              (0x00000010UL)
-#define TMR6_SCMDR_SCMD_5                              (0x00000020UL)
-#define TMR6_SCMDR_SCMD_6                              (0x00000040UL)
-#define TMR6_SCMDR_SCMD_7                              (0x00000080UL)
-#define TMR6_SCMDR_SCMD_8                              (0x00000100UL)
-#define TMR6_SCMDR_SCMD_9                              (0x00000200UL)
-#define TMR6_SCMDR_SCMD_10                             (0x00000400UL)
-#define TMR6_SCMDR_SCMD_11                             (0x00000800UL)
-#define TMR6_SCMDR_SCMD_12                             (0x00001000UL)
-#define TMR6_SCMDR_SCMD_13                             (0x00002000UL)
-#define TMR6_SCMDR_SCMD_14                             (0x00004000UL)
-#define TMR6_SCMDR_SCMD_15                             (0x00008000UL)
 
 /*  Bit definition for TMR6_SCMER register  */
 #define TMR6_SCMER_SCME                                (0x0000FFFFUL)
-#define TMR6_SCMER_SCME_0                              (0x00000001UL)
-#define TMR6_SCMER_SCME_1                              (0x00000002UL)
-#define TMR6_SCMER_SCME_2                              (0x00000004UL)
-#define TMR6_SCMER_SCME_3                              (0x00000008UL)
-#define TMR6_SCMER_SCME_4                              (0x00000010UL)
-#define TMR6_SCMER_SCME_5                              (0x00000020UL)
-#define TMR6_SCMER_SCME_6                              (0x00000040UL)
-#define TMR6_SCMER_SCME_7                              (0x00000080UL)
-#define TMR6_SCMER_SCME_8                              (0x00000100UL)
-#define TMR6_SCMER_SCME_9                              (0x00000200UL)
-#define TMR6_SCMER_SCME_10                             (0x00000400UL)
-#define TMR6_SCMER_SCME_11                             (0x00000800UL)
-#define TMR6_SCMER_SCME_12                             (0x00001000UL)
-#define TMR6_SCMER_SCME_13                             (0x00002000UL)
-#define TMR6_SCMER_SCME_14                             (0x00004000UL)
-#define TMR6_SCMER_SCME_15                             (0x00008000UL)
 
 /*  Bit definition for TMR6_SCMFR register  */
 #define TMR6_SCMFR_SCMF                                (0x0000FFFFUL)
-#define TMR6_SCMFR_SCMF_0                              (0x00000001UL)
-#define TMR6_SCMFR_SCMF_1                              (0x00000002UL)
-#define TMR6_SCMFR_SCMF_2                              (0x00000004UL)
-#define TMR6_SCMFR_SCMF_3                              (0x00000008UL)
-#define TMR6_SCMFR_SCMF_4                              (0x00000010UL)
-#define TMR6_SCMFR_SCMF_5                              (0x00000020UL)
-#define TMR6_SCMFR_SCMF_6                              (0x00000040UL)
-#define TMR6_SCMFR_SCMF_7                              (0x00000080UL)
-#define TMR6_SCMFR_SCMF_8                              (0x00000100UL)
-#define TMR6_SCMFR_SCMF_9                              (0x00000200UL)
-#define TMR6_SCMFR_SCMF_10                             (0x00000400UL)
-#define TMR6_SCMFR_SCMF_11                             (0x00000800UL)
-#define TMR6_SCMFR_SCMF_12                             (0x00001000UL)
-#define TMR6_SCMFR_SCMF_13                             (0x00002000UL)
-#define TMR6_SCMFR_SCMF_14                             (0x00004000UL)
-#define TMR6_SCMFR_SCMF_15                             (0x00008000UL)
 
 /*  Bit definition for TMR6_DTUAR register  */
 #define TMR6_DTUAR_DTUA                                (0x0000FFFFUL)
-#define TMR6_DTUAR_DTUA_0                              (0x00000001UL)
-#define TMR6_DTUAR_DTUA_1                              (0x00000002UL)
-#define TMR6_DTUAR_DTUA_2                              (0x00000004UL)
-#define TMR6_DTUAR_DTUA_3                              (0x00000008UL)
-#define TMR6_DTUAR_DTUA_4                              (0x00000010UL)
-#define TMR6_DTUAR_DTUA_5                              (0x00000020UL)
-#define TMR6_DTUAR_DTUA_6                              (0x00000040UL)
-#define TMR6_DTUAR_DTUA_7                              (0x00000080UL)
-#define TMR6_DTUAR_DTUA_8                              (0x00000100UL)
-#define TMR6_DTUAR_DTUA_9                              (0x00000200UL)
-#define TMR6_DTUAR_DTUA_10                             (0x00000400UL)
-#define TMR6_DTUAR_DTUA_11                             (0x00000800UL)
-#define TMR6_DTUAR_DTUA_12                             (0x00001000UL)
-#define TMR6_DTUAR_DTUA_13                             (0x00002000UL)
-#define TMR6_DTUAR_DTUA_14                             (0x00004000UL)
-#define TMR6_DTUAR_DTUA_15                             (0x00008000UL)
 
 /*  Bit definition for TMR6_DTDAR register  */
 #define TMR6_DTDAR_DTDA                                (0x0000FFFFUL)
-#define TMR6_DTDAR_DTDA_0                              (0x00000001UL)
-#define TMR6_DTDAR_DTDA_1                              (0x00000002UL)
-#define TMR6_DTDAR_DTDA_2                              (0x00000004UL)
-#define TMR6_DTDAR_DTDA_3                              (0x00000008UL)
-#define TMR6_DTDAR_DTDA_4                              (0x00000010UL)
-#define TMR6_DTDAR_DTDA_5                              (0x00000020UL)
-#define TMR6_DTDAR_DTDA_6                              (0x00000040UL)
-#define TMR6_DTDAR_DTDA_7                              (0x00000080UL)
-#define TMR6_DTDAR_DTDA_8                              (0x00000100UL)
-#define TMR6_DTDAR_DTDA_9                              (0x00000200UL)
-#define TMR6_DTDAR_DTDA_10                             (0x00000400UL)
-#define TMR6_DTDAR_DTDA_11                             (0x00000800UL)
-#define TMR6_DTDAR_DTDA_12                             (0x00001000UL)
-#define TMR6_DTDAR_DTDA_13                             (0x00002000UL)
-#define TMR6_DTDAR_DTDA_14                             (0x00004000UL)
-#define TMR6_DTDAR_DTDA_15                             (0x00008000UL)
 
 /*  Bit definition for TMR6_DTUBR register  */
 #define TMR6_DTUBR_DTUB                                (0x0000FFFFUL)
-#define TMR6_DTUBR_DTUB_0                              (0x00000001UL)
-#define TMR6_DTUBR_DTUB_1                              (0x00000002UL)
-#define TMR6_DTUBR_DTUB_2                              (0x00000004UL)
-#define TMR6_DTUBR_DTUB_3                              (0x00000008UL)
-#define TMR6_DTUBR_DTUB_4                              (0x00000010UL)
-#define TMR6_DTUBR_DTUB_5                              (0x00000020UL)
-#define TMR6_DTUBR_DTUB_6                              (0x00000040UL)
-#define TMR6_DTUBR_DTUB_7                              (0x00000080UL)
-#define TMR6_DTUBR_DTUB_8                              (0x00000100UL)
-#define TMR6_DTUBR_DTUB_9                              (0x00000200UL)
-#define TMR6_DTUBR_DTUB_10                             (0x00000400UL)
-#define TMR6_DTUBR_DTUB_11                             (0x00000800UL)
-#define TMR6_DTUBR_DTUB_12                             (0x00001000UL)
-#define TMR6_DTUBR_DTUB_13                             (0x00002000UL)
-#define TMR6_DTUBR_DTUB_14                             (0x00004000UL)
-#define TMR6_DTUBR_DTUB_15                             (0x00008000UL)
 
 /*  Bit definition for TMR6_DTDBR register  */
 #define TMR6_DTDBR_DTDB                                (0x0000FFFFUL)
-#define TMR6_DTDBR_DTDB_0                              (0x00000001UL)
-#define TMR6_DTDBR_DTDB_1                              (0x00000002UL)
-#define TMR6_DTDBR_DTDB_2                              (0x00000004UL)
-#define TMR6_DTDBR_DTDB_3                              (0x00000008UL)
-#define TMR6_DTDBR_DTDB_4                              (0x00000010UL)
-#define TMR6_DTDBR_DTDB_5                              (0x00000020UL)
-#define TMR6_DTDBR_DTDB_6                              (0x00000040UL)
-#define TMR6_DTDBR_DTDB_7                              (0x00000080UL)
-#define TMR6_DTDBR_DTDB_8                              (0x00000100UL)
-#define TMR6_DTDBR_DTDB_9                              (0x00000200UL)
-#define TMR6_DTDBR_DTDB_10                             (0x00000400UL)
-#define TMR6_DTDBR_DTDB_11                             (0x00000800UL)
-#define TMR6_DTDBR_DTDB_12                             (0x00001000UL)
-#define TMR6_DTDBR_DTDB_13                             (0x00002000UL)
-#define TMR6_DTDBR_DTDB_14                             (0x00004000UL)
-#define TMR6_DTDBR_DTDB_15                             (0x00008000UL)
 
 /*  Bit definition for TMR6_GCONR register  */
 #define TMR6_GCONR_START_POS                           (0U)
 #define TMR6_GCONR_START                               (0x00000001UL)
 #define TMR6_GCONR_MODE_POS                            (1U)
 #define TMR6_GCONR_MODE                                (0x0000000EUL)
-#define TMR6_GCONR_MODE_0                              (0x00000002UL)
-#define TMR6_GCONR_MODE_1                              (0x00000004UL)
-#define TMR6_GCONR_MODE_2                              (0x00000008UL)
 #define TMR6_GCONR_CKDIV_POS                           (4U)
 #define TMR6_GCONR_CKDIV                               (0x00000070UL)
-#define TMR6_GCONR_CKDIV_0                             (0x00000010UL)
-#define TMR6_GCONR_CKDIV_1                             (0x00000020UL)
-#define TMR6_GCONR_CKDIV_2                             (0x00000040UL)
 #define TMR6_GCONR_DIR_POS                             (8U)
 #define TMR6_GCONR_DIR                                 (0x00000100UL)
 #define TMR6_GCONR_ZMSKREV_POS                         (16U)
@@ -9072,9 +7656,6 @@ typedef struct {
 #define TMR6_VPERR_PCNTE_1                             (0x00020000UL)
 #define TMR6_VPERR_PCNTS_POS                           (18U)
 #define TMR6_VPERR_PCNTS                               (0x001C0000UL)
-#define TMR6_VPERR_PCNTS_0                             (0x00040000UL)
-#define TMR6_VPERR_PCNTS_1                             (0x00080000UL)
-#define TMR6_VPERR_PCNTS_2                             (0x00100000UL)
 
 /*  Bit definition for TMR6_STFLR register  */
 #define TMR6_STFLR_CMAF_POS                            (0U)
@@ -9105,9 +7686,6 @@ typedef struct {
 #define TMR6_STFLR_CMSBDF                              (0x00001000UL)
 #define TMR6_STFLR_VPERNUM_POS                         (21U)
 #define TMR6_STFLR_VPERNUM                             (0x00E00000UL)
-#define TMR6_STFLR_VPERNUM_0                           (0x00200000UL)
-#define TMR6_STFLR_VPERNUM_1                           (0x00400000UL)
-#define TMR6_STFLR_VPERNUM_2                           (0x00800000UL)
 #define TMR6_STFLR_DIRF_POS                            (31U)
 #define TMR6_STFLR_DIRF                                (0x80000000UL)
 
@@ -9326,25 +7904,29 @@ typedef struct {
 /*  Bit definition for TMRA_CMPAR register  */
 #define TMRA_CMPAR_CMP                                 (0xFFFFU)
 
-/*  Bit definition for TMRA_BCSTR register  */
-#define TMRA_BCSTR_START_POS                           (0U)
-#define TMRA_BCSTR_START                               (0x0001U)
-#define TMRA_BCSTR_DIR_POS                             (1U)
-#define TMRA_BCSTR_DIR                                 (0x0002U)
-#define TMRA_BCSTR_MODE_POS                            (2U)
-#define TMRA_BCSTR_MODE                                (0x0004U)
-#define TMRA_BCSTR_SYNST_POS                           (3U)
-#define TMRA_BCSTR_SYNST                               (0x0008U)
-#define TMRA_BCSTR_CKDIV_POS                           (4U)
-#define TMRA_BCSTR_CKDIV                               (0x00F0U)
-#define TMRA_BCSTR_ITENOVF_POS                         (12U)
-#define TMRA_BCSTR_ITENOVF                             (0x1000U)
-#define TMRA_BCSTR_ITENUDF_POS                         (13U)
-#define TMRA_BCSTR_ITENUDF                             (0x2000U)
-#define TMRA_BCSTR_OVFF_POS                            (14U)
-#define TMRA_BCSTR_OVFF                                (0x4000U)
-#define TMRA_BCSTR_UDFF_POS                            (15U)
-#define TMRA_BCSTR_UDFF                                (0x8000U)
+/*  Bit definition for TMRA_BCSTRL register  */
+#define TMRA_BCSTRL_START_POS                          (0U)
+#define TMRA_BCSTRL_START                              (0x01U)
+#define TMRA_BCSTRL_DIR_POS                            (1U)
+#define TMRA_BCSTRL_DIR                                (0x02U)
+#define TMRA_BCSTRL_MODE_POS                           (2U)
+#define TMRA_BCSTRL_MODE                               (0x04U)
+#define TMRA_BCSTRL_SYNST_POS                          (3U)
+#define TMRA_BCSTRL_SYNST                              (0x08U)
+#define TMRA_BCSTRL_CKDIV_POS                          (4U)
+#define TMRA_BCSTRL_CKDIV                              (0xF0U)
+
+/*  Bit definition for TMRA_BCSTRH register  */
+#define TMRA_BCSTRH_OVSTP_POS                          (0U)
+#define TMRA_BCSTRH_OVSTP                              (0x01U)
+#define TMRA_BCSTRH_ITENOVF_POS                        (4U)
+#define TMRA_BCSTRH_ITENOVF                            (0x10U)
+#define TMRA_BCSTRH_ITENUDF_POS                        (5U)
+#define TMRA_BCSTRH_ITENUDF                            (0x20U)
+#define TMRA_BCSTRH_OVFF_POS                           (6U)
+#define TMRA_BCSTRH_OVFF                               (0x40U)
+#define TMRA_BCSTRH_UDFF_POS                           (7U)
+#define TMRA_BCSTRH_UDFF                               (0x80U)
 
 /*  Bit definition for TMRA_HCONR register  */
 #define TMRA_HCONR_HSTA0_POS                           (0U)
@@ -9564,9 +8146,6 @@ typedef struct {
 #define TRNG_MR_LOAD                                   (0x00000001UL)
 #define TRNG_MR_CNT_POS                                (2U)
 #define TRNG_MR_CNT                                    (0x0000001CUL)
-#define TRNG_MR_CNT_0                                  (0x00000004UL)
-#define TRNG_MR_CNT_1                                  (0x00000008UL)
-#define TRNG_MR_CNT_2                                  (0x00000010UL)
 
 /*  Bit definition for TRNG_DR0 register  */
 #define TRNG_DR0                                       (0xFFFFFFFFUL)
@@ -9595,13 +8174,14 @@ typedef struct {
 #define USART_SR_MPB_POS                               (16U)
 #define USART_SR_MPB                                   (0x00010000UL)
 
-/*  Bit definition for USART_DR register  */
-#define USART_DR_TDR_POS                               (0U)
-#define USART_DR_TDR                                   (0x000001FFUL)
-#define USART_DR_MPID_POS                              (9U)
-#define USART_DR_MPID                                  (0x00000200UL)
-#define USART_DR_RDR_POS                               (16U)
-#define USART_DR_RDR                                   (0x01FF0000UL)
+/*  Bit definition for USART_TDR register  */
+#define USART_TDR_TDR_POS                              (0U)
+#define USART_TDR_TDR                                  (0x01FFU)
+#define USART_TDR_MPID_POS                             (9U)
+#define USART_TDR_MPID                                 (0x0200U)
+
+/*  Bit definition for USART_RDR register  */
+#define USART_RDR_RDR                                  (0x01FFU)
 
 /*  Bit definition for USART_BRR register  */
 #define USART_BRR_DIV_FRACTION_POS                     (0U)
@@ -9670,9 +8250,6 @@ typedef struct {
 #define USART_CR3_CTSE                                 (0x00000200UL)
 #define USART_CR3_BCN_POS                              (21U)
 #define USART_CR3_BCN                                  (0x00E00000UL)
-#define USART_CR3_BCN_0                                (0x00200000UL)
-#define USART_CR3_BCN_1                                (0x00400000UL)
-#define USART_CR3_BCN_2                                (0x00800000UL)
 
 /*  Bit definition for USART_PR register  */
 #define USART_PR_PSC                                   (0x00000003UL)
@@ -10053,8 +8630,8 @@ typedef struct {
 #define USBFS_DIEPMSK_EPDM                             (0x00000002UL)
 #define USBFS_DIEPMSK_TOM_POS                          (3U)
 #define USBFS_DIEPMSK_TOM                              (0x00000008UL)
-#define USBFS_DIEPMSK_ITTXFEMSK_POS                    (4U)
-#define USBFS_DIEPMSK_ITTXFEMSK                        (0x00000010UL)
+#define USBFS_DIEPMSK_TTXFEMSK_POS                     (4U)
+#define USBFS_DIEPMSK_TTXFEMSK                         (0x00000010UL)
 #define USBFS_DIEPMSK_INEPNMM_POS                      (5U)
 #define USBFS_DIEPMSK_INEPNMM                          (0x00000020UL)
 #define USBFS_DIEPMSK_INEPNEM_POS                      (6U)
@@ -10262,16 +8839,8 @@ typedef struct {
 #define WDT_CR_PERI_1                                  (0x00000002UL)
 #define WDT_CR_CKS_POS                                 (4U)
 #define WDT_CR_CKS                                     (0x000000F0UL)
-#define WDT_CR_CKS_0                                   (0x00000010UL)
-#define WDT_CR_CKS_1                                   (0x00000020UL)
-#define WDT_CR_CKS_2                                   (0x00000040UL)
-#define WDT_CR_CKS_3                                   (0x00000080UL)
 #define WDT_CR_WDPT_POS                                (8U)
 #define WDT_CR_WDPT                                    (0x00000F00UL)
-#define WDT_CR_WDPT_0                                  (0x00000100UL)
-#define WDT_CR_WDPT_1                                  (0x00000200UL)
-#define WDT_CR_WDPT_2                                  (0x00000400UL)
-#define WDT_CR_WDPT_3                                  (0x00000800UL)
 #define WDT_CR_SLPOFF_POS                              (16U)
 #define WDT_CR_SLPOFF                                  (0x00010000UL)
 #define WDT_CR_ITS_POS                                 (31U)
@@ -10280,22 +8849,6 @@ typedef struct {
 /*  Bit definition for WDT_SR register  */
 #define WDT_SR_CNT_POS                                 (0U)
 #define WDT_SR_CNT                                     (0x0000FFFFUL)
-#define WDT_SR_CNT_0                                   (0x00000001UL)
-#define WDT_SR_CNT_1                                   (0x00000002UL)
-#define WDT_SR_CNT_2                                   (0x00000004UL)
-#define WDT_SR_CNT_3                                   (0x00000008UL)
-#define WDT_SR_CNT_4                                   (0x00000010UL)
-#define WDT_SR_CNT_5                                   (0x00000020UL)
-#define WDT_SR_CNT_6                                   (0x00000040UL)
-#define WDT_SR_CNT_7                                   (0x00000080UL)
-#define WDT_SR_CNT_8                                   (0x00000100UL)
-#define WDT_SR_CNT_9                                   (0x00000200UL)
-#define WDT_SR_CNT_10                                  (0x00000400UL)
-#define WDT_SR_CNT_11                                  (0x00000800UL)
-#define WDT_SR_CNT_12                                  (0x00001000UL)
-#define WDT_SR_CNT_13                                  (0x00002000UL)
-#define WDT_SR_CNT_14                                  (0x00004000UL)
-#define WDT_SR_CNT_15                                  (0x00008000UL)
 #define WDT_SR_UDF_POS                                 (16U)
 #define WDT_SR_UDF                                     (0x00010000UL)
 #define WDT_SR_REF_POS                                 (17U)
@@ -10303,22 +8856,6 @@ typedef struct {
 
 /*  Bit definition for WDT_RR register  */
 #define WDT_RR_RF                                      (0x0000FFFFUL)
-#define WDT_RR_RF_0                                    (0x00000001UL)
-#define WDT_RR_RF_1                                    (0x00000002UL)
-#define WDT_RR_RF_2                                    (0x00000004UL)
-#define WDT_RR_RF_3                                    (0x00000008UL)
-#define WDT_RR_RF_4                                    (0x00000010UL)
-#define WDT_RR_RF_5                                    (0x00000020UL)
-#define WDT_RR_RF_6                                    (0x00000040UL)
-#define WDT_RR_RF_7                                    (0x00000080UL)
-#define WDT_RR_RF_8                                    (0x00000100UL)
-#define WDT_RR_RF_9                                    (0x00000200UL)
-#define WDT_RR_RF_10                                   (0x00000400UL)
-#define WDT_RR_RF_11                                   (0x00000800UL)
-#define WDT_RR_RF_12                                   (0x00001000UL)
-#define WDT_RR_RF_13                                   (0x00002000UL)
-#define WDT_RR_RF_14                                   (0x00004000UL)
-#define WDT_RR_RF_15                                   (0x00008000UL)
 
 /******************************************************************************/
 /*             Device Specific Registers bit_band structure                   */
@@ -10330,17 +8867,10 @@ typedef struct {
 } stc_adc_str_bit_t;
 
 typedef struct {
-    __IO uint32_t MS0;
-    __IO uint32_t MS1;
-    uint32_t RESERVED0[2];
-    __IO uint32_t ACCSEL0;
-    __IO uint32_t ACCSEL1;
+    uint32_t RESERVED0[6];
     __IO uint32_t CLREN;
     __IO uint32_t DFMT;
-    __IO uint32_t AVCNT0;
-    __IO uint32_t AVCNT1;
-    __IO uint32_t AVCNT2;
-    uint32_t RESERVED1[5];
+    uint32_t RESERVED1[8];
 } stc_adc_cr0_bit_t;
 
 typedef struct {
@@ -10350,91 +8880,11 @@ typedef struct {
 } stc_adc_cr1_bit_t;
 
 typedef struct {
-    __IO uint32_t TRGSELA0;
-    __IO uint32_t TRGSELA1;
-    uint32_t RESERVED0[5];
+    uint32_t RESERVED0[7];
     __IO uint32_t TRGENA;
-    __IO uint32_t TRGSELB0;
-    __IO uint32_t TRGSELB1;
-    uint32_t RESERVED1[5];
+    uint32_t RESERVED1[7];
     __IO uint32_t TRGENB;
 } stc_adc_trgsr_bit_t;
-
-typedef struct {
-    __IO uint32_t CH00MUX0;
-    __IO uint32_t CH00MUX1;
-    __IO uint32_t CH00MUX2;
-    __IO uint32_t CH00MUX3;
-    __IO uint32_t CH01MUX0;
-    __IO uint32_t CH01MUX1;
-    __IO uint32_t CH01MUX2;
-    __IO uint32_t CH01MUX3;
-    __IO uint32_t CH02MUX0;
-    __IO uint32_t CH02MUX1;
-    __IO uint32_t CH02MUX2;
-    __IO uint32_t CH02MUX3;
-    __IO uint32_t CH03MUX0;
-    __IO uint32_t CH03MUX1;
-    __IO uint32_t CH03MUX2;
-    __IO uint32_t CH03MUX3;
-} stc_adc_chmuxr0_bit_t;
-
-typedef struct {
-    __IO uint32_t CH04MUX0;
-    __IO uint32_t CH04MUX1;
-    __IO uint32_t CH04MUX2;
-    __IO uint32_t CH04MUX3;
-    __IO uint32_t CH05MUX0;
-    __IO uint32_t CH05MUX1;
-    __IO uint32_t CH05MUX2;
-    __IO uint32_t CH05MUX3;
-    __IO uint32_t CH06MUX0;
-    __IO uint32_t CH06MUX1;
-    __IO uint32_t CH06MUX2;
-    __IO uint32_t CH06MUX3;
-    __IO uint32_t CH07MUX0;
-    __IO uint32_t CH07MUX1;
-    __IO uint32_t CH07MUX2;
-    __IO uint32_t CH07MUX3;
-} stc_adc_chmuxr1_bit_t;
-
-typedef struct {
-    __IO uint32_t CH08MUX0;
-    __IO uint32_t CH08MUX1;
-    __IO uint32_t CH08MUX2;
-    __IO uint32_t CH08MUX3;
-    __IO uint32_t CH09MUX0;
-    __IO uint32_t CH09MUX1;
-    __IO uint32_t CH09MUX2;
-    __IO uint32_t CH09MUX3;
-    __IO uint32_t CH10MUX0;
-    __IO uint32_t CH10MUX1;
-    __IO uint32_t CH10MUX2;
-    __IO uint32_t CH10MUX3;
-    __IO uint32_t CH11MUX0;
-    __IO uint32_t CH11MUX1;
-    __IO uint32_t CH11MUX2;
-    __IO uint32_t CH11MUX3;
-} stc_adc_chmuxr2_bit_t;
-
-typedef struct {
-    __IO uint32_t CH12MUX0;
-    __IO uint32_t CH12MUX1;
-    __IO uint32_t CH12MUX2;
-    __IO uint32_t CH12MUX3;
-    __IO uint32_t CH13MUX0;
-    __IO uint32_t CH13MUX1;
-    __IO uint32_t CH13MUX2;
-    __IO uint32_t CH13MUX3;
-    __IO uint32_t CH14MUX0;
-    __IO uint32_t CH14MUX1;
-    __IO uint32_t CH14MUX2;
-    __IO uint32_t CH14MUX3;
-    __IO uint32_t CH15MUX0;
-    __IO uint32_t CH15MUX1;
-    __IO uint32_t CH15MUX2;
-    __IO uint32_t CH15MUX3;
-} stc_adc_chmuxr3_bit_t;
 
 typedef struct {
     __IO uint32_t EOCAF;
@@ -10450,60 +8900,17 @@ typedef struct {
 
 typedef struct {
     __IO uint32_t SYNCEN;
-    uint32_t RESERVED0[3];
-    __IO uint32_t SYNCMD0;
-    __IO uint32_t SYNCMD1;
-    __IO uint32_t SYNCMD2;
-    uint32_t RESERVED1[1];
-    __IO uint32_t SYNCDLY0;
-    __IO uint32_t SYNCDLY1;
-    __IO uint32_t SYNCDLY2;
-    __IO uint32_t SYNCDLY3;
-    __IO uint32_t SYNCDLY4;
-    __IO uint32_t SYNCDLY5;
-    __IO uint32_t SYNCDLY6;
-    __IO uint32_t SYNCDLY7;
+    uint32_t RESERVED0[15];
 } stc_adc_synccr_bit_t;
 
 typedef struct {
     __IO uint32_t AWDEN;
     uint32_t RESERVED0[3];
     __IO uint32_t AWDMD;
-    uint32_t RESERVED1[1];
-    __IO uint32_t AWDSS0;
-    __IO uint32_t AWDSS1;
+    uint32_t RESERVED1[3];
     __IO uint32_t AWDIEN;
     uint32_t RESERVED2[7];
 } stc_adc_awdcr_bit_t;
-
-typedef struct {
-    __IO uint32_t PGACTL0;
-    __IO uint32_t PGACTL1;
-    __IO uint32_t PGACTL2;
-    __IO uint32_t PGACTL3;
-    uint32_t RESERVED0[12];
-} stc_adc_pgacr_bit_t;
-
-typedef struct {
-    __IO uint32_t GAIN0;
-    __IO uint32_t GAIN1;
-    __IO uint32_t GAIN2;
-    __IO uint32_t GAIN3;
-    uint32_t RESERVED0[12];
-} stc_adc_pgagsr_bit_t;
-
-typedef struct {
-    __IO uint32_t PGAINSEL0;
-    __IO uint32_t PGAINSEL1;
-    __IO uint32_t PGAINSEL2;
-    __IO uint32_t PGAINSEL3;
-    __IO uint32_t PGAINSEL4;
-    __IO uint32_t PGAINSEL5;
-    __IO uint32_t PGAINSEL6;
-    __IO uint32_t PGAINSEL7;
-    __IO uint32_t PGAINSEL8;
-    uint32_t RESERVED0[7];
-} stc_adc_pgainsr0_bit_t;
 
 typedef struct {
     __IO uint32_t PGAVSSEN;
@@ -10520,212 +8927,6 @@ typedef struct {
     __O  uint32_t STRG;
     uint32_t RESERVED0[31];
 } stc_aos_intsfttrg_bit_t;
-
-typedef struct {
-    uint32_t RESERVED0[30];
-    __IO uint32_t COMTRG_EN0;
-    __IO uint32_t COMTRG_EN1;
-} stc_aos_dcu_trgsel_bit_t;
-
-typedef struct {
-    uint32_t RESERVED0[30];
-    __IO uint32_t COMTRG_EN0;
-    __IO uint32_t COMTRG_EN1;
-} stc_aos_dma1_trgsel_bit_t;
-
-typedef struct {
-    uint32_t RESERVED0[30];
-    __IO uint32_t COMTRG_EN0;
-    __IO uint32_t COMTRG_EN1;
-} stc_aos_dma2_trgsel_bit_t;
-
-typedef struct {
-    uint32_t RESERVED0[30];
-    __IO uint32_t COMTRG_EN0;
-    __IO uint32_t COMTRG_EN1;
-} stc_aos_dma_trgselrc_bit_t;
-
-typedef struct {
-    uint32_t RESERVED0[30];
-    __IO uint32_t COMTRG_EN0;
-    __IO uint32_t COMTRG_EN1;
-} stc_aos_tmr6_htssr_bit_t;
-
-typedef struct {
-    uint32_t RESERVED0[30];
-    __IO uint32_t COMTRG_EN0;
-    __IO uint32_t COMTRG_EN1;
-} stc_aos_tmr0_htssr_bit_t;
-
-typedef struct {
-    uint32_t RESERVED0[30];
-    __IO uint32_t COMTRG_EN0;
-    __IO uint32_t COMTRG_EN1;
-} stc_aos_pevnttrgsr_bit_t;
-
-typedef struct {
-    uint32_t RESERVED0[30];
-    __IO uint32_t COMTRG_EN0;
-    __IO uint32_t COMTRG_EN1;
-} stc_aos_tmra_htssr_bit_t;
-
-typedef struct {
-    uint32_t RESERVED0[30];
-    __IO uint32_t COMTRG_EN0;
-    __IO uint32_t COMTRG_EN1;
-} stc_aos_ots_trg_bit_t;
-
-typedef struct {
-    uint32_t RESERVED0[30];
-    __IO uint32_t COMTRG_EN0;
-    __IO uint32_t COMTRG_EN1;
-} stc_aos_adc1_itrgselr_bit_t;
-
-typedef struct {
-    uint32_t RESERVED0[30];
-    __IO uint32_t COMTRG_EN0;
-    __IO uint32_t COMTRG_EN1;
-} stc_aos_adc2_itrgselr_bit_t;
-
-typedef struct {
-    __IO uint32_t PDIR00;
-    __IO uint32_t PDIR01;
-    __IO uint32_t PDIR02;
-    __IO uint32_t PDIR03;
-    __IO uint32_t PDIR04;
-    __IO uint32_t PDIR05;
-    __IO uint32_t PDIR06;
-    __IO uint32_t PDIR07;
-    __IO uint32_t PDIR08;
-    __IO uint32_t PDIR09;
-    __IO uint32_t PDIR10;
-    __IO uint32_t PDIR11;
-    __IO uint32_t PDIR12;
-    __IO uint32_t PDIR13;
-    __IO uint32_t PDIR14;
-    __IO uint32_t PDIR15;
-    uint32_t RESERVED0[16];
-} stc_aos_pevntdirr_bit_t;
-
-typedef struct {
-    __I  uint32_t PIN00;
-    __I  uint32_t PIN01;
-    __I  uint32_t PIN02;
-    __I  uint32_t PIN03;
-    __I  uint32_t PIN04;
-    __I  uint32_t PIN05;
-    __I  uint32_t PIN06;
-    __I  uint32_t PIN07;
-    __I  uint32_t PIN08;
-    __I  uint32_t PIN09;
-    __I  uint32_t PIN10;
-    __I  uint32_t PIN11;
-    __I  uint32_t PIN12;
-    __I  uint32_t PIN13;
-    __I  uint32_t PIN14;
-    __I  uint32_t PIN15;
-    uint32_t RESERVED0[16];
-} stc_aos_pevntidr_bit_t;
-
-typedef struct {
-    __IO uint32_t POUT00;
-    __IO uint32_t POUT01;
-    __IO uint32_t POUT02;
-    __IO uint32_t POUT03;
-    __IO uint32_t POUT04;
-    __IO uint32_t POUT05;
-    __IO uint32_t POUT06;
-    __IO uint32_t POUT07;
-    __IO uint32_t POUT08;
-    __IO uint32_t POUT09;
-    __IO uint32_t POUT10;
-    __IO uint32_t POUT11;
-    __IO uint32_t POUT12;
-    __IO uint32_t POUT13;
-    __IO uint32_t POUT14;
-    __IO uint32_t POUT15;
-    uint32_t RESERVED0[16];
-} stc_aos_pevntodr_bit_t;
-
-typedef struct {
-    __IO uint32_t POR00;
-    __IO uint32_t POR01;
-    __IO uint32_t POR02;
-    __IO uint32_t POR03;
-    __IO uint32_t POR04;
-    __IO uint32_t POR05;
-    __IO uint32_t POR06;
-    __IO uint32_t POR07;
-    __IO uint32_t POR08;
-    __IO uint32_t POR09;
-    __IO uint32_t POR10;
-    __IO uint32_t POR11;
-    __IO uint32_t POR12;
-    __IO uint32_t POR13;
-    __IO uint32_t POR14;
-    __IO uint32_t POR15;
-    uint32_t RESERVED0[16];
-} stc_aos_pevntorr_bit_t;
-
-typedef struct {
-    __IO uint32_t POS00;
-    __IO uint32_t POS01;
-    __IO uint32_t POS02;
-    __IO uint32_t POS03;
-    __IO uint32_t POS04;
-    __IO uint32_t POS05;
-    __IO uint32_t POS06;
-    __IO uint32_t POS07;
-    __IO uint32_t POS08;
-    __IO uint32_t POS09;
-    __IO uint32_t POS10;
-    __IO uint32_t POS11;
-    __IO uint32_t POS12;
-    __IO uint32_t POS13;
-    __IO uint32_t POS14;
-    __IO uint32_t POS15;
-    uint32_t RESERVED0[16];
-} stc_aos_pevntosr_bit_t;
-
-typedef struct {
-    __IO uint32_t RIS00;
-    __IO uint32_t RIS01;
-    __IO uint32_t RIS02;
-    __IO uint32_t RIS03;
-    __IO uint32_t RIS04;
-    __IO uint32_t RIS05;
-    __IO uint32_t RIS06;
-    __IO uint32_t RIS07;
-    __IO uint32_t RIS08;
-    __IO uint32_t RIS09;
-    __IO uint32_t RIS10;
-    __IO uint32_t RIS11;
-    __IO uint32_t RIS12;
-    __IO uint32_t RIS13;
-    __IO uint32_t RIS14;
-    __IO uint32_t RIS15;
-    uint32_t RESERVED0[16];
-} stc_aos_pevntrisr_bit_t;
-
-typedef struct {
-    __IO uint32_t FAL00;
-    __IO uint32_t FAL01;
-    __IO uint32_t FAL02;
-    __IO uint32_t FAL03;
-    __IO uint32_t FAL04;
-    __IO uint32_t FAL05;
-    __IO uint32_t FAL06;
-    __IO uint32_t FAL07;
-    __IO uint32_t FAL08;
-    __IO uint32_t FAL09;
-    __IO uint32_t FAL10;
-    __IO uint32_t FAL11;
-    __IO uint32_t FAL12;
-    __IO uint32_t FAL13;
-    __IO uint32_t FAL14;
-    __IO uint32_t FAL15;
-    uint32_t RESERVED0[16];
-} stc_aos_pevntfal_bit_t;
 
 typedef struct {
     __IO uint32_t NFEN1;
@@ -10761,9 +8962,7 @@ typedef struct {
 } stc_can_tcmd_bit_t;
 
 typedef struct {
-    __I  uint32_t TSSTAT0;
-    __I  uint32_t TSSTAT1;
-    uint32_t RESERVED0[2];
+    uint32_t RESERVED0[4];
     __IO uint32_t TTTBM;
     __IO uint32_t TSMODE;
     __IO uint32_t TSNEXT;
@@ -10771,9 +8970,7 @@ typedef struct {
 } stc_can_tctrl_bit_t;
 
 typedef struct {
-    __I  uint32_t RSTAT0;
-    __I  uint32_t RSTAT1;
-    uint32_t RESERVED0[1];
+    uint32_t RESERVED0[3];
     __IO uint32_t RBALL;
     __IO uint32_t RREL;
     __I  uint32_t ROV;
@@ -10815,68 +9012,7 @@ typedef struct {
 } stc_can_errint_bit_t;
 
 typedef struct {
-    __IO uint32_t EWL0;
-    __IO uint32_t EWL1;
-    __IO uint32_t EWL2;
-    __IO uint32_t EWL3;
-    __IO uint32_t AFWL0;
-    __IO uint32_t AFWL1;
-    __IO uint32_t AFWL2;
-    __IO uint32_t AFWL3;
-} stc_can_limit_bit_t;
-
-typedef struct {
-    __IO uint32_t S_SEG_10;
-    __IO uint32_t S_SEG_11;
-    __IO uint32_t S_SEG_12;
-    __IO uint32_t S_SEG_13;
-    __IO uint32_t S_SEG_14;
-    __IO uint32_t S_SEG_15;
-    __IO uint32_t S_SEG_16;
-    __IO uint32_t S_SEG_17;
-    __IO uint32_t S_SEG_20;
-    __IO uint32_t S_SEG_21;
-    __IO uint32_t S_SEG_22;
-    __IO uint32_t S_SEG_23;
-    __IO uint32_t S_SEG_24;
-    __IO uint32_t S_SEG_25;
-    __IO uint32_t S_SEG_26;
-    uint32_t RESERVED0[1];
-    __IO uint32_t S_SJW0;
-    __IO uint32_t S_SJW1;
-    __IO uint32_t S_SJW2;
-    __IO uint32_t S_SJW3;
-    __IO uint32_t S_SJW4;
-    __IO uint32_t S_SJW5;
-    __IO uint32_t S_SJW6;
-    uint32_t RESERVED1[1];
-    __IO uint32_t S_PRESC0;
-    __IO uint32_t S_PRESC1;
-    __IO uint32_t S_PRESC2;
-    __IO uint32_t S_PRESC3;
-    __IO uint32_t S_PRESC4;
-    __IO uint32_t S_PRESC5;
-    __IO uint32_t S_PRESC6;
-    __IO uint32_t S_PRESC7;
-} stc_can_sbt_bit_t;
-
-typedef struct {
-    __I  uint32_t ALC0;
-    __I  uint32_t ALC1;
-    __I  uint32_t ALC2;
-    __I  uint32_t ALC3;
-    __I  uint32_t ALC4;
-    __I  uint32_t KOER0;
-    __I  uint32_t KOER1;
-    __I  uint32_t KOER2;
-} stc_can_ealcap_bit_t;
-
-typedef struct {
-    __IO uint32_t ACFADR0;
-    __IO uint32_t ACFADR1;
-    __IO uint32_t ACFADR2;
-    __IO uint32_t ACFADR3;
-    uint32_t RESERVED0[1];
+    uint32_t RESERVED0[5];
     __IO uint32_t SELMASK;
     uint32_t RESERVED1[2];
 } stc_can_acfctrl_bit_t;
@@ -10893,55 +9029,21 @@ typedef struct {
 } stc_can_acfen_bit_t;
 
 typedef struct {
-    __IO uint32_t ACODEORAMASK0;
-    __IO uint32_t ACODEORAMASK1;
-    __IO uint32_t ACODEORAMASK2;
-    __IO uint32_t ACODEORAMASK3;
-    __IO uint32_t ACODEORAMASK4;
-    __IO uint32_t ACODEORAMASK5;
-    __IO uint32_t ACODEORAMASK6;
-    __IO uint32_t ACODEORAMASK7;
-    __IO uint32_t ACODEORAMASK8;
-    __IO uint32_t ACODEORAMASK9;
-    __IO uint32_t ACODEORAMASK10;
-    __IO uint32_t ACODEORAMASK11;
-    __IO uint32_t ACODEORAMASK12;
-    __IO uint32_t ACODEORAMASK13;
-    __IO uint32_t ACODEORAMASK14;
-    __IO uint32_t ACODEORAMASK15;
-    __IO uint32_t ACODEORAMASK16;
-    __IO uint32_t ACODEORAMASK17;
-    __IO uint32_t ACODEORAMASK18;
-    __IO uint32_t ACODEORAMASK19;
-    __IO uint32_t ACODEORAMASK20;
-    __IO uint32_t ACODEORAMASK21;
-    __IO uint32_t ACODEORAMASK22;
-    __IO uint32_t ACODEORAMASK23;
-    __IO uint32_t ACODEORAMASK24;
-    __IO uint32_t ACODEORAMASK25;
-    __IO uint32_t ACODEORAMASK26;
-    __IO uint32_t ACODEORAMASK27;
-    __IO uint32_t ACODEORAMASK28;
+    uint32_t RESERVED0[29];
     __IO uint32_t AIDE;
     __IO uint32_t AIDEE;
-    uint32_t RESERVED0[1];
+    uint32_t RESERVED1[1];
 } stc_can_acf_bit_t;
 
 typedef struct {
-    __IO uint32_t TBPTR0;
-    __IO uint32_t TBPTR1;
-    __IO uint32_t TBPTR2;
-    __IO uint32_t TBPTR3;
-    __IO uint32_t TBPTR4;
-    __IO uint32_t TBPTR5;
+    uint32_t RESERVED0[6];
     __IO uint32_t TBF;
     __IO uint32_t TBE;
 } stc_can_tbslot_bit_t;
 
 typedef struct {
     __IO uint32_t TTEN;
-    __IO uint32_t T_PRESC0;
-    __IO uint32_t T_PRESC1;
+    uint32_t RESERVED0[2];
     __IO uint32_t TTIF;
     __IO uint32_t TTIE;
     __IO uint32_t TEIF;
@@ -10950,64 +9052,12 @@ typedef struct {
 } stc_can_ttcfg_bit_t;
 
 typedef struct {
-    __IO uint32_t REF_ID0;
-    __IO uint32_t REF_ID1;
-    __IO uint32_t REF_ID2;
-    __IO uint32_t REF_ID3;
-    __IO uint32_t REF_ID4;
-    __IO uint32_t REF_ID5;
-    __IO uint32_t REF_ID6;
-    __IO uint32_t REF_ID7;
-    __IO uint32_t REF_ID8;
-    __IO uint32_t REF_ID9;
-    __IO uint32_t REF_ID10;
-    __IO uint32_t REF_ID11;
-    __IO uint32_t REF_ID12;
-    __IO uint32_t REF_ID13;
-    __IO uint32_t REF_ID14;
-    __IO uint32_t REF_ID15;
-    __IO uint32_t REF_ID16;
-    __IO uint32_t REF_ID17;
-    __IO uint32_t REF_ID18;
-    __IO uint32_t REF_ID19;
-    __IO uint32_t REF_ID20;
-    __IO uint32_t REF_ID21;
-    __IO uint32_t REF_ID22;
-    __IO uint32_t REF_ID23;
-    __IO uint32_t REF_ID24;
-    __IO uint32_t REF_ID25;
-    __IO uint32_t REF_ID26;
-    __IO uint32_t REF_ID27;
-    __IO uint32_t REF_ID28;
-    uint32_t RESERVED0[2];
+    uint32_t RESERVED0[31];
     __IO uint32_t REF_IDE;
 } stc_can_ref_msg_bit_t;
 
 typedef struct {
-    __IO uint32_t TTPTR0;
-    __IO uint32_t TTPTR1;
-    __IO uint32_t TTPTR2;
-    __IO uint32_t TTPTR3;
-    __IO uint32_t TTPTR4;
-    __IO uint32_t TTPTR5;
-    uint32_t RESERVED0[2];
-    __IO uint32_t TTYPE0;
-    __IO uint32_t TTYPE1;
-    __IO uint32_t TTYPE2;
-    uint32_t RESERVED1[1];
-    __IO uint32_t TEW0;
-    __IO uint32_t TEW1;
-    __IO uint32_t TEW2;
-    __IO uint32_t TEW3;
-} stc_can_trg_cfg_bit_t;
-
-typedef struct {
-    __IO uint32_t FLTSL0;
-    __IO uint32_t FLTSL1;
-    __IO uint32_t FLTSL2;
-    uint32_t RESERVED0[2];
-    __IO uint32_t EDGSL0;
-    __IO uint32_t EDGSL1;
+    uint32_t RESERVED0[7];
     __IO uint32_t IEN;
     __IO uint32_t CVSEN;
     uint32_t RESERVED1[3];
@@ -11035,33 +9085,8 @@ typedef struct {
 
 typedef struct {
     __I  uint32_t OMON;
-    uint32_t RESERVED0[7];
-    __I  uint32_t CVST0;
-    __I  uint32_t CVST1;
-    __I  uint32_t CVST2;
-    __I  uint32_t CVST3;
-    uint32_t RESERVED1[4];
+    uint32_t RESERVED0[15];
 } stc_cmp_outmon_bit_t;
-
-typedef struct {
-    __IO uint32_t STB0;
-    __IO uint32_t STB1;
-    __IO uint32_t STB2;
-    __IO uint32_t STB3;
-    uint32_t RESERVED0[12];
-} stc_cmp_cvsstb_bit_t;
-
-typedef struct {
-    __IO uint32_t PRD0;
-    __IO uint32_t PRD1;
-    __IO uint32_t PRD2;
-    __IO uint32_t PRD3;
-    __IO uint32_t PRD4;
-    __IO uint32_t PRD5;
-    __IO uint32_t PRD6;
-    __IO uint32_t PRD7;
-    uint32_t RESERVED0[8];
-} stc_cmp_cvsprd_bit_t;
 
 typedef struct {
     __IO uint32_t DA1EN;
@@ -11087,24 +9112,9 @@ typedef struct {
 } stc_crc_cr_bit_t;
 
 typedef struct {
-    __IO uint32_t CRC_REG0;
-    __IO uint32_t CRC_REG1;
-    __IO uint32_t CRC_REG2;
-    __IO uint32_t CRC_REG3;
-    __IO uint32_t CRC_REG4;
-    __IO uint32_t CRC_REG5;
-    __IO uint32_t CRC_REG6;
-    __IO uint32_t CRC_REG7;
-    __IO uint32_t CRC_REG8;
-    __IO uint32_t CRC_REG9;
-    __IO uint32_t CRC_REG10;
-    __IO uint32_t CRC_REG11;
-    __IO uint32_t CRC_REG12;
-    __IO uint32_t CRC_REG13;
-    __IO uint32_t CRC_REG14;
-    __IO uint32_t CRC_REG15;
+    uint32_t RESERVED0[16];
     __I  uint32_t CRCFLAG_16;
-    uint32_t RESERVED0[15];
+    uint32_t RESERVED1[15];
 } stc_crc_reslt_bit_t;
 
 typedef struct {
@@ -11113,30 +9123,19 @@ typedef struct {
 } stc_crc_flg_bit_t;
 
 typedef struct {
-    __IO uint32_t AUTH;
-    __IO uint32_t REMVLOCK;
-    __IO uint32_t SAFTYLOCK1;
-    __IO uint32_t SAFTYLOCK2;
-    uint32_t RESERVED0[4];
-    __IO uint32_t CPUSTOP;
-    __IO uint32_t CPUSLEEP;
-    uint32_t RESERVED1[22];
+    __IO uint32_t AUTHFG;
+    uint32_t RESERVED0[1];
+    __IO uint32_t PRTLV1;
+    __IO uint32_t PRTLV2;
+    uint32_t RESERVED1[28];
 } stc_dbgc_mcustat_bit_t;
-
-typedef struct {
-    __IO uint32_t EDBGRQ;
-    __IO uint32_t RESTART;
-    uint32_t RESERVED0[6];
-    __IO uint32_t DIRQ;
-    uint32_t RESERVED1[23];
-} stc_dbgc_mcuctl_bit_t;
 
 typedef struct {
     __IO uint32_t ERASEREQ;
     __IO uint32_t ERASEACK;
     __IO uint32_t ERASEERR;
     uint32_t RESERVED0[29];
-} stc_dbgc_fmcctl_bit_t;
+} stc_dbgc_fersctl_bit_t;
 
 typedef struct {
     __IO uint32_t CDBGPWRUPREQ;
@@ -11148,10 +9147,7 @@ typedef struct {
     __IO uint32_t SWDTSTP;
     __IO uint32_t WDTSTP;
     __IO uint32_t RTCSTP;
-    __IO uint32_t PVD0STP;
-    __IO uint32_t PVD1STP;
-    __IO uint32_t PVD2STP;
-    uint32_t RESERVED0[8];
+    uint32_t RESERVED0[11];
     __IO uint32_t TMR01STP;
     __IO uint32_t TMR02STP;
     uint32_t RESERVED1[4];
@@ -11170,20 +9166,14 @@ typedef struct {
 } stc_dbgc_mcustpctl_bit_t;
 
 typedef struct {
-    __IO uint32_t TRACEMODE0;
-    __IO uint32_t TRACEMODE1;
+    uint32_t RESERVED0[2];
     __IO uint32_t TRACEIOEN;
-    uint32_t RESERVED0[29];
+    uint32_t RESERVED1[29];
 } stc_dbgc_mcutracectl_bit_t;
 
 typedef struct {
-    __IO uint32_t MODE0;
-    __IO uint32_t MODE1;
-    __IO uint32_t MODE2;
-    __IO uint32_t DATASIZE0;
-    __IO uint32_t DATASIZE1;
-    uint32_t RESERVED0[3];
-    __IO uint32_t COMP_TRG;
+    uint32_t RESERVED0[8];
+    __IO uint32_t COMPTRG;
     uint32_t RESERVED1[22];
     __IO uint32_t INTEN;
 } stc_dcu_ctl_bit_t;
@@ -11211,17 +9201,15 @@ typedef struct {
 } stc_dcu_flagclr_bit_t;
 
 typedef struct {
-    __IO uint32_t INT_OP;
-    __IO uint32_t INT_LS2;
-    __IO uint32_t INT_EQ2;
-    __IO uint32_t INT_GT2;
-    __IO uint32_t INT_LS1;
-    __IO uint32_t INT_EQ1;
-    __IO uint32_t INT_GT1;
-    __IO uint32_t INT_WIN0;
-    __IO uint32_t INT_WIN1;
-    uint32_t RESERVED0[23];
-} stc_dcu_intsel_bit_t;
+    __IO uint32_t SEL_OP;
+    __IO uint32_t SEL_LS2;
+    __IO uint32_t SEL_EQ2;
+    __IO uint32_t SEL_GT2;
+    __IO uint32_t SEL_LS1;
+    __IO uint32_t SEL_EQ1;
+    __IO uint32_t SEL_GT1;
+    uint32_t RESERVED0[25];
+} stc_dcu_intevtsel_bit_t;
 
 typedef struct {
     __IO uint32_t EN;
@@ -11307,19 +9295,7 @@ typedef struct {
 } stc_dma_intclr1_bit_t;
 
 typedef struct {
-    __IO uint32_t CHEN0;
-    __IO uint32_t CHEN1;
-    __IO uint32_t CHEN2;
-    __IO uint32_t CHEN3;
-    uint32_t RESERVED0[28];
-} stc_dma_chen_bit_t;
-
-typedef struct {
-    __I  uint32_t CHREQ0;
-    __I  uint32_t CHREQ1;
-    __I  uint32_t CHREQ2;
-    __I  uint32_t CHREQ3;
-    uint32_t RESERVED0[11];
+    uint32_t RESERVED0[15];
     __I  uint32_t RCFGREQ;
     uint32_t RESERVED1[16];
 } stc_dma_reqstat_bit_t;
@@ -11327,142 +9303,26 @@ typedef struct {
 typedef struct {
     __I  uint32_t DMAACT;
     __I  uint32_t RCFGACT;
-    uint32_t RESERVED0[14];
-    __I  uint32_t CHACT0;
-    __I  uint32_t CHACT1;
-    __I  uint32_t CHACT2;
-    __I  uint32_t CHACT3;
-    uint32_t RESERVED1[12];
+    uint32_t RESERVED0[30];
 } stc_dma_chstat_bit_t;
 
 typedef struct {
     __IO uint32_t RCFGEN;
     __IO uint32_t RCFGLLP;
-    uint32_t RESERVED0[6];
-    __IO uint32_t RCFGCHS0;
-    __IO uint32_t RCFGCHS1;
-    __IO uint32_t RCFGCHS2;
-    __IO uint32_t RCFGCHS3;
-    uint32_t RESERVED1[4];
-    __IO uint32_t SARMD0;
-    __IO uint32_t SARMD1;
-    __IO uint32_t DARMD0;
-    __IO uint32_t DARMD1;
-    __IO uint32_t CNTMD0;
-    __IO uint32_t CNTMD1;
-    uint32_t RESERVED2[10];
+    uint32_t RESERVED0[30];
 } stc_dma_rcfgctl_bit_t;
 
 typedef struct {
-    __IO uint32_t SRPTB0;
-    __IO uint32_t SRPTB1;
-    __IO uint32_t SRPTB2;
-    __IO uint32_t SRPTB3;
-    __IO uint32_t SRPTB4;
-    __IO uint32_t SRPTB5;
-    __IO uint32_t SRPTB6;
-    __IO uint32_t SRPTB7;
-    __IO uint32_t SRPTB8;
-    __IO uint32_t SRPTB9;
-    uint32_t RESERVED0[6];
-    __IO uint32_t DRPTB0;
-    __IO uint32_t DRPTB1;
-    __IO uint32_t DRPTB2;
-    __IO uint32_t DRPTB3;
-    __IO uint32_t DRPTB4;
-    __IO uint32_t DRPTB5;
-    __IO uint32_t DRPTB6;
-    __IO uint32_t DRPTB7;
-    __IO uint32_t DRPTB8;
-    __IO uint32_t DRPTB9;
-    uint32_t RESERVED1[6];
-} stc_dma_rptb_bit_t;
-
-typedef struct {
-    __IO uint32_t SNSDIST0;
-    __IO uint32_t SNSDIST1;
-    __IO uint32_t SNSDIST2;
-    __IO uint32_t SNSDIST3;
-    __IO uint32_t SNSDIST4;
-    __IO uint32_t SNSDIST5;
-    __IO uint32_t SNSDIST6;
-    __IO uint32_t SNSDIST7;
-    __IO uint32_t SNSDIST8;
-    __IO uint32_t SNSDIST9;
-    __IO uint32_t SNSDIST10;
-    __IO uint32_t SNSDIST11;
-    __IO uint32_t SNSDIST12;
-    __IO uint32_t SNSDIST13;
-    __IO uint32_t SNSDIST14;
-    __IO uint32_t SNSDIST15;
-    __IO uint32_t SNSDIST16;
-    __IO uint32_t SNSDIST17;
-    __IO uint32_t SNSDIST18;
-    __IO uint32_t SNSDIST19;
-    __IO uint32_t SNSCNTB0;
-    __IO uint32_t SNSCNTB1;
-    __IO uint32_t SNSCNTB2;
-    __IO uint32_t SNSCNTB3;
-    __IO uint32_t SNSCNTB4;
-    __IO uint32_t SNSCNTB5;
-    __IO uint32_t SNSCNTB6;
-    __IO uint32_t SNSCNTB7;
-    __IO uint32_t SNSCNTB8;
-    __IO uint32_t SNSCNTB9;
-    __IO uint32_t SNSCNTB10;
-    __IO uint32_t SNSCNTB11;
-} stc_dma_snseqctlb_bit_t;
-
-typedef struct {
-    __IO uint32_t DNSDIST0;
-    __IO uint32_t DNSDIST1;
-    __IO uint32_t DNSDIST2;
-    __IO uint32_t DNSDIST3;
-    __IO uint32_t DNSDIST4;
-    __IO uint32_t DNSDIST5;
-    __IO uint32_t DNSDIST6;
-    __IO uint32_t DNSDIST7;
-    __IO uint32_t DNSDIST8;
-    __IO uint32_t DNSDIST9;
-    __IO uint32_t DNSDIST10;
-    __IO uint32_t DNSDIST11;
-    __IO uint32_t DNSDIST12;
-    __IO uint32_t DNSDIST13;
-    __IO uint32_t DNSDIST14;
-    __IO uint32_t DNSDIST15;
-    __IO uint32_t DNSDIST16;
-    __IO uint32_t DNSDIST17;
-    __IO uint32_t DNSDIST18;
-    __IO uint32_t DNSDIST19;
-    __IO uint32_t DNSCNTB0;
-    __IO uint32_t DNSCNTB1;
-    __IO uint32_t DNSCNTB2;
-    __IO uint32_t DNSCNTB3;
-    __IO uint32_t DNSCNTB4;
-    __IO uint32_t DNSCNTB5;
-    __IO uint32_t DNSCNTB6;
-    __IO uint32_t DNSCNTB7;
-    __IO uint32_t DNSCNTB8;
-    __IO uint32_t DNSCNTB9;
-    __IO uint32_t DNSCNTB10;
-    __IO uint32_t DNSCNTB11;
-} stc_dma_dnseqctlb_bit_t;
-
-typedef struct {
-    __IO uint32_t SINC0;
-    __IO uint32_t SINC1;
-    __IO uint32_t DINC0;
-    __IO uint32_t DINC1;
+    uint32_t RESERVED0[4];
     __IO uint32_t SRPTEN;
     __IO uint32_t DRPTEN;
     __IO uint32_t SNSEQEN;
     __IO uint32_t DNSEQEN;
-    __IO uint32_t HSIZE0;
-    __IO uint32_t HSIZE1;
+    uint32_t RESERVED1[2];
     __IO uint32_t LLPEN;
     __IO uint32_t LLPRUN;
     __IO uint32_t IE;
-    uint32_t RESERVED0[19];
+    uint32_t RESERVED2[19];
 } stc_dma_chctl_bit_t;
 
 typedef struct {
@@ -11483,13 +9343,9 @@ typedef struct {
 
 typedef struct {
     __IO uint32_t PEMODE;
-    uint32_t RESERVED0[3];
-    __IO uint32_t PEMOD0;
-    __IO uint32_t PEMOD1;
-    __IO uint32_t PEMOD2;
-    uint32_t RESERVED1[1];
+    uint32_t RESERVED0[7];
     __IO uint32_t BUSHLDCTL;
-    uint32_t RESERVED2[23];
+    uint32_t RESERVED1[23];
 } stc_efm_fwmc_bit_t;
 
 typedef struct {
@@ -11533,9 +9389,9 @@ typedef struct {
 
 typedef struct {
     __IO uint32_t PORTINEN;
-    __IO uint32_t CMPEN0;
     __IO uint32_t CMPEN1;
     __IO uint32_t CMPEN2;
+    __IO uint32_t CMPEN3;
     uint32_t RESERVED0[1];
     __IO uint32_t OSCSTPEN;
     __IO uint32_t PWMSEN0;
@@ -11577,72 +9433,12 @@ typedef struct {
 } stc_emb_statclr_bit_t;
 
 typedef struct {
-    __IO uint32_t PORTINTEN;
-    __IO uint32_t PWMINTEN;
+    __IO uint32_t PORTININTEN;
+    __IO uint32_t PWMSINTEN;
     __IO uint32_t CMPINTEN;
     __IO uint32_t OSINTEN;
     uint32_t RESERVED0[28];
 } stc_emb_inten_bit_t;
-
-typedef struct {
-    __IO uint32_t LVR0;
-    __IO uint32_t LVR1;
-    __IO uint32_t LVR2;
-    __IO uint32_t LVR3;
-    __IO uint32_t LVR4;
-    __IO uint32_t LVR5;
-    __IO uint32_t LVR6;
-    __IO uint32_t LVR7;
-    __IO uint32_t LVR8;
-    __IO uint32_t LVR9;
-    __IO uint32_t LVR10;
-    __IO uint32_t LVR11;
-    __IO uint32_t LVR12;
-    __IO uint32_t LVR13;
-    __IO uint32_t LVR14;
-    __IO uint32_t LVR15;
-    uint32_t RESERVED0[16];
-} stc_fcm_lvr_bit_t;
-
-typedef struct {
-    __IO uint32_t UVR0;
-    __IO uint32_t UVR1;
-    __IO uint32_t UVR2;
-    __IO uint32_t UVR3;
-    __IO uint32_t UVR4;
-    __IO uint32_t UVR5;
-    __IO uint32_t UVR6;
-    __IO uint32_t UVR7;
-    __IO uint32_t UVR8;
-    __IO uint32_t UVR9;
-    __IO uint32_t UVR10;
-    __IO uint32_t UVR11;
-    __IO uint32_t UVR12;
-    __IO uint32_t UVR13;
-    __IO uint32_t UVR14;
-    __IO uint32_t UVR15;
-    uint32_t RESERVED0[16];
-} stc_fcm_uvr_bit_t;
-
-typedef struct {
-    __I  uint32_t CNTR0;
-    __I  uint32_t CNTR1;
-    __I  uint32_t CNTR2;
-    __I  uint32_t CNTR3;
-    __I  uint32_t CNTR4;
-    __I  uint32_t CNTR5;
-    __I  uint32_t CNTR6;
-    __I  uint32_t CNTR7;
-    __I  uint32_t CNTR8;
-    __I  uint32_t CNTR9;
-    __I  uint32_t CNTR10;
-    __I  uint32_t CNTR11;
-    __I  uint32_t CNTR12;
-    __I  uint32_t CNTR13;
-    __I  uint32_t CNTR14;
-    __I  uint32_t CNTR15;
-    uint32_t RESERVED0[16];
-} stc_fcm_cntr_bit_t;
 
 typedef struct {
     __IO uint32_t START;
@@ -11650,33 +9446,11 @@ typedef struct {
 } stc_fcm_str_bit_t;
 
 typedef struct {
-    __IO uint32_t MDIVS0;
-    __IO uint32_t MDIVS1;
-    uint32_t RESERVED0[2];
-    __IO uint32_t MCKS0;
-    __IO uint32_t MCKS1;
-    __IO uint32_t MCKS2;
-    __IO uint32_t MCKS3;
-    uint32_t RESERVED1[24];
-} stc_fcm_mccr_bit_t;
-
-typedef struct {
-    __IO uint32_t RDIVS0;
-    __IO uint32_t RDIVS1;
-    uint32_t RESERVED0[1];
-    __IO uint32_t RCKS0;
-    __IO uint32_t RCKS1;
-    __IO uint32_t RCKS2;
-    __IO uint32_t RCKS3;
+    uint32_t RESERVED0[7];
     __IO uint32_t INEXS;
-    __IO uint32_t DNFS0;
-    __IO uint32_t DNFS1;
-    uint32_t RESERVED1[2];
-    __IO uint32_t EDGES0;
-    __IO uint32_t EDGES1;
-    uint32_t RESERVED2[1];
+    uint32_t RESERVED1[7];
     __IO uint32_t EXREFE;
-    uint32_t RESERVED3[16];
+    uint32_t RESERVED2[16];
 } stc_fcm_rccr_bit_t;
 
 typedef struct {
@@ -11861,54 +9635,15 @@ typedef struct {
 } stc_gpio_potrh_bit_t;
 
 typedef struct {
-    __IO uint32_t SPFE0;
-    __IO uint32_t SPFE1;
-    __IO uint32_t SPFE2;
-    __IO uint32_t SPFE3;
-    __IO uint32_t SPFE4;
-    uint32_t RESERVED0[11];
-} stc_gpio_pspcr_bit_t;
-
-typedef struct {
-    __IO uint32_t BFSEL0;
-    __IO uint32_t BFSEL1;
-    __IO uint32_t BFSEL2;
-    __IO uint32_t BFSEL3;
-    uint32_t RESERVED0[10];
-    __IO uint32_t RDWT0;
-    __IO uint32_t RDWT1;
-} stc_gpio_pccr_bit_t;
-
-typedef struct {
-    __IO uint32_t PINAE0;
-    __IO uint32_t PINAE1;
-    __IO uint32_t PINAE2;
-    __IO uint32_t PINAE3;
-    __IO uint32_t PINAE4;
-    __IO uint32_t PINAE5;
-    uint32_t RESERVED0[10];
-} stc_gpio_pinaer_bit_t;
-
-typedef struct {
     __IO uint32_t WE;
-    uint32_t RESERVED0[7];
-    __O  uint32_t WP0;
-    __O  uint32_t WP1;
-    __O  uint32_t WP2;
-    __O  uint32_t WP3;
-    __O  uint32_t WP4;
-    __O  uint32_t WP5;
-    __O  uint32_t WP6;
-    __O  uint32_t WP7;
+    uint32_t RESERVED0[15];
 } stc_gpio_pwpr_bit_t;
 
 typedef struct {
     __IO uint32_t POUT;
     __IO uint32_t POUTE;
     __IO uint32_t NOD;
-    uint32_t RESERVED0[1];
-    __IO uint32_t DRV0;
-    __IO uint32_t DRV1;
+    uint32_t RESERVED0[3];
     __IO uint32_t PUU;
     uint32_t RESERVED1[1];
     __I  uint32_t PIN;
@@ -11921,13 +9656,7 @@ typedef struct {
 } stc_gpio_pcr_bit_t;
 
 typedef struct {
-    __IO uint32_t FSEL0;
-    __IO uint32_t FSEL1;
-    __IO uint32_t FSEL2;
-    __IO uint32_t FSEL3;
-    __IO uint32_t FSEL4;
-    __IO uint32_t FSEL5;
-    uint32_t RESERVED0[2];
+    uint32_t RESERVED0[8];
     __IO uint32_t BFE;
     uint32_t RESERVED1[7];
 } stc_gpio_pfsr_bit_t;
@@ -11945,7 +9674,7 @@ typedef struct {
     __IO uint32_t SMBDEFAULTEN;
     __IO uint32_t SMBHOSTEN;
     uint32_t RESERVED0[1];
-    __IO uint32_t GCEN;
+    __IO uint32_t ENGC;
     __IO uint32_t RESTART;
     __IO uint32_t START;
     __IO uint32_t STOP;
@@ -11994,17 +9723,7 @@ typedef struct {
 } stc_i2c_cr4_bit_t;
 
 typedef struct {
-    __IO uint32_t SLADDR00;
-    __IO uint32_t SLADDR01;
-    __IO uint32_t SLADDR02;
-    __IO uint32_t SLADDR03;
-    __IO uint32_t SLADDR04;
-    __IO uint32_t SLADDR05;
-    __IO uint32_t SLADDR06;
-    __IO uint32_t SLADDR07;
-    __IO uint32_t SLADDR08;
-    __IO uint32_t SLADDR09;
-    uint32_t RESERVED0[2];
+    uint32_t RESERVED0[12];
     __IO uint32_t SLADDR0EN;
     uint32_t RESERVED1[2];
     __IO uint32_t ADDRMOD0;
@@ -12012,57 +9731,12 @@ typedef struct {
 } stc_i2c_slr0_bit_t;
 
 typedef struct {
-    __IO uint32_t SLADDR10;
-    __IO uint32_t SLADDR11;
-    __IO uint32_t SLADDR12;
-    __IO uint32_t SLADDR13;
-    __IO uint32_t SLADDR14;
-    __IO uint32_t SLADDR15;
-    __IO uint32_t SLADDR16;
-    __IO uint32_t SLADDR17;
-    __IO uint32_t SLADDR18;
-    __IO uint32_t SLADDR19;
-    uint32_t RESERVED0[2];
+    uint32_t RESERVED0[12];
     __IO uint32_t SLADDR1EN;
     uint32_t RESERVED1[2];
     __IO uint32_t ADDRMOD1;
     uint32_t RESERVED2[16];
 } stc_i2c_slr1_bit_t;
-
-typedef struct {
-    __IO uint32_t TOUTLOW0;
-    __IO uint32_t TOUTLOW1;
-    __IO uint32_t TOUTLOW2;
-    __IO uint32_t TOUTLOW3;
-    __IO uint32_t TOUTLOW4;
-    __IO uint32_t TOUTLOW5;
-    __IO uint32_t TOUTLOW6;
-    __IO uint32_t TOUTLOW7;
-    __IO uint32_t TOUTLOW8;
-    __IO uint32_t TOUTLOW9;
-    __IO uint32_t TOUTLOW10;
-    __IO uint32_t TOUTLOW11;
-    __IO uint32_t TOUTLOW12;
-    __IO uint32_t TOUTLOW13;
-    __IO uint32_t TOUTLOW14;
-    __IO uint32_t TOUTLOW15;
-    __IO uint32_t TOUTHIGH0;
-    __IO uint32_t TOUTHIGH1;
-    __IO uint32_t TOUTHIGH2;
-    __IO uint32_t TOUTHIGH3;
-    __IO uint32_t TOUTHIGH4;
-    __IO uint32_t TOUTHIGH5;
-    __IO uint32_t TOUTHIGH6;
-    __IO uint32_t TOUTHIGH7;
-    __IO uint32_t TOUTHIGH8;
-    __IO uint32_t TOUTHIGH9;
-    __IO uint32_t TOUTHIGH10;
-    __IO uint32_t TOUTHIGH11;
-    __IO uint32_t TOUTHIGH12;
-    __IO uint32_t TOUTHIGH13;
-    __IO uint32_t TOUTHIGH14;
-    __IO uint32_t TOUTHIGH15;
-} stc_i2c_sltr_bit_t;
 
 typedef struct {
     __IO uint32_t STARTF;
@@ -12116,50 +9790,7 @@ typedef struct {
 } stc_i2c_clr_bit_t;
 
 typedef struct {
-    __O  uint32_t DT0;
-    __O  uint32_t DT1;
-    __O  uint32_t DT2;
-    __O  uint32_t DT3;
-    __O  uint32_t DT4;
-    __O  uint32_t DT5;
-    __O  uint32_t DT6;
-    __O  uint32_t DT7;
-} stc_i2c_dtr_bit_t;
-
-typedef struct {
-    __I  uint32_t DR0;
-    __I  uint32_t DR1;
-    __I  uint32_t DR2;
-    __I  uint32_t DR3;
-    __I  uint32_t DR4;
-    __I  uint32_t DR5;
-    __I  uint32_t DR6;
-    __I  uint32_t DR7;
-} stc_i2c_drr_bit_t;
-
-typedef struct {
-    __IO uint32_t SLOWW0;
-    __IO uint32_t SLOWW1;
-    __IO uint32_t SLOWW2;
-    __IO uint32_t SLOWW3;
-    __IO uint32_t SLOWW4;
-    uint32_t RESERVED0[3];
-    __IO uint32_t SHIGHW0;
-    __IO uint32_t SHIGHW1;
-    __IO uint32_t SHIGHW2;
-    __IO uint32_t SHIGHW3;
-    __IO uint32_t SHIGHW4;
-    uint32_t RESERVED1[3];
-    __IO uint32_t FREQ0;
-    __IO uint32_t FREQ1;
-    __IO uint32_t FREQ2;
-    uint32_t RESERVED2[13];
-} stc_i2c_ccr_bit_t;
-
-typedef struct {
-    __IO uint32_t DNF0;
-    __IO uint32_t DNF1;
-    uint32_t RESERVED0[2];
+    uint32_t RESERVED0[4];
     __IO uint32_t DNFEN;
     __IO uint32_t ANFEN;
     uint32_t RESERVED1[26];
@@ -12174,14 +9805,7 @@ typedef struct {
     __IO uint32_t WMS;
     __IO uint32_t ODD;
     __IO uint32_t MCKOE;
-    __IO uint32_t TXBIRQWL0;
-    __IO uint32_t TXBIRQWL1;
-    __IO uint32_t TXBIRQWL2;
-    uint32_t RESERVED0[1];
-    __IO uint32_t RXBIRQWL0;
-    __IO uint32_t RXBIRQWL1;
-    __IO uint32_t RXBIRQWL2;
-    uint32_t RESERVED1[1];
+    uint32_t RESERVED0[8];
     __IO uint32_t FIFOR;
     __IO uint32_t CODECRC;
     __IO uint32_t I2SPLLSEL;
@@ -12190,7 +9814,7 @@ typedef struct {
     __IO uint32_t CKOE;
     __IO uint32_t DUPLEX;
     __IO uint32_t CLKSEL;
-    uint32_t RESERVED2[8];
+    uint32_t RESERVED1[8];
 } stc_i2s_ctrl_bit_t;
 
 typedef struct {
@@ -12210,69 +9834,32 @@ typedef struct {
 } stc_i2s_er_bit_t;
 
 typedef struct {
-    __IO uint32_t I2SSTD0;
-    __IO uint32_t I2SSTD1;
-    __IO uint32_t DATLEN0;
-    __IO uint32_t DATLEN1;
+    uint32_t RESERVED0[4];
     __IO uint32_t CHLEN;
     __IO uint32_t PCMSYNC;
-    uint32_t RESERVED0[26];
+    uint32_t RESERVED1[26];
 } stc_i2s_cfgr_bit_t;
-
-typedef struct {
-    __IO uint32_t I2SDIV0;
-    __IO uint32_t I2SDIV1;
-    __IO uint32_t I2SDIV2;
-    __IO uint32_t I2SDIV3;
-    __IO uint32_t I2SDIV4;
-    __IO uint32_t I2SDIV5;
-    __IO uint32_t I2SDIV6;
-    __IO uint32_t I2SDIV7;
-    uint32_t RESERVED0[24];
-} stc_i2s_pr_bit_t;
 
 typedef struct {
     __I  uint32_t SWDTAUTS;
     __I  uint32_t SWDTITS;
-    __I  uint32_t SWDTPERI0;
-    __I  uint32_t SWDTPERI1;
-    __I  uint32_t SWDTCKS0;
-    __I  uint32_t SWDTCKS1;
-    __I  uint32_t SWDTCKS2;
-    __I  uint32_t SWDTCKS3;
-    __I  uint32_t SWDTWDPT0;
-    __I  uint32_t SWDTWDPT1;
-    __I  uint32_t SWDTWDPT2;
-    __I  uint32_t SWDTWDPT3;
+    uint32_t RESERVED0[10];
     __I  uint32_t SWDTSLPOFF;
-    uint32_t RESERVED0[3];
+    uint32_t RESERVED1[3];
     __I  uint32_t WDTAUTS;
     __I  uint32_t WDTITS;
-    __I  uint32_t WDTPERI0;
-    __I  uint32_t WDTPERI1;
-    __I  uint32_t WDTCKS0;
-    __I  uint32_t WDTCKS1;
-    __I  uint32_t WDTCKS2;
-    __I  uint32_t WDTCKS3;
-    __I  uint32_t WDTWDPT0;
-    __I  uint32_t WDTWDPT1;
-    __I  uint32_t WDTWDPT2;
-    __I  uint32_t WDTWDPT3;
+    uint32_t RESERVED2[10];
     __I  uint32_t WDTSLPOFF;
-    uint32_t RESERVED1[3];
+    uint32_t RESERVED3[3];
 } stc_icg_icg0_bit_t;
 
 typedef struct {
     __I  uint32_t HRCFREQSEL;
     uint32_t RESERVED0[7];
     __I  uint32_t HRCSTOP;
-    uint32_t RESERVED1[7];
-    __I  uint32_t BOR_LEV0;
-    __I  uint32_t BOR_LEV1;
+    uint32_t RESERVED1[9];
     __I  uint32_t BORDIS;
-    uint32_t RESERVED2[7];
-    __I  uint32_t SMPCLK0;
-    __I  uint32_t SMPCLK1;
+    uint32_t RESERVED2[9];
     __I  uint32_t NMITRG;
     __I  uint32_t NMIEN;
     __I  uint32_t NFEN;
@@ -12281,12 +9868,9 @@ typedef struct {
 
 typedef struct {
     __IO uint32_t NMITRG;
-    uint32_t RESERVED0[3];
-    __IO uint32_t NSMPCLK0;
-    __IO uint32_t NSMPCLK1;
-    uint32_t RESERVED1[1];
+    uint32_t RESERVED0[6];
     __IO uint32_t NFEN;
-    uint32_t RESERVED2[24];
+    uint32_t RESERVED1[24];
 } stc_intc_nmicr_bit_t;
 
 typedef struct {
@@ -12335,14 +9919,9 @@ typedef struct {
 } stc_intc_nmicfr_bit_t;
 
 typedef struct {
-    __IO uint32_t EIRQTRG0;
-    __IO uint32_t EIRQTRG1;
-    uint32_t RESERVED0[2];
-    __IO uint32_t EISMPCLK0;
-    __IO uint32_t EISMPCLK1;
-    uint32_t RESERVED1[1];
+    uint32_t RESERVED0[7];
     __IO uint32_t EFEN;
-    uint32_t RESERVED2[24];
+    uint32_t RESERVED1[24];
 } stc_intc_eirqcr_bit_t;
 
 typedef struct {
@@ -12376,57 +9955,44 @@ typedef struct {
 } stc_intc_wupen_bit_t;
 
 typedef struct {
-    __IO uint32_t EIRQFR0;
-    __IO uint32_t EIRQFR1;
-    __IO uint32_t EIRQFR2;
-    __IO uint32_t EIRQFR3;
-    __IO uint32_t EIRQFR4;
-    __IO uint32_t EIRQFR5;
-    __IO uint32_t EIRQFR6;
-    __IO uint32_t EIRQFR7;
-    __IO uint32_t EIRQFR8;
-    __IO uint32_t EIRQFR9;
-    __IO uint32_t EIRQFR10;
-    __IO uint32_t EIRQFR11;
-    __IO uint32_t EIRQFR12;
-    __IO uint32_t EIRQFR13;
-    __IO uint32_t EIRQFR14;
-    __IO uint32_t EIRQFR15;
+    __IO uint32_t EIFR0;
+    __IO uint32_t EIFR1;
+    __IO uint32_t EIFR2;
+    __IO uint32_t EIFR3;
+    __IO uint32_t EIFR4;
+    __IO uint32_t EIFR5;
+    __IO uint32_t EIFR6;
+    __IO uint32_t EIFR7;
+    __IO uint32_t EIFR8;
+    __IO uint32_t EIFR9;
+    __IO uint32_t EIFR10;
+    __IO uint32_t EIFR11;
+    __IO uint32_t EIFR12;
+    __IO uint32_t EIFR13;
+    __IO uint32_t EIFR14;
+    __IO uint32_t EIFR15;
     uint32_t RESERVED0[16];
-} stc_intc_eirqfr_bit_t;
+} stc_intc_eifr_bit_t;
 
 typedef struct {
-    __IO uint32_t EIRQCFR0;
-    __IO uint32_t EIRQCFR1;
-    __IO uint32_t EIRQCFR2;
-    __IO uint32_t EIRQCFR3;
-    __IO uint32_t EIRQCFR4;
-    __IO uint32_t EIRQCFR5;
-    __IO uint32_t EIRQCFR6;
-    __IO uint32_t EIRQCFR7;
-    __IO uint32_t EIRQCFR8;
-    __IO uint32_t EIRQCFR9;
-    __IO uint32_t EIRQCFR10;
-    __IO uint32_t EIRQCFR11;
-    __IO uint32_t EIRQCFR12;
-    __IO uint32_t EIRQCFR13;
-    __IO uint32_t EIRQCFR14;
-    __IO uint32_t EIRQCFR15;
+    __IO uint32_t EIFCR0;
+    __IO uint32_t EIFCR1;
+    __IO uint32_t EIFCR2;
+    __IO uint32_t EIFCR3;
+    __IO uint32_t EIFCR4;
+    __IO uint32_t EIFCR5;
+    __IO uint32_t EIFCR6;
+    __IO uint32_t EIFCR7;
+    __IO uint32_t EIFCR8;
+    __IO uint32_t EIFCR9;
+    __IO uint32_t EIFCR10;
+    __IO uint32_t EIFCR11;
+    __IO uint32_t EIFCR12;
+    __IO uint32_t EIFCR13;
+    __IO uint32_t EIFCR14;
+    __IO uint32_t EIFCR15;
     uint32_t RESERVED0[16];
-} stc_intc_eirqcfr_bit_t;
-
-typedef struct {
-    __IO uint32_t INTSEL0;
-    __IO uint32_t INTSEL1;
-    __IO uint32_t INTSEL2;
-    __IO uint32_t INTSEL3;
-    __IO uint32_t INTSEL4;
-    __IO uint32_t INTSEL5;
-    __IO uint32_t INTSEL6;
-    __IO uint32_t INTSEL7;
-    __IO uint32_t INTSEL8;
-    uint32_t RESERVED0[23];
-} stc_intc_sel_bit_t;
+} stc_intc_eifcr_bit_t;
 
 typedef struct {
     __IO uint32_t VSEL0;
@@ -12569,85 +10135,9 @@ typedef struct {
 } stc_intc_ier_bit_t;
 
 typedef struct {
-    __IO uint32_t KEYINSEL0;
-    __IO uint32_t KEYINSEL1;
-    __IO uint32_t KEYINSEL2;
-    __IO uint32_t KEYINSEL3;
-    __IO uint32_t KEYINSEL4;
-    __IO uint32_t KEYINSEL5;
-    __IO uint32_t KEYINSEL6;
-    __IO uint32_t KEYINSEL7;
-    __IO uint32_t KEYINSEL8;
-    __IO uint32_t KEYINSEL9;
-    __IO uint32_t KEYINSEL10;
-    __IO uint32_t KEYINSEL11;
-    __IO uint32_t KEYINSEL12;
-    __IO uint32_t KEYINSEL13;
-    __IO uint32_t KEYINSEL14;
-    __IO uint32_t KEYINSEL15;
-    __IO uint32_t KEYOUTSEL0;
-    __IO uint32_t KEYOUTSEL1;
-    __IO uint32_t KEYOUTSEL2;
-    uint32_t RESERVED0[1];
-    __IO uint32_t CKSEL0;
-    __IO uint32_t CKSEL1;
-    uint32_t RESERVED1[2];
-    __IO uint32_t T_LLEVEL0;
-    __IO uint32_t T_LLEVEL1;
-    __IO uint32_t T_LLEVEL2;
-    __IO uint32_t T_LLEVEL3;
-    __IO uint32_t T_LLEVEL4;
-    __IO uint32_t T_HIZ0;
-    __IO uint32_t T_HIZ1;
-    __IO uint32_t T_HIZ2;
-} stc_keyscan_scr_bit_t;
-
-typedef struct {
     __IO uint32_t SEN;
     uint32_t RESERVED0[31];
 } stc_keyscan_ser_bit_t;
-
-typedef struct {
-    __IO uint32_t INDEX0;
-    __IO uint32_t INDEX1;
-    __IO uint32_t INDEX2;
-    uint32_t RESERVED0[29];
-} stc_keyscan_ssr_bit_t;
-
-typedef struct {
-    __IO uint32_t MPURGSIZE0;
-    __IO uint32_t MPURGSIZE1;
-    __IO uint32_t MPURGSIZE2;
-    __IO uint32_t MPURGSIZE3;
-    __IO uint32_t MPURGSIZE4;
-    __IO uint32_t MPURGADDR0;
-    __IO uint32_t MPURGADDR1;
-    __IO uint32_t MPURGADDR2;
-    __IO uint32_t MPURGADDR3;
-    __IO uint32_t MPURGADDR4;
-    __IO uint32_t MPURGADDR5;
-    __IO uint32_t MPURGADDR6;
-    __IO uint32_t MPURGADDR7;
-    __IO uint32_t MPURGADDR8;
-    __IO uint32_t MPURGADDR9;
-    __IO uint32_t MPURGADDR10;
-    __IO uint32_t MPURGADDR11;
-    __IO uint32_t MPURGADDR12;
-    __IO uint32_t MPURGADDR13;
-    __IO uint32_t MPURGADDR14;
-    __IO uint32_t MPURGADDR15;
-    __IO uint32_t MPURGADDR16;
-    __IO uint32_t MPURGADDR17;
-    __IO uint32_t MPURGADDR18;
-    __IO uint32_t MPURGADDR19;
-    __IO uint32_t MPURGADDR20;
-    __IO uint32_t MPURGADDR21;
-    __IO uint32_t MPURGADDR22;
-    __IO uint32_t MPURGADDR23;
-    __IO uint32_t MPURGADDR24;
-    __IO uint32_t MPURGADDR25;
-    __IO uint32_t MPURGADDR26;
-} stc_mpu_rgd_bit_t;
 
 typedef struct {
     __IO uint32_t S2RGRP;
@@ -12668,21 +10158,15 @@ typedef struct {
 typedef struct {
     __IO uint32_t SMPU2BRP;
     __IO uint32_t SMPU2BWP;
-    __IO uint32_t SMPU2ACT0;
-    __IO uint32_t SMPU2ACT1;
-    uint32_t RESERVED0[3];
+    uint32_t RESERVED0[5];
     __IO uint32_t SMPU2E;
     __IO uint32_t SMPU1BRP;
     __IO uint32_t SMPU1BWP;
-    __IO uint32_t SMPU1ACT0;
-    __IO uint32_t SMPU1ACT1;
-    uint32_t RESERVED1[3];
+    uint32_t RESERVED1[5];
     __IO uint32_t SMPU1E;
     __IO uint32_t FMPUBRP;
     __IO uint32_t FMPUBWP;
-    __IO uint32_t FMPUACT0;
-    __IO uint32_t FMPUACT1;
-    uint32_t RESERVED2[3];
+    uint32_t RESERVED2[5];
     __IO uint32_t FMPUE;
     uint32_t RESERVED3[8];
 } stc_mpu_cr_bit_t;
@@ -12707,22 +10191,7 @@ typedef struct {
 
 typedef struct {
     __IO uint32_t MPUWE;
-    __O  uint32_t WKEY0;
-    __O  uint32_t WKEY1;
-    __O  uint32_t WKEY2;
-    __O  uint32_t WKEY3;
-    __O  uint32_t WKEY4;
-    __O  uint32_t WKEY5;
-    __O  uint32_t WKEY6;
-    __O  uint32_t WKEY7;
-    __O  uint32_t WKEY8;
-    __O  uint32_t WKEY9;
-    __O  uint32_t WKEY10;
-    __O  uint32_t WKEY11;
-    __O  uint32_t WKEY12;
-    __O  uint32_t WKEY13;
-    __O  uint32_t WKEY14;
-    uint32_t RESERVED0[16];
+    uint32_t RESERVED0[31];
 } stc_mpu_wp_bit_t;
 
 typedef struct {
@@ -12768,41 +10237,6 @@ typedef struct {
 } stc_ots_ctl_bit_t;
 
 typedef struct {
-    __I  uint32_t TSOFS0;
-    __I  uint32_t TSOFS1;
-    __I  uint32_t TSOFS2;
-    __I  uint32_t TSOFS3;
-    __I  uint32_t TSOFS4;
-    __I  uint32_t TSOFS5;
-    __I  uint32_t TSOFS6;
-    __I  uint32_t TSOFS7;
-    __I  uint32_t TSSLP0;
-    __I  uint32_t TSSLP1;
-    __I  uint32_t TSSLP2;
-    __I  uint32_t TSSLP3;
-    __I  uint32_t TSSLP4;
-    __I  uint32_t TSSLP5;
-    __I  uint32_t TSSLP6;
-    __I  uint32_t TSSLP7;
-    __I  uint32_t TSSLP8;
-    __I  uint32_t TSSLP9;
-    __I  uint32_t TSSLP10;
-    __I  uint32_t TSSLP11;
-    __I  uint32_t TSSLP12;
-    __I  uint32_t TSSLP13;
-    __I  uint32_t TSSLP14;
-    __I  uint32_t TSSLP15;
-    __I  uint32_t TSSLP16;
-    __I  uint32_t TSSLP17;
-    __I  uint32_t TSSLP18;
-    __I  uint32_t TSSLP19;
-    __I  uint32_t TSSLP20;
-    __I  uint32_t TSSLP21;
-    __I  uint32_t TSSLP22;
-    __I  uint32_t TSSLP23;
-} stc_ots_lpr_bit_t;
-
-typedef struct {
     __IO uint32_t DFB;
     __IO uint32_t SOFEN;
     uint32_t RESERVED0[30];
@@ -12817,54 +10251,23 @@ typedef struct {
 } stc_peric_sdioc_syctlreg_bit_t;
 
 typedef struct {
-    __IO uint32_t MDSEL0;
-    __IO uint32_t MDSEL1;
-    __IO uint32_t MDSEL2;
+    uint32_t RESERVED0[3];
     __IO uint32_t PFE;
     __IO uint32_t PFSAE;
     __IO uint32_t DCOME;
     __IO uint32_t XIPE;
     __IO uint32_t SPIMD3;
-    __IO uint32_t IPRSL0;
-    __IO uint32_t IPRSL1;
-    __IO uint32_t APRSL0;
-    __IO uint32_t APRSL1;
-    __IO uint32_t DPRSL0;
-    __IO uint32_t DPRSL1;
-    uint32_t RESERVED0[2];
-    __IO uint32_t DIV0;
-    __IO uint32_t DIV1;
-    __IO uint32_t DIV2;
-    __IO uint32_t DIV3;
-    __IO uint32_t DIV4;
-    __IO uint32_t DIV5;
-    uint32_t RESERVED1[10];
+    uint32_t RESERVED1[24];
 } stc_qspi_cr_bit_t;
 
 typedef struct {
-    __IO uint32_t SSHW0;
-    __IO uint32_t SSHW1;
-    __IO uint32_t SSHW2;
-    __IO uint32_t SSHW3;
-    __IO uint32_t SSNW0;
-    __IO uint32_t SSNW1;
-    uint32_t RESERVED0[26];
-} stc_qspi_cscr_bit_t;
-
-typedef struct {
-    __IO uint32_t AWSL0;
-    __IO uint32_t AWSL1;
+    uint32_t RESERVED0[2];
     __IO uint32_t FOUR_BIC;
-    uint32_t RESERVED0[1];
+    uint32_t RESERVED1[1];
     __IO uint32_t SSNHD;
     __IO uint32_t SSNLD;
     __IO uint32_t WPOL;
-    uint32_t RESERVED1[1];
-    __IO uint32_t DMCYCN0;
-    __IO uint32_t DMCYCN1;
-    __IO uint32_t DMCYCN2;
-    __IO uint32_t DMCYCN3;
-    uint32_t RESERVED2[3];
+    uint32_t RESERVED2[8];
     __IO uint32_t DUTY;
     uint32_t RESERVED3[16];
 } stc_qspi_fcr_bit_t;
@@ -12874,68 +10277,17 @@ typedef struct {
     uint32_t RESERVED0[5];
     __IO uint32_t XIPF;
     __IO uint32_t RAER;
-    __IO uint32_t PFNUM0;
-    __IO uint32_t PFNUM1;
-    __IO uint32_t PFNUM2;
-    __IO uint32_t PFNUM3;
-    __IO uint32_t PFNUM4;
-    uint32_t RESERVED1[1];
+    uint32_t RESERVED1[6];
     __IO uint32_t PFFUL;
     __IO uint32_t PFAN;
     uint32_t RESERVED2[16];
 } stc_qspi_sr_bit_t;
 
 typedef struct {
-    __IO uint32_t DCOM0;
-    __IO uint32_t DCOM1;
-    __IO uint32_t DCOM2;
-    __IO uint32_t DCOM3;
-    __IO uint32_t DCOM4;
-    __IO uint32_t DCOM5;
-    __IO uint32_t DCOM6;
-    __IO uint32_t DCOM7;
-    uint32_t RESERVED0[24];
-} stc_qspi_dcom_bit_t;
-
-typedef struct {
-    __IO uint32_t RIC0;
-    __IO uint32_t RIC1;
-    __IO uint32_t RIC2;
-    __IO uint32_t RIC3;
-    __IO uint32_t RIC4;
-    __IO uint32_t RIC5;
-    __IO uint32_t RIC6;
-    __IO uint32_t RIC7;
-    uint32_t RESERVED0[24];
-} stc_qspi_ccmd_bit_t;
-
-typedef struct {
-    __IO uint32_t XIPMC0;
-    __IO uint32_t XIPMC1;
-    __IO uint32_t XIPMC2;
-    __IO uint32_t XIPMC3;
-    __IO uint32_t XIPMC4;
-    __IO uint32_t XIPMC5;
-    __IO uint32_t XIPMC6;
-    __IO uint32_t XIPMC7;
-    uint32_t RESERVED0[24];
-} stc_qspi_xcmd_bit_t;
-
-typedef struct {
     uint32_t RESERVED0[7];
     __O  uint32_t RAERCLR;
     uint32_t RESERVED1[24];
 } stc_qspi_sr2_bit_t;
-
-typedef struct {
-    uint32_t RESERVED0[26];
-    __IO uint32_t EXADR0;
-    __IO uint32_t EXADR1;
-    __IO uint32_t EXADR2;
-    __IO uint32_t EXADR3;
-    __IO uint32_t EXADR4;
-    __IO uint32_t EXADR5;
-} stc_qspi_exar_bit_t;
 
 typedef struct {
     __IO uint32_t PORF;
@@ -12962,9 +10314,7 @@ typedef struct {
 } stc_rtc_cr0_bit_t;
 
 typedef struct {
-    __IO uint32_t PRDS0;
-    __IO uint32_t PRDS1;
-    __IO uint32_t PRDS2;
+    uint32_t RESERVED0[3];
     __IO uint32_t AMPM;
     __IO uint32_t ALMFCLR;
     __IO uint32_t ONEHZOE;
@@ -12991,84 +10341,26 @@ typedef struct {
 } stc_rtc_cr3_bit_t;
 
 typedef struct {
-    __IO uint32_t HOURU0;
-    __IO uint32_t HOURU1;
-    __IO uint32_t HOURU2;
-    __IO uint32_t HOURU3;
-    __IO uint32_t HOURD0;
-    __IO uint32_t HOURD1;
-    uint32_t RESERVED0[2];
-} stc_rtc_hour_bit_t;
-
-typedef struct {
-    __IO uint32_t ALMHOURU0;
-    __IO uint32_t ALMHOURU1;
-    __IO uint32_t ALMHOURU2;
-    __IO uint32_t ALMHOURU3;
-    __IO uint32_t ALMHOURD0;
-    __IO uint32_t ALMHOURD1;
-    uint32_t RESERVED0[2];
-} stc_rtc_almhour_bit_t;
-
-typedef struct {
-    __IO uint32_t ALMWEEK0;
-    __IO uint32_t ALMWEEK1;
-    __IO uint32_t ALMWEEK2;
-    __IO uint32_t ALMWEEK3;
-    __IO uint32_t ALMWEEK4;
-    __IO uint32_t ALMWEEK5;
-    __IO uint32_t ALMWEEK6;
-    uint32_t RESERVED0[1];
-} stc_rtc_almweek_bit_t;
-
-typedef struct {
     __IO uint32_t COMP8;
     uint32_t RESERVED0[6];
     __IO uint32_t COMPEN;
 } stc_rtc_errcrh_bit_t;
 
 typedef struct {
-    __IO uint32_t TBS0;
-    __IO uint32_t TBS1;
-    __IO uint32_t TBS2;
-    __IO uint32_t TBS3;
-    __IO uint32_t TBS4;
-    __IO uint32_t TBS5;
-    __IO uint32_t TBS6;
-    __IO uint32_t TBS7;
-    __IO uint32_t TBS8;
-    __IO uint32_t TBS9;
-    __IO uint32_t TBS10;
-    __IO uint32_t TBS11;
-    uint32_t RESERVED0[4];
-} stc_sdioc_blksize_bit_t;
-
-typedef struct {
     uint32_t RESERVED0[1];
     __IO uint32_t BCE;
-    __IO uint32_t ATCEN0;
-    __IO uint32_t ATCEN1;
+    uint32_t RESERVED1[2];
     __IO uint32_t DDIR;
     __IO uint32_t MULB;
-    uint32_t RESERVED1[10];
+    uint32_t RESERVED2[10];
 } stc_sdioc_transmode_bit_t;
 
 typedef struct {
-    __IO uint32_t RESTYP0;
-    __IO uint32_t RESTYP1;
-    uint32_t RESERVED0[1];
+    uint32_t RESERVED0[3];
     __IO uint32_t CCE;
     __IO uint32_t ICE;
     __IO uint32_t DAT;
-    __IO uint32_t TYP0;
-    __IO uint32_t TYP1;
-    __IO uint32_t IDX0;
-    __IO uint32_t IDX1;
-    __IO uint32_t IDX2;
-    __IO uint32_t IDX3;
-    __IO uint32_t IDX4;
-    __IO uint32_t IDX5;
-    uint32_t RESERVED1[2];
+    uint32_t RESERVED1[10];
 } stc_sdioc_cmd_bit_t;
 
 typedef struct {
@@ -13085,12 +10377,9 @@ typedef struct {
     __I  uint32_t CSS;
     __I  uint32_t CDL;
     __I  uint32_t WPL;
-    __I  uint32_t DATL0;
-    __I  uint32_t DATL1;
-    __I  uint32_t DATL2;
-    __I  uint32_t DATL3;
+    uint32_t RESERVED2[4];
     __I  uint32_t CMDL;
-    uint32_t RESERVED2[7];
+    uint32_t RESERVED3[7];
 } stc_sdioc_pstat_bit_t;
 
 typedef struct {
@@ -13120,24 +10409,8 @@ typedef struct {
     __IO uint32_t ICE;
     uint32_t RESERVED0[1];
     __IO uint32_t CE;
-    uint32_t RESERVED1[5];
-    __IO uint32_t FS0;
-    __IO uint32_t FS1;
-    __IO uint32_t FS2;
-    __IO uint32_t FS3;
-    __IO uint32_t FS4;
-    __IO uint32_t FS5;
-    __IO uint32_t FS6;
-    __IO uint32_t FS7;
+    uint32_t RESERVED1[13];
 } stc_sdioc_clkcon_bit_t;
-
-typedef struct {
-    __IO uint32_t DTO0;
-    __IO uint32_t DTO1;
-    __IO uint32_t DTO2;
-    __IO uint32_t DTO3;
-    uint32_t RESERVED0[4];
-} stc_sdioc_toutcon_bit_t;
 
 typedef struct {
     __IO uint32_t RSTA;
@@ -13281,28 +10554,14 @@ typedef struct {
 } stc_spi_cr1_bit_t;
 
 typedef struct {
-    __IO uint32_t FTHLV0;
-    __IO uint32_t FTHLV1;
-    uint32_t RESERVED0[4];
+    uint32_t RESERVED0[6];
     __IO uint32_t SPRDTD;
     uint32_t RESERVED1[1];
     __IO uint32_t SS0PV;
     __IO uint32_t SS1PV;
     __IO uint32_t SS2PV;
     __IO uint32_t SS3PV;
-    uint32_t RESERVED2[8];
-    __IO uint32_t MSSI0;
-    __IO uint32_t MSSI1;
-    __IO uint32_t MSSI2;
-    uint32_t RESERVED3[1];
-    __IO uint32_t MSSDL0;
-    __IO uint32_t MSSDL1;
-    __IO uint32_t MSSDL2;
-    uint32_t RESERVED4[1];
-    __IO uint32_t MIDI0;
-    __IO uint32_t MIDI1;
-    __IO uint32_t MIDI2;
-    uint32_t RESERVED5[1];
+    uint32_t RESERVED2[20];
 } stc_spi_cfg1_bit_t;
 
 typedef struct {
@@ -13320,90 +10579,29 @@ typedef struct {
 typedef struct {
     __IO uint32_t CPHA;
     __IO uint32_t CPOL;
-    __IO uint32_t MBR0;
-    __IO uint32_t MBR1;
-    __IO uint32_t MBR2;
-    __IO uint32_t SSA0;
-    __IO uint32_t SSA1;
-    __IO uint32_t SSA2;
-    __IO uint32_t DSIZE0;
-    __IO uint32_t DSIZE1;
-    __IO uint32_t DSIZE2;
-    __IO uint32_t DSIZE3;
+    uint32_t RESERVED0[10];
     __IO uint32_t LSBF;
     __IO uint32_t MIDIE;
     __IO uint32_t MSSDLE;
     __IO uint32_t MSSIE;
-    uint32_t RESERVED0[16];
+    uint32_t RESERVED1[16];
 } stc_spi_cfg2_bit_t;
 
 typedef struct {
-    __IO uint32_t SRAM12_RWT0;
-    __IO uint32_t SRAM12_RWT1;
-    __IO uint32_t SRAM12_RWT2;
-    uint32_t RESERVED0[1];
-    __IO uint32_t SRAM12_WWT0;
-    __IO uint32_t SRAM12_WWT1;
-    __IO uint32_t SRAM12_WWT2;
-    uint32_t RESERVED1[1];
-    __IO uint32_t SRAM3_RWT0;
-    __IO uint32_t SRAM3_RWT1;
-    __IO uint32_t SRAM3_RWT2;
-    uint32_t RESERVED2[1];
-    __IO uint32_t SRAM3_WWT0;
-    __IO uint32_t SRAM3_WWT1;
-    __IO uint32_t SRAM3_WWT2;
-    uint32_t RESERVED3[1];
-    __IO uint32_t SRAMH_RWT0;
-    __IO uint32_t SRAMH_RWT1;
-    __IO uint32_t SRAMH_RWT2;
-    uint32_t RESERVED4[1];
-    __IO uint32_t SRAMH_WWT0;
-    __IO uint32_t SRAMH_WWT1;
-    __IO uint32_t SRAMH_WWT2;
-    uint32_t RESERVED5[1];
-    __IO uint32_t SRAMR_RWT0;
-    __IO uint32_t SRAMR_RWT1;
-    __IO uint32_t SRAMR_RWT2;
-    uint32_t RESERVED6[1];
-    __IO uint32_t SRAMR_WWT0;
-    __IO uint32_t SRAMR_WWT1;
-    __IO uint32_t SRAMR_WWT2;
-    uint32_t RESERVED7[1];
-} stc_sramc_wtcr_bit_t;
-
-typedef struct {
     __IO uint32_t WTPRC;
-    __IO uint32_t WTPRKW0;
-    __IO uint32_t WTPRKW1;
-    __IO uint32_t WTPRKW2;
-    __IO uint32_t WTPRKW3;
-    __IO uint32_t WTPRKW4;
-    __IO uint32_t WTPRKW5;
-    __IO uint32_t WTPRKW6;
-    uint32_t RESERVED0[24];
+    uint32_t RESERVED0[31];
 } stc_sramc_wtpr_bit_t;
 
 typedef struct {
     __IO uint32_t PYOAD;
     uint32_t RESERVED0[15];
     __IO uint32_t ECCOAD;
-    uint32_t RESERVED1[7];
-    __IO uint32_t ECCMOD0;
-    __IO uint32_t ECCMOD1;
-    uint32_t RESERVED2[6];
+    uint32_t RESERVED1[15];
 } stc_sramc_ckcr_bit_t;
 
 typedef struct {
     __IO uint32_t CKPRC;
-    __IO uint32_t CKPRKW0;
-    __IO uint32_t CKPRKW1;
-    __IO uint32_t CKPRKW2;
-    __IO uint32_t CKPRKW3;
-    __IO uint32_t CKPRKW4;
-    __IO uint32_t CKPRKW5;
-    __IO uint32_t CKPRKW6;
-    uint32_t RESERVED0[24];
+    uint32_t RESERVED0[31];
 } stc_sramc_ckpr_bit_t;
 
 typedef struct {
@@ -13416,136 +10614,17 @@ typedef struct {
 } stc_sramc_cksr_bit_t;
 
 typedef struct {
-    __I  uint32_t CNT0;
-    __I  uint32_t CNT1;
-    __I  uint32_t CNT2;
-    __I  uint32_t CNT3;
-    __I  uint32_t CNT4;
-    __I  uint32_t CNT5;
-    __I  uint32_t CNT6;
-    __I  uint32_t CNT7;
-    __I  uint32_t CNT8;
-    __I  uint32_t CNT9;
-    __I  uint32_t CNT10;
-    __I  uint32_t CNT11;
-    __I  uint32_t CNT12;
-    __I  uint32_t CNT13;
-    __I  uint32_t CNT14;
-    __I  uint32_t CNT15;
+    uint32_t RESERVED0[16];
     __IO uint32_t UDF;
     __IO uint32_t REF;
-    uint32_t RESERVED0[14];
+    uint32_t RESERVED1[14];
 } stc_swdt_sr_bit_t;
-
-typedef struct {
-    __IO uint32_t RF0;
-    __IO uint32_t RF1;
-    __IO uint32_t RF2;
-    __IO uint32_t RF3;
-    __IO uint32_t RF4;
-    __IO uint32_t RF5;
-    __IO uint32_t RF6;
-    __IO uint32_t RF7;
-    __IO uint32_t RF8;
-    __IO uint32_t RF9;
-    __IO uint32_t RF10;
-    __IO uint32_t RF11;
-    __IO uint32_t RF12;
-    __IO uint32_t RF13;
-    __IO uint32_t RF14;
-    __IO uint32_t RF15;
-    uint32_t RESERVED0[16];
-} stc_swdt_rr_bit_t;
-
-typedef struct {
-    __IO uint32_t CNTA0;
-    __IO uint32_t CNTA1;
-    __IO uint32_t CNTA2;
-    __IO uint32_t CNTA3;
-    __IO uint32_t CNTA4;
-    __IO uint32_t CNTA5;
-    __IO uint32_t CNTA6;
-    __IO uint32_t CNTA7;
-    __IO uint32_t CNTA8;
-    __IO uint32_t CNTA9;
-    __IO uint32_t CNTA10;
-    __IO uint32_t CNTA11;
-    __IO uint32_t CNTA12;
-    __IO uint32_t CNTA13;
-    __IO uint32_t CNTA14;
-    __IO uint32_t CNTA15;
-    uint32_t RESERVED0[16];
-} stc_tmr0_cntar_bit_t;
-
-typedef struct {
-    __IO uint32_t CNTB0;
-    __IO uint32_t CNTB1;
-    __IO uint32_t CNTB2;
-    __IO uint32_t CNTB3;
-    __IO uint32_t CNTB4;
-    __IO uint32_t CNTB5;
-    __IO uint32_t CNTB6;
-    __IO uint32_t CNTB7;
-    __IO uint32_t CNTB8;
-    __IO uint32_t CNTB9;
-    __IO uint32_t CNTB10;
-    __IO uint32_t CNTB11;
-    __IO uint32_t CNTB12;
-    __IO uint32_t CNTB13;
-    __IO uint32_t CNTB14;
-    __IO uint32_t CNTB15;
-    uint32_t RESERVED0[16];
-} stc_tmr0_cntbr_bit_t;
-
-typedef struct {
-    __IO uint32_t CMPA0;
-    __IO uint32_t CMPA1;
-    __IO uint32_t CMPA2;
-    __IO uint32_t CMPA3;
-    __IO uint32_t CMPA4;
-    __IO uint32_t CMPA5;
-    __IO uint32_t CMPA6;
-    __IO uint32_t CMPA7;
-    __IO uint32_t CMPA8;
-    __IO uint32_t CMPA9;
-    __IO uint32_t CMPA10;
-    __IO uint32_t CMPA11;
-    __IO uint32_t CMPA12;
-    __IO uint32_t CMPA13;
-    __IO uint32_t CMPA14;
-    __IO uint32_t CMPA15;
-    uint32_t RESERVED0[16];
-} stc_tmr0_cmpar_bit_t;
-
-typedef struct {
-    __IO uint32_t CMPB0;
-    __IO uint32_t CMPB1;
-    __IO uint32_t CMPB2;
-    __IO uint32_t CMPB3;
-    __IO uint32_t CMPB4;
-    __IO uint32_t CMPB5;
-    __IO uint32_t CMPB6;
-    __IO uint32_t CMPB7;
-    __IO uint32_t CMPB8;
-    __IO uint32_t CMPB9;
-    __IO uint32_t CMPB10;
-    __IO uint32_t CMPB11;
-    __IO uint32_t CMPB12;
-    __IO uint32_t CMPB13;
-    __IO uint32_t CMPB14;
-    __IO uint32_t CMPB15;
-    uint32_t RESERVED0[16];
-} stc_tmr0_cmpbr_bit_t;
 
 typedef struct {
     __IO uint32_t CSTA;
     __IO uint32_t CAPMDA;
     __IO uint32_t INTENA;
-    uint32_t RESERVED0[1];
-    __IO uint32_t CKDIVA0;
-    __IO uint32_t CKDIVA1;
-    __IO uint32_t CKDIVA2;
-    __IO uint32_t CKDIVA3;
+    uint32_t RESERVED0[5];
     __IO uint32_t SYNSA;
     __IO uint32_t SYNCLKA;
     __IO uint32_t ASYNCLKA;
@@ -13557,11 +10636,7 @@ typedef struct {
     __IO uint32_t CSTB;
     __IO uint32_t CAPMDB;
     __IO uint32_t INTENB;
-    uint32_t RESERVED2[1];
-    __IO uint32_t CKDIVB0;
-    __IO uint32_t CKDIVB1;
-    __IO uint32_t CKDIVB2;
-    __IO uint32_t CKDIVB3;
+    uint32_t RESERVED2[5];
     __IO uint32_t SYNSB;
     __IO uint32_t SYNCLKB;
     __IO uint32_t ASYNCLKB;
@@ -13592,21 +10667,14 @@ typedef struct {
 } stc_tmr4_ocsr_bit_t;
 
 typedef struct {
-    __IO uint32_t CHBUFEN0;
-    __IO uint32_t CHBUFEN1;
-    __IO uint32_t CLBUFEN0;
-    __IO uint32_t CLBUFEN1;
-    __IO uint32_t MHBUFEN0;
-    __IO uint32_t MHBUFEN1;
-    __IO uint32_t MLBUFEN0;
-    __IO uint32_t MLBUFEN1;
+    uint32_t RESERVED0[8];
     __IO uint32_t LMCH;
     __IO uint32_t LMCL;
     __IO uint32_t LMMH;
     __IO uint32_t LMML;
     __IO uint32_t MCECH;
     __IO uint32_t MCECL;
-    uint32_t RESERVED0[2];
+    uint32_t RESERVED1[2];
 } stc_tmr4_ocer_bit_t;
 
 typedef struct {
@@ -13614,18 +10682,7 @@ typedef struct {
     __IO uint32_t OCFPKH;
     __IO uint32_t OCFUCH;
     __IO uint32_t OCFZRH;
-    __IO uint32_t OPDCH0;
-    __IO uint32_t OPDCH1;
-    __IO uint32_t OPPKH0;
-    __IO uint32_t OPPKH1;
-    __IO uint32_t OPUCH0;
-    __IO uint32_t OPUCH1;
-    __IO uint32_t OPZRH0;
-    __IO uint32_t OPZRH1;
-    __IO uint32_t OPNPKH0;
-    __IO uint32_t OPNPKH1;
-    __IO uint32_t OPNZRH0;
-    __IO uint32_t OPNZRH1;
+    uint32_t RESERVED0[12];
 } stc_tmr4_ocmrh_bit_t;
 
 typedef struct {
@@ -13633,83 +10690,22 @@ typedef struct {
     __IO uint32_t OCFPKL;
     __IO uint32_t OCFUCL;
     __IO uint32_t OCFZRL;
-    __IO uint32_t OPDCL0;
-    __IO uint32_t OPDCL1;
-    __IO uint32_t OPPKL0;
-    __IO uint32_t OPPKL1;
-    __IO uint32_t OPUCL0;
-    __IO uint32_t OPUCL1;
-    __IO uint32_t OPZRL0;
-    __IO uint32_t OPZRL1;
-    __IO uint32_t OPNPKL0;
-    __IO uint32_t OPNPKL1;
-    __IO uint32_t OPNZRL0;
-    __IO uint32_t OPNZRL1;
-    __IO uint32_t EOPNDCL0;
-    __IO uint32_t EOPNDCL1;
-    __IO uint32_t EOPNUCL0;
-    __IO uint32_t EOPNUCL1;
-    __IO uint32_t EOPDCL0;
-    __IO uint32_t EOPDCL1;
-    __IO uint32_t EOPPKL0;
-    __IO uint32_t EOPPKL1;
-    __IO uint32_t EOPUCL0;
-    __IO uint32_t EOPUCL1;
-    __IO uint32_t EOPZRL0;
-    __IO uint32_t EOPZRL1;
-    __IO uint32_t EOPNPKL0;
-    __IO uint32_t EOPNPKL1;
-    __IO uint32_t EOPNZRL0;
-    __IO uint32_t EOPNZRL1;
+    uint32_t RESERVED0[28];
 } stc_tmr4_ocmrl_bit_t;
 
 typedef struct {
-    __IO uint32_t CKDIV0;
-    __IO uint32_t CKDIV1;
-    __IO uint32_t CKDIV2;
-    __IO uint32_t CKDIV3;
+    uint32_t RESERVED0[4];
     __IO uint32_t CLEAR;
     __IO uint32_t MODE;
     __IO uint32_t STOP;
     __IO uint32_t BUFEN;
     __IO uint32_t IRQPEN;
     __IO uint32_t IRQPF;
-    uint32_t RESERVED0[3];
+    uint32_t RESERVED1[3];
     __IO uint32_t IRQZEN;
     __IO uint32_t IRQZF;
     __IO uint32_t ECKEN;
 } stc_tmr4_ccsr_bit_t;
-
-typedef struct {
-    __IO uint32_t ZIM0;
-    __IO uint32_t ZIM1;
-    __IO uint32_t ZIM2;
-    __IO uint32_t ZIM3;
-    __IO uint32_t PIM0;
-    __IO uint32_t PIM1;
-    __IO uint32_t PIM2;
-    __IO uint32_t PIM3;
-    __I  uint32_t ZIC0;
-    __I  uint32_t ZIC1;
-    __I  uint32_t ZIC2;
-    __I  uint32_t ZIC3;
-    __I  uint32_t PIC0;
-    __I  uint32_t PIC1;
-    __I  uint32_t PIC2;
-    __I  uint32_t PIC3;
-} stc_tmr4_cvpr_bit_t;
-
-typedef struct {
-    __IO uint32_t DIVCK0;
-    __IO uint32_t DIVCK1;
-    __IO uint32_t DIVCK2;
-    uint32_t RESERVED0[1];
-    __IO uint32_t PWMMD0;
-    __IO uint32_t PWMMD1;
-    __IO uint32_t LVLS0;
-    __IO uint32_t LVLS1;
-    uint32_t RESERVED1[8];
-} stc_tmr4_pocr_bit_t;
 
 typedef struct {
     __IO uint32_t RTIDU;
@@ -13731,16 +10727,12 @@ typedef struct {
 } stc_tmr4_rcsr_bit_t;
 
 typedef struct {
-    __IO uint32_t BUFEN0;
-    __IO uint32_t BUFEN1;
-    __IO uint32_t EVTOS0;
-    __IO uint32_t EVTOS1;
-    __IO uint32_t EVTOS2;
+    uint32_t RESERVED0[5];
     __IO uint32_t LMC;
-    uint32_t RESERVED0[2];
+    uint32_t RESERVED1[2];
     __IO uint32_t EVTMS;
     __IO uint32_t EVTDS;
-    uint32_t RESERVED1[2];
+    uint32_t RESERVED2[2];
     __IO uint32_t DEN;
     __IO uint32_t PEN;
     __IO uint32_t UEN;
@@ -13748,11 +10740,7 @@ typedef struct {
 } stc_tmr4_scsr_bit_t;
 
 typedef struct {
-    __IO uint32_t AMC0;
-    __IO uint32_t AMC1;
-    __IO uint32_t AMC2;
-    __IO uint32_t AMC3;
-    uint32_t RESERVED0[2];
+    uint32_t RESERVED0[6];
     __IO uint32_t MZCE;
     __IO uint32_t MPCE;
     uint32_t RESERVED1[8];
@@ -13765,439 +10753,13 @@ typedef struct {
 } stc_tmr4_ecsr_bit_t;
 
 typedef struct {
-    __IO uint32_t EMBVAL0;
-    __IO uint32_t EMBVAL1;
-    uint32_t RESERVED0[30];
-} stc_tmr4cr_ecer1_bit_t;
-
-typedef struct {
-    __IO uint32_t EMBVAL0;
-    __IO uint32_t EMBVAL1;
-    uint32_t RESERVED0[30];
-} stc_tmr4cr_ecer2_bit_t;
-
-typedef struct {
-    __IO uint32_t EMBVAL0;
-    __IO uint32_t EMBVAL1;
-    uint32_t RESERVED0[30];
-} stc_tmr4cr_ecer3_bit_t;
-
-typedef struct {
-    __IO uint32_t CNT0;
-    __IO uint32_t CNT1;
-    __IO uint32_t CNT2;
-    __IO uint32_t CNT3;
-    __IO uint32_t CNT4;
-    __IO uint32_t CNT5;
-    __IO uint32_t CNT6;
-    __IO uint32_t CNT7;
-    __IO uint32_t CNT8;
-    __IO uint32_t CNT9;
-    __IO uint32_t CNT10;
-    __IO uint32_t CNT11;
-    __IO uint32_t CNT12;
-    __IO uint32_t CNT13;
-    __IO uint32_t CNT14;
-    __IO uint32_t CNT15;
-    uint32_t RESERVED0[16];
-} stc_tmr6_cnter_bit_t;
-
-typedef struct {
-    __IO uint32_t PERA0;
-    __IO uint32_t PERA1;
-    __IO uint32_t PERA2;
-    __IO uint32_t PERA3;
-    __IO uint32_t PERA4;
-    __IO uint32_t PERA5;
-    __IO uint32_t PERA6;
-    __IO uint32_t PERA7;
-    __IO uint32_t PERA8;
-    __IO uint32_t PERA9;
-    __IO uint32_t PERA10;
-    __IO uint32_t PERA11;
-    __IO uint32_t PERA12;
-    __IO uint32_t PERA13;
-    __IO uint32_t PERA14;
-    __IO uint32_t PERA15;
-    uint32_t RESERVED0[16];
-} stc_tmr6_perar_bit_t;
-
-typedef struct {
-    __IO uint32_t PERB0;
-    __IO uint32_t PERB1;
-    __IO uint32_t PERB2;
-    __IO uint32_t PERB3;
-    __IO uint32_t PERB4;
-    __IO uint32_t PERB5;
-    __IO uint32_t PERB6;
-    __IO uint32_t PERB7;
-    __IO uint32_t PERB8;
-    __IO uint32_t PERB9;
-    __IO uint32_t PERB10;
-    __IO uint32_t PERB11;
-    __IO uint32_t PERB12;
-    __IO uint32_t PERB13;
-    __IO uint32_t PERB14;
-    __IO uint32_t PERB15;
-    uint32_t RESERVED0[16];
-} stc_tmr6_perbr_bit_t;
-
-typedef struct {
-    __IO uint32_t PERC0;
-    __IO uint32_t PERC1;
-    __IO uint32_t PERC2;
-    __IO uint32_t PERC3;
-    __IO uint32_t PERC4;
-    __IO uint32_t PERC5;
-    __IO uint32_t PERC6;
-    __IO uint32_t PERC7;
-    __IO uint32_t PERC8;
-    __IO uint32_t PERC9;
-    __IO uint32_t PERC10;
-    __IO uint32_t PERC11;
-    __IO uint32_t PERC12;
-    __IO uint32_t PERC13;
-    __IO uint32_t PERC14;
-    __IO uint32_t PERC15;
-    uint32_t RESERVED0[16];
-} stc_tmr6_percr_bit_t;
-
-typedef struct {
-    __IO uint32_t GCMA0;
-    __IO uint32_t GCMA1;
-    __IO uint32_t GCMA2;
-    __IO uint32_t GCMA3;
-    __IO uint32_t GCMA4;
-    __IO uint32_t GCMA5;
-    __IO uint32_t GCMA6;
-    __IO uint32_t GCMA7;
-    __IO uint32_t GCMA8;
-    __IO uint32_t GCMA9;
-    __IO uint32_t GCMA10;
-    __IO uint32_t GCMA11;
-    __IO uint32_t GCMA12;
-    __IO uint32_t GCMA13;
-    __IO uint32_t GCMA14;
-    __IO uint32_t GCMA15;
-    uint32_t RESERVED0[16];
-} stc_tmr6_gcmar_bit_t;
-
-typedef struct {
-    __IO uint32_t GCMB0;
-    __IO uint32_t GCMB1;
-    __IO uint32_t GCMB2;
-    __IO uint32_t GCMB3;
-    __IO uint32_t GCMB4;
-    __IO uint32_t GCMB5;
-    __IO uint32_t GCMB6;
-    __IO uint32_t GCMB7;
-    __IO uint32_t GCMB8;
-    __IO uint32_t GCMB9;
-    __IO uint32_t GCMB10;
-    __IO uint32_t GCMB11;
-    __IO uint32_t GCMB12;
-    __IO uint32_t GCMB13;
-    __IO uint32_t GCMB14;
-    __IO uint32_t GCMB15;
-    uint32_t RESERVED0[16];
-} stc_tmr6_gcmbr_bit_t;
-
-typedef struct {
-    __IO uint32_t GCMC0;
-    __IO uint32_t GCMC1;
-    __IO uint32_t GCMC2;
-    __IO uint32_t GCMC3;
-    __IO uint32_t GCMC4;
-    __IO uint32_t GCMC5;
-    __IO uint32_t GCMC6;
-    __IO uint32_t GCMC7;
-    __IO uint32_t GCMC8;
-    __IO uint32_t GCMC9;
-    __IO uint32_t GCMC10;
-    __IO uint32_t GCMC11;
-    __IO uint32_t GCMC12;
-    __IO uint32_t GCMC13;
-    __IO uint32_t GCMC14;
-    __IO uint32_t GCMC15;
-    uint32_t RESERVED0[16];
-} stc_tmr6_gcmcr_bit_t;
-
-typedef struct {
-    __IO uint32_t GCMD0;
-    __IO uint32_t GCMD1;
-    __IO uint32_t GCMD2;
-    __IO uint32_t GCMD3;
-    __IO uint32_t GCMD4;
-    __IO uint32_t GCMD5;
-    __IO uint32_t GCMD6;
-    __IO uint32_t GCMD7;
-    __IO uint32_t GCMD8;
-    __IO uint32_t GCMD9;
-    __IO uint32_t GCMD10;
-    __IO uint32_t GCMD11;
-    __IO uint32_t GCMD12;
-    __IO uint32_t GCMD13;
-    __IO uint32_t GCMD14;
-    __IO uint32_t GCMD15;
-    uint32_t RESERVED0[16];
-} stc_tmr6_gcmdr_bit_t;
-
-typedef struct {
-    __IO uint32_t GCME0;
-    __IO uint32_t GCME1;
-    __IO uint32_t GCME2;
-    __IO uint32_t GCME3;
-    __IO uint32_t GCME4;
-    __IO uint32_t GCME5;
-    __IO uint32_t GCME6;
-    __IO uint32_t GCME7;
-    __IO uint32_t GCME8;
-    __IO uint32_t GCME9;
-    __IO uint32_t GCME10;
-    __IO uint32_t GCME11;
-    __IO uint32_t GCME12;
-    __IO uint32_t GCME13;
-    __IO uint32_t GCME14;
-    __IO uint32_t GCME15;
-    uint32_t RESERVED0[16];
-} stc_tmr6_gcmer_bit_t;
-
-typedef struct {
-    __IO uint32_t GCMF0;
-    __IO uint32_t GCMF1;
-    __IO uint32_t GCMF2;
-    __IO uint32_t GCMF3;
-    __IO uint32_t GCMF4;
-    __IO uint32_t GCMF5;
-    __IO uint32_t GCMF6;
-    __IO uint32_t GCMF7;
-    __IO uint32_t GCMF8;
-    __IO uint32_t GCMF9;
-    __IO uint32_t GCMF10;
-    __IO uint32_t GCMF11;
-    __IO uint32_t GCMF12;
-    __IO uint32_t GCMF13;
-    __IO uint32_t GCMF14;
-    __IO uint32_t GCMF15;
-    uint32_t RESERVED0[16];
-} stc_tmr6_gcmfr_bit_t;
-
-typedef struct {
-    __IO uint32_t SCMA0;
-    __IO uint32_t SCMA1;
-    __IO uint32_t SCMA2;
-    __IO uint32_t SCMA3;
-    __IO uint32_t SCMA4;
-    __IO uint32_t SCMA5;
-    __IO uint32_t SCMA6;
-    __IO uint32_t SCMA7;
-    __IO uint32_t SCMA8;
-    __IO uint32_t SCMA9;
-    __IO uint32_t SCMA10;
-    __IO uint32_t SCMA11;
-    __IO uint32_t SCMA12;
-    __IO uint32_t SCMA13;
-    __IO uint32_t SCMA14;
-    __IO uint32_t SCMA15;
-    uint32_t RESERVED0[16];
-} stc_tmr6_scmar_bit_t;
-
-typedef struct {
-    __IO uint32_t SCMB0;
-    __IO uint32_t SCMB1;
-    __IO uint32_t SCMB2;
-    __IO uint32_t SCMB3;
-    __IO uint32_t SCMB4;
-    __IO uint32_t SCMB5;
-    __IO uint32_t SCMB6;
-    __IO uint32_t SCMB7;
-    __IO uint32_t SCMB8;
-    __IO uint32_t SCMB9;
-    __IO uint32_t SCMB10;
-    __IO uint32_t SCMB11;
-    __IO uint32_t SCMB12;
-    __IO uint32_t SCMB13;
-    __IO uint32_t SCMB14;
-    __IO uint32_t SCMB15;
-    uint32_t RESERVED0[16];
-} stc_tmr6_scmbr_bit_t;
-
-typedef struct {
-    __IO uint32_t SCMC0;
-    __IO uint32_t SCMC1;
-    __IO uint32_t SCMC2;
-    __IO uint32_t SCMC3;
-    __IO uint32_t SCMC4;
-    __IO uint32_t SCMC5;
-    __IO uint32_t SCMC6;
-    __IO uint32_t SCMC7;
-    __IO uint32_t SCMC8;
-    __IO uint32_t SCMC9;
-    __IO uint32_t SCMC10;
-    __IO uint32_t SCMC11;
-    __IO uint32_t SCMC12;
-    __IO uint32_t SCMC13;
-    __IO uint32_t SCMC14;
-    __IO uint32_t SCMC15;
-    uint32_t RESERVED0[16];
-} stc_tmr6_scmcr_bit_t;
-
-typedef struct {
-    __IO uint32_t SCMD0;
-    __IO uint32_t SCMD1;
-    __IO uint32_t SCMD2;
-    __IO uint32_t SCMD3;
-    __IO uint32_t SCMD4;
-    __IO uint32_t SCMD5;
-    __IO uint32_t SCMD6;
-    __IO uint32_t SCMD7;
-    __IO uint32_t SCMD8;
-    __IO uint32_t SCMD9;
-    __IO uint32_t SCMD10;
-    __IO uint32_t SCMD11;
-    __IO uint32_t SCMD12;
-    __IO uint32_t SCMD13;
-    __IO uint32_t SCMD14;
-    __IO uint32_t SCMD15;
-    uint32_t RESERVED0[16];
-} stc_tmr6_scmdr_bit_t;
-
-typedef struct {
-    __IO uint32_t SCME0;
-    __IO uint32_t SCME1;
-    __IO uint32_t SCME2;
-    __IO uint32_t SCME3;
-    __IO uint32_t SCME4;
-    __IO uint32_t SCME5;
-    __IO uint32_t SCME6;
-    __IO uint32_t SCME7;
-    __IO uint32_t SCME8;
-    __IO uint32_t SCME9;
-    __IO uint32_t SCME10;
-    __IO uint32_t SCME11;
-    __IO uint32_t SCME12;
-    __IO uint32_t SCME13;
-    __IO uint32_t SCME14;
-    __IO uint32_t SCME15;
-    uint32_t RESERVED0[16];
-} stc_tmr6_scmer_bit_t;
-
-typedef struct {
-    __IO uint32_t SCMF0;
-    __IO uint32_t SCMF1;
-    __IO uint32_t SCMF2;
-    __IO uint32_t SCMF3;
-    __IO uint32_t SCMF4;
-    __IO uint32_t SCMF5;
-    __IO uint32_t SCMF6;
-    __IO uint32_t SCMF7;
-    __IO uint32_t SCMF8;
-    __IO uint32_t SCMF9;
-    __IO uint32_t SCMF10;
-    __IO uint32_t SCMF11;
-    __IO uint32_t SCMF12;
-    __IO uint32_t SCMF13;
-    __IO uint32_t SCMF14;
-    __IO uint32_t SCMF15;
-    uint32_t RESERVED0[16];
-} stc_tmr6_scmfr_bit_t;
-
-typedef struct {
-    __IO uint32_t DTUA0;
-    __IO uint32_t DTUA1;
-    __IO uint32_t DTUA2;
-    __IO uint32_t DTUA3;
-    __IO uint32_t DTUA4;
-    __IO uint32_t DTUA5;
-    __IO uint32_t DTUA6;
-    __IO uint32_t DTUA7;
-    __IO uint32_t DTUA8;
-    __IO uint32_t DTUA9;
-    __IO uint32_t DTUA10;
-    __IO uint32_t DTUA11;
-    __IO uint32_t DTUA12;
-    __IO uint32_t DTUA13;
-    __IO uint32_t DTUA14;
-    __IO uint32_t DTUA15;
-    uint32_t RESERVED0[16];
-} stc_tmr6_dtuar_bit_t;
-
-typedef struct {
-    __IO uint32_t DTDA0;
-    __IO uint32_t DTDA1;
-    __IO uint32_t DTDA2;
-    __IO uint32_t DTDA3;
-    __IO uint32_t DTDA4;
-    __IO uint32_t DTDA5;
-    __IO uint32_t DTDA6;
-    __IO uint32_t DTDA7;
-    __IO uint32_t DTDA8;
-    __IO uint32_t DTDA9;
-    __IO uint32_t DTDA10;
-    __IO uint32_t DTDA11;
-    __IO uint32_t DTDA12;
-    __IO uint32_t DTDA13;
-    __IO uint32_t DTDA14;
-    __IO uint32_t DTDA15;
-    uint32_t RESERVED0[16];
-} stc_tmr6_dtdar_bit_t;
-
-typedef struct {
-    __IO uint32_t DTUB0;
-    __IO uint32_t DTUB1;
-    __IO uint32_t DTUB2;
-    __IO uint32_t DTUB3;
-    __IO uint32_t DTUB4;
-    __IO uint32_t DTUB5;
-    __IO uint32_t DTUB6;
-    __IO uint32_t DTUB7;
-    __IO uint32_t DTUB8;
-    __IO uint32_t DTUB9;
-    __IO uint32_t DTUB10;
-    __IO uint32_t DTUB11;
-    __IO uint32_t DTUB12;
-    __IO uint32_t DTUB13;
-    __IO uint32_t DTUB14;
-    __IO uint32_t DTUB15;
-    uint32_t RESERVED0[16];
-} stc_tmr6_dtubr_bit_t;
-
-typedef struct {
-    __IO uint32_t DTDB0;
-    __IO uint32_t DTDB1;
-    __IO uint32_t DTDB2;
-    __IO uint32_t DTDB3;
-    __IO uint32_t DTDB4;
-    __IO uint32_t DTDB5;
-    __IO uint32_t DTDB6;
-    __IO uint32_t DTDB7;
-    __IO uint32_t DTDB8;
-    __IO uint32_t DTDB9;
-    __IO uint32_t DTDB10;
-    __IO uint32_t DTDB11;
-    __IO uint32_t DTDB12;
-    __IO uint32_t DTDB13;
-    __IO uint32_t DTDB14;
-    __IO uint32_t DTDB15;
-    uint32_t RESERVED0[16];
-} stc_tmr6_dtdbr_bit_t;
-
-typedef struct {
     __IO uint32_t START;
-    __IO uint32_t MODE0;
-    __IO uint32_t MODE1;
-    __IO uint32_t MODE2;
-    __IO uint32_t CKDIV0;
-    __IO uint32_t CKDIV1;
-    __IO uint32_t CKDIV2;
-    uint32_t RESERVED0[1];
+    uint32_t RESERVED0[7];
     __IO uint32_t DIR;
     uint32_t RESERVED1[7];
     __IO uint32_t ZMSKREV;
     __IO uint32_t ZMSKPOS;
-    __IO uint32_t ZMSKVAL0;
-    __IO uint32_t ZMSKVAL1;
-    uint32_t RESERVED2[12];
+    uint32_t RESERVED2[14];
 } stc_tmr6_gconr_bit_t;
 
 typedef struct {
@@ -14223,28 +10785,16 @@ typedef struct {
     __IO uint32_t STACA;
     __IO uint32_t STPCA;
     __IO uint32_t STASTPSA;
-    __IO uint32_t CMPCA0;
-    __IO uint32_t CMPCA1;
-    __IO uint32_t PERCA0;
-    __IO uint32_t PERCA1;
+    uint32_t RESERVED0[4];
     __IO uint32_t OUTENA;
-    uint32_t RESERVED0[2];
-    __IO uint32_t EMBVALA0;
-    __IO uint32_t EMBVALA1;
-    uint32_t RESERVED1[3];
+    uint32_t RESERVED1[7];
     __IO uint32_t CAPMDB;
     __IO uint32_t STACB;
     __IO uint32_t STPCB;
     __IO uint32_t STASTPSB;
-    __IO uint32_t CMPCB0;
-    __IO uint32_t CMPCB1;
-    __IO uint32_t PERCB0;
-    __IO uint32_t PERCB1;
+    uint32_t RESERVED2[4];
     __IO uint32_t OUTENB;
-    uint32_t RESERVED2[2];
-    __IO uint32_t EMBVALB0;
-    __IO uint32_t EMBVALB1;
-    uint32_t RESERVED3[3];
+    uint32_t RESERVED3[7];
 } stc_tmr6_pconr_bit_t;
 
 typedef struct {
@@ -14282,34 +10832,20 @@ typedef struct {
 
 typedef struct {
     __IO uint32_t NOFIENGA;
-    __IO uint32_t NOFICKGA0;
-    __IO uint32_t NOFICKGA1;
-    uint32_t RESERVED0[1];
+    uint32_t RESERVED0[3];
     __IO uint32_t NOFIENGB;
-    __IO uint32_t NOFICKGB0;
-    __IO uint32_t NOFICKGB1;
-    uint32_t RESERVED1[9];
+    uint32_t RESERVED1[11];
     __IO uint32_t NOFIENTA;
-    __IO uint32_t NOFICKTA0;
-    __IO uint32_t NOFICKTA1;
-    uint32_t RESERVED2[1];
+    uint32_t RESERVED2[3];
     __IO uint32_t NOFIENTB;
-    __IO uint32_t NOFICKTB0;
-    __IO uint32_t NOFICKTB1;
-    uint32_t RESERVED3[9];
+    uint32_t RESERVED3[11];
 } stc_tmr6_fconr_bit_t;
 
 typedef struct {
     uint32_t RESERVED0[8];
     __IO uint32_t SPPERIA;
     __IO uint32_t SPPERIB;
-    uint32_t RESERVED1[6];
-    __IO uint32_t PCNTE0;
-    __IO uint32_t PCNTE1;
-    __IO uint32_t PCNTS0;
-    __IO uint32_t PCNTS1;
-    __IO uint32_t PCNTS2;
-    uint32_t RESERVED2[11];
+    uint32_t RESERVED1[22];
 } stc_tmr6_vperr_bit_t;
 
 typedef struct {
@@ -14326,11 +10862,7 @@ typedef struct {
     __IO uint32_t CMSADF;
     __IO uint32_t CMSBUF;
     __IO uint32_t CMSBDF;
-    uint32_t RESERVED0[8];
-    __I  uint32_t VPERNUM0;
-    __I  uint32_t VPERNUM1;
-    __I  uint32_t VPERNUM2;
-    uint32_t RESERVED1[7];
+    uint32_t RESERVED0[18];
     __I  uint32_t DIRF;
 } stc_tmr6_stflr_bit_t;
 
@@ -14476,12 +11008,17 @@ typedef struct {
     __IO uint32_t DIR;
     __IO uint32_t MODE;
     __IO uint32_t SYNST;
-    uint32_t RESERVED0[8];
+    uint32_t RESERVED0[4];
+} stc_tmra_bcstrl_bit_t;
+
+typedef struct {
+    __IO uint32_t OVSTP;
+    uint32_t RESERVED0[3];
     __IO uint32_t ITENOVF;
     __IO uint32_t ITENUDF;
     __IO uint32_t OVFF;
     __IO uint32_t UDFF;
-} stc_tmra_bcstr_bit_t;
+} stc_tmra_bcstrh_bit_t;
 
 typedef struct {
     __IO uint32_t HSTA0;
@@ -14599,23 +11136,11 @@ typedef struct {
     __IO uint32_t HICP4;
     uint32_t RESERVED2[2];
     __IO uint32_t NOFIENCP;
-    __IO uint32_t NOFICKCP0;
-    __IO uint32_t NOFICKCP1;
-    uint32_t RESERVED3[1];
+    uint32_t RESERVED3[3];
 } stc_tmra_cconr_bit_t;
 
 typedef struct {
-    __IO uint32_t STAC0;
-    __IO uint32_t STAC1;
-    __IO uint32_t STPC0;
-    __IO uint32_t STPC1;
-    __IO uint32_t CMPC0;
-    __IO uint32_t CMPC1;
-    __IO uint32_t PERC0;
-    __IO uint32_t PERC1;
-    __IO uint32_t FORC0;
-    __IO uint32_t FORC1;
-    uint32_t RESERVED0[2];
+    uint32_t RESERVED0[12];
     __IO uint32_t OUTEN;
     uint32_t RESERVED1[3];
 } stc_tmra_pconr_bit_t;
@@ -14628,11 +11153,7 @@ typedef struct {
 
 typedef struct {
     __IO uint32_t LOAD;
-    uint32_t RESERVED0[1];
-    __IO uint32_t CNT0;
-    __IO uint32_t CNT1;
-    __IO uint32_t CNT2;
-    uint32_t RESERVED1[27];
+    uint32_t RESERVED0[31];
 } stc_trng_mr_bit_t;
 
 typedef struct {
@@ -14653,8 +11174,8 @@ typedef struct {
 typedef struct {
     uint32_t RESERVED0[9];
     __IO uint32_t MPID;
-    uint32_t RESERVED1[22];
-} stc_usart_dr_bit_t;
+    uint32_t RESERVED1[6];
+} stc_usart_tdr_bit_t;
 
 typedef struct {
     __IO uint32_t RTOE;
@@ -14688,9 +11209,7 @@ typedef struct {
 
 typedef struct {
     __IO uint32_t MPE;
-    uint32_t RESERVED0[10];
-    __IO uint32_t CLKC0;
-    __IO uint32_t CLKC1;
+    uint32_t RESERVED0[12];
     __IO uint32_t STOP;
     uint32_t RESERVED1[18];
 } stc_usart_cr2_bit_t;
@@ -14700,18 +11219,8 @@ typedef struct {
     __IO uint32_t SCEN;
     uint32_t RESERVED1[3];
     __IO uint32_t CTSE;
-    uint32_t RESERVED2[11];
-    __IO uint32_t BCN0;
-    __IO uint32_t BCN1;
-    __IO uint32_t BCN2;
-    uint32_t RESERVED3[8];
+    uint32_t RESERVED2[22];
 } stc_usart_cr3_bit_t;
-
-typedef struct {
-    __IO uint32_t PSC0;
-    __IO uint32_t PSC1;
-    uint32_t RESERVED0[30];
-} stc_usart_pr_bit_t;
 
 typedef struct {
     uint32_t RESERVED0[6];
@@ -14910,7 +11419,7 @@ typedef struct {
     __IO uint32_t EPDM;
     uint32_t RESERVED0[1];
     __IO uint32_t TOM;
-    __IO uint32_t ITTXFEMSK;
+    __IO uint32_t TTXFEMSK;
     __IO uint32_t INEPNMM;
     __IO uint32_t INEPNEM;
     uint32_t RESERVED1[25];
@@ -14980,7 +11489,7 @@ typedef struct {
     __IO uint32_t CNAK;
     __IO uint32_t SNAK;
     uint32_t RESERVED4[2];
-    __IO uint32_t EPDIS;
+    __I  uint32_t EPDIS;
     __IO uint32_t EPENA;
 } stc_usbfs_doepctl0_bit_t;
 
@@ -15003,7 +11512,7 @@ typedef struct {
 
 typedef struct {
     uint32_t RESERVED0[15];
-    __I  uint32_t USBAEP;
+    __IO uint32_t USBAEP;
     __I  uint32_t DPID;
     __I  uint32_t NAKSTS;
     uint32_t RESERVED1[2];
@@ -15025,64 +11534,18 @@ typedef struct {
 } stc_usbfs_gcctl_bit_t;
 
 typedef struct {
-    __IO uint32_t PERI0;
-    __IO uint32_t PERI1;
-    uint32_t RESERVED0[2];
-    __IO uint32_t CKS0;
-    __IO uint32_t CKS1;
-    __IO uint32_t CKS2;
-    __IO uint32_t CKS3;
-    __IO uint32_t WDPT0;
-    __IO uint32_t WDPT1;
-    __IO uint32_t WDPT2;
-    __IO uint32_t WDPT3;
-    uint32_t RESERVED1[4];
+    uint32_t RESERVED0[16];
     __IO uint32_t SLPOFF;
-    uint32_t RESERVED2[14];
+    uint32_t RESERVED1[14];
     __IO uint32_t ITS;
 } stc_wdt_cr_bit_t;
 
 typedef struct {
-    __I  uint32_t CNT0;
-    __I  uint32_t CNT1;
-    __I  uint32_t CNT2;
-    __I  uint32_t CNT3;
-    __I  uint32_t CNT4;
-    __I  uint32_t CNT5;
-    __I  uint32_t CNT6;
-    __I  uint32_t CNT7;
-    __I  uint32_t CNT8;
-    __I  uint32_t CNT9;
-    __I  uint32_t CNT10;
-    __I  uint32_t CNT11;
-    __I  uint32_t CNT12;
-    __I  uint32_t CNT13;
-    __I  uint32_t CNT14;
-    __I  uint32_t CNT15;
+    uint32_t RESERVED0[16];
     __IO uint32_t UDF;
     __IO uint32_t REF;
-    uint32_t RESERVED0[14];
+    uint32_t RESERVED1[14];
 } stc_wdt_sr_bit_t;
-
-typedef struct {
-    __IO uint32_t RF0;
-    __IO uint32_t RF1;
-    __IO uint32_t RF2;
-    __IO uint32_t RF3;
-    __IO uint32_t RF4;
-    __IO uint32_t RF5;
-    __IO uint32_t RF6;
-    __IO uint32_t RF7;
-    __IO uint32_t RF8;
-    __IO uint32_t RF9;
-    __IO uint32_t RF10;
-    __IO uint32_t RF11;
-    __IO uint32_t RF12;
-    __IO uint32_t RF13;
-    __IO uint32_t RF14;
-    __IO uint32_t RF15;
-    uint32_t RESERVED0[16];
-} stc_wdt_rr_bit_t;
 
 
 typedef struct {
@@ -15092,23 +11555,14 @@ typedef struct {
     stc_adc_cr1_bit_t                        CR1_b;
     uint32_t                                 RESERVED1[32];
     stc_adc_trgsr_bit_t                      TRGSR_b;
-    uint32_t                                 RESERVED2[352];
-    stc_adc_chmuxr0_bit_t                    CHMUXR0_b;
-    stc_adc_chmuxr1_bit_t                    CHMUXR1_b;
-    stc_adc_chmuxr2_bit_t                    CHMUXR2_b;
-    stc_adc_chmuxr3_bit_t                    CHMUXR3_b;
-    uint32_t                                 RESERVED3[48];
+    uint32_t                                 RESERVED2[464];
     stc_adc_isr_bit_t                        ISR_b;
     stc_adc_icr_bit_t                        ICR_b;
-    uint32_t                                 RESERVED4[32];
+    uint32_t                                 RESERVED3[32];
     stc_adc_synccr_bit_t                     SYNCCR_b;
-    uint32_t                                 RESERVED5[656];
+    uint32_t                                 RESERVED4[656];
     stc_adc_awdcr_bit_t                      AWDCR_b;
-    uint32_t                                 RESERVED6[240];
-    stc_adc_pgacr_bit_t                      PGACR_b;
-    stc_adc_pgagsr_bit_t                     PGAGSR_b;
-    uint32_t                                 RESERVED7[64];
-    stc_adc_pgainsr0_bit_t                   PGAINSR0_b;
+    uint32_t                                 RESERVED5[352];
     stc_adc_pgainsr1_bit_t                   PGAINSR1_b;
 } bCM_ADC_TypeDef;
 
@@ -15118,60 +11572,7 @@ typedef struct {
 
 typedef struct {
     stc_aos_intsfttrg_bit_t                  INTSFTTRG_b;
-    stc_aos_dcu_trgsel_bit_t                 DCU_TRGSEL1_b;
-    stc_aos_dcu_trgsel_bit_t                 DCU_TRGSEL2_b;
-    stc_aos_dcu_trgsel_bit_t                 DCU_TRGSEL3_b;
-    stc_aos_dcu_trgsel_bit_t                 DCU_TRGSEL4_b;
-    stc_aos_dma1_trgsel_bit_t                DMA1_TRGSEL0_b;
-    stc_aos_dma1_trgsel_bit_t                DMA1_TRGSEL1_b;
-    stc_aos_dma1_trgsel_bit_t                DMA1_TRGSEL2_b;
-    stc_aos_dma1_trgsel_bit_t                DMA1_TRGSEL3_b;
-    stc_aos_dma2_trgsel_bit_t                DMA2_TRGSEL0_b;
-    stc_aos_dma2_trgsel_bit_t                DMA2_TRGSEL1_b;
-    stc_aos_dma2_trgsel_bit_t                DMA2_TRGSEL2_b;
-    stc_aos_dma2_trgsel_bit_t                DMA2_TRGSEL3_b;
-    stc_aos_dma_trgselrc_bit_t               DMA_TRGSELRC_b;
-    stc_aos_tmr6_htssr_bit_t                 TMR6_HTSSR0_b;
-    stc_aos_tmr6_htssr_bit_t                 TMR6_HTSSR1_b;
-    stc_aos_tmr0_htssr_bit_t                 TMR0_HTSSR_b;
-    stc_aos_pevnttrgsr_bit_t                 PEVNTTRGSR12_b;
-    stc_aos_pevnttrgsr_bit_t                 PEVNTTRGSR34_b;
-    stc_aos_tmra_htssr_bit_t                 TMRA_HTSSR0_b;
-    stc_aos_tmra_htssr_bit_t                 TMRA_HTSSR1_b;
-    stc_aos_ots_trg_bit_t                    OTS_TRG_b;
-    stc_aos_adc1_itrgselr_bit_t              ADC1_ITRGSELR0_b;
-    stc_aos_adc1_itrgselr_bit_t              ADC1_ITRGSELR1_b;
-    stc_aos_adc2_itrgselr_bit_t              ADC2_ITRGSELR0_b;
-    stc_aos_adc2_itrgselr_bit_t              ADC2_ITRGSELR1_b;
-    uint32_t                                 RESERVED0[1216];
-    stc_aos_pevntdirr_bit_t                  PEVNTDIRR1_b;
-    stc_aos_pevntidr_bit_t                   PEVNTIDR1_b;
-    stc_aos_pevntodr_bit_t                   PEVNTODR1_b;
-    stc_aos_pevntorr_bit_t                   PEVNTORR1_b;
-    stc_aos_pevntosr_bit_t                   PEVNTOSR1_b;
-    stc_aos_pevntrisr_bit_t                  PEVNTRISR1_b;
-    stc_aos_pevntfal_bit_t                   PEVNTFAL1_b;
-    stc_aos_pevntdirr_bit_t                  PEVNTDIRR2_b;
-    stc_aos_pevntidr_bit_t                   PEVNTIDR2_b;
-    stc_aos_pevntodr_bit_t                   PEVNTODR2_b;
-    stc_aos_pevntorr_bit_t                   PEVNTORR2_b;
-    stc_aos_pevntosr_bit_t                   PEVNTOSR2_b;
-    stc_aos_pevntrisr_bit_t                  PEVNTRISR2_b;
-    stc_aos_pevntfal_bit_t                   PEVNTFAL2_b;
-    stc_aos_pevntdirr_bit_t                  PEVNTDIRR3_b;
-    stc_aos_pevntidr_bit_t                   PEVNTIDR3_b;
-    stc_aos_pevntodr_bit_t                   PEVNTODR3_b;
-    stc_aos_pevntorr_bit_t                   PEVNTORR3_b;
-    stc_aos_pevntosr_bit_t                   PEVNTOSR3_b;
-    stc_aos_pevntrisr_bit_t                  PEVNTRISR3_b;
-    stc_aos_pevntfal_bit_t                   PEVNTFAL3_b;
-    stc_aos_pevntdirr_bit_t                  PEVNTDIRR4_b;
-    stc_aos_pevntidr_bit_t                   PEVNTIDR4_b;
-    stc_aos_pevntodr_bit_t                   PEVNTODR4_b;
-    stc_aos_pevntorr_bit_t                   PEVNTORR4_b;
-    stc_aos_pevntosr_bit_t                   PEVNTOSR4_b;
-    stc_aos_pevntrisr_bit_t                  PEVNTRISR4_b;
-    stc_aos_pevntfal_bit_t                   PEVNTFAL4_b;
+    uint32_t                                 RESERVED0[2912];
     stc_aos_pevntnfcr_bit_t                  PEVNTNFCR_b;
 } bCM_AOS_TypeDef;
 
@@ -15184,29 +11585,22 @@ typedef struct {
     stc_can_rtie_bit_t                       RTIE_b;
     stc_can_rtif_bit_t                       RTIF_b;
     stc_can_errint_bit_t                     ERRINT_b;
-    stc_can_limit_bit_t                      LIMIT_b;
-    stc_can_sbt_bit_t                        SBT_b;
-    uint32_t                                 RESERVED1[32];
-    stc_can_ealcap_bit_t                     EALCAP_b;
-    uint32_t                                 RESERVED2[24];
+    uint32_t                                 RESERVED1[104];
     stc_can_acfctrl_bit_t                    ACFCTRL_b;
-    uint32_t                                 RESERVED3[8];
+    uint32_t                                 RESERVED2[8];
     stc_can_acfen_bit_t                      ACFEN_b;
-    uint32_t                                 RESERVED4[8];
+    uint32_t                                 RESERVED3[8];
     stc_can_acf_bit_t                        ACF_b;
-    uint32_t                                 RESERVED5[16];
+    uint32_t                                 RESERVED4[16];
     stc_can_tbslot_bit_t                     TBSLOT_b;
     stc_can_ttcfg_bit_t                      TTCFG_b;
     stc_can_ref_msg_bit_t                    REF_MSG_b;
-    stc_can_trg_cfg_bit_t                    TRG_CFG_b;
 } bCM_CAN_TypeDef;
 
 typedef struct {
     stc_cmp_ctrl_bit_t                       CTRL_b;
     stc_cmp_vltsel_bit_t                     VLTSEL_b;
     stc_cmp_outmon_bit_t                     OUTMON_b;
-    stc_cmp_cvsstb_bit_t                     CVSSTB_b;
-    stc_cmp_cvsprd_bit_t                     CVSPRD_b;
 } bCM_CMP_TypeDef;
 
 typedef struct {
@@ -15226,8 +11620,8 @@ typedef struct {
 typedef struct {
     uint32_t                                 RESERVED0[128];
     stc_dbgc_mcustat_bit_t                   MCUSTAT_b;
-    stc_dbgc_mcuctl_bit_t                    MCUCTL_b;
-    stc_dbgc_fmcctl_bit_t                    FMCCTL_b;
+    uint32_t                                 RESERVED1[32];
+    stc_dbgc_fersctl_bit_t                   FERSCTL_b;
     stc_dbgc_mcudbgstat_bit_t                MCUDBGSTAT_b;
     stc_dbgc_mcustpctl_bit_t                 MCUSTPCTL_b;
     stc_dbgc_mcutracectl_bit_t               MCUTRACECTL_b;
@@ -15238,7 +11632,7 @@ typedef struct {
     stc_dcu_flag_bit_t                       FLAG_b;
     uint32_t                                 RESERVED0[96];
     stc_dcu_flagclr_bit_t                    FLAGCLR_b;
-    stc_dcu_intsel_bit_t                     INTSEL_b;
+    stc_dcu_intevtsel_bit_t                  INTEVTSEL_b;
 } bCM_DCU_TypeDef;
 
 typedef struct {
@@ -15249,42 +11643,18 @@ typedef struct {
     stc_dma_intmask1_bit_t                   INTMASK1_b;
     stc_dma_intclr0_bit_t                    INTCLR0_b;
     stc_dma_intclr1_bit_t                    INTCLR1_b;
-    stc_dma_chen_bit_t                       CHEN_b;
+    uint32_t                                 RESERVED0[32];
     stc_dma_reqstat_bit_t                    REQSTAT_b;
     stc_dma_chstat_bit_t                     CHSTAT_b;
-    uint32_t                                 RESERVED0[32];
+    uint32_t                                 RESERVED1[32];
     stc_dma_rcfgctl_bit_t                    RCFGCTL_b;
-    uint32_t                                 RESERVED1[256];
-    stc_dma_rptb_bit_t                       RPTB0_b;
-    uint32_t                                 RESERVED2[32];
-    stc_dma_snseqctlb_bit_t                  SNSEQCTLB0_b;
-    uint32_t                                 RESERVED3[32];
-    stc_dma_dnseqctlb_bit_t                  DNSEQCTLB0_b;
-    uint32_t                                 RESERVED4[32];
+    uint32_t                                 RESERVED2[352];
     stc_dma_chctl_bit_t                      CHCTL0_b;
-    uint32_t                                 RESERVED5[384];
-    stc_dma_rptb_bit_t                       RPTB1_b;
-    uint32_t                                 RESERVED6[32];
-    stc_dma_snseqctlb_bit_t                  SNSEQCTLB1_b;
-    uint32_t                                 RESERVED7[32];
-    stc_dma_dnseqctlb_bit_t                  DNSEQCTLB1_b;
-    uint32_t                                 RESERVED8[32];
+    uint32_t                                 RESERVED3[480];
     stc_dma_chctl_bit_t                      CHCTL1_b;
-    uint32_t                                 RESERVED9[384];
-    stc_dma_rptb_bit_t                       RPTB2_b;
-    uint32_t                                 RESERVED10[32];
-    stc_dma_snseqctlb_bit_t                  SNSEQCTLB2_b;
-    uint32_t                                 RESERVED11[32];
-    stc_dma_dnseqctlb_bit_t                  DNSEQCTLB2_b;
-    uint32_t                                 RESERVED12[32];
+    uint32_t                                 RESERVED4[480];
     stc_dma_chctl_bit_t                      CHCTL2_b;
-    uint32_t                                 RESERVED13[384];
-    stc_dma_rptb_bit_t                       RPTB3_b;
-    uint32_t                                 RESERVED14[32];
-    stc_dma_snseqctlb_bit_t                  SNSEQCTLB3_b;
-    uint32_t                                 RESERVED15[32];
-    stc_dma_dnseqctlb_bit_t                  DNSEQCTLB3_b;
-    uint32_t                                 RESERVED16[32];
+    uint32_t                                 RESERVED5[480];
     stc_dma_chctl_bit_t                      CHCTL3_b;
 } bCM_DMA_TypeDef;
 
@@ -15312,11 +11682,9 @@ typedef struct {
 } bCM_EMB_TypeDef;
 
 typedef struct {
-    stc_fcm_lvr_bit_t                        LVR_b;
-    stc_fcm_uvr_bit_t                        UVR_b;
-    stc_fcm_cntr_bit_t                       CNTR_b;
+    uint32_t                                 RESERVED0[96];
     stc_fcm_str_bit_t                        STR_b;
-    stc_fcm_mccr_bit_t                       MCCR_b;
+    uint32_t                                 RESERVED1[32];
     stc_fcm_rccr_bit_t                       RCCR_b;
     stc_fcm_rier_bit_t                       RIER_b;
     stc_fcm_sr_bit_t                         SR_b;
@@ -15371,13 +11739,9 @@ typedef struct {
     stc_gpio_posrh_bit_t                     POSRH_b;
     stc_gpio_porrh_bit_t                     PORRH_b;
     stc_gpio_potrh_bit_t                     POTRH_b;
-    uint32_t                                 RESERVED11[7344];
-    stc_gpio_pspcr_bit_t                     PSPCR_b;
-    uint32_t                                 RESERVED12[16];
-    stc_gpio_pccr_bit_t                      PCCR_b;
-    stc_gpio_pinaer_bit_t                    PINAER_b;
+    uint32_t                                 RESERVED11[7408];
     stc_gpio_pwpr_bit_t                      PWPR_b;
-    uint32_t                                 RESERVED13[16];
+    uint32_t                                 RESERVED12[16];
     stc_gpio_pcr_bit_t                       PCRA0_b;
     stc_gpio_pfsr_bit_t                      PFSRA0_b;
     stc_gpio_pcr_bit_t                       PCRA1_b;
@@ -15557,14 +11921,10 @@ typedef struct {
     stc_i2c_cr4_bit_t                        CR4_b;
     stc_i2c_slr0_bit_t                       SLR0_b;
     stc_i2c_slr1_bit_t                       SLR1_b;
-    stc_i2c_sltr_bit_t                       SLTR_b;
+    uint32_t                                 RESERVED0[32];
     stc_i2c_sr_bit_t                         SR_b;
     stc_i2c_clr_bit_t                        CLR_b;
-    stc_i2c_dtr_bit_t                        DTR_b;
-    uint32_t                                 RESERVED0[24];
-    stc_i2c_drr_bit_t                        DRR_b;
-    uint32_t                                 RESERVED1[24];
-    stc_i2c_ccr_bit_t                        CCR_b;
+    uint32_t                                 RESERVED1[96];
     stc_i2c_fltr_bit_t                       FLTR_b;
 } bCM_I2C_TypeDef;
 
@@ -15573,8 +11933,6 @@ typedef struct {
     stc_i2s_sr_bit_t                         SR_b;
     stc_i2s_er_bit_t                         ER_b;
     stc_i2s_cfgr_bit_t                       CFGR_b;
-    uint32_t                                 RESERVED0[64];
-    stc_i2s_pr_bit_t                         PR_b;
 } bCM_I2S_TypeDef;
 
 typedef struct {
@@ -15604,136 +11962,9 @@ typedef struct {
     stc_intc_eirqcr_bit_t                    EIRQCR14_b;
     stc_intc_eirqcr_bit_t                    EIRQCR15_b;
     stc_intc_wupen_bit_t                     WUPEN_b;
-    stc_intc_eirqfr_bit_t                    EIRQFR_b;
-    stc_intc_eirqcfr_bit_t                   EIRQCFR_b;
-    stc_intc_sel_bit_t                       SEL0_b;
-    stc_intc_sel_bit_t                       SEL1_b;
-    stc_intc_sel_bit_t                       SEL2_b;
-    stc_intc_sel_bit_t                       SEL3_b;
-    stc_intc_sel_bit_t                       SEL4_b;
-    stc_intc_sel_bit_t                       SEL5_b;
-    stc_intc_sel_bit_t                       SEL6_b;
-    stc_intc_sel_bit_t                       SEL7_b;
-    stc_intc_sel_bit_t                       SEL8_b;
-    stc_intc_sel_bit_t                       SEL9_b;
-    stc_intc_sel_bit_t                       SEL10_b;
-    stc_intc_sel_bit_t                       SEL11_b;
-    stc_intc_sel_bit_t                       SEL12_b;
-    stc_intc_sel_bit_t                       SEL13_b;
-    stc_intc_sel_bit_t                       SEL14_b;
-    stc_intc_sel_bit_t                       SEL15_b;
-    stc_intc_sel_bit_t                       SEL16_b;
-    stc_intc_sel_bit_t                       SEL17_b;
-    stc_intc_sel_bit_t                       SEL18_b;
-    stc_intc_sel_bit_t                       SEL19_b;
-    stc_intc_sel_bit_t                       SEL20_b;
-    stc_intc_sel_bit_t                       SEL21_b;
-    stc_intc_sel_bit_t                       SEL22_b;
-    stc_intc_sel_bit_t                       SEL23_b;
-    stc_intc_sel_bit_t                       SEL24_b;
-    stc_intc_sel_bit_t                       SEL25_b;
-    stc_intc_sel_bit_t                       SEL26_b;
-    stc_intc_sel_bit_t                       SEL27_b;
-    stc_intc_sel_bit_t                       SEL28_b;
-    stc_intc_sel_bit_t                       SEL29_b;
-    stc_intc_sel_bit_t                       SEL30_b;
-    stc_intc_sel_bit_t                       SEL31_b;
-    stc_intc_sel_bit_t                       SEL32_b;
-    stc_intc_sel_bit_t                       SEL33_b;
-    stc_intc_sel_bit_t                       SEL34_b;
-    stc_intc_sel_bit_t                       SEL35_b;
-    stc_intc_sel_bit_t                       SEL36_b;
-    stc_intc_sel_bit_t                       SEL37_b;
-    stc_intc_sel_bit_t                       SEL38_b;
-    stc_intc_sel_bit_t                       SEL39_b;
-    stc_intc_sel_bit_t                       SEL40_b;
-    stc_intc_sel_bit_t                       SEL41_b;
-    stc_intc_sel_bit_t                       SEL42_b;
-    stc_intc_sel_bit_t                       SEL43_b;
-    stc_intc_sel_bit_t                       SEL44_b;
-    stc_intc_sel_bit_t                       SEL45_b;
-    stc_intc_sel_bit_t                       SEL46_b;
-    stc_intc_sel_bit_t                       SEL47_b;
-    stc_intc_sel_bit_t                       SEL48_b;
-    stc_intc_sel_bit_t                       SEL49_b;
-    stc_intc_sel_bit_t                       SEL50_b;
-    stc_intc_sel_bit_t                       SEL51_b;
-    stc_intc_sel_bit_t                       SEL52_b;
-    stc_intc_sel_bit_t                       SEL53_b;
-    stc_intc_sel_bit_t                       SEL54_b;
-    stc_intc_sel_bit_t                       SEL55_b;
-    stc_intc_sel_bit_t                       SEL56_b;
-    stc_intc_sel_bit_t                       SEL57_b;
-    stc_intc_sel_bit_t                       SEL58_b;
-    stc_intc_sel_bit_t                       SEL59_b;
-    stc_intc_sel_bit_t                       SEL60_b;
-    stc_intc_sel_bit_t                       SEL61_b;
-    stc_intc_sel_bit_t                       SEL62_b;
-    stc_intc_sel_bit_t                       SEL63_b;
-    stc_intc_sel_bit_t                       SEL64_b;
-    stc_intc_sel_bit_t                       SEL65_b;
-    stc_intc_sel_bit_t                       SEL66_b;
-    stc_intc_sel_bit_t                       SEL67_b;
-    stc_intc_sel_bit_t                       SEL68_b;
-    stc_intc_sel_bit_t                       SEL69_b;
-    stc_intc_sel_bit_t                       SEL70_b;
-    stc_intc_sel_bit_t                       SEL71_b;
-    stc_intc_sel_bit_t                       SEL72_b;
-    stc_intc_sel_bit_t                       SEL73_b;
-    stc_intc_sel_bit_t                       SEL74_b;
-    stc_intc_sel_bit_t                       SEL75_b;
-    stc_intc_sel_bit_t                       SEL76_b;
-    stc_intc_sel_bit_t                       SEL77_b;
-    stc_intc_sel_bit_t                       SEL78_b;
-    stc_intc_sel_bit_t                       SEL79_b;
-    stc_intc_sel_bit_t                       SEL80_b;
-    stc_intc_sel_bit_t                       SEL81_b;
-    stc_intc_sel_bit_t                       SEL82_b;
-    stc_intc_sel_bit_t                       SEL83_b;
-    stc_intc_sel_bit_t                       SEL84_b;
-    stc_intc_sel_bit_t                       SEL85_b;
-    stc_intc_sel_bit_t                       SEL86_b;
-    stc_intc_sel_bit_t                       SEL87_b;
-    stc_intc_sel_bit_t                       SEL88_b;
-    stc_intc_sel_bit_t                       SEL89_b;
-    stc_intc_sel_bit_t                       SEL90_b;
-    stc_intc_sel_bit_t                       SEL91_b;
-    stc_intc_sel_bit_t                       SEL92_b;
-    stc_intc_sel_bit_t                       SEL93_b;
-    stc_intc_sel_bit_t                       SEL94_b;
-    stc_intc_sel_bit_t                       SEL95_b;
-    stc_intc_sel_bit_t                       SEL96_b;
-    stc_intc_sel_bit_t                       SEL97_b;
-    stc_intc_sel_bit_t                       SEL98_b;
-    stc_intc_sel_bit_t                       SEL99_b;
-    stc_intc_sel_bit_t                       SEL100_b;
-    stc_intc_sel_bit_t                       SEL101_b;
-    stc_intc_sel_bit_t                       SEL102_b;
-    stc_intc_sel_bit_t                       SEL103_b;
-    stc_intc_sel_bit_t                       SEL104_b;
-    stc_intc_sel_bit_t                       SEL105_b;
-    stc_intc_sel_bit_t                       SEL106_b;
-    stc_intc_sel_bit_t                       SEL107_b;
-    stc_intc_sel_bit_t                       SEL108_b;
-    stc_intc_sel_bit_t                       SEL109_b;
-    stc_intc_sel_bit_t                       SEL110_b;
-    stc_intc_sel_bit_t                       SEL111_b;
-    stc_intc_sel_bit_t                       SEL112_b;
-    stc_intc_sel_bit_t                       SEL113_b;
-    stc_intc_sel_bit_t                       SEL114_b;
-    stc_intc_sel_bit_t                       SEL115_b;
-    stc_intc_sel_bit_t                       SEL116_b;
-    stc_intc_sel_bit_t                       SEL117_b;
-    stc_intc_sel_bit_t                       SEL118_b;
-    stc_intc_sel_bit_t                       SEL119_b;
-    stc_intc_sel_bit_t                       SEL120_b;
-    stc_intc_sel_bit_t                       SEL121_b;
-    stc_intc_sel_bit_t                       SEL122_b;
-    stc_intc_sel_bit_t                       SEL123_b;
-    stc_intc_sel_bit_t                       SEL124_b;
-    stc_intc_sel_bit_t                       SEL125_b;
-    stc_intc_sel_bit_t                       SEL126_b;
-    stc_intc_sel_bit_t                       SEL127_b;
+    stc_intc_eifr_bit_t                      EIFR_b;
+    stc_intc_eifcr_bit_t                     EIFCR_b;
+    uint32_t                                 RESERVED0[4096];
     stc_intc_vssel_bit_t                     VSSEL128_b;
     stc_intc_vssel_bit_t                     VSSEL129_b;
     stc_intc_vssel_bit_t                     VSSEL130_b;
@@ -15756,28 +11987,12 @@ typedef struct {
 } bCM_INTC_TypeDef;
 
 typedef struct {
-    stc_keyscan_scr_bit_t                    SCR_b;
+    uint32_t                                 RESERVED0[32];
     stc_keyscan_ser_bit_t                    SER_b;
-    stc_keyscan_ssr_bit_t                    SSR_b;
 } bCM_KEYSCAN_TypeDef;
 
 typedef struct {
-    stc_mpu_rgd_bit_t                        RGD0_b;
-    stc_mpu_rgd_bit_t                        RGD1_b;
-    stc_mpu_rgd_bit_t                        RGD2_b;
-    stc_mpu_rgd_bit_t                        RGD3_b;
-    stc_mpu_rgd_bit_t                        RGD4_b;
-    stc_mpu_rgd_bit_t                        RGD5_b;
-    stc_mpu_rgd_bit_t                        RGD6_b;
-    stc_mpu_rgd_bit_t                        RGD7_b;
-    stc_mpu_rgd_bit_t                        RGD8_b;
-    stc_mpu_rgd_bit_t                        RGD9_b;
-    stc_mpu_rgd_bit_t                        RGD10_b;
-    stc_mpu_rgd_bit_t                        RGD11_b;
-    stc_mpu_rgd_bit_t                        RGD12_b;
-    stc_mpu_rgd_bit_t                        RGD13_b;
-    stc_mpu_rgd_bit_t                        RGD14_b;
-    stc_mpu_rgd_bit_t                        RGD15_b;
+    uint32_t                                 RESERVED0[512];
     stc_mpu_rgcr_bit_t                       RGCR0_b;
     stc_mpu_rgcr_bit_t                       RGCR1_b;
     stc_mpu_rgcr_bit_t                       RGCR2_b;
@@ -15798,14 +12013,12 @@ typedef struct {
     stc_mpu_sr_bit_t                         SR_b;
     stc_mpu_eclr_bit_t                       ECLR_b;
     stc_mpu_wp_bit_t                         WP_b;
-    uint32_t                                 RESERVED0[130144];
+    uint32_t                                 RESERVED1[130144];
     stc_mpu_ippr_bit_t                       IPPR_b;
 } bCM_MPU_TypeDef;
 
 typedef struct {
     stc_ots_ctl_bit_t                        CTL_b;
-    uint32_t                                 RESERVED0[48];
-    stc_ots_lpr_bit_t                        LPR_b;
 } bCM_OTS_TypeDef;
 
 typedef struct {
@@ -15815,16 +12028,11 @@ typedef struct {
 
 typedef struct {
     stc_qspi_cr_bit_t                        CR_b;
-    stc_qspi_cscr_bit_t                      CSCR_b;
+    uint32_t                                 RESERVED0[32];
     stc_qspi_fcr_bit_t                       FCR_b;
     stc_qspi_sr_bit_t                        SR_b;
-    stc_qspi_dcom_bit_t                      DCOM_b;
-    stc_qspi_ccmd_bit_t                      CCMD_b;
-    stc_qspi_xcmd_bit_t                      XCMD_b;
-    uint32_t                                 RESERVED0[64];
+    uint32_t                                 RESERVED1[160];
     stc_qspi_sr2_bit_t                       SR2_b;
-    uint32_t                                 RESERVED1[16096];
-    stc_qspi_exar_bit_t                      EXAR_b;
 } bCM_QSPI_TypeDef;
 
 typedef struct {
@@ -15839,30 +12047,22 @@ typedef struct {
     stc_rtc_cr2_bit_t                        CR2_b;
     uint32_t                                 RESERVED2[24];
     stc_rtc_cr3_bit_t                        CR3_b;
-    uint32_t                                 RESERVED3[88];
-    stc_rtc_hour_bit_t                       HOUR_b;
-    uint32_t                                 RESERVED4[184];
-    stc_rtc_almhour_bit_t                    ALMHOUR_b;
-    uint32_t                                 RESERVED5[24];
-    stc_rtc_almweek_bit_t                    ALMWEEK_b;
-    uint32_t                                 RESERVED6[24];
+    uint32_t                                 RESERVED3[344];
     stc_rtc_errcrh_bit_t                     ERRCRH_b;
 } bCM_RTC_TypeDef;
 
 typedef struct {
-    uint32_t                                 RESERVED0[32];
-    stc_sdioc_blksize_bit_t                  BLKSIZE_b;
-    uint32_t                                 RESERVED1[48];
+    uint32_t                                 RESERVED0[96];
     stc_sdioc_transmode_bit_t                TRANSMODE_b;
     stc_sdioc_cmd_bit_t                      CMD_b;
-    uint32_t                                 RESERVED2[160];
+    uint32_t                                 RESERVED1[160];
     stc_sdioc_pstat_bit_t                    PSTAT_b;
     stc_sdioc_hostcon_bit_t                  HOSTCON_b;
     stc_sdioc_pwrcon_bit_t                   PWRCON_b;
     stc_sdioc_blkgpcon_bit_t                 BLKGPCON_b;
-    uint32_t                                 RESERVED3[8];
+    uint32_t                                 RESERVED2[8];
     stc_sdioc_clkcon_bit_t                   CLKCON_b;
-    stc_sdioc_toutcon_bit_t                  TOUTCON_b;
+    uint32_t                                 RESERVED3[8];
     stc_sdioc_sftrst_bit_t                   SFTRST_b;
     stc_sdioc_norintst_bit_t                 NORINTST_b;
     stc_sdioc_errintst_bit_t                 ERRINTST_b;
@@ -15887,7 +12087,7 @@ typedef struct {
 } bCM_SPI_TypeDef;
 
 typedef struct {
-    stc_sramc_wtcr_bit_t                     WTCR_b;
+    uint32_t                                 RESERVED0[32];
     stc_sramc_wtpr_bit_t                     WTPR_b;
     stc_sramc_ckcr_bit_t                     CKCR_b;
     stc_sramc_ckpr_bit_t                     CKPR_b;
@@ -15897,14 +12097,10 @@ typedef struct {
 typedef struct {
     uint32_t                                 RESERVED0[32];
     stc_swdt_sr_bit_t                        SR_b;
-    stc_swdt_rr_bit_t                        RR_b;
 } bCM_SWDT_TypeDef;
 
 typedef struct {
-    stc_tmr0_cntar_bit_t                     CNTAR_b;
-    stc_tmr0_cntbr_bit_t                     CNTBR_b;
-    stc_tmr0_cmpar_bit_t                     CMPAR_b;
-    stc_tmr0_cmpbr_bit_t                     CMPBR_b;
+    uint32_t                                 RESERVED0[128];
     stc_tmr0_bconr_bit_t                     BCONR_b;
     stc_tmr0_stflr_bit_t                     STFLR_b;
 } bCM_TMR0_TypeDef;
@@ -15928,16 +12124,9 @@ typedef struct {
     stc_tmr4_ocmrl_bit_t                     OCMRLWL_b;
     uint32_t                                 RESERVED4[96];
     stc_tmr4_ccsr_bit_t                      CCSR_b;
-    stc_tmr4_cvpr_bit_t                      CVPR_b;
-    uint32_t                                 RESERVED5[608];
-    stc_tmr4_pocr_bit_t                      POCRU_b;
-    uint32_t                                 RESERVED6[16];
-    stc_tmr4_pocr_bit_t                      POCRV_b;
-    uint32_t                                 RESERVED7[16];
-    stc_tmr4_pocr_bit_t                      POCRW_b;
-    uint32_t                                 RESERVED8[16];
+    uint32_t                                 RESERVED5[720];
     stc_tmr4_rcsr_bit_t                      RCSR_b;
-    uint32_t                                 RESERVED9[272];
+    uint32_t                                 RESERVED6[272];
     stc_tmr4_scsr_bit_t                      SCSRUH_b;
     stc_tmr4_scmr_bit_t                      SCMRUH_b;
     stc_tmr4_scsr_bit_t                      SCSRUL_b;
@@ -15950,43 +12139,18 @@ typedef struct {
     stc_tmr4_scmr_bit_t                      SCMRWH_b;
     stc_tmr4_scsr_bit_t                      SCSRWL_b;
     stc_tmr4_scmr_bit_t                      SCMRWL_b;
-    uint32_t                                 RESERVED10[128];
+    uint32_t                                 RESERVED7[128];
     stc_tmr4_ecsr_bit_t                      ECSR_b;
 } bCM_TMR4_TypeDef;
 
 typedef struct {
-    stc_tmr4cr_ecer1_bit_t                   ECER1_b;
-    stc_tmr4cr_ecer2_bit_t                   ECER2_b;
-    stc_tmr4cr_ecer3_bit_t                   ECER3_b;
-} bCM_TMR4CR_TypeDef;
-
-typedef struct {
-    stc_tmr6_cnter_bit_t                     CNTER_b;
-    stc_tmr6_perar_bit_t                     PERAR_b;
-    stc_tmr6_perbr_bit_t                     PERBR_b;
-    stc_tmr6_percr_bit_t                     PERCR_b;
-    stc_tmr6_gcmar_bit_t                     GCMAR_b;
-    stc_tmr6_gcmbr_bit_t                     GCMBR_b;
-    stc_tmr6_gcmcr_bit_t                     GCMCR_b;
-    stc_tmr6_gcmdr_bit_t                     GCMDR_b;
-    stc_tmr6_gcmer_bit_t                     GCMER_b;
-    stc_tmr6_gcmfr_bit_t                     GCMFR_b;
-    stc_tmr6_scmar_bit_t                     SCMAR_b;
-    stc_tmr6_scmbr_bit_t                     SCMBR_b;
-    stc_tmr6_scmcr_bit_t                     SCMCR_b;
-    stc_tmr6_scmdr_bit_t                     SCMDR_b;
-    stc_tmr6_scmer_bit_t                     SCMER_b;
-    stc_tmr6_scmfr_bit_t                     SCMFR_b;
-    stc_tmr6_dtuar_bit_t                     DTUAR_b;
-    stc_tmr6_dtdar_bit_t                     DTDAR_b;
-    stc_tmr6_dtubr_bit_t                     DTUBR_b;
-    stc_tmr6_dtdbr_bit_t                     DTDBR_b;
+    uint32_t                                 RESERVED0[640];
     stc_tmr6_gconr_bit_t                     GCONR_b;
     stc_tmr6_iconr_bit_t                     ICONR_b;
     stc_tmr6_pconr_bit_t                     PCONR_b;
     stc_tmr6_bconr_bit_t                     BCONR_b;
     stc_tmr6_dconr_bit_t                     DCONR_b;
-    uint32_t                                 RESERVED0[32];
+    uint32_t                                 RESERVED1[32];
     stc_tmr6_fconr_bit_t                     FCONR_b;
     stc_tmr6_vperr_bit_t                     VPERR_b;
     stc_tmr6_stflr_bit_t                     STFLR_b;
@@ -16008,7 +12172,8 @@ typedef struct {
 
 typedef struct {
     uint32_t                                 RESERVED0[1024];
-    stc_tmra_bcstr_bit_t                     BCSTR_b;
+    stc_tmra_bcstrl_bit_t                    BCSTRL_b;
+    stc_tmra_bcstrh_bit_t                    BCSTRH_b;
     uint32_t                                 RESERVED1[16];
     stc_tmra_hconr_bit_t                     HCONR_b;
     uint32_t                                 RESERVED2[16];
@@ -16072,12 +12237,11 @@ typedef struct {
 
 typedef struct {
     stc_usart_sr_bit_t                       SR_b;
-    stc_usart_dr_bit_t                       DR_b;
-    uint32_t                                 RESERVED0[32];
+    stc_usart_tdr_bit_t                      TDR_b;
+    uint32_t                                 RESERVED0[48];
     stc_usart_cr1_bit_t                      CR1_b;
     stc_usart_cr2_bit_t                      CR2_b;
     stc_usart_cr3_bit_t                      CR3_b;
-    stc_usart_pr_bit_t                       PR_b;
 } bCM_USART_TypeDef;
 
 typedef struct {
@@ -16216,7 +12380,6 @@ typedef struct {
 typedef struct {
     stc_wdt_cr_bit_t                         CR_b;
     stc_wdt_sr_bit_t                         SR_b;
-    stc_wdt_rr_bit_t                         RR_b;
 } bCM_WDT_TypeDef;
 
 

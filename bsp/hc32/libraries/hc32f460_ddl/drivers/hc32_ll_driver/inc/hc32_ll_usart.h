@@ -7,9 +7,15 @@
    Change Logs:
    Date             Author          Notes
    2022-03-31       CDT             First version
+   2023-06-30       CDT             Modify typo
+                                    Change macro-definition: USART_DR_MPID -> USART_TDR_MPID
+                                    Modify USART_SetTransType parameter: u32Type -> u16Type
+                                    Modify USART_SC_ETU_CLK128/256 value
+                                    Modify return type of function USART_DeInit
+   2023-09-30       CDT             Remove u32StopBit param from stc_usart_smartcard_init_t structure
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -129,11 +135,6 @@ typedef struct {
 } stc_usart_uart_init_t;
 
 /**
- * @brief LIN mode initialization structure definition
- * @note The parameter(u32ClockDiv/u32CKOutput/u32Baudrate) is valid when clock source is the internal clock.
- */
-
-/**
  * @brief Smartcard mode initialization structure definition
  */
 typedef struct {
@@ -143,8 +144,6 @@ typedef struct {
                                              @note This parameter is valid when clock source is the internal clock. */
     uint32_t u32Baudrate;               /*!< USART baudrate.
                                              This parameter is calculated according with smartcard default ETU and clock. */
-    uint32_t u32StopBit;                /*!< Stop Bits.
-                                             This parameter can be a value of @ref USART_Stop_Bit */
     uint32_t u32FirstBit;               /*!< Significant bit.
                                              This parameter can be a value of @ref USART_First_Bit */
 } stc_usart_smartcard_init_t;
@@ -187,7 +186,7 @@ typedef struct {
  * @{
  */
 #define USART_TRANS_DATA                (0UL)
-#define USART_TRANS_ID                  (USART_DR_MPID)
+#define USART_TRANS_ID                  (USART_TDR_MPID)
 /**
  * @}
  */
@@ -201,9 +200,8 @@ typedef struct {
 #define USART_INT_RX                    (USART_CR1_RIE)     /*!< USART receive data register not empty && receive error interrupt */
 #define USART_INT_TX_CPLT               (USART_CR1_TCIE)    /*!< USART transmission complete interrupt */
 #define USART_INT_TX_EMPTY              (USART_CR1_TXEIE)   /*!< USART transmit data register empty interrupt */
-
-#define USART_RX_TIMEOUT                (USART_CR1_RTOE)    /*!< USART RX timerout function */
-#define USART_INT_RX_TIMEOUT            (USART_CR1_RTOIE)   /*!< USART RX timerout interrupt */
+#define USART_RX_TIMEOUT                (USART_CR1_RTOE)    /*!< USART RX timeout function */
+#define USART_INT_RX_TIMEOUT            (USART_CR1_RTOIE)   /*!< USART RX timeout interrupt */
 
 #define USART_FUNC_ALL                  (USART_TX | USART_RX  | USART_INT_RX | USART_INT_TX_CPLT | USART_RX_TIMEOUT | \
                                          USART_INT_RX_TIMEOUT | USART_INT_TX_EMPTY)
@@ -331,8 +329,8 @@ typedef struct {
  */
 #define USART_SC_ETU_CLK32              (0UL << USART_CR3_BCN_POS)  /*!< 1 etu = 32/f */
 #define USART_SC_ETU_CLK64              (1UL << USART_CR3_BCN_POS)  /*!< 1 etu = 64/f */
-#define USART_SC_ETU_CLK128             (2UL << USART_CR3_BCN_POS)  /*!< 1 etu = 128/f */
-#define USART_SC_ETU_CLK256             (3UL << USART_CR3_BCN_POS)  /*!< 1 etu = 256/f */
+#define USART_SC_ETU_CLK128             (3UL << USART_CR3_BCN_POS)  /*!< 1 etu = 128/f */
+#define USART_SC_ETU_CLK256             (5UL << USART_CR3_BCN_POS)  /*!< 1 etu = 256/f */
 #define USART_SC_ETU_CLK372             (6UL << USART_CR3_BCN_POS)  /*!< 1 etu = 372/f */
 /**
  * @}
@@ -366,7 +364,7 @@ int32_t USART_SmartCard_StructInit(stc_usart_smartcard_init_t *pstcSmartCardInit
 int32_t USART_SmartCard_Init(CM_USART_TypeDef *USARTx,
                              const stc_usart_smartcard_init_t *pstcSmartCardInit, float32_t *pf32Error);
 
-void USART_DeInit(CM_USART_TypeDef *USARTx);
+int32_t USART_DeInit(CM_USART_TypeDef *USARTx);
 void USART_FuncCmd(CM_USART_TypeDef *USARTx, uint32_t u32Func, en_functional_state_t enNewState);
 en_flag_status_t USART_GetStatus(const CM_USART_TypeDef *USARTx, uint32_t u32Flag);
 void USART_ClearStatus(CM_USART_TypeDef *USARTx, uint32_t u32Flag);
@@ -376,7 +374,7 @@ void USART_SetStopBit(CM_USART_TypeDef *USARTx, uint32_t u32StopBit);
 void USART_SetDataWidth(CM_USART_TypeDef *USARTx, uint32_t u32DataWidth);
 void USART_SetOverSampleBit(CM_USART_TypeDef *USARTx, uint32_t u32OverSampleBit);
 void USART_SetStartBitPolarity(CM_USART_TypeDef *USARTx, uint32_t u32Polarity);
-void USART_SetTransType(CM_USART_TypeDef *USARTx, uint32_t u32Type);
+void USART_SetTransType(CM_USART_TypeDef *USARTx, uint16_t u16Type);
 void USART_SetClockDiv(CM_USART_TypeDef *USARTx, uint32_t u32ClockDiv);
 uint32_t USART_GetClockDiv(const CM_USART_TypeDef *USARTx);
 void USART_SetClockSrc(CM_USART_TypeDef *USARTx, uint32_t u32ClockSrc);
@@ -390,7 +388,6 @@ void USART_WriteID(CM_USART_TypeDef *USARTx, uint16_t u16ID);
 
 int32_t USART_SetBaudrate(CM_USART_TypeDef *USARTx, uint32_t u32Baudrate, float32_t *pf32Error);
 
-/* Smartcard function */
 void USART_SmartCard_SetEtuClock(CM_USART_TypeDef *USARTx, uint32_t u32EtuClock);
 
 int32_t USART_UART_Trans(CM_USART_TypeDef *USARTx, const void *pvBuf, uint32_t u32Len, uint32_t u32Timeout);

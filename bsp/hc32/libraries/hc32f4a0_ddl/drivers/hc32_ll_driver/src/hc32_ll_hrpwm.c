@@ -7,9 +7,10 @@
    Change Logs:
    Date             Author          Notes
    2022-03-31       CDT             First version
+   2023-09-30       CDT             Modify typo
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -49,31 +50,31 @@
  * @defgroup HRPWM_Local_Macros HRPWM Local Macros
  * @{
  */
+
 /* About 1mS timeout */
-#define HRPWM_CAL_TIMEOUT             (HCLK_VALUE/1000UL)
-#define HRPWM_PCLK0_MIN               (120000000UL)
+#define HRPWM_CAL_TIMEOUT               (HCLK_VALUE/1000UL)
+#define HRPWM_PCLK0_MIN                 (120000000UL)
 
-#define HRPWM_SYSCLKSRC_HRC           (0x00U)
-#define HRPWM_SYSCLKSRC_MRC           (0x01U)
-#define HRPWM_SYSCLKSRC_LRC           (0x02U)
-#define HRPWM_SYSCLKSRC_XTAL          (0x03U)
-#define HRPWM_SYSCLKSRC_XTAL32        (0x04U)
-#define HRPWM_SYSCLKSRC_PLL           (0x05U)
+#define HRPWM_SYSCLKSRC_HRC             (0x00U)
+#define HRPWM_SYSCLKSRC_MRC             (0x01U)
+#define HRPWM_SYSCLKSRC_LRC             (0x02U)
+#define HRPWM_SYSCLKSRC_XTAL            (0x03U)
+#define HRPWM_SYSCLKSRC_XTAL32          (0x04U)
+#define HRPWM_SYSCLKSRC_PLL             (0x05U)
 
-#define HRPWM_PLLSRC_XTAL             (0x00UL)
-#define HRPWM_PLLSRC_HRC              (0x01UL)
+#define HRPWM_PLLSRC_XTAL               (0x00UL)
+#define HRPWM_PLLSRC_HRC                (0x01UL)
 
 /**
  * @defgroup HRPWM_Check_Param_Validity HRPWM Check Parameters Validity
  * @{
  */
-
 /*! Parameter valid check for HRPWM output channel */
 #define IS_VALID_HRPWM_CH(x)                                                   \
 (   ((x) >= HRPWM_CH_MIN)                       &&                             \
     ((x) <= HRPWM_CH_MAX))
 
-/*! Parameter valid check for HRPWM caliration unit */
+/*! Parameter valid check for HRPWM calibration unit */
 #define IS_VALID_HRPWM_CAL_UNIT(x)                                             \
 (   (HRPWM_CAL_UNIT0 == (x))                    ||                             \
     (HRPWM_CAL_UNIT1 == (x)))
@@ -266,7 +267,7 @@ void HRPWM_ChNegativeAdjustCmd(uint32_t u32Ch, en_functional_state_t enNewState)
 }
 
 /**
- * @brief  HRPWM positive edge adjust delay counts configration for specified channel
+ * @brief  HRPWM positive edge adjust delay counts configuration for specified channel
  * @param  [in] u32Ch               Channel, the parameter should range from HRPWM_CH_MIN to HRPWM_CH_MAX
  * @param  [in] u8DelayNum          Delay counts of minimum delay time.
  * @retval None
@@ -282,7 +283,7 @@ void HRPWM_ChPositiveAdjustConfig(uint32_t u32Ch, uint8_t u8DelayNum)
 }
 
 /**
- * @brief  HRPWM negative edge adjust delay counts configration for specified channel
+ * @brief  HRPWM negative edge adjust delay counts configuration for specified channel
  * @param  [in] u32Ch               Channel, the parameter should range from HRPWM_CH_MIN to HRPWM_CH_MAX
  * @param  [in] u8DelayNum          Delay counts of minimum delay time.
  * @retval None
@@ -373,8 +374,8 @@ en_functional_state_t HRPWM_CondConfirm(void)
  */
 
 /**
-* @}
-*/
+ * @}
+ */
 
 /******************************************************************************
  * EOF (not truncated)

@@ -6,9 +6,10 @@
    Change Logs:
    Date             Author          Notes
    2022-03-31       CDT             First version
+   2023-06-30       CDT             Replace MAX_CHNUM by USB_MAX_CH_NUM
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -75,7 +76,7 @@ void usb_host_chopen(usb_core_instance *pdev,
                      uint8_t  ep_type,
                      uint16_t mps)
 {
-    pdev->host.hc[hc_num].ep_idx     = (uint8_t) pdev->host.channel[hc_num] & 0x7Fu;
+    pdev->host.hc[hc_num].ep_idx     = (uint8_t) pdev->host.channel[hc_num] & 0x7FU;
     pdev->host.hc[hc_num].is_epin    = (uint8_t)((pdev->host.channel[hc_num] & 0x80U) == 0x80U);
     pdev->host.hc[hc_num].dev_addr   = dev_address;
     pdev->host.hc[hc_num].ep_type    = ep_type;
@@ -143,7 +144,7 @@ uint8_t usb_host_distrch(usb_core_instance *pdev, uint8_t ep_addr)
  */
 uint8_t usb_host_freech(usb_core_instance *pdev, uint8_t idx)
 {
-    if (idx < MAX_CHNUM) {
+    if (idx < USB_MAX_CH_NUM) {
         pdev->host.channel[idx & (USB_MAX_TX_FIFOS - 1U)] &= HC_USED_MASK;
     }
     return (uint8_t)HSTATUS_OK;
@@ -158,7 +159,7 @@ void usb_host_dedistrallch(usb_core_instance *pdev)
 {
     uint8_t idx;
 
-    for (idx = 2U; idx < MAX_CHNUM ; idx ++) {
+    for (idx = 2U; idx < USB_MAX_CH_NUM ; idx ++) {
         pdev->host.channel[idx & (USB_MAX_TX_FIFOS - 1U)] = 0U;
     }
 }
@@ -173,7 +174,7 @@ uint16_t usb_host_getfreech(usb_core_instance *pdev)
     uint8_t tmp_idx;
     uint16_t u16Ret = HC_ERROR;
 
-    for (tmp_idx = 0U ; tmp_idx < MAX_CHNUM ; tmp_idx++) {
+    for (tmp_idx = 0U ; tmp_idx < USB_MAX_CH_NUM ; tmp_idx++) {
         if ((pdev->host.channel[tmp_idx & (USB_MAX_TX_FIFOS - 1U)] & HC_USED) == 0U) {
             u16Ret = HC_OK;
             break;

@@ -8,7 +8,7 @@
    2022-03-31       CDT             First version
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -156,8 +156,8 @@ uint8_t usb_dev_msc_setup(void *pdev, USB_SETUP_REQ *req)
             switch (req->bRequest) {
                 case BOT_GET_MAX_LUN:
                     if ((req->wValue == (uint16_t)0) &&
-                            (req->wLength == (uint16_t)1) &&
-                            ((req->bmRequest & 0x80U) == (uint8_t)0x80)) {
+                        (req->wLength == (uint16_t)1) &&
+                        ((req->bmRequest & 0x80U) == (uint8_t)0x80)) {
                         dev_msc_maxlun = msc_fops->GetMaxLun();
                         if (dev_msc_maxlun > 0U) {
                             usb_ctrldatatx(pdev, &dev_msc_maxlun, 1U);
@@ -172,8 +172,8 @@ uint8_t usb_dev_msc_setup(void *pdev, USB_SETUP_REQ *req)
                     break;
                 case BOT_RESET:
                     if ((req->wValue == (uint16_t)0) &&
-                            (req->wLength == (uint16_t)0) &&
-                            ((req->bmRequest & 0x80U) != (uint8_t)0x80)) {
+                        (req->wLength == (uint16_t)0) &&
+                        ((req->bmRequest & 0x80U) != (uint8_t)0x80)) {
                         msc_bot_rst(pdev);
                     } else {
                         usb_ctrlerr(pdev);

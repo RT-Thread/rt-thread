@@ -1,6 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
- * Copyright (c) 2022, Xiaohua Semiconductor Co., Ltd.
+ * Copyright (C) 2022-2024, Xiaohua Semiconductor Co., Ltd.
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -17,8 +16,8 @@
 
 #if defined(RT_USING_I2C)
 
-#if defined(BSP_USING_I2C1) || defined(BSP_USING_I2C2) || defined(BSP_USING_I2C3) || \
-    defined(BSP_USING_I2C4) || defined(BSP_USING_I2C5) || defined(BSP_USING_I2C6)
+#if defined(BSP_USING_I2C1_SW) || defined(BSP_USING_I2C2_SW) || defined(BSP_USING_I2C3_SW) || \
+    defined(BSP_USING_I2C4_SW) || defined(BSP_USING_I2C5_SW) || defined(BSP_USING_I2C6_SW)
 
 /*******************************************************************************
  * Local type definitions ('typedef')
@@ -45,27 +44,27 @@
 
 static const struct hc32_soft_i2c_config soft_i2c_config[] =
 {
-#ifdef BSP_USING_I2C1
+#ifdef BSP_USING_I2C1_SW
     I2C1_BUS_CONFIG,
 #endif
-#ifdef BSP_USING_I2C2
+#ifdef BSP_USING_I2C2_SW
     I2C2_BUS_CONFIG,
 #endif
-#ifdef BSP_USING_I2C3
+#ifdef BSP_USING_I2C3_SW
     I2C3_BUS_CONFIG,
 #endif
-#ifdef BSP_USING_I2C4
+#ifdef BSP_USING_I2C4_SW
     I2C4_BUS_CONFIG,
 #endif
-#ifdef BSP_USING_I2C5
+#ifdef BSP_USING_I2C5_SW
     I2C5_BUS_CONFIG,
 #endif
-#ifdef BSP_USING_I2C6
+#ifdef BSP_USING_I2C6_SW
     I2C6_BUS_CONFIG,
 #endif
 };
 
-static struct hc32_i2c i2c_obj[sizeof(soft_i2c_config) / sizeof(soft_i2c_config[0])];
+static struct hc32_soft_i2c i2c_obj[sizeof(soft_i2c_config) / sizeof(soft_i2c_config[0])];
 
 /*******************************************************************************
  * Function implementation - global ('extern') and local ('static')
@@ -73,9 +72,9 @@ static struct hc32_i2c i2c_obj[sizeof(soft_i2c_config) / sizeof(soft_i2c_config[
 /**
  * This function initializes the i2c pin.
  *
- * @param Hc32 i2c dirver class.
+ * @param Hc32 i2c driver class.
  */
-static void hc32_i2c_gpio_init(struct hc32_i2c *i2c)
+static void hc32_i2c_gpio_init(struct hc32_soft_i2c *i2c)
 {
     struct hc32_soft_i2c_config *cfg = (struct hc32_soft_i2c_config *)i2c->ops.data;
 
@@ -224,9 +223,9 @@ static rt_err_t hc32_i2c_bus_unlock(const struct hc32_soft_i2c_config *cfg)
 }
 
 /* I2C initialization function */
-int hc32_hw_i2c_init(void)
+int hc32_soft_i2c_init(void)
 {
-    rt_size_t obj_num = sizeof(i2c_obj) / sizeof(struct hc32_i2c);
+    rt_size_t obj_num = sizeof(i2c_obj) / sizeof(struct hc32_soft_i2c);
     rt_err_t result;
 
     for (int i = 0; i < obj_num; i++)
@@ -242,7 +241,7 @@ int hc32_hw_i2c_init(void)
 
     return RT_EOK;
 }
-INIT_BOARD_EXPORT(hc32_hw_i2c_init);
+INIT_BOARD_EXPORT(hc32_soft_i2c_init);
 
 #endif
 

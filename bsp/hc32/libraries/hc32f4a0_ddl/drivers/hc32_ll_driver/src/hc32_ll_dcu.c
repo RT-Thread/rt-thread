@@ -7,9 +7,14 @@
    Change Logs:
    Date             Author          Notes
    2022-03-31       CDT             First version
+   2022-06-30       CDT             Synchronize register: DCU_INTSEL -> DCU_INTEVTSEL
+                                    Modify function comments: DCU_IntCmd
+   2023-06-30       CDT             Modify typo
+                                    Modify API DCU_DeInit()
+                                    Modify function DCU_IntCmd() for misra
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -54,7 +59,6 @@
  * @defgroup DCU_Check_Parameters_Validity DCU Check Parameters Validity
  * @{
  */
-
 #define IS_DCU_WAVE_FUNC_UNIT(x)                                               \
 (   ((x) == CM_DCU1)                    ||                                     \
     ((x) == CM_DCU2)                    ||                                     \
@@ -237,7 +241,7 @@ int32_t DCU_Init(CM_DCU_TypeDef *DCUx, const stc_dcu_init_t *pstcDcuInit)
         WRITE_REG32(DCUx->CTL, (pstcDcuInit->u32Mode | pstcDcuInit->u32DataWidth));
 
         /* Disable interrupt */
-        WRITE_REG32(DCUx->INTSEL, 0x00000000UL);
+        WRITE_REG32(DCUx->INTEVTSEL, 0x00000000UL);
 
         /* Clear Flag */
         WRITE_REG32(DCUx->FLAGCLR, 0x0000007FUL);
@@ -252,7 +256,8 @@ int32_t DCU_Init(CM_DCU_TypeDef *DCUx, const stc_dcu_init_t *pstcDcuInit)
  * @param [in] DCUx                     Pointer to DCU instance register base
  *         This parameter can be one of the following values:
  *           @arg CM_DCU or CM_DCUx:    DCU instance register base
- * @retval None
+ * @retval int32_t:
+ *           - LL_OK:                   De-Initialize success.
  */
 int32_t DCU_DeInit(CM_DCU_TypeDef *DCUx)
 {
@@ -260,7 +265,7 @@ int32_t DCU_DeInit(CM_DCU_TypeDef *DCUx)
 
     /* Configures the registers to reset value. */
     WRITE_REG32(DCUx->CTL, 0x00000000UL);
-    WRITE_REG32(DCUx->INTSEL, 0x00000000UL);
+    WRITE_REG32(DCUx->INTEVTSEL, 0x00000000UL);
 
     /* Clear Flag */
     WRITE_REG32(DCUx->FLAGCLR, 0x0000007FUL);
@@ -272,25 +277,25 @@ int32_t DCU_DeInit(CM_DCU_TypeDef *DCUx)
  * @param  [in] DCUx                    Pointer to DCU instance register base
  *         This parameter can be one of the following values:
  *           @arg CM_DCU or CM_DCUx:    DCU instance register base
- * @param  [in] pstcWaveconfig          Pointer to a @ref stc_dcu_wave_config_t structure (DCU wave function configuration data structure).
+ * @param  [in] pstcWaveConfig          Pointer to a @ref stc_dcu_wave_config_t structure (DCU wave function configuration data structure).
  * @retval int32_t:
  *           - LL_OK:                   Initialize successfully.
- *           - LL_ERR_INVD_PARAM:       The pointer pstcWaveconfig value is NULL.
+ *           - LL_ERR_INVD_PARAM:       The pointer pstcWaveConfig value is NULL.
  */
-int32_t DCU_WaveConfig(CM_DCU_TypeDef *DCUx, const stc_dcu_wave_config_t *pstcWaveconfig)
+int32_t DCU_WaveConfig(CM_DCU_TypeDef *DCUx, const stc_dcu_wave_config_t *pstcWaveConfig)
 {
     int32_t i32Ret = LL_ERR_INVD_PARAM;
 
-    if (NULL != pstcWaveconfig) {
+    if (NULL != pstcWaveConfig) {
         DDL_ASSERT(IS_DCU_WAVE_FUNC_UNIT(DCUx));
-        DDL_ASSERT(IS_DCU_WAVE_LOWER_LIMIT(pstcWaveconfig->u32LowerLimit));
-        DDL_ASSERT(IS_DCU_WAVE_UPPER_LIMIT(pstcWaveconfig->u32UpperLimit));
-        DDL_ASSERT(IS_DCU_WAVE_STEP(pstcWaveconfig->u32Step));
+        DDL_ASSERT(IS_DCU_WAVE_LOWER_LIMIT(pstcWaveConfig->u32LowerLimit));
+        DDL_ASSERT(IS_DCU_WAVE_UPPER_LIMIT(pstcWaveConfig->u32UpperLimit));
+        DDL_ASSERT(IS_DCU_WAVE_STEP(pstcWaveConfig->u32Step));
 
         WRITE_REG32(DCUx->DATA0, 0x00000000UL);
-        WRITE_REG32(DCUx->DATA1, ((pstcWaveconfig->u32LowerLimit << DCU_DATA1_LOWER_LIMIT_POS) | \
-                                  (pstcWaveconfig->u32UpperLimit << DCU_DATA1_UPPER_LIMIT_POS)));
-        WRITE_REG32(DCUx->DATA2, pstcWaveconfig->u32Step);
+        WRITE_REG32(DCUx->DATA1, ((pstcWaveConfig->u32LowerLimit << DCU_DATA1_LOWER_LIMIT_POS) | \
+                                  (pstcWaveConfig->u32UpperLimit << DCU_DATA1_UPPER_LIMIT_POS)));
+        WRITE_REG32(DCUx->DATA2, pstcWaveConfig->u32Step);
 
         i32Ret = LL_OK;
     }
@@ -351,7 +356,7 @@ void DCU_SetCompareCond(CM_DCU_TypeDef *DCUx, uint32_t u32Cond)
     DDL_ASSERT(IS_DCU_UNIT(DCUx));
     DDL_ASSERT(IS_DCU_CMP_COND(u32Cond));
 
-    MODIFY_REG32(DCUx->CTL, DCU_CTL_COMP_TRG, u32Cond);
+    MODIFY_REG32(DCUx->CTL, DCU_CTL_COMPTRG, u32Cond);
 }
 
 /**
@@ -389,7 +394,7 @@ void DCU_ClearStatus(CM_DCU_TypeDef *DCUx, uint32_t u32Flag)
 }
 
 /**
- * @brief  Enable or disable DCU interupt function.
+ * @brief  Enable or disable DCU interrupt function.
  * @param  [in] DCUx                    Pointer to DCU instance register base
  *         This parameter can be one of the following values:
  *           @arg CM_DCU or CM_DCUx: DCU instance register base
@@ -413,14 +418,10 @@ void DCU_GlobalIntCmd(CM_DCU_TypeDef *DCUx, en_functional_state_t enNewState)
  * @param  [in] DCUx                    Pointer to DCU instance register base
  *         This parameter can be one of the following values:
  *           @arg CM_DCU or CM_DCUx:    DCU instance register base
- * @param  [in] u32IntCategory          DCU interrupt categorye
+ * @param  [in] u32IntCategory          DCU interrupt category
  *         This parameter can be one of the macros group @ref DCU_Category.
  * @param  [in] u32IntType              DCU interrupt type
- *         This parameter can be one of the following case:
- *         a. this parameter can be one of the macros group @ref DCU_Operation_Interrupt when u32Category = DCU_CATEGORY_OP.
- *         b. this parameter can be one of the macros group @ref DCU_Window_Compare_Interrupt when u32Category = DCU_CATEGORY_CMP_WIN.
- *         c. this parameter can be one of the macros group @ref DCU_Compare_Interrupt when u32Category = DCU_CATEGORY_CMP_NON_WIN.
- *         d. this parameter can be one of the macros group @ref DCU_Wave_Mode_Interrupt when u32Category = DCU_CATEGORY_WAVE.
+ *         This parameter can be one of the macros group @ref DCU_Interrupt_Type.
  * @param  [in] enNewState              An @ref en_functional_state_t enumeration value.
  * @retval None
  */
@@ -438,19 +439,19 @@ void DCU_IntCmd(CM_DCU_TypeDef *DCUx, uint32_t u32IntCategory, uint32_t u32IntTy
     } else if (DCU_CATEGORY_CMP_WIN == u32IntCategory) {
         DDL_ASSERT(IS_DCU_INT_CMP_WIN(u32IntType));
         u32Type = (u32IntType & DCU_INT_CMP_WIN_ALL);
-    } else if (DCU_CATEGORY_CMP_NON_WIN == u32IntCategory) {
-        DDL_ASSERT(IS_DCU_INT_CMP_NON_WIN(u32IntType));
-        u32Type = (u32IntType & DCU_INT_CMP_NON_WIN_ALL);
-    } else {
+    } else if (DCU_CATEGORY_WAVE == u32IntCategory) {
         DDL_ASSERT(IS_DCU_WAVE_FUNC_UNIT(DCUx));
         DDL_ASSERT(IS_DCU_INT_WAVE_MD(u32IntType));
         u32Type = (u32IntType & DCU_INT_WAVE_MD_ALL);
+    } else {
+        DDL_ASSERT(IS_DCU_INT_CMP_NON_WIN(u32IntType));
+        u32Type = (u32IntType & DCU_INT_CMP_NON_WIN_ALL);
     }
 
     if (ENABLE == enNewState) {
-        SET_REG32_BIT(DCUx->INTSEL, u32Type);
+        SET_REG32_BIT(DCUx->INTEVTSEL, u32Type);
     } else {
-        CLR_REG32_BIT(DCUx->INTSEL, u32Type);
+        CLR_REG32_BIT(DCUx->INTEVTSEL, u32Type);
     }
 }
 
@@ -597,8 +598,8 @@ void DCU_WriteData32(CM_DCU_TypeDef *DCUx, uint32_t u32DataIndex, uint32_t u32Da
  */
 
 /**
-* @}
-*/
+ * @}
+ */
 
 /******************************************************************************
  * EOF (not truncated)

@@ -1,14 +1,15 @@
 /**
  *******************************************************************************
  * @file  hc32_ll_hash.c
- * @brief This file provides firmware functions to manage the HASH
+ * @brief This file provides firmware functions to manage the HASH.
  @verbatim
    Change Logs:
    Date             Author          Notes
    2022-03-31       CDT             First version
+   2023-06-30       CDT             Add HASH_DeInit function
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -94,7 +95,6 @@
 (   ((x) == HASH_MSG_GRP_FIRST)                 ||                             \
     ((x) == HASH_MSG_GRP_END)                   ||                             \
     ((x) == HASH_MSG_GRP_ONLY_ONE))
-
 /**
  * @}
  */
@@ -306,6 +306,24 @@ static void HASH_ReadMsgDigest(uint8_t *pu8MsgDigest)
  */
 
 /**
+ * @brief  De-initializes HASH.
+ * @param  None
+ * @retval int32_t:
+ *           - LL_OK:                   No error occurred.
+ */
+int32_t HASH_DeInit(void)
+{
+    uint8_t i;
+    __IO uint32_t *regDR = &CM_HASH->DR15;
+
+    WRITE_REG32(CM_HASH->CR,  0UL);
+    for (i = 0U; i < HASH_GROUP_SIZE_WORD; i++) {
+        WRITE_REG32(regDR[i],  0UL);
+    }
+    return LL_OK;
+}
+
+/**
  * @brief  HASH calculate.
  * @param  [in]  pu8SrcData             Pointer to the source data buffer.
  * @param  [in]  u32SrcDataSize         Length of the source data buffer in bytes.
@@ -353,7 +371,7 @@ int32_t HASH_HMAC_Calculate(const uint8_t *pu8SrcData, uint32_t u32SrcDataSize,
     uint8_t u8FillBuffer[HASH_GROUP_SIZE] = {0U};
 
     if ((pu8SrcData != NULL) && (u32SrcDataSize != 0UL) && \
-            (pu8Key != NULL) && (u32KeySize != 0UL) && (pu8MsgDigest != NULL)) {
+        (pu8Key != NULL) && (u32KeySize != 0UL) && (pu8MsgDigest != NULL)) {
         /* Set HMAC Mode */
         (void)HASH_SetMode(HASH_MD_HMAC);
         if (u32KeySize > HASH_KEY_LONG_SIZE) {
@@ -586,8 +604,8 @@ void HASH_GetMsgDigest(uint8_t *pu8MsgDigest)
  */
 
 /**
-* @}
-*/
+ * @}
+ */
 /*******************************************************************************
  * EOF (not truncated)
  ******************************************************************************/

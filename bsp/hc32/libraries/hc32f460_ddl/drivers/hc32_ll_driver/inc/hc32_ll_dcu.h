@@ -7,9 +7,11 @@
    Change Logs:
    Date             Author          Notes
    2022-03-31       CDT             First version
+   2022-06-30       CDT             Modify macro group comments: DCU_Interrupt_Type
+   2023-06-30       CDT             Modify macro-definition according to RM:DCU_CTL_COMP_TRG->DCU_CTL_COMPTRG
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -93,7 +95,7 @@ typedef struct {
  * @{
  */
 #define DCU_CMP_TRIG_DATA0                  (0UL)               /*!< DCU compare triggered by DATA0 */
-#define DCU_CMP_TRIG_DATA0_DATA1_DATA2      (DCU_CTL_COMP_TRG)  /*!< DCU compare triggered by DATA0 or DATA1 or DATA2 */
+#define DCU_CMP_TRIG_DATA0_DATA1_DATA2      (DCU_CTL_COMPTRG)   /*!< DCU compare triggered by DATA0 or DATA1 or DATA2 */
 /**
  * @}
  */
@@ -146,15 +148,15 @@ typedef struct {
  */
 /**
  * @defgroup DCU_Compare_Interrupt DCU Compare(Non-window) Interrupt
+ * @note Interrupt type DCU_Compare_Interrupt is valid when only select DCU_CATEGORY_CMP_NON_WIN
  * @{
- * @note Compare interrupt selection is valid only when select DCU comparison(non-window) interrupt(DCU_INTSEL.INT_WIN=0) under DCU compare mode
  */
-#define DCU_INT_CMP_DATA0_LT_DATA2          (DCU_INTSEL_INT_LS2)    /*!< DCU DATA0 < DATA2 interrupt */
-#define DCU_INT_CMP_DATA0_EQ_DATA2          (DCU_INTSEL_INT_EQ2)    /*!< DCU DATA0 = DATA2 interrupt */
-#define DCU_INT_CMP_DATA0_GT_DATA2          (DCU_INTSEL_INT_GT2)    /*!< DCU DATA0 > DATA2 interrupt */
-#define DCU_INT_CMP_DATA0_LT_DATA1          (DCU_INTSEL_INT_LS1)    /*!< DCU DATA0 < DATA1 interrupt */
-#define DCU_INT_CMP_DATA0_EQ_DATA1          (DCU_INTSEL_INT_EQ1)    /*!< DCU DATA0 = DATA1 interrupt */
-#define DCU_INT_CMP_DATA0_GT_DATA1          (DCU_INTSEL_INT_GT1)    /*!< DCU DATA0 > DATA1 interrupt */
+#define DCU_INT_CMP_DATA0_LT_DATA2          (DCU_INTEVTSEL_SEL_LS2)   /*!< DCU DATA0 < DATA2 interrupt */
+#define DCU_INT_CMP_DATA0_EQ_DATA2          (DCU_INTEVTSEL_SEL_EQ2)   /*!< DCU DATA0 = DATA2 interrupt */
+#define DCU_INT_CMP_DATA0_GT_DATA2          (DCU_INTEVTSEL_SEL_GT2)   /*!< DCU DATA0 > DATA2 interrupt */
+#define DCU_INT_CMP_DATA0_LT_DATA1          (DCU_INTEVTSEL_SEL_LS1)   /*!< DCU DATA0 < DATA1 interrupt */
+#define DCU_INT_CMP_DATA0_EQ_DATA1          (DCU_INTEVTSEL_SEL_EQ1)   /*!< DCU DATA0 = DATA1 interrupt */
+#define DCU_INT_CMP_DATA0_GT_DATA1          (DCU_INTEVTSEL_SEL_GT1)   /*!< DCU DATA0 > DATA1 interrupt */
 #define DCU_INT_CMP_NON_WIN_ALL             (DCU_INT_CMP_DATA0_LT_DATA2 |  \
                                              DCU_INT_CMP_DATA0_EQ_DATA2 |  \
                                              DCU_INT_CMP_DATA0_GT_DATA2 |  \
@@ -167,10 +169,11 @@ typedef struct {
 
 /**
  * @defgroup DCU_Window_Compare_Interrupt DCU Window Compare Interrupt
+ * @note Interrupt type DCU_Window_Compare_Interrupt is valid when only select DCU_CATEGORY_CMP_WIN
  * @{
  */
-#define DCU_INT_CMP_WIN_INSIDE              (DCU_INTSEL_INT_WIN_0)  /*!< DCU comparison(DATA2 <= DATA0 <= DATA1) interrupt */
-#define DCU_INT_CMP_WIN_OUTSIDE             (DCU_INTSEL_INT_WIN_1)  /*!< DCU comparison(DATA0 < DATA2 & DATA0 > DATA1 ) interrupt */
+#define DCU_INT_CMP_WIN_INSIDE              (DCU_INTEVTSEL_SEL_WIN_0)  /*!< DCU comparison(DATA2 <= DATA0 <= DATA1) interrupt */
+#define DCU_INT_CMP_WIN_OUTSIDE             (DCU_INTEVTSEL_SEL_WIN_1)  /*!< DCU comparison(DATA0 < DATA2 & DATA0 > DATA1 ) interrupt */
 #define DCU_INT_CMP_WIN_ALL                 (DCU_INT_CMP_WIN_INSIDE | DCU_INT_CMP_WIN_OUTSIDE)
 /**
  * @}
@@ -178,9 +181,10 @@ typedef struct {
 
 /**
  * @defgroup DCU_Operation_Interrupt DCU Operation Interrupt
+ * @note DCU_Window_Compare_Interrupt selection is valid when only select DCU_CATEGORY_OP
  * @{
  */
-#define DCU_INT_OP_CARRY                    (DCU_INTSEL_INT_OP) /*!< DCU addition overflow or subtraction underflow interrupt */
+#define DCU_INT_OP_CARRY                    (DCU_INTEVTSEL_SEL_OP) /*!< DCU addition overflow or subtraction underflow interrupt */
 /**
  * @}
  */

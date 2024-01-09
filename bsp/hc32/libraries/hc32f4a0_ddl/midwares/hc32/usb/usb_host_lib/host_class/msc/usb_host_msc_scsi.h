@@ -8,7 +8,7 @@
    2022-03-31       CDT             First version
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -107,9 +107,9 @@ extern USB_HOST_MSC_STATUS usb_host_msc_Write10(usb_core_instance *pdev,
                                                 uint32_t address,
                                                 uint32_t nbOfbytes);
 extern USB_HOST_MSC_STATUS usb_host_msc_Read10(usb_core_instance *pdev,
-                                                uint8_t *dataBuffer,
-                                                uint32_t address,
-                                                uint32_t nbOfbytes);
+                                               uint8_t *dataBuffer,
+                                               uint32_t address,
+                                               uint32_t nbOfbytes);
 
 /**
  * @}
@@ -132,5 +132,4 @@ extern USB_HOST_MSC_STATUS usb_host_msc_Read10(usb_core_instance *pdev,
 /*******************************************************************************
  * EOF (not truncated)
  ******************************************************************************/
-
 

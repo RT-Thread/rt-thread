@@ -6,9 +6,12 @@
    Change Logs:
    Date             Author          Notes
    2022-03-31       CDT             First version
+   2022-10-31       CDT             Add configuration of XTAL IO as analog function
+   2023-09-30       CDT             Add API BSP_XTAL32_Init()
+                                    Optimize function BSP_I2C_Init()
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -33,11 +36,21 @@
  * @{
  */
 
+/**
+ * @defgroup EV_HC32F460_LQFP100_V2_BASE EV_HC32F460_LQFP100_V2 Base
+ * @{
+ */
+
 #if (BSP_EV_HC32F460_LQFP100_V2 == BSP_EV_HC32F4XX)
 
 /*******************************************************************************
  * Local type definitions ('typedef')
  ******************************************************************************/
+
+/**
+ * @defgroup EV_HC32F460_LQFP100_V2_Local_Types EV_HC32F460_LQFP100_V2 Local Types
+ * @{
+ */
 typedef struct {
     uint8_t port;
     uint16_t pin;
@@ -51,6 +64,9 @@ typedef struct {
     IRQn_Type    irq;
     func_ptr_t   callback;
 } BSP_KeyIn_Config;
+/**
+ * @}
+ */
 
 /*******************************************************************************
  * Local pre-processor symbols/macros ('#define')
@@ -64,7 +80,7 @@ typedef struct {
  * Local function prototypes ('static')
  ******************************************************************************/
 /**
- * @addtogroup BSP_Local_Functions
+ * @addtogroup EV_HC32F460_LQFP100_V2_Local_Functions
  * @{
  */
 static void BSP_KEY_ROW0_IrqCallback(void);
@@ -80,7 +96,7 @@ static void BSP_KEY_COL_Init(void);
  * Local variable definitions ('static')
  ******************************************************************************/
 /**
-* @defgroup BSP_Local_Variables BSP Local Variables
+* @defgroup EV_HC32F460_LQFP100_V2_Local_Variables EV_HC32F460_LQFP100_V2 Local Variables
 * @{
 */
 static const BSP_Port_Pin BSP_LED_PORT_PIN[BSP_LED_NUM] = {
@@ -113,7 +129,7 @@ static uint32_t m_u32GlobalKey = 0UL;
  * Function implementation - global ('extern') and local ('static')
  ******************************************************************************/
 /**
- * @defgroup EV_HC32F460_LQFP100_V2_Global_Functions BSP Global Functions
+ * @defgroup EV_HC32F460_LQFP100_V2_Global_Functions EV_HC32F460_LQFP100_V2 Global Functions
  * @{
  */
 
@@ -124,7 +140,7 @@ static uint32_t m_u32GlobalKey = 0UL;
  *                                  This parameter can be a value of the following:
  *         @arg CM_I2Cx:            I2C instance register base.
  * @retval int32_t:
- *            - LL_OK:              Configurate success
+ *            - LL_OK:              Configure success
  *            - LL_ERR_INVD_PARAM:  Invalid parameter
  */
 int32_t BSP_I2C_Init(CM_I2C_TypeDef *I2Cx)
@@ -132,19 +148,30 @@ int32_t BSP_I2C_Init(CM_I2C_TypeDef *I2Cx)
     int32_t i32Ret;
     float32_t fErr;
     stc_i2c_init_t stcI2cInit;
+    uint32_t I2cSrcClk;
+    uint32_t I2cClkDiv;
+    uint32_t I2cClkDivReg;
+
+    I2cSrcClk = I2C_SRC_CLK;
+    I2cClkDiv = I2cSrcClk / BSP_I2C_BAUDRATE / I2C_WIDTH_MAX_IMME;
+    for (I2cClkDivReg = I2C_CLK_DIV1; I2cClkDivReg <= I2C_CLK_DIV128; I2cClkDivReg++) {
+        if (I2cClkDiv < (1UL << I2cClkDivReg)) {
+            break;
+        }
+    }
 
     I2C_DeInit(I2Cx);
     (void)I2C_StructInit(&stcI2cInit);
     stcI2cInit.u32Baudrate = BSP_I2C_BAUDRATE;
-    stcI2cInit.u32SclTime = 5U;
-    stcI2cInit.u32ClockDiv = I2C_CLK_DIV16;
+    stcI2cInit.u32SclTime  = 250UL * I2cSrcClk / 1000000000UL;  /* SCL time is about 250nS in EVB board */
+    stcI2cInit.u32ClockDiv = I2cClkDivReg;
     i32Ret = I2C_Init(I2Cx, &stcI2cInit, &fErr);
 
     if (LL_OK == i32Ret) {
         I2C_BusWaitCmd(I2Cx, ENABLE);
+        I2C_Cmd(I2Cx, ENABLE);
     }
 
-    I2C_Cmd(I2Cx, ENABLE);
     return i32Ret;
 }
 
@@ -290,6 +317,7 @@ __WEAKDEF void BSP_CLK_Init(void)
     stc_clock_xtal_init_t     stcXtalInit;
     stc_clock_pll_init_t      stcMpllInit;
 
+    GPIO_AnalogCmd(BSP_XTAL_PORT, BSP_XTAL_IN_PIN | BSP_XTAL_OUT_PIN, ENABLE);
     (void)CLK_XtalStructInit(&stcXtalInit);
     (void)CLK_PLLStructInit(&stcMpllInit);
 
@@ -331,6 +359,68 @@ __WEAKDEF void BSP_CLK_Init(void)
     (void)PWC_HighSpeedToHighPerformance();
     /* Switch system clock source to MPLL. */
     CLK_SetSysClockSrc(CLK_SYSCLK_SRC_PLL);
+}
+
+/**
+ * @brief  BSP Xtal32 initialize.
+ * @param  None
+ * @retval int32_t:
+ *         - LL_OK: XTAL32 enable successfully
+ *         - LL_ERR_TIMEOUT: XTAL32 enable timeout.
+ */
+__WEAKDEF int32_t BSP_XTAL32_Init(void)
+{
+    stc_clock_xtal32_init_t stcXtal32Init;
+    stc_fcm_init_t stcFcmInit;
+    uint32_t u32TimeOut = 0UL;
+    uint32_t u32Time = HCLK_VALUE / 5UL;
+
+    if (CLK_XTAL32_ON == READ_REG8(CM_CMU->XTAL32CR)) {
+        /* Disable xtal32 */
+        (void)CLK_Xtal32Cmd(DISABLE);
+        /* Wait 5 * xtal32 cycle */
+        DDL_DelayUS(160U);
+    }
+
+    /* Xtal32 config */
+    (void)CLK_Xtal32StructInit(&stcXtal32Init);
+    stcXtal32Init.u8State  = CLK_XTAL32_ON;
+    stcXtal32Init.u8Drv    = CLK_XTAL32_DRV_MID;
+    stcXtal32Init.u8Filter = CLK_XTAL32_FILTER_ALL_MD;
+    GPIO_AnalogCmd(BSP_XTAL32_PORT, BSP_XTAL32_IN_PIN | BSP_XTAL32_OUT_PIN, ENABLE);
+    (void)CLK_Xtal32Init(&stcXtal32Init);
+
+    /* FCM config */
+    FCG_Fcg0PeriphClockCmd(FCG0_PERIPH_FCM, ENABLE);
+    (void)FCM_StructInit(&stcFcmInit);
+    stcFcmInit.u32RefClock       = FCM_REF_CLK_MRC;
+    stcFcmInit.u32RefClockDiv    = FCM_REF_CLK_DIV8192;
+    stcFcmInit.u32RefClockEdge   = FCM_REF_CLK_RISING;
+    stcFcmInit.u32TargetClock    = FCM_TARGET_CLK_XTAL32;
+    stcFcmInit.u32TargetClockDiv = FCM_TARGET_CLK_DIV1;
+    stcFcmInit.u16LowerLimit     = (uint16_t)((XTAL32_VALUE / (MRC_VALUE / 8192U)) * 96UL / 100UL);
+    stcFcmInit.u16UpperLimit     = (uint16_t)((XTAL32_VALUE / (MRC_VALUE / 8192U)) * 104UL / 100UL);
+    (void)FCM_Init(&stcFcmInit);
+    /* Enable FCM, to ensure xtal32 stable */
+    FCM_Cmd(ENABLE);
+    for (;;) {
+        if (SET == FCM_GetStatus(FCM_FLAG_END)) {
+            FCM_ClearStatus(FCM_FLAG_END);
+            if ((SET == FCM_GetStatus(FCM_FLAG_ERR)) || (SET == FCM_GetStatus(FCM_FLAG_OVF))) {
+                FCM_ClearStatus(FCM_FLAG_ERR | FCM_FLAG_OVF);
+            } else {
+                (void)FCM_DeInit();
+                FCG_Fcg0PeriphClockCmd(FCG0_PERIPH_FCM, DISABLE);
+                return LL_OK;
+            }
+        }
+        u32TimeOut++;
+        if (u32TimeOut > u32Time) {
+            (void)FCM_DeInit();
+            FCG_Fcg0PeriphClockCmd(FCG0_PERIPH_FCM, DISABLE);
+            return LL_ERR_TIMEOUT;
+        }
+    }
 }
 
 /**
@@ -492,7 +582,7 @@ int32_t BSP_PRINTF_Preinit(void *vpDevice, uint32_t u32Baudrate)
             USART_SetClockDiv(BSP_PRINTF_DEVICE, u32Div);
             i32Ret = USART_SetBaudrate(BSP_PRINTF_DEVICE, u32Baudrate, &f32Error);
             if ((LL_OK == i32Ret) && \
-                    ((-BSP_PRINTF_BAUDRATE_ERR_MAX <= f32Error) && (f32Error <= BSP_PRINTF_BAUDRATE_ERR_MAX))) {
+                ((-BSP_PRINTF_BAUDRATE_ERR_MAX <= f32Error) && (f32Error <= BSP_PRINTF_BAUDRATE_ERR_MAX))) {
                 USART_FuncCmd(BSP_PRINTF_DEVICE, USART_TX, ENABLE);
                 break;
             } else {
@@ -523,7 +613,7 @@ __WEAKDEF void BSP_KEY_KEY10_IrqHandler(void)
  */
 
 /**
- * @defgroup BSP_Local_Functions BSP Local Functions
+ * @defgroup EV_HC32F460_LQFP100_V2_Local_Functions EV_HC32F460_LQFP100_V2 Local Functions
  * @{
  */
 
@@ -672,6 +762,10 @@ static void BSP_KEY_COL_Init(void)
  */
 
 #endif /* BSP_EV_HC32F460_LQFP100_V2 */
+
+/**
+ * @}
+ */
 
 /**
  * @}

@@ -8,7 +8,7 @@
    2022-03-31       CDT             First version
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -104,9 +104,8 @@ uint32_t STL_IntRuntimeTableInit(stc_stl_int_params_t *pstcParamsTable, uint32_t
 }
 
 /**
- * @brief  Interrupt test initialize in runtime.
- * @param  [in] pstcParamsTable     Test case table
- * @param  [in] u32TableSize        Test case size
+ * @brief  Interrupt test in runtime.
+ * @param  None
  * @retval uint32_t:
  *           - STL_OK:              Test pass.
  *           - STL_ERR:             Test error.
@@ -123,7 +122,7 @@ uint32_t STL_IntRuntimeTest(void)
             pstcTestParam = &m_pstcTestParamTable[i];
 
             if ((pstcTestParam->u32PrivateParam < pstcTestParam->u32FreqLowerVal) || \
-                    (pstcTestParam->u32PrivateParam > pstcTestParam->u32FreqUpperVal)) {
+                (pstcTestParam->u32PrivateParam > pstcTestParam->u32FreqUpperVal)) {
                 u32Ret = STL_ERR;
             }
             pstcTestParam->u32PrivateParam = 0UL;
@@ -136,11 +135,8 @@ uint32_t STL_IntRuntimeTest(void)
 
 /**
  * @brief  Update interrupt count in runtime.
- * @param  [in] u8Num               Params index
- * @param  [in] u32TableSize        Test case size
- * @retval uint32_t:
- *           - STL_OK:              Test pass.
- *           - STL_ERR:             Test error.
+ * @param  [in] u8ParamIndex        Params index
+ * @retval None
  */
 void STL_IntUpdateCount(uint8_t u8ParamIndex)
 {

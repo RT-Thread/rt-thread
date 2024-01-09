@@ -7,9 +7,13 @@
    Change Logs:
    Date             Author          Notes
    2022-03-31       CDT             First version
+   2023-06-30       CDT             Reconstruct interface function relate to calculate CRC
+                                    Modify return type of function CRC_DeInit
+   2023-09-30       CDT             Modify comment
+                                    Delete and modify some of group/function relate to calculate CRC
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -61,8 +65,8 @@ extern "C"
 typedef struct {
     uint32_t u32Protocol;   /*!< Specifies CRC Protocol.
                                  This parameter can be a value of @ref CRC_Protocol_Control_Bit */
-    uint32_t u32InitValue;  /*!< Specifies initial CRC value and value upper 16 bit is ignored when using CRC16.
-                                 This parameter can be a value of @ref CRC_Initial_Value */
+    uint32_t u32InitValue;  /*!< Specifies initial CRC value.
+                                 This parameter can be CRC_INIT_VALUE_DEFAULT @ref CRC_Init_Value_Default */
     uint32_t u32RefIn;      /*!< Specifies CRC Retroflexion Input.
                                  This parameter can be a value of @ref CRC_Retroflexion_Input */
     uint32_t u32RefOut;     /*!< Specifies CRC Retroflexion Output.
@@ -85,9 +89,6 @@ typedef struct {
 
 /**
  * @defgroup CRC_Protocol_Control_Bit CRC Protocol Control Bit
- * @note: - CRC16 polynomial is X^16 + X^12 + X^5 + 1
- *        - CRC32 polynomial is X^32 + X^26 + X^23 + X^22 + X^16 + X^12 + X^11 + \
- *                              X^10 + X^8  + X^7  + X^5  + X^4  + X^2  + X + 1
  * @{
  */
 #define CRC_CRC16                   (0x0UL)
@@ -97,11 +98,21 @@ typedef struct {
  */
 
 /**
- * @defgroup CRC_Initial_Value CRC Initial Value
+ * @defgroup CRC_DATA_Bit_Width CRC Data Bit Width
  * @{
  */
-#define CRC16_INIT_VALUE            (0xFFFFUL)
-#define CRC32_INIT_VALUE            (0xFFFFFFFFUL)
+#define CRC_DATA_WIDTH_8BIT         (1U)
+#define CRC_DATA_WIDTH_16BIT        (2U)
+#define CRC_DATA_WIDTH_32BIT        (4U)
+/**
+ * @}
+ */
+
+/**
+ * @defgroup CRC_Init_Value_Default CRC Default Computation Initialization Value
+ * @{
+ */
+#define CRC_INIT_VALUE_DEFAULT      (0xFFFFFFFFUL)
 /**
  * @}
  */
@@ -153,24 +164,19 @@ typedef struct {
  */
 int32_t CRC_StructInit(stc_crc_init_t *pstcCrcInit);
 int32_t CRC_Init(const stc_crc_init_t *pstcCrcInit);
-void CRC_DeInit(void);
+int32_t CRC_DeInit(void);
 
 en_flag_status_t CRC_GetResultStatus(void);
 
-uint32_t CRC_AccumulateData8(const uint8_t au8Data[], uint32_t u32Len);
-uint32_t CRC_AccumulateData16(const uint16_t au16Data[], uint32_t u32Len);
-uint32_t CRC_AccumulateData32(const uint32_t au32Data[], uint32_t u32Len);
+uint16_t CRC_CRC16_AccumulateData(uint8_t u8DataWidth, const void *pvData, uint32_t u32Len);
+uint16_t CRC_CRC16_Calculate(uint16_t u16InitValue, uint8_t u8DataWidth, const void *pvData, uint32_t u32Len);
+en_flag_status_t CRC_CRC16_CheckData(uint16_t u16InitValue, uint8_t u8DataWidth, const void *pvData, uint32_t u32Len, uint16_t u16ExpectValue);
+en_flag_status_t CRC_CRC16_GetCheckResult(uint16_t u16ExpectValue);
 
-uint32_t CRC_CalculateData8(uint32_t u32InitValue, const uint8_t au8Data[], uint32_t u32Len);
-uint32_t CRC_CalculateData16(uint32_t u32InitValue, const uint16_t au16Data[], uint32_t u32Len);
-uint32_t CRC_CalculateData32(uint32_t u32InitValue, const uint32_t au32Data[], uint32_t u32Len);
-
-en_flag_status_t CRC_CheckData8(uint32_t u32InitValue, const uint8_t au8Data[],
-                                uint32_t u32Len, uint32_t u32ExpectValue);
-en_flag_status_t CRC_CheckData16(uint32_t u32InitValue, const uint16_t au16Data[],
-                                 uint32_t u32Len, uint32_t u32ExpectValue);
-en_flag_status_t CRC_CheckData32(uint32_t u32InitValue, const uint32_t au32Data[],
-                                 uint32_t u32Len, uint32_t u32ExpectValue);
+uint32_t CRC_CRC32_AccumulateData(uint8_t u8DataWidth, const void *pvData, uint32_t u32Len);
+uint32_t CRC_CRC32_Calculate(uint32_t u32InitValue, uint8_t u8DataWidth, const void *pvData, uint32_t u32Len);
+en_flag_status_t CRC_CRC32_CheckData(uint32_t u32InitValue, uint8_t u8DataWidth, const void *pvData, uint32_t u32Len, uint32_t u32ExpectValue);
+en_flag_status_t CRC_CRC32_GetCheckResult(uint32_t u32ExpectValue);
 
 /**
  * @}

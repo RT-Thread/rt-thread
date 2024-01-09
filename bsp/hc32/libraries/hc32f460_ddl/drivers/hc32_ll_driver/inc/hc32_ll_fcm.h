@@ -7,9 +7,10 @@
    Change Logs:
    Date             Author          Notes
    2022-03-31       CDT             First version
+   2023-06-30       CDT             Modify API FCM_DeInit()
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -145,7 +146,7 @@ typedef struct {
  */
 
 /**
- * @defgroup FCM_Ref_Clock_Src FCM Feference Clock Source
+ * @defgroup FCM_Ref_Clock_Src FCM Reference Clock Source
  * @{
  */
 #define FCM_REF_CLK_EXTCLK          (0x00UL << FCM_RCCR_RCKS_POS)
@@ -255,7 +256,7 @@ __STATIC_INLINE void FCM_SetLowerLimit(uint16_t u16Limit)
 
 int32_t FCM_Init(const stc_fcm_init_t *pstcFcmInit);
 int32_t FCM_StructInit(stc_fcm_init_t *pstcFcmInit);
-void FCM_DeInit(void);
+int32_t FCM_DeInit(void);
 uint16_t FCM_GetCountValue(void);
 void FCM_SetUpperLimit(uint16_t u16Limit);
 void FCM_SetLowerLimit(uint16_t u16Limit);

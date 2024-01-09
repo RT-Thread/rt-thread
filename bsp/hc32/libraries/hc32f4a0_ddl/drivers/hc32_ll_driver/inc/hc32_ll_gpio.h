@@ -7,9 +7,11 @@
    Change Logs:
    Date             Author          Notes
    2022-03-31       CDT             First version
+   2022-06-30       CDT             Add API GPIO_AnalogCmd() and GPIO_ExIntCmd()
+   2023-06-30       CDT             Rename GPIO_ExIntCmd() as GPIO_ExtIntCmd
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -73,9 +75,9 @@ typedef struct {
     uint16_t u16PinDrv;         /*!< Pin drive capacity setting, @ref GPIO_PinDrv_Sel for details           */
     uint16_t u16Latch;          /*!< Pin latch setting, @ref GPIO_PinLatch_Sel for details                  */
     uint16_t u16PullUp;         /*!< Internal pull-up resistor setting, @ref GPIO_PinPU_Sel for details     */
-    uint16_t u16Invert;         /*!< Pin input/output invert setting, @ref GPIO_PinInvert_Sel               */
+    uint16_t u16Invert;         /*!< Pin input/output invert setting, @ref GPIO_PinInvert_Sel for details   */
     uint16_t u16ExtInt;         /*!< External interrupt pin setting, @ref GPIO_PinExtInt_Sel for details    */
-    uint16_t u16PinInputType;   /*!< Input type setting, @ref GPIO_PinInType_Sel                            */
+    uint16_t u16PinInputType;   /*!< Input type setting, @ref GPIO_PinInType_Sel for detials                */
     uint16_t u16PinAttr;        /*!< Digital or analog attribute setting, @ref GPIO_PinMode_Sel for details */
 } stc_gpio_init_t;
 /**
@@ -102,7 +104,6 @@ typedef struct {
 #define GPIO_PIN_05                 (0x0020U)  /*!< Pin 05 selected   */
 #define GPIO_PIN_06                 (0x0040U)  /*!< Pin 06 selected   */
 #define GPIO_PIN_07                 (0x0080U)  /*!< Pin 07 selected   */
-
 #define GPIO_PIN_08                 (0x0100U)  /*!< Pin 08 selected   */
 #define GPIO_PIN_09                 (0x0200U)  /*!< Pin 09 selected   */
 #define GPIO_PIN_10                 (0x0400U)  /*!< Pin 10 selected   */
@@ -112,7 +113,6 @@ typedef struct {
 #define GPIO_PIN_14                 (0x4000U)  /*!< Pin 14 selected   */
 #define GPIO_PIN_15                 (0x8000U)  /*!< Pin 15 selected   */
 #define GPIO_PIN_ALL                (0xFFFFU)  /*!< All pins selected */
-
 /**
  * @}
  */
@@ -130,7 +130,6 @@ typedef struct {
 #define GPIO_PIN_G_ALL              (0xFFFFU)   /*!< Pin G all*/
 #define GPIO_PIN_H_ALL              (0xFFFFU)   /*!< Pin H all*/
 #define GPIO_PIN_I_ALL              (0x3FFFU)   /*!< Pin I all*/
-
 /**
  * @}
  */
@@ -148,7 +147,6 @@ typedef struct {
 #define GPIO_PORT_G                 (0x06U)     /*!< Port G selected  */
 #define GPIO_PORT_H                 (0x07U)     /*!< Port H selected  */
 #define GPIO_PORT_I                 (0x08U)     /*!< Port I selected  */
-
 /**
  * @}
  */
@@ -165,7 +163,6 @@ typedef struct {
 #define GPIO_FUNC_5               (5U)
 #define GPIO_FUNC_6               (6U)
 #define GPIO_FUNC_7               (7U)
-
 #define GPIO_FUNC_8               (8U)
 #define GPIO_FUNC_9               (9U)
 #define GPIO_FUNC_10              (10U)
@@ -174,13 +171,11 @@ typedef struct {
 #define GPIO_FUNC_13              (13U)
 #define GPIO_FUNC_14              (14U)
 #define GPIO_FUNC_15              (15U)
-
 #define GPIO_FUNC_16              (16U)
 #define GPIO_FUNC_17              (17U)
 #define GPIO_FUNC_18              (18U)
 #define GPIO_FUNC_19              (19U)
 #define GPIO_FUNC_20              (20U)
-
 #define GPIO_FUNC_32              (32U)
 #define GPIO_FUNC_33              (33U)
 #define GPIO_FUNC_34              (34U)
@@ -209,7 +204,6 @@ typedef struct {
 #define GPIO_FUNC_57              (57U)
 #define GPIO_FUNC_58              (58U)
 #define GPIO_FUNC_59              (59U)
-
 #define GPIO_FUNC_60              (60U)
 #define GPIO_FUNC_61              (61U)
 #define GPIO_FUNC_62              (62U)
@@ -228,21 +222,11 @@ typedef struct {
 #define GPIO_PIN_TDI                (0x08U)
 #define GPIO_PIN_TRST               (0x10U)
 #define GPIO_PIN_DEBUG_JTAG         (0x1FU)
-
 #define GPIO_PIN_SWCLK              (0x01U)
 #define GPIO_PIN_SWDIO              (0x02U)
 #define GPIO_PIN_SWO                (0x04U)
 #define GPIO_PIN_DEBUG_SWD          (0x07U)
 #define GPIO_PIN_DEBUG              (0x1FU)
-
-/**
- * @}
- */
-
-/**
- * @defgroup GPIO_Hprwm_Pin_Sel GPIO Hrpwm Pin Selection
- * @{
- */
 /**
  * @}
  */
@@ -255,7 +239,6 @@ typedef struct {
 #define GPIO_RD_WAIT1              (0x01U << GPIO_PCCR_RDWT_POS)
 #define GPIO_RD_WAIT2              (0x02U << GPIO_PCCR_RDWT_POS)
 #define GPIO_RD_WAIT3              (0x03U << GPIO_PCCR_RDWT_POS)
-
 #define GPIO_RD_WAIT4              (0x04U << GPIO_PCCR_RDWT_POS)
 #define GPIO_RD_WAIT5              (0x05U << GPIO_PCCR_RDWT_POS)
 #define GPIO_RD_WAIT6              (0x06U << GPIO_PCCR_RDWT_POS)
@@ -301,7 +284,6 @@ typedef struct {
 #define PIN_LOW_DRV                 (0U)
 #define PIN_MID_DRV                 (GPIO_PCR_DRV_0)
 #define PIN_HIGH_DRV                (GPIO_PCR_DRV_1)
-
 /**
  * @}
  */
@@ -322,26 +304,6 @@ typedef struct {
  */
 #define PIN_PU_OFF                  (0U)
 #define PIN_PU_ON                   (GPIO_PCR_PUU)
-/**
- * @}
- */
-
-/**
- * @defgroup GPIO_PinPD_Sel GPIO Pin Internal Pull-Down Resistor Selection
- * @{
- */
-#define PIN_PD_OFF                  (0U)
-#define PIN_PD_ON                   (GPIO_PCR_PUD)
-/**
- * @}
- */
-
-/**
- * @defgroup GPIO_PinInputSw_Sel GPIO Pin Input Switch Resistor Selection
- * @{
- */
-#define PIN_IN_SW_OFF               (0U)
-#define PIN_IN_SW_ON                (GPIO_PCR_PINAE)
 /**
  * @}
  */
@@ -459,7 +421,8 @@ void GPIO_SetPins(uint8_t u8Port, uint16_t u16Pin);
 void GPIO_ResetPins(uint8_t u8Port, uint16_t u16Pin);
 void GPIO_WritePort(uint8_t u8Port, uint16_t u16PortVal);
 void GPIO_TogglePins(uint8_t u8Port, uint16_t u16Pin);
-
+void GPIO_ExtIntCmd(uint8_t u8Port, uint16_t u16Pin, en_functional_state_t enNewState);
+void GPIO_AnalogCmd(uint8_t u8Port, uint16_t u16Pin, en_functional_state_t enNewState);
 /**
  * @}
  */
