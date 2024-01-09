@@ -1,1 +1,2 @@
+# scons: --strict
 CONFIG_RT_USING_NANO=y
