@@ -181,7 +181,7 @@
         <debug>0</debug>
         <option>
           <name>CCDefines</name>
-          <state>__DEBUG</state>
+          <state></state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -697,7 +697,8 @@
         </option>
         <option>
           <name>IlinkConfigDefines</name>
-          <state></state>
+          <state>_LINK_FLASH_= 0</state>
+          <state>_HC32F460_512K_= 1</state>
         </option>
         <option>
           <name>IlinkMapFile</name>
@@ -1652,7 +1653,8 @@
         </option>
         <option>
           <name>IlinkConfigDefines</name>
-          <state></state>
+          <state>_LINK_FLASH_= 0</state>
+          <state>_HC32F460_512K_= 1</state>
         </option>
         <option>
           <name>IlinkMapFile</name>

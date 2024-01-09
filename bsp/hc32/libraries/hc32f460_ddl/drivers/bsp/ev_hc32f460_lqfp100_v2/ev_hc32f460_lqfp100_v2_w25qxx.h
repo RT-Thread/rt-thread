@@ -7,9 +7,10 @@
    Change Logs:
    Date             Author          Notes
    2022-03-31       CDT             First version
+   2023-09-30       CDT             Modify spi timeout value
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -58,6 +59,11 @@ extern "C"
  * Global pre-processor symbols/macros ('#define')
  ******************************************************************************/
 /**
+ * @defgroup EV_HC32F460_LQFP100_V2_W25QXX_Global_Macros EV_HC32F460_LQFP100_V2 W25QXX Global Macros
+ * @{
+ */
+
+/**
  * @defgroup BSP_SPI_Port BSP SPI Port
  * @{
  */
@@ -95,7 +101,7 @@ extern "C"
  * @defgroup W25Qxx_SPI_Timeout W25Qxx SPI Timeout
  * @{
  */
-#define BSP_SPI_TIMEOUT                  (HCLK_VALUE / 1000UL)
+#define BSP_SPI_TIMEOUT                 (HCLK_VALUE)
 /**
  * @}
  */
@@ -109,6 +115,10 @@ extern "C"
 #define W25Q64_BLOCK_SIZE               (1024UL * 64UL)
 #define W25Q64_PAGE_PER_SECTOR          (W25Q64_SECTOR_SIZE / W25Q64_PAGE_SIZE)
 #define W25Q64_MAX_ADDR                 (0x800000UL)
+/**
+ * @}
+ */
+
 /**
  * @}
  */

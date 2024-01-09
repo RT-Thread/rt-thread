@@ -7,9 +7,12 @@
    Change Logs:
    Date             Author          Notes
    2022-03-31       CDT             First version
+   2022-10-31       CDT             Add Flash protect level define
+   2023-01-15       CDT             Code refine
+   2023-09-30       CDT             Add FLASH security addr define
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -67,7 +70,6 @@ typedef struct {
     uint32_t u32Addr;
     uint32_t u32Size;
 } stc_efm_remap_init_t;
-
 /**
  * @}
  */
@@ -92,8 +94,10 @@ typedef struct {
 #define EFM_OTP_END_ADDR                (0x030017FFUL)    /*!< OTP end address */
 #define EFM_OTP_LOCK_ADDR_START         (0x03001800UL)    /*!< OTP lock address */
 #define EFM_OTP_LOCK_ADDR_END           (0x03001AD7UL)    /*!< OTP lock address */
-#define EFM_OTP_ENABLE_ADDR             (0x03001AD8UL)
+#define EFM_OTP_ENABLE_ADDR             (0x03001AD8UL)    /*!< OTP Enable address */
 #define EFM_FLASH_1_START_ADDR          (0x00100000UL)
+#define EFM_SECURITY_START_ADDR         (0x03004000UL)    /*!< Flash security start address */
+#define EFM_SECURITY_END_ADDR           (0x0300400BUL)    /*!< Flash security end address */
 
 /**
  * @}
@@ -280,6 +284,7 @@ typedef struct {
 #define EFM_OTP_BASE5_SIZE          (0x04UL)
 #define EFM_OTP_BASE5_OFFSET        (54UL)
 #define EFM_OTP_LOCK_ADDR           (0x03001800UL)
+
 /**
  * @}
  */
@@ -475,14 +480,14 @@ typedef struct {
 #define EFM_OTP_BLOCK179            (EFM_OTP_BASE5_ADDR + ((179UL - EFM_OTP_BASE5_OFFSET) * EFM_OTP_BASE5_SIZE))
 #define EFM_OTP_BLOCK180            (EFM_OTP_BASE5_ADDR + ((180UL - EFM_OTP_BASE5_OFFSET) * EFM_OTP_BASE5_SIZE))
 #define EFM_OTP_BLOCK181            (EFM_OTP_BASE5_ADDR + ((181UL - EFM_OTP_BASE5_OFFSET) * EFM_OTP_BASE5_SIZE))
+
 /**
  * @}
  */
 
 /**
  * @defgroup EFM_OTP_Lock_Address EFM Otp Lock_address
- * @note    x at range of 0~14 while HC32F460, HC32F451, HC32F452
- *          x at range of 0~181 while HC32F4A0, HC32F472
+ *          x at range of 0~181
  * @{
  */
 #define EFM_OTP_BLOCK_LOCKADDR(x)    (EFM_OTP_LOCK_ADDR + 0x04UL * (x))   /*!< OTP block x  lock address */
@@ -499,7 +504,7 @@ typedef struct {
  * @{
  */
 #define EFM_REMAP_OFF               (0UL)
-#define EFM_REMAP_ON                EFM_MMF_REMCR_EN
+#define EFM_REMAP_ON                (EFM_MMF_REMCR_EN)
 /**
  * @}
  */
@@ -549,6 +554,29 @@ typedef struct {
 
 #define EFM_REMAP_RAM_START_ADDR    (0x1FFE0000UL)
 #define EFM_REMAP_RAM_END_ADDR      (0x1FFFFFFFUL)
+/**
+ * @}
+ */
+
+/**
+ * @defgroup EFM_Protect_Level EFM protect level
+ * @{
+ */
+#define EFM_PROTECT_LEVEL1          (1U)
+#define EFM_PROTECT_LEVEL2          (2U)
+#define EFM_PROTECT_LEVEL3          (4U)
+/**
+ * @}
+ */
+
+/**
+ * @defgroup EFM_MCU_Status EFM protect level
+ * @{
+ */
+#define EFM_MCU_PROTECT1_FREE       (0U)
+#define EFM_MCU_PROTECT1_LOCK       (1U)
+#define EFM_MCU_PROTECT1_UNLOCK     (2U)
+#define EFM_MCU_PROTECT2_LOCK       (4U)
 /**
  * @}
  */
@@ -654,6 +682,9 @@ int32_t EFM_OTP_Enable(void);
 void EFM_SectorProtectRegLock(uint32_t u32RegLock);
 void EFM_SingleSectorOperateCmd(uint8_t u8SectorNum, en_functional_state_t enNewState);
 void EFM_SequenceSectorOperateCmd(uint32_t u32StartSectorNum, uint16_t u16Count, en_functional_state_t enNewState);
+
+void EFM_Protect_Enable(uint8_t u8Level);
+int32_t EFM_WriteSecurityCode(uint8_t *pu8Buf, uint32_t u32Len);
 
 /**
  * @}

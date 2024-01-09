@@ -6,9 +6,10 @@
    Change Logs:
    Date             Author          Notes
    2022-03-31       CDT             First version
+   2022-06-30       CDT             Add USB core ID select function
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -56,7 +57,7 @@ extern "C"
 /*******************************************************************************
   Global function prototypes (definition in C source)
  ******************************************************************************/
-extern void host_driver_init(usb_core_instance *pdev);
+extern void host_driver_init(usb_core_instance *pdev, stc_usb_port_identify *pstcPortIdentify);
 extern uint32_t host_driver_hostch_init(usb_core_instance *pdev, uint8_t hc_num);
 extern uint32_t host_driver_submitrequest(usb_core_instance *pdev, uint8_t hc_num);
 extern uint32_t host_driver_getcurrentspd(usb_core_instance *pdev);
@@ -86,5 +87,4 @@ extern HOST_CH_STATUS host_driver_gethostchstate(usb_core_instance *pdev,  uint8
 /*******************************************************************************
  * EOF (not truncated)
  ******************************************************************************/
-
 

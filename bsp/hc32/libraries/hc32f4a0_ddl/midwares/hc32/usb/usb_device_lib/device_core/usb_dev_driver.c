@@ -6,9 +6,10 @@
    Change Logs:
    Date             Author          Notes
    2022-03-31       CDT             First version
+   2022-06-30       CDT             Add USB core ID select function
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -58,15 +59,16 @@
  ******************************************************************************/
 /**
  * @brief  Device intialize
- * @param  [in] pdev        device instance
+ * @param  [in] pdev                device instance
+ * @param  [in] pstcPortIdentify    usb core and phy select
  * @retval None
  */
-void usb_initdev(usb_core_instance *pdev)
+void usb_initdev(usb_core_instance *pdev, stc_usb_port_identify *pstcPortIdentify)
 {
     uint32_t tmp_1;
     USB_DEV_EP *iep, *oep;
 
-    usb_setregaddr(&pdev->regs, &pdev->basic_cfgs);
+    usb_setregaddr(&pdev->regs, pstcPortIdentify, &pdev->basic_cfgs);
     pdev->dev.device_cur_status = (uint8_t)USB_DEV_DEFAULT;
     pdev->dev.device_address = 0U;
     tmp_1 = 0UL;

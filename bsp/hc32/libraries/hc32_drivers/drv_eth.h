@@ -1,6 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
- * Copyright (c) 2022, Xiaohua Semiconductor Co., Ltd.
+ * Copyright (C) 2022-2024, Xiaohua Semiconductor Co., Ltd.
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -39,7 +38,7 @@ extern "C" {
 #define PHY_ID1_REG                     0x02U
 
 
-#ifdef PHY_USING_RTL8201F
+#if defined (ETH_PHY_USING_RTL8201F)
 /* Extended PHY Registers */
 #define PHY_PSMR                        (0x18U)   /*!< Power Saving Mode Register                         */
 #define PHY_IISDR                       (0x1EU)   /*!< Interrupt Indicators and SNR Display Register      */

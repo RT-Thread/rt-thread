@@ -1,14 +1,17 @@
 /**
  *******************************************************************************
  * @file  hc32_ll_usb.h
- * @brief A detailed description is available at hardware registers
+ * @brief A detailed description is available at hardware registers.
  @verbatim
    Change Logs:
    Date             Author          Notes
    2022-03-31       CDT             First version
+   2022-06-30       CDT             Add USB core ID select function
+                                    Delete comment
+   2023-06-30       CDT             Modify typo
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -54,6 +57,14 @@ extern "C"
 #define USB_MAX_TX_FIFOS                       (12U)
 #define USB_MAX_CH_NUM                         (USB_MAX_TX_FIFOS)
 #define USB_MAX_EP_NUM                         (6U)
+
+/* USB Core ID define */
+#define USBFS_CORE_ID                          (0U)
+#define USBHS_CORE_ID                          (1U)
+
+/* USB PHY type define for USBHS core */
+#define USBHS_PHY_EMBED                        (0U)
+#define USBHS_PHY_EXT                          (1U)
 
 #define USB_MAX_EP0_SIZE                       (64U)
 /* working mode of the USB core */
@@ -136,8 +147,8 @@ typedef struct {
     __IO uint32_t GRXSTSR;                    /* Receive Sts Q Read Register                      01Ch */
     __IO uint32_t GRXSTSP;                    /* Receive Sts Q Read & POP Register                020h */
     __IO uint32_t GRXFSIZ;                    /* Receive FIFO Size Register                       024h */
-    __IO uint32_t HNPTXFSIZ;                  /* HNPTXFSIZ: Host Non-Periodic Transmit FIFO Size Register 028h */
-                                              /* DIEPTXF0: Device IN EP0 Transmit FIFO size register      028h */
+    __IO uint32_t HNPTXFSIZ;                  /* HNPTXFSIZ: Host Non-Periodic Transmit FIFO Size Register 028h
+                                                 DIEPTXF0: Device IN EP0 Transmit FIFO size register      028h */
     __IO uint32_t HNPTXSTS;                   /* Host Non Periodic Transmit FIFO/Queue Status Register    02Ch */
     uint32_t Reserved30[3];                   /* Reserved                                    030h-038h */
     __IO uint32_t CID;                        /* User ID Register                                 03Ch */
@@ -160,12 +171,12 @@ typedef struct {
     uint32_t Reserved20[4];     /* Reserved                                     820h-82Ch */
     __IO uint32_t DTHRCTL;      /* Device Threshold Control Register                 830h */
     __IO uint32_t DIEPEMPMSK;   /* Device IN EP FIFO Empty Interrupt Mask Register   834h */
-    __IO uint32_t DEACHINT;     /* Deivce Each EP Interrupt Register                 838h */
+    __IO uint32_t DEACHINT;     /* Device Each EP Interrupt Register                 838h */
     __IO uint32_t DEACHINTMSK;  /* Device Each EP Interrupt Mask Register            83Ch */
     uint32_t Reserved40;        /* Reserved                                          840h */
-    __IO uint32_t DIEPEACHMSK1; /* Deveice IN EP1 Interrupt Mask Register            844h */
-    uint32_t Reserved48[15];     /* Reserved                                      848-880h */
-    __IO uint32_t DOEPEACHMSK1; /* Deveice OUT EP1 Interrupt Mask Register           884h */
+    __IO uint32_t DIEPEACHMSK1; /* Device IN EP1 Interrupt Mask Register             844h */
+    uint32_t Reserved48[15];    /* Reserved                                      848-880h */
+    __IO uint32_t DOEPEACHMSK1; /* Device OUT EP1 Interrupt Mask Register            884h */
 } USB_CORE_DREGS;
 
 typedef struct {
@@ -267,6 +278,10 @@ typedef struct {
     uint32_t       xfer_count;
     uint8_t        *xfer_buff;
 } USB_DEV_EP;
+
+typedef struct {
+    uint8_t        u8CoreID;     /* USBFS_CORE_ID or USBHS_CORE_ID */
+} stc_usb_port_identify;
 
 /*******************************************************************************
   Global function prototypes (definition in C source)
@@ -435,9 +450,9 @@ __STATIC_INLINE void usb_devaddrset(LL_USB_TypeDef *USBx, uint8_t address)
  */
 __STATIC_INLINE void usb_PhySelect(LL_USB_TypeDef *USBx, uint8_t PhyType)
 {
-    if (1U == PhyType) {
+    if (USBHS_PHY_EXT == PhyType) {
         CLR_REG32_BIT(USBx->GREGS->GUSBCFG, USBFS_GUSBCFG_PHYSEL);
-        //SET_REG32_BIT(USBx->GREGS->GUSBCFG, 1UL<<4);  //todo 手册上没有该bit
+        //SET_REG32_BIT(USBx->GREGS->GUSBCFG, 1UL<<4);
     } else {
         SET_REG32_BIT(USBx->GREGS->GUSBCFG, USBFS_GUSBCFG_PHYSEL);
     }
@@ -501,7 +516,6 @@ __STATIC_INLINE void usb_FrameIntervalConfig(LL_USB_TypeDef *USBx, uint8_t inter
 //#define USBFS_HPRT_PRTOVRCURRCHNG                            (0x00000020UL)
 __STATIC_INLINE uint32_t usb_rdhprt(LL_USB_TypeDef *USBx)
 {
-//todo don't have prtovrcurrchng  bit
     return (READ_REG32(*USBx->HPRT) & ~(USBFS_HPRT_PENA | USBFS_HPRT_PCDET | USBFS_HPRT_PENCHNG));
 }
 
@@ -514,7 +528,6 @@ __STATIC_INLINE uint32_t usb_rdhprt(LL_USB_TypeDef *USBx)
 //#define USBFS_HCTSIZ_DOPNG (0x80000000UL)
 __STATIC_INLINE void usb_pingtokenissue(LL_USB_TypeDef *USBx, uint8_t hc_num)
 {
-    //todo don't have dopng bit
     WRITE_REG32(USBx->HC_REGS[hc_num]->HCTSIZ, 1UL << USBFS_HCTSIZ_PKTCNT_POS);
     MODIFY_REG32(USBx->HC_REGS[hc_num]->HCCHAR, USBFS_HCCHAR_CHENA | USBFS_HCCHAR_CHDIS, USBFS_HCCHAR_CHENA);
 }
@@ -570,29 +583,33 @@ __STATIC_INLINE void usb_enumspeed(LL_USB_TypeDef *USBx)
  * @param  [in] USBx        usb instance
  * @retval None
  */
-__STATIC_INLINE void usb_sethostfifo(LL_USB_TypeDef *USBx)
+__STATIC_INLINE void usb_sethostfifo(LL_USB_TypeDef *USBx, uint8_t u8CoreID)
 {
+    if (USBFS_CORE_ID == u8CoreID) {
 #ifdef USB_FS_MODE
-    /* USBFS Core*/
-    WRITE_REG32(USBx->GREGS->GRXFSIZ, RX_FIFO_FS_SIZE);   /* set the RxFIFO Depth */
-    /* non-periodic transmit RAM start address, set the non-periodic TxFIFO depth */
-    WRITE_REG32(USBx->GREGS->HNPTXFSIZ,
-                (RX_FIFO_FS_SIZE << USBFS_HNPTXFSIZ_NPTXFSA_POS)
-                | (TXH_NP_FS_FIFOSIZ << USBFS_HNPTXFSIZ_NPTXFD_POS));
-    /* set the host periodic TxFIFO start address, set the host periodic TxFIFO depth */
-    WRITE_REG32(USBx->GREGS->HPTXFSIZ,
-                ((RX_FIFO_FS_SIZE + TXH_NP_FS_FIFOSIZ) << USBFS_HPTXFSIZ_PTXSA_POS)
-                | (TXH_P_FS_FIFOSIZ << USBFS_HPTXFSIZ_PTXFD_POS));
-#else
-    /* USBHS Core */
-    WRITE_REG32(USBx->GREGS->GRXFSIZ, RX_FIFO_HS_SIZE);
-    WRITE_REG32(USBx->GREGS->HNPTXFSIZ,
-                (RX_FIFO_HS_SIZE << USBFS_HNPTXFSIZ_NPTXFSA_POS)
-                | (TXH_NP_HS_FIFOSIZ << USBFS_HNPTXFSIZ_NPTXFD_POS));
-    WRITE_REG32(USBx->GREGS->HPTXFSIZ,
-                ((RX_FIFO_HS_SIZE + TXH_NP_HS_FIFOSIZ) << USBFS_HPTXFSIZ_PTXSA_POS)
-                | (TXH_P_HS_FIFOSIZ << USBFS_HPTXFSIZ_PTXFD_POS));
+        /* USBFS Core*/
+        WRITE_REG32(USBx->GREGS->GRXFSIZ, RX_FIFO_FS_SIZE);   /* set the RxFIFO Depth */
+        /* non-periodic transmit RAM start address, set the non-periodic TxFIFO depth */
+        WRITE_REG32(USBx->GREGS->HNPTXFSIZ,
+                    (RX_FIFO_FS_SIZE << USBFS_HNPTXFSIZ_NPTXFSA_POS)
+                    | (TXH_NP_FS_FIFOSIZ << USBFS_HNPTXFSIZ_NPTXFD_POS));
+        /* set the host periodic TxFIFO start address, set the host periodic TxFIFO depth */
+        WRITE_REG32(USBx->GREGS->HPTXFSIZ,
+                    ((RX_FIFO_FS_SIZE + TXH_NP_FS_FIFOSIZ) << USBFS_HPTXFSIZ_PTXSA_POS)
+                    | (TXH_P_FS_FIFOSIZ << USBFS_HPTXFSIZ_PTXFD_POS));
 #endif
+    } else {
+#ifdef USB_HS_MODE
+        /* USBHS Core */
+        WRITE_REG32(USBx->GREGS->GRXFSIZ, RX_FIFO_HS_SIZE);
+        WRITE_REG32(USBx->GREGS->HNPTXFSIZ,
+                    (RX_FIFO_HS_SIZE << USBFS_HNPTXFSIZ_NPTXFSA_POS)
+                    | (TXH_NP_HS_FIFOSIZ << USBFS_HNPTXFSIZ_NPTXFD_POS));
+        WRITE_REG32(USBx->GREGS->HPTXFSIZ,
+                    ((RX_FIFO_HS_SIZE + TXH_NP_HS_FIFOSIZ) << USBFS_HPTXFSIZ_PTXSA_POS)
+                    | (TXH_P_HS_FIFOSIZ << USBFS_HPTXFSIZ_PTXFD_POS));
+#endif
+    }
 }
 
 /**
@@ -610,7 +627,7 @@ __STATIC_INLINE void usb_chrst(LL_USB_TypeDef *USBx, uint8_t ch_idx)
 #endif /* end of USE_HOST_MODE */
 
 extern void usb_initusbcore(LL_USB_TypeDef *USBx, USB_CORE_BASIC_CFGS *basic_cfgs);
-extern void usb_setregaddr(LL_USB_TypeDef *USBx, USB_CORE_BASIC_CFGS *basic_cfgs);
+extern void usb_setregaddr(LL_USB_TypeDef *USBx, stc_usb_port_identify *pstcPortIdentify, USB_CORE_BASIC_CFGS *basic_cfgs);
 extern void usb_rdpkt(LL_USB_TypeDef *USBx, uint8_t *dest, uint16_t len);
 extern void usb_wrpkt(LL_USB_TypeDef *USBx, uint8_t *src, uint8_t ch_ep_num, uint16_t len, uint8_t u8DmaEn);
 extern void usb_txfifoflush(LL_USB_TypeDef *USBx, uint32_t num);
@@ -622,6 +639,7 @@ extern void usb_coresoftrst(LL_USB_TypeDef *USBx);
 extern void usb_hostmodeinit(LL_USB_TypeDef *USBx, USB_CORE_BASIC_CFGS *basic_cfgs);
 extern void usb_hostinten(LL_USB_TypeDef *USBx, uint8_t u8DmaEn);
 extern uint8_t usb_inithch(LL_USB_TypeDef *USBx, uint8_t hc_num, USB_HOST_CH *pCh, uint8_t u8DmaEn);
+extern void usb_hoststop(LL_USB_TypeDef *USBx, uint8_t u8ChNum);
 extern void usb_hchstop(LL_USB_TypeDef *USBx, uint8_t hc_num);
 extern uint8_t usb_hchtransbegin(LL_USB_TypeDef *USBx, uint8_t hc_num, USB_HOST_CH *pCh, uint8_t u8DmaEn);
 extern void usb_hprtrst(LL_USB_TypeDef *USBx);

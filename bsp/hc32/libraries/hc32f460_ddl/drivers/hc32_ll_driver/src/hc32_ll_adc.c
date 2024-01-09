@@ -7,9 +7,12 @@
    Change Logs:
    Date             Author          Notes
    2022-03-31       CDT             First version
+   2023-01-15       CDT             API fixed: ADC_DeInit()
+   2023-06-30       CDT             Modify typo
+                                    API fixed: ADC_DeInit()
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -49,12 +52,13 @@
  * @defgroup ADC_Local_Macros ADC Local Macros
  * @{
  */
+
 /**
  * @defgroup ADC_PGA_En ADC PGA Function Control
  * @{
  */
-#define ADC_PGA_DISABLE                     (0x0U)
-#define ADC_PGA_ENABLE                      (0xEU)
+#define ADC_PGA_DISABLE                 (0x0U)
+#define ADC_PGA_ENABLE                  (0xEU)
 /**
  * @}
  */
@@ -63,16 +67,15 @@
  * @defgroup ADC_Channel_Max ADC Channel Max
  * @{
  */
-#define ADC1_CH_MAX                 (ADC_CH16)
-#define ADC2_CH_MAX                 (ADC_CH8)
-#define ADC1_REMAP_CH_MAX           (ADC_CH15)
-#define ADC2_REMAP_CH_MAX           (ADC_CH7)
-#define ADC1_REMAP_PIN_MAX          (ADC1_PIN_PC5)
-#define ADC2_REMAP_PIN_MAX          (ADC2_PIN_PC1)
-#define ADC_SSTR_NUM                (16U)
-#define ADC1_SSTR_NUM               (ADC_SSTR_NUM)
-#define ADC2_SSTR_NUM               (9U)
-
+#define ADC1_CH_MAX                     (ADC_CH16)
+#define ADC2_CH_MAX                     (ADC_CH8)
+#define ADC1_REMAP_CH_MAX               (ADC_CH15)
+#define ADC2_REMAP_CH_MAX               (ADC_CH7)
+#define ADC1_REMAP_PIN_MAX              (ADC1_PIN_PC5)
+#define ADC2_REMAP_PIN_MAX              (ADC2_PIN_PC1)
+#define ADC_SSTR_NUM                    (16U)
+#define ADC1_SSTR_NUM                   (ADC_SSTR_NUM)
+#define ADC2_SSTR_NUM                   (9U)
 /**
  * @}
  */
@@ -81,14 +84,14 @@
  * @defgroup ADC_Check_Parameters_Validity ADC check parameters validity
  * @{
  */
-#define IS_ADC_1BIT_MASK(x)         (((x) != 0U) && (((x) & ((x) - 1U)) == 0U))
-
-#define IS_ADC_BIT_MASK(x, mask)    (((x) != 0U) && (((x) | (mask)) == (mask)))
+#define IS_ADC_1BIT_MASK(x)             (((x) != 0U) && (((x) & ((x) - 1U)) == 0U))
+#define IS_ADC_BIT_MASK(x, mask)        (((x) != 0U) && (((x) | (mask)) == (mask)))
 
 /* ADC unit check */
-#define IS_ADC_UNIT(x)              (((x) == CM_ADC1) || ((x) == CM_ADC2))
+#define IS_ADC_UNIT(x)                  (((x) == CM_ADC1) || ((x) == CM_ADC2))
 
-#define IS_ADC_SEQ(x)               (((x) == ADC_SEQ_A) || ((x) == ADC_SEQ_B))
+/* ADC sequence check */
+#define IS_ADC_SEQ(x)                   (((x) == ADC_SEQ_A) || ((x) == ADC_SEQ_B))
 
 /* ADC channel check */
 #define IS_ADC_CH(adc, ch)                                                     \
@@ -120,16 +123,15 @@
 (   ((x) == ADC_SEQA_RESUME_SCAN_CONT)      ||                                 \
     ((x) == ADC_SEQA_RESUME_SCAN_RESTART))
 
-#define IS_ADC_SAMPLE_TIME(x)       ((x) >= 5U)
+#define IS_ADC_SAMPLE_TIME(x)           ((x) >= 5U)
 
-#define IS_ADC_INT(x)               IS_ADC_BIT_MASK(x, ADC_INT_ALL)
-
-#define IS_ADC_FLAG(x)              IS_ADC_BIT_MASK(x, ADC_FLAG_ALL)
+#define IS_ADC_INT(x)                   IS_ADC_BIT_MASK(x, ADC_INT_ALL)
+#define IS_ADC_FLAG(x)                  IS_ADC_BIT_MASK(x, ADC_FLAG_ALL)
 
 /* Scan-average. */
-#define IS_ADC_AVG_CNT(x)           (((x) | ADC_AVG_CNT256) == ADC_AVG_CNT256)
+#define IS_ADC_AVG_CNT(x)               (((x) | ADC_AVG_CNT256) == ADC_AVG_CNT256)
 
-/* Channel remap. */
+/* Channel remapping. */
 #define IS_ADC_REMAP_PIN(adc, pin)                                             \
 (   (((adc) == CM_ADC1) && ((pin) <= ADC1_REMAP_PIN_MAX))   ||                 \
     (((adc) == CM_ADC2) && ((pin) <= ADC2_REMAP_PIN_MAX)))
@@ -144,30 +146,30 @@
     ((x) == ADC_SYNC_CYCLIC_DELAY_TRIG)     ||                                 \
     ((x) == ADC_SYNC_CYCLIC_PARALLEL_TRIG))
 
-#define IS_ADC_SYNC(x)              ((x) == ADC_SYNC_ADC1_ADC2)
+#define IS_ADC_SYNC(x)                  ((x) == ADC_SYNC_ADC1_ADC2)
 
 /* Analog watchdog. */
 #define IS_ADC_AWD_MD(x)                                                       \
 (   ((x) == ADC_AWD_MD_CMP_OUT)             ||                                 \
     ((x) == ADC_AWD_MD_CMP_IN))
 
-#define IS_ADC_AWD(x)               ((x) == ADC_AWD0)
+#define IS_ADC_AWD(x)                   ((x) == ADC_AWD0)
 
 /* AWD flag check */
 #define IS_ADC_AWD_FLAG(adc, flag)                                             \
 (   (((adc) == CM_ADC1) && IS_ADC_BIT_MASK(flag, ADC1_AWD_FLAG_ALL))    ||     \
     (((adc) == CM_ADC2) && IS_ADC_BIT_MASK(flag, ADC2_AWD_FLAG_ALL)))
 
-#define IS_ADC_AWD_INT(x)           IS_ADC_BIT_MASK(x, ADC_AWD_INT_ALL)
+#define IS_ADC_AWD_INT(x)               IS_ADC_BIT_MASK(x, ADC_AWD_INT_ALL)
 
 /* PGA */
-#define IS_ADC_PGA_GAIN(x)          ((x) <= ADC_PGA_GAIN_32)
+#define IS_ADC_PGA_GAIN(x)              ((x) <= ADC_PGA_GAIN_32)
 
-#define IS_ADC_PGA_VSS(x)           (((x) == ADC_PGA_VSS_PGAVSS) || ((x) == ADC_PGA_VSS_AVSS))
+#define IS_ADC_PGA_VSS(x)               (((x) == ADC_PGA_VSS_PGAVSS) || ((x) == ADC_PGA_VSS_AVSS))
 
 /* PGA unit */
-#define IS_ADC_PGA(adc, pga)        (((adc) == CM_ADC1) && ((pga) == ADC_PGA1))
-#define IS_PGA_ADC(x)               ((x) == CM_ADC1)
+#define IS_ADC_PGA(adc, pga)            (((adc) == CM_ADC1) && ((pga) == ADC_PGA1))
+#define IS_PGA_ADC(x)                   ((x) == CM_ADC1)
 #define IS_ADC_PGA_INPUT_SRC(x)                                                \
 (   IS_ADC_BIT_MASK(x, ADC_PGAINSR0_PGAINSEL) && IS_ADC_1BIT_MASK(x))
 
@@ -221,11 +223,8 @@ int32_t ADC_Init(CM_ADC_TypeDef *ADCx, const stc_adc_init_t *pstcAdcInit)
         DDL_ASSERT(IS_ADC_SCAN_MD(pstcAdcInit->u16ScanMode));
         DDL_ASSERT(IS_ADC_RESOLUTION(pstcAdcInit->u16Resolution));
         DDL_ASSERT(IS_ADC_DATAALIGN(pstcAdcInit->u16DataAlign));
-
         /* Configures scan mode, resolution, data align. */
-        WRITE_REG16(ADCx->CR0, pstcAdcInit->u16ScanMode | \
-                    pstcAdcInit->u16Resolution | \
-                    pstcAdcInit->u16DataAlign);
+        WRITE_REG16(ADCx->CR0, pstcAdcInit->u16ScanMode | pstcAdcInit->u16Resolution | pstcAdcInit->u16DataAlign);
         i32Ret = LL_OK;
     }
 
@@ -233,15 +232,15 @@ int32_t ADC_Init(CM_ADC_TypeDef *ADCx, const stc_adc_init_t *pstcAdcInit)
 }
 
 /**
- * @brief  Deinitializes the specified ADC peripheral registers to their default reset values.
+ * @brief  Deinitialize the specified ADC peripheral registers to their default reset values.
  * @param  [in]  ADCx                   Pointer to ADC instance register base.
  *                                      This parameter can be a value of the following:
  *   @arg  CM_ADC or CM_ADCx:           ADC instance register base.
- * @retval None
+ * @retval int32_t:
+ *           - LL_OK:                   De-Initialize success.
  */
-void ADC_DeInit(CM_ADC_TypeDef *ADCx)
+int32_t ADC_DeInit(CM_ADC_TypeDef *ADCx)
 {
-    /* SSTRx */
     uint8_t i;
     __IO uint8_t *reg8SSTR;
     uint8_t u8SSTRNum;
@@ -250,7 +249,6 @@ void ADC_DeInit(CM_ADC_TypeDef *ADCx)
 
     /* Stop the ADC. */
     WRITE_REG8(ADCx->STR, 0U);
-
     /* Set the registers to reset value. */
     WRITE_REG16(ADCx->CR0, 0x0U);
     WRITE_REG16(ADCx->CR1, 0x0U);
@@ -258,7 +256,6 @@ void ADC_DeInit(CM_ADC_TypeDef *ADCx)
     WRITE_REG32(ADCx->CHSELRA, 0x0U);
     WRITE_REG32(ADCx->CHSELRB, 0x0U);
     WRITE_REG8(ADCx->ICR, 0x03U);
-    /* AVCHSELR */
     WRITE_REG32(ADCx->AVCHSELR, 0x0U);
 
     /* SSTRx */
@@ -285,7 +282,7 @@ void ADC_DeInit(CM_ADC_TypeDef *ADCx)
     WRITE_REG8(ADCx->ISR, 0x03U);
 
     /* Sync mode */
-    WRITE_REG16(ADCx->SYNCCR, 0x0U);
+    WRITE_REG16(ADCx->SYNCCR, 0x0C00U);
 
     /* Analog watchdog */
     WRITE_REG16(ADCx->AWDCR, 0x0U);
@@ -294,8 +291,6 @@ void ADC_DeInit(CM_ADC_TypeDef *ADCx)
     WRITE_REG16(ADCx->AWDCHSR, 0x0U);
     WRITE_REG16(ADCx->AWDSR, 0x0U);
 
-    /* Sample hold */
-
     /* PGA and OPA */
     if (ADCx == CM_ADC1) {
         WRITE_REG16(ADCx->PGACR, 0x0U);
@@ -303,6 +298,7 @@ void ADC_DeInit(CM_ADC_TypeDef *ADCx)
         WRITE_REG16(ADCx->PGAINSR0, 0x0U);
         WRITE_REG16(ADCx->PGAINSR1, 0x0U);
     }
+    return LL_OK;
 }
 
 /**
@@ -386,7 +382,6 @@ void ADC_SetSampleTime(CM_ADC_TypeDef *ADCx, uint8_t u8Ch, uint8_t u8SampleTime)
     } else {
         WRITE_REG8(ADCx->SSTRL, u8SampleTime);
     }
-
 }
 
 /**
@@ -447,11 +442,11 @@ void ADC_ConvDataAverageChCmd(CM_ADC_TypeDef *ADCx, uint8_t u8Ch, en_functional_
  * @param  [in]  u16TriggerSel          Hard trigger selection. This parameter can be a value of @ref ADC_Hard_Trigger_Sel
  *   @arg  ADC_HARDTRIG_ADTRG_PIN:      Selects the following edge of pin ADTRG as the trigger of ADC sequence.
  *   @arg  ADC_HARDTRIG_EVT0:           Selects an internal event as the trigger of ADC sequence.
-                                        This event is specified by register ADCx_ITRGSELR0(x=(null), 1, 2, 3).
+                                        This event is specified by register ADCx_TRGSEL0(x=(null), 1, 2, 3).
  *   @arg  ADC_HARDTRIG_EVT1:           Selects an internal event as the trigger of ADC sequence.
-                                        This event is specified by register ADCx_ITRGSELR1(x=(null), 1, 2, 3).
+                                        This event is specified by register ADCx_TRGSEL1(x=(null), 1, 2, 3).
  *   @arg  ADC_HARDTRIG_EVT0_EVT1:      Selects two internal events as the trigger of ADC sequence.
-                                        The two events are specified by register ADCx_ITRGSELR0 and register ADCx_ITRGSELR1.
+                                        The two events are specified by register ADCx_TRGSEL0 and register ADCx_TRGSEL1.
  * @retval None
  * @note   ADC must be stopped while calling this function.
  * @note   The trigger source CANNOT be an event that generated by the sequence itself.
@@ -463,9 +458,7 @@ void ADC_TriggerConfig(CM_ADC_TypeDef *ADCx, uint8_t u8Seq, uint16_t u16TriggerS
     DDL_ASSERT(IS_ADC_HARDTRIG(u16TriggerSel));
 
     u8Seq *= ADC_TRGSR_TRGSELB_POS;
-    MODIFY_REG16(ADCx->TRGSR, \
-                 (uint32_t)ADC_TRGSR_TRGSELA << u8Seq, \
-                 (uint32_t)u16TriggerSel << u8Seq);
+    MODIFY_REG16(ADCx->TRGSR, (uint32_t)ADC_TRGSR_TRGSELA << u8Seq, (uint32_t)u16TriggerSel << u8Seq);
 }
 
 /**
@@ -562,6 +555,20 @@ uint16_t ADC_GetValue(const CM_ADC_TypeDef *ADCx, uint8_t u8Ch)
 }
 
 /**
+ * @brief  Get the ADC resolution.
+ * @param  [in]  ADCx                   Pointer to ADC instance register base.
+ *                                      This parameter can be a value of the following:
+ *   @arg  CM_ADC or CM_ADCx:           ADC instance register base.
+ * @retval An uint16_t type value of ADC resolution.
+ */
+uint16_t ADC_GetResolution(const CM_ADC_TypeDef *ADCx)
+{
+    DDL_ASSERT(IS_ADC_UNIT(ADCx));
+
+    return (READ_REG16_BIT(ADCx->CR0, ADC_CR0_ACCSEL));
+}
+
+/**
  * @brief  Get the status of the specified ADC flag.
  * @param  [in]  ADCx                   Pointer to ADC instance register base.
  *                                      This parameter can be a value of the following:
@@ -622,9 +629,7 @@ void ADC_ChRemap(CM_ADC_TypeDef *ADCx, uint8_t u8Ch, uint8_t u8AdcPin)
     regCHMUXR  = (__IO uint16_t *)((uint32_t)&ADCx->CHMUXR0);
     u8RegIdx   = u8Ch / 4U;
     u8FieldOfs = (u8Ch % 4U) * 4U;
-    MODIFY_REG16(regCHMUXR[u8RegIdx], \
-                 ((uint32_t)ADC_CHMUXR0_CH00MUX << u8FieldOfs), \
-                 ((uint32_t)u8AdcPin << u8FieldOfs));
+    MODIFY_REG16(regCHMUXR[u8RegIdx], ((uint32_t)ADC_CHMUXR0_CH00MUX << u8FieldOfs), ((uint32_t)u8AdcPin << u8FieldOfs));
 }
 
 /**
@@ -686,10 +691,10 @@ void ADC_ResetChMapping(CM_ADC_TypeDef *ADCx)
  *                                        All ADCs scan once.
  *   @arg  ADC_SYNC_CYCLIC_DELAY_TRIG:  Cyclic delayed trigger mode.
  *                                      When the trigger condition occurs, ADC1 starts first, then ADC2, last ADC3(if has).
- *                                      All ADCs scan cyclicly(keep scaning till you stop them).
+ *                                      All ADCs scan cyclicly(keep scanning till you stop them).
  *   @arg  ADC_SYNC_CYCLIC_PARALLEL_TRIG: Single shot parallel trigger mode.
  *                                        When the trigger condition occurs, all ADCs start at the same time.
- *                                        All ADCs scan cyclicly(keep scaning till you stop them).
+ *                                        All ADCs scan cyclicly(keep scanning till you stop them).
  * @param  [in]  u8TriggerDelay         Trigger delay time(ADCLK cycle), range is [1, 255].
  * @retval None
  */
@@ -743,7 +748,6 @@ int32_t ADC_AWD_Config(CM_ADC_TypeDef *ADCx, uint8_t u8AwdUnit, uint8_t u8Ch, co
         WRITE_REG16(ADCx->AWDDR0, pstcAwd->u16LowThreshold);
         WRITE_REG16(ADCx->AWDDR1, pstcAwd->u16HighThreshold);
         SET_REG32_BIT(ADCx->AWDCHSR, 1UL << u8Ch);
-
         i32Ret = LL_OK;
     }
 
@@ -751,13 +755,13 @@ int32_t ADC_AWD_Config(CM_ADC_TypeDef *ADCx, uint8_t u8AwdUnit, uint8_t u8Ch, co
 }
 
 /**
- * @brief  Specifies the comapre mode of analog watchdog.
+ * @brief  Specifies the compare mode of analog watchdog.
  * @param  [in]  ADCx                   Pointer to ADC instance register base.
  *                                      This parameter can be a value of the following:
  *   @arg  CM_ADC or CM_ADCx:           ADC instance register base.
  * @param  [in]  u8AwdUnit              AWD unit that is going to be configured.
  *                                      This parameter can be a value of @ref ADC_AWD_Unit
- * @param  [in]  u16WatchdogMode        Analog watchdog comapre mode.
+ * @param  [in]  u16WatchdogMode        Analog watchdog compare mode.
  *                                      This parameter can be a value of @ref ADC_AWD_Mode
  *   @arg  ADC_AWD_MD_CMP_OUT:          ADCValue > HighThreshold or ADCValue < LowThreshold
  *   @arg  ADC_AWD_MD_CMP_IN:           LowThreshold < ADCValue < HighThreshold
@@ -772,11 +776,10 @@ void ADC_AWD_SetMode(CM_ADC_TypeDef *ADCx, uint8_t u8AwdUnit, uint16_t u16Watchd
 
     (void)(u8AwdUnit);
     MODIFY_REG16(ADCx->AWDCR, ADC_AWDCR_AWDMD, u16WatchdogMode << ADC_AWDCR_AWDMD_POS);
-
 }
 
 /**
- * @brief  Get the comapre mode of analog watchdog.
+ * @brief  Get the compare mode of analog watchdog.
  * @param  [in]  ADCx                   Pointer to ADC instance register base.
  *                                      This parameter can be a value of the following:
  *   @arg  CM_ADC or CM_ADCx:           ADC instance register base.
@@ -819,7 +822,6 @@ void ADC_AWD_SetThreshold(CM_ADC_TypeDef *ADCx, uint8_t u8AwdUnit, uint16_t u16L
     (void)(u8AwdUnit);
     WRITE_REG16(ADCx->AWDDR0, u16LowThreshold);
     WRITE_REG16(ADCx->AWDDR1, u16HighThreshold);
-
 }
 
 /**
@@ -838,7 +840,6 @@ void ADC_AWD_SelectCh(CM_ADC_TypeDef *ADCx, uint8_t u8AwdUnit, uint8_t u8Ch)
     DDL_ASSERT(IS_ADC_CH(ADCx, u8Ch));
     (void)(u8AwdUnit);
     SET_REG32_BIT(ADCx->AWDCHSR, 1UL << u8Ch);
-
 }
 
 /**
@@ -881,7 +882,6 @@ void ADC_AWD_Cmd(CM_ADC_TypeDef *ADCx, uint8_t u8AwdUnit, en_functional_state_t 
     (void)(u8AwdUnit);
     /* Enable bit position: ADC_AWDCR_AWDEN_POS */
     WRITE_REG32(PERIPH_BIT_BAND(u32Addr, ADC_AWDCR_AWDEN_POS), enNewState);
-
 }
 
 /**
@@ -911,7 +911,6 @@ void ADC_AWD_IntCmd(CM_ADC_TypeDef *ADCx, uint16_t u16IntType, en_functional_sta
             CLR_REG16_BIT(ADCx->AWDCR, ADC_AWDCR_AWDIEN);
         }
     }
-
 }
 
 /**
@@ -948,7 +947,6 @@ void ADC_AWD_ClearStatus(CM_ADC_TypeDef *ADCx, uint32_t u32Flag)
 {
     DDL_ASSERT(IS_ADC_AWD_FLAG(ADCx, u32Flag));
     CLR_REG32_BIT(ADCx->AWDSR, u32Flag);
-
 }
 
 /**
@@ -990,7 +988,6 @@ void ADC_PGA_Config(CM_ADC_TypeDef *ADCx, uint8_t u8PgaUnit, uint8_t u8Gain, uin
     (void)(u8PgaUnit);
     WRITE_REG16(ADCx->PGAGSR, u8Gain);
     WRITE_REG16(ADCx->PGAINSR1, u8PgaVss);
-
 }
 
 /**
@@ -1012,7 +1009,6 @@ void ADC_PGA_Cmd(CM_ADC_TypeDef *ADCx, uint8_t u8PgaUnit, en_functional_state_t 
 
     (void)(u8PgaUnit);
     WRITE_REG16(ADCx->PGACR, au8Cmd[(uint8_t)enNewState]);
-
 }
 
 /**
@@ -1094,8 +1090,8 @@ void ADC_SetSeqAResumeMode(CM_ADC_TypeDef *ADCx, uint16_t u16SeqAResumeMode)
  */
 
 /**
-* @}
-*/
+ * @}
+ */
 
 /******************************************************************************
  * EOF (not truncated)

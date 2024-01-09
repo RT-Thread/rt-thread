@@ -6,9 +6,10 @@
    Change Logs:
    Date             Author          Notes
    2022-03-31       CDT             First version
+   2023-06-30       CDT             Modify for variable alignment
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -55,18 +56,6 @@ void mouse_decode(uint8_t *data);
 /*******************************************************************************
  * Global variable definitions (declared in header file with 'extern')
  ******************************************************************************/
-#ifdef USB_INTERNAL_DMA_ENABLED
-#if defined   (__CC_ARM) /*!< ARM Compiler */
-__align(4)
-#elif defined ( __ICCARM__ ) /*!< IAR Compiler */
-#pragma data_alignment=4
-#elif defined (__GNUC__) /*!< GNU Compiler */
-#pragma pack(4)
-#elif defined  (__TASKING__) /*!< TASKING Compiler */
-__align(4)
-#endif /* __CC_ARM */
-#endif
-
 HID_MOUSE_Data_TypeDef HID_MOUSE_Data;
 HID_cb_TypeDef HID_MOUSE_cb = {
     mouse_init,

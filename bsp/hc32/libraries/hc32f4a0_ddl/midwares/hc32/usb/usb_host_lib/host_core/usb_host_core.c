@@ -6,9 +6,11 @@
    Change Logs:
    Date             Author          Notes
    2022-03-31       CDT             First version
+   2022-06-30       CDT             Add USB core ID select function
+   2023-01-15       CDT             Optimize for device insert detection
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -57,24 +59,26 @@ static uint8_t Local_Buffer[ENUM_LOCAL_BUF];
 
 /**
  * @brief  initialization for the host application
- * @param  [in] pdev        device instance
- * @param  [in] phost       host state set
- * @param  [in] class_cbk   the call back function for the class application
- * @param  [in] user_cbk    the call back function for user
+ * @param  [in] pdev                device instance
+ * @param  [in] pstcPortIdentify    usb core and phy select
+ * @param  [in] phost               host state set
+ * @param  [in] class_cbk           the call back function for the class application
+ * @param  [in] user_cbk            the call back function for user
  * @retval None
  */
 void usb_host_init(usb_core_instance *pdev,
+                   stc_usb_port_identify *pstcPortIdentify,
                    USBH_HOST *phost,
                    usb_host_class_callback_func *class_cbk,
                    usb_host_user_callback_func *user_cbk)
 {
-    usb_bsp_init(pdev);
+    usb_bsp_init(pdev, pstcPortIdentify);
     usb_host_deinit(pdev, phost);
     phost->class_callbk = class_cbk;
     phost->user_callbk  = user_cbk;
-    host_driver_init(pdev);
+    host_driver_init(pdev, pstcPortIdentify);
     phost->user_callbk->huser_init();
-    usb_bsp_nvicconfig();
+    usb_bsp_nvicconfig(pdev);
 }
 
 /**
@@ -103,11 +107,12 @@ void usb_host_deinit(usb_core_instance *pdev, USBH_HOST *phost)
 /**
  * @brief  This is the main process function for the host core, it will process
  *         the main machine, such as connect,disconnect, emunation etc.
- * @param  [in] pdev        device instance
- * @param  [in] phost       host state set
+ * @param  [in] pdev                device instance
+ * @param  [in] pstcPortIdentify    usb core and phy select
+ * @param  [in] phost               host state set
  * @retval None
  */
-void usb_host_mainprocess(usb_core_instance *pdev, USBH_HOST *phost)
+void usb_host_mainprocess(usb_core_instance *pdev, stc_usb_port_identify *pstcPortIdentify, USBH_HOST *phost)
 {
     __IO HOST_STATUS tmp_status;
     tmp_status = HSTATUS_FAIL;
@@ -120,7 +125,7 @@ void usb_host_mainprocess(usb_core_instance *pdev, USBH_HOST *phost)
     }
 
     if ((host_driver_ifdevconnected(pdev) == 0UL) && (phost->host_state == HOST_IDLE)
-            && (host_driver_getvbusdrivestate(pdev) == 0UL)) {
+        && (host_driver_getvbusdrivestate(pdev) == 0UL)) {
         phost->host_state = HOST_DEV_DISCONNECTED;
     }
 
@@ -133,12 +138,20 @@ void usb_host_mainprocess(usb_core_instance *pdev, USBH_HOST *phost)
     } else if (tmp_host_state == HOST_DEV_CONNECTED) {
 #ifdef MSC_HID_COMPOSITE
         if (host_driver_getcurrentspd(pdev) == 2) {
-            host_driver_init(pdev);
+            host_driver_init(pdev, pstcPortIdentify);
         }
 #endif /* MSC_HID_COMPOSITE */
+
         phost->user_callbk->huser_devattached();
         phost->ctrlparam.hc_num_out = usb_host_distrch(pdev, 0x00U);
         phost->ctrlparam.hc_num_in = usb_host_distrch(pdev, 0x80U);
+
+        /* Wait DP DM stable */
+        usb_udelay(10UL);
+        while (host_driver_getdmdpstate(pdev) == 0UL) {
+            usb_mdelay(5UL);
+        }
+
         host_driver_portrst(pdev);
         phost->user_callbk->huser_devreset();
         phost->device_prop.devspeed = (uint8_t)host_driver_getcurrentspd(pdev);
@@ -189,7 +202,7 @@ void usb_host_mainprocess(usb_core_instance *pdev, USBH_HOST *phost)
         usb_host_dedistrallch(pdev);
         phost->host_state = HOST_IDLE;
 
-        host_driver_init(pdev);
+        host_driver_init(pdev, pstcPortIdentify);
     } else {
         ;
     }
@@ -296,7 +309,7 @@ HOST_STATUS usb_host_enumprocess(usb_core_instance *pdev, USBH_HOST *phost)
                                        phost,
                                        phost->device_prop.devdesc.iManufacturer,
                                        Local_Buffer,
-                                       0xffu) == HSTATUS_OK) {
+                                       0xFFU) == HSTATUS_OK) {
                 phost->user_callbk->huser_mfcstring(Local_Buffer);
                 phost->enum_state = ENUM_GET_PRODUCT_STRINGDESC;
             }
@@ -311,7 +324,7 @@ HOST_STATUS usb_host_enumprocess(usb_core_instance *pdev, USBH_HOST *phost)
                                        phost,
                                        phost->device_prop.devdesc.iProduct,
                                        Local_Buffer,
-                                       0xffu) == HSTATUS_OK) {
+                                       0xFFU) == HSTATUS_OK) {
                 phost->user_callbk->huser_productstring(Local_Buffer);
                 phost->enum_state = ENUM_GET_SERIALNUM_STRINGDESC;
             }
@@ -326,7 +339,7 @@ HOST_STATUS usb_host_enumprocess(usb_core_instance *pdev, USBH_HOST *phost)
                                        phost,
                                        phost->device_prop.devdesc.iSerialNumber,
                                        Local_Buffer,
-                                       0xffu) == HSTATUS_OK) {
+                                       0xFFU) == HSTATUS_OK) {
                 phost->user_callbk->huser_serialnum(Local_Buffer);
                 phost->enum_state = ENUM_SET_CFG;
             }
@@ -348,7 +361,6 @@ HOST_STATUS usb_host_enumprocess(usb_core_instance *pdev, USBH_HOST *phost)
     }
     return tmp_status;
 }
-
 
 /**
  * @brief  process the state machine of control transfer

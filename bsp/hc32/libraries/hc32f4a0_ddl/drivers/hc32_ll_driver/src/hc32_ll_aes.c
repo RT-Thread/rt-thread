@@ -7,9 +7,10 @@
    Change Logs:
    Date             Author          Notes
    2022-03-31       CDT             First version
+   2023-06-30       CDT             Add API AES_DeInit()
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -204,7 +205,7 @@ int32_t AES_Encrypt(const uint8_t *pu8Plaintext, uint32_t u32PlaintextSize,
     DDL_ASSERT((u32PlaintextSize % AES_BLOCK_SIZE) == 0U);
 
     if ((pu8Plaintext != NULL) && (u32PlaintextSize > 0UL) && \
-            (pu8Key != NULL) && (pu8Ciphertext != NULL)) {
+        (pu8Key != NULL) && (pu8Ciphertext != NULL)) {
         AES_WriteKey(pu8Key, u8KeySize);
         /* Set AES encrypt. */
         WRITE_REG32(bCM_AES->CR_b.MODE, 0UL);
@@ -248,7 +249,7 @@ int32_t AES_Decrypt(const uint8_t *pu8Ciphertext, uint32_t u32CiphertextSize,
     DDL_ASSERT((u32CiphertextSize % AES_BLOCK_SIZE) == 0U);
 
     if ((pu8Plaintext != NULL) && (u32CiphertextSize > 0UL) && \
-            (pu8Key != NULL) && (pu8Ciphertext != NULL)) {
+        (pu8Key != NULL) && (pu8Ciphertext != NULL)) {
         AES_WriteKey(pu8Key, u8KeySize);
         /* Set AES decrypt. */
         WRITE_REG32(bCM_AES->CR_b.MODE, 1UL);
@@ -268,6 +269,41 @@ int32_t AES_Decrypt(const uint8_t *pu8Ciphertext, uint32_t u32CiphertextSize,
 
     return i32Ret;
 }
+
+/**
+ * @brief  De-Initialize AES function.
+ * @param  None
+ * @retval int32_t:
+ *           - LL_OK:                   De-Initialize success.
+ *           - LL_ERR_TIMEOUT:          Timeout.
+ */
+int32_t AES_DeInit(void)
+{
+    int32_t i32Ret = LL_OK;
+    __IO uint32_t u32TimeOut = 0U;
+    uint8_t i;
+    __IO uint32_t *regDR = &CM_AES->DR0;
+    __IO uint32_t *regKR = &CM_AES->KR0;
+    /* Wait generating done */
+    while (0UL != READ_REG32(bCM_AES->CR_b.START)) {
+        u32TimeOut++;
+        if (u32TimeOut > AES_TIMEOUT) {
+            i32Ret = LL_ERR_TIMEOUT;
+            break;
+        }
+    }
+    if (LL_OK == i32Ret) {
+        /* Configures the registers to reset value. */
+        WRITE_REG32(CM_AES->CR, 0x00000000UL);
+        for (i = 0U; i < 4U; i++) {
+            regDR[i] = 0x00000000UL;
+        }
+        for (i = 0U; i < 8U; i++) {
+            regKR[i] = 0x00000000UL;
+        }
+    }
+    return i32Ret;
+}
 /**
  * @}
  */
@@ -279,8 +315,8 @@ int32_t AES_Decrypt(const uint8_t *pu8Ciphertext, uint32_t u32CiphertextSize,
  */
 
 /**
-* @}
-*/
+ * @}
+ */
 /*******************************************************************************
  * EOF (not truncated)
  ******************************************************************************/

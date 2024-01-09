@@ -1,6 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
- * Copyright (c) 2022, Xiaohua Semiconductor Co., Ltd.
+ * Copyright (C) 2022-2024, Xiaohua Semiconductor Co., Ltd.
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -14,7 +13,9 @@
 #include "drv_gpio.h"
 #include "board_config.h"
 
-#ifdef RT_USING_PIN
+#if defined(RT_USING_PIN)
+
+#if defined(BSP_USING_GPIO)
 
 #define GPIO_PIN_INDEX(pin)             ((uint8_t)((pin) & 0x0F))
 #define PIN_NUM(port, pin)              (((((port) & 0x0F) << 4) | ((pin) & 0x0F)))
@@ -283,7 +284,7 @@ static rt_int8_t hc32_pin_read(struct rt_device *device, rt_base_t pin)
 {
     uint8_t  gpio_port;
     uint16_t gpio_pin;
-    rt_int8_t value = PIN_LOW;
+    int value = PIN_LOW;
 
     if (pin < PIN_MAX_NUM)
     {
@@ -503,5 +504,8 @@ int rt_hw_pin_init(void)
 
     return rt_device_pin_register("pin", &hc32_pin_ops, RT_NULL);
 }
+INIT_BOARD_EXPORT(rt_hw_pin_init);
+
+#endif
 
 #endif  /* RT_USING_PIN */

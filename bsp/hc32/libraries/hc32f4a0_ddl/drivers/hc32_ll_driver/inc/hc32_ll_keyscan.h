@@ -7,9 +7,10 @@
    Change Logs:
    Date             Author          Notes
    2022-03-31       CDT             First version
+   2023-06-30       CDT             Add function KEYSCAN_DeInit
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -163,22 +164,22 @@ typedef struct {
  * @defgroup KEYSCAN_Keyin_Sel KEYSCAN keyin pins selection
  * @{
  */
-#define KEYSCAN_IN_0            (KEYSCAN_SCR_KEYINSEL_0)    /*!< KEYIN(EIRQ) 0 is selected */
-#define KEYSCAN_IN_1            (KEYSCAN_SCR_KEYINSEL_1)    /*!< KEYIN(EIRQ) 1 is selected */
-#define KEYSCAN_IN_2            (KEYSCAN_SCR_KEYINSEL_2)    /*!< KEYIN(EIRQ) 2 is selected */
-#define KEYSCAN_IN_3            (KEYSCAN_SCR_KEYINSEL_3)    /*!< KEYIN(EIRQ) 3 is selected */
-#define KEYSCAN_IN_4            (KEYSCAN_SCR_KEYINSEL_4)    /*!< KEYIN(EIRQ) 4 is selected */
-#define KEYSCAN_IN_5            (KEYSCAN_SCR_KEYINSEL_5)    /*!< KEYIN(EIRQ) 5 is selected */
-#define KEYSCAN_IN_6            (KEYSCAN_SCR_KEYINSEL_6)    /*!< KEYIN(EIRQ) 6 is selected */
-#define KEYSCAN_IN_7            (KEYSCAN_SCR_KEYINSEL_7)    /*!< KEYIN(EIRQ) 7 is selected */
-#define KEYSCAN_IN_8            (KEYSCAN_SCR_KEYINSEL_8)    /*!< KEYIN(EIRQ) 8  is selected */
-#define KEYSCAN_IN_9            (KEYSCAN_SCR_KEYINSEL_9)    /*!< KEYIN(EIRQ) 9  is selected */
-#define KEYSCAN_IN_10           (KEYSCAN_SCR_KEYINSEL_10)   /*!< KEYIN(EIRQ) 10 is selected */
-#define KEYSCAN_IN_11           (KEYSCAN_SCR_KEYINSEL_11)   /*!< KEYIN(EIRQ) 11 is selected */
-#define KEYSCAN_IN_12           (KEYSCAN_SCR_KEYINSEL_12)   /*!< KEYIN(EIRQ) 12 is selected */
-#define KEYSCAN_IN_13           (KEYSCAN_SCR_KEYINSEL_13)   /*!< KEYIN(EIRQ) 13 is selected */
-#define KEYSCAN_IN_14           (KEYSCAN_SCR_KEYINSEL_14)   /*!< KEYIN(EIRQ) 14 is selected */
-#define KEYSCAN_IN_15           (KEYSCAN_SCR_KEYINSEL_15)   /*!< KEYIN(EIRQ) 15 is selected */
+#define KEYSCAN_IN_0            (1UL << 0U)    /*!< KEYIN(EIRQ) 0 is selected */
+#define KEYSCAN_IN_1            (1UL << 1U)    /*!< KEYIN(EIRQ) 1 is selected */
+#define KEYSCAN_IN_2            (1UL << 2U)    /*!< KEYIN(EIRQ) 2 is selected */
+#define KEYSCAN_IN_3            (1UL << 3U)    /*!< KEYIN(EIRQ) 3 is selected */
+#define KEYSCAN_IN_4            (1UL << 4U)    /*!< KEYIN(EIRQ) 4 is selected */
+#define KEYSCAN_IN_5            (1UL << 5U)    /*!< KEYIN(EIRQ) 5 is selected */
+#define KEYSCAN_IN_6            (1UL << 6U)    /*!< KEYIN(EIRQ) 6 is selected */
+#define KEYSCAN_IN_7            (1UL << 7U)    /*!< KEYIN(EIRQ) 7 is selected */
+#define KEYSCAN_IN_8            (1UL << 8U)    /*!< KEYIN(EIRQ) 8  is selected */
+#define KEYSCAN_IN_9            (1UL << 9U)    /*!< KEYIN(EIRQ) 9  is selected */
+#define KEYSCAN_IN_10           (1UL << 10U)   /*!< KEYIN(EIRQ) 10 is selected */
+#define KEYSCAN_IN_11           (1UL << 11U)   /*!< KEYIN(EIRQ) 11 is selected */
+#define KEYSCAN_IN_12           (1UL << 12U)   /*!< KEYIN(EIRQ) 12 is selected */
+#define KEYSCAN_IN_13           (1UL << 13U)   /*!< KEYIN(EIRQ) 13 is selected */
+#define KEYSCAN_IN_14           (1UL << 14U)   /*!< KEYIN(EIRQ) 14 is selected */
+#define KEYSCAN_IN_15           (1UL << 15U)   /*!< KEYIN(EIRQ) 15 is selected */
 #define KEYSCAN_IN_ALL          (KEYSCAN_SCR_KEYINSEL)      /*!< KEYIN(EIRQ) mask */
 
 /**
@@ -213,6 +214,7 @@ __STATIC_INLINE uint32_t KEYSCAN_GetKeyoutIdx(void)
 int32_t KEYSCAN_StructInit(stc_keyscan_init_t *pstcKeyscanInit);
 int32_t KEYSCAN_Init(const stc_keyscan_init_t *pstcKeyscanInit);
 void KEYSCAN_Cmd(en_functional_state_t enNewState);
+int32_t KEYSCAN_DeInit(void);
 
 /**
  * @}

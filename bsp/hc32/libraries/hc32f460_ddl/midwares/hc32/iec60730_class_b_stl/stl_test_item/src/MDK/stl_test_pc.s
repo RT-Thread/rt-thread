@@ -1,5 +1,5 @@
 ;/*****************************************************************************
-; * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+; * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
 ; *
 ; * This software component is licensed by XHSC under BSD 3-Clause license
 ; * (the "License"); You may not use this file except in compliance with the
@@ -9,8 +9,9 @@
 ; */
 ;/****************************************************************************/
 ;/*  Test for MDK                                                            */
-;/*  Version     V1.0                                                        */
-;/*  Date        2022-03-31                                                  */
+;/*  Date             Author          Notes                                  */
+;/*  2022-03-31       CDT             First version                          */
+;/*  2023-05-31       CDT             Typo: subrouitne -> subroutine         */
 ;/****************************************************************************/
 
     THUMB
@@ -108,35 +109,35 @@ _pc_test_exit
             BX R3                   ; return
 
 _return_pc_test_addr_1
-            LDR R1, =_return_pc_test_addr_1     ; store subrouitne address in R1
+            LDR R1, =_return_pc_test_addr_1     ; store subroutine address in R1
             BX LR
 
 _return_pc_test_addr_2
-            LDR R1, =_return_pc_test_addr_2     ; store subrouitne address in R1
+            LDR R1, =_return_pc_test_addr_2     ; store subroutine address in R1
             BX LR
 
 _return_pc_test_addr_3
-            LDR R1, =_return_pc_test_addr_3     ; store subrouitne address in R1
+            LDR R1, =_return_pc_test_addr_3     ; store subroutine address in R1
             BX LR
 
 _return_pc_test_addr_4
-            LDR R1, =_return_pc_test_addr_4     ; store subrouitne address in R1
+            LDR R1, =_return_pc_test_addr_4     ; store subroutine address in R1
             BX LR
 
 _return_pc_test_addr_5
-            LDR R1, =_return_pc_test_addr_5     ; store subrouitne address in R1
+            LDR R1, =_return_pc_test_addr_5     ; store subroutine address in R1
             BX LR
 
 _return_pc_test_addr_6
-            LDR R1, =_return_pc_test_addr_6     ; store subrouitne address in R1
+            LDR R1, =_return_pc_test_addr_6     ; store subroutine address in R1
             BX LR
 
 _return_pc_test_addr_7
-            LDR R1, =_return_pc_test_addr_7     ; store subrouitne address in R1
+            LDR R1, =_return_pc_test_addr_7     ; store subroutine address in R1
             BX LR
 
 _return_pc_test_addr_8
-            LDR R1, =_return_pc_test_addr_8     ; store subrouitne address in R1
+            LDR R1, =_return_pc_test_addr_8     ; store subroutine address in R1
             BX LR
 
             ENDP

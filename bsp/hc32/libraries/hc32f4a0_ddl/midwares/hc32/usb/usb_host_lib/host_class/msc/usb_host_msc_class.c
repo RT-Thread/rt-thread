@@ -6,9 +6,11 @@
    Change Logs:
    Date             Author          Notes
    2022-03-31       CDT             First version
+   2022-06-30       CDT             Remove msc bot reset operation
+                                    Modify for variable alignment
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -66,18 +68,7 @@ void usb_host_msc_error_process(USB_HOST_MSC_STATUS status);
 /*******************************************************************************
  * Global variable definitions (declared in header file with 'extern')
  ******************************************************************************/
-#ifdef USB_INTERNAL_DMA_ENABLED
-#if defined ( __ICCARM__ ) /*!< IAR Compiler */
-#pragma data_alignment=4
-#endif
-#endif /* USB_INTERNAL_DMA_ENABLED */
 __USB_ALIGN_BEGIN MSC_Machine_TypeDef         MSC_Machine;
-
-#ifdef USB_INTERNAL_DMA_ENABLED
-#if defined ( __ICCARM__ ) /*!< IAR Compiler */
-#pragma data_alignment=4
-#endif
-#endif /* USB_INTERNAL_DMA_ENABLED */
 uint8_t MSCErrorCount = 0U;
 
 usb_host_class_callback_func  USBH_MSC_cb = {
@@ -105,7 +96,7 @@ usb_host_class_callback_func  USBH_MSC_cb = {
 HOST_STATUS usb_host_msc_bot_reset(usb_core_instance *pdev, USBH_HOST *phost)
 {
     phost->ctrlparam.setup.b.bmRequestType = USB_H2D | USB_REQ_TYPE_CLASS | \
-            USB_REQ_RECIPIENT_INTERFACE;
+                                             USB_REQ_RECIPIENT_INTERFACE;
     phost->ctrlparam.setup.b.bRequest = USB_REQ_BOT_RESET;
     phost->ctrlparam.setup.b.wValue.w = 0U;
     phost->ctrlparam.setup.b.wIndex.w = 0U;
@@ -123,7 +114,7 @@ HOST_STATUS usb_host_msc_bot_reset(usb_core_instance *pdev, USBH_HOST *phost)
 HOST_STATUS usb_host_msc_maxlun_get(usb_core_instance *pdev, USBH_HOST *phost)
 {
     phost->ctrlparam.setup.b.bmRequestType = USB_D2H | USB_REQ_TYPE_CLASS | \
-            USB_REQ_RECIPIENT_INTERFACE;
+                                             USB_REQ_RECIPIENT_INTERFACE;
 
     phost->ctrlparam.setup.b.bRequest = USB_REQ_GET_MAX_LUN;
     phost->ctrlparam.setup.b.wValue.w = 0U;
@@ -174,7 +165,7 @@ HOST_STATUS usb_host_msc_itfinit(usb_core_instance *pdev, void *phost)
     USBH_HOST *pphost = phost;
 
     if ((pphost->device_prop.devitfdesc[0].bInterfaceClass == MSC_CLASS) && \
-            (pphost->device_prop.devitfdesc[0].bInterfaceProtocol == MSC_PROTOCOL)) {
+        (pphost->device_prop.devitfdesc[0].bInterfaceProtocol == MSC_PROTOCOL)) {
         if ((pphost->device_prop.devepdesc[0][0].bEndpointAddress & 0x80U) == 0x80U) {
             MSC_Machine.MSC_BulkInEp = (pphost->device_prop.devepdesc[0][0].bEndpointAddress);
             MSC_Machine.MSC_BulkInEpSize  = pphost->device_prop.devepdesc[0][0].wMaxPacketSize;
@@ -263,17 +254,8 @@ HOST_STATUS usb_host_msc_process(usb_core_instance *pdev, void *phost)
                 USBH_MSC_BOTXferParam.MSCState = HOST_MSC_BOT_RESET;
                 break;
             case HOST_MSC_BOT_RESET:
-                /* issue a request to reset the bot. */
-                status = usb_host_msc_bot_reset(pdev, phost);
-                if (status == HSTATUS_OK) {
-                    USBH_MSC_BOTXferParam.MSCState = HOST_MSC_GET_MAX_LUN;
-                }
-                if (status == HSTATUS_UNSUPPORTED) {
-                    /* if the request fails, it needs to move to next state and should save the next state as backup */
-                    USBH_MSC_BOTXferParam.MSCStateBkp = HOST_MSC_GET_MAX_LUN;
-                    /* a clear feature should be issued if the request fails. */
-                    USBH_MSC_BOTXferParam.MSCState = HOST_MSC_CTRL_ERROR_STATE;
-                }
+                /* donot issue a request to reset the bot here, only when bot unrecovered error. */
+                USBH_MSC_BOTXferParam.MSCState = HOST_MSC_GET_MAX_LUN;
                 break;
             case HOST_MSC_GET_MAX_LUN:
                 /* issue a request to get the max logical unit(MAXLUN). */

@@ -9,7 +9,7 @@
    2022-03-31       CDT             First version
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -35,7 +35,7 @@
  */
 
 /**
- * @defgroup EV_HC32F460_LQFP100_V2_WM8731 HC32F460 EVB LQFP100 WM8731
+ * @defgroup EV_HC32F460_LQFP100_V2_WM8731 EV_HC32F460_LQFP100_V2 WM8731
  * @{
  */
 #if ((BSP_WM8731_ENABLE == DDL_ON) && (BSP_EV_HC32F460_LQFP100_V2 == BSP_EV_HC32F4XX))
@@ -59,13 +59,20 @@
 /*******************************************************************************
  * Local variable definitions ('static')
  ******************************************************************************/
+/**
+ * @defgroup EV_HC32F460_LQFP100_V2_WM8731_Local_Variables EV_HC32F460_LQFP100_V2 WM8731 Local Variables
+ * @{
+ */
 static stc_wm8731_ll_t stcWm8731Config = {0};
+/**
+ * @}
+ */
 
 /*******************************************************************************
  * Function implementation - global ('extern') and local ('static')
  ******************************************************************************/
 /**
- * @defgroup EV_HC32F460_LQFP100_V2_WM8731_Global_Functions HC32F460 LQFP100 EVB WM8731 Global Functions
+ * @defgroup EV_HC32F460_LQFP100_V2_WM8731_Local_Functions EV_HC32F460_LQFP100_V2 WM8731 Local Functions
  * @{
  */
 
@@ -100,6 +107,15 @@ static void BSP_WM8731_I2C_Write(const uint8_t *pu8Reg, const uint8_t *pu8Buf, u
 {
     (void)BSP_I2C_Write(BSP_WM8731_I2C_UNIT, BSP_WM8731_DEV_ADDR, pu8Reg, BSP_WM8731_REG_ADDR_LEN, pu8Buf, u32Len);
 }
+
+/**
+ * @}
+ */
+
+/**
+ * @defgroup EV_HC32F460_LQFP100_V2_WM8731_Global_Functions EV_HC32F460_LQFP100_V2 WM8731 Global Functions
+ * @{
+ */
 
 /**
  * @brief  De-initialize the WM8731.
@@ -208,10 +224,10 @@ void BSP_WM8731_Record(uint32_t *pu32ReadBuf, uint16_t u16Size)
 }
 
 /**
-  * @brief  Stops audio playing and recording.
-  * @param  None
-  * @retval None
-  */
+ * @brief  Stops audio playing and recording.
+ * @param  None
+ * @retval None
+ */
 void BSP_WM8731_Stop(void)
 {
     DMA_TransCompleteIntCmd(BSP_WM8731_DMA_SD_UNIT, BSP_WM8731_DMA_SD_INT_CH, DISABLE);
@@ -227,10 +243,10 @@ void BSP_WM8731_Stop(void)
 }
 
 /**
-  * @brief  Update the audio frequency.
-  * @param  u32AudioFreq:               Audio frequency used to play the audio.
-  * @retval None
-  */
+ * @brief  Update the audio frequency.
+ * @param  u32AudioFreq:               Audio frequency used to play the audio.
+ * @retval None
+ */
 void BSP_WM8731_SetFreq(uint32_t u32AudioFreq)
 {
     (void)WM8731_SetAudioFreq(&stcWm8731Config, u32AudioFreq);
@@ -238,10 +254,10 @@ void BSP_WM8731_SetFreq(uint32_t u32AudioFreq)
 }
 
 /**
-  * @brief  Set the audio volume level.
-  * @param  u8Volume:                   Volume level, Range is 0 to 100.
-  * @retval None
-  */
+ * @brief  Set the audio volume level.
+ * @param  u8Volume:                   Volume level, Range is 0 to 100.
+ * @retval None
+ */
 void BSP_WM8731_SetVolume(uint8_t u8Volume)
 {
     (void)WM8731_SetVolume(&stcWm8731Config, u8Volume);
@@ -375,8 +391,8 @@ __WEAKDEF int32_t BSP_I2S_Init(uint32_t u32AudioFreq)
  */
 
 /**
-* @}
-*/
+ * @}
+ */
 
 /******************************************************************************
  * EOF (not truncated)

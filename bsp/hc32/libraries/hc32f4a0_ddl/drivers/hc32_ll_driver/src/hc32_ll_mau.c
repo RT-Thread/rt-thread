@@ -6,9 +6,10 @@
    Change Logs:
    Date             Author          Notes
    2022-03-31       CDT             First version
+   2023-06-30       CDT             Add API MAU_DeInit()
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -87,25 +88,25 @@
 
 /**
  * @brief  Sqrt result left shift config
- * @param  [in] MAUx   Pointer to MAU instance register base.
+ * @param  [in] MAUx            Pointer to MAU instance register base.
  *         This parameter can only be: @arg CM_MAU
- * @param  [in] u8LShBitsNumber     Number of left shift bits
- *                                  Max value is MAU_SQRT_OUTPUT_LSHIFT_MAX
+ * @param  [in] u8ShiftNum      Number of left shift bits
+ *                              Max value is MAU_SQRT_OUTPUT_LSHIFT_MAX
  * @retval None
  */
-void MAU_SqrtResultLShiftConfig(CM_MAU_TypeDef *MAUx, uint8_t u8LShBitsNumber)
+void MAU_SqrtResultLShiftConfig(CM_MAU_TypeDef *MAUx, uint8_t u8ShiftNum)
 {
     DDL_ASSERT(IS_VALID_UNIT(MAUx));
-    DDL_ASSERT(IS_LSHBIT_NUM(u8LShBitsNumber));
+    DDL_ASSERT(IS_LSHBIT_NUM(u8ShiftNum));
 
-    MODIFY_REG32(MAUx->CSR, MAU_CSR_SHIFT, ((uint32_t)u8LShBitsNumber << MAU_CSR_SHIFT_POS));
+    MODIFY_REG32(MAUx->CSR, MAU_CSR_SHIFT, ((uint32_t)u8ShiftNum << MAU_CSR_SHIFT_POS));
 }
 
 /**
  * @brief  Sqrt interrupt function command
- * @param  [in] MAUx   Pointer to MAU instance register base.
+ * @param  [in] MAUx            Pointer to MAU instance register base.
  *         This parameter can only be: @arg CM_MAU
- * @param  [in] enNewState           An @ref en_functional_state_t enumeration value.
+ * @param  [in] enNewState      An @ref en_functional_state_t enumeration value.
  * @retval None
  */
 void MAU_SqrtIntCmd(CM_MAU_TypeDef *MAUx, en_functional_state_t enNewState)
@@ -118,9 +119,9 @@ void MAU_SqrtIntCmd(CM_MAU_TypeDef *MAUx, en_functional_state_t enNewState)
 
 /**
  * @brief  Input radicand for sqrt
- * @param  [in] MAUx   Pointer to MAU instance register base.
+ * @param  [in] MAUx            Pointer to MAU instance register base.
  *         This parameter can only be: @arg CM_MAU
- * @param  [in]  u32Radicand   Data to be square rooted
+ * @param  [in] u32Radicand     Data to be square rooted
  * @retval None
  */
 void MAU_SqrtWriteData(CM_MAU_TypeDef *MAUx, uint32_t u32Radicand)
@@ -132,7 +133,7 @@ void MAU_SqrtWriteData(CM_MAU_TypeDef *MAUx, uint32_t u32Radicand)
 
 /**
  * @brief  Start sqrt calculation
- * @param  [in] MAUx   Pointer to MAU instance register base.
+ * @param  [in] MAUx            Pointer to MAU instance register base.
  *         This parameter can only be: @arg CM_MAU
  * @retval None
  */
@@ -145,7 +146,7 @@ void MAU_SqrtStart(CM_MAU_TypeDef *MAUx)
 
 /**
  * @brief  Check whether the sqrt calculation is in progress
- * @param  [in] MAUx   Pointer to MAU instance register base.
+ * @param  [in] MAUx            Pointer to MAU instance register base.
  *         This parameter can only be: @arg CM_MAU
  * @retval An @ref en_flag_status_t enumeration type value.
  */
@@ -158,7 +159,7 @@ en_flag_status_t MAU_SqrtGetStatus(const CM_MAU_TypeDef *MAUx)
 
 /**
  * @brief  Read result of sqrt
- * @param  [in] MAUx   Pointer to MAU instance register base.
+ * @param  [in] MAUx            Pointer to MAU instance register base.
  *         This parameter can only be: @arg CM_MAU
  * @retval Result of sqrt,range is [0,0x10000]
  */
@@ -170,28 +171,26 @@ uint32_t MAU_SqrtReadData(const CM_MAU_TypeDef *MAUx)
 }
 
 /**
- * @brief  Initialize the specified DAC peripheral according to the specified parameters.
- * @param  [in]  MAUx                  Pointer to MAU instance register base.
+ * @brief  Initialize the MAU Sqrt function.
+ * @param  [in] MAUx            Pointer to MAU instance register base.
  *         This parameter can only be: @arg CM_MAU
- * @param  [in] u8LShBitsNumber       Sqrt result left shift bits number
- *                                    max value is @ref MAU_SQRT_OUTPUT_LSHIFT_MAX
- * @param  [in] enIntNewState         Enable or Disable sqrt interrupt
- *                                    @ref en_functional_state_t
+ * @param  [in] u8ShiftNum      Sqrt result left shift bits, max value is @ref MAU_SQRT_OUTPUT_LSHIFT_MAX
+ * @param  [in] enNewState      Enable or Disable sqrt interrupt @ref en_functional_state_t
  * @retval None
  */
-void MAU_SqrtInit(CM_MAU_TypeDef *MAUx, uint8_t u8LShBitsNumber, en_functional_state_t enIntNewState)
+void MAU_SqrtInit(CM_MAU_TypeDef *MAUx, uint8_t u8ShiftNum, en_functional_state_t enNewState)
 {
     DDL_ASSERT(IS_VALID_UNIT(MAUx));
-    DDL_ASSERT(IS_LSHBIT_NUM(u8LShBitsNumber));
-    DDL_ASSERT(IS_FUNCTIONAL_STATE(enIntNewState));
+    DDL_ASSERT(IS_LSHBIT_NUM(u8ShiftNum));
+    DDL_ASSERT(IS_FUNCTIONAL_STATE(enNewState));
 
     MODIFY_REG32(MAUx->CSR, MAU_CSR_SHIFT | MAU_CSR_INTEN,
-                 ((((uint32_t)u8LShBitsNumber << MAU_CSR_SHIFT_POS)) | ((uint32_t)enIntNewState << MAU_CSR_INTEN_POS)));
+                 ((((uint32_t)u8ShiftNum << MAU_CSR_SHIFT_POS)) | ((uint32_t)enNewState << MAU_CSR_INTEN_POS)));
 }
 
 /**
- * @brief  De-initialize the DAC peripheral. RESET the registers of the specified DAC unit.
- * @param  [in]  MAUx       Pointer to MAU instance register base.
+ * @brief  De-initialize the MAU Sqrt function.
+ * @param  [in] MAUx            Pointer to MAU instance register base.
  *         This parameter can only be: @arg CM_MAU
  * @retval None
  */
@@ -204,10 +203,10 @@ void MAU_SqrtDeInit(CM_MAU_TypeDef *MAUx)
 
 /**
  * @brief  Square root
- * @param  [in]  MAUx       Pointer to MAU instance register base.
+ * @param  [in] MAUx            Pointer to MAU instance register base.
  *         This parameter can only be: @arg CM_MAU
- * @param  [in]  u32Radicand   Data to be square rooted
- * @param  [out] pu32Result    Result of sqrt,range is [0,0x10000]
+ * @param  [in]  u32Radicand    Data to be square rooted
+ * @param  [out] pu32Result     Result of sqrt,range is [0,0x10000]
  * @retval int32_t:
  *               -  LL_OK:      No errors occurred
  *               -  LL_ERR:     Errors occurred
@@ -221,6 +220,7 @@ int32_t MAU_Sqrt(CM_MAU_TypeDef *MAUx, uint32_t u32Radicand, uint32_t *pu32Resul
     DDL_ASSERT(pu32Result != (void *)0UL);
 
     WRITE_REG32(MAUx->DTR0, u32Radicand);
+
     SET_REG32_BIT(MAUx->CSR, MAU_CSR_START);
     __ASM("NOP");
     __ASM("NOP");
@@ -242,9 +242,9 @@ int32_t MAU_Sqrt(CM_MAU_TypeDef *MAUx, uint32_t u32Radicand, uint32_t *pu32Resul
 
 /**
  * @brief  Sine
- * @param  [in] MAUx   Pointer to MAU instance register base.
+ * @param  [in] MAUx            Pointer to MAU instance register base.
  *         This parameter can only be: @arg CM_MAU
- * @param  u16AngleIdx: Angle index,range is [0,0xFFF], calculation method for reference:
+ * @param  u16AngleIdx:         Angle index,range is [0,0xFFF], calculation method for reference:
            AngleIdx = (uint16_t)(Angle * 4096.0F / 360.0F + 0.5F) % 4096U
  * @retval Result of Sine in Q15 format
  */
@@ -260,6 +260,35 @@ int16_t MAU_Sin(CM_MAU_TypeDef *MAUx, uint16_t u16AngleIdx)
 }
 
 /**
+ * @brief  De-initializes MAU.
+ * @param  None
+ * @retval int32_t:
+ *           - LL_OK:                   De-Initialize success.
+ *           - LL_ERR_TIMEOUT:          Timeout.
+ */
+int32_t MAU_DeInit(void)
+{
+    int32_t i32Ret = LL_OK;
+    __IO uint32_t u32TimeOut = MAU_SQRT_TIMEOUT;
+    /* Wait generating done */
+    while (0UL != READ_REG32(bCM_MAU->CSR_b.BUSY)) {
+        u32TimeOut--;
+        if (0UL == u32TimeOut) {
+            i32Ret = LL_ERR_TIMEOUT;
+            break;
+        }
+    }
+    if (LL_OK == i32Ret) {
+        WRITE_REG32(CM_MAU->CSR, 0x00000000UL);
+        WRITE_REG32(CM_MAU->DTR0,  0x00000000UL);
+        WRITE_REG32(CM_MAU->RTR0,  0x00000000UL);
+        WRITE_REG32(CM_MAU->DTR1,  0x00000000UL);
+        WRITE_REG32(CM_MAU->RTR1,  0x00000000UL);
+    }
+    return i32Ret;
+}
+
+/**
  * @}
  */
 
@@ -270,8 +299,8 @@ int16_t MAU_Sin(CM_MAU_TypeDef *MAUx, uint16_t u16AngleIdx)
  */
 
 /**
-* @}
-*/
+ * @}
+ */
 
 /******************************************************************************
  * EOF (not truncated)

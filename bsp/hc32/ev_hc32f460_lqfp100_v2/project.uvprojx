@@ -30,7 +30,7 @@
           <SLE66CMisc />
           <SLE66AMisc />
           <SLE66LinkerMisc />
-          <SFDFile>../libraries/hc32f460_ddl/drivers/cmsis/Device/HDSC/hc32f4xx/Source/ARM/sfr/HDSC_HC32F460.SFR</SFDFile>
+          <SFDFile>../libraries/hc32f460_ddl/drivers/cmsis/Device/HDSC/hc32f4xx/Source/ARM/sfr/HC32F460.SFR</SFDFile>
           <bCustSvd>1</bCustSvd>
           <UseEnv>0</UseEnv>
           <BinPath />
@@ -46,10 +46,10 @@
             <InvalidFlash>1</InvalidFlash>
           </TargetStatus>
           <OutputDirectory>.\build\keil\Obj\</OutputDirectory>
-          <OutputName>rtthread</OutputName>
+          <OutputName>rt-thread</OutputName>
           <CreateExecutable>1</CreateExecutable>
           <CreateLib>0</CreateLib>
-          <CreateHexFile>0</CreateHexFile>
+          <CreateHexFile>1</CreateHexFile>
           <DebugInformation>1</DebugInformation>
           <BrowseInformation>0</BrowseInformation>
           <ListingPath>.\build\keil\List\</ListingPath>
@@ -182,8 +182,9 @@
             <uocXRam>0</uocXRam>
             <RvdsVP>1</RvdsVP>
             <RvdsMve>0</RvdsMve>
+            <RvdsCdeCp>0</RvdsCdeCp>
             <hadIRAM2>1</hadIRAM2>
-            <hadIROM2>0</hadIROM2>
+            <hadIROM2>1</hadIROM2>
             <StupSel>8</StupSel>
             <useUlib>0</useUlib>
             <EndSel>1</EndSel>
@@ -277,7 +278,7 @@
               <OCR_RVCT5>
                 <Type>1</Type>
                 <StartAddress>0x03000C00</StartAddress>
-                <Size>0x3FC</Size>
+                <Size>0x3C0</Size>
               </OCR_RVCT5>
               <OCR_RVCT6>
                 <Type>0</Type>
@@ -333,9 +334,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls />
-              <Define>__STDC_LIMIT_MACROS, RT_USING_ARMLIBC, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, HC32F460, USE_DDL_DRIVER, __RTTHREAD__</Define>
+              <Define>__STDC_LIMIT_MACROS, RT_USING_ARMLIBC, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, HC32F460, USE_DDL_DRIVER, __RTTHREAD__, __DEBUG</Define>
               <Undefine />
-              <IncludePath>..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\compilers\common\include;.;..\libraries\hc32f460_ddl\drivers\cmsis\Include;board;..\..\..\components\libc\compilers\common\extension;applications;..\..\..\libcpu\arm\cortex-m4;..\..\..\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;board\ports;..\libraries\hc32f460_ddl\drivers\hc32_ll_driver\inc;..\libraries\hc32f460_ddl\drivers\cmsis\Device\HDSC\hc32f4xx\Include;..\..\..\components\drivers\include;..\libraries\hc32_drivers;..\..\..\components\libc\posix\ipc;board\config;..\..\..\components\libc\posix\io\eventfd;..\..\..\components\drivers\include;..\..\..\libcpu\arm\common;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\components\libc\posix\io\epoll;..\..\..\components\finsh</IncludePath>
+              <IncludePath>..\..\..\components\libc\compilers\common\extension;..\..\..\components\libc\compilers\common\include;..\..\..\include;..\libraries\hc32_drivers;..\libraries\hc32f460_ddl\drivers\cmsis\Include;board\config;..\..\..\components\libc\posix\io\poll;..\..\..\components\drivers\include;board\config\usb_config;..\..\..\components\libc\posix\io\eventfd;..\..\..\components\drivers\include;..\..\..\components\libc\posix\io\epoll;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\components\drivers\include;..\..\..\components\finsh;..\..\..\libcpu\arm\common;..\libraries\hc32f460_ddl\drivers\cmsis\Device\HDSC\hc32f4xx\Include;board\ports;..\..\..\components\libc\posix\ipc;..\..\..\components\drivers\include;..\libraries\hc32f460_ddl\drivers\hc32_ll_driver\inc;.;board;..\..\..\libcpu\arm\cortex-m4;applications</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -348,7 +349,7 @@
             <NoWarn>0</NoWarn>
             <uSurpInc>0</uSurpInc>
             <useXO>0</useXO>
-            <uClangAs>0</uClangAs>
+            <ClangAsOpt>4</ClangAsOpt>
             <VariousControls>
               <MiscControls />
               <Define />
@@ -383,6 +384,13 @@
               <FileName>main.c</FileName>
               <FileType>1</FileType>
               <FilePath>applications\main.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>xtal32_fcm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>applications\xtal32_fcm.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -577,6 +585,13 @@
               <FileName>startup_hc32f460.s</FileName>
               <FileType>2</FileType>
               <FilePath>..\libraries\hc32f460_ddl\drivers\cmsis\Device\HDSC\hc32f4xx\Source\ARM\startup_hc32f460.s</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>drv_common.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\hc32_drivers\drv_common.c</FilePath>
             </File>
           </Files>
           <Files>

@@ -7,9 +7,10 @@
    Change Logs:
    Date             Author          Notes
    2022-03-31       CDT             First version
+   2023-06-30       CDT             Modify typo
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -190,7 +191,7 @@ typedef struct {
  */
 #define TMR2_CNT_STAT_START             (0U)                            /*!< Counter start counting. */
 #define TMR2_CNT_STAT_STOP              (1U)                            /*!< Counter stop counting. */
-#define TMR2_CNT_STAT_MATCH_CMP         (2U)                            /*!< Counter value matchs the compare value. */
+#define TMR2_CNT_STAT_MATCH_CMP         (2U)                            /*!< Counter value matches the compare value. */
 /**
  * @}
  */

@@ -21,7 +21,7 @@
 #if (!(defined(BSP_USING_PWM_TMRA_1) || defined(BSP_USING_PWM_TMRA_2) || \
        defined(BSP_USING_PWM_TMRA_3) || defined(BSP_USING_PWM_TMRA_4) || \
        defined(BSP_USING_PWM_TMRA_5) || defined(BSP_USING_PWM_TMRA_6)))
-    #error "Please define at least one BSP_USING_PWM_TMRA_x"
+#error "Please define at least one BSP_USING_PWM_TMRA_x"
 #endif
 
 enum
@@ -94,39 +94,39 @@ static rt_uint32_t get_tmra_clk_freq(CM_TMRA_TypeDef *TMRAx)
     u16Div = READ_REG16(TMRAx->BCSTR) & TMRA_BCSTR_CKDIV;
     switch (u16Div)
     {
-        case (TMRA_CLK_DIV2):
-            u32clkFreq /= 2;
-            break;
-        case (TMRA_CLK_DIV4):
-            u32clkFreq /= 4;
-            break;
-        case (TMRA_CLK_DIV8):
-            u32clkFreq /= 8;
-            break;
-        case (TMRA_CLK_DIV16):
-            u32clkFreq /= 16;
-            break;
-        case (TMRA_CLK_DIV32):
-            u32clkFreq /= 32;
-            break;
-        case (TMRA_CLK_DIV64):
-            u32clkFreq /= 64;
-            break;
-        case (TMRA_CLK_DIV128):
-            u32clkFreq /= 128;
-            break;
-        case (TMRA_CLK_DIV256):
-            u32clkFreq /= 256;
-            break;
-        case (TMRA_CLK_DIV512):
-            u32clkFreq /= 512;
-            break;
-        case (TMRA_CLK_DIV1024):
-            u32clkFreq /= 1024;
-            break;
-        case (TMRA_CLK_DIV1):
-        default:
-            break;
+    case (TMRA_CLK_DIV2):
+        u32clkFreq /= 2;
+        break;
+    case (TMRA_CLK_DIV4):
+        u32clkFreq /= 4;
+        break;
+    case (TMRA_CLK_DIV8):
+        u32clkFreq /= 8;
+        break;
+    case (TMRA_CLK_DIV16):
+        u32clkFreq /= 16;
+        break;
+    case (TMRA_CLK_DIV32):
+        u32clkFreq /= 32;
+        break;
+    case (TMRA_CLK_DIV64):
+        u32clkFreq /= 64;
+        break;
+    case (TMRA_CLK_DIV128):
+        u32clkFreq /= 128;
+        break;
+    case (TMRA_CLK_DIV256):
+        u32clkFreq /= 256;
+        break;
+    case (TMRA_CLK_DIV512):
+        u32clkFreq /= 512;
+        break;
+    case (TMRA_CLK_DIV1024):
+        u32clkFreq /= 1024;
+        break;
+    case (TMRA_CLK_DIV1):
+    default:
+        break;
     }
     return u32clkFreq;
 }
@@ -139,8 +139,14 @@ static struct rt_pwm_ops drv_ops =
 
 static rt_err_t drv_pwm_enable(CM_TMRA_TypeDef *TMRAx, struct rt_pwm_configuration *configuration, rt_bool_t enable)
 {
-    if (RT_TRUE == enable) {TMRA_PWM_OutputCmd(TMRAx, configuration->channel, ENABLE);}
-    else {TMRA_PWM_OutputCmd(TMRAx, configuration->channel, DISABLE);}
+    if (RT_TRUE == enable)
+    {
+        TMRA_PWM_OutputCmd(TMRAx, configuration->channel, ENABLE);
+    }
+    else
+    {
+        TMRA_PWM_OutputCmd(TMRAx, configuration->channel, DISABLE);
+    }
     return RT_EOK;
 }
 
@@ -170,7 +176,7 @@ static rt_err_t drv_pwm_set(CM_TMRA_TypeDef *TMRAx, struct rt_pwm_configuration 
         u32clkFreq = get_tmra_clk_freq_not_div(TMRAx);
         u64clk_ns = (rt_uint64_t)1000000000ul / u32clkFreq;
         u64val = (rt_uint64_t)configuration->period / u64clk_ns;
-        for (div_bit=0; div_bit<= 10; div_bit++)
+        for (div_bit = 0; div_bit <= 10; div_bit++)
         {
             if (u64val < 0xFFFF) break;
             u64val /= 2;
@@ -200,7 +206,7 @@ static rt_err_t drv_pwm_set_period(CM_TMRA_TypeDef *TMRAx, struct rt_pwm_configu
         u32clkFreq = get_tmra_clk_freq_not_div(TMRAx);
         u64clk_ns = (rt_uint64_t)1000000000ul / u32clkFreq;
         u64val = (rt_uint64_t)configuration->period / u64clk_ns;
-        for (div_bit=0; div_bit<= 10; div_bit++)
+        for (div_bit = 0; div_bit <= 10; div_bit++)
         {
             if (u64val < 0xFFFF) break;
             u64val /= 2;
@@ -260,7 +266,7 @@ static rt_err_t _pwm_tmra_init(struct hc32_pwm_tmra *device)
     RT_ASSERT(device != RT_NULL);
     TMRAx = device->instance;
     TMRA_Init(TMRAx, &device->stcTmraInit);
-    for (i=0; i<8; i++)
+    for (i = 0; i < 8; i++)
     {
         if ((device->channel >> i) & 0x01)
         {
@@ -274,160 +280,160 @@ static rt_err_t _pwm_tmra_init(struct hc32_pwm_tmra *device)
 static void pwm_get_channel(void)
 {
 #ifdef BSP_USING_PWM_TMRA_1
-    #ifdef BSP_USING_PWM_TMRA_1_CH1
-        g_pwm_dev_array[PWM_TMRA_1_INDEX].channel |= 1 << 0;
-    #endif
-    #ifdef BSP_USING_PWM_TMRA_1_CH2
-        g_pwm_dev_array[PWM_TMRA_1_INDEX].channel |= 1 << 1;
-    #endif
-    #ifdef BSP_USING_PWM_TMRA_1_CH3
-        g_pwm_dev_array[PWM_TMRA_1_INDEX].channel |= 1 << 2;
-    #endif
-    #ifdef BSP_USING_PWM_TMRA_1_CH4
-        g_pwm_dev_array[PWM_TMRA_1_INDEX].channel |= 1 << 3;
-    #endif
-    #ifdef BSP_USING_PWM_TMRA_1_CH5
-        g_pwm_dev_array[PWM_TMRA_1_INDEX].channel |= 1 << 4;
-    #endif
-    #ifdef BSP_USING_PWM_TMRA_1_CH6
-        g_pwm_dev_array[PWM_TMRA_1_INDEX].channel |= 1 << 5;
-    #endif
-    #ifdef BSP_USING_PWM_TMRA_1_CH7
-        g_pwm_dev_array[PWM_TMRA_1_INDEX].channel |= 1 << 6;
-    #endif
-    #ifdef BSP_USING_PWM_TMRA_1_CH8
-        g_pwm_dev_array[PWM_TMRA_1_INDEX].channel |= 1 << 7;
-    #endif
+#ifdef BSP_USING_PWM_TMRA_1_CH1
+    g_pwm_dev_array[PWM_TMRA_1_INDEX].channel |= 1 << 0;
+#endif
+#ifdef BSP_USING_PWM_TMRA_1_CH2
+    g_pwm_dev_array[PWM_TMRA_1_INDEX].channel |= 1 << 1;
+#endif
+#ifdef BSP_USING_PWM_TMRA_1_CH3
+    g_pwm_dev_array[PWM_TMRA_1_INDEX].channel |= 1 << 2;
+#endif
+#ifdef BSP_USING_PWM_TMRA_1_CH4
+    g_pwm_dev_array[PWM_TMRA_1_INDEX].channel |= 1 << 3;
+#endif
+#ifdef BSP_USING_PWM_TMRA_1_CH5
+    g_pwm_dev_array[PWM_TMRA_1_INDEX].channel |= 1 << 4;
+#endif
+#ifdef BSP_USING_PWM_TMRA_1_CH6
+    g_pwm_dev_array[PWM_TMRA_1_INDEX].channel |= 1 << 5;
+#endif
+#ifdef BSP_USING_PWM_TMRA_1_CH7
+    g_pwm_dev_array[PWM_TMRA_1_INDEX].channel |= 1 << 6;
+#endif
+#ifdef BSP_USING_PWM_TMRA_1_CH8
+    g_pwm_dev_array[PWM_TMRA_1_INDEX].channel |= 1 << 7;
+#endif
 #endif
 #ifdef BSP_USING_PWM_TMRA_2
-    #ifdef BSP_USING_PWM_TMRA_2_CH1
-        g_pwm_dev_array[PWM_TMRA_2_INDEX].channel |= 1 << 0;
-    #endif
-    #ifdef BSP_USING_PWM_TMRA_2_CH2
-        g_pwm_dev_array[PWM_TMRA_2_INDEX].channel |= 1 << 1;
-    #endif
-    #ifdef BSP_USING_PWM_TMRA_2_CH3
-        g_pwm_dev_array[PWM_TMRA_2_INDEX].channel |= 1 << 2;
-    #endif
-    #ifdef BSP_USING_PWM_TMRA_2_CH4
-        g_pwm_dev_array[PWM_TMRA_2_INDEX].channel |= 1 << 3;
-    #endif
-    #ifdef BSP_USING_PWM_TMRA_2_CH5
-        g_pwm_dev_array[PWM_TMRA_2_INDEX].channel |= 1 << 4;
-    #endif
-    #ifdef BSP_USING_PWM_TMRA_2_CH6
-        g_pwm_dev_array[PWM_TMRA_2_INDEX].channel |= 1 << 5;
-    #endif
-    #ifdef BSP_USING_PWM_TMRA_2_CH7
-        g_pwm_dev_array[PWM_TMRA_2_INDEX].channel |= 1 << 6;
-    #endif
-    #ifdef BSP_USING_PWM_TMRA_2_CH8
-        g_pwm_dev_array[PWM_TMRA_2_INDEX].channel |= 1 << 7;
-    #endif
+#ifdef BSP_USING_PWM_TMRA_2_CH1
+    g_pwm_dev_array[PWM_TMRA_2_INDEX].channel |= 1 << 0;
+#endif
+#ifdef BSP_USING_PWM_TMRA_2_CH2
+    g_pwm_dev_array[PWM_TMRA_2_INDEX].channel |= 1 << 1;
+#endif
+#ifdef BSP_USING_PWM_TMRA_2_CH3
+    g_pwm_dev_array[PWM_TMRA_2_INDEX].channel |= 1 << 2;
+#endif
+#ifdef BSP_USING_PWM_TMRA_2_CH4
+    g_pwm_dev_array[PWM_TMRA_2_INDEX].channel |= 1 << 3;
+#endif
+#ifdef BSP_USING_PWM_TMRA_2_CH5
+    g_pwm_dev_array[PWM_TMRA_2_INDEX].channel |= 1 << 4;
+#endif
+#ifdef BSP_USING_PWM_TMRA_2_CH6
+    g_pwm_dev_array[PWM_TMRA_2_INDEX].channel |= 1 << 5;
+#endif
+#ifdef BSP_USING_PWM_TMRA_2_CH7
+    g_pwm_dev_array[PWM_TMRA_2_INDEX].channel |= 1 << 6;
+#endif
+#ifdef BSP_USING_PWM_TMRA_2_CH8
+    g_pwm_dev_array[PWM_TMRA_2_INDEX].channel |= 1 << 7;
+#endif
 #endif
 #ifdef BSP_USING_PWM_TMRA_3
-    #ifdef BSP_USING_PWM_TMRA_3_CH1
-        g_pwm_dev_array[PWM_TMRA_3_INDEX].channel |= 1 << 0;
-    #endif
-    #ifdef BSP_USING_PWM_TMRA_3_CH2
-        g_pwm_dev_array[PWM_TMRA_3_INDEX].channel |= 1 << 1;
-    #endif
-    #ifdef BSP_USING_PWM_TMRA_3_CH3
-        g_pwm_dev_array[PWM_TMRA_3_INDEX].channel |= 1 << 2;
-    #endif
-    #ifdef BSP_USING_PWM_TMRA_3_CH4
-        g_pwm_dev_array[PWM_TMRA_3_INDEX].channel |= 1 << 3;
-    #endif
-    #ifdef BSP_USING_PWM_TMRA_3_CH5
-        g_pwm_dev_array[PWM_TMRA_3_INDEX].channel |= 1 << 4;
-    #endif
-    #ifdef BSP_USING_PWM_TMRA_3_CH6
-        g_pwm_dev_array[PWM_TMRA_3_INDEX].channel |= 1 << 5;
-    #endif
-    #ifdef BSP_USING_PWM_TMRA_3_CH7
-        g_pwm_dev_array[PWM_TMRA_3_INDEX].channel |= 1 << 6;
-    #endif
-    #ifdef BSP_USING_PWM_TMRA_3_CH8
-        g_pwm_dev_array[PWM_TMRA_3_INDEX].channel |= 1 << 7;
-    #endif
+#ifdef BSP_USING_PWM_TMRA_3_CH1
+    g_pwm_dev_array[PWM_TMRA_3_INDEX].channel |= 1 << 0;
+#endif
+#ifdef BSP_USING_PWM_TMRA_3_CH2
+    g_pwm_dev_array[PWM_TMRA_3_INDEX].channel |= 1 << 1;
+#endif
+#ifdef BSP_USING_PWM_TMRA_3_CH3
+    g_pwm_dev_array[PWM_TMRA_3_INDEX].channel |= 1 << 2;
+#endif
+#ifdef BSP_USING_PWM_TMRA_3_CH4
+    g_pwm_dev_array[PWM_TMRA_3_INDEX].channel |= 1 << 3;
+#endif
+#ifdef BSP_USING_PWM_TMRA_3_CH5
+    g_pwm_dev_array[PWM_TMRA_3_INDEX].channel |= 1 << 4;
+#endif
+#ifdef BSP_USING_PWM_TMRA_3_CH6
+    g_pwm_dev_array[PWM_TMRA_3_INDEX].channel |= 1 << 5;
+#endif
+#ifdef BSP_USING_PWM_TMRA_3_CH7
+    g_pwm_dev_array[PWM_TMRA_3_INDEX].channel |= 1 << 6;
+#endif
+#ifdef BSP_USING_PWM_TMRA_3_CH8
+    g_pwm_dev_array[PWM_TMRA_3_INDEX].channel |= 1 << 7;
+#endif
 #endif
 #ifdef BSP_USING_PWM_TMRA_4
-    #ifdef BSP_USING_PWM_TMRA_4_CH1
-        g_pwm_dev_array[PWM_TMRA_4_INDEX].channel |= 1 << 0;
-    #endif
-    #ifdef BSP_USING_PWM_TMRA_4_CH2
-        g_pwm_dev_array[PWM_TMRA_4_INDEX].channel |= 1 << 1;
-    #endif
-    #ifdef BSP_USING_PWM_TMRA_4_CH3
-        g_pwm_dev_array[PWM_TMRA_4_INDEX].channel |= 1 << 2;
-    #endif
-    #ifdef BSP_USING_PWM_TMRA_4_CH4
-        g_pwm_dev_array[PWM_TMRA_4_INDEX].channel |= 1 << 3;
-    #endif
-    #ifdef BSP_USING_PWM_TMRA_4_CH5
-        g_pwm_dev_array[PWM_TMRA_4_INDEX].channel |= 1 << 4;
-    #endif
-    #ifdef BSP_USING_PWM_TMRA_4_CH6
-        g_pwm_dev_array[PWM_TMRA_4_INDEX].channel |= 1 << 5;
-    #endif
-    #ifdef BSP_USING_PWM_TMRA_4_CH7
-        g_pwm_dev_array[PWM_TMRA_4_INDEX].channel |= 1 << 6;
-    #endif
-    #ifdef BSP_USING_PWM_TMRA_4_CH8
-        g_pwm_dev_array[PWM_TMRA_4_INDEX].channel |= 1 << 7;
-    #endif
+#ifdef BSP_USING_PWM_TMRA_4_CH1
+    g_pwm_dev_array[PWM_TMRA_4_INDEX].channel |= 1 << 0;
+#endif
+#ifdef BSP_USING_PWM_TMRA_4_CH2
+    g_pwm_dev_array[PWM_TMRA_4_INDEX].channel |= 1 << 1;
+#endif
+#ifdef BSP_USING_PWM_TMRA_4_CH3
+    g_pwm_dev_array[PWM_TMRA_4_INDEX].channel |= 1 << 2;
+#endif
+#ifdef BSP_USING_PWM_TMRA_4_CH4
+    g_pwm_dev_array[PWM_TMRA_4_INDEX].channel |= 1 << 3;
+#endif
+#ifdef BSP_USING_PWM_TMRA_4_CH5
+    g_pwm_dev_array[PWM_TMRA_4_INDEX].channel |= 1 << 4;
+#endif
+#ifdef BSP_USING_PWM_TMRA_4_CH6
+    g_pwm_dev_array[PWM_TMRA_4_INDEX].channel |= 1 << 5;
+#endif
+#ifdef BSP_USING_PWM_TMRA_4_CH7
+    g_pwm_dev_array[PWM_TMRA_4_INDEX].channel |= 1 << 6;
+#endif
+#ifdef BSP_USING_PWM_TMRA_4_CH8
+    g_pwm_dev_array[PWM_TMRA_4_INDEX].channel |= 1 << 7;
+#endif
 #endif
 #ifdef BSP_USING_PWM_TMRA_5
-    #ifdef BSP_USING_PWM_TMRA_5_CH1
-        g_pwm_dev_array[PWM_TMRA_5_INDEX].channel |= 1 << 0;
-    #endif
-    #ifdef BSP_USING_PWM_TMRA_5_CH2
-        g_pwm_dev_array[PWM_TMRA_5_INDEX].channel |= 1 << 1;
-    #endif
-    #ifdef BSP_USING_PWM_TMRA_5_CH3
-        g_pwm_dev_array[PWM_TMRA_5_INDEX].channel |= 1 << 2;
-    #endif
-    #ifdef BSP_USING_PWM_TMRA_5_CH4
-        g_pwm_dev_array[PWM_TMRA_5_INDEX].channel |= 1 << 3;
-    #endif
-    #ifdef BSP_USING_PWM_TMRA_5_CH5
-        g_pwm_dev_array[PWM_TMRA_5_INDEX].channel |= 1 << 4;
-    #endif
-    #ifdef BSP_USING_PWM_TMRA_5_CH6
-        g_pwm_dev_array[PWM_TMRA_5_INDEX].channel |= 1 << 5;
-    #endif
-    #ifdef BSP_USING_PWM_TMRA_5_CH7
-        g_pwm_dev_array[PWM_TMRA_5_INDEX].channel |= 1 << 6;
-    #endif
-    #ifdef BSP_USING_PWM_TMRA_5_CH8
-        g_pwm_dev_array[PWM_TMRA_5_INDEX].channel |= 1 << 7;
-    #endif
+#ifdef BSP_USING_PWM_TMRA_5_CH1
+    g_pwm_dev_array[PWM_TMRA_5_INDEX].channel |= 1 << 0;
+#endif
+#ifdef BSP_USING_PWM_TMRA_5_CH2
+    g_pwm_dev_array[PWM_TMRA_5_INDEX].channel |= 1 << 1;
+#endif
+#ifdef BSP_USING_PWM_TMRA_5_CH3
+    g_pwm_dev_array[PWM_TMRA_5_INDEX].channel |= 1 << 2;
+#endif
+#ifdef BSP_USING_PWM_TMRA_5_CH4
+    g_pwm_dev_array[PWM_TMRA_5_INDEX].channel |= 1 << 3;
+#endif
+#ifdef BSP_USING_PWM_TMRA_5_CH5
+    g_pwm_dev_array[PWM_TMRA_5_INDEX].channel |= 1 << 4;
+#endif
+#ifdef BSP_USING_PWM_TMRA_5_CH6
+    g_pwm_dev_array[PWM_TMRA_5_INDEX].channel |= 1 << 5;
+#endif
+#ifdef BSP_USING_PWM_TMRA_5_CH7
+    g_pwm_dev_array[PWM_TMRA_5_INDEX].channel |= 1 << 6;
+#endif
+#ifdef BSP_USING_PWM_TMRA_5_CH8
+    g_pwm_dev_array[PWM_TMRA_5_INDEX].channel |= 1 << 7;
+#endif
 #endif
 #ifdef BSP_USING_PWM_TMRA_6
-    #ifdef BSP_USING_PWM_TMRA_6_CH1
-        g_pwm_dev_array[PWM_TMRA_6_INDEX].channel |= 1 << 0;
-    #endif
-    #ifdef BSP_USING_PWM_TMRA_6_CH2
-        g_pwm_dev_array[PWM_TMRA_6_INDEX].channel |= 1 << 1;
-    #endif
-    #ifdef BSP_USING_PWM_TMRA_6_CH3
-        g_pwm_dev_array[PWM_TMRA_6_INDEX].channel |= 1 << 2;
-    #endif
-    #ifdef BSP_USING_PWM_TMRA_6_CH4
-        g_pwm_dev_array[PWM_TMRA_6_INDEX].channel |= 1 << 3;
-    #endif
-    #ifdef BSP_USING_PWM_TMRA_6_CH5
-        g_pwm_dev_array[PWM_TMRA_6_INDEX].channel |= 1 << 4;
-    #endif
-    #ifdef BSP_USING_PWM_TMRA_6_CH6
-        g_pwm_dev_array[PWM_TMRA_6_INDEX].channel |= 1 << 5;
-    #endif
-    #ifdef BSP_USING_PWM_TMRA_6_CH7
-        g_pwm_dev_array[PWM_TMRA_6_INDEX].channel |= 1 << 6;
-    #endif
-    #ifdef BSP_USING_PWM_TMRA_6_CH8
-        g_pwm_dev_array[PWM_TMRA_6_INDEX].channel |= 1 << 7;
-    #endif
+#ifdef BSP_USING_PWM_TMRA_6_CH1
+    g_pwm_dev_array[PWM_TMRA_6_INDEX].channel |= 1 << 0;
+#endif
+#ifdef BSP_USING_PWM_TMRA_6_CH2
+    g_pwm_dev_array[PWM_TMRA_6_INDEX].channel |= 1 << 1;
+#endif
+#ifdef BSP_USING_PWM_TMRA_6_CH3
+    g_pwm_dev_array[PWM_TMRA_6_INDEX].channel |= 1 << 2;
+#endif
+#ifdef BSP_USING_PWM_TMRA_6_CH4
+    g_pwm_dev_array[PWM_TMRA_6_INDEX].channel |= 1 << 3;
+#endif
+#ifdef BSP_USING_PWM_TMRA_6_CH5
+    g_pwm_dev_array[PWM_TMRA_6_INDEX].channel |= 1 << 4;
+#endif
+#ifdef BSP_USING_PWM_TMRA_6_CH6
+    g_pwm_dev_array[PWM_TMRA_6_INDEX].channel |= 1 << 5;
+#endif
+#ifdef BSP_USING_PWM_TMRA_6_CH7
+    g_pwm_dev_array[PWM_TMRA_6_INDEX].channel |= 1 << 6;
+#endif
+#ifdef BSP_USING_PWM_TMRA_6_CH8
+    g_pwm_dev_array[PWM_TMRA_6_INDEX].channel |= 1 << 7;
+#endif
 #endif
 }
 

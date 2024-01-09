@@ -8,7 +8,7 @@
    2022-03-31       CDT             First version
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -167,7 +167,6 @@ typedef enum {
     HOST_ERROR_STATE
 } HOST_HANDLE_STATE;
 
-
 /* states of the enumeration stage on the host side */
 typedef enum {
     ENUM_IDLE = 0,
@@ -222,6 +221,7 @@ typedef struct {
     uint8_t               *buff;             /* data buffer */
     CTRL_HANDLE_STATUS    ctrl_status;       /* status of control pipe */
     CTRL_HANDLE_STATE     ctrl_state;        /* running state of the control transfer */
+    uint8_t Rev[2];
     usb_setup_typedef     setup;             /* setup packet */
 } usb_host_ctrl_param;
 

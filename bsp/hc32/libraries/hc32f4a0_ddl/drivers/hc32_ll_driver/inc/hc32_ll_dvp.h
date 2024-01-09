@@ -7,9 +7,11 @@
    Change Logs:
    Date             Author          Notes
    2022-03-31       CDT             First version
+   2023-09-30       CDT             Modify typo
+                                    Add function: DVP_GetCaptureState
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -81,11 +83,11 @@ typedef struct {
 typedef struct {
     uint16_t u16RowStartLine;       /*!< The DVP window row start line.
                                          This parameter can be a value between 0x00 and 0x3FFF */
-    uint16_t u16ColoumStartLine;    /*!< The DVP window coloum start line.
+    uint16_t u16ColumnStartLine;    /*!< The DVP window column start line.
                                          This parameter can be a value between 0x00 and 0x3FFF */
     uint16_t u16RowLineSize;        /*!< The DVP window row line size.
                                          This parameter can be a value between 0x04 and 0x3FFF */
-    uint16_t u16ColoumLineSize;     /*!< The DVP window coloum line size.
+    uint16_t u16ColumnLineSize;     /*!< The DVP window column line size.
                                          This parameter can be a value between 0x00 and 0x3FFF */
 } stc_dvp_crop_window_config_t;
 
@@ -265,7 +267,8 @@ void DVP_Cmd(en_functional_state_t enNewState);
 void DVP_IntCmd(uint32_t u32IntType, en_functional_state_t enNewState);
 void DVP_CropCmd(en_functional_state_t enNewState);
 void DVP_JPEGCmd(en_functional_state_t enNewState);
-void DVP_CaptrueCmd(en_functional_state_t enNewState);
+void DVP_CaptureCmd(en_functional_state_t enNewState);
+en_functional_state_t DVP_GetCaptureState(void);
 en_flag_status_t DVP_GetStatus(uint32_t u32Flag);
 void DVP_ClearStatus(uint32_t u32Flag);
 int32_t DVP_SetSWSyncCode(const stc_dvp_sw_sync_code_t *pstcSyncCode);

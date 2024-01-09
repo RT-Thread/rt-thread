@@ -6,9 +6,10 @@
    Change Logs:
    Date             Author          Notes
    2022-03-31       CDT             First version
+   2022-06-30       CDT             Fix warning: MISRAC2012-Rule-18.4
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -121,19 +122,16 @@ static const uint32_t m_au32Crc32Table[256] = {
  * @param  [in] u32Crc32Value       CRC32 value
  * @param  [in] pu8Data             Pointer to data buffer
  * @param  [in] u32Len              Data length
- * @retval None
+ * @retval CRC32 value
  * @note Poly=0x04C11DB7, Init=0xFFFFFFFF, RefIn=true, RefOut=true, XorOut=0x00000000
  */
 uint32_t STL_CalculateCRC32Value(uint32_t u32Crc32Value, uint8_t *pu8Data, uint32_t u32Len)
 {
-    uint8_t octet;
-    const uint8_t *p, *q;
+    uint32_t i;
     uint32_t u32CurrCrc32Value = u32Crc32Value;
 
-    q = pu8Data + u32Len;
-    for (p = pu8Data; p < q; p++) {
-        octet = *p;
-        u32CurrCrc32Value = (u32CurrCrc32Value >> 8) ^ m_au32Crc32Table[(u32CurrCrc32Value & 0xFFUL) ^ octet];
+    for (i = 0UL; i < u32Len; i++) {
+        u32CurrCrc32Value = (u32CurrCrc32Value >> 8) ^ m_au32Crc32Table[(u32CurrCrc32Value & 0xFFUL) ^ pu8Data[i]];
     }
 
     return u32CurrCrc32Value;

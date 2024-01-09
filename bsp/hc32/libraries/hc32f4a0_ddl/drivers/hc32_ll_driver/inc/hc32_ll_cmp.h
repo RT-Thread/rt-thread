@@ -1,15 +1,17 @@
 /**
  *******************************************************************************
  * @file  hc32_ll_cmp.h
- * @brief Head file for CMP module.
- *
+ * @brief This file contains all the functions prototypes of the CMP driver
+ *        library.
  @verbatim
    Change Logs:
    Date             Author          Notes
    2022-03-31       CDT             First version
+   2022-06-30       CDT             Modify structure stc_cmp_window_init_t
+                                    Modify macro define for API
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -70,8 +72,11 @@ typedef struct {
  * @brief CMP window mode configuration structure
  */
 typedef struct {
-    uint8_t u8WinVolLow;            /*!< CMP reference low voltage for window mode @ref CMP_Window_Low_Select */
-    uint8_t u8WinVolHigh;           /*!< CMP reference high voltage for window mode @ref CMP_Window_High_Select */
+    /* Window mode Positive(compare voltage) input:
+       CMP2_INP3 valid for u16PositiveInput of CMP_WIN_CMP12
+       CMP4_INP3 valid for u16PositiveInput of CMP_WIN_CMP34 */
+    uint16_t u16WinVolLow;          /*!< CMP reference low voltage for window mode @ref CMP_Window_Low_Select */
+    uint16_t u16WinVolHigh;         /*!< CMP reference high voltage for window mode @ref CMP_Window_High_Select */
     uint16_t u16OutPolarity;        /*!< Output polarity select, @ref CMP_Out_Polarity_Select */
     uint16_t u16OutDetectEdge;      /*!< Output detect edge, @ref CMP_Out_Detect_Edge_Select */
     uint16_t u16OutFilter;          /*!< Output Filter, @ref CMP_Out_Filter */
@@ -118,7 +123,6 @@ typedef struct {
  * @{
  */
 #define CMP_POSITIVE_NONE           (0x0U)
-
 /* Select positive input for CMP1 */
 #define CMP1_POSITIVE_PGA1_BP       (CMP_PMSR_CVSL_0)                                       /*!< Select PGA1_BP */
 #define CMP1_POSITIVE_PGA1          ((CMP_PMSR_CVSL_1) | (CMP_VISR_P2SL_0 << VISR_OFFSET))  /*!< Select PGA1 */
@@ -145,7 +149,6 @@ typedef struct {
 #define CMP4_POSITIVE_PGA4          (CMP_PMSR_CVSL_1)   /*!< Select PGA4 */
 #define CMP4_POSITIVE_CMP4_INP3     (CMP_PMSR_CVSL_2)   /*!< Select CMP4_INP3 */
 #define CMP4_POSITIVE_CMP4_INP4     (CMP_PMSR_CVSL_3)   /*!< Select CMP4_INP4 */
-
 /**
  * @}
  */
@@ -155,28 +158,18 @@ typedef struct {
  * @{
  */
 #define CMP_NEGATIVE_NONE           (0x0U)
-
-/* Select negative input for CMP1 */
-#define CMP1_NEGATIVE_DAC1_OUT1     (CMP_PMSR_RVSL_0)         /*!< DAC voltage DAC1_OUT1 */
-#define CMP1_NEGATIVE_DAC1_OUT2     (CMP_PMSR_RVSL_1)         /*!< DAC voltage DAC1_OUT2 */
-#define CMP1_NEGATIVE_CMP123_INM3   (CMP_PMSR_RVSL_2)         /*!< Pin CMP123_INM3 */
-#define CMP1_NEGATIVE_CMP1_INM4     (CMP_PMSR_RVSL_3)         /*!< Pin CMP1_INM4 */
-/* Select negative input for CMP2 */
-#define CMP2_NEGATIVE_DAC1_OUT1     (CMP_PMSR_RVSL_0)         /*!< DAC voltage DAC1_OUT1 */
-#define CMP2_NEGATIVE_DAC1_OUT2     (CMP_PMSR_RVSL_1)         /*!< DAC voltage DAC1_OUT2 */
-#define CMP2_NEGATIVE_CMP123_INM3   (CMP_PMSR_RVSL_2)         /*!< Pin CMP123_INM3 */
-#define CMP2_NEGATIVE_CMP2_INM4     (CMP_PMSR_RVSL_3)         /*!< Pin CMP2_INM4 */
-/* Select negative input for CMP3 */
-#define CMP3_NEGATIVE_DAC2_OUT1     (CMP_PMSR_RVSL_0)         /*!< DAC voltage DAC2_OUT1 */
-#define CMP3_NEGATIVE_DAC2_OUT2     (CMP_PMSR_RVSL_1)         /*!< DAC voltage DAC2_OUT2 */
-#define CMP3_NEGATIVE_CMP123_INM3   (CMP_PMSR_RVSL_2)         /*!< Pin CMP123_INM3 */
-#define CMP3_NEGATIVE_CMP3_INM4     (CMP_PMSR_RVSL_3)         /*!< Pin CMP3_INM4 */
-/* Select negative input for CMP4 */
-#define CMP4_NEGATIVE_DAC2_OUT1     (CMP_PMSR_RVSL_0)         /*!< DAC voltage DAC2_OUT1 */
-#define CMP4_NEGATIVE_DAC2_OUT2     (CMP_PMSR_RVSL_1)         /*!< DAC voltage DAC2_OUT2 */
-#define CMP4_NEGATIVE_CMP4_INM3     (CMP_PMSR_RVSL_2)         /*!< Pin CMP4_INM3 */
-#define CMP4_NEGATIVE_CMP4_INM4     (CMP_PMSR_RVSL_3)         /*!< Pin CMP4_INM4 */
-
+/* Negative input select table
+        CMP1            CMP2            CMP3            CMP4
+--------------------------------------------------------------------
+INM1    DAC1_OUT1       DAC1_OUT1       DAC2_OUT1       DAC2_OUT1
+INM2    DAC1_OUT2       DAC1_OUT2       DAC2_OUT2       DAC2_OUT2
+INM3    CMP123_INM3     CMP123_INM3     CMP123_INM3     CMP4_INM3
+INM4    CMP1_INM4       CMP2_INM4       CMP3_INM4       CMP4_INM4
+*/
+#define CMP_NEGATIVE_INM1           (CMP_PMSR_RVSL_0)
+#define CMP_NEGATIVE_INM2           (CMP_PMSR_RVSL_1)
+#define CMP_NEGATIVE_INM3           (CMP_PMSR_RVSL_2)
+#define CMP_NEGATIVE_INM4           (CMP_PMSR_RVSL_3)
 /**
  * @}
  */
@@ -186,17 +179,18 @@ typedef struct {
  * @{
  */
 #define CMP_WIN_LOW_NONE            (0x0U)
-/* Select input for window mode CMP_WIN_CMP12 */
-#define CMP12_WIN_LOW_DAC1_OUT1     (CMP_PMSR_RVSL_0)         /*!< DAC voltage DAC1_OUT1 */
-#define CMP12_WIN_LOW_DAC1_OUT2     (CMP_PMSR_RVSL_1)         /*!< DAC voltage DAC1_OUT2 */
-#define CMP12_WIN_LOW_CMP123_INM3   (CMP_PMSR_RVSL_2)         /*!< Pin CMP123_INM3 */
-#define CMP12_WIN_LOW_CMP1_INM4     (CMP_PMSR_RVSL_3)         /*!< Pin CMP1_INM4 */
-/* Select input for window mode CMP_WIN_CMP34 */
-#define CMP34_WIN_LOW_DAC2_OUT1     (CMP_PMSR_RVSL_0)         /*!< DAC voltage DAC2_OUT1 */
-#define CMP34_WIN_LOW_DAC2_OUT2     (CMP_PMSR_RVSL_1)         /*!< DAC voltage DAC2_OUT2 */
-#define CMP34_WIN_LOW_CMP123_INM3   (CMP_PMSR_RVSL_2)         /*!< Pin CMP123_INM3 */
-#define CMP34_WIN_LOW_CMP3_INM4     (CMP_PMSR_RVSL_3)         /*!< Pin CMP3_INM4 */
-
+/* Window mode low voltage select table
+        WIN_CMP12       WIN_CMP34
+------------------------------------
+INM1    DAC1_OUT1       DAC2_OUT1
+INM2    DAC1_OUT2       DAC2_OUT2
+INM3    CMP123_INM3     CMP123_INM3
+INM4    CMP1_INM4       CMP3_INM4
+*/
+#define CMP_WIN_LOW_INM1            (CMP_PMSR_RVSL_0)
+#define CMP_WIN_LOW_INM2            (CMP_PMSR_RVSL_1)
+#define CMP_WIN_LOW_INM3            (CMP_PMSR_RVSL_2)
+#define CMP_WIN_LOW_INM4            (CMP_PMSR_RVSL_3)
 /**
  * @}
  */
@@ -206,17 +200,18 @@ typedef struct {
  * @{
  */
 #define CMP_WIN_HIGH_NONE           (0x0U)
-/* Select input for window mode CMP_WIN_CMP12 */
-#define CMP12_WIN_HIGH_DAC1_OUT1    (CMP_PMSR_RVSL_0)         /*!< DAC voltage DAC1_OUT1 */
-#define CMP12_WIN_HIGH_DAC1_OUT2    (CMP_PMSR_RVSL_1)         /*!< DAC voltage DAC1_OUT2 */
-#define CMP12_WIN_HIGH_CMP123_INM3  (CMP_PMSR_RVSL_2)         /*!< Pin CMP123_INM3 */
-#define CMP12_WIN_HIGH_CMP2_INM4    (CMP_PMSR_RVSL_3)         /*!< Pin CMP2_INM4 */
-/* Select input for window mode CMP_WIN_CMP34 */
-#define CMP34_WIN_HIGH_DAC2_OUT1    (CMP_PMSR_RVSL_0)         /*!< DAC voltage DAC2_OUT1 */
-#define CMP34_WIN_HIGH_DAC2_OUT2    (CMP_PMSR_RVSL_1)         /*!< DAC voltage DAC2_OUT2 */
-#define CMP34_WIN_HIGH_CMP4_INM3    (CMP_PMSR_RVSL_2)         /*!< Pin CMP4_INM3 */
-#define CMP34_WIN_HIGH_CMP4_INM4    (CMP_PMSR_RVSL_3)         /*!< Pin CMP4_INM4 */
-
+/* Window mode high voltage select table
+        WIN_CMP12       WIN_CMP34
+-------------------------------------------------------
+INM1    DAC1_OUT1       DAC2_OUT1
+INM2    DAC1_OUT2       DAC2_OUT2
+INM3    CMP123_INM3     CMP4_INM3
+INM4    CMP2_INM4       CMP4_INM4
+*/
+#define CMP_WIN_HIGH_INM1           (CMP_PMSR_RVSL_0)
+#define CMP_WIN_HIGH_INM2           (CMP_PMSR_RVSL_1)
+#define CMP_WIN_HIGH_INM3           (CMP_PMSR_RVSL_2)
+#define CMP_WIN_HIGH_INM4           (CMP_PMSR_RVSL_3)
 /**
  * @}
  */
@@ -236,11 +231,9 @@ typedef struct {
  * @{
  */
 #define CMP_DETECT_EDGS_NONE        (0U)                       /*!< Do not detect edge */
-
 #define CMP_DETECT_EDGS_RISING      (1U << CMP_FIR_EDGS_POS)   /*!< Detect rising edge */
 #define CMP_DETECT_EDGS_FALLING     (2U << CMP_FIR_EDGS_POS)   /*!< Detect falling edge */
 #define CMP_DETECT_EDGS_BOTH        (3U << CMP_FIR_EDGS_POS)   /*!< Detect rising and falling edges */
-
 /**
  * @}
  */
@@ -250,11 +243,9 @@ typedef struct {
  * @{
  */
 #define CMP_OUT_FILTER_NONE         (0U)                       /*!< Do not filter */
-
 #define CMP_OUT_FILTER_CLK          (1U << CMP_FIR_FCKS_POS)
 #define CMP_OUT_FILTER_CLK_DIV8     (2U << CMP_FIR_FCKS_POS)
 #define CMP_OUT_FILTER_CLK_DIV32    (3U << CMP_FIR_FCKS_POS)
-
 /**
  * @}
  */
@@ -263,74 +254,42 @@ typedef struct {
  * @defgroup CMP_BlankWindow_Src CMP Output blank window Function Control Signal
  * @{
  */
-/* CMP1 blank window signal */
-#define CMP1_BLANKWIN_TMRA_1_PWM1     (CMP_TWSR_CTWS0)          /*!< Select TMRA_1_PWM1 for CMP1 */
-#define CMP1_BLANKWIN_TMRA_1_PWM2     (CMP_TWSR_CTWS1)          /*!< Select TMRA_1_PWM2 for CMP1 */
-#define CMP1_BLANKWIN_TMRA_1_PWM3     (CMP_TWSR_CTWS2)          /*!< Select TMRA_1_PWM3 for CMP1 */
-#define CMP1_BLANKWIN_TMRA_2_PWM1     (CMP_TWSR_CTWS3)          /*!< Select TMRA_2_PWM1 for CMP1 */
-#define CMP1_BLANKWIN_TMRA_2_PWM2     (CMP_TWSR_CTWS4)          /*!< Select TMRA_2_PWM2 for CMP1 */
-#define CMP1_BLANKWIN_TMRA_2_PWM3     (CMP_TWSR_CTWS5)          /*!< Select TMRA_2_PWM3 for CMP1 */
-#define CMP1_BLANKWIN_TMR6_1_PWMA     (CMP_TWSR_CTWS6)          /*!< Select TMR6_1_PWMA for CMP1 */
-#define CMP1_BLANKWIN_TMR6_2_PWMA     (CMP_TWSR_CTWS7)          /*!< Select TMR6_2_PWMA for CMP1 */
-#define CMP1_BLANKWIN_TMR6_3_PWMA     (CMP_TWSR_CTWS8)          /*!< Select TMR6_3_PWMA for CMP1 */
-#define CMP1_BLANKWIN_TMR6_4_PWMA     (CMP_TWSR_CTWS9)          /*!< Select TMR6_4_PWMA for CMP1 */
-#define CMP1_BLANKWIN_TMR4_1_OUH      (CMP_TWSR_CTWS10)         /*!< Select TMR4_1_OUH for CMP1 */
-#define CMP1_BLANKWIN_TMR4_1_OUL      (CMP_TWSR_CTWS11)         /*!< Select TMR4_1_OUL for CMP1 */
-#define CMP1_BLANKWIN_TMR4_1_OVH      (CMP_TWSR_CTWS12)         /*!< Select TMR4_1_OVH for CMP1 */
-#define CMP1_BLANKWIN_TMR4_1_OVL      (CMP_TWSR_CTWS13)         /*!< Select TMR4_1_OVL for CMP1 */
-#define CMP1_BLANKWIN_TMR4_1_OWH      (CMP_TWSR_CTWS14)         /*!< Select TMR4_1_OWH for CMP1 */
-#define CMP1_BLANKWIN_TMR4_1_OWL      (CMP_TWSR_CTWS15)         /*!< Select TMR4_1_OWL for CMP1 */
-/* CMP2 blank window signal */
-#define CMP2_BLANKWIN_TMRA_3_PWM1     (CMP_TWSR_CTWS0)          /*!< Select TMRA_3_PWM1 for CMP2 */
-#define CMP2_BLANKWIN_TMRA_3_PWM2     (CMP_TWSR_CTWS1)          /*!< Select TMRA_3_PWM2 for CMP2 */
-#define CMP2_BLANKWIN_TMRA_3_PWM3     (CMP_TWSR_CTWS2)          /*!< Select TMRA_3_PWM3 for CMP2 */
-#define CMP2_BLANKWIN_TMRA_4_PWM1     (CMP_TWSR_CTWS3)          /*!< Select TMRA_4_PWM1 for CMP2 */
-#define CMP2_BLANKWIN_TMRA_4_PWM2     (CMP_TWSR_CTWS4)          /*!< Select TMRA_4_PWM2 for CMP2 */
-#define CMP2_BLANKWIN_TMRA_4_PWM3     (CMP_TWSR_CTWS5)          /*!< Select TMRA_4_PWM3 for CMP2 */
-#define CMP2_BLANKWIN_TMR6_5_PWMA     (CMP_TWSR_CTWS6)          /*!< Select TMR6_5_PWMA for CMP2 */
-#define CMP2_BLANKWIN_TMR6_6_PWMA     (CMP_TWSR_CTWS7)          /*!< Select TMR6_6_PWMA for CMP2 */
-#define CMP2_BLANKWIN_TMR6_7_PWMA     (CMP_TWSR_CTWS8)          /*!< Select TMR6_7_PWMA for CMP2 */
-#define CMP2_BLANKWIN_TMR6_8_PWMA     (CMP_TWSR_CTWS9)          /*!< Select TMR6_8_PWMA for CMP2 */
-#define CMP2_BLANKWIN_TMR4_2_OUH      (CMP_TWSR_CTWS10)         /*!< Select TMR4_2_OUH for CMP2 */
-#define CMP2_BLANKWIN_TMR4_2_OUL      (CMP_TWSR_CTWS11)         /*!< Select TMR4_2_OUL for CMP2 */
-#define CMP2_BLANKWIN_TMR4_2_OVH      (CMP_TWSR_CTWS12)         /*!< Select TMR4_2_OVH for CMP2 */
-#define CMP2_BLANKWIN_TMR4_2_OVL      (CMP_TWSR_CTWS13)         /*!< Select TMR4_2_OVL for CMP2 */
-#define CMP2_BLANKWIN_TMR4_2_OWH      (CMP_TWSR_CTWS14)         /*!< Select TMR4_2_OWH for CMP2 */
-#define CMP2_BLANKWIN_TMR4_2_OWL      (CMP_TWSR_CTWS15)         /*!< Select TMR4_2_OWL for CMP2 */
-/* CMP3 blank window signal */
-#define CMP3_BLANKWIN_TMRA_1_PWM1     (CMP_TWSR_CTWS0)          /*!< Select TMRA_1_PWM1 for CMP3 */
-#define CMP3_BLANKWIN_TMRA_1_PWM2     (CMP_TWSR_CTWS1)          /*!< Select TMRA_1_PWM2 for CMP3 */
-#define CMP3_BLANKWIN_TMRA_1_PWM3     (CMP_TWSR_CTWS2)          /*!< Select TMRA_1_PWM3 for CMP3 */
-#define CMP3_BLANKWIN_TMRA_3_PWM1     (CMP_TWSR_CTWS3)          /*!< Select TMRA_3_PWM1 for CMP3 */
-#define CMP3_BLANKWIN_TMRA_3_PWM2     (CMP_TWSR_CTWS4)          /*!< Select TMRA_3_PWM2 for CMP3 */
-#define CMP3_BLANKWIN_TMRA_3_PWM3     (CMP_TWSR_CTWS5)          /*!< Select TMRA_3_PWM3 for CMP3 */
-#define CMP3_BLANKWIN_TMR6_1_PWMB     (CMP_TWSR_CTWS6)          /*!< Select TMR6_1_PWMB for CMP3 */
-#define CMP3_BLANKWIN_TMR6_2_PWMB     (CMP_TWSR_CTWS7)          /*!< Select TMR6_2_PWMB for CMP3 */
-#define CMP3_BLANKWIN_TMR6_3_PWMB     (CMP_TWSR_CTWS8)          /*!< Select TMR6_3_PWMB for CMP3 */
-#define CMP3_BLANKWIN_TMR6_4_PWMB     (CMP_TWSR_CTWS9)          /*!< Select TMR6_4_PWMB for CMP3 */
-#define CMP3_BLANKWIN_TMR4_3_OUH      (CMP_TWSR_CTWS10)         /*!< Select TMR4_3_OUH for CMP3 */
-#define CMP3_BLANKWIN_TMR4_3_OUL      (CMP_TWSR_CTWS11)         /*!< Select TMR4_3_OUL for CMP3 */
-#define CMP3_BLANKWIN_TMR4_3_OVH      (CMP_TWSR_CTWS12)         /*!< Select TMR4_3_OVH for CMP3 */
-#define CMP3_BLANKWIN_TMR4_3_OVL      (CMP_TWSR_CTWS13)         /*!< Select TMR4_3_OVL for CMP3 */
-#define CMP3_BLANKWIN_TMR4_3_OWH      (CMP_TWSR_CTWS14)         /*!< Select TMR4_3_OWH for CMP3 */
-#define CMP3_BLANKWIN_TMR4_3_OWL      (CMP_TWSR_CTWS15)         /*!< Select TMR4_3_OWL for CMP3 */
-/* CMP4 blank window signal */
-#define CMP4_BLANKWIN_TMRA_2_PWM1     (CMP_TWSR_CTWS0)          /*!< Select TMRA_2_PWM1 for CMP4 */
-#define CMP4_BLANKWIN_TMRA_2_PWM2     (CMP_TWSR_CTWS1)          /*!< Select TMRA_2_PWM2 for CMP4 */
-#define CMP4_BLANKWIN_TMRA_2_PWM3     (CMP_TWSR_CTWS2)          /*!< Select TMRA_2_PWM3 for CMP3 */
-#define CMP4_BLANKWIN_TMRA_4_PWM1     (CMP_TWSR_CTWS3)          /*!< Select TMRA_4_PWM1 for CMP4 */
-#define CMP4_BLANKWIN_TMRA_4_PWM2     (CMP_TWSR_CTWS4)          /*!< Select TMRA_4_PWM2 for CMP4 */
-#define CMP4_BLANKWIN_TMRA_4_PWM3     (CMP_TWSR_CTWS5)          /*!< Select TMRA_4_PWM3 for CMP4 */
-#define CMP4_BLANKWIN_TMR6_5_PWMB     (CMP_TWSR_CTWS6)          /*!< Select TMR6_5_PWMB for CMP4 */
-#define CMP4_BLANKWIN_TMR6_6_PWMB     (CMP_TWSR_CTWS7)          /*!< Select TMR6_6_PWMB for CMP4 */
-#define CMP4_BLANKWIN_TMR6_7_PWMB     (CMP_TWSR_CTWS8)          /*!< Select TMR6_7_PWMB for CMP4 */
-#define CMP4_BLANKWIN_TMR6_8_PWMB     (CMP_TWSR_CTWS9)          /*!< Select TMR6_8_PWMB for CMP4 */
-#define CMP4_BLANKWIN_TMR4_3_OUH      (CMP_TWSR_CTWS10)         /*!< Select TMR4_4_OUH for CMP4 */
-#define CMP4_BLANKWIN_TMR4_3_OUL      (CMP_TWSR_CTWS11)         /*!< Select TMR4_4_OUL for CMP4 */
-#define CMP4_BLANKWIN_TMR4_3_OVH      (CMP_TWSR_CTWS12)         /*!< Select TMR4_4_OVH for CMP4 */
-#define CMP4_BLANKWIN_TMR4_3_OVL      (CMP_TWSR_CTWS13)         /*!< Select TMR4_4_OVL for CMP4 */
-#define CMP4_BLANKWIN_TMR4_3_OWH      (CMP_TWSR_CTWS14)         /*!< Select TMR4_4_OWH for CMP4 */
-#define CMP4_BLANKWIN_TMR4_3_OWL      (CMP_TWSR_CTWS15)         /*!< Select TMR4_4_OWL for CMP4 */
+/* Blank window PWM source select table
+        CMP1            CMP2            CMP3            CMP4
+------------------------------------------------------------------------
+SRC1    TMRA_1_PWM1     TMRA_3_PWM1     TMRA_1_PWM1     TMRA_2_PWM1
+SRC2    TMRA_1_PWM2     TMRA_3_PWM2     TMRA_1_PWM2     TMRA_2_PWM2
+SRC3    TMRA_1_PWM3     TMRA_3_PWM3     TMRA_1_PWM3     TMRA_2_PWM3
+SRC4    TMRA_2_PWM1     TMRA_4_PWM1     TMRA_3_PWM1     TMRA_4_PWM1
+SRC5    TMRA_2_PWM2     TMRA_4_PWM2     TMRA_3_PWM2     TMRA_4_PWM2
+SRC6    TMRA_2_PWM3     TMRA_4_PWM3     TMRA_3_PWM3     TMRA_4_PWM3
+SRC7    TMR6_1_PWMA     TMR6_5_PWMA     TMR6_1_PWMB     TMR6_5_PWMB
+SRC8    TMR6_2_PWMA     TMR6_6_PWMA     TMR6_2_PWMB     TMR6_6_PWMB
+SRC9    TMR6_3_PWMA     TMR6_7_PWMA     TMR6_3_PWMB     TMR6_7_PWMB
+SRC10   TMR6_4_PWMA     TMR6_8_PWMA     TMR6_4_PWMB     TMR6_8_PWMB
+SRC11   TMR4_1_OUH      TMR4_2_OUH      TMR4_3_OUH      TMR4_3_OUH
+SRC12   TMR4_1_OUL      TMR4_2_OUL      TMR4_3_OUL      TMR4_3_OUL
+SRC13   TMR4_1_OVH      TMR4_2_OVH      TMR4_3_OVH      TMR4_3_OVH
+SRC14   TMR4_1_OVL      TMR4_2_OVL      TMR4_3_OVL      TMR4_3_OVL
+SRC15   TMR4_1_OWH      TMR4_2_OWH      TMR4_3_OWH      TMR4_3_OWH
+SRC16   TMR4_1_OWL      TMR4_2_OWL      TMR4_3_OWL      TMR4_3_OWL
+*/
+#define CMP_BLANKWIN_SRC1           (CMP_TWSR_CTWS0)
+#define CMP_BLANKWIN_SRC2           (CMP_TWSR_CTWS1)
+#define CMP_BLANKWIN_SRC3           (CMP_TWSR_CTWS2)
+#define CMP_BLANKWIN_SRC4           (CMP_TWSR_CTWS3)
+#define CMP_BLANKWIN_SRC5           (CMP_TWSR_CTWS4)
+#define CMP_BLANKWIN_SRC6           (CMP_TWSR_CTWS5)
+#define CMP_BLANKWIN_SRC7           (CMP_TWSR_CTWS6)
+#define CMP_BLANKWIN_SRC8           (CMP_TWSR_CTWS7)
+#define CMP_BLANKWIN_SRC9           (CMP_TWSR_CTWS8)
+#define CMP_BLANKWIN_SRC10          (CMP_TWSR_CTWS9)
+#define CMP_BLANKWIN_SRC11          (CMP_TWSR_CTWS10)
+#define CMP_BLANKWIN_SRC12          (CMP_TWSR_CTWS11)
+#define CMP_BLANKWIN_SRC13          (CMP_TWSR_CTWS12)
+#define CMP_BLANKWIN_SRC14          (CMP_TWSR_CTWS13)
+#define CMP_BLANKWIN_SRC15          (CMP_TWSR_CTWS14)
+#define CMP_BLANKWIN_SRC16          (CMP_TWSR_CTWS15)
 
 /**
  * @}
@@ -340,8 +299,8 @@ typedef struct {
  * @defgroup CMP_BlankWindow_Valid_Level CMP Blank Window Valid Level
  * @{
  */
-#define CMP_BLANKWIN_VALID_LVL_LOW    (0U)                   /*!< Blank window valid level is low */
-#define CMP_BLANKWIN_VALID_LVL_HIGH   (1U)                   /*!< Blank window valid level is high */
+#define CMP_BLANKWIN_VALID_LVL_LOW  (0U)                   /*!< Blank window valid level is low */
+#define CMP_BLANKWIN_VALID_LVL_HIGH (1U)                   /*!< Blank window valid level is high */
 /**
  * @}
  */
@@ -350,24 +309,8 @@ typedef struct {
  * @defgroup CMP_BlankWindow_output_Level CMP Output Level When Blank Windows Valid
  * @{
  */
-#define CMP_BLANKWIN_OUTPUT_LVL_LOW   (0U)                   /*!< Output low when blank windows valid */
-#define CMP_BLANKWIN_OUTPUT_LVL_HIGH  (CMP_OCR_TWOL)         /*!< Output high when blank windows valid */
-/**
- * @}
- */
-
-/**
- * @defgroup CMP_8BitDAC_Adc_Ref_Switch CMP 8 bit DAC ADC Reference Voltage Switch
- * @{
- */
-/**
- * @}
- */
-
-/**
- * @defgroup CMP_8Bit_Dac_Ch CMP 8 bit DAC Channel
- * @{
- */
+#define CMP_BLANKWIN_OUTPUT_LVL_LOW     (0U)                   /*!< Output low when blank windows valid */
+#define CMP_BLANKWIN_OUTPUT_LVL_HIGH    (CMP_OCR_TWOL)         /*!< Output high when blank windows valid */
 /**
  * @}
  */
@@ -407,7 +350,8 @@ int32_t CMP_WindowModeInit(uint8_t u8WinCMPx, const stc_cmp_window_init_t *pstcC
 int32_t CMP_WindowStructInit(stc_cmp_window_init_t *pstcCmpWindowInit);
 
 void CMP_BlankWindowSrcDisable(CM_CMP_TypeDef *CMPx, uint16_t u16BlankWindowSrc);
-int32_t CMP_BlankWindowConfig(CM_CMP_TypeDef *CMPx, const stc_cmp_blankwindow_t *pstcBlankWindowInit);
+int32_t CMP_BlankWindowConfig(CM_CMP_TypeDef *CMPx, const stc_cmp_blankwindow_t *pstcBlankWindowConfig);
+int32_t CMP_BlankWindowStructInit(stc_cmp_blankwindow_t *pstcBlankWindowConfig);
 void CMP_BlankWindowCmd(CM_CMP_TypeDef *CMPx, en_functional_state_t enNewState);
 
 /**

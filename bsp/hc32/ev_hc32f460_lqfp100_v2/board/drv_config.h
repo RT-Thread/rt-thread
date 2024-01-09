@@ -1,6 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
- * Copyright (c) 2022, Xiaohua Semiconductor Co., Ltd.
+ * Copyright (C) 2022-2024, Xiaohua Semiconductor Co., Ltd.
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -19,20 +18,18 @@
 extern "C" {
 #endif
 
-/* Suppress warning messages */
-#if defined(__CC_ARM)
-// Suppress warning message: extended constant initialiser used
-#pragma diag_suppress 1296
-#elif defined(__ICCARM__)
-#elif defined(__GNUC__)
-#endif
-
 #include "dma_config.h"
 #include "uart_config.h"
+#include "spi_config.h"
+#include "adc_config.h"
 #include "gpio_config.h"
 #include "can_config.h"
-#include "adc_config.h"
-#include "pwm_tmra_config.h"
+#include "sdio_config.h"
+#include "pm_config.h"
+#include "i2c_config.h"
+#include "qspi_config.h"
+#include "pulse_encoder_config.h"
+#include "timer_config.h"
 
 #ifdef __cplusplus
 }

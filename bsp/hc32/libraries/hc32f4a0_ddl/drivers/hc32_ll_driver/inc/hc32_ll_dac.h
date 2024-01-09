@@ -7,9 +7,12 @@
    Change Logs:
    Date             Author          Notes
    2022-03-31       CDT             First version
+   2022-06-30       CDT             Modify function: DAC_AMPCmd
+   2023-06-30       CDT             Refine definition of dac resolution
+   2023-09-30       CDT             Modify API DAC_DeInit
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -102,30 +105,29 @@ typedef struct {
  * @defgroup DAC_DATAREG_ALIGN_PATTERN DAC data register alignment pattern
  * @{
  */
-#define DAC_DATA_ALIGN_L                   (DAC_DACR_ALIGN)
-#define DAC_DATA_ALIGN_R                   (0U)
+#define DAC_DATA_ALIGN_LEFT                (DAC_DACR_DPSEL)
+#define DAC_DATA_ALIGN_RIGHT               (0U)
 /**
  * @}
  */
 
 /**
- * @defgroup DAC_DATAREG_ALIGN_PATTERN DAC data register alignment pattern
+ * @defgroup DAC_RESOLUTION DAC resolution
  * @{
  */
+#define DAC_RESOLUTION_12BIT                 (12U)
 /**
  * @}
  */
-
-#define DAC_DATAREG_VALUE_MAX              (4096UL)
 
 /**
  * @defgroup DAC_ADP_SELECT DAC ADCx priority select
  * @{
  */
-#define DAC_ADP_SELECT_ADC1                (DAC_DAADPCR_ADPSL1)
-#define DAC_ADP_SELECT_ADC2                (DAC_DAADPCR_ADPSL2)
-#define DAC_ADP_SELECT_ADC3                (DAC_DAADPCR_ADPSL3)
-#define DAC_ADP_SELECT_ALL (DAC_DAADPCR_ADPSL1 | DAC_DAADPCR_ADPSL2 | DAC_DAADPCR_ADPSL3)
+#define DAC_ADP_SEL_ADC1                   (DAC_DAADPCR_ADCSL1)
+#define DAC_ADP_SEL_ADC2                   (DAC_DAADPCR_ADCSL2)
+#define DAC_ADP_SEL_ADC3                   (DAC_DAADPCR_ADCSL3)
+#define DAC_ADP_SEL_ALL   (DAC_DAADPCR_ADCSL1 | DAC_DAADPCR_ADCSL2 | DAC_DAADPCR_ADCSL3)
 /**
  * @}
  */
@@ -148,12 +150,12 @@ typedef struct {
 
 int32_t DAC_StructInit(stc_dac_init_t *pstcDacInit);
 int32_t DAC_Init(CM_DAC_TypeDef *DACx, uint16_t u16Ch, const stc_dac_init_t *pstcDacInit);
-void DAC_DeInit(CM_DAC_TypeDef *DACx);
+int32_t DAC_DeInit(CM_DAC_TypeDef *DACx);
 
 void DAC_SetDataSrc(CM_DAC_TypeDef *DACx, uint16_t u16Ch, uint16_t u16Src);
 void DAC_DataRegAlignConfig(CM_DAC_TypeDef *DACx, uint16_t u16Align);
 void DAC_OutputCmd(CM_DAC_TypeDef *DACx, uint16_t u16Ch, en_functional_state_t enNewState);
-int32_t DAC_AMPCmd(CM_DAC_TypeDef *DACx, uint16_t u16Ch, en_functional_state_t enNewState);
+void DAC_AMPCmd(CM_DAC_TypeDef *DACx, uint16_t u16Ch, en_functional_state_t enNewState);
 void DAC_ADCPrioCmd(CM_DAC_TypeDef *DACx, en_functional_state_t enNewState);
 void DAC_ADCPrioConfig(CM_DAC_TypeDef *DACx, uint16_t u16ADCxPrio, en_functional_state_t enNewState);
 

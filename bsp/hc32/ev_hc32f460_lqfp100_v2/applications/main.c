@@ -1,6 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
- * Copyright (c) 2022, Xiaohua Semiconductor Co., Ltd.
+ * Copyright (C) 2022-2024, Xiaohua Semiconductor Co., Ltd.
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -12,7 +11,6 @@
 #include <rtthread.h>
 #include <rtdevice.h>
 #include <board.h>
-
 
 /* defined the LED_GREEN pin: PD4 */
 #define LED_GREEN_PIN GET_PIN(D, 4)

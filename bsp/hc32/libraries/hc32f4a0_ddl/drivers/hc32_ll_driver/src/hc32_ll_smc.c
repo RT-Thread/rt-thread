@@ -7,9 +7,12 @@
    Change Logs:
    Date             Author          Notes
    2022-03-31       CDT             First version
+   2022-06-30       CDT             Modify EXMC_SMC_StructInit, EXMC_SMC_Init, EXMC_SMC_GetChipConfig
+                                    Delete function comments: EXMC_SMC_Chipx
+   2023-06-30       CDT             Function EXMC_SMC_DeInit add return value
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -162,11 +165,20 @@
  * @defgroup EXMC_SMC_Register_Bit_Mask EXMC_SMC Register Bit Mask
  * @{
  */
-#define SMC_CSCR0_ADDMSKx_POS(__CHIPx__)    (((__CHIPx__) & EXMC_SMC_CHIP3) << 3U)
+#define SMC_CSCR0_ADDMSKx_POS(__CHIPx__)    (((__CHIPx__) & 0x03UL) << 3U)
 #define SMC_CSCR0_ADDMSKx(__CHIPx__)        (SMC_CSCR0_ADDMSK0 << SMC_CSCR0_ADDMSKx_POS((__CHIPx__)))
 
-#define SMC_CSCR1_ADDMATx_POS(__CHIPx__)    (((__CHIPx__) & EXMC_SMC_CHIP3) << 3U)
+#define SMC_CSCR1_ADDMATx_POS(__CHIPx__)    (((__CHIPx__) & 0x03UL) << 3U)
 #define SMC_CSCR1_ADDMATx(__CHIPx__)        (SMC_CSCR1_ADDMAT0 << SMC_CSCR1_ADDMATx_POS((__CHIPx__)))
+/**
+ * @}
+ */
+
+/**
+ * @defgroup EXMC_SMC_Register_Reset_Value EXMC_SMC Register Reset Value
+ * @{
+ */
+#define EXMC_SMC_BACR_RST_VALUE             (0x00000300UL)
 /**
  * @}
  */
@@ -208,8 +220,8 @@ int32_t EXMC_SMC_StructInit(stc_exmc_smc_init_t *pstcSmcInit)
 
     if (NULL != pstcSmcInit) {
         pstcSmcInit->stcChipConfig.u32ReadMode = EXMC_SMC_READ_ASYNC;
-        pstcSmcInit->stcChipConfig.u32ReadBurstLen = EXMC_SMC_READ_BURST_1BEAT;
         pstcSmcInit->stcChipConfig.u32WriteMode = EXMC_SMC_WRITE_ASYNC;
+        pstcSmcInit->stcChipConfig.u32ReadBurstLen = EXMC_SMC_READ_BURST_1BEAT;
         pstcSmcInit->stcChipConfig.u32WriteBurstLen = EXMC_SMC_WRITE_BURST_1BEAT;
         pstcSmcInit->stcChipConfig.u32MemoryWidth = EXMC_SMC_MEMORY_WIDTH_16BIT;
         pstcSmcInit->stcChipConfig.u32BAA = EXMC_SMC_BAA_PORT_DISABLE;
@@ -234,10 +246,6 @@ int32_t EXMC_SMC_StructInit(stc_exmc_smc_init_t *pstcSmcInit)
  * @brief  Initialize EXMC_SMC function.
  * @param  [in] u32Chip                 The chip number.
  *         This parameter can be one of the macros group @ref EXMC_SMC_Chip
- *           @arg EXMC_SMC_CHIP0:       Chip 0
- *           @arg EXMC_SMC_CHIP1:       Chip 1
- *           @arg EXMC_SMC_CHIP2:       Chip 2
- *           @arg EXMC_SMC_CHIP3:       Chip 3
  * @param  [in] pstcSmcInit             Pointer to a @ref stc_exmc_smc_init_t structure.
  * @retval int32_t:
  *           - LL_OK:                   Initialize successfully.
@@ -245,7 +253,8 @@ int32_t EXMC_SMC_StructInit(stc_exmc_smc_init_t *pstcSmcInit)
  */
 int32_t EXMC_SMC_Init(uint32_t u32Chip, const stc_exmc_smc_init_t *pstcSmcInit)
 {
-    uint32_t u32RegVal;
+    uint32_t u32TMCR;
+    uint32_t u32CPCR;
     int32_t i32Ret = LL_ERR_INVD_PARAM;
 
     if (NULL != pstcSmcInit) {
@@ -259,38 +268,34 @@ int32_t EXMC_SMC_Init(uint32_t u32Chip, const stc_exmc_smc_init_t *pstcSmcInit)
         DDL_ASSERT(IS_EXMC_SMC_ADV_PORT(pstcSmcInit->stcChipConfig.u32ADV));
         DDL_ASSERT(IS_EXMC_SMC_BLS_SYNC(pstcSmcInit->stcChipConfig.u32BLS));
         DDL_ASSERT(IS_EXMC_SMC_MAP_ADDR(pstcSmcInit->stcChipConfig.u32AddrMatch, pstcSmcInit->stcChipConfig.u32AddrMask));
-
         DDL_ASSERT(IS_EXMC_SMC_TIMING_RC_CYCLE(pstcSmcInit->stcTimingConfig.u8RC));
         DDL_ASSERT(IS_EXMC_SMC_TIMING_WC_CYCLE(pstcSmcInit->stcTimingConfig.u8WC));
         DDL_ASSERT(IS_EXMC_SMC_TIMING_CEOE_CYCLE(pstcSmcInit->stcTimingConfig.u8CEOE));
         DDL_ASSERT(IS_EXMC_SMC_TIMING_WP_CYCLE(pstcSmcInit->stcTimingConfig.u8WP));
-        DDL_ASSERT(IS_EXMC_SMC_TIMING_RC_CYCLE(pstcSmcInit->stcTimingConfig.u8RC));
+        DDL_ASSERT(IS_EXMC_SMC_TIMING_PC_CYCLE(pstcSmcInit->stcTimingConfig.u8PC));
         DDL_ASSERT(IS_EXMC_SMC_TIMING_TR_CYCLE(pstcSmcInit->stcTimingConfig.u8TR));
 
-        /* Set SMC timing.*/
-        u32RegVal = (((uint32_t)pstcSmcInit->stcTimingConfig.u8RC << SMC_TMCR_T_RC_POS) | \
-                     ((uint32_t)pstcSmcInit->stcTimingConfig.u8WC << SMC_TMCR_T_WC_POS) | \
-                     ((uint32_t)pstcSmcInit->stcTimingConfig.u8CEOE << SMC_TMCR_T_CEOE_POS) | \
-                     ((uint32_t)pstcSmcInit->stcTimingConfig.u8WP << SMC_TMCR_T_WP_POS) | \
-                     ((uint32_t)pstcSmcInit->stcTimingConfig.u8PC << SMC_TMCR_T_PC_POS) | \
-                     ((uint32_t)pstcSmcInit->stcTimingConfig.u8TR << SMC_TMCR_T_TR_POS));
-        WRITE_REG32(CM_SMC->TMCR, u32RegVal);
+        u32TMCR = (((uint32_t)pstcSmcInit->stcTimingConfig.u8RC << SMC_TMCR_T_RC_POS) | \
+                   ((uint32_t)pstcSmcInit->stcTimingConfig.u8WC << SMC_TMCR_T_WC_POS) | \
+                   ((uint32_t)pstcSmcInit->stcTimingConfig.u8CEOE << SMC_TMCR_T_CEOE_POS) | \
+                   ((uint32_t)pstcSmcInit->stcTimingConfig.u8WP << SMC_TMCR_T_WP_POS) | \
+                   ((uint32_t)pstcSmcInit->stcTimingConfig.u8PC << SMC_TMCR_T_PC_POS) | \
+                   ((uint32_t)pstcSmcInit->stcTimingConfig.u8TR << SMC_TMCR_T_TR_POS));
+        u32CPCR = (pstcSmcInit->stcChipConfig.u32ReadMode | \
+                   pstcSmcInit->stcChipConfig.u32ReadBurstLen | \
+                   pstcSmcInit->stcChipConfig.u32WriteMode | \
+                   pstcSmcInit->stcChipConfig.u32WriteBurstLen | \
+                   pstcSmcInit->stcChipConfig.u32MemoryWidth | \
+                   pstcSmcInit->stcChipConfig.u32BAA | \
+                   pstcSmcInit->stcChipConfig.u32ADV | \
+                   pstcSmcInit->stcChipConfig.u32BLS);
+        WRITE_REG32(CM_SMC->TMCR, u32TMCR); /* Set SMC timing.*/
+        WRITE_REG32(CM_SMC->CPCR, u32CPCR); /* Set SMC chip configuration.*/
 
-        /* Set SMC chip configuration.*/
-        u32RegVal = (pstcSmcInit->stcChipConfig.u32ReadMode | \
-                     pstcSmcInit->stcChipConfig.u32ReadBurstLen | \
-                     pstcSmcInit->stcChipConfig.u32WriteMode | \
-                     pstcSmcInit->stcChipConfig.u32WriteBurstLen | \
-                     pstcSmcInit->stcChipConfig.u32MemoryWidth | \
-                     pstcSmcInit->stcChipConfig.u32BAA | \
-                     pstcSmcInit->stcChipConfig.u32ADV | \
-                     pstcSmcInit->stcChipConfig.u32BLS);
-        WRITE_REG32(CM_SMC->CPCR, u32RegVal);
-
-        /* Set chip selection address match/mask spacefor SMC.*/
+        /* Set chip selection address match/mask space for SMC.*/
         MODIFY_REG32(CM_SMC->CSCR0, SMC_CSCR0_ADDMSKx(u32Chip), \
                      (pstcSmcInit->stcChipConfig.u32AddrMask << SMC_CSCR0_ADDMSKx_POS(u32Chip)));
-        MODIFY_REG32(CM_SMC->CSCR1,  SMC_CSCR0_ADDMSKx(u32Chip), \
+        MODIFY_REG32(CM_SMC->CSCR1,  SMC_CSCR1_ADDMATx(u32Chip), \
                      (pstcSmcInit->stcChipConfig.u32AddrMatch << SMC_CSCR1_ADDMATx_POS(u32Chip)));
         i32Ret = LL_OK;
     }
@@ -301,18 +306,27 @@ int32_t EXMC_SMC_Init(uint32_t u32Chip, const stc_exmc_smc_init_t *pstcSmcInit)
 /**
  * @brief  De-Initialize EXMC_SMC function.
  * @param  None
- * @retval None
+ * @retval int32_t:
+ *           - LL_OK:           Reset success.
  */
-void EXMC_SMC_DeInit(void)
+int32_t EXMC_SMC_DeInit(void)
 {
+    int32_t i32Ret = LL_OK;
+
     /* Disable SMC */
     CLR_REG32_BIT(CM_PERIC->SMC_ENAR, PERIC_SMC_ENAR_SMCEN);
 
-    /* Set SMC timing.*/
-    WRITE_REG32(CM_SMC->TMCR, 0UL);
+    /* Set register CSCR0/CSCR1 to reset value.*/
+    WRITE_REG32(CM_SMC->CSCR0, 0xFFFFFFFFUL);
+    WRITE_REG32(CM_SMC->CSCR1, 0x00000000UL);
 
-    /* Set SMC chip configuration.*/
-    WRITE_REG32(CM_SMC->CPCR, 0UL);
+    /* Set register RFTR to reset value.*/
+    WRITE_REG32(CM_SMC->RFTR, 0x00000000UL);
+
+    /* Set register BACR to reset value.*/
+    WRITE_REG32(CM_SMC->BACR, EXMC_SMC_BACR_RST_VALUE);
+
+    return i32Ret;
 }
 
 /**
@@ -380,10 +394,6 @@ void EXMC_SMC_SetRefreshPeriod(uint8_t u8PeriodVal)
  * @brief  Set EXMC_SMC command.
  * @param  [in] u32Chip                 The chip number.
  *         This parameter can be one of the macros group @ref EXMC_SMC_Chip
- *           @arg EXMC_SMC_CHIP0:       Chip 0
- *           @arg EXMC_SMC_CHIP1:       Chip 1
- *           @arg EXMC_SMC_CHIP2:       Chip 2
- *           @arg EXMC_SMC_CHIP3:       Chip 3
  * @param  [in] u32Cmd                  The command.
  *         This parameter can be one of the macros group @ref EXMC_SMC_Command
  *           @arg EXMC_SMC_CMD_MDREGCONFIG: Configure mode register
@@ -415,10 +425,6 @@ void EXMC_SMC_SetCommand(uint32_t u32Chip, uint32_t u32Cmd, uint32_t u32CrePolar
  * @brief  Get the start address of the specified SMC chip.
  * @param  [in] u32Chip                 The chip number.
  *         This parameter can be one of the macros group @ref EXMC_SMC_Chip
- *           @arg EXMC_SMC_CHIP0:       Chip 0
- *           @arg EXMC_SMC_CHIP1:       Chip 1
- *           @arg EXMC_SMC_CHIP2:       Chip 2
- *           @arg EXMC_SMC_CHIP3:       Chip 3
  * @retval The start address of the specified SMC chip.
  */
 uint32_t EXMC_SMC_GetChipStartAddr(uint32_t u32Chip)
@@ -435,10 +441,6 @@ uint32_t EXMC_SMC_GetChipStartAddr(uint32_t u32Chip)
  * @brief  Get the end address of the specified SMC chip.
  * @param  [in] u32Chip                 The chip number.
  *         This parameter can be one of the macros group @ref EXMC_SMC_Chip
- *           @arg EXMC_SMC_CHIP0:       Chip 0
- *           @arg EXMC_SMC_CHIP1:       Chip 1
- *           @arg EXMC_SMC_CHIP2:       Chip 2
- *           @arg EXMC_SMC_CHIP3:       Chip 3
  * @retval The end address of the specified SMC chip
  */
 uint32_t EXMC_SMC_GetChipEndAddr(uint32_t u32Chip)
@@ -458,10 +460,6 @@ uint32_t EXMC_SMC_GetChipEndAddr(uint32_t u32Chip)
  * @brief  Get SMC chip configure.
  * @param  [in] u32Chip                 The chip number.
  *         This parameter can be one of the macros group @ref EXMC_SMC_Chip
- *           @arg EXMC_SMC_CHIP0:       Chip 0
- *           @arg EXMC_SMC_CHIP1:       Chip 1
- *           @arg EXMC_SMC_CHIP2:       Chip 2
- *           @arg EXMC_SMC_CHIP3:       Chip 3
  * @param  [in] pstcChipConfig          Pointer to a @ref stc_exmc_smc_chip_config_t structure.
  * @retval int32_t:
  *           - LL_OK:                   Get successfully.
@@ -477,8 +475,8 @@ int32_t EXMC_SMC_GetChipConfig(uint32_t u32Chip, stc_exmc_smc_chip_config_t *pst
 
         SMC_CPSRx = EXMC_SMC_CPSRx(u32Chip);
         pstcChipConfig->u32ReadMode = READ_REG32_BIT(*SMC_CPSRx, SMC_CPSR_RSYN);
-        pstcChipConfig->u32ReadBurstLen = READ_REG32_BIT(*SMC_CPSRx, SMC_CPSR_RBL);
         pstcChipConfig->u32WriteMode = READ_REG32_BIT(*SMC_CPSRx, SMC_CPSR_WSYN);
+        pstcChipConfig->u32ReadBurstLen = READ_REG32_BIT(*SMC_CPSRx, SMC_CPSR_RBL);
         pstcChipConfig->u32WriteBurstLen = READ_REG32_BIT(*SMC_CPSRx, SMC_CPSR_WBL);
         pstcChipConfig->u32MemoryWidth = READ_REG32_BIT(*SMC_CPSRx, SMC_CPSR_MW);
         pstcChipConfig->u32BAA = READ_REG32_BIT(*SMC_CPSRx, SMC_CPSR_BAAS);
@@ -496,10 +494,6 @@ int32_t EXMC_SMC_GetChipConfig(uint32_t u32Chip, stc_exmc_smc_chip_config_t *pst
  * @brief  Get SMC timing configure.
  * @param  [in] u32Chip                 The chip number.
  *         This parameter can be one of the macros group @ref EXMC_SMC_Chip
- *           @arg EXMC_SMC_CHIP0:       Chip 0
- *           @arg EXMC_SMC_CHIP1:       Chip 1
- *           @arg EXMC_SMC_CHIP2:       Chip 2
- *           @arg EXMC_SMC_CHIP3:       Chip 3
  * @param  [in] pstcTimingConfig        Pointer to a @ref stc_exmc_smc_timing_config_t structure.
  * @retval int32_t:
  *           - LL_OK:                   Get successfully.
@@ -537,8 +531,8 @@ int32_t EXMC_SMC_GetTimingConfig(uint32_t u32Chip, stc_exmc_smc_timing_config_t 
  */
 
 /**
-* @}
-*/
+ * @}
+ */
 
 /**
  * @}

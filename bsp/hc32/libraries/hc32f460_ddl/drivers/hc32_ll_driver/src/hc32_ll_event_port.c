@@ -6,9 +6,11 @@
    Change Logs:
    Date             Author          Notes
    2022-03-31       CDT             First version
+   2023-09-30       CDT             Modify typo
+                                    Modify for new head file
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -55,7 +57,7 @@
 #define PEVNTORR_REG(x)         (*(__IO uint32_t *)((uint32_t)(&CM_AOS->PEVNTORR1) + (EP_OFFSET * (x))))
 #define PEVNTOSR_REG(x)         (*(__IO uint32_t *)((uint32_t)(&CM_AOS->PEVNTOSR1) + (EP_OFFSET * (x))))
 #define PEVNTRIS_REG(x)         (*(__IO uint32_t *)((uint32_t)(&CM_AOS->PEVNTRISR1) + (EP_OFFSET * (x))))
-#define PEVNTFAL_REG(x)         (*(__IO uint32_t *)((uint32_t)(&CM_AOS->PEVNTFAL1) + (EP_OFFSET * (x))))
+#define PEVNTFAL_REG(x)         (*(__IO uint32_t *)((uint32_t)(&CM_AOS->PEVNTFALR1) + (EP_OFFSET * (x))))
 #define PEVNTTRGSR_RST_VALUE    (0x1FFUL)
 #define EP_PIN_MAX              (16U)
 
@@ -201,8 +203,8 @@ void EP_DeInit(void)
     uint8_t u8EventPort;
 
     /* Restore all registers to default value */
-    WRITE_REG32(CM_AOS->PEVNTTRGSR12, PEVNTTRGSR_RST_VALUE);
-    WRITE_REG32(CM_AOS->PEVNTTRGSR34, PEVNTTRGSR_RST_VALUE);
+    WRITE_REG32(CM_AOS->PEVNT_TRGSEL12, PEVNTTRGSR_RST_VALUE);
+    WRITE_REG32(CM_AOS->PEVNT_TRGSEL34, PEVNTTRGSR_RST_VALUE);
     WRITE_REG32(CM_AOS->PEVNTNFCR, 0UL);
     for (u8EventPort = EVT_PORT_1; u8EventPort < EVT_PORT_4; u8EventPort++) {
         WRITE_REG32(PEVNTDIR_REG(u8EventPort), 0UL);
@@ -283,7 +285,7 @@ int32_t EP_SetTriggerEdge(uint8_t u8EventPort, uint16_t u16EventPin, uint32_t u3
 }
 
 /**
- * @brief  Set event port opeartion after triggered
+ * @brief  Set event port operation after triggered
  * @param  [in] u8EventPort: EVENT_PORT_x, x can be (1~4) to select the EP peripheral
  * @param  [in] u16EventPin: EVENT_PIN_x, x can be (00~15) to select the EP pin index
  * @param  [in] u32Ops: The operation after triggered, @ref EP_TriggerOps_Sel for details
@@ -434,8 +436,8 @@ void EP_SetDir(uint8_t u8EventPort, uint16_t u16EventPin, uint32_t u32Dir)
  */
 
 /**
-* @}
-*/
+ * @}
+ */
 
 /******************************************************************************
  * EOF (not truncated)

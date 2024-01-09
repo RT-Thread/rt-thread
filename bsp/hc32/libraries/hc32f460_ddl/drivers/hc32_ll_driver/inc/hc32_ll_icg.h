@@ -9,7 +9,7 @@
    2022-03-31       CDT             First version
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -140,7 +140,6 @@ extern "C"
  * @}
  */
 
-/* WDT function */
 /**
  * @defgroup ICG_WDT_Reset_State ICG WDT Reset State
  * @{
@@ -229,7 +228,6 @@ extern "C"
  * @}
  */
 
-/* NMI Pin function */
 /**
  * @defgroup ICG_NMI_Pin_Filter_Clock_Division ICG NMI Pin Filter Clock Division
  * @{
@@ -284,7 +282,6 @@ extern "C"
  * @}
  */
 
-/* BOR function */
 /**
  * @defgroup ICG_BOR_Voltage_Threshold ICG BOR Voltage Threshold
  * @{
@@ -328,12 +325,6 @@ extern "C"
  * @}
  */
 
-/* LVD function */
-
-/* Core lockup function */
-
-/* Flash function */
-
 /**
  * @}
  */
@@ -344,10 +335,8 @@ extern "C"
  */
 
 /**
- *******************************************************************************
  * @defgroup ICG_SWDT_Preload_Configuration ICG SWDT Preload Configuration
  * @{
- *******************************************************************************
  */
 /* SWDT register config */
 #define ICG_RB_SWDT_AUTS                        (ICG_SWDT_RST_STOP)
@@ -365,10 +354,8 @@ extern "C"
  */
 
 /**
- *******************************************************************************
  * @defgroup ICG_WDT_Preload_Configuration ICG WDT Preload Configuration
  * @{
- *******************************************************************************
  */
 /* WDT register config */
 #define ICG_RB_WDT_AUTS                         (ICG_WDT_RST_STOP)
@@ -386,10 +373,8 @@ extern "C"
  */
 
 /**
- *******************************************************************************
  * @defgroup ICG_NMI_Pin_Preload_Configuration ICG NMI Pin Preload Configuration
  * @{
- *******************************************************************************
  */
 /* NMI register config */
 #define ICG_RB_NMI_FCLK                         (ICG_NMI_PIN_FILTER_CLK_DIV64)
@@ -406,10 +391,8 @@ extern "C"
  */
 
 /**
- *******************************************************************************
  * @defgroup ICG_BOR_Preload_Configuration ICG BOR Preload Configuration
  * @{
- *******************************************************************************
  */
 /* BOR register config */
 #define ICG_RB_BOR_LEV                          (ICG_BOR_VOL_THRESHOLD_LVL3)
@@ -422,10 +405,8 @@ extern "C"
  */
 
 /**
- *******************************************************************************
  * @defgroup ICG_HRC_Preload_Configuration ICG HRC Preload Configuration
  * @{
- *******************************************************************************
  */
 /* HRC register config */
 #define ICG_RB_HRC_FREQSEL                      (ICG_HRC_16M)

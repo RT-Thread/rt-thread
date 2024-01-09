@@ -1,6 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
- * Copyright (c) 2022, Xiaohua Semiconductor Co., Ltd.
+ * Copyright (C) 2022-2024, Xiaohua Semiconductor Co., Ltd.
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -34,6 +33,7 @@ extern "C"
 struct adc_dev_init_params
 {
     char name[8];
+    uint16_t vref;                      /*!< Specifies the ADC reference voltage, unit is mv */
     uint16_t resolution;                /*!< Specifies the ADC resolution.
                                              This parameter can be a value of @ref ADC_Resolution */
     uint16_t data_align;                /*!< Specifies ADC data alignment.
@@ -64,14 +64,14 @@ struct adc_dev_init_params
 /*******************************************************************************
  * Global function prototypes (definition in C source)
  ******************************************************************************/
-int rt_hw_uart_init(void);
+int rt_hw_adc_init(void);
 
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* __DRV_USART_H__ */
+#endif /* __DRV_ADC_H__ */
 
 /*******************************************************************************
  * EOF (not truncated)

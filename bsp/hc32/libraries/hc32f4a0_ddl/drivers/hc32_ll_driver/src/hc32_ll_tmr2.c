@@ -6,9 +6,10 @@
    Change Logs:
    Date             Author          Notes
    2022-03-31       CDT             First version
+   2022-10-31       CDT             Deleted redundant comments
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -81,7 +82,6 @@
  */
 #define IS_TMR2_BIT_MASK(x, mask)   (((x) != 0U) && (((x) | (mask)) == (mask)))
 
-/* Unit and channel */
 #define IS_TMR2_UNIT(x)                                                        \
 (   ((x) == CM_TMR2_1)                       ||                                \
     ((x) == CM_TMR2_2)                       ||                                \
@@ -92,7 +92,6 @@
 
 #define IS_TMR2_FUNC(x)             (((x) == TMR2_FUNC_CMP) || ((x) == TMR2_FUNC_CAPT))
 
-/* Clock source */
 #define IS_TMR2_CLK_SRC(x)                                                     \
 (   ((x) == TMR2_CLK_PCLK1)                 ||                                 \
     ((x) == TMR2_CLK_TRIG_RISING)           ||                                 \
@@ -802,8 +801,8 @@ void TMR2_PWM_SetPolarity(CM_TMR2_TypeDef *TMR2x, uint32_t u32Ch, uint8_t u8Coun
  */
 
 /**
-* @}
-*/
+ * @}
+ */
 
 /******************************************************************************
  * EOF (not truncated)
