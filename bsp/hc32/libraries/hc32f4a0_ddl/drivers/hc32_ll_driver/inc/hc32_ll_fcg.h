@@ -7,9 +7,10 @@
    Change Logs:
    Date             Author          Notes
    2022-03-31       CDT             First version
+   2023-09-30       CDT             Modify for head file update: PWC_FCG3_CMP1->PWC_FCG3_CMP12, PWC_FCG3_CMP2->PWC_FCG3_CMP34
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -174,8 +175,8 @@ extern "C"
 #define FCG3_PERIPH_CMBIAS              (PWC_FCG3_CMBIAS)
 #define FCG3_PERIPH_DAC1                (PWC_FCG3_DAC1)
 #define FCG3_PERIPH_DAC2                (PWC_FCG3_DAC2)
-#define FCG3_PERIPH_CMP1_2              (PWC_FCG3_CMP1)
-#define FCG3_PERIPH_CMP3_4              (PWC_FCG3_CMP2)
+#define FCG3_PERIPH_CMP1_2              (PWC_FCG3_CMP12)
+#define FCG3_PERIPH_CMP3_4              (PWC_FCG3_CMP34)
 #define FCG3_PERIPH_OTS                 (PWC_FCG3_OTS)
 #define FCG3_PERIPH_DVP                 (PWC_FCG3_DVP)
 #define FCG3_PERIPH_SMC                 (PWC_FCG3_SMC)

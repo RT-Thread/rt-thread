@@ -56,5 +56,7 @@ objs.extend(SConscript(os.path.join(libraries_path_prefix, hc32_library, 'SConsc
 # include drivers
 objs.extend(SConscript(os.path.join(libraries_path_prefix, 'hc32_drivers', 'SConscript')))
 
+objs.extend(SConscript(os.path.join(os.getcwd(), 'board', 'ports', 'SConscript')))
+
 # make a building
 DoBuilding(TARGET, objs)

@@ -8,7 +8,7 @@
    2022-03-31       CDT             First version
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -214,7 +214,6 @@ void usb_host_recvbulkdata(usb_core_instance *pdev, uint8_t *buff, uint16_t leng
     pdev->host.hc[hc_num].is_epin   = (uint8_t)1;
     pdev->host.hc[hc_num].xfer_buff = buff;
     pdev->host.hc[hc_num].xfer_len  = length;
-
 
     if (pdev->host.hc[hc_num].in_toggle == (uint8_t)0) {
         pdev->host.hc[hc_num].pid_type = PID_DATA0;

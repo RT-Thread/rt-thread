@@ -6,9 +6,10 @@
    Change Logs:
    Date             Author          Notes
    2022-03-31       CDT             First version
+   2022-06-30       CDT             Fix warning: MISRAC2012-Rule-18.4
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -140,49 +141,49 @@ uint32_t STL_RamRuntimeTest(void)
         /*---------------------------- STEP 1 --------------------------------- */
         /* Write background with addresses increasing */
         for (i = 0UL; i < STL_MARCH_RAM_BUF_WORDS; ++i) {
-            *(m_pu32MarchRAM + i) = STL_MARCH_RAM_BCKGRND;
+            m_pu32MarchRAM[i] = STL_MARCH_RAM_BCKGRND;
         }
 
         /*---------------------------- STEP 2 --------------------------------- */
         /* Verify background and write inverted background addresses increasing */
         for (i = 0UL; i < STL_MARCH_RAM_BUF_WORDS; ++i) {
-            if (*(m_pu32MarchRAM + i) != STL_MARCH_RAM_BCKGRND) {
+            if (m_pu32MarchRAM[i] != STL_MARCH_RAM_BCKGRND) {
                 u32Ret = STL_ERR;
             }
-            *(m_pu32MarchRAM + i) = STL_MARCH_RAM_INVBCKGRND;
+            m_pu32MarchRAM[i] = STL_MARCH_RAM_INVBCKGRND;
         }
 
         /*---------------------------- STEP 3 --------------------------------- */
         /* Verify inverted background and write background addresses increasing */
         for (i = 0UL; i < STL_MARCH_RAM_BUF_WORDS; ++i) {
-            if (*(m_pu32MarchRAM + i) != STL_MARCH_RAM_INVBCKGRND) {
+            if (m_pu32MarchRAM[i] != STL_MARCH_RAM_INVBCKGRND) {
                 u32Ret = STL_ERR;
             }
-            *(m_pu32MarchRAM + i) = STL_MARCH_RAM_BCKGRND;
+            m_pu32MarchRAM[i] = STL_MARCH_RAM_BCKGRND;
         }
 
         /*---------------------------- STEP 4 --------------------------------- */
         /* Verify background and write inverted background addresses decreasing */
         for (i = STL_MARCH_RAM_BUF_WORDS; i > 0UL ; --i) {
-            if (*(m_pu32MarchRAM + i - 1UL) != STL_MARCH_RAM_BCKGRND) {
+            if (m_pu32MarchRAM[i - 1UL] != STL_MARCH_RAM_BCKGRND) {
                 u32Ret = STL_ERR;
             }
-            *(m_pu32MarchRAM + i - 1UL) = STL_MARCH_RAM_INVBCKGRND;
+            m_pu32MarchRAM[i - 1UL] = STL_MARCH_RAM_INVBCKGRND;
         }
 
         /*---------------------------- STEP 5 --------------------------------- */
         /* Verify inverted background and write background addresses decreasing */
         for (i = STL_MARCH_RAM_BUF_WORDS; i > 0UL ; --i) {
-            if (*(m_pu32MarchRAM + i - 1UL) != STL_MARCH_RAM_INVBCKGRND) {
+            if (m_pu32MarchRAM[i - 1UL] != STL_MARCH_RAM_INVBCKGRND) {
                 u32Ret = STL_ERR;
             }
-            *(m_pu32MarchRAM + i - 1UL) = STL_MARCH_RAM_BCKGRND;
+            m_pu32MarchRAM[i - 1UL] = STL_MARCH_RAM_BCKGRND;
         }
 
         /*---------------------------- STEP 6 --------------------------------- */
         /* Verify background with addresses increasing */
         for (i = 0UL; i < STL_MARCH_RAM_BUF_WORDS; ++i) {
-            if (*(m_pu32MarchRAM + i) != STL_MARCH_RAM_BCKGRND) {
+            if (m_pu32MarchRAM[i] != STL_MARCH_RAM_BCKGRND) {
                 u32Ret = STL_ERR;
             }
         }
@@ -194,58 +195,58 @@ uint32_t STL_RamRuntimeTest(void)
         /* Save the content of the 6 words to be tested and start MarchC -
            Write background with addresses increasing */
         for (i = 0UL; i < STL_MARCH_RAM_BUF_WORDS; ++i) {
-            m_au32MarchRAMBuf[i] = *(m_pu32MarchRAM + i);
-            *(m_pu32MarchRAM + i) = STL_MARCH_RAM_BCKGRND;
+            m_au32MarchRAMBuf[i] = m_pu32MarchRAM[i];
+            m_pu32MarchRAM[i] = STL_MARCH_RAM_BCKGRND;
         }
 
         /*---------------------------- STEP 2 --------------------------------- */
         /* Verify background and write inverted background addresses increasing */
         for (i = 0UL; i < STL_MARCH_RAM_BUF_WORDS; ++i) {
-            if (*(m_pu32MarchRAM + i) != STL_MARCH_RAM_BCKGRND) {
+            if (m_pu32MarchRAM[i] != STL_MARCH_RAM_BCKGRND) {
                 u32Ret = STL_ERR;
             }
-            *(m_pu32MarchRAM + i) = STL_MARCH_RAM_INVBCKGRND;
+            m_pu32MarchRAM[i] = STL_MARCH_RAM_INVBCKGRND;
         }
 
         /*---------------------------- STEP 3 --------------------------------- */
         /* Verify inverted background and write background addresses increasing */
         for (i = 0UL; i < STL_MARCH_RAM_BUF_WORDS; ++i) {
-            if (*(m_pu32MarchRAM + i) != STL_MARCH_RAM_INVBCKGRND) {
+            if (m_pu32MarchRAM[i] != STL_MARCH_RAM_INVBCKGRND) {
                 u32Ret = STL_ERR;
             }
-            *(m_pu32MarchRAM + i) = STL_MARCH_RAM_BCKGRND;
+            m_pu32MarchRAM[i] = STL_MARCH_RAM_BCKGRND;
         }
 
         /*---------------------------- STEP 4 --------------------------------- */
         /* Verify background and write inverted background addresses decreasing */
         for (i = STL_MARCH_RAM_BUF_WORDS; i > 0UL; --i) {
-            if (*(m_pu32MarchRAM + i - 1UL) != STL_MARCH_RAM_BCKGRND) {
+            if (m_pu32MarchRAM[i - 1UL] != STL_MARCH_RAM_BCKGRND) {
                 u32Ret = STL_ERR;
             }
-            *(m_pu32MarchRAM + i - 1UL) = STL_MARCH_RAM_INVBCKGRND;
+            m_pu32MarchRAM[i - 1UL] = STL_MARCH_RAM_INVBCKGRND;
         }
 
         /*---------------------------- STEP 5 --------------------------------- */
         /* Verify inverted background and write background addresses decreasing */
         for (i = STL_MARCH_RAM_BUF_WORDS; i > 0UL; --i) {
-            if (*(m_pu32MarchRAM + i - 1UL) != STL_MARCH_RAM_INVBCKGRND) {
+            if (m_pu32MarchRAM[i - 1UL] != STL_MARCH_RAM_INVBCKGRND) {
                 u32Ret = STL_ERR;
             }
-            *(m_pu32MarchRAM + i - 1UL) = STL_MARCH_RAM_BCKGRND;
+            m_pu32MarchRAM[i - 1UL] = STL_MARCH_RAM_BCKGRND;
         }
 
         /*---------------------------- STEP 6 --------------------------------- */
         /* Verify background with addresses increasing */
         /* and restore the content of the 6 tested words */
         for (i = 0UL; i < STL_MARCH_RAM_BUF_WORDS; ++i) {
-            if (*(m_pu32MarchRAM + i) != STL_MARCH_RAM_BCKGRND) {
+            if (m_pu32MarchRAM[i] != STL_MARCH_RAM_BCKGRND) {
                 u32Ret = STL_ERR;
             }
-            *(m_pu32MarchRAM + i) = m_au32MarchRAMBuf[i];
+            m_pu32MarchRAM[i] = m_au32MarchRAMBuf[i];
         }
 
         /* Prepare next Row Tranparent RAM test */
-        m_pu32MarchRAM += STL_MARCH_RAM_BUF_WORDS;
+        m_pu32MarchRAM = &m_pu32MarchRAM[STL_MARCH_RAM_BUF_WORDS];
     }
 
     return u32Ret;

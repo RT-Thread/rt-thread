@@ -7,9 +7,11 @@
    Change Logs:
    Date             Author          Notes
    2022-03-31       CDT             First version
+   2023-06-30       CDT             Add TRNG_Cmd,TRNG_DeInit functions
+                                    API optimized for better random numbers: TRNG_GenerateRandom()
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -63,8 +65,8 @@ extern "C"
  * @defgroup TRNG_Reload_Init_Value TRNG Reload Initial Value
  * @{
  */
-#define TRNG_RELOAD_INIT_VAL_ENABLE   (TRNG_MR_LOAD)                /* Enable reload new initial value. */
-#define TRNG_RELOAD_INIT_VAL_DISABLE  (0x0U)                        /* Disable reload new initial value. */
+#define TRNG_RELOAD_INIT_VAL_ENABLE     (TRNG_MR_LOAD)                /* Enable reload new initial value. */
+#define TRNG_RELOAD_INIT_VAL_DISABLE    (0x0U)                        /* Disable reload new initial value. */
 /**
  * @}
  */
@@ -73,10 +75,10 @@ extern "C"
  * @defgroup TRNG_Shift_Ctrl TRNG Shift Control
  * @{
  */
-#define TRNG_SHIFT_CNT32              (0x3UL << TRNG_MR_CNT_POS)    /* Shift 32 times when capturing random noise. */
-#define TRNG_SHIFT_CNT64              (0x4UL << TRNG_MR_CNT_POS)    /* Shift 64 times when capturing random noise. */
-#define TRNG_SHIFT_CNT128             (0x5UL << TRNG_MR_CNT_POS)    /* Shift 128 times when capturing random noise. */
-#define TRNG_SHIFT_CNT256             (0x6UL << TRNG_MR_CNT_POS)    /* Shift 256 times when capturing random noise. */
+#define TRNG_SHIFT_CNT32                (0x3UL << TRNG_MR_CNT_POS)    /* Shift 32 times when capturing random noise. */
+#define TRNG_SHIFT_CNT64                (0x4UL << TRNG_MR_CNT_POS)    /* Shift 64 times when capturing random noise. */
+#define TRNG_SHIFT_CNT128               (0x5UL << TRNG_MR_CNT_POS)    /* Shift 128 times when capturing random noise. */
+#define TRNG_SHIFT_CNT256               (0x6UL << TRNG_MR_CNT_POS)    /* Shift 256 times when capturing random noise. */
 /**
  * @}
  */
@@ -96,15 +98,13 @@ extern "C"
  * @addtogroup TRNG_Global_Functions
  * @{
  */
+int32_t TRNG_DeInit(void);
 void TRNG_Init(uint32_t u32ShiftCount, uint32_t u32ReloadInitValueEn);
+int32_t TRNG_GenerateRandom(uint32_t *pu32Random, uint32_t u32RandomLen);
 
-/* For polling mode. */
-int32_t TRNG_GenerateRandom(uint32_t *pu32Random, uint8_t u8RandomLen);
-
-/* For interrupt mode. */
 void TRNG_Start(void);
+void TRNG_Cmd(en_functional_state_t enNewState);
 int32_t TRNG_GetRandom(uint32_t *pu32Random, uint8_t u8RandomLen);
-
 /**
  * @}
  */

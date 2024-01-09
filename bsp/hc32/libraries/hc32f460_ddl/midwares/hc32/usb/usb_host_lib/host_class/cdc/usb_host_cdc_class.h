@@ -8,7 +8,7 @@
    2022-03-31       CDT             First version
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -122,15 +122,12 @@ CDC_Machine_TypeDef;
 #define ETHERNET_NETWORKING_CONTROL_MODEL                       (0x06U)
 #define ATM_NETWORKING_CONTROL_MODEL                            (0x07U)
 
-
 #define NO_CLASS_SPECIFIC_PROTOCOL_CODE                         (0x00U)
 #define COMMON_AT_COMMAND                                       (0x01U)
 #define VENDOR_SPECIFIC                                         (0xFFU)
 
-
 #define CS_INTERFACE                                            (0x24U)
 #define CDC_PAGE_SIZE_64                                        (0x40U)
-
 
 /*******************************************************************************
  * Global variable definitions ('extern')
@@ -144,7 +141,6 @@ extern CDC_Usercb_TypeDef UserCb;
 void  usb_host_cdc_senddata(uint8_t *data, uint16_t length);
 void  usb_host_cdc_enable_receive(usb_core_instance *pdev);
 void  usb_host_cdc_disable_receive(usb_core_instance *pdev);
-
 
 /**
  * @}

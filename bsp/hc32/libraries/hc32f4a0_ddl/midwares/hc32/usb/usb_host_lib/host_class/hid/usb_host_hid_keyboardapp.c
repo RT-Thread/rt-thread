@@ -6,9 +6,10 @@
    Change Logs:
    Date             Author          Notes
    2022-03-31       CDT             First version
+   2023-06-30       CDT             Modify for variable alignment
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -56,16 +57,6 @@ void keyboard_decode(uint8_t *pbuf);
 /*******************************************************************************
  * Global variable definitions (declared in header file with 'extern')
  ******************************************************************************/
-#ifdef USB_INTERNAL_DMA_ENABLED
-#if defined   (__CC_ARM) /*!< ARM Compiler */
-__align(4)
-#elif defined ( __ICCARM__ ) /*!< IAR Compiler */
-#pragma data_alignment=4
-#elif defined (__GNUC__) /*!< GNU Compiler */
-#pragma pack(4)
-#endif /* __CC_ARM */
-#endif
-
 HID_cb_TypeDef HID_KEYBRD_cb = {
     keyboard_init,
     keyboard_decode
@@ -74,7 +65,7 @@ HID_cb_TypeDef HID_KEYBRD_cb = {
 /*******************************************************************************
  * Local variable definitions ('static')
  ******************************************************************************/
-static  const  uint8_t  HID_KEYBRD_Codes[] = {
+__USB_ALIGN_BEGIN static const uint8_t HID_KEYBRD_Codes[] = {
     0,      0,      0,      0,      31,     50,     48,     33,
     19,     34,     35,     36,     24,     37,     38,     39,     /* 0x00 - 0x0F */
     52,     51,     25,     26,     17,     20,     32,     21,
@@ -107,7 +98,7 @@ static  const  uint8_t  HID_KEYBRD_Codes[] = {
 };
 
 #ifdef QWERTY_KEYBOARD
-static  const  uint8_t  HID_KEYBRD_Key[] = {
+__USB_ALIGN_BEGIN static const uint8_t HID_KEYBRD_Key[] = {
     '\0',   '`',   '1',   '2',   '3',   '4',   '5',   '6',
     '7',   '8',   '9',   '0',   '-',   '=',   '\0',   '\r',
     '\t',   'q',   'w',   'e',   'r',   't',   'y',   'u',
@@ -128,7 +119,7 @@ static  const  uint8_t  HID_KEYBRD_Key[] = {
     '\0',   '\0',   '\0',   '\0'
 };
 
-static  const  uint8_t  HID_KEYBRD_ShiftKey[] = {
+__USB_ALIGN_BEGIN static const uint8_t HID_KEYBRD_ShiftKey[] = {
     '\0',   '~',   '!',   '@',   '#',   '$',   '%',   '^',   '&',   '*',   '(',   ')',
     '_',   '+',   '\0',   '\0',   '\0',   'Q',   'W',   'E',   'R',   'T',   'Y',   'U',
     'I',   'O',   'P',   '{',   '}',   '|',   '\0',   'A',   'S',   'D',   'F',   'G',
@@ -144,7 +135,7 @@ static  const  uint8_t  HID_KEYBRD_ShiftKey[] = {
 
 #else
 
-static  const  uint8_t  HID_KEYBRD_Key[] = {
+__USB_ALIGN_BEGIN static const uint8_t HID_KEYBRD_Key[] = {
     '\0',   '`',   '1',   '2',   '3',   '4',   '5',   '6',   '7',   '8',   '9',   '0',
     '-',   '=',   '\0',   '\r',   '\t',   'a',   'z',   'e',   'r',   't',   'y',   'u',
     'i',   'o',   'p',   '[',   ']',   '\\',   '\0',   'q',   's',   'd',   'f',   'g',
@@ -158,7 +149,7 @@ static  const  uint8_t  HID_KEYBRD_Key[] = {
     '\0',   '\0',   '\0',   '\0',   '\0',   '\0',   '\0',   '\0',   '\0',   '\0'
 };
 
-static  const  uint8_t  HID_KEYBRD_ShiftKey[] = {
+__USB_ALIGN_BEGIN static const uint8_t HID_KEYBRD_ShiftKey[] = {
     '\0',   '~',   '!',   '@',   '#',   '$',   '%',   '^',   '&',   '*',   '(',   ')',   '_',
     '+',   '\0',   '\0',   '\0',   'A',   'Z',   'E',   'R',   'T',   'Y',   'U',   'I',   'O',
     'P',   '{',   '}',   '*',   '\0',   'Q',   'S',   'D',   'F',   'G',   'H',   'J',   'K',

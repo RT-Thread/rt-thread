@@ -8,7 +8,7 @@
    2022-03-31       CDT             First version
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -80,7 +80,6 @@ typedef struct stc_stl_case_runtime {
  * Global variable definitions ('extern')
  ******************************************************************************/
 
-
 /*******************************************************************************
  * Global function prototypes (definition in C source)
  ******************************************************************************/
@@ -105,9 +104,8 @@ void STL_RuntimeTestCase(const stc_stl_case_runtime_t *pstcCaseTable, uint32_t u
  */
 
 #ifdef __cplusplus
-{
+}
 #endif
-
 
 #endif /* #include "stl_common.h" */
 

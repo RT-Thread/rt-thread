@@ -8,7 +8,7 @@
    2022-03-31       CDT             First version
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -139,7 +139,6 @@ __USB_ALIGN_BEGIN static uint8_t usb_dev_hid_cfgdesc[USB_CUSTOM_HID_CONFIG_DESC_
     0x00,
     0x0A,
 } ;
-
 
 __USB_ALIGN_BEGIN static uint8_t CUSTOM_HID_ReportDesc[CUSTOM_HID_REPORT_DESC_SIZE] = {
     0x05, 0x8C, 0x09, 0x06, 0xA1, 0x01, 0x09, 0x06, 0x15, 0x00, 0x26, 0x00,

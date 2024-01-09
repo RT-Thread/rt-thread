@@ -7,9 +7,11 @@
    Change Logs:
    Date             Author          Notes
    2022-03-31       CDT             First version
+   2023-09-30       CDT             Modify typo
+                                    Add ETH_MAC_SetInterface function
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -188,7 +190,7 @@ typedef struct {
                                              This parameter can be a value of @ref ETH_Transmit_Threshold */
     uint32_t u32ForwardErrorFrame;      /*!< Specifies the validity of the forward erroneous frame.
                                              This parameter can be a value of @ref ETH_Forward_Error_Frame */
-    uint32_t u32ForwardUndersizeFrame;  /*!< Specifies the validity of the Rx FIFO to forward Un dersize frame.
+    uint32_t u32ForwardUndersizeFrame;  /*!< Specifies the validity of the Rx FIFO to forward Undersize frame.
                                              This parameter can be a value of @ref ETH_Forward_Undersize_Good_Frame */
     uint32_t u32DropJumboFrame;         /*!< Specifies the validity of Dropping jumbo Frame.
                                              This parameter can be a value of @ref ETH_Drop_Jumbo_Frame */
@@ -244,7 +246,7 @@ typedef struct {
                                              This parameter can be a value of @ref ETH_PPS_Trigger_Function */
     uint32_t u32OutputMode;             /*!< Specifies the PPS output mode.
                                              This parameter can be a value of @ref ETH_PPS_Output_Mode */
-    uint32_t u32OutputFreq;             /*!< Specifies the PPS outout frequency.
+    uint32_t u32OutputFreq;             /*!< Specifies the PPS output frequency.
                                              This parameter can be any combination of @ref ETH_PPS_Output_Frequency */
     uint32_t u32SecValue;               /*!< Specifies the PPS Target Time for Second.
                                              This parameter must be a number between Min_Data = 0x0 and Max_Data = 0xFFFFFFFF */
@@ -469,9 +471,9 @@ typedef struct {
  */
 #define ETH_DMA_TXDESC_SAIRC                        (0xE0000000UL)  /*!< Source Address Insertion or Replace Control: 5 cases */
 #define ETH_DMA_TXDESC_SAIRC_BYPASS                 (0x00000000UL)  /*!< Do Nothing: Source Address Insertion or Replace Control is bypassed */
-#define ETH_DMA_TXDESC_SAIRC_INSTER_MACADDR0        (0x20000000UL)  /*!< Insert address value in MAC address register 0 into transmit frame as source address */
+#define ETH_DMA_TXDESC_SAIRC_INSERT_MACADDR0        (0x20000000UL)  /*!< Insert address value in MAC address register 0 into transmit frame as source address */
 #define ETH_DMA_TXDESC_SAIRC_REPLACE_MACADDR0       (0x40000000UL)  /*!< Replace source address in transmit frame with address value in MAC address register 0 */
-#define ETH_DMA_TXDESC_SAIRC_INSTER_MACADDR1        (0xA0000000UL)  /*!< Insert address value in MAC address register 1 into transmit frame as source address */
+#define ETH_DMA_TXDESC_SAIRC_INSERT_MACADDR1        (0xA0000000UL)  /*!< Insert address value in MAC address register 1 into transmit frame as source address */
 #define ETH_DMA_TXDESC_SAIRC_REPLACE_MACADDR1       (0xC0000000UL)  /*!< Replace source address in transmit frame with address value in MAC address register 1 */
 #define ETH_DMA_TXDESC_TBS2                         (0x1FFF0000UL)  /*!< Transmit Buffer2 Size */
 #define ETH_DMA_TXDESC_TBS1                         (0x00001FFFUL)  /*!< Transmit Buffer1 Size */
@@ -726,9 +728,9 @@ typedef struct {
  * @{
  */
 #define ETH_MAC_SRC_ADDR_MD_BY_DMA_TXDESC           (0UL)                                   /*!< Configure the Insert mode by Tx Descriptor of DMA */
-#define ETH_MAC_SRC_ADDR_MD_INSTER_MACADDR0         (0x02UL << ETH_MAC_CONFIGR_SAIRC_POS)   /*!< Insert address value in MAC address register 0 into transmit frame as source address */
+#define ETH_MAC_SRC_ADDR_MD_INSERT_MACADDR0         (0x02UL << ETH_MAC_CONFIGR_SAIRC_POS)   /*!< Insert address value in MAC address register 0 into transmit frame as source address */
 #define ETH_MAC_SRC_ADDR_MD_REPLACE_MACADDR0        (0x03UL << ETH_MAC_CONFIGR_SAIRC_POS)   /*!< Replace source address in transmit frame with address value in MAC address register 0 */
-#define ETH_MAC_SRC_ADDR_MD_INSTER_MACADDR1         (0x06UL << ETH_MAC_CONFIGR_SAIRC_POS)   /*!< Insert address value in MAC address register 1 into transmit frame as source address */
+#define ETH_MAC_SRC_ADDR_MD_INSERT_MACADDR1         (0x06UL << ETH_MAC_CONFIGR_SAIRC_POS)   /*!< Insert address value in MAC address register 1 into transmit frame as source address */
 #define ETH_MAC_SRC_ADDR_MD_REPLACE_MACADDR1        (0x07UL << ETH_MAC_CONFIGR_SAIRC_POS)   /*!< Replace source address in transmit frame with address value in MAC address register 1 */
 /**
  * @}
@@ -1765,9 +1767,9 @@ typedef struct {
  * @{
  */
 #define ETH_DMA_TXDESC_SRC_ADDR_BYPASS              (ETH_DMA_TXDESC_SAIRC_BYPASS)           /*!< Source Address Insertion or Replace Control is bypassed */
-#define ETH_DMA_TXDESC_SRC_ADDR_INSTER_MACADDR0     (ETH_DMA_TXDESC_SAIRC_INSTER_MACADDR0)  /*!< Insert address value in MAC address register 0 into transmit frame as source address */
+#define ETH_DMA_TXDESC_SRC_ADDR_INSERT_MACADDR0     (ETH_DMA_TXDESC_SAIRC_INSERT_MACADDR0)  /*!< Insert address value in MAC address register 0 into transmit frame as source address */
 #define ETH_DMA_TXDESC_SRC_ADDR_REPLACE_MACADDR0    (ETH_DMA_TXDESC_SAIRC_REPLACE_MACADDR0) /*!< Replace source address in transmit frame with address value in MAC address register 0 */
-#define ETH_DMA_TXDESC_SRC_ADDR_INSTER_MACADDR1     (ETH_DMA_TXDESC_SAIRC_INSTER_MACADDR1)  /*!< Insert address value in MAC address register 1 into transmit frame as source address */
+#define ETH_DMA_TXDESC_SRC_ADDR_INSERT_MACADDR1     (ETH_DMA_TXDESC_SAIRC_INSERT_MACADDR1)  /*!< Insert address value in MAC address register 1 into transmit frame as source address */
 #define ETH_DMA_TXDESC_SRC_ADDR_REPLACE_MACADDR1    (ETH_DMA_TXDESC_SAIRC_REPLACE_MACADDR1) /*!< Replace source address in transmit frame with address value in MAC address register 1 */
 /**
  * @}
@@ -1950,7 +1952,7 @@ typedef struct {
 #define ETH_PTP_DATAGRAM_TYPE_DELAY                         (0x03UL << ETH_PTP_TSPCTLR_TSPMTSEL_POS)    /*!< Delay_Req */
 #define ETH_PTP_DATAGRAM_TYPE_SYNC_FOLLOW_DELAY_PDELAY      (0x04UL << ETH_PTP_TSPCTLR_TSPMTSEL_POS)    /*!< SYNC Follow_Up Delay_Req Delay_Resp Pdelay_Req Pdelay_Resp Pdelay_Resp_Follow_Up */
 #define ETH_PTP_DATAGRAM_TYPE_SYNC_PDELAY                   (0x05UL << ETH_PTP_TSPCTLR_TSPMTSEL_POS)    /*!< SYNC Pdelay_Req Pdelay_Resp */
-#define ETH_PTP_DATAGRAM_TYPE_DELAY_PDEALY                  (0x07UL << ETH_PTP_TSPCTLR_TSPMTSEL_POS)    /*!< Delay_Req Pdelay_Req Pdelay_Resp */
+#define ETH_PTP_DATAGRAM_TYPE_DELAY_PDELAY                  (0x07UL << ETH_PTP_TSPCTLR_TSPMTSEL_POS)    /*!< Delay_Req Pdelay_Req Pdelay_Resp */
 #define ETH_PTP_DATAGRAM_TYPE_SYNC_DELAY                    (0x08UL << ETH_PTP_TSPCTLR_TSPMTSEL_POS)    /*!< SYNC Delay_Req */
 #define ETH_PTP_DATAGRAM_TYPE_PDELAY                        (0x0CUL << ETH_PTP_TSPCTLR_TSPMTSEL_POS)    /*!< Pdelay_Req Pdelay_Resp */
 /**
@@ -2291,6 +2293,7 @@ int32_t ETH_PHY_LoopBackCmd(stc_eth_handle_t *pstcEthHandle, en_functional_state
 void ETH_MAC_DeInit(void);
 int32_t ETH_MAC_Init(stc_eth_handle_t *pstcEthHandle, const stc_eth_mac_init_t *pstcMacInit);
 int32_t ETH_MAC_StructInit(stc_eth_mac_init_t *pstcMacInit);
+void ETH_MAC_SetInterface(uint32_t u32Interface);
 void ETH_MAC_SetDuplexSpeed(uint32_t u32Mode, uint32_t u32Speed);
 void ETH_MAC_SetHashTable(uint32_t u32HashHigh, uint32_t u32HashLow);
 void ETH_MAC_SetTxVlanTagValue(uint16_t u16TxTag);

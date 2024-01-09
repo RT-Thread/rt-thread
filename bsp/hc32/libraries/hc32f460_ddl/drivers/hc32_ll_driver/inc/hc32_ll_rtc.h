@@ -9,7 +9,7 @@
    2022-03-31       CDT             First version
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -153,8 +153,8 @@ typedef struct {
  * @defgroup RTC_Clock_Source RTC Clock Source
  * @{
  */
-#define RTC_CLK_SRC_XTAL32                      (0U)                              /*!< XTAL32 Clock   */
-#define RTC_CLK_SRC_LRC                         (RTC_CR3_RCKSEL | RTC_CR3_LRCEN)  /*!< RTC LRC Clock  */
+#define RTC_CLK_SRC_XTAL32                      (0U)                                    /*!< XTAL32 Clock   */
+#define RTC_CLK_SRC_LRC                         (RTC_CR3_RCKSEL | RTC_CR3_LRCEN)        /*!< RTC LRC Clock  */
 /**
  * @}
  */
@@ -272,7 +272,6 @@ typedef struct {
  */
 #define RTC_FLAG_RD_WR                          (RTC_CR2_RWEN)                      /*!< Read and write permission flag */
 #define RTC_FLAG_ALARM                          (RTC_CR2_ALMF)                      /*!< Alarm flag                     */
-
 #define RTC_FLAG_ALL                            (RTC_FLAG_RD_WR | RTC_FLAG_ALARM)
 #define RTC_FLAG_CLR_ALL                        (RTC_FLAG_ALARM)
 /**
@@ -285,7 +284,6 @@ typedef struct {
  */
 #define RTC_INT_PERIOD                          (RTC_CR2_PRDIE)                     /*!< Period interrupt          */
 #define RTC_INT_ALARM                           (RTC_CR2_ALMIE)                     /*!< Alarm interrupt           */
-
 #define RTC_INT_ALL                             (RTC_INT_PERIOD | RTC_INT_ALARM)
 /**
  * @}

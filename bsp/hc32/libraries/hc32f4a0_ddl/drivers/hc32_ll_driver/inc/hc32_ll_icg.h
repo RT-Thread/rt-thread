@@ -7,9 +7,10 @@
    Change Logs:
    Date             Author          Notes
    2022-03-31       CDT             First version
+   2023-01-15       CDT             Delete ICG2 function
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -140,7 +141,6 @@ extern "C"
  * @}
  */
 
-/* WDT function */
 /**
  * @defgroup ICG_WDT_Reset_State ICG WDT Reset State
  * @{
@@ -229,9 +229,6 @@ extern "C"
  * @}
  */
 
-/* NMI Pin function */
-
-/* BOR function */
 /**
  * @defgroup ICG_BOR_Voltage_Threshold ICG BOR Voltage Threshold
  * @{
@@ -275,21 +272,6 @@ extern "C"
  * @}
  */
 
-/* LVD function */
-
-/* Core lockup function */
-
-/* Flash function */
-/**
- * @defgroup ICG_FLASH_Bank_Reset_State ICG FLASH Bank Reset State
- * @{
- */
-#define ICG_FLASH_BANK_1                        (0xFFFFFFFFUL)  /*!< After reset, 1MBytes flash are provided by bank0                              */
-#define ICG_FLASH_BANK_12                       (0x004B4B4BUL)  /*!< After reset, 1MBytes flash are provided by bank0 and bank1 with 512Bytes each */
-/**
- * @}
- */
-
 /**
  * @defgroup ICG_FLASH_Protect_Reset_State ICG FLASH Protect Reset State
  * @brief Enable or disable D-BUS read protection for addresses 0x00000000 - 0x0001FFFF
@@ -311,10 +293,8 @@ extern "C"
  */
 
 /**
- *******************************************************************************
  * @defgroup ICG_SWDT_Preload_Configuration ICG SWDT Preload Configuration
  * @{
- *******************************************************************************
  */
 /* SWDT register config */
 #define ICG_RB_SWDT_AUTS                        (ICG_SWDT_RST_STOP)
@@ -332,10 +312,8 @@ extern "C"
  */
 
 /**
- *******************************************************************************
  * @defgroup ICG_WDT_Preload_Configuration ICG WDT Preload Configuration
  * @{
- *******************************************************************************
  */
 /* WDT register config */
 #define ICG_RB_WDT_AUTS                         (ICG_WDT_RST_STOP)
@@ -353,10 +331,8 @@ extern "C"
  */
 
 /**
- *******************************************************************************
  * @defgroup ICG_BOR_Preload_Configuration ICG BOR Preload Configuration
  * @{
- *******************************************************************************
  */
 /* BOR register config */
 #define ICG_RB_BOR_LEV                          (ICG_BOR_VOL_THRESHOLD_LVL3)
@@ -369,10 +345,8 @@ extern "C"
  */
 
 /**
- *******************************************************************************
  * @defgroup ICG_HRC_Preload_Configuration ICG HRC Preload Configuration
  * @{
- *******************************************************************************
  */
 /* HRC register config */
 #define ICG_RB_HRC_FREQSEL                      (ICG_HRC_16M)
@@ -385,22 +359,8 @@ extern "C"
  */
 
 /**
- *******************************************************************************
- * @defgroup ICG_FLASH_Bank_Preload_Configuration ICG FLASH Bank Preload Configuration
- * @{
- *******************************************************************************
- */
-/* FLASH Bank register value */
-#define ICG_REG_FLASH_BANK_CONFIG               (ICG_FLASH_BANK_1)
-/**
- * @}
- */
-
-/**
- *******************************************************************************
  * @defgroup ICG_FLASH_Protect_Preload_Configuration ICG FLASH Protect Preload Configuration
  * @{
- *******************************************************************************
  */
 /* FLASH Read Protect register value */
 #define ICG_REG_FLASH_PROTECT_CONFIG            (ICG_FLASH_PROTECT_RST_DISABLE)
@@ -424,7 +384,7 @@ extern "C"
 #define ICG_REG_CFG1_CONST                      (ICG_REG_BOR_CONFIG | ICG_REG_HRC_CONFIG  | 0xFFF8FEFEUL)
 #endif
 #ifndef ICG_REG_CFG2_CONST
-#define ICG_REG_CFG2_CONST                      (ICG_REG_FLASH_BANK_CONFIG    | 0xFF000000UL)
+#define ICG_REG_CFG2_CONST                      (0xFFFFFFFFUL)
 #endif
 #ifndef ICG_REG_CFG3_CONST
 #define ICG_REG_CFG3_CONST                      (ICG_REG_FLASH_PROTECT_CONFIG | 0xFFFF0000UL)

@@ -8,7 +8,7 @@
    2022-03-31       CDT             First version
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -359,7 +359,6 @@ int8_t scsi_read10(uint8_t lun, uint8_t *params)
 
             SCSI_blk_len = ((uint32_t)params[7] << 8U) | \
                            (uint32_t)params[8];
-
 
             if (scsi_addressrangecheck((uint32_t)SCSI_blk_addr, (uint16_t)SCSI_blk_len) < 0) {
                 i8Ret = (int8_t) -1;            /* error */

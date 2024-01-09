@@ -8,7 +8,7 @@
    2022-03-31       CDT             First version
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -60,13 +60,11 @@ extern "C"
 #define MOUSE_DESCRIPTOR_TYPE           (0x21U)
 #define MOUSE_REPORT_DESC               (0x22U)
 
-
 #define MOUSE_REQ_SET_PROTOCOL          (0x0BU)
 #define MOUSE_REQ_GET_PROTOCOL          (0x03U)
 
 #define MOUSE_REQ_SET_IDLE              (0x0AU)
 #define MOUSE_REQ_GET_IDLE              (0x02U)
-
 
 /*******************************************************************************
  * Global variable definitions ('extern')

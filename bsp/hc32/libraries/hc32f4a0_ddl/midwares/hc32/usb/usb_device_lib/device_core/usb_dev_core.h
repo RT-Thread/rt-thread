@@ -6,9 +6,10 @@
    Change Logs:
    Date             Author          Notes
    2022-03-31       CDT             First version
+   2022-06-30       CDT             Add USB core ID select function
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -58,6 +59,7 @@ extern __IO uint32_t SET_TEST_MODE;
   Global function prototypes (definition in C source)
  ******************************************************************************/
 extern void usb_dev_init(usb_core_instance *pdev,
+                         stc_usb_port_identify *pstcPortIdentify,
                          usb_dev_desc_func *pdesc,
                          usb_dev_class_func *class_cb,
                          usb_dev_user_func *usr_cb);

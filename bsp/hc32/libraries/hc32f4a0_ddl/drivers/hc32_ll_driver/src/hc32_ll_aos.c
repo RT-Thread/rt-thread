@@ -6,9 +6,11 @@
    Change Logs:
    Date             Author          Notes
    2022-03-31       CDT             First version
+   2023-01-15       CDT             Macro name modified: from IS_AOS_TRIG_SEL to IS_AOS_TARGET
+                                    Modified parameters name and comments of AOS_CommonTriggerCmd() and AOS_SetTriggerEventSrc()
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -62,10 +64,10 @@
  */
 
 /**
- * @defgroup AOS_Trigger_Select_Validity AOS Trigger Select Validity
+ * @defgroup AOS_Target_Select_Validity AOS Target Select Validity
  * @{
  */
-#define IS_AOS_TRIG_SEL(x)                                                     \
+#define IS_AOS_TARGET(x)                                                       \
 (   ((x) == AOS_DCU1)                           ||                             \
     ((x) == AOS_DCU2)                           ||                             \
     ((x) == AOS_DCU3)                           ||                             \
@@ -140,8 +142,8 @@
  */
 
 /**
- * @brief  Event Port Hardware trigger common event function command
- * @param  [in] u32TriggerSel       AOS trigger select, @ref AOS_Trigger_Select in details
+ * @brief  Common trigger function command
+ * @param  [in] u32Target           AOS target that need to be triggered by common trigger @ref AOS_Target_Select in details
  * @param  [in] u32CommonTrigger    Common trigger ID
  *                                  This parameter can be one of the following values:
  *   @arg  AOS_COMM_TRIG1:          Common trigger 1.
@@ -149,30 +151,30 @@
  * @param  [in] enNewState          An @ref en_functional_state_t enumeration value.
  * @retval None
  */
-void AOS_CommonTriggerCmd(uint32_t u32TriggerSel, uint32_t u32CommonTrigger, en_functional_state_t enNewState)
+void AOS_CommonTriggerCmd(uint32_t u32Target, uint32_t u32CommonTrigger, en_functional_state_t enNewState)
 {
-    DDL_ASSERT(IS_AOS_TRIG_SEL(u32TriggerSel));
+    DDL_ASSERT(IS_AOS_TARGET(u32Target));
     DDL_ASSERT(IS_AOS_COMM_TRIG(u32CommonTrigger));
     DDL_ASSERT(IS_FUNCTIONAL_STATE(enNewState));
 
     if (ENABLE == enNewState) {
-        SET_REG32_BIT(*(__IO uint32_t *)u32TriggerSel, u32CommonTrigger);
+        SET_REG32_BIT(*(__IO uint32_t *)u32Target, u32CommonTrigger);
     } else {
-        CLR_REG32_BIT(*(__IO uint32_t *)u32TriggerSel, u32CommonTrigger);
+        CLR_REG32_BIT(*(__IO uint32_t *)u32Target, u32CommonTrigger);
     }
 }
 
 /**
- * @brief  Event Port Hardware trigger common event function command
- * @param  [in] u32TriggerSel       AOS trigger select, @ref AOS_Trigger_Select in details
- * @param  [in] enEvent             Event source configuration, @ref en_event_src_t in details
+ * @brief  Set trigger event source
+ * @param  [in] u32Target       AOS target that need to be triggered by AOS source @ref AOS_Target_Select in details
+ * @param  [in] enSource        AOS source that trigger the AOS target @ref en_event_src_t in details
  * @retval None
  */
-void AOS_SetTriggerEventSrc(uint32_t u32TriggerSel, en_event_src_t enEvent)
+void AOS_SetTriggerEventSrc(uint32_t u32Target, en_event_src_t enSource)
 {
-    DDL_ASSERT(IS_AOS_TRIG_SEL(u32TriggerSel));
+    DDL_ASSERT(IS_AOS_TARGET(u32Target));
 
-    MODIFY_REG32(*(__IO uint32_t *)u32TriggerSel, AOS_TRIG_SEL_MASK, enEvent);
+    MODIFY_REG32(*(__IO uint32_t *)u32Target, AOS_TRIG_SEL_MASK, enSource);
 }
 
 /**
@@ -186,8 +188,8 @@ void AOS_SetTriggerEventSrc(uint32_t u32TriggerSel, en_event_src_t enEvent)
  */
 
 /**
-* @}
-*/
+ * @}
+ */
 
 /******************************************************************************
  * EOF (not truncated)

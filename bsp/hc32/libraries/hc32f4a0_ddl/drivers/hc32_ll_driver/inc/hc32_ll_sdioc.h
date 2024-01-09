@@ -7,9 +7,15 @@
    Change Logs:
    Date             Author          Notes
    2022-03-31       CDT             First version
+   2023-09-30       CDT             Modify typo
+                                    Rename function SDMMC_ACMD41_SendOperatCond to SDMMC_ACMD41_SendOperateCond
+                                    Rename function SDMMC_CMD1_SendOperatCond to SDMMC_CMD1_SendOperateCond
+                                    Support CMD5/CMD52/CMD53
+                                    Rename macro definition SDIOC_ACMD52_RW_DIRECT to SDIOC_CMD52_IO_RW_DIRECT
+                                    Rename macro definition SDIOC_ACMD53_RW_EXTENDED to SDIOC_CMD53_IO_RW_EXTENDED
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -102,6 +108,38 @@ typedef struct {
     uint8_t  u16DataTimeout;            /*!< Specifies the SDIOC data timeout time.
                                              This parameter can be a value of @ref SDIOC_Data_Timeout_Time */
 } stc_sdioc_data_config_t;
+
+/**
+ * @brief SDIO CMD52 arguments structure definition
+ */
+typedef struct {
+    uint8_t u8FuncNum;                  /*!< Specifies the number of the function within the I/O card.
+                                             This parameter must be a number between Min_Data = 0 and Max_Data = 7 */
+    uint32_t u32RwFlag;                 /*!< Specifies the direction of the I/O operation.
+                                             This parameter can be a value of @ref SDIO_CMD52_Arguments_RW_Flag */
+    uint32_t u32RegAddr;                /*!< Specifies the address of the byte of data inside of the selected function.
+                                             This parameter must be a number between Min_Data = 0 and Max_Data = 0x1FFFF */
+    uint32_t u32RawFlag;                /*!< Specifies the direction of the I/O operation.
+                                             This parameter can be a value of @ref SDIO_CMD52_Arguments_RAW_Flag */
+} stc_sdio_cmd52_arg_t;
+
+/**
+ * @brief SDIO CMD53 arguments structure definition
+ */
+typedef struct {
+    uint8_t u8FuncNum;                  /*!< Specifies the number of the function within the I/O card.
+                                             This parameter must be a number between Min_Data = 0 and Max_Data = 7 */
+    uint32_t u32RwFlag;                 /*!< Specifies the direction of the I/O operation.
+                                             This parameter can be a value of @ref SDIO_CMD53_Arguments_RW_Flag */
+    uint32_t u32RegAddr;                /*!< Specifies the address of the byte of data inside of the selected function.
+                                             This parameter must be a number between Min_Data = 0 and Max_Data = 0x1FFFF */
+    uint32_t u32OperateCode;            /*!< Specifies the operation code.
+                                             This parameter can be a value of @ref SDIO_CMD53_Arguments_Operate_Code */
+    uint32_t u32BlockMode;              /*!< Specifies the operation code.
+                                             This parameter can be a value of @ref SDIO_CMD53_Arguments_Block_Mode */
+    uint32_t u32Count;                  /*!< Specifies the byte/block count.
+                                             This parameter must be a number between Min_Data = 0 and Max_Data = 0x1FF */
+} stc_sdio_cmd53_arg_t;
 
 /**
  * @}
@@ -463,6 +501,14 @@ typedef struct {
  * @}
  */
 
+/**
+ * @defgroup SDIOC_Command SDIOC Command
+ * @{
+ */
+/**
+ * @defgroup SDIOC_SDMMC_CMD SDIOC SDMMC CMD
+ * @{
+ */
 #define SDIOC_CMD0_GO_IDLE_STATE                (0U)    /*!< Resets the SD memory card. */
 #define SDIOC_CMD1_SEND_OP_COND                 (1U)    /*!< Sends host capacity support information and activates the card's initialization process. */
 #define SDIOC_CMD2_ALL_SEND_CID                 (2U)    /*!< Asks any card connected to the host to send the CID numbers on the CMD line.             */
@@ -509,45 +555,51 @@ typedef struct {
 #define SDIOC_CMD40_GO_IRQ_STATE                (40U)   /*!< SD card doesn't support it (Reserved).                                                   */
 #define SDIOC_CMD42_LOCK_UNLOCK                 (42U)   /*!< Sets/resets the password or lock/unlock the card. The size of the data block is set by    \
                                                             the SET_BLOCK_LEN command.                                                               */
+#define SDIOC_CMD52_IO_RW_DIRECT                (52U)   /*!< For SD I/O card only, access a single I/O register.                                    */
+#define SDIOC_CMD53_IO_RW_EXTENDED              (53U)   /*!< For SD I/O card only, access multiple I/O registers with a single command.              */
 #define SDIOC_CMD55_APP_CMD                     (55U)   /*!< Indicates to the card that the next command is an application specific command rather     \
                                                             than a standard command.                                                                 */
 #define SDIOC_CMD56_GEN_CMD                     (56U)   /*!< Used either to transfer a data block to the card or to get a data block from the card     \
                                                             for general purpose/application specific commands.                                       */
 #define SDIOC_CMD64_NO_CMD                      (64U)   /*!< No command                                                                               */
+/**
+ * @}
+ */
 
 /**
- * @brief Following commands are SD Card Specific commands.
- * @note  SDIOC_CMD55_APP_CMD should be sent before sending these commands.
+ * @defgroup SDIOC_SDMMC_ACMD SDIOC SDMMC ACMD
+ * @{
  */
+/* Following commands are SD Card Specific commands. SDIOC_CMD55_APP_CMD should be sent before sending these commands. */
 #define SDIOC_ACMD6_SET_BUS_WIDTH               (6U)    /*!< (ACMD6) Defines the data bus width to be used for data transfer. The allowed data bus     \
                                                             widths are given in SCR register.                                                        */
 #define SDIOC_ACMD13_SD_STATUS                  (13U)   /*!< (ACMD13) Sends the SD status.                                                            */
 #define SDIOC_ACMD22_SEND_NUM_WR_BLOCKS         (22U)   /*!< (ACMD22) Sends the number of the written (without errors) write blocks. Responds with     \
                                                             32bit+CRC data block.                                                                    */
 #define SDIOC_ACMD23_SET_WR_BLK_ERASE_COUNT     (23U)   /*!< Set the number of write blocks to be pre-erased before writing (to be used for faster     \
-                                                            Multiple Block WR com-mand). */
+                                                            Multiple Block WR command). */
 #define SDIOC_ACMD41_SD_APP_OP_COND             (41U)   /*!< (ACMD41) Sends host capacity support information (HCS) and asks the accessed card to      \
                                                             send its operating condition register (OCR) content in the response on the CMD line.     */
 #define SDIOC_ACMD42_SET_CLR_CARD_DETECT        (42U)   /*!< (ACMD42) Connect/Disconnect the 50 KOhm pull-up resistor on CD/DAT3 (pin 1) of the card  */
 #define SDIOC_ACMD51_SEND_SCR                   (51U)   /*!< Reads the SD Configuration Register (SCR).                                               */
-#define SDIOC_ACMD52_RW_DIRECT                  (52U)   /*!< For SD I/O card only, reserved for security specification.                               */
-#define SDIOC_ACMD53_RW_EXTENDED                (53U)   /*!< For SD I/O card only, reserved for security specification.                               */
 
+#define SDIOC_ACMD43_GET_MKB                    (43U)
+#define SDIOC_ACMD44_GET_MID                    (44U)
+#define SDIOC_ACMD45_SET_CER_RN1                (45U)
+#define SDIOC_ACMD46_GET_CER_RN2                (46U)
+#define SDIOC_ACMD47_SET_CER_RES2               (47U)
+#define SDIOC_ACMD48_GET_CER_RES1               (48U)
+#define SDIOC_ACMD18_SECURE_READ_MULTI_BLOCK    (18U)
+#define SDIOC_ACMD25_SECURE_WRITE_MULTI_BLOCK   (25U)
+#define SDIOC_ACMD38_SECURE_ERASE               (38U)
+#define SDIOC_ACMD49_CHANGE_SECURE_AREA         (49U)
+#define SDIOC_ACMD48_SECURE_WRITE_MKB           (48U)
 /**
- * @brief Following commands are SD Card Specific security commands.
- * @note  SDIOC_CMD55_APP_CMD should be sent before sending these commands.
+ * @}
  */
-#define SDIOC_ACMD43_GET_MKB                        (43U)
-#define SDIOC_ACMD44_GET_MID                        (44U)
-#define SDIOC_ACMD45_SET_CER_RN1                    (45U)
-#define SDIOC_ACMD46_GET_CER_RN2                    (46U)
-#define SDIOC_ACMD47_SET_CER_RES2                   (47U)
-#define SDIOC_ACMD48_GET_CER_RES1                   (48U)
-#define SDIOC_ACMD18_SECURE_READ_MULTI_BLOCK        (18U)
-#define SDIOC_ACMD25_SECURE_WRITE_MULTI_BLOCK       (25U)
-#define SDIOC_ACMD38_SECURE_ERASE                   (38U)
-#define SDIOC_ACMD49_CHANGE_SECURE_AREA             (49U)
-#define SDIOC_ACMD48_SECURE_WRITE_MKB               (48U)
+/**
+ * @}
+ */
 
 /**
  * @defgroup SDMMC_Error_Code SDMMC Error Code
@@ -568,7 +620,7 @@ typedef struct {
 #define SDMMC_ERR_CARD_ECC_FAILED               (0x00200000UL)  /*!< Card internal ECC was applied but failed to correct the data  */
 #define SDMMC_ERR_CC_ERR                        (0x00100000UL)  /*!< Internal card controller error                                */
 #define SDMMC_ERR_GENERAL_UNKNOWN_ERR           (0x00080000UL)  /*!< General or unknown error                                      */
-#define SDMMC_ERR_STREAM_RD_UNDERRUN            (0x00040000UL)  /*!< The card could not sustain data reading in stream rmode       */
+#define SDMMC_ERR_STREAM_RD_UNDERRUN            (0x00040000UL)  /*!< The card could not sustain data reading in stream mode       */
 #define SDMMC_ERR_STREAM_WR_OVERRUN             (0x00020000UL)  /*!< The card could not sustain data programming in stream mode    */
 #define SDMMC_ERR_CID_CSD_OVERWRITE             (0x00010000UL)  /*!< CID/CSD overwrite error                                       */
 #define SDMMC_ERR_WP_ERASE_SKIP                 (0x00008000UL)  /*!< Only partial address space was erased                         */
@@ -588,7 +640,7 @@ typedef struct {
 #define SDMMC_ERR_AKE_SEQ_ERR                   (0x00000008UL)  /*!< Error in sequence of authentication                           */
 #define SDMMC_ERR_INVD_VOLT                     (0x00000004UL)  /*!< Error in case of invalid voltage range                        */
 #define SDMMC_ERR_REQ_NOT_APPLICABLE            (0x00000002UL)  /*!< Error when command request is not applicable                  */
-#define SDMMC_ERR_UNSUPPORT_FEATURE             (0x00000001UL)  /*!< Error when feature is not insupported                         */
+#define SDMMC_ERR_UNSUPPORT_FEATURE             (0x00000001UL)  /*!< Error when feature is unsupported                         */
 
 #define SDMMC_ERR_BITS_MASK                     (0xFDFFE048UL)  /*!< SD/MMC Error status bits mask                                 */
 /**
@@ -650,6 +702,77 @@ typedef struct {
  */
 #define SDMMC_DATA_TIMEOUT                      (0x0000FFFFUL)
 #define SDMMC_MAX_VOLT_TRIAL                    (0x0000FFFFUL)
+/**
+ * @}
+ */
+
+/**
+ * @defgroup SDMMC_IO_Command_Arguments SDMMC IO Command Arguments
+ * @{
+ */
+/**
+ * @defgroup SDIO_CMD52_Arguments SDIO CMD52 Arguments
+ * @{
+ */
+/**
+ * @defgroup SDIO_CMD52_Arguments_RW_Flag SDIO CMD52 Arguments RW_Flag
+ * @{
+ */
+#define SDIO_CMD52_ARG_RD                       (0UL << 31)
+#define SDIO_CMD52_ARG_WR                       (1UL << 31)
+/**
+ * @}
+ */
+
+/**
+ * @defgroup SDIO_CMD52_Arguments_RAW_Flag SDIO CMD52 Arguments RAW Flag
+ * @{
+ */
+#define SDIO_CMD52_ARG_RAW_FLAG_0               (0UL << 27)
+#define SDIO_CMD52_ARG_RAW_FLAG_1               (1UL << 27)
+/**
+ * @}
+ */
+/**
+ * @}
+ */
+
+/**
+ * @defgroup SDIO_CMD53_Arguments SDIO CMD53 Arguments
+ * @{
+ */
+/**
+ * @defgroup SDIO_CMD53_Arguments_RW_Flag SDIO CMD53 Arguments RW_Flag
+ * @{
+ */
+#define SDIO_CMD53_ARG_RD                       (0UL << 31)
+#define SDIO_CMD53_ARG_WR                       (1UL << 31)
+/**
+ * @}
+ */
+
+/**
+ * @defgroup SDIO_CMD53_Arguments_Block_Mode SDIO CMD53 Arguments Block Mode
+ * @{
+ */
+#define SDIO_CMD53_ARG_TRANS_MD_BYTE            (0UL << 27)
+#define SDIO_CMD53_ARG_TRANS_MD_BLOCK           (1UL << 27)
+/**
+ * @}
+ */
+
+/**
+ * @defgroup SDIO_CMD53_Arguments_Operate_Code SDIO CMD53 Arguments Operate Code
+ * @{
+ */
+#define SDIO_CMD53_ARG_OP_CODE_ADDR_FIX         (0UL << 26)
+#define SDIO_CMD53_ARG_OP_CODE_ADDR_INC         (1UL << 26)
+/**
+ * @}
+ */
+/**
+ * @}
+ */
 /**
  * @}
  */
@@ -731,12 +854,18 @@ int32_t SDMMC_CMD55_AppCmd(CM_SDIOC_TypeDef *SDIOCx, uint32_t u32Argument, uint3
 
 int32_t SDMMC_ACMD6_SetBusWidth(CM_SDIOC_TypeDef *SDIOCx, uint32_t u32BusWidth, uint32_t *pu32ErrStatus);
 int32_t SDMMC_ACMD13_SendStatus(CM_SDIOC_TypeDef *SDIOCx, uint32_t *pu32ErrStatus);
-int32_t SDMMC_ACMD41_SendOperatCond(CM_SDIOC_TypeDef *SDIOCx, uint32_t u32Argument, uint32_t *pu32ErrStatus);
+int32_t SDMMC_ACMD41_SendOperateCond(CM_SDIOC_TypeDef *SDIOCx, uint32_t u32Argument, uint32_t *pu32ErrStatus);
 int32_t SDMMC_ACMD51_SendSCR(CM_SDIOC_TypeDef *SDIOCx, uint32_t *pu32ErrStatus);
 
-int32_t SDMMC_CMD1_SendOperatCond(CM_SDIOC_TypeDef *SDIOCx, uint32_t u32Argument, uint32_t *pu32ErrStatus);
+int32_t SDMMC_CMD1_SendOperateCond(CM_SDIOC_TypeDef *SDIOCx, uint32_t u32Argument, uint32_t *pu32ErrStatus);
 int32_t SDMMC_CMD35_EraseGroupStartAddr(CM_SDIOC_TypeDef *SDIOCx, uint32_t u32StartAddr, uint32_t *pu32ErrStatus);
 int32_t SDMMC_CMD36_EraseGroupEndAddr(CM_SDIOC_TypeDef *SDIOCx, uint32_t u32EndAddr, uint32_t *pu32ErrStatus);
+
+int32_t SDMMC_CMD5_IOSendOperateCond(CM_SDIOC_TypeDef *SDIOCx, uint32_t u32Argument, uint32_t *pu32ErrStatus);
+int32_t SDMMC_CMD52_IORwDirect(CM_SDIOC_TypeDef *SDIOCx, const stc_sdio_cmd52_arg_t *pstcCmdArg,
+                               uint8_t u8In, uint8_t *pu8Out, uint32_t *pu32ErrStatus);
+int32_t SDMMC_CMD53_IORwExtended(CM_SDIOC_TypeDef *SDIOCx, const stc_sdio_cmd53_arg_t *pstcCmdArg,
+                                 uint32_t *pu32ErrStatus);
 
 /**
  * @}

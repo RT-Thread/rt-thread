@@ -1,15 +1,16 @@
 /**
  *******************************************************************************
  * @file  hc32_ll_hrpwm.h
- * @brief Head file for HRPWM module.
- *
+ * @brief This file contains all the functions prototypes of the HWPRM driver
+ *        library.
  @verbatim
    Change Logs:
    Date             Author          Notes
    2022-03-31       CDT             First version
+   2023-09-30       CDT             Modify typo
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -54,23 +55,24 @@ extern "C"
 /*******************************************************************************
  * Global pre-processor symbols/macros ('#define')
  ******************************************************************************/
+
 /**
  * @defgroup HRPWM_Global_Macros HRPWM Global Macros
  * @{
  */
 
-#define   HRPWM_CH_MIN                (1UL)
-#define   HRPWM_CH_MAX                (16UL)
+#define HRPWM_CH_MIN                        (1UL)
+#define HRPWM_CH_MAX                        (16UL)
 
-#define   HRPWM_CH_DELAY_NUM_MIN      (1U)
-#define   HRPWM_CH_DELAY_NUM_MAX      (256U)
+#define HRPWM_CH_DLY_NUM_MIN                (1U)
+#define HRPWM_CH_DLY_NUM_MAX                (256U)
 
 /**
  * @defgroup HRPWM_Calibrate_Unit_Define HRPWM Calibrate Unit Define
  * @{
  */
-#define   HRPWM_CAL_UNIT0             (0x00UL)
-#define   HRPWM_CAL_UNIT1             (0x01UL)
+#define HRPWM_CAL_UNIT0                     (0x00UL)
+#define HRPWM_CAL_UNIT1                     (0x01UL)
 /**
  * @}
  */
@@ -90,6 +92,7 @@ extern "C"
  * @addtogroup HRPWM_Global_Functions
  * @{
  */
+
 /* HRPWM Judge the condition of calibration function */
 en_functional_state_t HRPWM_CondConfirm(void);
 
@@ -109,9 +112,9 @@ void HRPWM_ChCmd(uint32_t u32Ch, en_functional_state_t enNewState);
 void HRPWM_ChPositiveAdjustCmd(uint32_t u32Ch, en_functional_state_t enNewState);
 /* HRPWM negative edge adjust enable or disable for specified channel */
 void HRPWM_ChNegativeAdjustCmd(uint32_t u32Ch, en_functional_state_t enNewState);
-/* HRPWM positive edge adjust delay counts configration for specified channel */
+/* HRPWM positive edge adjust delay counts configuration for specified channel */
 void HRPWM_ChPositiveAdjustConfig(uint32_t u32Ch, uint8_t u8DelayNum);
-/* HRPWM negative edge adjust delay counts configration for specified channel */
+/* HRPWM negative edge adjust delay counts configuration for specified channel */
 void HRPWM_ChNegativeAdjustConfig(uint32_t u32Ch, uint8_t u8DelayNum);
 
 /**

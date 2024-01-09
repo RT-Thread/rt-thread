@@ -7,9 +7,11 @@
    Change Logs:
    Date             Author          Notes
    2022-03-31       CDT             First version
+   2023-09-30       CDT             Modify typo
+                                    Add function: DVP_GetCaptureState
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -96,11 +98,11 @@
 
 #define IS_DVP_CROP_WIN_ROW_START_LINE(x)       ((x) <= 0x3FFFU)
 
-#define IS_DVP_CROP_WIN_COLOUM_START_LINE(x)    ((x) <= 0x3FFFU)
+#define IS_DVP_CROP_WIN_COLUMN_START_LINE(x)    ((x) <= 0x3FFFU)
 
 #define IS_DVP_CROP_WIN_ROW_LINE_SIZE(x)        (((x) >= 0x04U) && ((x) <= 0x3FFFU))
 
-#define IS_DVP_CROP_WIN_COLOUM_LINE_SIZE(x)     ((x) <= 0x3FFFU)
+#define IS_DVP_CROP_WIN_COLUMN_LINE_SIZE(x)     ((x) <= 0x3FFFU)
 /**
  * @}
  */
@@ -276,7 +278,7 @@ void DVP_JPEGCmd(en_functional_state_t enNewState)
  * @param  [in]  enNewState             An @ref en_functional_state_t enumeration value.
  * @retval None
  */
-void DVP_CaptrueCmd(en_functional_state_t enNewState)
+void DVP_CaptureCmd(en_functional_state_t enNewState)
 {
     DDL_ASSERT(IS_FUNCTIONAL_STATE(enNewState));
 
@@ -285,6 +287,18 @@ void DVP_CaptrueCmd(en_functional_state_t enNewState)
     } else {
         CLR_REG32_BIT(CM_DVP->CTR, DVP_CTR_CAPEN);
     }
+}
+
+/**
+ * @brief  Get DVP capture status.
+ * @param  None
+ * @retval An @ref en_functional_state_t enumeration value.
+ *           - ENABLE: DVP capture started
+ *           - DISABLE: DVP capture stopped
+ */
+en_functional_state_t DVP_GetCaptureState(void)
+{
+    return (READ_REG32_BIT(CM_DVP->CTR, DVP_CTR_CAPEN) > 0UL) ? ENABLE : DISABLE;
 }
 
 /**
@@ -389,17 +403,17 @@ int32_t DVP_CropWindowConfig(const stc_dvp_crop_window_config_t *pstcConfig)
 
     if (NULL != pstcConfig) {
         DDL_ASSERT(IS_DVP_CROP_WIN_ROW_START_LINE(pstcConfig->u16RowStartLine));
-        DDL_ASSERT(IS_DVP_CROP_WIN_COLOUM_START_LINE(pstcConfig->u16ColoumStartLine));
+        DDL_ASSERT(IS_DVP_CROP_WIN_COLUMN_START_LINE(pstcConfig->u16ColumnStartLine));
         DDL_ASSERT(IS_DVP_CROP_WIN_ROW_LINE_SIZE(pstcConfig->u16RowLineSize));
-        DDL_ASSERT(IS_DVP_CROP_WIN_COLOUM_LINE_SIZE(pstcConfig->u16ColoumLineSize));
+        DDL_ASSERT(IS_DVP_CROP_WIN_COLUMN_LINE_SIZE(pstcConfig->u16ColumnLineSize));
 
         /* Configure crop window */
         u32Value = ((uint32_t)pstcConfig->u16RowStartLine | \
-                    ((uint32_t)pstcConfig->u16ColoumStartLine << DVP_CPSFTR_CSHIFT_POS));
+                    ((uint32_t)pstcConfig->u16ColumnStartLine << DVP_CPSFTR_CSHIFT_POS));
         WRITE_REG32(CM_DVP->CPSFTR, u32Value);
 
         u32Value = ((uint32_t)pstcConfig->u16RowLineSize | \
-                    ((uint32_t)pstcConfig->u16ColoumLineSize << DVP_CPSZER_CSIZE_POS));
+                    ((uint32_t)pstcConfig->u16ColumnLineSize << DVP_CPSZER_CSIZE_POS));
         WRITE_REG32(CM_DVP->CPSZER, u32Value);
         i32Ret = LL_OK;
     }
@@ -418,8 +432,8 @@ int32_t DVP_CropWindowConfig(const stc_dvp_crop_window_config_t *pstcConfig)
  */
 
 /**
-* @}
-*/
+ * @}
+ */
 
 /******************************************************************************
  * EOF (not truncated)

@@ -6,9 +6,11 @@
    Change Logs:
    Date             Author          Notes
    2022-03-31       CDT             First version
+   2022-06-30       CDT             Add bot xfer error processing
+                                    Modify for variable alignment
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -55,14 +57,9 @@
 /*******************************************************************************
  * Global variable definitions (declared in header file with 'extern')
  ******************************************************************************/
-#ifdef USB_INTERNAL_DMA_ENABLED
-#if defined ( __ICCARM__ ) /*!< IAR Compiler */
-#pragma data_alignment=4
-#endif
-#endif /* USB_INTERNAL_DMA_ENABLED */
 __USB_ALIGN_BEGIN HOST_CSW_PACKET_TypeDef USBH_MSC_CSWData;
 
-USB_HOST_BOTXFER_TypeDef USBH_MSC_BOTXferParam;
+__USB_ALIGN_BEGIN USB_HOST_BOTXFER_TypeDef USBH_MSC_BOTXferParam;
 
 /*******************************************************************************
  * Local function prototypes ('static')
@@ -71,14 +68,10 @@ USB_HOST_BOTXFER_TypeDef USBH_MSC_BOTXferParam;
 /*******************************************************************************
  * Local variable definitions ('static')
  ******************************************************************************/
-#ifdef USB_INTERNAL_DMA_ENABLED
-#if defined ( __ICCARM__ ) /*!< IAR Compiler */
-#pragma data_alignment=4
-#endif
-#endif /* USB_INTERNAL_DMA_ENABLED */
 __USB_ALIGN_BEGIN HostCBWPkt_TypeDef USBH_MSC_CBWData;
 
 static uint32_t BOTStallErrorCount;   /* Keeps count of STALL Error Cases*/
+static uint8_t  u8BotXferErrorCount;
 
 /*******************************************************************************
  * Function implementation - global ('extern') and local ('static')
@@ -129,6 +122,7 @@ void usb_host_msc_botxferprocess(usb_core_instance *pdev, USBH_HOST *phost)
                                       MSC_Machine.hc_num_out);
                 USBH_MSC_BOTXferParam.BOTStateBkp = HOST_MSC_SEND_CBW;
                 USBH_MSC_BOTXferParam.BOTState    = HOST_MSC_SENT_CBW;
+                u8BotXferErrorCount = 0U;
                 break;
             case HOST_MSC_SENT_CBW:
                 URB_Status = host_driver_getxferstate(pdev, MSC_Machine.hc_num_out);
@@ -160,6 +154,14 @@ void usb_host_msc_botxferprocess(usb_core_instance *pdev, USBH_HOST *phost)
                         error_direction                 = HOST_MSC_DIR_OUT;
                         USBH_MSC_BOTXferParam.BOTState  = HOST_MSC_BOT_ERROR_OUT;
                         break;
+                    case HOST_CH_XFER_ERROR:
+                        u8BotXferErrorCount++;
+                        if (u8BotXferErrorCount < 3U) {
+                            USBH_MSC_BOTXferParam.BOTState  = USBH_MSC_BOTXferParam.BOTStateBkp;
+                        } else {
+                            USBH_MSC_BOTXferParam.BOTXferStatus = (uint8_t)USB_HOST_MSC_PHASE_ERROR;
+                        }
+                        break;
                     default:
                         break;
                 }
@@ -168,7 +170,7 @@ void usb_host_msc_botxferprocess(usb_core_instance *pdev, USBH_HOST *phost)
             case HOST_MSC_BOT_DATAIN_STATE:
                 URB_Status = host_driver_getxferstate(pdev, MSC_Machine.hc_num_in);
                 if ((URB_Status == HOST_CH_XFER_DONE) \
-                        || (USBH_MSC_BOTXferParam.BOTStateBkp != HOST_MSC_BOT_DATAIN_STATE)) {
+                    || (USBH_MSC_BOTXferParam.BOTStateBkp != HOST_MSC_BOT_DATAIN_STATE)) {
                     BOTStallErrorCount = 0U;
                     USBH_MSC_BOTXferParam.BOTStateBkp = HOST_MSC_BOT_DATAIN_STATE;
 
@@ -190,6 +192,10 @@ void usb_host_msc_botxferprocess(usb_core_instance *pdev, USBH_HOST *phost)
                         remainingDataLength = 0UL;
                     }
                 } else if (URB_Status == HOST_CH_XFER_STALL) {
+                    error_direction                 = HOST_MSC_DIR_IN;
+                    USBH_MSC_BOTXferParam.BOTState  = HOST_MSC_BOT_ERROR_IN;
+                    USBH_MSC_BOTXferParam.BOTStateBkp = HOST_MSC_RECEIVE_CSW_STATE;
+                } else if (URB_Status == HOST_CH_XFER_ERROR) {
                     error_direction                 = HOST_MSC_DIR_IN;
                     USBH_MSC_BOTXferParam.BOTState  = HOST_MSC_BOT_ERROR_IN;
                     USBH_MSC_BOTXferParam.BOTStateBkp = HOST_MSC_RECEIVE_CSW_STATE;
@@ -236,6 +242,10 @@ void usb_host_msc_botxferprocess(usb_core_instance *pdev, USBH_HOST *phost)
                     error_direction = HOST_MSC_DIR_OUT;
                     USBH_MSC_BOTXferParam.BOTState  = HOST_MSC_BOT_ERROR_OUT;
                     USBH_MSC_BOTXferParam.BOTStateBkp = HOST_MSC_RECEIVE_CSW_STATE;
+                } else if (URB_Status == HOST_CH_XFER_ERROR) {
+                    error_direction = HOST_MSC_DIR_OUT;
+                    USBH_MSC_BOTXferParam.BOTState  = HOST_MSC_BOT_ERROR_OUT;
+                    USBH_MSC_BOTXferParam.BOTStateBkp = HOST_MSC_RECEIVE_CSW_STATE;
                 } else {
                     ;
                 }
@@ -255,7 +265,7 @@ void usb_host_msc_botxferprocess(usb_core_instance *pdev, USBH_HOST *phost)
                                       HOST_MSC_CSW_MAX_LENGTH,
                                       MSC_Machine.hc_num_in);
                 USBH_MSC_BOTXferParam.BOTState = HOST_MSC_DECODE_CSW;
-
+                u8BotXferErrorCount = 0U;
                 break;
 
             case HOST_MSC_DECODE_CSW:
@@ -268,6 +278,13 @@ void usb_host_msc_botxferprocess(usb_core_instance *pdev, USBH_HOST *phost)
                 } else if (URB_Status == HOST_CH_XFER_STALL) {
                     error_direction                 = HOST_MSC_DIR_IN;
                     USBH_MSC_BOTXferParam.BOTState  = HOST_MSC_BOT_ERROR_IN;
+                }  else if (URB_Status == HOST_CH_XFER_ERROR) {
+                    u8BotXferErrorCount++;
+                    if (u8BotXferErrorCount < 3U) {
+                        USBH_MSC_BOTXferParam.BOTState  = USBH_MSC_BOTXferParam.BOTStateBkp;
+                    } else {
+                        USBH_MSC_BOTXferParam.BOTXferStatus = (uint8_t)USB_HOST_MSC_PHASE_ERROR;
+                    }
                 } else {
                     ;
                 }

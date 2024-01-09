@@ -7,9 +7,14 @@
    Change Logs:
    Date             Author          Notes
    2022-03-31       CDT             First version
+   2023-09-30       CDT             Modify response type of MMC CMD3
+                                    Rename function SDMMC_ACMD41_SendOperatCond to SDMMC_ACMD41_SendOperateCond
+                                    Rename function SDMMC_CMD1_SendOperatCond to SDMMC_CMD1_SendOperateCond
+                                    Optimize SDIOC_GetMode function
+                                    Support CMD5/CMD52/CMD53
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -49,6 +54,14 @@
  * @defgroup SDIOC_Local_Macros SDIOC Local Macros
  * @{
  */
+
+/* CMD52 arguments field shift */
+#define SDIO_CMD52_ARG_REG_ADDR_SHIFT           (9U)
+#define SDIO_CMD52_ARG_FUNC_SHIFT               (28U)
+
+/* CMD53 arguments field shift */
+#define SDIO_CMD53_ARG_REG_ADDR_SHIFT           (9U)
+#define SDIO_CMD53_ARG_FUNC_SHIFT               (28U)
 
 /* Masks for R6 Response */
 #define SDMMC_R6_GEN_UNKNOWN_ERR                (0x00002000UL)
@@ -438,6 +451,42 @@ static int32_t SDMMC_GetCmdResp3(CM_SDIOC_TypeDef *SDIOCx, uint32_t *pu32ErrStat
 }
 
 /**
+ * @brief  Checks for error conditions for R4 response.
+ * @param  [in] SDIOCx                  Pointer to SDIOC unit instance
+ *         This parameter can be one of the following values:
+ *           @arg CM_SDIOC1:            SDIOC unit 1 instance
+ *           @arg CM_SDIOC2:            SDIOC unit 2 instance
+ * @param  [out] pu32ErrStatus          Pointer to the error state value
+ * @retval int32_t:
+ *           - LL_OK: The response is normal received
+ *           - LL_ERR: Refer to pu32ErrStatus for the reason of error
+ *           - LL_ERR_TIMEOUT: Wait timeout
+ */
+static int32_t SDMMC_GetCmdResp4(CM_SDIOC_TypeDef *SDIOCx, uint32_t *pu32ErrStatus)
+{
+    return SDMMC_WaitResponse(SDIOCx, (SDIOC_INT_FLAG_CC | SDIOC_INT_FLAG_CEBE | SDIOC_INT_FLAG_CCE |
+                                       SDIOC_INT_FLAG_CTOE), SDMMC_CMD_TIMEOUT, pu32ErrStatus);
+}
+
+/**
+ * @brief  Checks for error conditions for R5 response.
+ * @param  [in] SDIOCx                  Pointer to SDIOC unit instance
+ *         This parameter can be one of the following values:
+ *           @arg CM_SDIOC1:            SDIOC unit 1 instance
+ *           @arg CM_SDIOC2:            SDIOC unit 2 instance
+ * @param  [out] pu32ErrStatus          Pointer to the error state value
+ * @retval int32_t:
+ *           - LL_OK: The response is normal received
+ *           - LL_ERR: Refer to pu32ErrStatus for the reason of error
+ *           - LL_ERR_TIMEOUT: Wait timeout
+ */
+static int32_t SDMMC_GetCmdResp5(CM_SDIOC_TypeDef *SDIOCx, uint32_t *pu32ErrStatus)
+{
+    return SDMMC_WaitResponse(SDIOCx, (SDIOC_INT_FLAG_CC | SDIOC_INT_FLAG_CEBE | SDIOC_INT_FLAG_CCE |
+                                       SDIOC_INT_FLAG_CTOE), SDMMC_CMD_TIMEOUT, pu32ErrStatus);
+}
+
+/**
  * @brief  Checks for error conditions for R6(RCA) response.
  * @param  [in] SDIOCx                  Pointer to SDIOC unit instance
  *         This parameter can be one of the following values:
@@ -676,12 +725,17 @@ en_functional_state_t SDIOC_GetPowerState(const CM_SDIOC_TypeDef *SDIOCx)
 uint32_t SDIOC_GetMode(const CM_SDIOC_TypeDef *SDIOCx)
 {
     uint32_t u32SdMode;
+    uint32_t u32Temp;
 
     /* Check parameters */
     DDL_ASSERT(IS_SDIOC_UNIT(SDIOCx));
 
-    u32SdMode = READ_REG32_BIT(CM_PERIC->SDIOC_SYCTLREG, ((CM_SDIOC1 == SDIOCx) ?
-                               PERIC_SDIOC_SYCTLREG_SELMMC1 : PERIC_SDIOC_SYCTLREG_SELMMC2));
+    if (CM_SDIOC1 == SDIOCx) {
+        u32Temp = PERIC_SDIOC_SYCTLREG_SELMMC1;
+    } else {
+        u32Temp = PERIC_SDIOC_SYCTLREG_SELMMC2;
+    }
+    u32SdMode = READ_REG32_BIT(CM_PERIC->SDIOC_SYCTLREG, u32Temp);
     if (0UL != u32SdMode) { /* MMC mode */
         u32SdMode = SDIOC_MD_MMC;
     } else {
@@ -1801,11 +1855,12 @@ int32_t SDMMC_CMD3_SendRelativeAddr(CM_SDIOC_TypeDef *SDIOCx, uint16_t *pu16RCA,
 {
     int32_t i32Ret;
     stc_sdioc_cmd_config_t stcCmdConfig;
+    uint32_t u32SdMode;
 
     if ((NULL == pu16RCA) || (NULL == pu32ErrStatus)) {
         i32Ret = LL_ERR_INVD_PARAM;
     } else {
-        stcCmdConfig.u32Argument        = 0UL;
+        stcCmdConfig.u32Argument        = (uint32_t)(*pu16RCA) << 16U;
         stcCmdConfig.u16CmdIndex        = SDIOC_CMD3_SEND_RELATIVE_ADDR;
         stcCmdConfig.u16CmdType         = SDIOC_CMD_TYPE_NORMAL;
         stcCmdConfig.u16DataLine        = SDIOC_DATA_LINE_DISABLE;
@@ -1813,7 +1868,12 @@ int32_t SDMMC_CMD3_SendRelativeAddr(CM_SDIOC_TypeDef *SDIOCx, uint16_t *pu16RCA,
         i32Ret = SDIOC_SendCommand(SDIOCx, &stcCmdConfig);
         /* Check for error conditions */
         if (LL_OK == i32Ret) {
-            i32Ret = SDMMC_GetCmdResp6(SDIOCx, pu16RCA, pu32ErrStatus);
+            u32SdMode = SDIOC_GetMode(SDIOCx);
+            if (SDIOC_MD_SD != u32SdMode) { /* MMC mode */
+                i32Ret = SDMMC_GetCmdResp1(SDIOCx, SDMMC_CMD_TIMEOUT, pu32ErrStatus);
+            } else {
+                i32Ret = SDMMC_GetCmdResp6(SDIOCx, pu16RCA, pu32ErrStatus);
+            }
         }
     }
 
@@ -2487,7 +2547,7 @@ int32_t SDMMC_ACMD13_SendStatus(CM_SDIOC_TypeDef *SDIOCx, uint32_t *pu32ErrStatu
  *           - LL_ERR_INVD_PARAM: SDIOCx == NULL or pu32ErrStatus == NULL
  *           - LL_ERR_TIMEOUT: Wait timeout
  */
-int32_t SDMMC_ACMD41_SendOperatCond(CM_SDIOC_TypeDef *SDIOCx, uint32_t u32Argument, uint32_t *pu32ErrStatus)
+int32_t SDMMC_ACMD41_SendOperateCond(CM_SDIOC_TypeDef *SDIOCx, uint32_t u32Argument, uint32_t *pu32ErrStatus)
 {
     int32_t i32Ret;
     stc_sdioc_cmd_config_t stcCmdConfig;
@@ -2560,7 +2620,7 @@ int32_t SDMMC_ACMD51_SendSCR(CM_SDIOC_TypeDef *SDIOCx, uint32_t *pu32ErrStatus)
  *           - LL_ERR_INVD_PARAM: SDIOCx == NULL or pu32ErrStatus == NULL
  *           - LL_ERR_TIMEOUT: Wait timeout
  */
-int32_t SDMMC_CMD1_SendOperatCond(CM_SDIOC_TypeDef *SDIOCx, uint32_t u32Argument, uint32_t *pu32ErrStatus)
+int32_t SDMMC_CMD1_SendOperateCond(CM_SDIOC_TypeDef *SDIOCx, uint32_t u32Argument, uint32_t *pu32ErrStatus)
 {
     int32_t i32Ret;
     stc_sdioc_cmd_config_t stcCmdConfig;
@@ -2658,6 +2718,144 @@ int32_t SDMMC_CMD36_EraseGroupEndAddr(CM_SDIOC_TypeDef *SDIOCx, uint32_t u32EndA
 }
 
 /**
+ * @brief  Send the IO_SEND_OP_COND command for inquiring about the voltage range needed by the I/O card.
+ * @param  [in] SDIOCx                  Pointer to SDIOC unit instance
+ *         This parameter can be one of the following values:
+ *           @arg CM_SDIOC1:            SDIOC unit 1 instance
+ *           @arg CM_SDIOC2:            SDIOC unit 2 instance
+ * @param  [in] u32Argument             Argument used for the command.
+ * @param  [out] pu32ErrStatus          Pointer to the error state value
+ * @retval int32_t:
+ *           - LL_OK: Command send completed
+ *           - LL_ERR: Refer to pu32ErrStatus for the reason of error
+ *           - LL_ERR_INVD_PARAM: SDIOCx == NULL or pu32ErrStatus == NULL
+ *           - LL_ERR_TIMEOUT: Wait timeout
+ */
+int32_t SDMMC_CMD5_IOSendOperateCond(CM_SDIOC_TypeDef *SDIOCx, uint32_t u32Argument, uint32_t *pu32ErrStatus)
+{
+    int32_t i32Ret;
+    stc_sdioc_cmd_config_t stcCmdConfig;
+
+    if (NULL == pu32ErrStatus) {
+        i32Ret = LL_ERR_INVD_PARAM;
+    } else {
+        stcCmdConfig.u32Argument        = u32Argument;
+        stcCmdConfig.u16CmdIndex        = SDIOC_CMD5_IO_SEND_OP_COND;
+        stcCmdConfig.u16CmdType         = SDIOC_CMD_TYPE_NORMAL;
+        stcCmdConfig.u16DataLine        = SDIOC_DATA_LINE_DISABLE;
+        stcCmdConfig.u16ResponseType    = SDIOC_RESP_TYPE_R3_R4;
+        i32Ret = SDIOC_SendCommand(SDIOCx, &stcCmdConfig);
+        /* Check for error conditions */
+        if (LL_OK == i32Ret) {
+            i32Ret = SDMMC_GetCmdResp4(SDIOCx, pu32ErrStatus);
+        }
+    }
+
+    return i32Ret;
+}
+
+/**
+ * @brief  Send the IO_RW_DIRECT command to access a single I/O register.
+ * @param  [in] SDIOCx                  Pointer to SDIOC unit instance
+ *         This parameter can be one of the following values:
+ *           @arg CM_SDIOC1:            SDIOC unit 1 instance
+ *           @arg CM_SDIOC2:            SDIOC unit 2 instance
+ * @param  [in] pstcCmdArg              Pointer to a @ref stc_sdio_cmd52_arg_t structure
+ * @param  [in] u8In                    Data to write
+ * @param  [out] pu8Out                 Pointer to buffer to store command response
+ * @param  [out] pu32ErrStatus          Pointer to the error state value
+ * @retval int32_t:
+ *           - LL_OK: Command send completed
+ *           - LL_ERR: Refer to pu32ErrStatus for the reason of error or response(R5) indicate error
+ *           - LL_ERR_INVD_PARAM: SDIOCx == NULL or pstcCmdArg == NULL or pu32ErrStatus == NULL
+ *           - LL_ERR_TIMEOUT: Wait timeout
+ */
+int32_t SDMMC_CMD52_IORwDirect(CM_SDIOC_TypeDef *SDIOCx, const stc_sdio_cmd52_arg_t *pstcCmdArg,
+                               uint8_t u8In, uint8_t *pu8Out, uint32_t *pu32ErrStatus)
+{
+    int32_t i32Ret;
+    uint32_t u32Arg;
+    uint32_t u32R5;
+    stc_sdioc_cmd_config_t stcCmdConfig;
+
+    if ((NULL == pstcCmdArg) || (NULL == pu32ErrStatus)) {
+        i32Ret = LL_ERR_INVD_PARAM;
+    } else {
+        /* Command arguments */
+        u32Arg = 0UL;
+        u32Arg |= pstcCmdArg->u32RwFlag;
+        u32Arg |= ((uint32_t)pstcCmdArg->u8FuncNum << SDIO_CMD52_ARG_FUNC_SHIFT);
+        u32Arg |= (pstcCmdArg->u32RegAddr << SDIO_CMD52_ARG_REG_ADDR_SHIFT);
+        u32Arg |= pstcCmdArg->u32RawFlag;
+        u32Arg |= u8In;
+
+        stcCmdConfig.u32Argument     = u32Arg;
+        stcCmdConfig.u16CmdIndex     = SDIOC_CMD52_IO_RW_DIRECT;
+        stcCmdConfig.u16CmdType      = SDIOC_CMD_TYPE_NORMAL;
+        stcCmdConfig.u16DataLine     = SDIOC_DATA_LINE_DISABLE;
+        stcCmdConfig.u16ResponseType = SDIOC_RESP_TYPE_R1_R5_R6_R7;
+        i32Ret = SDIOC_SendCommand(SDIOCx, &stcCmdConfig);
+        if (LL_OK == i32Ret) {
+            i32Ret = SDMMC_GetCmdResp5(SDIOCx, pu32ErrStatus);
+            if (LL_OK == i32Ret) {
+                (void)SDIOC_GetResponse(SDIOCx, SDIOC_RESP_REG_BIT0_31, &u32R5);
+                if (NULL != pu8Out) {
+                    *pu8Out = (uint8_t)(u32R5 & 0x000000FFUL);
+                }
+            }
+        }
+    }
+
+    return i32Ret;
+}
+
+/**
+ * @brief  Send the IO_RW_EXTENDED command to access a large number of I/O registers.
+ * @param  [in] SDIOCx                  Pointer to SDIOC unit instance
+ *         This parameter can be one of the following values:
+ *           @arg CM_SDIOC1:            SDIOC unit 1 instance
+ *           @arg CM_SDIOC2:            SDIOC unit 2 instance
+ * @param  [in] pstcCmdArg              Pointer to a @ref stc_sdio_cmd53_arg_t structure
+ * @param  [out] pu32ErrStatus          Pointer to the error state value
+ * @retval int32_t:
+ *           - LL_OK: Command send completed
+ *           - LL_ERR: Refer to pu32ErrStatus for the reason of error or response(R5) indicate error
+ *           - LL_ERR_INVD_PARAM: SDIOCx == NULL or pstcCmdArg == NULL or pu32ErrStatus == NULL
+ *           - LL_ERR_TIMEOUT: Wait timeout
+ */
+int32_t SDMMC_CMD53_IORwExtended(CM_SDIOC_TypeDef *SDIOCx, const stc_sdio_cmd53_arg_t *pstcCmdArg,
+                                 uint32_t *pu32ErrStatus)
+{
+    int32_t i32Ret;
+    uint32_t u32Arg;
+    stc_sdioc_cmd_config_t stcCmdConfig;
+
+    if ((NULL == pstcCmdArg) || (NULL == pu32ErrStatus)) {
+        i32Ret = LL_ERR_INVD_PARAM;
+    } else {
+        /* Command arguments */
+        u32Arg = 0UL;
+        u32Arg |= pstcCmdArg->u32RwFlag;
+        u32Arg |= ((uint32_t)pstcCmdArg->u8FuncNum << SDIO_CMD53_ARG_FUNC_SHIFT);
+        u32Arg |= pstcCmdArg->u32BlockMode;
+        u32Arg |= pstcCmdArg->u32OperateCode;
+        u32Arg |= (pstcCmdArg->u32RegAddr << SDIO_CMD53_ARG_REG_ADDR_SHIFT);
+
+        stcCmdConfig.u32Argument     = u32Arg;
+        stcCmdConfig.u16CmdIndex     = SDIOC_CMD53_IO_RW_EXTENDED;
+        stcCmdConfig.u16CmdType      = SDIOC_CMD_TYPE_NORMAL;
+        stcCmdConfig.u16DataLine     = SDIOC_DATA_LINE_ENABLE;
+        stcCmdConfig.u16ResponseType = SDIOC_RESP_TYPE_R1_R5_R6_R7;
+        i32Ret = SDIOC_SendCommand(SDIOCx, &stcCmdConfig);
+        if (LL_OK == i32Ret) {
+            i32Ret = SDMMC_GetCmdResp5(SDIOCx, pu32ErrStatus);
+        }
+    }
+
+    return i32Ret;
+}
+
+/**
  * @}
  */
 
@@ -2668,8 +2866,8 @@ int32_t SDMMC_CMD36_EraseGroupEndAddr(CM_SDIOC_TypeDef *SDIOCx, uint32_t u32EndA
  */
 
 /**
-* @}
-*/
+ * @}
+ */
 
 /******************************************************************************
  * EOF (not truncated)

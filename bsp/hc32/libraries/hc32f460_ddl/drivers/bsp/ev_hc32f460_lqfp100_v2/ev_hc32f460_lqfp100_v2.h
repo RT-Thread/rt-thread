@@ -7,9 +7,11 @@
    Change Logs:
    Date             Author          Notes
    2022-03-31       CDT             First version
+   2022-10-31       CDT             Add XTAL/XTAL32 IO define
+   2023-09-30       CDT             Add include file named hc32_ll_fcm.h and add declaration of BSP_XTAL32_Init()
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -35,6 +37,7 @@ extern "C"
 #include "hc32_ll_dma.h"
 #include "hc32_ll_efm.h"
 #include "hc32_ll_fcg.h"
+#include "hc32_ll_fcm.h"
 #include "hc32_ll_gpio.h"
 #include "hc32_ll_i2c.h"
 #include "hc32_ll_i2s.h"
@@ -53,6 +56,11 @@ extern "C"
 
 /**
  * @addtogroup EV_HC32F460_LQFP100_V2
+ * @{
+ */
+
+/**
+ * @addtogroup EV_HC32F460_LQFP100_V2_BASE
  * @{
  */
 
@@ -165,7 +173,7 @@ extern "C"
 #define BSP_KEY_KEY10_EXTINT    (EXTINT_CH01)
 #define BSP_KEY_KEY10_INT_SRC   (INT_SRC_PORT_EIRQ1)
 #define BSP_KEY_KEY10_IRQn      (INT025_IRQn)
-#define BSP_KEY_KEY10_WAKEUP    (INTC_WUPEN_EIRQWUEN_1)
+#define BSP_KEY_KEY10_WAKEUP    (INTC_STOP_WKUP_EXTINT_CH1)
 #define BSP_KEY_KEY10_EVT       (EVT_SRC_PORT_EIRQ1)
 
 #define BSP_KEYOUT0_PORT        (GPIO_PORT_A)
@@ -224,6 +232,28 @@ extern "C"
  */
 
 /**
+ * @defgroup EV_HC32F460_LQFP100_V2_XTAL_CONFIG EV_HC32F460_LQFP100_V2 XTAL Configure definition
+ * @{
+ */
+#define BSP_XTAL_PORT                   (GPIO_PORT_H)
+#define BSP_XTAL_IN_PIN                 (GPIO_PIN_01)
+#define BSP_XTAL_OUT_PIN                (GPIO_PIN_00)
+/**
+ * @}
+ */
+
+/**
+ * @defgroup EV_HC32F460_LQFP100_V2_XTAL32_CONFIG EV_HC32F460_LQFP100_V2 XTAL32 Configure definition
+ * @{
+ */
+#define BSP_XTAL32_PORT                 (GPIO_PORT_C)
+#define BSP_XTAL32_IN_PIN               (GPIO_PIN_15)
+#define BSP_XTAL32_OUT_PIN              (GPIO_PIN_14)
+/**
+ * @}
+ */
+
+/**
  * @}
  */
 
@@ -238,6 +268,7 @@ extern "C"
  * @addtogroup EV_HC32F460_LQFP100_V2_Global_Functions
  * @{
  */
+int32_t BSP_XTAL32_Init(void);
 void BSP_CLK_Init(void);
 
 void BSP_KEY_Init(void);
@@ -268,6 +299,10 @@ int32_t BSP_I2C_GetDevStatus(CM_I2C_TypeDef *I2Cx, uint16_t u16DevAddr);
  */
 
 #endif /* BSP_EV_HC32F460_LQFP100_V2 */
+/**
+ * @}
+ */
+
 /**
  * @}
  */

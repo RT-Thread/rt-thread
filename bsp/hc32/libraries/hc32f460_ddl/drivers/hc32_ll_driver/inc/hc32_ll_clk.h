@@ -7,9 +7,10 @@
    Change Logs:
    Date             Author          Notes
    2022-03-31       CDT             First version
+   2022-06-30       CDT             Refine stc_clock_freq_t
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -57,51 +58,42 @@ extern "C"
  * @brief  CLK XTAL configuration structure definition
  */
 typedef struct {
-    uint8_t u8State;        /*!< The new state of the XTAL.
-                                This parameter can be a value of @ref CLK_XTAL_Config   */
-
-    uint8_t u8Drv;          /*!< The XTAL drive ability.
-                                This parameter can be a value of @ref CLK_XTAL_Config   */
-
-    uint8_t u8Mode;         /*!< The XTAL mode selection osc or exclk.
-                                This parameter can be a value of @ref CLK_XTAL_Config   */
-
-    uint8_t u8SuperDrv;     /*!< The XTAL super drive on or off.
-                                This parameter can be a value of @ref CLK_XTAL_Config   */
-
-    uint8_t u8StableTime;   /*!< The XTAL stable time selection.
-                                This parameter can be a value of @ref CLK_XTAL_Config   */
+    uint8_t u8State;            /*!< The new state of the XTAL.
+                                     This parameter can be a value of @ref CLK_XTAL_Config   */
+    uint8_t u8Drv;              /*!< The XTAL drive ability.
+                                     This parameter can be a value of @ref CLK_XTAL_Config   */
+    uint8_t u8Mode;             /*!< The XTAL mode selection osc or exclk.
+                                     This parameter can be a value of @ref CLK_XTAL_Config   */
+    uint8_t u8SuperDrv;         /*!< The XTAL super drive on or off.
+                                     This parameter can be a value of @ref CLK_XTAL_Config   */
+    uint8_t u8StableTime;       /*!< The XTAL stable time selection.
+                                     This parameter can be a value of @ref CLK_XTAL_Config   */
 } stc_clock_xtal_init_t;
 
 /**
  * @brief  CLK XTAL fault detect configuration structure definition
  */
 typedef struct {
-    uint8_t u8State;   /*!< Specifies the new state of XTALSTD.
-                                This parameter can be a value of @ref CLK_XTALSTD_Config    */
-
-    uint8_t u8Mode;    /*!< Specifies the XTALSTD mode.
-                                This parameter can be a value of @ref CLK_XTALSTD_Config    */
-
-    uint8_t u8Int;     /*!< Specifies the XTALSTD interrupt on or off.
-                                This parameter can be a value of @ref CLK_XTALSTD_Config    */
-
-    uint8_t u8Reset;   /*!< Specifies the XTALSTD reset on or off.
-                                This parameter can be a value of @ref CLK_XTALSTD_Config    */
+    uint8_t u8State;            /*!< Specifies the new state of XTALSTD.
+                                     This parameter can be a value of @ref CLK_XTALSTD_Config    */
+    uint8_t u8Mode;             /*!< Specifies the XTALSTD mode.
+                                     This parameter can be a value of @ref CLK_XTALSTD_Config    */
+    uint8_t u8Int;              /*!< Specifies the XTALSTD interrupt on or off.
+                                     This parameter can be a value of @ref CLK_XTALSTD_Config    */
+    uint8_t u8Reset;            /*!< Specifies the XTALSTD reset on or off.
+                                     This parameter can be a value of @ref CLK_XTALSTD_Config    */
 } stc_clock_xtalstd_init_t;
 
 /**
  * @brief  CLK XTAL32 configuration structure definition
  */
 typedef struct {
-    uint8_t u8State;        /*!< Xtal32 new state,
-                                @ref CLK_XTAL32_Config for details */
-
-    uint8_t u8Drv;          /*!< Xtal32 drive capacity setting,
-                                @ref CLK_XTAL32_Config for details */
-
-    uint8_t u8Filter;       /*!< Xtal32 noise filter setting,
-                                @ref CLK_XTAL32_Config for details */
+    uint8_t u8State;            /*!< Xtal32 new state,
+                                     @ref CLK_XTAL32_Config for details */
+    uint8_t u8Drv;              /*!< Xtal32 drive capacity setting,
+                                     @ref CLK_XTAL32_Config for details */
+    uint8_t u8Filter;           /*!< Xtal32 noise filter setting,
+                                     @ref CLK_XTAL32_Config for details */
 } stc_clock_xtal32_init_t;
 
 /**
@@ -131,8 +123,7 @@ typedef struct {
 
 /**
  * @brief  CLK PLL configuration structure definition
- * @note   PLL for MPLL while HC32F460,HC32F451,HC32F452
- *         PLL for PLLH while HC32F4A0
+ * @note   PLL for MPLL
  */
 typedef struct {
     uint8_t u8PLLState;         /*!< PLL new state, @ref CLK_PLL_Config for details */
@@ -170,7 +161,7 @@ typedef struct {
             uint32_t PLLP   : 4; /*!< PLLx P divide */
         } PLLCFGR_f;
     };
-}  stc_clock_pllx_init_t;
+} stc_clock_pllx_init_t;
 
 /**
  * @brief  CLK bus frequency structure definition
@@ -178,13 +169,12 @@ typedef struct {
 typedef struct {
     uint32_t u32SysclkFreq;        /*!< System clock frequency. */
     uint32_t u32HclkFreq;          /*!< Hclk frequency.         */
-
-    uint32_t u32Pclk1Freq;         /*!< Pclk1 frequency.        */
-    uint32_t u32Pclk4Freq;         /*!< Pclk4 frequency.        */
-    uint32_t u32Pclk3Freq;         /*!< Pclk3 frequency.        */
-    uint32_t u32ExclkFreq;         /*!< Exclk frequency.        */
     uint32_t u32Pclk0Freq;         /*!< Pclk0 frequency.        */
+    uint32_t u32Pclk1Freq;         /*!< Pclk1 frequency.        */
     uint32_t u32Pclk2Freq;         /*!< Pclk2 frequency.        */
+    uint32_t u32Pclk3Freq;         /*!< Pclk3 frequency.        */
+    uint32_t u32Pclk4Freq;         /*!< Pclk4 frequency.        */
+    uint32_t u32ExclkFreq;         /*!< Exclk frequency.        */
 } stc_clock_freq_t;
 
 /**
@@ -237,7 +227,7 @@ typedef struct {
 #define CLK_PLL_ON                      (0x00U)
 
 /**
- * @brief PLL/A source clock selection.
+ * @brief PLL source clock selection.
  */
 #define CLK_PLL_SRC_XTAL                (0x00UL)
 #define CLK_PLL_SRC_HRC                 (0x01UL)
@@ -257,13 +247,11 @@ typedef struct {
 
 /**
  * @brief XTAL driver ability
- * @note    HC32F451/HC32F452  |                     |                               |
- * @note    HC32F4A0/HC32F460  |                     |                               |
- * @note    HC32F472           |  HC32M423/HC32M424  |  HC32M120/HC32F120/HC32F160   |
- *  High:       [20~25]        |       [20~24]       |           [20]                |
- *  Mid:        [16~20)        |       [16~20)       |         [10~20)               |
- *  Low:         (8~16)        |        (8~16)       |          (4~10)               |
- *  ULow:        [4~8]         |        [4~8]        |            [4]                |
+ * @note
+ * @verbatim
+ *            High      |       Mid       |       Low       |      ULow     |
+ *          [20~25]     |     [16~20)     |     (8~16)      |     [4~8]     |
+ * @endverbatim
  */
 #define CLK_XTAL_DRV_HIGH               (0x00U << CMU_XTALCFGR_XTALDRV_POS)
 #define CLK_XTAL_DRV_MID                (0x01U << CMU_XTALCFGR_XTALDRV_POS)
@@ -295,7 +283,6 @@ typedef struct {
 #define CLK_XTAL_STB_8MS                (0x07U)       /*!< 2147 stable count cycle, approx. 8ms */
 #define CLK_XTAL_STB_16MS               (0x08U)       /*!< 4291 stable count cycle, approx. 16ms */
 #define CLK_XTAL_STB_31MS               (0x09U)       /*!< 8163 stable count cycle, approx. 32ms */
-
 /**
  * @}
  */
@@ -369,15 +356,6 @@ typedef struct {
  */
 
 /**
- * @defgroup CLK_HrcFreq_Sel Hrc Freqency Selection
- * @{
- */
-
-/**
- * @}
- */
-
-/**
  * @defgroup CLK_STB_Flag CLK Stable Flags
  * @{
  */
@@ -387,7 +365,6 @@ typedef struct {
 #define CLK_STB_FLAG_PLLX               (CMU_OSCSTBSR_UPLLSTBF)
 #define CLK_STB_FLAG_MASK               (CMU_OSCSTBSR_HRCSTBF | CMU_OSCSTBSR_XTALSTBF | \
                                         CMU_OSCSTBSR_MPLLSTBF | CMU_OSCSTBSR_UPLLSTBF)
-
 /**
  * @}
  */
@@ -402,7 +379,6 @@ typedef struct {
 #define CLK_SYSCLK_SRC_XTAL             (0x03U)
 #define CLK_SYSCLK_SRC_XTAL32           (0x04U)
 #define CLK_SYSCLK_SRC_PLL              (0x05U)
-
 /**
  * @}
  */
@@ -420,7 +396,6 @@ typedef struct {
 #define CLK_BUS_HCLK                    (CMU_SCFGR_HCLKS)
 #define CLK_BUS_CLK_ALL                 (CLK_BUS_PCLK0 | CLK_BUS_PCLK1 | CLK_BUS_PCLK2 | CLK_BUS_PCLK3 | \
                                          CLK_BUS_PCLK4 | CLK_BUS_EXCLK | CLK_BUS_HCLK)
-
 /**
  * @}
  */
@@ -557,33 +532,32 @@ typedef struct {
  * @defgroup CLK_USBCLK_Sel CLK USB Clock Selection
  * @{
  */
-#define CLK_USBCLK_SYSCLK_DIV2         (0x02U << CMU_USBCKCFGR_USBCKS_POS)
-#define CLK_USBCLK_SYSCLK_DIV3         (0x03U << CMU_USBCKCFGR_USBCKS_POS)
-#define CLK_USBCLK_SYSCLK_DIV4         (0x04U << CMU_USBCKCFGR_USBCKS_POS)
-#define CLK_USBCLK_PLLP                (0x08U << CMU_USBCKCFGR_USBCKS_POS)
-#define CLK_USBCLK_PLLQ                (0x09U << CMU_USBCKCFGR_USBCKS_POS)
-#define CLK_USBCLK_PLLR                (0x0AU << CMU_USBCKCFGR_USBCKS_POS)
-#define CLK_USBCLK_PLLXP               (0x0BU << CMU_USBCKCFGR_USBCKS_POS)
-#define CLK_USBCLK_PLLXQ               (0x0CU << CMU_USBCKCFGR_USBCKS_POS)
-#define CLK_USBCLK_PLLXR               (0x0DU << CMU_USBCKCFGR_USBCKS_POS)
+#define CLK_USBCLK_SYSCLK_DIV2          (0x02U << CMU_USBCKCFGR_USBCKS_POS)
+#define CLK_USBCLK_SYSCLK_DIV3          (0x03U << CMU_USBCKCFGR_USBCKS_POS)
+#define CLK_USBCLK_SYSCLK_DIV4          (0x04U << CMU_USBCKCFGR_USBCKS_POS)
+#define CLK_USBCLK_PLLP                 (0x08U << CMU_USBCKCFGR_USBCKS_POS)
+#define CLK_USBCLK_PLLQ                 (0x09U << CMU_USBCKCFGR_USBCKS_POS)
+#define CLK_USBCLK_PLLR                 (0x0AU << CMU_USBCKCFGR_USBCKS_POS)
+#define CLK_USBCLK_PLLXP                (0x0BU << CMU_USBCKCFGR_USBCKS_POS)
+#define CLK_USBCLK_PLLXQ                (0x0CU << CMU_USBCKCFGR_USBCKS_POS)
+#define CLK_USBCLK_PLLXR                (0x0DU << CMU_USBCKCFGR_USBCKS_POS)
 /**
  * @}
  */
 
 /**
  * @defgroup CLK_PERIPH_Sel CLK Peripheral Clock Selection
- * @note    ADC,I2S,DAC,TRANG
+ * @note    ADC,I2S,DAC,TRNG
  * @{
  */
-#define CLK_PERIPHCLK_PCLK               (0x0000U)   /*  PCLK2 is used for ADC clock, \
-                                                    PCLK3 is used for I2S clock, \
-                                                    PCLK4 is used for DAC/TRANG clock */
-#define CLK_PERIPHCLK_PLLP               (0x0008U)
-#define CLK_PERIPHCLK_PLLQ               (0x0009U)
-#define CLK_PERIPHCLK_PLLR               (0x000AU)
-#define CLK_PERIPHCLK_PLLXP              (0x000BU)
-#define CLK_PERIPHCLK_PLLXQ              (0x000CU)
-#define CLK_PERIPHCLK_PLLXR              (0x000DU)
+/*  PCLK2 is used for ADC clock, PCLK3 is used for I2S clock, PCLK4 is used for DAC/TRNG clock */
+#define CLK_PERIPHCLK_PCLK              (0x0000U)
+#define CLK_PERIPHCLK_PLLP              (0x0008U)
+#define CLK_PERIPHCLK_PLLQ              (0x0009U)
+#define CLK_PERIPHCLK_PLLR              (0x000AU)
+#define CLK_PERIPHCLK_PLLXP             (0x000BU)
+#define CLK_PERIPHCLK_PLLXQ             (0x000CU)
+#define CLK_PERIPHCLK_PLLXR             (0x000DU)
 /**
  * @}
  */
@@ -604,9 +578,9 @@ typedef struct {
  * @defgroup CLK_TPIU_Divider TPIU clock divider
  * @{
  */
-#define CLK_TPIUCLK_DIV1               (0x00U)
-#define CLK_TPIUCLK_DIV2               (0x01U)
-#define CLK_TPIUCLK_DIV4               (0x02U)
+#define CLK_TPIUCLK_DIV1                (0x00U)
+#define CLK_TPIUCLK_DIV2                (0x01U)
+#define CLK_TPIUCLK_DIV4                (0x02U)
 /**
  * @}
  */
@@ -635,7 +609,6 @@ typedef struct {
 #define CLK_MCO_SRC_PLLQ                (0x08U)
 #define CLK_MCO_SRC_PLLXQ               (0x09U)
 #define CLK_MCO_SRC_HCLK                (0x0BU)
-
 /**
  * @}
  */
@@ -671,11 +644,8 @@ typedef struct {
  * @addtogroup CLK_Global_Functions
  * @{
  */
-
 int32_t CLK_HrcCmd(en_functional_state_t enNewState);
-
 int32_t CLK_MrcCmd(en_functional_state_t enNewState);
-
 int32_t CLK_LrcCmd(en_functional_state_t enNewState);
 
 void CLK_HrcTrim(int8_t i8TrimVal);
@@ -700,7 +670,6 @@ int32_t CLK_PLLStructInit(stc_clock_pll_init_t *pstcPLLInit);
 int32_t CLK_PLLInit(const stc_clock_pll_init_t *pstcPLLInit);
 int32_t CLK_PLLCmd(en_functional_state_t enNewState);
 int32_t CLK_GetPLLClockFreq(stc_pll_clock_freq_t *pstcPllClkFreq);
-
 int32_t CLK_PLLxStructInit(stc_clock_pllx_init_t *pstcPLLxInit);
 int32_t CLK_PLLxInit(const stc_clock_pllx_init_t *pstcPLLxInit);
 int32_t CLK_PLLxCmd(en_functional_state_t enNewState);
@@ -709,20 +678,17 @@ void CLK_MCOConfig(uint8_t u8Ch, uint8_t u8Src, uint8_t u8Div);
 void CLK_MCOCmd(uint8_t u8Ch, en_functional_state_t enNewState);
 
 en_flag_status_t CLK_GetStableStatus(uint8_t u8Flag);
-
 void CLK_SetSysClockSrc(uint8_t u8Src);
 void CLK_SetClockDiv(uint32_t u32Clock, uint32_t u32Div);
 int32_t CLK_GetClockFreq(stc_clock_freq_t *pstcClockFreq);
 uint32_t CLK_GetBusClockFreq(uint32_t u32Clock);
 
 void CLK_SetPeriClockSrc(uint16_t u16Src);
-
 void CLK_SetUSBClockSrc(uint8_t u8Src);
 void CLK_SetI2SClockSrc(uint8_t u8Unit, uint8_t u8Src);
 
 void CLK_TpiuClockCmd(en_functional_state_t enNewState);
 void CLK_SetTpiuClockDiv(uint8_t u8Div);
-
 /**
  * @}
  */
