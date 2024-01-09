@@ -164,7 +164,7 @@ static rt_err_t _hash_update(struct hwcrypto_hash *ctx, const rt_uint8_t *in, rt
         break;
     default :
         LOG_E("not support hash type: %x", ctx->parent.type);
-        result = RT_ERROR;
+        result = -RT_ERROR;
         break;
     }
 
@@ -183,7 +183,7 @@ static rt_err_t _hash_finish(struct hwcrypto_hash *ctx, rt_uint8_t *out, rt_size
     if (hash_in == RT_NULL || hash_length == 0)
     {
         LOG_E("no data input.");
-        result = RT_ERROR;
+        result = -RT_ERROR;
         goto _exit;
     }
 
@@ -204,7 +204,7 @@ static rt_err_t _hash_finish(struct hwcrypto_hash *ctx, rt_uint8_t *out, rt_size
 
     default :
         LOG_E("not support hash type: %x", ctx->parent.type);
-        result = RT_ERROR;
+        result = -RT_ERROR;
         break;
     }
 
@@ -247,7 +247,7 @@ static rt_err_t _cryp_crypt(struct hwcrypto_symmetric *ctx, struct hwcrypto_symm
     if (ctx->key_bitlen != (AES_KEY_SIZE_16BYTE * 8U))
     {
         LOG_E("not support key bitlen: %d", ctx->key_bitlen);
-        result = RT_ERROR;
+        result = -RT_ERROR;
         goto _exit;
     }
 #elif defined (HC32F4A0)
@@ -255,7 +255,7 @@ static rt_err_t _cryp_crypt(struct hwcrypto_symmetric *ctx, struct hwcrypto_symm
             ctx->key_bitlen != (AES_KEY_SIZE_32BYTE * 8U))
     {
         LOG_E("not support key bitlen: %d", ctx->key_bitlen);
-        result = RT_ERROR;
+        result = -RT_ERROR;
         goto _exit;
     }
 #endif
@@ -263,7 +263,7 @@ static rt_err_t _cryp_crypt(struct hwcrypto_symmetric *ctx, struct hwcrypto_symm
     if ((info->length % 16U) != 0U)
     {
         LOG_E("aes supports only an integer multiple of 16 in length");
-        result = RT_ERROR;
+        result = -RT_ERROR;
         goto _exit;
     }
 
@@ -280,7 +280,7 @@ static rt_err_t _cryp_crypt(struct hwcrypto_symmetric *ctx, struct hwcrypto_symm
     else
     {
         rt_kprintf("error cryp mode : %02x!\n", info->mode);
-        result = RT_ERROR;
+        result = -RT_ERROR;
         goto _exit;
     }
 

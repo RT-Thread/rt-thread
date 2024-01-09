@@ -85,7 +85,7 @@ static rt_int32_t _sdram_verify_clock_frequency(void)
     /* EXCLK max frequency for SDRAM: 60MHz */
     if (CLK_GetBusClockFreq(CLK_BUS_EXCLK) > (60 * 1000000))
     {
-        ret = RT_ERROR;
+        ret = -RT_ERROR;
     }
 #endif
 

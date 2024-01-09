@@ -121,7 +121,7 @@ static rt_err_t _adc_enable(struct rt_adc_device *device, rt_int8_t channel, rt_
 
 static rt_err_t _adc_convert(struct rt_adc_device *device, rt_int8_t channel, rt_uint32_t *value)
 {
-    rt_err_t rt_ret = RT_ERROR;
+    rt_err_t rt_ret = -RT_ERROR;
 
     if (!value)
     {
@@ -215,7 +215,7 @@ static void _adc_clock_enable(void)
 extern rt_err_t rt_hw_board_adc_init(CM_ADC_TypeDef *ADCx);
 int rt_hw_adc_init(void)
 {
-    int ret, i = 0;
+    int ret = RT_EOK, i = 0;
     stc_adc_init_t stcAdcInit = {0};
     int32_t ll_ret = 0;
 

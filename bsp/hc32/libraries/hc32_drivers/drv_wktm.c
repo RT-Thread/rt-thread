@@ -79,7 +79,7 @@ rt_err_t hc32_wktm_start(rt_uint32_t reload)
 #endif
     if (reload > CMPVAL_MAX || !reload)
     {
-        return RT_ERROR;
+        return -RT_ERROR;
     }
     cmpval = reload;
     PWC_WKT_SetCompareValue(cmpval);

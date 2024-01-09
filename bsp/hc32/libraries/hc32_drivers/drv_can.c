@@ -503,22 +503,22 @@ static rt_err_t _calc_can_bit_timing(CM_CAN_TypeDef *CANx, int option, uint32_t 
 
     do
     {
-        uint32_t idx = 0;
+        uint8_t idx = 0;
         for (int i = 0; i < 3; i++)
         {
-            if (option & 1 << i)
+            if (option & (1 << i))
             {
-                idx = i;
+                idx = (uint8_t)i;
                 break;
             }
         }
-        if ((idx > CAN_BIT_TIMING_CANFD_DATA) || (baudrate == 0U) ||
+        if ((idx >= 3) || (baudrate == 0U) ||
                 (can_clk / baudrate < MIN_TQ_MUL_PRESCALE) || (p_stc_bit_cfg == NULL))
         {
             break;
         }
 
-        const can_bit_timing_table_t *tbl = &_g_can_bit_timing_tbl[(uint8_t) idx];
+        const can_bit_timing_table_t *tbl = &_g_can_bit_timing_tbl[idx];
         if (can_clk / baudrate < tbl->tq_min)
         {
             break;

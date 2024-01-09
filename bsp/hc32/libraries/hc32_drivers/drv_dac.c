@@ -80,7 +80,7 @@ static rt_err_t _dac_enabled(struct rt_dac_device *device, rt_uint32_t channel)
 
     int32_t result = DAC_Start(p_ll_instance, ll_channel);
 
-    return (result == LL_OK) ? RT_EOK : RT_ERROR;
+    return (result == LL_OK) ? RT_EOK : -RT_ERROR;
 }
 
 static rt_err_t _dac_disabled(struct rt_dac_device *device, rt_uint32_t channel)
@@ -93,7 +93,7 @@ static rt_err_t _dac_disabled(struct rt_dac_device *device, rt_uint32_t channel)
 
     int32_t result = DAC_Stop(p_ll_instance, ll_channel);
 
-    return (result == LL_OK) ? RT_EOK : RT_ERROR;
+    return (result == LL_OK) ? RT_EOK : -RT_ERROR;
 }
 
 static rt_uint8_t _dac_get_resolution(struct rt_dac_device *device)
