@@ -31,6 +31,7 @@
  * 2023-03-27     rose_man     Split into scheduler upc and scheduler_mp.c
  * 2023-09-15     xqyjlj       perf rt_hw_interrupt_disable/enable
  * 2023-12-10     xqyjlj       use rt_hw_spinlock
+ * 2024-01-05     Shell        Fixup of data racing in rt_critical_level
  */
 
 #include <rtthread.h>
@@ -848,8 +849,17 @@ RTM_EXPORT(rt_exit_critical);
  */
 rt_uint16_t rt_critical_level(void)
 {
-    struct rt_thread *current_thread = rt_cpu_self()->current_thread;
-    return rt_atomic_load(&(current_thread->critical_lock_nest));
+    rt_base_t level;
+    rt_uint16_t critical_lvl;
+    struct rt_thread *current_thread;
+
+    level = rt_hw_local_irq_disable();
+
+    current_thread = rt_cpu_self()->current_thread;
+    critical_lvl = rt_atomic_load(&(current_thread->critical_lock_nest));
+
+    rt_hw_local_irq_enable(level);
+    return critical_lvl;
 }
 RTM_EXPORT(rt_critical_level);
 

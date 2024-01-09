@@ -89,6 +89,8 @@ void rt_tick_increase(void)
     rt_base_t level;
     rt_atomic_t oldval = 0;
 
+    RT_ASSERT(rt_interrupt_get_nest() > 0);
+
     RT_OBJECT_HOOK_CALL(rt_tick_hook, ());
     /* increase the global tick */
 #ifdef RT_USING_SMP

@@ -13,6 +13,7 @@
  * 2022-01-07     Gabriel      Moving __on_rt_xxxxx_hook to irq.c
  * 2022-07-04     Yunjie       fix RT_DEBUG_LOG
  * 2023-09-15     xqyjlj       perf rt_hw_interrupt_disable/enable
+ * 2024-01-05     Shell        Fixup of data racing in rt_interrupt_get_nest
  */
 
 #include <rthw.h>
@@ -114,7 +115,13 @@ RTM_EXPORT(rt_interrupt_leave);
  */
 rt_weak rt_uint8_t rt_interrupt_get_nest(void)
 {
-    return rt_atomic_load(&rt_interrupt_nest);
+    rt_uint8_t ret;
+    rt_base_t level;
+
+    level = rt_hw_local_irq_disable();
+    ret = rt_atomic_load(&rt_interrupt_nest);
+    rt_hw_local_irq_enable(level);
+    return ret;
 }
 RTM_EXPORT(rt_interrupt_get_nest);
 

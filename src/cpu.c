@@ -136,6 +136,7 @@ RTM_EXPORT(rt_spin_unlock_irqrestore)
  */
 struct rt_cpu *rt_cpu_self(void)
 {
+    RT_ASSERT(!rt_scheduler_is_available());
     return &_cpus[rt_hw_cpu_id()];
 }
 
