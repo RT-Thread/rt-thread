@@ -23,7 +23,7 @@ class CPPCheck:
         logging.info("Start to static code analysis.")
         check_result = True
         for file in file_list_filtered:
-            result = subprocess.run(['cppcheck', '-DRTM_EXPORT', '--enable=warning', 'performance', 'portability', '--inline-suppr', '--error-exitcode=1', '--force', file], stdout = subprocess.PIPE, stderr = subprocess.PIPE)
+            result = subprocess.run(['cppcheck', '-DRTM_EXPORT', '-DMSH_CMD_EXPORT(a,b)=', '--enable=warning', 'performance', 'portability', '--inline-suppr', '--error-exitcode=1', '--force', file], stdout = subprocess.PIPE, stderr = subprocess.PIPE)
             logging.info(result.stdout.decode())
             logging.info(result.stderr.decode())
             if result.stderr:
