@@ -417,6 +417,10 @@ config RT_USING_INTERRUPT_INFO
     help
         Add name and counter information for interrupt trace.
 
+config RT_USING_THREDSAFE_PRINTF
+    bool "Enable thread safe kernel print service"
+    default y if RT_USING_SMP && RT_USING_SMART
+
 config RT_USING_CONSOLE
     bool "Using console for rt_kprintf"
     default y
@@ -429,6 +433,7 @@ if RT_USING_CONSOLE
     config RT_CONSOLE_DEVICE_NAME
         string "the device name for console"
         default "uart1"
+
 endif
 
 config RT_VER_NUM
