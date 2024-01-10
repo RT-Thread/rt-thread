@@ -9,6 +9,7 @@
  */
 
 #include <board.h>
+#include <rtthread.h>
 
 #ifdef BSP_USING_SDRAM
 #include <sdram_port.h>
