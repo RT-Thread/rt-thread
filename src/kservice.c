@@ -1499,7 +1499,7 @@ rt_thread_t rt_console_current_user(void)
     return _pr_curr_user;
 }
 
-static void _acquire_console(void)
+static void _console_take(void)
 {
     rt_ubase_t level = rt_spin_lock_irqsave(&_pr_lock);
     rt_thread_t self_thread = rt_thread_self();
@@ -1526,7 +1526,7 @@ static void _acquire_console(void)
     rt_spin_unlock_irqrestore(&_pr_lock, level);
 }
 
-static void _release_console(void)
+static void _console_release(void)
 {
     rt_ubase_t level = rt_spin_lock_irqsave(&_pr_lock);
     rt_thread_t self_thread = rt_thread_self();
@@ -1542,16 +1542,16 @@ static void _release_console(void)
     rt_spin_unlock_irqrestore(&_pr_lock, level);
 }
 
-#define ACQUIRE_CONSOLE       _acquire_console()
-#define RELEASE_CONSOLE       _release_console()
-#define ACQUIRE_PRINTF_BUFFER rt_ubase_t level = rt_spin_lock_irqsave(&_prf_lock)
-#define RELEASE_PRINTF_BUFFER rt_spin_unlock_irqrestore(&_prf_lock, level)
+#define CONSOLE_TAKE          _console_take()
+#define CONSOLE_RELEASE       _console_release()
+#define PRINTF_BUFFER_TAKE    rt_ubase_t level = rt_spin_lock_irqsave(&_prf_lock)
+#define PRINTF_BUFFER_RELEASE rt_spin_unlock_irqrestore(&_prf_lock, level)
 #else
 
-#define ACQUIRE_CONSOLE
-#define RELEASE_CONSOLE
-#define ACQUIRE_PRINTF_BUFFER
-#define RELEASE_PRINTF_BUFFER
+#define CONSOLE_TAKE
+#define CONSOLE_RELEASE
+#define PRINTF_BUFFER_TAKE
+#define PRINTF_BUFFER_RELEASE
 #endif /* RT_USING_THREDSAFE_PRINTF */
 
 /**
@@ -1561,7 +1561,7 @@ static void _release_console(void)
  */
 static void _kputs(const char *str, long len)
 {
-    ACQUIRE_CONSOLE;
+    CONSOLE_TAKE;
 
 #ifdef RT_USING_DEVICE
     if (_console_device == RT_NULL)
@@ -1576,7 +1576,7 @@ static void _kputs(const char *str, long len)
     rt_hw_console_output(str);
 #endif /* RT_USING_DEVICE */
 
-    RELEASE_CONSOLE;
+    CONSOLE_RELEASE;
 }
 
 /**
@@ -1608,7 +1608,7 @@ rt_weak int rt_kprintf(const char *fmt, ...)
     static char rt_log_buf[RT_CONSOLEBUF_SIZE];
 
     va_start(args, fmt);
-    ACQUIRE_PRINTF_BUFFER;
+    PRINTF_BUFFER_TAKE;
 
     /* the return value of vsnprintf is the number of bytes that would be
      * written to buffer had if the size of the buffer been sufficiently
@@ -1623,7 +1623,7 @@ rt_weak int rt_kprintf(const char *fmt, ...)
 
     _kputs(rt_log_buf, length);
 
-    RELEASE_PRINTF_BUFFER;
+    PRINTF_BUFFER_RELEASE;
     va_end(args);
 
     return length;
