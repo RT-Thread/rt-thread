@@ -18,7 +18,6 @@
 
 #include "fparameters.h"
 #include "phytium_cpu.h"
-#include "fkernel.h"
 
 #include "mmu.h"
 #ifdef RT_USING_SMART
@@ -39,8 +38,6 @@
     #define PAGE_END        (rt_size_t)((rt_size_t)KERNEL_VADDR_START + 128 * 1024 * 1024)
 #else
     #define HEAP_END        (rt_size_t)(HEAP_BEGIN + 64*1024*1024)
-    #define KERNEL_VADDR_START (rt_size_t)0x80000000
-    #define DDR_END_ADDRESS (KERNEL_VADDR_START + 1024*1024*1024 - 1 )
     #define PAGE_POOL_SIZE  (8ul << 20)
     #define PAGE_START      (rt_size_t)(HEAP_END)
     #define PAGE_END        (PAGE_START +PAGE_POOL_SIZE)
