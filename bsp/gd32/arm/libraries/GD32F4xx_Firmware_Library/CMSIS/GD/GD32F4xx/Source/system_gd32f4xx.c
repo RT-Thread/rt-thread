@@ -56,6 +56,12 @@
 //#define __SYSTEM_CLOCK_240M_PLL_8M_HXTAL        (uint32_t)(240000000)
 //#define __SYSTEM_CLOCK_240M_PLL_25M_HXTAL       (uint32_t)(240000000)
 
+#ifdef LCKFB_SKYSTART_GD32F407V
+#undef __SYSTEM_CLOCK_200M_PLL_25M_HXTAL
+#define __SYSTEM_CLOCK_168M_PLL_8M_HXTAL        (uint32_t)(168000000)
+#endif
+
+
 #define RCU_MODIFY(__delay)     do{                                     \
                                     volatile uint32_t i;                \
                                     if(0 != __delay){                   \

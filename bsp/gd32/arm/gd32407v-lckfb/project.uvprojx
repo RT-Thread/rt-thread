@@ -10,7 +10,7 @@
       <TargetName>rt-thread</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
-      <pCCUsed>5060960::V5.06 update 7 (build 960)::.\ARMCC</pCCUsed>
+      <pCCUsed>5060750::V5.06 update 6 (build 750)::.\ARMCC</pCCUsed>
       <uAC6>0</uAC6>
       <TargetOption>
         <TargetCommonOption>
@@ -338,7 +338,7 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls></MiscControls>
-              <Define>RT_USING_LIBC, RT_USING_ARMLIBC, USE_STDPERIPH_DRIVER, GD32F407, __CLK_TCK=RT_TICK_PER_SECOND, __STDC_LIMIT_MACROS, __RTTHREAD__</Define>
+              <Define>RT_USING_LIBC, RT_USING_ARMLIBC, __RTTHREAD__, USE_STDPERIPH_DRIVER, GD32F407, __CLK_TCK=RT_TICK_PER_SECOND, __STDC_LIMIT_MACROS, LCKFB_SKYSTART_GD32F407V</Define>
               <Undefine></Undefine>
               <IncludePath>..\..\..\..\components\libc\compilers\common\include;applications;..\..\..\..\components\drivers\include;..\libraries\GD32F4xx_Firmware_Library\GD32F4xx_standard_peripheral\Include;..\..\..\..\components\libc\posix\io\poll;..\..\..\..\components\finsh;..\..\..\..\include;..\..\..\..\components\drivers\include;..\..\..\..\components\libc\compilers\common\extension;.;..\..\..\..\libcpu\arm\cortex-m4;..\..\..\..\components\drivers\include;..\libraries\gd32_drivers;..\..\..\..\components\libc\posix\io\eventfd;..\libraries\GD32F4xx_Firmware_Library\CMSIS\GD\GD32F4xx\Include;..\..\..\..\components\libc\compilers\common\extension\fcntl\octal;board;..\..\..\..\components\libc\posix\io\epoll;..\..\..\..\components\drivers\include;..\libraries\GD32F4xx_Firmware_Library\CMSIS;..\..\..\..\components\drivers\include;..\..\..\..\libcpu\arm\common;..\..\..\..\components\libc\posix\ipc</IncludePath>
             </VariousControls>
