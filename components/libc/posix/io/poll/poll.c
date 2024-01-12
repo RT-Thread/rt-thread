@@ -146,6 +146,10 @@ static int do_pollfd(struct pollfd *pollfd, rt_pollreq_t *req)
             /* Mask out unneeded events. */
             mask &= pollfd->events | POLLERR | POLLHUP;
         }
+        else
+        {
+            mask = 0;
+        }
     }
     pollfd->revents = mask;
 
