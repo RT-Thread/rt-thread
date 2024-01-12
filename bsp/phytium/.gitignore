@@ -1,9 +1,7 @@
 *.dis
 *.asm
 /aarch32/tools/*
-/aarch32/phytium_standalone_sdk_install.py
 /aarch64/tools/*
-/aarch64/phytium_standalone_sdk_install.py
 **/**/makefile
 /libraries/tests/*
 /libraries/phytium_standalone_sdk/
