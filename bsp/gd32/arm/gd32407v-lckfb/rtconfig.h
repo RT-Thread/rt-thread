@@ -7,6 +7,7 @@
 /* RT-Thread Kernel */
 
 #define RT_NAME_MAX 8
+#define RT_CPUS_NR 1
 #define RT_ALIGN_SIZE 8
 #define RT_THREAD_PRIORITY_32
 #define RT_THREAD_PRIORITY_MAX 32
@@ -38,14 +39,12 @@
 #define RT_USING_SMALL_MEM
 #define RT_USING_SMALL_MEM_AS_HEAP
 #define RT_USING_HEAP
-
-/* Kernel Device Object */
-
 #define RT_USING_DEVICE
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
-#define RT_CONSOLE_DEVICE_NAME "uart1"
-#define RT_VER_NUM 0x50002
+#define RT_CONSOLE_DEVICE_NAME "uart0"
+#define RT_VER_NUM 0x50100
+#define RT_BACKTRACE_LEVEL_MAX_NR 32
 
 /* RT-Thread Components */
 
@@ -110,6 +109,9 @@
 
 
 /* Network */
+
+
+/* Memory protection */
 
 
 /* Utilities */
@@ -242,10 +244,7 @@
 
 #define BSP_USING_GPIO
 #define BSP_USING_UART
-#define BSP_USING_UART1
-#define BSP_USING_I2C1
-#define BSP_I2C1_SCL_PIN 24
-#define BSP_I2C1_SDA_PIN 25
+#define BSP_USING_UART0
 
 /* Board extended module Drivers */
 

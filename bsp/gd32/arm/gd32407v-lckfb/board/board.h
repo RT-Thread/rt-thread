@@ -16,11 +16,8 @@
 
 #include "gd32f4xx_exti.h"
 
-#define EXT_SDRAM_BEGIN    (0xC0000000U) /* the begining address of external SDRAM */
-#define EXT_SDRAM_END      (EXT_SDRAM_BEGIN + (32U * 1024 * 1024)) /* the end address of external SDRAM */
-
-// <o> Internal SRAM memory size[Kbytes] <8-64>
-//  <i>Default: 64
+// <o> Internal SRAM memory size[Kbytes] <8-128>
+//  <i>Default: 128
 #ifdef __ICCARM__
 // Use *.icf ram symbal, to avoid hardcode.
 extern char __ICFEDIT_region_RAM_end__;
