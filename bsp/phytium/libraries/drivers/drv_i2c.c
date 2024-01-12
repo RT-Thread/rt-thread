@@ -244,62 +244,62 @@ static int i2c_mio_init(struct phytium_i2c_bus *i2c_mio_bus)
 #endif
 
 #if defined(RT_USING_I2C0)
-static struct phytium_i2c_bus i2c_controller0_bus;
+    static struct phytium_i2c_bus i2c_controller0_bus;
 #endif
 #if defined(RT_USING_I2C1)
-static struct phytium_i2c_bus i2c_controller1_bus;
+    static struct phytium_i2c_bus i2c_controller1_bus;
 #endif
 #if defined(RT_USING_I2C2)
-static struct phytium_i2c_bus i2c_controller2_bus;
+    static struct phytium_i2c_bus i2c_controller2_bus;
 #endif
 
 #if defined(RT_USING_MIO0)
-static struct phytium_i2c_bus i2c_mio0_bus;
+    static struct phytium_i2c_bus i2c_mio0_bus;
 #endif
 #if defined(RT_USING_MIO1)
-static struct phytium_i2c_bus i2c_mio1_bus;
+    static struct phytium_i2c_bus i2c_mio1_bus;
 #endif
 #if defined(RT_USING_MIO2)
-static struct phytium_i2c_bus i2c_mio2_bus;
+    static struct phytium_i2c_bus i2c_mio2_bus;
 #endif
 #if defined(RT_USING_MIO3)
-static struct phytium_i2c_bus i2c_mio3_bus;
+    static struct phytium_i2c_bus i2c_mio3_bus;
 #endif
 #if defined(RT_USING_MIO4)
-static struct phytium_i2c_bus i2c_mio4_bus;
+    static struct phytium_i2c_bus i2c_mio4_bus;
 #endif
 #if defined(RT_USING_MIO5)
-static struct phytium_i2c_bus i2c_mio5_bus;
+    static struct phytium_i2c_bus i2c_mio5_bus;
 #endif
 #if defined(RT_USING_MIO6)
-static struct phytium_i2c_bus i2c_mio6_bus;
+    static struct phytium_i2c_bus i2c_mio6_bus;
 #endif
 #if defined(RT_USING_MIO7)
-static struct phytium_i2c_bus i2c_mio7_bus;
+    static struct phytium_i2c_bus i2c_mio7_bus;
 #endif
 #if defined(RT_USING_MIO8)
-static struct phytium_i2c_bus i2c_mio8_bus;
+    static struct phytium_i2c_bus i2c_mio8_bus;
 #endif
 #if defined(RT_USING_MIO9)
-static struct phytium_i2c_bus i2c_mio9_bus;
+    static struct phytium_i2c_bus i2c_mio9_bus;
 #endif
 #if defined(RT_USING_MIO10)
-static struct phytium_i2c_bus i2c_mio10_bus;
+    static struct phytium_i2c_bus i2c_mio10_bus;
 #endif
 #if defined(RT_USING_MIO11)
-static struct phytium_i2c_bus i2c_mio11_bus;
+    static struct phytium_i2c_bus i2c_mio11_bus;
 #endif
 #if defined(RT_USING_MIO12)
-static struct phytium_i2c_bus i2c_mio12_bus;
+    static struct phytium_i2c_bus i2c_mio12_bus;
 #endif
 #if defined(RT_USING_MIO13)
-static struct phytium_i2c_bus i2c_mio13_bus;
+    static struct phytium_i2c_bus i2c_mio13_bus;
 #endif
 #if defined(RT_USING_MIO14)
-static struct phytium_i2c_bus i2c_mio14_bus;
+    static struct phytium_i2c_bus i2c_mio14_bus;
 #endif
 #if defined(RT_USING_MIO15)
-static struct phytium_i2c_bus i2c_mio15_bus;
+    static struct phytium_i2c_bus i2c_mio15_bus;
 #endif
 
 int rt_hw_i2c_init(void)

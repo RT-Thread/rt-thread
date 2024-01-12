@@ -28,7 +28,7 @@
     #include "ioremap.h"
 #endif
 
-static  rt_uint16_t _rt_framebuffer[1024*768*4] __aligned(128);
+static  rt_uint16_t _rt_framebuffer[1024 * 768 * 4] __aligned(128);
 struct phytium_dc_bus
 {
     struct rt_device parent;
@@ -140,7 +140,7 @@ int rt_hw_dc_init(void)
     _dc_info.framebuffer = (rt_uint8_t *)dev_dc.dc_handle.user_config[dev_dc.fdc_id].fb_virtual;
     _dc_info.width = FB_XSIZE;
     _dc_info.height = FB_YSIZE;
-    rt_hw_dc_register(&dev_dc,"dc",RT_DEVICE_FLAG_RDWR,NULL);
+    rt_hw_dc_register(&dev_dc, "dc", RT_DEVICE_FLAG_RDWR, NULL);
     return RT_EOK;
 }
 

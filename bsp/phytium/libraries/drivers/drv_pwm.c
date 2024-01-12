@@ -220,28 +220,28 @@ static rt_err_t pwm_controller_init(struct phytium_pwm *pwm_dev)
 }
 
 #if defined(RT_USING_PWM0)
-static struct phytium_pwm pwm0_dev;
+    static struct phytium_pwm pwm0_dev;
 #endif
 #if defined(RT_USING_PWM1)
-static struct phytium_pwm pwm1_dev;
+    static struct phytium_pwm pwm1_dev;
 #endif
 #if defined(RT_USING_PWM2)
-static struct phytium_pwm pwm2_dev;
+    static struct phytium_pwm pwm2_dev;
 #endif
 #if defined(RT_USING_PWM3)
-static struct phytium_pwm pwm3_dev;
+    static struct phytium_pwm pwm3_dev;
 #endif
 #if defined(RT_USING_PWM4)
-static struct phytium_pwm pwm4_dev;
+    static struct phytium_pwm pwm4_dev;
 #endif
 #if defined(RT_USING_PWM5)
-static struct phytium_pwm pwm5_dev;
+    static struct phytium_pwm pwm5_dev;
 #endif
 #if defined(RT_USING_PWM6)
-static struct phytium_pwm pwm6_dev;
+    static struct phytium_pwm pwm6_dev;
 #endif
 #if defined(RT_USING_PWM7)
-static struct phytium_pwm pwm7_dev;
+    static struct phytium_pwm pwm7_dev;
 #endif
 
 int rt_hw_pwm_init(void)

@@ -815,7 +815,7 @@ void FXmacLinkChange(void *arg)
         LOG_I("xmac_p->config.base_address is %p", xmac_p->config.base_address);
         ctrl = FXMAC_READREG32(xmac_p->config.base_address, FXMAC_PCS_AN_LP_OFFSET);
         link = (ctrl & FXMAC_PCS_LINK_PARTNER_NEXT_PAGE_STATUS) >> 15;
-        
+
 
         switch (link)
         {
@@ -919,7 +919,7 @@ enum lwip_port_link_status FXmacLwipPortLinkDetect(FXmacOs *instance_p)
             if ((phy_link_status == FXMAC_LINKUP) && FXmacPhyAutonegStatus(xmac_p, xmac_p->phy_address))
             {
                 err_t phy_ret;
-                phy_ret = FXmacPhyInit(xmac_p, xmac_p->config.speed, xmac_p->config.duplex, xmac_p->config.auto_neg,XMAC_PHY_RESET_DISABLE);
+                phy_ret = FXmacPhyInit(xmac_p, xmac_p->config.speed, xmac_p->config.duplex, xmac_p->config.auto_neg, XMAC_PHY_RESET_DISABLE);
 
                 if (phy_ret != FT_SUCCESS)
                 {
@@ -953,7 +953,7 @@ enum lwip_port_link_status FXmacPhyReconnect(FXmacOs *instance_p)
         {
             /* auto negotiation again*/
             err_t phy_ret;
-            phy_ret = FXmacPhyInit(xmac_p, xmac_p->config.speed, xmac_p->config.duplex, xmac_p->config.auto_neg,XMAC_PHY_RESET_DISABLE);
+            phy_ret = FXmacPhyInit(xmac_p, xmac_p->config.speed, xmac_p->config.duplex, xmac_p->config.auto_neg, XMAC_PHY_RESET_DISABLE);
             if (phy_ret != FT_SUCCESS)
             {
                 LOG_I("FXmacPhyInit is error.");
@@ -1154,7 +1154,7 @@ FError FXmacOsInit(FXmacOs *instance_p)
     }
 
     /* initialize phy */
-    status = FXmacPhyInit(xmac_p, xmac_p->config.speed, xmac_p->config.duplex, xmac_p->config.auto_neg,XMAC_PHY_RESET_ENABLE);
+    status = FXmacPhyInit(xmac_p, xmac_p->config.speed, xmac_p->config.duplex, xmac_p->config.auto_neg, XMAC_PHY_RESET_ENABLE);
     if (status != FT_SUCCESS)
     {
         LOG_W("FXmacPhyInit is error.");
@@ -1471,7 +1471,7 @@ enum lwip_port_link_status eth_link_detect(FXmacOs *instance_p)
 
 static void ethernet_link_thread(void *Args)
 {
-    
+
     if (RT_NULL == Args)
     {
         return;
