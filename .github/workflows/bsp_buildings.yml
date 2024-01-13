@@ -225,6 +225,7 @@ jobs:
                 - "gd32/arm/gd32305r-start"
                 - "gd32/arm/gd32307e-start"
                 - "gd32/arm/gd32407v-start"
+                - "gd32/arm/gd32407v-lckfb"
                 - "gd32/arm/gd32450z-eval" 
                 - "gd32/arm/gd32470z-lckfb"
                 - "n32/n32g43xcl-stb"
