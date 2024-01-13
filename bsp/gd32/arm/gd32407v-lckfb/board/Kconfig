@@ -13,6 +13,26 @@ config SOC_GD32407V
 
 menu "Onboard Peripheral Drivers"
 
+    menuconfig BSP_USING_FS
+        bool "Enable File System"
+        select RT_USING_DFS
+        select RT_USING_DFS_ROMFS
+        default n
+
+        if BSP_USING_FS
+            config BSP_USING_SDCARD_FATFS
+                bool "Enable SDCARD (FATFS)"
+                select BSP_USING_SDIO
+                select RT_USING_DFS_ELMFAT
+                default n
+			if BSP_USING_SDCARD_FATFS
+				menuconfig BSP_USING_FS_AUTO_MOUNT
+					bool "Enable filesystem auto mount"
+					default y
+			endif
+			
+        endif
+
 endmenu
 
 menu "On-chip Peripheral Drivers"
