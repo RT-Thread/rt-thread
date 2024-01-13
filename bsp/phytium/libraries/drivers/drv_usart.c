@@ -190,7 +190,7 @@ static int uart_init(struct drv_usart *uart_dev)
     uart_dev->config.isr_event_mask = (RTOS_UART_ISR_OEIM_MASK | RTOS_UART_ISR_BEIM_MASK | RTOS_UART_ISR_PEIM_MASK | RTOS_UART_ISR_FEIM_MASK | RTOS_UART_ISR_RTIM_MASK | RTOS_UART_ISR_RXIM_MASK);
     uart_dev->config.uart_baudrate = 115200;
 
-    rt_hw_serial_register(&uart_dev->serial, uart_dev->name ,
+    rt_hw_serial_register(&uart_dev->serial, uart_dev->name,
                           RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
                           uart_dev);
 
@@ -198,16 +198,16 @@ static int uart_init(struct drv_usart *uart_dev)
 }
 
 #ifdef RT_USING_UART0
- static FPl011 Ft_Uart0;
-static struct drv_usart drv_uart0;
+    static FPl011 Ft_Uart0;
+    static struct drv_usart drv_uart0;
 #endif
 #ifdef RT_USING_UART1
- static FPl011 Ft_Uart1;
-static struct drv_usart drv_uart1;
+    static FPl011 Ft_Uart1;
+    static struct drv_usart drv_uart1;
 #endif
 #ifdef RT_USING_UART2
- static FPl011 Ft_Uart2;
-static struct drv_usart drv_uart2;
+    static FPl011 Ft_Uart2;
+    static struct drv_usart drv_uart2;
 #endif
 
 int rt_hw_uart_init(void)

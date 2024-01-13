@@ -4,72 +4,79 @@
 
 ## 1. 准备编译环境
 
-- 创建tools目录，在 tools 目录下下载两个python 脚本，get_toolchain.py 和 ci.py，下载完后给两个脚本添加执行权限
-
+- 在aarch32目录下创建tools文件夹，用于存放编译链
 ```shell
 mkdir tools
-cd ./tools
-wget https://gitee.com/rtthread/ART-Pi-smart/raw/master/tools/get_toolchain.py
-wget https://gitee.com/rtthread/ART-Pi-smart/raw/master/tools/ci.py
-chmod +x get_toolchain.py ci.py
 ```
+### Ubuntu 环境
 
-- 运行 get_toolchain.py 脚本，拉取 aarch32 交叉编译链`arm-linux-musleabi_for_x86_64-pc-linux-gnu`
+- 点击[下载编译链工具](https://github.com/RT-Thread/toolchains-ci/releases/tag/v1.7)压缩包，放置在tools目录下，如下所示
 
-```shell
-python3 ./get_toolchain.py arm
-```
-
-- 注：若拉取aarch32交叉编译链失败，请在网站下载压缩包
-```shell
-https://github.com/RT-Thread/toolchains-ci/releases/tag/v1.7
-```
 ![aarch32_tools](./figures/aarch32_tools.png)
 
-- 在tools/目录下新建gnu_gcc文件夹，将下载好的压缩包移至该文件夹下，并使用tar命令解压缩
+- 在tools目录下，使用tar命令解压缩
 ```shell
-mkdir gnu_gcc
-cd ./gnu_gcc
 tar jxvf arm-linux-musleabi_for_x86_64-pc-linux-gnu_stable.tar.bz2
 ```
 
-> RT-Thread 5.0 后必须使用这个带 musl-libc 的编译链，不能使用`arm-none-eabi`
+![tar_toolschain](./figures/tar_toolschain.png)
 
-- 在 aarch32 目录下下载脚本 smart-env.sh ，然后运行脚本生效环境变量
-
+- 返回`aarch32`目录，运行smart-env.sh脚本，生效环境变量
 ```shell
-cd ./aarch32
-wget https://gitee.com/rtthread/ART-Pi-smart/raw/master/smart-env.sh
-source ./smart-env.sh arm
+source ./smart-env.sh
 ```
 
-- 如下所示是 aarch32 编译相关的环境变量，运行 scons 前要确保环境变量设置正确
+- 如下所示是`aarch32`编译相关的环境变量，运行`scons`前要确保环境变量设置正确
 
 ![aarch32_env](./figures/aarch32_env.png)
 
-## NOTE
-
-以上步骤已在ubuntu20.04开发环境测试，在其他开发环境下若无法下载相关脚本，可使用以下链接手动下载
-
+- 输入以下指令进行编译，初次编译会拉取`phytium_standalone_sdk工具包`，请确保当前环境下网络畅通
 ```shell
-    get_toolchain.py下载地址
-    https://gitee.com/rtthread/ART-Pi-smart/blob/master/tools/get_toolchain.py
+scons -j8
+```
+![ubuntu_scons](./figures/ubuntu_scons.png)
 
-    ci.py下载地址
-    https://gitee.com/rtthread/ART-Pi-smart/blob/master/tools/ci.py
+- 完成编译之后aarch32目录下将会生成以下几个文件
+```
+rtthread_a32.bin
+rtthread_a32.elf
+rtthread_a32.map
+```
 
-    当出现以下提示时，可采用以下链接下载 phytium_standalone_sdk_install.py
-    "Please refer to the ./README and manual download phytium_standalone_sdk_install.py, place in current folder"
-    phytium_standalone_sdk_install.py下载地址
-    https://gitee.com/phytium_embedded/phytium-standalone-sdk/blob/Standalone-Sdk_RT-thread/phytium_standalone_sdk_install.py
+### RT-Thread env 环境
+
+- 点击[下载编译链工具](https://pan.baidu.com/s/1p7PRhV3dTGIb7hxv34YWYw)压缩包，提取码：ndxq
+
+- 在tools目录下，将下载好的编译链工具压缩包解压缩，如下所示
+
+![aarch32_env_tools](./figures/aarch32_env_tools.png)
+
+- 返回`aarch32`目录，运行smart-env.bat脚本，生效环境变量
+```shell
+.\smart-env.bat
+```
+
+- 输入以下指令进行编译，初次编译会拉取`phytium_standalone_sdk工具包`，请确保当前环境下网络畅通
+```shell
+scons -j8
+```
+![rtt_env_scons](./figures/rtt_env_scons.png)
+
+- 完成编译之后aarch32目录下将会生成以下几个文件
+```
+rtthread_a32.bin
+rtthread_a32.elf
+rtthread_a32.map
 ```
 
 ## 2. 如何选择开发板
 
-- 以 E2000Q RT-Smart为例，Linux 环境下，运行 make load_e2000q_demo_rtsmart 加载默认的 rtconfig, 然后输入下列命令，进入 menuconfig 进一步配置，
+>注：在 RT-Thread env 环境下使用`menuconfig`指令即可打开配置菜单，在Ubuntu下需要使用`scons --menuconfig`
+
+- 以 E2000Q RT-Thread为例，Linux 环境下，运行`make load_e2000d_demo_rtthread`加载默认的 rtconfig, 然后输入下列命令，进入 menuconfig 进一步配置
 
 ```shell
-    scons --menuconfig
+scons --menuconfig
 ```
 
 开发者通过以下选择进行配置
@@ -83,7 +90,7 @@ Standalone Setting > Board Configuration > Chip
 ## 3. 如何选择驱动
 
 ```shell
-    scons --menuconfig
+scons --menuconfig
 ```
 
 开发者通过以下选项进行驱动的使能
@@ -97,99 +104,40 @@ Hardware Drivers > On-chip Peripheral Drivers
 ## 4. 开启SDK中内部调试信息
 
 ```shell
-    scons --menuconfig
+scons --menuconfig
 ```
 
-开发者通过以下选项进行调试信息等级的设置
+开发者通过以下选项开启调试信息
 
 ![](./figures/debug_info.png)
 
 
-## 5. 如何切换至RT-Thread Smart 工作模式
+## 5. 如何切换至 RT-Thread Smart 工作模式
 
+### Ubuntu环境下可使用以下指令加载RT-Smart默认配置
+
+- 以E2000D_DEMO开发板为例
 ```shell
-
- scons --menuconfig
-
+make load_e2000d_demo_rtsmart
 ```
+### RT-Thread env环境不方便安装make工具，可按照以下步骤加载RT-Smart默认配置
 
-![rtsmart_config](figures/rtsmart_config.png)
+1. 查看`makefile`文件，找到`make load_e2000d_demo_rtsmart`
 
-开发者通过以上配置开启RT-Thread Smart 功能
+![load_e2000d_rtsmart](./figures/load_e2000d_rtsmart.png)
 
-## 6. 编译程序
-
+2. 输入以下指令
 ```shell
-    scons -c
-    scons
+cp ./configs/e2000d_demo_rtsmart ./.config -f
+cp ./configs/e2000d_demo_rtsmart.h ./rtconfig.h -f
+scons -c
 ```
 
-- 完成编译之后目录下将会生成以下几个文件
+## 6. 启动镜像程序
 
+1. 完成配置后，使用以下指令进行clean和重新编译
+```shell
+scons -c
+scons -j8
 ```
-rtthread_a32.bin
-rtthread_a32.elf
-rtthread_a32.map
-```
-
-## 7. 启动镜像程序
-
-- 可以用串口通过 XMODEM 协议将 bin/elf 文件上传到开发板，然后启动，
-
-- 如果使用 SD-1 控制器
-
-```
-mw.l 0x32b31178 0x1f
-```
-
-- 首先在 Phytium 开发板上输入，上传 bin 文件
-
-```
-loadx 80080000
-```
-
-![](./figures/ymodem_upload.png)
-
-- 加载 bin 文件完成后，输入下列命令启动
-
-```
-go 80080000
-```
-
-## 8. 打包导出工程源代码
-
-- 指定工程名和路径，打包RT-Thread内核和Phytium BSP代码，可以导出一个工程工程
-
-```
-python ./export_project.py -n=phytium-a32 -o=D:/proj/rt-thread-e2000/phytium-a32
-```
-
-![](./figures/export_project.png)
-
-- 进入打包工程的目录，修改工程根目录 Kconfig 中的路径 BSP_DIR 和 STANDALONE_DIR
-
-> env 环境中的 menuconfig 不会调用 SConstruct 修改路径环境变量，因此需要手动修改路径
-
-```
-config BSP_DIR
-    string
-    option env="BSP_ROOT"
-    default "."
-
-config SDK_DIR
-    string
-    option env="SDK_DIR"
-    default "./libraries/phytium_standalone_sdk"
-```
-
-- 输入 menuconfig 和 scons 完成编译
-
-## 9. 将工程导入 RT-Studio
-
-- 在 RT-Studio 使用功能 `RT-Thread Bsp 到工作空间`，导入 8. 中导出的 BSP 工程
-- 设置 BSP 工程的交叉编译链后进行后续开发
-
-![](./figures/import_project.png)
-
-python get_toolchain.py arm
-./smart-env.bat
+2. 按照指导[启动镜像程序](../doc/how_to_flashed_binary.md)

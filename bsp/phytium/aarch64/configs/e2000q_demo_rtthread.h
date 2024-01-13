@@ -158,7 +158,6 @@
 
 /* C/C++ and POSIX layer */
 
-
 /* ISO-ANSI C layer */
 
 /* Timezone and Daylight Saving Time */
@@ -232,6 +231,7 @@
 #define RT_LWIP_ETHTHREAD_MBOX_SIZE 8
 #define LWIP_NETIF_STATUS_CALLBACK 1
 #define LWIP_NETIF_LINK_CALLBACK 1
+#define RT_LWIP_NETIF_NAMESIZE 6
 #define SO_REUSE 1
 #define LWIP_SO_RCVTIMEO 1
 #define LWIP_SO_SNDTIMEO 1
@@ -241,6 +241,9 @@
 #define RT_LWIP_USING_PING
 #define RT_LWIP_DEBUG
 #define RT_LWIP_NETIF_DEBUG
+
+/* Memory protection */
+
 
 /* Utilities */
 
@@ -252,12 +255,6 @@
 #define RT_USING_ADT_BITMAP
 #define RT_USING_ADT_HASHMAP
 #define RT_USING_ADT_REF
-
-/* Memory management */
-
-
-/* Memory protection */
-
 
 /* RT-Thread Utestcases */
 
@@ -273,6 +270,15 @@
 
 
 /* Wiced WiFi */
+
+
+/* CYW43012 WiFi */
+
+
+/* BL808 WiFi */
+
+
+/* CYW43439 WiFi */
 
 
 /* IoT Cloud */
@@ -295,9 +301,6 @@
 
 
 /* u8g2: a monochrome graphic library */
-
-
-/* PainterEngine: A cross-platform graphics application framework written in C language */
 
 
 /* tools packages */
@@ -331,6 +334,9 @@
 /* AI packages */
 
 
+/* Signal Processing and Control Algorithm Packages */
+
+
 /* miscellaneous packages */
 
 /* project laboratory */
@@ -347,7 +353,7 @@
 /* Arduino libraries */
 
 
-/* Projects */
+/* Projects and Demos */
 
 
 /* Sensors */
@@ -371,6 +377,7 @@
 
 
 /* Other */
+
 
 /* Signal IO */
 

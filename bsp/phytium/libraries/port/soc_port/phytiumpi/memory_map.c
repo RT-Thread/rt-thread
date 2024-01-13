@@ -45,17 +45,16 @@ struct mem_desc platform_mem_desc[] =
 
 struct mem_desc platform_mem_desc[] =
 {
-    {KERNEL_VADDR_START, DDR_END_ADDRESS, KERNEL_VADDR_START, NORMAL_MEM},
+    {
+        0x80000000,
+        (0x80000000 + 0x10000000 - 1),
+        0x80000000,
+        NORMAL_MEM
+    },
     {
         0x28000000U,
         0x32B36FFFU,
         0x28000000U,
-        DEVICE_MEM
-    },
-    {
-        0x00001000U,
-        0x0FFFFFFFU,
-        0x00001000U,
         DEVICE_MEM
     },
 };

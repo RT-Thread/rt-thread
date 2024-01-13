@@ -490,7 +490,7 @@ static int rt_qspi_init(phytium_qspi_bus *phytium_qspi)
 }
 
 #if defined(RT_USING_QSPI0)
-static phytium_qspi_bus phytium_qspi0_bus;
+    static phytium_qspi_bus phytium_qspi0_bus;
 #endif
 
 int rt_hw_qspi_init(void)
