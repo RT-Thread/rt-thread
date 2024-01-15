@@ -13,6 +13,28 @@
 #define DBG_TAG    "drv_common"
 #define DBG_LVL    DBG_INFO
 #include <rtdbg.h>
+
+#ifdef RT_USING_PIN
+#include <drv_gpio.h>
+#endif
+
+#ifdef RT_USING_SERIAL
+#ifdef RT_USING_SERIAL_V2
+#include <drv_usart_v2.h>
+#else
+#include <drv_usart.h>
+#endif /* RT_USING_SERIAL */
+#endif /* RT_USING_SERIAL_V2 */
+
+#ifdef RT_USING_FINSH
+#include <finsh.h>
+static void reboot(uint8_t argc, char **argv)
+{
+    rt_hw_cpu_reset();
+}
+MSH_CMD_EXPORT(reboot, Reboot System);
+#endif /* RT_USING_FINSH */
+
 /**
   * This function is executed in case of error occurrence.
   */
@@ -71,13 +93,21 @@ void rt_hw_board_init()
     rt_system_heap_init((void *)HEAP_BEGIN, (void *)HEAP_END);
 #endif
 
-    /* Board underlying hardware initialization */
-#ifdef RT_USING_COMPONENTS_INIT
-    rt_components_board_init();
+#ifdef RT_USING_PIN
+    rt_hw_pin_init();
+#endif
+
+#ifdef RT_USING_SERIAL
+    rt_hw_usart_init();
 #endif
 
 #if defined(RT_USING_CONSOLE) && defined(RT_USING_DEVICE)
     rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
+#endif
+
+    /* Board underlying hardware initialization */
+#ifdef RT_USING_COMPONENTS_INIT
+    rt_components_board_init();
 #endif
 }
 

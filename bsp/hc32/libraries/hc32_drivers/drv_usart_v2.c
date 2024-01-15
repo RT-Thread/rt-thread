@@ -1630,7 +1630,7 @@ static const struct rt_uart_ops hc32_uart_ops =
     .transmit = hc32_transmit
 };
 
-int hc32_hw_uart_init(void)
+int rt_hw_usart_init(void)
 {
     rt_err_t result = RT_EOK;
     rt_size_t obj_num = sizeof(uart_obj) / sizeof(struct hc32_uart);
@@ -1673,8 +1673,6 @@ int hc32_hw_uart_init(void)
 
     return result;
 }
-
-INIT_BOARD_EXPORT(hc32_hw_uart_init);
 
 #endif
 
