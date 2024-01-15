@@ -90,6 +90,7 @@ struct hc32_uart
 /*******************************************************************************
  * Global function prototypes (definition in C source)
  ******************************************************************************/
+int rt_hw_usart_init(void);
 
 #ifdef __cplusplus
 }
