@@ -1506,23 +1506,36 @@ static void ethernet_link_thread(void *Args)
                 }
                 break;
         }
-        rt_thread_mdelay(10);
+        rt_thread_mdelay(500);
     }
 }
 
-
-
+#ifdef RT_USING_DEVICE_OPS
+const struct rt_device_ops net_ops=
+{
+    rt_xmac_init,
+    rt_xmac_open,
+    rt_xmac_close,
+    rt_xmac_read,
+    rt_xmac_write,
+    rt_xmac_control
+};
+#endif
 
 static int rt_hw_xmac_init(FXmacOs *pOsMac, const char *name, const char *link_thread_name)
 {
     rt_err_t state = RT_EOK;
 
+    #ifdef RT_USING_DEVICE_OPS
+    pOsMac->parent.parent.ops= &net_ops;
+    #else
     pOsMac->parent.parent.init = rt_xmac_init;
     pOsMac->parent.parent.open = rt_xmac_open;
     pOsMac->parent.parent.close = rt_xmac_close;
     pOsMac->parent.parent.read = rt_xmac_read;
     pOsMac->parent.parent.write = rt_xmac_write;
     pOsMac->parent.parent.control = rt_xmac_control;
+    #endif
     pOsMac->parent.parent.user_data = RT_NULL;
 
     pOsMac->parent.eth_rx = rt_xmac_rx;
@@ -1546,7 +1559,7 @@ static int rt_hw_xmac_init(FXmacOs *pOsMac, const char *name, const char *link_t
                            pOsMac,
                            &pOsMac->_link_thread_stack[0],
                            sizeof(pOsMac->_link_thread_stack),
-                           10, 2);
+                           12, 2);
     if (RT_EOK == state)
     {
         rt_thread_startup(&pOsMac->_link_thread);
@@ -1556,8 +1569,6 @@ static int rt_hw_xmac_init(FXmacOs *pOsMac, const char *name, const char *link_t
         LOG_E("rt_thread_init is error");
         return -RT_ERROR;
     }
-
-    FXmacOsStart(pOsMac);
 
     return RT_EOK;
 }
@@ -1620,6 +1631,16 @@ static int rt_hw_xmac_eth_init(void)
         goto __exit;
     }
 #endif
+
+#if defined(MAC_NUM0)
+        rt_kprintf("Start Xmac NUM0 \n");
+        FXmacOsStart(&fxmac_os_instace[MAC_NUM0_CONTROLLER]);
+#endif
+#if defined(MAC_NUM1)
+        rt_kprintf("Start Xmac NUM1 \n");
+        FXmacOsStart(&fxmac_os_instace[MAC_NUM1_CONTROLLER]);
+#endif
+    
 __exit:
     return state;
 }
