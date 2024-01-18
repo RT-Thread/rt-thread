@@ -31,12 +31,6 @@ struct ra_i2c
 };
 
 #ifdef BSP_USING_I2C0
-    #define BSP_I2C0_SCL_PIN    BSP_IO_PORT_02_PIN_02
-    #define BSP_I2C0_SDA_PIN    BSP_IO_PORT_02_PIN_03
-#endif
-
-
-#ifdef BSP_USING_I2C0
 #define I2C0_BUS_CONFIG                                  \
     {                                                    \
         .scl = BSP_I2C0_SCL_PIN,                         \
