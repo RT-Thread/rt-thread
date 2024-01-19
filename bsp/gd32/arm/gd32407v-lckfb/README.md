@@ -8,7 +8,7 @@
 
 此外，这款核心板的设计考虑到了大家在电子竞赛中对于稳定性和可靠性的需求，以及在小型项目开发中对低成本的追求。具体请看硬件设计手册。
 
-![[board](./images/board.jpg)](figures/board.jpg)
+![[(lckfb.com)](https://lckfb.com/project/detail/lckfb-lspi-skystar-gd32f407vet6-lite?param=baseInfo)](figures/board.jpg)
 
 ## 资料罗列：
 
@@ -77,7 +77,7 @@ msh >
 
 ### 进阶使用
 
-此 BSP 默认只开启了 GPIO 和 串口1的功能，如果需使用高级功能，需要利用 ENV 工具对BSP 进行配置，步骤如下：
+此 BSP 默认只开启了 GPIO 和 串口0的功能，如果需使用高级功能，需要利用 ENV 工具对BSP 进行配置，步骤如下：
 
 1. 在 bsp 下打开 env 工具。
 
