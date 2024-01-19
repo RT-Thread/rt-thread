@@ -8,6 +8,16 @@
 
 此外，这款核心板的设计考虑到了大家在电子竞赛中对于稳定性和可靠性的需求，以及在小型项目开发中对低成本的追求。具体请看硬件设计手册。
 
+![[board](https://lckfb.com/project/detail/lckfb-lspi-skystar-gd32f407vet6-lite?param=baseInfo)](./images/board.jpg)
+
+## 资料罗列：
+
+* [硬件开源地址](https://oshwhub.com/li-chuang-kai-fa-ban/li-chuang-liang-shan-pai-tian-kong-xing-kai-fa-ban)
+* [硬件文档](https://lceda001.feishu.cn/wiki/D4cqwUkiTi6723knO2cczSThnYb)
+* [入门手册](https://lceda001.feishu.cn/wiki/Zawdwg0laig3Qnk2XuxcKrQRn2g)
+* [模块移植手册](https://lceda001.feishu.cn/wiki/GySKwn3jMitXbAkhX0GcDjtBnQd)
+* [移植的DAPLINK开源仓库](https://gitee.com/lcsc/SkyStar-GD32F407VET6-DAPLINK)
+
 ## 外设支持
 
 本 BSP 目前对外设的支持情况如下：
@@ -18,8 +28,9 @@
 | UART         |     支持     | UART0 - UART5                   |
 | I2C          |     支持     | I2C1                            |
 | SPI          |     支持     | SPI0 -  SPI2                    |
-| SPI FLASH    |     支持     |                                 |
 | ADC          |     支持     | ADC0 - ADC2                     |
+| TF CARD      |     支持     | SDIO                            |
+| SPI FLASH    |   暂不支持   |                                 |
 | **扩展模块** | **支持情况** | **备注**                        |
 | 暂无         |   暂不支持   | 暂不支持                        |
 
