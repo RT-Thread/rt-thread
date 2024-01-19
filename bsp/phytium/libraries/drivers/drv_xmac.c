@@ -1482,7 +1482,7 @@ static void ethernet_link_thread(void *Args)
 
     while (1)
     {
-        /* Call eth_link_detect() every 10ms to detect Ethernet link
+        /* Call eth_link_detect() every 500ms to detect Ethernet link
          * change.
          */
 
