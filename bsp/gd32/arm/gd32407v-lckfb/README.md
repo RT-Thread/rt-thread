@@ -8,7 +8,7 @@
 
 此外，这款核心板的设计考虑到了大家在电子竞赛中对于稳定性和可靠性的需求，以及在小型项目开发中对低成本的追求。具体请看硬件设计手册。
 
-![[board](https://lckfb.com/project/detail/lckfb-lspi-skystar-gd32f407vet6-lite?param=baseInfo)](images/board.jpg)
+![[board](./images/board.jpg)](figures/board.jpg)
 
 ## 资料罗列：
 
