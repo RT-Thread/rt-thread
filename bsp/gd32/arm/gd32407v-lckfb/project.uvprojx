@@ -14,16 +14,16 @@
       <uAC6>0</uAC6>
       <TargetOption>
         <TargetCommonOption>
-          <Device>GD32F470ZG</Device>
+          <Device>GD32F407VE</Device>
           <Vendor>GigaDevice</Vendor>
           <PackID>GigaDevice.GD32F4xx_DFP.3.0.4</PackID>
           <PackURL>https://gd32mcu.com/data/documents/pack/</PackURL>
-          <Cpu>IRAM(0x20000000,0x070000) IRAM2(0x10000000,0x010000) IROM(0x08000000,0x0100000) CPUTYPE("Cortex-M4") FPU2 CLOCK(12000000) ELITTLE</Cpu>
+          <Cpu>IRAM(0x20000000,0x020000) IRAM2(0x10000000,0x010000) IROM(0x08000000,0x080000) CPUTYPE("Cortex-M4") FPU2 CLOCK(12000000) ELITTLE</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
           <StartupFile></StartupFile>
-          <FlashDriverDll>UL2CM3(-S0 -C0 -P0 -FD20000000 -FC1000 -FN1 -FF0GD32F4xx_1MB -FS08000000 -FL0100000 -FP0($$Device:GD32F470ZG$Flash\GD32F4xx_1MB.FLM))</FlashDriverDll>
+          <FlashDriverDll>UL2CM3(-S0 -C0 -P0 -FD20000000 -FC1000 -FN1 -FF0GD32F4xx_512KB -FS08000000 -FL080000 -FP0($$Device:GD32F407VE$Flash\GD32F4xx_512KB.FLM))</FlashDriverDll>
           <DeviceId>0</DeviceId>
-          <RegisterFile>$$Device:GD32F470ZG$Device\F4XX\Include\gd32f4xx.h</RegisterFile>
+          <RegisterFile>$$Device:GD32F407VE$Device\F4XX\Include\gd32f4xx.h</RegisterFile>
           <MemoryEnv></MemoryEnv>
           <Cmp></Cmp>
           <Asm></Asm>
@@ -33,7 +33,7 @@
           <SLE66CMisc></SLE66CMisc>
           <SLE66AMisc></SLE66AMisc>
           <SLE66LinkerMisc></SLE66LinkerMisc>
-          <SFDFile>$$Device:GD32F470ZG$SVD\GD32F4xx.svd</SFDFile>
+          <SFDFile>$$Device:GD32F407VE$SVD\GD32F4xx.svd</SFDFile>
           <bCustSvd>0</bCustSvd>
           <UseEnv>0</UseEnv>
           <BinPath></BinPath>
@@ -52,7 +52,7 @@
           <OutputName>rtthread</OutputName>
           <CreateExecutable>1</CreateExecutable>
           <CreateLib>0</CreateLib>
-          <CreateHexFile>0</CreateHexFile>
+          <CreateHexFile>1</CreateHexFile>
           <DebugInformation>1</DebugInformation>
           <BrowseInformation>1</BrowseInformation>
           <ListingPath>.\build\</ListingPath>
@@ -247,12 +247,12 @@
               <IRAM>
                 <Type>0</Type>
                 <StartAddress>0x20000000</StartAddress>
-                <Size>0x70000</Size>
+                <Size>0x20000</Size>
               </IRAM>
               <IROM>
                 <Type>1</Type>
                 <StartAddress>0x8000000</StartAddress>
-                <Size>0x100000</Size>
+                <Size>0x80000</Size>
               </IROM>
               <XRAM>
                 <Type>0</Type>
@@ -277,7 +277,7 @@
               <OCR_RVCT4>
                 <Type>1</Type>
                 <StartAddress>0x8000000</StartAddress>
-                <Size>0x100000</Size>
+                <Size>0x80000</Size>
               </OCR_RVCT4>
               <OCR_RVCT5>
                 <Type>1</Type>
@@ -302,7 +302,7 @@
               <OCR_RVCT9>
                 <Type>0</Type>
                 <StartAddress>0x20000000</StartAddress>
-                <Size>0x70000</Size>
+                <Size>0x20000</Size>
               </OCR_RVCT9>
               <OCR_RVCT10>
                 <Type>0</Type>
@@ -314,10 +314,10 @@
           </ArmAdsMisc>
           <Cads>
             <interw>1</interw>
-            <Optim>4</Optim>
+            <Optim>1</Optim>
             <oTime>0</oTime>
             <SplitLS>0</SplitLS>
-            <OneElfS>1</OneElfS>
+            <OneElfS>0</OneElfS>
             <Strict>0</Strict>
             <EnumInt>0</EnumInt>
             <PlainCh>0</PlainCh>
@@ -338,9 +338,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls></MiscControls>
-              <Define>__STDC_LIMIT_MACROS, RT_USING_ARMLIBC, USE_STDPERIPH_DRIVER, GD32F470, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__</Define>
+              <Define>RT_USING_LIBC, RT_USING_ARMLIBC, __RTTHREAD__, USE_STDPERIPH_DRIVER, GD32F407, __CLK_TCK=RT_TICK_PER_SECOND, __STDC_LIMIT_MACROS, LCKFB_SKYSTART_GD32F407V</Define>
               <Undefine></Undefine>
-              <IncludePath>..\..\..\..\components\libc\compilers\common\include;..\libraries\GD32F4xx_Firmware_Library\GD32F4xx_standard_peripheral\Include;..\..\..\..\components\libc\posix\io\poll;..\..\..\..\components\finsh;..\..\..\..\include;board;..\..\..\..\components\drivers\include;..\..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\..\components\dfs\dfs_v1\include;..\..\..\..\libcpu\arm\cortex-m4;.;..\libraries\gd32_drivers;..\..\..\..\components\libc\posix\io\eventfd;applications;..\libraries\GD32F4xx_Firmware_Library\CMSIS\GD\GD32F4xx\Include;..\..\..\..\components\libc\compilers\common\extension;..\..\..\..\components\libc\posix\io\epoll;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;..\libraries\GD32F4xx_Firmware_Library\CMSIS;..\..\..\..\components\drivers\include;..\..\..\..\libcpu\arm\common;..\..\..\..\components\libc\posix\ipc</IncludePath>
+              <IncludePath>..\..\..\..\components\libc\compilers\common\include;applications;..\..\..\..\components\drivers\include;..\libraries\GD32F4xx_Firmware_Library\GD32F4xx_standard_peripheral\Include;..\..\..\..\components\libc\posix\io\poll;..\..\..\..\components\finsh;..\..\..\..\include;..\..\..\..\components\drivers\include;..\..\..\..\components\libc\compilers\common\extension;.;..\..\..\..\libcpu\arm\cortex-m4;..\..\..\..\components\drivers\include;..\libraries\gd32_drivers;..\..\..\..\components\libc\posix\io\eventfd;..\libraries\GD32F4xx_Firmware_Library\CMSIS\GD\GD32F4xx\Include;..\..\..\..\components\libc\compilers\common\extension\fcntl\octal;board;..\..\..\..\components\libc\posix\io\epoll;..\..\..\..\components\drivers\include;..\libraries\GD32F4xx_Firmware_Library\CMSIS;..\..\..\..\components\drivers\include;..\..\..\..\libcpu\arm\common;..\..\..\..\components\libc\posix\ipc</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -470,6 +470,21 @@
               <FilePath>..\..\..\..\components\drivers\core\device.c</FilePath>
             </File>
             <File>
+              <FileName>i2c-bit-ops.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\components\drivers\i2c\i2c-bit-ops.c</FilePath>
+            </File>
+            <File>
+              <FileName>i2c_core.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\components\drivers\i2c\i2c_core.c</FilePath>
+            </File>
+            <File>
+              <FileName>i2c_dev.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\components\drivers\i2c\i2c_dev.c</FilePath>
+            </File>
+            <File>
               <FileName>completion.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\components\drivers\ipc\completion.c</FilePath>
@@ -542,31 +557,6 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>Filesystem</GroupName>
-          <Files>
-            <File>
-              <FileName>dfs_posix.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\dfs\dfs_v1\src\dfs_posix.c</FilePath>
-            </File>
-            <File>
-              <FileName>dfs_fs.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\dfs\dfs_v1\src\dfs_fs.c</FilePath>
-            </File>
-            <File>
-              <FileName>dfs.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\dfs\dfs_v1\src\dfs.c</FilePath>
-            </File>
-            <File>
-              <FileName>dfs_file.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\dfs\dfs_v1\src\dfs_file.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
           <GroupName>Finsh</GroupName>
           <Files>
             <File>
@@ -588,11 +578,6 @@
               <FileName>cmd.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\components\finsh\cmd.c</FilePath>
-            </File>
-            <File>
-              <FileName>msh_file.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\finsh\msh_file.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -665,6 +650,11 @@
           <GroupName>Libraries</GroupName>
           <Files>
             <File>
+              <FileName>gd32f4xx_i2c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\GD32F4xx_Firmware_Library\GD32F4xx_standard_peripheral\Source\gd32f4xx_i2c.c</FilePath>
+            </File>
+            <File>
               <FileName>gd32f4xx_syscfg.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\GD32F4xx_Firmware_Library\GD32F4xx_standard_peripheral\Source\gd32f4xx_syscfg.c</FilePath>
@@ -711,8 +701,8 @@
   <RTE>
     <apis/>
     <components>
-      <component Cclass="CMSIS" Cgroup="CORE" Cvendor="ARM" Cversion="5.5.0" condition="ARMv6_7_8-M Device">
-        <package name="CMSIS" schemaVersion="1.3" url="http://www.keil.com/pack/" vendor="ARM" version="5.8.0"/>
+      <component Cclass="CMSIS" Cgroup="CORE" Cvendor="ARM" Cversion="5.6.0" condition="ARMv6_7_8-M Device">
+        <package name="CMSIS" schemaVersion="1.7.7" url="http://www.keil.com/pack/" vendor="ARM" version="5.9.0"/>
         <targetInfos>
           <targetInfo name="rt-thread"/>
         </targetInfos>

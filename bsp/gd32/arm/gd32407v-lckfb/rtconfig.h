@@ -11,20 +11,16 @@
 #define RT_ALIGN_SIZE 8
 #define RT_THREAD_PRIORITY_32
 #define RT_THREAD_PRIORITY_MAX 32
-#define RT_TICK_PER_SECOND 1000
+#define RT_TICK_PER_SECOND 100
 #define RT_USING_OVERFLOW_CHECK
 #define RT_USING_HOOK
 #define RT_HOOK_USING_FUNC_PTR
 #define RT_USING_IDLE_HOOK
 #define RT_IDLE_HOOK_LIST_SIZE 4
 #define IDLE_THREAD_STACK_SIZE 256
-#define RT_USING_TIMER_SOFT
-#define RT_TIMER_THREAD_PRIO 4
-#define RT_TIMER_THREAD_STACK_SIZE 512
 
 /* kservice optimization */
 
-#define RT_KSERVICE_USING_STDLIB
 #define RT_USING_DEBUG
 #define RT_DEBUGING_COLOR
 #define RT_DEBUGING_CONTEXT
@@ -73,22 +69,20 @@
 
 /* DFS: device virtual file system */
 
-#define RT_USING_DFS
-#define DFS_USING_POSIX
-#define DFS_USING_WORKDIR
-#define DFS_FD_MAX 16
-#define RT_USING_DFS_V1
-#define DFS_FILESYSTEMS_MAX 4
-#define DFS_FILESYSTEM_TYPES_MAX 4
 
 /* Device Drivers */
 
 #define RT_USING_DEVICE_IPC
 #define RT_UNAMED_PIPE_NUMBER 64
+#define RT_USING_SYSTEM_WORKQUEUE
+#define RT_SYSTEM_WORKQUEUE_STACKSIZE 2048
+#define RT_SYSTEM_WORKQUEUE_PRIORITY 23
 #define RT_USING_SERIAL
 #define RT_USING_SERIAL_V1
 #define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 64
+#define RT_USING_I2C
+#define RT_USING_I2C_BITOPS
 #define RT_USING_PIN
 
 /* Using USB */
@@ -242,7 +236,7 @@
 /* Hardware Drivers Config */
 
 #define SOC_SERIES_GD32F4xx
-#define SOC_GD32470Z
+#define SOC_GD32407V
 
 /* Onboard Peripheral Drivers */
 

@@ -19,6 +19,7 @@ GD32 ARM 系列 BSP 目前支持情况如下表所示：
 | [gd32307e-start](gd32307e-start) | 兆易创新 官方 GD32307E-START 开发板 |
 | **F4 系列** |  |
 | [gd32407v-start](gd32407v-start) | 兆易创新 官方 GD32407V-START 开发板 |
+| [gd32407v-lckfb](gd32407v-lckfb) | 立创天空星  GD32F407VET6 开发板 |
 | [gd32450z-eval](gd32450z-eval) | 兆易创新 官方 GD32450Z-EVAL 开发板 |
 | [gd32470z-lckfb](gd32470z-lckfb) | 立创梁山派  GD32F470ZGT6 开发板 |
 
