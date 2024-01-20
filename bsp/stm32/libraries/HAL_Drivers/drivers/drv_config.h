@@ -137,6 +137,8 @@ extern "C" {
 #include "u5/usbd_config.h"
 #elif defined(SOC_SERIES_STM32H5)
 #include "h5/uart_config.h"
+#include "h5/pwm_config.h"
+#include "h5/adc_config.h"
 #elif  defined(SOC_SERIES_STM32MP1)
 #include "mp1/dma_config.h"
 #include "mp1/uart_config.h"
