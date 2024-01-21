@@ -8,11 +8,9 @@
  * 2023-09-26     1ridic       Integrate with RT-Thread driver framework.
  */
 
-#include <rthw.h>
-#include <rtthread.h>
 #include <rtdevice.h>
-#include "board.h"
-#include "drv_uart.h"
+#include <drv_uart.h>
+#include <hardware/gpio.h>
 
 #ifdef RT_USING_SERIAL
 

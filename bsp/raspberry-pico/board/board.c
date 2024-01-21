@@ -11,12 +11,13 @@
 
 #include <rthw.h>
 #include <rtthread.h>
-
 #include <stdio.h>
-
 #include "board.h"
-#include "hardware/structs/systick.h"
-#include "pico/bootrom.h"
+#include <pico/bootrom.h>
+#include <pico/stdlib.h>
+#include <hardware/clocks.h>
+#include <hardware/structs/systick.h>
+#include <drv_uart.h>
 
 #define PLL_SYS_KHZ (133 * 1000)
 

@@ -9,6 +9,8 @@
  */
 
 #include "drv_gpio.h"
+#include <hardware/gpio.h>
+#include <hardware/platform_defs.h>
 
 static void pico_pin_mode(struct rt_device *dev, rt_base_t pin, rt_uint8_t mode)
 {
