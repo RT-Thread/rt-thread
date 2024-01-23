@@ -45,6 +45,12 @@ Export('SDK_LIB')
 
 rtconfig.BSP_LIBRARY_TYPE = None
 
+def startup_check():
+    import startup_check
+    startup_check.startup_check()
+
+RegisterPreBuildingAction(startup_check)
+
 # prepare building environment
 objs = PrepareBuilding(env, RTT_ROOT, has_libcpu=False)
 
