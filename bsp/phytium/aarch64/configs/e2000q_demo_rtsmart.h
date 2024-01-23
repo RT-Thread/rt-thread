@@ -183,6 +183,10 @@
 #define RT_USING_POSIX_FS
 #define RT_USING_POSIX_DEVIO
 #define RT_USING_POSIX_STDIO
+#define RT_USING_POSIX_POLL
+#define RT_USING_POSIX_EPOLL
+#define RT_USING_POSIX_SIGNALFD
+#define RT_SIGNALFD_MAX_NUM 10
 #define RT_USING_POSIX_TERMIOS
 #define RT_USING_POSIX_DELAY
 #define RT_USING_POSIX_CLOCK
@@ -292,15 +296,6 @@
 
 
 /* Wiced WiFi */
-
-
-/* CYW43012 WiFi */
-
-
-/* BL808 WiFi */
-
-
-/* CYW43439 WiFi */
 
 
 /* IoT Cloud */
@@ -429,6 +424,8 @@
 #define BSP_USING_QSPI
 #define RT_USING_QSPI0
 #define USING_QSPI_CHANNEL0
+#define BSP_USING_ETH
+#define RT_LWIP_PBUF_POOL_BUFSIZE 1700
 #define BSP_USING_PWM
 #define RT_USING_PWM6
 #define BSP_USING_I2C
