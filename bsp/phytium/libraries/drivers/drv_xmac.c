@@ -801,9 +801,6 @@ void FXmacLinkChange(void *arg)
 {
     u32 ctrl;
     u32 link, link_status;
-    u32 speed;
-    u32 speed_bit;
-    u32 duplex;
     FXmac *xmac_p;
     FXmacOs *instance_p;
 
@@ -1396,7 +1393,6 @@ rt_err_t rt_xmac_tx(rt_device_t dev, struct pbuf *p)
 {
     FXmacOs *pOsMac;
     struct eth_device *pXmacParent;
-    rt_base_t level;
     FError  ret;
 
     pXmacParent = rt_container_of(dev, struct eth_device, parent);
@@ -1640,12 +1636,9 @@ static int rt_hw_xmac_eth_init(void)
         rt_kprintf("Start Xmac NUM1 \n");
         FXmacOsStart(&fxmac_os_instace[MAC_NUM1_CONTROLLER]);
 #endif
-    
+
 __exit:
     return state;
 }
 INIT_DEVICE_EXPORT(rt_hw_xmac_eth_init);
-
 #endif
-
-
