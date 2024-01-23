@@ -226,6 +226,8 @@ jobs:
           - {RTT_BSP_NAME: "renesas_ra6m3-hmi-board", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "renesas/ra6m3-hmi-board"}
           - {RTT_BSP_NAME: "renesas_ra6m4-cpk", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "renesas/ra6m4-cpk"}
           - {RTT_BSP_NAME: "renesas_ra6m4-iot", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "renesas/ra6m4-iot"}
+          - {RTT_BSP_NAME: "renesas_ra8d1-ek", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "renesas/ra8d1-ek"}
+          - {RTT_BSP_NAME: "renesas_ra8m1-ek", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "renesas/ra8m1-ek"}
           - {RTT_BSP_NAME: "rm48x50", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "rm48x50"}
          #- {RTT_BSP_NAME: "rockchip_rk2108", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "rockchip/rk2108"} # menuconfig 有问题
           - {RTT_BSP_NAME: "rockchip_rk3568", RTT_TOOL_CHAIN: "sourcery-aarch64", RTT_BSP: "rockchip/rk3568"} 
