@@ -827,6 +827,63 @@ void LPUART1_DMA_RX_IRQHandler(void)
 #endif /* defined(RT_SERIAL_USING_DMA) && defined(BSP_LPUART1_RX_USING_DMA) */
 #endif /* BSP_USING_LPUART1*/
 
+#if defined(SOC_SERIES_STM32G0)
+#if defined(BSP_USING_UART2)
+#if defined(STM32G0B1xx) || defined(STM32G0C1xx)
+void USART2_LPUART2_IRQHandler(void)
+{
+    USART2_IRQHandler();
+}
+#endif /* defined(STM32G0B1xx) || defined(STM32G0C1xx) */
+#endif /* defined(BSP_USING_UART2) */
+#if defined(BSP_USING_UART3) || defined(BSP_USING_UART4) || defined(BSP_USING_UART5) || defined(BSP_USING_UART6) \
+    || defined(BSP_USING_LPUART1)
+#if defined(STM32G070xx)
+void USART3_4_IRQHandler(void)
+#elif defined(STM32G071xx) || defined(STM32G081xx)
+void USART3_4_LPUART1_IRQHandler(void)
+#elif defined(STM32G0B0xx)
+void USART3_4_5_6_IRQHandler(void)
+#elif defined(STM32G0B1xx) || defined(STM32G0C1xx)
+void USART3_4_5_6_LPUART1_IRQHandler(void)
+#endif /* defined(STM32G070xx) */
+{
+#if defined(BSP_USING_UART3)
+    USART3_IRQHandler();
+#endif
+#if defined(BSP_USING_UART4)
+    UART4_IRQHandler();
+#endif
+#if defined(BSP_USING_UART5)
+    UART5_IRQHandler();
+#endif
+#if defined(BSP_USING_UART6)
+    USART6_IRQHandler();
+#endif
+#if defined(BSP_USING_LPUART1)
+    LPUART1_IRQHandler();
+#endif
+}
+#endif /* defined(BSP_USING_UART3) || defined(BSP_USING_UART4) || defined(BSP_USING_UART5) || defined(BSP_USING_UART6) */
+#if defined(RT_SERIAL_USING_DMA)
+void UART_DMA_RX_TX_IRQHandler(void)
+{
+#if defined(BSP_USING_UART1) && defined(BSP_UART1_TX_USING_DMA)
+    UART1_DMA_TX_IRQHandler();
+#endif
+#if defined(BSP_USING_UART1) && defined(BSP_UART1_RX_USING_DMA)
+    UART1_DMA_RX_IRQHandler();
+#endif
+#if defined(BSP_USING_UART2) && defined(BSP_UART2_TX_USING_DMA)
+    UART2_DMA_TX_IRQHandler();
+#endif
+#if defined(BSP_USING_UART2) && defined(BSP_UART2_RX_USING_DMA)
+    UART2_DMA_RX_IRQHandler();
+#endif
+}
+#endif /* defined(RT_SERIAL_USING_DMA) */
+#endif /* defined(SOC_SERIES_STM32G0) */
+
 static void stm32_uart_get_dma_config(void)
 {
 #ifdef BSP_USING_UART1
@@ -938,6 +995,15 @@ static void stm32_uart_get_dma_config(void)
     uart_obj[UART8_INDEX].uart_dma_flag |= RT_DEVICE_FLAG_DMA_TX;
     static struct dma_config uart8_dma_tx = UART8_DMA_TX_CONFIG;
     uart_config[UART8_INDEX].dma_tx = &uart8_dma_tx;
+#endif
+#endif
+
+#ifdef BSP_USING_LPUART1
+    uart_obj[LPUART1_INDEX].uart_dma_flag = 0;
+#ifdef BSP_LPUART1_RX_USING_DMA
+    uart_obj[LPUART1_INDEX].uart_dma_flag |= RT_DEVICE_FLAG_DMA_RX;
+    static struct dma_config lpuart1_dma_rx = LPUART1_DMA_RX_CONFIG;
+    uart_config[LPUART1_INDEX].dma_rx = &lpuart1_dma_rx;
 #endif
 #endif
 }
