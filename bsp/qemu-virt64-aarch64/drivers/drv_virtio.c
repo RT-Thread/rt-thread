@@ -9,7 +9,7 @@
  */
 
 #include <rtthread.h>
-#include <virt.h>
+
 #include <virtio.h>
 #ifdef BSP_USING_VIRTIO_BLK
 #include <virtio_blk.h>
@@ -19,10 +19,8 @@
 #endif
 #ifdef BSP_USING_VIRTIO_CONSOLE
 #include <virtio_console.h>
-#endif 
-#ifdef RT_USING_DRM
-#include <inc/drm_device.h>
-#else
+#endif
+#ifdef BSP_USING_VIRTIO_GPU
 #include <virtio_gpu.h>
 #endif
 #ifdef BSP_USING_VIRTIO_INPUT
@@ -42,9 +40,7 @@ static virtio_device_init_handler virtio_device_init_handlers[] =
 #ifdef BSP_USING_VIRTIO_CONSOLE
     [VIRTIO_DEVICE_ID_CONSOLE]  = rt_virtio_console_init,
 #endif
-#ifdef RT_USING_DRM
-    [VIRTIO_DEVICE_ID_GPU]      = rt_virtio_gpu_drm_init,
-#else 
+#ifdef BSP_USING_VIRTIO_GPU
     [VIRTIO_DEVICE_ID_GPU]      = rt_virtio_gpu_init,
 #endif
 #ifdef BSP_USING_VIRTIO_INPUT
@@ -83,6 +79,7 @@ int rt_virtio_devices_init(void)
         {
             continue;
         }
+
         init_handler = virtio_device_init_handlers[mmio_config->device_id];
 
         if (init_handler != RT_NULL)

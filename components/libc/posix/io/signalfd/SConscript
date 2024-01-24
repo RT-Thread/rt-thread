@@ -6,8 +6,9 @@ cwd     = GetCurrentDir()
 src     = []
 CPPPATH = [cwd]
 
-if GetDepend('RT_USING_POSIX_SIGNALFD'):
-    src += ['signalfd.c']
+if GetDepend('RT_USING_DFS'):
+    if GetDepend('RT_USING_MUSLLIBC'):
+        src += ['signalfd.c']
 
 group = DefineGroup('POSIX', src, depend = ['RT_USING_SMART','RT_USING_POSIX_SIGNALFD'], CPPPATH = CPPPATH)
 
