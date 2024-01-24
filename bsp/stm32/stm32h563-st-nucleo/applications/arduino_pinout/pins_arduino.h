@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
- * Date           Author       Notes
- * 2023-04-13     songw4232    first version
+ * Date           Author         Notes
+ * 2023-12-30     ChuShicheng    first version
  */
 
 #ifndef Pins_Arduino_h
@@ -35,12 +35,16 @@
 #define A4        (20)
 #define A5        (21)
 
-#define F_CPU          160000000L  /* CPU:160MHz */
+#define RTDUINO_PIN_MAX_LIMIT A5 /* pin number max limit check */
 
-/* i2c1 : PB9-SDA PB8-SCL */
-#define RTDUINO_DEFAULT_IIC_BUS_NAME    "i2c1"
+#define F_CPU 250000000L /* CPU:250MHz */
 
-/* spi1 : PA5-SCK  PA6-MISO  PA7-MOSI */
-#define RTDUINO_DEFAULT_SPI_BUS_NAME      "spi1"
+#define LED_BUILTIN D0 /* Default Built-in LED */
+
+/* i2c1 : PB.9-SDA PB.8-SCL */
+#define RTDUINO_DEFAULT_IIC_BUS_NAME "i2c1"
+
+/* Serial2(lpuart1) : PB.6-TX  PB.7-RX */
+#define RTDUINO_SERIAL2_DEVICE_NAME "lpuart1"
 
 #endif /* Pins_Arduino_h */

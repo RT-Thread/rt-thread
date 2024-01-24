@@ -7,9 +7,17 @@
    Change Logs:
    Date             Author          Notes
    2022-03-31       CDT             First version
+   2023-09-30       CDT             Optimize ETH start and stop timing
+                                    Modify the process of obtaining PHY status
+                                    Modify the process of auto-negotiation disable
+                                    Modify ETH_PTP_UpdateBasicAddend function
+                                    Modify typo
+                                    Modify the clock division of SMIC
+                                    Modify operation sequence of ETH_DeInit function
+                                    Add ETH_MAC_SetInterface function
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -58,7 +66,7 @@
 #define ETH_MAC_SMIADDR_CLR_MASK                    (0x0000FFC3UL)
 #define ETH_DMA_BUSMODR_CLR_MASK                    (0x0FFFFFFEUL)
 #define ETH_DMA_OPRMODR_CLR_MASK                    (0x0721C0FCUL)
-#define ETH_PTP_TSPCTLR_CLR_MASK                    (0x0007FE02UL)
+#define ETH_PTP_TSPCTLR_CLR_MASK                    (0x0007FF02UL)
 
 /* Ethernet MAC Address byte length */
 #define ETH_MAC_ADDR_BYTE_LEN                       (6U)
@@ -77,7 +85,7 @@
 #define ETH_WR_REG_TIMEOUT                          (50UL)
 #define ETH_SW_RST_TIMEOUT                          (200UL)
 #define ETH_LINK_STATUS_TIMEOUT                     (3000UL)
-#define ETH_AUTO_NEGO_CPLT_TIMEOUT                  (1000UL)
+#define ETH_AUTO_NEGO_CPLT_TIMEOUT                  (3000UL)
 
 /** Get the specified register address */
 #define ETH_MAC_MACADHR_ADDR(__SHIFT__)             (__IO uint32_t *)((uint32_t)(&(CM_ETH->MAC_MACADHR0)) + \
@@ -130,9 +138,9 @@
 
 #define IS_ETH_MAC_SRC_ADDR_MD(x)                                              \
 (   ((x) == ETH_MAC_SRC_ADDR_MD_BY_DMA_TXDESC)              ||                 \
-    ((x) == ETH_MAC_SRC_ADDR_MD_INSTER_MACADDR0)            ||                 \
+    ((x) == ETH_MAC_SRC_ADDR_MD_INSERT_MACADDR0)            ||                 \
     ((x) == ETH_MAC_SRC_ADDR_MD_REPLACE_MACADDR0)           ||                 \
-    ((x) == ETH_MAC_SRC_ADDR_MD_INSTER_MACADDR1)            ||                 \
+    ((x) == ETH_MAC_SRC_ADDR_MD_INSERT_MACADDR1)            ||                 \
     ((x) == ETH_MAC_SRC_ADDR_MD_REPLACE_MACADDR1))
 
 #define IS_ETH_MAC_TYPE_FRAME_STRIP_FCS(x)                                     \
@@ -484,9 +492,9 @@
 
 #define IS_ETH_DMA_TXDESC_SRC_ADDR_CTRL(x)                                     \
 (   ((x) == ETH_DMA_TXDESC_SRC_ADDR_BYPASS)                 ||                 \
-    ((x) == ETH_DMA_TXDESC_SRC_ADDR_INSTER_MACADDR0)        ||                 \
+    ((x) == ETH_DMA_TXDESC_SRC_ADDR_INSERT_MACADDR0)        ||                 \
     ((x) == ETH_DMA_TXDESC_SRC_ADDR_REPLACE_MACADDR0)       ||                 \
-    ((x) == ETH_DMA_TXDESC_SRC_ADDR_INSTER_MACADDR1)        ||                 \
+    ((x) == ETH_DMA_TXDESC_SRC_ADDR_INSERT_MACADDR1)        ||                 \
     ((x) == ETH_DMA_TXDESC_SRC_ADDR_REPLACE_MACADDR1))
 
 #define IS_ETH_PMT_FLAG(x)                                                     \
@@ -554,7 +562,7 @@
     ((x) == ETH_PTP_DATAGRAM_TYPE_DELAY)                    ||                 \
     ((x) == ETH_PTP_DATAGRAM_TYPE_SYNC_FOLLOW_DELAY_PDELAY) ||                 \
     ((x) == ETH_PTP_DATAGRAM_TYPE_SYNC_PDELAY)              ||                 \
-    ((x) == ETH_PTP_DATAGRAM_TYPE_DELAY_PDEALY)             ||                 \
+    ((x) == ETH_PTP_DATAGRAM_TYPE_DELAY_PDELAY)             ||                 \
     ((x) == ETH_PTP_DATAGRAM_TYPE_SYNC_DELAY)               ||                 \
     ((x) == ETH_PTP_DATAGRAM_TYPE_PDELAY))
 
@@ -673,20 +681,20 @@ int32_t ETH_DeInit(void)
 {
     int32_t i32Ret;
 
-    ETH_MAC_DeInit();
-    ETH_DMA_DeInit();
-    ETH_MACADDR_DeInit(ETH_MAC_ADDR_IDX0);
-    ETH_MACADDR_DeInit(ETH_MAC_ADDR_IDX1);
-    ETH_MACADDR_DeInit(ETH_MAC_ADDR_IDX2);
-    ETH_MACADDR_DeInit(ETH_MAC_ADDR_IDX3);
-    ETH_MACADDR_DeInit(ETH_MAC_ADDR_IDX4);
-    ETH_MAC_L3L4FilterDeInit();
-    ETH_PTP_DeInit();
-    ETH_PPS_DeInit(ETH_PPS_CH0);
-    ETH_PPS_DeInit(ETH_PPS_CH1);
-    i32Ret = ETH_MMC_DeInit();
+    i32Ret = ETH_DMA_SoftwareReset();
     if (LL_OK == i32Ret) {
-        i32Ret = ETH_DMA_SoftwareReset();
+        ETH_DMA_DeInit();
+        ETH_MAC_DeInit();
+        ETH_MACADDR_DeInit(ETH_MAC_ADDR_IDX0);
+        ETH_MACADDR_DeInit(ETH_MAC_ADDR_IDX1);
+        ETH_MACADDR_DeInit(ETH_MAC_ADDR_IDX2);
+        ETH_MACADDR_DeInit(ETH_MAC_ADDR_IDX3);
+        ETH_MACADDR_DeInit(ETH_MAC_ADDR_IDX4);
+        ETH_MAC_L3L4FilterDeInit();
+        ETH_PTP_DeInit();
+        ETH_PPS_DeInit(ETH_PPS_CH0);
+        ETH_PPS_DeInit(ETH_PPS_CH1);
+        i32Ret = ETH_MMC_DeInit();
     }
 
     return i32Ret;
@@ -727,14 +735,14 @@ int32_t ETH_Init(stc_eth_handle_t *pstcEthHandle, stc_eth_init_t *pstcEthInit)
         } else {
             /* Get ETH frequency value */
             u32BusClk = SystemCoreClock / (0x01UL << (READ_REG32_BIT(CM_CMU->SCFGR,
-                                           CMU_SCFGR_PCLK1S) >> CMU_SCFGR_PCLK1S_POS));
+                                                                     CMU_SCFGR_PCLK1S) >> CMU_SCFGR_PCLK1S_POS));
             /* Set SMIC bits depending on PCLK1 clock value */
             /* PCLK1 Clock Range between 20-35 MHz */
-            if ((u32BusClk >= 20000000UL) && (u32BusClk < 35000000UL)) {
+            if ((u32BusClk >= 20000000UL) && (u32BusClk <= 35000000UL)) {
                 u32TempReg = ETH_MAC_SMIADDR_SMIC_1;
-            } else if ((u32BusClk >= 35000000UL) && (u32BusClk < 60000000UL)) {     /* PCLK1 Clock Range between 35-60 MHz */
+            } else if ((u32BusClk > 35000000UL) && (u32BusClk <= 60000000UL)) {     /* PCLK1 Clock Range between 35-60 MHz */
                 u32TempReg = ETH_MAC_SMIADDR_SMIC_1 | ETH_MAC_SMIADDR_SMIC_0;
-            } else if ((u32BusClk >= 60000000UL) && (u32BusClk < 100000000UL)) {    /* PCLK1 Clock Range between 60-100 MHz */
+            } else if ((u32BusClk > 60000000UL) && (u32BusClk <= 100000000UL)) {    /* PCLK1 Clock Range between 60-100 MHz */
                 u32TempReg = 0UL;
             } else {    /* PCLK1 Clock Range between 100-120 MHz */
                 u32TempReg = ETH_MAC_SMIADDR_SMIC_0;
@@ -751,7 +759,7 @@ int32_t ETH_Init(stc_eth_handle_t *pstcEthHandle, stc_eth_init_t *pstcEthInit)
                 DDL_DelayMS(ETH_PHY_RST_DELAY);
                 if (ETH_AUTO_NEGO_DISABLE != pstcEthHandle->stcCommInit.u16AutoNego) {
                     u32PhyTimeout = ETH_PHY_RD_TIMEOUT * (HCLK_VALUE / 20000UL);
-                    /* Wait for linke status */
+                    /* Wait for link status */
                     u32Count = ETH_LINK_STATUS_TIMEOUT * (HCLK_VALUE / 20000UL);
                     while (PHY_LINK_STATUS != (u16PhyReg & PHY_LINK_STATUS)) {
                         if (0UL == u32Count) {
@@ -790,14 +798,15 @@ int32_t ETH_Init(stc_eth_handle_t *pstcEthHandle, stc_eth_init_t *pstcEthInit)
                                 i32Ret = LL_ERR_TIMEOUT;
                             } else {
                                 /* Read the result of the auto-negotiation */
+                                (void)ETH_PHY_ReadReg(pstcEthHandle, PHY_SR, &u16PhyReg);
                                 /* Configure ETH duplex mode according to the result of automatic negotiation */
-                                if (0U != (u16PhyReg & (uint16_t)(PHY_100BASE_TX_FD | PHY_10BASE_T_FD))) {
+                                if (0U != (u16PhyReg & PHY_DUPLEX_STATUS)) {
                                     pstcEthHandle->stcCommInit.u32DuplexMode = ETH_MAC_DUPLEX_MD_FULL;
                                 } else {
                                     pstcEthHandle->stcCommInit.u32DuplexMode = ETH_MAC_DUPLEX_MD_HALF;
                                 }
                                 /* Configure ETH speed according to the result of automatic negotiation */
-                                if (0U != (u16PhyReg & (uint16_t)(PHY_100BASE_TX_FD | PHY_100BASE_TX_HD))) {
+                                if (0U != (u16PhyReg & PHY_SPEED_STATUS)) {
                                     pstcEthHandle->stcCommInit.u32Speed = ETH_MAC_SPEED_100M;
                                 } else {
                                     pstcEthHandle->stcCommInit.u32Speed = ETH_MAC_SPEED_10M;
@@ -814,8 +823,26 @@ int32_t ETH_Init(stc_eth_handle_t *pstcEthHandle, stc_eth_init_t *pstcEthInit)
                                                    (uint16_t)(pstcEthHandle->stcCommInit.u32Speed >> 1U)))) {
                         i32Ret = LL_ERR_TIMEOUT;
                     } else {
-                        /* Delay to assure PHY configuration */
-                        DDL_DelayMS(ETH_PHY_CONFIG_DELAY);
+                        /* Wait for link status */
+                        u32PhyTimeout = ETH_PHY_RD_TIMEOUT * (HCLK_VALUE / 20000UL);
+                        u32Count = ETH_LINK_STATUS_TIMEOUT * (HCLK_VALUE / 20000UL);
+                        while (PHY_LINK_STATUS != (u16PhyReg & PHY_LINK_STATUS)) {
+                            if (0UL == u32Count) {
+                                break;
+                            }
+                            if (LL_ERR_TIMEOUT == ETH_PHY_ReadReg(pstcEthHandle, PHY_BSR, &u16PhyReg)) {
+                                u32Count = (u32Count > u32PhyTimeout) ? (u32Count - u32PhyTimeout) : 0UL;
+                            } else {
+                                u32Count = (u32Count > u32PhyTimeout) ? (u32Count - (u32PhyTimeout / 150U)) : 0UL;
+                            }
+                        }
+                        if ((0x0000U == u16PhyReg) || (0xFFFFU == u16PhyReg)) {
+                            i32Ret = LL_ERR_INVD_PARAM;
+                        } else if (PHY_LINK_STATUS != (u16PhyReg & PHY_LINK_STATUS)) {
+                            i32Ret = LL_ERR_TIMEOUT;
+                        } else {
+                            /* Reserved */
+                        }
                     }
                 }
             }
@@ -915,14 +942,14 @@ int32_t ETH_Start(void)
     /* Flush Transmit FIFO */
     i32Ret = ETH_DMA_FlushTransFIFO();
     if (LL_OK == i32Ret) {
-        /* Enable MAC Transmit */
-        ETH_MAC_TransCmd(ENABLE);
-        /* Enable MAC Receive */
-        ETH_MAC_ReceiveCmd(ENABLE);
         /* Enable DMA Transmit */
         ETH_DMA_TransCmd(ENABLE);
         /* Enable DMA Receive */
         ETH_DMA_ReceiveCmd(ENABLE);
+        /* Enable MAC Transmit */
+        ETH_MAC_TransCmd(ENABLE);
+        /* Enable MAC Receive */
+        ETH_MAC_ReceiveCmd(ENABLE);
     }
 
     return i32Ret;
@@ -939,14 +966,14 @@ int32_t ETH_Stop(void)
 {
     int32_t i32Ret;
 
-    /* Disable DMA Transmit */
-    ETH_DMA_TransCmd(DISABLE);
-    /* Disable DMA Receive */
-    ETH_DMA_ReceiveCmd(DISABLE);
     /* Disable MAC Receive */
     ETH_MAC_ReceiveCmd(DISABLE);
     /* Disable MAC Transmit */
     ETH_MAC_TransCmd(DISABLE);
+    /* Disable DMA Transmit */
+    ETH_DMA_TransCmd(DISABLE);
+    /* Disable DMA Receive */
+    ETH_DMA_ReceiveCmd(DISABLE);
     /* Flush Transmit FIFO */
     i32Ret = ETH_DMA_FlushTransFIFO();
 
@@ -1055,7 +1082,7 @@ int32_t ETH_PHY_ReadReg(stc_eth_handle_t *pstcEthHandle, uint16_t u16Reg, uint16
 }
 
 /**
- * @brief  Enabele or disable PHY loopback.
+ * @brief  Enable or disable PHY loopback.
  * @param  [in] pstcEthHandle           Pointer to a @ref stc_eth_handle_t structure
  * @param  [in] enNewState              An @ref en_functional_state_t enumeration value.
  * @retval int32_t:
@@ -1267,6 +1294,26 @@ int32_t ETH_MAC_StructInit(stc_eth_mac_init_t *pstcMacInit)
 }
 
 /**
+ * @brief  Set MAC interface.
+ * @param  [in] u32Interface            The media interface.
+ *         This parameter can be one of the following values:
+ *           @arg ETH_MAC_IF_MII:       MII interface
+ *           @arg ETH_MAC_IF_RMII:      RMII interface
+ * @retval None
+ */
+void ETH_MAC_SetInterface(uint32_t u32Interface)
+{
+    /* Check parameters */
+    DDL_ASSERT(IS_ETH_MAC_IF(u32Interface));
+
+    if (ETH_MAC_IF_RMII != u32Interface) {
+        WRITE_REG32(bCM_ETH->MAC_IFCONFR_b.IFSEL, DISABLE);
+    } else {
+        WRITE_REG32(bCM_ETH->MAC_IFCONFR_b.IFSEL, ENABLE);
+    }
+}
+
+/**
  * @brief  Set MAC duplex mode and speed.
  * @param  [in] u32Mode                 MAC duplex mode
  *         This parameter can be one or any combination of the following values:
@@ -1366,6 +1413,7 @@ void ETH_MAC_TransCmd(en_functional_state_t enNewState)
     DDL_ASSERT(IS_FUNCTIONAL_STATE(enNewState));
 
     WRITE_REG32(bCM_ETH->MAC_CONFIGR_b.TE, enNewState);
+    DDL_DelayUS(300);
 }
 
 /**
@@ -1379,6 +1427,7 @@ void ETH_MAC_ReceiveCmd(en_functional_state_t enNewState)
     DDL_ASSERT(IS_FUNCTIONAL_STATE(enNewState));
 
     WRITE_REG32(bCM_ETH->MAC_CONFIGR_b.RE, enNewState);
+    DDL_DelayUS(300);
 }
 
 /**
@@ -2088,6 +2137,7 @@ void ETH_DMA_TransCmd(en_functional_state_t enNewState)
     DDL_ASSERT(IS_FUNCTIONAL_STATE(enNewState));
 
     WRITE_REG32(bCM_ETH->DMA_OPRMODR_b.STT, enNewState);
+    DDL_DelayUS(300);
 }
 
 /**
@@ -2101,6 +2151,7 @@ void ETH_DMA_ReceiveCmd(en_functional_state_t enNewState)
     DDL_ASSERT(IS_FUNCTIONAL_STATE(enNewState));
 
     WRITE_REG32(bCM_ETH->DMA_OPRMODR_b.STR, enNewState);
+    DDL_DelayUS(300);
 }
 
 /**
@@ -2483,7 +2534,7 @@ int32_t ETH_DMA_GetReceiveFrame_Int(stc_eth_handle_t *pstcEthHandle)
     } else {
         /* Scan descriptor owned by CPU */
         while ((0UL == (pstcEthHandle->stcRxDesc->u32ControlStatus & ETH_DMA_RXDESC_OWN)) &&
-                (u32DescCnt < ETH_RX_BUF_SIZE)) {
+               (u32DescCnt < ETH_RX_BUF_SIZE)) {
             u32DescCnt++;
             /* Check if first segment in frame */
             if (ETH_DMA_RXDESC_RFS == (pstcEthHandle->stcRxDesc->u32ControlStatus &
@@ -2654,9 +2705,9 @@ int32_t ETH_DMA_TxDescVlanInsertConfig(stc_eth_dma_desc_t *pstcTxDesc, uint32_t 
  * @param  [in] u32Mode                 SA insert mode
  *         This parameter can be one of the following values:
  *           @arg ETH_DMA_TXDESC_SAIRC_BYPASS:              Source Address Insertion or Replace Control is bypassed
- *           @arg ETH_DMA_TXDESC_SAIRC_INSTER_MACADDR0:     Insert address value in MAC address register 0 into transmit frame as SA address
+ *           @arg ETH_DMA_TXDESC_SAIRC_INSERT_MACADDR0:     Insert address value in MAC address register 0 into transmit frame as SA address
  *           @arg ETH_DMA_TXDESC_SAIRC_REPLACE_MACADDR0:    Replace SA address in transmit frame with address value in MAC address register 0
- *           @arg ETH_DMA_TXDESC_SAIRC_INSTER_MACADDR1:     Insert address value in MAC address register 1 into transmit frame as SA address
+ *           @arg ETH_DMA_TXDESC_SAIRC_INSERT_MACADDR1:     Insert address value in MAC address register 1 into transmit frame as SA address
  *           @arg ETH_DMA_TXDESC_SAIRC_REPLACE_MACADDR1:    Replace SA address in transmit frame with address value in MAC address register 1
  * @retval int32_t:
  *           - LL_OK: Configure Tx descriptor SA insert success
@@ -3691,7 +3742,7 @@ int32_t ETH_PTP_StructInit(stc_eth_ptp_init_t *pstcPtpInit)
  *           @arg ETH_PTP_DATAGRAM_TYPE_DELAY:                     Delay_Req
  *           @arg ETH_PTP_DATAGRAM_TYPE_SYNC_FOLLOW_DELAY_PDELAY:  SYNC Follow_Up Delay_Req Delay_Resp Pdelay_Req Pdelay_Resp Pdelay_Resp_Follow_Up
  *           @arg ETH_PTP_DATAGRAM_TYPE_SYNC_PDELAY:               SYNC Pdelay_Req Pdelay_Resp
- *           @arg ETH_PTP_DATAGRAM_TYPE_DELAY_PDEALY:              Delay_Req Pdelay_Req Pdelay_Resp
+ *           @arg ETH_PTP_DATAGRAM_TYPE_DELAY_PDELAY:              Delay_Req Pdelay_Req Pdelay_Resp
  *           @arg ETH_PTP_DATAGRAM_TYPE_SYNC_DELAY:                SYNC Delay_Req
  *           @arg ETH_PTP_DATAGRAM_TYPE_PDELAY:                    Pdelay_Req Pdelay_Resp
  * @retval None
@@ -3756,9 +3807,9 @@ int32_t ETH_PTP_UpdateBasicAddend(void)
     int32_t i32Ret = LL_ERR;
 
     if (0UL == READ_REG32(bCM_ETH->PTP_TSPCTLR_b.TSPADUP)) {
-        WRITE_REG32(bCM_ETH->MMC_MMCCTLR_b.CRST, 1U);
+        WRITE_REG32(bCM_ETH->PTP_TSPCTLR_b.TSPADUP, 1U);
         u32Count = ETH_WR_REG_TIMEOUT * (HCLK_VALUE / 20000UL);
-        while (0UL != READ_REG32(bCM_ETH->MMC_MMCCTLR_b.CRST)) {
+        while (0UL != READ_REG32(bCM_ETH->PTP_TSPCTLR_b.TSPADUP)) {
             if (0UL == u32Count) {
                 i32Ret = LL_ERR_TIMEOUT;
                 break;

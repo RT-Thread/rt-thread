@@ -32,7 +32,7 @@
 
 typedef int (*cmd_function_t)(int argc, char **argv);
 
-int msh_help(int argc, char **argv)
+static int msh_help(int argc, char **argv)
 {
     rt_kprintf("RT-Thread shell commands:\n");
     {
@@ -53,10 +53,10 @@ int msh_help(int argc, char **argv)
 
     return 0;
 }
-MSH_CMD_EXPORT_ALIAS(msh_help, help, RT-Thread shell help.);
+MSH_CMD_EXPORT_ALIAS(msh_help, help, RT-Thread shell help);
 
 #ifdef MSH_USING_BUILT_IN_COMMANDS
-int cmd_ps(int argc, char **argv)
+static int cmd_ps(int argc, char **argv)
 {
     extern long list_thread(void);
     extern int list_module(void);
@@ -69,10 +69,10 @@ int cmd_ps(int argc, char **argv)
     list_thread();
     return 0;
 }
-MSH_CMD_EXPORT_ALIAS(cmd_ps, ps, List threads in the system.);
+MSH_CMD_EXPORT_ALIAS(cmd_ps, ps, List threads in the system);
 
 #ifdef RT_USING_HEAP
-int cmd_free(int argc, char **argv)
+static int cmd_free(int argc, char **argv)
 {
 #ifdef RT_USING_MEMHEAP_AS_HEAP
     extern void list_memheap(void);
@@ -88,7 +88,7 @@ int cmd_free(int argc, char **argv)
 #endif
     return 0;
 }
-MSH_CMD_EXPORT_ALIAS(cmd_free, free, Show the memory usage in the system.);
+MSH_CMD_EXPORT_ALIAS(cmd_free, free, Show the memory usage in the system);
 #endif /* RT_USING_HEAP */
 #endif /* MSH_USING_BUILT_IN_COMMANDS */
 
@@ -296,8 +296,7 @@ static int _msh_exec_cmd(char *cmd, rt_size_t length, int *retp)
 }
 
 #if defined(RT_USING_SMART) && defined(DFS_USING_POSIX)
-pid_t exec(char*, int, int, char**);
-
+#include <lwp.h>
 /* check whether a file of the given path exits */
 static rt_bool_t _msh_lwp_cmd_exists(const char *path)
 {

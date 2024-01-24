@@ -9,6 +9,7 @@
  */
 
 #include <board.h>
+#include <drv_gpio.h>
 
 #define RESET_IO GET_PIN(D, 3)
 

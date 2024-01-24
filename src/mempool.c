@@ -16,19 +16,13 @@
  * 2012-03-22     Bernard      fix align issue in rt_mp_init and rt_mp_create.
  * 2022-01-07     Gabriel      Moving __on_rt_xxxxx_hook to mempool.c
  * 2023-09-15     xqyjlj       perf rt_hw_interrupt_disable/enable
+ * 2023-12-10     xqyjlj       fix spinlock assert
  */
 
 #include <rthw.h>
 #include <rtthread.h>
 
 #ifdef RT_USING_MEMPOOL
-
-#ifndef __on_rt_mp_alloc_hook
-    #define __on_rt_mp_alloc_hook(mp, block)        __ON_HOOK_ARGS(rt_mp_alloc_hook, (mp, block))
-#endif
-#ifndef __on_rt_mp_free_hook
-    #define __on_rt_mp_free_hook(mp, block)         __ON_HOOK_ARGS(rt_mp_free_hook, (mp, block))
-#endif
 
 #if defined(RT_USING_HOOK) && defined(RT_HOOK_USING_FUNC_PTR)
 static void (*rt_mp_alloc_hook)(struct rt_mempool *mp, void *block);
@@ -290,12 +284,13 @@ rt_err_t rt_mp_delete(rt_mp_t mp)
         rt_thread_resume(thread);
     }
 
+    rt_spin_unlock_irqrestore(&(mp->spinlock), level);
+
     /* release allocated room */
     rt_free(mp->start_address);
 
     /* detach object */
     rt_object_delete(&(mp->parent));
-    rt_spin_unlock_irqrestore(&(mp->spinlock), level);
 
     return RT_EOK;
 }

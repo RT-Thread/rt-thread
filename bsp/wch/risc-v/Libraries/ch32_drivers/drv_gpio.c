@@ -576,6 +576,5 @@ int rt_hw_pin_init(void)
 
     return rt_device_pin_register("pin", &_ch32_pin_ops, RT_NULL);
 }
-INIT_BOARD_EXPORT(rt_hw_pin_init);
 
 #endif /* BSP_USING_GPIO */

@@ -9,7 +9,9 @@
  * 2023-05-05     yuanjie           add test method
  */
 
+#include <rtdevice.h>
 #include <board.h>
+#include <drv_gpio.h>
 #include "drv_rs485.h"
 
 #ifdef BSP_USING_RS485
@@ -134,4 +136,4 @@ void rs485_test(int argc, void **argv)
 }
 MSH_CMD_EXPORT(rs485_test, test rs485 transmission);
 
-#endif /* bsp_using_RS485 */
+#endif /* BSP_USING_RS485 */

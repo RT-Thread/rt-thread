@@ -9,6 +9,7 @@
  */
 
 #include <rtthread.h>
+#include <posix/stdlib.h>
 
 #define DBG_TAG    "stdlib"
 #define DBG_LVL    DBG_INFO

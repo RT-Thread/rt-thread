@@ -6,9 +6,12 @@
    Change Logs:
    Date             Author          Notes
    2022-03-31       CDT             First version
+   2022-06-30       CDT             Support re-target printf for IAR EW version 9 or later
+   2023-06-30       CDT             Modify register USART DR to USART TDR
+                                    Prohibit DDL_DelayMS and DDL_DelayUS functions from being optimized
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -137,7 +140,11 @@ __STATIC_INLINE uint32_t LL_GetPrintTimeout(void)
  * @param [in] u32Count                   ms
  * @retval None
  */
-void DDL_DelayMS(uint32_t u32Count)
+#if defined (__CC_ARM)  /*!< ARM Compiler */
+#pragma push
+#pragma O0
+#endif
+__NO_OPTIMIZE void DDL_DelayMS(uint32_t u32Count)
 {
     __IO uint32_t i;
     const uint32_t u32Cyc = (HCLK_VALUE + 10000UL - 1UL) / 10000UL;
@@ -154,7 +161,7 @@ void DDL_DelayMS(uint32_t u32Count)
  * @param [in] u32Count                   us
  * @retval None
  */
-void DDL_DelayUS(uint32_t u32Count)
+__NO_OPTIMIZE void DDL_DelayUS(uint32_t u32Count)
 {
     __IO uint32_t i;
     const uint32_t u32Cyc = (HCLK_VALUE + 10000000UL - 1UL) / 10000000UL;
@@ -165,6 +172,9 @@ void DDL_DelayUS(uint32_t u32Count)
         }
     }
 }
+#if defined (__CC_ARM)  /*!< ARM Compiler */
+#pragma pop
+#endif
 
 /**
  * @brief This function Initializes the interrupt frequency of the SysTick.
@@ -273,7 +283,7 @@ __WEAKDEF void DDL_AssertHandler(const char *file, int line)
 #if (LL_PRINT_ENABLE == DDL_ON)
 
 #if (defined (__ARMCC_VERSION) && (__ARMCC_VERSION >= 6010050)) || \
-    (defined (__ICCARM__)) || (defined (__CC_ARM))
+    (defined (__ICCARM__) && (__VER__ < 9000000)) || (defined (__CC_ARM))
 /**
  * @brief  Re-target fputc function.
  * @param  [in] ch
@@ -285,6 +295,40 @@ int32_t fputc(int32_t ch, FILE *f)
     (void)f;  /* Prevent unused argument compilation warning */
 
     return (LL_OK == DDL_ConsoleOutputChar((char)ch)) ? ch : -1;
+}
+
+#elif (defined (__ICCARM__) && (__VER__ >= 9000000))
+#include <LowLevelIOInterface.h>
+#pragma module_name = "?__write"
+size_t __dwrite(int handle, const unsigned char *buffer, size_t size)
+{
+    size_t nChars = 0;
+    size_t i;
+
+    if (buffer == NULL) {
+        /*
+         * This means that we should flush internal buffers.  Since we
+         * don't we just return.  (Remember, "handle" == -1 means that all
+         * handles should be flushed.)
+         */
+        return 0;
+    }
+
+    /* This template only writes to "standard out" and "standard err",
+     * for all other file handles it returns failure. */
+    if (handle != _LLIO_STDOUT && handle != _LLIO_STDERR) {
+        return _LLIO_ERROR;
+    }
+
+    for (i = 0; i < size; i++) {
+        if (DDL_ConsoleOutputChar((char)buffer[i]) < 0) {
+            return _LLIO_ERROR;
+        }
+
+        ++nChars;
+    }
+
+    return nChars;
 }
 
 #elif defined ( __GNUC__ ) && !defined (__CC_ARM)
@@ -365,7 +409,7 @@ __WEAKDEF int32_t DDL_ConsoleOutputChar(char cData)
         }
 
         if (0UL != u32TxEmpty) {
-            WRITE_REG32(USARTx->DR, (uint32_t)cData);
+            WRITE_REG16(USARTx->TDR, (uint16_t)cData);
             i32Ret = LL_OK;
         } else {
             i32Ret = LL_ERR_TIMEOUT;

@@ -152,7 +152,7 @@ static int _cpus_init(int num_cpus, rt_uint64_t *cpu_hw_ids, struct cpu_ops_t *c
     // assuming that cpuid 0 has already init
     for (int i = 1; i < RT_CPUS_NR; i++)
     {
-        if (cpuid_to_hwid(i) == ID_ERROR)
+        if (rt_cpu_mpidr_early[i] == ID_ERROR)
         {
             LOG_E("Failed to find hardware id of CPU %d", i);
             continue;
@@ -166,7 +166,7 @@ static int _cpus_init(int num_cpus, rt_uint64_t *cpu_hw_ids, struct cpu_ops_t *c
         else
         {
             LOG_E("Failed to find cpu_init for cpu %d with cpu_ops[%p], cpu_ops->cpu_init[%p]"
-                , cpuid_to_hwid(i), cpu_ops_tbl[i], cpu_ops_tbl[i] ? cpu_ops_tbl[i]->cpu_init : NULL);
+                , rt_cpu_mpidr_early[i], cpu_ops_tbl[i], cpu_ops_tbl[i] ? cpu_ops_tbl[i]->cpu_init : NULL);
         }
     }
     return 0;
@@ -204,20 +204,4 @@ const char *rt_hw_cpu_arch(void)
     return "aarch64";
 }
 
-#ifdef RT_USING_CPU_FFS
-/**
- * This function finds the first bit set (beginning with the least significant bit)
- * in value and return the index of that bit.
- *
- * Bits are numbered starting at 1 (the least significant bit).  A return value of
- * zero from any of these functions means that the argument was zero.
- *
- * @return return the index of the first bit set. If value is 0, then this function
- * shall return 0.
- */
-int __rt_ffs(int value)
-{
-    return __builtin_ffs(value);
-}
-#endif
 /*@}*/

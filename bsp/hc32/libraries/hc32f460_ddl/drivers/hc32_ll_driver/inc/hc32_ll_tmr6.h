@@ -1,15 +1,24 @@
 /**
  *******************************************************************************
  * @file  hc32_ll_tmr6.h
- * @brief Head file for TMR6 module.
- *
+ * @brief This file contains all the functions prototypes of the TMR6 driver
+ *        library.
  @verbatim
    Change Logs:
    Date             Author          Notes
    2022-03-31       CDT             First version
+   2023-01-15       CDT             Modify structure stc_timer6_init_t to stc_tmr6_init_t
+                                    Modify macro define for group TMR6_hardware_xxx_condition_Define
+                                    Modify macro define for group TMR6_HW_Count_xx_Cond_Define
+                                    Modify macro define for group TMR6_Valid_Period_Count_Cond_Define
+                                    Modify API TMR6_SetFilterClockDiv()
+   2023-06-30       CDT             Modify for TMR6_Count_Mode_Define
+                                    Delete union in stc_tmr6_init_t structure
+   2023-09-30       CDT             Add macro define for TMR6_Count_Dir_Status_Define
+                                    Modify typo
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -60,20 +69,17 @@ extern "C"
  */
 typedef struct {
     uint8_t u8CountSrc;             /*!< Specifies the count source @ref TMR6_Count_Src_Define */
-    union {
-        struct {
-            uint32_t u32ClockDiv;   /*!< Count clock division select, @ref TMR6_Count_Clock_Define */
-            uint32_t u32CountMode;  /*!< Count mode, @ref TMR6_Count_Mode_Define */
-            uint32_t u32CountDir;   /*!< Count direction, @ref TMR6_Count_Dir_Define */
-        } sw_count;
-        struct {
-            uint32_t u32CountUpCond;   /*!< Hardware count up condition. @ref TMR6_HW_Count_Up_Cond_Define */
-            uint32_t u32CountDownCond; /*!< Hardware count down condition. @ref TMR6_HW_Count_Down_Cond_Define */
-            uint32_t u32Reserved;      /*!< Reserved */
-        } hw_count;
-    };
+    struct {
+        uint32_t u32ClockDiv;   /*!< Count clock division select, @ref TMR6_Count_Clock_Define */
+        uint32_t u32CountMode;  /*!< Count mode, @ref TMR6_Count_Mode_Define */
+        uint32_t u32CountDir;   /*!< Count direction, @ref TMR6_Count_Dir_Define */
+    } sw_count;
+    struct {
+        uint32_t u32CountUpCond;   /*!< Hardware count up condition. @ref TMR6_HW_Count_Up_Cond_Define */
+        uint32_t u32CountDownCond; /*!< Hardware count down condition. @ref TMR6_HW_Count_Down_Cond_Define */
+    } hw_count;
     uint32_t u32PeriodValue;        /*!< The period reference value. (0x00 ~ 0xFFFF) or (0x00 ~ 0xFFFFFFFF) */
-} stc_timer6_init_t;
+} stc_tmr6_init_t;
 
 /**
  * @brief Timer6 pwm output function structure definition
@@ -94,7 +100,7 @@ typedef struct {
 typedef struct {
     uint32_t u32BufNum;             /*!< The buffer number, and this parameter can be a value of \
                                          @ref TMR6_Buf_Num_Define */
-    uint32_t u32BufTransCond;    /*!< The buffer send time, and this parameter can be a value of \
+    uint32_t u32BufTransCond;       /*!< The buffer send time, and this parameter can be a value of \
                                          @ref TMR6_Buf_Trans_Cond_Define */
 } stc_tmr6_buf_config_t;
 
@@ -180,6 +186,7 @@ typedef struct {
 #define TMR6_FLAG_UP_CNT_SPECIAL_MATCH_B    (TMR6_STFLR_CMSBUF)     /*!< SCMBR match counter when count-up */
 #define TMR6_FLAG_DOWN_CNT_SPECIAL_MATCH_B  (TMR6_STFLR_CMSBDF)     /*!< SCMBR match counter when count-down */
 #define TMR6_FLAG_CNT_DIR                   (TMR6_STFLR_DIRF)       /*!< Count direction flag */
+
 #define TMR6_FLAG_CLR_ALL                   (0x00001EFFUL)          /*!< Clear all flag */
 #define TMR6_FLAG_ALL                       (TMR6_FLAG_MATCH_A | TMR6_FLAG_MATCH_B | TMR6_FLAG_MATCH_C | \
                                             TMR6_FLAG_MATCH_D | TMR6_FLAG_MATCH_E | TMR6_FLAG_MATCH_F | \
@@ -187,6 +194,7 @@ typedef struct {
                                             TMR6_FLAG_UP_CNT_SPECIAL_MATCH_A | TMR6_FLAG_DOWN_CNT_SPECIAL_MATCH_A | \
                                             TMR6_FLAG_UP_CNT_SPECIAL_MATCH_B | TMR6_FLAG_DOWN_CNT_SPECIAL_MATCH_B | \
                                             TMR6_FLAG_CNT_DIR)
+
 /**
  * @}
  */
@@ -256,7 +264,7 @@ typedef struct {
  * @defgroup TMR6_Buf_Num_Define TMR6 Buffer Number Define
  * @{
  */
-#define TMR6_BUF_SINGLE                     (0x00000000UL)
+#define TMR6_BUF_SINGLE                     (0x00UL)
 #define TMR6_BUF_DUAL                       (TMR6_BCONR_BSEA)
 /**
  * @}
@@ -266,7 +274,7 @@ typedef struct {
  * @defgroup TMR6_Buf_Trans_Cond_Define TMR6 Buffer Transfer Time Configuration Define
  * @{
  */
-#define TMR6_BUF_TRANS_INVD                 (0x00000000UL)
+#define TMR6_BUF_TRANS_INVD                 (0x00UL)
 #define TMR6_BUF_TRANS_OVF                  (0x00000004UL)
 #define TMR6_BUF_TRANS_UDF                  (0x00000008UL)
 #define TMR6_BUF_TRANS_OVF_UDF              (0x0000000CUL)
@@ -279,13 +287,13 @@ typedef struct {
  * @defgroup TMR6_Valid_Period_Count_Cond_Define TMR6 Valid Period Function Count Condition Define
  * @{
  */
-#define TMR6_VALID_PERIOD_INVD              (0x00000000UL)       /*!< Valid period function off */
-#define TMR6_VALID_PERIOD_CNT_COND_UDF      (TMR6_VPERR_PCNTE_0) /*!< Count when Sawtooth waveform overflow and underflow, \
-                                                                      triangular wave underflow */
-#define TMR6_VALID_PERIOD_CNT_COND_OVF      (TMR6_VPERR_PCNTE_1) /*!< Count when Sawtooth waveform overflow and underflow, \
-                                                                      triangular wave overflow */
-#define TMR6_VALID_PERIOD_CNT_COND_OVF_UDF  (TMR6_VPERR_PCNTE)   /*!< Count when Sawtooth waveform overflow and underflow, \
-                                                                      triangular wave overflow and underflow */
+#define TMR6_VALID_PERIOD_INVD                  (0x00UL)             /*!< Valid period function off */
+#define TMR6_VALID_PERIOD_CNT_COND_VALLEY       (TMR6_VPERR_PCNTE_0) /*!< Count when Sawtooth waveform overflow and underflow, \
+                                                                        triangular wave valley */
+#define TMR6_VALID_PERIOD_CNT_COND_PEAK         (TMR6_VPERR_PCNTE_1) /*!< Count when Sawtooth waveform overflow and underflow, \
+                                                                        triangular wave peak */
+#define TMR6_VALID_PERIOD_CNT_COND_VALLEY_PEAK  (TMR6_VPERR_PCNTE)   /*!< Count when Sawtooth waveform overflow and underflow, \
+                                                                        triangular wave valley and peak */
 /**
  * @}
  */
@@ -294,7 +302,7 @@ typedef struct {
  * @defgroup TMR6_Valid_Period_Count_Define TMR6 Valid Period Function Count Define
  * @{
  */
-#define TMR6_VALID_PERIOD_CNT_INVD          (0x00000000UL)
+#define TMR6_VALID_PERIOD_CNT_INVD          (0x00UL)
 #define TMR6_VALID_PERIOD_CNT1              (1UL << TMR6_VPERR_PCNTS_POS)
 #define TMR6_VALID_PERIOD_CNT2              (2UL << TMR6_VPERR_PCNTS_POS)
 #define TMR6_VALID_PERIOD_CNT3              (3UL << TMR6_VPERR_PCNTS_POS)
@@ -314,7 +322,6 @@ typedef struct {
 #define TMR6_DEADTIME_REG_DOWN_A            (0x01U)         /*!< Register DTDAR */
 #define TMR6_DEADTIME_REG_UP_B              (0x02U)         /*!< Register DTUBR */
 #define TMR6_DEADTIME_REG_DOWN_B            (0x03U)         /*!< Register DTDBR */
-
 /**
  * @}
  */
@@ -347,7 +354,7 @@ typedef struct {
  * @defgroup TMR6_Pin_Mode_Define TMR6 Pin Function Mode Selection
  * @{
  */
-#define TMR6_PIN_CMP_OUTPUT                 (0x00U)
+#define TMR6_PIN_CMP_OUTPUT                 (0x00UL)
 #define TMR6_PIN_CAPT_INPUT                 (TMR6_PCONR_CAPMDA)
 /**
  * @}
@@ -357,10 +364,10 @@ typedef struct {
  * @defgroup TMR6_Count_State_Define TMR6 Count State
  * @{
  */
-#define TMR6_STAT_START                    (0U)    /*!< Count start */
-#define TMR6_STAT_STOP                     (1U)    /*!< Count stop */
-#define TMR6_STAT_MATCH_CMP                (2U)    /*!< Count match compare register */
-#define TMR6_STAT_MATCH_PERIOD             (3U)    /*!< Count match period register */
+#define TMR6_STAT_START                     (0U)    /*!< Count start */
+#define TMR6_STAT_STOP                      (1U)    /*!< Count stop */
+#define TMR6_STAT_MATCH_CMP                 (2U)    /*!< Count match compare register */
+#define TMR6_STAT_MATCH_PERIOD              (3U)    /*!< Count match period register */
 
 /**
  * @}
@@ -384,7 +391,7 @@ typedef struct {
  * @{
  */
 #define TMR6_PWM_START_STOP_HOLD            (TMR6_PCONR_STASTPSA)
-#define TMR6_PWM_START_STOP_CHANGE          (0UL)
+#define TMR6_PWM_START_STOP_CHANGE          (0x00UL)
 /**
  * @}
  */
@@ -393,7 +400,7 @@ typedef struct {
  * @defgroup TMR6_Emb_Pin_Status_Define TMR6 Pin Output Status When EMB Event Valid
  * @{
  */
-#define TMR6_EMB_PIN_NORMAL                 (0x00U)
+#define TMR6_EMB_PIN_NORMAL                 (0x00UL)
 #define TMR6_EMB_PIN_HIZ                    (TMR6_PCONR_EMBVALA_0)
 #define TMR6_EMB_PIN_LOW                    (TMR6_PCONR_EMBVALA_1)
 #define TMR6_EMB_PIN_HIGH                   (TMR6_PCONR_EMBVALA)
@@ -405,7 +412,7 @@ typedef struct {
  * @defgroup TMR6_Deadtime_CountUp_Buf_Func_Define TMR6 Dead Time Buffer Function For Count Up Stage
  * @{
  */
-#define TMR6_DEADTIME_CNT_UP_BUF_OFF        (0x00U)
+#define TMR6_DEADTIME_CNT_UP_BUF_OFF        (0x00UL)
 #define TMR6_DEADTIME_CNT_UP_BUF_ON         (TMR6_DCONR_DTBENU)
 /**
  * @}
@@ -415,7 +422,7 @@ typedef struct {
  * @defgroup TMR6_Deadtime_CountDown_Buf_Func_Define TMR6 Dead Time Buffer Function For Count Down Stage
  * @{
  */
-#define TMR6_DEADTIME_CNT_DOWN_BUF_OFF      (0x00U)
+#define TMR6_DEADTIME_CNT_DOWN_BUF_OFF      (0x00UL)
 #define TMR6_DEADTIME_CNT_DOWN_BUF_ON       (TMR6_DCONR_DTBEND)
 /**
  * @}
@@ -425,7 +432,7 @@ typedef struct {
  * @defgroup TMR6_Deadtime_Reg_Equal_Func_Define TMR6 Dead Time Function DTDAR Equal DTUAR
  * @{
  */
-#define TMR6_DEADTIME_EQUAL_OFF             (0x00U)
+#define TMR6_DEADTIME_EQUAL_OFF             (0x00UL)
 #define TMR6_DEADTIME_EQUAL_ON              (TMR6_DCONR_SEPA)
 /**
  * @}
@@ -438,7 +445,8 @@ typedef struct {
 #define TMR6_SW_SYNC_U1                     (TMR6CR_SSTAR_SSTA1)
 #define TMR6_SW_SYNC_U2                     (TMR6CR_SSTAR_SSTA2)
 #define TMR6_SW_SYNC_U3                     (TMR6CR_SSTAR_SSTA3)
-#define TMR6_SW_SYNC_ALL                    (0x07U)
+#define TMR6_SW_SYNC_ALL                    (0x07UL)
+
 /**
  * @}
  */
@@ -450,14 +458,15 @@ typedef struct {
 #define TMR6_START_COND_EVT0                (TMR6_HSTAR_HSTA0)
 #define TMR6_START_COND_EVT1                (TMR6_HSTAR_HSTA1)
 #define TMR6_START_COND_PWMA_RISING         (TMR6_HSTAR_HSTA4)
-#define TMR6_START_COND_PWMA_FAILLING       (TMR6_HSTAR_HSTA5)
+#define TMR6_START_COND_PWMA_FALLING        (TMR6_HSTAR_HSTA5)
 #define TMR6_START_COND_PWMB_RISING         (TMR6_HSTAR_HSTA6)
-#define TMR6_START_COND_PWMB_FAILLING       (TMR6_HSTAR_HSTA7)
-#define TMR6_START_COND_TRIGEA_RISING       (TMR6_HSTAR_HSTA8)
-#define TMR6_START_COND_TRIGEA_FAILLING     (TMR6_HSTAR_HSTA9)
-#define TMR6_START_COND_TRIGEB_RISING       (TMR6_HSTAR_HSTA10)
-#define TMR6_START_COND_TRIGEB_FAILLING     (TMR6_HSTAR_HSTA11)
+#define TMR6_START_COND_PWMB_FALLING        (TMR6_HSTAR_HSTA7)
+#define TMR6_START_COND_TRIGA_RISING        (TMR6_HSTAR_HSTA8)
+#define TMR6_START_COND_TRIGA_FALLING       (TMR6_HSTAR_HSTA9)
+#define TMR6_START_COND_TRIGB_RISING        (TMR6_HSTAR_HSTA10)
+#define TMR6_START_COND_TRIGB_FALLING       (TMR6_HSTAR_HSTA11)
 #define TMR6_START_COND_ALL                 (0x00000FF3UL)
+
 /**
  * @}
  */
@@ -469,14 +478,15 @@ typedef struct {
 #define TMR6_STOP_COND_EVT0                 (TMR6_HSTPR_HSTP0)
 #define TMR6_STOP_COND_EVT1                 (TMR6_HSTPR_HSTP1)
 #define TMR6_STOP_COND_PWMA_RISING          (TMR6_HSTPR_HSTP4)
-#define TMR6_STOP_COND_PWMA_FAILLING        (TMR6_HSTPR_HSTP5)
+#define TMR6_STOP_COND_PWMA_FALLING         (TMR6_HSTPR_HSTP5)
 #define TMR6_STOP_COND_PWMB_RISING          (TMR6_HSTPR_HSTP6)
-#define TMR6_STOP_COND_PWMB_FAILLING        (TMR6_HSTPR_HSTP7)
-#define TMR6_STOP_COND_TRIGEA_RISING        (TMR6_HSTPR_HSTP8)
-#define TMR6_STOP_COND_TRIGEA_FAILLING      (TMR6_HSTPR_HSTP9)
-#define TMR6_STOP_COND_TRIGEB_RISING        (TMR6_HSTPR_HSTP10)
-#define TMR6_STOP_COND_TRIGEB_FAILLING      (TMR6_HSTPR_HSTP11)
+#define TMR6_STOP_COND_PWMB_FALLING         (TMR6_HSTPR_HSTP7)
+#define TMR6_STOP_COND_TRIGA_RISING         (TMR6_HSTPR_HSTP8)
+#define TMR6_STOP_COND_TRIGA_FALLING        (TMR6_HSTPR_HSTP9)
+#define TMR6_STOP_COND_TRIGB_RISING         (TMR6_HSTPR_HSTP10)
+#define TMR6_STOP_COND_TRIGB_FALLING        (TMR6_HSTPR_HSTP11)
 #define TMR6_STOP_COND_ALL                  (0x00000FF3UL)
+
 /**
  * @}
  */
@@ -488,14 +498,15 @@ typedef struct {
 #define TMR6_CLR_COND_EVT0                  (TMR6_HCLRR_HCLE0)
 #define TMR6_CLR_COND_EVT1                  (TMR6_HCLRR_HCLE1)
 #define TMR6_CLR_COND_PWMA_RISING           (TMR6_HCLRR_HCLE4)
-#define TMR6_CLR_COND_PWMA_FAILLING         (TMR6_HCLRR_HCLE5)
+#define TMR6_CLR_COND_PWMA_FALLING          (TMR6_HCLRR_HCLE5)
 #define TMR6_CLR_COND_PWMB_RISING           (TMR6_HCLRR_HCLE6)
-#define TMR6_CLR_COND_PWMB_FAILLING         (TMR6_HCLRR_HCLE7)
-#define TMR6_CLR_COND_TRIGEA_RISING         (TMR6_HCLRR_HCLE8)
-#define TMR6_CLR_COND_TRIGEA_FAILLING       (TMR6_HCLRR_HCLE9)
-#define TMR6_CLR_COND_TRIGEB_RISING         (TMR6_HCLRR_HCLE10)
-#define TMR6_CLR_COND_TRIGEB_FAILLING       (TMR6_HCLRR_HCLE11)
+#define TMR6_CLR_COND_PWMB_FALLING          (TMR6_HCLRR_HCLE7)
+#define TMR6_CLR_COND_TRIGA_RISING          (TMR6_HCLRR_HCLE8)
+#define TMR6_CLR_COND_TRIGA_FALLING         (TMR6_HCLRR_HCLE9)
+#define TMR6_CLR_COND_TRIGB_RISING          (TMR6_HCLRR_HCLE10)
+#define TMR6_CLR_COND_TRIGB_FALLING         (TMR6_HCLRR_HCLE11)
 #define TMR6_CLR_COND_ALL                   (0x00000FF3UL)
+
 /**
  * @}
  */
@@ -507,13 +518,13 @@ typedef struct {
 #define TMR6_CAPT_COND_EVT0                 (TMR6_HCPAR_HCPA0)
 #define TMR6_CAPT_COND_EVT1                 (TMR6_HCPAR_HCPA1)
 #define TMR6_CAPT_COND_PWMA_RISING          (TMR6_HCPAR_HCPA4)
-#define TMR6_CAPT_COND_PWMA_FAILLING        (TMR6_HCPAR_HCPA5)
+#define TMR6_CAPT_COND_PWMA_FALLING         (TMR6_HCPAR_HCPA5)
 #define TMR6_CAPT_COND_PWMB_RISING          (TMR6_HCPAR_HCPA6)
-#define TMR6_CAPT_COND_PWMB_FAILLING        (TMR6_HCPAR_HCPA7)
-#define TMR6_CAPT_COND_TRIGEA_RISING        (TMR6_HCPAR_HCPA8)
-#define TMR6_CAPT_COND_TRIGEA_FAILLING      (TMR6_HCPAR_HCPA9)
-#define TMR6_CAPT_COND_TRIGEB_RISING        (TMR6_HCPAR_HCPA10)
-#define TMR6_CAPT_COND_TRIGEB_FAILLING      (TMR6_HCPAR_HCPA11)
+#define TMR6_CAPT_COND_PWMB_FALLING         (TMR6_HCPAR_HCPA7)
+#define TMR6_CAPT_COND_TRIGA_RISING         (TMR6_HCPAR_HCPA8)
+#define TMR6_CAPT_COND_TRIGA_FALLING        (TMR6_HCPAR_HCPA9)
+#define TMR6_CAPT_COND_TRIGB_RISING         (TMR6_HCPAR_HCPA10)
+#define TMR6_CAPT_COND_TRIGB_FALLING        (TMR6_HCPAR_HCPA11)
 #define TMR6_CAPT_COND_ALL                  (0x00000FF3UL)
 /**
  * @}
@@ -523,21 +534,23 @@ typedef struct {
  * @defgroup TMR6_HW_Count_Up_Cond_Define TMR6 Hardware Count Up Condition Define
  * @{
  */
-#define TMR6_CNT_UP_COND_PWMA_LOW_PWMB_RISING    (TMR6_HCUPR_HCUP0)
-#define TMR6_CNT_UP_COND_PWMA_LOW_PWMB_FAILLING  (TMR6_HCUPR_HCUP1)
-#define TMR6_CNT_UP_COND_PWMA_HIGH_PWMB_RISING   (TMR6_HCUPR_HCUP2)
-#define TMR6_CNT_UP_COND_PWMA_HIGH_PWMB_FAILLING (TMR6_HCUPR_HCUP3)
-#define TMR6_CNT_UP_COND_PWMB_LOW_PWMA_RISING    (TMR6_HCUPR_HCUP4)
-#define TMR6_CNT_UP_COND_PWMB_LOW_PWMA_FAILLING  (TMR6_HCUPR_HCUP5)
-#define TMR6_CNT_UP_COND_PWMB_HIGH_PWMA_RISING   (TMR6_HCUPR_HCUP6)
-#define TMR6_CNT_UP_COND_PWMB_HIGH_PWMA_FAILLING (TMR6_HCUPR_HCUP7)
-#define TMR6_CNT_UP_COND_TRIGEA_RISING           (TMR6_HCUPR_HCUP8)
-#define TMR6_CNT_UP_COND_TRIGEA_FAILLING         (TMR6_HCUPR_HCUP9)
-#define TMR6_CNT_UP_COND_TRIGEB_RISING           (TMR6_HCUPR_HCUP10)
-#define TMR6_CNT_UP_COND_TRIGEB_FAILLING         (TMR6_HCUPR_HCUP11)
-#define TMR6_CNT_UP_COND_EVT0                    (TMR6_HCUPR_HCUP16)
-#define TMR6_CNT_UP_COND_EVT1                    (TMR6_HCUPR_HCUP17)
-#define TMR6_CNT_UP_COND_ALL                     (0x00030FFFUL)
+#define TMR6_CNT_UP_COND_INVD                       (0U)
+#define TMR6_CNT_UP_COND_PWMA_LOW_PWMB_RISING       (TMR6_HCUPR_HCUP0)
+#define TMR6_CNT_UP_COND_PWMA_LOW_PWMB_FALLING      (TMR6_HCUPR_HCUP1)
+#define TMR6_CNT_UP_COND_PWMA_HIGH_PWMB_RISING      (TMR6_HCUPR_HCUP2)
+#define TMR6_CNT_UP_COND_PWMA_HIGH_PWMB_FALLING     (TMR6_HCUPR_HCUP3)
+#define TMR6_CNT_UP_COND_PWMB_LOW_PWMA_RISING       (TMR6_HCUPR_HCUP4)
+#define TMR6_CNT_UP_COND_PWMB_LOW_PWMA_FALLING      (TMR6_HCUPR_HCUP5)
+#define TMR6_CNT_UP_COND_PWMB_HIGH_PWMA_RISING      (TMR6_HCUPR_HCUP6)
+#define TMR6_CNT_UP_COND_PWMB_HIGH_PWMA_FALLING     (TMR6_HCUPR_HCUP7)
+#define TMR6_CNT_UP_COND_TRIGA_RISING               (TMR6_HCUPR_HCUP8)
+#define TMR6_CNT_UP_COND_TRIGA_FALLING              (TMR6_HCUPR_HCUP9)
+#define TMR6_CNT_UP_COND_TRIGB_RISING               (TMR6_HCUPR_HCUP10)
+#define TMR6_CNT_UP_COND_TRIGB_FALLING              (TMR6_HCUPR_HCUP11)
+#define TMR6_CNT_UP_COND_EVT0                       (TMR6_HCUPR_HCUP16)
+#define TMR6_CNT_UP_COND_EVT1                       (TMR6_HCUPR_HCUP17)
+#define TMR6_CNT_UP_COND_ALL                        (0x00030FFFUL)
+
 /**
  * @}
  */
@@ -546,21 +559,23 @@ typedef struct {
  * @defgroup TMR6_HW_Count_Down_Cond_Define TMR6 Hardware Count Down Condition Define
  * @{
  */
-#define TMR6_CNT_DOWN_COND_PWMA_LOW_PWMB_RISING    (TMR6_HCDOR_HCDO0)
-#define TMR6_CNT_DOWN_COND_PWMA_LOW_PWMB_FAILLING  (TMR6_HCDOR_HCDO1)
-#define TMR6_CNT_DOWN_COND_PWMA_HIGH_PWMB_RISING   (TMR6_HCDOR_HCDO2)
-#define TMR6_CNT_DOWN_COND_PWMA_HIGH_PWMB_FAILLING (TMR6_HCDOR_HCDO3)
-#define TMR6_CNT_DOWN_COND_PWMB_LOW_PWMA_RISING    (TMR6_HCDOR_HCDO4)
-#define TMR6_CNT_DOWN_COND_PWMB_LOW_PWMA_FAILLING  (TMR6_HCDOR_HCDO5)
-#define TMR6_CNT_DOWN_COND_PWMB_HIGH_PWMA_RISING   (TMR6_HCDOR_HCDO6)
-#define TMR6_CNT_DOWN_COND_PWMB_HIGH_PWMA_FAILLING (TMR6_HCDOR_HCDO7)
-#define TMR6_CNT_DOWN_COND_TRIGEA_RISING           (TMR6_HCDOR_HCDO8)
-#define TMR6_CNT_DOWN_COND_TRIGEA_FAILLING         (TMR6_HCDOR_HCDO9)
-#define TMR6_CNT_DOWN_COND_TRIGEB_RISING           (TMR6_HCDOR_HCDO10)
-#define TMR6_CNT_DOWN_COND_TRIGEB_FAILLING         (TMR6_HCDOR_HCDO11)
-#define TMR6_CNT_DOWN_COND_EVT0                    (TMR6_HCDOR_HCDO16)
-#define TMR6_CNT_DOWN_COND_EVT1                    (TMR6_HCDOR_HCDO17)
-#define TMR6_CNT_DOWN_COND_ALL                     (0x00030FFFUL)
+#define TMR6_CNT_DOWN_COND_INVD                     (0U)
+#define TMR6_CNT_DOWN_COND_PWMA_LOW_PWMB_RISING     (TMR6_HCDOR_HCDO0)
+#define TMR6_CNT_DOWN_COND_PWMA_LOW_PWMB_FALLING    (TMR6_HCDOR_HCDO1)
+#define TMR6_CNT_DOWN_COND_PWMA_HIGH_PWMB_RISING    (TMR6_HCDOR_HCDO2)
+#define TMR6_CNT_DOWN_COND_PWMA_HIGH_PWMB_FALLING   (TMR6_HCDOR_HCDO3)
+#define TMR6_CNT_DOWN_COND_PWMB_LOW_PWMA_RISING     (TMR6_HCDOR_HCDO4)
+#define TMR6_CNT_DOWN_COND_PWMB_LOW_PWMA_FALLING    (TMR6_HCDOR_HCDO5)
+#define TMR6_CNT_DOWN_COND_PWMB_HIGH_PWMA_RISING    (TMR6_HCDOR_HCDO6)
+#define TMR6_CNT_DOWN_COND_PWMB_HIGH_PWMA_FALLING   (TMR6_HCDOR_HCDO7)
+#define TMR6_CNT_DOWN_COND_TRIGA_RISING             (TMR6_HCDOR_HCDO8)
+#define TMR6_CNT_DOWN_COND_TRIGA_FALLING            (TMR6_HCDOR_HCDO9)
+#define TMR6_CNT_DOWN_COND_TRIGB_RISING             (TMR6_HCDOR_HCDO10)
+#define TMR6_CNT_DOWN_COND_TRIGB_FALLING            (TMR6_HCDOR_HCDO11)
+#define TMR6_CNT_DOWN_COND_EVT0                     (TMR6_HCDOR_HCDO16)
+#define TMR6_CNT_DOWN_COND_EVT1                     (TMR6_HCDOR_HCDO17)
+#define TMR6_CNT_DOWN_COND_ALL                      (0x00030FFFUL)
+
 /**
  * @}
  */
@@ -570,7 +585,17 @@ typedef struct {
  * @{
  */
 #define TMR6_CNT_UP                         (TMR6_GCONR_DIR)
-#define TMR6_CNT_DOWN                       (0x00U)
+#define TMR6_CNT_DOWN                       (0x00UL)
+/**
+ * @}
+ */
+
+/**
+ * @defgroup TMR6_Count_Dir_Status_Define TMR6 Count Direction Status Define
+ * @{
+ */
+#define TMR6_STAT_CNT_UP                    (TMR6_STFLR_DIRF)
+#define TMR6_STAT_CNT_DOWN                  (0x00UL)
 /**
  * @}
  */
@@ -579,9 +604,9 @@ typedef struct {
  * @defgroup TMR6_Count_Mode_Define TMR6 Base Counter Function Mode Define
  * @{
  */
-#define TMR6_MD_SAWTOOTH                    (0x00U)
-#define TMR6_MD_TRIANGLE_A                  (TMR6_GCONR_MODE_2)
-#define TMR6_MD_TRIANGLE_B                  (TMR6_GCONR_MODE_2 | TMR6_GCONR_MODE_0)
+#define TMR6_MD_SAWTOOTH                    (0x00UL)
+#define TMR6_MD_TRIANGLE_A                  (0x04UL << TMR6_GCONR_MODE_POS)
+#define TMR6_MD_TRIANGLE_B                  (0x05UL << TMR6_GCONR_MODE_POS)
 /**
  * @}
  */
@@ -606,7 +631,7 @@ typedef struct {
  * @defgroup TMR6_Zmask_Cycle_Define TMR6 Z Mask Input Function Mask Cycles Number Define
  * @{
  */
-#define TMR6_ZMASK_FUNC_INVD                (0x00U)
+#define TMR6_ZMASK_FUNC_INVD                (0x00UL)
 #define TMR6_ZMASK_CYCLE_4                  (TMR6_GCONR_ZMSKVAL_0)
 #define TMR6_ZMASK_CYCLE_8                  (TMR6_GCONR_ZMSKVAL_1)
 #define TMR6_ZMASK_CYCLE_16                 (TMR6_GCONR_ZMSKVAL)
@@ -618,7 +643,7 @@ typedef struct {
  * @defgroup TMR6_Zmask_Pos_Unit_Clear_Func_Define TMR6 Unit As Position Timer, Z Phase Input Mask Function Define For Clear Action
  * @{
  */
-#define TMR6_POS_CLR_ZMASK_FUNC_OFF         (0x00U)
+#define TMR6_POS_CLR_ZMASK_FUNC_OFF         (0x00UL)
 #define TMR6_POS_CLR_ZMASK_FUNC_ON          (TMR6_GCONR_ZMSKPOS)
 /**
  * @}
@@ -628,7 +653,7 @@ typedef struct {
  * @defgroup TMR6_Zmask_Revo_Unit_Count_Func_Define TMR6 Unit As Revolution Timer, Z Phase Input Mask Function Define For Count Action
  * @{
  */
-#define TMR6_REVO_CNT_ZMASK_FUNC_OFF        (0x00U)
+#define TMR6_REVO_CNT_ZMASK_FUNC_OFF        (0x00UL)
 #define TMR6_REVO_CNT_ZMASK_FUNC_ON         (TMR6_GCONR_ZMSKREV)
 /**
  * @}
@@ -660,8 +685,8 @@ __STATIC_INLINE uint32_t TMR6_GetSWSyncStartStatus(void)
 }
 
 /* Base count */
-int32_t TMR6_StructInit(stc_timer6_init_t *pstcTmr6Init);
-int32_t TMR6_Init(CM_TMR6_TypeDef *TMR6x, const stc_timer6_init_t *pstcTmr6Init);
+int32_t TMR6_StructInit(stc_tmr6_init_t *pstcTmr6Init);
+int32_t TMR6_Init(CM_TMR6_TypeDef *TMR6x, const stc_tmr6_init_t *pstcTmr6Init);
 
 void TMR6_SetCountMode(CM_TMR6_TypeDef *TMR6x, uint32_t u32Mode);
 void TMR6_SetCountDir(CM_TMR6_TypeDef *TMR6x, uint32_t u32Dir);
@@ -683,7 +708,8 @@ void TMR6_PWM_SetStartStopHold(CM_TMR6_TypeDef *TMR6x, uint32_t u32Ch, uint32_t 
 void TMR6_HWCaptureCondCmd(CM_TMR6_TypeDef *TMR6x, uint32_t u32Ch, uint32_t u32Cond, en_functional_state_t enNewState);
 
 /* Pin config */
-int32_t TMR6_SetFilterClockDiv(CM_TMR6_TypeDef *TMR6x, uint32_t u32Pin, uint32_t u32Div);
+/* note: Please make sure that peripheral clock of CM_TMR6_1 is valid if The TRIGX pin is used.*/
+void TMR6_SetFilterClockDiv(CM_TMR6_TypeDef *TMR6x, uint32_t u32Pin, uint32_t u32Div);
 void TMR6_FilterCmd(CM_TMR6_TypeDef *TMR6x, uint32_t u32Pin, en_functional_state_t enNewState);
 void TMR6_SetFunc(CM_TMR6_TypeDef *TMR6x, uint32_t u32Ch, uint32_t u32Func);
 

@@ -6,9 +6,12 @@
    Change Logs:
    Date             Author          Notes
    2022-03-31       CDT             First version
+   2022-06-30       CDT             Modify for MISRAC
+                                    Delete comment
+   2023-09-30       CDT             Modify function usb_susp_isr()
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -143,10 +146,9 @@ static void usb_susp_isr(usb_core_instance *pdev)
     u32dsts = READ_REG32(pdev->regs.DREGS->DSTS);
     WRITE_REG32(pdev->regs.GREGS->GINTSTS, USBFS_GINTSTS_USBSUSP);
 
-    u8PrevStatus = pdev->dev.device_cur_status;
-    if ((u8PrevStatus == USB_DEV_CONFIGURED) &&
-            (0U != pdev->basic_cfgs.low_power) && ((u32dsts & 1UL) != 0UL)  &&
-            (pdev->dev.connection_status == 1U)) {
+    u8PrevStatus = pdev->dev.device_old_status;
+    if ((pdev->dev.connection_status == 1U) && (u8PrevStatus == USB_DEV_CONFIGURED) &&
+        (0U != pdev->basic_cfgs.low_power) && ((u32dsts & 1UL) != 0UL)) {
         SET_REG32_BIT(*pdev->regs.GCCTL, USBFS_GCCTL_STPPCLK);
         SET_REG32_BIT(*pdev->regs.GCCTL, USBFS_GCCTL_GATEHCLK);
     }
@@ -166,7 +168,7 @@ static void usb_inep_isr(usb_core_instance *pdev)
 
     u32EpIntr = usb_getalliepintr(&pdev->regs);
     u8epnum = 0U;
-    while ((0U != u32EpIntr) && (u8epnum <= USB_MAX_TX_FIFOS)) {
+    while ((0U != u32EpIntr) && (u8epnum < USB_MAX_TX_FIFOS)) {
         if ((u32EpIntr & 0x1UL) != 0UL) {
             u32diepint = usb_rddevinep(pdev, u8epnum);
             if ((u32diepint & XFER_COMPL) != 0UL) {
@@ -175,7 +177,7 @@ static void usb_inep_isr(usb_core_instance *pdev)
                 WRITE_REG32(pdev->regs.INEP_REGS[u8epnum]->DIEPINT, XFER_COMPL);
                 dev_int_cbkpr->DataInStage(pdev, u8epnum);
                 if (pdev->basic_cfgs.dmaen == 1U) {
-                    if ((u8epnum == 0U) && (pdev->dev.device_state == USB_EP0_STATUS_IN)) {
+                    if ((pdev->dev.device_state == USB_EP0_STATUS_IN) && (u8epnum == 0U)) {
                         pdev->dev.out_ep[0].xfer_len = 64U;
                         pdev->dev.out_ep[0].rem_data_len = 64U;
                         pdev->dev.out_ep[0].total_data_len = 64U;
@@ -220,7 +222,7 @@ static void usb_outep_isr(usb_core_instance *pdev)
     uint32_t u32ReadEpSize;
 
     u32EpIntr = usb_getalloepintr(&pdev->regs);
-    while ((u32EpIntr != 0UL) && (u8epnum <= USB_MAX_TX_FIFOS)) {
+    while ((u32EpIntr != 0UL) && (u8epnum < USB_MAX_TX_FIFOS)) {
         if ((u32EpIntr & 0x1UL) != 0UL) {
             u32doepint = usb_getoepintbit(&pdev->regs, u8epnum);
             if ((u32doepint & XFER_COMPL) != 0UL) {
@@ -235,7 +237,7 @@ static void usb_outep_isr(usb_core_instance *pdev)
                 }
                 dev_int_cbkpr->DataOutStage(pdev, u8epnum);
                 if (pdev->basic_cfgs.dmaen == 1U) {
-                    if ((u8epnum == 0U) && (pdev->dev.device_state == USB_EP0_STATUS_OUT)) {
+                    if ((pdev->dev.device_state == USB_EP0_STATUS_OUT) && (u8epnum == 0U)) {
                         pdev->dev.out_ep[0].xfer_len       = 64U;
                         pdev->dev.out_ep[0].rem_data_len   = 64U;
                         pdev->dev.out_ep[0].total_data_len = 64U;
@@ -333,7 +335,7 @@ static void usb_reset_isr(usb_core_instance *pdev)
     }
     WRITE_REG32(pdev->regs.DREGS->DAINT, 0xFFFFFFFFUL);
     WRITE_REG32(pdev->regs.DREGS->DAINTMSK, 1UL | (1UL << USBFS_DAINTMSK_OEPINTM_POS));
-    //todo: bit5 if need be set?
+
     WRITE_REG32(pdev->regs.DREGS->DOEPMSK, USBFS_DOEPMSK_STUPM | USBFS_DOEPMSK_XFRCM | USBFS_DOEPMSK_EPDM);
 #ifdef USB_OTG_HS_DEDICATED_EP1_ENABLED
     WRITE_REG32(pdev->regs.DREGS->DOUTEP1MSK, USBFS_DOEPMSK_STUPM | USBFS_DOEPMSK_XFRCM | USBFS_DOEPMSK_EPDM);

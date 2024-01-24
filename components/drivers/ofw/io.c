@@ -10,7 +10,6 @@
 
 #include <rtthread.h>
 
-#include <ioremap.h>
 #include <drivers/ofw.h>
 #include <drivers/ofw_io.h>
 #include <drivers/ofw_fdt.h>
@@ -155,7 +154,7 @@ static rt_err_t ofw_get_address_by_name(struct rt_ofw_node *np, const char *name
 
 {
     int index = 0;
-    rt_err_t err = RT_EOK;
+    rt_err_t err = -RT_EEMPTY;
     const char *reg_name;
     struct rt_ofw_prop *prop;
 
@@ -386,6 +385,22 @@ rt_uint64_t rt_ofw_translate_address(struct rt_ofw_node *np, const char *range_t
     return cpu_addr;
 }
 
+#ifdef ARCH_CPU_64BIT
+#define ofw_address_cpu_cast(np, address) (void *)(address)
+#else
+#define ofw_address_cpu_cast(np, address)                       \
+({                                                              \
+    if (((address) >> 32))                                      \
+    {                                                           \
+        LOG_W("%s find 64 bits address = %x%x",                 \
+                rt_ofw_node_full_name(np),                      \
+                ofw_static_cast(rt_ubase_t, (address) >> 32),   \
+                ofw_static_cast(rt_ubase_t, (address)));        \
+    }                                                           \
+    (void *)ofw_static_cast(rt_ubase_t, (address));             \
+})
+#endif
+
 void *rt_ofw_iomap(struct rt_ofw_node *np, int index)
 {
     void *iomem = RT_NULL;
@@ -396,7 +411,7 @@ void *rt_ofw_iomap(struct rt_ofw_node *np, int index)
 
         if (!ofw_get_address(np, index, &regs[0], &regs[1]))
         {
-            iomem = rt_ioremap((void *)regs[0], (size_t)regs[1]);
+            iomem = rt_ioremap(ofw_address_cpu_cast(np, regs[0]), (size_t)regs[1]);
         }
     }
 
@@ -413,7 +428,7 @@ void *rt_ofw_iomap_by_name(struct rt_ofw_node *np, const char *name)
 
         if (!ofw_get_address_by_name(np, name, &regs[0], &regs[1]))
         {
-            iomem = rt_ioremap((void *)regs[0], (size_t)regs[1]);
+            iomem = rt_ioremap(ofw_address_cpu_cast(np, regs[0]), (size_t)regs[1]);
         }
     }
 

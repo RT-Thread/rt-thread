@@ -30,6 +30,8 @@
  * 2022-01-07     Gabriel      Moving __on_rt_xxxxx_hook to scheduler.c
  * 2023-03-27     rose_man     Split into scheduler upc and scheduler_mp.c
  * 2023-09-15     xqyjlj       perf rt_hw_interrupt_disable/enable
+ * 2023-12-10     xqyjlj       use rt_hw_spinlock
+ * 2024-01-05     Shell        Fixup of data racing in rt_critical_level
  */
 
 #include <rtthread.h>
@@ -40,19 +42,12 @@
 #include <rtdbg.h>
 
 rt_list_t rt_thread_priority_table[RT_THREAD_PRIORITY_MAX];
-static RT_DEFINE_SPINLOCK(_spinlock);
+static rt_hw_spinlock_t _mp_scheduler_spinlock;
 rt_uint32_t rt_thread_ready_priority_group;
 #if RT_THREAD_PRIORITY_MAX > 32
 /* Maximum priority level, 256 */
 rt_uint8_t rt_thread_ready_table[32];
 #endif /* RT_THREAD_PRIORITY_MAX > 32 */
-
-#ifndef __on_rt_scheduler_hook
-    #define __on_rt_scheduler_hook(from, to)        __ON_HOOK_ARGS(rt_scheduler_hook, (from, to))
-#endif
-#ifndef __on_rt_scheduler_switch_hook
-    #define __on_rt_scheduler_switch_hook(tid)      __ON_HOOK_ARGS(rt_scheduler_switch_hook, (tid))
-#endif
 
 #if defined(RT_USING_HOOK) && defined(RT_HOOK_USING_FUNC_PTR)
 static void (*rt_scheduler_hook)(struct rt_thread *from, struct rt_thread *to);
@@ -122,7 +117,7 @@ static void _scheduler_stack_check(struct rt_thread *thread)
         rt_kprintf("thread:%s stack overflow\n", thread->parent.name);
 
         level = rt_hw_local_irq_disable();
-        rt_spin_lock(&_spinlock);
+        rt_hw_spin_lock(&_mp_scheduler_spinlock);
         while (level);
     }
 #endif
@@ -200,6 +195,8 @@ void rt_system_scheduler_init(void)
     LOG_D("start scheduler: max priority 0x%02x",
           RT_THREAD_PRIORITY_MAX);
 
+    rt_hw_spin_lock_init(&_mp_scheduler_spinlock);
+
     for (offset = 0; offset < RT_THREAD_PRIORITY_MAX; offset ++)
     {
         rt_list_init(&rt_thread_priority_table[offset]);
@@ -266,14 +263,14 @@ static void _rt_schedule_insert_thread(struct rt_thread *thread, rt_bool_t is_lo
     /* disable interrupt */
     if(is_lock)
     {
-        rt_spin_lock(&(thread->spinlock));
+        rt_hw_spin_lock(&(thread->spinlock.lock));
     }
 
     if ((thread->stat & RT_THREAD_STAT_MASK) == RT_THREAD_READY)
     {
         if(is_lock)
         {
-            rt_spin_unlock(&(thread->spinlock));
+            rt_hw_spin_unlock(&(thread->spinlock.lock));
         }
         return;
     }
@@ -284,7 +281,7 @@ static void _rt_schedule_insert_thread(struct rt_thread *thread, rt_bool_t is_lo
         thread->stat = RT_THREAD_RUNNING | (thread->stat & ~RT_THREAD_STAT_MASK);
         if(is_lock)
         {
-            rt_spin_unlock(&(thread->spinlock));
+            rt_hw_spin_unlock(&(thread->spinlock.lock));
         }
         return;
     }
@@ -317,7 +314,7 @@ static void _rt_schedule_insert_thread(struct rt_thread *thread, rt_bool_t is_lo
         }
         if(is_lock)
         {
-            rt_spin_unlock(&(thread->spinlock));
+            rt_hw_spin_unlock(&(thread->spinlock.lock));
         }
 
         cpu_mask = RT_CPU_MASK ^ (1 << cpu_id);
@@ -329,7 +326,7 @@ static void _rt_schedule_insert_thread(struct rt_thread *thread, rt_bool_t is_lo
 
         if(is_lock)
         {
-            rt_spin_lock(&(pcpu->spinlock));
+            rt_hw_spin_lock(&(pcpu->spinlock.lock));
         }
 #if RT_THREAD_PRIORITY_MAX > 32
         pcpu->ready_table[thread->number] |= thread->high_mask;
@@ -351,8 +348,8 @@ static void _rt_schedule_insert_thread(struct rt_thread *thread, rt_bool_t is_lo
 
         if(is_lock)
         {
-            rt_spin_unlock(&(pcpu->spinlock));
-            rt_spin_unlock(&(thread->spinlock));
+            rt_hw_spin_unlock(&(pcpu->spinlock.lock));
+            rt_hw_spin_unlock(&(thread->spinlock.lock));
         }
 
         if (cpu_id != bind_cpu)
@@ -397,7 +394,7 @@ static void _rt_schedule_remove_thread(struct rt_thread *thread, rt_bool_t is_lo
         struct rt_cpu *pcpu = rt_cpu_index(thread->bind_cpu);
         if(is_lock)
         {
-            rt_spin_lock(&(pcpu->spinlock));
+            rt_hw_spin_lock(&(pcpu->spinlock.lock));
         }
         if (rt_list_isempty(&(pcpu->priority_table[thread->current_priority])))
         {
@@ -413,7 +410,7 @@ static void _rt_schedule_remove_thread(struct rt_thread *thread, rt_bool_t is_lo
         }
         if(is_lock)
         {
-            rt_spin_unlock(&(pcpu->spinlock));
+            rt_hw_spin_unlock(&(pcpu->spinlock.lock));
         }
     }
 }
@@ -428,17 +425,17 @@ void rt_system_scheduler_start(void)
     rt_ubase_t highest_ready_priority;
 
     rt_hw_local_irq_disable();
-    rt_spin_lock(&_spinlock);
+    rt_hw_spin_lock(&_mp_scheduler_spinlock);
 
     to_thread = _scheduler_get_highest_priority_thread(&highest_ready_priority);
-    rt_spin_lock(&to_thread->spinlock);
+    rt_hw_spin_lock(&(to_thread->spinlock.lock));
     to_thread->oncpu = rt_hw_cpu_id();
 
     _rt_schedule_remove_thread(to_thread, RT_TRUE);
     to_thread->stat = RT_THREAD_RUNNING;
 
-    rt_spin_unlock(&to_thread->spinlock);
-    rt_spin_unlock(&_spinlock);
+    rt_hw_spin_unlock(&(to_thread->spinlock.lock));
+    rt_hw_spin_unlock(&_mp_scheduler_spinlock);
 
     rt_hw_spin_unlock(&_cpus_lock);
 
@@ -465,19 +462,19 @@ void rt_schedule(void)
     /* disable interrupt */
     level  = rt_hw_local_irq_disable();
 
-    rt_spin_lock(&_spinlock);
+    rt_hw_spin_lock(&_mp_scheduler_spinlock);
 
     cpu_id = rt_hw_cpu_id();
     pcpu   = rt_cpu_index(cpu_id);
-    rt_spin_lock(&pcpu->spinlock);
+    rt_hw_spin_lock(&(pcpu->spinlock.lock));
     current_thread = pcpu->current_thread;
 
     /* whether do switch in interrupt */
     if (rt_atomic_load(&(pcpu->irq_nest)))
     {
         pcpu->irq_switch_flag = 1;
-        rt_spin_unlock(&pcpu->spinlock);
-        rt_spin_unlock(&_spinlock);
+        rt_hw_spin_unlock(&(pcpu->spinlock.lock));
+        rt_hw_spin_unlock(&_mp_scheduler_spinlock);
         rt_hw_local_irq_enable(level);
         goto __exit;
     }
@@ -498,8 +495,17 @@ void rt_schedule(void)
     }
 #endif /* RT_USING_SIGNALS */
 
-    rt_spin_lock(&(current_thread->spinlock));
-    if (rt_atomic_load(&(current_thread->critical_lock_nest)) == 0) /* whether lock scheduler */
+    /* whether lock scheduler */
+    if (rt_atomic_load(&(current_thread->critical_lock_nest)) != 0)
+    {
+        rt_hw_spin_unlock(&(pcpu->spinlock.lock));
+        rt_hw_spin_unlock(&_mp_scheduler_spinlock);
+        rt_hw_local_irq_enable(level);
+        goto __exit;
+    }
+
+    rt_hw_spin_lock(&(current_thread->spinlock.lock));
+
     {
         rt_ubase_t highest_ready_priority;
 
@@ -533,7 +539,7 @@ void rt_schedule(void)
 
             if (to_thread != current_thread)
             {
-                rt_spin_lock(&(to_thread->spinlock));
+                rt_hw_spin_lock(&(to_thread->spinlock.lock));
             }
             to_thread->oncpu = cpu_id;
             if (to_thread != current_thread)
@@ -560,9 +566,9 @@ void rt_schedule(void)
 
                 RT_OBJECT_HOOK_CALL(rt_scheduler_switch_hook, (current_thread));
 
-                rt_spin_unlock(&(to_thread->spinlock));
-                rt_spin_unlock(&pcpu->spinlock);
-                rt_spin_unlock(&_spinlock);
+                rt_hw_spin_unlock(&(to_thread->spinlock.lock));
+                rt_hw_spin_unlock(&(pcpu->spinlock.lock));
+                rt_hw_spin_unlock(&_mp_scheduler_spinlock);
 
                 need_unlock = RT_FALSE;
                 rt_hw_context_switch((rt_ubase_t)&current_thread->sp,
@@ -573,29 +579,29 @@ void rt_schedule(void)
 
     if(need_unlock)
     {
-        rt_spin_unlock(&(current_thread->spinlock));
-        rt_spin_unlock(&pcpu->spinlock);
-        rt_spin_unlock(&_spinlock);
+        rt_hw_spin_unlock(&(current_thread->spinlock.lock));
+        rt_hw_spin_unlock(&(pcpu->spinlock.lock));
+        rt_hw_spin_unlock(&_mp_scheduler_spinlock);
     }
     rt_hw_local_irq_enable(level);
 
 #ifdef RT_USING_SIGNALS
     /* check stat of thread for signal */
-    rt_spin_lock(&(current_thread->spinlock));
+    rt_hw_spin_lock(&(current_thread->spinlock));
     if (current_thread->stat & RT_THREAD_STAT_SIGNAL_PENDING)
     {
         extern void rt_thread_handle_sig(rt_bool_t clean_state);
 
         current_thread->stat &= ~RT_THREAD_STAT_SIGNAL_PENDING;
 
-        rt_spin_unlock(&(current_thread->spinlock));
+        rt_hw_spin_unlock(&(current_thread->spinlock));
 
         /* check signal status */
         rt_thread_handle_sig(RT_TRUE);
     }
     else
     {
-        rt_spin_unlock(&(current_thread->spinlock));
+        rt_hw_spin_unlock(&(current_thread->spinlock));
     }
 #endif /* RT_USING_SIGNALS */
 
@@ -618,10 +624,10 @@ void rt_scheduler_do_irq_switch(void *context)
     rt_bool_t        need_unlock = RT_TRUE;
 
     level  = rt_hw_local_irq_disable();
-    rt_spin_lock(&_spinlock);
+    rt_hw_spin_lock(&_mp_scheduler_spinlock);
     cpu_id = rt_hw_cpu_id();
     pcpu   = rt_cpu_index(cpu_id);
-    rt_spin_lock(&pcpu->spinlock);
+    rt_hw_spin_lock(&(pcpu->spinlock.lock));
     current_thread = pcpu->current_thread;
 
 #ifdef RT_USING_SIGNALS
@@ -642,14 +648,23 @@ void rt_scheduler_do_irq_switch(void *context)
 
     if (pcpu->irq_switch_flag == 0)
     {
-        rt_spin_unlock(&pcpu->spinlock);
-        rt_spin_unlock(&_spinlock);
+        rt_hw_spin_unlock(&(pcpu->spinlock.lock));
+        rt_hw_spin_unlock(&_mp_scheduler_spinlock);
         rt_hw_local_irq_enable(level);
         return;
     }
-    rt_spin_lock(&(current_thread->spinlock));
-    if (rt_atomic_load(&(current_thread->critical_lock_nest)) == 0 &&
-        rt_atomic_load(&(pcpu->irq_nest)) == 0)
+
+    /* whether lock scheduler */
+    if (rt_atomic_load(&(current_thread->critical_lock_nest)) != 0)
+    {
+        rt_hw_spin_unlock(&(pcpu->spinlock.lock));
+        rt_hw_spin_unlock(&_mp_scheduler_spinlock);
+        rt_hw_local_irq_enable(level);
+        return;
+    }
+
+    rt_hw_spin_lock(&(current_thread->spinlock.lock));
+    if (rt_atomic_load(&(pcpu->irq_nest)) == 0)
     {
         rt_ubase_t highest_ready_priority;
 
@@ -686,7 +701,7 @@ void rt_scheduler_do_irq_switch(void *context)
 
             if (to_thread != current_thread)
             {
-                rt_spin_lock(&(to_thread->spinlock));
+                rt_hw_spin_lock(&(to_thread->spinlock.lock));
             }
             to_thread->oncpu = cpu_id;
             if (to_thread != current_thread)
@@ -707,9 +722,9 @@ void rt_scheduler_do_irq_switch(void *context)
 
                 RT_OBJECT_HOOK_CALL(rt_scheduler_switch_hook, (current_thread));
 
-                rt_spin_unlock(&(to_thread->spinlock));
-                rt_spin_unlock(&pcpu->spinlock);
-                rt_spin_unlock(&_spinlock);
+                rt_hw_spin_unlock(&(to_thread->spinlock.lock));
+                rt_hw_spin_unlock(&(pcpu->spinlock.lock));
+                rt_hw_spin_unlock(&_mp_scheduler_spinlock);
 
                 need_unlock = RT_FALSE;
                 rt_hw_context_switch_interrupt(context, (rt_ubase_t)&current_thread->sp,
@@ -720,9 +735,9 @@ void rt_scheduler_do_irq_switch(void *context)
 
     if(need_unlock)
     {
-        rt_spin_unlock(&(current_thread->spinlock));
-        rt_spin_unlock(&pcpu->spinlock);
-        rt_spin_unlock(&_spinlock);
+        rt_hw_spin_unlock(&(current_thread->spinlock.lock));
+        rt_hw_spin_unlock(&(pcpu->spinlock.lock));
+        rt_hw_spin_unlock(&_mp_scheduler_spinlock);
     }
 
     rt_hw_local_irq_enable(level);
@@ -739,9 +754,11 @@ void rt_scheduler_do_irq_switch(void *context)
 void rt_schedule_insert_thread(struct rt_thread *thread)
 {
     rt_base_t level;
-    level = rt_spin_lock_irqsave(&_spinlock);
+    level = rt_hw_local_irq_disable();
+    rt_hw_spin_lock(&_mp_scheduler_spinlock);
     _rt_schedule_insert_thread(thread, RT_TRUE);
-    rt_spin_unlock_irqrestore(&_spinlock, level);
+    rt_hw_spin_unlock(&_mp_scheduler_spinlock);
+    rt_hw_local_irq_enable(level);
 }
 
 /**
@@ -754,11 +771,13 @@ void rt_schedule_insert_thread(struct rt_thread *thread)
 void rt_schedule_remove_thread(struct rt_thread *thread)
 {
     rt_base_t level;
-    level = rt_spin_lock_irqsave(&_spinlock);
-    rt_spin_lock(&thread->spinlock);
+    level = rt_hw_local_irq_disable();
+    rt_hw_spin_lock(&_mp_scheduler_spinlock);
+    rt_hw_spin_lock(&(thread->spinlock.lock));
     _rt_schedule_remove_thread(thread, RT_TRUE);
-    rt_spin_unlock(&thread->spinlock);
-    rt_spin_unlock_irqrestore(&_spinlock, level);
+    rt_hw_spin_unlock(&(thread->spinlock.lock));
+    rt_hw_spin_unlock(&_mp_scheduler_spinlock);
+    rt_hw_local_irq_enable(level);
 }
 
 /**
@@ -830,8 +849,17 @@ RTM_EXPORT(rt_exit_critical);
  */
 rt_uint16_t rt_critical_level(void)
 {
-    struct rt_thread *current_thread = rt_cpu_self()->current_thread;
-    return rt_atomic_load(&(current_thread->critical_lock_nest));
+    rt_base_t level;
+    rt_uint16_t critical_lvl;
+    struct rt_thread *current_thread;
+
+    level = rt_hw_local_irq_disable();
+
+    current_thread = rt_cpu_self()->current_thread;
+    critical_lvl = rt_atomic_load(&(current_thread->critical_lock_nest));
+
+    rt_hw_local_irq_enable(level);
+    return critical_lvl;
 }
 RTM_EXPORT(rt_critical_level);
 

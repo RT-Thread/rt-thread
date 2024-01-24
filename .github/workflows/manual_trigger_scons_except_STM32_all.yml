@@ -226,6 +226,8 @@ jobs:
           - {RTT_BSP_NAME: "renesas_ra6m3-hmi-board", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "renesas/ra6m3-hmi-board"}
           - {RTT_BSP_NAME: "renesas_ra6m4-cpk", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "renesas/ra6m4-cpk"}
           - {RTT_BSP_NAME: "renesas_ra6m4-iot", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "renesas/ra6m4-iot"}
+          - {RTT_BSP_NAME: "renesas_ra8d1-ek", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "renesas/ra8d1-ek"}
+          - {RTT_BSP_NAME: "renesas_ra8m1-ek", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "renesas/ra8m1-ek"}
           - {RTT_BSP_NAME: "rm48x50", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "rm48x50"}
          #- {RTT_BSP_NAME: "rockchip_rk2108", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "rockchip/rk2108"} # menuconfig 有问题
           - {RTT_BSP_NAME: "rockchip_rk3568", RTT_TOOL_CHAIN: "sourcery-aarch64", RTT_BSP: "rockchip/rk3568"} 
@@ -238,8 +240,8 @@ jobs:
           - {RTT_BSP_NAME: "smartfusion2", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "smartfusion2"}
           - {RTT_BSP_NAME: "sparkfun-redv", RTT_TOOL_CHAIN: "sourcery-riscv64-unknown-elf", RTT_BSP: "sparkfun-redv"}
          #- {RTT_BSP_NAME: "synopsys_boards", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "synopsys/boards"} #不支持的toolchain
-          - {RTT_BSP_NAME: "synwit_swm320", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "synwit/swm320"}
-          - {RTT_BSP_NAME: "synwit_swm341", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "synwit/swm341"}
+          - {RTT_BSP_NAME: "synwit_swm320-mini", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "synwit/swm320-mini"}
+          - {RTT_BSP_NAME: "synwit_swm341-mini", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "synwit/swm341-mini"}
          #- {RTT_BSP_NAME: "tae32f5300", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "tae32f5300"}  #musl toolchain 未支持
          #- {RTT_BSP_NAME: "taihu", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "taihu"} #powerpc-eabi-gcc 未支持
          #- {RTT_BSP_NAME: "thead-smart", RTT_TOOL_CHAIN: "sourcery-riscv64-unknown-elf", RTT_BSP: "thead-smart"} #menuconfig有问题
@@ -268,7 +270,7 @@ jobs:
           - {RTT_BSP_NAME: "zynqmp-r5-axu4ev", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "zynqmp-r5-axu4ev"}
   
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Set up Python
         uses: actions/setup-python@v3
         with:

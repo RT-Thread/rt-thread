@@ -7,9 +7,14 @@
    Change Logs:
    Date             Author          Notes
    2022-03-31       CDT             First version
+   2023-01-15       CDT             Bug fix of TMRA CMP DCU and USART, refine IRQ143
+                                    Rename I2Cx_Error_IrqHandler as I2Cx_EE_IrqHandler
+   2023-09-30       CDT             IRQxxx_Handler add __DSB for Arm Errata 838869
+                                    The BCSTR register of TimerA is split into BCSTRH and BCSTRL
+                                    Modify for head file update: EIRQFR -> EIFR
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -97,69 +102,72 @@ void IRQ128_Handler(void)
     const uint32_t VSSEL128 = CM_INTC->VSSEL128;
 
     /* external interrupt 00 */
-    if ((1UL == bCM_INTC->EIRQFR_b.EIRQFR0) && (0UL != (VSSEL128 & BIT_MASK_00))) {
+    if ((1UL == bCM_INTC->EIFR_b.EIFR0) && (0UL != (VSSEL128 & BIT_MASK_00))) {
         EXTINT00_IrqHandler();
     }
     /* external interrupt 01 */
-    if ((1UL == bCM_INTC->EIRQFR_b.EIRQFR1) && (0UL != (VSSEL128 & BIT_MASK_01))) {
+    if ((1UL == bCM_INTC->EIFR_b.EIFR1) && (0UL != (VSSEL128 & BIT_MASK_01))) {
         EXTINT01_IrqHandler();
     }
     /* external interrupt 02 */
-    if ((1UL == bCM_INTC->EIRQFR_b.EIRQFR2) && (0UL != (VSSEL128 & BIT_MASK_02))) {
+    if ((1UL == bCM_INTC->EIFR_b.EIFR2) && (0UL != (VSSEL128 & BIT_MASK_02))) {
         EXTINT02_IrqHandler();
     }
     /* external interrupt 03 */
-    if ((1UL == bCM_INTC->EIRQFR_b.EIRQFR3) && (0UL != (VSSEL128 & BIT_MASK_03))) {
+    if ((1UL == bCM_INTC->EIFR_b.EIFR3) && (0UL != (VSSEL128 & BIT_MASK_03))) {
         EXTINT03_IrqHandler();
     }
     /* external interrupt 04 */
-    if ((1UL == bCM_INTC->EIRQFR_b.EIRQFR4) && (0UL != (VSSEL128 & BIT_MASK_04))) {
+    if ((1UL == bCM_INTC->EIFR_b.EIFR4) && (0UL != (VSSEL128 & BIT_MASK_04))) {
         EXTINT04_IrqHandler();
     }
     /* external interrupt 05 */
-    if ((1UL == bCM_INTC->EIRQFR_b.EIRQFR5) && (0UL != (VSSEL128 & BIT_MASK_05))) {
+    if ((1UL == bCM_INTC->EIFR_b.EIFR5) && (0UL != (VSSEL128 & BIT_MASK_05))) {
         EXTINT05_IrqHandler();
     }
     /* external interrupt 06 */
-    if ((1UL == bCM_INTC->EIRQFR_b.EIRQFR6) && (0UL != (VSSEL128 & BIT_MASK_06))) {
+    if ((1UL == bCM_INTC->EIFR_b.EIFR6) && (0UL != (VSSEL128 & BIT_MASK_06))) {
         EXTINT06_IrqHandler();
     }
     /* external interrupt 07 */
-    if ((1UL == bCM_INTC->EIRQFR_b.EIRQFR7) && (0UL != (VSSEL128 & BIT_MASK_07))) {
+    if ((1UL == bCM_INTC->EIFR_b.EIFR7) && (0UL != (VSSEL128 & BIT_MASK_07))) {
         EXTINT07_IrqHandler();
     }
     /* external interrupt 08 */
-    if ((1UL == bCM_INTC->EIRQFR_b.EIRQFR8) && (0UL != (VSSEL128 & BIT_MASK_08))) {
+    if ((1UL == bCM_INTC->EIFR_b.EIFR8) && (0UL != (VSSEL128 & BIT_MASK_08))) {
         EXTINT08_IrqHandler();
     }
     /* external interrupt 09 */
-    if ((1UL == bCM_INTC->EIRQFR_b.EIRQFR9) && (0UL != (VSSEL128 & BIT_MASK_09))) {
+    if ((1UL == bCM_INTC->EIFR_b.EIFR9) && (0UL != (VSSEL128 & BIT_MASK_09))) {
         EXTINT09_IrqHandler();
     }
     /* external interrupt 10 */
-    if ((1UL == bCM_INTC->EIRQFR_b.EIRQFR10) && (0UL != (VSSEL128 & BIT_MASK_10))) {
+    if ((1UL == bCM_INTC->EIFR_b.EIFR10) && (0UL != (VSSEL128 & BIT_MASK_10))) {
         EXTINT10_IrqHandler();
     }
     /* external interrupt 11 */
-    if ((1UL == bCM_INTC->EIRQFR_b.EIRQFR11) && (0UL != (VSSEL128 & BIT_MASK_11))) {
+    if ((1UL == bCM_INTC->EIFR_b.EIFR11) && (0UL != (VSSEL128 & BIT_MASK_11))) {
         EXTINT11_IrqHandler();
     }
     /* external interrupt 12 */
-    if ((1UL == bCM_INTC->EIRQFR_b.EIRQFR12) && (0UL != (VSSEL128 & BIT_MASK_12))) {
+    if ((1UL == bCM_INTC->EIFR_b.EIFR12) && (0UL != (VSSEL128 & BIT_MASK_12))) {
         EXTINT12_IrqHandler();
     }
     /* external interrupt 13 */
-    if ((1UL == bCM_INTC->EIRQFR_b.EIRQFR13) && (0UL != (VSSEL128 & BIT_MASK_13))) {
+    if ((1UL == bCM_INTC->EIFR_b.EIFR13) && (0UL != (VSSEL128 & BIT_MASK_13))) {
         EXTINT13_IrqHandler();
     }
     /* external interrupt 14 */
-    if ((1UL == bCM_INTC->EIRQFR_b.EIRQFR14) && (0UL != (VSSEL128 & BIT_MASK_14))) {
+    if ((1UL == bCM_INTC->EIFR_b.EIFR14) && (0UL != (VSSEL128 & BIT_MASK_14))) {
         EXTINT14_IrqHandler();
     }
     /* external interrupt 15 */
-    if ((1UL == bCM_INTC->EIRQFR_b.EIRQFR15) && (0UL != (VSSEL128 & BIT_MASK_15))) {
+    if ((1UL == bCM_INTC->EIFR_b.EIFR15) && (0UL != (VSSEL128 & BIT_MASK_15))) {
         EXTINT15_IrqHandler();
     }
+
+    /* Arm Errata 838869: Cortex-M4, Cortex-M4F */
+    __DSB();
 }
 
 /**
@@ -363,29 +371,40 @@ void IRQ129_Handler(void)
         QSPI_Error_IrqHandler();
     }
     /*DCU1 */
-    u32Tmp1 = CM_DCU1->INTSEL;
-    u32Tmp2 = CM_DCU1->FLAG;
-    if ((0UL != (u32Tmp1 & u32Tmp2 & 0x7FUL)) && (0UL != (VSSEL129 & BIT_MASK_23))) {
-        DCU1_IrqHandler();
+    if (1UL == bCM_DCU1->CTL_b.INTEN) {
+        u32Tmp1 = CM_DCU1->INTEVTSEL;
+        u32Tmp2 = CM_DCU1->FLAG;
+        if ((0UL != (u32Tmp1 & u32Tmp2 & 0x7FUL)) && (0UL != (VSSEL129 & BIT_MASK_23))) {
+            DCU1_IrqHandler();
+        }
     }
     /*DCU2 */
-    u32Tmp1 = CM_DCU2->INTSEL;
-    u32Tmp2 = CM_DCU2->FLAG;
-    if ((0UL != (u32Tmp1 & u32Tmp2 & 0x7FUL)) && (0UL != (VSSEL129 & BIT_MASK_24))) {
-        DCU2_IrqHandler();
+    if (1UL == bCM_DCU2->CTL_b.INTEN) {
+        u32Tmp1 = CM_DCU2->INTEVTSEL;
+        u32Tmp2 = CM_DCU2->FLAG;
+        if ((0UL != (u32Tmp1 & u32Tmp2 & 0x7FUL)) && (0UL != (VSSEL129 & BIT_MASK_24))) {
+            DCU2_IrqHandler();
+        }
     }
     /*DCU3 */
-    u32Tmp1 = CM_DCU3->INTSEL;
-    u32Tmp2 = CM_DCU3->FLAG;
-    if ((0UL != (u32Tmp1 & u32Tmp2 & 0x7FUL)) && (0UL != (VSSEL129 & BIT_MASK_25))) {
-        DCU3_IrqHandler();
+    if (1UL == bCM_DCU3->CTL_b.INTEN) {
+        u32Tmp1 = CM_DCU3->INTEVTSEL;
+        u32Tmp2 = CM_DCU3->FLAG;
+        if ((0UL != (u32Tmp1 & u32Tmp2 & 0x7FUL)) && (0UL != (VSSEL129 & BIT_MASK_25))) {
+            DCU3_IrqHandler();
+        }
     }
     /*DCU4 */
-    u32Tmp1 = CM_DCU4->INTSEL;
-    u32Tmp2 = CM_DCU4->FLAG;
-    if ((0UL != (u32Tmp1 & u32Tmp2 & 0x7FUL)) && (0UL != (VSSEL129 & BIT_MASK_26))) {
-        DCU4_IrqHandler();
+    if (1UL == bCM_DCU4->CTL_b.INTEN) {
+        u32Tmp1 = CM_DCU4->INTEVTSEL;
+        u32Tmp2 = CM_DCU4->FLAG;
+        if ((0UL != (u32Tmp1 & u32Tmp2 & 0x7FUL)) && (0UL != (VSSEL129 & BIT_MASK_26))) {
+            DCU4_IrqHandler();
+        }
     }
+
+    /* Arm Errata 838869: Cortex-M4, Cortex-M4F */
+    __DSB();
 }
 
 /**
@@ -423,7 +442,7 @@ void IRQ130_Handler(void)
     /* Main-OSC stop */
     if (CMU_XTALSTDCR_XTALSTDIE ==  READ_REG8_BIT(CM_CMU->XTALSTDCR, CMU_XTALSTDCR_XTALSTDIE)) {
         if ((CMU_XTALSTDSR_XTALSTDF == READ_REG8_BIT(CM_CMU->XTALSTDSR, CMU_XTALSTDSR_XTALSTDF)) && \
-                (0UL != (VSSEL130 & BIT_MASK_21))) {
+            (0UL != (VSSEL130 & BIT_MASK_21))) {
             CLK_XtalStop_IrqHandler();
         }
     }
@@ -435,6 +454,9 @@ void IRQ130_Handler(void)
     if ((0UL != (CM_SWDT->SR & (BIT_MASK_16 | BIT_MASK_17))) && (0UL != (VSSEL130 & BIT_MASK_23))) {
         SWDT_IrqHandler();
     }
+
+    /* Arm Errata 838869: Cortex-M4, Cortex-M4F */
+    __DSB();
 }
 
 /**
@@ -447,138 +469,141 @@ void IRQ131_Handler(void)
     const uint32_t VSSEL131 = CM_INTC->VSSEL131;
     uint32_t u32Tmp1;
     uint32_t u32Tmp2;
-    /* Timer6 Ch.1 A compare match */
+    /* Timer6 Unit.1 A compare match */
     if (1UL == bCM_TMR6_1->ICONR_b.INTENA) {
         if ((1UL == bCM_TMR6_1->STFLR_b.CMAF) && (0UL != (VSSEL131 & BIT_MASK_00))) {
             TMR6_1_GCmpA_IrqHandler();
         }
     }
-    /* Timer6 Ch.1 B compare match */
+    /* Timer6 Unit.1 B compare match */
     if (1UL == bCM_TMR6_1->ICONR_b.INTENB) {
         if ((1UL == bCM_TMR6_1->STFLR_b.CMBF) && (0UL != (VSSEL131 & BIT_MASK_01))) {
             TMR6_1_GCmpB_IrqHandler();
         }
     }
-    /* Timer6 Ch.1 C compare match */
+    /* Timer6 Unit.1 C compare match */
     if (1UL == bCM_TMR6_1->ICONR_b.INTENC) {
         if ((1UL == bCM_TMR6_1->STFLR_b.CMCF) && (0UL != (VSSEL131 & BIT_MASK_02))) {
             TMR6_1_GCmpC_IrqHandler();
         }
     }
-    /* Timer6 Ch.1 D compare match */
+    /* Timer6 Unit.1 D compare match */
     if (1UL == bCM_TMR6_1->ICONR_b.INTEND) {
         if ((1UL == bCM_TMR6_1->STFLR_b.CMDF) && (0UL != (VSSEL131 & BIT_MASK_03))) {
             TMR6_1_GCmpD_IrqHandler();
         }
     }
-    /* Timer6 Ch.1 E compare match */
+    /* Timer6 Unit.1 E compare match */
     if (1UL == bCM_TMR6_1->ICONR_b.INTENE) {
         if ((1UL == bCM_TMR6_1->STFLR_b.CMEF) && (0UL != (VSSEL131 & BIT_MASK_04))) {
             TMR6_1_GCmpE_IrqHandler();
         }
     }
-    /* Timer6 Ch.1 F compare match */
+    /* Timer6 Unit.1 F compare match */
     if (1UL == bCM_TMR6_1->ICONR_b.INTENF) {
         if ((1UL == bCM_TMR6_1->STFLR_b.CMFF) && (0UL != (VSSEL131 & BIT_MASK_05))) {
             TMR6_1_GCmpF_IrqHandler();
         }
     }
-    /* Timer6 Ch.1 overflow */
+    /* Timer6 Unit.1 overflow */
     if (1UL == bCM_TMR6_1->ICONR_b.INTENOVF) {
         if ((1UL == bCM_TMR6_1->STFLR_b.OVFF) && (0UL != (VSSEL131 & BIT_MASK_06))) {
             TMR6_1_GOvf_IrqHandler();
         }
     }
-    /* Timer6 Ch.1 underflow */
+    /* Timer6 Unit.1 underflow */
     if (1UL == bCM_TMR6_1->ICONR_b.INTENUDF) {
         if ((1UL == bCM_TMR6_1->STFLR_b.UDFF) && (0UL != (VSSEL131 & BIT_MASK_07))) {
             TMR6_1_GUdf_IrqHandler();
         }
     }
-    /* Timer6 Ch.1 dead time */
+    /* Timer6 Unit.1 dead time */
     if (1UL == bCM_TMR6_1->ICONR_b.INTENDTE) {
         if (((1UL == bCM_TMR6_1->STFLR_b.DTEF)) && (0UL != (VSSEL131 & BIT_MASK_08))) {
             TMR6_1_GDte_IrqHandler();
         }
     }
-    /* Timer6 Ch.1 A up-down compare match */
+    /* Timer6 Unit.1 A up-down compare match */
     u32Tmp1 = (CM_TMR6_1->ICONR & (BIT_MASK_16 | BIT_MASK_17)) >> 7U;
     u32Tmp2 = CM_TMR6_1->STFLR & (BIT_MASK_09 | BIT_MASK_10);
     if ((0UL != (u32Tmp1 & u32Tmp2)) && (0UL != (VSSEL131 & BIT_MASK_11))) {
         TMR6_1_SCmpA_IrqHandler();
     }
-    /* Timer6 Ch.1 B up-down compare match */
+    /* Timer6 Unit.1 B up-down compare match */
     u32Tmp1 = (CM_TMR6_1->ICONR & (BIT_MASK_18 | BIT_MASK_19)) >> 7U;
     u32Tmp2 = CM_TMR6_1->STFLR & (BIT_MASK_11 | BIT_MASK_12);
     if ((0UL != (u32Tmp1 & u32Tmp2)) && (0UL != (VSSEL131 & BIT_MASK_12))) {
         TMR6_1_SCmpB_IrqHandler();
     }
-    /* Timer6 Ch.2 A compare match */
+    /* Timer6 Unit.2 A compare match */
     if (1UL == bCM_TMR6_2->ICONR_b.INTENA) {
         if ((1UL == bCM_TMR6_2->STFLR_b.CMAF) && (0UL != (VSSEL131 & BIT_MASK_16))) {
             TMR6_2_GCmpA_IrqHandler();
         }
     }
-    /* Timer6 Ch.2 B compare match */
+    /* Timer6 Unit.2 B compare match */
     if (1UL == bCM_TMR6_2->ICONR_b.INTENB) {
         if ((1UL == bCM_TMR6_2->STFLR_b.CMBF) && (0UL != (VSSEL131 & BIT_MASK_17))) {
             TMR6_2_GCmpB_IrqHandler();
         }
     }
-    /* Timer6 Ch.2 C compare match */
+    /* Timer6 Unit.2 C compare match */
     if (1UL == bCM_TMR6_2->ICONR_b.INTENC) {
         if ((1UL == bCM_TMR6_2->STFLR_b.CMCF) && (0UL != (VSSEL131 & BIT_MASK_18))) {
             TMR6_2_GCmpC_IrqHandler();
         }
     }
-    /* Timer6 Ch.2 D compare match */
+    /* Timer6 Unit.2 D compare match */
     if (1UL == bCM_TMR6_2->ICONR_b.INTEND) {
         if ((1UL == bCM_TMR6_2->STFLR_b.CMDF) && (0UL != (VSSEL131 & BIT_MASK_19))) {
             TMR6_2_GCmpD_IrqHandler();
         }
     }
-    /* Timer6 Ch.2 E compare match */
+    /* Timer6 Unit.2 E compare match */
     if (1UL == bCM_TMR6_2->ICONR_b.INTENE) {
         if ((1UL == bCM_TMR6_2->STFLR_b.CMEF) && (0UL != (VSSEL131 & BIT_MASK_20))) {
             TMR6_2_GCmpE_IrqHandler();
         }
     }
-    /* Timer6 Ch.2 F compare match */
+    /* Timer6 Unit.2 F compare match */
     if (1UL == bCM_TMR6_2->ICONR_b.INTENF) {
         if ((1UL == bCM_TMR6_2->STFLR_b.CMFF) && (0UL != (VSSEL131 & BIT_MASK_21))) {
             TMR6_2_GCmpF_IrqHandler();
         }
     }
-    /* Timer6 Ch.2 overflow */
+    /* Timer6 Unit.2 overflow */
     if (1UL == bCM_TMR6_2->ICONR_b.INTENOVF) {
         if ((1UL == bCM_TMR6_2->STFLR_b.OVFF) && (0UL != (VSSEL131 & BIT_MASK_22))) {
             TMR6_2_GOvf_IrqHandler();
         }
     }
-    /* Timer6 Ch.2 underflow */
+    /* Timer6 Unit.2 underflow */
     if (1UL == bCM_TMR6_2->ICONR_b.INTENUDF) {
         if ((1UL == bCM_TMR6_2->STFLR_b.UDFF) && (0UL != (VSSEL131 & BIT_MASK_23))) {
             TMR6_2_GUdf_IrqHandler();
         }
     }
-    /* Timer6 Ch.2 dead time */
+    /* Timer6 Unit.2 dead time */
     if (1UL == bCM_TMR6_2->ICONR_b.INTENDTE) {
         if ((1UL == bCM_TMR6_2->STFLR_b.DTEF) && (0UL != (VSSEL131 & BIT_MASK_24))) {
             TMR6_2_GDte_IrqHandler();
         }
     }
-    /* Timer6 Ch.2 A up-down compare match */
+    /* Timer6 Unit.2 A up-down compare match */
     u32Tmp1 = (CM_TMR6_2->ICONR & (BIT_MASK_16 | BIT_MASK_17)) >> 7U;
     u32Tmp2 = CM_TMR6_2->STFLR & (BIT_MASK_09 | BIT_MASK_10);
     if ((0UL != (u32Tmp1 & u32Tmp2)) && (0UL != (VSSEL131 & BIT_MASK_27))) {
         TMR6_2_SCmpA_IrqHandler();
     }
-    /* Timer6 Ch.2 B up-down compare match */
+    /* Timer6 Unit.2 B up-down compare match */
     u32Tmp1 = (CM_TMR6_2->ICONR & (BIT_MASK_18 | BIT_MASK_19)) >> 7U;
     u32Tmp2 = CM_TMR6_2->STFLR & (BIT_MASK_11 | BIT_MASK_12);
     if ((0UL != (u32Tmp1 & u32Tmp2)) && (0UL != (VSSEL131 & BIT_MASK_28))) {
         TMR6_2_SCmpB_IrqHandler();
     }
+
+    /* Arm Errata 838869: Cortex-M4, Cortex-M4F */
+    __DSB();
 }
 
 /**
@@ -591,72 +616,75 @@ void IRQ132_Handler(void)
     const uint32_t VSSEL132 = CM_INTC->VSSEL132;
     uint32_t u32Tmp1;
     uint32_t u32Tmp2;
-    /* Timer6 Ch.3 A compare match */
+    /* Timer6 Unit.3 A compare match */
     if (1UL == bCM_TMR6_3->ICONR_b.INTENA) {
         if ((1UL == bCM_TMR6_3->STFLR_b.CMAF) && (0UL != (VSSEL132 & BIT_MASK_00))) {
             TMR6_3_GCmpA_IrqHandler();
         }
     }
-    /* Timer6 Ch.3 B compare match */
+    /* Timer6 Unit.3 B compare match */
     if (1UL == bCM_TMR6_3->ICONR_b.INTENB) {
         if ((1UL == bCM_TMR6_3->STFLR_b.CMBF) && (0UL != (VSSEL132 & BIT_MASK_01))) {
             TMR6_3_GCmpB_IrqHandler();
         }
     }
-    /* Timer6 Ch.3 C compare match */
+    /* Timer6 Unit.3 C compare match */
     if (1UL == bCM_TMR6_3->ICONR_b.INTENC) {
         if ((1UL == bCM_TMR6_3->STFLR_b.CMCF) && (0UL != (VSSEL132 & BIT_MASK_02))) {
             TMR6_3_GCmpC_IrqHandler();
         }
     }
-    /* Timer6 Ch.3 D compare match */
+    /* Timer6 Unit.3 D compare match */
     if (1UL == bCM_TMR6_3->ICONR_b.INTEND) {
         if ((1UL == bCM_TMR6_3->STFLR_b.CMDF) && (0UL != (VSSEL132 & BIT_MASK_03))) {
             TMR6_3_GCmpD_IrqHandler();
         }
     }
-    /* Timer6 Ch.3 E compare match */
+    /* Timer6 Unit.3 E compare match */
     if (1UL == bCM_TMR6_3->ICONR_b.INTENE) {
         if ((1UL == bCM_TMR6_3->STFLR_b.CMEF) && (0UL != (VSSEL132 & BIT_MASK_04))) {
             TMR6_3_GCmpE_IrqHandler();
         }
     }
-    /* Timer6 Ch.3 F compare match */
+    /* Timer6 Unit.3 F compare match */
     if (1UL == bCM_TMR6_3->ICONR_b.INTENF) {
         if ((1UL == bCM_TMR6_3->STFLR_b.CMFF) && (0UL != (VSSEL132 & BIT_MASK_05))) {
             TMR6_3_GCmpF_IrqHandler();
         }
     }
-    /* Timer6 Ch.3 overflow */
+    /* Timer6 Unit.3 overflow */
     if (1UL == bCM_TMR6_3->ICONR_b.INTENOVF) {
         if ((1UL == bCM_TMR6_3->STFLR_b.OVFF) && (0UL != (VSSEL132 & BIT_MASK_06))) {
             TMR6_3_GOvf_IrqHandler();
         }
     }
-    /* Timer6 Ch.3 underflow */
+    /* Timer6 Unit.3 underflow */
     if (1UL == bCM_TMR6_3->ICONR_b.INTENUDF) {
         if ((1UL == bCM_TMR6_3->STFLR_b.UDFF) && (0UL != (VSSEL132 & BIT_MASK_07))) {
             TMR6_3_GUdf_IrqHandler();
         }
     }
-    /* Timer6 Ch.3 dead time */
+    /* Timer6 Unit.3 dead time */
     if (1UL == bCM_TMR6_3->ICONR_b.INTENDTE) {
         if ((1UL == bCM_TMR6_3->STFLR_b.DTEF) && (0UL != (VSSEL132 & BIT_MASK_08))) {
             TMR6_3_GDte_IrqHandler();
         }
     }
-    /* Timer6 Ch.3 A up-down compare match */
+    /* Timer6 Unit.3 A up-down compare match */
     u32Tmp1 = (CM_TMR6_3->ICONR & (BIT_MASK_16 | BIT_MASK_17)) >> 7U;
     u32Tmp2 = CM_TMR6_3->STFLR & (BIT_MASK_09 | BIT_MASK_10);
     if ((0UL != (u32Tmp1 & u32Tmp2)) && (0UL != (0UL != (VSSEL132 & BIT_MASK_11)))) {
         TMR6_3_SCmpA_IrqHandler();
     }
-    /* Timer6 Ch.3 B up-down compare match */
+    /* Timer6 Unit.3 B up-down compare match */
     u32Tmp1 = (CM_TMR6_3->ICONR & (BIT_MASK_18 | BIT_MASK_19)) >> 7U;
     u32Tmp2 = CM_TMR6_3->STFLR & (BIT_MASK_11 | BIT_MASK_12);
     if ((0UL != (u32Tmp1 & u32Tmp2)) && (0UL != (0UL != (VSSEL132 & BIT_MASK_12)))) {
         TMR6_3_SCmpB_IrqHandler();
     }
+
+    /* Arm Errata 838869: Cortex-M4, Cortex-M4F */
+    __DSB();
 }
 
 /**
@@ -670,101 +698,120 @@ void IRQ136_Handler(void)
     uint32_t u32Tmp2;
     const uint32_t VSSEL136 = CM_INTC->VSSEL136;
 
-    u32Tmp1 = CM_TMRA_1->BCSTR;
-    /* TimerA Ch.1 overflow */
-    if ((0UL != (u32Tmp1 & BIT_MASK_12)) && (0UL != (u32Tmp1 & BIT_MASK_14)) && (0UL != (VSSEL136 & BIT_MASK_00))) {
-        TMRA_1_Ovf_IrqHandler();
+    /* TimerA Unit.1 overflow */
+    if (1UL == bCM_TMRA_1->BCSTRH_b.ITENOVF) {
+        if ((1UL == bCM_TMRA_1->BCSTRH_b.OVFF) && (0UL != (VSSEL136 & BIT_MASK_00))) {
+            TMRA_1_Ovf_IrqHandler();
+        }
     }
-    /* TimerA Ch.1 underflow */
-    if ((0UL != (u32Tmp1 & BIT_MASK_13)) && (0UL != (u32Tmp1 & BIT_MASK_15)) && (0UL != (VSSEL136 & BIT_MASK_01))) {
-        TMRA_1_Udf_IrqHandler();
+    /* TimerA Unit.1 underflow */
+    if (1UL == bCM_TMRA_1->BCSTRH_b.ITENUDF) {
+        if ((1UL == bCM_TMRA_1->BCSTRH_b.UDFF) && (0UL != (VSSEL136 & BIT_MASK_01))) {
+            TMRA_1_Udf_IrqHandler();
+        }
     }
     u32Tmp1 = CM_TMRA_1->ICONR;
     u32Tmp2 = CM_TMRA_1->STFLR;
-    /* TimerA Ch.1 compare match */
-    if ((0UL != (u32Tmp1 & u32Tmp2 & 0xFFUL)) && (0UL != (0xFFUL & VSSEL136))) {
+    /* TimerA Unit.1 compare match */
+    if ((0UL != (u32Tmp1 & u32Tmp2 & 0xFFUL)) && (0UL != (VSSEL136 & BIT_MASK_02))) {
         TMRA_1_Cmp_IrqHandler();
     }
 
-    u32Tmp1 = CM_TMRA_2->BCSTR;
-    /* TimerA Ch.2 overflow */
-    if ((0UL != (u32Tmp1 & BIT_MASK_12)) && (0UL != (u32Tmp1 & BIT_MASK_14)) && (0UL != (VSSEL136 & BIT_MASK_03))) {
-        TMRA_2_Ovf_IrqHandler();
+    /* TimerA Unit.2 overflow */
+    if (1UL == bCM_TMRA_2->BCSTRH_b.ITENOVF) {
+        if ((1UL == bCM_TMRA_2->BCSTRH_b.OVFF) && (0UL != (VSSEL136 & BIT_MASK_03))) {
+            TMRA_2_Ovf_IrqHandler();
+        }
     }
-    /* TimerA Ch.2 underflow */
-    if ((0UL != (u32Tmp1 & BIT_MASK_13)) && (0UL != (u32Tmp1 & BIT_MASK_15)) && (0UL != (VSSEL136 & BIT_MASK_04))) {
-        TMRA_2_Udf_IrqHandler();
+    /* TimerA Unit.2 underflow */
+    if (1UL == bCM_TMRA_2->BCSTRH_b.ITENUDF) {
+        if ((1UL == bCM_TMRA_2->BCSTRH_b.UDFF) && (0UL != (VSSEL136 & BIT_MASK_04))) {
+            TMRA_2_Udf_IrqHandler();
+        }
     }
     u32Tmp1 = CM_TMRA_2->ICONR;
     u32Tmp2 = CM_TMRA_2->STFLR;
-    /* TimerA Ch.2 compare match */
-    if ((0UL != (u32Tmp1 & u32Tmp2 & 0xFFUL)) && (0UL != (0xFFUL & VSSEL136))) {
+    /* TimerA Unit.2 compare match */
+    if ((0UL != (u32Tmp1 & u32Tmp2 & 0xFFUL)) && (0UL != (VSSEL136 & BIT_MASK_05))) {
         TMRA_2_Cmp_IrqHandler();
     }
 
-    u32Tmp1 = CM_TMRA_3->BCSTR;
-    /* TimerA Ch.3 overflow */
-    if ((0UL != (u32Tmp1 & BIT_MASK_12)) && (0UL != (u32Tmp1 & BIT_MASK_14)) && (0UL != (VSSEL136 & BIT_MASK_06))) {
-        TMRA_3_Ovf_IrqHandler();
+    /* TimerA Unit.3 overflow */
+    if (1UL == bCM_TMRA_3->BCSTRH_b.ITENOVF) {
+        if ((1UL == bCM_TMRA_3->BCSTRH_b.OVFF) && (0UL != (VSSEL136 & BIT_MASK_06))) {
+            TMRA_3_Ovf_IrqHandler();
+        }
     }
-    /* TimerA Ch.3 underflow */
-    if ((0UL != (u32Tmp1 & BIT_MASK_13)) && (0UL != (u32Tmp1 & BIT_MASK_15)) && (0UL != (VSSEL136 & BIT_MASK_07))) {
-        TMRA_3_Udf_IrqHandler();
+    /* TimerA Unit.3 underflow */
+    if (1UL == bCM_TMRA_3->BCSTRH_b.ITENUDF) {
+        if ((1UL == bCM_TMRA_3->BCSTRH_b.UDFF) && (0UL != (VSSEL136 & BIT_MASK_07))) {
+            TMRA_3_Udf_IrqHandler();
+        }
     }
     u32Tmp1 = CM_TMRA_3->ICONR;
     u32Tmp2 = CM_TMRA_3->STFLR;
-    /* TimerA Ch.3 compare match */
-    if ((0UL != (u32Tmp1 & u32Tmp2 & 0xFFUL)) && (0UL != (0xFFUL & VSSEL136))) {
+    /* TimerA Unit.3 compare match */
+    if ((0UL != (u32Tmp1 & u32Tmp2 & 0xFFUL)) && (0UL != (VSSEL136 & BIT_MASK_08))) {
         TMRA_3_Cmp_IrqHandler();
     }
 
-    u32Tmp1 = CM_TMRA_4->BCSTR;
-    /* TimerA Ch.4 overflow */
-    if ((0UL != (u32Tmp1 & BIT_MASK_12)) && (0UL != (u32Tmp1 & BIT_MASK_14)) && (0UL != (VSSEL136 & BIT_MASK_09))) {
-        TMRA_4_Ovf_IrqHandler();
+    /* TimerA Unit.4 overflow */
+    if (1UL == bCM_TMRA_4->BCSTRH_b.ITENOVF) {
+        if ((1UL == bCM_TMRA_4->BCSTRH_b.OVFF) && (0UL != (VSSEL136 & BIT_MASK_09))) {
+            TMRA_4_Ovf_IrqHandler();
+        }
     }
-    /* TimerA Ch.4 underflow */
-    if ((0UL != (u32Tmp1 & BIT_MASK_13)) && (0UL != (u32Tmp1 & BIT_MASK_15)) && (0UL != (VSSEL136 & BIT_MASK_10))) {
-        TMRA_4_Udf_IrqHandler();
+    /* TimerA Unit.4 underflow */
+    if (1UL == bCM_TMRA_4->BCSTRH_b.ITENUDF) {
+        if ((1UL == bCM_TMRA_4->BCSTRH_b.UDFF) && (0UL != (VSSEL136 & BIT_MASK_10))) {
+            TMRA_4_Udf_IrqHandler();
+        }
     }
     u32Tmp1 = CM_TMRA_4->ICONR;
     u32Tmp2 = CM_TMRA_4->STFLR;
-    /* TimerA Ch.4 compare match */
-    if ((0UL != (u32Tmp1 & u32Tmp2 & 0xFFUL)) && (0UL != (0xFFUL & VSSEL136))) {
+    /* TimerA Unit.4 compare match */
+    if ((0UL != (u32Tmp1 & u32Tmp2 & 0xFFUL)) && (0UL != (VSSEL136 & BIT_MASK_11))) {
         TMRA_4_Cmp_IrqHandler();
     }
 
-    u32Tmp1 = CM_TMRA_5->BCSTR;
-    /* TimerA Ch.5 overflow */
-    if ((0UL != (u32Tmp1 & BIT_MASK_12)) && (0UL != (u32Tmp1 & BIT_MASK_14)) && (0UL != (VSSEL136 & BIT_MASK_12))) {
-        TMRA_5_Ovf_IrqHandler();
+    /* TimerA Unit.5 overflow */
+    if (1UL == bCM_TMRA_5->BCSTRH_b.ITENOVF) {
+        if ((1UL == bCM_TMRA_5->BCSTRH_b.OVFF) && (0UL != (VSSEL136 & BIT_MASK_12))) {
+            TMRA_5_Ovf_IrqHandler();
+        }
     }
-    /* TimerA Ch.5 underflow */
-    if ((0UL != (u32Tmp1 & BIT_MASK_13)) && (0UL != (u32Tmp1 & BIT_MASK_15)) && (0UL != (VSSEL136 & BIT_MASK_13))) {
-        TMRA_5_Udf_IrqHandler();
+    /* TimerA Unit.5 underflow */
+    if (1UL == bCM_TMRA_5->BCSTRH_b.ITENUDF) {
+        if ((1UL == bCM_TMRA_5->BCSTRH_b.UDFF) && (0UL != (VSSEL136 & BIT_MASK_13))) {
+            TMRA_5_Udf_IrqHandler();
+        }
     }
     u32Tmp1 = CM_TMRA_5->ICONR;
     u32Tmp2 = CM_TMRA_5->STFLR;
-    /* TimerA Ch.5 compare match */
-    if ((0UL != (u32Tmp1 & u32Tmp2 & 0xFFUL)) && (0UL != (0xFFUL & VSSEL136))) {
+    /* TimerA Unit.5 compare match */
+    if ((0UL != (u32Tmp1 & u32Tmp2 & 0xFFUL)) && (0UL != (VSSEL136 & BIT_MASK_14))) {
         TMRA_5_Cmp_IrqHandler();
     }
 
-    u32Tmp1 = CM_TMRA_6->BCSTR;
-    /* TimerA Ch.6 overflow */
-    if ((0UL != (u32Tmp1 & BIT_MASK_12)) && (0UL != (u32Tmp1 & BIT_MASK_14)) && (0UL != (VSSEL136 & BIT_MASK_16))) {
-        TMRA_6_Ovf_IrqHandler();
+    /* TimerA Unit.6 overflow */
+    if (1UL == bCM_TMRA_6->BCSTRH_b.ITENOVF) {
+        if ((1UL == bCM_TMRA_6->BCSTRH_b.OVFF) && (0UL != (VSSEL136 & BIT_MASK_16))) {
+            TMRA_6_Ovf_IrqHandler();
+        }
     }
-    /* TimerA Ch.6 underflow */
-    if ((0UL != (u32Tmp1 & BIT_MASK_13)) && (0UL != (u32Tmp1 & BIT_MASK_15)) && (0UL != (VSSEL136 & BIT_MASK_17))) {
-        TMRA_6_Udf_IrqHandler();
+    /* TimerA Unit.6 underflow */
+    if (1UL == bCM_TMRA_6->BCSTRH_b.ITENUDF) {
+        if ((1UL == bCM_TMRA_6->BCSTRH_b.UDFF) && (0UL != (VSSEL136 & BIT_MASK_17))) {
+            TMRA_6_Udf_IrqHandler();
+        }
     }
     u32Tmp1 = CM_TMRA_6->ICONR;
     u32Tmp2 = CM_TMRA_6->STFLR;
-    /* TimerA Ch.6 compare match */
-    if ((0UL != (u32Tmp1 & u32Tmp2 & 0xFFUL)) && (0UL != (0xFFUL & VSSEL136))) {
+    /* TimerA Unit.6 compare match */
+    if ((0UL != (u32Tmp1 & u32Tmp2 & 0xFFUL)) && (0UL != (VSSEL136 & BIT_MASK_18))) {
         TMRA_6_Cmp_IrqHandler();
     }
+
     /* USBFS global interrupt */
     if (1UL == bCM_USBFS->GAHBCFG_b.GINTMSK) {
         u32Tmp1 = CM_USBFS->GINTMSK & 0xF77CFCFBUL;
@@ -778,19 +825,19 @@ void IRQ136_Handler(void)
     u32Tmp2 = CM_USART1->CR1;
     /* USART Ch.1 Receive error */
     if ((0UL != (u32Tmp2 & BIT_MASK_05)) && (0UL != (u32Tmp1 & (BIT_MASK_00 | BIT_MASK_01 | BIT_MASK_03))) &&   \
-            (0UL != (VSSEL136 & BIT_MASK_22))) {
+        (0UL != (VSSEL136 & BIT_MASK_22))) {
         USART1_RxError_IrqHandler();
     }
     /* USART Ch.1 Receive completed */
-    if ((0UL != (u32Tmp2 & u32Tmp1 & BIT_MASK_05)) && (0UL != (BIT_MASK_05 & VSSEL136))) {
+    if ((0UL != (u32Tmp2 & u32Tmp1 & BIT_MASK_05)) && (0UL != (BIT_MASK_23 & VSSEL136))) {
         USART1_RxFull_IrqHandler();
     }
     /* USART Ch.1 Transmit data empty */
-    if ((0UL != (u32Tmp2 & u32Tmp1 & BIT_MASK_07)) && (0UL != (BIT_MASK_07 & VSSEL136))) {
+    if ((0UL != (u32Tmp2 & u32Tmp1 & BIT_MASK_07)) && (0UL != (BIT_MASK_24 & VSSEL136))) {
         USART1_TxEmpty_IrqHandler();
     }
     /* USART Ch.1 Transmit completed */
-    if ((0UL != (u32Tmp2 & u32Tmp1 & BIT_MASK_06)) && (0UL != (BIT_MASK_06 & VSSEL136))) {
+    if ((0UL != (u32Tmp2 & u32Tmp1 & BIT_MASK_06)) && (0UL != (BIT_MASK_25 & VSSEL136))) {
         USART1_TxComplete_IrqHandler();
     }
     /* USART Ch.1 Receive timeout */
@@ -802,25 +849,28 @@ void IRQ136_Handler(void)
     u32Tmp2 = CM_USART2->CR1;
     /* USART Ch.2 Receive error */
     if ((0UL != (u32Tmp2 & BIT_MASK_05)) && (0UL != (u32Tmp1 & (BIT_MASK_00 | BIT_MASK_01 | BIT_MASK_03))) &&   \
-            (0UL != (VSSEL136 & BIT_MASK_27))) {
+        (0UL != (VSSEL136 & BIT_MASK_27))) {
         USART2_RxError_IrqHandler();
     }
     /* USART Ch.2 Receive completed */
-    if ((0UL != (u32Tmp2 & u32Tmp1 & BIT_MASK_05)) && (0UL != (BIT_MASK_05 & VSSEL136))) {
+    if ((0UL != (u32Tmp2 & u32Tmp1 & BIT_MASK_05)) && (0UL != (BIT_MASK_28 & VSSEL136))) {
         USART2_RxFull_IrqHandler();
     }
     /* USART Ch.2 Transmit data empty */
-    if ((0UL != (u32Tmp2 & u32Tmp1 & BIT_MASK_07)) && (0UL != (BIT_MASK_07 & VSSEL136))) {
+    if ((0UL != (u32Tmp2 & u32Tmp1 & BIT_MASK_07)) && (0UL != (BIT_MASK_29 & VSSEL136))) {
         USART2_TxEmpty_IrqHandler();
     }
     /* USART Ch.2 Transmit completed */
-    if ((0UL != (u32Tmp2 & u32Tmp1 & BIT_MASK_06)) && (0UL != (BIT_MASK_06 & VSSEL136))) {
+    if ((0UL != (u32Tmp2 & u32Tmp1 & BIT_MASK_06)) && (0UL != (BIT_MASK_30 & VSSEL136))) {
         USART2_TxComplete_IrqHandler();
     }
     /* USART Ch.2 Receive timeout */
     if ((0UL != (u32Tmp2 & BIT_MASK_01)) && (0UL != (u32Tmp1 & BIT_MASK_08)) && (0UL != (VSSEL136 & BIT_MASK_31))) {
         USART2_RxTO_IrqHandler();
     }
+
+    /* Arm Errata 838869: Cortex-M4, Cortex-M4F */
+    __DSB();
 }
 
 /**
@@ -838,19 +888,19 @@ void IRQ137_Handler(void)
     u32Tmp2 = CM_USART3->CR1;
     /* USART Ch.3 Receive error */
     if ((0UL != (u32Tmp2 & BIT_MASK_05)) && (0UL != (u32Tmp1 & (BIT_MASK_00 | BIT_MASK_01 | BIT_MASK_03))) &&   \
-            (0UL != (VSSEL137 & BIT_MASK_00))) {
+        (0UL != (VSSEL137 & BIT_MASK_00))) {
         USART3_RxError_IrqHandler();
     }
     /* USART Ch.3 Receive completed */
-    if ((0UL != (u32Tmp2 & u32Tmp1 & BIT_MASK_05)) && (0UL != (BIT_MASK_05 & VSSEL137))) {
+    if ((0UL != (u32Tmp2 & u32Tmp1 & BIT_MASK_05)) && (0UL != (BIT_MASK_01 & VSSEL137))) {
         USART3_RxFull_IrqHandler();
     }
     /* USART Ch.3 Transmit data empty */
-    if ((0UL != (u32Tmp2 & u32Tmp1 & BIT_MASK_07)) && (0UL != (BIT_MASK_07 & VSSEL137))) {
+    if ((0UL != (u32Tmp2 & u32Tmp1 & BIT_MASK_07)) && (0UL != (BIT_MASK_02 & VSSEL137))) {
         USART3_TxEmpty_IrqHandler();
     }
     /* USART Ch.3 Transmit completed */
-    if ((0UL != (u32Tmp2 & u32Tmp1 & BIT_MASK_06)) && (0UL != (BIT_MASK_06 & VSSEL137))) {
+    if ((0UL != (u32Tmp2 & u32Tmp1 & BIT_MASK_06)) && (0UL != (BIT_MASK_03 & VSSEL137))) {
         USART3_TxComplete_IrqHandler();
     }
     /* USART Ch.3 Receive timeout */
@@ -862,11 +912,11 @@ void IRQ137_Handler(void)
     u32Tmp2 = CM_USART4->CR1;
     /* USART Ch.4 Receive error */
     if ((0UL != (u32Tmp2 & BIT_MASK_05)) && (0UL != (u32Tmp1 & (BIT_MASK_00 | BIT_MASK_01 | BIT_MASK_03))) &&   \
-            (0UL != (VSSEL137 & BIT_MASK_05))) {
+        (0UL != (VSSEL137 & BIT_MASK_05))) {
         USART4_RxError_IrqHandler();
     }
     /* USART Ch.4 Receive completed */
-    if ((0UL != (u32Tmp2 & u32Tmp1 & BIT_MASK_05)) && (0UL != (BIT_MASK_05 & VSSEL137))) {
+    if ((0UL != (u32Tmp2 & u32Tmp1 & BIT_MASK_05)) && (0UL != (BIT_MASK_06 & VSSEL137))) {
         USART4_RxFull_IrqHandler();
     }
     /* USART Ch.4 Transmit data empty */
@@ -874,7 +924,7 @@ void IRQ137_Handler(void)
         USART4_TxEmpty_IrqHandler();
     }
     /* USART Ch.4 Transmit completed */
-    if ((0UL != (u32Tmp2 & u32Tmp1 & BIT_MASK_06)) && (0UL != (BIT_MASK_06 & VSSEL137))) {
+    if ((0UL != (u32Tmp2 & u32Tmp1 & BIT_MASK_06)) && (0UL != (BIT_MASK_08 & VSSEL137))) {
         USART4_TxComplete_IrqHandler();
     }
     /* USART Ch.4 Receive timeout */
@@ -898,8 +948,8 @@ void IRQ137_Handler(void)
     }
     /* SPI Ch.1 parity/overflow/underflow/mode error */
     if ((0UL != (u32Tmp1 & BIT_MASK_08))                                                 &&  \
-            (0UL != ((u32Tmp2 & (BIT_MASK_00 | BIT_MASK_02 | BIT_MASK_03 | BIT_MASK_04))))   &&  \
-            (0UL != (VSSEL137 & BIT_MASK_14))) {
+        (0UL != ((u32Tmp2 & (BIT_MASK_00 | BIT_MASK_02 | BIT_MASK_03 | BIT_MASK_04))))   &&  \
+        (0UL != (VSSEL137 & BIT_MASK_14))) {
         SPI1_Error_IrqHandler();
     }
 
@@ -919,8 +969,8 @@ void IRQ137_Handler(void)
     }
     /* SPI Ch.2 parity/overflow/underflow/mode error */
     if ((0UL != (u32Tmp1 & BIT_MASK_08))                                                 &&  \
-            (0UL != ((u32Tmp2 & (BIT_MASK_00 | BIT_MASK_02 | BIT_MASK_03 | BIT_MASK_04))))   &&  \
-            (0UL != (VSSEL137 & BIT_MASK_19))) {
+        (0UL != ((u32Tmp2 & (BIT_MASK_00 | BIT_MASK_02 | BIT_MASK_03 | BIT_MASK_04))))   &&  \
+        (0UL != (VSSEL137 & BIT_MASK_19))) {
         SPI2_Error_IrqHandler();
     }
 
@@ -940,8 +990,8 @@ void IRQ137_Handler(void)
     }
     /* SPI Ch.3 parity/overflow/underflow/mode error */
     if ((0UL != (u32Tmp1 & BIT_MASK_08))                                                 &&  \
-            (0UL != ((u32Tmp2 & (BIT_MASK_00 | BIT_MASK_02 | BIT_MASK_03 | BIT_MASK_04))))   &&  \
-            (0UL != (VSSEL137 & BIT_MASK_24))) {
+        (0UL != ((u32Tmp2 & (BIT_MASK_00 | BIT_MASK_02 | BIT_MASK_03 | BIT_MASK_04))))   &&  \
+        (0UL != (VSSEL137 & BIT_MASK_24))) {
         SPI3_Error_IrqHandler();
     }
 
@@ -961,10 +1011,13 @@ void IRQ137_Handler(void)
     }
     /* SPI Ch.4 parity/overflow/underflow/mode error */
     if ((0UL != (u32Tmp1 & BIT_MASK_08))                                                 &&  \
-            (0UL != ((u32Tmp2 & (BIT_MASK_00 | BIT_MASK_02 | BIT_MASK_03 | BIT_MASK_04))))   &&  \
-            (0UL != (VSSEL137 & BIT_MASK_29))) {
+        (0UL != ((u32Tmp2 & (BIT_MASK_00 | BIT_MASK_02 | BIT_MASK_03 | BIT_MASK_04))))   &&  \
+        (0UL != (VSSEL137 & BIT_MASK_29))) {
         SPI4_Error_IrqHandler();
     }
+
+    /* Arm Errata 838869: Cortex-M4, Cortex-M4F */
+    __DSB();
 }
 
 /**
@@ -978,112 +1031,115 @@ void IRQ138_Handler(void)
     uint32_t u32Tmp1;
 
     u32Tmp1 = CM_TMR4_1->OCSRU;
-    /* Timer4 Ch.1 U phase higher compare match */
+    /* Timer4 Unit.1 U phase higher compare match */
     if ((0UL != (VSSEL138 & BIT_MASK_00)) && (0UL != (u32Tmp1 & BIT_MASK_04)) && (0UL != (u32Tmp1 & BIT_MASK_06))) {
         TMR4_1_GCmpUH_IrqHandler();
     }
-    /* Timer4 Ch.1 U phase lower compare match */
+    /* Timer4 Unit.1 U phase lower compare match */
     if ((0UL != (VSSEL138 & BIT_MASK_01)) && (0UL != (u32Tmp1 & BIT_MASK_05)) && (0UL != (u32Tmp1 & BIT_MASK_07))) {
         TMR4_1_GCmpUL_IrqHandler();
     }
 
     u32Tmp1 = CM_TMR4_1->OCSRV;
-    /* Timer4 Ch.1 V phase higher compare match */
+    /* Timer4 Unit.1 V phase higher compare match */
     if ((0UL != (VSSEL138 & BIT_MASK_02)) && (0UL != (u32Tmp1 & BIT_MASK_04)) && (0UL != (u32Tmp1 & BIT_MASK_06))) {
         TMR4_1_GCmpVH_IrqHandler();
     }
-    /* Timer4 Ch.1 V phase lower compare match */
+    /* Timer4 Unit.1 V phase lower compare match */
     if ((0UL != (VSSEL138 & BIT_MASK_03)) && (0UL != (u32Tmp1 & BIT_MASK_05)) && (0UL != (u32Tmp1 & BIT_MASK_07))) {
         TMR4_1_GCmpVL_IrqHandler();
     }
 
     u32Tmp1 = CM_TMR4_1->OCSRW;
-    /* Timer4 Ch.1 W phase higher compare match */
+    /* Timer4 Unit.1 W phase higher compare match */
     if ((0UL != (VSSEL138 & BIT_MASK_04)) && (0UL != (u32Tmp1 & BIT_MASK_04)) && (0UL != (u32Tmp1 & BIT_MASK_06))) {
         TMR4_1_GCmpWH_IrqHandler();
     }
-    /* Timer4 Ch.1 W phase lower compare match */
+    /* Timer4 Unit.1 W phase lower compare match */
     if ((0UL != (VSSEL138 & BIT_MASK_05)) && (0UL != (u32Tmp1 & BIT_MASK_05)) && (0UL != (u32Tmp1 & BIT_MASK_07))) {
         TMR4_1_GCmpWL_IrqHandler();
     }
 
     u32Tmp1 = CM_TMR4_1->CCSR;
-    /* Timer4 Ch.1 overflow */
+    /* Timer4 Unit.1 overflow */
     if ((0UL != (VSSEL138 & BIT_MASK_06)) && (0UL != (u32Tmp1 & BIT_MASK_08)) && (0UL != (u32Tmp1 & BIT_MASK_09))) {
         TMR4_1_GOvf_IrqHandler();
     }
-    /* Timer4 Ch.1 underflow */
+    /* Timer4 Unit.1 underflow */
     if ((0UL != (VSSEL138 & BIT_MASK_07)) && (0UL != (u32Tmp1 & BIT_MASK_13)) && (0UL != (u32Tmp1 & BIT_MASK_14))) {
         TMR4_1_GUdf_IrqHandler();
     }
 
     u32Tmp1 = CM_TMR4_1->RCSR;
-    /* Timer4 Ch.1 U phase reload */
+    /* Timer4 Unit.1 U phase reload */
     if ((0UL != (VSSEL138 & BIT_MASK_08)) && (0UL == (u32Tmp1 & BIT_MASK_00)) && (0UL != (u32Tmp1 & BIT_MASK_04))) {
         TMR4_1_ReloadU_IrqHandler();
     }
-    /* Timer4 Ch.1 V phase reload */
+    /* Timer4 Unit.1 V phase reload */
     if ((0UL != (VSSEL138 & BIT_MASK_09)) && (0UL == (u32Tmp1 & BIT_MASK_01)) && (0UL != (u32Tmp1 & BIT_MASK_08))) {
         TMR4_1_ReloadV_IrqHandler();
     }
-    /* Timer4 Ch.1 W phase reload */
+    /* Timer4 Unit.1 W phase reload */
     if ((0UL != (VSSEL138 & BIT_MASK_10)) && (0UL == (u32Tmp1 & BIT_MASK_02)) && (0UL != (u32Tmp1 & BIT_MASK_12))) {
         TMR4_1_ReloadW_IrqHandler();
     }
 
     u32Tmp1 = CM_TMR4_2->OCSRU;
-    /* Timer4 Ch.2 U phase higher compare match */
+    /* Timer4 Unit.2 U phase higher compare match */
     if ((0UL != (VSSEL138 & BIT_MASK_16)) && (0UL != (u32Tmp1 & BIT_MASK_04)) && (0UL != (u32Tmp1 & BIT_MASK_06))) {
         TMR4_1_GCmpUH_IrqHandler();
     }
-    /* Timer4 Ch.2 U phase lower compare match */
+    /* Timer4 Unit.2 U phase lower compare match */
     if ((0UL != (VSSEL138 & BIT_MASK_17)) && (0UL != (u32Tmp1 & BIT_MASK_05)) && (0UL != (u32Tmp1 & BIT_MASK_07))) {
         TMR4_1_GCmpUL_IrqHandler();
     }
 
     u32Tmp1 = CM_TMR4_2->OCSRV;
-    /* Timer4 Ch.2 V phase higher compare match */
+    /* Timer4 Unit.2 V phase higher compare match */
     if ((0UL != (VSSEL138 & BIT_MASK_18)) && (0UL != (u32Tmp1 & BIT_MASK_04)) && (0UL != (u32Tmp1 & BIT_MASK_06))) {
         TMR4_2_GCmpVH_IrqHandler();
     }
-    /* Timer4 Ch.2 V phase lower compare match */
+    /* Timer4 Unit.2 V phase lower compare match */
     if ((0UL != (VSSEL138 & BIT_MASK_19)) && (0UL != (u32Tmp1 & BIT_MASK_05)) && (0UL != (u32Tmp1 & BIT_MASK_07))) {
         TMR4_2_GCmpVL_IrqHandler();
     }
 
     u32Tmp1 = CM_TMR4_2->OCSRW;
-    /* Timer4 Ch.2 W phase higher compare match */
+    /* Timer4 Unit.2 W phase higher compare match */
     if ((0UL != (VSSEL138 & BIT_MASK_20)) && (0UL != (u32Tmp1 & BIT_MASK_04)) && (0UL != (u32Tmp1 & BIT_MASK_06))) {
         TMR4_2_GCmpWH_IrqHandler();
     }
-    /* Timer4 Ch.2 W phase lower compare match */
+    /* Timer4 Unit.2 W phase lower compare match */
     if ((0UL != (VSSEL138 & BIT_MASK_21)) && (0UL != (u32Tmp1 & BIT_MASK_05)) && (0UL != (u32Tmp1 & BIT_MASK_07))) {
         TMR4_2_GCmpWL_IrqHandler();
     }
 
     u32Tmp1 = CM_TMR4_2->CCSR;
-    /* Timer4 Ch.2 overflow */
+    /* Timer4 Unit.2 overflow */
     if ((0UL != (VSSEL138 & BIT_MASK_22)) && (0UL != (u32Tmp1 & BIT_MASK_08)) && (0UL != (u32Tmp1 & BIT_MASK_09))) {
         TMR4_2_GOvf_IrqHandler();
     }
-    /* Timer4 Ch.2 underflow */
+    /* Timer4 Unit.2 underflow */
     if ((0UL != (VSSEL138 & BIT_MASK_23)) && (0UL != (u32Tmp1 & BIT_MASK_13)) && (0UL != (u32Tmp1 & BIT_MASK_14))) {
         TMR4_2_GUdf_IrqHandler();
     }
 
     u32Tmp1 = CM_TMR4_2->RCSR;
-    /* Timer4 Ch.2 U phase reload */
+    /* Timer4 Unit.2 U phase reload */
     if ((0UL != (VSSEL138 & BIT_MASK_24)) && (0UL == (u32Tmp1 & BIT_MASK_00)) && (0UL != (u32Tmp1 & BIT_MASK_04))) {
         TMR4_2_ReloadU_IrqHandler();
     }
-    /* Timer4 Ch.2 V phase reload */
+    /* Timer4 Unit.2 V phase reload */
     if ((0UL != (VSSEL138 & BIT_MASK_25)) && (0UL == (u32Tmp1 & BIT_MASK_01)) && (0UL != (u32Tmp1 & BIT_MASK_08))) {
         TMR4_2_ReloadV_IrqHandler();
     }
-    /* Timer4 Ch.2 W phase reload */
+    /* Timer4 Unit.2 W phase reload */
     if ((0UL != (VSSEL138 & BIT_MASK_26)) && (0UL == (u32Tmp1 & BIT_MASK_02)) && (0UL != (u32Tmp1 & BIT_MASK_12))) {
         TMR4_2_ReloadW_IrqHandler();
     }
+
+    /* Arm Errata 838869: Cortex-M4, Cortex-M4F */
+    __DSB();
 }
 
 /**
@@ -1097,58 +1153,61 @@ void IRQ139_Handler(void)
     const uint32_t VSSEL139 = CM_INTC->VSSEL139;
 
     u32Tmp1 = CM_TMR4_3->OCSRU;
-    /* Timer4 Ch.3 U phase higher compare match */
+    /* Timer4 Unit.3 U phase higher compare match */
     if ((0UL != (VSSEL139 & BIT_MASK_00)) && (0UL != (u32Tmp1 & BIT_MASK_04)) && (0UL != (u32Tmp1 & BIT_MASK_06))) {
         TMR4_3_GCmpUH_IrqHandler();
     }
-    /* Timer4 Ch.3 U phase lower compare match */
+    /* Timer4 Unit.3 U phase lower compare match */
     if ((0UL != (VSSEL139 & BIT_MASK_01)) && (0UL != (u32Tmp1 & BIT_MASK_05)) && (0UL != (u32Tmp1 & BIT_MASK_07))) {
         TMR4_3_GCmpUL_IrqHandler();
     }
 
     u32Tmp1 = CM_TMR4_3->OCSRV;
-    /* Timer4 Ch.3 V phase higher compare match */
+    /* Timer4 Unit.3 V phase higher compare match */
     if ((0UL != (VSSEL139 & BIT_MASK_02)) && (0UL != (u32Tmp1 & BIT_MASK_04)) && (0UL != (u32Tmp1 & BIT_MASK_06))) {
         TMR4_3_GCmpVH_IrqHandler();
     }
-    /* Timer4 Ch.3 V phase lower compare match */
+    /* Timer4 Unit.3 V phase lower compare match */
     if ((0UL != (VSSEL139 & BIT_MASK_03)) && (0UL != (u32Tmp1 & BIT_MASK_05)) && (0UL != (u32Tmp1 & BIT_MASK_07))) {
         TMR4_3_GCmpVL_IrqHandler();
     }
 
     u32Tmp1 = CM_TMR4_3->OCSRW;
-    /* Timer4 Ch.3 W phase higher compare match */
+    /* Timer4 Unit.3 W phase higher compare match */
     if ((0UL != (VSSEL139 & BIT_MASK_04)) && (0UL != (u32Tmp1 & BIT_MASK_04)) && (0UL != (u32Tmp1 & BIT_MASK_06))) {
         TMR4_3_GCmpWH_IrqHandler();
     }
-    /* Timer4 Ch.3 W phase lower compare match */
+    /* Timer4 Unit.3 W phase lower compare match */
     if ((0UL != (VSSEL139 & BIT_MASK_05)) && (0UL != (u32Tmp1 & BIT_MASK_05)) && (0UL != (u32Tmp1 & BIT_MASK_07))) {
         TMR4_3_GCmpWL_IrqHandler();
     }
 
     u32Tmp1 = CM_TMR4_3->CCSR;
-    /* Timer4 Ch.3 overflow */
+    /* Timer4 Unit.3 overflow */
     if ((0UL != (VSSEL139 & BIT_MASK_06)) && (0UL != (u32Tmp1 & BIT_MASK_08)) && (0UL != (u32Tmp1 & BIT_MASK_09))) {
         TMR4_3_GOvf_IrqHandler();
     }
-    /* Timer4 Ch.3 underflow */
+    /* Timer4 Unit.3 underflow */
     if ((0UL != (VSSEL139 & BIT_MASK_07)) && (0UL != (u32Tmp1 & BIT_MASK_13)) && (0UL != (u32Tmp1 & BIT_MASK_14))) {
         TMR4_3_GUdf_IrqHandler();
     }
 
     u32Tmp1 = CM_TMR4_3->RCSR;
-    /* Timer4 Ch.3 U phase reload */
+    /* Timer4 Unit.3 U phase reload */
     if ((0UL != (VSSEL139 & BIT_MASK_08)) && (0UL == (u32Tmp1 & BIT_MASK_00)) && (0UL != (u32Tmp1 & BIT_MASK_04))) {
         TMR4_1_ReloadU_IrqHandler();
     }
-    /* Timer4 Ch.3 V phase reload */
+    /* Timer4 Unit.3 V phase reload */
     if ((0UL != (VSSEL139 & BIT_MASK_09)) && (0UL == (u32Tmp1 & BIT_MASK_01)) && (0UL != (u32Tmp1 & BIT_MASK_08))) {
         TMR4_3_ReloadV_IrqHandler();
     }
-    /* Timer4 Ch.3 W phase reload */
+    /* Timer4 Unit.3 W phase reload */
     if ((0UL != (VSSEL139 & BIT_MASK_10)) && (0UL == (u32Tmp1 & BIT_MASK_02)) && (0UL != (u32Tmp1 & BIT_MASK_12))) {
         TMR4_3_ReloadW_IrqHandler();
     }
+
+    /* Arm Errata 838869: Cortex-M4, Cortex-M4F */
+    __DSB();
 }
 
 /**
@@ -1258,6 +1317,9 @@ void IRQ140_Handler(void)
             I2S4_Error_IrqHandler();
         }
     }
+
+    /* Arm Errata 838869: Cortex-M4, Cortex-M4F */
+    __DSB();
 }
 
 /**
@@ -1292,7 +1354,7 @@ void IRQ141_Handler(void)
     u32Tmp1 = CM_I2C1->CR2 & 0x00F05217UL;
     u32Tmp2 = CM_I2C1->SR & 0x00F05217UL;
     if ((0UL != (u32Tmp1 & u32Tmp2)) && (0UL != (VSSEL141 & BIT_MASK_07))) {
-        I2C1_Error_IrqHandler();
+        I2C1_EE_IrqHandler();
     }
     /* I2C Ch.2 Receive completed */
     if (1UL == bCM_I2C2->CR2_b.RFULLIE) {
@@ -1316,7 +1378,7 @@ void IRQ141_Handler(void)
     u32Tmp1 = CM_I2C2->CR2 & 0x00F05217UL;
     u32Tmp2 = CM_I2C2->SR & 0x00F05217UL;
     if ((0UL != (u32Tmp1 & u32Tmp2)) && (0UL != (VSSEL141 & BIT_MASK_11))) {
-        I2C2_Error_IrqHandler();
+        I2C2_EE_IrqHandler();
     }
     /* I2C Ch.3 Receive completed */
     if (1UL == bCM_I2C3->CR2_b.RFULLIE) {
@@ -1340,19 +1402,19 @@ void IRQ141_Handler(void)
     u32Tmp1 = CM_I2C3->CR2 & 0x00F05217UL;
     u32Tmp2 = CM_I2C3->SR & 0x00F05217UL;
     if ((0UL != (u32Tmp1 & u32Tmp2)) && (0UL != (VSSEL141 & BIT_MASK_15))) {
-        I2C3_Error_IrqHandler();
+        I2C3_EE_IrqHandler();
     }
     /* LVD Ch.1 detected */
     if (PWC_PVDCR1_PVD1IRE == READ_REG8_BIT(CM_PWC->PVDCR1, PWC_PVDCR1_PVD1IRE | PWC_PVDCR1_PVD1IRS)) {
         if ((PWC_PVDDSR_PVD1DETFLG == READ_REG8_BIT(CM_PWC->PVDDSR, PWC_PVDDSR_PVD1DETFLG)) && \
-                (0UL != (VSSEL141 & BIT_MASK_17))) {
+            (0UL != (VSSEL141 & BIT_MASK_17))) {
             PWC_LVD1_IrqHandler();
         }
     }
     if (PWC_PVDCR1_PVD2IRE == READ_REG8_BIT(CM_PWC->PVDCR1, PWC_PVDCR1_PVD2IRE | PWC_PVDCR1_PVD2IRS)) {
         /* LVD Ch.2 detected */
         if ((PWC_PVDDSR_PVD2DETFLG == READ_REG8_BIT(CM_PWC->PVDDSR, PWC_PVDDSR_PVD2DETFLG)) && \
-                (0UL != (VSSEL141 & BIT_MASK_18))) {
+            (0UL != (VSSEL141 & BIT_MASK_18))) {
             PWC_LVD2_IrqHandler();
         }
     }
@@ -1379,6 +1441,9 @@ void IRQ141_Handler(void)
     if ((0UL != (CM_WDT->SR & (BIT_MASK_16 | BIT_MASK_17))) && (0UL != (VSSEL141 & BIT_MASK_23))) {
         WDT_IrqHandler();
     }
+
+    /* Arm Errata 838869: Cortex-M4, Cortex-M4F */
+    __DSB();
 }
 
 /**
@@ -1438,6 +1503,9 @@ void IRQ142_Handler(void)
             ADC2_SeqCmp_IrqHandler();
         }
     }
+
+    /* Arm Errata 838869: Cortex-M4, Cortex-M4F */
+    __DSB();
 }
 
 /**
@@ -1455,9 +1523,10 @@ void IRQ143_Handler(void)
     uint16_t NORINTSGEN;
     uint16_t ERRINTST;
     uint16_t ERRINTSGEN;
+    uint32_t u32VSSEL143 = CM_INTC->VSSEL143;
 
     /* SDIO Ch.1 */
-    if (1UL == bCM_INTC->VSSEL143_b.VSEL2) {
+    if (0UL != (u32VSSEL143 & BIT_MASK_02)) {
         NORINTST = CM_SDIOC1->NORINTST;
         NORINTSGEN = CM_SDIOC1->NORINTSGEN;
         ERRINTST = CM_SDIOC1->ERRINTST;
@@ -1469,7 +1538,7 @@ void IRQ143_Handler(void)
     }
 
     /* SDIO Ch.2 */
-    if (1UL == bCM_INTC->VSSEL143_b.VSEL5) {
+    if (0UL != (u32VSSEL143 & BIT_MASK_05)) {
         NORINTST = CM_SDIOC2->NORINTST;
         NORINTSGEN = CM_SDIOC2->NORINTSGEN;
         ERRINTST = CM_SDIOC2->ERRINTST;
@@ -1481,22 +1550,25 @@ void IRQ143_Handler(void)
     }
 
     /* CAN */
-    if (1UL == bCM_INTC->VSSEL143_b.VSEL6) {
+    if (0UL != (u32VSSEL143 & BIT_MASK_06)) {
         RTIF = CM_CAN->RTIF;
         RTIE = CM_CAN->RTIE;
         ERRINT = CM_CAN->ERRINT;
         TTCFG = CM_CAN->TTCFG;
-        if (((0U != (TTCFG & BIT_MASK_05))                                          ||  \
-                (0U != (RTIF & BIT_MASK_00))                                           ||  \
-                (0U != (RTIF & RTIE & 0xFEU))                                          ||  \
-                ((0U != (ERRINT & BIT_MASK_00)) && (0U != (ERRINT & BIT_MASK_01)))     ||  \
-                ((0U != (ERRINT & BIT_MASK_02)) && (0U != (ERRINT & BIT_MASK_03)))     ||  \
-                ((0U != (ERRINT & BIT_MASK_04)) && (0U != (ERRINT & BIT_MASK_05)))     ||  \
-                ((0U != (TTCFG & BIT_MASK_03)) && (0U != (TTCFG  & BIT_MASK_04)))     ||  \
-                ((0U != (TTCFG & BIT_MASK_06)) && (0U != (TTCFG & BIT_MASK_07)))) != 0U) {
+        if (((0U != (TTCFG & BIT_MASK_05))                                             ||  \
+             (0U != (RTIF & BIT_MASK_00))                                              ||  \
+             (0U != (RTIF & RTIE & 0xFEU))                                             ||  \
+             ((0U != (ERRINT & BIT_MASK_00)) && (0U != (ERRINT & BIT_MASK_01)))        ||  \
+             ((0U != (ERRINT & BIT_MASK_02)) && (0U != (ERRINT & BIT_MASK_03)))        ||  \
+             ((0U != (ERRINT & BIT_MASK_04)) && (0U != (ERRINT & BIT_MASK_05)))        ||  \
+             ((0U != (TTCFG & BIT_MASK_03)) && (0U != (TTCFG  & BIT_MASK_04)))         ||  \
+             ((0U != (TTCFG & BIT_MASK_06)) && (0U != (TTCFG & BIT_MASK_07)))) != 0U) {
             CAN_IrqHandler();
         }
     }
+
+    /* Arm Errata 838869: Cortex-M4, Cortex-M4F */
+    __DSB();
 }
 /**
  * @}
@@ -2094,7 +2166,7 @@ __WEAKDEF void I2C1_TxComplete_IrqHandler(void)
 __WEAKDEF void I2C1_TxEmpty_IrqHandler(void)
 {
 }
-__WEAKDEF void I2C1_Error_IrqHandler(void)
+__WEAKDEF void I2C1_EE_IrqHandler(void)
 {
 }
 __WEAKDEF void I2C2_RxFull_IrqHandler(void)
@@ -2106,7 +2178,7 @@ __WEAKDEF void I2C2_TxComplete_IrqHandler(void)
 __WEAKDEF void I2C2_TxEmpty_IrqHandler(void)
 {
 }
-__WEAKDEF void I2C2_Error_IrqHandler(void)
+__WEAKDEF void I2C2_EE_IrqHandler(void)
 {
 }
 __WEAKDEF void I2C3_RxFull_IrqHandler(void)
@@ -2118,7 +2190,7 @@ __WEAKDEF void I2C3_TxComplete_IrqHandler(void)
 __WEAKDEF void I2C3_TxEmpty_IrqHandler(void)
 {
 }
-__WEAKDEF void I2C3_Error_IrqHandler(void)
+__WEAKDEF void I2C3_EE_IrqHandler(void)
 {
 }
 __WEAKDEF void PWC_LVD1_IrqHandler(void)

@@ -6,7 +6,7 @@
 - 2. USB 主机 (PUSB2), 可以识别 U 盘/鼠标/键盘等设备
 - 3. USB 从机 (PUSB2), 可以将开发板作为一个 USB 设备（U 盘）运行，连接 Windows/Ubuntu 等主机进行识别和访问
 
-> 目前只在 AARCH64 RT-Thread 模式下测试过，AARCH32 使用需要做少量修改，RT-Smart 下使用需要修改链接脚本，增加虚拟内存空间适配
+> 目前只在 AARCH64 RT-Thread 模式下测试过
 
 ## 通过 Package 使用 CherryUSB
 

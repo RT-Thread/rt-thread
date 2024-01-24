@@ -15,7 +15,7 @@ config RT_USING_RYM
         default y
     endif
 
-config RT_USING_ULOG
+menuconfig RT_USING_ULOG
     bool "Enable ulog"
     default n
 

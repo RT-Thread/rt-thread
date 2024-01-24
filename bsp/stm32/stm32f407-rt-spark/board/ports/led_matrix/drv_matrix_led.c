@@ -21,19 +21,21 @@
  *  - logic 1 is: 900ns(H) + 400ns(L)
  */
 
+#include <rtdevice.h>
 #include <board.h>
 #include <drv_matrix_led.h>
+#include <drv_common.h>
+#include <drv_gpio.h>
 
 #ifndef LED_NUM
-    #define LED_NUM     19 // LED灯珠个数
+#define LED_NUM     19 // LED灯珠个数
 #endif
 #define LED_MATRIX_EN_PIN   GET_PIN(F, 2)
 
 TIM_HandleTypeDef htim3;
 DMA_HandleTypeDef hdma_tim3_ch2;
 
-ALIGN(4)
-uint8_t led_buffer[LED_NUM * 24 * 2];
+rt_align(RT_ALIGN_SIZE) uint8_t led_buffer[LED_NUM * 24 * 2];
 
 extern void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
 

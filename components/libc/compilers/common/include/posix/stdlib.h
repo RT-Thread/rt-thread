@@ -18,6 +18,8 @@ extern "C" {
 #include <stdint.h>
 #include <stdlib.h>
 
+void __rt_libc_exit(int status);
+
 char *itoa(int n, char *buffer, int radix);
 char *lltoa(int64_t ll, char *buffer, int radix);
 char *ltoa(long l, char *buffer, int radix);

@@ -29,10 +29,6 @@
 static volatile rt_atomic_t rt_tick = 0;
 #endif /* RT_USING_SMP */
 
-#ifndef __on_rt_tick_hook
-    #define __on_rt_tick_hook()          __ON_HOOK_ARGS(rt_tick_hook, ())
-#endif
-
 #if defined(RT_USING_HOOK) && defined(RT_HOOK_USING_FUNC_PTR)
 static void (*rt_tick_hook)(void);
 
@@ -93,6 +89,8 @@ void rt_tick_increase(void)
     rt_base_t level;
     rt_atomic_t oldval = 0;
 
+    RT_ASSERT(rt_interrupt_get_nest() > 0);
+
     RT_OBJECT_HOOK_CALL(rt_tick_hook, ());
     /* increase the global tick */
 #ifdef RT_USING_SMP
@@ -103,20 +101,17 @@ void rt_tick_increase(void)
 
     /* check time slice */
     thread = rt_thread_self();
-    rt_get_thread_struct(thread);
     level = rt_spin_lock_irqsave(&(thread->spinlock));
     rt_atomic_sub(&(thread->remaining_tick), 1);
     if (rt_atomic_compare_exchange_strong(&(thread->remaining_tick), &oldval, thread->init_tick))
     {
         thread->stat |= RT_THREAD_STAT_YIELD;
         rt_spin_unlock_irqrestore(&(thread->spinlock), level);
-        rt_put_thread_struct(thread);
         rt_schedule();
     }
     else
     {
         rt_spin_unlock_irqrestore(&(thread->spinlock), level);
-        rt_put_thread_struct(thread);
     }
 
     /* check timer */
@@ -169,6 +164,10 @@ RTM_EXPORT(rt_tick_from_millisecond);
  */
 rt_weak rt_tick_t rt_tick_get_millisecond(void)
 {
+#if RT_TICK_PER_SECOND == 0 // make cppcheck happy
+#error "RT_TICK_PER_SECOND must be greater than zero"
+#endif
+
 #if 1000 % RT_TICK_PER_SECOND == 0u
     return rt_tick_get() * (1000u / RT_TICK_PER_SECOND);
 #else

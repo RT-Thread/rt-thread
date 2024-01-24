@@ -7,9 +7,10 @@
    Change Logs:
    Date             Author          Notes
    2022-03-31       CDT             First version
+   2023-06-30       CDT             Add function KEYSCAN_DeInit
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -209,6 +210,20 @@ int32_t KEYSCAN_Init(const stc_keyscan_init_t *pstcKeyscanInit)
 }
 
 /**
+ * @brief  De-initialize the KEYSCAN.
+ * @param  None
+ * @retval int32_t:
+ *           - LL_OK: De-Initialize success.
+ */
+int32_t KEYSCAN_DeInit(void)
+{
+    int32_t i32Ret = LL_OK;
+    WRITE_REG32(CM_KEYSCAN->SER, 0UL);
+    WRITE_REG32(CM_KEYSCAN->SCR, 0UL);
+    return i32Ret;
+}
+
+/**
  * @}
  */
 
@@ -219,8 +234,8 @@ int32_t KEYSCAN_Init(const stc_keyscan_init_t *pstcKeyscanInit)
  */
 
 /**
-* @}
-*/
+ * @}
+ */
 
 /******************************************************************************
  * EOF (not truncated)

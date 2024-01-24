@@ -40,7 +40,7 @@ jobs:
     env:
       TEST_BSP_ROOT: bsp/stm32/stm32f407-atk-explorer
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - name: Install Tools
       shell: bash

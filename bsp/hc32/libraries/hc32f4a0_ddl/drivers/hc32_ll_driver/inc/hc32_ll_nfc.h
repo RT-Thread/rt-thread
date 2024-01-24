@@ -7,9 +7,11 @@
    Change Logs:
    Date             Author          Notes
    2022-03-31       CDT             First version
+   2023-09-30       CDT             Modify typo
+                                    Add API function: EXMC_NFC_Read/EXMC_NFC_Write
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -549,11 +551,17 @@ int32_t EXMC_NFC_ReadId(uint32_t u32Bank, uint32_t u32IdAddr,
 int32_t EXMC_NFC_ReadUniqueId(uint32_t u32Bank, uint32_t au32UniqueId[], uint8_t u8NumWords, uint32_t u32Timeout);
 int32_t EXMC_NFC_ReadParameterPage(uint32_t u32Bank,
                                    uint32_t au32Data[], uint16_t u16NumWords, uint32_t u32Timeout);
-int32_t EXMC_NFC_SetFeature(uint32_t u32Bank, uint8_t u8FeatrueAddr,
+int32_t EXMC_NFC_SetFeature(uint32_t u32Bank, uint8_t u8FeatureAddr,
                             const uint32_t au32Data[], uint8_t u8NumWords, uint32_t u32Timeout);
-int32_t EXMC_NFC_GetFeature(uint32_t u32Bank, uint8_t u8FeatrueAddr,
+int32_t EXMC_NFC_GetFeature(uint32_t u32Bank, uint8_t u8FeatureAddr,
                             uint32_t au32Data[], uint8_t u8NumWords, uint32_t u32Timeout);
 int32_t EXMC_NFC_EraseBlock(uint32_t u32Bank, uint32_t u32RowAddr, uint32_t u32Timeout);
+int32_t EXMC_NFC_Read(uint32_t u32Bank, uint32_t u32Page, uint32_t u32Col,
+                      uint32_t au32Data[], uint32_t u32NumWords,
+                      en_functional_state_t enEccState, uint32_t u32Timeout);
+int32_t EXMC_NFC_Write(uint32_t u32Bank, uint32_t u32Page, uint32_t u32Col,
+                       const uint32_t au32Data[], uint32_t u32NumWords,
+                       en_functional_state_t enEccState, uint32_t u32Timeout);
 int32_t EXMC_NFC_ReadPageMeta(uint32_t u32Bank, uint32_t u32Page, uint8_t *pu8Data,
                               uint32_t u32NumBytes, uint32_t u32Timeout);
 int32_t EXMC_NFC_WritePageMeta(uint32_t u32Bank, uint32_t u32Page,

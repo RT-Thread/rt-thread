@@ -9,7 +9,7 @@
    2022-03-31       CDT             First version
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -84,29 +84,29 @@ extern "C"
 extern void __main(void);
 
 /* CC */
-#define STL_SECTION(x)                  __attribute__((section(x)))
-#define STL_UNUSED                      __attribute__((unused))
-#define STL_USED                        __attribute__((used))
-#define STL_ALIGN(n)                    __attribute__((aligned(n)))
-#define STL_WEAK                        __WEAKDEF
-#define STL_INLINE                      static __inline
+#define STL_SECTION(x)              __attribute__((section(x)))
+#define STL_UNUSED                  __attribute__((unused))
+#define STL_USED                    __attribute__((used))
+#define STL_ALIGN(n)                __attribute__((aligned(n)))
+#define STL_WEAK                    __WEAKDEF
+#define STL_INLINE                  static __inline
 
-#define CallApplicationStartUp( )       __main()
+#define CallApplicationStartUp( )   __main()
 
 #elif defined (__ICCARM__)              /*!< IAR Compiler */
 /* CPU will start executing at the program entry label __iar_program_start when the CPU is reset */
 extern void __iar_program_start(void);
 
 /* CC */
-#define STL_SECTION(x)                  @ x
+#define STL_SECTION(x)              @ x
 #define STL_UNUSED
-#define STL_USED                        __root
-#define STL_PRAGMA(x)                   _Pragma(#x)
-#define STL_ALIGN(n)                    STL_PRAGMA(data_alignment=n)
-#define STL_WEAK                        __WEAKDEF
-#define STL_INLINE                      static inline
+#define STL_USED                    __root
+#define STL_PRAGMA(x)               _Pragma(#x)
+#define STL_ALIGN(n)                STL_PRAGMA(data_alignment=n)
+#define STL_WEAK                    __WEAKDEF
+#define STL_INLINE                  static inline
 
-#define CallApplicationStartUp( )       __iar_program_start()
+#define CallApplicationStartUp( )   __iar_program_start()
 #else
 #error Unsupported tool chain
 #endif

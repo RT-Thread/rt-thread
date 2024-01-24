@@ -194,9 +194,9 @@ int rt_soft_i2c_init(void)
     {
         i2c_obj[i].ops = lpc55s69_bit_ops_default;
         i2c_obj[i].ops.data = (void*)&soft_i2c_config[i];
-        i2c_obj[i].i2c2_bus.priv = &i2c_obj[i].ops;
+        i2c_obj[i].i2c_bus.priv = &i2c_obj[i].ops;
         lpc55s69_i2c_gpio_init(&i2c_obj[i]);
-        result = rt_i2c_bit_add_bus(&i2c_obj[i].i2c2_bus, soft_i2c_config[i].bus_name);
+        result = rt_i2c_bit_add_bus(&i2c_obj[i].i2c_bus, soft_i2c_config[i].bus_name);
         RT_ASSERT(result == RT_EOK);
         lpc55s69_i2c_bus_unlock(&soft_i2c_config[i]);
 

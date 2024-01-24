@@ -7,9 +7,14 @@
    Change Logs:
    Date             Author          Notes
    2022-03-31       CDT             First version
+   2023-01-15       CDT             Implemented the definition of __NO_INIT for AC6 and ARM Compiler
+                                    ARM Compiler suppress warning message: diag_1296
+   2023-06-30       CDT             Modify typo
+                                    Add __NO_OPTIMIZE configuration item
+   2023-09-30       CDT             Add attribute for __RAM_FUNC definition
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -111,11 +116,14 @@ Functions that are executed in RAM should reside in a separate source module.
 Using the 'Options for File' dialog you can simply change the 'Code / Const'
 area of a module to a memory space in physical RAM. */
 #ifndef __RAM_FUNC
-#define __RAM_FUNC
+#define __RAM_FUNC                  __attribute__((section("RAMCODE")))
 #endif /* __RAM_FUNC */
 #ifndef __NO_INIT
-#define __NO_INIT
+#define __NO_INIT                   __attribute__((section(".bss.noinit")))
 #endif /* __NO_INIT */
+#ifndef __NO_OPTIMIZE
+#define __NO_OPTIMIZE               __attribute__((optnone))
+#endif /* __NO_OPTIMIZE */
 #elif defined ( __GNUC__ ) && !defined (__CC_ARM) /*!< GNU Compiler */
 #ifndef __WEAKDEF
 #define __WEAKDEF                   __attribute__((weak))
@@ -133,6 +141,9 @@ area of a module to a memory space in physical RAM. */
 #ifndef __NO_INIT
 #define __NO_INIT                   __attribute__((section(".noinit")))
 #endif /* __NO_INIT */
+#ifndef __NO_OPTIMIZE
+#define __NO_OPTIMIZE               __attribute__((optimize("O0")))
+#endif /* __NO_OPTIMIZE */
 #elif defined (__ICCARM__)              /*!< IAR Compiler */
 #ifndef __WEAKDEF
 #define __WEAKDEF                   __weak
@@ -149,6 +160,9 @@ area of a module to a memory space in physical RAM. */
 #ifndef __NO_INIT
 #define __NO_INIT                   __no_init
 #endif /* __NO_INIT */
+#ifndef __NO_OPTIMIZE
+#define __NO_OPTIMIZE               _Pragma("optimize=none")
+#endif /* __NO_OPTIMIZE */
 #elif defined (__CC_ARM)                /*!< ARM Compiler */
 #ifndef __WEAKDEF
 #define __WEAKDEF                   __attribute__((weak))
@@ -160,8 +174,11 @@ area of a module to a memory space in physical RAM. */
 #define __NOINLINE                  __attribute__((noinline))
 #endif /* __NOINLINE */
 #ifndef __NO_INIT
-#define __NO_INIT
+#define __NO_INIT                   __attribute__((section(".bss.noinit"), zero_init))
 #endif /* __NO_INIT */
+#ifndef __NO_OPTIMIZE
+#define __NO_OPTIMIZE
+#endif /* __NO_OPTIMIZE */
 /* RAM functions are defined using the toolchain options.
 Functions that are executed in RAM should reside in a separate source module.
 Using the 'Options for File' dialog you can simply change the 'Code / Const'
@@ -169,7 +186,7 @@ area of a module to a memory space in physical RAM. */
 #ifndef __RAM_FUNC
 #define __RAM_FUNC                  __attribute__((section("RAMCODE")))
 #endif /* __RAM_FUNC */
-/* Suppress warning message: extended constant initialiser used */
+/* Suppress warning message: extended constant initializer used */
 #pragma diag_suppress 1296
 #else
 #error  "unsupported compiler!!"

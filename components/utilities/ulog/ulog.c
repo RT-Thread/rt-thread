@@ -191,7 +191,7 @@ static void output_unlock(void)
     }
 
     /* If the scheduler is started and in thread context */
-    if (rt_interrupt_get_nest() == 0 && rt_thread_self() != RT_NULL)
+    if (rt_scheduler_is_available())
     {
         rt_mutex_release(&ulog.output_locker);
     }
@@ -212,7 +212,7 @@ static void output_lock(void)
     }
 
     /* If the scheduler is started and in thread context */
-    if (rt_interrupt_get_nest() == 0 && rt_thread_self() != RT_NULL)
+    if (rt_scheduler_is_available())
     {
         rt_mutex_take(&ulog.output_locker, RT_WAITING_FOREVER);
     }

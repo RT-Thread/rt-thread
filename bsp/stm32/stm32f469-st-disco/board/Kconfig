@@ -82,6 +82,7 @@ menu "Onboard Peripheral Drivers"
 
     config BSP_USING_TOUCH
         bool "Enable touch screen"
+        select RT_USING_TOUCH
         select BSP_USING_I2C1
 
     choice

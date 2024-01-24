@@ -6,9 +6,11 @@
    Change Logs:
    Date             Author          Notes
    2022-03-31       CDT             First version
+   2022-06-30       CDT             Fix warning: MISRAC2012-Rule-18.4
+   2023-01-15       CDT             Fix bug: Reading CC Build CRC32 value is error in release project
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -44,8 +46,6 @@
 /*******************************************************************************
  * Local pre-processor symbols/macros ('#define')
  ******************************************************************************/
-#define CC_BULID_CRC32_VALUE    (*(volatile uint32_t *)(&STL_ROM_CRC32_CC_CHECKSUM))
-
 #if defined (__CC_ARM)                  /* keil Compiler */
 #define STL_CRC32_XOR_VALUE     (0xFFFFFFFFUL)
 #elif defined (__IAR_SYSTEMS_ICC__)     /* IAR Compiler */
@@ -92,12 +92,20 @@ STL_USED const uint32_t __checksum STL_SECTION(".checksum") = 0UL;
  */
 uint32_t STL_FlashStartupTest(void)
 {
+    uint32_t u32RomStart = STL_ROM_CRC32_START;
+    uint32_t u32RomEnd = STL_ROM_CRC32_END;
+    uint32_t u32RomSize = (u32RomEnd - u32RomStart);
+    uint8_t *pu8CrcData = (uint8_t *)u32RomStart;
     uint32_t u32CalcCrc32Value;
+    volatile uint32_t u32CcBulidCrc32Addr;
+    volatile uint32_t u32CcBulidCrc32Value;
     uint32_t u32Ret = STL_ERR;
 
-    u32CalcCrc32Value = STL_CalculateCRC32Value(STL_CRC32_INIT_VALUE, (uint8_t *)STL_ROM_CRC32_START, STL_ROM_CRC32_SIZE);
+    u32CcBulidCrc32Addr = (uint32_t)(&STL_ROM_CRC32_CC_CHECKSUM);
+    u32CcBulidCrc32Value =  *(uint32_t *)(u32CcBulidCrc32Addr);
+    u32CalcCrc32Value = STL_CalculateCRC32Value(STL_CRC32_INIT_VALUE, pu8CrcData, u32RomSize);
     u32CalcCrc32Value = SW_CRC32_VALUE_XOR(u32CalcCrc32Value);
-    if (CC_BULID_CRC32_VALUE == u32CalcCrc32Value) {
+    if (u32CcBulidCrc32Value == u32CalcCrc32Value) {
         u32Ret = STL_OK;
     }
 
@@ -109,12 +117,17 @@ uint32_t STL_FlashStartupTest(void)
  * @param  None
  * @retval uint32_t:
  *           - STL_OK:          Test pass.
- *           - STL_OK:          Flash CRC32 value error.
+ *           - STL_ERR:         Flash CRC value error.
  */
 uint32_t STL_FlashRuntimeTest(void)
 {
     uint32_t u32Ret = STL_OK;
-    const uint32_t u32CheckEndAddr = STL_ROM_CRC32_END + 4UL - STL_ROM_CRC32_BLOCK_SIZE;
+    uint32_t u32RomStart = STL_ROM_CRC32_START;
+    uint32_t u32RomEnd = STL_ROM_CRC32_END;
+    uint32_t u32RomSize = (u32RomEnd - u32RomStart);
+    volatile uint32_t u32CcBulidCrc32Addr;
+    volatile uint32_t u32CcBulidCrc32Value;
+    const uint32_t u32CheckEndAddr = u32RomSize + 3UL - STL_ROM_CRC32_BLOCK_SIZE;
     static uint32_t u32CalcLen;
     static uint32_t u32CheckAddr = STL_ROM_CRC32_START;
     static uint32_t u32CalcCrc32Value = STL_CRC32_INIT_VALUE;
@@ -127,19 +140,21 @@ uint32_t STL_FlashRuntimeTest(void)
         if (u32CheckAddr < u32CheckEndAddr) {
             u32CalcLen = STL_ROM_CRC32_BLOCK_SIZE;
         } else {
-            u32CalcLen = STL_ROM_CRC32_END - u32CheckAddr + 1UL;
+            u32CalcLen = u32RomEnd - u32CheckAddr;
         }
         u32CalcCrc32Value = STL_CalculateCRC32Value(u32CalcCrc32Value, (uint8_t *)u32CheckAddr, u32CalcLen);
 
         u32CheckAddr += u32CalcLen;       /* Update address */
     } else {
+        u32CcBulidCrc32Addr = (uint32_t)(&STL_ROM_CRC32_CC_CHECKSUM);
+        u32CcBulidCrc32Value =  *(uint32_t *)(u32CcBulidCrc32Addr);
         u32CheckAddr = STL_ROM_CRC32_START;             /* Update address */
         u32CalcCrc32Value = SW_CRC32_VALUE_XOR(u32CalcCrc32Value);
-        if (CC_BULID_CRC32_VALUE == u32CalcCrc32Value) {
-            STL_Printf("********    CRC32 verify ok in runtime    ********\r\n");
+        if (u32CcBulidCrc32Value == u32CalcCrc32Value) {
+            STL_Printf("********   CRC32 verify ok in runtime                   ********\r\n");
         } else {
-            STL_Printf("********   CRC32 verify error in runtime   ********\r\n");
-            STL_Printf("* Calc_CRC32= 0x%x:CC Build_CRC32= 0x%x *\r\n", u32CalcCrc32Value, CC_BULID_CRC32_VALUE);
+            STL_Printf("********   CRC32 verify error in runtime                ********\r\n");
+            STL_Printf("* Calc_CRC32= 0x%x:CC Build_CRC32= 0x%x *\r\n", u32CalcCrc32Value, u32CcBulidCrc32Value);
             u32Ret = STL_ERR;
         }
     }

@@ -2049,7 +2049,7 @@ static int lwp_copy_files(struct rt_lwp *dst, struct rt_lwp *src)
         /* dup files */
         for (i = 0; i < src_fdt->maxfd; i++)
         {
-            d_s = fdt_fd_get(src_fdt, i);
+            d_s = fdt_get_file(src_fdt, i);
             if (d_s)
             {
                 dst_fdt->fds[i] = d_s;

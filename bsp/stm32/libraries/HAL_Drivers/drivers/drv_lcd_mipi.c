@@ -9,6 +9,7 @@
  */
 
 #include <board.h>
+#include <rtconfig.h>
 
 #ifdef BSP_USING_LCD_MIPI
 #include <lcd_port.h>

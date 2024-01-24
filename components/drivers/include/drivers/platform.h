@@ -22,6 +22,8 @@ struct rt_platform_device
 {
     struct rt_device parent;
 
+    int dev_id;
+
     const char *name;
 
 #ifdef RT_USING_OFW
@@ -42,12 +44,16 @@ struct rt_platform_driver
 #endif
 
     rt_err_t (*probe)(struct rt_platform_device *pdev);
+    rt_err_t (*remove)(struct rt_platform_device *pdev);
+    rt_err_t (*shutdown)(struct rt_platform_device *pdev);
 };
 
 struct rt_platform_device *rt_platform_device_alloc(const char *name);
 
 rt_err_t rt_platform_driver_register(struct rt_platform_driver *pdrv);
 rt_err_t rt_platform_device_register(struct rt_platform_device *pdev);
+
+rt_err_t rt_platform_ofw_device_probe_child(struct rt_ofw_node *np);
 
 #define RT_PLATFORM_DRIVER_EXPORT(driver)  RT_DRIVER_EXPORT(driver, platform, BUILIN)
 

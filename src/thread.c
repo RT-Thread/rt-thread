@@ -33,6 +33,8 @@
  * 2022-01-24     THEWON       let rt_thread_sleep return thread->error when using signal
  * 2022-10-15     Bernard      add nested mutex feature
  * 2023-09-15     xqyjlj       perf rt_hw_interrupt_disable/enable
+ * 2023-12-10     xqyjlj       fix thread_exit/detach/delete
+ *                             fix rt_thread_delay
  */
 
 #include <rthw.h>
@@ -43,20 +45,9 @@
 #define DBG_LVL           DBG_INFO
 #include <rtdbg.h>
 
-#ifndef __on_rt_thread_inited_hook
-    #define __on_rt_thread_inited_hook(thread)      __ON_HOOK_ARGS(rt_thread_inited_hook, (thread))
-#endif
-#ifndef __on_rt_thread_suspend_hook
-    #define __on_rt_thread_suspend_hook(thread)     __ON_HOOK_ARGS(rt_thread_suspend_hook, (thread))
-#endif
-#ifndef __on_rt_thread_resume_hook
-    #define __on_rt_thread_resume_hook(thread)      __ON_HOOK_ARGS(rt_thread_resume_hook, (thread))
-#endif
-
 #if defined(RT_USING_HOOK) && defined(RT_HOOK_USING_FUNC_PTR)
 static void (*rt_thread_suspend_hook)(rt_thread_t thread);
 static void (*rt_thread_resume_hook) (rt_thread_t thread);
-static void (*rt_thread_inited_hook) (rt_thread_t thread);
 
 /**
  * @brief   This function sets a hook function when the system suspend a thread.
@@ -82,15 +73,7 @@ void rt_thread_resume_sethook(void (*hook)(rt_thread_t thread))
     rt_thread_resume_hook = hook;
 }
 
-/**
- * @brief   This function sets a hook function when a thread is initialized.
- *
- * @param   hook is the specified hook function.
- */
-void rt_thread_inited_sethook(void (*hook)(rt_thread_t thread))
-{
-    rt_thread_inited_hook = hook;
-}
+RT_OBJECT_HOOKLIST_DEFINE(rt_thread_inited);
 #endif /* defined(RT_USING_HOOK) && defined(RT_HOOK_USING_FUNC_PTR) */
 
 static void _thread_exit(void)
@@ -99,17 +82,29 @@ static void _thread_exit(void)
     rt_base_t level;
 
     /* get current thread */
-    LOG_D("line:%d thread:%s exit\n",__LINE__,rt_thread_self()->parent.name);
     thread = rt_thread_self();
-    rt_get_thread_struct(thread);
-    rt_thread_defunct_enqueue(thread);
+
+    rt_enter_critical();
+
+    /* remove from schedule */
+    rt_schedule_remove_thread(thread);
+
     level = rt_spin_lock_irqsave(&(thread->spinlock));
+
+    /* remove it from timer list */
     rt_timer_detach(&thread->thread_timer);
-    /* insert to defunct thread list */
-    rt_spin_unlock_irqrestore(&(thread->spinlock), level);
-    LOG_D("line:%d thread:%s exit\n",__LINE__,rt_thread_self()->parent.name);
-    rt_put_thread_struct(thread);
+
+    /* change stat */
     thread->stat = RT_THREAD_CLOSE;
+
+    rt_spin_unlock_irqrestore(&(thread->spinlock), level);
+
+    /* insert to defunct thread list */
+    rt_thread_defunct_enqueue(thread);
+
+    LOG_D("line:%d thread:%s exit\n", __LINE__, rt_thread_self()->parent.name);
+    rt_exit_critical();
+
     /* switch to next task */
     rt_schedule();
 }
@@ -296,10 +291,10 @@ static rt_err_t _thread_init(struct rt_thread *thread,
 #ifdef RT_USING_MODULE
     thread->parent.module_id = 0;
 #endif /* RT_USING_MODULE */
-    rt_atomic_store(&thread->ref_count, 0);
+
     rt_spin_lock_init(&thread->spinlock);
 
-    RT_OBJECT_HOOK_CALL(rt_thread_inited_hook, (thread));
+    RT_OBJECT_HOOKLIST_CALL(rt_thread_inited, (thread));
 
     return RT_EOK;
 }
@@ -444,6 +439,8 @@ rt_err_t rt_thread_detach(rt_thread_t thread)
     if ((thread->stat & RT_THREAD_STAT_MASK) == RT_THREAD_CLOSE)
         return RT_EOK;
 
+    rt_enter_critical();
+
     if ((thread->stat & RT_THREAD_STAT_MASK) != RT_THREAD_INIT)
     {
         /* remove from schedule */
@@ -474,6 +471,7 @@ rt_err_t rt_thread_detach(rt_thread_t thread)
     /* insert to defunct thread list */
     rt_thread_defunct_enqueue(thread);
 
+    rt_exit_critical();
     return RT_EOK;
 }
 RTM_EXPORT(rt_thread_detach);
@@ -556,6 +554,8 @@ rt_err_t rt_thread_delete(rt_thread_t thread)
     if ((thread->stat & RT_THREAD_STAT_MASK) == RT_THREAD_CLOSE)
         return RT_EOK;
 
+    rt_enter_critical();
+
     if ((thread->stat & RT_THREAD_STAT_MASK) != RT_THREAD_INIT)
     {
         /* remove from schedule */
@@ -583,6 +583,7 @@ rt_err_t rt_thread_delete(rt_thread_t thread)
     /* insert to defunct thread list */
     rt_thread_defunct_enqueue(thread);
 
+    rt_exit_critical();
     return RT_EOK;
 }
 RTM_EXPORT(rt_thread_delete);
@@ -623,7 +624,7 @@ RTM_EXPORT(rt_thread_yield);
  */
 rt_err_t rt_thread_sleep(rt_tick_t tick)
 {
-    rt_base_t level, level_local;
+    rt_base_t level;
     struct rt_thread *thread;
     int err;
 
@@ -641,10 +642,11 @@ rt_err_t rt_thread_sleep(rt_tick_t tick)
     RT_DEBUG_SCHEDULER_AVAILABLE(RT_TRUE);
     /* reset thread error */
     thread->error = RT_EOK;
-    level_local = rt_hw_local_irq_disable();
+    level = rt_hw_local_irq_disable();
     /* suspend thread */
+    rt_enter_critical();
     err = rt_thread_suspend_with_flag(thread, RT_INTERRUPTIBLE);
-    level = rt_spin_lock_irqsave(&(thread->spinlock));
+    rt_spin_lock(&(thread->spinlock));
     /* reset the timeout of thread timer and start it */
     if (err == RT_EOK)
     {
@@ -652,8 +654,10 @@ rt_err_t rt_thread_sleep(rt_tick_t tick)
         rt_timer_start(&(thread->thread_timer));
 
         /* enable interrupt */
-        rt_spin_unlock_irqrestore(&(thread->spinlock), level);
-        rt_hw_local_irq_enable(level_local);
+        rt_spin_unlock(&(thread->spinlock));
+        rt_hw_local_irq_enable(level);
+        rt_exit_critical();
+
         thread->error = -RT_EINTR;
 
         rt_schedule();
@@ -664,8 +668,9 @@ rt_err_t rt_thread_sleep(rt_tick_t tick)
     }
     else
     {
-        rt_spin_unlock_irqrestore(&(thread->spinlock), level);
-        rt_hw_local_irq_enable(level_local);
+        rt_spin_unlock(&(thread->spinlock));
+        rt_hw_local_irq_enable(level);
+        rt_exit_critical();
     }
 
     return err;
@@ -708,11 +713,11 @@ rt_err_t rt_thread_delay_until(rt_tick_t *tick, rt_tick_t inc_tick)
     RT_ASSERT(thread != RT_NULL);
     RT_ASSERT(rt_object_get_type((rt_object_t)thread) == RT_Object_Class_Thread);
 
-    /* disable interrupt */
-    level = rt_spin_lock_irqsave(&(thread->spinlock));
-
     /* reset thread error */
     thread->error = RT_EOK;
+
+    /* disable interrupt */
+    level = rt_hw_local_irq_disable();
 
     cur_tick = rt_tick_get();
     if (cur_tick - *tick < inc_tick)
@@ -721,14 +726,20 @@ rt_err_t rt_thread_delay_until(rt_tick_t *tick, rt_tick_t inc_tick)
 
         *tick += inc_tick;
         left_tick = *tick - cur_tick;
-        rt_spin_unlock_irqrestore(&(thread->spinlock), level);
+
+        rt_enter_critical();
         /* suspend thread */
         rt_thread_suspend_with_flag(thread, RT_UNINTERRUPTIBLE);
-        level = rt_spin_lock_irqsave(&(thread->spinlock));
+
+        rt_spin_lock(&(thread->spinlock));
+
         /* reset the timeout of thread timer and start it */
         rt_timer_control(&(thread->thread_timer), RT_TIMER_CTRL_SET_TIME, &left_tick);
         rt_timer_start(&(thread->thread_timer));
-        rt_spin_unlock_irqrestore(&(thread->spinlock), level);
+
+        rt_spin_unlock(&(thread->spinlock));
+        rt_hw_local_irq_enable(level);
+        rt_exit_critical();
 
         rt_schedule();
 
@@ -741,7 +752,7 @@ rt_err_t rt_thread_delay_until(rt_tick_t *tick, rt_tick_t inc_tick)
     else
     {
         *tick = cur_tick;
-        rt_spin_unlock_irqrestore(&(thread->spinlock), level);
+        rt_hw_local_irq_enable(level);
     }
 
     return thread->error;
@@ -1059,15 +1070,17 @@ rt_err_t rt_thread_resume(rt_thread_t thread)
 
     LOG_D("thread resume:  %s", thread->parent.name);
 
+    level = rt_spin_lock_irqsave(&(thread->spinlock)); //TODO need lock for cpu
+
     if ((thread->stat & RT_THREAD_SUSPEND_MASK) != RT_THREAD_SUSPEND_MASK)
     {
+        rt_spin_unlock_irqrestore(&(thread->spinlock), level);
+
         LOG_D("thread resume: thread disorder, %d",
               thread->stat);
 
         return -RT_ERROR;
     }
-
-    level = rt_spin_lock_irqsave(&(thread->spinlock)); //TODO need lock for cpu
 
     /* remove from suspend list */
     rt_list_remove(&(thread->tlist));

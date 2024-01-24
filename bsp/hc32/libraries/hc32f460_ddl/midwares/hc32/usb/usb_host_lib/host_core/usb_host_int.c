@@ -6,9 +6,13 @@
    Change Logs:
    Date             Author          Notes
    2022-03-31       CDT             First version
+   2022-06-30       CDT             Remove the judgment of ErrCnt when xfer error
+                                    Add USB core ID select function
+                                    Modify for MISRAC
+                                    Delete comment
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -23,6 +27,7 @@
  ******************************************************************************/
 #include "usb_host_int.h"
 #include "usb_host_driver.h"
+#include "usb_bsp.h"
 
 /**
  * @addtogroup LL_USB_LIB
@@ -78,14 +83,7 @@ static void usb_host_chx_out_isr(usb_core_instance *pdev, uint8_t chnum)
 
     if (0UL != (u32hcint & USBFS_HCINT_ACK)) {
         usb_host_clrint(pdev, chnum, USBFS_HCINT_ACK);
-    }
-#if defined (HC32F4A0)
-    else if (0UL != (u32hcint & USBFS_HCINT_AHBERR)) {
-        usb_host_clrint(pdev, chnum, USBFS_HCINT_AHBERR);
-        usb_host_int_unmskchhltd(pdev, chnum);
-    }
-#endif
-    else if (0UL != (u32hcint & USBFS_HCINT_FRMOR)) {
+    } else if (0UL != (u32hcint & USBFS_HCINT_FRMOR)) {
         usb_host_int_unmskchhltd(pdev, chnum);
         usb_hchstop(&pdev->regs, chnum);
         usb_host_clrint(pdev, chnum, USBFS_HCINT_FRMOR);
@@ -142,10 +140,8 @@ static void usb_host_chx_out_isr(usb_core_instance *pdev, uint8_t chnum)
         } else if (pdev->host.HC_Status[chnum] == HOST_CH_STALL) {
             pdev->host.URB_State[chnum] = HOST_CH_XFER_STALL;
         } else if (pdev->host.HC_Status[chnum] == HOST_CH_XACTERR) {
-            if (pdev->host.ErrCnt[chnum] == 3UL) {
-                pdev->host.URB_State[chnum] = HOST_CH_XFER_ERROR;
-                pdev->host.ErrCnt[chnum] = 0UL;
-            }
+            pdev->host.URB_State[chnum] = HOST_CH_XFER_ERROR;
+            pdev->host.ErrCnt[chnum] = 0UL;
         } else {
             ;
         }
@@ -177,14 +173,7 @@ static void usb_host_chx_in_isr(usb_core_instance *pdev, uint8_t chnum)
     u32eptypetmp = (u32hcchar & USBFS_HCCHAR_EPTYP) >> USBFS_HCCHAR_EPTYP_POS;
     if (0UL != (u32hcint & USBFS_HCINT_ACK)) {
         usb_host_clrint(pdev, chnum, USBFS_HCINT_ACK);
-    }
-#if defined (HC32F4A0)
-    else if (0UL != (u32hcint & USBFS_HCINT_AHBERR)) {
-        usb_host_clrint(pdev, chnum, USBFS_HCINT_AHBERR);
-        usb_host_int_unmskchhltd(pdev, chnum);
-    }
-#endif
-    else if (0UL != (u32hcint & USBFS_HCINT_STALL)) {
+    } else if (0UL != (u32hcint & USBFS_HCINT_STALL)) {
         usb_host_int_unmskchhltd(pdev, chnum);
         pdev->host.HC_Status[chnum] = HOST_CH_STALL;
         usb_host_clrint(pdev, chnum, USBFS_HCINT_NAK);
@@ -204,6 +193,7 @@ static void usb_host_chx_in_isr(usb_core_instance *pdev, uint8_t chnum)
         if (pdev->basic_cfgs.dmaen == 1U) {
             u32hctsiz = READ_REG32(pdev->regs.HC_REGS[chnum]->HCTSIZ);
             pdev->host.XferCnt[chnum] =  pdev->host.hc[chnum].xfer_len - (u32hctsiz & USBFS_HCTSIZ_XFRSIZ);
+            pdev->host.hc[chnum].xfer_count += pdev->host.XferCnt[chnum];
         }
         pdev->host.HC_Status[chnum] = HOST_CH_XFERCOMPL;
         pdev->host.ErrCnt [chnum] = 0U;
@@ -313,6 +303,8 @@ static void usb_host_sof_isr(usb_core_instance *pdev)
 static void usb_host_disconn_isr(usb_core_instance *pdev)
 {
     usb_gintdis(&pdev->regs);
+    /* enable or disable the external charge pump */
+    usb_bsp_drivevbus(pdev, 0U);
     usb_vbusctrl(&pdev->regs, 0U);
     WRITE_REG32(pdev->regs.GREGS->GINTSTS, USBFS_GINTSTS_DISCINT);
 
@@ -334,7 +326,7 @@ static void usb_host_nptxfifoempty_isr(usb_core_instance *pdev)
     uint8_t u8ChNum;
 
     u32hnptxsts = READ_REG32(pdev->regs.GREGS->HNPTXSTS);
-    u8ChNum = (uint8_t)((u32hnptxsts & USBFS_HNPTXSTS_NPTXQTOP_CHEPNUM) >> USBFS_HNPTXSTS_NPTXQTOP_CHEPNUM_POS);
+    u8ChNum = (uint8_t)((u32hnptxsts & USBFS_HNPTXSTS_NPTXQTOP_CHEPNUM) >> USBFS_HNPTXSTS_NPTXQTOP_CHEPNUM_POS) % USB_MAX_TX_FIFOS;
 
     u16LenWord = (uint16_t)((pdev->host.hc[u8ChNum].xfer_len + 3UL) / 4UL);
     while (((u32hnptxsts & USBFS_HNPTXSTS_NPTXFSAV) > u16LenWord) && (pdev->host.hc[u8ChNum].xfer_len != 0U)) {
@@ -366,7 +358,7 @@ static void usb_host_ptxfifoempty_isr(usb_core_instance *pdev)
     uint8_t u8ChNum;
 
     u32hptxsts = READ_REG32(pdev->regs.HREGS->HPTXSTS);
-    u8ChNum = (uint8_t)((u32hptxsts & USBFS_HPTXSTS_PTXQTOP_CHNUM) >> USBFS_HPTXSTS_PTXQTOP_CHNUM_POS);
+    u8ChNum = (uint8_t)((u32hptxsts & USBFS_HPTXSTS_PTXQTOP_CHNUM) >> USBFS_HPTXSTS_PTXQTOP_CHNUM_POS) % USB_MAX_TX_FIFOS;
     u16LenWord = (uint16_t)((pdev->host.hc[u8ChNum].xfer_len + 3UL) / 4UL);
     while ((((u32hptxsts & USBFS_HPTXSTS_PTXFSAVL)) > u16LenWord) && (pdev->host.hc[u8ChNum].xfer_len != 0U)) {
         u16Len = (uint16_t)((u32hptxsts & USBFS_HPTXSTS_PTXFSAVL) * 4UL);
@@ -399,7 +391,7 @@ static void usb_host_port_isr(usb_core_instance *pdev)
     u32hprt = READ_REG32(*pdev->regs.HPRT);
     u32hprt_bk = u32hprt;
     /* Clear the interrupt bits in GINTSTS */
-    //tmp_hprt_bk.b.prtovrcurrchng = 0U;  //todo don't have this bit
+    //tmp_hprt_bk.b.prtovrcurrchng = 0U;
     u32hprt_bk &= ~(USBFS_HPRT_PENA | USBFS_HPRT_PCDET | USBFS_HPRT_PENCHNG);
 
     /* check if a port connect have been detected */
@@ -435,7 +427,6 @@ static void usb_host_port_isr(usb_core_instance *pdev)
         }
     }
 
-    //todo don't have this bit
     //if ((u32hprt & USBFS_HPRT_PRTOVRCURRCHNG) != 0UL) {
     //    u32hprt_bk |= USBFS_HPRT_PRTOVRCURRCHNG;
     //}
@@ -463,7 +454,7 @@ static void usb_host_rxflvl_isr(usb_core_instance *pdev)
     CLR_REG32_BIT(pdev->regs.GREGS->GINTMSK, USBFS_GINTSTS_RXFNE);
 
     u32grxsts = READ_REG32(pdev->regs.GREGS->GRXSTSP);
-    u8chnum = (uint8_t)(u32grxsts & USBFS_GRXSTSP_CHNUM_EPNUM);
+    u8chnum = (uint8_t)(u32grxsts & USBFS_GRXSTSP_CHNUM_EPNUM) % USB_MAX_TX_FIFOS;
     u16bcnt = (uint16_t)((u32grxsts & USBFS_GRXSTSP_BCNT) >> USBFS_GRXSTSP_BCNT_POS);
     u32hcchar = READ_REG32(pdev->regs.HC_REGS[u8chnum]->HCCHAR);
 

@@ -7,9 +7,14 @@
    Change Logs:
    Date             Author          Notes
    2022-03-31       CDT             First version
+   2022-06-30       CDT             Modify structure stc_cmp_window_init_t
+                                    Modify macro define for API
+   2023-06-30       CDT             Modify typo
+   2023-09-30       CDT             Add assert for CIEN bit in GetCmpFuncStatusAndDisFunc function
+                                    Remove redundant code in function CMP_WindowModeInit
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -83,24 +88,24 @@
 
 #define IS_CMP_NEGATIVE_IN(x)                                                  \
 (   ((x) == CMP_NEGATIVE_NONE)                  ||                             \
-    ((x) == CMP1_NEGATIVE_DAC1_OUT1)            ||                             \
-    ((x) == CMP1_NEGATIVE_DAC1_OUT2)            ||                             \
-    ((x) == CMP1_NEGATIVE_CMP123_INM3)          ||                             \
-    ((x) == CMP1_NEGATIVE_CMP1_INM4))
+    ((x) == CMP_NEGATIVE_INM1)                  ||                             \
+    ((x) == CMP_NEGATIVE_INM2)                  ||                             \
+    ((x) == CMP_NEGATIVE_INM3)                  ||                             \
+    ((x) == CMP_NEGATIVE_INM4))
 
 #define IS_CMP_WIN_LOW_IN(x)                                                   \
 (   ((x) == CMP_WIN_LOW_NONE)                   ||                             \
-    ((x) == CMP12_WIN_LOW_DAC1_OUT1)            ||                             \
-    ((x) == CMP12_WIN_LOW_DAC1_OUT2)            ||                             \
-    ((x) == CMP12_WIN_LOW_CMP123_INM3)          ||                             \
-    ((x) == CMP12_WIN_LOW_CMP1_INM4))
+    ((x) == CMP_WIN_LOW_INM1)                   ||                             \
+    ((x) == CMP_WIN_LOW_INM2)                   ||                             \
+    ((x) == CMP_WIN_LOW_INM3)                   ||                             \
+    ((x) == CMP_WIN_LOW_INM4))
 
 #define IS_CMP_WIN_HIGH_IN(x)                                                  \
 (   ((x) == CMP_WIN_HIGH_NONE)                  ||                             \
-    ((x) == CMP12_WIN_HIGH_DAC1_OUT1)           ||                             \
-    ((x) == CMP12_WIN_HIGH_DAC1_OUT2)           ||                             \
-    ((x) == CMP12_WIN_HIGH_CMP123_INM3)         ||                             \
-    ((x) == CMP12_WIN_HIGH_CMP2_INM4))
+    ((x) == CMP_WIN_HIGH_INM1)                  ||                             \
+    ((x) == CMP_WIN_HIGH_INM2)                  ||                             \
+    ((x) == CMP_WIN_HIGH_INM3)                  ||                             \
+    ((x) == CMP_WIN_HIGH_INM4))
 
 #define IS_CMP_OUT_POLARITY(x)                                                 \
 (   ((x) == CMP_OUT_INVT_OFF)                   ||                             \
@@ -129,6 +134,7 @@
 /**
  * @}
  */
+
 /**
  * @}
  */
@@ -180,6 +186,9 @@ static void CMP_DelayUS(uint32_t u32Count)
 static uint16_t GetCmpFuncStatusAndDisFunc(CM_CMP_TypeDef *CMPx)
 {
     uint16_t u16temp;
+    /* It is possible that the interrupt may occurs after CMP status switch. */
+    DDL_ASSERT(READ_REG8_BIT(CMPx->FIR, CMP_FIR_CIEN) == 0U);
+
     /* Read CMP status */
     u16temp = (uint16_t)(uint8_t)READ_REG8_BIT(CMPx->MDR, CMP_MDR_CENB);
     /* Stop CMP function */
@@ -188,7 +197,7 @@ static uint16_t GetCmpFuncStatusAndDisFunc(CM_CMP_TypeDef *CMPx)
 }
 
 /**
- * @brief  Revcover CMP function status
+ * @brief  Recover CMP function status
  * @param  [in] CMPx                Pointer to CMP instance register base
  *   @arg  CM_CMPx
  * @param  [in] u16CmpFuncStatus    CMP function status backup value
@@ -235,7 +244,7 @@ int32_t CMP_StructInit(stc_cmp_init_t *pstcCmpInit)
 }
 
 /**
- * @brief  Initialize structure stc_cmp_init_t variable with default value.
+ * @brief  Initialize structure stc_cmp_window_init_t variable with default value.
  * @param  [in] pstcCmpWindowInit   Pointer to a structure variable. @ref stc_cmp_window_init_t
  * @retval int32_t
  *         - LL_OK:                 Success
@@ -245,11 +254,29 @@ int32_t CMP_WindowStructInit(stc_cmp_window_init_t *pstcCmpWindowInit)
 {
     int32_t i32Ret = LL_ERR_INVD_PARAM;
     if (pstcCmpWindowInit != NULL) {
-        pstcCmpWindowInit->u8WinVolLow = CMP_NEGATIVE_NONE;
-        pstcCmpWindowInit->u8WinVolHigh = CMP_NEGATIVE_NONE;
+        pstcCmpWindowInit->u16WinVolLow = CMP_NEGATIVE_NONE;
+        pstcCmpWindowInit->u16WinVolHigh = CMP_NEGATIVE_NONE;
         pstcCmpWindowInit->u16OutPolarity = CMP_OUT_INVT_OFF;
         pstcCmpWindowInit->u16OutDetectEdge = CMP_DETECT_EDGS_NONE;
         pstcCmpWindowInit->u16OutFilter = CMP_OUT_FILTER_NONE;
+        i32Ret = LL_OK;
+    }
+    return i32Ret;
+}
+
+/**
+ * @brief  Initialize structure stc_cmp_blankwindow_t variable with default value.
+ * @param  [in] pstcBlankWindowConfig   Pointer to a structure variable. @ref stc_cmp_blankwindow_t
+ * @retval int32_t
+ *         - LL_OK:                     Success
+ *         - LL_ERR_INVD_PARAM:         Parameter error
+ */
+int32_t CMP_BlankWindowStructInit(stc_cmp_blankwindow_t *pstcBlankWindowConfig)
+{
+    int32_t i32Ret = LL_ERR_INVD_PARAM;
+    if (pstcBlankWindowConfig != NULL) {
+        pstcBlankWindowConfig->u8ValidLevel = CMP_BLANKWIN_VALID_LVL_LOW;
+        pstcBlankWindowConfig->u8OutLevel = CMP_BLANKWIN_OUTPUT_LVL_LOW;
         i32Ret = LL_OK;
     }
     return i32Ret;
@@ -312,7 +339,7 @@ int32_t CMP_NormalModeInit(CM_CMP_TypeDef *CMPx, const stc_cmp_init_t *pstcCmpIn
         WRITE_REG8(CMPx->PMSR, (pstcCmpInit->u16PositiveInput & CMP_PMSR_CVSL) | pstcCmpInit->u16NegativeInput);
         if ((CM_CMP1 == CMPx) || (CM_CMP3 == CMPx)) {
             if ((CMP_PMSR_CVSL_1 == (pstcCmpInit->u16PositiveInput & CMP_PMSR_CVSL)) \
-                    || (CMP_PMSR_CVSL_2 == (pstcCmpInit->u16PositiveInput & CMP_PMSR_CVSL))) {
+                || (CMP_PMSR_CVSL_2 == (pstcCmpInit->u16PositiveInput & CMP_PMSR_CVSL))) {
                 WRITE_REG16(CMPx->VISR, (pstcCmpInit->u16PositiveInput >> VISR_OFFSET) & (CMP_VISR_P3SL | CMP_VISR_P2SL));
             }
         }
@@ -392,7 +419,6 @@ void CMP_CompareOutCmd(CM_CMP_TypeDef *CMPx, en_functional_state_t enNewState)
     } else {
         CLR_REG8_BIT(CMPx->OCR, CMP_OCR_COEN);
     }
-
 }
 
 /**
@@ -430,11 +456,11 @@ void CMP_PinVcoutCmd(CM_CMP_TypeDef *CMPx, en_functional_state_t enNewState)
  */
 en_flag_status_t CMP_GetStatus(const CM_CMP_TypeDef *CMPx)
 {
-    en_flag_status_t i32Ret;
+    en_flag_status_t enRet;
     /* Check CMPx instance */
     DDL_ASSERT(IS_CMP_UNIT(CMPx));
-    i32Ret = (READ_REG8_BIT(CMPx->MDR, CMP_MDR_CMON) != 0U) ? SET : RESET;
-    return i32Ret;
+    enRet = (READ_REG8_BIT(CMPx->MDR, CMP_MDR_CMON) != 0U) ? SET : RESET;
+    return enRet;
 }
 
 /**
@@ -560,22 +586,11 @@ void CMP_SetNegativeInput(CM_CMP_TypeDef *CMPx, uint16_t u16NegativeInput)
 
 /**
  * @brief  CMP window mode initialize
- * @param  [in] u8WinCMPx                        @ref CMP_Window_Mode_Unit
- * @param  [in] pstcCmpWindowInit                CMP function base parameter structure @ref stc_cmp_window_init_t
+ * @param  [in] u8WinCMPx               @ref CMP_Window_Mode_Unit
+ * @param  [in] pstcCmpWindowInit       CMP function base parameter structure @ref stc_cmp_window_init_t
  * @retval int32_t
- *         - LL_OK:                             Success
- *         - LL_ERR_INVD_PARAM:                 Parameter error
- * @note   Window mode compare input:
- *         HC32F4A0:
- *              CMP2_INP3 valid for u16PositiveInput of CMP_WIN_CMP12
- *              CMP4_INP3 valid for u16PositiveInput of CMP_WIN_CMP34
- *         HC32M423
- *              IVCMP2_2 valid for u16PositiveInput of CMP_WIN_CMP23
- *         HC32M424
- *              IVCMP1_0 or IVCMP1_1 valid for u16PositiveInput CMP_WIN_CMP13
- *              IVCMP2_0 or IVCMP2_1 valid for u16PositiveInput CMP_WIN_CMP24
- *         HC32M120
- *              IVCMP2_0 valid for u16PositiveInput of CMP_WIN_CMP12
+ *         - LL_OK:                     Success
+ *         - LL_ERR_INVD_PARAM:         Parameter error
  */
 int32_t CMP_WindowModeInit(uint8_t u8WinCMPx, const stc_cmp_window_init_t *pstcCmpWindowInit)
 {
@@ -587,8 +602,8 @@ int32_t CMP_WindowModeInit(uint8_t u8WinCMPx, const stc_cmp_window_init_t *pstcC
         DDL_ASSERT(IS_CMP_OUT_POLARITY(pstcCmpWindowInit->u16OutPolarity));
         DDL_ASSERT(IS_CMP_OUT_DETECT_EDGE(pstcCmpWindowInit->u16OutDetectEdge));
         DDL_ASSERT(IS_CMP_OUT_FILTER(pstcCmpWindowInit->u16OutFilter));
-        DDL_ASSERT(IS_CMP_WIN_LOW_IN(pstcCmpWindowInit->u8WinVolLow));
-        DDL_ASSERT(IS_CMP_WIN_HIGH_IN(pstcCmpWindowInit->u8WinVolHigh));
+        DDL_ASSERT(IS_CMP_WIN_LOW_IN(pstcCmpWindowInit->u16WinVolLow));
+        DDL_ASSERT(IS_CMP_WIN_HIGH_IN(pstcCmpWindowInit->u16WinVolHigh));
 
         CM_CMP_TypeDef *pCMP_MAIN;
         CM_CMP_TypeDef *pCMP_MINOR;
@@ -605,10 +620,9 @@ int32_t CMP_WindowModeInit(uint8_t u8WinCMPx, const stc_cmp_window_init_t *pstcC
         CLR_REG8_BIT(pCMP_MAIN->MDR, CMP_MDR_CENB);
 
         /* Set positive in(compare voltage), window voltage */
-        WRITE_REG8(pCMP_MINOR->PMSR, (CMP1_POSITIVE_CMP2_INP3 & CMP_PMSR_CVSL) | pstcCmpWindowInit->u8WinVolLow);
-        WRITE_REG8(pCMP_MAIN->PMSR, (CMP2_POSITIVE_CMP2_INP3 & CMP_PMSR_CVSL) | pstcCmpWindowInit->u8WinVolHigh);
+        WRITE_REG8(pCMP_MINOR->PMSR, (CMP1_POSITIVE_CMP2_INP3 & CMP_PMSR_CVSL) | pstcCmpWindowInit->u16WinVolLow);
+        WRITE_REG8(pCMP_MAIN->PMSR, (CMP2_POSITIVE_CMP2_INP3 & CMP_PMSR_CVSL) | pstcCmpWindowInit->u16WinVolHigh);
         WRITE_REG16(pCMP_MINOR->VISR, (CMP1_POSITIVE_CMP2_INP3 >> VISR_OFFSET) & (CMP_VISR_P3SL | CMP_VISR_P2SL));
-        WRITE_REG16(pCMP_MAIN->VISR, (CMP2_POSITIVE_CMP2_INP3 >> VISR_OFFSET) & (CMP_VISR_P3SL | CMP_VISR_P2SL));
         /* Select window compare mode */
         SET_REG8_BIT(pCMP_MAIN->MDR, CMP_MDR_CWDE);
         /* Start CMP compare function */
@@ -629,7 +643,7 @@ int32_t CMP_WindowModeInit(uint8_t u8WinCMPx, const stc_cmp_window_init_t *pstcC
  * @brief  Blank window function disable specified window source
  * @param  [in] CMPx                    Pointer to CMP instance register base
  *   @arg  CM_CMPx
- * @param  [in] u16BlankWindowSrc       Blank window source.
+ * @param  [in] u16BlankWindowSrc       Blank window source. can be any combination of @ref CMP_BlankWindow_Src
  * @retval None
  */
 void CMP_BlankWindowSrcDisable(CM_CMP_TypeDef *CMPx, uint16_t u16BlankWindowSrc)
@@ -647,32 +661,32 @@ void CMP_BlankWindowSrcDisable(CM_CMP_TypeDef *CMPx, uint16_t u16BlankWindowSrc)
  * @brief  Voltage compare blank window function configuration
  * @param  [in] CMPx                    Pointer to CMP instance register base
  *   @arg  CM_CMPx
- * @param  [in] pstcBlankWindowInit     Configuration structure for blank window mode.
+ * @param  [in] pstcBlankWindowConfig   Configuration structure for blank window mode.
  * @retval int32_t
  *         - LL_OK:                     Success
  *         - LL_ERR_INVD_PARAM:         Parameter error
  */
-int32_t CMP_BlankWindowConfig(CM_CMP_TypeDef *CMPx, const stc_cmp_blankwindow_t *pstcBlankWindowInit)
+int32_t CMP_BlankWindowConfig(CM_CMP_TypeDef *CMPx, const stc_cmp_blankwindow_t *pstcBlankWindowConfig)
 {
     int32_t i32Ret = LL_ERR_INVD_PARAM;
     /* Check CMPx instance and configuration structure*/
-    if (NULL != pstcBlankWindowInit) {
+    if (NULL != pstcBlankWindowConfig) {
         i32Ret = LL_OK;
         /* Check parameters */
         DDL_ASSERT(IS_CMP_UNIT(CMPx));
-        DDL_ASSERT(IS_CMP_BLANKWIN_VALID_LVL(pstcBlankWindowInit->u8ValidLevel));
-        DDL_ASSERT(IS_CMP_BLANKWIN_OUT_LVL(pstcBlankWindowInit->u8OutLevel));
+        DDL_ASSERT(IS_CMP_BLANKWIN_VALID_LVL(pstcBlankWindowConfig->u8ValidLevel));
+        DDL_ASSERT(IS_CMP_BLANKWIN_OUT_LVL(pstcBlankWindowConfig->u8OutLevel));
 
         /* Select output level when blank window valid */
-        MODIFY_REG8(CMPx->OCR, CMP_OCR_TWOL, pstcBlankWindowInit->u8OutLevel);
+        MODIFY_REG8(CMPx->OCR, CMP_OCR_TWOL, pstcBlankWindowConfig->u8OutLevel);
         /* Select blank window valid level */
-        if (CMP_BLANKWIN_VALID_LVL_LOW == pstcBlankWindowInit->u8ValidLevel) {
-            SET_REG16_BIT(CMPx->TWPR, pstcBlankWindowInit->u16Src);
+        if (CMP_BLANKWIN_VALID_LVL_LOW == pstcBlankWindowConfig->u8ValidLevel) {
+            SET_REG16_BIT(CMPx->TWPR, pstcBlankWindowConfig->u16Src);
         } else {
-            CLR_REG16_BIT(CMPx->TWPR, pstcBlankWindowInit->u16Src);
+            CLR_REG16_BIT(CMPx->TWPR, pstcBlankWindowConfig->u16Src);
         }
         /* Select blank window source  */
-        SET_REG16_BIT(CMPx->TWSR, pstcBlankWindowInit->u16Src);
+        SET_REG16_BIT(CMPx->TWSR, pstcBlankWindowConfig->u16Src);
     }
     return i32Ret;
 }
@@ -708,8 +722,8 @@ void CMP_BlankWindowCmd(CM_CMP_TypeDef *CMPx, en_functional_state_t enNewState)
  */
 
 /**
-* @}
-*/
+ * @}
+ */
 
 /******************************************************************************
  * EOF (not truncated)

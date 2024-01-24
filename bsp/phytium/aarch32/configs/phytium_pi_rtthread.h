@@ -149,7 +149,6 @@
 
 /* C/C++ and POSIX layer */
 
-
 /* ISO-ANSI C layer */
 
 /* Timezone and Daylight Saving Time */
@@ -230,6 +229,7 @@
 #define RT_LWIP_ETHTHREAD_MBOX_SIZE 8
 #define LWIP_NETIF_STATUS_CALLBACK 1
 #define LWIP_NETIF_LINK_CALLBACK 1
+#define RT_LWIP_NETIF_NAMESIZE 6
 #define SO_REUSE 1
 #define LWIP_SO_RCVTIMEO 1
 #define LWIP_SO_SNDTIMEO 1
@@ -237,6 +237,9 @@
 #define LWIP_SO_LINGER 0
 #define LWIP_NETIF_LOOPBACK 0
 #define RT_LWIP_USING_PING
+
+/* Memory protection */
+
 
 /* Utilities */
 
@@ -252,12 +255,6 @@
 #define RT_USING_ADT_HASHMAP
 #define RT_USING_ADT_REF
 
-/* Memory management */
-
-
-/* Memory protection */
-
-
 /* RT-Thread Utestcases */
 
 
@@ -272,6 +269,15 @@
 
 
 /* Wiced WiFi */
+
+
+/* CYW43012 WiFi */
+
+
+/* BL808 WiFi */
+
+
+/* CYW43439 WiFi */
 
 
 /* IoT Cloud */
@@ -394,6 +400,8 @@
 #define I2C_USE_MIO
 #define RT_USING_MIO0
 #define RT_USING_MIO1
+#define BSP_USING_DC
+#define RT_USING_DC_CHANNEL1
 
 /* Board extended module Drivers */
 

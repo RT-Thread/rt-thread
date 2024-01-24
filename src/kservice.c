@@ -24,6 +24,8 @@
  * 2022-08-24     Yunjie       make rt_memset word-independent to adapt to ti c28x (16bit word)
  * 2022-08-30     Yunjie       make rt_vsnprintf adapt to ti c28x (16bit int)
  * 2023-02-02     Bernard      add Smart ID for logo version show
+ * 2023-10-16     Shell        Add hook point for rt_malloc services
+ * 2023-12-10     xqyjlj       perf rt_hw_interrupt_disable/enable, fix memheap lock
  */
 
 #include <rtthread.h>
@@ -1483,6 +1485,100 @@ rt_weak void rt_hw_console_output(const char *str)
 }
 RTM_EXPORT(rt_hw_console_output);
 
+#ifdef RT_USING_THREDSAFE_PRINTF
+
+static struct rt_spinlock _pr_lock = RT_SPINLOCK_INIT;
+static struct rt_spinlock _prf_lock = RT_SPINLOCK_INIT;
+/* current user of system console */
+static rt_thread_t _pr_curr_user;
+/* nested level of current user */
+static int _pr_curr_user_nested;
+
+rt_thread_t rt_console_current_user(void)
+{
+    return _pr_curr_user;
+}
+
+static void _console_take(void)
+{
+    rt_ubase_t level = rt_spin_lock_irqsave(&_pr_lock);
+    rt_thread_t self_thread = rt_thread_self();
+
+    while (_pr_curr_user != self_thread)
+    {
+        if (_pr_curr_user == RT_NULL)
+        {
+            /* no preemption is allowed to avoid dead lock */
+            rt_enter_critical();
+            _pr_curr_user = self_thread;
+            break;
+        }
+        else
+        {
+            rt_spin_unlock_irqrestore(&_pr_lock, level);
+            rt_thread_yield();
+            level = rt_spin_lock_irqsave(&_pr_lock);
+        }
+    }
+
+    _pr_curr_user_nested++;
+
+    rt_spin_unlock_irqrestore(&_pr_lock, level);
+}
+
+static void _console_release(void)
+{
+    rt_ubase_t level = rt_spin_lock_irqsave(&_pr_lock);
+    rt_thread_t self_thread = rt_thread_self();
+
+    RT_ASSERT(_pr_curr_user == self_thread);
+
+    _pr_curr_user_nested--;
+    if (!_pr_curr_user_nested)
+    {
+        _pr_curr_user = RT_NULL;
+        rt_exit_critical();
+    }
+    rt_spin_unlock_irqrestore(&_pr_lock, level);
+}
+
+#define CONSOLE_TAKE          _console_take()
+#define CONSOLE_RELEASE       _console_release()
+#define PRINTF_BUFFER_TAKE    rt_ubase_t level = rt_spin_lock_irqsave(&_prf_lock)
+#define PRINTF_BUFFER_RELEASE rt_spin_unlock_irqrestore(&_prf_lock, level)
+#else
+
+#define CONSOLE_TAKE
+#define CONSOLE_RELEASE
+#define PRINTF_BUFFER_TAKE
+#define PRINTF_BUFFER_RELEASE
+#endif /* RT_USING_THREDSAFE_PRINTF */
+
+/**
+ * @brief This function will put string to the console.
+ *
+ * @param str is the string output to the console.
+ */
+static void _kputs(const char *str, long len)
+{
+    CONSOLE_TAKE;
+
+#ifdef RT_USING_DEVICE
+    if (_console_device == RT_NULL)
+    {
+        rt_hw_console_output(str);
+    }
+    else
+    {
+        rt_device_write(_console_device, 0, str, len);
+    }
+#else
+    rt_hw_console_output(str);
+#endif /* RT_USING_DEVICE */
+
+    CONSOLE_RELEASE;
+}
+
 /**
  * @brief This function will put string to the console.
  *
@@ -1495,18 +1591,7 @@ void rt_kputs(const char *str)
         return;
     }
 
-#ifdef RT_USING_DEVICE
-    if (_console_device == RT_NULL)
-    {
-        rt_hw_console_output(str);
-    }
-    else
-    {
-        rt_device_write(_console_device, 0, str, rt_strlen(str));
-    }
-#else
-    rt_hw_console_output(str);
-#endif /* RT_USING_DEVICE */
+    _kputs(str, rt_strlen(str));
 }
 
 /**
@@ -1523,6 +1608,8 @@ rt_weak int rt_kprintf(const char *fmt, ...)
     static char rt_log_buf[RT_CONSOLEBUF_SIZE];
 
     va_start(args, fmt);
+    PRINTF_BUFFER_TAKE;
+
     /* the return value of vsnprintf is the number of bytes that would be
      * written to buffer had if the size of the buffer been sufficiently
      * large excluding the terminating null byte. If the output string
@@ -1534,18 +1621,9 @@ rt_weak int rt_kprintf(const char *fmt, ...)
         length = RT_CONSOLEBUF_SIZE - 1;
     }
 
-#ifdef RT_USING_DEVICE
-    if (_console_device == RT_NULL)
-    {
-        rt_hw_console_output(rt_log_buf);
-    }
-    else
-    {
-        rt_device_write(_console_device, 0, rt_log_buf, length);
-    }
-#else
-    rt_hw_console_output(rt_log_buf);
-#endif /* RT_USING_DEVICE */
+    _kputs(rt_log_buf, length);
+
+    PRINTF_BUFFER_RELEASE;
     va_end(args);
 
     return length;
@@ -1577,7 +1655,7 @@ rt_err_t rt_backtrace_frame(struct rt_hw_backtrace_frame *frame)
 {
     long nesting = 0;
 
-    rt_kprintf("please use: addr2line -e rtthread.elf -a -f\n");
+    rt_kprintf("please use: addr2line -e rtthread.elf -a -f");
 
     while (nesting < RT_BACKTRACE_LEVEL_MAX_NR)
     {
@@ -1659,8 +1737,10 @@ MSH_CMD_EXPORT_ALIAS(cmd_backtrace, backtrace, print backtrace of a thread);
 
 #if defined(RT_USING_HEAP) && !defined(RT_USING_USERHEAP)
 #ifdef RT_USING_HOOK
-static void (*rt_malloc_hook)(void *ptr, rt_size_t size);
-static void (*rt_free_hook)(void *ptr);
+static void (*rt_malloc_hook)(void **ptr, rt_size_t size);
+static void (*rt_realloc_entry_hook)(void **ptr, rt_size_t size);
+static void (*rt_realloc_exit_hook)(void **ptr, rt_size_t size);
+static void (*rt_free_hook)(void **ptr);
 
 /**
  * @addtogroup Hook
@@ -1673,9 +1753,31 @@ static void (*rt_free_hook)(void *ptr);
  *
  * @param hook the hook function.
  */
-void rt_malloc_sethook(void (*hook)(void *ptr, rt_size_t size))
+void rt_malloc_sethook(void (*hook)(void **ptr, rt_size_t size))
 {
     rt_malloc_hook = hook;
+}
+
+/**
+ * @brief This function will set a hook function, which will be invoked when a memory
+ *        block is allocated from heap memory.
+ *
+ * @param hook the hook function.
+ */
+void rt_realloc_set_entry_hook(void (*hook)(void **ptr, rt_size_t size))
+{
+    rt_realloc_entry_hook = hook;
+}
+
+/**
+ * @brief This function will set a hook function, which will be invoked when a memory
+ *        block is allocated from heap memory.
+ *
+ * @param hook the hook function.
+ */
+void rt_realloc_set_exit_hook(void (*hook)(void **ptr, rt_size_t size))
+{
+    rt_realloc_exit_hook = hook;
 }
 
 /**
@@ -1684,7 +1786,7 @@ void rt_malloc_sethook(void (*hook)(void *ptr, rt_size_t size))
  *
  * @param hook the hook function
  */
-void rt_free_sethook(void (*hook)(void *ptr))
+void rt_free_sethook(void (*hook)(void **ptr))
 {
     rt_free_hook = hook;
 }
@@ -1694,6 +1796,7 @@ void rt_free_sethook(void (*hook)(void *ptr))
 #endif /* RT_USING_HOOK */
 
 #if defined(RT_USING_HEAP_ISR)
+static struct rt_spinlock _heap_spinlock;
 #elif defined(RT_USING_MUTEX)
 static struct rt_mutex _lock;
 #endif
@@ -1701,6 +1804,7 @@ static struct rt_mutex _lock;
 rt_inline void _heap_lock_init(void)
 {
 #if defined(RT_USING_HEAP_ISR)
+    rt_spin_lock_init(&_heap_spinlock);
 #elif defined(RT_USING_MUTEX)
     rt_mutex_init(&_lock, "heap", RT_IPC_FLAG_PRIO);
 #endif
@@ -1709,7 +1813,7 @@ rt_inline void _heap_lock_init(void)
 rt_inline rt_base_t _heap_lock(void)
 {
 #if defined(RT_USING_HEAP_ISR)
-    return rt_hw_interrupt_disable();
+    return rt_spin_lock_irqsave(&_heap_spinlock);
 #elif defined(RT_USING_MUTEX)
     if (rt_thread_self())
         return rt_mutex_take(&_lock, RT_WAITING_FOREVER);
@@ -1724,7 +1828,7 @@ rt_inline rt_base_t _heap_lock(void)
 rt_inline void _heap_unlock(rt_base_t level)
 {
 #if defined(RT_USING_HEAP_ISR)
-    rt_hw_interrupt_enable(level);
+    rt_spin_unlock_irqrestore(&_heap_spinlock, level);
 #elif defined(RT_USING_MUTEX)
     RT_ASSERT(level == RT_EOK);
     if (rt_thread_self())
@@ -1773,7 +1877,10 @@ void *_memheap_alloc(struct rt_memheap *heap, rt_size_t size);
 void _memheap_free(void *rmem);
 void *_memheap_realloc(struct rt_memheap *heap, void *rmem, rt_size_t newsize);
 #define _MEM_INIT(_name, _start, _size) \
-    rt_memheap_init(&system_heap, _name, _start, _size)
+    do {\
+        rt_memheap_init(&system_heap, _name, _start, _size); \
+        system_heap.locked = RT_TRUE; \
+    } while(0)
 #define _MEM_MALLOC(_size)  \
     _memheap_alloc(&system_heap, _size)
 #define _MEM_REALLOC(_ptr, _newsize)    \
@@ -1811,14 +1918,7 @@ rt_inline void _slab_info(rt_size_t *total,
 #define _MEM_INFO(...)
 #endif
 
-/**
- * @brief This function will init system heap.
- *
- * @param begin_addr the beginning address of system page.
- *
- * @param end_addr the end address of system page.
- */
-rt_weak void rt_system_heap_init(void *begin_addr, void *end_addr)
+void _rt_system_heap_init(void *begin_addr, void *end_addr)
 {
     rt_ubase_t begin_align = RT_ALIGN((rt_ubase_t)begin_addr, RT_ALIGN_SIZE);
     rt_ubase_t end_align   = RT_ALIGN_DOWN((rt_ubase_t)end_addr, RT_ALIGN_SIZE);
@@ -1829,6 +1929,18 @@ rt_weak void rt_system_heap_init(void *begin_addr, void *end_addr)
     _MEM_INIT("heap", (void *)begin_align, end_align - begin_align);
     /* Initialize multi thread contention lock */
     _heap_lock_init();
+}
+
+/**
+ * @brief This function will init system heap.
+ *
+ * @param begin_addr the beginning address of system page.
+ *
+ * @param end_addr the end address of system page.
+ */
+rt_weak void rt_system_heap_init(void *begin_addr, void *end_addr)
+{
+    _rt_system_heap_init(begin_addr, end_addr);
 }
 
 /**
@@ -1850,7 +1962,7 @@ rt_weak void *rt_malloc(rt_size_t size)
     /* Exit critical zone */
     _heap_unlock(level);
     /* call 'rt_malloc' hook */
-    RT_OBJECT_HOOK_CALL(rt_malloc_hook, (ptr, size));
+    RT_OBJECT_HOOK_CALL(rt_malloc_hook, (&ptr, size));
     return ptr;
 }
 RTM_EXPORT(rt_malloc);
@@ -1869,12 +1981,16 @@ rt_weak void *rt_realloc(void *ptr, rt_size_t newsize)
     rt_base_t level;
     void *nptr;
 
+    /* Entry hook */
+    RT_OBJECT_HOOK_CALL(rt_realloc_entry_hook, (&ptr, newsize));
     /* Enter critical zone */
     level = _heap_lock();
     /* Change the size of previously allocated memory block */
     nptr = _MEM_REALLOC(ptr, newsize);
     /* Exit critical zone */
     _heap_unlock(level);
+    /* Exit hook */
+    RT_OBJECT_HOOK_CALL(rt_realloc_exit_hook, (&nptr, newsize));
     return nptr;
 }
 RTM_EXPORT(rt_realloc);
@@ -1918,7 +2034,7 @@ rt_weak void rt_free(void *ptr)
     rt_base_t level;
 
     /* call 'rt_free' hook */
-    RT_OBJECT_HOOK_CALL(rt_free_hook, (ptr));
+    RT_OBJECT_HOOK_CALL(rt_free_hook, (&ptr));
     /* NULL check */
     if (ptr == RT_NULL) return;
     /* Enter critical zone */
@@ -2136,10 +2252,6 @@ int __rt_ffs(int value)
 }
 #endif /* RT_USING_TINY_FFS */
 #endif /* RT_USING_CPU_FFS */
-
-#ifndef __on_rt_assert_hook
-    #define __on_rt_assert_hook(ex, func, line)         __ON_HOOK_ARGS(rt_assert_hook, (ex, func, line))
-#endif
 
 #ifdef RT_USING_DEBUG
 /* RT_ASSERT(EX)'s hook */

@@ -6,9 +6,10 @@
    Change Logs:
    Date             Author          Notes
    2022-03-31       CDT             First version
+   2022-06-30       CDT             Optimize macros definitions
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -54,8 +55,7 @@ extern "C"
  * @{
  */
 #define STL_ROM_CRC32_START             (STL_ROM_START)
-#define STL_ROM_CRC32_END               ((uint32_t)&__checksum - 1UL)
-#define STL_ROM_CRC32_SIZE              (STL_ROM_CRC32_END - STL_ROM_CRC32_START + 1UL)
+#define STL_ROM_CRC32_END               ((uint32_t)(&__checksum))
 #define STL_ROM_CRC32_BLOCK_SIZE        (128UL)
 #define STL_ROM_CRC32_CC_CHECKSUM       (__checksum)
 /**

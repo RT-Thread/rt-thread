@@ -8,7 +8,7 @@
    2022-03-31       CDT             First version
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -92,7 +92,7 @@ void STL_StartupTestCase(const stc_stl_case_startup_t *pstcCaseTable, uint32_t u
         for (i = 0UL; i < u32TableSize; i++) {
             if (pstcCaseTable[i].pfnTest != NULL) {
                 if (pstcCaseTable[i].pfnTest() != STL_OK) {
-                    STL_Printf("%s test fail in startup\r\n", pstcCaseTable[i].pcCaseName);
+                    STL_Printf("********   Test fail in startup: %-20s   ********\r\n", pstcCaseTable[i].pcCaseName);
 
                     if (pstcCaseTable[i].pfnFailHandler != NULL) {
                         pstcCaseTable[i].pfnFailHandler();

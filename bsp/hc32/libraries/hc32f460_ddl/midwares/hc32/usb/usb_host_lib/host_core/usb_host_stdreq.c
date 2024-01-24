@@ -6,9 +6,10 @@
    Change Logs:
    Date             Author          Notes
    2022-03-31       CDT             First version
+   2022-06-30       CDT             Modify for MISRAC
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -261,8 +262,8 @@ HOST_STATUS usb_host_clrfeature(usb_core_instance *pdev,
                                 uint8_t hc_num)
 {
     phost->ctrlparam.setup.b.bmRequestType = USB_H2D |
-            USB_REQ_RECIPIENT_ENDPOINT |
-            USB_REQ_TYPE_STANDARD;
+                                             USB_REQ_RECIPIENT_ENDPOINT |
+                                             USB_REQ_TYPE_STANDARD;
 
     phost->ctrlparam.setup.b.bRequest      = USB_REQ_CLEAR_FEATURE;
     phost->ctrlparam.setup.b.wValue.w      = FEATURE_SELECTOR_ENDPOINT;
@@ -289,22 +290,22 @@ void usb_host_parsedevdesc(usb_host_devdesc_typedef *dev_desc,
                            uint8_t *buf,
                            uint16_t length)
 {
-    dev_desc->bLength                = *(uint8_t *)(buf +  0U);
-    dev_desc->bDescriptorType        = *(uint8_t *)(buf +  1U);
-    dev_desc->bcdUSB                 = SMALL_END(buf +  2U);
-    dev_desc->bDeviceClass           = *(uint8_t *)(buf +  4U);
-    dev_desc->bDeviceSubClass        = *(uint8_t *)(buf +  5U);
-    dev_desc->bDeviceProtocol        = *(uint8_t *)(buf +  6U);
-    dev_desc->bMaxPacketSize0        = *(uint8_t *)(buf +  7U);
+    dev_desc->bLength                = buf[0];
+    dev_desc->bDescriptorType        = buf[1];
+    dev_desc->bcdUSB                 = SMALL_END(&buf[2]);
+    dev_desc->bDeviceClass           = buf[4];
+    dev_desc->bDeviceSubClass        = buf[5];
+    dev_desc->bDeviceProtocol        = buf[6];
+    dev_desc->bMaxPacketSize0        = buf[7];
 
     if (length > (uint16_t)8) {
-        dev_desc->idVendor           = SMALL_END(buf +  8U);
-        dev_desc->idProduct          = SMALL_END(buf + 10U);
-        dev_desc->bcdDevice          = SMALL_END(buf + 12U);
-        dev_desc->iManufacturer      = *(uint8_t *)(buf + 14U);
-        dev_desc->iProduct           = *(uint8_t *)(buf + 15U);
-        dev_desc->iSerialNumber      = *(uint8_t *)(buf + 16U);
-        dev_desc->bNumConfigurations = *(uint8_t *)(buf + 17U);
+        dev_desc->idVendor           = SMALL_END(&buf[8]);
+        dev_desc->idProduct          = SMALL_END(&buf[10]);
+        dev_desc->bcdDevice          = SMALL_END(&buf[12]);
+        dev_desc->iManufacturer      = buf[14];
+        dev_desc->iProduct           = buf[15];
+        dev_desc->iSerialNumber      = buf[16];
+        dev_desc->bNumConfigurations = buf[17];
     }
 }
 
@@ -334,14 +335,14 @@ void usb_host_parsecfgdesc(usb_host_cfgdesc_typedef *cfg_desc,
     static uint8_t                prev_itf = 0U;
 
     /* Parse the configuration descriptor */
-    cfg_desc->bLength             = *(uint8_t *)(buf + 0U);
-    cfg_desc->bDescriptorType     = *(uint8_t *)(buf + 1U);
-    cfg_desc->wTotalLength        = SMALL_END(buf + 2U);
-    cfg_desc->bNumInterfaces      = *(uint8_t *)(buf + 4U);
-    cfg_desc->bConfigurationValue = *(uint8_t *)(buf + 5U);
-    cfg_desc->iConfiguration      = *(uint8_t *)(buf + 6U);
-    cfg_desc->bmAttributes        = *(uint8_t *)(buf + 7U);
-    cfg_desc->bMaxPower           = *(uint8_t *)(buf + 8U);
+    cfg_desc->bLength             = buf[0];
+    cfg_desc->bDescriptorType     = buf[1];
+    cfg_desc->wTotalLength        = SMALL_END(&buf[2]);
+    cfg_desc->bNumInterfaces      = buf[4];
+    cfg_desc->bConfigurationValue = buf[5];
+    cfg_desc->iConfiguration      = buf[6];
+    cfg_desc->bmAttributes        = buf[7];
+    cfg_desc->bMaxPower           = buf[8];
 
     if (length > USB_CONFIGURATION_DESC_SIZE) {
         ptr = USB_LEN_CFG_DESC;
@@ -398,15 +399,15 @@ void usb_host_parsecfgdesc(usb_host_cfgdesc_typedef *cfg_desc,
  */
 void  usb_host_parseitfdesc(usb_host_itfdesc_typedef *if_descriptor, uint8_t *buf)
 {
-    if_descriptor->bLength            = *(uint8_t *)(buf + 0U);
-    if_descriptor->bDescriptorType    = *(uint8_t *)(buf + 1U);
-    if_descriptor->bInterfaceNumber   = *(uint8_t *)(buf + 2U);
-    if_descriptor->bAlternateSetting  = *(uint8_t *)(buf + 3U);
-    if_descriptor->bNumEndpoints      = *(uint8_t *)(buf + 4U);
-    if_descriptor->bInterfaceClass    = *(uint8_t *)(buf + 5U);
-    if_descriptor->bInterfaceSubClass = *(uint8_t *)(buf + 6U);
-    if_descriptor->bInterfaceProtocol = *(uint8_t *)(buf + 7U);
-    if_descriptor->iInterface         = *(uint8_t *)(buf + 8U);
+    if_descriptor->bLength            = buf[0];
+    if_descriptor->bDescriptorType    = buf[1];
+    if_descriptor->bInterfaceNumber   = buf[2];
+    if_descriptor->bAlternateSetting  = buf[3];
+    if_descriptor->bNumEndpoints      = buf[4];
+    if_descriptor->bInterfaceClass    = buf[5];
+    if_descriptor->bInterfaceSubClass = buf[6];
+    if_descriptor->bInterfaceProtocol = buf[7];
+    if_descriptor->iInterface         = buf[8];
 }
 
 /**
@@ -417,12 +418,12 @@ void  usb_host_parseitfdesc(usb_host_itfdesc_typedef *if_descriptor, uint8_t *bu
  */
 void usb_host_parseepdesc(USB_HOST_EPDesc_TypeDef  *ep_descriptor, uint8_t *buf)
 {
-    ep_descriptor->bLength          = *(uint8_t *)(buf + 0U);
-    ep_descriptor->bDescriptorType  = *(uint8_t *)(buf + 1U);
-    ep_descriptor->bEndpointAddress = *(uint8_t *)(buf + 2U);
-    ep_descriptor->bmAttributes     = *(uint8_t *)(buf + 3U);
-    ep_descriptor->wMaxPacketSize   = SMALL_END(buf + 4U);
-    ep_descriptor->bInterval        = *(uint8_t *)(buf + 6U);
+    ep_descriptor->bLength          = buf[0];
+    ep_descriptor->bDescriptorType  = buf[1];
+    ep_descriptor->bEndpointAddress = buf[2];
+    ep_descriptor->bmAttributes     = buf[3];
+    ep_descriptor->wMaxPacketSize   = SMALL_END(&buf[4]);
+    ep_descriptor->bInterval        = buf[6];
 }
 
 /**

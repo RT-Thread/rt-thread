@@ -7,9 +7,10 @@
    Change Logs:
    Date             Author          Notes
    2022-03-31       CDT             First version
+   2023-09-30       CDT             Modify typo
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -326,7 +327,7 @@ int32_t EXMC_DMC_Init(const stc_exmc_dmc_init_t *pstcDmcInit)
         /* Set sample clock for DMC.*/
         MODIFY_REG32(CM_DMC->BACR, DMC_BACR_CKSEL, pstcDmcInit->u32SampleClock);
 
-        /* Set memrory width(16bit or 32bit) for DMC.*/
+        /* Set memory width(16bit or 32bit) for DMC.*/
         MODIFY_REG32(CM_DMC->BACR, DMC_BACR_DMCMW, pstcDmcInit->u32MemoryWidth);
 
         /* set auto refresh period*/
@@ -553,8 +554,8 @@ void EXMC_DMC_SetCommand(uint32_t u32Chip, uint32_t u32Bank, uint32_t u32Cmd, ui
  */
 
 /**
-* @}
-*/
+ * @}
+ */
 
 /**
  * @}

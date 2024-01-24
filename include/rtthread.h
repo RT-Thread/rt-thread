@@ -20,6 +20,7 @@
  * 2023-05-20     Bernard      add rtatomic.h header file to included files.
  * 2023-06-30     ChuShicheng  move debug check from the rtdebug.h
  * 2023-10-16     Shell        Support a new backtrace framework
+ * 2023-12-10     xqyjlj       fix spinlock in up
  */
 
 #ifndef __RT_THREAD_H__
@@ -178,7 +179,15 @@ int  rt_thread_kill(rt_thread_t tid, int sig);
 #ifdef RT_USING_HOOK
 void rt_thread_suspend_sethook(void (*hook)(rt_thread_t thread));
 void rt_thread_resume_sethook (void (*hook)(rt_thread_t thread));
-void rt_thread_inited_sethook (void (*hook)(rt_thread_t thread));
+
+/**
+ * @brief Sets a hook function when a thread is initialized.
+ *
+ * @param thread is the target thread that initializing
+ */
+typedef void (*rt_thread_inited_hookproto_t)(rt_thread_t thread);
+RT_OBJECT_HOOKLIST_DECLARE(rt_thread_inited_hookproto_t, rt_thread_inited);
+
 #endif /* RT_USING_HOOK */
 
 /*
@@ -286,8 +295,10 @@ void rt_page_free(void *addr, rt_size_t npages);
 #endif /* defined(RT_USING_SLAB) && defined(RT_USING_SLAB_AS_HEAP) */
 
 #ifdef RT_USING_HOOK
-void rt_malloc_sethook(void (*hook)(void *ptr, rt_size_t size));
-void rt_free_sethook(void (*hook)(void *ptr));
+void rt_malloc_sethook(void (*hook)(void **ptr, rt_size_t size));
+void rt_realloc_set_entry_hook(void (*hook)(void **ptr, rt_size_t size));
+void rt_realloc_set_exit_hook(void (*hook)(void **ptr, rt_size_t size));
+void rt_free_sethook(void (*hook)(void **ptr));
 #endif /* RT_USING_HOOK */
 
 #endif /* RT_USING_HEAP */
@@ -553,11 +564,34 @@ void rt_spin_unlock(struct rt_spinlock *lock);
 rt_base_t rt_spin_lock_irqsave(struct rt_spinlock *lock);
 void rt_spin_unlock_irqrestore(struct rt_spinlock *lock, rt_base_t level);
 #else
-#define rt_spin_lock_init(lock)                                     do {RT_UNUSED(lock);} while (0)
-#define rt_spin_lock(lock)                                          do {RT_UNUSED(lock);} while (0)
-#define rt_spin_unlock(lock)                                        do {RT_UNUSED(lock);} while (0)
-rt_inline rt_base_t rt_spin_lock_irqsave(struct rt_spinlock *lock)  {RT_UNUSED(lock);return rt_hw_interrupt_disable();}
-#define rt_spin_unlock_irqrestore(lock, level)                      do {RT_UNUSED(lock); rt_hw_interrupt_enable(level);} while (0)
+
+rt_inline void rt_spin_lock_init(struct rt_spinlock *lock)
+{
+    RT_UNUSED(lock);
+}
+rt_inline void rt_spin_lock(struct rt_spinlock *lock)
+{
+    RT_UNUSED(lock);
+    rt_enter_critical();
+}
+rt_inline void rt_spin_unlock(struct rt_spinlock *lock)
+{
+    RT_UNUSED(lock);
+    rt_exit_critical();
+}
+rt_inline rt_base_t rt_spin_lock_irqsave(struct rt_spinlock *lock)
+{
+    rt_base_t level;
+    RT_UNUSED(lock);
+    level = rt_hw_interrupt_disable();
+    return level;
+}
+rt_inline void rt_spin_unlock_irqrestore(struct rt_spinlock *lock, rt_base_t level)
+{
+    RT_UNUSED(lock);
+    rt_hw_interrupt_enable(level);
+}
+
 #endif /* RT_USING_SMP */
 
 /**@}*/
@@ -673,6 +707,11 @@ int rt_snprintf(char *buf, rt_size_t size, const char *format, ...);
 #if defined(RT_USING_DEVICE) && defined(RT_USING_CONSOLE)
 rt_device_t rt_console_set_device(const char *name);
 rt_device_t rt_console_get_device(void);
+#ifdef RT_USING_THREDSAFE_PRINTF
+    rt_thread_t rt_console_current_user(void);
+#else
+    rt_inline void *rt_console_current_user(void) { return RT_NULL; }
+#endif /* RT_USING_THREDSAFE_PRINTF */
 #endif /* defined(RT_USING_DEVICE) && defined(RT_USING_CONSOLE) */
 
 rt_err_t rt_get_errno(void);
@@ -800,6 +839,16 @@ while (0)
 #define RT_DEBUG_IN_THREAD_CONTEXT
 #define RT_DEBUG_SCHEDULER_AVAILABLE(need_check)
 #endif /* RT_DEBUGING_CONTEXT */
+
+rt_inline rt_bool_t rt_in_thread_context(void)
+{
+    return rt_thread_self() != RT_NULL && rt_interrupt_get_nest() == 0;
+}
+
+rt_inline rt_bool_t rt_scheduler_is_available(void)
+{
+    return !rt_hw_interrupt_is_disabled() && rt_critical_level() == 0 && rt_in_thread_context();
+}
 
 /**@}*/
 

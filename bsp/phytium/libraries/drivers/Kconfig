@@ -250,6 +250,20 @@ menu "On-chip Peripheral Drivers"
 
         endif
 
+        menuconfig BSP_USING_DC
+        bool "Enable DC"
+        default n
+        select RT_USING_DC
+        if BSP_USING_DC
+            config RT_USING_DC_CHANNEL0
+                bool "using dc channel_0"
+                default n
+            config RT_USING_DC_CHANNEL1
+                bool "using dc channel_1"
+                default n
+        endif
+
+
     menuconfig BSP_USING_XHCI
         bool "Enable USB3.0(XHCI)"
             default n

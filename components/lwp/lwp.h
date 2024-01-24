@@ -208,6 +208,8 @@ void lwp_uthread_ctx_restore(void);
 
 int lwp_setaffinity(pid_t pid, int cpu);
 
+pid_t exec(char *filename, int debug, int argc, char **argv);
+
 /* ctime lwp API */
 int timer_list_free(rt_list_t *timer_list);
 

@@ -12,6 +12,8 @@
 #ifndef Pins_Arduino_h
 #define Pins_Arduino_h
 
+#include <rtconfig.h>
+
 /* pins alias. Must keep in sequence */
 #define D0        (0)
 #define D1        (1)

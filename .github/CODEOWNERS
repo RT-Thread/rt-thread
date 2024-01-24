@@ -20,6 +20,7 @@
 /bsp/maxim                                @supperthomas
 
 *arduino*                                 @mysterywolf
+*.attach                                  @mysterywolf
 
 /components/libc/                         @mysterywolf
 /components/dfs/dfs_v2/                   @BernardXiong

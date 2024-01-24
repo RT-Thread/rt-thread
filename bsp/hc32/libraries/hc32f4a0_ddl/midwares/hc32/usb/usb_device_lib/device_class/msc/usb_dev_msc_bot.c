@@ -8,7 +8,7 @@
    2022-03-31       CDT             First version
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -84,8 +84,8 @@ static void msc_bot_txdata(usb_core_instance *pdev, uint8_t *buf, uint16_t lengt
 static void msc_bot_abort(usb_core_instance *pdev)
 {
     if ((MSC_BOT_cbw.bmFlags == (uint8_t)0) &&
-            (MSC_BOT_cbw.dDataLength != (uint32_t)0) &&
-            (MSC_BOT_Status == BOT_STATE_NORMAL)) {
+        (MSC_BOT_cbw.dDataLength != (uint32_t)0) &&
+        (MSC_BOT_Status == BOT_STATE_NORMAL)) {
         usb_stalldevep(pdev, MSC_OUT_EP);
     }
     usb_stalldevep(pdev, MSC_IN_EP);
@@ -106,10 +106,10 @@ static void msc_bot_decode_cbw(usb_core_instance *pdev)
     MSC_BOT_csw.dDataResidue = MSC_BOT_cbw.dDataLength;
 
     if ((usb_getrxcnt(pdev, MSC_OUT_EP) != BOT_CBW_LENGTH) ||
-            (MSC_BOT_cbw.dSignature != BOT_CBW_SIGNATURE) ||
-            (MSC_BOT_cbw.bLUN > 1U) ||
-            (MSC_BOT_cbw.bCBLength < 1U) ||
-            (MSC_BOT_cbw.bCBLength > 16U)) {
+        (MSC_BOT_cbw.dSignature != BOT_CBW_SIGNATURE) ||
+        (MSC_BOT_cbw.bLUN > 1U) ||
+        (MSC_BOT_cbw.bCBLength < 1U) ||
+        (MSC_BOT_cbw.bCBLength > 16U)) {
         scsi_sensecode(ILLEGAL_REQUEST, INVALID_CDB);
         MSC_BOT_Status = BOT_STATE_ERROR;
         msc_bot_abort(pdev);

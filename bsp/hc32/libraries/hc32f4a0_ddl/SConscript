@@ -24,6 +24,12 @@ drivers/hc32_ll_driver/src/hc32_ll_utility.c
 drivers/hc32_ll_driver/src/hc32f4a0_ll_interrupts_share.c
 ''')
 
+if GetDepend(['BSP_USING_NAND']):
+    src += ['drivers/hc32_ll_driver/src/hc32_ll_nfc.c']
+
+if GetDepend(['BSP_USING_SDRAM']):
+    src += ['drivers/hc32_ll_driver/src/hc32_ll_dmc.c']
+
 if GetDepend(['RT_USING_SERIAL']):
     src += ['drivers/hc32_ll_driver/src/hc32_ll_usart.c']
     src += ['drivers/hc32_ll_driver/src/hc32_ll_tmr0.c']
@@ -33,6 +39,9 @@ if GetDepend(['RT_USING_I2C']):
 
 if GetDepend(['RT_USING_SPI']):
     src += ['drivers/hc32_ll_driver/src/hc32_ll_spi.c']
+
+if GetDepend(['RT_USING_QSPI']):
+    src += ['drivers/hc32_ll_driver/src/hc32_ll_qspi.c']
 
 if GetDepend(['RT_USING_CAN']):
     src += ['drivers/hc32_ll_driver/src/hc32_ll_can.c']
@@ -59,8 +68,38 @@ if GetDepend(['RT_USING_SDIO']):
 if GetDepend(['RT_USING_ON_CHIP_FLASH']):
     src += ['drivers/hc32_ll_driver/src/hc32_ll_efm.c']
 
-if GetDepend(['RT_USING_HWTIMER']) or GetDepend(['RT_USING_PWM'] or GetDepend(['RT_USING_PULSE_ENCODER'])):
+if GetDepend(['RT_USING_HWTIMER']):
+    src += ['drivers/hc32_ll_driver/src/hc32_ll_tmr2.c']
+    src += ['drivers/hc32_ll_driver/src/hc32_ll_tmr4.c']
+    src += ['drivers/hc32_ll_driver/src/hc32_ll_tmr6.c']
     src += ['drivers/hc32_ll_driver/src/hc32_ll_tmra.c']
+
+if GetDepend(['RT_USING_PULSE_ENCODER']):
+    src += ['drivers/hc32_ll_driver/src/hc32_ll_tmr6.c']
+    src += ['drivers/hc32_ll_driver/src/hc32_ll_tmra.c']
+
+if GetDepend(['RT_USING_PWM']):
+    src += ['drivers/hc32_ll_driver/src/hc32_ll_tmr4.c']
+    src += ['drivers/hc32_ll_driver/src/hc32_ll_tmr6.c']
+    src += ['drivers/hc32_ll_driver/src/hc32_ll_tmra.c']
+
+if GetDepend(['RT_HWCRYPTO_USING_RNG']):
+    src += ['drivers/hc32_ll_driver/src/hc32_ll_trng.c']
+
+if GetDepend(['RT_HWCRYPTO_USING_CRC']):
+    src += ['drivers/hc32_ll_driver/src/hc32_ll_crc.c']
+
+if GetDepend(['RT_HWCRYPTO_USING_AES']):
+    src += ['drivers/hc32_ll_driver/src/hc32_ll_aes.c']
+
+if GetDepend(['RT_HWCRYPTO_USING_SHA2']):
+    src += ['drivers/hc32_ll_driver/src/hc32_ll_hash.c']
+
+if GetDepend(['BSP_USING_USBD']) or GetDepend(['BSP_USING_USBH']):
+    src += ['drivers/hc32_ll_driver/src/hc32_ll_usb.c']
+
+if GetDepend(['BSP_RTC_USING_XTAL32']) or GetDepend(['RT_USING_PM']):
+    src += ['drivers/hc32_ll_driver/src/hc32_ll_fcm.c']
 
 path = [
     cwd + '/drivers/cmsis/Device/HDSC/hc32f4xx/Include',

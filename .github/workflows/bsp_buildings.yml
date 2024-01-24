@@ -1,4 +1,4 @@
-name: RT-Thread BSP build check
+name: RT-Thread BSP Static Build Check
 
 # Controls when the action will run. Triggers the workflow on push or pull request
 # events but only for the RT-Thread organization master branch
@@ -34,6 +34,14 @@ jobs:
       fail-fast: false
       matrix:
        legs:
+         -  RTT_BSP: "RT-Thread Online Packages"
+            RTT_TOOL_CHAIN: "sourcery-arm"
+            SUB_RTT_BSP:
+                - "stm32/stm32f407-rt-spark"
+         -  RTT_BSP: "RTduino/Arduino Libraries"
+            RTT_TOOL_CHAIN: "sourcery-arm"
+            SUB_RTT_BSP:
+                - "stm32/stm32f411-st-nucleo"
          -  RTT_BSP: "others_at32_hc32"
             RTT_TOOL_CHAIN: "sourcery-arm"
             SUB_RTT_BSP: 
@@ -50,8 +58,8 @@ jobs:
                 - "at91/at91sam9260"
                 - "wch/arm/ch32f103c8-core"
                 - "wch/arm/ch32f203r-evt"
-                - "synwit/swm320"
-                - "synwit/swm341"
+                - "synwit/swm320-mini"
+                - "synwit/swm341-mini"
                 - "beaglebone"
                 - "zynqmp-r5-axu4ev"
                 - "at32/at32f402-start"
@@ -127,7 +135,6 @@ jobs:
                 - "stm32/stm32f407-st-discovery"
                 - "stm32/stm32f410-st-nucleo"
                 - "stm32/stm32f411-atk-nano"
-                - "stm32/stm32f411-st-nucleo"
                 - "stm32/stm32f411-weact-blackpill" 
                 - "stm32/stm32f412-st-nucleo"
                 - "stm32/stm32f413-st-nucleo"
@@ -154,6 +161,7 @@ jobs:
                 - "stm32/stm32g491-st-nucleo"
                 - "stm32/stm32g474-st-nucleo"
                 - "stm32/stm32h563-st-nucleo"
+                - "stm32/stm32h503-st-nucleo"
                 - "stm32/stm32h743-armfly-v7"
                 - "stm32/stm32h743-atk-apollo"
                 - "stm32/stm32h743-openmv-h7plus"
@@ -202,6 +210,7 @@ jobs:
                 - "renesas/ra4m2-eco"
                 - "renesas/ra2l1-cpk"
                 - "renesas/ra8m1-ek"
+                - "renesas/ra8d1-ek"
          -  RTT_BSP: "gd32_n32_apm32"   
             RTT_TOOL_CHAIN: "sourcery-arm"
             SUB_RTT_BSP:             
@@ -216,6 +225,7 @@ jobs:
                 - "gd32/arm/gd32305r-start"
                 - "gd32/arm/gd32307e-start"
                 - "gd32/arm/gd32407v-start"
+                - "gd32/arm/gd32407v-lckfb"
                 - "gd32/arm/gd32450z-eval" 
                 - "gd32/arm/gd32470z-lckfb"
                 - "n32/n32g43xcl-stb"
@@ -316,7 +326,7 @@ jobs:
             SUB_RTT_BSP:  
                 - "x86"
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Set up Python
         uses: actions/setup-python@v3
         with:
@@ -419,19 +429,4 @@ jobs:
           SRTT_BSP: ${{ join(matrix.legs.SUB_RTT_BSP, ',') }}
         run: |
           source ~/.env/env.sh
-          failed=0
-          count=0
-          for bsp in $(echo $SRTT_BSP | tr ',' '\n'); do
-            count=$((count+1))
-            echo "::group::Compiling BSP: ==$count=== $bsp ===="
-            echo bsp/$bsp
-            ls bsp/$bsp/Kconfig && scons -C bsp/$bsp --pyconfig-silent
-            pushd bsp/$bsp && pkgs --update && popd
-            scons -C bsp/$bsp -j$(nproc) --debug=time | tee output.log || \
-            { total_time=$(grep "Total command execution time" output.log | awk '{print $5}'); \
-              failed=$((failed+1)) ; echo "::endgroup::" ; echo "::error::build $bsp failed" ; \
-              echo "- ❌ build $bsp failed in $total_time seconds " >> $GITHUB_STEP_SUMMARY ; } && \
-            { total_time=$(grep "Total command execution time" output.log | awk '{print $5}'); \
-              echo "- ✅ build $bsp success in $total_time seconds " >> $GITHUB_STEP_SUMMARY ; echo "::endgroup::" ; }
-          done
-          exit $failed
+          python tools/ci/bsp_buildings.py

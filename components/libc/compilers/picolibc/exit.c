@@ -9,11 +9,11 @@
 
 #include <rtthread.h>
 #include <sys/types.h>
+#include <posix/stdlib.h>
 
 /* for exit() and abort() */
 rt_noreturn void _exit (int status)
 {
-    extern void __rt_libc_exit(int status);
     __rt_libc_exit(status);
     while(1);
 }
