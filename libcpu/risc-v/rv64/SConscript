@@ -2,13 +2,11 @@
 
 from building import *
 
-Import('rtconfig')
-
 cwd     = GetCurrentDir()
 src     = Glob('*.c') + Glob('*.cpp') + Glob('*_gcc.S')
 CPPPATH = [cwd]
-ASFLAGS = ''
+ASFLAGS = ' -I ' + cwd
 
-group = DefineGroup('CPU', src, depend = [''], CPPPATH = CPPPATH, ASFLAGS = ASFLAGS)
+group = DefineGroup('rv64', src, depend = [''], CPPPATH = CPPPATH, ASFLAGS = ASFLAGS)
 
 Return('group')

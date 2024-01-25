@@ -16,7 +16,8 @@
 #include <sysctl.h>
 
 static volatile unsigned long tick_cycles = 0;
-int tick_isr(void)
+
+int rt_hw_tick_isr(void)
 {
     uint64_t core_id = current_coreid();
 
