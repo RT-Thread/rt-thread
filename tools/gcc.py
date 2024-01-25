@@ -72,14 +72,20 @@ def GetGccDefaultSearchDirs(rtconfig):
 
     gcc_cmd = os.path.join(rtconfig.EXEC_PATH, rtconfig.CC)
     device_flags = rtconfig.DEVICE.split()
-    args = [gcc_cmd] + device_flags + ['-xc', '-E', '-v', os.devnull]
+    command = [gcc_cmd] + device_flags + ['-xc', '-E', '-v', os.devnull]
 
     # if gcc_cmd can not access , return empty list
     if not os.access(gcc_cmd, os.X_OK):
         return []
 
-    proc = subprocess.run(args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True)
-    lines = proc.stdout.splitlines()
+    if(platform.system() == 'Windows'):
+        child = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+    else:
+        child = subprocess.Popen(' '.join(command), stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+
+    stdout = child.communicate()
+    stdout_string = (b''.join(stdout)).decode()
+    lines = stdout_string.splitlines()
 
     start_it = match_pattern(start_pattern, lines)
     if start_it == None:
