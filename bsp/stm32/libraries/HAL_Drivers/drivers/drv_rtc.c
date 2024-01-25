@@ -157,14 +157,16 @@ static rt_err_t rt_rtc_config(void)
 
     HAL_PWR_EnableBkUpAccess();
     PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_RTC;
-#ifdef BSP_RTC_USING_LSI
+#if defined(BSP_RTC_USING_LSI)
     PeriphClkInitStruct.RTCClockSelection = RCC_RTCCLKSOURCE_LSI;
-#else
+#elif defined(BSP_RTC_USING_LSE)
     PeriphClkInitStruct.RTCClockSelection = RCC_RTCCLKSOURCE_LSE;
+#else
+    PeriphClkInitStruct.RTCClockSelection = RCC_RTCCLKSOURCE_HSE_DIV32;
 #endif
     HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct);
 
-#if defined(SOC_SERIES_STM32WL)
+#if defined(SOC_SERIES_STM32WL) || defined(SOC_SERIES_STM32G0)
     __HAL_RCC_RTCAPB_CLK_ENABLE();
 #endif
 
@@ -194,7 +196,9 @@ static rt_err_t rt_rtc_config(void)
         RTC_Handler.Init.OutPut = RTC_OUTPUT_DISABLE;
         RTC_Handler.Init.OutPutPolarity = RTC_OUTPUT_POLARITY_HIGH;
         RTC_Handler.Init.OutPutType = RTC_OUTPUT_TYPE_OPENDRAIN;
-#elif defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7) || defined(SOC_SERIES_STM32L0) || defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32G4) || defined(SOC_SERIES_STM32WL) || defined(SOC_SERIES_STM32H7) || defined (SOC_SERIES_STM32WB)
+#elif defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7) || defined(SOC_SERIES_STM32L0) \
+        || defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32WL) || defined(SOC_SERIES_STM32H7) || defined (SOC_SERIES_STM32WB) \
+        || defined(SOC_SERIES_STM32G0)
 
         /* set the frequency division */
 #ifdef BSP_RTC_USING_LSI
@@ -237,26 +241,24 @@ static rt_err_t stm32_rtc_init(void)
 #endif
 #endif
 
+#if defined(BSP_RTC_USING_LSI) || defined(BSP_RTC_USING_LSE)
     RCC_OscInitTypeDef RCC_OscInitStruct = {0};
 #ifdef BSP_RTC_USING_LSI
 #ifdef SOC_SERIES_STM32WB
-RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_LSI1;
-    RCC_OscInitStruct.PLL.PLLState = RCC_PLL_NONE;
-    RCC_OscInitStruct.LSEState = RCC_LSE_OFF;
-    RCC_OscInitStruct.LSIState = RCC_LSI_ON;
+    RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_LSI1;
 #else
     RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_LSI;
-    RCC_OscInitStruct.PLL.PLLState = RCC_PLL_NONE;
+#endif
     RCC_OscInitStruct.LSEState = RCC_LSE_OFF;
     RCC_OscInitStruct.LSIState = RCC_LSI_ON;
-#endif
 #else
     RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_LSE;
-    RCC_OscInitStruct.PLL.PLLState = RCC_PLL_NONE;
     RCC_OscInitStruct.LSEState = RCC_LSE_ON;
     RCC_OscInitStruct.LSIState = RCC_LSI_OFF;
 #endif
+    RCC_OscInitStruct.PLL.PLLState = RCC_PLL_NONE;
     HAL_RCC_OscConfig(&RCC_OscInitStruct);
+#endif
 
     if (rt_rtc_config() != RT_EOK)
     {
