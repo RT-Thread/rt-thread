@@ -10,6 +10,7 @@
 #include "drv_pwm.h"
 #include "board.h"
 #include "hardware/pwm.h"
+#include "hardware/gpio.h"
 
 #ifdef BSP_USING_PWM
 

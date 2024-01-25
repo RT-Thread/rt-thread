@@ -25,28 +25,31 @@ Hardware Drivers Config --->
 | 1 (D1) | P | 是/否 | Serial-RX，默认被RT-Thread的UART设备框架uart1接管 |
 | 2 (D2) | P | 是/否 |  |
 | 3 (D3) | P | 是/否 |  |
-| 4 (D4) | P | 是/否 |  |
-| 5 (D5) | P | 是/否 |  |
+| 4 (D4) | P | 是/否 | I2C0-SDA，默认被RT-Thread的I2C设备框架i2c0接管 |
+| 5 (D5) | P | 是/否 | I2C0-SCL，默认被RT-Thread的I2C设备框架i2c0接管 |
 | 6 (D6) | P | 是/否 |  |
 | 7 (D7) | P | 是/否 |  |
 | 8 (D8) | P | 是/否 | Serial2-TX，默认被RT-Thread的UART设备框架uart2接管 |
 | 9 (D9) | P | 是/否 | Serial2-RX，默认被RT-Thread的UART设备框架uart2接管 |
-| 10 (D10) | P | 是/否 |  |
-| 11 (D11) | P | 是/否 |  |
-| 12 (D12) | P | 是/否 |  |
-| 13 (D13) | P | 是/否 |  |
-| 14 (D14) | P | 是/否 |  |
-| 15 (D15) | P | 是/否 |  |
-| 16 (D16) | P | 是/否 |  |
-| 17 (D17) | P | 是/否 |  |
-| 18 (D18) | P | 是/否 |  |
-| 19 (D19) | P | 是/否 |  |
-| 20 (D20) | P | 是/否 |  |
-| 21 (D21) | P | 是/否 |  |
-| 22 (D22) | P | 是/否 |  |
-| 23 (D23) | P | 是/否 | 板载用户LED |
-| 24 (D24) | P | 是/否 |  |
-| 25 (D25) | P | 是/否 |  |
+| 10 (D10) | P | 是/否 | PWM5-CH0，默认被RT-Thread的PWM设备框架pwm5接管 |
+| 11 (D11) | P | 是/否 | PWM5-CH1，默认被RT-Thread的PWM设备框架pwm5接管 |
+| 12 (D12) | P | 是/否 | PWM6-CH0，默认被RT-Thread的PWM设备框架pwm6接管 |
+| 13 (D13) | P | 是/否 | PWM6-CH1，默认被RT-Thread的PWM设备框架pwm6接管 |
+| 14 (D14) | P | 是/否 | PWM7-CH0，默认被RT-Thread的PWM设备框架pwm7接管 |
+| 15 (D15) | P | 是/否 | PWM7-CH1，默认被RT-Thread的PWM设备框架pwm7接管 |
+| 16 (D16) | P | 是/否 | PWM0-CH0，默认被RT-Thread的PWM设备框架pwm0接管 |
+| 17 (D17) | P | 是/否 | PWM0-CH1，默认被RT-Thread的PWM设备框架pwm0接管 |
+| 18 (D18) | P | 是/否 | PWM1-CH0，默认被RT-Thread的PWM设备框架pwm1接管 |
+| 19 (D19) | P | 是/否 | PWM1-CH1，默认被RT-Thread的PWM设备框架pwm1接管 |
+| 20 (D20) | P | 是/否 | PWM2-CH0，默认被RT-Thread的PWM设备框架pwm2接管 |
+| 21 (D21) | P | 是/否 | PWM2-CH1，默认被RT-Thread的PWM设备框架pwm2接管 |
+| 22 (D22) | P | 是/否 | PWM3-CH0，默认被RT-Thread的PWM设备框架pwm3接管 |
+| 23 (D23) | P | 是/否 | PWM3-CH1，默认被RT-Thread的PWM设备框架pwm3接管 |
+| 24 (D24) | P | 是/否 | PWM4-CH0，默认被RT-Thread的PWM设备框架pwm4接管 |
+| 25 (D25) | P | 是/否 | PWM4-CH1，默认被RT-Thread的PWM设备框架pwm4接管 |
+| 26 (A0) | P | 是/否 | ADC0-CH0，默认被RT-Thread的ADC设备框架adc0接管 |
+| 27 (A1) | P | 是/否 | ADC1-CH1，默认被RT-Thread的ADC设备框架adc1接管 |
+| 28 (A2) | P | 是/否 | ADC2-CH2，默认被RT-Thread的ADC设备框架adc2接管 |
 
 > 注意：
 >

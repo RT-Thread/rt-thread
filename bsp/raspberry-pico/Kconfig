@@ -44,16 +44,44 @@ menu "Onboard Peripheral Drivers"
             default y
     endif
 
-    config BSP_USING_ARDUINO
+        config BSP_USING_ARDUINO
         bool "Compatible with Arduino Ecosystem (RTduino)"
         select PKG_USING_RTDUINO
-        select BSP_USING_UART0
-        select BSP_UART0_TX_PIN_0
-        select BSP_UART0_RX_PIN_1
+        select BSP_USING_STLINK_TO_USART
         select BSP_USING_UART1
-        select BSP_UART1_TX_PIN_8
-        select BSP_UART1_RX_PIN_9
         select BSP_USING_GPIO
+        select BSP_USING_ADC
+        select BSP_USING_ADC0
+        select BSP_USING_ADC1
+        select BSP_USING_ADC2
+        select BSP_USING_PWM
+        select BSP_USING_PWM0
+        select BSP_PWM0_A_PIN_16
+        select BSP_PWM0_B_PIN_17
+        select BSP_USING_PWM1
+        select BSP_PWM1_A_PIN_18
+        select BSP_PWM1_A_PIN_19
+        select BSP_USING_PWM2
+        select BSP_PWM2_A_PIN_20
+        select BSP_PWM2_A_PIN_21
+        select BSP_USING_PWM3
+        select BSP_PWM3_A_PIN_22
+        select BSP_PWM3_A_PIN_23
+        select BSP_USING_PWM4
+        select BSP_PWM4_A_PIN_24
+        select BSP_PWM4_A_PIN_25
+        select BSP_USING_PWM5
+        select BSP_PWM5_A_PIN_10
+        select BSP_PWM5_A_PIN_11
+        select BSP_USING_PWM6
+        select BSP_PWM6_A_PIN_12
+        select BSP_PWM6_A_PIN_13
+        select BSP_USING_PWM7
+        select BSP_PWM7_A_PIN_14
+        select BSP_PWM7_A_PIN_15
+        select BSP_USING_I2C
+        select BSP_USING_I2C0
+        imply RTDUINO_USING_SERVO
         default n
 
     config BSP_USING_ON_CHIP_FLASH
@@ -121,7 +149,7 @@ menu "On-chip Peripheral Drivers"
                 choice
                     prompt "uart1 tx pin number (GP)"
                     depends on BSP_USING_UART1
-                    default BSP_UART1_TX_PIN_4
+                    default BSP_UART1_TX_PIN_8
                     config BSP_UART1_TX_PIN_4
                         bool "4"
                     config BSP_UART1_TX_PIN_8
@@ -135,7 +163,7 @@ menu "On-chip Peripheral Drivers"
                 choice
                     prompt "uart1 rx pin number (GP)"
                     depends on BSP_USING_UART1
-                    default BSP_UART1_RX_PIN_5
+                    default BSP_UART1_RX_PIN_9
                     config BSP_UART1_RX_PIN_5
                         bool "5"
                     config BSP_UART1_RX_PIN_9
@@ -393,7 +421,7 @@ menu "On-chip Peripheral Drivers"
                     choice
                         prompt "pwm slice A pin number (GP)"
                         depends on BSP_USING_PWM0
-                        default BSP_PWM0_A_PIN_0
+                        default BSP_PWM0_A_PIN_16
                         config BSP_PWM0_A_PIN_0
                             bool "0"
                         config BSP_PWM0_A_PIN_16
@@ -406,7 +434,7 @@ menu "On-chip Peripheral Drivers"
                     choice
                         prompt "pwm slice B pin number (GP)"
                         depends on BSP_USING_PWM0
-                        default BSP_PWM0_B_PIN_1
+                        default BSP_PWM0_B_PIN_17
                         config BSP_PWM0_B_PIN_1
                             bool "1"
                         config BSP_PWM0_B_PIN_17
@@ -431,7 +459,7 @@ menu "On-chip Peripheral Drivers"
                     choice
                         prompt "pwm slice A pin number (GP)"
                         depends on BSP_USING_PWM1
-                        default BSP_PWM1_A_PIN_2
+                        default BSP_PWM1_A_PIN_18
                         config BSP_PWM1_A_PIN_2
                             bool "2"
                         config BSP_PWM1_A_PIN_18
@@ -444,7 +472,7 @@ menu "On-chip Peripheral Drivers"
                     choice
                         prompt "pwm slice B pin number (GP)"
                         depends on BSP_USING_PWM1
-                        default BSP_PWM1_B_PIN_3
+                        default BSP_PWM1_B_PIN_19
                         config BSP_PWM1_B_PIN_3
                             bool "3"
                         config BSP_PWM1_B_PIN_19
@@ -469,7 +497,7 @@ menu "On-chip Peripheral Drivers"
                     choice
                         prompt "pwm slice A pin number (GP)"
                         depends on BSP_USING_PWM2
-                        default BSP_PWM2_A_PIN_4
+                        default BSP_PWM2_A_PIN_20
                         config BSP_PWM2_A_PIN_4
                             bool "4"
                         config BSP_PWM2_A_PIN_20
@@ -482,7 +510,7 @@ menu "On-chip Peripheral Drivers"
                     choice
                         prompt "pwm slice B pin number (GP)"
                         depends on BSP_USING_PWM2
-                        default BSP_PWM2_B_PIN_5
+                        default BSP_PWM2_B_PIN_21
                         config BSP_PWM2_B_PIN_5
                             bool "5"
                         config BSP_PWM2_B_PIN_21
@@ -507,7 +535,7 @@ menu "On-chip Peripheral Drivers"
                     choice
                         prompt "pwm slice A pin number (GP)"
                         depends on BSP_USING_PWM3
-                        default BSP_PWM3_A_PIN_6
+                        default BSP_PWM3_A_PIN_22
                         config BSP_PWM3_A_PIN_6
                             bool "6"
                         config BSP_PWM3_A_PIN_22
@@ -520,7 +548,7 @@ menu "On-chip Peripheral Drivers"
                     choice
                         prompt "pwm slice B pin number (GP)"
                         depends on BSP_USING_PWM3
-                        default BSP_PWM3_B_PIN_7
+                        default BSP_PWM3_B_PIN_23
                         config BSP_PWM3_B_PIN_7
                             bool "7"
                         config BSP_PWM3_B_PIN_23
@@ -545,7 +573,7 @@ menu "On-chip Peripheral Drivers"
                     choice
                         prompt "pwm slice A pin number (GP)"
                         depends on BSP_USING_PWM4
-                        default BSP_PWM4_A_PIN_8
+                        default BSP_PWM4_A_PIN_24
                         config BSP_PWM4_A_PIN_8
                             bool "8"
                         config BSP_PWM4_A_PIN_24
@@ -558,7 +586,7 @@ menu "On-chip Peripheral Drivers"
                     choice
                         prompt "pwm slice B pin number (GP)"
                         depends on BSP_USING_PWM4
-                        default BSP_PWM4_B_PIN_9
+                        default BSP_PWM4_B_PIN_25
                         config BSP_PWM4_B_PIN_9
                             bool "9"
                         config BSP_PWM4_B_PIN_25
@@ -604,7 +632,7 @@ menu "On-chip Peripheral Drivers"
                     endchoice
                     config BSP_PWM5_B_PIN
                         int
-                        default 10 if BSP_PWM5_B_PIN_10
+                        default 11 if BSP_PWM5_B_PIN_11
                         default 27 if BSP_PWM5_B_PIN_27
                     config BSP_PWM5_A_ALL
                         bool "pwm slice use all A pin"

@@ -12,17 +12,17 @@
 #define __DRV_ADC_H__
 
 #include <rtdevice.h>
-#if defined BSP_USING_ADC
+#ifdef BSP_USING_ADC
 
-/* pico i2c dirver class */
-static struct pico_adc
+/* pico adc dirver class */
+struct pico_adc
 {
     struct rt_adc_ops ops;
     struct rt_adc_device pico_adc_device;
 };
 
 /* pico config class */
-static struct pico_adc_config
+struct pico_adc_config
 {
     rt_uint8_t pin;
     rt_uint8_t channel;
@@ -46,7 +46,7 @@ static struct pico_adc_config
     }
 #endif
 #ifdef BSP_USING_ADC2
-#define ADC1_CONFIG                                      \
+#define ADC2_CONFIG                                      \
     {                                                    \
         .pin = 28,                                       \
         .channel = 2,                                    \

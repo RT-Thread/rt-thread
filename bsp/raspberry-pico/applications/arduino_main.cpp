@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2006-2023, RT-Thread Development Team
+ * Copyright (c) 2006-2024, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
- * 2023-11-27     ShichengChu  first version
+ * 2024-01-25     ShichengChu  first version
  */
 
 #include <Arduino.h>
@@ -13,12 +13,12 @@
 void setup(void)
 {
     /* put your setup code here, to run once: */
-    Serial.begin();
+    Serial2.begin();
+    Serial2.println("Hello RTduino!");
 }
 
 void loop(void)
 {
     /* put your main code here, to run repeatedly: */
-    Serial.println("Hello Arduino!");
-    delay(800);
+    delay(1000);
 }
