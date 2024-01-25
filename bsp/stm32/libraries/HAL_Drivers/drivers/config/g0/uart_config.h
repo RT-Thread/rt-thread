@@ -19,16 +19,25 @@ extern "C" {
 
 #if defined(BSP_USING_LPUART1)
 #ifndef LPUART1_CONFIG
+#if defined(STM32G071xx) || defined(STM32G081xx)
 #define LPUART1_CONFIG                                              \
     {                                                               \
         .name = "lpuart1",                                          \
         .Instance = LPUART1,                                        \
         .irq_type = USART3_4_LPUART1_IRQn,                          \
     }
+#elif defined(STM32G0B1xx) || defined(STM32G0C1xx)
+#define LPUART1_CONFIG                                              \
+    {                                                               \
+        .name = "lpuart1",                                          \
+        .Instance = LPUART1,                                        \
+        .irq_type = USART3_4_5_6_LPUART1_IRQn,                      \
+    }
+#endif /* defined(STM32G071xx) || defined(STM32G081xx) */
 #endif /* LPUART1_CONFIG */
 #if defined(BSP_LPUART1_RX_USING_DMA)
-#ifndef LPUART1_DMA_RX_CONFIG
-#define LPUART1_DMA_RX_CONFIG                                       \
+#ifndef LPUART1_DMA_CONFIG
+#define LPUART1_DMA_CONFIG                                          \
     {                                                               \
         .Instance = LPUART1_RX_DMA_INSTANCE,                        \
         .request =  LPUART1_RX_DMA_REQUEST,                         \

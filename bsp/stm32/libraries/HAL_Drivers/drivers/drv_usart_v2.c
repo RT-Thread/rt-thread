@@ -1092,7 +1092,7 @@ static void stm32_uart_get_config(void)
 
 #ifdef BSP_LPUART1_RX_USING_DMA
     uart_obj[LPUART1_INDEX].uart_dma_flag |= RT_DEVICE_FLAG_DMA_RX;
-    static struct dma_config lpuart1_dma_rx = LPUART1_DMA_RX_CONFIG;
+    static struct dma_config lpuart1_dma_rx = LPUART1_DMA_CONFIG;
     uart_config[LPUART1_INDEX].dma_rx = &lpuart1_dma_rx;
 #endif
 #endif
