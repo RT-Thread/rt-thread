@@ -183,6 +183,10 @@
 #define RT_USING_POSIX_FS
 #define RT_USING_POSIX_DEVIO
 #define RT_USING_POSIX_STDIO
+#define RT_USING_POSIX_POLL
+#define RT_USING_POSIX_EPOLL
+#define RT_USING_POSIX_SIGNALFD
+#define RT_SIGNALFD_MAX_NUM 10
 #define RT_USING_POSIX_TERMIOS
 #define RT_USING_POSIX_DELAY
 #define RT_USING_POSIX_CLOCK
@@ -250,8 +254,6 @@
 #define LWIP_SO_LINGER 0
 #define LWIP_NETIF_LOOPBACK 0
 #define RT_LWIP_USING_PING
-#define RT_LWIP_DEBUG
-#define RT_LWIP_NETIF_DEBUG
 
 /* Memory protection */
 
@@ -292,15 +294,6 @@
 
 
 /* Wiced WiFi */
-
-
-/* CYW43012 WiFi */
-
-
-/* BL808 WiFi */
-
-
-/* CYW43439 WiFi */
 
 
 /* IoT Cloud */
@@ -422,22 +415,18 @@
 #define RT_USING_SPIM3
 #define BSP_USING_CAN
 #define RT_USING_CANFD
-#define RT_USING_FILTER
 #define RT_USING_CAN0
-#define RT_USING_CAN1
 #define BSP_USING_GPIO
 #define BSP_USING_QSPI
 #define RT_USING_QSPI0
 #define USING_QSPI_CHANNEL0
+#define BSP_USING_ETH
+#define RT_LWIP_PBUF_POOL_BUFSIZE 1700
 #define BSP_USING_PWM
 #define RT_USING_PWM6
 #define BSP_USING_I2C
 #define I2C_USE_MIO
 #define RT_USING_MIO15
-#define BSP_USING_SDIF
-#define BSP_USING_SDCARD_FATFS
-#define BSP_USING_SDCARD_PARTITION "sd0"
-#define USING_SDIF1
 
 /* Board extended module Drivers */
 
