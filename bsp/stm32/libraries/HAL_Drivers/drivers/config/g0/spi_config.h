@@ -55,12 +55,21 @@ extern "C" {
 
 #ifdef BSP_USING_SPI2
 #ifndef SPI2_BUS_CONFIG
+#if defined(STM32G0B0xx) || defined(STM32G0B1xx) || defined(STM32G0C1xx)
+#define SPI2_BUS_CONFIG                             \
+    {                                               \
+        .Instance = SPI2,                           \
+        .bus_name = "spi2",                         \
+        .irq_type = SPI2_3_IRQn,                    \
+    }
+#else
 #define SPI2_BUS_CONFIG                             \
     {                                               \
         .Instance = SPI2,                           \
         .bus_name = "spi2",                         \
         .irq_type = SPI2_IRQn,                      \
     }
+#endif /* defined(STM32G0B0xx) || defined(STM32G0B1xx) || defined(STM32G0C1xx) */
 #endif /* SPI2_BUS_CONFIG */
 #endif /* BSP_USING_SPI2 */
 

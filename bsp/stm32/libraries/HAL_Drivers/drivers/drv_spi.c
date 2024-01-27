@@ -1039,7 +1039,45 @@ void SPI2_DMA_RX_TX_IRQHandler(void)
     SPI2_DMA_RX_IRQHandler();
 #endif
 }
-#endif  /* SOC_SERIES_STM32F0 */
+#elif defined(SOC_SERIES_STM32G0)
+#if defined(BSP_SPI1_TX_USING_DMA) || defined(BSP_SPI1_RX_USING_DMA)
+void SPI1_DMA_RX_TX_IRQHandler(void)
+{
+#if defined(BSP_SPI1_TX_USING_DMA)
+    SPI1_DMA_TX_IRQHandler();
+#endif
+
+#if defined(BSP_SPI1_RX_USING_DMA)
+    SPI1_DMA_RX_IRQHandler();
+#endif
+}
+#endif /* defined(BSP_SPI1_TX_USING_DMA) || defined(BSP_SPI1_RX_USING_DMA) */
+#if defined(BSP_SPI2_TX_USING_DMA) || defined(BSP_SPI2_RX_USING_DMA)
+void SPI2_DMA_RX_TX_IRQHandler(void)
+{
+#if defined(BSP_SPI2_TX_USING_DMA)
+    SPI2_DMA_TX_IRQHandler();
+#endif
+
+#if defined(BSP_SPI2_RX_USING_DMA)
+    SPI2_DMA_RX_IRQHandler();
+#endif
+}
+#endif /* defined(BSP_SPI1_TX_USING_DMA) || defined(BSP_SPI1_RX_USING_DMA) */
+#if defined(STM32G0B0xx) || defined(STM32G0B1xx) || defined(STM32G0C1xx)
+#if defined(BSP_USING_SPI2) || defined(BSP_USING_SPI3)
+void SPI2_3_IRQHandler(void)
+{
+#if defined(BSP_SPI2_TX_USING_DMA) || defined(BSP_SPI2_RX_USING_DMA)
+    SPI2_IRQHandler();
+#endif
+#if defined(BSP_SPI3_TX_USING_DMA) || defined(BSP_SPI3_RX_USING_DMA)
+    SPI3_IRQHandler();
+#endif
+}
+#endif /* defined(BSP_USING_SPI2) || defined(BSP_USING_SPI3) */
+#endif /* defined(STM32G0B0xx) || defined(STM32G0B1xx) || defined(STM32G0C1xx) */
+#endif /* defined(SOC_SERIES_STM32F0) */
 
 int rt_hw_spi_init(void)
 {

@@ -623,6 +623,23 @@ void TIM2_IRQHandler(void)
     rt_interrupt_leave();
 }
 #endif
+#if defined(STM32G0B0xx) || defined(STM32G0B1xx) || defined(STM32G0C1xx)
+#if defined(BSP_USING_TIM3) || defined(BSP_USING_TIM4)
+void TIM3_TIM4_IRQHandler(void)
+{
+    /* enter interrupt */
+    rt_interrupt_enter();
+#ifdef BSP_USING_TIM3
+    HAL_TIM_IRQHandler(&stm32_hwtimer_obj[TIM3_INDEX].tim_handle);
+#endif
+#ifdef BSP_USING_TIM4
+    HAL_TIM_IRQHandler(&stm32_hwtimer_obj[TIM4_INDEX].tim_handle);
+#endif
+    /* leave interrupt */
+    rt_interrupt_leave();
+}
+#endif
+#else
 #ifdef BSP_USING_TIM3
 void TIM3_IRQHandler(void)
 {
@@ -642,6 +659,7 @@ void TIM4_IRQHandler(void)
     /* leave interrupt */
     rt_interrupt_leave();
 }
+#endif
 #endif
 #ifdef BSP_USING_TIM5
 void TIM5_IRQHandler(void)
