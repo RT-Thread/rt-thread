@@ -6,6 +6,8 @@ config BSP_USING_BL808
     select RT_USING_CACHE
     select ARCH_MM_MMU
     select BL808_CORE_D0
+    select RT_USING_SYSTEM_WORKQUEUE
+    select RT_USING_DEVICE_OPS
     default y
 
 config BL808_CORE_D0
