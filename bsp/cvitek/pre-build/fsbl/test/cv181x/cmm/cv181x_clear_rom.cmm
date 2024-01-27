@@ -1,0 +1,16 @@
+sys.up
+
+; Reset
+break;
+WAIT !ISRUN() ;wait until target stop
+
+; MWriteS32 PM:0x0C000000++0x3ffff 0x14000000
+MWriteS32 PM:0x4400000++0xf 0x14000000
+MWriteS32 0x4400000++0xf 0x14000000
+Register.Set pc 0x04400000
+
+; MWriteS32 PM:0x03000008 0x4 // wdt reset enable
+; MWriteS32 PM:0x03010004 0x1 // Set timeout range reigster
+; MWriteS32 PM:0x0301000c 0x76 // Counter restart register
+; MWriteS32 PM:0x03010000 0x13
+print "CLEAR ROM"

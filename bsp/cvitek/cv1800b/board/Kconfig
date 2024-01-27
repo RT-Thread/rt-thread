@@ -10,6 +10,10 @@ menu "General Drivers Configuration"
             bool "Enable UART 0"
             default y
 
+            config UART_IRQ_BASE
+            int
+            default 30
+            
             config RT_USING_UART1
             bool "Enable UART 1"
             default n

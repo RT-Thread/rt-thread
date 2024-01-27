@@ -47,6 +47,7 @@
 #define RT_USING_SMALL_MEM_AS_HEAP
 #define RT_USING_HEAP
 #define RT_USING_DEVICE
+#define RT_USING_DEVICE_OPS
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 256
 #define RT_CONSOLE_DEVICE_NAME "uart0"
@@ -86,17 +87,18 @@
 #define DFS_USING_POSIX
 #define DFS_USING_WORKDIR
 #define DFS_FD_MAX 16
-#define RT_USING_DFS_V1
-#define DFS_FILESYSTEMS_MAX 4
-#define DFS_FILESYSTEM_TYPES_MAX 4
+#define RT_USING_DFS_V2
 #define RT_USING_DFS_DEVFS
-#define RT_USING_LWP
-#define RT_LWP_MAX_NR 30
-#define LWP_TASK_STACK_SIZE 16384
-#define RT_CH_MSG_MAX_NR 1024
-#define LWP_CONSOLE_INPUT_BUFFER_SIZE 1024
-#define LWP_TID_MAX_NR 64
-#define RT_LWP_SHM_MAX_NR 64
+#define RT_USING_PAGECACHE
+
+/* page cache config */
+
+#define RT_PAGECACHE_COUNT 4096
+#define RT_PAGECACHE_ASPACE_COUNT 1024
+#define RT_PAGECACHE_PRELOAD 4
+#define RT_PAGECACHE_HASH_NR 1024
+#define RT_PAGECACHE_GC_WORK_LEVEL 90
+#define RT_PAGECACHE_GC_STOP_LEVEL 70
 
 /* Device Drivers */
 
@@ -150,6 +152,9 @@
 /* Network */
 
 
+/* Memory protection */
+
+
 /* Utilities */
 
 #define RT_USING_RESOURCE_ID
@@ -158,6 +163,14 @@
 #define RT_USING_ADT_BITMAP
 #define RT_USING_ADT_HASHMAP
 #define RT_USING_ADT_REF
+#define RT_USING_LWP
+#define RT_LWP_MAX_NR 30
+#define LWP_TASK_STACK_SIZE 16384
+#define RT_CH_MSG_MAX_NR 1024
+#define LWP_CONSOLE_INPUT_BUFFER_SIZE 1024
+#define LWP_TID_MAX_NR 64
+#define RT_LWP_SHM_MAX_NR 64
+#define RT_USING_LDSO
 
 /* Memory management */
 
@@ -179,6 +192,12 @@
 
 
 /* CYW43012 WiFi */
+
+
+/* BL808 WiFi */
+
+
+/* CYW43439 WiFi */
 
 
 /* IoT Cloud */
@@ -285,6 +304,7 @@
 
 #define BSP_USING_UART
 #define RT_USING_UART0
+#define UART_IRQ_BASE 30
 #define BSP_USING_CV1800B
 #define C906_PLIC_PHY_ADDR 0x70000000
 #define IRQ_MAX_NR 64
