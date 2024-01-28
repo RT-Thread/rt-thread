@@ -47,7 +47,6 @@ menu "Onboard Peripheral Drivers"
         config BSP_USING_ARDUINO
         bool "Compatible with Arduino Ecosystem (RTduino)"
         select PKG_USING_RTDUINO
-        select BSP_USING_STLINK_TO_USART
         select BSP_USING_UART1
         select BSP_USING_GPIO
         select BSP_USING_ADC
@@ -56,29 +55,13 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_ADC2
         select BSP_USING_PWM
         select BSP_USING_PWM0
-        select BSP_PWM0_A_PIN_16
-        select BSP_PWM0_B_PIN_17
         select BSP_USING_PWM1
-        select BSP_PWM1_A_PIN_18
-        select BSP_PWM1_A_PIN_19
         select BSP_USING_PWM2
-        select BSP_PWM2_A_PIN_20
-        select BSP_PWM2_A_PIN_21
         select BSP_USING_PWM3
-        select BSP_PWM3_A_PIN_22
-        select BSP_PWM3_A_PIN_23
         select BSP_USING_PWM4
-        select BSP_PWM4_A_PIN_24
-        select BSP_PWM4_A_PIN_25
         select BSP_USING_PWM5
-        select BSP_PWM5_A_PIN_10
-        select BSP_PWM5_A_PIN_11
         select BSP_USING_PWM6
-        select BSP_PWM6_A_PIN_12
-        select BSP_PWM6_A_PIN_13
         select BSP_USING_PWM7
-        select BSP_PWM7_A_PIN_14
-        select BSP_PWM7_A_PIN_15
         select BSP_USING_I2C
         select BSP_USING_I2C0
         imply RTDUINO_USING_SERVO
