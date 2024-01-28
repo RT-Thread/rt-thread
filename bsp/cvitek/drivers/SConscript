@@ -1,13 +1,16 @@
 from building import *
 
 cwd     = GetCurrentDir()
-src     = Glob('*.c') + Glob('*.cpp') + Glob('*.S')
+src     = ['drv_uart.c']
 CPPDEFINES = []
 
 CPPPATH = [cwd]
 
-if GetDepend('BSP_USING_CV1800B'):
+if GetDepend('BSP_USING_CV1800B') or GetDepend('BSP_USING_C906_LITTLE'):
     CPPPATH += [cwd + r'/cv1800b']
+
+if GetDepend('BSP_USING_CV1800B'):
+    src += ['drv_gpio.c']
 
 CPPDEFINES += ['-DCONFIG_64BIT']
 
