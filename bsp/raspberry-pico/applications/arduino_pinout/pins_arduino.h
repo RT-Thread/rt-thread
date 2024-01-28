@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2006-2023, RT-Thread Development Team
+ * Copyright (c) 2006-2024, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
- * 2023-11-27     ShichengChu  first version
+ * 2024-01-25     ShichengChu  first version
  */
 
 #ifndef Pins_Arduino_h
@@ -38,12 +38,15 @@
 #define D23       (23)
 #define D24       (24)
 #define D25       (25)
+#define A0        (26)
+#define A1        (27)
+#define A2        (28)
 
 #define F_CPU          133000000L  /* CPU:133MHz */
 
-#define LED_BUILTIN     D23  /* Default Built-in LED */
+#define LED_BUILTIN     D25  /* Default Built-in LED */
 
 /* Serial2 : P-TX  P-RX */
-#define RTDUINO_SERIAL2_DEVICE_NAME      "uart2"
+#define RTDUINO_SERIAL2_DEVICE_NAME      "uart1"
 
 #endif /* Pins_Arduino_h */
