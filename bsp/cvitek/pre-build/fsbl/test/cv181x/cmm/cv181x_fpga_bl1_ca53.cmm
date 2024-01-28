@@ -1,0 +1,13 @@
+DO up.cmm
+
+MWriteS32 PM:0x4400000++0xf 0x14000000
+Register.Set pc 0x04400000
+print "clear ROM"
+
+LoadBINARY ..\cv181x_ca53_bl1.bin 0x04400000 %S32
+print "CA53 BL1 loaded"
+
+Register.Set r0 0
+Register.Set pc 0x04400000
+
+END

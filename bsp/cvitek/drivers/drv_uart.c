@@ -1,12 +1,11 @@
 /*
- * Copyright (c) 2006-2023, RT-Thread Development Team
+ * Copyright (c) 2006-2024, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
  * 2023/06/25     flyingcys    first version
- * 2023/10/25     flyingcys    update uart configure
  */
 #include <rthw.h>
 #include <rtthread.h>
@@ -250,19 +249,33 @@ int rt_hw_uart_init(void)
     rt_hw_interrupt_install(uart->irqno, rt_hw_uart_isr, &_serial##no, "uart" #no);
 
 #ifdef RT_USING_UART0
+    PINMUX_CONFIG(UART0_RX, UART0_RX);
+    PINMUX_CONFIG(UART0_TX, UART0_TX);
     BSP_INSTALL_UART_DEVICE(0);
 #endif
 
 #ifdef RT_USING_UART1
+    PINMUX_CONFIG(IIC0_SDA, UART1_RX);
+    PINMUX_CONFIG(IIC0_SCL, UART1_TX);
     BSP_INSTALL_UART_DEVICE(1);
 #endif
 
 #ifdef RT_USING_UART2
+    PINMUX_CONFIG(SD1_D1, UART2_RX);
+    PINMUX_CONFIG(SD1_D2, UART2_TX);
     BSP_INSTALL_UART_DEVICE(2);
 #endif
 
 #ifdef RT_USING_UART3
+    PINMUX_CONFIG(SD1_D1, UART3_RX);
+    PINMUX_CONFIG(SD1_D2, UART3_TX);
     BSP_INSTALL_UART_DEVICE(3);
+#endif
+
+#ifdef RT_USING_UART4
+    PINMUX_CONFIG(SD1_GP0, UART4_RX);
+    PINMUX_CONFIG(SD1_GP1, UART4_TX);
+    BSP_INSTALL_UART_DEVICE(4);
 #endif
 
     return 0;

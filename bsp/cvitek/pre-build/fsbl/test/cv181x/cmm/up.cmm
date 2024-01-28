@@ -1,0 +1,40 @@
+
+;winclear
+system.reset
+translation.reset
+
+system.cpu cortexa53
+system.config debugaccessport 0
+system.config apbaccessport 0
+system.config axiaccessport 1
+system.config memoryaccessport 1
+; set corenumber first
+sys.config corenumber 1
+; then set corebase and ctibase
+sys.config corebase 0x81010000
+sys.config ctibase  0x81020000
+sys.jc 5mhz
+
+Wait 10.ms
+system.option enreset on
+system.option trst on
+system.option resetbreak on
+system.option waitreset 500.ms
+OPTION.SerialWire ON
+
+sys.down
+Wait 50.ms
+sys.up
+
+if system.up()
+(
+	; data.list
+)
+else
+(
+	dialog.ok "system.up failed"
+)
+
+; Reset
+break;
+WAIT !ISRUN() ;wait until target stop

@@ -1,0 +1,14 @@
+DO up.cmm
+
+MWriteS32 PM:0x4400000++0xf 0x14000000
+MWriteS32 PM:0x4418000++0xf 0x6F
+Register.Set pc 0x04400000
+print "clear ROM"
+
+LoadBINARY ..\cv181x_c906b_bl1.bin 0x04418000 %S32
+print "C906B BL1 loaded"
+
+Data.Set PM:0x3003024 %LONG Data.Long(PM:0x3003024)|(1<<5)
+print "Release C906B"
+
+END
