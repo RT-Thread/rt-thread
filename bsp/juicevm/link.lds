@@ -103,6 +103,7 @@ SECTIONS
 
         . += __STACKSIZE__;
         __stack = .;
+        __rt_rvstack = .;
     } > SRAM
 
     .sbss :

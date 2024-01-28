@@ -2,7 +2,7 @@ import os
 
 # toolchains options
 ARCH        ='risc-v'
-CPU         ='juicevm'
+CPU         ='rv64'
 CROSS_TOOL  ='gcc'
 
 if os.getenv('RTT_ROOT'):

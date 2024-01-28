@@ -45,14 +45,12 @@
 #define RT_MEMHEAP_FAST_MODE
 #define RT_USING_SLAB_AS_HEAP
 #define RT_USING_HEAP
-
-/* Kernel Device Object */
-
 #define RT_USING_DEVICE
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uarths"
-#define RT_VER_NUM 0x50002
+#define RT_VER_NUM 0x50100
+#define RT_BACKTRACE_LEVEL_MAX_NR 32
 #define ARCH_CPU_64BIT
 #define RT_USING_HW_ATOMIC
 #define ARCH_RISCV
@@ -153,6 +151,9 @@
 /* Network */
 
 
+/* Memory protection */
+
+
 /* Utilities */
 
 #define RT_USING_ULOG
@@ -183,6 +184,15 @@
 
 
 /* Wiced WiFi */
+
+
+/* CYW43012 WiFi */
+
+
+/* BL808 WiFi */
+
+
+/* CYW43439 WiFi */
 
 
 /* IoT Cloud */
@@ -299,23 +309,6 @@
 #define BSP_USING_UART1
 #define BSP_UART1_TXD_PIN 20
 #define BSP_UART1_RXD_PIN 21
-#define BSP_USING_SPI1
-#define BSP_SPI1_CLK_PIN 27
-#define BSP_SPI1_D0_PIN 28
-#define BSP_SPI1_D1_PIN 26
-#define BSP_SPI1_USING_SS0
-#define BSP_SPI1_SS0_PIN 29
-#define BSP_USING_LCD
-#define BSP_LCD_CS_PIN 36
-#define BSP_LCD_WR_PIN 39
-#define BSP_LCD_DC_PIN 38
-#define BSP_LCD_RST_PIN 37
-#define BSP_LCD_BACKLIGHT_PIN -1
-#define BSP_LCD_BACKLIGHT_ACTIVE_LOW
-#define BSP_LCD_CLK_FREQ 15000000
-#define BSP_BOARD_K210_OPENMV_TEST
-#define BSP_LCD_X_MAX 240
-#define BSP_LCD_Y_MAX 320
 #define __STACKSIZE__ 4096
 
 #endif
