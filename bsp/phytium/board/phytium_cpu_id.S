@@ -12,6 +12,7 @@
  */
 
 #include "fparameters.h"
+#include "rtconfig.h"
 
 #ifndef __aarch64__
 .globl cpu_id_mapping

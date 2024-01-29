@@ -58,6 +58,40 @@ void rt_hw_mmu_setmtt(rt_uint32_t vaddrStart, rt_uint32_t vaddrEnd,
     }
 }
 
+static void _init_map_section(rt_uint32_t *mmu_table, rt_uint32_t va,
+                        rt_uint32_t size,rt_uint32_t pa, rt_uint32_t attr)
+{
+    volatile rt_uint32_t *ptt;
+    volatile int i, num_section;
+    ptt  = (rt_uint32_t *)mmu_table + (va >> ARCH_SECTION_SHIFT);
+    num_section = size >> ARCH_SECTION_SHIFT;
+    for(i = 0; i <= num_section; i++)
+    {
+        *ptt = attr | (((pa >> ARCH_SECTION_SHIFT) + i) << ARCH_SECTION_SHIFT);
+        ptt++;
+    }
+}
+
+void rt_hw_mem_setup_early(rt_uint32_t *early_mmu_talbe,
+                            rt_uint32_t pv_off)
+{
+    rt_uint32_t normal_attr = NORMAL_MEM;
+    rt_uint32_t size  = 0;
+    extern unsigned char _reset;
+    size = 0x100000 +  (rt_uint32_t)&__bss_end ;
+    size &= ~(0x100000 - 1) ;
+#ifdef RT_USING_SMART
+    rt_uint32_t va = KERNEL_VADDR_START;
+    size -= KERNEL_VADDR_START;
+    init_mm_setup(early_mmu_talbe,size,pv_off) ;
+#else
+    rt_uint32_t va = (rt_uint32_t) &_reset;
+    size -= va;
+    _init_map_section(early_mmu_talbe,va , size ,va + pv_off ,normal_attr) ;
+#endif
+
+}
+
 void rt_hw_init_mmu_table(struct mem_desc *mdesc, rt_uint32_t size)
 {
     void *vaddr;

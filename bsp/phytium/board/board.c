@@ -189,27 +189,30 @@ void rt_hw_board_aarch64_init(void)
 }
 #else
 
+
+extern void rt_hw_mmu_init(void) ;
+
 void rt_hw_board_aarch32_init(void)
 {
 
 #if defined(RT_USING_SMART)
-
+    rt_uint32_t mmutable_p = 0;
     /* set io map range is 0xf0000000 ~ 0x10000000  , Memory Protection start address is 0xf0000000  - rt_mpr_size */
     rt_hw_mmu_map_init(&rt_kernel_space, (void *)0xf0000000, 0x10000000, MMUTable, PV_OFFSET);
-
+    rt_hw_init_mmu_table(platform_mem_desc,platform_mem_desc_size) ;
+    mmutable_p = (rt_uint32_t)MMUTable + (rt_uint32_t)PV_OFFSET ;
+    rt_hw_mmu_switch(mmutable_p) ;
     rt_page_init(init_page_region);
-
+    
     /* rt_kernel_space 在start_gcc.S 中被初始化，此函数将iomap 空间放置在kernel space 上 */
     rt_hw_mmu_ioremap_init(&rt_kernel_space, (void *)0xf0000000, 0x10000000);
-    /*  */
+    
     arch_kuser_init(&rt_kernel_space, (void *)0xffff0000);
 #else
-    /*
-       map kernel space memory (totally 1GB = 0x10000000), pv_offset = 0 if not RT_SMART:
-         0x80000000 ~ 0x80100000: kernel stack
-         0x80100000 ~ __bss_end: kernel code and data
-    */
+
     rt_hw_mmu_map_init(&rt_kernel_space, (void *)0x80000000, 0x10000000, MMUTable, 0);
+    rt_hw_init_mmu_table(platform_mem_desc,platform_mem_desc_size) ;
+    rt_hw_mmu_init() ;
     rt_hw_mmu_ioremap_init(&rt_kernel_space, (void *)0x80000000, 0x10000000);
 #endif
 

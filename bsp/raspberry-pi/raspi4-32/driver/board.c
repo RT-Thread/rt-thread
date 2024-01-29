@@ -64,12 +64,16 @@ void idle_wfi(void)
     asm volatile ("wfi");
 }
 
+
+extern void rt_hw_mmu_init(void);
 /**
  *  Initialize the Hardware related stuffs. Called from rtthread_startup()
  *  after interrupt disabled.
  */
 void rt_hw_board_init(void)
 {
+    rt_hw_init_mmu_table(platform_mem_desc,platform_mem_desc_size);
+    rt_hw_mmu_init();
     /* initialize hardware interrupt */
     rt_hw_interrupt_init();
     /* initialize uart */

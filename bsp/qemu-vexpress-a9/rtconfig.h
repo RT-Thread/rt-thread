@@ -7,7 +7,8 @@
 /* RT-Thread Kernel */
 
 #define RT_NAME_MAX 8
-#define RT_CPUS_NR 1
+#define RT_USING_SMP
+#define RT_CPUS_NR 2
 #define RT_ALIGN_SIZE 8
 #define RT_THREAD_PRIORITY_256
 #define RT_THREAD_PRIORITY_MAX 256
@@ -17,7 +18,8 @@
 #define RT_HOOK_USING_FUNC_PTR
 #define RT_USING_IDLE_HOOK
 #define RT_IDLE_HOOK_LIST_SIZE 4
-#define IDLE_THREAD_STACK_SIZE 4096
+#define IDLE_THREAD_STACK_SIZE 8192
+#define SYSTEM_THREAD_STACK_SIZE 8192
 #define RT_USING_TIMER_SOFT
 #define RT_TIMER_THREAD_PRIO 4
 #define RT_TIMER_THREAD_STACK_SIZE 1024
@@ -27,7 +29,6 @@
 #define RT_USING_DEBUG
 #define RT_DEBUGING_COLOR
 #define RT_DEBUGING_CONTEXT
-#define RT_DEBUGING_INIT
 
 /* Inter-Thread communication */
 
@@ -48,9 +49,6 @@
 #define RT_USING_SMALL_MEM_AS_HEAP
 #define RT_USING_MEMTRACE
 #define RT_USING_HEAP
-
-/* Kernel Device Object */
-
 #define RT_USING_DEVICE
 #define RT_USING_DEVICE_OPS
 #define RT_USING_INTERRUPT_INFO
@@ -196,6 +194,9 @@
 /* Network */
 
 
+/* Memory protection */
+
+
 /* Utilities */
 
 #define RT_USING_RESOURCE_ID
@@ -204,9 +205,6 @@
 #define RT_USING_ADT_BITMAP
 #define RT_USING_ADT_HASHMAP
 #define RT_USING_ADT_REF
-
-/* Memory management */
-
 
 /* RT-Thread Utestcases */
 
@@ -222,6 +220,15 @@
 
 
 /* Wiced WiFi */
+
+
+/* CYW43012 WiFi */
+
+
+/* BL808 WiFi */
+
+
+/* CYW43439 WiFi */
 
 
 /* IoT Cloud */
@@ -246,9 +253,6 @@
 /* u8g2: a monochrome graphic library */
 
 
-/* PainterEngine: A cross-platform graphics application framework written in C language */
-
-
 /* tools packages */
 
 
@@ -268,11 +272,19 @@
 
 /* peripheral libraries and drivers */
 
+/* sensors drivers */
+
+
+/* touch drivers */
+
 
 /* Kendryte SDK */
 
 
 /* AI packages */
+
+
+/* Signal Processing and Control Algorithm Packages */
 
 
 /* miscellaneous packages */
@@ -288,7 +300,7 @@
 /* Arduino libraries */
 
 
-/* Projects */
+/* Projects and Demos */
 
 
 /* Sensors */
@@ -312,6 +324,7 @@
 
 
 /* Other */
+
 
 /* Signal IO */
 
