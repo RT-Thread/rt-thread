@@ -8,7 +8,7 @@
 
 #define RT_NAME_MAX 16
 #define RT_USING_SMP
-#define RT_CPUS_NR 2
+#define RT_CPUS_NR 4
 #define RT_ALIGN_SIZE 4
 #define RT_THREAD_PRIORITY_32
 #define RT_THREAD_PRIORITY_MAX 32
@@ -44,7 +44,6 @@
 /* Memory Management */
 
 #define RT_PAGE_MAX_ORDER 11
-#define RT_USING_MEMPOOL
 #define RT_USING_SLAB
 #define RT_USING_MEMHEAP
 #define RT_MEMHEAP_FAST_MODE
@@ -52,7 +51,6 @@
 #define RT_USING_HEAP_ISR
 #define RT_USING_HEAP
 #define RT_USING_DEVICE
-#define RT_USING_DEVICE_OPS
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 256
 #define RT_CONSOLE_DEVICE_NAME "uart1"
@@ -94,7 +92,9 @@
 #define DFS_USING_POSIX
 #define DFS_USING_WORKDIR
 #define DFS_FD_MAX 16
-#define RT_USING_DFS_V2
+#define RT_USING_DFS_V1
+#define DFS_FILESYSTEMS_MAX 4
+#define DFS_FILESYSTEM_TYPES_MAX 4
 #define RT_USING_DFS_ELMFAT
 
 /* elm-chan's FatFs, Generic FAT Filesystem Module */
@@ -111,6 +111,7 @@
 #define RT_DFS_ELM_REENTRANT
 #define RT_DFS_ELM_MUTEX_TIMEOUT 3000
 #define RT_USING_DFS_DEVFS
+#define RT_USING_DFS_RAMFS
 #define RT_USING_DFS_MQUEUE
 
 /* Device Drivers */
@@ -272,6 +273,15 @@
 /* Wiced WiFi */
 
 
+/* CYW43012 WiFi */
+
+
+/* BL808 WiFi */
+
+
+/* CYW43439 WiFi */
+
+
 /* IoT Cloud */
 
 
@@ -384,12 +394,16 @@
 #define BSP_USING_SPI
 #define RT_USING_SPIM0
 #define BSP_USING_GPIO
+#define BSP_USING_ETH
+#define RT_LWIP_PBUF_POOL_BUFSIZE 1700
 #define BSP_USING_PWM
 #define RT_USING_PWM2
 #define BSP_USING_I2C
 #define I2C_USE_MIO
 #define RT_USING_MIO0
 #define RT_USING_MIO1
+#define BSP_USING_DC
+#define RT_USING_DC_CHANNEL1
 
 /* Board extended module Drivers */
 
@@ -402,10 +416,9 @@
 
 /* Soc configuration */
 
-#define TARGET_E2000D
-#define SOC_NAME "e2000"
-#define TARGET_TYPE_NAME "d"
-#define SOC_CORE_NUM 2
+#define TARGET_PHYTIUMPI
+#define SOC_NAME "phytiumpi"
+#define SOC_CORE_NUM 4
 #define F32BIT_MEMORY_ADDRESS 0x80000000
 #define F32BIT_MEMORY_LENGTH 0x80000000
 #define F64BIT_MEMORY_ADDRESS 0x2000000000
@@ -415,8 +428,8 @@
 
 /* Board Configuration */
 
-#define E2000D_DEMO_BOARD
-#define BOARD_NAME "demo"
+#define BOARD_NAME "firefly"
+#define FIREFLY_DEMO_BOARD
 
 /* IO mux configuration when board start up */
 
