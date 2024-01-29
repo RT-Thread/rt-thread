@@ -11,7 +11,9 @@
 #include <rtthread.h>
 #include <rtdevice.h>
 #include <board.h>
+#ifdef RT_USING_SMART
 #include <ioremap.h>
+#endif
 
 #ifdef RT_USING_PIN
 #include "drv_gpio.h"
@@ -305,7 +307,7 @@ static void rt_hw_gpio_isr(int irqno, void *param)
 
 int rt_hw_gpio_init(void)
 {
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
 #define BSP_IOREMAP_GPIO_DEVICE(no)     \
     rt_ioremap((void *)(DWAPB_GPIOA_BASE + (no) * DWAPB_GPIO_SIZE), DWAPB_GPIO_SIZE);
 

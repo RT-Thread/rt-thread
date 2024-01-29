@@ -1,0 +1,22 @@
+menu "General Drivers Configuration"
+
+    menuconfig BSP_USING_UART
+        bool "Using UART"
+        select RT_USING_SERIAL
+        default y
+
+        if BSP_USING_UART
+            config RT_USING_UART0
+            bool "Enable UART 0"
+            default y
+
+            config RT_USING_UART1
+            bool "Enable UART 1"
+            default n
+
+            config UART_IRQ_BASE
+            int
+            default 30
+        endif
+
+endmenu
