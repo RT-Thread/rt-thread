@@ -1,5 +1,9 @@
 import subprocess
 import sys
+import os
+
+# cwd_path = os.getcwd()
+# sys.path.append(os.path.join(os.path.dirname(cwd_path), 'rt-thread', 'tools'))
 
 def check_git_exists():
     try:
@@ -26,6 +30,7 @@ def install_git():
         sys.exit(1)
 
 def check_file_changes(filepath):
+
     # Use Git to check the file status
     result = subprocess.Popen(["git", "status", "--porcelain", filepath], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     out, _ = result.communicate()
@@ -38,7 +43,7 @@ def revert_to_original(filepath):
     subprocess.call(["git", "checkout", filepath])
 
 def startup_check():
-    file_path = "ra/fsp/src/bsp/cmsis/Device/RENESAS/Source/startup.c"
+    file_path = os.getcwd() + f"/ra/fsp/src/bsp/cmsis/Device/RENESAS/Source/startup.c"
     python_executable = 'python' if sys.version_info[0] == 2 else 'python3'
 
     # Check if Git is installed, if not, try to install it
