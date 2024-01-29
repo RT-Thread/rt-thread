@@ -152,6 +152,7 @@ overHyped: /* Get out of HYP mode */
     mrs r1, cpsr_all
     and r1, r1, #0xFFFFFFE0    /* CPSR_MODE_MASK */
     orr r1, r1, #0x13          /* CPSR_MODE_SUPERVISOR */
+    msr SPSR_hyp, r1
     eret
 
 continue_exit:

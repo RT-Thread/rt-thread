@@ -5,7 +5,7 @@ ENTRY(_boot)
 
 SECTIONS
 {
-    . = 0x80100000;
+    . = 0x80080000;
 
     .text :
     {
