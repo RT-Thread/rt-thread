@@ -101,13 +101,21 @@ setenv serverip 192.168.4.50
 setenv gatewayip 192.168.4.1 
 ```
 - 将编译好的elf 或者bin 文件拷贝至Tftpd64所设置文件夹下
-- 随后烧录的文件到开发板，输入以下指令
-  
+- 随后烧录的文件到开发板
+- aarch64 输入以下指令
 ```
 tftpboot 0x80080000 rtthread_a64.bin
 dcache flush
 go 0x80080000
 ```
+
+- aarch32 输入以下指令
+```
+tftpboot 0x80100000 rtthread_a64.bin
+dcache flush
+go 0x80100000
+```
+
 ![tftp_test](../figures/tftp_test.png)
 
 ## 使用串口工具
@@ -115,18 +123,30 @@ go 0x80080000
 - 可以用串口通过XMODEM协议将`.bin`文件上传到开发板
 
 1. 启动开发板，进入uboot界面，输入以下指令
+- aarch64输入以下指令
 ```
 loadx 0x80080000
 ```
-2. 发送`.bin`文件
+- 发送`.bin`文件
 
 ![securecrt_sendx](../figures/securecrt_sendx.png)
 
-3. 输入以下指令，完成跳转
+- 完成跳转
 ```
 go 0x80080000
 ```
+- aarch32输入以下指令
+```
+loadx 0x80100000
+```
+- 发送`.bin`文件
 
+![securecrt_sendx](../figures/securecrt_sendx.png)
+
+- 完成跳转
+```
+go 0x80100000
+```
 ![xmodem_flash](../figures/xmodem_flash.png)
 
 
