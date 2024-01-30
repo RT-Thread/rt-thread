@@ -21,7 +21,7 @@ tar jxvf aarch64-linux-musleabi_for_x86_64-pc-linux-gnu_stable.tar.bz2
 
 ![tar_toolschain](./figures/tar_toolschain.png)
 
-- 返回`aarch32`目录，运行smart-env.sh脚本，生效环境变量
+- 返回`aarch64`目录，运行smart-env.sh脚本，生效环境变量
 ```shell
 source ./smart-env.sh
 ```
@@ -30,7 +30,7 @@ source ./smart-env.sh
 
 ![aarch64_env](./figures/aarch64_env.png)
 
-- 输入以下指令进行编译，初次编译会拉取`phytium_standalone_sdk工具包`，请确保当前环境下网络畅通
+- 输入以下指令进行编译，初次编译会拉取`phytium_standalone_sdk`工具包，请确保当前环境下网络畅通
 ```shell
 scons -j8
 ```
