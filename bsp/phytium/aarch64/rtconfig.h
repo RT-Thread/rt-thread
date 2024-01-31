@@ -7,6 +7,7 @@
 /* RT-Thread Kernel */
 
 #define RT_NAME_MAX 16
+#define RT_USING_SMART
 #define RT_CPUS_NR 1
 #define RT_ALIGN_SIZE 4
 #define RT_THREAD_PRIORITY_32
@@ -48,6 +49,7 @@
 #define RT_USING_HEAP_ISR
 #define RT_USING_HEAP
 #define RT_USING_DEVICE
+#define RT_USING_DEVICE_OPS
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uart1"
@@ -68,6 +70,7 @@
 #define ARCH_MM_MMU
 #define ARCH_ARM
 #define ARCH_ARM_MMU
+#define KERNEL_VADDR_START 0xffff000000000000
 #define ARCH_ARMV8
 
 /* RT-Thread Components */
@@ -97,9 +100,7 @@
 #define DFS_USING_POSIX
 #define DFS_USING_WORKDIR
 #define DFS_FD_MAX 16
-#define RT_USING_DFS_V1
-#define DFS_FILESYSTEMS_MAX 4
-#define DFS_FILESYSTEM_TYPES_MAX 4
+#define RT_USING_DFS_V2
 #define RT_USING_DFS_ELMFAT
 
 /* elm-chan's FatFs, Generic FAT Filesystem Module */
@@ -116,7 +117,16 @@
 #define RT_DFS_ELM_REENTRANT
 #define RT_DFS_ELM_MUTEX_TIMEOUT 3000
 #define RT_USING_DFS_DEVFS
-#define RT_USING_DFS_RAMFS
+#define RT_USING_PAGECACHE
+
+/* page cache config */
+
+#define RT_PAGECACHE_COUNT 4096
+#define RT_PAGECACHE_ASPACE_COUNT 1024
+#define RT_PAGECACHE_PRELOAD 4
+#define RT_PAGECACHE_HASH_NR 1024
+#define RT_PAGECACHE_GC_WORK_LEVEL 90
+#define RT_PAGECACHE_GC_STOP_LEVEL 70
 
 /* Device Drivers */
 
@@ -129,6 +139,7 @@
 #define RT_USING_SERIAL_V1
 #define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 64
+#define RT_USING_TTY
 #define RT_USING_CAN
 #define RT_CAN_USING_CANFD
 #define RT_USING_I2C
@@ -169,6 +180,10 @@
 #define RT_USING_POSIX_FS
 #define RT_USING_POSIX_DEVIO
 #define RT_USING_POSIX_STDIO
+#define RT_USING_POSIX_POLL
+#define RT_USING_POSIX_EPOLL
+#define RT_USING_POSIX_SIGNALFD
+#define RT_SIGNALFD_MAX_NUM 10
 #define RT_USING_POSIX_TERMIOS
 #define RT_USING_POSIX_DELAY
 #define RT_USING_POSIX_CLOCK
@@ -250,6 +265,17 @@
 #define RT_USING_ADT_BITMAP
 #define RT_USING_ADT_HASHMAP
 #define RT_USING_ADT_REF
+#define RT_USING_LWP
+#define RT_LWP_MAX_NR 30
+#define LWP_TASK_STACK_SIZE 16384
+#define RT_CH_MSG_MAX_NR 1024
+#define LWP_CONSOLE_INPUT_BUFFER_SIZE 1024
+#define LWP_TID_MAX_NR 64
+#define RT_LWP_SHM_MAX_NR 64
+#define RT_USING_LDSO
+
+/* Memory management */
+
 
 /* RT-Thread Utestcases */
 
@@ -289,6 +315,9 @@
 /* u8g2: a monochrome graphic library */
 
 
+/* PainterEngine: A cross-platform graphics application framework written in C language */
+
+
 /* tools packages */
 
 
@@ -320,9 +349,6 @@
 /* AI packages */
 
 
-/* Signal Processing and Control Algorithm Packages */
-
-
 /* miscellaneous packages */
 
 /* project laboratory */
@@ -339,7 +365,7 @@
 /* Arduino libraries */
 
 
-/* Projects and Demos */
+/* Projects */
 
 
 /* Sensors */
@@ -364,7 +390,6 @@
 
 /* Other */
 
-
 /* Signal IO */
 
 
@@ -377,28 +402,9 @@
 
 #define BSP_USING_IOPAD
 #define BSP_USING_UART
-#define RT_USING_UART0
 #define RT_USING_UART1
-#define BSP_USING_SPI
-#define RT_USING_SPIM0
-#define RT_USING_SPIM1
-#define RT_USING_SPIM2
-#define RT_USING_SPIM3
-#define BSP_USING_GPIO
-#define BSP_USING_QSPI
-#define RT_USING_QSPI0
-#define USING_QSPI_CHANNEL0
-#define BSP_USING_ETH
-#define RT_LWIP_PBUF_POOL_BUFSIZE 1700
-#define BSP_USING_PWM
-#define RT_USING_PWM2
-#define BSP_USING_I2C
-#define I2C_USE_MIO
-#define RT_USING_MIO0
-#define RT_USING_MIO1
-#define RT_USING_MIO2
-#define RT_USING_MIO10
 #define BSP_USING_DC
+#define RT_USING_DC_CHANNEL1
 
 /* Board extended module Drivers */
 
