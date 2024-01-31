@@ -58,6 +58,30 @@ void rt_hw_mmu_setmtt(rt_uint32_t vaddrStart, rt_uint32_t vaddrEnd,
     }
 }
 
+void init_mm_setup(unsigned int *mtbl, unsigned int size, unsigned int pv_off)
+{
+    unsigned int va;
+
+    for (va = 0; va < 0x1000; va++)
+    {
+        unsigned int vaddr = (va << 20);
+
+        if (vaddr >= KERNEL_VADDR_START && vaddr - KERNEL_VADDR_START < size)
+        {
+            mtbl[va] = ((va << 20) + pv_off) | NORMAL_MEM;
+        }
+        else if (vaddr >= (KERNEL_VADDR_START + pv_off) && vaddr - (KERNEL_VADDR_START + pv_off) < size)
+        {
+            mtbl[va] = (va << 20) | NORMAL_MEM;
+        }
+        else
+        {
+            mtbl[va] = 0;
+        }
+    }
+}
+
+#ifndef RT_USING_SMART
 static void _init_map_section(rt_uint32_t *mmu_table, rt_uint32_t va,
                         rt_uint32_t size,rt_uint32_t pa, rt_uint32_t attr)
 {
@@ -71,20 +95,21 @@ static void _init_map_section(rt_uint32_t *mmu_table, rt_uint32_t va,
         ptt++;
     }
 }
+#endif
 
 void rt_hw_mem_setup_early(rt_uint32_t *early_mmu_talbe,
                             rt_uint32_t pv_off)
 {
-    rt_uint32_t normal_attr = NORMAL_MEM;
     rt_uint32_t size  = 0;
-    extern unsigned char _reset;
+
     size = 0x100000 +  (rt_uint32_t)&__bss_end;
     size &= ~(0x100000 - 1);
 #ifdef RT_USING_SMART
-    rt_uint32_t va = KERNEL_VADDR_START;
     size -= KERNEL_VADDR_START;
-    init_mm_setup(early_mmu_talbe,size,pv_off);
+    init_mm_setup(early_mmu_talbe, size, pv_off);
 #else
+    rt_uint32_t normal_attr = NORMAL_MEM;
+    extern unsigned char _reset;
     rt_uint32_t va = (rt_uint32_t) &_reset;
     /* The starting virtual address is aligned along 0x1000000. */
     va &= (0x1000000 - 1);
@@ -396,29 +421,6 @@ void rt_hw_aspace_switch(rt_aspace_t aspace)
         rt_hw_mmu_switch(pgtbl);
 
         rt_hw_tlb_invalidate_all_local();
-    }
-}
-
-void init_mm_setup(unsigned int *mtbl, unsigned int size, unsigned int pv_off)
-{
-    unsigned int va;
-
-    for (va = 0; va < 0x1000; va++)
-    {
-        unsigned int vaddr = (va << 20);
-
-        if (vaddr >= KERNEL_VADDR_START && vaddr - KERNEL_VADDR_START < size)
-        {
-            mtbl[va] = ((va << 20) + pv_off) | NORMAL_MEM;
-        }
-        else if (vaddr >= (KERNEL_VADDR_START + pv_off) && vaddr - (KERNEL_VADDR_START + pv_off) < size)
-        {
-            mtbl[va] = (va << 20) | NORMAL_MEM;
-        }
-        else
-        {
-            mtbl[va] = 0;
-        }
     }
 }
 
