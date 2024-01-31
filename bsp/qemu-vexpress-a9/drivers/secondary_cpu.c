@@ -56,17 +56,14 @@ void rt_hw_secondary_cpu_bsp_start(void)
     rt_hw_vector_init();
 
     rt_hw_spin_lock(&_cpus_lock);
-    
     rt_uint32_t mmutable_p;
     mmutable_p = (rt_uint32_t)MMUTable + (rt_uint32_t)PV_OFFSET ;
-    rt_hw_mmu_switch(mmutable_p) ;
+    rt_hw_mmu_switch((void*)mmutable_p) ;
     arm_gic_cpu_init(0, 0);
     arm_gic_set_cpu(0, IRQ_PBA8_TIMER0_1, 0x2);
-
     timer_init(0, 10000);
     rt_hw_interrupt_install(IRQ_PBA8_TIMER0_1, rt_hw_timer2_isr, RT_NULL, "tick");
     rt_hw_interrupt_umask(IRQ_PBA8_TIMER0_1);
-
     rt_system_scheduler_start();
 }
 
