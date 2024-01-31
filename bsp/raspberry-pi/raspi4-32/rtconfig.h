@@ -134,6 +134,7 @@
 
 /* C/C++ and POSIX layer */
 
+
 /* ISO-ANSI C layer */
 
 /* Timezone and Daylight Saving Time */
@@ -207,7 +208,6 @@
 #define RT_LWIP_ETHTHREAD_MBOX_SIZE 8
 #define LWIP_NETIF_STATUS_CALLBACK 1
 #define LWIP_NETIF_LINK_CALLBACK 1
-#define RT_LWIP_NETIF_NAMESIZE 6
 #define SO_REUSE 1
 #define LWIP_SO_RCVTIMEO 1
 #define LWIP_SO_SNDTIMEO 1
@@ -216,9 +216,6 @@
 #define LWIP_NETIF_LOOPBACK 0
 #define RT_LWIP_USING_PING
 
-/* Memory protection */
-
-
 /* Utilities */
 
 #define RT_USING_ADT
@@ -226,6 +223,12 @@
 #define RT_USING_ADT_BITMAP
 #define RT_USING_ADT_HASHMAP
 #define RT_USING_ADT_REF
+
+/* Memory management */
+
+
+/* Memory protection */
+
 
 /* RT-Thread Utestcases */
 
@@ -244,12 +247,6 @@
 
 
 /* CYW43012 WiFi */
-
-
-/* BL808 WiFi */
-
-
-/* CYW43439 WiFi */
 
 
 /* IoT Cloud */
@@ -352,6 +349,14 @@
 
 /* Uncategorized */
 
+/* Privated Packages of RealThread */
+
+
+/* Network Utilities */
+
+
+/* RT-Thread Smart */
+
 #define BCM2711_SOC
 
 /* Hardware Drivers Config */
@@ -380,5 +385,9 @@
 
 /* Board Peripheral Drivers */
 
+#define BSP_USING_LCD
+#define BSP_USING_DSI_DISPLAY
+#define BSP_USING_TOUCH
+#define BSP_USING_DSI_TOUCH_DEV
 
 #endif
