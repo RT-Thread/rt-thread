@@ -78,16 +78,18 @@ void rt_hw_mem_setup_early(rt_uint32_t *early_mmu_talbe,
     rt_uint32_t normal_attr = NORMAL_MEM;
     rt_uint32_t size  = 0;
     extern unsigned char _reset;
-    size = 0x100000 +  (rt_uint32_t)&__bss_end ;
-    size &= ~(0x100000 - 1) ;
+    size = 0x100000 +  (rt_uint32_t)&__bss_end;
+    size &= ~(0x100000 - 1);
 #ifdef RT_USING_SMART
     rt_uint32_t va = KERNEL_VADDR_START;
     size -= KERNEL_VADDR_START;
-    init_mm_setup(early_mmu_talbe,size,pv_off) ;
+    init_mm_setup(early_mmu_talbe,size,pv_off);
 #else
     rt_uint32_t va = (rt_uint32_t) &_reset;
+    /* The starting virtual address is aligned along 0x1000000. */
+    va &= (0x1000000 - 1);
     size -= va;
-    _init_map_section(early_mmu_talbe,va , size ,va + pv_off ,normal_attr) ;
+    _init_map_section(early_mmu_talbe, va, size, va + pv_off, normal_attr);
 #endif
 
 }

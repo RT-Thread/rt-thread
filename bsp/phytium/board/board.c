@@ -212,7 +212,7 @@ void rt_hw_board_aarch32_init(void)
 
     rt_hw_mmu_map_init(&rt_kernel_space, (void *)0x80000000, 0x10000000, MMUTable, 0);
     rt_hw_init_mmu_table(platform_mem_desc,platform_mem_desc_size) ;
-    rt_hw_mmu_init() ;
+    rt_hw_mmu_init();
     rt_hw_mmu_ioremap_init(&rt_kernel_space, (void *)0x80000000, 0x10000000);
 #endif
 

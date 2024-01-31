@@ -33,20 +33,20 @@
     ldr \reg, =\symbol
     add \reg, pv_off
 .endm
-/*Calculate the offset between the physical address of the "_reset" and the runtime address.*/
+/*Calculate the offset between the physical address and the virtual address of the "_reset".*/
 .macro get_pvoff, tmp, out
     ldr     \tmp, =_reset
     get_phy \out, _reset
     sub     \out, \out, \tmp
 .endm
 
-pv_off       .req r11 /* Used to store the difference between the link address and the running address */
+pv_off       .req r11 /* Used to store the offset between physical address and the virtual address */
 cpu_id       .req r10 /* Used to store the cpu id */
 
 /* reset entry */
     .globl _reset
 _reset:
-    /* Calculate the difference between the link address and the run address for pv off */
+    /* Calculate the offset between the physical address and the virtual address */
     ldr r0, =_reset
     adr pv_off, _reset
     sub pv_off, pv_off, r0
@@ -74,7 +74,6 @@ init_cpu_stack_early:
 #endif
 
     mov pc, lr
-
 
 init_kernel_bss:
 
@@ -181,7 +180,6 @@ continue_exit:
 
     mov pc, lr
 
-
 init_mmu_early:
     get_phy r0, init_mtbl
     get_pvoff r2,r1
@@ -272,7 +270,6 @@ enable_mmu_early:
 
     mov pc, lr
 
-
 master_core_startup :
     mov r0 ,pv_off
     bl rt_kmem_pvoff_set
@@ -280,13 +277,11 @@ master_core_startup :
     ldr     lr, =rtthread_startup
     mov pc, lr
 
-
 .global rt_hw_mmu_tbl_get
 rt_hw_mmu_tbl_get:
     mrc p15, 0, r0, c2, c0, 0    /* ttbr0 */
     bic r0, #0x18
     mov pc, lr
-
 
 .weak rt_asm_cpu_id
 rt_asm_cpu_id:
