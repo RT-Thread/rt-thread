@@ -137,6 +137,15 @@
 /* Wiced WiFi */
 
 
+/* CYW43012 WiFi */
+
+
+/* BL808 WiFi */
+
+
+/* CYW43439 WiFi */
+
+
 /* IoT Cloud */
 
 
@@ -244,6 +253,9 @@
 
 #define SOC_R7FA8D1AH
 
+/* Onboard Peripheral Drivers */
+
+
 /* On-chip Peripheral Drivers */
 
 #define BSP_USING_GPIO
@@ -251,7 +263,5 @@
 #define BSP_USING_UART9
 #define BSP_UART9_RX_BUFSIZE 256
 #define BSP_UART9_TX_BUFSIZE 0
-#define BSP_USING_SDRAM
-#define BSP_USING_SDRAM_SIZE 0x8000000
 
 #endif

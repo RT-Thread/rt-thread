@@ -425,10 +425,24 @@ menu "Hardware Drivers Config"
             select RT_LIBC_USING_FILEIO
             select RT_USING_POSIX_DEVIO
             if BSP_USING_SDHI
-                config SDHI_USING_1_BIT
-                    bool "Use 1-bit Mode(4-bit when disable)"
-                    default y
-            endif
+                menuconfig BSP_USING_SDHI0
+                    bool "Enable SDHI0"
+                    default n
+                    if BSP_USING_SDHI0
+                        config SDHI_USING_1_BIT
+                            bool "Use 1-bit Mode(4-bit when disable)"
+                            default y
+                    endif
+
+                menuconfig BSP_USING_SDHI1
+                    bool "Enable SDHI1"
+                    default n
+                    if BSP_USING_SDHI1
+                        config SDHI_USING_1_BIT
+                            bool "Use 1-bit Mode(4-bit when disable)"
+                            default y
+                    endif
+                endif
 
         menuconfig BSP_USING_CAN
             bool "Enable CAN"
