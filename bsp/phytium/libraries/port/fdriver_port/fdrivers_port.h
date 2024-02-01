@@ -36,11 +36,6 @@
 #include "ftypes.h"
 #include "drv_log.h"
 #include "fkernel.h"
-#ifdef __aarch64__
-    #include "faarch64.h"
-#else
-    #include "faarch32.h"
-#endif
 
 #ifdef __cplusplus
 extern "C"
