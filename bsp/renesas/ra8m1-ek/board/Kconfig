@@ -9,6 +9,19 @@ menu "Hardware Drivers Config"
 
     menu "Onboard Peripheral Drivers"
 
+        menuconfig BSP_USING_FS
+            bool "Enable filesystem"
+            default n
+            if BSP_USING_FS
+                config BSP_USING_SPICARD_FS
+                    bool "Enable SPI FLASH filesystem"
+                    select BSP_USING_SPI
+                    select BSP_USING_SCI_SPI6
+                    select RT_USING_SPI_MSD
+                    select RT_USING_DFS_ELMFAT
+                    default n
+            endif
+
     endmenu
 
     menu "On-chip Peripheral Drivers"
@@ -493,18 +506,6 @@ menu "Hardware Drivers Config"
             if BSP_USING_DAC
                 config BSP_USING_DAC0
                     bool "Enable DAC0"
-                    default n
-            endif
-        menuconfig BSP_USING_FS
-            bool "Enable filesystem"
-            default n
-            if BSP_USING_FS
-                config BSP_USING_SPICARD_FS
-                    bool "Enable SPI FLASH filesystem"
-                    select BSP_USING_SPI
-                    select BSP_USING_SCI_SPI6
-                    select RT_USING_SPI_MSD
-                    select RT_USING_DFS_ELMFAT
                     default n
             endif
 

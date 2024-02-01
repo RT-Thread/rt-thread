@@ -22,5 +22,9 @@ elif rtconfig.PLATFORM in GetGCCLikePLATFORM():
                     cwd + '/fsp/inc/api',
                     cwd + '/fsp/inc/instances',]
 
+if GetDepend('BSP_USING_G2D'):
+    src += Glob(cwd + '/tes/dave2d/src/*.c')
+    CPPPATH += [cwd + '/tes/dave2d/inc']
+
 group = DefineGroup('ra', src, depend = [''], CPPPATH = CPPPATH)
 Return('group')
