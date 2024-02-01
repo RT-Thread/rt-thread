@@ -25,11 +25,7 @@
 #ifndef FDRIVERS_PORT_H
 #define FDRIVERS_PORT_H
 
-#ifdef __aarch64__
-    #include "faarch64.h"
-#else
-    #include "faarch32.h"
-#endif
+#include "faarch.h"
 #include <rtthread.h>
 /***************************** Include Files *********************************/
 #include "rtconfig.h"
