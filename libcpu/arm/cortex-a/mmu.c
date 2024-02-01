@@ -208,7 +208,7 @@ int rt_hw_mmu_map_init(struct rt_aspace *aspace, void* v_address, size_t size, s
     rt_ioremap_size = size;
     rt_mpr_start = rt_ioremap_start - rt_mpr_size;
 #else
-    rt_mpr_start = (void *)((uintptr_t)0 - rt_mpr_size);
+    rt_mpr_start = (void *)((rt_uint32_t)0 - rt_mpr_size);
 #endif
 
     return 0;
