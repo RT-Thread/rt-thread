@@ -797,7 +797,8 @@ static msh_cmd_opt_t *msh_get_cmd_opt(char *opt_str)
     char *ptr;
     int len;
 
-    if ((ptr = strchr(opt_str, ' ')))
+    ptr = strchr(opt_str, ' ');
+    if (ptr)
     {
         len = ptr - opt_str;
     }
@@ -892,7 +893,8 @@ void msh_opt_auto_complete(char *prefix)
     char *opt_str = RT_NULL;
     msh_cmd_opt_t *opt = RT_NULL;
 
-    if ((argc = msh_get_argc(prefix, &opt_str)))
+    argc = msh_get_argc(prefix, &opt_str);
+    if (argc)
     {
         opt = msh_get_cmd_opt(prefix);
     }
