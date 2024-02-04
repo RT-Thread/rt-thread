@@ -1083,7 +1083,6 @@ static int cmd_list(int argc, char **argv)
 #endif /* RT_USING_DFS */
         default:
             goto _usage;
-            break;
         };
 
         return 0;
