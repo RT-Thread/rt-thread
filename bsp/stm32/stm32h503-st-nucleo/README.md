@@ -1,87 +1,93 @@
-# **NUCLEO-H503RB** 开发板 BSP 说明
+# **NUCLEO-H503RB** BSP Introduction
 
-## 简介
+[中文页](README_zh.md) |
 
-本文档为 NUCLEO-STM32H503RB  开发板提供的 BSP (板级支持包) 说明。
+## Introduction
 
-主要内容如下：
+This document records the execution instruction of the BSP (board support package) provided by the RT-Thread development team for the NUCLEO-STM32H503RB  development board.
 
-- 开发板资源介绍
-- BSP 快速上手
-- 注意事项及参考资料
+The document is covered in three parts:
 
-通过阅读快速上手章节开发者可以快速地上手该 BSP，将 RT-Thread 运行在开发板上。
+- NUCLEO-STM32H503RB  Board Resources Introduction
+- Quickly Get Started
+- Advanced Features
 
-## 开发板介绍
+By reading the Quickly Get Started section developers can quickly get their hands on this BSP and run RT-Thread on the board. More advanced features will be introduced in the Advanced Features section to help developers take advantage of RT-Thread to drive more on-board resources.
 
-NUCLEO-STM32H503RB是 ST 推出的一款基于 ARM Cortex-M33 内核的开发板，最高主频为 250Mhz，128KB Flash，32KB RAM，该开发板具有丰富的板载资源，可以充分发挥 STM32H503RB 的芯片性能。
+## Board Resources Introduction
 
-开发板外观如下图所示（板载TYPE-C接口的STLINK-V3）：
+The NUCLEO-STM32H503RB is a development board introduced by ST, based on the ARM Cortex-M33 core. It operates at a maximum frequency of 250MHz and comes equipped with 128KB Flash and 32KB RAM. This development board offers abundant onboard resources, allowing for the full utilization of the STM32H503RB chip's performance capabilities.
 
-![board](figures/board.png)
+The appearance of the development board is as shown in the following picture.
 
-该开发板常用 **板载资源** 如下：
+![board](images/board.png)
 
-- MCU：STM32H503RB ，高性能，Arm Cortex-M33带有TrustZone，MCU带有128KB Flash，32KB RAM，250 MHz CPU, 375 DMIPS (Dhrystone 2.1)
-- 通用特性
-  - 采用LQFP64或LQFP48封装的STM32 微控制器
-  - 1个用户LED，与arduino共享
-  - 1个用户按钮和1个复位按钮
-  - 32.768 kHz晶体振荡器
-  - 板连接器：SWDST Zio扩展连接器，包括ARDUINO® Uno V3ST morpho扩展连接器
-  - 灵活的供电选项：ST-LINK、USB VBUS或外部电源
-  - 具有USB重新枚举功能的板上ST-LINK调试器/编程器：大容量存储器、虚拟COM端口和调试端口
-  - 提供了全面的免费软件库和例程，可从STM32Cube MCU软件包获得
-  - 支持多种集成开发环境（IDE），包括IAR™、Keil®、和STM32CubeIDE
+The mainly-used **on-board resources** are shown as follows:
 
-开发板更多详细信息请参考 ST [STM32H503RB]([NUCLEO-H503RB - STM32 Nucleo-64 development board with STM32H503RBT6 MCU, supports Arduino and ST Morpho connectivity - STMicroelectronics](https://www.st.com/en/evaluation-tools/nucleo-h503rb.html))。
+- MCU: The STM32H563ZI is a high-performance microcontroller unit (MCU) featuring an Arm Cortex-M33 with TrustZone. The MCU is equipped with 2 MB Flash, 640 KB RAM, a 250 MHz CPU, and achieves 375 DMIPS (Dhrystone 2.1).
 
-## 外设支持
+- Common features
+  - STM32 microcontroller in an LQFP64 or LQFP48 package
+  - 1 user LED shared with ARDUINO®
+  - 1 user and 1 reset push-buttons
+  - 32.768 kHz crystal oscillator
+  - Board connectors:
+    - ARDUINO® Uno V3 expansion connector
+    - ST morpho extension pin headers for full access to all STM32 I/Os
+  - Flexible power-supply options: ST-LINK USB VBUS or external sources
+  - On-board ST-LINK debugger/programmer with USB re-enumeration capability: mass storage, Virtual COM port, and debug port
+  - Comprehensive free software libraries and examples available with the STM32Cube MCU Package
+  - Support of a wide choice of Integrated Development Environments (IDEs) including IAR Embedded Workbench®, MDK-ARM, and STM32CubeIDE
 
-本 BSP 目前对外设的支持情况如下：
-
-| **板载外设**                     | **支持情况** | **备注** |
-| :------------------------------- | :----------: | :------- |
-| USB 转 串口(板载**STLINK-V3EC**) |     支持     |          |
-| **片上外设**                     | **支持情况** | **备注** |
-| GPIO                             |     支持     |          |
-| UART                             |     支持     | UART3    |
+#### For more details about this board, please refer to the [ST official documentation](https://www.st.com/en/evaluation-tools/nucleo-h503rb.html)
 
 
-## 使用说明
 
-使用说明分为如下两个章节：
+### Peripheral Condition
 
-- 快速上手
+Each peripheral supporting condition for this BSP is as follows:
 
-  本章节是为刚接触 RT-Thread 的新手准备的使用说明，遵循简单的步骤即可将 RT-Thread 操作系统运行在该开发板上，看到实验效果 。
+| **On-chip Peripheral Drivers**          | **Support** | **Remark** |
+| --------------------------------------- | ----------- | ---------- |
+| GPIO                                    | Support     |            |
+| UART                                    | Support     | UART3      |
+| USB to Serial (Onboard **STLINK-V3EC**) | Support     |            |
+| PWM                                     | Support     |            |
+| ADC                                     | Support     |            |
 
-- 进阶使用
+## User Manual
 
-  本章节是为需要在 RT-Thread 操作系统上使用更多开发板资源的开发者准备的。通过使用 ENV 工具对 BSP 进行配置，可以开启更多板载资源，实现更多高级功能。
+The user manual is divided into the following two sections:
 
+- Quick Start
 
-### 快速上手
+  This section is designed for beginners who are new to RT-Thread. By following simple steps, you can run the RT-Thread operating system on the development board and observe the experimental results.
 
-本 BSP 为开发者提供 MDK5 和 IAR 工程，并且支持 GCC 开发环境。下面以 MDK5 开发环境为例，介绍如何将系统运行起来。
+- Advanced Usage
 
-#### 硬件连接
+  This section is intended for developers who need to leverage more development board resources on the RT-Thread operating system. By using the ENV tool to configure the Board Support Package (BSP), you can enable additional onboard resources and implement more advanced functionalities.
 
-使用Type-C数据线连接开发板到 PC。
+### Quickly Get Started
 
-#### 编译下载
+This BSP provides MDK5 and IAR projects for developers. Also support GCC development environment. Here's an example of the MDK5 development environment, to introduce how to run the system.
 
-双击 project.uvprojx 文件，打开 MDK5 工程，编译并下载程序到开发板。
+#### Hardware Connection
 
-> 工程默认配置使用 ST_LINK 仿真器下载程序，在通过 ST_LINK 连接开发板的基础上，点击下载按钮即可下载程序到开发板
+Connect the development board to the PC using a Type-C data cable.
 
-#### 运行结果
+#### Compile And Download
 
-下载程序成功之后，系统会自动运行，LED1闪烁。
+Double-click the `project.uvprojx` file, to open the MDK5 project, compile and download the program to the board.
 
-连接开发板对应串口到 PC , 在终端工具里打开相应的串口（115200-8-1-N），复位设备后，可以看到 RT-Thread 的输出信息:
+> By default, the project uses ST_LINK simulator to download the program, when the ST_LINK connects the board, clicking the download button can download the program to the board.
 
-```bash
+### Running Results
+
+After the program is successfully downloaded, the system runs automatically. Observe the running results of the LED on the development board, the  LED1 will flash periodically.
+
+Connect the corresponding serial port of the development board to the PC. Open the corresponding serial port in the terminal tool (115200-8-1-N). After resetting the device, you should be able to see the output information from RT-Thread.
+
+```
  \ | /
 - RT -     Thread Operating System
  / | \     5.1.0 build Dec 22 2023 16:30:30
@@ -89,35 +95,35 @@ NUCLEO-STM32H503RB是 ST 推出的一款基于 ARM Cortex-M33 内核的开发板
 msh >
 ```
 
-### 进阶使用
+### Advanced Features
 
-此 BSP 默认只开启了 GPIO 和 UART1 的功能，如果需使用更多高级功能，需要利用 ENV 工具对BSP 进行配置，步骤如下：
+This BSP only enables GPIO and serial port 1 by default. If need more advanced features, you need to configure the BSP with RT-Thread Env tools, as follows:
 
-1. 在 bsp 下打开 env 工具。
+- Open the [Env](https://www.rt-thread.io/download.html?download=Env) tool under this BSP;
 
-2. 输入`menuconfig`命令配置工程，配置好之后保存退出。
+- Enter the `menuconfig` command to configure the project, then save and exit;
 
-3. 输入`pkgs --update`命令更新软件包。
+- Enter the `pkgs --update` command to update the packages;
 
-4. 输入`scons --target=mdk4/mdk5/iar` 命令重新生成工程。
+- Enter the  `scons --target=mdk4/mdk5/iar` command to regenerate the project.
 
-本章节更多详细的介绍请参考 [STM32 系列 BSP 外设驱动使用教程](../docs/STM32系列BSP外设驱动使用教程.md)。
+  
 
-## 注意事项
+## Notes
 
-- 调试串口为 UART3 ，映射说明（详情看STM32Cubemx中的配置）。
+- Debugging UART3 is mapped as per the configuration in STM32CubeMX.
+
+- Currently, using CubeProgrammer for flashing.
 
 
-* 目前使用 cubeprogrammer 进行烧录。
 
-## 参考资料：   
+## References:
 
-1. [STM32H503RB官方介绍页](https://www.st.com/en/microcontrollers-microprocessors/stm32h503rb.html)
-2. [STM32H503-NUCLEO开发板介绍](https://www.st.com/en/evaluation-tools/nucleo-h503rb.html#overview)
+1. [STM32H503RB Official Introduction](https://www.st.com/en/microcontrollers-microprocessors/stm32h503rb.html)
+2. [STM32H503-NUCLEO Development Board Introduction](https://www.st.com/en/evaluation-tools/nucleo-h503rb.html#overview)
 
-## 联系人信息
 
-维护人:
 
-- [Shicheng Chu](https://github.com/zihao-yuan/), 邮箱：1468559561@qq.com
+## Maintained By
 
+[Shicheng Chu](https://github.com/zihao-yuan/)  1468559561@qq.com
