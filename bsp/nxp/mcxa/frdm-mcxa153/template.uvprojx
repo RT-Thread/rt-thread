@@ -7,23 +7,23 @@
 
   <Targets>
     <Target>
-      <TargetName>rtthread-frdm-mcxn947</TargetName>
+      <TargetName>rtthread-frdm-mcxa153</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
-      <pCCUsed>6160000::V6.16::ARMCLANG</pCCUsed>
+      <pCCUsed>6190000::V6.19::ARMCLANG</pCCUsed>
       <uAC6>1</uAC6>
       <TargetOption>
         <TargetCommonOption>
-          <Device>MCXN947VDF:cm33_core0</Device>
+          <Device>MCXA153VLH</Device>
           <Vendor>NXP</Vendor>
-          <PackID>NXP.MCXN947_DFP.16.0.0</PackID>
+          <PackID>NXP.MCXA153_DFP.17.0.0</PackID>
           <PackURL>https://mcuxpresso.nxp.com/cmsis_pack/repo/</PackURL>
-          <Cpu>IRAM(0x20000000,0x060000) IRAM2(0x20060000,0x8000) IROM(0x03000000,0x040000) IROM2(0x13000000,0x040000) XRAM(0x30060000,0x8000) XRAM2(0x04000000,0x018000) XRAM3(0x14000000,0x018000) XROM(0x00000000,0x100000) XROM2(0x00100000,0x100000) XROM3(0x10000000,0x100000) CPUTYPE("Cortex-M33") FPU3(SFPU) DSP TZ CLOCK(12000000) ELITTLE</Cpu>
+          <Cpu>IRAM(0x20000000,0x6000) IRAM2(0x04000000,0x2000) IROM(0x03000000,0x2000) IROM2(0x00000000,0x020000) XRAM(0x04002000,0x1000) CPUTYPE("Cortex-M33") CLOCK(12000000) ELITTLE</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
           <StartupFile></StartupFile>
-          <FlashDriverDll>UL2V8M(-S0 -C0 -P0 -FD20000000 -FC1000 -FN4 -FF0MCXN9XX_2048 -FS00 -FL0200000 -FF1MCXN9XX_2048_S -FS110000000 -FL1200000 -FF2MCXN9XX_W25Q64 -FS280000000 -FL2800000 -FF3MCXN9XX_W25Q64_S -FS390000000 -FL3800000 -FP0($$Device:MCXN947VDF$arm\MCXN9XX_2048.FLM) -FP1($$Device:MCXN947VDF$arm\MCXN9XX_2048_S.FLM) -FP2($$Device:MCXN947VDF$arm\MCXN9XX_W25Q64.FLM) -FP3($$Device:MCXN947VDF$arm\MCXN9XX_W25Q64_S.FLM))</FlashDriverDll>
+          <FlashDriverDll>UL2V8M(-S0 -C0 -P0 -FD20000000 -FC1000 -FN1 -FF0MCXA15X_128 -FS00 -FL020000 -FP0($$Device:MCXA153VLH$devices\MCXA153\arm\MCXA15X_128.FLM))</FlashDriverDll>
           <DeviceId>0</DeviceId>
-          <RegisterFile>$$Device:MCXN947VDF$fsl_device_registers.h</RegisterFile>
+          <RegisterFile>$$Device:MCXA153VLH$devices\MCXA153\fsl_device_registers.h</RegisterFile>
           <MemoryEnv></MemoryEnv>
           <Cmp></Cmp>
           <Asm></Asm>
@@ -33,7 +33,7 @@
           <SLE66CMisc></SLE66CMisc>
           <SLE66AMisc></SLE66AMisc>
           <SLE66LinkerMisc></SLE66LinkerMisc>
-          <SFDFile>$$Device:MCXN947VDF$MCXN947_cm33_core0.xml</SFDFile>
+          <SFDFile>$$Device:MCXA153VLH$devices\MCXA153\MCXA153.xml</SFDFile>
           <bCustSvd>0</bCustSvd>
           <UseEnv>0</UseEnv>
           <BinPath></BinPath>
@@ -114,7 +114,7 @@
           <SimDlgDll></SimDlgDll>
           <SimDlgDllArguments></SimDlgDllArguments>
           <TargetDllName>SARMV8M.DLL</TargetDllName>
-          <TargetDllArguments> -MPU</TargetDllArguments>
+          <TargetDllArguments></TargetDllArguments>
           <TargetDlgDll>TCM.DLL</TargetDlgDll>
           <TargetDlgDllArguments>-pCM33</TargetDlgDllArguments>
         </DllOption>
@@ -138,7 +138,7 @@
           </Flash1>
           <bUseTDR>1</bUseTDR>
           <Flash2>BIN\UL2V8M.DLL</Flash2>
-          <Flash3>"" ()</Flash3>
+          <Flash3></Flash3>
           <Flash4></Flash4>
           <pFcarmOut></pFcarmOut>
           <pFcarmGrp></pFcarmGrp>
@@ -183,7 +183,7 @@
             <hadIRAM>1</hadIRAM>
             <hadXRAM>1</hadXRAM>
             <uocXRam>0</uocXRam>
-            <RvdsVP>2</RvdsVP>
+            <RvdsVP>0</RvdsVP>
             <RvdsMve>0</RvdsMve>
             <RvdsCdeCp>0</RvdsCdeCp>
             <nBranchProt>0</nBranchProt>
@@ -207,7 +207,7 @@
             <Ro2Chk>0</Ro2Chk>
             <Ro3Chk>0</Ro3Chk>
             <Ir1Chk>0</Ir1Chk>
-            <Ir2Chk>0</Ir2Chk>
+            <Ir2Chk>1</Ir2Chk>
             <Ra1Chk>0</Ra1Chk>
             <Ra2Chk>0</Ra2Chk>
             <Ra3Chk>0</Ra3Chk>
@@ -247,67 +247,67 @@
               <IRAM>
                 <Type>0</Type>
                 <StartAddress>0x20000000</StartAddress>
-                <Size>0x60000</Size>
+                <Size>0x6000</Size>
               </IRAM>
               <IROM>
                 <Type>1</Type>
                 <StartAddress>0x3000000</StartAddress>
-                <Size>0x40000</Size>
+                <Size>0x2000</Size>
               </IROM>
               <XRAM>
                 <Type>1</Type>
-                <StartAddress>0x30060000</StartAddress>
-                <Size>0x8000</Size>
+                <StartAddress>0x4002000</StartAddress>
+                <Size>0x1000</Size>
               </XRAM>
               <OCR_RVCT1>
                 <Type>1</Type>
                 <StartAddress>0x0</StartAddress>
-                <Size>0x100000</Size>
+                <Size>0x0</Size>
               </OCR_RVCT1>
               <OCR_RVCT2>
                 <Type>1</Type>
-                <StartAddress>0x100000</StartAddress>
-                <Size>0x100000</Size>
+                <StartAddress>0x0</StartAddress>
+                <Size>0x0</Size>
               </OCR_RVCT2>
               <OCR_RVCT3>
                 <Type>1</Type>
-                <StartAddress>0x10000000</StartAddress>
-                <Size>0x100000</Size>
+                <StartAddress>0x0</StartAddress>
+                <Size>0x0</Size>
               </OCR_RVCT3>
               <OCR_RVCT4>
                 <Type>1</Type>
                 <StartAddress>0x3000000</StartAddress>
-                <Size>0x40000</Size>
+                <Size>0x2000</Size>
               </OCR_RVCT4>
               <OCR_RVCT5>
                 <Type>1</Type>
-                <StartAddress>0x13000000</StartAddress>
-                <Size>0x40000</Size>
+                <StartAddress>0x0</StartAddress>
+                <Size>0x20000</Size>
               </OCR_RVCT5>
               <OCR_RVCT6>
                 <Type>0</Type>
-                <StartAddress>0x30060000</StartAddress>
-                <Size>0x8000</Size>
+                <StartAddress>0x4002000</StartAddress>
+                <Size>0x1000</Size>
               </OCR_RVCT6>
               <OCR_RVCT7>
                 <Type>0</Type>
-                <StartAddress>0x4000000</StartAddress>
-                <Size>0x18000</Size>
+                <StartAddress>0x0</StartAddress>
+                <Size>0x0</Size>
               </OCR_RVCT7>
               <OCR_RVCT8>
                 <Type>0</Type>
-                <StartAddress>0x14000000</StartAddress>
-                <Size>0x18000</Size>
+                <StartAddress>0x0</StartAddress>
+                <Size>0x0</Size>
               </OCR_RVCT8>
               <OCR_RVCT9>
                 <Type>0</Type>
                 <StartAddress>0x20000000</StartAddress>
-                <Size>0x60000</Size>
+                <Size>0x6000</Size>
               </OCR_RVCT9>
               <OCR_RVCT10>
                 <Type>0</Type>
-                <StartAddress>0x20060000</StartAddress>
-                <Size>0x8000</Size>
+                <StartAddress>0x4000000</StartAddress>
+                <Size>0x2000</Size>
               </OCR_RVCT10>
             </OnChipMemories>
             <RvctStartVector></RvctStartVector>
@@ -338,7 +338,7 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls>--target=arm-arm-none-eabi</MiscControls>
-              <Define>CPU_MCXN947VDF_cm33_core0, ARM_MATH_CM33,  RT_USING_ARM_LIBC</Define>
+              <Define>CPU_MCXA153VLH, ARM_MATH_CM33,  RT_USING_ARM_LIBC</Define>
               <Undefine></Undefine>
               <IncludePath></IncludePath>
             </VariousControls>
@@ -371,7 +371,7 @@
             <TextAddressRange>0x00000000</TextAddressRange>
             <DataAddressRange>0x02000000</DataAddressRange>
             <pXoBase></pXoBase>
-            <ScatterFile>.\board\linker_scripts\MCXN947_cm33_core0_flash.scf</ScatterFile>
+            <ScatterFile>.\board\linker_scripts\MCXA153_flash.scf</ScatterFile>
             <IncludeLibs></IncludeLibs>
             <IncludeLibsPath></IncludeLibsPath>
             <Misc>--keep *.o(.rti_fn.*)   --keep *.o(FSymTab) --keep *.o(VSymTab)</Misc>

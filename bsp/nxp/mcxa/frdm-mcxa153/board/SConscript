@@ -10,7 +10,7 @@ MCUX_Config/board/pin_mux.c
 """)
 
 CPPPATH = [cwd, cwd + '/MCUX_Config/board']
-CPPDEFINES = ['DEBUG', 'CPU_MCXN947VDF_cm33_core0']
+CPPDEFINES = ['DEBUG', 'CPU_MCXA153VLH']
 
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES=CPPDEFINES)
 

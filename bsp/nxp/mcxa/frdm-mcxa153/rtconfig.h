@@ -48,7 +48,7 @@
 #define RT_USING_DEVICE
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
-#define RT_CONSOLE_DEVICE_NAME "uart4"
+#define RT_CONSOLE_DEVICE_NAME "uart0"
 #define RT_VER_NUM 0x50100
 #define RT_BACKTRACE_LEVEL_MAX_NR 32
 #define RT_USING_HW_ATOMIC
@@ -278,7 +278,7 @@
 
 #define BSP_USING_PIN
 #define BSP_USING_UART
-#define BSP_USING_UART4
+#define BSP_USING_UART0
 
 /* Board extended module Drivers */
 

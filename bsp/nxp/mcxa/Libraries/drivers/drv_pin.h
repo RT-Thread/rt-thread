@@ -7,7 +7,7 @@
  * Date           Author       Notes
  * 2018-03-13     Liuguang     the first version.
  * 2018-03-19     Liuguang     add GPIO interrupt mode support.
- * 2019-07-15     Magicoe      The first version for LPC55S6x
+ * 2024-02-06     yandld       The first version for MCX
  */
 
 #ifndef __DRV_PIN_H__

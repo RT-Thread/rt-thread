@@ -6,7 +6,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2024-01-29     yandld      first implementation
+ * 2024-02-06     yandld       first implementation
  */
 
 #include <rthw.h>
@@ -15,7 +15,6 @@
 #include "board.h"
 #include "clock_config.h"
 #include "drv_uart.h"
-#include "fsl_cache_lpcac.h"
 
 /**
  * This is the timer interrupt service routine.
@@ -37,44 +36,7 @@ void SysTick_Handler(void)
  */
 void rt_hw_board_init()
 {
-    /* Hardware Initialization */
     BOARD_InitBootPins();
-    L1CACHE_EnableCodeCache();
-
-    CLOCK_EnableClock(kCLOCK_Freqme);
-    CLOCK_EnableClock(kCLOCK_InputMux);
-
-    CLOCK_EnableClock(kCLOCK_Port0);
-    CLOCK_EnableClock(kCLOCK_Port1);
-    CLOCK_EnableClock(kCLOCK_Port2);
-    CLOCK_EnableClock(kCLOCK_Port3);
-    CLOCK_EnableClock(kCLOCK_Port4);
-
-    CLOCK_EnableClock(kCLOCK_Gpio0);
-    CLOCK_EnableClock(kCLOCK_Gpio1);
-    CLOCK_EnableClock(kCLOCK_Gpio2);
-    CLOCK_EnableClock(kCLOCK_Gpio3);
-    CLOCK_EnableClock(kCLOCK_Gpio4);
-
-    CLOCK_EnableClock(kCLOCK_Pint);
-    CLOCK_EnableClock(kCLOCK_Flexcan0);
-    CLOCK_EnableClock(kCLOCK_Flexcan1);
-
-    CLOCK_AttachClk(kFRO_HF_to_ADC0);
-    CLOCK_SetClkDiv(kCLOCK_DivAdc0Clk, 1u);
-
-    /* enable VREF */
-    SPC0->ACTIVE_CFG1 |= 0xFFFFFFFF;
-
-
-    CLOCK_EnableClock(kCLOCK_Dma0);
-    CLOCK_EnableClock(kCLOCK_Dma1);
-
-    edma_config_t userConfig = {0};
-    EDMA_GetDefaultConfig(&userConfig);
-    EDMA_Init(DMA0, &userConfig);
-    EDMA_Init(DMA1, &userConfig);
-
 
     /* This init has finished in secure side of TF-M  */
     BOARD_InitBootClocks();

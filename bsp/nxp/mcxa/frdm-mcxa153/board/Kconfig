@@ -26,8 +26,8 @@ menu "On-chip Peripheral Drivers"
             default y
 
             if BSP_USING_UART
-                config BSP_USING_UART4
-                    bool "Enable Flexcomm4 as UART"
+                config BSP_USING_UART0
+                    bool "Enable LPUART as UART"
                     default y
 
             endif

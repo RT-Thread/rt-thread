@@ -7,12 +7,12 @@
  * Date           Author       Notes
  * 2023-03-24     YangXi       the first version.
  */
+
 #include "drv_pin.h"
 
 #include "fsl_common.h"
 #include "fsl_gpio.h"
 #include "fsl_port.h"
-#include "fsl_pint.h"
 #include "fsl_inputmux.h"
 
 #ifdef RT_USING_PIN
@@ -23,16 +23,16 @@
 
 static struct rt_pin_ops mcx_pin_ops;
 
-static GPIO_Type *GPIO_TYPE_TBL[] = {GPIO0, GPIO1, GPIO2, GPIO3, GPIO4};
-static PORT_Type *PORT_TYPE_TBL[] = {PORT0, PORT1, PORT2, PORT3, PORT4};
-static IRQn_Type   IRQ_TYPE_TBL[] = {GPIO00_IRQn, GPIO10_IRQn, GPIO20_IRQn, GPIO30_IRQn, GPIO40_IRQn};
+static GPIO_Type *GPIO_TYPE_TBL[] = {GPIO0, GPIO1, GPIO2, GPIO3};
+static PORT_Type *PORT_TYPE_TBL[] = {PORT0, PORT1, PORT2, PORT3};
+static IRQn_Type   IRQ_TYPE_TBL[] = {GPIO0_IRQn, GPIO1_IRQn, GPIO2_IRQn, GPIO3_IRQn};
 
 
 #define PIN2GPIO(x)     GPIO_TYPE_TBL[GET_GPIO_PORT(x)]
 #define PIN2PORT(x)     PORT_TYPE_TBL[GET_GPIO_PORT(x)]
 #define PIN2IRQ(x)      IRQ_TYPE_TBL[GET_GPIO_PORT(x)]
 
-struct rt_pin_irq_hdr pin_irq_hdr_tab[32*5] = {0};
+struct rt_pin_irq_hdr pin_irq_hdr_tab[32*4] = {0};
 
 static void mcx_pin_mode(rt_device_t dev, rt_base_t pin, rt_uint8_t mode)
 {
@@ -102,7 +102,6 @@ static rt_int8_t mcx_pin_read(rt_device_t dev, rt_base_t pin)
 }
 
 
-
 rt_inline void pin_irq_handler(uint8_t gpio_idx)
 {
     int i;
@@ -124,29 +123,24 @@ rt_inline void pin_irq_handler(uint8_t gpio_idx)
     rt_interrupt_leave();
 }
 
-void GPIO00_IRQHandler(void)
+void GPIO0_IRQHandler(void)
 {
     pin_irq_handler(0);
 }
 
-void GPIO10_IRQHandler(void)
+void GPIO1_IRQHandler(void)
 {
     pin_irq_handler(1);
 }
 
-void GPIO20_IRQHandler(void)
+void GPIO2_IRQHandler(void)
 {
     pin_irq_handler(2);
 }
 
-void GPIO30_IRQHandler(void)
+void GPIO3_IRQHandler(void)
 {
     pin_irq_handler(3);
-}
-
-void GPIO40_IRQHandler(void)
-{
-    pin_irq_handler(4);
 }
 
 

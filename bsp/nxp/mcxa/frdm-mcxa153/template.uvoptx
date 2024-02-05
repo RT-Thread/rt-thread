@@ -22,7 +22,7 @@
   </DaveTm>
 
   <Target>
-    <TargetName>rtthread-mcxn9xxbrk</TargetName>
+    <TargetName>rtthread-frdm-mcxa153</TargetName>
     <ToolsetNumber>0x4</ToolsetNumber>
     <ToolsetName>ARM-ADS</ToolsetName>
     <TargetOption>
@@ -103,7 +103,7 @@
         <bEvRecOn>1</bEvRecOn>
         <bSchkAxf>0</bSchkAxf>
         <bTchkAxf>0</bTchkAxf>
-        <nTsel>14</nTsel>
+        <nTsel>13</nTsel>
         <sDll></sDll>
         <sDllPa></sDllPa>
         <sDlgDll></sDlgDll>
@@ -114,18 +114,13 @@
         <tDlgDll></tDlgDll>
         <tDlgPa></tDlgPa>
         <tIfile></tIfile>
-        <pMon>BIN\CMSIS_AGDI_V8M.DLL</pMon>
+        <pMon>BIN\UL2V8M.DLL</pMon>
       </DebugOpt>
       <TargetDriverDllRegistry>
         <SetRegEntry>
           <Number>0</Number>
-          <Key>CMSIS_AGDI_V8M</Key>
-          <Name>-X"Any" -UAny -O206 -S9 -C0 -P00000000 -N00("") -D00(00000000) -L00(0) -TO65554 -TC10000000 -TT10000000 -TP20 -TDS8007 -TDT0 -TDC1F -TIEFFFFFFFF -TIP8 -FO23 -FD20000000 -FC1000 -FN1 -FF0MCXN9XX_2048.FLM -FS00 -FL0200000 -FP0($$Device:MCXN947VDF$arm\MCXN9XX_2048.FLM)</Name>
-        </SetRegEntry>
-        <SetRegEntry>
-          <Number>0</Number>
           <Key>UL2V8M</Key>
-          <Name>UL2V8M(-S0 -C0 -P0 -FD20000000 -FC1000 -FN4 -FF0MCXN9XX_2048 -FS00 -FL0200000 -FF1MCXN9XX_2048_S -FS110000000 -FL1200000 -FF2MCXN9XX_W25Q64 -FS280000000 -FL2800000 -FF3MCXN9XX_W25Q64_S -FS390000000 -FL3800000 -FP0($$Device:MCXN947VDF$arm\MCXN9XX_2048.FLM) -FP1($$Device:MCXN947VDF$arm\MCXN9XX_2048_S.FLM) -FP2($$Device:MCXN947VDF$arm\MCXN9XX_W25Q64.FLM) -FP3($$Device:MCXN947VDF$arm\MCXN9XX_W25Q64_S.FLM))</Name>
+          <Name>UL2V8M(-S0 -C0 -P0 -FD20000000 -FC1000 -FN1 -FF0MCXA15X_128 -FS00 -FL020000 -FP0($$Device:MCXA153VLH$devices\MCXA153\arm\MCXA15X_128.FLM))</Name>
         </SetRegEntry>
       </TargetDriverDllRegistry>
       <Breakpoint/>

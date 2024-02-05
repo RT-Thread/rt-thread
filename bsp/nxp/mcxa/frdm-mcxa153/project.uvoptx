@@ -22,13 +22,13 @@
   </DaveTm>
 
   <Target>
-    <TargetName>rtthread-frdm-mcxn947</TargetName>
+    <TargetName>rtthread-frdm-mcxa153</TargetName>
     <ToolsetNumber>0x4</ToolsetNumber>
     <ToolsetName>ARM-ADS</ToolsetName>
     <TargetOption>
       <CLKADS>12000000</CLKADS>
       <OPTTT>
-        <gFlags>0</gFlags>
+        <gFlags>1</gFlags>
         <BeepAtEnd>1</BeepAtEnd>
         <RunSim>0</RunSim>
         <RunTarget>1</RunTarget>
@@ -73,11 +73,11 @@
         <LExpSel>0</LExpSel>
       </OPTXL>
       <OPTFL>
-        <tvExp>1</tvExp>
+        <tvExp>0</tvExp>
         <tvExpOptDlg>0</tvExpOptDlg>
         <IsCurrentTarget>1</IsCurrentTarget>
       </OPTFL>
-      <CpuCode>0</CpuCode>
+      <CpuCode>8</CpuCode>
       <DebugOpt>
         <uSim>0</uSim>
         <uTrg>1</uTrg>
@@ -103,7 +103,7 @@
         <bEvRecOn>1</bEvRecOn>
         <bSchkAxf>0</bSchkAxf>
         <bTchkAxf>0</bTchkAxf>
-        <nTsel>13</nTsel>
+        <nTsel>14</nTsel>
         <sDll></sDll>
         <sDllPa></sDllPa>
         <sDlgDll></sDlgDll>
@@ -114,13 +114,18 @@
         <tDlgDll></tDlgDll>
         <tDlgPa></tDlgPa>
         <tIfile></tIfile>
-        <pMon>BIN\UL2V8M.DLL</pMon>
+        <pMon>BIN\CMSIS_AGDI_V8M.DLL</pMon>
       </DebugOpt>
       <TargetDriverDllRegistry>
         <SetRegEntry>
           <Number>0</Number>
+          <Key>CMSIS_AGDI_V8M</Key>
+          <Name>-X"Any" -UAny -O206 -S9 -C0 -P00000000 -N00("ARM CoreSight SW-DP") -D00(6BA02477) -L00(0) -TO65554 -TC10000000 -TT10000000 -TP20 -TDS8007 -TDT0 -TDC1F -TIEFFFFFFFF -TIP8 -FO7 -FD20000000 -FC1000 -FN1 -FF0MCXA15X_128.FLM -FS00 -FL020000 -FP0($$Device:MCXA153VLH$devices\MCXA153\arm\MCXA15X_128.FLM)</Name>
+        </SetRegEntry>
+        <SetRegEntry>
+          <Number>0</Number>
           <Key>UL2V8M</Key>
-          <Name>UL2V8M(-S0 -C0 -P0 -FD20000000 -FC1000 -FN4 -FF0MCXN9XX_2048 -FS00 -FL0200000 -FF1MCXN9XX_2048_S -FS110000000 -FL1200000 -FF2MCXN9XX_W25Q64 -FS280000000 -FL2800000 -FF3MCXN9XX_W25Q64_S -FS390000000 -FL3800000 -FP0($$Device:MCXN947VDF$arm\MCXN9XX_2048.FLM) -FP1($$Device:MCXN947VDF$arm\MCXN9XX_2048_S.FLM) -FP2($$Device:MCXN947VDF$arm\MCXN9XX_W25Q64.FLM) -FP3($$Device:MCXN947VDF$arm\MCXN9XX_W25Q64_S.FLM))</Name>
+          <Name>UL2V8M(-S0 -C0 -P0 -FD20000000 -FC1000 -FN1 -FF0MCXA15X_128 -FS00 -FL020000 -FP0($$Device:MCXA153VLH$devices\MCXA153\arm\MCXA15X_128.FLM))</Name>
         </SetRegEntry>
       </TargetDriverDllRegistry>
       <Breakpoint/>
@@ -178,7 +183,7 @@
 
   <Group>
     <GroupName>Applications</GroupName>
-    <tvExp>1</tvExp>
+    <tvExp>0</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
@@ -534,7 +539,7 @@
 
   <Group>
     <GroupName>Drivers</GroupName>
-    <tvExp>1</tvExp>
+    <tvExp>0</tvExp>
     <tvExpOptDlg>0</tvExpOptDlg>
     <cbSel>0</cbSel>
     <RteFlg>0</RteFlg>
@@ -821,8 +826,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXN947\MCXN947\drivers\fsl_clock.c</PathWithFileName>
-      <FilenameWithoutPath>fsl_clock.c</FilenameWithoutPath>
+      <PathWithFileName>..\Libraries\MCXA153\MCXA153\drivers\fsl_lpuart.c</PathWithFileName>
+      <FilenameWithoutPath>fsl_lpuart.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -833,8 +838,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXN947\MCXN947\drivers\fsl_flexcan.c</PathWithFileName>
-      <FilenameWithoutPath>fsl_flexcan.c</FilenameWithoutPath>
+      <PathWithFileName>..\Libraries\MCXA153\MCXA153\drivers\fsl_common_arm.c</PathWithFileName>
+      <FilenameWithoutPath>fsl_common_arm.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -845,8 +850,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXN947\MCXN947\drivers\fsl_edma.c</PathWithFileName>
-      <FilenameWithoutPath>fsl_edma.c</FilenameWithoutPath>
+      <PathWithFileName>..\Libraries\MCXA153\MCXA153\drivers\fsl_lpcmp.c</PathWithFileName>
+      <FilenameWithoutPath>fsl_lpcmp.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -857,8 +862,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXN947\MCXN947\drivers\fsl_flexio_mculcd.c</PathWithFileName>
-      <FilenameWithoutPath>fsl_flexio_mculcd.c</FilenameWithoutPath>
+      <PathWithFileName>..\Libraries\MCXA153\MCXA153\system_MCXA153.c</PathWithFileName>
+      <FilenameWithoutPath>system_MCXA153.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -869,8 +874,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXN947\MCXN947\drivers\fsl_crc.c</PathWithFileName>
-      <FilenameWithoutPath>fsl_crc.c</FilenameWithoutPath>
+      <PathWithFileName>..\Libraries\MCXA153\MCXA153\drivers\fsl_utick.c</PathWithFileName>
+      <FilenameWithoutPath>fsl_utick.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -881,8 +886,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXN947\MCXN947\drivers\fsl_lpspi.c</PathWithFileName>
-      <FilenameWithoutPath>fsl_lpspi.c</FilenameWithoutPath>
+      <PathWithFileName>..\Libraries\MCXA153\MCXA153\drivers\fsl_glikey.c</PathWithFileName>
+      <FilenameWithoutPath>fsl_glikey.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -893,8 +898,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXN947\MCXN947\drivers\fsl_mrt.c</PathWithFileName>
-      <FilenameWithoutPath>fsl_mrt.c</FilenameWithoutPath>
+      <PathWithFileName>..\Libraries\MCXA153\MCXA153\drivers\fsl_eqdc.c</PathWithFileName>
+      <FilenameWithoutPath>fsl_eqdc.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -905,8 +910,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXN947\MCXN947\drivers\fsl_lpuart.c</PathWithFileName>
-      <FilenameWithoutPath>fsl_lpuart.c</FilenameWithoutPath>
+      <PathWithFileName>..\Libraries\MCXA153\MCXA153\drivers\fsl_wwdt.c</PathWithFileName>
+      <FilenameWithoutPath>fsl_wwdt.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -917,8 +922,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXN947\MCXN947\drivers\fsl_cmc.c</PathWithFileName>
-      <FilenameWithoutPath>fsl_cmc.c</FilenameWithoutPath>
+      <PathWithFileName>..\Libraries\MCXA153\MCXA153\drivers\fsl_i3c_edma.c</PathWithFileName>
+      <FilenameWithoutPath>fsl_i3c_edma.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -929,8 +934,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXN947\MCXN947\drivers\fsl_flexio_spi_edma.c</PathWithFileName>
-      <FilenameWithoutPath>fsl_flexio_spi_edma.c</FilenameWithoutPath>
+      <PathWithFileName>..\Libraries\MCXA153\MCXA153\drivers\fsl_pwm.c</PathWithFileName>
+      <FilenameWithoutPath>fsl_pwm.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -941,20 +946,20 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXN947\MCXN947\drivers\fsl_flexio_mculcd_edma.c</PathWithFileName>
-      <FilenameWithoutPath>fsl_flexio_mculcd_edma.c</FilenameWithoutPath>
+      <PathWithFileName>..\Libraries\MCXA153\MCXA153\drivers\fsl_gpio.c</PathWithFileName>
+      <FilenameWithoutPath>fsl_gpio.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
     <File>
       <GroupNumber>8</GroupNumber>
       <FileNumber>60</FileNumber>
-      <FileType>2</FileType>
+      <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXN947\MCXN947\arm\startup_MCXN947_cm33_core0.s</PathWithFileName>
-      <FilenameWithoutPath>startup_MCXN947_cm33_core0.s</FilenameWithoutPath>
+      <PathWithFileName>..\Libraries\MCXA153\MCXA153\drivers\fsl_lptmr.c</PathWithFileName>
+      <FilenameWithoutPath>fsl_lptmr.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -965,8 +970,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXN947\MCXN947\drivers\fsl_dac.c</PathWithFileName>
-      <FilenameWithoutPath>fsl_dac.c</FilenameWithoutPath>
+      <PathWithFileName>..\Libraries\MCXA153\MCXA153\drivers\fsl_common.c</PathWithFileName>
+      <FilenameWithoutPath>fsl_common.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -977,8 +982,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXN947\MCXN947\drivers\fsl_lptmr.c</PathWithFileName>
-      <FilenameWithoutPath>fsl_lptmr.c</FilenameWithoutPath>
+      <PathWithFileName>..\Libraries\MCXA153\MCXA153\drivers\fsl_reset.c</PathWithFileName>
+      <FilenameWithoutPath>fsl_reset.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -989,8 +994,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXN947\MCXN947\drivers\fsl_common_arm.c</PathWithFileName>
-      <FilenameWithoutPath>fsl_common_arm.c</FilenameWithoutPath>
+      <PathWithFileName>..\Libraries\MCXA153\MCXA153\drivers\fsl_wuu.c</PathWithFileName>
+      <FilenameWithoutPath>fsl_wuu.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -1001,8 +1006,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXN947\MCXN947\drivers\fsl_reset.c</PathWithFileName>
-      <FilenameWithoutPath>fsl_reset.c</FilenameWithoutPath>
+      <PathWithFileName>..\Libraries\MCXA153\MCXA153\drivers\fsl_crc.c</PathWithFileName>
+      <FilenameWithoutPath>fsl_crc.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -1013,8 +1018,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXN947\MCXN947\drivers\fsl_vref.c</PathWithFileName>
-      <FilenameWithoutPath>fsl_vref.c</FilenameWithoutPath>
+      <PathWithFileName>..\Libraries\MCXA153\MCXA153\drivers\fsl_edma.c</PathWithFileName>
+      <FilenameWithoutPath>fsl_edma.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -1025,8 +1030,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXN947\MCXN947\drivers\fsl_flexio_uart_edma.c</PathWithFileName>
-      <FilenameWithoutPath>fsl_flexio_uart_edma.c</FilenameWithoutPath>
+      <PathWithFileName>..\Libraries\MCXA153\MCXA153\drivers\fsl_clock.c</PathWithFileName>
+      <FilenameWithoutPath>fsl_clock.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -1037,8 +1042,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXN947\MCXN947\drivers\fsl_lpi2c_edma.c</PathWithFileName>
-      <FilenameWithoutPath>fsl_lpi2c_edma.c</FilenameWithoutPath>
+      <PathWithFileName>..\Libraries\MCXA153\MCXA153\drivers\fsl_i3c.c</PathWithFileName>
+      <FilenameWithoutPath>fsl_i3c.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -1049,8 +1054,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXN947\MCXN947\drivers\fsl_irtc.c</PathWithFileName>
-      <FilenameWithoutPath>fsl_irtc.c</FilenameWithoutPath>
+      <PathWithFileName>..\Libraries\MCXA153\MCXA153\drivers\fsl_ctimer.c</PathWithFileName>
+      <FilenameWithoutPath>fsl_ctimer.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -1061,8 +1066,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXN947\MCXN947\drivers\fsl_usdhc.c</PathWithFileName>
-      <FilenameWithoutPath>fsl_usdhc.c</FilenameWithoutPath>
+      <PathWithFileName>..\Libraries\MCXA153\MCXA153\drivers\fsl_freqme.c</PathWithFileName>
+      <FilenameWithoutPath>fsl_freqme.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -1073,8 +1078,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXN947\MCXN947\drivers\fsl_erm.c</PathWithFileName>
-      <FilenameWithoutPath>fsl_erm.c</FilenameWithoutPath>
+      <PathWithFileName>..\Libraries\MCXA153\MCXA153\drivers\fsl_waketimer.c</PathWithFileName>
+      <FilenameWithoutPath>fsl_waketimer.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -1085,8 +1090,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXN947\MCXN947\drivers\fsl_dac14.c</PathWithFileName>
-      <FilenameWithoutPath>fsl_dac14.c</FilenameWithoutPath>
+      <PathWithFileName>..\Libraries\MCXA153\MCXA153\drivers\fsl_vbat.c</PathWithFileName>
+      <FilenameWithoutPath>fsl_vbat.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -1097,8 +1102,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXN947\MCXN947\drivers\fsl_gpio.c</PathWithFileName>
-      <FilenameWithoutPath>fsl_gpio.c</FilenameWithoutPath>
+      <PathWithFileName>..\Libraries\MCXA153\MCXA153\drivers\fsl_spc.c</PathWithFileName>
+      <FilenameWithoutPath>fsl_spc.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -1109,8 +1114,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXN947\MCXN947\drivers\fsl_lpi2c.c</PathWithFileName>
-      <FilenameWithoutPath>fsl_lpi2c.c</FilenameWithoutPath>
+      <PathWithFileName>..\Libraries\MCXA153\MCXA153\drivers\fsl_inputmux.c</PathWithFileName>
+      <FilenameWithoutPath>fsl_inputmux.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -1121,8 +1126,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXN947\MCXN947\drivers\fsl_flexspi.c</PathWithFileName>
-      <FilenameWithoutPath>fsl_flexspi.c</FilenameWithoutPath>
+      <PathWithFileName>..\Libraries\MCXA153\MCXA153\drivers\fsl_lpuart_edma.c</PathWithFileName>
+      <FilenameWithoutPath>fsl_lpuart_edma.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -1133,8 +1138,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXN947\MCXN947\drivers\fsl_flexspi_edma.c</PathWithFileName>
-      <FilenameWithoutPath>fsl_flexspi_edma.c</FilenameWithoutPath>
+      <PathWithFileName>..\Libraries\MCXA153\MCXA153\drivers\fsl_lpadc.c</PathWithFileName>
+      <FilenameWithoutPath>fsl_lpadc.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -1145,8 +1150,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXN947\MCXN947\drivers\fsl_ewm.c</PathWithFileName>
-      <FilenameWithoutPath>fsl_ewm.c</FilenameWithoutPath>
+      <PathWithFileName>..\Libraries\MCXA153\MCXA153\drivers\fsl_aoi.c</PathWithFileName>
+      <FilenameWithoutPath>fsl_aoi.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -1157,8 +1162,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXN947\MCXN947\system_MCXN947_cm33_core0.c</PathWithFileName>
-      <FilenameWithoutPath>system_MCXN947_cm33_core0.c</FilenameWithoutPath>
+      <PathWithFileName>..\Libraries\MCXA153\MCXA153\drivers\fsl_lpi2c.c</PathWithFileName>
+      <FilenameWithoutPath>fsl_lpi2c.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -1169,8 +1174,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXN947\MCXN947\drivers\fsl_flexio_i2c_master.c</PathWithFileName>
-      <FilenameWithoutPath>fsl_flexio_i2c_master.c</FilenameWithoutPath>
+      <PathWithFileName>..\Libraries\MCXA153\MCXA153\drivers\fsl_ostimer.c</PathWithFileName>
+      <FilenameWithoutPath>fsl_ostimer.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -1181,8 +1186,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXN947\MCXN947\drivers\fsl_ctimer.c</PathWithFileName>
-      <FilenameWithoutPath>fsl_ctimer.c</FilenameWithoutPath>
+      <PathWithFileName>..\Libraries\MCXA153\MCXA153\drivers\fsl_eim.c</PathWithFileName>
+      <FilenameWithoutPath>fsl_eim.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -1193,8 +1198,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXN947\MCXN947\drivers\fsl_flexio_uart.c</PathWithFileName>
-      <FilenameWithoutPath>fsl_flexio_uart.c</FilenameWithoutPath>
+      <PathWithFileName>..\Libraries\MCXA153\MCXA153\drivers\fsl_erm.c</PathWithFileName>
+      <FilenameWithoutPath>fsl_erm.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -1205,8 +1210,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXN947\MCXN947\drivers\fsl_enc.c</PathWithFileName>
-      <FilenameWithoutPath>fsl_enc.c</FilenameWithoutPath>
+      <PathWithFileName>..\Libraries\MCXA153\MCXA153\drivers\fsl_lpi2c_edma.c</PathWithFileName>
+      <FilenameWithoutPath>fsl_lpi2c_edma.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -1217,20 +1222,20 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXN947\MCXN947\drivers\fsl_i3c.c</PathWithFileName>
-      <FilenameWithoutPath>fsl_i3c.c</FilenameWithoutPath>
+      <PathWithFileName>..\Libraries\MCXA153\MCXA153\drivers\fsl_cmc.c</PathWithFileName>
+      <FilenameWithoutPath>fsl_cmc.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
     <File>
       <GroupNumber>8</GroupNumber>
       <FileNumber>83</FileNumber>
-      <FileType>1</FileType>
+      <FileType>2</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXN947\MCXN947\drivers\fsl_cache_lpcac.c</PathWithFileName>
-      <FilenameWithoutPath>fsl_cache_lpcac.c</FilenameWithoutPath>
+      <PathWithFileName>..\Libraries\MCXA153\MCXA153\arm\startup_MCXA153.s</PathWithFileName>
+      <FilenameWithoutPath>startup_MCXA153.s</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -1241,128 +1246,8 @@
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
       <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXN947\MCXN947\drivers\fsl_enet.c</PathWithFileName>
-      <FilenameWithoutPath>fsl_enet.c</FilenameWithoutPath>
-      <RteFlg>0</RteFlg>
-      <bShared>0</bShared>
-    </File>
-    <File>
-      <GroupNumber>8</GroupNumber>
-      <FileNumber>85</FileNumber>
-      <FileType>1</FileType>
-      <tvExp>0</tvExp>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXN947\MCXN947\drivers\fsl_lpflexcomm.c</PathWithFileName>
-      <FilenameWithoutPath>fsl_lpflexcomm.c</FilenameWithoutPath>
-      <RteFlg>0</RteFlg>
-      <bShared>0</bShared>
-    </File>
-    <File>
-      <GroupNumber>8</GroupNumber>
-      <FileNumber>86</FileNumber>
-      <FileType>1</FileType>
-      <tvExp>0</tvExp>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXN947\MCXN947\drivers\fsl_flexio.c</PathWithFileName>
-      <FilenameWithoutPath>fsl_flexio.c</FilenameWithoutPath>
-      <RteFlg>0</RteFlg>
-      <bShared>0</bShared>
-    </File>
-    <File>
-      <GroupNumber>8</GroupNumber>
-      <FileNumber>87</FileNumber>
-      <FileType>1</FileType>
-      <tvExp>0</tvExp>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXN947\MCXN947\drivers\fsl_edma_soc.c</PathWithFileName>
+      <PathWithFileName>..\Libraries\MCXA153\MCXA153\drivers\fsl_edma_soc.c</PathWithFileName>
       <FilenameWithoutPath>fsl_edma_soc.c</FilenameWithoutPath>
-      <RteFlg>0</RteFlg>
-      <bShared>0</bShared>
-    </File>
-    <File>
-      <GroupNumber>8</GroupNumber>
-      <FileNumber>88</FileNumber>
-      <FileType>1</FileType>
-      <tvExp>0</tvExp>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXN947\MCXN947\drivers\fsl_evtg.c</PathWithFileName>
-      <FilenameWithoutPath>fsl_evtg.c</FilenameWithoutPath>
-      <RteFlg>0</RteFlg>
-      <bShared>0</bShared>
-    </File>
-    <File>
-      <GroupNumber>8</GroupNumber>
-      <FileNumber>89</FileNumber>
-      <FileType>1</FileType>
-      <tvExp>0</tvExp>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXN947\MCXN947\drivers\fsl_itrc.c</PathWithFileName>
-      <FilenameWithoutPath>fsl_itrc.c</FilenameWithoutPath>
-      <RteFlg>0</RteFlg>
-      <bShared>0</bShared>
-    </File>
-    <File>
-      <GroupNumber>8</GroupNumber>
-      <FileNumber>90</FileNumber>
-      <FileType>1</FileType>
-      <tvExp>0</tvExp>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXN947\MCXN947\drivers\fsl_cache.c</PathWithFileName>
-      <FilenameWithoutPath>fsl_cache.c</FilenameWithoutPath>
-      <RteFlg>0</RteFlg>
-      <bShared>0</bShared>
-    </File>
-    <File>
-      <GroupNumber>8</GroupNumber>
-      <FileNumber>91</FileNumber>
-      <FileType>1</FileType>
-      <tvExp>0</tvExp>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXN947\MCXN947\drivers\fsl_eim.c</PathWithFileName>
-      <FilenameWithoutPath>fsl_eim.c</FilenameWithoutPath>
-      <RteFlg>0</RteFlg>
-      <bShared>0</bShared>
-    </File>
-    <File>
-      <GroupNumber>8</GroupNumber>
-      <FileNumber>92</FileNumber>
-      <FileType>1</FileType>
-      <tvExp>0</tvExp>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXN947\MCXN947\drivers\fsl_cdog.c</PathWithFileName>
-      <FilenameWithoutPath>fsl_cdog.c</FilenameWithoutPath>
-      <RteFlg>0</RteFlg>
-      <bShared>0</bShared>
-    </File>
-    <File>
-      <GroupNumber>8</GroupNumber>
-      <FileNumber>93</FileNumber>
-      <FileType>1</FileType>
-      <tvExp>0</tvExp>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXN947\MCXN947\drivers\fsl_flexio_spi.c</PathWithFileName>
-      <FilenameWithoutPath>fsl_flexio_spi.c</FilenameWithoutPath>
-      <RteFlg>0</RteFlg>
-      <bShared>0</bShared>
-    </File>
-    <File>
-      <GroupNumber>8</GroupNumber>
-      <FileNumber>94</FileNumber>
-      <FileType>1</FileType>
-      <tvExp>0</tvExp>
-      <tvExpOptDlg>0</tvExpOptDlg>
-      <bDave2>0</bDave2>
-      <PathWithFileName>..\Libraries\MCXN947\MCXN947\drivers\fsl_common.c</PathWithFileName>
-      <FilenameWithoutPath>fsl_common.c</FilenameWithoutPath>
       <RteFlg>0</RteFlg>
       <bShared>0</bShared>
     </File>
@@ -1376,7 +1261,7 @@
     <RteFlg>0</RteFlg>
     <File>
       <GroupNumber>9</GroupNumber>
-      <FileNumber>95</FileNumber>
+      <FileNumber>85</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -1396,7 +1281,7 @@
     <RteFlg>0</RteFlg>
     <File>
       <GroupNumber>10</GroupNumber>
-      <FileNumber>96</FileNumber>
+      <FileNumber>86</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>
@@ -1408,7 +1293,7 @@
     </File>
     <File>
       <GroupNumber>10</GroupNumber>
-      <FileNumber>97</FileNumber>
+      <FileNumber>87</FileNumber>
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <tvExpOptDlg>0</tvExpOptDlg>

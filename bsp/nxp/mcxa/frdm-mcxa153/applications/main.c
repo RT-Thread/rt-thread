@@ -15,10 +15,7 @@
 #include <rtdevice.h>
 #include "drv_pin.h"
 
-#define LEDB_PIN        ((3*32)+4)
-#define BUTTON_PIN      ((0*32)+29)
-
-#include "fsl_lpuart.h"
+#define LED_PIN        ((3*32)+12)
 
 int main(void)
 {
@@ -32,27 +29,15 @@ int main(void)
     rt_kprintf("using gcc, version: %d.%d\n", __GNUC__, __GNUC_MINOR__);
 #endif
 
-    rt_pin_mode(LEDB_PIN, PIN_MODE_OUTPUT);  /* Set GPIO as Output */
-    rt_pin_mode(BUTTON_PIN, PIN_MODE_INPUT_PULLUP);
-    rt_kprintf("MCXN947 HelloWorld\r\n");
+    rt_pin_mode(LED_PIN, PIN_MODE_OUTPUT);  /* Set GPIO as Output */
+    rt_kprintf("MCXA153 HelloWorld\r\n");
 
-#ifdef RT_USING_SDIO
-    rt_thread_mdelay(2000);
-    if (dfs_mount("sd", "/", "elm", 0, NULL) == 0)
-    {
-        rt_kprintf("sd mounted to /\n");
-    }
-    else
-    {
-        rt_kprintf("sd mount to / failed\n");
-    }
-#endif
 
     while (1)
     {
-        rt_pin_write(LEDB_PIN, PIN_HIGH);    /* Set GPIO output 1 */
+        rt_pin_write(LED_PIN, PIN_HIGH);    /* Set GPIO output 1 */
         rt_thread_mdelay(500);               /* Delay 500mS */
-        rt_pin_write(LEDB_PIN, PIN_LOW);     /* Set GPIO output 0 */
+        rt_pin_write(LED_PIN, PIN_LOW);     /* Set GPIO output 0 */
         rt_thread_mdelay(500);               /* Delay 500mS */
     }
 }

@@ -7,23 +7,23 @@
 
   <Targets>
     <Target>
-      <TargetName>rtthread-frdm-mcxn947</TargetName>
+      <TargetName>rtthread-frdm-mcxa153</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
-      <pCCUsed>6160000::V6.16::ARMCLANG</pCCUsed>
+      <pCCUsed>6190000::V6.19::ARMCLANG</pCCUsed>
       <uAC6>1</uAC6>
       <TargetOption>
         <TargetCommonOption>
-          <Device>MCXN947VDF:cm33_core0</Device>
+          <Device>MCXA153VLH</Device>
           <Vendor>NXP</Vendor>
-          <PackID>NXP.MCXN947_DFP.16.0.0</PackID>
+          <PackID>NXP.MCXA153_DFP.17.0.0</PackID>
           <PackURL>https://mcuxpresso.nxp.com/cmsis_pack/repo/</PackURL>
-          <Cpu>IRAM(0x20000000,0x060000) IRAM2(0x20060000,0x8000) IROM(0x03000000,0x040000) IROM2(0x13000000,0x040000) XRAM(0x30060000,0x8000) XRAM2(0x04000000,0x018000) XRAM3(0x14000000,0x018000) XROM(0x00000000,0x100000) XROM2(0x00100000,0x100000) XROM3(0x10000000,0x100000) CPUTYPE("Cortex-M33") FPU3(SFPU) DSP TZ CLOCK(12000000) ELITTLE</Cpu>
+          <Cpu>IRAM(0x20000000,0x6000) IRAM2(0x04000000,0x2000) IROM(0x03000000,0x2000) IROM2(0x00000000,0x020000) XRAM(0x04002000,0x1000) CPUTYPE("Cortex-M33") CLOCK(12000000) ELITTLE</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
           <StartupFile></StartupFile>
-          <FlashDriverDll>UL2V8M(-S0 -C0 -P0 -FD20000000 -FC1000 -FN4 -FF0MCXN9XX_2048 -FS00 -FL0200000 -FF1MCXN9XX_2048_S -FS110000000 -FL1200000 -FF2MCXN9XX_W25Q64 -FS280000000 -FL2800000 -FF3MCXN9XX_W25Q64_S -FS390000000 -FL3800000 -FP0($$Device:MCXN947VDF$arm\MCXN9XX_2048.FLM) -FP1($$Device:MCXN947VDF$arm\MCXN9XX_2048_S.FLM) -FP2($$Device:MCXN947VDF$arm\MCXN9XX_W25Q64.FLM) -FP3($$Device:MCXN947VDF$arm\MCXN9XX_W25Q64_S.FLM))</FlashDriverDll>
+          <FlashDriverDll>UL2V8M(-S0 -C0 -P0 -FD20000000 -FC1000 -FN1 -FF0MCXA15X_128 -FS00 -FL020000 -FP0($$Device:MCXA153VLH$devices\MCXA153\arm\MCXA15X_128.FLM))</FlashDriverDll>
           <DeviceId>0</DeviceId>
-          <RegisterFile>$$Device:MCXN947VDF$fsl_device_registers.h</RegisterFile>
+          <RegisterFile>$$Device:MCXA153VLH$devices\MCXA153\fsl_device_registers.h</RegisterFile>
           <MemoryEnv></MemoryEnv>
           <Cmp></Cmp>
           <Asm></Asm>
@@ -33,7 +33,7 @@
           <SLE66CMisc></SLE66CMisc>
           <SLE66AMisc></SLE66AMisc>
           <SLE66LinkerMisc></SLE66LinkerMisc>
-          <SFDFile>$$Device:MCXN947VDF$MCXN947_cm33_core0.xml</SFDFile>
+          <SFDFile>$$Device:MCXA153VLH$devices\MCXA153\MCXA153.xml</SFDFile>
           <bCustSvd>0</bCustSvd>
           <UseEnv>0</UseEnv>
           <BinPath></BinPath>
@@ -114,7 +114,7 @@
           <SimDlgDll></SimDlgDll>
           <SimDlgDllArguments></SimDlgDllArguments>
           <TargetDllName>SARMV8M.DLL</TargetDllName>
-          <TargetDllArguments> -MPU</TargetDllArguments>
+          <TargetDllArguments></TargetDllArguments>
           <TargetDlgDll>TCM.DLL</TargetDlgDll>
           <TargetDlgDllArguments>-pCM33</TargetDlgDllArguments>
         </DllOption>
@@ -138,7 +138,7 @@
           </Flash1>
           <bUseTDR>1</bUseTDR>
           <Flash2>BIN\UL2V8M.DLL</Flash2>
-          <Flash3>"" ()</Flash3>
+          <Flash3></Flash3>
           <Flash4></Flash4>
           <pFcarmOut></pFcarmOut>
           <pFcarmGrp></pFcarmGrp>
@@ -183,7 +183,7 @@
             <hadIRAM>1</hadIRAM>
             <hadXRAM>1</hadXRAM>
             <uocXRam>0</uocXRam>
-            <RvdsVP>2</RvdsVP>
+            <RvdsVP>0</RvdsVP>
             <RvdsMve>0</RvdsMve>
             <RvdsCdeCp>0</RvdsCdeCp>
             <nBranchProt>0</nBranchProt>
@@ -207,7 +207,7 @@
             <Ro2Chk>0</Ro2Chk>
             <Ro3Chk>0</Ro3Chk>
             <Ir1Chk>0</Ir1Chk>
-            <Ir2Chk>0</Ir2Chk>
+            <Ir2Chk>1</Ir2Chk>
             <Ra1Chk>0</Ra1Chk>
             <Ra2Chk>0</Ra2Chk>
             <Ra3Chk>0</Ra3Chk>
@@ -247,67 +247,67 @@
               <IRAM>
                 <Type>0</Type>
                 <StartAddress>0x20000000</StartAddress>
-                <Size>0x60000</Size>
+                <Size>0x6000</Size>
               </IRAM>
               <IROM>
                 <Type>1</Type>
                 <StartAddress>0x3000000</StartAddress>
-                <Size>0x40000</Size>
+                <Size>0x2000</Size>
               </IROM>
               <XRAM>
                 <Type>1</Type>
-                <StartAddress>0x30060000</StartAddress>
-                <Size>0x8000</Size>
+                <StartAddress>0x4002000</StartAddress>
+                <Size>0x1000</Size>
               </XRAM>
               <OCR_RVCT1>
                 <Type>1</Type>
                 <StartAddress>0x0</StartAddress>
-                <Size>0x100000</Size>
+                <Size>0x0</Size>
               </OCR_RVCT1>
               <OCR_RVCT2>
                 <Type>1</Type>
-                <StartAddress>0x100000</StartAddress>
-                <Size>0x100000</Size>
+                <StartAddress>0x0</StartAddress>
+                <Size>0x0</Size>
               </OCR_RVCT2>
               <OCR_RVCT3>
                 <Type>1</Type>
-                <StartAddress>0x10000000</StartAddress>
-                <Size>0x100000</Size>
+                <StartAddress>0x0</StartAddress>
+                <Size>0x0</Size>
               </OCR_RVCT3>
               <OCR_RVCT4>
                 <Type>1</Type>
                 <StartAddress>0x3000000</StartAddress>
-                <Size>0x40000</Size>
+                <Size>0x2000</Size>
               </OCR_RVCT4>
               <OCR_RVCT5>
                 <Type>1</Type>
-                <StartAddress>0x13000000</StartAddress>
-                <Size>0x40000</Size>
+                <StartAddress>0x0</StartAddress>
+                <Size>0x20000</Size>
               </OCR_RVCT5>
               <OCR_RVCT6>
                 <Type>0</Type>
-                <StartAddress>0x30060000</StartAddress>
-                <Size>0x8000</Size>
+                <StartAddress>0x4002000</StartAddress>
+                <Size>0x1000</Size>
               </OCR_RVCT6>
               <OCR_RVCT7>
                 <Type>0</Type>
-                <StartAddress>0x4000000</StartAddress>
-                <Size>0x18000</Size>
+                <StartAddress>0x0</StartAddress>
+                <Size>0x0</Size>
               </OCR_RVCT7>
               <OCR_RVCT8>
                 <Type>0</Type>
-                <StartAddress>0x14000000</StartAddress>
-                <Size>0x18000</Size>
+                <StartAddress>0x0</StartAddress>
+                <Size>0x0</Size>
               </OCR_RVCT8>
               <OCR_RVCT9>
                 <Type>0</Type>
                 <StartAddress>0x20000000</StartAddress>
-                <Size>0x60000</Size>
+                <Size>0x6000</Size>
               </OCR_RVCT9>
               <OCR_RVCT10>
                 <Type>0</Type>
-                <StartAddress>0x20060000</StartAddress>
-                <Size>0x8000</Size>
+                <StartAddress>0x4000000</StartAddress>
+                <Size>0x2000</Size>
               </OCR_RVCT10>
             </OnChipMemories>
             <RvctStartVector></RvctStartVector>
@@ -338,9 +338,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls>--target=arm-arm-none-eabi</MiscControls>
-              <Define>__STDC_LIMIT_MACROS, RT_USING_ARMLIBC, CPU_MCXN947VDF_cm33_core0, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__, DEBUG</Define>
+              <Define>__STDC_LIMIT_MACROS, RT_USING_ARMLIBC, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, CPU_MCXA153VLH, __RTTHREAD__, DEBUG</Define>
               <Undefine></Undefine>
-              <IncludePath>..\..\..\..\components\libc\posix\io\poll;..\..\..\..\components\libc\compilers\common\include;..\..\..\..\components\drivers\include;..\..\..\..\components\libc\compilers\common\extension;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;..\..\..\..\components\libc\posix\io\eventfd;..\..\..\..\libcpu\arm\common;applications;..\..\..\..\components\drivers\include;..\Libraries\MCXN947\MCXN947;..\Libraries\MCXN947\middleware\sdmmc\inc;..\Libraries\CMSIS\Core\Include;..\..\..\..\libcpu\arm\cortex-m33;..\..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\Libraries\MCXN947\MCXN947\drivers;..\Libraries\MCXN947\components\codec;.;board;..\..\..\..\include;..\..\..\..\components\libc\posix\io\epoll;..\..\..\..\components\libc\posix\ipc;..\..\..\..\components\utilities\ulog;..\..\..\..\components\finsh;..\Libraries\drivers\config;..\..\..\..\components\drivers\include;board\MCUX_Config\board;..\Libraries\MCXN947\middleware\sdmmc\port;..\Libraries\drivers</IncludePath>
+              <IncludePath>..\..\..\..\components\libc\posix\io\poll;..\..\..\..\components\libc\compilers\common\include;board;..\..\..\..\components\drivers\include;..\Libraries\drivers\config;..\..\..\..\components\libc\compilers\common\extension;applications;..\..\..\..\components\drivers\include;..\..\..\..\components\drivers\include;..\Libraries\MCXA153\middleware\sdmmc\port;..\..\..\..\components\libc\posix\io\eventfd;..\Libraries\CMSIS\Core\Include;..\..\..\..\libcpu\arm\common;..\..\..\..\components\drivers\include;..\Libraries\MCXA153\MCXA153\drivers;..\Libraries\MCXA153\middleware\sdmmc\inc;.;..\Libraries\MCXA153\components\codec;..\..\..\..\libcpu\arm\cortex-m33;..\..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\..\include;..\..\..\..\components\libc\posix\io\epoll;..\..\..\..\components\libc\posix\ipc;..\..\..\..\components\utilities\ulog;..\..\..\..\components\finsh;..\Libraries\drivers;..\Libraries\MCXA153\MCXA153;..\..\..\..\components\drivers\include;board\MCUX_Config\board</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -371,7 +371,7 @@
             <TextAddressRange>0x00000000</TextAddressRange>
             <DataAddressRange>0x02000000</DataAddressRange>
             <pXoBase></pXoBase>
-            <ScatterFile>.\board\linker_scripts\MCXN947_cm33_core0_flash.scf</ScatterFile>
+            <ScatterFile>.\board\linker_scripts\MCXA153_flash.scf</ScatterFile>
             <IncludeLibs></IncludeLibs>
             <IncludeLibsPath></IncludeLibsPath>
             <Misc></Misc>
@@ -864,234 +864,184 @@
           <GroupName>Libraries</GroupName>
           <Files>
             <File>
-              <FileName>fsl_clock.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_clock.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_flexcan.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_flexcan.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_edma.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_edma.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_flexio_mculcd.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_flexio_mculcd.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_crc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_crc.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_lpspi.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_lpspi.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_mrt.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_mrt.c</FilePath>
-            </File>
-            <File>
               <FileName>fsl_lpuart.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_lpuart.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_cmc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_cmc.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_flexio_spi_edma.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_flexio_spi_edma.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_flexio_mculcd_edma.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_flexio_mculcd_edma.c</FilePath>
-            </File>
-            <File>
-              <FileName>startup_MCXN947_cm33_core0.s</FileName>
-              <FileType>2</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\arm\startup_MCXN947_cm33_core0.s</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_dac.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_dac.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_lptmr.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_lptmr.c</FilePath>
+              <FilePath>..\Libraries\MCXA153\MCXA153\drivers\fsl_lpuart.c</FilePath>
             </File>
             <File>
               <FileName>fsl_common_arm.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_common_arm.c</FilePath>
+              <FilePath>..\Libraries\MCXA153\MCXA153\drivers\fsl_common_arm.c</FilePath>
             </File>
             <File>
-              <FileName>fsl_reset.c</FileName>
+              <FileName>fsl_lpcmp.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_reset.c</FilePath>
+              <FilePath>..\Libraries\MCXA153\MCXA153\drivers\fsl_lpcmp.c</FilePath>
             </File>
             <File>
-              <FileName>fsl_vref.c</FileName>
+              <FileName>system_MCXA153.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_vref.c</FilePath>
+              <FilePath>..\Libraries\MCXA153\MCXA153\system_MCXA153.c</FilePath>
             </File>
             <File>
-              <FileName>fsl_flexio_uart_edma.c</FileName>
+              <FileName>fsl_utick.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_flexio_uart_edma.c</FilePath>
+              <FilePath>..\Libraries\MCXA153\MCXA153\drivers\fsl_utick.c</FilePath>
             </File>
             <File>
-              <FileName>fsl_lpi2c_edma.c</FileName>
+              <FileName>fsl_glikey.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_lpi2c_edma.c</FilePath>
+              <FilePath>..\Libraries\MCXA153\MCXA153\drivers\fsl_glikey.c</FilePath>
             </File>
             <File>
-              <FileName>fsl_irtc.c</FileName>
+              <FileName>fsl_eqdc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_irtc.c</FilePath>
+              <FilePath>..\Libraries\MCXA153\MCXA153\drivers\fsl_eqdc.c</FilePath>
             </File>
             <File>
-              <FileName>fsl_usdhc.c</FileName>
+              <FileName>fsl_wwdt.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_usdhc.c</FilePath>
+              <FilePath>..\Libraries\MCXA153\MCXA153\drivers\fsl_wwdt.c</FilePath>
             </File>
             <File>
-              <FileName>fsl_erm.c</FileName>
+              <FileName>fsl_i3c_edma.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_erm.c</FilePath>
+              <FilePath>..\Libraries\MCXA153\MCXA153\drivers\fsl_i3c_edma.c</FilePath>
             </File>
             <File>
-              <FileName>fsl_dac14.c</FileName>
+              <FileName>fsl_pwm.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_dac14.c</FilePath>
+              <FilePath>..\Libraries\MCXA153\MCXA153\drivers\fsl_pwm.c</FilePath>
             </File>
             <File>
               <FileName>fsl_gpio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_gpio.c</FilePath>
+              <FilePath>..\Libraries\MCXA153\MCXA153\drivers\fsl_gpio.c</FilePath>
             </File>
             <File>
-              <FileName>fsl_lpi2c.c</FileName>
+              <FileName>fsl_lptmr.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_lpi2c.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_flexspi.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_flexspi.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_flexspi_edma.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_flexspi_edma.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_ewm.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_ewm.c</FilePath>
-            </File>
-            <File>
-              <FileName>system_MCXN947_cm33_core0.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\system_MCXN947_cm33_core0.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_flexio_i2c_master.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_flexio_i2c_master.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_ctimer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_ctimer.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_flexio_uart.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_flexio_uart.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_enc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_enc.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_i3c.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_i3c.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_cache_lpcac.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_cache_lpcac.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_enet.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_enet.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_lpflexcomm.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_lpflexcomm.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_flexio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_flexio.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_edma_soc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_edma_soc.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_evtg.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_evtg.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_itrc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_itrc.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_cache.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_cache.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_eim.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_eim.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_cdog.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_cdog.c</FilePath>
-            </File>
-            <File>
-              <FileName>fsl_flexio_spi.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_flexio_spi.c</FilePath>
+              <FilePath>..\Libraries\MCXA153\MCXA153\drivers\fsl_lptmr.c</FilePath>
             </File>
             <File>
               <FileName>fsl_common.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_common.c</FilePath>
+              <FilePath>..\Libraries\MCXA153\MCXA153\drivers\fsl_common.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_reset.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXA153\MCXA153\drivers\fsl_reset.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_wuu.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXA153\MCXA153\drivers\fsl_wuu.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_crc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXA153\MCXA153\drivers\fsl_crc.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_edma.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXA153\MCXA153\drivers\fsl_edma.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_clock.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXA153\MCXA153\drivers\fsl_clock.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_i3c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXA153\MCXA153\drivers\fsl_i3c.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_ctimer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXA153\MCXA153\drivers\fsl_ctimer.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_freqme.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXA153\MCXA153\drivers\fsl_freqme.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_waketimer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXA153\MCXA153\drivers\fsl_waketimer.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_vbat.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXA153\MCXA153\drivers\fsl_vbat.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_spc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXA153\MCXA153\drivers\fsl_spc.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_inputmux.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXA153\MCXA153\drivers\fsl_inputmux.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_lpuart_edma.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXA153\MCXA153\drivers\fsl_lpuart_edma.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_lpadc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXA153\MCXA153\drivers\fsl_lpadc.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_aoi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXA153\MCXA153\drivers\fsl_aoi.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_lpi2c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXA153\MCXA153\drivers\fsl_lpi2c.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_ostimer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXA153\MCXA153\drivers\fsl_ostimer.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_eim.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXA153\MCXA153\drivers\fsl_eim.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_erm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXA153\MCXA153\drivers\fsl_erm.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_lpi2c_edma.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXA153\MCXA153\drivers\fsl_lpi2c_edma.c</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_cmc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXA153\MCXA153\drivers\fsl_cmc.c</FilePath>
+            </File>
+            <File>
+              <FileName>startup_MCXA153.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>..\Libraries\MCXA153\MCXA153\arm\startup_MCXA153.s</FilePath>
+            </File>
+            <File>
+              <FileName>fsl_edma_soc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXA153\MCXA153\drivers\fsl_edma_soc.c</FilePath>
             </File>
           </Files>
         </Group>

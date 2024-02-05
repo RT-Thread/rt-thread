@@ -5,7 +5,7 @@
 // *
 // * Change Logs:
 // * Date           Author       Notes
-// * 2019-07-15     Magicoe      The first version for LPC55S6x
+// * 2024-02-06     yandld       The first version for MCX
 // */
 
 #include <rtthread.h>
@@ -17,10 +17,8 @@
 #ifdef RT_USING_SERIAL
 
 
-
 #include <rtdevice.h>
 
-/* lpc uart driver */
 struct mcx_uart
 {
     struct rt_serial_device     *serial;
@@ -36,48 +34,29 @@ struct mcx_uart
 static void uart_isr(struct rt_serial_device *serial);
 
 
-#if defined(BSP_USING_UART4)
-struct rt_serial_device serial4;
+#if defined(BSP_USING_UART0)
+struct rt_serial_device serial0;
 
-void LP_FLEXCOMM4_IRQHandler(void)
+void LPUART0_IRQHandler(void)
 {
-    uart_isr(&serial4);
+    uart_isr(&serial0);
 }
-#endif /* BSP_USING_UART4 */
+#endif
 
-#if defined(BSP_USING_UART6)
-struct rt_serial_device serial6;
 
-void LP_FLEXCOMM6_IRQHandler(void)
-{
-    uart_isr(&serial6);
-}
-#endif /* BSP_USING_UART6 */
 
 static const struct mcx_uart uarts[] =
 {
-#ifdef BSP_USING_UART4
+#ifdef BSP_USING_UART0
     {
-        &serial4,
-        LPUART4,
-        LP_FLEXCOMM4_IRQn,
+        &serial0,
+        LPUART0,
+        LPUART0_IRQn,
         kCLOCK_Fro12M,
-        kFRO12M_to_FLEXCOMM4,
-        kCLOCK_LPFlexComm4,
-        kCLOCK_DivFlexcom4Clk,
-        "uart4",
-    },
-#endif
-#ifdef BSP_USING_UART6
-    {
-        &serial6,
-        LPUART6,
-        LP_FLEXCOMM6_IRQn,
-        kCLOCK_Fro12M,
-        kFRO12M_to_FLEXCOMM6,
-        kCLOCK_LPFlexComm6,
-        kCLOCK_DivFlexcom6Clk,
-        "uart6",
+        kFRO12M_to_LPUART0,
+        kCLOCK_GateLPUART0,
+        kCLOCK_DivLPUART0,
+        "uart0",
     },
 #endif
 };
@@ -93,7 +72,7 @@ static rt_err_t mcx_configure(struct rt_serial_device *serial, struct serial_con
 
     uart = (struct mcx_uart *)serial->parent.user_data;
 
-    CLOCK_SetClkDiv(uart->clock_div_name, 1u);
+    CLOCK_SetClockDiv(uart->clock_div_name, 1u);
     CLOCK_AttachClk(uart->clock_attach_id);
     CLOCK_EnableClock(uart->clock_ip_name);
 
