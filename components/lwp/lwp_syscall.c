@@ -6814,20 +6814,24 @@ sysret_t sys_memfd_create()
 {
     return 0;
 }
+
 sysret_t sys_setitimer(int which, const struct itimerspec *restrict new, struct itimerspec *restrict old)
 {
-    int ret = 0;
-    timer_t timerid = 0;
-    struct sigevent sevp_k = {0};
+    sysret_t rc = 0;
+    rt_lwp_t lwp = lwp_self();
+    struct itimerspec new_value_k;
+    struct itimerspec old_value_k;
 
-    sevp_k.sigev_notify = SIGEV_SIGNAL;
-    sevp_k.sigev_signo = SIGALRM;
-    ret = timer_create(CLOCK_REALTIME_ALARM, &sevp_k, &timerid);
-    if (ret != 0)
+    if (lwp_get_from_user(&new_value_k, (void *)new, sizeof(*new)) != sizeof(*new))
     {
-        return GET_ERRNO();
+        return -EFAULT;
     }
-    return sys_timer_settime(timerid,0,new,old);
+
+    rc = lwp_signal_setitimer(lwp, which, &new_value_k, &old_value_k);
+    if (old && lwp_put_to_user(old, (void *)&old_value_k, sizeof old_value_k) != sizeof old_value_k)
+        return -EFAULT;
+
+    return rc;
 }
 
 const static struct rt_syscall_def func_table[] =

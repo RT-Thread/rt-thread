@@ -28,6 +28,7 @@ extern "C" {
 #define LWP_SIG_USER_SA_FLAGS                                               \
     (SA_NOCLDSTOP | SA_NOCLDWAIT | SA_SIGINFO | SA_ONSTACK | SA_RESTART |   \
      SA_NODEFER | SA_RESETHAND | SA_EXPOSE_TAGBITS)
+#define LWP_SIG_INVALID_TIMER ((timer_t)-1)
 
 typedef enum {
     LWP_SIG_MASK_CMD_BLOCK,
@@ -40,6 +41,7 @@ typedef enum {
  * LwP implementation of POSIX signal
  */
 struct lwp_signal {
+    timer_t real_timer;
     struct lwp_sigqueue sig_queue;
     rt_thread_t sig_dispatch_thr[_LWP_NSIG];
 

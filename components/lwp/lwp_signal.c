@@ -408,6 +408,8 @@ rt_err_t lwp_signal_init(struct lwp_signal *sig)
 {
     rt_err_t rc = RT_EOK;
 
+    sig->real_timer = LWP_SIG_INVALID_TIMER;
+
     memset(&sig->sig_dispatch_thr, 0, sizeof(sig->sig_dispatch_thr));
 
     memset(&sig->sig_action, 0, sizeof(sig->sig_action));
@@ -423,6 +425,7 @@ rt_err_t lwp_signal_detach(struct lwp_signal *signal)
 {
     rt_err_t ret = RT_EOK;
 
+    timer_delete(signal->real_timer);
     lwp_sigqueue_clear(&signal->sig_queue);
 
     return ret;
