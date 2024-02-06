@@ -146,10 +146,10 @@ contex_ns_store
 
     MRS     r1, psp                                 ; get from thread stack pointer
 
-    IF      {FPU} != "SoftVFP"
+#if defined (__VFP_FP__) && !defined(__SOFTFP__)
     TST     lr, #0x10                               ; if(!EXC_RETURN[4])
     VSTMFDEQ  r1!, {d8 - d15}                       ; push FPU register s16~s31
-    ENDIF
+#endif
 
     STMFD   r1!, {r4 - r11}                         ; push r4 - r11 register
 
@@ -190,10 +190,10 @@ switch_to_thread
 contex_ns_load
     LDMFD   r1!, {r4 - r11}                         ; pop r4 - r11 register
 
-    IF      {FPU} != "SoftVFP"
+#if defined (__VFP_FP__) && !defined(__SOFTFP__)
     TST     lr, #0x10                               ; if(!EXC_RETURN[4])
     VLDMFDEQ  r1!, {d8 - d15}                       ; pop FPU register s16~s31
-    ENDIF
+#endif
 
 pendsv_exit
     MSR     psp, r1                                 ; update stack pointer
@@ -215,12 +215,12 @@ rt_hw_context_switch_to    PROC
     LDR     r1, =rt_interrupt_to_thread
     STR     r0, [r1]
 
-    IF      {FPU} != "SoftVFP"
+#if defined (__VFP_FP__) && !defined(__SOFTFP__)
     ; CLEAR CONTROL.FPCA
     MRS     r2, CONTROL             ; read
     BIC     r2, #0x04               ; modify
     MSR     CONTROL, r2             ; write-back
-    ENDIF
+#endif
 
     ; set from thread to 0
     LDR     r1, =rt_interrupt_from_thread
