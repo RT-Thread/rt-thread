@@ -44,10 +44,10 @@ if PLATFORM == 'gcc':
     OBJCPY = PREFIX + 'objcopy'
     STRIP = PREFIX + 'strip'
 
-    DEVICE = ' -mcpu=' + CPU + ' -mthumb -mfpu=fpv4-sp-d16 -mfloat-abi=hard -ffunction-sections -fdata-sections -DCPU_LPC55S16JBD100'
-    CFLAGS = DEVICE + ' -Wall -D__FPU_PRESENT -eentry'
-    AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp -Wa,-mimplicit-it=thumb -D__START=entry'
-    LFLAGS = DEVICE + ' -lm -lgcc -lc' + ' -nostartfiles -Wl,--gc-sections,-Map=rtthread.map,-cref,-u,Reset_Handler -T board/linker_scripts/LPC55S16_flash.ld'
+    DEVICE = ' -mcpu=' + CPU + ' -mthumb -mfpu=fpv5-sp-d16 -mfloat-abi=hard -ffunction-sections -fdata-sections -DCPU_LPC55S16JBD100'
+    CFLAGS = DEVICE + ' -Wall -D__FPU_PRESENT'
+    AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp -D__START=entry -D__STARTUP_CLEAR_BSS'
+    LFLAGS = DEVICE + ' -specs=nano.specs -specs=nosys.specs -Wl,--defsym=__heap_size__=0x8000,--gc-sections,-Map=rtthread.map,--print-memory-usage -Tboard/linker_scripts/LPC55S16_flash.ld'
 
     CPATH = ''
     LPATH = ''
