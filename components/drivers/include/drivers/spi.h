@@ -181,8 +181,11 @@ rt_err_t rt_spi_bus_attach_device(struct rt_spi_device *device,
 rt_err_t rt_spi_bus_attach_device_cspin(struct rt_spi_device *device,
                                         const char           *name,
                                         const char           *bus_name,
-                                        rt_base_t            cs_pin,
+                                        rt_base_t             cs_pin,
                                         void                 *user_data);
+
+/* re-configure SPI bus */
+rt_err_t rt_spi_bus_configure(struct rt_spi_device *device);
 
 /**
  * This function takes SPI bus.

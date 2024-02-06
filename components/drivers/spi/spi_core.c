@@ -87,25 +87,9 @@ rt_err_t rt_spi_bus_attach_device(struct rt_spi_device *device,
     return rt_spi_bus_attach_device_cspin(device, name, bus_name, PIN_NONE, user_data);
 }
 
-rt_err_t rt_spi_configure(struct rt_spi_device        *device,
-                          struct rt_spi_configuration *cfg)
+rt_err_t rt_spi_bus_configure(struct rt_spi_device *device)
 {
     rt_err_t result = -RT_ERROR;
-
-    RT_ASSERT(device != RT_NULL);
-
-    /* If the configurations are the same, we don't need to set again. */
-    if(device->config.data_width == cfg->data_width &&
-       device->config.mode       == (cfg->mode & RT_SPI_MODE_MASK) &&
-       device->config.max_hz     == cfg->max_hz)
-    {
-        return RT_EOK;
-    }
-
-    /* set configuration */
-    device->config.data_width = cfg->data_width;
-    device->config.mode       = cfg->mode & RT_SPI_MODE_MASK;
-    device->config.max_hz     = cfg->max_hz;
 
     /* reset the CS pin */
     if (device->cs_pin != PIN_NONE)
@@ -142,6 +126,28 @@ rt_err_t rt_spi_configure(struct rt_spi_device        *device,
     }
 
     return result;
+}
+
+rt_err_t rt_spi_configure(struct rt_spi_device        *device,
+                          struct rt_spi_configuration *cfg)
+{
+    RT_ASSERT(device != RT_NULL);
+    RT_ASSERT(cfg != RT_NULL);
+
+    /* If the configurations are the same, we don't need to set again. */
+    if (device->config.data_width == cfg->data_width &&
+        device->config.mode       == (cfg->mode & RT_SPI_MODE_MASK) &&
+        device->config.max_hz     == cfg->max_hz)
+    {
+        return RT_EOK;
+    }
+
+    /* set configuration */
+    device->config.data_width = cfg->data_width;
+    device->config.mode       = cfg->mode & RT_SPI_MODE_MASK;
+    device->config.max_hz     = cfg->max_hz;
+
+    return rt_spi_bus_configure(device);
 }
 
 rt_err_t rt_spi_send_then_send(struct rt_spi_device *device,
