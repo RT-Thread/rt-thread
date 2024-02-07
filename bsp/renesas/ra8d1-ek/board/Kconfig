@@ -7,6 +7,47 @@ menu "Hardware Drivers Config"
         select RT_USING_USER_MAIN
         default y
 
+    menu "Onboard Peripheral Drivers"
+
+        menuconfig BSP_USING_FS
+            bool "Enable filesystem"
+            default n
+            if BSP_USING_FS
+                config BSP_USING_ONCHIP_FS
+                    bool "Enable ONCHIP filesystem"
+                    select RT_USING_FAL
+                    select RT_USING_DFS_ELMFAT
+                    select RT_USING_MTD_NOR
+                    select BSP_USING_ONCHIP_FLASH
+                    default n
+                config BSP_USING_SDCARD_FS
+                    bool "Enable SDCARD filesystem"
+                    select BSP_USING_SDHI
+                    select BSP_USING_SDHI1
+                    select RT_USING_DFS_ELMFAT
+                    default n
+                config BSP_USING_SPICARD_FS
+                    bool "Enable SPI FLASH filesystem"
+                    select BSP_USING_SCI_SPI
+                    select BSP_USING_SCI_SPI2
+                    select RT_USING_SPI_MSD
+                    select RT_USING_DFS_ELMFAT
+                    default n
+            endif
+
+        menuconfig BSP_USING_LVGL
+            bool "Enable LVGL for LCD"
+            select PKG_USING_LVGL
+            default n
+            if BSP_USING_LVGL      
+                config BSP_USING_LCD_RGB
+                    bool "Enable LVGL for LCD_RGB565"
+                    select BSP_USING_LCD
+                    default n
+            endif
+
+    endmenu
+
     menu "On-chip Peripheral Drivers"
 
         source "../libraries/HAL_Drivers/Kconfig"
@@ -473,31 +514,6 @@ menu "Hardware Drivers Config"
                 endif
             endif
 
-        menuconfig BSP_USING_FS
-            bool "Enable filesystem"
-            default n
-            if BSP_USING_FS
-                config BSP_USING_ONCHIP_FS
-                    bool "Enable ONCHIP filesystem"
-                    select RT_USING_FAL
-                    select RT_USING_DFS_ELMFAT
-                    select RT_USING_MTD_NOR
-                    select BSP_USING_ONCHIP_FLASH
-                    default n
-                config BSP_USING_SDCARD_FS
-                    bool "Enable SDCARD filesystem"
-                    select BSP_USING_SDHI
-                    select RT_USING_DFS_ELMFAT
-                    default n
-                config BSP_USING_SPICARD_FS
-                    bool "Enable SPI FLASH filesystem"
-                    select BSP_USING_SCI_SPI
-                    select BSP_USING_SCI_SPI2
-                    select RT_USING_SPI_MSD
-                    select RT_USING_DFS_ELMFAT
-                    default n
-            endif
-
         menuconfig BSP_USING_SDHI
             bool "Enable SDHI"
             default n
@@ -506,10 +522,24 @@ menu "Hardware Drivers Config"
             select RT_LIBC_USING_FILEIO
             select RT_USING_POSIX_DEVIO
             if BSP_USING_SDHI
-                config SDHI_USING_1_BIT
-                    bool "Use 1-bit Mode(4-bit when disable)"
-                    default y
-            endif
+                menuconfig BSP_USING_SDHI0
+                    bool "Enable SDHI0"
+                    default n
+                    if BSP_USING_SDHI0
+                        config SDHI_USING_1_BIT
+                            bool "Use 1-bit Mode(4-bit when disable)"
+                            default y
+                    endif
+
+                menuconfig BSP_USING_SDHI1
+                    bool "Enable SDHI1"
+                    default n
+                    if BSP_USING_SDHI1
+                        config SDHI_USING_1_BIT
+                            bool "Use 1-bit Mode(4-bit when disable)"
+                            default y
+                    endif
+                endif
 
         menuconfig BSP_USING_PWM
             bool "Enable PWM"
@@ -566,16 +596,5 @@ menu "Hardware Drivers Config"
             select RT_USING_LWIP
             select RT_USING_NETDEV
             default n
-
-        menuconfig BSP_USING_LVGL
-            bool "Enable LVGL for LCD"
-            select PKG_USING_LVGL
-            default n
-            if BSP_USING_LVGL      
-                config BSP_USING_LCD_RGB
-                    bool "Enable LVGL for LCD_RGB565"
-                    select BSP_USING_LCD
-                    default n
-            endif
     endmenu
 endmenu

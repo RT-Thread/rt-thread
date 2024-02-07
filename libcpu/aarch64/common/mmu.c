@@ -604,7 +604,7 @@ static int _map_single_page_2M(unsigned long *lv0_tbl, unsigned long va,
 
 void *rt_ioremap_early(void *paddr, size_t size)
 {
-    size_t count;
+    volatile size_t count;
     rt_ubase_t base;
     static void *tbl = RT_NULL;
 

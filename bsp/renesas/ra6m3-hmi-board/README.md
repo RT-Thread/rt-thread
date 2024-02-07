@@ -146,6 +146,19 @@ The steps are as follows:
 3. Enter the `pkgs --update` command to update the software package.
 4. Enter the `scons --target=mdk5` command to regenerate the project.
 
+**FSP Configuration**
+
+*   How to Use FSP: [Configuring Peripheral Drivers for RA Series Using FSP](https://www.rt-thread.org/document/site/#/rt-thread-version/rt-thread-standard/tutorial/make-bsp/renesas-ra/RA系列使用FSP配置外设驱动?id=ra系列使用-fsp-配置外设驱动)
+
+The current repository's BSP is configured with the minimum footprint enabled by default. Users can enable peripheral configurations through the following steps:
+
+1. Open the `env` tool in the BSP directory and use the `scons --target=mdk5` command to generate an MDK project.
+2. Open the `project.uvprojx` file in the BSP directory, select the `Software Components` configuration in the top navigation bar, and open the configuration button next to `RA Configuration` under `Flex Software`. This operation will automatically detect the installed FSP version on the current computer. After selecting the specified version, enter FSP.
+    ![](../docs/figures/mdk_rasc.png)
+3. Upon entering FSP, pre-configured peripherals are already present. Click the `Generate Project Content` button to generate the required driver files.
+    ![](../docs/figures/fsp_configure.png)
+4. Return to `env`, enable the necessary peripheral configurations, save, and exit.
+
 ## Contribute the Code
 
 If you’re interested in the HMI-Board and have some cool projects you’d like to share with everyone, we’d love for you to contribute your code! You can check out [how to contribute to RT-Thread’s code](https://www.rt-thread.io/contribution.html). Let’s make something awesome together!
