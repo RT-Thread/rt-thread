@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2023, RT-Thread Development Team
+ * Copyright (c) 2006-2024, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -737,7 +737,7 @@ void rt_show_version(void)
 #endif
     rt_kprintf(" / | \\     %d.%d.%d build %s %s\n",
                (rt_int32_t)RT_VERSION_MAJOR, (rt_int32_t)RT_VERSION_MINOR, (rt_int32_t)RT_VERSION_PATCH, __DATE__, __TIME__);
-    rt_kprintf(" 2006 - 2022 Copyright by RT-Thread team\n");
+    rt_kprintf(" 2006 - 2024 Copyright by RT-Thread team\n");
 }
 RTM_EXPORT(rt_show_version);
 
