@@ -3,12 +3,8 @@
 from building import *
 
 cwd     = GetCurrentDir()
-src     = []
-CPPPATH = [cwd]
+src     = ['timerfd.c']
 
-if GetDepend('RT_USING_DFS'):
-    src += ['timerfd.c']
-
-group = DefineGroup('POSIX', src, depend = ['RT_USING_POSIX_TIMERFD'], CPPPATH = CPPPATH)
+group = DefineGroup('POSIX', src, depend = ['RT_USING_DFS', 'RT_USING_POSIX_TIMERFD'])
 
 Return('group')

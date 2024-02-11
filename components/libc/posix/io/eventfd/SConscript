@@ -3,12 +3,9 @@
 from building import *
 
 cwd     = GetCurrentDir()
-src     = []
+src     = ['eventfd.c']
 CPPPATH = [cwd]
 
-if GetDepend('RT_USING_POSIX_EVENTFD'):
-    src += ['eventfd.c']
-
-group = DefineGroup('POSIX', src, depend = [''], CPPPATH = CPPPATH)
+group = DefineGroup('POSIX', src, depend = ['RT_USING_POSIX_EVENTFD'], CPPPATH = CPPPATH)
 
 Return('group')
