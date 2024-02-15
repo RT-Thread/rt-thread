@@ -485,7 +485,7 @@ int rt_hw_i2c_init(void)
     for (rt_size_t i = 0; i < sizeof(_i2c_obj) / sizeof(struct _i2c_bus); i++)
     {
         hal_i2c_init(_i2c_obj->i2c_id);
-        
+
         _i2c_obj[i].parent.ops = &i2c_ops;
 
         /* register i2c device */
