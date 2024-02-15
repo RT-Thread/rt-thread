@@ -38,12 +38,12 @@ void BOARD_InitPins(void)
     CLOCK_EnableClock(kCLOCK_GatePORT1);
     CLOCK_EnableClock(kCLOCK_GatePORT2);
     CLOCK_EnableClock(kCLOCK_GatePORT3);
-    
+
     CLOCK_EnableClock(kCLOCK_GateGPIO0);
     CLOCK_EnableClock(kCLOCK_GateGPIO1);
     CLOCK_EnableClock(kCLOCK_GateGPIO2);
     CLOCK_EnableClock(kCLOCK_GateGPIO3);
-    
+
     RESET_ReleasePeripheralReset(kLPUART0_RST_SHIFT_RSTn);
     RESET_ReleasePeripheralReset(kLPUART1_RST_SHIFT_RSTn);
     RESET_ReleasePeripheralReset(kLPUART2_RST_SHIFT_RSTn);
@@ -57,7 +57,7 @@ void BOARD_InitPins(void)
     RESET_ReleasePeripheralReset(kGPIO1_RST_SHIFT_RSTn);
     RESET_ReleasePeripheralReset(kGPIO2_RST_SHIFT_RSTn);
     RESET_ReleasePeripheralReset(kGPIO3_RST_SHIFT_RSTn);
-    
+
     const port_pin_config_t port0_2_pin51_config = {/* Internal pull-up resistor is enabled */
                                                     kPORT_PullUp,
                                                     /* Low internal pull resistor value is selected. */

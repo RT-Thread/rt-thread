@@ -464,7 +464,7 @@ void EQDC_Init(EQDC_Type *base, const eqdc_config_t *psConfig);
     psConfig->filterSampleCount                   = kEQDC_Filter3Samples;
     psConfig->filterSamplePeriod                  = 0U;
     psConfig->outputPulseMode                     = kEQDC_OutputPulseOnCounterEqualCompare;
-    psConfig->positionCompareValue[0]  	          = 0xFFFFFFFFU;
+    psConfig->positionCompareValue[0]             = 0xFFFFFFFFU;
     psConfig->positionCompareValue[1]             = 0xFFFFFFFFU;
     psConfig->positionCompareValue[2]             = 0xFFFFFFFFU;
     psConfig->positionCompareValue[3]             = 0xFFFFFFFFU;
