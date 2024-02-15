@@ -8,7 +8,6 @@
  *2024-02-14      ShichengChu  first version
  */
 #include "drv_hw_i2c.h"
-#include <rtthread.h>
 #include <rtdevice.h>
 #include <board.h>
 
@@ -18,7 +17,6 @@
 #define DBG_LVL               DBG_INFO
 #include <rtdbg.h>
 
-#define printf LOG_I
 #define false 0
 #define true  1
 
@@ -118,7 +116,7 @@ static void i2c_enable(struct i2c_regs *i2c, uint8_t enable)
 		rt_hw_us_delay(25);
 	} while (timeout--);
 
-	printf("timeout in %sabling I2C adapter\n", enable ? "en" : "dis");
+	LOG_I("timeout in %sabling I2C adapter\n", enable ? "en" : "dis");
 }
 
 static void i2c_disable(struct i2c_regs *i2c)
@@ -138,7 +136,7 @@ static void i2c_disable(struct i2c_regs *i2c)
 		rt_hw_us_delay(25);
 	} while (timeout--);
 
-	printf("timeout in disabling I2C adapter\n");
+	LOG_I("timeout in disabling I2C adapter\n");
 }
 
 /*
@@ -217,7 +215,7 @@ static int i2c_xfer_finish(struct i2c_regs *i2c)
             timeout++;
 			rt_hw_us_delay(5);
             if (timeout > I2C_STOPDET_TO * 100) {
-				printf("%s, tiemout\n", __func__);
+				LOG_I("%s, tiemout\n", __func__);
 			    break;
 			}
 		}
@@ -322,7 +320,7 @@ static int hal_i2c_write(uint8_t i2c_id, uint8_t dev, uint16_t addr, uint16_t al
 			}
 			buffer++;
         } else
-			printf("len=%d, ic status is not TFNF\n", len);
+			LOG_I("len=%d, ic status is not TFNF\n", len);
 	}
 	ret = i2c_xfer_finish(i2c);
 	i2c_disable(i2c);
@@ -405,7 +403,7 @@ static void hal_i2c_init(uint8_t i2c_id)
     struct i2c_regs *i2c;
 	uint32_t i2c_intr;
 
-    printf("%s, i2c-%d\n", __func__, i2c_id);
+    LOG_I("%s, i2c-%d\n", __func__, i2c_id);
 	/* Disable i2c */
     //Need to acquire lock here
 
