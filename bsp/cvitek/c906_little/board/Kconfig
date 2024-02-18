@@ -8,11 +8,11 @@ menu "General Drivers Configuration"
         if BSP_USING_UART
             config RT_USING_UART0
             bool "Enable UART 0"
-            default y
+            default n
 
             config RT_USING_UART1
             bool "Enable UART 1"
-            default n
+            default y
 
             config UART_IRQ_BASE
             int
