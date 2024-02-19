@@ -207,6 +207,8 @@ rt_inline rt_size_t lwp_user_mm_flag_to_kernel(int flags)
 
 rt_inline rt_size_t lwp_user_mm_attr_to_kernel(int prot)
 {
+    RT_UNUSED(prot);
+
     rt_size_t k_attr = 0;
 
 #ifdef IMPL_MPROTECT

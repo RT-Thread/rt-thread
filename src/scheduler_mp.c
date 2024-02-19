@@ -249,6 +249,9 @@ void rt_system_scheduler_init(void)
  */
 void rt_scheduler_ipi_handler(int vector, void *param)
 {
+    RT_UNUSED(vector);
+    RT_UNUSED(param);
+
     rt_schedule();
 }
 
