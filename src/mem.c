@@ -290,16 +290,6 @@ void *rt_smem_alloc(rt_smem_t m, rt_size_t size)
     RT_ASSERT(rt_object_get_type(&m->parent) == RT_Object_Class_Memory);
     RT_ASSERT(rt_object_is_systemobject(&m->parent));
 
-    if (size != RT_ALIGN(size, RT_ALIGN_SIZE))
-    {
-        LOG_D("malloc size %d, but align to %d",
-                size, RT_ALIGN(size, RT_ALIGN_SIZE));
-    }
-    else
-    {
-        LOG_D("malloc size %d", size);
-    }
-
     small_mem = (struct rt_small_mem *)m;
     /* alignment size */
     size = RT_ALIGN(size, RT_ALIGN_SIZE);
