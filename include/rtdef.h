@@ -194,7 +194,7 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
 #define RT_STATIC_ASSERT(name, expn) typedef char _static_assert_##name[(expn)?1:-1]
 
 /* Compiler Related Definitions */
-#if defined(__ARMCC_VERSION)           /* ARM Compiler */
+#if defined(__ARMCC_VERSION)        /* ARM Compiler */
 #define rt_section(x)               __attribute__((section(x)))
 #define rt_used                     __attribute__((used))
 #define rt_align(n)                 __attribute__((aligned(n)))
@@ -203,17 +203,17 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
 #define rt_noreturn
 #define rt_inline                   static __inline
 #define rt_always_inline            rt_inline
-#elif defined (__IAR_SYSTEMS_ICC__)     /* for IAR Compiler */
+#elif defined (__IAR_SYSTEMS_ICC__) /* for IAR Compiler */
 #define rt_section(x)               @ x
 #define rt_used                     __root
 #define PRAGMA(x)                   _Pragma(#x)
-#define rt_align(n)                    PRAGMA(data_alignment=n)
+#define rt_align(n)                 PRAGMA(data_alignment=n)
 #define rt_weak                     __weak
 #define rt_typeof                   typeof
 #define rt_noreturn
 #define rt_inline                   static inline
 #define rt_always_inline            rt_inline
-#elif defined (__GNUC__)                /* GNU GCC Compiler */
+#elif defined (__GNUC__)            /* GNU GCC Compiler */
 #define __RT_STRINGIFY(x...)        #x
 #define RT_STRINGIFY(x...)          __RT_STRINGIFY(x)
 #define rt_section(x)               __attribute__((section(x)))
@@ -224,7 +224,7 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
 #define rt_noreturn                 __attribute__ ((noreturn))
 #define rt_inline                   static __inline
 #define rt_always_inline            static inline __attribute__((always_inline))
-#elif defined (__ADSPBLACKFIN__)        /* for VisualDSP++ Compiler */
+#elif defined (__ADSPBLACKFIN__)    /* for VisualDSP++ Compiler */
 #define rt_section(x)               __attribute__((section(x)))
 #define rt_used                     __attribute__((used))
 #define rt_align(n)                 __attribute__((aligned(n)))
@@ -233,7 +233,7 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
 #define rt_noreturn
 #define rt_inline                   static inline
 #define rt_always_inline            rt_inline
-#elif defined (_MSC_VER)
+#elif defined (_MSC_VER)            /* for Visual Studio Compiler */
 #define rt_section(x)
 #define rt_used
 #define rt_align(n)                 __declspec(align(n))
@@ -242,10 +242,12 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
 #define rt_noreturn
 #define rt_inline                   static __inline
 #define rt_always_inline            rt_inline
-#elif defined (__TI_COMPILER_VERSION__)
-/* The way that TI compiler set section is different from other(at least
-    * GCC and MDK) compilers. See ARM Optimizing C/C++ Compiler 5.9.3 for more
-    * details. */
+#elif defined (__TI_COMPILER_VERSION__) /* for TI CCS Compiler */
+/**
+ * The way that TI compiler set section is different from other(at least
+ * GCC and MDK) compilers. See ARM Optimizing C/C++ Compiler 5.9.3 for more
+ * details.
+ */
 #define rt_section(x)               __attribute__((section(x)))
 #ifdef __TI_EABI__
 #define rt_used                     __attribute__((retain)) __attribute__((used))
@@ -263,7 +265,7 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
 #define rt_noreturn
 #define rt_inline                   static inline
 #define rt_always_inline            rt_inline
-#elif defined (__TASKING__)
+#elif defined (__TASKING__)         /* for TASKING Compiler */
 #define rt_section(x)               __attribute__((section(x)))
 #define rt_used                     __attribute__((used, protect))
 #define PRAGMA(x)                   _Pragma(#x)
@@ -273,7 +275,7 @@ typedef rt_base_t                       rt_off_t;       /**< Type for offset */
 #define rt_noreturn
 #define rt_inline                   static inline
 #define rt_always_inline            rt_inline
-#else
+#else                              /* Unkown Compiler */
     #error not supported tool chain
 #endif /* __ARMCC_VERSION */
 
@@ -322,10 +324,10 @@ typedef int (*init_fn_t)(void);
         #define INIT_EXPORT(fn, level)                                                       \
             rt_used const init_fn_t __rt_init_##fn rt_section(".rti_fn." level) = fn
     #endif /* RT_DEBUGING_AUTO_INIT */
-#endif
+#endif /* _MSC_VER */
 #else
 #define INIT_EXPORT(fn, level)
-#endif
+#endif /* RT_USING_COMPONENTS_INIT */
 
 /* board init routines will be called in board_init() function */
 #define INIT_BOARD_EXPORT(fn)           INIT_EXPORT(fn, "1")
@@ -380,15 +382,15 @@ typedef int (*init_fn_t)(void);
 /* kernel malloc definitions */
 #ifndef RT_KERNEL_MALLOC
 #define RT_KERNEL_MALLOC(sz)            rt_malloc(sz)
-#endif
+#endif /* RT_KERNEL_MALLOC */
 
 #ifndef RT_KERNEL_FREE
 #define RT_KERNEL_FREE(ptr)             rt_free(ptr)
-#endif
+#endif /* RT_KERNEL_FREE */
 
 #ifndef RT_KERNEL_REALLOC
 #define RT_KERNEL_REALLOC(ptr, size)    rt_realloc(ptr, size)
-#endif
+#endif /* RT_KERNEL_REALLOC */
 
 /**
  * @addtogroup Error
@@ -961,7 +963,7 @@ typedef struct {
 #if _LWP_NSIG <= 64
 #define lwp_sigmask(signo)      ((lwp_sigset_t){.sig = {[0] = ((long)(1u << ((signo)-1)))}})
 #define lwp_sigset_init(mask)   ((lwp_sigset_t){.sig = {[0] = (long)(mask)}})
-#endif
+#endif /* _LWP_NSIG <= 64 */
 
 struct lwp_sigaction {
     union {
@@ -1004,7 +1006,7 @@ struct rt_user_context
 
     void *ctx;
 };
-#endif
+#endif /* RT_USING_SMART */
 
 typedef void (*rt_thread_cleanup_t)(struct rt_thread *tid);
 
@@ -1050,7 +1052,7 @@ struct rt_thread
     /* object for IPC */
     rt_list_t                   taken_object_list;
     rt_object_t                 pending_object;
-#endif
+#endif /* RT_USING_MUTEX */
 
 #ifdef RT_USING_EVENT
     /* thread event */
@@ -1124,8 +1126,8 @@ struct rt_thread
     void *mem_regions;
 #ifdef RT_USING_HW_STACK_GUARD
     void *stack_buf;
-#endif
-#endif
+#endif /* RT_USING_HW_STACK_GUARD */
+#endif /* RT_USING_MEM_PROTECTION */
 
     struct rt_spinlock          spinlock;
     rt_ubase_t                  user_data;              /**< private user data beyond this thread */
@@ -1503,7 +1505,7 @@ typedef struct rt_wqueue rt_wqueue_t;
 #ifdef RT_USING_DM
 struct rt_driver;
 struct rt_bus;
-#endif
+#endif /* RT_USING_DM */
 
 /**
  * Device structure
@@ -1518,8 +1520,8 @@ struct rt_device
     struct rt_driver *drv;                              /**< driver for powering the device */
 #ifdef RT_USING_OFW
     void *ofw_node;                                     /**< ofw node get from device tree */
-#endif
-#endif
+#endif /* RT_USING_OFW */
+#endif /* RT_USING_DM */
 
     enum rt_device_class_type type;                     /**< device type */
     rt_uint16_t               flag;                     /**< device flag */
@@ -1574,7 +1576,7 @@ struct rt_channel
     rt_ubase_t  ref;
 };
 typedef struct rt_channel *rt_channel_t;
-#endif
+#endif /* RT_USING_SMART */
 
 /**@}*/
 #endif /* RT_USING_DEVICE */

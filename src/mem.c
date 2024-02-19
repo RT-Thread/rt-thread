@@ -562,7 +562,7 @@ RTM_EXPORT(rt_smem_free);
 #include <finsh.h>
 
 #ifdef RT_USING_MEMTRACE
-int memcheck(int argc, char *argv[])
+static int memcheck(int argc, char *argv[])
 {
     int position;
     rt_base_t level;
@@ -611,7 +611,7 @@ __exit:
 }
 MSH_CMD_EXPORT(memcheck, check memory data);
 
-int memtrace(int argc, char **argv)
+static int memtrace(int argc, char **argv)
 {
     struct rt_small_mem_item *mem;
     struct rt_small_mem *m;

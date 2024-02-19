@@ -16,6 +16,8 @@
 #ifndef __RT_SERVICE_H__
 #define __RT_SERVICE_H__
 
+#include <rtdef.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
