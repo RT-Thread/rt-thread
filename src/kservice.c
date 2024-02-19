@@ -95,12 +95,18 @@ rt_weak void rt_hw_cpu_shutdown(void)
 
 rt_weak rt_err_t rt_hw_backtrace_frame_get(rt_thread_t thread, struct rt_hw_backtrace_frame *frame)
 {
+    RT_UNUSED(thread);
+    RT_UNUSED(frame);
+
     LOG_W("%s is not implemented", __func__);
     return -RT_ENOSYS;
 }
 
 rt_weak rt_err_t rt_hw_backtrace_frame_unwind(rt_thread_t thread, struct rt_hw_backtrace_frame *frame)
 {
+    RT_UNUSED(thread);
+    RT_UNUSED(frame);
+
     LOG_W("%s is not implemented", __func__);
     return -RT_ENOSYS;
 }
@@ -1482,6 +1488,7 @@ RTM_EXPORT(rt_console_set_device);
 rt_weak void rt_hw_console_output(const char *str)
 {
     /* empty console output */
+    RT_UNUSED(str);
 }
 RTM_EXPORT(rt_hw_console_output);
 
@@ -1918,7 +1925,7 @@ rt_inline void _slab_info(rt_size_t *total,
 #define _MEM_INFO(...)
 #endif
 
-void _rt_system_heap_init(void *begin_addr, void *end_addr)
+static void _rt_system_heap_init(void *begin_addr, void *end_addr)
 {
     rt_ubase_t begin_align = RT_ALIGN((rt_ubase_t)begin_addr, RT_ALIGN_SIZE);
     rt_ubase_t end_align   = RT_ALIGN_DOWN((rt_ubase_t)end_addr, RT_ALIGN_SIZE);

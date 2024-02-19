@@ -1591,11 +1591,11 @@ RTM_EXPORT(rt_mutex_release);
  */
 rt_err_t rt_mutex_control(rt_mutex_t mutex, int cmd, void *arg)
 {
-    /* parameter check */
-    RT_ASSERT(mutex != RT_NULL);
-    RT_ASSERT(rt_object_get_type(&mutex->parent.parent) == RT_Object_Class_Mutex);
+    RT_UNUSED(mutex);
+    RT_UNUSED(cmd);
+    RT_UNUSED(arg);
 
-    return -RT_ERROR;
+    return -RT_EINVAL;
 }
 RTM_EXPORT(rt_mutex_control);
 
@@ -2122,6 +2122,8 @@ RTM_EXPORT(rt_event_recv_killable);
 rt_err_t rt_event_control(rt_event_t event, int cmd, void *arg)
 {
     rt_base_t level;
+
+    RT_UNUSED(arg);
 
     /* parameter check */
     RT_ASSERT(event != RT_NULL);
@@ -2866,6 +2868,8 @@ rt_err_t rt_mb_control(rt_mailbox_t mb, int cmd, void *arg)
 {
     rt_base_t level;
 
+    RT_UNUSED(arg);
+
     /* parameter check */
     RT_ASSERT(mb != RT_NULL);
     RT_ASSERT(rt_object_get_type(&mb->parent.parent) == RT_Object_Class_MailBox);
@@ -3242,6 +3246,8 @@ static rt_err_t _rt_mq_send_wait(rt_mq_t mq,
     rt_uint32_t tick_delta;
     struct rt_thread *thread;
     rt_err_t ret;
+
+    RT_UNUSED(prio);
 
     /* parameter check */
     RT_ASSERT(mq != RT_NULL);
@@ -3626,6 +3632,8 @@ static rt_ssize_t _rt_mq_recv(rt_mq_t mq,
     rt_err_t ret;
     rt_size_t len;
 
+    RT_UNUSED(prio);
+
     /* parameter check */
     RT_ASSERT(mq != RT_NULL);
     RT_ASSERT(rt_object_get_type(&mq->parent.parent) == RT_Object_Class_MessageQueue);
@@ -3838,6 +3846,8 @@ rt_err_t rt_mq_control(rt_mq_t mq, int cmd, void *arg)
 {
     rt_base_t level;
     struct rt_mq_message *msg;
+
+    RT_UNUSED(arg);
 
     /* parameter check */
     RT_ASSERT(mq != RT_NULL);

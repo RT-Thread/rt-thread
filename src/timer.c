@@ -748,7 +748,7 @@ rt_tick_t rt_timer_next_timeout_tick(void)
  * @brief This function will check software-timer list, if a timeout event happens, the
  *        corresponding timeout function will be invoked.
  */
-void rt_soft_timer_check(void)
+static void _soft_timer_check(void)
 {
     rt_tick_t current_tick;
     struct rt_timer *t;
@@ -829,6 +829,8 @@ static void _timer_thread_entry(void *parameter)
     rt_tick_t next_timeout;
     rt_base_t level;
 
+    RT_UNUSED(parameter);
+
     rt_sem_control(&_soft_timer_sem, RT_IPC_CMD_SET_VLIMIT, (void*)1);
 
     while (1)
@@ -858,7 +860,7 @@ static void _timer_thread_entry(void *parameter)
         }
 
         /* check software timer */
-        rt_soft_timer_check();
+        _soft_timer_check();
     }
 }
 #endif /* RT_USING_TIMER_SOFT */

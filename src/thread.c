@@ -30,7 +30,7 @@
  * 2021-11-15     THEWON       Remove duplicate work between idle and _thread_exit
  * 2021-12-27     Meco Man     remove .init_priority
  * 2022-01-07     Gabriel      Moving __on_rt_xxxxx_hook to thread.c
- * 2022-01-24     THEWON       let rt_thread_sleep return thread->error when using signal
+ * 2022-01-24     THEWON       let _thread_sleep return thread->error when using signal
  * 2022-10-15     Bernard      add nested mutex feature
  * 2023-09-15     xqyjlj       perf rt_hw_interrupt_disable/enable
  * 2023-12-10     xqyjlj       fix thread_exit/detach/delete
@@ -164,6 +164,8 @@ static rt_err_t _thread_init(struct rt_thread *thread,
                              rt_uint8_t        priority,
                              rt_uint32_t       tick)
 {
+    RT_UNUSED(name);
+
     /* init thread list */
     rt_list_init(&(thread->tlist));
     rt_list_init(&(thread->tlist_schedule));
@@ -622,7 +624,7 @@ RTM_EXPORT(rt_thread_yield);
  * @return  Return the operation status. If the return value is RT_EOK, the function is successfully executed.
  *          If the return value is any other values, it means this operation failed.
  */
-rt_err_t rt_thread_sleep(rt_tick_t tick)
+static rt_err_t _thread_sleep(rt_tick_t tick)
 {
     rt_base_t level;
     struct rt_thread *thread;
@@ -686,7 +688,7 @@ rt_err_t rt_thread_sleep(rt_tick_t tick)
  */
 rt_err_t rt_thread_delay(rt_tick_t tick)
 {
-    return rt_thread_sleep(tick);
+    return _thread_sleep(tick);
 }
 RTM_EXPORT(rt_thread_delay);
 
@@ -773,7 +775,7 @@ rt_err_t rt_thread_mdelay(rt_int32_t ms)
 
     tick = rt_tick_from_millisecond(ms);
 
-    return rt_thread_sleep(tick);
+    return _thread_sleep(tick);
 }
 RTM_EXPORT(rt_thread_mdelay);
 
