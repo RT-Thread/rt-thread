@@ -6,7 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2017-08-08     Yang         the first version
- * 2019-07-19     Magicoe      The first version for LPC55S6x
+ * 2019-07-19     yandld      The first version for MCXN
  * 2023-02-0      Alex Yang    update driver
  */
 
