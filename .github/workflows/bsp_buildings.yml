@@ -203,6 +203,8 @@ jobs:
                 - "lpc176x"
                 - "xplorer4330/M4"
                 #- "lpc43xx/M4"
+                - "nxp/mcxn/frdm-mcxn947"
+                - "nxp/mcxa/frdm-mcxa153"
                 - "renesas/ebf_qi_min_6m5"
                 - "renesas/ra6m4-cpk"
                 - "renesas/ra6m4-iot"
