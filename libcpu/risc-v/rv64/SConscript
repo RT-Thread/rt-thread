@@ -7,6 +7,6 @@ src     = Glob('*.c') + Glob('*.cpp') + Glob('*_gcc.S')
 CPPPATH = [cwd]
 ASFLAGS = ' -I ' + cwd
 
-group = DefineGroup('rv64', src, depend = [''], CPPPATH = CPPPATH, ASFLAGS = ASFLAGS)
+group = DefineGroup('libcpu', src, depend = [''], CPPPATH = CPPPATH, ASFLAGS = ASFLAGS)
 
 Return('group')

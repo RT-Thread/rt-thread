@@ -4,7 +4,6 @@ cwd     = GetCurrentDir()
 src     = Glob('*.c')
 CPPPATH = [cwd]
 
-
-group = DefineGroup('CPU', src, depend = [''], CPPPATH = CPPPATH)
+group = DefineGroup('libcpu', src, depend = [''], CPPPATH = CPPPATH)
 
 Return('group')
