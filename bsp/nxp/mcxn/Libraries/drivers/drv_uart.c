@@ -5,7 +5,7 @@
 // *
 // * Change Logs:
 // * Date           Author       Notes
-// * 2019-07-15     Magicoe      The first version for LPC55S6x
+// * 2019-07-15     yandld      The first version for MCXN
 // */
 
 #include <rtthread.h>
