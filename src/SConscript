@@ -4,10 +4,7 @@ import os
 
 src = Glob('*.c')
 cwd = GetCurrentDir()
-
 inc = [os.path.join(cwd, '..', 'include')]
-
-LOCAL_CFLAGS = ''
 
 if GetDepend('RT_USING_SMALL_MEM') == False:
     SrcRemove(src, ['mem.c'])
@@ -33,9 +30,19 @@ if GetDepend('RT_USING_SMP') == False:
 if GetDepend('RT_USING_SMP') == True:
     SrcRemove(src, ['scheduler_up.c'])
 
-if rtconfig.PLATFORM in GetGCCLikePLATFORM():
-    LOCAL_CFLAGS += ' -Wunused-parameter -Wunused -Wreturn-type -Wformat -Wswitch' # -Wmissing-prototypes -Wstrict-prototypes -Wmissing-declarations
+LOCAL_CFLAGS = ''
 
-group = DefineGroup('Kernel', src, depend = [''], CPPPATH = inc, CPPDEFINES = ['__RTTHREAD__'], LOCAL_CFLAGS=LOCAL_CFLAGS)
+if rtconfig.PLATFORM in GetGCCLikePLATFORM():
+    LOCAL_CFLAGS += ' -Wunused' # unused warning
+    LOCAL_CFLAGS += ' -Wformat -Wformat-security' # printf/scanf format warning
+    LOCAL_CFLAGS += ' -Warray-bounds -Wuninitialized' # memory access warning
+    LOCAL_CFLAGS += ' -Wreturn-type -Wcomment -Wswitch' # code style warning
+    LOCAL_CFLAGS += ' -Wparentheses -Wlogical-op ' # operation warning
+    # LOCAL_CFLAGS += ' -Wmissing-declarations -Wmissing-prototypes -Wstrict-prototypes' # function declaration warning
+    LOCAL_CFLAGS += ' -Wimplicit-fallthrough' # implicit fallthrough warning
+    if 'mips' not in rtconfig.PREFIX: # mips toolchain does not support
+        LOCAL_CFLAGS += ' -Wduplicated-cond -Wduplicated-branches' # duplicated condition warning
+
+group = DefineGroup('Kernel', src, depend=[''], CPPPATH=inc, CPPDEFINES=['__RTTHREAD__'], LOCAL_CFLAGS=LOCAL_CFLAGS)
 
 Return('group')

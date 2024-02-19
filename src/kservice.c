@@ -1026,6 +1026,10 @@ static char *print_number(char *buf,
     return buf;
 }
 
+#ifdef __GNUC__
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
+#endif /* __GNUC__ */
 /**
  * @brief  This function will fill a formatted string to buffer.
  *
@@ -1345,6 +1349,9 @@ rt_weak int rt_vsnprintf(char *buf, rt_size_t size, const char *fmt, va_list arg
     return str - buf;
 }
 RTM_EXPORT(rt_vsnprintf);
+#ifdef __GNUC__
+#pragma GCC diagnostic pop /* -Wimplicit-fallthrough */
+#endif /* __GNUC__ */
 
 /**
  * @brief  This function will fill a formatted string to buffer.
