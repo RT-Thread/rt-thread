@@ -41,12 +41,15 @@ void rt_thread_handle_sig(rt_bool_t clean_state);
 
 static void _signal_default_handler(int signo)
 {
+    RT_UNUSED(signo);
     LOG_I("handled signo[%d] with default action.", signo);
     return ;
 }
 
 static void _signal_entry(void *parameter)
 {
+    RT_UNUSED(parameter);
+
     rt_thread_t tid = rt_thread_self();
 
     /* handle signal */

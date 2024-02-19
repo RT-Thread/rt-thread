@@ -1568,6 +1568,8 @@ static void _console_release(void)
  */
 static void _kputs(const char *str, long len)
 {
+    RT_UNUSED(len);
+
     CONSOLE_TAKE;
 
 #ifdef RT_USING_DEVICE

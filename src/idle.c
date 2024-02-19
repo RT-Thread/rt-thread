@@ -304,6 +304,8 @@ static void idle_thread_entry(void *parameter)
 #ifdef RT_USING_SMP
 static void rt_thread_system_entry(void *parameter)
 {
+    RT_UNUSED(parameter);
+
     while (1)
     {
         int ret= rt_sem_take(&system_sem, RT_WAITING_FOREVER);
