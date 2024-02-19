@@ -66,7 +66,6 @@ void rt_hw_board_init()
     /* enable VREF */
     SPC0->ACTIVE_CFG1 |= 0xFFFFFFFF;
 
-
     CLOCK_EnableClock(kCLOCK_Dma0);
     CLOCK_EnableClock(kCLOCK_Dma1);
 
@@ -75,9 +74,10 @@ void rt_hw_board_init()
     EDMA_Init(DMA0, &userConfig);
     EDMA_Init(DMA1, &userConfig);
 
-
     /* This init has finished in secure side of TF-M  */
     BOARD_InitBootClocks();
+
+    CLOCK_SetupClk16KClocking(kCLOCK_Clk16KToAll);
 
     SysTick_Config(SystemCoreClock / RT_TICK_PER_SECOND);
     /* set pend exception priority */
