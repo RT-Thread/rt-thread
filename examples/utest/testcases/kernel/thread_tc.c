@@ -9,7 +9,7 @@
  * 2021-10.11     mazhiyuan    add idle, yield, suspend, control, priority, delay_until
  */
 
-#define __RTT_IPC_SOURCE__ /* include internal API for utest */
+#define __RT_IPC_SOURCE__ /* include internal API for utest */
 
 #include <rtthread.h>
 #include <stdlib.h>

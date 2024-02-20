@@ -8,7 +8,7 @@
  * 2021-09.01     luckyzjq     the first version
  * 2023-09-15     xqyjlj       change stack size in cpu64
  */
-#define __RTT_IPC_SOURCE__
+#define __RT_IPC_SOURCE__
 
 #include <rtthread.h>
 #include <stdlib.h>
