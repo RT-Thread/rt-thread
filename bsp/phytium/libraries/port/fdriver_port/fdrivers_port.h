@@ -13,7 +13,7 @@
  *
  * FilePath: fdrivers_port.h
  * Created Date: 2023-10-16 17:02:35
- * Last Modified: 2024-01-05 14:51:14
+ * Last Modified: Tue Feb 20 2024
  * Description:  This file is for drive layer code decoupling
  *
  * Modify History:
@@ -25,22 +25,13 @@
 #ifndef FDRIVERS_PORT_H
 #define FDRIVERS_PORT_H
 
-#ifdef __aarch64__
-    #include "faarch64.h"
-#else
-    #include "faarch32.h"
-#endif
 #include <rtthread.h>
 /***************************** Include Files *********************************/
 #include "rtconfig.h"
 #include "ftypes.h"
 #include "drv_log.h"
 #include "fkernel.h"
-#ifdef __aarch64__
-    #include "faarch64.h"
-#else
-    #include "faarch32.h"
-#endif
+#include "faarch.h"
 
 #ifdef __cplusplus
 extern "C"
