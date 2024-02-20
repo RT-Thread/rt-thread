@@ -10,25 +10,52 @@
 #ifndef __CACHE_H__
 #define __CACHE_H__
 
-#ifndef ALWAYS_INLINE
-#define ALWAYS_INLINE inline __attribute__((always_inline))
-#endif
+#include <rtdef.h>
 
 /**
  * @brief These APIs may not be supported by a specified architecture
  * But we have to include to all the cases to be 'general purpose'
  */
 
-ALWAYS_INLINE void rt_hw_cpu_dcache_clean_local(void *addr, int size) {}
-ALWAYS_INLINE void rt_hw_cpu_dcache_invalidate_local(void *addr, int size) {}
-ALWAYS_INLINE void rt_hw_cpu_dcache_clean_and_invalidate_local(void *addr, int size) {}
+rt_always_inline void rt_hw_cpu_dcache_clean_local(void *addr, int size)
+{
+    RT_UNUSED(addr);
+    RT_UNUSED(size);
+}
 
-ALWAYS_INLINE void rt_hw_cpu_dcache_clean_all_local() {}
-ALWAYS_INLINE void rt_hw_cpu_dcache_invalidate_all_local(void) {}
-ALWAYS_INLINE void rt_hw_cpu_dcache_clean_and_invalidate_all_local(void) {}
+rt_always_inline void rt_hw_cpu_dcache_invalidate_local(void *addr, int size)
+{
+    RT_UNUSED(addr);
+    RT_UNUSED(size);
+}
 
-ALWAYS_INLINE void rt_hw_cpu_icache_invalidate_local(void *addr, int size) {}
-ALWAYS_INLINE void rt_hw_cpu_icache_invalidate_all_local() {}
+rt_always_inline void rt_hw_cpu_dcache_clean_and_invalidate_local(void *addr, int size)
+{
+    RT_UNUSED(addr);
+    RT_UNUSED(size);
+}
+
+rt_always_inline void rt_hw_cpu_dcache_clean_all_local(void)
+{
+}
+
+rt_always_inline void rt_hw_cpu_dcache_invalidate_all_local(void)
+{
+}
+
+rt_always_inline void rt_hw_cpu_dcache_clean_and_invalidate_all_local(void)
+{
+}
+
+rt_always_inline void rt_hw_cpu_icache_invalidate_local(void *addr, int size)
+{
+    RT_UNUSED(addr);
+    RT_UNUSED(size);
+}
+
+rt_always_inline void rt_hw_cpu_icache_invalidate_all_local(void)
+{
+}
 
 /**
  * @brief Multi-core

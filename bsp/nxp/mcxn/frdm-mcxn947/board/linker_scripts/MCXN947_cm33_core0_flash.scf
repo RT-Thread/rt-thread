@@ -1,0 +1,120 @@
+#!armclang --target=arm-arm-none-eabi -march=armv8-m.main -E -x c
+/*
+** ###################################################################
+**     Processors:          MCXN947VDF_cm33_core0
+**                          MCXN947VNL_cm33_core0
+**
+**     Compiler:            Keil ARM C/C++ Compiler
+**     Reference manual:    MCX N1xNxxx Reference Manual
+**     Version:             rev. 1.0, 2021-08-03
+**     Build:               b221215
+**
+**     Abstract:
+**         Linker file for the Keil ARM C/C++ Compiler
+**
+**     Copyright 2016 Freescale Semiconductor, Inc.
+**     Copyright 2016-2022 NXP
+**     All rights reserved.
+**
+**     SPDX-License-Identifier: BSD-3-Clause
+**
+**     http:                 www.nxp.com
+**     mail:                 support@nxp.com
+**
+** ###################################################################
+*/
+
+
+/* USB BDT size */
+#define usb_bdt_size                   0x200
+/* Sizes */
+#if (defined(__stack_size__))
+  #define Stack_Size                   __stack_size__
+#else
+  #define Stack_Size                   0x800
+#endif
+
+#if (defined(__heap_size__))
+  #define Heap_Size                    __heap_size__
+#else
+  #define Heap_Size                    0x400
+#endif
+
+#if (defined(__qspi_xip__))
+  #define  m_interrupts_start            0x80001000
+  #define  m_interrupts_size             0x00000400
+
+  #define  m_text_start                  0x80001400
+  #define  m_text_size                   0x0FFFEC00
+#else
+  #define  m_interrupts_start            0x00000000
+  #define  m_interrupts_size             0x00000400
+
+  #define  m_text_start                  0x00000400
+  #define  m_text_size                   0x000BFC00
+#endif
+
+#define  m_flash1_start                0x00100000
+#define  m_flash1_size                 0x00100000
+
+#define  m_sramx_start                 0x04000000
+#define  m_sramx_size                  0x00018000
+
+
+#define  m_core1_image_start           0x000C0000
+#define  m_core1_image_size            0x00040000
+
+#define  m_data_start                0x20000000
+#define  m_data_size                 0x0005FE00
+
+#define  m_usb_sram_start              0x400BA000
+#define  m_usb_sram_size               0x00001000
+
+#define  m_boot_flash_conf_start       0x80000400
+
+LR_m_flash_conf m_boot_flash_conf_start 0x400 {
+  FLASH_CONFIG m_boot_flash_conf_start 0x400{ ; load address = execution address
+    * (.flexspi_fcb)
+  }
+}
+
+LR_m_text m_interrupts_start m_interrupts_size+m_text_size {   ; load region size_region
+
+  VECTOR_ROM m_interrupts_start m_interrupts_size { ; load address = execution address
+    * (.isr_vector,+FIRST)
+  }
+
+  ER_m_text m_text_start FIXED m_text_size { ; load address = execution address
+    * (InRoot$$Sections)
+    .ANY (+RO)
+  }
+
+
+  RW_m_data m_data_start m_data_size-Stack_Size-Heap_Size { ; RW data
+    .ANY (+RW +ZI)
+    * (RamFunction)
+    * (NonCacheable.init)
+    * (*NonCacheable)
+    * (CodeQuickAccess)
+    * (DataQuickAccess)
+  }
+  
+;  RW_m_sramx m_sramx_start m_sramx_size { ; RW data
+;		// lv_draw*.o (+RO +ZI +RW)
+;		// lv_img*.o (+RO +ZI +RW)
+;  }
+  
+  ARM_LIB_HEAP +0 EMPTY Heap_Size {    ; Heap region growing up
+  }
+  ARM_LIB_STACK m_data_start+m_data_size EMPTY -Stack_Size { ; Stack region growing down
+  }
+
+  RW_m_usb_bdt m_usb_sram_start UNINIT usb_bdt_size {
+    * (*m_usb_bdt)
+  }
+
+  
+  RW_m_usb_ram (m_usb_sram_start + usb_bdt_size) UNINIT (m_usb_sram_size - usb_bdt_size) {
+    * (*m_usb_global)
+  }
+  }

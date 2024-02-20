@@ -35,7 +35,6 @@
 extern int wifi_hw_init(void);
 extern void wwd_thread_notify_irq(void);
 
-static const struct fal_partition *partition = RT_NULL;
 static rt_uint32_t init_flag = 0;
 
 struct rt_wlan_device *bcm_hw_wlan_dev_alloc(void)

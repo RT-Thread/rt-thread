@@ -263,6 +263,7 @@ static void rt_defunct_execute(void)
 
 static void idle_thread_entry(void *parameter)
 {
+    RT_UNUSED(parameter);
 #ifdef RT_USING_SMP
     if (rt_hw_cpu_id() != 0)
     {
@@ -303,6 +304,8 @@ static void idle_thread_entry(void *parameter)
 #ifdef RT_USING_SMP
 static void rt_thread_system_entry(void *parameter)
 {
+    RT_UNUSED(parameter);
+
     while (1)
     {
         int ret= rt_sem_take(&system_sem, RT_WAITING_FOREVER);

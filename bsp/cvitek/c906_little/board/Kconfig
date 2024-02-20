@@ -8,15 +8,35 @@ menu "General Drivers Configuration"
         if BSP_USING_UART
             config RT_USING_UART0
             bool "Enable UART 0"
-            default y
+            default n
 
             config RT_USING_UART1
             bool "Enable UART 1"
-            default n
+            default y
 
             config UART_IRQ_BASE
             int
             default 30
         endif
 
+    menuconfig BSP_USING_I2C
+        bool "Using HW I2C"
+        select RT_USING_I2C
+        select RT_USING_I2C_BITOPS
+        select RT_USING_PIN
+        default n
+
+        if BSP_USING_I2C
+            config BSP_USING_I2C0
+                bool "Enable I2C0"
+                default n
+
+            config BSP_USING_I2C1
+                bool "Enable I2C1"
+                default n
+
+            config I2C_IRQ_BASE
+            int
+            default 32
+        endif
 endmenu

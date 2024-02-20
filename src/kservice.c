@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2023, RT-Thread Development Team
+ * Copyright (c) 2006-2024, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -95,12 +95,18 @@ rt_weak void rt_hw_cpu_shutdown(void)
 
 rt_weak rt_err_t rt_hw_backtrace_frame_get(rt_thread_t thread, struct rt_hw_backtrace_frame *frame)
 {
+    RT_UNUSED(thread);
+    RT_UNUSED(frame);
+
     LOG_W("%s is not implemented", __func__);
     return -RT_ENOSYS;
 }
 
 rt_weak rt_err_t rt_hw_backtrace_frame_unwind(rt_thread_t thread, struct rt_hw_backtrace_frame *frame)
 {
+    RT_UNUSED(thread);
+    RT_UNUSED(frame);
+
     LOG_W("%s is not implemented", __func__);
     return -RT_ENOSYS;
 }
@@ -737,7 +743,7 @@ void rt_show_version(void)
 #endif
     rt_kprintf(" / | \\     %d.%d.%d build %s %s\n",
                (rt_int32_t)RT_VERSION_MAJOR, (rt_int32_t)RT_VERSION_MINOR, (rt_int32_t)RT_VERSION_PATCH, __DATE__, __TIME__);
-    rt_kprintf(" 2006 - 2022 Copyright by RT-Thread team\n");
+    rt_kprintf(" 2006 - 2024 Copyright by RT-Thread team\n");
 }
 RTM_EXPORT(rt_show_version);
 
@@ -1020,6 +1026,11 @@ static char *print_number(char *buf,
     return buf;
 }
 
+#ifdef __GNUC__
+#pragma GCC diagnostic push
+/* ignore warning: this statement may fall through */
+#pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
+#endif /* __GNUC__ */
 /**
  * @brief  This function will fill a formatted string to buffer.
  *
@@ -1339,6 +1350,9 @@ rt_weak int rt_vsnprintf(char *buf, rt_size_t size, const char *fmt, va_list arg
     return str - buf;
 }
 RTM_EXPORT(rt_vsnprintf);
+#ifdef __GNUC__
+#pragma GCC diagnostic pop /* ignored "-Wimplicit-fallthrough" */
+#endif /* __GNUC__ */
 
 /**
  * @brief  This function will fill a formatted string to buffer.
@@ -1482,6 +1496,7 @@ RTM_EXPORT(rt_console_set_device);
 rt_weak void rt_hw_console_output(const char *str)
 {
     /* empty console output */
+    RT_UNUSED(str);
 }
 RTM_EXPORT(rt_hw_console_output);
 
@@ -1561,6 +1576,8 @@ static void _console_release(void)
  */
 static void _kputs(const char *str, long len)
 {
+    RT_UNUSED(len);
+
     CONSOLE_TAKE;
 
 #ifdef RT_USING_DEVICE
@@ -1918,7 +1935,7 @@ rt_inline void _slab_info(rt_size_t *total,
 #define _MEM_INFO(...)
 #endif
 
-void _rt_system_heap_init(void *begin_addr, void *end_addr)
+static void _rt_system_heap_init(void *begin_addr, void *end_addr)
 {
     rt_ubase_t begin_align = RT_ALIGN((rt_ubase_t)begin_addr, RT_ALIGN_SIZE);
     rt_ubase_t end_align   = RT_ALIGN_DOWN((rt_ubase_t)end_addr, RT_ALIGN_SIZE);

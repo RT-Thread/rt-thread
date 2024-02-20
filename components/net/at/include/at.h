@@ -22,20 +22,6 @@ extern "C" {
 #define AT_SW_VERSION                  "1.3.1"
 
 #define AT_CMD_NAME_LEN                16
-#define AT_END_MARK_LEN                4
-
-#ifndef AT_CMD_MAX_LEN
-#define AT_CMD_MAX_LEN                 128
-#endif
-
-/* the server AT commands new line sign */
-#if defined(AT_CMD_END_MARK_CRLF)
-#define AT_CMD_END_MARK                "\r\n"
-#elif defined(AT_CMD_END_MARK_CR)
-#define AT_CMD_END_MARK                "\r"
-#elif defined(AT_CMD_END_MARK_LF)
-#define AT_CMD_END_MARK                "\n"
-#endif
 
 #ifndef AT_SERVER_RECV_BUFF_LEN
 #define AT_SERVER_RECV_BUFF_LEN        256
@@ -104,7 +90,6 @@ struct at_server
     char recv_buffer[AT_SERVER_RECV_BUFF_LEN];
     rt_size_t cur_recv_len;
     rt_sem_t rx_notice;
-    char end_mark[AT_END_MARK_LEN];
 
     rt_thread_t parser;
     void (*parser_entry)(struct at_server *server);

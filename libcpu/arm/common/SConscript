@@ -21,6 +21,6 @@ if rtconfig.PLATFORM in ['iccarm']:
 if not GetDepend('RT_USING_HW_ATOMIC'):
     SrcRemove(src, 'atomic_arm.c')
 
-group = DefineGroup('CPU', src, depend = [''], CPPPATH = CPPPATH)
+group = DefineGroup('libcpu', src, depend = [''], CPPPATH = CPPPATH)
 
 Return('group')

@@ -56,4 +56,4 @@ if PLATFORM == 'gcc':
     CXXFLAGS = CFLAGS
 
 DUMP_ACTION = OBJDUMP + ' -D -S $TARGET > rtthread.asm\n'
-POST_ACTION = OBJCPY + ' -O binary $TARGET Image\n' + SIZE + ' $TARGET \n' + './mksdimg.sh\n' + 'cd ../ && ./combine-fip.sh\n'
+POST_ACTION = OBJCPY + ' -O binary $TARGET Image\n' + SIZE + ' $TARGET \n' + './mksdimg.sh\n'

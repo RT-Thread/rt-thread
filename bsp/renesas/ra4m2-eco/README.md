@@ -130,7 +130,18 @@ void hal_entry(void)
 - [RA4M2数据手册](https://bbs.elecfans.com/forum.php?mod=attachment&aid=MTIwMDQxNnxjOTJiOTgyOHwxNjcwNDY2MTg2fDU5NTQxMXwyMzEyNjc4)
 
 **FSP 配置**
+
 请查看 [RA-Eco-RA4M2-100PIN开发板资料](https://bbs.elecfans.com/jishu_2312678_1_1.html) 及官网和bsp/renesas/docs中的相关文档
+
+目前仓库 bsp 默认使能最小体量配置，用户可通过如下步骤使能 env 外设配置：
+
+1. 在 bsp 目录下打开 env 工具，使用 `scons --target=mdk5`命令生成 MDK 工程。
+2. 打开 bsp 目录下的`project.uvprojx`文件，选择上方导航栏的 `Software Components`配置，打开后找到`Flex Software`下的`RA Configuration`旁的配置按钮，该操作会自动查找当前电脑环境下安装的 fsp 版本，选择指定版本后进入 fsp。 
+    ![](../docs/figures/mdk_rasc.png)
+3. 在进入 fsp 后我们可以发现，已经存在了一些已经配置完成的外设，此时我们点击`Generate Project Content`按钮即可生成所需驱动文件。
+    ![](../docs/figures/fsp_configure.png)
+4. 接下来回到 env，使能所需的外设配置后保存退出即可。
+
 **ENV 配置**
 
 - 如何使用 ENV 工具：[RT-Thread env 工具用户手册](https://www.rt-thread.org/document/site/#/development-tools/env/env)
@@ -142,7 +153,6 @@ void hal_entry(void)
 2. 输入`menuconfig`命令配置工程，配置好之后保存退出。
 3. 输入`pkgs --update`命令更新软件包。
 4. 输入`scons --target=mdk5` 命令重新生成工程。
-
 
 ## FAQ
 

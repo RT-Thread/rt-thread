@@ -186,12 +186,13 @@ static int is_gpt_valid(struct rt_mmcsd_card *card, size_t lba, gpt_header **gpt
 {
     size_t lastlba;
 
-    if (!ptes)
+    if (!ptes || !gpt)
     {
         return 0;
     }
 
-    if (!(*gpt = alloc_read_gpt_header(card, lba)))
+    *gpt = alloc_read_gpt_header(card, lba);
+    if (!(*gpt))
     {
         return 0;
     }
@@ -255,7 +256,8 @@ static int is_gpt_valid(struct rt_mmcsd_card *card, size_t lba, gpt_header **gpt
         goto fail;
     }
 
-    if (!(*ptes = alloc_read_gpt_entries(card, *gpt)))
+    *ptes = alloc_read_gpt_entries(card, *gpt);
+    if (!(*ptes))
     {
         goto fail;
     }

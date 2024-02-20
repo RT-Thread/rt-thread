@@ -8,10 +8,35 @@ menu "Hardware Drivers Config"
         default y
 
     menu "Onboard Peripheral Drivers"
-    config BSP_USING_SEGGER_RTT_CONSOLE
-            bool "Enable SEGGER-RTT for console"
-            select PKG_USING_SEGGER_RTT
+
+        config BSP_USING_SEGGER_RTT_CONSOLE
+                bool "Enable SEGGER-RTT for console"
+                select PKG_USING_SEGGER_RTT
+                default n
+
+        config BSP_USING_SPI_LCD
+            bool "Enable SPI LCD"
+            select BSP_USING_GPIO
+            select BSP_USING_SPI
+            select BSP_USING_SPI1
             default n
+
+            menuconfig BSP_USING_LVGL
+                bool "Enable LVGL for LCD"
+                select PKG_USING_LVGL
+                default n
+                if BSP_USING_LVGL
+                    config BSP_USING_LCD_ILI9431
+                        bool "Enable LVGL for LCD_ILI9431"
+                        select PKG_USING_ILI9341
+                        select BSP_USING_SPI_LCD
+                        default n
+
+                    config BSP_USING_LVGL_DEMO
+                        bool "Enable LVGL demo"
+                        select PKG_USING_LV_MUSIC_DEMO
+                        default y
+                endif
 
     endmenu
 
@@ -446,10 +471,24 @@ menu "Hardware Drivers Config"
             select RT_LIBC_USING_FILEIO
             select RT_USING_POSIX_DEVIO
             if BSP_USING_SDHI
-                config SDHI_USING_1_BIT
-                    bool "Use 1-bit Mode(4-bit when disable)"
-                    default y
-            endif
+                menuconfig BSP_USING_SDHI0
+                    bool "Enable SDHI0"
+                    default n
+                    if BSP_USING_SDHI0
+                        config SDHI_USING_1_BIT
+                            bool "Use 1-bit Mode(4-bit when disable)"
+                            default y
+                    endif
+
+                menuconfig BSP_USING_SDHI1
+                    bool "Enable SDHI1"
+                    default n
+                    if BSP_USING_SDHI1
+                        config SDHI_USING_1_BIT
+                            bool "Use 1-bit Mode(4-bit when disable)"
+                            default y
+                    endif
+                endif
 
         menuconfig BSP_USING_CAN
             bool "Enable CAN"
@@ -463,32 +502,6 @@ menu "Hardware Drivers Config"
                 config BSP_USING_CAN1
                     bool "Enable CAN1"
                     default n
-            endif
-
-        config BSP_USING_SPI_LCD
-            bool "Enable SPI LCD"
-            select BSP_USING_GPIO
-            select BSP_USING_SPI
-            select BSP_USING_SPI1
-            default n
-
-            menuconfig BSP_USING_LVGL
-                bool "Enable LVGL for LCD"
-                select PKG_USING_LVGL
-                default n
-                if BSP_USING_LVGL
-                    config BSP_USING_LCD_ILI9431
-                        bool "Enable LVGL for LCD_ILI9431"
-                        select PKG_USING_ILI9341
-                        select BSP_USING_SPI_LCD
-                        default n
-                endif
-
-            if BSP_USING_LVGL
-                config BSP_USING_LVGL_DEMO
-                    bool "Enable LVGL demo"
-                    select PKG_USING_LV_MUSIC_DEMO
-                    default y
             endif
 
     endmenu

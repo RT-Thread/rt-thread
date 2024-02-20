@@ -11,7 +11,7 @@ CPPPATH = [cwd]
 if GetDepend('RT_USING_OFW') == False:
     SrcRemove(src, ['setup.c', 'cpu_psci.c', 'psci.c'])
     
-group = DefineGroup('common', src, depend = [''], CPPPATH = CPPPATH)
+group = DefineGroup('libcpu', src, depend = [''], CPPPATH = CPPPATH)
 
 # build for sub-directory
 list = os.listdir(cwd)

@@ -31,6 +31,7 @@
  * 2020-04-07     chenhui      add clear
  * 2022-07-02     Stanley Lwin add list command
  * 2023-09-15     xqyjlj       perf rt_hw_interrupt_disable/enable
+ * 2024-02-09     Bernard      fix the version command
  */
 
 #include <rthw.h>
@@ -51,13 +52,13 @@ static long clear(void)
 }
 MSH_CMD_EXPORT(clear, clear the terminal screen);
 
-static long rtthread_version(void)
+static long version(void)
 {
     rt_show_version();
 
     return 0;
 }
-MSH_CMD_EXPORT(rtthread_version, show RT-Thread version information);
+MSH_CMD_EXPORT(version, show RT-Thread version information);
 
 rt_inline void object_split(int len)
 {
@@ -1083,7 +1084,6 @@ static int cmd_list(int argc, char **argv)
 #endif /* RT_USING_DFS */
         default:
             goto _usage;
-            break;
         };
 
         return 0;
