@@ -325,8 +325,8 @@ enable_mmu_early:
 .cpus_stack:
 #if defined(RT_USING_SMP) && RT_CPUS_NR > 1
     .space (ARCH_SECONDARY_CPU_STACK_SIZE * (RT_CPUS_NR - 1))
-.secondary_cpu_stack_top:
 #endif
+.secondary_cpu_stack_top:
     .space ARCH_SECONDARY_CPU_STACK_SIZE
 .boot_cpu_stack_top:
 
