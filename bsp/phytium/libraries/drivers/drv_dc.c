@@ -68,8 +68,6 @@ static rt_err_t rt_dc_init(struct rt_device *dev)
     return RT_EOK;
 }
 
-
-
 static rt_err_t rt_dc_control(rt_device_t dev, int cmd, void *args)
 {
     RT_ASSERT(dev);
@@ -111,12 +109,12 @@ static void rt_hw_dc_register(struct phytium_dc_bus *dc_control_bus, const char 
     struct rt_device *dc;
     dc = &(dc_control_bus->parent);
     dc->type = RT_Device_Class_Graphic;
-    #ifdef RT_USING_DEVICE_OPS
+#ifdef RT_USING_DEVICE_OPS
     dc->ops = &dc_ops;
-    #else
+#else
     dc->init = rt_dc_init;
     dc->control = rt_dc_control;
-    #endif
+#endif
     dc->user_data = data;
     /* register Display Controller device to RT-Thread */
     rt_device_register(dc, "dc", RT_DEVICE_FLAG_RDWR);
@@ -162,6 +160,3 @@ int rt_hw_dc_init(void)
 }
 
 INIT_DEVICE_EXPORT(rt_hw_dc_init);
-
-
-
