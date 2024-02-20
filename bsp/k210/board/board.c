@@ -34,8 +34,6 @@ void init_bss(void)
 
 void primary_cpu_entry(void)
 {
-    extern void entry(void);
-
     /* disable global interrupt */
     init_bss();
     rt_hw_interrupt_disable();

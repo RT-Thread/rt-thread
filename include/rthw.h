@@ -134,7 +134,7 @@ rt_isr_handler_t rt_hw_interrupt_install(int              vector,
                                          const char      *name);
 
 #ifdef RT_USING_SMP
-rt_base_t rt_hw_local_irq_disable();
+rt_base_t rt_hw_local_irq_disable(void);
 void rt_hw_local_irq_enable(rt_base_t level);
 
 rt_base_t rt_cpus_lock(void);
@@ -235,9 +235,9 @@ void rt_hw_secondary_cpu_idle_exec(void);
 #endif
 
 #ifndef RT_USING_CACHE
-#define rt_hw_isb()
-#define rt_hw_dmb()
-#define rt_hw_dsb()
+#define rt_hw_isb(void)
+#define rt_hw_dmb(void)
+#define rt_hw_dsb(void)
 #endif
 
 #ifdef __cplusplus

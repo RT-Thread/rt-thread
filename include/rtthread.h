@@ -42,6 +42,10 @@
 extern "C" {
 #endif
 
+#ifdef __GNUC__
+int entry(void); 
+#endif
+
 /**
  * @addtogroup KernelObject
  * @{
@@ -207,6 +211,7 @@ void rt_system_scheduler_init(void);
 void rt_system_scheduler_start(void);
 
 void rt_schedule(void);
+void rt_scheduler_do_irq_switch(void *context);
 void rt_schedule_insert_thread(struct rt_thread *thread);
 void rt_schedule_remove_thread(struct rt_thread *thread);
 
@@ -333,6 +338,15 @@ void rt_memheap_info(struct rt_memheap *heap,
                      rt_size_t *used,
                      rt_size_t *max_used);
 #endif /* RT_USING_MEMHEAP */
+
+#ifdef RT_USING_MEMHEAP_AS_HEAP
+/**
+ * memory heap as heap
+ */
+void *_memheap_alloc(struct rt_memheap *heap, rt_size_t size);
+void _memheap_free(void *rmem);
+void *_memheap_realloc(struct rt_memheap *heap, void *rmem, rt_size_t newsize);
+#endif
 
 #ifdef RT_USING_SLAB
 /**
@@ -663,6 +677,8 @@ void rt_cpus_unlock(rt_base_t level);
 
 struct rt_cpu *rt_cpu_self(void);
 struct rt_cpu *rt_cpu_index(int index);
+
+void rt_cpus_lock_status_restore(struct rt_thread *thread);
 
 #endif /* RT_USING_SMP */
 

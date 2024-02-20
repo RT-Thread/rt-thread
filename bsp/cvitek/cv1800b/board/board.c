@@ -53,8 +53,6 @@ static void __rt_assert_handler(const char *ex_string, const char *func, rt_size
 
 void primary_cpu_entry(void)
 {
-    extern void entry(void);
-
     /* disable global interrupt */
     rt_hw_interrupt_disable();
     rt_assert_set_hook(__rt_assert_handler);

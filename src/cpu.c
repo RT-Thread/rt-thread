@@ -94,7 +94,7 @@ RTM_EXPORT(rt_spin_unlock)
  */
 rt_base_t rt_spin_lock_irqsave(struct rt_spinlock *lock)
 {
-    unsigned long level;
+    rt_base_t level;
 
     level = rt_hw_local_irq_disable();
     rt_enter_critical();

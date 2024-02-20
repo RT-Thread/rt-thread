@@ -109,13 +109,7 @@ void rt_hw_mmu_kernel_map_init(struct rt_aspace *aspace, rt_size_t vaddr_start,
                                rt_size_t size);
 void *rt_hw_mmu_pgtbl_create(void);
 void rt_hw_mmu_pgtbl_delete(void *pgtbl);
-
-rt_inline void *rt_hw_mmu_tbl_get()
-{
-    uintptr_t tbl;
-    __asm__ volatile("MRS %0, TTBR0_EL1" : "=r"(tbl));
-    return rt_kmem_p2v((void *)(tbl & ((1ul << 48) - 2)));
-}
+void *rt_hw_mmu_tbl_get(void);
 
 static inline void *rt_hw_mmu_kernel_v2p(void *v_addr)
 {
