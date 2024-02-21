@@ -21,6 +21,7 @@
  * 2023-06-30     ChuShicheng  move debug check from the rtdebug.h
  * 2023-10-16     Shell        Support a new backtrace framework
  * 2023-12-10     xqyjlj       fix spinlock in up
+ * 2024-01-25     Shell        Add rt_susp_list for IPC primitives
  */
 
 #ifndef __RT_THREAD_H__
@@ -43,7 +44,7 @@ extern "C" {
 #endif
 
 #ifdef __GNUC__
-int entry(void); 
+int entry(void);
 #endif
 
 /**
@@ -173,7 +174,6 @@ rt_err_t rt_thread_resume(rt_thread_t thread);
 rt_err_t rt_thread_wakeup(rt_thread_t thread);
 void rt_thread_wakeup_set(struct rt_thread *thread, rt_wakeup_func_t func, void* user_data);
 #endif /* RT_USING_SMART */
-void rt_thread_timeout(void *parameter);
 rt_err_t rt_thread_get_name(rt_thread_t thread, char *name, rt_uint8_t name_size);
 #ifdef RT_USING_SIGNALS
 void rt_thread_alloc_sig(rt_thread_t tid);
@@ -212,11 +212,10 @@ void rt_system_scheduler_start(void);
 
 void rt_schedule(void);
 void rt_scheduler_do_irq_switch(void *context);
-void rt_schedule_insert_thread(struct rt_thread *thread);
-void rt_schedule_remove_thread(struct rt_thread *thread);
 
-void rt_enter_critical(void);
+rt_base_t rt_enter_critical(void);
 void rt_exit_critical(void);
+void rt_exit_critical_safe(rt_base_t critical_level);
 rt_uint16_t rt_critical_level(void);
 
 #ifdef RT_USING_HOOK
@@ -367,6 +366,26 @@ void rt_slab_free(rt_slab_t m, void *ptr);
  * @addtogroup IPC
  * @{
  */
+
+/**
+ * Suspend list - A basic building block for IPC primitives which interacts with
+ *                scheduler directly. Its API is similar to a FIFO list.
+ *
+ * Note: don't use in application codes directly
+ */
+void rt_susp_list_print(rt_list_t *list);
+/* reserve thread error while resuming it */
+#define RT_THREAD_RESUME_RES_THR_ERR (-1)
+struct rt_thread *rt_susp_list_dequeue(rt_list_t *susp_list, rt_err_t thread_error);
+rt_err_t rt_susp_list_resume_all(rt_list_t *susp_list, rt_err_t thread_error);
+rt_err_t rt_susp_list_resume_all_irq(rt_list_t *susp_list,
+                                     rt_err_t thread_error,
+                                     struct rt_spinlock *lock);
+
+/* suspend and enqueue */
+rt_err_t rt_thread_suspend_to_list(rt_thread_t thread, rt_list_t *susp_list, int ipc_flags, int suspend_flag);
+/* only for a suspended thread, and caller must hold the scheduler lock */
+rt_err_t rt_susp_list_enqueue(rt_list_t *susp_list, rt_thread_t thread, int ipc_flags);
 
 #ifdef RT_USING_SEMAPHORE
 /*
@@ -725,11 +744,11 @@ int rt_snprintf(char *buf, rt_size_t size, const char *format, ...);
 #if defined(RT_USING_DEVICE) && defined(RT_USING_CONSOLE)
 rt_device_t rt_console_set_device(const char *name);
 rt_device_t rt_console_get_device(void);
-#ifdef RT_USING_THREDSAFE_PRINTF
+#ifdef RT_USING_THREADSAFE_PRINTF
     rt_thread_t rt_console_current_user(void);
 #else
     rt_inline void *rt_console_current_user(void) { return RT_NULL; }
-#endif /* RT_USING_THREDSAFE_PRINTF */
+#endif /* RT_USING_THREADSAFE_PRINTF */
 #endif /* defined(RT_USING_DEVICE) && defined(RT_USING_CONSOLE) */
 
 rt_err_t rt_get_errno(void);

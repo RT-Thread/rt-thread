@@ -141,7 +141,6 @@ RTM_EXPORT(rt_mp_init);
  */
 rt_err_t rt_mp_detach(struct rt_mempool *mp)
 {
-    struct rt_thread *thread;
     rt_base_t level;
 
     /* parameter check */
@@ -151,21 +150,7 @@ rt_err_t rt_mp_detach(struct rt_mempool *mp)
 
     level = rt_spin_lock_irqsave(&(mp->spinlock));
     /* wake up all suspended threads */
-    while (!rt_list_isempty(&(mp->suspend_thread)))
-    {
-
-        /* get next suspend thread */
-        thread = rt_list_entry(mp->suspend_thread.next, struct rt_thread, tlist);
-        /* set error code to -RT_ERROR */
-        thread->error = -RT_ERROR;
-
-        /*
-         * resume thread
-         * In rt_thread_resume function, it will remove current thread from
-         * suspend list
-         */
-        rt_thread_resume(thread);
-    }
+    rt_susp_list_resume_all(&mp->suspend_thread, RT_ERROR);
 
     /* detach object */
     rt_object_detach(&(mp->parent));
@@ -257,7 +242,6 @@ RTM_EXPORT(rt_mp_create);
  */
 rt_err_t rt_mp_delete(rt_mp_t mp)
 {
-    struct rt_thread *thread;
     rt_base_t level;
 
     RT_DEBUG_NOT_IN_INTERRUPT;
@@ -269,20 +253,7 @@ rt_err_t rt_mp_delete(rt_mp_t mp)
 
     level = rt_spin_lock_irqsave(&(mp->spinlock));
     /* wake up all suspended threads */
-    while (!rt_list_isempty(&(mp->suspend_thread)))
-    {
-        /* get next suspend thread */
-        thread = rt_list_entry(mp->suspend_thread.next, struct rt_thread, tlist);
-        /* set error code to -RT_ERROR */
-        thread->error = -RT_ERROR;
-
-        /*
-         * resume thread
-         * In rt_thread_resume function, it will remove current thread from
-         * suspend list
-         */
-        rt_thread_resume(thread);
-    }
+    rt_susp_list_resume_all(&mp->suspend_thread, RT_ERROR);
 
     rt_spin_unlock_irqrestore(&(mp->spinlock), level);
 
@@ -339,8 +310,7 @@ void *rt_mp_alloc(rt_mp_t mp, rt_int32_t time)
         thread->error = RT_EOK;
 
         /* need suspend thread */
-        rt_thread_suspend(thread);
-        rt_list_insert_after(&(mp->suspend_thread), &(thread->tlist));
+        rt_thread_suspend_to_list(thread, &mp->suspend_thread, RT_IPC_FLAG_FIFO, RT_UNINTERRUPTIBLE);
 
         if (time > 0)
         {
@@ -403,7 +373,6 @@ void rt_mp_free(void *block)
 {
     rt_uint8_t **block_ptr;
     struct rt_mempool *mp;
-    struct rt_thread *thread;
     rt_base_t level;
 
     /* parameter check */
@@ -424,19 +393,8 @@ void rt_mp_free(void *block)
     *block_ptr = mp->block_list;
     mp->block_list = (rt_uint8_t *)block_ptr;
 
-    if (!rt_list_isempty(&(mp->suspend_thread)))
+    if (rt_susp_list_dequeue(&mp->suspend_thread, RT_EOK))
     {
-        /* get the suspended thread */
-        thread = rt_list_entry(mp->suspend_thread.next,
-                               struct rt_thread,
-                               tlist);
-
-        /* set error */
-        thread->error = RT_EOK;
-
-        /* resume thread */
-        rt_thread_resume(thread);
-
         rt_spin_unlock_irqrestore(&(mp->spinlock), level);
 
         /* do a schedule */

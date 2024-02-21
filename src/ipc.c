@@ -89,132 +89,60 @@ rt_inline rt_err_t _ipc_object_init(struct rt_ipc_object *ipc)
 
 
 /**
- * @brief    This function will suspend a thread to a IPC object list.
+ * @brief   Dequeue a thread from suspended list and set it to ready. The 2 are
+ *          taken as an atomic operation, so if a thread is returned, it's
+ *          resumed by us, not any other threads or async events. This is useful
+ *          if a consumer may be resumed by timeout, signals... besides its
+ *          producer.
  *
- * @param    list is a pointer to a suspended thread list of the IPC object.
+ * @param   susp_list the list thread dequeued from. RT_NULL if no list.
+ * @param   thread_error thread error number of the resuming thread.
+ *          A negative value in this set will be discarded, and thread error
+ *          will not be changed.
  *
- * @param    thread is a pointer to the thread object to be suspended.
- *
- * @param    flag is a flag for the thread object to be suspended. It determines how the thread is suspended.
- *           The flag can be ONE of the following values:
- *
- *               RT_IPC_FLAG_PRIO          The pending threads will queue in order of priority.
- *
- *               RT_IPC_FLAG_FIFO          The pending threads will queue in the first-in-first-out method
- *                                         (also known as first-come-first-served (FCFS) scheduling strategy).
- *
- *               NOTE: RT_IPC_FLAG_FIFO is a non-real-time scheduling mode. It is strongly recommended to use
- *               RT_IPC_FLAG_PRIO to ensure the thread is real-time UNLESS your applications concern about
- *               the first-in-first-out principle, and you clearly understand that all threads involved in
- *               this semaphore will become non-real-time threads.
- *
- * @param    suspend_flag status flag of the thread to be suspended.
- *
- * @return   Return the operation status. When the return value is RT_EOK, the function is successfully executed.
- *           When the return value is any other values, it means the initialization failed.
- *
- * @warning  This function can ONLY be called in the thread context, you can use RT_DEBUG_IN_THREAD_CONTEXT to
- *           check the context.
- *           In addition, this function is generally called by the following functions:
- *           rt_sem_take(),  rt_mutex_take(),  rt_event_recv(),   rt_mb_send_wait(),
- *           rt_mb_recv(),   rt_mq_recv(),     rt_mq_send_wait()
+ * @return  struct rt_thread * RT_NULL if failed, otherwise the thread resumed
  */
-rt_inline rt_err_t _ipc_list_suspend(rt_list_t        *list,
-                                       struct rt_thread *thread,
-                                       rt_uint8_t        flag,
-                                       int suspend_flag)
+struct rt_thread *rt_susp_list_dequeue(rt_list_t *susp_list, rt_err_t thread_error)
 {
-    rt_base_t level_local;
-    level_local = rt_hw_local_irq_disable();
-    if ((thread->stat & RT_THREAD_SUSPEND_MASK) != RT_THREAD_SUSPEND_MASK)
-    {
-        rt_err_t ret = rt_thread_suspend_with_flag(thread, suspend_flag);
+    rt_sched_lock_level_t slvl;
+    rt_thread_t thread;
+    rt_err_t error;
 
-        /* suspend thread */
-        if (ret != RT_EOK)
+    RT_SCHED_DEBUG_IS_UNLOCKED;
+    RT_ASSERT(susp_list != RT_NULL);
+
+    rt_sched_lock(&slvl);
+    if (!rt_list_isempty(susp_list))
+    {
+        thread = RT_THREAD_LIST_NODE_ENTRY(susp_list->next);
+        error = rt_sched_thread_ready(thread);
+
+        if (error)
         {
-            rt_hw_local_irq_enable(level_local);
-            return ret;
+            LOG_D("%s [error:%d] failed to resume thread:%p from suspended list",
+                  __func__, error, thread);
+
+            thread = RT_NULL;
         }
-    }
-
-    switch (flag)
-    {
-    case RT_IPC_FLAG_FIFO:
-        rt_list_insert_before(list, &(thread->tlist));
-        break; /* RT_IPC_FLAG_FIFO */
-
-    case RT_IPC_FLAG_PRIO:
+        else
         {
-            struct rt_list_node *n;
-            struct rt_thread *sthread;
-
-            /* find a suitable position */
-            for (n = list->next; n != list; n = n->next)
+            /* thread error should not be a negative value */
+            if (thread_error >= 0)
             {
-                sthread = rt_list_entry(n, struct rt_thread, tlist);
-
-                /* find out */
-                if (thread->current_priority < sthread->current_priority)
-                {
-                    /* insert this thread before the sthread */
-                    rt_list_insert_before(&(sthread->tlist), &(thread->tlist));
-                    break;
-                }
+                /* set thread error code to notified resuming thread */
+                thread->error = thread_error;
             }
-
-            /*
-             * not found a suitable position,
-             * append to the end of suspend_thread list
-             */
-            if (n == list)
-                rt_list_insert_before(list, &(thread->tlist));
         }
-        break;/* RT_IPC_FLAG_PRIO */
-
-    default:
-        RT_ASSERT(0);
-        break;
     }
-    rt_hw_local_irq_enable(level_local);
-    return RT_EOK;
-}
-
-
-/**
- * @brief    This function will resume a thread.
- *
- * @note     This function will resume the first thread in the list of a IPC object.
- *           1. remove the thread from suspend queue of a IPC object.
- *           2. put the thread into system ready queue.
- *
- *           By contrast, the rt_ipc_list_resume_all() function will resume all suspended threads
- *           in the list of a IPC object.
- *
- * @param    list is a pointer to a suspended thread list of the IPC object.
- *
- * @return   Return the operation status. When the return value is RT_EOK, the function is successfully executed.
- *           When the return value is any other values, it means this operation failed.
- *
- * @warning  This function is generally called by the following functions:
- *           rt_sem_release(),    rt_mutex_release(),    rt_mb_send_wait(),    rt_mq_send_wait(),
- *           rt_mb_urgent(),      rt_mb_recv(),          rt_mq_urgent(),       rt_mq_recv(),
- */
-rt_inline rt_err_t _ipc_list_resume(rt_list_t *list)
-{
-    struct rt_thread *thread;
-
-    /* get thread entry */
-    thread = rt_list_entry(list->next, struct rt_thread, tlist);
-
-    thread->error = RT_EOK;
+    else
+    {
+        thread = RT_NULL;
+    }
+    rt_sched_unlock(slvl);
 
     LOG_D("resume thread:%s\n", thread->parent.name);
 
-    /* resume it */
-    rt_thread_resume(thread);
-
-    return RT_EOK;
+    return thread;
 }
 
 
@@ -225,35 +153,160 @@ rt_inline rt_err_t _ipc_list_resume(rt_list_t *list)
  * @note    This function will resume all threads in the IPC object list.
  *          By contrast, the rt_ipc_list_resume() function will resume a suspended thread in the list of a IPC object.
  *
- * @param   list is a pointer to a suspended thread list of the IPC object.
+ * @param   susp_list is a pointer to a suspended thread list of the IPC object.
+ * @param   thread_error thread error number of the resuming thread.
+ *          A negative value in this set will be discarded, and thread error
+ *          will not be changed.
  *
- * @return   Return the operation status. When the return value is RT_EOK, the function is successfully executed.
- *           When the return value is any other values, it means this operation failed.
+ * @return  Return the operation status. When the return value is RT_EOK, the function is successfully executed.
+ *          When the return value is any other values, it means this operation failed.
  *
  */
-rt_inline rt_err_t _ipc_list_resume_all(rt_list_t *list)
+rt_err_t rt_susp_list_resume_all(rt_list_t *susp_list, rt_err_t thread_error)
 {
     struct rt_thread *thread;
 
+    RT_SCHED_DEBUG_IS_UNLOCKED;
+
     /* wakeup all suspended threads */
-    while (!rt_list_isempty(list))
+    thread = rt_susp_list_dequeue(susp_list, thread_error);
+    while (thread)
     {
-
-        /* get next suspended thread */
-        thread = rt_list_entry(list->next, struct rt_thread, tlist);
-        /* set error code to RT_ERROR */
-        thread->error = -RT_ERROR;
-
         /*
-         * resume thread
+         * resume NEXT thread
          * In rt_thread_resume function, it will remove current thread from
          * suspended list
          */
-        rt_thread_resume(thread);
+        thread = rt_susp_list_dequeue(susp_list, thread_error);
     }
 
     return RT_EOK;
 }
+
+/**
+ * @brief   This function will resume all suspended threads in the IPC object list,
+ *          including the suspended list of IPC object, and private list of mailbox etc.
+ *          A lock is passing and hold while operating.
+ *
+ * @note    This function will resume all threads in the IPC object list.
+ *          By contrast, the rt_ipc_list_resume() function will resume a suspended thread in the list of a IPC object.
+ *
+ * @param   susp_list is a pointer to a suspended thread list of the IPC object.
+ * @param   thread_error thread error number of the resuming thread.
+ *          A negative value in this set will be discarded, and thread error
+ *          will not be changed.
+ * @param   lock the lock to be held while operating susp_list
+ *
+ * @return  Return the operation status. When the return value is RT_EOK, the function is successfully executed.
+ *          When the return value is any other values, it means this operation failed.
+ *
+ */
+rt_err_t rt_susp_list_resume_all_irq(rt_list_t *susp_list,
+                                     rt_err_t thread_error,
+                                     struct rt_spinlock *lock)
+{
+    struct rt_thread *thread;
+    rt_base_t level;
+
+    RT_SCHED_DEBUG_IS_UNLOCKED;
+
+    do
+    {
+        level = rt_spin_lock_irqsave(lock);
+
+        /*
+         * resume NEXT thread
+         * In rt_thread_resume function, it will remove current thread from
+         * suspended list
+         */
+        thread = rt_susp_list_dequeue(susp_list, thread_error);
+
+        rt_spin_unlock_irqrestore(lock, level);
+    }
+    while (thread);
+
+    return RT_EOK;
+}
+
+/**
+ * @brief   Add a thread to the suspend list
+ *
+ * @note    Caller must hold the scheduler lock
+ *
+ * @param   susp_list the list thread enqueued to
+ * @param   thread the suspended thread
+ * @param   ipc_flags the pattern of suspend list
+ * @return  RT_EOK on succeed, otherwise a failure
+ */
+rt_err_t rt_susp_list_enqueue(rt_list_t *susp_list, rt_thread_t thread, int ipc_flags)
+{
+    RT_SCHED_DEBUG_IS_LOCKED;
+
+    switch (ipc_flags)
+    {
+    case RT_IPC_FLAG_FIFO:
+        rt_list_insert_before(susp_list, &RT_THREAD_LIST_NODE(thread));
+        break; /* RT_IPC_FLAG_FIFO */
+
+    case RT_IPC_FLAG_PRIO:
+        {
+            struct rt_list_node *n;
+            struct rt_thread *sthread;
+
+            /* find a suitable position */
+            for (n = susp_list->next; n != susp_list; n = n->next)
+            {
+                sthread = RT_THREAD_LIST_NODE_ENTRY(n);
+
+                /* find out */
+                if (rt_sched_thread_get_curr_prio(thread) < rt_sched_thread_get_curr_prio(sthread))
+                {
+                    /* insert this thread before the sthread */
+                    rt_list_insert_before(&RT_THREAD_LIST_NODE(sthread), &RT_THREAD_LIST_NODE(thread));
+                    break;
+                }
+            }
+
+            /*
+             * not found a suitable position,
+             * append to the end of suspend_thread list
+             */
+            if (n == susp_list)
+                rt_list_insert_before(susp_list, &RT_THREAD_LIST_NODE(thread));
+        }
+        break;/* RT_IPC_FLAG_PRIO */
+
+    default:
+        RT_ASSERT(0);
+        break;
+    }
+
+    return RT_EOK;
+}
+
+/**
+ * @brief   Print thread on suspend list to system console
+ */
+void rt_susp_list_print(rt_list_t *list)
+{
+    rt_sched_lock_level_t slvl;
+    struct rt_thread *thread;
+    struct rt_list_node *node;
+
+    rt_sched_lock(&slvl);
+
+    for (node = list->next; node != list; node = node->next)
+    {
+        thread = RT_THREAD_LIST_NODE_ENTRY(node);
+        rt_kprintf("%.*s", RT_NAME_MAX, thread->parent.name);
+
+        if (node->next != list)
+            rt_kprintf("/");
+    }
+
+    rt_sched_unlock(slvl);
+}
+
 
 #ifdef RT_USING_SEMAPHORE
 /**
@@ -364,7 +417,7 @@ rt_err_t rt_sem_detach(rt_sem_t sem)
 
     level = rt_spin_lock_irqsave(&(sem->spinlock));
     /* wakeup all suspended threads */
-    _ipc_list_resume_all(&(sem->parent.suspend_thread));
+    rt_susp_list_resume_all(&(sem->parent.suspend_thread), RT_ERROR);
     rt_spin_unlock_irqrestore(&(sem->spinlock), level);
 
     /* detach semaphore object */
@@ -459,7 +512,7 @@ rt_err_t rt_sem_delete(rt_sem_t sem)
 
     level = rt_spin_lock_irqsave(&(sem->spinlock));
     /* wakeup all suspended threads */
-    _ipc_list_resume_all(&(sem->parent.suspend_thread));
+    rt_susp_list_resume_all(&(sem->parent.suspend_thread), RT_ERROR);
     rt_spin_unlock_irqrestore(&(sem->spinlock), level);
 
     /* delete semaphore object */
@@ -511,7 +564,7 @@ static rt_err_t _rt_sem_take(rt_sem_t sem, rt_int32_t timeout, int suspend_flag)
     RT_OBJECT_HOOK_CALL(rt_object_trytake_hook, (&(sem->parent.parent)));
 
     /* current context checking */
-    RT_DEBUG_SCHEDULER_AVAILABLE(sem->value == 0 && timeout != 0);
+    RT_DEBUG_SCHEDULER_AVAILABLE(1);
 
     level = rt_spin_lock_irqsave(&(sem->spinlock));
 
@@ -546,10 +599,8 @@ static rt_err_t _rt_sem_take(rt_sem_t sem, rt_int32_t timeout, int suspend_flag)
             LOG_D("sem take: suspend thread - %s", thread->parent.name);
 
             /* suspend thread */
-            ret = _ipc_list_suspend(&(sem->parent.suspend_thread),
-                                thread,
-                                sem->parent.parent.flag,
-                                suspend_flag);
+            ret = rt_thread_suspend_to_list(thread, &(sem->parent.suspend_thread),
+                                            sem->parent.parent.flag, suspend_flag);
             if (ret != RT_EOK)
             {
                 rt_spin_unlock_irqrestore(&(sem->spinlock), level);
@@ -660,7 +711,7 @@ rt_err_t rt_sem_release(rt_sem_t sem)
     if (!rt_list_isempty(&sem->parent.suspend_thread))
     {
         /* resume the suspended thread */
-        _ipc_list_resume(&(sem->parent.suspend_thread));
+        rt_susp_list_dequeue(&(sem->parent.suspend_thread), RT_EOK);
         need_schedule = RT_TRUE;
     }
     else
@@ -718,7 +769,7 @@ rt_err_t rt_sem_control(rt_sem_t sem, int cmd, void *arg)
         level = rt_spin_lock_irqsave(&(sem->spinlock));
 
         /* resume all waiting thread */
-        _ipc_list_resume_all(&sem->parent.suspend_thread);
+        rt_susp_list_resume_all(&sem->parent.suspend_thread, RT_ERROR);
 
         /* set new value */
         sem->value = (rt_uint16_t)value;
@@ -744,7 +795,7 @@ rt_err_t rt_sem_control(rt_sem_t sem, int cmd, void *arg)
             if (!rt_list_isempty(&sem->parent.suspend_thread))
             {
                 /* resume all waiting thread */
-                _ipc_list_resume_all(&sem->parent.suspend_thread);
+                rt_susp_list_resume_all(&sem->parent.suspend_thread, RT_ERROR);
                 need_schedule = RT_TRUE;
             }
         }
@@ -775,8 +826,8 @@ rt_inline rt_uint8_t _mutex_update_priority(struct rt_mutex *mutex)
 
     if (!rt_list_isempty(&mutex->parent.suspend_thread))
     {
-        thread = rt_list_entry(mutex->parent.suspend_thread.next, struct rt_thread, tlist);
-        mutex->priority = thread->current_priority;
+        thread = RT_THREAD_LIST_NODE_ENTRY(mutex->parent.suspend_thread.next);
+        mutex->priority = rt_sched_thread_get_curr_prio(thread);
     }
     else
     {
@@ -791,7 +842,7 @@ rt_inline rt_uint8_t _thread_get_mutex_priority(struct rt_thread* thread)
 {
     rt_list_t *node = RT_NULL;
     struct rt_mutex *mutex = RT_NULL;
-    rt_uint8_t priority = thread->init_priority;
+    rt_uint8_t priority = rt_sched_thread_get_init_prio(thread);
 
     rt_list_for_each(node, &(thread->taken_object_list))
     {
@@ -818,9 +869,9 @@ rt_inline void _thread_update_priority(struct rt_thread *thread, rt_uint8_t prio
     LOG_D("thread:%s priority -> %d", thread->parent.name, priority);
 
     /* change priority of the thread */
-    ret = rt_thread_control(thread, RT_THREAD_CTRL_CHANGE_PRIORITY, &priority);
+    ret = rt_sched_thread_change_priority(thread, priority);
 
-    while ((ret == RT_EOK) && ((thread->stat & RT_THREAD_SUSPEND_MASK) == RT_THREAD_SUSPEND_MASK))
+    while ((ret == RT_EOK) && rt_sched_thread_is_suspended(thread))
     {
         /* whether change the priority of taken mutex */
         pending_obj = thread->pending_object;
@@ -830,13 +881,12 @@ rt_inline void _thread_update_priority(struct rt_thread *thread, rt_uint8_t prio
             rt_uint8_t mutex_priority = 0xff;
             struct rt_mutex* pending_mutex = (struct rt_mutex *)pending_obj;
 
-            /* re-insert thread to suspended thread list */
-            rt_list_remove(&(thread->tlist));
+            /* re-insert thread to suspended thread list to resort priority list */
+            rt_list_remove(&RT_THREAD_LIST_NODE(thread));
 
-            ret = _ipc_list_suspend(&(pending_mutex->parent.suspend_thread),
-                                    thread,
-                                    pending_mutex->parent.parent.flag,
-                                    suspend_flag);
+            ret = rt_susp_list_enqueue(
+                &(pending_mutex->parent.suspend_thread), thread,
+                pending_mutex->parent.parent.flag);
             if (ret == RT_EOK)
             {
                 /* update priority */
@@ -846,11 +896,11 @@ rt_inline void _thread_update_priority(struct rt_thread *thread, rt_uint8_t prio
                         pending_mutex->priority);
 
                 mutex_priority = _thread_get_mutex_priority(pending_mutex->owner);
-                if (mutex_priority != pending_mutex->owner->current_priority)
+                if (mutex_priority != rt_sched_thread_get_curr_prio(pending_mutex->owner))
                 {
                     thread = pending_mutex->owner;
 
-                    ret = rt_thread_control(thread, RT_THREAD_CTRL_CHANGE_PRIORITY, &mutex_priority);
+                    ret = rt_sched_thread_change_priority(thread, mutex_priority);
                 }
                 else
                 {
@@ -864,6 +914,61 @@ rt_inline void _thread_update_priority(struct rt_thread *thread, rt_uint8_t prio
         }
     }
 }
+
+static rt_bool_t _check_and_update_prio(rt_thread_t thread, rt_mutex_t mutex)
+{
+    RT_SCHED_DEBUG_IS_LOCKED;
+    rt_bool_t do_sched = RT_FALSE;
+
+    if ((mutex->ceiling_priority != 0xFF) || (rt_sched_thread_get_curr_prio(thread) == mutex->priority))
+    {
+        rt_uint8_t priority = 0xff;
+
+        /* get the highest priority in the taken list of thread */
+        priority = _thread_get_mutex_priority(thread);
+
+        rt_sched_thread_change_priority(thread, priority);
+
+        /**
+         * notify a pending reschedule. Since scheduler is locked, we will not
+         * really do a re-schedule at this point
+         */
+        do_sched = RT_TRUE;
+    }
+    return do_sched;
+}
+
+static void _mutex_before_delete_detach(rt_mutex_t mutex)
+{
+    rt_sched_lock_level_t slvl;
+    rt_bool_t need_schedule;
+
+    rt_spin_lock(&(mutex->spinlock));
+    /* wakeup all suspended threads */
+    rt_susp_list_resume_all(&(mutex->parent.suspend_thread), RT_ERROR);
+    /* remove mutex from thread's taken list */
+    rt_list_remove(&mutex->taken_list);
+
+    /* whether change the thread priority */
+    if (mutex->owner)
+    {
+        rt_sched_lock(&slvl);
+        need_schedule = _check_and_update_prio(mutex->owner, mutex);
+
+        if (need_schedule)
+        {
+            rt_sched_unlock_n_resched(slvl);
+        }
+        else
+        {
+            rt_sched_unlock(slvl);
+        }
+    }
+
+    /* unlock and do necessary reschedule if required */
+    rt_spin_unlock(&(mutex->spinlock));
+}
+
 /**
  * @addtogroup mutex
  * @{
@@ -942,19 +1047,12 @@ RTM_EXPORT(rt_mutex_init);
  */
 rt_err_t rt_mutex_detach(rt_mutex_t mutex)
 {
-    rt_ubase_t level;
-
     /* parameter check */
     RT_ASSERT(mutex != RT_NULL);
     RT_ASSERT(rt_object_get_type(&mutex->parent.parent) == RT_Object_Class_Mutex);
     RT_ASSERT(rt_object_is_systemobject(&mutex->parent.parent));
 
-    level = rt_spin_lock_irqsave(&(mutex->spinlock));
-    /* wakeup all suspended threads */
-    _ipc_list_resume_all(&(mutex->parent.suspend_thread));
-    /* remove mutex from thread's taken list */
-    rt_list_remove(&mutex->taken_list);
-    rt_spin_unlock_irqrestore(&(mutex->spinlock), level);
+    _mutex_before_delete_detach(mutex);
 
     /* detach mutex object */
     rt_object_detach(&(mutex->parent.parent));
@@ -975,14 +1073,21 @@ void rt_mutex_drop_thread(rt_mutex_t mutex, rt_thread_t thread)
 {
     rt_uint8_t priority;
     rt_bool_t need_update = RT_FALSE;
-    rt_ubase_t level;
+    rt_sched_lock_level_t slvl;
 
     /* parameter check */
+    RT_DEBUG_IN_THREAD_CONTEXT;
     RT_ASSERT(mutex != RT_NULL);
     RT_ASSERT(thread != RT_NULL);
 
-    level = rt_spin_lock_irqsave(&(mutex->spinlock));
-    rt_list_remove(&(thread->tlist));
+    rt_spin_lock(&(mutex->spinlock));
+
+    RT_ASSERT(thread->pending_object == &mutex->parent.parent);
+
+    rt_sched_lock(&slvl);
+
+    /* detach from suspended list */
+    rt_list_remove(&RT_THREAD_LIST_NODE(thread));
 
     /**
      * Should change the priority of mutex owner thread
@@ -991,8 +1096,11 @@ void rt_mutex_drop_thread(rt_mutex_t mutex, rt_thread_t thread)
      *       means mutex->owner can be NULL at this point. If that happened,
      *       it had already reset its priority. So it's okay to skip
      */
-    if (mutex->owner && mutex->owner->current_priority == thread->current_priority)
+    if (mutex->owner && rt_sched_thread_get_curr_prio(mutex->owner) ==
+                            rt_sched_thread_get_curr_prio(thread))
+    {
         need_update = RT_TRUE;
+    }
 
     /* update the priority of mutex */
     if (!rt_list_isempty(&mutex->parent.suspend_thread))
@@ -1000,11 +1108,9 @@ void rt_mutex_drop_thread(rt_mutex_t mutex, rt_thread_t thread)
         /* more thread suspended in the list */
         struct rt_thread *th;
 
-        th = rt_list_entry(mutex->parent.suspend_thread.next,
-                                struct rt_thread,
-                                tlist);
+        th = RT_THREAD_LIST_NODE_ENTRY(mutex->parent.suspend_thread.next);
         /* update the priority of mutex */
-        mutex->priority = th->current_priority;
+        mutex->priority = rt_sched_thread_get_curr_prio(th);
     }
     else
     {
@@ -1017,12 +1123,14 @@ void rt_mutex_drop_thread(rt_mutex_t mutex, rt_thread_t thread)
     {
         /* get the maximal priority of mutex in thread */
         priority = _thread_get_mutex_priority(mutex->owner);
-        if (priority != mutex->owner->current_priority)
+        if (priority != rt_sched_thread_get_curr_prio(mutex->owner))
         {
             _thread_update_priority(mutex->owner, priority, RT_UNINTERRUPTIBLE);
         }
     }
-    rt_spin_unlock_irqrestore(&(mutex->spinlock), level);
+
+    rt_sched_unlock(slvl);
+    rt_spin_unlock(&(mutex->spinlock));
 }
 
 
@@ -1037,20 +1145,28 @@ void rt_mutex_drop_thread(rt_mutex_t mutex, rt_thread_t thread)
 rt_uint8_t rt_mutex_setprioceiling(rt_mutex_t mutex, rt_uint8_t priority)
 {
     rt_uint8_t ret_priority = 0xFF;
+    rt_uint8_t highest_prio;
+    rt_sched_lock_level_t slvl;
+
+    RT_DEBUG_IN_THREAD_CONTEXT;
 
     if ((mutex) && (priority < RT_THREAD_PRIORITY_MAX))
     {
         /* critical section here if multiple updates to one mutex happen */
-        rt_ubase_t level = rt_spin_lock_irqsave(&(mutex->spinlock));
+        rt_spin_lock(&(mutex->spinlock));
         ret_priority = mutex->ceiling_priority;
         mutex->ceiling_priority = priority;
         if (mutex->owner)
         {
-            rt_uint8_t priority = _thread_get_mutex_priority(mutex->owner);
-            if (priority != mutex->owner->current_priority)
-                _thread_update_priority(mutex->owner, priority, RT_UNINTERRUPTIBLE);
+            rt_sched_lock(&slvl);
+            highest_prio = _thread_get_mutex_priority(mutex->owner);
+            if (highest_prio != rt_sched_thread_get_curr_prio(mutex->owner))
+            {
+                _thread_update_priority(mutex->owner, highest_prio, RT_UNINTERRUPTIBLE);
+            }
+            rt_sched_unlock(slvl);
         }
-        rt_spin_unlock_irqrestore(&(mutex->spinlock), level);
+        rt_spin_unlock(&(mutex->spinlock));
     }
     else
     {
@@ -1072,16 +1188,16 @@ RTM_EXPORT(rt_mutex_setprioceiling);
 rt_uint8_t rt_mutex_getprioceiling(rt_mutex_t mutex)
 {
     rt_uint8_t prio = 0xFF;
-    rt_ubase_t level;
 
     /* parameter check */
+    RT_DEBUG_IN_THREAD_CONTEXT;
     RT_ASSERT(mutex != RT_NULL);
 
     if (mutex)
     {
-        level = rt_spin_lock_irqsave(&(mutex->spinlock));
+        rt_spin_lock(&(mutex->spinlock));
         prio = mutex->ceiling_priority;
-        rt_spin_unlock_irqrestore(&(mutex->spinlock), level);
+        rt_spin_unlock(&(mutex->spinlock));
     }
 
     return prio;
@@ -1160,8 +1276,6 @@ RTM_EXPORT(rt_mutex_create);
  */
 rt_err_t rt_mutex_delete(rt_mutex_t mutex)
 {
-    rt_ubase_t level;
-
     /* parameter check */
     RT_ASSERT(mutex != RT_NULL);
     RT_ASSERT(rt_object_get_type(&mutex->parent.parent) == RT_Object_Class_Mutex);
@@ -1169,12 +1283,7 @@ rt_err_t rt_mutex_delete(rt_mutex_t mutex)
 
     RT_DEBUG_NOT_IN_INTERRUPT;
 
-    level = rt_spin_lock_irqsave(&(mutex->spinlock));
-    /* wakeup all suspended threads */
-    _ipc_list_resume_all(&(mutex->parent.suspend_thread));
-    /* remove mutex from thread's taken list */
-    rt_list_remove(&mutex->taken_list);
-    rt_spin_unlock_irqrestore(&(mutex->spinlock), level);
+    _mutex_before_delete_detach(mutex);
 
     /* delete mutex object */
     rt_object_delete(&(mutex->parent.parent));
@@ -1210,7 +1319,6 @@ RTM_EXPORT(rt_mutex_delete);
  */
 static rt_err_t _rt_mutex_take(rt_mutex_t mutex, rt_int32_t timeout, int suspend_flag)
 {
-    rt_base_t level;
     struct rt_thread *thread;
     rt_err_t ret;
 
@@ -1225,7 +1333,7 @@ static rt_err_t _rt_mutex_take(rt_mutex_t mutex, rt_int32_t timeout, int suspend
     /* get current thread */
     thread = rt_thread_self();
 
-    level = rt_spin_lock_irqsave(&(mutex->spinlock));
+    rt_spin_lock(&(mutex->spinlock));
 
     RT_OBJECT_HOOK_CALL(rt_object_trytake_hook, (&(mutex->parent.parent)));
 
@@ -1244,7 +1352,7 @@ static rt_err_t _rt_mutex_take(rt_mutex_t mutex, rt_int32_t timeout, int suspend
         }
         else
         {
-            rt_spin_unlock_irqrestore(&(mutex->spinlock), level);
+            rt_spin_unlock(&(mutex->spinlock));
             return -RT_EFULL; /* value overflowed */
         }
     }
@@ -1261,7 +1369,7 @@ static rt_err_t _rt_mutex_take(rt_mutex_t mutex, rt_int32_t timeout, int suspend
             if (mutex->ceiling_priority != 0xFF)
             {
                 /* set the priority of thread to the ceiling priority */
-                if (mutex->ceiling_priority < mutex->owner->current_priority)
+                if (mutex->ceiling_priority < rt_sched_thread_get_curr_prio(mutex->owner))
                     _thread_update_priority(mutex->owner, mutex->ceiling_priority, suspend_flag);
             }
 
@@ -1274,43 +1382,47 @@ static rt_err_t _rt_mutex_take(rt_mutex_t mutex, rt_int32_t timeout, int suspend
             if (timeout == 0)
             {
                 /* set error as timeout */
-                thread->error = -RT_ETIMEOUT;
+                thread->error = RT_ETIMEOUT;
 
-                rt_spin_unlock_irqrestore(&(mutex->spinlock), level);
-
+                rt_spin_unlock(&(mutex->spinlock));
                 return -RT_ETIMEOUT;
             }
             else
             {
-                rt_uint8_t priority = thread->current_priority;
+                rt_sched_lock_level_t slvl;
+                rt_uint8_t priority;
 
                 /* mutex is unavailable, push to suspend list */
                 LOG_D("mutex_take: suspend thread: %s",
                       thread->parent.name);
 
                 /* suspend current thread */
-                ret = _ipc_list_suspend(&(mutex->parent.suspend_thread),
-                                    thread,
-                                    mutex->parent.parent.flag,
-                                    suspend_flag);
+                ret = rt_thread_suspend_to_list(thread, &(mutex->parent.suspend_thread),
+                                                mutex->parent.parent.flag, suspend_flag);
                 if (ret != RT_EOK)
                 {
-                    rt_spin_unlock_irqrestore(&(mutex->spinlock), level);
+                    rt_spin_unlock(&(mutex->spinlock));
                     return ret;
                 }
 
                 /* set pending object in thread to this mutex */
                 thread->pending_object = &(mutex->parent.parent);
 
+                rt_sched_lock(&slvl);
+
+                priority = rt_sched_thread_get_curr_prio(thread);
+
                 /* update the priority level of mutex */
                 if (priority < mutex->priority)
                 {
                     mutex->priority = priority;
-                    if (mutex->priority < mutex->owner->current_priority)
+                    if (mutex->priority < rt_sched_thread_get_curr_prio(mutex->owner))
                     {
                         _thread_update_priority(mutex->owner, priority, RT_UNINTERRUPTIBLE); /* TODO */
                     }
                 }
+
+                rt_sched_unlock(slvl);
 
                 /* has waiting time, start thread timer */
                 if (timeout > 0)
@@ -1325,12 +1437,12 @@ static rt_err_t _rt_mutex_take(rt_mutex_t mutex, rt_int32_t timeout, int suspend
                     rt_timer_start(&(thread->thread_timer));
                 }
 
-                rt_spin_unlock_irqrestore(&(mutex->spinlock), level);
+                rt_spin_unlock(&(mutex->spinlock));
 
                 /* do schedule */
                 rt_schedule();
 
-                level = rt_spin_lock_irqsave(&(mutex->spinlock));
+                rt_spin_lock(&(mutex->spinlock));
 
                 if (thread->error == RT_EOK)
                 {
@@ -1345,6 +1457,12 @@ static rt_err_t _rt_mutex_take(rt_mutex_t mutex, rt_int32_t timeout, int suspend
                     /* the mutex has not been taken and thread has detach from the pending list. */
 
                     rt_bool_t need_update = RT_FALSE;
+                    RT_ASSERT(mutex->owner != thread);
+
+                    /* get value first before calling to other APIs */
+                    ret = thread->error;
+
+                    rt_sched_lock(&slvl);
 
                     /**
                      * Should change the priority of mutex owner thread
@@ -1353,7 +1471,7 @@ static rt_err_t _rt_mutex_take(rt_mutex_t mutex, rt_int32_t timeout, int suspend
                      *       means mutex->owner can be NULL at this point. If that happened,
                      *       it had already reset its priority. So it's okay to skip
                      */
-                    if (mutex->owner && mutex->owner->current_priority == thread->current_priority)
+                    if (mutex->owner && rt_sched_thread_get_curr_prio(mutex->owner) == rt_sched_thread_get_curr_prio(thread))
                         need_update = RT_TRUE;
 
                     /* update the priority of mutex */
@@ -1362,11 +1480,9 @@ static rt_err_t _rt_mutex_take(rt_mutex_t mutex, rt_int32_t timeout, int suspend
                         /* more thread suspended in the list */
                         struct rt_thread *th;
 
-                        th = rt_list_entry(mutex->parent.suspend_thread.next,
-                                                struct rt_thread,
-                                                tlist);
+                        th = RT_THREAD_LIST_NODE_ENTRY(mutex->parent.suspend_thread.next);
                         /* update the priority of mutex */
-                        mutex->priority = th->current_priority;
+                        mutex->priority = rt_sched_thread_get_curr_prio(th);
                     }
                     else
                     {
@@ -1379,26 +1495,27 @@ static rt_err_t _rt_mutex_take(rt_mutex_t mutex, rt_int32_t timeout, int suspend
                     {
                         /* get the maximal priority of mutex in thread */
                         priority = _thread_get_mutex_priority(mutex->owner);
-                        if (priority != mutex->owner->current_priority)
+                        if (priority != rt_sched_thread_get_curr_prio(mutex->owner))
                         {
                             _thread_update_priority(mutex->owner, priority, RT_UNINTERRUPTIBLE);
                         }
                     }
 
-                    rt_spin_unlock_irqrestore(&(mutex->spinlock), level);
+                    rt_sched_unlock(slvl);
+
+                    rt_spin_unlock(&(mutex->spinlock));
 
                     /* clear pending object before exit */
                     thread->pending_object = RT_NULL;
 
                     /* fix thread error number to negative value and return */
-                    ret = thread->error;
                     return ret > 0 ? -ret : ret;
                 }
             }
         }
     }
 
-    rt_spin_unlock_irqrestore(&(mutex->spinlock), level);
+    rt_spin_unlock(&(mutex->spinlock));
 
     RT_OBJECT_HOOK_CALL(rt_object_take_hook, (&(mutex->parent.parent)));
 
@@ -1459,7 +1576,7 @@ RTM_EXPORT(rt_mutex_trytake);
  */
 rt_err_t rt_mutex_release(rt_mutex_t mutex)
 {
-    rt_base_t level;
+    rt_sched_lock_level_t slvl;
     struct rt_thread *thread;
     rt_bool_t need_schedule;
 
@@ -1475,7 +1592,7 @@ rt_err_t rt_mutex_release(rt_mutex_t mutex)
     /* get current thread */
     thread = rt_thread_self();
 
-    level = rt_spin_lock_irqsave(&(mutex->spinlock));
+    rt_spin_lock(&(mutex->spinlock));
 
     LOG_D("mutex_release:current thread %s, hold: %d",
           thread->parent.name, mutex->hold);
@@ -1486,7 +1603,7 @@ rt_err_t rt_mutex_release(rt_mutex_t mutex)
     if (thread != mutex->owner)
     {
         thread->error = -RT_ERROR;
-        rt_spin_unlock_irqrestore(&(mutex->spinlock), level);
+        rt_spin_unlock(&(mutex->spinlock));
 
         return -RT_ERROR;
     }
@@ -1499,72 +1616,84 @@ rt_err_t rt_mutex_release(rt_mutex_t mutex)
         /* remove mutex from thread's taken list */
         rt_list_remove(&mutex->taken_list);
 
+        rt_sched_lock(&slvl);
+
         /* whether change the thread priority */
-        if ((mutex->ceiling_priority != 0xFF) || (thread->current_priority == mutex->priority))
-        {
-            rt_uint8_t priority = 0xff;
-
-            /* get the highest priority in the taken list of thread */
-            priority = _thread_get_mutex_priority(thread);
-
-            rt_thread_control(thread,
-                              RT_THREAD_CTRL_CHANGE_PRIORITY,
-                              &priority);
-
-            need_schedule = RT_TRUE;
-        }
+        need_schedule = _check_and_update_prio(thread, mutex);
 
         /* wakeup suspended thread */
         if (!rt_list_isempty(&mutex->parent.suspend_thread))
         {
-            /* get the first suspended thread */
-            struct rt_thread *next_thread = rt_list_entry(mutex->parent.suspend_thread.next,
-                                   struct rt_thread,
-                                   tlist);
-
-            LOG_D("mutex_release: resume thread: %s",
-                  next_thread->parent.name);
-
-            rt_spin_lock(&(next_thread->spinlock));
-            /* remove the thread from the suspended list of mutex */
-            rt_list_remove(&(next_thread->tlist));
-
-            /* set new owner and put mutex into taken list of thread */
-            mutex->owner = next_thread;
-            mutex->hold  = 1;
-            rt_list_insert_after(&next_thread->taken_object_list, &mutex->taken_list);
-            /* cleanup pending object */
-            next_thread->pending_object = RT_NULL;
-            rt_spin_unlock(&(next_thread->spinlock));
-            /* resume thread */
-            rt_thread_resume(next_thread);
-
-            /* update mutex priority */
-            if (!rt_list_isempty(&(mutex->parent.suspend_thread)))
+            struct rt_thread *next_thread;
+            do
             {
-                struct rt_thread *th;
+                /* get the first suspended thread */
+                next_thread = RT_THREAD_LIST_NODE_ENTRY(mutex->parent.suspend_thread.next);
 
-                th = rt_list_entry(mutex->parent.suspend_thread.next,
-                        struct rt_thread,
-                        tlist);
-                mutex->priority = th->current_priority;
+                RT_ASSERT(rt_sched_thread_is_suspended(next_thread));
+
+                /* remove the thread from the suspended list of mutex */
+                rt_list_remove(&RT_THREAD_LIST_NODE(next_thread));
+
+                /* resume thread to ready queue */
+                if (rt_sched_thread_ready(next_thread) != RT_EOK)
+                {
+                    /**
+                     * a timeout timer had triggered while we try. So we skip
+                     * this thread and try again.
+                     */
+                    next_thread = RT_NULL;
+                }
+            } while (!next_thread && !rt_list_isempty(&mutex->parent.suspend_thread));
+
+            if (next_thread)
+            {
+                LOG_D("mutex_release: resume thread: %s",
+                    next_thread->parent.name);
+
+                /* set new owner and put mutex into taken list of thread */
+                mutex->owner = next_thread;
+                mutex->hold  = 1;
+                rt_list_insert_after(&next_thread->taken_object_list, &mutex->taken_list);
+
+                /* cleanup pending object */
+                next_thread->pending_object = RT_NULL;
+
+                /* update mutex priority */
+                if (!rt_list_isempty(&(mutex->parent.suspend_thread)))
+                {
+                    struct rt_thread *th;
+
+                    th = RT_THREAD_LIST_NODE_ENTRY(mutex->parent.suspend_thread.next);
+                    mutex->priority = rt_sched_thread_get_curr_prio(th);
+                }
+                else
+                {
+                    mutex->priority = 0xff;
+                }
+
+                need_schedule = RT_TRUE;
             }
             else
             {
+                /* no waiting thread is woke up, clear owner */
+                mutex->owner = RT_NULL;
                 mutex->priority = 0xff;
             }
 
-            need_schedule = RT_TRUE;
+            rt_sched_unlock(slvl);
         }
         else
         {
+            rt_sched_unlock(slvl);
+
             /* clear owner */
             mutex->owner    = RT_NULL;
             mutex->priority = 0xff;
         }
     }
 
-    rt_spin_unlock_irqrestore(&(mutex->spinlock), level);
+    rt_spin_unlock(&(mutex->spinlock));
 
     /* perform a schedule */
     if (need_schedule == RT_TRUE)
@@ -1695,7 +1824,7 @@ rt_err_t rt_event_detach(rt_event_t event)
 
     level = rt_spin_lock_irqsave(&(event->spinlock));
     /* resume all suspended thread */
-    _ipc_list_resume_all(&(event->parent.suspend_thread));
+    rt_susp_list_resume_all(&(event->parent.suspend_thread), RT_ERROR);
     rt_spin_unlock_irqrestore(&(event->spinlock), level);
 
     /* detach event object */
@@ -1791,7 +1920,7 @@ rt_err_t rt_event_delete(rt_event_t event)
 
     rt_spin_lock(&(event->spinlock));
     /* resume all suspended thread */
-    _ipc_list_resume_all(&(event->parent.suspend_thread));
+    rt_susp_list_resume_all(&(event->parent.suspend_thread), RT_ERROR);
     rt_spin_unlock(&(event->spinlock));
 
     /* delete event object */
@@ -1824,6 +1953,7 @@ rt_err_t rt_event_send(rt_event_t event, rt_uint32_t set)
 {
     struct rt_list_node *n;
     struct rt_thread *thread;
+    rt_sched_lock_level_t slvl;
     rt_base_t level;
     rt_base_t status;
     rt_bool_t need_schedule;
@@ -1845,6 +1975,7 @@ rt_err_t rt_event_send(rt_event_t event, rt_uint32_t set)
 
     RT_OBJECT_HOOK_CALL(rt_object_put_hook, (&(event->parent.parent)));
 
+    rt_sched_lock(&slvl);
     if (!rt_list_isempty(&event->parent.suspend_thread))
     {
         /* search thread list to resume thread */
@@ -1852,7 +1983,7 @@ rt_err_t rt_event_send(rt_event_t event, rt_uint32_t set)
         while (n != &(event->parent.suspend_thread))
         {
             /* get thread */
-            thread = rt_list_entry(n, struct rt_thread, tlist);
+            thread = RT_THREAD_LIST_NODE_ENTRY(n);
 
             status = -RT_ERROR;
             if (thread->event_info & RT_EVENT_FLAG_AND)
@@ -1876,6 +2007,7 @@ rt_err_t rt_event_send(rt_event_t event, rt_uint32_t set)
             }
             else
             {
+                rt_sched_unlock(slvl);
                 rt_spin_unlock_irqrestore(&(event->spinlock), level);
 
                 return -RT_EINVAL;
@@ -1892,7 +2024,7 @@ rt_err_t rt_event_send(rt_event_t event, rt_uint32_t set)
                     need_clear_set |= thread->event_set;
 
                 /* resume thread, and thread list breaks out */
-                rt_thread_resume(thread);
+                rt_sched_thread_ready(thread);
                 thread->error = RT_EOK;
 
                 /* need do a scheduling */
@@ -1905,6 +2037,7 @@ rt_err_t rt_event_send(rt_event_t event, rt_uint32_t set)
         }
     }
 
+    rt_sched_unlock(slvl);
     rt_spin_unlock_irqrestore(&(event->spinlock), level);
 
     /* do a schedule */
@@ -1949,11 +2082,11 @@ RTM_EXPORT(rt_event_send);
  *           If the return value is any other values, it means that the semaphore release failed.
  */
 static rt_err_t _rt_event_recv(rt_event_t   event,
-                       rt_uint32_t  set,
-                       rt_uint8_t   option,
-                       rt_int32_t   timeout,
-                       rt_uint32_t *recved,
-                       int suspend_flag)
+                               rt_uint32_t  set,
+                               rt_uint8_t   option,
+                               rt_int32_t   timeout,
+                               rt_uint32_t *recved,
+                               int suspend_flag)
 {
     struct rt_thread *thread;
     rt_base_t level;
@@ -2030,10 +2163,8 @@ static rt_err_t _rt_event_recv(rt_event_t   event,
         thread->event_info = option;
 
         /* put thread to suspended thread list */
-        ret = _ipc_list_suspend(&(event->parent.suspend_thread),
-                            thread,
-                            event->parent.parent.flag,
-                            suspend_flag);
+        ret = rt_thread_suspend_to_list(thread, &(event->parent.suspend_thread),
+                                        event->parent.parent.flag, suspend_flag);
         if (ret != RT_EOK)
         {
             rt_spin_unlock_irqrestore(&(event->spinlock), level);
@@ -2134,7 +2265,7 @@ rt_err_t rt_event_control(rt_event_t event, int cmd, void *arg)
         level = rt_spin_lock_irqsave(&(event->spinlock));
 
         /* resume all waiting thread */
-        _ipc_list_resume_all(&event->parent.suspend_thread);
+        rt_susp_list_resume_all(&event->parent.suspend_thread, RT_ERROR);
 
         /* initialize event set */
         event->set = 0;
@@ -2260,9 +2391,9 @@ rt_err_t rt_mb_detach(rt_mailbox_t mb)
 
     level = rt_spin_lock_irqsave(&(mb->spinlock));
     /* resume all suspended thread */
-    _ipc_list_resume_all(&(mb->parent.suspend_thread));
+    rt_susp_list_resume_all(&(mb->parent.suspend_thread), RT_ERROR);
     /* also resume all mailbox private suspended thread */
-    _ipc_list_resume_all(&(mb->suspend_sender_thread));
+    rt_susp_list_resume_all(&(mb->suspend_sender_thread), RT_ERROR);
     rt_spin_unlock_irqrestore(&(mb->spinlock), level);
 
     /* detach mailbox object */
@@ -2375,10 +2506,10 @@ rt_err_t rt_mb_delete(rt_mailbox_t mb)
     rt_spin_lock(&(mb->spinlock));
 
     /* resume all suspended thread */
-    _ipc_list_resume_all(&(mb->parent.suspend_thread));
+    rt_susp_list_resume_all(&(mb->parent.suspend_thread), RT_ERROR);
 
     /* also resume all mailbox private suspended thread */
-    _ipc_list_resume_all(&(mb->suspend_sender_thread));
+    rt_susp_list_resume_all(&(mb->suspend_sender_thread), RT_ERROR);
 
     rt_spin_unlock(&(mb->spinlock));
 
@@ -2466,10 +2597,8 @@ static rt_err_t _rt_mb_send_wait(rt_mailbox_t mb,
         }
 
         /* suspend current thread */
-        ret = _ipc_list_suspend(&(mb->suspend_sender_thread),
-                            thread,
-                            mb->parent.parent.flag,
-                            suspend_flag);
+        ret = rt_thread_suspend_to_list(thread, &(mb->suspend_sender_thread),
+                                        mb->parent.parent.flag, suspend_flag);
 
         if (ret != RT_EOK)
         {
@@ -2537,7 +2666,7 @@ static rt_err_t _rt_mb_send_wait(rt_mailbox_t mb,
     /* resume suspended thread */
     if (!rt_list_isempty(&mb->parent.suspend_thread))
     {
-        _ipc_list_resume(&(mb->parent.suspend_thread));
+        rt_susp_list_dequeue(&(mb->parent.suspend_thread), RT_EOK);
 
         rt_spin_unlock_irqrestore(&(mb->spinlock), level);
 
@@ -2661,7 +2790,7 @@ rt_err_t rt_mb_urgent(rt_mailbox_t mb, rt_ubase_t value)
     /* resume suspended thread */
     if (!rt_list_isempty(&mb->parent.suspend_thread))
     {
-        _ipc_list_resume(&(mb->parent.suspend_thread));
+        rt_susp_list_dequeue(&(mb->parent.suspend_thread), RT_EOK);
 
         rt_spin_unlock_irqrestore(&(mb->spinlock), level);
 
@@ -2749,10 +2878,8 @@ static rt_err_t _rt_mb_recv(rt_mailbox_t mb, rt_ubase_t *value, rt_int32_t timeo
         }
 
         /* suspend current thread */
-        ret = _ipc_list_suspend(&(mb->parent.suspend_thread),
-                            thread,
-                            mb->parent.parent.flag,
-                            suspend_flag);
+        ret = rt_thread_suspend_to_list(thread, &(mb->parent.suspend_thread),
+                                        mb->parent.parent.flag, suspend_flag);
         if (ret != RT_EOK)
         {
             rt_spin_unlock_irqrestore(&(mb->spinlock), level);
@@ -2815,7 +2942,7 @@ static rt_err_t _rt_mb_recv(rt_mailbox_t mb, rt_ubase_t *value, rt_int32_t timeo
     /* resume suspended thread */
     if (!rt_list_isempty(&(mb->suspend_sender_thread)))
     {
-        _ipc_list_resume(&(mb->suspend_sender_thread));
+        rt_susp_list_dequeue(&(mb->suspend_sender_thread), RT_EOK);
 
         rt_spin_unlock_irqrestore(&(mb->spinlock), level);
 
@@ -2879,9 +3006,9 @@ rt_err_t rt_mb_control(rt_mailbox_t mb, int cmd, void *arg)
         level = rt_spin_lock_irqsave(&(mb->spinlock));
 
         /* resume all waiting thread */
-        _ipc_list_resume_all(&(mb->parent.suspend_thread));
+        rt_susp_list_resume_all(&(mb->parent.suspend_thread), RT_ERROR);
         /* also resume all mailbox private suspended thread */
-        _ipc_list_resume_all(&(mb->suspend_sender_thread));
+        rt_susp_list_resume_all(&(mb->suspend_sender_thread), RT_ERROR);
 
         /* re-init mailbox */
         mb->entry      = 0;
@@ -3042,9 +3169,9 @@ rt_err_t rt_mq_detach(rt_mq_t mq)
 
     level = rt_spin_lock_irqsave(&(mq->spinlock));
     /* resume all suspended thread */
-    _ipc_list_resume_all(&mq->parent.suspend_thread);
+    rt_susp_list_resume_all(&mq->parent.suspend_thread, RT_ERROR);
     /* also resume all message queue private suspended thread */
-    _ipc_list_resume_all(&(mq->suspend_sender_thread));
+    rt_susp_list_resume_all(&(mq->suspend_sender_thread), RT_ERROR);
     rt_spin_unlock_irqrestore(&(mq->spinlock), level);
 
     /* detach message queue object */
@@ -3184,9 +3311,9 @@ rt_err_t rt_mq_delete(rt_mq_t mq)
 
     rt_spin_lock(&(mq->spinlock));
     /* resume all suspended thread */
-    _ipc_list_resume_all(&(mq->parent.suspend_thread));
+    rt_susp_list_resume_all(&(mq->parent.suspend_thread), RT_ERROR);
     /* also resume all message queue private suspended thread */
-    _ipc_list_resume_all(&(mq->suspend_sender_thread));
+    rt_susp_list_resume_all(&(mq->suspend_sender_thread), RT_ERROR);
 
     rt_spin_unlock(&(mq->spinlock));
 
@@ -3296,10 +3423,8 @@ static rt_err_t _rt_mq_send_wait(rt_mq_t mq,
         }
 
         /* suspend current thread */
-        ret = _ipc_list_suspend(&(mq->suspend_sender_thread),
-                            thread,
-                            mq->parent.parent.flag,
-                            suspend_flag);
+        ret = rt_thread_suspend_to_list(thread, &(mq->suspend_sender_thread),
+                                        mq->parent.parent.flag, suspend_flag);
         if (ret != RT_EOK)
         {
             rt_spin_unlock_irqrestore(&(mq->spinlock), level);
@@ -3415,7 +3540,7 @@ static rt_err_t _rt_mq_send_wait(rt_mq_t mq,
     /* resume suspended thread */
     if (!rt_list_isempty(&mq->parent.suspend_thread))
     {
-        _ipc_list_resume(&(mq->parent.suspend_thread));
+        rt_susp_list_dequeue(&(mq->parent.suspend_thread), RT_EOK);
 
         rt_spin_unlock_irqrestore(&(mq->spinlock), level);
 
@@ -3573,7 +3698,7 @@ rt_err_t rt_mq_urgent(rt_mq_t mq, const void *buffer, rt_size_t size)
     /* resume suspended thread */
     if (!rt_list_isempty(&mq->parent.suspend_thread))
     {
-        _ipc_list_resume(&(mq->parent.suspend_thread));
+        rt_susp_list_dequeue(&(mq->parent.suspend_thread), RT_EOK);
 
         rt_spin_unlock_irqrestore(&(mq->spinlock), level);
 
@@ -3677,10 +3802,8 @@ static rt_ssize_t _rt_mq_recv(rt_mq_t mq,
         }
 
         /* suspend current thread */
-        ret = _ipc_list_suspend(&(mq->parent.suspend_thread),
-                            thread,
-                            mq->parent.parent.flag,
-                            suspend_flag);
+        ret = rt_thread_suspend_to_list(thread, &(mq->parent.suspend_thread),
+                                        mq->parent.parent.flag, suspend_flag);
         if (ret != RT_EOK)
         {
             rt_spin_unlock_irqrestore(&(mq->spinlock), level);
@@ -3764,7 +3887,7 @@ static rt_ssize_t _rt_mq_recv(rt_mq_t mq,
     /* resume suspended thread */
     if (!rt_list_isempty(&(mq->suspend_sender_thread)))
     {
-        _ipc_list_resume(&(mq->suspend_sender_thread));
+        rt_susp_list_dequeue(&(mq->suspend_sender_thread), RT_EOK);
 
         rt_spin_unlock_irqrestore(&(mq->spinlock), level);
 
@@ -3858,9 +3981,9 @@ rt_err_t rt_mq_control(rt_mq_t mq, int cmd, void *arg)
         level = rt_spin_lock_irqsave(&(mq->spinlock));
 
         /* resume all waiting thread */
-        _ipc_list_resume_all(&mq->parent.suspend_thread);
+        rt_susp_list_resume_all(&mq->parent.suspend_thread, RT_ERROR);
         /* also resume all message queue private suspended thread */
-        _ipc_list_resume_all(&(mq->suspend_sender_thread));
+        rt_susp_list_resume_all(&(mq->suspend_sender_thread), RT_ERROR);
 
         /* release all message in the queue */
         while (mq->msg_queue_head != RT_NULL)

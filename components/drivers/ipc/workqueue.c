@@ -64,7 +64,10 @@ static void _workqueue_thread_entry(void *parameter)
         {
             /* no software timer exist, suspend self. */
             rt_thread_suspend_with_flag(rt_thread_self(), RT_UNINTERRUPTIBLE);
+
+            /* release lock after suspend so we will not lost any wakeups */
             rt_spin_unlock_irqrestore(&(queue->spinlock), level);
+
             rt_schedule();
             continue;
         }
@@ -105,13 +108,11 @@ static rt_err_t _workqueue_submit_work(struct rt_workqueue *queue,
         work->workqueue = queue;
 
         /* whether the workqueue is doing work */
-        if (queue->work_current == RT_NULL &&
-                ((queue->work_thread->stat & RT_THREAD_SUSPEND_MASK) == RT_THREAD_SUSPEND_MASK))
+        if (queue->work_current == RT_NULL)
         {
-            /* resume work thread */
+            /* resume work thread, and do a re-schedule if succeed */
             rt_thread_resume(queue->work_thread);
             rt_spin_unlock_irqrestore(&(queue->spinlock), level);
-            rt_schedule();
         }
         else
         {
@@ -187,13 +188,11 @@ static void _delayed_work_timeout_handler(void *parameter)
         work->flags |= RT_WORK_STATE_PENDING;
     }
     /* whether the workqueue is doing work */
-    if (queue->work_current == RT_NULL &&
-            ((queue->work_thread->stat & RT_THREAD_SUSPEND_MASK) == RT_THREAD_SUSPEND_MASK))
+    if (queue->work_current == RT_NULL)
     {
-        /* resume work thread */
+        /* resume work thread, and do a re-schedule if succeed */
         rt_thread_resume(queue->work_thread);
         rt_spin_unlock_irqrestore(&(queue->spinlock), level);
-        rt_schedule();
     }
     else
     {
@@ -346,13 +345,11 @@ rt_err_t rt_workqueue_urgent_work(struct rt_workqueue *queue, struct rt_work *wo
     rt_list_remove(&(work->list));
     rt_list_insert_after(&queue->work_list, &(work->list));
     /* whether the workqueue is doing work */
-    if (queue->work_current == RT_NULL &&
-            ((queue->work_thread->stat & RT_THREAD_SUSPEND_MASK) == RT_THREAD_SUSPEND_MASK))
+    if (queue->work_current == RT_NULL)
     {
-        /* resume work thread */
+        /* resume work thread, and do a re-schedule if succeed */
         rt_thread_resume(queue->work_thread);
         rt_spin_unlock_irqrestore(&(queue->spinlock), level);
-        rt_schedule();
     }
     else
     {

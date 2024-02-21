@@ -70,7 +70,7 @@ enum rt_object_info_type
     RT_Object_Info_Module,                             /**< The object is a module. */
 #endif
 #ifdef RT_USING_HEAP
-    RT_Object_Info_Memory,                            /**< The object is a memory. */
+    RT_Object_Info_Memory,                             /**< The object is a memory. */
 #endif
 #ifdef RT_USING_SMART
     RT_Object_Info_Channel,                            /**< The object is a IPC channel */

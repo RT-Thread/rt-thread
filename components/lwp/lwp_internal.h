@@ -86,7 +86,7 @@ rt_err_t lwp_critical_exit(struct rt_lwp *lwp);
  * There tend to be chances where a return value is returned without correctly init
  */
 #ifndef LWP_DEBUG
-#define DEF_RETURN_CODE(name)   rt_err_t name
+#define DEF_RETURN_CODE(name)   rt_err_t name;RT_UNUSED(name)
 #define RETURN(name)            return name
 
 #else

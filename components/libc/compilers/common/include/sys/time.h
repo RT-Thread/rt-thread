@@ -46,7 +46,16 @@ int8_t rt_tz_is_dst(void);
 
 struct itimerspec;
 
-#if defined(_GNU_SOURCE) && (defined(__x86_64__) || defined(__i386__))
+#if !defined(__x86_64__) && !defined(__i386__) && !defined(_TIMEVAL_DEFINED)
+#define _TIMEVAL_DEFINED
+struct timeval
+{
+    time_t      tv_sec;     /* seconds */
+    suseconds_t tv_usec;    /* and microseconds */
+};
+#endif /* _TIMEVAL_DEFINED */
+
+#if defined(_GNU_SOURCE) && (defined(__x86_64__) || defined(__i386__) || defined(RT_USING_SMART))
 /* linux x86 platform gcc use! */
 #define _TIMEVAL_DEFINED
 /* Values for the first argument to `getitimer' and `setitimer'.  */
@@ -71,16 +80,7 @@ struct itimerval
     /* Time to the next timer expiration.  */
     struct timeval it_value;
 };
-#endif /* defined(_GNU_SOURCE) && (defined(__x86_64__) || defined(__i386__)) */
-
-#ifndef _TIMEVAL_DEFINED
-#define _TIMEVAL_DEFINED
-struct timeval
-{
-    time_t      tv_sec;     /* seconds */
-    suseconds_t tv_usec;    /* and microseconds */
-};
-#endif /* _TIMEVAL_DEFINED */
+#endif /* defined(_GNU_SOURCE) && (defined(__x86_64__) || defined(__i386__)) || defined(RT_USING_SMART) */
 
 #if defined(__ARMCC_VERSION) || defined(_WIN32) || (defined(__ICCARM__) && (__VER__ < 8010001))
 struct timespec

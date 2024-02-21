@@ -146,7 +146,7 @@ void rt_thread_defunct_enqueue(rt_thread_t thread)
 {
     rt_base_t level;
     level = rt_spin_lock_irqsave(&_defunct_spinlock);
-    rt_list_insert_after(&_rt_thread_defunct, &thread->tlist);
+    rt_list_insert_after(&_rt_thread_defunct, &RT_THREAD_LIST_NODE(thread));
     rt_spin_unlock_irqrestore(&_defunct_spinlock, level);
 #ifdef RT_USING_SMP
     rt_sem_release(&system_sem);
@@ -166,20 +166,16 @@ rt_thread_t rt_thread_defunct_dequeue(void)
     level = rt_spin_lock_irqsave(&_defunct_spinlock);
     if (l->next != l)
     {
-        thread = rt_list_entry(l->next,
-                struct rt_thread,
-                tlist);
-        rt_list_remove(&(thread->tlist));
+        thread = RT_THREAD_LIST_NODE_ENTRY(l->next);
+        rt_list_remove(&RT_THREAD_LIST_NODE(thread));
     }
     rt_spin_unlock_irqrestore(&_defunct_spinlock, level);
 #else
     if (l->next != l)
     {
-        thread = rt_list_entry(l->next,
-                struct rt_thread,
-                tlist);
+        thread = RT_THREAD_LIST_NODE_ENTRY(l->next);
         level = rt_hw_interrupt_disable();
-        rt_list_remove(&(thread->tlist));
+        rt_list_remove(&RT_THREAD_LIST_NODE(thread));
         rt_hw_interrupt_enable(level);
     }
 #endif
@@ -308,9 +304,10 @@ static void rt_thread_system_entry(void *parameter)
 
     while (1)
     {
-        int ret= rt_sem_take(&system_sem, RT_WAITING_FOREVER);
+        int ret = rt_sem_take(&system_sem, RT_WAITING_FOREVER);
         if (ret != RT_EOK)
         {
+            rt_kprintf("failed to sem_take() error %d\n", ret);
             RT_ASSERT(0);
         }
         rt_defunct_execute();

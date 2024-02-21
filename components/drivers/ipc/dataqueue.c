@@ -8,6 +8,7 @@
  * 2012-09-30     Bernard      first version.
  * 2016-10-31     armink       fix some resume push and pop thread bugs
  * 2023-09-15     xqyjlj       perf rt_hw_interrupt_disable/enable
+ * 2024-01-25     Shell        porting to susp_list API
  */
 
 #include <rthw.h>
@@ -121,27 +122,32 @@ rt_err_t rt_data_queue_push(struct rt_data_queue *queue,
         thread->error = RT_EOK;
 
         /* suspend thread on the push list */
-        rt_thread_suspend_with_flag(thread, RT_UNINTERRUPTIBLE);
-        rt_list_insert_before(&(queue->suspended_push_list), &(thread->tlist));
-        /* start timer */
-        if (timeout > 0)
+        result = rt_thread_suspend_to_list(thread, &queue->suspended_push_list,
+                                           RT_IPC_FLAG_FIFO, RT_UNINTERRUPTIBLE);
+        if (result == RT_EOK)
         {
-            /* reset the timeout of thread timer and start it */
-            rt_timer_control(&(thread->thread_timer),
-                             RT_TIMER_CTRL_SET_TIME,
-                             &timeout);
-            rt_timer_start(&(thread->thread_timer));
+            /* start timer */
+            if (timeout > 0)
+            {
+                /* reset the timeout of thread timer and start it */
+                rt_timer_control(&(thread->thread_timer),
+                                RT_TIMER_CTRL_SET_TIME,
+                                &timeout);
+                rt_timer_start(&(thread->thread_timer));
+            }
+
+            /* enable interrupt */
+            rt_spin_unlock_irqrestore(&(queue->spinlock), level);
+
+            /* do schedule */
+            rt_schedule();
+
+            /* thread is waked up */
+            level = rt_spin_lock_irqsave(&(queue->spinlock));
+
+            /* error may be modified by waker, so take the lock before accessing it */
+            result = thread->error;
         }
-
-        /* enable interrupt */
-        rt_spin_unlock_irqrestore(&(queue->spinlock), level);
-
-        /* do schedule */
-        rt_schedule();
-
-        /* thread is waked up */
-        result = thread->error;
-        level = rt_spin_lock_irqsave(&(queue->spinlock));
         if (result != RT_EOK) goto __exit;
     }
 
@@ -159,15 +165,10 @@ rt_err_t rt_data_queue_push(struct rt_data_queue *queue,
     }
 
     /* there is at least one thread in suspended list */
-    if (!rt_list_isempty(&(queue->suspended_pop_list)))
+    if (rt_susp_list_dequeue(&queue->suspended_push_list,
+                             RT_THREAD_RESUME_RES_THR_ERR))
     {
-        /* get thread entry */
-        thread = rt_list_entry(queue->suspended_pop_list.next,
-                               struct rt_thread,
-                               tlist);
-
-        /* resume it */
-        rt_thread_resume(thread);
+        /* unlock and perform a schedule */
         rt_spin_unlock_irqrestore(&(queue->spinlock), level);
 
         /* perform a schedule */
@@ -239,29 +240,32 @@ rt_err_t rt_data_queue_pop(struct rt_data_queue *queue,
         thread->error = RT_EOK;
 
         /* suspend thread on the pop list */
-        rt_thread_suspend_with_flag(thread, RT_UNINTERRUPTIBLE);
-        rt_list_insert_before(&(queue->suspended_pop_list), &(thread->tlist));
-        /* start timer */
-        if (timeout > 0)
+        result = rt_thread_suspend_to_list(thread, &queue->suspended_pop_list,
+                                           RT_IPC_FLAG_FIFO, RT_UNINTERRUPTIBLE);
+        if (result == RT_EOK)
         {
-            /* reset the timeout of thread timer and start it */
-            rt_timer_control(&(thread->thread_timer),
-                             RT_TIMER_CTRL_SET_TIME,
-                             &timeout);
-            rt_timer_start(&(thread->thread_timer));
+            /* start timer */
+            if (timeout > 0)
+            {
+                /* reset the timeout of thread timer and start it */
+                rt_timer_control(&(thread->thread_timer),
+                                RT_TIMER_CTRL_SET_TIME,
+                                &timeout);
+                rt_timer_start(&(thread->thread_timer));
+            }
+
+            /* enable interrupt */
+            rt_spin_unlock_irqrestore(&(queue->spinlock), level);
+
+            /* do schedule */
+            rt_schedule();
+
+            /* thread is waked up */
+            level  = rt_spin_lock_irqsave(&(queue->spinlock));
+            result = thread->error;
+            if (result != RT_EOK)
+                goto __exit;
         }
-
-        /* enable interrupt */
-        rt_spin_unlock_irqrestore(&(queue->spinlock), level);
-
-        /* do schedule */
-        rt_schedule();
-
-        /* thread is waked up */
-        result = thread->error;
-        level  = rt_spin_lock_irqsave(&(queue->spinlock));
-        if (result != RT_EOK)
-            goto __exit;
     }
 
     *data_ptr = queue->queue[queue->get_index].data_ptr;
@@ -280,15 +284,10 @@ rt_err_t rt_data_queue_pop(struct rt_data_queue *queue,
     if (rt_data_queue_len(queue) <= queue->lwm)
     {
         /* there is at least one thread in suspended list */
-        if (!rt_list_isempty(&(queue->suspended_push_list)))
+        if (rt_susp_list_dequeue(&queue->suspended_push_list,
+                                       RT_THREAD_RESUME_RES_THR_ERR))
         {
-            /* get thread entry */
-            thread = rt_list_entry(queue->suspended_push_list.next,
-                                   struct rt_thread,
-                                   tlist);
-
-            /* resume it */
-            rt_thread_resume(thread);
+            /* unlock and perform a schedule */
             rt_spin_unlock_irqrestore(&(queue->spinlock), level);
 
             /* perform a schedule */
@@ -364,7 +363,6 @@ RTM_EXPORT(rt_data_queue_peek);
 void rt_data_queue_reset(struct rt_data_queue *queue)
 {
     rt_base_t level;
-    struct rt_thread *thread;
 
     RT_ASSERT(queue != RT_NULL);
     RT_ASSERT(queue->magic == DATAQUEUE_MAGIC);
@@ -382,52 +380,13 @@ void rt_data_queue_reset(struct rt_data_queue *queue)
     /* wakeup all suspend threads */
 
     /* resume on pop list */
-    while (!rt_list_isempty(&(queue->suspended_pop_list)))
-    {
-        /* disable interrupt */
-        level = rt_spin_lock_irqsave(&(queue->spinlock));
-
-        /* get next suspend thread */
-        thread = rt_list_entry(queue->suspended_pop_list.next,
-                               struct rt_thread,
-                               tlist);
-        /* set error code to -RT_ERROR */
-        thread->error = -RT_ERROR;
-
-        /*
-         * resume thread
-         * In rt_thread_resume function, it will remove current thread from
-         * suspend list
-         */
-        rt_thread_resume(thread);
-
-        /* enable interrupt */
-        rt_spin_unlock_irqrestore(&(queue->spinlock), level);
-    }
+    rt_susp_list_resume_all_irq(&queue->suspended_pop_list, RT_ERROR,
+                                &(queue->spinlock));
 
     /* resume on push list */
-    while (!rt_list_isempty(&(queue->suspended_push_list)))
-    {
-        /* disable interrupt */
-        level = rt_spin_lock_irqsave(&(queue->spinlock));
+    rt_susp_list_resume_all_irq(&queue->suspended_push_list, RT_ERROR,
+                                &(queue->spinlock));
 
-        /* get next suspend thread */
-        thread = rt_list_entry(queue->suspended_push_list.next,
-                               struct rt_thread,
-                               tlist);
-        /* set error code to -RT_ERROR */
-        thread->error = -RT_ERROR;
-
-        /*
-         * resume thread
-         * In rt_thread_resume function, it will remove current thread from
-         * suspend list
-         */
-        rt_thread_resume(thread);
-
-        /* enable interrupt */
-        rt_spin_unlock_irqrestore(&(queue->spinlock), level);
-    }
     rt_exit_critical();
 
     rt_schedule();

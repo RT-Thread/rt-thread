@@ -285,7 +285,7 @@ rt_err_t _pthread_cond_timedwait(pthread_cond_t *cond,
                 rt_thread_suspend(thread);
 
                 /* Only support FIFO */
-                rt_list_insert_before(&(sem->parent.suspend_thread), &(thread->tlist));
+                rt_list_insert_before(&(sem->parent.suspend_thread), &RT_THREAD_LIST_NODE(thread));
 
                 /**
                 rt_ipc_list_suspend(&(sem->parent.suspend_thread),

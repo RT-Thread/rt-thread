@@ -8,7 +8,9 @@
  * 2019-10-12     Jesven       first version
  * 2023-07-25     Shell        Remove usage of rt_hw_interrupt API in the lwp
  * 2023-09-16     zmq810150896 Increased versatility of some features on dfs v2
+ * 2024-01-25     Shell        porting to susp_list API
  */
+#define __RT_IPC_SOURCE__
 
 #define DBG_TAG "lwp.ipc"
 #define DBG_LVL DBG_WARNING
@@ -124,11 +126,9 @@ rt_inline rt_err_t rt_channel_list_resume(rt_list_t *list)
     struct rt_thread *thread;
 
     /* get the first thread entry waiting for sending */
-    thread = rt_list_entry(list->next, struct rt_thread, tlist);
+    thread = rt_susp_list_dequeue(list, RT_THREAD_RESUME_RES_THR_ERR);
 
-    rt_thread_resume(thread);
-
-    return RT_EOK;
+    return thread ? RT_EOK : -RT_ERROR;
 }
 
 /**
@@ -136,15 +136,8 @@ rt_inline rt_err_t rt_channel_list_resume(rt_list_t *list)
  */
 rt_inline rt_err_t _channel_list_resume_all_locked(rt_list_t *list)
 {
-    struct rt_thread *thread;
-
     /* wakeup all suspended threads for sending */
-    while (!rt_list_isempty(list))
-    {
-        thread = rt_list_entry(list->next, struct rt_thread, tlist);
-        thread->error = -RT_ERROR;
-        rt_thread_resume(thread);
-    }
+    rt_susp_list_resume_all(list, RT_ERROR);
 
     return RT_EOK;
 }
@@ -155,12 +148,7 @@ rt_inline rt_err_t _channel_list_resume_all_locked(rt_list_t *list)
 rt_inline rt_err_t rt_channel_list_suspend(rt_list_t *list, struct rt_thread *thread)
 {
     /* suspend thread */
-    rt_err_t ret = rt_thread_suspend_with_flag(thread, RT_INTERRUPTIBLE);
-
-    if (ret == RT_EOK)
-    {
-        rt_list_insert_before(list, &(thread->tlist)); /* list end */
-    }
+    rt_err_t ret = rt_thread_suspend_to_list(thread, list, RT_IPC_FLAG_FIFO, RT_INTERRUPTIBLE);
 
     return ret;
 }
@@ -372,10 +360,13 @@ static rt_err_t wakeup_sender_wait_reply(void *object, struct rt_thread *thread)
 
 static void sender_timeout(void *parameter)
 {
+    rt_sched_lock_level_t slvl;
     struct rt_thread *thread = (struct rt_thread *)parameter;
     rt_channel_t ch;
 
-    ch = (rt_channel_t)(thread->wakeup.user_data);
+    rt_sched_lock(&slvl);
+
+    ch = (rt_channel_t)(thread->wakeup_handle.user_data);
     if (ch->stat == RT_IPC_STAT_ACTIVE && ch->reply == thread)
     {
         ch->stat = RT_IPC_STAT_IDLE;
@@ -399,14 +390,14 @@ static void sender_timeout(void *parameter)
             l = l->next;
         }
     }
-    thread->error = -RT_ETIMEOUT;
-    thread->wakeup.func = RT_NULL;
 
-    rt_list_remove(&(thread->tlist));
+    thread->wakeup_handle.func = RT_NULL;
+    thread->error = RT_ETIMEOUT;
+
     /* insert to schedule ready list */
-    rt_schedule_insert_thread(thread);
+    rt_sched_insert_thread(thread);
     /* do schedule */
-    rt_schedule();
+    rt_sched_unlock_n_resched(slvl);
 }
 
 /**
@@ -627,9 +618,12 @@ static rt_err_t _do_send_recv_timeout(rt_channel_t ch, rt_channel_msg_t data, in
 
         if (!need_reply || rc == RT_EOK)
         {
-            thread_recv = rt_list_entry(ch->parent.suspend_thread.next, struct rt_thread, tlist);
+            rt_sched_lock_level_t slvl;
+            rt_sched_lock(&slvl);
+            thread_recv = RT_THREAD_LIST_NODE_ENTRY(ch->parent.suspend_thread.next);
             thread_recv->msg_ret = msg; /* to the first suspended receiver */
             thread_recv->error = RT_EOK;
+            rt_sched_unlock(slvl);
             rt_channel_list_resume(&ch->parent.suspend_thread);
         }
         break;
@@ -783,24 +777,27 @@ static void receiver_timeout(void *parameter)
 {
     struct rt_thread *thread = (struct rt_thread *)parameter;
     rt_channel_t ch;
-    rt_base_t level;
+    rt_sched_lock_level_t slvl;
 
-    ch = (rt_channel_t)(thread->wakeup.user_data);
+    rt_sched_lock(&slvl);
 
-    level = rt_spin_lock_irqsave(&ch->slock);
-    ch->stat = RT_IPC_STAT_IDLE;
+    ch = (rt_channel_t)(thread->wakeup_handle.user_data);
+
     thread->error = -RT_ETIMEOUT;
-    thread->wakeup.func = RT_NULL;
+    thread->wakeup_handle.func = RT_NULL;
 
-    rt_list_remove(&(thread->tlist));
+    rt_spin_lock(&ch->slock);
+    ch->stat = RT_IPC_STAT_IDLE;
+
+    rt_list_remove(&RT_THREAD_LIST_NODE(thread));
     /* insert to schedule ready list */
-    rt_schedule_insert_thread(thread);
+    rt_sched_insert_thread(thread);
 
     _rt_channel_check_wq_wakup_locked(ch);
-    rt_spin_unlock_irqrestore(&ch->slock, level);
+    rt_spin_unlock(&ch->slock);
 
     /* do schedule */
-    rt_schedule();
+    rt_sched_unlock_n_resched(slvl);
 }
 
 /**
@@ -839,10 +836,12 @@ static rt_err_t _rt_raw_channel_recv_timeout(rt_channel_t ch, rt_channel_msg_t d
             rt_list_remove(ch->wait_msg.next); /* remove the message from the channel */
             if (msg_ret->need_reply)
             {
+                rt_sched_lock_level_t slvl;
+                rt_sched_lock(&slvl);
                 RT_ASSERT(ch->wait_thread.next != &ch->wait_thread);
-
-                thread = rt_list_entry(ch->wait_thread.next, struct rt_thread, tlist);
+                thread = RT_THREAD_LIST_NODE_ENTRY(ch->wait_thread.next);
                 rt_list_remove(ch->wait_thread.next);
+                rt_sched_unlock(slvl);
                 ch->reply = thread;            /* record the waiting sender */
                 ch->stat = RT_IPC_STAT_ACTIVE; /* no valid suspened receivers */
             }

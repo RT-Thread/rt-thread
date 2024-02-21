@@ -11,7 +11,7 @@
  *                             remove lwp_signal_backup/restore() to reduce architecture codes
  *                             update the generation, pending and delivery routines
  */
-
+#define __RT_IPC_SOURCE__
 #define DBG_TAG "lwp.signal"
 #define DBG_LVL DBG_INFO
 #include <rtdbg.h>
@@ -564,27 +564,41 @@ void lwp_thread_signal_catch(void *exp_frame)
 static int _do_signal_wakeup(rt_thread_t thread, int sig)
 {
     int need_schedule;
+    rt_sched_lock_level_t slvl;
     if (!_sigismember(&thread->signal.sigset_mask, sig))
     {
-        if ((thread->stat & RT_THREAD_SUSPEND_MASK) == RT_THREAD_SUSPEND_MASK)
+        rt_sched_lock(&slvl);
+        int stat = rt_sched_thread_get_stat(thread);
+        if ((stat & RT_THREAD_SUSPEND_MASK) == RT_THREAD_SUSPEND_MASK)
         {
-            if ((thread->stat & RT_SIGNAL_COMMON_WAKEUP_MASK) != RT_SIGNAL_COMMON_WAKEUP_MASK)
+            if ((stat & RT_SIGNAL_COMMON_WAKEUP_MASK) != RT_SIGNAL_COMMON_WAKEUP_MASK)
             {
+                thread->error = RT_EINTR;
+                rt_sched_unlock(slvl);
+
                 rt_thread_wakeup(thread);
                 need_schedule = 1;
             }
-            else if ((sig == SIGKILL) && ((thread->stat & RT_SIGNAL_KILL_WAKEUP_MASK) != RT_SIGNAL_KILL_WAKEUP_MASK))
+            else if ((sig == SIGKILL || sig == SIGSTOP) &&
+                    ((stat & RT_SIGNAL_KILL_WAKEUP_MASK) != RT_SIGNAL_KILL_WAKEUP_MASK))
             {
+                thread->error = RT_EINTR;
+                rt_sched_unlock(slvl);
+
                 rt_thread_wakeup(thread);
                 need_schedule = 1;
             }
             else
             {
+                rt_sched_unlock(slvl);
                 need_schedule = 0;
             }
         }
         else
+        {
+            rt_sched_unlock(slvl);
             need_schedule = 0;
+        }
     }
     else
         need_schedule = 0;
@@ -841,7 +855,7 @@ rt_err_t lwp_thread_signal_kill(rt_thread_t thread, long signo, long code, long 
 
     LOG_D("%s(signo=%d)", __func__, signo);
 
-    if (!thread || signo < 0 || signo >= _LWP_NSIG)
+    if (!thread || signo <= 0 || signo >= _LWP_NSIG)
     {
         ret = -RT_EINVAL;
     }

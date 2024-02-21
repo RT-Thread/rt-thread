@@ -85,34 +85,19 @@ void rt_tick_set(rt_tick_t tick)
  */
 void rt_tick_increase(void)
 {
-    struct rt_thread *thread;
-    rt_base_t level;
-    rt_atomic_t oldval = 0;
-
     RT_ASSERT(rt_interrupt_get_nest() > 0);
 
     RT_OBJECT_HOOK_CALL(rt_tick_hook, ());
     /* increase the global tick */
 #ifdef RT_USING_SMP
+    /* get percpu and increase the tick */
     rt_atomic_add(&(rt_cpu_self()->tick), 1);
 #else
     rt_atomic_add(&(rt_tick), 1);
 #endif /* RT_USING_SMP */
 
     /* check time slice */
-    thread = rt_thread_self();
-    level = rt_spin_lock_irqsave(&(thread->spinlock));
-    rt_atomic_sub(&(thread->remaining_tick), 1);
-    if (rt_atomic_compare_exchange_strong(&(thread->remaining_tick), &oldval, thread->init_tick))
-    {
-        thread->stat |= RT_THREAD_STAT_YIELD;
-        rt_spin_unlock_irqrestore(&(thread->spinlock), level);
-        rt_schedule();
-    }
-    else
-    {
-        rt_spin_unlock_irqrestore(&(thread->spinlock), level);
-    }
+    rt_sched_tick_increase();
 
     /* check timer */
 #ifdef RT_USING_SMP

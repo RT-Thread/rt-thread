@@ -14,7 +14,11 @@
  *                             error
  * 2023-10-27     shell        Format codes of sys_exit(). Fix the data racing where lock is missed
  *                             Add reference on pid/tid, so the resource is not freed while using.
+ * 2024-01-25     shell        porting to new sched API
  */
+
+/* includes scheduler related API */
+#define __RT_IPC_SOURCE__
 
 #include <rthw.h>
 #include <rtthread.h>
@@ -382,7 +386,7 @@ rt_lwp_t lwp_create(rt_base_t flags)
         }
     }
 
-    LOG_D("%s(pid=%d) => %p", __func__, new_lwp->pid, new_lwp);
+    LOG_D("%s(pid=%d) => %p", __func__, new_lwp ? new_lwp->pid : -1, new_lwp);
     return new_lwp;
 }
 
@@ -699,6 +703,7 @@ pid_t lwp_name2pid(const char *name)
     pid_t pid = 0;
     rt_thread_t main_thread;
     char* process_name = RT_NULL;
+    rt_sched_lock_level_t slvl;
 
     lwp_pid_lock_take();
     for (idx = 0; idx < RT_LWP_MAX_NR; idx++)
@@ -713,10 +718,12 @@ pid_t lwp_name2pid(const char *name)
             if (!rt_strncmp(name, process_name, RT_NAME_MAX))
             {
                 main_thread = rt_list_entry(lwp->t_grp.prev, struct rt_thread, sibling);
-                if (!(main_thread->stat & RT_THREAD_CLOSE))
+                rt_sched_lock(&slvl);
+                if (!(rt_sched_thread_get_stat(main_thread) == RT_THREAD_CLOSE))
                 {
                     pid = lwp->pid;
                 }
+                rt_sched_unlock(slvl);
             }
         }
     }
@@ -767,7 +774,7 @@ static sysret_t _lwp_wait_and_recycle(struct rt_lwp *child, rt_thread_t cur_thr,
             error = rt_thread_suspend_with_flag(cur_thr, RT_INTERRUPTIBLE);
             if (error == 0)
             {
-                rt_list_insert_before(&child->wait_list, &(cur_thr->tlist));
+                rt_list_insert_before(&child->wait_list, &RT_THREAD_LIST_NODE(cur_thr));
                 LWP_UNLOCK(child);
 
                 rt_set_errno(RT_EINTR);
@@ -898,15 +905,15 @@ static void print_thread_info(struct rt_thread* thread, int maxlen)
     rt_uint8_t stat;
 
 #ifdef RT_USING_SMP
-    if (thread->oncpu != RT_CPU_DETACHED)
-        rt_kprintf("%-*.*s %3d %3d ", maxlen, RT_NAME_MAX, thread->parent.name, thread->oncpu, thread->current_priority);
+    if (SCHED_CTX(thread).oncpu != RT_CPU_DETACHED)
+        rt_kprintf("%-*.*s %3d %3d ", maxlen, RT_NAME_MAX, thread->parent.name, SCHED_CTX(thread).oncpu, SCHED_PRIV(thread).current_priority);
     else
-        rt_kprintf("%-*.*s N/A %3d ", maxlen, RT_NAME_MAX, thread->parent.name, thread->current_priority);
+        rt_kprintf("%-*.*s N/A %3d ", maxlen, RT_NAME_MAX, thread->parent.name, SCHED_PRIV(thread).current_priority);
 #else
     rt_kprintf("%-*.*s %3d ", maxlen, RT_NAME_MAX, thread->parent.name, thread->current_priority);
 #endif /*RT_USING_SMP*/
 
-    stat = (thread->stat & RT_THREAD_STAT_MASK);
+    stat = (SCHED_CTX(thread).stat & RT_THREAD_STAT_MASK);
     if (stat == RT_THREAD_READY)        rt_kprintf(" ready  ");
     else if ((stat & RT_THREAD_SUSPEND_MASK) == RT_THREAD_SUSPEND_MASK) rt_kprintf(" suspend");
     else if (stat == RT_THREAD_INIT)    rt_kprintf(" init   ");
@@ -932,7 +939,7 @@ static void print_thread_info(struct rt_thread* thread, int maxlen)
             thread->stack_size,
             (thread->stack_size + (rt_uint32_t)(rt_size_t)thread->stack_addr - (rt_uint32_t)(rt_size_t)ptr) * 100
             / thread->stack_size,
-            thread->remaining_tick,
+            SCHED_PRIV(thread).remaining_tick,
             thread->error);
 #endif
 }
@@ -1066,99 +1073,15 @@ MSH_CMD_EXPORT_ALIAS(cmd_killall, killall, kill processes by name);
 int lwp_check_exit_request(void)
 {
     rt_thread_t thread = rt_thread_self();
+    rt_base_t expected = LWP_EXIT_REQUEST_TRIGGERED;
+
     if (!thread->lwp)
     {
         return 0;
     }
 
-    if (thread->exit_request == LWP_EXIT_REQUEST_TRIGGERED)
-    {
-        thread->exit_request = LWP_EXIT_REQUEST_IN_PROCESS;
-        return 1;
-    }
-    return 0;
-}
-
-static int found_thread(struct rt_lwp* lwp, rt_thread_t thread)
-{
-    int found = 0;
-    rt_base_t level;
-    rt_list_t *list;
-
-    level = rt_spin_lock_irqsave(&thread->spinlock);
-    list = lwp->t_grp.next;
-    while (list != &lwp->t_grp)
-    {
-        rt_thread_t iter_thread;
-
-        iter_thread = rt_list_entry(list, struct rt_thread, sibling);
-        if (thread == iter_thread)
-        {
-            found = 1;
-            break;
-        }
-        list = list->next;
-    }
-    rt_spin_unlock_irqrestore(&thread->spinlock, level);
-    return found;
-}
-
-void lwp_request_thread_exit(rt_thread_t thread_to_exit)
-{
-    rt_thread_t main_thread;
-    rt_base_t level;
-    rt_list_t *list;
-    struct rt_lwp *lwp;
-
-    lwp = lwp_self();
-
-    if ((!thread_to_exit) || (!lwp))
-    {
-        return;
-    }
-
-    level = rt_spin_lock_irqsave(&thread_to_exit->spinlock);
-
-    main_thread = rt_list_entry(lwp->t_grp.prev, struct rt_thread, sibling);
-    if (thread_to_exit == main_thread)
-    {
-        goto finish;
-    }
-    if ((struct rt_lwp *)thread_to_exit->lwp != lwp)
-    {
-        goto finish;
-    }
-
-    for (list = lwp->t_grp.next; list != &lwp->t_grp; list = list->next)
-    {
-        rt_thread_t thread;
-
-        thread = rt_list_entry(list, struct rt_thread, sibling);
-        if (thread != thread_to_exit)
-        {
-            continue;
-        }
-        if (thread->exit_request == LWP_EXIT_REQUEST_NONE)
-        {
-            thread->exit_request = LWP_EXIT_REQUEST_TRIGGERED;
-        }
-        if ((thread->stat & RT_THREAD_SUSPEND_MASK) == RT_THREAD_SUSPEND_MASK)
-        {
-            thread->error = -RT_EINTR;
-            rt_hw_dsb();
-            rt_thread_wakeup(thread);
-        }
-        break;
-    }
-
-    while (found_thread(lwp, thread_to_exit))
-    {
-        rt_thread_mdelay(10);
-    }
-
-finish:
-    rt_spin_unlock_irqrestore(&thread_to_exit->spinlock, level);
-    return;
+    return rt_atomic_compare_exchange_strong(&thread->exit_request, &expected,
+                                             LWP_EXIT_REQUEST_IN_PROCESS);
 }
 
 static void _wait_sibling_exit(rt_lwp_t lwp, rt_thread_t curr_thread);
@@ -1193,34 +1116,32 @@ void lwp_terminate(struct rt_lwp *lwp)
 
 static void _wait_sibling_exit(rt_lwp_t lwp, rt_thread_t curr_thread)
 {
-    rt_base_t level;
+    rt_sched_lock_level_t slvl;
     rt_list_t *list;
     rt_thread_t thread;
+    rt_base_t expected = LWP_EXIT_REQUEST_NONE;
 
     /* broadcast exit request for sibling threads */
     LWP_LOCK(lwp);
     for (list = lwp->t_grp.next; list != &lwp->t_grp; list = list->next)
     {
         thread = rt_list_entry(list, struct rt_thread, sibling);
-        level = rt_spin_lock_irqsave(&thread->spinlock);
-        if (thread->exit_request == LWP_EXIT_REQUEST_NONE)
-        {
-            thread->exit_request = LWP_EXIT_REQUEST_TRIGGERED;
-        }
-        rt_spin_unlock_irqrestore(&thread->spinlock, level);
 
-        level = rt_spin_lock_irqsave(&thread->spinlock);
-        if ((thread->stat & RT_THREAD_SUSPEND_MASK) == RT_THREAD_SUSPEND_MASK)
+        rt_atomic_compare_exchange_strong(&thread->exit_request, &expected,
+                                          LWP_EXIT_REQUEST_TRIGGERED);
+
+        rt_sched_lock(&slvl);
+        /* dont release, otherwise thread may have been freed */
+        if (rt_sched_thread_is_suspended(thread))
         {
             thread->error = RT_EINTR;
-            rt_spin_unlock_irqrestore(&thread->spinlock, level);
+            rt_sched_unlock(slvl);
 
-            rt_hw_dsb();
             rt_thread_wakeup(thread);
         }
         else
         {
-            rt_spin_unlock_irqrestore(&thread->spinlock, level);
+            rt_sched_unlock(slvl);
         }
     }
     LWP_UNLOCK(lwp);
@@ -1240,6 +1161,7 @@ static void _wait_sibling_exit(rt_lwp_t lwp, rt_thread_t curr_thread)
         subthread_is_terminated = (int)(curr_thread->sibling.prev == &lwp->t_grp);
         if (!subthread_is_terminated)
         {
+            rt_sched_lock_level_t slvl;
             rt_thread_t sub_thread;
             rt_list_t *list;
             int all_subthread_in_init = 1;
@@ -1247,12 +1169,17 @@ static void _wait_sibling_exit(rt_lwp_t lwp, rt_thread_t curr_thread)
             /* check all subthread is in init state */
             for (list = curr_thread->sibling.prev; list != &lwp->t_grp; list = list->prev)
             {
-
+                rt_sched_lock(&slvl);
                 sub_thread = rt_list_entry(list, struct rt_thread, sibling);
-                if ((sub_thread->stat & RT_THREAD_STAT_MASK) != RT_THREAD_INIT)
+                if (rt_sched_thread_get_stat(sub_thread) != RT_THREAD_INIT)
                 {
+                    rt_sched_unlock(slvl);
                     all_subthread_in_init = 0;
                     break;
+                }
+                else
+                {
+                    rt_sched_unlock(slvl);
                 }
             }
             if (all_subthread_in_init)
@@ -1344,7 +1271,7 @@ static void _resr_cleanup(struct rt_lwp *lwp)
         LWP_UNLOCK(lwp);
         if (!rt_list_isempty(&lwp->wait_list))
         {
-            thread = rt_list_entry(lwp->wait_list.next, struct rt_thread, tlist);
+            thread = RT_THREAD_LIST_NODE_ENTRY(lwp->wait_list.next);
             thread->error = RT_EOK;
             thread->msg_ret = (void*)(rt_size_t)lwp->lwp_ret;
             rt_thread_resume(thread);

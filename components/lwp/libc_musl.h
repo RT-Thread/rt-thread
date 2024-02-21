@@ -28,6 +28,22 @@
 
 #define FUTEX_CLOCK_REALTIME 256
 
+#define FUTEX_WAITERS    0x80000000
+#define FUTEX_OWNER_DIED 0x40000000
+#define FUTEX_TID_MASK   0x3fffffff
+
+struct robust_list
+{
+    struct robust_list *next;
+};
+
+struct robust_list_head
+{
+    struct robust_list list;
+    long futex_offset;
+    struct robust_list *list_op_pending;
+};
+
 /* for pmutex op */
 #define PMUTEX_INIT    0
 #define PMUTEX_LOCK    1

@@ -8,15 +8,16 @@
  * 2021-09.01     luckyzjq     the first version
  * 2023-09-15     xqyjlj       change stack size in cpu64
  */
+#define __RTT_IPC_SOURCE__
 
 #include <rtthread.h>
 #include <stdlib.h>
 #include "utest.h"
 
 #ifdef ARCH_CPU_64BIT
-#define THREAD_STACKSIZE 4096
+#define THREAD_STACKSIZE 8192
 #else
-#define THREAD_STACKSIZE 1024
+#define THREAD_STACKSIZE 4096
 #endif
 
 static struct rt_mutex static_mutex;
@@ -241,7 +242,7 @@ static void static_thread1_entry(void *param)
 
     /*  thread3 hode mutex  thread2 take mutex */
     /* check thread2 and thread3 priority */
-    if (tid2->current_priority != tid3->current_priority)
+    if (SCHED_PRIV(tid2).current_priority != SCHED_PRIV(tid3).current_priority)
     {
         uassert_true(RT_FALSE);
     }
@@ -550,7 +551,7 @@ static void dynamic_thread1_entry(void *param)
 
     /*  thread3 hode mutex  thread2 take mutex */
     /* check thread2 and thread3 priority */
-    if (tid2->current_priority != tid3->current_priority)
+    if (SCHED_PRIV(tid2).current_priority != SCHED_PRIV(tid3).current_priority)
     {
         uassert_true(RT_FALSE);
     }

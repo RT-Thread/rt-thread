@@ -79,31 +79,30 @@ RT_OBJECT_HOOKLIST_DEFINE(rt_thread_inited);
 static void _thread_exit(void)
 {
     struct rt_thread *thread;
-    rt_base_t level;
+    rt_sched_lock_level_t slvl;
+    rt_base_t critical_level;
 
     /* get current thread */
     thread = rt_thread_self();
 
-    rt_enter_critical();
+    critical_level = rt_enter_critical();
+    rt_sched_lock(&slvl);
 
     /* remove from schedule */
-    rt_schedule_remove_thread(thread);
-
-    level = rt_spin_lock_irqsave(&(thread->spinlock));
+    rt_sched_remove_thread(thread);
 
     /* remove it from timer list */
     rt_timer_detach(&thread->thread_timer);
 
     /* change stat */
-    thread->stat = RT_THREAD_CLOSE;
+    rt_sched_thread_close(thread);
 
-    rt_spin_unlock_irqrestore(&(thread->spinlock), level);
+    rt_sched_unlock(slvl);
 
     /* insert to defunct thread list */
     rt_thread_defunct_enqueue(thread);
 
-    LOG_D("line:%d thread:%s exit\n", __LINE__, rt_thread_self()->parent.name);
-    rt_exit_critical();
+    rt_exit_critical_safe(critical_level);
 
     /* switch to next task */
     rt_schedule();
@@ -118,41 +117,66 @@ static void _thread_exit(void)
 static void _thread_timeout(void *parameter)
 {
     struct rt_thread *thread;
-    rt_base_t level;
+    rt_sched_lock_level_t slvl;
 
     thread = (struct rt_thread *)parameter;
 
     /* parameter check */
     RT_ASSERT(thread != RT_NULL);
-    RT_ASSERT((thread->stat & RT_THREAD_SUSPEND_MASK) == RT_THREAD_SUSPEND_MASK);
     RT_ASSERT(rt_object_get_type((rt_object_t)thread) == RT_Object_Class_Thread);
-    level = rt_spin_lock_irqsave(&(thread->spinlock));
+
+    rt_sched_lock(&slvl);
+
+    /**
+     * resume of the thread and stop of the thread timer should be an atomic
+     * operation. So we don't expected that thread had resumed.
+     */
+    RT_ASSERT(rt_sched_thread_is_suspended(thread));
+
     /* set error number */
     thread->error = -RT_ETIMEOUT;
 
     /* remove from suspend list */
-    rt_list_remove(&(thread->tlist));
-    rt_spin_unlock_irqrestore(&(thread->spinlock), level);
+    rt_list_remove(&RT_THREAD_LIST_NODE(thread));
     /* insert to schedule ready list */
-    rt_schedule_insert_thread(thread);
-    /* do schedule */
-    rt_schedule();
+    rt_sched_insert_thread(thread);
+    /* do schedule and release the scheduler lock */
+    rt_sched_unlock_n_resched(slvl);
 }
 
-/* release the mutex held by a thread when thread is reclaimed */
 #ifdef RT_USING_MUTEX
-static void _free_owned_mutex(rt_thread_t thread)
+static void _thread_detach_from_mutex(rt_thread_t thread)
 {
     rt_list_t *node;
     rt_list_t *tmp_list;
     struct rt_mutex *mutex;
+    rt_base_t level;
 
+    level = rt_spin_lock_irqsave(&thread->spinlock);
+
+    /* check if thread is waiting on a mutex */
+    if ((thread->pending_object) &&
+        (rt_object_get_type(thread->pending_object) == RT_Object_Class_Mutex))
+    {
+        /* remove it from its waiting list */
+        struct rt_mutex *mutex = (struct rt_mutex*)thread->pending_object;
+        rt_mutex_drop_thread(mutex, thread);
+        thread->pending_object = RT_NULL;
+    }
+
+    /* free taken mutex after detaching from waiting, so we don't lost mutex just got */
     rt_list_for_each_safe(node, tmp_list, &(thread->taken_object_list))
     {
         mutex = rt_list_entry(node, struct rt_mutex, taken_list);
         rt_mutex_release(mutex);
     }
+
+    rt_spin_unlock_irqrestore(&thread->spinlock, level);
 }
+
+#else
+
+static void _thread_detach_from_mutex(rt_thread_t thread) {}
 #endif
 
 static rt_err_t _thread_init(struct rt_thread *thread,
@@ -166,16 +190,14 @@ static rt_err_t _thread_init(struct rt_thread *thread,
 {
     RT_UNUSED(name);
 
-    /* init thread list */
-    rt_list_init(&(thread->tlist));
-    rt_list_init(&(thread->tlist_schedule));
+    rt_sched_thread_init_ctx(thread, tick, priority);
 
 #ifdef RT_USING_MEM_PROTECTION
     thread->mem_regions = RT_NULL;
 #endif
 
 #ifdef RT_USING_SMART
-    thread->wakeup.func = RT_NULL;
+    thread->wakeup_handle.func = RT_NULL;
 #endif
 
     thread->entry = (void *)entry;
@@ -200,13 +222,6 @@ static rt_err_t _thread_init(struct rt_thread *thread,
                                           (void *)_thread_exit);
 #endif /* ARCH_CPU_STACK_GROWS_UPWARD */
 
-    /* priority init */
-    RT_ASSERT(priority < RT_THREAD_PRIORITY_MAX);
-    thread->init_priority    = priority;
-    thread->current_priority = priority;
-
-    thread->number_mask = 0;
-
 #ifdef RT_USING_MUTEX
     rt_list_init(&thread->taken_object_list);
     thread->pending_object = RT_NULL;
@@ -217,28 +232,13 @@ static rt_err_t _thread_init(struct rt_thread *thread,
     thread->event_info = 0;
 #endif /* RT_USING_EVENT */
 
-#if RT_THREAD_PRIORITY_MAX > 32
-    thread->number = 0;
-    thread->high_mask = 0;
-#endif /* RT_THREAD_PRIORITY_MAX > 32 */
-
-    /* tick init */
-    rt_atomic_store(&thread->init_tick, tick);
-    rt_atomic_store(&thread->remaining_tick, tick);
-
     /* error and flags */
     thread->error = RT_EOK;
-    thread->stat  = RT_THREAD_INIT;
-
-#ifdef RT_USING_SMP
-    /* not bind on any cpu */
-    thread->bind_cpu = RT_CPUS_NR;
-    thread->oncpu = RT_CPU_DETACHED;
 
     /* lock init */
+#ifdef RT_USING_SMP
     rt_atomic_store(&thread->cpus_lock_nest, 0);
-    rt_atomic_store(&thread->critical_lock_nest, 0);
-#endif /* RT_USING_SMP */
+#endif
 
     /* initialize cleanup function and user data */
     thread->cleanup   = 0;
@@ -250,7 +250,7 @@ static rt_err_t _thread_init(struct rt_thread *thread,
                   _thread_timeout,
                   thread,
                   0,
-                  RT_TIMER_FLAG_ONE_SHOT);
+                  RT_TIMER_FLAG_ONE_SHOT | RT_TIMER_FLAG_THREAD_TIMER);
 
     /* initialize signal */
 #ifdef RT_USING_SIGNALS
@@ -268,6 +268,7 @@ static rt_err_t _thread_init(struct rt_thread *thread,
     thread->tid_ref_count = 0;
     thread->lwp = RT_NULL;
     thread->susp_recycler = RT_NULL;
+    thread->robust_list = RT_NULL;
     rt_list_init(&(thread->sibling));
 
     /* lwp thread-signal init */
@@ -392,33 +393,23 @@ rt_err_t rt_thread_startup(rt_thread_t thread)
 {
     /* parameter check */
     RT_ASSERT(thread != RT_NULL);
-    RT_ASSERT((thread->stat & RT_THREAD_STAT_MASK) == RT_THREAD_INIT);
+    RT_ASSERT((SCHED_CTX(thread).stat & RT_THREAD_STAT_MASK) == RT_THREAD_INIT);
     RT_ASSERT(rt_object_get_type((rt_object_t)thread) == RT_Object_Class_Thread);
-
-    /* calculate priority attribute */
-#if RT_THREAD_PRIORITY_MAX > 32
-    thread->number      = thread->current_priority >> 3;            /* 5bit */
-    thread->number_mask = 1L << thread->number;
-    thread->high_mask   = 1L << (thread->current_priority & 0x07);  /* 3bit */
-#else
-    thread->number_mask = 1L << thread->current_priority;
-#endif /* RT_THREAD_PRIORITY_MAX > 32 */
 
     LOG_D("startup a thread:%s with priority:%d",
           thread->parent.name, thread->current_priority);
-    /* change thread stat */
-    thread->stat = RT_THREAD_SUSPEND;
-    /* then resume it */
+
+    /* calculate priority attribute and reset thread stat to suspend */
+    rt_sched_thread_startup(thread);
+
+    /* resume and do a schedule if scheduler is available */
     rt_thread_resume(thread);
-    if (rt_thread_self() != RT_NULL)
-    {
-        /* do a scheduling */
-        rt_schedule();
-    }
 
     return RT_EOK;
 }
 RTM_EXPORT(rt_thread_startup);
+
+static rt_err_t _thread_detach(rt_thread_t thread);
 
 /**
  * @brief   This function will detach a thread. The thread object will be removed from
@@ -431,52 +422,68 @@ RTM_EXPORT(rt_thread_startup);
  */
 rt_err_t rt_thread_detach(rt_thread_t thread)
 {
-    rt_base_t level;
-
     /* parameter check */
     RT_ASSERT(thread != RT_NULL);
     RT_ASSERT(rt_object_get_type((rt_object_t)thread) == RT_Object_Class_Thread);
     RT_ASSERT(rt_object_is_systemobject((rt_object_t)thread));
 
-    if ((thread->stat & RT_THREAD_STAT_MASK) == RT_THREAD_CLOSE)
-        return RT_EOK;
-
-    rt_enter_critical();
-
-    if ((thread->stat & RT_THREAD_STAT_MASK) != RT_THREAD_INIT)
-    {
-        /* remove from schedule */
-        rt_schedule_remove_thread(thread);
-    }
-
-    /* disable interrupt */
-    level = rt_spin_lock_irqsave(&(thread->spinlock));
-
-    /* release thread timer */
-    rt_timer_detach(&(thread->thread_timer));
-
-    /* change stat */
-    thread->stat = RT_THREAD_CLOSE;
-
-#ifdef RT_USING_MUTEX
-    _free_owned_mutex(thread);
-    if ((thread->pending_object) &&
-        (rt_object_get_type(thread->pending_object) == RT_Object_Class_Mutex))
-    {
-        struct rt_mutex *mutex = (struct rt_mutex*)thread->pending_object;
-        rt_mutex_drop_thread(mutex, thread);
-        thread->pending_object = RT_NULL;
-    }
-#endif
-    rt_spin_unlock_irqrestore(&(thread->spinlock), level);
-
-    /* insert to defunct thread list */
-    rt_thread_defunct_enqueue(thread);
-
-    rt_exit_critical();
-    return RT_EOK;
+    return _thread_detach(thread);
 }
 RTM_EXPORT(rt_thread_detach);
+
+static rt_err_t _thread_detach(rt_thread_t thread)
+{
+    rt_err_t error;
+    rt_sched_lock_level_t slvl;
+    rt_uint8_t thread_status;
+    rt_base_t critical_level;
+
+    /**
+     * forbid scheduling on current core before returning since current thread
+     * may be detached from scheduler.
+     */
+    critical_level = rt_enter_critical();
+
+    /* before checking status of scheduler */
+    rt_sched_lock(&slvl);
+
+    /* check if thread is already closed */
+    thread_status = rt_sched_thread_get_stat(thread);
+    if (thread_status != RT_THREAD_CLOSE)
+    {
+        if (thread_status != RT_THREAD_INIT)
+        {
+            /* remove from schedule */
+            rt_sched_remove_thread(thread);
+        }
+
+        /* release thread timer */
+        rt_timer_detach(&(thread->thread_timer));
+
+        /* change stat */
+        rt_sched_thread_close(thread);
+
+        /* scheduler works are done */
+        rt_sched_unlock(slvl);
+
+        _thread_detach_from_mutex(thread);
+
+        /* insert to defunct thread list */
+        rt_thread_defunct_enqueue(thread);
+
+        error = RT_EOK;
+    }
+    else
+    {
+        rt_sched_unlock(slvl);
+
+        /* already closed */
+        error = RT_EOK;
+    }
+
+    rt_exit_critical_safe(critical_level);
+    return error;
+}
 
 #ifdef RT_USING_HEAP
 /**
@@ -546,47 +553,12 @@ RTM_EXPORT(rt_thread_create);
  */
 rt_err_t rt_thread_delete(rt_thread_t thread)
 {
-    rt_base_t level;
-
     /* parameter check */
     RT_ASSERT(thread != RT_NULL);
     RT_ASSERT(rt_object_get_type((rt_object_t)thread) == RT_Object_Class_Thread);
     RT_ASSERT(rt_object_is_systemobject((rt_object_t)thread) == RT_FALSE);
 
-    if ((thread->stat & RT_THREAD_STAT_MASK) == RT_THREAD_CLOSE)
-        return RT_EOK;
-
-    rt_enter_critical();
-
-    if ((thread->stat & RT_THREAD_STAT_MASK) != RT_THREAD_INIT)
-    {
-        /* remove from schedule */
-        rt_schedule_remove_thread(thread);
-    }
-    level = rt_spin_lock_irqsave(&(thread->spinlock));
-
-    /* release thread timer */
-    rt_timer_detach(&(thread->thread_timer));
-
-    /* change stat */
-    thread->stat = RT_THREAD_CLOSE;
-
-#ifdef RT_USING_MUTEX
-    _free_owned_mutex(thread);
-    if ((thread->pending_object) &&
-        (rt_object_get_type(thread->pending_object) == RT_Object_Class_Mutex))
-    {
-        struct rt_mutex *mutex = (struct rt_mutex*)thread->pending_object;
-        rt_mutex_drop_thread(mutex, thread);
-        thread->pending_object = RT_NULL;
-    }
-#endif
-    rt_spin_unlock_irqrestore(&(thread->spinlock), level);
-    /* insert to defunct thread list */
-    rt_thread_defunct_enqueue(thread);
-
-    rt_exit_critical();
-    return RT_EOK;
+    return _thread_detach(thread);
 }
 RTM_EXPORT(rt_thread_delete);
 #endif /* RT_USING_HEAP */
@@ -601,15 +573,12 @@ RTM_EXPORT(rt_thread_delete);
  */
 rt_err_t rt_thread_yield(void)
 {
-    struct rt_thread *thread;
-    rt_base_t level;
+    rt_sched_lock_level_t slvl;
+    rt_sched_lock(&slvl);
 
-    thread = rt_thread_self();
-    level = rt_spin_lock_irqsave(&(thread->spinlock));
-    rt_atomic_store(&thread->remaining_tick, thread->init_tick);
-    thread->stat |= RT_THREAD_STAT_YIELD;
-    rt_spin_unlock_irqrestore(&(thread->spinlock), level);
-    rt_schedule();
+    rt_sched_thread_yield(rt_thread_self());
+
+    rt_sched_unlock_n_resched(slvl);
 
     return RT_EOK;
 }
@@ -626,8 +595,8 @@ RTM_EXPORT(rt_thread_yield);
  */
 static rt_err_t _thread_sleep(rt_tick_t tick)
 {
-    rt_base_t level;
     struct rt_thread *thread;
+    rt_base_t critical_level;
     int err;
 
     if (tick == 0)
@@ -642,27 +611,29 @@ static rt_err_t _thread_sleep(rt_tick_t tick)
 
     /* current context checking */
     RT_DEBUG_SCHEDULER_AVAILABLE(RT_TRUE);
+
     /* reset thread error */
     thread->error = RT_EOK;
-    level = rt_hw_local_irq_disable();
+
+    /* lock scheduler since current thread may be suspended */
+    critical_level = rt_enter_critical();
+
     /* suspend thread */
-    rt_enter_critical();
     err = rt_thread_suspend_with_flag(thread, RT_INTERRUPTIBLE);
-    rt_spin_lock(&(thread->spinlock));
+
     /* reset the timeout of thread timer and start it */
     if (err == RT_EOK)
     {
         rt_timer_control(&(thread->thread_timer), RT_TIMER_CTRL_SET_TIME, &tick);
         rt_timer_start(&(thread->thread_timer));
 
-        /* enable interrupt */
-        rt_spin_unlock(&(thread->spinlock));
-        rt_hw_local_irq_enable(level);
-        rt_exit_critical();
-
         thread->error = -RT_EINTR;
 
+        /* notify a pending rescheduling */
         rt_schedule();
+
+        /* exit critical and do a rescheduling */
+        rt_exit_critical_safe(critical_level);
 
         /* clear error number of this thread to RT_EOK */
         if (thread->error == -RT_ETIMEOUT)
@@ -670,9 +641,7 @@ static rt_err_t _thread_sleep(rt_tick_t tick)
     }
     else
     {
-        rt_spin_unlock(&(thread->spinlock));
-        rt_hw_local_irq_enable(level);
-        rt_exit_critical();
+        rt_exit_critical_safe(critical_level);
     }
 
     return err;
@@ -704,9 +673,9 @@ RTM_EXPORT(rt_thread_delay);
  */
 rt_err_t rt_thread_delay_until(rt_tick_t *tick, rt_tick_t inc_tick)
 {
-    rt_base_t level;
     struct rt_thread *thread;
     rt_tick_t cur_tick;
+    rt_base_t critical_level;
 
     RT_ASSERT(tick != RT_NULL);
 
@@ -719,7 +688,7 @@ rt_err_t rt_thread_delay_until(rt_tick_t *tick, rt_tick_t inc_tick)
     thread->error = RT_EOK;
 
     /* disable interrupt */
-    level = rt_hw_local_irq_disable();
+    critical_level = rt_enter_critical();
 
     cur_tick = rt_tick_get();
     if (cur_tick - *tick < inc_tick)
@@ -729,19 +698,14 @@ rt_err_t rt_thread_delay_until(rt_tick_t *tick, rt_tick_t inc_tick)
         *tick += inc_tick;
         left_tick = *tick - cur_tick;
 
-        rt_enter_critical();
         /* suspend thread */
         rt_thread_suspend_with_flag(thread, RT_UNINTERRUPTIBLE);
-
-        rt_spin_lock(&(thread->spinlock));
 
         /* reset the timeout of thread timer and start it */
         rt_timer_control(&(thread->thread_timer), RT_TIMER_CTRL_SET_TIME, &left_tick);
         rt_timer_start(&(thread->thread_timer));
 
-        rt_spin_unlock(&(thread->spinlock));
-        rt_hw_local_irq_enable(level);
-        rt_exit_critical();
+        rt_exit_critical_safe(critical_level);
 
         rt_schedule();
 
@@ -754,7 +718,7 @@ rt_err_t rt_thread_delay_until(rt_tick_t *tick, rt_tick_t inc_tick)
     else
     {
         *tick = cur_tick;
-        rt_hw_local_irq_enable(level);
+        rt_exit_critical_safe(critical_level);
     }
 
     return thread->error;
@@ -780,65 +744,6 @@ rt_err_t rt_thread_mdelay(rt_int32_t ms)
 RTM_EXPORT(rt_thread_mdelay);
 
 #ifdef RT_USING_SMP
-static void rt_thread_cpu_bind(rt_thread_t thread, int cpu)
-{
-    rt_base_t level;
-
-    if (cpu >= RT_CPUS_NR)
-    {
-        cpu = RT_CPUS_NR;
-    }
-
-    if ((thread->stat & RT_THREAD_STAT_MASK) == RT_THREAD_READY)
-    {
-        /* unbind */
-        /* remove from old ready queue */
-        rt_schedule_remove_thread(thread);
-        /* change thread bind cpu */
-        thread->bind_cpu = cpu;
-        /* add to new ready queue */
-        rt_schedule_insert_thread(thread);
-        if (rt_thread_self() != RT_NULL)
-        {
-            rt_schedule();
-        }
-    }
-    else
-    {
-        level = rt_spin_lock_irqsave(&(thread->spinlock));
-        thread->bind_cpu = cpu;
-        if ((thread->stat & RT_THREAD_STAT_MASK) == RT_THREAD_RUNNING)
-        {
-            /* thread is running on a cpu */
-            int current_cpu = rt_hw_cpu_id();
-
-            if (cpu != RT_CPUS_NR)
-            {
-                if (thread->oncpu == current_cpu)
-                {
-                    /* current thread on current cpu */
-                    if (cpu != current_cpu)
-                    {
-                        /* bind to other cpu */
-                        rt_hw_ipi_send(RT_SCHEDULE_IPI, 1U << cpu);
-                        /* self cpu need reschedule */
-                        rt_spin_unlock_irqrestore(&(thread->spinlock), level);
-                        rt_schedule();
-                        level = rt_spin_lock_irqsave(&(thread->spinlock));
-                    }
-                    /* else do nothing */
-                }
-                else
-                {
-                    /* no running on self cpu, but dest cpu can be itself */
-                    rt_hw_ipi_send(RT_SCHEDULE_IPI, 1U << thread->oncpu);
-                }
-            }
-            /* else do nothing */
-        }
-        rt_spin_unlock_irqrestore(&(thread->spinlock), level);
-    }
-}
 #endif
 
 /**
@@ -863,8 +768,6 @@ static void rt_thread_cpu_bind(rt_thread_t thread, int cpu)
  */
 rt_err_t rt_thread_control(rt_thread_t thread, int cmd, void *arg)
 {
-    rt_base_t level;
-
     /* parameter check */
     RT_ASSERT(thread != RT_NULL);
     RT_ASSERT(rt_object_get_type((rt_object_t)thread) == RT_Object_Class_Thread);
@@ -873,44 +776,12 @@ rt_err_t rt_thread_control(rt_thread_t thread, int cmd, void *arg)
     {
         case RT_THREAD_CTRL_CHANGE_PRIORITY:
         {
-            /* for ready thread, change queue */
-            if ((thread->stat & RT_THREAD_STAT_MASK) == RT_THREAD_READY)
-            {
-                /* remove thread from schedule queue first */
-                rt_schedule_remove_thread(thread);
-                level = rt_spin_lock_irqsave(&(thread->spinlock));
-                /* change thread priority */
-                thread->current_priority = *(rt_uint8_t *)arg;
-
-                /* recalculate priority attribute */
-    #if RT_THREAD_PRIORITY_MAX > 32
-                thread->number      = thread->current_priority >> 3;            /* 5bit */
-                thread->number_mask = 1 << thread->number;
-                thread->high_mask   = 1 << (thread->current_priority & 0x07);   /* 3bit */
-    #else
-                thread->number_mask = 1 << thread->current_priority;
-    #endif /* RT_THREAD_PRIORITY_MAX > 32 */
-                thread->stat  = RT_THREAD_INIT;
-                rt_spin_unlock_irqrestore(&(thread->spinlock), level);
-                /* insert thread to schedule queue again */
-                rt_schedule_insert_thread(thread);
-            }
-            else
-            {
-                level = rt_spin_lock_irqsave(&(thread->spinlock));
-                thread->current_priority = *(rt_uint8_t *)arg;
-
-                /* recalculate priority attribute */
-    #if RT_THREAD_PRIORITY_MAX > 32
-                thread->number      = thread->current_priority >> 3;            /* 5bit */
-                thread->number_mask = 1 << thread->number;
-                thread->high_mask   = 1 << (thread->current_priority & 0x07);   /* 3bit */
-    #else
-                thread->number_mask = 1 << thread->current_priority;
-    #endif /* RT_THREAD_PRIORITY_MAX > 32 */
-                rt_spin_unlock_irqrestore(&(thread->spinlock), level);
-            }
-            break;
+            rt_err_t error;
+            rt_sched_lock_level_t slvl;
+            rt_sched_lock(&slvl);
+            error = rt_sched_thread_change_priority(thread, *(rt_uint8_t *)arg);
+            rt_sched_unlock(slvl);
+            return error;
         }
 
         case RT_THREAD_CTRL_STARTUP:
@@ -936,16 +807,14 @@ rt_err_t rt_thread_control(rt_thread_t thread, int cmd, void *arg)
             return rt_err;
         }
 
-    #ifdef RT_USING_SMP
         case RT_THREAD_CTRL_BIND_CPU:
         {
             rt_uint8_t cpu;
 
             cpu = (rt_uint8_t)(size_t)arg;
-            rt_thread_cpu_bind(thread, cpu);
-            break;
+            return rt_sched_thread_bind_cpu(thread, cpu);
         }
-#endif /*RT_USING_SMP*/
+
     default:
         break;
     }
@@ -958,7 +827,7 @@ RTM_EXPORT(rt_thread_control);
 #include <lwp_signal.h>
 #endif
 
-static void rt_thread_set_suspend_state(struct rt_thread *thread, int suspend_flag)
+static void _thread_set_suspend_state(struct rt_thread *thread, int suspend_flag)
 {
     rt_uint8_t stat = RT_THREAD_SUSPEND_UNINTERRUPTIBLE;
 
@@ -978,8 +847,109 @@ static void rt_thread_set_suspend_state(struct rt_thread *thread, int suspend_fl
         RT_ASSERT(0);
         break;
     }
-    thread->stat = stat | (thread->stat & ~RT_THREAD_STAT_MASK);
+    SCHED_CTX(thread).stat = stat | (SCHED_CTX(thread).stat & ~RT_THREAD_STAT_MASK);
 }
+
+/**
+ * @brief   This function will suspend the specified thread and change it to suspend state.
+ *
+ * @note    This function ONLY can suspend current thread itself.
+ *              rt_thread_suspend(rt_thread_self());
+ *
+ *          Do not use the rt_thread_suspend to suspend other threads. You have no way of knowing what code a
+ *          thread is executing when you suspend it. If you suspend a thread while sharing a resouce with
+ *          other threads and occupying this resouce, starvation can occur very easily.
+ *
+ * @param   thread the thread to be suspended.
+ * @param   susp_list the list thread enqueued to. RT_NULL if no list.
+ * @param   ipc_flags is a flag for the thread object to be suspended. It determines how the thread is suspended.
+ *          The flag can be ONE of the following values:
+ *              RT_IPC_FLAG_PRIO          The pending threads will queue in order of priority.
+ *              RT_IPC_FLAG_FIFO          The pending threads will queue in the first-in-first-out method
+ *                                         (also known as first-come-first-served (FCFS) scheduling strategy).
+ *          NOTE: RT_IPC_FLAG_FIFO is a non-real-time scheduling mode. It is strongly recommended to use
+ *          RT_IPC_FLAG_PRIO to ensure the thread is real-time UNLESS your applications concern about
+ *          the first-in-first-out principle, and you clearly understand that all threads involved in
+ *          this semaphore will become non-real-time threads.
+ * @param   suspend_flag status flag of the thread to be suspended.
+ *
+ * @return  Return the operation status. If the return value is RT_EOK, the function is successfully executed.
+ *          If the return value is any other values, it means this operation failed.
+ */
+rt_err_t rt_thread_suspend_to_list(rt_thread_t thread, rt_list_t *susp_list, int ipc_flags, int suspend_flag)
+{
+    rt_base_t stat;
+    rt_sched_lock_level_t slvl;
+
+    /* parameter check */
+    RT_ASSERT(thread != RT_NULL);
+    RT_ASSERT(rt_object_get_type((rt_object_t)thread) == RT_Object_Class_Thread);
+    RT_ASSERT(thread == rt_thread_self());
+
+    LOG_D("thread suspend:  %s", thread->parent.name);
+
+    rt_sched_lock(&slvl);
+
+    stat = rt_sched_thread_get_stat(thread);
+    if ((stat != RT_THREAD_READY) && (stat != RT_THREAD_RUNNING))
+    {
+        LOG_D("thread suspend: thread disorder, 0x%2x", thread->stat);
+        rt_sched_unlock(slvl);
+        return -RT_ERROR;
+    }
+
+    if (stat == RT_THREAD_RUNNING)
+    {
+        /* not suspend running status thread on other core */
+        RT_ASSERT(thread == rt_thread_self());
+    }
+
+#ifdef RT_USING_SMART
+    rt_sched_unlock(slvl);
+
+    /* check pending signals for thread before suspend */
+    if (lwp_thread_signal_suspend_check(thread, suspend_flag) == 0)
+    {
+        /* not to suspend */
+        return -RT_EINTR;
+    }
+
+    rt_sched_lock(&slvl);
+    if (stat == RT_THREAD_READY)
+    {
+        stat = rt_sched_thread_get_stat(thread);
+
+        if (stat != RT_THREAD_READY)
+        {
+            /* status updated while we check for signal */
+            rt_sched_unlock(slvl);
+            return -RT_ERROR;
+        }
+    }
+#endif
+
+    /* change thread stat */
+    rt_sched_remove_thread(thread);
+    _thread_set_suspend_state(thread, suspend_flag);
+
+    if (susp_list)
+    {
+        /**
+         * enqueue thread on the push list before leaving critical region of
+         * scheduler, so we won't miss notification of async events.
+         */
+        rt_susp_list_enqueue(susp_list, thread, ipc_flags);
+    }
+
+    /* stop thread timer anyway */
+    rt_sched_thread_timer_stop(thread);
+
+    rt_sched_unlock(slvl);
+
+    RT_OBJECT_HOOK_CALL(rt_thread_suspend_hook, (thread));
+    return RT_EOK;
+}
+RTM_EXPORT(rt_thread_suspend_to_list);
 
 /**
  * @brief   This function will suspend the specified thread and change it to suspend state.
@@ -999,52 +969,7 @@ static void rt_thread_set_suspend_state(struct rt_thread *thread, int suspend_fl
  */
 rt_err_t rt_thread_suspend_with_flag(rt_thread_t thread, int suspend_flag)
 {
-    rt_base_t stat;
-    rt_base_t level;
-
-    /* parameter check */
-    RT_ASSERT(thread != RT_NULL);
-    RT_ASSERT(rt_object_get_type((rt_object_t)thread) == RT_Object_Class_Thread);
-    RT_ASSERT(thread == rt_thread_self());
-
-    LOG_D("thread suspend:  %s", thread->parent.name);
-
-    level = rt_spin_lock_irqsave(&(thread->spinlock));
-
-    stat = thread->stat & RT_THREAD_STAT_MASK;
-    if ((stat != RT_THREAD_READY) && (stat != RT_THREAD_RUNNING))
-    {
-        LOG_D("thread suspend: thread disorder, 0x%2x", thread->stat);
-        rt_spin_unlock_irqrestore(&(thread->spinlock), level);
-        return -RT_ERROR;
-    }
-
-    if (stat == RT_THREAD_RUNNING)
-    {
-        /* not suspend running status thread on other core */
-        RT_ASSERT(thread == rt_thread_self());
-    }
-#ifdef RT_USING_SMART
-    if (lwp_thread_signal_suspend_check(thread, suspend_flag) == 0)
-    {
-        /* not to suspend */
-        rt_spin_unlock_irqrestore(&(thread->spinlock), level);
-        return -RT_EINTR;
-    }
-#endif
-
-    rt_spin_unlock_irqrestore(&(thread->spinlock), level);
-    rt_schedule_remove_thread(thread);
-    level = rt_spin_lock_irqsave(&(thread->spinlock));
-
-    rt_thread_set_suspend_state(thread, suspend_flag);
-
-    /* stop thread timer anyway */
-    rt_timer_stop(&(thread->thread_timer));
-    rt_spin_unlock_irqrestore(&(thread->spinlock), level);
-
-    RT_OBJECT_HOOK_CALL(rt_thread_suspend_hook, (thread));
-    return RT_EOK;
+    return rt_thread_suspend_to_list(thread, RT_NULL, 0, suspend_flag);
 }
 RTM_EXPORT(rt_thread_suspend_with_flag);
 
@@ -1064,41 +989,31 @@ RTM_EXPORT(rt_thread_suspend);
  */
 rt_err_t rt_thread_resume(rt_thread_t thread)
 {
-    rt_base_t level;
+    rt_sched_lock_level_t slvl;
+    rt_err_t error;
 
     /* parameter check */
     RT_ASSERT(thread != RT_NULL);
     RT_ASSERT(rt_object_get_type((rt_object_t)thread) == RT_Object_Class_Thread);
 
-    LOG_D("thread resume:  %s", thread->parent.name);
+    LOG_D("thread resume: %s", thread->parent.name);
 
-    level = rt_spin_lock_irqsave(&(thread->spinlock)); //TODO need lock for cpu
+    rt_sched_lock(&slvl);
 
-    if ((thread->stat & RT_THREAD_SUSPEND_MASK) != RT_THREAD_SUSPEND_MASK)
+    error = rt_sched_thread_ready(thread);
+
+    if (!error)
     {
-        rt_spin_unlock_irqrestore(&(thread->spinlock), level);
-
-        LOG_D("thread resume: thread disorder, %d",
-              thread->stat);
-
-        return -RT_ERROR;
+        error = rt_sched_unlock_n_resched(slvl);
+    }
+    else
+    {
+        rt_sched_unlock(slvl);
     }
 
-    /* remove from suspend list */
-    rt_list_remove(&(thread->tlist));
-
-    rt_timer_stop(&thread->thread_timer);
-
-#ifdef RT_USING_SMART
-    thread->wakeup.func = RT_NULL;
-#endif
-
-    rt_spin_unlock_irqrestore(&(thread->spinlock), level);
-    /* insert to schedule ready list */
-    rt_schedule_insert_thread(thread);
-
     RT_OBJECT_HOOK_CALL(rt_thread_resume_hook, (thread));
-    return RT_EOK;
+
+    return error;
 }
 RTM_EXPORT(rt_thread_resume);
 
@@ -1112,19 +1027,21 @@ RTM_EXPORT(rt_thread_resume);
  */
 rt_err_t rt_thread_wakeup(rt_thread_t thread)
 {
-    register rt_base_t temp;
+    rt_sched_lock_level_t slvl;
     rt_err_t ret;
     rt_wakeup_func_t func = RT_NULL;
 
     RT_ASSERT(thread != RT_NULL);
     RT_ASSERT(rt_object_get_type((rt_object_t)thread) == RT_Object_Class_Thread);
-    temp = rt_spin_lock_irqsave(&(thread->spinlock));
-    func = thread->wakeup.func;
-    thread->wakeup.func = RT_NULL;
-    rt_spin_unlock_irqrestore(&(thread->spinlock), temp);
+
+    rt_sched_lock(&slvl);
+    func = thread->wakeup_handle.func;
+    thread->wakeup_handle.func = RT_NULL;
+    rt_sched_unlock(slvl);
+
     if (func)
     {
-        ret = func(thread->wakeup.user_data, thread);
+        ret = func(thread->wakeup_handle.user_data, thread);
     }
     else
     {
@@ -1136,15 +1053,15 @@ RTM_EXPORT(rt_thread_wakeup);
 
 void rt_thread_wakeup_set(struct rt_thread *thread, rt_wakeup_func_t func, void* user_data)
 {
-    register rt_base_t temp;
+    rt_sched_lock_level_t slvl;
 
     RT_ASSERT(thread != RT_NULL);
     RT_ASSERT(rt_object_get_type((rt_object_t)thread) == RT_Object_Class_Thread);
 
-    temp = rt_spin_lock_irqsave(&(thread->spinlock));
-    thread->wakeup.func = func;
-    thread->wakeup.user_data = user_data;
-    rt_spin_unlock_irqrestore(&(thread->spinlock), temp);
+    rt_sched_lock(&slvl);
+    thread->wakeup_handle.func = func;
+    thread->wakeup_handle.user_data = user_data;
+    rt_sched_unlock(slvl);
 }
 RTM_EXPORT(rt_thread_wakeup_set);
 #endif

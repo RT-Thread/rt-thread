@@ -26,8 +26,7 @@ if GetDepend('RT_USING_DEVICE') == False:
 
 if GetDepend('RT_USING_SMP') == False:
     SrcRemove(src, ['cpu.c', 'scheduler_mp.c'])
-
-if GetDepend('RT_USING_SMP') == True:
+else:
     SrcRemove(src, ['scheduler_up.c'])
 
 LOCAL_CFLAGS = ''
@@ -43,6 +42,6 @@ if rtconfig.PLATFORM in GetGCCLikePLATFORM():
         LOCAL_CFLAGS += ' -Wimplicit-fallthrough' # implicit fallthrough warning
         LOCAL_CFLAGS += ' -Wduplicated-cond -Wduplicated-branches' # duplicated condition warning
 
-group = DefineGroup('Kernel', src, depend=[''], CPPPATH=inc, CPPDEFINES=['__RTTHREAD__'], LOCAL_CFLAGS=LOCAL_CFLAGS)
+group = DefineGroup('Kernel', src, depend=[''], CPPPATH=inc, CPPDEFINES=['__RTTHREAD__'], LOCAL_CFLAGS=LOCAL_CFLAGS, LOCAL_CPPDEFINES=['__RTTHREAD_SOURCE__'])
 
 Return('group')

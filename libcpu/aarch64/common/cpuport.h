@@ -13,6 +13,7 @@
 #define  CPUPORT_H__
 
 #include <armv8.h>
+#include <rtcompiler.h>
 #include <rtdef.h>
 
 #ifdef RT_USING_SMP

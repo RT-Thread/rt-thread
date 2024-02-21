@@ -13,10 +13,11 @@
  * 2023-11-03     Shell        Add Support for ~FUTEX_PRIVATE
  * 2023-11-16     xqyjlj       Add Support for futex requeue and futex pi
  */
+#define __RT_IPC_SOURCE__
 
 #include "lwp_futex_internal.h"
 #include "sys/time.h"
-#include <rtatomic.h>
+#include <stdatomic.h>
 
 struct rt_mutex _glob_futex;
 
@@ -333,18 +334,18 @@ static rt_err_t _suspend_thread_timeout_locked(rt_thread_t thread,
                                                rt_tick_t timeout)
 {
     rt_err_t rc;
-    rc = rt_thread_suspend_with_flag(thread, RT_INTERRUPTIBLE);
+
+    /**
+     * Brief: Add current thread into futex waiting thread list
+     *
+     * Note: Critical Section
+     * - the futex waiting_thread list (RW)
+     */
+    rc = rt_thread_suspend_to_list(thread, &futex->waiting_thread,
+                                   RT_IPC_FLAG_FIFO, RT_INTERRUPTIBLE);
 
     if (rc == RT_EOK)
     {
-        /**
-         * Brief: Add current thread into futex waiting thread list
-         *
-         * Note: Critical Section
-         * - the futex waiting_thread list (RW)
-         */
-        rt_list_insert_before(&(futex->waiting_thread), &(thread->tlist));
-
         /* start the timer of thread */
         rt_timer_control(&(thread->thread_timer), RT_TIMER_CTRL_SET_TIME,
                          &timeout);
@@ -357,21 +358,14 @@ static rt_err_t _suspend_thread_timeout_locked(rt_thread_t thread,
 
 static rt_err_t _suspend_thread_locked(rt_thread_t thread, rt_futex_t futex)
 {
-    rt_err_t rc;
-    rc = rt_thread_suspend_with_flag(thread, RT_INTERRUPTIBLE);
-
-    if (rc == RT_EOK)
-    {
-        /**
-         * Brief: Add current thread into futex waiting thread list
-         *
-         * Note: Critical Section
-         * - the futex waiting_thread list (RW)
-         */
-        rt_list_insert_before(&(futex->waiting_thread), &(thread->tlist));
-    }
-
-    return rc;
+    /**
+     * Brief: Add current thread into futex waiting thread list
+     *
+     * Note: Critical Section
+     * - the futex waiting_thread list (RW)
+     */
+    return rt_thread_suspend_to_list(thread, &futex->waiting_thread,
+                                     RT_IPC_FLAG_FIFO, RT_INTERRUPTIBLE);
 }
 
 rt_inline int _futex_cmpxchg_value(int *curval, int *uaddr, int uval,
@@ -467,7 +461,6 @@ static long _futex_wake(rt_futex_t futex, struct rt_lwp *lwp, int number,
 {
     long woken_cnt = 0;
     int is_empty = 0;
-    rt_thread_t thread;
 
     /**
      * Brief: Wakeup a suspended thread on the futex waiting thread list
@@ -478,18 +471,8 @@ static long _futex_wake(rt_futex_t futex, struct rt_lwp *lwp, int number,
     while (number && !is_empty)
     {
         _futex_lock(lwp, op_flags);
-        is_empty = rt_list_isempty(&(futex->waiting_thread));
-        if (!is_empty)
+        if (rt_susp_list_dequeue(&futex->waiting_thread, RT_EOK))
         {
-            thread = rt_list_entry(futex->waiting_thread.next, struct rt_thread,
-                                   tlist);
-            /* remove from waiting list */
-            rt_list_remove(&(thread->tlist));
-
-            thread->error = RT_EOK;
-            /* resume the suspended thread */
-            rt_thread_resume(thread);
-
             number--;
             woken_cnt++;
         }
@@ -529,13 +512,14 @@ static long _futex_requeue(rt_futex_t futex1, rt_futex_t futex2,
      */
     while (nr_wake && !is_empty)
     {
+        rt_sched_lock_level_t slvl;
+        rt_sched_lock(&slvl);
         is_empty = rt_list_isempty(&(futex1->waiting_thread));
         if (!is_empty)
         {
-            thread = rt_list_entry(futex1->waiting_thread.next,
-                                   struct rt_thread, tlist);
+            thread = RT_THREAD_LIST_NODE_ENTRY(futex1->waiting_thread.next);
             /* remove from waiting list */
-            rt_list_remove(&(thread->tlist));
+            rt_list_remove(&RT_THREAD_LIST_NODE(thread));
 
             thread->error = RT_EOK;
             /* resume the suspended thread */
@@ -544,6 +528,7 @@ static long _futex_requeue(rt_futex_t futex1, rt_futex_t futex2,
             nr_wake--;
             woken_cnt++;
         }
+        rt_sched_unlock(slvl);
     }
     rtn = woken_cnt;
 
@@ -555,16 +540,19 @@ static long _futex_requeue(rt_futex_t futex1, rt_futex_t futex2,
      */
     while (!is_empty && nr_requeue)
     {
+        rt_sched_lock_level_t slvl;
+        rt_sched_lock(&slvl);
         is_empty = rt_list_isempty(&(futex1->waiting_thread));
         if (!is_empty)
         {
-            thread = rt_list_entry(futex1->waiting_thread.next,
-                                   struct rt_thread, tlist);
-            rt_list_remove(&(thread->tlist));
-            rt_list_insert_before(&(futex2->waiting_thread), &(thread->tlist));
+            thread = RT_THREAD_LIST_NODE_ENTRY(futex1->waiting_thread.next);
+            rt_list_remove(&RT_THREAD_LIST_NODE(thread));
+            rt_list_insert_before(&(futex2->waiting_thread),
+                                  &RT_THREAD_LIST_NODE(thread));
             nr_requeue--;
             rtn++;
         }
+        rt_sched_unlock(slvl);
     }
 
     /* do schedule */
@@ -619,7 +607,7 @@ static long _futex_lock_pi(rt_futex_t futex, struct rt_lwp *lwp, int *uaddr,
         lwp_tid_dec_ref(thread);
 
         nword =
-            word | FUTEX_WAITERS; // TODO: maybe need uaccess_enable/disable api
+            word | FUTEX_WAITERS;
         if (_futex_cmpxchg_value(&cword, uaddr, word, nword))
         {
             _futex_unlock(lwp, op_flags);

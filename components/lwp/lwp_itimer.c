@@ -8,13 +8,13 @@
  * 2023-11-30     Shell        Add itimer support
  */
 
-#define DBG_TAG "lwp.signal"
-#define DBG_LVL DBG_INFO
-#include <rtdbg.h>
-
 #define _GNU_SOURCE
 #include <sys/time.h>
 #undef _GNU_SOURCE
+
+#define DBG_TAG "lwp.signal"
+#define DBG_LVL DBG_INFO
+#include <rtdbg.h>
 
 #include <rthw.h>
 #include <rtthread.h>

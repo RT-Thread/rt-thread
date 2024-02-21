@@ -151,7 +151,7 @@ _secondary_cpu_entry:
 #else
     bl      rt_hw_cpu_id_set
     mrs     x0, tpidr_el1
-#endif
+#endif /* RT_USING_OFW */
 
     /* Set current cpu's stack top */
     sub     x0, x0, #1
