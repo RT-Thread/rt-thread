@@ -755,7 +755,11 @@ static rt_ssize_t _vcom_rb_block_put(struct vcom *data, const rt_uint8_t *buf, r
     return size;
 }
 
-static rt_ssize_t _vcom_tx(struct rt_serial_device *serial, rt_uint8_t *buf, rt_size_t size, int direction)
+#ifdef RT_USING_SERIAL_V1
+static rt_size_t _vcom_tx(struct rt_serial_device *serial, rt_uint8_t *buf, rt_size_t size, int direction)
+#else
+static rt_size_t _vcom_tx(struct rt_serial_device *serial, rt_uint8_t *buf, rt_size_t size, rt_uint32_t tx_flag)
+#endif
 {
     struct ufunction *func;
     struct vcom *data;
