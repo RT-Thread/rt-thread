@@ -602,6 +602,13 @@ static int _map_single_page_2M(unsigned long *lv0_tbl, unsigned long va,
     return 0;
 }
 
+void *rt_hw_mmu_tbl_get()
+{
+    uintptr_t tbl;
+    __asm__ volatile("MRS %0, TTBR0_EL1" : "=r"(tbl));
+    return rt_kmem_p2v((void *)(tbl & ((1ul << 48) - 2)));
+}
+
 void *rt_ioremap_early(void *paddr, size_t size)
 {
     volatile size_t count;

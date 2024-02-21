@@ -108,8 +108,8 @@
 #define ARCH_MAP_FAILED         ((void *)0x8000000000000000)
 
 void mmu_set_pagetable(rt_ubase_t addr);
-void mmu_enable_user_page_access();
-void mmu_disable_user_page_access();
+void mmu_enable_user_page_access(void);
+void mmu_disable_user_page_access(void);
 
 #define RT_HW_MMU_PROT_READ 1
 #define RT_HW_MMU_PROT_WRITE 2

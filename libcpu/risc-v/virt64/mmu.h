@@ -56,7 +56,7 @@ struct mem_desc
 #define MMU_MAP_ERROR_NOPAGE     -3
 #define MMU_MAP_ERROR_CONFLICT   -4
 
-void *rt_hw_mmu_tbl_get();
+void *rt_hw_mmu_tbl_get(void);
 int rt_hw_mmu_map_init(rt_aspace_t aspace, void *v_address, rt_size_t size,
                        rt_size_t *vtable, rt_size_t pv_off);
 void rt_hw_mmu_setup(rt_aspace_t aspace, struct mem_desc *mdesc, int desc_nr);

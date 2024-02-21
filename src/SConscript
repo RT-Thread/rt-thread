@@ -38,7 +38,7 @@ if rtconfig.PLATFORM in GetGCCLikePLATFORM():
     LOCAL_CFLAGS += ' -Warray-bounds -Wuninitialized' # memory access warning
     LOCAL_CFLAGS += ' -Wreturn-type -Wcomment -Wswitch' # code style warning
     LOCAL_CFLAGS += ' -Wparentheses -Wlogical-op ' # operation warning
-    # LOCAL_CFLAGS += ' -Wmissing-declarations -Wmissing-prototypes -Wstrict-prototypes' # function declaration warning
+    LOCAL_CFLAGS += ' -Wmissing-declarations -Wmissing-prototypes -Wstrict-prototypes' # function declaration warning
     if 'mips' not in rtconfig.PREFIX: # mips toolchain does not support
         LOCAL_CFLAGS += ' -Wimplicit-fallthrough' # implicit fallthrough warning
         LOCAL_CFLAGS += ' -Wduplicated-cond -Wduplicated-branches' # duplicated condition warning

@@ -44,8 +44,6 @@ struct mem_desc platform_mem_desc[] = {
 
 void primary_cpu_entry(void)
 {
-    extern void entry(void);
-
     /* disable global interrupt */
     rt_hw_interrupt_disable();
 

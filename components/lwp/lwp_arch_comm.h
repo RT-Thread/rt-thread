@@ -23,8 +23,8 @@
 /* syscall handlers */
 void arch_clone_exit(void);
 void arch_fork_exit(void);
-void arch_syscall_exit();
-void arch_ret_to_user();
+void arch_syscall_exit(void);
+void arch_ret_to_user(void);
 
 /* ELF relocation */
 #ifdef ARCH_MM_MMU

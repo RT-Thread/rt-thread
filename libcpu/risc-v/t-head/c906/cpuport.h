@@ -39,17 +39,17 @@
 #ifndef __ASSEMBLY__
 #include <rtdef.h>
 
-rt_inline void rt_hw_dsb()
+rt_inline void rt_hw_dsb(void)
 {
     __asm__ volatile("fence":::"memory");
 }
 
-rt_inline void rt_hw_dmb()
+rt_inline void rt_hw_dmb(void)
 {
     __asm__ volatile("fence":::"memory");
 }
 
-rt_inline void rt_hw_isb()
+rt_inline void rt_hw_isb(void)
 {
     __asm__ volatile(OPC_FENCE_I:::"memory");
 }
