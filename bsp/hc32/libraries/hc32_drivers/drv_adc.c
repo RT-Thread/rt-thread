@@ -8,6 +8,8 @@
  * 2022-04-28     CDT                  first version
  * 2022-06-08     xiaoxiaolisunny      add hc32f460 series
  * 2022-06-14     CDT                  fix a bug of internal trigger
+ * 2024-02-20     CDT                  support HC32F448
+ *                                     add function for associating with the dma
  */
 
 #include <board.h>
@@ -28,6 +30,19 @@ typedef struct
 } adc_device;
 
 #if defined(BSP_USING_ADC1) || defined(BSP_USING_ADC2) || defined(BSP_USING_ADC3)
+
+enum
+{
+#ifdef BSP_USING_ADC1
+    ADC1_INDEX,
+#endif
+#ifdef BSP_USING_ADC2
+    ADC2_INDEX,
+#endif
+#ifdef BSP_USING_ADC3
+    ADC3_INDEX,
+#endif
+};
 
 static adc_device _g_adc_dev_array[] =
 {
@@ -116,12 +131,24 @@ static rt_err_t _adc_enable(struct rt_adc_device *device, rt_int8_t channel, rt_
 {
     adc_device *p_adc_dev = rt_container_of(device, adc_device, rt_adc);
     ADC_ChCmd(p_adc_dev->instance, ADC_SEQ_A, channel, (en_functional_state_t)enabled);
+
+    /* user_data != NULL */
+    if (device->parent.user_data != RT_NULL)
+    {
+        struct adc_dev_priv_params *adc_dev_priv = device->parent.user_data;
+        if ((ADC_USING_EOCA_DMA_FLAG == adc_dev_priv->flag) && (adc_dev_priv->ops->dma_trig_config != RT_NULL))
+        {
+            adc_dev_priv->ops->dma_trig_config();
+        }
+    }
+
     return 0;
 }
 
 static rt_err_t _adc_convert(struct rt_adc_device *device, rt_int8_t channel, rt_uint32_t *value)
 {
     rt_err_t rt_ret = -RT_ERROR;
+    rt_uint32_t timeCnt;
 
     if (!value)
     {
@@ -129,27 +156,68 @@ static rt_err_t _adc_convert(struct rt_adc_device *device, rt_int8_t channel, rt
     }
 
     adc_device *p_adc_dev = rt_container_of(device, adc_device, rt_adc);
-    if (p_adc_dev->init.hard_trig_enable == RT_FALSE && p_adc_dev->instance->STR == 0)
+    if (p_adc_dev->init.hard_trig_enable == RT_FALSE)
     {
-        ADC_Start(p_adc_dev->instance);
-    }
-
-    uint32_t start_time = rt_tick_get();
-    do
-    {
-        if (ADC_GetStatus(p_adc_dev->instance, ADC_FLAG_EOCA) == SET)
+        if (p_adc_dev->instance->STR == 0)
         {
-            ADC_ClearStatus(p_adc_dev->instance, ADC_FLAG_EOCA);
-            rt_ret = LL_OK;
-            break;
+            ADC_Start(p_adc_dev->instance);
+        }
+
+        uint32_t start_time = rt_tick_get();
+        do
+        {
+            if (ADC_GetStatus(p_adc_dev->instance, ADC_FLAG_EOCA) == SET)
+            {
+                ADC_ClearStatus(p_adc_dev->instance, ADC_FLAG_EOCA);
+                rt_ret = LL_OK;
+                break;
+            }
+        }
+        while ((rt_tick_get() - start_time) < p_adc_dev->init.eoc_poll_time_max);
+
+        if (rt_ret == LL_OK)
+        {
+            /* Get any ADC value of sequence A channel that needed. */
+            *value = ADC_GetValue(p_adc_dev->instance, channel);
         }
     }
-    while ((rt_tick_get() - start_time) < p_adc_dev->init.eoc_poll_time_max);
-
-    if (rt_ret == LL_OK)
+    else if (p_adc_dev->init.hard_trig_enable == RT_TRUE)
     {
-        /* Get any ADC value of sequence A channel that needed. */
-        *value = ADC_GetValue(p_adc_dev->instance, channel);
+        /* DMA src/dest/tc... config; start/stop trigger */
+        if (p_adc_dev->init.adc_eoca_dma != RT_NULL)
+        {
+            if (p_adc_dev->rt_adc.parent.user_data != RT_NULL)
+            {
+                struct adc_dev_priv_params *adc_dev_priv = device->parent.user_data;
+                struct dma_config *adc_eoca_dma;
+                adc_eoca_dma = p_adc_dev->init.adc_eoca_dma;
+                if ((ADC_USING_EOCA_DMA_FLAG == adc_dev_priv->flag) && (adc_dev_priv->ops->dma_trig_start != RT_NULL))
+                {
+                    DMA_ClearTransCompleteStatus(adc_eoca_dma->Instance, adc_eoca_dma->flag);
+                    (void)DMA_SetTransCount(adc_eoca_dma->Instance, adc_eoca_dma->channel, 1U);
+                    (void)DMA_SetSrcAddr(adc_eoca_dma->Instance, adc_eoca_dma->channel, (uint32_t)(&p_adc_dev->instance->DR0) + channel * 2);
+                    (void)DMA_SetDestAddr(adc_eoca_dma->Instance, adc_eoca_dma->channel, (uint32_t)(value));
+                    (void)DMA_ChCmd(adc_eoca_dma->Instance, adc_eoca_dma->channel, ENABLE);
+                    adc_dev_priv->ops->dma_trig_start();
+                    timeCnt = 0;
+                    /* wait DMA transfer completed */
+                    while (RESET == DMA_GetTransCompleteStatus(adc_eoca_dma->Instance, adc_eoca_dma->flag) && (timeCnt < p_adc_dev->init.eoc_poll_time_max))
+                    {
+                        rt_thread_mdelay(1);
+                        timeCnt++;
+                    }
+                    if (timeCnt >= p_adc_dev->init.eoc_poll_time_max)
+                    {
+                        (void)DMA_ChCmd(adc_eoca_dma->Instance, adc_eoca_dma->channel, DISABLE);
+                        rt_ret = -RT_ETIMEOUT;
+                    }
+                    if (adc_dev_priv->ops->dma_trig_stop != RT_NULL)
+                    {
+                        adc_dev_priv->ops->dma_trig_stop();
+                    }
+                }
+            }
+        }
     }
 
     return rt_ret;
@@ -212,6 +280,51 @@ static void _adc_clock_enable(void)
 #endif
 }
 
+static void hc32_adc_get_dma_info(void)
+{
+#ifdef  BSP_ADC1_USING_DMA
+    static struct dma_config adc1_eoca_dma = ADC1_EOCA_DMA_CONFIG;
+    _g_adc_dev_array[ADC1_INDEX].init.adc_eoca_dma = &adc1_eoca_dma;
+#endif
+
+#ifdef  BSP_ADC2_USING_DMA
+    static struct dma_config adc2_eoca_dma = ADC2_EOCA_DMA_CONFIG;
+    _g_adc_dev_array[ADC2_INDEX].init.adc_eoca_dma = &adc2_eoca_dma;
+#endif
+
+#ifdef  BSP_ADC3_USING_DMA
+    static struct dma_config adc3_eoca_dma = ADC3_EOCA_DMA_CONFIG;
+    _g_adc_dev_array[ADC3_INDEX].init.adc_eoca_dma = &adc3_eoca_dma;
+#endif
+}
+
+static void hc32_adc_dma_config(adc_device *p_adc_dev)
+{
+    stc_dma_init_t stcDmaInit;
+
+    /* DMA/AOS FCG enable */
+    FCG_Fcg0PeriphClockCmd(p_adc_dev->init.adc_eoca_dma->clock, ENABLE);
+
+    (void)DMA_StructInit(&stcDmaInit);
+    stcDmaInit.u32BlockSize  = 1UL;
+    stcDmaInit.u32TransCount = 1UL;
+    stcDmaInit.u32DataWidth  = DMA_DATAWIDTH_16BIT;
+    stcDmaInit.u32SrcAddrInc  = DMA_SRC_ADDR_FIX;
+    stcDmaInit.u32DestAddrInc = DMA_DEST_ADDR_FIX;
+    stcDmaInit.u32SrcAddr     = (uint32_t)RT_NULL;
+    stcDmaInit.u32DestAddr    = (uint32_t)RT_NULL;
+    if (LL_OK != DMA_Init(p_adc_dev->init.adc_eoca_dma->Instance, p_adc_dev->init.adc_eoca_dma->channel, &stcDmaInit))
+    {
+        rt_kprintf("[%s:%d]ADC DMA init error!\n", __func__, __LINE__);
+    }
+    AOS_SetTriggerEventSrc(p_adc_dev->init.adc_eoca_dma->trigger_select, p_adc_dev->init.adc_eoca_dma->trigger_event);
+
+    /* Clear DMA TC flag */
+    DMA_ClearTransCompleteStatus(p_adc_dev->init.adc_eoca_dma->Instance, p_adc_dev->init.adc_eoca_dma->flag);
+    /* Enable DMA unit */
+    DMA_Cmd(p_adc_dev->init.adc_eoca_dma->Instance, ENABLE);
+}
+
 extern rt_err_t rt_hw_board_adc_init(CM_ADC_TypeDef *ADCx);
 int rt_hw_adc_init(void)
 {
@@ -220,6 +333,7 @@ int rt_hw_adc_init(void)
     int32_t ll_ret = 0;
 
     _adc_clock_enable();
+    hc32_adc_get_dma_info();
     uint32_t dev_cnt = sizeof(_g_adc_dev_array) / sizeof(_g_adc_dev_array[0]);
     for (; i < dev_cnt; i++)
     {
@@ -241,6 +355,11 @@ int rt_hw_adc_init(void)
         {
             _adc_internal_trigger0_set(&_g_adc_dev_array[i]);
             _adc_internal_trigger1_set(&_g_adc_dev_array[i]);
+        }
+
+        if (_g_adc_dev_array[i].init.adc_eoca_dma != RT_NULL)
+        {
+            hc32_adc_dma_config(&_g_adc_dev_array[i]);
         }
 
         rt_hw_board_adc_init((void *)_g_adc_dev_array[i].instance);

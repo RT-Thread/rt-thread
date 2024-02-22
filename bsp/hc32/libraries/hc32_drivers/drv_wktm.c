@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022, Xiaohua Semiconductor Co., Ltd.
+ * Copyright (C) 2022-2024, Xiaohua Semiconductor Co., Ltd.
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -30,7 +30,7 @@
 #else
     #if defined(HC32F4A0)
         #define PWC_WKT_CLK_SRC             (PWC_WKT_CLK_SRC_RTCLRC)
-    #elif defined(HC32F460)
+    #elif defined(HC32F460) || defined(HC32F448)
         #define PWC_WKT_CLK_SRC             (PWC_WKT_CLK_SRC_LRC)
     #endif
     #define PWC_WKT_COUNT_FRQ           (32768UL)
