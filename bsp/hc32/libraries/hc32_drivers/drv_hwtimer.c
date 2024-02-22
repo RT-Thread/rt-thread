@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author            Notes
  * 2023-06-21     CDT               first version
+ * 2024-02-20     CDT               support HC32F448
  */
 
 #include <rtdevice.h>
@@ -144,12 +145,20 @@ static void _timer_init(struct rt_hwtimer_device *timer, rt_uint32_t state)
         (void)TMRA_Init(tmr_device->tmr_handle, &stcTmraInit);
 
         TMRA_IntCmd(tmr_device->tmr_handle, TMRA_INT_OVF, ENABLE);
+#if defined (HC32F460) || defined (HC32F4A0)
         hc32_install_irq_handler(&irq_config, tmr_device->isr.irq_callback, RT_TRUE);
+#elif defined (HC32F448)
+        hc32_install_independ_irq_handler(&irq_config, RT_TRUE);
+#endif
     }
     else    /* close */
     {
         TMRA_DeInit(tmr_device->tmr_handle);
+#if defined (HC32F460) || defined (HC32F4A0)
         hc32_install_irq_handler(&irq_config, tmr_device->isr.irq_callback, RT_FALSE);
+#elif defined (HC32F448)
+        hc32_install_independ_irq_handler(&irq_config, RT_FALSE);
+#endif
         FCG_Fcg2PeriphClockCmd(tmr_device->clock, DISABLE);
     }
 }
@@ -238,84 +247,130 @@ static void TMRA_1_callback(void)
     TMRA_ClearStatus(hc32_hwtimer_obj[TMRA_1_INDEX].tmr_handle, hc32_hwtimer_obj[TMRA_1_INDEX].flag);
     rt_device_hwtimer_isr(&hc32_hwtimer_obj[TMRA_1_INDEX].time_device);
 }
-#endif
+
+#if defined (HC32F448)
+void TMRA_1_Ovf_Udf_Handler(void)
+{
+    TMRA_1_callback();
+}
+#endif /* HC32F448 */
+#endif /* BSP_USING_TMRA_1 */
+
 #ifdef BSP_USING_TMRA_2
 static void TMRA_2_callback(void)
 {
     TMRA_ClearStatus(hc32_hwtimer_obj[TMRA_2_INDEX].tmr_handle, hc32_hwtimer_obj[TMRA_2_INDEX].flag);
     rt_device_hwtimer_isr(&hc32_hwtimer_obj[TMRA_2_INDEX].time_device);
 }
-#endif
+
+#if defined (HC32F448)
+void TMRA_2_Ovf_Udf_Handler(void)
+{
+    TMRA_2_callback();
+}
+#endif /* HC32F448 */
+#endif /* BSP_USING_TMRA_2 */
+
 #ifdef BSP_USING_TMRA_3
 static void TMRA_3_callback(void)
 {
     TMRA_ClearStatus(hc32_hwtimer_obj[TMRA_3_INDEX].tmr_handle, hc32_hwtimer_obj[TMRA_3_INDEX].flag);
     rt_device_hwtimer_isr(&hc32_hwtimer_obj[TMRA_3_INDEX].time_device);
 }
-#endif
+
+#if defined (HC32F448)
+void TMRA_3_Ovf_Udf_Handler(void)
+{
+    TMRA_3_callback();
+}
+#endif /* HC32F448 */
+#endif /* BSP_USING_TMRA_3 */
+
 #ifdef BSP_USING_TMRA_4
 static void TMRA_4_callback(void)
 {
     TMRA_ClearStatus(hc32_hwtimer_obj[TMRA_4_INDEX].tmr_handle, hc32_hwtimer_obj[TMRA_4_INDEX].flag);
     rt_device_hwtimer_isr(&hc32_hwtimer_obj[TMRA_4_INDEX].time_device);
 }
-#endif
+
+#if defined (HC32F448)
+void TMRA_4_Ovf_Udf_Handler(void)
+{
+    TMRA_4_callback();
+}
+#endif /* HC32F448 */
+#endif /* BSP_USING_TMRA_4 */
+
 #ifdef BSP_USING_TMRA_5
 static void TMRA_5_callback(void)
 {
     TMRA_ClearStatus(hc32_hwtimer_obj[TMRA_5_INDEX].tmr_handle, hc32_hwtimer_obj[TMRA_5_INDEX].flag);
     rt_device_hwtimer_isr(&hc32_hwtimer_obj[TMRA_5_INDEX].time_device);
 }
-#endif
+
+#if defined (HC32F448)
+void TMRA_5_Ovf_Udf_Handler(void)
+{
+    TMRA_5_callback();
+}
+#endif /* HC32F448 */
+#endif /* BSP_USING_TMRA_5 */
+
 #ifdef BSP_USING_TMRA_6
 static void TMRA_6_callback(void)
 {
     TMRA_ClearStatus(hc32_hwtimer_obj[TMRA_6_INDEX].tmr_handle, hc32_hwtimer_obj[TMRA_6_INDEX].flag);
     rt_device_hwtimer_isr(&hc32_hwtimer_obj[TMRA_6_INDEX].time_device);
 }
-#endif
+#endif /* BSP_USING_TMRA_6 */
+
 #ifdef BSP_USING_TMRA_7
 static void TMRA_7_callback(void)
 {
     TMRA_ClearStatus(hc32_hwtimer_obj[TMRA_7_INDEX].tmr_handle, hc32_hwtimer_obj[TMRA_7_INDEX].flag);
     rt_device_hwtimer_isr(&hc32_hwtimer_obj[TMRA_7_INDEX].time_device);
 }
-#endif
+#endif /* BSP_USING_TMRA_7 */
+
 #ifdef BSP_USING_TMRA_8
 static void TMRA_8_callback(void)
 {
     TMRA_ClearStatus(hc32_hwtimer_obj[TMRA_8_INDEX].tmr_handle, hc32_hwtimer_obj[TMRA_8_INDEX].flag);
     rt_device_hwtimer_isr(&hc32_hwtimer_obj[TMRA_8_INDEX].time_device);
 }
-#endif
+#endif /* BSP_USING_TMRA_8 */
+
 #ifdef BSP_USING_TMRA_9
 static void TMRA_9_callback(void)
 {
     TMRA_ClearStatus(hc32_hwtimer_obj[TMRA_9_INDEX].tmr_handle, hc32_hwtimer_obj[TMRA_9_INDEX].flag);
     rt_device_hwtimer_isr(&hc32_hwtimer_obj[TMRA_9_INDEX].time_device);
 }
-#endif
+#endif /* BSP_USING_TMRA_9 */
+
 #ifdef BSP_USING_TMRA_10
 static void TMRA_10_callback(void)
 {
     TMRA_ClearStatus(hc32_hwtimer_obj[TMRA_10_INDEX].tmr_handle, hc32_hwtimer_obj[TMRA_10_INDEX].flag);
     rt_device_hwtimer_isr(&hc32_hwtimer_obj[TMRA_10_INDEX].time_device);
 }
-#endif
+#endif /* BSP_USING_TMRA_10 */
+
 #ifdef BSP_USING_TMRA_11
 static void TMRA_11_callback(void)
 {
     TMRA_ClearStatus(hc32_hwtimer_obj[TMRA_11_INDEX].tmr_handle, hc32_hwtimer_obj[TMRA_11_INDEX].flag);
     rt_device_hwtimer_isr(&hc32_hwtimer_obj[TMRA_11_INDEX].time_device);
 }
-#endif
+#endif /* BSP_USING_TMRA_11 */
+
 #ifdef BSP_USING_TMRA_12
 static void TMRA_12_callback(void)
 {
     TMRA_ClearStatus(hc32_hwtimer_obj[TMRA_12_INDEX].tmr_handle, hc32_hwtimer_obj[TMRA_12_INDEX].flag);
     rt_device_hwtimer_isr(&hc32_hwtimer_obj[TMRA_12_INDEX].time_device);
 }
-#endif
+#endif /* BSP_USING_TMRA_12 */
 
 static struct rt_hwtimer_info _info[sizeof(hc32_hwtimer_obj) / sizeof(hc32_hwtimer_obj[0])];
 

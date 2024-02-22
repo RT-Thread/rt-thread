@@ -64,11 +64,22 @@ menu "Onboard Peripheral Drivers"
                 endif
         endif
 
-    config BSP_USING_TCA9539
-        bool "Enable TCA9539"
-        select BSP_USING_I2C
-        select BSP_USING_I2C1
+    config BSP_USING_EXMC
+        bool "Enable EXMC"
         default n
+        if BSP_USING_EXMC
+            choice
+                prompt "Using SDRAM or NAND"
+                default BSP_USING_NAND
+
+                config BSP_USING_NAND
+                    bool "Using NAND (MT29F2G08AB)"
+                    select RT_USING_MTD_NAND
+
+                config BSP_USING_SDRAM
+                    bool "Using SDRAM (IS42S16400J7TLI)"
+            endchoice
+        endif
 
     config BSP_USING_SPI_FLASH
         bool "Enable SPI FLASH (w25q64 spi1)"
@@ -81,11 +92,10 @@ menu "Onboard Peripheral Drivers"
         select RT_USING_MTD_NOR
         default n
 
-    config BSP_USING_MT29F2G08AB
-        bool "Enable NAND FLASH (MT29F2G08AB)"
-        select BSP_USING_EXMC
-        select BSP_USING_NAND
-        select RT_USING_MTD_NAND
+    config BSP_USING_TCA9539
+        bool "Enable TCA9539"
+        select BSP_USING_I2C
+        select BSP_USING_I2C1
         default n
 
 endmenu
@@ -631,24 +641,6 @@ menu "On-chip Peripheral Drivers"
             config BSP_USING_SDIO2
                 bool "Enable SDIO2"
                 default n
-        endif
-
-    menuconfig BSP_USING_EXMC
-        bool "Enable EXMC"
-        default n
-        select BSP_USING_EXMC
-        if BSP_USING_EXMC
-            choice
-                prompt "Using SDRAM or Nand"
-                default BSP_USING_SDRAM
-
-                config BSP_USING_SDRAM
-                    bool "Using SDRAM"
-
-                config BSP_USING_NAND
-                    bool "Using Nand"
-                    select RT_USING_MTD_NAND
-            endchoice
         endif
 
     menuconfig BSP_USING_PM

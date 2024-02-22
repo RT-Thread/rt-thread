@@ -6,6 +6,8 @@
  * Change Logs:
  * Date           Author       Notes
  * 2023-02-24     CDT          first version
+ * 2024-02-20     CDT          modify exclk clock max frequency to 40MHz for HC32F4A0
+ *                             add t_rcd_p/t_rfc_p/t_rp_p configuration
  */
 
 
@@ -82,8 +84,8 @@ static rt_int32_t _sdram_verify_clock_frequency(void)
     rt_int32_t ret = RT_EOK;
 
 #if defined (HC32F4A0)
-    /* EXCLK max frequency for SDRAM: 60MHz */
-    if (CLK_GetBusClockFreq(CLK_BUS_EXCLK) > (60 * 1000000))
+    /* EXCLK max frequency for SDRAM: 40MHz */
+    if (CLK_GetBusClockFreq(CLK_BUS_EXCLK) > (40 * 1000000))
     {
         ret = -RT_ERROR;
     }
@@ -131,12 +133,12 @@ static rt_int32_t _sdram_init(void)
     stcDmcInit.stcTimingConfig.u8MRD   = SDRAM_TMDR;
     stcDmcInit.stcTimingConfig.u8RAS   = SDRAM_TRAS;
     stcDmcInit.stcTimingConfig.u8RC    = SDRAM_TRC;
-    stcDmcInit.stcTimingConfig.u8RCD_B = SDRAM_TRCD;
-    stcDmcInit.stcTimingConfig.u8RCD_P = 0U;
-    stcDmcInit.stcTimingConfig.u8RFC_B = SDRAM_TRFC;
-    stcDmcInit.stcTimingConfig.u8RFC_P = 0U;
-    stcDmcInit.stcTimingConfig.u8RP_B  = SDRAM_TRP;
-    stcDmcInit.stcTimingConfig.u8RP_P  = 0U;
+    stcDmcInit.stcTimingConfig.u8RCD_B = SDRAM_TRCD_B;
+    stcDmcInit.stcTimingConfig.u8RCD_P = SDRAM_TRCD_P;
+    stcDmcInit.stcTimingConfig.u8RFC_B = SDRAM_TRFC_B;
+    stcDmcInit.stcTimingConfig.u8RFC_P = SDRAM_TRFC_P;
+    stcDmcInit.stcTimingConfig.u8RP_B  = SDRAM_TRP_B;
+    stcDmcInit.stcTimingConfig.u8RP_P  = SDRAM_TRP_P;
     stcDmcInit.stcTimingConfig.u8RRD   = SDRAM_TRRD;
     stcDmcInit.stcTimingConfig.u8WR    = SDRAM_TWR;
     stcDmcInit.stcTimingConfig.u8WTR   = SDRAM_TWTR;

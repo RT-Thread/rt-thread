@@ -6,6 +6,8 @@
  * Change Logs:
  * Date           Author       Notes
  * 2023-02-24     CDT          first version
+ * 2024-02-20     CDT          modify timing configuration for using exclk clock frequency 30MHz
+ *                             add t_rcd/t_rfc/t_rp configuration macros-definition
  */
 
 #ifndef __SDRAM_PORT_H__
@@ -39,21 +41,24 @@
 /* write burst mode: SDRAM_MODEREG_WRITEBURST_MODE_PROGRAMMED/SINGLE */
 #define SDRAM_MODEREG_WRITEBURST_MODE   SDRAM_MODEREG_WRITEBURST_MODE_PROGRAMMED
 
-/* timing configuration(EXCLK clock frequency: 60MHz) for IS42S16400J-7TLI */
+/* timing configuration(EXCLK clock frequency: 30MHz) for IS42S16400J-7TLI */
 /* refresh rate counter (EXCLK clock) */
-#define SDRAM_REFRESH_COUNT             (900U)
+#define SDRAM_REFRESH_COUNT             (450U)
 /* TMDR: mode register command time (EXCLK clock) */
 #define SDRAM_TMDR                      2U
 /* TRAS: RAS to precharge delay time (EXCLK clock) */
-#define SDRAM_TRAS                      3U
+#define SDRAM_TRAS                      2U
 /* TRC:  active bank x to active bank x delay time (EXCLK clock) */
-#define SDRAM_TRC                       4U
+#define SDRAM_TRC                       2U
 /* TRCD: RAS to CAS minimum delay time (EXCLK clock) */
-#define SDRAM_TRCD                      1U
+#define SDRAM_TRCD_B                    3U
+#define SDRAM_TRCD_P                    0U
 /* TRFC: autorefresh command time (EXCLK clock) */
-#define SDRAM_TRFC                      4U
+#define SDRAM_TRFC_B                    3U
+#define SDRAM_TRFC_P                    0U
 /* TRP:  precharge to RAS delay time (EXCLK clock) */
-#define SDRAM_TRP                       1U
+#define SDRAM_TRP_B                     3U
+#define SDRAM_TRP_P                     0U
 /* TRRD: active bank x to active bank y delay time (EXCLK clock) */
 #define SDRAM_TRRD                      1U
 /* TWR: write to precharge delay time (EXCLK clock). */
