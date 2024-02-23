@@ -46,7 +46,8 @@ int8_t rt_tz_is_dst(void);
 
 struct itimerspec;
 
-#if !defined(__x86_64__) && !defined(__i386__) && !defined(_TIMEVAL_DEFINED)
+/* 'struct timeval' is defined on __x86_64__ toolchain */
+#if !defined(__x86_64__) && !defined(_TIMEVAL_DEFINED)
 #define _TIMEVAL_DEFINED
 struct timeval
 {
