@@ -27,8 +27,13 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_PWM14_CH1
         select BSP_USING_I2C
         select BSP_USING_I2C1
+        select BSP_USING_SPI
+        select BSP_USING_SPI1
+        select BSP_SPI1_TX_USING_DMA
+        select BSP_SPI1_RX_USING_DMA
         imply RTDUINO_USING_SERVO
         imply RTDUINO_USING_WIRE
+        imply RTDUINO_USING_SPI
         default n
 
 endmenu
@@ -140,6 +145,27 @@ menu "On-chip Peripheral Drivers"
                         range 1 176
                         default 25
                 endif
+        endif
+
+    menuconfig BSP_USING_SPI
+        bool "Enable SPI BUS"
+        default n
+        select RT_USING_SPI
+        if BSP_USING_SPI
+            config BSP_USING_SPI1
+                bool "Enable SPI1 BUS"
+                default n
+
+            config BSP_SPI1_TX_USING_DMA
+                bool "Enable SPI1 TX DMA"
+                depends on BSP_USING_SPI1
+                default n
+
+            config BSP_SPI1_RX_USING_DMA
+                bool "Enable SPI1 RX DMA"
+                depends on BSP_USING_SPI1
+                select BSP_SPI1_TX_USING_DMA
+                default n
         endif
 
     config BSP_USING_ON_CHIP_FLASH
