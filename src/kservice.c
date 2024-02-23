@@ -1500,14 +1500,21 @@ rt_weak void rt_hw_console_output(const char *str)
 }
 RTM_EXPORT(rt_hw_console_output);
 
-#ifdef RT_USING_THREDSAFE_PRINTF
+#ifdef RT_USING_THREADSAFE_PRINTF
 
-static struct rt_spinlock _pr_lock = RT_SPINLOCK_INIT;
-static struct rt_spinlock _prf_lock = RT_SPINLOCK_INIT;
+/* system console lock */
+static struct rt_spinlock _syscon_lock = RT_SPINLOCK_INIT;
+/* lock of kprintf buffer */
+static struct rt_spinlock _prbuf_lock = RT_SPINLOCK_INIT;
 /* current user of system console */
 static rt_thread_t _pr_curr_user;
+
+#ifdef RT_USING_DEBUG
+static rt_base_t _pr_critical_level;
+#endif /* RT_USING_DEBUG */
+
 /* nested level of current user */
-static int _pr_curr_user_nested;
+static volatile int _pr_curr_user_nested;
 
 rt_thread_t rt_console_current_user(void)
 {
@@ -1516,35 +1523,42 @@ rt_thread_t rt_console_current_user(void)
 
 static void _console_take(void)
 {
-    rt_ubase_t level = rt_spin_lock_irqsave(&_pr_lock);
+    rt_ubase_t level = rt_spin_lock_irqsave(&_syscon_lock);
     rt_thread_t self_thread = rt_thread_self();
+    rt_base_t critical_level;
+    RT_UNUSED(critical_level);
 
     while (_pr_curr_user != self_thread)
     {
         if (_pr_curr_user == RT_NULL)
         {
             /* no preemption is allowed to avoid dead lock */
-            rt_enter_critical();
+            critical_level = rt_enter_critical();
+#ifdef RT_USING_DEBUG
+            _pr_critical_level = _syscon_lock.critical_level;
+            _syscon_lock.critical_level = critical_level;
+#endif
             _pr_curr_user = self_thread;
             break;
         }
         else
         {
-            rt_spin_unlock_irqrestore(&_pr_lock, level);
+            rt_spin_unlock_irqrestore(&_syscon_lock, level);
             rt_thread_yield();
-            level = rt_spin_lock_irqsave(&_pr_lock);
+            level = rt_spin_lock_irqsave(&_syscon_lock);
         }
     }
 
     _pr_curr_user_nested++;
 
-    rt_spin_unlock_irqrestore(&_pr_lock, level);
+    rt_spin_unlock_irqrestore(&_syscon_lock, level);
 }
 
 static void _console_release(void)
 {
-    rt_ubase_t level = rt_spin_lock_irqsave(&_pr_lock);
+    rt_ubase_t level = rt_spin_lock_irqsave(&_syscon_lock);
     rt_thread_t self_thread = rt_thread_self();
+    RT_UNUSED(self_thread);
 
     RT_ASSERT(_pr_curr_user == self_thread);
 
@@ -1552,22 +1566,28 @@ static void _console_release(void)
     if (!_pr_curr_user_nested)
     {
         _pr_curr_user = RT_NULL;
+
+#ifdef RT_USING_DEBUG
+        rt_exit_critical_safe(_syscon_lock.critical_level);
+        _syscon_lock.critical_level = _pr_critical_level;
+#else
         rt_exit_critical();
+#endif
     }
-    rt_spin_unlock_irqrestore(&_pr_lock, level);
+    rt_spin_unlock_irqrestore(&_syscon_lock, level);
 }
 
 #define CONSOLE_TAKE          _console_take()
 #define CONSOLE_RELEASE       _console_release()
-#define PRINTF_BUFFER_TAKE    rt_ubase_t level = rt_spin_lock_irqsave(&_prf_lock)
-#define PRINTF_BUFFER_RELEASE rt_spin_unlock_irqrestore(&_prf_lock, level)
+#define PRINTF_BUFFER_TAKE    rt_ubase_t level = rt_spin_lock_irqsave(&_prbuf_lock)
+#define PRINTF_BUFFER_RELEASE rt_spin_unlock_irqrestore(&_prbuf_lock, level)
 #else
 
 #define CONSOLE_TAKE
 #define CONSOLE_RELEASE
 #define PRINTF_BUFFER_TAKE
 #define PRINTF_BUFFER_RELEASE
-#endif /* RT_USING_THREDSAFE_PRINTF */
+#endif /* RT_USING_THREADSAFE_PRINTF */
 
 /**
  * @brief This function will put string to the console.

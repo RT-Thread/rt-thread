@@ -86,13 +86,13 @@ rt_err_t lwp_critical_exit(struct rt_lwp *lwp);
  * There tend to be chances where a return value is returned without correctly init
  */
 #ifndef LWP_DEBUG
-#define DEF_RETURN_CODE(name)   rt_err_t name
-#define RETURN(name)            return name
+#define LWP_DEF_RETURN_CODE(name)   rt_err_t name;RT_UNUSED(name)
+#define LWP_RETURN(name)            return name
 
 #else
 #define _LWP_UNINITIALIZED_RC   0xbeefcafe
-#define DEF_RETURN_CODE(name)   rt_err_t name = _LWP_UNINITIALIZED_RC
-#define RETURN(name)            {RT_ASSERT(name != _LWP_UNINITIALIZED_RC);return name;}
+#define LWP_DEF_RETURN_CODE(name)   rt_err_t name = _LWP_UNINITIALIZED_RC
+#define LWP_RETURN(name)            {RT_ASSERT(name != _LWP_UNINITIALIZED_RC);return name;}
 #endif /* LWP_DEBUG */
 
 #endif /* __LWP_INTERNAL_H__ */

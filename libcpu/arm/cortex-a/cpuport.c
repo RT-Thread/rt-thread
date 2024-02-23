@@ -103,4 +103,11 @@ int __rt_ffs(int value)
 }
 #endif
 
+rt_bool_t rt_hw_interrupt_is_disabled(void)
+{
+    int rc;
+    __asm__ volatile("mrs %0, cpsr" : "=r" (rc));
+    return !!(rc & 0x80);
+}
+
 /*@}*/

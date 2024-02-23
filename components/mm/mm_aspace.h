@@ -25,21 +25,11 @@
 #define MM_PA_TO_OFF(pa) ((uintptr_t)(pa) >> MM_PAGE_SHIFT)
 #define PV_OFFSET        (rt_kmem_pvoff())
 
-#ifndef RT_USING_SMP
-typedef rt_spinlock_t mm_spinlock;
-
-#define MM_PGTBL_LOCK_INIT(aspace)
-#define MM_PGTBL_LOCK(aspace)      (rt_hw_spin_lock(&((aspace)->pgtbl_lock)))
-#define MM_PGTBL_UNLOCK(aspace)    (rt_hw_spin_unlock(&((aspace)->pgtbl_lock)))
-
-#else
-typedef struct rt_spinlock mm_spinlock;
+typedef struct rt_spinlock mm_spinlock_t;
 
 #define MM_PGTBL_LOCK_INIT(aspace) (rt_spin_lock_init(&((aspace)->pgtbl_lock)))
 #define MM_PGTBL_LOCK(aspace)      (rt_spin_lock(&((aspace)->pgtbl_lock)))
 #define MM_PGTBL_UNLOCK(aspace)    (rt_spin_unlock(&((aspace)->pgtbl_lock)))
-
-#endif /* RT_USING_SMP */
 
 struct rt_aspace;
 struct rt_varea;
@@ -53,7 +43,7 @@ typedef struct rt_aspace
     rt_size_t size;
 
     void *page_table;
-    mm_spinlock pgtbl_lock;
+    mm_spinlock_t pgtbl_lock;
 
     struct _aspace_tree tree;
     struct rt_mutex bst_lock;

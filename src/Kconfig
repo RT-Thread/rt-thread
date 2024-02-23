@@ -35,6 +35,7 @@ config RT_USING_SMART
     select RT_USING_POSIX_FS
     select RT_USING_POSIX_TERMIOS
     select RT_USING_KTIME
+    select RT_USING_STDC_ATOMIC
     depends on ARCH_ARM_CORTEX_M || ARCH_ARM_ARM9 || ARCH_ARM_CORTEX_A || ARCH_ARMV8 || ARCH_RISCV64
     depends on !RT_USING_NANO
     help
@@ -66,6 +67,7 @@ config RT_USING_AMP
 config RT_USING_SMP
     bool "Enable SMP (Symmetric multiprocessing)"
     default n
+    select RT_USING_SCHED_THREAD_CTX
     help
         This option should be selected by machines which have an SMP-
         capable CPU.
@@ -417,9 +419,17 @@ config RT_USING_INTERRUPT_INFO
     help
         Add name and counter information for interrupt trace.
 
-config RT_USING_THREDSAFE_PRINTF
+config RT_USING_THREADSAFE_PRINTF
     bool "Enable thread safe kernel print service"
     default y if RT_USING_SMP && RT_USING_SMART
+
+config RT_USING_SCHED_THREAD_CTX
+    bool "Using the scheduler thread context"
+    help
+        Using the scheduler thread context embedded in the thread object.
+        This options is only for backward compatible codes. Maybe use as a
+        mandatory option in the future.
+    default y if RT_USING_SMP
 
 config RT_USING_CONSOLE
     bool "Using console for rt_kprintf"

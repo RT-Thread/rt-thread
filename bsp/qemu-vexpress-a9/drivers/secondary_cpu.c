@@ -47,7 +47,7 @@ void rt_hw_secondary_cpu_up(void)
     *plat_boot_reg-- = (void *)(size_t)-1;
     *plat_boot_reg = (void *)entry;
     rt_hw_dsb();
-    rt_hw_ipi_send(0, 1 << 1);
+    rt_hw_ipi_send(0, RT_CPU_MASK ^ (1 << rt_hw_cpu_id()));
 }
 
 /* Interface */

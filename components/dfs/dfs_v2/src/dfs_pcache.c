@@ -822,7 +822,10 @@ static int dfs_page_insert(struct dfs_page *page)
     rt_list_insert_before(&aspace->list_inactive, &page->space_node);
     aspace->pages_count ++;
 
-    RT_ASSERT(_dfs_page_insert(aspace, page) == 0);
+    if (_dfs_page_insert(aspace, page))
+    {
+        RT_ASSERT(0);
+    }
 
     if (aspace->pages_count > RT_PAGECACHE_ASPACE_COUNT)
     {

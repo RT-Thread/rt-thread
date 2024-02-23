@@ -14,7 +14,7 @@
  * 2023-07-06     Shell        adapt the signal API, and clone, fork to new implementation of lwp signal
  * 2023-07-27     Shell        Move tid_put() from lwp_free() to sys_exit()
  */
-
+#define __RT_IPC_SOURCE__
 #define _GNU_SOURCE
 
 /* RT-Thread System call */
@@ -1120,7 +1120,7 @@ sysret_t sys_getpriority(int which, id_t who)
         if (lwp)
         {
             rt_thread_t thread = rt_list_entry(lwp->t_grp.prev, struct rt_thread, sibling);
-            prio = thread->current_priority;
+            prio = RT_SCHED_PRIV(thread).current_priority;
         }
 
         lwp_pid_lock_release();
@@ -1808,7 +1808,7 @@ rt_thread_t sys_thread_create(void *arg[])
     }
 
 #ifdef RT_USING_SMP
-    thread->bind_cpu = lwp->bind_cpu;
+    RT_SCHED_CTX(thread).bind_cpu = lwp->bind_cpu;
 #endif
     thread->cleanup = lwp_cleanup;
     thread->user_entry = (void (*)(void *))arg[1];
@@ -1935,15 +1935,15 @@ long _sys_clone(void *arg[])
             RT_NULL,
             RT_NULL,
             self->stack_size,
-            self->init_priority,
-            self->init_tick);
+            RT_SCHED_PRIV(self).init_priority,
+            RT_SCHED_PRIV(self).init_tick);
     if (!thread)
     {
         goto fail;
     }
 
 #ifdef RT_USING_SMP
-    thread->bind_cpu = lwp->bind_cpu;
+    RT_SCHED_CTX(self).bind_cpu = lwp->bind_cpu;
 #endif
     thread->cleanup = lwp_cleanup;
     thread->user_entry = RT_NULL;
@@ -2120,8 +2120,8 @@ sysret_t _sys_fork(void)
             RT_NULL,
             RT_NULL,
             self_thread->stack_size,
-            self_thread->init_priority,
-            self_thread->init_tick);
+            RT_SCHED_PRIV(self_thread).init_priority,
+            RT_SCHED_PRIV(self_thread).init_tick);
     if (!thread)
     {
         SET_ERRNO(ENOMEM);
@@ -4231,6 +4231,9 @@ sysret_t sys_sigtimedwait(const sigset_t *sigset, siginfo_t *info, const struct 
     struct timespec ktimeout;
     struct timespec *ptimeout;
 
+    /* for RT_ASSERT */
+    RT_UNUSED(ret);
+
     /* Fit sigset size to lwp set */
     if (sizeof(lwpset) < sigsize)
     {
@@ -5505,7 +5508,7 @@ sysret_t sys_sched_setaffinity(pid_t pid, size_t size, void *set)
 sysret_t sys_sched_getaffinity(const pid_t pid, size_t size, void *set)
 {
 #ifdef ARCH_MM_MMU
-    DEF_RETURN_CODE(rc);
+    LWP_DEF_RETURN_CODE(rc);
     void *mask;
     struct rt_lwp *lwp;
     rt_bool_t need_release = RT_FALSE;
@@ -5571,7 +5574,7 @@ sysret_t sys_sched_getaffinity(const pid_t pid, size_t size, void *set)
 
     kmem_put(mask);
 
-    RETURN(rc);
+    LWP_RETURN(rc);
 #else
     return -1;
 #endif
@@ -5679,13 +5682,11 @@ sysret_t sys_sched_yield(void)
     return 0;
 }
 
-sysret_t sys_sched_getparam(const pid_t pid, void *param)
+sysret_t sys_sched_getparam(const pid_t tid, void *param)
 {
     struct sched_param *sched_param = RT_NULL;
-    struct rt_lwp *lwp = NULL;
-    rt_thread_t main_thread;
+    rt_thread_t thread;
     int ret = -1;
-    rt_bool_t need_release = RT_FALSE;
 
     if (!lwp_user_accessable(param, sizeof(struct sched_param)))
     {
@@ -5698,26 +5699,15 @@ sysret_t sys_sched_getparam(const pid_t pid, void *param)
         return -ENOMEM;
     }
 
-    if (pid > 0)
-    {
-        need_release = RT_TRUE;
-        lwp_pid_lock_take();
-        lwp = lwp_from_pid_locked(pid);
-    }
-    else if (pid == 0)
-    {
-        lwp = lwp_self();
-    }
+    thread = lwp_tid_get_thread_and_inc_ref(tid);
 
-    if (lwp)
+    if (thread)
     {
-        main_thread = rt_list_entry(lwp->t_grp.prev, struct rt_thread, sibling);
-        if (need_release)
-            lwp_pid_lock_release();
-
-        sched_param->sched_priority = main_thread->current_priority;
+        sched_param->sched_priority = RT_SCHED_PRIV(thread).current_priority;
         ret = 0;
     }
+
+    lwp_tid_dec_ref(thread);
 
     lwp_put_to_user((void *)param, sched_param, sizeof(struct sched_param));
     kmem_put(sched_param);
@@ -5800,7 +5790,7 @@ sysret_t sys_sched_getscheduler(int tid, int *policy, void *param)
     }
 
     thread = lwp_tid_get_thread_and_inc_ref(tid);
-    sched_param->sched_priority = thread->current_priority;
+    sched_param->sched_priority = RT_SCHED_PRIV(thread).current_priority;
     lwp_tid_dec_ref(thread);
 
     lwp_put_to_user((void *)param, sched_param, sizeof(struct sched_param));
@@ -6814,20 +6804,24 @@ sysret_t sys_memfd_create()
 {
     return 0;
 }
+
 sysret_t sys_setitimer(int which, const struct itimerspec *restrict new, struct itimerspec *restrict old)
 {
-    int ret = 0;
-    timer_t timerid = 0;
-    struct sigevent sevp_k = {0};
+    sysret_t rc = 0;
+    rt_lwp_t lwp = lwp_self();
+    struct itimerspec new_value_k;
+    struct itimerspec old_value_k;
 
-    sevp_k.sigev_notify = SIGEV_SIGNAL;
-    sevp_k.sigev_signo = SIGALRM;
-    ret = timer_create(CLOCK_REALTIME_ALARM, &sevp_k, &timerid);
-    if (ret != 0)
+    if (lwp_get_from_user(&new_value_k, (void *)new, sizeof(*new)) != sizeof(*new))
     {
-        return GET_ERRNO();
+        return -EFAULT;
     }
-    return sys_timer_settime(timerid,0,new,old);
+
+    rc = lwp_signal_setitimer(lwp, which, &new_value_k, &old_value_k);
+    if (old && lwp_put_to_user(old, (void *)&old_value_k, sizeof old_value_k) != sizeof old_value_k)
+        return -EFAULT;
+
+    return rc;
 }
 
 const static struct rt_syscall_def func_table[] =

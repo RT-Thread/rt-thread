@@ -17,6 +17,9 @@
 #include <rtthread.h>
 #include <sys/signal.h>
 
+struct timespec;
+struct itimerspec;
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -28,6 +31,7 @@ extern "C" {
 #define LWP_SIG_USER_SA_FLAGS                                               \
     (SA_NOCLDSTOP | SA_NOCLDWAIT | SA_SIGINFO | SA_ONSTACK | SA_RESTART |   \
      SA_NODEFER | SA_RESETHAND | SA_EXPOSE_TAGBITS)
+#define LWP_SIG_INVALID_TIMER ((timer_t)-1)
 
 typedef enum {
     LWP_SIG_MASK_CMD_BLOCK,
@@ -40,6 +44,7 @@ typedef enum {
  * LwP implementation of POSIX signal
  */
 struct lwp_signal {
+    timer_t real_timer;
     struct lwp_sigqueue sig_queue;
     rt_thread_t sig_dispatch_thr[_LWP_NSIG];
 
@@ -166,6 +171,10 @@ rt_err_t lwp_thread_signal_timedwait(rt_thread_t thread, lwp_sigset_t *sigset,
  * @param sigset where mask of pending signals is returned
  */
 void lwp_thread_signal_pending(rt_thread_t thread, lwp_sigset_t *sigset);
+
+rt_err_t lwp_signal_setitimer(struct rt_lwp *lwp, int which,
+                              const struct itimerspec *restrict new,
+                              struct itimerspec *restrict old);
 
 #ifdef __cplusplus
 }

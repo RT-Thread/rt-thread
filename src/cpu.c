@@ -8,6 +8,7 @@
  * 2018-10-30     Bernard      The first version
  * 2023-09-15     xqyjlj       perf rt_hw_interrupt_disable/enable
  * 2023-12-10     xqyjlj       spinlock should lock sched
+ * 2024-01-25     Shell        Using rt_exit_critical_safe
  */
 #include <rthw.h>
 #include <rtthread.h>
@@ -16,20 +17,16 @@
 #include <lwp.h>
 #endif
 
+#ifdef RT_USING_DEBUG
+rt_base_t _cpus_critical_level;
+#endif /* RT_USING_DEBUG */
+
 #ifdef RT_USING_SMP
 static struct rt_cpu _cpus[RT_CPUS_NR];
 rt_hw_spinlock_t _cpus_lock;
 #if defined(RT_DEBUGING_SPINLOCK)
 void *_cpus_lock_owner = 0;
 void *_cpus_lock_pc = 0;
-
-#define __OWNER_MAGIC ((void *)0xdeadbeaf)
-
-#if defined (__GNUC__)
-#define __GET_RETURN_ADDRESS __builtin_return_address(0)
-#else
-#define __GET_RETURN_ADDRESS RT_NULL
-#endif
 
 #endif /* RT_DEBUGING_SPINLOCK */
 
@@ -56,13 +53,7 @@ void rt_spin_lock(struct rt_spinlock *lock)
 {
     rt_enter_critical();
     rt_hw_spin_lock(&lock->lock);
-#if defined(RT_DEBUGING_SPINLOCK)
-    if (rt_cpu_self() != RT_NULL)
-    {
-        lock->owner = rt_cpu_self()->current_thread;
-    }
-    lock->pc = __GET_RETURN_ADDRESS;
-#endif /* RT_DEBUGING_SPINLOCK */
+    RT_SPIN_LOCK_DEBUG(lock);
 }
 RTM_EXPORT(rt_spin_lock)
 
@@ -73,12 +64,10 @@ RTM_EXPORT(rt_spin_lock)
  */
 void rt_spin_unlock(struct rt_spinlock *lock)
 {
+    rt_base_t critical_level;
+    RT_SPIN_UNLOCK_DEBUG(lock, critical_level);
     rt_hw_spin_unlock(&lock->lock);
-#if defined(RT_DEBUGING_SPINLOCK)
-    lock->owner = __OWNER_MAGIC;
-    lock->pc = RT_NULL;
-#endif /* RT_DEBUGING_SPINLOCK */
-    rt_exit_critical();
+    rt_exit_critical_safe(critical_level);
 }
 RTM_EXPORT(rt_spin_unlock)
 
@@ -99,13 +88,7 @@ rt_base_t rt_spin_lock_irqsave(struct rt_spinlock *lock)
     level = rt_hw_local_irq_disable();
     rt_enter_critical();
     rt_hw_spin_lock(&lock->lock);
-#if defined(RT_DEBUGING_SPINLOCK)
-    if (rt_cpu_self() != RT_NULL)
-    {
-        lock->owner = rt_cpu_self()->current_thread;
-        lock->pc = __GET_RETURN_ADDRESS;
-    }
-#endif /* RT_DEBUGING_SPINLOCK */
+    RT_SPIN_LOCK_DEBUG(lock);
     return level;
 }
 RTM_EXPORT(rt_spin_lock_irqsave)
@@ -119,13 +102,12 @@ RTM_EXPORT(rt_spin_lock_irqsave)
  */
 void rt_spin_unlock_irqrestore(struct rt_spinlock *lock, rt_base_t level)
 {
-#if defined(RT_DEBUGING_SPINLOCK)
-    lock->owner = __OWNER_MAGIC;
-    lock->pc = RT_NULL;
-#endif /* RT_DEBUGING_SPINLOCK */
+    rt_base_t critical_level;
+
+    RT_SPIN_UNLOCK_DEBUG(lock, critical_level);
     rt_hw_spin_unlock(&lock->lock);
     rt_hw_local_irq_enable(level);
-    rt_exit_critical();
+    rt_exit_critical_safe(critical_level);
 }
 RTM_EXPORT(rt_spin_unlock_irqrestore)
 
@@ -162,7 +144,6 @@ rt_base_t rt_cpus_lock(void)
     struct rt_cpu* pcpu;
 
     level = rt_hw_local_irq_disable();
-    rt_enter_critical();
     pcpu = rt_cpu_self();
     if (pcpu->current_thread != RT_NULL)
     {
@@ -171,11 +152,16 @@ rt_base_t rt_cpus_lock(void)
         rt_atomic_add(&(pcpu->current_thread->cpus_lock_nest), 1);
         if (lock_nest == 0)
         {
+            rt_enter_critical();
             rt_hw_spin_lock(&_cpus_lock);
-#if defined(RT_DEBUGING_SPINLOCK)
+#ifdef RT_USING_DEBUG
+            _cpus_critical_level = rt_critical_level();
+#endif /* RT_USING_DEBUG */
+
+#ifdef RT_DEBUGING_SPINLOCK
             _cpus_lock_owner = pcpu->current_thread;
             _cpus_lock_pc = __GET_RETURN_ADDRESS;
-#endif
+#endif /* RT_DEBUGING_SPINLOCK */
         }
     }
 
@@ -194,6 +180,7 @@ void rt_cpus_unlock(rt_base_t level)
 
     if (pcpu->current_thread != RT_NULL)
     {
+        rt_base_t critical_level = 0;
         RT_ASSERT(rt_atomic_load(&(pcpu->current_thread->cpus_lock_nest)) > 0);
         rt_atomic_sub(&(pcpu->current_thread->cpus_lock_nest), 1);
 
@@ -202,12 +189,16 @@ void rt_cpus_unlock(rt_base_t level)
 #if defined(RT_DEBUGING_SPINLOCK)
             _cpus_lock_owner = __OWNER_MAGIC;
             _cpus_lock_pc = RT_NULL;
-#endif
+#endif /* RT_DEBUGING_SPINLOCK */
+#ifdef RT_USING_DEBUG
+            critical_level = _cpus_critical_level;
+            _cpus_critical_level = 0;
+#endif /* RT_USING_DEBUG */
             rt_hw_spin_unlock(&_cpus_lock);
+            rt_exit_critical_safe(critical_level);
         }
     }
     rt_hw_local_irq_enable(level);
-    rt_exit_critical();
 }
 RTM_EXPORT(rt_cpus_unlock);
 
@@ -220,20 +211,10 @@ RTM_EXPORT(rt_cpus_unlock);
  */
 void rt_cpus_lock_status_restore(struct rt_thread *thread)
 {
-    struct rt_cpu* pcpu = rt_cpu_self();
-
 #if defined(ARCH_MM_MMU) && defined(RT_USING_SMART)
     lwp_aspace_switch(thread);
 #endif
-    if (pcpu->current_thread != RT_NULL )
-    {
-        rt_hw_spin_unlock(&(pcpu->current_thread->spinlock.lock));
-        if ((pcpu->current_thread->stat & RT_THREAD_STAT_MASK) == RT_THREAD_RUNNING)
-        {
-            rt_schedule_insert_thread(pcpu->current_thread);
-        }
-    }
-    pcpu->current_thread = thread;
+    rt_sched_post_ctx_switch(thread);
 }
 RTM_EXPORT(rt_cpus_lock_status_restore);
 #endif /* RT_USING_SMP */

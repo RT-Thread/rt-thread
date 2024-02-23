@@ -13,17 +13,21 @@
 #include <rtconfig.h>
 
 /**
- * Completion
+ * Completion - A tiny IPC implementation for resource-constrained scenarios
+ *
+ * It's an IPC using one CPU word with the encoding:
+ *
+ * BIT      | MAX-1 ----------------- 1 |       0        |
+ * CONTENT  |   suspended_thread & ~1   | completed flag |
  */
 
 struct rt_completion
 {
-    rt_uint32_t flag;
-
-    /* suspended list */
-    rt_list_t suspended_list;
-    struct rt_spinlock spinlock;
+    /* suspended thread, and completed flag */
+    rt_base_t susp_thread_n_flag;
 };
+
+#define RT_COMPLETION_INIT(comp) {0}
 
 void rt_completion_init(struct rt_completion *completion);
 rt_err_t rt_completion_wait(struct rt_completion *completion,
