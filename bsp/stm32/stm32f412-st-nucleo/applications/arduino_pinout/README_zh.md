@@ -68,7 +68,7 @@ I2C总线是板上丝印的 `SCL/D15` 和 `SDA/D14` 引脚，这两个引脚默�
 
 ### 3.2 SPI总线
 
-目前本BSP不支持使用Arduino的SPI功能。
+Nucleo板的SPI总线是板上丝印的 `CS/D10`、`MOSI/D11`、`MISO/D12` 以及 `SCK/D13` 引脚，这`D11`、`D12` 以及 `D13` 引脚是被RT-Thread SPI设备框架接管的，不需要直接操控这些引脚。用户需要操作 `D10` 片选引脚。直接引用`#include <SPI.h>`（Arduino官方SPI头文件）即可使用。在使用SPI功能后，`D10` 和 `D11` 的PWM功能将会不可逆失效，转为SPI功能。
 
 ### 3.3 串口
 
