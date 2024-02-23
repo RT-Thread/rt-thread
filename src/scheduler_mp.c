@@ -50,13 +50,13 @@ static struct rt_spinlock _mp_scheduler_lock;
 #define SCHEDULER_ENTER_CRITICAL(curthr)                    \
     do                                                      \
     {                                                       \
-        if (curthr) SCHED_CTX(curthr).critical_lock_nest++; \
+        if (curthr) RT_SCHED_CTX(curthr).critical_lock_nest++; \
     } while (0)
 
 #define SCHEDULER_EXIT_CRITICAL(curthr)                     \
     do                                                      \
     {                                                       \
-        if (curthr) SCHED_CTX(curthr).critical_lock_nest--; \
+        if (curthr) RT_SCHED_CTX(curthr).critical_lock_nest--; \
     } while (0)
 
 #define SCHEDULER_CONTEXT_LOCK(percpu)               \
@@ -328,45 +328,45 @@ static void _sched_insert_thread_locked(struct rt_thread *thread)
     int bind_cpu;
     rt_uint32_t cpu_mask;
 
-    if ((SCHED_CTX(thread).stat & RT_THREAD_STAT_MASK) == RT_THREAD_READY)
+    if ((RT_SCHED_CTX(thread).stat & RT_THREAD_STAT_MASK) == RT_THREAD_READY)
     {
         /* already in ready queue */
         return ;
     }
-    else if (SCHED_CTX(thread).oncpu != RT_CPU_DETACHED)
+    else if (RT_SCHED_CTX(thread).oncpu != RT_CPU_DETACHED)
     {
         /**
          * only YIELD -> READY, SUSPEND -> READY is allowed by this API. However,
          * this is a RUNNING thread. So here we reset it's status and let it go.
          */
-        SCHED_CTX(thread).stat = RT_THREAD_RUNNING | (SCHED_CTX(thread).stat & ~RT_THREAD_STAT_MASK);
+        RT_SCHED_CTX(thread).stat = RT_THREAD_RUNNING | (RT_SCHED_CTX(thread).stat & ~RT_THREAD_STAT_MASK);
         return ;
     }
 
     /* READY thread, insert to ready queue */
-    SCHED_CTX(thread).stat = RT_THREAD_READY | (SCHED_CTX(thread).stat & ~RT_THREAD_STAT_MASK);
+    RT_SCHED_CTX(thread).stat = RT_THREAD_READY | (RT_SCHED_CTX(thread).stat & ~RT_THREAD_STAT_MASK);
 
     cpu_id   = rt_hw_cpu_id();
-    bind_cpu = SCHED_CTX(thread).bind_cpu;
+    bind_cpu = RT_SCHED_CTX(thread).bind_cpu;
 
     /* insert thread to ready list */
     if (bind_cpu == RT_CPUS_NR)
     {
 #if RT_THREAD_PRIORITY_MAX > 32
-        rt_thread_ready_table[SCHED_PRIV(thread).number] |= SCHED_PRIV(thread).high_mask;
+        rt_thread_ready_table[RT_SCHED_PRIV(thread).number] |= RT_SCHED_PRIV(thread).high_mask;
 #endif /* RT_THREAD_PRIORITY_MAX > 32 */
-        rt_thread_ready_priority_group |= SCHED_PRIV(thread).number_mask;
+        rt_thread_ready_priority_group |= RT_SCHED_PRIV(thread).number_mask;
 
         /* there is no time slices left(YIELD), inserting thread before ready list*/
-        if((SCHED_CTX(thread).stat & RT_THREAD_STAT_YIELD_MASK) != 0)
+        if((RT_SCHED_CTX(thread).stat & RT_THREAD_STAT_YIELD_MASK) != 0)
         {
-            rt_list_insert_before(&(rt_thread_priority_table[SCHED_PRIV(thread).current_priority]),
+            rt_list_insert_before(&(rt_thread_priority_table[RT_SCHED_PRIV(thread).current_priority]),
                                   &RT_THREAD_LIST_NODE(thread));
         }
         /* there are some time slices left, inserting thread after ready list to schedule it firstly at next time*/
         else
         {
-            rt_list_insert_after(&(rt_thread_priority_table[SCHED_PRIV(thread).current_priority]),
+            rt_list_insert_after(&(rt_thread_priority_table[RT_SCHED_PRIV(thread).current_priority]),
                                  &RT_THREAD_LIST_NODE(thread));
         }
 
@@ -378,20 +378,20 @@ static void _sched_insert_thread_locked(struct rt_thread *thread)
         struct rt_cpu *pcpu = rt_cpu_index(bind_cpu);
 
 #if RT_THREAD_PRIORITY_MAX > 32
-        pcpu->ready_table[SCHED_PRIV(thread).number] |= SCHED_PRIV(thread).high_mask;
+        pcpu->ready_table[RT_SCHED_PRIV(thread).number] |= RT_SCHED_PRIV(thread).high_mask;
 #endif /* RT_THREAD_PRIORITY_MAX > 32 */
-        pcpu->priority_group |= SCHED_PRIV(thread).number_mask;
+        pcpu->priority_group |= RT_SCHED_PRIV(thread).number_mask;
 
         /* there is no time slices left(YIELD), inserting thread before ready list*/
-        if((SCHED_CTX(thread).stat & RT_THREAD_STAT_YIELD_MASK) != 0)
+        if((RT_SCHED_CTX(thread).stat & RT_THREAD_STAT_YIELD_MASK) != 0)
         {
-            rt_list_insert_before(&(rt_cpu_index(bind_cpu)->priority_table[SCHED_PRIV(thread).current_priority]),
+            rt_list_insert_before(&(rt_cpu_index(bind_cpu)->priority_table[RT_SCHED_PRIV(thread).current_priority]),
                                   &RT_THREAD_LIST_NODE(thread));
         }
         /* there are some time slices left, inserting thread after ready list to schedule it firstly at next time*/
         else
         {
-            rt_list_insert_after(&(rt_cpu_index(bind_cpu)->priority_table[SCHED_PRIV(thread).current_priority]),
+            rt_list_insert_after(&(rt_cpu_index(bind_cpu)->priority_table[RT_SCHED_PRIV(thread).current_priority]),
                                  &RT_THREAD_LIST_NODE(thread));
         }
 
@@ -403,7 +403,7 @@ static void _sched_insert_thread_locked(struct rt_thread *thread)
     }
 
     LOG_D("insert thread[%.*s], the priority: %d",
-          RT_NAME_MAX, thread->parent.name, SCHED_PRIV(thread).current_priority);
+          RT_NAME_MAX, thread->parent.name, RT_SCHED_PRIV(thread).current_priority);
 }
 
 /* remove thread from ready queue */
@@ -411,40 +411,40 @@ static void _sched_remove_thread_locked(struct rt_thread *thread)
 {
     LOG_D("%s [%.*s], the priority: %d", __func__,
           RT_NAME_MAX, thread->parent.name,
-          SCHED_PRIV(thread).current_priority);
+          RT_SCHED_PRIV(thread).current_priority);
 
     /* remove thread from ready list */
     rt_list_remove(&RT_THREAD_LIST_NODE(thread));
 
-    if (SCHED_CTX(thread).bind_cpu == RT_CPUS_NR)
+    if (RT_SCHED_CTX(thread).bind_cpu == RT_CPUS_NR)
     {
-        if (rt_list_isempty(&(rt_thread_priority_table[SCHED_PRIV(thread).current_priority])))
+        if (rt_list_isempty(&(rt_thread_priority_table[RT_SCHED_PRIV(thread).current_priority])))
         {
 #if RT_THREAD_PRIORITY_MAX > 32
-            rt_thread_ready_table[SCHED_PRIV(thread).number] &= ~SCHED_PRIV(thread).high_mask;
-            if (rt_thread_ready_table[SCHED_PRIV(thread).number] == 0)
+            rt_thread_ready_table[RT_SCHED_PRIV(thread).number] &= ~RT_SCHED_PRIV(thread).high_mask;
+            if (rt_thread_ready_table[RT_SCHED_PRIV(thread).number] == 0)
             {
-                rt_thread_ready_priority_group &= ~SCHED_PRIV(thread).number_mask;
+                rt_thread_ready_priority_group &= ~RT_SCHED_PRIV(thread).number_mask;
             }
 #else
-            rt_thread_ready_priority_group &= ~SCHED_PRIV(thread).number_mask;
+            rt_thread_ready_priority_group &= ~RT_SCHED_PRIV(thread).number_mask;
 #endif /* RT_THREAD_PRIORITY_MAX > 32 */
         }
     }
     else
     {
-        struct rt_cpu *pcpu = rt_cpu_index(SCHED_CTX(thread).bind_cpu);
+        struct rt_cpu *pcpu = rt_cpu_index(RT_SCHED_CTX(thread).bind_cpu);
 
-        if (rt_list_isempty(&(pcpu->priority_table[SCHED_PRIV(thread).current_priority])))
+        if (rt_list_isempty(&(pcpu->priority_table[RT_SCHED_PRIV(thread).current_priority])))
         {
 #if RT_THREAD_PRIORITY_MAX > 32
-            pcpu->ready_table[SCHED_PRIV(thread).number] &= ~SCHED_PRIV(thread).high_mask;
-            if (pcpu->ready_table[SCHED_PRIV(thread).number] == 0)
+            pcpu->ready_table[RT_SCHED_PRIV(thread).number] &= ~RT_SCHED_PRIV(thread).high_mask;
+            if (pcpu->ready_table[RT_SCHED_PRIV(thread).number] == 0)
             {
-                pcpu->priority_group &= ~SCHED_PRIV(thread).number_mask;
+                pcpu->priority_group &= ~RT_SCHED_PRIV(thread).number_mask;
             }
 #else
-            pcpu->priority_group &= ~SCHED_PRIV(thread).number_mask;
+            pcpu->priority_group &= ~RT_SCHED_PRIV(thread).number_mask;
 #endif /* RT_THREAD_PRIORITY_MAX > 32 */
         }
     }
@@ -532,11 +532,11 @@ void rt_system_scheduler_start(void)
     _sched_remove_thread_locked(to_thread);
 
     /* dedigate current core to `to_thread` */
-    SCHED_CTX(to_thread).oncpu = rt_hw_cpu_id();
-    SCHED_CTX(to_thread).stat = RT_THREAD_RUNNING;
+    RT_SCHED_CTX(to_thread).oncpu = rt_hw_cpu_id();
+    RT_SCHED_CTX(to_thread).stat = RT_THREAD_RUNNING;
 
     LOG_D("[cpu#%d] switch to priority#%d thread:%.*s(sp:0x%08x)",
-          rt_hw_cpu_id(), SCHED_PRIV(to_thread).current_priority,
+          rt_hw_cpu_id(), RT_SCHED_PRIV(to_thread).current_priority,
           RT_NAME_MAX, to_thread->parent.name, to_thread->sp);
 
     _fast_spin_unlock(&_mp_scheduler_lock);
@@ -638,23 +638,23 @@ static rt_thread_t _prepare_context_switch_locked(int cpu_id,
         to_thread = _scheduler_get_highest_priority_thread(&highest_ready_priority);
 
         /* detach current thread from percpu scheduling context */
-        SCHED_CTX(current_thread).oncpu = RT_CPU_DETACHED;
+        RT_SCHED_CTX(current_thread).oncpu = RT_CPU_DETACHED;
 
         /* check if current thread should be put to ready queue, or scheduling again */
-        if ((SCHED_CTX(current_thread).stat & RT_THREAD_STAT_MASK) == RT_THREAD_RUNNING)
+        if ((RT_SCHED_CTX(current_thread).stat & RT_THREAD_STAT_MASK) == RT_THREAD_RUNNING)
         {
             /* check if current thread can be running on current core again */
-            if (SCHED_CTX(current_thread).bind_cpu == RT_CPUS_NR
-                || SCHED_CTX(current_thread).bind_cpu == cpu_id)
+            if (RT_SCHED_CTX(current_thread).bind_cpu == RT_CPUS_NR
+                || RT_SCHED_CTX(current_thread).bind_cpu == cpu_id)
             {
                 /* if current_thread is the highest runnable thread */
-                if (SCHED_PRIV(current_thread).current_priority < highest_ready_priority)
+                if (RT_SCHED_PRIV(current_thread).current_priority < highest_ready_priority)
                 {
                     to_thread = current_thread;
                 }
                 /* or no higher-priority thread existed and it has remaining ticks */
-                else if (SCHED_PRIV(current_thread).current_priority == highest_ready_priority &&
-                         (SCHED_CTX(current_thread).stat & RT_THREAD_STAT_YIELD_MASK) == 0)
+                else if (RT_SCHED_PRIV(current_thread).current_priority == highest_ready_priority &&
+                         (RT_SCHED_CTX(current_thread).stat & RT_THREAD_STAT_YIELD_MASK) == 0)
                 {
                     to_thread = current_thread;
                 }
@@ -671,7 +671,7 @@ static rt_thread_t _prepare_context_switch_locked(int cpu_id,
             }
 
             /* consume the yield flags after scheduling */
-            SCHED_CTX(current_thread).stat &= ~RT_THREAD_STAT_YIELD_MASK;
+            RT_SCHED_CTX(current_thread).stat &= ~RT_THREAD_STAT_YIELD_MASK;
         }
 
         /**
@@ -682,7 +682,7 @@ static rt_thread_t _prepare_context_switch_locked(int cpu_id,
          * core for any observers if they properly do the synchronization
          * (take the SCHEDULER_LOCK).
          */
-        SCHED_CTX(to_thread).oncpu = cpu_id;
+        RT_SCHED_CTX(to_thread).oncpu = cpu_id;
 
         /* check if context switch is required */
         if (to_thread != current_thread)
@@ -693,7 +693,7 @@ static rt_thread_t _prepare_context_switch_locked(int cpu_id,
 
             /* remove to_thread from ready queue and update its status to RUNNING */
             _sched_remove_thread_locked(to_thread);
-            SCHED_CTX(to_thread).stat = RT_THREAD_RUNNING | (SCHED_CTX(to_thread).stat & ~RT_THREAD_STAT_MASK);
+            RT_SCHED_CTX(to_thread).stat = RT_THREAD_RUNNING | (RT_SCHED_CTX(to_thread).stat & ~RT_THREAD_STAT_MASK);
 
             SCHEDULER_STACK_CHECK(to_thread);
 
@@ -721,7 +721,7 @@ static void _sched_thread_preprocess_signal(struct rt_thread *current_thread)
     if (rt_sched_thread_is_suspended(current_thread))
     {
         /* if current_thread signal is in pending */
-        if ((SCHED_CTX(current_thread).stat & RT_THREAD_STAT_SIGNAL_MASK) & RT_THREAD_STAT_SIGNAL_PENDING)
+        if ((RT_SCHED_CTX(current_thread).stat & RT_THREAD_STAT_SIGNAL_MASK) & RT_THREAD_STAT_SIGNAL_PENDING)
         {
 #ifdef RT_USING_SMART
             rt_thread_wakeup(current_thread);
@@ -738,11 +738,11 @@ static void _sched_thread_process_signal(struct rt_thread *current_thread)
     SCHEDULER_LOCK(level);
 
     /* check stat of thread for signal */
-    if (SCHED_CTX(current_thread).stat & RT_THREAD_STAT_SIGNAL_PENDING)
+    if (RT_SCHED_CTX(current_thread).stat & RT_THREAD_STAT_SIGNAL_PENDING)
     {
         extern void rt_thread_handle_sig(rt_bool_t clean_state);
 
-        SCHED_CTX(current_thread).stat &= ~RT_THREAD_STAT_SIGNAL_PENDING;
+        RT_SCHED_CTX(current_thread).stat &= ~RT_THREAD_STAT_SIGNAL_PENDING;
 
         SCHEDULER_UNLOCK(level);
 
@@ -810,7 +810,7 @@ rt_err_t rt_sched_unlock_n_resched(rt_sched_lock_level_t level)
     SCHED_THREAD_PREPROCESS_SIGNAL_LOCKED(current_thread);
 
     /* whether caller had locked the local scheduler already */
-    if (SCHED_CTX(current_thread).critical_lock_nest > 1)
+    if (RT_SCHED_CTX(current_thread).critical_lock_nest > 1)
     {
         /* leaving critical region of global context since we can't schedule */
         SCHEDULER_CONTEXT_UNLOCK(pcpu);
@@ -833,7 +833,7 @@ rt_err_t rt_sched_unlock_n_resched(rt_sched_lock_level_t level)
             LOG_D("[cpu#%d] UNLOCK switch to priority#%d "
                   "thread:%.*s(sp:0x%08x), "
                   "from thread:%.*s(sp: 0x%08x)",
-                  cpu_id, SCHED_PRIV(to_thread).current_priority,
+                  cpu_id, RT_SCHED_PRIV(to_thread).current_priority,
                   RT_NAME_MAX, to_thread->parent.name, to_thread->sp,
                   RT_NAME_MAX, current_thread->parent.name, current_thread->sp);
 
@@ -892,7 +892,7 @@ void rt_schedule(void)
     SCHED_THREAD_PREPROCESS_SIGNAL(pcpu, current_thread);
 
     /* whether caller had locked the local scheduler already */
-    if (SCHED_CTX(current_thread).critical_lock_nest > 1)
+    if (RT_SCHED_CTX(current_thread).critical_lock_nest > 1)
     {
         pcpu->critical_switch_flag = 1;
 
@@ -920,7 +920,7 @@ void rt_schedule(void)
             LOG_D("[cpu#%d] switch to priority#%d "
                   "thread:%.*s(sp:0x%08x), "
                   "from thread:%.*s(sp: 0x%08x)",
-                  cpu_id, SCHED_PRIV(to_thread).current_priority,
+                  cpu_id, RT_SCHED_PRIV(to_thread).current_priority,
                   RT_NAME_MAX, to_thread->parent.name, to_thread->sp,
                   RT_NAME_MAX, current_thread->parent.name, current_thread->sp);
 
@@ -976,7 +976,7 @@ void rt_scheduler_do_irq_switch(void *context)
     }
 
     /* whether caller had locked the local scheduler already */
-    if (SCHED_CTX(current_thread).critical_lock_nest > 1)
+    if (RT_SCHED_CTX(current_thread).critical_lock_nest > 1)
     {
         pcpu->critical_switch_flag = 1;
         SCHEDULER_EXIT_CRITICAL(current_thread);
@@ -996,7 +996,7 @@ void rt_scheduler_do_irq_switch(void *context)
             LOG_D("[cpu#%d] IRQ switch to priority#%d "
                   "thread:%.*s(sp:0x%08x), "
                   "from thread:%.*s(sp: 0x%08x)",
-                  cpu_id, SCHED_PRIV(to_thread).current_priority,
+                  cpu_id, RT_SCHED_PRIV(to_thread).current_priority,
                   RT_NAME_MAX, to_thread->parent.name, to_thread->sp,
                   RT_NAME_MAX, current_thread->parent.name, current_thread->sp);
 
@@ -1061,24 +1061,24 @@ void rt_sched_thread_init_priv(struct rt_thread *thread, rt_uint32_t tick, rt_ui
 
     /* priority init */
     RT_ASSERT(priority < RT_THREAD_PRIORITY_MAX);
-    SCHED_PRIV(thread).init_priority    = priority;
-    SCHED_PRIV(thread).current_priority = priority;
+    RT_SCHED_PRIV(thread).init_priority    = priority;
+    RT_SCHED_PRIV(thread).current_priority = priority;
 
     /* don't add to scheduler queue as init thread */
-    SCHED_PRIV(thread).number_mask = 0;
+    RT_SCHED_PRIV(thread).number_mask = 0;
 #if RT_THREAD_PRIORITY_MAX > 32
-    SCHED_PRIV(thread).number = 0;
-    SCHED_PRIV(thread).high_mask = 0;
+    RT_SCHED_PRIV(thread).number = 0;
+    RT_SCHED_PRIV(thread).high_mask = 0;
 #endif /* RT_THREAD_PRIORITY_MAX > 32 */
 
     /* tick init */
-    SCHED_PRIV(thread).init_tick = tick;
-    SCHED_PRIV(thread).remaining_tick = tick;
+    RT_SCHED_PRIV(thread).init_tick = tick;
+    RT_SCHED_PRIV(thread).remaining_tick = tick;
 
 #ifdef RT_USING_SMP
 
     /* lock init */
-    SCHED_CTX(thread).critical_lock_nest = 0;
+    RT_SCHED_CTX(thread).critical_lock_nest = 0;
 #endif /* RT_USING_SMP */
 
 }
@@ -1087,15 +1087,15 @@ void rt_sched_thread_init_priv(struct rt_thread *thread, rt_uint32_t tick, rt_ui
 void rt_sched_thread_startup(struct rt_thread *thread)
 {
 #if RT_THREAD_PRIORITY_MAX > 32
-    SCHED_PRIV(thread).number = SCHED_PRIV(thread).current_priority >> 3;            /* 5bit */
-    SCHED_PRIV(thread).number_mask = 1L << SCHED_PRIV(thread).number;
-    SCHED_PRIV(thread).high_mask = 1L << (SCHED_PRIV(thread).current_priority & 0x07);  /* 3bit */
+    RT_SCHED_PRIV(thread).number = RT_SCHED_PRIV(thread).current_priority >> 3;            /* 5bit */
+    RT_SCHED_PRIV(thread).number_mask = 1L << RT_SCHED_PRIV(thread).number;
+    RT_SCHED_PRIV(thread).high_mask = 1L << (RT_SCHED_PRIV(thread).current_priority & 0x07);  /* 3bit */
 #else
-    SCHED_PRIV(thread).number_mask = 1L << SCHED_PRIV(thread).current_priority;
+    RT_SCHED_PRIV(thread).number_mask = 1L << RT_SCHED_PRIV(thread).current_priority;
 #endif /* RT_THREAD_PRIORITY_MAX > 32 */
 
     /* change thread stat, so we can resume it */
-    SCHED_CTX(thread).stat = RT_THREAD_SUSPEND;
+    RT_SCHED_CTX(thread).stat = RT_THREAD_SUSPEND;
 }
 
 /**
@@ -1112,10 +1112,10 @@ void rt_sched_post_ctx_switch(struct rt_thread *thread)
 
     if (from_thread)
     {
-        RT_ASSERT(SCHED_CTX(from_thread).critical_lock_nest == 1);
+        RT_ASSERT(RT_SCHED_CTX(from_thread).critical_lock_nest == 1);
 
         /* release the scheduler lock since we are done with critical region */
-        SCHED_CTX(from_thread).critical_lock_nest = 0;
+        RT_SCHED_CTX(from_thread).critical_lock_nest = 0;
         SCHEDULER_CONTEXT_UNLOCK(pcpu);
     }
     /* safe to access since irq is masked out */
@@ -1132,14 +1132,14 @@ void rt_exit_critical_safe(rt_base_t critical_level)
     rt_thread_t current_thread = pcpu->current_thread;
     if (current_thread && !_critical_error_occurred)
     {
-        if (critical_level != SCHED_CTX(current_thread).critical_lock_nest)
+        if (critical_level != RT_SCHED_CTX(current_thread).critical_lock_nest)
         {
             int dummy = 1;
             _critical_error_occurred = 1;
 
             rt_kprintf("%s: un-compatible critical level\n" \
                        "\tCurrent %d\n\tCaller %d\n",
-                       __func__, SCHED_CTX(current_thread).critical_lock_nest,
+                       __func__, RT_SCHED_CTX(current_thread).critical_lock_nest,
                        critical_level);
             rt_backtrace();
 
@@ -1182,8 +1182,8 @@ rt_base_t rt_enter_critical(void)
     }
 
     /* critical for local cpu */
-    SCHED_CTX(current_thread).critical_lock_nest++;
-    critical_level = SCHED_CTX(current_thread).critical_lock_nest;
+    RT_SCHED_CTX(current_thread).critical_lock_nest++;
+    critical_level = RT_SCHED_CTX(current_thread).critical_lock_nest;
 
     /* enable interrupt */
     rt_hw_local_irq_enable(level);
@@ -1214,10 +1214,10 @@ void rt_exit_critical(void)
     }
 
     /* the necessary memory barrier is done on irq_(dis|en)able */
-    SCHED_CTX(current_thread).critical_lock_nest--;
+    RT_SCHED_CTX(current_thread).critical_lock_nest--;
 
     /* may need a rescheduling */
-    if (SCHED_CTX(current_thread).critical_lock_nest == 0)
+    if (RT_SCHED_CTX(current_thread).critical_lock_nest == 0)
     {
         /* is there any scheduling request unfinished? */
         need_resched = pcpu->critical_switch_flag;
@@ -1232,7 +1232,7 @@ void rt_exit_critical(void)
     else
     {
         /* each exit_critical is strictly corresponding to an enter_critical */
-        RT_ASSERT(SCHED_CTX(current_thread).critical_lock_nest > 0);
+        RT_ASSERT(RT_SCHED_CTX(current_thread).critical_lock_nest > 0);
 
         /* enable interrupt */
         rt_hw_local_irq_enable(level);
@@ -1256,7 +1256,7 @@ rt_uint16_t rt_critical_level(void)
     current_thread = rt_cpu_self()->current_thread;
 
     /* the necessary memory barrier is done on irq_(dis|en)able */
-    critical_lvl = SCHED_CTX(current_thread).critical_lock_nest;
+    critical_lvl = RT_SCHED_CTX(current_thread).critical_lock_nest;
 
     rt_hw_local_irq_enable(level);
     return critical_lvl;
@@ -1285,7 +1285,7 @@ rt_err_t rt_sched_thread_bind_cpu(struct rt_thread *thread, int cpu)
         /* remove from old ready queue */
         rt_sched_remove_thread(thread);
         /* change thread bind cpu */
-        SCHED_CTX(thread).bind_cpu = cpu;
+        RT_SCHED_CTX(thread).bind_cpu = cpu;
         /* add to new ready queue */
         rt_sched_insert_thread(thread);
 
@@ -1300,7 +1300,7 @@ rt_err_t rt_sched_thread_bind_cpu(struct rt_thread *thread, int cpu)
     }
     else
     {
-        SCHED_CTX(thread).bind_cpu = cpu;
+        RT_SCHED_CTX(thread).bind_cpu = cpu;
         if (thread_stat == RT_THREAD_RUNNING)
         {
             /* thread is running on a cpu */
@@ -1308,7 +1308,7 @@ rt_err_t rt_sched_thread_bind_cpu(struct rt_thread *thread, int cpu)
 
             if (cpu != RT_CPUS_NR)
             {
-                if (SCHED_CTX(thread).oncpu == current_cpu)
+                if (RT_SCHED_CTX(thread).oncpu == current_cpu)
                 {
                     /* current thread on current cpu */
                     if (cpu != current_cpu)
@@ -1327,7 +1327,7 @@ rt_err_t rt_sched_thread_bind_cpu(struct rt_thread *thread, int cpu)
                 else
                 {
                     /* no running on self cpu, but dest cpu can be itself */
-                    rt_hw_ipi_send(RT_SCHEDULE_IPI, 1U << SCHED_CTX(thread).oncpu);
+                    rt_hw_ipi_send(RT_SCHEDULE_IPI, 1U << RT_SCHED_CTX(thread).oncpu);
                     rt_sched_unlock(slvl);
                 }
             }

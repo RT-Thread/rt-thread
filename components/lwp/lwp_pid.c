@@ -63,7 +63,7 @@ int lwp_pid_init(void)
 
 void lwp_pid_lock_take(void)
 {
-    DEF_RETURN_CODE(rc);
+    LWP_DEF_RETURN_CODE(rc);
 
     rc = lwp_mutex_take_safe(&pid_mtx, RT_WAITING_FOREVER, 0);
     /* should never failed */
@@ -905,15 +905,15 @@ static void print_thread_info(struct rt_thread* thread, int maxlen)
     rt_uint8_t stat;
 
 #ifdef RT_USING_SMP
-    if (SCHED_CTX(thread).oncpu != RT_CPU_DETACHED)
-        rt_kprintf("%-*.*s %3d %3d ", maxlen, RT_NAME_MAX, thread->parent.name, SCHED_CTX(thread).oncpu, SCHED_PRIV(thread).current_priority);
+    if (RT_SCHED_CTX(thread).oncpu != RT_CPU_DETACHED)
+        rt_kprintf("%-*.*s %3d %3d ", maxlen, RT_NAME_MAX, thread->parent.name, RT_SCHED_CTX(thread).oncpu, RT_SCHED_PRIV(thread).current_priority);
     else
-        rt_kprintf("%-*.*s N/A %3d ", maxlen, RT_NAME_MAX, thread->parent.name, SCHED_PRIV(thread).current_priority);
+        rt_kprintf("%-*.*s N/A %3d ", maxlen, RT_NAME_MAX, thread->parent.name, RT_SCHED_PRIV(thread).current_priority);
 #else
     rt_kprintf("%-*.*s %3d ", maxlen, RT_NAME_MAX, thread->parent.name, thread->current_priority);
 #endif /*RT_USING_SMP*/
 
-    stat = (SCHED_CTX(thread).stat & RT_THREAD_STAT_MASK);
+    stat = (RT_SCHED_CTX(thread).stat & RT_THREAD_STAT_MASK);
     if (stat == RT_THREAD_READY)        rt_kprintf(" ready  ");
     else if ((stat & RT_THREAD_SUSPEND_MASK) == RT_THREAD_SUSPEND_MASK) rt_kprintf(" suspend");
     else if (stat == RT_THREAD_INIT)    rt_kprintf(" init   ");
@@ -939,7 +939,7 @@ static void print_thread_info(struct rt_thread* thread, int maxlen)
             thread->stack_size,
             (thread->stack_size + (rt_uint32_t)(rt_size_t)thread->stack_addr - (rt_uint32_t)(rt_size_t)ptr) * 100
             / thread->stack_size,
-            SCHED_PRIV(thread).remaining_tick,
+            RT_SCHED_PRIV(thread).remaining_tick,
             thread->error);
 #endif
 }

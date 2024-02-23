@@ -65,7 +65,7 @@ static void _signal_entry(void *parameter)
 #endif /* RT_USING_SMP */
 
     LOG_D("switch back to: 0x%08x\n", tid->sp);
-    SCHED_CTX(tid).stat &= ~RT_THREAD_STAT_SIGNAL;
+    RT_SCHED_CTX(tid).stat &= ~RT_THREAD_STAT_SIGNAL;
 
 #ifdef RT_USING_SMP
     rt_hw_context_switch_to((rt_base_t)&parameter, tid);
@@ -97,7 +97,7 @@ static void _signal_deliver(rt_thread_t tid)
         return;
     }
 
-    if ((SCHED_CTX(tid).stat & RT_THREAD_SUSPEND_MASK) == RT_THREAD_SUSPEND_MASK)
+    if ((RT_SCHED_CTX(tid).stat & RT_THREAD_SUSPEND_MASK) == RT_THREAD_SUSPEND_MASK)
     {
         /* resume thread to handle signal */
 #ifdef RT_USING_SMART
@@ -106,7 +106,7 @@ static void _signal_deliver(rt_thread_t tid)
         rt_thread_resume(tid);
 #endif
         /* add signal state */
-        SCHED_CTX(tid).stat |= (RT_THREAD_STAT_SIGNAL | RT_THREAD_STAT_SIGNAL_PENDING);
+        RT_SCHED_CTX(tid).stat |= (RT_THREAD_STAT_SIGNAL | RT_THREAD_STAT_SIGNAL_PENDING);
 
         rt_spin_unlock_irqrestore(&_thread_signal_lock, level);
 
@@ -118,7 +118,7 @@ static void _signal_deliver(rt_thread_t tid)
         if (tid == rt_thread_self())
         {
             /* add signal state */
-            SCHED_CTX(tid).stat |= RT_THREAD_STAT_SIGNAL;
+            RT_SCHED_CTX(tid).stat |= RT_THREAD_STAT_SIGNAL;
 
             rt_spin_unlock_irqrestore(&_thread_signal_lock, level);
 
@@ -128,16 +128,16 @@ static void _signal_deliver(rt_thread_t tid)
                 rt_thread_handle_sig(RT_TRUE);
             }
         }
-        else if (!((SCHED_CTX(tid).stat & RT_THREAD_STAT_SIGNAL_MASK) & RT_THREAD_STAT_SIGNAL))
+        else if (!((RT_SCHED_CTX(tid).stat & RT_THREAD_STAT_SIGNAL_MASK) & RT_THREAD_STAT_SIGNAL))
         {
             /* add signal state */
-            SCHED_CTX(tid).stat |= (RT_THREAD_STAT_SIGNAL | RT_THREAD_STAT_SIGNAL_PENDING);
+            RT_SCHED_CTX(tid).stat |= (RT_THREAD_STAT_SIGNAL | RT_THREAD_STAT_SIGNAL_PENDING);
 
 #ifdef RT_USING_SMP
             {
                 int cpu_id;
 
-                cpu_id = SCHED_CTX(tid).oncpu;
+                cpu_id = RT_SCHED_CTX(tid).oncpu;
                 if ((cpu_id != RT_CPU_DETACHED) && (cpu_id != rt_hw_cpu_id()))
                 {
                     rt_uint32_t cpu_mask;
@@ -148,7 +148,7 @@ static void _signal_deliver(rt_thread_t tid)
             }
 #else
             /* point to the signal handle entry */
-            SCHED_CTX(tid).stat &= ~RT_THREAD_STAT_SIGNAL_PENDING;
+            RT_SCHED_CTX(tid).stat &= ~RT_THREAD_STAT_SIGNAL_PENDING;
             tid->sig_ret = tid->sp;
             tid->sp = rt_hw_stack_init((void *)_signal_entry, RT_NULL,
                                        (void *)((char *)tid->sig_ret - 32), RT_NULL);
@@ -189,11 +189,11 @@ void *rt_signal_check(void* context)
 
     if (current_thread->cpus_lock_nest == 1)
     {
-        if (SCHED_CTX(current_thread).stat & RT_THREAD_STAT_SIGNAL_PENDING)
+        if (RT_SCHED_CTX(current_thread).stat & RT_THREAD_STAT_SIGNAL_PENDING)
         {
             void *sig_context;
 
-            SCHED_CTX(current_thread).stat &= ~RT_THREAD_STAT_SIGNAL_PENDING;
+            RT_SCHED_CTX(current_thread).stat &= ~RT_THREAD_STAT_SIGNAL_PENDING;
 
             rt_spin_unlock_irqrestore(&_thread_signal_lock, level);
             sig_context = rt_hw_stack_init((void *)_signal_entry, context,
@@ -356,7 +356,7 @@ int rt_signal_wait(const rt_sigset_t *set, rt_siginfo_t *si, rt_int32_t timeout)
     /* suspend self thread */
     rt_thread_suspend_with_flag(tid, RT_UNINTERRUPTIBLE);
     /* set thread stat as waiting for signal */
-    SCHED_CTX(tid).stat |= RT_THREAD_STAT_SIGNAL_WAIT;
+    RT_SCHED_CTX(tid).stat |= RT_THREAD_STAT_SIGNAL_WAIT;
 
     /* start timeout timer */
     if (timeout != RT_WAITING_FOREVER)
@@ -375,7 +375,7 @@ int rt_signal_wait(const rt_sigset_t *set, rt_siginfo_t *si, rt_int32_t timeout)
     level = rt_spin_lock_irqsave(&_thread_signal_lock);
 
     /* remove signal waiting flag */
-    SCHED_CTX(tid).stat &= ~RT_THREAD_STAT_SIGNAL_WAIT;
+    RT_SCHED_CTX(tid).stat &= ~RT_THREAD_STAT_SIGNAL_WAIT;
 
     /* check errno of thread */
     if (tid->error == -RT_ETIMEOUT)
@@ -452,7 +452,7 @@ void rt_thread_handle_sig(rt_bool_t clean_state)
     if (tid->sig_pending & tid->sig_mask)
     {
         /* if thread is not waiting for signal */
-        if (!(SCHED_CTX(tid).stat & RT_THREAD_STAT_SIGNAL_WAIT))
+        if (!(RT_SCHED_CTX(tid).stat & RT_THREAD_STAT_SIGNAL_WAIT))
         {
             while (tid->sig_pending & tid->sig_mask)
             {
@@ -487,7 +487,7 @@ void rt_thread_handle_sig(rt_bool_t clean_state)
             /* whether clean signal status */
             if (clean_state == RT_TRUE)
             {
-                SCHED_CTX(tid).stat &= ~RT_THREAD_STAT_SIGNAL;
+                RT_SCHED_CTX(tid).stat &= ~RT_THREAD_STAT_SIGNAL;
             }
             else
             {

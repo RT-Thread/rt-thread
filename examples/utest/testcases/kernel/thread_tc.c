@@ -457,6 +457,10 @@ static void test_delay_until(void)
     rt_kprintf("delta[20] -> %d\n", delta);
     uassert_int_equal(delta, 20);
 
+    /**
+     * the rt_kprints above can take few ticks to complete, maybe more than 10
+     */
+    tick = rt_tick_get();
     check_tick = tick;
     rt_thread_delay(2);
     rt_thread_delay_until(&tick, 10);

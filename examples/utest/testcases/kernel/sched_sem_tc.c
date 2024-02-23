@@ -40,7 +40,7 @@ static void _print_char(rt_thread_t thr_self, int character)
     rt_base_t current_counter;
 
 #ifdef RT_USING_SMP
-    rt_kprintf("%c%d", character, SCHED_CTX(thr_self).oncpu);
+    rt_kprintf("%c%d", character, RT_SCHED_CTX(thr_self).oncpu);
 #else
     rt_kprintf("%c0", character);
 #endif /* RT_USING_SMP */

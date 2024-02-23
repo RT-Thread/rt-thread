@@ -64,18 +64,18 @@ struct rt_sched_thread_ctx
 
 #define RT_SCHED_THREAD_CTX struct rt_sched_thread_ctx sched_thread_ctx
 
-#define SCHED_PRIV(thread) ((thread)->sched_thread_ctx.sched_thread_priv)
-#define SCHED_CTX(thread) ((thread)->sched_thread_ctx)
+#define RT_SCHED_PRIV(thread) ((thread)->sched_thread_ctx.sched_thread_priv)
+#define RT_SCHED_CTX(thread) ((thread)->sched_thread_ctx)
 
 /**
- * Convert a list node in container SCHED_CTX(thread)->thread_list_node
+ * Convert a list node in container RT_SCHED_CTX(thread)->thread_list_node
  * to a thread pointer.
  */
 #define RT_THREAD_LIST_NODE_ENTRY(node)                                      \
     rt_container_of(                                                         \
         rt_list_entry((node), struct rt_sched_thread_ctx, thread_list_node), \
         struct rt_thread, sched_thread_ctx)
-#define RT_THREAD_LIST_NODE(thread) (SCHED_CTX(thread).thread_list_node)
+#define RT_THREAD_LIST_NODE(thread) (RT_SCHED_CTX(thread).thread_list_node)
 
 #else /* !defined(RT_USING_SCHED_THREAD_CTX) */
 
@@ -102,15 +102,15 @@ struct rt_sched_thread_ctx
     _RT_SCHED_THREAD_CTX_PRIO_EXT;                                             \
     rt_uint32_t number_mask; /**< priority number mask */
 
-#define SCHED_PRIV(thread) (*thread)
-#define SCHED_CTX(thread) (*thread)
+#define RT_SCHED_PRIV(thread) (*thread)
+#define RT_SCHED_CTX(thread) (*thread)
 
 /**
- * Convert a list node in container SCHED_CTX(thread)->thread_list_node
+ * Convert a list node in container RT_SCHED_CTX(thread)->thread_list_node
  * to a thread pointer.
  */
 #define RT_THREAD_LIST_NODE_ENTRY(node) rt_list_entry((node), struct rt_thread, tlist)
-#define RT_THREAD_LIST_NODE(thread) (SCHED_CTX(thread).tlist)
+#define RT_THREAD_LIST_NODE(thread) (RT_SCHED_CTX(thread).tlist)
 
 #endif /* RT_USING_SCHED_THREAD_CTX */
 
@@ -140,7 +140,7 @@ rt_bool_t rt_sched_is_locked(void);
  * NOTE: user should NEVER use these APIs directly. See rt_thread_.* or IPC
  * methods instead.
  */
-#if defined(__RTTHREAD_SOURCE__) || defined(__RT_IPC_SOURCE__)
+#if defined(__RT_KERNEL_SOURCE__) || defined(__RT_IPC_SOURCE__)
 
 /* thread initialization and startup routine */
 void rt_sched_thread_init_ctx(struct rt_thread *thread, rt_uint32_t tick, rt_uint8_t priority);
@@ -167,6 +167,6 @@ rt_err_t rt_sched_thread_timer_start(struct rt_thread *thread);
 void rt_sched_insert_thread(struct rt_thread *thread);
 void rt_sched_remove_thread(struct rt_thread *thread);
 
-#endif /* defined(__RTTHREAD_SOURCE__) || defined(__RT_IPC_SOURCE__) */
+#endif /* defined(__RT_KERNEL_SOURCE__) || defined(__RT_IPC_SOURCE__) */
 
 #endif /* __RT_SCHED_H__ */

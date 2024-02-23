@@ -42,6 +42,6 @@ if rtconfig.PLATFORM in GetGCCLikePLATFORM():
         LOCAL_CFLAGS += ' -Wimplicit-fallthrough' # implicit fallthrough warning
         LOCAL_CFLAGS += ' -Wduplicated-cond -Wduplicated-branches' # duplicated condition warning
 
-group = DefineGroup('Kernel', src, depend=[''], CPPPATH=inc, CPPDEFINES=['__RTTHREAD__'], LOCAL_CFLAGS=LOCAL_CFLAGS, LOCAL_CPPDEFINES=['__RTTHREAD_SOURCE__'])
+group = DefineGroup('Kernel', src, depend=[''], CPPPATH=inc, CPPDEFINES=['__RTTHREAD__'], LOCAL_CFLAGS=LOCAL_CFLAGS, LOCAL_CPPDEFINES=['__RT_KERNEL_SOURCE__'])
 
 Return('group')

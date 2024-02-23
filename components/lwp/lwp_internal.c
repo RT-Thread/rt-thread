@@ -17,7 +17,7 @@
 
 static rt_err_t _mutex_take_safe(rt_mutex_t mtx, rt_int32_t timeout, rt_bool_t interruptable)
 {
-    DEF_RETURN_CODE(rc);
+    LWP_DEF_RETURN_CODE(rc);
     int retry;
     rt_int32_t effect_timeout;
 
@@ -92,19 +92,19 @@ static rt_err_t _mutex_take_safe(rt_mutex_t mtx, rt_int32_t timeout, rt_bool_t i
         RT_ASSERT(0);
     }
 
-    RETURN(rc);
+    LWP_RETURN(rc);
 }
 
 rt_err_t lwp_mutex_take_safe(rt_mutex_t mtx, rt_int32_t timeout, rt_bool_t interruptable)
 {
-    DEF_RETURN_CODE(rc);
+    LWP_DEF_RETURN_CODE(rc);
     rc = _mutex_take_safe(mtx, timeout, interruptable);
-    RETURN(rc);
+    LWP_RETURN(rc);
 }
 
 rt_err_t lwp_mutex_release_safe(rt_mutex_t mtx)
 {
-    DEF_RETURN_CODE(rc);
+    LWP_DEF_RETURN_CODE(rc);
 
     rc = rt_mutex_release(mtx);
     if (rc)
@@ -113,7 +113,7 @@ rt_err_t lwp_mutex_release_safe(rt_mutex_t mtx)
         rt_backtrace();
     }
 
-    RETURN(rc);
+    LWP_RETURN(rc);
 }
 
 rt_err_t lwp_critical_enter(struct rt_lwp *lwp)

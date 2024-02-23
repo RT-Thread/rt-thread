@@ -217,22 +217,22 @@ long list_thread(void)
 
 #ifdef RT_USING_SMP
                     /* no synchronization applied since it's only for debug */
-                    if (SCHED_CTX(thread).oncpu != RT_CPU_DETACHED)
+                    if (RT_SCHED_CTX(thread).oncpu != RT_CPU_DETACHED)
                         rt_kprintf("%-*.*s %3d %3d %4d ", maxlen, RT_NAME_MAX,
-                                   thread->parent.name, SCHED_CTX(thread).oncpu,
-                                   SCHED_CTX(thread).bind_cpu,
-                                   SCHED_PRIV(thread).current_priority);
+                                   thread->parent.name, RT_SCHED_CTX(thread).oncpu,
+                                   RT_SCHED_CTX(thread).bind_cpu,
+                                   RT_SCHED_PRIV(thread).current_priority);
                     else
                         rt_kprintf("%-*.*s N/A %3d %4d ", maxlen, RT_NAME_MAX,
                                    thread->parent.name,
-                                   SCHED_CTX(thread).bind_cpu,
-                                   SCHED_PRIV(thread).current_priority);
+                                   RT_SCHED_CTX(thread).bind_cpu,
+                                   RT_SCHED_PRIV(thread).current_priority);
 
 #else
                     /* no synchronization applied since it's only for debug */
-                    rt_kprintf("%-*.*s %3d ", maxlen, RT_NAME_MAX, thread->parent.name, SCHED_PRIV(thread).current_priority);
+                    rt_kprintf("%-*.*s %3d ", maxlen, RT_NAME_MAX, thread->parent.name, RT_SCHED_PRIV(thread).current_priority);
 #endif /*RT_USING_SMP*/
-                    stat = (SCHED_CTX(thread).stat & RT_THREAD_STAT_MASK);
+                    stat = (RT_SCHED_CTX(thread).stat & RT_THREAD_STAT_MASK);
                     if (stat == RT_THREAD_READY)        rt_kprintf(" ready  ");
                     else if ((stat & RT_THREAD_SUSPEND_MASK) == RT_THREAD_SUSPEND_MASK) rt_kprintf(" suspend");
                     else if (stat == RT_THREAD_INIT)    rt_kprintf(" init   ");
@@ -258,7 +258,7 @@ long list_thread(void)
                                thread->stack_size,
                                (thread->stack_size - ((rt_ubase_t) ptr - (rt_ubase_t) thread->stack_addr)) * 100
                                / thread->stack_size,
-                               SCHED_PRIV(thread).remaining_tick,
+                               RT_SCHED_PRIV(thread).remaining_tick,
                                rt_strerror(thread->error),
                                thread);
 #endif

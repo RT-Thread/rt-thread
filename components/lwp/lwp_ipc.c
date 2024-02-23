@@ -513,7 +513,7 @@ static rt_err_t _send_recv_timeout(rt_channel_t ch, rt_channel_msg_t data, int n
 
 static rt_err_t _do_send_recv_timeout(rt_channel_t ch, rt_channel_msg_t data, int need_reply, rt_channel_msg_t data_ret, rt_int32_t time, rt_ipc_msg_t msg)
 {
-    DEF_RETURN_CODE(rc);
+    LWP_DEF_RETURN_CODE(rc);
     rt_thread_t thread_recv;
     rt_thread_t thread_send = 0;
     void (*old_timeout_func)(void *) = 0;
@@ -700,7 +700,7 @@ rt_err_t rt_raw_channel_send_recv_timeout(rt_channel_t ch, rt_channel_msg_t data
  */
 rt_err_t rt_raw_channel_reply(rt_channel_t ch, rt_channel_msg_t data)
 {
-    DEF_RETURN_CODE(rc);
+    LWP_DEF_RETURN_CODE(rc);
     rt_ipc_msg_t msg;
     struct rt_thread *thread;
     rt_base_t level;
@@ -752,7 +752,7 @@ rt_err_t rt_raw_channel_reply(rt_channel_t ch, rt_channel_msg_t data)
         rt_schedule();
     }
 
-    RETURN(rc);
+    LWP_RETURN(rc);
 }
 
 static rt_err_t wakeup_receiver(void *object, struct rt_thread *thread)
@@ -805,7 +805,7 @@ static void receiver_timeout(void *parameter)
  */
 static rt_err_t _rt_raw_channel_recv_timeout(rt_channel_t ch, rt_channel_msg_t data, rt_int32_t time)
 {
-    DEF_RETURN_CODE(rc);
+    LWP_DEF_RETURN_CODE(rc);
     struct rt_thread *thread;
     rt_ipc_msg_t msg_ret;
     void (*old_timeout_func)(void *) = 0;
@@ -911,7 +911,7 @@ static rt_err_t _rt_raw_channel_recv_timeout(rt_channel_t ch, rt_channel_msg_t d
 
     rt_spin_unlock_irqrestore(&ch->slock, level);
 
-    RETURN(rc);
+    LWP_RETURN(rc);
 }
 
 rt_err_t rt_raw_channel_recv(rt_channel_t ch, rt_channel_msg_t data)

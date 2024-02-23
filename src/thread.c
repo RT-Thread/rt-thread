@@ -393,7 +393,7 @@ rt_err_t rt_thread_startup(rt_thread_t thread)
 {
     /* parameter check */
     RT_ASSERT(thread != RT_NULL);
-    RT_ASSERT((SCHED_CTX(thread).stat & RT_THREAD_STAT_MASK) == RT_THREAD_INIT);
+    RT_ASSERT((RT_SCHED_CTX(thread).stat & RT_THREAD_STAT_MASK) == RT_THREAD_INIT);
     RT_ASSERT(rt_object_get_type((rt_object_t)thread) == RT_Object_Class_Thread);
 
     LOG_D("startup a thread:%s with priority:%d",
@@ -847,7 +847,7 @@ static void _thread_set_suspend_state(struct rt_thread *thread, int suspend_flag
         RT_ASSERT(0);
         break;
     }
-    SCHED_CTX(thread).stat = stat | (SCHED_CTX(thread).stat & ~RT_THREAD_STAT_MASK);
+    RT_SCHED_CTX(thread).stat = stat | (RT_SCHED_CTX(thread).stat & ~RT_THREAD_STAT_MASK);
 }
 
 /**

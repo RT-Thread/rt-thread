@@ -7,7 +7,7 @@
  * Date           Author       Notes
  * 2024-01-25     Shell        init ver.
  */
-#define __RTTHREAD_SOURCE__
+#define __RT_KERNEL_SOURCE__
 #include <rtthread.h>
 #include "utest.h"
 

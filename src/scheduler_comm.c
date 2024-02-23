@@ -19,12 +19,12 @@
 void rt_sched_thread_init_ctx(struct rt_thread *thread, rt_uint32_t tick, rt_uint8_t priority)
 {
     /* setup thread status */
-    SCHED_CTX(thread).stat  = RT_THREAD_INIT;
+    RT_SCHED_CTX(thread).stat  = RT_THREAD_INIT;
 
 #ifdef RT_USING_SMP
     /* not bind on any cpu */
-    SCHED_CTX(thread).bind_cpu = RT_CPUS_NR;
-    SCHED_CTX(thread).oncpu = RT_CPU_DETACHED;
+    RT_SCHED_CTX(thread).bind_cpu = RT_CPUS_NR;
+    RT_SCHED_CTX(thread).oncpu = RT_CPU_DETACHED;
 #endif /* RT_USING_SMP */
 
     rt_sched_thread_init_priv(thread, tick, priority);
@@ -33,7 +33,7 @@ void rt_sched_thread_init_ctx(struct rt_thread *thread, rt_uint32_t tick, rt_uin
 rt_err_t rt_sched_thread_timer_start(struct rt_thread *thread)
 {
     RT_SCHED_DEBUG_IS_LOCKED;
-    SCHED_CTX(thread).sched_flag_ttmr_set = 1;
+    RT_SCHED_CTX(thread).sched_flag_ttmr_set = 1;
     return RT_EOK;
 }
 
@@ -42,12 +42,12 @@ rt_err_t rt_sched_thread_timer_stop(struct rt_thread *thread)
     rt_err_t error;
     RT_SCHED_DEBUG_IS_LOCKED;
 
-    if (SCHED_CTX(thread).sched_flag_ttmr_set)
+    if (RT_SCHED_CTX(thread).sched_flag_ttmr_set)
     {
         error = rt_timer_stop(&thread->thread_timer);
 
         /* mask out timer flag no matter stop success or not */
-        SCHED_CTX(thread).sched_flag_ttmr_set = 0;
+        RT_SCHED_CTX(thread).sched_flag_ttmr_set = 0;
     }
     else
     {
@@ -59,19 +59,19 @@ rt_err_t rt_sched_thread_timer_stop(struct rt_thread *thread)
 rt_uint8_t rt_sched_thread_get_stat(struct rt_thread *thread)
 {
     RT_SCHED_DEBUG_IS_LOCKED;
-    return SCHED_CTX(thread).stat & RT_THREAD_STAT_MASK;
+    return RT_SCHED_CTX(thread).stat & RT_THREAD_STAT_MASK;
 }
 
 rt_uint8_t rt_sched_thread_get_curr_prio(struct rt_thread *thread)
 {
     RT_SCHED_DEBUG_IS_LOCKED;
-    return SCHED_PRIV(thread).current_priority;
+    return RT_SCHED_PRIV(thread).current_priority;
 }
 
 rt_uint8_t rt_sched_thread_get_init_prio(struct rt_thread *thread)
 {
     /* read only fields, so lock is unecessary */
-    return SCHED_PRIV(thread).init_priority;
+    return RT_SCHED_PRIV(thread).init_priority;
 }
 
 /**
@@ -80,13 +80,13 @@ rt_uint8_t rt_sched_thread_get_init_prio(struct rt_thread *thread)
 rt_uint8_t rt_sched_thread_is_suspended(struct rt_thread *thread)
 {
     RT_SCHED_DEBUG_IS_LOCKED;
-    return (SCHED_CTX(thread).stat & RT_THREAD_SUSPEND_MASK) == RT_THREAD_SUSPEND_MASK;
+    return (RT_SCHED_CTX(thread).stat & RT_THREAD_SUSPEND_MASK) == RT_THREAD_SUSPEND_MASK;
 }
 
 rt_err_t rt_sched_thread_close(struct rt_thread *thread)
 {
     RT_SCHED_DEBUG_IS_LOCKED;
-    SCHED_CTX(thread).stat = RT_THREAD_CLOSE;
+    RT_SCHED_CTX(thread).stat = RT_THREAD_CLOSE;
     return RT_EOK;
 }
 
@@ -94,8 +94,8 @@ rt_err_t rt_sched_thread_yield(struct rt_thread *thread)
 {
     RT_SCHED_DEBUG_IS_LOCKED;
 
-    SCHED_PRIV(thread).remaining_tick = SCHED_PRIV(thread).init_tick;
-    SCHED_CTX(thread).stat |= RT_THREAD_STAT_YIELD;
+    RT_SCHED_PRIV(thread).remaining_tick = RT_SCHED_PRIV(thread).init_tick;
+    RT_SCHED_CTX(thread).stat |= RT_THREAD_STAT_YIELD;
 
     return RT_EOK;
 }
@@ -113,7 +113,7 @@ rt_err_t rt_sched_thread_ready(struct rt_thread *thread)
     }
     else
     {
-        if (SCHED_CTX(thread).sched_flag_ttmr_set)
+        if (RT_SCHED_CTX(thread).sched_flag_ttmr_set)
         {
             /**
              * Quiet timeout timer first if set. and don't continue if we
@@ -153,8 +153,8 @@ rt_err_t rt_sched_tick_increase(void)
 
     rt_sched_lock(&slvl);
 
-    SCHED_PRIV(thread).remaining_tick--;
-    if (SCHED_PRIV(thread).remaining_tick)
+    RT_SCHED_PRIV(thread).remaining_tick--;
+    if (RT_SCHED_PRIV(thread).remaining_tick)
     {
         rt_sched_unlock(slvl);
     }
@@ -178,38 +178,38 @@ rt_err_t rt_sched_thread_change_priority(struct rt_thread *thread, rt_uint8_t pr
     RT_SCHED_DEBUG_IS_LOCKED;
 
     /* for ready thread, change queue; otherwise simply update the priority */
-    if ((SCHED_CTX(thread).stat & RT_THREAD_STAT_MASK) == RT_THREAD_READY)
+    if ((RT_SCHED_CTX(thread).stat & RT_THREAD_STAT_MASK) == RT_THREAD_READY)
     {
         /* remove thread from schedule queue first */
         rt_sched_remove_thread(thread);
 
         /* change thread priority */
-        SCHED_PRIV(thread).current_priority = priority;
+        RT_SCHED_PRIV(thread).current_priority = priority;
 
         /* recalculate priority attribute */
 #if RT_THREAD_PRIORITY_MAX > 32
-        SCHED_PRIV(thread).number = SCHED_PRIV(thread).current_priority >> 3;               /* 5bit */
-        SCHED_PRIV(thread).number_mask = 1 << SCHED_PRIV(thread).number;
-        SCHED_PRIV(thread).high_mask = 1 << (SCHED_PRIV(thread).current_priority & 0x07);   /* 3bit */
+        RT_SCHED_PRIV(thread).number = RT_SCHED_PRIV(thread).current_priority >> 3;               /* 5bit */
+        RT_SCHED_PRIV(thread).number_mask = 1 << RT_SCHED_PRIV(thread).number;
+        RT_SCHED_PRIV(thread).high_mask = 1 << (RT_SCHED_PRIV(thread).current_priority & 0x07);   /* 3bit */
 #else
-        SCHED_PRIV(thread).number_mask = 1 << SCHED_PRIV(thread).current_priority;
+        RT_SCHED_PRIV(thread).number_mask = 1 << RT_SCHED_PRIV(thread).current_priority;
 #endif /* RT_THREAD_PRIORITY_MAX > 32 */
-        SCHED_CTX(thread).stat = RT_THREAD_INIT;
+        RT_SCHED_CTX(thread).stat = RT_THREAD_INIT;
 
         /* insert thread to schedule queue again */
         rt_sched_insert_thread(thread);
     }
     else
     {
-        SCHED_PRIV(thread).current_priority = priority;
+        RT_SCHED_PRIV(thread).current_priority = priority;
 
         /* recalculate priority attribute */
 #if RT_THREAD_PRIORITY_MAX > 32
-        SCHED_PRIV(thread).number = SCHED_PRIV(thread).current_priority >> 3;               /* 5bit */
-        SCHED_PRIV(thread).number_mask = 1 << SCHED_PRIV(thread).number;
-        SCHED_PRIV(thread).high_mask = 1 << (SCHED_PRIV(thread).current_priority & 0x07);   /* 3bit */
+        RT_SCHED_PRIV(thread).number = RT_SCHED_PRIV(thread).current_priority >> 3;               /* 5bit */
+        RT_SCHED_PRIV(thread).number_mask = 1 << RT_SCHED_PRIV(thread).number;
+        RT_SCHED_PRIV(thread).high_mask = 1 << (RT_SCHED_PRIV(thread).current_priority & 0x07);   /* 3bit */
 #else
-        SCHED_PRIV(thread).number_mask = 1 << SCHED_PRIV(thread).current_priority;
+        RT_SCHED_PRIV(thread).number_mask = 1 << RT_SCHED_PRIV(thread).current_priority;
 #endif /* RT_THREAD_PRIORITY_MAX > 32 */
     }
 
