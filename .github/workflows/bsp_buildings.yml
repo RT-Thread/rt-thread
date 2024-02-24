@@ -20,6 +20,9 @@ on:
       - documentation/**
       - '**/README.md'
       - '**/README_zh.md'
+  repository_dispatch:
+    types:
+      - online-pkgs-static-building-trigger-event
   workflow_dispatch:
 
 permissions:
