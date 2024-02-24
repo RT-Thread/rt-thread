@@ -1249,6 +1249,13 @@ rt_weak int rt_vsnprintf(char *buf, rt_size_t size, const char *fmt, va_list arg
         case 'u':
             break;
 
+        case 'e':
+        case 'E':
+        case 'G':
+        case 'g':
+        case 'f':
+        case 'F':
+            va_arg(args, double);
         default:
             if (str < end)
             {
