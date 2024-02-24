@@ -49,10 +49,6 @@
 #include <console.h>
 #endif
 
-/* use precision */
-#define RT_PRINTF_PRECISION
-#define RT_PRINTF_SPECIAL
-
 /**
  * @addtogroup KernelService
  * @{
@@ -806,9 +802,7 @@ static char *print_number(char *buf,
                           int   base,
                           int   qualifier,
                           int   s,
-#ifdef RT_PRINTF_PRECISION
                           int   precision,
-#endif /* RT_PRINTF_PRECISION */
                           int   type)
 {
     char c = 0, sign = 0;
@@ -878,7 +872,6 @@ static char *print_number(char *buf,
         }
     }
 
-#ifdef RT_PRINTF_SPECIAL
     if (type & SPECIAL)
     {
         if (base == 2 || base == 16)
@@ -890,7 +883,6 @@ static char *print_number(char *buf,
             size--;
         }
     }
-#endif /* RT_PRINTF_SPECIAL */
 
     i = 0;
     if (num == 0)
@@ -903,15 +895,11 @@ static char *print_number(char *buf,
             tmp[i++] = digits[divide(&num, base)];
     }
 
-#ifdef RT_PRINTF_PRECISION
     if (i > precision)
     {
         precision = i;
     }
     size -= precision;
-#else
-    size -= i;
-#endif /* RT_PRINTF_PRECISION */
 
     if (!(type & (ZEROPAD | LEFT)))
     {
@@ -941,7 +929,6 @@ static char *print_number(char *buf,
         ++ buf;
     }
 
-#ifdef RT_PRINTF_SPECIAL
     if (type & SPECIAL)
     {
         if (base == 2)
@@ -974,7 +961,6 @@ static char *print_number(char *buf,
             ++ buf;
         }
     }
-#endif /* RT_PRINTF_SPECIAL */
 
     /* no align to the left */
     if (!(type & LEFT))
@@ -990,7 +976,6 @@ static char *print_number(char *buf,
         }
     }
 
-#ifdef RT_PRINTF_PRECISION
     while (i < precision--)
     {
         if (buf < end)
@@ -1000,7 +985,6 @@ static char *print_number(char *buf,
 
         ++ buf;
     }
-#endif /* RT_PRINTF_PRECISION */
 
     /* put number in the temporary buffer */
     while (i-- > 0 && (precision_bak != 0))
@@ -1059,10 +1043,7 @@ rt_weak int rt_vsnprintf(char *buf, rt_size_t size, const char *fmt, va_list arg
     rt_uint8_t flags = 0;           /* flags to print number */
     rt_uint8_t qualifier = 0;       /* 'h', 'l', or 'L' for integer fields */
     rt_int32_t field_width = 0;     /* width of output field */
-
-#ifdef RT_PRINTF_PRECISION
     int precision = 0;      /* min. # of digits for integers and max for a string */
-#endif /* RT_PRINTF_PRECISION */
 
     str = buf;
     end = buf + size;
@@ -1093,7 +1074,7 @@ rt_weak int rt_vsnprintf(char *buf, rt_size_t size, const char *fmt, va_list arg
         while (1)
         {
             /* skips the first '%' also */
-            ++ fmt;
+            ++fmt;
             if (*fmt == '-') flags |= LEFT;
             else if (*fmt == '+') flags |= PLUS;
             else if (*fmt == ' ') flags |= SPACE;
@@ -1110,7 +1091,7 @@ rt_weak int rt_vsnprintf(char *buf, rt_size_t size, const char *fmt, va_list arg
         }
         else if (*fmt == '*')
         {
-            ++ fmt;
+            ++fmt;
             /* it's the next argument */
             field_width = va_arg(args, int);
             if (field_width < 0)
@@ -1120,19 +1101,18 @@ rt_weak int rt_vsnprintf(char *buf, rt_size_t size, const char *fmt, va_list arg
             }
         }
 
-#ifdef RT_PRINTF_PRECISION
         /* get the precision */
         precision = -1;
         if (*fmt == '.')
         {
-            ++ fmt;
+            ++fmt;
             if (_ISDIGIT(*fmt))
             {
                 precision = skip_atoi(&fmt);
             }
             else if (*fmt == '*')
             {
-                ++ fmt;
+                ++fmt;
                 /* it's the next argument */
                 precision = va_arg(args, int);
             }
@@ -1141,24 +1121,29 @@ rt_weak int rt_vsnprintf(char *buf, rt_size_t size, const char *fmt, va_list arg
                 precision = 0;
             }
         }
-#endif /* RT_PRINTF_PRECISION */
-        /* get the conversion qualifier */
-        qualifier = 0;
+
+        qualifier = 0; /* get the conversion qualifier */
+
+        if (*fmt == 'h' || *fmt == 'l' ||
 #ifdef RT_KPRINTF_USING_LONGLONG
-        if (*fmt == 'h' || *fmt == 'l' || *fmt == 'L')
-#else
-        if (*fmt == 'h' || *fmt == 'l')
+            *fmt == 'L' ||
 #endif /* RT_KPRINTF_USING_LONGLONG */
+            *fmt == 'z')
         {
             qualifier = *fmt;
-            ++ fmt;
+            ++fmt;
 #ifdef RT_KPRINTF_USING_LONGLONG
             if (qualifier == 'l' && *fmt == 'l')
             {
                 qualifier = 'L';
-                ++ fmt;
+                ++fmt;
             }
 #endif /* RT_KPRINTF_USING_LONGLONG */
+            if (qualifier == 'h' && *fmt == 'h')
+            {
+                qualifier = 'H';
+                ++fmt;
+            }
         }
 
         /* the default base */
@@ -1200,12 +1185,11 @@ rt_weak int rt_vsnprintf(char *buf, rt_size_t size, const char *fmt, va_list arg
             }
 
             for (len = 0; (len != field_width) && (s[len] != '\0'); len++);
-#ifdef RT_PRINTF_PRECISION
+
             if (precision > 0 && len > precision)
             {
                 len = precision;
             }
-#endif /* RT_PRINTF_PRECISION */
 
             if (!(flags & LEFT))
             {
@@ -1234,21 +1218,12 @@ rt_weak int rt_vsnprintf(char *buf, rt_size_t size, const char *fmt, va_list arg
             if (field_width == -1)
             {
                 field_width = sizeof(void *) << 1;
-#ifdef RT_PRINTF_SPECIAL
                 field_width += 2; /* `0x` prefix */
                 flags |= SPECIAL;
-#endif
                 flags |= ZEROPAD;
             }
-#ifdef RT_PRINTF_PRECISION
-            str = print_number(str, end,
-                               (unsigned long)va_arg(args, void *),
+            str = print_number(str, end, (unsigned long)va_arg(args, void *),
                                16, qualifier, field_width, precision, flags);
-#else
-            str = print_number(str, end,
-                               (unsigned long)va_arg(args, void *),
-                               16, qualifier, field_width, flags);
-#endif
             continue;
 
         case '%':
@@ -1279,6 +1254,13 @@ rt_weak int rt_vsnprintf(char *buf, rt_size_t size, const char *fmt, va_list arg
         case 'u':
             break;
 
+        case 'e':
+        case 'E':
+        case 'G':
+        case 'g':
+        case 'f':
+        case 'F':
+            va_arg(args, double);
         default:
             if (str < end)
             {
@@ -1301,17 +1283,21 @@ rt_weak int rt_vsnprintf(char *buf, rt_size_t size, const char *fmt, va_list arg
             continue;
         }
 
-#ifdef RT_KPRINTF_USING_LONGLONG
         if (qualifier == 'L')
         {
             num = va_arg(args, unsigned long long);
         }
         else if (qualifier == 'l')
-#else
-        if (qualifier == 'l')
-#endif /* RT_KPRINTF_USING_LONGLONG */
         {
             num = va_arg(args, unsigned long);
+        }
+        else if (qualifier == 'H')
+        {
+            num = (rt_int8_t)va_arg(args, rt_int32_t);
+            if (flags & SIGN)
+            {
+                num = (rt_int8_t)num;
+            }
         }
         else if (qualifier == 'h')
         {
@@ -1321,15 +1307,19 @@ rt_weak int rt_vsnprintf(char *buf, rt_size_t size, const char *fmt, va_list arg
                 num = (rt_int16_t)num;
             }
         }
+        else if (qualifier == 'z')
+        {
+            num = va_arg(args, rt_size_t);
+            if (flags & SIGN)
+            {
+                num = (rt_ssize_t)num;
+            }
+        }
         else
         {
             num = (rt_uint32_t)va_arg(args, unsigned long);
         }
-#ifdef RT_PRINTF_PRECISION
         str = print_number(str, end, num, base, qualifier, field_width, precision, flags);
-#else
-        str = print_number(str, end, num, base, qualifier, field_width, flags);
-#endif
     }
 
     if (size > 0)
