@@ -1074,7 +1074,7 @@ rt_weak int rt_vsnprintf(char *buf, rt_size_t size, const char *fmt, va_list arg
         while (1)
         {
             /* skips the first '%' also */
-            ++ fmt;
+            ++fmt;
             if (*fmt == '-') flags |= LEFT;
             else if (*fmt == '+') flags |= PLUS;
             else if (*fmt == ' ') flags |= SPACE;
@@ -1091,7 +1091,7 @@ rt_weak int rt_vsnprintf(char *buf, rt_size_t size, const char *fmt, va_list arg
         }
         else if (*fmt == '*')
         {
-            ++ fmt;
+            ++fmt;
             /* it's the next argument */
             field_width = va_arg(args, int);
             if (field_width < 0)
@@ -1105,14 +1105,14 @@ rt_weak int rt_vsnprintf(char *buf, rt_size_t size, const char *fmt, va_list arg
         precision = -1;
         if (*fmt == '.')
         {
-            ++ fmt;
+            ++fmt;
             if (_ISDIGIT(*fmt))
             {
                 precision = skip_atoi(&fmt);
             }
             else if (*fmt == '*')
             {
-                ++ fmt;
+                ++fmt;
                 /* it's the next argument */
                 precision = va_arg(args, int);
             }
@@ -1122,23 +1122,28 @@ rt_weak int rt_vsnprintf(char *buf, rt_size_t size, const char *fmt, va_list arg
             }
         }
 
-        /* get the conversion qualifier */
-        qualifier = 0;
+        qualifier = 0; /* get the conversion qualifier */
+
+        if (*fmt == 'h' || *fmt == 'l' ||
 #ifdef RT_KPRINTF_USING_LONGLONG
-        if (*fmt == 'h' || *fmt == 'l' || *fmt == 'L')
-#else
-        if (*fmt == 'h' || *fmt == 'l')
+            *fmt == 'L' ||
 #endif /* RT_KPRINTF_USING_LONGLONG */
+            *fmt == 'z')
         {
             qualifier = *fmt;
-            ++ fmt;
+            ++fmt;
 #ifdef RT_KPRINTF_USING_LONGLONG
             if (qualifier == 'l' && *fmt == 'l')
             {
                 qualifier = 'L';
-                ++ fmt;
+                ++fmt;
             }
 #endif /* RT_KPRINTF_USING_LONGLONG */
+            if (qualifier == 'h' && *fmt == 'h')
+            {
+                qualifier = 'H';
+                ++fmt;
+            }
         }
 
         /* the default base */
@@ -1278,17 +1283,21 @@ rt_weak int rt_vsnprintf(char *buf, rt_size_t size, const char *fmt, va_list arg
             continue;
         }
 
-#ifdef RT_KPRINTF_USING_LONGLONG
         if (qualifier == 'L')
         {
             num = va_arg(args, unsigned long long);
         }
         else if (qualifier == 'l')
-#else
-        if (qualifier == 'l')
-#endif /* RT_KPRINTF_USING_LONGLONG */
         {
             num = va_arg(args, unsigned long);
+        }
+        else if (qualifier == 'H')
+        {
+            num = (rt_int8_t)va_arg(args, rt_int32_t);
+            if (flags & SIGN)
+            {
+                num = (rt_int8_t)num;
+            }
         }
         else if (qualifier == 'h')
         {
@@ -1296,6 +1305,14 @@ rt_weak int rt_vsnprintf(char *buf, rt_size_t size, const char *fmt, va_list arg
             if (flags & SIGN)
             {
                 num = (rt_int16_t)num;
+            }
+        }
+        else if (qualifier == 'z')
+        {
+            num = va_arg(args, rt_size_t);
+            if (flags & SIGN)
+            {
+                num = (rt_ssize_t)num;
             }
         }
         else
