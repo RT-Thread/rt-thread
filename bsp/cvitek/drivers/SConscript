@@ -15,6 +15,9 @@ if GetDepend('BSP_USING_CV1800B'):
 if GetDepend('BSP_USING_I2C'):
     src += ['drv_hw_i2c.c']
 
+if GetDepend('BSP_USING_ADC'):
+    src += ['drv_adc.c']
+
 CPPDEFINES += ['-DCONFIG_64BIT']
 
 group = DefineGroup('drivers', src, depend = [''], CPPDEFINES = CPPDEFINES, CPPPATH = CPPPATH)
