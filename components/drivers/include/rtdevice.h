@@ -121,10 +121,6 @@ extern "C" {
 #include "drivers/audio.h"
 #endif /* RT_USING_AUDIO */
 
-#ifdef RT_USING_CPUTIME
-#include "drivers/cputime.h"
-#endif /* RT_USING_CPUTIME */
-
 #ifdef RT_USING_ADC
 #include "drivers/adc.h"
 #endif /* RT_USING_ADC */

@@ -49,7 +49,11 @@ int rt_hw_tick_init(void)
     clear_csr(sie, SIP_STIP);
 
     /* calculate the tick cycles */
-    tick_cycles = CPUTIME_TIMER_FREQ / RT_TICK_PER_SECOND;
+#ifdef KTIME_CPUTIMER_FREQ
+    tick_cycles = KTIME_CPUTIMER_FREQ / RT_TICK_PER_SECOND;
+#else
+    tick_cycles = 10000000 / RT_TICK_PER_SECOND;
+#endif
     /* Set timer */
     sbi_set_timer(get_ticks() + tick_cycles);
 
