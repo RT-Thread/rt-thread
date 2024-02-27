@@ -14,7 +14,9 @@
 
 #include "board.h"
 #include "clock_config.h"
+#include "pin_mux.h"
 #include "drv_uart.h"
+#include "fsl_port.h"
 #include "fsl_cache_lpcac.h"
 
 /**
@@ -79,12 +81,27 @@ void rt_hw_board_init()
 
     CLOCK_SetupClk16KClocking(kCLOCK_Clk16KToAll);
 
+    CLOCK_AttachClk(kPLL0_to_CTIMER0);
+    CLOCK_AttachClk(kPLL0_to_CTIMER1);
+    CLOCK_AttachClk(kPLL0_to_CTIMER2);
+    CLOCK_AttachClk(kPLL0_to_CTIMER3);
+    CLOCK_AttachClk(kPLL0_to_CTIMER4);
+    CLOCK_SetClkDiv(kCLOCK_DivCtimer0Clk, 1u);
+    CLOCK_SetClkDiv(kCLOCK_DivCtimer1Clk, 1u);
+    CLOCK_SetClkDiv(kCLOCK_DivCtimer2Clk, 1u);
+    CLOCK_SetClkDiv(kCLOCK_DivCtimer3Clk, 1u);
+    CLOCK_SetClkDiv(kCLOCK_DivCtimer4Clk, 1u);
+
     SysTick_Config(SystemCoreClock / RT_TICK_PER_SECOND);
     /* set pend exception priority */
     NVIC_SetPriority(PendSV_IRQn, (1 << __NVIC_PRIO_BITS) - 1);
 
     /*init uart device*/
     rt_hw_uart_init();
+
+#if defined(BSP_USING_LEDG_PWM) && defined(BSP_USING_PWM)
+    PORT_SetPinMux(PORT0, 27, kPORT_MuxAlt4);
+#endif
 
 #if defined(RT_USING_CONSOLE) && defined(RT_USING_DEVICE)
     rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
