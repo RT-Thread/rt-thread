@@ -12,11 +12,12 @@
  */
 
 #include "fparameters.h"
+#include "rtconfig.h"
 
 #ifndef __aarch64__
 .globl cpu_id_mapping
 cpu_id_mapping:
-#if defined(TARGET_E2000Q)
+#if defined(TARGET_E2000Q) || defined(TARGET_PHYTIUMPI)
 cmp r0, #0 // compare cpu_id with 0
 beq map_cpu_id_0
 cmp r0, #1 // compare cpu_id with 1
@@ -121,7 +122,7 @@ return:
 
 .globl cpu_id_mapping
 cpu_id_mapping:
-#if defined(TARGET_E2000Q)
+#if defined(TARGET_E2000Q) || defined(TARGET_PHYTIUMPI)
 cmp x0, #0 // compare cpu_id with 0
 beq map_cpu_id_0
 cmp x0, #1 // compare cpu_id with 1

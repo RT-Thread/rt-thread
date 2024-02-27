@@ -17,6 +17,10 @@
 #include <rthw.h>
 #include <rtthread.h>
 #include "fparameters.h"
+#include "fio.h"
+#ifdef RT_USING_SMART
+#include"ioremap.h"
+#endif
 
 #define ARM_GIC_MAX_NR 1
 
@@ -41,42 +45,45 @@ rt_inline rt_uint32_t platform_get_gic_dist_base(void)
 
 #if defined(TARGET_ARMV8_AARCH64)
 
+rt_inline rt_uint32_t FGicRedistrubutiorIterate_rt(void)
+{
+    rt_uint32_t redis_base = 0;
+    rt_uint64_t mpidr_aff = 0;
+    rt_uint32_t mpidr_aff_32 = 0;
+    rt_uint32_t gicr_typer_aff = 0;
+
+    __asm__ volatile ("mrs %0, mpidr_el1":"=r"(mpidr_aff));
+    mpidr_aff_32 = (rt_uint32_t) (mpidr_aff & 0xfff);
+
+    for(redis_base = GICV3_RD_BASE_ADDR; redis_base < GICV3_RD_BASE_ADDR + GICV3_RD_SIZE; redis_base += GICV3_RD_OFFSET)
+    {
+        #ifdef RT_USING_SMART
+        rt_uint64_t temp= (rt_uint64_t)rt_ioremap((void*)redis_base,(2 << 16));
+        #else
+        rt_uint64_t temp= redis_base;
+        #endif
+        gicr_typer_aff = FtIn32(temp + 12);
+        #ifdef RT_USING_SMART
+        rt_iounmap((void*)temp);
+        #endif
+        if (mpidr_aff_32 == gicr_typer_aff)
+        {
+#if RT_CPUS_NR <= 2
+            return redis_base;
+#else
+            return GICV3_RD_BASE_ADDR;
+#endif
+        }
+    }
+
+    return 0;
+}
 /* the basic constants and interfaces needed by gic */
 rt_inline rt_uint32_t platform_get_gic_redist_base(void)
 {
-    extern int phytium_cpu_id(void);
-
-#if RT_CPUS_NR <= 2
-    s32 cpu_offset = 0;
-#if defined(FT_GIC_REDISTRUBUTIOR_OFFSET)
-    cpu_offset = FT_GIC_REDISTRUBUTIOR_OFFSET ;
-#endif
-
-#if defined(TARGET_E2000Q) || defined(TARGET_PHYTIUMPI)
-    u32 cpu_id = 0;
-    cpu_id = phytium_cpu_id();
-
-    switch (cpu_id)
-    {
-        case 0:
-        case 1:
-            cpu_offset = 2;
-            break;
-        case 2:
-        case 3:
-            cpu_offset = -2;
-        default:
-            break;
-    }
-
-    rt_kprintf("cpu_id is %d \r\n", cpu_id);
-#endif
-    rt_kprintf("offset  is %d\n", cpu_offset);
-
-    return (GICV3_RD_BASE_ADDR + (cpu_offset) * GICV3_RD_OFFSET);
-#else
-    return (GICV3_RD_BASE_ADDR);
-#endif
+    rt_uint32_t redis_base = 0;
+    redis_base = FGicRedistrubutiorIterate_rt();
+    return redis_base;
 }
 
 rt_inline rt_uint32_t platform_get_gic_cpu_base(void)
