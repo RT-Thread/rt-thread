@@ -189,6 +189,10 @@ void rt_hw_board_aarch64_init(void)
 }
 #else
 
+#if defined(TARGET_E2000D)
+#define FT_GIC_REDISTRUBUTIOR_OFFSET 2
+#endif
+
 void rt_hw_board_aarch32_init(void)
 {
 

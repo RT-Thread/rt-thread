@@ -45,6 +45,8 @@ rt_inline rt_uint32_t platform_get_gic_dist_base(void)
 
 #if defined(TARGET_ARMV8_AARCH64)
 
+#define GICR_TYPER_AFF_OFFSET 12
+
 rt_inline rt_uint32_t FGicRedistrubutiorIterate_rt(void)
 {
     rt_uint32_t redis_base = 0;
@@ -62,7 +64,7 @@ rt_inline rt_uint32_t FGicRedistrubutiorIterate_rt(void)
         #else
         rt_uint64_t temp= redis_base;
         #endif
-        gicr_typer_aff = FtIn32(temp + 12);
+        gicr_typer_aff = FtIn32(temp + GICR_TYPER_AFF_OFFSET);
         #ifdef RT_USING_SMART
         rt_iounmap((void*)temp);
         #endif
