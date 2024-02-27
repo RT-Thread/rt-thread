@@ -125,25 +125,9 @@ menu "On-chip Peripheral Drivers"
             default y
 
             if BSP_USING_PWM
-                config BSP_USING_CTIMER1_MAT0
-                    bool "Enable CIMER1 Match0 as PWM output"
+                config BSP_USING_LEDG_PWM
+                    bool "Enable on-board green LED as PWM output (pwm0, channel 3)"
                     default y
-
-                config BSP_USING_CTIMER2_MAT0
-                    bool "Enable CIMER2 Match0 as PWM output"
-                    default n
-
-                config BSP_USING_CTIMER2_MAT1
-                    bool "Enable CIMER2 Match1 as PWM output"
-                    default n
-
-                config BSP_USING_CTIMER2_MAT2
-                    bool "Enable CIMER2 Match2 as PWM output"
-                    default n
-
-                config BSP_USING_CTIMER3_MAT2
-                    bool "Enable CIMER3 Match2 as PWM output"
-                    default n
             endif
 endmenu
 
