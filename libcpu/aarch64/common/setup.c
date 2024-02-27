@@ -349,7 +349,7 @@ void rt_hw_common_setup(void)
     rt_hw_gtimer_init();
 #endif
 
-    #ifdef RT_USING_COMPONENTS_INIT
+#ifdef RT_USING_COMPONENTS_INIT
     rt_components_board_init();
 #endif
 
@@ -359,19 +359,12 @@ void rt_hw_common_setup(void)
 
     rt_thread_idle_sethook(rt_hw_idle_wfi);
 
-/* Install the IPI handle */
 #ifdef RT_USING_SMP
-#ifdef RT_USING_PIC
-    rt_pic_attach_irq(RT_SCHEDULE_IPI, rt_scheduler_ipi_handler, 0, "IPI_HANDLER", RT_IRQ_F_NONE);
-    rt_pic_attach_irq(RT_SCHEDULE_IPI, rt_scheduler_ipi_handler, 0, "IPI_HANDLER", RT_IRQ_F_NONE);
-    rt_pic_irq_unmask(RT_SCHEDULE_IPI);
-    rt_pic_irq_unmask(RT_STOP_IPI);
-#else
+    /* Install the IPI handle */
     rt_hw_ipi_handler_install(RT_SCHEDULE_IPI, rt_scheduler_ipi_handler);
     rt_hw_ipi_handler_install(RT_STOP_IPI, rt_scheduler_ipi_handler);
     rt_hw_interrupt_umask(RT_SCHEDULE_IPI);
     rt_hw_interrupt_umask(RT_STOP_IPI);
-#endif
 #endif
 }
 
@@ -440,13 +433,8 @@ rt_weak void rt_hw_secondary_cpu_bsp_start(void)
 
     rt_dm_secondary_cpu_init();
 
-#ifdef RT_USING_PIC
-    rt_pic_irq_unmask(RT_SCHEDULE_IPI);
-    rt_pic_irq_unmask(RT_STOP_IPI);
-#else
     rt_hw_interrupt_umask(RT_SCHEDULE_IPI);
     rt_hw_interrupt_umask(RT_STOP_IPI);
-#endif
 
     LOG_I("Call cpu %d on %s", cpu_id, "success");
 
