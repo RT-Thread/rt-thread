@@ -57,19 +57,6 @@ int phytium_cpu_id_mapping(int cpu_id)
 #endif
 }
 
-int phytium_cpu_id(void)
-{
-    FError ret;
-    u32 cpu_id;
-    ret = GetCpuId(&cpu_id);
-
-    if (ret != ERR_SUCCESS)
-    {
-        RT_ASSERT(0);
-    }
-    return phytium_cpu_id_mapping(cpu_id);
-}
-
 int rt_hw_cpu_id(void)
 {
     FError ret;
@@ -82,7 +69,6 @@ int rt_hw_cpu_id(void)
     }
     return phytium_cpu_id_mapping(cpu_id);
 }
-
 
 #else
 
@@ -122,8 +108,6 @@ int rt_hw_cpu_id(void)
 
     return phytium_cpu_id_mapping(cpu_id);
 }
-
-
 
 rt_uint64_t get_main_cpu_affval(void)
 {
