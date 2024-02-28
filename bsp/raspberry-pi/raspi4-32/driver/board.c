@@ -64,8 +64,6 @@ void idle_wfi(void)
     asm volatile ("wfi");
 }
 
-
-extern void rt_hw_mmu_init(void);
 /**
  *  Initialize the Hardware related stuffs. Called from rtthread_startup()
  *  after interrupt disabled.

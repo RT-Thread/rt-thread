@@ -189,9 +189,6 @@ void rt_hw_board_aarch64_init(void)
 }
 #else
 
-
-extern void rt_hw_mmu_init(void) ;
-
 void rt_hw_board_aarch32_init(void)
 {
 
@@ -221,7 +218,7 @@ void rt_hw_board_aarch32_init(void)
 
     extern int rt_hw_cpu_id(void);
 
-    u32 cpu_id, cpu_offset = 0;
+    u32 cpu_id, cpu_offset = 2;
     GetCpuId(&cpu_id);
 
 #if defined(FT_GIC_REDISTRUBUTIOR_OFFSET)

@@ -29,14 +29,14 @@
 
 /*Load the physical address of a symbol into a register. 
   Through pv_off calculates the offset of the physical address */
-.macro get_phy, reg, symbol 
+.macro get_phy, reg, symbol, _pvoff
     ldr \reg, =\symbol
-    add \reg, pv_off
+    add \reg, \_pvoff
 .endm
 /*Calculate the offset between the physical address and the virtual address of the "_reset".*/
 .macro get_pvoff, tmp, out
     ldr     \tmp, =_reset
-    get_phy \out, _reset
+    adr     \out, _reset
     sub     \out, \out, \tmp
 .endm
 
@@ -47,9 +47,7 @@ cpu_id       .req r10 /* Used to store the cpu id */
     .globl _reset
 _reset:
     /* Calculate the offset between the physical address and the virtual address */
-    ldr r0, =_reset
-    adr pv_off, _reset
-    sub pv_off, pv_off, r0
+    get_pvoff r0, pv_off
 
     /* exit hyp mode  */
     bl init_cpu_mode
@@ -65,7 +63,7 @@ init_cpu_stack_early:
 
     cps #Mode_SVC
     
-    get_phy r0,svc_stack_top
+    get_phy r0, svc_stack_top, pv_off
     mov     sp, r0
 
 #ifdef RT_USING_FPU
@@ -84,8 +82,8 @@ init_kernel_bss:
     mcr p15, 0, r0, c1, c0, 0
 
     mov r0,#0                   /* get a zero      */
-    get_phy r1, __bss_start
-    get_phy r2, __bss_end
+    get_phy r1, __bss_start, pv_off
+    get_phy r2, __bss_end, pv_off
 
 bss_loop:
     cmp r1,r2                   /* check if data to clear           */
@@ -181,12 +179,12 @@ continue_exit:
     mov pc, lr
 
 init_mmu_early:
-    get_phy r0, init_mtbl
-    get_pvoff r2,r1
+    get_phy r0, init_mtbl, pv_off
+    mov r1, pv_off
     bl rt_hw_mem_setup_early
 
     /* get cpu id */
-    bl rt_asm_cpu_id
+    bl rt_hw_cpu_id
     mov cpu_id ,r0
     /* enable_mmu_early is changed to master_core_startup */
     ldr     lr, =master_core_startup
@@ -217,7 +215,7 @@ secondary_loop:
     
 enable_mmu_early:
     /* init TTBR0  */
-    get_phy r0,init_mtbl
+    get_phy r0, init_mtbl, pv_off
     mcr     p15, #0, r0, c2, c0, #0
     dmb
     
@@ -283,8 +281,8 @@ rt_hw_mmu_tbl_get:
     bic r0, #0x18
     mov pc, lr
 
-.weak rt_asm_cpu_id
-rt_asm_cpu_id:
+.weak rt_hw_cpu_id
+rt_hw_cpu_id:
     mrc p15, 0, r0, c0, c0, 5
     and r0, r0, #0xf
     mov pc, lr
@@ -299,7 +297,7 @@ rt_secondary_cpu_entry:
     bl init_cpu_stack_early
 
     /* init mmu  */
-    bl rt_asm_cpu_id
+    bl rt_hw_cpu_id
     mov cpu_id ,r0
 
     ldr lr ,= rt_hw_secondary_cpu_bsp_start

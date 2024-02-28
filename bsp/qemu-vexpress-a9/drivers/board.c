@@ -59,8 +59,6 @@ rt_region_t init_page_region = {
 };
 #endif
 
-extern void rt_hw_mmu_init(void);
-
 void rt_hw_board_init(void)
 {
 #ifdef RT_USING_SMART
