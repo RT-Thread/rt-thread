@@ -196,6 +196,9 @@ static rt_err_t ofw_parse_irq_map(struct rt_ofw_node *np, struct rt_ofw_cell_arg
             break;
         }
 
+        map_len = sizeof(fdt32_t);
+        map_mask_len = sizeof(fdt32_t);
+
         err = -RT_EINVAL;
 
         addr = irq_args->data;
@@ -491,7 +494,7 @@ rt_err_t rt_ofw_parse_irq_cells(struct rt_ofw_node *np, int index, struct rt_ofw
 
 struct rt_ofw_node *rt_ofw_find_irq_parent(struct rt_ofw_node *np, int *out_interrupt_cells)
 {
-    rt_ofw_foreach_parent_node(np)
+    for (np = rt_ofw_node_get(np); np; np = rt_ofw_get_next_parent(np))
     {
         rt_phandle ic_phandle;
 

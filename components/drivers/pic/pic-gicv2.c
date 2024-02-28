@@ -196,7 +196,7 @@ static rt_err_t gicv2_irq_set_priority(struct rt_pic_irq *pirq, rt_uint32_t prio
     return RT_EOK;
 }
 
-static rt_err_t gicv2_irq_set_affinity(struct rt_pic_irq *pirq, bitmap_t *affinity)
+static rt_err_t gicv2_irq_set_affinity(struct rt_pic_irq *pirq, rt_bitmap_t *affinity)
 {
     int hwirq = pirq->hwirq;
     struct gicv2 *gic = raw_to_gicv2(pirq->pic);
@@ -248,7 +248,7 @@ static rt_err_t gicv2_irq_set_triger_mode(struct rt_pic_irq *pirq, rt_uint32_t m
     return err;
 }
 
-static void gicv2_irq_send_ipi(struct rt_pic_irq *pirq, bitmap_t *cpumask)
+static void gicv2_irq_send_ipi(struct rt_pic_irq *pirq, rt_bitmap_t *cpumask)
 {
     struct gicv2 *gic;
     int sgi = pirq->hwirq;
@@ -278,7 +278,7 @@ static int gicv2_irq_map(struct rt_pic *pic, int hwirq, rt_uint32_t mode)
     {
         pirq->mode = mode;
         pirq->priority = GICD_INT_DEF_PRI;
-        bitmap_set_bit(pirq->affinity, _init_cpu_id);
+        rt_bitmap_set_bit(pirq->affinity, _init_cpu_id);
 
         irq = rt_pic_config_irq(pic, irq_index, hwirq);
 

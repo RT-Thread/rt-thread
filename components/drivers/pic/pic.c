@@ -605,14 +605,14 @@ void rt_pic_irq_enable(int irq)
 
     RT_ASSERT(pirq != RT_NULL);
 
-    rt_spin_lock(&pirq->rw_lock);
+    rt_hw_spin_lock(&pirq->rw_lock.lock);
 
     if (pirq->pic->ops->irq_enable)
     {
         pirq->pic->ops->irq_enable(pirq);
     }
 
-    rt_spin_unlock(&pirq->rw_lock);
+    rt_hw_spin_unlock(&pirq->rw_lock.lock);
 }
 
 void rt_pic_irq_disable(int irq)
@@ -621,14 +621,14 @@ void rt_pic_irq_disable(int irq)
 
     RT_ASSERT(pirq != RT_NULL);
 
-    rt_spin_lock(&pirq->rw_lock);
+    rt_hw_spin_lock(&pirq->rw_lock.lock);
 
     if (pirq->pic->ops->irq_disable)
     {
         pirq->pic->ops->irq_disable(pirq);
     }
 
-    rt_spin_unlock(&pirq->rw_lock);
+    rt_hw_spin_unlock(&pirq->rw_lock.lock);
 }
 
 void rt_pic_irq_ack(int irq)
@@ -637,14 +637,14 @@ void rt_pic_irq_ack(int irq)
 
     RT_ASSERT(pirq != RT_NULL);
 
-    rt_spin_lock(&pirq->rw_lock);
+    rt_hw_spin_lock(&pirq->rw_lock.lock);
 
     if (pirq->pic->ops->irq_ack)
     {
         pirq->pic->ops->irq_ack(pirq);
     }
 
-    rt_spin_unlock(&pirq->rw_lock);
+    rt_hw_spin_unlock(&pirq->rw_lock.lock);
 }
 
 void rt_pic_irq_mask(int irq)
@@ -653,14 +653,14 @@ void rt_pic_irq_mask(int irq)
 
     RT_ASSERT(pirq != RT_NULL);
 
-    rt_spin_lock(&pirq->rw_lock);
+    rt_hw_spin_lock(&pirq->rw_lock.lock);
 
     if (pirq->pic->ops->irq_mask)
     {
         pirq->pic->ops->irq_mask(pirq);
     }
 
-    rt_spin_unlock(&pirq->rw_lock);
+    rt_hw_spin_unlock(&pirq->rw_lock.lock);
 }
 
 void rt_pic_irq_unmask(int irq)
@@ -669,14 +669,14 @@ void rt_pic_irq_unmask(int irq)
 
     RT_ASSERT(pirq != RT_NULL);
 
-    rt_spin_lock(&pirq->rw_lock);
+    rt_hw_spin_lock(&pirq->rw_lock.lock);
 
     if (pirq->pic->ops->irq_unmask)
     {
         pirq->pic->ops->irq_unmask(pirq);
     }
 
-    rt_spin_unlock(&pirq->rw_lock);
+    rt_hw_spin_unlock(&pirq->rw_lock.lock);
 }
 
 void rt_pic_irq_eoi(int irq)
@@ -685,14 +685,14 @@ void rt_pic_irq_eoi(int irq)
 
     RT_ASSERT(pirq != RT_NULL);
 
-    rt_spin_lock(&pirq->rw_lock);
+    rt_hw_spin_lock(&pirq->rw_lock.lock);
 
     if (pirq->pic->ops->irq_eoi)
     {
         pirq->pic->ops->irq_eoi(pirq);
     }
 
-    rt_spin_unlock(&pirq->rw_lock);
+    rt_hw_spin_unlock(&pirq->rw_lock.lock);
 }
 
 rt_err_t rt_pic_irq_set_priority(int irq, rt_uint32_t priority)
@@ -702,7 +702,7 @@ rt_err_t rt_pic_irq_set_priority(int irq, rt_uint32_t priority)
 
     if (pirq)
     {
-        rt_spin_lock(&pirq->rw_lock);
+        rt_hw_spin_lock(&pirq->rw_lock.lock);
 
         if (pirq->pic->ops->irq_set_priority)
         {
@@ -718,7 +718,7 @@ rt_err_t rt_pic_irq_set_priority(int irq, rt_uint32_t priority)
             err = -RT_ENOSYS;
         }
 
-        rt_spin_unlock(&pirq->rw_lock);
+        rt_hw_spin_unlock(&pirq->rw_lock.lock);
     }
 
     return err;
@@ -731,11 +731,11 @@ rt_uint32_t rt_pic_irq_get_priority(int irq)
 
     if (pirq)
     {
-        rt_spin_lock(&pirq->rw_lock);
+        rt_hw_spin_lock(&pirq->rw_lock.lock);
 
         priority = pirq->priority;
 
-        rt_spin_unlock(&pirq->rw_lock);
+        rt_hw_spin_unlock(&pirq->rw_lock.lock);
     }
 
     return priority;
@@ -748,7 +748,7 @@ rt_err_t rt_pic_irq_set_affinity(int irq, rt_bitmap_t *affinity)
 
     if (affinity && (pirq = irq2pirq(irq)))
     {
-        rt_spin_lock(&pirq->rw_lock);
+        rt_hw_spin_lock(&pirq->rw_lock.lock);
 
         if (pirq->pic->ops->irq_set_affinity)
         {
@@ -764,7 +764,7 @@ rt_err_t rt_pic_irq_set_affinity(int irq, rt_bitmap_t *affinity)
             err = -RT_ENOSYS;
         }
 
-        rt_spin_unlock(&pirq->rw_lock);
+        rt_hw_spin_unlock(&pirq->rw_lock.lock);
     }
 
     return err;
@@ -777,12 +777,12 @@ rt_err_t rt_pic_irq_get_affinity(int irq, rt_bitmap_t *out_affinity)
 
     if (out_affinity && (pirq = irq2pirq(irq)))
     {
-        rt_spin_lock(&pirq->rw_lock);
+        rt_hw_spin_lock(&pirq->rw_lock.lock);
 
         rt_memcpy(out_affinity, pirq->affinity, sizeof(pirq->affinity));
         err = RT_EOK;
 
-        rt_spin_unlock(&pirq->rw_lock);
+        rt_hw_spin_unlock(&pirq->rw_lock.lock);
     }
 
     return err;
@@ -795,7 +795,7 @@ rt_err_t rt_pic_irq_set_triger_mode(int irq, rt_uint32_t mode)
 
     if ((~mode & RT_IRQ_MODE_MASK) && (pirq = irq2pirq(irq)))
     {
-        rt_spin_lock(&pirq->rw_lock);
+        rt_hw_spin_lock(&pirq->rw_lock.lock);
 
         if (pirq->pic->ops->irq_set_triger_mode)
         {
@@ -811,7 +811,7 @@ rt_err_t rt_pic_irq_set_triger_mode(int irq, rt_uint32_t mode)
             err = -RT_ENOSYS;
         }
 
-        rt_spin_unlock(&pirq->rw_lock);
+        rt_hw_spin_unlock(&pirq->rw_lock.lock);
     }
 
     return err;
@@ -824,32 +824,30 @@ rt_uint32_t rt_pic_irq_get_triger_mode(int irq)
 
     if (pirq)
     {
-        rt_spin_lock(&pirq->rw_lock);
+        rt_hw_spin_lock(&pirq->rw_lock.lock);
 
         mode = pirq->mode;
 
-        rt_spin_unlock(&pirq->rw_lock);
+        rt_hw_spin_unlock(&pirq->rw_lock.lock);
     }
 
     return mode;
 }
 
-void rt_pic_irq_send_ipi(int irq, unsigned int cpumask)
+void rt_pic_irq_send_ipi(int irq, rt_bitmap_t *cpumask)
 {
     struct rt_pic_irq *pirq;
 
-    RT_DECLARE_BITMAP(cpu_mask, RT_CPUS_NR) = { cpumask };
-
     if (cpumask && (pirq = irq2pirq(irq)))
     {
-        rt_spin_lock(&pirq->rw_lock);
+        rt_hw_spin_lock(&pirq->rw_lock.lock);
 
         if (pirq->pic->ops->irq_send_ipi)
         {
-            pirq->pic->ops->irq_send_ipi(pirq, cpu_mask);
+            pirq->pic->ops->irq_send_ipi(pirq, cpumask);
         }
 
-        rt_spin_unlock(&pirq->rw_lock);
+        rt_hw_spin_unlock(&pirq->rw_lock.lock);
     }
 }
 
@@ -1006,73 +1004,6 @@ rt_err_t rt_pic_init(void)
 
     return err;
 }
-
-/**
- * This function will initialize hardware interrupt
- */
-void rt_hw_interrupt_init(void)
-{
-    /* initialize pic */
-    rt_pic_irq_init();
-}
-
-/**
- * This function will mask a interrupt.
- * @param vector the interrupt number
- */
-void rt_hw_interrupt_mask(int vector)
-{
-    rt_pic_irq_mask(vector);
-}
-
-/**
- * This function will un-mask a interrupt.
- * @param vector the interrupt number
- */
-void rt_hw_interrupt_umask(int vector)
-{
-    rt_pic_irq_unmask(vector);
-}
-
-/**
- * This function will install a interrupt service routine to a interrupt.
- * @param vector the interrupt number
- * @param new_handler the interrupt service routine to be installed
- * @param old_handler the old interrupt service routine
- */
-rt_isr_handler_t rt_hw_interrupt_install(int vector, rt_isr_handler_t handler,
-        void *param, const char *name)
-{
-    rt_pic_attach_irq(vector, handler, param, name, RT_IRQ_F_NONE);
-
-    return RT_NULL;
-}
-
-/**
- * This function will install a interrupt service routine to a interrupt.
- * @param vector the interrupt number
- * @param new_handler the interrupt service routine to be installed
- * @param old_handler the old interrupt service routine
- */
-void rt_hw_interrupt_uninstall(int vector, rt_isr_handler_t handler, void *param)
-{
-    rt_pic_detach_irq(vector, param);
-}
-
-#if defined(RT_USING_SMP) || defined(RT_USING_AMP)
-void rt_hw_ipi_send(int ipi_vector, unsigned int cpu_mask)
-{
-    RT_DECLARE_BITMAP(cpu_masks, RT_CPUS_NR) = { cpu_mask };
-
-    rt_pic_irq_send_ipi(ipi_vector, cpu_masks);
-}
-
-void rt_hw_ipi_handler_install(int ipi_vector, rt_isr_handler_t ipi_isr_handler)
-{
-    /* note: ipi_vector maybe different with irq_vector */
-    rt_hw_interrupt_install(ipi_vector, ipi_isr_handler, 0, "IPI_HANDLER");
-}
-#endif
 
 #if defined(RT_USING_CONSOLE) && defined(RT_USING_MSH)
 static int list_irq(int argc, char**argv)
