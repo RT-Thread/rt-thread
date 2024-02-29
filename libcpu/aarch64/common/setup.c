@@ -73,11 +73,6 @@ void rt_hw_fdt_install_early(void *fdt)
     }
 }
 
-void rt_hw_console_output(const char *str)
-{
-    rt_fdt_earlycon_output(str);
-}
-
 rt_weak void rt_hw_idle_wfi(void)
 {
     __asm__ volatile ("wfi");
@@ -458,3 +453,8 @@ rt_weak void rt_hw_secondary_cpu_idle_exec(void)
     rt_hw_wfe();
 }
 #endif
+
+void rt_hw_console_output(const char *str)
+{
+    rt_fdt_earlycon_output(str);
+}
