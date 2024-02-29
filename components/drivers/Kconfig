@@ -344,10 +344,6 @@ config RT_USING_PHY
     bool "Using ethernet phy device drivers"
     default n
 
-config RT_USING_PIN
-    bool "Using generic GPIO device drivers"
-    default n
-
 config RT_USING_ADC
     bool "Using ADC device drivers"
     default n
@@ -970,6 +966,8 @@ menuconfig RT_USING_VIRTIO
 
 source "$RTT_DIR/components/drivers/ofw/Kconfig"
 source "$RTT_DIR/components/drivers/pic/Kconfig"
+source "$RTT_DIR/components/drivers/pin/Kconfig"
+source "$RTT_DIR/components/drivers/pinctrl/Kconfig"
 source "$RTT_DIR/components/drivers/ktime/Kconfig"
 source "$RTT_DIR/components/drivers/clk/Kconfig"
 
