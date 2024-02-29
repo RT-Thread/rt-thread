@@ -6,6 +6,7 @@
 #include <rthw.h>
 #include "bflb_adc.h"
 #include "bflb_core.h"
+#include "bflb_dma.h"
 
 int rt_hw_adc_init(void);
 

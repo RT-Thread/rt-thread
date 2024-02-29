@@ -665,6 +665,99 @@ menu "General Drivers Configuration"
         bool "Enable ADC"
         select RT_USING_ADC
         default n
+        if BSP_USING_ADC
+            config BSP_ADC_DMA_CHANNEL
+                string "ADC DMA Channel Name" 
+                default "dma0_ch2"
+            config BSP_USING_ADC_CH0
+                bool "USING ADC CH0"
+                default n
+                if BSP_USING_ADC_CH0
+                    config BSP_ADC_CH0_PIN
+                        int "ADC CH0 Pin Num (GPIO_X)"
+                        default 17
+                endif
+            config BSP_USING_ADC_CH1
+                bool "USING ADC CH1"
+                default n
+                if BSP_USING_ADC_CH1
+                    config BSP_ADC_CH1_PIN
+                        int "ADC CH1 Pin Num (GPIO_X)"
+                        default 5
+                endif
+            config BSP_USING_ADC_CH2
+                bool "USING ADC CH2"
+                default n
+                if BSP_USING_ADC_CH2
+                    config BSP_ADC_CH2_PIN
+                        int "ADC CH2 Pin Num (GPIO_X)"
+                        default 4
+                endif
+            config BSP_USING_ADC_CH3
+                bool "USING ADC CH3"
+                default n
+                if BSP_USING_ADC_CH3
+                    config BSP_ADC_CH3_PIN
+                        int "ADC CH3 Pin Num (GPIO_X)"
+                        default 11
+                endif
+            config BSP_USING_ADC_CH4
+                bool "USING ADC CH4"
+                default n
+                if BSP_USING_ADC_CH4
+                    config BSP_ADC_CH4_PIN
+                        int "ADC CH4 Pin Num (GPIO_X)"
+                        default 6
+                endif
+            config BSP_USING_ADC_CH5
+                bool "USING ADC CH5"
+                default n
+                if BSP_USING_ADC_CH5
+                    config BSP_ADC_CH5_PIN
+                        int "ADC CH5 Pin Num (GPIO_X)"
+                        default 40
+                endif
+            config BSP_USING_ADC_CH6
+                bool "USING ADC CH6"
+                default n
+                if BSP_USING_ADC_CH6
+                    config BSP_ADC_CH6_PIN
+                        int "ADC CH6 Pin Num (GPIO_X)"
+                        default 12
+                endif
+            config BSP_USING_ADC_CH7
+                bool "USING ADC CH7"
+                default n
+                if BSP_USING_ADC_CH7
+                    config BSP_ADC_CH7_PIN
+                        int "ADC CH7 Pin Num (GPIO_X)"
+                        default 13
+                endif
+            config BSP_USING_ADC_CH8
+                bool "USING ADC CH8"
+                default n
+                if BSP_USING_ADC_CH8
+                    config BSP_ADC_CH8_PIN
+                        int "ADC CH8 Pin Num (GPIO_X)"
+                        default 16
+                endif
+            config BSP_USING_ADC_CH9
+                bool "USING ADC CH9"
+                default n
+                if BSP_USING_ADC_CH9
+                    config BSP_ADC_CH9_PIN
+                        int "ADC CH9 Pin Num (GPIO_X)"
+                        default 18
+                endif
+            config BSP_USING_ADC_CH10
+                bool "USING ADC CH10"
+                default n
+                if BSP_USING_ADC_CH10
+                    config BSP_ADC_CH10_PIN
+                        int "ADC CH10 Pin Num (GPIO_X)"
+                        default 19
+                endif
+        endif
 
     config BSP_USING_RTC
         bool "Enable RTC"
