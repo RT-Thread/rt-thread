@@ -25,7 +25,6 @@ config RT_USING_SMART
     select RT_USING_DFS
     select RT_USING_POSIX_CLOCKTIME
     select RT_USING_DEVICE
-    select RT_USING_TTY
     select RT_USING_NULL
     select RT_USING_ZERO
     select RT_USING_RANDOM

@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2021-01-15     shaojinchun  first version
+ * 2023-11-16     xqyjlj       Fix the case where tid is 0
  */
 
 #define DBG_TAG    "lwp.tid"
@@ -126,20 +127,28 @@ void lwp_tid_put(int tid)
         lwp_mutex_release_safe(&tid_lock);
 }
 
-rt_thread_t lwp_tid_get_thread_and_inc_ref(int tid)
+rt_thread_t lwp_tid_get_thread_raw(int tid)
 {
     struct lwp_avl_struct *p;
     rt_thread_t thread = RT_NULL;
-    lwp_mutex_take_safe(&tid_lock, RT_WAITING_FOREVER, 0);
 
     p  = lwp_avl_find(tid, lwp_tid_root);
     if (p)
     {
         thread = (rt_thread_t)p->data;
-        if (thread != RT_NULL)
-        {
-            thread->tid_ref_count += 1;
-        }
+    }
+    return thread;
+}
+
+rt_thread_t lwp_tid_get_thread_and_inc_ref(int tid)
+{
+    rt_thread_t thread = RT_NULL;
+
+    lwp_mutex_take_safe(&tid_lock, RT_WAITING_FOREVER, 0);
+    thread = tid ? lwp_tid_get_thread_raw(tid) : rt_thread_self();
+    if (thread != RT_NULL)
+    {
+        thread->tid_ref_count += 1;
     }
     lwp_mutex_release_safe(&tid_lock);
     return thread;
