@@ -15,6 +15,24 @@
 #define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
+#ifdef RT_USING_DM
+void (*rt_device_hwtimer_us_delay)(rt_uint32_t us) = RT_NULL;
+
+void rt_hw_us_delay(rt_uint32_t us)
+{
+    if (rt_device_hwtimer_us_delay)
+    {
+        rt_device_hwtimer_us_delay(us);
+    }
+    else
+    {
+        LOG_E("Implemented at least in the libcpu");
+
+        RT_ASSERT(0);
+    }
+}
+#endif /* RT_USING_DM */
+
 rt_inline rt_uint32_t timeout_calc(rt_hwtimer_t *timer, rt_hwtimerval_t *tv)
 {
     float overflow;
