@@ -9,6 +9,9 @@
  * 2019-10-12     Jesven       Add MMU and userspace support
  * 2020-10-08     Bernard      Architecture and code cleanup
  * 2021-08-26     linzhenxing  add lwp_setcwd\lwp_getcwd
+ * 2023-11-17     xqyjlj       add process group and session support
+ * 2023-12-02     Shell        Add macro to create lwp status and
+ *                             fix dead lock problem on pgrp
  */
 
 /*
@@ -48,10 +51,6 @@
 #include <locale.h>
 #endif /* RT_USING_MUSLLIBC */
 
-#ifdef  RT_USING_TTY
-struct tty_struct;
-#endif /* RT_USING_TTY */
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -76,11 +75,47 @@ struct rt_lwp_notify
     rt_slist_t list_node;
 };
 
+struct lwp_tty;
+
 #ifdef RT_USING_MUSLLIBC
-#define LWP_CREATE_STAT(exit_code) (((exit_code) & 0xff) << 8)
+#define LWP_COREDUMP_FLAG                         0x80
+#define LWP_CREATE_STAT_EXIT(exit_code)           (((exit_code)&0xff) << 8)
+#define LWP_CREATE_STAT_SIGNALED(signo, coredump) (((signo) & 0x7f) | (coredump ? LWP_COREDUMP_FLAG : 0))
+#define LWP_CREATE_STAT_STOPPED(signo)            (LWP_CREATE_STAT_EXIT(signo) | 0x7f)
+#define LWP_CREATE_STAT_CONTINUED                 (0xffff)
 #else
 #error "No compatible lwp set status provided for this libc"
 #endif
+
+typedef struct rt_lwp *rt_lwp_t;
+typedef struct rt_session *rt_session_t;
+typedef struct rt_processgroup *rt_processgroup_t;
+
+struct rt_session {
+    struct rt_object    object;
+    rt_lwp_t            leader;
+    rt_list_t           processgroup;
+    pid_t               sid;
+    pid_t               foreground_pgid;
+    struct rt_mutex     mutex;
+    struct lwp_tty      *ctty;
+};
+
+struct rt_processgroup {
+    struct rt_object    object;
+    rt_lwp_t            leader;
+    rt_list_t           process;
+    rt_list_t           pgrp_list_node;
+    pid_t               pgid;
+    pid_t               sid;
+    struct rt_session   *session;
+    struct rt_mutex     mutex;
+
+    rt_atomic_t         ref;
+
+    /* flags on process group */
+    unsigned int is_orphaned:1;
+};
 
 struct rt_lwp
 {
@@ -100,14 +135,21 @@ struct rt_lwp
     uint8_t lwp_type;
     uint8_t reserv[3];
 
-    struct rt_lwp *parent;
-    struct rt_lwp *first_child;
-    struct rt_lwp *sibling;
+    /* flags */
+    unsigned int terminated:1;
+    unsigned int background:1;
+    unsigned int term_ctrlterm:1;  /* have control terminal? */
+    unsigned int did_exec:1;       /* Whether exec has been performed */
+    unsigned int jobctl_stopped:1; /* job control: current proc is stopped */
+    unsigned int wait_reap_stp:1;  /* job control: has wait event for parent */
+    unsigned int sig_protected:1;  /* signal: protected proc cannot be killed or stopped */
 
-    rt_list_t wait_list;
-    rt_bool_t terminated;
-    rt_bool_t background;
-    int lwp_ret;
+    struct rt_lwp *parent;          /* parent process */
+    struct rt_lwp *first_child;     /* first child process */
+    struct rt_lwp *sibling;         /* sibling(child) process */
+
+    struct rt_wqueue waitpid_waiters;
+    lwp_status_t lwp_status;
 
     void *text_entry;
     uint32_t text_size;
@@ -118,15 +160,20 @@ struct rt_lwp
     void *args;
     uint32_t args_length;
     pid_t pid;
-    pid_t __pgrp; /*Accessed via process_group()*/
-    pid_t tty_old_pgrp;
-    pid_t session;
-    rt_list_t t_grp;
-    rt_list_t timer; /* POSIX timer object binding to a process */
+    pid_t D__pgrp;                  /*Accessed via process_group()*/
+    pid_t D_tty_old_pgrp;
+    pid_t D_session;                /**< maybe need delete */
+    pid_t sid;                      /* session ID */
+    pid_t pgid;                     /* process group ID */
+    struct rt_processgroup *pgrp;
+    rt_list_t pgrp_node;            /* process group node */
+    rt_list_t t_grp;                /* thread group */
+    rt_list_t timer;                /* POSIX timer object binding to a process */
 
-    int leader; /* boolean value for session group_leader*/
+    int D_leader; /* boolean value for session group_leader*/
     struct dfs_fdtable fdt;
     char cmd[RT_NAME_MAX];
+    char *exe_file;                 /* process file path */
 
     /* POSIX signal */
     struct lwp_signal signal;
@@ -135,7 +182,7 @@ struct rt_lwp
     struct rt_mutex object_mutex;
     struct rt_user_context user_ctx;
 
-    struct rt_wqueue wait_queue; /*for console */
+    struct rt_wqueue wait_queue; /* for console */
     struct tty_struct *tty; /* NULL if no tty */
 
     struct lwp_avl_struct *address_search_head; /* for addressed object fast search */
@@ -152,6 +199,7 @@ struct rt_lwp
     uint64_t generation;
     unsigned int asid;
 #endif
+    struct rusage rt_rusage;
 };
 typedef struct rt_lwp *rt_lwp_t;
 
@@ -182,7 +230,7 @@ void lwp_tid_put(int tid);
  * @return rt_thread_t
  */
 rt_thread_t lwp_tid_get_thread_and_inc_ref(int tid);
-
+rt_thread_t lwp_tid_get_thread_raw(int tid);
 /**
  * @brief Decrease a reference count
  *
@@ -216,6 +264,78 @@ rt_err_t lwp_futex_init(void);
 rt_err_t lwp_futex(struct rt_lwp *lwp, int *uaddr, int op, int val,
                    const struct timespec *timeout, int *uaddr2, int val3);
 
+/* processgroup api */
+rt_inline pid_t lwp_pgid_get_bypgrp(rt_processgroup_t group)
+{
+    return group ? group->pgid : 0;
+}
+
+rt_inline pid_t lwp_pgid_get_byprocess(rt_lwp_t process)
+{
+    return process ? process->pgid : 0;
+}
+rt_processgroup_t lwp_pgrp_find(pid_t pgid);
+void lwp_pgrp_dec_ref(rt_processgroup_t pgrp);
+rt_processgroup_t lwp_pgrp_find_and_inc_ref(pid_t pgid);
+rt_processgroup_t lwp_pgrp_create(rt_lwp_t leader);
+int lwp_pgrp_delete(rt_processgroup_t group);
+
+/**
+ * Note: all the pgrp with process operation must be called in the context where
+ * process lock is taken. This is protect us from a possible dead lock condition
+ *
+ * The order is mandatory in the case:
+ *      PGRP_LOCK(pgrp);
+ *      LWP_LOCK(p);
+ *      ... bussiness logic
+ *      LWP_UNLOCK(p);
+ *      PGRP_UNLOCK(pgrp);
+ */
+int lwp_pgrp_insert(rt_processgroup_t group, rt_lwp_t process);
+int lwp_pgrp_remove(rt_processgroup_t group, rt_lwp_t process);
+int lwp_pgrp_move(rt_processgroup_t group, rt_lwp_t process);
+
+int lwp_pgrp_update_children_info(rt_processgroup_t group, pid_t sid, pid_t pgid);
+
+/* session api */
+rt_inline pid_t lwp_sid_get_bysession(rt_session_t session)
+{
+    return session ? session->sid : 0;
+}
+
+rt_inline pid_t lwp_sid_get_bypgrp(rt_processgroup_t group)
+{
+    return group ? group->sid : 0;
+}
+
+rt_inline pid_t lwp_sid_get_byprocess(rt_lwp_t process)
+{
+    return process ? process->sid : 0;
+}
+
+rt_session_t lwp_session_find(pid_t sid);
+rt_session_t lwp_session_create(struct rt_lwp *leader);
+int lwp_session_delete(rt_session_t session);
+
+/**
+ * Note: all the session operation must be called in the context where
+ * process lock is taken. This is protect us from a possible dead lock condition
+ *
+ * The order is mandatory in the case:
+ *      PGRP_LOCK(pgrp);
+ *      LWP_LOCK(p);
+ *      ... bussiness logic
+ *      LWP_UNLOCK(p);
+ *      PGRP_UNLOCK(pgrp);
+ */
+int lwp_session_insert(rt_session_t session, rt_processgroup_t group);
+int lwp_session_remove(rt_session_t session, rt_processgroup_t group);
+int lwp_session_move(rt_session_t session, rt_processgroup_t group);
+int lwp_session_update_children_info(rt_session_t session, pid_t sid);
+int lwp_session_set_foreground(rt_session_t session, pid_t pgid);
+
+/* complete the job control related bussiness on process exit */
+void lwp_jobctrl_on_exit(struct rt_lwp *lwp);
 
 #ifdef __cplusplus
 }
@@ -301,6 +421,7 @@ int dbg_step_type(void);
 void dbg_attach_req(void *pc);
 int dbg_check_suspend(void);
 void rt_hw_set_process_id(int pid);
+void lwp_futex_exit_robust_list(rt_thread_t thread);
 
 /* backtrace service */
 rt_err_t lwp_backtrace_frame(rt_thread_t uthread, struct rt_hw_backtrace_frame *frame);

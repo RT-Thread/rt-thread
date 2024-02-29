@@ -6,20 +6,31 @@
  * Change Logs:
  * Date           Author       Notes
  * 2023-07-25     Shell        first version
+ * 2023-11-25     Shell        Add pgrp, session lock API
  */
 
 #ifndef __LWP_INTERNAL_H__
 #define __LWP_INTERNAL_H__
 
 #include "lwp.h"
+#include "lwp_arch.h"
 #include "lwp_user_mm.h"
+#include "lwp_mm.h"
 
 #include <rtthread.h>
 #include "libc_musl.h"
 
 struct rt_lwp;
-rt_err_t lwp_mutex_take_safe(rt_mutex_t mtx, rt_int32_t timeout, rt_bool_t interruptable);
+
+#define LWP_MTX_FLAGS_INTR   0x1 /* interruptible waiting */
+#define LWP_MTX_FALGS_NESTED 0x2 /* allow nested */
+rt_err_t lwp_mutex_take_safe(rt_mutex_t mtx, rt_int32_t timeout, int flags);
 rt_err_t lwp_mutex_release_safe(rt_mutex_t mtx);
+
+rt_inline rt_bool_t lwp_in_user_space(const char *addr)
+{
+    return (addr >= (char *)USER_VADDR_START && addr < (char *)USER_VADDR_TOP);
+}
 
 #ifdef RT_USING_SMP
     #define LOCAL_IRQ_MASK() rt_hw_local_irq_disable()
@@ -30,16 +41,34 @@ rt_err_t lwp_mutex_release_safe(rt_mutex_t mtx);
 #endif
 
 #ifndef LWP_USING_CPUS_LOCK
-rt_err_t lwp_critical_enter(struct rt_lwp *lwp);
+rt_err_t lwp_sess_critical_enter(struct rt_session *sess, int flags);
+rt_err_t lwp_sess_critical_exit(struct rt_session *sess);
+rt_err_t lwp_pgrp_critical_enter(struct rt_processgroup *pgrp, int flags);
+rt_err_t lwp_pgrp_critical_exit(struct rt_processgroup *pgrp);
+rt_err_t lwp_critical_enter(struct rt_lwp *lwp, int flags);
 rt_err_t lwp_critical_exit(struct rt_lwp *lwp);
 
-#define LWP_LOCK(lwp)                           \
-    do {                                        \
-        RT_DEBUG_SCHEDULER_AVAILABLE(1);        \
-        if (lwp_critical_enter(lwp) != RT_EOK)  \
-        {                                       \
-            RT_ASSERT(0);                       \
-        }                                       \
+#define LWP_ASSERT_LOCKED(proc) RT_ASSERT(rt_mutex_get_owner(&(proc)->lwp_lock) == rt_thread_self())
+#define PGRP_ASSERT_LOCKED(pgrp) RT_ASSERT(rt_mutex_get_owner(&(pgrp)->mutex) == rt_thread_self())
+
+#define LWP_LOCK(lwp)                             \
+    do                                            \
+    {                                             \
+        RT_DEBUG_SCHEDULER_AVAILABLE(1);          \
+        if (lwp_critical_enter(lwp, 0) != RT_EOK) \
+        {                                         \
+            RT_ASSERT(0);                         \
+        }                                         \
+    } while (0)
+
+#define LWP_LOCK_NESTED(lwp)                                         \
+    do                                                               \
+    {                                                                \
+            RT_DEBUG_SCHEDULER_AVAILABLE(1);                             \
+        if (lwp_critical_enter(lwp, LWP_MTX_FALGS_NESTED) != RT_EOK) \
+        {                                                            \
+            RT_ASSERT(0);                                            \
+        }                                                            \
     } while (0)
 
 #define LWP_UNLOCK(lwp)                         \
@@ -50,10 +79,72 @@ rt_err_t lwp_critical_exit(struct rt_lwp *lwp);
         }                                       \
     } while (0)
 
+#define PGRP_LOCK(pgrp)                                 \
+    do                                                  \
+    {                                                   \
+        RT_DEBUG_SCHEDULER_AVAILABLE(1);                \
+        if (lwp_pgrp_critical_enter(pgrp, 0) != RT_EOK) \
+        {                                               \
+            RT_ASSERT(0);                               \
+        }                                               \
+    } while (0)
+
+#define PGRP_LOCK_NESTED(pgrp)                                             \
+    do                                                                     \
+    {                                                                      \
+        RT_DEBUG_SCHEDULER_AVAILABLE(1);                                   \
+        if (lwp_pgrp_critical_enter(pgrp, LWP_MTX_FALGS_NESTED) != RT_EOK) \
+        {                                                                  \
+            RT_ASSERT(0);                                                  \
+        }                                                                  \
+    } while (0)
+
+#define PGRP_UNLOCK(pgrp)                           \
+    do                                              \
+    {                                               \
+        if (lwp_pgrp_critical_exit(pgrp) != RT_EOK) \
+        {                                           \
+            RT_ASSERT(0);                           \
+        }                                           \
+    } while (0)
+
+#define SESS_LOCK(sess)                                 \
+    do                                                  \
+    {                                                   \
+        RT_DEBUG_SCHEDULER_AVAILABLE(1);                \
+        if (lwp_sess_critical_enter(sess, 0) != RT_EOK) \
+        {                                               \
+            RT_ASSERT(0);                               \
+        }                                               \
+    } while (0)
+
+#define SESS_LOCK_NESTED(sess)                                             \
+    do                                                                     \
+    {                                                                      \
+        RT_DEBUG_SCHEDULER_AVAILABLE(1);                                   \
+        if (lwp_sess_critical_enter(sess, LWP_MTX_FALGS_NESTED) != RT_EOK) \
+        {                                                                  \
+            RT_ASSERT(0);                                                  \
+        }                                                                  \
+    } while (0)
+
+#define SESS_UNLOCK(sess)                           \
+    do                                              \
+    {                                               \
+        if (lwp_sess_critical_exit(sess) != RT_EOK) \
+        {                                           \
+            RT_ASSERT(0);                           \
+        }                                           \
+    } while (0)
+
 #else
 
 #define LWP_LOCK(lwp)           rt_base_t level = rt_hw_interrupt_disable()
 #define LWP_UNLOCK(lwp)         rt_hw_interrupt_enable(level)
+#define PGRP_LOCK(pgrp)         rt_base_t level = rt_hw_interrupt_disable()
+#define PGRP_UNLOCK(pgrp)       rt_hw_interrupt_enable(level)
+#define SESS_LOCK(sess)         rt_base_t level = rt_hw_interrupt_disable()
+#define SESS_UNLOCK(sess)       rt_hw_interrupt_enable(level)
 
 #endif /* LWP_USING_CPUS_LOCK */
 
@@ -94,5 +185,7 @@ rt_err_t lwp_critical_exit(struct rt_lwp *lwp);
 #define LWP_DEF_RETURN_CODE(name)   rt_err_t name = _LWP_UNINITIALIZED_RC
 #define LWP_RETURN(name)            {RT_ASSERT(name != _LWP_UNINITIALIZED_RC);return name;}
 #endif /* LWP_DEBUG */
+
+int load_ldso(struct rt_lwp *lwp, char *exec_name, char *const argv[], char *const envp[]);
 
 #endif /* __LWP_INTERNAL_H__ */
