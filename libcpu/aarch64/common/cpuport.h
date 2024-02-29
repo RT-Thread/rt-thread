@@ -37,6 +37,12 @@ typedef struct {
 
 #define rt_hw_cpu_relax() rt_hw_barrier(yield)
 
+#define rt_hw_sysreg_write(sysreg, val) \
+    __asm__ volatile ("msr "RT_STRINGIFY(sysreg)", %0"::"r"((rt_uint64_t)(val)))
+
+#define rt_hw_sysreg_read(sysreg, val) \
+    __asm__ volatile ("mrs %0, "RT_STRINGIFY(sysreg)"":"=r"((val)))
+
 void _thread_start(void);
 
 #ifdef RT_USING_CPU_FFS

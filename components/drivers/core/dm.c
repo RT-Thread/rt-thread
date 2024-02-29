@@ -263,7 +263,7 @@ int rt_dm_dev_get_irq_count(rt_device_t dev)
 {
     RT_ASSERT(dev != RT_NULL);
 
-#ifdef RT_USING_OFW
+#if defined(RT_USING_OFW) && defined(RT_USING_PIC)
     if (dev->ofw_node)
     {
         return ofw_api_call(get_irq_count, dev->ofw_node);
@@ -277,7 +277,7 @@ int rt_dm_dev_get_irq(rt_device_t dev, int index)
 {
     RT_ASSERT(dev != RT_NULL);
 
-#ifdef RT_USING_OFW
+#if defined(RT_USING_OFW) && defined(RT_USING_PIC)
     if (dev->ofw_node)
     {
         return ofw_api_call(get_irq, dev->ofw_node, index);
@@ -291,7 +291,7 @@ int rt_dm_dev_get_irq_by_name(rt_device_t dev, const char *name)
 {
     RT_ASSERT(dev != RT_NULL);
 
-#ifdef RT_USING_OFW
+#if defined(RT_USING_OFW) && defined(RT_USING_PIC)
     if (dev->ofw_node)
     {
         return ofw_api_call(get_irq_by_name, dev->ofw_node, name);
@@ -327,7 +327,7 @@ void rt_dm_dev_unbind_fwdata(rt_device_t dev, void *fw_np)
     RT_ASSERT(dev!= RT_NULL);
 
 #ifdef RT_USING_OFW
-    void *dev_fw_np;
+    void *dev_fw_np = RT_NULL;
 
     if (!dev->ofw_node && fw_np)
     {

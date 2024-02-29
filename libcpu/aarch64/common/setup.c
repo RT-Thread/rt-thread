@@ -22,10 +22,7 @@
 #include <setup.h>
 #include <stdlib.h>
 #include <ioremap.h>
-#include <drivers/ofw.h>
-#include <drivers/ofw_fdt.h>
-#include <drivers/ofw_raw.h>
-#include <drivers/core/dm.h>
+#include <rtdevice.h>
 
 #define rt_sysreg_write(sysreg, val) \
     __asm__ volatile ("msr "RT_STRINGIFY(sysreg)", %0"::"r"((rt_uint64_t)(val)))
@@ -165,6 +162,8 @@ void rt_hw_common_setup(void)
     rt_region_t platform_mem_region;
     static struct mem_desc platform_mem_desc;
     void *kernel_start, *kernel_end, *memheap_start = RT_NULL, *memheap_end = RT_NULL;
+
+    system_vectors_init();
 
 #ifdef RT_USING_SMART
     rt_hw_mmu_map_init(&rt_kernel_space, (void*)0xfffffffff0000000, 0x10000000, MMUTable, PV_OFFSET);
@@ -336,6 +335,10 @@ void rt_hw_common_setup(void)
 
     cpu_info_init();
 
+#ifdef RT_USING_PIC
+    rt_pic_init();
+    rt_pic_irq_init();
+#else
     /* initialize hardware interrupt */
     rt_hw_interrupt_init();
 
@@ -344,8 +347,9 @@ void rt_hw_common_setup(void)
 
     /* initialize timer for os tick */
     rt_hw_gtimer_init();
+#endif
 
-    #ifdef RT_USING_COMPONENTS_INIT
+#ifdef RT_USING_COMPONENTS_INIT
     rt_components_board_init();
 #endif
 
@@ -421,9 +425,14 @@ rt_weak void rt_hw_secondary_cpu_bsp_start(void)
 
     rt_hw_mmu_ktbl_set((unsigned long)MMUTable);
 
+#ifdef RT_USING_PIC
+    rt_pic_irq_init();
+#else
     rt_hw_interrupt_init();
+#endif
 
     rt_dm_secondary_cpu_init();
+
     rt_hw_interrupt_umask(RT_SCHEDULE_IPI);
     rt_hw_interrupt_umask(RT_STOP_IPI);
 
