@@ -468,7 +468,7 @@ rt_uint64_t arm_gic_get_interface_prior_mask(rt_uint64_t index)
 
 void arm_gic_set_binary_point(rt_uint64_t index, rt_uint64_t binary_point)
 {
-    index = index;
+    RT_UNUSED(index);
     binary_point &= 0x7;
 
     SET_GICV3_REG(ICC_BPR1_EL1, binary_point);
@@ -625,13 +625,18 @@ rt_uint64_t arm_gic_get_high_pending_irq(rt_uint64_t index)
 rt_uint64_t arm_gic_get_interface_id(rt_uint64_t index)
 {
     rt_uint64_t ret = 0;
+    rt_base_t level;
+    int cpuid;
 
     RT_ASSERT(index < ARM_GIC_MAX_NR);
 
-    if (_gic_table[index].cpu_hw_base != RT_NULL)
+    level = rt_hw_local_irq_disable();
+    cpuid = rt_hw_cpu_id();
+    if (_gic_table[index].cpu_hw_base[cpuid] != RT_NULL)
     {
-        ret = GIC_CPU_IIDR(_gic_table[index].cpu_hw_base);
+        ret = GIC_CPU_IIDR(_gic_table[index].cpu_hw_base[cpuid]);
     }
+    rt_hw_local_irq_enable(level);
 
     return ret;
 }
