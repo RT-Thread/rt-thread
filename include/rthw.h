@@ -235,9 +235,9 @@ void rt_hw_secondary_cpu_idle_exec(void);
 #endif
 
 #ifndef RT_USING_CACHE
-#define rt_hw_isb(void)
-#define rt_hw_dmb(void)
-#define rt_hw_dsb(void)
+#define rt_hw_isb()
+#define rt_hw_dmb()
+#define rt_hw_dsb()
 #endif
 
 #ifdef __cplusplus
