@@ -16,7 +16,7 @@
         <TargetCommonOption>
           <Device>MCXN947VDF:cm33_core0</Device>
           <Vendor>NXP</Vendor>
-          <PackID>NXP.MCXN947_DFP.16.0.0</PackID>
+          <PackID>NXP.MCXN947_DFP.17.0.0</PackID>
           <PackURL>https://mcuxpresso.nxp.com/cmsis_pack/repo/</PackURL>
           <Cpu>IRAM(0x20000000,0x060000) IRAM2(0x20060000,0x8000) IROM(0x03000000,0x040000) IROM2(0x13000000,0x040000) XRAM(0x30060000,0x8000) XRAM2(0x04000000,0x018000) XRAM3(0x14000000,0x018000) XROM(0x00000000,0x100000) XROM2(0x00100000,0x100000) XROM3(0x10000000,0x100000) CPUTYPE("Cortex-M33") FPU3(SFPU) DSP TZ CLOCK(12000000) ELITTLE</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
