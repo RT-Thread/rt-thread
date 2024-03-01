@@ -81,24 +81,24 @@ static unsigned int _gic_max_irq;
 #define ICC_ASGI1R_EL1  "S3_0_C12_C11_6"
 
 /* Macro to access the Distributor Control Register (GICD_CTLR) */
-#define GICD_CTLR_RWP       (1 << 31)
-#define GICD_CTLR_E1NWF     (1 << 7)
-#define GICD_CTLR_DS        (1 << 6)
-#define GICD_CTLR_ARE_NS    (1 << 5)
-#define GICD_CTLR_ARE_S     (1 << 4)
-#define GICD_CTLR_ENGRP1S   (1 << 2)
-#define GICD_CTLR_ENGRP1NS  (1 << 1)
-#define GICD_CTLR_ENGRP0    (1 << 0)
+#define GICD_CTLR_RWP       (1U << 31)
+#define GICD_CTLR_E1NWF     (1U << 7)
+#define GICD_CTLR_DS        (1U << 6)
+#define GICD_CTLR_ARE_NS    (1U << 5)
+#define GICD_CTLR_ARE_S     (1U << 4)
+#define GICD_CTLR_ENGRP1S   (1U << 2)
+#define GICD_CTLR_ENGRP1NS  (1U << 1)
+#define GICD_CTLR_ENGRP0    (1U << 0)
 
 /* Macro to access the Redistributor Control Register (GICR_CTLR) */
-#define GICR_CTLR_UWP       (1 << 31)
-#define GICR_CTLR_DPG1S     (1 << 26)
-#define GICR_CTLR_DPG1NS    (1 << 25)
-#define GICR_CTLR_DPG0      (1 << 24)
-#define GICR_CTLR_RWP       (1 << 3)
-#define GICR_CTLR_IR        (1 << 2)
-#define GICR_CTLR_CES       (1 << 1)
-#define GICR_CTLR_EnableLPI (1 << 0)
+#define GICR_CTLR_UWP       (1U << 31)
+#define GICR_CTLR_DPG1S     (1U << 26)
+#define GICR_CTLR_DPG1NS    (1U << 25)
+#define GICR_CTLR_DPG0      (1U << 24)
+#define GICR_CTLR_RWP       (1U << 3)
+#define GICR_CTLR_IR        (1U << 2)
+#define GICR_CTLR_CES       (1U << 1)
+#define GICR_CTLR_EnableLPI (1U << 0)
 
 /* Macro to access the Generic Interrupt Controller Interface (GICC) */
 #define GIC_CPU_CTRL(hw_base)               HWREG32((hw_base) + 0x00U)
@@ -162,7 +162,7 @@ static unsigned int _gic_max_irq;
 
 int arm_gic_get_active_irq(rt_uint64_t index)
 {
-    int irq;
+    rt_base_t irq;
 
     RT_ASSERT(index < ARM_GIC_MAX_NR);
 
@@ -178,7 +178,7 @@ void arm_gic_ack(rt_uint64_t index, int irq)
     RT_ASSERT(irq >= 0);
 
     __DSB();
-    SET_GICV3_REG(ICC_EOIR1_EL1, irq);
+    SET_GICV3_REG(ICC_EOIR1_EL1, (rt_base_t)irq);
 }
 
 void arm_gic_mask(rt_uint64_t index, int irq)
@@ -397,7 +397,7 @@ void arm_gic_set_priority(rt_uint64_t index, int irq, rt_uint64_t priority)
         rt_int32_t cpu_id = rt_hw_cpu_id();
 
         mask = GIC_RDISTSGI_IPRIORITYR(_gic_table[index].redist_hw_base[cpu_id], irq);
-        mask &= ~(0xff << ((irq % 4) * 8));
+        mask &= ~(0xffUL << ((irq % 4) * 8));
         mask |= ((priority & 0xff) << ((irq % 4) * 8));
         GIC_RDISTSGI_IPRIORITYR(_gic_table[index].redist_hw_base[cpu_id], irq) = mask;
     }
@@ -478,7 +478,7 @@ rt_uint64_t arm_gic_get_binary_point(rt_uint64_t index)
 {
     rt_uint64_t binary_point;
 
-    index = index;
+    RT_UNUSED(index);
     GET_GICV3_REG(ICC_BPR1_EL1, binary_point);
     return binary_point;
 }
@@ -616,7 +616,7 @@ rt_uint64_t arm_gic_get_high_pending_irq(rt_uint64_t index)
     rt_uint64_t irq;
     RT_ASSERT(index < ARM_GIC_MAX_NR);
 
-    index = index;
+    RT_UNUSED(index);
     GET_GICV3_REG(ICC_HPPIR1_EL1, irq);
 
     return irq;
@@ -862,7 +862,7 @@ int arm_gic_cpu_init(rt_uint64_t index, rt_uint64_t cpu_base)
     value = arm_gic_get_system_register_enable_mask(index);
     value |= (1 << 0);
     arm_gic_set_system_register_enable_mask(index, value);
-    SET_GICV3_REG(ICC_CTLR_EL1, 0);
+    SET_GICV3_REG(ICC_CTLR_EL1, 0l);
 
     arm_gic_set_interface_prior_mask(index, 0xff);
 
