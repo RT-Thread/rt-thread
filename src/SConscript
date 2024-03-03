@@ -1,5 +1,4 @@
 from building import *
-from gcc import GetGCCLikePLATFORM
 import os
 
 src = Glob('*.c')
@@ -31,7 +30,7 @@ else:
 
 LOCAL_CFLAGS = ''
 
-if rtconfig.PLATFORM in GetGCCLikePLATFORM():
+if rtconfig.PLATFORM in ['gcc']: # only for GCC
     LOCAL_CFLAGS += ' -Wunused' # unused warning
     LOCAL_CFLAGS += ' -Wformat -Wformat-security' # printf/scanf format warning
     LOCAL_CFLAGS += ' -Warray-bounds -Wuninitialized' # memory access warning
