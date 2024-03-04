@@ -15,6 +15,15 @@ rt_err_t rt_qspi_configure(struct rt_qspi_device *device, struct rt_qspi_configu
     RT_ASSERT(device != RT_NULL);
     RT_ASSERT(cfg != RT_NULL);
 
+    /* reset the CS pin */
+    if (device->parent.cs_pin != PIN_NONE)
+    {
+        if (cfg->parent.mode & RT_SPI_CS_HIGH)
+            rt_pin_write(device->parent.cs_pin, PIN_LOW);
+        else
+            rt_pin_write(device->parent.cs_pin, PIN_HIGH);
+    }
+
     /* If the configurations are the same, we don't need to set again. */
     if (device->config.medium_size       == cfg->medium_size &&
         device->config.ddr_mode          == cfg->ddr_mode &&
