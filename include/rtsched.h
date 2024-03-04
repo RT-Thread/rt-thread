@@ -99,7 +99,7 @@ struct rt_sched_thread_ctx
     rt_tick_t remaining_tick;           /**< remaining tick */                 \
     rt_uint8_t current_priority;        /**< current priority */               \
     rt_uint8_t init_priority;           /**< initialized priority */           \
-    _RT_SCHED_THREAD_CTX_PRIO_EXT;                                             \
+    _RT_SCHED_THREAD_CTX_PRIO_EXT                                              \
     rt_uint32_t number_mask; /**< priority number mask */
 
 #define RT_SCHED_PRIV(thread) (*thread)
