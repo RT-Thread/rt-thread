@@ -186,7 +186,7 @@ def MDK4AddGroup(ProjectFiles, parent, name, files, project_path, group_scons):
             MiscControls_text = MiscControls_text + group_scons['LOCAL_CXXFLAGS']
         if 'LOCAL_CCFLAGS' in group_scons:
             MiscControls_text = MiscControls_text + group_scons['LOCAL_CCFLAGS']
-        if MiscControls_text != ' ':
+        if MiscControls_text != ' ' or ('LOCAL_CPPDEFINES' in group_scons):
             FileOption     = SubElement(file,  'FileOption')
             FileArmAds     = SubElement(FileOption, 'FileArmAds')
             Cads            = SubElement(FileArmAds, 'Cads')
