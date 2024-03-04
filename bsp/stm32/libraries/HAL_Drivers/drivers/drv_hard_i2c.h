@@ -1,22 +1,22 @@
 /*
- * @Author: Dyyt587 67887002+Dyyt587@users.noreply.github.com
- * @Date: 2024-02-17 19:52:38
- * @LastEditors: Dyyt587 67887002+Dyyt587@users.noreply.github.com
- * @LastEditTime: 2024-02-28 17:21:34
- * @FilePath: \rtthread_hardware_i2c_driver\common\drv_i2c.h
+ * @Author: Dyyt587 805207319@qq.com
+ * @Date: 2024-03-04 22:13:39
+ * @LastEditors: Dyyt587 805207319@qq.com
+ * @LastEditTime: 2024-03-04 22:22:44
+ * @FilePath: \stm32\libraries\HAL_Drivers\drivers\drv_hard_i2c.h
  * @Description: 这是默认设置,请设置`customMade`, 打开koroFileHeader查看配置 进行设置: https://github.com/OBKoro1/koro1FileHeader/wiki/%E9%85%8D%E7%BD%AE
  */
 /*
  * Copyright (c) 2024
- * SPDX-License-Identifier: MIT-2.0
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
  * 2024-02-17     Dyyt587   first version
  */
 
-#ifndef __DRV_I2C_H__
-#define __DRV_I2C_H__
+#ifndef __DRV_HARD_I2C_H__
+#define __DRV_HARD_I2C_H__
 
 #include "drv_config.h"
 #include <rtthread.h>

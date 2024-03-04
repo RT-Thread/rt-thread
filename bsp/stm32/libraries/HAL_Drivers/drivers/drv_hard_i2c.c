@@ -1,6 +1,7 @@
 /*
  * Copyright (c) 2024
- * SPDX-License-Identifier: MIT-2.0
+ *
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
@@ -8,18 +9,16 @@
  * 2024-02-19     Dyyt587   add dma support,add auto xfsr timeout,add some error rrror recovery(beta)
  */
 
-/*******************************************************************************
- * Include files
- ******************************************************************************/
 #include <rtthread.h>
 #include <rthw.h>
 #include <board.h>
 #include <rtconfig.h>
-#include "drv_i2c.h"
+#include "drv_hard_i2c.h"
 #include "drv_config.h"
 /*to simple and more compatible*/
 #include "i2c_hard_config.h"
 #include <string.h>
+
 #ifdef (RT_USING_I2C && BSP_USING_I2C)
 /* not fully support for I2C4 */
 #if defined(BSP_USING_HARD_I2C1) || defined(BSP_USING_HARD_I2C2) || defined(BSP_USING_HARD_I2C3)
@@ -79,30 +78,24 @@ static rt_err_t stm32_i2c_init(struct stm32_i2c *i2c_drv)
     i2c_handle->Init.NoStretchMode = I2C_NOSTRETCH_DISABLE;
     if (HAL_I2C_DeInit(i2c_handle) != HAL_OK)
     {
-        return RT_EFAULT;
+        return -RT_EFAULT;
     }
-    /*复位控制器*/
-    //    i2c_handle->Instance->CR1 |= I2C_CR1_SWRST;
-    //    i2c_handle->Instance->CR1 &= ~I2C_CR1_SWRST;
 
-    // TODO:先确保总线被释放
     if (HAL_I2C_Init(i2c_handle) != HAL_OK)
     {
-        return RT_EFAULT;
+        return -RT_EFAULT;
     }
 
-    /** Configure Analogue filter
-     */
+    /* Configure Analogue filter */
     if (HAL_I2CEx_ConfigAnalogFilter(i2c_handle, I2C_ANALOGFILTER_ENABLE) != HAL_OK)
     {
-        return RT_EFAULT;
+        return -RT_EFAULT;
     }
 
-    /** Configure Digital filter
-     */
+    /* Configure Digital filter */
     if (HAL_I2CEx_ConfigDigitalFilter(i2c_handle, 0) != HAL_OK)
     {
-        return RT_EFAULT;
+        return -RT_EFAULT;
     }
 
     /* I2C2 DMA Init */
@@ -146,18 +139,18 @@ static rt_err_t stm32_i2c_configure(struct rt_i2c_bus_device *bus)
     return stm32_i2c_init(i2c_drv);
 }
 /**
- * @brief 硬件i2c驱动传输
+ * @brief Hardware I2C driver transfer
  * 
- * @param bus 设备总线
- * @param msgs 带传送数据
- * @param num 数据个数
- * @return rt_ssize_t 传输状态
+ * @param bus Device bus
+ * @param msgs Data to be transferred
+ * @param num Number of data
+ * @return rt_ssize_t Transfer status
  */
 static rt_ssize_t stm32_i2c_master_xfer(struct rt_i2c_bus_device *bus,
                                         struct rt_i2c_msg msgs[],
                                         rt_uint32_t num)
 {
-    // for stm32 dma may more stability
+    /* for stm32 dma may more stability */
 #define DMA_TRANS_MIN_LEN 2 /* only buffer length >= DMA_TRANS_MIN_LEN will use DMA mode */
 #define TRANS_TIMEOUT_PERSEC 8 /* per ms will trans nums bytes */
 
@@ -190,13 +183,12 @@ static rt_ssize_t stm32_i2c_master_xfer(struct rt_i2c_bus_device *bus,
         if (next_flag & RT_I2C_NO_START)
         {
             if ((next_flag & RT_I2C_RD) == (msg->flags & RT_I2C_RD))
-            { /*相同的模式，可以使用no start*/
+            { /* The same mode, can use no start */
                 mode = I2C_FIRST_AND_NEXT_FRAME;
             }
             else
             {
-                // 不允许使用no start 换方向必须发送地址
-                // 用户设置错误
+                /* Not allowed to use no start, sending address is required when changing direction, user setting error */
                 LOG_W("user set flags error msg[%d] flags RT_I2C_NO_START has canceled", i + 1);
                 mode = I2C_LAST_FRAME_NO_STOP;
             }
@@ -258,7 +250,7 @@ static rt_ssize_t stm32_i2c_master_xfer(struct rt_i2c_bus_device *bus,
         }
         LOG_D("xfer  next msgs[%d] addr=0x%2x buf= 0x%x len= 0x%x flags = 0x%x\r\n", i + 1, next_msg->addr, next_msg->buf, next_msg->len, next_msg->flags);
     }
-    // 最后的一个包
+    /* last msg */
     msg = &msgs[i];
 		timeout = msg->len/TRANS_TIMEOUT_PERSEC+1;
     if (msg->flags & RT_I2C_NO_STOP)
@@ -320,18 +312,17 @@ static rt_ssize_t stm32_i2c_master_xfer(struct rt_i2c_bus_device *bus,
     LOG_D("xfer  end  %d mags\r\n", num);
     return ret;
 out:
-//    if (ret == HAL_BUSY)
-//        handle->Instance->CR1 |= I2C_IT_STOPI; // 发送停止信号，防止总线锁死
+
     if (handle->ErrorCode == HAL_I2C_ERROR_AF)
     {
         LOG_D("I2C NACK Error now stoped");
-        handle->Instance->CR1 |= I2C_IT_STOPI; // 发送停止信号，防止总线锁死
+        /* Send stop signal to prevent bus lock-up */
+        handle->Instance->CR1 |= I2C_IT_STOPI; 
     }
     if (handle->ErrorCode == HAL_I2C_ERROR_BERR)
     {
         LOG_D("I2C BUS Error now stoped");
-        handle->Instance->CR1 |= I2C_IT_STOPI; // 发送停止信号，防止总线锁死
-    }
+        handle->Instance->CR1 |= I2C_IT_STOPI; 
 		ret=i-1;
     return ret;
 }
@@ -477,15 +468,16 @@ void HAL_I2C_MasterRxCpltCallback(I2C_HandleTypeDef *hi2c)
 }
 void HAL_I2C_ErrorCallback(I2C_HandleTypeDef *hi2c)
 {
+    /* Send stop signal to prevent bus lock-up */
     if (hi2c->ErrorCode == HAL_I2C_ERROR_AF)
     {
         LOG_D("I2C NACK Error now stoped");
-        hi2c->Instance->CR1 |= I2C_IT_STOPI; // 发送停止信号，防止总线锁死
+        hi2c->Instance->CR1 |= I2C_IT_STOPI; 
     }
     if (hi2c->ErrorCode == HAL_I2C_ERROR_BERR)
     {
         LOG_D("I2C BUS Error now stoped");
-        hi2c->Instance->CR1 |= I2C_IT_STOPI; // 发送停止信号，防止总线锁死
+        hi2c->Instance->CR1 |= I2C_IT_STOPI; 
     }
 }
 #ifdef BSP_USING_HARD_I2C1
