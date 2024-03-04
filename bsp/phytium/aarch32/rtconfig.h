@@ -51,6 +51,7 @@
 #define RT_USING_HEAP_ISR
 #define RT_USING_HEAP
 #define RT_USING_DEVICE
+#define RT_USING_SCHED_THREAD_CTX
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 256
 #define RT_CONSOLE_DEVICE_NAME "uart1"
@@ -129,7 +130,6 @@
 #define RT_CAN_USING_CANFD
 #define RT_USING_I2C
 #define RT_USING_I2C_BITOPS
-#define RT_USING_PIN
 #define RT_USING_NULL
 #define RT_USING_ZERO
 #define RT_USING_RANDOM
@@ -144,6 +144,7 @@
 #define RT_USING_SPI
 #define RT_USING_QSPI
 #define RT_USING_DEV_BUS
+#define RT_USING_PIN
 #define RT_USING_KTIME
 
 /* Using USB */

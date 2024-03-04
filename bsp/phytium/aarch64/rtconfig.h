@@ -136,7 +136,6 @@
 #define RT_CAN_USING_CANFD
 #define RT_USING_I2C
 #define RT_USING_I2C_BITOPS
-#define RT_USING_PIN
 #define RT_USING_NULL
 #define RT_USING_ZERO
 #define RT_USING_RANDOM
@@ -151,6 +150,7 @@
 #define RT_USING_SPI
 #define RT_USING_QSPI
 #define RT_USING_DEV_BUS
+#define RT_USING_PIN
 #define RT_USING_KTIME
 
 /* Using USB */
@@ -391,6 +391,26 @@
 #define BSP_USING_UART
 #define RT_USING_UART0
 #define RT_USING_UART1
+#define BSP_USING_SPI
+#define RT_USING_SPIM0
+#define RT_USING_SPIM1
+#define RT_USING_SPIM2
+#define RT_USING_SPIM3
+#define BSP_USING_GPIO
+#define BSP_USING_QSPI
+#define RT_USING_QSPI0
+#define USING_QSPI_CHANNEL0
+#define BSP_USING_ETH
+#define RT_LWIP_PBUF_POOL_BUFSIZE 1700
+#define BSP_USING_PWM
+#define RT_USING_PWM2
+#define BSP_USING_I2C
+#define I2C_USE_MIO
+#define RT_USING_MIO0
+#define RT_USING_MIO1
+#define RT_USING_MIO2
+#define RT_USING_MIO10
+#define BSP_USING_DC
 
 /* Board extended module Drivers */
 

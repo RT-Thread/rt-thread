@@ -70,7 +70,7 @@ void FDriverUdelay(u32 usec)
 
 void FDriverMdelay(u32 msec)
 {
-    rt_thread_mdelay(msec);
+    for(rt_uint32_t wait = 0; wait < 10000000; wait ++);
 }
 
 void FDriverSdelay(u32 sec)
