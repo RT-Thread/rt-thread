@@ -81,10 +81,6 @@ if RT_USING_CAN
         default n
 endif
 
-config RT_USING_HWTIMER
-    bool "Using hardware timer device drivers"
-    default n
-
 config RT_USING_CPUTIME
     bool "Enable CPU time for high resolution clock counter"
     default n
@@ -342,10 +338,6 @@ endif
 
 config RT_USING_PHY
     bool "Using ethernet phy device drivers"
-    default n
-
-config RT_USING_PIN
-    bool "Using generic GPIO device drivers"
     default n
 
 config RT_USING_ADC
@@ -970,8 +962,11 @@ menuconfig RT_USING_VIRTIO
 
 source "$RTT_DIR/components/drivers/ofw/Kconfig"
 source "$RTT_DIR/components/drivers/pic/Kconfig"
+source "$RTT_DIR/components/drivers/pin/Kconfig"
+source "$RTT_DIR/components/drivers/pinctrl/Kconfig"
 source "$RTT_DIR/components/drivers/ktime/Kconfig"
 source "$RTT_DIR/components/drivers/clk/Kconfig"
+source "$RTT_DIR/components/drivers/hwtimer/Kconfig"
 
 menu "Using USB"
     config RT_USING_USB

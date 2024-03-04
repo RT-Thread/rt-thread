@@ -14,6 +14,10 @@
 #include "mmu.h"
 #include "gtimer.h"
 
+#ifdef BSP_USING_GICV3
+#include <gicv3.h>
+#endif
+
 #ifdef RT_USING_SMP
 
 extern unsigned long MMUTable[];
@@ -28,6 +32,10 @@ void rt_hw_secondary_cpu_bsp_start(void)
     rt_hw_vector_init();
 
     arm_gic_cpu_init(0, 0);
+
+#ifdef BSP_USING_GICV3
+    arm_gic_redist_init(0, 0);
+#endif /* BSP_USING_GICV3 */
 
     // local timer init
     rt_hw_gtimer_init();

@@ -89,12 +89,20 @@ void rt_hw_secondary_cpu_up(void)
         __DSB();
 #else
         /* code */
-        FPsciCpuMaskOn(cpu_mask, (uintptr)rt_secondary_cpu_entry);
+        char *entry = (char *)rt_secondary_cpu_entry;
+        entry += PV_OFFSET;
+        FPsciCpuMaskOn(cpu_mask, (uintptr)entry);
         __asm__ volatile("dsb" ::: "memory");
 #endif
 
     }
 }
+
+/**
+ * This function will initialize board
+ */
+extern size_t MMUTable[];
+
 
 void rt_hw_secondary_cpu_bsp_start(void)
 {
@@ -105,6 +113,10 @@ void rt_hw_secondary_cpu_bsp_start(void)
 #if defined(TARGET_ARMV8_AARCH64)
     extern unsigned long MMUTable[];
     rt_hw_mmu_ktbl_set((unsigned long)MMUTable);
+#else
+    rt_uint32_t mmutable_p;
+    mmutable_p = (rt_uint32_t)MMUTable + (rt_uint32_t)PV_OFFSET ;
+    rt_hw_mmu_switch(mmutable_p) ;
 #endif
 
     /* vector init */

@@ -1255,8 +1255,15 @@ rt_uint16_t rt_critical_level(void)
 
     current_thread = rt_cpu_self()->current_thread;
 
-    /* the necessary memory barrier is done on irq_(dis|en)able */
-    critical_lvl = RT_SCHED_CTX(current_thread).critical_lock_nest;
+    if (current_thread)
+    {
+        /* the necessary memory barrier is done on irq_(dis|en)able */
+        critical_lvl = RT_SCHED_CTX(current_thread).critical_lock_nest;
+    }
+    else
+    {
+        critical_lvl = 0;
+    }
 
     rt_hw_local_irq_enable(level);
     return critical_lvl;

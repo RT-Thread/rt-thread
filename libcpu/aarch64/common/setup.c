@@ -22,16 +22,8 @@
 #include <setup.h>
 #include <stdlib.h>
 #include <ioremap.h>
-#include <drivers/ofw.h>
-#include <drivers/ofw_fdt.h>
-#include <drivers/ofw_raw.h>
-#include <drivers/core/dm.h>
+#include <rtdevice.h>
 
-#define rt_sysreg_write(sysreg, val) \
-    __asm__ volatile ("msr "RT_STRINGIFY(sysreg)", %0"::"r"((rt_uint64_t)(val)))
-
-#define rt_sysreg_read(sysreg, val) \
-    __asm__ volatile ("mrs %0, "RT_STRINGIFY(sysreg)"":"=r"((val)))
 #define SIZE_KB  1024
 #define SIZE_MB (1024 * SIZE_KB)
 #define SIZE_GB (1024 * SIZE_MB)
@@ -76,6 +68,68 @@ void rt_hw_fdt_install_early(void *fdt)
     }
 }
 
+#ifdef RT_USING_HWTIMER
+static rt_ubase_t loops_per_tick[RT_CPUS_NR];
+
+static rt_ubase_t cpu_get_cycles(void)
+{
+    rt_ubase_t cycles;
+
+    rt_hw_sysreg_read(cntpct_el0, cycles);
+
+    return cycles;
+}
+
+static void cpu_loops_per_tick_init(void)
+{
+    rt_ubase_t offset;
+    volatile rt_ubase_t freq, step, cycles_end1, cycles_end2;
+    volatile rt_uint32_t cycles_count1 = 0, cycles_count2 = 0;
+
+    rt_hw_sysreg_read(cntfrq_el0, freq);
+    step = freq / RT_TICK_PER_SECOND;
+
+    cycles_end1 = cpu_get_cycles() + step;
+
+    while (cpu_get_cycles() < cycles_end1)
+    {
+        __asm__ volatile ("nop");
+        __asm__ volatile ("add %0, %0, #1":"=r"(cycles_count1));
+    }
+
+    cycles_end2 = cpu_get_cycles() + step;
+
+    while (cpu_get_cycles() < cycles_end2)
+    {
+        __asm__ volatile ("add %0, %0, #1":"=r"(cycles_count2));
+    }
+
+    if ((rt_int32_t)(cycles_count2 - cycles_count1) > 0)
+    {
+        offset = cycles_count2 - cycles_count1;
+    }
+    else
+    {
+        /* Impossible, but prepared for any eventualities */
+        offset = cycles_count2 / 4;
+    }
+
+    loops_per_tick[rt_hw_cpu_id()] = offset;
+}
+
+static void cpu_us_delay(rt_uint32_t us)
+{
+    volatile rt_base_t start = cpu_get_cycles(), cycles;
+
+    cycles = ((us * 0x10c7UL) * loops_per_tick[rt_hw_cpu_id()] * RT_TICK_PER_SECOND) >> 32;
+
+    while ((cpu_get_cycles() - start) < cycles)
+    {
+        rt_hw_cpu_relax();
+    }
+}
+#endif /* RT_USING_HWTIMER */
+
 rt_weak void rt_hw_idle_wfi(void)
 {
     __asm__ volatile ("wfi");
@@ -93,7 +147,7 @@ rt_inline void cpu_info_init(void)
     struct rt_ofw_node *np;
 
     /* get boot cpu info */
-    rt_sysreg_read(mpidr_el1, mpidr);
+    rt_hw_sysreg_read(mpidr_el1, mpidr);
 
     rt_ofw_foreach_cpu_node(np)
     {
@@ -131,6 +185,15 @@ rt_inline void cpu_info_init(void)
     }
 
     rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, rt_cpu_mpidr_table, sizeof(rt_cpu_mpidr_table));
+
+#ifdef RT_USING_HWTIMER
+    cpu_loops_per_tick_init();
+
+    if (!rt_device_hwtimer_us_delay)
+    {
+        rt_device_hwtimer_us_delay = &cpu_us_delay;
+    }
+#endif /* RT_USING_HWTIMER */
 }
 
 rt_inline rt_bool_t is_kernel_aspace(const char *name)
@@ -165,6 +228,8 @@ void rt_hw_common_setup(void)
     rt_region_t platform_mem_region;
     static struct mem_desc platform_mem_desc;
     void *kernel_start, *kernel_end, *memheap_start = RT_NULL, *memheap_end = RT_NULL;
+
+    system_vectors_init();
 
 #ifdef RT_USING_SMART
     rt_hw_mmu_map_init(&rt_kernel_space, (void*)0xfffffffff0000000, 0x10000000, MMUTable, PV_OFFSET);
@@ -325,8 +390,10 @@ void rt_hw_common_setup(void)
 
         for (int i = 0; i < mem_region_nr; ++i, ++mem_region)
         {
-            if (mem_region != page_region)
+            if (mem_region != page_region && mem_region->name)
             {
+                mem_region->start -= PV_OFFSET;
+                mem_region->end -= PV_OFFSET;
                 rt_page_install(*mem_region);
             }
         }
@@ -336,6 +403,10 @@ void rt_hw_common_setup(void)
 
     cpu_info_init();
 
+#ifdef RT_USING_PIC
+    rt_pic_init();
+    rt_pic_irq_init();
+#else
     /* initialize hardware interrupt */
     rt_hw_interrupt_init();
 
@@ -344,8 +415,9 @@ void rt_hw_common_setup(void)
 
     /* initialize timer for os tick */
     rt_hw_gtimer_init();
+#endif
 
-    #ifdef RT_USING_COMPONENTS_INIT
+#ifdef RT_USING_COMPONENTS_INIT
     rt_components_board_init();
 #endif
 
@@ -417,13 +489,18 @@ rt_weak void rt_hw_secondary_cpu_bsp_start(void)
     rt_hw_spin_lock(&_cpus_lock);
 
     /* Save all mpidr */
-    rt_sysreg_read(mpidr_el1, rt_cpu_mpidr_table[cpu_id]);
+    rt_hw_sysreg_read(mpidr_el1, rt_cpu_mpidr_table[cpu_id]);
 
     rt_hw_mmu_ktbl_set((unsigned long)MMUTable);
 
+#ifdef RT_USING_PIC
+    rt_pic_irq_init();
+#else
     rt_hw_interrupt_init();
+#endif
 
     rt_dm_secondary_cpu_init();
+
     rt_hw_interrupt_umask(RT_SCHEDULE_IPI);
     rt_hw_interrupt_umask(RT_STOP_IPI);
 
@@ -444,3 +521,8 @@ rt_weak void rt_hw_secondary_cpu_idle_exec(void)
     rt_hw_wfe();
 }
 #endif
+
+void rt_hw_console_output(const char *str)
+{
+    rt_fdt_earlycon_output(str);
+}

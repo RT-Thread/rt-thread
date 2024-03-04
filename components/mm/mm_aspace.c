@@ -1278,7 +1278,7 @@ int rt_aspace_load_page(rt_aspace_t aspace, void *addr, rt_size_t npage)
 
     if (!varea)
     {
-        LOG_W("%s: varea not exist", __func__);
+        LOG_W("%s: varea not exist(addr=%p)", __func__, addr);
         err = -RT_ENOENT;
     }
     else if ((char *)addr >= end || (rt_size_t)addr & ARCH_PAGE_MASK ||

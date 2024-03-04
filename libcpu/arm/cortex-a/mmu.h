@@ -112,7 +112,7 @@ int rt_hw_mmu_ioremap_init(struct rt_aspace *aspace, void *v_address, size_t siz
 void rt_hw_init_mmu_table(struct mem_desc *mdesc, rt_uint32_t size);
 
 void rt_hw_mmu_setup(struct rt_aspace *aspace, struct mem_desc *mdesc, int desc_nr);
-
+void rt_hw_mmu_init(void);
 int rt_hw_mmu_map_init(struct rt_aspace *aspace, void *v_address, size_t size, size_t *vtable, size_t pv_off);
 void *rt_hw_mmu_map(struct rt_aspace *aspace, void *v_addr, void *p_addr, size_t size, size_t attr);
 void rt_hw_mmu_unmap(struct rt_aspace *aspace, void *v_addr, size_t size);

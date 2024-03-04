@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2023-02-28     leo          first version
+ * 2024-02-26     shelton      update drv_pipe_xfer
  */
 
 #include <rtthread.h>
@@ -107,140 +108,130 @@ static rt_err_t drv_reset_port(rt_uint8_t port)
 static int drv_pipe_xfer(upipe_t pipe, rt_uint8_t token, void *buffer, int nbytes, int timeouts)
 {
     int timeout = timeouts;
+    volatile int retry = 0;
 
-    while(1)
+    if(!connect_status)
     {
-        if(!connect_status)
-        {
-            return -1;
-        }
-        rt_completion_init(&urb_completion);
+        return -1;
+    }
+    rt_completion_init(&urb_completion);
 
-        p_usbotg_instance->p_otg_core->host.hch[pipe->pipe_index].dir = (pipe->ep.bEndpointAddress & 0x80) >> 7;
+    p_usbotg_instance->p_otg_core->host.hch[pipe->pipe_index].dir = (pipe->ep.bEndpointAddress & 0x80) >> 7;
 
-        if(token == 0U)
-        {
-            p_usbotg_instance->p_otg_core->host.hch[pipe->pipe_index].data_pid = HCH_PID_SETUP;
-        }
-        else
-        {
-            p_usbotg_instance->p_otg_core->host.hch[pipe->pipe_index].data_pid = HCH_PID_DATA1;
-        }
+    if(token == 0U)
+    {
+        p_usbotg_instance->p_otg_core->host.hch[pipe->pipe_index].data_pid = HCH_PID_SETUP;
+    }
+    else
+    {
+        p_usbotg_instance->p_otg_core->host.hch[pipe->pipe_index].data_pid = HCH_PID_DATA1;
+    }
 
-        /* endpoint type */
-        switch(pipe->ep.bmAttributes)
-        {
-            /* endpoint is control type */
-            case EPT_CONTROL_TYPE:
-                if((token == 1U) && (((pipe->ep.bEndpointAddress & 0x80) >> 7) == 0U))
-                {
-                    if(nbytes == 0U)
-                    {
-                        p_usbotg_instance->p_otg_core->host.hch[pipe->pipe_index].toggle_out = 1U;
-                    }
-                    if((&p_usbotg_instance->p_otg_core->host)->hch[pipe->pipe_index].toggle_out == 0U)
-                    {
-                        p_usbotg_instance->p_otg_core->host.hch[pipe->pipe_index].data_pid = HCH_PID_DATA0;
-                    }
-                    else
-                    {
-                        p_usbotg_instance->p_otg_core->host.hch[pipe->pipe_index].data_pid = HCH_PID_DATA1;
-                    }
-                }
-                break;
-            /* endpoint is bulk type */
-            case EPT_BULK_TYPE:
-                if(((pipe->ep.bEndpointAddress & 0x80) >> 7) == 0U)
-                {
-                    if( p_usbotg_instance->p_otg_core->host.hch[pipe->pipe_index].toggle_out == 0U)
-                    {
-                        p_usbotg_instance->p_otg_core->host.hch[pipe->pipe_index].data_pid = HCH_PID_DATA0;
-                    }
-                    else
-                    {
-                        p_usbotg_instance->p_otg_core->host.hch[pipe->pipe_index].data_pid = HCH_PID_DATA1;
-                    }
-                }
-                else
-                {
-                    if( p_usbotg_instance->p_otg_core->host.hch[pipe->pipe_index].toggle_in == 0U)
-                    {
-                        p_usbotg_instance->p_otg_core->host.hch[pipe->pipe_index].data_pid = HCH_PID_DATA0;
-                    }
-                    else
-                    {
-                        p_usbotg_instance->p_otg_core->host.hch[pipe->pipe_index].data_pid = HCH_PID_DATA1;
-                    }
-                }
-                break;
-            /* endpoint is int type */
-            case  EPT_INT_TYPE:
-                if(((pipe->ep.bEndpointAddress & 0x80) >> 7) == 0U)
-                {
-                    if( p_usbotg_instance->p_otg_core->host.hch[pipe->pipe_index].toggle_out == 0U)
-                    {
-                        p_usbotg_instance->p_otg_core->host.hch[pipe->pipe_index].data_pid = HCH_PID_DATA0;
-                    }
-                    else
-                    {
-                        p_usbotg_instance->p_otg_core->host.hch[pipe->pipe_index].data_pid = HCH_PID_DATA1;
-                    }
-                }
-                else
-                {
-                    if( p_usbotg_instance->p_otg_core->host.hch[pipe->pipe_index].toggle_in == 0U)
-                    {
-                        p_usbotg_instance->p_otg_core->host.hch[pipe->pipe_index].data_pid = HCH_PID_DATA0;
-                    }
-                    else
-                    {
-                        p_usbotg_instance->p_otg_core->host.hch[pipe->pipe_index].data_pid = HCH_PID_DATA1;
-                    }
-                }
-                break;
-            /* endpoint is isoc type */
-            case EPT_ISO_TYPE:
-                p_usbotg_instance->p_otg_core->host.hch[pipe->pipe_index].data_pid = HCH_PID_DATA0;
-                break;
-
-            default:
-                break;
-        }
-
-        /* set transfer buffer */
-        p_usbotg_instance->p_otg_core->host.hch[pipe->pipe_index].trans_buf = buffer;
-        /* set transfer len*/
-        p_usbotg_instance->p_otg_core->host.hch[pipe->pipe_index].trans_len = nbytes;
-        p_usbotg_instance->p_otg_core->host.hch[pipe->pipe_index].urb_sts = URB_IDLE;
-        p_usbotg_instance->p_otg_core->host.hch[pipe->pipe_index].ch_num = pipe->pipe_index;
-        p_usbotg_instance->p_otg_core->host.hch[pipe->pipe_index].trans_count = 0;
-        p_usbotg_instance->p_otg_core->host.hch[pipe->pipe_index].state = HCH_IDLE;
-
-        /* data in/out for host */
-        usbh_in_out_request((&p_usbotg_instance->p_otg_core->host), pipe->pipe_index);
-
-        rt_completion_wait(&urb_completion, timeout);
-        rt_thread_mdelay(1);
-
-        if(usbh_get_status((&p_usbotg_instance->p_otg_core->host), pipe->pipe_index) == HCH_NAK)
-        {
-            LOG_D("nak");
-            if (pipe->ep.bmAttributes == USB_EP_ATTR_INT)
+    /* endpoint type */
+    switch(pipe->ep.bmAttributes)
+    {
+        /* endpoint is control type */
+        case EPT_CONTROL_TYPE:
+            if((token == 1U) && (((pipe->ep.bEndpointAddress & 0x80) >> 7) == 0U))
             {
-                rt_thread_delay((pipe->ep.bInterval * RT_TICK_PER_SECOND / 1000) > 0 ? (pipe->ep.bInterval * RT_TICK_PER_SECOND / 1000) : 1);
+                if(nbytes == 0U)
+                {
+                    p_usbotg_instance->p_otg_core->host.hch[pipe->pipe_index].toggle_out = 1U;
+                }
+                if((&p_usbotg_instance->p_otg_core->host)->hch[pipe->pipe_index].toggle_out == 0U)
+                {
+                    p_usbotg_instance->p_otg_core->host.hch[pipe->pipe_index].data_pid = HCH_PID_DATA0;
+                }
+                else
+                {
+                    p_usbotg_instance->p_otg_core->host.hch[pipe->pipe_index].data_pid = HCH_PID_DATA1;
+                }
             }
-            usb_hch_halt((&p_usbotg_instance->p_otg_core->host)->usb_reg, pipe->pipe_index);
+            break;
+        /* endpoint is bulk type */
+        case EPT_BULK_TYPE:
+            if(((pipe->ep.bEndpointAddress & 0x80) >> 7) == 0U)
+            {
+                if( p_usbotg_instance->p_otg_core->host.hch[pipe->pipe_index].toggle_out == 0U)
+                {
+                    p_usbotg_instance->p_otg_core->host.hch[pipe->pipe_index].data_pid = HCH_PID_DATA0;
+                }
+                else
+                {
+                    p_usbotg_instance->p_otg_core->host.hch[pipe->pipe_index].data_pid = HCH_PID_DATA1;
+                }
+            }
+            else
+            {
+                if( p_usbotg_instance->p_otg_core->host.hch[pipe->pipe_index].toggle_in == 0U)
+                {
+                    p_usbotg_instance->p_otg_core->host.hch[pipe->pipe_index].data_pid = HCH_PID_DATA0;
+                }
+                else
+                {
+                    p_usbotg_instance->p_otg_core->host.hch[pipe->pipe_index].data_pid = HCH_PID_DATA1;
+                }
+            }
+            break;
+        /* endpoint is int type */
+        case  EPT_INT_TYPE:
+            if(((pipe->ep.bEndpointAddress & 0x80) >> 7) == 0U)
+            {
+                if( p_usbotg_instance->p_otg_core->host.hch[pipe->pipe_index].toggle_out == 0U)
+                {
+                    p_usbotg_instance->p_otg_core->host.hch[pipe->pipe_index].data_pid = HCH_PID_DATA0;
+                }
+                else
+                {
+                    p_usbotg_instance->p_otg_core->host.hch[pipe->pipe_index].data_pid = HCH_PID_DATA1;
+                }
+            }
+            else
+            {
+                if( p_usbotg_instance->p_otg_core->host.hch[pipe->pipe_index].toggle_in == 0U)
+                {
+                    p_usbotg_instance->p_otg_core->host.hch[pipe->pipe_index].data_pid = HCH_PID_DATA0;
+                }
+                else
+                {
+                    p_usbotg_instance->p_otg_core->host.hch[pipe->pipe_index].data_pid = HCH_PID_DATA1;
+                }
+            }
+            break;
+        /* endpoint is isoc type */
+        case EPT_ISO_TYPE:
+            p_usbotg_instance->p_otg_core->host.hch[pipe->pipe_index].data_pid = HCH_PID_DATA0;
+            break;
 
-            usbh_hc_open(&p_usbotg_instance->p_otg_core->host,
-                         pipe->pipe_index,
-                         pipe->ep.bEndpointAddress,
-                         pipe->inst->address,
-                         pipe->ep.bmAttributes,
-                         pipe->ep.wMaxPacketSize,
-                         USB_PRTSPD_FULL_SPEED);
-            continue;
+        default:
+            break;
+    }
+
+    /* set transfer buffer */
+    p_usbotg_instance->p_otg_core->host.hch[pipe->pipe_index].trans_buf = buffer;
+    /* set transfer len*/
+    p_usbotg_instance->p_otg_core->host.hch[pipe->pipe_index].trans_len = nbytes;
+    p_usbotg_instance->p_otg_core->host.hch[pipe->pipe_index].urb_sts = URB_IDLE;
+    p_usbotg_instance->p_otg_core->host.hch[pipe->pipe_index].ch_num = pipe->pipe_index;
+    p_usbotg_instance->p_otg_core->host.hch[pipe->pipe_index].trans_count = 0;
+    p_usbotg_instance->p_otg_core->host.hch[pipe->pipe_index].state = HCH_IDLE;
+
+__resend:
+    /* data in/out for host */
+    usbh_in_out_request((&p_usbotg_instance->p_otg_core->host), pipe->pipe_index);
+
+    retry = 0xFFFFFFFF;
+    while(retry --)
+    {
+        rt_completion_wait(&urb_completion, timeout);
+        if(usbh_get_urb_status((&p_usbotg_instance->p_otg_core->host), pipe->pipe_index) == URB_NOTREADY)
+        {
+            if((pipe->ep.bEndpointAddress & 0x80) == 0)
+            {
+                goto __resend;
+            }
         }
-        else if (usbh_get_status(&p_usbotg_instance->p_otg_core->host, pipe->pipe_index) == HCH_STALL)
+        else if (usbh_get_urb_status(&p_usbotg_instance->p_otg_core->host, pipe->pipe_index) == URB_STALL)
         {
             LOG_D("stall");
             pipe->status = UPIPE_STATUS_STALL;
@@ -250,7 +241,7 @@ static int drv_pipe_xfer(upipe_t pipe, rt_uint8_t token, void *buffer, int nbyte
             }
             return -1;
         }
-        else if (usbh_get_status(&p_usbotg_instance->p_otg_core->host, pipe->pipe_index) == URB_ERROR)
+        else if (usbh_get_urb_status(&p_usbotg_instance->p_otg_core->host, pipe->pipe_index) == URB_ERROR)
         {
             LOG_D("error");
             pipe->status = UPIPE_STATUS_ERROR;
@@ -260,7 +251,7 @@ static int drv_pipe_xfer(upipe_t pipe, rt_uint8_t token, void *buffer, int nbyte
             }
             return -1;
         }
-        else if(URB_DONE == usbh_get_urb_status(&p_usbotg_instance->p_otg_core->host, pipe->pipe_index))
+        else if (usbh_get_urb_status(&p_usbotg_instance->p_otg_core->host, pipe->pipe_index) == URB_DONE)
         {
             LOG_D("ok");
             pipe->status = UPIPE_STATUS_OK;
@@ -268,7 +259,7 @@ static int drv_pipe_xfer(upipe_t pipe, rt_uint8_t token, void *buffer, int nbyte
             {
                 pipe->callback(pipe);
             }
-            size_t size = (&p_usbotg_instance->p_otg_core->host)->hch[pipe->pipe_index].trans_count;
+            rt_size_t size = (&p_usbotg_instance->p_otg_core->host)->hch[pipe->pipe_index].trans_count;
             if (pipe->ep.bEndpointAddress & 0x80)
             {
                 return size;
@@ -279,8 +270,8 @@ static int drv_pipe_xfer(upipe_t pipe, rt_uint8_t token, void *buffer, int nbyte
             }
             return nbytes;
         }
-        continue;
     }
+    return 0;
 }
 
 static rt_uint16_t pipe_index = 0;

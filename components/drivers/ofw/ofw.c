@@ -12,6 +12,7 @@
 #include <rtdevice.h>
 #include <drivers/platform.h>
 #include <drivers/core/bus.h>
+#include "../serial/serial_dm.h"
 
 #define DBG_TAG "rtdm.ofw"
 #define DBG_LVL DBG_INFO
@@ -61,7 +62,7 @@ struct rt_ofw_stub *rt_ofw_stub_probe_range(struct rt_ofw_node *np,
 
 static const char *ofw_console_serial_find(char *dst_con, struct rt_ofw_node *np)
 {
-    rt_object_t rt_obj;
+    rt_object_t rt_obj = RT_NULL;
     const char *ofw_name = RT_NULL;
     struct rt_serial_device *rt_serial = rt_ofw_data(np);
 
@@ -168,7 +169,7 @@ static const char *ofw_console_tty_find(char *dst_con, const char *con)
 rt_err_t rt_ofw_console_setup(void)
 {
     rt_err_t err = -RT_ENOSYS;
-    char con_name[RT_NAME_MAX];
+    char con_name[RT_NAME_MAX], *options = RT_NULL;
     const char *ofw_name = RT_NULL, *stdout_path, *con;
 
     /* chosen.console > chosen.stdout-path > RT_CONSOLE_DEVICE_NAME */
@@ -190,6 +191,18 @@ rt_err_t rt_ofw_console_setup(void)
 
             if (ofw_name)
             {
+                const char *ch = con;
+
+                while (*ch && *ch != ' ')
+                {
+                    if (*ch++ == ',')
+                    {
+                        options = (char *)ch;
+
+                        break;
+                    }
+                }
+
                 err = RT_EOK;
                 break;
             }
@@ -229,6 +242,18 @@ rt_err_t rt_ofw_console_setup(void)
     }
 
     rt_console_set_device(con);
+
+    if (options)
+    {
+        rt_device_t con_dev = rt_console_get_device();
+
+        if (con_dev)
+        {
+            struct serial_configure con_conf = serial_cfg_from_args(options);
+
+            rt_device_control(con_dev, RT_DEVICE_CTRL_CONFIG, &con_conf);
+        }
+    }
 
     rt_fdt_earlycon_kick(FDT_EARLYCON_KICK_COMPLETED);
 
