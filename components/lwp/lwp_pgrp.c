@@ -100,7 +100,7 @@ rt_processgroup_t lwp_pgrp_create(rt_lwp_t leader)
     {
         rt_object_init(&(group->object), RT_Object_Class_ProcessGroup, "pgrp");
         rt_list_init(&(group->process));
-        rt_list_init(&(group->node));
+        rt_list_init(&(group->pgrp_list_node));
         rt_mutex_init(&(group->mutex), "pgrp", RT_IPC_FLAG_PRIO);
         group->leader = leader;
         group->sid = 0;
@@ -140,27 +140,31 @@ int lwp_pgrp_delete(rt_processgroup_t group)
         {
             ctty = session->ctty;
             if (ctty)
+            {
+                /**
+                 * Note: it's safe to release pgrp even we do this multiple,
+                 * the neccessary check is done before the tty actually detach
+                 */
                 tty_lock(ctty);
+                tty_rel_pgrp(ctty, group); // tty_unlock
+            }
+
             SESS_LOCK(session);
-            PGRP_LOCK(group);
+            PGRP_LOCK_NESTED(group);
             if (group->session == session && session->ctty == ctty)
             {
                 rt_object_detach(&(group->object));
                 is_session_free = lwp_session_remove(session, group);
-
-                if (ctty)
-                    tty_rel_pgrp(ctty, group);
             }
             else
             {
                 retry = 1;
+
             }
 
             PGRP_UNLOCK(group);
             if (is_session_free != 1)
                 SESS_UNLOCK(session);
-            if (ctty)
-                tty_unlock(ctty);
         }
         else
         {
@@ -250,7 +254,7 @@ int lwp_pgrp_move(rt_processgroup_t group, rt_lwp_t process)
     while (retry)
     {
         retry = 0;
-        old_group = lwp_pgrp_find(lwp_pgid_get_byprocess(process));
+        old_group = lwp_pgrp_find_and_inc_ref(lwp_pgid_get_byprocess(process));
 
         PGRP_LOCK(old_group);
         LWP_LOCK(process);
@@ -266,6 +270,8 @@ int lwp_pgrp_move(rt_processgroup_t group, rt_lwp_t process)
         }
         PGRP_UNLOCK(old_group);
         LWP_UNLOCK(process);
+
+        lwp_pgrp_dec_ref(old_group);
     }
     PGRP_UNLOCK(group);
 
@@ -331,18 +337,27 @@ sysret_t sys_setpgid(pid_t pid, pid_t pgid)
         return -EINVAL;
     }
 
-    lwp_pid_lock_take();
-    process = lwp_from_pid_locked(pid);
-    lwp_pid_lock_release();
+    self_process = lwp_self();
 
-    if (process == RT_NULL)
+    if (pid == 0)
     {
-        return -ESRCH;
+        pid = self_process->pid;
+        process = self_process;
+    }
+    else
+    {
+        lwp_pid_lock_take();
+        process = lwp_from_pid_locked(pid);
+        lwp_pid_lock_release();
+
+        if (process == RT_NULL)
+        {
+            return -ESRCH;
+        }
     }
 
     LWP_LOCK(process);
 
-    self_process = lwp_self();
     if (process->parent == self_process)
     {
         /**
@@ -387,26 +402,28 @@ sysret_t sys_setpgid(pid_t pid, pid_t pgid)
         group = lwp_pgrp_find(pgid);
         if (group == RT_NULL)
         {
-            err = -EPERM;
-            goto exit;
+            group = lwp_pgrp_create(process);
         }
-        /**
-         * An attempt was made to move a process into a process group in a different session
-         */
-        if (sid != lwp_sid_get_bypgrp(group))
+        else
         {
-            err = -EPERM;
-            goto exit;
+            /**
+             * An attempt was made to move a process into a process group in a different session
+             */
+            if (sid != lwp_sid_get_bypgrp(group))
+            {
+                err = -EPERM;
+                goto exit;
+            }
+            /**
+             * or to change the process group ID of a session leader
+             */
+            if (sid == lwp_to_pid(process))
+            {
+                err = -EPERM;
+                goto exit;
+            }
+            lwp_pgrp_move(group, process);
         }
-        /**
-         * or to change the process group ID of a session leader
-         */
-        if (sid == lwp_to_pid(process))
-        {
-            err = -EPERM;
-            goto exit;
-        }
-        lwp_pgrp_move(group, process);
     }
     else
     {

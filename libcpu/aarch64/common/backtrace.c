@@ -85,7 +85,7 @@ rt_err_t rt_hw_backtrace_frame_unwind(rt_thread_t thread, struct rt_hw_backtrace
     if (fp && !((long)fp & 0x7))
     {
 #ifdef RT_USING_SMART
-        if (thread && thread->lwp)
+        if (thread && thread->lwp && rt_scheduler_is_available())
         {
             rt_lwp_t lwp = thread->lwp;
             void *this_lwp = lwp_self();

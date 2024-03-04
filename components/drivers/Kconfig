@@ -57,17 +57,6 @@ menuconfig RT_USING_SERIAL
             default 64
     endif
 
-config RT_USING_TTY
-    bool "Using TTY SYSTEM"
-    depends on RT_USING_SMART
-    default y
-
-if RT_USING_TTY
-    config RT_TTY_DEBUG
-        bool "Using TTY DEBUG"
-        default n
-endif
-
 config RT_USING_CAN
     bool "Using CAN device drivers"
     default n

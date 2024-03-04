@@ -13,6 +13,7 @@
  * 2023-02-20     wangxiaoyao  fix bug on foreground app switch
  * 2023-10-16     Shell        Support a new backtrace framework
  * 2023-11-17     xqyjlj       add process group and session support
+ * 2023-11-30     Shell        add lwp_startup()
  */
 
 #define DBG_TAG "lwp"
@@ -40,7 +41,7 @@
 #include "lwp_arch_comm.h"
 #include "lwp_signal.h"
 #include "lwp_dbg.h"
-#include "console.h"
+#include <terminal/terminal.h>
 
 #ifdef ARCH_MM_MMU
 #include <lwp_user_mm.h>
@@ -60,16 +61,31 @@ static const char elf_magic[] = {0x7f, 'E', 'L', 'F'};
 #ifdef DFS_USING_WORKDIR
 extern char working_directory[];
 #endif
-static struct termios stdin_termios, old_stdin_termios;
 
-int load_ldso(struct rt_lwp *lwp, char *exec_name, char *const argv[], char *const envp[]);
-
-struct termios *get_old_termios(void)
+/**
+ * @brief The default console is only a backup device with lowest priority.
+ *        It's always recommended to scratch the console from the boot arguments.
+ *        And dont forget to register the device with a higher priority.
+ */
+static rt_err_t lwp_default_console_setup(void)
 {
-    return &old_stdin_termios;
+    rt_device_t bakdev = rt_device_find("ttyS0");
+    rt_err_t rc;
+
+    if (bakdev)
+    {
+        lwp_console_register_backend(bakdev, LWP_CONSOLE_LOWEST_PRIOR);
+        rc = RT_EOK;
+    }
+    else
+    {
+        rc = -RT_EINVAL;
+    }
+
+    return rc;
 }
 
-int lwp_component_init(void)
+static int lwp_component_init(void)
 {
     int rc;
     if ((rc = lwp_tid_init()) != RT_EOK)
@@ -84,9 +100,98 @@ int lwp_component_init(void)
     {
         LOG_E("%s: rt_channel_component_init failed", __func__);
     }
+    else if ((rc = lwp_futex_init()) != RT_EOK)
+    {
+        LOG_E("%s: lwp_futex_init() failed", __func__);
+    }
+    else if ((rc = lwp_default_console_setup()) != RT_EOK)
+    {
+        LOG_E("%s: lwp_default_console_setup() failed", __func__);
+    }
     return rc;
 }
 INIT_COMPONENT_EXPORT(lwp_component_init);
+
+rt_weak int lwp_startup_debug_request(void)
+{
+    return 0;
+}
+
+#define LATENCY_TIMES (3)
+#define LATENCY_IN_MSEC (128)
+#define LWP_CONSOLE_PATH "CONSOLE=/dev/console"
+const char *init_search_path[] = {
+    "/sbin/init",
+    "/bin/init",
+};
+
+/**
+ * Startup process 0 and do the essential works
+ * This is the "Hello World" point of RT-Smart
+ */
+static int lwp_startup(void)
+{
+    int error;
+
+    const char *init_path;
+    char *argv[] = {0, "&"};
+    char *envp[] = {LWP_CONSOLE_PATH, 0};
+
+#ifdef LWP_DEBUG
+    int command;
+    int countdown = LATENCY_TIMES;
+    while (countdown)
+    {
+        command = lwp_startup_debug_request();
+        if (command)
+        {
+            return 0;
+        }
+        rt_kprintf("Press any key to stop init process startup ... %d\n", countdown);
+        countdown -= 1;
+        rt_thread_mdelay(LATENCY_IN_MSEC);
+    }
+    rt_kprintf("Starting init ...\n");
+#endif
+
+    for (size_t i = 0; i < sizeof(init_search_path)/sizeof(init_search_path[0]); i++)
+    {
+        struct stat s;
+        init_path = init_search_path[i];
+        error = stat(init_path, &s);
+        if (error == 0)
+        {
+            argv[0] = (void *)init_path;
+            error = lwp_execve((void *)init_path, 0, sizeof(argv)/sizeof(argv[0]), argv, envp);
+            if (error < 0)
+            {
+                LOG_E("%s: failed to startup process 0 (init)\n"
+                    "Switching to legacy mode...", __func__);
+            }
+            else if (error != 1)
+            {
+                LOG_E("%s: pid 1 is already allocated", __func__);
+                error = -EBUSY;
+            }
+            else
+            {
+                rt_lwp_t p = lwp_from_pid_locked(1);
+                p->sig_protected = 0;
+
+                error = 0;
+            }
+            break;
+        }
+    }
+
+    if (error)
+    {
+        LOG_E("%s: init program not found\n"
+            "Switching to legacy mode...", __func__);
+    }
+    return error;
+}
+INIT_APP_EXPORT(lwp_startup);
 
 void lwp_setcwd(char *buf)
 {
@@ -101,11 +206,11 @@ void lwp_setcwd(char *buf)
     lwp = (struct rt_lwp *)rt_thread_self()->lwp;
     if (lwp)
     {
-        rt_strncpy(lwp->working_directory, buf, DFS_PATH_MAX);
+        rt_strncpy(lwp->working_directory, buf, DFS_PATH_MAX - 1);
     }
     else
     {
-        rt_strncpy(working_directory, buf, DFS_PATH_MAX);
+        rt_strncpy(working_directory, buf, DFS_PATH_MAX - 1);
     }
 
     return ;
@@ -115,8 +220,13 @@ char *lwp_getcwd(void)
 {
     char *dir_buf = RT_NULL;
     struct rt_lwp *lwp = RT_NULL;
+    rt_thread_t thread = rt_thread_self();
 
-    lwp = (struct rt_lwp *)rt_thread_self()->lwp;
+    if (thread)
+    {
+        lwp = (struct rt_lwp *)thread->lwp;
+    }
+
     if (lwp)
     {
         if(lwp->working_directory[0] != '/')
@@ -1078,25 +1188,35 @@ void lwp_cleanup(struct rt_thread *tid)
     return;
 }
 
-static void lwp_copy_stdio_fdt(struct rt_lwp *lwp)
+static void lwp_execve_setup_stdio(struct rt_lwp *lwp)
 {
-    struct dfs_file *d;
     struct dfs_fdtable *lwp_fdt;
+    struct dfs_file *cons_file;
+    int cons_fd;
 
     lwp_fdt = &lwp->fdt;
+
+    /* open console */
+    cons_fd = open("/dev/console", O_RDWR);
+    if (cons_fd < 0)
+    {
+        LOG_E("%s: Cannot open console tty", __func__);
+        return ;
+    }
+    LOG_D("%s: open console as fd %d", __func__, cons_fd);
+
     /* init 4 fds */
     lwp_fdt->fds = rt_calloc(4, sizeof(void *));
     if (lwp_fdt->fds)
     {
+        cons_file = fd_get(cons_fd);
         lwp_fdt->maxfd = 4;
-        d = fd_get(0);
-        fdt_fd_associate_file(lwp_fdt, 0, d);
-        d = fd_get(1);
-        fdt_fd_associate_file(lwp_fdt, 1, d);
-        d = fd_get(2);
-        fdt_fd_associate_file(lwp_fdt, 2, d);
+        fdt_fd_associate_file(lwp_fdt, 0, cons_file);
+        fdt_fd_associate_file(lwp_fdt, 1, cons_file);
+        fdt_fd_associate_file(lwp_fdt, 2, cons_file);
     }
 
+    close(cons_fd);
     return;
 }
 
@@ -1198,11 +1318,8 @@ pid_t lwp_execve(char *filename, int debug, int argc, char **argv, char **envp)
     int result;
     struct rt_lwp *lwp;
     char *thread_name;
-    char *argv_last = argv[argc - 1];
-    int bg = 0;
     struct process_aux *aux;
     int tid = 0;
-    int ret;
 
     if (filename == RT_NULL)
     {
@@ -1214,7 +1331,7 @@ pid_t lwp_execve(char *filename, int debug, int argc, char **argv, char **envp)
         return -EACCES;
     }
 
-    lwp = lwp_create(LWP_CREATE_FLAG_ALLOC_PID);
+    lwp = lwp_create(LWP_CREATE_FLAG_ALLOC_PID | LWP_CREATE_FLAG_NOTRACE_EXEC);
 
     if (lwp == RT_NULL)
     {
@@ -1237,12 +1354,6 @@ pid_t lwp_execve(char *filename, int debug, int argc, char **argv, char **envp)
     }
 #endif
 
-    if (argv_last[0] == '&' && argv_last[1] == '\0')
-    {
-        argc--;
-        bg = 1;
-    }
-
     if ((aux = lwp_argscopy(lwp, argc, argv, envp)) == RT_NULL)
     {
         lwp_tid_put(tid);
@@ -1264,7 +1375,7 @@ pid_t lwp_execve(char *filename, int debug, int argc, char **argv, char **envp)
         rt_thread_t thread = RT_NULL;
         rt_uint32_t priority = 25, tick = 200;
 
-        lwp_copy_stdio_fdt(lwp);
+        lwp_execve_setup_stdio(lwp);
 
         /* obtain the base name */
         thread_name = strrchr(filename, '/');
@@ -1285,105 +1396,46 @@ pid_t lwp_execve(char *filename, int debug, int argc, char **argv, char **envp)
         if (thread != RT_NULL)
         {
             struct rt_lwp *self_lwp;
+            rt_session_t session;
+            rt_processgroup_t group;
 
             thread->tid = tid;
             lwp_tid_set_thread(tid, thread);
             LOG_D("lwp kernel => (0x%08x, 0x%08x)\n", (rt_size_t)thread->stack_addr,
                     (rt_size_t)thread->stack_addr + thread->stack_size);
             self_lwp = lwp_self();
+
+            /* when create init, self_lwp == null */
+            if (self_lwp == RT_NULL && lwp_to_pid(lwp) != 1)
+            {
+                self_lwp = lwp_from_pid_and_lock(1);
+            }
+
             if (self_lwp)
             {
-                //lwp->tgroup_leader = &thread; //add thread group leader for lwp
-                lwp->__pgrp = tid;
-                lwp->session = self_lwp->session; // TODO: should be delete
                 /* lwp add to children link */
-                // lwp_children_register(self_lwp, lwp);
-            }
-            else
-            {
-                //lwp->tgroup_leader = &thread; //add thread group leader for lwp
-                lwp->__pgrp = tid; // TODO: should be delete
+                lwp_children_register(self_lwp, lwp);
             }
 
-            rt_session_t session = RT_NULL;
-            rt_processgroup_t group = RT_NULL;
+            session = RT_NULL;
+            group = RT_NULL;
 
             group = lwp_pgrp_create(lwp);
-            lwp_pgrp_insert(group, lwp);
-            if (self_lwp == RT_NULL)
+            if (group)
             {
-                session = lwp_session_find(lwp_sid_get_byprocess(self_lwp));
-                lwp_session_insert(session, group);
-            }
-            else
-            {
-                session = lwp_session_create(group);
-                lwp_session_insert(session, group);
-            }
-
-            if (!bg)
-            {
-                if (lwp->session == -1)
+                lwp_pgrp_insert(group, lwp);
+                if (self_lwp == RT_NULL)
                 {
-                    struct tty_struct *tty = RT_NULL;
-                    struct rt_lwp *old_lwp;
-                    tty = (struct tty_struct *)console_tty_get();
-                    old_lwp = tty->foreground;
-                    if (old_lwp)
-                    {
-                        rt_mutex_take(&tty->lock, RT_WAITING_FOREVER);
-                        ret = tty_push(&tty->head, old_lwp);
-                        rt_mutex_release(&tty->lock);
-
-                        if (ret < 0)
-                        {
-                            lwp_tid_put(tid);
-                            lwp_ref_dec(lwp);
-                            LOG_E("malloc fail!\n");
-                            return -ENOMEM;
-                        }
-                    }
-
-                    lwp->tty = tty;
-                    lwp->tty->pgrp = lwp->__pgrp;
-                    lwp->tty->session = lwp->session;
-                    lwp->tty->foreground = lwp;
-                    tcgetattr(1, &stdin_termios);
-                    old_stdin_termios = stdin_termios;
-                    stdin_termios.c_lflag |= ICANON | ECHO | ECHOCTL;
-                    tcsetattr(1, 0, &stdin_termios);
+                    session = lwp_session_create(lwp);
+                    lwp_session_insert(session, group);
                 }
                 else
                 {
-                    if (self_lwp != RT_NULL)
-                    {
-                        rt_mutex_take(&self_lwp->tty->lock, RT_WAITING_FOREVER);
-                        ret = tty_push(&self_lwp->tty->head, self_lwp);
-                        rt_mutex_release(&self_lwp->tty->lock);
-                        if (ret < 0)
-                        {
-                            lwp_tid_put(tid);
-                            lwp_ref_dec(lwp);
-                            LOG_E("malloc fail!\n");
-                            return -ENOMEM;
-                        }
-
-                        lwp->tty = self_lwp->tty;
-                        lwp->tty->pgrp = lwp->__pgrp;
-                        lwp->tty->session = lwp->session;
-                        lwp->tty->foreground = lwp;
-                    }
-                    else
-                    {
-                        lwp->tty = RT_NULL;
-                    }
-
+                    session = lwp_session_find(lwp_sid_get_byprocess(self_lwp));
+                    lwp_session_insert(session, group);
                 }
             }
-            else
-            {
-                lwp->background = RT_TRUE;
-            }
+
             thread->lwp = lwp;
 #ifndef ARCH_MM_MMU
             struct lwp_app_head *app_head = (struct lwp_app_head*)lwp->text_entry;
@@ -1502,7 +1554,7 @@ rt_err_t lwp_backtrace_frame(rt_thread_t uthread, struct rt_hw_backtrace_frame *
     char **argv;
     rt_lwp_t lwp;
 
-    if (uthread->lwp)
+    if (uthread && uthread->lwp && rt_scheduler_is_available())
     {
         lwp = uthread->lwp;
         argv = lwp_get_command_line_args(lwp);

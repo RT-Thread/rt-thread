@@ -74,9 +74,9 @@ enum rt_object_info_type
     RT_Object_Info_Memory,                             /**< The object is a memory. */
 #endif
 #ifdef RT_USING_SMART
-    RT_Object_Info_Channel,                             /**< The object is a IPC channel */
-    RT_Object_Info_ProcessGroup,                        /**< The object is a process group */
-    RT_Object_Info_Session,                             /**< The object is a session */
+    RT_Object_Info_Channel,                            /**< The object is a IPC channel */
+    RT_Object_Info_ProcessGroup,                       /**< The object is a process group */
+    RT_Object_Info_Session,                            /**< The object is a session */
 #endif
 #ifdef RT_USING_HEAP
     RT_Object_Info_Custom,                             /**< The object is a custom object */
@@ -476,7 +476,7 @@ rt_object_t rt_object_allocate(enum rt_object_class_type type, const char *name)
     object->flag = 0;
 
 #if RT_NAME_MAX > 0
-    rt_strncpy(object->name, name, RT_NAME_MAX); /* copy name */
+    rt_strncpy(object->name, name, RT_NAME_MAX - 1); /* copy name */
 #else
     object->name = name;
 #endif /* RT_NAME_MAX > 0 */

@@ -8,7 +8,6 @@
  * 2020/10/7      bernard      the first version
  */
 
-#include <stdio.h>
 #include <rtthread.h>
 
 int main(void)

@@ -10,6 +10,9 @@
  * 2023-07-04     Shell        Support siginfo, sigqueue
  *                             remove lwp_signal_backup/restore() to reduce architecture codes
  *                             update the generation, pending and delivery routines
+ * 2023-11-22     Shell        Support for job control signal. Fixup of signal catch while
+ *                             some of the signals is blocked, but no more further dequeue is applied.
+ *                             Add itimer support
  */
 #define __RT_IPC_SOURCE__
 #define DBG_TAG "lwp.signal"
@@ -24,7 +27,7 @@
 #include "sys/signal.h"
 #include "syscall_generic.h"
 
-static lwp_siginfo_t siginfo_create(int signo, int code, int value)
+static lwp_siginfo_t siginfo_create(rt_thread_t current, int signo, int code, lwp_siginfo_ext_t ext)
 {
     lwp_siginfo_t siginfo;
     struct rt_lwp *self_lwp;
@@ -35,10 +38,10 @@ static lwp_siginfo_t siginfo_create(int signo, int code, int value)
     {
         siginfo->ksiginfo.signo = signo;
         siginfo->ksiginfo.code = code;
-        siginfo->ksiginfo.value = value;
+        siginfo->ext = ext;
 
-        self_lwp = lwp_self();
-        self_thr = rt_thread_self();
+        self_thr = current;
+        self_lwp = current->lwp;
         if (self_lwp)
         {
             siginfo->ksiginfo.from_pid = self_lwp->pid;
@@ -56,6 +59,12 @@ static lwp_siginfo_t siginfo_create(int signo, int code, int value)
 
 rt_inline void siginfo_delete(lwp_siginfo_t siginfo)
 {
+    if (siginfo->ext)
+    {
+        rt_free(siginfo->ext);
+        siginfo->ext = RT_NULL;
+    }
+
     rt_free(siginfo);
 }
 
@@ -296,10 +305,30 @@ static lwp_siginfo_t sigqueue_dequeue(lwp_sigqueue_t sigqueue, int signo)
     return found;
 }
 
+/**
+ * Discard all the signal matching `signo` in sigqueue
+ */
 static void sigqueue_discard(lwp_sigqueue_t sigqueue, int signo)
 {
     lwp_siginfo_t queuing_si;
-    while (!sigqueue_isempty(sigqueue))
+    while (sigqueue_ismember(sigqueue, signo))
+    {
+        queuing_si = sigqueue_dequeue(sigqueue, signo);
+        siginfo_delete(queuing_si);
+    }
+}
+
+/**
+ * Discard all the queuing signals in sigset
+ */
+static void sigqueue_discard_sigset(lwp_sigqueue_t sigqueue, lwp_sigset_t *sigset)
+{
+    lwp_siginfo_t queuing_si;
+    lwp_sigset_t mask;
+    int signo;
+
+    _signotsets(&mask, sigset);
+    while ((signo = sigqueue_peek(sigqueue, &mask)) != 0)
     {
         queuing_si = sigqueue_dequeue(sigqueue, signo);
         siginfo_delete(queuing_si);
@@ -312,10 +341,20 @@ RT_STATIC_ASSERT(lp_width_same, sizeof(void *) == sizeof(long));
 /** translate lwp siginfo to user siginfo_t  */
 rt_inline void siginfo_k2u(lwp_siginfo_t ksigi, siginfo_t *usigi)
 {
+    int signo = ksigi->ksiginfo.signo;
     usigi->si_code = ksigi->ksiginfo.code;
-    usigi->si_signo = ksigi->ksiginfo.signo;
-    usigi->si_value.sival_ptr = (void *)ksigi->ksiginfo.value;
+    usigi->si_signo = signo;
     usigi->si_pid = ksigi->ksiginfo.from_pid;
+
+    if (ksigi->ext)
+    {
+        if (signo == SIGCHLD)
+        {
+            usigi->si_status = ksigi->ext->sigchld.status;
+            usigi->si_utime = ksigi->ext->sigchld.stime;
+            usigi->si_stime = ksigi->ext->sigchld.utime;
+        }
+    }
 
     /* deprecated field */
     usigi->si_errno = 0;
@@ -417,7 +456,9 @@ rt_err_t lwp_signal_init(struct lwp_signal *sig)
     memset(&sig->sig_action_onstack, 0, sizeof(sig->sig_action_onstack));
     memset(&sig->sig_action_restart, 0, sizeof(sig->sig_action_restart));
     memset(&sig->sig_action_siginfo, 0, sizeof(sig->sig_action_siginfo));
+    memset(&sig->sig_action_nocldstop, 0, sizeof(sig->sig_action_nocldstop));
     lwp_sigqueue_init(&sig->sig_queue);
+
     return rc;
 }
 
@@ -433,17 +474,19 @@ rt_err_t lwp_signal_detach(struct lwp_signal *signal)
 
 int lwp_thread_signal_suspend_check(rt_thread_t thread, int suspend_flag)
 {
-    struct rt_lwp *lwp = (struct rt_lwp*)thread->lwp;
+    struct rt_lwp *lwp = (struct rt_lwp *)thread->lwp;
+    lwp_sigset_t sigmask = thread->signal.sigset_mask;
     int ret = 0;
 
+    _sigaddset(&sigmask, SIGCONT);
     switch (suspend_flag)
     {
         case RT_INTERRUPTIBLE:
-            if (!sigqueue_isempty(_SIGQ(thread)))
+            if (sigqueue_peek(_SIGQ(thread), &sigmask))
             {
                 break;
             }
-            if (thread->lwp && !sigqueue_isempty(_SIGQ(lwp)))
+            if (thread->lwp && sigqueue_peek(_SIGQ(lwp), &sigmask))
             {
                 break;
             }
@@ -470,84 +513,201 @@ int lwp_thread_signal_suspend_check(rt_thread_t thread, int suspend_flag)
     return ret;
 }
 
-void lwp_thread_signal_catch(void *exp_frame)
+rt_inline rt_bool_t _is_jobctl_signal(rt_lwp_t lwp, int signo)
 {
-    int signo = 0;
-    struct rt_thread *thread;
-    struct rt_lwp *lwp;
-    lwp_siginfo_t siginfo = 0;
-    lwp_sigqueue_t pending;
-    lwp_sigset_t *sig_mask;
-    lwp_sigset_t save_sig_mask;
-    lwp_sigset_t new_sig_mask;
-    lwp_sighandler_t handler = 0;
-    siginfo_t usiginfo;
-    siginfo_t *p_usi = RT_NULL;
+    lwp_sigset_t jobctl_sigset = lwp_sigset_init(LWP_SIG_JOBCTL_SET);
 
-    thread = rt_thread_self();
-    lwp = (struct rt_lwp*)thread->lwp;
+    return lwp_sigismember(&jobctl_sigset, signo);
+}
 
-    RT_ASSERT(!!lwp);
-    LWP_LOCK(lwp);
+rt_inline rt_bool_t _is_stop_signal(rt_lwp_t lwp, int signo)
+{
+    lwp_sigset_t stop_sigset = lwp_sigset_init(LWP_SIG_STOP_SET);
 
-    /* check if signal exist */
-    if (!sigqueue_isempty(_SIGQ(thread)))
+    return lwp_sigismember(&stop_sigset, signo);
+}
+
+rt_inline rt_bool_t _need_notify_status_changed(rt_lwp_t lwp, int signo)
+{
+    return !lwp_sigismember(&lwp->signal.sig_action_nocldstop, signo);
+}
+
+/**
+ * wakeup the waitpid_waiters if any, and try to generate SIGCHLD if they are
+ * not disable explicitly by user.
+ *
+ * TODO: This event is always per-process and doesn't make whole lot of
+ * sense for ptracers, who shouldn't consume the state via wait(2) either,
+ * but, for backward compatibility, notify the ptracer of the group leader
+ * too unless it's gonna be a duplicate.
+ */
+static void _notify_parent_and_leader(rt_lwp_t child_lwp, rt_thread_t child_thr, int trig_signo, rt_bool_t is_stop)
+{
+    int si_code;
+    lwp_siginfo_ext_t ext;
+    rt_lwp_t parent_lwp = child_lwp->parent;
+
+    if (!parent_lwp)
+        return ;
+
+    /* prepare the event data for parent to query */
+    if (is_stop)
     {
-        pending = _SIGQ(thread);
-        sig_mask = &thread->signal.sigset_mask;
-    }
-    else if (!sigqueue_isempty(_SIGQ(lwp)))
-    {
-        pending = _SIGQ(lwp);
-        sig_mask = &thread->signal.sigset_mask;
+        si_code = CLD_STOPPED;
+        child_lwp->lwp_status = LWP_CREATE_STAT_STOPPED(trig_signo);
     }
     else
     {
-        pending = RT_NULL;
+        si_code = CLD_CONTINUED;
+        child_lwp->lwp_status = LWP_CREATE_STAT_CONTINUED;
     }
 
-    if (pending)
+    /* wakeup waiter on waitpid(2) */
+    lwp_waitpid_kick(parent_lwp, child_lwp);
+
+    if (_need_notify_status_changed(parent_lwp, trig_signo))
     {
-        /* peek the pending signal */
-        signo = sigqueue_peek(pending, sig_mask);
-        if (signo)
+        ext = rt_malloc(sizeof(struct lwp_siginfo_ext));
+        if (ext)
         {
-            siginfo = sigqueue_dequeue(pending, signo);
-            RT_ASSERT(siginfo != RT_NULL);
-            handler = _get_sighandler_locked(lwp, signo);
+            ext->sigchld.status = trig_signo;
 
-            /* IGN signal will never be queued */
-            RT_ASSERT(handler != LWP_SIG_ACT_IGN);
+            /* TODO: signal usage is not supported */
+            ext->sigchld.stime = child_thr->system_time;
+            ext->sigchld.utime = child_thr->user_time;
+        }
 
-            /* copy the blocked signal mask from the registered signal action */
-            memcpy(&new_sig_mask, &lwp->signal.sig_action_mask[signo - 1], sizeof(new_sig_mask));
+        /* generate SIGCHLD for parent */
+        lwp_signal_kill(parent_lwp, SIGCHLD, si_code, ext);
+    }
+}
 
-            if (!_sigismember(&lwp->signal.sig_action_nodefer, signo))
-                _sigaddset(&new_sig_mask, signo);
+static int _do_signal_wakeup(rt_thread_t thread, int sig);
+static rt_err_t _stop_thread_locked(rt_lwp_t self_lwp, rt_thread_t cur_thr, int signo,
+                                    lwp_siginfo_t si, lwp_sigqueue_t sq)
+{
+    rt_err_t error;
+    int jobctl_stopped = self_lwp->jobctl_stopped;
+    rt_thread_t iter;
 
-            _thread_signal_mask(thread, LWP_SIG_MASK_CMD_BLOCK, &new_sig_mask, &save_sig_mask);
-
-            /* siginfo is need for signal action */
-            if (_sigismember(&lwp->signal.sig_action_siginfo, signo))
-            {
-                siginfo_k2u(siginfo, &usiginfo);
-                p_usi = &usiginfo;
-            }
-            else
-                p_usi = RT_NULL;
+    /* race to setup jobctl stopped flags */
+    if (!jobctl_stopped)
+    {
+        self_lwp->jobctl_stopped = RT_TRUE;
+        self_lwp->wait_reap_stp = RT_FALSE;
+        rt_list_for_each_entry(iter, &self_lwp->t_grp, sibling)
+        {
+            if (iter != cur_thr)
+                _do_signal_wakeup(iter, signo);
         }
     }
+
+    /**
+     * raise the event again so siblings is able to catch it again.
+     * `si` will be discarded while SIGCONT is generatd
+     */
+    sigqueue_enqueue(sq, si);
+
+    /* release the lwp lock so we can happily suspend */
+    LWP_UNLOCK(self_lwp);
+
+    rt_set_errno(RT_EOK);
+
+    /* After suspension, only the SIGKILL and SIGCONT will wake this thread up */
+    error = rt_thread_suspend_with_flag(cur_thr, RT_KILLABLE);
+    if (error == RT_EOK)
+    {
+        rt_schedule();
+        error = rt_get_errno();
+        error = error > 0 ? -error : error;
+    }
+
+    if (!jobctl_stopped &&
+        (sigqueue_ismember(_SIGQ(self_lwp), SIGCONT) ||
+        sigqueue_ismember(_SIGQ(cur_thr), SIGCONT)))
+    {
+        /**
+         * if we are resumed by a SIGCONT and we are the winner of racing
+         * notify parent of the incoming event
+         */
+        _notify_parent_and_leader(self_lwp, cur_thr, SIGCONT, RT_FALSE);
+    }
+
+    /* reacquire the lock since we release it before */
+    LWP_LOCK(self_lwp);
+
+    return error;
+}
+
+static void _catch_signal_locked(rt_lwp_t lwp, rt_thread_t thread, int signo,
+                                 lwp_siginfo_t siginfo, lwp_sighandler_t handler,
+                                 void *exp_frame)
+{
+    lwp_sigset_t new_sig_mask;
+    lwp_sigset_t save_sig_mask;
+    siginfo_t usiginfo;
+    siginfo_t *p_usi;
+
+    /* siginfo is need for signal action */
+    if (_sigismember(&lwp->signal.sig_action_siginfo, signo))
+    {
+        siginfo_k2u(siginfo, &usiginfo);
+        p_usi = &usiginfo;
+    }
+    else
+    {
+        p_usi = RT_NULL;
+    }
+
+    /**
+     * lock is acquired by caller. Release it so that we can happily go to the
+     * signal handler in user space
+     */
     LWP_UNLOCK(lwp);
 
-    if (pending && signo)
-    {
-        siginfo_delete(siginfo);
+    siginfo_delete(siginfo);
 
-        /* signal default handler */
-        if (handler == LWP_SIG_ACT_DFL)
+    /* signal default handler */
+    if (handler == LWP_SIG_ACT_DFL)
+    {
+        lwp_sigset_t ign_sigset;
+
+        ign_sigset = lwp_sigset_init(LWP_SIG_IGNORE_SET);
+        if (signo == SIGCONT)
         {
+            arch_syscall_set_errno(exp_frame, EINTR, ERESTART);
+            arch_thread_signal_enter(signo, p_usi, exp_frame, 0, &thread->signal.sigset_mask);
+        }
+        else if (!lwp_sigismember(&ign_sigset, signo) && !lwp->sig_protected)
+        {
+            /* for those defautl handler is to terminate process */
             LOG_D("%s: default handler; and exit", __func__);
-            sys_exit_group(0);
+
+            /* TODO: coredump if neccessary */
+            lwp_exit(lwp, LWP_CREATE_STAT_SIGNALED(signo, 0));
+        }
+        /**
+         * otherwise is to ignore the signal,
+         * -> then reacquire the lock and return
+         */
+    }
+    else if (handler == LWP_SIG_ACT_IGN)
+    {
+        /* do nothing */
+    }
+    else
+    {
+        /* copy the blocked signal mask from the registered signal action */
+        memcpy(&new_sig_mask, &lwp->signal.sig_action_mask[signo - 1], sizeof(new_sig_mask));
+
+        if (!_sigismember(&lwp->signal.sig_action_nodefer, signo))
+            _sigaddset(&new_sig_mask, signo);
+
+        _thread_signal_mask(thread, LWP_SIG_MASK_CMD_BLOCK, &new_sig_mask, &save_sig_mask);
+
+        if (_sigismember(&lwp->signal.sig_action_restart, signo))
+        {
+            arch_syscall_set_errno(exp_frame, EINTR, ERESTART);
         }
 
         /**
@@ -557,18 +717,92 @@ void lwp_thread_signal_catch(void *exp_frame)
          */
         LOG_D("%s: enter signal handler(signo=%d) at %p", __func__, signo, handler);
         arch_thread_signal_enter(signo, p_usi, exp_frame, handler, &save_sig_mask);
+
         /* the arch_thread_signal_enter() never return */
         RT_ASSERT(0);
     }
+
+    /* reacquire the lock because we release it before */
+    LWP_LOCK(lwp);
 }
+
+void lwp_thread_signal_catch(void *exp_frame)
+{
+    struct rt_thread *thread;
+    struct rt_lwp *lwp;
+    lwp_sigqueue_t pending;
+    lwp_sigset_t *sig_mask;
+    int retry_signal_catch;
+    int signo;
+
+    thread = rt_thread_self();
+    lwp = (struct rt_lwp *)thread->lwp;
+
+    RT_ASSERT(!!lwp);
+    LWP_LOCK(lwp);
+
+    do {
+        /* if stopped process resume, we will retry to catch the signal */
+        retry_signal_catch = 0;
+        signo = 0;
+
+        /* try to peek a signal which is pending and not blocked by this thread */
+        if (!sigqueue_isempty(_SIGQ(thread)))
+        {
+            pending = _SIGQ(thread);
+            sig_mask = &thread->signal.sigset_mask;
+            signo = sigqueue_peek(pending, sig_mask);
+        }
+        if (!signo && !sigqueue_isempty(_SIGQ(lwp)))
+        {
+            pending = _SIGQ(lwp);
+            sig_mask = &thread->signal.sigset_mask;
+            signo = sigqueue_peek(pending, sig_mask);
+        }
+
+        if (signo)
+        {
+            lwp_siginfo_t siginfo;
+            lwp_sighandler_t handler;
+
+            LOG_D("%s(signo=%d)", __func__, signo);
+
+            siginfo = sigqueue_dequeue(pending, signo);
+            RT_ASSERT(siginfo != RT_NULL);
+            handler = _get_sighandler_locked(lwp, signo);
+
+            if (_is_stop_signal(lwp, signo) && handler == LWP_SIG_ACT_DFL)
+            {
+                /* notify the status update for parent process */
+                _notify_parent_and_leader(lwp, thread, signo, RT_TRUE);
+
+                LOG_D("%s: pid=%d stopped", __func__, lwp->pid);
+                _stop_thread_locked(lwp, thread, signo, siginfo, pending);
+                LOG_D("%s: pid=%d continued", __func__, lwp->pid);
+
+                /* wakeup and retry to catch signals send to us */
+                retry_signal_catch = 1;
+            }
+            else
+            {
+                /* do a normal, non-jobctl signal handling */
+                _catch_signal_locked(lwp, thread, signo, siginfo, handler, exp_frame);
+            }
+        }
+    } while (retry_signal_catch);
+
+    LWP_UNLOCK(lwp);
+}
+
 static int _do_signal_wakeup(rt_thread_t thread, int sig)
 {
     int need_schedule;
     rt_sched_lock_level_t slvl;
     if (!_sigismember(&thread->signal.sigset_mask, sig))
     {
+        int stat;
         rt_sched_lock(&slvl);
-        int stat = rt_sched_thread_get_stat(thread);
+        stat = rt_sched_thread_get_stat(thread);
         if ((stat & RT_THREAD_SUSPEND_MASK) == RT_THREAD_SUSPEND_MASK)
         {
             if ((stat & RT_SIGNAL_COMMON_WAKEUP_MASK) != RT_SIGNAL_COMMON_WAKEUP_MASK)
@@ -599,6 +833,8 @@ static int _do_signal_wakeup(rt_thread_t thread, int sig)
             rt_sched_unlock(slvl);
             need_schedule = 0;
         }
+
+        RT_ASSERT(!rt_sched_is_locked());
     }
     else
         need_schedule = 0;
@@ -689,7 +925,63 @@ rt_inline rt_bool_t _sighandler_cannot_caught(struct rt_lwp *lwp, int signo)
     return signo == SIGKILL || signo == SIGSTOP;
 }
 
-rt_err_t lwp_signal_kill(struct rt_lwp *lwp, long signo, long code, long value)
+/* before signal is killed to target process/thread */
+static void _before_sending_jobctl_signal(int signo, rt_lwp_t target_lwp, lwp_siginfo_t si)
+{
+    rt_thread_t thr_iter;
+    rt_sched_lock_level_t slvl;
+    lwp_sigset_t jobctl_sigset = lwp_sigset_init(LWP_SIG_JOBCTL_SET);
+
+    LWP_ASSERT_LOCKED(target_lwp);
+
+    /**
+     * dequeue all the pending jobctl signals (including
+     * the one we are adding, since we don't want to pend it)
+     */
+    sigqueue_discard_sigset(_SIGQ(target_lwp), &jobctl_sigset);
+
+    if (signo == SIGCONT)
+    {
+        target_lwp->jobctl_stopped = RT_FALSE;
+        rt_list_for_each_entry(thr_iter, &target_lwp->t_grp, sibling)
+        {
+            rt_base_t stat;
+            sigqueue_discard_sigset(_SIGQ(thr_iter), &jobctl_sigset);
+
+            /**
+             * Note: all stopped thread will be resumed
+             */
+            rt_sched_lock(&slvl);
+            stat = rt_sched_thread_get_stat(thr_iter);
+            if ((stat & RT_THREAD_SUSPEND_MASK) == RT_THREAD_SUSPEND_MASK &&
+                (stat & RT_SIGNAL_KILL_WAKEUP_MASK) == 0)
+            {
+                thr_iter->error = RT_EINTR;
+
+                /**
+                 * don't matter if we failed to resume the thread, since we
+                 * only care about the event passing, but not ordering here
+                 */
+                rt_sched_unlock(slvl);
+                rt_thread_wakeup(thr_iter);
+            }
+            else
+            {
+                rt_sched_unlock(slvl);
+            }
+
+        }
+    }
+    else
+    {
+        rt_list_for_each_entry(thr_iter, &target_lwp->t_grp, sibling)
+        {
+            sigqueue_discard_sigset(_SIGQ(thr_iter), &jobctl_sigset);
+        }
+    }
+}
+
+rt_err_t lwp_signal_kill(struct rt_lwp *lwp, long signo, long code, lwp_siginfo_ext_t value)
 {
     rt_err_t ret = -1;
 
@@ -715,19 +1007,25 @@ rt_err_t lwp_signal_kill(struct rt_lwp *lwp, long signo, long code, long value)
         terminated = lwp->terminated;
 
         /* short-circuit code for inactive task, ignored signals */
-        if (terminated || _sighandler_is_ignored(lwp, signo))
+        if (terminated)
         {
+            /* no one rely on this, then free the resource */
+            if (value)
+                rt_free(value);
             ret = 0;
         }
         else
         {
-            siginfo = siginfo_create(signo, code, value);
+            siginfo = siginfo_create(rt_thread_self(), signo, code, value);
 
             if (siginfo)
             {
+                if (_is_jobctl_signal(lwp, signo))
+                    _before_sending_jobctl_signal(signo, lwp, siginfo);
+
                 need_schedule = _siginfo_deliver_to_lwp(lwp, siginfo);
-                ret = 0;
                 lwp_signal_notify(&lwp->signalfd_notify_head, siginfo);
+                ret = 0;
             }
             else
             {
@@ -755,6 +1053,8 @@ static void _signal_action_flag_k2u(int signo, struct lwp_signal *signal, struct
         flags |= SA_RESTART;
     if (_sigismember(&signal->sig_action_siginfo, signo))
         flags |= SA_SIGINFO;
+    if (_sigismember(&signal->sig_action_nocldstop, signo))
+        flags |= SA_NOCLDSTOP;
 
     act->sa_flags = flags;
 }
@@ -770,6 +1070,15 @@ static void _signal_action_flag_u2k(int signo, struct lwp_signal *signal, const 
         _sigaddset(&signal->sig_action_restart, signo);
     if (flags & SA_SIGINFO)
         _sigaddset(&signal->sig_action_siginfo, signo);
+    if (flags & SA_NOCLDSTOP)
+        _sigaddset(&signal->sig_action_nocldstop, signo);
+}
+
+rt_bool_t lwp_sigisign(struct rt_lwp *lwp, int _sig)
+{
+    unsigned long sig = _sig - 1;
+
+    return lwp->signal.sig_action[sig] == LWP_SIG_ACT_IGN;
 }
 
 rt_err_t lwp_signal_action(struct rt_lwp *lwp, int signo,
@@ -793,6 +1102,7 @@ rt_err_t lwp_signal_action(struct rt_lwp *lwp, int signo,
             oact->sa_restorer = RT_NULL;
             _signal_action_flag_k2u(signo, &lwp->signal, oact);
         }
+
         if (act)
         {
             /**
@@ -800,15 +1110,29 @@ rt_err_t lwp_signal_action(struct rt_lwp *lwp, int signo,
              * argument succeed, even in the case of signals that cannot be caught or ignored
              */
             if (_sighandler_cannot_caught(lwp, signo))
-                ret = -RT_EINVAL;
+                ret = -EINVAL;
             else
             {
                 prev_handler = _get_sighandler_locked(lwp, signo);
                 lwp->signal.sig_action_mask[signo - 1] = act->sa_mask;
                 if (act->__sa_handler._sa_handler == SIG_IGN)
-                    lwp->signal.sig_action[signo - 1] = LWP_SIG_ACT_IGN;
+                {
+                    lwp_sigset_t no_ign_set = lwp_sigset_init(LWP_SIG_NO_IGN_SET);
+                    if (!lwp_sigismember(&no_ign_set, signo))
+                    {
+                        /* except those unignorable signals, discard them for proc */
+                        lwp->signal.sig_action[signo - 1] = LWP_SIG_ACT_IGN;
+                    }
+                    else
+                    {
+                        /* POSIX.1: SIG_IGN and SIG_DFL are equivalent for SIGCONT */
+                        lwp->signal.sig_action[signo - 1] = LWP_SIG_ACT_DFL;
+                    }
+                }
                 else
+                {
                     lwp->signal.sig_action[signo - 1] = act->__sa_handler._sa_handler;
+                }
 
                 _signal_action_flag_u2k(signo, &lwp->signal, act);
 
@@ -837,12 +1161,12 @@ rt_err_t lwp_signal_action(struct rt_lwp *lwp, int signo,
         LWP_UNLOCK(lwp);
     }
     else
-        ret = -RT_EINVAL;
+        ret = -EINVAL;
 
     return ret;
 }
 
-rt_err_t lwp_thread_signal_kill(rt_thread_t thread, long signo, long code, long value)
+rt_err_t lwp_thread_signal_kill(rt_thread_t thread, long signo, long code, lwp_siginfo_ext_t value)
 {
     rt_err_t ret = -1;
 
@@ -855,7 +1179,7 @@ rt_err_t lwp_thread_signal_kill(rt_thread_t thread, long signo, long code, long 
 
     LOG_D("%s(signo=%d)", __func__, signo);
 
-    if (!thread || signo <= 0 || signo >= _LWP_NSIG)
+    if (!thread || signo < 0 || signo >= _LWP_NSIG)
     {
         ret = -RT_EINVAL;
     }
@@ -874,7 +1198,7 @@ rt_err_t lwp_thread_signal_kill(rt_thread_t thread, long signo, long code, long 
             ret = 0;
         else
         {
-            siginfo = siginfo_create(signo, code, value);
+            siginfo = siginfo_create(rt_thread_self(), signo, code, value);
 
             if (siginfo)
             {
@@ -919,7 +1243,7 @@ rt_err_t lwp_thread_signal_mask(rt_thread_t thread, lwp_sig_mask_cmd_t how,
 
     if (thread)
     {
-        lwp = (struct rt_lwp*)thread->lwp;
+        lwp = (struct rt_lwp *)thread->lwp;
         LWP_LOCK(lwp);
 
         if (!lwp)
@@ -948,13 +1272,14 @@ static int _dequeue_signal(rt_thread_t thread, lwp_sigset_t *mask, siginfo_t *us
     lwp_sigset_t *pending;
     lwp_sigqueue_t sigqueue;
 
+    lwp = thread->lwp;
+    RT_ASSERT(lwp);
+
     sigqueue = _SIGQ(thread);
     pending = &sigqueue->sigset_pending;
     signo = _next_signal(pending, mask);
     if (!signo)
     {
-        lwp = thread->lwp;
-        RT_ASSERT(lwp);
         sigqueue = _SIGQ(lwp);
         pending = &sigqueue->sigset_pending;
         signo = _next_signal(pending, mask);
@@ -978,6 +1303,7 @@ rt_err_t lwp_thread_signal_timedwait(rt_thread_t thread, lwp_sigset_t *sigset,
     rt_err_t ret;
     lwp_sigset_t saved_sigset;
     lwp_sigset_t blocked_sigset;
+    lwp_sigset_t dontwait_sigset;
     int sig;
     struct rt_lwp *lwp = thread->lwp;
 
@@ -990,10 +1316,10 @@ rt_err_t lwp_thread_signal_timedwait(rt_thread_t thread, lwp_sigset_t *sigset,
     /* Create a mask of signals user dont want or cannot catch */
     _sigdelset(sigset, SIGKILL);
     _sigdelset(sigset, SIGSTOP);
-    _signotsets(sigset, sigset);
+    _signotsets(&dontwait_sigset, sigset);
 
     LWP_LOCK(lwp);
-    sig = _dequeue_signal(thread, sigset, usi);
+    sig = _dequeue_signal(thread, &dontwait_sigset, usi);
     LWP_UNLOCK(lwp);
     if (sig)
         return sig;
@@ -1007,13 +1333,12 @@ rt_err_t lwp_thread_signal_timedwait(rt_thread_t thread, lwp_sigset_t *sigset,
      * Note: If the pending signal arrives before thread suspend, the suspend
      * operation will return a failure
      */
-    _sigandsets(&blocked_sigset, &thread->signal.sigset_mask, sigset);
+    _sigandsets(&blocked_sigset, &thread->signal.sigset_mask, &dontwait_sigset);
     _thread_signal_mask(thread, LWP_SIG_MASK_CMD_SET_MASK, &blocked_sigset, &saved_sigset);
     if (timeout)
     {
-        rt_uint32_t time;
-        time = rt_timespec_to_tick(timeout);
-
+        rt_tick_t time;
+        time = (timeout->tv_sec * RT_TICK_PER_SECOND) + ((timeout->tv_nsec * RT_TICK_PER_SECOND) / NANOSECOND_PER_SECOND);
         /**
          * Brief: POSIX
          * If the timespec structure pointed to by timeout is zero-valued and
@@ -1023,11 +1348,13 @@ rt_err_t lwp_thread_signal_timedwait(rt_thread_t thread, lwp_sigset_t *sigset,
         if (time == 0)
             return -EAGAIN;
 
+        rt_enter_critical();
         ret = rt_thread_suspend_with_flag(thread, RT_INTERRUPTIBLE);
         rt_timer_control(&(thread->thread_timer),
                          RT_TIMER_CTRL_SET_TIME,
                          &time);
         rt_timer_start(&(thread->thread_timer));
+        rt_exit_critical();
 
     }
     else
@@ -1040,7 +1367,7 @@ rt_err_t lwp_thread_signal_timedwait(rt_thread_t thread, lwp_sigset_t *sigset,
     {
         rt_schedule();
         /* If thread->error reliable? */
-        if (thread->error == -RT_EINTR)
+        if (thread->error == RT_EINTR)
             ret = -EINTR;
         else
             ret = -EAGAIN;
@@ -1049,7 +1376,7 @@ rt_err_t lwp_thread_signal_timedwait(rt_thread_t thread, lwp_sigset_t *sigset,
     _thread_signal_mask(thread, LWP_SIG_MASK_CMD_SET_MASK, &saved_sigset, RT_NULL);
 
     LWP_LOCK(lwp);
-    sig = _dequeue_signal(thread, sigset, usi);
+    sig = _dequeue_signal(thread, &dontwait_sigset, usi);
     LWP_UNLOCK(lwp);
 
     return sig ? sig : ret;
@@ -1071,4 +1398,23 @@ void lwp_thread_signal_pending(rt_thread_t thread, lwp_sigset_t *pending)
 
         _sigandsets(pending, pending, &thread->signal.sigset_mask);
     }
+}
+
+rt_err_t lwp_pgrp_signal_kill(rt_processgroup_t pgrp, long signo, long code,
+                              lwp_siginfo_ext_t value)
+{
+    struct rt_lwp *lwp;
+    rt_err_t rc = 0;
+
+    PGRP_ASSERT_LOCKED(pgrp);
+
+    if (pgrp)
+    {
+        rt_list_for_each_entry(lwp, &pgrp->process, pgrp_node)
+        {
+            lwp_signal_kill(lwp, signo, code, value);
+        }
+    }
+
+    return rc;
 }
