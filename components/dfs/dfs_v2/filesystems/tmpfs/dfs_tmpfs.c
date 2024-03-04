@@ -317,26 +317,21 @@ static ssize_t dfs_tmpfs_read(struct dfs_file *file, void *buf, size_t count, of
     return length;
 }
 
-static ssize_t dfs_tmpfs_write(struct dfs_file *file, const void *buf, size_t count, off_t *pos)
+static ssize_t _dfs_tmpfs_write(struct tmpfs_file *d_file, const void *buf, size_t count, off_t *pos)
 {
-    struct tmpfs_file *d_file;
     struct tmpfs_sb *superblock;
 
-    d_file = (struct tmpfs_file *)file->vnode->data;
     RT_ASSERT(d_file != NULL);
 
     superblock = d_file->sb;
     RT_ASSERT(superblock != NULL);
 
-    rt_mutex_take(&file->vnode->lock, RT_WAITING_FOREVER);
-
-    if (count + *pos > file->vnode->size)
+    if (count + *pos > d_file->size)
     {
         rt_uint8_t *ptr;
         ptr = rt_realloc(d_file->data, *pos + count);
         if (ptr == NULL)
         {
-            rt_mutex_release(&file->vnode->lock);
             rt_set_errno(-ENOMEM);
             return 0;
         }
@@ -347,7 +342,6 @@ static ssize_t dfs_tmpfs_write(struct dfs_file *file, const void *buf, size_t co
         /* update d_file and file size */
         d_file->data = ptr;
         d_file->size = *pos + count;
-        file->vnode->size = d_file->size;
         LOG_D("tmpfile ptr:%x, size:%d", ptr, d_file->size);
     }
 
@@ -356,6 +350,21 @@ static ssize_t dfs_tmpfs_write(struct dfs_file *file, const void *buf, size_t co
 
     /* update file current position */
     *pos += count;
+
+    return count;
+}
+
+static ssize_t dfs_tmpfs_write(struct dfs_file *file, const void *buf, size_t count, off_t *pos)
+{
+    struct tmpfs_file *d_file;
+
+    d_file = (struct tmpfs_file *)file->vnode->data;
+    RT_ASSERT(d_file != NULL);
+
+    rt_mutex_take(&file->vnode->lock, RT_WAITING_FOREVER);
+
+    count = _dfs_tmpfs_write(d_file, buf, count, pos);
+
     rt_mutex_release(&file->vnode->lock);
 
     return count;
@@ -797,6 +806,8 @@ static ssize_t dfs_tmp_page_read(struct dfs_file *file, struct dfs_page *page)
 
 ssize_t dfs_tmp_page_write(struct dfs_page *page)
 {
+    off_t pos;
+    size_t count = 0;
     struct tmpfs_file *d_file;
 
     if (page->aspace->vnode->type == FT_DIRECTORY)
@@ -806,13 +817,16 @@ ssize_t dfs_tmp_page_write(struct dfs_page *page)
 
     d_file = (struct tmpfs_file *)(page->aspace->vnode->data);
     RT_ASSERT(d_file != RT_NULL);
+
     rt_mutex_take(&page->aspace->vnode->lock, RT_WAITING_FOREVER);
     if (page->len > 0)
-        memcpy(d_file->data + page->fpos, page->page, page->len);
-
+    {
+        pos = page->fpos;
+        count = _dfs_tmpfs_write(d_file, page->page, page->len, &pos);
+    }
     rt_mutex_release(&page->aspace->vnode->lock);
 
-    return F_OK;
+    return count;
 }
 #endif
 

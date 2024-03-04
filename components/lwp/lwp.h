@@ -160,9 +160,6 @@ struct rt_lwp
     void *args;
     uint32_t args_length;
     pid_t pid;
-    pid_t D__pgrp;                  /*Accessed via process_group()*/
-    pid_t D_tty_old_pgrp;
-    pid_t D_session;                /**< maybe need delete */
     pid_t sid;                      /* session ID */
     pid_t pgid;                     /* process group ID */
     struct rt_processgroup *pgrp;
@@ -170,7 +167,6 @@ struct rt_lwp
     rt_list_t t_grp;                /* thread group */
     rt_list_t timer;                /* POSIX timer object binding to a process */
 
-    int D_leader; /* boolean value for session group_leader*/
     struct dfs_fdtable fdt;
     char cmd[RT_NAME_MAX];
     char *exe_file;                 /* process file path */

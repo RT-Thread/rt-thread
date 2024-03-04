@@ -1272,7 +1272,7 @@ rt_err_t ulog_backend_register(ulog_backend_t backend, const char *name, rt_bool
 
     backend->support_color = support_color;
     backend->out_level = LOG_FILTER_LVL_ALL;
-    rt_strncpy(backend->name, name, RT_NAME_MAX);
+    rt_strncpy(backend->name, name, RT_NAME_MAX - 1);
 
     level = rt_spin_lock_irqsave(&_spinlock);
     rt_slist_append(&ulog.backend_list, &backend->list);

@@ -179,4 +179,5 @@ rt_err_t rt_hw_serial_register(struct rt_serial_device *serial,
                                rt_uint32_t              flag,
                                void                    *data);
 
+rt_err_t rt_hw_serial_register_tty(struct rt_serial_device *serial);
 #endif

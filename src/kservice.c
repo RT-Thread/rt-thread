@@ -46,7 +46,6 @@
 #ifdef RT_USING_SMART
 #include <lwp.h>
 #include <lwp_user_mm.h>
-#include <console.h>
 #endif
 
 /**
@@ -1432,27 +1431,6 @@ RTM_EXPORT(rt_console_get_device);
  */
 rt_device_t rt_console_set_device(const char *name)
 {
-#ifdef RT_USING_SMART
-    rt_device_t new_iodev = RT_NULL, old_iodev = RT_NULL;
-
-    /* find new console device */
-    new_iodev = rt_device_find(name);
-    if (new_iodev != RT_NULL)
-    {
-        if (_console_device != RT_NULL)
-        {
-            old_iodev = console_set_iodev(new_iodev);
-        }
-        else
-        {
-            console_register("console", new_iodev);
-            _console_device = rt_device_find("console");
-            rt_device_open(_console_device, RT_DEVICE_OFLAG_RDWR | RT_DEVICE_FLAG_STREAM);
-        }
-    }
-
-    return old_iodev;
-#else
     rt_device_t new_device, old_device;
 
     /* save old device */
@@ -1478,7 +1456,6 @@ rt_device_t rt_console_set_device(const char *name)
     }
 
     return old_device;
-#endif
 }
 RTM_EXPORT(rt_console_set_device);
 #endif /* RT_USING_DEVICE */

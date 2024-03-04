@@ -64,7 +64,7 @@ rt_err_t lwp_critical_exit(struct rt_lwp *lwp);
 #define LWP_LOCK_NESTED(lwp)                                         \
     do                                                               \
     {                                                                \
-            RT_DEBUG_SCHEDULER_AVAILABLE(1);                             \
+        RT_DEBUG_SCHEDULER_AVAILABLE(1);                             \
         if (lwp_critical_enter(lwp, LWP_MTX_FALGS_NESTED) != RT_EOK) \
         {                                                            \
             RT_ASSERT(0);                                            \

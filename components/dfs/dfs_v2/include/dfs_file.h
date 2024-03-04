@@ -174,19 +174,24 @@ int dfs_file_isdir(const char *path);
 int dfs_file_access(const char *path, mode_t mode);
 int dfs_file_chdir(const char *path);
 char *dfs_file_getcwd(char *buf, size_t size);
-char *dfs_nolink_path(struct dfs_mnt **mnt, char *fullpath, int mode);
+
 #ifdef RT_USING_SMART
 int dfs_file_mmap2(struct dfs_file *file, struct dfs_mmap2_args *mmap2);
 
 int dfs_file_mmap(struct dfs_file *file, struct dfs_mmap2_args *mmap2);
 #endif
 
-char *dfs_nolink_path(struct dfs_mnt **mnt, char *fullpath, int mode);
-
 /* 0x5254 is just a magic number to make these relatively unique ("RT") */
 #define RT_FIOFTRUNCATE  0x52540000U
 #define RT_FIOGETADDR    0x52540001U
 #define RT_FIOMMAP2      0x52540002U
+
+/* dfs_file_realpath mode */
+#define DFS_REALPATH_EXCEPT_LAST    0
+#define DFS_REALPATH_EXCEPT_NONE    1
+#define DFS_REALPATH_ONLY_LAST      3
+
+char *dfs_file_realpath(struct dfs_mnt **mnt, const char *fullpath, int mode);
 
 #ifdef __cplusplus
 }
