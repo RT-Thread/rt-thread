@@ -7,7 +7,9 @@
 /* RT-Thread Kernel */
 
 #define RT_NAME_MAX 8
-#define RT_CPUS_NR 1
+#define RT_USING_SMART
+#define RT_USING_SMP
+#define RT_CPUS_NR 2
 #define RT_ALIGN_SIZE 8
 #define RT_THREAD_PRIORITY_256
 #define RT_THREAD_PRIORITY_MAX 256
@@ -18,6 +20,7 @@
 #define RT_USING_IDLE_HOOK
 #define RT_IDLE_HOOK_LIST_SIZE 4
 #define IDLE_THREAD_STACK_SIZE 4096
+#define SYSTEM_THREAD_STACK_SIZE 4096
 #define RT_USING_TIMER_SOFT
 #define RT_TIMER_THREAD_PRIO 4
 #define RT_TIMER_THREAD_STACK_SIZE 1024
@@ -27,7 +30,6 @@
 #define RT_USING_DEBUG
 #define RT_DEBUGING_COLOR
 #define RT_DEBUGING_CONTEXT
-#define RT_DEBUGING_INIT
 
 /* Inter-Thread communication */
 
@@ -48,16 +50,16 @@
 #define RT_USING_SMALL_MEM_AS_HEAP
 #define RT_USING_MEMTRACE
 #define RT_USING_HEAP
-
-/* Kernel Device Object */
-
 #define RT_USING_DEVICE
 #define RT_USING_DEVICE_OPS
 #define RT_USING_INTERRUPT_INFO
+#define RT_USING_THREADSAFE_PRINTF
+#define RT_USING_SCHED_THREAD_CTX
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 256
 #define RT_CONSOLE_DEVICE_NAME "uart0"
 #define RT_VER_NUM 0x50100
+#define RT_USING_STDC_ATOMIC
 #define RT_BACKTRACE_LEVEL_MAX_NR 32
 #define RT_USING_CACHE
 #define RT_USING_HW_ATOMIC
@@ -65,6 +67,7 @@
 #define ARCH_MM_MMU
 #define ARCH_ARM
 #define ARCH_ARM_MMU
+#define KERNEL_VADDR_START 0xc0000000
 #define ARCH_ARM_CORTEX_A
 #define RT_USING_GIC_V2
 #define ARCH_ARM_CORTEX_A9
@@ -117,6 +120,16 @@
 #define RT_USING_DFS_ROMFS
 #define RT_USING_DFS_TMPFS
 #define RT_USING_DFS_MQUEUE
+#define RT_USING_PAGECACHE
+
+/* page cache config */
+
+#define RT_PAGECACHE_COUNT 4096
+#define RT_PAGECACHE_ASPACE_COUNT 1024
+#define RT_PAGECACHE_PRELOAD 4
+#define RT_PAGECACHE_HASH_NR 1024
+#define RT_PAGECACHE_GC_WORK_LEVEL 90
+#define RT_PAGECACHE_GC_STOP_LEVEL 70
 
 /* Device Drivers */
 
@@ -129,9 +142,9 @@
 #define RT_USING_SERIAL_V1
 #define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 256
+#define RT_USING_TTY
 #define RT_USING_I2C
 #define RT_USING_I2C_BITOPS
-#define RT_USING_PIN
 #define RT_USING_NULL
 #define RT_USING_ZERO
 #define RT_USING_RANDOM
@@ -154,6 +167,7 @@
 #define RT_SFUD_SPI_MAX_HZ 50000000
 #define RT_USING_WDT
 #define RT_USING_DEV_BUS
+#define RT_USING_PIN
 #define RT_USING_KTIME
 
 /* Using USB */
@@ -177,6 +191,9 @@
 #define RT_USING_POSIX_STDIO
 #define RT_USING_POSIX_POLL
 #define RT_USING_POSIX_SELECT
+#define RT_USING_POSIX_EPOLL
+#define RT_USING_POSIX_SIGNALFD
+#define RT_SIGNALFD_MAX_NUM 10
 #define RT_USING_POSIX_TERMIOS
 #define RT_USING_POSIX_AIO
 #define RT_USING_POSIX_DELAY
@@ -196,6 +213,9 @@
 /* Network */
 
 
+/* Memory protection */
+
+
 /* Utilities */
 
 #define RT_USING_RESOURCE_ID
@@ -204,6 +224,15 @@
 #define RT_USING_ADT_BITMAP
 #define RT_USING_ADT_HASHMAP
 #define RT_USING_ADT_REF
+#define RT_USING_LWP
+#define RT_LWP_MAX_NR 30
+#define LWP_TASK_STACK_SIZE 16384
+#define RT_CH_MSG_MAX_NR 1024
+#define LWP_CONSOLE_INPUT_BUFFER_SIZE 1024
+#define LWP_TID_MAX_NR 64
+#define LWP_ENABLE_ASID
+#define RT_LWP_SHM_MAX_NR 64
+#define RT_USING_LDSO
 
 /* Memory management */
 
@@ -222,6 +251,15 @@
 
 
 /* Wiced WiFi */
+
+
+/* CYW43012 WiFi */
+
+
+/* BL808 WiFi */
+
+
+/* CYW43439 WiFi */
 
 
 /* IoT Cloud */
@@ -246,9 +284,6 @@
 /* u8g2: a monochrome graphic library */
 
 
-/* PainterEngine: A cross-platform graphics application framework written in C language */
-
-
 /* tools packages */
 
 
@@ -268,11 +303,19 @@
 
 /* peripheral libraries and drivers */
 
+/* sensors drivers */
+
+
+/* touch drivers */
+
 
 /* Kendryte SDK */
 
 
 /* AI packages */
+
+
+/* Signal Processing and Control Algorithm Packages */
 
 
 /* miscellaneous packages */
@@ -288,7 +331,7 @@
 /* Arduino libraries */
 
 
-/* Projects */
+/* Projects and Demos */
 
 
 /* Sensors */
@@ -312,6 +355,7 @@
 
 
 /* Other */
+
 
 /* Signal IO */
 

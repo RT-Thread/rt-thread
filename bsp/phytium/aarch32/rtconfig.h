@@ -404,7 +404,7 @@
 #define RT_USING_MIO0
 #define RT_USING_MIO1
 #define BSP_USING_DC
-#define RT_USING_DC_CHANNEL1
+#define RT_USING_DC_CHANNEL0
 
 /* Board extended module Drivers */
 

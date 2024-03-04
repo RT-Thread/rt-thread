@@ -184,7 +184,7 @@ init_mmu_early:
     bl rt_hw_mem_setup_early
 
     /* get cpu id */
-    bl rt_hw_cpu_id
+    bl rt_asm_cpu_id
     mov cpu_id ,r0
     /* enable_mmu_early is changed to master_core_startup */
     ldr     lr, =master_core_startup
@@ -281,8 +281,8 @@ rt_hw_mmu_tbl_get:
     bic r0, #0x18
     mov pc, lr
 
-.weak rt_hw_cpu_id
-rt_hw_cpu_id:
+.weak rt_asm_cpu_id
+rt_asm_cpu_id:
     mrc p15, 0, r0, c0, c0, 5
     and r0, r0, #0xf
     mov pc, lr
@@ -297,7 +297,7 @@ rt_secondary_cpu_entry:
     bl init_cpu_stack_early
 
     /* init mmu  */
-    bl rt_hw_cpu_id
+    bl rt_asm_cpu_id
     mov cpu_id ,r0
 
     ldr lr ,= rt_hw_secondary_cpu_bsp_start
