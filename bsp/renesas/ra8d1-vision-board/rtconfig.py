@@ -19,9 +19,6 @@ if  CROSS_TOOL == 'gcc':
 elif CROSS_TOOL == 'keil':
     PLATFORM    = 'armclang'
     EXEC_PATH   = r'C:/Keil_v5'
-elif CROSS_TOOL == 'iar':
-    PLATFORM    = 'iccarm'
-    EXEC_PATH   = r'C:/Program Files/IAR Systems/Embedded Workbench 8.0'
 elif CROSS_TOOL == 'llvm-arm':
     PLATFORM    = 'llvm-arm'
     EXEC_PATH   = r'D:\Progrem\LLVMEmbeddedToolchainForArm-17.0.1-Windows-x86_64\bin'
