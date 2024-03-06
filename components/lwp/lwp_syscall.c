@@ -1986,6 +1986,7 @@ static void lwp_struct_copy(struct rt_lwp *dst, struct rt_lwp *src)
     rt_memcpy(&dst->signal.sig_action_restart, &dst->signal.sig_action_restart, sizeof(dst->signal.sig_action_restart));
     rt_memcpy(&dst->signal.sig_action_siginfo, &dst->signal.sig_action_siginfo, sizeof(dst->signal.sig_action_siginfo));
     rt_memcpy(&dst->signal.sig_action_nocldstop, &dst->signal.sig_action_nocldstop, sizeof(dst->signal.sig_action_nocldstop));
+    rt_memcpy(&dst->signal.sig_action_nocldwait, &dst->signal.sig_action_nocldwait, sizeof(dst->signal.sig_action_nocldwait));
     rt_strcpy(dst->working_directory, src->working_directory);
 }
 
@@ -6991,22 +6992,22 @@ const static struct rt_syscall_def func_table[] =
     SYSCALL_SIGN(sys_clock_settime),
     SYSCALL_SIGN(sys_clock_gettime),
     SYSCALL_SIGN(sys_clock_getres),
-    SYSCALL_USPACE(SYSCALL_SIGN(sys_clone)),           /* 130 */
+    SYSCALL_USPACE(SYSCALL_SIGN(sys_clone)),            /* 130 */
     SYSCALL_USPACE(SYSCALL_SIGN(sys_futex)),
-    SYSCALL_USPACE(SYSCALL_SIGN(sys_pmutex)),
+    SYSCALL_SIGN(sys_notimpl),                          /* discarded: sys_pmutex */
     SYSCALL_SIGN(sys_dup),
     SYSCALL_SIGN(sys_dup2),
-    SYSCALL_SIGN(sys_rename),         /* 135 */
+    SYSCALL_SIGN(sys_rename),                           /* 135 */
     SYSCALL_USPACE(SYSCALL_SIGN(sys_fork)),
     SYSCALL_USPACE(SYSCALL_SIGN(sys_execve)),
     SYSCALL_USPACE(SYSCALL_SIGN(sys_vfork)),
     SYSCALL_SIGN(sys_gettid),
-    SYSCALL_SIGN(sys_prlimit64),      /* 140 */
+    SYSCALL_SIGN(sys_prlimit64),                        /* 140 */
     SYSCALL_SIGN(sys_getrlimit),
     SYSCALL_SIGN(sys_setrlimit),
     SYSCALL_SIGN(sys_setsid),
     SYSCALL_SIGN(sys_getrandom),
-    SYSCALL_SIGN(sys_readlink),    // SYSCALL_SIGN(sys_readlink)     /* 145 */
+    SYSCALL_SIGN(sys_readlink),                         /* 145 */
     SYSCALL_USPACE(SYSCALL_SIGN(sys_mremap)),
     SYSCALL_USPACE(SYSCALL_SIGN(sys_madvise)),
     SYSCALL_SIGN(sys_sched_setparam),

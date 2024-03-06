@@ -225,7 +225,7 @@ static void dfs_file_unref(struct dfs_file *file)
 char *dfs_file_realpath(struct dfs_mnt **mnt, const char *fullpath, int mode)
 {
     int path_len = 0, index = 0;
-    char *path, *link_fn, *tmp_path;
+    char *path = RT_NULL, *link_fn, *tmp_path;
     struct dfs_mnt *tmp_mnt;
 
     if (*mnt && fullpath)

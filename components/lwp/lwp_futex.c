@@ -915,7 +915,7 @@ void lwp_futex_exit_robust_list(rt_thread_t thread)
         rc = _fetch_robust_entry(&next_entry, &entry->next, &next_pi);
         if (entry != pending)
         {
-            if (_handle_futex_death((void *)entry + futex_offset, thread, pi,
+            if (_handle_futex_death((int *)((size_t)entry + futex_offset), thread, pi,
                                     RT_FALSE))
                 return;
         }

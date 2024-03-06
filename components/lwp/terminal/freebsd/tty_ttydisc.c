@@ -1477,37 +1477,3 @@ size_t ttydisc_getc_poll(struct lwp_tty *tp)
 
     return ttyoutq_bytesused(&tp->t_outq);
 }
-
-#if 0
-/*
- * XXX: not really related to the TTYDISC, but we'd better put
- * tty_putchar() here, because we need to perform proper output
- * processing.
- */
-
-int
-tty_putstrn(struct lwp_tty *tp, const char *p, size_t n)
-{
-	size_t i;
-
-	tty_assert_locked(tp);
-
-	if (tty_gone(tp))
-		return (-1);
-
-	for (i = 0; i < n; i++)
-		ttydisc_echo_force(tp, p[i], 0);
-
-	tp->t_writepos = tp->t_column;
-	ttyinq_reprintpos_set(&tp->t_inq);
-
-	ttydevsw_outwakeup(tp);
-	return 0;
-}
-
-int
-tty_putchar(struct lwp_tty *tp, char c)
-{
-	return (tty_putstrn(tp, &c, 1));
-}
-#endif

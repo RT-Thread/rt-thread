@@ -74,7 +74,7 @@ int rt_condvar_timedwait(rt_condvar_t cv, rt_mutex_t mtx, int suspend_flag,
                          rt_tick_t timeout)
 {
     rt_err_t acq_mtx_succ, rc;
-    size_t waiting_mtx;
+    rt_atomic_t waiting_mtx;
     struct rt_wqueue_node node = INIT_WAITQ_NODE(node);
 
     /* not allowed in IRQ & critical section */

@@ -63,10 +63,6 @@
  */
 
 static int ttyinq_flush_secure = 1;
-#if 0
-SYSCTL_INT(_kern, OID_AUTO, tty_inq_flush_secure, CTLFLAG_RW,
-	&ttyinq_flush_secure, 0, "Zero buffers while flushing");
-#endif
 
 #define TTYINQ_QUOTESIZE (TTYINQ_DATASIZE / BMSIZE)
 #define BMSIZE           32

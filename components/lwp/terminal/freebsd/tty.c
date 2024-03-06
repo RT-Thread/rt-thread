@@ -593,10 +593,10 @@ static int ttydev_ioctl(struct lwp_tty *tp, rt_ubase_t cmd, rt_caddr_t data, int
         case TIOCSTI:
         case TIOCSTOP:
         case TIOCSWINSZ:
-#if 0
-	case TIOCSDRAINWAIT:
-	case TIOCSETD:
-#endif
+#if USING_BSD_TIOCSDRAINWAIT
+    case TIOCSDRAINWAIT:
+    case TIOCSETD:
+#endif /* USING_BSD_TIOCSDRAINWAIT */
 #ifdef COMPAT_43TTY
         case TIOCLBIC:
         case TIOCLBIS:

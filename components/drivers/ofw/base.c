@@ -1109,17 +1109,20 @@ struct rt_ofw_node *rt_ofw_get_alias_node(const char *tag, int id)
 
     if (tag && id >= 0)
     {
-        rt_list_for_each_entry(info, &_aliases_nodes, list)
+        if (!rt_list_isempty(&_aliases_nodes))
         {
-            if (rt_strncmp(info->tag, tag, info->tag_len))
+            rt_list_for_each_entry(info, &_aliases_nodes, list)
             {
-                continue;
-            }
+                if (rt_strncmp(info->tag, tag, info->tag_len))
+                {
+                    continue;
+                }
 
-            if (info->id == id)
-            {
-                np = info->np;
-                break;
+                if (info->id == id)
+                {
+                    np = info->np;
+                    break;
+                }
             }
         }
     }
@@ -1130,18 +1133,20 @@ struct rt_ofw_node *rt_ofw_get_alias_node(const char *tag, int id)
 int ofw_alias_node_id(struct rt_ofw_node *np)
 {
     int id;
-    struct alias_info *info;
+    struct alias_info *info = RT_NULL;
 
     if (np)
     {
         id = -1;
-
-        rt_list_for_each_entry(info, &_aliases_nodes, list)
+        if (!rt_list_isempty(&_aliases_nodes))
         {
-            if (info->np == np)
+            rt_list_for_each_entry(info, &_aliases_nodes, list)
             {
-                id = info->id;
-                break;
+                if (info->np == np)
+                {
+                    id = info->id;
+                    break;
+                }
             }
         }
     }
@@ -1161,18 +1166,20 @@ int rt_ofw_get_alias_id(struct rt_ofw_node *np, const char *tag)
     if (np && tag)
     {
         id = -1;
-
-        rt_list_for_each_entry(info, &_aliases_nodes, list)
+        if (!rt_list_isempty(&_aliases_nodes))
         {
-            if (rt_strncmp(info->tag, tag, info->tag_len))
+            rt_list_for_each_entry(info, &_aliases_nodes, list)
             {
-                continue;
-            }
+                if (rt_strncmp(info->tag, tag, info->tag_len))
+                {
+                    continue;
+                }
 
-            if (info->np == np)
-            {
-                id = info->id;
-                break;
+                if (info->np == np)
+                {
+                    id = info->id;
+                    break;
+                }
             }
         }
     }
@@ -1192,17 +1199,19 @@ int rt_ofw_get_alias_last_id(const char *tag)
     if (tag)
     {
         id = -1;
-
-        rt_list_for_each_entry(info, &_aliases_nodes, list)
+        if (!rt_list_isempty(&_aliases_nodes))
         {
-            if (rt_strncmp(info->tag, tag, info->tag_len))
+            rt_list_for_each_entry(info, &_aliases_nodes, list)
             {
-                continue;
-            }
+                if (rt_strncmp(info->tag, tag, info->tag_len))
+                {
+                    continue;
+                }
 
-            if (info->id > id)
-            {
-                id = info->id;
+                if (info->id > id)
+                {
+                    id = info->id;
+                }
             }
         }
     }

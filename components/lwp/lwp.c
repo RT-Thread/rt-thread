@@ -1560,24 +1560,24 @@ rt_err_t lwp_backtrace_frame(rt_thread_t uthread, struct rt_hw_backtrace_frame *
         argv = lwp_get_command_line_args(lwp);
         if (argv)
         {
-            LOG_RAW("please use: addr2line -e %s -a -f", argv[0]);
+            rt_kprintf("please use: addr2line -e %s -a -f", argv[0]);
             lwp_free_command_line_args(argv);
         }
         else
         {
-            LOG_RAW("please use: addr2line -e %s -a -f", lwp->cmd);
+            rt_kprintf("please use: addr2line -e %s -a -f", lwp->cmd);
         }
 
         while (nesting < RT_BACKTRACE_LEVEL_MAX_NR)
         {
-            LOG_RAW(" 0x%lx", frame->pc);
+            rt_kprintf(" 0x%lx", frame->pc);
             if (rt_hw_backtrace_frame_unwind(uthread, frame))
             {
                 break;
             }
             nesting++;
         }
-        LOG_RAW("\n");
+        rt_kprintf("\n");
         rc = RT_EOK;
     }
     return rc;

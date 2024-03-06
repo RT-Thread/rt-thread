@@ -426,7 +426,7 @@ int lwp_tty_ioctl_adapter(lwp_tty_t tp, int cmd, int oflags, void *args, rt_thre
             }
             break;
 
-#if 0
+#ifdef USING_BSD_IOCTL_EXT
         /* Software flow control */
         case TCXONC: {
             switch (args->arg)
@@ -466,7 +466,7 @@ int lwp_tty_ioctl_adapter(lwp_tty_t tp, int cmd, int oflags, void *args, rt_thre
             error = (sys_ioctl(td, (struct ioctl_args *)args));
             break;
         }
-#endif
+#endif /* USING_BSD_IOCTL_EXT */
         case TCFLSH: {
             int val;
             error = 0;
@@ -490,7 +490,7 @@ int lwp_tty_ioctl_adapter(lwp_tty_t tp, int cmd, int oflags, void *args, rt_thre
             break;
         }
 
-#if 0
+#ifdef USING_BSD_IOCTL_EXT
         case TIOCEXCL:
             args->cmd = TIOCEXCL;
             error = (sys_ioctl(td, (struct ioctl_args *)args));
@@ -500,7 +500,7 @@ int lwp_tty_ioctl_adapter(lwp_tty_t tp, int cmd, int oflags, void *args, rt_thre
             args->cmd = TIOCNXCL;
             error = (sys_ioctl(td, (struct ioctl_args *)args));
             break;
-#endif
+#endif /* USING_BSD_IOCTL_EXT */
 
         /* Controlling terminal */
         case TIOCSCTTY:
@@ -686,7 +686,7 @@ int lwp_tty_ioctl_adapter(lwp_tty_t tp, int cmd, int oflags, void *args, rt_thre
             args->cmd = TIOCPTMASTER;
             error = (sys_ioctl(td, (struct ioctl_args *)args));
             break;
-#endif
+#endif /* USING_BSD_IOCTL_EXT */
 
         /**
          * those are for current implementation of devfs, and we dont want to
