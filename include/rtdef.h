@@ -62,18 +62,8 @@
 #ifndef __RT_DEF_H__
 #define __RT_DEF_H__
 
-#include <rtconfig.h>
-
-#include <stdint.h>
-#include <stddef.h>
-#include <stdarg.h>
-#ifndef RT_USING_NANO
-#include <sys/types.h>
-#include <sys/errno.h>
-#if defined(RT_USING_SIGNALS) || defined(RT_USING_SMART)
-#include <sys/signal.h>
-#endif /* defined(RT_USING_SIGNALS) || defined(RT_USING_SMART) */
-#endif /* RT_USING_NANO */
+#include "rtsched.h"
+#include "rttypes.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -96,9 +86,6 @@ extern "C" {
 /* RT-Thread version */
 #define RTTHREAD_VERSION                RT_VERSION_CHECK(RT_VERSION_MAJOR, RT_VERSION_MINOR, RT_VERSION_PATCH)
 
-
-/* RT-Thread basic data type definitions */
-#include "rttypes.h"
 
 /**@}*/
 
@@ -846,8 +833,6 @@ typedef void (*rt_thread_cleanup_t)(struct rt_thread *tid);
  * Thread structure
  */
 
-#include "rtsched.h" /* for struct rt_sched_thread_ctx */
-
 struct rt_thread
 {
     struct rt_object            parent;
@@ -866,7 +851,7 @@ struct rt_thread
     rt_atomic_t                 cpus_lock_nest;         /**< cpus lock count */
 #endif
 
-    RT_SCHED_THREAD_CTX;
+    RT_SCHED_THREAD_CTX
     struct rt_timer             thread_timer;           /**< built-in thread timer */
     rt_thread_cleanup_t         cleanup;                /**< cleanup function when thread exit */
 
