@@ -457,6 +457,7 @@ rt_err_t lwp_signal_init(struct lwp_signal *sig)
     memset(&sig->sig_action_restart, 0, sizeof(sig->sig_action_restart));
     memset(&sig->sig_action_siginfo, 0, sizeof(sig->sig_action_siginfo));
     memset(&sig->sig_action_nocldstop, 0, sizeof(sig->sig_action_nocldstop));
+    memset(&sig->sig_action_nocldwait, 0, sizeof(sig->sig_action_nocldwait));
     lwp_sigqueue_init(&sig->sig_queue);
 
     return rc;
@@ -529,7 +530,8 @@ rt_inline rt_bool_t _is_stop_signal(rt_lwp_t lwp, int signo)
 
 rt_inline rt_bool_t _need_notify_status_changed(rt_lwp_t lwp, int signo)
 {
-    return !lwp_sigismember(&lwp->signal.sig_action_nocldstop, signo);
+    RT_ASSERT(lwp_sigismember(&lwp_sigset_init(LWP_SIG_JOBCTL_SET), signo));
+    return !lwp_sigismember(&lwp->signal.sig_action_nocldstop, SIGCHLD);
 }
 
 /**
@@ -1055,6 +1057,8 @@ static void _signal_action_flag_k2u(int signo, struct lwp_signal *signal, struct
         flags |= SA_SIGINFO;
     if (_sigismember(&signal->sig_action_nocldstop, signo))
         flags |= SA_NOCLDSTOP;
+    if (_sigismember(&signal->sig_action_nocldwait, signo))
+        flags |= SA_NOCLDWAIT;
 
     act->sa_flags = flags;
 }
@@ -1070,8 +1074,18 @@ static void _signal_action_flag_u2k(int signo, struct lwp_signal *signal, const 
         _sigaddset(&signal->sig_action_restart, signo);
     if (flags & SA_SIGINFO)
         _sigaddset(&signal->sig_action_siginfo, signo);
-    if (flags & SA_NOCLDSTOP)
-        _sigaddset(&signal->sig_action_nocldstop, signo);
+    if (signo == SIGCHLD)
+    {
+        /* These flags are meaningful only when establishing a handler for SIGCHLD */
+        if (flags & SA_NOCLDSTOP)
+            _sigaddset(&signal->sig_action_nocldstop, signo);
+        if (flags & SA_NOCLDWAIT)
+            _sigaddset(&signal->sig_action_nocldwait, signo);
+    }
+
+    #define _HANDLE_FLAGS (SA_RESTORER | SA_NODEFER | SA_ONSTACK | SA_RESTART | SA_SIGINFO | SA_NOCLDSTOP | SA_NOCLDWAIT)
+    if (flags & ~_HANDLE_FLAGS)
+        LOG_W("Unhandled flags: 0x%lx", flags & ~_HANDLE_FLAGS);
 }
 
 rt_bool_t lwp_sigisign(struct rt_lwp *lwp, int _sig)

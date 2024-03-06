@@ -1478,6 +1478,7 @@ static void _notify_parent(rt_lwp_t lwp)
     int signo_or_exitcode;
     lwp_siginfo_ext_t ext;
     lwp_status_t lwp_status = lwp->lwp_status;
+    rt_lwp_t parent = lwp->parent;
 
     if (WIFSIGNALED(lwp_status))
     {
@@ -1490,21 +1491,18 @@ static void _notify_parent(rt_lwp_t lwp)
         signo_or_exitcode = WEXITSTATUS(lwp->lwp_status);
     }
 
-    lwp_waitpid_kick(lwp->parent, lwp);
+    lwp_waitpid_kick(parent, lwp);
 
-    if (!lwp_sigismember(&lwp->signal.sig_action_nocldstop, SIGCHLD))
+    ext = rt_malloc(sizeof(struct lwp_siginfo));
+
+    if (ext)
     {
-        ext = rt_malloc(sizeof(struct lwp_siginfo));
-
-        if (ext)
-        {
-            rt_thread_t cur_thr = rt_thread_self();
-            ext->sigchld.status = signo_or_exitcode;
-            ext->sigchld.stime = cur_thr->system_time;
-            ext->sigchld.utime = cur_thr->user_time;
-        }
-        lwp_signal_kill(lwp->parent, SIGCHLD, si_code, ext);
+        rt_thread_t cur_thr = rt_thread_self();
+        ext->sigchld.status = signo_or_exitcode;
+        ext->sigchld.stime = cur_thr->system_time;
+        ext->sigchld.utime = cur_thr->user_time;
     }
+    lwp_signal_kill(parent, SIGCHLD, si_code, ext);
 }
 
 static void _resr_cleanup(struct rt_lwp *lwp)
@@ -1558,7 +1556,8 @@ static void _resr_cleanup(struct rt_lwp *lwp)
      * - the parent lwp (RW.)
      */
     LWP_LOCK(lwp);
-    if (lwp->parent)
+    if (lwp->parent &&
+        !lwp_sigismember(&lwp->parent->signal.sig_action_nocldwait, SIGCHLD))
     {
         /* if successfully race to setup lwp->terminated before parent detach */
         LWP_UNLOCK(lwp);
@@ -1573,7 +1572,10 @@ static void _resr_cleanup(struct rt_lwp *lwp)
     {
         LWP_UNLOCK(lwp);
 
-        /* INFO: orphan hasn't parents to do the reap of pid */
+        /**
+         * if process is orphan, it doesn't have parent to do the recycling.
+         * Otherwise, its parent had setup a flag to mask out recycling event
+         */
         lwp_pid_put(lwp);
     }
 

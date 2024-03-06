@@ -1986,6 +1986,7 @@ static void lwp_struct_copy(struct rt_lwp *dst, struct rt_lwp *src)
     rt_memcpy(&dst->signal.sig_action_restart, &dst->signal.sig_action_restart, sizeof(dst->signal.sig_action_restart));
     rt_memcpy(&dst->signal.sig_action_siginfo, &dst->signal.sig_action_siginfo, sizeof(dst->signal.sig_action_siginfo));
     rt_memcpy(&dst->signal.sig_action_nocldstop, &dst->signal.sig_action_nocldstop, sizeof(dst->signal.sig_action_nocldstop));
+    rt_memcpy(&dst->signal.sig_action_nocldwait, &dst->signal.sig_action_nocldwait, sizeof(dst->signal.sig_action_nocldwait));
     rt_strcpy(dst->working_directory, src->working_directory);
 }
 
