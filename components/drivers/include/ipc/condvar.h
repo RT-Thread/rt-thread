@@ -31,6 +31,7 @@ int rt_condvar_broadcast(rt_condvar_t cv);
 
 rt_inline void rt_condvar_detach(rt_condvar_t cv)
 {
+    RT_UNUSED(cv);
     return ;
 }
 

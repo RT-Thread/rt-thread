@@ -192,6 +192,12 @@ void *arch_signal_ucontext_save(rt_base_t lr, siginfo_t *psiginfo,
     return new_sp;
 }
 
+void arch_syscall_set_errno(void *eframe, int expected, int code)
+{
+    /* NO support */
+    return ;
+}
+
 #ifdef LWP_ENABLE_ASID
 #define MAX_ASID_BITS 8
 #define MAX_ASID (1 << MAX_ASID_BITS)

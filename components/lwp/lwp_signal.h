@@ -68,6 +68,7 @@ struct lwp_signal
     lwp_sigset_t sig_action_restart;
     lwp_sigset_t sig_action_siginfo;
     lwp_sigset_t sig_action_nocldstop;
+    lwp_sigset_t sig_action_nocldwait;
 };
 
 struct rt_lwp;

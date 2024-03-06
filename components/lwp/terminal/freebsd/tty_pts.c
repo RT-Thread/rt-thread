@@ -52,8 +52,8 @@
  * Per-PTS structure.
  *
  * List of locks
- * (t)	locked by tty_lock()
- * (c)	const until freeing
+ * (t)  locked by tty_lock()
+ * (c)  const until freeing
  */
 struct pts_softc
 {

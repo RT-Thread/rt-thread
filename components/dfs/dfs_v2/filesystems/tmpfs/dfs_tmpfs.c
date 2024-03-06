@@ -202,6 +202,7 @@ int dfs_tmpfs_ioctl(struct dfs_file *file, int cmd, void *args)
 
     superblock = d_file->sb;
     RT_ASSERT(superblock != NULL);
+    RT_UNUSED(superblock);
 
     switch (cmd)
     {
@@ -513,6 +514,7 @@ static int dfs_tmpfs_getdents(struct dfs_file *file,
 
     superblock  = d_file->sb;
     RT_ASSERT(superblock != RT_NULL);
+    RT_UNUSED(superblock);
 
     /* make integer count */
     count = (count / sizeof(struct dirent));

@@ -44,6 +44,7 @@
 #include <stdlib.h>
 #include <sys/stat.h>
 #include <sys/statfs.h> /* statfs() */
+#include <stdatomic.h>
 
 #ifdef ARCH_MM_MMU
 #include "lwp_user_mm.h"
@@ -440,7 +441,7 @@ rt_lwp_t lwp_create(rt_base_t flags)
         }
     }
 
-    LOG_D("%s(pid=%d) => %p", __func__, new_lwp->pid, new_lwp);
+    LOG_D("%s(pid=%d) => %p", __func__, new_lwp ? new_lwp->pid : -1, new_lwp);
     return new_lwp;
 }
 
@@ -1169,7 +1170,7 @@ static void print_thread_info(struct rt_thread* thread, int maxlen)
     else
         rt_kprintf("%-*.*s N/A %3d ", maxlen, RT_NAME_MAX, thread->parent.name, RT_SCHED_PRIV(thread).current_priority);
 #else
-    rt_kprintf("%-*.*s %3d ", maxlen, RT_NAME_MAX, thread->parent.name, thread->current_priority);
+    rt_kprintf("%-*.*s %3d ", maxlen, RT_NAME_MAX, thread->parent.name, RT_SCHED_PRIV(thread).current_priority);
 #endif /*RT_USING_SMP*/
 
     stat = (RT_SCHED_CTX(thread).stat & RT_THREAD_STAT_MASK);
@@ -1339,8 +1340,8 @@ int lwp_check_exit_request(void)
         return 0;
     }
 
-    return rt_atomic_compare_exchange_strong(&thread->exit_request, &expected,
-                                             LWP_EXIT_REQUEST_IN_PROCESS);
+    return atomic_compare_exchange_strong(&thread->exit_request, &expected,
+                                          LWP_EXIT_REQUEST_IN_PROCESS);
 }
 
 static void _wait_sibling_exit(rt_lwp_t lwp, rt_thread_t curr_thread);
@@ -1386,8 +1387,8 @@ static void _wait_sibling_exit(rt_lwp_t lwp, rt_thread_t curr_thread)
     {
         thread = rt_list_entry(list, struct rt_thread, sibling);
 
-        rt_atomic_compare_exchange_strong(&thread->exit_request, &expected,
-                                          LWP_EXIT_REQUEST_TRIGGERED);
+        atomic_compare_exchange_strong(&thread->exit_request, &expected,
+                                       LWP_EXIT_REQUEST_TRIGGERED);
 
         rt_sched_lock(&slvl);
         /* dont release, otherwise thread may have been freed */
@@ -1478,6 +1479,7 @@ static void _notify_parent(rt_lwp_t lwp)
     int signo_or_exitcode;
     lwp_siginfo_ext_t ext;
     lwp_status_t lwp_status = lwp->lwp_status;
+    rt_lwp_t parent = lwp->parent;
 
     if (WIFSIGNALED(lwp_status))
     {
@@ -1490,21 +1492,18 @@ static void _notify_parent(rt_lwp_t lwp)
         signo_or_exitcode = WEXITSTATUS(lwp->lwp_status);
     }
 
-    lwp_waitpid_kick(lwp->parent, lwp);
+    lwp_waitpid_kick(parent, lwp);
 
-    if (!lwp_sigismember(&lwp->signal.sig_action_nocldstop, SIGCHLD))
+    ext = rt_malloc(sizeof(struct lwp_siginfo));
+
+    if (ext)
     {
-        ext = rt_malloc(sizeof(struct lwp_siginfo));
-
-        if (ext)
-        {
-            rt_thread_t cur_thr = rt_thread_self();
-            ext->sigchld.status = signo_or_exitcode;
-            ext->sigchld.stime = cur_thr->system_time;
-            ext->sigchld.utime = cur_thr->user_time;
-        }
-        lwp_signal_kill(lwp->parent, SIGCHLD, si_code, ext);
+        rt_thread_t cur_thr = rt_thread_self();
+        ext->sigchld.status = signo_or_exitcode;
+        ext->sigchld.stime = cur_thr->system_time;
+        ext->sigchld.utime = cur_thr->user_time;
     }
+    lwp_signal_kill(parent, SIGCHLD, si_code, ext);
 }
 
 static void _resr_cleanup(struct rt_lwp *lwp)
@@ -1558,7 +1557,8 @@ static void _resr_cleanup(struct rt_lwp *lwp)
      * - the parent lwp (RW.)
      */
     LWP_LOCK(lwp);
-    if (lwp->parent)
+    if (lwp->parent &&
+        !lwp_sigismember(&lwp->parent->signal.sig_action_nocldwait, SIGCHLD))
     {
         /* if successfully race to setup lwp->terminated before parent detach */
         LWP_UNLOCK(lwp);
@@ -1573,7 +1573,10 @@ static void _resr_cleanup(struct rt_lwp *lwp)
     {
         LWP_UNLOCK(lwp);
 
-        /* INFO: orphan hasn't parents to do the reap of pid */
+        /**
+         * if process is orphan, it doesn't have parent to do the recycling.
+         * Otherwise, its parent had setup a flag to mask out recycling event
+         */
         lwp_pid_put(lwp);
     }
 

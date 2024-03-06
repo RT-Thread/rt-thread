@@ -436,7 +436,7 @@ static int ptyfs_ops_stat(struct dfs_dentry *dentry, struct stat *st)
         vnode = dentry->vnode;
 
         /* device id ? */
-        st->st_dev = (dev_t)(dentry->mnt->dev_id);
+        st->st_dev = (dev_t)(long)(dentry->mnt->dev_id);
         st->st_ino = (ino_t)dfs_dentry_full_path_crc32(dentry);
 
         st->st_gid = vnode->gid;

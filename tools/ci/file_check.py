@@ -121,7 +121,7 @@ class FormatCheck:
         self.file_list = file_list
 
     def __check_rt_errorcode(self, line):
-        pattern = re.compile(r'return\s+(RT_ERROR|RT_ETIMEOUT|RT_EFULL|RT_EEMPTY|RT_ENOMEM|RT_ENOSYS|RT_EBUSY|RT_EIO|RT_EINTR|RT_EINVAL|RT_ENOENT|RT_ENOSPC|RT_EPERM|RT_ETRAP|RT_EFAULT)')  
+        pattern = re.compile(r'return\s+(RT_ERROR|RT_ETIMEOUT|RT_EFULL|RT_EEMPTY|RT_ENOMEM|RT_ENOSYS|RT_EBUSY|RT_EIO|RT_EINTR|RT_EINVAL|RT_ENOENT|RT_ENOSPC|RT_EPERM|RT_ETRAP|RT_EFAULT)')
         match = pattern.search(line)
         if match:
             return False
@@ -163,14 +163,16 @@ class FormatCheck:
                     with open(file_path, 'rb') as f:
                         file = f.read()
                         # get file encoding
-                        code = chardet.detect(file)['encoding']
+                        chardet_report = chardet.detect(file)
+                        code = chardet_report['encoding']
+                        confidence = chardet_report['confidence']
                 except Exception as e:
                     logging.error(e)
             else:
                 continue
 
-            if code != 'utf-8' and code != 'ascii':
-                logging.error("[{0}]: encoding not utf-8, please format it.".format(file_path))
+            if code != 'utf-8' and code != 'ascii' and confidence > 0.8:
+                logging.error("[{0}]: encoding {1} not utf-8, please format it.".format(file_path, code))
                 encoding_check_result = False
             else:
                 logging.info('[{0}]: encoding check success.'.format(file_path))
