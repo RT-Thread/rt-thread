@@ -70,7 +70,7 @@ extern "C"
 
 #ifdef BSP_I2C2_TX_USING_DMA
 #ifndef I2C2_TX_DMA_CONFIG
-#define I2C2_TX_DMA_CONFIG                \
+    #define I2C2_TX_DMA_CONFIG            \
     {                                     \
         .dma_rcc = I2C2_TX_DMA_RCC,       \
         .Instance = I2C2_TX_DMA_INSTANCE, \
