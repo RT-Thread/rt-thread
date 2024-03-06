@@ -86,4 +86,9 @@ menu "General Drivers Configuration"
             bool "Enable PWM 3"
             default n
         endif
+
+    config BSP_USING_RTC
+        bool "Enable RTC"
+        select RT_USING_RTC
+        default n
 endmenu
