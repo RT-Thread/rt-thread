@@ -46,6 +46,8 @@
 #define A4   (29)
 #define A5   (30)
 
+#define RTDUINO_PIN_MAX_LIMIT A5 /* pin number max limit check */
+
 #define F_CPU  96000000L /* CPU: 96MHz */
 
 #define RTDUINO_DEFAULT_IIC_BUS_NAME            "i2c0"
