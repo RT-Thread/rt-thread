@@ -51,4 +51,6 @@
 /* i2c1 : PB9-SDA PB8-SCL */
 #define RTDUINO_DEFAULT_IIC_BUS_NAME    "i2c1"
 
+#define RTDUINO_TONE_HWTIMER_DEVICE_NAME "timer6"
+
 #endif /* Pins_Arduino_h */
