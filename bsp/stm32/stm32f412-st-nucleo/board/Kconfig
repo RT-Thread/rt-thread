@@ -15,6 +15,8 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_GPIO
         select BSP_USING_ADC
         select BSP_USING_ADC1
+        select BSP_USING_TIM
+        select BSP_USING_TIM6
         select BSP_USING_PWM
         select BSP_USING_PWM14
         select BSP_USING_PWM4
@@ -121,6 +123,16 @@ menu "On-chip Peripheral Drivers"
                         bool "Enable PWM14 channel1"
                         default n
                 endif
+        endif
+
+    menuconfig BSP_USING_TIM
+        bool "Enable timer"
+        default n
+        select RT_USING_HWTIMER
+        if BSP_USING_TIM
+            config BSP_USING_TIM6
+                bool "Enable TIM6"
+                default n
         endif
 
     menuconfig BSP_USING_I2C
