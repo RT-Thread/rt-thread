@@ -22,6 +22,15 @@
 #endif /* DRV_DEBUG */
 #include <rtdbg.h>
 
+#ifdef R_SCI_B_SPI_H
+    #define R_SCI_SPI_Write             R_SCI_B_SPI_Write
+    #define R_SCI_SPI_Read              R_SCI_B_SPI_Read
+    #define R_SCI_SPI_WriteRead         R_SCI_B_SPI_WriteRead
+    #define R_SCI_SPI_Open              R_SCI_B_SPI_Open
+    #define R_SCI_SPI_Close             R_SCI_B_SPI_Close
+    #define R_SCI_SPI_CallbackSet       R_SCI_B_SPI_CallbackSet
+#endif
+
 enum
 {
 #ifdef        BSP_USING_SCI0
@@ -108,7 +117,7 @@ struct ra_sci_object
 #endif
 
 #ifndef BITS
-    #define BITS(b,e)                   ((((uint32_t)-1)<<(b))&(((uint32_t)-1)>>(31-(e))))
+    #define BITS(b,e)           ((((uint32_t)-1)<<(b))&(((uint32_t)-1)>>(31-(e))))
 #endif
 
 #define _TO_STR(_a)                 #_a
@@ -225,7 +234,7 @@ const static struct ra_sci_param sci_param[] =
 #endif
 };
 
-static struct ra_sci_object sci_obj[RA_SCI_INDEX_MAX] = {0};
+static struct ra_sci_object sci_obj[RA_SCI_INDEX_MAX];
 rt_used static rt_err_t ra_wait_complete(struct ra_sci_object *obj)
 {
     rt_uint32_t event = 0;
@@ -625,6 +634,7 @@ static rt_err_t ra_write_read_message(struct rt_spi_device *device, struct rt_sp
         LOG_E("%s write and read failed. %d", param->bus_name, err);
         return -RT_ERROR;
     }
+
     /* Wait for SPI_EVENT_TRANSFER_COMPLETE callback event. */
     ra_wait_complete(obj);
     return message->length;
@@ -648,13 +658,21 @@ static rt_err_t ra_hw_spi_configure(struct rt_spi_device *device,
     configuration->data_width = configuration->data_width / 8;
     obj->spi_cfg = configuration;
 
-    sci_spi_extended_cfg_t *cfg_ext = (sci_spi_extended_cfg_t *)cfg->p_extend;
+#ifdef R_SCI_B_SPI_H
+    sci_b_spi_extended_cfg_t spi_cfg = *(sci_b_spi_extended_cfg_t *)cfg->p_extend;
+#else
+    sci_spi_extended_cfg_t *spi_cfg = (sci_spi_extended_cfg_t *)cfg->p_extend;
+#endif
 
     /**< Configure Select Line */
     rt_pin_write(device->cs_pin, PIN_HIGH);
 
     /**< config bitrate */
+#ifdef R_SCI_B_SPI_H
+    R_SCI_B_SPI_CalculateBitrate(obj->spi_cfg->max_hz, SCI_B_SPI_SOURCE_CLOCK_PCLK, &spi_cfg.clk_div);
+#else
     R_SCI_SPI_CalculateBitrate(obj->spi_cfg->max_hz, &cfg_ext->clk_div, false);
+#endif
 
     /**< init */
     err = R_SCI_SPI_Open((spi_ctrl_t *)param->sci_ctrl, cfg);
@@ -863,7 +881,7 @@ rt_weak int rt_hw_usart_init(void)
   * Attach the spi device to SPI bus, this function must be used after initialization.
   */
 #ifdef BSP_USING_SCIn_SPI
-rt_err_t drv_sci_spi_device_attach(const char *bus_name, const char *device_name, rt_base_t cs_pin)
+rt_err_t rt_hw_sci_spi_device_attach(const char *bus_name, const char *device_name, rt_base_t cs_pin)
 {
     RT_ASSERT(bus_name != RT_NULL);
     RT_ASSERT(device_name != RT_NULL);

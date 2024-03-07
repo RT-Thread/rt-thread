@@ -91,15 +91,6 @@ rt_err_t rt_spi_bus_configure(struct rt_spi_device *device)
 {
     rt_err_t result = -RT_ERROR;
 
-    /* reset the CS pin */
-    if (device->cs_pin != PIN_NONE)
-    {
-        if (device->config.mode & RT_SPI_CS_HIGH)
-            rt_pin_write(device->cs_pin, PIN_LOW);
-        else
-            rt_pin_write(device->cs_pin, PIN_HIGH);
-    }
-
     if (device->bus != RT_NULL)
     {
         result = rt_mutex_take(&(device->bus->lock), RT_WAITING_FOREVER);
@@ -133,6 +124,15 @@ rt_err_t rt_spi_configure(struct rt_spi_device        *device,
 {
     RT_ASSERT(device != RT_NULL);
     RT_ASSERT(cfg != RT_NULL);
+
+    /* reset the CS pin */
+    if (device->cs_pin != PIN_NONE)
+    {
+        if (cfg->mode & RT_SPI_CS_HIGH)
+            rt_pin_write(device->cs_pin, PIN_LOW);
+        else
+            rt_pin_write(device->cs_pin, PIN_HIGH);
+    }
 
     /* If the configurations are the same, we don't need to set again. */
     if (device->config.data_width == cfg->data_width &&

@@ -62,7 +62,7 @@ struct rt_sched_thread_ctx
     struct rt_sched_thread_priv sched_thread_priv;      /**< private context of scheduler */
 };
 
-#define RT_SCHED_THREAD_CTX struct rt_sched_thread_ctx sched_thread_ctx
+#define RT_SCHED_THREAD_CTX struct rt_sched_thread_ctx sched_thread_ctx;
 
 #define RT_SCHED_PRIV(thread) ((thread)->sched_thread_ctx.sched_thread_priv)
 #define RT_SCHED_CTX(thread) ((thread)->sched_thread_ctx)
@@ -99,8 +99,8 @@ struct rt_sched_thread_ctx
     rt_tick_t remaining_tick;           /**< remaining tick */                 \
     rt_uint8_t current_priority;        /**< current priority */               \
     rt_uint8_t init_priority;           /**< initialized priority */           \
-    _RT_SCHED_THREAD_CTX_PRIO_EXT;                                             \
-    rt_uint32_t number_mask; /**< priority number mask */
+    _RT_SCHED_THREAD_CTX_PRIO_EXT                                              \
+    rt_uint32_t number_mask;            /**< priority number mask */
 
 #define RT_SCHED_PRIV(thread) (*thread)
 #define RT_SCHED_CTX(thread) (*thread)

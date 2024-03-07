@@ -109,22 +109,6 @@ rt_inline struct rt_spinlock* _timerlock_idx(struct rt_timer *timer)
     }
 }
 
-rt_inline rt_list_t* _timerhead_idx(struct rt_timer *timer)
-{
-#ifdef RT_USING_TIMER_SOFT
-    if (timer->parent.flag & RT_TIMER_FLAG_SOFT_TIMER)
-    {
-        /* insert timer to soft timer list */
-        return _soft_timer_list;
-    }
-    else
-#endif /* RT_USING_TIMER_SOFT */
-    {
-        /* insert timer to system timer list */
-        return _timer_list;
-    }
-}
-
 /**
  * @brief [internal] The init funtion of timer
  *
