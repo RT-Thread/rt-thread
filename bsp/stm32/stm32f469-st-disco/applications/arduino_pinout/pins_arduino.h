@@ -42,6 +42,8 @@
 #define A6        (27)
 #define A7        (28)
 
+#define RTDUINO_PIN_MAX_LIMIT A7 /* pin number max limit check */
+
 #define F_CPU          180000000L  /* CPU:180MHz */
 
 #define LED_BUILTIN     D13  /* Default Built-in LED */

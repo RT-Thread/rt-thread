@@ -43,8 +43,10 @@
 #define D27  (27)
 #define D28  (28)
 
-#define A0   (25)
-#define A1   (26)
+#define A0   (29)
+#define A1   (30)
+
+#define RTDUINO_PIN_MAX_LIMIT A1 /* pin number max limit check */
 
 #define F_CPU  72000000L /* CPU: 72MHz */
 

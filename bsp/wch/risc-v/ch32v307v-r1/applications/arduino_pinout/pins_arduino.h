@@ -35,6 +35,8 @@
 #define A4        (20)
 #define A5        (21)
 
+#define RTDUINO_PIN_MAX_LIMIT A5 /* pin number max limit check */
+
 #define F_CPU          144000000L  /* CPU:144MHz */
 
 /* i2c1 : PB1-SDA PB10-SCL */
