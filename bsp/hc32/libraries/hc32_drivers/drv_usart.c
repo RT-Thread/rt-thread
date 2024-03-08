@@ -731,9 +731,9 @@ static void hc32_uart_rxto_irq_handler(struct hc32_uart *uart)
 }
 #endif
 
-#if defined (BSP_UART1_RX_USING_DMA) || defined (BSP_UART2_RX_USING_DMA) || defined (BSP_UART3_RX_USING_DMA) || \
-    defined (BSP_UART4_RX_USING_DMA) || defined (BSP_UART5_RX_USING_DMA) || defined (BSP_UART6_RX_USING_DMA) || \
-    defined (BSP_UART7_RX_USING_DMA)
+#if defined (BSP_UART1_TX_USING_DMA) || defined (BSP_UART2_TX_USING_DMA) || defined (BSP_UART3_TX_USING_DMA) || \
+    defined (BSP_UART4_TX_USING_DMA) || defined (BSP_UART5_TX_USING_DMA) || defined (BSP_UART6_TX_USING_DMA) || \
+    defined (BSP_UART7_TX_USING_DMA)
 static void hc32_uart_tc_irq_handler(struct hc32_uart *uart)
 {
     RT_ASSERT(uart != RT_NULL);
