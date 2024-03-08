@@ -716,7 +716,8 @@ void I2C4_DMA_TX_IRQHandler(void)
     /* leave interrupt */
     rt_interrupt_leave();
 }
-#endif
+#endif /* defined(BSP_USING_I2C4) && defined(BSP_I2C4_TX_USING_DMA) */
+
 int rt_hw_hw_i2c_init(void)
 {
     stm32_get_dma_info();
