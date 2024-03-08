@@ -1,12 +1,11 @@
 /*
- * Copyright (c) 2024
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
  * 2024-02-17     Dyyt587   first version
- * 2024-02-19     Dyyt587   add dma support,add auto xfsr timeout,add some error rrror recovery(beta)
  */
 
 #include <rtthread.h>
