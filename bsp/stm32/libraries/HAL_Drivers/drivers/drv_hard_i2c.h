@@ -57,9 +57,6 @@ struct stm32_i2c
 
 };
 
-/*******************************************************************************
- * Global pre-processor symbols/macros ('#define')
- ******************************************************************************/
 #define I2C_USING_TX_DMA_FLAG       (1U)
 #define I2C_USING_RX_DMA_FLAG       (1U << 1)
 
