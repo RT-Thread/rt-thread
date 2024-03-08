@@ -12,16 +12,11 @@
 #include "drv_soft_i2c.h"
 #include "drv_config.h"
 
-#ifdef RT_USING_I2C
+#if defined(BSP_USING_I2C1) || defined(BSP_USING_I2C2) || defined(BSP_USING_I2C3) || defined(BSP_USING_I2C4)
 
 //#define DRV_DEBUG
-#define LOG_TAG              "drv.i2c"
+#define LOG_TAG              "drv.i2c.sw"
 #include <drv_log.h>
-
-#if !defined(BSP_USING_I2C1) && !defined(BSP_USING_I2C2) && !defined(BSP_USING_I2C3) && !defined(BSP_USING_I2C4)
-#error "Please define at least one BSP_USING_I2Cx"
-/* this driver can be disabled at menuconfig -> RT-Thread Components -> Device Drivers */
-#endif
 
 static const struct stm32_soft_i2c_config soft_i2c_config[] =
 {
@@ -183,4 +178,4 @@ int rt_hw_i2c_init(void)
 }
 INIT_BOARD_EXPORT(rt_hw_i2c_init);
 
-#endif /* RT_USING_I2C */
+#endif /* defined(BSP_USING_I2C1) || defined(BSP_USING_I2C2) || defined(BSP_USING_I2C3) || defined(BSP_USING_I2C4) */
