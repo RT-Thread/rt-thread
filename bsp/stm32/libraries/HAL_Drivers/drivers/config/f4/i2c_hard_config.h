@@ -23,7 +23,7 @@ extern "C" {
         .Instance = I2C1,                           \
         .timing=0x10707DBC,                         \
         .timeout=0x1000,                            \
-        .name = "i2c1",                             \
+        .name = "hwi2c1",                           \
         .evirq_type = I2C1_EV_IRQn,                 \
         .erirq_type = I2C1_ER_IRQn,                 \
     }
@@ -61,7 +61,7 @@ extern "C" {
         .Instance = I2C2,                           \
         .timing=0x10707DBC,                         \
         .timeout=0x1000,                            \
-        .name = "i2c2",                             \
+        .name = "hwi2c2",                           \
         .evirq_type = I2C2_EV_IRQn,                 \
         .erirq_type = I2C2_ER_IRQn,                 \
     }
@@ -99,7 +99,7 @@ extern "C" {
         .Instance = I2C3,                           \
         .timing=0x10707DBC,                         \
         .timeout=0x1000,                            \
-        .name = "i2c3",                             \
+        .name = "hwi2c3",                           \
         .evirq_type = I2C3_EV_IRQn,                 \
         .erirq_type = I2C3_ER_IRQn,                 \
     }

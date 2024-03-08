@@ -11,18 +11,15 @@
 #include <rtthread.h>
 #include <rthw.h>
 #include <board.h>
-#include <rtconfig.h>
 #include "drv_hard_i2c.h"
 #include "drv_config.h"
-#include "i2c_hard_config.h"
 #include <string.h>
 
-#ifdef (RT_USING_I2C && BSP_USING_I2C)
 /* not fully support for I2C4 */
 #if defined(BSP_USING_HARD_I2C1) || defined(BSP_USING_HARD_I2C2) || defined(BSP_USING_HARD_I2C3)
 
 //#define DRV_DEBUG
-#define LOG_TAG "drv.i2c"
+#define LOG_TAG "drv.i2c.hw"
 #include <drv_log.h>
 
 enum
@@ -36,11 +33,10 @@ enum
 #ifdef BSP_USING_HARD_I2C3
     I2C3_INDEX,
 #endif /* BSP_USING_HARD_I2C3 */
-
 };
 
 static struct stm32_i2c_config i2c_config[] =
-    {
+{
 #ifdef BSP_USING_HARD_I2C1
         I2C1_BUS_CONFIG,
 #endif /* BSP_USING_HARD_I2C1 */
@@ -50,7 +46,6 @@ static struct stm32_i2c_config i2c_config[] =
 #ifdef BSP_USING_HARD_I2C3
         I2C3_BUS_CONFIG,
 #endif /* BSP_USING_HARD_I2C3 */
-
 };
 
 static struct stm32_i2c i2c_objs[sizeof(i2c_config) / sizeof(i2c_config[0])] = {0};
@@ -136,7 +131,7 @@ static rt_err_t stm32_i2c_configure(struct rt_i2c_bus_device *bus)
 }
 /**
  * @brief Hardware I2C driver transfer
- * 
+ *
  * @param bus Device bus
  * @param msgs Data to be transferred
  * @param num Number of data
@@ -157,6 +152,7 @@ static rt_ssize_t stm32_i2c_master_xfer(struct rt_i2c_bus_device *bus,
     uint32_t mode = 0;
     uint8_t next_flag = 0;
     struct rt_completion *completion;
+    rt_uint32_t timeout;
     if (num == 0)
     {
         return 0;
@@ -165,17 +161,16 @@ static rt_ssize_t stm32_i2c_master_xfer(struct rt_i2c_bus_device *bus,
     i2c_obj = rt_container_of(bus, struct stm32_i2c, i2c_bus);
     completion = &i2c_obj->completion;
     I2C_HandleTypeDef *handle = &i2c_obj->handle;
-    rt_uint32_t timeout;
+
     LOG_D("xfer start %d mags", num);
     for (i = 0; i < (num - 1); i++)
     {
         mode = 0;
-
         msg = &msgs[i];
         LOG_D("xfer       msgs[%d] addr=0x%2x buf=0x%x len= 0x%x flags= 0x%x", i, msg->addr, msg->buf, msg->len, msg->flags);
         next_msg = &msgs[i + 1];
         next_flag = next_msg->flags;
-				timeout = msg->len/TRANS_TIMEOUT_PERSEC+1;
+        timeout = msg->len/TRANS_TIMEOUT_PERSEC + 1;
         if (next_flag & RT_I2C_NO_START)
         {
             if ((next_flag & RT_I2C_RD) == (msg->flags & RT_I2C_RD))
@@ -215,7 +210,7 @@ static rt_ssize_t stm32_i2c_master_xfer(struct rt_i2c_bus_device *bus,
             if (rt_completion_wait(completion, timeout) != RT_EOK)
             {
                 LOG_D("receive time out");
-								goto out;
+                                goto out;
 
             }
         }
@@ -240,7 +235,7 @@ static rt_ssize_t stm32_i2c_master_xfer(struct rt_i2c_bus_device *bus,
             if (rt_completion_wait(completion, timeout) != RT_EOK)
             {
                 LOG_D("transmit time out");
-								goto out;
+                                goto out;
 
             }
         }
@@ -248,7 +243,7 @@ static rt_ssize_t stm32_i2c_master_xfer(struct rt_i2c_bus_device *bus,
     }
     /* last msg */
     msg = &msgs[i];
-		timeout = msg->len/TRANS_TIMEOUT_PERSEC+1;
+        timeout = msg->len/TRANS_TIMEOUT_PERSEC+1;
     if (msg->flags & RT_I2C_NO_STOP)
         mode = I2C_LAST_FRAME_NO_STOP;
     else
@@ -275,8 +270,7 @@ static rt_ssize_t stm32_i2c_master_xfer(struct rt_i2c_bus_device *bus,
         if (rt_completion_wait(completion, timeout) != RT_EOK)
         {
             LOG_D("receive time out");
-						goto out;
-
+            goto out;
         }
     }
     else
@@ -300,34 +294,35 @@ static rt_ssize_t stm32_i2c_master_xfer(struct rt_i2c_bus_device *bus,
         if (rt_completion_wait(completion, timeout) != RT_EOK)
         {
             LOG_D("transmit time out");
-					  goto out;
+            goto out;
 
         }
     }
     ret = num;
     LOG_D("xfer  end  %d mags\r\n", num);
     return ret;
-out:
 
+out:
     if (handle->ErrorCode == HAL_I2C_ERROR_AF)
     {
         LOG_D("I2C NACK Error now stoped");
         /* Send stop signal to prevent bus lock-up */
-        handle->Instance->CR1 |= I2C_IT_STOPI; 
+        handle->Instance->CR1 |= I2C_IT_STOPI;
     }
     if (handle->ErrorCode == HAL_I2C_ERROR_BERR)
     {
         LOG_D("I2C BUS Error now stoped");
-        handle->Instance->CR1 |= I2C_IT_STOPI; 
-		ret=i-1;
+        handle->Instance->CR1 |= I2C_IT_STOPI;
+        ret=i-1;
     return ret;
 }
 
 static const struct rt_i2c_bus_device_ops stm32_i2c_ops =
-    {
-        .master_xfer = stm32_i2c_master_xfer,
-        RT_NULL,
-        RT_NULL};
+{
+    .master_xfer = stm32_i2c_master_xfer,
+    RT_NULL,
+    RT_NULL
+};
 
 int RT_hw_i2c_bus_init(void)
 {
@@ -468,12 +463,12 @@ void HAL_I2C_ErrorCallback(I2C_HandleTypeDef *hi2c)
     if (hi2c->ErrorCode == HAL_I2C_ERROR_AF)
     {
         LOG_D("I2C NACK Error now stoped");
-        hi2c->Instance->CR1 |= I2C_IT_STOPI; 
+        hi2c->Instance->CR1 |= I2C_IT_STOPI;
     }
     if (hi2c->ErrorCode == HAL_I2C_ERROR_BERR)
     {
         LOG_D("I2C BUS Error now stoped");
-        hi2c->Instance->CR1 |= I2C_IT_STOPI; 
+        hi2c->Instance->CR1 |= I2C_IT_STOPI;
     }
 }
 #ifdef BSP_USING_HARD_I2C1
@@ -594,7 +589,8 @@ void I2C1_DMA_RX_IRQHandler(void)
     /* leave interrupt */
     rt_interrupt_leave();
 }
-#endif /* BSP_USING_HARD_I2C1 && BSP_I2C1_RX_USING_DMA */
+#endif /* defined(BSP_USING_HARD_I2C1) && defined(BSP_I2C1_RX_USING_DMA) */
+
 #if defined(BSP_USING_HARD_I2C1) && defined(BSP_I2C1_TX_USING_DMA)
 /**
  * @brief  This function handles DMA Rx interrupt request.
@@ -611,7 +607,8 @@ void I2C1_DMA_TX_IRQHandler(void)
     /* leave interrupt */
     rt_interrupt_leave();
 }
-#endif /* BSP_USING_HARD_I2C1 && BSP_I2C1_TX_USING_DMA */
+#endif /* defined(BSP_USING_HARD_I2C1) && defined(BSP_I2C1_TX_USING_DMA) */
+
 #if defined(BSP_USING_HARD_I2C2) && defined(BSP_I2C2_RX_USING_DMA)
 /**
  * @brief  This function handles DMA Rx interrupt request.
@@ -628,7 +625,8 @@ void I2C2_DMA_RX_IRQHandler(void)
     /* leave interrupt */
     rt_interrupt_leave();
 }
-#endif /* BSP_USING_HARD_I2C2 && BSP_I2C2_RX_USING_DMA */
+#endif /* defined(BSP_USING_HARD_I2C2) && defined(BSP_I2C2_RX_USING_DMA) */
+
 #if defined(BSP_USING_HARD_I2C2) && defined(BSP_I2C2_TX_USING_DMA)
 /**
  * @brief  This function handles DMA Rx interrupt request.
@@ -645,7 +643,8 @@ void I2C2_DMA_TX_IRQHandler(void)
     /* leave interrupt */
     rt_interrupt_leave();
 }
-#endif /* BSP_USING_HARD_I2C2 && BSP_I2C2_TX_USING_DMA */
+#endif /* defined(BSP_USING_HARD_I2C2) && defined(BSP_I2C2_TX_USING_DMA) */
+
 #if defined(BSP_USING_HARD_I2C3) && defined(BSP_I2C3_RX_USING_DMA)
 /**
  * @brief  This function handles DMA Rx interrupt request.
@@ -662,7 +661,8 @@ void I2C3_DMA_RX_IRQHandler(void)
     /* leave interrupt */
     rt_interrupt_leave();
 }
-#endif /* BSP_USING_HARD_I2C3 && BSP_I2C3_RX_USING_DMA */
+#endif /* defined(BSP_USING_HARD_I2C3) && defined(BSP_I2C3_RX_USING_DMA) */
+
 #if defined(BSP_USING_HARD_I2C3) && defined(BSP_I2C3_TX_USING_DMA)
 /**
  * @brief  This function handles DMA Rx interrupt request.
@@ -679,7 +679,8 @@ void I2C3_DMA_TX_IRQHandler(void)
     /* leave interrupt */
     rt_interrupt_leave();
 }
-#endif /* BSP_USING_HARD_I2C3 && BSP_I2C3_TX_USING_DMA */
+#endif /* defined(BSP_USING_HARD_I2C3) && defined(BSP_I2C3_TX_USING_DMA) */
+
 #if defined(BSP_USING_I2C4) && defined(BSP_I2C4_RX_USING_DMA)
 /**
  * @brief  This function handles DMA Rx interrupt request.
@@ -696,7 +697,8 @@ void I2C4_DMA_RX_IRQHandler(void)
     /* leave interrupt */
     rt_interrupt_leave();
 }
-#endif /* BSP_USING_I2C4 && BSP_I2C4_RX_USING_DMA */
+#endif /* defined(BSP_USING_I2C4) && defined(BSP_I2C4_RX_USING_DMA) */
+
 #if defined(BSP_USING_I2C4) && defined(BSP_I2C4_TX_USING_DMA)
 /**
  * @brief  This function handles DMA Rx interrupt request.
@@ -722,5 +724,4 @@ int rt_hw_hw_i2c_init(void)
 }
 INIT_CORE_EXPORT(rt_hw_hw_i2c_init);
 
-#endif
-#endif /* RT_USING_I2C */
+#endif /* defined(BSP_USING_HARD_I2C1) || defined(BSP_USING_HARD_I2C2) || defined(BSP_USING_HARD_I2C3) */
