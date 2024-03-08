@@ -14,7 +14,6 @@
 #include <rtconfig.h>
 #include "drv_hard_i2c.h"
 #include "drv_config.h"
-/*to simple and more compatible*/
 #include "i2c_hard_config.h"
 #include <string.h>
 
@@ -350,7 +349,7 @@ int RT_hw_i2c_bus_init(void)
             i2c_objs[i].dma.handle_tx.Init.Channel = i2c_config[i].dma_tx->channel;
 #elif defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32G0) || defined(SOC_SERIES_STM32MP1) || defined(SOC_SERIES_STM32WB) || defined(SOC_SERIES_STM32H7)
             i2c_objs[i].dma.handle_tx.Init.Request = i2c_config[i].dma_tx->request;
-#endif
+#endif/**/
 #ifndef SOC_SERIES_STM32U5
             i2c_objs[i].dma.handle_tx.Init.Direction = DMA_MEMORY_TO_PERIPH;
             i2c_objs[i].dma.handle_tx.Init.PeriphInc = DMA_PINC_DISABLE;
@@ -511,7 +510,7 @@ void I2C1_ER_IRQHandler(void)
     rt_interrupt_leave();
     /* USER CODE END I2C2_ER_IRQn 1 */
 }
-#endif
+#endif /* BSP_USING_HARD_I2C1 */
 
 #ifdef BSP_USING_HARD_I2C2
 /**
@@ -545,7 +544,7 @@ void I2C2_ER_IRQHandler(void)
     rt_interrupt_leave();
     /* USER CODE END I2C2_ER_IRQn 1 */
 }
-#endif
+#endif /* BSP_USING_HARD_I2C2 */
 
 #ifdef BSP_USING_HARD_I2C3
 /**
@@ -579,7 +578,7 @@ void I2C3_ER_IRQHandler(void)
     rt_interrupt_leave();
     /* USER CODE END I2C2_ER_IRQn 1 */
 }
-#endif
+#endif /* BSP_USING_HARD_I2C3 */
 
 #if defined(BSP_USING_HARD_I2C1) && defined(BSP_I2C1_RX_USING_DMA)
 /**
@@ -597,7 +596,7 @@ void I2C1_DMA_RX_IRQHandler(void)
     /* leave interrupt */
     rt_interrupt_leave();
 }
-#endif
+#endif /* BSP_USING_HARD_I2C1 && BSP_I2C1_RX_USING_DMA */
 #if defined(BSP_USING_HARD_I2C1) && defined(BSP_I2C1_TX_USING_DMA)
 /**
  * @brief  This function handles DMA Rx interrupt request.
@@ -614,7 +613,7 @@ void I2C1_DMA_TX_IRQHandler(void)
     /* leave interrupt */
     rt_interrupt_leave();
 }
-#endif
+#endif /* BSP_USING_HARD_I2C1 && BSP_I2C1_TX_USING_DMA */
 #if defined(BSP_USING_HARD_I2C2) && defined(BSP_I2C2_RX_USING_DMA)
 /**
  * @brief  This function handles DMA Rx interrupt request.
@@ -631,7 +630,7 @@ void I2C2_DMA_RX_IRQHandler(void)
     /* leave interrupt */
     rt_interrupt_leave();
 }
-#endif
+#endif /* BSP_USING_HARD_I2C2 && BSP_I2C2_RX_USING_DMA */
 #if defined(BSP_USING_HARD_I2C2) && defined(BSP_I2C2_TX_USING_DMA)
 /**
  * @brief  This function handles DMA Rx interrupt request.
@@ -648,7 +647,7 @@ void I2C2_DMA_TX_IRQHandler(void)
     /* leave interrupt */
     rt_interrupt_leave();
 }
-#endif
+#endif /* BSP_USING_HARD_I2C2 && BSP_I2C2_TX_USING_DMA */
 #if defined(BSP_USING_HARD_I2C3) && defined(BSP_I2C3_RX_USING_DMA)
 /**
  * @brief  This function handles DMA Rx interrupt request.
@@ -665,7 +664,7 @@ void I2C3_DMA_RX_IRQHandler(void)
     /* leave interrupt */
     rt_interrupt_leave();
 }
-#endif
+#endif /* BSP_USING_HARD_I2C3 && BSP_I2C3_RX_USING_DMA */
 #if defined(BSP_USING_HARD_I2C3) && defined(BSP_I2C3_TX_USING_DMA)
 /**
  * @brief  This function handles DMA Rx interrupt request.
@@ -682,7 +681,7 @@ void I2C3_DMA_TX_IRQHandler(void)
     /* leave interrupt */
     rt_interrupt_leave();
 }
-#endif
+#endif /* BSP_USING_HARD_I2C3 && BSP_I2C3_TX_USING_DMA */
 #if defined(BSP_USING_I2C4) && defined(BSP_I2C4_RX_USING_DMA)
 /**
  * @brief  This function handles DMA Rx interrupt request.
@@ -699,7 +698,7 @@ void I2C4_DMA_RX_IRQHandler(void)
     /* leave interrupt */
     rt_interrupt_leave();
 }
-#endif
+#endif /* BSP_USING_I2C4 && BSP_I2C4_RX_USING_DMA */
 #if defined(BSP_USING_I2C4) && defined(BSP_I2C4_TX_USING_DMA)
 /**
  * @brief  This function handles DMA Rx interrupt request.
