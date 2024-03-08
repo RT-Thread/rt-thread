@@ -29,13 +29,13 @@ enum
 {
 #ifdef BSP_USING_HARD_I2C1
     I2C1_INDEX,
-#endif
+#endif /* BSP_USING_HARD_I2C1 */
 #ifdef BSP_USING_HARD_I2C2
     I2C2_INDEX,
-#endif
+#endif /* BSP_USING_HARD_I2C2 */
 #ifdef BSP_USING_HARD_I2C3
     I2C3_INDEX,
-#endif
+#endif /* BSP_USING_HARD_I2C3 */
 
 };
 
@@ -43,13 +43,13 @@ static struct stm32_i2c_config i2c_config[] =
     {
 #ifdef BSP_USING_HARD_I2C1
         I2C1_BUS_CONFIG,
-#endif
+#endif /* BSP_USING_HARD_I2C1 */
 #ifdef BSP_USING_HARD_I2C2
         I2C2_BUS_CONFIG,
-#endif
+#endif /* BSP_USING_HARD_I2C2 */
 #ifdef BSP_USING_HARD_I2C3
         I2C3_BUS_CONFIG,
-#endif
+#endif /* BSP_USING_HARD_I2C3 */
 
 };
 
@@ -347,7 +347,7 @@ int RT_hw_i2c_bus_init(void)
             i2c_objs[i].dma.handle_tx.Init.Channel = i2c_config[i].dma_tx->channel;
 #elif defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32G0) || defined(SOC_SERIES_STM32MP1) || defined(SOC_SERIES_STM32WB) || defined(SOC_SERIES_STM32H7)
             i2c_objs[i].dma.handle_tx.Init.Request = i2c_config[i].dma_tx->request;
-#endif/**/
+#endif /* defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7) */
 #ifndef SOC_SERIES_STM32U5
             i2c_objs[i].dma.handle_tx.Init.Direction = DMA_MEMORY_TO_PERIPH;
             i2c_objs[i].dma.handle_tx.Init.PeriphInc = DMA_PINC_DISABLE;
@@ -363,7 +363,7 @@ int RT_hw_i2c_bus_init(void)
             i2c_objs[i].dma.handle_tx.Init.FIFOThreshold = DMA_FIFO_THRESHOLD_FULL;
             i2c_objs[i].dma.handle_tx.Init.MemBurst = DMA_MBURST_INC4;
             i2c_objs[i].dma.handle_tx.Init.PeriphBurst = DMA_PBURST_INC4;
-#endif
+#endif /* defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7) || defined(SOC_SERIES_STM32MP1) || defined(SOC_SERIES_STM32H7) */
         }
         if ((i2c_objs[i].i2c_dma_flag & I2C_USING_RX_DMA_FLAG))
         {
@@ -372,7 +372,7 @@ int RT_hw_i2c_bus_init(void)
             i2c_objs[i].dma.handle_rx.Init.Channel = i2c_config[i].dma_rx->channel;
 #elif defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32G0) || defined(SOC_SERIES_STM32MP1) || defined(SOC_SERIES_STM32WB) || defined(SOC_SERIES_STM32H7)
             i2c_objs[i].dma.handle_rx.Init.Request = i2c_config[i].dma_rx->request;
-#endif
+#endif /* defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7) */
 #ifndef SOC_SERIES_STM32U5
             i2c_objs[i].dma.handle_rx.Init.Direction = DMA_PERIPH_TO_MEMORY;
             i2c_objs[i].dma.handle_rx.Init.PeriphInc = DMA_PINC_DISABLE;
@@ -381,7 +381,7 @@ int RT_hw_i2c_bus_init(void)
             i2c_objs[i].dma.handle_rx.Init.MemDataAlignment = DMA_MDATAALIGN_BYTE;
             i2c_objs[i].dma.handle_rx.Init.Mode = DMA_NORMAL;
             i2c_objs[i].dma.handle_rx.Init.Priority = DMA_PRIORITY_LOW;
-#endif
+#endif /* SOC_SERIES_STM32U5 */
 #if defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7) || defined(SOC_SERIES_STM32MP1) || defined(SOC_SERIES_STM32H7)
 
             i2c_objs[i].dma.handle_rx.Init.FIFOMode = DMA_FIFOMODE_DISABLE;
@@ -389,7 +389,7 @@ int RT_hw_i2c_bus_init(void)
             i2c_objs[i].dma.handle_tx.Init.MemBurst = DMA_MBURST_INC4;
             i2c_objs[i].dma.handle_tx.Init.PeriphBurst = DMA_PBURST_INC4;
         }
-#endif
+#endif /* defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7) || defined(SOC_SERIES_STM32MP1) || defined(SOC_SERIES_STM32H7) */
         {
             rt_uint32_t tmpreg = 0x00U;
 #if defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32G0) || defined(SOC_SERIES_STM32F0)
@@ -404,7 +404,7 @@ int RT_hw_i2c_bus_init(void)
                 __HAL_RCC_DMAMUX_CLK_ENABLE();
                 SET_BIT(RCC->MP_AHB2ENSETR, i2c_config[i].dma_tx->dma_rcc);
                 tmpreg = READ_BIT(RCC->MP_AHB2ENSETR, i2c_config[i].dma_tx->dma_rcc);
-#endif
+#endif /* defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32G0) || defined(SOC_SERIES_STM32F0) */
             UNUSED(tmpreg); /* To avoid compiler warnings */
         }
         rt_completion_init(&i2c_objs[i].completion);
@@ -422,34 +422,34 @@ static void stm32_get_dma_info(void)
     i2c_objs[I2C1_INDEX].i2c_dma_flag |= I2C_USING_RX_DMA_FLAG;
     static struct dma_config I2C1_dma_rx = I2C1_RX_DMA_CONFIG;
     i2c_config[I2C1_INDEX].dma_rx = &I2C1_dma_rx;
-#endif
+#endif /* BSP_I2C1_RX_USING_DMA */
 #ifdef BSP_I2C1_TX_USING_DMA
     i2c_objs[I2C1_INDEX].i2c_dma_flag |= I2C_USING_TX_DMA_FLAG;
     static struct dma_config I2C1_dma_tx = I2C1_TX_DMA_CONFIG;
     i2c_config[I2C1_INDEX].dma_tx = &I2C1_dma_tx;
-#endif
+#endif /* BSP_I2C1_TX_USING_DMA */
 
 #ifdef BSP_I2C2_RX_USING_DMA
     i2c_objs[I2C2_INDEX].i2c_dma_flag |= I2C_USING_RX_DMA_FLAG;
     static struct dma_config I2C2_dma_rx = I2C2_RX_DMA_CONFIG;
     i2c_config[I2C2_INDEX].dma_rx = &I2C2_dma_rx;
-#endif
+#endif /* BSP_I2C2_RX_USING_DMA */
 #ifdef BSP_I2C2_TX_USING_DMA
     i2c_objs[I2C2_INDEX].i2c_dma_flag |= I2C_USING_TX_DMA_FLAG;
     static struct dma_config I2C2_dma_tx = I2C2_TX_DMA_CONFIG;
     i2c_config[I2C2_INDEX].dma_tx = &I2C2_dma_tx;
-#endif
+#endif /* BSP_I2C2_TX_USING_DMA */
 
 #ifdef BSP_I2C3_RX_USING_DMA
     i2c_objs[I2C3_INDEX].i2c_dma_flag |= I2C_USING_RX_DMA_FLAG;
     static struct dma_config I2C3_dma_rx = I2C3_RX_DMA_CONFIG;
     i2c_config[I2C3_INDEX].dma_rx = &I2C3_dma_rx;
-#endif
+#endif /* BSP_I2C3_RX_USING_DMA */
 #ifdef BSP_I2C3_TX_USING_DMA
     i2c_objs[I2C3_INDEX].i2c_dma_flag |= I2C_USING_TX_DMA_FLAG;
     static struct dma_config I2C3_dma_tx = I2C3_TX_DMA_CONFIG;
     i2c_config[I2C3_INDEX].dma_tx = &I2C3_dma_tx;
-#endif
+#endif /* BSP_I2C3_TX_USING_DMA */
 }
 
 void HAL_I2C_MasterTxCpltCallback(I2C_HandleTypeDef *hi2c)
