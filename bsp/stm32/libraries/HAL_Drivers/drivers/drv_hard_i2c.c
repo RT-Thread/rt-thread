@@ -25,8 +25,6 @@
 #define LOG_TAG "drv.i2c"
 #include <drv_log.h>
 
-#define I2C_TIMEOUT ((uint32_t)0x10000)
-
 enum
 {
 #ifdef BSP_USING_HARD_I2C1
