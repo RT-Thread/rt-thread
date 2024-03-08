@@ -7,8 +7,8 @@
  * Date           Author       Notes
  * 2024-02-06     Dyyt587   first version
  */
-#ifndef __I2C_CONFIG_H__
-#define __I2C_CONFIG_H__
+#ifndef __I2C_HARD_CONFIG_H__
+#define __I2C_HARD_CONFIG_H__
 
 #include <rtthread.h>
 
