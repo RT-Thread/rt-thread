@@ -1,6 +1,7 @@
 /*
- * Copyright (c) 2024
- * SPDX-License-Identifier: MIT-2.0
+ * Copyright (c) 2006-2023, RT-Thread Development Team
+ *
+ * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
