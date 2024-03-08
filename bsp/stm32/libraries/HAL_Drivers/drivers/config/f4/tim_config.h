@@ -74,12 +74,21 @@ extern "C" {
 
 #ifdef BSP_USING_TIM6
 #ifndef TIM6_CONFIG
+#if defined(STM32F412Cx) || defined(STM32F412Rx) || defined(STM32F412Vx) || defined(STM32F412Zx)
+#define TIM6_CONFIG                                         \
+    {                                                       \
+       .tim_handle.Instance     = TIM6,                     \
+       .tim_irqn                = TIM6_IRQn,                \
+       .name                    = "timer6",                 \
+    }
+#else
 #define TIM6_CONFIG                                         \
     {                                                       \
        .tim_handle.Instance     = TIM6,                     \
        .tim_irqn                = TIM6_DAC_IRQn,            \
        .name                    = "timer6",                 \
     }
+#endif /* defined(STM32F412Cx) || defined(STM32F412Rx) || defined(STM32F412Vx) || defined(STM32F412Zx) */
 #endif /* TIM6_CONFIG */
 #endif /* BSP_USING_TIM6 */
 
