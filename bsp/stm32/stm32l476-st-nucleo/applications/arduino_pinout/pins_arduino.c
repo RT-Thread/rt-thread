@@ -78,7 +78,7 @@ void switchToSPI(const char *bus_name)
         GPIO_InitStruct.Alternate = GPIO_AF5_SPI1;
         HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-        LOG_W("D11, D12 and D13 will switch from PWM to SPI");
+        LOG_I("D11, D12 and D13 will switch from PWM to SPI");
     }
 }
 #endif /* RTDUINO_USING_SPI */
