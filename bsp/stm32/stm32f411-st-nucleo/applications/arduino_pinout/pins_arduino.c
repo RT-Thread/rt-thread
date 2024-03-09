@@ -62,9 +62,7 @@ void switchToSPI(const char *bus_name)
         __HAL_RCC_SPI1_CLK_ENABLE();
         __HAL_RCC_GPIOA_CLK_ENABLE();
 
-        HAL_GPIO_DeInit(GPIOA, GPIO_PIN_5);
-        HAL_GPIO_DeInit(GPIOA, GPIO_PIN_6);
-        HAL_GPIO_DeInit(GPIOA, GPIO_PIN_7);
+        HAL_GPIO_DeInit(GPIOA, GPIO_PIN_5 | GPIO_PIN_6 | GPIO_PIN_7);
 
         /**SPI1 GPIO Configuration
         PA5     ------> SPI1_SCK
@@ -78,7 +76,7 @@ void switchToSPI(const char *bus_name)
         GPIO_InitStruct.Alternate = GPIO_AF5_SPI1;
         HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-        LOG_W("D11, D12 and D13 will switch from PWM to SPI");
+        LOG_I("D11, D12 and D13 will switch from PWM to SPI");
     }
 }
 #endif /* RTDUINO_USING_SPI */
