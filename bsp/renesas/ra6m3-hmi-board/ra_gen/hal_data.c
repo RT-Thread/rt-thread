@@ -2,18 +2,24 @@
 #include "hal_data.h"
 
 sci_uart_instance_ctrl_t     g_uart4_ctrl;
-
-            baud_setting_t               g_uart4_baud_setting =
+            baud_setting_t g_uart4_baud_setting =
             {
-                /* Baud rate calculated with 0.160% error. */ .abcse = 0, .abcs = 0, .bgdm = 1, .cks = 0, .brr = 64, .mddr = (uint8_t) 256, .brme = false
+                /* Baud rate calculated with 0.160% error. */ 
+                .abcse   = 0, 
+                .abcs    = 0, 
+                .bgdm    = 1, 
+                .cks     = 0, 
+                .brr     = 64, 
+                .mddr    = (uint8_t) 256, 
+                .brme    = false
             };
 
             /** UART extended configuration for UARTonSCI HAL driver */
             const sci_uart_extended_cfg_t g_uart4_cfg_extend =
             {
-                .clock                = SCI_UART_CLOCK_INT,
+                .clock                  = SCI_UART_CLOCK_INT,
                 .rx_edge_start          = SCI_UART_START_BIT_FALLING_EDGE,
-                .noise_cancel         = SCI_UART_NOISE_CANCELLATION_DISABLE,
+                .noise_cancel           = SCI_UART_NOISE_CANCELLATION_DISABLE,
                 .rx_fifo_trigger        = SCI_UART_RX_FIFO_TRIGGER_MAX,
                 .p_baud_setting         = &g_uart4_baud_setting,
                 .flow_control           = SCI_UART_FLOW_CONTROL_RTS,
@@ -84,7 +90,14 @@ sci_uart_instance_ctrl_t     g_uart9_ctrl;
 
             baud_setting_t               g_uart9_baud_setting =
             {
-                /* Baud rate calculated with 0.160% error. */ .abcse = 0, .abcs = 0, .bgdm = 1, .cks = 0, .brr = 64, .mddr = (uint8_t) 256, .brme = false
+                /* Baud rate calculated with 0.160% error. */ 
+                .abcse   = 0, 
+                .abcs    = 0, 
+                .bgdm    = 1, 
+                .cks     = 0, 
+                .brr     = 64, 
+                .mddr    = (uint8_t) 256, 
+                .brme    = false
             };
 
             /** UART extended configuration for UARTonSCI HAL driver */
