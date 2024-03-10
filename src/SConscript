@@ -2,6 +2,7 @@ from building import *
 import os
 
 src = Glob('*.c')
+src += Glob('klibc/*.c')
 cwd = GetCurrentDir()
 inc = [os.path.join(cwd, '..', 'include')]
 
