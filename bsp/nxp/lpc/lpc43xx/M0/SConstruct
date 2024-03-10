@@ -1,0 +1,48 @@
+import os
+import sys
+import rtconfig
+
+if os.getenv('RTT_ROOT'):
+    RTT_ROOT = os.getenv('RTT_ROOT')
+else:
+    RTT_ROOT = os.path.join(Dir('#').get_abspath(), '..', '..', '..', '..', '..')
+
+sys.path = sys.path + [os.path.join(RTT_ROOT, 'tools')]
+from building import *
+
+TARGET = 'rtthread-lpc40xx.' + rtconfig.TARGET_EXT
+
+DefaultEnvironment(tools=[])
+env = Environment(tools = ['mingw'],
+    AS = rtconfig.AS, ASFLAGS = rtconfig.AFLAGS,
+    CC = rtconfig.CC, CFLAGS = rtconfig.CFLAGS,
+    AR = rtconfig.AR, ARFLAGS = '-rc',
+    LINK = rtconfig.LINK, LINKFLAGS = rtconfig.LFLAGS)
+env.PrependENVPath('PATH', rtconfig.EXEC_PATH)
+
+Export('RTT_ROOT')
+Export('rtconfig')
+
+# prepare building environment
+objs = PrepareBuilding(env, RTT_ROOT, has_libcpu=False)
+
+if rtconfig.PLATFORM in ['gcc']:
+    import glob
+    # Remove the .o for M0 left on the drivers dir.
+    for i in glob.glob(GetCurrentDir() + '/../drivers/*.o'):
+        print('RM %s' % i)
+        os.unlink(i)
+
+    if sys.platform.startswith('linux'):
+        import glob
+        ocwd = os.getcwd()
+        res = os.system('cd ../Libraries/; find -name \*.o -exec rm {} \;')
+        os.chdir(ocwd)
+    else:
+        # Assume Windows.
+        ocwd = os.getcwd()
+        print('TODO: remove the object files in ../Libraries')
+        os.chdir(ocwd)
+
+# do building
+DoBuilding(TARGET, objs)
