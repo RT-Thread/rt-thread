@@ -24,6 +24,10 @@
 #endif /* defined(RT_USING_SIGNALS) || defined(RT_USING_SMART) */
 #endif /* RT_USING_NANO */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /**
  * RT-Thread basic data types definition
  */
@@ -219,5 +223,9 @@ struct rt_spinlock
 typedef struct rt_spinlock rt_spinlock_t;
 
 #define RT_DEFINE_SPINLOCK(x)  struct rt_spinlock x = RT_SPINLOCK_INIT
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* __RT_TYPES_H__ */
