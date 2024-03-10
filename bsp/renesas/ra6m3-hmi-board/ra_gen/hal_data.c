@@ -1,7 +1,7 @@
 /* generated HAL source file - do not edit */
 #include "hal_data.h"
 
-sci_uart_instance_ctrl_t     g_uart4_ctrl;
+sci_uart_instance_ctrl_t g_uart4_ctrl;
             baud_setting_t g_uart4_baud_setting =
             {
                 /* Baud rate calculated with 0.160% error. */ 
