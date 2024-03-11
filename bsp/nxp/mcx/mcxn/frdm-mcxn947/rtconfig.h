@@ -211,13 +211,18 @@
 
 /* peripheral libraries and drivers */
 
+/* HAL & SDK Drivers */
+
+/* STM32 HAL & SDK Drivers */
+
+
+/* Kendryte SDK */
+
+
 /* sensors drivers */
 
 
 /* touch drivers */
-
-
-/* Kendryte SDK */
 
 
 /* AI packages */
@@ -279,6 +284,8 @@
 #define BSP_USING_PIN
 #define BSP_USING_UART
 #define BSP_USING_UART4
+#define BSP_USING_UART5
+#define BSP_USING_UART2
 
 /* Board extended module Drivers */
 
