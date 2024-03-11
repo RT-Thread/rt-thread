@@ -265,7 +265,7 @@ int rt_hw_uart_init(void)
     struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT; // initial struct [115200,8,1,NONE]
     int i;
 // Registers loops for multiple serial devices
-	for (i = 0; i < sizeof(uarts) / sizeof(uarts[0]); i++) // sizeof(uarts) / sizeof(uarts[0] : Calculate the number of struct mcx_uart serial ports
+    for (i = 0; i < sizeof(uarts) / sizeof(uarts[0]); i++) // sizeof(uarts) / sizeof(uarts[0] : Calculate the number of struct mcx_uart serial ports
     {
         uarts[i].serial->ops    = &mcx_uart_ops;
         uarts[i].serial->config = config;
@@ -274,7 +274,7 @@ int rt_hw_uart_init(void)
  * register UART device.
  *
  * @param Indicates the structure of the serial port device to be registered
- * @param device name 
+ * @param device name
  * @param Flag bit mask
  * @param A pointer to the current device that is used as user private data at registration
  */
