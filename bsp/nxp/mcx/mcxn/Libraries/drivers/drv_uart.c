@@ -25,12 +25,12 @@ struct mcx_uart
 {
     struct rt_serial_device     *serial;  // Select serial device
     LPUART_Type                 *uart_base; // serial base
-    IRQn_Type                   irqn; // serial interrupt 
+    IRQn_Type                   irqn; // serial interrupt
     clock_name_t                clock_src; //serial RTC
     clock_attach_id_t           clock_attach_id; // RTC ID
     clock_ip_name_t             clock_ip_name; // serial clock name
     clock_div_name_t            clock_div_name; // serial clock div
-    char *device_name; // serial device name 
+    char *device_name; // serial device name
 };
 
 static void uart_isr(struct rt_serial_device *serial);
@@ -73,7 +73,7 @@ void LP_FLEXCOMM6_IRQHandler(void)
 
 static const struct mcx_uart uarts[] = // Initializes the above structure
 {
-	#ifdef BSP_USING_UART2
+#ifdef BSP_USING_UART2
     {
         &serial2,
         LPUART2,
@@ -97,7 +97,7 @@ static const struct mcx_uart uarts[] = // Initializes the above structure
         "uart4",
     },
 #endif
-	#ifdef BSP_USING_UART5
+#ifdef BSP_USING_UART5
     {
         &serial5,
         LPUART5,
@@ -217,8 +217,8 @@ static int mcx_getc(struct rt_serial_device *serial)
     struct mcx_uart *uart = (struct mcx_uart *)serial->parent.user_data;
 
     if (kLPUART_RxDataRegFullInterruptEnable & LPUART_GetStatusFlags(uart->uart_base))
-		// Check whether the receive cache is full and read the status flag bit of the status register
-		// This flag is read, indicating that there is data in the cache and can be read
+// Check whether the receive cache is full and read the status flag bit of the status register
+// This flag is read, indicating that there is data in the cache and can be read
     {
         return LPUART_ReadByte(uart->uart_base);
     }
@@ -264,21 +264,20 @@ int rt_hw_uart_init(void)
 {
     struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT; // initial struct [115200,8,1,NONE]
     int i;
-		
-		// Registers loops for multiple serial devices
+// Registers loops for multiple serial devices
 	for (i = 0; i < sizeof(uarts) / sizeof(uarts[0]); i++) // sizeof(uarts) / sizeof(uarts[0] : Calculate the number of struct mcx_uart serial ports
     {
         uarts[i].serial->ops    = &mcx_uart_ops;
         uarts[i].serial->config = config;
 
-			  /**
-				 * register UART device.
-				 *
-				 * @param Indicates the structure of the serial port device to be registered
-				 * @param device name 
-			   * @param Flag bit mask
-		     * @param A pointer to the current device that is used as user private data at registration
-				 */
+/**
+ * register UART device.
+ *
+ * @param Indicates the structure of the serial port device to be registered
+ * @param device name 
+ * @param Flag bit mask
+ * @param A pointer to the current device that is used as user private data at registration
+ */
         rt_hw_serial_register(uarts[i].serial, uarts[i].device_name, RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX, (void *)&uarts[i]);
     }
 

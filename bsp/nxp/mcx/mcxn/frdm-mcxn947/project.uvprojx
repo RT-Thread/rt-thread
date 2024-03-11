@@ -340,7 +340,7 @@
               <MiscControls>--target=arm-arm-none-eabi</MiscControls>
               <Define>__STDC_LIMIT_MACROS, RT_USING_ARMLIBC, CPU_MCXN947VDF_cm33_core0, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__, DEBUG</Define>
               <Undefine></Undefine>
-              <IncludePath>applications;..\..\..\..\libcpu\arm\common;.;..\Libraries\MCXN947\MCXN947\drivers;..\..\..\..\components\drivers\include;..\..\..\..\components\libc\compilers\common\extension\fcntl\octal;board;..\..\..\..\components\libc\posix\io\poll;..\..\..\..\components\libc\compilers\common\extension;..\..\..\..\components\drivers\include;..\Libraries\MCXN947\MCXN947;..\..\..\..\components\drivers\include;..\Libraries\CMSIS\Core\Include;..\..\..\..\components\drivers\include;..\..\..\..\components\libc\compilers\common\include;..\..\..\..\components\drivers\include;..\..\..\..\components\finsh;..\Libraries\drivers\config;..\..\..\..\components\libc\posix\ipc;..\..\..\..\components\libc\posix\io\epoll;..\..\..\..\include;..\..\..\..\components\libc\posix\io\eventfd;..\Libraries\MCXN947\middleware\sdmmc\inc;..\..\..\..\components\utilities\ulog;board\MCUX_Config\board;..\Libraries\MCXN947\middleware\sdmmc\port;..\Libraries\MCXN947\components\codec;..\Libraries\drivers;..\..\..\..\libcpu\arm\cortex-m33</IncludePath>
+              <IncludePath>..\..\..\..\..\include;..\..\..\..\..\libcpu\arm\common;..\Libraries\drivers;..\..\..\..\..\libcpu\arm\cortex-m33;..\..\..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\..\..\components\libc\posix\ipc;..\Libraries\MCXN947\middleware\sdmmc\inc;..\..\..\..\..\components\libc\posix\io\poll;.;..\..\..\..\..\components\libc\compilers\common\extension;..\..\..\..\..\components\drivers\include;..\Libraries\MCXN947\MCXN947\drivers;board\MCUX_Config\board;..\..\..\..\..\components\drivers\include;..\Libraries\MCXN947\middleware\sdmmc\port;..\..\..\..\..\components\libc\compilers\common\include;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\finsh;..\..\..\..\..\components\utilities\ulog;..\Libraries\MCXN947\MCXN947;board;..\Libraries\CMSIS\Core\Include;..\..\..\..\..\components\libc\posix\io\eventfd;applications;..\..\..\..\..\components\drivers\include;..\Libraries\MCXN947\components\codec;..\Libraries\drivers\config;..\..\..\..\..\components\libc\posix\io\epoll;..\..\..\..\..\components\drivers\include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -397,42 +397,42 @@
             <File>
               <FileName>syscall_mem.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\libc\compilers\armlibc\syscall_mem.c</FilePath>
+              <FilePath>..\..\..\..\..\components\libc\compilers\armlibc\syscall_mem.c</FilePath>
             </File>
             <File>
               <FileName>syscalls.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\libc\compilers\armlibc\syscalls.c</FilePath>
+              <FilePath>..\..\..\..\..\components\libc\compilers\armlibc\syscalls.c</FilePath>
             </File>
             <File>
               <FileName>cctype.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\libc\compilers\common\cctype.c</FilePath>
+              <FilePath>..\..\..\..\..\components\libc\compilers\common\cctype.c</FilePath>
             </File>
             <File>
               <FileName>cstdlib.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\libc\compilers\common\cstdlib.c</FilePath>
+              <FilePath>..\..\..\..\..\components\libc\compilers\common\cstdlib.c</FilePath>
             </File>
             <File>
               <FileName>cstring.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\libc\compilers\common\cstring.c</FilePath>
+              <FilePath>..\..\..\..\..\components\libc\compilers\common\cstring.c</FilePath>
             </File>
             <File>
               <FileName>ctime.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\libc\compilers\common\ctime.c</FilePath>
+              <FilePath>..\..\..\..\..\components\libc\compilers\common\ctime.c</FilePath>
             </File>
             <File>
               <FileName>cunistd.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\libc\compilers\common\cunistd.c</FilePath>
+              <FilePath>..\..\..\..\..\components\libc\compilers\common\cunistd.c</FilePath>
             </File>
             <File>
               <FileName>cwchar.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\libc\compilers\common\cwchar.c</FilePath>
+              <FilePath>..\..\..\..\..\components\libc\compilers\common\cwchar.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -442,7 +442,7 @@
             <File>
               <FileName>device.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\drivers\core\device.c</FilePath>
+              <FilePath>..\..\..\..\..\components\drivers\core\device.c</FilePath>
               <FileOption>
                 <CommonProperty>
                   <UseCPPCompiler>2</UseCPPCompiler>
@@ -498,7 +498,7 @@
             <File>
               <FileName>hwtimer.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\drivers\hwtimer\hwtimer.c</FilePath>
+              <FilePath>..\..\..\..\..\components\drivers\hwtimer\hwtimer.c</FilePath>
               <FileOption>
                 <CommonProperty>
                   <UseCPPCompiler>2</UseCPPCompiler>
@@ -554,7 +554,7 @@
             <File>
               <FileName>completion.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\drivers\ipc\completion.c</FilePath>
+              <FilePath>..\..\..\..\..\components\drivers\ipc\completion.c</FilePath>
               <FileOption>
                 <CommonProperty>
                   <UseCPPCompiler>2</UseCPPCompiler>
@@ -610,7 +610,7 @@
             <File>
               <FileName>dataqueue.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\drivers\ipc\dataqueue.c</FilePath>
+              <FilePath>..\..\..\..\..\components\drivers\ipc\dataqueue.c</FilePath>
               <FileOption>
                 <CommonProperty>
                   <UseCPPCompiler>2</UseCPPCompiler>
@@ -666,7 +666,7 @@
             <File>
               <FileName>pipe.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\drivers\ipc\pipe.c</FilePath>
+              <FilePath>..\..\..\..\..\components\drivers\ipc\pipe.c</FilePath>
               <FileOption>
                 <CommonProperty>
                   <UseCPPCompiler>2</UseCPPCompiler>
@@ -722,7 +722,7 @@
             <File>
               <FileName>ringblk_buf.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\drivers\ipc\ringblk_buf.c</FilePath>
+              <FilePath>..\..\..\..\..\components\drivers\ipc\ringblk_buf.c</FilePath>
               <FileOption>
                 <CommonProperty>
                   <UseCPPCompiler>2</UseCPPCompiler>
@@ -778,7 +778,7 @@
             <File>
               <FileName>ringbuffer.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\drivers\ipc\ringbuffer.c</FilePath>
+              <FilePath>..\..\..\..\..\components\drivers\ipc\ringbuffer.c</FilePath>
               <FileOption>
                 <CommonProperty>
                   <UseCPPCompiler>2</UseCPPCompiler>
@@ -834,7 +834,7 @@
             <File>
               <FileName>waitqueue.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\drivers\ipc\waitqueue.c</FilePath>
+              <FilePath>..\..\..\..\..\components\drivers\ipc\waitqueue.c</FilePath>
               <FileOption>
                 <CommonProperty>
                   <UseCPPCompiler>2</UseCPPCompiler>
@@ -890,7 +890,7 @@
             <File>
               <FileName>workqueue.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\drivers\ipc\workqueue.c</FilePath>
+              <FilePath>..\..\..\..\..\components\drivers\ipc\workqueue.c</FilePath>
               <FileOption>
                 <CommonProperty>
                   <UseCPPCompiler>2</UseCPPCompiler>
@@ -946,7 +946,7 @@
             <File>
               <FileName>pin.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\drivers\pin\pin.c</FilePath>
+              <FilePath>..\..\..\..\..\components\drivers\pin\pin.c</FilePath>
               <FileOption>
                 <CommonProperty>
                   <UseCPPCompiler>2</UseCPPCompiler>
@@ -1002,7 +1002,7 @@
             <File>
               <FileName>serial.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\drivers\serial\serial.c</FilePath>
+              <FilePath>..\..\..\..\..\components\drivers\serial\serial.c</FilePath>
               <FileOption>
                 <CommonProperty>
                   <UseCPPCompiler>2</UseCPPCompiler>
@@ -1093,7 +1093,7 @@
             <File>
               <FileName>shell.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\finsh\shell.c</FilePath>
+              <FilePath>..\..\..\..\..\components\finsh\shell.c</FilePath>
               <FileOption>
                 <CommonProperty>
                   <UseCPPCompiler>2</UseCPPCompiler>
@@ -1149,7 +1149,7 @@
             <File>
               <FileName>msh.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\finsh\msh.c</FilePath>
+              <FilePath>..\..\..\..\..\components\finsh\msh.c</FilePath>
               <FileOption>
                 <CommonProperty>
                   <UseCPPCompiler>2</UseCPPCompiler>
@@ -1205,7 +1205,7 @@
             <File>
               <FileName>msh_parse.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\finsh\msh_parse.c</FilePath>
+              <FilePath>..\..\..\..\..\components\finsh\msh_parse.c</FilePath>
               <FileOption>
                 <CommonProperty>
                   <UseCPPCompiler>2</UseCPPCompiler>
@@ -1261,7 +1261,7 @@
             <File>
               <FileName>cmd.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\finsh\cmd.c</FilePath>
+              <FilePath>..\..\..\..\..\components\finsh\cmd.c</FilePath>
               <FileOption>
                 <CommonProperty>
                   <UseCPPCompiler>2</UseCPPCompiler>
@@ -1322,7 +1322,7 @@
             <File>
               <FileName>clock.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\src\clock.c</FilePath>
+              <FilePath>..\..\..\..\..\src\clock.c</FilePath>
               <FileOption>
                 <CommonProperty>
                   <UseCPPCompiler>2</UseCPPCompiler>
@@ -1378,7 +1378,7 @@
             <File>
               <FileName>components.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\src\components.c</FilePath>
+              <FilePath>..\..\..\..\..\src\components.c</FilePath>
               <FileOption>
                 <CommonProperty>
                   <UseCPPCompiler>2</UseCPPCompiler>
@@ -1434,7 +1434,7 @@
             <File>
               <FileName>idle.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\src\idle.c</FilePath>
+              <FilePath>..\..\..\..\..\src\idle.c</FilePath>
               <FileOption>
                 <CommonProperty>
                   <UseCPPCompiler>2</UseCPPCompiler>
@@ -1490,7 +1490,7 @@
             <File>
               <FileName>ipc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\src\ipc.c</FilePath>
+              <FilePath>..\..\..\..\..\src\ipc.c</FilePath>
               <FileOption>
                 <CommonProperty>
                   <UseCPPCompiler>2</UseCPPCompiler>
@@ -1546,7 +1546,7 @@
             <File>
               <FileName>irq.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\src\irq.c</FilePath>
+              <FilePath>..\..\..\..\..\src\irq.c</FilePath>
               <FileOption>
                 <CommonProperty>
                   <UseCPPCompiler>2</UseCPPCompiler>
@@ -1602,7 +1602,7 @@
             <File>
               <FileName>kservice.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\src\kservice.c</FilePath>
+              <FilePath>..\..\..\..\..\src\kservice.c</FilePath>
               <FileOption>
                 <CommonProperty>
                   <UseCPPCompiler>2</UseCPPCompiler>
@@ -1658,7 +1658,7 @@
             <File>
               <FileName>mem.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\src\mem.c</FilePath>
+              <FilePath>..\..\..\..\..\src\mem.c</FilePath>
               <FileOption>
                 <CommonProperty>
                   <UseCPPCompiler>2</UseCPPCompiler>
@@ -1714,7 +1714,7 @@
             <File>
               <FileName>mempool.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\src\mempool.c</FilePath>
+              <FilePath>..\..\..\..\..\src\mempool.c</FilePath>
               <FileOption>
                 <CommonProperty>
                   <UseCPPCompiler>2</UseCPPCompiler>
@@ -1770,7 +1770,7 @@
             <File>
               <FileName>object.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\src\object.c</FilePath>
+              <FilePath>..\..\..\..\..\src\object.c</FilePath>
               <FileOption>
                 <CommonProperty>
                   <UseCPPCompiler>2</UseCPPCompiler>
@@ -1826,7 +1826,7 @@
             <File>
               <FileName>scheduler_comm.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\src\scheduler_comm.c</FilePath>
+              <FilePath>..\..\..\..\..\src\scheduler_comm.c</FilePath>
               <FileOption>
                 <CommonProperty>
                   <UseCPPCompiler>2</UseCPPCompiler>
@@ -1882,7 +1882,7 @@
             <File>
               <FileName>scheduler_up.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\src\scheduler_up.c</FilePath>
+              <FilePath>..\..\..\..\..\src\scheduler_up.c</FilePath>
               <FileOption>
                 <CommonProperty>
                   <UseCPPCompiler>2</UseCPPCompiler>
@@ -1938,7 +1938,7 @@
             <File>
               <FileName>thread.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\src\thread.c</FilePath>
+              <FilePath>..\..\..\..\..\src\thread.c</FilePath>
               <FileOption>
                 <CommonProperty>
                   <UseCPPCompiler>2</UseCPPCompiler>
@@ -1994,7 +1994,7 @@
             <File>
               <FileName>timer.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\src\timer.c</FilePath>
+              <FilePath>..\..\..\..\..\src\timer.c</FilePath>
               <FileOption>
                 <CommonProperty>
                   <UseCPPCompiler>2</UseCPPCompiler>
@@ -2055,37 +2055,37 @@
             <File>
               <FileName>atomic_arm.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\libcpu\arm\common\atomic_arm.c</FilePath>
+              <FilePath>..\..\..\..\..\libcpu\arm\common\atomic_arm.c</FilePath>
             </File>
             <File>
               <FileName>div0.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\libcpu\arm\common\div0.c</FilePath>
+              <FilePath>..\..\..\..\..\libcpu\arm\common\div0.c</FilePath>
             </File>
             <File>
               <FileName>showmem.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\libcpu\arm\common\showmem.c</FilePath>
+              <FilePath>..\..\..\..\..\libcpu\arm\common\showmem.c</FilePath>
             </File>
             <File>
               <FileName>context_rvds.S</FileName>
               <FileType>2</FileType>
-              <FilePath>..\..\..\..\libcpu\arm\cortex-m33\context_rvds.S</FilePath>
+              <FilePath>..\..\..\..\..\libcpu\arm\cortex-m33\context_rvds.S</FilePath>
             </File>
             <File>
               <FileName>cpuport.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\libcpu\arm\cortex-m33\cpuport.c</FilePath>
+              <FilePath>..\..\..\..\..\libcpu\arm\cortex-m33\cpuport.c</FilePath>
             </File>
             <File>
               <FileName>syscall_rvds.S</FileName>
               <FileType>2</FileType>
-              <FilePath>..\..\..\..\libcpu\arm\cortex-m33\syscall_rvds.S</FilePath>
+              <FilePath>..\..\..\..\..\libcpu\arm\cortex-m33\syscall_rvds.S</FilePath>
             </File>
             <File>
               <FileName>trustzone.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\libcpu\arm\cortex-m33\trustzone.c</FilePath>
+              <FilePath>..\..\..\..\..\libcpu\arm\cortex-m33\trustzone.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -2330,12 +2330,12 @@
             <File>
               <FileName>ulog.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\utilities\ulog\ulog.c</FilePath>
+              <FilePath>..\..\..\..\..\components\utilities\ulog\ulog.c</FilePath>
             </File>
             <File>
               <FileName>console_be.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\utilities\ulog\backend\console_be.c</FilePath>
+              <FilePath>..\..\..\..\..\components\utilities\ulog\backend\console_be.c</FilePath>
             </File>
           </Files>
         </Group>

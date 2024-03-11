@@ -24,17 +24,17 @@ void BOARD_InitBootPins(void)
     /* UART */
     PORT1->PCR[8]   = PORT_PCR_MUX(2) | PORT_PCR_PS(0) | PORT_PCR_IBE(1);     /* FC4_P0 */
     PORT1->PCR[9]   = PORT_PCR_MUX(2) | PORT_PCR_PS(0) | PORT_PCR_IBE(1);     /* FC4_P1 */
-	
-	  /* Mikro Bus UART */
+
+    /* Mikro Bus UART */
 //	  PORT1->PCR[16]  = PORT_PCR_MUX(2) | PORT_PCR_PS(0) | PORT_PCR_IBE(1);     /* FC5_P0 */
 //	  PORT1->PCR[17]  = PORT_PCR_MUX(2) | PORT_PCR_PS(0) | PORT_PCR_IBE(1);     /* FC5_P1 */
-		
-		PORT1->PCR[16]  = PORT_PCR_MUX(2) | PORT_PCR_PS(0) | PORT_PCR_PE(1) | PORT_PCR_IBE(1);     /* FC5_UART */
-	  PORT1->PCR[17]  = PORT_PCR_MUX(2) | PORT_PCR_PS(0) | PORT_PCR_PE(1) | PORT_PCR_IBE(1);     /* FC5_UART */
-		
-		/* MCX_RST UART */
-		PORT4->PCR[2]  = PORT_PCR_MUX(2) | PORT_PCR_PS(0) | PORT_PCR_PE(1) | PORT_PCR_IBE(1);     /* FC2_UART */
-	  PORT4->PCR[3]  = PORT_PCR_MUX(2) | PORT_PCR_PS(0) | PORT_PCR_PE(1) | PORT_PCR_IBE(1);     /* FC2_UART */
+
+    PORT1->PCR[16]  = PORT_PCR_MUX(2) | PORT_PCR_PS(0) | PORT_PCR_PE(1) | PORT_PCR_IBE(1);     /* FC5_UART */
+    PORT1->PCR[17]  = PORT_PCR_MUX(2) | PORT_PCR_PS(0) | PORT_PCR_PE(1) | PORT_PCR_IBE(1);     /* FC5_UART */
+
+    /* MCX_RST UART */
+    PORT4->PCR[2]  = PORT_PCR_MUX(2) | PORT_PCR_PS(0) | PORT_PCR_PE(1) | PORT_PCR_IBE(1);     /* FC2_UART */
+    PORT4->PCR[3]  = PORT_PCR_MUX(2) | PORT_PCR_PS(0) | PORT_PCR_PE(1) | PORT_PCR_IBE(1);     /* FC2_UART */
 
 
     PORT0->PCR[6]   = PORT_PCR_MUX(12) | PORT_PCR_PS(1) | PORT_PCR_PE(1) | PORT_PCR_IBE(1) | PORT_PCR_SRE(0) | PORT_PCR_ODE(0);     /* CLKOUT */
