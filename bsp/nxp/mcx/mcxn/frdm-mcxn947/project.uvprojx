@@ -2328,14 +2328,14 @@
           <GroupName>Utilities</GroupName>
           <Files>
             <File>
-              <FileName>console_be.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\utilities\ulog\backend\console_be.c</FilePath>
-            </File>
-            <File>
               <FileName>ulog.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\components\utilities\ulog\ulog.c</FilePath>
+            </File>
+            <File>
+              <FileName>console_be.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\components\utilities\ulog\backend\console_be.c</FilePath>
             </File>
           </Files>
         </Group>

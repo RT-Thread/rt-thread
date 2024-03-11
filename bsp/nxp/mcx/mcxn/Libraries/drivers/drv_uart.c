@@ -23,29 +23,46 @@
 /* lpc uart driver */
 struct mcx_uart
 {
-    struct rt_serial_device     *serial;
-    LPUART_Type                 *uart_base;
-    IRQn_Type                   irqn;
-    clock_name_t                clock_src;
-    clock_attach_id_t           clock_attach_id;
-    clock_ip_name_t             clock_ip_name;
-    clock_div_name_t            clock_div_name;
-    char *device_name;
+    struct rt_serial_device     *serial;  // Select serial device
+    LPUART_Type                 *uart_base; // serial base
+    IRQn_Type                   irqn; // serial interrupt 
+    clock_name_t                clock_src; //serial RTC
+    clock_attach_id_t           clock_attach_id; // RTC ID
+    clock_ip_name_t             clock_ip_name; // serial clock name
+    clock_div_name_t            clock_div_name; // serial clock div
+    char *device_name; // serial device name 
 };
 
 static void uart_isr(struct rt_serial_device *serial);
 
+#if defined(BSP_USING_UART2)
+struct rt_serial_device serial2;
+
+void LP_FLEXCOMM2_IRQHandler(void)
+{
+    uart_isr(&serial2); // Serial interrupt handling function
+}
+#endif /* BSP_USING_UART2 */
 
 #if defined(BSP_USING_UART4)
 struct rt_serial_device serial4;
 
 void LP_FLEXCOMM4_IRQHandler(void)
 {
-    uart_isr(&serial4);
+    uart_isr(&serial4); // Serial interrupt handling function
 }
 #endif /* BSP_USING_UART4 */
 
-#if defined(BSP_USING_UART6)
+#if defined(BSP_USING_UART5)
+struct rt_serial_device serial5;
+
+void LP_FLEXCOMM5_IRQHandler(void)
+{
+    uart_isr(&serial5); // Serial interrupt handling function
+}
+#endif /* BSP_USING_UART5 */
+
+#if defined(BSP_USING_UART6) // same UART4
 struct rt_serial_device serial6;
 
 void LP_FLEXCOMM6_IRQHandler(void)
@@ -54,8 +71,20 @@ void LP_FLEXCOMM6_IRQHandler(void)
 }
 #endif /* BSP_USING_UART6 */
 
-static const struct mcx_uart uarts[] =
+static const struct mcx_uart uarts[] = // Initializes the above structure
 {
+	#ifdef BSP_USING_UART2
+    {
+        &serial2,
+        LPUART2,
+        LP_FLEXCOMM2_IRQn,
+        kCLOCK_Fro12M,
+        kFRO12M_to_FLEXCOMM2,
+        kCLOCK_LPFlexComm2,
+        kCLOCK_DivFlexcom2Clk,
+        "uart2",
+    },
+#endif
 #ifdef BSP_USING_UART4
     {
         &serial4,
@@ -66,6 +95,18 @@ static const struct mcx_uart uarts[] =
         kCLOCK_LPFlexComm4,
         kCLOCK_DivFlexcom4Clk,
         "uart4",
+    },
+#endif
+	#ifdef BSP_USING_UART5
+    {
+        &serial5,
+        LPUART5,
+        LP_FLEXCOMM5_IRQn,
+        kCLOCK_Fro12M,
+        kFRO12M_to_FLEXCOMM5,
+        kCLOCK_LPFlexComm5,
+        kCLOCK_DivFlexcom5Clk,
+        "uart5",
     },
 #endif
 #ifdef BSP_USING_UART6
@@ -82,13 +123,18 @@ static const struct mcx_uart uarts[] =
 #endif
 };
 
-
-static rt_err_t mcx_configure(struct rt_serial_device *serial, struct serial_configure *cfg)
+/**
+ * Configuring the serial port Module.
+ *
+ * @param serial device
+ * @param Configure the serial port configuration structure to set the TX RX features
+ */
+static rt_err_t mcx_configure(struct rt_serial_device *serial, struct serial_configure *cfg) // Configuring the serial port Module
 {
-    struct mcx_uart *uart;
-    lpuart_config_t config;
+    struct mcx_uart *uart; // Serial port hardware structure, calling the structure initialized above
+    lpuart_config_t config;// It contains basic configuration parameters of the serial port, such as baud rate, data bit, stop bit, and parity check
 
-    RT_ASSERT(serial != RT_NULL);
+    RT_ASSERT(serial != RT_NULL); // assert
     RT_ASSERT(cfg != RT_NULL);
 
     uart = (struct mcx_uart *)serial->parent.user_data;
@@ -119,11 +165,18 @@ static rt_err_t mcx_configure(struct rt_serial_device *serial, struct serial_con
     return RT_EOK;
 }
 
-static rt_err_t mcx_control(struct rt_serial_device *serial, int cmd, void *arg)
+/**
+ * Serial Control Function.
+ *
+ * @param serial device struct
+ * @param control Cmd
+ * @param Parameters passed to the control command
+ */
+static rt_err_t mcx_control(struct rt_serial_device *serial, int cmd, void *arg)// serial control
 {
-    struct mcx_uart *uart = (struct mcx_uart *)serial->parent.user_data;
+    struct mcx_uart *uart = (struct mcx_uart *)serial->parent.user_data; // Convert the type to struct mcx_uart
 
-    RT_ASSERT(uart != RT_NULL);
+    RT_ASSERT(uart != RT_NULL); // Assert
 
     switch (cmd)
     {
@@ -143,6 +196,12 @@ static rt_err_t mcx_control(struct rt_serial_device *serial, int cmd, void *arg)
     return RT_EOK;
 }
 
+/**
+ * Sends a single character function to a serial device.
+ *
+ * @param serial device struct
+ * @param The serial port character you want to send
+ */
 static int mcx_putc(struct rt_serial_device *serial, char ch)
 {
     struct mcx_uart *uart = (struct mcx_uart *)serial->parent.user_data;
@@ -158,6 +217,8 @@ static int mcx_getc(struct rt_serial_device *serial)
     struct mcx_uart *uart = (struct mcx_uart *)serial->parent.user_data;
 
     if (kLPUART_RxDataRegFullInterruptEnable & LPUART_GetStatusFlags(uart->uart_base))
+		// Check whether the receive cache is full and read the status flag bit of the status register
+		// This flag is read, indicating that there is data in the cache and can be read
     {
         return LPUART_ReadByte(uart->uart_base);
     }
@@ -174,7 +235,7 @@ static int mcx_getc(struct rt_serial_device *serial)
  */
 static void uart_isr(struct rt_serial_device *serial)
 {
-    struct mcx_uart *uart;
+    struct mcx_uart *uart; // Create a serial port hardware structure variable
 
     RT_ASSERT(serial != RT_NULL);
 
@@ -201,21 +262,29 @@ static const struct rt_uart_ops mcx_uart_ops =
 
 int rt_hw_uart_init(void)
 {
-    struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT;
+    struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT; // initial struct [115200,8,1,NONE]
     int i;
-
-    for (i = 0; i < sizeof(uarts) / sizeof(uarts[0]); i++)
+		
+		// Registers loops for multiple serial devices
+	for (i = 0; i < sizeof(uarts) / sizeof(uarts[0]); i++) // sizeof(uarts) / sizeof(uarts[0] : Calculate the number of struct mcx_uart serial ports
     {
         uarts[i].serial->ops    = &mcx_uart_ops;
         uarts[i].serial->config = config;
 
-        /* register UART device */
+			  /**
+				 * register UART device.
+				 *
+				 * @param Indicates the structure of the serial port device to be registered
+				 * @param device name 
+			   * @param Flag bit mask
+		     * @param A pointer to the current device that is used as user private data at registration
+				 */
         rt_hw_serial_register(uarts[i].serial, uarts[i].device_name, RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX, (void *)&uarts[i]);
     }
 
     return 0;
 }
 
-INIT_BOARD_EXPORT(rt_hw_uart_init);
+INIT_BOARD_EXPORT(rt_hw_uart_init); // RT-Thread Automatic initialization mechanism
 
 #endif /*BSP_USING_SERIAL */
