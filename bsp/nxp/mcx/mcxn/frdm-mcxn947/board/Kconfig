@@ -20,18 +20,23 @@ menu "On-chip Peripheral Drivers"
         default y
 
     menuconfig BSP_USING_UART
-        config BSP_USING_UART
-            bool "Enable UART"
-            select RT_USING_UART
-            default y
+        bool "Enable UART"
+        default y
+        select RT_USING_SERIAL
+        if BSP_USING_UART
+            config BSP_USING_UART4
+                bool "Enable UART4"
+                default y
+  
+            config BSP_USING_UART5
+                bool "Enable UART5"
+                default n
 
-            if BSP_USING_UART
-                config BSP_USING_UART4
-                    bool "Enable Flexcomm4 as UART"
-                    default y
+            config BSP_USING_UART2
+                bool "Enable UART2"
+                default n
 
-            endif
-
+        endif
 
     menuconfig BSP_USING_I2C
         config BSP_USING_I2C
