@@ -32,6 +32,19 @@ menu "On-chip Peripheral Drivers"
 
             endif
 
+            if BSP_USING_UART
+                config BSP_USING_UART5
+                    bool "Enable Flexcomm5 as UART"
+                    default n
+
+            endif
+
+            if BSP_USING_UART
+                config BSP_USING_UART2
+                    bool "Enable Flexcomm2 as UART"
+                    default n
+
+            endif
 
     menuconfig BSP_USING_I2C
         config BSP_USING_I2C
