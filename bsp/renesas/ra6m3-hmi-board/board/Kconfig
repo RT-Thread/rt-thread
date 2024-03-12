@@ -22,6 +22,8 @@ menu "Hardware Drivers Config"
             select BSP_USING_PWM8
             select BSP_USING_SOFT_I2C
             select BSP_USING_I2C0
+            select BSP_USING_SOFT_SPI
+            select BSP_USING_SOFT_SPI1
             imply RTDUINO_USING_SERVO
             imply RTDUINO_USING_WIRE
             default n
@@ -534,6 +536,33 @@ menu "Hardware Drivers Config"
                 config BSP_USING_SPI1
                     bool "Enable SPI1 BUS"
                     default n
+            endif
+
+        menuconfig BSP_USING_SOFT_SPI
+            bool "Enable soft SPI BUS"
+            default n
+            select RT_USING_PIN
+            select RT_USING_SPI_BITOPS
+            select RT_USING_SPI
+            if BSP_USING_SOFT_SPI
+                config BSP_USING_SOFT_SPI1
+                    bool "Enable soft SPI1 BUS (software simulation)"
+                    default n
+                    if BSP_USING_SOFT_SPI1
+                        comment "Please select your spi analog pin, e.g. 'P512': 0x512"
+                        config BSP_S_SPI1_SCK_PIN
+                            hex "spi1 sck pin number (hex)"
+                            range 0x0000 0x0E0F
+                            default 0x204
+                        config BSP_S_SPI1_MOSI_PIN
+                            hex "spi1 mosi pin number (hex)"
+                            range 0x0000 0x0E0F
+                            default 0x512
+                        config BSP_S_SPI1_MISO_PIN
+                            hex "spi1 miso pin number (hex)"
+                            range 0x0000 0x0E0F
+                            default 0x511
+                    endif
             endif
 
         menuconfig BSP_USING_SOFT_I2C
