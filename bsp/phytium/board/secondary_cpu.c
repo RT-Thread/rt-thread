@@ -80,7 +80,6 @@ void rt_hw_secondary_cpu_up(void)
         }
         cpu_mask = 1 << phytium_cpu_id_mapping(i);
 
-
 #if defined(TARGET_ARMV8_AARCH64)
         /* code */
         rt_kprintf("cpu_mask = 0x%x \n", cpu_mask);

@@ -52,9 +52,9 @@ struct mem_desc platform_mem_desc[] =
         NORMAL_MEM
     },
     {
-        0x28000000U,
+        0x00080000U,
         0x32B36FFFU,
-        0x28000000U,
+        0x00080000U,
         DEVICE_MEM
     },
 };

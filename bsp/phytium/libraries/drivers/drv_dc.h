@@ -14,7 +14,7 @@
 #ifndef __DRV_DC_H__
 #define __DRV_DC_H__
 #include <rtdevice.h>
-
+#include "fdcdp.h"
 
 #ifdef __cplusplus
 extern "C"
@@ -31,7 +31,13 @@ extern "C"
 
 
 int rt_hw_dc_init(void);
-
+struct phytium_dc_bus
+{
+    struct rt_device parent;
+    FDcDp  dc_handle;/* data */
+    const char *name;
+    rt_uint32_t fdc_id;
+};
 #ifdef __cplusplus
 }
 #endif

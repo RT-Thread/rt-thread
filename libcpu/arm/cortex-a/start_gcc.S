@@ -57,7 +57,7 @@ _reset:
     bl init_cpu_stack_early
 
     /* init mmu  */
-    b init_mmu_early
+    b init_mmu_page_table_early
 
 init_cpu_stack_early:
 
@@ -178,19 +178,19 @@ continue_exit:
 
     mov pc, lr
 
-init_mmu_early:
+init_mmu_page_table_early:
     get_phy r0, init_mtbl, pv_off
     mov r1, pv_off
     bl rt_hw_mem_setup_early
 
     /* get cpu id */
-    bl rt_hw_cpu_id
+    bl rt_hw_cpu_id_early
     mov cpu_id ,r0
-    /* enable_mmu_early is changed to master_core_startup */
+    /* enable_mmu_page_table_early is changed to master_core_startup */
     ldr     lr, =master_core_startup
     
     cmp cpu_id, #0
-    beq enable_mmu_early
+    beq enable_mmu_page_table_early
 
 
 #ifdef RT_USING_SMP
@@ -213,7 +213,7 @@ secondary_loop:
 #endif /* RT_SMP_AUTO_BOOT */
     b secondary_loop
     
-enable_mmu_early:
+enable_mmu_page_table_early:
     /* init TTBR0  */
     get_phy r0, init_mtbl, pv_off
     mcr     p15, #0, r0, c2, c0, #0
@@ -281,8 +281,8 @@ rt_hw_mmu_tbl_get:
     bic r0, #0x18
     mov pc, lr
 
-.weak rt_hw_cpu_id
-rt_hw_cpu_id:
+.weak rt_hw_cpu_id_early
+rt_hw_cpu_id_early:
     mrc p15, 0, r0, c0, c0, 5
     and r0, r0, #0xf
     mov pc, lr
@@ -297,11 +297,11 @@ rt_secondary_cpu_entry:
     bl init_cpu_stack_early
 
     /* init mmu  */
-    bl rt_hw_cpu_id
+    bl rt_hw_cpu_id_early
     mov cpu_id ,r0
 
     ldr lr ,= rt_hw_secondary_cpu_bsp_start
-    b enable_mmu_early
+    b enable_mmu_page_table_early
 #endif
 
 
