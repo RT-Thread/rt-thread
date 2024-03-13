@@ -47,8 +47,8 @@ map_cpu_id_3:
 mov r0, #1
 mov pc, lr
 
-.globl rt_asm_cpu_id 
-rt_asm_cpu_id:
+.globl rt_hw_cpu_id_early 
+rt_hw_cpu_id_early:
 // read MPIDR
     mov r9, lr
     mrc p15, 0, r0, c0, c0, 5 
