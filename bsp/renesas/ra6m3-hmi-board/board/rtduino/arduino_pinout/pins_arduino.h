@@ -45,4 +45,8 @@
 /* Serial4(uart4) : P205-TX  P206-RX */
 #define RTDUINO_SERIAL2_DEVICE_NAME "uart4"
 
+/* soft spi1: P204-SS   P511-MISO   P512-MOSI */
+#define SS          D13
+#define RTDUINO_DEFAULT_SPI_BUS_NAME     "sspi1"
+
 #endif /* Pins_Arduino_h */
