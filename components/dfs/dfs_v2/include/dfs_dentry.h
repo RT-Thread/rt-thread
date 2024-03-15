@@ -41,6 +41,7 @@ struct dfs_dentry
 };
 
 struct dfs_dentry *dfs_dentry_create(struct dfs_mnt *mnt, char *fullpath);
+struct dfs_dentry *dfs_dentry_create_rela(struct dfs_mnt *mnt, char *rela_path);
 struct dfs_dentry *dfs_dentry_unref(struct dfs_dentry *dentry);
 struct dfs_dentry *dfs_dentry_ref(struct dfs_dentry *dentry);
 void dfs_dentry_insert(struct dfs_dentry *dentry);
