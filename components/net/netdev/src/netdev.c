@@ -165,9 +165,17 @@ int netdev_unregister(struct netdev *netdev)
         if (cur_netdev == netdev)
         {
             /* find this network interface device in network interface device list */
-            if (netdev_list == netdev && rt_slist_next(&netdev_list->list) == RT_NULL)
+            if (netdev_list == netdev)
             {
-                netdev_list = RT_NULL;
+                rt_slist_t *next = rt_slist_next(node);
+                if (next)
+                {
+                    netdev_list = rt_slist_entry(next, struct netdev, list);
+                }
+                else
+                {
+                    netdev_list = RT_NULL;
+                }
             }
             else
             {
