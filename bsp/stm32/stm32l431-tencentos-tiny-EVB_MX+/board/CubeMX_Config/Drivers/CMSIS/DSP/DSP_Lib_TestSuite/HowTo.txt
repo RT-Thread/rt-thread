@@ -1,0 +1,137 @@
+HowTo DSP_Lib_TestSuite     18.02.2019
+=======================================
+
+This file describes the folder structure, content, prerequisites and instructions to validate the
+build of the CMSIS-DSP library. This is done by processing input data sets using the DSP Library
+functions executing on a target simulator or hardware. The output data sets are then compared 
+with the reference data set produced by unoptimized DSP functions and a Signal to Noise Ratio (SNR)
+is computed. If the SNR is below a defined threshold the test is considered "passed".
+
+
+Folder structure
+----------------
+	.\DSP_Lib_TestSuite                                       Batch files for building the reference libraries and running the tests.
+	.\DSP_Lib_TestSuite\Common
+	.\DSP_Lib_TestSuite\Common\inc                            DSP_Lib test include files
+	.\DSP_Lib_TestSuite\Common\JTest                          JTEST Test Framework + INI files for uVision
+	.\DSP_Lib_TestSuite\Common\platform                       ARM/GCC device startup/system files
+	.\DSP_Lib_TestSuite\Common\src                            DSP_Lib test source files
+	.\DSP_Lib_TestSuite\DspLibTest_FVP                        ARM/GCC DSP_Lib test projects for Fixed Virtual Platforms
+	.\DSP_Lib_TestSuite\DspLibTest_MPS2                       ARM/GCC DSP_Lib test projects for MPS2
+	.\DSP_Lib_TestSuite\DspLibTest_Simulator                  ARM/GCC DSP_Lib test projects for uVision simulator
+	.\DSP_Lib_TestSuite\RefLibs                               ARM/GCC DSP_Lib reference libraries (and projects)
+
+
+
+Prerequisites
+--------------
+ - Python (running on Windows). Tested with ActivePython 2.7.8.10.
+ - Keil MDK-ARM (tested with MDK-ARM 5.22: http://www2.keil.com/mdk5)
+ - ULINKpro debug adapter (http://www2.keil.com/mdk5/ulink)
+ - MPS2 (Cortex-M Prototyping System:https://www.arm.com/products/tools/development-boards/versatile-express/cortex-m-prototyping-system.php)
+ - CMSIS 5.0.0 (https://github.com/ARM-software/CMSIS_5/releases/tag/5.0.0)
+
+
+Setup
+------
+ - remove 'read-only' tag from folder .\CMSIS\DSP\Lib
+   (required for rebuild of the DSP_Lib libraries)
+
+ - open a Windows command window in folder .\CMSIS\DSP\DSP_Lib_TestSuite.
+
+
+
+How to run the tests
+---------------------
+
+a) build the DSP_Lib libraries:
+ - batch file: buildDspLibs.bat 
+   Note: only require if the DSP_Lib source code got updated or the desired configuration is missing
+   buildDspLibs.bat overwrites the prebuild libraries in .\CMSIS\DSP\Lib.
+   Log files of the build process are generated in folder .\CMSIS\DSP\DSP_Lib/[ARM|GCC]
+ - run:  buildDspLibs.bat in a Windows command window in folder .\CMSIS\DSP\DSP_Lib_TestSuite
+         buildDspLibs ARM        -> builds the ARMCC libraries
+         buildDspLibs GCC        -> builds the GCC libraries
+
+b) build the reference libraries:
+ - batch file: buildRefLibs.bat
+   
+   Log files of the build process are generated in folder .\CMSIS\DSP\DSP_Lib_TestSuite\RefLibs/[ARM|GCC]
+ - run: buildRefLibs.bat in a Windows command window in folder .\CMSIS\DSP\DSP_Lib_TestSuite
+        buildRefLibs ARM        -> builds the ARMCC reference libraries
+        buildRefLibs GCC        -> builds the GCC reference libraries
+
+c) running an individual test using uVision (MDK-ARM):
+ - batch file: runTest.bat
+ - run:  runTest.bat in a Windows command window in folder .\CMSIS\DSP\DSP_Lib_TestSuite
+         runTest                                -> prints usage information
+    e.g. runTest ARM cortexM4lf Simulator       -> runs the test for toolchain ARM, Cortex-M4 littel endian with FPU, uVision Simulator.
+
+   Tests running on MPS2 requires additional steps to setup. See section 'MPS2'.
+
+d) parsing the test output log file
+ - script: parseLog.py 
+ - run:  parseLog.py python script in a Windows command window in folder .\CMSIS\DSP\DSP_Lib_TestSuite
+   command line options should match the invocation of the runTest executed before.
+   e.g: runTest ARM cortexM4lf Simulator  ->  python parseLog.py ARM cortexM4lf Simulator
+   
+ - check the test log
+   depending on your test parameters change into the required folder
+      .\DSP_Lib_TestSuite\DspLibTest_[FVP|MPS2|Simulator]\[ARM|GCC]\Logs
+   the folder will contain the following files (e.g. for a 'runTest') :
+       DspLibTest_Simulator.log                    raw result of the last test run.
+       DspLibTest_Simulator_cortexM4lf.log         raw result of a cortexM4lf test run
+       DspLibTest_Simulator_cortexM4lf_build.log   build result of cortexM4lf test
+       DspLibTest_Simulator_cortexM4lf_parsed.log  parsed log of raw result of a cortexM4lf test run
+       DspLibTest_Simulator_cortexM4lf_time.log    log how long the test took (some tests e.g. M0 take really a long time!).
+   'runTest' produces files of the format:     DspLibTest_<test>_<core>...
+
+
+Differences between the tests for FVP, MPS2, Simulator
+------------------------------------------------------
+ - all tests are identical except for:
+    'Simulator' uses uVision with uVision simulator and generates also code coverage information
+         can be used for little/big endian tests
+         ! do not use 'Simulator' for M7 with FPU      -> no uVision simulation available.
+         ! do not use 'Simulator' for ARMv8-M devices  -> no uVision simulation available.
+    'MPS2' uses uVision with ULINKpro debugger and MPS2. No code coverage information is generated.
+         can be used for little endian only (because of the lack of MPS2 FPGA images).
+    'FVP' uses uVision with Models debugger. No code coverage information is generated.
+         can be used for little/big endian tests.
+         ! config files must be prepared.
+         ! uVision target for big endianess are not yet prepared.
+
+
+Setup 'MPS2'
+-------------
+ - load the appropriate FPGA image to the MPS2 board matching the CPU of the test builds prior to running the test
+ - check if ULINKpro can connect with the configured debug connection (JTAG or SWD) as this must
+   match the protocol implemented in the FPGA image.
+ 
+
+How to select tests for "run all tests"
+----------------------------------------
+ - edit .\CMSIS\DSP\DSP_Lib_TestSuite\Common\src\all_tests.c
+   comment out all unwanted test groups.
+   e.g.  //    JTEST_GROUP_CALL(complex_math_tests);
+
+ - edit .\CMSIS\DSP\DSP_Lib_TestSuite\Common\src\<test group>/<test group>_group.c
+   comment out all unwanted sub test groups.
+   e.g. file .\DSP_Lib_TestSuite\Common\src\basic_math_tests\basic_math_test_group.c ->  //    JTEST_GROUP_CALL(abs_tests);
+
+ - edit .\CMSIS\DSP\DSP_Lib_TestSuite\Common\src\<test group>/<test>_tests.c
+   comment out all unwanted tests.
+   e.g. file .\DSP_Lib_TestSuite\Common\src\basic_math_tests\abs_tests.c  ->  //    JTEST_TEST_CALL(arm_abs_f32_test);
+
+
+Notes
+-----
+ - How to use ARM Clang (ARM Compiler 6):
+   in uVision 'Options for Target' tab you can select which compiler to use
+   by default uVision uses ARMCC V5 for Cortex-M devices and ARMCLANG V6 only for ARMv8M.
+   Only ARMv8M cores have been tested using ARMCLANG
+
+ - test data used for the tests is used as provided by DSP Concepts.
+
+ - some tests run for a very long time before they finish. This is expected
+ 
