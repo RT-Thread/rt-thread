@@ -1,8 +1,0 @@
-# Parameters:
-# instance.parameter=value       #(type, mode) default = 'def value' : description : [min..max]
-#----------------------------------------------------------------------------------------------
-armcortexm3ct.semihosting-enable=0                    # (bool  , init-time) default = '1'      : Enable semihosting SVC traps. Applications that do not use semihosting must set this parameter to false.
-armcortexm3ct.min_sync_level=0x3                      # (int   , run-time ) default = '0x0'    : force minimum syncLevel (0=off=default,1=syncState,2=postInsnIO,3=postInsnAll) : [0x0..0x3]
-armcortexm3ct.cpi_mul=0x1                             # (int   , run-time ) default = '0x1'    : multiplier for calculating CPI (Cycles Per Instruction) : [0x1..0x7FFFFFFF]
-armcortexm3ct.cpi_div=0x1                             # (int   , run-time ) default = '0x1'    : divider for calculating CPI (Cycles Per Instruction) : [0x1..0x7FFFFFFF]
-#----------------------------------------------------------------------------------------------

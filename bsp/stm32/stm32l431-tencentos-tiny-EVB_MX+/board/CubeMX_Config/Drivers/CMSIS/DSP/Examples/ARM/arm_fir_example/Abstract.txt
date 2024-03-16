@@ -1,4 +1,0 @@
-CMSIS DSP_Lib example arm_fir_example for
-  Cortex-M0, Cortex-M3, Cortex-M4 with FPU and Cortex-M7 with single precision FPU.
-
-The example is configured for uVision Simulator.
