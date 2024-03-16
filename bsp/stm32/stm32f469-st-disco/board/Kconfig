@@ -44,8 +44,11 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_I2C1
         select BSP_USING_SPI
         select BSP_USING_SPI2
+        select BSP_SPI2_TX_USING_DMA
+        select BSP_SPI2_RX_USING_DMA
+        select RTDUINO_USING_WIRE
+        select RTDUINO_USING_SPI
         imply RTDUINO_USING_SERVO
-        imply RTDUINO_USING_WIRE
         default n
 
     config BSP_USING_SDRAM
