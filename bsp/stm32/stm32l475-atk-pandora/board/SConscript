@@ -13,7 +13,7 @@ CubeMX_Config/Src/stm32l4xx_hal_msp.c
 ''')
 
 path =  [cwd]
-path += [cwd + '/CubeMX_Config/Inc']
+path += [os.path.join(cwd, 'CubeMX_Config', 'Inc')]
 
 if not GetDepend(['RT_USING_NANO']):
     if GetDepend(['BSP_USING_KEY']):
@@ -26,10 +26,10 @@ if not GetDepend(['RT_USING_NANO']):
         src += [os.path.join('ports', 'drv_filesystem.c')]
         if GetDepend(['BSP_USING_SPI_FLASH_LITTLEFS']):
             src += [os.path.join('ports', 'fal', 'fal_spi_flash_sfud_port.c')]
-            path += [cwd + os.path.join('ports', 'fal')]
+            path += [os.path.join(cwd, 'ports', 'fal')]
 
     if GetDepend(['RT_USING_SENSOR']):
-        src += os.path.join('ports', 'drv_sensors.c')
+        src += [os.path.join('ports', 'drv_sensors.c')]
 
     if GetDepend(['BSP_USING_AUDIO']):
         src += [os.path.join('ports', 'audio', 'drv_es8388.c')]
@@ -42,7 +42,7 @@ if not GetDepend(['RT_USING_NANO']):
         src += [os.path.join('ports', 'drv_sdio_adapter.c')]
 
     if GetDepend(['BSP_USING_AUDIO']):
-        path += [cwd + os.path.join('ports', 'audio')]
+        path += [os.path.join(cwd, 'ports', 'audio')]
 
 startup_path_prefix = SDK_LIB
 
