@@ -2,7 +2,7 @@
 
 ## 简介
 
-本文档为开发板的TencentOS-tiny-EVB_MX+的BSP (板级支持包) 说明。
+本文档为TencentOS-tiny-EVB_MX+开发板的BSP (板级支持包) 说明。
 
 主要内容如下：
 
