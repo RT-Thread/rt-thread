@@ -557,9 +557,9 @@ config RT_USING_SENSOR
     default n
 
 if RT_USING_SENSOR
-    # config RT_USING_SENSOR_V2
-    #     bool "Enable Sensor Framework v2"
-    #     default n
+    config RT_USING_SENSOR_V2
+        bool "Enable Sensor Framework v2"
+        default n
 
     config RT_USING_SENSOR_CMD
         bool "Using Sensor cmd"
