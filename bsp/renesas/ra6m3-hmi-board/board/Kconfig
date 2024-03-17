@@ -24,8 +24,9 @@ menu "Hardware Drivers Config"
             select BSP_USING_I2C0
             select BSP_USING_SOFT_SPI
             select BSP_USING_SOFT_SPI1
+            select RTDUINO_USING_WIRE
+            select RTDUINO_USING_SPI
             imply RTDUINO_USING_SERVO
-            imply RTDUINO_USING_WIRE
             default n
 
         menuconfig BSP_USING_FS
