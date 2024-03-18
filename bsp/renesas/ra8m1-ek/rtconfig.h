@@ -134,9 +134,6 @@
 /* Wiced WiFi */
 
 
-/* CYW43012 WiFi */
-
-
 /* IoT Cloud */
 
 
@@ -245,6 +242,7 @@
 #define SOC_R7FA8M1AH
 
 /* Onboard Peripheral Drivers */
+
 
 /* On-chip Peripheral Drivers */
 
