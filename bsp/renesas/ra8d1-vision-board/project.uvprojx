@@ -16,7 +16,7 @@
         <TargetCommonOption>
           <Device>R7FA8D1BH</Device>
           <Vendor>Renesas</Vendor>
-          <PackID>Renesas.RA8_DFP.0.0.2</PackID>
+          <PackID>Renesas.RA_DFP.5.1.0</PackID>
           <PackURL>https://www2.renesas.eu/Keil_MDK_Packs/</PackURL>
           <Cpu>IRAM(0x22000000,0xE0000) IRAM2(0x0,0x10000) IROM(0x02000000,0x001F8000) XRAM(0x20000000,0x10000) CPUTYPE("Cortex-M85") FPU3(DFPU) DSP TZ MVE(FP) PACBTI CLOCK(12000000) ELITTLE</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
@@ -2046,7 +2046,7 @@
     <apis/>
     <components>
       <component Cclass="Flex Software" Cgroup="RA Configuration" Cvendor="Renesas" Cversion="1.0.0" condition="RA Device" generator="Renesas RA Smart Configurator">
-        <package name="RA8_DFP" schemaVersion="1.7.2" url="https://www2.renesas.eu/Keil_MDK_Packs/" vendor="Renesas" version="0.0.2"/>
+        <package name="RA_DFP" schemaVersion="1.7.2" url="https://www2.renesas.eu/Keil_MDK_Packs/" vendor="Renesas" version="5.1.0"/>
         <targetInfos>
           <targetInfo name="Target 1"/>
         </targetInfos>
