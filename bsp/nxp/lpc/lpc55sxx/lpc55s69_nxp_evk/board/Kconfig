@@ -335,8 +335,8 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_CTIMER2_MAT2
         select BSP_USING_I2C
         select BSP_USING_I2C1
+        select RTDUINO_USING_WIRE
         imply RTDUINO_USING_SERVO
-        imply RTDUINO_USING_WIRE
         default n
 
     if BSP_USING_ARDUINO

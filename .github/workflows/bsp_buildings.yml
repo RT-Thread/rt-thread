@@ -99,6 +99,7 @@ jobs:
                 - "stm32/stm32l053-st-nucleo"
                 - "stm32/stm32l412-st-nucleo"
                 - "stm32/stm32l431-BearPi"
+                - "stm32/stm32l431-tencentos-tiny-EVB_MX+"
                 - "stm32/stm32l432-st-nucleo"
                 - "stm32/stm32l433-ali-startkit"
                 - "stm32/stm32l433-st-nucleo"
