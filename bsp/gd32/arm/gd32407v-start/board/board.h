@@ -6,12 +6,12 @@
  * Change Logs:
  * Date           Author       Notes
  * 2021-08-20     BruceOu      first implementation
+ * 2024-03-19     Evlers       remove the include of drv_usart.h
  */
 #ifndef __BOARD_H__
 #define __BOARD_H__
 
 #include "gd32f4xx.h"
-#include "drv_usart.h"
 #include "drv_gpio.h"
 
 #include "gd32f4xx_exti.h"
