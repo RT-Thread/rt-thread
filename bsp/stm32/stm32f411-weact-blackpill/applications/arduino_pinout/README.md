@@ -23,12 +23,12 @@ Hardware Drivers Config --->
 | Arduino引脚编号  | STM32引脚编号 | 5V容忍 | 备注  |
 | ------------------- | --------- | ---- | ------------------------------------------------------------------------- |
 | 0 (D0) | PC13 | 是 | 板载用户LED |
-| 1 (D1) | PC14 | 是 | I2C1-SDA，默认被RT-Thread的I2C设备框架i2c1接管 |
-| 2 (D2) | PC15 | 是 | I2C1-SCL，默认被RT-Thread的I2C设备框架i2c1接管 |
+| 1 (D1) | PC14 | 是 | |
+| 2 (D2) | PC15 | 是 | |
 | 3 (D3) | PA2 | 是 | Serial2-TX，默认被RT-Thread的UART设备框架uart2接管 |
 | 4 (D4) | PA3 | 是 | Serial2-RX，默认被RT-Thread的UART设备框架uart2接管 |
-| 5 (D5) | PB2 | 是 |  |
-| 6 (D6) | PB10 | 是 |  |
+| 5 (D5) | PB2 | 是 | I2C1-SDA，默认被RT-Thread的I2C设备框架i2c1接管 |
+| 6 (D6) | PB10 | 是 | I2C1-SCL，默认被RT-Thread的I2C设备框架i2c1接管 |
 | 7 (D7) | PB9 | 是 | PWM4-CH4，默认被RT-Thread的PWM设备框架pwm4接管 |
 | 8 (D8) | PB8 | 是 | PWM4-CH3，默认被RT-Thread的PWM设备框架pwm4接管 |
 | 9 (D9) | PB7 | 是 | PWM4-CH2，默认被RT-Thread的PWM设备框架pwm4接管 |

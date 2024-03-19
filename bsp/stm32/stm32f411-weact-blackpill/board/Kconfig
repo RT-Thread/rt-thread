@@ -4,8 +4,8 @@ menu "Onboard Peripheral Drivers"
     config BSP_USING_ARDUINO
         bool "Compatible with Arduino Ecosystem (RTduino)"
         select PKG_USING_RTDUINO
-        select BSP_USING_USART1
-        select BSP_USING_USART2
+        select BSP_USING_UART1
+        select BSP_USING_UART2
         select BSP_USING_GPIO
         select BSP_USING_ADC
         select BSP_USING_ADC1
@@ -79,15 +79,15 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_I2C_BITOPS
         select RT_USING_PIN
         if BSP_USING_I2C1
-            comment "Notice: PC14 --> 46; PC15 --> 47"
+            comment "Notice: PB2 --> 18; PB10 --> 26"
             config BSP_I2C1_SCL_PIN
                 int "i2c1 scl pin number"
                 range 0 48
-                default 47
+                default 26
             config BSP_I2C1_SDA_PIN
                 int "I2C1 sda pin number"
                 range 0 48
-                default 46
+                default 18
         endif
 
      menuconfig BSP_USING_PWM
