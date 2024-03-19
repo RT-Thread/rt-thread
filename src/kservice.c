@@ -1010,11 +1010,11 @@ static char *print_number(char *buf,
     return buf;
 }
 
-#ifdef __GNUC__
+#if defined(__GNUC__) && !defined(__ARMCC_VERSION) /* GCC */
 #pragma GCC diagnostic push
 /* ignore warning: this statement may fall through */
 #pragma GCC diagnostic ignored "-Wimplicit-fallthrough"
-#endif /* __GNUC__ */
+#endif /* defined(__GNUC__) && !defined(__ARMCC_VERSION) */
 /**
  * @brief  This function will fill a formatted string to buffer.
  *
@@ -1340,9 +1340,9 @@ rt_weak int rt_vsnprintf(char *buf, rt_size_t size, const char *fmt, va_list arg
     return str - buf;
 }
 RTM_EXPORT(rt_vsnprintf);
-#ifdef __GNUC__
+#if defined(__GNUC__) && !defined(__ARMCC_VERSION) /* GCC */
 #pragma GCC diagnostic pop /* ignored "-Wimplicit-fallthrough" */
-#endif /* __GNUC__ */
+#endif /* defined(__GNUC__) && !defined(__ARMCC_VERSION) */
 
 /**
  * @brief  This function will fill a formatted string to buffer.
