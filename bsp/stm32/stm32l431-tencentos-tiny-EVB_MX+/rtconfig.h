@@ -281,20 +281,6 @@
 #define BSP_USING_UART2
 #define BSP_USING_UART3
 #define BSP_USING_LPUART1
-#define BSP_USING_ADC
-#define BSP_USING_ADC1
-#define BSP_USING_ONCHIP_RTC
-#define BSP_RTC_USING_LSE
-#define BSP_USING_DAC
-#define BSP_USING_DAC1
-#define BSP_USING_SPI
-#define BSP_USING_SPI1
-#define BSP_USING_SPI3
-#define BSP_USING_QSPI_FLASH
-#define BSP_USING_SDCARD
-#define BSP_USING_I2C1
-#define BSP_I2C1_SCL_PIN 22
-#define BSP_I2C1_SDA_PIN 25
 
 /* Board extended module Drivers */
 
