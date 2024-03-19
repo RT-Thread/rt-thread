@@ -24,9 +24,9 @@ struct dma_config
 {
     uint32_t periph;
     rcu_periph_enum rcu;
-	dma_channel_enum channel;
-	dma_subperipheral_enum subperiph;
-	IRQn_Type irq;
+    dma_channel_enum channel;
+    dma_subperipheral_enum subperiph;
+    IRQn_Type irq;
 };
 
 #endif /* _DRV_DMA_H_ */

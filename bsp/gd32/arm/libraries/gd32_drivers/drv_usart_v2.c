@@ -260,7 +260,7 @@ static void dma_recv_isr (struct rt_serial_device *serial)
 static void usart_isr (struct rt_serial_device *serial)
 {
     struct gd32_uart *uart;
-    
+
     RT_ASSERT(serial != RT_NULL);
     uart = rt_container_of(serial, struct gd32_uart, serial);
 
@@ -271,7 +271,7 @@ static void usart_isr (struct rt_serial_device *serial)
         RT_ASSERT(rx_fifo != RT_NULL);
 
         rt_ringbuffer_putchar(&(rx_fifo->rb), usart_data_receive(uart->periph));
-        
+
         rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_IND);
 
         /* Clear RXNE interrupt flag */
@@ -355,7 +355,7 @@ static void usart_isr (struct rt_serial_device *serial)
         {
             usart_interrupt_flag_clear(uart->periph, USART_INT_FLAG_EB);
         }
-        
+
         if (usart_interrupt_flag_get(uart->periph, USART_INT_FLAG_RT) != RESET)
         {
             usart_interrupt_flag_clear(uart->periph, USART_INT_FLAG_RT);
@@ -379,7 +379,7 @@ static void dma_rx_isr (struct rt_serial_device *serial)
     RT_ASSERT(serial != RT_NULL);
     uart = rt_container_of(serial, struct gd32_uart, serial);
 
-    if ((dma_interrupt_flag_get(uart->dma.rx.periph, uart->dma.rx.channel, DMA_INT_FLAG_HTF) != RESET) || 
+    if ((dma_interrupt_flag_get(uart->dma.rx.periph, uart->dma.rx.channel, DMA_INT_FLAG_HTF) != RESET) ||
         (dma_interrupt_flag_get(uart->dma.rx.periph, uart->dma.rx.channel, DMA_INT_FLAG_FTF) != RESET))
     {
         dma_recv_isr(serial);
