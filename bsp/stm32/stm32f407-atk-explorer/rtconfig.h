@@ -4,9 +4,13 @@
 /* Automatically generated file; DO NOT EDIT. */
 /* RT-Thread Configuration */
 
+#define SOC_STM32F407ZG
+#define BOARD_STM32F407_ATK_EXPLORER
+
 /* RT-Thread Kernel */
 
 #define RT_NAME_MAX 8
+#define RT_CPUS_NR 1
 #define RT_ALIGN_SIZE 8
 #define RT_THREAD_PRIORITY_32
 #define RT_THREAD_PRIORITY_MAX 32
@@ -38,14 +42,12 @@
 #define RT_USING_SMALL_MEM
 #define RT_USING_SMALL_MEM_AS_HEAP
 #define RT_USING_HEAP
-
-/* Kernel Device Object */
-
 #define RT_USING_DEVICE
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uart1"
-#define RT_VER_NUM 0x50002
+#define RT_VER_NUM 0x50100
+#define RT_BACKTRACE_LEVEL_MAX_NR 32
 #define RT_USING_HW_ATOMIC
 #define RT_USING_CPU_FFS
 #define ARCH_ARM
@@ -114,6 +116,9 @@
 /* Network */
 
 
+/* Memory protection */
+
+
 /* Utilities */
 
 
@@ -131,6 +136,15 @@
 
 
 /* Wiced WiFi */
+
+
+/* CYW43012 WiFi */
+
+
+/* BL808 WiFi */
+
+
+/* CYW43439 WiFi */
 
 
 /* IoT Cloud */
@@ -238,9 +252,6 @@
 #define SOC_SERIES_STM32F4
 
 /* Hardware Drivers Config */
-
-#define SOC_STM32F407ZG
-#define BOARD_STM32F407_ATK_EXPLORER
 
 /* Onboard Peripheral Drivers */
 
