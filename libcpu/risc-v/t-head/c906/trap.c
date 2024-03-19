@@ -28,6 +28,7 @@
 
 #ifdef RT_USING_SMART
 #include <lwp_arch.h>
+void rt_hw_backtrace(rt_uint32_t *ffp, rt_ubase_t sepc);
 #else
 #define rt_hw_backtrace(...) (0)
 #endif
