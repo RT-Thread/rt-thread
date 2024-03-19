@@ -36,9 +36,6 @@ static struct rt_spinlock _htimer_lock;
 
 #ifdef RT_USING_TIMER_SOFT
 
-#define RT_SOFT_TIMER_IDLE              1
-#define RT_SOFT_TIMER_BUSY              0
-
 #ifndef RT_TIMER_THREAD_STACK_SIZE
 #define RT_TIMER_THREAD_STACK_SIZE     512
 #endif /* RT_TIMER_THREAD_STACK_SIZE */
@@ -47,8 +44,6 @@ static struct rt_spinlock _htimer_lock;
 #define RT_TIMER_THREAD_PRIO           0
 #endif /* RT_TIMER_THREAD_PRIO */
 
-/* soft timer status */
-static rt_uint8_t _soft_timer_status = RT_SOFT_TIMER_IDLE;
 /* soft timer list */
 static rt_list_t _soft_timer_list[RT_TIMER_SKIP_LIST_LEVEL];
 static struct rt_spinlock _stimer_lock;
@@ -796,8 +791,6 @@ static void _soft_timer_check(void)
             /* add timer to temporary list  */
             rt_list_insert_after(&list, &(t->row[RT_TIMER_SKIP_LIST_LEVEL - 1]));
 
-            _soft_timer_status = RT_SOFT_TIMER_BUSY;
-
             rt_spin_unlock_irqrestore(&_stimer_lock, level);
 
             /* call timeout function */
@@ -808,7 +801,6 @@ static void _soft_timer_check(void)
 
             level = rt_spin_lock_irqsave(&_stimer_lock);
 
-            _soft_timer_status = RT_SOFT_TIMER_IDLE;
             /* Check whether the timer object is detached or started again */
             if (rt_list_isempty(&list))
             {
