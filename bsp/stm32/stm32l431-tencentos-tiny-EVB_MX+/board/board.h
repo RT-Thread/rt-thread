@@ -44,6 +44,7 @@ extern int __bss_end;
 
 void SystemClock_Config(void);
 
+void PeriphCommonClock_Config(void);
 #ifdef __cplusplus
 }
 #endif
