@@ -575,7 +575,7 @@ void *rt_hw_mmu_pgtbl_create(void)
     mmu_table = (rt_ubase_t *)rt_pages_alloc_ext(0, PAGE_ANY_AVAILABLE);
     if (!mmu_table)
     {
-        return -RT_ENOMEM;
+        return RT_NULL;
     }
     rt_memcpy(mmu_table, rt_kernel_space.page_table, ARCH_PAGE_SIZE);
     rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, mmu_table, ARCH_PAGE_SIZE);
