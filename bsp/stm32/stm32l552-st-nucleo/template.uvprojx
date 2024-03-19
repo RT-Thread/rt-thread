@@ -186,6 +186,7 @@
             <RvdsVP>2</RvdsVP>
             <RvdsMve>0</RvdsMve>
             <RvdsCdeCp>0</RvdsCdeCp>
+            <nBranchProt>0</nBranchProt>
             <hadIRAM2>1</hadIRAM2>
             <hadIROM2>1</hadIROM2>
             <StupSel>8</StupSel>
@@ -280,8 +281,8 @@
               </OCR_RVCT4>
               <OCR_RVCT5>
                 <Type>1</Type>
-                <StartAddress>0x0</StartAddress>
-                <Size>0x0</Size>
+                <StartAddress>0xc000000</StartAddress>
+                <Size>0x80000</Size>
               </OCR_RVCT5>
               <OCR_RVCT6>
                 <Type>0</Type>
@@ -305,8 +306,8 @@
               </OCR_RVCT9>
               <OCR_RVCT10>
                 <Type>0</Type>
-                <StartAddress>0x0</StartAddress>
-                <Size>0x0</Size>
+                <StartAddress>0x30000000</StartAddress>
+                <Size>0x40000</Size>
               </OCR_RVCT10>
             </OnChipMemories>
             <RvctStartVector></RvctStartVector>
@@ -352,7 +353,7 @@
             <NoWarn>0</NoWarn>
             <uSurpInc>0</uSurpInc>
             <useXO>0</useXO>
-            <ClangAsOpt>4</ClangAsOpt>
+            <ClangAsOpt>3</ClangAsOpt>
             <VariousControls>
               <MiscControls></MiscControls>
               <Define></Define>
@@ -397,11 +398,6 @@
     <Layers>
       <Layer>
         <LayName>&lt;Project Info&gt;</LayName>
-        <LayDesc></LayDesc>
-        <LayUrl></LayUrl>
-        <LayKeys></LayKeys>
-        <LayCat></LayCat>
-        <LayLic></LayLic>
         <LayTarg>0</LayTarg>
         <LayPrjMark>1</LayPrjMark>
       </Layer>
