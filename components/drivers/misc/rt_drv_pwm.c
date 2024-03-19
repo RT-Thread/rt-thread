@@ -418,7 +418,6 @@ int pwm_list(int argc, char **argv)
 
         default:
             goto _usage;
-            break;
         }
     }
     else
