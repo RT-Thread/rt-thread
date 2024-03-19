@@ -7,7 +7,6 @@
 /* RT-Thread Kernel */
 
 #define RT_NAME_MAX 8
-#define RT_CPUS_NR 1
 #define RT_ALIGN_SIZE 8
 #define RT_THREAD_PRIORITY_32
 #define RT_THREAD_PRIORITY_MAX 32
@@ -25,6 +24,7 @@
 #define RT_USING_DEBUG
 #define RT_DEBUGING_COLOR
 #define RT_DEBUGING_CONTEXT
+#define RT_DEBUGING_INIT
 
 /* Inter-Thread communication */
 
@@ -40,12 +40,14 @@
 #define RT_USING_SMALL_MEM
 #define RT_USING_SMALL_MEM_AS_HEAP
 #define RT_USING_HEAP
+
+/* Kernel Device Object */
+
 #define RT_USING_DEVICE
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 256
-#define RT_CONSOLE_DEVICE_NAME "uart1"
-#define RT_VER_NUM 0x50100
-#define RT_BACKTRACE_LEVEL_MAX_NR 32
+#define RT_CONSOLE_DEVICE_NAME "uart2"
+#define RT_VER_NUM 0x50001
 #define RT_USING_HW_ATOMIC
 #define RT_USING_CPU_FFS
 #define ARCH_ARM
@@ -84,22 +86,6 @@
 #define RT_USING_SERIAL_V1
 #define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 64
-#define RT_USING_I2C
-#define RT_USING_I2C_BITOPS
-#define RT_USING_ADC
-#define RT_USING_DAC
-#define RT_USING_RTC
-#define RT_USING_SPI
-#define RT_USING_SFUD
-#define RT_SFUD_USING_SFDP
-#define RT_SFUD_USING_FLASH_INFO_TABLE
-#define RT_SFUD_SPI_MAX_HZ 50000000
-#define RT_USING_HWCRYPTO
-#define RT_HWCRYPTO_DEFAULT_NAME "hwcryto"
-#define RT_HWCRYPTO_IV_MAX_SIZE 16
-#define RT_HWCRYPTO_KEYBIT_MAX_SIZE 256
-#define RT_HWCRYPTO_USING_RNG
-#define RT_HWCRYPTO_USING_CRC
 #define RT_USING_PIN
 
 /* Using USB */
@@ -126,9 +112,6 @@
 
 
 /* Network */
-
-
-/* Memory protection */
 
 
 /* Utilities */
@@ -277,10 +260,7 @@
 
 #define BSP_USING_GPIO
 #define BSP_USING_UART
-#define BSP_USING_UART1
 #define BSP_USING_UART2
-#define BSP_USING_UART3
-#define BSP_USING_LPUART1
 
 /* Board extended module Drivers */
 
