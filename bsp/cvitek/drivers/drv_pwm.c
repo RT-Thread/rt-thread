@@ -31,7 +31,7 @@ static void cvi_pwm_set_config(rt_ubase_t reg_base, struct rt_pwm_configuration 
 {
     unsigned long long duty_clk, period_clk;
 
-    cvi_pwm_set_polarity_low_ch(reg_base, (cfg->channel & PWM_MAX_CH));
+    cvi_pwm_set_polarity_high_ch(reg_base, (cfg->channel & PWM_MAX_CH));
 
     duty_clk = (cfg->pulse * count_unit) / NSEC_COUNT;
     cvi_pwm_set_high_period_ch(reg_base, (cfg->channel & PWM_MAX_CH), duty_clk);

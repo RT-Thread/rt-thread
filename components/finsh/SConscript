@@ -11,7 +11,7 @@ msh_parse.c
 CPPPATH = [cwd]
 LOCAL_CFLAGS = ''
 
-if rtconfig.PLATFORM in GetGCCLikePLATFORM():
+if rtconfig.PLATFORM in ['gcc']: # only for GCC
     LOCAL_CFLAGS += ' -Wstack-usage=' + str(GetConfigValue('FINSH_THREAD_STACK_SIZE')) # check finsh thread stack size
 
 if GetDepend('MSH_USING_BUILT_IN_COMMANDS'):

@@ -22,8 +22,11 @@ menu "Hardware Drivers Config"
             select BSP_USING_PWM8
             select BSP_USING_SOFT_I2C
             select BSP_USING_I2C0
+            select BSP_USING_SOFT_SPI
+            select BSP_USING_SOFT_SPI1
+            select RTDUINO_USING_WIRE
+            select RTDUINO_USING_SPI
             imply RTDUINO_USING_SERVO
-            imply RTDUINO_USING_WIRE
             default n
 
         menuconfig BSP_USING_FS
@@ -536,6 +539,33 @@ menu "Hardware Drivers Config"
                     default n
             endif
 
+        menuconfig BSP_USING_SOFT_SPI
+            bool "Enable soft SPI BUS"
+            default n
+            select RT_USING_PIN
+            select RT_USING_SPI_BITOPS
+            select RT_USING_SPI
+            if BSP_USING_SOFT_SPI
+                config BSP_USING_SOFT_SPI1
+                    bool "Enable soft SPI1 BUS (software simulation)"
+                    default n
+                    if BSP_USING_SOFT_SPI1
+                        comment "Please refer to the 'bsp_io.h' file to configure the pins"
+                        config BSP_S_SPI1_SCK_PIN
+                            hex "spi1 sck pin number (hex)"
+                            range 0x0000 0xFFFF
+                            default 0x0204
+                        config BSP_S_SPI1_MOSI_PIN
+                            hex "spi1 mosi pin number (hex)"
+                            range 0x0000 0xFFFF
+                            default 0x050C
+                        config BSP_S_SPI1_MISO_PIN
+                            hex "spi1 miso pin number (hex)"
+                            range 0x0000 0xFFFF
+                            default 0x050B
+                    endif
+            endif
+
         menuconfig BSP_USING_SOFT_I2C
             bool "Enable software I2C bus"
             select RT_USING_I2C
@@ -548,14 +578,14 @@ menu "Hardware Drivers Config"
                     bool "Enable I2C0 Bus (software simulation)"
                     default n
                     if BSP_USING_I2C0
-                        comment "Please select your i2c analog pin, e.g. 'P512': 0x512"
+                        comment "Please refer to the 'bsp_io.h' file to configure the pins"
                         config BSP_I2C0_SCL_PIN
                             hex "i2c0 scl pin number (hex)"
-                            range 0x0000 0x0E0F
+                            range 0x0000 0xFFFF
                             default 0x202
                         config BSP_I2C0_SDA_PIN
                             hex "i2c0 sda pin number (hex)"
-                            range 0x0000 0x0E0F
+                            range 0x0000 0xFFFF
                             default 0x203
                     endif
             endif

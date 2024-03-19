@@ -1767,6 +1767,7 @@ int dfs_file_mmap2(struct dfs_file *file, struct dfs_mmap2_args *mmap2)
 
 #define _COLOR_RED      "\033[31m"
 #define _COLOR_GREEN    "\033[32m"
+#define _COLOR_YELLOW   "\033[33m"
 #define _COLOR_BLUE     "\033[34m"
 #define _COLOR_CYAN     "\033[36m"
 #define _COLOR_WHITE    "\033[37m"
@@ -1895,6 +1896,11 @@ void ls(const char *pathname)
                             rt_kprintf(_COLOR_GREEN "%-20s" _COLOR_NORMAL, dirent.d_name);
                             rt_kprintf("%-25lu\n", (unsigned long)stat.st_size);
                         }
+                        else if (S_ISCHR(stat.st_mode))
+                        {
+                            rt_kprintf(_COLOR_YELLOW "%-20s" _COLOR_NORMAL, dirent.d_name);
+                            rt_kprintf("%-25s\n", "<CHR>");
+                        }
                         else
                         {
                             rt_kprintf("%-20s", dirent.d_name);
@@ -1903,7 +1909,7 @@ void ls(const char *pathname)
                     }
                     else
                     {
-                        rt_kprintf(_COLOR_RED "%-20s" _COLOR_NORMAL, dirent.d_name);
+                        rt_kprintf(_COLOR_RED "%-20s\n" _COLOR_NORMAL, dirent.d_name);
                     }
 
                     rt_free(fullpath);

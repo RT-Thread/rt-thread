@@ -28,8 +28,8 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_PWM3_CH4
         select BSP_USING_I2C
         select BSP_USING_I2C2
+        select RTDUINO_USING_WIRE
         imply RTDUINO_USING_SERVO
-        imply RTDUINO_USING_WIRE
         default n
 
 endmenu

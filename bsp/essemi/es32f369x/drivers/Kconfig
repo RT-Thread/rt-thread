@@ -21,9 +21,9 @@ menu "Hardware Drivers Config"
             select BSP_USING_I2C0
             select BSP_USING_ADC0
             select BSP_USING_GP32C4T0_PWM
+            select RTDUINO_USING_WIRE
+            select RTDUINO_USING_SPI
             imply RTDUINO_USING_SERVO
-            imply RTDUINO_USING_WIRE
-            imply RTDUINO_USING_SPI
             default n
 
         config BSP_USING_SPI_FLASH
