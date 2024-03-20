@@ -122,7 +122,7 @@ static const struct gd32_spi spi_bus_obj[] = {
 
 /* private rt-thread spi ops function */
 static rt_err_t spi_configure(struct rt_spi_device* device, struct rt_spi_configuration* configuration);
-static rt_uint32_t spixfer(struct rt_spi_device* device, struct rt_spi_message* message);
+static rt_ssize_t spixfer(struct rt_spi_device* device, struct rt_spi_message* message);
 
 static struct rt_spi_ops gd32_spi_ops =
 {
@@ -282,7 +282,7 @@ static rt_err_t spi_configure(struct rt_spi_device* device,
     return RT_EOK;
 };
 
-static rt_uint32_t spixfer(struct rt_spi_device* device, struct rt_spi_message* message)
+static rt_ssize_t spixfer(struct rt_spi_device* device, struct rt_spi_message* message)
 {
     struct rt_spi_bus * gd32_spi_bus = (struct rt_spi_bus *)device->bus;
     struct gd32_spi *spi_device = (struct gd32_spi *)gd32_spi_bus->parent.user_data;
