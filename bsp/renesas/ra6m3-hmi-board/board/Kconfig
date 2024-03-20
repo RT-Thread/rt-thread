@@ -49,7 +49,6 @@ menu "Hardware Drivers Config"
             endif
 
         config BSP_USING_SPI_LCD
-            bool "Enable SPI LCD"
             select BSP_USING_GPIO
             select BSP_USING_SPI
             select BSP_USING_SPI0
@@ -667,11 +666,9 @@ menu "Hardware Drivers Config"
             endif
 
         config BSP_USING_G2D
-            bool "Enable G2D"
             default n
 
         config BSP_USING_JPEG
-            bool "Enable JPEG"
             default n
 
         config BSP_USING_ETH
@@ -682,7 +679,6 @@ menu "Hardware Drivers Config"
             default n
 
         config BSP_USING_LCD
-            bool "Enable LCD"
             select BSP_USING_GPIO
             default n
 
