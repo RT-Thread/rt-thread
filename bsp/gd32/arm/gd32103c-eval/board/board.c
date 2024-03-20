@@ -75,7 +75,7 @@ void rt_hw_board_init()
 
     SystemClock_Config();
 
-#ifdef RT_USING_SERIAL_V2
+#ifdef RT_USING_SERIAL
     rt_hw_usart_init();
 #endif
 
