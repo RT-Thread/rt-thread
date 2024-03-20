@@ -162,72 +162,6 @@ void rt_scheduler_switch_sethook(void (*hook)(struct rt_thread *tid))
 /**@}*/
 #endif /* RT_USING_HOOK */
 
-#ifdef RT_USING_OVERFLOW_CHECK
-static void _scheduler_stack_check(struct rt_thread *thread)
-{
-    RT_ASSERT(thread != RT_NULL);
-
-#ifdef RT_USING_SMART
-#ifndef ARCH_MM_MMU
-    struct rt_lwp *lwp = thread ? (struct rt_lwp *)thread->lwp : 0;
-
-    /* if stack pointer locate in user data section skip stack check. */
-    if (lwp && ((rt_uint32_t)thread->sp > (rt_uint32_t)lwp->data_entry &&
-    (rt_uint32_t)thread->sp <= (rt_uint32_t)lwp->data_entry + (rt_uint32_t)lwp->data_size))
-    {
-        return;
-    }
-#endif /* not defined ARCH_MM_MMU */
-#endif /* RT_USING_SMART */
-
-#ifndef RT_USING_HW_STACK_GUARD
-#ifdef ARCH_CPU_STACK_GROWS_UPWARD
-    if (*((rt_uint8_t *)((rt_ubase_t)thread->stack_addr + thread->stack_size - 1)) != '#' ||
-#else
-    if (*((rt_uint8_t *)thread->stack_addr) != '#' ||
-#endif /* ARCH_CPU_STACK_GROWS_UPWARD */
-        (rt_ubase_t)thread->sp <= (rt_ubase_t)thread->stack_addr ||
-        (rt_ubase_t)thread->sp >
-        (rt_ubase_t)thread->stack_addr + (rt_ubase_t)thread->stack_size)
-    {
-        rt_base_t dummy = 1;
-
-        rt_kprintf("thread:%s stack overflow\n", thread->parent.name);
-
-        while (dummy);
-    }
-#endif /* RT_USING_HW_STACK_GUARD */
-#ifdef ARCH_CPU_STACK_GROWS_UPWARD
-#ifndef RT_USING_HW_STACK_GUARD
-    else if ((rt_ubase_t)thread->sp > ((rt_ubase_t)thread->stack_addr + thread->stack_size))
-#else
-    if ((rt_ubase_t)thread->sp > ((rt_ubase_t)thread->stack_addr + thread->stack_size))
-#endif
-    {
-        rt_kprintf("warning: %s stack is close to the top of stack address.\n",
-                   thread->parent.name);
-    }
-#else
-#ifndef RT_USING_HW_STACK_GUARD
-    else if ((rt_ubase_t)thread->sp <= ((rt_ubase_t)thread->stack_addr + 32))
-#else
-    if ((rt_ubase_t)thread->sp <= ((rt_ubase_t)thread->stack_addr + 32))
-#endif
-    {
-        rt_kprintf("warning: %s stack is close to end of stack address.\n",
-                   thread->parent.name);
-    }
-#endif /* ARCH_CPU_STACK_GROWS_UPWARD */
-}
-
-#define SCHEDULER_STACK_CHECK(thr) _scheduler_stack_check(thr)
-
-#else /* !RT_USING_OVERFLOW_CHECK */
-
-#define SCHEDULER_STACK_CHECK(thr)
-
-#endif /* RT_USING_OVERFLOW_CHECK */
-
 #if RT_THREAD_PRIORITY_MAX > 32
 
 rt_inline rt_base_t _get_global_highest_ready_prio(void)
@@ -695,7 +629,7 @@ static rt_thread_t _prepare_context_switch_locked(int cpu_id,
             _sched_remove_thread_locked(to_thread);
             RT_SCHED_CTX(to_thread).stat = RT_THREAD_RUNNING | (RT_SCHED_CTX(to_thread).stat & ~RT_THREAD_STAT_MASK);
 
-            SCHEDULER_STACK_CHECK(to_thread);
+            RT_SCHEDULER_STACK_CHECK(to_thread);
 
             RT_OBJECT_HOOK_CALL(rt_scheduler_switch_hook, (current_thread));
         }
