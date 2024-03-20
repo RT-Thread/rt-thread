@@ -91,7 +91,7 @@ def mk_rtconfig(filename):
                     continue
 
                 if setting[1] == 'y':
-                    rtconfig.write('#define %s\n' % setting[0])
+                    rtconfig.write('#define %s 1\n' % setting[0])
                 else:
                     rtconfig.write('#define %s %s\n' % (setting[0], re.findall(r"^.*?=(.*)$",line)[0]))
 
