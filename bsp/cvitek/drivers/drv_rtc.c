@@ -54,6 +54,7 @@
 #define RTC_SEC_MAX_VAL     0xFFFFFFFF
 
 #define RTC_OFFSET_SN 0x5201800
+#define RTC_ALARM_IRQ_NUM 0x11
 
 struct rtc_device_object
 {
@@ -298,13 +299,86 @@ static rt_err_t _rtc_set_secs(time_t *sec)
     return result;
 }
 
+#ifdef RT_USING_ALARM
+static void rtc_alarm_enable(rt_bool_t enable)
+{
+    mmio_write_32(CVI_RTC_BASE + CVI_RTC_ALARM_ENABLE, enable);
+}
+
+static void rt_hw_rtc_isr(int irqno, void *param)
+{
+    rt_interrupt_enter();
+
+    /* send event to alarm */
+    rt_alarm_update(&rtc_device.rtc_dev.parent, 1);
+    /* clear alarm */
+    rtc_alarm_enable(0);
+
+    rt_interrupt_leave();
+}
+#endif
+
+static rt_err_t _rtc_get_alarm(struct rt_rtc_wkalarm *alarm)
+{
+    if (alarm == RT_NULL)
+        return -RT_ERROR;
+
+    unsigned long int sec;
+    cvi_rtc_time_t t = {0};
+
+    sec = mmio_read_32(CVI_RTC_BASE + CVI_RTC_ALARM_TIME);
+    rtc_time64_to_tm(sec, &t);
+
+    alarm->tm_sec     = t.tm_sec;
+    alarm->tm_min     = t.tm_min;
+    alarm->tm_hour    = t.tm_hour;
+    alarm->tm_mday    = t.tm_mday;
+    alarm->tm_mon     = t.tm_mon;
+    alarm->tm_year    = t.tm_year;
+    LOG_D("GET_ALARM %d:%d:%d", alarm->tm_hour, alarm->tm_min, alarm->tm_sec);
+
+    return RT_EOK;
+}
+
+static rt_err_t _rtc_set_alarm(struct rt_rtc_wkalarm *alarm)
+{
+    if (alarm == RT_NULL)
+        return -RT_ERROR;
+
+    cvi_rtc_time_t t = {0};
+    unsigned long int set_sec;
+
+    if (alarm->enable){
+        t.tm_sec     = alarm->tm_sec;
+        t.tm_min     = alarm->tm_min;
+        t.tm_hour    = alarm->tm_hour;
+        t.tm_mday    = alarm->tm_mday;
+        t.tm_mon     = alarm->tm_mon;
+        t.tm_year    = alarm->tm_year;
+
+        set_sec = rtc_tm_to_time64(&t);
+        mmio_write_32(CVI_RTC_BASE + CVI_RTC_ALARM_TIME, set_sec);
+
+        LOG_D("GET_ALARM %d:%d:%d", alarm->tm_hour, alarm->tm_min, alarm->tm_sec);
+    }
+
+    rtc_alarm_enable(alarm->enable);
+
+    return RT_EOK;
+}
+
 static const struct rt_rtc_ops _rtc_ops =
 {
     _rtc_init,
     _rtc_get_secs,
     _rtc_set_secs,
+#ifdef RT_USING_ALARM
+    _rtc_get_alarm,
+    _rtc_set_alarm,
+#else
     RT_NULL,
     RT_NULL,
+#endif
     _rtc_get_timeval,
     RT_NULL,
 };
@@ -320,6 +394,12 @@ static int rt_hw_rtc_init(void)
         LOG_E("rtc register err code: %d", result);
         return result;
     }
+
+#ifdef RT_USING_ALARM
+    rt_hw_interrupt_install(RTC_ALARM_IRQ_NUM, rt_hw_rtc_isr, RT_NULL, "rtc");
+    rt_hw_interrupt_umask(RTC_ALARM_IRQ_NUM);
+#endif
+
     LOG_D("rtc init success");
 
     return RT_EOK;
