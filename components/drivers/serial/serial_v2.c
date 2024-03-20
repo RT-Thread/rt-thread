@@ -483,7 +483,8 @@ static rt_ssize_t _serial_fifo_tx_blocking_nbuf(struct rt_device        *dev,
                                 RT_SERIAL_TX_BLOCKING);
     /* Waiting for the transmission to complete */
     rt_completion_wait(&(tx_fifo->tx_cpt), RT_WAITING_FOREVER);
-
+    /* Inactive tx mode flag */
+    tx_fifo->activated = RT_FALSE;
     return rst;
 }
 
