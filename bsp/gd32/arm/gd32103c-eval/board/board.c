@@ -83,6 +83,7 @@ void rt_hw_board_init()
     rt_system_heap_init((void *)EXT_SDRAM_BEGIN, (void *)EXT_SDRAM_END);
 #else
     rt_system_heap_init((void *)HEAP_BEGIN, (void *)HEAP_END);
+#endif
 
 #ifdef RT_USING_CONSOLE
     rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
