@@ -215,6 +215,17 @@ void rt_system_scheduler_start(void);
 void rt_schedule(void);
 void rt_scheduler_do_irq_switch(void *context);
 
+#ifdef RT_USING_OVERFLOW_CHECK
+void rt_scheduler_stack_check(struct rt_thread *thread);
+
+#define RT_SCHEDULER_STACK_CHECK(thr) rt_scheduler_stack_check(thr)
+
+#else /* !RT_USING_OVERFLOW_CHECK */
+
+#define RT_SCHEDULER_STACK_CHECK(thr)
+
+#endif /* RT_USING_OVERFLOW_CHECK */
+
 rt_base_t rt_enter_critical(void);
 void rt_exit_critical(void);
 void rt_exit_critical_safe(rt_base_t critical_level);
