@@ -1,7 +1,10 @@
 from building import *
 
 cwd     = GetCurrentDir()
-src     = ['drv_uart.c']
+src     = Split('''
+drv_uart.c
+drv_por.c
+''')
 CPPDEFINES = []
 
 CPPPATH = [cwd]
