@@ -217,6 +217,8 @@
           <state>_DLIB_ADD_EXTRA_SYMBOLS=0</state>
           <state>__RTTHREAD__</state>
           <state>ES32F36xx</state>
+          <state>__RT_IPC_SOURCE__</state>
+          <state>__RT_KERNEL_SOURCE__</state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -345,7 +347,7 @@
           <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\extension\fcntl\octal</state>
           <state>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m3</state>
           <state>$PROJ_DIR$\..\..\..\components\finsh</state>
-          <state>$PROJ_DIR$\..\..\..\libcpu\arm\common</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\include</state>
           <state>$PROJ_DIR$\drivers\ES</state>
           <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\eventfd</state>
           <state>$PROJ_DIR$\..\..\..\components\drivers\include</state>
@@ -356,7 +358,7 @@
           <state>$PROJ_DIR$\..\..\..\components\libc\posix\ipc</state>
           <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\poll</state>
           <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\extension</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\include</state>
+          <state>$PROJ_DIR$\..\..\..\libcpu\arm\common</state>
           <state>$PROJ_DIR$\..\..\..\include</state>
           <state>$PROJ_DIR$\drivers</state>
           <state>$PROJ_DIR$\libraries\CMSIS\Device\EastSoft\ES32F36xx\Include</state>
@@ -1252,6 +1254,8 @@
           <state>_DLIB_ADD_EXTRA_SYMBOLS=0</state>
           <state>__RTTHREAD__</state>
           <state>ES32F36xx</state>
+          <state>__RT_IPC_SOURCE__</state>
+          <state>__RT_KERNEL_SOURCE__</state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -1380,7 +1384,7 @@
           <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\extension\fcntl\octal</state>
           <state>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m3</state>
           <state>$PROJ_DIR$\..\..\..\components\finsh</state>
-          <state>$PROJ_DIR$\..\..\..\libcpu\arm\common</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\include</state>
           <state>$PROJ_DIR$\drivers\ES</state>
           <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\eventfd</state>
           <state>$PROJ_DIR$\..\..\..\components\drivers\include</state>
@@ -1391,7 +1395,7 @@
           <state>$PROJ_DIR$\..\..\..\components\libc\posix\ipc</state>
           <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\poll</state>
           <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\extension</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\include</state>
+          <state>$PROJ_DIR$\..\..\..\libcpu\arm\common</state>
           <state>$PROJ_DIR$\..\..\..\include</state>
           <state>$PROJ_DIR$\drivers</state>
           <state>$PROJ_DIR$\libraries\CMSIS\Device\EastSoft\ES32F36xx\Include</state>
@@ -2128,24 +2132,6 @@
     </file>
   </group>
   <group>
-    <name>CPU</name>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\libcpu\arm\common\atomic_arm.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\libcpu\arm\common\div0.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\libcpu\arm\common\showmem.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m3\context_iar.S</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m3\cpuport.c</name>
-    </file>
-  </group>
-  <group>
     <name>DeviceDrivers</name>
     <file>
       <name>$PROJ_DIR$\..\..\..\components\drivers\core\device.c</name>
@@ -2172,7 +2158,7 @@
       <name>$PROJ_DIR$\..\..\..\components\drivers\ipc\workqueue.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\misc\pin.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\drivers\pin\pin.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\components\drivers\serial\serial.c</name>
@@ -2223,6 +2209,12 @@
       <name>$PROJ_DIR$\..\..\..\src\irq.c</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\..\..\..\src\klibc\kstdio.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\src\klibc\kstring.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\..\..\src\kservice.c</name>
     </file>
     <file>
@@ -2233,6 +2225,9 @@
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\src\object.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\src\scheduler_comm.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\src\scheduler_up.c</name>
@@ -2248,102 +2243,99 @@
     </file>
   </group>
   <group>
+    <name>libcpu</name>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\libcpu\arm\common\atomic_arm.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\libcpu\arm\common\div0.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\libcpu\arm\common\showmem.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m3\context_iar.S</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m3\cpuport.c</name>
+    </file>
+  </group>
+  <group>
     <name>Libraries</name>
     <file>
       <name>$PROJ_DIR$\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_i2s.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_trng.c</name>
+      <name>$PROJ_DIR$\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_pis.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_flash.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_iap.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_crypt.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_timer.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_bkpc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_rtc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_wdt.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_can.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_rtchw.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_usb.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_dma.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_rmu.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_nand.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_tsense.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_dac.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_uart.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\libraries\CMSIS\Device\EastSoft\ES32F36xx\Startup\iar\startup_es32f36xx.s</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_crc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_i2c.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_flash_ext.c</name>
+      <name>$PROJ_DIR$\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_spi.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_gpio.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_ebi.c</name>
+      <name>$PROJ_DIR$\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_rmu.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_bkpc.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_tsense.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_flash.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_nor_lcd.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\utils.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_calc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_pis.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_qspi.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_adc.c</name>
+      <name>$PROJ_DIR$\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_dac.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_usb.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_timer.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_i2c.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_rtc.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_rtchw.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_flash_ext.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\utils.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_cmu.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_trng.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_uart.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_pmu.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_cmu.c</name>
+      <name>$PROJ_DIR$\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_crypt.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_calc.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_iap.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_sram.c</name>
@@ -2352,7 +2344,28 @@
       <name>$PROJ_DIR$\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_acmp.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_spi.c</name>
+      <name>$PROJ_DIR$\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_can.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_adc.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_dma.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_wdt.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_ebi.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_nand.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\libraries\CMSIS\Device\EastSoft\ES32F36xx\Startup\iar\startup_es32f36xx.s</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\libraries\ES32F36xx_ALD_StdPeriph_Driver\Source\ald_crc.c</name>
     </file>
   </group>
   <group>

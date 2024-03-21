@@ -4,6 +4,9 @@
 /* Automatically generated file; DO NOT EDIT. */
 /* RT-Thread Configuration */
 
+#define SOC_STM32L475VE
+#define BOARD_STM32L475_ATK_PANDORA
+
 /* RT-Thread Kernel */
 
 #define RT_NAME_MAX 8
@@ -44,6 +47,7 @@
 #define RT_CONSOLEBUF_SIZE 256
 #define RT_CONSOLE_DEVICE_NAME "uart1"
 #define RT_VER_NUM 0x50100
+#define RT_BACKTRACE_LEVEL_MAX_NR 32
 #define RT_USING_HW_ATOMIC
 #define RT_USING_CPU_FFS
 #define ARCH_ARM
@@ -110,10 +114,10 @@
 /* Network */
 
 
+/* Memory protection */
+
+
 /* Utilities */
-
-
-/* Memory management */
 
 
 /* RT-Thread Utestcases */
@@ -133,6 +137,12 @@
 
 
 /* CYW43012 WiFi */
+
+
+/* BL808 WiFi */
+
+
+/* CYW43439 WiFi */
 
 
 /* IoT Cloud */
@@ -176,13 +186,18 @@
 
 /* peripheral libraries and drivers */
 
+/* HAL & SDK Drivers */
+
+/* STM32 HAL & SDK Drivers */
+
+
+/* Kendryte SDK */
+
+
 /* sensors drivers */
 
 
 /* touch drivers */
-
-
-/* Kendryte SDK */
 
 
 /* AI packages */
@@ -240,9 +255,6 @@
 #define SOC_SERIES_STM32L4
 
 /* Hardware Drivers Config */
-
-#define SOC_STM32L475VE
-#define BOARD_STM32L475_ATK_PANDORA
 
 /* Onboard Peripheral Drivers */
 

@@ -171,8 +171,11 @@
           <state>RT_USING_LIBC</state>
           <state>_DLIB_ADD_EXTRA_SYMBOLS=0</state>
           <state>GD32F407</state>
+          <state>LCKFB_SKYSTART_GD32F407V</state>
           <state>__RTTHREAD__</state>
           <state>USE_STDPERIPH_DRIVER</state>
+          <state>__RT_IPC_SOURCE__</state>
+          <state>__RT_KERNEL_SOURCE__</state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -1138,8 +1141,11 @@
           <state>RT_USING_LIBC</state>
           <state>_DLIB_ADD_EXTRA_SYMBOLS=0</state>
           <state>GD32F407</state>
+          <state>LCKFB_SKYSTART_GD32F407V</state>
           <state>__RTTHREAD__</state>
           <state>USE_STDPERIPH_DRIVER</state>
+          <state>__RT_IPC_SOURCE__</state>
+          <state>__RT_KERNEL_SOURCE__</state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -1989,21 +1995,6 @@
     </file>
   </group>
   <group>
-    <name>CPU</name>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\..\libcpu\arm\common\div0.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\..\libcpu\arm\common\showmem.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\..\libcpu\arm\cortex-m4\context_iar.S</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\..\libcpu\arm\cortex-m4\cpuport.c</name>
-    </file>
-  </group>
-  <group>
     <name>DeviceDrivers</name>
     <file>
       <name>$PROJ_DIR$\..\..\..\..\components\drivers\core\device.c</name>
@@ -2039,7 +2030,7 @@
       <name>$PROJ_DIR$\..\..\..\..\components\drivers\ipc\workqueue.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\components\drivers\misc\pin.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\components\drivers\pin\pin.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\..\components\drivers\serial\serial.c</name>
@@ -2055,9 +2046,6 @@
     </file>
     <file>
       <name>$PROJ_DIR$\..\libraries\gd32_drivers\drv_gpio.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\gd32_drivers\drv_soft_i2c.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\libraries\gd32_drivers\drv_usart.c</name>
@@ -2096,6 +2084,12 @@
       <name>$PROJ_DIR$\..\..\..\..\src\irq.c</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\..\..\..\..\src\klibc\kstdio.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\..\src\klibc\kstring.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\..\..\..\src\kservice.c</name>
     </file>
     <file>
@@ -2108,6 +2102,9 @@
       <name>$PROJ_DIR$\..\..\..\..\src\object.c</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\..\..\..\..\src\scheduler_comm.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\..\..\..\src\scheduler_up.c</name>
     </file>
     <file>
@@ -2115,6 +2112,21 @@
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\..\src\timer.c</name>
+    </file>
+  </group>
+  <group>
+    <name>libcpu</name>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\..\libcpu\arm\common\div0.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\..\libcpu\arm\common\showmem.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\..\libcpu\arm\cortex-m4\context_iar.S</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\..\libcpu\arm\cortex-m4\cpuport.c</name>
     </file>
   </group>
   <group>
@@ -2126,10 +2138,13 @@
       <name>$PROJ_DIR$\..\libraries\GD32F4xx_Firmware_Library\GD32F4xx_standard_peripheral\Source\gd32f4xx_syscfg.c</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\..\libraries\GD32F4xx_Firmware_Library\GD32F4xx_standard_peripheral\Source\gd32f4xx_gpio.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\libraries\GD32F4xx_Firmware_Library\GD32F4xx_standard_peripheral\Source\gd32f4xx_exti.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\GD32F4xx_Firmware_Library\GD32F4xx_standard_peripheral\Source\gd32f4xx_gpio.c</name>
+      <name>$PROJ_DIR$\..\libraries\GD32F4xx_Firmware_Library\GD32F4xx_standard_peripheral\Source\gd32f4xx_dma.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\libraries\GD32F4xx_Firmware_Library\GD32F4xx_standard_peripheral\Source\gd32f4xx_rcu.c</name>

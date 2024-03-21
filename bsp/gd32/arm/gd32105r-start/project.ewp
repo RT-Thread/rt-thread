@@ -173,6 +173,8 @@
           <state>GD32F10X_CL</state>
           <state>__RTTHREAD__</state>
           <state>USE_STDPERIPH_DRIVER</state>
+          <state>__RT_IPC_SOURCE__</state>
+          <state>__RT_KERNEL_SOURCE__</state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -302,14 +304,14 @@
         <option>
           <name>CCIncludePath2</name>
           <state>$PROJ_DIR$\..\..\..\..\components\libc\compilers\common\extension</state>
-          <state>$PROJ_DIR$\..\..\..\..\include</state>
+          <state>$PROJ_DIR$\..\libraries\GD32F10x_Firmware_Library\CMSIS\GD\GD32F10x\Include</state>
+          <state>$PROJ_DIR$\..\..\..\..\libcpu\arm\cortex-m3</state>
           <state>$PROJ_DIR$\..\..\..\..\components\libc\compilers\common\include</state>
           <state>$PROJ_DIR$\..\..\..\..\components\libc\posix\io\poll</state>
           <state>$PROJ_DIR$\..\libraries\gd32_drivers</state>
-          <state>$PROJ_DIR$\..\libraries\GD32F10x_Firmware_Library\CMSIS\GD\GD32F10x\Include</state>
           <state>$PROJ_DIR$\..\libraries\GD32F10x_Firmware_Library\GD32F10x_standard_peripheral\Include</state>
           <state>$PROJ_DIR$\..\..\..\..\components\libc\compilers\common\extension\fcntl\octal</state>
-          <state>$PROJ_DIR$\..\..\..\..\libcpu\arm\cortex-m3</state>
+          <state>$PROJ_DIR$\.</state>
           <state>$PROJ_DIR$\..\..\..\..\components\libc\posix\io\epoll</state>
           <state>$PROJ_DIR$\applications</state>
           <state>$PROJ_DIR$\..\..\..\..\components\libc\posix\ipc</state>
@@ -318,7 +320,7 @@
           <state>$PROJ_DIR$\..\..\..\..\components\finsh</state>
           <state>$PROJ_DIR$\..\..\..\..\components\libc\posix\io\eventfd</state>
           <state>$PROJ_DIR$\..\libraries\GD32F10x_Firmware_Library\CMSIS</state>
-          <state>$PROJ_DIR$\.</state>
+          <state>$PROJ_DIR$\..\..\..\..\include</state>
           <state>$PROJ_DIR$\..\..\..\..\components\drivers\include</state>
         </option>
         <option>
@@ -1140,6 +1142,8 @@
           <state>GD32F10X_CL</state>
           <state>__RTTHREAD__</state>
           <state>USE_STDPERIPH_DRIVER</state>
+          <state>__RT_IPC_SOURCE__</state>
+          <state>__RT_KERNEL_SOURCE__</state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -1270,14 +1274,14 @@
           <name>CCIncludePath2</name>
           <state />
           <state>$PROJ_DIR$\..\..\..\..\components\libc\compilers\common\extension</state>
-          <state>$PROJ_DIR$\..\..\..\..\include</state>
+          <state>$PROJ_DIR$\..\libraries\GD32F10x_Firmware_Library\CMSIS\GD\GD32F10x\Include</state>
+          <state>$PROJ_DIR$\..\..\..\..\libcpu\arm\cortex-m3</state>
           <state>$PROJ_DIR$\..\..\..\..\components\libc\compilers\common\include</state>
           <state>$PROJ_DIR$\..\..\..\..\components\libc\posix\io\poll</state>
           <state>$PROJ_DIR$\..\libraries\gd32_drivers</state>
-          <state>$PROJ_DIR$\..\libraries\GD32F10x_Firmware_Library\CMSIS\GD\GD32F10x\Include</state>
           <state>$PROJ_DIR$\..\libraries\GD32F10x_Firmware_Library\GD32F10x_standard_peripheral\Include</state>
           <state>$PROJ_DIR$\..\..\..\..\components\libc\compilers\common\extension\fcntl\octal</state>
-          <state>$PROJ_DIR$\..\..\..\..\libcpu\arm\cortex-m3</state>
+          <state>$PROJ_DIR$\.</state>
           <state>$PROJ_DIR$\..\..\..\..\components\libc\posix\io\epoll</state>
           <state>$PROJ_DIR$\applications</state>
           <state>$PROJ_DIR$\..\..\..\..\components\libc\posix\ipc</state>
@@ -1286,7 +1290,7 @@
           <state>$PROJ_DIR$\..\..\..\..\components\finsh</state>
           <state>$PROJ_DIR$\..\..\..\..\components\libc\posix\io\eventfd</state>
           <state>$PROJ_DIR$\..\libraries\GD32F10x_Firmware_Library\CMSIS</state>
-          <state>$PROJ_DIR$\.</state>
+          <state>$PROJ_DIR$\..\..\..\..\include</state>
           <state>$PROJ_DIR$\..\..\..\..\components\drivers\include</state>
         </option>
         <option>
@@ -1989,21 +1993,6 @@
     </file>
   </group>
   <group>
-    <name>CPU</name>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\..\libcpu\arm\common\div0.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\..\libcpu\arm\common\showmem.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\..\libcpu\arm\cortex-m3\context_iar.S</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\..\libcpu\arm\cortex-m3\cpuport.c</name>
-    </file>
-  </group>
-  <group>
     <name>DeviceDrivers</name>
     <file>
       <name>$PROJ_DIR$\..\..\..\..\components\drivers\core\device.c</name>
@@ -2030,7 +2019,7 @@
       <name>$PROJ_DIR$\..\..\..\..\components\drivers\ipc\workqueue.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\components\drivers\misc\pin.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\components\drivers\pin\pin.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\..\components\drivers\serial\serial.c</name>
@@ -2084,6 +2073,12 @@
       <name>$PROJ_DIR$\..\..\..\..\src\irq.c</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\..\..\..\..\src\klibc\kstdio.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\..\src\klibc\kstring.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\..\..\..\src\kservice.c</name>
     </file>
     <file>
@@ -2096,6 +2091,9 @@
       <name>$PROJ_DIR$\..\..\..\..\src\object.c</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\..\..\..\..\src\scheduler_comm.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\..\..\..\src\scheduler_up.c</name>
     </file>
     <file>
@@ -2103,6 +2101,21 @@
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\..\src\timer.c</name>
+    </file>
+  </group>
+  <group>
+    <name>libcpu</name>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\..\libcpu\arm\common\div0.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\..\libcpu\arm\common\showmem.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\..\libcpu\arm\cortex-m3\context_iar.S</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\..\libcpu\arm\cortex-m3\cpuport.c</name>
     </file>
   </group>
   <group>
