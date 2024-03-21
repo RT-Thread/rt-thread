@@ -3,12 +3,12 @@ name: Check Spelling
 on:
   push:
     branches:
-      - master
+      - v5.1.x
     paths:
       - 'documentation/**'
   pull_request:
     branches:
-      - master
+      - v5.1.x
     paths:
       - 'documentation/**'
 jobs:

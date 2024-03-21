@@ -3,7 +3,7 @@ name: Check File Format and License
 on:
   pull_request:
     branches:
-      - master
+      - v5.1.x
     paths-ignore:
       - documentation/**
       - '**/README.md'

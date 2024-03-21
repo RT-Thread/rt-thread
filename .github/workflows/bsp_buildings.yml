@@ -8,14 +8,14 @@ on:
     - cron:  '0 16 * * *'
   push:
     branches:
-      - master
+      - v5.1.x
     paths-ignore:
       - documentation/**
       - '**/README.md'
       - '**/README_zh.md'
   pull_request:
     branches:
-      - master
+      - v5.1.x
     paths-ignore:
       - documentation/**
       - '**/README.md'
