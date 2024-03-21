@@ -76,7 +76,7 @@ rt_err_t rt_hw_backtrace_frame_unwind(rt_thread_t thread, struct rt_hw_backtrace
         {
             void *lwp = thread->lwp;
             void *this_lwp = lwp_self();
-            if (this_lwp == lwp && rt_hw_mmu_v2p(lwp, fp) != ARCH_MAP_FAILED)
+            if (this_lwp == lwp && rt_hw_mmu_v2p(((rt_lwp_t)lwp)->aspace, fp) != ARCH_MAP_FAILED)
             {
                 rc = _bt_kaddr(fp, frame);
             }
