@@ -246,7 +246,7 @@ void rt_scheduler_stack_check(struct rt_thread *thread)
     {
         rt_base_t dummy = 1;
 
-        rt_kprintf("thread:%s stack overflow\n", thread->parent.name);
+        LOG_E("thread:%s stack overflow\n", thread->parent.name);
 
         while (dummy);
     }
@@ -258,7 +258,7 @@ void rt_scheduler_stack_check(struct rt_thread *thread)
     if ((rt_ubase_t)thread->sp > ((rt_ubase_t)thread->stack_addr + thread->stack_size))
 #endif
     {
-        rt_kprintf("warning: %s stack is close to the top of stack address.\n",
+        LOG_W("warning: %s stack is close to the top of stack address.\n",
                    thread->parent.name);
     }
 #else
@@ -268,7 +268,7 @@ void rt_scheduler_stack_check(struct rt_thread *thread)
     if ((rt_ubase_t)thread->sp <= ((rt_ubase_t)thread->stack_addr + 32))
 #endif
     {
-        rt_kprintf("warning: %s stack is close to end of stack address.\n",
+        LOG_W("warning: %s stack is close to end of stack address.\n",
                    thread->parent.name);
     }
 #endif /* ARCH_CPU_STACK_GROWS_UPWARD */
