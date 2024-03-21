@@ -27,7 +27,6 @@
 #define RT_USING_DEBUG
 #define RT_DEBUGING_COLOR
 #define RT_DEBUGING_CONTEXT
-#define RT_DEBUGING_INIT
 
 /* Inter-Thread communication */
 
@@ -48,9 +47,6 @@
 #define RT_USING_SMALL_MEM_AS_HEAP
 #define RT_USING_MEMTRACE
 #define RT_USING_HEAP
-
-/* Kernel Device Object */
-
 #define RT_USING_DEVICE
 #define RT_USING_DEVICE_OPS
 #define RT_USING_INTERRUPT_INFO
@@ -131,7 +127,6 @@
 #define RT_SERIAL_RB_BUFSZ 256
 #define RT_USING_I2C
 #define RT_USING_I2C_BITOPS
-#define RT_USING_PIN
 #define RT_USING_NULL
 #define RT_USING_ZERO
 #define RT_USING_RANDOM
@@ -154,6 +149,7 @@
 #define RT_SFUD_SPI_MAX_HZ 50000000
 #define RT_USING_WDT
 #define RT_USING_DEV_BUS
+#define RT_USING_PIN
 #define RT_USING_KTIME
 
 /* Using USB */
@@ -196,6 +192,9 @@
 /* Network */
 
 
+/* Memory protection */
+
+
 /* Utilities */
 
 #define RT_USING_RESOURCE_ID
@@ -204,9 +203,6 @@
 #define RT_USING_ADT_BITMAP
 #define RT_USING_ADT_HASHMAP
 #define RT_USING_ADT_REF
-
-/* Memory management */
-
 
 /* RT-Thread Utestcases */
 
@@ -222,6 +218,15 @@
 
 
 /* Wiced WiFi */
+
+
+/* CYW43012 WiFi */
+
+
+/* BL808 WiFi */
+
+
+/* CYW43439 WiFi */
 
 
 /* IoT Cloud */
@@ -246,9 +251,6 @@
 /* u8g2: a monochrome graphic library */
 
 
-/* PainterEngine: A cross-platform graphics application framework written in C language */
-
-
 /* tools packages */
 
 
@@ -268,11 +270,24 @@
 
 /* peripheral libraries and drivers */
 
+/* HAL & SDK Drivers */
+
+/* STM32 HAL & SDK Drivers */
+
 
 /* Kendryte SDK */
 
 
+/* sensors drivers */
+
+
+/* touch drivers */
+
+
 /* AI packages */
+
+
+/* Signal Processing and Control Algorithm Packages */
 
 
 /* miscellaneous packages */
@@ -288,7 +303,7 @@
 /* Arduino libraries */
 
 
-/* Projects */
+/* Projects and Demos */
 
 
 /* Sensors */
@@ -312,6 +327,7 @@
 
 
 /* Other */
+
 
 /* Signal IO */
 

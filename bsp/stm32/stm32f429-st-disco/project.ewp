@@ -224,6 +224,8 @@
           <state>STM32F429xx</state>
           <state>__RTTHREAD__</state>
           <state>USE_HAL_DRIVER</state>
+          <state>__RT_IPC_SOURCE__</state>
+          <state>__RT_KERNEL_SOURCE__</state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -349,14 +351,15 @@
         <option>
           <name>CCIncludePath2</name>
           <state />
+          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\poll</state>
           <state>$PROJ_DIR$\..\..\..\components\finsh</state>
+          <state>$PROJ_DIR$\..\libraries\HAL_Drivers\drivers</state>
           <state>$PROJ_DIR$\..\..\..\components\drivers\include</state>
           <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\extension</state>
           <state>$PROJ_DIR$\board\CubeMX_Config\Inc</state>
           <state>$PROJ_DIR$\..\..\..\components\libc\posix\ipc</state>
           <state>$PROJ_DIR$\..\libraries\HAL_Drivers\CMSIS\Include</state>
           <state>$PROJ_DIR$\.</state>
-          <state>$PROJ_DIR$\..\libraries\HAL_Drivers\config</state>
           <state>$PROJ_DIR$\board</state>
           <state>$PROJ_DIR$\..\..\..\components\drivers\spi</state>
           <state>$PROJ_DIR$\..\libraries\HAL_Drivers</state>
@@ -367,7 +370,7 @@
           <state>$PROJ_DIR$\board\ports</state>
           <state>$PROJ_DIR$\..\libraries\STM32F4xx_HAL\CMSIS\Device\ST\STM32F4xx\Include</state>
           <state>$PROJ_DIR$\applications</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\poll</state>
+          <state>$PROJ_DIR$\..\libraries\HAL_Drivers\drivers\config</state>
           <state>$PROJ_DIR$\..\..\..\include</state>
           <state>$PROJ_DIR$\..\..\..\components\dfs\dfs_v1\include</state>
           <state>$PROJ_DIR$\..\..\..\libcpu\arm\common</state>
@@ -1272,6 +1275,8 @@
           <state>STM32F429xx</state>
           <state>__RTTHREAD__</state>
           <state>USE_HAL_DRIVER</state>
+          <state>__RT_IPC_SOURCE__</state>
+          <state>__RT_KERNEL_SOURCE__</state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -1397,14 +1402,15 @@
         <option>
           <name>CCIncludePath2</name>
           <state />
+          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\poll</state>
           <state>$PROJ_DIR$\..\..\..\components\finsh</state>
+          <state>$PROJ_DIR$\..\libraries\HAL_Drivers\drivers</state>
           <state>$PROJ_DIR$\..\..\..\components\drivers\include</state>
           <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\extension</state>
           <state>$PROJ_DIR$\board\CubeMX_Config\Inc</state>
           <state>$PROJ_DIR$\..\..\..\components\libc\posix\ipc</state>
           <state>$PROJ_DIR$\..\libraries\HAL_Drivers\CMSIS\Include</state>
           <state>$PROJ_DIR$\.</state>
-          <state>$PROJ_DIR$\..\libraries\HAL_Drivers\config</state>
           <state>$PROJ_DIR$\board</state>
           <state>$PROJ_DIR$\..\..\..\components\drivers\spi</state>
           <state>$PROJ_DIR$\..\libraries\HAL_Drivers</state>
@@ -1415,7 +1421,7 @@
           <state>$PROJ_DIR$\board\ports</state>
           <state>$PROJ_DIR$\..\libraries\STM32F4xx_HAL\CMSIS\Device\ST\STM32F4xx\Include</state>
           <state>$PROJ_DIR$\applications</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\poll</state>
+          <state>$PROJ_DIR$\..\libraries\HAL_Drivers\drivers\config</state>
           <state>$PROJ_DIR$\..\..\..\include</state>
           <state>$PROJ_DIR$\..\..\..\components\dfs\dfs_v1\include</state>
           <state>$PROJ_DIR$\..\..\..\libcpu\arm\common</state>
@@ -2154,24 +2160,6 @@
     </file>
   </group>
   <group>
-    <name>CPU</name>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\libcpu\arm\common\atomic_arm.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\libcpu\arm\common\div0.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\libcpu\arm\common\showmem.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m4\context_iar.S</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m4\cpuport.c</name>
-    </file>
-  </group>
-  <group>
     <name>DeviceDrivers</name>
     <file>
       <name>$PROJ_DIR$\..\..\..\components\drivers\core\device.c</name>
@@ -2207,7 +2195,7 @@
       <name>$PROJ_DIR$\..\..\..\components\drivers\ipc\workqueue.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\misc\pin.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\drivers\pin\pin.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\components\drivers\serial\serial.c</name>
@@ -2222,22 +2210,22 @@
   <group>
     <name>Drivers</name>
     <file>
+      <name>$PROJ_DIR$\..\libraries\HAL_Drivers\drivers\drv_gpio.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\libraries\HAL_Drivers\drivers\drv_lcd.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\libraries\HAL_Drivers\drivers\drv_sdram.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\libraries\HAL_Drivers\drivers\drv_spi.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\libraries\HAL_Drivers\drivers\drv_usart.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\libraries\HAL_Drivers\drv_common.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\HAL_Drivers\drv_gpio.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\HAL_Drivers\drv_lcd.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\HAL_Drivers\drv_sdram.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\HAL_Drivers\drv_spi.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\HAL_Drivers\drv_usart.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\libraries\STM32F4xx_HAL\CMSIS\Device\ST\STM32F4xx\Source\Templates\iar\startup_stm32f429xx.s</name>
@@ -2306,6 +2294,12 @@
       <name>$PROJ_DIR$\..\..\..\src\irq.c</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\..\..\..\src\klibc\kstdio.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\src\klibc\kstring.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\..\..\src\kservice.c</name>
     </file>
     <file>
@@ -2318,16 +2312,34 @@
       <name>$PROJ_DIR$\..\..\..\src\object.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\src\scheduler_up.c</name>
+      <name>$PROJ_DIR$\..\..\..\src\scheduler_comm.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\src\signal.c</name>
+      <name>$PROJ_DIR$\..\..\..\src\scheduler_up.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\src\thread.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\src\timer.c</name>
+    </file>
+  </group>
+  <group>
+    <name>libcpu</name>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\libcpu\arm\common\atomic_arm.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\libcpu\arm\common\div0.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\libcpu\arm\common\showmem.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m4\context_iar.S</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m4\cpuport.c</name>
     </file>
   </group>
   <group>

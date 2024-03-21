@@ -1,10 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <Project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="project_projx.xsd">
-
   <SchemaVersion>2.1</SchemaVersion>
-
   <Header>### uVision Project, (C) Keil Software</Header>
-
   <Targets>
     <Target>
       <TargetName>rt-thread</TargetName>
@@ -16,31 +13,31 @@
         <TargetCommonOption>
           <Device>SWM341xE</Device>
           <Vendor>Synwit</Vendor>
-          <PackID>Synwit.SWM32_DFP.2.0.8</PackID>
+          <PackID>Synwit.SWM32_DFP.1.17.0</PackID>
           <PackURL>http://www.synwit.com/pack</PackURL>
           <Cpu>IRAM(0x20000000,0x10000) IROM(0x00000000,0x80000) CPUTYPE("Cortex-M33") FPU3(SFPU) DSP CLOCK(12000000) ELITTLE</Cpu>
-          <FlashUtilSpec></FlashUtilSpec>
-          <StartupFile></StartupFile>
+          <FlashUtilSpec />
+          <StartupFile />
           <FlashDriverDll>UL2V8M(-S0 -C0 -P0 -FD20000000 -FC1000 -FN1 -FF0SWM341xE -FS00 -FL080000 -FP0($$Device:SWM341xE$Flash\SWM341xE.FLM))</FlashDriverDll>
           <DeviceId>0</DeviceId>
           <RegisterFile>$$Device:SWM341xE$CSL\SWM341\CMSIS\DeviceSupport\SWM341.h</RegisterFile>
-          <MemoryEnv></MemoryEnv>
-          <Cmp></Cmp>
-          <Asm></Asm>
-          <Linker></Linker>
-          <OHString></OHString>
-          <InfinionOptionDll></InfinionOptionDll>
-          <SLE66CMisc></SLE66CMisc>
-          <SLE66AMisc></SLE66AMisc>
-          <SLE66LinkerMisc></SLE66LinkerMisc>
+          <MemoryEnv />
+          <Cmp />
+          <Asm />
+          <Linker />
+          <OHString />
+          <InfinionOptionDll />
+          <SLE66CMisc />
+          <SLE66AMisc />
+          <SLE66LinkerMisc />
           <SFDFile>$$Device:SWM341xE$SVD\SWM341.svd</SFDFile>
           <bCustSvd>0</bCustSvd>
           <UseEnv>0</UseEnv>
-          <BinPath></BinPath>
-          <IncludePath></IncludePath>
-          <LibPath></LibPath>
-          <RegisterFilePath></RegisterFilePath>
-          <DBRegisterFilePath></DBRegisterFilePath>
+          <BinPath />
+          <IncludePath />
+          <LibPath />
+          <RegisterFilePath />
+          <DBRegisterFilePath />
           <TargetStatus>
             <Error>0</Error>
             <ExitCodeStop>0</ExitCodeStop>
@@ -62,8 +59,8 @@
           <BeforeCompile>
             <RunUserProg1>0</RunUserProg1>
             <RunUserProg2>0</RunUserProg2>
-            <UserProg1Name></UserProg1Name>
-            <UserProg2Name></UserProg2Name>
+            <UserProg1Name />
+            <UserProg2Name />
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
             <nStopU1X>0</nStopU1X>
@@ -72,8 +69,8 @@
           <BeforeMake>
             <RunUserProg1>0</RunUserProg1>
             <RunUserProg2>0</RunUserProg2>
-            <UserProg1Name></UserProg1Name>
-            <UserProg2Name></UserProg2Name>
+            <UserProg1Name />
+            <UserProg2Name />
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
             <nStopB1X>0</nStopB1X>
@@ -83,14 +80,14 @@
             <RunUserProg1>1</RunUserProg1>
             <RunUserProg2>0</RunUserProg2>
             <UserProg1Name>fromelf --bin !L --output rtthread.bin</UserProg1Name>
-            <UserProg2Name></UserProg2Name>
+            <UserProg2Name />
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
             <nStopA1X>0</nStopA1X>
             <nStopA2X>0</nStopA2X>
           </AfterMake>
           <SelectedForBatchBuild>0</SelectedForBatchBuild>
-          <SVCSIdString></SVCSIdString>
+          <SVCSIdString />
         </TargetCommonOption>
         <CommonProperty>
           <UseCPPCompiler>0</UseCPPCompiler>
@@ -104,17 +101,17 @@
           <AssembleAssemblyFile>0</AssembleAssemblyFile>
           <PublicsOnly>0</PublicsOnly>
           <StopOnExitCode>3</StopOnExitCode>
-          <CustomArgument></CustomArgument>
-          <IncludeLibraryModules></IncludeLibraryModules>
+          <CustomArgument />
+          <IncludeLibraryModules />
           <ComprImg>1</ComprImg>
         </CommonProperty>
         <DllOption>
-          <SimDllName></SimDllName>
-          <SimDllArguments></SimDllArguments>
-          <SimDlgDll></SimDlgDll>
-          <SimDlgDllArguments></SimDlgDllArguments>
+          <SimDllName />
+          <SimDllArguments />
+          <SimDlgDll />
+          <SimDlgDllArguments />
           <TargetDllName>SARMV8M.DLL</TargetDllName>
-          <TargetDllArguments></TargetDllArguments>
+          <TargetDllArguments />
           <TargetDlgDll>TCM.DLL</TargetDlgDll>
           <TargetDlgDllArguments>-pCM33</TargetDlgDllArguments>
         </DllOption>
@@ -139,10 +136,10 @@
           <bUseTDR>1</bUseTDR>
           <Flash2>BIN\UL2V8M.DLL</Flash2>
           <Flash3>"" ()</Flash3>
-          <Flash4></Flash4>
-          <pFcarmOut></pFcarmOut>
-          <pFcarmGrp></pFcarmGrp>
-          <pFcArmRoot></pFcArmRoot>
+          <Flash4 />
+          <pFcarmOut />
+          <pFcarmGrp />
+          <pFcArmRoot />
           <FcArmLst>0</FcArmLst>
         </Utilities>
         <TargetArmAds>
@@ -175,7 +172,7 @@
             <RvctClst>0</RvctClst>
             <GenPPlst>0</GenPPlst>
             <AdsCpuType>"Cortex-M33"</AdsCpuType>
-            <RvctDeviceName></RvctDeviceName>
+            <RvctDeviceName />
             <mOS>0</mOS>
             <uocRom>0</uocRom>
             <uocRam>0</uocRam>
@@ -309,7 +306,7 @@
                 <Size>0x0</Size>
               </OCR_RVCT10>
             </OnChipMemories>
-            <RvctStartVector></RvctStartVector>
+            <RvctStartVector />
           </ArmAdsMisc>
           <Cads>
             <interw>1</interw>
@@ -336,10 +333,10 @@
             <v6WtE>0</v6WtE>
             <v6Rtti>0</v6Rtti>
             <VariousControls>
-              <MiscControls></MiscControls>
+              <MiscControls />
               <Define>RT_USING_LIBC, RT_USING_ARMLIBC, __STDC_LIMIT_MACROS, __RTTHREAD__, __CLK_TCK=RT_TICK_PER_SECOND</Define>
-              <Undefine></Undefine>
-              <IncludePath>.;..\libraries\SWM341_CSL\CMSIS\DeviceSupport;..\..\..\components\libc\compilers\common\include;..\libraries\SWM341_CSL\SWM341_StdPeriph_Driver;..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\libc\posix\ipc;..\..\..\libcpu\arm\common;..\..\..\libcpu\arm\cortex-m33;..\..\..\components\finsh;..\..\..\components\libc\posix\io\epoll;..\..\..\components\libc\compilers\common\extension;..\..\..\components\drivers\include;..\..\..\components\drivers\include;board;..\..\..\components\libc\posix\io\eventfd;..\libraries\SWM341_CSL\CMSIS\CoreSupport;applications;..\libraries\SWM341_drivers</IncludePath>
+              <Undefine />
+              <IncludePath>..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\components\libc\compilers\common\include;..\libraries\SWM341_CSL\SWM341_StdPeriph_Driver;.;..\..\..\components\finsh;..\..\..\components\libc\posix\io\epoll;..\..\..\libcpu\arm\common;..\..\..\components\drivers\include;..\..\..\include;..\..\..\components\libc\posix\io\eventfd;..\libraries\SWM341_CSL\CMSIS\CoreSupport;applications;..\..\..\components\libc\posix\io\poll;..\..\..\libcpu\arm\cortex-m33;..\..\..\components\drivers\include;..\libraries\SWM341_drivers;..\..\..\components\libc\compilers\common\extension;..\libraries\SWM341_CSL\CMSIS\DeviceSupport;..\..\..\components\drivers\include;board;..\..\..\components\drivers\include;..\..\..\components\libc\posix\ipc</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -354,10 +351,10 @@
             <useXO>0</useXO>
             <ClangAsOpt>1</ClangAsOpt>
             <VariousControls>
-              <MiscControls></MiscControls>
-              <Define></Define>
-              <Undefine></Undefine>
-              <IncludePath></IncludePath>
+              <MiscControls />
+              <Define />
+              <Undefine />
+              <IncludePath />
             </VariousControls>
           </Aads>
           <LDads>
@@ -369,13 +366,13 @@
             <useFile>0</useFile>
             <TextAddressRange>0x00000000</TextAddressRange>
             <DataAddressRange>0x20000000</DataAddressRange>
-            <pXoBase></pXoBase>
+            <pXoBase />
             <ScatterFile>.\board\linker_scripts\link.sct</ScatterFile>
-            <IncludeLibs></IncludeLibs>
-            <IncludeLibsPath></IncludeLibsPath>
-            <Misc></Misc>
-            <LinkerInputFile></LinkerInputFile>
-            <DisabledWarnings></DisabledWarnings>
+            <IncludeLibs />
+            <IncludeLibsPath />
+            <Misc />
+            <LinkerInputFile />
+            <DisabledWarnings />
           </LDads>
         </TargetArmAds>
       </TargetOption>
@@ -408,80 +405,54 @@
               <FileType>1</FileType>
               <FilePath>..\..\..\components\libc\compilers\armlibc\syscall_mem.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>syscalls.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\libc\compilers\armlibc\syscalls.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>cctype.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\libc\compilers\common\cctype.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>cstdlib.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\libc\compilers\common\cstdlib.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>cstring.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\libc\compilers\common\cstring.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>ctime.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\libc\compilers\common\ctime.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>cunistd.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\libc\compilers\common\cunistd.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>cwchar.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\libc\compilers\common\cwchar.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>CPU</GroupName>
-          <Files>
-            <File>
-              <FileName>atomic_arm.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\libcpu\arm\common\atomic_arm.c</FilePath>
-            </File>
-            <File>
-              <FileName>div0.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\libcpu\arm\common\div0.c</FilePath>
-            </File>
-            <File>
-              <FileName>showmem.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\libcpu\arm\common\showmem.c</FilePath>
-            </File>
-            <File>
-              <FileName>context_rvds.S</FileName>
-              <FileType>2</FileType>
-              <FilePath>..\..\..\libcpu\arm\cortex-m33\context_rvds.S</FilePath>
-            </File>
-            <File>
-              <FileName>cpuport.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\libcpu\arm\cortex-m33\cpuport.c</FilePath>
-            </File>
-            <File>
-              <FileName>syscall_rvds.S</FileName>
-              <FileType>2</FileType>
-              <FilePath>..\..\..\libcpu\arm\cortex-m33\syscall_rvds.S</FilePath>
-            </File>
-            <File>
-              <FileName>trustzone.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\libcpu\arm\cortex-m33\trustzone.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -492,51 +463,189 @@
               <FileName>device.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\core\device.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>completion.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\ipc\completion.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>dataqueue.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\ipc\dataqueue.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>pipe.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\ipc\pipe.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>ringblk_buf.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\ipc\ringblk_buf.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>ringbuffer.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\ipc\ringbuffer.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>waitqueue.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\ipc\waitqueue.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>workqueue.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\ipc\workqueue.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>pin.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\misc\pin.c</FilePath>
+              <FilePath>..\..\..\components\drivers\pin\pin.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>serial.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\serial\serial.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
           </Files>
         </Group>
@@ -548,6 +657,8 @@
               <FileType>1</FileType>
               <FilePath>..\libraries\SWM341_drivers\drv_gpio.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>drv_uart.c</FileName>
               <FileType>1</FileType>
@@ -563,16 +674,22 @@
               <FileType>1</FileType>
               <FilePath>..\..\..\components\finsh\shell.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>msh.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\finsh\msh.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>msh_parse.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\finsh\msh_parse.c</FilePath>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>cmd.c</FileName>
               <FileType>1</FileType>
@@ -587,61 +704,336 @@
               <FileName>clock.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\clock.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_KERNEL_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>components.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\components.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_KERNEL_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>idle.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\idle.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_KERNEL_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>ipc.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\ipc.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_KERNEL_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>irq.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\irq.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_KERNEL_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>kstdio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\klibc\kstdio.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_KERNEL_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>kstring.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\klibc\kstring.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_KERNEL_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+          <Files>
             <File>
               <FileName>kservice.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\kservice.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_KERNEL_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>mem.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\mem.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_KERNEL_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>memheap.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\memheap.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_KERNEL_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>object.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\object.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_KERNEL_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>scheduler_comm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\scheduler_comm.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_KERNEL_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+          <Files>
             <File>
               <FileName>scheduler_up.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\scheduler_up.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_KERNEL_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>thread.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\thread.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_KERNEL_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
+          </Files>
+          <Files>
             <File>
               <FileName>timer.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\timer.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_KERNEL_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>libcpu</GroupName>
+          <Files>
+            <File>
+              <FileName>atomic_arm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\libcpu\arm\common\atomic_arm.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>div0.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\libcpu\arm\common\div0.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>showmem.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\libcpu\arm\common\showmem.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>context_rvds.S</FileName>
+              <FileType>2</FileType>
+              <FilePath>..\..\..\libcpu\arm\cortex-m33\context_rvds.S</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cpuport.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\libcpu\arm\cortex-m33\cpuport.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>syscall_rvds.S</FileName>
+              <FileType>2</FileType>
+              <FilePath>..\..\..\libcpu\arm\cortex-m33\syscall_rvds.S</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>trustzone.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\libcpu\arm\cortex-m33\trustzone.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -653,151 +1045,211 @@
               <FileType>1</FileType>
               <FilePath>..\libraries\SWM341_CSL\SWM341_StdPeriph_Driver\SWM341_can.c</FilePath>
             </File>
-            <File>
-              <FileName>SWM341_usbh.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\SWM341_CSL\SWM341_StdPeriph_Driver\SWM341_usbh.c</FilePath>
-            </File>
-            <File>
-              <FileName>SWM341_jpeg.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\SWM341_CSL\SWM341_StdPeriph_Driver\SWM341_jpeg.c</FilePath>
-            </File>
-            <File>
-              <FileName>SWM341_port.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\SWM341_CSL\SWM341_StdPeriph_Driver\SWM341_port.c</FilePath>
-            </File>
-            <File>
-              <FileName>SWM341_adc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\SWM341_CSL\SWM341_StdPeriph_Driver\SWM341_adc.c</FilePath>
-            </File>
-            <File>
-              <FileName>SWM341_lcd.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\SWM341_CSL\SWM341_StdPeriph_Driver\SWM341_lcd.c</FilePath>
-            </File>
-            <File>
-              <FileName>SWM341_crc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\SWM341_CSL\SWM341_StdPeriph_Driver\SWM341_crc.c</FilePath>
-            </File>
-            <File>
-              <FileName>SWM341_flash.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\SWM341_CSL\SWM341_StdPeriph_Driver\SWM341_flash.c</FilePath>
-            </File>
-            <File>
-              <FileName>SWM341_sdram.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\SWM341_CSL\SWM341_StdPeriph_Driver\SWM341_sdram.c</FilePath>
-            </File>
-            <File>
-              <FileName>SWM341_cordic.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\SWM341_CSL\SWM341_StdPeriph_Driver\SWM341_cordic.c</FilePath>
-            </File>
-            <File>
-              <FileName>SWM341_rtc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\SWM341_CSL\SWM341_StdPeriph_Driver\SWM341_rtc.c</FilePath>
-            </File>
-            <File>
-              <FileName>SWM341_qei.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\SWM341_CSL\SWM341_StdPeriph_Driver\SWM341_qei.c</FilePath>
-            </File>
-            <File>
-              <FileName>SWM341_sleep.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\SWM341_CSL\SWM341_StdPeriph_Driver\SWM341_sleep.c</FilePath>
-            </File>
-            <File>
-              <FileName>SWM341_wdt.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\SWM341_CSL\SWM341_StdPeriph_Driver\SWM341_wdt.c</FilePath>
-            </File>
-            <File>
-              <FileName>SWM341_sfc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\SWM341_CSL\SWM341_StdPeriph_Driver\SWM341_sfc.c</FilePath>
-            </File>
-            <File>
-              <FileName>SWM341_div.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\SWM341_CSL\SWM341_StdPeriph_Driver\SWM341_div.c</FilePath>
-            </File>
-            <File>
-              <FileName>SWM341_gpio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\SWM341_CSL\SWM341_StdPeriph_Driver\SWM341_gpio.c</FilePath>
-            </File>
-            <File>
-              <FileName>SWM341_spi.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\SWM341_CSL\SWM341_StdPeriph_Driver\SWM341_spi.c</FilePath>
-            </File>
-            <File>
-              <FileName>SWM341_dac.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\SWM341_CSL\SWM341_StdPeriph_Driver\SWM341_dac.c</FilePath>
-            </File>
-            <File>
-              <FileName>SWM341_usbd.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\SWM341_CSL\SWM341_StdPeriph_Driver\SWM341_usbd.c</FilePath>
-            </File>
-            <File>
-              <FileName>SWM341_pwm.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\SWM341_CSL\SWM341_StdPeriph_Driver\SWM341_pwm.c</FilePath>
-            </File>
-            <File>
-              <FileName>SWM341_iofilt.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\SWM341_CSL\SWM341_StdPeriph_Driver\SWM341_iofilt.c</FilePath>
-            </File>
-            <File>
-              <FileName>SWM341_timr.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\SWM341_CSL\SWM341_StdPeriph_Driver\SWM341_timr.c</FilePath>
-            </File>
-            <File>
-              <FileName>SWM341_dma.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\SWM341_CSL\SWM341_StdPeriph_Driver\SWM341_dma.c</FilePath>
-            </File>
+          </Files>
+          <Files>
             <File>
               <FileName>SWM341_i2c.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\SWM341_CSL\SWM341_StdPeriph_Driver\SWM341_i2c.c</FilePath>
             </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>SWM341_qei.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\SWM341_CSL\SWM341_StdPeriph_Driver\SWM341_qei.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>SWM341_usbh.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\SWM341_CSL\SWM341_StdPeriph_Driver\SWM341_usbh.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>SWM341_wdt.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\SWM341_CSL\SWM341_StdPeriph_Driver\SWM341_wdt.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>SWM341_iofilt.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\SWM341_CSL\SWM341_StdPeriph_Driver\SWM341_iofilt.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>SWM341_sdram.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\SWM341_CSL\SWM341_StdPeriph_Driver\SWM341_sdram.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>SWM341_div.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\SWM341_CSL\SWM341_StdPeriph_Driver\SWM341_div.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>SWM341_lcd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\SWM341_CSL\SWM341_StdPeriph_Driver\SWM341_lcd.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>SWM341_rtc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\SWM341_CSL\SWM341_StdPeriph_Driver\SWM341_rtc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>SWM341_port.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\SWM341_CSL\SWM341_StdPeriph_Driver\SWM341_port.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>SWM341_flash.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\SWM341_CSL\SWM341_StdPeriph_Driver\SWM341_flash.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>SWM341_sleep.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\SWM341_CSL\SWM341_StdPeriph_Driver\SWM341_sleep.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>SWM341_dac.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\SWM341_CSL\SWM341_StdPeriph_Driver\SWM341_dac.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>SWM341_jpeg.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\SWM341_CSL\SWM341_StdPeriph_Driver\SWM341_jpeg.c</FilePath>
+            </File>
+          </Files>
+          <Files>
             <File>
               <FileName>system_SWM341.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\SWM341_CSL\CMSIS\DeviceSupport\system_SWM341.c</FilePath>
             </File>
-            <File>
-              <FileName>SWM341_uart.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\SWM341_CSL\SWM341_StdPeriph_Driver\SWM341_uart.c</FilePath>
-            </File>
-            <File>
-              <FileName>SWM341_dma2d.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\SWM341_CSL\SWM341_StdPeriph_Driver\SWM341_dma2d.c</FilePath>
-            </File>
+          </Files>
+          <Files>
             <File>
               <FileName>SWM341_exti.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\SWM341_CSL\SWM341_StdPeriph_Driver\SWM341_exti.c</FilePath>
             </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>SWM341_cordic.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\SWM341_CSL\SWM341_StdPeriph_Driver\SWM341_cordic.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>SWM341_usbd.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\SWM341_CSL\SWM341_StdPeriph_Driver\SWM341_usbd.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>SWM341_timr.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\SWM341_CSL\SWM341_StdPeriph_Driver\SWM341_timr.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>SWM341_gpio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\SWM341_CSL\SWM341_StdPeriph_Driver\SWM341_gpio.c</FilePath>
+            </File>
+          </Files>
+          <Files>
             <File>
               <FileName>SWM341_sdio.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\SWM341_CSL\SWM341_StdPeriph_Driver\SWM341_sdio.c</FilePath>
             </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>SWM341_dma.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\SWM341_CSL\SWM341_StdPeriph_Driver\SWM341_dma.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>SWM341_dma2d.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\SWM341_CSL\SWM341_StdPeriph_Driver\SWM341_dma2d.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>SWM341_uart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\SWM341_CSL\SWM341_StdPeriph_Driver\SWM341_uart.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>SWM341_spi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\SWM341_CSL\SWM341_StdPeriph_Driver\SWM341_spi.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>SWM341_sfc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\SWM341_CSL\SWM341_StdPeriph_Driver\SWM341_sfc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>SWM341_crc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\SWM341_CSL\SWM341_StdPeriph_Driver\SWM341_crc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>SWM341_pwm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\SWM341_CSL\SWM341_StdPeriph_Driver\SWM341_pwm.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>SWM341_adc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\SWM341_CSL\SWM341_StdPeriph_Driver\SWM341_adc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
             <File>
               <FileName>startup_SWM341.s</FileName>
               <FileType>2</FileType>
@@ -808,11 +1260,9 @@
       </Groups>
     </Target>
   </Targets>
-
   <RTE>
-    <apis/>
-    <components/>
-    <files/>
+    <apis />
+    <components />
+    <files />
   </RTE>
-
 </Project>

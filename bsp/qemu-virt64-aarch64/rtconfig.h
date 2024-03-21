@@ -54,6 +54,7 @@
 #define RT_USING_DEVICE
 #define RT_USING_DEVICE_OPS
 #define RT_USING_INTERRUPT_INFO
+#define RT_USING_SCHED_THREAD_CTX
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 256
 #define RT_CONSOLE_DEVICE_NAME "uart0"
@@ -135,7 +136,6 @@
 #define RT_USING_SERIAL_V1
 #define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 256
-#define RT_USING_PIN
 #define RT_USING_NULL
 #define RT_USING_ZERO
 #define RT_USING_RANDOM
@@ -154,7 +154,9 @@
 #define RT_USING_VIRTIO_INPUT
 #define RT_USING_OFW
 #define RT_FDT_EARLYCON_MSG_SIZE 128
+#define RT_USING_PIN
 #define RT_USING_KTIME
+#define RT_USING_CLK
 
 /* Using USB */
 
@@ -192,6 +194,9 @@
 /* Network */
 
 
+/* Memory protection */
+
+
 /* Utilities */
 
 #define RT_USING_RESOURCE_ID
@@ -200,12 +205,6 @@
 #define RT_USING_ADT_BITMAP
 #define RT_USING_ADT_HASHMAP
 #define RT_USING_ADT_REF
-
-/* Memory management */
-
-
-/* Memory protection */
-
 
 /* RT-Thread Utestcases */
 
@@ -224,6 +223,12 @@
 
 
 /* CYW43012 WiFi */
+
+
+/* BL808 WiFi */
+
+
+/* CYW43439 WiFi */
 
 
 /* IoT Cloud */
@@ -267,13 +272,18 @@
 
 /* peripheral libraries and drivers */
 
+/* HAL & SDK Drivers */
+
+/* STM32 HAL & SDK Drivers */
+
+
+/* Kendryte SDK */
+
+
 /* sensors drivers */
 
 
 /* touch drivers */
-
-
-/* Kendryte SDK */
 
 
 /* AI packages */

@@ -229,6 +229,8 @@
           <state>APM32E10X_HD</state>
           <state>__RTTHREAD__</state>
           <state>USE_STDPERIPH_DRIVER</state>
+          <state>__RT_IPC_SOURCE__</state>
+          <state>__RT_KERNEL_SOURCE__</state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -353,7 +355,7 @@
           <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\extension\fcntl\octal</state>
           <state>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m3</state>
           <state>$PROJ_DIR$\..\..\..\components\finsh</state>
-          <state>$PROJ_DIR$\..\..\..\libcpu\arm\common</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\include</state>
           <state>$PROJ_DIR$\..\..\..\components\libc\posix\ipc</state>
           <state>$PROJ_DIR$\board\ports</state>
           <state>$PROJ_DIR$\..\libraries\Drivers</state>
@@ -366,11 +368,11 @@
           <state>$PROJ_DIR$\applications</state>
           <state>$PROJ_DIR$\..\libraries\APM32E10x_Library\Device\Geehy\APM32E10x\Include</state>
           <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\poll</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\extension</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\include</state>
+          <state>$PROJ_DIR$\board</state>
+          <state>$PROJ_DIR$\..\..\..\libcpu\arm\common</state>
           <state>$PROJ_DIR$\..\libraries\APM32E10x_Library\CMSIS\Include</state>
           <state>$PROJ_DIR$\..\..\..\include</state>
-          <state>$PROJ_DIR$\board</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\extension</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -1327,6 +1329,8 @@
           <state>APM32E10X_HD</state>
           <state>__RTTHREAD__</state>
           <state>USE_STDPERIPH_DRIVER</state>
+          <state>__RT_IPC_SOURCE__</state>
+          <state>__RT_KERNEL_SOURCE__</state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -1451,7 +1455,7 @@
           <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\extension\fcntl\octal</state>
           <state>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m3</state>
           <state>$PROJ_DIR$\..\..\..\components\finsh</state>
-          <state>$PROJ_DIR$\..\..\..\libcpu\arm\common</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\include</state>
           <state>$PROJ_DIR$\..\..\..\components\libc\posix\ipc</state>
           <state>$PROJ_DIR$\board\ports</state>
           <state>$PROJ_DIR$\..\libraries\Drivers</state>
@@ -1464,11 +1468,11 @@
           <state>$PROJ_DIR$\applications</state>
           <state>$PROJ_DIR$\..\libraries\APM32E10x_Library\Device\Geehy\APM32E10x\Include</state>
           <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\poll</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\extension</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\include</state>
+          <state>$PROJ_DIR$\board</state>
+          <state>$PROJ_DIR$\..\..\..\libcpu\arm\common</state>
           <state>$PROJ_DIR$\..\libraries\APM32E10x_Library\CMSIS\Include</state>
           <state>$PROJ_DIR$\..\..\..\include</state>
-          <state>$PROJ_DIR$\board</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\extension</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -2251,24 +2255,6 @@
     </file>
   </group>
   <group>
-    <name>CPU</name>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\libcpu\arm\common\atomic_arm.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\libcpu\arm\common\div0.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\libcpu\arm\common\showmem.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m3\context_iar.S</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m3\cpuport.c</name>
-    </file>
-  </group>
-  <group>
     <name>DeviceDrivers</name>
     <file>
       <name>$PROJ_DIR$\..\..\..\components\drivers\core\device.c</name>
@@ -2295,7 +2281,7 @@
       <name>$PROJ_DIR$\..\..\..\components\drivers\ipc\workqueue.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\misc\pin.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\drivers\pin\pin.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\components\drivers\serial\serial.c</name>
@@ -2352,6 +2338,12 @@
       <name>$PROJ_DIR$\..\..\..\src\irq.c</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\..\..\..\src\klibc\kstdio.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\src\klibc\kstring.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\..\..\src\kservice.c</name>
     </file>
     <file>
@@ -2364,6 +2356,9 @@
       <name>$PROJ_DIR$\..\..\..\src\object.c</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\..\..\..\src\scheduler_comm.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\..\..\src\scheduler_up.c</name>
     </file>
     <file>
@@ -2371,6 +2366,24 @@
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\src\timer.c</name>
+    </file>
+  </group>
+  <group>
+    <name>libcpu</name>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\libcpu\arm\common\atomic_arm.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\libcpu\arm\common\div0.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\libcpu\arm\common\showmem.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m3\context_iar.S</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m3\cpuport.c</name>
     </file>
   </group>
   <group>

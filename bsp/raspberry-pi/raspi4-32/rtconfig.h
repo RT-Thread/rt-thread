@@ -117,7 +117,6 @@
 #define RT_SERIAL_RB_BUFSZ 512
 #define RT_USING_I2C
 #define RT_USING_I2C_BITOPS
-#define RT_USING_PIN
 #define RT_USING_SDIO
 #define RT_SDIO_STACK_SIZE 512
 #define RT_SDIO_THREAD_PRIORITY 15
@@ -127,6 +126,7 @@
 #define RT_USING_SPI
 #define RT_USING_WDT
 #define RT_USING_TOUCH
+#define RT_USING_PIN
 #define RT_USING_KTIME
 
 /* Using USB */
@@ -293,13 +293,18 @@
 
 /* peripheral libraries and drivers */
 
+/* HAL & SDK Drivers */
+
+/* STM32 HAL & SDK Drivers */
+
+
+/* Kendryte SDK */
+
+
 /* sensors drivers */
 
 
 /* touch drivers */
-
-
-/* Kendryte SDK */
 
 
 /* AI packages */

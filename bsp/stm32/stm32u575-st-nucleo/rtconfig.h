@@ -4,6 +4,8 @@
 /* Automatically generated file; DO NOT EDIT. */
 /* RT-Thread Configuration */
 
+#define BOARD_STM32U575_NUCLEO
+
 /* RT-Thread Kernel */
 
 #define RT_NAME_MAX 8
@@ -27,7 +29,6 @@
 #define RT_USING_DEBUG
 #define RT_DEBUGING_COLOR
 #define RT_DEBUGING_CONTEXT
-#define RT_DEBUGING_INIT
 
 /* Inter-Thread communication */
 
@@ -91,10 +92,10 @@
 #define RT_SERIAL_RB_BUFSZ 64
 #define RT_USING_I2C
 #define RT_USING_I2C_BITOPS
-#define RT_USING_PIN
 #define RT_USING_ADC
 #define RT_USING_PWM
 #define RT_USING_SPI
+#define RT_USING_PIN
 
 /* Using USB */
 
@@ -122,12 +123,6 @@
 /* Network */
 
 
-/* Utilities */
-
-
-/* Memory management */
-
-
 /* Memory protection */
 
 #define RT_USING_MEM_PROTECTION
@@ -136,6 +131,9 @@
 #define NUM_MEM_REGIONS 8
 #define NUM_EXCLUSIVE_REGIONS 2
 #define NUM_CONFIGURABLE_REGIONS 3
+
+/* Utilities */
+
 
 /* RT-Thread Utestcases */
 
@@ -151,6 +149,15 @@
 
 
 /* Wiced WiFi */
+
+
+/* CYW43012 WiFi */
+
+
+/* BL808 WiFi */
+
+
+/* CYW43439 WiFi */
 
 
 /* IoT Cloud */
@@ -175,9 +182,6 @@
 /* u8g2: a monochrome graphic library */
 
 
-/* PainterEngine: A cross-platform graphics application framework written in C language */
-
-
 /* tools packages */
 
 
@@ -197,16 +201,24 @@
 
 /* peripheral libraries and drivers */
 
+/* HAL & SDK Drivers */
+
+/* STM32 HAL & SDK Drivers */
+
+
+/* Kendryte SDK */
+
+
 /* sensors drivers */
 
 
 /* touch drivers */
 
 
-/* Kendryte SDK */
-
-
 /* AI packages */
+
+
+/* Signal Processing and Control Algorithm Packages */
 
 
 /* miscellaneous packages */
@@ -222,7 +234,7 @@
 /* Arduino libraries */
 
 
-/* Projects */
+/* Projects and Demos */
 
 
 /* Sensors */
@@ -247,6 +259,7 @@
 
 /* Other */
 
+
 /* Signal IO */
 
 
@@ -254,6 +267,7 @@
 
 #define SOC_FAMILY_STM32
 #define SOC_SERIES_STM32U5
+#define BOARD_SERIES_STM32_NUCLEO_144
 
 /* Hardware Drivers Config */
 

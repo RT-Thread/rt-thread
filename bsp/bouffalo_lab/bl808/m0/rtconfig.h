@@ -113,7 +113,6 @@
 #define RT_USING_SERIAL_V1
 #define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 64
-#define RT_USING_PIN
 #define RT_USING_PWM
 #define RT_USING_RTC
 #define RT_USING_SDIO
@@ -149,6 +148,7 @@
 #define RT_WLAN_WORKQUEUE_THREAD_NAME "wlan"
 #define RT_WLAN_WORKQUEUE_THREAD_SIZE 8192
 #define RT_WLAN_WORKQUEUE_THREAD_PRIO 15
+#define RT_USING_PIN
 
 /* Using USB */
 
@@ -231,6 +231,7 @@
 #define RT_LWIP_ETHTHREAD_MBOX_SIZE 8
 #define LWIP_NETIF_STATUS_CALLBACK 1
 #define LWIP_NETIF_LINK_CALLBACK 1
+#define RT_LWIP_NETIF_NAMESIZE 6
 #define SO_REUSE 1
 #define LWIP_SO_RCVTIMEO 1
 #define LWIP_SO_SNDTIMEO 1
@@ -241,13 +242,10 @@
 #define LWIP_USING_DHCPD
 #define DHCPD_SERVER_IP "192.168.169.1"
 
-/* Utilities */
-
-
-/* Memory management */
-
-
 /* Memory protection */
+
+
+/* Utilities */
 
 
 /* RT-Thread Utestcases */
@@ -273,6 +271,9 @@
 
 #define PKG_USING_WLAN_BL808
 #define PKG_USING_WLAN_BL808_LATEST_VERSION
+
+/* CYW43439 WiFi */
+
 
 /* IoT Cloud */
 
@@ -323,13 +324,18 @@
 
 /* peripheral libraries and drivers */
 
+/* HAL & SDK Drivers */
+
+/* STM32 HAL & SDK Drivers */
+
+
+/* Kendryte SDK */
+
+
 /* sensors drivers */
 
 
 /* touch drivers */
-
-
-/* Kendryte SDK */
 
 
 /* AI packages */

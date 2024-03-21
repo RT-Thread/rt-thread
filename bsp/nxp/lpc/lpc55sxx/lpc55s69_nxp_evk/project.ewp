@@ -233,6 +233,8 @@
           <state>DEBUG</state>
           <state>CPU_LPC55S69JBD100_cm33_core0</state>
           <state>__RTTHREAD__</state>
+          <state>__RT_IPC_SOURCE__</state>
+          <state>__RT_KERNEL_SOURCE__</state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -355,28 +357,28 @@
           <name>CCIncludePath2</name>
           <state />
           <state>$PROJ_DIR$\board\MCUX_Config\board</state>
-          <state>$PROJ_DIR$\..\..\..\components\drivers\include</state>
-          <state>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m33</state>
-          <state>$PROJ_DIR$\..\..\..\components\finsh</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\extension</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\posix\ipc</state>
+          <state>$PROJ_DIR$\..\..\..\..\..\libcpu\arm\cortex-m33</state>
+          <state>$PROJ_DIR$\..\..\..\..\..\components\libc\compilers\common\include</state>
           <state>$PROJ_DIR$\..\Libraries\LPC55S6X\LPC55S6X</state>
+          <state>$PROJ_DIR$\..\..\..\..\..\components\libc\posix\io\epoll</state>
           <state>$PROJ_DIR$\.</state>
           <state>$PROJ_DIR$\..\Libraries\CMSIS\Core\Include</state>
           <state>$PROJ_DIR$\board</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\extension\fcntl\octal</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\epoll</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\include</state>
+          <state>$PROJ_DIR$\..\..\..\..\..\libcpu\arm\common</state>
           <state>$PROJ_DIR$\..\Libraries\drivers</state>
           <state>$PROJ_DIR$\..\Libraries\LPC55S6X\LPC55S6X\drivers</state>
+          <state>$PROJ_DIR$\..\..\..\..\..\components\libc\posix\io\poll</state>
+          <state>$PROJ_DIR$\..\..\..\..\..\components\libc\posix\ipc</state>
           <state>$PROJ_DIR$\applications</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\poll</state>
-          <state>$PROJ_DIR$\..\..\..\include</state>
-          <state>$PROJ_DIR$\..\..\..\libcpu\arm\common</state>
+          <state>$PROJ_DIR$\..\..\..\..\..\components\libc\posix\io\eventfd</state>
+          <state>$PROJ_DIR$\..\..\..\..\..\components\libc\compilers\common\extension\fcntl\octal</state>
+          <state>$PROJ_DIR$\..\..\..\..\..\components\drivers\include</state>
+          <state>$PROJ_DIR$\..\..\..\..\..\components\finsh</state>
           <state>$PROJ_DIR$\..\Libraries\LPC55S6X\middleware\sdmmc\inc</state>
           <state>$PROJ_DIR$\..\Libraries\LPC55S6X\middleware\sdmmc\port</state>
           <state>$PROJ_DIR$\..\Libraries\LPC55S6X\components\codec</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\eventfd</state>
+          <state>$PROJ_DIR$\..\..\..\..\..\include</state>
+          <state>$PROJ_DIR$\..\..\..\..\..\components\libc\compilers\common\extension</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -1109,106 +1111,82 @@
   <group>
     <name>Compiler</name>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\common\cctype.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\..\components\libc\compilers\common\cctype.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\common\cstdlib.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\..\components\libc\compilers\common\cstdlib.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\common\cstring.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\..\components\libc\compilers\common\cstring.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\common\ctime.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\..\components\libc\compilers\common\ctime.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\common\cunistd.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\..\components\libc\compilers\common\cunistd.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\common\cwchar.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\..\components\libc\compilers\common\cwchar.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\environ.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\..\components\libc\compilers\dlib\environ.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscall_close.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\..\components\libc\compilers\dlib\syscall_close.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscall_lseek.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\..\components\libc\compilers\dlib\syscall_lseek.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscall_mem.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\..\components\libc\compilers\dlib\syscall_mem.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscall_open.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\..\components\libc\compilers\dlib\syscall_open.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscall_read.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\..\components\libc\compilers\dlib\syscall_read.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscall_remove.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\..\components\libc\compilers\dlib\syscall_remove.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscall_write.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\..\components\libc\compilers\dlib\syscall_write.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\dlib\syscalls.c</name>
-    </file>
-  </group>
-  <group>
-    <name>CPU</name>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\libcpu\arm\common\atomic_arm.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\libcpu\arm\common\div0.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\libcpu\arm\common\showmem.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m33\context_iar.S</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m33\cpuport.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m33\syscall_iar.S</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m33\trustzone.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\..\components\libc\compilers\dlib\syscalls.c</name>
     </file>
   </group>
   <group>
     <name>DeviceDrivers</name>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\core\device.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\..\components\drivers\core\device.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\ipc\completion.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\..\components\drivers\ipc\completion.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\ipc\dataqueue.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\..\components\drivers\ipc\dataqueue.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\ipc\pipe.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\..\components\drivers\ipc\pipe.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\ipc\ringblk_buf.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\..\components\drivers\ipc\ringblk_buf.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\ipc\ringbuffer.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\..\components\drivers\ipc\ringbuffer.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\ipc\waitqueue.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\..\components\drivers\ipc\waitqueue.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\ipc\workqueue.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\..\components\drivers\ipc\workqueue.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\misc\pin.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\..\components\drivers\pin\pin.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\serial\serial.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\..\components\drivers\serial\serial.c</name>
     </file>
   </group>
   <group>
@@ -1232,55 +1210,88 @@
   <group>
     <name>Finsh</name>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\finsh\shell.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\..\components\finsh\shell.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\finsh\msh.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\..\components\finsh\msh.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\finsh\msh_parse.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\..\components\finsh\msh_parse.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\finsh\cmd.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\..\components\finsh\cmd.c</name>
     </file>
   </group>
   <group>
     <name>Kernel</name>
     <file>
-      <name>$PROJ_DIR$\..\..\..\src\clock.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\..\src\clock.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\src\components.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\..\src\components.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\src\idle.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\..\src\idle.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\src\ipc.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\..\src\ipc.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\src\irq.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\..\src\irq.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\src\kservice.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\..\src\klibc\kstdio.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\src\mem.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\..\src\klibc\kstring.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\src\mempool.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\..\src\kservice.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\src\object.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\..\src\mem.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\src\scheduler_up.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\..\src\mempool.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\src\thread.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\..\src\object.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\src\timer.c</name>
+      <name>$PROJ_DIR$\..\..\..\..\..\src\scheduler_comm.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\..\..\src\scheduler_up.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\..\..\src\thread.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\..\..\src\timer.c</name>
+    </file>
+  </group>
+  <group>
+    <name>libcpu</name>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\..\..\libcpu\arm\common\atomic_arm.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\..\..\libcpu\arm\common\div0.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\..\..\libcpu\arm\common\showmem.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\..\..\libcpu\arm\cortex-m33\context_iar.S</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\..\..\libcpu\arm\cortex-m33\cpuport.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\..\..\libcpu\arm\cortex-m33\syscall_iar.S</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\..\..\libcpu\arm\cortex-m33\trustzone.c</name>
     </file>
   </group>
   <group>
