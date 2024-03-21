@@ -27,7 +27,7 @@
 #define RSM_STATE               0xD4
 #define ST_ON                   0x3
 
-static int cvi_restart()
+static int cvi_restart(void)
 {
     /* Enable power suspend wakeup source mask */
     mmio_write_32(CVI_RTC_REG_BASE + RTC_APB_BUSY_SEL,0x1);
