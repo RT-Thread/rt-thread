@@ -20,7 +20,7 @@
 #define IDLE_THREAD_STACK_SIZE 4096
 #define RT_USING_TIMER_SOFT
 #define RT_TIMER_THREAD_PRIO 4
-#define RT_TIMER_THREAD_STACK_SIZE 1024
+#define RT_TIMER_THREAD_STACK_SIZE 4096
 
 /* kservice optimization */
 
@@ -69,7 +69,7 @@
 
 #define RT_USING_COMPONENTS_INIT
 #define RT_USING_USER_MAIN
-#define RT_MAIN_THREAD_STACK_SIZE 2048
+#define RT_MAIN_THREAD_STACK_SIZE 8196
 #define RT_MAIN_THREAD_PRIORITY 10
 #define RT_USING_LEGACY
 #define RT_USING_MSH
@@ -119,7 +119,7 @@
 #define RT_USING_DEVICE_IPC
 #define RT_UNAMED_PIPE_NUMBER 64
 #define RT_USING_SYSTEM_WORKQUEUE
-#define RT_SYSTEM_WORKQUEUE_STACKSIZE 2048
+#define RT_SYSTEM_WORKQUEUE_STACKSIZE 8196
 #define RT_SYSTEM_WORKQUEUE_PRIORITY 23
 #define RT_USING_SERIAL
 #define RT_USING_SERIAL_V1
@@ -136,9 +136,9 @@
 #define RT_USING_RTC
 #define RT_USING_SOFT_RTC
 #define RT_USING_SDIO
-#define RT_SDIO_STACK_SIZE 512
+#define RT_SDIO_STACK_SIZE 4096
 #define RT_SDIO_THREAD_PRIORITY 15
-#define RT_MMCSD_STACK_SIZE 1024
+#define RT_MMCSD_STACK_SIZE 4096
 #define RT_MMCSD_THREAD_PREORITY 22
 #define RT_MMCSD_MAX_PARTITION 16
 #define RT_USING_SPI
@@ -220,15 +220,6 @@
 /* Wiced WiFi */
 
 
-/* CYW43012 WiFi */
-
-
-/* BL808 WiFi */
-
-
-/* CYW43439 WiFi */
-
-
 /* IoT Cloud */
 
 
@@ -251,6 +242,9 @@
 /* u8g2: a monochrome graphic library */
 
 
+/* PainterEngine: A cross-platform graphics application framework written in C language */
+
+
 /* tools packages */
 
 
@@ -270,24 +264,11 @@
 
 /* peripheral libraries and drivers */
 
-/* HAL & SDK Drivers */
-
-/* STM32 HAL & SDK Drivers */
-
 
 /* Kendryte SDK */
 
 
-/* sensors drivers */
-
-
-/* touch drivers */
-
-
 /* AI packages */
-
-
-/* Signal Processing and Control Algorithm Packages */
 
 
 /* miscellaneous packages */
@@ -303,7 +284,7 @@
 /* Arduino libraries */
 
 
-/* Projects and Demos */
+/* Projects */
 
 
 /* Sensors */
@@ -328,11 +309,19 @@
 
 /* Other */
 
-
 /* Signal IO */
 
 
 /* Uncategorized */
+
+/* Privated Packages of RealThread */
+
+
+/* Network Utilities */
+
+
+/* RT-Thread Smart */
+
 
 /* Hardware Drivers Config */
 
