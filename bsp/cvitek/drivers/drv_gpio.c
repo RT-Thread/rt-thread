@@ -126,7 +126,7 @@ static void dwapb_pin_write(struct rt_device *device, rt_base_t pin, rt_uint8_t 
     dwapb_write32(base_addr + GPIO_SWPORTA_DR, reg_val);
 }
 
-static rt_int8_t dwapb_pin_read(struct rt_device *device, rt_base_t pin)
+static rt_ssize_t dwapb_pin_read(struct rt_device *device, rt_base_t pin)
 {
     rt_uint8_t bit, port;
     rt_ubase_t base_addr;

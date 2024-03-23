@@ -71,7 +71,7 @@ static void sf2_pin_mode(rt_device_t dev, rt_base_t pin, rt_uint8_t mode)
     MSS_GPIO_config((mss_gpio_id_t )pin, config);
 }
 
-static rt_int8_t sf2_pin_read(rt_device_t dev, rt_base_t pin)
+static rt_ssize_t sf2_pin_read(rt_device_t dev, rt_base_t pin)
 {
     uint32_t value;
     value = MSS_GPIO_get_inputs() & (1<<pin);

@@ -51,10 +51,10 @@ void ls1c_pin_write(struct rt_device *device, rt_base_t pin, rt_uint8_t value)
 }
 
 
-rt_int8_t ls1c_pin_read(struct rt_device *device, rt_base_t pin)
+rt_ssize_t ls1c_pin_read(struct rt_device *device, rt_base_t pin)
 {
     unsigned int gpio = pin;
-    rt_int8_t value = PIN_LOW;
+    rt_ssize_t value = PIN_LOW;
 
     if (0 == gpio_get(gpio))
     {

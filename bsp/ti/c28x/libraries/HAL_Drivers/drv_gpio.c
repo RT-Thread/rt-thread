@@ -76,10 +76,10 @@ static void c28x_pin_write(rt_device_t dev, rt_base_t pin, rt_uint8_t value)
     }
 }
 
-static rt_int8_t c28x_pin_read(rt_device_t dev, rt_base_t pin)
+static rt_ssize_t c28x_pin_read(rt_device_t dev, rt_base_t pin)
 {
     volatile Uint32 *gpioDataReg;
-    rt_int8_t value = PIN_LOW;
+    rt_ssize_t value = PIN_LOW;
 
     if (PIN_PORT(pin) < PIN_c28x_PORT_MAX)
     {

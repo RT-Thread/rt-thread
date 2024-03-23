@@ -128,7 +128,7 @@ struct rt_pin_ops
 {
     void (*pin_mode)(struct rt_device *device, rt_base_t pin, rt_uint8_t mode);
     void (*pin_write)(struct rt_device *device, rt_base_t pin, rt_uint8_t value);
-    rt_int8_t  (*pin_read)(struct rt_device *device, rt_base_t pin);
+    rt_ssize_t  (*pin_read)(struct rt_device *device, rt_base_t pin);
     rt_err_t (*pin_attach_irq)(struct rt_device *device, rt_base_t pin,
             rt_uint8_t mode, void (*hdr)(void *args), void *args);
     rt_err_t (*pin_detach_irq)(struct rt_device *device, rt_base_t pin);
@@ -145,8 +145,8 @@ struct rt_pin_ops
 
 int rt_device_pin_register(const char *name, const struct rt_pin_ops *ops, void *user_data);
 void rt_pin_mode(rt_base_t pin, rt_uint8_t mode);
-void rt_pin_write(rt_base_t pin, rt_uint8_t value);
-rt_int8_t rt_pin_read(rt_base_t pin);
+void rt_pin_write(rt_base_t pin, rt_ssize_t value);
+rt_ssize_t rt_pin_read(rt_base_t pin);
 rt_base_t rt_pin_get(const char *name);
 rt_err_t rt_pin_attach_irq(rt_base_t pin, rt_uint8_t mode,
                            void (*hdr)(void *args), void  *args);

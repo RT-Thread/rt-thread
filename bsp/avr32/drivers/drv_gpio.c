@@ -59,7 +59,7 @@ static void at32uc3_pin_write(struct rt_device *dev, rt_base_t pin, rt_uint8_t v
     }
 }
 
-static rt_int8_t at32uc3_pin_read(struct rt_device *device, rt_base_t pin)
+static rt_ssize_t at32uc3_pin_read(struct rt_device *device, rt_base_t pin)
 {
     RT_ASSERT((AVR32_BSP_GPIO_PMIN <= pin) && (pin <= AVR32_BSP_GPIO_PMAX));
     return (gpio_get_pin_value(pin) ? PIN_HIGH : PIN_LOW);
