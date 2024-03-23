@@ -106,7 +106,7 @@ static void pl061_pin_write(struct rt_device *device, rt_base_t pin, rt_uint8_t 
     pl061_write8(BIT(pin + 2), !!value << pin);
 }
 
-static rt_int8_t pl061_pin_read(struct rt_device *device, rt_base_t pin)
+static rt_ssize_t pl061_pin_read(struct rt_device *device, rt_base_t pin)
 {
     return !!pl061_read8((BIT(pin + 2)));
 }

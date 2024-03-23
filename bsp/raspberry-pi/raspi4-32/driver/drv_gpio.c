@@ -180,10 +180,10 @@ static void raspi_pin_write(struct rt_device *dev, rt_base_t pin, rt_uint8_t val
     prev_raspi_pin_write(pin, value);
 }
 
-static rt_int8_t raspi_pin_read(struct rt_device *device, rt_base_t pin)
+static rt_ssize_t raspi_pin_read(struct rt_device *device, rt_base_t pin)
 {
     uint32_t num = pin / 32;
-    rt_int8_t pin_level = 0;
+    rt_ssize_t pin_level = 0;
 
     if(num == 0)
     {
