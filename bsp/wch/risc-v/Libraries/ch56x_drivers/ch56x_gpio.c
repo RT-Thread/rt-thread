@@ -149,7 +149,7 @@ static void gpio_pin_write(struct rt_device *device, rt_base_t pin, rt_uint8_t v
         BITS_SET(px->OUT, bitpos);
 }
 
-static rt_int8_t gpio_pin_read(struct rt_device *device, rt_base_t pin)
+static rt_ssize_t gpio_pin_read(struct rt_device *device, rt_base_t pin)
 {
     volatile struct gpio_px_regs *px;
 

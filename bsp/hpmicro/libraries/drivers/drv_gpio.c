@@ -217,13 +217,13 @@ static void hpm_pin_mode(rt_device_t dev, rt_base_t pin, rt_uint8_t mode)
     HPM_IOC->PAD[pin].FUNC_CTL = IOC_PAD_FUNC_CTL_LOOP_BACK_MASK;
 }
 
-static rt_int8_t hpm_pin_read(rt_device_t dev, rt_base_t pin)
+static rt_ssize_t hpm_pin_read(rt_device_t dev, rt_base_t pin)
 {
     /* TODO: Check the validity of the pin value */
     uint32_t gpio_idx = pin >> 5;
     uint32_t pin_idx = pin & 0x1FU;
 
-    return (int) gpio_read_pin(HPM_GPIO0, gpio_idx, pin_idx);
+    return (rt_ssize_t) gpio_read_pin(HPM_GPIO0, gpio_idx, pin_idx);
 }
 
 static void hpm_pin_write(rt_device_t dev, rt_base_t pin, rt_uint8_t value)

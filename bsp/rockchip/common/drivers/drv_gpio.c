@@ -248,7 +248,7 @@ static void pin_write(struct rt_device *dev, rt_base_t pin, rt_uint8_t value)
     HAL_GPIO_SetPinLevel(get_st_gpio(pin), get_st_pin(pin), value);
 }
 
-static rt_int8_t pin_read(struct rt_device *dev, rt_base_t pin)
+static rt_ssize_t pin_read(struct rt_device *dev, rt_base_t pin)
 {
     RT_ASSERT(PIN_BANK(pin) < GPIO_BANK_NUM);
     return HAL_GPIO_GetPinLevel(get_st_gpio(pin), get_st_pin(pin));;

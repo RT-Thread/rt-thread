@@ -43,7 +43,7 @@ static void pico_pin_write(struct rt_device *dev, rt_base_t pin, rt_uint8_t valu
     gpio_put(pin, value);
 }
 
-static rt_int8_t pico_pin_read(struct rt_device *device, rt_base_t pin)
+static rt_ssize_t pico_pin_read(struct rt_device *device, rt_base_t pin)
 {
     RT_ASSERT((0 <= pin) && (pin < NUM_BANK0_GPIOS));
     return (gpio_get(pin)? PIN_HIGH : PIN_LOW);

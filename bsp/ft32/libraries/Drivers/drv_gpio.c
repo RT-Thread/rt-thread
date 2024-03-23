@@ -135,11 +135,11 @@ static void ft32_pin_write(rt_device_t dev, rt_base_t pin, rt_uint8_t value)
     }
 }
 
-static rt_int8_t ft32_pin_read(rt_device_t dev, rt_base_t pin)
+static rt_ssize_t ft32_pin_read(rt_device_t dev, rt_base_t pin)
 {
     GPIO_TypeDef *gpio_port;
     uint16_t gpio_pin;
-    rt_int8_t value = PIN_LOW;
+    rt_ssize_t value = PIN_LOW;
 
     if (PIN_PORT(pin) < PIN_STPORT_MAX)
     {

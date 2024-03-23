@@ -184,7 +184,7 @@ static void at32_pin_write(rt_device_t dev, rt_base_t pin, rt_uint8_t value)
     gpio_bits_write(gpio_port, gpio_pin, (confirm_state)value);
 }
 
-static rt_int8_t at32_pin_read(rt_device_t dev, rt_base_t pin)
+static rt_ssize_t at32_pin_read(rt_device_t dev, rt_base_t pin)
 {
     gpio_type *gpio_port;
     uint16_t gpio_pin;
