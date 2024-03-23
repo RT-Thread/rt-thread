@@ -811,6 +811,10 @@ menuconfig RT_USING_WIFI
                 bool "MSH command Enable"
                 default y
 
+            config RT_WLAN_JOIN_SCAN_BY_MGNT
+                bool "Enable wlan join scan"
+                default y
+
             config RT_WLAN_AUTO_CONNECT_ENABLE
                 bool "Auto connect Enable"
                 select RT_WLAN_CFG_ENABLE
