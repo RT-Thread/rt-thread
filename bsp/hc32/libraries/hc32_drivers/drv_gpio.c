@@ -302,6 +302,10 @@ static rt_ssize_t hc32_pin_read(struct rt_device *device, rt_base_t pin)
             value = PIN_HIGH;
         }
     }
+    else
+    {
+        return -RT_EINVAL;
+    }
 
     return value;
 }

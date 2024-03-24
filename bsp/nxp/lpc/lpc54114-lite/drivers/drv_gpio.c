@@ -147,7 +147,9 @@ static rt_ssize_t lpc_pin_read(rt_device_t dev, rt_base_t pin)
     rt_ssize_t value;
 
     if(pin > PIN_MAX_VAL)
-        return -RT_ERROR;
+    {
+        return -RT_EINVAL;
+    }
 
     portx = get_port(pin);
     piny  = get_pin(pin);

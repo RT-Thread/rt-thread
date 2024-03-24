@@ -68,7 +68,7 @@ static rt_ssize_t air105_pin_read(rt_device_t dev, rt_base_t pin)
     }
     else
     {
-        return -1;
+        return -RT_EINVAL;
     }
 }
 

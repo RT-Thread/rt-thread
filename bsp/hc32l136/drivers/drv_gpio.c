@@ -164,6 +164,10 @@ static rt_ssize_t _pin_read(rt_device_t dev, rt_base_t pin)
             value = PIN_HIGH;
         }
     }
+    else
+    {
+        value = -RT_EINVAL;
+    }
 
     return value;
 }

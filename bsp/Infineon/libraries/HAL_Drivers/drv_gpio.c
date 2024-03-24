@@ -160,7 +160,7 @@ static rt_ssize_t ifx_pin_read(struct rt_device *device, rt_base_t pin)
     }
     else
     {
-        return -RT_ERROR;
+        return -RT_EINVAL;
     }
 
     return cyhal_gpio_read(gpio_pin);

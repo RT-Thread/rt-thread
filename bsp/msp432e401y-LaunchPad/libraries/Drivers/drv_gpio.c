@@ -274,6 +274,10 @@ static rt_ssize_t msp432_pin_read(struct rt_device *device, rt_base_t pin)
     {
         value = (rt_ssize_t)GPIOPinRead(index->gpioBaseAddress, index->pin);
     }
+    else
+    {
+        value = -RT_EINVAL;
+    }
 
     return value;
 }
