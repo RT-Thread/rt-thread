@@ -132,7 +132,7 @@ rt_ssize_t _pin_read(rt_device_t dev, rt_base_t pin)
     index = get_pin(pin);
     if (index == RT_NULL)
     {
-        return PIN_LOW;
+        return -RT_EINVAL;
     }
     if (LL_GPIO_ReadPin(index->gpio, index->pin) == GPIO_PIN_RESET)
     {

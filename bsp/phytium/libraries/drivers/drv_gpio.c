@@ -195,11 +195,7 @@ rt_ssize_t drv_pin_read(struct rt_device *device, rt_base_t pin)
 
     if (pin_instance == RT_NULL)
     {
-        rt_kprintf("Pin %d-%c-%d not set mode\n",
-                   ctrl_id,
-                   port_id == 0 ? 'a' : 'b',
-                   pin_id);
-        return -RT_ERROR;
+        return -RT_EINVAL;
     }
     return FGpioGetInputValue(pin_instance) == FGPIO_PIN_HIGH ? PIN_HIGH : PIN_LOW;
 }

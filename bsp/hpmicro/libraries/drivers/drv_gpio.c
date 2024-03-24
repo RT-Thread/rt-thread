@@ -310,13 +310,15 @@ static rt_err_t hpm_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_u
     return RT_EOK;
 }
 
-const static struct rt_pin_ops hpm_pin_ops = {
-        .pin_mode = hpm_pin_mode,
-        .pin_write = hpm_pin_write,
-        .pin_read = hpm_pin_read,
-        .pin_attach_irq = hpm_pin_attach_irq,
-        .pin_detach_irq = hpm_pin_detach_irq,
-        .pin_irq_enable = hpm_pin_irq_enable};
+const static struct rt_pin_ops hpm_pin_ops =
+{
+    .pin_mode = hpm_pin_mode,
+    .pin_write = hpm_pin_write,
+    .pin_read = hpm_pin_read,
+    .pin_attach_irq = hpm_pin_attach_irq,
+    .pin_detach_irq = hpm_pin_detach_irq,
+    .pin_irq_enable = hpm_pin_irq_enable
+};
 
 int rt_hw_pin_init(void)
 {

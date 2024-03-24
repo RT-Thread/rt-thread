@@ -228,7 +228,7 @@ static rt_ssize_t n32_pin_read(rt_device_t dev, rt_base_t pin)
     index = get_pin(pin);
     if (index == RT_NULL)
     {
-        return value;
+        return -RT_EINVAL;
     }
 
     value = GPIO_ReadInputDataBit(index->gpio, index->pin);

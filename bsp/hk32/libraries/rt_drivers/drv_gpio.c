@@ -120,6 +120,11 @@ static rt_int8_t hk32_pin_read(rt_device_t dev, rt_base_t pin)
         gpio_pin     =  PIN_HKPIN(pin);
         value = GPIO_ReadInputDataBit(gpio_port, gpio_pin);
     }
+    else
+    {
+        return -RT_ENOSYS;
+    }
+
     return value;
 }
 

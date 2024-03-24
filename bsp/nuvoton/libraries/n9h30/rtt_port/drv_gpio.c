@@ -198,7 +198,9 @@ static rt_ssize_t nu_gpio_read(struct rt_device *device, rt_base_t pin)
     GPIO_PORT PORT;
 
     if (nu_port_check(pin))
-        return PIN_LOW;
+    {
+        return -RT_EINVAL;
+    }
 
     PORT = (GPIO_PORT)(GPIOA + (NU_GET_PORT(pin) * PORT_OFFSET));
 

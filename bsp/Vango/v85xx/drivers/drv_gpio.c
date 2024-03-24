@@ -157,6 +157,10 @@ static rt_ssize_t v85xx_pin_read(rt_device_t dev, rt_base_t pin)
         gpio_pin = PIN_V85XXPIN(pin);
         value = GPIOBToF_ReadInputDataBit(gpio_port, gpio_pin);
     }
+    else
+    {
+        return -RT_EINVAL;
+    }
 
     return value;
 }
