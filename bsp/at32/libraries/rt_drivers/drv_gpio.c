@@ -198,6 +198,11 @@ static rt_ssize_t at32_pin_read(rt_device_t dev, rt_base_t pin)
         gpio_pin     =  PIN_ATPIN(pin);
         value = gpio_input_data_bit_read(gpio_port, gpio_pin);
     }
+    else
+    {
+        return -RT_EINVAL;
+    }
+
     return value;
 }
 

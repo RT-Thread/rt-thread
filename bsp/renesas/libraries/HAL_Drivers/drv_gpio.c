@@ -172,8 +172,7 @@ static rt_ssize_t ra_pin_read(rt_device_t dev, rt_base_t pin)
 {
     if ((pin > RA_MAX_PIN_VALUE) || (pin < RA_MIN_PIN_VALUE))
     {
-        LOG_E("GPIO pin value is illegal");
-        return -1;
+        return -RT_EINVAL;
     }
     return R_BSP_PinRead(pin);
 }

@@ -147,6 +147,10 @@ static rt_ssize_t ft32_pin_read(rt_device_t dev, rt_base_t pin)
         gpio_pin = PIN_FTPIN(pin);
         value = GPIO_ReadInputDataBit(gpio_port, gpio_pin);
     }
+    else
+    {
+        return -RT_EINVAL;
+    }
 
     return value;
 }

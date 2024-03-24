@@ -180,7 +180,7 @@ rt_ssize_t mm32_pin_read(rt_device_t dev, rt_base_t pin)
     index = get_pin(pin);
     if (index == RT_NULL)
     {
-        return PIN_LOW;
+        return -RT_EINVAL;
     }
     if (GPIO_ReadInputDataBit(index->gpio, index->pin) == Bit_RESET)
     {

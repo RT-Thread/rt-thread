@@ -634,7 +634,7 @@ static rt_ssize_t imxrt_pin_read(rt_device_t dev, rt_base_t pin)
     if (PIN_INVALID_CHECK(port, pin_num))
     {
         LOG_D("invalid pin,rtt pin: %d,port: %d,pin: %d \n", pin,port + 1,pin_num);
-        return value;
+        return -RT_EINVAL;
     }
 
     return GPIO_PinReadPadStatus(mask_tab[port].gpio, pin_num);

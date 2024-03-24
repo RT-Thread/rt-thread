@@ -458,7 +458,7 @@ static rt_ssize_t pin_read(struct rt_device *device, rt_base_t pin)
     if ((pin > PIN_NUM(pin_index)) || (pin_index[pin].magic != PIN_MAGIC))
     {
         LOG_E("pin:%d value wrongful", pin);
-        return 0;
+        return -RT_EINVAL;
     }
 
     return gpio_get_value(pin_index[pin].pin_port, pin_index[pin].pin);

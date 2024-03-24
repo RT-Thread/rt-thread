@@ -173,7 +173,9 @@ static void nu_gpio_write(struct rt_device *device, rt_base_t pin, rt_uint8_t va
 static rt_ssize_t nu_gpio_read(struct rt_device *device, rt_base_t pin)
 {
     if (nu_port_check(pin))
-        return PIN_LOW;
+    {
+        return -RT_EINVAL;
+    }
 
     return GPIO_PIN_DATA(NU_GET_PORT(pin), NU_GET_PINS(pin));
 }

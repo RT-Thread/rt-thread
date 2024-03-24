@@ -110,7 +110,7 @@ static rt_ssize_t _pin_read(rt_device_t dev, rt_base_t pin)
 
     if (pin >= PIN_MAX_NUM)
     {
-        return PIN_LOW;
+        return -RT_EINVAL;
     }
 
     gpio_port = GPIO_PORT(pin);
