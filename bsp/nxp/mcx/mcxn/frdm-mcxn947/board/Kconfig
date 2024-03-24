@@ -118,6 +118,14 @@ menu "On-chip Peripheral Drivers"
                     bool "Enable DAC0 Channel"
                     default n
 
+                config BSP_USING_DAC1
+                    bool "Enable DAC1 Channel"
+                    default n
+
+                config BSP_USING_DAC2
+                    bool "Enable DAC2 Channel"
+                    default n
+
             endif
 
     config BSP_USING_SDIO

@@ -11,6 +11,7 @@
 #include <rtthread.h>
 #include <rtdevice.h>
 #include "fsl_dac.h"
+#include "fsl_dac14.h"
 
 #ifdef RT_USING_DAC
 
@@ -30,6 +31,7 @@ struct mcx_dac {
   clock_div_name_t clock_div_name;
   uint8_t clock_div;
   uint8_t referenceVoltageSource; /* kDAC_ReferenceVoltageSourceAlt1, VREFH reference pin */
+  uint8_t SOC_CNTRL_BIT;
   char *name;
 };
 
@@ -41,7 +43,30 @@ static struct mcx_dac mcx_dac_obj[] = {
         .clock_div_name         = kCLOCK_DivDac0Clk,
         .clock_div              = 1u,
         .referenceVoltageSource = kDAC_ReferenceVoltageSourceAlt1,
+        .SOC_CNTRL_BIT          = 4,
         .name                   = "dac0",
+    },
+#endif
+#ifdef BSP_USING_DAC1
+    {
+        .dac_base               = DAC1,
+        .clock_attach_id        = kFRO_HF_to_DAC1,
+        .clock_div_name         = kCLOCK_DivDac1Clk,
+        .clock_div              = 1u,
+        .referenceVoltageSource = kDAC_ReferenceVoltageSourceAlt1,
+        .SOC_CNTRL_BIT          = 5,
+        .name                   = "dac1",
+    },
+#endif
+#ifdef BSP_USING_DAC2
+    {
+        .dac_base               = DAC2,
+        .clock_attach_id        = kFRO_HF_to_DAC2,
+        .clock_div_name         = kCLOCK_DivDac2Clk,
+        .clock_div              = 1u,
+        .referenceVoltageSource = kDAC_ReferenceVoltageSourceAlt1,
+        .SOC_CNTRL_BIT          = 6,
+        .name                   = "dac2",
     },
 #endif
 
@@ -51,7 +76,11 @@ rt_err_t mcxn_dac_disabled(struct rt_dac_device *device, rt_uint32_t channel) {
   RT_ASSERT(device != RT_NULL);
   struct mcx_dac *dac = (struct mcx_dac *)device->parent.user_data;
 
-  DAC_Deinit(dac->dac_base);
+  if (dac->dac_base == DAC2) {
+    DAC14_Deinit(dac->dac_base);
+  } else {
+    DAC_Deinit(dac->dac_base);
+  }
   return RT_EOK;
 }
 
@@ -59,11 +88,19 @@ rt_err_t mcxn_dac_enabled(struct rt_dac_device *device, rt_uint32_t channel) {
   RT_ASSERT(device != RT_NULL);
   struct mcx_dac *dac = (struct mcx_dac *)device->parent.user_data;
   dac_config_t dacConfigStruct;
+  dac14_config_t dac14ConfigStruct;
 
-  DAC_GetDefaultConfig(&dacConfigStruct);
-  dacConfigStruct.referenceVoltageSource = dac->referenceVoltageSource;
-  DAC_Init(dac->dac_base, &dacConfigStruct);
-  DAC_Enable(dac->dac_base, RT_TRUE);
+  if (dac->dac_base == DAC2) {
+    DAC14_GetDefaultConfig(&dac14ConfigStruct);
+    dac14ConfigStruct.enableOpampBuffer = true;
+    dac14ConfigStruct.enableDAC         = true;
+    DAC14_Init(dac->dac_base, &dac14ConfigStruct);
+  } else {
+    DAC_GetDefaultConfig(&dacConfigStruct);
+    dacConfigStruct.referenceVoltageSource = dac->referenceVoltageSource;
+    DAC_Init(dac->dac_base, &dacConfigStruct);
+    DAC_Enable(dac->dac_base, RT_TRUE);
+  }
 
   return RT_EOK;
 }
@@ -72,7 +109,17 @@ rt_err_t mcxn_dac_write(struct rt_dac_device *device, rt_uint32_t channel, rt_ui
   RT_ASSERT(device != RT_NULL);
   struct mcx_dac *dac = (struct mcx_dac *)device->parent.user_data;
 
-  DAC_SetData(dac->dac_base, *value);
+  if (dac->dac_base == DAC2) {
+    if (*value > 0x3FFFU) {
+      *value = 0x3FFFU;
+    }
+    DAC14_SetData(dac->dac_base, *value);
+  } else {
+    if (*value > 0xFFFU) {
+      *value = 0xFFFU;
+    }
+    DAC_SetData(dac->dac_base, *value);
+  }
   return RT_EOK;
 }
 
@@ -86,14 +133,12 @@ static int mcxn_dac_init(void) {
   int i;
   int dac_num = sizeof(mcx_dac_obj) / sizeof(struct mcx_dac);
 
-#ifdef BSP_USING_DAC0
-  /* enable DAC0 and VREF */
-  SPC0->ACTIVE_CFG1 |= 0x11;
-#endif
-
   for (i = 0; i < dac_num; i++) {
     CLOCK_SetClkDiv(mcx_dac_obj[i].clock_div_name, mcx_dac_obj[i].clock_div);
     CLOCK_AttachClk(mcx_dac_obj[i].clock_attach_id);
+
+    SPC0->ACTIVE_CFG1 |= 0x01;  // Enable VREF
+    SPC0->ACTIVE_CFG1 |= (0x01 << mcx_dac_obj[i].SOC_CNTRL_BIT);
 
     if (RT_EOK != rt_hw_dac_register(&mcx_dac_obj[i].mcxn_dac_device, mcx_dac_obj[i].name, &mcxn_dac_ops,
                                      (void *)(mcx_dac_obj + i))) {
