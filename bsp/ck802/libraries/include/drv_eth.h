@@ -33,17 +33,17 @@ typedef struct csi_driver_version {
 } csi_drv_version_t;
 
 /* General return codes */
-#define CSI_ETH_OK                 0 ///< Operation succeeded 
+#define CSI_ETH_OK                 0 ///< Operation succeeded
 #define CSI_ETH_ERROR             CSI_DRV_ERRNO_ETH_BASE+1 ///< Unspecified error
 #define CSI_ETH_ERROR_BUSY        CSI_DRV_ERRNO_ETH_BASE+2 ///< Driver is busy
 #define CSI_ETH_ERROR_TIMEOUT     CSI_DRV_ERRNO_ETH_BASE+3 ///< Timeout occurred
 #define CSI_ETH_ERROR_UNSUPPORTED CSI_DRV_ERRNO_ETH_BASE+4 ///< Operation not supported
 #define CSI_ETH_ERROR_PARAMETER   CSI_DRV_ERRNO_ETH_BASE+5 ///< Parameter error
-#define CSI_ETH_ERROR_SPECIFIC    CSI_DRV_ERRNO_ETH_BASE+6 ///< Start of driver specific errors 
+#define CSI_ETH_ERROR_SPECIFIC    CSI_DRV_ERRNO_ETH_BASE+6 ///< Start of driver specific errors
 
 /**
 \brief General power states
-*/ 
+*/
 typedef enum eth_power_state {
   CSI_ETH_POWER_OFF,                        ///< Power off: no operation possible
   CSI_ETH_POWER_LOW,                        ///< Low Power mode: retain state, detect and signal wake-up events
