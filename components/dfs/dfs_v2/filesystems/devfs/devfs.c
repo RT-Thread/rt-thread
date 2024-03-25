@@ -282,9 +282,7 @@ int dfs_devfs_ioctl(struct dfs_file *file, int cmd, void *args)
     {
         result = device->fops->ioctl(file, cmd, args);
     }
-    else if (device->ops)
-#else
-    if (device->ops)
+    else
 #endif /* RT_USING_POSIX_DEVIO */
     {
         result = rt_device_control(device, cmd, args);
@@ -312,9 +310,7 @@ ssize_t dfs_devfs_read(struct dfs_file *file, void *buf, size_t count, off_t *po
     {
         result = device->fops->read(file, buf, count, pos);
     }
-    else if (device->ops)
-#else
-    if (device->ops)
+    else
 #endif /* RT_USING_POSIX_DEVIO */
     {
         /* read device data */
@@ -344,9 +340,7 @@ ssize_t dfs_devfs_write(struct dfs_file *file, const void *buf, size_t count, of
     {
         result = device->fops->write(file, buf, count, pos);
     }
-    else if (device->ops)
-#else
-    if (device->ops)
+    else
 #endif /* RT_USING_POSIX_DEVIO */
     {
         /* read device data */
@@ -375,9 +369,7 @@ int dfs_devfs_close(struct dfs_file *file)
         {
             result = device->fops->close(file);
         }
-        else if (device->ops)
-#else
-        if (device->ops)
+        else
 #endif /* RT_USING_POSIX_DEVIO */
         {
             /* close device handler */
@@ -417,9 +409,7 @@ int dfs_devfs_open(struct dfs_file *file)
                     return RT_EOK;
                 }
             }
-            else if (device->ops)
-#else
-            if (device->ops)
+            else
 #endif /* RT_USING_POSIX_DEVIO */
             {
                 result = rt_device_open(device, RT_DEVICE_OFLAG_RDWR);

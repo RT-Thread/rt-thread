@@ -424,7 +424,7 @@ static int char_dev_fopen(struct dfs_file *fd)
     default:
         break;
     }
-    fd->pos = 0;
+    DFS_FILE_POS(fd) = 0;
 
     return RT_EOK;
 }
@@ -436,15 +436,15 @@ static int char_dev_fread(struct dfs_file *fd, void *buf, size_t count)
 
     assert(part != RT_NULL);
 
-    if (fd->pos + count > part->fal_part->len)
-        count = part->fal_part->len - fd->pos;
+    if (DFS_FILE_POS(fd) + count > part->fal_part->len)
+        count = part->fal_part->len - DFS_FILE_POS(fd);
 
-    ret = fal_partition_read(part->fal_part, fd->pos, buf, count);
+    ret = fal_partition_read(part->fal_part, DFS_FILE_POS(fd), buf, count);
 
     if (ret != (int)(count))
         return 0;
 
-    fd->pos += ret;
+    DFS_FILE_POS(fd) += ret;
 
     return ret;
 }
@@ -456,15 +456,15 @@ static int char_dev_fwrite(struct dfs_file *fd, const void *buf, size_t count)
 
     assert(part != RT_NULL);
 
-    if (fd->pos + count > part->fal_part->len)
-        count = part->fal_part->len - fd->pos;
+    if (DFS_FILE_POS(fd) + count > part->fal_part->len)
+        count = part->fal_part->len - DFS_FILE_POS(fd);
 
-    ret = fal_partition_write(part->fal_part, fd->pos, buf, count);
+    ret = fal_partition_write(part->fal_part, DFS_FILE_POS(fd), buf, count);
 
     if (ret != (int) count)
         return 0;
 
-    fd->pos += ret;
+    DFS_FILE_POS(fd) += ret;
 
     return ret;
 }
