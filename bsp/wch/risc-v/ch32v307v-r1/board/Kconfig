@@ -121,6 +121,21 @@ menu "On-chip Peripheral Drivers"
                 default n
         endif
 
+    menuconfig BSP_USING_I2C
+        bool "Enable I2C"
+        select RT_USING_I2C
+
+        if BSP_USING_I2C
+            config BSP_USING_I2C1
+                bool "Enable I2C1"
+                default n
+
+            config BSP_USING_I2C2
+                bool "Enable I2C2"
+                default n
+
+        endif
+
     menuconfig BSP_USING_SOFT_I2C
         bool "Enable I2C Bus"
         select RT_USING_I2C
