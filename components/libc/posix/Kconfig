@@ -27,7 +27,7 @@ if RT_USING_POSIX_FS
         select RT_USING_POSIX_POLL
         default y if RT_USING_SMART
         default n
-    
+
     config RT_USING_POSIX_EVENTFD
         bool "Enable I/O event eventfd <sys/eventfd.h>"
         select RT_USING_POSIX_POLL

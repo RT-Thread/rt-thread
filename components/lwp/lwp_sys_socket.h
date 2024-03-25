@@ -113,7 +113,7 @@ struct musl_ifreq
 {
     union
     {
-#define IFNAMSIZ	16
+#define IFNAMSIZ    16
         char ifrn_name[IFNAMSIZ];
     } ifr_ifrn;
     union
@@ -131,6 +131,25 @@ struct musl_ifreq
         char ifru_newname[IFNAMSIZ];
         char *ifru_data;
     } ifr_ifru;
+};
+
+struct musl_rtentry
+{
+    unsigned long int rt_pad1;
+    struct musl_sockaddr rt_dst;
+    struct musl_sockaddr rt_gateway;
+    struct musl_sockaddr rt_genmask;
+    unsigned short int rt_flags;
+    short int rt_pad2;
+    unsigned long int rt_pad3;
+    unsigned char rt_tos;
+    unsigned char rt_class;
+    short int rt_pad4[sizeof(long)/2-1];
+    short int rt_metric;
+    char *rt_dev;
+    unsigned long int rt_mtu;
+    unsigned long int rt_window;
+    unsigned short int rt_irtt;
 };
 
 #endif /* __LWP_SYS_SOCKET_H__ */

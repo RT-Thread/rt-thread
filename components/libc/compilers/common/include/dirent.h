@@ -32,9 +32,13 @@ extern "C" {
 
 #define DT_UNKNOWN      0x00
 #define DT_FIFO         0x01
-#define DT_SYMLINK      0x03
+#define DT_CHR          0x02
 #define DT_DIR          0x04
+#define DT_BLK          0x06
 #define DT_REG          0x08
+#define DT_LNK          0x0a
+#define DT_SOCK         0x0c
+#define DT_SYMLINK      DT_LNK
 
 #ifndef HAVE_DIR_STRUCTURE
 #define HAVE_DIR_STRUCTURE

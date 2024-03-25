@@ -145,7 +145,7 @@ static struct dfs_vnode *dfs_mqueue_create_vnode(struct dfs_dentry *dentry, int 
             }
             mq_file->msg_size = 8192;
             mq_file->max_msgs = 10;
-            strncpy(mq_file->name, dentry->pathname + 1, RT_NAME_MAX);
+            strncpy(mq_file->name, dentry->pathname + 1, RT_NAME_MAX - 1);
             dfs_mqueue_insert_after(&(mq_file->list));
         }
 

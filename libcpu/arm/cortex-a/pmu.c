@@ -21,4 +21,5 @@ void rt_hw_pmu_dump_feature(void)
     LOG_D("ARM PMU Implementor: %c, ID code: %02x, %d counters\n",
         reg >> 24, (reg >> 16) & 0xff, (reg >> 11) & 0x1f);
     RT_ASSERT(ARM_PMU_CNTER_NR == ((reg >> 11) & 0x1f));
+    RT_UNUSED(reg);
 }

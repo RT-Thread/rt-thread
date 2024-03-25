@@ -5,7 +5,12 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2023-07-29   zmq810150896   first version
+ * 2023-07-29     zmq810150896 first version
+ * 2023-12-14     Shell        When poll goes to sleep before the waitqueue has added a
+ *                             record and finished enumerating all the fd's, it may be
+ *                             incorrectly woken up. This is basically because the poll
+ *                             mechanism wakeup algorithm does not correctly distinguish
+ *                             the current wait state.
  */
 
 #include <rtthread.h>
@@ -26,6 +31,12 @@
 
 struct rt_eventpoll;
 
+enum rt_epoll_status {
+    RT_EPOLL_STAT_INIT,
+    RT_EPOLL_STAT_TRIG,
+    RT_EPOLL_STAT_WAITING,
+};
+
 /* Monitor queue */
 struct rt_fd_list
 {
@@ -43,7 +54,6 @@ struct rt_fd_list
 
 struct rt_eventpoll
 {
-    rt_uint32_t tirggered;      /* the waited thread whether triggered */
     rt_wqueue_t epoll_read;
     rt_thread_t polling_thread;
     struct rt_mutex lock;
@@ -52,6 +62,7 @@ struct rt_eventpoll
     rt_pollreq_t req;
     struct rt_spinlock spinlock;
     rt_slist_t rdl_head;
+    enum rt_epoll_status status; /* the waited thread whether triggered */
 };
 
 static int epoll_close(struct dfs_file *file);
@@ -75,8 +86,7 @@ static int epoll_close_fdlist(struct rt_fd_list *fdlist)
         while (list->next != RT_NULL)
         {
             fre_node = list->next;
-            if (fre_node->wqn.wqueue)
-                rt_wqueue_remove(&fre_node->wqn);
+            rt_wqueue_remove(&fre_node->wqn);
 
             list->next = fre_node->next;
             rt_free(fre_node);
@@ -149,13 +159,14 @@ static int epoll_wqueue_callback(struct rt_wqueue_node *wait, void *key)
     struct rt_fd_list *fdlist;
     struct rt_eventpoll *ep;
     rt_base_t level;
+    int is_waiting = 0;
 
     if (key && !((rt_ubase_t)key & wait->key))
         return -1;
 
     fdlist = rt_container_of(wait, struct rt_fd_list, wqn);
-
     ep = fdlist->ep;
+
     if (ep)
     {
         level = rt_spin_lock_irqsave(&ep->spinlock);
@@ -164,14 +175,26 @@ static int epoll_wqueue_callback(struct rt_wqueue_node *wait, void *key)
             rt_slist_append(&ep->rdl_head, &fdlist->rdl_node);
             fdlist->exclusive = 0;
             fdlist->is_rdl_node = RT_TRUE;
-            ep->tirggered = 1;
-            ep->eventpoll_num ++;
+            ep->eventpoll_num++;
+
+            if (ep->status == RT_EPOLL_STAT_WAITING)
+            {
+                is_waiting = 1;
+            }
+            else
+            {
+                is_waiting = 0;
+            }
+            ep->status = RT_EPOLL_STAT_TRIG;
             rt_wqueue_wakeup(&ep->epoll_read, (void *)POLLIN);
         }
         rt_spin_unlock_irqrestore(&ep->spinlock, level);
     }
 
-    return __wqueue_default_wake(wait, key);
+    if (is_waiting)
+        return __wqueue_default_wake(wait, key);
+
+    return -1;
 }
 
 static void epoll_wqueue_add_callback(rt_wqueue_t *wq, rt_pollreq_t *req)
@@ -209,7 +232,7 @@ static void epoll_ctl_install(struct rt_fd_list *fdlist, struct rt_eventpoll *ep
             rt_slist_append(&ep->rdl_head, &fdlist->rdl_node);
             fdlist->exclusive = 0;
             fdlist->is_rdl_node = RT_TRUE;
-            ep->tirggered = 1;
+            ep->status = RT_EPOLL_STAT_TRIG;
             ep->eventpoll_num ++;
             rt_spin_unlock_irqrestore(&ep->spinlock, level);
             rt_mutex_release(&ep->lock);
@@ -219,7 +242,7 @@ static void epoll_ctl_install(struct rt_fd_list *fdlist, struct rt_eventpoll *ep
 
 static void epoll_member_init(struct rt_eventpoll *ep)
 {
-    ep->tirggered = 0;
+    ep->status = RT_EPOLL_STAT_INIT;
     ep->eventpoll_num = 0;
     ep->polling_thread = rt_thread_self();
     ep->fdlist = RT_NULL;
@@ -541,7 +564,7 @@ static int epoll_wait_timeout(struct rt_eventpoll *ep, int msec)
 
     level = rt_spin_lock_irqsave(&ep->spinlock);
 
-    if (timeout != 0 && !ep->tirggered)
+    if (timeout != 0 && ep->status != RT_EPOLL_STAT_TRIG)
     {
         if (rt_thread_suspend_with_flag(thread, RT_KILLABLE) == RT_EOK)
         {
@@ -553,15 +576,19 @@ static int epoll_wait_timeout(struct rt_eventpoll *ep, int msec)
                 rt_timer_start(&(thread->thread_timer));
             }
 
+            ep->status = RT_EPOLL_STAT_WAITING;
+
             rt_spin_unlock_irqrestore(&ep->spinlock, level);
 
             rt_schedule();
 
             level = rt_spin_lock_irqsave(&ep->spinlock);
+            if (ep->status == RT_EPOLL_STAT_WAITING)
+                ep->status = RT_EPOLL_STAT_INIT;
         }
     }
 
-    ret = !ep->tirggered;
+    ret = !(ep->status == RT_EPOLL_STAT_TRIG);
     rt_spin_unlock_irqrestore(&ep->spinlock, level);
 
     return ret;
@@ -708,7 +735,7 @@ static int epoll_do(struct rt_eventpoll *ep, struct epoll_event *events, int max
         if (event_num || istimeout)
         {
             level = rt_spin_lock_irqsave(&ep->spinlock);
-            ep->tirggered = 0;
+            ep->status = RT_EPOLL_STAT_INIT;
             rt_spin_unlock_irqrestore(&ep->spinlock, level);
             if ((timeout >= 0) || (event_num > 0))
                 break;

@@ -22,11 +22,6 @@ if arch == 'risc-v':
     if cpu in rv64:
         cpu = 'rv64'
 
-if GetDepend('LWP_UNIX98_PTY'):
-    # print("LWP_UNIX98_PTY")
-    src += Glob('unix98pty/*.c')
-    CPPPATH += ['unix98pty/']
-
 if platform in platform_file.keys(): # support platforms
     if arch in support_arch.keys() and cpu in support_arch[arch]:
         asm_path = 'arch/' + arch + '/' + cpu + '/*_' + platform_file[platform]
@@ -39,6 +34,12 @@ if platform in platform_file.keys(): # support platforms
         src += Glob('arch/' + arch + '/' + cpu + '/*.c')
         CPPPATH = [cwd]
         CPPPATH += [cwd + '/arch/' + arch + '/' + cpu]
+
+# Terminal I/O Subsystem
+termios_path = ['./terminal/', './terminal/freebsd/']
+for item in termios_path:
+    src += Glob(item + '*.c')
+CPPPATH += ['./terminal/']
 
 group = DefineGroup('lwP', src, depend = ['RT_USING_SMART'], CPPPATH = CPPPATH)
 

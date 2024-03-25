@@ -134,7 +134,7 @@ RTM_EXPORT(rt_completion_wait);
  *
  * @param completion is a pointer to a completion object.
  */
-void rt_completion_done(struct rt_completion *completion)
+static int _completion_done(struct rt_completion *completion)
 {
     rt_base_t level;
     rt_err_t error;
@@ -145,7 +145,7 @@ void rt_completion_done(struct rt_completion *completion)
     if (RT_COMPLETION_FLAG(completion) == RT_COMPLETED)
     {
         rt_spin_unlock_irqrestore(&_completion_lock, level);
-        return;
+        return -RT_EBUSY;
     }
 
     suspend_thread = RT_COMPLETION_THREAD(completion);
@@ -160,10 +160,38 @@ void rt_completion_done(struct rt_completion *completion)
             LOG_D("%s: failed to resume thread", __func__);
         }
     }
+    else
+    {
+        /* no thread waiting */
+        error = -RT_EEMPTY;
+    }
 
     completion->susp_thread_n_flag = RT_COMPLETION_NEW_STAT(RT_NULL, RT_COMPLETED);
 
     rt_spin_unlock_irqrestore(&_completion_lock, level);
+
+    return error;
+}
+
+/**
+ * @brief This function indicates a completion has done.
+ *
+ * @param completion is a pointer to a completion object.
+ */
+void rt_completion_done(struct rt_completion *completion)
+{
+    _completion_done(completion);
 }
 RTM_EXPORT(rt_completion_done);
+
+/**
+ * @brief This function indicates a completion has done and wakeup the thread
+ *
+ * @param completion is a pointer to a completion object.
+ */
+rt_err_t rt_completion_wakeup(struct rt_completion *completion)
+{
+    return _completion_done(completion);
+}
+RTM_EXPORT(rt_completion_wakeup);
 

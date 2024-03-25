@@ -56,6 +56,9 @@ void* lwp_mmap2(struct rt_lwp *lwp, void *addr, size_t length, int prot, int fla
  */
 int lwp_munmap(struct rt_lwp *lwp, void *addr, size_t length);
 
+void *lwp_mremap(struct rt_lwp *lwp, void *old_address, size_t old_size,
+                    size_t new_size, int flags, void *new_address);
+
 /**
  * @brief Test if address from user is accessible address by user
  *
@@ -163,6 +166,7 @@ rt_base_t lwp_brk(void *addr);
 
 size_t lwp_user_strlen(const char *s);
 size_t lwp_user_strlen_ext(struct rt_lwp *lwp, const char *s);
+size_t lwp_strlen(struct rt_lwp *lwp, const char *s);
 
 int lwp_fork_aspace(struct rt_lwp *dest_lwp, struct rt_lwp *src_lwp);
 

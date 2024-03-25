@@ -45,6 +45,7 @@ endif
 
         config RT_USING_DFS_V2
             bool "DFS v2.0"
+            select RT_USING_DEVICE_OPS
     endchoice
 
 if RT_USING_DFS_V1
@@ -169,6 +170,13 @@ endif
         bool "Use user's romfs root"
         depends on RT_USING_DFS_ROMFS
         default n
+
+if RT_USING_SMART
+    config RT_USING_DFS_PTYFS
+        bool "Using Pseudo-Teletype Filesystem (UNIX98 PTY)"
+        depends on RT_USING_DFS_DEVFS
+        default y
+endif
 
     config RT_USING_DFS_CROMFS
         bool "Enable ReadOnly compressed file system on flash"

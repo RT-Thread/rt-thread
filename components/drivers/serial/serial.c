@@ -909,7 +909,7 @@ static rt_ssize_t rt_serial_write(struct rt_device *dev,
     }
 }
 
-#if defined(RT_USING_POSIX_TERMIOS) && !defined(RT_USING_TTY)
+#if defined(RT_USING_POSIX_TERMIOS) && !defined(RT_USING_SMART)
 struct speed_baudrate_item
 {
     speed_t speed;
@@ -1058,7 +1058,7 @@ static rt_err_t rt_serial_control(struct rt_device *dev,
             }
             break;
 #ifdef RT_USING_POSIX_STDIO
-#if defined(RT_USING_POSIX_TERMIOS) && !defined(RT_USING_TTY)
+#if defined(RT_USING_POSIX_TERMIOS) && !defined(RT_USING_SMART)
         case TCGETA:
             {
                 struct termios *tio = (struct termios*)args;
@@ -1315,8 +1315,20 @@ rt_err_t rt_hw_serial_register(struct rt_serial_device *serial,
     device->fops        = &_serial_fops;
 #endif
 
+#if defined(RT_USING_SMART)
+    rt_hw_serial_register_tty(serial);
+#endif
+
     return ret;
 }
+
+#if defined(RT_USING_SMART) && defined(LWP_DEBUG)
+static volatile int _early_input = 0;
+int lwp_startup_debug_request(void)
+{
+    return _early_input;
+}
+#endif
 
 /* ISR for serial interrupt */
 void rt_hw_serial_isr(struct rt_serial_device *serial, int event)
@@ -1360,8 +1372,17 @@ void rt_hw_serial_isr(struct rt_serial_device *serial, int event)
                 rt_spin_unlock_irqrestore(&(serial->spinlock), level);
             }
 
-            /* invoke callback */
-            if (serial->parent.rx_indicate != RT_NULL)
+            /**
+             * Invoke callback.
+             * First try notify if any, and if notify is existed, rx_indicate()
+             * is not callback. This seperate the priority and makes the reuse
+             * of same serial device reasonable for RT console.
+             */
+            if (serial->rx_notify.notify)
+            {
+                serial->rx_notify.notify(serial->rx_notify.dev);
+            }
+            else if (serial->parent.rx_indicate != RT_NULL)
             {
                 rt_size_t rx_length;
 
@@ -1376,10 +1397,9 @@ void rt_hw_serial_isr(struct rt_serial_device *serial, int event)
                     serial->parent.rx_indicate(&serial->parent, rx_length);
                 }
             }
-            if (serial->rx_notify.notify)
-            {
-                serial->rx_notify.notify(serial->rx_notify.dev);
-            }
+        #if defined(RT_USING_SMART) && defined(LWP_DEBUG)
+            _early_input = 1;
+        #endif
             break;
         }
         case RT_SERIAL_EVENT_TX_DONE:

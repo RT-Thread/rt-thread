@@ -269,7 +269,6 @@ static void dfs_pcache_thread(void *parameter)
                                 {
                                     page->len = page->size;
                                 }
-                                //rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, page->page, page->size);
                                 if (aspace->ops->write)
                                 {
                                     aspace->ops->write(page);
@@ -676,9 +675,14 @@ static int dfs_page_unmap(struct dfs_page *page)
 
         if (map)
         {
-            void *vaddr = dfs_aspace_vaddr(map->varea, page->fpos);
-            //rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, vaddr, ARCH_PAGE_SIZE);
-            rt_varea_unmap_page(map->varea, vaddr);
+            rt_varea_t varea;
+            void *vaddr;
+
+            varea = rt_aspace_query(map->aspace, map->vaddr);
+            RT_ASSERT(varea);
+            vaddr = dfs_aspace_vaddr(varea, page->fpos);
+
+            rt_varea_unmap_page(varea, vaddr);
 
             rt_free(map);
         }
@@ -741,7 +745,6 @@ static void dfs_page_release(struct dfs_page *page)
             {
                 page->len = page->size;
             }
-            //rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, page->page, page->size);
             if (aspace->ops->write)
             {
                 aspace->ops->write(page);
@@ -995,7 +998,6 @@ static struct dfs_page *dfs_aspace_load_page(struct dfs_file *file, off_t pos)
             page->size = ARCH_PAGE_SIZE;
             page->fpos = pos / ARCH_PAGE_SIZE * ARCH_PAGE_SIZE;
             aspace->ops->read(file, page);
-            //rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, page->page, page->size);
             page->ref_count ++;
 
             dfs_page_insert(page);
@@ -1105,7 +1107,6 @@ int dfs_aspace_read(struct dfs_file *file, void *buf, size_t count, off_t *pos)
                 len = count > len ? len : count;
                 if (len)
                 {
-                    //rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, page->page, page->size);
                     rt_memcpy(ptr, page->page + *pos - page->fpos, len);
                     ptr += len;
                     *pos += len;
@@ -1158,7 +1159,6 @@ int dfs_aspace_write(struct dfs_file *file, const void *buf, size_t count, off_t
                 len = page->fpos + ARCH_PAGE_SIZE - *pos;
                 len = count > len ? len : count;
                 rt_memcpy(page->page + *pos - page->fpos, ptr, len);
-                //rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, page->page, page->size);
                 ptr += len;
                 *pos += len;
                 count -= len;
@@ -1225,7 +1225,7 @@ int dfs_aspace_flush(struct dfs_aspace *aspace)
                     {
                         page->len = page->size;
                     }
-                    //rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, page->page, page->size);
+
                     if (aspace->ops->write)
                     {
                         aspace->ops->write(page);
@@ -1277,6 +1277,7 @@ void *dfs_aspace_mmap(struct dfs_file *file, struct rt_varea *varea, void *vaddr
     void *ret = RT_NULL;
     struct dfs_page *page;
     struct dfs_aspace *aspace = file->vnode->aspace;
+    rt_aspace_t target_aspace = varea->aspace;
 
     page = dfs_page_lookup(file, dfs_aspace_fpos(varea, vaddr));
     if (page)
@@ -1284,7 +1285,8 @@ void *dfs_aspace_mmap(struct dfs_file *file, struct rt_varea *varea, void *vaddr
         struct dfs_mmap *map = (struct dfs_mmap *)rt_calloc(1, sizeof(struct dfs_mmap));
         if (map)
         {
-            void *pg_paddr = rt_kmem_v2p(page->page);
+            void *pg_vaddr = page->page;
+            void *pg_paddr = rt_kmem_v2p(pg_vaddr);
             int err = rt_varea_map_range(varea, vaddr, pg_paddr, page->size);
             if (err == RT_EOK)
             {
@@ -1301,10 +1303,12 @@ void *dfs_aspace_mmap(struct dfs_file *file, struct rt_varea *varea, void *vaddr
                  * fetching of the next instruction can see the coherent data with the data cache,
                  * TLB, MMU, main memory, and all the other observers in the computer system.
                  */
+                rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, vaddr, ARCH_PAGE_SIZE);
                 rt_hw_cpu_icache_ops(RT_HW_CACHE_INVALIDATE, vaddr, ARCH_PAGE_SIZE);
 
-                ret = page->page;
-                map->varea = varea;
+                ret = pg_vaddr;
+                map->aspace = target_aspace;
+                map->vaddr = vaddr;
                 dfs_aspace_lock(aspace);
                 rt_list_insert_after(&page->mmap_head, &map->mmap_node);
                 dfs_page_release(page);
@@ -1329,6 +1333,8 @@ int dfs_aspace_unmap(struct dfs_file *file, struct rt_varea *varea)
 {
     struct dfs_vnode *vnode = file->vnode;
     struct dfs_aspace *aspace = vnode->aspace;
+    void *unmap_start = varea->start;
+    void *unmap_end = (char *)unmap_start + varea->size;
 
     if (aspace)
     {
@@ -1347,20 +1353,32 @@ int dfs_aspace_unmap(struct dfs_file *file, struct rt_varea *varea)
                     {
                         rt_list_t *node, *tmp;
                         struct dfs_mmap *map;
+                        rt_varea_t map_varea = RT_NULL;
 
                         node = page->mmap_head.next;
 
                         while (node != &page->mmap_head)
                         {
+                            rt_aspace_t map_aspace;
                             map = rt_list_entry(node, struct dfs_mmap, mmap_node);
                             tmp = node;
                             node = node->next;
 
-                            if (map && varea == map->varea)
+                            if (map && varea->aspace == map->aspace
+                                && map->vaddr >= unmap_start && map->vaddr < unmap_end)
                             {
-                                void *vaddr = dfs_aspace_vaddr(map->varea, page->fpos);
+                                void *vaddr = map->vaddr;
+                                map_aspace = map->aspace;
 
-                                rt_varea_unmap_page(map->varea, vaddr);
+                                if (!map_varea || map_varea->aspace != map_aspace ||
+                                    vaddr < map_varea->start ||
+                                    vaddr >= map_varea->start + map_varea->size)
+                                {
+                                    /* lock the tree so we don't access uncompleted data */
+                                    map_varea = rt_aspace_query(map_aspace, vaddr);
+                                }
+
+                                rt_varea_unmap_page(map_varea, vaddr);
 
                                 if (varea->attr == MMU_MAP_U_RWCB && page->fpos < page->aspace->vnode->size)
                                 {
@@ -1405,7 +1423,7 @@ int dfs_aspace_page_unmap(struct dfs_file *file, struct rt_varea *varea, void *v
                 tmp = node;
                 node = node->next;
 
-                if (map && varea == map->varea)
+                if (map && varea->aspace == map->aspace && vaddr == map->vaddr)
                 {
                     if (varea->attr == MMU_MAP_U_RWCB)
                     {
