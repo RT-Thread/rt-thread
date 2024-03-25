@@ -107,6 +107,27 @@ menu "On-chip Peripheral Drivers"
 
             endif
 
+    menuconfig BSP_USING_DAC
+        config BSP_USING_DAC
+            bool "Enable DAC Channel"
+            select RT_USING_DAC
+            default y
+
+            if BSP_USING_DAC
+                config BSP_USING_DAC0
+                    bool "Enable DAC0 Channel"
+                    default n
+
+                config BSP_USING_DAC1
+                    bool "Enable DAC1 Channel"
+                    default n
+
+                config BSP_USING_DAC2
+                    bool "Enable DAC2 Channel"
+                    default n
+
+            endif
+
     config BSP_USING_SDIO
         bool "Enable SDIO SD Card Interface"
         select RT_USING_SDIO
