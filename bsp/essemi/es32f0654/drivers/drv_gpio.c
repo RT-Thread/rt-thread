@@ -246,15 +246,15 @@ void es32f0_pin_write(rt_device_t dev, rt_base_t pin, rt_uint8_t value)
     ald_gpio_write_pin(index->gpio, index->pin, value);
 }
 
-rt_int8_t es32f0_pin_read(rt_device_t dev, rt_base_t pin)
+rt_ssize_t es32f0_pin_read(rt_device_t dev, rt_base_t pin)
 {
-    rt_int8_t value;
+    rt_ssize_t value;
     const struct pin_index *index;
     value = PIN_LOW;
     index = get_pin(pin);
     if (index == RT_NULL)
     {
-        return value;
+        return -RT_EINVAL;
     }
     value = ald_gpio_read_pin(index->gpio, index->pin);
     return value;

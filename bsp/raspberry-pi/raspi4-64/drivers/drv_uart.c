@@ -230,7 +230,7 @@ void early_printhex(rt_ubase_t number)
 #ifdef RT_USING_UART1
 static void rt_hw_aux_uart_isr(int irqno, void *param)
 {
-    struct rt_serial_device *serial = (struct rt_serial_device*)param; 
+    struct rt_serial_device *serial = (struct rt_serial_device*)param;
     rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_IND);
 }
 #endif
@@ -239,7 +239,7 @@ static void rt_hw_uart_isr(int irqno, void *param)
 {
 #ifdef RT_USING_UART0
     if((PACTL_CS & IRQ_UART0) == IRQ_UART0)
-    {   
+    {
         PACTL_CS &=  ~(IRQ_UART0);
         rt_hw_serial_isr(&_serial0, RT_SERIAL_EVENT_RX_IND);
         PL011_REG_ICR(uart0_addr) = PL011_INTERRUPT_RECEIVE;
@@ -333,13 +333,13 @@ int rt_hw_uart_init(void)
     earlycon_base = (void *)uart0_addr;
     uart0->hw_base = uart0_addr;
 
-    
+
     /* register UART0 device */
     rt_hw_serial_register(&_serial0, "uart0",
                           RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
                           uart0);
     rt_hw_interrupt_install(uart0->irqno, rt_hw_uart_isr, &_serial0, "uart0");
-    
+
 #endif
 
 #ifdef RT_USING_UART1
@@ -348,7 +348,7 @@ int rt_hw_uart_init(void)
 
     _serial1.ops    = &_uart_ops;
     _serial1.config = config;
-    
+
     uart1->hw_base = (size_t)rt_ioremap((void*)AUX_BASE, 0x1000);
 
     /* register UART1 device */

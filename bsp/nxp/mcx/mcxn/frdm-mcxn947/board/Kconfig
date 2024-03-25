@@ -76,26 +76,54 @@ menu "On-chip Peripheral Drivers"
             default y
 
             if BSP_USING_ADC
+                config BSP_USING_ADC0
+                    bool
+                    default n
+
                 config BSP_USING_ADC0_CH0
                     bool "Enable ADC0 Channel0"
+                    select BSP_USING_ADC0
                     default y
 
                 config BSP_USING_ADC0_CH1
                     bool "Enable ADC0 Channel1"
+                    select BSP_USING_ADC0
                     default n
 
                 config BSP_USING_ADC0_CH8
                     bool "Enable ADC0 Channel8"
+                    select BSP_USING_ADC0
                     default n
 
-        
                 config BSP_USING_ADC0_CH13
                     bool "Enable ADC0 Channel13"
+                    select BSP_USING_ADC0
                     default n
-
 
                 config BSP_USING_ADC0_CH26
                     bool "Enable ADC0 Channel26"
+                    select BSP_USING_ADC0
+                    default n
+
+            endif
+
+    menuconfig BSP_USING_DAC
+        config BSP_USING_DAC
+            bool "Enable DAC Channel"
+            select RT_USING_DAC
+            default y
+
+            if BSP_USING_DAC
+                config BSP_USING_DAC0
+                    bool "Enable DAC0 Channel"
+                    default n
+
+                config BSP_USING_DAC1
+                    bool "Enable DAC1 Channel"
+                    default n
+
+                config BSP_USING_DAC2
+                    bool "Enable DAC2 Channel"
                     default n
 
             endif

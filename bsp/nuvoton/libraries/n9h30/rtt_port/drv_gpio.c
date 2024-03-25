@@ -39,7 +39,7 @@
 
 static void nu_gpio_mode(struct rt_device *device, rt_base_t pin, rt_uint8_t mode);
 static void nu_gpio_write(struct rt_device *device, rt_base_t pin, rt_uint8_t value);
-static rt_int8_t nu_gpio_read(struct rt_device *device, rt_base_t pin);
+static rt_ssize_t nu_gpio_read(struct rt_device *device, rt_base_t pin);
 static rt_err_t nu_gpio_attach_irq(struct rt_device *device, rt_int32_t pin, rt_uint8_t mode, void (*hdr)(void *args), void *args);
 static rt_err_t nu_gpio_detach_irq(struct rt_device *device, rt_int32_t pin);
 static rt_err_t nu_gpio_irq_enable(struct rt_device *device, rt_base_t pin, rt_uint8_t enabled);
@@ -193,12 +193,14 @@ static void nu_gpio_write(struct rt_device *device, rt_base_t pin, rt_uint8_t va
         GPIO_ClrBit(PORT, NU_GET_PIN_MASK(NU_GET_PINS(pin)));
 }
 
-static rt_int8_t nu_gpio_read(struct rt_device *device, rt_base_t pin)
+static rt_ssize_t nu_gpio_read(struct rt_device *device, rt_base_t pin)
 {
     GPIO_PORT PORT;
 
     if (nu_port_check(pin))
-        return PIN_LOW;
+    {
+        return -RT_EINVAL;
+    }
 
     PORT = (GPIO_PORT)(GPIOA + (NU_GET_PORT(pin) * PORT_OFFSET));
 

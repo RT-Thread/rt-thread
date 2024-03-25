@@ -139,13 +139,13 @@ void rt_pin_mode(rt_base_t pin, rt_uint8_t mode)
     _hw_pin.ops->pin_mode(&_hw_pin.parent, pin, mode);
 }
 
-void rt_pin_write(rt_base_t pin, rt_uint8_t value)
+void rt_pin_write(rt_base_t pin, rt_ssize_t value)
 {
     RT_ASSERT(_hw_pin.ops != RT_NULL);
     _hw_pin.ops->pin_write(&_hw_pin.parent, pin, value);
 }
 
-rt_int8_t rt_pin_read(rt_base_t pin)
+rt_ssize_t rt_pin_read(rt_base_t pin)
 {
     RT_ASSERT(_hw_pin.ops != RT_NULL);
     return _hw_pin.ops->pin_read(&_hw_pin.parent, pin);

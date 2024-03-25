@@ -42,6 +42,7 @@
 #define RT_CONSOLEBUF_SIZE 256
 #define RT_CONSOLE_DEVICE_NAME "uart"
 #define RT_VER_NUM 0x50100
+#define RT_BACKTRACE_LEVEL_MAX_NR 32
 
 /* RT-Thread Components */
 
@@ -105,10 +106,10 @@
 /* Network */
 
 
+/* Memory protection */
+
+
 /* Utilities */
-
-
-/* Memory management */
 
 
 /* RT-Thread Utestcases */
@@ -128,6 +129,12 @@
 
 
 /* CYW43012 WiFi */
+
+
+/* BL808 WiFi */
+
+
+/* CYW43439 WiFi */
 
 
 /* IoT Cloud */
@@ -174,15 +181,20 @@
 
 /* peripheral libraries and drivers */
 
-/* sensors drivers */
+/* HAL & SDK Drivers */
 
-
-/* touch drivers */
+/* STM32 HAL & SDK Drivers */
 
 #define PKG_USING_ESP_IDF
 #define PKG_USING_ESP_IDF_LATEST_VERSION
 
 /* Kendryte SDK */
+
+
+/* sensors drivers */
+
+
+/* touch drivers */
 
 
 /* AI packages */

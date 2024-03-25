@@ -264,15 +264,19 @@ static void msp432_pin_write(struct rt_device *device, rt_base_t pin, rt_uint8_t
     }
 }
 
-static rt_int8_t msp432_pin_read(struct rt_device *device, rt_base_t pin)
+static rt_ssize_t msp432_pin_read(struct rt_device *device, rt_base_t pin)
 {
     const struct pin_index *index = RT_NULL;
-    rt_int8_t value = -1;
+    rt_ssize_t value = -1;
 
     index = _get_pin(pin);
     if (index != RT_NULL)
     {
-        value = (rt_int8_t)GPIOPinRead(index->gpioBaseAddress, index->pin);
+        value = (rt_ssize_t)GPIOPinRead(index->gpioBaseAddress, index->pin);
+    }
+    else
+    {
+        value = -RT_EINVAL;
     }
 
     return value;

@@ -217,7 +217,7 @@ static void stm32_pin_write(rt_device_t dev, rt_base_t pin, rt_uint8_t value)
     }
 }
 
-static rt_int8_t stm32_pin_read(rt_device_t dev, rt_base_t pin)
+static rt_ssize_t stm32_pin_read(rt_device_t dev, rt_base_t pin)
 {
     GPIO_TypeDef *gpio_port;
     uint16_t gpio_pin;
@@ -228,6 +228,10 @@ static rt_int8_t stm32_pin_read(rt_device_t dev, rt_base_t pin)
         gpio_port = PIN_STPORT(pin);
         gpio_pin = PIN_STPIN(pin);
         state = HAL_GPIO_ReadPin(gpio_port, gpio_pin);
+    }
+    else
+    {
+        return -RT_EINVAL;
     }
 
     return (state == GPIO_PIN_RESET) ? PIN_LOW : PIN_HIGH;
@@ -503,13 +507,13 @@ static rt_err_t stm32_pin_irq_enable(struct rt_device *device, rt_base_t pin,
 }
 static const struct rt_pin_ops _stm32_pin_ops =
 {
-        stm32_pin_mode,
-        stm32_pin_write,
-        stm32_pin_read,
-        stm32_pin_attach_irq,
-        stm32_pin_dettach_irq,
-        stm32_pin_irq_enable,
-        stm32_pin_get,
+    stm32_pin_mode,
+    stm32_pin_write,
+    stm32_pin_read,
+    stm32_pin_attach_irq,
+    stm32_pin_dettach_irq,
+    stm32_pin_irq_enable,
+    stm32_pin_get,
 };
 
 rt_inline void pin_irq_hdr(int irqno)

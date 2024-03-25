@@ -103,14 +103,14 @@ static void _pin_write(rt_device_t dev, rt_base_t pin, rt_uint8_t value)
     }
 }
 
-static rt_int8_t _pin_read(rt_device_t dev, rt_base_t pin)
+static rt_ssize_t _pin_read(rt_device_t dev, rt_base_t pin)
 {
     en_gpio_port_t gpio_port;
     en_gpio_pin_t gpio_pin;
 
     if (pin >= PIN_MAX_NUM)
     {
-        return PIN_LOW;
+        return -RT_EINVAL;
     }
 
     gpio_port = GPIO_PORT(pin);

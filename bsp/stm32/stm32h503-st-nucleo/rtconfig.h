@@ -4,6 +4,8 @@
 /* Automatically generated file; DO NOT EDIT. */
 /* RT-Thread Configuration */
 
+#define BOARD_STM32H503_NUCLEO
+
 /* RT-Thread Kernel */
 
 #define RT_NAME_MAX 8
@@ -90,10 +92,10 @@
 #define RT_SERIAL_RB_BUFSZ 64
 #define RT_USING_I2C
 #define RT_USING_I2C_BITOPS
-#define RT_USING_PIN
 #define RT_USING_ADC
 #define RT_USING_PWM
 #define RT_USING_SPI
+#define RT_USING_PIN
 
 /* Using USB */
 
@@ -146,6 +148,12 @@
 /* CYW43012 WiFi */
 
 
+/* BL808 WiFi */
+
+
+/* CYW43439 WiFi */
+
+
 /* IoT Cloud */
 
 
@@ -187,13 +195,18 @@
 
 /* peripheral libraries and drivers */
 
+/* HAL & SDK Drivers */
+
+/* STM32 HAL & SDK Drivers */
+
+
+/* Kendryte SDK */
+
+
 /* sensors drivers */
 
 
 /* touch drivers */
-
-
-/* Kendryte SDK */
 
 
 /* AI packages */
@@ -248,10 +261,14 @@
 
 #define SOC_FAMILY_STM32
 #define SOC_SERIES_STM32H5
+#define BOARD_SERIES_STM32_NUCLEO_64
 
 /* Hardware Drivers Config */
 
 #define SOC_STM32H503RB
+
+/* Onboard Peripheral Drivers */
+
 
 /* On-chip Peripheral Drivers */
 

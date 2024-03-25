@@ -103,13 +103,10 @@
 /* Network */
 
 
-/* Utilities */
-
-
-/* Memory management */
-
-
 /* Memory protection */
+
+
+/* Utilities */
 
 
 /* RT-Thread Utestcases */
@@ -126,6 +123,15 @@
 
 
 /* Wiced WiFi */
+
+
+/* CYW43012 WiFi */
+
+
+/* BL808 WiFi */
+
+
+/* CYW43439 WiFi */
 
 
 /* IoT Cloud */
@@ -169,13 +175,18 @@
 
 /* peripheral libraries and drivers */
 
+/* HAL & SDK Drivers */
+
+/* STM32 HAL & SDK Drivers */
+
+
+/* Kendryte SDK */
+
+
 /* sensors drivers */
 
 
 /* touch drivers */
-
-
-/* Kendryte SDK */
 
 
 /* AI packages */

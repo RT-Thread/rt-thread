@@ -144,4 +144,4 @@ RT-Thread ist sehr dankbar für die Unterstützung durch alle Entwickler der Com
 
 # Beitrag
 
-Wenn Sie an RT-Thread interessiert sind und sich an der Entwicklung von RT-Thread beteiligen und einen Beitrag zum Code leisten wollen, lesen Sie bitte den [Code Contribution Guide](documentation/contribution_guide/contribution_guide.md).
+Wenn Sie an RT-Thread interessiert sind und sich an der Entwicklung von RT-Thread beteiligen und einen Beitrag zum Code leisten wollen, lesen Sie bitte den [Code Contribution Guide](.github/CONTRIBUTING.md).

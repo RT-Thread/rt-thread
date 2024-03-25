@@ -283,7 +283,7 @@ static void hc32_pin_write(struct rt_device *device, rt_base_t pin, rt_uint8_t v
     }
 }
 
-static rt_int8_t hc32_pin_read(struct rt_device *device, rt_base_t pin)
+static rt_ssize_t hc32_pin_read(struct rt_device *device, rt_base_t pin)
 {
     uint8_t  gpio_port;
     uint16_t gpio_pin;
@@ -301,6 +301,10 @@ static rt_int8_t hc32_pin_read(struct rt_device *device, rt_base_t pin)
         {
             value = PIN_HIGH;
         }
+    }
+    else
+    {
+        return -RT_EINVAL;
     }
 
     return value;

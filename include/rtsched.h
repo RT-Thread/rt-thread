@@ -14,6 +14,10 @@
 #include "rttypes.h"
 #include "rtcompiler.h"
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 struct rt_thread;
 
 typedef rt_uint8_t rt_sched_thread_status_t;
@@ -168,5 +172,9 @@ void rt_sched_insert_thread(struct rt_thread *thread);
 void rt_sched_remove_thread(struct rt_thread *thread);
 
 #endif /* defined(__RT_KERNEL_SOURCE__) || defined(__RT_IPC_SOURCE__) */
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* __RT_SCHED_H__ */

@@ -354,7 +354,7 @@ void ch32f2_pin_write(rt_device_t dev, rt_base_t pin, rt_uint8_t value)
     GPIO_WriteBit(item->gpio, item->gpio_pin, (BitAction)value);
 }
 
-rt_int8_t ch32f2_pin_read(rt_device_t dev, rt_base_t pin)
+rt_ssize_t ch32f2_pin_read(rt_device_t dev, rt_base_t pin)
 {
     const struct pin_info *item;
 

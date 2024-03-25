@@ -21,9 +21,9 @@ static void mcu_pin_write(rt_device_t dev, rt_base_t pin, rt_uint8_t value)
     /*TODO:set gpio out put mode */
 }
 
-static rt_int8_t mcu_pin_read(rt_device_t dev, rt_base_t pin)
+static rt_ssize_t mcu_pin_read(rt_device_t dev, rt_base_t pin)
 {
-    rt_int8_t value;
+    rt_ssize_t value;
     value = gpio_get_level(pin);
     return value;
 }

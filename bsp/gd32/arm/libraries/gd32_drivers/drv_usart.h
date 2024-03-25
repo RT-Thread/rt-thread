@@ -47,6 +47,8 @@ struct gd32_uart
     char *device_name;
 };
 
+int rt_hw_usart_init(void);
+
 #ifdef __cplusplus
 }
 #endif

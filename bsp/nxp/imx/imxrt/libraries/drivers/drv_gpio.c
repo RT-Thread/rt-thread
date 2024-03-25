@@ -622,9 +622,9 @@ static void imxrt_pin_mode(rt_device_t dev, rt_base_t pin, rt_uint8_t mode)
     GPIO_PinInit(mask_tab[port].gpio, pin_num, &gpio);
 }
 
-static rt_int8_t imxrt_pin_read(rt_device_t dev, rt_base_t pin)
+static rt_ssize_t imxrt_pin_read(rt_device_t dev, rt_base_t pin)
 {
-    int value;
+    rt_ssize_t value;
     rt_int8_t port, pin_num;
 
     value = PIN_LOW;
@@ -634,7 +634,7 @@ static rt_int8_t imxrt_pin_read(rt_device_t dev, rt_base_t pin)
     if (PIN_INVALID_CHECK(port, pin_num))
     {
         LOG_D("invalid pin,rtt pin: %d,port: %d,pin: %d \n", pin,port + 1,pin_num);
-        return value;
+        return -RT_EINVAL;
     }
 
     return GPIO_PinReadPadStatus(mask_tab[port].gpio, pin_num);

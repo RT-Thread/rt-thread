@@ -49,7 +49,7 @@ static struct bl_adc bl_adc_obj;
 struct _adc_channel_cfg
 {
     struct bflb_adc_channel_s chan;
-    uint16_t chan_gpio;   
+    uint16_t chan_gpio;
 };
 
 static struct _adc_channel_cfg chan[] = {
@@ -197,7 +197,7 @@ int rt_hw_adc_init(void)
         LOG_E("adc dma device not found");
         return -RT_ERROR;
     }
-    
+
     bl_adc_obj.sem = rt_sem_create("adc_sem", 0, RT_IPC_FLAG_PRIO);
     if(bl_adc_obj.sem == RT_NULL)
     {
