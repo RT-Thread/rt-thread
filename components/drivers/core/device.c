@@ -32,12 +32,12 @@
 #ifdef RT_USING_DEVICE
 
 #ifdef RT_USING_DEVICE_OPS
-#define device_init     (dev->ops->init)
-#define device_open     (dev->ops->open)
-#define device_close    (dev->ops->close)
-#define device_read     (dev->ops->read)
-#define device_write    (dev->ops->write)
-#define device_control  (dev->ops->control)
+#define device_init     (dev->ops ? dev->ops->init : RT_NULL)
+#define device_open     (dev->ops ? dev->ops->open : RT_NULL)
+#define device_close    (dev->ops ? dev->ops->close : RT_NULL)
+#define device_read     (dev->ops ? dev->ops->read : RT_NULL)
+#define device_write    (dev->ops ? dev->ops->write : RT_NULL)
+#define device_control  (dev->ops ? dev->ops->control : RT_NULL)
 #else
 #define device_init     (dev->init)
 #define device_open     (dev->open)
