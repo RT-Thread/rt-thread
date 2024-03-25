@@ -101,6 +101,7 @@ struct dfs_file
 
     void *data;
 };
+#define DFS_FILE_POS(dfs_file) ((dfs_file)->fpos)
 
 /* file is open for reading */
 #define FMODE_READ 0x1
