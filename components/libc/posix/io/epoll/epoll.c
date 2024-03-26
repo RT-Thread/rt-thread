@@ -6,7 +6,9 @@
  * Change Logs:
  * Date           Author            Notes
  * 2023-07-29     zmq810150896      first version
- * 2024/03/26     TroyMitchelle     Add comments for all functions and members within structure members
+ * 2024/03/26     TroyMitchelle     Add comments for all functions,
+                                    members within structure members and 
+                                    fix incorrect naming of triggered
  */
 
 #include <rtthread.h>
@@ -44,7 +46,7 @@ struct rt_fd_list
 
 struct rt_eventpoll
 {
-    rt_uint32_t tirggered;      /**< Indicates if the wait thread is triggered */
+    rt_uint32_t triggered;      /**< Indicates if the wait thread is triggered */
     rt_wqueue_t epoll_read;     /**< Epoll read queue */
     rt_thread_t polling_thread; /**< Polling thread */
     struct rt_mutex lock;       /**< Mutex lock */
@@ -203,7 +205,7 @@ static int epoll_wqueue_callback(struct rt_wqueue_node *wait, void *key)
             rt_slist_append(&ep->rdl_head, &fdlist->rdl_node);
             fdlist->exclusive = 0;
             fdlist->is_rdl_node = RT_TRUE;
-            ep->tirggered = 1;
+            ep->triggered = 1;
             ep->eventpoll_num++;
             rt_wqueue_wakeup(&ep->epoll_read, (void *)POLLIN);
         }
@@ -678,7 +680,7 @@ static int epoll_wait_timeout(struct rt_eventpoll *ep, int msec)
 
     level = rt_spin_lock_irqsave(&ep->spinlock);
 
-    if (timeout != 0 && !ep->tirggered)
+    if (timeout != 0 && !ep->triggered)
     {
         if (rt_thread_suspend_with_flag(thread, RT_KILLABLE) == RT_EOK)
         {
@@ -698,7 +700,7 @@ static int epoll_wait_timeout(struct rt_eventpoll *ep, int msec)
         }
     }
 
-    ret = !ep->tirggered;
+    ret = !ep->triggered;
     rt_spin_unlock_irqrestore(&ep->spinlock, level);
 
     return ret;
@@ -867,7 +869,7 @@ static int epoll_do(struct rt_eventpoll *ep, struct epoll_event *events, int max
         if (event_num || istimeout)
         {
             level = rt_spin_lock_irqsave(&ep->spinlock);
-            ep->tirggered = 0;
+            ep->triggered = 0;
             rt_spin_unlock_irqrestore(&ep->spinlock, level);
             if ((timeout >= 0) || (event_num > 0))
                 break;
