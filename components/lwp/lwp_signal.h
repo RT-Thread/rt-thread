@@ -18,34 +18,33 @@
 #include <rtthread.h>
 #include <sys/signal.h>
 
-struct timespec;
-struct itimerspec;
-
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 #define _USIGNAL_SIGMASK(signo) (1u << ((signo)-1))
-#define LWP_SIG_NO_IGN_SET                                                     \
-  (_USIGNAL_SIGMASK(SIGCONT) | _USIGNAL_SIGMASK(SIGSTOP) |                     \
-   _USIGNAL_SIGMASK(SIGKILL))
-#define LWP_SIG_IGNORE_SET                                                     \
-  (_USIGNAL_SIGMASK(SIGCHLD) | _USIGNAL_SIGMASK(SIGURG) |                      \
-   _USIGNAL_SIGMASK(SIGWINCH) /* from 4.3 BSD, not POSIX.1 */)
-#define LWP_SIG_JOBCTL_SET                                                     \
-  (_USIGNAL_SIGMASK(SIGCONT) | _USIGNAL_SIGMASK(SIGSTOP) |                     \
-   _USIGNAL_SIGMASK(SIGTSTP) | _USIGNAL_SIGMASK(SIGTTIN) |                     \
-   _USIGNAL_SIGMASK(SIGTTOU))
-#define LWP_SIG_STOP_SET                                                       \
-  (_USIGNAL_SIGMASK(SIGSTOP) | _USIGNAL_SIGMASK(SIGTSTP) |                     \
-   _USIGNAL_SIGMASK(SIGTTIN) | _USIGNAL_SIGMASK(SIGTTOU))
+#define LWP_SIG_NO_IGN_SET                                   \
+    (_USIGNAL_SIGMASK(SIGCONT) | _USIGNAL_SIGMASK(SIGSTOP) | \
+     _USIGNAL_SIGMASK(SIGKILL))
+#define LWP_SIG_IGNORE_SET                                  \
+    (_USIGNAL_SIGMASK(SIGCHLD) | _USIGNAL_SIGMASK(SIGURG) | \
+     _USIGNAL_SIGMASK(SIGWINCH) /* from 4.3 BSD, not POSIX.1 */)
+#define LWP_SIG_JOBCTL_SET                                   \
+    (_USIGNAL_SIGMASK(SIGCONT) | _USIGNAL_SIGMASK(SIGSTOP) | \
+     _USIGNAL_SIGMASK(SIGTSTP) | _USIGNAL_SIGMASK(SIGTTIN) | \
+     _USIGNAL_SIGMASK(SIGTTOU))
+#define LWP_SIG_STOP_SET                                     \
+    (_USIGNAL_SIGMASK(SIGSTOP) | _USIGNAL_SIGMASK(SIGTSTP) | \
+     _USIGNAL_SIGMASK(SIGTTIN) | _USIGNAL_SIGMASK(SIGTTOU))
 #define LWP_SIG_ACT_DFL ((lwp_sighandler_t)0)
 #define LWP_SIG_ACT_IGN ((lwp_sighandler_t)1)
-#define LWP_SIG_USER_SA_FLAGS                                                  \
-  (SA_NOCLDSTOP | SA_NOCLDWAIT | SA_SIGINFO | SA_ONSTACK | SA_RESTART |        \
-   SA_NODEFER | SA_RESETHAND | SA_EXPOSE_TAGBITS)
+#define LWP_SIG_USER_SA_FLAGS                                             \
+    (SA_NOCLDSTOP | SA_NOCLDWAIT | SA_SIGINFO | SA_ONSTACK | SA_RESTART | \
+     SA_NODEFER | SA_RESETHAND | SA_EXPOSE_TAGBITS)
+#define LWP_SIG_INVALID_TIMER ((timer_t)-1)
 
-typedef enum {
+typedef enum
+{
     LWP_SIG_MASK_CMD_BLOCK,
     LWP_SIG_MASK_CMD_UNBLOCK,
     LWP_SIG_MASK_CMD_SET_MASK,
@@ -55,7 +54,8 @@ typedef enum {
 /**
  * LwP implementation of POSIX signal
  */
-struct lwp_signal {
+struct lwp_signal
+{
     timer_t real_timer;
     struct lwp_sigqueue sig_queue;
     rt_thread_t sig_dispatch_thr[_LWP_NSIG];
@@ -107,7 +107,8 @@ rt_inline void lwp_thread_signal_detach(struct lwp_thread_signal *tsig)
  * @param signo the signal number
  * @param code as in siginfo
  * @param value as in siginfo
- * @return rt_err_t RT_EINVAL if the parameter is invalid, RT_EOK as successful
+ * @return rt_err_t RT_EINVAL if the parameter is invalid, RT_EOK as
+ * successful
  *
  * @note the *signal_kill have the same definition of a successful return as
  *       kill() in IEEE Std 1003.1-2017
@@ -134,7 +135,8 @@ rt_err_t lwp_signal_action(struct rt_lwp *lwp, int signo,
  * @param signo the signal number
  * @param code as in siginfo
  * @param value as in siginfo
- * @return rt_err_t RT_EINVAL if the parameter is invalid, RT_EOK as successful
+ * @return rt_err_t RT_EINVAL if the parameter is invalid, RT_EOK as
+ * successful
  */
 rt_err_t lwp_thread_signal_kill(rt_thread_t thread, long signo, long code,
                                 lwp_siginfo_ext_t value);
@@ -152,8 +154,8 @@ rt_err_t lwp_thread_signal_mask(rt_thread_t thread, lwp_sig_mask_cmd_t how,
                                 const lwp_sigset_t *sigset, lwp_sigset_t *oset);
 
 /**
- * @brief Catch signal if exists and no return, otherwise return with no side
- * effect
+ * @brief Catch signal if exists and no return, otherwise return with no
+ * side effect
  *
  * @param exp_frame the exception frame on kernel stack
  */
@@ -196,19 +198,24 @@ void lwp_thread_signal_pending(rt_thread_t thread, lwp_sigset_t *sigset);
  * @param signo the signal number
  * @param code as in siginfo
  * @param value as in siginfo
- * @return rt_err_t RT_EINVAL if the parameter is invalid, RT_EOK as successful
+ * @return rt_err_t RT_EINVAL if the parameter is invalid, RT_EOK as
+ * successful
  */
 rt_err_t lwp_pgrp_signal_kill(struct rt_processgroup *pgrp, long signo,
                               long code, lwp_siginfo_ext_t value);
 
-rt_inline int lwp_sigismember(lwp_sigset_t *set, int _sig) {
-  unsigned long sig = _sig - 1;
+rt_inline int lwp_sigismember(lwp_sigset_t *set, int _sig)
+{
+    unsigned long sig = _sig - 1;
 
-  if (_LWP_NSIG_WORDS == 1) {
-    return 1 & (set->sig[0] >> sig);
-  } else {
-    return 1 & (set->sig[sig / _LWP_NSIG_BPW] >> (sig % _LWP_NSIG_BPW));
-  }
+    if (_LWP_NSIG_WORDS == 1)
+    {
+        return 1 & (set->sig[0] >> sig);
+    }
+    else
+    {
+        return 1 & (set->sig[sig / _LWP_NSIG_BPW] >> (sig % _LWP_NSIG_BPW));
+    }
 }
 
 struct itimerspec;

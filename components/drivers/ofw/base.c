@@ -1465,7 +1465,7 @@ static const char *ofw_get_prop_fuzzy_name(const struct rt_ofw_node *np, const c
     char *sf, split_field[64];
     rt_size_t len = 0, max_ak = 0;
     const char *str, *result = RT_NULL;
-    RT_DECLARE_BITMAP(ak, sizeof(split_field));
+    RT_BITMAP_DECLARE(ak, sizeof(split_field));
     struct rt_ofw_prop *prop;
 
     /*

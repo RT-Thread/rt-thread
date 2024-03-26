@@ -58,7 +58,7 @@ rt_session_t lwp_session_find(pid_t sid)
     return RT_NULL;
 }
 
-rt_session_t lwp_session_create(rt_processgroup_t leader)
+rt_session_t lwp_session_create(rt_lwp_t leader)
 {
     rt_session_t session = RT_NULL;
 
@@ -75,16 +75,17 @@ rt_session_t lwp_session_create(rt_processgroup_t leader)
         rt_list_init(&(session->processgroup));
         rt_mutex_init(&(session->mutex), "session", RT_IPC_FLAG_PRIO);
         session->leader = leader;
-        session->sid = leader->pgid;
-        lwp_pgrp_update_children_info(leader, session->sid, leader->pgid);
+        session->sid = leader->pid;
+        lwp_pgrp_update_children_info(leader->pgrp, session->sid, leader->pgid);
         session->foreground_pgid = session->sid;
+        session->ctty = RT_NULL;
     }
     return session;
 }
 
 int lwp_session_delete(rt_session_t session)
 {
-    int retry = 0;
+    int retry = 1;
     lwp_tty_t ctty;
 
     /* parameter check */
@@ -100,23 +101,33 @@ int lwp_session_delete(rt_session_t session)
     {
         retry = 0;
         ctty = session->ctty;
-        if (ctty)
-            tty_lock(ctty);
-        SESS_LOCK(session);
+        SESS_LOCK_NESTED(session);
 
         if (session->ctty == ctty)
         {
             if (ctty)
+            {
+                SESS_UNLOCK(session);
+
+                /**
+                 * Note: it's safe to release the session lock now. Even if someone
+                 * race to acquire the tty, it's safe under protection of tty_lock()
+                 * and the check inside
+                 */
+                tty_lock(ctty);
                 tty_rel_sess(ctty, session);
+                session->ctty = RT_NULL;
+            }
+            else
+            {
+                SESS_UNLOCK(session);
+            }
         }
         else
         {
+            SESS_UNLOCK(session);
             retry = 1;
         }
-
-        SESS_UNLOCK(session);
-        if (ctty)
-            tty_unlock(ctty);
     }
 
     rt_object_detach(&(session->object));
@@ -140,7 +151,7 @@ int lwp_session_insert(rt_session_t session, rt_processgroup_t group)
     group->sid = session->sid;
     group->session = session;
     lwp_pgrp_update_children_info(group, session->sid, group->pgid);
-    rt_list_insert_after(&(session->processgroup), &(group->node));
+    rt_list_insert_after(&(session->processgroup), &(group->pgrp_list_node));
 
     PGRP_UNLOCK(group);
     SESS_UNLOCK(session);
@@ -161,7 +172,7 @@ int lwp_session_remove(rt_session_t session, rt_processgroup_t group)
     SESS_LOCK_NESTED(session);
     PGRP_LOCK_NESTED(group);
 
-    rt_list_remove(&(group->node));
+    rt_list_remove(&(group->pgrp_list_node));
     /* clear children sid */
     lwp_pgrp_update_children_info(group, 0, group->pgid);
     group->sid = 0;
@@ -228,7 +239,7 @@ int lwp_session_update_children_info(rt_session_t session, pid_t sid)
 
     rt_list_for_each(node, &(session->processgroup))
     {
-        group = (rt_processgroup_t)rt_list_entry(node, struct rt_processgroup, node);
+        group = (rt_processgroup_t)rt_list_entry(node, struct rt_processgroup, pgrp_list_node);
         PGRP_LOCK_NESTED(group);
         if (sid != -1)
         {
@@ -259,7 +270,7 @@ int lwp_session_set_foreground(rt_session_t session, pid_t pgid)
 
     rt_list_for_each(node, &(session->processgroup))
     {
-        group = (rt_processgroup_t)rt_list_entry(node, struct rt_processgroup, node);
+        group = (rt_processgroup_t)rt_list_entry(node, struct rt_processgroup, pgrp_list_node);
         PGRP_LOCK(group);
         if (group->pgid == pgid)
         {
@@ -309,7 +320,7 @@ sysret_t sys_setsid(void)
     if (group)
     {
         lwp_pgrp_move(group, process);
-        session = lwp_session_create(group);
+        session = lwp_session_create(process);
         if (session)
         {
             lwp_session_move(session, group);
@@ -318,9 +329,13 @@ sysret_t sys_setsid(void)
         {
             lwp_pgrp_delete(group);
         }
+        err = lwp_sid_get_bysession(session);
+    }
+    else
+    {
+        err = -ENOMEM;
     }
 
-    err = lwp_sid_get_bysession(session);
 
 exit:
     return err;
@@ -394,9 +409,9 @@ long list_session(void)
                     rt_memcpy(&se, session, sizeof(struct rt_session));
                     SESS_UNLOCK(session);
 
-                    if (se.leader && se.leader->leader)
+                    if (se.leader && se.leader)
                     {
-                        thread = rt_list_entry(se.leader->leader->t_grp.prev, struct rt_thread, sibling);
+                        thread = rt_list_entry(se.leader->t_grp.prev, struct rt_thread, sibling);
                         rt_strncpy(name, thread->parent.name, RT_NAME_MAX);
                     }
                     else

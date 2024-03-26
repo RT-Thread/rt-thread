@@ -10,10 +10,6 @@
 
 #include <rtthread.h>
 
-#if defined(RT_USING_POSIX_DEVIO) && defined(RT_USING_SMART)
-#include <console.h>
-#endif
-
 #include <virtio_console.h>
 
 static int console_init()
@@ -36,8 +32,6 @@ static int console_init()
 }
 INIT_ENV_EXPORT(console_init);
 
-#ifdef FINSH_USING_MSH
-
 static int console(int argc, char **argv)
 {
     rt_err_t result = RT_EOK;
@@ -48,23 +42,6 @@ static int console(int argc, char **argv)
         {
             rt_kprintf("console change to %s\n", argv[2]);
             rt_console_set_device(argv[2]);
-
-        #ifdef RT_USING_POSIX_DEVIO
-            {
-                rt_device_t dev = rt_device_find(argv[2]);
-
-                if (dev != RT_NULL)
-                {
-                    #ifdef RT_USING_SMART
-                        console_set_iodev(dev);
-                    #else
-                        rt_kprintf("TODO not supported\n");
-                    #endif
-                }
-            }
-        #else
-            finsh_set_device(argv[2]);
-        #endif /* RT_USING_POSIX_DEVIO */
         }
         else
         {
@@ -81,5 +58,3 @@ static int console(int argc, char **argv)
     return result;
 }
 MSH_CMD_EXPORT(console, set console name);
-
-#endif /* FINSH_USING_MSH */

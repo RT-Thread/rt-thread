@@ -136,6 +136,7 @@ rt_inline void rt_ktime_hrtimer_keep_errno(rt_ktime_hrtimer_t timer, rt_err_t er
     RT_ASSERT(timer != RT_NULL);
 
     timer->error = err;
+    rt_set_errno(-err);
 }
 
 /**

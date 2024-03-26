@@ -14,6 +14,8 @@
  * 2023-07-06     Shell        adapt the signal API, and clone, fork to new implementation of lwp signal
  * 2023-07-27     Shell        Move tid_put() from lwp_free() to sys_exit()
  * 2023-11-16     xqyjlj       fix some syscalls (about sched_*, get/setpriority)
+ * 2023-11-17     xqyjlj       add process group and session support
+ * 2023-11-30     Shell        Fix sys_setitimer() and exit(status)
  */
 #define __RT_IPC_SOURCE__
 #define _GNU_SOURCE
@@ -936,40 +938,51 @@ sysret_t sys_kill(int pid, int signo)
             lwp_ref_dec(lwp);
         }
     }
-    else if (pid == 0)
+    else if (pid < -1 || pid == 0)
     {
-        /**
-         * sig shall be sent to all processes (excluding an unspecified set
-         * of system processes) whose process group ID is equal to the process
-         * group ID of the sender, and for which the process has permission to
-         * send a signal.
-         */
-        kret = -RT_ENOSYS;
-    }
-    else if (pid == -1)
-    {
-        /**
-         * sig shall be sent to all processes (excluding an unspecified set
-         * of system processes) for which the process has permission to send
-         * that signal.
-         */
-        kret = -RT_ENOSYS;
-    }
-    else if (pid == -1)
-    {
-        /**
-         * sig shall be sent to all processes (excluding an unspecified set
-         * of system processes) for which the process has permission to send
-         * that signal.
-         */
-        kret = -RT_ENOSYS;
-    }
+        pid_t pgid = 0;
+        rt_processgroup_t group;
 
-    if (lwp)
+        if (pid == 0)
+        {
+            /**
+             * sig shall be sent to all processes (excluding an unspecified set
+             * of system processes) whose process group ID is equal to the process
+             * group ID of the sender, and for which the process has permission to
+             * send a signal.
+             */
+            pgid = lwp_pgid_get_byprocess(lwp_self());
+        }
+        else
+        {
+            /**
+             * sig shall be sent to all processes (excluding an unspecified set
+             * of system processes) whose process group ID is equal to the absolute
+             * value of pid, and for which the process has permission to send a signal.
+             */
+            pgid = -pid;
+        }
+
+        group = lwp_pgrp_find(pgid);
+        if (group != RT_NULL)
+        {
+            PGRP_LOCK(group);
+            kret = lwp_pgrp_signal_kill(group, signo, SI_USER, 0);
+            PGRP_UNLOCK(group);
+        }
+        else
+        {
+            kret = -ECHILD;
+        }
+    }
+    else if (pid == -1)
     {
-        kret = lwp_signal_kill(lwp, signo, SI_USER, 0);
-        lwp_ref_dec(lwp);
-        kret = 0;
+        /**
+         * sig shall be sent to all processes (excluding an unspecified set
+         * of system processes) for which the process has permission to send
+         * that signal.
+         */
+        kret = -RT_ENOSYS;
     }
 
     switch (kret)
@@ -1000,6 +1013,22 @@ sysret_t sys_kill(int pid, int signo)
 sysret_t sys_getpid(void)
 {
     return lwp_getpid();
+}
+
+sysret_t sys_getppid(void)
+{
+    rt_lwp_t process;
+
+    process = lwp_self();
+    if (process->parent == RT_NULL)
+    {
+        LOG_E("%s: process %d has no parent process", __func__, lwp_to_pid(process));
+        return 0;
+    }
+    else
+    {
+        return lwp_to_pid(process->parent);
+    }
 }
 
 /* syscall: "getpriority" ret: "int" args: "int" "id_t" */
@@ -1934,11 +1963,7 @@ static void lwp_struct_copy(struct rt_lwp *dst, struct rt_lwp *src)
     dst->data_entry = src->data_entry;
     dst->data_size = src->data_size;
     dst->args = src->args;
-    dst->D_leader = 0;
-    dst->D_session = src->D_session;
     dst->background = src->background;
-    dst->D_tty_old_pgrp = 0;
-    dst->D__pgrp = src->D__pgrp;
     dst->tty = src->tty;
 
     /* terminal API */
@@ -2080,6 +2105,17 @@ sysret_t _sys_fork(void)
     LWP_UNLOCK(self_lwp);
 
     lwp_children_register(self_lwp, lwp);
+
+    /* set pgid and sid */
+    group = lwp_pgrp_find(lwp_pgid_get_byprocess(self_lwp));
+    if (group)
+    {
+        lwp_pgrp_insert(group, lwp);
+    }
+    else
+    {
+        LOG_W("the process group of pid: %d cannot be found", lwp_pgid_get_byprocess(self_lwp));
+    }
 
     /* copy kernel stack context from self thread */
     lwp_memcpy(thread->stack_addr, self_thread->stack_addr, self_thread->stack_size);
@@ -3897,6 +3933,30 @@ out:
     return (fd < 0 ? GET_ERRNO() : fd);
 }
 
+sysret_t sys_socketpair(int domain, int type, int protocol, int fd[2])
+{
+#ifdef RT_USING_SAL
+    int ret = 0;
+    int k_fd[2];
+
+    if (!lwp_user_accessable((void *)fd, sizeof(int [2])))
+    {
+        return -EFAULT;
+    }
+
+    ret = socketpair(domain, type, protocol, k_fd);
+
+    if (ret == 0)
+    {
+        lwp_put_to_user(fd, k_fd, sizeof(int [2]));
+    }
+
+    return ret;
+#else
+    return -ELIBACC;
+#endif
+}
+
 sysret_t sys_closesocket(int socket)
 {
     return closesocket(socket);
@@ -4304,7 +4364,7 @@ sysret_t sys_waitpid(int32_t pid, int *status, int options)
     }
     else
     {
-        ret = lwp_waitpid(pid, status, options);
+        ret = lwp_waitpid(pid, status, options, RT_NULL);
     }
 #else
     if (!lwp_user_accessable((void *)status, sizeof(int)))
@@ -5203,7 +5263,7 @@ sysret_t sys_getrlimit(unsigned int resource, unsigned long rlim[2])
     }
 
     lwp_put_to_user((void *)rlim, krlim, sizeof(unsigned long [2]));
-    kmem_put(krlim);
+
     return (ret < 0 ? GET_ERRNO() : ret);
 }
 
@@ -6708,30 +6768,6 @@ sysret_t sys_setitimer(int which, const struct itimerspec *restrict new, struct 
     return rc;
 }
 
-sysret_t sys_socketpair(int domain, int type, int protocol, int fd[2])
-{
-#ifdef RT_USING_SAL
-    int ret = 0;
-    int k_fd[2];
-
-    if (!lwp_user_accessable((void *)fd, sizeof(int [2])))
-    {
-        return -EFAULT;
-    }
-
-    ret = socketpair(domain, type, protocol, k_fd);
-
-    if (ret == 0)
-    {
-        lwp_put_to_user(fd, k_fd, sizeof(int [2]));
-    }
-
-    return ret;
-#else
-    return -ELIBACC;
-#endif
-}
-
 sysret_t sys_set_robust_list(struct robust_list_head *head, size_t len)
 {
     if (len != sizeof(*head))
@@ -7039,6 +7075,12 @@ const static struct rt_syscall_def func_table[] =
     SYSCALL_SIGN(sys_wait4),
     SYSCALL_SIGN(sys_set_robust_list),
     SYSCALL_SIGN(sys_get_robust_list),
+    SYSCALL_SIGN(sys_setpgid),
+    SYSCALL_SIGN(sys_getpgid),                          /* 210 */
+    SYSCALL_SIGN(sys_getsid),
+    SYSCALL_SIGN(sys_getppid),
+    SYSCALL_SIGN(sys_fchdir),
+    SYSCALL_SIGN(sys_chown),
 };
 
 const void *lwp_get_sys_api(rt_uint32_t number)

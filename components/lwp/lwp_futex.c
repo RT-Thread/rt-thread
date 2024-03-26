@@ -475,6 +475,11 @@ static long _futex_wake(rt_futex_t futex, struct rt_lwp *lwp, int number,
         {
             number--;
             woken_cnt++;
+            is_empty = RT_FALSE;
+        }
+        else
+        {
+            is_empty = RT_TRUE;
         }
         _futex_unlock(lwp, op_flags);
     }
@@ -512,23 +517,16 @@ static long _futex_requeue(rt_futex_t futex1, rt_futex_t futex2,
      */
     while (nr_wake && !is_empty)
     {
-        rt_sched_lock_level_t slvl;
-        rt_sched_lock(&slvl);
-        is_empty = rt_list_isempty(&(futex1->waiting_thread));
-        if (!is_empty)
+        if (rt_susp_list_dequeue(&futex1->waiting_thread, RT_EOK))
         {
-            thread = RT_THREAD_LIST_NODE_ENTRY(futex1->waiting_thread.next);
-            /* remove from waiting list */
-            rt_list_remove(&RT_THREAD_LIST_NODE(thread));
-
-            thread->error = RT_EOK;
-            /* resume the suspended thread */
-            rt_thread_resume(thread);
-
             nr_wake--;
             woken_cnt++;
+            is_empty = RT_FALSE;
         }
-        rt_sched_unlock(slvl);
+        else
+        {
+            is_empty = RT_TRUE;
+        }
     }
     rtn = woken_cnt;
 
@@ -542,7 +540,10 @@ static long _futex_requeue(rt_futex_t futex1, rt_futex_t futex2,
     {
         rt_sched_lock_level_t slvl;
         rt_sched_lock(&slvl);
+
+        /* moving from one susp list to another */
         is_empty = rt_list_isempty(&(futex1->waiting_thread));
+
         if (!is_empty)
         {
             thread = RT_THREAD_LIST_NODE_ENTRY(futex1->waiting_thread.next);
