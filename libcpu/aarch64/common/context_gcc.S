@@ -439,7 +439,7 @@ rt_hw_context_switch_exit:
     MOV     X0, SP
     RESTORE_CONTEXT
 
-#else   /* RT_USING_SMP */
+#else   /* !RT_USING_SMP */
 
 /*
  * void rt_hw_context_switch_to(rt_ubase_t to);

@@ -215,6 +215,9 @@ struct rt_spinlock
 
 struct rt_spinlock
 {
+#ifdef RT_USING_DEBUG
+    rt_uint32_t critical_level;
+#endif /* RT_USING_DEBUG */
     rt_ubase_t lock;
 };
 #define RT_SPINLOCK_INIT {0}
