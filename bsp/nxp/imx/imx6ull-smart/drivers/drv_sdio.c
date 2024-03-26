@@ -52,7 +52,7 @@
 /* Endian mode. */
 #define USDHC_ENDIAN_MODE kUSDHC_EndianModeLittle
 
-uint32_t g_usdhcAdma2Table[USDHC_ADMA_TABLE_WORDS];
+static uint32_t g_usdhcAdma2Table[USDHC_ADMA_TABLE_WORDS];
 struct rt_mmcsd_host *host1;
 struct rt_mmcsd_host *host2;
 static rt_mutex_t mmcsd_mutex = RT_NULL;
