@@ -2749,7 +2749,7 @@ sysret_t sys_execve(const char *path, char *const argv[], char *const envp[])
          */
         RT_ASSERT(rt_list_entry(lwp->t_grp.prev, struct rt_thread, sibling) == thread);
 
-        strncpy(thread->parent.name, run_name + last_backslash, RT_NAME_MAX);
+        strncpy(thread->parent.name, run_name + last_backslash, RT_NAME_MAX - 1);
         strncpy(lwp->cmd, new_lwp->cmd, RT_NAME_MAX);
 
         rt_pages_free(page, 0);

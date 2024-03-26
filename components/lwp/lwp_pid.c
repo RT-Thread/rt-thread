@@ -910,7 +910,7 @@ static void print_thread_info(struct rt_thread* thread, int maxlen)
     else
         rt_kprintf("%-*.*s N/A %3d ", maxlen, RT_NAME_MAX, thread->parent.name, RT_SCHED_PRIV(thread).current_priority);
 #else
-    rt_kprintf("%-*.*s %3d ", maxlen, RT_NAME_MAX, thread->parent.name, thread->current_priority);
+    rt_kprintf("%-*.*s %3d ", maxlen, RT_NAME_MAX, thread->parent.name, RT_SCHED_PRIV(thread).current_priority);
 #endif /*RT_USING_SMP*/
 
     stat = (RT_SCHED_CTX(thread).stat & RT_THREAD_STAT_MASK);
