@@ -928,9 +928,16 @@ static const struct speed_baudrate_item _tbl[] =
     {B230400, BAUD_RATE_230400},
     {B460800, BAUD_RATE_460800},
     {B500000, BAUD_RATE_500000},
+    {B576000, BAUD_RATE_576000},
     {B921600, BAUD_RATE_921600},
+    {B1000000, BAUD_RATE_1000000},
+    {B1152000, BAUD_RATE_1152000},
+    {B1500000, BAUD_RATE_1500000},
     {B2000000, BAUD_RATE_2000000},
+    {B2500000, BAUD_RATE_2500000},
     {B3000000, BAUD_RATE_3000000},
+    {B3500000, BAUD_RATE_3500000},
+    {B4000000, BAUD_RATE_4000000},
 };
 
 static speed_t _get_speed(int baudrate)
@@ -1058,8 +1065,8 @@ static rt_err_t rt_serial_control(struct rt_device *dev,
             }
             break;
 #ifdef RT_USING_POSIX_STDIO
-#if defined(RT_USING_POSIX_TERMIOS) && !defined(RT_USING_SMART)
-        case TCGETA:
+#if defined(RT_USING_POSIX_TERMIOS) && !defined(RT_USING_TTY)
+        case TCGETS:
             {
                 struct termios *tio = (struct termios*)args;
                 if (tio == RT_NULL) return -RT_EINVAL;
@@ -1095,9 +1102,9 @@ static rt_err_t rt_serial_control(struct rt_device *dev,
             }
             break;
 
-        case TCSETAW:
-        case TCSETAF:
-        case TCSETA:
+        case TCSETSW:
+        case TCSETSF:
+        case TCSETS:
             {
                 int baudrate;
                 struct serial_configure config;
