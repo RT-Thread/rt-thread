@@ -25,6 +25,7 @@ if os.getenv('RTT_EXEC_PATH'):
     EXEC_PATH = os.getenv('RTT_EXEC_PATH')
 
 BUILD = 'debug'
+CHIP_TYPE = 'cv180x'
 
 if PLATFORM == 'gcc':
     # toolchains
@@ -56,4 +57,5 @@ if PLATFORM == 'gcc':
     CXXFLAGS = CFLAGS
 
 DUMP_ACTION = OBJDUMP + ' -D -S $TARGET > rtthread.asm\n'
-POST_ACTION = OBJCPY + ' -O binary $TARGET Image\n' + SIZE + ' $TARGET \n' + './mksdimg.sh\n'
+POST_ACTION = OBJCPY + ' -O binary $TARGET Image \n' + SIZE + ' $TARGET \n'
+POST_ACTION += 'cd .. && bash mksdimg.sh ' + os.getcwd() + ' Image \n'

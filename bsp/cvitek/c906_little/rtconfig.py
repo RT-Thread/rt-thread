@@ -18,7 +18,7 @@ if os.getenv('RTT_CC'):
 
 if  CROSS_TOOL == 'gcc':
     PLATFORM    = 'gcc'
-    EXEC_PATH   = r'/opt/Xuantie-900-gcc-elf-newlib-x86_64-V2.8.0/bin'
+    EXEC_PATH   = r'/opt/Xuantie-900-gcc-elf-newlib-x86_64-V2.8.1/bin'
 else:
     print('Please make sure your toolchains is GNU GCC!')
     exit(0)
@@ -47,9 +47,10 @@ if PLATFORM == 'gcc':
     CFLAGS += ' -DCONFIG_64BIT'
 
     LINKER_SCRIPTS = r'cv180x_lscript.ld'
+    LINKER_SCRIPTS_PATH = r' -L board/script/cv180x'
 
     AFLAGS  = ' -c' + DEVICE + ' -x assembler-with-cpp'
-    LFLAGS  = DEVICE + ' -nostartfiles -fms-extensions -ffunction-sections -fdata-sections -Wl,--gc-sections,-Map=rtthread.map,-cref,-u,_start -T ' + LINKER_SCRIPTS
+    LFLAGS  = DEVICE + ' -nostartfiles -fms-extensions -ffunction-sections -fdata-sections -Wl,--gc-sections,-Map=rtthread.map,-cref,-u,_start -T ' + LINKER_SCRIPTS + LINKER_SCRIPTS_PATH
     CPATH   = ''
     LPATH   = ''
 
@@ -63,4 +64,4 @@ if PLATFORM == 'gcc':
 
 DUMP_ACTION = OBJDUMP + ' -D -S $TARGET > rtt.asm\n'
 POST_ACTION = OBJCPY + ' -O binary $TARGET rtthread.bin\n' + SIZE + ' $TARGET \n'
-POST_ACTION += 'cd .. && ./combine-fip.sh c906_little/rtthread.bin\n'
+POST_ACTION += 'cd .. && bash combine-fip.sh ' + os.getcwd() + ' rtthread.bin' + ' \n'
