@@ -122,7 +122,12 @@ def get_env_dir():
         env_dir  = os.path.join(home_dir, '.env')
     else:
         home_dir = os.environ['HOME']
-        env_dir  = os.path.join(home_dir, '.env')
+        # compatible with the old path ~/.env
+        if os.path.exists(os.path.join(home_dir, '.env')):
+            env_dir  = os.path.join(home_dir, '.env')
+        else:
+            xdg_data_home = os.getenv('XDG_DATA_HOME', os.path.join(home_dir, '.local/share'))
+            env_dir  = os.path.join(xdg_data_home, 'rt-thread/env')
 
     if not os.path.exists(env_dir):
         return None
@@ -148,14 +153,15 @@ def help_info():
 def touch_env():
     if sys.platform != 'win32':
         home_dir = os.environ['HOME']
+        xdg_data_home = os.getenv('XDG_DATA_HOME', os.path.join(home_dir, '.local/share'))
     else:
         home_dir = os.environ['USERPROFILE']
 
     package_url = os.getenv('RTT_PACKAGE_URL') or DEFAULT_RTT_PACKAGE_URL
 
-    env_dir  = os.path.join(home_dir, '.env')
+    env_dir  = os.path.join(xdg_data_home, 'rt-thread/env')
     if not os.path.exists(env_dir):
-        os.mkdir(env_dir)
+        os.makedirs(env_dir)
         os.mkdir(os.path.join(env_dir, 'local_pkgs'))
         os.mkdir(os.path.join(env_dir, 'packages'))
         os.mkdir(os.path.join(env_dir, 'tools'))
@@ -218,12 +224,12 @@ def touch_env():
 
     if sys.platform != 'win32':
         env_sh = open(os.path.join(env_dir, 'env.sh'), 'w')
-        env_sh.write('export PATH=~/.env/tools/scripts:$PATH')
+        env_sh.write('export PATH={}/tools/scripts:$PATH'.format(env_dir))
 
         # if fish config exists, generate env.fish
         if os.path.exists(os.path.join(home_dir, '.config', 'fish', 'config.fish')):
             env_fish = open(os.path.join(env_dir, 'env.fish'), 'w')
-            env_fish.write('set -gx PATH ~/.env/tools/scripts $PATH')
+            env_fish.write('set -gx PATH {}/tools/scripts $PATH'.format(env_dir))
     else:
         if os.path.exists(os.path.join(env_dir, 'tools', 'scripts')):
             os.environ["PATH"] = os.path.join(env_dir, 'tools', 'scripts') + ';' + os.environ["PATH"]
@@ -252,8 +258,12 @@ def menuconfig(RTT_ROOT):
     kconfig_dir = os.path.join(RTT_ROOT, 'tools', 'kconfig-frontends')
     os.system('scons -C ' + kconfig_dir)
 
-    touch_env()
     env_dir = get_env_dir()
+    # only touch_env when it not exists
+    if not env_dir:
+        touch_env()
+        env_dir = get_env_dir()
+
     if isinstance(env_dir, str):
         os.environ['PKGS_ROOT'] = os.path.join(env_dir, 'packages')
 
@@ -284,7 +294,11 @@ def guiconfig(RTT_ROOT):
     exclude_utestcases(RTT_ROOT)
 
     if sys.platform != 'win32':
-        touch_env()
+        env_dir = get_env_dir()
+        # only touch_env when it not exists
+        if not env_dir:
+            env_dir = get_env_dir()
+            touch_env()
 
     env_dir = get_env_dir()
     if isinstance(env_dir, str):
@@ -318,7 +332,11 @@ def guiconfig_silent(RTT_ROOT):
     exclude_utestcases(RTT_ROOT)
 
     if sys.platform != 'win32':
-        touch_env()
+        env_dir = get_env_dir()
+        # only touch_env when it not exists
+        if not env_dir:
+            env_dir = get_env_dir()
+            touch_env()
 
     env_dir = get_env_dir()
     if isinstance(env_dir, str):
