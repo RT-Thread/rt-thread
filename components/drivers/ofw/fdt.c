@@ -504,6 +504,11 @@ static rt_err_t fdt_scan_memory(void)
                     err = commit_memregion(region->name, res_region->end, new_size, RT_FALSE);
                 }
 
+                if (!(region->end - region->start))
+                {
+                    region->name = RT_NULL;
+                }
+
                 if (!err)
                 {
                     ++no;
