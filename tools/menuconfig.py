@@ -243,16 +243,16 @@ def exclude_utestcases(RTT_ROOT):
             if line.find('examples/utest/testcases/Kconfig') == -1:
                 f.write(line)
 
-# menuconfig for Linux
+# menuconfig for Linux and Windows
 def menuconfig(RTT_ROOT):
+    from Kconfiglib import menuconfig
 
     # Exclude utestcases
     exclude_utestcases(RTT_ROOT)
 
-    kconfig_dir = os.path.join(RTT_ROOT, 'tools', 'kconfig-frontends')
-    os.system('scons -C ' + kconfig_dir)
+    if sys.platform != 'win32':
+        touch_env()
 
-    touch_env()
     env_dir = get_env_dir()
     if isinstance(env_dir, str):
         os.environ['PKGS_ROOT'] = os.path.join(env_dir, 'packages')
@@ -260,8 +260,8 @@ def menuconfig(RTT_ROOT):
     fn = '.config'
     fn_old = '.config.old'
 
-    kconfig_cmd = os.path.join(RTT_ROOT, 'tools', 'kconfig-frontends', 'kconfig-mconf')
-    os.system(kconfig_cmd + ' Kconfig')
+    sys.argv = ['menuconfig', 'Kconfig']
+    menuconfig._main()
 
     if os.path.isfile(fn):
         if os.path.isfile(fn_old):
@@ -278,7 +278,7 @@ def menuconfig(RTT_ROOT):
 
 # guiconfig for windows and linux
 def guiconfig(RTT_ROOT):
-    import pyguiconfig
+    from Kconfiglib import guiconfig
 
     # Exclude utestcases
     exclude_utestcases(RTT_ROOT)
@@ -294,7 +294,7 @@ def guiconfig(RTT_ROOT):
     fn_old = '.config.old'
 
     sys.argv = ['guiconfig', 'Kconfig']
-    pyguiconfig._main()
+    guiconfig._main()
 
     if os.path.isfile(fn):
         if os.path.isfile(fn_old):
@@ -312,7 +312,7 @@ def guiconfig(RTT_ROOT):
 
 # guiconfig for windows and linux
 def guiconfig_silent(RTT_ROOT):
-    import defconfig
+    from Kconfiglib import defconfig
 
     # Exclude utestcases
     exclude_utestcases(RTT_ROOT)
