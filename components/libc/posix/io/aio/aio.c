@@ -7,6 +7,7 @@
  * Date           Author            Notes
  * 2017/12/30     Bernard           The first version.
  * 2024/03/26     TroyMitchelle     Added some function comments
+ * 2024/03/27     TroyMitchelle     Fix the issue of incorrect return of invalid parameters in aio_write
  */
 
 #include <rtthread.h>
@@ -401,7 +402,8 @@ int aio_write(struct aiocb *cb)
 
     /* check access mode */
     oflags = fcntl(cb->aio_fildes, F_GETFL, 0);
-    if ((oflags & O_ACCMODE) != O_WRONLY ||
+    /* If the flag is not in write only or read-write mode, it cannot be written then an invalid parameter is returned  */
+    if ((oflags & O_ACCMODE) != O_WRONLY &&
         (oflags & O_ACCMODE) != O_RDWR)
         return -EINVAL;
 
