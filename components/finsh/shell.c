@@ -112,7 +112,11 @@ const char *finsh_get_prompt(void)
     getcwd(&finsh_prompt[rt_strlen(finsh_prompt)], RT_CONSOLEBUF_SIZE - rt_strlen(finsh_prompt));
 #endif
 
-    strcat(finsh_prompt, ">");
+    if (rt_strlen(finsh_prompt) + 2 < RT_CONSOLEBUF_SIZE)
+    {
+        finsh_prompt[rt_strlen(finsh_prompt)] = '>';
+        finsh_prompt[rt_strlen(finsh_prompt) + 1] = '\0';
+    }
 
     return finsh_prompt;
 }
