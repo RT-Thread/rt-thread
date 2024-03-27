@@ -159,32 +159,7 @@ void ch32_dir_miso(void *data, rt_int32_t state)
 
 static void ch32_udelay(rt_uint32_t us)
 {
-    rt_uint32_t ticks;
-    rt_uint32_t told, tnow, tcnt = 0;
-    rt_uint32_t reload = SysTick->CMP;
-
-    ticks = us * reload / (1000000 / RT_TICK_PER_SECOND);
-    told = SysTick->CNT;
-    while (1)
-    {
-        tnow = SysTick->CNT;
-        if (tnow != told)
-        {
-            if (tnow > told)
-            {
-                tcnt += tnow - told;
-            }
-            else
-            {
-                tcnt += reload - told + tnow;
-            }
-            told = tnow;
-            if (tcnt >= ticks)
-            {
-                break;
-            }
-        }
-    }
+    rt_hw_us_delay(us);
 }
 
 static struct rt_spi_bit_ops ch32_soft_spi_ops =
