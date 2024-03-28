@@ -51,4 +51,7 @@
 /* Serial2 : P-TX  P-RX */
 #define RTDUINO_SERIAL2_DEVICE_NAME      "uart1"
 
+#define SS          D17
+#define RTDUINO_DEFAULT_SPI_BUS_NAME     "spi0"
+
 #endif /* Pins_Arduino_h */
