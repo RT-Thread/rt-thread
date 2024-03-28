@@ -190,12 +190,7 @@ int rt_hw_i2c_init(void)
 
     //TODO CONFIG
     I2C_InitTypeDef I2C_InitTSturcture = {0};
-    I2C_InitTSturcture.I2C_ClockSpeed = 5000; //TODO
-    I2C_InitTSturcture.I2C_Mode = I2C_Mode_I2C;
-    I2C_InitTSturcture.I2C_DutyCycle = I2C_DutyCycle_2; //TODO
-    I2C_InitTSturcture.I2C_OwnAddress1 = address; //TODO address
-    I2C_InitTSturcture.I2C_Ack = I2C_Ack_Enable;
-    I2C_InitTSturcture.I2C_AcknowledgedAddress = I2C_AcknowledgedAddress_7bit; //TODO 7/10 bits
+    I2C_StructInit(&I2C_InitTSturcture);
 
 #ifdef BSP_USING_I2C1
 
@@ -230,7 +225,6 @@ int rt_hw_i2c_init(void)
 
     GPIO_InitStructure.GPIO_Pin = GPIO_Pin_10 | GPIO_Pin_11;
     GPIO_Init(GPIOB, &GPIO_InitStructure);
-    //TODO pin remap missing
 
     //I2C Initialization Config
     I2C_Init(I2C2, &I2C_InitTSturcture);
