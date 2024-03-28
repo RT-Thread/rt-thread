@@ -19,7 +19,7 @@ source "$RTT_DIR/Kconfig"
 source "$PKGS_DIR/Kconfig"
 source "board/Kconfig"
 
-config BSP_USING_CV1800B
+config BSP_USING_CV180X
     bool
     select ARCH_RISCV64
     select RT_USING_SYSTEM_WORKQUEUE
@@ -45,3 +45,11 @@ config TIMER_CLK_FREQ
 config __STACKSIZE__
     int "stack size for interrupt"
     default 4096
+
+choice
+    prompt "Board Type"
+    default BOARD_TYPE_MILKV_DUO
+
+    config BOARD_TYPE_MILKV_DUO
+        bool "milkv-duo"
+endchoice

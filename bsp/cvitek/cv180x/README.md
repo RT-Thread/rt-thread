@@ -49,8 +49,9 @@ $ export RTT_EXEC_PATH=/opt/riscv64-linux-musleabi_for_x86_64-pc-linux-gnu/bin
 1. 依赖安装
 
 ```shell
-$ sudo apt install -y device-tree-compiler
+$ sudo apt install -y scons libncurses5-dev device-tree-compiler
 ```
+
 2. Linux平台下，可以先执行：
 ```shell
 $ scons --menuconfig
@@ -61,7 +62,7 @@ $ scons --menuconfig
 $ source ~/.env/env.sh
 $ pkgs --update
 ```
-更新完软件包后，执行 `scons -j10` 或 `scons -j10 --verbose` 来编译这个板级支持包。或者通过 `scons --exec-path="GCC工具链路径"` 命令，在指定工具链位置的同时直接编译。编译正确无误，会产生rtthread.elf文件。
+更新完软件包后，执行 `scons -j10` 或 `scons -j10 --verbose` 来编译这个板级支持包。或者通过 `scons --exec-path="GCC工具链路径"` 命令，在指定工具链位置的同时直接编译。编译正确无误，会产生 rtthread.elf 文件。
 
 编译完成后脚本自动调用 `./mksdimg.sh` 脚本进行打包，并生成 `boot.sd`, 该文件即为 SD 卡启动的 kernel 文件。
 
