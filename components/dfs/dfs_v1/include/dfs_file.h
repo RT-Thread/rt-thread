@@ -63,6 +63,7 @@ struct dfs_file
     struct dfs_vnode *vnode;     /* file node struct */
     void *data;                  /* Specific fd data */
 };
+#define DFS_FILE_POS(dfs_file) ((dfs_file)->pos)
 
 #ifdef RT_USING_SMART
 struct dfs_mmap2_args
