@@ -7,6 +7,7 @@
  * Date           Author       Notes
  * 2021-05-18     Jesven       first version
  * 2023-07-16     Shell        Move part of the codes to C from asm in signal handling
+ * 2023-08-03     Shell        Support of syscall restart (SA_RESTART)
  */
 
 #ifndef __ASSEMBLY__
@@ -17,6 +18,7 @@
 #include "asm-generic.h"
 #include "asm-fpu.h"
 #include "armv8.h"
+#include "lwp_arch.h"
 
 /*********************
  *      SPSR BIT     *
@@ -155,6 +157,14 @@ START_POINT_END(SVC_Handler)
 
 .global arch_syscall_exit
 arch_syscall_exit:
+
+    /**
+     * @brief back up former x0 which is required to restart syscall, then setup
+     * syscall return value in stack frame
+     */
+    mov x1, sp
+    bl arch_syscall_prepare_signal
+
     msr daifset, #3
 
     ldp x2, x3, [sp], #0x10  /* SPSR and ELR. */
@@ -177,7 +187,10 @@ arch_syscall_exit:
     ldp x12, x13, [sp], #0x10
     ldp x10, x11, [sp], #0x10
     ldp x8, x9, [sp], #0x10
-    add sp, sp, #0x40
+    ldp x6, x7, [sp], #0x10
+    ldp x4, x5, [sp], #0x10
+    ldp x2, x3, [sp], #0x10
+    ldp x0, x1, [sp], #0x10
     RESTORE_FPU sp
 
 /* the sp is reset to the outer most level, irq and fiq are disabled */
@@ -383,10 +396,53 @@ lwp_check_debug_quit:
     ldp x29, x30, [sp], #0x10
     ret
 
+.global arch_syscall_restart
+arch_syscall_restart:
+    msr daifset, 3
+
+    mov sp, x1
+    /* drop exception frame in user stack */
+    msr sp_el0, x0
+
+    /* restore previous exception frame */
+    msr spsel, #0
+
+    ldp x2, x3, [sp], #0x10
+    msr elr_el1, x2
+    msr spsr_el1, x3
+
+    ldp x29, x30, [sp], #0x10
+
+    ldp x28, x29, [sp], #0x10
+    msr fpcr, x28
+    msr fpsr, x29
+
+    ldp x28, x29, [sp], #0x10
+    ldp x26, x27, [sp], #0x10
+    ldp x24, x25, [sp], #0x10
+    ldp x22, x23, [sp], #0x10
+    ldp x20, x21, [sp], #0x10
+    ldp x18, x19, [sp], #0x10
+    ldp x16, x17, [sp], #0x10
+    ldp x14, x15, [sp], #0x10
+    ldp x12, x13, [sp], #0x10
+    ldp x10, x11, [sp], #0x10
+    ldp x8, x9, [sp], #0x10
+    ldp x6, x7, [sp], #0x10
+    ldp x4, x5, [sp], #0x10
+    ldp x2, x3, [sp], #0x10
+    ldp x0, x1, [sp], #0x10
+    RESTORE_FPU sp
+
+    msr spsel, #1
+
+    b vector_exception
+
 arch_signal_quit:
 
     /* drop current exception frame */
     add sp, sp, #CONTEXT_SIZE
+    mov x1, sp
     mrs x0, sp_el0
     bl  arch_signal_ucontext_restore
     add x0, x0, #-CONTEXT_SIZE
@@ -456,6 +512,11 @@ arch_thread_signal_enter:
 
     /* arch_signal_ucontext_save(user_sp, psiginfo, exp_frame, save_sig_mask); */
     bl arch_signal_ucontext_save
+    mov x22, x0
+    /* get and saved pointer to uframe */
+    bl arch_signal_ucontext_get_frame
+    mov x2, x0
+    mov x0, x22
 
     dc cvau, x0
     dsb sy
@@ -483,12 +544,15 @@ arch_thread_signal_enter:
     /** set the return address to the sigreturn */
     mov x30, x0
 
+    cbnz x21, 1f
+    mov x21, x30
+1:
     /** set the entry address of signal handler */
     msr elr_el1, x21
 
     /* siginfo is above the return address */
-    add x2, x30, 16
-    add x1, x2, #CONTEXT_SIZE
+    add x1, x30, UCTX_ABI_OFFSET_TO_SI
+    /* uframe is saved in x2 */
     mov x0, x19
 
     /**

@@ -23,6 +23,8 @@ extern "C"
 {
 #endif
 
+struct rt_varea;
+struct rt_aspace;
 struct dfs_vnode;
 struct dfs_dentry;
 struct dfs_aspace;
@@ -30,7 +32,8 @@ struct dfs_aspace;
 struct dfs_mmap
 {
     rt_list_t mmap_node;
-    struct rt_varea *varea;
+    struct rt_aspace *aspace;
+    void *vaddr;
 };
 
 struct dfs_page

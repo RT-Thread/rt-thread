@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2023-07-25     Shell        first version
+ * 2023-11-25     Shell        Add pgrp, session lock API
  */
 
 #define DBG_TAG "lwp.internal"
@@ -15,7 +16,7 @@
 #include <stdlib.h>
 #include "lwp_internal.h"
 
-static rt_err_t _mutex_take_safe(rt_mutex_t mtx, rt_int32_t timeout, rt_bool_t interruptable)
+static rt_err_t _mutex_take_safe(rt_mutex_t mtx, rt_int32_t timeout, int flags)
 {
     LWP_DEF_RETURN_CODE(rc);
     int retry;
@@ -45,15 +46,15 @@ static rt_err_t _mutex_take_safe(rt_mutex_t mtx, rt_int32_t timeout, rt_bool_t i
 
         do {
             retry = 0;
-            if (interruptable)
+            if (flags & LWP_MTX_FLAGS_INTR)
                 rc = rt_mutex_take_interruptible(mtx, effect_timeout);
             else
-                rc = rt_mutex_take(mtx, effect_timeout);
+                rc = rt_mutex_take_killable(mtx, effect_timeout);
 
 #ifdef LWP_DEBUG
             if (rc == RT_EOK)
             {
-                if (rt_mutex_get_hold(mtx) > 1)
+                if (!(flags & LWP_MTX_FALGS_NESTED) && rt_mutex_get_hold(mtx) > 1)
                 {
                     LOG_W("Already hold the lock");
                     rt_backtrace();
@@ -88,6 +89,7 @@ static rt_err_t _mutex_take_safe(rt_mutex_t mtx, rt_int32_t timeout, rt_bool_t i
     }
     else
     {
+        rc = -RT_EINVAL;
         LOG_W("%s: mtx should not be NULL", __func__);
         RT_ASSERT(0);
     }
@@ -95,10 +97,10 @@ static rt_err_t _mutex_take_safe(rt_mutex_t mtx, rt_int32_t timeout, rt_bool_t i
     LWP_RETURN(rc);
 }
 
-rt_err_t lwp_mutex_take_safe(rt_mutex_t mtx, rt_int32_t timeout, rt_bool_t interruptable)
+rt_err_t lwp_mutex_take_safe(rt_mutex_t mtx, rt_int32_t timeout, int flags)
 {
     LWP_DEF_RETURN_CODE(rc);
-    rc = _mutex_take_safe(mtx, timeout, interruptable);
+    rc = _mutex_take_safe(mtx, timeout, flags);
     LWP_RETURN(rc);
 }
 
@@ -116,18 +118,17 @@ rt_err_t lwp_mutex_release_safe(rt_mutex_t mtx)
     LWP_RETURN(rc);
 }
 
-rt_err_t lwp_critical_enter(struct rt_lwp *lwp)
+rt_err_t lwp_critical_enter(struct rt_lwp *lwp, int flags)
 {
     rt_err_t rc;
-    rc = lwp_mutex_take_safe(&lwp->lwp_lock, RT_WAITING_FOREVER, 0);
+    do {
+        rc = lwp_mutex_take_safe(&lwp->lwp_lock, RT_WAITING_FOREVER, flags);
+    } while (rc != RT_EOK && !(flags & LWP_MTX_FLAGS_INTR) && rc == -RT_EINTR);
 
     /* if current process is force killed */
-    if (rc != RT_EOK)
+    if (rc != RT_EOK && rc != -RT_EINTR)
     {
-        if (rc == -RT_EINTR && lwp_self() != RT_NULL)
-            sys_exit(EXIT_SUCCESS);
-        else
-            LOG_I("%s: unexpected return code = %ld", __func__, rc);
+        LOG_I("%s: unexpected return code = %ld", __func__, rc);
     }
 
     return rc;
@@ -136,4 +137,46 @@ rt_err_t lwp_critical_enter(struct rt_lwp *lwp)
 rt_err_t lwp_critical_exit(struct rt_lwp *lwp)
 {
     return lwp_mutex_release_safe(&lwp->lwp_lock);
+}
+
+rt_err_t lwp_pgrp_critical_enter(struct rt_processgroup *pgrp, int flags)
+{
+    rt_err_t rc;
+    do {
+        rc = lwp_mutex_take_safe(&pgrp->mutex, RT_WAITING_FOREVER, flags);
+    } while (rc != RT_EOK && !(flags & LWP_MTX_FLAGS_INTR) && rc == -RT_EINTR);
+
+    /* if current process is force killed */
+    if (rc != RT_EOK && rc != -RT_EINTR)
+    {
+        LOG_I("%s: unexpected return code = %ld", __func__, rc);
+    }
+
+    return rc;
+}
+
+rt_err_t lwp_pgrp_critical_exit(struct rt_processgroup *pgrp)
+{
+    return lwp_mutex_release_safe(&pgrp->mutex);
+}
+
+rt_err_t lwp_sess_critical_enter(struct rt_session *sess, int flags)
+{
+    rt_err_t rc;
+    do {
+        rc = lwp_mutex_take_safe(&sess->mutex, RT_WAITING_FOREVER, flags);
+    } while (rc != RT_EOK && !(flags & LWP_MTX_FLAGS_INTR) && rc == -RT_EINTR);
+
+    /* if current process is force killed */
+    if (rc != RT_EOK && rc != -RT_EINTR)
+    {
+        LOG_I("%s: unexpected return code = %ld", __func__, rc);
+    }
+
+    return rc;
+}
+
+rt_err_t lwp_sess_critical_exit(struct rt_session *sess)
+{
+    return lwp_mutex_release_safe(&sess->mutex);
 }

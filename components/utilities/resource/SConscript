@@ -3,6 +3,10 @@ from building import *
 cwd     = GetCurrentDir()
 src     = Glob('*.c')
 CPPPATH = [cwd]
+
+if GetDepend('RT_USING_ADT_BITMAP') == False:
+    SrcRemove(src, ['rid_bitmap.c'])
+
 group   = DefineGroup('Utilities', src, depend = ['RT_USING_RESOURCE_ID'], CPPPATH = CPPPATH)
 
 Return('group')

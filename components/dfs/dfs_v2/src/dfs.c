@@ -557,6 +557,111 @@ exit:
     return newfd;
 }
 
+/**
+ * @brief  The fd in the current process dup to designate fd table.
+ *
+ * @param  oldfd is the fd in current process.
+ *
+ * @param  fdtab is the fd table to dup, if empty, use global (_fdtab).
+ *
+ * @return -1 on failed or the allocated file descriptor.
+ */
+int dfs_dup_to(int oldfd, struct dfs_fdtable *fdtab)
+{
+    int newfd = -1;
+    struct dfs_fdtable *fdt = NULL;
+
+    if (dfs_file_lock() != RT_EOK)
+    {
+        return -RT_ENOSYS;
+    }
+
+    if (fdtab == NULL)
+    {
+        fdtab = &_fdtab;
+    }
+
+    /* check old fd */
+    fdt = dfs_fdtable_get();
+    if ((oldfd < 0) || (oldfd >= fdt->maxfd))
+    {
+        goto exit;
+    }
+    if (!fdt->fds[oldfd])
+    {
+        goto exit;
+    }
+    /* get a new fd*/
+    newfd = _fdt_slot_alloc(fdtab, DFS_STDIO_OFFSET);
+    if (newfd >= 0)
+    {
+        fdtab->fds[newfd] = fdt->fds[oldfd];
+
+        /* inc ref_count */
+        rt_atomic_add(&(fdtab->fds[newfd]->ref_count), 1);
+    }
+exit:
+    dfs_file_unlock();
+
+    return newfd;
+}
+
+/**
+ * @brief  The fd in the designate fd table dup to current process.
+ *
+ * @param  oldfd is the fd in the designate fd table.
+ *
+ * @param  fdtab is the fd table for oldfd, if empty, use global (_fdtab).
+ *
+ * @return -1 on failed or the allocated file descriptor.
+ */
+int dfs_dup_from(int oldfd, struct dfs_fdtable *fdtab)
+{
+    int newfd = -1;
+    struct dfs_file *file;
+
+    if (dfs_file_lock() != RT_EOK)
+    {
+        return -RT_ENOSYS;
+    }
+
+    if (fdtab == NULL)
+    {
+        fdtab = &_fdtab;
+    }
+
+    /* check old fd */
+    if ((oldfd < 0) || (oldfd >= fdtab->maxfd))
+    {
+        goto exit;
+    }
+    if (!fdtab->fds[oldfd])
+    {
+        goto exit;
+    }
+    /* get a new fd*/
+    newfd = fd_new();
+    file = fd_get(newfd);
+    if (newfd >= 0 && file)
+    {
+        file->mode = fdtab->fds[oldfd]->mode;
+        file->flags = fdtab->fds[oldfd]->flags;
+        file->fops = fdtab->fds[oldfd]->fops;
+        file->dentry = dfs_dentry_ref(fdtab->fds[oldfd]->dentry);
+        file->vnode = fdtab->fds[oldfd]->vnode;
+        file->mmap_context = RT_NULL;
+        file->data = fdtab->fds[oldfd]->data;
+    }
+
+    dfs_file_close(fdtab->fds[oldfd]);
+
+exit:
+    fdt_fd_release(fdtab, oldfd);
+    dfs_file_unlock();
+
+    return newfd;
+}
+
 #ifdef RT_USING_SMART
 sysret_t sys_dup(int oldfd)
 #else
@@ -856,7 +961,11 @@ int dfs_fd_dump(int argc, char** argv)
 {
     int index;
 
-    dfs_file_lock();
+    if (dfs_file_lock() != RT_EOK)
+    {
+        return -RT_ENOSYS;
+    }
+
     for (index = 0; index < _fdtab.maxfd; index++)
     {
         struct dfs_file *file = _fdtab.fds[index];

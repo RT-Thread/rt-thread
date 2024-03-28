@@ -622,27 +622,27 @@ void list_page(void)
         struct rt_page *lp = page_list_low[i];
         struct rt_page *hp = page_list_high[i];
 
-        LOG_RAW("level %d ", i);
+        rt_kprintf("level %d ", i);
 
         while (lp)
         {
             free += (1UL << i);
-            LOG_RAW("[0x%08p]", rt_page_page2addr(lp));
+            rt_kprintf("[0x%08p]", rt_page_page2addr(lp));
             lp = lp->next;
         }
         while (hp)
         {
             free += (1UL << i);
-            LOG_RAW("[0x%08p]", rt_page_page2addr(hp));
+            rt_kprintf("[0x%08p]", rt_page_page2addr(hp));
             hp = hp->next;
         }
         LOG_RAW("\n");
     }
 
     rt_spin_unlock_irqrestore(&_spinlock, level);
-    LOG_RAW("-------------------------------\n");
-    LOG_RAW("Page Summary:\n => free/installed: 0x%lx/0x%lx (%ld/%ld KB)\n", free, installed, PGNR2SIZE(free), PGNR2SIZE(installed));
-    LOG_RAW("-------------------------------\n");
+    rt_kprintf("-------------------------------\n");
+    rt_kprintf("Page Summary:\n => free/installed: 0x%lx/0x%lx (%ld/%ld KB)\n", free, installed, PGNR2SIZE(free), PGNR2SIZE(installed));
+    rt_kprintf("-------------------------------\n");
 }
 MSH_CMD_EXPORT(list_page, show page info);
 
