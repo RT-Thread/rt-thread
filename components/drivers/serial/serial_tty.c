@@ -146,7 +146,6 @@ rt_inline void _setup_serial(struct rt_serial_device *serial, lwp_tty_t tp,
 
     rt_device_init(&serial->parent);
 
-    rt_work_init(&softc->work, _tty_rx_worker, tp);
     rt_device_control(&serial->parent, RT_DEVICE_CTRL_NOTIFY_SET, &notify);
 }
 
@@ -295,6 +294,7 @@ rt_err_t rt_hw_serial_register_tty(struct rt_serial_device *serial)
             if (tty)
             {
                 rc = lwp_tty_register(tty, dev_name);
+                rt_work_init(&softc->work, _tty_rx_worker, tty);
 
                 if (rc != RT_EOK)
                 {

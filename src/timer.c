@@ -402,6 +402,11 @@ static rt_err_t _timer_start(rt_list_t *timer_list, rt_timer_t timer)
     unsigned int tst_nr;
     static unsigned int random_nr;
 
+    if (timer->parent.flag & RT_TIMER_FLAG_PROCESSING)
+    {
+        return -RT_ERROR;
+    }
+
     /* remove timer from list */
     _timer_remove(timer);
     /* change status of timer */
@@ -599,6 +604,11 @@ rt_err_t rt_timer_control(rt_timer_t timer, int cmd, void *arg)
 
     case RT_TIMER_CTRL_SET_TIME:
         RT_ASSERT((*(rt_tick_t *)arg) < RT_TICK_MAX / 2);
+        if (timer->parent.flag & RT_TIMER_FLAG_ACTIVATED)
+        {
+            _timer_remove(timer);
+            timer->parent.flag &= ~RT_TIMER_FLAG_ACTIVATED;
+        }
         timer->init_tick = *(rt_tick_t *)arg;
         break;
 
@@ -702,6 +712,8 @@ void rt_timer_check(void)
             {
                 t->parent.flag &= ~RT_TIMER_FLAG_ACTIVATED;
             }
+
+            t->parent.flag |= RT_TIMER_FLAG_PROCESSING;
             /* add timer to temporary list  */
             rt_list_insert_after(&list, &(t->row[RT_TIMER_SKIP_LIST_LEVEL - 1]));
             rt_spin_unlock_irqrestore(&_htimer_lock, level);
@@ -714,6 +726,9 @@ void rt_timer_check(void)
             RT_OBJECT_HOOK_CALL(rt_timer_exit_hook, (t));
             LOG_D("current tick: %d", current_tick);
             level = rt_spin_lock_irqsave(&_htimer_lock);
+
+            t->parent.flag &= ~RT_TIMER_FLAG_PROCESSING;
+
             /* Check whether the timer object is detached or started again */
             if (rt_list_isempty(&list))
             {
@@ -788,6 +803,8 @@ static void _soft_timer_check(void)
             {
                 t->parent.flag &= ~RT_TIMER_FLAG_ACTIVATED;
             }
+
+            t->parent.flag |= RT_TIMER_FLAG_PROCESSING;
             /* add timer to temporary list  */
             rt_list_insert_after(&list, &(t->row[RT_TIMER_SKIP_LIST_LEVEL - 1]));
 
@@ -800,6 +817,8 @@ static void _soft_timer_check(void)
             LOG_D("current tick: %d", current_tick);
 
             level = rt_spin_lock_irqsave(&_stimer_lock);
+
+            t->parent.flag &= ~RT_TIMER_FLAG_PROCESSING;
 
             /* Check whether the timer object is detached or started again */
             if (rt_list_isempty(&list))

@@ -94,6 +94,7 @@ static rt_err_t _workqueue_submit_work(struct rt_workqueue *queue,
                                        struct rt_work *work, rt_tick_t ticks)
 {
     rt_base_t level;
+    rt_err_t err;
 
     level = rt_spin_lock_irqsave(&(queue->spinlock));
 
@@ -125,7 +126,6 @@ static rt_err_t _workqueue_submit_work(struct rt_workqueue *queue,
         /* Timer started */
         if (work->flags & RT_WORK_STATE_SUBMITTING)
         {
-            rt_timer_stop(&work->timer);
             rt_timer_control(&work->timer, RT_TIMER_CTRL_SET_TIME, &ticks);
         }
         else
@@ -137,9 +137,11 @@ static rt_err_t _workqueue_submit_work(struct rt_workqueue *queue,
         work->workqueue = queue;
         /* insert delay work list */
         rt_list_insert_after(queue->delayed_list.prev, &(work->list));
+
+        err = rt_timer_start(&(work->timer));
         rt_spin_unlock_irqrestore(&(queue->spinlock), level);
-        rt_timer_start(&(work->timer));
-        return RT_EOK;
+
+        return err;
     }
     rt_spin_unlock_irqrestore(&(queue->spinlock), level);
     return -RT_ERROR;
@@ -156,7 +158,11 @@ static rt_err_t _workqueue_cancel_work(struct rt_workqueue *queue, struct rt_wor
     /* Timer started */
     if (work->flags & RT_WORK_STATE_SUBMITTING)
     {
-        rt_timer_stop(&(work->timer));
+        if ((err = rt_timer_stop(&(work->timer))) != RT_EOK)
+        {
+            rt_spin_unlock_irqrestore(&(queue->spinlock), level);
+            return err;
+        }
         rt_timer_detach(&(work->timer));
         work->flags &= ~RT_WORK_STATE_SUBMITTING;
     }
@@ -174,6 +180,8 @@ static void _delayed_work_timeout_handler(void *parameter)
 
     work = (struct rt_work *)parameter;
     queue = work->workqueue;
+
+    RT_ASSERT(work->flags & RT_WORK_STATE_SUBMITTING);
     RT_ASSERT(queue != RT_NULL);
 
     level = rt_spin_lock_irqsave(&(queue->spinlock));
