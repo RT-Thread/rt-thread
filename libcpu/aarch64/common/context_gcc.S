@@ -314,6 +314,12 @@ rt_hw_interrupt_is_disabled:
 .globl rt_hw_interrupt_disable
 rt_hw_interrupt_disable:
     MRS     X0, DAIF
+    AND     X0, X0, #0xc0
+    CMP     X0, #0xc0
+    /* branch if bits not both set(zero) */
+    BNE     1f
+    RET
+1:
     MSR     DAIFSet, #3
     DSB     NSH
     ISB
@@ -324,6 +330,12 @@ rt_hw_interrupt_disable:
  */
 .globl rt_hw_interrupt_enable
 rt_hw_interrupt_enable:
+    AND     X0, X0, #0xc0
+    CMP     X0, #0xc0
+    /* branch if one of the bits not set(zero) */
+    BNE     1f
+    RET
+1:
     ISB
     DSB     NSH
     AND     X0, X0, #0xc0
@@ -439,7 +451,7 @@ rt_hw_context_switch_exit:
     MOV     X0, SP
     RESTORE_CONTEXT
 
-#else   /* RT_USING_SMP */
+#else   /* !RT_USING_SMP */
 
 /*
  * void rt_hw_context_switch_to(rt_ubase_t to);
