@@ -2,17 +2,23 @@ from building import *
 
 cwd     = GetCurrentDir()
 src     = Split('''
-drv_uart.c
-drv_por.c
+    drv_uart.c
+    drv_por.c
 ''')
 CPPDEFINES = []
 
 CPPPATH = [cwd]
 
-if GetDepend('BSP_USING_CV1800B') or GetDepend('BSP_USING_C906_LITTLE'):
-    CPPPATH += [cwd + r'/cv1800b']
+CHIP_TYPE = 'cv180x'
+if GetDepend('BOARD_TYPE_MILKV_DUO256M'):
+    CHIP_TYPE = 'cv181x'
+elif GetDepend('BOARD_TYPE_MILKV_DUO') or GetDepend('BOARD_TYPE_MILKV_DUO_SPINOR') or GetDepend('BOARD_TYPE_MILKV_DUO_SPINAND'):
+    CHIP_TYPE = 'cv180x'
 
-if GetDepend('BSP_USING_CV1800B'):
+CPPPATH += [cwd + r'/libraries']
+CPPPATH += [cwd + r'/libraries/' + CHIP_TYPE]
+
+if GetDepend('BSP_USING_CV180X'):
     src += ['drv_gpio.c']
 
 if GetDepend('BSP_USING_I2C'):
@@ -26,7 +32,8 @@ if GetDepend('BSP_USING_WDT'):
 
 if GetDepend('BSP_USING_PWM'):
     src += ['drv_pwm.c']
-    CPPPATH += [cwd + r'/cv1800b/pwm']
+    CPPPATH += [cwd + r'/libraries/cv180x/pwm']
+    
 CPPDEFINES += ['-DCONFIG_64BIT']
 
 if GetDepend('BSP_USING_RTC'):
