@@ -19,7 +19,11 @@
 #ifdef RT_USING_SIGNALS
 
 #ifndef RT_SIG_INFO_MAX
-#define RT_SIG_INFO_MAX 32
+    #ifdef ARCH_CPU_64BIT
+        #define RT_SIG_INFO_MAX 64
+    #else
+        #define RT_SIG_INFO_MAX 32
+    #endif /* ARCH_CPU_64BIT */
 #endif /* RT_SIG_INFO_MAX */
 
 #define DBG_TAG     "SIGN"

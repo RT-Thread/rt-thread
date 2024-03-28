@@ -1,0 +1,13 @@
+menuconfig LWP_USING_TERMINAL
+    bool "Terminal I/O Subsystem"
+    depends on RT_USING_SMART
+    default y
+
+if LWP_USING_TERMINAL
+    config LWP_PTY_MAX_PARIS_LIMIT
+        int "Max number of pty devices registered at the same time"
+        default 64
+        help
+            This upper limit is set to protect kernel memory from draining
+            out by the application if it keeps allocating pty devices.
+endif

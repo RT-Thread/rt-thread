@@ -29,6 +29,10 @@
 #include <rtdevice.h> /* for wqueue_init */
 #endif /* RT_USING_POSIX_DEVIO */
 
+#ifdef RT_USING_DFS_V2
+#include <devfs.h>
+#endif /* RT_USING_DFS_V2 */
+
 #ifdef RT_USING_DEVICE
 
 #ifdef RT_USING_DEVICE_OPS
@@ -77,6 +81,10 @@ rt_err_t rt_device_register(rt_device_t dev,
     dev->fops = RT_NULL;
     rt_wqueue_init(&(dev->wait_queue));
 #endif /* RT_USING_POSIX_DEVIO */
+
+#ifdef RT_USING_DFS_V2
+    dfs_devfs_device_add(dev);
+#endif /* RT_USING_DFS_V2 */
 
     return RT_EOK;
 }

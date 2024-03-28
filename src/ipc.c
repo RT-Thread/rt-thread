@@ -598,7 +598,7 @@ static rt_err_t _rt_sem_take(rt_sem_t sem, rt_int32_t timeout, int suspend_flag)
             thread = rt_thread_self();
 
             /* reset thread error number */
-            thread->error = -RT_EINTR;
+            thread->error = RT_EINTR;
 
             LOG_D("sem take: suspend thread - %s", thread->parent.name);
 

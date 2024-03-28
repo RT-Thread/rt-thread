@@ -107,7 +107,7 @@ struct rt_pic_irq
     rt_uint32_t mode;
 
     rt_uint32_t priority;
-    RT_DECLARE_BITMAP(affinity, RT_CPUS_NR);
+    RT_BITMAP_DECLARE(affinity, RT_CPUS_NR);
 
     rt_list_t list;
     rt_list_t children_nodes;

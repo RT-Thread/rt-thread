@@ -602,7 +602,7 @@ static int _map_single_page_2M(unsigned long *lv0_tbl, unsigned long va,
     return 0;
 }
 
-void *rt_hw_mmu_tbl_get()
+void *rt_hw_mmu_tbl_get(void)
 {
     uintptr_t tbl;
     __asm__ volatile("MRS %0, TTBR0_EL1" : "=r"(tbl));
