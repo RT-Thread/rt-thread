@@ -17,20 +17,37 @@ $ export RTT_EXEC_PATH=/opt/Xuantie-900-gcc-elf-newlib-x86_64-V2.8.1/bin
 ```
 
 ## 编译
-1. Linux平台下，可以先执行：
+1. 依赖安装
+
+```shell
+$ sudo apt install -y scons libncurses5-dev wget flex bison
+```
+
+
+2. Linux平台下，先执行：
 ```shell
 $ scons --menuconfig
 ```
 
-它会自动下载env相关脚本到~/.env目录，然后执行
+选择当前需要编译的目标开发板类型
+```shell
+Board Type (milkv-duo)  --->
+    ( ) milkv-duo
+    (X) milkv-duo256m
+```
+
+它会自动下载 env 相关脚本到 ~/.env 目录，然后执行
 ```shell
 $ source ~/.env/env.sh
 $ pkgs --update
 ```
-更新完软件包后，执行 `scons -j10` 或 `scons -j10 --verbose` 来编译这个板级支持包。或者通过 `scons --exec-path="GCC工具链路径"` 命令，在指定工具链位置的同时直接编译。编译正确无误，会产生rtthread.elf文件。
+更新完软件包后，执行 `scons -j10` 或 `scons -j10 --verbose` 来编译这个板级支持包。或者通过 `scons --exec-path="GCC工具链路径"` 命令，在指定工具链位置的同时直接编译。编译正确无误，会产生rtthread.elf 文件。
 
 编译完成后脚本自动调用 `combine-fip.sh` 脚本进行打包，并生成 `fip.sd`, 该文件即为 SD 卡启动的 c906_little 文件。
 
+第一次调用 `combine-fip.sh` 脚本时会自动下载打包需要的 `opsbsbi`、`fsbl`、`uboot` 等相关文件至 `bsp/cvitek/cvitek_bootloader` 目录，请耐心等待。
+
+下载完成后会自动解压、编译，后续再次编译同一类型开发板只会调用相关文件打包合成 `fip.bin`。如需手工编译相关 `cvitek_bootloader` 文件，可在 `bsp/cvitek/cvitek_bootloader` 目录下执行 `bash build.sh lunch` 选择对应的开发板编译。
 
 ## 运行
 1. 将 SD 卡分为 2 个分区，第 1 个分区用于存放 bin 文件，第 2 个分区用于作为数据存储分区，分区格式为 `FAT32`。
