@@ -155,41 +155,6 @@ static rt_int32_t swm_i2c_get_scl(void *data)
     return rt_pin_read(soft_i2c_cfg->scl);
 }
 
-/**
- * The time delay function.
- *
- * @param microseconds.
- */
-static void swm_i2c_udelay(rt_uint32_t us)
-{
-    rt_uint32_t ticks;
-    rt_uint32_t told, tnow, tcnt = 0;
-    rt_uint32_t reload = SysTick->LOAD;
-
-    ticks = us * reload / (1000000 / RT_TICK_PER_SECOND);
-    told = SysTick->VAL;
-    while (1)
-    {
-        tnow = SysTick->VAL;
-        if (tnow != told)
-        {
-            if (tnow < told)
-            {
-                tcnt += told - tnow;
-            }
-            else
-            {
-                tcnt += reload - tnow + told;
-            }
-            told = tnow;
-            if (tcnt >= ticks)
-            {
-                break;
-            }
-        }
-    }
-}
-
 static const struct rt_i2c_bit_ops swm_i2c_bit_ops =
     {
         .data = RT_NULL,
@@ -197,7 +162,7 @@ static const struct rt_i2c_bit_ops swm_i2c_bit_ops =
         .set_scl = swm_i2c_set_scl,
         .get_sda = swm_i2c_get_sda,
         .get_scl = swm_i2c_get_scl,
-        .udelay = swm_i2c_udelay,
+        .udelay = rt_hw_us_delay,
         .delay_us = 1,
         .timeout = 100};
 

@@ -137,37 +137,6 @@ static rt_int32_t apm32_soft_i2c_get_scl(void *data)
 }
 
 /**
- * @brief    The time delay function in microseconds.
- *
- * @param    us is the microseconds to delay.
- */
-static void apm32_soft_i2c_udelay(rt_uint32_t us)
-{
-    rt_uint32_t count_old = SysTick->VAL;
-    rt_uint32_t count_now;
-    rt_uint32_t count = 0;
-    rt_uint32_t reload = SysTick->LOAD;
-    rt_uint32_t count_pre_us = (reload * RT_TICK_PER_SECOND) / 1000000;
-
-    while (count_pre_us * us > count)
-    {
-        count_now = SysTick->VAL;
-        if (count_now != count_old)
-        {
-            if (count_now < count_old)
-            {
-                count += count_old - count_now;
-            }
-            else
-            {
-                count += reload - count_now + count_old;
-            }
-            count_old = count_now;
-        }
-    }
-}
-
-/**
  * @brief    This function will unlock i2c, if it is locked.
  *
  * @param    cfg is a pointer to i2c config class.
@@ -183,9 +152,9 @@ static rt_err_t apm32_i2c_bus_unlock(const struct apm32_soft_i2c_config *cfg)
         while (i++ < 9)
         {
             rt_pin_write(cfg->scl_pin, PIN_HIGH);
-            apm32_soft_i2c_udelay(100);
+            rt_hw_us_delay(100);
             rt_pin_write(cfg->scl_pin, PIN_LOW);
-            apm32_soft_i2c_udelay(100);
+            rt_hw_us_delay(100);
         }
     }
     if (PIN_LOW == rt_pin_read(cfg->sda_pin))
@@ -203,7 +172,7 @@ static const struct rt_i2c_bit_ops apm32_bit_ops_default =
     .set_scl  = apm32_soft_i2c_set_scl,
     .get_sda  = apm32_soft_i2c_get_sda,
     .get_scl  = apm32_soft_i2c_get_scl,
-    .udelay   = apm32_soft_i2c_udelay,
+    .udelay   = rt_hw_us_delay,
     .delay_us = 1,
     .timeout  = 100
 };

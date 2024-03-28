@@ -66,7 +66,6 @@ struct nu_soft_i2c
 };
 
 /* Private functions ------------------------------------------------------------*/
-static void nu_soft_i2c_udelay(rt_uint32_t us);
 static void nu_soft_i2c_set_sda(void *data, rt_int32_t state);
 static void nu_soft_i2c_set_scl(void *data, rt_int32_t state);
 static rt_int32_t nu_soft_i2c_get_sda(void *data);
@@ -92,22 +91,12 @@ static const struct rt_i2c_bit_ops nu_soft_i2c_bit_ops =
     .set_scl  = nu_soft_i2c_set_scl,
     .get_sda  = nu_soft_i2c_get_sda,
     .get_scl  = nu_soft_i2c_get_scl,
-    .udelay   = nu_soft_i2c_udelay,
+    .udelay   = rt_hw_us_delay,
     .delay_us = 1,
     .timeout  = 100
 };
 
 /* Functions define ------------------------------------------------------------*/
-
-/**
- * The time delay function.
- *
- * @param microseconds.
- */
-static void nu_soft_i2c_udelay(rt_uint32_t us)
-{
-    rt_hw_us_delay(us);
-}
 
 /**
  * This function initializes the soft i2c pin.
@@ -139,9 +128,9 @@ static rt_err_t nu_soft_i2c_bus_unlock(const struct nu_soft_i2c_config *cfg)
         while (i++ < 9)
         {
             rt_pin_write(cfg->scl, PIN_HIGH);
-            nu_soft_i2c_udelay(100);
+            rt_hw_us_delay(100);
             rt_pin_write(cfg->scl, PIN_LOW);
-            nu_soft_i2c_udelay(100);
+            rt_hw_us_delay(100);
         }
     }
     if (PIN_LOW == rt_pin_read(cfg->sda))

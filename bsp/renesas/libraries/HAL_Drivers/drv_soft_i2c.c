@@ -116,40 +116,6 @@ static rt_int32_t ra_get_scl(void *data)
     struct ra_soft_i2c_config *cfg = (struct ra_soft_i2c_config *)data;
     return rt_pin_read(cfg->scl);
 }
-/**
- * The time delay function.
- *
- * @param microseconds.
- */
-static void ra_udelay(rt_uint32_t us)
-{
-    rt_uint32_t ticks;
-    rt_uint32_t told, tnow, tcnt = 0;
-    rt_uint32_t reload = SysTick->LOAD;
-
-    ticks = us * reload / (1000000 / RT_TICK_PER_SECOND);
-    told = SysTick->VAL;
-    while (1)
-    {
-        tnow = SysTick->VAL;
-        if (tnow != told)
-        {
-            if (tnow < told)
-            {
-                tcnt += told - tnow;
-            }
-            else
-            {
-                tcnt += reload - tnow + told;
-            }
-            told = tnow;
-            if (tcnt >= ticks)
-            {
-                break;
-            }
-        }
-    }
-}
 
 static const struct rt_i2c_bit_ops ra_bit_ops_default =
 {
@@ -158,7 +124,7 @@ static const struct rt_i2c_bit_ops ra_bit_ops_default =
     .set_scl  = ra_set_scl,
     .get_sda  = ra_get_sda,
     .get_scl  = ra_get_scl,
-    .udelay   = ra_udelay,
+    .udelay   = rt_hw_us_delay,
     .delay_us = 1,
     .timeout  = 100
 };
@@ -179,9 +145,9 @@ static rt_err_t ra_i2c_bus_unlock(const struct ra_soft_i2c_config *cfg)
         while (i++ < 9)
         {
             rt_pin_write(cfg->scl, PIN_HIGH);
-            ra_udelay(100);
+            rt_hw_us_delay(100);
             rt_pin_write(cfg->scl, PIN_LOW);
-            ra_udelay(100);
+            rt_hw_us_delay(100);
         }
     }
     if (PIN_LOW == rt_pin_read(cfg->sda))

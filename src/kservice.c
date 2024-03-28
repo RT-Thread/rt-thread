@@ -64,9 +64,38 @@ static rt_device_t _console_device = RT_NULL;
 
 rt_weak void rt_hw_us_delay(rt_uint32_t us)
 {
+#if defined(ARCH_ARM_CORTEX_M)
+    rt_uint32_t ticks;
+    rt_uint32_t told, tnow, tcnt = 0;
+    rt_uint32_t reload = SysTick->LOAD;
+
+    ticks = us * reload / (1000000 / RT_TICK_PER_SECOND);
+    told = SysTick->VAL;
+    while (1)
+    {
+        tnow = SysTick->VAL;
+        if (tnow != told)
+        {
+            if (tnow < told)
+            {
+                tcnt += told - tnow;
+            }
+            else
+            {
+                tcnt += reload - tnow + told;
+            }
+            told = tnow;
+            if (tcnt >= ticks)
+            {
+                break;
+            }
+        }
+    }
+#else
     (void) us;
     LOG_W("rt_hw_us_delay() doesn't support for this board."
         "Please consider implementing rt_hw_us_delay() in another file.");
+#endif
 }
 
 rt_weak void rt_hw_cpu_reset(void)

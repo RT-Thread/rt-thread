@@ -73,36 +73,6 @@ static rt_int32_t _get_scl(void *data)
     return HAL_GPIO_ReadPin(bd->scl.port, bd->scl.pin);
 }
 
-static void acm32_udelay(rt_uint32_t us)
-{
-    rt_uint32_t ticks;
-    rt_uint32_t told, tnow, tcnt = 0;
-    rt_uint32_t reload = SysTick->LOAD;
-
-    ticks = us * reload / (1000000 / RT_TICK_PER_SECOND);
-    told = SysTick->VAL;
-    while (1)
-    {
-        tnow = SysTick->VAL;
-        if (tnow != told)
-        {
-            if (tnow < told)
-            {
-                tcnt += told - tnow;
-            }
-            else
-            {
-                tcnt += reload - tnow + told;
-            }
-            told = tnow;
-            if (tcnt >= ticks)
-            {
-                break;
-            }
-        }
-    }
-}
-
 static void drv_i2c_gpio_init(const struct acm32_i2c_bit_data* bd)
 {
     GPIO_InitTypeDef GPIO_Handle;
@@ -141,7 +111,7 @@ int rt_soft_i2c_init(void)
         _set_scl,
         _get_sda,
         _get_scl,
-        acm32_udelay,
+        rt_hw_us_delay,
         1,
         100
     };

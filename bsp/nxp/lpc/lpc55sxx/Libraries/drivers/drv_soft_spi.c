@@ -149,36 +149,6 @@ static void lpc_dir_miso(void *data, rt_int32_t state)
     }
 }
 
-static void lpc_udelay(rt_uint32_t us)
-{
-    rt_uint32_t ticks;
-    rt_uint32_t told, tnow, tcnt = 0;
-    rt_uint32_t reload = SysTick->LOAD;
-
-    ticks = us * reload / (1000000UL / RT_TICK_PER_SECOND);
-    told = SysTick->VAL;
-    while (1)
-    {
-        tnow = SysTick->VAL;
-        if (tnow != told)
-        {
-            if (tnow < told)
-            {
-                tcnt += told - tnow;
-            }
-            else
-            {
-                tcnt += reload - tnow + told;
-            }
-            told = tnow;
-            if (tcnt >= ticks)
-            {
-                break;
-            }
-        }
-    }
-}
-
 static struct rt_spi_bit_ops lpc_soft_spi_ops =
 {
     .data = RT_NULL,
@@ -191,7 +161,7 @@ static struct rt_spi_bit_ops lpc_soft_spi_ops =
     .get_miso = lpc_get_miso,
     .dir_mosi = lpc_dir_mosi,
     .dir_miso = lpc_dir_miso,
-    .udelay = lpc_udelay,
+    .udelay   = rt_hw_us_delay,
     .delay_us = 1,
 };
 

@@ -124,45 +124,6 @@ static rt_int32_t n32_get_scl(void *data)
     return rt_pin_read(cfg->scl);
 }
 
-
-/**
-*\*\name    n32_udelay
-*\*\fun     The time delay function.
-*\*\param   us
-*\*\return  none
-**/
-static void n32_udelay(rt_uint32_t us)
-{
-    rt_uint32_t ticks;
-    rt_uint32_t told, tnow, tcnt = 0;
-    rt_uint32_t reload = SysTick->LOAD;
-
-    ticks = us * reload / (1000000 / RT_TICK_PER_SECOND);
-    told = SysTick->VAL;
-
-    while (1)
-    {
-        tnow = SysTick->VAL;
-        if (tnow != told)
-        {
-            if (tnow < told)
-            {
-                tcnt += told - tnow;
-            }
-            else
-            {
-                tcnt += reload - tnow + told;
-            }
-            told = tnow;
-
-            if (tcnt >= ticks)
-            {
-                break;
-            }
-        }
-    }
-}
-
 static const struct rt_i2c_bit_ops n32_bit_ops_default =
 {
     .data     = RT_NULL,
@@ -170,7 +131,7 @@ static const struct rt_i2c_bit_ops n32_bit_ops_default =
     .set_scl  = n32_set_scl,
     .get_sda  = n32_get_sda,
     .get_scl  = n32_get_scl,
-    .udelay   = n32_udelay,
+    .udelay   = rt_hw_us_delay,
     .delay_us = 1,
     .timeout  = 100
 };
@@ -191,9 +152,9 @@ static rt_err_t n32_i2c_bus_unlock(const struct n32_soft_i2c_config *cfg)
         while (i++ < 9)
         {
             rt_pin_write(cfg->scl, PIN_HIGH);
-            n32_udelay(100);
+            rt_hw_us_delay(100);
             rt_pin_write(cfg->scl, PIN_LOW);
-            n32_udelay(100);
+            rt_hw_us_delay(100);
         }
     }
 

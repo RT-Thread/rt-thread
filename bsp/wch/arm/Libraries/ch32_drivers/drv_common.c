@@ -30,19 +30,6 @@ static void reboot(uint8_t argc, char **argv)
 MSH_CMD_EXPORT(reboot, Reboot System)
 #endif /* RT_USING_FINSH */
 
-void rt_hw_us_delay(rt_uint32_t us)
-{
-    rt_uint32_t start, now, delta, reload, us_tick;
-    start = SysTick->VAL;
-    reload = SysTick->LOAD;
-    us_tick = SystemCoreClock / 1000000UL;
-    do
-    {
-        now = SysTick->VAL;
-        delta = start > now ? start - now : reload + start - now;
-    } while (delta < us_tick * us);
-}
-
 void SystemClock_Config(void)
 {
     SysTick_Config(ch32_get_sysclock_frequency() / RT_TICK_PER_SECOND);

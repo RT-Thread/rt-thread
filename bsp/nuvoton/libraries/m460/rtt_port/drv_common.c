@@ -79,41 +79,6 @@ rt_weak void rt_hw_board_init(void)
 #endif
 }
 
-/**
- * The time delay function.
- *
- * @param microseconds.
- */
-void rt_hw_us_delay(rt_uint32_t us)
-{
-    rt_uint32_t ticks;
-    rt_uint32_t told, tnow, tcnt = 0;
-    rt_uint32_t reload = SysTick->LOAD;
-
-    ticks = us * reload / (1000000 / RT_TICK_PER_SECOND);
-    told = SysTick->VAL;
-    while (1)
-    {
-        tnow = SysTick->VAL;
-        if (tnow != told)
-        {
-            if (tnow < told)
-            {
-                tcnt += told - tnow;
-            }
-            else
-            {
-                tcnt += reload - tnow + told;
-            }
-            told = tnow;
-            if (tcnt >= ticks)
-            {
-                break;
-            }
-        }
-    }
-}
-
 #define NU_MFP_POS(PIN)   ((PIN % 4) * 8)
 #define NU_MFP_MSK(PIN)   (0x1ful << NU_MFP_POS(PIN))
 void nu_pin_set_function(rt_base_t pin, int data)
