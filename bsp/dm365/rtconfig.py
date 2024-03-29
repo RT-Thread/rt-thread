@@ -33,7 +33,7 @@ if PLATFORM == 'gcc':
     DEVICE = ' -mcpu=arm926ej-s'
     CFLAGS = DEVICE
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp' + ' -DTEXT_BASE=' + TextBase
-    LFLAGS = DEVICE + ' -nostartfiles -Wl,--gc-sections,-Map=rtthread_dm365.map,-cref,-u,_start -T dm365_ram.ld' + ' -Ttext ' + TextBase
+    LFLAGS = DEVICE + ' -nostartfiles -Wl,-Map=rtthread_dm365.map,-cref,-u,_start -T dm365_ram.ld' + ' -Ttext ' + TextBase
 
     CPATH = ''
     LPATH = ''

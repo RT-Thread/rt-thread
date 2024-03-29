@@ -60,7 +60,7 @@ if PLATFORM == 'gcc':
     DEVICE = ' -mcpu=cortex-m3 -mthumb -ffunction-sections -fdata-sections'
     CFLAGS = DEVICE
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp'
-    LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread-efm32.map,-cref,-u,__cs3_reset -nostartfiles -T'
+    LFLAGS = DEVICE + ' -Wl,-Map=rtthread-efm32.map,-cref,-u,__cs3_reset -nostartfiles -T'
     if EFM32_BOARD == 'EFM32_G8XX_STK' or EFM32_BOARD == 'EFM32_GXXX_DK':
         LFLAGS += ' efm32g_rom.ld'
     elif EFM32_BOARD == 'EFM32GG_DK3750':

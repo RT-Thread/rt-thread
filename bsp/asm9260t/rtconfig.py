@@ -49,7 +49,7 @@ if PLATFORM == 'gcc':
     AFLAGS = '-c'+ DEVICE + ' -x assembler-with-cpp'
     AFLAGS += ' -Iplatform'
     LFLAGS = DEVICE
-    LFLAGS += ' -Wl,--gc-sections,-cref,-Map=' + MAP_FILE
+    LFLAGS += ' -Wl,-cref,-Map=' + MAP_FILE
     LFLAGS += ' -T ' + LINK_FILE + '.ld'
 
     CPATH = ''

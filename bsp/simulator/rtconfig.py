@@ -109,7 +109,7 @@ elif PLATFORM == 'mingw':
     CFLAGS = DEVICE + ' -D_Win32 -DNO_OLDNAMES -fno-pic -fno-builtin -fno-exceptions -fno-omit-frame-pointer'
 
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp'
-    LFLAGS = DEVICE + ' -static-libgcc  -Wl,--gc-sections,-Map=rtthread-win32.map -T mingw.ld '
+    LFLAGS = DEVICE + ' -static-libgcc  -Wl,-Map=rtthread-win32.map -T mingw.ld '
     CPATH = ''
     LPATH = ''
 

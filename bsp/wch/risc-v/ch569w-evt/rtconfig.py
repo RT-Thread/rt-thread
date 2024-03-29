@@ -45,7 +45,7 @@ if PLATFORM == 'gcc':
     CFLAGS += ' -save-temps=obj'
     AFLAGS = '-c'+ DEVICE + ' -x assembler-with-cpp'
     LFLAGS = DEVICE
-    LFLAGS += ' -Wl,--gc-sections,-cref,-Map=' + MAP_FILE
+    LFLAGS += ' -Wl,-cref,-Map=' + MAP_FILE
     LFLAGS += ' -T ' + LINK_FILE
     LFLAGS += ' -Wl,-wrap=memset'
 

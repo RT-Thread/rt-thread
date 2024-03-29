@@ -39,7 +39,7 @@ READELF = PREFIX + 'readelf'
 DEVICE = ' -mips32 -msoft-float -mfp32'
 CFLAGS = DEVICE + ' -EL -G0 -mno-abicalls -fno-pic -fno-builtin -fno-exceptions -ffunction-sections -fomit-frame-pointer'
 AFLAGS = ' -c' + DEVICE + ' -EL -fno-pic -fno-builtin -mno-abicalls -x assembler-with-cpp'
-LFLAGS = DEVICE + ' -nostartfiles -EL -Wl,--gc-sections,-Map=rtthread.map,-cref,-u,Reset_Handler -T ls1b_ram.lds'
+LFLAGS = DEVICE + ' -nostartfiles -EL -Wl,-Map=rtthread.map,-cref,-u,Reset_Handler -T ls1b_ram.lds'
 
 CPATH = ''
 LPATH = ''

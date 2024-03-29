@@ -38,7 +38,7 @@ if PLATFORM == 'gcc':
     CFLAGS = DEVICE + ' -std=c99'
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp -Wa,-mimplicit-it=thumb '
     # link script file path
-    LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread.map,-cref,-u,Reset_Handler -T CMSIS/startup_gcc/debug-in-microsemi-smartfusion2-envm.ld'
+    LFLAGS = DEVICE + ' -Wl,-Map=rtthread.map,-cref,-u,Reset_Handler -T CMSIS/startup_gcc/debug-in-microsemi-smartfusion2-envm.ld'
     
     CPATH = ''
     LPATH = ''

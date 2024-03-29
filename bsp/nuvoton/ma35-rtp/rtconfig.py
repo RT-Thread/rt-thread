@@ -48,7 +48,7 @@ if PLATFORM == 'gcc':
 
     CFLAGS = DEVICE
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp'
-    LFLAGS = DEVICE + ' -nostartfiles -Wl,--gc-sections,-Map=rtthread.map -T ./linking_scripts/subm.ld '
+    LFLAGS = DEVICE + ' -nostartfiles -Wl,-Map=rtthread.map -T ./linking_scripts/subm.ld '
 
     CPATH = ''
     LPATH = ''

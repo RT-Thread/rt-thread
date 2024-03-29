@@ -34,7 +34,7 @@ if PLATFORM == 'gcc':
     CFLAGS = DEVICE
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp -D__ASSEMBLY__'
     LINK_SCRIPT = 'zynqmp-r5.ld'
-    LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=zynqmp-r5.map,-cref,-u,system_vectors -T %s' % LINK_SCRIPT
+    LFLAGS = DEVICE + ' -Wl,-Map=zynqmp-r5.map,-cref,-u,system_vectors -T %s' % LINK_SCRIPT
 
     CPATH = ''
     LPATH = ''

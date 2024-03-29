@@ -44,7 +44,7 @@ if PLATFORM == 'gcc':
     DEVICE = ' -mcpu=arm720t'
     CFLAGS = DEVICE
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp' + ' -DTEXT_BASE=' + TextBase
-    LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread_mini4020.map,-cref,-u,_start -T mini4020_rom.ld' + ' -Ttext ' + TextBase
+    LFLAGS = DEVICE + ' -Wl,-Map=rtthread_mini4020.map,-cref,-u,_start -T mini4020_rom.ld' + ' -Ttext ' + TextBase
 
     CPATH = ''
     LPATH = ''

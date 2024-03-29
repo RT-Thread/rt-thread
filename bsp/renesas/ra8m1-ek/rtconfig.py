@@ -49,7 +49,7 @@ if PLATFORM == 'gcc':
     DEVICE = ' -march=armv8.1-m.main+mve.fp+fp.dp -mthumb -mfpu=fpv5-sp-d16 -mfloat-abi=hard -ffunction-sections -fdata-sections'
     CFLAGS = DEVICE + ' -Dgcc'
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp -Wa,-mimplicit-it=thumb '
-    LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread.map,-cref,-u,Reset_Handler -T script/fsp.ld -L script/'
+    LFLAGS = DEVICE + ' -Wl,-Map=rtthread.map,-cref,-u,Reset_Handler -T script/fsp.ld -L script/'
 
     CPATH = ''
     LPATH = ''
@@ -114,7 +114,7 @@ elif PLATFORM == 'llvm-arm':
     CFLAGS = DEVICE
     CFLAGS += ' -mfloat-abi=hard -march=armv8.1m.main+fp'
     AFLAGS = ' -c' + DEVICE + ' -Wa,-mimplicit-it=thumb ' ## -x assembler-with-cpp
-    LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rt-thread.map,-u,Reset_Handler -lcrt0 -T script/fsp.ld -L script/'
+    LFLAGS = DEVICE + ' -Wl,-Map=rt-thread.map,-u,Reset_Handler -lcrt0 -T script/fsp.ld -L script/'
 
     CPATH = ''
     LPATH = ''

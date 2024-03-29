@@ -46,7 +46,7 @@ if PLATFORM == 'gcc':
     DEVICE = ' -mcpu=cortex-m23 -mthumb -ffunction-sections -fdata-sections -Wuninitialized'
     CFLAGS = DEVICE + ' -Dgcc' # -D' + PART_TYPE
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp -Wa,-mimplicit-it=thumb '
-    LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread.map,-cref,-u,Reset_Handler -T ./linking_scripts/m2354_link.ld'
+    LFLAGS = DEVICE + ' -Wl,-Map=rtthread.map,-cref,-u,Reset_Handler -T ./linking_scripts/m2354_link.ld'
 
     CPATH = ''
     LPATH = ''

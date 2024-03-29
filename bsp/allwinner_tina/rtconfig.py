@@ -42,7 +42,7 @@ if PLATFORM == 'gcc':
     DEVICE  = ' -mcpu=arm926ej-s -ffunction-sections -fdata-sections'
     CFLAGS  = DEVICE + ' -Wall'
     AFLAGS  = ' -c' + DEVICE + ' -x assembler-with-cpp'
-    LFLAGS  = DEVICE + ' -nostartfiles -Wl,--gc-sections,-Map=rtthread.map,-cref,-u,system_vectors -T link.lds'
+    LFLAGS  = DEVICE + ' -nostartfiles -Wl,-Map=rtthread.map,-cref,-u,system_vectors -T link.lds'
     CPATH   = ''
     LPATH   = ''
 

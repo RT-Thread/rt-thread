@@ -42,7 +42,7 @@ if PLATFORM == 'gcc':
     DEVICE = ' -mcpu=cortex-m4 -mthumb -mfpu=fpv4-sp-d16 -mfloat-abi=hard -ffunction-sections -fdata-sections'
     CFLAGS = DEVICE + ' -g -Wall -D__ASSEMBLY__ -D__FPU_USED'
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp -Wa,-mimplicit-it=thumb '
-    LFLAGS = DEVICE + ' -lm -lgcc -lc' + '  -nostartfiles -Wl,--gc-sections,-Map=rtthread-k64f.map,-cref,-u,Reset_Handler -T K64FN1M0xxx12.ld'
+    LFLAGS = DEVICE + ' -lm -lgcc -lc' + '  -nostartfiles -Wl,-Map=rtthread-k64f.map,-cref,-u,Reset_Handler -T K64FN1M0xxx12.ld'
 
     CPATH = ''
     LPATH = ''

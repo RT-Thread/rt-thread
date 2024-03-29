@@ -30,7 +30,7 @@ if PLATFORM == 'gcc':
     CXXFLAGS = DEVICE + CFPFLAGS + ' -Wall -fdiagnostics-color=always'
     CFLAGS  = DEVICE + CFPFLAGS + ' -Wall -Wno-cpp -std=gnu99 -fdiagnostics-color=always'
     AFLAGS  = ' -c' + AFPFLAGS + ' -x assembler-with-cpp'
-    LFLAGS  = DEVICE + ' -nostartfiles -Wl,--gc-sections,-Map=rtthread_a64.map,-cref,-u,system_vectors -T link.lds' + ' -lsupc++ -lgcc -static'
+    LFLAGS  = DEVICE + ' -nostartfiles -Wl,-Map=rtthread_a64.map,-cref,-u,system_vectors -T link.lds' + ' -lsupc++ -lgcc -static'
     CPATH   = ''
     LPATH   = ''
 

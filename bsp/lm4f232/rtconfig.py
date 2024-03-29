@@ -45,7 +45,7 @@ if PLATFORM == 'gcc':
     DEVICE = ' -mcpu=cortex-m4 -mthumb -mfpu=fpv4-sp-d16 -mfloat-abi=softfp -ffunction-sections -fdata-sections'
     CFLAGS = DEVICE 
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp -Wa,-mimplicit-it=thumb '
-    LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread-lm4f.map,-cref,-u,Reset_Handler -T lm4f_rom.ld'
+    LFLAGS = DEVICE + ' -Wl,-Map=rtthread-lm4f.map,-cref,-u,Reset_Handler -T lm4f_rom.ld'
 
     CPATH = ''
     LPATH = ''

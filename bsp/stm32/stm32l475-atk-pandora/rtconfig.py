@@ -49,7 +49,7 @@ if PLATFORM == 'gcc':
     DEVICE = ' -mcpu=cortex-m4 -mthumb -mfpu=fpv4-sp-d16 -mfloat-abi=hard -ffunction-sections -fdata-sections'
     CFLAGS = DEVICE + ' -Dgcc -fstack-usage -fdump-rtl-dfinish'
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp -Wa,-mimplicit-it=thumb '
-    LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rt-thread.map,-cref,-u,Reset_Handler -T board/linker_scripts/link.lds'
+    LFLAGS = DEVICE + ' -Wl,-Map=rt-thread.map,-cref,-u,Reset_Handler -T board/linker_scripts/link.lds'
 
     CPATH = ''
     LPATH = ''
@@ -195,7 +195,7 @@ elif PLATFORM == 'llvm-arm':
     DEVICE += ' -ffunction-sections -fdata-sections -fno-exceptions -fno-rtti'
     CFLAGS = DEVICE
     AFLAGS = ' -c' + DEVICE + ' -Wa,-mimplicit-it=thumb ' ## -x assembler-with-cpp
-    LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rt-thread.map,-u,Reset_Handler -lcrt0 -T board/linker_scripts/link.lds'
+    LFLAGS = DEVICE + ' -Wl,-Map=rt-thread.map,-u,Reset_Handler -lcrt0 -T board/linker_scripts/link.lds'
 
     CPATH = ''
     LPATH = ''

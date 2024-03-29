@@ -31,7 +31,7 @@ if PLATFORM == 'gcc':
 
     CFLAGS = DEVICE + ' -D__KERNEL__'
     AFLAGS = '-D__ASSEMBLY__ -fno-exceptions  -fno-builtin  -mregnames -c -Wall -Xassembler -m405 -msoft-float -ffunction-sections'
-    LFLAGS = DEVICE + ' -Wl,--gc-sections,--cref,-Map=rtthread.map -T taihu.lds' + ' -Ttext=' + TextBase
+    LFLAGS = DEVICE + ' -Wl,--cref,-Map=rtthread.map -T taihu.lds' + ' -Ttext=' + TextBase
 
     CPATH = ''
     LPATH = ''

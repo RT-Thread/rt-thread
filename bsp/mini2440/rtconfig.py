@@ -44,13 +44,13 @@ if PLATFORM == 'gcc':
     DEVICE = ' -mcpu=arm920t'
     CFLAGS = DEVICE
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp' + ' -DTEXT_BASE=' + TextBase
-    LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread_mini2440.map,-cref,-u,_start  -nostartfiles -T mini2440_ram.ld' + ' -Ttext ' + TextBase
+    LFLAGS = DEVICE + ' -Wl,-Map=rtthread_mini2440.map,-cref,-u,_start  -nostartfiles -T mini2440_ram.ld' + ' -Ttext ' + TextBase
 
     # module setting 
     CXXFLAGS = ' -Woverloaded-virtual -fno-exceptions -fno-rtti '
     M_CFLAGS = CFLAGS + ' -mlong-calls -fPIC '
     M_CXXFLAGS = CXXFLAGS + ' -mlong-calls -fPIC'
-    M_LFLAGS = DEVICE + CXXFLAGS + ' -Wl,--gc-sections,-z,max-page-size=0x4' +\
+    M_LFLAGS = DEVICE + CXXFLAGS + ' -Wl,-z,max-page-size=0x4' +\
                                     ' -shared -fPIC -nostartfiles -static-libgcc'
     M_POST_ACTION = STRIP + ' -R .hash $TARGET\n' + SIZE + ' $TARGET \n'
 

@@ -47,7 +47,7 @@ if PLATFORM == 'gcc':
     DEVICE = ' -mcpu=' + CPU + ' -mthumb -mfpu=fpv5-sp-d16 -mfloat-abi=hard -ffunction-sections -fdata-sections -DCPU_LPC55S36JBD100'
     CFLAGS = DEVICE + ' -Wall -D__FPU_PRESENT'
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp -D__START=entry -D__STARTUP_CLEAR_BSS'
-    LFLAGS = DEVICE + ' -specs=nano.specs -specs=nosys.specs -Wl,--defsym=__heap_size__=0x8000,--gc-sections,-Map=rtthread.map,--print-memory-usage -Tboard/linker_scripts/LPC55S36_flash.ld'
+    LFLAGS = DEVICE + ' -specs=nano.specs -specs=nosys.specs -Wl,--defsym=__heap_size__=0x8000,-Map=rtthread.map,--print-memory-usage -Tboard/linker_scripts/LPC55S36_flash.ld'
 
     CPATH = ''
     LPATH = ''
@@ -65,7 +65,7 @@ if PLATFORM == 'gcc':
     CXXFLAGS = ' -Woverloaded-virtual -fno-exceptions -fno-rtti '
     M_CFLAGS = CFLAGS + ' -mlong-calls -fPIC '
     M_CXXFLAGS = CXXFLAGS + ' -mlong-calls -fPIC'
-    M_LFLAGS = DEVICE + CXXFLAGS + ' -Wl,--gc-sections,-z,max-page-size=0x4' +\
+    M_LFLAGS = DEVICE + CXXFLAGS + ' -Wl,-z,max-page-size=0x4' +\
                                     ' -shared -fPIC -nostartfiles -static-libgcc'
     M_POST_ACTION = STRIP + ' -R .hash $TARGET\n' + SIZE + ' $TARGET \n'
 

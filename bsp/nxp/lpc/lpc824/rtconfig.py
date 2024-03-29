@@ -42,7 +42,7 @@ if PLATFORM == 'gcc':
     DEVICE = ' -mcpu=cortex-m0 -mthumb -ffunction-sections -fdata-sections'
     CFLAGS = DEVICE
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp'
-    LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread-lpc824.map,-cref,-u,Reset_Handler -T lpc824_rom.ld'
+    LFLAGS = DEVICE + ' -Wl,-Map=rtthread-lpc824.map,-cref,-u,Reset_Handler -T lpc824_rom.ld'
 
     CPATH = ''
     LPATH = ''

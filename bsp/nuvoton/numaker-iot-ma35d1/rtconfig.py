@@ -44,12 +44,12 @@ if PLATFORM == 'gcc':
     DEVICE = ' -march=armv8-a -mfpu=neon-vfpv4  -ftree-vectorize -ffast-math -msoft-float'
     CFLAGS = DEVICE + ' -Wall -fno-zero-initialized-in-bss '
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp -D__ASSEMBLY__'
-    LFLAGS = DEVICE + ' -nostartfiles  -Wl,--gc-sections,-cref,-Map=' + MAP_FILE + ',-cref,-u,system_vectors' + ' -T ' + LINK_FILE + '.ld'
+    LFLAGS = DEVICE + ' -nostartfiles  -Wl,-cref,-Map=' + MAP_FILE + ',-cref,-u,system_vectors' + ' -T ' + LINK_FILE + '.ld'
     CXXFLAGS = '  -march=armv8-a -mfpu=neon-vfpv4 -std=c++11 '
 
     M_CFLAGS = CFLAGS + ' -mlong-calls -fPIC '
     M_CXXFLAGS = CXXFLAGS + ' -mlong-calls -fPIC'
-    M_LFLAGS = DEVICE + CXXFLAGS + ' -Wl,--gc-sections,-z,max-page-size=0x4' +\
+    M_LFLAGS = DEVICE + CXXFLAGS + ' -Wl,-z,max-page-size=0x4' +\
                                 ' -shared -fPIC -nostartfiles -nostdlib -static-libgcc'
     M_POST_ACTION = STRIP + ' -R .hash $TARGET\n' + SIZE + ' $TARGET \n'
     #M_BIN_PATH = r'z:\fatdisk\root'

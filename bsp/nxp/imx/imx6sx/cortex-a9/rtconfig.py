@@ -38,7 +38,7 @@ if PLATFORM == 'gcc':
     CFLAGS = DEVICE + ' -Wall'
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp -D__ASSEMBLY__'
     LINK_SCRIPT = 'imx6.lds'
-    LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread-imx6.map,-cref,-u,system_vectors'+\
+    LFLAGS = DEVICE + ' -Wl,-Map=rtthread-imx6.map,-cref,-u,system_vectors'+\
                       ' -T %s' % LINK_SCRIPT
 
     CPATH = ''

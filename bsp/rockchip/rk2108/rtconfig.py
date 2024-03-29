@@ -42,7 +42,7 @@ if PLATFORM == 'gcc':
     CFLAGS = DEVICE + ' -std=gnu99 -Wall -g -Wno-stringop-truncation -Wall -Werror=maybe-uninitialized -Werror=implicit-function-declaration -Werror=return-type -Werror=address -Werror=int-to-pointer-cast -Werror=pointer-to-int-cast'
     AFLAGS = DEVICE + ' -c -x assembler-with-cpp -Wa,-mimplicit-it=thumb -D__ASSEMBLY__'
     LINK_SCRIPT = 'gcc_xip_off.ld.S'
-    LFLAGS  = DEVICE + ' -lm -lgcc -lc' + ' -nostartfiles -Wl,--gc-sections,-Map=rtthread.map,-cref,-u,Reset_Handler -T gcc_xip_off.ld'
+    LFLAGS  = DEVICE + ' -lm -lgcc -lc' + ' -nostartfiles -Wl,-Map=rtthread.map,-cref,-u,Reset_Handler -T gcc_xip_off.ld'
     CPATH   = ''
     LPATH   = ''
 

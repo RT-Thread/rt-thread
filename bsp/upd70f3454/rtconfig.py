@@ -43,7 +43,7 @@ if PLATFORM == 'gcc':
     DEVICE = ' -mcpu=m16c'
     CFLAGS = DEVICE
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp'
-    LFLAGS = DEVICE + ' -nostartfiles' + ' -Wl,--gc-sections,-Map=rtthread_m16c.map,-cref,-u,_start -T m16c62p.ld'
+    LFLAGS = DEVICE + ' -nostartfiles' + ' -Wl,-Map=rtthread_m16c.map,-cref,-u,_start -T m16c62p.ld'
 
     CPATH = ''
     LPATH = ''

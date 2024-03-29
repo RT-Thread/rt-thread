@@ -42,7 +42,7 @@ if PLATFORM == 'gcc':
     DEVICE = ' -mcpu=cortex-m4 -mthumb -ffunction-sections -fdata-sections'
     CFLAGS = DEVICE + ' -g -Wall '
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp -Wa,-mimplicit-it=thumb '
-    LFLAGS = DEVICE + ' -lm -lgcc -lc' + ' -nostartfiles  -Wl,--gc-sections,-Map=rtthread-' + BOARD_NAME +'.map,-cref,-u,Reset_Handler -T rtthread-' + BOARD_NAME + '.ld'
+    LFLAGS = DEVICE + ' -lm -lgcc -lc' + ' -nostartfiles  -Wl,-Map=rtthread-' + BOARD_NAME +'.map,-cref,-u,Reset_Handler -T rtthread-' + BOARD_NAME + '.ld'
 
     CPATH = ''
     LPATH = ''

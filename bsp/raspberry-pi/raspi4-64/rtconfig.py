@@ -37,7 +37,7 @@ if PLATFORM == 'gcc':
     DEVICE = ' -march=armv8-a -mtune=cortex-a72'
     CFLAGS = DEVICE + ' -Wall -Wno-cpp -D_POSIX_SOURCE'
     AFLAGS = ' -c' + ' -x assembler-with-cpp -D__ASSEMBLY__'
-    LFLAGS  = DEVICE + ' -nostartfiles -Wl,--gc-sections,-Map=rtthread.map,-cref,-u,system_vectors -T link.lds'
+    LFLAGS  = DEVICE + ' -nostartfiles -Wl,-Map=rtthread.map,-cref,-u,system_vectors -T link.lds'
     CPATH   = ''
     LPATH   = ''
 

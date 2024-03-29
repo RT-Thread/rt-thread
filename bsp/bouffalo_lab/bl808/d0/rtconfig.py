@@ -46,7 +46,7 @@ if PLATFORM == 'gcc':
     CFLAGS += ' -DCFG_COMPONENT_BLOG_ENABLE=0 -DBFLB_USE_HAL_DRIVER -DCPU_D0 -DBL808 -DLOG_UART_ID_0'
 
     AFLAGS  = ' -c' + DEVICE + ' -x assembler-with-cpp -D__ASSEMBLY__'
-    LFLAGS  = DEVICE + ' -nostartfiles -Wl,--gc-sections,-Map=rtthread.map,-cref,-u,_start -T board/linker_scripts/link.lds' + ' -lsupc++ -lgcc -static'
+    LFLAGS  = DEVICE + ' -nostartfiles -Wl,-Map=rtthread.map,-cref,-u,_start -T board/linker_scripts/link.lds' + ' -lsupc++ -lgcc -static'
     CPATH   = ''
     LPATH   = ''
 

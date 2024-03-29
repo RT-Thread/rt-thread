@@ -41,7 +41,7 @@ if PLATFORM == 'gcc':
     DEVICE = ' -mcpu=arm7tdmi-s'
     CFLAGS = DEVICE
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp'
-    LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread-lpc2478.map,-cref,-u,Reset_Handler -nostartfiles -T lpc2478_rom.lds'
+    LFLAGS = DEVICE + ' -Wl,-Map=rtthread-lpc2478.map,-cref,-u,Reset_Handler -nostartfiles -T lpc2478_rom.lds'
 
     CPATH = ''
     LPATH = ''

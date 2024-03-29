@@ -41,7 +41,7 @@ if PLATFORM == 'gcc':
     DEVICE  = ' -mcmodel=medany -march=rv64imafc -mabi=lp64f -fsingle-precision-constant'
     CFLAGS  = DEVICE + ' -fno-common -ffunction-sections -fdata-sections -fstrict-volatile-bitfields'
     AFLAGS  = ' -c' + DEVICE + ' -x assembler-with-cpp'
-    LFLAGS  = DEVICE + ' -nostartfiles -Wl,--gc-sections,-Map=rtthread.map,-cref,-u,_start -T link.lds'
+    LFLAGS  = DEVICE + ' -nostartfiles -Wl,-Map=rtthread.map,-cref,-u,_start -T link.lds'
     CPATH   = ''
     LPATH   = ''
 

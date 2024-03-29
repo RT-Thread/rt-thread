@@ -41,7 +41,7 @@ if PLATFORM == 'gcc':
 
     CFLAGS  = DEVICE + '  -DCONFIG_CPU_CK802 -c -g -ffunction-sections -Wall -mistack -mlittle-endian'
     AFLAGS  = ' -c' + DEVICE + ' -EL -x assembler-with-cpp'
-    LFLAGS  = DEVICE + ' -EL -Wl,--gc-sections,-Map=rtthread_ck802.map,-cref,-u,Reset_Handler -T gcc_csky.ld'
+    LFLAGS  = DEVICE + ' -EL -Wl,-Map=rtthread_ck802.map,-cref,-u,Reset_Handler -T gcc_csky.ld'
     CPATH   = ''
     LPATH   = ''
 
@@ -55,7 +55,7 @@ if PLATFORM == 'gcc':
 
     M_CFLAGS = DEVICE + ' -EL -G0 -O2 -mno-abicalls -fno-common -fno-exceptions -fno-omit-frame-pointer -mlong-calls -fno-pic '
     M_CXXFLAGS = M_CFLAGS
-    M_LFLAGS = DEVICE + ' -EL -r -Wl,--gc-sections,-z,max-page-size=0x4' +\
+    M_LFLAGS = DEVICE + ' -EL -r -Wl,-z,max-page-size=0x4' +\
                                     ' -nostartfiles -static-libgcc'
     M_POST_ACTION = STRIP + ' -R .hash $TARGET\n' + SIZE + ' $TARGET \n'
 

@@ -45,7 +45,7 @@ if PLATFORM == 'gcc':
     LINKER_SCRIPTS = r'board/linker_scripts/bl702_flash.ld'
 
     AFLAGS  = ' -c' + DEVICE + ' -x assembler-with-cpp'
-    LFLAGS  = DEVICE + ' -nostartfiles -ufw_header -fms-extensions -ffunction-sections -fdata-sections -Wl,--gc-sections,-Map=rtthread.map,-cref,-u,_start -T ' + LINKER_SCRIPTS
+    LFLAGS  = DEVICE + ' -nostartfiles -ufw_header -fms-extensions -ffunction-sections -fdata-sections -Wl,-Map=rtthread.map,-cref,-u,_start -T ' + LINKER_SCRIPTS
     CPATH   = ''
     LPATH   = ''
 

@@ -41,7 +41,7 @@ if PLATFORM == 'gcc':
     DEVICE  = ' -march=rv32imc -mabi=ilp32'
     CFLAGS  = DEVICE + ' -fno-builtin -fno-exceptions -ffunction-sections'
     AFLAGS  = ' -c' + DEVICE + ' -x assembler-with-cpp'
-    LFLAGS  = DEVICE + ' -nostartfiles -Wl,--gc-sections,-Map=rtthread.map,-cref,-u,Reset_Handler -T link.lds'
+    LFLAGS  = DEVICE + ' -nostartfiles -Wl,-Map=rtthread.map,-cref,-u,Reset_Handler -T link.lds'
     CPATH   = ''
     LPATH   = ''
 

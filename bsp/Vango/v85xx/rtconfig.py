@@ -40,7 +40,7 @@ if PLATFORM == 'gcc':
     DEVICE = ' -mcpu=cortex-m0 -mthumb -ffunction-sections -fdata-sections'
     CFLAGS = DEVICE + ' -Dgcc' # -D' + PART_TYPE
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp -Wa,-mimplicit-it=thumb '
-    LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread-v85xx.map,-cref,-u,Reset_Handler -T Target_FLASH.ld'
+    LFLAGS = DEVICE + ' -Wl,-Map=rtthread-v85xx.map,-cref,-u,Reset_Handler -T Target_FLASH.ld'
 
     CPATH = ''
     LPATH = ''

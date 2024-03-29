@@ -51,7 +51,7 @@ if PLATFORM == 'gcc':
     DEVICE = ' -mcpu=cortex-m4 -mthumb -mfpu=fpv4-sp-d16 -mfloat-abi=hard -ffunction-sections -fdata-sections -mlong-calls'
     CFLAGS = DEVICE + ' -Dgcc'
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp -Wa,-mimplicit-it=thumb '
-    LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rt-thread-' + DEVICE_PART + '.map,-cref,-u,Reset_Handler -T bsp/gcc/gcc/same54p20a_flash.ld'
+    LFLAGS = DEVICE + ' -Wl,-Map=rt-thread-' + DEVICE_PART + '.map,-cref,-u,Reset_Handler -T bsp/gcc/gcc/same54p20a_flash.ld'
 
     CPATH = ''
     LPATH = ''

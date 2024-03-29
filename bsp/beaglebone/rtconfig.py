@@ -38,7 +38,7 @@ if PLATFORM == 'gcc':
     #DEVICE = ' '
     CFLAGS = DEVICE
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp -D__ASSEMBLY__'
-    LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=rtthread-beaglebone.map,-cref,-u,Reset_Handler -T beaglebone_ram.lds'
+    LFLAGS = DEVICE + ' -Wl,-Map=rtthread-beaglebone.map,-cref,-u,Reset_Handler -T beaglebone_ram.lds'
 
     CPATH = ''
     LPATH = ''

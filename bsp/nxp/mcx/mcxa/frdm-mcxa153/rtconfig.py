@@ -47,7 +47,7 @@ if PLATFORM == 'gcc':
     DEVICE = ' -mcpu=' + CPU + '+nodsp' + ' -mthumb -mfloat-abi=soft -ffunction-sections -fdata-sections'
     CFLAGS = DEVICE + ' -Wall'
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp -D__START=entry -D__STARTUP_CLEAR_BSS'
-    LFLAGS = DEVICE + ' -specs=nano.specs -specs=nosys.specs -Wl,--defsym=__heap_size__=0x2000,--gc-sections,-Map=rtthread.map,--print-memory-usage -Tboard/linker_scripts/MCXA153_flash.ld'
+    LFLAGS = DEVICE + ' -specs=nano.specs -specs=nosys.specs -Wl,--defsym=__heap_size__=0x2000,-Map=rtthread.map,--print-memory-usage -Tboard/linker_scripts/MCXA153_flash.ld'
 
     CPATH = ''
     LPATH = ''
@@ -67,7 +67,7 @@ if PLATFORM == 'gcc':
 
     M_CFLAGS = CFLAGS + ' -mlong-calls -fPIC '
     M_CXXFLAGS = CXXFLAGS + ' -mlong-calls -fPIC'
-    M_LFLAGS = DEVICE + CXXFLAGS + ' -Wl,--gc-sections,-z,max-page-size=0x4' +\
+    M_LFLAGS = DEVICE + CXXFLAGS + ' -Wl,-z,max-page-size=0x4' +\
                                     ' -shared -fPIC -nostartfiles -static-libgcc'
     M_POST_ACTION = STRIP + ' -R .hash $TARGET\n' + SIZE + ' $TARGET \n'
 

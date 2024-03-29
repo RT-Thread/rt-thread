@@ -42,7 +42,7 @@ if PLATFORM == 'gcc':
     DEVICE = ' -mcpu=arm7tdmi'
     CFLAGS = DEVICE
     AFLAGS = ' -c' + DEVICE + ' -x assembler-with-cpp'
-    LFLAGS = DEVICE + ' -Wl,--gc-sections,-Map=sam7x_rom_gcc.map,-cref,-u,_start -T sam7x_rom.ld -nostartfiles'
+    LFLAGS = DEVICE + ' -Wl,-Map=sam7x_rom_gcc.map,-cref,-u,_start -T sam7x_rom.ld -nostartfiles'
     CPATH = ''
     LPATH = ''
 
