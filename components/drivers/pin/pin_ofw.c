@@ -20,14 +20,14 @@ static const char * const gpio_suffixes[] =
 rt_ssize_t rt_ofw_get_named_pin(struct rt_ofw_node *np, const char *propname, int index,
         rt_uint8_t *out_mode, rt_uint8_t *out_value)
 {
-    rt_ssize_t pin;
+    rt_ssize_t pin = -1;
     rt_uint8_t mode;
     rt_uint8_t value;
     rt_uint32_t flags;
     char gpios_name[64];
-    struct rt_device_pin *pin_dev;
-    struct rt_ofw_node *pin_dev_np;
-    struct rt_ofw_cell_args pin_args;
+    struct rt_device_pin *pin_dev = 0;
+    struct rt_ofw_node *pin_dev_np = 0;
+    struct rt_ofw_cell_args pin_args = {0};
 
     if (!np && index < 0)
     {
