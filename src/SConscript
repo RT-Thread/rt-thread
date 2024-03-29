@@ -30,6 +30,7 @@ else:
     SrcRemove(src, ['scheduler_up.c'])
 
 LOCAL_CFLAGS = ''
+LINKFLAGS = ''
 
 if rtconfig.PLATFORM in ['gcc']: # only for GCC
     LOCAL_CFLAGS += ' -Wunused' # unused warning
@@ -41,7 +42,11 @@ if rtconfig.PLATFORM in ['gcc']: # only for GCC
     if 'mips' not in rtconfig.PREFIX: # mips toolchain does not support
         LOCAL_CFLAGS += ' -Wimplicit-fallthrough' # implicit fallthrough warning
         LOCAL_CFLAGS += ' -Wduplicated-cond -Wduplicated-branches' # duplicated condition warning
+    if rtconfig.ARCH not in ['sim']:
+        LINKFLAGS += ' -Wl,--gc-sections,--print-memory-usage' # remove unused sections and print memory usage
 
-group = DefineGroup('Kernel', src, depend=[''], CPPPATH=inc, CPPDEFINES=['__RTTHREAD__'], LOCAL_CFLAGS=LOCAL_CFLAGS, LOCAL_CPPDEFINES=['__RT_KERNEL_SOURCE__'])
+group = DefineGroup('Kernel', src, depend=[''], CPPPATH=inc,
+                    LINKFLAGS=LINKFLAGS, LOCAL_CFLAGS=LOCAL_CFLAGS,
+                    CPPDEFINES=['__RTTHREAD__'], LOCAL_CPPDEFINES=['__RT_KERNEL_SOURCE__'])
 
 Return('group')
