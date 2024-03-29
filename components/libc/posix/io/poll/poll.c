@@ -4,15 +4,16 @@
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
- * Date           Author       Notes
- * 2016-12-28     Bernard      first version
- * 2018-03-09     Bernard      Add protection for pt->triggered.
- * 2023-12-04     Shell        Fix return code and error verification
- * 2023-12-14     Shell        When poll goes to sleep before the waitqueue has added a
- *                             record and finished enumerating all the fd's, it may be
- *                             incorrectly woken up. This is basically because the poll
- *                             mechanism wakeup algorithm does not correctly distinguish
- *                             the current wait state.
+ * Date           Author            Notes
+ * 2016-12-28     Bernard           first version
+ * 2018-03-09     Bernard           Add protection for pt->triggered.
+ * 2023-12-04     Shell             Fix return code and error verification
+ * 2023-12-14     Shell             When poll goes to sleep before the waitqueue has added a
+ *                                  record and finished enumerating all the fd's, it may be
+ *                                  incorrectly woken up. This is basically because the poll
+ *                                  mechanism wakeup algorithm does not correctly distinguish
+ *                                  the current wait state.
+ * 2024/03/29     TroyMitchelle     Add all function comments and comments to structure members
  */
 
 #include <stdint.h>
@@ -21,30 +22,45 @@
 #include <dfs_file.h>
 #include "poll.h"
 
-struct rt_poll_node;
+/**
+ * @brief   Enumeration defining the status of a poll operation.
+ */
 enum rt_poll_status {
-    RT_POLL_STAT_INIT,
-    RT_POLL_STAT_TRIG,
-    RT_POLL_STAT_WAITING,
+    RT_POLL_STAT_INIT,     /**< Poll operation initialization status. */
+    RT_POLL_STAT_TRIG,     /**< Poll operation triggered status. */
+    RT_POLL_STAT_WAITING   /**< Poll operation waiting status. */
 };
 
-struct rt_poll_table
-{
-    rt_pollreq_t req;
-    enum rt_poll_status status; /* the waited thread whether triggered */
-    rt_thread_t polling_thread;
-    struct rt_poll_node *nodes;
+/**
+ * @brief   Structure representing a poll table for managing poll operations.
+ */
+struct rt_poll_table {
+    rt_pollreq_t req;               /**< Poll request. */
+    enum rt_poll_status status;     /**< Status of the poll operation. */
+    rt_thread_t polling_thread;     /**< Polling thread associated with the table. */
+    struct rt_poll_node *nodes;     /**< Linked list of poll nodes. */
 };
 
-struct rt_poll_node
-{
-    struct rt_wqueue_node wqn;
-    struct rt_poll_table *pt;
-    struct rt_poll_node *next;
+/**
+ * @brief   Structure representing a node in the poll table.
+ */
+struct rt_poll_node {
+    struct rt_wqueue_node wqn;     /**< Wait queue node for the poll node. */
+    struct rt_poll_table *pt;       /**< Pointer to the parent poll table. */
+    struct rt_poll_node *next;      /**< Pointer to the next poll node. */
 };
 
 static RT_DEFINE_SPINLOCK(_spinlock);
 
+/**
+ * @brief   Wake-up function for the wait queue.
+ *
+ * This function is invoked when a node in the wait queue needs to be woken up.
+ *
+ * @param   wait    Pointer to the wait queue node.
+ * @param   key     Key associated with the wake-up operation.
+ * @return  Upon successful wake-up, returns 0; otherwise, -1 is returned.
+ */
 static int __wqueue_pollwake(struct rt_wqueue_node *wait, void *key)
 {
     rt_ubase_t level;
@@ -68,6 +84,15 @@ static int __wqueue_pollwake(struct rt_wqueue_node *wait, void *key)
     return -1;
 }
 
+/**
+ * @brief   Adds a poll request to the wait queue.
+ *
+ * This function adds a poll request to the wait queue associated with the specified
+ * wait queue and poll request.
+ *
+ * @param   wq      Pointer to the wait queue.
+ * @param   req     Pointer to the poll request.
+ */
 static void _poll_add(rt_wqueue_t *wq, rt_pollreq_t *req)
 {
     struct rt_poll_table *pt;
@@ -89,6 +114,14 @@ static void _poll_add(rt_wqueue_t *wq, rt_pollreq_t *req)
     rt_wqueue_add(wq, &node->wqn);
 }
 
+/**
+ * @brief   Initializes a poll table.
+ *
+ * This function initializes a poll table with the provided poll request, status,
+ * and polling thread.
+ *
+ * @param   pt  Pointer to the poll table to be initialized.
+ */
 static void poll_table_init(struct rt_poll_table *pt)
 {
     pt->req._proc = _poll_add;
@@ -97,6 +130,18 @@ static void poll_table_init(struct rt_poll_table *pt)
     pt->polling_thread = rt_thread_self();
 }
 
+/**
+ * @brief   Waits for events on the poll table with a specified timeout.
+ *
+ * This function waits for events on the poll table with the specified timeout
+ * in milliseconds.
+ *
+ * @param   pt      Pointer to the poll table.
+ * @param   msec    Timeout value in milliseconds.
+ * @return  Upon successful completion, returns 0. If the timeout expires, -RT_ETIMEOUT
+ *          is returned. If the operation is interrupted by a signal, -RT_EINTR is
+ *          returned.
+ */
 static int poll_wait_timeout(struct rt_poll_table *pt, int msec)
 {
     rt_int32_t timeout;
@@ -150,6 +195,17 @@ static int poll_wait_timeout(struct rt_poll_table *pt, int msec)
     return ret;
 }
 
+/**
+ * @brief   Performs poll operation for a single file descriptor.
+ *
+ * This function performs a poll operation for a single file descriptor and updates
+ * the revents field of the pollfd structure accordingly.
+ *
+ * @param   pollfd  Pointer to the pollfd structure.
+ * @param   req     Pointer to the poll request.
+ * @return  Upon successful completion, returns the bitmask of events that occurred.
+ *          If an error occurs, -1 is returned.
+ */
 static int do_pollfd(struct pollfd *pollfd, rt_pollreq_t *req)
 {
     int mask = 0;
@@ -187,6 +243,21 @@ static int do_pollfd(struct pollfd *pollfd, rt_pollreq_t *req)
     return mask;
 }
 
+/**
+ * @brief   Performs the poll operation on an array of file descriptors.
+ *
+ * This function performs the poll operation on an array of file descriptors and
+ * waits for events with the specified timeout.
+ *
+ * @param   fds     Pointer to the array of pollfd structures.
+ * @param   nfds    Number of file descriptors in the array.
+ * @param   pt      Pointer to the poll table.
+ * @param   msec    Timeout value in milliseconds.
+ * @return  Upon successful completion, returns the number of file descriptors
+ *          for which events were received. If the timeout expires, -RT_ETIMEOUT
+ *          is returned. If the operation is interrupted by a signal, -RT_EINTR is
+ *          returned.
+ */
 static int poll_do(struct pollfd *fds, nfds_t nfds, struct rt_poll_table *pt, int msec)
 {
     int num;
@@ -241,6 +312,14 @@ static int poll_do(struct pollfd *fds, nfds_t nfds, struct rt_poll_table *pt, in
     return num;
 }
 
+/**
+ * @brief   Tears down the poll table.
+ *
+ * This function tears down the poll table by removing all poll nodes associated
+ * with it.
+ *
+ * @param   pt  Pointer to the poll table.
+ */
 static void poll_teardown(struct rt_poll_table *pt)
 {
     struct rt_poll_node *node, *next;
@@ -255,6 +334,19 @@ static void poll_teardown(struct rt_poll_table *pt)
     }
 }
 
+/**
+ * @brief   Performs the poll operation on a set of file descriptors.
+ *
+ * This function performs the poll operation on a set of file descriptors and
+ * waits for events with the specified timeout.
+ *
+ * @param   fds     Pointer to the array of pollfd structures.
+ * @param   nfds    Number of file descriptors in the array.
+ * @param   timeout Timeout value in milliseconds.
+ * @return  Upon successful completion, returns the number of file descriptors
+ *          for which events were received. If the timeout expires, 0 is returned.
+ *          If an error occurs, -1 is returned.
+ */
 int poll(struct pollfd *fds, nfds_t nfds, int timeout)
 {
     int num;
