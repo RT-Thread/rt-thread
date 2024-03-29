@@ -27,9 +27,10 @@ class CPPCheck:
                 [
                     'cppcheck',
                     '-DRT_ASSERT(x)=',
-                    '-Drt_list_for_each_entry(a,b,c)=a=(void*)b',
+                    '-Drt_list_for_each_entry(a,b,c)=a=(void*)b;',
                     '-I include',
                     '-I thread/components/finsh',
+                    # it's okay because CI will do the real compilation to check this
                     '--suppress=syntaxError',
                     '--enable=warning',
                     'performance',

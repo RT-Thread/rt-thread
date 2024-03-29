@@ -879,7 +879,8 @@ static void rtthread_timer_wrapper(void *timerobj)
     }
 #ifdef RT_USING_SMART
     /* this field is named as tid in musl */
-    int tid = *(int *)&timer->sigev_notify_function;
+    void *ptid = &timer->sigev_notify_function;
+    int tid = *(int *)ptid;
     struct lwp_timer_event_param *data = rt_container_of(timer->work, struct lwp_timer_event_param, work);
     data->signo = timer->sigev_signo;
 
