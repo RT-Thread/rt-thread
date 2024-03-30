@@ -116,6 +116,7 @@
 #define RT_DFS_ELM_MUTEX_TIMEOUT 3000
 #define RT_USING_DFS_DEVFS
 #define RT_USING_DFS_ROMFS
+#define RT_USING_DFS_PTYFS
 #define RT_USING_DFS_TMPFS
 #define RT_USING_PAGECACHE
 
@@ -138,7 +139,6 @@
 #define RT_USING_SERIAL
 #define RT_USING_SERIAL_V1
 #define RT_SERIAL_RB_BUFSZ 64
-#define RT_USING_TTY
 #define RT_USING_CPUTIME
 #define CPUTIME_TIMER_FREQ 0
 #define RT_USING_I2C
@@ -297,6 +297,8 @@
 #define LWP_ENABLE_ASID
 #define RT_LWP_SHM_MAX_NR 64
 #define RT_USING_LDSO
+#define LWP_USING_TERMINAL
+#define LWP_PTY_MAX_PARIS_LIMIT 64
 
 /* Memory management */
 
@@ -367,18 +369,13 @@
 
 /* peripheral libraries and drivers */
 
-/* HAL & SDK Drivers */
-
-/* STM32 HAL & SDK Drivers */
-
-
-/* Kendryte SDK */
-
-
 /* sensors drivers */
 
 
 /* touch drivers */
+
+
+/* Kendryte SDK */
 
 
 /* AI packages */
@@ -489,7 +486,6 @@
 
 /* Select ENET Driver */
 
-#define RT_USING_ENET1
 
 /* Select Wifi Driver */
 
