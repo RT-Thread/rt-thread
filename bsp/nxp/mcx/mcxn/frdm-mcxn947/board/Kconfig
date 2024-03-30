@@ -67,6 +67,11 @@ menu "On-chip Peripheral Drivers"
                 config BSP_USING_SPI6
                     bool "Enable Flexcomm6 as SPI"
                     default n
+                    if BSP_USING_SPI6
+                        config BSP_USING_SPI6_SAMPLE
+                            bool "Enable SPI6 BUS Sample"
+                            default n
+                    endif
 
                 config BSP_USING_SPI8
                     bool "Enable Flexcomm8 as High Speed SPI"
