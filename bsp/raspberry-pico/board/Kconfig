@@ -24,6 +24,7 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_I2C0
         select BSP_USING_SPI
         select BSP_USING_SPI0
+        select RTDUINO_USING_WIRE
         imply RTDUINO_USING_SERVO
         default n
 
@@ -160,15 +161,15 @@ menu "On-chip Peripheral Drivers"
                 default n
                 if BSP_USING_SOFT_SPI0
                     config BSP_S_SPI0_SCK_PIN
-                        int "spi0 sck pin number (GP)"
+                        int "spi0 SCK pin number (GP)"
                         range 0 28
                         default 6
                     config BSP_S_SPI0_MOSI_PIN
-                        int "spi0 mosi pin number (GP)"
+                        int "spi0 MOSI pin number (GP)"
                         range 0 28
                         default 7
                     config BSP_S_SPI0_MISO_PIN
-                        int "spi0 miso pin number (GP)"
+                        int "spi0 MISO pin number (GP)"
                         range 0 28
                         default 4
                 endif
@@ -177,15 +178,15 @@ menu "On-chip Peripheral Drivers"
                 default n
                 if BSP_USING_SOFT_SPI1
                     config BSP_S_SPI1_SCK_PIN
-                        int "spi1 sck pin number (GP)"
+                        int "spi1 SCK pin number (GP)"
                         range 0 28
                         default 10
                     config BSP_S_SPI1_MOSI_PIN
-                        int "spi1 mosi pin number (GP)"
+                        int "spi1 MOSI pin number (GP)"
                         range 0 28
                         default 11
                     config BSP_S_SPI1_MISO_PIN
-                        int "spi1 miso pin number (GP)"
+                        int "spi1 MISO pin number (GP)"
                         range 0 28
                         default 12
                 endif
@@ -229,7 +230,7 @@ menu "On-chip Peripheral Drivers"
                 default n
             if BSP_USING_SPI0
                 choice
-                    prompt "spi0 mosi pin number (GP)"
+                    prompt "spi0 MOSI pin number (GP)"
                     depends on BSP_USING_SPI0
                     default BSP_SPI0_MOSI_PIN_19 if BSP_USING_ARDUINO
                     config BSP_SPI0_MOSI_PIN_19
@@ -246,7 +247,7 @@ menu "On-chip Peripheral Drivers"
                     default 19 if BSP_SPI0_MOSI_PIN_19
 
                 choice
-                    prompt "spi0 miso pin number (GP)"
+                    prompt "spi0 MISO pin number (GP)"
                     depends on BSP_USING_SPI0
                     default BSP_SPI0_MISO_PIN_16 if BSP_USING_ARDUINO
                     config BSP_SPI0_MISO_PIN_16
@@ -263,7 +264,7 @@ menu "On-chip Peripheral Drivers"
                     default 16 if BSP_SPI0_MISO_PIN_16
 
                 choice
-                    prompt "spi0 sck pin number (GP)"
+                    prompt "spi0 SCK pin number (GP)"
                     depends on BSP_USING_SPI0
                     default BSP_SPI0_SCK_PIN_18 if BSP_USING_ARDUINO
                     config BSP_SPI0_SCK_PIN_18
@@ -280,7 +281,7 @@ menu "On-chip Peripheral Drivers"
                     default 18 if BSP_SPI0_SCK_PIN_18
 
                 choice
-                    prompt "spi0 cs pin number (GP)"
+                    prompt "spi0 CS pin number (GP)"
                     depends on BSP_USING_SPI0
                     default BSP_SPI0_CS_PIN_17 if BSP_USING_ARDUINO
                     config BSP_SPI0_CS_PIN_17
@@ -302,7 +303,7 @@ menu "On-chip Peripheral Drivers"
                 default n
             if BSP_USING_SPI1
                 choice
-                    prompt "spi1 mosi pin number (GP)"
+                    prompt "spi1 MOSI pin number (GP)"
                     depends on BSP_USING_SPI1
                     default BSP_SPI1_MOSI_PIN_15 if BSP_USING_ARDUINO
                     config BSP_SPI1_MOSI_PIN_15
@@ -316,7 +317,7 @@ menu "On-chip Peripheral Drivers"
                     default 15 if BSP_SPI1_MOSI_PIN_15
 
                 choice
-                    prompt "spi1 miso pin number (GP)"
+                    prompt "spi1 MISO pin number (GP)"
                     depends on BSP_USING_SPI1
                     default BSP_SPI1_MISO_PIN_12 if BSP_USING_ARDUINO
                     config BSP_SPI1_MISO_PIN_12
@@ -330,7 +331,7 @@ menu "On-chip Peripheral Drivers"
                     default 12 if BSP_SPI0_MISO_PIN_12
 
                 choice
-                    prompt "spi1 sck pin number (GP)"
+                    prompt "spi1 SCK pin number (GP)"
                     depends on BSP_USING_SPI1
                     default BSP_SPI1_SCK_PIN_14 if BSP_USING_ARDUINO
                     config BSP_SPI1_SCK_PIN_14
@@ -344,7 +345,7 @@ menu "On-chip Peripheral Drivers"
                     default 14 if BSP_SPI1_SCK_PIN_14
 
                 choice
-                    prompt "spi1 cs pin number (GP)"
+                    prompt "spi1 CS pin number (GP)"
                     depends on BSP_USING_SPI0
                     default BSP_SPI1_CS_PIN_13 if BSP_USING_ARDUINO
                     config BSP_SPI1_CS_PIN_13

@@ -58,7 +58,6 @@ void switchToSPI(const char *bus_name)
 {
     if(!rt_strcmp(bus_name, "spi0"))
     {
-
         /**SPI0 GPIO Configuration
         18u     ------> SPI0_SCK
         16u     ------> SPI0_MISO
