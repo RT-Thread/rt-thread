@@ -59,6 +59,7 @@
  * 2023-12-22     Shell        Support hook list
  * 2024-01-18     Shell        Seperate basical types to a rttypes.h
  *                             Seperate the compiler portings to rtcompiler.h
+ * 2024-03-30     Meco Man     update version number to v5.2.0
  */
 
 #ifndef __RT_DEF_H__
@@ -79,7 +80,7 @@ extern "C" {
 
 /* RT-Thread version information */
 #define RT_VERSION_MAJOR                5               /**< Major version number (X.x.x) */
-#define RT_VERSION_MINOR                1               /**< Minor version number (x.X.x) */
+#define RT_VERSION_MINOR                2               /**< Minor version number (x.X.x) */
 #define RT_VERSION_PATCH                0               /**< Patch version number (x.x.X) */
 
 /* e.g. #if (RTTHREAD_VERSION >= RT_VERSION_CHECK(4, 1, 0) */
