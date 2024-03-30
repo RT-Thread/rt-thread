@@ -25,6 +25,16 @@ int rt_vsnprintf(char *buf, rt_size_t size, const char *fmt, va_list args);
 int rt_sprintf(char *buf, const char *format, ...);
 int rt_snprintf(char *buf, rt_size_t size, const char *format, ...);
 
+rt_err_t rt_get_errno(void);
+void rt_set_errno(rt_err_t no);
+int *_rt_errno(void);
+const char *rt_strerror(rt_err_t error);
+#if !defined(RT_USING_NEWLIBC) && !defined(_WIN32)
+#ifndef errno
+#define errno    *_rt_errno()
+#endif
+#endif /* !defined(RT_USING_NEWLIBC) && !defined(_WIN32) */
+
 /* kstring */
 
 #ifndef RT_KSERVICE_USING_STDLIB_MEMORY
