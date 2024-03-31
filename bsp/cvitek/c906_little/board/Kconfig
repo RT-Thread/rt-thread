@@ -45,6 +45,11 @@ menu "General Drivers Configuration"
         select RT_USING_ADC
         default n
 
+    config BSP_USING_SPI
+        bool "Using SPI"
+        select RT_USING_SPI
+        default n
+
     menuconfig BSP_USING_WDT
         bool "Enable Watchdog Timer"
         select RT_USING_WDT
