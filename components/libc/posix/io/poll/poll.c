@@ -13,7 +13,7 @@
  *                                  incorrectly woken up. This is basically because the poll
  *                                  mechanism wakeup algorithm does not correctly distinguish
  *                                  the current wait state.
- * 2024/03/29     TroyMitchelle     Add all function comments and comments to structure members
+ * 2024-03-29     TroyMitchelle     Add all function comments and comments to structure members
  */
 
 #include <stdint.h>
@@ -22,29 +22,26 @@
 #include <dfs_file.h>
 #include "poll.h"
 
-/**
- * @brief   Enumeration defining the status of a poll operation.
- */
-enum rt_poll_status {
+
+enum rt_poll_status 
+{
     RT_POLL_STAT_INIT,     /**< Poll operation initialization status. */
     RT_POLL_STAT_TRIG,     /**< Poll operation triggered status. */
     RT_POLL_STAT_WAITING   /**< Poll operation waiting status. */
 };
 
-/**
- * @brief   Structure representing a poll table for managing poll operations.
- */
-struct rt_poll_table {
+
+struct rt_poll_table 
+{
     rt_pollreq_t req;               /**< Poll request. */
     enum rt_poll_status status;     /**< Status of the poll operation. */
     rt_thread_t polling_thread;     /**< Polling thread associated with the table. */
     struct rt_poll_node *nodes;     /**< Linked list of poll nodes. */
 };
 
-/**
- * @brief   Structure representing a node in the poll table.
- */
-struct rt_poll_node {
+
+struct rt_poll_node 
+{
     struct rt_wqueue_node wqn;     /**< Wait queue node for the poll node. */
     struct rt_poll_table *pt;       /**< Pointer to the parent poll table. */
     struct rt_poll_node *next;      /**< Pointer to the next poll node. */

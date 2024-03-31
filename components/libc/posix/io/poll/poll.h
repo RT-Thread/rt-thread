@@ -6,7 +6,7 @@
  * Change Logs:
  * Date           Author            Notes
  * 2021-09-11     Meco Man          First version
- * 2024/03/29     TroyMitchelle     Add all macro comments and comments to structure members
+ * 2024-03-29     TroyMitchelle     Add all macro comments and comments to structure members
  */
 
 #ifndef __POLL_H__
