@@ -51,4 +51,10 @@
 /* Serial2 : P-TX  P-RX */
 #define RTDUINO_SERIAL2_DEVICE_NAME      "uart1"
 
+#define SS          D17
+#define RTDUINO_DEFAULT_SPI_BUS_NAME     "spi0"
+
+/* i2c0 : D4-SDA D5-SCL */
+#define RTDUINO_DEFAULT_IIC_BUS_NAME    "i2c0"
+
 #endif /* Pins_Arduino_h */
