@@ -11,10 +11,10 @@
 #include <Arduino.h>
 #include <board.h>
 #include "pins_arduino.h"
-#include "pico/stdlib.h"
-#include "hardware/spi.h"
-#include "hardware/gpio.h"
-#include "pico/binary_info.h"
+#include <pico/stdlib.h>
+#include <hardware/spi.h>
+#include <hardware/gpio.h>
+#include <pico/binary_info.h>
 
 #define DBG_TAG    "RTduino.pins_arduino"
 #define DBG_LVL    DBG_INFO
