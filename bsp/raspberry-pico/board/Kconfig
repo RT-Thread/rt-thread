@@ -22,6 +22,10 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_PWM7
         select BSP_USING_I2C
         select BSP_USING_I2C0
+        select BSP_USING_SPI
+        select BSP_USING_SPI0
+        select RTDUINO_USING_WIRE
+        select RTDUINO_USING_SPI
         imply RTDUINO_USING_SERVO
         default n
 
@@ -158,15 +162,15 @@ menu "On-chip Peripheral Drivers"
                 default n
                 if BSP_USING_SOFT_SPI0
                     config BSP_S_SPI0_SCK_PIN
-                        int "spi0 sck pin number (GP)"
+                        int "spi0 SCK pin number (GP)"
                         range 0 28
                         default 6
                     config BSP_S_SPI0_MOSI_PIN
-                        int "spi0 mosi pin number (GP)"
+                        int "spi0 MOSI pin number (GP)"
                         range 0 28
                         default 7
                     config BSP_S_SPI0_MISO_PIN
-                        int "spi0 miso pin number (GP)"
+                        int "spi0 MISO pin number (GP)"
                         range 0 28
                         default 4
                 endif
@@ -175,15 +179,15 @@ menu "On-chip Peripheral Drivers"
                 default n
                 if BSP_USING_SOFT_SPI1
                     config BSP_S_SPI1_SCK_PIN
-                        int "spi1 sck pin number (GP)"
+                        int "spi1 SCK pin number (GP)"
                         range 0 28
                         default 10
                     config BSP_S_SPI1_MOSI_PIN
-                        int "spi1 mosi pin number (GP)"
+                        int "spi1 MOSI pin number (GP)"
                         range 0 28
                         default 11
                     config BSP_S_SPI1_MISO_PIN
-                        int "spi1 miso pin number (GP)"
+                        int "spi1 MISO pin number (GP)"
                         range 0 28
                         default 12
                 endif
@@ -227,66 +231,66 @@ menu "On-chip Peripheral Drivers"
                 default n
             if BSP_USING_SPI0
                 choice
-                    prompt "spi0 tx pin number (GP)"
+                    prompt "spi0 MOSI pin number (GP)"
                     depends on BSP_USING_SPI0
-                    default BSP_SPI0_TX_PIN_3
-                    config BSP_SPI0_TX_PIN_3
-                        bool "3"
-                    config BSP_SPI0_TX_PIN_7
-                        bool "7"
-                    config BSP_SPI0_TX_PIN_19
+                    default BSP_SPI0_MOSI_PIN_19 if BSP_USING_ARDUINO
+                    config BSP_SPI0_MOSI_PIN_19
                         bool "19"
+                    config BSP_SPI0_MOSI_PIN_3
+                        bool "3"
+                    config BSP_SPI0_MOSI_PIN_7
+                        bool "7"
                 endchoice
-                config BSP_SPI0_TX_PIN
+                config BSP_SPI0_MOSI_PIN
                     int
-                    default 3 if BSP_SPI0_TX_PIN_3
-                    default 7 if BSP_SPI0_TX_PIN_7
-                    default 19 if BSP_SPI0_TX_PIN_19
+                    default 3 if BSP_SPI0_MOSI_PIN_3
+                    default 7 if BSP_SPI0_MOSI_PIN_7
+                    default 19 if BSP_SPI0_MOSI_PIN_19
 
                 choice
-                    prompt "spi0 rx pin number (GP)"
+                    prompt "spi0 MISO pin number (GP)"
                     depends on BSP_USING_SPI0
-                    default BSP_SPI0_RX_PIN_4
-                    config BSP_SPI0_RX_PIN_0
-                        bool "0"
-                    config BSP_SPI0_RX_PIN_4
-                        bool "4"
-                    config BSP_SPI0_RX_PIN_16
+                    default BSP_SPI0_MISO_PIN_16 if BSP_USING_ARDUINO
+                    config BSP_SPI0_MISO_PIN_16
                         bool "16"
+                    config BSP_SPI0_MISO_PIN_0
+                        bool "0"
+                    config BSP_SPI0_MISO_PIN_4
+                        bool "4"
                 endchoice
-                config BSP_SPI0_RX_PIN
+                config BSP_SPI0_MISO_PIN
                     int
-                    default 0 if BSP_SPI0_RX_PIN_0
-                    default 4 if BSP_SPI0_RX_PIN_4
-                    default 16 if BSP_SPI0_RX_PIN_16
+                    default 0 if BSP_SPI0_MISO_PIN_0
+                    default 4 if BSP_SPI0_MISO_PIN_4
+                    default 16 if BSP_SPI0_MISO_PIN_16
 
                 choice
-                    prompt "spi0 sck pin number (GP)"
+                    prompt "spi0 SCK pin number (GP)"
                     depends on BSP_USING_SPI0
-                    default BSP_SPI0_SCK_PIN_2
+                    default BSP_SPI0_SCK_PIN_18 if BSP_USING_ARDUINO
+                    config BSP_SPI0_SCK_PIN_18
+                        bool "18"
                     config BSP_SPI0_SCK_PIN_2
                         bool "2"
                     config BSP_SPI0_SCK_PIN_6
                         bool "6"
-                    config BSP_SPI0_SCK_PIN_8
-                        bool "8"
                 endchoice
                 config BSP_SPI0_SCK_PIN
                     int
                     default 2 if BSP_SPI0_SCK_PIN_2
                     default 6 if BSP_SPI0_SCK_PIN_6
-                    default 8 if BSP_SPI0_SCK_PIN_8
+                    default 18 if BSP_SPI0_SCK_PIN_18
 
                 choice
-                    prompt "spi0 cs pin number (GP)"
+                    prompt "spi0 CS pin number (GP)"
                     depends on BSP_USING_SPI0
-                    default BSP_SPI0_CS_PIN_5
+                    default BSP_SPI0_CS_PIN_17 if BSP_USING_ARDUINO
+                    config BSP_SPI0_CS_PIN_17
+                        bool "17"
                     config BSP_SPI0_CS_PIN_1
                         bool "1"
                     config BSP_SPI0_CS_PIN_5
                         bool "5"
-                    config BSP_SPI0_CS_PIN_17
-                        bool "17"
                 endchoice
                 config BSP_SPI0_CS_PIN
                     int
@@ -300,41 +304,41 @@ menu "On-chip Peripheral Drivers"
                 default n
             if BSP_USING_SPI1
                 choice
-                    prompt "spi1 tx pin number (GP)"
+                    prompt "spi1 MOSI pin number (GP)"
                     depends on BSP_USING_SPI1
-                    default BSP_SPI1_TX_PIN_11
-                    config BSP_SPI1_TX_PIN_11
-                        bool "11"
-                    config BSP_SPI1_TX_PIN_15
+                    default BSP_SPI1_MOSI_PIN_15 if BSP_USING_ARDUINO
+                    config BSP_SPI1_MOSI_PIN_15
                         bool "15"
+                    config BSP_SPI1_MOSI_PIN_11
+                        bool "11"
                 endchoice
-                config BSP_SPI1_TX_PIN
+                config BSP_SPI1_MOSI_PIN
                     int
-                    default 11 if BSP_SPI1_TX_PIN_11
-                    default 15 if BSP_SPI1_TX_PIN_15
+                    default 11 if BSP_SPI1_MOSI_PIN_11
+                    default 15 if BSP_SPI1_MOSI_PIN_15
 
                 choice
-                    prompt "spi1 rx pin number (GP)"
+                    prompt "spi1 MISO pin number (GP)"
                     depends on BSP_USING_SPI1
-                    default BSP_SPI1_RX_PIN_12
-                    config BSP_SPI1_RX_PIN_8
-                        bool "8"
-                    config BSP_SPI1_RX_PIN_12
+                    default BSP_SPI1_MISO_PIN_12 if BSP_USING_ARDUINO
+                    config BSP_SPI1_MISO_PIN_12
                         bool "12"
+                    config BSP_SPI1_MISO_PIN_8
+                        bool "8"
                 endchoice
-                config BSP_SPI1_RX_PIN
+                config BSP_SPI1_MISO_PIN
                     int
-                    default 8 if BSP_SPI1_RX_PIN_8
-                    default 12 if BSP_SPI1_RX_PIN_12
+                    default 8 if BSP_SPI0_MISO_PIN_8
+                    default 12 if BSP_SPI0_MISO_PIN_12
 
                 choice
-                    prompt "spi1 sck pin number (GP)"
-                    depends on BSP_USING_SPI0
-                    default BSP_SPI1_SCK_PIN_10
-                    config BSP_SPI1_SCK_PIN_10
-                        bool "10"
+                    prompt "spi1 SCK pin number (GP)"
+                    depends on BSP_USING_SPI1
+                    default BSP_SPI1_SCK_PIN_14 if BSP_USING_ARDUINO
                     config BSP_SPI1_SCK_PIN_14
                         bool "14"
+                    config BSP_SPI1_SCK_PIN_10
+                        bool "10"
                 endchoice
                 config BSP_SPI1_SCK_PIN
                     int
@@ -342,13 +346,13 @@ menu "On-chip Peripheral Drivers"
                     default 14 if BSP_SPI1_SCK_PIN_14
 
                 choice
-                    prompt "spi1 cs pin number (GP)"
+                    prompt "spi1 CS pin number (GP)"
                     depends on BSP_USING_SPI0
-                    default BSP_SPI1_CS_PIN_13
-                    config BSP_SPI1_CS_PIN_9
-                        bool "9"
+                    default BSP_SPI1_CS_PIN_13 if BSP_USING_ARDUINO
                     config BSP_SPI1_CS_PIN_13
                         bool "13"
+                    config BSP_SPI1_CS_PIN_9
+                        bool "9"
                 endchoice
                 config BSP_SPI1_CS_PIN
                     int
@@ -692,11 +696,11 @@ menu "On-chip Peripheral Drivers"
                     choice
                         prompt "i2c0 scl pin number (GP)"
                         depends on BSP_USING_I2C0
-                        default BSP_I2C0_SCL_PIN_21
-                        config BSP_I2C0_SCL_PIN_1
-                            bool "1"
+                        default BSP_I2C0_SCL_PIN_5 if BSP_USING_ARDUINO
                         config BSP_I2C0_SCL_PIN_5
                             bool "5"
+                        config BSP_I2C0_SCL_PIN_1
+                            bool "1"
                         config BSP_I2C0_SCL_PIN_9
                             bool "9"
                         config BSP_I2C0_SCL_PIN_13
@@ -718,11 +722,11 @@ menu "On-chip Peripheral Drivers"
                     choice
                         prompt "i2c0 sda pin number (GP)"
                         depends on BSP_USING_I2C0
-                        default BSP_I2C0_SDA_PIN_20
-                        config BSP_I2C0_SDA_PIN_0
-                            bool "0"
+                        default BSP_I2C0_SDA_PIN_4 if BSP_USING_ARDUINO
                         config BSP_I2C0_SDA_PIN_4
                             bool "4"
+                        config BSP_I2C0_SDA_PIN_0
+                            bool "0"
                         config BSP_I2C0_SDA_PIN_8
                             bool "8"
                         config BSP_I2C0_SDA_PIN_12
