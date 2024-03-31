@@ -82,7 +82,6 @@ static int i2c_read(I2C_TypeDef *i2c_periph,
         *(buf++)=I2C_ReceiveData(i2c_periph);
     }
 
-//    I2C_AcknowledgeConfig(i2c_periph, DISABLE);
     I2C_GenerateSTOP(i2c_periph, ENABLE);
 }
 
@@ -133,7 +132,7 @@ static int i2c_write(I2C_TypeDef *i2c_periph,
     }
 
     try = 0;
-    while(!I2C_CheckEvent(i2c_periph, I2C_EVENT_MASTER_BYTE_TRANSMITTED))                   //EVT8_2
+    while(!I2C_CheckEvent(i2c_periph, I2C_EVENT_MASTER_BYTE_TRANSMITTING))                  //Last byte sent successfully
         if (try++ >= TIMEOUT) return -1;
 
     I2C_GenerateSTOP(i2c_periph, ENABLE);
@@ -180,7 +179,7 @@ static const struct rt_i2c_bus_device_ops ch32_i2c_ops =
         .i2c_bus_control = RT_NULL
 };
 
-int rt_hw_i2c_init(void)
+int rt_hw_i2c_init(struct i2c_config *config = &{5000, I2C_DutyCycle_2, 0, I2C_Ack_Disable, I2C_AcknowledgedAddress_7bit})
 {
     int result = RT_EOK;
 
@@ -188,9 +187,14 @@ int rt_hw_i2c_init(void)
     GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
     GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF_OD;
 
-    //TODO CONFIG
     I2C_InitTypeDef I2C_InitTSturcture = {0};
     I2C_StructInit(&I2C_InitTSturcture);
+    I2C_InitTSturcture.I2C_ClockSpeed = config->clock_speed;
+    I2C_InitTSturcture.I2C_DutyCycle = config->duty_cycle;
+    I2C_InitTSturcture.I2C_OwnAddress1 = config->own_address;
+    I2C_InitTSturcture.I2C_Ack = config->enable_ack ? I2C_Ack_Enable : I2C_Ack_Disable;
+    I2C_InitTSturcture.I2C_AcknowledgedAddress = config->is_7_bit_address ? I2C_AcknowledgedAddress_7bit : I2C_AcknowledgedAddress_10bit;
+
 
 #ifdef BSP_USING_I2C1
 
@@ -236,7 +240,7 @@ int rt_hw_i2c_init(void)
 
 #endif
 
-    return RT_EOK;
+    return result;
 }
 
 #endif //BSP_USING_HWI2C
