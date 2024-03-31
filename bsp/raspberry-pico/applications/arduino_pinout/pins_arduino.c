@@ -14,6 +14,10 @@
 #include <hardware/gpio.h>
 #include <pico/binary_info.h>
 
+#define DBG_TAG    "RTduino.pins_arduino"
+#define DBG_LVL    DBG_INFO
+#include <rtdbg.h>
+
 /*
  * {Arduino Pin, RT-Thread Pin [, Device Name, Channel]}
  * [] means optional
