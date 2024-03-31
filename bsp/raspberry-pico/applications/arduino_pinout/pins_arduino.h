@@ -54,4 +54,7 @@
 #define SS          D17
 #define RTDUINO_DEFAULT_SPI_BUS_NAME     "spi0"
 
+/* i2c0 : 20-SDA 21-SCL */
+#define RTDUINO_DEFAULT_IIC_BUS_NAME    "i2c0"
+
 #endif /* Pins_Arduino_h */
