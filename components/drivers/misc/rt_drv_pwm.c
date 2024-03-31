@@ -282,7 +282,8 @@ rt_err_t rt_pwm_set_phase(struct rt_device_pwm *device, int channel, rt_uint32_t
 
     return result;
 }
-rt_err_t rt_pwm_get(struct rt_device_pwm *device, struct rt_pwm_configuration *cfg)
+
+static rt_err_t rt_pwm_get(struct rt_device_pwm *device, struct rt_pwm_configuration *cfg)
 {
     rt_err_t result = RT_EOK;
 
@@ -313,7 +314,8 @@ enum pwm_list_parameters
 };
 
 CMD_OPTIONS_STATEMENT(pwm_list)
-int pwm_list(int argc, char **argv)
+
+static int pwm_list(int argc, char **argv)
 {
     rt_err_t result = -RT_ERROR;
     char *result_str;

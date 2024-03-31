@@ -109,7 +109,7 @@ static void _collect()
     rt_page_t page = _trace_head;
     if (!page)
     {
-        LOG_RAW("ok! ALLOC CNT %ld\n", _alloc_cnt);
+        rt_kprintf("ok! ALLOC CNT %ld\n", _alloc_cnt);
     }
     else
     {
@@ -159,7 +159,7 @@ void _report(rt_page_t page, size_t size_bits, char *msg)
 {
     void *pg_va = rt_page_page2addr(page);
     LOG_W("%s: %p, allocator: %p, size bits: %lx", msg, pg_va, page->caller, page->trace_size);
-    LOG_RAW("backtrace\n");
+    rt_kprintf("backtrace\n");
     rt_backtrace();
 }
 
@@ -175,7 +175,7 @@ static void _trace_free(rt_page_t page, void *caller, size_t size_bits)
         }
         else if (page->trace_size != size_bits)
         {
-            LOG_RAW("free with size bits %lx\n", size_bits);
+            rt_kprintf("free with size bits %lx\n", size_bits);
             _report(page, size_bits, "incompatible size bits parameter");
             return ;
         }
@@ -636,7 +636,7 @@ void list_page(void)
             rt_kprintf("[0x%08p]", rt_page_page2addr(hp));
             hp = hp->next;
         }
-        LOG_RAW("\n");
+        rt_kprintf("\n");
     }
 
     rt_spin_unlock_irqrestore(&_spinlock, level);
