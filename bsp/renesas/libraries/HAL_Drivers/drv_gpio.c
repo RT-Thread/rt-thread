@@ -335,7 +335,7 @@ int rt_hw_pin_init(void)
     if (err != FSP_SUCCESS)
     {
         LOG_E("GPIO open failed");
-        return;
+        return -1;
     }
 
     return rt_device_pin_register("pin", &_ra_pin_ops, RT_NULL);
