@@ -19,6 +19,14 @@
 #include "asm-fpu.h"
 #include "armv8.h"
 
+#ifndef RT_USING_SMP
+.bss
+    .align 3
+rt_interrupt_from_thread: .comm 8, 8
+rt_interrupt_to_thread: .comm 8, 8
+rt_thread_switch_interrupt_flag: .comm 8, 8
+#endif
+
 .text
 .weak rt_hw_cpu_id_set
 .type rt_hw_cpu_id_set, @function
