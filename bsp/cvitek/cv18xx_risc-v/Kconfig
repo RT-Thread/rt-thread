@@ -19,7 +19,7 @@ source "$RTT_DIR/Kconfig"
 source "$PKGS_DIR/Kconfig"
 source "board/Kconfig"
 
-config BSP_USING_CV180X
+config BSP_USING_CV18XX
     bool
     select ARCH_RISCV64
     select RT_USING_SYSTEM_WORKQUEUE
@@ -48,8 +48,11 @@ config __STACKSIZE__
 
 choice
     prompt "Board Type"
-    default BOARD_TYPE_MILKV_DUO
+    default BOARD_TYPE_MILKV_DUO256M
 
     config BOARD_TYPE_MILKV_DUO
         bool "milkv-duo"
+
+    config BOARD_TYPE_MILKV_DUO256M
+        bool "milkv-duo256m"
 endchoice

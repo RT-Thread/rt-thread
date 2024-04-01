@@ -31,7 +31,7 @@ get_board_type
 
 echo "start compress kernel..."
 
-lzma -c -9 -f -k ${PROJECT_PATH}/${IMAGE_NAME} > ${PROJECT_PATH}/Image.lzma
+lzma -c -9 -f -k ${PROJECT_PATH}/${IMAGE_NAME} > ${PROJECT_PATH}/dtb/${BOARD_TYPE}/Image.lzma
 
 mkdir -p ${ROOT_PATH}/output/${BOARD_TYPE}
-./mkimage -f ${PROJECT_PATH}/multi.its -r ${ROOT_PATH}/output/${BOARD_TYPE}/boot.sd
+./mkimage -f ${PROJECT_PATH}/dtb/${BOARD_TYPE}/multi.its -r ${ROOT_PATH}/output/${BOARD_TYPE}/boot.sd
