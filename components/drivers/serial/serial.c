@@ -640,6 +640,11 @@ static rt_err_t rt_serial_open(struct rt_device *dev, rt_uint16_t oflag)
     /* get open flags */
     dev->open_flag = oflag & 0xff;
 
+#ifdef RT_USING_PINCTRL
+    /* initialize iomux in DM */
+    rt_pin_ctrl_confs_apply_by_name(dev, RT_NULL);
+#endif
+
     /* initialize the Rx/Tx structure according to open flag */
     if (serial->serial_rx == RT_NULL)
     {
@@ -909,7 +914,7 @@ static rt_ssize_t rt_serial_write(struct rt_device *dev,
     }
 }
 
-#if defined(RT_USING_POSIX_TERMIOS) && !defined(RT_USING_SMART)
+#if defined(RT_USING_POSIX_TERMIOS)
 struct speed_baudrate_item
 {
     speed_t speed;
@@ -1009,6 +1014,32 @@ static void _tc_flush(struct rt_serial_device *serial, int queue)
     }
 
 }
+
+static inline int _termio_to_termios(const struct termio *termio,
+						struct termios *termios)
+{
+	termios->c_iflag = termio->c_iflag;
+	termios->c_oflag = termio->c_oflag;
+	termios->c_cflag = termio->c_cflag;
+	termios->c_lflag = termio->c_lflag;
+    termios->c_line = termio->c_line;
+    rt_memcpy(termios->c_cc, termio->c_cc, NCC);
+
+	return 0;
+}
+
+static inline int _termios_to_termio(const struct termios *termios,
+						struct termio *termio)
+{
+    termio->c_iflag = (unsigned short)termios->c_iflag;
+    termio->c_oflag = (unsigned short)termios->c_oflag;
+    termio->c_cflag = (unsigned short)termios->c_cflag;
+    termio->c_lflag = (unsigned short)termios->c_lflag;
+    termio->c_line = termios->c_line;
+	rt_memcpy(termio->c_cc, termios->c_cc, NCC);
+
+	return 0;
+}
 #endif /* RT_USING_POSIX_TERMIOS */
 
 static rt_err_t rt_serial_control(struct rt_device *dev,
@@ -1065,10 +1096,21 @@ static rt_err_t rt_serial_control(struct rt_device *dev,
             }
             break;
 #ifdef RT_USING_POSIX_STDIO
-#if defined(RT_USING_POSIX_TERMIOS) && !defined(RT_USING_TTY)
+#if defined(RT_USING_POSIX_TERMIOS)
+        case TCGETA:
         case TCGETS:
             {
-                struct termios *tio = (struct termios*)args;
+                struct termios *tio, tmp;
+
+                if (cmd == TCGETS)
+                {
+                    tio = (struct termios*)args;
+                }
+                else
+                {
+                    tio = &tmp;
+                }
+
                 if (tio == RT_NULL) return -RT_EINVAL;
 
                 tio->c_iflag = 0;
@@ -1099,17 +1141,34 @@ static rt_err_t rt_serial_control(struct rt_device *dev,
                     tio->c_cflag |= (PARODD | PARENB);
 
                 cfsetospeed(tio, _get_speed(serial->config.baud_rate));
+
+                if (cmd == TCGETA)
+                {
+                    _termios_to_termio(tio, args);
+                }
             }
             break;
-
+        case TCSETAW:
+        case TCSETAF:
+        case TCSETA:
         case TCSETSW:
         case TCSETSF:
         case TCSETS:
             {
                 int baudrate;
                 struct serial_configure config;
+                struct termios *tio, tmp;
 
-                struct termios *tio = (struct termios*)args;
+                if ((cmd >= TCSETA) && (cmd <= TCSETA + 2))
+                {
+                    _termio_to_termios(args, &tmp);
+                    tio = &tmp;
+                }
+                else
+                {
+                    tio = (struct termios*)args;
+                }
+
                 if (tio == RT_NULL) return -RT_EINVAL;
 
                 config = serial->config;
@@ -1146,6 +1205,7 @@ static rt_err_t rt_serial_control(struct rt_device *dev,
                 serial->ops->configure(serial, &config);
             }
             break;
+#ifndef RT_USING_TTY
         case TCFLSH:
             {
                 int queue = (int)(rt_ubase_t)args;
@@ -1156,6 +1216,7 @@ static rt_err_t rt_serial_control(struct rt_device *dev,
             break;
         case TCXONC:
             break;
+#endif /*RT_USING_TTY*/
 #endif /*RT_USING_POSIX_TERMIOS*/
         case TIOCSWINSZ:
             {
