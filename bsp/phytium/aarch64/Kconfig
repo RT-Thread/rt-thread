@@ -24,13 +24,6 @@ source "$RTT_DIR/Kconfig"
 source "$PKGS_DIR/Kconfig"
 source "$BSP_DIR/libraries/drivers/Kconfig"
 
-config BSP_USING_GIC
-    bool
-    default y
-    config BSP_USING_GICV3
-        bool
-        default y
-
 config PHYTIUM_ARCH_AARCH64
     bool
     select ARCH_ARMV8
