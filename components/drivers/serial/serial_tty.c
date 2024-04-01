@@ -212,6 +212,15 @@ static int serial_tty_ioctl(struct lwp_tty *tp, rt_ubase_t cmd, rt_caddr_t data,
     int error;
     switch (cmd)
     {
+        case TCSETS:
+        case TCSETSW:
+        case TCSETSF:
+            RT_ASSERT(tp->t_devswsoftc);
+            struct serial_tty_context *softc = (struct serial_tty_context *)(tp->t_devswsoftc);
+            struct rt_serial_device *serial = softc->parent;
+            struct termios *termios = (struct termios *)data;
+            rt_device_control(&(serial->parent), cmd, termios);
+            error = -ENOIOCTL;
         default:
             /**
              * Note: for the most case, we don't let serial layer handle ioctl,

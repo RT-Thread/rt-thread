@@ -16,15 +16,6 @@
 #include "gicv3.h"
 #include "ioremap.h"
 
-#ifndef RT_USING_SMP
-/* Those variables will be accessed in ISR, so we need to share them. */
-rt_ubase_t rt_interrupt_from_thread        = 0;
-rt_ubase_t rt_interrupt_to_thread          = 0;
-rt_ubase_t rt_thread_switch_interrupt_flag = 0;
-#endif
-
-#ifndef RT_USING_PIC
-
 /* exception and interrupt handler table */
 struct rt_irq_desc isr_table[MAX_HANDLERS];
 
@@ -87,9 +78,6 @@ void rt_hw_interrupt_init(void)
 
     /* init interrupt nest, and context in thread sp */
     rt_atomic_store(&rt_interrupt_nest, 0);
-    rt_interrupt_from_thread = 0;
-    rt_interrupt_to_thread = 0;
-    rt_thread_switch_interrupt_flag = 0;
 #else
     rt_uint64_t gic_cpu_base;
     rt_uint64_t gic_dist_base;
@@ -416,8 +404,6 @@ void rt_hw_ipi_handler_install(int ipi_vector, rt_isr_handler_t ipi_isr_handler)
     rt_hw_interrupt_install(ipi_vector, ipi_isr_handler, 0, "IPI_HANDLER");
 }
 #endif
-
-#endif /* RT_USING_PIC */
 
 #if defined(FINSH_USING_MSH) && defined(RT_USING_INTERRUPT_INFO)
 int list_isr()
