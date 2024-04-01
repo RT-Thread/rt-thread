@@ -15,6 +15,7 @@
 #include <rtdef.h>
 #include <rtthread.h>
 #include <drivers/core/driver.h>
+#include <drivers/core/bus.h>
 
 #include <drivers/classes/block.h>
 #include <drivers/classes/char.h>
