@@ -135,6 +135,13 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_DFS_ELMFAT
         default y
 
+    config BSP_USING_ETH
+        bool "Enable Ethernet"
+        default n
+        select RT_USING_LWIP
+        select RT_USING_NETDEV
+        select RT_USING_SAL
+        
     config BSP_USING_RTC
         bool "Enable RTC"
         select RT_USING_RTC
@@ -162,6 +169,7 @@ menu "On-chip Peripheral Drivers"
                     bool "Enable on-board green LED as PWM output (pwm0, channel 3)"
                     default y
             endif
+
 endmenu
 
 
