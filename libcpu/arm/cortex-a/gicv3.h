@@ -186,6 +186,7 @@ int arm_gic_redist_init(rt_uint32_t index);
 
 void arm_gic_dump_type(rt_uint32_t index);
 void arm_gic_dump(rt_uint32_t index);
+rt_uint64_t arm_gic_get_gic_table_addr(void);
 
 void arm_gic_set_system_register_enable_mask(rt_uint32_t index, rt_uint32_t value);
 rt_uint32_t arm_gic_get_system_register_enable_mask(rt_uint32_t index);

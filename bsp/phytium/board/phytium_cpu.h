@@ -43,15 +43,21 @@ rt_inline rt_uint32_t platform_get_gic_dist_base(void)
     return GICV3_DISTRIBUTOR_BASE_ADDR;
 }
 
-rt_inline rt_uint32_t platform_get_gic_cpu_base(void)
-{
-    return 0;
-}
+#if defined(TARGET_ARMV8_AARCH64)
 
+/* the basic constants and interfaces needed by gic */
 rt_inline rt_uint32_t platform_get_gic_redist_base(void)
 {
     return 0;
 }
+
+rt_inline rt_uint32_t platform_get_gic_cpu_base(void)
+{
+    return 0; /* unused in gicv3 */
+}
+
+#endif
+
 
 int phytium_cpu_id_mapping(int cpu_id);
 
