@@ -1337,6 +1337,7 @@ struct rt_device
     struct rt_bus *bus;                                 /**< the bus mounting to */
     rt_list_t node;                                     /**< to mount on bus */
     struct rt_driver *drv;                              /**< driver for powering the device */
+    void *power_domain_unit;
 #ifdef RT_USING_OFW
     void *ofw_node;                                     /**< ofw node get from device tree */
 #endif /* RT_USING_OFW */

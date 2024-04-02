@@ -183,8 +183,11 @@ extern "C" {
 #endif /* RT_USING_CLK */
 
 #ifdef RT_USING_DM
+#include "drivers/core/bus.h"
 #include "drivers/core/dm.h"
 #include "drivers/platform.h"
+#include "drivers/core/power.h"
+#include "drivers/core/power_domain.h"
 
 #ifdef RT_USING_OFW
 #include "drivers/ofw.h"
