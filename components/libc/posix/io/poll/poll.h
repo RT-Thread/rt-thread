@@ -59,7 +59,6 @@ struct pollfd
 #endif
 #endif /* !defined(POLLIN) && !defined(POLLOUT) */
 
-
 #define POLLMASK_DEFAULT (POLLIN | POLLOUT | POLLRDNORM | POLLWRNORM)
 
 int poll(struct pollfd *fds, nfds_t nfds, int timeout);
