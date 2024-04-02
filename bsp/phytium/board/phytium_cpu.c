@@ -33,7 +33,6 @@
 int phytium_cpu_id_mapping(int cpu_id)
 {
 #if defined(TARGET_E2000Q) || defined(TARGET_PHYTIUMPI)
-#if RT_CPUS_NR <= 2
     switch (cpu_id)
     {
         case 0:
@@ -49,9 +48,6 @@ int phytium_cpu_id_mapping(int cpu_id)
             return 0;
             break;
     }
-#else
-    return (int)cpu_id;
-#endif
 #else
     return (int)cpu_id;
 #endif

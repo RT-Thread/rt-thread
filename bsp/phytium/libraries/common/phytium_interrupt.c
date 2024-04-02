@@ -7,6 +7,7 @@
 #include "phytium_cpu.h"
 #include "ftypes.h"
 #include "fparameters.h"
+
 #define GIC_RSGI_OFFSET 0x10000
 #define GIC_RDIST_WAKER(hw_base)            HWREG32((hw_base) + 0x014U)
 #define GIC_RDISTSGI_ICENABLER0(hw_base)    HWREG32((hw_base) + GIC_RSGI_OFFSET + 0x180U)
@@ -23,7 +24,6 @@ struct arm_gic
     rt_uint64_t dist_hw_base;               /* the base address of the gic distributor */
     rt_uint64_t cpu_hw_base[ARM_GIC_CPU_NUM];    /* the base address of the gic cpu interface */
 };
-
 
 extern struct arm_gic _gic_table[ARM_GIC_MAX_NR];
 
@@ -45,15 +45,9 @@ int arm_gic_redist_address_set(rt_uint64_t index, rt_uint64_t redist_addr, int c
 
 int phytium_aarch64_arm_gic_redist_init()
 {
-    // rt_uint32_t cpu_id;
+    rt_uint64_t cpu_id = rt_hw_cpu_id();
 
-    // int ret = GetCpuId(&cpu_id);
-
-    // if (ret != 0)
-    // {
-    //     RT_ASSERT(0);
-    // }
-    rt_uint64_t redist_addr = _gic_table[0].redist_hw_base[0];
+    rt_uint64_t redist_addr = _gic_table[0].redist_hw_base[cpu_id];
 
     /* redistributor enable */
     GIC_RDIST_WAKER(redist_addr) &= ~(1 << 1);
@@ -110,9 +104,9 @@ void phytium_interrupt_init(void)
 //     arm_gic_redist_address_set(0, redist_addr + 3 * GICV3_RD_OFFSET, 1);
 //     arm_gic_redist_address_set(0, redist_addr, 2);
 // #elif RT_CPUS_NR == 4
-//     arm_gic_redist_address_set(0, redist_addr + 3 * GICV3_RD_OFFSET, 1);
-//     arm_gic_redist_address_set(0, redist_addr, 2);
-//     arm_gic_redist_address_set(0, redist_addr + GICV3_RD_OFFSET, 3);
+    arm_gic_redist_address_set(0, redist_addr + 3 * GICV3_RD_OFFSET, 1);
+    arm_gic_redist_address_set(0, redist_addr, 2);
+    arm_gic_redist_address_set(0, redist_addr + GICV3_RD_OFFSET, 3);
 // #endif
 
 // #else
