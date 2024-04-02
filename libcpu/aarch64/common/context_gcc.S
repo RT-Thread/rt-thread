@@ -20,11 +20,10 @@
 #include "armv8.h"
 
 #ifndef RT_USING_SMP
-.bss
-    .align 3
-rt_interrupt_from_thread: .comm 8, 8
-rt_interrupt_to_thread: .comm 8, 8
-rt_thread_switch_interrupt_flag: .comm 8, 8
+.section .data
+rt_interrupt_from_thread: .zero  8
+rt_interrupt_to_thread: .zero  8
+rt_thread_switch_interrupt_flag: .zero  8
 #endif
 
 .text

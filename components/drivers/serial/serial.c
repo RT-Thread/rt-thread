@@ -1015,30 +1015,28 @@ static void _tc_flush(struct rt_serial_device *serial, int queue)
 
 }
 
-static inline int _termio_to_termios(const struct termio *termio,
-						struct termios *termios)
+static inline int _termio_to_termios(const struct termio *termio, struct termios *termios)
 {
-	termios->c_iflag = termio->c_iflag;
-	termios->c_oflag = termio->c_oflag;
-	termios->c_cflag = termio->c_cflag;
-	termios->c_lflag = termio->c_lflag;
+    termios->c_iflag = termio->c_iflag;
+    termios->c_oflag = termio->c_oflag;
+    termios->c_cflag = termio->c_cflag;
+    termios->c_lflag = termio->c_lflag;
     termios->c_line = termio->c_line;
     rt_memcpy(termios->c_cc, termio->c_cc, NCC);
 
-	return 0;
+    return 0;
 }
 
-static inline int _termios_to_termio(const struct termios *termios,
-						struct termio *termio)
+static inline int _termios_to_termio(const struct termios *termios, struct termio *termio)
 {
     termio->c_iflag = (unsigned short)termios->c_iflag;
     termio->c_oflag = (unsigned short)termios->c_oflag;
     termio->c_cflag = (unsigned short)termios->c_cflag;
     termio->c_lflag = (unsigned short)termios->c_lflag;
     termio->c_line = termios->c_line;
-	rt_memcpy(termio->c_cc, termios->c_cc, NCC);
+    rt_memcpy(termio->c_cc, termios->c_cc, NCC);
 
-	return 0;
+    return 0;
 }
 #endif /* RT_USING_POSIX_TERMIOS */
 
