@@ -65,7 +65,7 @@ static rt_err_t stm32_i2c_init(struct stm32_i2c *i2c_drv)
 #if defined(SOC_SERIES_STM32F4)
   hi2c1.Init.ClockSpeed = 100000;
   hi2c1.Init.DutyCycle = I2C_DUTYCYCLE_2;
-#endif
+#endif /* defined(SOC_SERIES_STM32F4) */
     i2c_handle->Init.OwnAddress1 = 0;
     i2c_handle->Init.AddressingMode = I2C_ADDRESSINGMODE_7BIT;
 #if defined(SOC_SERIES_STM32H7)
