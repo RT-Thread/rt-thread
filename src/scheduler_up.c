@@ -196,7 +196,7 @@ void rt_system_scheduler_start(void)
 rt_weak rt_uint64_t rt_thread_usage_get_now_time(void)
 {
 #ifdef PKG_USING_PERF_COUNTER
-    // #include <perf_counter.h>
+    /* use perf_counter packages */ 
     extern int64_t get_system_ticks(void);
     return get_system_ticks();
 #else
