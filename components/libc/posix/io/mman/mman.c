@@ -4,8 +4,9 @@
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
- * Date           Author       Notes
- * 2017/11/30     Bernard      The first version.
+ * Date           Author            Notes
+ * 2017/11/30     Bernard           The first version.
+ * 2024/03/29     TroyMitchelle     Add all function comments
  */
 
 #include <stdint.h>
@@ -20,6 +21,16 @@
 
 #include "sys/mman.h"
 
+/**
+ * @brief   Maps a region of memory into the calling process's address space.
+ * @param   addr    Desired starting address of the mapping.
+ * @param   length  Length of the mapping.
+ * @param   prot    Protection of the mapped memory region.
+ * @param   flags   Type of the mapped memory region.
+ * @param   fd      File descriptor of the file to be mapped.
+ * @param   offset  Offset within the file to start the mapping.
+ * @return  Upon success, returns a pointer to the mapped region; otherwise, MAP_FAILED is returned.
+ */
 void *mmap(void *addr, size_t length, int prot, int flags,
     int fd, off_t offset)
 {
@@ -59,6 +70,12 @@ void *mmap(void *addr, size_t length, int prot, int flags,
     return MAP_FAILED;
 }
 
+/**
+ * @brief   Unmaps a mapped region of memory.
+ * @param   addr    Starting address of the mapping to be unmapped.
+ * @param   length  Length of the mapping.
+ * @return  Upon success, returns 0; otherwise, -1 is returned.
+ */
 int munmap(void *addr, size_t length)
 {
     if (addr)

@@ -6,7 +6,7 @@
  * Change Logs:
  * Date           Author        Notes
  * 2023-07-29     zmq810150896  first version
- * 2024/03/26     TroyMitchelle Add comments for all functions, members within structure members and fix incorrect naming of triggered
+ * 2024-03-26     TroyMitchelle Add comments for all functions, members within structure members and fix incorrect naming of triggered
  * 2023-12-14     Shell         When poll goes to sleep before the waitqueue has added a
  *                              record and finished enumerating all the fd's, it may be
  *                              incorrectly woken up. This is basically because the poll
