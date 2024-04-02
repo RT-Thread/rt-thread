@@ -7,8 +7,7 @@
 /* RT-Thread Kernel */
 
 #define RT_NAME_MAX 16
-#define RT_USING_SMP
-#define RT_CPUS_NR 4
+#define RT_CPUS_NR 1
 #define RT_ALIGN_SIZE 4
 #define RT_THREAD_PRIORITY_32
 #define RT_THREAD_PRIORITY_MAX 32
@@ -19,7 +18,6 @@
 #define RT_USING_IDLE_HOOK
 #define RT_IDLE_HOOK_LIST_SIZE 4
 #define IDLE_THREAD_STACK_SIZE 8192
-#define SYSTEM_THREAD_STACK_SIZE 8192
 #define RT_USING_TIMER_SOFT
 #define RT_TIMER_THREAD_PRIO 4
 #define RT_TIMER_THREAD_STACK_SIZE 8192
@@ -394,36 +392,13 @@
 #define BSP_USING_UART
 #define RT_USING_UART0
 #define RT_USING_UART1
-#define BSP_USING_SPI
-#define RT_USING_SPIM0
-#define RT_USING_SPIM1
-#define RT_USING_SPIM2
-#define RT_USING_SPIM3
-#define BSP_USING_CAN
-#define RT_USING_CANFD
-#define RT_USING_FILTER
-#define RT_USING_CAN0
-#define RT_USING_CAN1
-#define BSP_USING_GPIO
-#define BSP_USING_QSPI
-#define RT_USING_QSPI0
-#define USING_QSPI_CHANNEL0
 #define BSP_USING_ETH
 #define RT_LWIP_PBUF_POOL_BUFSIZE 1700
-#define BSP_USING_PWM
-#define RT_USING_PWM6
-#define BSP_USING_I2C
-#define I2C_USE_MIO
-#define RT_USING_MIO15
-#define BSP_USING_SDIF
-#define BSP_USING_SDCARD_FATFS
-#define BSP_USING_SDCARD_PARTITION "sd0"
-#define USING_SDIF1
-#define BSP_USING_DC
-#define RT_USING_DC_CHANNEL0
 
 /* Board extended module Drivers */
 
+#define BSP_USING_GIC
+#define BSP_USING_GICV3
 #define PHYTIUM_ARCH_AARCH64
 #define ARM_SPI_BIND_CPU_ID 2
 

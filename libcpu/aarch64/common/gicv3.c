@@ -50,7 +50,7 @@ struct arm_gic
 };
 
 /* 'ARM_GIC_MAX_NR' is the number of cores */
-static struct arm_gic _gic_table[ARM_GIC_MAX_NR];
+struct arm_gic _gic_table[ARM_GIC_MAX_NR];
 static unsigned int _gic_max_irq;
 
 #define GET_GICV3_REG(reg, out) __asm__ volatile ("mrs %0, " reg:"=r"(out)::"memory");
@@ -670,7 +670,7 @@ rt_uint64_t arm_gic_get_group(rt_uint64_t index, int irq)
     return (GIC_DIST_IGROUP(_gic_table[index].dist_hw_base, irq) >> (irq % 32)) & 0x1UL;
 }
 
-static int arm_gicv3_wait_rwp(rt_uint64_t index, rt_uint64_t irq)
+int arm_gicv3_wait_rwp(rt_uint64_t index, rt_uint64_t irq)
 {
     rt_uint64_t rwp_bit;
     rt_uint64_t base;
@@ -898,6 +898,11 @@ void arm_gic_dump_type(rt_uint64_t index)
                gic_type & (1U << 10U) ? "has" : "no",
                gic_type);
 }
+
+// rt_uint64_t arm_gic_get_gic_table_addr(void)
+// {
+//     return &_gic_table;
+// }
 
 void arm_gic_dump(rt_uint64_t index)
 {

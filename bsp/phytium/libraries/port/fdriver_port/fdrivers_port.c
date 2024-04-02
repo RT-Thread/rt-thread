@@ -42,11 +42,6 @@ void FDriverICacheRangeInvalidate(uintptr_t adr, size_t len)
     __asm_invalidate_icache_all();
 }
 
-void FDriverMdelay(u32 msec)
-{
-    for(rt_uint32_t wait = 0; wait < 10000000; wait ++);
-}
-
 #else
 #include "rthw.h"
 /* cache */
@@ -65,13 +60,7 @@ void FDriverICacheRangeInvalidate(uintptr_t adr, size_t len)
     rt_hw_cpu_icache_ops(RT_HW_CACHE_INVALIDATE, adr, len);
 }
 
-void FDriverMdelay(u32 msec)
-{
-    rt_thread_mdelay(msec);
-}
-
 #endif
-
 
 /* time delay */
 
@@ -83,5 +72,10 @@ void FDriverUdelay(u32 usec)
 void FDriverSdelay(u32 sec)
 {
     u32 msec = sec * 1000;
+    rt_thread_mdelay(msec);
+}
+
+void FDriverMdelay(u32 msec)
+{
     rt_thread_mdelay(msec);
 }

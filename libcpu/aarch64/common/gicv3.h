@@ -69,11 +69,12 @@ rt_uint64_t arm_gic_get_group(rt_uint64_t index, int irq);
 
 int arm_gic_redist_address_set(rt_uint64_t index, rt_uint64_t redist_addr, int cpu_id);
 int arm_gic_cpu_interface_address_set(rt_uint64_t index, rt_uint64_t interface_addr, int cpu_id);
-
+int arm_gicv3_wait_rwp(rt_uint64_t index, rt_uint64_t irq);
 int arm_gic_dist_init(rt_uint64_t index, rt_uint64_t dist_base, int irq_start);
 int arm_gic_redist_init(rt_uint64_t index, rt_uint64_t redist_base);
 int arm_gic_cpu_init(rt_uint64_t index, rt_uint64_t cpu_base);
 
+rt_uint64_t arm_gic_get_gic_table_addr(void);
 void arm_gic_dump_type(rt_uint64_t index);
 void arm_gic_dump(rt_uint64_t index);
 
