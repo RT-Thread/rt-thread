@@ -90,6 +90,7 @@
 #define DFS_FD_MAX 16
 #define RT_USING_DFS_V2
 #define RT_USING_DFS_DEVFS
+#define RT_USING_DFS_PTYFS
 #define RT_USING_PAGECACHE
 
 /* page cache config */
@@ -112,7 +113,6 @@
 #define RT_USING_SERIAL_V1
 #define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 64
-#define RT_USING_TTY
 #define RT_USING_NULL
 #define RT_USING_ZERO
 #define RT_USING_RANDOM
@@ -172,6 +172,8 @@
 #define LWP_TID_MAX_NR 64
 #define RT_LWP_SHM_MAX_NR 64
 #define RT_USING_LDSO
+#define LWP_USING_TERMINAL
+#define LWP_PTY_MAX_PARIS_LIMIT 64
 
 /* Memory management */
 
@@ -242,18 +244,13 @@
 
 /* peripheral libraries and drivers */
 
-/* HAL & SDK Drivers */
-
-/* STM32 HAL & SDK Drivers */
-
-
-/* Kendryte SDK */
-
-
 /* sensors drivers */
 
 
 /* touch drivers */
+
+
+/* Kendryte SDK */
 
 
 /* AI packages */
@@ -311,11 +308,11 @@
 #define BSP_USING_UART
 #define RT_USING_UART0
 #define UART_IRQ_BASE 44
-#define BSP_USING_CV180X
+#define BSP_USING_CV18XX
 #define C906_PLIC_PHY_ADDR 0x70000000
 #define IRQ_MAX_NR 64
 #define TIMER_CLK_FREQ 25000000
 #define __STACKSIZE__ 4096
-#define BOARD_TYPE_MILKV_DUO
+#define BOARD_TYPE_MILKV_DUO256M
 
 #endif
