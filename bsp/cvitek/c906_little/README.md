@@ -29,7 +29,7 @@ $ sudo apt install -y scons libncurses5-dev wget flex bison
 $ scons --menuconfig
 ```
 
-选择当前需要编译的目标开发板类型
+选择当前需要编译的目标开发板类型：
 ```shell
 Board Type (milkv-duo)  --->
     ( ) milkv-duo
@@ -67,3 +67,5 @@ HW_HEAP_BEGIN:83f74dc0 RT_HW_HEAP_END:84000000 size: 569920
 Hello, RISC-V!
 msh />
 ```
+
+> 注：c906 小核默认日志串口为 uart1

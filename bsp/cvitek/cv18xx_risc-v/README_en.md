@@ -54,6 +54,14 @@ On the Linux platform, you can execute:
 ```shell
 $ scons --menuconfig
 ```
+
+Select the type of target board that you want to compile:
+```shell
+Board Type (milkv-duo)  --->
+    ( ) milkv-duo
+    (X) milkv-duo256m
+```
+
 It will automatically download environment-related scripts to the ~/.env directory, and then execute
 ```shell
 $ source ~/.env/env.sh

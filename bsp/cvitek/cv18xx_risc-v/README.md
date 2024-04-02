@@ -57,6 +57,13 @@ $ sudo apt install -y scons libncurses5-dev device-tree-compiler
 $ scons --menuconfig
 ```
 
+选择当前需要编译的目标开发板类型：
+```shell
+Board Type (milkv-duo)  --->
+    ( ) milkv-duo
+    (X) milkv-duo256m
+```
+
 它会自动下载env相关脚本到~/.env目录，然后执行
 ```shell
 $ source ~/.env/env.sh
