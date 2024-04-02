@@ -59,16 +59,16 @@ static rt_err_t stm32_i2c_init(struct stm32_i2c *i2c_drv)
     rt_memset(i2c_handle, 0, sizeof(I2C_HandleTypeDef));
     struct stm32_i2c_config *cfg = i2c_drv->config;
     i2c_handle->Instance = cfg->Instance;
-#if defined(SOC_SERIES_STM32H7) 
+#if defined(SOC_SERIES_STM32H7)
     i2c_handle->Init.Timing = cfg->timing;
 #endif /* defined(SOC_SERIES_STM32H7) */
-#if defined(SOC_SERIES_STM32F4) 
+#if defined(SOC_SERIES_STM32F4)
   hi2c1.Init.ClockSpeed = 100000;
   hi2c1.Init.DutyCycle = I2C_DUTYCYCLE_2;
 #endif
     i2c_handle->Init.OwnAddress1 = 0;
     i2c_handle->Init.AddressingMode = I2C_ADDRESSINGMODE_7BIT;
-#if defined(SOC_SERIES_STM32H7) 
+#if defined(SOC_SERIES_STM32H7)
     i2c_handle->Init.DualAddressMode = I2C_DUALADDRESS_DISABLE;
 #endif /* defined(SOC_SERIES_STM32H7) */
     i2c_handle->Init.OwnAddress2 = 0;
@@ -84,7 +84,7 @@ static rt_err_t stm32_i2c_init(struct stm32_i2c *i2c_drv)
     {
         return -RT_EFAULT;
     }
-#if defined(SOC_SERIES_STM32H7) 
+#if defined(SOC_SERIES_STM32H7)
     /* Configure Analogue filter */
     if (HAL_I2CEx_ConfigAnalogFilter(i2c_handle, I2C_ANALOGFILTER_ENABLE) != HAL_OK)
     {
@@ -314,7 +314,7 @@ out:
     {
         LOG_D("I2C NACK Error now stoped");
         /* Send stop signal to prevent bus lock-up */
-#if defined(SOC_SERIES_STM32H7) 
+#if defined(SOC_SERIES_STM32H7)
         handle->Instance->CR1 |= I2C_IT_STOPI;
 #endif /* defined(SOC_SERIES_STM32H7) */
     }
