@@ -59,10 +59,18 @@ static rt_err_t stm32_i2c_init(struct stm32_i2c *i2c_drv)
     rt_memset(i2c_handle, 0, sizeof(I2C_HandleTypeDef));
     struct stm32_i2c_config *cfg = i2c_drv->config;
     i2c_handle->Instance = cfg->Instance;
+#if defined(SOC_SERIES_STM32H7) 
     i2c_handle->Init.Timing = cfg->timing;
+#endif /* defined(SOC_SERIES_STM32H7) */
+#if defined(SOC_SERIES_STM32F4) 
+  hi2c1.Init.ClockSpeed = 100000;
+  hi2c1.Init.DutyCycle = I2C_DUTYCYCLE_2;
+#endif
     i2c_handle->Init.OwnAddress1 = 0;
     i2c_handle->Init.AddressingMode = I2C_ADDRESSINGMODE_7BIT;
+#if defined(SOC_SERIES_STM32H7) 
     i2c_handle->Init.DualAddressMode = I2C_DUALADDRESS_DISABLE;
+#endif /* defined(SOC_SERIES_STM32H7) */
     i2c_handle->Init.OwnAddress2 = 0;
     i2c_handle->Init.OwnAddress2Masks = I2C_OA2_NOMASK;
     i2c_handle->Init.GeneralCallMode = I2C_GENERALCALL_DISABLE;
@@ -76,7 +84,7 @@ static rt_err_t stm32_i2c_init(struct stm32_i2c *i2c_drv)
     {
         return -RT_EFAULT;
     }
-
+#if defined(SOC_SERIES_STM32H7) 
     /* Configure Analogue filter */
     if (HAL_I2CEx_ConfigAnalogFilter(i2c_handle, I2C_ANALOGFILTER_ENABLE) != HAL_OK)
     {
@@ -88,7 +96,7 @@ static rt_err_t stm32_i2c_init(struct stm32_i2c *i2c_drv)
     {
         return -RT_EFAULT;
     }
-
+#endif /* defined(SOC_SERIES_STM32H7) */
     /* I2C2 DMA Init */
     if (i2c_drv->i2c_dma_flag & I2C_USING_RX_DMA_FLAG)
     {
@@ -123,7 +131,6 @@ static rt_err_t stm32_i2c_init(struct stm32_i2c *i2c_drv)
 
 static rt_err_t stm32_i2c_configure(struct rt_i2c_bus_device *bus)
 {
-    int ret = -RT_ERROR;
     RT_ASSERT(RT_NULL != bus);
     struct stm32_i2c *i2c_drv = rt_container_of(bus, struct stm32_i2c, i2c_bus);
 
@@ -307,7 +314,9 @@ out:
     {
         LOG_D("I2C NACK Error now stoped");
         /* Send stop signal to prevent bus lock-up */
+#if defined(SOC_SERIES_STM32H7) 
         handle->Instance->CR1 |= I2C_IT_STOPI;
+#endif /* defined(SOC_SERIES_STM32H7) */
     }
     if (handle->ErrorCode == HAL_I2C_ERROR_BERR)
     {
@@ -459,6 +468,7 @@ void HAL_I2C_MasterRxCpltCallback(I2C_HandleTypeDef *hi2c)
 }
 void HAL_I2C_ErrorCallback(I2C_HandleTypeDef *hi2c)
 {
+#if defined(SOC_SERIES_STM32H7)
     /* Send stop signal to prevent bus lock-up */
     if (hi2c->ErrorCode == HAL_I2C_ERROR_AF)
     {
@@ -470,6 +480,8 @@ void HAL_I2C_ErrorCallback(I2C_HandleTypeDef *hi2c)
         LOG_D("I2C BUS Error now stoped");
         hi2c->Instance->CR1 |= I2C_IT_STOPI;
     }
+#endif /* defined(SOC_SERIES_STM32H7) */
+
 }
 #ifdef BSP_USING_HARD_I2C1
 /**
