@@ -30,6 +30,7 @@
  * 2022-01-07     Gabriel      Moving __on_rt_xxxxx_hook to scheduler.c
  * 2023-03-27     rose_man     Split into scheduler upc and scheduler_mp.c
  * 2023-10-17     ChuShicheng  Modify the timing of clearing RT_THREAD_STAT_YIELD flag bits
+ * 2024-04-02     Dyyt587      add thread usage support
  */
 
 #include <rtthread.h>
@@ -50,6 +51,10 @@ extern volatile rt_uint8_t rt_interrupt_nest;
 static rt_int16_t rt_scheduler_lock_nest;
 struct rt_thread *rt_current_thread = RT_NULL;
 rt_uint8_t rt_current_priority;
+
+#ifdef RT_USING_CPU_USAGE
+static rt_uint64_t last_time_tick;
+#endif /* RT_USING_CPU_USAGE */
 
 #if defined(RT_USING_HOOK) && defined(RT_HOOK_USING_FUNC_PTR)
 static void (*rt_scheduler_hook)(struct rt_thread *from, struct rt_thread *to);
@@ -187,6 +192,38 @@ void rt_system_scheduler_start(void)
     /* never come back */
 }
 
+#ifdef RT_USING_CPU_USAGE
+rt_weak rt_uint64_t rt_thread_usage_get_now_time(void)
+{
+#ifdef PKG_USING_PERF_COUNTER
+    // #include <perf_counter.h>
+    extern int64_t get_system_ticks(void);
+    return get_system_ticks();
+#else
+    return rt_tick_get();
+#endif
+}
+
+/**
+ * @brief This funtion will get the interval time;
+ *
+ * @return rt_uint64_t
+ */
+static rt_uint64_t rt_thread_uasge_get_interval_time(void)
+{
+    return rt_thread_usage_get_now_time() - last_time_tick;
+}
+
+/**
+ * @brief This funtion will Resets the measurement start time
+ *
+ */
+static void rt_reaet_time_thread_usage(void)
+{
+    last_time_tick = rt_thread_usage_get_now_time();
+}
+#endif /* RT_USING_CPU_USAGE */
+
 /**
  * @addtogroup Thread
  * @cond
@@ -203,7 +240,10 @@ void rt_schedule(void)
     rt_base_t level;
     struct rt_thread *to_thread;
     struct rt_thread *from_thread;
-
+#ifdef RT_USING_CPU_USAGE
+    volatile rt_uint64_t interval_time;
+    interval_time = rt_thread_uasge_get_interval_time();
+#endif /* RT_USING_CPU_USAGE */
     /* disable interrupt */
     level = rt_hw_interrupt_disable();
 
@@ -237,6 +277,9 @@ void rt_schedule(void)
 
             if (to_thread != rt_current_thread)
             {
+#ifdef RT_USING_CPU_USAGE
+                rt_current_thread->duration_tick += interval_time;
+#endif /* RT_USING_CPU_USAGE */
                 /* if the destination thread is not the same as current thread */
                 rt_current_priority = (rt_uint8_t)highest_ready_priority;
                 from_thread         = rt_current_thread;
@@ -276,6 +319,9 @@ void rt_schedule(void)
                     rt_hw_context_switch((rt_ubase_t)&from_thread->sp,
                             (rt_ubase_t)&to_thread->sp);
 
+#ifdef RT_USING_CPU_USAGE
+                    rt_reaet_time_thread_usage();
+#endif
                     /* enable interrupt */
                     rt_hw_interrupt_enable(level);
 
@@ -306,6 +352,9 @@ void rt_schedule(void)
 
                     rt_hw_context_switch_interrupt((rt_ubase_t)&from_thread->sp,
                             (rt_ubase_t)&to_thread->sp, from_thread, to_thread);
+#ifdef RT_USING_CPU_USAGE
+                    rt_reaet_time_thread_usage();
+#endif /* RT_USING_CPU_USAGE */
                 }
             }
             else

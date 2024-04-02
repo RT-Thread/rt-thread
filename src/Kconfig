@@ -99,6 +99,13 @@ choice
         bool "256"
 endchoice
 
+config RT_USING_CPU_USAGE
+    bool "Enable the usage of thread"
+    default true
+    help
+        Enable the usage of thread, the system will calculate the CPU usage
+        of each thread.(enable perfcounter and rt_kprintf_full will bring a surprise)
+
 config RT_THREAD_PRIORITY_MAX
     int
     default 8   if RT_THREAD_PRIORITY_8
