@@ -647,6 +647,7 @@ int rt_thread_kill(rt_thread_t tid, int sig)
     else
     {
         LOG_E("The allocation of signal info node failed.");
+        return -RT_EEMPTY;
     }
 
     /* deliver signal to this thread */
