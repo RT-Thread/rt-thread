@@ -10,15 +10,7 @@
 
 #if defined(TARGET_ARMV8_AARCH64)
 
-struct phytium_arm_gic
-{
-    rt_uint64_t offset;                     /* the first interrupt index in the vector table */
-    rt_uint64_t redist_hw_base[ARM_GIC_CPU_NUM]; /* the pointer of the gic redistributor */
-    rt_uint64_t dist_hw_base;               /* the base address of the gic distributor */
-    rt_uint64_t cpu_hw_base[ARM_GIC_CPU_NUM];    /* the base address of the gic cpu interface */
-};
-
-struct phytium_arm_gic *phytium_gic_table;
+struct arm_gic *phytium_gic_table;
 
 extern struct rt_irq_desc isr_table[MAX_HANDLERS];
 
@@ -32,6 +24,33 @@ int arm_gic_redist_address_set(rt_uint64_t index, rt_uint64_t redist_addr, int c
     }
 
     phytium_gic_table[index].redist_hw_base[cpu_id] = redist_addr;
+
+    return 0;
+}
+
+static int arm_gicv3_wait_rwp(rt_uint64_t index, rt_uint64_t irq)
+{
+    rt_uint64_t rwp_bit;
+    rt_uint64_t base;
+
+    RT_ASSERT(index < ARM_GIC_MAX_NR);
+
+    if (irq < 32)
+    {
+        rt_int32_t cpu_id = rt_hw_cpu_id();
+
+        base = phytium_gic_table[index].redist_hw_base[cpu_id];
+        rwp_bit = GICR_CTLR_RWP;
+    }
+    else
+    {
+        base = phytium_gic_table[index].dist_hw_base;
+        rwp_bit = GICD_CTLR_RWP;
+    }
+
+    while (HWREG32(base) & rwp_bit)
+    {
+    }
 
     return 0;
 }
@@ -77,7 +96,7 @@ void phytium_interrupt_init(void)
     rt_uint64_t gic_irq_start;
     rt_uint64_t redist_addr;
 
-    phytium_gic_table = (struct phytium_arm_gic *)arm_gic_get_gic_table_addr();
+    phytium_gic_table = (struct arm_gic *)arm_gic_get_gic_table_addr();
     /* initialize vector table */
     rt_hw_vector_init();
 

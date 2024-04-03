@@ -132,6 +132,14 @@
 #define GIC_RDISTSGI_IGRPMODR0(hw_base, n)  HWREG32((hw_base) + GIC_RSGI_OFFSET + 0xD00U + (n) * 4)
 #define GIC_RDISTSGI_NSACR(hw_base)         HWREG32((hw_base) + GIC_RSGI_OFFSET + 0xE00U)
 
+struct arm_gic
+{
+    rt_uint64_t offset;                     /* the first interrupt index in the vector table */
+    rt_uint64_t redist_hw_base[ARM_GIC_CPU_NUM]; /* the pointer of the gic redistributor */
+    rt_uint64_t dist_hw_base;               /* the base address of the gic distributor */
+    rt_uint64_t cpu_hw_base[ARM_GIC_CPU_NUM];    /* the base address of the gic cpu interface */
+};
+
 int arm_gic_get_active_irq(rt_uint64_t index);
 void arm_gic_ack(rt_uint64_t index, int irq);
 
@@ -179,7 +187,6 @@ int arm_gic_cpu_interface_address_set(rt_uint64_t index, rt_uint64_t interface_a
 int arm_gic_dist_init(rt_uint64_t index, rt_uint64_t dist_base, int irq_start);
 int arm_gic_redist_init(rt_uint64_t index, rt_uint64_t redist_base);
 int arm_gic_cpu_init(rt_uint64_t index, rt_uint64_t cpu_base);
-int arm_gicv3_wait_rwp(rt_uint64_t index, rt_uint64_t irq);
 
 rt_uint64_t *arm_gic_get_gic_table_addr(void);
 void arm_gic_dump_type(rt_uint64_t index);

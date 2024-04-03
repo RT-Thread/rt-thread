@@ -41,14 +41,6 @@
 extern rt_uint64_t rt_cpu_mpidr_early[];
 #endif /* RT_USING_SMP */
 
-struct arm_gic
-{
-    rt_uint64_t offset;                     /* the first interrupt index in the vector table */
-    rt_uint64_t redist_hw_base[ARM_GIC_CPU_NUM]; /* the pointer of the gic redistributor */
-    rt_uint64_t dist_hw_base;               /* the base address of the gic distributor */
-    rt_uint64_t cpu_hw_base[ARM_GIC_CPU_NUM];    /* the base address of the gic cpu interface */
-};
-
 /* 'ARM_GIC_MAX_NR' is the number of cores */
 static struct arm_gic _gic_table[ARM_GIC_MAX_NR];
 static unsigned int _gic_max_irq;
@@ -563,7 +555,7 @@ rt_uint64_t arm_gic_get_group(rt_uint64_t index, int irq)
     return (GIC_DIST_IGROUP(_gic_table[index].dist_hw_base, irq) >> (irq % 32)) & 0x1UL;
 }
 
-int arm_gicv3_wait_rwp(rt_uint64_t index, rt_uint64_t irq)
+static int arm_gicv3_wait_rwp(rt_uint64_t index, rt_uint64_t irq)
 {
     rt_uint64_t rwp_bit;
     rt_uint64_t base;
