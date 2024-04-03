@@ -91,6 +91,15 @@
 #define RT_USING_SERIAL_V1
 #define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 64
+#define RT_USING_DAC
+#define RT_USING_SPI
+#define RT_USING_QSPI
+#define RT_USING_SFUD
+#define RT_SFUD_USING_SFDP
+#define RT_SFUD_USING_FLASH_INFO_TABLE
+#define RT_SFUD_USING_QSPI
+#define RT_SFUD_SPI_MAX_HZ 50000000
+#define RT_DEBUG_SFUD
 #define RT_USING_PIN
 #define RT_USING_HWTIMER
 
@@ -281,11 +290,16 @@
 
 /* On-chip Peripheral Drivers */
 
+#define BSP_USING_DMA
 #define BSP_USING_PIN
 #define BSP_USING_UART
 #define BSP_USING_UART4
 #define BSP_USING_UART5
 #define BSP_USING_UART2
+#define BSP_USING_SPI
+#define BSP_USING_SPI3
+#define BSP_USING_SPI7
+#define BSP_USING_SPI8
 
 /* Board extended module Drivers */
 

@@ -64,6 +64,12 @@ void BOARD_InitBootPins(void)
 //    PORT1->PCR[4]   = PORT_PCR_MUX(2) | PORT_PCR_PS(0) | PORT_PCR_PE(0) | PORT_PCR_IBE(1);     /* FC3_4 D[3] */
 //    PORT1->PCR[5]   = PORT_PCR_MUX(2) | PORT_PCR_PS(0) | PORT_PCR_PE(0) | PORT_PCR_IBE(1);     /* FC3_5 D[2] */
 
+    /* QSPI */
+    PORT3->PCR[8]   = PORT_PCR_MUX(3) | PORT_PCR_PS(0) | PORT_PCR_PE(0) | PORT_PCR_IBE(1);     /* FC7_P0, MOSI */
+    PORT3->PCR[9]   = PORT_PCR_MUX(3) | PORT_PCR_PS(0) | PORT_PCR_PE(0) | PORT_PCR_IBE(1);     /* FC7_P2, MISO */
+    PORT3->PCR[7]   = PORT_PCR_MUX(3) | PORT_PCR_PS(0) | PORT_PCR_PE(0) | PORT_PCR_IBE(1);     /* FC7_P1, CLK */
+    PORT3->PCR[0]   = PORT_PCR_MUX(3) | PORT_PCR_PS(0) | PORT_PCR_PE(0) | PORT_PCR_IBE(1);     /* FC7_P1, CS */
+
     PORT1->PCR[8]   = PORT_PCR_MUX(2) | PORT_PCR_PS(0) | PORT_PCR_PE(1) | PORT_PCR_IBE(1);     /* FC4_UART */
     PORT1->PCR[9]   = PORT_PCR_MUX(2) | PORT_PCR_PS(0) | PORT_PCR_PE(1) | PORT_PCR_IBE(1);     /* FC4_UART */
 
