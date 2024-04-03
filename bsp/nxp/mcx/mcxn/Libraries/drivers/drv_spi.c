@@ -80,10 +80,36 @@ static struct lpc_spi lpc_obj[] =
 #endif
 };
 
-static rt_err_t spi_configure(struct rt_spi_device *device, struct rt_spi_configuration *cfg)
+
+struct lpc_sw_spi_cs
+{
+    rt_uint32_t pin;
+};
+
+
+rt_err_t rt_hw_spi_device_attach(const char *bus_name, const char *device_name, rt_uint32_t pin)
 {
     rt_err_t ret = RT_EOK;
 
+    struct rt_spi_device *spi_device = (struct rt_spi_device *)rt_malloc(sizeof(struct rt_spi_device));
+    struct lpc_sw_spi_cs *cs_pin = (struct lpc_sw_spi_cs *)rt_malloc(sizeof(struct lpc_sw_spi_cs));
+
+    cs_pin->pin = pin;
+    rt_pin_mode(pin, PIN_MODE_OUTPUT);
+    rt_pin_write(pin, PIN_HIGH);
+
+    ret = rt_spi_bus_attach_device(spi_device, device_name, bus_name, (void *)cs_pin);
+
+    return ret;
+}
+
+
+static rt_err_t spi_configure(struct rt_spi_device *device, struct rt_spi_configuration *cfg)
+{
+    rt_err_t ret = RT_EOK;
+//    struct lpc_spi *spi = RT_NULL;
+//    spi = (struct lpc_spi *)(device->bus->parent.user_data);
+//    ret = lpc_spi_init(spi->SPIx, cfg);
     return ret;
 }
 
