@@ -70,7 +70,7 @@ static int dfs_devfs_open(struct dfs_file *file)
             if (device->ops && file->vnode->ref_count == 1)
 #endif /* RT_USING_POSIX_DEVIO */
             {
-                ret = rt_device_open(device, RT_DEVICE_OFLAG_RDWR);
+                ret = rt_device_open(device, RT_DEVICE_OFLAG_RDWR | (file->flags >> 16));
                 if (ret == RT_EOK || ret == -RT_ENOSYS)
                 {
                     ret = RT_EOK;
