@@ -64,6 +64,15 @@ menu "On-chip Peripheral Drivers"
                     bool "Enable Flexcomm3 as SPI"
                     default n
 
+                config BSP_USING_SPI6
+                    bool "Enable Flexcomm6 as SPI"
+                    default n
+                    if BSP_USING_SPI6
+                        config BSP_USING_SPI6_SAMPLE
+                            bool "Enable SPI6 BUS Sample"
+                            default n
+                    endif
+
                 config BSP_USING_SPI7
                     bool "Enable Flexcomm7 as SPI"
                     default n
