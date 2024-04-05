@@ -20,6 +20,11 @@ enum
 #ifdef BSP_USING_SPI3
     SPI3_INDEX,
 #endif
+
+#ifdef BSP_USING_SPI6
+    SPI6_INDEX,
+#endif
+
 #ifdef BSP_USING_SPI7
     SPI7_INDEX,
 #endif
@@ -63,7 +68,20 @@ static struct lpc_spi lpc_obj[] =
             .rx_dma_chl = 3,
             .name = "spi3",
         },
-#endif
+#endif /* BSP_USING_SPI3 */
+#ifdef BSP_USING_SPI6
+        {
+            .LPSPIx = LPSPI6,
+            .clock_attach_id = kFRO_HF_DIV_to_FLEXCOMM6,
+            .clock_div_name = kCLOCK_DivFlexcom6Clk,
+            .clock_name = kCLOCK_FroHf,
+            .tx_dma_request = kDmaRequestMuxLpFlexcomm6Tx,
+            .rx_dma_request = kDmaRequestMuxLpFlexcomm6Rx,
+            .DMAx = DMA0,
+            .tx_dma_chl = 4,
+            .rx_dma_chl = 5,
+            .name = "spi6",
+#endif /* BSP_USING_SPI6 */
 #ifdef BSP_USING_SPI7
         {
             .LPSPIx = LPSPI7,
@@ -77,7 +95,7 @@ static struct lpc_spi lpc_obj[] =
             .rx_dma_chl = 3,
             .name = "spi7",
         },
-#endif
+#endif /* BSP_USING_SPI7 */
 };
 
 
@@ -146,7 +164,7 @@ static rt_ssize_t spixfer(struct rt_spi_device *device, struct rt_spi_message *m
   //  if(message->length < MAX_DMA_TRANSFER_SIZE)
     if(0)
     {
-      //  SPI_MasterTransferBlocking(spi->SPIx, &transfer);
+        LPSPI_MasterTransferBlocking(spi->LPSPIx, &transfer);
     }
     else
     {
