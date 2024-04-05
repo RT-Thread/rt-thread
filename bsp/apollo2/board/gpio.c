@@ -59,9 +59,9 @@ void am_pin_write(rt_device_t dev, rt_base_t pin, rt_uint8_t value)
     }
 }
 
-rt_int8_t am_pin_read(rt_device_t dev, rt_base_t pin)
+rt_ssize_t am_pin_read(rt_device_t dev, rt_base_t pin)
 {
-    rt_int8_t value = PIN_LOW;
+    rt_ssize_t value = PIN_LOW;
 
     if (am_hal_gpio_pin_config_read(pin) == AM_HAL_GPIO_OUTPUT)
     {

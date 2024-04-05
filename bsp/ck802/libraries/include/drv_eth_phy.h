@@ -65,8 +65,8 @@ csi_drv_version_t csi_eth_phy_get_version(eth_phy_handle_t handle);
 
 /**
   \brief       Initialize Ethernet PHY Device.
-  \param[in]   fn_read   
-  \param[in]   fn_write  
+  \param[in]   fn_read
+  \param[in]   fn_write
   \return      ethernet phy handle
 */
 eth_phy_handle_t csi_eth_phy_initialize(csi_eth_phy_read_t fn_read, csi_eth_phy_write_t fn_write);

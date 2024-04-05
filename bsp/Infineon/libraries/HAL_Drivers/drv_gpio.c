@@ -150,7 +150,7 @@ static void ifx_pin_write(rt_device_t dev, rt_base_t pin, rt_uint8_t value)
     cyhal_gpio_write(gpio_pin, value);
 }
 
-static rt_int8_t ifx_pin_read(struct rt_device *device, rt_base_t pin)
+static rt_ssize_t ifx_pin_read(struct rt_device *device, rt_base_t pin)
 {
     rt_uint16_t gpio_pin;
 
@@ -160,7 +160,7 @@ static rt_int8_t ifx_pin_read(struct rt_device *device, rt_base_t pin)
     }
     else
     {
-        return -RT_ERROR;
+        return -RT_EINVAL;
     }
 
     return cyhal_gpio_read(gpio_pin);

@@ -141,18 +141,20 @@ static void lpc_pin_write(rt_device_t dev, rt_base_t pin, rt_uint8_t value)
     GPIO_PinWrite(GPIO, portx, piny, value);
 }
 
-static rt_int8_t lpc_pin_read(rt_device_t dev, rt_base_t pin)
+static rt_ssize_t lpc_pin_read(rt_device_t dev, rt_base_t pin)
 {
     int  portx, piny;
-    rt_int8_t value;
+    rt_ssize_t value;
 
     if(pin > PIN_MAX_VAL)
-        return -RT_ERROR;
+    {
+        return -RT_EINVAL;
+    }
 
     portx = get_port(pin);
     piny  = get_pin(pin);
 
-    value = (rt_int8_t)(GPIO_PinRead(GPIO, portx, piny));
+    value = (rt_ssize_t)(GPIO_PinRead(GPIO, portx, piny));
 
     return value;
 }

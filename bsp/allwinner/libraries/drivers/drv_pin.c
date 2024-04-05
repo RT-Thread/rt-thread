@@ -32,11 +32,11 @@ static void hal_pin_write(struct rt_device *device, rt_base_t pin, rt_uint8_t va
     hal_gpio_set_data(pin,value);
 }
 
-static rt_int8_t hal_pin_read(struct rt_device *device, rt_base_t pin)
+static rt_ssize_t hal_pin_read(struct rt_device *device, rt_base_t pin)
 {
     gpio_data_t value;
     hal_gpio_get_data(pin,&value);
-    return (rt_int8_t)value;
+    return (rt_ssize_t)value;
 }
 
 static rt_err_t hal_pin_attach_irq(struct rt_device *device, rt_base_t pin,

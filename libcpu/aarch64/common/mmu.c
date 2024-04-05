@@ -602,7 +602,7 @@ static int _map_single_page_2M(unsigned long *lv0_tbl, unsigned long va,
     return 0;
 }
 
-void *rt_hw_mmu_tbl_get()
+void *rt_hw_mmu_tbl_get(void)
 {
     uintptr_t tbl;
     __asm__ volatile("MRS %0, TTBR0_EL1" : "=r"(tbl));
@@ -688,6 +688,7 @@ static unsigned long *_query(rt_aspace_t aspace, void *vaddr, int *plvl_shf)
 
         if (!(cur_lv_tbl[off] & MMU_TYPE_USED))
         {
+            *plvl_shf = level_shift;
             return (void *)0;
         }
 
@@ -707,11 +708,11 @@ static unsigned long *_query(rt_aspace_t aspace, void *vaddr, int *plvl_shf)
     off &= MMU_LEVEL_MASK;
     page = cur_lv_tbl[off];
 
+    *plvl_shf = level_shift;
     if (!(page & MMU_TYPE_USED))
     {
         return (void *)0;
     }
-    *plvl_shf = level_shift;
     return &cur_lv_tbl[off];
 }
 

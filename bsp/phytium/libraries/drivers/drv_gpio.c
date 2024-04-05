@@ -186,7 +186,7 @@ void drv_pin_write(struct rt_device *device, rt_base_t pin, rt_uint8_t value)
     FGpioSetOutputValue(pin_instance, (value == PIN_HIGH) ? FGPIO_PIN_HIGH : FGPIO_PIN_LOW);
 }
 
-rt_int8_t drv_pin_read(struct rt_device *device, rt_base_t pin)
+rt_ssize_t drv_pin_read(struct rt_device *device, rt_base_t pin)
 {
     u32 ctrl_id = FGPIO_OPS_PIN_CTRL_ID(pin);
     u32 port_id = FGPIO_OPS_PIN_PORT_ID(pin);
@@ -195,11 +195,7 @@ rt_int8_t drv_pin_read(struct rt_device *device, rt_base_t pin)
 
     if (pin_instance == RT_NULL)
     {
-        rt_kprintf("Pin %d-%c-%d not set mode\n",
-                   ctrl_id,
-                   port_id == 0 ? 'a' : 'b',
-                   pin_id);
-        return -RT_ERROR;
+        return -RT_EINVAL;
     }
     return FGpioGetInputValue(pin_instance) == FGPIO_PIN_HIGH ? PIN_HIGH : PIN_LOW;
 }

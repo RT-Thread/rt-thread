@@ -111,13 +111,13 @@ static void drv_pin_write(struct rt_device *device, rt_base_t pin, rt_uint8_t va
     gpiohs_set_pin(pin_channel, value == PIN_HIGH ? GPIO_PV_HIGH : GPIO_PV_LOW);
 }
 
-static rt_int8_t drv_pin_read(struct rt_device *device, rt_base_t pin)
+static rt_ssize_t drv_pin_read(struct rt_device *device, rt_base_t pin)
 {
     int pin_channel = get_pin_channel(pin);
     if(pin_channel == -1)
     {
         LOG_E("pin %d not set mode", pin);
-        return -1;
+        return -RT_EINVAL;
     }
     return gpiohs_get_pin(pin_channel) == GPIO_PV_HIGH ? PIN_HIGH : PIN_LOW;
 }
@@ -248,7 +248,6 @@ const static struct rt_pin_ops drv_pin_ops =
     drv_pin_mode,
     drv_pin_write,
     drv_pin_read,
-
     drv_pin_attach_irq,
     drv_pin_detach_irq,
     drv_pin_irq_enable

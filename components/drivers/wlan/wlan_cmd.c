@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2018-08-13     tyx          the first version
+ * 2024-03-24     Evlers       fixed a duplicate issue with the wifi scan command
  */
 
 #include <rtthread.h>
@@ -388,6 +389,7 @@ static void user_ap_info_callback(int event, struct rt_wlan_buff *buff, void *pa
     struct rt_wlan_info *info = RT_NULL;
     int index = 0;
     int ret = RT_EOK;
+    rt_uint32_t last_num = scan_result.num;
 
     RT_ASSERT(event == RT_WLAN_EVT_SCAN_REPORT);
     RT_ASSERT(buff != RT_NULL);
@@ -404,8 +406,12 @@ static void user_ap_info_callback(int event, struct rt_wlan_buff *buff, void *pa
                  scan_filter->ssid.len == info->ssid.len &&
                  rt_memcmp(&scan_filter->ssid.val[0], &info->ssid.val[0], scan_filter->ssid.len) == 0))
         {
-            /*Print the info*/
-            print_ap_info(info,index);
+            /*Check whether a new ap is added*/
+            if (last_num < scan_result.num)
+            {
+                /*Print the info*/
+                print_ap_info(info,index);
+            }
 
             index++;
             *((int *)(parameter)) = index;

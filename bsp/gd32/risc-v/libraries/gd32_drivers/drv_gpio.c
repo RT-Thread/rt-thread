@@ -248,15 +248,15 @@ static void gd32_pin_write(rt_device_t dev, rt_base_t pin, rt_uint8_t value)
   * @param  dev, pin
   * @retval None
   */
-static rt_int8_t gd32_pin_read(rt_device_t dev, rt_base_t pin)
+static rt_ssize_t gd32_pin_read(rt_device_t dev, rt_base_t pin)
 {
-    rt_int8_t value = PIN_LOW;
+    rt_ssize_t value = PIN_LOW;
     const struct pin_index *index = RT_NULL;
 
     index = get_pin(pin);
     if (index == RT_NULL)
     {
-        return value;
+        return -RT_EINVAL;
     }
 
     value = gpio_input_bit_get(index->gpio_periph, index->pin);

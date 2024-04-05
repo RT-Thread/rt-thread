@@ -60,7 +60,7 @@ static void air105_pin_write(rt_device_t dev, rt_base_t pin, rt_uint8_t value)
     }
 }
 
-static rt_int8_t air105_pin_read(rt_device_t dev, rt_base_t pin)
+static rt_ssize_t air105_pin_read(rt_device_t dev, rt_base_t pin)
 {
     if (pin < GPIO_MAX)
     {
@@ -68,7 +68,7 @@ static rt_int8_t air105_pin_read(rt_device_t dev, rt_base_t pin)
     }
     else
     {
-        return -1;
+        return -RT_EINVAL;
     }
 }
 

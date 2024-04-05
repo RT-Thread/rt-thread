@@ -337,7 +337,7 @@
               <MiscControls>--target=arm-arm-none-eabi</MiscControls>
               <Define>__STDC_LIMIT_MACROS, RT_USING_ARMLIBC, CPU_MCXN947VDF_cm33_core0, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__, DEBUG</Define>
               <Undefine />
-              <IncludePath>..\Libraries\MCXN947\middleware\sdmmc\port;..\..\..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\Libraries\MCXN947\MCXN947;..\Libraries\drivers;..\Libraries\MCXN947\components\codec;..\..\..\..\..\components\libc\compilers\common\include;applications;board\MCUX_Config\board;.;..\..\..\..\..\components\finsh;..\Libraries\drivers\config;..\..\..\..\..\components\libc\posix\io\epoll;..\Libraries\MCXN947\MCXN947\drivers;..\..\..\..\..\libcpu\arm\common;..\..\..\..\..\components\drivers\include;..\..\..\..\..\include;..\..\..\..\..\components\libc\posix\io\eventfd;..\..\..\..\..\components\libc\posix\io\poll;..\Libraries\CMSIS\Core\Include;..\..\..\..\..\libcpu\arm\cortex-m33;..\..\..\..\..\components\drivers\include;..\Libraries\MCXN947\middleware\sdmmc\inc;..\..\..\..\..\components\libc\compilers\common\extension;..\..\..\..\..\components\drivers\include;board;..\..\..\..\..\components\utilities\ulog;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\libc\posix\ipc;..\..\..\..\..\components\drivers\include</IncludePath>
+              <IncludePath>..\..\..\..\..\include;..\..\..\..\..\libcpu\arm\common;..\Libraries\drivers;..\..\..\..\..\libcpu\arm\cortex-m33;..\..\..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\..\..\components\libc\posix\ipc;..\Libraries\MCXN947\middleware\sdmmc\inc;..\..\..\..\..\components\libc\posix\io\poll;.;..\..\..\..\..\components\libc\compilers\common\extension;..\..\..\..\..\components\drivers\include;..\Libraries\MCXN947\MCXN947\drivers;board\MCUX_Config\board;..\..\..\..\..\components\drivers\include;..\Libraries\MCXN947\middleware\sdmmc\port;..\..\..\..\..\components\libc\compilers\common\include;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\finsh;..\..\..\..\..\components\utilities\ulog;..\Libraries\MCXN947\MCXN947;board;..\Libraries\CMSIS\Core\Include;..\..\..\..\..\components\libc\posix\io\eventfd;applications;..\..\..\..\..\components\drivers\include;..\Libraries\MCXN947\components\codec;..\Libraries\drivers\config;..\..\..\..\..\components\libc\posix\io\epoll;..\..\..\..\..\components\drivers\include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -492,6 +492,25 @@
               <FileName>completion.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\..\components\drivers\ipc\completion.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>condvar.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\components\drivers\ipc\condvar.c</FilePath>
               <FileOption>
                 <FileArmAds>
                   <Cads>
@@ -1128,6 +1147,13 @@
           </Files>
           <Files>
             <File>
+              <FileName>fsl_lpspi_edma.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_lpspi_edma.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>fsl_cmc.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_cmc.c</FilePath>
@@ -1180,6 +1206,13 @@
               <FileName>fsl_reset.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_reset.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>fsl_lpadc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_lpadc.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1271,6 +1304,13 @@
               <FileName>system_MCXN947_cm33_core0.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Libraries\MCXN947\MCXN947\system_MCXN947_cm33_core0.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>fsl_spc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_spc.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1390,16 +1430,6 @@
               <FileName>fsl_common.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Libraries\MCXN947\MCXN947\drivers\fsl_common.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>rt_kprintf</GroupName>
-          <Files>
-            <File>
-              <FileName>rt_vsnprintf.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>packages\rt_vsnprintf_full-latest\rt_vsnprintf.c</FilePath>
             </File>
           </Files>
         </Group>

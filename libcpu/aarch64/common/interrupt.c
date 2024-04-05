@@ -16,16 +16,8 @@
 #include "gicv3.h"
 #include "ioremap.h"
 
-
 /* exception and interrupt handler table */
 struct rt_irq_desc isr_table[MAX_HANDLERS];
-
-#ifndef RT_USING_SMP
-/* Those variables will be accessed in ISR, so we need to share them. */
-rt_ubase_t rt_interrupt_from_thread        = 0;
-rt_ubase_t rt_interrupt_to_thread          = 0;
-rt_ubase_t rt_thread_switch_interrupt_flag = 0;
-#endif
 
 #ifndef RT_CPUS_NR
 #define RT_CPUS_NR 1
@@ -86,9 +78,6 @@ void rt_hw_interrupt_init(void)
 
     /* init interrupt nest, and context in thread sp */
     rt_atomic_store(&rt_interrupt_nest, 0);
-    rt_interrupt_from_thread = 0;
-    rt_interrupt_to_thread = 0;
-    rt_thread_switch_interrupt_flag = 0;
 #else
     rt_uint64_t gic_cpu_base;
     rt_uint64_t gic_dist_base;
@@ -138,17 +127,17 @@ void rt_hw_interrupt_mask(int vector)
 #ifdef SOC_BCM283x
     if (vector < 32)
     {
-        IRQ_DISABLE1 = (1 << vector);
+        IRQ_DISABLE1 = (1UL << vector);
     }
     else if (vector < 64)
     {
         vector = vector % 32;
-        IRQ_DISABLE2 = (1 << vector);
+        IRQ_DISABLE2 = (1UL << vector);
     }
     else
     {
         vector = vector - 64;
-        IRQ_DISABLE_BASIC = (1 << vector);
+        IRQ_DISABLE_BASIC = (1UL << vector);
     }
 #else
     arm_gic_mask(0, vector);
@@ -164,17 +153,17 @@ void rt_hw_interrupt_umask(int vector)
 #ifdef SOC_BCM283x
 if (vector < 32)
     {
-        IRQ_ENABLE1 = (1 << vector);
+        IRQ_ENABLE1 = (1UL << vector);
     }
     else if (vector < 64)
     {
         vector = vector % 32;
-        IRQ_ENABLE2 = (1 << vector);
+        IRQ_ENABLE2 = (1UL << vector);
     }
     else
     {
         vector = vector - 64;
-        IRQ_ENABLE_BASIC = (1 << vector);
+        IRQ_ENABLE_BASIC = (1UL << vector);
     }
 #else
     arm_gic_umask(0, vector);

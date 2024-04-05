@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
- * Date           Author         	Notes
- * 2023-06-05     zengjianwei         	first version
+ * Date           Author            Notes
+ * 2023-06-05     zengjianwei           first version
  */
 
 #include <board.h>

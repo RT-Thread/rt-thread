@@ -206,7 +206,7 @@ static void _pin_write(rt_device_t dev, rt_base_t pin, rt_uint8_t value)
     HAL_GPIO_WritePin(index->gpio, index->pin, (enum_PinState_t)value);
 }
 
-static rt_int8_t _pin_read(rt_device_t dev, rt_base_t pin)
+static rt_ssize_t _pin_read(rt_device_t dev, rt_base_t pin)
 {
     int value;
     const struct pin_index *index;
@@ -216,7 +216,7 @@ static rt_int8_t _pin_read(rt_device_t dev, rt_base_t pin)
     index = get_pin(pin);
     if (index == RT_NULL)
     {
-        return value;
+        return -RT_EINVAL;
     }
 
     value = HAL_GPIO_ReadPin(index->gpio, index->pin);

@@ -47,3 +47,25 @@ const pin_map_t pin_map_table[]=
     {A4, BSP_IO_PORT_05_PIN_08, "adc0", 20},                     /* ADC */
     {A5, BSP_IO_PORT_00_PIN_14, "adc0", 5}                       /* ADC */
 };
+
+static ioport_instance_ctrl_t g_pwm_ioport_ctrl;
+static const ioport_pin_cfg_t g_pwm_pin_cfg_data[] = {
+     {
+          .pin = BSP_IO_PORT_05_PIN_12,
+          .pin_cfg = ((uint32_t) IOPORT_CFG_PERIPHERAL_PIN | (uint32_t) IOPORT_PERIPHERAL_GPT1)
+     },
+};
+
+static const ioport_cfg_t g_pwm_pin_cfg = {
+     .number_of_pins = sizeof(g_pwm_pin_cfg_data)/sizeof(ioport_pin_cfg_t),
+     .p_pin_cfg_data = &g_pwm_pin_cfg_data[0],
+};
+
+void switchToPWM(const char *device_name)
+{
+     if(!rt_strcmp(device_name, "pwm0"))
+     {
+          R_IOPORT_Open(&g_pwm_ioport_ctrl, &g_pwm_pin_cfg);
+          LOG_I("D11 will switch from SPI to PWM");
+     }
+}

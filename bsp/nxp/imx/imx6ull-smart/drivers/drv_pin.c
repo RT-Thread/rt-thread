@@ -279,9 +279,9 @@ static void imx6ull_pin_write(struct rt_device *device, rt_base_t pin, rt_uint8_
     GPIO_WritePinOutput(mask_tab[port].gpio, pin_num, value);
 }
 
-static rt_int8_t imx6ull_pin_read(struct rt_device *device, rt_base_t pin)
+static rt_ssize_t imx6ull_pin_read(struct rt_device *device, rt_base_t pin)
 {
-    rt_int8_t value = 0;
+    rt_ssize_t value = 0;
     rt_int8_t port = 0, pin_num = 0;
 
     value = PIN_LOW;

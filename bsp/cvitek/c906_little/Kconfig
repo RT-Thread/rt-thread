@@ -38,3 +38,13 @@ config IRQ_MAX_NR
 config TIMER_CLK_FREQ
     int
     default 25000000
+
+choice
+    prompt "Board Type"
+    default BOARD_TYPE_MILKV_DUO256M
+
+    config BOARD_TYPE_MILKV_DUO
+        bool "milkv-duo"
+    config BOARD_TYPE_MILKV_DUO256M
+        bool "milkv-duo256m"
+endchoice

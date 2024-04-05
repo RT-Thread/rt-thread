@@ -109,7 +109,7 @@ static void _collect()
     rt_page_t page = _trace_head;
     if (!page)
     {
-        LOG_RAW("ok! ALLOC CNT %ld\n", _alloc_cnt);
+        rt_kprintf("ok! ALLOC CNT %ld\n", _alloc_cnt);
     }
     else
     {
@@ -159,7 +159,7 @@ void _report(rt_page_t page, size_t size_bits, char *msg)
 {
     void *pg_va = rt_page_page2addr(page);
     LOG_W("%s: %p, allocator: %p, size bits: %lx", msg, pg_va, page->caller, page->trace_size);
-    LOG_RAW("backtrace\n");
+    rt_kprintf("backtrace\n");
     rt_backtrace();
 }
 
@@ -175,7 +175,7 @@ static void _trace_free(rt_page_t page, void *caller, size_t size_bits)
         }
         else if (page->trace_size != size_bits)
         {
-            LOG_RAW("free with size bits %lx\n", size_bits);
+            rt_kprintf("free with size bits %lx\n", size_bits);
             _report(page, size_bits, "incompatible size bits parameter");
             return ;
         }
@@ -622,27 +622,27 @@ void list_page(void)
         struct rt_page *lp = page_list_low[i];
         struct rt_page *hp = page_list_high[i];
 
-        LOG_RAW("level %d ", i);
+        rt_kprintf("level %d ", i);
 
         while (lp)
         {
             free += (1UL << i);
-            LOG_RAW("[0x%08p]", rt_page_page2addr(lp));
+            rt_kprintf("[0x%08p]", rt_page_page2addr(lp));
             lp = lp->next;
         }
         while (hp)
         {
             free += (1UL << i);
-            LOG_RAW("[0x%08p]", rt_page_page2addr(hp));
+            rt_kprintf("[0x%08p]", rt_page_page2addr(hp));
             hp = hp->next;
         }
-        LOG_RAW("\n");
+        rt_kprintf("\n");
     }
 
     rt_spin_unlock_irqrestore(&_spinlock, level);
-    LOG_RAW("-------------------------------\n");
-    LOG_RAW("Page Summary:\n => free/installed: 0x%lx/0x%lx (%ld/%ld KB)\n", free, installed, PGNR2SIZE(free), PGNR2SIZE(installed));
-    LOG_RAW("-------------------------------\n");
+    rt_kprintf("-------------------------------\n");
+    rt_kprintf("Page Summary:\n => free/installed: 0x%lx/0x%lx (%ld/%ld KB)\n", free, installed, PGNR2SIZE(free), PGNR2SIZE(installed));
+    rt_kprintf("-------------------------------\n");
 }
 MSH_CMD_EXPORT(list_page, show page info);
 
