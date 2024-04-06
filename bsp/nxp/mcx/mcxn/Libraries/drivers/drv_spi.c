@@ -17,6 +17,9 @@
 
 enum
 {
+#ifdef BSP_USING_SPI1
+    SPI1_INDEX,
+#endif
 #ifdef BSP_USING_SPI3
     SPI3_INDEX,
 #endif
@@ -55,6 +58,20 @@ struct lpc_spi
 
 static struct lpc_spi lpc_obj[] =
 {
+#ifdef BSP_USING_SPI1
+        {
+            .LPSPIx = LPSPI1,
+            .clock_attach_id = kFRO_HF_DIV_to_FLEXCOMM1,
+            .clock_div_name = kCLOCK_DivFlexcom1Clk,
+            .clock_name = kCLOCK_FroHf,
+            .tx_dma_request = kDmaRequestMuxLpFlexcomm1Tx,
+            .rx_dma_request = kDmaRequestMuxLpFlexcomm1Rx,
+            .DMAx = DMA0,
+            .tx_dma_chl = 0,
+            .rx_dma_chl = 1,
+            .name = "spi1",
+        },
+#endif
 #ifdef BSP_USING_SPI3
         {
             .LPSPIx = LPSPI3,
