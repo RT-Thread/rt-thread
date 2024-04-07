@@ -1,0 +1,56 @@
+/*
+ * U-Boot uImage source file with multiple kernels, ramdisks and FDT blobs
+ */
+
+/dts-v1/;
+
+/ {
+	description = "Various kernels, ramdisks and FDT blobs";
+	#address-cells = <2>;
+
+	images {
+		kernel-1 {
+			description = "cvitek kernel";
+			data = /incbin/("./Image.lzma");
+			type = "kernel";
+			arch = "riscv";
+			os = "linux";
+			compression = "lzma";
+			load = <0x0 0x80200000>;
+			entry = <0x0 0x80200000>;
+			hash-2 {
+				algo = "crc32";
+			};
+		};
+
+
+		/*FDT*/
+    
+        fdt-cv1800b_milkv_duo_sd {
+            description = "cvitek device tree - cv1800b_milkv_duo_sd";
+            data = /incbin/("./cv1800b_milkv_duo_sd.dtb");
+            type = "flat_dt";
+            arch = "riscv";
+            compression = "none";
+            hash-1 {
+                algo = "sha256";
+            };
+        };
+
+
+
+	};
+
+	/*CFG*/
+    configurations {
+        
+        config-cv1800b_milkv_duo_sd {
+            description = "boot cvitek system with board cv1800b_milkv_duo_sd";
+            kernel = "kernel-1";
+            fdt = "fdt-cv1800b_milkv_duo_sd";
+        };
+
+    };
+
+
+};
