@@ -1,3 +1,0 @@
-source "$RTT_DIR/examples/utest/testcases/posix/sys/mman_h/Kconfig"
-source "$RTT_DIR/examples/utest/testcases/posix/sys/shm_h/Kconfig"
-source "$RTT_DIR/examples/utest/testcases/posix/sys/utsname_h/Kconfig"

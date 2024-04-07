@@ -1,4 +1,4 @@
 source "$RTT_DIR/src/Kconfig"
 source "$RTT_DIR/libcpu/Kconfig"
 source "$RTT_DIR/components/Kconfig"
-source "$RTT_DIR/examples/utest/testcases/Kconfig"
+source "$RTT_DIR/tests/utest/testcases/Kconfig"

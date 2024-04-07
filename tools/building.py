@@ -370,9 +370,9 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
                            duplicate=0,
                            exports='remove_components'))
     # include testcases
-    if os.path.isfile(os.path.join(Rtt_Root, 'examples/utest/testcases/SConscript')):
-        objs.extend(SConscript(Rtt_Root + '/examples/utest/testcases/SConscript',
-                           variant_dir=kernel_vdir + '/examples/utest/testcases',
+    if os.path.isfile(os.path.join(Rtt_Root, 'tests/utest/testcases/SConscript')):
+        objs.extend(SConscript(Rtt_Root + '/tests/utest/testcases/SConscript',
+                           variant_dir=kernel_vdir + '/tests/utest/testcases',
                            duplicate=0))
 
     return objs
