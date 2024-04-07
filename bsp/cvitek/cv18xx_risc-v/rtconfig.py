@@ -16,7 +16,7 @@ if os.getenv('RTT_CC'):
 
 if  CROSS_TOOL == 'gcc':
     PLATFORM    = 'gcc'
-    EXEC_PATH   = r'/opt/riscv64-linux-musleabi_for_x86_64-pc-linux-gnu/bin'
+    EXEC_PATH   = r'/opt/Xuantie-900-gcc-elf-newlib-x86_64-V2.8.1/bin'
 else:
     print('Please make sure your toolchains is GNU GCC!')
     exit(0)
@@ -30,7 +30,7 @@ CHIP_TYPE = 'cv180x'
 if PLATFORM == 'gcc':
     # toolchains
     #PREFIX  = 'riscv64-unknown-elf-'
-    PREFIX  = os.getenv('RTT_CC_PREFIX') or 'riscv64-unknown-linux-musl-'
+    PREFIX  = os.getenv('RTT_CC_PREFIX') or 'riscv64-unknown-elf-'
     CC      = PREFIX + 'gcc'
     CXX     = PREFIX + 'g++'
     AS      = PREFIX + 'gcc'

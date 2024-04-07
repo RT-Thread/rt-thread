@@ -8,13 +8,14 @@
 
 | 芯片名称 | 芯片架构 | 内存大小 | 默认日志串口 | 备注 |
 | ------- | ------- |------- | -------- | -------- |
-| cv180x | RISC-V C906 | 64MByte | uart0 | 默认开启 MMU，运行 RT-SMART 模式 |
+| cv180x | RISC-V C906 | 64MByte | uart0 | 支持 MMU， 支持 RT-Thread 标准版 和 RT-SMART 模式，默认运行 RT-Thread 标准版本 |
+| cv181x | RISC-V C906 或 Cortex A53 通过硬件 IO 二选一 | 64MByte | uart0 | 支持 MMU， 支持 RT-Thread 标准版 和 RT-SMART 版，默认运行 RT-Thread 标准版本 |
 
 - 小核
 
 | 目录 | 内存大小 | 默认日志串口 | 备注 |
 | ---- | ------- | -------- | --- |
-| c906-little | 与大核共享 | uart1 | 无 MMU，运行 RT-Thread 标准 |
+| c906-little | 与大核共享 | uart1 | 无 MMU，运行 RT-Thread 标准版 |
 
 > 注：异构芯片需单独编译每个核的 OS
 
