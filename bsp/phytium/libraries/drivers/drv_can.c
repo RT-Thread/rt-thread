@@ -166,7 +166,7 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
     struct phytium_can *drv_can;
     drv_can = (struct phytium_can *)can->parent.user_data;
     RT_ASSERT(drv_can != RT_NULL);
-    rt_uint32_t cpu_id;
+    rt_uint32_t cpu_id = rt_hw_cpu_id();
     FCanIntrEventConfig intr_event;
     FError status = FT_SUCCESS;
 
@@ -177,7 +177,6 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
     switch (cmd)
     {
         case RT_DEVICE_CTRL_SET_INT:
-            GetCpuId(&cpu_id);
             rt_hw_interrupt_set_target_cpus(drv_can->can_handle.config.irq_num, cpu_id);
             argval = (rt_uint32_t) arg;
             /*Open different interrupts*/

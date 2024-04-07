@@ -29,12 +29,12 @@
 /* cache */
 void FDriverDCacheRangeFlush(uintptr_t adr, size_t len)
 {
-    __asm_flush_dcache_range(adr, len);
+    __asm_flush_dcache_range((void *)adr, len);
 }
 
 void FDriverDCacheRangeInvalidate(uintptr_t adr, size_t len)
 {
-    rt_hw_cpu_dcache_invalidate(adr, len);
+    rt_hw_cpu_dcache_invalidate((void *)adr, len);
 }
 
 void FDriverICacheRangeInvalidate(uintptr_t adr, size_t len)
@@ -47,17 +47,17 @@ void FDriverICacheRangeInvalidate(uintptr_t adr, size_t len)
 /* cache */
 void FDriverDCacheRangeFlush(uintptr_t adr, size_t len)
 {
-    rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, adr, len);
+    rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, (void *)adr, len);
 }
 
 void FDriverDCacheRangeInvalidate(uintptr_t adr, size_t len)
 {
-    rt_hw_cpu_dcache_ops(RT_HW_CACHE_INVALIDATE, adr, len);
+    rt_hw_cpu_dcache_ops(RT_HW_CACHE_INVALIDATE, (void *)adr, len);
 }
 
 void FDriverICacheRangeInvalidate(uintptr_t adr, size_t len)
 {
-    rt_hw_cpu_icache_ops(RT_HW_CACHE_INVALIDATE, adr, len);
+    rt_hw_cpu_icache_ops(RT_HW_CACHE_INVALIDATE, (void *)adr, len);
 }
 
 #endif

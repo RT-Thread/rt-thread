@@ -63,10 +63,9 @@ extern FIOPadCtrl iopad_ctrl;
 /*******************************Api Functions*********************************/
 static void FGpioOpsSetupCtrlIRQ(FGpio *ctrl)
 {
-    u32 cpu_id;
+    rt_uint32_t cpu_id = rt_hw_cpu_id();
     u32 irq_num = ctrl->config.irq_num[0];
 
-    GetCpuId(&cpu_id);
     LOG_D("In FGpioOpsSetupCtrlIRQ() -> cpu_id %d, irq_num %d\r\n", cpu_id, irq_num);
     rt_hw_interrupt_set_target_cpus(irq_num, cpu_id);
     rt_hw_interrupt_set_priority(irq_num, ctrl->config.irq_priority); /* setup interrupt */
@@ -78,10 +77,9 @@ static void FGpioOpsSetupCtrlIRQ(FGpio *ctrl)
 /* setup gpio pin interrupt */
 static void FGpioOpsSetupPinIRQ(FGpio *ctrl, FGpioPin *const pin, FGpioOpsPinConfig *config)
 {
-    u32 cpu_id;
+    rt_uint32_t cpu_id = rt_hw_cpu_id();
     u32 irq_num = ctrl->config.irq_num[pin->index.pin];
 
-    GetCpuId(&cpu_id);
     LOG_D("in FGpioOpsSetupPinIRQ() -> cpu_id %d, irq_num %d", cpu_id, irq_num);
     rt_hw_interrupt_set_target_cpus(irq_num, cpu_id);
     rt_hw_interrupt_set_priority(irq_num, ctrl->config.irq_priority); /* setup interrupt */

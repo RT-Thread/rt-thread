@@ -1,3 +1,5 @@
+#include "rtconfig.h"
+#if defined(TARGET_ARMV8_AARCH64)
 #include <rthw.h>
 #include <rtthread.h>
 #include "interrupt.h"
@@ -7,8 +9,6 @@
 #include "phytium_cpu.h"
 #include "ftypes.h"
 #include "fparameters.h"
-
-#if defined(TARGET_ARMV8_AARCH64)
 
 struct arm_gic *phytium_gic_table;
 

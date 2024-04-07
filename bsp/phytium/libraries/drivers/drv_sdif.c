@@ -129,9 +129,8 @@ static void fsdif_ctrl_setup_interrupt(struct rt_mmcsd_host *host)
     fsdif_info_t *private_data = (fsdif_info_t *)host->private_data;
     FSdif *mmcsd_instance = private_data->mmcsd_instance;
     FSdifConfig *config_p = &mmcsd_instance->config;
-    rt_uint32_t cpu_id = 0;
+    rt_uint32_t cpu_id = rt_hw_cpu_id();
 
-    GetCpuId((u32 *)&cpu_id);
     rt_hw_interrupt_set_target_cpus(config_p->irq_num, cpu_id);
     rt_hw_interrupt_set_priority(config_p->irq_num, 0xd0);
 
