@@ -52,7 +52,6 @@ jobs:
           git config --global http.postBuffer 524288000
           git remote -v
           git fetch origin
-          python -m pip install windows-curses
           python -c "import tools.menukconfig; tools.menukconfig.touch_env()"
 
       - name: Install Arm ToolChains
