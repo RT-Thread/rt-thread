@@ -245,7 +245,7 @@ def exclude_utestcases(RTT_ROOT):
 
 # menuconfig for Linux and Windows
 def menuconfig(RTT_ROOT):
-    from Kconfiglib import menuconfig
+    import menuconfig
 
     # Exclude utestcases
     exclude_utestcases(RTT_ROOT)
@@ -278,7 +278,7 @@ def menuconfig(RTT_ROOT):
 
 # guiconfig for windows and linux
 def guiconfig(RTT_ROOT):
-    from Kconfiglib import guiconfig
+    import guiconfig
 
     # Exclude utestcases
     exclude_utestcases(RTT_ROOT)
@@ -312,7 +312,7 @@ def guiconfig(RTT_ROOT):
 
 # guiconfig for windows and linux
 def guiconfig_silent(RTT_ROOT):
-    from Kconfiglib import defconfig
+    import defconfig
 
     # Exclude utestcases
     exclude_utestcases(RTT_ROOT)
@@ -331,3 +331,35 @@ def guiconfig_silent(RTT_ROOT):
 
     # silent mode, force to make rtconfig.h
     mk_rtconfig(fn)
+
+
+def genconfig() :
+    from SCons.Script import SCons
+
+    PreProcessor = SCons.cpp.PreProcessor()
+
+    try:
+        f = open('rtconfig.h', 'r')
+        contents = f.read()
+        f.close()
+    except :
+        print("Open rtconfig.h file failed.")
+
+    PreProcessor.process_contents(contents)
+    options = PreProcessor.cpp_namespace
+
+    try:
+        f = open('.config', 'w')
+        for (opt, value) in options.items():
+            if type(value) == type(1):
+                f.write("CONFIG_%s=%d\n" % (opt, value))
+
+            if type(value) == type('') and value == '':
+                f.write("CONFIG_%s=y\n" % opt)
+            elif type(value) == type('str'):
+                f.write("CONFIG_%s=%s\n" % (opt, value))
+
+        print("Generate .config done!")
+        f.close()
+    except:
+        print("Generate .config file failed.")
