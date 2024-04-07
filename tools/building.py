@@ -147,8 +147,10 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
     if not "PKGS_DIR" in os.environ:
         if "ENV_ROOT" in os.environ:
             os.environ["PKGS_DIR"] = os.path.join(os.environ["ENV_ROOT"], "packages")
+        elif sys.platform == "win32":
+            os.environ["PKGS_DIR"] = os.path.join(os.environ["USERPROFILE"], ".env/packages")
         else:
-            os.environ["PKGS_DIR"] = os.path.join(Dir('#').abspath, "packages")
+            os.environ["PKGS_DIR"] = os.path.join(os.environ["HOME"], ".env/packages")
 
     sys.path = sys.path + [os.path.join(Rtt_Root, 'tools'), os.path.join(Rtt_Root, 'tools/kconfiglib')]
 
