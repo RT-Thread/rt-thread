@@ -13,7 +13,10 @@
 
 int main(void)
 {
+#ifdef RT_USING_SMART
     rt_kprintf("Hello RT-Smart!\n");
-
+#else
+    rt_kprintf("Hello RISC-V!\n");
+#endif
     return 0;
 }
