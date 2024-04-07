@@ -21,6 +21,9 @@
 #define RT_USING_IDLE_HOOK
 #define RT_IDLE_HOOK_LIST_SIZE 4
 #define IDLE_THREAD_STACK_SIZE 1024
+#define RT_USING_TIMER_SOFT
+#define RT_TIMER_THREAD_PRIO 4
+#define RT_TIMER_THREAD_STACK_SIZE 512
 
 /* kservice optimization */
 
@@ -88,7 +91,11 @@
 #define RT_SERIAL_RB_BUFSZ 64
 #define RT_USING_I2C
 #define RT_USING_I2C_BITOPS
+#define RT_USING_ADC
+#define RT_USING_DAC
 #define RT_USING_PWM
+#define RT_USING_SPI
+#define RT_USING_SPI_BITOPS
 #define RT_USING_PIN
 
 /* Using USB */
@@ -113,6 +120,7 @@
 
 /* Socket is in the 'Network' category */
 
+#define RT_USING_CPLUSPLUS
 
 /* Network */
 
@@ -186,21 +194,18 @@
 
 /* Micrium: Micrium software products porting for RT-Thread */
 
+#define PKG_USING_PERF_COUNTER
+#define PKG_USING_PERF_COUNTER_V2241
 
 /* peripheral libraries and drivers */
-
-/* HAL & SDK Drivers */
-
-/* STM32 HAL & SDK Drivers */
-
-
-/* Kendryte SDK */
-
 
 /* sensors drivers */
 
 
 /* touch drivers */
+
+
+/* Kendryte SDK */
 
 
 /* AI packages */
@@ -221,6 +226,15 @@
 
 /* Arduino libraries */
 
+#define PKG_USING_RTDUINO
+#define RTDUINO_THREAD_SIZE 2048
+#define RTDUINO_THREAD_PRIO 30
+#define RTDUINO_SUPPORT_HIGH_PRECISION_MICROS
+#define RTDUINO_USING_WIRE
+#define RTDUINO_WIRE_BUFFER_LENGTH 32
+#define RTDUINO_USING_SPI
+#define RTDUINO_USING_SERVO
+#define PKG_USING_RTDUINO_LATEST_VERSION
 
 /* Projects and Demos */
 
@@ -230,6 +244,10 @@
 
 /* Display */
 
+#define PKG_USING_ARDUINO_ADAFRUIT_GFX_LIBRARY
+#define PKG_USING_ARDUINO_ADAFRUIT_GFX_LIBRARY_LATEST_VERSION
+#define PKG_USING_ARDUINO_ADAFRUIT_SSD1306
+#define PKG_USING_ARDUINO_ADAFRUIT_SSD1306_LATEST_VERSION
 
 /* Timing */
 
@@ -250,6 +268,8 @@
 
 /* Signal IO */
 
+#define PKG_USING_ARDUINO_ADAFRUIT_BUSIO
+#define PKG_USING_ARDUINO_ADAFRUIT_BUSIO_LATEST_VERSION
 
 /* Uncategorized */
 
@@ -260,6 +280,7 @@
 
 /* Onboard Peripheral Drivers */
 
+#define BSP_USING_ARDUINO
 #define BSP_USING_USB_TO_USART
 
 /* On-chip Peripheral Drivers */
@@ -267,6 +288,38 @@
 #define BSP_USING_GPIO
 #define BSP_USING_UART
 #define BSP_USING_UART1
+#define BSP_USING_UART2
+#define BSP_USING_PWM
+#define BSP_USING_PWM2
+#define BSP_USING_PWM2_CH3
+#define BSP_USING_PWM2_CH4
+#define BSP_USING_PWM3
+#define BSP_USING_PWM3_CH1
+#define BSP_USING_PWM3_CH2
+#define BSP_USING_PWM4
+#define BSP_USING_PWM4_CH1
+#define BSP_USING_SOFT_SPI
+#define BSP_USING_SOFT_SPI1
+#define BSP_S_SPI1_SCK_PIN 101
+#define BSP_S_SPI1_MISO_PIN 99
+#define BSP_S_SPI1_MOSI_PIN 97
+#define BSP_USING_ADC
+#define BSP_USING_ADC3
+#define BSP_USING_I2C
+#define BSP_USING_I2C1
+#define BSP_I2C1_SCL_PIN 24
+#define BSP_I2C1_SDA_PIN 25
+#define BSP_USING_I2C2
+#define BSP_I2C2_SCL_PIN 81
+#define BSP_I2C2_SDA_PIN 80
+#define BSP_USING_I2C4
+#define BSP_I2C4_SCL_PIN 103
+#define BSP_I2C4_SDA_PIN 55
+#define BSP_USING_I2C5
+#define BSP_I2C5_SCL_PIN 22
+#define BSP_I2C5_SDA_PIN 23
+#define BSP_USING_DAC
+#define BSP_USING_DAC1
 
 /* Board extended module Drivers */
 
