@@ -25,8 +25,8 @@ int main(void)
     while (1)
     {
         rt_pin_write(GPIO_LED_R, PIN_HIGH);
-        rt_thread_mdelay(500);
+        rt_thread_mdelay(1000);
         rt_pin_write(GPIO_LED_R, PIN_LOW);
-        rt_thread_mdelay(500);
+        rt_thread_mdelay(1000);
     }
 }

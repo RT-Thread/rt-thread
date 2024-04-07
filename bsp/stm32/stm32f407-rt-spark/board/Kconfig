@@ -2,6 +2,38 @@ menu "Hardware Drivers Config"
 
 menu "Onboard Peripheral Drivers"
 
+    config BSP_USING_ARDUINO
+        bool "Compatible with Arduino Ecosystem (RTduino)"
+        select PKG_USING_RTDUINO
+        select BSP_USING_STLINK_TO_USART
+        select BSP_USING_UART1
+        select BSP_USING_UART2
+        select BSP_USING_GPIO
+        select BSP_USING_ADC
+        select BSP_USING_ADC3
+        select BSP_USING_DAC
+        select BSP_USING_DAC1
+        select BSP_USING_PWM
+        select BSP_USING_PWM1
+        select BSP_USING_PWM1_CH2
+        select BSP_USING_PWM1_CH3
+        select BSP_USING_PWM2
+        select BSP_USING_PWM2_CH3
+        select BSP_USING_PWM2_CH4
+        select BSP_USING_PWM4
+        select BSP_USING_PWM4_CH1
+        select BSP_USING_I2C
+        select BSP_USING_I2C4
+        select BSP_USING_I2C5
+        select BSP_USING_SPI
+        select BSP_USING_SPI1
+        select BSP_USING_SOFT_SPI
+        select BSP_USING_SOFT_SPI1
+        imply RTDUINO_USING_SERVO
+        imply RTDUINO_USING_WIRE
+        imply RTDUINO_USING_SPI
+        default n
+
     config BSP_USING_USB_TO_USART
         bool "Enable USB TO USART (uart1)"
         select BSP_USING_UART
@@ -30,7 +62,7 @@ menu "Onboard Peripheral Drivers"
             comment "set rts pin number "
             config BSP_RS485_RTS_PIN
                 int "RS485 rts pin number"
-                range 1 176
+                range 0 143
                 default 104
 
             config RS485_UART_DEVICE_NAME
@@ -363,10 +395,24 @@ menu "On-chip Peripheral Drivers"
         default n
         select RT_USING_PWM
         if BSP_USING_PWM
+        menuconfig BSP_USING_PWM1
+            bool "Enable timer1 output PWM"
+            default n
+            if BSP_USING_PWM1
+                config BSP_USING_PWM1_CH2
+                    bool "Enable PWM1 channel2"
+                    default n
+                config BSP_USING_PWM1_CH3
+                    bool "Enable PWM1 channel3"
+                    default n
+            endif
         menuconfig BSP_USING_PWM2
             bool "Enable timer2 output PWM"
             default n
             if BSP_USING_PWM2
+                config BSP_USING_PWM2_CH3
+                    bool "Enable PWM2 channel3"
+                    default n
                 config BSP_USING_PWM2_CH4
                     bool "Enable PWM2 channel4"
                     default n
@@ -375,13 +421,16 @@ menu "On-chip Peripheral Drivers"
             bool "Enable timer3 output PWM"
             default n
             if BSP_USING_PWM3
-                config BSP_USING_PWM3_CH2
-                    bool "Enable PWM3 channel2"
-                    default n
-            endif
-            if BSP_USING_PWM3
                 config BSP_USING_PWM3_CH4
                     bool "Enable PWM3 channel4"
+                    default n
+            endif
+        menuconfig BSP_USING_PWM4
+            bool "Enable timer4 output PWM"
+            default n
+            if BSP_USING_PWM4
+                config BSP_USING_PWM4_CH1
+                    bool "Enable PWM4 channel1"
                     default n
             endif
         menuconfig BSP_USING_PWM14
@@ -410,17 +459,17 @@ menu "On-chip Peripheral Drivers"
                 default n
                 if BSP_USING_SOFT_SPI1
                     config BSP_S_SPI1_SCK_PIN
-                        int "soft spi1 sck pin number"
-                        range 1 176
-                        default 16
+                        int "soft spi1 sck pin number(G,5)"
+                        range 0 143
+                        default 101
                     config BSP_S_SPI1_MISO_PIN
-                        int "soft spi1 miso pin number"
-                        range 1 176
-                        default 18
+                        int "soft spi1 miso pin numbe(G,3)"
+                        range 0 143
+                        default 99
                     config BSP_S_SPI1_MOSI_PIN
-                        int "soft spi1 mosi pin number"
-                        range 1 176
-                        default 91
+                        int "soft spi1 mosi pin number(G,1)"
+                        range 0 143
+                        default 97
                 endif
 
             menuconfig BSP_USING_SOFT_SPI2
@@ -429,15 +478,15 @@ menu "On-chip Peripheral Drivers"
                 if BSP_USING_SOFT_SPI2
                     config BSP_S_SPI2_SCK_PIN
                         int "soft spi2 sck pin number"
-                        range 1 176
+                        range 0 143
                         default 19
                     config BSP_S_SPI2_MISO_PIN
                         int "soft spi2 miso pin number"
-                        range 1 176
+                        range 0 143
                         default 20
                     config BSP_S_SPI2_MOSI_PIN
                         int "soft spi2 mosi pin number"
-                        range 1 176
+                        range 0 143
                         default 21
                 endif
         endif
@@ -485,6 +534,9 @@ menu "On-chip Peripheral Drivers"
         if BSP_USING_ADC
             config BSP_USING_ADC1
                 bool "Enable ADC1"
+                default n
+            config BSP_USING_ADC3
+                bool "Enable ADC3"
                 default n
         endif
 
@@ -541,6 +593,40 @@ menu "On-chip Peripheral Drivers"
                         int "I2C3 sda pin number, PE1"
                         range 0 143
                         default 65
+                endif
+            
+            menuconfig BSP_USING_I2C4
+                bool "Enable I2C4 BUS for RTduino(software simulation)"
+                default n
+                select RT_USING_I2C
+                select RT_USING_I2C_BITOPS
+                select RT_USING_PIN
+                if BSP_USING_I2C4
+                    config BSP_I2C4_SCL_PIN
+                        int "i2c4 scl pin number, PG7"
+                        range 0 143
+                        default 103
+                    config BSP_I2C4_SDA_PIN
+                        int "I2C4 sda pin number, PD7"
+                        range 0 143
+                        default 55
+                endif
+                
+            menuconfig BSP_USING_I2C5
+                bool "Enable I2C5 BUS for RTduino(software simulation)"
+                default n
+                select RT_USING_I2C
+                select RT_USING_I2C_BITOPS
+                select RT_USING_PIN
+                if BSP_USING_I2C5
+                    config BSP_I2C5_SCL_PIN
+                        int "i2c5 scl pin number, PB6"
+                        range 0 143
+                        default 22
+                    config BSP_I2C5_SDA_PIN
+                        int "I2C5 sda pin number, PB7"
+                        range 0 143
+                        default 23
                 endif
         endif
 

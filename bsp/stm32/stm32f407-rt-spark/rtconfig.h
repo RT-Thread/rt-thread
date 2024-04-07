@@ -21,6 +21,9 @@
 #define RT_USING_IDLE_HOOK
 #define RT_IDLE_HOOK_LIST_SIZE 4
 #define IDLE_THREAD_STACK_SIZE 1024
+#define RT_USING_TIMER_SOFT
+#define RT_TIMER_THREAD_PRIO 4
+#define RT_TIMER_THREAD_STACK_SIZE 512
 
 /* kservice optimization */
 
@@ -88,7 +91,11 @@
 #define RT_SERIAL_RB_BUFSZ 64
 #define RT_USING_I2C
 #define RT_USING_I2C_BITOPS
+#define RT_USING_ADC
+#define RT_USING_DAC
 #define RT_USING_PWM
+#define RT_USING_SPI
+#define RT_USING_SPI_BITOPS
 #define RT_USING_PIN
 
 /* Using USB */
@@ -113,6 +120,7 @@
 
 /* Socket is in the 'Network' category */
 
+#define RT_USING_CPLUSPLUS
 
 /* Network */
 
@@ -186,21 +194,18 @@
 
 /* Micrium: Micrium software products porting for RT-Thread */
 
+#define PKG_USING_PERF_COUNTER
+#define PKG_USING_PERF_COUNTER_V2241
 
 /* peripheral libraries and drivers */
-
-/* HAL & SDK Drivers */
-
-/* STM32 HAL & SDK Drivers */
-
-
-/* Kendryte SDK */
-
 
 /* sensors drivers */
 
 
 /* touch drivers */
+
+
+/* Kendryte SDK */
 
 
 /* AI packages */
@@ -221,6 +226,15 @@
 
 /* Arduino libraries */
 
+#define PKG_USING_RTDUINO
+#define RTDUINO_THREAD_SIZE 2048
+#define RTDUINO_THREAD_PRIO 30
+#define RTDUINO_SUPPORT_HIGH_PRECISION_MICROS
+#define RTDUINO_USING_WIRE
+#define RTDUINO_WIRE_BUFFER_LENGTH 32
+#define RTDUINO_USING_SPI
+#define RTDUINO_USING_SERVO
+#define PKG_USING_RTDUINO_LATEST_VERSION
 
 /* Projects and Demos */
 
@@ -230,6 +244,8 @@
 
 /* Display */
 
+#define PKG_USING_ARDUINO_ADAFRUIT_GFX_LIBRARY
+#define PKG_USING_ARDUINO_ADAFRUIT_GFX_LIBRARY_LATEST_VERSION
 
 /* Timing */
 
@@ -250,6 +266,8 @@
 
 /* Signal IO */
 
+#define PKG_USING_ARDUINO_ADAFRUIT_BUSIO
+#define PKG_USING_ARDUINO_ADAFRUIT_BUSIO_LATEST_VERSION
 
 /* Uncategorized */
 
