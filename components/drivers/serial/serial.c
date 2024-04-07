@@ -57,9 +57,13 @@
 #undef putc
 #endif
 
+RT_OBJECT_HOOKLIST_DEFINE(rt_hw_serial_rxind);
+
 static rt_err_t serial_fops_rx_ind(rt_device_t dev, rt_size_t size)
 {
     rt_wqueue_wakeup(&(dev->wait_queue), (void*)POLLIN);
+
+    RT_OBJECT_HOOKLIST_CALL(rt_hw_serial_rxind, (dev, size));
 
     return RT_EOK;
 }
@@ -1388,14 +1392,6 @@ rt_err_t rt_hw_serial_register(struct rt_serial_device *serial,
     return ret;
 }
 
-#if defined(RT_USING_SMART) && defined(LWP_DEBUG)
-static volatile int _early_input = 0;
-int lwp_startup_debug_request(void)
-{
-    return _early_input;
-}
-#endif
-
 /* ISR for serial interrupt */
 void rt_hw_serial_isr(struct rt_serial_device *serial, int event)
 {
@@ -1441,7 +1437,7 @@ void rt_hw_serial_isr(struct rt_serial_device *serial, int event)
             /**
              * Invoke callback.
              * First try notify if any, and if notify is existed, rx_indicate()
-             * is not callback. This seperate the priority and makes the reuse
+             * is not callback. This separate the priority and makes the reuse
              * of same serial device reasonable for RT console.
              */
             if (serial->rx_notify.notify)
@@ -1463,9 +1459,6 @@ void rt_hw_serial_isr(struct rt_serial_device *serial, int event)
                     serial->parent.rx_indicate(&serial->parent, rx_length);
                 }
             }
-        #if defined(RT_USING_SMART) && defined(LWP_DEBUG)
-            _early_input = 1;
-        #endif
             break;
         }
         case RT_SERIAL_EVENT_TX_DONE:
