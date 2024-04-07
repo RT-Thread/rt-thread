@@ -89,6 +89,8 @@ struct rt_i2c_driver
     const struct rt_ofw_node_id *ofw_ids;
 
     rt_err_t (*probe)(struct rt_i2c_client *client);
+    rt_err_t (*remove)(struct rt_i2c_client *client);
+    rt_err_t (*shutdown)(struct rt_i2c_client *client);
 };
 
 rt_err_t rt_i2c_driver_register(struct rt_i2c_driver *driver);

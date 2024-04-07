@@ -8,7 +8,7 @@
  * 2022-12-06     GuEe-GUI     first version
  */
 
-#include "i2c_dm.h"
+#include <rtdevice.h>
 
 #define DBG_TAG "i2c.bus"
 #define DBG_LVL DBG_INFO
@@ -21,9 +21,9 @@ void i2c_bus_scan_clients(struct rt_i2c_bus_device *bus)
 #ifdef RT_USING_OFW
     if (bus->parent.ofw_node)
     {
-        struct rt_ofw_node *np = bus->parent.ofw_node, *i2c_client_np;
+        struct rt_ofw_node *np = bus->parent.ofw_node, *child_np, *i2c_client_np;
 
-        rt_ofw_foreach_available_child_node(np, i2c_client_np)
+        rt_ofw_foreach_available_child_node(np, child_np)
         {
             rt_uint32_t client_addr;
             struct rt_i2c_client *client;
@@ -47,6 +47,7 @@ void i2c_bus_scan_clients(struct rt_i2c_bus_device *bus)
 
             if (!client)
             {
+                rt_ofw_node_put(i2c_client_np);
                 LOG_E("Not memory to create i2c client: %s",
                         rt_ofw_node_full_name(i2c_client_np));
 

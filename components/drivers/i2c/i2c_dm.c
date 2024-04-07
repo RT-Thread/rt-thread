@@ -8,7 +8,7 @@
  * 2022-12-06     GuEe-GUI     first version
  */
 
-#include "i2c_dm.h"
+#include <rtdevice.h>
 
 #define DBG_TAG "i2c.dm"
 #define DBG_LVL DBG_INFO

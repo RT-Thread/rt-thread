@@ -13,7 +13,7 @@
 
 #include <rthw.h>
 #include <rtthread.h>
-#include <rtdevice.h>
+#include <drivers/core/bus.h>
 
 /* I2C Frequency Modes */
 #define I2C_MAX_STANDARD_MODE_FREQ      100000

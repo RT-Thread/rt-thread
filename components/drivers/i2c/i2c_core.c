@@ -19,10 +19,6 @@
 #endif
 #include <rtdbg.h>
 
-#ifdef RT_USING_DM
-#include "i2c_dm.h"
-#endif
-
 rt_err_t rt_i2c_bus_device_register(struct rt_i2c_bus_device *bus,
                                     const char               *bus_name)
 {
