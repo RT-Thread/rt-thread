@@ -116,7 +116,6 @@ void phytium_interrupt_init(void)
     gic_irq_start = 0;
     arm_gic_dist_init(0, gic_dist_base, gic_irq_start);
     arm_gic_cpu_init(0, gic_cpu_base);
-    
     arm_gic_redist_address_set(0, redist_addr + 2 * GICV3_RD_OFFSET, 0);
 
 #if defined(TARGET_E2000Q) || defined(TARGET_PHYTIUMPI)

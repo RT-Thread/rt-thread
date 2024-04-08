@@ -30,7 +30,6 @@
 #ifndef FI2C_DEVICE_MEMADDR_LEN
     #define FI2C_DEVICE_MEMADDR_LEN 1 
 #endif
-
 #define FI2C_DEFAULT_ID 0
 #define I2C_USE_MIO
 #if defined(I2C_USE_MIO)
@@ -181,7 +180,6 @@ static rt_ssize_t i2c_master_xfer(struct rt_i2c_bus_device *device, struct rt_i2
         {
             mem_addr |= msgs[i].buf[j] << (8 * (FI2C_DEVICE_MEMADDR_LEN - 1 - j));
         }
-        
         i2c_bus->i2c_handle.config.slave_addr = pmsg->addr;
         if (pmsg->flags & RT_I2C_RD)
         {

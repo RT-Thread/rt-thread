@@ -320,14 +320,16 @@ static rt_ssize_t phytium_qspi_xfer(struct rt_spi_device *device, struct rt_spi_
 {
     RT_ASSERT(device != RT_NULL);
     RT_ASSERT(message != RT_NULL);
+    FError ret = FT_SUCCESS;
     phytium_qspi_bus *qspi_bus;
     struct rt_qspi_message *qspi_message = (struct rt_qspi_message *)message;
+
     rt_uint32_t cmd = qspi_message->instruction.content;
     rt_uint32_t flash_addr = qspi_message->address.content;
+    rt_uint32_t len = message->length;
 
     const void *rcvb = message->recv_buf;
     const void *sndb = message->send_buf;
-    FError ret = FT_SUCCESS;
 
     qspi_bus = (phytium_qspi_bus *)(struct phytium_qspi_bus *) device->bus->parent.user_data;
 
@@ -345,8 +347,6 @@ static rt_ssize_t phytium_qspi_xfer(struct rt_spi_device *device, struct rt_spi_
     /*Distinguish the write mode according to different commands*/
     if (cmd == FQSPI_FLASH_CMD_PP || cmd == FQSPI_FLASH_CMD_QPP || cmd == FQSPI_FLASH_CMD_4PP || cmd == FQSPI_FLASH_CMD_4QPP)
     {
-        rt_uint8_t len = message->length;
-
         rt_memcpy(&wr_buf, (char *)message->send_buf, len);
         ret = FQspiFlashErase(&(qspi_bus->fqspi), FQSPI_FLASH_CMD_SE, flash_addr);
         if (FT_SUCCESS != ret)
@@ -380,23 +380,22 @@ static rt_ssize_t phytium_qspi_xfer(struct rt_spi_device *device, struct rt_spi_
             rt_kprintf("Failed to config read, test result 0x%x.\r\n", ret);
             return -RT_ERROR;
         }
+        
         /* read norflash data */
-        size_t read_len = QspiFlashReadData(&(qspi_bus->fqspi), addr, (u8 *)&rd_buf, DAT_LENGTH);
-        message->length = read_len;
-        if (read_len != DAT_LENGTH)
+        size_t read_len = QspiFlashReadData(&(qspi_bus->fqspi), addr, (u8 *)&rd_buf, len);
+        if (read_len != len)
         {
             rt_kprintf("Failed to read mem, read len = %d.\r\n", read_len);
             return -RT_ERROR;
         }
         else
         {
-            rt_kprintf("Read successfully!!!\r\n");
+            rt_kprintf("Read successfully!!!, read_len = %d\r\n", read_len);
             message->recv_buf = &rd_buf;
-
         }
         FtDumpHexByte(message->recv_buf, read_len);
 
-        return RT_EOK;
+        return read_len;
     }
 
     if (rcvb)
@@ -411,7 +410,7 @@ static rt_ssize_t phytium_qspi_xfer(struct rt_spi_device *device, struct rt_spi_
             }
         }
 
-        return RT_EOK;
+        return 1;
     }
 
     if (sndb)
@@ -430,8 +429,9 @@ static rt_ssize_t phytium_qspi_xfer(struct rt_spi_device *device, struct rt_spi_
             return -RT_ERROR;
         }
 
-        return RT_EOK;
+        return 1;
     }
+
     rt_kprintf("cmd not found!!!\r\n");
     return ret;
 }
