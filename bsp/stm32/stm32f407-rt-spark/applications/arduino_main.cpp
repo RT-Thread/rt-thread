@@ -352,7 +352,15 @@ void testanimate(const uint8_t *bitmap, uint8_t w, uint8_t h) {
 
 void setup() {
   Serial.begin(115200);
-
+  pinMode(D37,OUTPUT);
+  while (1)
+  {
+    digitalWrite(D37,1);
+    delay(550);
+    digitalWrite(D37,0);
+    delay(550);
+  }
+  
   // SSD1306_SWITCHCAPVCC = generate display voltage from 3.3V internally
   if(!display.begin(SSD1306_SWITCHCAPVCC, SCREEN_ADDRESS)) {
     Serial.println(F("SSD1306 allocation failed"));

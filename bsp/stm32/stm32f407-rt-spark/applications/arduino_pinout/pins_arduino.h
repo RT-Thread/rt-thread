@@ -48,12 +48,14 @@
 #define D33       (33)
 #define D34       (34)
 #define D35       (35)
-#define A0        (36)
-#define A1        (37)
-#define A2        (38)
-#define A3        (39)
-#define DAC0      (40)
-#define DAC1      (41)
+#define D36       (36)
+#define D37       (37)
+#define A0        (38)
+#define A1        (39)
+#define A2        (40)
+#define A3        (41)
+#define DAC0      (42)
+#define DAC1      (43)
 
 #define RTDUINO_PIN_MAX_LIMIT DAC1 /* pin number max limit check */
 
@@ -61,12 +63,16 @@
 
 #define LED_BUILTIN D35 /* Default Built-in LED */
 
-/* i2c1 : PD.7-SDA PG.7-SCL */
-#define RTDUINO_DEFAULT_IIC_BUS_NAME "i2c1"
+/* i2c4 : PD.7-SDA PG.7-SCL */
+//#define RTDUINO_DEFAULT_IIC_BUS_NAME "i2c4"
+
+/* i2c5 : PB.6-SDA PB.7-SCL */
+#define RTDUINO_DEFAULT_IIC_BUS_NAME "i2c5"
+
 
 /* spi1 : PG.5-SCK  PG.3-MISO  PG.1-MOSI */
 #define SS D31 /* Chip select pin of default spi */
-#define RTDUINO_DEFAULT_SPI_BUS_NAME "spi1"
+#define RTDUINO_DEFAULT_SPI_BUS_NAME "sspi1"
 
 /* Serial2(uart2) : PA.2-TX  PA.3-RX */
 #define RTDUINO_SERIAL2_DEVICE_NAME "uart2"

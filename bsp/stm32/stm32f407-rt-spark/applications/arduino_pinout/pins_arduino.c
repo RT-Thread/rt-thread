@@ -56,7 +56,9 @@ const pin_map_t pin_map_table[]=
     {D32, GET_PIN(G, 4)},
     {D33, GET_PIN(A, 2), "uart2"},          /* Serial2-TX */
     {D34, GET_PIN(A, 3), "uart2"},          /* Serial2-RX */
-    {D35, GET_PIN(F, 12)},
+    {D35, GET_PIN(F, 12)},                  /* On-Board R-LED*/
+    {D36, GET_PIN(F, 11)},                  /* On-Board B-LED*/
+    {D37, GET_PIN(B, 0)},                   /* On-Board Buzzer*/
     {A0, GET_PIN(F, 6), "adc3", 4},         /* ADC */
     {A1, GET_PIN(F, 7), "adc3", 5},         /* ADC */
     {A2, GET_PIN(F, 4), "adc3", 14},        /* ADC */
