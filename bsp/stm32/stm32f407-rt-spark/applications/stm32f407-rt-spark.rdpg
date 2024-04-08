@@ -118,26 +118,26 @@
         {
             "allow5v": true,
             "arduino": "D9",
-            "channel": "1",
+            "channel": "2",
             "function": "PWM",
             "iomap": "",
-            "name": "pwm3",
+            "name": "pwm1",
             "notes": "/* PWM */",
             "rtthread": "",
-            "rttpin": "6",
-            "rttport": "A"
+            "rttpin": "11",
+            "rttport": "E"
         },
         {
             "allow5v": true,
             "arduino": "D10",
-            "channel": "2",
+            "channel": "3",
             "function": "PWM",
             "iomap": "",
-            "name": "pwm3",
+            "name": "pwm1",
             "notes": "/* PWM */",
             "rtthread": "",
-            "rttpin": "7",
-            "rttport": "A"
+            "rttpin": "13",
+            "rttport": "E"
         },
         {
             "allow5v": true,
@@ -208,7 +208,7 @@
             "name": "",
             "notes": "",
             "rtthread": "",
-            "rttpin": "11",
+            "rttpin": "15",
             "rttport": "E"
         },
         {
@@ -220,8 +220,8 @@
             "name": "",
             "notes": "",
             "rtthread": "",
-            "rttpin": "13",
-            "rttport": "E"
+            "rttpin": "9",
+            "rttport": "D"
         },
         {
             "allow5v": true,
@@ -232,8 +232,8 @@
             "name": "",
             "notes": "",
             "rtthread": "",
-            "rttpin": "15",
-            "rttport": "E"
+            "rttpin": "2",
+            "rttport": "G"
         },
         {
             "allow5v": true,
@@ -244,8 +244,8 @@
             "name": "",
             "notes": "",
             "rtthread": "",
-            "rttpin": "9",
-            "rttport": "D"
+            "rttpin": "2",
+            "rttport": "B"
         },
         {
             "allow5v": true,
@@ -256,7 +256,7 @@
             "name": "",
             "notes": "",
             "rtthread": "",
-            "rttpin": "2",
+            "rttpin": "0",
             "rttport": "G"
         },
         {
@@ -268,8 +268,8 @@
             "name": "",
             "notes": "",
             "rtthread": "",
-            "rttpin": "2",
-            "rttport": "B"
+            "rttpin": "0",
+            "rttport": "A"
         },
         {
             "allow5v": true,
@@ -280,7 +280,7 @@
             "name": "",
             "notes": "",
             "rtthread": "",
-            "rttpin": "0",
+            "rttpin": "5",
             "rttport": "G"
         },
         {
@@ -292,12 +292,24 @@
             "name": "",
             "notes": "",
             "rtthread": "",
-            "rttpin": "0",
-            "rttport": "A"
+            "rttpin": "3",
+            "rttport": "G"
         },
         {
             "allow5v": true,
             "arduino": "D24",
+            "channel": "",
+            "function": "GPIO",
+            "iomap": "",
+            "name": "",
+            "notes": "",
+            "rtthread": "",
+            "rttpin": "1",
+            "rttport": "G"
+        },
+        {
+            "allow5v": true,
+            "arduino": "D25",
             "channel": "",
             "function": "I2C",
             "iomap": "SCL",
@@ -309,7 +321,7 @@
         },
         {
             "allow5v": true,
-            "arduino": "D25",
+            "arduino": "D26",
             "channel": "",
             "function": "I2C",
             "iomap": "SDA",
@@ -321,7 +333,7 @@
         },
         {
             "allow5v": true,
-            "arduino": "D26",
+            "arduino": "D27",
             "channel": "",
             "function": "I2C",
             "iomap": "SCL",
@@ -333,7 +345,7 @@
         },
         {
             "allow5v": true,
-            "arduino": "D27",
+            "arduino": "D28",
             "channel": "",
             "function": "I2C",
             "iomap": "SDA",
@@ -345,7 +357,7 @@
         },
         {
             "allow5v": true,
-            "arduino": "D28",
+            "arduino": "D29",
             "channel": "",
             "function": "SPI",
             "iomap": "SCK",
@@ -353,35 +365,35 @@
             "notes": "/* SPI-SCK */",
             "rtthread": "",
             "rttpin": "5",
-            "rttport": "G"
-        },
-        {
-            "allow5v": true,
-            "arduino": "D29",
-            "channel": "",
-            "function": "SPI",
-            "iomap": "MISO",
-            "name": "spi1",
-            "notes": "/* SPI-MISO */",
-            "rtthread": "",
-            "rttpin": "3",
-            "rttport": "G"
+            "rttport": "A"
         },
         {
             "allow5v": true,
             "arduino": "D30",
             "channel": "",
             "function": "SPI",
-            "iomap": "MOSI",
+            "iomap": "MISO",
             "name": "spi1",
-            "notes": "/* SPI-MOSI */",
+            "notes": "/* SPI-MISO */",
             "rtthread": "",
-            "rttpin": "1",
-            "rttport": "G"
+            "rttpin": "6",
+            "rttport": "A"
         },
         {
             "allow5v": true,
             "arduino": "D31",
+            "channel": "",
+            "function": "SPI",
+            "iomap": "MOSI",
+            "name": "spi1",
+            "notes": "/* SPI-MOSI */",
+            "rtthread": "",
+            "rttpin": "7",
+            "rttport": "A"
+        },
+        {
+            "allow5v": true,
+            "arduino": "D32",
             "channel": "",
             "function": "GPIO",
             "iomap": "",
@@ -393,19 +405,19 @@
         },
         {
             "allow5v": true,
-            "arduino": "D32",
+            "arduino": "D33",
             "channel": "",
             "function": "GPIO",
             "iomap": "",
             "name": "",
-            "notes": "",
+            "notes": "/* SPI-SS */",
             "rtthread": "",
             "rttpin": "4",
             "rttport": "G"
         },
         {
             "allow5v": true,
-            "arduino": "D33",
+            "arduino": "D34",
             "channel": "",
             "function": "UART",
             "iomap": "TX",
@@ -417,7 +429,7 @@
         },
         {
             "allow5v": true,
-            "arduino": "D34",
+            "arduino": "D35",
             "channel": "",
             "function": "UART",
             "iomap": "RX",
@@ -429,15 +441,87 @@
         },
         {
             "allow5v": true,
-            "arduino": "D35",
+            "arduino": "D36",
+            "channel": "",
+            "function": "GPIO",
+            "iomap": "",
+            "name": "",
+            "notes": "/* LED_BUILTIN */",
+            "rtthread": "",
+            "rttpin": "12",
+            "rttport": "F"
+        },
+        {
+            "allow5v": true,
+            "arduino": "D37",
+            "channel": "",
+            "function": "GPIO",
+            "iomap": "",
+            "name": "",
+            "notes": "/* LED_BUILTIN */",
+            "rtthread": "",
+            "rttpin": "11",
+            "rttport": "F"
+        },
+        {
+            "allow5v": true,
+            "arduino": "D38",
+            "channel": "",
+            "function": "GPIO",
+            "iomap": "",
+            "name": "",
+            "notes": "/* LED_BUILTIN */",
+            "rtthread": "",
+            "rttpin": "0",
+            "rttport": "B"
+        },
+        {
+            "allow5v": true,
+            "arduino": "D39",
             "channel": "",
             "function": "GPIO",
             "iomap": "",
             "name": "",
             "notes": "",
             "rtthread": "",
-            "rttpin": "12",
-            "rttport": "F"
+            "rttpin": "5",
+            "rttport": "C"
+        },
+        {
+            "allow5v": true,
+            "arduino": "D40",
+            "channel": "",
+            "function": "GPIO",
+            "iomap": "",
+            "name": "",
+            "notes": "",
+            "rtthread": "",
+            "rttpin": "1",
+            "rttport": "C"
+        },
+        {
+            "allow5v": true,
+            "arduino": "D41",
+            "channel": "",
+            "function": "GPIO",
+            "iomap": "",
+            "name": "",
+            "notes": "",
+            "rtthread": "",
+            "rttpin": "0",
+            "rttport": "C"
+        },
+        {
+            "allow5v": true,
+            "arduino": "D42",
+            "channel": "",
+            "function": "GPIO",
+            "iomap": "",
+            "name": "",
+            "notes": "",
+            "rtthread": "",
+            "rttpin": "4",
+            "rttport": "C"
         },
         {
             "allow5v": true,
@@ -491,18 +575,6 @@
             "allow5v": true,
             "arduino": "DAC0",
             "channel": "1",
-            "function": "DAC",
-            "iomap": "",
-            "name": "dac1",
-            "notes": "/* DAC */",
-            "rtthread": "",
-            "rttpin": "4",
-            "rttport": "A"
-        },
-        {
-            "allow5v": true,
-            "arduino": "DAC1",
-            "channel": "2",
             "function": "DAC",
             "iomap": "",
             "name": "dac1",

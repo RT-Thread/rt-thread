@@ -12,17 +12,17 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_DAC
         select BSP_USING_DAC1
         select BSP_USING_PWM
+        select BSP_USING_PWM1
+        select BSP_USING_PWM1_CH2
+        select BSP_USING_PWM1_CH3
         select BSP_USING_PWM2
         select BSP_USING_PWM2_CH3
         select BSP_USING_PWM2_CH4
-        select BSP_USING_PWM3
-        select BSP_USING_PWM3_CH1
-        select BSP_USING_PWM3_CH2
         select BSP_USING_PWM4
         select BSP_USING_PWM4_CH1
         select BSP_USING_I2C
-        select BSP_USING_I2C1
-        select BSP_USING_I2C2
+        select BSP_USING_I2C4
+        select BSP_USING_I2C5
         select BSP_USING_SPI
         select BSP_USING_SPI1
         imply RTDUINO_USING_SERVO
@@ -77,6 +77,18 @@ menu "On-chip Peripheral Drivers"
         default n
         select RT_USING_PWM
         if BSP_USING_PWM
+        menuconfig BSP_USING_PWM1
+            bool "Enable timer1 output PWM"
+            default n
+            if BSP_USING_PWM1
+                config BSP_USING_PWM1_CH2
+                    bool "Enable PWM1 channel2"
+                    default n
+                config BSP_USING_PWM1_CH3
+                    bool "Enable PWM1 channel3"
+                    default n
+            endif
+
         menuconfig BSP_USING_PWM2
             bool "Enable timer2 output PWM"
             default n
@@ -86,18 +98,6 @@ menu "On-chip Peripheral Drivers"
                     default n
                 config BSP_USING_PWM2_CH4
                     bool "Enable PWM2 channel4"
-                    default n
-            endif
-
-        menuconfig BSP_USING_PWM3
-            bool "Enable timer3 output PWM"
-            default n
-            if BSP_USING_PWM3
-                config BSP_USING_PWM3_CH1
-                    bool "Enable PWM3 channel1"
-                    default n
-                config BSP_USING_PWM3_CH2
-                    bool "Enable PWM3 channel2"
                     default n
             endif
 

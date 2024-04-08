@@ -50,12 +50,17 @@
 #define D35       (35)
 #define D36       (36)
 #define D37       (37)
-#define A0        (38)
-#define A1        (39)
-#define A2        (40)
-#define A3        (41)
-#define DAC0      (42)
-#define DAC1      (43)
+#define D38       (38)
+#define D39       (39)
+#define D40       (40)
+#define D41       (41)
+#define D42       (42)
+#define A0        (43)
+#define A1        (44)
+#define A2        (45)
+#define A3        (46)
+#define DAC1      (47)
+
 
 #define RTDUINO_PIN_MAX_LIMIT DAC1 /* pin number max limit check */
 
