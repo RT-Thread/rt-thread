@@ -62,14 +62,18 @@ rt_region_t init_page_region = {
 void rt_hw_board_init(void)
 {
 #ifdef RT_USING_SMART
+    rt_uint32_t mmutable_p = 0;
     rt_hw_mmu_map_init(&rt_kernel_space, (void*)0xf0000000, 0x10000000, MMUTable, PV_OFFSET);
-
+    rt_hw_init_mmu_table(platform_mem_desc,platform_mem_desc_size);
+    mmutable_p = (rt_uint32_t)MMUTable + (rt_uint32_t)PV_OFFSET ;
+    rt_hw_mmu_switch((void*)mmutable_p);
     rt_page_init(init_page_region);
     rt_hw_mmu_ioremap_init(&rt_kernel_space, (void*)0xf0000000, 0x10000000);
-
     arch_kuser_init(&rt_kernel_space, (void*)0xffff0000);
 #else
     rt_hw_mmu_map_init(&rt_kernel_space, (void*)0x80000000, 0x10000000, MMUTable, 0);
+    rt_hw_init_mmu_table(platform_mem_desc,platform_mem_desc_size);
+    rt_hw_mmu_init();
     rt_hw_mmu_ioremap_init(&rt_kernel_space, (void*)0x80000000, 0x10000000);
 #endif
 

@@ -63,7 +63,9 @@ struct dfs_file
     struct dfs_vnode *vnode;     /* file node struct */
     void *data;                  /* Specific fd data */
 };
+#define DFS_FILE_POS(dfs_file) ((dfs_file)->pos)
 
+#ifdef RT_USING_SMART
 struct dfs_mmap2_args
 {
     void *addr;
@@ -72,8 +74,10 @@ struct dfs_mmap2_args
     int flags;
     off_t pgoffset;
 
+    struct rt_lwp *lwp;
     void *ret;
 };
+#endif
 
 void dfs_vnode_mgr_init(void);
 int dfs_vnode_init(struct dfs_vnode *vnode, int type, const struct dfs_file_ops *fops);
@@ -92,8 +96,9 @@ off_t dfs_file_lseek(struct dfs_file *fd, off_t offset);
 int dfs_file_stat(const char *path, struct stat *buf);
 int dfs_file_rename(const char *oldpath, const char *newpath);
 int dfs_file_ftruncate(struct dfs_file *fd, off_t length);
+#ifdef RT_USING_SMART
 int dfs_file_mmap2(struct dfs_file *fd, struct dfs_mmap2_args *mmap2);
-
+#endif
 /* 0x5254 is just a magic number to make these relatively unique ("RT") */
 #define RT_FIOFTRUNCATE  0x52540000U
 #define RT_FIOGETADDR    0x52540001U

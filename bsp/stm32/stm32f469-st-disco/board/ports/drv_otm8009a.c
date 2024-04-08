@@ -9,6 +9,8 @@
  */
 
 #include <board.h>
+#include <drv_gpio.h>
+
 #ifdef BSP_USING_LCD_OTM8009A
 extern DSI_HandleTypeDef hdsi;
 extern DSI_VidCfgTypeDef hdsi_video;

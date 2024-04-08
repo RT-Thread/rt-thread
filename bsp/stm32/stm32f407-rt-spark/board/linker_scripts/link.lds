@@ -10,7 +10,7 @@ MEMORY
     CODE (rx) : ORIGIN = 0x08000000, LENGTH = 1024k /* 1024KB flash */
     RAM1 (rw) : ORIGIN = 0x20000000, LENGTH =  128k /* 128K sram */
     RAM2 (rw) : ORIGIN = 0x10000000, LENGTH =   64k /* 64K sram */
-    MCUlcdgrambysram (rw) : ORIGIN =0x68000000, LENGTH = 1024k
+    MCUlcdgrambysram (rw) : ORIGIN = 0x68000000, LENGTH = 1024k
 }
 ENTRY(Reset_Handler)
 _system_stack_size = 0x400;
@@ -43,6 +43,12 @@ SECTIONS
         KEEP(*(VSymTab))
         __vsymtab_end = .;
 
+        /* section information for utest */
+        . = ALIGN(4);
+        __rt_utest_tc_tab_start = .;
+        KEEP(*(UtestTcTab))
+        __rt_utest_tc_tab_end = .;
+
         /* section information for initial. */
         . = ALIGN(4);
         __rt_init_start = .;
@@ -58,6 +64,8 @@ SECTIONS
 
         . = ALIGN(4);
 
+        KEEP(*(.eh_frame*))
+        . = ALIGN(4);
         _etext = .;
     } > CODE = 0
 

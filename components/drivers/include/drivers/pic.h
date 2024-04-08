@@ -25,14 +25,25 @@ struct rt_pic_irq;
 
 struct rt_pic
 {
+    /*
+     * Other IC is not implemented with PIC but rt_device/object, we need to
+     * identify with this object:
+     *
+     *  struct rt_ic_XYZ_device
+     *  {
+     *      struct rt_device parent;
+     *      struct rt_pic pic;
+     *      ...
+     *  };
+     */
+    struct rt_object parent;
+
     rt_list_t list;
 
     struct rt_pic_ops *ops;
 
     void *priv_data;
     void *user_data;
-
-    struct rt_pic *parent;
 
     int irq_start;
     rt_size_t irq_nr;
@@ -66,6 +77,9 @@ struct rt_pic_ops
 
     int         (*irq_map)(struct rt_pic *pic, int hwirq, rt_uint32_t mode);
     rt_err_t    (*irq_parse)(struct rt_pic *pic, struct rt_ofw_cell_args *args, struct rt_pic_irq *out_pirq);
+
+#define RT_PIC_F_IRQ_ROUTING    RT_BIT(0)   /* Routing ISR when cascade */
+    rt_ubase_t  flags;
 };
 
 struct rt_pic_isr
@@ -93,7 +107,10 @@ struct rt_pic_irq
     rt_uint32_t mode;
 
     rt_uint32_t priority;
-    RT_DECLARE_BITMAP(affinity, RT_CPUS_NR);
+    RT_BITMAP_DECLARE(affinity, RT_CPUS_NR);
+
+    rt_list_t list;
+    rt_list_t children_nodes;
 
     struct rt_pci_msi_desc *msi_desc;
 
@@ -102,7 +119,11 @@ struct rt_pic_irq
     struct rt_spinlock rw_lock;
 
     struct rt_pic *pic;
+    struct rt_pic_irq *parent;
 };
+
+void rt_pic_default_name(struct rt_pic *pic);
+struct rt_pic *rt_pic_dynamic_cast(void *ptr);
 
 rt_err_t rt_pic_linear_irq(struct rt_pic *pic, rt_size_t irq_nr);
 
@@ -120,9 +141,10 @@ rt_inline struct rt_pic_irq *rt_pic_find_irq(struct rt_pic *pic, int irq_index)
 }
 
 struct rt_pic_irq *rt_pic_find_ipi(struct rt_pic *pic, int ipi_index);
+struct rt_pic_irq *rt_pic_find_pirq(struct rt_pic *pic, int irq);
 
-int rt_pic_cascade(struct rt_pic *pic, struct rt_pic *parent_pic, int hwirq, rt_uint32_t mode);
-void rt_pic_uncascade(struct rt_pic *pic, int irq);
+rt_err_t rt_pic_cascade(struct rt_pic_irq *pirq, int parent_irq);
+rt_err_t rt_pic_uncascade(struct rt_pic_irq *pirq);
 
 rt_err_t rt_pic_attach_irq(int irq, rt_isr_handler_t handler, void *uid, const char *name, int flags);
 rt_err_t rt_pic_detach_irq(int irq, void *uid);
@@ -150,15 +172,15 @@ rt_err_t rt_pic_irq_set_triger_mode(int irq, rt_uint32_t mode);
 rt_uint32_t rt_pic_irq_get_triger_mode(int irq);
 void rt_pic_irq_send_ipi(int irq, rt_bitmap_t *cpumask);
 
-void rt_pic_irq_parent_enable(struct rt_pic *ppic, struct rt_pic_irq *pirq);
-void rt_pic_irq_parent_disable(struct rt_pic *ppic, struct rt_pic_irq *pirq);
-void rt_pic_irq_parent_ack(struct rt_pic *ppic, struct rt_pic_irq *pirq);
-void rt_pic_irq_parent_mask(struct rt_pic *ppic, struct rt_pic_irq *pirq);
-void rt_pic_irq_parent_unmask(struct rt_pic *ppic, struct rt_pic_irq *pirq);
-void rt_pic_irq_parent_eoi(struct rt_pic *ppic, struct rt_pic_irq *pirq);
-rt_err_t rt_pic_irq_parent_set_priority(struct rt_pic *ppic, struct rt_pic_irq *pirq, rt_uint32_t priority);
-rt_err_t rt_pic_irq_parent_set_affinity(struct rt_pic *ppic, struct rt_pic_irq *pirq, rt_bitmap_t *affinity);
-rt_err_t rt_pic_irq_parent_set_triger_mode(struct rt_pic *ppic, struct rt_pic_irq *pirq, rt_uint32_t mode);
+void rt_pic_irq_parent_enable(struct rt_pic_irq *pirq);
+void rt_pic_irq_parent_disable(struct rt_pic_irq *pirq);
+void rt_pic_irq_parent_ack(struct rt_pic_irq *pirq);
+void rt_pic_irq_parent_mask(struct rt_pic_irq *pirq);
+void rt_pic_irq_parent_unmask(struct rt_pic_irq *pirq);
+void rt_pic_irq_parent_eoi(struct rt_pic_irq *pirq);
+rt_err_t rt_pic_irq_parent_set_priority(struct rt_pic_irq *pirq, rt_uint32_t priority);
+rt_err_t rt_pic_irq_parent_set_affinity(struct rt_pic_irq *pirq, rt_bitmap_t *affinity);
+rt_err_t rt_pic_irq_parent_set_triger_mode(struct rt_pic_irq *pirq, rt_uint32_t mode);
 
 #define RT_PIC_OFW_DECLARE(name, ids, handler)   RT_OFW_STUB_EXPORT(name, ids, pic, handler)
 

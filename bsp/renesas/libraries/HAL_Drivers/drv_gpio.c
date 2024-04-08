@@ -114,14 +114,6 @@ static void ra_pin_map_init(void)
 static void ra_pin_mode(rt_device_t dev, rt_base_t pin, rt_uint8_t mode)
 {
     fsp_err_t err;
-    /* Initialize the IOPORT module and configure the pins */
-    err = R_IOPORT_Open(&g_ioport_ctrl, &g_bsp_pin_cfg);
-
-    if (err != FSP_SUCCESS)
-    {
-        LOG_E("GPIO open failed");
-        return;
-    }
 
     switch (mode)
     {
@@ -168,12 +160,11 @@ static void ra_pin_write(rt_device_t dev, rt_base_t pin, rt_uint8_t value)
     R_BSP_PinAccessDisable();
 }
 
-static rt_int8_t ra_pin_read(rt_device_t dev, rt_base_t pin)
+static rt_ssize_t ra_pin_read(rt_device_t dev, rt_base_t pin)
 {
     if ((pin > RA_MAX_PIN_VALUE) || (pin < RA_MIN_PIN_VALUE))
     {
-        LOG_E("GPIO pin value is illegal");
-        return -RT_ERROR;
+        return -RT_EINVAL;
     }
     return R_BSP_PinRead(pin);
 }
@@ -336,6 +327,17 @@ int rt_hw_pin_init(void)
     ra_irq_tab_init();
     ra_pin_map_init();
 #endif
+
+    fsp_err_t err;
+    /* Initialize the IOPORT module and configure the pins */
+    err = R_IOPORT_Open(&g_ioport_ctrl, &g_bsp_pin_cfg);
+
+    if (err != FSP_SUCCESS)
+    {
+        LOG_E("GPIO open failed");
+        return -1;
+    }
+
     return rt_device_pin_register("pin", &_ra_pin_ops, RT_NULL);
 }
 

@@ -12,10 +12,7 @@
 #ifndef __BOARD_H__
 #define __BOARD_H__
 
-#include <rtthread.h>
 #include <stm32h7xx.h>
-// #include "drv_common.h"
-#include "drv_gpio.h"
 
 #ifdef __cplusplus
 extern "C" {

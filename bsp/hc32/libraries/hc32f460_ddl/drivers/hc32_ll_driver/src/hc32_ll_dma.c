@@ -7,9 +7,16 @@
    Change Logs:
    Date             Author          Notes
    2022-03-31       CDT             First version
+   2022-06-30       CDT             Modify DMA_StructInit() default value
+   2022-10-31       CDT             Modify DMA config API
+   2023-01-15       CDT             Modify API DMA_DeInit and add LLP address assert
+   2023-06-30       CDT             Modify typo
+                                    Modify blocksize assert, 1024U is valid
+                                    Add API DMA_SetDataWidth()
+                                    Optimize set blocksize & repeat count process
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -49,13 +56,13 @@
  * @defgroup DMA_Local_Macros DMA Local Macros
  * @{
  */
-#define DMA_CH_REG(reg_base, ch)    (*(__IO uint32_t *)((uint32_t)(&(reg_base)) + ((ch) * 0x40UL)))
+#define DMA_CH_REG(reg_base, ch)        (*(__IO uint32_t *)((uint32_t)(&(reg_base)) + ((ch) * 0x40UL)))
 
-#define DMA_CNT                     (10U)
-#define DMA_IDLE                    (0U)
-#define DMA_BUSY                    (1U)
-#define DMATIMEOUT1                 (0x5000U)
-#define DMATIMEOUT2                 (0x1000u)
+#define DMA_CNT                         (10U)
+#define DMA_IDLE                        (0U)
+#define DMA_BUSY                        (1U)
+#define DMATIMEOUT1                     (0x5000U)
+#define DMATIMEOUT2                     (0x1000u)
 
 /**
  * @defgroup DMA_Check_Parameters_Validity DMA Check Parameters Validity
@@ -67,21 +74,21 @@
     ((x) == CM_DMA2))
 
 /* Parameter valid check for DMA channel. */
-#define IS_DMA_CH(x)                ((x) <= DMA_CH3)
+#define IS_DMA_CH(x)                    ((x) <= DMA_CH3)
 
 /* Parameter valid check for DMA multiplex channel. */
 #define IS_DMA_MX_CH(x)                                                         \
-(   ((x) != 0x00UL)                        &&                                   \
+(   ((x) != 0x00UL)                         &&                                  \
     (((x) | DMA_MX_CH_ALL) == DMA_MX_CH_ALL))
 
 /* Parameter valid check for DMA block size. */
-#define IS_DMA_BLOCK_SIZE(x)        ((x) < 1024U)
+#define IS_DMA_BLOCK_SIZE(x)            ((x) <= 1024U)
 
 /* Parameter valid check for DMA non-sequence transfer count. */
-#define IS_DMA_NON_SEQ_TRANS_CNT(x) ((x) < 4096U)
+#define IS_DMA_NON_SEQ_TRANS_CNT(x)     ((x) < 4096U)
 
 /* Parameter valid check for DMA non-sequence offset. */
-#define IS_DMA_NON_SEQ_OFFSET(x)    ((x) <= ((1UL << 20U) - 1UL))
+#define IS_DMA_NON_SEQ_OFFSET(x)        ((x) <= ((1UL << 20U) - 1UL))
 
 /* Parameter valid check for DMA LLP function. */
 #define IS_DMA_LLP_EN(x)                                                        \
@@ -92,6 +99,9 @@
 #define IS_DMA_LLP_MD(x)                                                        \
 (   ((x) == DMA_LLP_RUN)                    ||                                  \
     ((x) == DMA_LLP_WAIT))
+
+/* Parameter valid check for address alignment of DMA linked-list-pointer descriptor  */
+#define IS_DMA_LLP_ADDR_ALIGN(x)        IS_ADDR_ALIGN_WORD(x)
 
 /* Parameter valid check for DMA error flag. */
 #define IS_DMA_ERR_FLAG(x)                                                      \
@@ -118,7 +128,7 @@
 (   ((x) != 0x00000000UL)                   &&                                  \
     (((x) | DMA_STAT_REQ_MASK) == DMA_STAT_REQ_MASK))
 
-/* Parameter valid check for DMA channel status. */
+/* Parameter valid check for DMA transfer status. */
 #define IS_DMA_TRANS_STAT(x)                                                    \
 (   ((x) != 0x00000000UL)                   &&                                  \
     (((x) | DMA_STAT_TRANS_MASK) == DMA_STAT_TRANS_MASK))
@@ -480,14 +490,13 @@ en_flag_status_t DMA_GetRequestStatus(const CM_DMA_TypeDef *DMAx, uint32_t u32St
 int32_t DMA_SetSrcAddr(CM_DMA_TypeDef *DMAx, uint8_t u8Ch, uint32_t u32Addr)
 {
     uint16_t u16Timeout = 0U;
-
     DDL_ASSERT(IS_DMA_UNIT(DMAx));
     DDL_ASSERT(IS_DMA_CH(u8Ch));
 
     WRITE_REG32(DMA_CH_REG(DMAx->SAR0, u8Ch), u32Addr);
 
     /* Ensure the address has been written */
-    while (u32Addr != READ_REG32(DMA_CH_REG(DMAx->SAR0, u8Ch))) {
+    while (u32Addr != READ_REG32(DMA_CH_REG(DMAx->MONSAR0, u8Ch))) {
         u16Timeout++;
         if (u16Timeout > DMATIMEOUT2) {
             return LL_ERR_TIMEOUT;
@@ -509,14 +518,13 @@ int32_t DMA_SetSrcAddr(CM_DMA_TypeDef *DMAx, uint8_t u8Ch, uint32_t u32Addr)
 int32_t DMA_SetDestAddr(CM_DMA_TypeDef *DMAx, uint8_t u8Ch, uint32_t u32Addr)
 {
     uint16_t u16Timeout = 0U;
-
     DDL_ASSERT(IS_DMA_UNIT(DMAx));
     DDL_ASSERT(IS_DMA_CH(u8Ch));
 
     WRITE_REG32(DMA_CH_REG(DMAx->DAR0, u8Ch), u32Addr);
 
     /* Ensure the address has been written */
-    while (u32Addr != READ_REG32(DMA_CH_REG(DMAx->DAR0, u8Ch))) {
+    while (u32Addr != READ_REG32(DMA_CH_REG(DMAx->MONDAR0, u8Ch))) {
         u16Timeout++;
         if (u16Timeout > DMATIMEOUT2) {
             return LL_ERR_TIMEOUT;
@@ -538,14 +546,16 @@ int32_t DMA_SetDestAddr(CM_DMA_TypeDef *DMAx, uint8_t u8Ch, uint32_t u32Addr)
 int32_t DMA_SetTransCount(CM_DMA_TypeDef *DMAx, uint8_t u8Ch, uint16_t u16Count)
 {
     uint16_t u16Timeout = 0U;
+    __IO uint32_t *MONDTCTLx;
     __IO uint32_t *DTCTLx;
     DDL_ASSERT(IS_DMA_UNIT(DMAx));
     DDL_ASSERT(IS_DMA_CH(u8Ch));
 
     DTCTLx = &DMA_CH_REG(DMAx->DTCTL0, u8Ch);
     MODIFY_REG32(*DTCTLx, DMA_DTCTL_CNT, ((uint32_t)(u16Count) << DMA_DTCTL_CNT_POS));
+    MONDTCTLx = &DMA_CH_REG(DMAx->MONDTCTL0, u8Ch);
     /* Ensure the transfer count has been written */
-    while (u16Count != (READ_REG32_BIT(*DTCTLx, DMA_DTCTL_CNT) >> DMA_DTCTL_CNT_POS)) {
+    while (u16Count != (READ_REG32_BIT(*MONDTCTLx, DMA_MONDTCTL_CNT) >> DMA_MONDTCTL_CNT_POS)) {
         u16Timeout++;
         if (u16Timeout > DMATIMEOUT2) {
             return LL_ERR_TIMEOUT;
@@ -561,12 +571,13 @@ int32_t DMA_SetTransCount(CM_DMA_TypeDef *DMAx, uint8_t u8Ch, uint16_t u16Count)
  * @param  [in] DMAx DMA unit instance.
  *   @arg  CM_DMAx or CM_DMA
  * @param  [in] u8Ch DMA channel. @ref DMA_Channel_selection
- * @param  [in] u16Size DMA block size (range: 1~1024, 0 is for 1024).
+ * @param  [in] u16Size DMA block size (range: 0~1024, 0 is for 1024).
  * @retval int32_t
  */
 int32_t DMA_SetBlockSize(CM_DMA_TypeDef *DMAx, uint8_t u8Ch, uint16_t u16Size)
 {
     uint16_t u16Timeout = 0U;
+    __IO uint32_t *MONDTCTLx;
     __IO uint32_t *DTCTLx;
     DDL_ASSERT(IS_DMA_UNIT(DMAx));
     DDL_ASSERT(IS_DMA_CH(u8Ch));
@@ -575,8 +586,9 @@ int32_t DMA_SetBlockSize(CM_DMA_TypeDef *DMAx, uint8_t u8Ch, uint16_t u16Size)
     DTCTLx = &DMA_CH_REG(DMAx->DTCTL0, u8Ch);
     MODIFY_REG32(*DTCTLx, DMA_DTCTL_BLKSIZE, u16Size);
 
+    MONDTCTLx = &DMA_CH_REG(DMAx->MONDTCTL0, u8Ch);
     /* Ensure the block size has been written */
-    while (u16Size != READ_REG32_BIT(*DTCTLx, DMA_DTCTL_BLKSIZE)) {
+    while (u16Size != READ_REG32_BIT(*MONDTCTLx, DMA_MONDTCTL_BLKSIZE)) {
         u16Timeout++;
         if (u16Timeout > DMATIMEOUT2) {
             return LL_ERR_TIMEOUT;
@@ -584,6 +596,27 @@ int32_t DMA_SetBlockSize(CM_DMA_TypeDef *DMAx, uint8_t u8Ch, uint16_t u16Size)
             MODIFY_REG32(*DTCTLx, DMA_DTCTL_BLKSIZE, u16Size);
         }
     }
+
+    return LL_OK;
+}
+
+/**
+ * @brief  Config DMA data width per transfer.
+ * @param  [in] DMAx DMA unit instance.
+ *   @arg  CM_DMAx or CM_DMA
+ * @param  [in] u8Ch DMA channel. @ref DMA_Channel_selection
+ * @param  [in] u32DataWidth DMA data width. @ref DMA_DataWidth_Sel
+ * @retval int32_t
+ */
+int32_t DMA_SetDataWidth(CM_DMA_TypeDef *DMAx, uint8_t u8Ch, uint32_t u32DataWidth)
+{
+    __IO uint32_t *CHxCTL0;
+    DDL_ASSERT(IS_DMA_UNIT(DMAx));
+    DDL_ASSERT(IS_DMA_CH(u8Ch));
+    DDL_ASSERT(IS_DMA_DATA_WIDTH(u32DataWidth));
+
+    CHxCTL0 = &DMA_CH_REG(DMAx->CHCTL0, u8Ch);
+    MODIFY_REG32(*CHxCTL0, DMA_CHCTL_HSIZE, u32DataWidth);
 
     return LL_OK;
 }
@@ -599,6 +632,7 @@ int32_t DMA_SetBlockSize(CM_DMA_TypeDef *DMAx, uint8_t u8Ch, uint16_t u16Size)
 int32_t DMA_SetSrcRepeatSize(CM_DMA_TypeDef *DMAx, uint8_t u8Ch, uint16_t u16Size)
 {
     uint16_t u16Timeout = 0U;
+    __IO uint32_t *MONRPTx;
     __IO uint32_t *RPTx;
     DDL_ASSERT(IS_DMA_UNIT(DMAx));
     DDL_ASSERT(IS_DMA_CH(u8Ch));
@@ -607,8 +641,9 @@ int32_t DMA_SetSrcRepeatSize(CM_DMA_TypeDef *DMAx, uint8_t u8Ch, uint16_t u16Siz
     RPTx = &DMA_CH_REG(DMAx->RPT0, u8Ch);
     MODIFY_REG32(*RPTx, DMA_RPT_SRPT, ((uint32_t)(u16Size) << DMA_RPT_SRPT_POS));
 
+    MONRPTx = &DMA_CH_REG(DMAx->MONRPT0, u8Ch);
     /* Ensure the repeat size has been written */
-    while (u16Size != (READ_REG32_BIT(*RPTx, DMA_RPT_SRPT) >> DMA_RPT_SRPT_POS)) {
+    while (u16Size != (READ_REG32_BIT(*MONRPTx, DMA_MONRPT_SRPT) >> DMA_MONRPT_SRPT_POS)) {
         u16Timeout++;
         if (u16Timeout > DMATIMEOUT2) {
             return LL_ERR_TIMEOUT;
@@ -631,6 +666,7 @@ int32_t DMA_SetSrcRepeatSize(CM_DMA_TypeDef *DMAx, uint8_t u8Ch, uint16_t u16Siz
 int32_t DMA_SetDestRepeatSize(CM_DMA_TypeDef *DMAx, uint8_t u8Ch, uint16_t u16Size)
 {
     uint16_t u16Timeout = 0U;
+    __IO uint32_t *MONRPTx;
     __IO uint32_t *RPTx;
     DDL_ASSERT(IS_DMA_UNIT(DMAx));
     DDL_ASSERT(IS_DMA_CH(u8Ch));
@@ -639,8 +675,9 @@ int32_t DMA_SetDestRepeatSize(CM_DMA_TypeDef *DMAx, uint8_t u8Ch, uint16_t u16Si
     RPTx = &DMA_CH_REG(DMAx->RPT0, u8Ch);
     MODIFY_REG32(*RPTx, DMA_RPT_DRPT, ((uint32_t)(u16Size) << DMA_RPT_DRPT_POS));
 
+    MONRPTx = &DMA_CH_REG(DMAx->MONRPT0, u8Ch);
     /* Ensure the repeat size has been written */
-    while (u16Size != (READ_REG32_BIT(*RPTx, DMA_RPT_DRPT) >> DMA_RPT_DRPT_POS)) {
+    while (u16Size != (READ_REG32_BIT(*MONRPTx, DMA_MONRPT_DRPT) >> DMA_MONRPT_DRPT_POS)) {
         u16Timeout++;
         if (u16Timeout > DMATIMEOUT2) {
             return LL_ERR_TIMEOUT;
@@ -653,7 +690,7 @@ int32_t DMA_SetDestRepeatSize(CM_DMA_TypeDef *DMAx, uint8_t u8Ch, uint16_t u16Si
 }
 
 /**
- * @brief  Config DMA source transfter count under non-sequence mode.
+ * @brief  Config DMA source transfer count under non-sequence mode.
  * @param  [in] DMAx DMA unit instance.
  *   @arg  CM_DMAx or CM_DMA
  * @param  [in] u8Ch DMA channel. @ref DMA_Channel_selection
@@ -663,6 +700,7 @@ int32_t DMA_SetDestRepeatSize(CM_DMA_TypeDef *DMAx, uint8_t u8Ch, uint16_t u16Si
 int32_t DMA_SetNonSeqSrcCount(CM_DMA_TypeDef *DMAx, uint8_t u8Ch, uint32_t u32Count)
 {
     uint16_t u16Timeout = 0U;
+    __IO uint32_t *MONSNSEQCTLx;
     __IO uint32_t *SNSEQCTLx;
     DDL_ASSERT(IS_DMA_UNIT(DMAx));
     DDL_ASSERT(IS_DMA_CH(u8Ch));
@@ -671,8 +709,9 @@ int32_t DMA_SetNonSeqSrcCount(CM_DMA_TypeDef *DMAx, uint8_t u8Ch, uint32_t u32Co
     SNSEQCTLx = &DMA_CH_REG(DMAx->SNSEQCTL0, u8Ch);
     MODIFY_REG32(*SNSEQCTLx, DMA_SNSEQCTL_SNSCNT, (u32Count << DMA_SNSEQCTL_SNSCNT_POS));
 
+    MONSNSEQCTLx = &DMA_CH_REG(DMAx->MONSNSEQCTL0, u8Ch);
     /* Ensure the count has been written */
-    while (u32Count != (READ_REG32_BIT(*SNSEQCTLx, DMA_SNSEQCTL_SNSCNT) >> DMA_SNSEQCTL_SNSCNT_POS)) {
+    while (u32Count != (READ_REG32_BIT(*MONSNSEQCTLx, DMA_MONSNSEQCTL_SNSCNT) >> DMA_MONSNSEQCTL_SNSCNT_POS)) {
         u16Timeout++;
         if (u16Timeout > DMATIMEOUT2) {
             return LL_ERR_TIMEOUT;
@@ -685,7 +724,7 @@ int32_t DMA_SetNonSeqSrcCount(CM_DMA_TypeDef *DMAx, uint8_t u8Ch, uint32_t u32Co
 }
 
 /**
- * @brief  Config DMA destination transfter count under non-sequence mode.
+ * @brief  Config DMA destination transfer count under non-sequence mode.
  * @param  [in] DMAx DMA unit instance.
  *   @arg  CM_DMAx or CM_DMA
  * @param  [in] u8Ch DMA channel. @ref DMA_Channel_selection
@@ -695,6 +734,7 @@ int32_t DMA_SetNonSeqSrcCount(CM_DMA_TypeDef *DMAx, uint8_t u8Ch, uint32_t u32Co
 int32_t DMA_SetNonSeqDestCount(CM_DMA_TypeDef *DMAx, uint8_t u8Ch, uint32_t u32Count)
 {
     uint16_t u16Timeout = 0U;
+    __IO uint32_t *MONDNSEQCTLx;
     __IO uint32_t *DNSEQCTLx;
     DDL_ASSERT(IS_DMA_UNIT(DMAx));
     DDL_ASSERT(IS_DMA_CH(u8Ch));
@@ -703,8 +743,9 @@ int32_t DMA_SetNonSeqDestCount(CM_DMA_TypeDef *DMAx, uint8_t u8Ch, uint32_t u32C
     DNSEQCTLx = &DMA_CH_REG(DMAx->DNSEQCTL0, u8Ch);
     MODIFY_REG32(*DNSEQCTLx, DMA_DNSEQCTL_DNSCNT, (u32Count << DMA_DNSEQCTL_DNSCNT_POS));
 
+    MONDNSEQCTLx = &DMA_CH_REG(DMAx->MONDNSEQCTL0, u8Ch);
     /* Ensure the count has been written */
-    while (u32Count != (READ_REG32_BIT(*DNSEQCTLx, DMA_DNSEQCTL_DNSCNT) >> DMA_DNSEQCTL_DNSCNT_POS)) {
+    while (u32Count != (READ_REG32_BIT(*MONDNSEQCTLx, DMA_MONDNSEQCTL_DNSCNT) >> DMA_MONDNSEQCTL_DNSCNT_POS)) {
         u16Timeout++;
         if (u16Timeout > DMATIMEOUT2) {
             return LL_ERR_TIMEOUT;
@@ -727,6 +768,7 @@ int32_t DMA_SetNonSeqDestCount(CM_DMA_TypeDef *DMAx, uint8_t u8Ch, uint32_t u32C
 int32_t DMA_SetNonSeqSrcOffset(CM_DMA_TypeDef *DMAx, uint8_t u8Ch, uint32_t u32Offset)
 {
     uint16_t u16Timeout = 0U;
+    __IO uint32_t *MONSNSEQCTLx;
     __IO uint32_t *SNSEQCTLx;
     DDL_ASSERT(IS_DMA_UNIT(DMAx));
     DDL_ASSERT(IS_DMA_CH(u8Ch));
@@ -735,8 +777,9 @@ int32_t DMA_SetNonSeqSrcOffset(CM_DMA_TypeDef *DMAx, uint8_t u8Ch, uint32_t u32O
     SNSEQCTLx = &DMA_CH_REG(DMAx->SNSEQCTL0, u8Ch);
     MODIFY_REG32(*SNSEQCTLx, DMA_SNSEQCTL_SOFFSET, u32Offset);
 
+    MONSNSEQCTLx = &DMA_CH_REG(DMAx->MONSNSEQCTL0, u8Ch);
     /* Ensure the offset has been written */
-    while (u32Offset != READ_REG32_BIT(*SNSEQCTLx, DMA_SNSEQCTL_SOFFSET)) {
+    while (u32Offset != READ_REG32_BIT(*MONSNSEQCTLx, DMA_MONSNSEQCTL_SOFFSET)) {
         u16Timeout++;
         if (u16Timeout > DMATIMEOUT2) {
             return LL_ERR_TIMEOUT;
@@ -759,6 +802,7 @@ int32_t DMA_SetNonSeqSrcOffset(CM_DMA_TypeDef *DMAx, uint8_t u8Ch, uint32_t u32O
 int32_t DMA_SetNonSeqDestOffset(CM_DMA_TypeDef *DMAx, uint8_t u8Ch, uint32_t u32Offset)
 {
     uint16_t u16Timeout = 0U;
+    __IO uint32_t *MONDNSEQCTLx;
     __IO uint32_t *DNSEQCTLx;
     DDL_ASSERT(IS_DMA_UNIT(DMAx));
     DDL_ASSERT(IS_DMA_CH(u8Ch));
@@ -767,8 +811,9 @@ int32_t DMA_SetNonSeqDestOffset(CM_DMA_TypeDef *DMAx, uint8_t u8Ch, uint32_t u32
     DNSEQCTLx = &DMA_CH_REG(DMAx->DNSEQCTL0, u8Ch);
     MODIFY_REG32(*DNSEQCTLx, DMA_DNSEQCTL_DOFFSET, u32Offset);
 
+    MONDNSEQCTLx = &DMA_CH_REG(DMAx->MONDNSEQCTL0, u8Ch);
     /* Ensure the offset has been written */
-    while (u32Offset != READ_REG32_BIT(*DNSEQCTLx, DMA_DNSEQCTL_DOFFSET)) {
+    while (u32Offset != READ_REG32_BIT(*MONDNSEQCTLx, DMA_MONDNSEQCTL_DOFFSET)) {
         u16Timeout++;
         if (u16Timeout > DMATIMEOUT2) {
             return LL_ERR_TIMEOUT;
@@ -781,7 +826,7 @@ int32_t DMA_SetNonSeqDestOffset(CM_DMA_TypeDef *DMAx, uint8_t u8Ch, uint32_t u32
 }
 
 /**
- * @brief  De-Initialize DMA function.
+ * @brief  De-Initialize DMA channel function.
  * @param  [in] DMAx DMA unit instance.
  *   @arg  CM_DMAx or CM_DMA
  * @param  [in] u8Ch DMA channel. @ref DMA_Channel_selection
@@ -793,15 +838,15 @@ void DMA_DeInit(CM_DMA_TypeDef *DMAx, uint8_t u8Ch)
     DDL_ASSERT(IS_DMA_CH(u8Ch));
 
     /* Disable */
-    CLR_REG32_BIT(DMAx->CHEN, DMA_CHEN_CHEN << u8Ch);
+    CLR_REG32_BIT(DMAx->CHEN, DMA_CHEN_CHEN_0 << u8Ch);
 
     /* Set default value. */
     WRITE_REG32(DMA_CH_REG(DMAx->SAR0, u8Ch), 0UL);
     WRITE_REG32(DMA_CH_REG(DMAx->DAR0, u8Ch), 0UL);
-    WRITE_REG32(DMAx->INTMASK0, 0UL);
-    WRITE_REG32(DMAx->INTMASK1, 0UL);
-    WRITE_REG32(DMAx->INTCLR0, DMA_INTCLR0_CLRTRNERR | DMA_INTCLR0_CLRREQERR);
-    WRITE_REG32(DMAx->INTCLR1, DMA_INTCLR1_CLRTC | DMA_INTCLR1_CLRBTC);
+    CLR_REG32_BIT(DMAx->INTMASK0, (DMA_INTMASK0_MSKTRNERR_0 | DMA_INTMASK0_MSKREQERR_0) << u8Ch);
+    CLR_REG32_BIT(DMAx->INTMASK1, (DMA_INTMASK1_MSKTC_0 | DMA_INTMASK1_MSKBTC_0) << u8Ch);
+    SET_REG32_BIT(DMAx->INTCLR0, (DMA_INTCLR0_CLRTRNERR_0 | DMA_INTCLR0_CLRREQERR_0) << u8Ch);
+    SET_REG32_BIT(DMAx->INTCLR1, (DMA_INTCLR1_CLRTC_0 | DMA_INTCLR1_CLRBTC_0) << u8Ch);
 
     WRITE_REG32(DMA_CH_REG(DMAx->DTCTL0, u8Ch), 1UL);
     WRITE_REG32(DMA_CH_REG(DMAx->CHCTL0, u8Ch), 0x00001000UL);
@@ -831,8 +876,8 @@ int32_t DMA_StructInit(stc_dma_init_t *pstcDmaInit)
         pstcDmaInit->u32SrcAddr     = 0x00UL;
         pstcDmaInit->u32DestAddr    = 0x00UL;
         pstcDmaInit->u32DataWidth   = DMA_DATAWIDTH_8BIT;
-        pstcDmaInit->u32BlockSize   = 0x00UL;
-        pstcDmaInit->u32TransCount  = 0x01UL;
+        pstcDmaInit->u32BlockSize   = 0x01UL;
+        pstcDmaInit->u32TransCount  = 0x00UL;
         pstcDmaInit->u32SrcAddrInc  = DMA_SRC_ADDR_FIX;
         pstcDmaInit->u32DestAddrInc = DMA_DEST_ADDR_FIX;
     }
@@ -851,9 +896,9 @@ int32_t DMA_StructInit(stc_dma_init_t *pstcDmaInit)
  *   @arg  u32DataWidth     DMA data width.
  *   @arg  u32BlockSize     DMA block size.
  *   @arg  u32TransCount    DMA transfer count.
- *   @arg  u32SrcAddrInc        DMA source address direction.
- *   @arg  u32DestAddrInc       DMA destination address direction.
-  * @retval int32_t:
+ *   @arg  u32SrcAddrInc    DMA source address direction.
+ *   @arg  u32DestAddrInc   DMA destination address direction.
+ * @retval int32_t:
  *          - LL_OK: DMA basic function initialize successful
  *          - LL_ERR_INVD_PARAM: NULL pointer
  */
@@ -877,8 +922,8 @@ int32_t DMA_Init(CM_DMA_TypeDef *DMAx, uint8_t u8Ch, const stc_dma_init_t *pstcD
         WRITE_REG32(DMA_CH_REG(DMAx->SAR0, u8Ch), pstcDmaInit->u32SrcAddr);
         WRITE_REG32(DMA_CH_REG(DMAx->DAR0, u8Ch), pstcDmaInit->u32DestAddr);
 
-        WRITE_REG32(DMA_CH_REG(DMAx->DTCTL0, u8Ch), \
-                    (pstcDmaInit->u32BlockSize | (pstcDmaInit->u32TransCount << DMA_DTCTL_CNT_POS)));
+        WRITE_REG32(DMA_CH_REG(DMAx->DTCTL0, u8Ch), ((pstcDmaInit->u32BlockSize & DMA_DTCTL_BLKSIZE) | \
+                                                     (pstcDmaInit->u32TransCount << DMA_DTCTL_CNT_POS)));
 
         CHCTLx = &DMA_CH_REG(DMAx->CHCTL0, u8Ch);
         MODIFY_REG32(*CHCTLx, (DMA_CHCTL_SINC | DMA_CHCTL_DINC | DMA_CHCTL_HSIZE | DMA_CHCTL_IE),       \
@@ -894,7 +939,7 @@ int32_t DMA_Init(CM_DMA_TypeDef *DMAx, uint8_t u8Ch, const stc_dma_init_t *pstcD
  *          Fill each pstcDmaInit with default value
  * @param  [in] pstcDmaRepeatInit Pointer to a stc_dma_repeat_init_t structure that
  *                            contains configuration information.
-  * @retval int32_t:
+ * @retval int32_t:
  *          - LL_OK: DMA repeat mode config structure initialize successful
  *          - LL_ERR_INVD_PARAM: NULL pointer
  */
@@ -939,7 +984,8 @@ int32_t DMA_RepeatInit(CM_DMA_TypeDef *DMAx, uint8_t u8Ch, const stc_dma_repeat_
         MODIFY_REG32(*CHCTLx, (DMA_CHCTL_SRPTEN | DMA_CHCTL_DRPTEN), pstcDmaRepeatInit->u32Mode);
 
         WRITE_REG32(DMA_CH_REG(DMAx->RPT0, u8Ch), \
-                    ((pstcDmaRepeatInit->u32DestCount << DMA_RPT_DRPT_POS) | pstcDmaRepeatInit->u32SrcCount));
+                    ((pstcDmaRepeatInit->u32DestCount << DMA_RPT_DRPT_POS) | pstcDmaRepeatInit->u32SrcCount) & \
+                    (DMA_RPT_DRPT | DMA_RPT_SRPT));
 
     }
     return i32Ret;
@@ -950,7 +996,7 @@ int32_t DMA_RepeatInit(CM_DMA_TypeDef *DMAx, uint8_t u8Ch, const stc_dma_repeat_
  *          Fill each pstcDmaInit with default value
  * @param  [in] pstcDmaNonSeqInit Pointer to a stc_dma_nonseq_init_t structure that
  *                            contains configuration information.
-  * @retval int32_t:
+ * @retval int32_t:
  *          - LL_OK: DMA non-sequence mode structure initialize successful
  *          - LL_ERR_INVD_PARAM: NULL pointer
  */
@@ -976,7 +1022,7 @@ int32_t DMA_NonSeqStructInit(stc_dma_nonseq_init_t *pstcDmaNonSeqInit)
  *   @arg  CM_DMAx or CM_DMA
  * @param  [in] u8Ch DMA channel. @ref DMA_Channel_selection
  * @param  [in] pstcDmaNonSeqInit DMA non-sequence mode config structure.
-  * @retval int32_t:
+ * @retval int32_t:
  *          - LL_OK: DMA non-sequence function initialize successful
  *          - LL_ERR_INVD_PARAM: NULL pointer
  * @note Call this function after DMA_Init();
@@ -1003,9 +1049,9 @@ int32_t DMA_NonSeqInit(CM_DMA_TypeDef *DMAx, uint8_t u8Ch, const stc_dma_nonseq_
         MODIFY_REG32(*CHCTLx, (DMA_CHCTL_SNSEQEN | DMA_CHCTL_DNSEQEN), pstcDmaNonSeqInit->u32Mode);
 
         WRITE_REG32(DMA_CH_REG(DMAx->SNSEQCTL0, u8Ch), ((pstcDmaNonSeqInit->u32SrcCount << DMA_SNSEQCTL_SNSCNT_POS) | \
-                    pstcDmaNonSeqInit->u32SrcOffset));
+                                                        pstcDmaNonSeqInit->u32SrcOffset));
         WRITE_REG32(DMA_CH_REG(DMAx->DNSEQCTL0, u8Ch), ((pstcDmaNonSeqInit->u32DestCount << DMA_DNSEQCTL_DNSCNT_POS) | \
-                    pstcDmaNonSeqInit->u32DestOffset));
+                                                        pstcDmaNonSeqInit->u32DestOffset));
 
     }
     return i32Ret;
@@ -1016,7 +1062,7 @@ int32_t DMA_NonSeqInit(CM_DMA_TypeDef *DMAx, uint8_t u8Ch, const stc_dma_nonseq_
  *          Fill each pstcDmaInit with default value
  * @param  [in] pstcDmaLlpInit Pointer to a stc_dma_llp_init_t structure that
  *                            contains configuration information.
-  * @retval int32_t:
+ * @retval int32_t:
  *          - LL_OK: DMA LLP mode config structure initialize successful
  *          - LL_ERR_INVD_PARAM: NULL pointer
  */
@@ -1044,7 +1090,7 @@ int32_t DMA_LlpStructInit(stc_dma_llp_init_t *pstcDmaLlpInit)
  *   @arg  u32Mode       DMA LLP auto-run or wait request.
  *   @arg  u32Addr       DMA LLP next list pointer address.
  *   @arg  u32AddrSelect DMA LLP address mode.
-  * @retval int32_t:
+ * @retval int32_t:
  *          - LL_OK: DMA LLP function initialize successful
  *          - LL_ERR_INVD_PARAM: NULL pointer
  * @note Call this function after DMA_Init();
@@ -1062,6 +1108,7 @@ int32_t DMA_LlpInit(CM_DMA_TypeDef *DMAx, uint8_t u8Ch, const stc_dma_llp_init_t
     } else {
         DDL_ASSERT(IS_DMA_LLP_EN(pstcDmaLlpInit->u32State));
         DDL_ASSERT(IS_DMA_LLP_MD(pstcDmaLlpInit->u32Mode));
+        DDL_ASSERT(IS_DMA_LLP_ADDR_ALIGN(pstcDmaLlpInit->u32Addr));
 
         CHCTLx = &DMA_CH_REG(DMAx->CHCTL0, u8Ch);
         MODIFY_REG32(*CHCTLx, (DMA_CHCTL_LLPEN | DMA_CHCTL_LLPRUN), \
@@ -1087,6 +1134,7 @@ void DMA_SetLlpAddr(CM_DMA_TypeDef *DMAx, uint8_t u8Ch, uint32_t u32Addr)
 
     DDL_ASSERT(IS_DMA_UNIT(DMAx));
     DDL_ASSERT(IS_DMA_CH(u8Ch));
+    DDL_ASSERT(IS_DMA_LLP_ADDR_ALIGN(u32Addr));
 
     WRITE_REG32(DMA_CH_REG(DMAx->LLP0, u8Ch), (u32Addr & DMA_LLP_LLP));
 }
@@ -1156,7 +1204,7 @@ void DMA_ReconfigLlpCmd(CM_DMA_TypeDef *DMAx, uint8_t u8Ch, en_functional_state_
  *          Fill each pstcDmaRCInit with default value
  * @param  [in] pstcDmaRCInit Pointer to a stc_dma_reconfig_init_t structure that
  *                            contains configuration information.
-  * @retval int32_t:
+ * @retval int32_t:
  *          - LL_OK: DMA reconfig mode config structure initialize successful
  *          - LL_ERR_INVD_PARAM: NULL pointer
  */
@@ -1183,7 +1231,7 @@ int32_t DMA_ReconfigStructInit(stc_dma_reconfig_init_t *pstcDmaRCInit)
  *   @arg  u32CountMode         DMA reconfig count mode.
  *   @arg  u32DestAddrMode      DMA reconfig destination address mode.
  *   @arg  u32SrcAddrMode       DMA reconfig source address mode.
-  * @retval int32_t:
+ * @retval int32_t:
  *          - LL_OK: DMA reconfig function initialize successful
  *          - LL_ERR_INVD_PARAM: NULL pointer
 */
@@ -1370,8 +1418,8 @@ uint32_t DMA_GetNonSeqDestOffset(const CM_DMA_TypeDef *DMAx, uint8_t u8Ch)
  */
 
 /**
-* @}
-*/
+ * @}
+ */
 
 /******************************************************************************
  * EOF (not truncated)

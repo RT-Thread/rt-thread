@@ -1,4 +1,5 @@
 from building import *
+from gcc import GetGCCLikePLATFORM
 
 cwd     = GetCurrentDir()
 src     = Split('''
@@ -7,14 +8,19 @@ msh.c
 msh_parse.c
 ''')
 
+CPPPATH = [cwd]
+LOCAL_CFLAGS = ''
+
+if rtconfig.PLATFORM in ['gcc']: # only for GCC
+    LOCAL_CFLAGS += ' -Wstack-usage=' + str(GetConfigValue('FINSH_THREAD_STACK_SIZE')) # check finsh thread stack size
+
 if GetDepend('MSH_USING_BUILT_IN_COMMANDS'):
     src += ['cmd.c']
 
 if GetDepend('DFS_USING_POSIX'):
     src += ['msh_file.c']
 
-CPPPATH = [cwd]
-
-group = DefineGroup('Finsh', src, depend = ['RT_USING_FINSH'], CPPPATH = CPPPATH)
+group = DefineGroup('Finsh', src, depend = ['RT_USING_FINSH'], CPPPATH = CPPPATH,
+                    LOCAL_CFLAGS = LOCAL_CFLAGS)
 
 Return('group')

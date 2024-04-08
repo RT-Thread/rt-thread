@@ -111,7 +111,8 @@ struct netdev
 extern struct netdev *netdev_list;
 /* The default network interface device */
 extern struct netdev *netdev_default;
-
+/* The local virtual network device */
+extern struct netdev *netdev_lo;
 /* The network interface device ping response object */
 struct netdev_ping_resp
 {
@@ -136,7 +137,7 @@ struct netdev_ops
 
 #ifdef RT_USING_FINSH
     /* set network interface device common network interface device operations */
-    int (*ping)(struct netdev *netdev, const char *host, size_t data_len, uint32_t timeout, struct netdev_ping_resp *ping_resp);
+    int (*ping)(struct netdev *netdev, const char *host, size_t data_len, uint32_t timeout, struct netdev_ping_resp *ping_resp, rt_bool_t isbind);
     void (*netstat)(struct netdev *netdev);
 #endif
 

@@ -23,8 +23,8 @@
 /* syscall handlers */
 void arch_clone_exit(void);
 void arch_fork_exit(void);
-void arch_syscall_exit();
-void arch_ret_to_user();
+void arch_syscall_exit(void);
+void arch_ret_to_user(void);
 
 /* ELF relocation */
 #ifdef ARCH_MM_MMU
@@ -60,5 +60,11 @@ void arch_set_tidr(void *p);
 rt_noreturn void arch_thread_signal_enter(int signo, siginfo_t *psiginfo,
                                           void *exp_frame, void *entry_uaddr,
                                           lwp_sigset_t *save_sig_mask);
+
+void arch_signal_check_erestart(void *eframe, void *ksp);
+
+void arch_syscall_set_errno(void *eframe, int expected, int code);
+
+int arch_backtrace_uthread(rt_thread_t thread);
 
 #endif /* __LWP_ARCH_COMM__ */

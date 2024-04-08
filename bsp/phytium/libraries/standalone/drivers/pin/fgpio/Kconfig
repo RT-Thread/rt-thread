@@ -1,7 +1,0 @@
-
-config ENABLE_FGPIO
-    bool
-    prompt "Use FGPIO"
-    default n
-    
-    

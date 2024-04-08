@@ -125,6 +125,113 @@ int openat(int dirfd, const char *path, int flag, ...)
     return fd;
 }
 
+int utimensat(int __fd, const char *__path, const struct timespec __times[2], int __flags)
+{
+    int ret;
+    struct stat buffer;
+    struct dfs_file *d;
+    char *fullpath;
+    struct dfs_attr attr;
+    time_t current_time;
+    char *link_fn = (char *)rt_malloc(DFS_PATH_MAX);
+    int err;
+
+    if (__path == NULL)
+    {
+        return -EFAULT;
+    }
+
+    if (__path[0] == '/' || __fd == AT_FDCWD)
+    {
+        if (stat(__path, &buffer) < 0)
+        {
+            return -ENOENT;
+        }
+        else
+        {
+            fullpath = (char*)__path;
+        }
+    }
+    else
+    {
+        if (__fd != AT_FDCWD)
+        {
+            d = fd_get(__fd);
+            if (!d || !d->vnode)
+            {
+                return -EBADF;
+            }
+
+            fullpath = dfs_dentry_full_path(d->dentry);
+            if (!fullpath)
+            {
+                rt_set_errno(-ENOMEM);
+                return -1;
+            }
+        }
+    }
+
+    //update time
+    attr.ia_valid = ATTR_ATIME_SET | ATTR_MTIME_SET;
+    time(&current_time);
+    if (UTIME_NOW == __times[0].tv_nsec)
+    {
+        attr.ia_atime.tv_sec = current_time;
+    }
+    else if (UTIME_OMIT != __times[0].tv_nsec)
+    {
+        attr.ia_atime.tv_sec = __times[0].tv_sec;
+    }
+    else
+    {
+        attr.ia_valid &= ~ATTR_ATIME_SET;
+    }
+
+    if (UTIME_NOW == __times[1].tv_nsec)
+    {
+        attr.ia_mtime.tv_sec = current_time;
+    }
+    else if (UTIME_OMIT == __times[1].tv_nsec)
+    {
+        attr.ia_mtime.tv_sec = __times[1].tv_sec;
+    }
+    else
+    {
+        attr.ia_valid &= ~ATTR_MTIME_SET;
+    }
+
+    if (dfs_file_lstat(fullpath, &buffer) == 0)
+    {
+        if (S_ISLNK(buffer.st_mode) && (__flags != AT_SYMLINK_NOFOLLOW))
+        {
+            if (link_fn)
+            {
+                err = dfs_file_readlink(fullpath, link_fn, DFS_PATH_MAX);
+                if (err < 0)
+                {
+                    rt_free(link_fn);
+                    return -ENOENT;
+                }
+                else
+                {
+                    fullpath = link_fn;
+                    if (dfs_file_stat(fullpath, &buffer) != 0)
+                    {
+                        rt_free(link_fn);
+                        return -ENOENT;
+                    }
+                }
+            }
+
+        }
+    }
+    attr.st_mode = buffer.st_mode;
+    ret = dfs_file_setattr(fullpath, &attr);
+    rt_free(link_fn);
+
+    return ret;
+}
+
 /**
  * this function is a POSIX compliant version,
  * which will create a new file or rewrite an existing one
@@ -1109,53 +1216,46 @@ FINSH_FUNCTION_EXPORT_ALIAS(chdir, cd, change current working directory);
  */
 int access(const char *path, int amode)
 {
-    int fd, ret = -1, flags = 0;
-    struct stat sb;
+    struct stat st;
 
     if (path == NULL)
     {
-        rt_set_errno(-EBADF);
+        rt_set_errno(-EINVAL);
+        return -1;
+    }
+
+    if (stat(path, &st) < 0)
+    {
+        rt_set_errno(-ENOENT);
         return -1;
     }
 
     if (amode == F_OK)
     {
-        if (stat(path, &sb) < 0)
-            return -1; /* already sets errno */
-        else
-            return 0;
+        return 0;
     }
 
-    /* ignore R_OK,W_OK,X_OK condition */
-    if (dfs_file_isdir(path) == 0)
+    if ((amode & R_OK) && !(st.st_mode & S_IRUSR))
     {
-        flags |= O_DIRECTORY;
+        rt_set_errno(-EACCES);
+        return -1;
     }
 
-    if (amode & R_OK)
+    if ((amode & W_OK) && !(st.st_mode & S_IWUSR))
     {
-        flags |= O_RDONLY;
+        rt_set_errno(-EACCES);
+        return -1;
     }
 
-    if (amode & W_OK)
+    if ((amode & X_OK) && !(st.st_mode & S_IXUSR))
     {
-        flags |= O_WRONLY;
+        rt_set_errno(-EACCES);
+        return -1;
     }
 
-    if (amode & X_OK)
-    {
-        flags |= O_EXEC;
-    }
-
-    fd = open(path, flags, 0);
-    if (fd >= 0)
-    {
-        ret = 0;
-        close(fd);
-    }
-
-    return ret;
+    return 0;
 }
+
 /**
  * this function is a POSIX compliant version, which will set current
  * working directory.

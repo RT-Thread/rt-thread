@@ -45,6 +45,18 @@ Export('SDK_LIB')
 
 rtconfig.BSP_LIBRARY_TYPE = None
 
+def startup_check():
+    import subprocess
+    startup_check_path = os.getcwd() + "/../tools/startup_check.py"
+
+    if os.path.exists(startup_check_path):
+        try:
+            subprocess.call(["python", startup_check_path])
+        except:
+            subprocess.call(["python3", startup_check_path])
+
+RegisterPreBuildingAction(startup_check)
+
 # prepare building environment
 objs = PrepareBuilding(env, RTT_ROOT, has_libcpu=False)
 

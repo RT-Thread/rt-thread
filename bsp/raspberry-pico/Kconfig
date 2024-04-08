@@ -15,13 +15,15 @@ config PKGS_DIR
     option env="PKGS_ROOT"
     default "packages"
 
-source "$RTT_DIR/Kconfig"
-source "$PKGS_DIR/Kconfig"
-source "libraries/Kconfig"
-
 config SOC_RP2040
     bool
     select ARCH_ARM_CORTEX_M0
     select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN
+    select SOC_SERIES_RP2040_PICO
+    select PKG_USING_RASPBERRYPI_PICO_SDK
     default y
+
+source "$RTT_DIR/Kconfig"
+source "$PKGS_DIR/Kconfig"
+source "board/Kconfig"

@@ -6,9 +6,10 @@
    Change Logs:
    Date             Author          Notes
    2022-03-31       CDT             First version
+   2022-06-30       CDT             Add USB core ID select function
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -59,10 +60,11 @@
  ******************************************************************************/
 /**
  * @brief  Initialize the driver for the host mode
- * @param  [in] pdev        device instance
+ * @param  [in] pdev                device instance
+ * @param  [in] pstcPortIdentify    usb core and phy select
  * @retval None
  */
-void host_driver_init(usb_core_instance *pdev)
+void host_driver_init(usb_core_instance *pdev, stc_usb_port_identify *pstcPortIdentify)
 {
     uint8_t i;
 
@@ -74,14 +76,16 @@ void host_driver_init(usb_core_instance *pdev)
     }
     pdev->host.hc[0].max_packet = 8U;
 
-    usb_setregaddr(&pdev->regs, &pdev->basic_cfgs);;
+    usb_setregaddr(&pdev->regs, pstcPortIdentify, &pdev->basic_cfgs);
 
     usb_gintdis(&pdev->regs);
     usb_initusbcore(&pdev->regs, &pdev->basic_cfgs);
     /* force to work in host mode*/
     usb_modeset(&pdev->regs, HOST_MODE);
     /* configure charge pump IO */
-    usb_bsp_cfgvbus(&pdev->regs);
+    usb_bsp_cfgvbus(pdev);
+    /* enable or disable the external charge pump */
+    usb_bsp_drivevbus(pdev, 1U);
     usb_vbusctrl(&pdev->regs, 1U);
     usb_mdelay(50UL);
 

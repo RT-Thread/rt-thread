@@ -34,6 +34,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     name: ${{ matrix.legs.RTT_BSP }}
+    if: github.repository_owner == 'RT-Thread'
     strategy:
       fail-fast: false
       matrix:
@@ -87,6 +88,7 @@ jobs:
         - {RTT_BSP_NAME: "stm32_stm32g070-st-nucleo", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "stm32/stm32g070-st-nucleo"}
         - {RTT_BSP_NAME: "stm32_stm32g071-st-nucleo", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "stm32/stm32g071-st-nucleo"}
         - {RTT_BSP_NAME: "stm32_stm32g431-st-nucleo", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "stm32/stm32g431-st-nucleo"}
+        - {RTT_BSP_NAME: "stm32_stm32g491-st-nucleo", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "stm32/stm32g491-st-nucleo"}
         - {RTT_BSP_NAME: "stm32_stm32g474-st-nucleo", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "stm32/stm32g474-st-nucleo"}
         - {RTT_BSP_NAME: "stm32_stm32h743-armfly-v7", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "stm32/stm32h743-armfly-v7"}
         - {RTT_BSP_NAME: "stm32_stm32h743-atk-apollo", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "stm32/stm32h743-atk-apollo"}
@@ -125,7 +127,7 @@ jobs:
 
   
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Set up Python
         uses: actions/setup-python@v3
         with:
@@ -135,9 +137,9 @@ jobs:
         shell: bash
         run: |
           sudo apt-get update
-          sudo apt-get -qq install gcc-multilib libncurses5-dev scons
-          sudo python -m pip install --upgrade pip -qq
-          pip install requests -qq
+          wget https://raw.githubusercontent.com/RT-Thread/env/master/install_ubuntu.sh
+          chmod 777 install_ubuntu.sh
+          ./install_ubuntu.sh
           git config --global http.postBuffer 524288000
           python -c "import tools.menuconfig; tools.menuconfig.touch_env()"
           echo "RTT_ROOT=${{ github.workspace }}" >> $GITHUB_ENV

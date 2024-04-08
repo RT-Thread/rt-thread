@@ -174,7 +174,7 @@ handle_reset:
 2:
 	/* disable interrupt */
   	li t0, 0x1800
-  	csrs mstatus, t0
+  	csrw mstatus, t0
 	la t0, _vector_base
   	ori t0, t0, 1
 	csrw mtvec, t0

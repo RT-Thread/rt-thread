@@ -717,16 +717,13 @@ static int ipaddr_to_ipstr(const struct sockaddr *sockaddr, char *ipstr)
 }
 
 #ifdef AT_USING_SOCKET_SERVER
-static int (*store_at_socket_temporary)(struct at_device *device, enum at_socket_type type);
 static void at_connect_notice_cb(struct at_socket *sock, at_socket_evt_t event, const char *buff, size_t bfsz)
 {
     RT_ASSERT(buff);
     RT_ASSERT(sock == RT_NULL);
     RT_ASSERT(event == AT_SOCKET_EVT_CONNECTED);
 
-    extern struct netdev *netdev_default;
-    struct netdev *netdev = RT_NULL;
-    struct at_device *device = RT_NULL;
+    int new_socket;
     struct at_socket *new_sock = RT_NULL;
     rt_base_t level;
     rt_slist_t *node = RT_NULL;
@@ -734,51 +731,17 @@ static void at_connect_notice_cb(struct at_socket *sock, at_socket_evt_t event, 
     char *socket_info = RT_NULL;
     int base_socket = 0;
 
-    if (netdev_default && netdev_is_up(netdev_default) &&
-            netdev_family_get(netdev_default) == AF_AT)
-    {
-        netdev = netdev_default;
-    }
-    else
-    {
-        /* get network interface device by protocol family AF_AT */
-        netdev = netdev_get_by_family(AF_AT);
-        if (netdev == RT_NULL)
-        {
-            return;
-        }
-    }
-
-    device = at_device_get_by_name(AT_DEVICE_NAMETYPE_NETDEV, netdev->name);
-    if (device == RT_NULL)
-    {
-        return;
-    }
-
     /* avoid use bottom driver to alloc "socket" */
-    store_at_socket_temporary = device->class->socket_ops->at_socket;
-    device->class->socket_ops->at_socket = RT_NULL;
-    new_sock = alloc_socket_by_device(device, AT_SOCKET_TCP);
-    if (new_sock == RT_NULL)
+    new_socket = at_socket(AF_AT, SOCK_STREAM, 0);
+    if (new_socket == -1)
     {
         return;
     }
-    new_sock->type = AT_SOCKET_TCP;
+    new_sock = at_get_socket(new_socket);
     new_sock->state = AT_SOCKET_CONNECT;
-
-    /* set AT socket receive data callback function */
-    new_sock->ops->at_set_event_cb(AT_SOCKET_EVT_RECV, at_recv_notice_cb);
-    new_sock->ops->at_set_event_cb(AT_SOCKET_EVT_CLOSED, at_closed_notice_cb);
-    new_sock->ops->at_set_event_cb(AT_SOCKET_EVT_CONNECTED, at_connect_notice_cb);
-    device->class->socket_ops->at_socket = store_at_socket_temporary;
-
-    /* put incoming "socket" to the listen socket receiver packet list */
     sscanf(buff, "SOCKET:%d", &base_socket);
     LOG_D("ACCEPT BASE SOCKET: %d", base_socket);
     new_sock->user_data = (void *)base_socket;
-    socket_info = rt_malloc(AT_SOCKET_INFO_LEN);
-    rt_memset(socket_info, 0, AT_SOCKET_INFO_LEN);
-    rt_sprintf(socket_info, "SOCKET:%d", new_sock->socket);
 
     /* find out the listen socket */
     level = rt_hw_interrupt_disable();
@@ -793,16 +756,23 @@ static void at_connect_notice_cb(struct at_socket *sock, at_socket_evt_t event, 
     }
     rt_hw_interrupt_enable(level);
 
-    if(at_sock == RT_NULL)
+    if (at_sock == RT_NULL)
     {
+        at_closesocket(new_socket);
         return;
     }
+
+    /* put incoming "socket" to the listen socket receiver packet list */
+    socket_info = rt_malloc(AT_SOCKET_INFO_LEN);
+    rt_memset(socket_info, 0, AT_SOCKET_INFO_LEN);
+    rt_sprintf(socket_info, "SOCKET:%d", new_sock->socket);
 
     /* wakeup the "accept" function */
     rt_mutex_take(at_sock->recv_lock, RT_WAITING_FOREVER);
     if (at_recvpkt_put(&(at_sock->recvpkt_list), socket_info, AT_SOCKET_INFO_LEN) != RT_EOK)
     {
-        rt_free((void *)buff);
+        at_closesocket(new_socket);
+        rt_free(socket_info);
         rt_mutex_release(at_sock->recv_lock);
         return;
     }
@@ -866,8 +836,7 @@ int at_listen(int socket, int backlog)
     sock = at_get_socket(socket);
     if (sock == RT_NULL)
     {
-        result = -1;
-        goto __exit;
+        return -1;
     }
 
     if (sock->state != AT_SOCKET_OPEN)
@@ -890,10 +859,7 @@ __exit:
 
     if (result < 0)
     {
-        if (sock != RT_NULL)
-        {
-            at_do_event_changes(sock, AT_EVENT_ERROR, RT_TRUE);
-        }
+        at_do_event_changes(sock, AT_EVENT_ERROR, RT_TRUE);
     }
 
     return result;
@@ -911,8 +877,7 @@ int at_connect(int socket, const struct sockaddr *name, socklen_t namelen)
     sock = at_get_socket(socket);
     if (sock == RT_NULL)
     {
-        result = -1;
-        goto __exit;
+        return -1;
     }
 
     if (sock->state != AT_SOCKET_OPEN)
@@ -938,13 +903,9 @@ __exit:
 
     if (result < 0)
     {
-        if (sock != RT_NULL)
-        {
-            at_do_event_changes(sock, AT_EVENT_ERROR, RT_TRUE);
-        }
+        at_do_event_changes(sock, AT_EVENT_ERROR, RT_TRUE);
     }
-
-    if (sock)
+    else
     {
         at_do_event_changes(sock, AT_EVENT_SEND, RT_TRUE);
     }
@@ -966,8 +927,7 @@ int at_accept(int socket, struct sockaddr *name, socklen_t *namelen)
     sock = at_get_socket(socket);
     if (sock == RT_NULL)
     {
-        result = -1;
-        goto __exit;
+        return -1;
     }
 
     if (sock->state != AT_SOCKET_LISTEN)
@@ -990,16 +950,11 @@ int at_accept(int socket, struct sockaddr *name, socklen_t *namelen)
         rt_mutex_take(sock->recv_lock, RT_WAITING_FOREVER);
         at_recvpkt_get(&(sock->recvpkt_list), (char *) &receive_buff, AT_SOCKET_INFO_LEN);
         rt_mutex_release(sock->recv_lock);
+        at_do_event_changes(sock, AT_EVENT_RECV, RT_FALSE);
     }
 
     sscanf(&receive_buff[0], "SOCKET:%d", &new_socket);
     new_sock = at_get_socket(new_socket);
-    if (sock == RT_NULL)
-    {
-        result = -1;
-        goto __exit;
-    }
-    new_sock->state = AT_SOCKET_CONNECT;
     ip4_addr_set_any(&remote_addr);
     ipaddr_port_to_socketaddr(name, &remote_addr, &remote_port);
     LOG_D("Accept: [socket :%d, base_socket:%d]", new_socket, (int)new_sock->user_data);
@@ -1007,10 +962,7 @@ int at_accept(int socket, struct sockaddr *name, socklen_t *namelen)
 __exit:
     if (result < 0)
     {
-        if (sock != RT_NULL)
-        {
-            at_do_event_changes(sock, AT_EVENT_ERROR, RT_TRUE);
-        }
+        at_do_event_changes(sock, AT_EVENT_ERROR, RT_TRUE);
     }
 
     return new_sock->socket;
@@ -1025,15 +977,14 @@ int at_recvfrom(int socket, void *mem, size_t len, int flags, struct sockaddr *f
 
     if (mem == RT_NULL || len == 0)
     {
-        LOG_E("AT recvfrom input data or length error!");
-        return -1;
+        /* if the requested number of bytes to receive from a stream socket was 0. */
+        return 0;
     }
 
     sock = at_get_socket(socket);
     if (sock == RT_NULL)
     {
-        result = -1;
-        goto __exit;
+        return -1;
     }
 
     /* if the socket type is UDP, need to connect socket first */
@@ -1048,104 +999,66 @@ int at_recvfrom(int socket, void *mem, size_t len, int flags, struct sockaddr *f
 
         if (sock->ops->at_connect(sock, ipstr, remote_port, sock->type, RT_TRUE) < 0)
         {
-            result = -1;
-            goto __exit;
+            at_do_event_changes(sock, AT_EVENT_ERROR, RT_TRUE);
+            /* socket shutdown */
+            return 0;
         }
         sock->state = AT_SOCKET_CONNECT;
     }
 
-    /* receive packet list last transmission of remaining data */
-    rt_mutex_take(sock->recv_lock, RT_WAITING_FOREVER);
-    if((recv_len = at_recvpkt_get(&(sock->recvpkt_list), (char *)mem, len)) > 0)
-    {
-        rt_mutex_release(sock->recv_lock);
-        goto __exit;
-    }
-    rt_mutex_release(sock->recv_lock);
-
-    /* socket passively closed, receive function return 0 */
-    if (sock->state == AT_SOCKET_CLOSED)
-    {
-        result = 0;
-        goto __exit;
-    }
-    else if (sock->state != AT_SOCKET_CONNECT && sock->state != AT_SOCKET_OPEN)
-    {
-        LOG_E("received data error, current socket (%d) state (%d) is error.", socket, sock->state);
-        result = -1;
-        goto __exit;
-    }
-
-    /* non-blocking sockets receive data */
-    if (flags & MSG_DONTWAIT)
-    {
-        goto __exit;
-    }
-
-    /* set AT socket receive timeout */
-    if ((timeout = sock->recv_timeout) == 0)
-    {
-        timeout = RT_WAITING_FOREVER;
-    }
-    else
-    {
-        timeout = rt_tick_from_millisecond(timeout);
-    }
-
     while (1)
     {
-        /* wait the receive semaphore */
-        if (rt_sem_take(sock->recv_notice, timeout) < 0)
+        if (sock->state == AT_SOCKET_CLOSED)
+        {
+            /* socket passively closed, receive function return 0 */
+            result = 0;
+            break;
+        }
+
+        rt_sem_control(sock->recv_notice, RT_IPC_CMD_RESET, RT_NULL);
+        /* receive packet list last transmission of remaining data */
+        rt_mutex_take(sock->recv_lock, RT_WAITING_FOREVER);
+        recv_len = at_recvpkt_get(&(sock->recvpkt_list), (char *)mem, len);
+        rt_mutex_release(sock->recv_lock);
+        if (recv_len > 0)
+        {
+            if (rt_slist_isempty(&sock->recvpkt_list))
+            {
+                at_do_event_clean(sock, AT_EVENT_RECV);
+            }
+            errno = 0;
+            result = recv_len;
+            break;
+        }
+
+        if (flags & MSG_DONTWAIT)
+        {
+            errno = EAGAIN;
+            result = -1;
+            break;
+        }
+
+        /* set AT socket receive timeout */
+        if (sock->recv_timeout == 0)
+        {
+            timeout = RT_WAITING_FOREVER;
+        }
+        else
+        {
+            timeout = rt_tick_from_millisecond(sock->recv_timeout);
+        }
+        if (rt_sem_take(sock->recv_notice, timeout) != RT_EOK)
         {
             LOG_D("AT socket (%d) receive timeout (%d)!", socket, timeout);
             errno = EAGAIN;
             result = -1;
-            goto __exit;
-        }
-        else
-        {
-
-            /* get receive buffer to receiver ring buffer */
-            rt_mutex_take(sock->recv_lock, RT_WAITING_FOREVER);
-            recv_len = at_recvpkt_get(&(sock->recvpkt_list), (char *) mem, len);
-            rt_mutex_release(sock->recv_lock);
-            if (recv_len > 0)
-            {
-                break;
-            }
-            else
-            {
-                /* we have no data to receive but are woken up,
-                    which means the socket have been closed. */
-                errno = EIO;
-                result = -1;
-                goto __exit;
-            }
+            break;
         }
     }
 
-__exit:
-
-    if (sock != RT_NULL)
+    if (result <= 0)
     {
-        if (recv_len > 0)
-        {
-            result = recv_len;
-            at_do_event_changes(sock, AT_EVENT_RECV, RT_FALSE);
-            errno = 0;
-            if (!rt_slist_isempty(&sock->recvpkt_list))
-            {
-                at_do_event_changes(sock, AT_EVENT_RECV, RT_TRUE);
-            }
-            else
-            {
-                at_do_event_clean(sock, AT_EVENT_RECV);
-            }
-        }
-        else
-        {
-            at_do_event_changes(sock, AT_EVENT_ERROR, RT_TRUE);
-        }
+        at_do_event_changes(sock, AT_EVENT_ERROR, RT_TRUE);
     }
 
     return result;
@@ -1164,15 +1077,13 @@ int at_sendto(int socket, const void *data, size_t size, int flags, const struct
     if (data == RT_NULL || size == 0)
     {
         LOG_E("AT sendto input data or size error!");
-        result = -1;
-        goto __exit;
+        return -1;
     }
 
     sock = at_get_socket(socket);
     if (sock == RT_NULL)
     {
-        result = -1;
-        goto __exit;
+        return -1;
     }
 
     switch (sock->type)
@@ -1232,10 +1143,7 @@ __exit:
 
     if (result < 0)
     {
-        if (sock != RT_NULL)
-        {
-            at_do_event_changes(sock, AT_EVENT_ERROR, RT_TRUE);
-        }
+        at_do_event_changes(sock, AT_EVENT_ERROR, RT_TRUE);
     }
     else
     {

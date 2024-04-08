@@ -3,18 +3,22 @@
 
 RA 系列 BSP 目前支持情况如下表所示：
 
-| **BSP 文件夹名称**                 | **开发板名称**                                |
-| :--------------------------------- | :-------------------------------------------- |
-| **RA6 系列**                       |                                               |
-| [ebf_qi_min_6m5](ebf_qi_min_6m5)   | 野火 启明6 开发板                             |
-| [ra6m4-cpk](ra6m4-cpk)             | Renesas 官方 CPK-RA6M4 开发板                 |
-| [ra6m4-iot](ra6m4-iot)             | Renesas 官方 IOT-RA6M4 开发板                 |
-| [ra6m3-ek](ra6m3-ek)               | Renesas 官方 RA6M3-EK 开发板                  |
-| [ra6m3-hmi-board](ra6m3-hmi-board) | Renesas 联合 RT-Thread RA6M3-HMI-Board 开发板 |
-| **RA4 系列**                       |                                               |
-| [ra4m2-eco](ra4m2-eco)             | Renesas 官方 RA-Eco-RA4M2 开发板              |
-| **RA2 系列**                       |                                               |
-| [ra2l1-cpk](ra2l1-cpk)             | Renesas 官方 CPK-RA2L1 开发板                 |
+| **BSP 文件夹名称**                       | **开发板名称**                                   |
+| :--------------------------------------- | :----------------------------------------------- |
+| **RA6 系列**                             |                                                  |
+| [ebf_qi_min_6m5](ebf_qi_min_6m5)         | 野火 启明6 开发板                                |
+| [ra6m4-cpk](ra6m4-cpk)                   | Renesas 官方 CPK-RA6M4 开发板                    |
+| [ra6m4-iot](ra6m4-iot)                   | Renesas 官方 IOT-RA6M4 开发板                    |
+| [ra6m3-ek](ra6m3-ek)                     | Renesas 官方 RA6M3-EK 开发板                     |
+| [ra6m3-hmi-board](ra6m3-hmi-board)       | Renesas 联合 RT-Thread RA6M3-HMI-Board 开发板    |
+| **RA4 系列**                             |                                                  |
+| [ra4m2-eco](ra4m2-eco)                   | Renesas 官方 RA-Eco-RA4M2 开发板                 |
+| **RA2 系列**                             |                                                  |
+| [ra2l1-cpk](ra2l1-cpk)                   | Renesas 官方 CPK-RA2L1 开发板                    |
+| **RA8 系列**                             |                                                  |
+| [ra8m1-ek](ra8m1-ek)                     | Renesas 官方 EK-RA8M1 开发板                     |
+| [ra8d1-ek](ra8d1-ek)                     | Renesas 官方 EK-RA8D1 开发板                     |
+| [ra8d1-vision-board](ra8d1-vision-board) | Renesas 联合 RT-Thread RA8D1-Vision-Board 开发板 |
 
 可以通过阅读相应 BSP 下的 README 来快速上手，如果想要使用 BSP 更多功能可参考 docs 文件夹下提供的说明文档，如下表所示：
 

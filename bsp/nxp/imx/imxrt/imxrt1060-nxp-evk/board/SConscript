@@ -1,0 +1,35 @@
+Import('RTT_ROOT')
+Import('rtconfig')
+from building import *
+
+cwd = GetCurrentDir()
+
+# add the general drivers.
+src = Split("""
+board.c
+MCUX_Config/clock_config.c
+MCUX_Config/pin_mux.c
+MCUX_Config/dcd.c
+""")
+
+if GetDepend(['BSP_USING_TOUCHPAD']):
+    src += ['ports/touchpad.c']
+
+if GetDepend(['PKG_USING_RW007']):
+    src += ['ports/rw007_port.c']
+
+CPPPATH = [cwd,cwd + '/MCUX_Config',cwd + '/ports']
+
+# CPPDEFINES = ['CPU_MIMXRT1062DVL6A', 'SKIP_SYSCLK_INIT', 'EVK_MCIMXRM', 'FSL_SDK_ENABLE_DRIVER_CACHE_CONTROL=1',
+#                 'FSL_SDK_DRIVER_QUICK_ACCESS_ENABLE=1','DATA_SECTION_IS_CACHEABLE=1']
+
+
+CPPDEFINES = ['CPU_MIMXRT1062DVL6A', 'SKIP_SYSCLK_INIT', 'EVK_MCIMXRM', 'FSL_SDK_ENABLE_DRIVER_CACHE_CONTROL=1',
+                'FSL_SDK_DRIVER_QUICK_ACCESS_ENABLE=1','DATA_SECTION_IS_CACHEABLE=1', 'XIP_EXTERNAL_FLASH=1', 'XIP_BOOT_HEADER_ENABLE=1', 'XIP_BOOT_HEADER_DCD_ENABLE=1']
+
+if rtconfig.PLATFORM in ['armcc', 'armclang']:
+    CPPDEFINES.append('__FPU_PRESENT=1')
+
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES=CPPDEFINES)
+
+Return('group')

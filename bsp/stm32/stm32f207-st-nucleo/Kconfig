@@ -15,8 +15,23 @@ config PKGS_DIR
     option env="PKGS_ROOT"
     default "packages"
 
+config SOC_STM32F207ZG
+    bool
+    select SOC_SERIES_STM32F2
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+    default y
+
+config BOARD_STM32F207_NUCLEO
+    bool
+    select BOARD_SERIES_STM32_NUCLEO_144
+    default y
+
 source "$RTT_DIR/Kconfig"
 source "$PKGS_DIR/Kconfig"
 source "../libraries/Kconfig"
+
+if !RT_USING_NANO
 source "board/Kconfig"
+endif
 

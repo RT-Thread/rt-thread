@@ -20,7 +20,7 @@
 struct pico_i2c
 {
     struct rt_i2c_bit_ops ops;
-    struct rt_i2c_bus_device i2c2_bus;
+    struct rt_i2c_bus_device i2c_bus;
 };
 
 /* pico config class */

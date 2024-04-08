@@ -55,6 +55,8 @@ SECTIONS
 
         . = ALIGN(4);
 
+        KEEP(*(.eh_frame*))
+        . = ALIGN(4);
         _etext = .;
     } > ROM = 0
 

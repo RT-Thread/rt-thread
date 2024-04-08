@@ -9,13 +9,17 @@
  */
 
 #include "drv_common.h"
-#include "board.h"
+#include <board.h>
+
+#ifdef RT_USING_PIN
+#include <drv_gpio.h>
+#endif
 
 #ifdef RT_USING_SERIAL
 #ifdef RT_USING_SERIAL_V2
-#include "drv_usart_v2.h"
+#include <drv_usart_v2.h>
 #else
-#include "drv_usart.h"
+#include <drv_usart.h>
 #endif /* RT_USING_SERIAL */
 #endif /* RT_USING_SERIAL_V2 */
 
@@ -182,29 +186,31 @@ rt_weak void rt_hw_board_init(void)
     /* System clock initialization */
     SystemClock_Config();
 
-    /* Heap initialization */
 #if defined(RT_USING_HEAP)
+    /* Heap initialization */
     rt_system_heap_init((void *)HEAP_BEGIN, (void *)HEAP_END);
 #endif
 
-    /* Pin driver initialization is open by default */
 #ifdef RT_USING_PIN
     rt_hw_pin_init();
 #endif
 
-    /* USART driver initialization is open by default */
 #ifdef RT_USING_SERIAL
     rt_hw_usart_init();
 #endif
 
-    /* Set the shell console output device */
 #if defined(RT_USING_CONSOLE) && defined(RT_USING_DEVICE)
+    /* Set the shell console output device */
     rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
 #endif
 
-    /* Board underlying hardware initialization */
+#if defined(RT_USING_CONSOLE) && defined(RT_USING_NANO)
+    extern void rt_hw_console_init(void);
+    rt_hw_console_init();
+#endif
+
 #ifdef RT_USING_COMPONENTS_INIT
+    /* Board underlying hardware initialization */
     rt_components_board_init();
 #endif
 }
-

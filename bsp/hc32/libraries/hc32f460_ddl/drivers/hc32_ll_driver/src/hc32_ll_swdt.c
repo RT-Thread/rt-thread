@@ -7,9 +7,10 @@
    Change Logs:
    Date             Author          Notes
    2022-03-31       CDT             First version
+   2023-09-30       CDT             Optimize SWDT_ClearStatus function timeout
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -55,7 +56,7 @@
 #define SWDT_REFRESH_KEY_END            (0x3210UL)
 
 /* SWDT clear flag timeout(ms) */
-#define SWDT_CLR_FLAG_TIMEOUT           (5UL)
+#define SWDT_CLR_FLAG_TIMEOUT           (400UL)
 
 /**
  * @defgroup SWDT_Check_Parameters_Validity SWDT Check Parameters Validity
@@ -148,10 +149,10 @@ int32_t SWDT_ClearStatus(uint32_t u32Flag)
     /* Check parameters */
     DDL_ASSERT(IS_SWDT_FLAG(u32Flag));
 
-    CLR_REG32_BIT(CM_SWDT->SR, u32Flag);
     /* Waiting for FLAG bit clear */
-    u32Count = SWDT_CLR_FLAG_TIMEOUT * (HCLK_VALUE / 20000UL);
+    u32Count = SWDT_CLR_FLAG_TIMEOUT * (HCLK_VALUE / 25000UL);
     while (0UL != READ_REG32_BIT(CM_SWDT->SR, u32Flag)) {
+        CLR_REG32_BIT(CM_SWDT->SR, u32Flag);
         if (0UL == u32Count) {
             i32Ret = LL_ERR_TIMEOUT;
             break;
@@ -173,8 +174,8 @@ int32_t SWDT_ClearStatus(uint32_t u32Flag)
  */
 
 /**
-* @}
-*/
+ * @}
+ */
 
 /******************************************************************************
  * EOF (not truncated)

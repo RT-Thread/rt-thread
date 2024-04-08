@@ -44,6 +44,19 @@ if GetDepend(['UTEST_THREAD_TC']):
 if GetDepend(['UTEST_ATOMIC_TC']):
     src += ['atomic_tc.c']
 
+if GetDepend(['UTEST_HOOKLIST_TC']):
+    src += ['hooklist_tc.c']
+
+if GetDepend(['UTEST_MTSAFE_KPRINT_TC']):
+    src += ['mtsafe_kprint_tc.c']
+
+# Stressful testcase for scheduler (MP/UP)
+if GetDepend(['UTEST_SCHEDULER_TC']):
+    src += ['sched_timed_sem_tc.c']
+    src += ['sched_timed_mtx_tc.c']
+    src += ['sched_mtx_tc.c']
+    src += ['sched_sem_tc.c', 'sched_thread_tc.c']
+
 group = DefineGroup('utestcases', src, depend = ['RT_USING_UTESTCASES'], CPPPATH = CPPPATH)
 
 Return('group')

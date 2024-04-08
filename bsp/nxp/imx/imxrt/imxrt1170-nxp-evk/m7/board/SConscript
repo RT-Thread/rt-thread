@@ -1,0 +1,21 @@
+from building import *
+
+cwd = GetCurrentDir()
+
+# add the general drivers.
+src = Split("""
+board.c
+dcd.c
+MCUX_Config/clock_config.c
+MCUX_Config/pin_mux.c
+""")
+
+if GetDepend(['BSP_USING_VGLITE']):
+    src += ['display_support.c', 'vglite_support.c', 'vglite_window.c']
+
+CPPPATH = [cwd,cwd + '/MCUX_Config',cwd + '/ports']
+CPPDEFINES = ['CPU_MIMXRT1176DVMAA_cm7', 'XIP_BOOT_HEADER_ENABLE=1', 'XIP_BOOT_HEADER_DCD_ENABLE=1', 'FSL_SDK_ENABLE_DRIVER_CACHE_CONTROL=1','XIP_EXTERNAL_FLASH=1','ARM_MATH_CM7','USE_SDRAM']
+
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES=CPPDEFINES)
+
+Return('group')

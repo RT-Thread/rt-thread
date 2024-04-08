@@ -203,7 +203,7 @@ void dlmodule_destroy_subthread(struct rt_dlmodule *module, rt_thread_t thread)
     rt_enter_critical();
 
     /* remove thread from thread_list (ready or defunct thread list) */
-    rt_list_remove(&(thread->tlist));
+    rt_list_remove(&RT_THREAD_LIST_NODE(thread));
 
     if ((thread->stat & RT_THREAD_STAT_MASK) != RT_THREAD_CLOSE &&
         (thread->thread_timer.parent.type == (RT_Object_Class_Static | RT_Object_Class_Timer)))

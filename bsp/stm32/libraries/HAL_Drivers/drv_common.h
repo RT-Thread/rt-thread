@@ -11,11 +11,12 @@
 #ifndef __DRV_COMMON_H__
 #define __DRV_COMMON_H__
 
-#include <rtthread.h>
 #include <rthw.h>
+#include <board.h>
+#include <rtthread.h>
 #ifdef RT_USING_DEVICE
 #include <rtdevice.h>
-#endif
+#endif /* RT_USING_DEVICE */
 
 #ifdef __cplusplus
 extern "C" {

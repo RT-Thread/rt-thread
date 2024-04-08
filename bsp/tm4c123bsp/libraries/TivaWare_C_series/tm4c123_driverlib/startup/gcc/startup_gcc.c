@@ -291,7 +291,8 @@ ResetISR(void)
     //
     // Call the application's entry point.
     //
-    main();
+    extern int entry(void);
+    entry();
 }
 
 //*****************************************************************************

@@ -36,6 +36,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     name: ${{ matrix.legs.RTT_BSP }}
+    if: github.repository_owner == 'RT-Thread'
     strategy:
       fail-fast: false
       matrix:
@@ -117,13 +118,6 @@ jobs:
           - {RTT_BSP_NAME: "gd32_arm_gd32470z-lckfb", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "gd32/arm/gd32470z-lckfb"}
           - {RTT_BSP_NAME: "gd32_risc-v_gd32vf103r-start", RTT_TOOL_CHAIN: "sourcery-riscv-none-embed", RTT_BSP: "gd32/risc-v/gd32vf103r-start"}
           - {RTT_BSP_NAME: "gd32_risc-v_gd32vf103v-eval", RTT_TOOL_CHAIN: "sourcery-riscv-none-embed", RTT_BSP: "gd32/risc-v/gd32vf103v-eval"}
-         #- {RTT_BSP_NAME: "gd32105c-eval", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "gd32105c-eval"}  #编译错误
-         #- {RTT_BSP_NAME: "gd32107c-eval", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "gd32107c-eval"}  #编译错误
-          - {RTT_BSP_NAME: "gd32303e-eval", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "gd32303e-eval"}
-         #- {RTT_BSP_NAME: "gd32350r-eval", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "gd32350r-eval"}  #编译错误
-          - {RTT_BSP_NAME: "gd32450z-eval", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "gd32450z-eval"}
-          - {RTT_BSP_NAME: "gd32e230k-start", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "gd32e230k-start"}
-          - {RTT_BSP_NAME: "gd32vf103v-eval", RTT_TOOL_CHAIN: "sourcery-riscv-none-embed", RTT_BSP: "gd32vf103v-eval"}
           - {RTT_BSP_NAME: "hc32_ev_hc32f460_lqfp100_v2", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "hc32/ev_hc32f460_lqfp100_v2"}
           - {RTT_BSP_NAME: "hc32_ev_hc32f4a0_lqfp176", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "hc32/ev_hc32f4a0_lqfp176"}
          #- {RTT_BSP_NAME: "hc32l136", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "hc32l136"}  #编译错误
@@ -232,6 +226,8 @@ jobs:
           - {RTT_BSP_NAME: "renesas_ra6m3-hmi-board", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "renesas/ra6m3-hmi-board"}
           - {RTT_BSP_NAME: "renesas_ra6m4-cpk", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "renesas/ra6m4-cpk"}
           - {RTT_BSP_NAME: "renesas_ra6m4-iot", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "renesas/ra6m4-iot"}
+          - {RTT_BSP_NAME: "renesas_ra8d1-ek", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "renesas/ra8d1-ek"}
+          - {RTT_BSP_NAME: "renesas_ra8m1-ek", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "renesas/ra8m1-ek"}
           - {RTT_BSP_NAME: "rm48x50", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "rm48x50"}
          #- {RTT_BSP_NAME: "rockchip_rk2108", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "rockchip/rk2108"} # menuconfig 有问题
           - {RTT_BSP_NAME: "rockchip_rk3568", RTT_TOOL_CHAIN: "sourcery-aarch64", RTT_BSP: "rockchip/rk3568"} 
@@ -244,8 +240,8 @@ jobs:
           - {RTT_BSP_NAME: "smartfusion2", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "smartfusion2"}
           - {RTT_BSP_NAME: "sparkfun-redv", RTT_TOOL_CHAIN: "sourcery-riscv64-unknown-elf", RTT_BSP: "sparkfun-redv"}
          #- {RTT_BSP_NAME: "synopsys_boards", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "synopsys/boards"} #不支持的toolchain
-          - {RTT_BSP_NAME: "synwit_swm320", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "synwit/swm320"}
-          - {RTT_BSP_NAME: "synwit_swm341", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "synwit/swm341"}
+          - {RTT_BSP_NAME: "synwit_swm320-mini", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "synwit/swm320-mini"}
+          - {RTT_BSP_NAME: "synwit_swm341-mini", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "synwit/swm341-mini"}
          #- {RTT_BSP_NAME: "tae32f5300", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "tae32f5300"}  #musl toolchain 未支持
          #- {RTT_BSP_NAME: "taihu", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "taihu"} #powerpc-eabi-gcc 未支持
          #- {RTT_BSP_NAME: "thead-smart", RTT_TOOL_CHAIN: "sourcery-riscv64-unknown-elf", RTT_BSP: "thead-smart"} #menuconfig有问题
@@ -274,7 +270,7 @@ jobs:
           - {RTT_BSP_NAME: "zynqmp-r5-axu4ev", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "zynqmp-r5-axu4ev"}
   
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Set up Python
         uses: actions/setup-python@v3
         with:
@@ -284,9 +280,9 @@ jobs:
         shell: bash
         run: |
           sudo apt-get update
-          sudo apt-get -qq install gcc-multilib libncurses5-dev scons
-          sudo python -m pip install --upgrade pip -qq
-          pip install requests -qq
+          wget https://raw.githubusercontent.com/RT-Thread/env/master/install_ubuntu.sh
+          chmod 777 install_ubuntu.sh
+          ./install_ubuntu.sh
           git config --global http.postBuffer 524288000
           python -c "import tools.menuconfig; tools.menuconfig.touch_env()"
           echo "RTT_ROOT=${{ github.workspace }}" >> $GITHUB_ENV
@@ -346,7 +342,7 @@ jobs:
           wget -q https://github.com/espressif/crosstool-NG/releases/download/esp-2022r1-RC1/riscv32-esp-elf-gcc11_2_0-esp-2022r1-RC1-linux-amd64.tar.xz
           sudo tar xf riscv32-esp-elf-gcc11_2_0-esp-2022r1-RC1-linux-amd64.tar.xz -C /opt
           /opt/riscv32-esp-elf/bin/riscv32-esp-elf-gcc --version
-          /usr/bin/pip install esptool
+          pip3 install esptool
           echo "RTT_EXEC_PATH=/opt/riscv32-esp-elf/bin" >> $GITHUB_ENV
           
       - name: Bsp Scons Compile

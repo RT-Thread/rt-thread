@@ -1,0 +1,43 @@
+name: doc_doxygen
+on:
+  # Runs at 16:00 UTC (BeiJing 00:00) on the 30st of every month
+  schedule:
+    - cron:  '0 16 30 * *'
+  push:
+    branches:
+      - master
+    paths-ignore:
+      - documentation/**
+      - '**/README.md'
+      - '**/README_zh.md'
+  pull_request:
+    branches:
+      - master
+    paths-ignore:
+      - documentation/**
+      - bsp/**
+      - examples/**
+      - .github/**
+      - '**/README.md'
+      - '**/README_zh.md'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: doxygen_doc generate
+    if: github.repository_owner == 'RT-Thread'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: 'recursive'
+      - name: Install Tools
+        shell: bash
+        run: |
+          sudo apt-get update
+          sudo apt-get -qq install doxygen graphviz
+      - name: generat doxygen html
+        shell: bash
+        run: |
+          cd documentation/doxygen
+          doxygen Doxyfile
+          cat Doxyfile

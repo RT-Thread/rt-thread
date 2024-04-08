@@ -7,6 +7,7 @@
  * Date         Author         Notes
  * 2022-05-16   shelton        first version
  * 2023-04-08   shelton        add support f423
+ * 2023-10-18   shelton        add support f402/f405
  */
 
 #include <rtthread.h>
@@ -22,11 +23,34 @@
 
 #define BKUP_REG_DATA                   0xA5A5
 
+#if   defined (SOC_SERIES_AT32F403A) || defined (SOC_SERIES_AT32F407) || \
+      defined (SOC_SERIES_AT32F413)
+#define Alarm_IRQn                      RTCAlarm_IRQn
+#define Alarm_IRQHandler                RTCAlarm_IRQHandler
+#elif defined (SOC_SERIES_AT32F421)  || defined (SOC_SERIES_AT32F425)
+#define Alarm_IRQn                      RTC_IRQn
+#define Alarm_IRQHandler                RTC_IRQHandler
+#else
+#define Alarm_IRQn                      ERTCAlarm_IRQn
+#define Alarm_IRQHandler                ERTCAlarm_IRQHandler
+#endif
+
+struct rtc_device_object
+{
+    rt_rtc_dev_t rtc_dev;
+#ifdef RT_USING_ALARM
+    struct rt_rtc_wkalarm   wkalarm;
+#endif
+};
+
+static struct rtc_device_object rtc_device;
+
 static time_t get_rtc_timestamp(void)
 {
 #if defined (SOC_SERIES_AT32F435) || defined (SOC_SERIES_AT32F437) || \
     defined (SOC_SERIES_AT32F415) || defined (SOC_SERIES_AT32F421) || \
-    defined (SOC_SERIES_AT32F425) || defined (SOC_SERIES_AT32F423)
+    defined (SOC_SERIES_AT32F425) || defined (SOC_SERIES_AT32F423) || \
+    defined (SOC_SERIES_AT32F402) || defined (SOC_SERIES_AT32F405)
     struct tm tm_new;
     ertc_time_type ertc_time_struct;
 
@@ -51,7 +75,8 @@ static rt_err_t set_rtc_time_stamp(time_t time_stamp)
 {
 #if defined (SOC_SERIES_AT32F435) || defined (SOC_SERIES_AT32F437) || \
     defined (SOC_SERIES_AT32F415) || defined (SOC_SERIES_AT32F421) || \
-    defined (SOC_SERIES_AT32F425) || defined (SOC_SERIES_AT32F423)
+    defined (SOC_SERIES_AT32F425) || defined (SOC_SERIES_AT32F423) || \
+    defined (SOC_SERIES_AT32F402) || defined (SOC_SERIES_AT32F405)
     struct tm now;
 
     gmtime_r(&time_stamp, &now);
@@ -96,7 +121,8 @@ static rt_err_t rt_rtc_config(void)
 
 #if defined (SOC_SERIES_AT32F435) || defined (SOC_SERIES_AT32F437) || \
     defined (SOC_SERIES_AT32F415) || defined (SOC_SERIES_AT32F421) || \
-    defined (SOC_SERIES_AT32F425) || defined (SOC_SERIES_AT32F423)
+    defined (SOC_SERIES_AT32F425) || defined (SOC_SERIES_AT32F423) || \
+    defined (SOC_SERIES_AT32F402) || defined (SOC_SERIES_AT32F405)
 
     /* select rtc clock source */
 #ifdef BSP_RTC_USING_LICK
@@ -196,24 +222,167 @@ static rt_err_t _rtc_set_secs(time_t *args)
     return result;
 }
 
+#ifdef RT_USING_ALARM
+static rt_err_t rtc_alarm_time_set(struct rtc_device_object* p_dev)
+{
+    exint_init_type exint_init_struct;
+
+#if defined (SOC_SERIES_AT32F403A) || defined (SOC_SERIES_AT32F407) || \
+    defined (SOC_SERIES_AT32F413)
+    struct tm tm_new;
+    time_t sec_count;
+#endif
+    /* config the exint line of the rtc alarm */
+    exint_init_struct.line_select = EXINT_LINE_17;
+    exint_init_struct.line_enable = TRUE;
+    exint_init_struct.line_mode = EXINT_LINE_INTERRUPUT;
+    exint_init_struct.line_polarity = EXINT_TRIGGER_RISING_EDGE;
+    exint_init(&exint_init_struct);
+
+    if (p_dev->wkalarm.enable)
+    {
+        nvic_irq_enable(Alarm_IRQn, 0, 0);
+
+#if defined (SOC_SERIES_AT32F403A) || defined (SOC_SERIES_AT32F407) || \
+    defined (SOC_SERIES_AT32F413)
+        /* clear alarm flag */
+        rtc_flag_clear(RTC_TA_FLAG);
+        /* wait for the register write to complete */
+        rtc_wait_config_finish();
+        /* enable alarm interrupt */
+        rtc_interrupt_enable(RTC_TA_INT, TRUE);
+        /* wait for the register write to complete */
+        rtc_wait_config_finish();
+
+        tm_new.tm_sec = p_dev->wkalarm.tm_sec;
+        tm_new.tm_min = p_dev->wkalarm.tm_min;
+        tm_new.tm_hour = p_dev->wkalarm.tm_hour;
+        tm_new.tm_mday = p_dev->wkalarm.tm_mday;
+        tm_new.tm_mon = p_dev->wkalarm.tm_mon;
+        tm_new.tm_year = p_dev->wkalarm.tm_year;
+
+        sec_count = timegm(&tm_new);
+        rtc_alarm_set(sec_count);
+        /* wait for the register write to complete */
+        rtc_wait_config_finish();
+#else
+        ertc_alarm_enable(ERTC_ALA, FALSE);
+        ertc_flag_clear(ERTC_ALAF_FLAG);
+        ertc_alarm_mask_set(ERTC_ALA, ERTC_ALARM_MASK_DATE_WEEK);
+        ertc_alarm_week_date_select(ERTC_ALA, ERTC_SLECT_DATE);
+        ertc_alarm_set(ERTC_ALA, p_dev->wkalarm.tm_mday, p_dev->wkalarm.tm_hour, \
+                       p_dev->wkalarm.tm_min, p_dev->wkalarm.tm_sec, ERTC_24H);
+
+        ertc_interrupt_enable(ERTC_ALA_INT, TRUE);
+        ertc_alarm_enable(ERTC_ALA, TRUE);
+        ertc_flag_clear(ERTC_ALAF_FLAG);
+#endif
+    }
+
+    return RT_EOK;
+}
+
+void Alarm_IRQHandler(void)
+{
+    rt_interrupt_enter();
+
+#if defined (SOC_SERIES_AT32F403A) || defined (SOC_SERIES_AT32F407) || \
+    defined (SOC_SERIES_AT32F413)
+    if(rtc_flag_get(RTC_TA_FLAG) != RESET)
+    {
+        /* clear exint line flag */
+        exint_flag_clear(EXINT_LINE_17);
+
+        /* wait for the register write to complete */
+        rtc_wait_config_finish();
+
+        /* clear alarm flag */
+        rtc_flag_clear(RTC_TA_FLAG);
+
+        /* wait for the register write to complete */
+        rtc_wait_config_finish();
+
+        rt_alarm_update(&rtc_device.rtc_dev.parent, 1);
+    }
+#else
+    if(ertc_flag_get(ERTC_ALAF_FLAG) != RESET)
+    {
+        /* clear alarm flag */
+        ertc_flag_clear(ERTC_ALAF_FLAG);
+
+        /* clear exint flag */
+        exint_flag_clear(EXINT_LINE_17);
+
+        rt_alarm_update(&rtc_device.rtc_dev.parent, 1);
+    }
+#endif
+    rt_interrupt_leave();
+}
+#endif
+
+static rt_err_t _rtc_get_alarm(struct rt_rtc_wkalarm *alarm)
+{
+#ifdef RT_USING_ALARM
+    *alarm = rtc_device.wkalarm;
+    LOG_D("GET_ALARM %d:%d:%d",rtc_device.wkalarm.tm_hour,
+        rtc_device.wkalarm.tm_min,rtc_device.wkalarm.tm_sec);
+    return RT_EOK;
+#else
+    return -RT_ERROR;
+#endif
+}
+
+static rt_err_t _rtc_set_alarm(struct rt_rtc_wkalarm *alarm)
+{
+#ifdef RT_USING_ALARM
+    LOG_D("RT_DEVICE_CTRL_RTC_SET_ALARM");
+    if (alarm != RT_NULL)
+    {
+        rtc_device.wkalarm.enable = alarm->enable;
+        rtc_device.wkalarm.tm_year = alarm->tm_year;
+        rtc_device.wkalarm.tm_mon = alarm->tm_mon;
+        rtc_device.wkalarm.tm_mday = alarm->tm_mday;
+        rtc_device.wkalarm.tm_hour = alarm->tm_hour;
+        rtc_device.wkalarm.tm_min = alarm->tm_min;
+        rtc_device.wkalarm.tm_sec = alarm->tm_sec;
+        rtc_alarm_time_set(&rtc_device);
+    }
+    else
+    {
+        LOG_E("RT_DEVICE_CTRL_RTC_SET_ALARM error!!");
+        return -RT_ERROR;
+    }
+    LOG_D("SET_ALARM %d:%d:%d",alarm->tm_hour,
+        alarm->tm_min, alarm->tm_sec);
+    return RT_EOK;
+#else
+    return -RT_ERROR;
+#endif
+}
+
+static rt_err_t _rtc_get_timeval(struct timeval *tv)
+{
+    tv->tv_sec = get_rtc_timestamp();
+
+    return RT_EOK;
+}
+
 static const struct rt_rtc_ops _rtc_ops =
 {
     _rtc_init,
     _rtc_get_secs,
     _rtc_set_secs,
-    RT_NULL,
-    RT_NULL,
-    RT_NULL,
+    _rtc_get_alarm,
+    _rtc_set_alarm,
+    _rtc_get_timeval,
     RT_NULL,
 };
-
-static rt_rtc_dev_t at32_rtc_dev;
 
 int rt_hw_rtc_init(void)
 {
     rt_err_t result;
-    at32_rtc_dev.ops = &_rtc_ops;
-    result = rt_hw_rtc_register(&at32_rtc_dev, "rtc", RT_DEVICE_FLAG_RDWR,RT_NULL);
+    rtc_device.rtc_dev.ops = &_rtc_ops;
+    result = rt_hw_rtc_register(&rtc_device.rtc_dev, "rtc", RT_DEVICE_FLAG_RDWR, RT_NULL);
     if (result != RT_EOK)
     {
         LOG_E("rtc register err code: %d", result);

@@ -207,6 +207,7 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
         env['LINK'] = rtconfig.LINK
     if exec_path:
         env.PrependENVPath('PATH', rtconfig.EXEC_PATH)
+    env['ASCOM']= env['ASPPCOM']
 
     if GetOption('strict-compiling'):
         STRICT_FLAGS = ''
@@ -288,18 +289,18 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
     if rtconfig.PLATFORM in ['gcc'] and str(env['LINKFLAGS']).find('nano.specs') != -1:
         env.AppendUnique(CPPDEFINES = ['_REENT_SMALL'])
 
-    add_rtconfig = GetOption('add_rtconfig')
-    if add_rtconfig:
-        add_rtconfig = add_rtconfig.split(',')
-        if isinstance(add_rtconfig, list):
-            for config in add_rtconfig:
+    attach_global_macros = GetOption('global-macros')
+    if attach_global_macros:
+        attach_global_macros = attach_global_macros.split(',')
+        if isinstance(attach_global_macros, list):
+            for config in attach_global_macros:
                 if isinstance(config, str):
-                    AddDepend(add_rtconfig)
+                    AddDepend(attach_global_macros)
                     env.Append(CFLAGS=' -D' + config, CXXFLAGS=' -D' + config, AFLAGS=' -D' + config)
                 else:
-                    print('add_rtconfig arguements are illegal!')
+                    print('--global-macros arguments are illegal!')
         else:
-            print('add_rtconfig arguements are illegal!')
+            print('--global-macros arguments are illegal!')
 
     if GetOption('genconfig'):
         from genconf import genconfig
@@ -316,7 +317,7 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
             menuconfig(Rtt_Root)
             exit(0)
 
-    if GetOption('pyconfig_silent'):
+    if GetOption('pyconfig-silent'):
         from menuconfig import guiconfig_silent
         guiconfig_silent(Rtt_Root)
         exit(0)
@@ -782,6 +783,7 @@ def DoBuilding(target, objects):
 
         return False
 
+    PreBuilding()
     objects = one_list(objects)
 
     program = None
@@ -872,6 +874,9 @@ def GenTargetProject(program = None):
     if GetOption('target') == 'vsc':
         from vsc import GenerateVSCode
         GenerateVSCode(Env)
+        if GetOption('cmsispack'):
+            from vscpyocd import GenerateVSCodePyocdConfig
+            GenerateVSCodePyocdConfig(GetOption('cmsispack'))
 
     if GetOption('target') == 'cdk':
         from cdk import CDKProject
@@ -906,7 +911,7 @@ def GenTargetProject(program = None):
         ESPIDFProject(Env, Projects)
 
 def EndBuilding(target, program = None):
-    from mkdist import MkDist, MkDist_Strip
+    from mkdist import MkDist
 
     need_exit = False
 
@@ -936,9 +941,6 @@ def EndBuilding(target, program = None):
     project_path = GetOption('project-path')
     if GetOption('make-dist') and program != None:
         MkDist(program, BSP_ROOT, Rtt_Root, Env, project_name, project_path)
-        need_exit = True
-    if GetOption('make-dist-strip') and program != None:
-        MkDist_Strip(program, BSP_ROOT, Rtt_Root, Env)
         need_exit = True
     if GetOption('make-dist-ide') and program != None:
         import subprocess

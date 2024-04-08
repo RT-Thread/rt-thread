@@ -6,9 +6,10 @@
    Change Logs:
    Date             Author          Notes
    2022-03-31       CDT             First version
+   2023-09-30       CDT             Modify for doxygen
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -73,10 +74,10 @@ extern USBH_HOST                  usb_app_host;
 
 /**
  * @brief  Initialize Disk Drive
- * @param  [in] drv     Physical drive number (0)
+ * @param  [in] pdrv        Physical drive number (0)
  * @retval DSTATUS
  */
-DSTATUS disk_initialize(BYTE drv)
+DSTATUS disk_initialize(BYTE pdrv)
 {
     if (host_driver_ifdevconnected(&usb_app_instance) != 0UL) {
         Stat &= (DSTATUS)~STA_NOINIT;
@@ -86,13 +87,13 @@ DSTATUS disk_initialize(BYTE drv)
 
 /**
  * @brief  Get Disk Status
- * @param  [in] drv Physical drive number (0)
+ * @param  [in] pdrv        Physical drive number (0)
  * @retval DSTATUS
  */
-DSTATUS disk_status(BYTE drv)
+DSTATUS disk_status(BYTE pdrv)
 {
     DSTATUS status = Stat;
-    if (drv != 0U) {
+    if (pdrv != 0U) {
         status = STA_NOINIT;        /* Supports only single drive */
     }
     return status;
@@ -100,10 +101,10 @@ DSTATUS disk_status(BYTE drv)
 
 /**
  * @brief  Read Sector(s)
- * @param  [in] drv     Physical drive number (0)
- * @param  [in] buff    Pointer to the data buffer to store read data
- * @param  [in] sector  Start sector number (LBA)
- * @param  [in] count   Sector count (1..255)
+ * @param  [in] pdrv        Physical drive number (0)
+ * @param  [in] buff        Pointer to the data buffer to store read data
+ * @param  [in] sector      Start sector number (LBA)
+ * @param  [in] count       Sector count (1..255)
  * @retval DSTATUS
  */
 DRESULT disk_read(BYTE pdrv, BYTE *buff, LBA_t sector, UINT count)
@@ -136,11 +137,10 @@ DRESULT disk_read(BYTE pdrv, BYTE *buff, LBA_t sector, UINT count)
 
 }
 
-
 #if _READONLY == 0
 /**
  * @brief  Write Sector(s)
- * @param  [in] drv     Physical drive number (0)
+ * @param  [in] pdrv    Physical drive number (0)
  * @param  [in] buff    Pointer to the data to be written
  * @param  [in] sector  Start sector number (LBA)
  * @param  [in] count   Sector count (1..255)
@@ -177,11 +177,10 @@ DRESULT disk_write(BYTE pdrv, const BYTE *buff, LBA_t sector, UINT count)
 }
 #endif /* _READONLY == 0 */
 
-//#if _USE_IOCTL != 0
 /**
  * @brief  Miscellaneous Functions
- * @param  [in] drv     Physical drive number (0)
- * @param  [in] ctrl    Control code
+ * @param  [in] pdrv    Physical drive number (0)
+ * @param  [in] cmd     Command code
  * @param  [in] buff    Buffer to send/receive control data
  **
  * @retval DSTATUS
@@ -221,8 +220,8 @@ DRESULT disk_ioctl(BYTE pdrv, BYTE cmd, void *buff)
     }
     return res;
 }
-//#endif
-#endif /* _USE_IOCTL != 0 */
+
+#endif /* #ifdef USB_MSC_FAT_VALID */
 
 /**
  * @}

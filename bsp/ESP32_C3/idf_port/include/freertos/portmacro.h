@@ -51,6 +51,7 @@
 #include "esp_heap_caps.h"
 #include "esp_system.h"             /* required by esp_get_...() functions in portable.h. [refactor-todo] Update portable.h */
 #include "esp_newlib.h"
+#include "rtthread.h"
 
 /* [refactor-todo] These includes are not directly used in this file. They are kept into to prevent a breaking change. Remove these. */
 #include <limits.h>
@@ -325,12 +326,8 @@ FORCE_INLINE_ATTR BaseType_t xPortGetCoreID(void)
 
 FORCE_INLINE_ATTR bool xPortCanYield(void)
 {
-    uint32_t threshold = REG_READ(INTERRUPT_CORE0_CPU_INT_THRESH_REG);
-    /* when enter critical code, FreeRTOS will mask threshold to RVHAL_EXCM_LEVEL
-     * and exit critical code, will recover threshold value (1). so threshold <= 1
-     * means not in critical code
-     */
-    return (threshold <= 1);
+    rt_base_t level = rt_interrupt_get_nest();
+    return (level == 0);
 }
 
 #define FREERTOS_PRIORITY_TO_RTTHREAD(priority)    ( configMAX_PRIORITIES - 1 - ( priority ) )

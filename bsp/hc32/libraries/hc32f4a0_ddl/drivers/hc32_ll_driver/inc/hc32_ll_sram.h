@@ -7,9 +7,11 @@
    Change Logs:
    Date             Author          Notes
    2022-03-31       CDT             First version
+   2022-10-31       CDT             Deleted redundant comments
+   2023-06-30       CDT             Modify typo
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -62,7 +64,6 @@ extern "C"
  * @defgroup SRAM_Sel SRAM Selection
  * @{
  */
-/* SRAM selection */
 #define SRAM_SRAMH              (1UL << 2U)                 /*!< SRAMH: 0x1FFE0000~0x1FFFFFFF, 128KB */
 #define SRAM_SRAM123            (1UL << 0U)                 /*!< SRAM1: 0x20000000~0x2001FFFF, 128KB
                                                                  SRAM2: 0x20020000~0x2003FFFF, 128KB
@@ -98,8 +99,8 @@ extern "C"
  * @note Even-parity check error, ECC check error.
  * @{
  */
-#define SRAM_ERR_MD_NMI         (0UL)                        /*!< Non-maskable interrupt occurres while check error occurres. */
-#define SRAM_ERR_MD_RST         (1UL)                        /*!< System reset occurres while check error occurres. */
+#define SRAM_ERR_MD_NMI         (0UL)                        /*!< Non-maskable interrupt occurrence while check error occurs. */
+#define SRAM_ERR_MD_RST         (1UL)                        /*!< System reset occurrence while check error occurs. */
 /**
  * @}
  */
@@ -109,24 +110,24 @@ extern "C"
  * @{
  */
 #define SRAM_ECC_MD_INVD        (0U)                        /*!< The ECC mode is invalid. */
-#define SRAM_ECC_MD1            (SRAMC_CKCR_ECCMOD_0)       /*!< When 1-bit error occurres:
+#define SRAM_ECC_MD1            (SRAMC_CKCR_ECCMOD_0)       /*!< When 1-bit error occurs:
                                                                  ECC error corrects.
                                                                  No 1-bit-error status flag setting, no interrupt or reset.
-                                                                 When 2-bit error occurres:
+                                                                 When 2-bit error occurs:
                                                                  ECC error detects.
-                                                                 2-bit-error status flag sets and interrupt or reset occurres. */
-#define SRAM_ECC_MD2            (SRAMC_CKCR_ECCMOD_1)       /*!< When 1-bit error occurres:
+                                                                 2-bit-error status flag sets and interrupt or reset occurs. */
+#define SRAM_ECC_MD2            (SRAMC_CKCR_ECCMOD_1)       /*!< When 1-bit error occurs:
                                                                  ECC error corrects.
                                                                  1-bit-error status flag sets, no interrupt or reset.
-                                                                 When 2-bit error occurres:
+                                                                 When 2-bit error occurs:
                                                                  ECC error detects.
-                                                                 2-bit-error status flag sets and interrupt or reset occurres. */
-#define SRAM_ECC_MD3            (SRAMC_CKCR_ECCMOD)         /*!< When 1-bit error occurres:
+                                                                 2-bit-error status flag sets and interrupt or reset occurs. */
+#define SRAM_ECC_MD3            (SRAMC_CKCR_ECCMOD)         /*!< When 1-bit error occurs:
                                                                  ECC error corrects.
-                                                                 1-bit-error status flag sets and interrupt or reset occurres.
-                                                                 When 2-bit error occurres:
+                                                                 1-bit-error status flag sets and interrupt or reset occurs.
+                                                                 When 2-bit error occurs:
                                                                  ECC error detects.
-                                                                 2-bit-error status flag sets and interrupt or reset occurres. */
+                                                                 2-bit-error status flag sets and interrupt or reset occurs. */
 /**
  * @}
  */
@@ -145,6 +146,7 @@ extern "C"
 #define SRAM_FLAG_SRAMB_2ERR    (SRAMC_CKSR_SRAMB_2ERR)     /*!< SRAMB ECC 2-bit error. */
 #define SRAM_FLAG_CACHE_PYERR   (SRAMC_CKSR_CACHE_PYERR)    /*!< Cache RAM parity error. */
 #define SRAM_FLAG_ALL           (0x1FFUL)
+
 /**
  * @}
  */

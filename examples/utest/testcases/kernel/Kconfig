@@ -39,6 +39,7 @@ config UTEST_MESSAGEQUEUE_TC
 
 config UTEST_SIGNAL_TC
     bool "signal test"
+    select RT_USING_SIGNALS
     default n
 
 config UTEST_MUTEX_TC
@@ -58,5 +59,18 @@ config UTEST_THREAD_TC
 config UTEST_ATOMIC_TC
     bool "atomic test"
     default n
-    
+
+config UTEST_HOOKLIST_TC
+    bool "hook list test"
+    select RT_USING_HOOKLIST
+    default n
+
+config UTEST_MTSAFE_KPRINT_TC
+    bool "mtsafe kprint test"
+    default n
+
+config UTEST_SCHEDULER_TC
+    bool "scheduler test"
+    default n
+
 endmenu

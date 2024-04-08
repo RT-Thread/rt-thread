@@ -12,27 +12,32 @@
  * 2021-02-20     lizhirui     fix some warnings
  * 2023-03-13     WangXiaoyao  Format & fix syscall return value
  * 2023-07-06     Shell        adapt the signal API, and clone, fork to new implementation of lwp signal
+ * 2023-07-27     Shell        Move tid_put() from lwp_free() to sys_exit()
+ * 2023-11-16     xqyjlj       fix some syscalls (about sched_*, get/setpriority)
+ * 2023-11-17     xqyjlj       add process group and session support
+ * 2023-11-30     Shell        Fix sys_setitimer() and exit(status)
  */
-
+#define __RT_IPC_SOURCE__
 #define _GNU_SOURCE
 
 /* RT-Thread System call */
 #include <rtthread.h>
 #include <rthw.h>
 #include <board.h>
-#include <mm_aspace.h>
+
 #include <string.h>
 #include <stdint.h>
 
-#define DBG_TAG    "SYSCALL"
+#define DBG_TAG    "lwp.syscall"
 #define DBG_LVL    DBG_INFO
 #include <rtdbg.h>
 
 #include "syscall_generic.h"
 
-#include <lwp.h>
-#include "lwp_signal.h"
+#include "libc_musl.h"
+#include "lwp_internal.h"
 #ifdef ARCH_MM_MMU
+#include <mm_aspace.h>
 #include <lwp_user_mm.h>
 #include <lwp_arch.h>
 #endif
@@ -53,6 +58,11 @@
 #include <stdio.h> /* rename() */
 #include <sys/stat.h>
 #include <sys/statfs.h> /* statfs() */
+#include <sys/timerfd.h>
+#include <sys/ioctl.h>
+#ifdef RT_USING_MUSLLIBC
+#include <sys/signalfd.h>
+#endif
 #endif
 
 #include "mqueue.h"
@@ -81,7 +91,6 @@
     #define SYSCALL_USPACE(f)   SYSCALL_SIGN(sys_notimpl)
 #endif /* defined(RT_USING_DFS) && defined(ARCH_MM_MMU) */
 
-#include <tty.h>
 #include "lwp_ipc_internal.h"
 #include <sched.h>
 
@@ -318,68 +327,45 @@ static void _crt_thread_entry(void *parameter)
 #endif /* ARCH_MM_MMU */
 }
 
-/* thread/process */
-void sys_exit(int value)
+/* exit group */
+sysret_t sys_exit_group(int value)
 {
-    rt_base_t level;
-    rt_thread_t tid, main_thread;
-    struct rt_lwp *lwp;
+    sysret_t rc = 0;
+    lwp_status_t lwp_status;
+    struct rt_lwp *lwp = lwp_self();
 
-    LOG_D("thread/process exit.");
-
-    tid = rt_thread_self();
-    lwp = (struct rt_lwp *)tid->lwp;
-
-    level = rt_hw_interrupt_disable();
-#ifdef ARCH_MM_MMU
-    if (tid->clear_child_tid)
+    if (lwp)
     {
-        int t = 0;
-        int *clear_child_tid = tid->clear_child_tid;
-
-        tid->clear_child_tid = RT_NULL;
-        lwp_put_to_user(clear_child_tid, &t, sizeof t);
-        sys_futex(clear_child_tid, FUTEX_WAKE, 1, RT_NULL, RT_NULL, 0);
+        lwp_status = LWP_CREATE_STAT_EXIT(value);
+        lwp_exit(lwp, lwp_status);
     }
-    lwp_terminate(lwp);
-
-    main_thread = rt_list_entry(lwp->t_grp.prev, struct rt_thread, sibling);
-    if (main_thread == tid)
+    else
     {
-        lwp_wait_subthread_exit();
-        lwp->lwp_ret = value;
+        LOG_E("Can't find matching process of current thread");
+        rc = -EINVAL;
     }
-#else
-    main_thread = rt_list_entry(lwp->t_grp.prev, struct rt_thread, sibling);
-    if (main_thread == tid)
-    {
-        rt_thread_t sub_thread;
-        rt_list_t *list;
 
-        lwp_terminate(lwp);
-
-        /* delete all subthread */
-        while ((list = tid->sibling.prev) != &lwp->t_grp)
-        {
-            sub_thread = rt_list_entry(list, struct rt_thread, sibling);
-            rt_list_remove(&sub_thread->sibling);
-            rt_thread_delete(sub_thread);
-        }
-        lwp->lwp_ret = value;
-    }
-#endif /* ARCH_MM_MMU */
-
-    rt_thread_delete(tid);
-    rt_schedule();
-    rt_hw_interrupt_enable(level);
-
-    return;
+    return rc;
 }
 
-/* exit group */
-void sys_exit_group(int status)
+/* thread exit */
+sysret_t sys_exit(int status)
 {
-    return;
+    sysret_t rc = 0;
+    rt_thread_t tid;
+
+    tid = rt_thread_self();
+    if (tid && tid->lwp)
+    {
+        lwp_thread_exit(tid, status);
+    }
+    else
+    {
+        LOG_E("Can't find matching process of current thread");
+        rc = -EINVAL;
+    }
+
+    return rc;
 }
 
 /* syscall: "read" ret: "ssize_t" args: "int" "void *" "size_t" */
@@ -408,7 +394,8 @@ ssize_t sys_read(int fd, void *buf, size_t nbyte)
     ret = read(fd, kmem, nbyte);
     if (ret > 0)
     {
-        lwp_put_to_user(buf, kmem, ret);
+        if (ret != lwp_put_to_user(buf, kmem, ret))
+            return -EFAULT;
     }
 
     if (ret < 0)
@@ -436,23 +423,22 @@ ssize_t sys_write(int fd, const void *buf, size_t nbyte)
     void *kmem = RT_NULL;
     ssize_t ret = -1;
 
-    if (!nbyte)
+    if (nbyte)
     {
-        return -EINVAL;
+        if (!lwp_user_accessable((void *)buf, nbyte))
+        {
+            return -EFAULT;
+        }
+
+        kmem = kmem_get(nbyte);
+        if (!kmem)
+        {
+            return -ENOMEM;
+        }
+
+        lwp_get_from_user(kmem, (void *)buf, nbyte);
     }
 
-    if (!lwp_user_accessable((void *)buf, nbyte))
-    {
-        return -EFAULT;
-    }
-
-    kmem = kmem_get(nbyte);
-    if (!kmem)
-    {
-        return -ENOMEM;
-    }
-
-    lwp_get_from_user(kmem, (void *)buf, nbyte);
     ret = write(fd, kmem, nbyte);
     if (ret < 0)
     {
@@ -473,9 +459,9 @@ ssize_t sys_write(int fd, const void *buf, size_t nbyte)
 }
 
 /* syscall: "lseek" ret: "off_t" args: "int" "off_t" "int" */
-off_t sys_lseek(int fd, off_t offset, int whence)
+size_t sys_lseek(int fd, size_t offset, int whence)
 {
-    off_t ret = lseek(fd, offset, whence);
+    size_t ret = lseek(fd, offset, whence);
     return (ret < 0 ? GET_ERRNO() : ret);
 }
 
@@ -493,7 +479,7 @@ sysret_t sys_open(const char *name, int flag, ...)
         return -EFAULT;
     }
 
-    len = rt_strlen(name);
+    len = lwp_user_strlen(name);
     if (!len)
     {
         return -EINVAL;
@@ -513,7 +499,12 @@ sysret_t sys_open(const char *name, int flag, ...)
         va_end(ap);
     }
 
-    lwp_get_from_user(kname, (void *)name, len + 1);
+    if (lwp_get_from_user(kname, (void *)name, len + 1) != (len + 1))
+    {
+        kmem_put(kname);
+        return -EINVAL;
+    }
+
     ret = open(kname, flag, mode);
     if (ret < 0)
     {
@@ -550,12 +541,11 @@ sysret_t sys_openat(int dirfd, const char *name, int flag, mode_t mode)
 {
 #ifdef ARCH_MM_MMU
     int ret = -1;
-    int err = 0;
     rt_size_t len = 0;
     char *kname = RT_NULL;
 
-    len = lwp_user_strlen(name, &err);
-    if (!len || err != 0)
+    len = lwp_user_strlen(name);
+    if (len <= 0)
     {
         return -EINVAL;
     }
@@ -635,102 +625,9 @@ sysret_t sys_fstat(int file, struct stat *buf)
 #endif
 }
 
-/* DFS and lwip definitions */
-#define IMPL_POLLIN     (0x01)
-
-#define IMPL_POLLOUT    (0x02)
-
-#define IMPL_POLLERR    (0x04)
-#define IMPL_POLLHUP    (0x08)
-#define IMPL_POLLNVAL   (0x10)
-
-/* musl definitions */
-#define INTF_POLLIN     0x001
-#define INTF_POLLPRI    0x002
-#define INTF_POLLOUT    0x004
-#define INTF_POLLERR    0x008
-#define INTF_POLLHUP    0x010
-#define INTF_POLLNVAL   0x020
-#define INTF_POLLRDNORM 0x040
-#define INTF_POLLRDBAND 0x080
-#define INTF_POLLWRNORM 0x100
-#define INTF_POLLWRBAND 0x200
-#define INTF_POLLMSG    0x400
-#define INTF_POLLRDHUP  0x2000
-
-#define INTF_POLLIN_MASK    (INTF_POLLIN | INTF_POLLRDNORM | INTF_POLLRDBAND | INTF_POLLPRI)
-#define INTF_POLLOUT_MASK   (INTF_POLLOUT | INTF_POLLWRNORM | INTF_POLLWRBAND)
-
-static void musl2dfs_events(short *events)
-{
-    short origin_e = *events;
-    short result_e = 0;
-
-    if (origin_e & INTF_POLLIN_MASK)
-    {
-        result_e |= IMPL_POLLIN;
-    }
-
-    if (origin_e & INTF_POLLOUT_MASK)
-    {
-        result_e |= IMPL_POLLOUT;
-    }
-
-    if (origin_e & INTF_POLLERR)
-    {
-        result_e |= IMPL_POLLERR;
-    }
-
-    if (origin_e & INTF_POLLHUP)
-    {
-        result_e |= IMPL_POLLHUP;
-    }
-
-    if (origin_e & INTF_POLLNVAL)
-    {
-        result_e |= IMPL_POLLNVAL;
-    }
-
-    *events = result_e;
-}
-
-static void dfs2musl_events(short *events)
-{
-    short origin_e = *events;
-    short result_e = 0;
-
-    if (origin_e & IMPL_POLLIN)
-    {
-        result_e |= INTF_POLLIN_MASK;
-    }
-
-    if (origin_e & IMPL_POLLOUT)
-    {
-        result_e |= INTF_POLLOUT_MASK;
-    }
-
-    if (origin_e & IMPL_POLLERR)
-    {
-        result_e |= INTF_POLLERR;
-    }
-
-    if (origin_e & IMPL_POLLHUP)
-    {
-        result_e |= INTF_POLLHUP;
-    }
-
-    if (origin_e & IMPL_POLLNVAL)
-    {
-        result_e |= INTF_POLLNVAL;
-    }
-
-    *events = result_e;
-}
-
 sysret_t sys_poll(struct pollfd *fds, nfds_t nfds, int timeout)
 {
     int ret = -1;
-    int i = 0;
 #ifdef ARCH_MM_MMU
     struct pollfd *kfds = RT_NULL;
 
@@ -747,43 +644,20 @@ sysret_t sys_poll(struct pollfd *fds, nfds_t nfds, int timeout)
 
     lwp_get_from_user(kfds, fds, nfds * sizeof *kfds);
 
-    for (i = 0; i < nfds; i++)
-    {
-        musl2dfs_events(&kfds[i].events);
-    }
     ret = poll(kfds, nfds, timeout);
     if (ret > 0)
     {
-        for (i = 0; i < nfds; i++)
-        {
-            dfs2musl_events(&kfds->revents);
-        }
         lwp_put_to_user(fds, kfds, nfds * sizeof *kfds);
     }
 
     kmem_put(kfds);
     return ret;
 #else
-#ifdef RT_USING_MUSLLIBC
-    for (i = 0; i < nfds; i++)
-    {
-        musl2dfs_events(&fds->events);
-    }
-#endif /* RT_USING_MUSLLIBC */
     if (!lwp_user_accessable((void *)fds, nfds * sizeof *fds))
     {
         return -EFAULT;
     }
     ret = poll(fds, nfds, timeout);
-#ifdef RT_USING_MUSLLIBC
-    if (ret > 0)
-    {
-        for (i = 0; i < nfds; i++)
-        {
-            dfs2musl_events(&fds->revents);
-        }
-    }
-#endif /* RT_USING_MUSLLIBC */
     return ret;
 #endif /* ARCH_MM_MMU */
 }
@@ -898,15 +772,8 @@ sysret_t sys_unlink(const char *pathname)
     int ret = -1;
     rt_size_t len = 0;
     char *kname = RT_NULL;
-    int a_err = 0;
 
-    lwp_user_strlen(pathname, &a_err);
-    if (a_err)
-    {
-        return -EFAULT;
-    }
-
-    len = rt_strlen(pathname);
+    len = lwp_user_strlen(pathname);
     if (!len)
     {
         return -EINVAL;
@@ -918,7 +785,11 @@ sysret_t sys_unlink(const char *pathname)
         return -ENOMEM;
     }
 
-    lwp_get_from_user(kname, (void *)pathname, len + 1);
+    if (lwp_get_from_user(kname, (void *)pathname, len + 1) != (len + 1))
+    {
+        kmem_put(kname);
+        return -EINVAL;
+    }
     ret = unlink(kname);
     if (ret < 0)
     {
@@ -1005,40 +876,104 @@ sysret_t sys_settimeofday(const struct timeval *tv, const struct timezone *tzp)
 
 sysret_t sys_exec(char *filename, int argc, char **argv, char **envp)
 {
-    return lwp_execve(filename, 0, argc, argv, envp);
+    int ret = 0;
+    int len = 0;
+    char *kfilename = RT_NULL;
+
+    len = lwp_user_strlen(filename);
+    if (len <= 0)
+    {
+        return -EFAULT;
+    }
+
+    kfilename = (char *)kmem_get(len + 1);
+    if (!kfilename)
+    {
+        return -ENOMEM;
+    }
+
+    if (lwp_get_from_user(kfilename, (void *)filename, len + 1) != (len + 1))
+    {
+        kmem_put(kfilename);
+        return -EFAULT;
+    }
+
+    ret = lwp_execve(kfilename, 0, argc, argv, envp);
+
+    kmem_put(kfilename);
+
+    return ret;
 }
 
 sysret_t sys_kill(int pid, int signo)
 {
-    rt_err_t kret;
+    rt_err_t kret = 0;
     sysret_t sysret;
-    rt_base_t level;
-    struct rt_lwp *lwp;
+    struct rt_lwp *lwp = RT_NULL;
 
     /* handling the semantics of sys_kill */
     if (pid > 0)
     {
-        /* TODO: lock the lwp strcut */
-        level = rt_hw_interrupt_disable();
-        lwp = lwp_from_pid(pid);
-
-        /* lwp_signal_kill() can handle NULL lwp */
-        if (lwp)
-            kret = lwp_signal_kill(lwp, signo, SI_USER, 0);
-        else
-            kret = -RT_ENOENT;
-
-        rt_hw_interrupt_enable(level);
-    }
-    else if (pid == 0)
-    {
         /**
-         * sig shall be sent to all processes (excluding an unspecified set
-         * of system processes) whose process group ID is equal to the process
-         * group ID of the sender, and for which the process has permission to
-         * send a signal.
+         * Brief: Match the pid and send signal to the lwp if found
+         * Note: Critical Section
+         * - pid tree (READ. since the lwp is fetch from the pid tree, it must stay there)
          */
-        kret = -RT_ENOSYS;
+        lwp_pid_lock_take();
+        lwp = lwp_from_pid_raw_locked(pid);
+        if (lwp)
+        {
+            lwp_ref_inc(lwp);
+            lwp_pid_lock_release();
+        }
+        else
+        {
+            lwp_pid_lock_release();
+            kret = -RT_ENOENT;
+        }
+
+        if (lwp)
+        {
+            kret = lwp_signal_kill(lwp, signo, SI_USER, 0);
+            lwp_ref_dec(lwp);
+        }
+    }
+    else if (pid < -1 || pid == 0)
+    {
+        pid_t pgid = 0;
+        rt_processgroup_t group;
+
+        if (pid == 0)
+        {
+            /**
+             * sig shall be sent to all processes (excluding an unspecified set
+             * of system processes) whose process group ID is equal to the process
+             * group ID of the sender, and for which the process has permission to
+             * send a signal.
+             */
+            pgid = lwp_pgid_get_byprocess(lwp_self());
+        }
+        else
+        {
+            /**
+             * sig shall be sent to all processes (excluding an unspecified set
+             * of system processes) whose process group ID is equal to the absolute
+             * value of pid, and for which the process has permission to send a signal.
+             */
+            pgid = -pid;
+        }
+
+        group = lwp_pgrp_find(pgid);
+        if (group != RT_NULL)
+        {
+            PGRP_LOCK(group);
+            kret = lwp_pgrp_signal_kill(group, signo, SI_USER, 0);
+            PGRP_UNLOCK(group);
+        }
+        else
+        {
+            kret = -ECHILD;
+        }
     }
     else if (pid == -1)
     {
@@ -1046,15 +981,6 @@ sysret_t sys_kill(int pid, int signo)
          * sig shall be sent to all processes (excluding an unspecified set
          * of system processes) for which the process has permission to send
          * that signal.
-         */
-        kret = -RT_ENOSYS;
-    }
-    else /* pid < -1 */
-    {
-        /**
-         * sig shall be sent to all processes (excluding an unspecified set
-         * of system processes) whose process group ID is equal to the absolute
-         * value of pid, and for which the process has permission to send a signal.
          */
         kret = -RT_ENOSYS;
     }
@@ -1089,21 +1015,44 @@ sysret_t sys_getpid(void)
     return lwp_getpid();
 }
 
+sysret_t sys_getppid(void)
+{
+    rt_lwp_t process;
+
+    process = lwp_self();
+    if (process->parent == RT_NULL)
+    {
+        LOG_E("%s: process %d has no parent process", __func__, lwp_to_pid(process));
+        return 0;
+    }
+    else
+    {
+        return lwp_to_pid(process->parent);
+    }
+}
+
 /* syscall: "getpriority" ret: "int" args: "int" "id_t" */
 sysret_t sys_getpriority(int which, id_t who)
 {
+    long prio = 0xff;
+
     if (which == PRIO_PROCESS)
     {
-        rt_thread_t tid;
+        struct rt_lwp *lwp = RT_NULL;
 
-        tid = rt_thread_self();
-        if (who == (id_t)(rt_size_t)tid || who == 0xff)
+        lwp_pid_lock_take();
+        lwp = lwp_from_pid_locked(who);
+
+        if (lwp)
         {
-            return tid->current_priority;
+            rt_thread_t thread = rt_list_entry(lwp->t_grp.prev, struct rt_thread, sibling);
+            prio = RT_SCHED_PRIV(thread).current_priority;
         }
+
+        lwp_pid_lock_release();
     }
 
-    return 0xff;
+    return prio;
 }
 
 /* syscall: "setpriority" ret: "int" args: "int" "id_t" "int" */
@@ -1111,13 +1060,26 @@ sysret_t sys_setpriority(int which, id_t who, int prio)
 {
     if (which == PRIO_PROCESS)
     {
-        rt_thread_t tid;
+        struct rt_lwp *lwp = RT_NULL;
 
-        tid = rt_thread_self();
-        if ((who == (id_t)(rt_size_t)tid || who == 0xff) && (prio >= 0 && prio < RT_THREAD_PRIORITY_MAX))
+        lwp_pid_lock_take();
+        lwp = lwp_from_pid_locked(who);
+
+        if (lwp && prio >= 0 && prio < RT_THREAD_PRIORITY_MAX)
         {
-            rt_thread_control(tid, RT_THREAD_CTRL_CHANGE_PRIORITY, &prio);
+            rt_list_t *list;
+            rt_thread_t thread;
+            for (list = lwp->t_grp.next; list != &lwp->t_grp; list = list->next)
+            {
+                thread = rt_list_entry(list, struct rt_thread, sibling);
+                rt_thread_control(thread, RT_THREAD_CTRL_CHANGE_PRIORITY, &prio);
+            }
+            lwp_pid_lock_release();
             return 0;
+        }
+        else
+        {
+            lwp_pid_lock_release();
         }
     }
 
@@ -1126,12 +1088,36 @@ sysret_t sys_setpriority(int which, id_t who, int prio)
 
 rt_sem_t sys_sem_create(const char *name, rt_uint32_t value, rt_uint8_t flag)
 {
-    rt_sem_t sem = rt_sem_create(name, value, flag);
+    int len = 0;
+    char *kname = RT_NULL;
+
+    len = lwp_user_strlen(name);
+    if (len <= 0)
+    {
+        return RT_NULL;
+    }
+
+    kname = (char *)kmem_get(len + 1);
+    if (!kname)
+    {
+        return RT_NULL;
+    }
+
+    if (lwp_get_from_user(kname, (void *)name, len + 1) != (len + 1))
+    {
+        kmem_put(kname);
+        return RT_NULL;
+    }
+
+    rt_sem_t sem = rt_sem_create(kname, value, flag);
     if (lwp_user_object_add(lwp_self(), (rt_object_t)sem) != 0)
     {
         rt_sem_delete(sem);
         sem = NULL;
     }
+
+    kmem_put(kname);
+
     return sem;
 }
 
@@ -1152,14 +1138,40 @@ sysret_t sys_sem_release(rt_sem_t sem)
 
 rt_mutex_t sys_mutex_create(const char *name, rt_uint8_t flag)
 {
-    rt_mutex_t mutex = rt_mutex_create(name, flag);
-    if(mutex == NULL)
-        return NULL;
+    int len = 0;
+    char *kname = RT_NULL;
+    rt_mutex_t mutex = RT_NULL;
+
+    len = lwp_user_strlen(name);
+    if (len <= 0)
+    {
+        return RT_NULL;
+    }
+
+    kname = (char *)kmem_get(len + 1);
+    if (!kname)
+    {
+        return RT_NULL;
+    }
+
+    if (lwp_get_from_user(kname, (void *)name, len + 1) != (len + 1))
+    {
+        kmem_put(kname);
+        return RT_NULL;
+    }
+
+    mutex = rt_mutex_create(kname, flag);
+    if(mutex == RT_NULL)
+        return RT_NULL;
+
     if (lwp_user_object_add(lwp_self(), (rt_object_t)mutex) != 0)
     {
         rt_mutex_delete(mutex);
-        mutex = NULL;
+        mutex = RT_NULL;
     }
+
+    kmem_put(kname);
+
     return mutex;
 }
 
@@ -1186,20 +1198,49 @@ rt_base_t sys_brk(void *addr)
 }
 
 void *sys_mmap2(void *addr, size_t length, int prot,
-        int flags, int fd, off_t pgoffset)
+        int flags, int fd, size_t pgoffset)
 {
-    return lwp_mmap2(addr, length, prot, flags, fd, pgoffset);
+    sysret_t rc = 0;
+    long offset = 0;
+
+    /* aligned for user addr */
+    if ((rt_base_t)addr & ARCH_PAGE_MASK)
+    {
+        if (flags & MAP_FIXED)
+            rc = -EINVAL;
+        else
+        {
+            offset = (char *)addr - (char *)RT_ALIGN_DOWN((rt_base_t)addr, ARCH_PAGE_SIZE);
+            length += offset;
+            addr = (void *)RT_ALIGN_DOWN((rt_base_t)addr, ARCH_PAGE_SIZE);
+        }
+    }
+
+    if (rc == 0)
+    {
+        /* fix parameter passing (both along have same effect) */
+        if (fd == -1 || flags & MAP_ANONYMOUS)
+        {
+            fd = -1;
+            /* MAP_SHARED has no effect and treated as nothing */
+            flags &= ~MAP_SHARED;
+            flags |= MAP_PRIVATE | MAP_ANONYMOUS;
+        }
+        rc = (sysret_t)lwp_mmap2(lwp_self(), addr, length, prot, flags, fd, pgoffset);
+    }
+
+    return (char *)rc + offset;
 }
 
 sysret_t sys_munmap(void *addr, size_t length)
 {
-    return lwp_munmap(addr);
+    return lwp_munmap(lwp_self(), addr, length);
 }
 
 void *sys_mremap(void *old_address, size_t old_size,
              size_t new_size, int flags, void *new_address)
 {
-    return (void *)-1;
+    return lwp_mremap(lwp_self(), old_address, old_size, new_size, flags, new_address);
 }
 
 sysret_t sys_madvise(void *addr, size_t len, int behav)
@@ -1210,12 +1251,37 @@ sysret_t sys_madvise(void *addr, size_t len, int behav)
 
 rt_event_t sys_event_create(const char *name, rt_uint8_t flag)
 {
-    rt_event_t event = rt_event_create(name, flag);
+    int len = 0;
+    rt_event_t event = RT_NULL;
+    char *kname = RT_NULL;
+
+    len = lwp_user_strlen(name);
+    if (len <= 0)
+    {
+        return RT_NULL;
+    }
+
+    kname = (char *)kmem_get(len + 1);
+    if (!kname)
+    {
+        return RT_NULL;
+    }
+
+    if (lwp_get_from_user(kname, (void *)name, len + 1) != (len + 1))
+    {
+        kmem_put(kname);
+        return RT_NULL;
+    }
+
+    event = rt_event_create(kname, flag);
     if (lwp_user_object_add(lwp_self(), (rt_object_t)event) != 0)
     {
         rt_event_delete(event);
         event = NULL;
     }
+
+    kmem_put(kname);
+
     return event;
 }
 
@@ -1235,21 +1301,56 @@ sysret_t sys_event_recv(rt_event_t   event,
                        rt_int32_t   timeout,
                        rt_uint32_t *recved)
 {
+    int ret = 0;
+    rt_uint32_t krecved;
+
     if ((recved != NULL) && !lwp_user_accessable((void *)recved, sizeof(rt_uint32_t *)))
     {
         return -EFAULT;
     }
-    return rt_event_recv(event, set, opt, timeout, recved);
+
+    ret = rt_event_recv(event, set, opt, timeout, &krecved);
+    if ((ret == RT_EOK) && recved)
+    {
+        lwp_put_to_user((void *)recved, &krecved, sizeof(rt_uint32_t *));
+    }
+
+    return ret;
 }
 
 rt_mailbox_t sys_mb_create(const char *name, rt_size_t size, rt_uint8_t flag)
 {
-    rt_mailbox_t mb = rt_mb_create(name, size, flag);
+    int len = 0;
+    rt_mailbox_t mb = RT_NULL;
+    char *kname = RT_NULL;
+
+    len = lwp_user_strlen(name);
+    if (len <= 0)
+    {
+        return RT_NULL;
+    }
+
+    kname = (char *)kmem_get(len + 1);
+    if (!kname)
+    {
+        return RT_NULL;
+    }
+
+    if (lwp_get_from_user(kname, (void *)name, len + 1) != (len + 1))
+    {
+        kmem_put(kname);
+        return RT_NULL;
+    }
+
+    mb = rt_mb_create(kname, size, flag);
     if (lwp_user_object_add(lwp_self(), (rt_object_t)mb) != 0)
     {
         rt_mb_delete(mb);
         mb = NULL;
     }
+
+    kmem_put(kname);
+
     return mb;
 }
 
@@ -1272,11 +1373,57 @@ sysret_t sys_mb_send_wait(rt_mailbox_t mb,
 
 sysret_t sys_mb_recv(rt_mailbox_t mb, rt_ubase_t *value, rt_int32_t timeout)
 {
+    int ret = 0;
+    rt_ubase_t *kvalue;
+
     if (!lwp_user_accessable((void *)value, sizeof(rt_ubase_t *)))
     {
         return -EFAULT;
     }
-    return rt_mb_recv(mb, (rt_ubase_t *)value, timeout);
+
+    kvalue = kmem_get(sizeof(rt_ubase_t *));
+    if (kvalue == RT_NULL)
+    {
+        return -ENOMEM;
+    }
+
+    ret = rt_mb_recv(mb, (rt_ubase_t *)kvalue, timeout);
+    if (ret == RT_EOK)
+    {
+        lwp_put_to_user(value, kvalue, sizeof(rt_ubase_t *));
+    }
+
+    kmem_put(kvalue);
+
+    return ret;
+}
+
+rt_weak int syslog_ctrl(int type, char *buf, int len)
+{
+    return -EINVAL;
+}
+
+sysret_t sys_syslog(int type, char *buf, int len)
+{
+    char *tmp;
+    int ret = -1;
+
+    if (!lwp_user_accessable((void *)buf, len))
+    {
+        return -EFAULT;
+    }
+
+    tmp = (char *)rt_malloc(len);
+    if (!tmp)
+    {
+        return -ENOMEM;
+    }
+
+    ret = syslog_ctrl(type, tmp, len);
+    lwp_put_to_user(buf, tmp, len);
+    rt_free(tmp);
+
+    return ret;
 }
 
 rt_mq_t sys_mq_create(const char *name,
@@ -1284,12 +1431,38 @@ rt_mq_t sys_mq_create(const char *name,
                      rt_size_t   max_msgs,
                      rt_uint8_t  flag)
 {
-    rt_mq_t mq = rt_mq_create(name, msg_size, max_msgs, flag);
+    rt_mq_t mq = RT_NULL;
+
+    int len = 0;
+    char *kname = RT_NULL;
+
+    len = lwp_user_strlen(name);
+    if (len <= 0)
+    {
+        return RT_NULL;
+    }
+
+    kname = (char *)kmem_get(len + 1);
+    if (!kname)
+    {
+        return RT_NULL;
+    }
+
+    if (lwp_get_from_user(kname, (void *)name, len + 1) != (len + 1))
+    {
+        kmem_put(kname);
+        return RT_NULL;
+    }
+
+    mq = rt_mq_create(kname, msg_size, max_msgs, flag);
     if (lwp_user_object_add(lwp_self(), (rt_object_t)mq) != 0)
     {
         rt_mq_delete(mq);
         mq = NULL;
     }
+
+    kmem_put(kname);
+
     return mq;
 }
 
@@ -1300,20 +1473,60 @@ sysret_t sys_mq_delete(rt_mq_t mq)
 
 sysret_t sys_mq_send(rt_mq_t mq, void *buffer, rt_size_t size)
 {
+    int ret = 0;
+    void *kbuffer = RT_NULL;
+
     if (!lwp_user_accessable((void *)buffer, size))
     {
         return -EFAULT;
     }
-    return rt_mq_send(mq, buffer, size);
+
+    kbuffer = kmem_get(size);
+    if (kbuffer == RT_NULL)
+    {
+        return -ENOMEM;
+    }
+
+    if (lwp_get_from_user(kbuffer, buffer, size) != size)
+    {
+        kmem_put(kbuffer);
+        return -EINVAL;
+    }
+
+    ret = rt_mq_send(mq, kbuffer, size);
+
+    kmem_put(kbuffer);
+
+    return ret;
 }
 
 sysret_t sys_mq_urgent(rt_mq_t mq, void *buffer, rt_size_t size)
 {
+    int ret = 0;
+    void *kbuffer = RT_NULL;
+
     if (!lwp_user_accessable((void *)buffer, size))
     {
         return -EFAULT;
     }
-    return rt_mq_urgent(mq, buffer, size);
+
+    kbuffer = kmem_get(size);
+    if (kbuffer == RT_NULL)
+    {
+        return -ENOMEM;
+    }
+
+    if (lwp_get_from_user(kbuffer, buffer, size) != size)
+    {
+        kmem_put(kbuffer);
+        return -EINVAL;
+    }
+
+    ret = rt_mq_urgent(mq, kbuffer, size);
+
+    kmem_put(kbuffer);
+
+    return ret;
 }
 
 sysret_t sys_mq_recv(rt_mq_t    mq,
@@ -1321,11 +1534,27 @@ sysret_t sys_mq_recv(rt_mq_t    mq,
                     rt_size_t  size,
                     rt_int32_t timeout)
 {
+    int ret = 0;
+    void *kbuffer = RT_NULL;
+
     if (!lwp_user_accessable((void *)buffer, size))
     {
         return -EFAULT;
     }
-    return rt_mq_recv(mq, buffer, size, timeout);
+
+    kbuffer = kmem_get(size);
+    if (kbuffer == RT_NULL)
+    {
+        return -ENOMEM;
+    }
+
+    ret = rt_mq_recv(mq, kbuffer, size, timeout);
+    if (ret > 0)
+        lwp_put_to_user((void *)buffer, (void *)kbuffer, ret);
+
+    kmem_put(kbuffer);
+
+    return ret;
 }
 
 static void timer_timeout_callback(void *parameter)
@@ -1339,12 +1568,37 @@ rt_timer_t sys_rt_timer_create(const char *name,
                                rt_tick_t time,
                                rt_uint8_t flag)
 {
-    rt_timer_t timer = rt_timer_create(name, timer_timeout_callback, (void *)data, time, flag);
+    int len = 0;
+    char *kname = RT_NULL;
+    rt_timer_t timer = RT_NULL;
+
+    len = lwp_user_strlen(name);
+    if (len <= 0)
+    {
+        return RT_NULL;
+    }
+
+    kname = (char *)kmem_get(len + 1);
+    if (!kname)
+    {
+        return RT_NULL;
+    }
+
+    if (lwp_get_from_user(kname, (void *)name, len + 1) != (len + 1))
+    {
+        kmem_put(kname);
+        return RT_NULL;
+    }
+
+    timer = rt_timer_create(kname, timer_timeout_callback, (void *)data, time, flag);
     if (lwp_user_object_add(lwp_self(), (rt_object_t)timer) != 0)
     {
         rt_timer_delete(timer);
         timer = NULL;
     }
+
+    kmem_put(kname);
+
     return timer;
 }
 
@@ -1476,7 +1730,6 @@ sysret_t sys_timer_getoverrun(timer_t timerid)
 
 rt_thread_t sys_thread_create(void *arg[])
 {
-    rt_base_t level = 0;
     void *user_stack = 0;
     struct rt_lwp *lwp = 0;
     rt_thread_t thread = RT_NULL;
@@ -1506,7 +1759,7 @@ rt_thread_t sys_thread_create(void *arg[])
     }
 
 #ifdef RT_USING_SMP
-    thread->bind_cpu = lwp->bind_cpu;
+    RT_SCHED_CTX(thread).bind_cpu = lwp->bind_cpu;
 #endif
     thread->cleanup = lwp_cleanup;
     thread->user_entry = (void (*)(void *))arg[1];
@@ -1556,9 +1809,9 @@ rt_thread_t sys_thread_create(void *arg[])
         rt_thread_control(thread, RT_THREAD_CTRL_BIND_CPU, (void*)0);
     }
 
-    level = rt_hw_interrupt_disable();
+    LWP_LOCK(lwp);
     rt_list_insert_after(&lwp->t_grp, &thread->sibling);
-    rt_hw_interrupt_enable(level);
+    LWP_UNLOCK(lwp);
 
     return thread;
 
@@ -1572,11 +1825,9 @@ fail:
 }
 
 #ifdef ARCH_MM_MMU
-#include "lwp_clone.h"
 
 long _sys_clone(void *arg[])
 {
-    rt_base_t level = 0;
     struct rt_lwp *lwp = 0;
     rt_thread_t thread = RT_NULL;
     rt_thread_t self = RT_NULL;
@@ -1635,15 +1886,15 @@ long _sys_clone(void *arg[])
             RT_NULL,
             RT_NULL,
             self->stack_size,
-            self->init_priority,
-            self->init_tick);
+            RT_SCHED_PRIV(self).init_priority,
+            RT_SCHED_PRIV(self).init_tick);
     if (!thread)
     {
         goto fail;
     }
 
 #ifdef RT_USING_SMP
-    thread->bind_cpu = lwp->bind_cpu;
+    RT_SCHED_CTX(self).bind_cpu = lwp->bind_cpu;
 #endif
     thread->cleanup = lwp_cleanup;
     thread->user_entry = RT_NULL;
@@ -1670,12 +1921,12 @@ long _sys_clone(void *arg[])
         rt_thread_control(thread, RT_THREAD_CTRL_BIND_CPU, (void*)0);
     }
 
-    level = rt_hw_interrupt_disable();
+    LWP_LOCK(lwp);
     rt_list_insert_after(&lwp->t_grp, &thread->sibling);
-    rt_hw_interrupt_enable(level);
+    LWP_UNLOCK(lwp);
 
     /* copy origin stack */
-    rt_memcpy(thread->stack_addr, self->stack_addr, thread->stack_size);
+    lwp_memcpy(thread->stack_addr, self->stack_addr, thread->stack_size);
     lwp_tid_set_thread(tid, thread);
     arch_set_thread_context(arch_clone_exit,
             (void *)((char *)thread->stack_addr + thread->stack_size),
@@ -1685,6 +1936,10 @@ long _sys_clone(void *arg[])
     return (long)tid;
 fail:
     lwp_tid_put(tid);
+    if (thread)
+    {
+        rt_thread_delete(thread);
+    }
     if (lwp)
     {
         lwp_ref_dec(lwp);
@@ -1695,17 +1950,6 @@ fail:
 rt_weak long sys_clone(void *arg[])
 {
     return _sys_clone(arg);
-}
-
-int lwp_dup_user(rt_varea_t varea, void *arg);
-
-static int _copy_process(struct rt_lwp *dest_lwp, struct rt_lwp *src_lwp)
-{
-    int err;
-    dest_lwp->lwp_obj->source = src_lwp->aspace;
-    err = rt_aspace_traversal(src_lwp->aspace, lwp_dup_user, dest_lwp);
-    dest_lwp->lwp_obj->source = NULL;
-    return err;
 }
 
 static void lwp_struct_copy(struct rt_lwp *dst, struct rt_lwp *src)
@@ -1719,13 +1963,21 @@ static void lwp_struct_copy(struct rt_lwp *dst, struct rt_lwp *src)
     dst->data_entry = src->data_entry;
     dst->data_size = src->data_size;
     dst->args = src->args;
-    dst->leader = 0;
-    dst->session = src->session;
     dst->background = src->background;
-    dst->tty_old_pgrp = 0;
-    dst->__pgrp = src->__pgrp;
     dst->tty = src->tty;
+
+    /* terminal API */
+    dst->term_ctrlterm = src->term_ctrlterm;
+
     rt_memcpy(dst->cmd, src->cmd, RT_NAME_MAX);
+    if (src->exe_file)
+    {
+        if (dst->exe_file)
+        {
+            rt_free(dst->exe_file);
+        }
+        dst->exe_file = strndup(src->exe_file, DFS_PATH_MAX);
+    }
 
     rt_memcpy(&dst->signal.sig_action, &src->signal.sig_action, sizeof(dst->signal.sig_action));
     rt_memcpy(&dst->signal.sig_action_mask, &src->signal.sig_action_mask, sizeof(dst->signal.sig_action_mask));
@@ -1733,6 +1985,8 @@ static void lwp_struct_copy(struct rt_lwp *dst, struct rt_lwp *src)
     rt_memcpy(&dst->signal.sig_action_onstack, &src->signal.sig_action_onstack, sizeof(dst->signal.sig_action_onstack));
     rt_memcpy(&dst->signal.sig_action_restart, &dst->signal.sig_action_restart, sizeof(dst->signal.sig_action_restart));
     rt_memcpy(&dst->signal.sig_action_siginfo, &dst->signal.sig_action_siginfo, sizeof(dst->signal.sig_action_siginfo));
+    rt_memcpy(&dst->signal.sig_action_nocldstop, &dst->signal.sig_action_nocldstop, sizeof(dst->signal.sig_action_nocldstop));
+    rt_memcpy(&dst->signal.sig_action_nocldwait, &dst->signal.sig_action_nocldwait, sizeof(dst->signal.sig_action_nocldwait));
     rt_strcpy(dst->working_directory, src->working_directory);
 }
 
@@ -1756,7 +2010,7 @@ static int lwp_copy_files(struct rt_lwp *dst, struct rt_lwp *src)
         /* dup files */
         for (i = 0; i < src_fdt->maxfd; i++)
         {
-            d_s = fdt_fd_get(src_fdt, i);
+            d_s = fdt_get_file(src_fdt, i);
             if (d_s)
             {
                 dst_fdt->fds[i] = d_s;
@@ -1771,7 +2025,6 @@ static int lwp_copy_files(struct rt_lwp *dst, struct rt_lwp *src)
 
 sysret_t _sys_fork(void)
 {
-    rt_base_t level;
     int tid = 0;
     sysret_t falival = 0;
     struct rt_lwp *lwp = RT_NULL;
@@ -1779,9 +2032,10 @@ sysret_t _sys_fork(void)
     rt_thread_t thread = RT_NULL;
     rt_thread_t self_thread = RT_NULL;
     void *user_stack = RT_NULL;
+    rt_processgroup_t group;
 
     /* new lwp */
-    lwp = lwp_new();
+    lwp = lwp_create(LWP_CREATE_FLAG_ALLOC_PID);
     if (!lwp)
     {
         SET_ERRNO(ENOMEM);
@@ -1804,8 +2058,8 @@ sysret_t _sys_fork(void)
 
     self_lwp = lwp_self();
 
-    /* copy process */
-    if (_copy_process(lwp, self_lwp) != 0)
+    /* copy address space of process from this proc to forked one */
+    if (lwp_fork_aspace(lwp, self_lwp) != 0)
     {
         SET_ERRNO(ENOMEM);
         goto fail;
@@ -1828,8 +2082,8 @@ sysret_t _sys_fork(void)
             RT_NULL,
             RT_NULL,
             self_thread->stack_size,
-            self_thread->init_priority,
-            self_thread->init_tick);
+            RT_SCHED_PRIV(self_thread).init_priority,
+            RT_SCHED_PRIV(self_thread).init_tick);
     if (!thread)
     {
         SET_ERRNO(ENOMEM);
@@ -1842,56 +2096,40 @@ sysret_t _sys_fork(void)
     thread->user_stack_size = self_thread->user_stack_size;
     thread->signal.sigset_mask = self_thread->signal.sigset_mask;
     thread->thread_idr = self_thread->thread_idr;
+    thread->clear_child_tid = self_thread->clear_child_tid;
     thread->lwp = (void *)lwp;
     thread->tid = tid;
 
-    level = rt_hw_interrupt_disable();
-
+    LWP_LOCK(self_lwp);
     /* add thread to lwp process */
     rt_list_insert_after(&lwp->t_grp, &thread->sibling);
+    LWP_UNLOCK(self_lwp);
 
-    /* lwp add to children link */
-    lwp->sibling = self_lwp->first_child;
-    self_lwp->first_child = lwp;
-    lwp->parent = self_lwp;
+    lwp_children_register(self_lwp, lwp);
 
-    rt_hw_interrupt_enable(level);
+    /* set pgid and sid */
+    group = lwp_pgrp_find(lwp_pgid_get_byprocess(self_lwp));
+    if (group)
+    {
+        lwp_pgrp_insert(group, lwp);
+    }
+    else
+    {
+        LOG_W("the process group of pid: %d cannot be found", lwp_pgid_get_byprocess(self_lwp));
+    }
 
-    /* copy origin stack */
-    rt_memcpy(thread->stack_addr, self_thread->stack_addr, self_thread->stack_size);
+    /* copy kernel stack context from self thread */
+    lwp_memcpy(thread->stack_addr, self_thread->stack_addr, self_thread->stack_size);
     lwp_tid_set_thread(tid, thread);
 
     /* duplicate user objects */
     lwp_user_object_dup(lwp, self_lwp);
 
-    level = rt_hw_interrupt_disable();
     user_stack = arch_get_user_sp();
-    rt_hw_interrupt_enable(level);
-
     arch_set_thread_context(arch_fork_exit,
             (void *)((char *)thread->stack_addr + thread->stack_size),
             user_stack, &thread->sp);
-    /* new thread never reach there */
-    level = rt_hw_interrupt_disable();
-    if (lwp->tty != RT_NULL)
-    {
-        int ret;
-        struct rt_lwp *old_lwp;
 
-        old_lwp = lwp->tty->foreground;
-        rt_mutex_take(&lwp->tty->lock, RT_WAITING_FOREVER);
-        ret = tty_push(&lwp->tty->head, old_lwp);
-        rt_mutex_release(&lwp->tty->lock);
-        if (ret < 0)
-        {
-            LOG_E("malloc fail!\n");
-            SET_ERRNO(ENOMEM);
-            goto fail;
-        }
-
-        lwp->tty->foreground = lwp;
-    }
-    rt_hw_interrupt_enable(level);
     rt_thread_startup(thread);
     return lwp_to_pid(lwp);
 fail:
@@ -1901,37 +2139,15 @@ fail:
     {
         lwp_tid_put(tid);
     }
+    if (thread)
+    {
+        rt_thread_delete(thread);
+    }
     if (lwp)
     {
         lwp_ref_dec(lwp);
     }
     return falival;
-}
-
-size_t lwp_user_strlen(const char *s, int *err)
-{
-    size_t len = 0;
-
-    while (1)
-    {
-        if (!lwp_user_accessable((void *)(s + len), sizeof(char)))
-        {
-            if (err)
-            {
-                *err = 1;
-            }
-            return 0;
-        }
-        if (s[len] == '\0')
-        {
-            if (err)
-            {
-                *err = 0;
-            }
-            return len;
-        }
-        len++;
-    }
 }
 
 /* arm needs to wrap fork/clone call to preserved lr & caller saved regs */
@@ -1981,7 +2197,7 @@ static char *_insert_args(int new_argc, char *new_argv[], struct lwp_args_info *
     nsize = new_argc * sizeof(char *);
     for (i = 0; i < new_argc; i++)
     {
-        nsize += rt_strlen(new_argv[i]) + 1;
+        nsize += lwp_strlen(lwp_self(), new_argv[i]) + 1;
     }
     if (nsize + args->size > ARCH_PAGE_SIZE)
     {
@@ -1995,8 +2211,8 @@ static char *_insert_args(int new_argc, char *new_argv[], struct lwp_args_info *
     for (i = 0; i < new_argc; i++)
     {
         nargv[i] = p;
-        len = rt_strlen(new_argv[i]) + 1;
-        rt_memcpy(p, new_argv[i], len);
+        len = lwp_strlen(lwp_self(), new_argv[i]) + 1;
+        lwp_memcpy(p, new_argv[i], len);
         p += len;
     }
     /* copy argv */
@@ -2004,8 +2220,8 @@ static char *_insert_args(int new_argc, char *new_argv[], struct lwp_args_info *
     for (i = 0; i < args->argc; i++)
     {
         nargv[i] = p;
-        len = rt_strlen(args->argv[i]) + 1;
-        rt_memcpy(p, args->argv[i], len);
+        len = lwp_strlen(lwp_self(), args->argv[i]) + 1;
+        lwp_memcpy(p, args->argv[i], len);
         p += len;
     }
     nargv[i] = NULL;
@@ -2013,8 +2229,8 @@ static char *_insert_args(int new_argc, char *new_argv[], struct lwp_args_info *
     for (i = 0; i < args->envc; i++)
     {
         nenvp[i] = p;
-        len = rt_strlen(args->envp[i]) + 1;
-        rt_memcpy(p, args->envp[i], len);
+        len = lwp_strlen(lwp_self(), args->envp[i]) + 1;
+        lwp_memcpy(p, args->envp[i], len);
         p += len;
     }
     nenvp[i] = NULL;
@@ -2162,7 +2378,7 @@ int load_ldso(struct rt_lwp *lwp, char *exec_name, char *const argv[], char *con
             {
                 break;
             }
-            len = rt_strlen((const char *)argv[argc]);
+            len = lwp_strlen(lwp, (const char *)argv[argc]);
             size += sizeof(char *) + len + 1;
             argc++;
         }
@@ -2175,7 +2391,7 @@ int load_ldso(struct rt_lwp *lwp, char *exec_name, char *const argv[], char *con
             {
                 break;
             }
-            len = rt_strlen((const char *)envp[envc]);
+            len = lwp_strlen(lwp, (const char *)envp[envc]);
             size += sizeof(char *) + len + 1;
             envc++;
         }
@@ -2196,8 +2412,8 @@ int load_ldso(struct rt_lwp *lwp, char *exec_name, char *const argv[], char *con
         for (i = 0; i < argc; i++)
         {
             kargv[i] = p;
-            len = rt_strlen(argv[i]) + 1;
-            rt_memcpy(p, argv[i], len);
+            len = lwp_strlen(lwp, argv[i]) + 1;
+            lwp_memcpy(p, argv[i], len);
             p += len;
         }
         kargv[i] = NULL;
@@ -2208,8 +2424,8 @@ int load_ldso(struct rt_lwp *lwp, char *exec_name, char *const argv[], char *con
         for (i = 0; i < envc; i++)
         {
             kenvp[i] = p;
-            len = rt_strlen(envp[i]) + 1;
-            rt_memcpy(p, envp[i], len);
+            len = lwp_strlen(lwp, envp[i]) + 1;
+            lwp_memcpy(p, envp[i], len);
             p += len;
         }
         kenvp[i] = NULL;
@@ -2258,7 +2474,7 @@ int load_ldso(struct rt_lwp *lwp, char *exec_name, char *const argv[], char *con
 
     ret = lwp_load("/lib/ld.so", lwp, RT_NULL, 0, aux);
 
-    rt_strncpy(lwp->cmd, exec_name, RT_NAME_MAX);
+    rt_strncpy(lwp->cmd, exec_name, RT_NAME_MAX - 1);
 quit:
     if (page)
     {
@@ -2276,13 +2492,11 @@ sysret_t sys_execve(const char *path, char *const argv[], char *const envp[])
     void *new_page;
     int size = 0;
     size_t len;
-    int access_err;
     char **kargv;
     char **kenvp;
     char *p;
     struct rt_lwp *new_lwp = NULL;
     struct rt_lwp *lwp;
-    rt_base_t level;
     int uni_thread;
     rt_thread_t thread;
     struct process_aux *aux;
@@ -2297,7 +2511,8 @@ sysret_t sys_execve(const char *path, char *const argv[], char *const envp[])
     lwp = lwp_self();
     thread = rt_thread_self();
     uni_thread = 1;
-    level = rt_hw_interrupt_disable();
+
+    LWP_LOCK(lwp);
     if (lwp->t_grp.prev != &thread->sibling)
     {
         uni_thread = 0;
@@ -2306,15 +2521,16 @@ sysret_t sys_execve(const char *path, char *const argv[], char *const envp[])
     {
         uni_thread = 0;
     }
-    rt_hw_interrupt_enable(level);
+    LWP_UNLOCK(lwp);
+
     if (!uni_thread)
     {
         SET_ERRNO(EINVAL);
         goto quit;
     }
 
-    len = lwp_user_strlen(path, &access_err);
-    if (access_err)
+    len = lwp_user_strlen(path);
+    if (len <= 0)
     {
         SET_ERRNO(EFAULT);
         goto quit;
@@ -2334,8 +2550,8 @@ sysret_t sys_execve(const char *path, char *const argv[], char *const envp[])
             {
                 break;
             }
-            len = lwp_user_strlen((const char *)argv[argc], &access_err);
-            if (access_err)
+            len = lwp_user_strlen((const char *)argv[argc]);
+            if (len < 0)
             {
                 SET_ERRNO(EFAULT);
                 goto quit;
@@ -2358,8 +2574,8 @@ sysret_t sys_execve(const char *path, char *const argv[], char *const envp[])
             {
                 break;
             }
-            len = lwp_user_strlen((const char *)envp[envc], &access_err);
-            if (access_err)
+            len = lwp_user_strlen((const char *)envp[envc]);
+            if (len < 0)
             {
                 SET_ERRNO(EFAULT);
                 goto quit;
@@ -2389,8 +2605,8 @@ sysret_t sys_execve(const char *path, char *const argv[], char *const envp[])
         for (i = 0; i < argc; i++)
         {
             kargv[i] = p;
-            len = rt_strlen(argv[i]) + 1;
-            rt_memcpy(p, argv[i], len);
+            len = lwp_user_strlen(argv[i]) + 1;
+            lwp_memcpy(p, argv[i], len);
             p += len;
         }
         kargv[i] = NULL;
@@ -2401,23 +2617,21 @@ sysret_t sys_execve(const char *path, char *const argv[], char *const envp[])
         for (i = 0; i < envc; i++)
         {
             kenvp[i] = p;
-            len = rt_strlen(envp[i]) + 1;
-            rt_memcpy(p, envp[i], len);
+            len = lwp_user_strlen(envp[i]) + 1;
+            lwp_memcpy(p, envp[i], len);
             p += len;
         }
         kenvp[i] = NULL;
     }
 
     /* alloc new lwp to operation */
-    new_lwp = (struct rt_lwp *)rt_malloc(sizeof(struct rt_lwp));
+    new_lwp = lwp_create(LWP_CREATE_FLAG_NONE);
     if (!new_lwp)
     {
         SET_ERRNO(ENOMEM);
         goto quit;
     }
-    rt_memset(new_lwp, 0, sizeof(struct rt_lwp));
-    new_lwp->ref = 1;
-    lwp_user_object_lock_init(new_lwp);
+
     ret = lwp_user_space_init(new_lwp, 0);
     if (ret != 0)
     {
@@ -2479,16 +2693,22 @@ sysret_t sys_execve(const char *path, char *const argv[], char *const envp[])
             }
         }
 
-        /* load ok, now set thread name and swap the data of lwp and new_lwp */
-        level = rt_hw_interrupt_disable();
+        /**
+         * Set thread name and swap the data of lwp and new_lwp.
+         * Since no other threads can access the lwp field, it't uneccessary to
+         * take a lock here
+         */
+        RT_ASSERT(rt_list_entry(lwp->t_grp.prev, struct rt_thread, sibling) == thread);
 
-        rt_strncpy(thread->parent.name, run_name + last_backslash, RT_NAME_MAX);
+        strncpy(thread->parent.name, run_name + last_backslash, RT_NAME_MAX - 1);
+        strncpy(lwp->cmd, new_lwp->cmd, RT_NAME_MAX);
+        rt_free(lwp->exe_file);
+        lwp->exe_file = strndup(new_lwp->exe_file, DFS_PATH_MAX);
 
         rt_pages_free(page, 0);
 
 #ifdef ARCH_MM_MMU
         _swap_lwp_data(lwp, new_lwp, struct rt_aspace *, aspace);
-        _swap_lwp_data(lwp, new_lwp, struct rt_lwp_objs *, lwp_obj);
 
         _swap_lwp_data(lwp, new_lwp, size_t, end_heap);
 #endif
@@ -2506,15 +2726,9 @@ sysret_t sys_execve(const char *path, char *const argv[], char *const envp[])
         lwp_signal_detach(&lwp->signal);
         lwp_signal_init(&lwp->signal);
 
-        /* to do: clsoe files with flag CLOEXEC */
+        /* to do: clsoe files with flag CLOEXEC, recy sub-thread */
 
         lwp_aspace_switch(thread);
-
-        rt_hw_interrupt_enable(level);
-
-        /* setup the signal, timer_list for the dummy lwp, so that is can be smoothly recycled */
-        lwp_signal_init(&new_lwp->signal);
-        rt_list_init(&new_lwp->timer);
 
         lwp_ref_dec(new_lwp);
         arch_start_umode(lwp->args,
@@ -2576,7 +2790,33 @@ rt_thread_t sys_thread_self(void)
 
 sysret_t sys_channel_open(const char *name, int flags)
 {
-    return lwp_channel_open(FDT_TYPE_LWP, name, flags);
+    rt_size_t ret = 0;
+    char *kname = RT_NULL;
+    int len = 0;
+
+    len = lwp_user_strlen(name);
+    if (len <= 0)
+    {
+        return -EFAULT;
+    }
+
+    kname = (char *)kmem_get(len + 1);
+    if (!kname)
+    {
+        return -ENOMEM;
+    }
+
+    if (lwp_get_from_user(kname, (void *)name, len + 1) != (len + 1))
+    {
+        kmem_put(kname);
+        return -EFAULT;
+    }
+
+    ret = lwp_channel_open(FDT_TYPE_LWP, kname, flags);
+
+    kmem_put(kname);
+
+    return ret;
 }
 
 sysret_t sys_channel_close(int fd)
@@ -2586,22 +2826,107 @@ sysret_t sys_channel_close(int fd)
 
 sysret_t sys_channel_send(int fd, rt_channel_msg_t data)
 {
-    return lwp_channel_send(FDT_TYPE_LWP, fd, data);
+    rt_size_t ret = 0;
+    rt_channel_msg_t kdata = RT_NULL;
+
+    if (!lwp_user_accessable((void *)data, sizeof(*data)))
+    {
+        return -EFAULT;
+    }
+
+    kdata = kmem_get(sizeof(*data));
+    if (kdata == RT_NULL)
+        return -ENOMEM;
+
+    if (lwp_get_from_user(kdata, data, sizeof(*kdata)) != sizeof(*kdata))
+    {
+        kmem_put(kdata);
+        return -EFAULT;
+    }
+
+    ret = lwp_channel_send(FDT_TYPE_LWP, fd, kdata);
+
+    kmem_put(kdata);
+
+    return ret;
 }
 
 sysret_t sys_channel_send_recv_timeout(int fd, rt_channel_msg_t data, rt_channel_msg_t data_ret, rt_int32_t time)
 {
-    return lwp_channel_send_recv_timeout(FDT_TYPE_LWP, fd, data, data_ret, time);
+    rt_size_t ret = 0;
+    rt_channel_msg_t kdata = RT_NULL;
+    rt_channel_msg_t kdata_ret = RT_NULL;
+
+    if (!lwp_user_accessable((void *)data, sizeof(*data)))
+    {
+        return -EFAULT;
+    }
+
+    kdata = kmem_get(sizeof(*data));
+    if (kdata == RT_NULL)
+        return -ENOMEM;
+
+    if (lwp_get_from_user(kdata, data, sizeof(*kdata)) != sizeof(*kdata))
+    {
+        kmem_put(kdata);
+        return -EFAULT;
+    }
+
+    kdata_ret = kmem_get(sizeof(*data_ret));
+    if (kdata_ret == RT_NULL)
+        return -ENOMEM;
+
+    ret = lwp_channel_send_recv_timeout(FDT_TYPE_LWP, fd, kdata, kdata_ret, time);
+
+    lwp_put_to_user(data_ret, kdata_ret, sizeof(*kdata_ret));
+    kmem_put(kdata);
+    kmem_put(kdata_ret);
+
+    return ret;
 }
 
 sysret_t sys_channel_reply(int fd, rt_channel_msg_t data)
 {
-    return lwp_channel_reply(FDT_TYPE_LWP, fd, data);
+    rt_size_t ret = 0;
+    rt_channel_msg_t kdata = RT_NULL;
+
+    if (!lwp_user_accessable((void *)data, sizeof(*data)))
+    {
+        return -EFAULT;
+    }
+
+    kdata = kmem_get(sizeof(*data));
+    if (kdata == RT_NULL)
+        return -ENOMEM;
+
+    if (lwp_get_from_user(kdata, data, sizeof(*kdata)) != sizeof(*data))
+    {
+        kmem_put(kdata);
+        return -EFAULT;
+    }
+
+    ret = lwp_channel_reply(FDT_TYPE_LWP, fd, kdata);
+
+    kmem_put(kdata);
+
+    return ret;
 }
 
 sysret_t sys_channel_recv_timeout(int fd, rt_channel_msg_t data, rt_int32_t time)
 {
-    return lwp_channel_recv_timeout(FDT_TYPE_LWP, fd, data, time);
+    rt_size_t ret = 0;
+    rt_channel_msg_t kdata = RT_NULL;
+
+    kdata = kmem_get(sizeof(*data));
+    if (kdata == RT_NULL)
+        return -ENOMEM;
+
+    ret = lwp_channel_recv_timeout(FDT_TYPE_LWP, fd, kdata, time);
+
+    lwp_put_to_user(data, kdata, sizeof(*kdata));
+    kmem_put(kdata);
+
+    return ret;
 }
 
 static struct rt_semaphore critical_lock;
@@ -2643,12 +2968,32 @@ MSH_CMD_EXPORT_ALIAS(sys_log_enable, sys_log, sys_log 1(enable)/0(disable));
 
 sysret_t sys_log(const char* log, int size)
 {
-    rt_device_t console = rt_console_get_device();
+    char *klog = RT_NULL;
+    rt_device_t console = RT_NULL;
+
+    if (!lwp_user_accessable((void *)log, size))
+        return -EFAULT;
+
+    klog = kmem_get(size);
+    if (klog == RT_NULL)
+    {
+        return -ENOMEM;
+    }
+
+    if (lwp_get_from_user((void *)klog, (void *)log, size) != size)
+    {
+        kmem_put(klog);
+        return -EINVAL;
+    }
+
+    console = rt_console_get_device();
 
     if (console && __sys_log_enable)
     {
-        rt_device_write(console, -1, log, size);
+        rt_device_write(console, -1, klog, size);
     }
+
+    kmem_put(klog);
 
     return 0;
 }
@@ -2656,7 +3001,6 @@ sysret_t sys_log(const char* log, int size)
 sysret_t sys_stat(const char *file, struct stat *buf)
 {
     int ret = 0;
-    int err;
     size_t len;
     size_t copy_len;
     char *copy_path;
@@ -2667,8 +3011,8 @@ sysret_t sys_stat(const char *file, struct stat *buf)
         return -EFAULT;
     }
 
-    len = lwp_user_strlen(file, &err);
-    if (err)
+    len = lwp_user_strlen(file);
+    if (len <= 0)
     {
         return -EFAULT;
     }
@@ -2701,7 +3045,6 @@ sysret_t sys_stat(const char *file, struct stat *buf)
 sysret_t sys_lstat(const char *file, struct stat *buf)
 {
     int ret = 0;
-    int err;
     size_t len;
     size_t copy_len;
     char *copy_path;
@@ -2712,8 +3055,8 @@ sysret_t sys_lstat(const char *file, struct stat *buf)
         return -EFAULT;
     }
 
-    len = lwp_user_strlen(file, &err);
-    if (err)
+    len = lwp_user_strlen(file);
+    if (len <= 0)
     {
         return -EFAULT;
     }
@@ -2900,26 +3243,47 @@ sysret_t sys_accept(int socket, struct musl_sockaddr *addr, socklen_t *addrlen)
 
 sysret_t sys_bind(int socket, const struct musl_sockaddr *name, socklen_t namelen)
 {
+    rt_err_t ret = 0;
     struct sockaddr sa;
+    struct sockaddr_un un_addr;
     struct musl_sockaddr kname;
+    rt_uint16_t family = 0;
 
     if (!lwp_user_accessable((void *)name, namelen))
     {
         return -EFAULT;
     }
 
-#ifdef SAL_USING_AF_UNIX
-    if (name->sa_family  == AF_UNIX)
+    lwp_get_from_user(&family, (void *)name, 2);
+    if (family == AF_UNIX)
     {
-        namelen = sizeof(struct sockaddr);
+        if (!lwp_user_accessable((void *)name, sizeof(struct sockaddr_un)))
+        {
+            return -EFAULT;
+        }
+
+        lwp_get_from_user(&un_addr, (void *)name, sizeof(struct sockaddr_un));
+        ret = bind(socket, (struct sockaddr *)&un_addr, namelen);
     }
-#endif /* SAL_USING_AF_UNIX */
+    else if (family == AF_NETLINK)
+    {
+        if (!lwp_user_accessable((void *)name, namelen))
+        {
+            return -EFAULT;
+        }
 
-    lwp_get_from_user(&kname, (void *)name, namelen);
+        lwp_get_from_user(&sa, (void *)name, namelen);
 
-    sockaddr_tolwip(&kname, &sa);
+        ret = bind(socket, &sa, namelen);
+    }
+    else
+    {
+        lwp_get_from_user(&kname, (void *)name, namelen);
+        sockaddr_tolwip(&kname, &sa);
+        ret = bind(socket, &sa, namelen);
+    }
 
-    return bind(socket, &sa, namelen);
+    return (ret < 0 ? GET_ERRNO() : ret);
 }
 
 sysret_t sys_shutdown(int socket, int how)
@@ -3015,9 +3379,40 @@ sysret_t sys_getsockname(int socket, struct musl_sockaddr *name, socklen_t *name
 
 sysret_t sys_getsockopt(int socket, int level, int optname, void *optval, socklen_t *optlen)
 {
-    int ret;
+    int ret = 0;
+    socklen_t koptlen = 0;
+    void *koptval = RT_NULL;
+
+    if (!lwp_user_accessable((void *)optlen, sizeof(uint32_t)))
+        return -EFAULT;
+
+    if (lwp_get_from_user(&koptlen, optlen, sizeof(uint32_t)) != sizeof(uint32_t))
+    {
+        return -EINVAL;
+    }
+
+    if (!lwp_user_accessable((void *)optval, koptlen))
+        return -EFAULT;
+
+    koptval = kmem_get(koptlen);
+    if (koptval == RT_NULL)
+    {
+        return -ENOMEM;
+    }
+
+    if (lwp_get_from_user(koptval, optval, koptlen) != koptlen)
+    {
+        kmem_put(koptval);
+        return -EINVAL;
+    }
+
     convert_sockopt(&level, &optname);
-    ret = getsockopt(socket, level, optname, optval, optlen);
+    ret = getsockopt(socket, level, optname, koptval, &koptlen);
+
+    lwp_put_to_user((void *)optval, koptval, koptlen);
+    lwp_put_to_user((void *)optlen, &koptlen, sizeof(uint32_t));
+
+    kmem_put(koptval);
 
     return (ret < 0 ? GET_ERRNO() : ret);
 }
@@ -3025,35 +3420,63 @@ sysret_t sys_getsockopt(int socket, int level, int optname, void *optval, sockle
 sysret_t sys_setsockopt(int socket, int level, int optname, const void *optval, socklen_t optlen)
 {
     int ret;
+    void *koptval = RT_NULL;
+
+    if (!lwp_user_accessable((void *)optval, optlen))
+        return -EFAULT;
+
+    koptval = kmem_get(optlen);
+    if (koptval == RT_NULL)
+    {
+        return -ENOMEM;
+    }
+
+    if (lwp_get_from_user(koptval, (void *)optval, optlen) != optlen)
+    {
+        kmem_put(koptval);
+        return -EINVAL;
+    }
+
     convert_sockopt(&level, &optname);
-    ret = setsockopt(socket, level, optname, optval, optlen);
+    ret = setsockopt(socket, level, optname, koptval, optlen);
+
+    kmem_put(koptval);
+
     return (ret < 0 ? GET_ERRNO() : ret);
 }
 
 sysret_t sys_connect(int socket, const struct musl_sockaddr *name, socklen_t namelen)
 {
-    int ret;
+    int ret = 0;
+    rt_uint16_t family = 0;
     struct sockaddr sa;
     struct musl_sockaddr kname;
+    struct sockaddr_un addr_un;
 
     if (!lwp_user_accessable((void *)name, namelen))
     {
         return -EFAULT;
     }
 
-#ifdef SAL_USING_AF_UNIX
-    if (name->sa_family  == AF_UNIX)
+    lwp_get_from_user(&family, (void *)name, 2);
+    if (family == AF_UNIX)
     {
-        namelen = sizeof(struct sockaddr);
+        if (!lwp_user_accessable((void *)name, sizeof(struct sockaddr_un)))
+        {
+            return -EFAULT;
+        }
+
+        lwp_get_from_user(&addr_un, (void *)name, sizeof(struct sockaddr_un));
+        ret = connect(socket, (struct sockaddr *)(&addr_un), namelen);
     }
-#endif /* SAL_USING_AF_UNIX */
+    else
+    {
+        lwp_get_from_user(&kname, (void *)name, namelen);
+        sockaddr_tolwip(&kname, &sa);
+        ret = connect(socket, &sa, namelen);
+    }
 
-    lwp_get_from_user(&kname, (void *)name, namelen);
-
-    sockaddr_tolwip(&kname, &sa);
-
-    ret = connect(socket, &sa, namelen);
-    return (ret < 0 ? GET_ERRNO() : ret);
+    return ret;
 }
 
 sysret_t sys_listen(int socket, int backlog)
@@ -3092,6 +3515,150 @@ static int netflags_muslc_2_lwip(int flags)
         flgs |= MSG_MORE;
     }
     return flgs;
+}
+
+#ifdef ARCH_MM_MMU
+static int copy_msghdr_from_user(struct msghdr *kmsg, struct msghdr *umsg,
+        struct iovec **out_iov, void **out_msg_control)
+{
+    size_t iovs_size;
+    struct iovec *uiov, *kiov;
+    size_t iovs_buffer_size = 0;
+    void *iovs_buffer;
+
+    if (!lwp_user_accessable(umsg, sizeof(*umsg)))
+    {
+        return -EFAULT;
+    }
+
+    lwp_get_from_user(kmsg, umsg, sizeof(*kmsg));
+
+    iovs_size = sizeof(*kmsg->msg_iov) * kmsg->msg_iovlen;
+    if (!lwp_user_accessable(kmsg->msg_iov, iovs_size))
+    {
+        return -EFAULT;
+    }
+
+    /* user and kernel */
+    kiov = kmem_get(iovs_size * 2);
+    if (!kiov)
+    {
+        return -ENOMEM;
+    }
+
+    uiov = (void *)kiov + iovs_size;
+    lwp_get_from_user(uiov, kmsg->msg_iov, iovs_size);
+
+    if (out_iov)
+    {
+        *out_iov = uiov;
+    }
+    kmsg->msg_iov = kiov;
+
+    for (int i = 0; i < kmsg->msg_iovlen; ++i)
+    {
+        /*
+         * We MUST check we can copy data to user after socket done in uiov
+         * otherwise we will be lost the messages from the network!
+         */
+        if (!lwp_user_accessable(uiov->iov_base, uiov->iov_len))
+        {
+            kmem_put(kmsg->msg_iov);
+
+            return -EPERM;
+        }
+
+        iovs_buffer_size += uiov->iov_len;
+        kiov->iov_len = uiov->iov_len;
+
+        ++kiov;
+        ++uiov;
+    }
+
+    /* msg_iov and msg_control */
+    iovs_buffer = kmem_get(iovs_buffer_size + kmsg->msg_controllen);
+
+    if (!iovs_buffer)
+    {
+        kmem_put(kmsg->msg_iov);
+
+        return -ENOMEM;
+    }
+
+    kiov = kmsg->msg_iov;
+
+    for (int i = 0; i < kmsg->msg_iovlen; ++i)
+    {
+        kiov->iov_base = iovs_buffer;
+        iovs_buffer += kiov->iov_len;
+        ++kiov;
+    }
+
+    *out_msg_control = kmsg->msg_control;
+    /* msg_control is the end of the iovs_buffer */
+    kmsg->msg_control = iovs_buffer;
+
+    return 0;
+}
+#endif /* ARCH_MM_MMU */
+
+sysret_t sys_recvmsg(int socket, struct msghdr *msg, int flags)
+{
+    int flgs, ret = -1;
+    struct msghdr kmsg;
+#ifdef ARCH_MM_MMU
+    void *msg_control;
+    struct iovec *uiov, *kiov;
+#endif
+
+    if (!msg)
+    {
+        return -EPERM;
+    }
+
+    flgs = netflags_muslc_2_lwip(flags);
+
+#ifdef ARCH_MM_MMU
+    ret = copy_msghdr_from_user(&kmsg, msg, &uiov, &msg_control);
+
+    if (!ret)
+    {
+        ret = recvmsg(socket, &kmsg, flgs);
+
+        if (ret < 0)
+        {
+            goto _free_res;
+        }
+
+        kiov = kmsg.msg_iov;
+
+        for (int i = 0; i < kmsg.msg_iovlen; ++i)
+        {
+            lwp_put_to_user(uiov->iov_base, kiov->iov_base, kiov->iov_len);
+
+            ++kiov;
+            ++uiov;
+        }
+
+        lwp_put_to_user(msg_control, kmsg.msg_control, kmsg.msg_controllen);
+        lwp_put_to_user(&msg->msg_flags, &kmsg.msg_flags, sizeof(kmsg.msg_flags));
+
+    _free_res:
+        kmem_put(kmsg.msg_iov->iov_base);
+        kmem_put(kmsg.msg_iov);
+    }
+#else
+    rt_memcpy(&kmsg, msg, sizeof(kmsg));
+
+    ret = recvmsg(socket, &kmsg, flgs);
+
+    if (!ret)
+    {
+        msg->msg_flags = kmsg.msg_flags;
+    }
+#endif /* ARCH_MM_MMU */
+
+    return (ret < 0 ? GET_ERRNO() : ret);
 }
 
 sysret_t sys_recvfrom(int socket, void *mem, size_t len, int flags,
@@ -3172,9 +3739,74 @@ sysret_t sys_recv(int socket, void *mem, size_t len, int flags)
 {
     int flgs = 0;
     int ret;
+    void *kmem = RT_NULL;
+
+    if (!lwp_user_accessable((void *)mem, len))
+        return -EFAULT;
+
+    kmem = kmem_get(sizeof(*kmem));
+    if (kmem == RT_NULL)
+    {
+        return -ENOMEM;
+    }
 
     flgs = netflags_muslc_2_lwip(flags);
-    ret = recvfrom(socket, mem, len, flgs, NULL, NULL);
+    ret = recvfrom(socket, kmem, len, flgs, NULL, NULL);
+
+    lwp_put_to_user((void *)mem, kmem, len);
+    kmem_put(kmem);
+
+    return (ret < 0 ? GET_ERRNO() : ret);
+}
+
+sysret_t sys_sendmsg(int socket, const struct msghdr *msg, int flags)
+{
+    int flgs, ret = -1;
+    struct msghdr kmsg;
+#ifdef ARCH_MM_MMU
+    void *msg_control;
+    struct iovec *uiov, *kiov;
+#endif
+    if (!msg)
+    {
+        return -EPERM;
+    }
+
+    flgs = netflags_muslc_2_lwip(flags);
+
+#ifdef ARCH_MM_MMU
+    ret = copy_msghdr_from_user(&kmsg, (struct msghdr *)msg, &uiov, &msg_control);
+
+    if (!ret)
+    {
+        kiov = kmsg.msg_iov;
+
+        for (int i = 0; i < kmsg.msg_iovlen; ++i)
+        {
+            lwp_get_from_user(kiov->iov_base, uiov->iov_base, kiov->iov_len);
+
+            ++kiov;
+            ++uiov;
+        }
+
+        lwp_get_from_user(kmsg.msg_control, msg_control, kmsg.msg_controllen);
+
+        ret = sendmsg(socket, &kmsg, flgs);
+
+        kmem_put(kmsg.msg_iov->iov_base);
+        kmem_put(kmsg.msg_iov);
+    }
+#else
+    rt_memcpy(&kmsg, msg, sizeof(kmsg));
+
+    ret = sendmsg(socket, &kmsg, flgs);
+
+    if (!ret)
+    {
+        msg->msg_flags = kmsg.msg_flags;
+    }
+#endif /* ARCH_MM_MMU */
+
     return (ret < 0 ? GET_ERRNO() : ret);
 }
 
@@ -3246,11 +3878,30 @@ sysret_t sys_sendto(int socket, const void *dataptr, size_t size, int flags,
 
 sysret_t sys_send(int socket, const void *dataptr, size_t size, int flags)
 {
-    int ret;
     int flgs = 0;
+    int ret = 0;
+    void *kdataptr = RT_NULL;
+
+    if (!lwp_user_accessable((void *)dataptr, size))
+        return -EFAULT;
+
+    kdataptr = kmem_get(size);
+    if (kdataptr == RT_NULL)
+    {
+        return -ENOMEM;
+    }
+
+    if (lwp_get_from_user(kdataptr, (void *)dataptr, size) != size)
+    {
+        kmem_put(kdataptr);
+        return -EINVAL;
+    }
 
     flgs = netflags_muslc_2_lwip(flags);
-    ret = sendto(socket, dataptr, size, flgs, NULL, 0);
+    ret = sendto(socket, kdataptr, size, flgs, NULL, 0);
+
+    kmem_put(kdataptr);
+
     return (ret < 0 ? GET_ERRNO() : ret);
 }
 
@@ -3283,6 +3934,30 @@ out:
     return (fd < 0 ? GET_ERRNO() : fd);
 }
 
+sysret_t sys_socketpair(int domain, int type, int protocol, int fd[2])
+{
+#ifdef RT_USING_SAL
+    int ret = 0;
+    int k_fd[2];
+
+    if (!lwp_user_accessable((void *)fd, sizeof(int [2])))
+    {
+        return -EFAULT;
+    }
+
+    ret = socketpair(domain, type, protocol, k_fd);
+
+    if (ret == 0)
+    {
+        lwp_put_to_user(fd, k_fd, sizeof(int [2]));
+    }
+
+    return ret;
+#else
+    return -ELIBACC;
+#endif
+}
+
 sysret_t sys_closesocket(int socket)
 {
     return closesocket(socket);
@@ -3292,7 +3967,33 @@ sysret_t sys_closesocket(int socket)
 
 rt_thread_t sys_thread_find(char *name)
 {
-    return rt_thread_find(name);
+    int len = 0;
+    char *kname = RT_NULL;
+    rt_thread_t thread;
+
+    len = lwp_user_strlen(name);
+    if (len <= 0)
+    {
+        return RT_NULL;
+    }
+
+    kname = (char *)kmem_get(len + 1);
+    if (!kname)
+    {
+        return RT_NULL;
+    }
+
+    if (lwp_get_from_user(kname, (void *)name, len + 1) != (len + 1))
+    {
+        kmem_put(kname);
+        return RT_NULL;
+    }
+
+    thread = rt_thread_find(name);
+
+    kmem_put(kname);
+
+    return thread;
 }
 
 rt_tick_t sys_tick_get(void)
@@ -3352,7 +4053,7 @@ sysret_t sys_sigaction(int sig, const struct k_sigaction *act,
         }
         kact.sa_flags = act->flags;
         kact.__sa_handler._sa_handler = act->handler;
-        memcpy(&kact.sa_mask, &act->mask, sigsetsize);
+        lwp_memcpy(&kact.sa_mask, &act->mask, sigsetsize);
         kact.sa_restorer = act->restorer;
         pkact = &kact;
     }
@@ -3483,6 +4184,9 @@ sysret_t sys_sigtimedwait(const sigset_t *sigset, siginfo_t *info, const struct 
     struct timespec ktimeout;
     struct timespec *ptimeout;
 
+    /* for RT_ASSERT */
+    RT_UNUSED(ret);
+
     /* Fit sigset size to lwp set */
     if (sizeof(lwpset) < sigsize)
     {
@@ -3541,14 +4245,19 @@ sysret_t sys_sigtimedwait(const sigset_t *sigset, siginfo_t *info, const struct 
 sysret_t sys_tkill(int tid, int sig)
 {
 #ifdef ARCH_MM_MMU
-    rt_base_t level;
     rt_thread_t thread;
-    int ret;
+    sysret_t ret;
 
-    level = rt_hw_interrupt_disable();
-    thread = lwp_tid_get_thread(tid);
+    /**
+     * Brief: Match a tid and do the kill
+     *
+     * Note: Critical Section
+     * - the thread (READ. may be released at the meantime; protected by locked)
+     */
+    thread = lwp_tid_get_thread_and_inc_ref(tid);
     ret = lwp_thread_signal_kill(thread, sig, SI_USER, 0);
-    rt_hw_interrupt_enable(level);
+    lwp_tid_dec_ref(thread);
+
     return ret;
 #else
     return lwp_thread_kill((rt_thread_t)tid, sig);
@@ -3656,7 +4365,7 @@ sysret_t sys_waitpid(int32_t pid, int *status, int options)
     }
     else
     {
-        ret = waitpid(pid, status, options);
+        ret = lwp_waitpid(pid, status, options, RT_NULL);
     }
 #else
     if (!lwp_user_accessable((void *)status, sizeof(int)))
@@ -3694,7 +4403,7 @@ sysret_t sys_getaddrinfo(const char *nodename,
     char *k_servname = NULL;
     struct addrinfo *k_hints = NULL;
 #ifdef ARCH_MM_MMU
-    int err;
+    int len = 0;
 #endif
 
 #ifdef ARCH_MM_MMU
@@ -3707,36 +4416,64 @@ sysret_t sys_getaddrinfo(const char *nodename,
     if (nodename)
     {
 #ifdef ARCH_MM_MMU
-        lwp_user_strlen(nodename, &err);
-        if (err)
+        len = lwp_user_strlen(nodename);
+        if (len <= 0)
         {
             SET_ERRNO(EFAULT);
             goto exit;
         }
-#endif
+
+        k_nodename = (char *)kmem_get(len + 1);
+        if (!k_nodename)
+        {
+            SET_ERRNO(ENOMEM);
+            goto exit;
+        }
+
+        if (lwp_get_from_user(k_nodename, (void *)nodename, len + 1) != len + 1)
+        {
+            SET_ERRNO(EFAULT);
+            goto exit;
+        }
+#else
         k_nodename = rt_strdup(nodename);
         if (!k_nodename)
         {
             SET_ERRNO(ENOMEM);
             goto exit;
         }
+#endif
     }
     if (servname)
     {
 #ifdef ARCH_MM_MMU
-        lwp_user_strlen(servname, &err);
-        if (err)
+        len = lwp_user_strlen(servname);
+        if (len <= 0)
         {
             SET_ERRNO(EFAULT);
             goto exit;
         }
-#endif
+
+        k_servname = (char *)kmem_get(len + 1);
+        if (!k_servname)
+        {
+            SET_ERRNO(ENOMEM);
+            goto exit;
+        }
+
+        if (lwp_get_from_user(k_servname, (void *)servname, len + 1) < 0)
+        {
+            SET_ERRNO(EFAULT);
+            goto exit;
+        }
+#else
         k_servname = rt_strdup(servname);
         if (!k_servname)
         {
             SET_ERRNO(ENOMEM);
             goto exit;
         }
+#endif
     }
 
     if (hints)
@@ -3791,15 +4528,28 @@ exit:
     {
         ret = GET_ERRNO();
     }
-
+#ifdef ARCH_MM_MMU
+    if (k_nodename)
+    {
+        kmem_put(k_nodename);
+    }
+#else
     if (k_nodename)
     {
         rt_free(k_nodename);
     }
+#endif
+#ifdef ARCH_MM_MMU
+    if (k_servname)
+    {
+        kmem_put(k_servname);
+    }
+#else
     if (k_servname)
     {
         rt_free(k_servname);
     }
+#endif
     if (k_hints)
     {
         rt_free(k_hints);
@@ -3815,11 +4565,11 @@ sysret_t sys_gethostbyname2_r(const char *name, int af, struct hostent *ret,
 {
     int ret_val = -1;
     int sal_ret = -1 , sal_err = -1;
-    struct hostent sal_he;
+    struct hostent sal_he, sal_tmp;
     struct hostent *sal_result = NULL;
     char *sal_buf = NULL;
     char *k_name  = NULL;
-    int a_err = 0;
+    int len = 0;
 
 #ifdef ARCH_MM_MMU
     if (!lwp_user_accessable((void *)err, sizeof(*err)))
@@ -3838,11 +4588,31 @@ sysret_t sys_gethostbyname2_r(const char *name, int af, struct hostent *ret,
         goto __exit;
     }
 
-    lwp_user_strlen(name, &a_err);
-    if (a_err)
+    len = lwp_user_strlen(name);
+    if (len <= 0)
     {
         *err = EFAULT;
         SET_ERRNO(EFAULT);
+        goto __exit;
+    }
+
+    k_name = (char *)kmem_get(len + 1);
+    if (!k_name)
+    {
+        SET_ERRNO(ENOMEM);
+        goto __exit;
+    }
+
+    if (lwp_get_from_user(k_name, (void *)name, len + 1) < 0)
+    {
+        SET_ERRNO(EFAULT);
+        goto __exit;
+    }
+#else
+    k_name = rt_strdup(name);
+    if (k_name == NULL)
+    {
+        SET_ERRNO(ENOMEM);
         goto __exit;
     }
 #endif
@@ -3850,13 +4620,6 @@ sysret_t sys_gethostbyname2_r(const char *name, int af, struct hostent *ret,
     *result = ret;
     sal_buf = (char *)malloc(HOSTENT_BUFSZ);
     if (sal_buf == NULL)
-    {
-        SET_ERRNO(ENOMEM);
-        goto __exit;
-    }
-
-    k_name = rt_strdup(name);
-    if (k_name == NULL)
     {
         SET_ERRNO(ENOMEM);
         goto __exit;
@@ -3877,13 +4640,35 @@ sysret_t sys_gethostbyname2_r(const char *name, int af, struct hostent *ret,
         }
         cnt = index + 1;
 
+#ifdef ARCH_MM_MMU
+        /* update user space hostent */
+        lwp_put_to_user(buf, k_name, buflen - (ptr - buf));
+        lwp_memcpy(&sal_tmp, &sal_he, sizeof(sal_he));
+        sal_tmp.h_name = ptr;
+        ptr += rt_strlen(k_name);
+
+        sal_tmp.h_addr_list = (char**)ptr;
+        ptr += cnt * sizeof(char *);
+
+        index = 0;
+        while (sal_he.h_addr_list[index] != NULL)
+        {
+            sal_tmp.h_addr_list[index] = ptr;
+            lwp_memcpy(ptr, sal_he.h_addr_list[index], sal_he.h_length);
+
+            ptr += sal_he.h_length;
+            index++;
+        }
+        sal_tmp.h_addr_list[index] = NULL;
+        lwp_put_to_user(ret, &sal_tmp, sizeof(sal_tmp));
+#else
         /* update user space hostent */
         ret->h_addrtype = sal_he.h_addrtype;
         ret->h_length   = sal_he.h_length;
 
         rt_strncpy(ptr, k_name, buflen - (ptr - buf));
         ret->h_name = ptr;
-        ptr += rt_strlen(k_name);
+        ptr += strlen(k_name);
 
         ret->h_addr_list = (char**)ptr;
         ptr += cnt * sizeof(char *);
@@ -3892,15 +4677,19 @@ sysret_t sys_gethostbyname2_r(const char *name, int af, struct hostent *ret,
         while (sal_he.h_addr_list[index] != NULL)
         {
             ret->h_addr_list[index] = ptr;
-            rt_memcpy(ptr, sal_he.h_addr_list[index], sal_he.h_length);
+            lwp_memcpy(ptr, sal_he.h_addr_list[index], sal_he.h_length);
 
             ptr += sal_he.h_length;
             index++;
         }
         ret->h_addr_list[index] = NULL;
+#endif
+        ret_val = 0;
     }
-
-    ret_val = 0;
+    else
+    {
+        SET_ERRNO(EINVAL);
+    }
 
 __exit:
     if (ret_val < 0)
@@ -3913,10 +4702,17 @@ __exit:
     {
         free(sal_buf);
     }
+#ifdef ARCH_MM_MMU
+    if (k_name)
+    {
+        kmem_put(k_name);
+    }
+#else
     if (k_name)
     {
         free(k_name);
     }
+#endif
 
     return ret_val;
 }
@@ -3924,44 +4720,128 @@ __exit:
 
 char *sys_getcwd(char *buf, size_t size)
 {
+    char *tmp, *ret = RT_NULL;
+
     if (!lwp_user_accessable((void *)buf, size))
     {
-        return RT_NULL;
+        return ret;
     }
-    getcwd(buf, size);
 
-    return (char *)strlen(buf);
+    tmp = (char *)rt_malloc(size);
+    if (!tmp)
+    {
+        return ret;
+    }
+
+    if (getcwd(tmp, size) != RT_NULL)
+    {
+        if (lwp_put_to_user(buf, tmp, size) > 0)
+        {
+            ret = buf;
+        }
+    }
+
+    rt_free(tmp);
+
+    return ret;
 }
 
 sysret_t sys_chdir(const char *path)
 {
 #ifdef ARCH_MM_MMU
     int err = 0;
+    int len = 0;
+    int errcode;
+    char *kpath = RT_NULL;
 
-    lwp_user_strlen(path, &err);
-    if (err)
+    len = lwp_user_strlen(path);
+    if (len <= 0)
     {
         return -EFAULT;
     }
-    err = chdir(path);
-    return (err < 0 ? GET_ERRNO() : err);
+
+    kpath = (char *)kmem_get(len + 1);
+    if (!kpath)
+    {
+        return -ENOMEM;
+    }
+
+    if (lwp_get_from_user(kpath, (void *)path, len + 1) != (len + 1))
+    {
+        kmem_put(kpath);
+        return -EINVAL;
+    }
+
+    err = chdir(kpath);
+    errcode = err != 0 ? GET_ERRNO() : 0;
+
+    kmem_put(kpath);
+
+    return errcode;
 #else
     int ret = chdir(path);
     return (ret < 0 ? GET_ERRNO() : ret);
 #endif
 }
 
+sysret_t sys_fchdir(int fd)
+{
+    int errcode = -ENOSYS;
+#ifdef ARCH_MM_MMU
+#ifdef RT_USING_DFS_V2
+    int err = -1;
+    struct dfs_file *d;
+    char *kpath;
+
+    d = fd_get(fd);
+    if (!d || !d->vnode)
+    {
+        return -EBADF;
+    }
+    kpath = dfs_dentry_full_path(d->dentry);
+    if (!kpath)
+    {
+        return -EACCES;
+    }
+
+    err = chdir(kpath);
+    errcode = err != 0 ? GET_ERRNO() : 0;
+
+    kmem_put(kpath);
+#endif
+#endif
+    return errcode;
+}
+
 sysret_t sys_mkdir(const char *path, mode_t mode)
 {
 #ifdef ARCH_MM_MMU
     int err = 0;
+    int len = 0;
+    char *kpath = RT_NULL;
 
-    lwp_user_strlen(path, &err);
-    if (err)
+    len = lwp_user_strlen(path);
+    if (len <= 0)
     {
         return -EFAULT;
     }
-    err = mkdir(path, mode);
+
+    kpath = (char *)kmem_get(len + 1);
+    if (!kpath)
+    {
+        return -ENOMEM;
+    }
+
+    if (lwp_get_from_user(kpath, (void *)path, len + 1) != (len + 1))
+    {
+        kmem_put(kpath);
+        return -EINVAL;
+    }
+
+    err = mkdir(kpath, mode);
+
+    kmem_put(kpath);
+
     return (err < 0 ? GET_ERRNO() : err);
 #else
     int ret = mkdir(path, mode);
@@ -3973,13 +4853,31 @@ sysret_t sys_rmdir(const char *path)
 {
 #ifdef ARCH_MM_MMU
     int err = 0;
+    int len = 0;
+    char *kpath = RT_NULL;
 
-    lwp_user_strlen(path, &err);
-    if (err)
+    len = lwp_user_strlen(path);
+    if (len <= 0)
     {
         return -EFAULT;
     }
-    err = rmdir(path);
+
+    kpath = (char *)kmem_get(len + 1);
+    if (!kpath)
+    {
+        return -ENOMEM;
+    }
+
+    if (lwp_get_from_user(kpath, (void *)path, len + 1) != (len + 1))
+    {
+        kmem_put(kpath);
+        return -EINVAL;
+    }
+
+    err = rmdir(kpath);
+
+    kmem_put(kpath);
+
     return (err < 0 ? GET_ERRNO() : err);
 #else
     int ret = rmdir(path);
@@ -3996,7 +4894,7 @@ struct libc_dirent {
     off_t d_off;
     unsigned short d_reclen;
     unsigned char d_type;
-    char d_name[256];
+    char d_name[DIRENT_NAME_MAX];
 };
 
 sysret_t sys_getdents(int fd, struct libc_dirent *dirp, size_t nbytes)
@@ -4094,35 +4992,33 @@ sysret_t sys_access(const char *filename, int mode)
     int ret = 0;
 #ifdef ARCH_MM_MMU
     rt_size_t len = 0;
-    char *kname = RT_NULL;
-    int a_err = 0;
+    char *kfilename = RT_NULL;
 
-    lwp_user_strlen(filename, &a_err);
-    if (a_err)
-    {
-        return -EFAULT;
-    }
-
-    len = rt_strlen(filename);
-    if (!len)
+    len = lwp_user_strlen(filename);
+    if (len <= 0)
     {
         return -EINVAL;
     }
 
-    kname = (char *)kmem_get(len + 1);
-    if (!kname)
+    kfilename = (char *)kmem_get(len + 1);
+    if (!kfilename)
     {
         return -ENOMEM;
     }
 
-    lwp_get_from_user(kname, (void *)filename, len + 1);
-    ret = access(kname, mode);
+    if (lwp_get_from_user(kfilename, (void *)filename, len + 1) != (len + 1))
+    {
+        kmem_put(kfilename);
+        return -EFAULT;
+    }
+
+    ret = access(kfilename, mode);
     if (ret < 0)
     {
         ret = GET_ERRNO();
     }
 
-    kmem_put(kname);
+    kmem_put(kfilename);
     return ret;
 #else
     ret = access(filename, mode);
@@ -4133,12 +5029,23 @@ sysret_t sys_access(const char *filename, int mode)
 sysret_t sys_pipe(int fd[2])
 {
     int ret;
+    int kfd[2] = {0, 0};
+
     if (!lwp_user_accessable((void *)fd, sizeof(int[2])))
     {
         return -EFAULT;
     }
-    ret = pipe(fd);
+
+    ret = pipe(kfd);
+
+    lwp_put_to_user((void *)fd, kfd, sizeof(int[2]));
+
     return (ret < 0 ? GET_ERRNO() : ret);
+}
+
+sysret_t sys_wait4(pid_t pid, int *status, int options, struct rusage *ru)
+{
+    return lwp_waitpid(pid, status, options, ru);
 }
 
 sysret_t sys_clock_settime(clockid_t clk, const struct timespec *ts)
@@ -4281,14 +5188,14 @@ sysret_t sys_rename(const char *oldpath, const char *newpath)
 #ifdef ARCH_MM_MMU
     int err;
 
-    lwp_user_strlen(oldpath, &err);
-    if (err)
+    err = lwp_user_strlen(oldpath);
+    if (err <= 0)
     {
         return -EFAULT;
     }
 
-    lwp_user_strlen(newpath, &err);
-    if (err)
+    err = lwp_user_strlen(newpath);
+    if (err <= 0)
     {
         return -EFAULT;
     }
@@ -4326,11 +5233,18 @@ sysret_t sys_prlimit64(pid_t pid,
 sysret_t sys_getrlimit(unsigned int resource, unsigned long rlim[2])
 {
     int ret = -1;
+    unsigned long krlim[2] = {0, 0};
 
     if (!lwp_user_accessable((void *)rlim, sizeof(unsigned long [2])))
     {
         return -EFAULT;
     }
+
+    if (lwp_get_from_user(krlim, rlim, sizeof(unsigned long [2])) != sizeof(unsigned long [2]))
+    {
+        return -EINVAL;
+    }
+
     switch (resource)
     {
     case RLIMIT_NOFILE:
@@ -4338,9 +5252,9 @@ sysret_t sys_getrlimit(unsigned int resource, unsigned long rlim[2])
             struct dfs_fdtable *fdt = dfs_fdtable_get();
 
             dfs_file_lock();
-            rlim[0] = fdt->maxfd;
+            krlim[0] = fdt->maxfd;
             dfs_file_unlock();
-            rlim[1] = DFS_FD_MAX;
+            krlim[1] = DFS_FD_MAX;
             ret = 0;
         }
         break;
@@ -4348,19 +5262,15 @@ sysret_t sys_getrlimit(unsigned int resource, unsigned long rlim[2])
         return -EINVAL;
         break;
     }
+
+    lwp_put_to_user((void *)rlim, krlim, sizeof(unsigned long [2]));
+
     return (ret < 0 ? GET_ERRNO() : ret);
 }
 
 sysret_t sys_setrlimit(unsigned int resource, struct rlimit *rlim)
 {
     return -ENOSYS;
-}
-
-sysret_t sys_setsid(void)
-{
-    int ret = 0;
-    ret = setsid();
-    return (ret < 0 ? GET_ERRNO() : ret);
 }
 
 sysret_t sys_getrandom(void *buf, size_t buflen, unsigned int flags)
@@ -4429,16 +5339,20 @@ sysret_t sys_getrandom(void *buf, size_t buflen, unsigned int flags)
     return ret;
 }
 
+/**
+ *  readlink() places the contents of the symbolic link pathname in the buffer buf, which has size bufsiz.
+ *  readlink() does not append a null byte to buf.
+ *  It will (silently) truncate the contents(to a length of bufsiz characters),
+ *  in case the buffer is too small to hold all of the contents.
+ */
 ssize_t sys_readlink(char* path, char *buf, size_t bufsz)
 {
     size_t len, copy_len;
     int err, rtn;
-    int fd = -1;
-    struct dfs_file *d;
     char *copy_path;
 
-    len = lwp_user_strlen(path, &err);
-    if (err)
+    len = lwp_user_strlen(path);
+    if (len <= 0)
     {
         return -EFAULT;
     }
@@ -4457,113 +5371,71 @@ ssize_t sys_readlink(char* path, char *buf, size_t bufsz)
     copy_len = lwp_get_from_user(copy_path, path, len);
     copy_path[copy_len] = '\0';
 
-    /* musl __procfdname */
-    err = sscanf(copy_path, "/proc/self/fd/%d", &fd);
-
-    if (err != 1)
+    char *link_fn = (char *)rt_malloc(DFS_PATH_MAX);
+    if (link_fn)
     {
-        rtn = 0;
-        if (access(copy_path, 0))
+        err = dfs_file_readlink(copy_path, link_fn, DFS_PATH_MAX);
+        if (err > 0)
         {
-            rtn = -ENOENT;
-            LOG_E("readlink: path not is /proc/self/fd/* and path not exits, call by musl __procfdname()?");
+            rtn = lwp_put_to_user(buf, link_fn, bufsz > err ? err : bufsz - 1);
         }
         else
         {
-#ifdef RT_USING_DFS_V2
-            char *link_fn = (char *)rt_malloc(DFS_PATH_MAX);
-            if (link_fn)
-            {
-                err = dfs_file_readlink(copy_path, link_fn, DFS_PATH_MAX);
-                if (err > 0)
-                {
-                    rtn = lwp_put_to_user(buf, link_fn, bufsz > err ? err : bufsz - 1);
-                }
-                else
-                {
-                    rtn = -EIO;
-                }
-                rt_free(link_fn);
-            }
-            else
-            {
-                rtn = -ENOMEM;
-            }
-#else
-            rtn = lwp_put_to_user(buf, copy_path, copy_len);
-#endif
+            rtn = -EIO;
         }
-        rt_free(copy_path);
-        return rtn;
+        rt_free(link_fn);
     }
     else
     {
-        rt_free(copy_path);
+        rtn = -ENOMEM;
     }
 
-    d = fd_get(fd);
-    if (!d)
-    {
-        return -EBADF;
-    }
-
-    if (!d->vnode)
-    {
-        return -EBADF;
-    }
-
-#ifdef RT_USING_DFS_V2
-    {
-        char *fullpath = dfs_dentry_full_path(d->dentry);
-        if (fullpath)
-        {
-            copy_len = strlen(fullpath);
-            if (copy_len > bufsz)
-            {
-                copy_len = bufsz;
-            }
-
-            bufsz = lwp_put_to_user(buf, fullpath, copy_len);
-            rt_free(fullpath);
-        }
-        else
-        {
-            bufsz = 0;
-        }
-    }
-#else
-    copy_len = strlen(d->vnode->fullpath);
-    if (copy_len > bufsz)
-    {
-        copy_len = bufsz;
-    }
-
-    bufsz = lwp_put_to_user(buf, d->vnode->fullpath, copy_len);
-#endif
-
-    return bufsz;
+    rt_free(copy_path);
+    return rtn;
 }
 
-sysret_t sys_setaffinity(pid_t pid, size_t size, void *set)
+sysret_t sys_sched_setaffinity(pid_t pid, size_t size, void *set)
 {
-    if (!lwp_user_accessable(set, sizeof(cpu_set_t)))
+    void *kset = RT_NULL;
+
+    if (size <= 0 || size > sizeof(cpu_set_t))
     {
-        return -EFAULT;
+        return -EINVAL;
     }
+    if (!lwp_user_accessable((void *)set, size))
+        return -EFAULT;
+
+    kset = kmem_get(size);
+    if (kset == RT_NULL)
+    {
+        return -ENOMEM;
+    }
+
+    if (lwp_get_from_user(kset, set, size) != size)
+    {
+        kmem_put(kset);
+        return -EINVAL;
+    }
+
     for (int i = 0;i < size * 8; i++)
     {
-        if (CPU_ISSET(i, (cpu_set_t *)set))
+        if (CPU_ISSET_S(i, size, kset))
         {
+            kmem_put(kset);
             return lwp_setaffinity(pid, i);
         }
     }
+
+    kmem_put(kset);
+
     return -1;
 }
 
-sysret_t sys_getaffinity(pid_t pid, size_t size, void *set)
+sysret_t sys_sched_getaffinity(const pid_t pid, size_t size, void *set)
 {
 #ifdef ARCH_MM_MMU
-    cpu_set_t mask;
+    LWP_DEF_RETURN_CODE(rc);
+    void *mask;
     struct rt_lwp *lwp;
 
     if (size <= 0 || size > sizeof(cpu_set_t))
@@ -4574,34 +5446,51 @@ sysret_t sys_getaffinity(pid_t pid, size_t size, void *set)
     {
         return -EFAULT;
     }
+    mask = kmem_get(size);
+    if (!mask)
+    {
+        return -ENOMEM;
+    }
 
-    if (pid == 0) lwp = lwp_self();
-    else lwp = lwp_from_pid(pid);
+    CPU_ZERO_S(size, mask);
+
+    lwp_pid_lock_take();
+    lwp = lwp_from_pid_locked(pid);
+
     if (!lwp)
     {
-        return -ESRCH;
+        rc = -ESRCH;
     }
-
+    else
+    {
 #ifdef RT_USING_SMP
-    if (lwp->bind_cpu == RT_CPUS_NR)    /* not bind */
-    {
-        CPU_ZERO_S(size, &mask);
-    }
-    else /* set bind cpu */
-    {
-        /* TODO: only single-core bindings are now supported of rt-smart */
-        CPU_SET_S(lwp->bind_cpu, size, &mask);
-    }
+        if (lwp->bind_cpu == RT_CPUS_NR)    /* not bind */
+        {
+            for(int i = 0; i < RT_CPUS_NR; i++)
+            {
+                CPU_SET_S(i, size, mask);
+            }
+        }
+        else /* set bind cpu */
+        {
+            /* TODO: only single-core bindings are now supported of rt-smart */
+            CPU_SET_S(lwp->bind_cpu, size, mask);
+        }
 #else
-    CPU_SET_S(0, size, &mask);
+        CPU_SET_S(0, size, mask);
 #endif
 
-    if (lwp_put_to_user(set, &mask, size) != size)
-    {
-        return -1;
+        if (lwp_put_to_user(set, mask, size) != size)
+            rc = -EFAULT;
+        else
+            rc = size;
     }
 
-    return 0;
+    lwp_pid_lock_release();
+
+    kmem_put(mask);
+
+    LWP_RETURN(rc);
 #else
     return -1;
 #endif
@@ -4653,29 +5542,40 @@ sysret_t sys_sysinfo(void *info)
 #endif
 }
 
-sysret_t sys_sched_setparam(pid_t pid, void *param)
+sysret_t sys_sched_setparam(pid_t tid, void *param)
 {
-    struct sched_param *sched_param = (struct sched_param *)param;
-    struct rt_lwp *lwp = NULL;
-    rt_thread_t main_thread;
+    struct sched_param *sched_param = RT_NULL;
+    rt_thread_t thread;
     int ret = -1;
+
     if (!lwp_user_accessable(param, sizeof(struct sched_param)))
     {
         return -EFAULT;
     }
-    if (pid > 0)
+
+    sched_param = kmem_get(sizeof(struct sched_param));
+    if (sched_param == RT_NULL)
     {
-        lwp = lwp_from_pid(pid);
+        return -ENOMEM;
     }
-    else if (pid == 0)
+
+    if (lwp_get_from_user(sched_param, param, sizeof(struct sched_param)) != sizeof(struct sched_param))
     {
-        lwp = lwp_self();
+        kmem_put(sched_param);
+        return -EINVAL;
     }
-    if (lwp)
+
+    thread = lwp_tid_get_thread_and_inc_ref(tid);
+
+    if (thread)
     {
-        main_thread = rt_list_entry(lwp->t_grp.prev, struct rt_thread, sibling);
-        return rt_thread_control(main_thread, RT_THREAD_CTRL_CHANGE_PRIORITY, (void *)&sched_param->sched_priority);
+        ret = rt_thread_control(thread, RT_THREAD_CTRL_CHANGE_PRIORITY, (void *)&sched_param->sched_priority);
     }
+
+    lwp_tid_dec_ref(thread);
+
+    kmem_put(sched_param);
+
     return ret;
 }
 
@@ -4685,30 +5585,36 @@ sysret_t sys_sched_yield(void)
     return 0;
 }
 
-sysret_t sys_sched_getparam(pid_t pid, void *param)
+sysret_t sys_sched_getparam(const pid_t tid, void *param)
 {
-    struct sched_param *sched_param = (struct sched_param *)param;
-    struct rt_lwp *lwp = NULL;
-    rt_thread_t main_thread;
+    struct sched_param *sched_param = RT_NULL;
+    rt_thread_t thread;
     int ret = -1;
+
     if (!lwp_user_accessable(param, sizeof(struct sched_param)))
     {
         return -EFAULT;
     }
-    if (pid > 0)
+
+    sched_param = kmem_get(sizeof(struct sched_param));
+    if (sched_param == RT_NULL)
     {
-        lwp = lwp_from_pid(pid);
+        return -ENOMEM;
     }
-    else if (pid == 0)
+
+    thread = lwp_tid_get_thread_and_inc_ref(tid);
+
+    if (thread)
     {
-        lwp = lwp_self();
-    }
-    if (lwp)
-    {
-        main_thread = rt_list_entry(lwp->t_grp.prev, struct rt_thread, sibling);
-        sched_param->sched_priority = main_thread->current_priority;
+        sched_param->sched_priority = RT_SCHED_PRIV(thread).current_priority;
         ret = 0;
     }
+
+    lwp_tid_dec_ref(thread);
+
+    lwp_put_to_user((void *)param, sched_param, sizeof(struct sched_param));
+    kmem_put(sched_param);
+
     return ret;
 }
 
@@ -4734,28 +5640,54 @@ sysret_t sys_sched_get_priority_min(int policy)
 
 sysret_t sys_sched_setscheduler(int tid, int policy, void *param)
 {
-    struct sched_param *sched_param = (struct sched_param *)param;
-    rt_thread_t thread = lwp_tid_get_thread(tid);
+    sysret_t ret;
+    struct sched_param *sched_param = RT_NULL;
+    rt_thread_t thread = RT_NULL;
 
     if (!lwp_user_accessable(param, sizeof(struct sched_param)))
     {
         return -EFAULT;
     }
-    return rt_thread_control(thread, RT_THREAD_CTRL_CHANGE_PRIORITY, (void *)&sched_param->sched_priority);
-    return 0;
+
+    sched_param = kmem_get(sizeof(struct sched_param));
+    if (sched_param == RT_NULL)
+    {
+        return -ENOMEM;
+    }
+
+    if (lwp_get_from_user(sched_param, param, sizeof(struct sched_param)) != sizeof(struct sched_param))
+    {
+        kmem_put(sched_param);
+        return -EINVAL;
+    }
+
+    thread = lwp_tid_get_thread_and_inc_ref(tid);
+    ret = rt_thread_control(thread, RT_THREAD_CTRL_CHANGE_PRIORITY, (void *)&sched_param->sched_priority);
+    lwp_tid_dec_ref(thread);
+
+    kmem_put(sched_param);
+
+    return ret;
 }
 
-sysret_t sys_sched_getscheduler(int tid, int *policy, void *param)
+sysret_t sys_sched_getscheduler(int tid)
 {
-    struct sched_param *sched_param = (struct sched_param *)param;
-    rt_thread_t thread = lwp_tid_get_thread(tid);
-    if (!lwp_user_accessable(sched_param, sizeof(struct sched_param)))
+    rt_thread_t thread = RT_NULL;
+    int rtn;
+
+    thread = lwp_tid_get_thread_and_inc_ref(tid);
+    lwp_tid_dec_ref(thread);
+
+    if (thread)
     {
-        return -EFAULT;
+        rtn = SCHED_RR;
     }
-    sched_param->sched_priority = thread->current_priority;
-    *policy = 0;
-    return 0;
+    else
+    {
+        rtn = -ESRCH;
+    }
+
+    return rtn;
 }
 
 sysret_t sys_fsync(int fd)
@@ -4772,16 +5704,13 @@ mqd_t sys_mq_open(const char *name, int flags, mode_t mode, struct mq_attr *attr
     sysret_t ret = 0;
 #ifdef ARCH_MM_MMU
     char *kname = RT_NULL;
-    int a_err = 0;
     rt_size_t len = 0;
     struct mq_attr attr_k;
 
-    lwp_user_strlen(name, &a_err);
-    if (a_err)
-        return (mqd_t)-EFAULT;
-    len = rt_strlen(name);
+    len = lwp_user_strlen(name);
     if (!len)
         return (mqd_t)-EINVAL;
+
     kname = (char *)kmem_get(len + 1);
     if (!kname)
         return (mqd_t)-ENOMEM;
@@ -4821,13 +5750,9 @@ sysret_t sys_mq_unlink(const char *name)
     int ret = 0;
 #ifdef ARCH_MM_MMU
     char *kname = RT_NULL;
-    int a_err = 0;
     rt_size_t len = 0;
 
-    lwp_user_strlen(name, &a_err);
-    if (a_err)
-        return -EFAULT;
-    len = rt_strlen(name);
+    len = lwp_user_strlen(name);
     if (!len)
         return -EINVAL;
     kname = (char *)kmem_get(len + 1);
@@ -4853,12 +5778,8 @@ sysret_t sys_mq_timedsend(mqd_t mqd, const char *msg, size_t len, unsigned prio,
     int ret = 0;
 #ifdef ARCH_MM_MMU
     char *kmsg = RT_NULL;
-    int a_err = 0;
     struct timespec at_k;
 
-    lwp_user_strlen(msg, &a_err);
-    if (a_err)
-        return -EFAULT;
     kmsg = (char *)kmem_get(len + 1);
     if (!kmsg)
         return -ENOMEM;
@@ -4885,13 +5806,9 @@ sysret_t sys_mq_timedreceive(mqd_t mqd, char *restrict msg, size_t len, unsigned
     int ret = 0;
 #ifdef ARCH_MM_MMU
     char *restrict kmsg = RT_NULL;
-    int a_err = 0;
 
     struct timespec at_k;
 
-    lwp_user_strlen(msg, &a_err);
-    if (a_err)
-        return -EFAULT;
     kmsg = (char *restrict)kmem_get(len + 1);
     if (!kmsg)
         return -ENOMEM;
@@ -5000,6 +5917,9 @@ sysret_t sys_mq_close(mqd_t mqd)
 
 rt_weak sysret_t sys_cacheflush(void *addr, int size, int cache)
 {
+    if (!lwp_user_accessable(addr, size))
+        return -EFAULT;
+
     if (((size_t)addr < (size_t)addr + size) &&
         ((size_t)addr >= USER_VADDR_START) &&
         ((size_t)addr + size < USER_VADDR_TOP))
@@ -5053,7 +5973,6 @@ sysret_t sys_uname(struct utsname *uts)
 sysret_t sys_statfs(const char *path, struct statfs *buf)
 {
     int ret = 0;
-    int err;
     size_t len;
     size_t copy_len;
     char *copy_path;
@@ -5064,8 +5983,8 @@ sysret_t sys_statfs(const char *path, struct statfs *buf)
         return -EFAULT;
     }
 
-    len = lwp_user_strlen(path, &err);
-    if (err)
+    len = lwp_user_strlen(path);
+    if (len <= 0)
     {
         return -EFAULT;
     }
@@ -5098,7 +6017,6 @@ sysret_t sys_statfs(const char *path, struct statfs *buf)
 sysret_t sys_statfs64(const char *path, size_t sz, struct statfs *buf)
 {
     int ret = 0;
-    int err;
     size_t len;
     size_t copy_len;
     char *copy_path;
@@ -5113,8 +6031,8 @@ sysret_t sys_statfs64(const char *path, size_t sz, struct statfs *buf)
         return -EINVAL;
     }
 
-    len = lwp_user_strlen(path, &err);
-    if (err)
+    len = lwp_user_strlen(path);
+    if (len <= 0)
     {
         return -EFAULT;
     }
@@ -5198,17 +6116,20 @@ sysret_t sys_mount(char *source, char *target,
     size_t len_source, copy_len_source;
     size_t len_target, copy_len_target;
     size_t len_filesystemtype, copy_len_filesystemtype;
-    int err_source, err_target, err_filesystemtype;
     char *tmp = NULL;
     int ret = 0;
 
-    len_source = lwp_user_strlen(source, &err_source);
-    len_target = lwp_user_strlen(target, &err_target);
-    len_filesystemtype = lwp_user_strlen(filesystemtype, &err_filesystemtype);
-    if (err_source || err_target || err_filesystemtype)
-    {
-        return -EFAULT;
-    }
+    len_source = lwp_user_strlen(source);
+    if (len_source <= 0)
+        return -EINVAL;
+
+    len_target = lwp_user_strlen(target);
+    if (len_target <= 0)
+        return -EINVAL;
+
+    len_filesystemtype = lwp_user_strlen(filesystemtype);
+    if (len_filesystemtype <= 0)
+        return -EINVAL;
 
     copy_source = (char*)rt_malloc(len_source + 1 + len_target + 1 + len_filesystemtype + 1);
     if (!copy_source)
@@ -5244,11 +6165,10 @@ sysret_t sys_umount2(char *__special_file, int __flags)
 {
     char *copy_special_file;
     size_t len_special_file, copy_len_special_file;
-    int err_special_file;
     int ret = 0;
 
-    len_special_file = lwp_user_strlen(__special_file, &err_special_file);
-    if (err_special_file)
+    len_special_file = lwp_user_strlen(__special_file);
+    if (len_special_file <= 0)
     {
         return -EFAULT;
     }
@@ -5272,26 +6192,62 @@ sysret_t sys_link(const char *existing, const char *new)
 {
     int ret = -1;
 
-#ifdef ARCH_MM_MMU
-    int err;
-
-    lwp_user_strlen(existing, &err);
-    if (err)
-    {
-        return -EFAULT;
-    }
-
-    lwp_user_strlen(new, &err);
-    if (err)
-    {
-        return -EFAULT;
-    }
-#endif
 #ifdef RT_USING_DFS_V2
+#ifdef ARCH_MM_MMU
+    int len = 0;
+    char *kexisting = RT_NULL;
+    char *knew = RT_NULL;
+
+    len = lwp_user_strlen(existing);
+    if (len <= 0)
+    {
+        return -EFAULT;
+    }
+
+    kexisting = (char *)kmem_get(len + 1);
+    if (!kexisting)
+    {
+        return -ENOMEM;
+    }
+
+    if (lwp_get_from_user(kexisting, (void *)existing, len + 1) != (len + 1))
+    {
+        kmem_put(kexisting);
+        return -EINVAL;
+    }
+
+    len = lwp_user_strlen(new);
+    if (len <= 0)
+    {
+        kmem_put(kexisting);
+        return -EFAULT;
+    }
+
+    knew = (char *)kmem_get(len + 1);
+    if (!knew)
+    {
+        kmem_put(kexisting);
+        return -ENOMEM;
+    }
+
+    if (lwp_get_from_user(knew, (void *)new, len + 1) != (len + 1))
+    {
+        kmem_put(knew);
+        kmem_put(kexisting);
+        return -EINVAL;
+    }
+
+    ret = dfs_file_link(kexisting, knew);
+
+    kmem_put(knew);
+    kmem_put(kexisting);
+#else
     ret = dfs_file_link(existing, new);
+#endif
 #else
     SET_ERRNO(EFAULT);
 #endif
+
     return (ret < 0 ? GET_ERRNO() : ret);
 }
 
@@ -5302,14 +6258,14 @@ sysret_t sys_symlink(const char *existing, const char *new)
 #ifdef ARCH_MM_MMU
     int err;
 
-    lwp_user_strlen(existing, &err);
-    if (err)
+    err = lwp_user_strlen(existing);
+    if (err <= 0)
     {
         return -EFAULT;
     }
 
-    lwp_user_strlen(new, &err);
-    if (err)
+    err = lwp_user_strlen(new);
+    if (err <= 0)
     {
         return -EFAULT;
     }
@@ -5340,14 +6296,34 @@ sysret_t sys_epoll_create1(int flags)
 
 sysret_t sys_epoll_ctl(int fd, int op, int fd2, struct epoll_event *ev)
 {
-    int ret;
+    int ret = 0;
+    struct epoll_event *kev = RT_NULL;
 
-    if (!lwp_user_accessable((void *)ev, sizeof(struct epoll_event)))
+    if (ev)
     {
+        if (!lwp_user_accessable((void *)ev, sizeof(struct epoll_event)))
         return -EFAULT;
-    }
 
-    ret = epoll_ctl(fd, op, fd2, ev);
+        kev = kmem_get(sizeof(struct epoll_event));
+        if (kev == RT_NULL)
+        {
+            return -ENOMEM;
+        }
+
+        if (lwp_get_from_user(kev, ev, sizeof(struct epoll_event)) != sizeof(struct epoll_event))
+        {
+            kmem_put(kev);
+            return -EINVAL;
+        }
+
+        ret = epoll_ctl(fd, op, fd2, kev);
+
+        kmem_put(kev);
+    }
+    else
+    {
+         ret = epoll_ctl(fd, op, fd2, RT_NULL);
+    }
 
     return (ret < 0 ? GET_ERRNO() : ret);
 }
@@ -5359,72 +6335,198 @@ sysret_t sys_epoll_pwait(int fd,
         const sigset_t *sigs,
         unsigned long sigsetsize)
 {
-    int ret;
-
-    if (!lwp_user_accessable((void *)ev, sizeof(struct epoll_event)))
-    {
-        return -EFAULT;
-    }
-
-    if (sigs != 0)
-    {
-        if (!lwp_user_accessable((void *)sigs, sizeof(sigset_t)))
-        {
-            return -EFAULT;
-        }
-    }
-
-    ret = epoll_pwait(fd, ev, cnt, to, sigs);
-
-    return (ret < 0 ? GET_ERRNO() : ret);
-}
-
-sysret_t sys_chmod(const char *fileName, mode_t mode)
-{
-    char *copy_fileName;
-    size_t len_fileName, copy_len_fileName;
-    int err_fileName;
-#ifdef RT_USING_DFS_V2
-    struct dfs_attr attr;
-    attr.st_mode = mode;
-#endif
     int ret = 0;
+    struct epoll_event *kev = RT_NULL;
+    sigset_t *ksigs = RT_NULL;
 
-    len_fileName = lwp_user_strlen(fileName, &err_fileName);
-    if (err_fileName)
-    {
+    if (!lwp_user_accessable((void *)ev, cnt * sizeof(struct epoll_event)))
         return -EFAULT;
-    }
 
-    copy_fileName = (char*)rt_malloc(len_fileName + 1);
-    if (!copy_fileName)
+    kev = kmem_get(cnt * sizeof(struct epoll_event));
+    if (kev == RT_NULL)
     {
         return -ENOMEM;
     }
 
-    copy_len_fileName = lwp_get_from_user(copy_fileName, (void *)fileName, len_fileName);
-    copy_fileName[copy_len_fileName] = '\0';
-#ifdef RT_USING_DFS_V2
-    ret = dfs_file_setattr(copy_fileName, &attr);
-#else
-    SET_ERRNO(EFAULT);
-#endif
-    rt_free(copy_fileName);
+    if (sigs != RT_NULL)
+    {
+        if (!lwp_user_accessable((void *)sigs, sizeof(sigset_t)))
+        {
+            kmem_put(kev);
+            return -EFAULT;
+        }
+
+        ksigs = kmem_get(sizeof(sigset_t));
+        if (ksigs == RT_NULL)
+        {
+            kmem_put(kev);
+            return -ENOMEM;
+        }
+
+        if (lwp_get_from_user(ksigs, (void *)sigs, sizeof(sigset_t)) != sizeof(sigset_t))
+        {
+            kmem_put(kev);
+            kmem_put(ksigs);
+            return -EINVAL;
+        }
+    }
+
+    ret = epoll_pwait(fd, kev, cnt, to, ksigs);
+
+    if (ret > 0)
+    {
+        lwp_put_to_user((void *)ev, kev, ret * sizeof(struct epoll_event));
+    }
+
+    if (sigs != RT_NULL)
+        kmem_put(ksigs);
+
+    kmem_put(kev);
 
     return (ret < 0 ? GET_ERRNO() : ret);
 }
 
-sysret_t sys_reboot(int magic)
+sysret_t sys_ftruncate(int fd, size_t length)
 {
-    rt_hw_cpu_reset();
+    int ret;
 
-    return 0;
+    ret = ftruncate(fd, length);
+
+    return (ret < 0 ? GET_ERRNO() : ret);
 }
 
-ssize_t sys_pread64(int fd, void *buf, int size, off_t offset)
+sysret_t sys_utimensat(int __fd, const char *__path, const struct timespec __times[2], int __flags)
+{
+#ifdef RT_USING_DFS_V2
+#ifdef ARCH_MM_MMU
+    int ret = -1;
+    rt_size_t len = 0;
+    char *kpath = RT_NULL;
+
+    len = lwp_user_strlen(__path);
+    if (len <= 0)
+    {
+        return -EINVAL;
+    }
+
+    kpath = (char *)kmem_get(len + 1);
+    if (!kpath)
+    {
+        return -ENOMEM;
+    }
+
+    lwp_get_from_user(kpath, (void *)__path, len + 1);
+    ret = utimensat(__fd, kpath, __times, __flags);
+
+    kmem_put(kpath);
+
+    return ret;
+#else
+    if (!lwp_user_accessable((void *)__path, 1))
+    {
+        return -EFAULT;
+    }
+    int ret = utimensat(__fd, __path, __times, __flags);
+    return ret;
+#endif
+#else
+    return -1;
+#endif
+}
+
+sysret_t sys_chmod(const char *pathname, mode_t mode)
+{
+    char *copy_file;
+    size_t len_file, copy_len_file;
+    struct dfs_attr attr = {0};
+    int ret = 0;
+
+    len_file = lwp_user_strlen(pathname);
+    if (len_file <= 0)
+    {
+        return -EFAULT;
+    }
+
+    copy_file = (char*)rt_malloc(len_file + 1);
+    if (!copy_file)
+    {
+        return -ENOMEM;
+    }
+
+    copy_len_file = lwp_get_from_user(copy_file, (void *)pathname, len_file);
+
+    attr.st_mode = mode;
+    attr.ia_valid |= ATTR_MODE_SET;
+
+    copy_file[copy_len_file] = '\0';
+    ret = dfs_file_setattr(copy_file, &attr);
+    rt_free(copy_file);
+
+    return (ret < 0 ? GET_ERRNO() : ret);
+}
+
+sysret_t sys_chown(const char *pathname, uid_t owner, gid_t group)
+{
+    char *copy_file;
+    size_t len_file, copy_len_file;
+    struct dfs_attr attr = {0};
+    int ret = 0;
+
+    len_file = lwp_user_strlen(pathname);
+    if (len_file <= 0)
+    {
+        return -EFAULT;
+    }
+
+    copy_file = (char*)rt_malloc(len_file + 1);
+    if (!copy_file)
+    {
+        return -ENOMEM;
+    }
+
+    copy_len_file = lwp_get_from_user(copy_file, (void *)pathname, len_file);
+
+    if(owner >= 0)
+    {
+        attr.st_uid = owner;
+        attr.ia_valid |= ATTR_UID_SET;
+    }
+
+    if(group >= 0)
+    {
+        attr.st_gid = group;
+        attr.ia_valid |= ATTR_GID_SET;
+    }
+
+    copy_file[copy_len_file] = '\0';
+    ret = dfs_file_setattr(copy_file, &attr);
+    rt_free(copy_file);
+
+    return (ret < 0 ? GET_ERRNO() : ret);
+}
+
+#include <sys/reboot.h>
+sysret_t sys_reboot(int magic, int magic2, int type)
+{
+    sysret_t rc;
+    switch (type)
+    {
+        /* TODO add software poweroff protocols */
+        case RB_AUTOBOOT:
+        case RB_POWER_OFF:
+            rt_hw_cpu_reset();
+            break;
+        default:
+            rc = -ENOSYS;
+    }
+
+    return rc;
+}
+
+ssize_t sys_pread64(int fd, void *buf, int size, size_t offset)
 #ifdef RT_USING_DFS_V2
 {
-    ssize_t pread(int fd, void *buf, size_t len, off_t offset);
+    ssize_t pread(int fd, void *buf, size_t len, size_t offset);
 #ifdef ARCH_MM_MMU
     ssize_t ret = -1;
     void *kmem = RT_NULL;
@@ -5475,10 +6577,10 @@ ssize_t sys_pread64(int fd, void *buf, int size, off_t offset)
 }
 #endif
 
-ssize_t sys_pwrite64(int fd, void *buf, int size, off_t offset)
+ssize_t sys_pwrite64(int fd, void *buf, int size, size_t offset)
 #ifdef RT_USING_DFS_V2
 {
-    ssize_t pwrite(int fd, const void *buf, size_t len, off_t offset);
+    ssize_t pwrite(int fd, const void *buf, size_t len, size_t offset);
 #ifdef ARCH_MM_MMU
     ssize_t ret = -1;
     void *kmem = RT_NULL;
@@ -5525,6 +6627,200 @@ ssize_t sys_pwrite64(int fd, void *buf, int size, off_t offset)
     return (ret < 0 ? GET_ERRNO() : ret);
 }
 #endif
+
+sysret_t sys_timerfd_create(int clockid, int flags)
+{
+    int ret;
+
+    ret = timerfd_create(clockid, flags);
+
+    return (ret < 0 ? GET_ERRNO() : ret);
+}
+
+sysret_t sys_timerfd_settime(int fd, int flags, const struct itimerspec *new, struct itimerspec *old)
+{
+    int ret = -1;
+    struct itimerspec *knew = RT_NULL;
+    struct itimerspec *kold = RT_NULL;
+
+    if (new == RT_NULL)
+        return -EINVAL;
+
+    if (!lwp_user_accessable((void *)new, sizeof(struct itimerspec)))
+    {
+        return -EFAULT;
+    }
+
+    knew = kmem_get(sizeof(struct itimerspec));
+
+    if (knew)
+    {
+        lwp_get_from_user(knew, (void*)new, sizeof(struct itimerspec));
+
+        if (old)
+        {
+            if (!lwp_user_accessable((void *)old, sizeof(struct itimerspec)))
+            {
+                kmem_put(knew);
+                return -EFAULT;
+            }
+
+            kold = kmem_get(sizeof(struct itimerspec));
+            if (kold == RT_NULL)
+            {
+                kmem_put(knew);
+                return -ENOMEM;
+            }
+        }
+
+        ret = timerfd_settime(fd, flags, knew, kold);
+
+        if (old)
+        {
+            lwp_put_to_user(old, kold, sizeof(*kold));
+            kmem_put(kold);
+        }
+
+        kmem_put(knew);
+    }
+
+    return (ret < 0 ? GET_ERRNO() : ret);
+}
+
+sysret_t sys_timerfd_gettime(int fd, struct itimerspec *cur)
+{
+    int ret = -1;
+    struct itimerspec *kcur;
+
+    if (cur == RT_NULL)
+        return -EINVAL;
+
+    if (!lwp_user_accessable((void *)cur, sizeof(struct itimerspec)))
+    {
+        return -EFAULT;
+    }
+
+    kcur = kmem_get(sizeof(struct itimerspec));
+
+    if (kcur)
+    {
+        lwp_get_from_user(kcur, cur, sizeof(struct itimerspec));
+        ret = timerfd_gettime(fd, kcur);
+        lwp_put_to_user(cur, kcur, sizeof(struct itimerspec));
+        kmem_put(kcur);
+    }
+
+    return (ret < 0 ? GET_ERRNO() : ret);
+}
+
+sysret_t sys_signalfd(int fd, const sigset_t *mask, int flags)
+{
+    int ret = 0;
+    sigset_t *kmask = RT_NULL;
+
+#ifdef RT_USING_MUSLLIBC
+    if (mask == RT_NULL)
+        return -EINVAL;
+
+    if (!lwp_user_accessable((void *)mask, sizeof(struct itimerspec)))
+    {
+        return -EFAULT;
+    }
+
+    kmask = kmem_get(sizeof(struct itimerspec));
+
+    if (kmask)
+    {
+        if (lwp_get_from_user(kmask, (void *)mask, sizeof(struct itimerspec)) != sizeof(struct itimerspec))
+        {
+            kmem_put(kmask);
+            return -EFAULT;
+        }
+
+        ret = signalfd(fd, mask, flags);
+        kmem_put(kmask);
+    }
+#endif
+
+    return (ret < 0 ? GET_ERRNO() : ret);
+}
+
+sysret_t sys_memfd_create()
+{
+    return 0;
+}
+
+sysret_t sys_setitimer(int which, const struct itimerspec *restrict new, struct itimerspec *restrict old)
+{
+    sysret_t rc = 0;
+    rt_lwp_t lwp = lwp_self();
+    struct itimerspec new_value_k;
+    struct itimerspec old_value_k;
+
+    if (lwp_get_from_user(&new_value_k, (void *)new, sizeof(*new)) != sizeof(*new))
+    {
+        return -EFAULT;
+    }
+
+    rc = lwp_signal_setitimer(lwp, which, &new_value_k, &old_value_k);
+    if (old && lwp_put_to_user(old, (void *)&old_value_k, sizeof old_value_k) != sizeof old_value_k)
+        return -EFAULT;
+
+    return rc;
+}
+
+sysret_t sys_set_robust_list(struct robust_list_head *head, size_t len)
+{
+    if (len != sizeof(*head))
+        return -EINVAL;
+
+    rt_thread_self()->robust_list = head;
+    return 0;
+}
+
+sysret_t sys_get_robust_list(int tid, struct robust_list_head **head_ptr, size_t *len_ptr)
+{
+    rt_thread_t thread;
+    size_t len;
+    struct robust_list_head *head;
+
+    if (!lwp_user_accessable((void *)head_ptr, sizeof(struct robust_list_head *)))
+    {
+        return -EFAULT;
+    }
+    if (!lwp_user_accessable((void *)len_ptr, sizeof(size_t)))
+    {
+        return -EFAULT;
+    }
+
+    if (tid == 0)
+    {
+        thread = rt_thread_self();
+        head = thread->robust_list;
+    }
+    else
+    {
+        thread = lwp_tid_get_thread_and_inc_ref(tid);
+        if (thread)
+        {
+            head = thread->robust_list;
+            lwp_tid_dec_ref(thread);
+        }
+        else
+        {
+            return -ESRCH;
+        }
+    }
+
+    len = sizeof(*(head));
+
+    if (!lwp_put_to_user(len_ptr, &len, sizeof(size_t)))
+        return -EFAULT;
+    if (!lwp_put_to_user(head_ptr, &head, sizeof(struct robust_list_head *)))
+        return -EFAULT;
+
+    return 0;
+}
 
 const static struct rt_syscall_def func_table[] =
 {
@@ -5632,8 +6928,8 @@ const static struct rt_syscall_def func_table[] =
     SYSCALL_NET(SYSCALL_SIGN(sys_getaddrinfo)),
     SYSCALL_NET(SYSCALL_SIGN(sys_gethostbyname2_r)), /* 85 */
 
-    SYSCALL_SIGN(sys_notimpl),    //network,
-    SYSCALL_SIGN(sys_notimpl),    //network,
+    SYSCALL_NET(SYSCALL_SIGN(sys_sendmsg)),
+    SYSCALL_NET(SYSCALL_SIGN(sys_recvmsg)),
     SYSCALL_SIGN(sys_notimpl),    //network,
     SYSCALL_SIGN(sys_notimpl),    //network,
     SYSCALL_SIGN(sys_notimpl),    //network, /* 90 */
@@ -5696,22 +6992,22 @@ const static struct rt_syscall_def func_table[] =
     SYSCALL_SIGN(sys_clock_settime),
     SYSCALL_SIGN(sys_clock_gettime),
     SYSCALL_SIGN(sys_clock_getres),
-    SYSCALL_USPACE(SYSCALL_SIGN(sys_clone)),           /* 130 */
+    SYSCALL_USPACE(SYSCALL_SIGN(sys_clone)),            /* 130 */
     SYSCALL_USPACE(SYSCALL_SIGN(sys_futex)),
-    SYSCALL_USPACE(SYSCALL_SIGN(sys_pmutex)),
+    SYSCALL_SIGN(sys_notimpl),                          /* discarded: sys_pmutex */
     SYSCALL_SIGN(sys_dup),
     SYSCALL_SIGN(sys_dup2),
-    SYSCALL_SIGN(sys_rename),         /* 135 */
+    SYSCALL_SIGN(sys_rename),                           /* 135 */
     SYSCALL_USPACE(SYSCALL_SIGN(sys_fork)),
     SYSCALL_USPACE(SYSCALL_SIGN(sys_execve)),
     SYSCALL_USPACE(SYSCALL_SIGN(sys_vfork)),
     SYSCALL_SIGN(sys_gettid),
-    SYSCALL_SIGN(sys_prlimit64),      /* 140 */
+    SYSCALL_SIGN(sys_prlimit64),                        /* 140 */
     SYSCALL_SIGN(sys_getrlimit),
     SYSCALL_SIGN(sys_setrlimit),
     SYSCALL_SIGN(sys_setsid),
     SYSCALL_SIGN(sys_getrandom),
-    SYSCALL_SIGN(sys_readlink),    // SYSCALL_SIGN(sys_readlink)     /* 145 */
+    SYSCALL_SIGN(sys_readlink),                         /* 145 */
     SYSCALL_USPACE(SYSCALL_SIGN(sys_mremap)),
     SYSCALL_USPACE(SYSCALL_SIGN(sys_madvise)),
     SYSCALL_SIGN(sys_sched_setparam),
@@ -5720,7 +7016,7 @@ const static struct rt_syscall_def func_table[] =
     SYSCALL_SIGN(sys_sched_get_priority_min),
     SYSCALL_SIGN(sys_sched_setscheduler),
     SYSCALL_SIGN(sys_sched_getscheduler),
-    SYSCALL_SIGN(sys_setaffinity),
+    SYSCALL_SIGN(sys_sched_setaffinity),
     SYSCALL_SIGN(sys_fsync),                            /* 155 */
     SYSCALL_SIGN(sys_clock_nanosleep),
     SYSCALL_SIGN(sys_timer_create),
@@ -5746,7 +7042,7 @@ const static struct rt_syscall_def func_table[] =
     SYSCALL_SIGN(sys_umount2),
     SYSCALL_SIGN(sys_link),
     SYSCALL_SIGN(sys_symlink),
-    SYSCALL_SIGN(sys_getaffinity),                      /* 180 */
+    SYSCALL_SIGN(sys_sched_getaffinity),                /* 180 */
     SYSCALL_SIGN(sys_sysinfo),
     SYSCALL_SIGN(sys_chmod),
     SYSCALL_SIGN(sys_reboot),
@@ -5761,6 +7057,31 @@ const static struct rt_syscall_def func_table[] =
     SYSCALL_SIGN(sys_epoll_create1),
     SYSCALL_SIGN(sys_epoll_ctl),
     SYSCALL_SIGN(sys_epoll_pwait),
+    SYSCALL_SIGN(sys_notimpl),                          /* 195 */
+    SYSCALL_SIGN(sys_timerfd_create),
+    SYSCALL_SIGN(sys_timerfd_settime),
+    SYSCALL_SIGN(sys_timerfd_gettime),
+    SYSCALL_SIGN(sys_signalfd),
+    SYSCALL_SIGN(sys_memfd_create),                     /* 200 */
+    SYSCALL_SIGN(sys_ftruncate),
+    SYSCALL_SIGN(sys_setitimer),
+    SYSCALL_SIGN(sys_utimensat),
+#ifdef RT_USING_POSIX_SOCKET
+    SYSCALL_SIGN(sys_syslog),
+    SYSCALL_SIGN(sys_socketpair),                             /* 205 */
+#else
+    SYSCALL_SIGN(sys_notimpl),
+    SYSCALL_SIGN(sys_notimpl),                          /* 205 */
+#endif
+    SYSCALL_SIGN(sys_wait4),
+    SYSCALL_SIGN(sys_set_robust_list),
+    SYSCALL_SIGN(sys_get_robust_list),
+    SYSCALL_SIGN(sys_setpgid),
+    SYSCALL_SIGN(sys_getpgid),                          /* 210 */
+    SYSCALL_SIGN(sys_getsid),
+    SYSCALL_SIGN(sys_getppid),
+    SYSCALL_SIGN(sys_fchdir),
+    SYSCALL_SIGN(sys_chown),
 };
 
 const void *lwp_get_sys_api(rt_uint32_t number)

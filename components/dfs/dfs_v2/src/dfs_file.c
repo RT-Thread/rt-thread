@@ -19,12 +19,95 @@
 #include "dfs_mnt.h"
 #include "dfs_private.h"
 
+#ifdef RT_USING_PAGECACHE
+#include "dfs_pcache.h"
+#endif
+
 #define DBG_TAG    "DFS.file"
 #define DBG_LVL    DBG_WARNING
 #include <rtdbg.h>
 
-
 #define MAX_RW_COUNT 0xfffc0000
+
+rt_inline int _first_path_len(const char *path)
+{
+    int i = 0;
+
+    if (path[i] == '/')
+    {
+        i++;
+        while (path[i] != '\0' && path[i] != '/')
+        {
+            i++;
+        }
+    }
+
+    return i;
+}
+
+static int _get_parent_path(const char *fullpath, char *path)
+{
+    int len = 0;
+    char *str = 0;
+
+    str = strrchr(fullpath, '/');
+    if (str)
+    {
+        len = str - fullpath;
+        if (len > 0)
+        {
+            rt_memcpy(path, fullpath, len);
+            path[len] = '\0';
+        }
+    }
+
+    return len;
+}
+
+static int _try_readlink(const char *path, struct dfs_mnt *mnt, char *link)
+{
+    int ret = -1;
+    struct dfs_dentry *dentry = dfs_dentry_lookup(mnt, path, 0);
+
+    if (dentry && dentry->vnode->type == FT_SYMLINK)
+    {
+        if (mnt->fs_ops->readlink)
+        {
+            if (dfs_is_mounted(mnt) == 0)
+            {
+                ret = mnt->fs_ops->readlink(dentry, link, DFS_PATH_MAX);
+            }
+        }
+    }
+    dfs_dentry_unref(dentry);
+
+    return ret;
+}
+
+static int _insert_link_path(const char *link_fn, int link_len, char *tmp_path, int *index)
+{
+    int ret = -1;
+
+    if (link_fn[0] != '/')
+    {
+        if (link_len + 1 <= *index)
+        {
+            *index -= link_len;
+            rt_memcpy(tmp_path + *index, link_fn, link_len);
+            *index -= 1;
+            tmp_path[*index] = '/';
+            ret = 0;
+        }
+    }
+    else if (link_len <= *index)
+    {
+        *index -= link_len;
+        rt_memcpy(tmp_path + *index, link_fn, link_len);
+        ret = 1;
+    }
+
+    return ret;
+}
 
 /*
  * rw_verify_area doesn't like huge counts. We limit
@@ -114,7 +197,7 @@ static void dfs_file_unref(struct dfs_file *file)
             {
                 if (file->vnode->ref_count > 1)
                 {
-                    file->vnode->ref_count--;
+                    rt_atomic_sub(&(file->vnode->ref_count), 1);
                 }
                 else if (file->vnode->ref_count == 1)
                 {
@@ -130,205 +213,101 @@ static void dfs_file_unref(struct dfs_file *file)
     }
 }
 
-struct dfs_dentry* dfs_file_follow_link(struct dfs_dentry *dentry)
-{
-    int ret = 0;
-    struct dfs_dentry *tmp = dfs_dentry_ref(dentry);
-
-    if (dentry && dentry->vnode && dentry->vnode->type == FT_SYMLINK)
-    {
-        char *buf = NULL;
-
-        buf = (char *) rt_malloc (DFS_PATH_MAX);
-        if (buf)
-        {
-            do
-            {
-                if (dfs_is_mounted(tmp->mnt) == 0)
-                {
-                    ret = tmp->mnt->fs_ops->readlink(tmp, buf, DFS_PATH_MAX);
-                }
-
-                if (ret > 0)
-                {
-                    struct dfs_mnt *mnt = NULL;
-
-                    if (buf[0] != '/')
-                    {
-                        char *dir = dfs_dentry_pathname(tmp);
-
-                        /* is the relative directory */
-                        if (dir)
-                        {
-                            char *fullpath = dfs_normalize_path(dir, buf);
-                            if (fullpath)
-                            {
-                                strncpy(buf, fullpath, DFS_PATH_MAX);
-
-                                rt_free(fullpath);
-                            }
-                            rt_free(dir);
-                        }
-                    }
-
-                    mnt = dfs_mnt_lookup(buf);
-                    if (mnt)
-                    {
-                        struct dfs_dentry *de = dfs_dentry_lookup(mnt, buf, 0);
-
-                        /* release the old dentry */
-                        dfs_dentry_unref(tmp);
-                        tmp = de;
-                    }
-                }
-                else
-                {
-                    break;
-                }
-            } while (tmp && tmp->vnode->type == FT_SYMLINK);
-        }
-
-        rt_free(buf);
-    }
-
-    return tmp;
-}
-
 /*
  * this function is creat a nolink path.
  *
  * @param mnt
  * @param fullpath
- * @param mode 0 middle path nolink; 1 all path nolink.
+ * @param mode
  *
  * @return new path.
  */
-static char *dfs_nolink_path(struct dfs_mnt **mnt, char *fullpath, int mode)
+char *dfs_file_realpath(struct dfs_mnt **mnt, const char *fullpath, int mode)
 {
-    int index = 0;
-    char *path = RT_NULL;
-    char link_fn[DFS_PATH_MAX] = {0};
-    struct dfs_dentry *dentry = RT_NULL;
-
-    path = (char *)rt_malloc(DFS_PATH_MAX);
-    if (!path)
-    {
-        return path;
-    }
+    int path_len = 0, index = 0;
+    char *path = RT_NULL, *link_fn, *tmp_path;
+    struct dfs_mnt *tmp_mnt;
 
     if (*mnt && fullpath)
     {
-        int i = 0;
-        char *fp = fullpath;
+        int len, link_len;
 
-        while (*fp != '\0')
+        path = (char *)rt_malloc((DFS_PATH_MAX * 3) + 3); // path + \0 + link_fn + \0 + tmp_path + \0
+        if (!path)
         {
-            fp++;
-            i++;
-            if (*fp == '/')
+            return RT_NULL;
+        }
+
+        link_fn = path + DFS_PATH_MAX + 1;
+        tmp_path = link_fn + (DFS_PATH_MAX + 1);
+
+        len = rt_strlen(fullpath);
+        if (len > DFS_PATH_MAX)
+        {
+            goto _ERR_RET;
+        }
+
+        index = (DFS_PATH_MAX - len);
+        rt_strcpy(tmp_path + index, fullpath);
+
+        if (mode == DFS_REALPATH_ONLY_LAST)
+        {
+            path_len = _get_parent_path(fullpath, path);
+            index += path_len;
+        }
+
+        while ((len = _first_path_len(tmp_path + index)) > 0)
+        {
+            if (len + path_len > DFS_PATH_MAX)
             {
-                rt_memcpy(path + index, fp - i, i);
-                path[index + i] = '\0';
+                goto _ERR_RET;
+            }
 
-                dentry = dfs_dentry_lookup(*mnt, path, 0);
-                if (dentry && dentry->vnode->type == FT_SYMLINK)
+            rt_memcpy(path + path_len, tmp_path + index, len);
+            path[path_len + len] = '\0';
+            index += len;
+
+            tmp_mnt = dfs_mnt_lookup(path);
+            if (tmp_mnt == RT_NULL)
+            {
+                goto _ERR_RET;
+            }
+
+            *mnt = tmp_mnt;
+
+            /* the last should by mode process. */
+            if ((tmp_path[index] == '\0') && (mode == DFS_REALPATH_EXCEPT_LAST))
+            {
+                break;
+            }
+
+            link_len = _try_readlink(path, *mnt, link_fn);
+            if (link_len > 0)
+            {
+                int ret = _insert_link_path(link_fn, link_len, tmp_path, &index);
+
+                if (ret == 1)
                 {
-                    int ret = -1;
-
-                    if ((*mnt)->fs_ops->readlink)
-                    {
-                        if (dfs_is_mounted((*mnt)) == 0)
-                        {
-                            ret = (*mnt)->fs_ops->readlink(dentry, link_fn, DFS_PATH_MAX);
-                        }
-                    }
-
-                    if (ret > 0)
-                    {
-                        int len = rt_strlen(link_fn);
-                        if (link_fn[0] == '/')
-                        {
-                            rt_memcpy(path, link_fn, len);
-                            index = len;
-                        }
-                        else
-                        {
-                            path[index] = '/';
-                            index++;
-                            rt_memcpy(path + index, link_fn, len);
-                            index += len;
-                        }
-                        path[index] = '\0';
-                        *mnt = dfs_mnt_lookup(path);
-                    }
-                    else
-                    {
-                        rt_kprintf("link error: %s\n", path);
-                    }
+                    /* link_fn[0] == '/' */
+                    path_len = 0;
                 }
-                else
+                else if (ret < 0)
                 {
-                    index += i;
+                    goto _ERR_RET;
                 }
-                dfs_dentry_unref(dentry);
-                i = 0;
+            }
+            else
+            {
+                path_len += len;
             }
         }
 
-        if (i)
-        {
-            rt_memcpy(path + index, fp - i, i);
-            path[index + i] = '\0';
+        return path;
 
-            if (mode)
-            {
-                dentry = dfs_dentry_lookup(*mnt, path, 0);
-                if (dentry && dentry->vnode->type == FT_SYMLINK)
-                {
-                    int ret = -1;
-
-                    if ((*mnt)->fs_ops->readlink)
-                    {
-                        if (dfs_is_mounted((*mnt)) == 0)
-                        {
-                            ret = (*mnt)->fs_ops->readlink(dentry, link_fn, DFS_PATH_MAX);
-                        }
-                    }
-
-                    if (ret > 0)
-                    {
-                        int len = rt_strlen(link_fn);
-                        if (link_fn[0] == '/')
-                        {
-                            rt_memcpy(path, link_fn, len);
-                            index = len;
-                        }
-                        else
-                        {
-                            path[index] = '/';
-                            index++;
-                            rt_memcpy(path + index, link_fn, len);
-                            index += len;
-                        }
-                        path[index] = '\0';
-                        *mnt = dfs_mnt_lookup(path);
-                    }
-                    else
-                    {
-                        rt_kprintf("link error: %s\n", path);
-                    }
-                }
-                dfs_dentry_unref(dentry);
-            }
-        }
-    }
-    else
-    {
+_ERR_RET:
         rt_free(path);
         path = RT_NULL;
     }
-
-    //rt_kprintf("%s: %s => %s\n", __FUNCTION__, fullpath, path);
 
     return path;
 }
@@ -365,7 +344,7 @@ int dfs_file_open(struct dfs_file *file, const char *path, int oflags, mode_t mo
             mnt = dfs_mnt_lookup(fullpath);
             if (mnt)
             {
-                char *tmp = dfs_nolink_path(&mnt, fullpath, 0);
+                char *tmp = dfs_file_realpath(&mnt, fullpath, DFS_REALPATH_EXCEPT_LAST);
                 if (tmp)
                 {
                     rt_free(fullpath);
@@ -386,9 +365,12 @@ int dfs_file_open(struct dfs_file *file, const char *path, int oflags, mode_t mo
                     else
                     {
                         struct dfs_dentry *target_dentry = RT_NULL;
-
-                        /* follow symbol link */
-                        target_dentry = dfs_file_follow_link(dentry);
+                        char *path = dfs_file_realpath(&mnt, fullpath, DFS_REALPATH_ONLY_LAST);
+                        if (path)
+                        {
+                            target_dentry = dfs_dentry_lookup(mnt, path, oflags);
+                            rt_free(path);
+                        }
                         dfs_dentry_unref(dentry);
                         dentry = target_dentry;
                     }
@@ -441,10 +423,10 @@ int dfs_file_open(struct dfs_file *file, const char *path, int oflags, mode_t mo
                             struct dfs_vnode *vnode = RT_NULL;
 
                             DLOG(msg, "dfs_file", "dentry", DLOG_MSG, "dfs_dentry_create(%s)", fullpath);
+                            dfs_file_lock();
                             dentry = dfs_dentry_create(mnt, fullpath);
                             if (dentry)
                             {
-                                mode &= ~S_IFMT;
                                 DLOG(msg, "dfs_file", mnt->fs_ops->name, DLOG_MSG, "fs_ops->create_vnode");
 
                                 if (dfs_is_mounted(mnt) == 0)
@@ -465,6 +447,7 @@ int dfs_file_open(struct dfs_file *file, const char *path, int oflags, mode_t mo
                                     dentry = RT_NULL;
                                 }
                             }
+                            dfs_file_unlock();
                         }
                     }
                 }
@@ -511,7 +494,9 @@ int dfs_file_open(struct dfs_file *file, const char *path, int oflags, mode_t mo
 
                         if (dfs_is_mounted(file->vnode->mnt) == 0)
                         {
+                            dfs_file_lock();
                             ret = file->fops->open(file);
+                            dfs_file_unlock();
                         }
                         else
                         {
@@ -520,7 +505,7 @@ int dfs_file_open(struct dfs_file *file, const char *path, int oflags, mode_t mo
 
                         if (ret < 0)
                         {
-                            LOG_E("open %s failed in file system: %s", path, dentry->mnt->fs_ops->name);
+                            LOG_I("open %s failed in file system: %s", path, dentry->mnt->fs_ops->name);
                             DLOG(msg, mnt->fs_ops->name, "dfs_file", DLOG_MSG_RET, "open failed.");
                             dfs_file_unref(file);
                         }
@@ -565,13 +550,18 @@ int dfs_file_open(struct dfs_file *file, const char *path, int oflags, mode_t mo
 
                     if (dfs_is_mounted(file->vnode->mnt) == 0)
                     {
+#ifdef RT_USING_PAGECACHE
+                        if (file->vnode->aspace)
+                        {
+                            dfs_aspace_clean(file->vnode->aspace);
+                        }
+#endif
                         ret = file->fops->truncate(file, 0);
                     }
                     else
                     {
                         ret = -EINVAL;
                     }
-
                 }
             }
 
@@ -605,7 +595,12 @@ int dfs_file_close(struct dfs_file *file)
             if (ref_count == 1 && file->fops && file->fops->close)
             {
                 DLOG(msg, "dfs_file", file->dentry->mnt->fs_ops->name, DLOG_MSG, "fops->close(file)");
-
+#ifdef RT_USING_PAGECACHE
+                if (file->vnode->aspace)
+                {
+                    dfs_aspace_flush(file->vnode->aspace);
+                }
+#endif
                 ret = file->fops->close(file);
 
                 if (ret == 0) /* close file sucessfully */
@@ -658,7 +653,16 @@ ssize_t dfs_file_read(struct dfs_file *file, void *buf, size_t len)
 
                 if (dfs_is_mounted(file->vnode->mnt) == 0)
                 {
-                    ret = file->fops->read(file, buf, len, &pos);
+#ifdef RT_USING_PAGECACHE
+                    if (file->vnode->aspace && !(file->flags & O_DIRECT))
+                    {
+                        ret = dfs_aspace_read(file, buf, len, &pos);
+                    }
+                    else
+#endif
+                    {
+                        ret = file->fops->read(file, buf, len, &pos);
+                    }
                 }
                 else
                 {
@@ -703,7 +707,21 @@ ssize_t dfs_file_write(struct dfs_file *file, const void *buf, size_t len)
 
                 if (dfs_is_mounted(file->vnode->mnt) == 0)
                 {
-                    ret = file->fops->write(file, buf, len, &pos);
+#ifdef RT_USING_PAGECACHE
+                    if (file->vnode->aspace && !(file->flags & O_DIRECT))
+                    {
+                        ret = dfs_aspace_write(file, buf, len, &pos);
+                    }
+                    else
+#endif
+                    {
+                        ret = file->fops->write(file, buf, len, &pos);
+                    }
+
+                    if (file->flags & O_SYNC)
+                    {
+                        file->fops->flush(file);
+                    }
                 }
                 else
                 {
@@ -771,7 +789,7 @@ int dfs_file_stat(const char *path, struct stat *buf)
         mnt = dfs_mnt_lookup(fullpath);
         if (mnt)
         {
-            char *tmp = dfs_nolink_path(&mnt, fullpath, 1);
+            char *tmp = dfs_file_realpath(&mnt, fullpath, DFS_REALPATH_EXCEPT_NONE);
             if (tmp)
             {
                 rt_free(fullpath);
@@ -825,7 +843,7 @@ int dfs_file_lstat(const char *path, struct stat *buf)
         mnt = dfs_mnt_lookup(fullpath);
         if (mnt)
         {
-            char *tmp = dfs_nolink_path(&mnt, fullpath, 0);
+            char *tmp = dfs_file_realpath(&mnt, fullpath, DFS_REALPATH_EXCEPT_LAST);
             if (tmp)
             {
                 rt_free(fullpath);
@@ -904,7 +922,7 @@ int dfs_file_setattr(const char *path, struct dfs_attr *attr)
         mnt = dfs_mnt_lookup(fullpath);
         if (mnt)
         {
-            char *tmp = dfs_nolink_path(&mnt, fullpath, 0);
+            char *tmp = dfs_file_realpath(&mnt, fullpath, DFS_REALPATH_EXCEPT_LAST);
             if (tmp)
             {
                 rt_free(fullpath);
@@ -1017,6 +1035,11 @@ int dfs_file_fcntl(int fd, int cmd, unsigned long arg)
         case F_SETLK:
         case F_SETLKW:
             break;
+#ifdef RT_USING_MUSLLIBC
+        case F_DUPFD_CLOEXEC:
+            ret = -EINVAL;
+            break;
+#endif
         default:
             ret = -EPERM;
             break;
@@ -1040,6 +1063,12 @@ int dfs_file_fsync(struct dfs_file *file)
         {
             if (dfs_is_mounted(file->vnode->mnt) == 0)
             {
+#ifdef RT_USING_PAGECACHE
+                if (file->vnode->aspace)
+                {
+                    dfs_aspace_flush(file->vnode->aspace);
+                }
+#endif
                 ret = file->fops->flush(file);
             }
             else
@@ -1066,7 +1095,7 @@ int dfs_file_unlink(const char *path)
         mnt = dfs_mnt_lookup(fullpath);
         if (mnt)
         {
-            char *tmp = dfs_nolink_path(&mnt, fullpath, 0);
+            char *tmp = dfs_file_realpath(&mnt, fullpath, DFS_REALPATH_EXCEPT_LAST);
             if (tmp)
             {
                 rt_free(fullpath);
@@ -1082,7 +1111,15 @@ int dfs_file_unlink(const char *path)
                     rt_bool_t has_child = RT_FALSE;
 
                     has_child = dfs_mnt_has_child_mnt(mnt, fullpath);
-                    if (has_child == RT_FALSE && rt_atomic_load(&(dentry->ref_count)) == 1)
+#ifdef RT_USING_PAGECACHE
+                    if (dentry->vnode->aspace)
+                    {
+                        dfs_aspace_clean(dentry->vnode->aspace);
+                    }
+#endif
+                    dfs_file_lock();
+
+                    if (has_child == RT_FALSE)
                     {
                         /* no child mnt point, unlink it */
                         ret = -RT_ERROR;
@@ -1099,6 +1136,7 @@ int dfs_file_unlink(const char *path)
                     {
                         ret = -EBUSY;
                     }
+                    dfs_file_unlock();
 
                     /* release this dentry */
                     dfs_dentry_unref(dentry);
@@ -1159,7 +1197,7 @@ int dfs_file_link(const char *oldname, const char *newname)
             return -1;
         }
 
-        char *tmp = dfs_nolink_path(&mnt, old_fullpath, 0);
+        char *tmp = dfs_file_realpath(&mnt, old_fullpath, DFS_REALPATH_EXCEPT_LAST);
         if (tmp)
         {
             rt_free(old_fullpath);
@@ -1170,7 +1208,7 @@ int dfs_file_link(const char *oldname, const char *newname)
     new_fullpath = dfs_normalize_path(NULL, newname);
     if (new_fullpath)
     {
-        char *tmp = dfs_nolink_path(&mnt, new_fullpath, 0);
+        char *tmp = dfs_file_realpath(&mnt, new_fullpath, DFS_REALPATH_EXCEPT_LAST);
         if (tmp)
         {
             rt_free(new_fullpath);
@@ -1270,7 +1308,7 @@ int dfs_file_symlink(const char *target, const char *linkpath)
                 mnt = dfs_mnt_lookup(parent);
                 if (mnt)
                 {
-                    char *tmp = dfs_nolink_path(&mnt, parent, 0);
+                    char *tmp = dfs_file_realpath(&mnt, parent, DFS_REALPATH_EXCEPT_LAST);
                     if (tmp)
                     {
                         rt_free(parent);
@@ -1278,45 +1316,31 @@ int dfs_file_symlink(const char *target, const char *linkpath)
                     }
 
                     DLOG(msg, "dfs_file", "dentry", DLOG_MSG, "dfs_dentry_lookup(mnt, %s)", fullpath);
-                    dentry = dfs_dentry_lookup(mnt, parent, 0);
+                    dentry = dfs_dentry_lookup(mnt, parent, DFS_REALPATH_EXCEPT_LAST);
                     if (dentry)
                     {
                         if (dentry->mnt->fs_ops->symlink)
                         {
-                            char *path = dfs_normalize_path(NULL, target);
+                            char *path = dfs_normalize_path(parent, target);
                             if (path)
                             {
-                                char *tmp = dfs_nolink_path(&mnt, path, 0);
-                                if (tmp)
+                                ret = rt_strncmp(parent, path, strlen(parent));
+                                if (ret == 0)
                                 {
-                                    rt_free(path);
-                                    path = tmp;
+                                    tmp = path + strlen(parent);
+                                    if (*tmp == '/')
+                                    {
+                                        tmp ++;
+                                    }
                                 }
                                 else
                                 {
                                     tmp = path;
                                 }
 
-                                if (dfs_file_access(path, O_RDONLY) == 0)
+                                if (dfs_is_mounted(mnt) == 0)
                                 {
-                                    ret = rt_strncmp(parent, path, strlen(parent));
-                                    if (ret == 0)
-                                    {
-                                        tmp = path + strlen(parent);
-                                        if (*tmp == '/')
-                                        {
-                                            tmp ++;
-                                        }
-                                    }
-
-                                    if (dfs_is_mounted(mnt) == 0)
-                                    {
-                                        ret = mnt->fs_ops->symlink(dentry, tmp, index + 1);
-                                    }
-                                }
-                                else
-                                {
-                                    ret = -ENOENT;
+                                    ret = mnt->fs_ops->symlink(dentry, tmp, index + 1);
                                 }
 
                                 rt_free(path);
@@ -1368,7 +1392,7 @@ int dfs_file_readlink(const char *path, char *buf, int bufsize)
         mnt = dfs_mnt_lookup(fullpath);
         if (mnt)
         {
-            char *tmp = dfs_nolink_path(&mnt, fullpath, 0);
+            char *tmp = dfs_file_realpath(&mnt, fullpath, DFS_REALPATH_EXCEPT_LAST);
             if (tmp)
             {
                 rt_free(fullpath);
@@ -1433,7 +1457,7 @@ int dfs_file_rename(const char *old_file, const char *new_file)
             return -1;
         }
 
-        char *tmp = dfs_nolink_path(&mnt, old_fullpath, 0);
+        char *tmp = dfs_file_realpath(&mnt, old_fullpath, DFS_REALPATH_EXCEPT_LAST);
         if (tmp)
         {
             rt_free(old_fullpath);
@@ -1444,7 +1468,7 @@ int dfs_file_rename(const char *old_file, const char *new_file)
     new_fullpath = dfs_normalize_path(NULL, new_file);
     if (new_fullpath)
     {
-        char *tmp = dfs_nolink_path(&mnt, new_fullpath, 0);
+        char *tmp = dfs_file_realpath(&mnt, new_fullpath, DFS_REALPATH_EXCEPT_LAST);
         if (tmp)
         {
             rt_free(new_fullpath);
@@ -1467,6 +1491,12 @@ int dfs_file_rename(const char *old_file, const char *new_file)
             {
                 if (dfs_is_mounted(mnt) == 0)
                 {
+#ifdef RT_USING_PAGECACHE
+                    if (old_dentry->vnode->aspace)
+                    {
+                        dfs_aspace_clean(old_dentry->vnode->aspace);
+                    }
+#endif
                     ret = mnt->fs_ops->rename(old_dentry, new_dentry);
                 }
             }
@@ -1499,6 +1529,12 @@ int dfs_file_ftruncate(struct dfs_file *file, off_t length)
         {
             if (dfs_is_mounted(file->vnode->mnt) == 0)
             {
+#ifdef RT_USING_PAGECACHE
+                if (file->vnode->aspace)
+                {
+                    dfs_aspace_clean(file->vnode->aspace);
+                }
+#endif
                 ret = file->fops->truncate(file, length);
             }
             else
@@ -1529,6 +1565,12 @@ int dfs_file_flush(struct dfs_file *file)
         {
             if (dfs_is_mounted(file->vnode->mnt) == 0)
             {
+#ifdef RT_USING_PAGECACHE
+                if (file->vnode->aspace)
+                {
+                    dfs_aspace_flush(file->vnode->aspace);
+                }
+#endif
                 ret = file->fops->flush(file);
             }
             else
@@ -1601,7 +1643,7 @@ int dfs_file_isdir(const char *path)
         mnt = dfs_mnt_lookup(fullpath);
         if (mnt)
         {
-            char *tmp = dfs_nolink_path(&mnt, fullpath, 1);
+            char *tmp = dfs_file_realpath(&mnt, fullpath, DFS_REALPATH_EXCEPT_NONE);
             if (tmp)
             {
                 rt_free(fullpath);
@@ -1669,13 +1711,23 @@ int dfs_file_access(const char *path, mode_t mode)
     return ret;
 }
 
+#ifdef RT_USING_SMART
 int dfs_file_mmap2(struct dfs_file *file, struct dfs_mmap2_args *mmap2)
 {
-    int ret = 0;
+    int ret = RT_EOK;
 
     if (file && mmap2)
     {
-        if (file->vnode->type != FT_DEVICE || !file->vnode->fops->ioctl)
+        if (file->vnode->type == FT_REGULAR)
+        {
+            ret = dfs_file_mmap(file, mmap2);
+            if (ret != 0)
+            {
+                ret = ret > 0 ? ret : -ret;
+                rt_set_errno(ret);
+            }
+        }
+        else if (file->vnode->type != FT_DEVICE || !file->vnode->fops->ioctl)
         {
             rt_set_errno(EINVAL);
         }
@@ -1700,11 +1752,13 @@ int dfs_file_mmap2(struct dfs_file *file, struct dfs_mmap2_args *mmap2)
 
     return ret;
 }
+#endif
 
 #ifdef RT_USING_FINSH
 
 #define _COLOR_RED      "\033[31m"
 #define _COLOR_GREEN    "\033[32m"
+#define _COLOR_YELLOW   "\033[33m"
 #define _COLOR_BLUE     "\033[34m"
 #define _COLOR_CYAN     "\033[36m"
 #define _COLOR_WHITE    "\033[37m"
@@ -1746,7 +1800,7 @@ void ls(const char *pathname)
     DLOG(msg, "dfs", "dfs_file", DLOG_MSG, "dfs_file_open(%s, O_DIRECTORY, 0)", path);
     if (dfs_file_open(&file, path, O_DIRECTORY, 0) >= 0)
     {
-        char *link_fn = (char *) rt_malloc (DFS_PATH_MAX);
+        char *link_fn = (char *)rt_malloc(DFS_PATH_MAX);
         if (link_fn)
         {
             rt_kprintf("Directory %s:\n", path);
@@ -1790,7 +1844,7 @@ void ls(const char *pathname)
                                 mnt = dfs_mnt_lookup(fullpath);
                                 if (mnt)
                                 {
-                                    char *tmp = dfs_nolink_path(&mnt, fullpath, 0);
+                                    char *tmp = dfs_file_realpath(&mnt, fullpath, DFS_REALPATH_EXCEPT_LAST);
                                     if (tmp)
                                     {
                                         char *index;
@@ -1833,6 +1887,11 @@ void ls(const char *pathname)
                             rt_kprintf(_COLOR_GREEN "%-20s" _COLOR_NORMAL, dirent.d_name);
                             rt_kprintf("%-25lu\n", (unsigned long)stat.st_size);
                         }
+                        else if (S_ISCHR(stat.st_mode))
+                        {
+                            rt_kprintf(_COLOR_YELLOW "%-20s" _COLOR_NORMAL, dirent.d_name);
+                            rt_kprintf("%-25s\n", "<CHR>");
+                        }
                         else
                         {
                             rt_kprintf("%-20s", dirent.d_name);
@@ -1841,7 +1900,7 @@ void ls(const char *pathname)
                     }
                     else
                     {
-                        rt_kprintf(_COLOR_RED "%-20s" _COLOR_NORMAL, dirent.d_name);
+                        rt_kprintf(_COLOR_RED "%-20s\n" _COLOR_NORMAL, dirent.d_name);
                     }
 
                     rt_free(fullpath);
@@ -1939,7 +1998,7 @@ static void copyfile(const char *src, const char *dst)
 
     dfs_file_init(&dst_file);
 
-    ret = dfs_file_open(&dst_file, dst, O_WRONLY | O_CREAT, 0);
+    ret = dfs_file_open(&dst_file, dst, O_WRONLY | O_CREAT | O_TRUNC, 0);
     if (ret < 0)
     {
         dfs_file_deinit(&dst_file);

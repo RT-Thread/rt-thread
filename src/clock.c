@@ -15,20 +15,19 @@
  * 2018-11-22     Jesven       add per cpu tick
  * 2020-12-29     Meco Man     implement rt_tick_get_millisecond()
  * 2021-06-01     Meco Man     add critical section projection for rt_tick_increase()
+ * 2023-09-15     xqyjlj       perf rt_hw_interrupt_disable/enable
+ * 2023-10-16     RiceChen     fix: only the main core detection rt_timer_check(), in SMP mode
  */
 
 #include <rthw.h>
 #include <rtthread.h>
+#include <rtatomic.h>
 
 #ifdef RT_USING_SMP
 #define rt_tick rt_cpu_index(0)->tick
 #else
-static volatile rt_tick_t rt_tick = 0;
+static volatile rt_atomic_t rt_tick = 0;
 #endif /* RT_USING_SMP */
-
-#ifndef __on_rt_tick_hook
-    #define __on_rt_tick_hook()          __ON_HOOK_ARGS(rt_tick_hook, ())
-#endif
 
 #if defined(RT_USING_HOOK) && defined(RT_HOOK_USING_FUNC_PTR)
 static void (*rt_tick_hook)(void);
@@ -66,7 +65,7 @@ void rt_tick_sethook(void (*hook)(void))
 rt_tick_t rt_tick_get(void)
 {
     /* return the global tick */
-    return rt_tick;
+    return (rt_tick_t)rt_atomic_load(&(rt_tick));
 }
 RTM_EXPORT(rt_tick_get);
 
@@ -77,11 +76,7 @@ RTM_EXPORT(rt_tick_get);
  */
 void rt_tick_set(rt_tick_t tick)
 {
-    rt_base_t level;
-
-    level = rt_hw_interrupt_disable();
-    rt_tick = tick;
-    rt_hw_interrupt_enable(level);
+    rt_atomic_store(&(rt_tick), tick);
 }
 
 /**
@@ -90,39 +85,27 @@ void rt_tick_set(rt_tick_t tick)
  */
 void rt_tick_increase(void)
 {
-    struct rt_thread *thread;
-    rt_base_t level;
+    RT_ASSERT(rt_interrupt_get_nest() > 0);
 
     RT_OBJECT_HOOK_CALL(rt_tick_hook, ());
-
-    level = rt_hw_interrupt_disable();
-
     /* increase the global tick */
 #ifdef RT_USING_SMP
-    rt_cpu_self()->tick ++;
+    /* get percpu and increase the tick */
+    rt_atomic_add(&(rt_cpu_self()->tick), 1);
 #else
-    ++ rt_tick;
+    rt_atomic_add(&(rt_tick), 1);
 #endif /* RT_USING_SMP */
 
     /* check time slice */
-    thread = rt_thread_self();
-
-    -- thread->remaining_tick;
-    if (thread->remaining_tick == 0)
-    {
-        /* change to initialized tick */
-        thread->remaining_tick = thread->init_tick;
-        thread->stat |= RT_THREAD_STAT_YIELD;
-
-        rt_hw_interrupt_enable(level);
-        rt_schedule();
-    }
-    else
-    {
-        rt_hw_interrupt_enable(level);
-    }
+    rt_sched_tick_increase();
 
     /* check timer */
+#ifdef RT_USING_SMP
+    if (rt_hw_cpu_id() != 0)
+    {
+        return;
+    }
+#endif
     rt_timer_check();
 }
 
@@ -166,6 +149,10 @@ RTM_EXPORT(rt_tick_from_millisecond);
  */
 rt_weak rt_tick_t rt_tick_get_millisecond(void)
 {
+#if RT_TICK_PER_SECOND == 0 // make cppcheck happy
+#error "RT_TICK_PER_SECOND must be greater than zero"
+#endif
+
 #if 1000 % RT_TICK_PER_SECOND == 0u
     return rt_tick_get() * (1000u / RT_TICK_PER_SECOND);
 #else

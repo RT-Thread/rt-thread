@@ -42,11 +42,18 @@
 #define A6        (27)
 #define A7        (28)
 
+#define RTDUINO_PIN_MAX_LIMIT A7 /* pin number max limit check */
+
 #define F_CPU          180000000L  /* CPU:180MHz */
 
 #define LED_BUILTIN     D13  /* Default Built-in LED */
 
 /* i2c1 : PB9-SDA PB8-SCL */
 #define RTDUINO_DEFAULT_IIC_BUS_NAME    "i2c1"
+
+#define SS          D10
+#define RTDUINO_DEFAULT_SPI_BUS_NAME     "spi2"
+
+#define RTDUINO_TONE_HWTIMER_DEVICE_NAME "timer6"
 
 #endif /* Pins_Arduino_h */

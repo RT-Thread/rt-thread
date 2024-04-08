@@ -7,9 +7,10 @@
    Change Logs:
    Date             Author          Notes
    2022-03-31       CDT             First version
+   2023-01-15       CDT             Update define base on new head file
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -161,7 +162,7 @@ typedef struct {
  * @defgroup MPU_Background_Write_Permission MPU Background Write Permission
  * @{
  */
-#define MPU_BACKGROUND_WR_DISABLE               (MPU_S1CR_SMPU1BWP) /*!< Disable write the background space */
+#define MPU_BACKGROUND_WR_DISABLE               (MPU_SCR_SMPUBWP)   /*!< Disable write the background space */
 #define MPU_BACKGROUND_WR_ENABLE                (0UL)               /*!< Enable write the background space  */
 /**
  * @}
@@ -171,7 +172,7 @@ typedef struct {
  * @defgroup MPU_Background_Read_Permission MPU Background Read Permission
  * @{
  */
-#define MPU_BACKGROUND_RD_DISABLE               (MPU_S1CR_SMPU1BRP) /*!< Disable read the background space */
+#define MPU_BACKGROUND_RD_DISABLE               (MPU_SCR_SMPUBRP)   /*!< Disable read the background space */
 #define MPU_BACKGROUND_RD_ENABLE                (0UL)               /*!< Enable read the background space  */
 /**
  * @}
@@ -182,9 +183,9 @@ typedef struct {
  * @{
  */
 #define MPU_EXP_TYPE_NONE                       (0UL)                   /*!< The host unit access protection regions will be ignored                                       */
-#define MPU_EXP_TYPE_BUS_ERR                    (MPU_S1CR_SMPU1ACT_0)   /*!< The host unit access protection regions will be ignored and a bus error will be triggered     */
-#define MPU_EXP_TYPE_NMI                        (MPU_S1CR_SMPU1ACT_1)   /*!< The host unit access protection regions will be ignored and a NMI interrupt will be triggered */
-#define MPU_EXP_TYPE_RST                        (MPU_S1CR_SMPU1ACT)     /*!< The host unit access protection regions will trigger the reset                                */
+#define MPU_EXP_TYPE_BUS_ERR                    (MPU_SCR_SMPUACT_0)     /*!< The host unit access protection regions will be ignored and a bus error will be triggered     */
+#define MPU_EXP_TYPE_NMI                        (MPU_SCR_SMPUACT_1)     /*!< The host unit access protection regions will be ignored and a NMI interrupt will be triggered */
+#define MPU_EXP_TYPE_RST                        (MPU_SCR_SMPUACT)       /*!< The host unit access protection regions will trigger the reset                                */
 /**
  * @}
  */
@@ -193,7 +194,7 @@ typedef struct {
  * @defgroup MPU_Region_Write_Permission MPU Region Write Permission
  * @{
  */
-#define MPU_REGION_WR_DISABLE                   (MPU_S1RGWP_S1RG0WP)    /*!< Disable write the region */
+#define MPU_REGION_WR_DISABLE                   (MPU_SRGWP_RG0WP)       /*!< Disable write the region */
 #define MPU_REGION_WR_ENABLE                    (0UL)                   /*!< Enable write the region  */
 /**
  * @}
@@ -203,7 +204,7 @@ typedef struct {
  * @defgroup MPU_Region_Read_Permission MPU Region Read Permission
  * @{
  */
-#define MPU_REGION_RD_DISABLE                   (MPU_S1RGRP_S1RG0RP)    /*!< Disable read the region */
+#define MPU_REGION_RD_DISABLE                   (MPU_SRGRP_RG0RP)    /*!< Disable read the region */
 #define MPU_REGION_RD_ENABLE                    (0UL)                   /*!< Enable read the region  */
 /**
  * @}
@@ -252,9 +253,9 @@ typedef struct {
 #define MPU_FLAG_SMPU1EAF                       (MPU_SR_SMPU1EAF)   /*!< System DMA_1 error flag */
 #define MPU_FLAG_SMPU2EAF                       (MPU_SR_SMPU2EAF)   /*!< System DMA_2 error flag */
 #define MPU_FLAG_FMPUEAF                        (MPU_SR_FMPUEAF)    /*!< USBFS_DMA error flag    */
-
 #define MPU_FLAG_HMPUEAF                        (MPU_SR_HMPUEAF)    /*!< USBHS_DMA error flag    */
 #define MPU_FLAG_EMPUEAF                        (MPU_SR_EMPUEAF)    /*!< ETH_DMA error flag      */
+
 #define MPU_FLAG_ALL                            (MPU_FLAG_SMPU1EAF | MPU_FLAG_SMPU2EAF | MPU_FLAG_FMPUEAF | \
                                                  MPU_FLAG_HMPUEAF  | MPU_FLAG_EMPUEAF)
 /**

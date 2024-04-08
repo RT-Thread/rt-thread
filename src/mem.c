@@ -290,16 +290,6 @@ void *rt_smem_alloc(rt_smem_t m, rt_size_t size)
     RT_ASSERT(rt_object_get_type(&m->parent) == RT_Object_Class_Memory);
     RT_ASSERT(rt_object_is_systemobject(&m->parent));
 
-    if (size != RT_ALIGN(size, RT_ALIGN_SIZE))
-    {
-        LOG_D("malloc size %d, but align to %d",
-                size, RT_ALIGN(size, RT_ALIGN_SIZE));
-    }
-    else
-    {
-        LOG_D("malloc size %d", size);
-    }
-
     small_mem = (struct rt_small_mem *)m;
     /* alignment size */
     size = RT_ALIGN(size, RT_ALIGN_SIZE);
@@ -562,7 +552,7 @@ RTM_EXPORT(rt_smem_free);
 #include <finsh.h>
 
 #ifdef RT_USING_MEMTRACE
-int memcheck(int argc, char *argv[])
+static int memcheck(int argc, char *argv[])
 {
     int position;
     rt_base_t level;
@@ -611,7 +601,7 @@ __exit:
 }
 MSH_CMD_EXPORT(memcheck, check memory data);
 
-int memtrace(int argc, char **argv)
+static int memtrace(int argc, char **argv)
 {
     struct rt_small_mem_item *mem;
     struct rt_small_mem *m;

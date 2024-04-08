@@ -114,9 +114,9 @@ static void nrf5x_pin_write(rt_device_t dev, rt_base_t pin, rt_uint8_t value)
     nrf_gpio_pin_write(pin, value);
 }
 
-static rt_int8_t nrf5x_pin_read(rt_device_t dev, rt_base_t pin)
+static rt_ssize_t nrf5x_pin_read(rt_device_t dev, rt_base_t pin)
 {
-    rt_int8_t value;
+    rt_ssize_t value;
     const struct pin_index *index;
 
     value = PIN_LOW;
@@ -124,7 +124,7 @@ static rt_int8_t nrf5x_pin_read(rt_device_t dev, rt_base_t pin)
     index = get_pin(pin);
     if (index == RT_NULL)
     {
-        return value;
+        return -RT_EINVAL;
     }
 
     value = nrf_gpio_pin_read(pin);

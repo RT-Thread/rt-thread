@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2024, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -503,7 +503,14 @@ struct rt_mmcsd_host *sdio_host_create(struct ra_sdhi *sdhi_des)
 
 int rt_hw_sdhi_init(void)
 {
+#if defined(BSP_USING_SDHI0)
     sdhi.instance = &g_sdmmc0;
+#elif defined(BSP_USING_SDHI1)
+    sdhi.instance = &g_sdmmc1;
+#else
+#error "please defined the g_sdmmc handle"
+#endif
+
     sdhi.instance->p_api->open(sdhi.instance->p_ctrl, sdhi.instance->p_cfg);
     host = sdio_host_create(&sdhi);
     if (host == RT_NULL)

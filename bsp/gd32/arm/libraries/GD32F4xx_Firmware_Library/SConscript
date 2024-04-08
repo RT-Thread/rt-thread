@@ -10,6 +10,7 @@ src = Split('''
 CMSIS/GD/GD32F4xx/Source/system_gd32f4xx.c
 GD32F4xx_standard_peripheral/Source/gd32f4xx_gpio.c
 GD32F4xx_standard_peripheral/Source/gd32f4xx_rcu.c
+GD32F4xx_standard_peripheral/Source/gd32f4xx_dma.c
 GD32F4xx_standard_peripheral/Source/gd32f4xx_exti.c
 GD32F4xx_standard_peripheral/Source/gd32f4xx_misc.c
 GD32F4xx_standard_peripheral/Source/gd32f4xx_syscfg.c

@@ -70,6 +70,8 @@ void idle_wfi(void)
  */
 void rt_hw_board_init(void)
 {
+    rt_hw_init_mmu_table(platform_mem_desc,platform_mem_desc_size);
+    rt_hw_mmu_init();
     /* initialize hardware interrupt */
     rt_hw_interrupt_init();
     /* initialize uart */

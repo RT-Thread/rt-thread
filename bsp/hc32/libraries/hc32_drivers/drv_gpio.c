@@ -1,12 +1,12 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
- * Copyright (c) 2022, Xiaohua Semiconductor Co., Ltd.
+ * Copyright (C) 2022-2024, Xiaohua Semiconductor Co., Ltd.
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
  * 2022-04-28     CDT          first version
+ * 2023-10-09     CDT          support HC32F448
  */
 
 #include <rtthread.h>
@@ -14,7 +14,9 @@
 #include "drv_gpio.h"
 #include "board_config.h"
 
-#ifdef RT_USING_PIN
+#if defined(RT_USING_PIN)
+
+#if defined(BSP_USING_GPIO)
 
 #define GPIO_PIN_INDEX(pin)             ((uint8_t)((pin) & 0x0F))
 #define PIN_NUM(port, pin)              (((((port) & 0x0F) << 4) | ((pin) & 0x0F)))
@@ -24,6 +26,8 @@
 #if defined (HC32F4A0)
     #define PIN_MAX_NUM                     ((GPIO_PORT_I * 16) + (__CLZ(__RBIT(GPIO_PIN_13))) + 1)
 #elif defined (HC32F460)
+    #define PIN_MAX_NUM                     ((GPIO_PORT_H * 16) + (__CLZ(__RBIT(GPIO_PIN_02))) + 1)
+#elif defined (HC32F448)
     #define PIN_MAX_NUM                     ((GPIO_PORT_H * 16) + (__CLZ(__RBIT(GPIO_PIN_02))) + 1)
 #endif
 
@@ -279,11 +283,11 @@ static void hc32_pin_write(struct rt_device *device, rt_base_t pin, rt_uint8_t v
     }
 }
 
-static rt_int8_t hc32_pin_read(struct rt_device *device, rt_base_t pin)
+static rt_ssize_t hc32_pin_read(struct rt_device *device, rt_base_t pin)
 {
     uint8_t  gpio_port;
     uint16_t gpio_pin;
-    rt_int8_t value = PIN_LOW;
+    int value = PIN_LOW;
 
     if (pin < PIN_MAX_NUM)
     {
@@ -297,6 +301,10 @@ static rt_int8_t hc32_pin_read(struct rt_device *device, rt_base_t pin)
         {
             value = PIN_HIGH;
         }
+    }
+    else
+    {
+        return -RT_EINVAL;
     }
 
     return value;
@@ -503,6 +511,7 @@ int rt_hw_pin_init(void)
 
     return rt_device_pin_register("pin", &hc32_pin_ops, RT_NULL);
 }
-INIT_BOARD_EXPORT(rt_hw_pin_init);
+
+#endif
 
 #endif  /* RT_USING_PIN */

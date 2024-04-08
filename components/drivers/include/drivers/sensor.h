@@ -238,7 +238,7 @@ struct rt_sensor_data
 
 struct rt_sensor_ops
 {
-    rt_size_t (*fetch_data)(struct rt_sensor_device *sensor, void *buf, rt_size_t len);
+    rt_ssize_t (*fetch_data)(struct rt_sensor_device *sensor, void *buf, rt_size_t len);
     rt_err_t (*control)(struct rt_sensor_device *sensor, int cmd, void *arg);
 };
 

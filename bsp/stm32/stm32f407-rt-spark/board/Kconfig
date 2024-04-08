@@ -1,16 +1,5 @@
 menu "Hardware Drivers Config"
 
-config SOC_STM32F407ZG
-    bool
-    select SOC_SERIES_STM32F4
-    select RT_USING_COMPONENTS_INIT
-    select RT_USING_USER_MAIN
-    default y
-
-config BOARD_STM32F407_SPARK
-    bool
-    default y
-
 menu "Onboard Peripheral Drivers"
 
     config BSP_USING_USB_TO_USART
@@ -31,7 +20,7 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_UART
         select BSP_USING_UART3
         default n
-        
+
     menuconfig BSP_USING_RS485
         bool "Enable RS485 (uart6)"
         select BSP_USING_UART
@@ -69,7 +58,7 @@ menu "Onboard Peripheral Drivers"
                 select BSP_USING_PWM14_CH1
         endif
 
-	config BSP_USING_ONBOARD_LED_MATRIX
+    config BSP_USING_ONBOARD_LED_MATRIX
         bool "Enable Led MATRIX"
         default n
         select BSP_USING_PWM
@@ -91,6 +80,7 @@ menu "Onboard Peripheral Drivers"
     if BSP_USING_LVGL
         config BSP_USING_LVGL_DEMO
             bool "Enable LVGL demo"
+            select PKG_LVGL_USING_DEMOS
             default y
     endif
 
@@ -107,7 +97,7 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_I2C1
         default n
 
-	config BSP_USING_ENC28j60
+    config BSP_USING_ENC28j60
         bool "Enable Ethernet 28j60"
         default n
         select BSP_USING_SPI
@@ -126,44 +116,45 @@ menu "Onboard Peripheral Drivers"
                 select BSP_USING_SDIO
                 select RT_USING_DFS_ELMFAT
                 default n
-			if BSP_USING_SDCARD_FATFS
-				menuconfig BSP_USING_FS_AUTO_MOUNT
-					bool "Enable filesystem auto mount"
-					default y
-			endif
-			
-			config BSP_USING_FLASH_FATFS
-				bool "Enable FAL filesystem partition base on W25Q64"
-				select BSP_USING_FAL
-				default n
-			if BSP_USING_FLASH_FATFS
-				menuconfig BSP_USING_FLASH_FS_AUTO_MOUNT
-					bool "Enable filesystem auto mount"
-					default y
-			endif
+            if BSP_USING_SDCARD_FATFS
+                menuconfig BSP_USING_FS_AUTO_MOUNT
+                    bool "Enable filesystem auto mount"
+                    default y
+            endif
+
+            config BSP_USING_FLASH_FATFS
+                bool "Enable FAL filesystem partition base on W25Q64"
+                select BSP_USING_FAL
+                default n
+            if BSP_USING_FLASH_FATFS
+                menuconfig BSP_USING_FLASH_FS_AUTO_MOUNT
+                    bool "Enable filesystem auto mount"
+                    default y
+            endif
         endif
 
     config BSP_USING_FAL
-		bool "Enable FAL (enable on-chip flash and spi2 flash)"
-		select BSP_USING_SPI_FLASH
-		select RT_USING_FAL
-		select FAL_DEBUG_CONFIG
-		select FAL_PART_HAS_TABLE_CFG
-		select FAL_USING_SFUD_PORT
-		
-	if BSP_USING_FAL
-		menuconfig BSP_USING_BOOTLOADER
-		bool "Enable bootloader partition table"
-		default n
-	endif
-			
-		
-	config BSP_USING_EASYFLASH
+        bool "Enable FAL (enable on-chip flash and spi2 flash)"
+        select BSP_USING_SPI_FLASH
+        select RT_USING_FAL
+        select FAL_DEBUG_CONFIG
+        select FAL_PART_HAS_TABLE_CFG
+        select FAL_USING_SFUD_PORT
+        select BSP_USING_ON_CHIP_FLASH
+
+    if BSP_USING_FAL
+        menuconfig BSP_USING_BOOTLOADER
+        bool "Enable bootloader partition table"
+        default n
+    endif
+
+
+    config BSP_USING_EASYFLASH
         bool "Enable Easy Flash base on FAL"
         select BSP_USING_FAL
         select PKG_USING_EASYFLASH
         default n
-        
+
     menuconfig BSP_USING_RW007_WLAN
         bool "Enable Rw007 Wlan Base on SPI2"
         default n
@@ -190,9 +181,9 @@ menu "Onboard Peripheral Drivers"
                 int "RW007 RESET pin index"
                 default 111
         endif
-    
+
     config BSP_USING_AHT21
-        bool "Enable AHT21(i2c3)" 
+        bool "Enable AHT21(i2c3)"
         select BSP_USING_I2C
         select BSP_USING_I2C3
         select PKG_USING_SENSORS_DRIVERS
@@ -222,12 +213,6 @@ menu "Onboard Peripheral Drivers"
         select RT_USB_DEVICE_HID_MOUSE
         select BSP_USING_ICM20608
 
-    config BSP_USING_EASYFLASH
-        bool "Enable Easy Flash base on FAL"
-        select BSP_USING_FAL
-        select PKG_USING_EASYFLASH
-        default n
-
     menuconfig BSP_USING_CAN
         bool "Enable On Board CAN"
         select RT_USING_CAN
@@ -253,9 +238,9 @@ menu "Onboard Peripheral Drivers"
             config BSP_USING_AUDIO_RECORD
             bool "Enable Audio Record"
             default n
-        endif   
+        endif
 
-        
+
 endmenu
 
 menu "On-chip Peripheral Drivers"
@@ -373,23 +358,6 @@ menu "On-chip Peripheral Drivers"
                 default n
         endif
 
-    menuconfig BSP_USING_ONCHIP_RTC
-        bool "Enable RTC"
-        select RT_USING_RTC
-        default n
-        if BSP_USING_ONCHIP_RTC
-            choice
-                prompt "Select clock source"
-                default BSP_RTC_USING_LSE
-
-                config BSP_RTC_USING_LSE
-                    bool "RTC USING LSE"
-
-                config BSP_RTC_USING_LSI
-                    bool "RTC USING LSI"
-            endchoice
-        endif
-
     menuconfig BSP_USING_PWM
         bool "Enable PWM"
         default n
@@ -454,7 +422,7 @@ menu "On-chip Peripheral Drivers"
                         range 1 176
                         default 91
                 endif
-            
+
             menuconfig BSP_USING_SOFT_SPI2
                 bool "Enable soft SPI2 BUS (software simulation)"
                 default n
@@ -557,7 +525,7 @@ menu "On-chip Peripheral Drivers"
                         range 0 143
                         default 80
                 endif
-        
+
             menuconfig BSP_USING_I2C3
                 bool "Enable I2C3 BUS for AHT21 Onboard(software simulation)"
                 default n
@@ -581,7 +549,7 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_PM
         select RT_USING_HOOK
         default n
-        
+
     menuconfig BSP_USING_DAC
         bool "Enable DAC"
         default n
@@ -664,7 +632,7 @@ menu "On-chip Peripheral Drivers"
     config BSP_USING_FMC
         bool
         default n
- source "../libraries/HAL_Drivers/Kconfig"
+ source "$BSP_DIR/../libraries/HAL_Drivers/drivers/Kconfig"
 
 endmenu
 

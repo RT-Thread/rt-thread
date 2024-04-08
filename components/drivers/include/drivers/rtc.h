@@ -38,6 +38,9 @@ struct rt_rtc_wkalarm
     rt_int32_t tm_sec;               /* alarm at tm_sec */
     rt_int32_t tm_min;               /* alarm at tm_min */
     rt_int32_t tm_hour;              /* alarm at tm_hour */
+    rt_int32_t tm_mday;              /* alarm at tm_mday */
+    rt_int32_t tm_mon;               /* alarm at tm_mon */
+    rt_int32_t tm_year;              /* alarm at tm_year */
 };
 
 struct rt_rtc_ops
@@ -68,7 +71,7 @@ rt_err_t set_timestamp(time_t timestamp);
 rt_err_t get_timestamp(time_t *timestamp);
 
 #ifdef RT_USING_SYSTEM_WORKQUEUE
-rt_err_t rt_soft_rtc_sync();
+rt_err_t rt_soft_rtc_sync(void);
 rt_err_t rt_soft_rtc_set_source(const char *name);
 #endif
 

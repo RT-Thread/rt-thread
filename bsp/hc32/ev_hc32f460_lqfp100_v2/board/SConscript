@@ -12,9 +12,13 @@ board.c
 board_config.c
 ''')
 
+if GetDepend(['BSP_USING_SPI_FLASH']):
+    src += Glob('ports/drv_spi_flash.c')
+
 path =  [cwd]
 path += [cwd + '/ports']
 path += [cwd + '/config']
+path += [cwd + '/config/usb_config']
 
 startup_path_prefix = SDK_LIB
 
@@ -25,7 +29,7 @@ elif rtconfig.PLATFORM in ['armcc', 'armclang']:
 elif rtconfig.PLATFORM in ['iccarm']:
     src += [startup_path_prefix + '/hc32f460_ddl/drivers/cmsis/Device/HDSC/hc32f4xx/Source/IAR/startup_hc32f460.s']
 
-CPPDEFINES = ['HC32F460']
+CPPDEFINES = ['HC32F460', '__DEBUG']
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
 
 Return('group')

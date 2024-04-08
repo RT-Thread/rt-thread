@@ -12,12 +12,22 @@
 #ifndef __RT_DEVICE_H__
 #define __RT_DEVICE_H__
 
+#include <rtdef.h>
 #include <rtthread.h>
+#include <drivers/core/driver.h>
+#include <drivers/core/bus.h>
+
+#include <drivers/classes/block.h>
+#include <drivers/classes/char.h>
+#include <drivers/classes/graphic.h>
+#include <drivers/classes/mtd.h>
+#include <drivers/classes/net.h>
 
 #include "ipc/ringbuffer.h"
 #include "ipc/completion.h"
 #include "ipc/dataqueue.h"
 #include "ipc/workqueue.h"
+#include "ipc/condvar.h"
 #include "ipc/waitqueue.h"
 #include "ipc/pipe.h"
 #include "ipc/poll.h"
@@ -28,6 +38,23 @@ extern "C" {
 #endif
 
 #define RT_DEVICE(device)            ((rt_device_t)device)
+
+#ifdef RT_USING_DM
+#include "drivers/core/dm.h"
+#include "drivers/platform.h"
+
+#ifdef RT_USING_OFW
+#include "drivers/ofw.h"
+#include "drivers/ofw_fdt.h"
+#include "drivers/ofw_io.h"
+#include "drivers/ofw_irq.h"
+#include "drivers/ofw_raw.h"
+#endif /* RT_USING_OFW */
+
+#ifdef RT_USING_PIC
+#include "drivers/pic.h"
+#endif
+#endif /* RT_USING_DM */
 
 #ifdef RT_USING_RTC
 #include "drivers/rtc.h"
@@ -71,6 +98,10 @@ extern "C" {
 #ifdef RT_USING_I2C_BITOPS
 #include "drivers/i2c-bit-ops.h"
 #endif /* RT_USING_I2C_BITOPS */
+
+#ifdef RT_USING_DM
+#include "drivers/i2c_dm.h"
+#endif /* RT_USING_DM */
 #endif /* RT_USING_I2C */
 
 #ifdef RT_USING_PHY
@@ -169,21 +200,9 @@ extern "C" {
 #include "drivers/lcd.h"
 #endif
 
-#ifdef RT_USING_DM
-#include "drivers/core/dm.h"
-
-#ifdef RT_USING_OFW
-#include "drivers/ofw.h"
-#include "drivers/ofw_fdt.h"
-#include "drivers/ofw_io.h"
-#include "drivers/ofw_irq.h"
-#include "drivers/ofw_raw.h"
-#endif /* RT_USING_OFW */
-
-#ifdef RT_USING_PIC
-#include "drivers/pic.h"
-#endif
-#endif /* RT_USING_DM */
+#ifdef RT_USING_CLK
+#include "drivers/clk.h"
+#endif /* RT_USING_CLK */
 
 #ifdef __cplusplus
 }

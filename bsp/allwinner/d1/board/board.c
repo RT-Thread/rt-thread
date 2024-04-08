@@ -67,8 +67,6 @@ static void __rt_assert_handler(const char *ex_string, const char *func, rt_size
 //BSP的C入口
 void primary_cpu_entry(void)
 {
-    extern void entry(void);
-
     //初始化BSS
     init_bss();
     //关中断

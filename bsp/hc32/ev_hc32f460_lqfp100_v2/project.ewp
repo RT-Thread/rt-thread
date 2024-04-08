@@ -179,14 +179,17 @@
         <debug>0</debug>
         <option>
           <name>CCDefines</name>
-          <state>__DEBUG</state>
+          <state />
           <state>CLOCKS_PER_SEC=RT_TICK_PER_SECOND</state>
           <state>RT_USING_DLIBC</state>
           <state>RT_USING_LIBC</state>
           <state>_DLIB_ADD_EXTRA_SYMBOLS=0</state>
           <state>HC32F460</state>
+          <state>__DEBUG</state>
           <state>__RTTHREAD__</state>
           <state>USE_DDL_DRIVER</state>
+          <state>__RT_IPC_SOURCE__</state>
+          <state>__RT_KERNEL_SOURCE__</state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -316,26 +319,28 @@
         <option>
           <name>CCIncludePath2</name>
           <state />
-          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\extension\fcntl\octal</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\posix\ipc</state>
           <state>$PROJ_DIR$\..\..\..\components\finsh</state>
-          <state>$PROJ_DIR$\..\..\..\libcpu\arm\common</state>
-          <state>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m4</state>
-          <state>$PROJ_DIR$\board\ports</state>
           <state>$PROJ_DIR$\..\..\..\components\drivers\include</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\stdio</state>
-          <state>$PROJ_DIR$\.</state>
-          <state>$PROJ_DIR$\applications</state>
           <state>$PROJ_DIR$\..\libraries\hc32_drivers</state>
           <state>$PROJ_DIR$\..\libraries\hc32f460_ddl\drivers\cmsis\Include</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\poll</state>
           <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\extension</state>
-          <state>$PROJ_DIR$\..\libraries\hc32f460_ddl\drivers\cmsis\Device\HDSC\hc32f4xx\Include</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\include</state>
-          <state>$PROJ_DIR$\board\config</state>
-          <state>$PROJ_DIR$\..\..\..\include</state>
-          <state>$PROJ_DIR$\..\libraries\hc32f460_ddl\drivers\hc32_ll_driver\inc</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\posix\ipc</state>
+          <state>$PROJ_DIR$\.</state>
           <state>$PROJ_DIR$\board</state>
+          <state>$PROJ_DIR$\..\libraries\hc32f460_ddl\drivers\cmsis\Device\HDSC\hc32f4xx\Include</state>
+          <state>$PROJ_DIR$\..\libraries\hc32f460_ddl\drivers\hc32_ll_driver\inc</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\extension\fcntl\octal</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\epoll</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\include</state>
+          <state>$PROJ_DIR$\board\ports</state>
+          <state>$PROJ_DIR$\applications</state>
+          <state>$PROJ_DIR$\..\..\..\libcpu\arm\common</state>
+          <state>$PROJ_DIR$\..\..\..\include</state>
+          <state>$PROJ_DIR$\board\config\usb_config</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\poll</state>
+          <state>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m4</state>
+          <state>$PROJ_DIR$\board\config</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\eventfd</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -722,7 +727,8 @@
         </option>
         <option>
           <name>IlinkConfigDefines</name>
-          <state />
+          <state>_LINK_FLASH_= 0</state>
+          <state>_HC32F460_512K_= 1</state>
         </option>
         <option>
           <name>IlinkMapFile</name>
@@ -1171,8 +1177,11 @@
           <state>RT_USING_LIBC</state>
           <state>_DLIB_ADD_EXTRA_SYMBOLS=0</state>
           <state>HC32F460</state>
+          <state>__DEBUG</state>
           <state>__RTTHREAD__</state>
           <state>USE_DDL_DRIVER</state>
+          <state>__RT_IPC_SOURCE__</state>
+          <state>__RT_KERNEL_SOURCE__</state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -1302,26 +1311,28 @@
         <option>
           <name>CCIncludePath2</name>
           <state />
-          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\extension\fcntl\octal</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\posix\ipc</state>
           <state>$PROJ_DIR$\..\..\..\components\finsh</state>
-          <state>$PROJ_DIR$\..\..\..\libcpu\arm\common</state>
-          <state>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m4</state>
-          <state>$PROJ_DIR$\board\ports</state>
           <state>$PROJ_DIR$\..\..\..\components\drivers\include</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\stdio</state>
-          <state>$PROJ_DIR$\.</state>
-          <state>$PROJ_DIR$\applications</state>
           <state>$PROJ_DIR$\..\libraries\hc32_drivers</state>
           <state>$PROJ_DIR$\..\libraries\hc32f460_ddl\drivers\cmsis\Include</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\poll</state>
           <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\extension</state>
-          <state>$PROJ_DIR$\..\libraries\hc32f460_ddl\drivers\cmsis\Device\HDSC\hc32f4xx\Include</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\include</state>
-          <state>$PROJ_DIR$\board\config</state>
-          <state>$PROJ_DIR$\..\..\..\include</state>
-          <state>$PROJ_DIR$\..\libraries\hc32f460_ddl\drivers\hc32_ll_driver\inc</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\posix\ipc</state>
+          <state>$PROJ_DIR$\.</state>
           <state>$PROJ_DIR$\board</state>
+          <state>$PROJ_DIR$\..\libraries\hc32f460_ddl\drivers\cmsis\Device\HDSC\hc32f4xx\Include</state>
+          <state>$PROJ_DIR$\..\libraries\hc32f460_ddl\drivers\hc32_ll_driver\inc</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\extension\fcntl\octal</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\epoll</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\include</state>
+          <state>$PROJ_DIR$\board\ports</state>
+          <state>$PROJ_DIR$\applications</state>
+          <state>$PROJ_DIR$\..\..\..\libcpu\arm\common</state>
+          <state>$PROJ_DIR$\..\..\..\include</state>
+          <state>$PROJ_DIR$\board\config\usb_config</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\poll</state>
+          <state>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m4</state>
+          <state>$PROJ_DIR$\board\config</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\eventfd</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -1704,7 +1715,8 @@
         </option>
         <option>
           <name>IlinkConfigDefines</name>
-          <state />
+          <state>_LINK_FLASH_= 0</state>
+          <state>_HC32F460_512K_= 1</state>
         </option>
         <option>
           <name>IlinkMapFile</name>
@@ -1977,14 +1989,14 @@
     <file>
       <name>$PROJ_DIR$\applications\main.c</name>
     </file>
+    <file>
+      <name>$PROJ_DIR$\applications\xtal32_fcm.c</name>
+    </file>
   </group>
   <group>
     <name>Compiler</name>
     <file>
       <name>$PROJ_DIR$\..\..\..\components\libc\compilers\common\cctype.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\common\cstdio.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\components\libc\compilers\common\cstdlib.c</name>
@@ -1994,6 +2006,9 @@
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\components\libc\compilers\common\ctime.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\common\cunistd.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\components\libc\compilers\common\cwchar.c</name>
@@ -2027,25 +2042,10 @@
     </file>
   </group>
   <group>
-    <name>CPU</name>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\libcpu\arm\common\atomic_arm.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\libcpu\arm\common\div0.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\libcpu\arm\common\showmem.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m4\context_iar.S</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m4\cpuport.c</name>
-    </file>
-  </group>
-  <group>
     <name>DeviceDrivers</name>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\drivers\core\device.c</name>
+    </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\components\drivers\ipc\completion.c</name>
     </file>
@@ -2068,7 +2068,7 @@
       <name>$PROJ_DIR$\..\..\..\components\drivers\ipc\workqueue.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\misc\pin.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\drivers\pin\pin.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\components\drivers\serial\serial.c</name>
@@ -2084,6 +2084,9 @@
     </file>
     <file>
       <name>$PROJ_DIR$\..\libraries\hc32f460_ddl\drivers\cmsis\Device\HDSC\hc32f4xx\Source\IAR\startup_hc32f460.s</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\libraries\hc32_drivers\drv_common.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\libraries\hc32_drivers\drv_gpio.c</name>
@@ -2119,9 +2122,6 @@
       <name>$PROJ_DIR$\..\..\..\src\components.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\src\device.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\..\..\src\idle.c</name>
     </file>
     <file>
@@ -2129,6 +2129,12 @@
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\src\irq.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\src\klibc\kstdio.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\src\klibc\kstring.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\src\kservice.c</name>
@@ -2143,6 +2149,9 @@
       <name>$PROJ_DIR$\..\..\..\src\object.c</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\..\..\..\src\scheduler_comm.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\..\..\src\scheduler_up.c</name>
     </file>
     <file>
@@ -2150,6 +2159,24 @@
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\src\timer.c</name>
+    </file>
+  </group>
+  <group>
+    <name>libcpu</name>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\libcpu\arm\common\atomic_arm.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\libcpu\arm\common\div0.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\libcpu\arm\common\showmem.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m4\context_iar.S</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m4\cpuport.c</name>
     </file>
   </group>
   <group>

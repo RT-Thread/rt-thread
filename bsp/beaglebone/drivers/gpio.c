@@ -170,7 +170,7 @@ static void am33xx_pin_write(struct rt_device *device, rt_base_t pin, rt_uint8_t
     }
 }
 
-static rt_int8_t am33xx_pin_read(struct rt_device *device, rt_base_t pin)
+static rt_ssize_t am33xx_pin_read(struct rt_device *device, rt_base_t pin)
 {
     RT_ASSERT(pin >= 0 && pin < 128);
     rt_base_t gpiox     = pin >> 5;

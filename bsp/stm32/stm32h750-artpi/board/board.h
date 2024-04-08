@@ -66,11 +66,6 @@ extern "C" {
  *
  */
 
-#define BSP_UART3_RX_BUFSIZE   256
-#define BSP_UART3_TX_BUFSIZE   256
-#define BSP_UART4_RX_BUFSIZE   256
-#define BSP_UART4_TX_BUFSIZE   256
-
 #define STM32_FLASH_START_ADRESS       ROM_START
 #define STM32_FLASH_SIZE               ROM_SIZE
 #define STM32_FLASH_END_ADDRESS        ROM_END

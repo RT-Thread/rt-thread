@@ -58,7 +58,7 @@ static void wm_pin_write(struct rt_device *device, rt_base_t pin, rt_uint8_t val
     return;
 }
 
-static rt_int8_t wm_pin_read(struct rt_device *device, rt_base_t pin)
+static rt_ssize_t wm_pin_read(struct rt_device *device, rt_base_t pin)
 {
     rt_int16_t gpio_pin;
     gpio_pin = wm_get_pin(pin);

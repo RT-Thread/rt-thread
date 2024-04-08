@@ -7,6 +7,7 @@
  * Date           Author       Notes
  * 2022-07-27     flybreak     the first version
  * 2023-03-21     WangShun     add atomic test
+ * 2023-09-15     xqyjlj       change stack size in cpu64
  */
 
 #include <rtthread.h>
@@ -16,7 +17,7 @@
 
 #define THREAD_PRIORITY         25
 #define THREAD_TIMESLICE        1
-#define THREAD_STACKSIZE        1024
+#define THREAD_STACKSIZE        UTEST_THR_STACK_SIZE
 
 /* convenience macro - return either 64-bit or 32-bit value */
 #define ATOMIC_WORD(val_if_64, val_if_32)                                           \

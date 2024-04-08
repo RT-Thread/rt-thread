@@ -33,13 +33,11 @@
     #include <gtimer.h>
     #include <cpuport.h>
 #else
-    #include "fgeneric_timer.h" /* for aarch32 */
+    #include <gtimer.h>
 #endif
 #include <interrupt.h>
 #include <board.h>
 
-#include "fdebug.h"
-#include "fprintk.h"
 #include "fearly_uart.h"
 #include "fcpu_info.h"
 #include "fiopad.h"
@@ -48,13 +46,7 @@
     #include "fpsci.h"
 #endif
 
-#define LOG_DEBUG_TAG "BOARD"
-#define BSP_LOG_ERROR(format, ...) FT_DEBUG_PRINT_E(LOG_DEBUG_TAG, format, ##__VA_ARGS__)
-#define BSP_LOG_WARN(format, ...)  FT_DEBUG_PRINT_W(LOG_DEBUG_TAG, format, ##__VA_ARGS__)
-#define BSP_LOG_INFO(format, ...)  FT_DEBUG_PRINT_I(LOG_DEBUG_TAG, format, ##__VA_ARGS__)
-#define BSP_LOG_DEBUG(format, ...) FT_DEBUG_PRINT_D(LOG_DEBUG_TAG, format, ##__VA_ARGS__)
-
-FIOPadCtrl iopad_ctrl;
+extern FIOPadCtrl iopad_ctrl;
 /* mmu config */
 extern struct mem_desc platform_mem_desc[];
 extern const rt_uint32_t platform_mem_desc_size;
@@ -75,6 +67,16 @@ rt_region_t init_page_region =
     PAGE_END
 };
 
+void FIOMuxInit(void)
+{
+    FIOPadCfgInitialize(&iopad_ctrl, FIOPadLookupConfig(FIOPAD0_ID));
+#ifdef RT_USING_SMART
+    iopad_ctrl.config.base_address = (uintptr)rt_ioremap((void *)iopad_ctrl.config.base_address, 0x2000);
+#endif
+
+    return;
+}
+
 #if defined(TARGET_ARMV8_AARCH64) /* AARCH64 */
 
 /* aarch64 use kernel gtimer */
@@ -84,9 +86,33 @@ rt_region_t init_page_region =
 /* aarch32 implment gtimer by bsp */
 static rt_uint32_t timer_step;
 
+#define CNTP_CTL_ENABLE     (1U << 0)    /* Enables the timer */
+#define CNTP_CTL_IMASK      (1U << 1)    /* Timer interrupt mask bit */
+#define CNTP_CTL_ISTATUS    (1U << 2)    /* The status of the timer */
+void GenericTimerInterruptEnable(u32 id)
+{
+    u64 ctrl = gtimer_get_control();
+    if (ctrl & CNTP_CTL_IMASK)
+    {
+        ctrl &= ~CNTP_CTL_IMASK;
+        gtimer_set_control(ctrl);
+    }
+}
+
+void GenericTimerStart(u32 id)
+{
+    u32 ctrl = gtimer_get_control(); /* get CNTP_CTL */
+
+    if (!(ctrl & CNTP_CTL_ENABLE))
+    {
+        ctrl |= CNTP_CTL_ENABLE; /* enable gtimer if off */
+        gtimer_set_control(ctrl); /* set CNTP_CTL */
+    }
+}
+
 void rt_hw_timer_isr(int vector, void *parameter)
 {
-    GenericTimerSetTimerCompareValue(GENERIC_TIMER_ID0, timer_step);
+    gtimer_set_load_value(timer_step);
     rt_tick_increase();
 }
 
@@ -94,15 +120,17 @@ int rt_hw_timer_init(void)
 {
     rt_hw_interrupt_install(GENERIC_TIMER_NS_IRQ_NUM, rt_hw_timer_isr, RT_NULL, "tick");
     rt_hw_interrupt_umask(GENERIC_TIMER_NS_IRQ_NUM);
-    timer_step = GenericTimerFrequecy();
+    timer_step = gtimer_get_counter_frequency();
+    FASSERT_MSG((timer_step > 1000000), "invalid freqency %ud", timer_step);
     timer_step /= RT_TICK_PER_SECOND;
 
-    GenericTimerSetTimerCompareValue(GENERIC_TIMER_ID0, timer_step);
+    gtimer_set_load_value(timer_step);
     GenericTimerInterruptEnable(GENERIC_TIMER_ID0);
     GenericTimerStart(GENERIC_TIMER_ID0);
     return 0;
 }
 INIT_BOARD_EXPORT(rt_hw_timer_init);
+
 #endif
 
 #ifdef RT_USING_SMP
@@ -118,7 +146,7 @@ void rt_hw_board_aarch64_init(void)
     /* 1. init rt_kernel_space table  (aspace.start = KERNEL_VADDR_START ,  aspace.size = ), 2. init io map range (rt_ioremap_start \ rt_ioremap_size) 3.   */
     rt_hw_mmu_map_init(&rt_kernel_space, (void *)0xfffffffff0000000, 0x10000000, MMUTable, PV_OFFSET);
 #else
-    rt_hw_mmu_map_init(&rt_kernel_space, (void *)0x80000000, 0x10000000, MMUTable, 0);
+    rt_hw_mmu_map_init(&rt_kernel_space, (void *)0xffffd0000000, 0x10000000, MMUTable, 0);
 #endif
     rt_page_init(init_page_region);
 
@@ -135,11 +163,7 @@ void rt_hw_board_aarch64_init(void)
 
     FEarlyUartProbe();
 
-    FIOPadCfgInitialize(&iopad_ctrl, FIOPadLookupConfig(FIOPAD0_ID));
-
-#ifdef RT_USING_SMART
-    iopad_ctrl.config.base_address = (uintptr)rt_ioremap((void *)iopad_ctrl.config.base_address, 0x2000);
-#endif
+    FIOMuxInit();
 
     /* compoent init */
 #ifdef RT_USING_COMPONENTS_INIT
@@ -162,32 +186,32 @@ void rt_hw_board_aarch64_init(void)
     rt_hw_interrupt_umask(RT_SCHEDULE_IPI);
 #endif
 
-
-
 }
 #else
+
+#if defined(TARGET_E2000D)
+#define FT_GIC_REDISTRUBUTIOR_OFFSET 2
+#endif
 
 void rt_hw_board_aarch32_init(void)
 {
 
 #if defined(RT_USING_SMART)
-
+    rt_uint32_t mmutable_p = 0;
     /* set io map range is 0xf0000000 ~ 0x10000000  , Memory Protection start address is 0xf0000000  - rt_mpr_size */
     rt_hw_mmu_map_init(&rt_kernel_space, (void *)0xf0000000, 0x10000000, MMUTable, PV_OFFSET);
-
+    rt_hw_init_mmu_table(platform_mem_desc,platform_mem_desc_size) ;
+    mmutable_p = (rt_uint32_t)MMUTable + (rt_uint32_t)PV_OFFSET ;
+    rt_hw_mmu_switch(mmutable_p) ;
     rt_page_init(init_page_region);
-
     /* rt_kernel_space 在start_gcc.S 中被初始化，此函数将iomap 空间放置在kernel space 上 */
     rt_hw_mmu_ioremap_init(&rt_kernel_space, (void *)0xf0000000, 0x10000000);
-    /*  */
     arch_kuser_init(&rt_kernel_space, (void *)0xffff0000);
 #else
-    /*
-       map kernel space memory (totally 1GB = 0x10000000), pv_offset = 0 if not RT_SMART:
-         0x80000000 ~ 0x80100000: kernel stack
-         0x80100000 ~ __bss_end: kernel code and data
-    */
+
     rt_hw_mmu_map_init(&rt_kernel_space, (void *)0x80000000, 0x10000000, MMUTable, 0);
+    rt_hw_init_mmu_table(platform_mem_desc,platform_mem_desc_size) ;
+    rt_hw_mmu_init();
     rt_hw_mmu_ioremap_init(&rt_kernel_space, (void *)0x80000000, 0x10000000);
 #endif
 
@@ -208,11 +232,10 @@ void rt_hw_board_aarch32_init(void)
 
     FEarlyUartProbe();
 
-    FIOPadCfgInitialize(&iopad_ctrl, FIOPadLookupConfig(FIOPAD0_ID));
+    FIOMuxInit();
 
 #if defined(RT_USING_SMART)
     redist_addr = (uint32_t)rt_ioremap(GICV3_RD_BASE_ADDR, 4 * 128 * 1024);
-    iopad_ctrl.config.base_address = (uintptr)rt_ioremap((void *)iopad_ctrl.config.base_address, 0x2000);
 #else
     redist_addr = GICV3_RD_BASE_ADDR;
 #endif

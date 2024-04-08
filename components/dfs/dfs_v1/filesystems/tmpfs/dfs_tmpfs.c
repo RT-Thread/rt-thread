@@ -120,19 +120,26 @@ int dfs_tmpfs_mount(struct dfs_filesystem *fs,
     struct tmpfs_sb *superblock;
 
     superblock = rt_calloc(1, sizeof(struct tmpfs_sb));
-    superblock->df_size = sizeof(struct tmpfs_sb);
-    superblock->magic = TMPFS_MAGIC;
-    rt_list_init(&superblock->sibling);
+    if (superblock)
+    {
+        superblock->df_size = sizeof(struct tmpfs_sb);
+        superblock->magic = TMPFS_MAGIC;
+        rt_list_init(&superblock->sibling);
 
-    superblock->root.name[0] = '/';
-    superblock->root.sb = superblock;
-    superblock->root.type = TMPFS_TYPE_DIR;
-    rt_list_init(&superblock->root.sibling);
-    rt_list_init(&superblock->root.subdirs);
+        superblock->root.name[0] = '/';
+        superblock->root.sb = superblock;
+        superblock->root.type = TMPFS_TYPE_DIR;
+        rt_list_init(&superblock->root.sibling);
+        rt_list_init(&superblock->root.subdirs);
 
-    rt_spin_lock_init(&superblock->lock);
+        rt_spin_lock_init(&superblock->lock);
 
-    fs->data = superblock;
+        fs->data = superblock;
+    }
+    else
+    {
+        return -1;
+    }
 
     return RT_EOK;
 }
@@ -191,9 +198,11 @@ int dfs_tmpfs_ioctl(struct dfs_file *file, int cmd, void *args)
             {
                 return -RT_ENOMEM;
             }
+            else if (mmap2->lwp == RT_NULL)
+                return -RT_EINVAL;
 
             LOG_D("tmpfile mmap ptr:%x , size:%d\n", d_file->data, mmap2->length);
-            mmap2->ret = lwp_map_user_phy(lwp_self(), RT_NULL, d_file->data, mmap2->length, 0);
+            mmap2->ret = lwp_map_user_phy(mmap2->lwp, mmap2->addr, d_file->data, mmap2->length, 0);
         }
         return RT_EOK;
         break;
@@ -485,7 +494,7 @@ int dfs_tmpfs_stat(struct dfs_filesystem *fs,
     if (d_file == NULL)
         return -ENOENT;
 
-    st->st_dev = (dev_t)dfs_filesystem_lookup(fs->path);
+    st->st_dev = (rt_device_t)dfs_filesystem_lookup(fs->path);
     st->st_mode = S_IFREG | S_IRUSR | S_IRGRP | S_IROTH |
                   S_IWUSR | S_IWGRP | S_IWOTH;
     if (d_file->type == TMPFS_TYPE_DIR)

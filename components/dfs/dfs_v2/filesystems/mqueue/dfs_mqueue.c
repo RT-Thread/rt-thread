@@ -145,11 +145,11 @@ static struct dfs_vnode *dfs_mqueue_create_vnode(struct dfs_dentry *dentry, int 
             }
             mq_file->msg_size = 8192;
             mq_file->max_msgs = 10;
-            strncpy(mq_file->name, dentry->pathname + 1, RT_NAME_MAX);
+            strncpy(mq_file->name, dentry->pathname + 1, RT_NAME_MAX - 1);
             dfs_mqueue_insert_after(&(mq_file->list));
         }
 
-        vnode->mode = S_IFREG | mode;
+        vnode->mode = S_IFREG | (S_IRWXU | S_IRWXG | S_IRWXO);
         vnode->type = FT_REGULAR;
         rt_mq_t mq = rt_mq_create(dentry->pathname + 1, mq_file->msg_size, mq_file->max_msgs,
                                   RT_IPC_FLAG_FIFO);
@@ -191,7 +191,7 @@ struct dfs_vnode *_dfs_mqueue_lookup(struct dfs_dentry *dentry) {
 
     vnode = dfs_vnode_create();
     if (mq_file && mq_file->data) {
-        vnode->mode = S_IFREG | S_IRUSR | S_IWUSR | S_IXUSR;
+        vnode->mode = S_IFREG | (S_IRWXU | S_IRWXG | S_IRWXO);
         vnode->type = FT_REGULAR;
         vnode->mnt = dentry->mnt;
         vnode->data = mq_file;
@@ -202,7 +202,7 @@ struct dfs_vnode *_dfs_mqueue_lookup(struct dfs_dentry *dentry) {
         vnode->fops = &_mqueue_fops;
         vnode->mnt = dentry->mnt;
         vnode->type = FT_DIRECTORY;
-        vnode->mode = S_IFDIR | S_IRUSR | S_IWUSR | S_IXUSR;
+        vnode->mode = S_IFDIR | (S_IRUSR | S_IXUSR | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH);
     }
     return vnode;
 }
@@ -230,6 +230,12 @@ static struct dfs_filesystem_type _mqueue = {
 
 int dfs_mqueue_init(void) {
     /* register mqueue file system */
-    return dfs_register(&_mqueue);
+    dfs_register(&_mqueue);
+    mkdir("/dev/mqueue", 0x777);
+    if (dfs_mount(RT_NULL, "/dev/mqueue", "mqueue", 0, 0) != 0)
+    {
+        rt_kprintf("Dir /dev/mqueue mount failed!\n");
+    }
+    return 0;
 }
-INIT_COMPONENT_EXPORT(dfs_mqueue_init);
+INIT_ENV_EXPORT(dfs_mqueue_init);

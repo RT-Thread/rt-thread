@@ -137,7 +137,7 @@ void hal_entry(void)
 
 • How to use the ENV tool: [RT-Thread env tool user manual](https://www.rt-thread.io/document/site/programming-manual/env/env/). 
 
-This BSP only enables the function of UART7 by default. If you're looking for more advanced functions such as components and software packages, ENV tool for configuration is available.
+This BSP only enables the function of UART9 by default. If you're looking for more advanced functions such as components and software packages, ENV tool for configuration is available.
 
 The steps are as follows:
 
@@ -145,6 +145,19 @@ The steps are as follows:
 2. Enter the `menuconfig` command to configure the project, and save and exit after configuration.
 3. Enter the `pkgs --update` command to update the software package.
 4. Enter the `scons --target=mdk5` command to regenerate the project.
+
+**FSP Configuration**
+
+*   How to Use FSP: [Configuring Peripheral Drivers for RA Series Using FSP](https://www.rt-thread.org/document/site/#/rt-thread-version/rt-thread-standard/tutorial/make-bsp/renesas-ra/RA系列使用FSP配置外设驱动?id=ra系列使用-fsp-配置外设驱动)
+
+The current repository's BSP is configured with the minimum footprint enabled by default. Users can enable peripheral configurations through the following steps:
+
+1. Open the `env` tool in the BSP directory and use the `scons --target=mdk5` command to generate an MDK project.
+2. Open the `project.uvprojx` file in the BSP directory, select the `Software Components` configuration in the top navigation bar, and open the configuration button next to `RA Configuration` under `Flex Software`. This operation will automatically detect the installed FSP version on the current computer. After selecting the specified version, enter FSP.
+    ![](../docs/figures/mdk_rasc.png)
+3. Upon entering FSP, pre-configured peripherals are already present. Click the `Generate Project Content` button to generate the required driver files.
+    ![](../docs/figures/fsp_configure.png)
+4. Return to `env`, enable the necessary peripheral configurations, save, and exit.
 
 ## Contribute the Code
 

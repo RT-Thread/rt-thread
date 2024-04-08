@@ -47,6 +47,8 @@
 #define A8        (32)
 #define A9        (33)
 
+#define RTDUINO_PIN_MAX_LIMIT A9 /* pin number max limit check */
+
 #define F_CPU          60000000L  /* CPU:60MHz */
 
 #define LED_BUILTIN     D0  /* Default Built-in LED */
@@ -55,7 +57,7 @@
 #define SS      D14  /* Chip select pin of default spi */
 #define RTDUINO_DEFAULT_SPI_BUS_NAME      "spi1"
 
-/* i2c1 : PC14-SDA PC15-SCL */
+/* i2c1 : PB2-SDA PB10-SCL */
 #define RTDUINO_DEFAULT_IIC_BUS_NAME    "i2c1"
 
 /* Serial2 - PA2-TX  PA3-RX */

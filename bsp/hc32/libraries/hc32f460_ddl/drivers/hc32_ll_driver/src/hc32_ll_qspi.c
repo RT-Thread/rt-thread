@@ -6,9 +6,12 @@
    Change Logs:
    Date             Author          Notes
    2022-03-31       CDT             First version
+   2023-01-15       CDT             Modify the conditions for entering direct communication mode
+   2023-09-30       CDT             Optimize QSPI_ClearStatus function
+                                    Modify return value type of QSPI_DeInit function
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -160,7 +163,7 @@
  */
 
 /* Current read mode */
-static uint8_t m_u8ReadMode = 0U;
+static uint32_t m_u32ReadMode = 0U;
 
 /**
  * @}
@@ -177,17 +180,20 @@ static uint8_t m_u8ReadMode = 0U;
 /**
  * @brief  De-initializes QSPI.
  * @param  None
- * @retval None
+ * @retval int32_t:
+ *           - LL_OK:                   No error occurred.
+ *           - LL_ERR_TIMEOUT:          Works timeout.
  */
-void QSPI_DeInit(void)
+int32_t QSPI_DeInit(void)
 {
     WRITE_REG32(CM_QSPI->CR,    0x003F0000UL);
     WRITE_REG32(CM_QSPI->CSCR,  0x0FUL);
-    WRITE_REG32(CM_QSPI->FCR,   0x80B3UL);
+    WRITE_REG32(CM_QSPI->FCR,   0x8033UL);
     WRITE_REG32(CM_QSPI->CCMD,  0x0UL);
     WRITE_REG32(CM_QSPI->XCMD,  0xFFUL);
     WRITE_REG32(CM_QSPI->SR2,   QSPI_FLAG_ROM_ACCESS_ERR);
     WRITE_REG32(CM_QSPI->EXAR,  0UL);
+    return LL_OK;
 }
 
 /**
@@ -221,10 +227,10 @@ int32_t QSPI_Init(const stc_qspi_init_t *pstcQspiInit)
             u32Duty = QSPI_FCR_DUTY;
         }
         MODIFY_REG32(CM_QSPI->CR, QSPI_CR_CLR_MASK, (pstcQspiInit->u32ClockDiv | pstcQspiInit->u32SpiMode |
-                     pstcQspiInit->u32PrefetchMode | pstcQspiInit->u32ReadMode));
+                                                     pstcQspiInit->u32PrefetchMode | pstcQspiInit->u32ReadMode));
         WRITE_REG32(CM_QSPI->CSCR, ((pstcQspiInit->u32ReleaseTime >> 8U) | pstcQspiInit->u32IntervalTime));
         MODIFY_REG32(CM_QSPI->FCR, QSPI_FCR_CLR_MASK, (pstcQspiInit->u32DummyCycle | pstcQspiInit->u32AddrWidth |
-                     pstcQspiInit->u32SetupTime | (pstcQspiInit->u32ReleaseTime & 0xFFU) | u32Duty));
+                                                       pstcQspiInit->u32SetupTime | (pstcQspiInit->u32ReleaseTime & 0xFFU) | u32Duty));
     }
 
     return i32Ret;
@@ -346,7 +352,7 @@ int32_t QSPI_CustomReadConfig(const stc_qspi_custom_mode_t *pstcCustomMode)
         DDL_ASSERT(IS_QSPI_DATA_PROTOCOL(pstcCustomMode->u32DataProtocol));
 
         MODIFY_REG32(CM_QSPI->CR, QSPI_CUSTOM_MD_CLR_MASK, (pstcCustomMode->u32InstrProtocol |
-                     pstcCustomMode->u32AddrProtocol | pstcCustomMode->u32DataProtocol));
+                                                            pstcCustomMode->u32AddrProtocol | pstcCustomMode->u32DataProtocol));
         WRITE_REG32(CM_QSPI->CCMD, pstcCustomMode->u8InstrCode);
     }
 
@@ -380,9 +386,11 @@ void QSPI_XipModeCmd(uint8_t u8ModeCode, en_functional_state_t enNewState)
 void QSPI_EnterDirectCommMode(void)
 {
     /* Backup the read mode */
-    m_u8ReadMode = (uint8_t)READ_REG32_BIT(CM_QSPI->CR, QSPI_CR_MDSEL);
-    /* Set standard read mode */
-    CLR_REG32_BIT(CM_QSPI->CR, QSPI_CR_MDSEL);
+    m_u32ReadMode = READ_REG32_BIT(CM_QSPI->CR, QSPI_CR_MDSEL);
+    if (m_u32ReadMode <= QSPI_RD_MD_QUAD_IO_FAST_RD) {
+        /* Set standard read mode */
+        CLR_REG32_BIT(CM_QSPI->CR, QSPI_CR_MDSEL);
+    }
     /* Enter direct communication mode */
     SET_REG32_BIT(CM_QSPI->CR, QSPI_CR_DCOME);
 }
@@ -396,8 +404,10 @@ void QSPI_ExitDirectCommMode(void)
 {
     /* Exit direct communication mode */
     CLR_REG32_BIT(CM_QSPI->CR, QSPI_CR_DCOME);
-    /* Recovery the read mode */
-    SET_REG32_BIT(CM_QSPI->CR, m_u8ReadMode);
+    if (m_u32ReadMode <= QSPI_RD_MD_QUAD_IO_FAST_RD) {
+        /* Recovery the read mode */
+        SET_REG32_BIT(CM_QSPI->CR, m_u32ReadMode);
+    }
 }
 
 /**
@@ -449,7 +459,7 @@ void QSPI_ClearStatus(uint32_t u32Flag)
     /* Check parameters */
     DDL_ASSERT(IS_QSPI_CLR_FLAG(u32Flag));
 
-    SET_REG32_BIT(CM_QSPI->SR2, u32Flag);
+    WRITE_REG32(CM_QSPI->SR2, u32Flag);
 }
 
 /**
@@ -463,8 +473,8 @@ void QSPI_ClearStatus(uint32_t u32Flag)
  */
 
 /**
-* @}
-*/
+ * @}
+ */
 
 /******************************************************************************
  * EOF (not truncated)

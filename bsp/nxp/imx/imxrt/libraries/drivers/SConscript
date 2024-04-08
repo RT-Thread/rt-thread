@@ -1,0 +1,107 @@
+from building import *
+
+src = []
+cwd = []
+
+CPPDEFINES = []
+
+cwd = GetCurrentDir()
+
+path =  [cwd]
+
+if GetDepend('BSP_USING_GPIO'):
+    src += ['drv_gpio.c']
+
+if  GetDepend('BSP_USING_LPUART'):
+    src += ['drv_uart.c']
+
+if  GetDepend('BSP_USING_HWTIMER'):
+    src += ['drv_hwtimer.c']
+
+if GetDepend('BSP_USING_RTC'):
+    src += ['drv_rtc.c']
+
+if  GetDepend('BSP_USING_SPI'):
+    src += ['drv_spi.c']
+
+if  GetDepend('BSP_USING_I2C'):
+    src += ['drv_i2c.c']
+
+if GetDepend('BSP_USING_WDT'):
+    src += ['drv_wdt.c']
+
+if GetDepend('BSP_USING_PWM'):
+    src += ['drv_pwm.c']
+
+if GetDepend('BSP_USING_ADC'):
+    src += ['drv_adc.c']
+
+if GetDepend('BSP_USING_LPADC'):
+    src += ['drv_lpadc.c']
+
+if GetDepend('BSP_USING_CAN'):
+    src += ['drv_can.c']
+
+if GetDepend('BSP_USING_SDRAM'):
+    src += ['drv_sdram.c']
+
+if GetDepend('BSP_USING_LCD'):
+    src += ['drv_lcd.c']
+
+if GetDepend('BSP_USING_ETH'):
+    src += ['drv_eth.c']
+
+if GetDepend('BSP_USING_PHY'):
+    src += ['drv_mdio.c']
+    if GetDepend('PHY_USING_KSZ8081'):
+        src += ['drv_ksz8081.c']
+    if GetDepend('PHY_USING_RTL8211F'):
+        src += ['drv_rtl8211f.c']
+
+if GetDepend('BSP_USING_AUDIO'):
+    src += ['drv_sai.c']
+    src += ['bsp_wm8960.c']
+
+if GetDepend('BSP_USING_SDIO'):
+    src += ['drv_sdio.c']
+
+if GetDepend('BSP_USING_USB_DEVICE'):
+    src += ['drv_usbd.c']
+    src += Glob('usb/device/*.c')
+
+if GetDepend('BSP_USING_USB_DEVICE') or GetDepend('RT_USING_USB_HOST'):
+    src += Glob('usb/phy/*.c')
+    CPPDEFINES += ['ENDIANNESS','USE_RTOS']
+
+if GetDepend('RT_USING_USB_HOST'):
+    src += ['drv_usbh.c']
+    src += Glob('usb/host/*.c')
+
+if GetDepend('BSP_USING_PULSE_ENCODER'):
+    src += ['drv_pulse_encoder.c']
+
+if GetDepend('BSP_USING_FLEXSPI'):
+    src += ['drv_flexspi.c']
+
+if GetDepend('BSP_USING_LCD_MIPI'):
+    src += ['drv_lcd_mipi.c']
+
+if GetDepend(['BSP_USING_VGLITE']):
+    src += Glob('vglite/font/*.c')
+    src += Glob('vglite/font/mcufont/decoder/*.c')
+    src += Glob('vglite/VGLite/rtos/*.c')
+    src += Glob('vglite/VGLite/*.c')
+    src += Glob('vglite/VGLiteKernel/rtos/*.c')
+    src += Glob('vglite/VGLiteKernel/*.c')
+    path += [cwd + '/vglite/font', cwd + '/vglite/font/mcufont/decoder', cwd + '/vglite/inc', cwd + '/vglite/VGLite', cwd + '/vglite/VGLite/rtos', cwd + '/vglite/VGLiteKernel', cwd + '/vglite/VGLiteKernel/rtos']
+
+    if GetDepend(['VGLITE_USING_ELM']):
+        src += Glob('vglite/elementary/src/*.c')
+        path += [cwd + '/vglite/elementary/inc', cwd + '/vglite/elementary/src']
+
+src += ['drv_common.c']
+
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path, CPPDEFINES=CPPDEFINES)
+
+Return('group')
+

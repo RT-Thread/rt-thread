@@ -23,6 +23,9 @@
  * 2023-07-16     Shell        update signal generation routine for lwp
  *                             adapt to new api and do the signal handling in thread context
  * 2023-08-12     Meco Man     re-implement RT-Thread lightweight timezone API
+ * 2023-09-15     xqyjlj       perf rt_hw_interrupt_disable/enable
+ * 2023-10-23     Shell        add lock for _g_timerid
+ * 2023-11-16     Shell        Fixup of nanosleep if previous call was interrupted
  */
 
 #include "sys/time.h"
@@ -136,21 +139,12 @@ static volatile int32_t _current_tz_offset_sec = \
 /* return current timezone offset in seconds */
 void rt_tz_set(int32_t offset_sec)
 {
-    rt_base_t level;
-    level = rt_hw_interrupt_disable();
     _current_tz_offset_sec = offset_sec;
-    rt_hw_interrupt_enable(level);
 }
 
 int32_t rt_tz_get(void)
 {
-    int32_t offset_sec;
-    rt_base_t level;
-
-    level = rt_hw_interrupt_disable();
-    offset_sec = _current_tz_offset_sec;
-    rt_hw_interrupt_enable(level);
-    return offset_sec;
+    return _current_tz_offset_sec;
 }
 
 int8_t rt_tz_is_dst(void)
@@ -325,12 +319,12 @@ char *ctime(const time_t *tim_p)
 }
 RTM_EXPORT(ctime);
 
-#ifndef __ICCARM__
+#if (!defined __ARMCC_VERSION) && (!defined __CC_ARM) && (!defined __ICCARM__)
 double difftime(time_t time1, time_t time2)
 {
     return (double)(time1 - time2);
 }
-#endif /* __ICCARM__ */
+#endif
 RTM_EXPORT(difftime);
 
 RTM_EXPORT(strftime); /* inherent in the toolchain */
@@ -487,7 +481,16 @@ int gettimeofday(struct timeval *tv, struct timezone *tz)
         tv->tv_usec = 0;
 
         if (_control_rtc(RT_DEVICE_CTRL_RTC_GET_TIMEVAL, tv) == RT_EOK)
+        {
             return 0;
+        }
+        else
+        {
+            if (_control_rtc(RT_DEVICE_CTRL_RTC_GET_TIME, (void *)&tv->tv_sec) == RT_EOK)
+            {
+                return 0;
+            }
+        }
     }
 
     rt_set_errno(EINVAL);
@@ -505,7 +508,16 @@ int settimeofday(const struct timeval *tv, const struct timezone *tz)
     if (tv != RT_NULL && (long)tv->tv_usec >= 0 && (long)tv->tv_sec >= 0)
     {
         if (_control_rtc(RT_DEVICE_CTRL_RTC_SET_TIMEVAL, (void *)tv) == RT_EOK)
+        {
             return 0;
+        }
+        else
+        {
+            if (_control_rtc(RT_DEVICE_CTRL_RTC_SET_TIME, (void *)&tv->tv_sec) == RT_EOK)
+            {
+                return 0;
+            }
+        }
     }
 
     rt_set_errno(EINVAL);
@@ -533,20 +545,24 @@ int nanosleep(const struct timespec *rqtp, struct timespec *rmtp)
     unsigned long ns = rqtp->tv_sec * NANOSECOND_PER_SECOND + rqtp->tv_nsec;
     rt_ktime_boottime_get_ns(&old_ts);
     rt_ktime_hrtimer_ndelay(ns);
-    if (rt_get_errno() == -RT_EINTR)
+    if (rt_get_errno() == RT_EINTR)
     {
         if (rmtp)
         {
+            rt_base_t rsec, rnsec;
             rt_ktime_boottime_get_ns(&new_ts);
 
-            rmtp->tv_sec = 0;
-            rmtp->tv_nsec =
-                (old_ts.tv_nsec + ns) - ((new_ts.tv_sec - old_ts.tv_sec) * NANOSECOND_PER_SECOND + new_ts.tv_nsec);
-
-            if (rmtp->tv_nsec > NANOSECOND_PER_SECOND)
+            rsec = old_ts.tv_sec + rqtp->tv_sec - new_ts.tv_sec;
+            rnsec = old_ts.tv_nsec + rqtp->tv_nsec - new_ts.tv_nsec;
+            if (rnsec < 0)
             {
-                rmtp->tv_nsec %= NANOSECOND_PER_SECOND;
-                rmtp->tv_sec += rmtp->tv_nsec / NANOSECOND_PER_SECOND;
+                rmtp->tv_sec = rsec - 1;
+                rmtp->tv_nsec = NANOSECOND_PER_SECOND + rnsec;
+            }
+            else
+            {
+                rmtp->tv_sec = rsec;
+                rmtp->tv_nsec = rnsec;
             }
         }
         rt_set_errno(EINTR);
@@ -717,7 +733,8 @@ RTM_EXPORT(clock_settime);
 int rt_timespec_to_tick(const struct timespec *time)
 {
     int tick;
-    int nsecond, second;
+    int second;
+    long long nsecond;
     struct timespec tp = {0};
 
     RT_ASSERT(time != RT_NULL);
@@ -796,11 +813,15 @@ static void _lwp_timer_event_from_tid(struct rt_work *work, void *param)
 
     RT_ASSERT(data->tid);
 
-    thread = lwp_tid_get_thread(data->tid);
+    /* stop others from delete thread */
+    thread = lwp_tid_get_thread_and_inc_ref(data->tid);
+    /** The tid of thread is a READ ONLY value, but here still facing the risk of thread already been delete error */
     ret = lwp_thread_signal_kill(thread, data->signo, SI_TIMER, 0);
+    lwp_tid_dec_ref(thread);
+
     if (ret)
     {
-        LOG_W("%s: Do kill failed(tid %d) returned %d", __func__, data->tid, ret);
+        LOG_D("%s: Do kill failed(tid %d) returned %d", __func__, data->tid, ret);
     }
 }
 
@@ -808,11 +829,21 @@ static void _lwp_timer_event_from_pid(struct rt_work *work, void *param)
 {
     rt_err_t ret;
     struct lwp_timer_event_param *data = rt_container_of(work, struct lwp_timer_event_param, work);
+    struct rt_lwp *lwp;
 
-    ret = lwp_signal_kill(lwp_from_pid(data->pid), data->signo, SI_TIMER, 0);
+    lwp_pid_lock_take();
+    lwp = lwp_from_pid_locked(data->pid);
+    if (lwp)
+        lwp_ref_inc(lwp);
+    lwp_pid_lock_release();
+
+    ret = lwp_signal_kill(lwp, data->signo, SI_TIMER, 0);
+    if (lwp)
+        lwp_ref_dec(lwp);
+
     if (ret)
     {
-        LOG_W("%s: Do kill failed(pid %d) returned %d", __func__, data->pid, ret);
+        LOG_D("%s: Do kill failed(pid %d) returned %d", __func__, data->pid, ret);
     }
 }
 
@@ -848,7 +879,8 @@ static void rtthread_timer_wrapper(void *timerobj)
     }
 #ifdef RT_USING_SMART
     /* this field is named as tid in musl */
-    int tid = *(int *)&timer->sigev_notify_function;
+    void *ptid = &timer->sigev_notify_function;
+    int tid = *(int *)ptid;
     struct lwp_timer_event_param *data = rt_container_of(timer->work, struct lwp_timer_event_param, work);
     data->signo = timer->sigev_signo;
 
@@ -874,6 +906,7 @@ static void rtthread_timer_wrapper(void *timerobj)
 }
 
 #define TIMER_ID_MAX 50
+static struct rt_spinlock _timer_id_lock = RT_SPINLOCK_INIT;
 static struct timer_obj *_g_timerid[TIMER_ID_MAX];
 static void *timer_id[TIMER_ID_MAX];
 static resource_id_t id_timer = RESOURCE_ID_INIT(TIMER_ID_MAX, timer_id);
@@ -969,8 +1002,14 @@ int timer_create(clockid_t clockid, struct sigevent *evp, timer_t *timerid)
     _timerid = resource_id_get(&id_timer);
     if (_timerid < 0)
     {
-        LOG_E("_timerid overflow!");
-        return -1; /* todo:memory leak */
+#ifdef RT_USING_SMART
+        rt_free(param);
+#endif /* RT_USING_SMART */
+
+        rt_ktime_hrtimer_detach(&timer->hrtimer);
+        rt_free(timer);
+        rt_set_errno(ENOMEM);
+        return -1;
     }
     _g_timerid[_timerid] = timer;
 
@@ -999,17 +1038,20 @@ int timer_delete(timer_t timerid)
         return -1;
     }
 
-    if (_g_timerid[ktimerid] == NULL)
-    {
-        rt_set_errno(EINVAL);
-        LOG_E("can not find timer!");
-        return -1;
-    }
+    RT_DEBUG_NOT_IN_INTERRUPT;
+    rt_spin_lock(&_timer_id_lock);
     timer = _g_timerid[ktimerid];
-    resource_id_put(&id_timer, ktimerid);
+    if (timer != NULL)
+    {
+        _g_timerid[ktimerid] = RT_NULL;
+        resource_id_put(&id_timer, ktimerid);
+    }
+    rt_spin_unlock(&_timer_id_lock);
+
     if (timer == RT_NULL)
     {
         rt_set_errno(EINVAL);
+        LOG_D("can not find timer %ld", ktimerid);
         return -1;
     }
 

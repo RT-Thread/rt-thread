@@ -11,6 +11,7 @@
 #include <board.h>
 #include <drv_lcd.h>
 
+#define LCD_DEV_NAME "lcd"
 // #define MY_DISP_HOR_RES LCD_W
 // #define DISP_BUFFER_LINES 70
 
@@ -64,6 +65,11 @@ void lv_port_disp_init(void)
 
     /*Used to copy the buffer's content to the display*/
     disp_drv.flush_cb = disp_flush;
+
+    /*Init lcd device*/
+    rt_device_t lcd_dev = rt_device_find(LCD_DEV_NAME);
+    rt_device_open(lcd_dev, RT_DEVICE_FLAG_STANDALONE);
+    disp_drv.user_data = lcd_dev;
 
     /*Finally register the driver*/
     lv_disp_drv_register(&disp_drv);

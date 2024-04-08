@@ -21,7 +21,7 @@
 // Files includes
 #include "types.h"
 #include "mm32_device.h"
-#include "HAL_eth_conf.h"
+#include "hal_eth_conf.h"
 ////////////////////////////////////////////////////////////////////////////////
 /// @addtogroup MM32_Hardware_Abstract_Layer
 /// @{

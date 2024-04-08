@@ -1,0 +1,32 @@
+import rtconfig
+Import('RTT_ROOT')
+from building import *
+
+cwd = GetCurrentDir()
+
+src = Split("""
+drivers/flashc/flashc.c
+drivers/gpio/gpio.c
+drivers/intc/intc.c
+drivers/pm/pm.c
+drivers/pm/pm_conf_clocks.c
+drivers/pm/power_clocks_lib.c
+drivers/usart/usart.c
+drivers/adc/adc.c
+""")
+
+CPPPATH = [
+    cwd + '/boards',
+    cwd + '/utils',
+    cwd + '/utils/preprocessor',
+    cwd + '/drivers/flashc',
+    cwd + '/drivers/gpio',
+    cwd + '/drivers/intc',
+    cwd + '/drivers/pm',
+    cwd + '/drivers/usart',
+    cwd + '/drivers/adc',
+]
+
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

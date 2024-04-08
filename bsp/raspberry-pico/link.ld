@@ -35,7 +35,7 @@ SECTIONS
 {
     /* Second stage bootloader is prepended to the image. It must be 256 bytes big
        and checksummed. It is usually built by the boot_stage2 target
-       in the Pico SDK
+       in the Raspberry Pi Pico SDK
     */
 
     .flash_begin : {
@@ -59,19 +59,24 @@ SECTIONS
     */
 
     .text : {
-        __reset_start = .;
-        KEEP (*(.reset))
-        . = ALIGN(256);
-        __reset_end = .;
-        ASSERT(__reset_end - __reset_start == 256, "ERROR: reset section should only be 256 bytes");
+        __logical_binary_start = .;
         KEEP (*(.vectors))
+        KEEP (*(.binary_info_header))
+        __binary_info_header_end = .;
+        KEEP (*(.reset))
         /* TODO revisit this now memset/memcpy/float in ROM */
         /* bit of a hack right now to exclude all floating point and time critical (e.g. memset, memcpy) code from
          * FLASH ... we will include any thing excluded here in .data below by default */
         *(.init)
         *(EXCLUDE_FILE(*libgcc.a: *libc.a:*lib_a-mem*.o *libm.a:) .text*)
         *(.fini)
-        
+
+        /* section information for utest */
+        . = ALIGN(4);
+        __rt_utest_tc_tab_start = .;
+        KEEP(*(UtestTcTab))
+        __rt_utest_tc_tab_end = .;
+
         /* section information for finsh shell */
         . = ALIGN(4);
         __fsymtab_start = .;
@@ -88,6 +93,8 @@ SECTIONS
         __rt_init_start = .;
         KEEP(*(SORT(.rti_fn*)))
         __rt_init_end = .;
+
+        . = ALIGN(4);
         
         /* Pull all c'tors into .text */
         *crtbegin.o(.ctors)
@@ -103,7 +110,15 @@ SECTIONS
         *(.dtors)
 
         *(.eh_frame*)
+
+        PROVIDE(__ctors_start__ = .);
+        KEEP (*(SORT(.init_array.*)))
+        KEEP (*(.init_array))
+        PROVIDE(__ctors_end__ = .);
+
         . = ALIGN(4);
+        
+        _etext = .;
     } > FLASH
 
     .rodata : {
@@ -136,10 +151,7 @@ SECTIONS
     __binary_info_end = .;
     . = ALIGN(4);
 
-    /* End of .text-like segments */
-    __etext = .;
-
-   .ram_vector_table (COPY): {
+   .ram_vector_table (NOLOAD): {
         *(.ram_vector_table)
     } > RAM
 
@@ -192,8 +204,10 @@ SECTIONS
         /* All data end */
         __data_end__ = .;
     } > RAM AT> FLASH
+    /* __etext is (for backwards compatibility) the name of the .data init source pointer (...) */
+    __etext = LOADADDR(.data);
 
-    .uninitialized_data (COPY): {
+    .uninitialized_data (NOLOAD): {
         . = ALIGN(4);
         *(.uninitialized_data*)
     } > RAM
@@ -234,17 +248,17 @@ SECTIONS
     /* by default we put core 0 stack at the end of scratch Y, so that if core 1
      * stack is not used then all of SCRATCH_X is free.
      */
-    .stack1_dummy (COPY):
+    .stack1_dummy (NOLOAD):
     {
         *(.stack1*)
     } > SCRATCH_X
-    .stack_dummy (COPY):
+    .stack_dummy (NOLOAD):
     {
-        *(.stack*)
+        KEEP(*(.stack*))
     } > SCRATCH_Y
 
     .flash_end : {
-        __flash_binary_end = .;
+        PROVIDE(__flash_binary_end = .);
     } > FLASH
 
     /* stack limit is poorly named, but historically is maximum heap ptr */
@@ -257,6 +271,7 @@ SECTIONS
 
     /* Check if data + heap + stack exceeds RAM limit */
     ASSERT(__StackLimit >= __bss_end__, "region RAM overflowed")
+    ASSERT( __binary_info_header_end - __logical_binary_start <= 256, "Binary info must be in first 256 bytes of the binary")
     /* todo assert on extra code */
 }
 

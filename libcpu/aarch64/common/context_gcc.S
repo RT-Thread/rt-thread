@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2024, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -7,12 +7,24 @@
  * Date           Author       Notes
  * 2021-05-18     Jesven       the first version
  * 2023-06-24     WangXiaoyao  Support backtrace for user thread
+ * 2024-01-06     Shell        Fix barrier on irq_disable/enable
  */
+
+#ifndef __ASSEMBLY__
+#define __ASSEMBLY__
+#endif
 
 #include "rtconfig.h"
 #include "asm-generic.h"
-
 #include "asm-fpu.h"
+#include "armv8.h"
+
+#ifndef RT_USING_SMP
+.section .data
+rt_interrupt_from_thread: .zero  8
+rt_interrupt_to_thread: .zero  8
+rt_thread_switch_interrupt_flag: .zero  8
+#endif
 
 .text
 .weak rt_hw_cpu_id_set
@@ -32,8 +44,8 @@ int rt_hw_cpu_id(void)
 .weak rt_hw_cpu_id
 .type rt_hw_cpu_id, @function
 rt_hw_cpu_id:
-   mrs x0, tpidr_el1           /* MPIDR_EL1: Multi-Processor Affinity Register */
-   ret
+    mrs x0, tpidr_el1
+    ret
 
 /*
 void rt_hw_set_process_id(size_t id)
@@ -268,20 +280,56 @@ START_POINT_END(_thread_start)
     ERET
 .endm
 
+.macro SAVE_USER_CTX
+    MRS     X1, SPSR_EL1
+    AND     X1, X1, 0xf
+    CMP     X1, XZR
+
+    BNE     1f
+    BL      lwp_uthread_ctx_save
+    LDP     X0, X1, [SP]
+1:
+.endm
+
+.macro RESTORE_USER_CTX, ctx
+    LDR     X1, [\ctx, #CONTEXT_OFFSET_SPSR_EL1]
+    AND     X1, X1, 0x1f
+    CMP     X1, XZR
+
+    BNE     1f
+    BL      lwp_uthread_ctx_restore
+1:
+.endm
+
 #ifdef RT_USING_SMP
 #define rt_hw_interrupt_disable rt_hw_local_irq_disable
 #define rt_hw_interrupt_enable rt_hw_local_irq_enable
 #endif
 
 .text
+
+.global rt_hw_interrupt_is_disabled
+rt_hw_interrupt_is_disabled:
+    MRS     X0, DAIF
+    TST     X0, #0xc0
+    CSET    X0, NE
+    RET
+
 /*
  * rt_base_t rt_hw_interrupt_disable();
  */
 .globl rt_hw_interrupt_disable
 rt_hw_interrupt_disable:
     MRS     X0, DAIF
+    AND     X0, X0, #0xc0
+    CMP     X0, #0xc0
+    /* branch if bits not both set(zero) */
+    BNE     1f
+    RET
+1:
     MSR     DAIFSet, #3
-    DSB     SY
+    DSB     NSH
+    ISB
     RET
 
 /*
@@ -289,7 +337,14 @@ rt_hw_interrupt_disable:
  */
 .globl rt_hw_interrupt_enable
 rt_hw_interrupt_enable:
-    DSB     SY
+    AND     X0, X0, #0xc0
+    CMP     X0, #0xc0
+    /* branch if one of the bits not set(zero) */
+    BNE     1f
+    RET
+1:
+    ISB
+    DSB     NSH
     AND     X0, X0, #0xc0
     MRS     X1, DAIF
     BIC     X1, X1, #0xc0
@@ -376,19 +431,7 @@ rt_hw_context_switch_interrupt:
 vector_fiq:
     B       .
 
-.macro SAVE_USER_CTX
-    MRS     X1, SPSR_EL1
-    AND     X1, X1, 0xf
-    CMP     X1, XZR
-
-    BNE     1f
-    BL      lwp_uthread_ctx_save
-    LDP     X0, X1, [SP]
-1:
-.endm
-
-.globl vector_irq
-vector_irq:
+START_POINT(vector_irq)
     SAVE_CONTEXT
     STP     X0, X1, [SP, #-0x10]!   /* X0 is thread sp */
 
@@ -399,13 +442,15 @@ vector_irq:
 #endif
     BL      rt_hw_trap_irq
 #ifdef RT_USING_LWP
-    BL      lwp_uthread_ctx_restore
+    LDP     X0, X1, [SP]
+    RESTORE_USER_CTX X0
 #endif
     BL      rt_interrupt_leave
 
     LDP     X0, X1, [SP], #0x10
     BL      rt_scheduler_do_irq_switch
     B       rt_hw_context_switch_exit
+START_POINT_END(vector_irq)
 
 .global rt_hw_context_switch_exit
 rt_hw_context_switch_exit:
@@ -413,7 +458,7 @@ rt_hw_context_switch_exit:
     MOV     X0, SP
     RESTORE_CONTEXT
 
-#else   /* RT_USING_SMP */
+#else   /* !RT_USING_SMP */
 
 /*
  * void rt_hw_context_switch_to(rt_ubase_t to);
@@ -540,7 +585,8 @@ START_POINT(vector_exception)
 
     BL      rt_hw_trap_exception
 #ifdef RT_USING_LWP
-    BL      lwp_uthread_ctx_restore
+    LDP     X0, X1, [SP]
+    RESTORE_USER_CTX X0
 #endif
 
     LDP     X0, X1, [SP], #0x10
@@ -556,4 +602,4 @@ START_POINT(vector_serror)
     STP     X0, X1, [SP, #-0x10]!
     BL      rt_hw_trap_serror
     b .
-START_POINT_END(vector_exception)
+START_POINT_END(vector_serror)

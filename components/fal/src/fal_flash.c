@@ -27,7 +27,7 @@ static uint8_t init_ok = 0;
  */
 int fal_flash_init(void)
 {
-    size_t i;
+    size_t i, j, offset;
 
     if (init_ok)
     {
@@ -47,6 +47,17 @@ int fal_flash_init(void)
         log_d("Flash device | %*.*s | addr: 0x%08lx | len: 0x%08x | blk_size: 0x%08x |initialized finish.",
                 FAL_DEV_NAME_MAX, FAL_DEV_NAME_MAX, device_table[i]->name, device_table[i]->addr, device_table[i]->len,
                 device_table[i]->blk_size);
+        offset = 0;
+        for (j = 0; j < FAL_DEV_BLK_MAX; j ++)
+        {
+            const struct flash_blk *blk = &device_table[i]->blocks[j];
+            size_t blk_len = blk->count * blk->size;
+            if (blk->count == 0 || blk->size == 0)
+                break;
+            log_d("                  blk%2d | addr: 0x%08lx | len: 0x%08x | blk_size: 0x%08x |initialized finish.",
+                    j, device_table[i]->addr + offset, blk_len, blk->size);
+            offset += blk_len;
+        }
     }
 
     init_ok = 1;

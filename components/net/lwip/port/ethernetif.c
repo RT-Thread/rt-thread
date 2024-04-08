@@ -72,6 +72,10 @@
 #include "lwip/ethip6.h"
 #endif /* LWIP_IPV6 */
 
+#if LWIP_NETIF_HOSTNAME
+#define LWIP_HOSTNAME_LEN 16
+#endif
+
 #define netifapi_netif_set_link_up(n)      netifapi_netif_common(n, netif_set_link_up, NULL)
 #define netifapi_netif_set_link_down(n)    netifapi_netif_common(n, netif_set_link_down, NULL)
 
@@ -202,7 +206,7 @@ extern int lwip_ping_recv(int s, int *ttl);
 extern err_t lwip_ping_send(int s, ip_addr_t *addr, int size);
 
 int lwip_netdev_ping(struct netdev *netif, const char *host, size_t data_len,
-                        uint32_t timeout, struct netdev_ping_resp *ping_resp)
+                        uint32_t timeout, struct netdev_ping_resp *ping_resp, rt_bool_t isbind)
 {
     int s, ttl, recv_len, result = 0;
     int elapsed_time;
@@ -251,7 +255,9 @@ int lwip_netdev_ping(struct netdev *netif, const char *host, size_t data_len,
 #else
     local.sin_addr.s_addr = (netif->ip_addr.u_addr.ip4.addr);
 #endif
-    lwip_bind(s, (struct sockaddr *)&local, sizeof(struct sockaddr_in));
+    if (isbind) {
+        lwip_bind(s, (struct sockaddr *)&local, sizeof(struct sockaddr_in));
+    }
 
     lwip_setsockopt(s, SOL_SOCKET, SO_RCVTIMEO, &recv_timeout, sizeof(recv_timeout));
 
@@ -385,10 +391,9 @@ static int netdev_flags_sync(struct netif *lwip_netif)
 
 static int netdev_add(struct netif *lwip_netif)
 {
-#define LWIP_NETIF_NAME_LEN 2
     int result = 0;
     struct netdev *netdev = RT_NULL;
-    char name[LWIP_NETIF_NAME_LEN + 1] = {0};
+    char name[NETIF_NAMESIZE] = {0};
 
     RT_ASSERT(lwip_netif);
 
@@ -404,7 +409,7 @@ static int netdev_add(struct netif *lwip_netif)
     sal_lwip_netdev_set_pf_info(netdev);
 #endif /* SAL_USING_LWIP */
 
-    rt_strncpy(name, lwip_netif->name, LWIP_NETIF_NAME_LEN);
+    rt_strncpy(name, lwip_netif->name, NETIF_NAMESIZE);
     result = netdev_register(netdev, name, (void *)lwip_netif);
 
     /* Update netdev info after registered */
@@ -421,12 +426,12 @@ static int netdev_add(struct netif *lwip_netif)
 
 static void netdev_del(struct netif *lwip_netif)
 {
-    char name[LWIP_NETIF_NAME_LEN + 1];
+    char name[NETIF_NAMESIZE];
     struct netdev *netdev;
 
     RT_ASSERT(lwip_netif);
 
-    rt_strncpy(name, lwip_netif->name, LWIP_NETIF_NAME_LEN);
+    rt_strncpy(name, lwip_netif->name, NETIF_NAMESIZE);
     netdev = netdev_get_by_name(name);
     netdev_unregister(netdev);
     rt_free(netdev);
@@ -520,20 +525,20 @@ static err_t eth_netif_device_init(struct netif *netif)
 
         /* set default netif */
         if (netif_default == RT_NULL)
-            netif_set_default(ethif->netif);
+            netif_set_default(netif);
 
         /* set interface up */
-        netif_set_up(ethif->netif);
+        netif_set_up(netif);
 
 #if LWIP_DHCP
         /* if this interface uses DHCP, start the DHCP client */
-        dhcp_start(ethif->netif);
+        dhcp_start(netif);
 #endif
 
         if (ethif->flags & ETHIF_LINK_PHYUP)
         {
             /* set link_up for this netif */
-            netif_set_link_up(ethif->netif);
+            netif_set_link_up(netif);
         }
 
 #ifdef RT_USING_NETDEV
@@ -552,7 +557,6 @@ rt_err_t eth_device_init_with_flag(struct eth_device *dev, const char *name, rt_
 {
     struct netif* netif;
 #if LWIP_NETIF_HOSTNAME
-#define LWIP_HOSTNAME_LEN 16
     char *hostname = RT_NULL;
     netif = (struct netif*) rt_calloc (1, sizeof(struct netif) + LWIP_HOSTNAME_LEN);
 #else
@@ -564,6 +568,7 @@ rt_err_t eth_device_init_with_flag(struct eth_device *dev, const char *name, rt_
         return -RT_ERROR;
     }
 
+    rt_spin_lock_init(&(dev->spinlock));
     /* set netif */
     dev->netif = netif;
     dev->flags = flags;
@@ -576,8 +581,7 @@ rt_err_t eth_device_init_with_flag(struct eth_device *dev, const char *name, rt_
     rt_device_register(&(dev->parent), name, RT_DEVICE_FLAG_RDWR);
 
     /* set name */
-    netif->name[0] = name[0];
-    netif->name[1] = name[1];
+    rt_strncpy(netif->name, name, NETIF_NAMESIZE);
 
     /* set hw address to 6 */
     netif->hwaddr_len   = 6;
@@ -709,16 +713,15 @@ static err_t af_unix_eth_netif_device_init(struct netif *netif)
 
         /* set default netif */
         if (netif_default == RT_NULL)
-            netif_set_default(ethif->netif);
+            netif_set_default(netif);
 
         /* set interface up */
-        netif_set_up(ethif->netif);
-
+        netif_set_up(netif);
 
         if (ethif->flags & ETHIF_LINK_PHYUP)
         {
             /* set link_up for this netif */
-            netif_set_link_up(ethif->netif);
+            netif_set_link_up(netif);
         }
 
 #ifdef RT_USING_NETDEV
@@ -737,7 +740,6 @@ rt_err_t af_unix_eth_device_init_with_flag(struct eth_device *dev, const char *n
 {
     struct netif* netif;
 #if LWIP_NETIF_HOSTNAME
-#define LWIP_HOSTNAME_LEN 16
     char *hostname = RT_NULL;
     netif = (struct netif*) rt_calloc (1, sizeof(struct netif) + LWIP_HOSTNAME_LEN);
 #else
@@ -838,13 +840,13 @@ rt_err_t eth_device_linkchange(struct eth_device* dev, rt_bool_t up)
 
     RT_ASSERT(dev != RT_NULL);
 
-    level = rt_hw_interrupt_disable();
+    level = rt_spin_lock_irqsave(&(dev->spinlock));
     dev->link_changed = 0x01;
     if (up == RT_TRUE)
         dev->link_status = 0x01;
     else
         dev->link_status = 0x00;
-    rt_hw_interrupt_enable(level);
+    rt_spin_unlock_irqrestore(&(dev->spinlock), level);
 
     /* post message to ethernet thread */
     return rt_mb_send(&eth_rx_thread_mb, (rt_ubase_t)dev);
@@ -912,10 +914,10 @@ static void eth_rx_thread_entry(void* parameter)
             {
                 int status;
 
-                level = rt_hw_interrupt_disable();
+                level = rt_spin_lock_irqsave(&(device->spinlock));
                 status = device->link_status;
                 device->link_changed = 0x00;
-                rt_hw_interrupt_enable(level);
+                rt_spin_unlock_irqrestore(&(device->spinlock), level);
 
                 if (status)
                     netifapi_netif_set_link_up(device->netif);
@@ -923,10 +925,10 @@ static void eth_rx_thread_entry(void* parameter)
                     netifapi_netif_set_link_down(device->netif);
             }
 
-            level = rt_hw_interrupt_disable();
+            level = rt_spin_lock_irqsave(&(device->spinlock));
             /* 'rx_notice' will be modify in the interrupt or here */
             device->rx_notice = RT_FALSE;
-            rt_hw_interrupt_enable(level);
+            rt_spin_unlock_irqrestore(&(device->spinlock), level);
 
             /* receive all of buffer */
             while (1)

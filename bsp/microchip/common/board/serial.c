@@ -1,17 +1,19 @@
 /*
- * Copyright (c)
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
- * Date        Author    Email                    Notes
- * 2019-07-16  Kevin.Liu kevin.liu.mchp@gmail.com First Release
+ * Date        Author     Email                     Notes
+ * 2019-07-16  Kevin.Liu  kevin.liu.mchp@gmail.com  First Release
+ * 2023-09-16  luhuadong  luhuadong@163.com         support serial v2
  */
 
 #include <rtthread.h>
 #include <rtdevice.h>
 
 #include <atmel_start.h>
+#include <board.h>
 
 /* SAM MCU serial device */
 static struct rt_serial_device sam_serial;
@@ -23,8 +25,22 @@ static void serial_rxcallback(const struct usart_async_descriptor *const io_desc
     /* enter interrupt */
     rt_interrupt_enter();
 
+#ifdef RT_USING_SERIAL_V2
+    struct rt_serial_rx_fifo *rx_fifo;
+    uint8_t data;
+
+    rx_fifo = (struct rt_serial_rx_fifo *)sam_serial.serial_rx;
+    RT_ASSERT(rx_fifo != RT_NULL);
+
+    do {
+        ringbuffer_get((struct ringbuffer *const)&io_descr->rx, &data);
+        rt_ringbuffer_putchar(&(rx_fifo->rb), data);
+    } while (0); // maybe not only one byte
+
+#endif
+
     /* Notify Serial driver to process RX data */
-    rt_hw_serial_isr(&sam_serial, RT_SERIAL_EVENT_RX_IND);
+    rt_hw_serial_isr(&sam_serial, RT_SERIAL_EVENT_RX_IND); // or RT_SERIAL_EVENT_RX_DMADONE
 
     /* leave interrupt */
     rt_interrupt_leave();
@@ -139,7 +155,14 @@ static rt_err_t serial_control(struct rt_serial_device *serial, int cmd, void *a
             usart_async_enable(desc);
             break;
         /* UART config */
-        case RT_DEVICE_CTRL_CONFIG :
+        case RT_DEVICE_CTRL_CONFIG: // RT_SERIAL_RX_NON_BLOCKING or RT_SERIAL_RX_BLOCKING
+                                    // RT_SERIAL_TX_NON_BLOCKING or RT_SERIAL_TX_BLOCKING
+            break;
+#ifdef RT_USING_SERIAL_V2
+        case RT_DEVICE_CHECK_OPTMODE:
+            break;
+#endif
+        default:
             break;
     }
 
@@ -214,12 +237,13 @@ static const struct rt_uart_ops sam_serial_ops =
 int rt_hw_uart_init(void)
 {
     struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT;
+    config.baud_rate = DEFAULT_USART_BAUD_RATE;
 
     sam_serial.ops       = &sam_serial_ops;
     sam_serial.config    = config;
     sam_serial.serial_rx = RT_NULL;
-    sam_serial.serial_rx = RT_NULL;
-    rt_hw_serial_register(&sam_serial, RT_CONSOLE_DEVICE_NAME,
+    sam_serial.serial_tx = RT_NULL;
+    rt_hw_serial_register(&sam_serial, "uart0" /* RT_CONSOLE_DEVICE_NAME */,
                           RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX |
                           RT_DEVICE_FLAG_INT_TX, (void *)&TARGET_IO);
 
@@ -228,5 +252,3 @@ int rt_hw_uart_init(void)
 
     return 0;
 }
-
-/*@}*/

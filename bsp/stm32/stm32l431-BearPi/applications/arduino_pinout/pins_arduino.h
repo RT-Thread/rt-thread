@@ -30,6 +30,8 @@
 #define A2        (15)
 #define DAC0      (16)
 
+#define RTDUINO_PIN_MAX_LIMIT DAC0 /* pin number max limit check */
+
 #define F_CPU          80000000L  /* CPU:80MHz */
 
 /* i2c1 : PB7-SDA PB6-SCL */

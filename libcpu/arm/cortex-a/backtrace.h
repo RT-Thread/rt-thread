@@ -2,6 +2,7 @@
 #define __BACKTRACE_H
 
 #ifndef __ASSEMBLY__
+#include <rtthread.h>
 #include <cpuport.h>
 
 /* Unwind reason code according the the ARM EABI documents */
@@ -75,7 +76,6 @@ int unwind_frame(struct stackframe *frame, const struct unwind_idx **origin_idx,
 void unwind_backtrace(struct pt_regs *regs, const struct unwind_idx exidx_start[], const struct unwind_idx exidx_end[]);
 
 void rt_unwind(struct rt_hw_exp_stack *regs, unsigned int pc_adj);
-void rt_backtrace(void);
 
 #endif	/* !__ASSEMBLY__ */
 

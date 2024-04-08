@@ -40,11 +40,11 @@ static uint32_t _dentry_hash(struct dfs_mnt *mnt, const char *path)
     return (val ^ (unsigned long) mnt) & (DFS_DENTRY_HASH_NR - 1);
 }
 
-struct dfs_dentry *dfs_dentry_create(struct dfs_mnt *mnt, char *fullpath)
+static struct dfs_dentry *_dentry_create(struct dfs_mnt *mnt, char *path, rt_bool_t is_rela_path)
 {
     struct dfs_dentry *dentry = RT_NULL;
 
-    if (mnt == RT_NULL || fullpath == RT_NULL)
+    if (mnt == RT_NULL || path == RT_NULL)
     {
         return dentry;
     }
@@ -52,15 +52,18 @@ struct dfs_dentry *dfs_dentry_create(struct dfs_mnt *mnt, char *fullpath)
     dentry = (struct dfs_dentry *)rt_calloc(1, sizeof(struct dfs_dentry));
     if (dentry)
     {
-        char *dentry_path = fullpath;
-        int mntpoint_len = strlen(mnt->fullpath);
-
-        if (rt_strncmp(mnt->fullpath, dentry_path, mntpoint_len) == 0)
+        char *dentry_path = path;
+        if (!is_rela_path)
         {
-            dentry_path += mntpoint_len;
+            int mntpoint_len = strlen(mnt->fullpath);
+
+            if (rt_strncmp(mnt->fullpath, dentry_path, mntpoint_len) == 0)
+            {
+                dentry_path += mntpoint_len;
+            }
         }
 
-        dentry->pathname = strlen(dentry_path) ? rt_strdup(dentry_path) : rt_strdup(fullpath);
+        dentry->pathname = strlen(dentry_path) ? rt_strdup(dentry_path) : rt_strdup(path);
         dentry->mnt = dfs_mnt_ref(mnt);
 
         rt_atomic_store(&(dentry->ref_count), 1);
@@ -70,6 +73,16 @@ struct dfs_dentry *dfs_dentry_create(struct dfs_mnt *mnt, char *fullpath)
     }
 
     return dentry;
+}
+
+struct dfs_dentry *dfs_dentry_create(struct dfs_mnt *mnt, char *fullpath)
+{
+    return _dentry_create(mnt, fullpath, RT_FALSE);
+}
+
+struct dfs_dentry *dfs_dentry_create_rela(struct dfs_mnt *mnt, char *rela_path)
+{
+    return _dentry_create(mnt, rela_path, RT_TRUE);;
 }
 
 struct dfs_dentry * dfs_dentry_ref(struct dfs_dentry *dentry)
@@ -131,6 +144,7 @@ struct dfs_dentry *dfs_dentry_unref(struct dfs_dentry *dentry)
                 LOG_I("free a dentry: %p", dentry);
                 rt_free(dentry->pathname);
                 rt_free(dentry);
+                dentry = RT_NULL;
             }
             else
             {
@@ -197,7 +211,7 @@ struct dfs_dentry *dfs_dentry_lookup(struct dfs_mnt *mnt, const char *path, uint
             path = "/";
         }
     }
-
+    dfs_file_lock();
     dentry = _dentry_hash_lookup(mnt, path);
     if (!dentry)
     {
@@ -205,8 +219,8 @@ struct dfs_dentry *dfs_dentry_lookup(struct dfs_mnt *mnt, const char *path, uint
         {
             DLOG(activate, "dentry");
             /* not in hash table, create it */
-            DLOG(msg, "dentry", "dentry", DLOG_MSG, "dfs_dentry_create(%s)", path);
-            dentry = dfs_dentry_create(mnt, (char*)path);
+            DLOG(msg, "dentry", "dentry", DLOG_MSG, "dfs_dentry_create_rela(mnt=%s, path=%s)", mnt->fullpath, path);
+            dentry = dfs_dentry_create_rela(mnt, (char*)path);
             if (dentry)
             {
                 DLOG(msg, "dentry", mnt->fs_ops->name, DLOG_MSG, "vnode=fs_ops->lookup(dentry)");
@@ -252,7 +266,7 @@ struct dfs_dentry *dfs_dentry_lookup(struct dfs_mnt *mnt, const char *path, uint
     {
         DLOG(note, "dentry", "found dentry");
     }
-
+    dfs_file_unlock();
     return dentry;
 }
 
@@ -268,7 +282,7 @@ char* dfs_dentry_full_path(struct dfs_dentry* dentry)
         path = (char *) rt_malloc(mnt_len + path_len + 3);
         if (path)
         {
-            if (dentry->pathname[0] == '/')
+            if (dentry->pathname[0] == '/' || dentry->mnt->fullpath[mnt_len - 1] == '/')
             {
                 rt_snprintf(path, mnt_len + path_len + 2, "%s%s", dentry->mnt->fullpath,
                     dentry->pathname);

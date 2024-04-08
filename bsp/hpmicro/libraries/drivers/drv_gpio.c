@@ -217,13 +217,13 @@ static void hpm_pin_mode(rt_device_t dev, rt_base_t pin, rt_uint8_t mode)
     HPM_IOC->PAD[pin].FUNC_CTL = IOC_PAD_FUNC_CTL_LOOP_BACK_MASK;
 }
 
-static rt_int8_t hpm_pin_read(rt_device_t dev, rt_base_t pin)
+static rt_ssize_t hpm_pin_read(rt_device_t dev, rt_base_t pin)
 {
     /* TODO: Check the validity of the pin value */
     uint32_t gpio_idx = pin >> 5;
     uint32_t pin_idx = pin & 0x1FU;
 
-    return (int) gpio_read_pin(HPM_GPIO0, gpio_idx, pin_idx);
+    return (rt_ssize_t) gpio_read_pin(HPM_GPIO0, gpio_idx, pin_idx);
 }
 
 static void hpm_pin_write(rt_device_t dev, rt_base_t pin, rt_uint8_t value)
@@ -310,13 +310,15 @@ static rt_err_t hpm_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_u
     return RT_EOK;
 }
 
-const static struct rt_pin_ops hpm_pin_ops = {
-        .pin_mode = hpm_pin_mode,
-        .pin_write = hpm_pin_write,
-        .pin_read = hpm_pin_read,
-        .pin_attach_irq = hpm_pin_attach_irq,
-        .pin_detach_irq = hpm_pin_detach_irq,
-        .pin_irq_enable = hpm_pin_irq_enable};
+const static struct rt_pin_ops hpm_pin_ops =
+{
+    .pin_mode = hpm_pin_mode,
+    .pin_write = hpm_pin_write,
+    .pin_read = hpm_pin_read,
+    .pin_attach_irq = hpm_pin_attach_irq,
+    .pin_detach_irq = hpm_pin_detach_irq,
+    .pin_irq_enable = hpm_pin_irq_enable
+};
 
 int rt_hw_pin_init(void)
 {

@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2021-08-25     RT-Thread    First version
+ * 2023-09-15     xqyjlj       perf rt_hw_interrupt_disable/enable
  */
 
 #ifndef  RESOURCE_ID_H__
@@ -14,7 +15,7 @@
 #include <rthw.h>
 #include <rtthread.h>
 
-#define RESOURCE_ID_INIT(size, pool)  {size, pool, 0, RT_NULL}
+#define RESOURCE_ID_INIT(size, pool)  {size, pool, 0, RT_NULL, RT_SPINLOCK_INIT}
 
 typedef struct
 {
@@ -22,6 +23,7 @@ typedef struct
     void **_res;
     int noused;
     void **_free;
+    struct rt_spinlock spinlock;
 } resource_id_t;
 
 void resource_id_init(resource_id_t *mgr, int size, void **res);

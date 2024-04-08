@@ -32,6 +32,13 @@ rt_err_t rt_i2c_bus_device_register(struct rt_i2c_bus_device *bus,
 
     LOG_I("I2C bus [%s] registered", bus_name);
 
+#ifdef RT_USING_DM
+    if (!res)
+    {
+        i2c_bus_scan_clients(bus);
+    }
+#endif
+
     return res;
 }
 

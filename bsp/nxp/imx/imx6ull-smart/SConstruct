@@ -1,0 +1,43 @@
+import os
+import sys
+import rtconfig
+import re
+RTT_ROOT = os.getenv('RTT_ROOT') or os.path.join('..', '..', '..', '..')
+
+sys.path = sys.path + [os.path.join(RTT_ROOT, 'tools')]
+from building import *
+
+TARGET = 'rtthread.' + rtconfig.TARGET_EXT
+
+content = ""
+TRACE_CONFIG = ''
+with open("rtconfig.h") as f:
+    for line in f.readlines():
+        if line.find("RT_BACKTRACE_FUNCTION_NAME") != -1:
+            for token in line.split(" "):
+                if re.match(r'RT_BACKTRACE_FUNCTION_NAME$', token, flags=0):
+                    TRACE_CONFIG = " -mpoke-function-name"
+
+DefaultEnvironment(tools=[])
+env = Environment(tools = ['mingw'],
+    AS   = rtconfig.AS, ASFLAGS = rtconfig.AFLAGS + TRACE_CONFIG,
+    CC   = rtconfig.CC, CFLAGS = rtconfig.CFLAGS + TRACE_CONFIG,
+    CXX  = rtconfig.CXX, CXXFLAGS = rtconfig.CXXFLAGS + TRACE_CONFIG,
+    AR   = rtconfig.AR, ARFLAGS = '-rc',
+    LINK = rtconfig.LINK, LINKFLAGS = rtconfig.LFLAGS)
+env.PrependENVPath('PATH', rtconfig.EXEC_PATH)
+env['ASCOM'] = env['ASPPCOM']
+env['LINKCOM'] = '$LINK -o $TARGET $LINKFLAGS $__RPATH $SOURCES $_LIBDIRFLAGS -Wl,--start-group $_LIBFLAGS -Wl,--end-group'
+
+Export('RTT_ROOT')
+Export('rtconfig')
+
+# prepare building environment
+objs = PrepareBuilding(env, RTT_ROOT)
+
+if GetDepend('RT_USING_SMART'):
+    # use smart link.lds
+    env['LINKFLAGS'] = env['LINKFLAGS'].replace('link.lds', 'link_smart.lds')
+
+# make a building
+DoBuilding(TARGET, objs)

@@ -11,12 +11,15 @@
 #ifndef __CORE_DRIVER_H__
 #define __CORE_DRIVER_H__
 
-#include <drivers/core/device.h>
+#include <rtdef.h>
 
 struct rt_driver
 {
+    struct rt_object parent;
     struct rt_bus *bus;
     rt_list_t node;
+
+    rt_uint32_t ref_count;
 
 #ifdef RT_USING_DEVICE_OPS
     const struct rt_device_ops *dev_ops;
@@ -32,15 +35,10 @@ struct rt_driver
 
     const struct filesystem_ops *fops;
 
-    const char *name;
-
     int (*probe)(struct rt_device *dev);
     int (*remove)(struct rt_device *dev);
-
-    void *priv;
+    int (*shutdown)(struct rt_device *dev);
 };
-
-int rt_driver_probe_device(struct rt_driver *drv, struct rt_device *dev);
 
 rt_err_t rt_driver_register(rt_driver_t drv);
 rt_err_t rt_driver_unregister(rt_driver_t drv);

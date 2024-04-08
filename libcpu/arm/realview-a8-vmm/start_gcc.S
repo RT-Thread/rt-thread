@@ -10,13 +10,6 @@
 
 #include <rtconfig.h>
 
-#ifdef RT_USING_VMM
-#include <vmm.h>
-.equ orig_irq_isr,    LINUX_VECTOR_POS+0x18
-#else
-#undef RT_VMM_USING_DOMAIN
-#endif
-
 .equ Mode_USR,        0x10
 .equ Mode_FIQ,        0x11
 .equ Mode_IRQ,        0x12
@@ -28,7 +21,6 @@
 .equ I_Bit,           0x80            @ when I bit is set, IRQ is disabled
 .equ F_Bit,           0x40            @ when F bit is set, FIQ is disabled
 
-#ifndef RT_USING_VMM
 .equ UND_Stack_Size,     0x00000000
 .equ SVC_Stack_Size,     0x00000100
 .equ ABT_Stack_Size,     0x00000000
@@ -38,9 +30,6 @@
 
 #define ISR_Stack_Size  (UND_Stack_Size + SVC_Stack_Size + ABT_Stack_Size + \
                  RT_FIQ_STACK_PGSZ + RT_IRQ_STACK_PGSZ)
-#else
-#define ISR_Stack_Size  (RT_FIQ_STACK_PGSZ + RT_IRQ_STACK_PGSZ)
-#endif
 
 .section .data.share.isr
 /* stack */
@@ -58,10 +47,6 @@ stack_top:
 /* reset entry */
 .globl _reset
 _reset:
-#ifdef RT_USING_VMM
-    /* save all the parameter and variable registers */
-    stmfd   sp!, {r0-r12, lr}
-#endif
     /* set the cpu to SVC32 mode and disable interrupt */
     mrs     r0, cpsr
     bic     r0, r0, #0x1f
@@ -81,18 +66,6 @@ bss_loop:
     strlo   r0,[r1],#4              /* clear 4 bytes                    */
     blo     bss_loop                /* loop until done                  */
 
-#ifdef RT_USING_VMM
-    /* clear .bss.share */
-    mov     r0,#0                   /* get a zero                       */
-    ldr     r1,=__bss_share_start   /* bss start                        */
-    ldr     r2,=__bss_share_end     /* bss end                          */
-
-bss_share_loop:
-    cmp     r1,r2                   /* check if data to clear           */
-    strlo   r0,[r1],#4              /* clear 4 bytes                    */
-    blo     bss_share_loop                /* loop until done                  */
-#endif
-
     /* call C++ constructors of global objects                          */
     ldr     r0, =__ctors_start__
     ldr     r1, =__ctors_end__
@@ -109,31 +82,16 @@ ctor_loop:
 ctor_end:
 
     /* start RT-Thread Kernel */
-#ifdef RT_USING_VMM
-    /* restore the parameter */
-    ldmfd   sp!, {r0-r3}
-    bl      vmm_entry
-    ldmfd   sp!, {r4-r12, pc}
-#else
     ldr     pc, _rtthread_startup
 _rtthread_startup:
     .word rtthread_startup
-#endif
 
 stack_setup:
     ldr     r0, =stack_top
-#ifdef RT_USING_VMM
-    @ Linux use stmia to save r0, lr and spsr. To align to 8 byte boundary,
-    @ just allocate 16 bytes for it.
-    sub     r0, r0, #16
-#endif
 
-#ifndef RT_USING_VMM
     @  Set the startup stack for svc
     mov     sp, r0
-#endif
 
-#ifndef RT_USING_VMM
     @  Enter Undefined Instruction Mode and set its Stack Pointer
     msr     cpsr_c, #Mode_UND|I_Bit|F_Bit
     mov     sp, r0
@@ -143,7 +101,6 @@ stack_setup:
     msr     cpsr_c, #Mode_ABT|I_Bit|F_Bit
     mov     sp, r0
     sub     r0, r0, #ABT_Stack_Size
-#endif
 
     @  Enter FIQ Mode and set its Stack Pointer
     msr     cpsr_c, #Mode_FIQ|I_Bit|F_Bit
@@ -184,25 +141,9 @@ vector_fiq:
 vector_irq:
     stmfd   sp!, {r0-r12,lr}
 
-#ifdef RT_VMM_USING_DOMAIN
-    @ save the last domain
-    mrc     p15, 0, r5, c3, c0
-    @ switch to vmm domain as we are going to call vmm codes
-    ldr     r1, =vmm_domain_val
-    ldr     r4, [r1]
-    mcr     p15, 0, r4, c3, c0
-#endif
-
     bl      rt_interrupt_enter
     bl      rt_hw_trap_irq
     bl      rt_interrupt_leave
-
-#ifdef RT_VMM_USING_DOMAIN
-    @ restore the last domain. It do some redundant work but simplify the
-    @ logic. It might be the guest domain so rt_thread_switch_interrupt_flag
-    @ should lay in .bss.share
-    mcr     p15, 0, r5, c3, c0
-#endif
 
     @ if rt_thread_switch_interrupt_flag set, jump to
     @ rt_hw_context_switch_interrupt_do and don't return
@@ -211,58 +152,8 @@ vector_irq:
     cmp     r1, #1
     beq     rt_hw_context_switch_interrupt_do
 
-#ifndef RT_USING_VMM
     ldmfd   sp!, {r0-r12,lr}
     subs    pc,  lr, #4
-#else
-#ifdef RT_VMM_USING_DOMAIN
-    @ r4 is vmm_domain_val
-    @ back to vmm domain as we need access rt_current_thread
-    mcr     p15, 0, r4, c3, c0
-#endif
-    /* check whether we need to do IRQ routing
-     * ensure the int is disabled. Or there will be an infinite loop. */
-    ldr     r0, =rt_current_thread
-    ldr     r0, [r0]
-    ldr     r1, =vmm_thread
-    cmp     r0, r1
-    beq     switch_to_guest
-
-#ifdef RT_VMM_USING_DOMAIN
-    @ r5 is domain of interrupted context
-    @ it might be super_domain_val or vmm_domain_val so we need to restore it.
-    mcr     p15, 0, r5, c3, c0
-#endif
-    @ switch back if the interrupted thread is not vmm
-    ldmfd sp!, {r0-r12,lr}
-    subs  pc, lr, #4
-
-switch_to_guest:
-#ifdef RT_VMM_USING_DOMAIN
-    @ We are going to execute rt-thread code but accessing the content of the
-    @ guest. So switch to super domain.
-    ldr     r1, =super_domain_val
-    ldr     r0, [r1]
-    mcr     p15, 0, r0, c3, c0
-#endif
-    /* check whether there is a pending interrupt for Guest OS */
-    bl      vmm_virq_check
-
-#ifdef RT_VMM_USING_DOMAIN
-    @ All done, restore the guest domain.
-    mcr     p15, 0, r5, c3, c0
-#endif
-
-    cmp     r0, #0x0
-    beq     route_irq_to_guest
-
-    ldmfd   sp!, {r0-r12,lr}
-    subs    pc, lr, #4
-
-route_irq_to_guest:
-    ldmfd   sp!, {r0-r12,lr}
-    b       orig_irq_isr
-#endif /* RT_USING_VMM */
 
 rt_hw_context_switch_interrupt_do:
     mov     r1,  #0         @ clear flag
@@ -289,13 +180,6 @@ rt_hw_context_switch_interrupt_do:
     ldr     r5,  [r4]
     str     sp,  [r5]       @ store sp in preempted tasks's TCB
 
-#ifdef RT_VMM_USING_DOMAIN
-    @ If a thread is wake up by interrupt, it should be RTT thread.
-    @ Make sure the domain is correct.
-    ldr     r1, =vmm_domain_val
-    ldr     r2, [r1]
-    mcr     p15, 0, r2, c3, c0
-#endif
     ldr     r6,  =rt_interrupt_to_thread
     ldr     r6,  [r6]
     ldr     sp,  [r6]       @ get new task's stack pointer

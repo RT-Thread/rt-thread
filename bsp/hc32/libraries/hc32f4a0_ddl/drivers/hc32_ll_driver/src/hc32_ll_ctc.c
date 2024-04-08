@@ -7,9 +7,11 @@
    Change Logs:
    Date             Author          Notes
    2022-03-31       CDT             First version
+   2023-06-30       CDT             Modify typo
+                                    Modify the init assignment of i32Ret in CTC_DeInit()
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -220,11 +222,11 @@ int32_t CTC_CT_Init(const stc_ctc_ct_init_t *pstcCtcInit)
             u64InterClock = ((uint64_t)u32CtcHrcFreq) * ((uint64_t)(u32RefClockDiv));
             u32Multiplier = (uint32_t)(u64InterClock / pstcCtcInit->u32RefClockFreq);
 
-            /* Calculate offset value formula: OFSVAL = (Fhrc / (Fref * Fref_divsion)) * TA */
+            /* Calculate offset value formula: OFSVAL = (Fhrc / (Fref * Fref_division)) * TA */
             f32OffsetValue = ((float32_t)u32Multiplier) * (pstcCtcInit->f32TolerantErrRate);
             u32OffsetValue = (uint32_t)(f32OffsetValue);
 
-            /* Calculate reload value formula: RLDVAL = (Fhrc / (Fref * Fref_divsion)) + OFSVAL */
+            /* Calculate reload value formula: RLDVAL = (Fhrc / (Fref * Fref_division)) + OFSVAL */
             u32ReloadValue = u32Multiplier + u32OffsetValue;
 
             /* Check reload and offset value */
@@ -254,8 +256,9 @@ int32_t CTC_CT_Init(const stc_ctc_ct_init_t *pstcCtcInit)
  */
 int32_t CTC_DeInit(void)
 {
-    int32_t i32Ret = LL_ERR_BUSY;
+    int32_t i32Ret;
 
+    i32Ret = LL_ERR_BUSY;
     /* Check CTC status */
     if (CTC_FLAG_BUSY != (READ_REG32_BIT(CM_CTC->STR, CTC_FLAG_BUSY))) {
         /* Configures the registers to reset value. */
@@ -376,8 +379,8 @@ uint8_t CTC_GetOffsetValue(void)
  */
 
 /**
-* @}
-*/
+ * @}
+ */
 
 /******************************************************************************
  * EOF (not truncated)

@@ -7,9 +7,15 @@
    Change Logs:
    Date             Author          Notes
    2022-03-31       CDT             First version
+   2022-10-31       CDT             Update API parameter u16IntType to u32IntType
+   2023-06-30       CDT             Add the macros group @ref TMR4_OC_Output_Polarity
+                                    Modify typo
+                                    TMR4_OC_Buffer_Object group add macro-definition: TMR4_OC_BUF_NONE
+   2023-09-30       CDT             Modify API TMR4_DeInit
+                                    Fix spell error about "response" that in function name
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -127,7 +133,7 @@ typedef union {
                                      This parameter can be a value of @ref TMR4_OC_Count_Match_Output_Polarity */
         uint32_t OPNZRL  : 2;   /*!< OCMRxl b15~b14 Low channel's OP output status when high channel not match and low channel not match occurs at the condition that counter count=0x0000
                                      This parameter can be a value of @ref TMR4_OC_Count_Match_Output_Polarity */
-        uint32_t EOPNDCL : 2;   /*!< OCMRxl b17~b16 Low channel's OP output status when high channel match and low channel not match occurs at the condition that counter is coutning down
+        uint32_t EOPNDCL : 2;   /*!< OCMRxl b17~b16 Low channel's OP output status when high channel match and low channel not match occurs at the condition that counter is counting down
                                      This parameter can be a value of @ref TMR4_OC_Count_Match_Output_Polarity */
         uint32_t EOPNUCL : 2;   /*!< OCMRxl b19~b18 Low channel's OP output status when high channel match and low channel not match occurs at the condition that counter is counting up
                                      This parameter can be a value of @ref TMR4_OC_Count_Match_Output_Polarity */
@@ -298,21 +304,21 @@ typedef struct {
  * @{
  */
 #define TMR4_INT_CNT_MASK0              (0U)    /*!< Counter interrupt flag is always set(not masked) for counter count every time at "0x0000" or peak */
-#define TMR4_INT_CNT_MASK1              (1U)    /*!< Counter interrupt flag is set once when counter counts 2 times at "0x0000" or peak (skiping 1 count) */
-#define TMR4_INT_CNT_MASK2              (2U)    /*!< Counter interrupt flag is set once when counter counts 3 times at "0x0000" or peak (skiping 2 count) */
-#define TMR4_INT_CNT_MASK3              (3U)    /*!< Counter interrupt flag is set once when counter counts 4 times at "0x0000" or peak (skiping 3 count) */
-#define TMR4_INT_CNT_MASK4              (4U)    /*!< Counter interrupt flag is set once when counter counts 5 times at "0x0000" or peak (skiping 4 count) */
-#define TMR4_INT_CNT_MASK5              (5U)    /*!< Counter interrupt flag is set once when counter counts 6 times at "0x0000" or peak (skiping 5 count) */
-#define TMR4_INT_CNT_MASK6              (6U)    /*!< Counter interrupt flag is set once when counter counts 7 times at "0x0000" or peak (skiping 6 count) */
-#define TMR4_INT_CNT_MASK7              (7U)    /*!< Counter interrupt flag is set once when counter counts 8 times at "0x0000" or peak (skiping 7 count) */
-#define TMR4_INT_CNT_MASK8              (8U)    /*!< Counter interrupt flag is set once when counter counts 9 times at "0x0000" or peak (skiping 8 count) */
-#define TMR4_INT_CNT_MASK9              (9U)    /*!< Counter interrupt flag is set once when counter counts 10 times at "0x0000" or peak (skiping 9 count) */
-#define TMR4_INT_CNT_MASK10             (10U)   /*!< Counter interrupt flag is set once when counter counts 11 times at "0x0000" or peak (skiping 10 count) */
-#define TMR4_INT_CNT_MASK11             (11U)   /*!< Counter interrupt flag is set once when counter counts 12 times at "0x0000" or peak (skiping 11 count) */
-#define TMR4_INT_CNT_MASK12             (12U)   /*!< Counter interrupt flag is set once when counter counts 13 times at "0x0000" or peak (skiping 12 count) */
-#define TMR4_INT_CNT_MASK13             (13U)   /*!< Counter interrupt flag is set once when counter counts 14 times at "0x0000" or peak (skiping 13 count) */
-#define TMR4_INT_CNT_MASK14             (14U)   /*!< Counter interrupt flag is set once when counter counts 15 times at "0x0000" or peak (skiping 14 count) */
-#define TMR4_INT_CNT_MASK15             (15U)   /*!< Counter interrupt flag is set once when counter counts 16 times at "0x0000" or peak (skiping 15 count) */
+#define TMR4_INT_CNT_MASK1              (1U)    /*!< Counter interrupt flag is set once when counter counts 2 times at "0x0000" or peak (skipping 1 count) */
+#define TMR4_INT_CNT_MASK2              (2U)    /*!< Counter interrupt flag is set once when counter counts 3 times at "0x0000" or peak (skipping 2 count) */
+#define TMR4_INT_CNT_MASK3              (3U)    /*!< Counter interrupt flag is set once when counter counts 4 times at "0x0000" or peak (skipping 3 count) */
+#define TMR4_INT_CNT_MASK4              (4U)    /*!< Counter interrupt flag is set once when counter counts 5 times at "0x0000" or peak (skipping 4 count) */
+#define TMR4_INT_CNT_MASK5              (5U)    /*!< Counter interrupt flag is set once when counter counts 6 times at "0x0000" or peak (skipping 5 count) */
+#define TMR4_INT_CNT_MASK6              (6U)    /*!< Counter interrupt flag is set once when counter counts 7 times at "0x0000" or peak (skipping 6 count) */
+#define TMR4_INT_CNT_MASK7              (7U)    /*!< Counter interrupt flag is set once when counter counts 8 times at "0x0000" or peak (skipping 7 count) */
+#define TMR4_INT_CNT_MASK8              (8U)    /*!< Counter interrupt flag is set once when counter counts 9 times at "0x0000" or peak (skipping 8 count) */
+#define TMR4_INT_CNT_MASK9              (9U)    /*!< Counter interrupt flag is set once when counter counts 10 times at "0x0000" or peak (skipping 9 count) */
+#define TMR4_INT_CNT_MASK10             (10U)   /*!< Counter interrupt flag is set once when counter counts 11 times at "0x0000" or peak (skipping 10 count) */
+#define TMR4_INT_CNT_MASK11             (11U)   /*!< Counter interrupt flag is set once when counter counts 12 times at "0x0000" or peak (skipping 11 count) */
+#define TMR4_INT_CNT_MASK12             (12U)   /*!< Counter interrupt flag is set once when counter counts 13 times at "0x0000" or peak (skipping 12 count) */
+#define TMR4_INT_CNT_MASK13             (13U)   /*!< Counter interrupt flag is set once when counter counts 14 times at "0x0000" or peak (skipping 13 count) */
+#define TMR4_INT_CNT_MASK14             (14U)   /*!< Counter interrupt flag is set once when counter counts 15 times at "0x0000" or peak (skipping 14 count) */
+#define TMR4_INT_CNT_MASK15             (15U)   /*!< Counter interrupt flag is set once when counter counts 16 times at "0x0000" or peak (skipping 15 count) */
 /**
  * @}
  */
@@ -351,11 +357,22 @@ typedef struct {
  */
 
 /**
+ * @defgroup TMR4_OC_Output_Polarity TMR4 OC Output Polarity
+ * @{
+ */
+#define TMR4_OC_PORT_LOW                (0U)              /*!< TMR4 OC Output low level */
+#define TMR4_OC_PORT_HIGH               (TMR4_OCSR_OCPH)  /*!< TMR4 OC Output high level */
+/**
+ * @}
+ */
+
+/**
  * @defgroup TMR4_OC_Buffer_Object TMR4 OC Buffer Object
  * @{
  */
-#define TMR4_OC_BUF_CMP_VALUE           (0x01U) /*!< The register OCCR buffer function index */
-#define TMR4_OC_BUF_CMP_MD              (0x02U) /*!< The register OCMR buffer function index */
+#define TMR4_OC_BUF_NONE                (0x00U) /*!< Disable the buffer function of OCCR/OCMR */
+#define TMR4_OC_BUF_CMP_VALUE           (0x01U) /*!< The register OCCR buffer function */
+#define TMR4_OC_BUF_CMP_MD              (0x02U) /*!< The register OCMR buffer function */
 /**
  * @}
  */
@@ -520,7 +537,7 @@ typedef struct {
 #define TMR4_EVT_MATCH_CNT_UP           (TMR4_SCSR_UEN)     /*!< Start event operation when match with SCCR&SCMR and TMR4 counter count up */
 #define TMR4_EVT_MATCH_CNT_DOWN         (TMR4_SCSR_DEN)     /*!< Start event operation when match with SCCR&SCMR and TMR4 counter count down */
 #define TMR4_EVT_MATCH_CNT_PEAK         (TMR4_SCSR_PEN)     /*!< Start event operation when match with SCCR&SCMR and TMR4 counter count peak */
-#define TMR4_EVT_MATCH_CNT_VALLEY       (TMR4_SCSR_ZEN)     /*!< Start event operation when match with SCCR&SCMR and TMR4 counter count vallay */
+#define TMR4_EVT_MATCH_CNT_VALLEY       (TMR4_SCSR_ZEN)     /*!< Start event operation when match with SCCR&SCMR and TMR4 counter count valley */
 #define TMR4_EVT_MATCH_CNT_ALL          (TMR4_EVT_MATCH_CNT_DOWN | TMR4_EVT_MATCH_CNT_UP | \
                                          TMR4_EVT_MATCH_CNT_PEAK | TMR4_EVT_MATCH_CNT_VALLEY)
 /**
@@ -651,7 +668,7 @@ typedef struct {
 /* Initialization and configuration TMR4 counter functions */
 int32_t TMR4_StructInit(stc_tmr4_init_t *pstcTmr4Init);
 int32_t TMR4_Init(CM_TMR4_TypeDef *TMR4x, const stc_tmr4_init_t *pstcTmr4Init);
-void TMR4_DeInit(CM_TMR4_TypeDef *TMR4x);
+int32_t TMR4_DeInit(CM_TMR4_TypeDef *TMR4x);
 void TMR4_SetClockSrc(CM_TMR4_TypeDef *TMR4x, uint16_t u16Src);
 void TMR4_SetClockDiv(CM_TMR4_TypeDef *TMR4x, uint16_t u16Div);
 void TMR4_SetCountMode(CM_TMR4_TypeDef *TMR4x, uint16_t u16Mode);
@@ -666,10 +683,9 @@ void TMR4_ClearStatus(CM_TMR4_TypeDef *TMR4x, uint32_t u32Flag);
 en_flag_status_t TMR4_GetStatus(const CM_TMR4_TypeDef *TMR4x, uint32_t u32Flag);
 void TMR4_IntCmd(CM_TMR4_TypeDef *TMR4x, uint32_t u32IntType, en_functional_state_t enNewState);
 void TMR4_PeriodBufCmd(CM_TMR4_TypeDef *TMR4x, en_functional_state_t enNewState);
-uint16_t TMR4_GetCountIntMaskTime(const CM_TMR4_TypeDef *TMR4x, uint16_t u16IntType);
+uint16_t TMR4_GetCountIntMaskTime(const CM_TMR4_TypeDef *TMR4x, uint32_t u32IntType);
 void TMR4_SetCountIntMaskTime(CM_TMR4_TypeDef *TMR4x, uint32_t u32IntType, uint16_t u16MaskTime);
-uint16_t TMR4_GetCurrentCountIntMaskTime(const CM_TMR4_TypeDef *TMR4x, uint16_t u16IntType);
-
+uint16_t TMR4_GetCurrentCountIntMaskTime(const CM_TMR4_TypeDef *TMR4x, uint32_t u32IntType);
 /**
  * @}
  */
@@ -687,8 +703,8 @@ uint16_t TMR4_OC_GetCompareValue(const CM_TMR4_TypeDef *TMR4x, uint32_t u32Ch);
 void TMR4_OC_SetCompareValue(CM_TMR4_TypeDef *TMR4x, uint32_t u32Ch, uint16_t u16Value);
 void TMR4_OC_Cmd(CM_TMR4_TypeDef *TMR4x, uint32_t u32Ch, en_functional_state_t enNewState);
 void TMR4_OC_ExtendControlCmd(CM_TMR4_TypeDef *TMR4x, uint32_t u32Ch, en_functional_state_t enNewState);
-void TMR4_OC_BufIntervalReponseCmd(CM_TMR4_TypeDef *TMR4x, uint32_t u32Ch,
-                                   uint16_t u16Object, en_functional_state_t enNewState);
+void TMR4_OC_BufIntervalResponseCmd(CM_TMR4_TypeDef *TMR4x, uint32_t u32Ch,
+                                    uint16_t u16Object, en_functional_state_t enNewState);
 uint16_t TMR4_OC_GetPolarity(const CM_TMR4_TypeDef *TMR4x, uint32_t u32Ch);
 void TMR4_OC_SetOcInvalidPolarity(CM_TMR4_TypeDef *TMR4x, uint32_t u32Ch, uint16_t u16Polarity);
 void TMR4_OC_SetCompareBufCond(CM_TMR4_TypeDef *TMR4x, uint32_t u32Ch, uint16_t u16Object, uint16_t u16BufCond);
@@ -716,7 +732,6 @@ void TMR4_PWM_StopReloadTimer(CM_TMR4_TypeDef *TMR4x, uint32_t u32Ch);
 void TMR4_PWM_SetFilterCountValue(CM_TMR4_TypeDef *TMR4x, uint32_t u32Ch, uint16_t u16Value);
 void TMR4_PWM_SetDeadTimeValue(CM_TMR4_TypeDef *TMR4x, uint32_t u32Ch, uint32_t u32DeadTimeIndex, uint16_t u16Value);
 uint16_t TMR4_PWM_GetDeadTimeValue(const CM_TMR4_TypeDef *TMR4x, uint32_t u32Ch, uint32_t u32DeadTimeIndex);
-
 void TMR4_PWM_SetAbnormalPinStatus(CM_TMR4_TypeDef *TMR4x, uint32_t u32PwmPin, uint32_t u32PinStatus);
 
 /**
@@ -739,11 +754,10 @@ void TMR4_EVT_SetCompareValue(CM_TMR4_TypeDef *TMR4x, uint32_t u32Ch, uint16_t u
 uint16_t TMR4_EVT_GetCompareValue(const CM_TMR4_TypeDef *TMR4x, uint32_t u32Ch);
 void TMR4_EVT_SetOutputEvent(CM_TMR4_TypeDef *TMR4x, uint32_t u32Ch, uint16_t u16Event);
 void TMR4_EVT_SetCompareBufCond(CM_TMR4_TypeDef *TMR4x, uint32_t u32Ch, uint16_t u16BufCond);
-void TMR4_EVT_BufIntervalReponseCmd(CM_TMR4_TypeDef *TMR4x, uint32_t u32Ch, en_functional_state_t enNewState);
-void TMR4_EVT_EventIntervalReponseCmd(CM_TMR4_TypeDef *TMR4x, uint32_t u32Ch,
-                                      uint16_t u16MaskType, en_functional_state_t enNewState);
+void TMR4_EVT_BufIntervalResponseCmd(CM_TMR4_TypeDef *TMR4x, uint32_t u32Ch, en_functional_state_t enNewState);
+void TMR4_EVT_EventIntervalResponseCmd(CM_TMR4_TypeDef *TMR4x, uint32_t u32Ch,
+                                       uint16_t u16MaskType, en_functional_state_t enNewState);
 void TMR4_EVT_MatchCondCmd(CM_TMR4_TypeDef *TMR4x, uint32_t u32Ch, uint16_t u16Cond, en_functional_state_t enNewState);
-
 /**
  * @}
  */

@@ -713,6 +713,7 @@ int dfs_file_ftruncate(struct dfs_file *fd, off_t length)
     return result;
 }
 
+#ifdef RT_USING_SMART
 int dfs_file_mmap2(struct dfs_file *fd, struct dfs_mmap2_args *mmap2)
 {
     int ret = 0;
@@ -736,6 +737,7 @@ int dfs_file_mmap2(struct dfs_file *fd, struct dfs_mmap2_args *mmap2)
 
     return ret;
 }
+#endif
 
 #ifdef RT_USING_FINSH
 #include <finsh.h>
@@ -879,7 +881,7 @@ static void copyfile(const char *src, const char *dst)
         return;
     }
     fd_init(&fd);
-    if (dfs_file_open(&fd, dst, O_WRONLY | O_CREAT) < 0)
+    if (dfs_file_open(&fd, dst, O_WRONLY | O_CREAT | O_TRUNC) < 0)
     {
         rt_free(block_ptr);
         dfs_file_close(&src_fd);

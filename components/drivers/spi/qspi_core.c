@@ -15,21 +15,36 @@ rt_err_t rt_qspi_configure(struct rt_qspi_device *device, struct rt_qspi_configu
     RT_ASSERT(device != RT_NULL);
     RT_ASSERT(cfg != RT_NULL);
 
-    struct rt_qspi_device *qspi_device = (struct rt_qspi_device *)device;
-    rt_err_t result = RT_EOK;
+    /* reset the CS pin */
+    if (device->parent.cs_pin != PIN_NONE)
+    {
+        if (cfg->parent.mode & RT_SPI_CS_HIGH)
+            rt_pin_write(device->parent.cs_pin, PIN_LOW);
+        else
+            rt_pin_write(device->parent.cs_pin, PIN_HIGH);
+    }
+
+    /* If the configurations are the same, we don't need to set again. */
+    if (device->config.medium_size       == cfg->medium_size &&
+        device->config.ddr_mode          == cfg->ddr_mode &&
+        device->config.qspi_dl_width     == cfg->qspi_dl_width &&
+        device->config.parent.data_width == cfg->parent.data_width &&
+        device->config.parent.mode       == (cfg->parent.mode & RT_SPI_MODE_MASK) &&
+        device->config.parent.max_hz     == cfg->parent.max_hz)
+    {
+        return RT_EOK;
+    }
 
     /* copy configuration items */
-    qspi_device->config.parent.mode = cfg->parent.mode;
-    qspi_device->config.parent.max_hz = cfg->parent.max_hz;
-    qspi_device->config.parent.data_width = cfg->parent.data_width;
-    qspi_device->config.parent.reserved = cfg->parent.reserved;
-    qspi_device->config.medium_size = cfg->medium_size;
-    qspi_device->config.ddr_mode = cfg->ddr_mode;
-    qspi_device->config.qspi_dl_width = cfg->qspi_dl_width;
+    device->config.parent.mode = cfg->parent.mode;
+    device->config.parent.max_hz = cfg->parent.max_hz;
+    device->config.parent.data_width = cfg->parent.data_width;
+    device->config.parent.reserved = cfg->parent.reserved;
+    device->config.medium_size = cfg->medium_size;
+    device->config.ddr_mode = cfg->ddr_mode;
+    device->config.qspi_dl_width = cfg->qspi_dl_width;
 
-    result = rt_spi_configure(&device->parent, &cfg->parent);
-
-    return result;
+    return rt_spi_bus_configure(&device->parent);
 }
 
 rt_err_t rt_qspi_bus_register(struct rt_spi_bus *bus, const char *name, const struct rt_spi_ops *ops)

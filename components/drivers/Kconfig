@@ -1,11 +1,19 @@
 menu "Device Drivers"
 
+config RT_USING_DM
+    bool "Enable device driver model with device tree"
+    default n
+    help
+        Enable device driver model with device tree (FDT). It will use more memory
+        to parse and support device tree feature.
+
 config RT_USING_DEVICE_IPC
     bool "Using device drivers IPC"
     default y
 
 config RT_UNAMED_PIPE_NUMBER
     int "The number of unamed pipe"
+    depends on RT_USING_DEVICE_IPC
     default 64
 
 if RT_USING_DEVICE_IPC
@@ -49,17 +57,6 @@ menuconfig RT_USING_SERIAL
             default 64
     endif
 
-config RT_USING_TTY
-    bool "Using TTY SYSTEM"
-    depends on RT_USING_SMART
-    default y
-
-if RT_USING_TTY
-    config RT_TTY_DEBUG
-        bool "Using TTY DEBUG"
-        default n
-endif
-
 config RT_USING_CAN
     bool "Using CAN device drivers"
     default n
@@ -72,10 +69,6 @@ if RT_USING_CAN
         bool "Enable CANFD support"
         default n
 endif
-
-config RT_USING_HWTIMER
-    bool "Using hardware timer device drivers"
-    default n
 
 config RT_USING_CPUTIME
     bool "Enable CPU time for high resolution clock counter"
@@ -130,15 +123,211 @@ if RT_USING_I2C
             bool "Use simulate I2C debug message"
             default n
     endif
+
+    config RT_USING_SOFT_I2C
+        bool "Use GPIO to soft simulate I2C"
+        default n
+        select RT_USING_PIN
+        select RT_USING_I2C_BITOPS
+    if RT_USING_SOFT_I2C
+        config RT_USING_SOFT_I2C1
+            bool "Enable I2C1 Bus (software simulation)"
+            default y
+            if RT_USING_SOFT_I2C1
+                config RT_SOFT_I2C1_SCL_PIN
+                    int "SCL pin number"
+                    range 0 32767
+                    default 1
+                config RT_SOFT_I2C1_SDA_PIN
+                    int "SDA pin number"
+                    range 0 32767
+                    default 2
+                config RT_SOFT_I2C1_BUS_NAME
+                    string "Bus name"
+                    default "i2c1"
+                config RT_SOFT_I2C1_TIMING_DELAY
+                    int "Timing delay (us)"
+                    range 0 32767
+                    default 10
+                config RT_SOFT_I2C1_TIMING_TIMEOUT
+                    int "Timing timeout (tick)"
+                    range 0 32767
+                    default 10
+            endif
+        config RT_USING_SOFT_I2C2
+            bool "Enable I2C2 Bus (software simulation)"
+            default n
+            if RT_USING_SOFT_I2C2
+                config RT_SOFT_I2C2_SCL_PIN
+                    int "SCL pin number"
+                    range 0 32767
+                    default 3
+                config RT_SOFT_I2C2_SDA_PIN
+                    int "SDA pin number"
+                    range 0 32767
+                    default 4
+                config RT_SOFT_I2C2_BUS_NAME
+                    string "Bus name"
+                    default "i2c2"
+                config RT_SOFT_I2C2_TIMING_DELAY
+                    int "Timing delay (us)"
+                    range 0 32767
+                    default 10
+                config RT_SOFT_I2C2_TIMING_TIMEOUT
+                    int "Timing timeout (tick)"
+                    range 0 32767
+                    default 10
+            endif
+        config RT_USING_SOFT_I2C3
+            bool "Enable I2C3 Bus (software simulation)"
+            default n
+            if RT_USING_SOFT_I2C3
+                config RT_SOFT_I2C3_SCL_PIN
+                    int "SCL pin number"
+                    range 0 32767
+                    default 5
+                config RT_SOFT_I2C3_SDA_PIN
+                    int "SDA pin number"
+                    range 0 32767
+                    default 6
+                config RT_SOFT_I2C3_BUS_NAME
+                    string "Bus name"
+                    default "i2c3"
+                config RT_SOFT_I2C3_TIMING_DELAY
+                    int "Timing delay (us)"
+                    range 0 32767
+                    default 10
+                config RT_SOFT_I2C3_TIMING_TIMEOUT
+                    int "Timing timeout (tick)"
+                    range 0 32767
+                    default 10
+            endif
+        config RT_USING_SOFT_I2C4
+            bool "Enable I2C4 Bus (software simulation)"
+            default n
+            if RT_USING_SOFT_I2C4
+                config RT_SOFT_I2C4_SCL_PIN
+                    int "SCL pin number"
+                    range 0 32767
+                    default 7
+                config RT_SOFT_I2C4_SDA_PIN
+                    int "SDA pin number"
+                    range 0 32767
+                    default 8
+                config RT_SOFT_I2C4_BUS_NAME
+                    string "Bus name"
+                    default "i2c4"
+                config RT_SOFT_I2C4_TIMING_DELAY
+                    int "Timing delay (us)"
+                    range 0 32767
+                    default 10
+                config RT_SOFT_I2C4_TIMING_TIMEOUT
+                    int "Timing timeout (tick)"
+                    range 0 32767
+                    default 10
+            endif
+        config RT_USING_SOFT_I2C5
+            bool "Enable I2C5 Bus (software simulation)"
+            default n
+            if RT_USING_SOFT_I2C5
+                config RT_SOFT_I2C5_SCL_PIN
+                    int "SCL pin number"
+                    range 0 32767
+                    default 9
+                config RT_SOFT_I2C5_SDA_PIN
+                    int "SDA pin number"
+                    range 0 32767
+                    default 10
+                config RT_SOFT_I2C5_BUS_NAME
+                    string "Bus name"
+                    default "i2c5"
+                config RT_SOFT_I2C5_TIMING_DELAY
+                    int "Timing delay (us)"
+                    range 0 32767
+                    default 10
+                config RT_SOFT_I2C5_TIMING_TIMEOUT
+                    int "Timing timeout (tick)"
+                    range 0 32767
+                    default 10
+            endif
+        config RT_USING_SOFT_I2C6
+            bool "Enable I2C6 Bus (software simulation)"
+            default n
+            if RT_USING_SOFT_I2C6
+                config RT_SOFT_I2C6_SCL_PIN
+                    int "SCL pin number"
+                    range 0 32767
+                    default 11
+                config RT_SOFT_I2C6_SDA_PIN
+                    int "SDA pin number"
+                    range 0 32767
+                    default 12
+                config RT_SOFT_I2C6_BUS_NAME
+                    string "Bus name"
+                    default "i2c6"
+                config RT_SOFT_I2C6_TIMING_DELAY
+                    int "Timing delay (us)"
+                    range 0 32767
+                    default 10
+                config RT_SOFT_I2C6_TIMING_TIMEOUT
+                    int "Timing timeout (tick)"
+                    range 0 32767
+                    default 10
+            endif
+        config RT_USING_SOFT_I2C7
+            bool "Enable I2C7 Bus (software simulation)"
+            default n
+            if RT_USING_SOFT_I2C7
+                config RT_SOFT_I2C7_SCL_PIN
+                    int "SCL pin number"
+                    range 0 32767
+                    default 13
+                config RT_SOFT_I2C7_SDA_PIN
+                    int "SDA pin number"
+                    range 0 32767
+                    default 14
+                config RT_SOFT_I2C7_BUS_NAME
+                    string "Bus name"
+                    default "i2c7"
+                config RT_SOFT_I2C7_TIMING_DELAY
+                    int "Timing delay (us)"
+                    range 0 32767
+                    default 10
+                config RT_SOFT_I2C7_TIMING_TIMEOUT
+                    int "Timing timeout (tick)"
+                    range 0 32767
+                    default 10
+            endif
+        config RT_USING_SOFT_I2C8
+            bool "Enable I2C8 Bus (software simulation)"
+            default n
+            if RT_USING_SOFT_I2C8
+                config RT_SOFT_I2C8_SCL_PIN
+                    int "SCL pin number"
+                    range 0 32767
+                    default 15
+                config RT_SOFT_I2C8_SDA_PIN
+                    int "SDA pin number"
+                    range 0 32767
+                    default 16
+                config RT_SOFT_I2C8_BUS_NAME
+                    string "Bus name"
+                    default "i2c8"
+                config RT_SOFT_I2C8_TIMING_DELAY
+                    int "Timing delay (us)"
+                    range 0 32767
+                    default 10
+                config RT_SOFT_I2C8_TIMING_TIMEOUT
+                    int "Timing timeout (tick)"
+                    range 0 32767
+                    default 10
+            endif
+    endif
 endif
 
 config RT_USING_PHY
     bool "Using ethernet phy device drivers"
     default n
-
-config RT_USING_PIN
-    bool "Using generic GPIO device drivers"
-    default y
 
 config RT_USING_ADC
     bool "Using ADC device drivers"
@@ -216,19 +405,6 @@ config RT_USING_PM
                 int "PM standby mode threashold time"
                 default 100
         endif
-    endif
-
-config RT_USING_FDT
-    bool "Using fdt interface for device drivers"
-    default n
-    if RT_USING_FDT
-        config RT_USING_FDTLIB
-            bool "Using fdt lib for device drivers"
-            default y
-        config FDT_USING_DEBUG
-            bool "Using fdt debug function "
-            default n
-
     endif
 
 config RT_USING_RTC
@@ -576,7 +752,7 @@ endif
 config RT_USING_DEV_BUS
     bool "Using Device Bus device drivers"
     default y if RT_USING_SMART
-    default n if !RT_USING_SMART
+    default n
 
 menuconfig RT_USING_WIFI
     bool "Using Wi-Fi framework"
@@ -622,6 +798,10 @@ menuconfig RT_USING_WIFI
 
             config RT_WLAN_MSH_CMD_ENABLE
                 bool "MSH command Enable"
+                default y
+
+            config RT_WLAN_JOIN_SCAN_BY_MGNT
+                bool "Enable wlan join scan"
                 default y
 
             config RT_WLAN_AUTO_CONNECT_ENABLE
@@ -775,6 +955,11 @@ menuconfig RT_USING_VIRTIO
 
 source "$RTT_DIR/components/drivers/ofw/Kconfig"
 source "$RTT_DIR/components/drivers/pic/Kconfig"
+source "$RTT_DIR/components/drivers/pin/Kconfig"
+source "$RTT_DIR/components/drivers/pinctrl/Kconfig"
+source "$RTT_DIR/components/drivers/ktime/Kconfig"
+source "$RTT_DIR/components/drivers/clk/Kconfig"
+source "$RTT_DIR/components/drivers/hwtimer/Kconfig"
 
 menu "Using USB"
     config RT_USING_USB

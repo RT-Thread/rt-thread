@@ -1,0 +1,10 @@
+menuconfig RT_USING_HWTIMER
+    bool "Using Hardware Timer device drivers"
+    default n
+
+config RT_HWTIMER_ARM_ARCH
+    bool "ARM ARCH Timer"
+    depends on RT_USING_DM
+    depends on RT_USING_HWTIMER
+    depends on ARCH_ARM_CORTEX_A || ARCH_ARMV8
+    default n

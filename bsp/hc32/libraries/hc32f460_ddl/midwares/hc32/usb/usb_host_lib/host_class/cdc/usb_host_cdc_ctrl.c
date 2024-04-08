@@ -8,7 +8,7 @@
    2022-03-31       CDT             First version
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -74,13 +74,12 @@ static CDC_LineCodingTypeDef             CDC_GetLineCode;
 HOST_STATUS usb_host_cdc_getlinecoding(usb_core_instance *pdev, USBH_HOST *phost)
 {
     phost->ctrlparam.setup.b.bmRequestType = USB_D2H | USB_REQ_TYPE_CLASS | \
-            USB_REQ_RECIPIENT_INTERFACE;
+                                             USB_REQ_RECIPIENT_INTERFACE;
 
     phost->ctrlparam.setup.b.bRequest = CDC_GET_LINE_CODING;
     phost->ctrlparam.setup.b.wValue.w = 0;
     phost->ctrlparam.setup.b.wIndex.w = CDC_Desc.CDC_UnionFuncDesc.bControlInterface;
     phost->ctrlparam.setup.b.wLength.w = LINE_CODING_STRUCTURE_SIZE;
-
 
     return usb_host_ctrlreq(pdev, phost, CDC_GetLineCode.Array, LINE_CODING_STRUCTURE_SIZE);
 }
@@ -96,7 +95,7 @@ HOST_STATUS usb_host_cdc_setlinecoding(usb_core_instance *pdev, USBH_HOST *phost
 {
 
     phost->ctrlparam.setup.b.bmRequestType = USB_H2D | USB_REQ_TYPE_CLASS | \
-            USB_REQ_RECIPIENT_INTERFACE;
+                                             USB_REQ_RECIPIENT_INTERFACE;
 
     phost->ctrlparam.setup.b.bRequest = CDC_SET_LINE_CODING;
     phost->ctrlparam.setup.b.wValue.w = 0;
@@ -117,7 +116,7 @@ HOST_STATUS usb_host_cdc_setlinecoding(usb_core_instance *pdev, USBH_HOST *phost
 HOST_STATUS usb_host_cdc_setcontrollinestate(usb_core_instance *pdev, USBH_HOST *phost)
 {
     phost->ctrlparam.setup.b.bmRequestType = USB_H2D | USB_REQ_TYPE_CLASS | \
-            USB_REQ_RECIPIENT_INTERFACE;
+                                             USB_REQ_RECIPIENT_INTERFACE;
 
     phost->ctrlparam.setup.b.bRequest = CDC_SET_CONTROL_LINE_STATE;
 

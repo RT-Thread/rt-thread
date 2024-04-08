@@ -1,17 +1,17 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2024, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
  * 2021-08-20     BruceOu      first implementation
+ * 2024-03-19     Evlers       remove the include of drv_usart.h
  */
 #ifndef __BOARD_H__
 #define __BOARD_H__
 
 #include "gd32f4xx.h"
-#include "drv_usart.h"
 #include "drv_gpio.h"
 
 #include "gd32f4xx_exti.h"

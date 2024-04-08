@@ -9,11 +9,17 @@
  */
 
 #include <rtthread.h>
+#include <posix/stdlib.h>
 
 #define DBG_TAG    "stdlib"
 #define DBG_LVL    DBG_INFO
 #include <rtdbg.h>
 
+/**
+ * @brief   This function is called when a thread exits. It can detach the thread and perform cleanup.
+ *
+ * @param   status is the exit status of the thread.
+ */
 void __rt_libc_exit(int status)
 {
     rt_thread_t self = rt_thread_self();
@@ -22,7 +28,7 @@ void __rt_libc_exit(int status)
     {
         LOG_W("thread:%s exit:%d!", self->parent.name, status);
 #ifdef RT_USING_PTHREADS
-        if(self->pthread_data != RT_NULL)
+        if (self->pthread_data != RT_NULL)
         {
             extern void pthread_exit(void *value);
             pthread_exit((void *)status);
@@ -36,6 +42,13 @@ void __rt_libc_exit(int status)
 }
 
 #ifdef RT_USING_MSH
+/**
+ * @brief   Execute a command using the Micro-Shell (MSH) subsystem.
+ *
+ * @param   command is the command string to execute.
+ *
+ * @return  Returns 0 after executing the command.
+ */
 int system(const char *command)
 {
     extern int msh_exec(char *cmd, rt_size_t length);
@@ -50,6 +63,15 @@ int system(const char *command)
 RTM_EXPORT(system);
 #endif /* RT_USING_MSH */
 
+/**
+ * @brief   Convert a long integer to a string representation with a specified radix.
+ *
+ * @param   value is the long integer to convert.
+ * @param   string is the destination string where the result will be stored.
+ * @param   radix is the base of the number system to be used for conversion.
+ *
+ * @return  Returns a pointer to the destination string.
+ */
 char *ltoa(long value, char *string, int radix)
 {
     char tmp[33];
@@ -61,12 +83,12 @@ char *ltoa(long value, char *string, int radix)
 
     if (string == NULL)
     {
-        return 0 ;
+        return 0;
     }
 
     if (radix > 36 || radix <= 1)
     {
-        return 0 ;
+        return 0;
     }
 
     sign = (radix == 10 && value < 0);
@@ -84,7 +106,7 @@ char *ltoa(long value, char *string, int radix)
         i = v % radix;
         v = v / radix;
         if (i < 10)
-            *tp++ = (char)(i+'0');
+            *tp++ = (char)(i + '0');
         else
             *tp++ = (char)(i + 'a' - 10);
     }
@@ -100,12 +122,29 @@ char *ltoa(long value, char *string, int radix)
     return string;
 }
 
+/**
+ * @brief   Convert an integer to a string representation with a specified radix.
+ *
+ * @param   value is the integer to convert.
+ * @param   string is the destination string where the result will be stored.
+ * @param   radix is the base of the number system to be used for conversion.
+ *
+ * @return  Returns a pointer to the destination string.
+ */
 char *itoa(int value, char *string, int radix)
 {
-    return ltoa(value, string, radix) ;
+    return ltoa(value, string, radix);
 }
 
-
+/**
+ * @brief   Convert an unsigned long integer to a string representation with a specified radix.
+ *
+ * @param   value is the unsigned long integer to convert.
+ * @param   string is the destination string where the result will be stored.
+ * @param   radix is the base of the number system to be used for conversion.
+ *
+ * @return  Returns a pointer to the destination string.
+ */
 char *ultoa(unsigned long value, char *string, int radix)
 {
     char tmp[33];
@@ -129,7 +168,7 @@ char *ultoa(unsigned long value, char *string, int radix)
         i = v % radix;
         v = v / radix;
         if (i < 10)
-            *tp++ = (char)(i+'0');
+            *tp++ = (char)(i + '0');
         else
             *tp++ = (char)(i + 'a' - 10);
     }
@@ -143,7 +182,16 @@ char *ultoa(unsigned long value, char *string, int radix)
     return string;
 }
 
+/**
+ * @brief   Convert an unsigned integer to a string representation with a specified radix.
+ *
+ * @param   value is the unsigned integer to convert.
+ * @param   string is the destination string where the result will be stored.
+ * @param   radix is the base of the number system to be used for conversion.
+ *
+ * @return  Returns a pointer to the destination string.
+ */
 char *utoa(unsigned value, char *string, int radix)
 {
-    return ultoa(value, string, radix) ;
+    return ultoa(value, string, radix);
 }

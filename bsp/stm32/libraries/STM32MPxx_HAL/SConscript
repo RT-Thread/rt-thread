@@ -31,7 +31,7 @@ STM32MP1xx_HAL_Driver/Src/stm32mp1xx_hal_tim.c
 STM32MP1xx_HAL_Driver/Src/stm32mp1xx_hal_tim_ex.c
 ''')
 
-if GetDepend(['RT_USING_SERIAL']):
+if GetDepend(['RT_USING_SERIAL']) or GetDepend(['RT_USING_NANO', 'RT_USING_CONSOLE']):
     src += ['STM32MP1xx_HAL_Driver/Src/stm32mp1xx_hal_uart.c']
     src += ['STM32MP1xx_HAL_Driver/Src/stm32mp1xx_hal_uart_ex.c']
 

@@ -5,66 +5,36 @@
  *
  * Change Logs:
  * Date           Author       Notes
+ * 2023-02-21     GuEe-GUI     replace with drivers/psci
  */
 #include <rthw.h>
 #include <rtthread.h>
-#include <stdint.h>
 
-#ifdef RT_USING_SMP
-
-#define DBG_TAG "libcpu.aarch64.cpu_psci"
+#define DBG_TAG "cpu.aa64"
 #define DBG_LVL DBG_INFO
 #include <rtdbg.h>
-#include "cpu_ops_common.h"
 
-#include "cpu.h"
-#include "errno.h"
-#include "psci.h"
-#include "psci_api.h"
+#include <cpu.h>
+#include <cpuport.h>
+#include <psci.h>
 
-static int (*_psci_init)(void) = psci_init;
-
-static int __call_method_init()
+static int psci_cpu_boot(rt_uint32_t cpuid, rt_uint64_t entry)
 {
-    int (*init)(void) = _psci_init;
-    _psci_init = RT_NULL;
-
-    return init();
+    return rt_psci_cpu_on(cpuid, entry);
 }
 
-/** return 0 on success, otherwise failed */
-#define _call_method_init() ((_psci_init) ? __call_method_init() : 0);
-
-static int cpu_psci_cpu_init(rt_uint32_t cpuid)
+static void psci_cpu_shutdown(void)
 {
-    // init psci only once
-    return _call_method_init();
+    rt_uint32_t state, state_id = PSCI_POWER_STATE_ID(0, 0, 0, PSCI_POWER_STATE_ID_POWERDOWN);
+
+    state = PSCI_POWER_STATE(PSCI_POWER_STATE_LEVEL_CORES, PSCI_POWER_STATE_TYPE_STANDBY, state_id);
+
+    rt_psci_cpu_off(state);
 }
 
-static int cpu_psci_cpu_boot(rt_uint32_t cpuid)
+struct cpu_ops_t cpu_psci_ops =
 {
-    rt_uint64_t secondary_entry_pa = get_secondary_entry_pa();
-
-    if (!secondary_entry_pa)
-        return -1;
-
-    if (!psci_ops.cpu_on) {
-        LOG_E("Uninitialized psci operation");
-        return -1;
-    }
-    return psci_ops.cpu_on(cpuid_to_hwid(cpuid), secondary_entry_pa);
-}
-
-static void cpu_psci_cpu_shutdown()
-{
-    psci_ops.cpu_off(cpuid_to_hwid(rt_hw_cpu_id()));
-}
-
-struct cpu_ops_t cpu_ops_psci = {
     .method = "psci",
-    .cpu_boot = cpu_psci_cpu_boot,
-    .cpu_init = cpu_psci_cpu_init,
-    .cpu_shutdown = cpu_psci_cpu_shutdown,
+    .cpu_boot = psci_cpu_boot,
+    .cpu_shutdown = psci_cpu_shutdown,
 };
-
-#endif /* RT_USING_SMP */

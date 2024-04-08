@@ -9,25 +9,31 @@
  * 2021-11-28     GuEe-GUI     first version
  * 2022-12-10     WangXiaoyao  porting to MM
  */
+
+#define DBG_TAG "hw.mmu"
+#define DBG_LVL DBG_LOG
+#include <rtdbg.h>
+
 #include <rthw.h>
 #include <rtthread.h>
 #include <stddef.h>
 #include <stdint.h>
 #include <string.h>
 
+#define __MMU_INTERNAL
+
 #include "mm_aspace.h"
 #include "mm_page.h"
 #include "mmu.h"
 #include "tlb.h"
 
-#ifdef RT_USING_SMART
 #include "ioremap.h"
+#ifdef RT_USING_SMART
 #include <lwp_mm.h>
 #endif
 
-#define DBG_TAG "hw.mmu"
-#define DBG_LVL DBG_LOG
-#include <rtdbg.h>
+#define TCR_CONFIG_TBI0     rt_hw_mmu_config_tbi(0)
+#define TCR_CONFIG_TBI1     rt_hw_mmu_config_tbi(1)
 
 #define MMU_LEVEL_MASK   0x1ffUL
 #define MMU_LEVEL_SHIFT  9
@@ -44,6 +50,10 @@
 #define MMU_TBL_BLOCK_2M_LEVEL 2
 #define MMU_TBL_PAGE_4k_LEVEL  3
 #define MMU_TBL_LEVEL_NR       4
+
+#ifndef KERNEL_VADDR_START
+#define KERNEL_VADDR_START ARCH_TEXT_OFFSET
+#endif
 
 volatile unsigned long MMUTable[512] __attribute__((aligned(4 * 1024)));
 
@@ -204,7 +214,7 @@ static int _kernel_map_2M(unsigned long *lv0_tbl, void *vaddr, void *paddr, unsi
     {
         return MMU_MAP_ERROR_VANOTALIGN;
     }
-    if (pa & ARCH_SECTION_MASK)
+    if (pa & ARCH_PAGE_MASK)
     {
         return MMU_MAP_ERROR_PANOTALIGN;
     }
@@ -423,21 +433,13 @@ void rt_hw_mmu_setup(rt_aspace_t aspace, struct mem_desc *mdesc, int desc_nr)
     rt_page_cleanup();
 }
 
-#ifdef RT_USING_SMART
 static void _init_region(void *vaddr, size_t size)
 {
     rt_ioremap_start = vaddr;
     rt_ioremap_size = size;
     rt_mpr_start = (char *)rt_ioremap_start - rt_mpr_size;
 }
-#else
 
-#define RTOS_VEND (0xfffffffff000UL)
-static inline void _init_region(void *vaddr, size_t size)
-{
-    rt_mpr_start = (void *)(RTOS_VEND - rt_mpr_size);
-}
-#endif
 
 /**
  * This function will initialize rt_mmu_info structure.
@@ -476,15 +478,16 @@ int rt_hw_mmu_map_init(rt_aspace_t aspace, void *v_address, size_t size,
         return -1;
     }
 
-#ifdef RT_USING_SMART
     rt_aspace_init(aspace, (void *)KERNEL_VADDR_START, 0 - KERNEL_VADDR_START,
                    vtable);
-#else
-    rt_aspace_init(aspace, (void *)0x1000, RTOS_VEND - 0x1000ul, vtable);
-#endif
 
     _init_region(v_address, size);
 
+    return 0;
+}
+
+rt_weak long rt_hw_mmu_config_tbi(int tbi_index)
+{
     return 0;
 }
 
@@ -497,30 +500,34 @@ int rt_hw_mmu_map_init(rt_aspace_t aspace, void *v_address, size_t size,
 void mmu_tcr_init(void)
 {
     unsigned long val64;
+    unsigned long pa_range;
 
     val64 = 0x00447fUL;
     __asm__ volatile("msr MAIR_EL1, %0\n dsb sy\n" ::"r"(val64));
 
+    __asm__ volatile ("mrs %0, ID_AA64MMFR0_EL1":"=r"(val64));
+    pa_range = val64 & 0xf; /* PARange */
+
     /* TCR_EL1 */
-    val64 = (16UL << 0)      /* t0sz 48bit */
-            | (0x0UL << 6)   /* reserved */
-            | (0x0UL << 7)   /* epd0 */
-            | (0x3UL << 8)   /* t0 wb cacheable */
-            | (0x3UL << 10)  /* inner shareable */
-            | (0x2UL << 12)  /* t0 outer shareable */
-            | (0x0UL << 14)  /* t0 4K */
-            | (16UL << 16)   /* t1sz 48bit */
-            | (0x0UL << 22)  /* define asid use ttbr0.asid */
-            | (0x0UL << 23)  /* epd1 */
-            | (0x3UL << 24)  /* t1 inner wb cacheable */
-            | (0x3UL << 26)  /* t1 outer wb cacheable */
-            | (0x2UL << 28)  /* t1 outer shareable */
-            | (0x2UL << 30)  /* t1 4k */
-            | (0x1UL << 32)  /* 001b 64GB PA */
-            | (0x0UL << 35)  /* reserved */
-            | (0x1UL << 36)  /* as: 0:8bit 1:16bit */
-            | (0x0UL << 37)  /* tbi0 */
-            | (0x0UL << 38); /* tbi1 */
+    val64 = (16UL << 0)                /* t0sz 48bit */
+            | (0x0UL << 6)             /* reserved */
+            | (0x0UL << 7)             /* epd0 */
+            | (0x3UL << 8)             /* t0 wb cacheable */
+            | (0x3UL << 10)            /* inner shareable */
+            | (0x2UL << 12)            /* t0 outer shareable */
+            | (0x0UL << 14)            /* t0 4K */
+            | (16UL << 16)             /* t1sz 48bit */
+            | (0x0UL << 22)            /* define asid use ttbr0.asid */
+            | (0x0UL << 23)            /* epd1 */
+            | (0x3UL << 24)            /* t1 inner wb cacheable */
+            | (0x3UL << 26)            /* t1 outer wb cacheable */
+            | (0x2UL << 28)            /* t1 outer shareable */
+            | (0x2UL << 30)            /* t1 4k */
+            | (pa_range << 32)         /* PA range */
+            | (0x0UL << 35)            /* reserved */
+            | (0x1UL << 36)            /* as: 0:8bit 1:16bit */
+            | (TCR_CONFIG_TBI0 << 37)  /* tbi0 */
+            | (TCR_CONFIG_TBI1 << 38); /* tbi1 */
     __asm__ volatile("msr TCR_EL1, %0\n" ::"r"(val64));
 }
 
@@ -530,17 +537,21 @@ struct page_table
 };
 
 /*  */
-static struct page_table __init_page_array[6] rt_align(0x1000);
-static unsigned long __page_off = 2UL; /* 0, 1 for ttbr0, ttrb1 */
+static struct page_table* __init_page_array;
+static unsigned long __page_off = 0UL;
 unsigned long get_ttbrn_base(void)
 {
     return (unsigned long) __init_page_array;
 }
 
+void set_free_page(void *page_array)
+{
+    __init_page_array = page_array;
+}
+
 unsigned long get_free_page(void)
 {
-    __page_off++;
-    return (unsigned long) (__init_page_array[__page_off - 1].page);
+    return (unsigned long) (__init_page_array[__page_off++].page);
 }
 
 static int _map_single_page_2M(unsigned long *lv0_tbl, unsigned long va,
@@ -556,7 +567,7 @@ static int _map_single_page_2M(unsigned long *lv0_tbl, unsigned long va,
     {
         return MMU_MAP_ERROR_VANOTALIGN;
     }
-    if (pa & ARCH_SECTION_MASK)
+    if (pa & ARCH_PAGE_MASK)
     {
         return MMU_MAP_ERROR_PANOTALIGN;
     }
@@ -591,9 +602,17 @@ static int _map_single_page_2M(unsigned long *lv0_tbl, unsigned long va,
     return 0;
 }
 
+void *rt_hw_mmu_tbl_get(void)
+{
+    uintptr_t tbl;
+    __asm__ volatile("MRS %0, TTBR0_EL1" : "=r"(tbl));
+    return rt_kmem_p2v((void *)(tbl & ((1ul << 48) - 2)));
+}
+
 void *rt_ioremap_early(void *paddr, size_t size)
 {
-    size_t count;
+    volatile size_t count;
+    rt_ubase_t base;
     static void *tbl = RT_NULL;
 
     if (!size)
@@ -607,10 +626,16 @@ void *rt_ioremap_early(void *paddr, size_t size)
     }
 
     count = (size + ARCH_SECTION_MASK) >> ARCH_SECTION_SHIFT;
+    base = (rt_ubase_t)paddr & (~ARCH_SECTION_MASK);
 
     while (count --> 0)
     {
-        _map_single_page_2M(tbl, (unsigned long)paddr, (unsigned long)paddr, MMU_MAP_K_DEVICE);
+        if (_map_single_page_2M(tbl, base, base, MMU_MAP_K_DEVICE))
+        {
+            return RT_NULL;
+        }
+
+        base += ARCH_SECTION_SIZE;
     }
 
     return paddr;
@@ -663,6 +688,7 @@ static unsigned long *_query(rt_aspace_t aspace, void *vaddr, int *plvl_shf)
 
         if (!(cur_lv_tbl[off] & MMU_TYPE_USED))
         {
+            *plvl_shf = level_shift;
             return (void *)0;
         }
 
@@ -682,11 +708,11 @@ static unsigned long *_query(rt_aspace_t aspace, void *vaddr, int *plvl_shf)
     off &= MMU_LEVEL_MASK;
     page = cur_lv_tbl[off];
 
+    *plvl_shf = level_shift;
     if (!(page & MMU_TYPE_USED))
     {
         return (void *)0;
     }
-    *plvl_shf = level_shift;
     return &cur_lv_tbl[off];
 }
 
@@ -825,4 +851,23 @@ void rt_hw_mem_setup_early(unsigned long *tbl0, unsigned long *tbl1,
     {
         while (1);
     }
+}
+
+void *rt_hw_mmu_pgtbl_create(void)
+{
+    size_t *mmu_table;
+    mmu_table = (size_t *)rt_pages_alloc_ext(0, PAGE_ANY_AVAILABLE);
+    if (!mmu_table)
+    {
+        return RT_NULL;
+    }
+
+    memset(mmu_table, 0, ARCH_PAGE_SIZE);
+    rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, mmu_table, ARCH_PAGE_SIZE);
+    return mmu_table;
+}
+
+void rt_hw_mmu_pgtbl_delete(void *pgtbl)
+{
+    rt_pages_free(pgtbl, 0);
 }

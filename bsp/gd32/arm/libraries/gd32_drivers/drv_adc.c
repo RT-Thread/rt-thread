@@ -108,7 +108,7 @@ static void gd32_adc_gpio_init(rcu_periph_enum adc_clk, rt_base_t pin)
 static rt_err_t gd32_adc_enabled(struct rt_adc_device *device, rt_uint32_t channel, rt_bool_t enabled)
 {
     uint32_t adc_periph;
-    struct gd32_adc * adc = (struct gd32_adc *)device->parent.user_data;
+    struct gd32_adc *adc = (struct gd32_adc *)device->parent.user_data;
 
     if (channel >= MAX_EXTERN_ADC_CHANNEL)
     {
@@ -116,29 +116,26 @@ static rt_err_t gd32_adc_enabled(struct rt_adc_device *device, rt_uint32_t chann
         return -RT_EINVAL;
     }
 
-    adc_periph = (uint32_t )(adc->adc_periph);
+    adc_periph = (uint32_t)(adc->adc_periph);
 
     if (enabled == ENABLE)
     {
         gd32_adc_gpio_init(adc->adc_clk, adc->adc_pins[channel]);
 
-        adc_channel_length_config(adc_periph, ADC_REGULAR_CHANNEL, 1);
         adc_data_alignment_config(adc_periph, ADC_DATAALIGN_RIGHT);
 
-#if defined SOC_SERIES_GD32F4xx
-        adc_external_trigger_source_config(adc_periph, ADC_REGULAR_CHANNEL, ADC_EXTTRIG_REGULAR_EXTI_11);
-#else
+        #if defined SOC_SERIES_GD32F4xx
+        adc_channel_length_config(adc_periph, ADC_ROUTINE_CHANNEL, 1);
+        adc_external_trigger_source_config(adc_periph, ADC_ROUTINE_CHANNEL, ADC_EXTTRIG_ROUTINE_EXTI_11);
+        adc_external_trigger_config(adc_periph, ADC_ROUTINE_CHANNEL, ENABLE);
+        #else
+        adc_channel_length_config(adc_periph, ADC_REGULAR_CHANNEL, 1);
         adc_external_trigger_source_config(adc_periph, ADC_REGULAR_CHANNEL, ADC0_1_2_EXTTRIG_REGULAR_NONE);
-#endif
         adc_external_trigger_config(adc_periph, ADC_REGULAR_CHANNEL, ENABLE);
-
-#if defined SOC_SERIES_GD32F4xx
-        adc_regular_channel_config(adc_periph, 0, channel, ADC_SAMPLETIME_480);
-#else
-        adc_regular_channel_config(adc_periph, 0, channel, ADC_SAMPLETIME_13POINT5);
-#endif
+        #endif
 
         adc_enable(adc_periph);
+        rt_hw_us_delay(1);
 
         /* ADC calibration and reset calibration */
         adc_calibration_enable(adc_periph);
@@ -147,7 +144,7 @@ static rt_err_t gd32_adc_enabled(struct rt_adc_device *device, rt_uint32_t chann
     {
         adc_disable(adc_periph);
     }
-    return 0;
+    return RT_EOK;
 }
 
 /**
@@ -159,7 +156,8 @@ static rt_err_t gd32_adc_enabled(struct rt_adc_device *device, rt_uint32_t chann
 static rt_err_t gd32_adc_convert(struct rt_adc_device *device, rt_uint32_t channel, rt_uint32_t *value)
 {
     uint32_t adc_periph;
-    struct gd32_adc * adc = (struct gd32_adc *)(device->parent.user_data);
+    uint32_t timeout = 0;
+    struct gd32_adc *adc = (struct gd32_adc *)(device->parent.user_data);
 
     if (!value)
     {
@@ -167,16 +165,39 @@ static rt_err_t gd32_adc_convert(struct rt_adc_device *device, rt_uint32_t chann
         return -RT_EINVAL;
     }
 
-    adc_periph = (uint32_t )(adc->adc_periph);
+    adc_periph = (uint32_t)(adc->adc_periph);
+    adc_flag_clear(adc_periph, ADC_FLAG_EOC | ADC_FLAG_STRC);
+#if defined SOC_SERIES_GD32F4xx
+    adc_routine_channel_config(adc_periph, 0, channel, ADC_SAMPLETIME_480);
+    adc_software_trigger_enable(adc_periph, ADC_ROUTINE_CHANNEL);
+#else
+    adc_regular_channel_config(adc_periph, 0, channel, ADC_SAMPLETIME_13POINT5);
     adc_software_trigger_enable(adc_periph, ADC_REGULAR_CHANNEL);
+#endif
 
-    while(!adc_flag_get(adc_periph, ADC_FLAG_EOC)){};
-    // clear flag
-    adc_flag_clear(adc_periph, ADC_FLAG_EOC);
+    while (!adc_flag_get(adc_periph, ADC_FLAG_EOC))
+    {
+        if(timeout >= 100)
+        {
+            adc_flag_clear(adc_periph, ADC_FLAG_EOC | ADC_FLAG_STRC);
+            LOG_E("Convert Timeout");
+            return -RT_ETIMEOUT;
+        }
+        else
+        {
+            timeout++;
+            rt_hw_us_delay(1);
+        }
+    }
 
+#if defined SOC_SERIES_GD32F4xx
+    *value = adc_routine_data_read(adc_periph);
+#else
     *value = adc_regular_data_read(adc_periph);
+#endif
 
-    return 0;
+    adc_flag_clear(adc_periph, ADC_FLAG_EOC | ADC_FLAG_STRC);
+    return RT_EOK;
 }
 
 static struct rt_adc_ops gd32_adc_ops = {

@@ -1,5 +1,6 @@
 menuconfig RT_USING_MSH
     bool "MSH: command shell"
+    default n if RT_USING_NANO
     default y
 
 if RT_USING_MSH
@@ -75,5 +76,9 @@ if RT_USING_MSH
     config FINSH_ARG_MAX
         int "The number of arguments for a shell command"
         default 10
+
+    config FINSH_USING_OPTION_COMPLETION
+        bool "command option completion enable"
+        default y
 
 endif

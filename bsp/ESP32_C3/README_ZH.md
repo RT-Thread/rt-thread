@@ -49,6 +49,53 @@
 | GPIO              |     支持     |  |
 | UART              |     支持     | 使用LUATOS_ESP32C3开发板需要在UART0_TX和UART0_RX连接串口转USB芯片（如CP2102）|
 | JTAG调试          |     支持     | ESP32C3采用USB方式和PC链接的开发板可以调试                                |
+| WIFI              | 部分支持 | 目前存在一些问题，例如不能在ISR中使用`rt_mq_recive`等 |
+| BLE             | 部分支持 | 目前存在一些问题，例如`NimBLE`启动一段时间后运行错误 |
+| GDBStub         | 支持 | 通过开启`BSP_ENABLE_GDBSTUB`开关即可使用ESP-IDF所提供的GDB，其会在芯片出错后进入GDB模式 |
+| HWTIMER         | 支持 |
+注：
+
+1、WIFI和BLE不能同时启用，在使用BLE驱动时注意在`menuconfig`中关闭`RT_USING_WIFI`和`LWIP`开关。另外由于能力有限且缺乏调试设备，WIFI和BLE驱动运行都有问题，如果可以解决联系[timwcx@qq.com](mailto:timwcx@qq.com)。
+
+2、BLE驱动仅支持`NimBLE`，并且由`esp-idf`中的`bluetooth`组件提供，使用BLE驱动可以参考`bsp/ESP32_C3/packages/ESP-IDF-latest/examples/bluetooth/nimble`下的样例程序，注意在调用`NimBLE`相关接口之前要调用`esp_timer_init()`函数初始化时钟驱动。
+
+一种运行BLE样例的方案是将样例程序加入到`scons`编译并在`bsp/ESP32_C3/main/main.c`中调用时钟初始化程序和样例程序入口。
+
+```c
+int main(void) {
+  ...
+#ifdef BSP_USING_BLE
+    esp_timer_init(); //调用时钟初始化程序
+    app_main();   //调用BLE样例程序入口
+#endif
+  ...
+}
+```
+
+3、关于GDBStub组件的使用，文档见[ESP-IDF关于GDBStub官方文档](https://docs.espressif.com/projects/esp-idf/zh_CN/latest/esp32c3/api-guides/tools/idf-monitor.html?#gdbstub-gdb)，目前个人提供了一个调试脚本`esp32c3.gdb`，具体使用方法如下。
+
+```sh
+wcx@tim  ~/rt-thread/bsp/ESP32_C3   esp32 ±  sudo riscv32-esp-elf-gdb # 进入gdb调试
+GNU gdb (crosstool-NG esp-2022r1-RC1) 9.2.90.20200913-git
+Copyright (C) 2020 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+Type "show copying" and "show warranty" for details.
+This GDB was configured as "--host=x86_64-build_pc-linux-gnu --target=riscv32-esp-elf".
+Type "show configuration" for configuration details.
+For bug reporting instructions, please see:
+<http://www.gnu.org/software/gdb/bugs/>.
+Find the GDB manual and other documentation resources online at:
+    <http://www.gnu.org/software/gdb/documentation/>.
+
+For help, type "help".
+Type "apropos word" to search for commands related to "word".
+(gdb) source esp32c3.gpb  # 加载gdb脚本
+0x3fca8c30 in __stack_start__ ()
+(gdb) 
+```
+
 
 ## 环境搭建及编译
 
@@ -96,11 +143,15 @@
 
 ## 下载烧录
 
+Windows 下可以使用「乐鑫科技」提供的 flash 工具进行烧录
+
+Linux 下可以使用先前下载的 esptool 进行烧录
+
+### Windows
+
 1. 烧录工具下载
 
-    当前bsp测试使用`flash_download_tool_3.9.4`工具进行烧录无误。
-
-    烧录工具下载地址：[https://www.espressif.com.cn/sites/default/files/tools/flash_download_tool_3.9.4_0.zip](https://www.espressif.com.cn/sites/default/files/tools/flash_download_tool_3.9.4_0.zip)
+    当前bsp测试使用 [Flash Download Tools](https://www.espressif.com.cn/sites/default/files/tools/flash_download_tool_3.9.4_0.zip) 工具进行烧录无误。
 
 2. 烧录工具配置
 
@@ -117,6 +168,17 @@
     其中`bootloader.bin`和`partition-table.bin`可在`bsp/ESP32_C3/builtin_imgs`文件夹下找到，配置完成后截图如下，之后点击`START`即可下载。
 
     ![flash_download_tools](images/flash_download_tools.png)
+
+### Linux
+
+```sh
+  esptool.py -b 115200 --before default_reset --after hard_reset write_flash --flash_mode dio --flash_size detect --flash_freq 80m 0x0 path/to/your/bootloader.bin 0x08000 path/to/your/partition-table.bin 0x010000 path/to/your/rtthread.bin
+```
+
+当多个 ESP 设备连接时，可以使用 -p 指定某个设备
+
+如果失败，可考虑是否是因为 user 权限不够，无法直接访问串口。
+或参考乐鑫[官方文档](https://docs.espressif.com/projects/esptool/en/latest/esp32/troubleshooting.html)进行查错。
 
 ## 注意事项
 

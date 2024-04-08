@@ -6,12 +6,14 @@
  * Change Logs:
  * Date           Author       Notes
  * 2021-08-15     liukang     the first version
+ * 2023-09-15     xqyjlj       change stack size in cpu64
  */
 
 #include <rtthread.h>
 #include "utest.h"
 #include <stdlib.h>
 
+#define THREAD_STACKSIZE UTEST_THR_STACK_SIZE
 #define EVENT_FLAG3 (1 << 3)
 #define EVENT_FLAG5 (1 << 5)
 
@@ -21,11 +23,11 @@ static rt_event_t dynamic_event = RT_NULL;
 static rt_uint32_t dynamic_event_recv_thread_finish = 0, dynamic_event_send_thread_finish = 0;
 
 rt_align(RT_ALIGN_SIZE)
-static char thread3_stack[1024];
+static char thread3_stack[UTEST_THR_STACK_SIZE];
 static struct rt_thread thread3;
 
 rt_align(RT_ALIGN_SIZE)
-static char thread4_stack[1024];
+static char thread4_stack[UTEST_THR_STACK_SIZE];
 static struct rt_thread thread4;
 #endif /* RT_USING_HEAP */
 
@@ -33,11 +35,11 @@ static rt_uint32_t recv_event_times1 = 0, recv_event_times2 = 0;
 static rt_uint32_t static_event_recv_thread_finish = 0, static_event_send_thread_finish = 0;
 
 rt_align(RT_ALIGN_SIZE)
-static char thread1_stack[1024];
+static char thread1_stack[UTEST_THR_STACK_SIZE];
 static struct rt_thread thread1;
 
 rt_align(RT_ALIGN_SIZE)
-static char thread2_stack[1024];
+static char thread2_stack[UTEST_THR_STACK_SIZE];
 static struct rt_thread thread2;
 
 #define THREAD_PRIORITY      9

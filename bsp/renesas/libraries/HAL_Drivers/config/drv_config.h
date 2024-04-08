@@ -124,6 +124,23 @@ extern "C"
 #endif
 #endif /* SOC_SERIES_R7FA4M2 */
 
+#ifdef SOC_SERIES_R7FA8M85
+#include "ra8/uart_config.h"
+
+#ifdef BSP_USING_PWM
+#include "ra8/pwm_config.h"
+#endif
+
+#ifdef BSP_USING_ADC
+#include "ra8/adc_config.h"
+#endif
+
+#ifdef BSP_USING_DAC
+#include "ra8/dac_config.h"
+#endif
+
+#endif /* SOC_SERIES_R7FA8M85 */
+
 #ifdef __cplusplus
 }
 #endif

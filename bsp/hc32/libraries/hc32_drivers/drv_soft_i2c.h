@@ -1,6 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
- * Copyright (c) 2022, Xiaohua Semiconductor Co., Ltd.
+ * Copyright (C) 2022-2024, Xiaohua Semiconductor Co., Ltd.
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -10,8 +9,8 @@
  */
 
 
-#ifndef __DRV_I2C_H__
-#define __DRV_I2C_H__
+#ifndef __DRV_I2C_SOFT_H__
+#define __DRV_I2C_SOFT_H__
 
 /*******************************************************************************
  * Include files
@@ -34,63 +33,63 @@ struct hc32_soft_i2c_config
     const char  *bus_name;
 };
 
-struct hc32_i2c
+struct hc32_soft_i2c
 {
     struct rt_i2c_bit_ops    ops;
     struct rt_i2c_bus_device i2c_bus;
 };
 
-#ifdef BSP_USING_I2C1
+#ifdef BSP_USING_I2C1_SW
 #define I2C1_BUS_CONFIG                                     \
     {                                                       \
         .scl_pin  = BSP_I2C1_SCL_PIN,                       \
         .sda_pin  = BSP_I2C1_SDA_PIN,                       \
-        .bus_name = "i2c1",                                 \
+        .bus_name = "i2c1_sw",                              \
     }
 #endif
 
-#ifdef BSP_USING_I2C2
+#ifdef BSP_USING_I2C2_SW
 #define I2C2_BUS_CONFIG                                     \
     {                                                       \
         .scl_pin = BSP_I2C2_SCL_PIN,                        \
         .sda_pin = BSP_I2C2_SDA_PIN,                        \
-        .bus_name = "i2c2",                                 \
+        .bus_name = "i2c2_sw",                              \
     }
 #endif
 
-#ifdef BSP_USING_I2C3
+#ifdef BSP_USING_I2C3_SW
 #define I2C3_BUS_CONFIG                                     \
     {                                                       \
         .scl_pin = BSP_I2C3_SCL_PIN,                        \
         .sda_pin = BSP_I2C3_SDA_PIN,                        \
-        .bus_name = "i2c3",                                 \
+        .bus_name = "i2c3_sw",                              \
     }
 #endif
 
-#ifdef BSP_USING_I2C4
+#ifdef BSP_USING_I2C4_SW
 #define I2C4_BUS_CONFIG                                     \
     {                                                       \
         .scl_pin = BSP_I2C4_SCL_PIN,                        \
         .sda_pin = BSP_I2C4_SDA_PIN,                        \
-        .bus_name = "i2c4",                                 \
+        .bus_name = "i2c4_sw",                              \
     }
 #endif
 
-#ifdef BSP_USING_I2C5
+#ifdef BSP_USING_I2C5_SW
 #define I2C5_BUS_CONFIG                                     \
     {                                                       \
         .scl_pin = BSP_I2C5_SCL_PIN,                        \
         .sda_pin = BSP_I2C5_SDA_PIN,                        \
-        .bus_name = "i2c5",                                 \
+        .bus_name = "i2c5_sw",                              \
     }
 #endif
 
-#ifdef BSP_USING_I2C6
+#ifdef BSP_USING_I2C6_SW
 #define I2C6_BUS_CONFIG                                     \
     {                                                       \
         .scl_pin = BSP_I2C6_SCL_PIN,                        \
         .sda_pin = BSP_I2C6_SDA_PIN,                        \
-        .bus_name = "i2c6",                                 \
+        .bus_name = "i2c6_sw",                              \
     }
 #endif
 
@@ -98,7 +97,7 @@ struct hc32_i2c
 }
 #endif
 
-#endif /* __DRV_I2C_H__ */
+#endif /* __DRV_SOFT_I2C_H__ */
 
 /*******************************************************************************
  * EOF (not truncated)

@@ -38,12 +38,17 @@
 #define A6        (23)
 #define A7        (24)
 
+#define RTDUINO_PIN_MAX_LIMIT A7 /* pin number max limit check */
+
 #define F_CPU          170000000L  /* CPU:170MHz */
 
 #define LED_BUILTIN     D13  /* Default Built-in LED */
 
 /* i2c1 : PB9-SDA PB8-SCL */
 #define RTDUINO_DEFAULT_IIC_BUS_NAME    "i2c1"
+
+#define SS          D10
+#define RTDUINO_DEFAULT_SPI_BUS_NAME     "spi1"
 
 /* Serial2 : PA9-TX  PA10-RX */
 #define RTDUINO_SERIAL2_DEVICE_NAME      "uart1"

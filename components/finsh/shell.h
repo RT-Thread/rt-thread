@@ -102,4 +102,8 @@ void finsh_set_prompt_mode(rt_uint32_t prompt_mode);
     const char *finsh_get_password(void);
 #endif
 
+#ifdef RT_USING_HOOK
+void finsh_thread_entry_sethook(void (*hook)(void));
+#endif /* RT_USING_HOOK */
+
 #endif

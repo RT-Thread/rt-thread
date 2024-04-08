@@ -43,9 +43,7 @@ void rt_wm_que_dump(struct rt_watermark_queue *wg)
     {
         rt_thread_t thread;
 
-        thread = rt_list_entry(wg->suspended_threads.next,
-                               struct rt_thread,
-                               tlist);
+        thread = RT_THREAD_LIST_NODE_ENTRY(wg->suspended_threads.next);
         rt_kprintf(" %.*s", RT_NAME_MAX, thread->parent.name);
     }
     rt_kprintf("\n");

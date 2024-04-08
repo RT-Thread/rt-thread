@@ -22,6 +22,10 @@
 #include <dfs_mnt.h>
 #endif
 
+#ifdef RT_USING_SMART
+#include "lwp.h"
+#endif /* RT_USING_SMART */
+
 static int msh_readline(int fd, char *line_buf, int size)
 {
     char ch;
@@ -159,7 +163,11 @@ static int cmd_ls(int argc, char **argv)
     if (argc == 1)
     {
 #ifdef DFS_USING_WORKDIR
+#ifdef RT_USING_SMART
+        ls(lwp_getcwd());
+#else
         ls(working_directory);
+#endif
 #else
         ls("/");
 #endif
@@ -343,6 +351,11 @@ static void directory_delete_for_msh(const char *pathname, char f, char v)
         if (rt_strcmp(".", dirent->d_name) != 0 &&
                 rt_strcmp("..", dirent->d_name) != 0)
         {
+            if (strlen(pathname) + 1 + strlen(dirent->d_name) > DFS_PATH_MAX)
+            {
+                rt_kprintf("cannot remove '%s/%s', path too long.\n", pathname, dirent->d_name);
+                continue;
+            }
             rt_sprintf(full_path, "%s/%s", pathname, dirent->d_name);
             if (dirent->d_type != DT_DIR)
             {
@@ -422,14 +435,14 @@ static int cmd_rm(int argc, char **argv)
         if (stat(argv[index], &s) == 0)
 #endif
         {
-            if (s.st_mode & S_IFDIR)
+            if (S_ISDIR(s.st_mode))
             {
                 if (r == 0)
                     rt_kprintf("cannot remove '%s': Is a directory\n", argv[index]);
                 else
                     directory_delete_for_msh(argv[index], f, v);
             }
-            else if (s.st_mode & S_IFREG)
+            else
             {
                 if (unlink(argv[index]) != 0)
                 {
@@ -862,6 +875,11 @@ static void directory_setattr(const char *pathname, struct dfs_attr *attr, char 
         if (rt_strcmp(".", dirent->d_name) != 0 &&
             rt_strcmp("..", dirent->d_name) != 0)
         {
+            if (strlen(pathname) + 1 + strlen(dirent->d_name) > DFS_PATH_MAX)
+            {
+                rt_kprintf("'%s/%s' setattr failed, path too long.\n", pathname, dirent->d_name);
+                continue;
+            }
             rt_sprintf(full_path, "%s/%s", pathname, dirent->d_name);
             if (dirent->d_type == DT_REG)
             {
@@ -1089,7 +1107,7 @@ static int cmd_chmod(int argc, char **argv)
                     struct stat s;
                     if (stat(argv[i], &s) == 0)
                     {
-                        if (s.st_mode & S_IFDIR)
+                        if (S_ISDIR(s.st_mode))
                         {
                             directory_setattr(argv[i], &attr, f, v);
                         }

@@ -24,12 +24,16 @@
 extern "C" {
 #endif
 
-#ifdef R_SCI_SPI_H
+#if defined(R_SCI_SPI_H) || defined(R_SCI_B_SPI_H)
 struct ra_sci_spi_handle
 {
     const char bus_name[RT_NAME_MAX];
     const spi_cfg_t               *spi_cfg_t;
+#ifdef R_SCI_B_SPI_H
+    const sci_b_spi_instance_ctrl_t *spi_ctrl_t;
+#else
     const sci_spi_instance_ctrl_t *spi_ctrl_t;
+#endif
 };
 
 struct ra_sci_spi

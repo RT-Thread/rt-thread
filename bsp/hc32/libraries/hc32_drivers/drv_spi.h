@@ -1,6 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
- * Copyright (c) 2022, Xiaohua Semiconductor Co., Ltd.
+ * Copyright (C) 2022-2024, Xiaohua Semiconductor Co., Ltd.
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -32,14 +31,23 @@ struct hc32_hw_spi_cs
     rt_uint16_t pin;
 };
 
+struct hc32_spi_irq_config
+{
+    struct hc32_irq_config irq_config;
+    func_ptr_t             irq_callback;
+};
+
 struct hc32_spi_config
 {
-    CM_SPI_TypeDef          *Instance;
-    char                    *bus_name;
-    rt_uint32_t             clock;
-    // struct hc32_irq_config  irq_config;
-    struct dma_config       *dma_rx;
-    struct dma_config       *dma_tx;
+    CM_SPI_TypeDef              *Instance;
+    char                        *bus_name;
+    rt_uint32_t                 clock;
+    rt_uint32_t                 timeout;
+    struct hc32_spi_irq_config  err_irq;
+#ifdef BSP_SPI_USING_DMA
+    struct dma_config           *dma_rx;
+    struct dma_config           *dma_tx;
+#endif
 };
 
 struct hc32_spi
@@ -47,7 +55,7 @@ struct hc32_spi
     struct hc32_spi_config      *config;
     struct rt_spi_configuration *cfg;
     struct rt_spi_bus           spi_bus;
-    rt_uint8_t                  spi_dma_flag;
+    rt_uint16_t                 spi_dma_flag;
 };
 
 rt_err_t rt_hw_spi_device_attach(const char *bus_name, const char *device_name, uint8_t cs_gpio_port, uint16_t cs_gpio_pin);

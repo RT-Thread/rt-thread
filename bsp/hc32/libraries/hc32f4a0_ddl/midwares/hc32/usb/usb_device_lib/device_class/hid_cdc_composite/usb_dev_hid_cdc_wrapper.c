@@ -8,7 +8,7 @@
    2022-03-31       CDT             First version
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -54,7 +54,6 @@
 #define HID_INTERFACE       (0x0U)
 #define CDC_COM_INTERFACE   (0x1U)
 
-
 /*******************************************************************************
  * Local function prototypes ('static')
  ******************************************************************************/
@@ -66,7 +65,6 @@ void    usb_dev_composite_datain(void *pdev, uint8_t epnum);
 void    usb_dev_composite_dataout(void *pdev, uint8_t epnum);
 uint8_t usb_dev_composite_sof(void *pdev);
 uint8_t *usb_dev_composite_getcfgdesc(uint16_t *length);
-
 
 /*******************************************************************************
  * Global variable definitions

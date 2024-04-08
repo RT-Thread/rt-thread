@@ -578,6 +578,16 @@
 #endif
 
 /**
+ * RT_LWIP_NETIF_NAMESIZE support netif name length(in netif.c)
+ */
+#ifdef RT_LWIP_NETIF_NAMESIZE
+#if (RT_LWIP_NETIF_NAMESIZE < 2)
+#warning NETIF_NAMESIZE too small, the value must be greater than or equal to 6.
+#endif
+#define NETIF_NAMESIZE                  RT_LWIP_NETIF_NAMESIZE
+#endif /* RT_LWIP_NETIF_NAMESIZE */
+
+/**
  * LWIP_NETIF_API==1: Support netif api (in netifapi.c)
  */
 #ifndef LWIP_NETIF_API

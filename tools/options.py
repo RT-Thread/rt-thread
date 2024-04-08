@@ -27,69 +27,67 @@ import platform
 
 def AddOptions():
     ''' ===== Add generic options to SCons ===== '''
-
     AddOption('--dist',
-                      dest = 'make-dist',
-                      action = 'store_true',
-                      default = False,
-                      help = 'make distribution')
-    AddOption('--dist-strip',
-                      dest = 'make-dist-strip',
-                      action = 'store_true',
-                      default = False,
-                      help = 'make distribution and strip useless files')
+                dest = 'make-dist',
+                action = 'store_true',
+                default = False,
+                help = 'make distribution')
     AddOption('--dist-ide', '--dist-rtstudio',
-                      dest = 'make-dist-ide',
-                      action = 'store_true',
-                      default = False,
-                      help = 'make distribution for RT-Thread Studio IDE')
+                dest = 'make-dist-ide',
+                action = 'store_true',
+                default = False,
+                help = 'make distribution for RT-Thread Studio IDE')
     AddOption('--project-path',
-                      dest = 'project-path',
-                      type = 'string',
-                      default = None,
-                      help = 'set project output path')
+                dest = 'project-path',
+                type = 'string',
+                default = None,
+                help = 'set project output path')
     AddOption('--project-name',
-                      dest = 'project-name',
-                      type = 'string',
-                      default = "project",
-                      help = 'set project name')
-    AddOption('--reset-project-config',
-                      dest = 'reset-project-config',
-                      action = 'store_true',
-                      default = False,
-                      help = 'reset the project configurations to default')
+                dest = 'project-name',
+                type = 'string',
+                default = "project",
+                help = 'set project name')
     AddOption('--cscope',
-                      dest = 'cscope',
-                      action = 'store_true',
-                      default = False,
-                      help = 'Build Cscope cross reference database. Requires cscope installed.')
+                dest = 'cscope',
+                action = 'store_true',
+                default = False,
+                help = 'Build Cscope cross reference database. Requires cscope installed.')
     AddOption('--clang-analyzer',
-                      dest = 'clang-analyzer',
-                      action = 'store_true',
-                      default = False,
-                      help = 'Perform static analyze with Clang-analyzer. ' + \
-                           'Requires Clang installed.\n' + \
-                           'It is recommended to use with scan-build like this:\n' + \
-                           '`scan-build scons --clang-analyzer`\n' + \
-                           'If things goes well, scan-build will instruct you to invoke scan-view.')
+                dest = 'clang-analyzer',
+                action = 'store_true',
+                default = False,
+                help = 'Perform static analyze with Clang-analyzer. ' + \
+                    'Requires Clang installed.' + \
+                    'It is recommended to use with scan-build like this:' + \
+                    '`scan-build scons --clang-analyzer`' + \
+                    'If things goes well, scan-build will instruct you to invoke scan-view.')
     AddOption('--buildlib',
-                      dest = 'buildlib',
-                      type = 'string',
-                      help = 'building library of a component')
+                dest = 'buildlib',
+                type = 'string',
+                help = 'building library of a component')
     AddOption('--cleanlib',
-                      dest = 'cleanlib',
-                      action = 'store_true',
-                      default = False,
-                      help = 'clean up the library by --buildlib')
+                dest = 'cleanlib',
+                action = 'store_true',
+                default = False,
+                help = 'clean up the library by --buildlib')
     AddOption('--target',
-                      dest = 'target',
-                      type = 'string',
-                      help = 'set target project: mdk/mdk4/mdk5/iar/vs/vsc/ua/cdk/ses/makefile/eclipse/codelite/cmake')
+                dest = 'target',
+                type = 'string',
+                help = 'set target project: mdk/mdk4/mdk5/iar/vs/vsc/ua/cdk/ses/makefile/eclipse/codelite/cmake')
+    AddOption('--cmsispack',
+                dest = 'cmsispack',
+                type = 'string',
+                help = 'set pack: <cmsispack path>')
     AddOption('--strict',
                 dest='strict-compiling',
                 help='Compiling project with strict mode and ALL warning will be errors',
                 action='store_true',
                 default=False)
+    AddOption('--verbose',
+                dest = 'verbose',
+                action = 'store_true',
+                default = False,
+                help = 'print verbose information during build')
     AddOption('--cc-prefix', '--exec-prefix',
                 dest = 'exec-prefix',
                 type = 'string',
@@ -112,25 +110,27 @@ def AddOptions():
                 dest = 'useconfig',
                 type = 'string',
                 help = 'make rtconfig.h from config file.')
-    AddOption('--verbose',
-                dest = 'verbose',
+    AddOption('--global-macros',
+                dest = 'global-macros',
+                type = 'string',
+                help = 'attach global macros in the project. '+\
+                'e.g. scons --global-config=RT_USING_XX,RT_USING_YY'+\
+                ' or scons --global-config="RT_USING_XX, RT_USING_YY"')
+    AddOption('--reset-project-config',
+                dest = 'reset-project-config',
                 action = 'store_true',
                 default = False,
-                help = 'print verbose information during build')
+                help = 'reset the project configurations to default')
     AddOption('--pyconfig',
                 dest = 'pyconfig',
                 action = 'store_true',
                 default = False,
                 help = 'Python GUI menuconfig for RT-Thread BSP')
     AddOption('--pyconfig-silent',
-                dest = 'pyconfig_silent',
+                dest = 'pyconfig-silent',
                 action = 'store_true',
                 default = False,
                 help = 'Don`t show pyconfig window')
-    AddOption('--add-rtconfig',
-                dest = 'add_rtconfig',
-                type = 'string',
-                help = 'Add macro definitions and scons depend at build time. It is similar to adding macro definitions in rtconfig.h')
     if platform.system() != 'Windows':
         AddOption('--menuconfig',
                     dest = 'menuconfig',

@@ -1,13 +1,11 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
- * Copyright (c) 2022, Xiaohua Semiconductor Co., Ltd.
- * Copyright (c) 2022, xiaoxiaolisunny
+ * Copyright (C) 2022-2024, Xiaohua Semiconductor Co., Ltd.
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
- * Date           Author                   Notes
- * 2022-06-07     xiaoxiaolisunny          first version
+ * Date           Author       Notes
+ * 2022-04-28     CDT          first version
  */
 
 #ifndef __ADC_CONFIG_H__
@@ -25,6 +23,7 @@ extern "C" {
 #define ADC1_INIT_PARAMS                                                        \
     {                                                                           \
        .name                            = "adc1",                               \
+       .vref                            = 3300,                                 \
        .resolution                      = ADC_RESOLUTION_12BIT,                 \
        .data_align                      = ADC_DATAALIGN_RIGHT,                  \
        .eoc_poll_time_max               = 100,                                  \
@@ -47,6 +46,7 @@ extern "C" {
 #define ADC2_INIT_PARAMS                                                        \
     {                                                                           \
        .name                            = "adc2",                               \
+       .vref                            = 3300,                                 \
        .resolution                      = ADC_RESOLUTION_12BIT,                 \
        .data_align                      = ADC_DATAALIGN_RIGHT,                  \
        .eoc_poll_time_max               = 100,                                  \

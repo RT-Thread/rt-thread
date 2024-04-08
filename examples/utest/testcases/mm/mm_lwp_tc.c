@@ -13,6 +13,7 @@
 #include "lwp_arch.h"
 #include "lwp_user_mm.h"
 #include "mm_aspace.h"
+#include "mm_flag.h"
 #include "mmu.h"
 
 /**
@@ -50,7 +51,7 @@ static void test_user_map_varea(void)
     const size_t buf_sz = ARCH_PAGE_SIZE * 4;
     struct rt_lwp *lwp;
     rt_varea_t varea;
-    lwp = lwp_new();
+    lwp = lwp_create(LWP_CREATE_FLAG_NONE);
 
     /* prepare environment */
     uassert_true(!!lwp);
@@ -62,11 +63,11 @@ static void test_user_map_varea(void)
     uassert_true(varea->attr == (MMU_MAP_U_RWCB));
     uassert_true(varea->size == buf_sz);
     uassert_true(varea->aspace == lwp->aspace);
-    uassert_true(varea->flag == 0);
+    uassert_true(varea->flag == MMF_MAP_PRIVATE);
     uassert_true(varea->start != 0);
     uassert_true(varea->start >= (void *)USER_VADDR_START && varea->start < (void *)USER_VADDR_TOP);
 
-    uassert_true(!lwp_ref_dec(lwp));
+    uassert_true(!(lwp_ref_dec(lwp) - 1));
 }
 
 static void test_user_map_varea_ext(void)
@@ -74,7 +75,7 @@ static void test_user_map_varea_ext(void)
     const size_t buf_sz = ARCH_PAGE_SIZE * 4;
     struct rt_lwp *lwp;
     rt_varea_t varea;
-    lwp = lwp_new();
+    lwp = lwp_create(LWP_CREATE_FLAG_NONE);
 
     uassert_true(!!lwp);
     uassert_true(!lwp_user_space_init(lwp, 1));
@@ -86,11 +87,11 @@ static void test_user_map_varea_ext(void)
     uassert_true(varea->attr == (MMU_MAP_U_RW));
     uassert_true(varea->size == buf_sz);
     uassert_true(varea->aspace == lwp->aspace);
-    uassert_true(varea->flag == 0);
+    uassert_true(varea->flag == MMF_MAP_PRIVATE);
     uassert_true(varea->start != 0);
     uassert_true(varea->start >= (void *)USER_VADDR_START && varea->start < (void *)USER_VADDR_TOP);
 
-    uassert_true(!lwp_ref_dec(lwp));
+    uassert_true(!(lwp_ref_dec(lwp) - 1));
 }
 
 static void user_map_varea_tc(void)
@@ -104,7 +105,7 @@ static void test_user_accessible(void)
     /* Prepare Environment */
     char *test_address = (char *)(USER_STACK_VEND);
     struct rt_lwp *lwp;
-    lwp = lwp_new();
+    lwp = lwp_create(LWP_CREATE_FLAG_NONE);
     uassert_true(!!lwp);
     uassert_true(!lwp_user_space_init(lwp, 0));
 

@@ -3,12 +3,22 @@ from building import *
 cwd = GetCurrentDir()
 CPPPATH = [cwd + '/../include']
 group = []
-if GetDepend(['RT_USING_SERIAL']):
-    if GetDepend(['RT_USING_SERIAL_V2']):
-        src = Glob('serial_v2.c')
-        group = DefineGroup('DeviceDrivers', src, depend = ['RT_USING_SERIAL_V2'], CPPPATH = CPPPATH)
-    else:
-        src = Glob('serial.c')
-        group = DefineGroup('DeviceDrivers', src, depend = ['RT_USING_SERIAL'], CPPPATH = CPPPATH)
+src = []
+
+if not GetDepend(['RT_USING_SERIAL']):
+    Return('group')
+
+if GetDepend(['RT_USING_SMART']):
+    src += Glob('serial_tty.c')
+
+if GetDepend(['RT_USING_SERIAL_V2']):
+    src += ['serial_v2.c']
+else:
+    src += ['serial.c']
+
+if GetDepend(['RT_USING_DM']):
+    src += ['serial_dm.c']
+
+group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)
 
 Return('group')

@@ -6,9 +6,10 @@
    Change Logs:
    Date             Author          Notes
    2022-03-31       CDT             First version
+   2023-06-30       CDT             Modify for variable alignment
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -60,11 +61,6 @@ MSC_PARAMETER USB_HOST_MSC_Param;
 /*******************************************************************************
  * Local variable definitions ('static')
  ******************************************************************************/
-#ifdef USB_INTERNAL_DMA_ENABLED
-#if defined ( __ICCARM__ )
-#pragma data_alignment=4
-#endif
-#endif
 __USB_ALIGN_BEGIN static uint8_t USB_HOST_DataInBuf[512];
 
 /*******************************************************************************
@@ -295,7 +291,7 @@ USB_HOST_MSC_STATUS usb_host_msc_RequestSense(usb_core_instance *pdev)
             case USB_HOST_MSC_CMD_SEND:
                 /*Prepare the CBW and relevent field*/
                 USBH_MSC_CBWData.field.CBWTransferLength = \
-                        ALLOCATION_LENGTH_REQUEST_SENSE;
+                                                           ALLOCATION_LENGTH_REQUEST_SENSE;
                 USBH_MSC_CBWData.field.CBWFlags = USB_EP_DIR_IN;
                 USBH_MSC_CBWData.field.CBWLength = CBW_LENGTH;
 

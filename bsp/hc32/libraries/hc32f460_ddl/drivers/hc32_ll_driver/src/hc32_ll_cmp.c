@@ -7,9 +7,13 @@
    Change Logs:
    Date             Author          Notes
    2022-03-31       CDT             First version
+   2022-06-30       CDT             Modify macro define for API
+   2023-01-15       CDT             Code refine for scan function
+   2023-06-30       CDT             Modify typo
+   2023-09-30       CDT             Add assert for IEN bit in GetCmpFuncStatusAndDisFunc function
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -100,16 +104,17 @@
 
 #define IS_CMP_NEGATIVE_IN(x)                                                  \
 (   ((x) == CMP_NEGATIVE_NONE)                  ||                             \
-    ((x) == CMP1_NEGATIVE_CMP1_INM1)            ||                             \
-    ((x) == CMP1_NEGATIVE_CMP1_INM2)            ||                             \
-    ((x) == CMP1_NEGATIVE_DAC1)                 ||                             \
-    ((x) == CMP1_NEGATIVE_VREF))
+    ((x) == CMP_NEGATIVE_INM1)                  ||                             \
+    ((x) == CMP_NEGATIVE_INM2)                  ||                             \
+    ((x) == CMP_NEGATIVE_INM3)                  ||                             \
+    ((x) == CMP_NEGATIVE_INM4))
 
 #define IS_CMP_SCAN_STABLE(x)                                                  \
-(   (x) < 16U)
+(   (x) <= 0x0FU)
 
 #define IS_CMP_SCAN_PERIOD(x)                                                  \
-(   (x) >= 0xFU)
+(   ((x) >= 0x0FU)                              &&                             \
+    ((x) <= 0xFFU))
 
 #define IS_CMP_8_BIT_DAC_CH(x)                                                 \
 (   ((x) == CMP_8BITDAC_CH1)                    ||                             \
@@ -147,6 +152,9 @@
  * @}
  */
 #define CMP_DADC_RVADC_REG_UNLOCK               (0x5500U)
+
+#define CMP_SCAN_PERIOD_IMME                (0x05U)
+
 /**
  * @}
  */
@@ -198,6 +206,9 @@ static void CMP_DelayUS(uint32_t u32Count)
 static uint16_t GetCmpFuncStatusAndDisFunc(CM_CMP_TypeDef *CMPx)
 {
     uint16_t u16temp;
+    /* It is possible that the interrupt may occurs after CMP status switch. */
+    DDL_ASSERT(READ_REG8_BIT(CMPx->CTRL, CMP_CTRL_IEN) == 0U);
+
     /* Read CMP status */
     u16temp = READ_REG16_BIT(CMPx->CTRL, CMP_CTRL_CMPON);
     /* Stop CMP function */
@@ -206,7 +217,7 @@ static uint16_t GetCmpFuncStatusAndDisFunc(CM_CMP_TypeDef *CMPx)
 }
 
 /**
- * @brief  Revcover CMP function status
+ * @brief  Recover CMP function status
  * @param  [in] CMPx                Pointer to CMP instance register base
  *   @arg  CM_CMPx
  * @param  [in] u16CmpFuncStatus    CMP function status backup value
@@ -420,11 +431,11 @@ void CMP_PinVcoutCmd(CM_CMP_TypeDef *CMPx, en_functional_state_t enNewState)
  */
 en_flag_status_t CMP_GetStatus(const CM_CMP_TypeDef *CMPx)
 {
-    en_flag_status_t i32Ret;
+    en_flag_status_t enRet;
     /* Check CMPx instance */
     DDL_ASSERT(IS_CMP_UNIT(CMPx));
-    i32Ret = (READ_REG16_BIT(CMPx->OUTMON, CMP_OUTMON_OMON) != 0U) ? SET : RESET;
-    return i32Ret;
+    enRet = (READ_REG16_BIT(CMPx->OUTMON, CMP_OUTMON_OMON) != 0U) ? SET : RESET;
+    return enRet;
 }
 
 /**
@@ -549,53 +560,52 @@ void CMP_SetNegativeInput(CM_CMP_TypeDef *CMPx, uint16_t u16NegativeInput)
  * @brief  Get CMP scan INP source
  * @param  [in] CMPx                Pointer to CMP instance register base
  *   @arg  CM_CMPx
- * @retval An uint16_t value @ref CMP_Scan_Inp_Status
+ * @retval An uint32_t value @ref CMP_Scan_Inp_Status
  */
-uint16_t CMP_GetScanInpSrc(CM_CMP_TypeDef *CMPx)
+uint32_t CMP_GetScanInpSrc(CM_CMP_TypeDef *CMPx)
 {
     /* Check parameters */
     DDL_ASSERT(IS_CMP_UNIT(CMPx));
-    return READ_REG16_BIT(CMPx->OUTMON, CMP_OUTMON_CVST);
+    return (uint32_t)READ_REG16_BIT(CMPx->OUTMON, CMP_OUTMON_CVST);
 }
 
 /**
  * @brief  Get CMP scan function stable time and period configuration
  * @param  [in] CMPx                Pointer to CMP instance register base
  *   @arg  CM_CMPx
- * @param  [in] u8ScanStable        CMP scan stable value
- *   @arg  u8ScanStable < 16
- * @param  [in] u8ScanPeriod        CMP scan period value
- *   @arg  u8ScanPeriod range(0x0F ~ 0xFF)
+ * @param  [in] u16Stable           The CMP stable time = T(CMP clock) x u16Stable, The stable time is recommended
+ *                                  greater than 100nS
+ *   @arg  range from 0x00U to 0x0FU
+ * @param  [in] u16Period           CMP scan period = T(CMP clock) x u16Period
+ *   @arg  range from 0x0F to 0xFF
  * @retval int32_t
  *         - LL_OK:                 Success
  *         - LL_ERR_INVD_PARAM:     Parameter error
- * @note   1. u8ScanPeriod > (u8ScanStable + u16OutFilter * 4 + 5)
- *            u16OutFilter is configurate in CMP_NormalModeInit() function.
- *         2. Scan stable time = u8ScanStable * T(pclk3)
- *            The typical value of Scan stable time is 100nS and Scan stable time < 200nS
+ * @note   1. u16Period > (u16Stable + u16OutFilter * 4 + CMP_SCAN_PERIOD_IMME)
+ *            u16OutFilter is configured in CMP_NormalModeInit() function.
  */
-int32_t CMP_ScanTimeConfig(CM_CMP_TypeDef *CMPx, uint8_t u8ScanStable, uint8_t u8ScanPeriod)
+int32_t CMP_ScanTimeConfig(CM_CMP_TypeDef *CMPx, uint16_t u16Stable, uint16_t u16Period)
 {
-    uint16_t u16Flts;
+    uint16_t u16Fltsl;
     uint16_t u16FltslDiv;
     int32_t i32Ret = LL_OK;
     /* Check parameters */
     DDL_ASSERT(IS_CMP_UNIT(CMPx));
-    DDL_ASSERT(IS_CMP_SCAN_STABLE(u8ScanStable));
-    DDL_ASSERT(IS_CMP_SCAN_PERIOD(u8ScanPeriod));
+    DDL_ASSERT(IS_CMP_SCAN_STABLE(u16Stable));
+    DDL_ASSERT(IS_CMP_SCAN_PERIOD(u16Period));
 
-    u16Flts = READ_REG16_BIT(CMPx->CTRL, CMP_CTRL_FLTSL);
-    if (0U != u16Flts) {
-        u16FltslDiv = ((uint16_t)1U << (u16Flts - 1U));
+    u16Fltsl = READ_REG16_BIT(CMPx->CTRL, CMP_CTRL_FLTSL);
+    if (0U != u16Fltsl) {
+        u16FltslDiv = ((uint16_t)1U << (u16Fltsl - 1U));
     } else {
         u16FltslDiv = 0U;
     }
 
-    if (u8ScanPeriod <= (u8ScanStable + u16FltslDiv * 4U + 5U)) {
+    if (u16Period <= (u16Stable + u16FltslDiv * 4U + CMP_SCAN_PERIOD_IMME)) {
         i32Ret = LL_ERR_INVD_PARAM;
     } else {
-        WRITE_REG16(CMPx->CVSSTB, u8ScanStable);
-        WRITE_REG16(CMPx->CVSPRD, u8ScanPeriod);
+        WRITE_REG16(CMPx->CVSSTB, u16Stable);
+        WRITE_REG16(CMPx->CVSPRD, u16Period);
     }
     return i32Ret;
 }
@@ -612,12 +622,7 @@ void CMP_ScanCmd(CM_CMP_TypeDef *CMPx, en_functional_state_t enNewState)
     /* Check parameters */
     DDL_ASSERT(IS_CMP_UNIT(CMPx));
     DDL_ASSERT(IS_FUNCTIONAL_STATE(enNewState));
-
-    if (ENABLE == enNewState) {
-        SET_REG16_BIT(CMPx->CTRL, CMP_CTRL_CVSEN);
-    } else {
-        CLR_REG16_BIT(CMPx->CTRL, CMP_CTRL_CVSEN);
-    }
+    MODIFY_REG16(CMPx->CTRL, CMP_CTRL_CVSEN, (uint16_t)enNewState << CMP_CTRL_CVSEN_POS);
 }
 
 /**
@@ -690,8 +695,8 @@ void CMP_8BitDAC_WriteData(uint8_t u8Ch, uint16_t u16DACData)
  */
 
 /**
-* @}
-*/
+ * @}
+ */
 
 /******************************************************************************
  * EOF (not truncated)

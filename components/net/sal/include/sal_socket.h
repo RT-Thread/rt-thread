@@ -48,6 +48,18 @@ typedef uint16_t in_port_t;
 #define SO_KEEPALIVE    0x0008 /* keep connections alive */
 #define SO_BROADCAST    0x0020 /* permit to send and to receive broadcast messages (see IP_SOF_BROADCAST option) */
 
+#define SO_PASSCRED         16
+#define SO_PEERCRED         17
+
+#define SO_BINDTODEVICE     25
+#define SO_ATTACH_FILTER    26
+#define SO_DETACH_FILTER    27
+
+#define SO_SNDBUFFORCE      32
+#define SO_RCVBUFFORCE      33
+#define SO_PROTOCOL         38
+#define SO_DOMAIN           39
+
 /* Additional options, not kept in so_options */
 #define SO_DEBUG        0x0001 /* Unimplemented: turn on debugging info recording */
 #define SO_ACCEPTCONN   0x0002 /* socket has had listen() */
@@ -69,18 +81,21 @@ typedef uint16_t in_port_t;
 #define SO_NO_CHECK     0x100a /* don't create UDP checksum */
 
 /* Level number for (get/set)sockopt() to apply to socket itself */
-#define  SOL_SOCKET     0xfff    /* options for socket level */
+#define SOL_SOCKET      0xfff    /* options for socket level */
+#define SOL_NETLINK     270
 
 #define AF_UNSPEC       0
 #define AF_UNIX         1
 #define AF_INET         2
 #define AF_INET6        10
+#define AF_NETLINK      16
 #define AF_CAN          29  /* Controller Area Network      */
 #define AF_AT           45  /* AT socket */
 #define AF_WIZ          46  /* WIZnet socket */
 #define PF_UNIX         AF_UNIX
 #define PF_INET         AF_INET
 #define PF_INET6        AF_INET6
+#define PF_NETLINK      AF_NETLINK
 #define PF_UNSPEC       AF_UNSPEC
 #define PF_CAN          AF_CAN
 #define PF_AT           AF_AT
@@ -103,6 +118,9 @@ typedef uint16_t in_port_t;
 #define MSG_OOB         0x04    /* Unimplemented: Requests out-of-band data. The significance and semantics of out-of-band data are protocol-specific */
 #define MSG_DONTWAIT    0x08    /* Nonblocking i/o for this operation only */
 #define MSG_MORE        0x10    /* Sender will send more */
+
+#define MSG_ERRQUEUE    0x2000  /* Fetch message from error queue */
+#define MSG_CONFIRM     0x0800  /* Confirm path validity */
 
 /* Options for level IPPROTO_IP */
 #define IP_TOS             1
@@ -150,6 +168,10 @@ typedef struct ip_mreq
 #define IPTOS_PREC_PRIORITY            0x20
 #define IPTOS_PREC_ROUTINE             0x00
 
+#define SCM_RIGHTS      0x01        /* rw: access rights (array of int) */
+#define SCM_CREDENTIALS 0x02        /* rw: struct ucred     */
+#define SCM_SECURITY    0x03        /* rw: security label       */
+
 /* Options for shatdown type */
 #ifndef SHUT_RD
   #define SHUT_RD       0
@@ -167,11 +189,9 @@ struct sockaddr
 /* Structure describing the address of an AF_LOCAL (aka AF_UNIX) socket.  */
 struct sockaddr_un
 {
-    uint8_t        sa_len;
-    sa_family_t    sa_family;
+    unsigned short sa_family;
     char sun_path[108];         /* Path name.  */
 };
-
 
 #if NETDEV_IPV4
 /* members are in network byte order */
@@ -209,8 +229,75 @@ struct sockaddr_storage
 #endif /* NETDEV_IPV6 */
 };
 
-#define IFNAMSIZ	16
-struct sal_ifmap 
+#ifdef RT_USING_MUSLLIBC
+#ifndef __DEFINED_struct_iovec
+struct iovec
+{
+    void *iov_base;
+    size_t iov_len;
+};
+#endif
+#endif
+
+struct msghdr
+{
+    void            *msg_name;
+    socklen_t        msg_namelen;
+    struct iovec    *msg_iov;
+    int              msg_iovlen;
+    void            *msg_control;
+    socklen_t        msg_controllen;
+    int              msg_flags;
+};
+
+/* RFC 3542, Section 20: Ancillary Data */
+struct cmsghdr
+{
+    size_t  cmsg_len;   /* number of bytes, including header */
+    int     cmsg_level; /* originating protocol */
+    int     cmsg_type;  /* protocol-specific type */
+};
+
+#define CMSG_NXTHDR(mhdr, cmsg) cmsg_nxthdr((mhdr), (cmsg))
+
+#define CMSG_ALIGN(len) (((len) + sizeof(long) - 1) & ~(sizeof(long)-1))
+
+#define CMSG_DATA(cmsg) ((void *)(cmsg) + sizeof(struct cmsghdr))
+#define CMSG_SPACE(len) (sizeof(struct cmsghdr) + CMSG_ALIGN(len))
+#define CMSG_LEN(len)   (sizeof(struct cmsghdr) + (len))
+
+#define __CMSG_FIRSTHDR(ctl, len) \
+    ((len) >= sizeof(struct cmsghdr) ? (struct cmsghdr *)(ctl) : (struct cmsghdr *)NULL)
+
+#define CMSG_FIRSTHDR(msg)  __CMSG_FIRSTHDR((msg)->msg_control, (msg)->msg_controllen)
+#define CMSG_OK(mhdr, cmsg) \
+    ((cmsg)->cmsg_len >= sizeof(struct cmsghdr) && \
+    (cmsg)->cmsg_len <= (unsigned long)((mhdr)->msg_controllen - ((char *)(cmsg) - (char *)(mhdr)->msg_control)))
+
+#define for_each_cmsghdr(cmsg, msg) \
+    for (cmsg = CMSG_FIRSTHDR(msg); cmsg; cmsg = CMSG_NXTHDR(msg, cmsg))
+
+static inline struct cmsghdr *__cmsg_nxthdr(void *_ctl, size_t _size, struct cmsghdr *_cmsg)
+{
+    struct cmsghdr *_ptr;
+
+    _ptr = (struct cmsghdr *)(((unsigned char *)_cmsg) + CMSG_ALIGN(_cmsg->cmsg_len));
+
+    if ((unsigned long)((char *)(_ptr + 1) - (char *)_ctl) > _size)
+    {
+        return (struct cmsghdr *)NULL;
+    }
+
+    return _ptr;
+}
+
+static inline struct cmsghdr *cmsg_nxthdr(struct msghdr *_msg, struct cmsghdr *_cmsg)
+{
+    return __cmsg_nxthdr(_msg->msg_control, _msg->msg_controllen, _cmsg);
+}
+
+#define IFNAMSIZ    16
+struct sal_ifmap
 {
     unsigned long int mem_start;
     unsigned long int mem_end;
@@ -220,13 +307,13 @@ struct sal_ifmap
     unsigned char port;
 };
 
-struct sal_ifreq 
+struct sal_ifreq
 {
-    union 
+    union
     {
         char ifrn_name[IFNAMSIZ];
     } ifr_ifrn;
-    union 
+    union
     {
         struct sockaddr ifru_addr;
         struct sockaddr ifru_dstaddr;
@@ -252,11 +339,14 @@ int sal_getsockopt (int socket, int level, int optname, void *optval, socklen_t 
 int sal_setsockopt (int socket, int level, int optname, const void *optval, socklen_t optlen);
 int sal_connect(int socket, const struct sockaddr *name, socklen_t namelen);
 int sal_listen(int socket, int backlog);
+int sal_sendmsg(int socket, const struct msghdr *message, int flags);
+int sal_recvmsg(int socket, struct msghdr *message, int flags);
 int sal_recvfrom(int socket, void *mem, size_t len, int flags,
       struct sockaddr *from, socklen_t *fromlen);
 int sal_sendto(int socket, const void *dataptr, size_t size, int flags,
     const struct sockaddr *to, socklen_t tolen);
 int sal_socket(int domain, int type, int protocol);
+int sal_socketpair(int domain, int type, int protocol, int *fds);
 int sal_closesocket(int socket);
 int sal_ioctlsocket(int socket, long cmd, void *arg);
 

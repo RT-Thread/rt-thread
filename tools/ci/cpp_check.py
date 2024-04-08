@@ -17,13 +17,30 @@ import format_ignore
 class CPPCheck:
     def __init__(self, file_list):
         self.file_list = file_list
-        
+
     def check(self):
         file_list_filtered = [file for file in self.file_list if file.endswith(('.c', '.cpp', '.cc', '.cxx'))]
         logging.info("Start to static code analysis.")
         check_result = True
         for file in file_list_filtered:
-            result = subprocess.run(['cppcheck', '--enable=warning', 'performance', 'portability', '--inline-suppr', '--error-exitcode=1', '--force', file], stdout = subprocess.PIPE, stderr = subprocess.PIPE)
+            result = subprocess.run(
+                [
+                    'cppcheck',
+                    '-DRT_ASSERT(x)=',
+                    '-Drt_list_for_each_entry(a,b,c)=a=(void*)b;',
+                    '-I include',
+                    '-I thread/components/finsh',
+                    # it's okay because CI will do the real compilation to check this
+                    '--suppress=syntaxError',
+                    '--enable=warning',
+                    'performance',
+                    'portability',
+                    '--inline-suppr',
+                    '--error-exitcode=1',
+                    '--force',
+                    file
+                ],
+                stdout = subprocess.PIPE, stderr = subprocess.PIPE)
             logging.info(result.stdout.decode())
             logging.info(result.stderr.decode())
             if result.stderr:

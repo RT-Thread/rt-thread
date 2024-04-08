@@ -1,12 +1,5 @@
 menu "Hardware Drivers Config"
 
-config SOC_STM32L431RC
-    bool
-    select SOC_SERIES_STM32L4
-    select RT_USING_COMPONENTS_INIT
-    select RT_USING_USER_MAIN
-    default y
-
 menu "On-chip Peripheral Drivers"
 
     config BSP_USING_GPIO
@@ -148,7 +141,7 @@ menu "On-chip Peripheral Drivers"
                 default n
         endif
 
-    source "../libraries/HAL_Drivers/Kconfig"
+    source "$BSP_DIR/../libraries/HAL_Drivers/drivers/Kconfig"
 
 endmenu
 
@@ -178,10 +171,74 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_I2C1
         select BSP_USING_SPI
         select BSP_USING_SPI1
+        select BSP_SPI1_TX_USING_DMA
+        select BSP_SPI1_RX_USING_DMA
+        select RTDUINO_USING_WIRE
+        select RTDUINO_USING_SPI
         imply RTDUINO_USING_SERVO
-        imply RTDUINO_USING_WIRE
-        imply RTDUINO_USING_SPI
         default n
+
+    config BSP_USING_MPU6050
+        bool "Enable MPU6050 to read accel data"
+        select BSP_USING_I2C
+        select BSP_USING_I2C1
+        select PKG_USING_MPU6XXX
+        default n
+        if BSP_USING_MPU6050
+            menuconfig BSP_USING_MQTT_HW_CLOUD
+                bool "Enable MPU6050 Connect to Huawei Cloud"
+                select BSP_USING_LPUART1
+                select PKG_USING_CJSON
+                select PKG_USING_AT_DEVICE
+                select AT_DEVICE_USING_ESP8266
+                select PKG_USING_KAWAII_MQTT
+                select KAWAII_MQTT_NETSOCKET_USE_SAL
+                default n
+
+                if AT_DEVICE_USING_ESP8266
+                    config ESP8266_SAMPLE_WIFI_SSID
+                        string "WIFI ssid"
+                        default "rtthread"
+
+                    config ESP8266_SAMPLE_WIFI_PASSWORD
+                        string "WIFI password"
+                        default "12345678"
+
+                    config ESP8266_SAMPLE_CLIENT_NAME
+                        string "AT client device name"
+                        default "lpuart1"
+                endif
+
+                if PKG_USING_KAWAII_MQTT
+                    config KAWAII_MQTT_HOST
+                        string "mqtt host"
+                        default "jiejie01.top"
+
+                    config KAWAII_MQTT_PORT
+                        string "mqtt port"
+                        default "1883"
+
+                    config KAWAII_MQTT_CLIENTID
+                        string "mqtt client id"
+                        default "rtthread001"
+
+                    config KAWAII_MQTT_USERNAME
+                        string "mqtt username"
+                        default "rt-thread"
+
+                    config KAWAII_MQTT_PASSWORD
+                        string "mqtt password"
+                        default "rt-thread"
+
+                    config KAWAII_MQTT_SUBTOPIC
+                        string "mqtt subscribe topic"
+                        default "rtt-sub"
+
+                    config KAWAII_MQTT_PUBTOPIC
+                        string "mqtt publish topic"
+                        default "rtt-pub"
+                endif
+            endif
 endmenu
 
 endmenu

@@ -23,9 +23,8 @@ config RT_USING_SMART
     default n
     select RT_USING_LWP
     select RT_USING_DFS
-    select RT_USING_LIBC
     select RT_USING_POSIX_CLOCKTIME
-    select RT_USING_TTY
+    select RT_USING_DEVICE
     select RT_USING_NULL
     select RT_USING_ZERO
     select RT_USING_RANDOM
@@ -35,9 +34,18 @@ config RT_USING_SMART
     select RT_USING_POSIX_FS
     select RT_USING_POSIX_TERMIOS
     select RT_USING_KTIME
+    select RT_USING_STDC_ATOMIC
     depends on ARCH_ARM_CORTEX_M || ARCH_ARM_ARM9 || ARCH_ARM_CORTEX_A || ARCH_ARMV8 || ARCH_RISCV64
+    depends on !RT_USING_NANO
     help
         RT-Thread Smart is a microkernel based operating system on RT-Thread.
+
+config RT_USING_NANO
+    bool "Enable RT-Thread Nano"
+    default n
+    help
+        RT-Thread Nano with a very small size and refined hard real-time kernel,
+        which is very suited for the resource-constrained MCU system.
 
 config RT_USING_AMP
     bool "Enable AMP (Asymmetric Multi-Processing)"
@@ -58,6 +66,7 @@ config RT_USING_AMP
 config RT_USING_SMP
     bool "Enable SMP (Symmetric multiprocessing)"
     default n
+    select RT_USING_SCHED_THREAD_CTX
     help
         This option should be selected by machines which have an SMP-
         capable CPU.
@@ -66,8 +75,7 @@ config RT_USING_SMP
 
 config RT_CPUS_NR
     int "Number of CPUs"
-    default 2
-    depends on RT_USING_SMP || RT_USING_AMP
+    default 1
     help
         Number of CPUs in the system
 
@@ -124,6 +132,13 @@ config RT_USING_HOOK
             bool "Using function pointers as system hook"
             default y
     endif
+
+config RT_USING_HOOKLIST
+    bool "Enable hook list"
+    default n
+    help
+        Enable the hook list feature for rt-thread packages. With this, they can
+        plug in to the system on run-time.
 
 config RT_USING_IDLE_HOOK
     bool "Enable IDLE Task hook"
@@ -211,13 +226,18 @@ menuconfig RT_USING_DEBUG
             bool "Enable debugging of environment and context check"
             default y
 
-        config RT_DEBUGING_INIT
-            bool "Enable debugging of components initialization"
-            default y
+        config RT_DEBUGING_AUTO_INIT
+            bool "Enable debugging of components automatic initialization"
+            default n
 
         config RT_DEBUGING_PAGE_LEAK
             bool "Enable page leaking tracer"
             depends on ARCH_MM_MMU
+            default n
+
+        config RT_DEBUGING_SPINLOCK
+            bool "Enable spinlock debugging"
+            depends on RT_USING_SMP
             default n
     endif
 
@@ -243,11 +263,10 @@ menu "Inter-Thread communication"
         bool "Enable message queue"
         default y
 
-    if RT_USING_MESSAGEQUEUE
-        config RT_USING_MESSAGEQUEUE_PRIORITY
-            bool "Enable message queue priority"
-            default n
-    endif
+    config RT_USING_MESSAGEQUEUE_PRIORITY
+        bool "Enable message queue priority"
+        depends on RT_USING_MESSAGEQUEUE
+        default n
 
     config RT_USING_SIGNALS
         bool "Enable signals"
@@ -383,61 +402,61 @@ menu "Memory Management"
         default y if RT_USING_USERHEAP
 endmenu
 
-menu "Kernel Device Object"
+config RT_USING_DEVICE
+    bool "Using device object"
+    depends on !RT_USING_NANO
+    default y
 
-    config RT_USING_DEVICE
-        bool "Using device object"
-        default y
+config RT_USING_DEVICE_OPS
+    bool "Using ops for each device object"
+    depends on RT_USING_DEVICE
+    default n
 
-    config RT_USING_DEVICE_OPS
-        bool "Using ops for each device object"
-        default n
+config RT_USING_INTERRUPT_INFO
+    bool "Enable additional interrupt trace information"
+    default n
+    help
+        Add name and counter information for interrupt trace.
 
-    config RT_USING_DM
-        bool "Enable device driver model with device tree"
-        default n
-        help
-            Enable device driver model with device tree (FDT). It will use more memory
-            to parse and support device tree feature.
+config RT_USING_THREADSAFE_PRINTF
+    bool "Enable thread safe kernel print service"
+    default y if RT_USING_SMP && RT_USING_SMART
 
-    config RT_USING_DM_FDT
-        bool "Enablie builtin libfdt"
-        depends on RT_USING_DM
-        default y
-        help
-            libfdt - Flat Device Tree manipulation. If your code already contains the
-            libfdt, you can cancel this built-in libfdt to avoid link issue.
+config RT_USING_SCHED_THREAD_CTX
+    bool "Using the scheduler thread context"
+    help
+        Using the scheduler thread context embedded in the thread object.
+        This options is only for backward compatible codes. Maybe use as a
+        mandatory option in the future.
+    default y if RT_USING_SMP
 
-    config RT_USING_INTERRUPT_INFO
-        bool "Enable additional interrupt trace information"
-        default n
-        help
-            Add name and counter information for interrupt trace.
+config RT_USING_CONSOLE
+    bool "Using console for rt_kprintf"
+    default y
 
-    config RT_USING_CONSOLE
-        bool "Using console for rt_kprintf"
-        default y
+if RT_USING_CONSOLE
+    config RT_CONSOLEBUF_SIZE
+        int "the buffer size for console log printf"
+        default 128
 
-    if RT_USING_CONSOLE
-        config RT_CONSOLEBUF_SIZE
-            int "the buffer size for console log printf"
-            default 128
+    config RT_CONSOLE_DEVICE_NAME
+        string "the device name for console"
+        default "uart1"
 
-        config RT_CONSOLE_DEVICE_NAME
-            string "the device name for console"
-            default "uart"
-    endif
-
-endmenu
+endif
 
 config RT_VER_NUM
     hex
-    default 0x50001
+    default 0x50100
     help
         RT-Thread version number
 
 config RT_USING_STDC_ATOMIC
     bool "Use atomic implemented in stdatomic.h"
     default n
+
+config RT_BACKTRACE_LEVEL_MAX_NR
+    int "Max number of backtrace level"
+    default 32
 
 endmenu

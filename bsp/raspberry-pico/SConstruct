@@ -16,7 +16,7 @@ DefaultEnvironment(tools=[])
 env = Environment(tools = ['mingw'],
     AS = rtconfig.AS, ASFLAGS = rtconfig.AFLAGS,
     CC = rtconfig.CC, CFLAGS = rtconfig.CFLAGS,
-    CXX = rtconfig.CXX,
+    CXX = rtconfig.CXX, CXXFLAGS = rtconfig.CXXFLAGS,
     AR = rtconfig.AR, ARFLAGS = '-rc',
     LINK = rtconfig.LINK, LINKFLAGS = rtconfig.LFLAGS)
 env.PrependENVPath('PATH', rtconfig.EXEC_PATH)
@@ -26,6 +26,15 @@ Export('rtconfig')
 
 # prepare building environment
 objs = PrepareBuilding(env, RTT_ROOT)
+
+ocwd = os.getcwd()
+os.chdir('packages/raspberrypi-pico-sdk-latest')
+print("Enter " + os.getcwd())
+if GetOption('clean'):
+    os.system("scons -c")
+else:
+    os.system("scons")
+os.chdir(ocwd)
 
 objs.extend(SConscript(os.path.join(os.getcwd(), 'board', 'ports', 'SConscript')))
 

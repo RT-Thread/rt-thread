@@ -8,7 +8,7 @@
    2022-03-31       CDT             First version
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -34,7 +34,7 @@
  */
 
 /**
- * @defgroup EV_HC32F460_LQFP100_V2_24CXX HC32F460 EVB 24CXX
+ * @defgroup EV_HC32F460_LQFP100_V2_24CXX EV_HC32F460_LQFP100_V2 24CXX
  * @{
  */
 
@@ -55,15 +55,26 @@
 /*******************************************************************************
  * Local function prototypes ('static')
  ******************************************************************************/
+/**
+ * @addtogroup EV_HC32F460_LQFP100_V2_24CXX_Local_Functions
+ * @{
+ */
 static int32_t BSP_24CXX_I2C_Init(void);
 static void BSP_24CXX_I2C_DeInit(void);
 static int32_t BSP_24CXX_I2C_WritePage(uint16_t u16Addr, const uint8_t *pu8Buf, uint32_t u32Len);
 static int32_t BSP_24CXX_I2C_Read(uint16_t u16Addr, uint8_t *pu8Buf, uint32_t u32Len);
 static int32_t BSP_24CXX_I2C_GetStatus(void);
+/**
+ * @}
+ */
 
 /*******************************************************************************
  * Local variable definitions ('static')
  ******************************************************************************/
+/**
+ * @defgroup EV_HC32F460_LQFP100_V2_24CXX_Local_Variables EV_HC32F460_LQFP100_V2 24CXX Local Variables
+ * @{
+ */
 static stc_24cxx_ll_t m_stc24cxxLL = {
     .u32PageSize = EE_24CXX_PAGE_SIZE,
     .u32Capacity = EE_24CXX_CAPACITY,
@@ -74,10 +85,18 @@ static stc_24cxx_ll_t m_stc24cxxLL = {
     .Read = BSP_24CXX_I2C_Read,
     .GetStatus = BSP_24CXX_I2C_GetStatus
 };
+/**
+ * @}
+ */
 
 /*******************************************************************************
  * Function implementation - global ('extern') and local ('static')
  ******************************************************************************/
+
+/**
+ * @defgroup EV_HC32F460_LQFP100_V2_24CXX_Local_Functions EV_HC32F460_LQFP100_V2 24CXX Local Functions
+ * @{
+ */
 
 /**
  * @brief  Initializes I2C for 24CXX.
@@ -123,7 +142,7 @@ static void BSP_24CXX_I2C_DeInit(void)
  *            - LL_ERR:             Receive NACK
  *            - LL_ERR_TIMEOUT:     Timeout
  *            - LL_ERR_INVD_PARAM:  pu8Buf is NULL
- * @note   This function don't check if the data write is whthin one page
+ * @note   This function don't check if the data write is within one page
  */
 static int32_t BSP_24CXX_I2C_WritePage(uint16_t u16Addr, const uint8_t *pu8Buf, uint32_t u32Len)
 {
@@ -171,9 +190,12 @@ static int32_t BSP_24CXX_I2C_GetStatus(void)
 {
     return BSP_I2C_GetDevStatus(BSP_24CXX_I2C_UNIT, EE_24CXX_DEV_ADDR);
 }
+/**
+ * @}
+ */
 
 /**
- * @defgroup EV_HC32F460_LQFP100_V2_24CXX_Global_Functions HC32F460 LQFP100 V2 EVB 24CXX Global Functions
+ * @defgroup EV_HC32F460_LQFP100_V2_24CXX_Global_Functions EV_HC32F460_LQFP100_V2 24CXX Global Functions
  * @{
  */
 
@@ -260,8 +282,8 @@ int32_t BSP_24CXX_WaitIdle(void)
  */
 
 /**
-* @}
-*/
+ * @}
+ */
 
 /******************************************************************************
  * EOF (not truncated)

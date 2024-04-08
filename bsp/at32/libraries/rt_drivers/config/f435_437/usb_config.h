@@ -17,15 +17,15 @@
 extern "C" {
 #endif
 
-#if defined BSP_USING_DEVICE_USBFS1 || defined BSP_USING_DEVICE_USBFS2
+#if defined BSP_USING_DEVICE_USBOTG1 || defined BSP_USING_DEVICE_USBOTG2
 #define USE_OTG_DEVICE_MODE
 #endif
 
-#if defined BSP_USING_HOST_USBFS1 || defined BSP_USING_HOST_USBFS2
+#if defined BSP_USING_HOST_USBOTG1 || defined BSP_USING_HOST_USBOTG2
 #define USE_OTG_HOST_MODE
 #endif
 
-/* usbfs irqhandler */
+/* usb irqhandler */
 #define OTGFS1_IRQHandler               OTGFS1_IRQHandler
 #define OTGFS2_IRQHandler               OTGFS2_IRQHandler
 
@@ -86,47 +86,51 @@ extern "C" {
   */
 // #define USB_LOW_POWER_WAKUP
 
-#if defined(BSP_USING_HOST_USBFS1)
-#undef BSP_USING_HOST_USBFS2
-#undef BSP_USING_DEVICE_USBFS1
-#define USBFS1_CONFIG                                               \
+#if defined(BSP_USING_HOST_USBOTG1)
+#undef BSP_USING_HOST_USBOTG2
+#undef BSP_USING_DEVICE_USBOTG1
+#define USBOTG1_CONFIG                                              \
     {                                                               \
         .name = "usbh1",                                            \
         .id = USB_OTG1_ID,                                          \
+        .dev_spd = USB_FULL_SPEED_CORE_ID,                          \
         .irqn = OTGFS1_IRQn,                                        \
     }
-#endif /* BSP_USING_HOST_USBFS1 */
+#endif /* BSP_USING_HOST_USBOTG1 */
 
-#if defined(BSP_USING_DEVICE_USBFS1)
-#undef BSP_USING_DEVICE_USBFS2
-#define USBFS1_CONFIG                                               \
+#if defined(BSP_USING_DEVICE_USBOTG1)
+#undef BSP_USING_DEVICE_USBOTG2
+#define USBOTG1_CONFIG                                              \
     {                                                               \
         .name = "usbd",                                             \
         .id = USB_OTG1_ID,                                          \
+        .dev_spd = USB_FULL_SPEED_CORE_ID,                          \
         .irqn = OTGFS1_IRQn,                                        \
     }
-#endif /* BSP_USING_DEVICE_USBFS1 */
+#endif /* BSP_USING_DEVICE_USBOTG1 */
 
-#if defined(BSP_USING_HOST_USBFS2)
-#undef BSP_USING_HOST_USBFS1
-#undef BSP_USING_DEVICE_USBFS2
-#define USBFS2_CONFIG                                               \
+#if defined(BSP_USING_HOST_USBOTG2)
+#undef BSP_USING_HOST_USBOTG1
+#undef BSP_USING_DEVICE_USBOTG2
+#define USBOTG2_CONFIG                                              \
     {                                                               \
         .name = "usbh2",                                            \
         .id = USB_OTG2_ID,                                          \
+        .dev_spd = USB_FULL_SPEED_CORE_ID,                          \
         .irqn = OTGFS2_IRQn,                                        \
     }
-#endif /* BSP_USING_HOST_USBFS2 */
+#endif /* BSP_USING_HOST_USBOTG2 */
 
-#if defined(BSP_USING_DEVICE_USBFS2)
-#undef BSP_USING_DEVICE_USBFS1
-#define USBFS2_CONFIG                                               \
+#if defined(BSP_USING_DEVICE_USBOTG2)
+#undef BSP_USING_DEVICE_USBOTG1
+#define USBOTG2_CONFIG                                              \
     {                                                               \
         .name = "usbd",                                             \
         .id = USB_OTG2_ID,                                          \
+        .dev_spd = USB_FULL_SPEED_CORE_ID,                          \
         .irqn = OTGFS2_IRQn,                                        \
     }
-#endif /* BSP_USING_DEVICE_USBFS2 */
+#endif /* BSP_USING_DEVICE_USBOTG2 */
 
 #ifdef __cplusplus
 }

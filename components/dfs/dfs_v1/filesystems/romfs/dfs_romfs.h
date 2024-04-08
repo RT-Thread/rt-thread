@@ -26,6 +26,9 @@ struct romfs_dirent
 };
 
 int dfs_romfs_init(void);
-extern const struct romfs_dirent romfs_root;
 
-#endif
+#ifndef RT_USING_DFS_ROMFS_USER_ROOT
+extern const struct romfs_dirent romfs_root;
+#endif /* RT_USING_DFS_ROMFS_USER_ROOT */
+
+#endif /* __DFS_ROMFS_H__ */

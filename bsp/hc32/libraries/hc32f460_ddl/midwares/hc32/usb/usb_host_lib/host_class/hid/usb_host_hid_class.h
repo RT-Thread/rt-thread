@@ -8,7 +8,7 @@
    2022-03-31       CDT             First version
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -138,11 +138,11 @@ extern usb_host_class_callback_func  USBH_HID_cb;
   Global function prototypes (definition in C source)
  ******************************************************************************/
 extern HOST_STATUS usb_host_set_hidreport(usb_core_instance *pdev,
-        USBH_HOST *phost,
-        uint8_t reportType,
-        uint8_t reportId,
-        uint8_t reportLen,
-        uint8_t *reportBuff);
+                                          USBH_HOST *phost,
+                                          uint8_t reportType,
+                                          uint8_t reportId,
+                                          uint8_t reportLen,
+                                          uint8_t *reportBuff);
 
 /**
  * @}

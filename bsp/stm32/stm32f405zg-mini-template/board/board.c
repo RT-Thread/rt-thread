@@ -9,7 +9,8 @@
  * 2023-08-20     Donocean     Configure Main clock to 168MHz
  */
 
-#include "board.h"
+#include <board.h>
+#include <drv_common.h>
 
 void SystemClock_Config(void)
 {

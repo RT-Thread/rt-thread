@@ -11,35 +11,21 @@
  *
  */
 
-#ifndef __DRT_QSPI_H__
-#define __DRT_QSPI_H__
+#ifndef __DRV_QSPI_H__
+#define __DRV_QSPI_H__
 
-#include "rtconfig.h"
-
-#ifdef RT_USING_QSPI
-#include <rtthread.h>
-#include "rtdevice.h"
-#include "fqspi_flash.h"
-#define PHYTIUM_QSPI_NAME "qspi"
-
+#include "rtdef.h"
 #ifdef __cplusplus
 extern "C"
 {
 #endif
 
-typedef struct
-{
-    rt_uint32_t fqspi_id;
-    rt_uint32_t init; /* 0 is init already */
-    FQspiCtrl fqspi;
-    struct rt_spi_bus qspi_bus;
-} phytium_qspi_bus;
-
 rt_err_t phytium_qspi_bus_attach_device(const char *bus_name, const char *device_name);
+
+int rt_hw_qspi_init(void);
 
 #ifdef __cplusplus
 }
-#endif
 #endif
 #endif // !DRT_QSPI_H
 

@@ -8,7 +8,9 @@
  * 2023-03-24     spaceman          the first version
  */
 
+#include <rtthread.h>
 #include "board.h"
+#include <drv_common.h>
 
 #define AXI_SRAM_ADDR (0X24000000)
 #define AXI_SRAM_SIZE (512*1024)

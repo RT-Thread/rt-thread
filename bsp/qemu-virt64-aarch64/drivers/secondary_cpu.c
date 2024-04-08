@@ -12,6 +12,11 @@
 #include "gic.h"
 #include "interrupt.h"
 #include "mmu.h"
+#include "gtimer.h"
+
+#ifdef BSP_USING_GICV3
+#include <gicv3.h>
+#endif
 
 #ifdef RT_USING_SMP
 
@@ -28,7 +33,12 @@ void rt_hw_secondary_cpu_bsp_start(void)
 
     arm_gic_cpu_init(0, 0);
 
+#ifdef BSP_USING_GICV3
+    arm_gic_redist_init(0, 0);
+#endif /* BSP_USING_GICV3 */
+
     // local timer init
+    rt_hw_gtimer_init();
 
     rt_system_scheduler_start();
 }

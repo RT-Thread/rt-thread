@@ -7,9 +7,10 @@
    Change Logs:
    Date             Author          Notes
    2022-03-31       CDT             First version
+   2023-06-30       CDT             Use IS_RMU_UNLOCKED() to assert
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -49,6 +50,7 @@
  * @defgroup RMU_Local_Macros RMU Local Macros
  * @{
  */
+#define IS_RMU_UNLOCKED()       ((CM_PWC->FPRC & PWC_FPRC_FPRCB1) == PWC_FPRC_FPRCB1)
 
 /**
  * @defgroup RMU_Check_Parameters_Validity RMU Check Parameters Validity
@@ -110,7 +112,7 @@ en_flag_status_t RMU_GetStatus(uint32_t u32RmuResetCause)
  */
 void RMU_ClearStatus(void)
 {
-    DDL_ASSERT((CM_PWC->FPRC & PWC_FPRC_FPRCB1) == PWC_FPRC_FPRCB1);
+    DDL_ASSERT(IS_RMU_UNLOCKED());
     SET_REG_BIT(CM_RMU->RSTF0, RMU_RSTF0_CLRF);
     __NOP();
     __NOP();
@@ -128,7 +130,7 @@ void RMU_ClearStatus(void)
  */
 void RMU_CPULockUpCmd(en_functional_state_t enNewState)
 {
-    DDL_ASSERT((CM_PWC->FPRC & PWC_FPRC_FPRCB1) == PWC_FPRC_FPRCB1);
+    DDL_ASSERT(IS_RMU_UNLOCKED());
 
     DDL_ASSERT(IS_FUNCTIONAL_STATE(enNewState));
     WRITE_REG32(bCM_RMU->PRSTCR0_b.LKUPREN, enNewState);
@@ -145,8 +147,8 @@ void RMU_CPULockUpCmd(en_functional_state_t enNewState)
  */
 
 /**
-* @}
-*/
+ * @}
+ */
 /*******************************************************************************
  * EOF (not truncated)
  ******************************************************************************/

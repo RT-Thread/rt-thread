@@ -11,6 +11,9 @@ CPPPATH = [cwd, cwd + '/../include']
 
 src     = Glob('*.c')
 
+if GetDepend('RT_USING_PIC') == False:
+    SrcRemove(src, ['irq.c'])
+
 group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)
 
 for d in list:

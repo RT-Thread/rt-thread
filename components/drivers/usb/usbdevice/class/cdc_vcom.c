@@ -755,7 +755,11 @@ static rt_ssize_t _vcom_rb_block_put(struct vcom *data, const rt_uint8_t *buf, r
     return size;
 }
 
+#ifdef RT_USING_SERIAL_V1
 static rt_ssize_t _vcom_tx(struct rt_serial_device *serial, rt_uint8_t *buf, rt_size_t size, int direction)
+#else
+static rt_ssize_t _vcom_tx(struct rt_serial_device *serial, rt_uint8_t *buf, rt_size_t size, rt_uint32_t tx_flag)
+#endif
 {
     struct ufunction *func;
     struct vcom *data;
@@ -889,18 +893,16 @@ static void vcom_tx_thread_entry(void* parameter)
             }
             if (!data->connected)
             {
-                if(data->serial.parent.open_flag &
 #ifdef RT_USING_SERIAL_V1
 #ifndef VCOM_TX_USE_DMA
-                         RT_DEVICE_FLAG_INT_TX
+                if(data->serial.parent.open_flag & RT_DEVICE_FLAG_INT_TX)
 #else
-                         RT_DEVICE_FLAG_DMA_TX
+                if(data->serial.parent.open_flag & RT_DEVICE_FLAG_DMA_TX)
 #endif
 #endif
 #ifdef RT_USING_SERIAL_V2
-                         RT_DEVICE_FLAG_TX_BLOCKING
+                if(data->serial.parent.open_flag & RT_DEVICE_FLAG_TX_BLOCKING)
 #endif
-                )
                 {
                 /* drop msg */
 #ifndef VCOM_TX_USE_DMA
@@ -923,18 +925,16 @@ static void vcom_tx_thread_entry(void* parameter)
             {
                 LOG_D("vcom tx timeout");
             }
-            if(data->serial.parent.open_flag &
 #ifdef RT_USING_SERIAL_V1
 #ifndef VCOM_TX_USE_DMA
-                         RT_DEVICE_FLAG_INT_TX
+            if(data->serial.parent.open_flag & RT_DEVICE_FLAG_INT_TX)
 #else
-                         RT_DEVICE_FLAG_DMA_TX
+            if(data->serial.parent.open_flag & RT_DEVICE_FLAG_DMA_TX)
 #endif
 #endif
 #ifdef RT_USING_SERIAL_V2
-                         RT_DEVICE_FLAG_TX_BLOCKING
+            if(data->serial.parent.open_flag & RT_DEVICE_FLAG_TX_BLOCKING)
 #endif
-            )
             {
 #ifndef VCOM_TX_USE_DMA
                 rt_hw_serial_isr(&data->serial,RT_SERIAL_EVENT_TX_DONE);

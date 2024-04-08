@@ -9,6 +9,7 @@
  * 2022-07-11     shelton      optimize code to improve network throughput
  *                             performance
  * 2022-10-15     shelton      optimize code
+ * 2023-10-18     shelton      optimize code
  */
 
 #include "drv_emac.h"
@@ -30,6 +31,8 @@
 
 #define MAX_ADDR_LEN                    6
 
+#define DMARXDESC_FRAMELENGTH_SHIFT     16
+
 struct rt_at32_emac
 {
     /* inherit from ethernet device */
@@ -46,8 +49,19 @@ struct rt_at32_emac
     emac_duplex_type emac_mode;
 };
 
+typedef struct {
+    rt_uint32_t length;
+    rt_uint32_t buffer;
+    emac_dma_desc_type *descriptor;
+    emac_dma_desc_type *rx_fs_desc;
+    emac_dma_desc_type *rx_ls_desc;
+    rt_uint8_t g_seg_count;
+} frame_type;
+
 static emac_dma_desc_type *dma_rx_dscr_tab, *dma_tx_dscr_tab;
 extern emac_dma_desc_type *dma_rx_desc_to_get, *dma_tx_desc_to_set;
+
+frame_type rx_frame;
 
 static rt_uint8_t *rx_buff, *tx_buff;
 static struct rt_at32_emac at32_emac_device;
@@ -451,71 +465,202 @@ static rt_err_t rt_at32_emac_control(rt_device_t dev, int cmd, void *args)
 }
 
 /**
+  * @brief emac txpkt chainmode
+  */
+rt_err_t emac_txpkt_chainmode(rt_uint32_t frame_length)
+{
+    rt_uint32_t buf_cnt = 0, index = 0;
+
+    /* check if the descriptor is owned by the ethernet dma (when set) or cpu (when reset) */
+    if((dma_tx_desc_to_set->status & EMAC_DMATXDESC_OWN) != (u32)RESET)
+    {
+        /* return error: own bit set */
+        return RT_ERROR;
+    }
+
+    if(frame_length == 0)
+    {
+        return RT_ERROR;
+    }
+
+    if(frame_length > EMAC_MAX_PACKET_LENGTH)
+    {
+        buf_cnt = frame_length / EMAC_MAX_PACKET_LENGTH;
+        if(frame_length % EMAC_MAX_PACKET_LENGTH)
+        {
+          buf_cnt += 1;
+        }
+    }
+    else
+    {
+        buf_cnt = 1;
+    }
+
+    if(buf_cnt == 1)
+    {
+        /* setting the last segment and first segment bits (in this case a frame is transmitted in one descriptor) */
+        dma_tx_desc_to_set->status |= EMAC_DMATXDESC_LS | EMAC_DMATXDESC_FS;
+
+        /* setting the frame length: bits[12:0] */
+        dma_tx_desc_to_set->controlsize = (frame_length & EMAC_DMATXDESC_TBS1);
+
+        /* set own bit of the tx descriptor status: gives the buffer back to ethernet dma */
+        dma_tx_desc_to_set->status |= EMAC_DMATXDESC_OWN;
+
+        /* selects the next dma tx descriptor list for next buffer to send */
+        dma_tx_desc_to_set = (emac_dma_desc_type*) (dma_tx_desc_to_set->buf2nextdescaddr);
+    }
+    else
+    {
+        for(index = 0; index < buf_cnt; index ++)
+        {
+            /* clear first and last segments */
+            dma_tx_desc_to_set->status &= ~(EMAC_DMATXDESC_LS | EMAC_DMATXDESC_FS);
+
+            /* set first segments */
+            if(index == 0)
+            {
+                dma_tx_desc_to_set->status |= EMAC_DMATXDESC_FS;
+            }
+
+            /* set size */
+            dma_tx_desc_to_set->controlsize = (EMAC_MAX_PACKET_LENGTH & EMAC_DMATXDESC_TBS1);
+
+            /* set last segments */
+            if(index == (buf_cnt - 1))
+            {
+                dma_tx_desc_to_set->status |= EMAC_DMATXDESC_LS;
+                dma_tx_desc_to_set->controlsize = ((frame_length - ((buf_cnt-1) * EMAC_MAX_PACKET_LENGTH)) & EMAC_DMATXDESC_TBS1);
+            }
+
+            /* set own bit of the tx descriptor status: gives the buffer back to ethernet dma */
+            dma_tx_desc_to_set->status |= EMAC_DMATXDESC_OWN;
+
+            /* selects the next dma tx descriptor list for next buffer to send */
+            dma_tx_desc_to_set = (emac_dma_desc_type*) (dma_tx_desc_to_set->buf2nextdescaddr);
+        }
+    }
+
+    /* when tx buffer unavailable flag is set: clear it and resume transmission */
+    if(emac_dma_flag_get(EMAC_DMA_TBU_FLAG))
+    {
+        /* clear tbus ethernet dma flag */
+        emac_dma_flag_clear(EMAC_DMA_TBU_FLAG);
+        /* resume dma transmission*/
+        EMAC_DMA->tpd_bit.tpd = 0;
+    }
+
+    return RT_EOK;
+}
+
+/**
   * @brief transmit data
   */
 rt_err_t rt_at32_emac_tx(rt_device_t dev, struct pbuf *p)
 {
     rt_err_t ret = -RT_ERROR;
     struct pbuf *q;
-    rt_uint32_t offset;
+    rt_uint32_t length = 0;
+    rt_uint32_t buffer_offset = 0, payload_offset = 0, copy_count = 0;
+    emac_dma_desc_type *dma_tx_desc;
+    rt_uint8_t *buffer;
 
-    if ((dma_tx_desc_to_set->status & EMAC_DMATXDESC_OWN) != RESET)
+    dma_tx_desc = dma_tx_desc_to_set;
+    buffer =  (uint8_t *)(dma_tx_desc_to_set->buf1addr);
+
+    /* copy data to buffer */
+    for(q = p; q != NULL; q = q->next)
     {
-        LOG_D("buffer not valid");
-        ret = ERR_USE;
-        goto __error;
+        if((dma_tx_desc->status & EMAC_DMATXDESC_OWN) != RESET)
+        {
+            ret = RT_EOK;
+            goto _error;
+        }
+
+        copy_count = q->len;
+        payload_offset = 0;
+
+        while((copy_count + buffer_offset) > EMAC_MAX_PACKET_LENGTH)
+        {
+            rt_memcpy(buffer + buffer_offset, (uint8_t *)q->payload + payload_offset, (EMAC_MAX_PACKET_LENGTH - buffer_offset));
+            dma_tx_desc = (emac_dma_desc_type*)dma_tx_desc->buf2nextdescaddr;
+
+            if((dma_tx_desc->status & EMAC_DMATXDESC_OWN) != RESET)
+            {
+                ret = RT_EOK;
+                goto _error;
+            }
+
+            buffer = (uint8_t *)dma_tx_desc->buf1addr;
+
+            copy_count = copy_count - (EMAC_MAX_PACKET_LENGTH - buffer_offset);
+            payload_offset = payload_offset + (EMAC_MAX_PACKET_LENGTH - buffer_offset);
+            length = length + (EMAC_MAX_PACKET_LENGTH - buffer_offset);
+            buffer_offset = 0;
+        }
+
+        rt_memcpy(buffer + buffer_offset, (uint8_t *)q->payload + payload_offset, copy_count);
+        buffer_offset = buffer_offset + copy_count;
+        length = length + copy_count;
     }
+    emac_txpkt_chainmode(length);
 
-    offset = 0;
-    for (q = p; q != NULL; q = q->next)
+    ret = RT_EOK;
+
+_error:
+     /* when tx buffer unavailable flag is set: clear it and resume transmission */
+    if(emac_dma_flag_get(EMAC_DMA_TBU_FLAG))
     {
-        uint8_t *buffer;
-
-        /* copy the frame to be sent into memory pointed by the current ethernet dma tx descriptor */
-        buffer = (uint8_t*)((dma_tx_desc_to_set->buf1addr) + offset);
-        SMEMCPY(buffer, q->payload, q->len);
-        offset += q->len;
-    }
-
-#ifdef EMAC_TX_DUMP
-    dump_hex(p->payload, p->tot_len);
-#endif
-
-    /* prepare transmit descriptors to give to dma */
-    LOG_D("transmit frame length :%d", p->tot_len);
-
-    /* setting the frame length: bits[12:0] */
-    dma_tx_desc_to_set->controlsize = (p->tot_len & EMAC_DMATXDESC_TBS1);
-    /* Setting the last segment and first segment bits (in this case a frame is transmitted in one descriptor) */
-    dma_tx_desc_to_set->status |= EMAC_DMATXDESC_LS | EMAC_DMATXDESC_FS;
-    /* enable tx completion interrupt */
-    dma_tx_desc_to_set->status |= EMAC_DMATXDESC_IC;
-    /* set own bit of the tx descriptor status: gives the buffer back to ethernet dma */
-    dma_tx_desc_to_set->status |= EMAC_DMATXDESC_OWN;
-
-    /* When Tx Buffer unavailable flag is set: clear it and resume transmission */
-    if(emac_dma_flag_get(EMAC_DMA_TBU_FLAG) != RESET)
-    {
+        /* clear tbus ethernet dma flag */
         emac_dma_flag_clear(EMAC_DMA_TBU_FLAG);
-        emac_dma_poll_demand_set(EMAC_DMA_TRANSMIT, 0);
-    }
-
-    /* selects the next dma tx descriptor list for next buffer to send */
-    dma_tx_desc_to_set = (emac_dma_desc_type*) (dma_tx_desc_to_set->buf2nextdescaddr);
-
-    return ERR_OK;
-
-__error:
-    if (emac_dma_flag_get(EMAC_DMA_UNF_FLAG) != (uint32_t)RESET)
-    {
-        /* clear underflow ethernet dma flag */
-        emac_dma_flag_clear(EMAC_DMA_UNF_FLAG);
-
         /* resume dma transmission*/
-        EMAC_DMA->tpd = 0;
+        EMAC_DMA->tpd_bit.tpd = 0;
     }
 
     return ret;
+}
+
+/**
+  * @brief emac rxpkt chainmode
+  */
+rt_err_t emac_rxpkt_chainmode(void)
+{
+    /* check if the descriptor is owned by the ethernet dma (when set) or cpu (when reset) */
+    if((dma_rx_desc_to_get->status & EMAC_DMARXDESC_OWN) != (u32)RESET)
+    {
+        /* return error: own bit set */
+        return RT_ERROR;
+    }
+    if((dma_rx_desc_to_get->status & EMAC_DMARXDESC_LS) != (u32)RESET)
+    {
+        rx_frame.g_seg_count ++;
+        if(rx_frame.g_seg_count == 1)
+        {
+            rx_frame.rx_fs_desc = dma_rx_desc_to_get;
+        }
+        rx_frame.rx_ls_desc = dma_rx_desc_to_get;
+        rx_frame.length = ((dma_rx_desc_to_get->status & EMAC_DMARXDESC_FL) >> DMARXDESC_FRAMELENGTH_SHIFT) - 4;
+        rx_frame.buffer = rx_frame.rx_fs_desc->buf1addr;
+
+        /* Selects the next DMA Rx descriptor list for next buffer to read */
+        dma_rx_desc_to_get = (emac_dma_desc_type*) (dma_rx_desc_to_get->buf2nextdescaddr);
+
+        return RT_EOK;
+    }
+    else if((dma_rx_desc_to_get->status & EMAC_DMARXDESC_FS) != (u32)RESET)
+    {
+        rx_frame.g_seg_count = 1;
+        rx_frame.rx_fs_desc = dma_rx_desc_to_get;
+        rx_frame.rx_ls_desc = NULL;
+        dma_rx_desc_to_get = (emac_dma_desc_type*) (dma_rx_desc_to_get->buf2nextdescaddr);
+    }
+    else
+    {
+        rx_frame.g_seg_count ++;
+        dma_rx_desc_to_get = (emac_dma_desc_type*) (dma_rx_desc_to_get->buf2nextdescaddr);
+    }
+
+    return RT_ERROR;
 }
 
 /**
@@ -525,71 +670,75 @@ struct pbuf *rt_at32_emac_rx(rt_device_t dev)
 {
     struct pbuf *p = NULL;
     struct pbuf *q = NULL;
-    rt_uint32_t offset = 0;
-    uint16_t len = 0;
-    uint8_t *buffer;
+    rt_uint16_t len = 0;
+    rt_uint8_t *buffer;
 
-    /* get received frame */
-    len = emac_received_packet_size_get();
+    emac_dma_desc_type *dma_rx_desc;
+    rt_uint32_t buffer_offset, payload_offset = 0, copy_count = 0;
+    rt_uint32_t index = 0;
+
+    if(emac_rxpkt_chainmode() != RT_EOK)
+    {
+        return NULL;
+    }
+
+    /* obtain the size of the packet and put it into the "len"
+       variable. */
+    len = rx_frame.length;
+    buffer = (uint8_t *)rx_frame.buffer;
+
+    /* we allocate a pbuf chain of pbufs from the pool. */
     if(len > 0)
     {
-        LOG_D("receive frame len : %d", len);
-        /* we allocate a pbuf chain of pbufs from the lwip buffer pool */
         p = pbuf_alloc(PBUF_RAW, len, PBUF_POOL);
+    }
 
-        if(p != NULL)
+    if(p != NULL)
+    {
+        dma_rx_desc = rx_frame.rx_fs_desc;
+        buffer_offset = 0;
+
+        for (q = p; q != NULL; q = q->next)
         {
-            for (q = p; q != RT_NULL; q= q->next)
+            copy_count = q->len;
+            payload_offset = 0;
+
+            while( (copy_count + buffer_offset) > EMAC_MAX_PACKET_LENGTH )
             {
-                /* get rx buffer */
-                buffer = (uint8_t *)(dma_rx_desc_to_get->buf1addr);
-#ifdef EMAC_RX_DUMP
-                dump_hex(buffer, len);
-#endif
-                /* copy the received frame into buffer from memory pointed by the current ethernet dma rx descriptor */
-                SMEMCPY(q->payload, (buffer + offset), q->len);
-                offset += q->len;
+                /* copy data to pbuf */
+                rt_memcpy((uint8_t*)q->payload + payload_offset, buffer + buffer_offset, (EMAC_MAX_PACKET_LENGTH - buffer_offset));
+
+                /* point to next descriptor */
+                dma_rx_desc = (emac_dma_desc_type *)(dma_rx_desc->buf2nextdescaddr);
+                buffer = (uint8_t *)(dma_rx_desc->buf1addr);
+
+                copy_count = copy_count - (EMAC_MAX_PACKET_LENGTH - buffer_offset);
+                payload_offset = payload_offset + (EMAC_MAX_PACKET_LENGTH - buffer_offset);
+                buffer_offset = 0;
             }
+            rt_memcpy((uint8_t*)q->payload + payload_offset, (uint8_t*)buffer + buffer_offset, copy_count);
+            buffer_offset = buffer_offset + copy_count;
         }
     }
-    else
+
+    dma_rx_desc = rx_frame.rx_fs_desc;
+    for(index = 0; index < rx_frame.g_seg_count; index ++)
     {
-        return p;
+        dma_rx_desc->status |= EMAC_DMARXDESC_OWN;
+        dma_rx_desc = (emac_dma_desc_type*) (dma_rx_desc->buf2nextdescaddr);
     }
 
-    /* release descriptors to dma */
-    dma_rx_desc_to_get->status |= EMAC_DMARXDESC_OWN;
+    rx_frame.g_seg_count = 0;
 
     /* when rx buffer unavailable flag is set: clear it and resume reception */
-    if(emac_dma_flag_get(EMAC_DMA_RBU_FLAG) != RESET)
+    if(emac_dma_flag_get(EMAC_DMA_RBU_FLAG))
     {
-        /* clear rbu ethernet dma flag */
+        /* clear rbus ethernet dma flag */
         emac_dma_flag_clear(EMAC_DMA_RBU_FLAG);
         /* resume dma reception */
-        emac_dma_poll_demand_set(EMAC_DMA_RECEIVE, 0);
+        EMAC_DMA->rpd_bit.rpd = FALSE;
     }
 
-    /* update the ethernet dma global rx descriptor with next rx decriptor */
-    /* chained mode */
-    if((dma_rx_desc_to_get->controlsize & EMAC_DMARXDESC_RCH) != RESET)
-    {
-        /* selects the next dma rx descriptor list for next buffer to read */
-        dma_rx_desc_to_get = (emac_dma_desc_type*) (dma_rx_desc_to_get->buf2nextdescaddr);
-    }
-    /* ring mode */
-    else
-    {
-        if((dma_rx_desc_to_get->controlsize & EMAC_DMARXDESC_RER) != RESET)
-        {
-            /* selects the first dma rx descriptor for next buffer to read: last rx descriptor was used */
-            dma_rx_desc_to_get = (emac_dma_desc_type*) (EMAC_DMA->rdladdr);
-        }
-        else
-        {
-            /* selects the next dma rx descriptor list for next buffer to read */
-            dma_rx_desc_to_get = (emac_dma_desc_type*) ((uint32_t)dma_rx_desc_to_get + 0x10 + ((EMAC_DMA->bm & 0x0000007C) >> 2));
-        }
-    }
     return p;
 }
 
@@ -856,6 +1005,8 @@ static int rt_hw_at32_emac_init(void)
 
     at32_emac_device.parent.eth_rx = rt_at32_emac_rx;
     at32_emac_device.parent.eth_tx = rt_at32_emac_tx;
+
+    rx_frame.g_seg_count = 0;
 
     /* reset phy */
     phy_reset();

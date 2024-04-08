@@ -156,7 +156,6 @@ static int _lwp_shmget(size_t key, size_t size, int create)
         p->mem_obj.on_varea_open = on_shm_varea_open;
         p->mem_obj.on_varea_close = on_shm_varea_close;
         p->mem_obj.hint_free = NULL;
-        p->mem_obj.on_page_offload = NULL;
 
         /* then insert it into the balancing binary tree */
         node_key = (struct lwp_avl_struct *)rt_malloc(sizeof(struct lwp_avl_struct) * 2);

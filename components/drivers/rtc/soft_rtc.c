@@ -40,10 +40,10 @@ static rt_device_t    source_device = RT_NULL;
 static struct rt_device soft_rtc_dev;
 static rt_tick_t init_tick;
 static time_t init_time;
+static struct timeval init_tv = {0};
 
 #ifdef RT_USING_KTIME
-static struct timeval   init_tv = {0};
-static struct timespec  init_ts = {0};
+static struct timespec init_ts = {0};
 #endif
 
 #ifdef RT_USING_ALARM
@@ -97,12 +97,6 @@ static void _source_device_control(int cmd, void *args)
 static rt_err_t soft_rtc_control(rt_device_t dev, int cmd, void *args)
 {
     time_t *t;
-#ifdef RT_USING_KTIME
-    struct timeval  *tv;
-    struct timespec *ts;
-    struct timeval   _tv;
-    struct timespec  _ts;
-#endif
     struct tm time_temp;
 
     RT_ASSERT(dev != RT_NULL);
@@ -111,9 +105,11 @@ static rt_err_t soft_rtc_control(rt_device_t dev, int cmd, void *args)
     switch (cmd)
     {
     case RT_DEVICE_CTRL_RTC_GET_TIME:
+    {
         t = (time_t *) args;
         *t = init_time + (rt_tick_get() - init_tick) / RT_TICK_PER_SECOND;
         break;
+    }
     case RT_DEVICE_CTRL_RTC_SET_TIME:
     {
         t = (time_t *) args;
@@ -132,37 +128,76 @@ static rt_err_t soft_rtc_control(rt_device_t dev, int cmd, void *args)
 #endif
 #ifdef RT_USING_KTIME
     case RT_DEVICE_CTRL_RTC_GET_TIMEVAL:
-        tv = (struct timeval *)args;
+    {
+        struct timeval _tv;
+        struct timeval *tv = (struct timeval *)args;
         rt_ktime_boottime_get_us(&_tv);
         tv->tv_sec  = init_time + _tv.tv_sec;
         tv->tv_usec = init_tv.tv_usec + _tv.tv_usec;
         break;
+    }
     case RT_DEVICE_CTRL_RTC_SET_TIMEVAL:
-        tv = (struct timeval *)args;
+    {
+        struct timeval _tv;
+        struct timeval *tv = (struct timeval *)args;
         rt_ktime_boottime_get_us(&_tv);
         set_rtc_time(tv->tv_sec);
         init_tv.tv_usec = tv->tv_usec - _tv.tv_usec;
         _source_device_control(RT_DEVICE_CTRL_RTC_SET_TIME, &(tv->tv_sec));
         break;
+    }
     case RT_DEVICE_CTRL_RTC_GET_TIMESPEC:
-        ts = (struct timespec *)args;
+    {
+        struct timespec _ts;
+        struct timespec *ts = (struct timespec *)args;
         rt_ktime_boottime_get_ns(&_ts);
         ts->tv_sec  = init_time + _ts.tv_sec;
         ts->tv_nsec = init_ts.tv_nsec + _ts.tv_nsec;
         break;
+    }
     case RT_DEVICE_CTRL_RTC_SET_TIMESPEC:
-        ts = (struct timespec *)args;
+    {
+        struct timespec _ts;
+        struct timespec *ts = (struct timespec *)args;
         rt_ktime_boottime_get_ns(&_ts);
         set_rtc_time(ts->tv_sec);
         init_ts.tv_nsec = ts->tv_nsec - _ts.tv_nsec;
         _source_device_control(RT_DEVICE_CTRL_RTC_SET_TIME, &(ts->tv_sec));
         break;
+    }
     case RT_DEVICE_CTRL_RTC_GET_TIMERES:
-        ts          = (struct timespec *)args;
+    {
+        struct timespec *ts = (struct timespec *)args;
         ts->tv_sec  = 0;
         ts->tv_nsec = (rt_ktime_cputimer_getres() / RT_KTIME_RESMUL);
         break;
-#endif
+    }
+#else
+    case RT_DEVICE_CTRL_RTC_GET_TIMEVAL:
+    {
+        struct timeval *tv = (struct timeval *)args;
+        rt_tick_t tick = rt_tick_get() - init_tick;
+        tv->tv_sec = init_time + tick / RT_TICK_PER_SECOND;
+        tv->tv_usec = init_tv.tv_usec + ((tick % RT_TICK_PER_SECOND) * (1000000 / RT_TICK_PER_SECOND));
+        break;
+    }
+    case RT_DEVICE_CTRL_RTC_SET_TIMEVAL:
+    {
+        struct timeval *tv = (struct timeval *)args;
+        rt_tick_t tick = rt_tick_get() - init_tick;
+        set_rtc_time(tv->tv_sec);
+        init_tv.tv_usec = tv->tv_usec - ((tick % RT_TICK_PER_SECOND) * (1000000 / RT_TICK_PER_SECOND));
+        _source_device_control(RT_DEVICE_CTRL_RTC_SET_TIME, &(tv->tv_sec));
+        break;
+    }
+    case RT_DEVICE_CTRL_RTC_GET_TIMERES:
+    {
+        struct timespec *ts = (struct timespec *)args;
+        ts->tv_sec  = 0;
+        ts->tv_nsec = (1000UL * 1000 * 1000) / RT_TICK_PER_SECOND;
+        break;
+    }
+#endif /* RT_USING_KTIME */
     default:
         return -RT_EINVAL;
     }
@@ -233,7 +268,7 @@ INIT_DEVICE_EXPORT(rt_soft_rtc_init);
 
 #ifdef RT_USING_SYSTEM_WORKQUEUE
 
-rt_err_t rt_soft_rtc_sync()
+rt_err_t rt_soft_rtc_sync(void)
 {
     time_t time = 0;
 

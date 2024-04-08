@@ -43,7 +43,12 @@ arch_start_umode:
     msr     spsr, r9
     mov     sp, r3
 
-    mov     r3, r2 ;/* user stack top */
+    /* set user stack top */
+    cps #Mode_SYS
+    mov sp, r2
+    cps #Mode_SVC
+    mov     r3, r2
+
     /* set data address. */
     movs    pc, r1
 

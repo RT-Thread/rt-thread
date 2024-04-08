@@ -9,7 +9,7 @@
    2022-03-31       CDT             First version
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -421,8 +421,8 @@ void TMR0_SetClockDiv(CM_TMR0_TypeDef *TMR0x, uint32_t u32Ch, uint32_t u32Div)
  *           @arg @ref TMR0_Channel
  * @param  [in] u32Func                 Select TMR0 function
  *         This parameter can be a value of the following:
- *           @arg TMR0_FUNC_CMP:        Select the Compare function for TMR0
- *           @arg TMR0_FUNC_CAPT:       Select the Capture function for TMR0
+ *           @arg TMR0_FUNC_CMP:        Select the Compare function
+ *           @arg TMR0_FUNC_CAPT:       Select the Capture function
  * @retval None
  */
 void TMR0_SetFunc(CM_TMR0_TypeDef *TMR0x, uint32_t u32Ch, uint32_t u32Func)
@@ -538,8 +538,7 @@ void TMR0_HWClearCondCmd(CM_TMR0_TypeDef *TMR0x, uint32_t u32Ch, en_functional_s
 
 /**
  * @brief  Enable or disable specified Tmr0 interrupt.
- * @note   The comparison matching interrupt of channel 'TMR0_INT_CMP_A' in unit 'CM_TMR0_1' of 'HC32F460,HC32F451,HC32F452'.
- *         is only available in asynchronous counting mode.
+ * @note   The comparison matching interrupt of channel 'TMR0_INT_CMP_A' in unit 'CM_TMR0_1' is only available in asynchronous counting mode.
  * @param  [in] TMR0x                   Pointer to TMR0 unit instance
  *         This parameter can be one of the following values:
  *           @arg CM_TMR0 or CM_TMR0_x: TMR0 unit instance
@@ -618,8 +617,8 @@ void TMR0_ClearStatus(CM_TMR0_TypeDef *TMR0x, uint32_t u32Flag)
  */
 
 /**
-* @}
-*/
+ * @}
+ */
 
 /******************************************************************************
  * EOF (not truncated)

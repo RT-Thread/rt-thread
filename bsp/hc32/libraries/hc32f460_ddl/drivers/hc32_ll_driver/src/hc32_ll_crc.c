@@ -7,9 +7,14 @@
    Change Logs:
    Date             Author          Notes
    2022-03-31       CDT             First version
+   2022-06-30       CDT             Add waiting time after write CRC data
+   2023-06-30       CDT             Reconstruct interface function relate to calculate CRC
+                                    Optimize CRC_DeInit function
+   2023-09-30       CDT             Delete and modify some of group/function relate to calculate CRC
+                                    Modify typo
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -93,21 +98,19 @@
  */
 
 /**
- * @defgroup CRC_DATA_Bit_Width CRC Data Bit Width
+ * @defgroup CRC_DATA_Register_Address CRC Data Register Address
  * @{
  */
-#define CRC_DATA_WIDTH_8BIT             (1U)
-#define CRC_DATA_WIDTH_16BIT            (2U)
-#define CRC_DATA_WIDTH_32BIT            (4U)
+#define CRC_DATA_ADDR                   ((uint32_t)(&CM_CRC->DAT0))
 /**
  * @}
  */
 
 /**
- * @defgroup CRC_Register_Address CRC Register Address
+ * @defgroup CRC_Calculate_Clock_Count CRC Calculate Clock Count
  * @{
  */
-#define CRC_DATA_ADDR                   ((uint32_t)(&CM_CRC->DAT0))
+#define CRC_CALC_CLK_COUNT              (10UL)
 /**
  * @}
  */
@@ -262,117 +265,6 @@ static int32_t CRC_WriteData32(const uint32_t au32Data[], uint32_t u32Len)
 }
 
 /**
- * @brief  Calculate the CRC value and start with the previously calculated CRC as initial value.
- * @param  [in] u8DataWidth             Bit width of the data.
- *         This parameter can be one of the macros group @ref CRC_DATA_Bit_Width
- *           @arg CRC_DATA_WIDTH_8BIT:  8  Bit
- *           @arg CRC_DATA_WIDTH_16BIT: 16 Bit
- *           @arg CRC_DATA_WIDTH_32BIT: 32 Bit
- * @param  [in] pvData                  Pointer to the buffer containing the data to be calculated.
- * @param  [in] u32Len                  The length(counted in bytes or half word or word, depending on
- *                                      the bit width) of the data to be calculated.
- * @retval The CRC value.
- * @note   The function fetch data in byte or half word or word depending on the data bit width(the parameter u8DataWidth).
- * @note   The upper 16 bit of CRC result value is ignored when using CRC16
- */
-static uint32_t CRC_Accumulate(uint8_t u8DataWidth, const void *pvData, uint32_t u32Len)
-{
-    uint32_t u32CrcValue = 0UL;
-
-    if ((pvData != NULL) && (u32Len != 0UL)) {
-        DDL_ASSERT(IS_CRC_DATA_WIDTH(u8DataWidth));
-
-        /* Write data */
-        if (CRC_DATA_WIDTH_32BIT == u8DataWidth) {
-            (void)CRC_WriteData32((const uint32_t *)pvData, u32Len);
-        } else if (CRC_DATA_WIDTH_16BIT == u8DataWidth) {
-            (void)CRC_WriteData16((const uint16_t *)pvData, u32Len);
-        } else {
-            (void)CRC_WriteData8((const uint8_t *)pvData, u32Len);
-        }
-
-        /* Get checksum */
-        if (READ_REG32_BIT(CM_CRC->CR, CRC_CR_CR) == CRC_CRC32) {
-            u32CrcValue = READ_REG32(CM_CRC->RESLT);
-        } else {
-            u32CrcValue = (READ_REG16(CM_CRC->RESLT) & CRC16_INIT_VALUE);
-        }
-    }
-
-    return u32CrcValue;
-}
-
-/**
- * @brief  Calculate the CRC value and start with the specified initial value(u32InitValue).
- * @param  [in] u32InitValue            The CRC initialization value which is the valid bits same as
- *                                      the bits of CRC Protocol.
- * @param  [in] u8DataWidth             Bit width of the data.
- *         This parameter can be one of the following values:
- *           @arg CRC_DATA_WIDTH_8BIT:  8  Bit
- *           @arg CRC_DATA_WIDTH_16BIT: 16 Bit
- *           @arg CRC_DATA_WIDTH_32BIT: 32 Bit
- * @param  [in] pvData                  Pointer to the buffer containing the data to be computed.
- * @param  [in] u32Len                  The length(counted in bytes or half word or word, depending on
- *                                      the bit width) of the data to be computed.
- * @retval The CRC value.
- * @note   The function fetch data in byte or half word or word depending on the data bit width(the parameter u8DataWidth).
- * @note   The upper 16 bit of CRC result value is ignored when using CRC16
- */
-static uint32_t CRC_Calculate(uint32_t u32InitValue, uint8_t u8DataWidth, const void *pvData, uint32_t u32Len)
-{
-    uint32_t u32CrcValue = 0UL;
-
-    if ((pvData != NULL) && (u32Len != 0UL)) {
-        /* Set initial value */
-        if (READ_REG32_BIT(CM_CRC->CR, CRC_CR_CR) == CRC_CRC32) {
-            WRITE_REG32(CM_CRC->RESLT, u32InitValue);
-        } else {
-            WRITE_REG16(CM_CRC->RESLT, (u32InitValue & CRC16_INIT_VALUE));
-        }
-
-        u32CrcValue = CRC_Accumulate(u8DataWidth, pvData, u32Len);
-    }
-
-    return u32CrcValue;
-}
-
-/**
- * @brief  Check the CRC calculating result with the expected value.
- * @param  [in] u32InitValue            The CRC initialization value which is the valid bits same as
- *                                      the bits of CRC Protocol.
- * @param  [in] u8DataWidth             Bit width of the data.
- *         This parameter can be one of the following values:
- *           @arg CRC_DATA_WIDTH_8BIT:  8  Bit
- *           @arg CRC_DATA_WIDTH_16BIT: 16 Bit
- *           @arg CRC_DATA_WIDTH_32BIT: 32 Bit
- * @param  [in] pvData                  Pointer to the buffer containing the data to be computed.
- * @param  [in] u32Len                  The length(counted in byte) of the data to be calculated.
- * @param  [in] u32ExpectValue          The expected CRC value to be checked.
- * @retval An @ref en_flag_status_t enumeration type value.
- * @note   The upper 16 bit of CRC result value and the expected value are ignored when using CRC16
- */
-static en_flag_status_t CRC_CheckData(uint32_t u32InitValue, uint8_t u8DataWidth,
-                                      const void *pvData, uint32_t u32Len, uint32_t u32ExpectValue)
-{
-    en_flag_status_t enStatus = RESET;
-
-    if ((pvData != NULL) && (u32Len != 0UL)) {
-        (void)CRC_Calculate(u32InitValue, u8DataWidth, pvData, u32Len);
-
-        u32ExpectValue = CRC_ConvertCrcValue(u32ExpectValue);
-
-        if (READ_REG32_BIT(CM_CRC->CR, CRC_CR_CR) == CRC_CRC32) {
-            (void)CRC_WriteData32(&u32ExpectValue, 1UL);
-        } else {
-            (void)CRC_WriteData16((uint16_t *)((void *)&u32ExpectValue), 1UL);
-        }
-
-        enStatus = CRC_GetResultStatus();
-    }
-
-    return enStatus;
-}
-/**
  * @}
  */
 
@@ -394,7 +286,7 @@ int32_t CRC_StructInit(stc_crc_init_t *pstcCrcInit)
 
     if (NULL != pstcCrcInit) {
         pstcCrcInit->u32Protocol = CRC_CRC16;
-        pstcCrcInit->u32InitValue = CRC16_INIT_VALUE;
+        pstcCrcInit->u32InitValue = CRC_INIT_VALUE_DEFAULT;
         pstcCrcInit->u32RefIn = CRC_REFIN_ENABLE;
         pstcCrcInit->u32RefOut = CRC_REFOUT_ENABLE;
         pstcCrcInit->u32XorOut = CRC_XOROUT_ENABLE;
@@ -417,8 +309,6 @@ int32_t CRC_Init(const stc_crc_init_t *pstcCrcInit)
 
     if (NULL != pstcCrcInit) {
         DDL_ASSERT(IS_CRC_PROTOCOL(pstcCrcInit->u32Protocol));
-        CRC_DeInit();
-
         DDL_ASSERT(IS_CRC_REFIN(pstcCrcInit->u32RefIn));
         DDL_ASSERT(IS_CRC_REFOUT(pstcCrcInit->u32RefOut));
         DDL_ASSERT(IS_CRC_XOROUT(pstcCrcInit->u32XorOut));
@@ -428,12 +318,11 @@ int32_t CRC_Init(const stc_crc_init_t *pstcCrcInit)
         MODIFY_REG32(CM_CRC->CR, CRC_CRC32, pstcCrcInit->u32Protocol);
 
         /* Set initial value */
-        if (CRC_CRC32 == pstcCrcInit->u32Protocol) {
-            WRITE_REG32(CM_CRC->RESLT, pstcCrcInit->u32InitValue);
+        if (CRC_CRC16 == (pstcCrcInit->u32Protocol & CRC_CRC32)) {
+            WRITE_REG16(CM_CRC->RESLT, (uint16_t)pstcCrcInit->u32InitValue);
         } else {
-            WRITE_REG16(CM_CRC->RESLT, pstcCrcInit->u32InitValue);
+            WRITE_REG32(CM_CRC->RESLT, pstcCrcInit->u32InitValue);
         }
-
         i32Ret = LL_OK;
     }
     return i32Ret;
@@ -442,11 +331,15 @@ int32_t CRC_Init(const stc_crc_init_t *pstcCrcInit)
 /**
  * @brief  De-initialize the CRC.
  * @param  None
- * @retval None
+ * @retval int32_t:
+ *           - LL_OK:           Reset success.
  */
-void CRC_DeInit(void)
+int32_t CRC_DeInit(void)
 {
+    int32_t i32Ret = LL_OK;
     WRITE_REG32(CM_CRC->CR, CRC_CR_RST_VALUE);
+
+    return i32Ret;
 }
 
 /**
@@ -468,181 +361,261 @@ en_flag_status_t CRC_GetResultStatus(void)
 }
 
 /**
- * @brief  Calculate the CRC value and start with the previously calculated CRC as initial value.
- * @param  [in] au8Data                 Pointer to the buffer containing the data to be calculated.
- * @param  [in] u32Len                  The length(counted in bytes) of the data to be calculated.
- * @retval The CRC value.
- * @note   The upper 16 bit of CRC result value is ignored when using CRC16
+ * @brief  Calculate the CRC16 value and start with the previously calculated CRC as initial value.
+ * @param  [in] u8DataWidth             Bit width of the data.
+ *         This parameter can be one of the macros group @ref CRC_DATA_Bit_Width
+ *           @arg CRC_DATA_WIDTH_8BIT:  8  Bit
+ *           @arg CRC_DATA_WIDTH_16BIT: 16 Bit
+ *           @arg CRC_DATA_WIDTH_32BIT: 32 Bit
+ * @param  [in] pvData                  Pointer to the buffer containing the data to be calculated.
+ * @param  [in] u32Len                  The length(counted in bytes or half word or word, depending on
+ *                                      the bit width) of the data to be calculated.
+ * @retval The CRC16 value.
+ * @note   The function fetch data in byte or half word or word depending on the data bit width(the parameter u8DataWidth).
  */
-uint32_t CRC_AccumulateData8(const uint8_t au8Data[], uint32_t u32Len)
+uint16_t CRC_CRC16_AccumulateData(uint8_t u8DataWidth, const void *pvData, uint32_t u32Len)
+{
+    uint16_t u16CrcValue = 0U;
+
+    if ((pvData != NULL) && (u32Len != 0UL)) {
+        DDL_ASSERT(IS_CRC_DATA_WIDTH(u8DataWidth));
+
+        /* Write data */
+        if (CRC_DATA_WIDTH_32BIT == u8DataWidth) {
+            (void)CRC_WriteData32((const uint32_t *)pvData, u32Len);
+        } else if (CRC_DATA_WIDTH_16BIT == u8DataWidth) {
+            (void)CRC_WriteData16((const uint16_t *)pvData, u32Len);
+        } else {
+            (void)CRC_WriteData8((const uint8_t *)pvData, u32Len);
+        }
+
+        /* Get checksum */
+        u16CrcValue = (uint16_t)READ_REG16(CM_CRC->RESLT);
+    }
+
+    return u16CrcValue;
+}
+
+/**
+ * @brief  Calculate the CRC32 value and start with the previously calculated CRC as initial value.
+ * @param  [in] u8DataWidth             Bit width of the data.
+ *         This parameter can be one of the macros group @ref CRC_DATA_Bit_Width
+ *           @arg CRC_DATA_WIDTH_8BIT:  8  Bit
+ *           @arg CRC_DATA_WIDTH_16BIT: 16 Bit
+ *           @arg CRC_DATA_WIDTH_32BIT: 32 Bit
+ * @param  [in] pvData                  Pointer to the buffer containing the data to be calculated.
+ * @param  [in] u32Len                  The length(counted in bytes or half word or word, depending on
+ *                                      the bit width) of the data to be calculated.
+ * @retval The CRC32 value.
+ * @note   The function fetch data in byte or half word or word depending on the data bit width(the parameter u8DataWidth).
+ */
+uint32_t CRC_CRC32_AccumulateData(uint8_t u8DataWidth, const void *pvData, uint32_t u32Len)
 {
     uint32_t u32CrcValue = 0UL;
 
-    if ((au8Data != NULL) && (u32Len != 0UL)) {
-        u32CrcValue = CRC_Accumulate(CRC_DATA_WIDTH_8BIT, au8Data, u32Len);
+    if ((pvData != NULL) && (u32Len != 0UL)) {
+        DDL_ASSERT(IS_CRC_DATA_WIDTH(u8DataWidth));
+
+        /* Write data */
+        if (CRC_DATA_WIDTH_32BIT == u8DataWidth) {
+            (void)CRC_WriteData32((const uint32_t *)pvData, u32Len);
+        } else if (CRC_DATA_WIDTH_16BIT == u8DataWidth) {
+            (void)CRC_WriteData16((const uint16_t *)pvData, u32Len);
+        } else {
+            (void)CRC_WriteData8((const uint8_t *)pvData, u32Len);
+        }
+
+        /* Get checksum */
+        u32CrcValue = READ_REG32(CM_CRC->RESLT);
     }
 
     return u32CrcValue;
 }
 
 /**
- * @brief  Calculate the CRC value and start with the previously calculated CRC as initial value.
- * @param  [in] au16Data                Pointer to the buffer containing the data to be calculated.
- * @param  [in] u32Len                  The length(counted in half-word) of the data to be calculated.
- * @retval The CRC value.
- * @note   The upper 16 bit of CRC result value is ignored when using CRC16
+ * @brief  Calculate the CRC16 value and start with the specified initial value.
+ * @param  [in] u16InitValue            The CRC initialization value which is the valid bits same as
+ *                                      the bits of CRC Protocol.
+ * @param  [in] u8DataWidth             Bit width of the data.
+ *         This parameter can be one of the macros group @ref CRC_DATA_Bit_Width
+ *           @arg CRC_DATA_WIDTH_8BIT:  8  Bit
+ *           @arg CRC_DATA_WIDTH_16BIT: 16 Bit
+ *           @arg CRC_DATA_WIDTH_32BIT: 32 Bit
+ * @param  [in] pvData                  Pointer to the buffer containing the data to be computed.
+ * @param  [in] u32Len                  The length(counted in bytes or half word or word, depending on
+ *                                      the bit width) of the data to be computed.
+ * @retval The CRC16 value.
+ * @note   The function fetch data in byte or half word or word depending on the data bit width(the parameter u8DataWidth).
  */
-uint32_t CRC_AccumulateData16(const uint16_t au16Data[], uint32_t u32Len)
+uint16_t CRC_CRC16_Calculate(uint16_t u16InitValue, uint8_t u8DataWidth, const void *pvData, uint32_t u32Len)
 {
-    uint32_t u32CrcValue = 0UL;
+    uint16_t u16CrcValue = 0U;
 
-    if ((au16Data != NULL) && (u32Len != 0UL)) {
-        u32CrcValue = CRC_Accumulate(CRC_DATA_WIDTH_16BIT, au16Data, u32Len);
+    if ((pvData != NULL) && (u32Len != 0UL)) {
+        /* Set initial value */
+        WRITE_REG16(CM_CRC->RESLT, u16InitValue);
+
+        u16CrcValue = CRC_CRC16_AccumulateData(u8DataWidth, pvData, u32Len);
     }
 
-    return u32CrcValue;
+    return u16CrcValue;
 }
 
 /**
- * @brief  Calculate the CRC value and start with the previously calculated CRC as initial value.
- * @param  [in] au32Data                Pointer to the buffer containing the data to be calculated.
- * @param  [in] u32Len                  The length(counted in word) of the data to be calculated.
- * @retval The CRC value.
- * @note   The upper 16 bit of CRC result value is ignored when using CRC16
- */
-uint32_t CRC_AccumulateData32(const uint32_t au32Data[], uint32_t u32Len)
-{
-    uint32_t u32CrcValue = 0UL;
-
-    if ((au32Data != NULL) && (u32Len != 0UL)) {
-        u32CrcValue = CRC_Accumulate(CRC_DATA_WIDTH_32BIT, au32Data, u32Len);
-    }
-
-    return u32CrcValue;
-}
-
-/**
- * @brief  Calculate the CRC value and start with the specified initial value(u32InitValue).
+ * @brief  Calculate the CRC32 value and start with the specified initial value.
  * @param  [in] u32InitValue            The CRC initialization value which is the valid bits same as
  *                                      the bits of CRC Protocol.
- * @param  [in] au8Data                 Pointer to the buffer containing the data to be calculated.
+ * @param  [in] u8DataWidth             Bit width of the data.
+ *         This parameter can be one of the macros group @ref CRC_DATA_Bit_Width
+ *           @arg CRC_DATA_WIDTH_8BIT:  8  Bit
+ *           @arg CRC_DATA_WIDTH_16BIT: 16 Bit
+ *           @arg CRC_DATA_WIDTH_32BIT: 32 Bit
+ * @param  [in] pvData                  Pointer to the buffer containing the data to be computed.
+ * @param  [in] u32Len                  The length(counted in bytes or half word or word, depending on
+ *                                      the bit width) of the data to be computed.
+ * @retval The CRC32 value.
+ * @note   The function fetch data in byte or half word or word depending on the data bit width(the parameter u8DataWidth).
+ */
+uint32_t CRC_CRC32_Calculate(uint32_t u32InitValue, uint8_t u8DataWidth, const void *pvData, uint32_t u32Len)
+{
+    uint32_t u32CrcValue = 0UL;
+
+    if ((pvData != NULL) && (u32Len != 0UL)) {
+        /* Set initial value */
+        WRITE_REG32(CM_CRC->RESLT, u32InitValue);
+
+        u32CrcValue = CRC_CRC32_AccumulateData(u8DataWidth, pvData, u32Len);
+    }
+
+    return u32CrcValue;
+}
+
+/**
+ * @brief  Check the CRC16 calculating result with the expected value.
+ * @param  [in] u16InitValue            The CRC initialization value which is the valid bits same as
+ *                                      the bits of CRC Protocol.
+ * @param  [in] u8DataWidth             Bit width of the data.
+ *         This parameter can be one of the following values:
+ *           @arg CRC_DATA_WIDTH_8BIT:  8  Bit
+ *           @arg CRC_DATA_WIDTH_16BIT: 16 Bit
+ *           @arg CRC_DATA_WIDTH_32BIT: 32 Bit
+ * @param  [in] pvData                  Pointer to the buffer containing the data to be computed.
  * @param  [in] u32Len                  The length(counted in byte) of the data to be calculated.
- * @retval The CRC value.
- * @note   The upper 16 bit of CRC result value is ignored when using CRC16
- */
-uint32_t CRC_CalculateData8(uint32_t u32InitValue, const uint8_t au8Data[], uint32_t u32Len)
-{
-    uint32_t u32CrcValue = 0UL;
-
-    if ((au8Data != NULL) && (u32Len != 0UL)) {
-        u32CrcValue = CRC_Calculate(u32InitValue, CRC_DATA_WIDTH_8BIT, au8Data, u32Len);
-    }
-
-    return u32CrcValue;
-}
-
-/**
- * @brief  Calculate the CRC value and start with the specified initial value(u32InitValue).
- * @param  [in] u32InitValue            The CRC initialization value which is the valid bits same as
- *                                      the bits of CRC Protocol.
- * @param  [in] au16Data                Pointer to the buffer containing the data to be calculated.
- * @param  [in] u32Len                  The length(counted in half-word) of the data to be calculated.
- * @retval The CRC value.
- * @note   The upper 16 bit of CRC result value is ignored when using CRC16
- */
-uint32_t CRC_CalculateData16(uint32_t u32InitValue, const uint16_t au16Data[], uint32_t u32Len)
-{
-    uint32_t u32CrcValue = 0UL;
-
-    if ((au16Data != NULL) && (u32Len != 0UL)) {
-        u32CrcValue = CRC_Calculate(u32InitValue, CRC_DATA_WIDTH_16BIT, au16Data, u32Len);
-    }
-
-    return u32CrcValue;
-}
-
-/**
- * @brief  Calculate the CRC value and start with the specified initial value(u32InitValue).
- * @param  [in] u32InitValue            The CRC initialization value which is the valid bits same as
- *                                      the bits of CRC Protocol.
- * @param  [in] au32Data                Pointer to the buffer containing the data to be calculated.
- * @param  [in] u32Len                  The length(counted in word) of the data to be calculated.
- * @retval The CRC value.
- * @note   The upper 16 bit of CRC result value is ignored when using CRC16
- */
-uint32_t CRC_CalculateData32(uint32_t u32InitValue, const uint32_t au32Data[], uint32_t u32Len)
-{
-    uint32_t u32CrcValue = 0UL;
-
-    if ((au32Data != NULL) && (u32Len != 0UL)) {
-        u32CrcValue = CRC_Calculate(u32InitValue, CRC_DATA_WIDTH_32BIT, au32Data, u32Len);
-    }
-
-    return u32CrcValue;
-}
-
-/**
- * @brief  Check the CRC calculating result with the expected value.
- * @param  [in] u32InitValue            The CRC initialization value which is the valid bits same as
- *                                      the bits of CRC Protocol.
- * @param  [in] au8Data                 Pointer to the buffer containing the data to be calculated.
- * @param  [in] u32Len                  The length(counted in byte) of the data to be calculated.
- * @param  [in] u32ExpectValue          The expected CRC value to be checked.
+ * @param  [in] u16ExpectValue          The expected CRC value to be checked.
  * @retval An @ref en_flag_status_t enumeration type value.
- * @note   The upper 16 bit of CRC result value and the expected value are ignored when using CRC16
  */
-en_flag_status_t CRC_CheckData8(uint32_t u32InitValue, const uint8_t au8Data[],
-                                uint32_t u32Len, uint32_t u32ExpectValue)
+en_flag_status_t CRC_CRC16_CheckData(uint16_t u16InitValue, uint8_t u8DataWidth, const void *pvData, uint32_t u32Len, uint16_t u16ExpectValue)
 {
+    __IO uint32_t u32Count = CRC_CALC_CLK_COUNT;
     en_flag_status_t enStatus = RESET;
+    uint32_t u32Expect_Value = u16ExpectValue;
 
-    if ((au8Data != NULL) && (u32Len != 0UL)) {
-        enStatus = CRC_CheckData(u32InitValue, CRC_DATA_WIDTH_8BIT, au8Data, u32Len, u32ExpectValue);
+    if ((pvData != NULL) && (u32Len != 0UL)) {
+        (void)CRC_CRC16_Calculate(u16InitValue, u8DataWidth, pvData, u32Len);
+
+        u32Expect_Value = CRC_ConvertCrcValue(u32Expect_Value);
+
+        /* Writes the expected CRC value to be checked */
+        (void)CRC_WriteData16((uint16_t *)((void *)&u32Expect_Value), 1UL);
+
+        /* Delay for waiting CRC result flag */
+        while (u32Count-- != 0UL) {
+            __NOP();
+        }
+
+        enStatus = CRC_GetResultStatus();
     }
 
     return enStatus;
 }
 
 /**
- * @brief  Check the CRC calculating result with the expected value.
+ * @brief  Check the CRC32 calculating result with the expected value.
  * @param  [in] u32InitValue            The CRC initialization value which is the valid bits same as
  *                                      the bits of CRC Protocol.
- * @param  [in] au16Data                Pointer to the buffer containing the data to be calculated.
- * @param  [in] u32Len                  The length(counted in half-word) of the data to be calculated.
+ * @param  [in] u8DataWidth             Bit width of the data.
+ *         This parameter can be one of the following values:
+ *           @arg CRC_DATA_WIDTH_8BIT:  8  Bit
+ *           @arg CRC_DATA_WIDTH_16BIT: 16 Bit
+ *           @arg CRC_DATA_WIDTH_32BIT: 32 Bit
+ * @param  [in] pvData                  Pointer to the buffer containing the data to be computed.
+ * @param  [in] u32Len                  The length(counted in byte) of the data to be calculated.
  * @param  [in] u32ExpectValue          The expected CRC value to be checked.
  * @retval An @ref en_flag_status_t enumeration type value.
- * @note   The upper 16 bit of CRC result value and the expected value are ignored when using CRC16
  */
-en_flag_status_t CRC_CheckData16(uint32_t u32InitValue, const uint16_t au16Data[],
-                                 uint32_t u32Len, uint32_t u32ExpectValue)
+en_flag_status_t CRC_CRC32_CheckData(uint32_t u32InitValue, uint8_t u8DataWidth, const void *pvData, uint32_t u32Len, uint32_t u32ExpectValue)
 {
+    __IO uint32_t u32Count = CRC_CALC_CLK_COUNT;
     en_flag_status_t enStatus = RESET;
+    uint32_t u32Expect_Value = u32ExpectValue;
 
-    if ((au16Data != NULL) && (u32Len != 0UL)) {
-        enStatus = CRC_CheckData(u32InitValue, CRC_DATA_WIDTH_16BIT, au16Data, u32Len, u32ExpectValue);
+    if ((pvData != NULL) && (u32Len != 0UL)) {
+        (void)CRC_CRC32_Calculate(u32InitValue, u8DataWidth, pvData, u32Len);
+
+        u32Expect_Value = CRC_ConvertCrcValue(u32Expect_Value);
+
+        /* Writes the expected CRC value to be checked */
+        (void)CRC_WriteData32(&u32Expect_Value, 1UL);
+
+        /* Delay for waiting CRC result flag */
+        while (u32Count-- != 0UL) {
+            __NOP();
+        }
+
+        enStatus = CRC_GetResultStatus();
     }
 
     return enStatus;
 }
 
 /**
- * @brief  Check the CRC calculating result with the expected value.
- * @param  [in] u32InitValue            The CRC initialization value which is the valid bits same as
- *                                      the bits of CRC Protocol.
- * @param  [in] au32Data                Pointer to the buffer containing the data to be calculated.
- * @param  [in] u32Len                  The length(counted in word) of the data to be calculated.
+ * @brief  Get the CRC16 check result with the expected value.
+ * @param  [in] u16ExpectValue          The expected CRC value to be checked.
+ * @retval An @ref en_flag_status_t enumeration type value.
+ */
+en_flag_status_t CRC_CRC16_GetCheckResult(uint16_t u16ExpectValue)
+{
+    __IO uint32_t u32Count = CRC_CALC_CLK_COUNT;
+    en_flag_status_t enStatus;
+    uint32_t u32Expect_Value = u16ExpectValue;
+
+    u32Expect_Value = CRC_ConvertCrcValue(u32Expect_Value);
+
+    /* Writes the expected CRC value to be checked */
+    (void)CRC_WriteData16((uint16_t *)((void *)&u32Expect_Value), 1UL);
+
+    /* Delay for waiting CRC result flag */
+    while (u32Count-- != 0UL) {
+        __NOP();
+    }
+
+    enStatus = CRC_GetResultStatus();
+
+    return enStatus;
+}
+
+/**
+ * @brief  Get the CRC32 check result with the expected value.
  * @param  [in] u32ExpectValue          The expected CRC value to be checked.
  * @retval An @ref en_flag_status_t enumeration type value.
- * @note   The upper 16 bit of CRC result value and the expected value are ignored when using CRC16
  */
-en_flag_status_t CRC_CheckData32(uint32_t u32InitValue, const uint32_t au32Data[],
-                                 uint32_t u32Len, uint32_t u32ExpectValue)
+en_flag_status_t CRC_CRC32_GetCheckResult(uint32_t u32ExpectValue)
 {
-    en_flag_status_t enStatus = RESET;
+    __IO uint32_t u32Count = CRC_CALC_CLK_COUNT;
+    en_flag_status_t enStatus;
+    uint32_t u32Expect_Value = u32ExpectValue;
 
-    if ((au32Data != NULL) && (u32Len != 0UL)) {
-        enStatus = CRC_CheckData(u32InitValue, CRC_DATA_WIDTH_32BIT, au32Data, u32Len, u32ExpectValue);
+    u32Expect_Value = CRC_ConvertCrcValue(u32Expect_Value);
+
+    /* Writes the expected CRC value to be checked */
+    (void)CRC_WriteData32(&u32Expect_Value, 1UL);
+
+    /* Delay for waiting CRC result flag */
+    while (u32Count-- != 0UL) {
+        __NOP();
     }
+
+    enStatus = CRC_GetResultStatus();
 
     return enStatus;
 }
@@ -658,8 +631,8 @@ en_flag_status_t CRC_CheckData32(uint32_t u32InitValue, const uint32_t au32Data[
  */
 
 /**
-* @}
-*/
+ * @}
+ */
 
 /******************************************************************************
  * EOF (not truncated)

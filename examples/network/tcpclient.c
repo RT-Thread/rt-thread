@@ -10,6 +10,7 @@
 
 #include <rtthread.h>
 #include <string.h>
+#include <stdlib.h>
 
 #if !defined(SAL_USING_POSIX)
 #error "Please enable SAL_USING_POSIX!"
@@ -114,15 +115,15 @@ static void tcpclient(void *arg)
         {
             /* Receive failed and close the connection */
             /* 接收失败，关闭这个连接 */
-            LOG_E("Received error, close the socket.");
+            LOG_E("Received error(%d), close the socket.", errno);
             goto __exit;
         }
         else if (bytes_received == 0)
         {
-            /* Print warning message when recv function returns 0 */
-            /* 打印recv函数返回值为0的警告信息 */
-            LOG_W("Received warning, recv function returns 0.");
-            continue;
+            /* Socket has performed an orderly shutdown. */
+            /* 连接已断开 */
+            LOG_E("Socket has performed an orderly shutdown.");
+            goto __exit;
         }
         else
         {
@@ -151,14 +152,19 @@ static void tcpclient(void *arg)
         {
             /* Send failed, close the connection */
             /* 发送失败，关闭这个连接 */
-            LOG_I("send error, close the socket.");
+            LOG_I("send error(%d), close the socket.", errno);
             goto __exit;
         }
         else if (ret == 0)
         {
-            /* Print warning message when send function returns 0 */
-            /* 打印send函数返回值为0的警告信息 */
-            LOG_W("Send warning, send function returns 0.");
+            /* Socket has performed an orderly shutdown. */
+            /* 连接已断开 */
+            LOG_E("Socket has performed an orderly shutdown.");
+            goto __exit;
+        }
+        else if (ret != rt_strlen(send_data))
+        {
+            LOG_W("%d out of %d bytes sent.", ret, rt_strlen(send_data));
         }
     }
 

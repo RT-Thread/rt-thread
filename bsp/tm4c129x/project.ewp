@@ -173,6 +173,8 @@
           <state>_DLIB_ADD_EXTRA_SYMBOLS=0</state>
           <state>__RTTHREAD__</state>
           <state>PART_TM4C129XNCZAD</state>
+          <state>__RT_IPC_SOURCE__</state>
+          <state>__RT_KERNEL_SOURCE__</state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -302,27 +304,28 @@
         <option>
           <name>CCIncludePath2</name>
           <state />
-          <state>$PROJ_DIR$\libraries\inc</state>
-          <state>$PROJ_DIR$\..\..\components\libc\posix\ipc</state>
-          <state>$PROJ_DIR$\libraries\driverlib</state>
-          <state>$PROJ_DIR$\..\..\components\libc\compilers\common\extension</state>
+          <state>$PROJ_DIR$\..\..\components\net\lwip\lwip-1.4.1\src\include\ipv4</state>
           <state>$PROJ_DIR$\..\..\include</state>
-          <state>$PROJ_DIR$\..\..\components\net\lwip\lwip-1.4.1\src\include</state>
-          <state>$PROJ_DIR$\drivers</state>
-          <state>$PROJ_DIR$\..\..\components\libc\compilers\common\include</state>
-          <state>$PROJ_DIR$\..\..\libcpu\arm\cortex-m4</state>
-          <state>$PROJ_DIR$\.</state>
-          <state>$PROJ_DIR$\libraries</state>
-          <state>$PROJ_DIR$\applications</state>
-          <state>$PROJ_DIR$\..\..\components\libc\compilers\common\extension\fcntl\octal</state>
-          <state>$PROJ_DIR$\..\..\components\libc\posix\io\poll</state>
-          <state>$PROJ_DIR$\..\..\components\libc\posix\io\stdio</state>
-          <state>$PROJ_DIR$\..\..\components\net\lwip\lwip-1.4.1\src\include\netif</state>
           <state>$PROJ_DIR$\..\..\components\drivers\include</state>
           <state>$PROJ_DIR$\..\..\libcpu\arm\common</state>
-          <state>$PROJ_DIR$\..\..\components\net\lwip\lwip-1.4.1\src\include\ipv4</state>
-          <state>$PROJ_DIR$\..\..\components\finsh</state>
+          <state>$PROJ_DIR$\libraries\driverlib</state>
+          <state>$PROJ_DIR$\..\..\components\libc\posix\io\poll</state>
+          <state>$PROJ_DIR$\..\..\components\libc\posix\ipc</state>
+          <state>$PROJ_DIR$\drivers</state>
+          <state>$PROJ_DIR$\.</state>
+          <state>$PROJ_DIR$\libraries\inc</state>
+          <state>$PROJ_DIR$\..\..\libcpu\arm\cortex-m4</state>
+          <state>$PROJ_DIR$\..\..\components\libc\posix\io\eventfd</state>
+          <state>$PROJ_DIR$\..\..\components\net\lwip\lwip-1.4.1\src\include</state>
+          <state>$PROJ_DIR$\..\..\components\libc\compilers\common\include</state>
+          <state>$PROJ_DIR$\applications</state>
+          <state>$PROJ_DIR$\..\..\components\libc\compilers\common\extension\fcntl\octal</state>
+          <state>$PROJ_DIR$\..\..\components\net\lwip\lwip-1.4.1\src\include\netif</state>
           <state>$PROJ_DIR$\..\..\components\net\lwip\port</state>
+          <state>$PROJ_DIR$\..\..\components\finsh</state>
+          <state>$PROJ_DIR$\..\..\components\libc\compilers\common\extension</state>
+          <state>$PROJ_DIR$\..\..\components\libc\posix\io\epoll</state>
+          <state>$PROJ_DIR$\libraries</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -1141,6 +1144,8 @@
           <state>_DLIB_ADD_EXTRA_SYMBOLS=0</state>
           <state>__RTTHREAD__</state>
           <state>PART_TM4C129XNCZAD</state>
+          <state>__RT_IPC_SOURCE__</state>
+          <state>__RT_KERNEL_SOURCE__</state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -1270,27 +1275,28 @@
         <option>
           <name>CCIncludePath2</name>
           <state />
-          <state>$PROJ_DIR$\libraries\inc</state>
-          <state>$PROJ_DIR$\..\..\components\libc\posix\ipc</state>
-          <state>$PROJ_DIR$\libraries\driverlib</state>
-          <state>$PROJ_DIR$\..\..\components\libc\compilers\common\extension</state>
+          <state>$PROJ_DIR$\..\..\components\net\lwip\lwip-1.4.1\src\include\ipv4</state>
           <state>$PROJ_DIR$\..\..\include</state>
-          <state>$PROJ_DIR$\..\..\components\net\lwip\lwip-1.4.1\src\include</state>
-          <state>$PROJ_DIR$\drivers</state>
-          <state>$PROJ_DIR$\..\..\components\libc\compilers\common\include</state>
-          <state>$PROJ_DIR$\..\..\libcpu\arm\cortex-m4</state>
-          <state>$PROJ_DIR$\.</state>
-          <state>$PROJ_DIR$\libraries</state>
-          <state>$PROJ_DIR$\applications</state>
-          <state>$PROJ_DIR$\..\..\components\libc\compilers\common\extension\fcntl\octal</state>
-          <state>$PROJ_DIR$\..\..\components\libc\posix\io\poll</state>
-          <state>$PROJ_DIR$\..\..\components\libc\posix\io\stdio</state>
-          <state>$PROJ_DIR$\..\..\components\net\lwip\lwip-1.4.1\src\include\netif</state>
           <state>$PROJ_DIR$\..\..\components\drivers\include</state>
           <state>$PROJ_DIR$\..\..\libcpu\arm\common</state>
-          <state>$PROJ_DIR$\..\..\components\net\lwip\lwip-1.4.1\src\include\ipv4</state>
-          <state>$PROJ_DIR$\..\..\components\finsh</state>
+          <state>$PROJ_DIR$\libraries\driverlib</state>
+          <state>$PROJ_DIR$\..\..\components\libc\posix\io\poll</state>
+          <state>$PROJ_DIR$\..\..\components\libc\posix\ipc</state>
+          <state>$PROJ_DIR$\drivers</state>
+          <state>$PROJ_DIR$\.</state>
+          <state>$PROJ_DIR$\libraries\inc</state>
+          <state>$PROJ_DIR$\..\..\libcpu\arm\cortex-m4</state>
+          <state>$PROJ_DIR$\..\..\components\libc\posix\io\eventfd</state>
+          <state>$PROJ_DIR$\..\..\components\net\lwip\lwip-1.4.1\src\include</state>
+          <state>$PROJ_DIR$\..\..\components\libc\compilers\common\include</state>
+          <state>$PROJ_DIR$\applications</state>
+          <state>$PROJ_DIR$\..\..\components\libc\compilers\common\extension\fcntl\octal</state>
+          <state>$PROJ_DIR$\..\..\components\net\lwip\lwip-1.4.1\src\include\netif</state>
           <state>$PROJ_DIR$\..\..\components\net\lwip\port</state>
+          <state>$PROJ_DIR$\..\..\components\finsh</state>
+          <state>$PROJ_DIR$\..\..\components\libc\compilers\common\extension</state>
+          <state>$PROJ_DIR$\..\..\components\libc\posix\io\epoll</state>
+          <state>$PROJ_DIR$\libraries</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -1951,9 +1957,6 @@
       <name>$PROJ_DIR$\..\..\components\libc\compilers\common\cctype.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\libc\compilers\common\cstdio.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\..\components\libc\compilers\common\cstdlib.c</name>
     </file>
     <file>
@@ -1961,6 +1964,9 @@
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\components\libc\compilers\common\ctime.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\libc\compilers\common\cunistd.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\components\libc\compilers\common\cwchar.c</name>
@@ -1994,22 +2000,10 @@
     </file>
   </group>
   <group>
-    <name>CPU</name>
-    <file>
-      <name>$PROJ_DIR$\..\..\libcpu\arm\common\div0.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\libcpu\arm\common\showmem.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\libcpu\arm\cortex-m4\context_iar.S</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\libcpu\arm\cortex-m4\cpuport.c</name>
-    </file>
-  </group>
-  <group>
     <name>DeviceDrivers</name>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\drivers\core\device.c</name>
+    </file>
     <file>
       <name>$PROJ_DIR$\..\..\components\drivers\ipc\completion.c</name>
     </file>
@@ -2068,9 +2062,6 @@
       <name>$PROJ_DIR$\..\..\src\components.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\src\device.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\..\src\idle.c</name>
     </file>
     <file>
@@ -2078,6 +2069,12 @@
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\src\irq.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\src\klibc\kstdio.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\src\klibc\kstring.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\src\kservice.c</name>
@@ -2095,6 +2092,9 @@
       <name>$PROJ_DIR$\..\..\src\object.c</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\..\..\src\scheduler_comm.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\..\src\scheduler_up.c</name>
     </file>
     <file>
@@ -2105,102 +2105,117 @@
     </file>
   </group>
   <group>
-    <name>Libraries</name>
+    <name>libcpu</name>
     <file>
-      <name>$PROJ_DIR$\libraries\driverlib\cpu.c</name>
+      <name>$PROJ_DIR$\..\..\libcpu\arm\common\div0.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\libraries\driverlib\gpio.c</name>
+      <name>$PROJ_DIR$\..\..\libcpu\arm\common\showmem.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\libcpu\arm\cortex-m4\context_iar.S</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\libcpu\arm\cortex-m4\cpuport.c</name>
+    </file>
+  </group>
+  <group>
+    <name>Libraries</name>
+    <file>
+      <name>$PROJ_DIR$\libraries\driverlib\sysexc.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\libraries\driverlib\cpu.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\libraries\driverlib\mpu.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\libraries\driverlib\ssi.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\libraries\driverlib\des.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\libraries\driverlib\interrupt.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\libraries\driverlib\fpu.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\libraries\driverlib\comp.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\libraries\driverlib\pwm.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\libraries\driverlib\crc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\libraries\driverlib\sw_crc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\libraries\driverlib\tiva_timer.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\libraries\driverlib\sysctl.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\libraries\driverlib\usb.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\libraries\driverlib\qei.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\libraries\driverlib\eeprom.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\libraries\driverlib\onewire.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\libraries\startup\startup_ewarm.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\libraries\driverlib\aes.c</name>
+      <name>$PROJ_DIR$\libraries\driverlib\emac.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\libraries\driverlib\hibernate.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\libraries\driverlib\systick.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\libraries\driverlib\epi.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\libraries\driverlib\i2c.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\libraries\driverlib\sysexc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\libraries\driverlib\shamd5.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\libraries\driverlib\emac.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\libraries\driverlib\uart.c</name>
+      <name>$PROJ_DIR$\libraries\driverlib\tiva_timer.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\libraries\driverlib\can.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\libraries\driverlib\adc.c</name>
+      <name>$PROJ_DIR$\libraries\driverlib\pwm.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\libraries\driverlib\lcd.c</name>
+      <name>$PROJ_DIR$\libraries\driverlib\usb.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\libraries\driverlib\sw_crc.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\libraries\driverlib\des.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\libraries\driverlib\shamd5.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\libraries\driverlib\crc.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\libraries\driverlib\uart.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\libraries\driverlib\flash.c</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\libraries\driverlib\interrupt.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\libraries\startup\startup_ewarm.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\libraries\driverlib\gpio.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\libraries\driverlib\lcd.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\libraries\driverlib\eeprom.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\libraries\driverlib\systick.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\libraries\driverlib\watchdog.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\libraries\driverlib\i2c.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\libraries\driverlib\epi.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\libraries\driverlib\sysctl.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\libraries\driverlib\fpu.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\libraries\driverlib\qei.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\libraries\driverlib\aes.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\libraries\driverlib\ssi.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\libraries\driverlib\adc.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\libraries\driverlib\onewire.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\libraries\driverlib\comp.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\libraries\driverlib\udma.c</name>

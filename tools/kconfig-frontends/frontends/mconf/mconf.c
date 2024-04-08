@@ -994,7 +994,7 @@ static int handle_exit(void)
         if (!silent)
             printf(_("\n\n"
                  "*** End of the configuration.\n"
-                 "*** Execute 'make' to start the build or try 'make help'."
+                 "*** Execute 'scons' to start the build or try 'scons --help'."
                  "\n\n"));
         res = 0;
         break;

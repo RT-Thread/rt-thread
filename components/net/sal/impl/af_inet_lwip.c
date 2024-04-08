@@ -79,6 +79,8 @@ struct lwip_sock {
 };
 #endif /* LWIP_VERSION >= 0x20100ff */
 
+static RT_DEFINE_SPINLOCK(_spinlock);
+
 extern struct lwip_sock *lwip_tryget_socket(int s);
 
 static void event_callback(struct netconn *conn, enum netconn_evt evt, u16_t len)
@@ -262,7 +264,7 @@ static int inet_poll(struct dfs_file *file, struct rt_pollreq *req)
 
         rt_poll_add(&sock->wait_head, req);
 
-        level = rt_hw_interrupt_disable();
+        level = rt_spin_lock_irqsave(&_spinlock);
 
 #if LWIP_VERSION >= 0x20100ff
         if ((void*)(sock->lastdata.pbuf) || sock->rcvevent)
@@ -282,7 +284,7 @@ static int inet_poll(struct dfs_file *file, struct rt_pollreq *req)
             /* clean error event */
             sock->errevent = 0;
         }
-        rt_hw_interrupt_enable(level);
+        rt_spin_unlock_irqrestore(&_spinlock, level);
     }
 
     return mask;
@@ -291,44 +293,49 @@ static int inet_poll(struct dfs_file *file, struct rt_pollreq *req)
 
 static const struct sal_socket_ops lwip_socket_ops =
 {
-    inet_socket,
-    lwip_close,
-    lwip_bind,
-    lwip_listen,
-    lwip_connect,
-    inet_accept,
-    (int (*)(int, const void *, size_t, int, const struct sockaddr *, socklen_t))lwip_sendto,
-    (int (*)(int, void *, size_t, int, struct sockaddr *, socklen_t *))lwip_recvfrom,
-    lwip_getsockopt,
+    .socket      = inet_socket,
+    .closesocket = lwip_close,
+    .bind        = lwip_bind,
+    .listen      = lwip_listen,
+    .connect     = lwip_connect,
+    .accept      = inet_accept,
+    .sendto      = (int (*)(int, const void *, size_t, int, const struct sockaddr *, socklen_t))lwip_sendto,
+#if LWIP_VERSION >= 0x20102ff
+    .sendmsg     = (int (*)(int, const struct msghdr *, int))lwip_sendmsg,
+    .recvmsg     = (int (*)(int, struct msghdr *, int))lwip_recvmsg,
+#endif
+    .recvfrom    = (int (*)(int, void *, size_t, int, struct sockaddr *, socklen_t *))lwip_recvfrom,
+    .getsockopt  = lwip_getsockopt,
     //TODO fix on 1.4.1
-    lwip_setsockopt,
-    lwip_shutdown,
-    lwip_getpeername,
-    inet_getsockname,
-    inet_ioctlsocket,
+    .setsockopt  = lwip_setsockopt,
+    .shutdown    = lwip_shutdown,
+    .getpeername = lwip_getpeername,
+    .getsockname = inet_getsockname,
+    .ioctlsocket = inet_ioctlsocket,
+    .socketpair  = RT_NULL,
 #ifdef SAL_USING_POSIX
-    inet_poll,
+    .poll        = inet_poll,
 #endif
 };
 
 static const struct sal_netdb_ops lwip_netdb_ops =
 {
-    lwip_gethostbyname,
-    lwip_gethostbyname_r,
-    lwip_getaddrinfo,
-    lwip_freeaddrinfo,
+    .gethostbyname   = lwip_gethostbyname,
+    .gethostbyname_r = lwip_gethostbyname_r,
+    .getaddrinfo     = lwip_getaddrinfo,
+    .freeaddrinfo    = lwip_freeaddrinfo,
 };
 
 static const struct sal_proto_family lwip_inet_family =
 {
-    AF_INET,
+    .family     = AF_INET,
 #if LWIP_VERSION > 0x2000000
-    AF_INET6,
+    .sec_family = AF_INET6,
 #else
-    AF_INET,
+    .sec_family = AF_INET,
 #endif
-    &lwip_socket_ops,
-    &lwip_netdb_ops,
+    .skt_ops    = &lwip_socket_ops,
+    .netdb_ops  = &lwip_netdb_ops,
 };
 
 /* Set lwIP network interface device protocol family information */

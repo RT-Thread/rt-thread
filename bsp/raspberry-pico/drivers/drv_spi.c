@@ -38,20 +38,20 @@ static struct pico_spi pico_spi_obj[] =
 #ifdef BSP_USING_SPI0
     {
         .handle = spi0,
-        .spi_rx_pin  = 4,
-        .spi_tx_pin  = 3,
-        .spi_sck_pin = 2,
-        .spi_cs_pin  = 5,
+        .spi_rx_pin  = BSP_SPI0_MISO_PIN,
+        .spi_tx_pin  = BSP_SPI0_MOSI_PIN,
+        .spi_sck_pin = BSP_SPI0_SCK_PIN,
+        .spi_cs_pin  = BSP_SPI0_CS_PIN,
         .device_name = "spi0",
     },
 #endif
 #ifdef BSP_USING_SPI1
     {
         .handle = spi1,
-        .spi_rx_pin  = 12,
-        .spi_tx_pin  = 11,
-        .spi_sck_pin = 10,
-        .spi_cs_pin  = 13,
+        .spi_rx_pin  = BSP_SPI1_MISO_PIN,
+        .spi_tx_pin  = BSP_SPI1_MOSI_PIN,
+        .spi_sck_pin = BSP_SPI1_SCK_PIN,
+        .spi_cs_pin  = BSP_SPI1_CS_PIN,
         .device_name = "spi1",
     },
 #endif

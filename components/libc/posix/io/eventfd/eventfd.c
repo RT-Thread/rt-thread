@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2023-07-20   zmq810150896   first version
+ * 2024-03-28   TroyMitchell   Add comments for all functions
  */
 
 #include <rtthread.h>
@@ -14,6 +15,7 @@
 #include <stdint.h>
 #include <unistd.h>
 #include <dfs_file.h>
+#include <dfs.h>
 #include "poll.h"
 #include "eventfd.h"
 
@@ -24,7 +26,7 @@
 #define EFD_SHARED_FCNTL_FLAGS (O_CLOEXEC | O_NONBLOCK)
 #define EFD_FLAGS_SET (EFD_SHARED_FCNTL_FLAGS | EFD_SEMAPHORE)
 
-#define ULLONG_MAX  (~0ULL)
+#define EFD_ULLONG_MAX  (~0ULL)
 
 #define EVENTFD_MUTEX_NAME "eventfd"
 
@@ -57,16 +59,30 @@ static const struct dfs_file_ops eventfd_fops =
     .write      = eventfd_write,
 };
 
+/**
+ * @brief   Closes an event file descriptor.
+ * @param   file Pointer to the file descriptor structure.
+ * @return  0 on success, otherwise an error code.
+ */
 static int eventfd_close(struct dfs_file *file)
 {
     struct eventfd_ctx *ctx = file->vnode->data;
 
-    rt_mutex_detach(&ctx->lock);
-    rt_free(ctx);
+    if (file->vnode->ref_count == 1)
+    {
+        rt_mutex_detach(&ctx->lock);
+        rt_free(ctx);
+    }
 
     return 0;
 }
 
+/**
+ * @brief   Polls an event file descriptor for events.
+ * @param   file Pointer to the file descriptor structure.
+ * @param   req Pointer to the poll request structure.
+ * @return  Events that occurred on the file descriptor.
+ */
 static int eventfd_poll(struct dfs_file *file, struct rt_pollreq *req)
 {
     struct eventfd_ctx *ctx = (struct eventfd_ctx *)file->vnode->data;
@@ -80,18 +96,33 @@ static int eventfd_poll(struct dfs_file *file, struct rt_pollreq *req)
     if (count > 0)
         events |= POLLIN;
 
-    if (count == ULLONG_MAX)
+    if (count == EFD_ULLONG_MAX)
         events |= POLLERR;
 
-    if ((ULLONG_MAX - 1) > count)
+    if ((EFD_ULLONG_MAX - 1) > count)
         events |= POLLOUT;
 
     return events;
 }
 
 #ifndef RT_USING_DFS_V2
+/**
+ * @brief   Reads data from an event file descriptor.
+ * @param   file Pointer to the file descriptor structure.
+ * @param   buf Pointer to the buffer to read data into.
+ * @param   count Maximum number of bytes to read.
+ * @return  Number of bytes read on success, otherwise an error code.
+ */
 static ssize_t eventfd_read(struct dfs_file *file, void *buf, size_t count)
 #else
+/**
+ * @brief   Reads data from an event file descriptor.
+ * @param   file Pointer to the file descriptor structure.
+ * @param   buf Pointer to the buffer to read data into.
+ * @param   count Maximum number of bytes to read.
+ * @param   pos Pointer to the file position (not used).
+ * @return  Number of bytes read on success, otherwise an error code.
+ */
 static ssize_t eventfd_read(struct dfs_file *file, void *buf, size_t count, off_t *pos)
 #endif
 {
@@ -142,8 +173,23 @@ static ssize_t eventfd_read(struct dfs_file *file, void *buf, size_t count, off_
 }
 
 #ifndef RT_USING_DFS_V2
+/**
+ * @brief   Writes data to an event file descriptor.
+ * @param   file Pointer to the file descriptor structure.
+ * @param   buf Pointer to the buffer containing data to write.
+ * @param   count Number of bytes to write.
+ * @return  Number of bytes written on success, otherwise an error code.
+ */
 static ssize_t eventfd_write(struct dfs_file *file, const void *buf, size_t count)
 #else
+/**
+ * @brief   Writes data to an event file descriptor.
+ * @param   file Pointer to the file descriptor structure.
+ * @param   buf Pointer to the buffer containing data to write.
+ * @param   count Number of bytes to write.
+ * @param   pos Pointer to the file position (not used).
+ * @return  Number of bytes written on success, otherwise an error code.
+ */
 static ssize_t eventfd_write(struct dfs_file *file, const void *buf, size_t count, off_t *pos)
 #endif
 {
@@ -157,14 +203,14 @@ static ssize_t eventfd_write(struct dfs_file *file, const void *buf, size_t coun
 
     counter_num = *(rt_uint64_t *)buf;
 
-    if (counter_num == ULLONG_MAX)
+    if (counter_num == EFD_ULLONG_MAX)
         return -EINVAL;
 
     ret = -EAGAIN;
 
     rt_mutex_take(&ctx->lock, RT_WAITING_FOREVER);
 
-    if ((ULLONG_MAX - ctx->count) > counter_num)
+    if ((EFD_ULLONG_MAX - ctx->count) > counter_num)
     {
         ret = sizeof(counter_num);
     }
@@ -172,7 +218,7 @@ static ssize_t eventfd_write(struct dfs_file *file, const void *buf, size_t coun
     {
         for (;;)
         {
-            if ((ULLONG_MAX - ctx->count) >= counter_num)
+            if ((EFD_ULLONG_MAX - ctx->count) >= counter_num)
             {
                 ret = sizeof(counter_num);
                 break;
@@ -194,7 +240,13 @@ static ssize_t eventfd_write(struct dfs_file *file, const void *buf, size_t coun
 
     return ret;
 }
-
+/**
+ * @brief   Creates an event file descriptor.
+ * @param   df Pointer to the file descriptor structure.
+ * @param   count Initial value of the event counter.
+ * @param   flags Flags for the event file descriptor.
+ * @return  0 on success, otherwise an error code.
+ */
 static int rt_eventfd_create(struct dfs_file *df, unsigned int count, int flags)
 {
     struct eventfd_ctx *ctx = RT_NULL;
@@ -219,7 +271,7 @@ static int rt_eventfd_create(struct dfs_file *df, unsigned int count, int flags)
         df->vnode = (struct dfs_vnode *)rt_malloc(sizeof(struct dfs_vnode));
         if (df->vnode)
         {
-            dfs_vnode_init(df->vnode, FT_REGULAR, &eventfd_fops);
+            dfs_vnode_init(df->vnode, FT_NONLOCK, &eventfd_fops);
             df->vnode->data = ctx;
             df->flags = flags;
         }
@@ -239,6 +291,12 @@ static int rt_eventfd_create(struct dfs_file *df, unsigned int count, int flags)
     return ret;
 }
 
+/**
+ * @brief   Internal function to create an event file descriptor.
+ * @param   count Initial value of the event counter.
+ * @param   flags Flags for the event file descriptor.
+ * @return  File descriptor on success, otherwise an error code.
+ */
 static int do_eventfd(unsigned int count, int flags)
 {
     struct dfs_file *file;
@@ -275,6 +333,12 @@ static int do_eventfd(unsigned int count, int flags)
     return ret;
 }
 
+/**
+ * @brief   Creates an event file descriptor with the specified count and flags.
+ * @param   count Initial value of the event counter.
+ * @param   flags Flags for the event file descriptor.
+ * @return  File descriptor on success, otherwise an error code.
+ */
 int eventfd(unsigned int count, int flags)
 {
     return do_eventfd(count, flags);

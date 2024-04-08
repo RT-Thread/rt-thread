@@ -1,3 +1,20 @@
+if ARCH_ARMV8 && ARCH_CPU_64BIT
+    menu "AArch64 Architecture Configuration"
+    config ARCH_TEXT_OFFSET
+        hex "Text offset"
+        default 0x200000
+    config ARCH_RAM_OFFSET
+        hex "RAM offset"
+        default 0
+    config ARCH_SECONDARY_CPU_STACK_SIZE
+        int "Secondary CPU stack size"
+        default 4096
+    config ARCH_HAVE_EFFICIENT_UNALIGNED_ACCESS
+        bool
+        default y
+    endmenu
+endif
+
 config ARCH_CPU_64BIT
     bool
 
@@ -69,6 +86,11 @@ config ARCH_ARM_CORTEX_M7
     select ARCH_ARM_CORTEX_M
     select RT_USING_CPU_FFS
     select RT_USING_CACHE
+
+config ARCH_ARM_CORTEX_M85
+    bool
+    select ARCH_ARM_CORTEX_M
+    select RT_USING_CPU_FFS
     select RT_USING_HW_ATOMIC
 
 config ARCH_ARM_CORTEX_M23
@@ -175,6 +197,7 @@ config ARCH_ARMV8
     bool
     select ARCH_ARM
     select ARCH_ARM_MMU
+    select RT_USING_CPU_FFS
 
 config ARCH_MIPS
     bool
@@ -236,7 +259,3 @@ config ARCH_HOST_SIMULATOR
 config ARCH_CPU_STACK_GROWS_UPWARD
     bool
     default n
-
-if ARCH_ARMV8 && ARCH_CPU_64BIT
-    source "$RTT_DIR/libcpu/aarch64/Kconfig"
-endif

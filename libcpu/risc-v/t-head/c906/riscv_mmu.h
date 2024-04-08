@@ -7,6 +7,7 @@
  * Date           Author       Notes
  * 2021-01-30     lizhirui     first version
  * 2021-05-03     lizhirui     porting to c906
+ * 2023-10-12     Shell        Add permission control API
  */
 
 #ifndef __RISCV_MMU_H__
@@ -90,8 +91,10 @@
 #define MMU_MAP_K_RWCB          PTE_WRAP(PAGE_ATTR_CB | PTE_G | PAGE_ATTR_RWX | PTE_V)
 #define MMU_MAP_K_RW            PTE_WRAP(PTE_G | PAGE_ATTR_RWX | PTE_V)
 #define MMU_MAP_U_RWCB          PTE_WRAP(PAGE_ATTR_CB | PTE_U | PAGE_ATTR_RWX | PTE_V)
+#define MMU_MAP_U_ROCB          PTE_WRAP(PAGE_ATTR_CB | PTE_U | PAGE_ATTR_READONLY | PTE_V)
 #define MMU_MAP_U_RWCB_XN       PTE_WRAP(PAGE_ATTR_CB | PTE_U | PAGE_ATTR_XN | PTE_V)
 #define MMU_MAP_U_RW            PTE_WRAP(PTE_U | PAGE_ATTR_RWX | PTE_V)
+#define MMU_MAP_TRACE(attr)     (attr)
 
 #define PTE_XWR_MASK            0xe
 
@@ -105,7 +108,72 @@
 #define ARCH_MAP_FAILED         ((void *)0x8000000000000000)
 
 void mmu_set_pagetable(rt_ubase_t addr);
-void mmu_enable_user_page_access();
-void mmu_disable_user_page_access();
+void mmu_enable_user_page_access(void);
+void mmu_disable_user_page_access(void);
+
+#define RT_HW_MMU_PROT_READ 1
+#define RT_HW_MMU_PROT_WRITE 2
+#define RT_HW_MMU_PROT_EXECUTE 4
+#define RT_HW_MMU_PROT_KERNEL 8
+#define RT_HW_MMU_PROT_USER 16
+#define RT_HW_MMU_PROT_CACHE 32
+
+/**
+ * @brief Remove permission from attribution
+ *
+ * @param attr architecture specified mmu attribution
+ * @param prot protect that will be removed
+ * @return size_t returned attribution
+ */
+rt_inline size_t rt_hw_mmu_attr_rm_perm(size_t attr, rt_base_t prot)
+{
+    switch (prot)
+    {
+        /* remove write permission for user */
+        case RT_HW_MMU_PROT_WRITE | RT_HW_MMU_PROT_USER:
+        default:
+            RT_ASSERT(0);
+    }
+    return attr;
+}
+
+/**
+ * @brief Add permission from attribution
+ *
+ * @param attr architecture specified mmu attribution
+ * @param prot protect that will be added
+ * @return size_t returned attribution
+ */
+rt_inline size_t rt_hw_mmu_attr_add_perm(size_t attr, rt_base_t prot)
+{
+    switch (prot)
+    {
+        /* add write permission for user */
+        case RT_HW_MMU_PROT_WRITE | RT_HW_MMU_PROT_USER:
+        default:
+            RT_ASSERT(0);
+    }
+    return attr;
+}
+
+/**
+ * @brief Test permission from attribution
+ *
+ * @param attr architecture specified mmu attribution
+ * @param prot protect that will be test
+ * @return rt_bool_t RT_TRUE if the prot is allowed, otherwise RT_FALSE
+ */
+rt_inline rt_bool_t rt_hw_mmu_attr_test_perm(size_t attr, rt_base_t prot)
+{
+    rt_bool_t rc = 0;
+    switch (prot)
+    {
+        /* test write permission for user */
+        case RT_HW_MMU_PROT_WRITE | RT_HW_MMU_PROT_USER:
+        default:
+            RT_ASSERT(0);
+    }
+    return rc;
+}
 
 #endif

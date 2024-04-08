@@ -67,10 +67,10 @@ static void loongson_pin_write(struct rt_device *device, rt_base_t pin, rt_uint8
     else
         gpio->GPIO0_O &= ~m;
 }
-static rt_int8_t loongson_pin_read(struct rt_device *device, rt_base_t pin)
+static rt_ssize_t loongson_pin_read(struct rt_device *device, rt_base_t pin)
 {
     struct loongson_gpio *gpio;
-    rt_int8_t rc;
+    rt_ssize_t rc;
 
     gpio = (void *)device->user_data;
     rt_uint64_t m;

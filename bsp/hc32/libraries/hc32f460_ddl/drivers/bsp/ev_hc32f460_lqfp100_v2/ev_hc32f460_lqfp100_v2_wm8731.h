@@ -9,7 +9,7 @@
    2022-03-31       CDT             First version
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -44,7 +44,7 @@ extern "C"
  */
 
 /**
- * @addtogroup EV_HC32F460_LQFP100_V2_WM8731 HC32F460 EVB LQFP100 WM8731
+ * @addtogroup EV_HC32F460_LQFP100_V2_WM8731
  * @{
  */
 #if ((BSP_WM8731_ENABLE == DDL_ON) && (BSP_EV_HC32F460_LQFP100_V2 == BSP_EV_HC32F4XX))
@@ -56,9 +56,21 @@ extern "C"
 /*******************************************************************************
  * Global pre-processor symbols/macros ('#define')
  ******************************************************************************/
+/**
+ * @defgroup EV_HC32F460_LQFP100_V2_WM8731_Global_Macros EV_HC32F460_LQFP100_V2 WM8731 Global Macros
+ * @{
+ */
+
+/**
+ * @defgroup BSP_WM8731_DEV_Config BSP WM8731 DEV Configure
+ * @{
+ */
 /* WM8731 device address */
 #define BSP_WM8731_DEV_ADDR                     (0x1AU)
 #define BSP_WM8731_REG_ADDR_LEN                 (1U)
+/**
+ * @}
+ */
 
 /**
  * @defgroup BSP_WM8731_I2C_Config BSP WM8731 I2C Configure
@@ -147,6 +159,10 @@ extern "C"
 /**
  * @}
  */
+/**
+ * @}
+ */
+
 
 /*******************************************************************************
  * Global variable definitions ('extern')
@@ -156,7 +172,7 @@ extern "C"
   Global function prototypes (definition in C source)
  ******************************************************************************/
 /**
- * @addtogroup BSP_WM8731_Global_Functions BSP WM8731 Global Functions
+ * @addtogroup EV_HC32F460_LQFP100_V2_WM8731_Global_Functions
  * @{
  */
 void BSP_WM8731_DeInit(void);

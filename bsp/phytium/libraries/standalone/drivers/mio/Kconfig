@@ -1,9 +1,0 @@
-menu "Hardware Mio Configuration"
-    config ENABLE_MIO
-        bool
-        prompt "Use Mio"
-        depends on TARGET_E2000 || TARGET_TARDIGRADE
-
-        default n
-endmenu
-

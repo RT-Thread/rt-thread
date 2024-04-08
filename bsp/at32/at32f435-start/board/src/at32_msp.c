@@ -478,17 +478,17 @@ void at32_msp_sdram_init(void *instance)
 
 #endif /* BSP_USING_SDRAM */
 
-#ifdef BSP_USING_USBFS
+#ifdef BSP_USING_USBOTG
 void at32_msp_usb_init(void *instance)
 {
     /* defalut usb clock from hick */
     usb_clk48_s clk_s = USB_CLK_HICK;
 
-#if defined (BSP_USING_HOST_USBFS1) || defined (BSP_USING_DEVICE_USBFS1)
+#if defined (BSP_USING_HOST_USBOTG1) || defined (BSP_USING_DEVICE_USBOTG1)
     crm_periph_clock_enable(CRM_OTGFS1_PERIPH_CLOCK, TRUE);
 #endif
 
-#if defined (BSP_USING_HOST_USBFS2) || defined (BSP_USING_DEVICE_USBFS2)
+#if defined (BSP_USING_HOST_USBOTG2) || defined (BSP_USING_DEVICE_USBOTG2)
     crm_periph_clock_enable(CRM_OTGFS2_PERIPH_CLOCK, TRUE);
 #endif
 
@@ -570,7 +570,7 @@ void at32_msp_usb_init(void *instance)
         }
     }
 }
-#endif /* BSP_USING_USBFS */
+#endif /* BSP_USING_USBOTG */
 
 #ifdef BSP_USING_DAC
 void at32_msp_dac_init(void *instance)

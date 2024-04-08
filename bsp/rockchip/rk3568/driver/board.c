@@ -12,14 +12,13 @@
 #include <rtthread.h>
 
 #include <mmu.h>
-#include <psci.h>
+#include <rtdevice.h>
 #include <gicv3.h>
 #include <gtimer.h>
 #include <cpuport.h>
 #include <interrupt.h>
 #include <ioremap.h>
-#include <psci_api.h>
-
+#include <psci.h>
 #include <board.h>
 #include <drv_uart.h>
 
@@ -62,6 +61,10 @@ void rt_hw_board_init(void)
 
     rt_hw_mmu_setup(&rt_kernel_space, platform_mem_desc, platform_mem_desc_size);
 
+#ifdef RT_USING_HEAP
+    /* initialize memory system */
+    rt_system_heap_init(RT_HW_HEAP_BEGIN, RT_HW_HEAP_END);
+#endif
     /* initialize hardware interrupt */
     rt_hw_interrupt_init();
 
@@ -73,9 +76,6 @@ void rt_hw_board_init(void)
 
     rt_thread_idle_sethook(idle_wfi);
 
-    // TODO porting to FDT-driven PSCI: arm_psci_init(PSCI_METHOD_SMC, RT_NULL, RT_NULL);
-    psci_init();
-
 #if defined(RT_USING_CONSOLE) && defined(RT_USING_DEVICE)
     /* set console device */
     rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
@@ -84,7 +84,6 @@ void rt_hw_board_init(void)
 #ifdef RT_USING_HEAP
     /* initialize memory system */
     rt_kprintf("heap: [0x%08x - 0x%08x]\n", RT_HW_HEAP_BEGIN, RT_HW_HEAP_END);
-    rt_system_heap_init(RT_HW_HEAP_BEGIN, RT_HW_HEAP_END);
 #endif
 
 #ifdef RT_USING_COMPONENTS_INIT
@@ -100,17 +99,11 @@ void rt_hw_board_init(void)
 
 void reboot(void)
 {
-    // TODO poring to FDT to use new PSCI: arm_psci_system_reboot();
-    if (psci_ops.system_reset)
-    {
-        psci_ops.system_reset();
-    }
-    else
-    {
-        void *cur_base = rt_ioremap((void *) CRU_BASE, 0x100);
-        HWREG32(cur_base + 0x00D4) = 0xfdb9;
-        HWREG32(cur_base + 0x00D8) = 0xeca8;
-    }
+    psci_system_reboot();
+
+    void *cur_base = rt_ioremap((void *) CRU_BASE, 0x100);
+    HWREG32(cur_base + 0x00D4) = 0xfdb9;
+    HWREG32(cur_base + 0x00D8) = 0xeca8;
 }
 MSH_CMD_EXPORT(reboot, reboot...);
 
@@ -124,21 +117,15 @@ MSH_CMD_EXPORT_ALIAS(print_cpu_id, cpuid, print_cpu_id);
 void start_cpu(int argc, char *argv[])
 {
     rt_uint32_t status;
-    if (psci_ops.cpu_on)
-    {
-        status = psci_ops.cpu_on(0x3, (rt_uint64_t) 0x7A000000);
-        rt_kprintf("arm_psci_cpu_on 0x%X\n", status);
-    }
+    status = rt_psci_cpu_on(0x3, (rt_uint64_t) 0x7A000000);
+    rt_kprintf("arm_psci_cpu_on 0x%X\n", status);
 }
 MSH_CMD_EXPORT(start_cpu, start_cpu);
 
 #ifdef RT_AMP_SLAVE
 void rt_hw_cpu_shutdown(void)
 {
-    if (psci_ops.cpu_off)
-    {
-        psci_ops.cpu_off(0);
-    }
+    rt_psci_cpu_off(0);
 }
 #endif /* RT_AMP_SLAVE */
 #endif /* RT_USING_AMP */
@@ -158,17 +145,20 @@ rt_uint64_t rt_cpu_mpidr_early[] =
 void rt_hw_secondary_cpu_up(void)
 {
     int i;
-    extern void secondary_cpu_start(void);
+    extern void _secondary_cpu_entry(void);
+    rt_uint64_t entry = (rt_uint64_t)rt_kmem_v2p(_secondary_cpu_entry);
 
     for (i = 1; i < RT_CPUS_NR; ++i)
     {
-        arm_psci_cpu_on(rt_cpu_mpidr_early[i], (rt_uint64_t) secondary_cpu_start);
+        rt_psci_cpu_on(rt_cpu_mpidr_early[i], entry);
     }
 }
 
+extern unsigned long MMUTable[];
+
 void secondary_cpu_c_start(void)
 {
-    rt_hw_mmu_init();
+    rt_hw_mmu_ktbl_set((unsigned long)MMUTable);
     rt_hw_spin_lock(&_cpus_lock);
 
     arm_gic_cpu_init(0, platform_get_gic_cpu_base());
@@ -184,6 +174,6 @@ void secondary_cpu_c_start(void)
 
 void rt_hw_secondary_cpu_idle_exec(void)
 {
-    __WFE();
+    rt_hw_wfe();
 }
 #endif

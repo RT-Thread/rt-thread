@@ -1,6 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
- * Copyright (c) 2022, Xiaohua Semiconductor Co., Ltd.
+ * Copyright (C) 2022-2024, Xiaohua Semiconductor Co., Ltd.
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -68,6 +67,28 @@ rt_err_t hc32_install_irq_handler(struct hc32_irq_config *irq_config,
     }
     return result;
 }
+
+#if defined (HC32F448)
+rt_err_t hc32_install_independ_irq_handler(struct hc32_irq_config *irq_config,
+        rt_bool_t irq_enable)
+{
+    RT_ASSERT(RT_NULL != irq_config);
+
+    NVIC_ClearPendingIRQ(irq_config->irq_num);
+    NVIC_SetPriority(irq_config->irq_num, irq_config->irq_prio);
+    if (RT_TRUE == irq_enable)
+    {
+        INTC_IntSrcCmd(irq_config->int_src, ENABLE);
+        NVIC_EnableIRQ(irq_config->irq_num);
+    }
+    else
+    {
+        INTC_IntSrcCmd(irq_config->int_src, DISABLE);
+        NVIC_DisableIRQ(irq_config->irq_num);
+    }
+    return RT_EOK;
+}
+#endif
 
 /*******************************************************************************
  * EOF (not truncated)

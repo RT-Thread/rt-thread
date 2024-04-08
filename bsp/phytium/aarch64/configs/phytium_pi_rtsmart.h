@@ -19,11 +19,11 @@
 #define RT_HOOK_USING_FUNC_PTR
 #define RT_USING_IDLE_HOOK
 #define RT_IDLE_HOOK_LIST_SIZE 4
-#define IDLE_THREAD_STACK_SIZE 40960
-#define SYSTEM_THREAD_STACK_SIZE 40960
+#define IDLE_THREAD_STACK_SIZE 8192
+#define SYSTEM_THREAD_STACK_SIZE 8192
 #define RT_USING_TIMER_SOFT
 #define RT_TIMER_THREAD_PRIO 4
-#define RT_TIMER_THREAD_STACK_SIZE 4096
+#define RT_TIMER_THREAD_STACK_SIZE 8192
 
 /* kservice optimization */
 
@@ -32,7 +32,6 @@
 #define RT_USING_DEBUG
 #define RT_DEBUGING_COLOR
 #define RT_DEBUGING_CONTEXT
-#define RT_DEBUGING_INIT
 
 /* Inter-Thread communication */
 
@@ -51,22 +50,16 @@
 #define RT_USING_SLAB_AS_HEAP
 #define RT_USING_HEAP_ISR
 #define RT_USING_HEAP
-
-/* Kernel Device Object */
-
 #define RT_USING_DEVICE
+#define RT_USING_DEVICE_OPS
+#define RT_USING_THREADSAFE_PRINTF
+#define RT_USING_SCHED_THREAD_CTX
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uart1"
-#define RT_VER_NUM 0x50001
-#define ARCH_CPU_64BIT
-#define RT_USING_CACHE
-#define ARCH_ARM_BOOTWITH_FLUSH_CACHE
-#define ARCH_MM_MMU
-#define ARCH_ARM
-#define ARCH_ARM_MMU
-#define KERNEL_VADDR_START 0xffff000000000000
-#define ARCH_ARMV8
+#define RT_VER_NUM 0x50100
+#define RT_USING_STDC_ATOMIC
+#define RT_BACKTRACE_LEVEL_MAX_NR 32
 
 /* AArch64 Architecture Configuration */
 
@@ -74,6 +67,16 @@
 #define ARCH_RAM_OFFSET 0x80000000
 #define ARCH_SECONDARY_CPU_STACK_SIZE 4096
 #define ARCH_HAVE_EFFICIENT_UNALIGNED_ACCESS
+#define ARCH_CPU_64BIT
+#define RT_USING_CACHE
+#define RT_USING_HW_ATOMIC
+#define ARCH_ARM_BOOTWITH_FLUSH_CACHE
+#define RT_USING_CPU_FFS
+#define ARCH_MM_MMU
+#define ARCH_ARM
+#define ARCH_ARM_MMU
+#define KERNEL_VADDR_START 0xffff000000000000
+#define ARCH_ARMV8
 
 /* RT-Thread Components */
 
@@ -94,6 +97,7 @@
 #define MSH_USING_BUILT_IN_COMMANDS
 #define FINSH_USING_DESCRIPTION
 #define FINSH_ARG_MAX 10
+#define FINSH_USING_OPTION_COMPLETION
 
 /* DFS: device virtual file system */
 
@@ -101,9 +105,7 @@
 #define DFS_USING_POSIX
 #define DFS_USING_WORKDIR
 #define DFS_FD_MAX 16
-#define RT_USING_DFS_V1
-#define DFS_FILESYSTEMS_MAX 4
-#define DFS_FILESYSTEM_TYPES_MAX 4
+#define RT_USING_DFS_V2
 #define RT_USING_DFS_ELMFAT
 
 /* elm-chan's FatFs, Generic FAT Filesystem Module */
@@ -120,14 +122,16 @@
 #define RT_DFS_ELM_REENTRANT
 #define RT_DFS_ELM_MUTEX_TIMEOUT 3000
 #define RT_USING_DFS_DEVFS
-#define RT_USING_DFS_RAMFS
-#define RT_USING_LWP
-#define RT_LWP_MAX_NR 30
-#define LWP_TASK_STACK_SIZE 16384
-#define RT_CH_MSG_MAX_NR 1024
-#define LWP_CONSOLE_INPUT_BUFFER_SIZE 1024
-#define LWP_TID_MAX_NR 64
-#define RT_LWP_SHM_MAX_NR 64
+#define RT_USING_PAGECACHE
+
+/* page cache config */
+
+#define RT_PAGECACHE_COUNT 4096
+#define RT_PAGECACHE_ASPACE_COUNT 1024
+#define RT_PAGECACHE_PRELOAD 4
+#define RT_PAGECACHE_HASH_NR 1024
+#define RT_PAGECACHE_GC_WORK_LEVEL 90
+#define RT_PAGECACHE_GC_STOP_LEVEL 70
 
 /* Device Drivers */
 
@@ -141,16 +145,26 @@
 #define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 64
 #define RT_USING_TTY
+#define RT_USING_CAN
+#define RT_CAN_USING_CANFD
+#define RT_USING_I2C
+#define RT_USING_I2C_BITOPS
 #define RT_USING_NULL
 #define RT_USING_ZERO
 #define RT_USING_RANDOM
+#define RT_USING_PWM
 #define RT_USING_RTC
 #define RT_USING_SDIO
-#define RT_SDIO_STACK_SIZE 512
+#define RT_SDIO_STACK_SIZE 8192
 #define RT_SDIO_THREAD_PRIORITY 15
-#define RT_MMCSD_STACK_SIZE 1024
+#define RT_MMCSD_STACK_SIZE 8192
 #define RT_MMCSD_THREAD_PREORITY 22
 #define RT_MMCSD_MAX_PARTITION 16
+#define RT_USING_SPI
+#define RT_USING_QSPI
+#define RT_USING_DEV_BUS
+#define RT_USING_PIN
+#define RT_USING_KTIME
 
 /* Using USB */
 
@@ -171,6 +185,10 @@
 #define RT_USING_POSIX_FS
 #define RT_USING_POSIX_DEVIO
 #define RT_USING_POSIX_STDIO
+#define RT_USING_POSIX_POLL
+#define RT_USING_POSIX_EPOLL
+#define RT_USING_POSIX_SIGNALFD
+#define RT_SIGNALFD_MAX_NUM 10
 #define RT_USING_POSIX_TERMIOS
 #define RT_USING_POSIX_DELAY
 #define RT_USING_POSIX_CLOCK
@@ -226,10 +244,11 @@
 #define RT_LWIP_TCPTHREAD_MBOX_SIZE 8
 #define RT_LWIP_TCPTHREAD_STACKSIZE 16184
 #define RT_LWIP_ETHTHREAD_PRIORITY 12
-#define RT_LWIP_ETHTHREAD_STACKSIZE 2048
+#define RT_LWIP_ETHTHREAD_STACKSIZE 8192
 #define RT_LWIP_ETHTHREAD_MBOX_SIZE 8
 #define LWIP_NETIF_STATUS_CALLBACK 1
 #define LWIP_NETIF_LINK_CALLBACK 1
+#define RT_LWIP_NETIF_NAMESIZE 6
 #define SO_REUSE 1
 #define LWIP_SO_RCVTIMEO 1
 #define LWIP_SO_SNDTIMEO 1
@@ -237,8 +256,9 @@
 #define LWIP_SO_LINGER 0
 #define LWIP_NETIF_LOOPBACK 0
 #define RT_LWIP_USING_PING
-#define RT_LWIP_DEBUG
-#define RT_LWIP_NETIF_DEBUG
+
+/* Memory protection */
+
 
 /* Utilities */
 
@@ -250,7 +270,17 @@
 #define RT_USING_ADT_BITMAP
 #define RT_USING_ADT_HASHMAP
 #define RT_USING_ADT_REF
-#define RT_USING_KTIME
+#define RT_USING_LWP
+#define RT_LWP_MAX_NR 30
+#define LWP_TASK_STACK_SIZE 16384
+#define RT_CH_MSG_MAX_NR 1024
+#define LWP_CONSOLE_INPUT_BUFFER_SIZE 1024
+#define LWP_TID_MAX_NR 64
+#define RT_LWP_SHM_MAX_NR 64
+#define RT_USING_LDSO
+
+/* Memory management */
+
 
 /* RT-Thread Utestcases */
 
@@ -266,6 +296,15 @@
 
 
 /* Wiced WiFi */
+
+
+/* CYW43012 WiFi */
+
+
+/* BL808 WiFi */
+
+
+/* CYW43439 WiFi */
 
 
 /* IoT Cloud */
@@ -340,7 +379,7 @@
 /* Arduino libraries */
 
 
-/* Projects */
+/* Projects and Demos */
 
 
 /* Sensors */
@@ -373,15 +412,32 @@
 
 /* Hardware Drivers */
 
+
 /* On-chip Peripheral Drivers */
 
+#define BSP_USING_IOPAD
 #define BSP_USING_UART
+#define RT_USING_UART0
 #define RT_USING_UART1
+#define BSP_USING_SPI
+#define RT_USING_SPIM0
+#define RT_USING_SPIM1
+#define RT_USING_SPIM2
+#define RT_USING_SPIM3
+#define BSP_USING_GPIO
+#define BSP_USING_QSPI
+#define RT_USING_QSPI0
+#define USING_QSPI_CHANNEL0
 #define BSP_USING_ETH
 #define RT_LWIP_PBUF_POOL_BUFSIZE 1700
-#define BSP_USING_SDIO
-#define BSP_USING_SDCARD_FATFS
-#define USING_SDIO0
+#define BSP_USING_PWM
+#define RT_USING_PWM2
+#define BSP_USING_I2C
+#define I2C_USE_MIO
+#define RT_USING_MIO0
+#define RT_USING_MIO1
+#define RT_USING_MIO2
+#define RT_USING_MIO10
 
 /* Board extended module Drivers */
 
@@ -394,37 +450,31 @@
 
 #define TARGET_ARMV8_AARCH64
 
-/* Board Configuration */
+/* Soc configuration */
 
 #define TARGET_PHYTIUMPI
+#define SOC_NAME "phytiumpi"
+#define SOC_CORE_NUM 4
+#define F32BIT_MEMORY_ADDRESS 0x80000000
+#define F32BIT_MEMORY_LENGTH 0x80000000
+#define F64BIT_MEMORY_ADDRESS 0x2000000000
+#define F64BIT_MEMORY_LENGTH 0x800000000
 #define TARGET_E2000
 #define DEFAULT_DEBUG_PRINT_UART1
 
-/* Components Configuration */
+/* Board Configuration */
 
-#define USE_SPI
-#define USE_FSPIM
-#define USE_QSPI
+#define BOARD_NAME "firefly"
+#define FIREFLY_DEMO_BOARD
 
-/* Qspi Configuration */
+/* IO mux configuration when board start up */
 
-#define USE_FQSPI
-#define USE_IOPAD
-#define ENABLE_IOPAD
-#define USE_SERIAL
-
-/* Usart Configuration */
-
-#define ENABLE_Pl011_UART
-#define USE_ETH
-
-/* Eth Configuration */
-
-#define ENABLE_FXMAC
-#define FXMAC_PHY_COMMON
 
 /* Sdk common configuration */
 
-#define LOG_ERROR
+#define LOG_DEBUG
+
+/* Image information configuration */
+
 
 #endif

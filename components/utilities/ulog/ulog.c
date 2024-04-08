@@ -138,6 +138,7 @@ static const char * const color_output_info[] =
 
 /* ulog local object */
 static struct rt_ulog ulog = { 0 };
+static RT_DEFINE_SPINLOCK(_spinlock);
 
 rt_size_t ulog_strcpy(rt_size_t cur_len, char *dst, const char *src)
 {
@@ -190,14 +191,14 @@ static void output_unlock(void)
     }
 
     /* If the scheduler is started and in thread context */
-    if (rt_interrupt_get_nest() == 0 && rt_thread_self() != RT_NULL)
+    if (rt_scheduler_is_available())
     {
         rt_mutex_release(&ulog.output_locker);
     }
     else
     {
 #ifdef ULOG_USING_ISR_LOG
-        rt_hw_interrupt_enable(ulog.output_locker_isr_lvl);
+        rt_spin_unlock_irqrestore(&_spinlock, ulog.output_locker_isr_lvl);
 #endif
     }
 }
@@ -211,14 +212,14 @@ static void output_lock(void)
     }
 
     /* If the scheduler is started and in thread context */
-    if (rt_interrupt_get_nest() == 0 && rt_thread_self() != RT_NULL)
+    if (rt_scheduler_is_available())
     {
         rt_mutex_take(&ulog.output_locker, RT_WAITING_FOREVER);
     }
     else
     {
 #ifdef ULOG_USING_ISR_LOG
-        ulog.output_locker_isr_lvl = rt_hw_interrupt_disable();
+        ulog.output_locker_isr_lvl = rt_spin_lock_irqsave(&_spinlock);
 #endif
     }
 }
@@ -1271,11 +1272,11 @@ rt_err_t ulog_backend_register(ulog_backend_t backend, const char *name, rt_bool
 
     backend->support_color = support_color;
     backend->out_level = LOG_FILTER_LVL_ALL;
-    rt_strncpy(backend->name, name, RT_NAME_MAX);
+    rt_strncpy(backend->name, name, RT_NAME_MAX - 1);
 
-    level = rt_hw_interrupt_disable();
+    level = rt_spin_lock_irqsave(&_spinlock);
     rt_slist_append(&ulog.backend_list, &backend->list);
-    rt_hw_interrupt_enable(level);
+    rt_spin_unlock_irqrestore(&_spinlock, level);
 
     return RT_EOK;
 }
@@ -1292,9 +1293,9 @@ rt_err_t ulog_backend_unregister(ulog_backend_t backend)
         backend->deinit(backend);
     }
 
-    level = rt_hw_interrupt_disable();
+    level = rt_spin_lock_irqsave(&_spinlock);
     rt_slist_remove(&ulog.backend_list, &backend->list);
-    rt_hw_interrupt_enable(level);
+    rt_spin_unlock_irqrestore(&_spinlock, level);
 
     return RT_EOK;
 }
@@ -1304,9 +1305,9 @@ rt_err_t ulog_backend_set_filter(ulog_backend_t backend, ulog_backend_filter_t f
     rt_base_t level;
     RT_ASSERT(backend);
 
-    level = rt_hw_interrupt_disable();
+    level = rt_spin_lock_irqsave(&_spinlock);
     backend->filter = filter;
-    rt_hw_interrupt_enable(level);
+    rt_spin_unlock_irqrestore(&_spinlock, level);
 
     return RT_EOK;
 }
@@ -1319,18 +1320,18 @@ ulog_backend_t ulog_backend_find(const char *name)
 
     RT_ASSERT(ulog.init_ok);
 
-    level = rt_hw_interrupt_disable();
+    level = rt_spin_lock_irqsave(&_spinlock);
     for (node = rt_slist_first(&ulog.backend_list); node; node = rt_slist_next(node))
     {
         backend = rt_slist_entry(node, struct ulog_backend, list);
         if (rt_strncmp(backend->name, name, RT_NAME_MAX) == 0)
         {
-            rt_hw_interrupt_enable(level);
+            rt_spin_unlock_irqrestore(&_spinlock, level);
             return backend;
         }
     }
 
-    rt_hw_interrupt_enable(level);
+    rt_spin_unlock_irqrestore(&_spinlock, level);
     return RT_NULL;
 }
 

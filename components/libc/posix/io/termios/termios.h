@@ -36,6 +36,20 @@ struct termios {
     speed_t __c_ospeed;
 };
 
+#ifndef NCC
+#define NCC 8
+
+struct termio
+{
+    unsigned short c_iflag;  /* input mode flags */
+    unsigned short c_oflag;  /* output mode flags */
+    unsigned short c_cflag;  /* control mode flags */
+    unsigned short c_lflag;  /* local mode flags */
+    unsigned char c_line;    /* line discipline */
+    unsigned char c_cc[NCC]; /* control characters */
+};
+#endif
+
 /* c_cc characters */
 #define VINTR     0
 #define VQUIT     1

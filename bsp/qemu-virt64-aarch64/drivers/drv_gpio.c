@@ -106,7 +106,7 @@ static void pl061_pin_write(struct rt_device *device, rt_base_t pin, rt_uint8_t 
     pl061_write8(BIT(pin + 2), !!value << pin);
 }
 
-static rt_int8_t pl061_pin_read(struct rt_device *device, rt_base_t pin)
+static rt_ssize_t pl061_pin_read(struct rt_device *device, rt_base_t pin)
 {
     return !!pl061_read8((BIT(pin + 2)));
 }
@@ -305,9 +305,7 @@ int rt_hw_gpio_init(void)
     rt_spin_lock_init(&_pl061.spinlock);
 #endif
 
-#ifdef RT_USING_LWP
     pl061_gpio_base = (rt_size_t)rt_ioremap((void *)pl061_gpio_base, PL061_GPIO_SIZE);
-#endif
 
     rt_device_pin_register("gpio", &ops, RT_NULL);
     rt_hw_interrupt_install(PL061_GPIO_IRQNUM, rt_hw_gpio_isr, RT_NULL, "gpio");

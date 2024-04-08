@@ -7,9 +7,14 @@
    Change Logs:
    Date             Author          Notes
    2022-03-31       CDT             First version
+   2022-06-30       CDT             Optimize function: EMB_TMR4_Init
+                                    Optimize function: EMB_TMR6_Init
+   2023-06-30       CDT             Function EMB_TMR4_Init don't call EMB_DeInit
+                                    Function EMB_TMR6_Init don't call EMB_DeInit
+                                    Function EMB_DeInit set register EMB_RLSSEL to reset value
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -400,9 +405,8 @@ int32_t EMB_TMR4_Init(CM_EMB_TypeDef *EMBx, const stc_emb_tmr4_init_t *pstcEmbIn
                          pstcEmbInit->stcTmr4.stcTmr4PwmW.u32PwmLevel);
 
         /* CMP */
-        u32Reg1Value |= (pstcEmbInit->stcCmp.u32Cmp1State | pstcEmbInit->stcCmp.u32Cmp2State);
-        u32Reg1Value |= pstcEmbInit->stcCmp.u32Cmp3State;
-        u32Reg1Value |= pstcEmbInit->stcCmp.u32Cmp4State;
+        u32Reg1Value |= (pstcEmbInit->stcCmp.u32Cmp1State | pstcEmbInit->stcCmp.u32Cmp2State | \
+                         pstcEmbInit->stcCmp.u32Cmp3State | pstcEmbInit->stcCmp.u32Cmp4State);
 
         /* PORT */
         u32Reg1Value |= (pstcEmbInit->stcPort.stcPort1.u32PortState | pstcEmbInit->stcPort.stcPort1.u32PortLevel | \
@@ -413,8 +417,6 @@ int32_t EMB_TMR4_Init(CM_EMB_TypeDef *EMBx, const stc_emb_tmr4_init_t *pstcEmbIn
                          pstcEmbInit->stcPort.stcPort2.u32PortFilterDiv | pstcEmbInit->stcPort.stcPort2.u32PortFilterState | \
                          pstcEmbInit->stcPort.stcPort3.u32PortFilterDiv | pstcEmbInit->stcPort.stcPort3.u32PortFilterState | \
                          pstcEmbInit->stcPort.stcPort4.u32PortFilterDiv | pstcEmbInit->stcPort.stcPort4.u32PortFilterState);
-
-        EMB_DeInit(EMBx);
 
         WRITE_REG32(EMBx->CTL2, u32Reg2Value);
         WRITE_REG32(EMBx->CTL1, u32Reg1Value);
@@ -462,6 +464,7 @@ int32_t EMB_TMR6_StructInit(stc_emb_tmr6_init_t *pstcEmbInit)
         pstcEmbInit->stcPort.stcPort4.u32PortLevel = EMB_PORT4_DETECT_LVL_HIGH;
         pstcEmbInit->stcPort.stcPort4.u32PortFilterDiv = EMB_PORT4_FILTER_CLK_DIV1;
         pstcEmbInit->stcPort.stcPort4.u32PortFilterState = EMB_PORT4_FILTER_DISABLE;
+
         /* PWM */
         pstcEmbInit->stcTmr6.stcTmr6_1.u32PwmLevel = EMB_DETECT_TMR6_1_PWM_BOTH_LOW;
         pstcEmbInit->stcTmr6.stcTmr6_1.u32PwmState = EMB_TMR6_1_PWM_DISABLE;
@@ -479,6 +482,7 @@ int32_t EMB_TMR6_StructInit(stc_emb_tmr6_init_t *pstcEmbInit)
         pstcEmbInit->stcTmr6.stcTmr6_7.u32PwmState = EMB_TMR6_7_PWM_DISABLE;
         pstcEmbInit->stcTmr6.stcTmr6_8.u32PwmLevel = EMB_DETECT_TMR6_8_PWM_BOTH_LOW;
         pstcEmbInit->stcTmr6.stcTmr6_8.u32PwmState = EMB_TMR6_8_PWM_DISABLE;
+
         i32Ret = LL_OK;
     }
 
@@ -542,25 +546,22 @@ int32_t EMB_TMR6_Init(CM_EMB_TypeDef *EMBx, const stc_emb_tmr6_init_t *pstcEmbIn
         DDL_ASSERT(IS_EMB_DETECT_TMR6_8_PWM_LVL(pstcEmbInit->stcTmr6.stcTmr6_8.u32PwmLevel));
 
         /* OSC */
-        u32Reg1Value = pstcEmbInit->stcOsc.u32OscState;
         u32Reg2Value = 0UL;
+        u32Reg1Value = pstcEmbInit->stcOsc.u32OscState;
 
         /* PWM */
         u32Reg1Value |= (pstcEmbInit->stcTmr6.stcTmr6_1.u32PwmState | pstcEmbInit->stcTmr6.stcTmr6_2.u32PwmState | \
-                         pstcEmbInit->stcTmr6.stcTmr6_3.u32PwmState);
+                         pstcEmbInit->stcTmr6.stcTmr6_3.u32PwmState | pstcEmbInit->stcTmr6.stcTmr6_4.u32PwmState | \
+                         pstcEmbInit->stcTmr6.stcTmr6_5.u32PwmState | pstcEmbInit->stcTmr6.stcTmr6_6.u32PwmState | \
+                         pstcEmbInit->stcTmr6.stcTmr6_7.u32PwmState | pstcEmbInit->stcTmr6.stcTmr6_8.u32PwmState);
         u32Reg2Value |= (pstcEmbInit->stcTmr6.stcTmr6_1.u32PwmLevel | pstcEmbInit->stcTmr6.stcTmr6_2.u32PwmLevel | \
-                         pstcEmbInit->stcTmr6.stcTmr6_3.u32PwmLevel);
-        u32Reg1Value |= (pstcEmbInit->stcTmr6.stcTmr6_4.u32PwmState | pstcEmbInit->stcTmr6.stcTmr6_5.u32PwmState | \
-                         pstcEmbInit->stcTmr6.stcTmr6_6.u32PwmState | pstcEmbInit->stcTmr6.stcTmr6_7.u32PwmState | \
-                         pstcEmbInit->stcTmr6.stcTmr6_8.u32PwmState);
-        u32Reg2Value |= (pstcEmbInit->stcTmr6.stcTmr6_4.u32PwmLevel | pstcEmbInit->stcTmr6.stcTmr6_5.u32PwmLevel | \
-                         pstcEmbInit->stcTmr6.stcTmr6_6.u32PwmLevel | pstcEmbInit->stcTmr6.stcTmr6_7.u32PwmLevel | \
-                         pstcEmbInit->stcTmr6.stcTmr6_8.u32PwmLevel);
+                         pstcEmbInit->stcTmr6.stcTmr6_3.u32PwmLevel | pstcEmbInit->stcTmr6.stcTmr6_4.u32PwmLevel | \
+                         pstcEmbInit->stcTmr6.stcTmr6_5.u32PwmLevel | pstcEmbInit->stcTmr6.stcTmr6_6.u32PwmLevel | \
+                         pstcEmbInit->stcTmr6.stcTmr6_7.u32PwmLevel | pstcEmbInit->stcTmr6.stcTmr6_8.u32PwmLevel);
 
         /* CMP */
         u32Reg1Value |= (pstcEmbInit->stcCmp.u32Cmp1State | pstcEmbInit->stcCmp.u32Cmp2State | \
-                         pstcEmbInit->stcCmp.u32Cmp3State);
-        u32Reg1Value |= pstcEmbInit->stcCmp.u32Cmp4State;
+                         pstcEmbInit->stcCmp.u32Cmp3State | pstcEmbInit->stcCmp.u32Cmp4State);
 
         /* PORT */
         u32Reg1Value |= (pstcEmbInit->stcPort.stcPort1.u32PortState | pstcEmbInit->stcPort.stcPort1.u32PortLevel | \
@@ -571,8 +572,6 @@ int32_t EMB_TMR6_Init(CM_EMB_TypeDef *EMBx, const stc_emb_tmr6_init_t *pstcEmbIn
                          pstcEmbInit->stcPort.stcPort2.u32PortFilterDiv | pstcEmbInit->stcPort.stcPort2.u32PortFilterState | \
                          pstcEmbInit->stcPort.stcPort3.u32PortFilterDiv | pstcEmbInit->stcPort.stcPort3.u32PortFilterState | \
                          pstcEmbInit->stcPort.stcPort4.u32PortFilterDiv | pstcEmbInit->stcPort.stcPort4.u32PortFilterState);
-
-        EMB_DeInit(EMBx);
 
         WRITE_REG32(EMBx->CTL2, u32Reg2Value);
         WRITE_REG32(EMBx->CTL1, u32Reg1Value);
@@ -595,6 +594,7 @@ void EMB_DeInit(CM_EMB_TypeDef *EMBx)
 
     WRITE_REG32(EMBx->SOE, 0x00UL);
     WRITE_REG32(EMBx->INTEN, 0x00UL);
+    WRITE_REG32(EMBx->RLSSEL, 0x00UL);
 }
 
 /**
@@ -710,8 +710,8 @@ void EMB_SetReleasePwmCond(CM_EMB_TypeDef *EMBx, uint32_t u32Event, uint32_t u32
  */
 
 /**
-* @}
-*/
+ * @}
+ */
 
 /******************************************************************************
  * EOF (not truncated)

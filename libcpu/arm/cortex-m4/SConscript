@@ -21,6 +21,6 @@ if rtconfig.PLATFORM in ['gcc', 'llvm-arm']:
 if rtconfig.PLATFORM in ['iccarm']:
     src += Glob('*_iar.S')
 
-group = DefineGroup('CPU', src, depend = [''], CPPPATH = CPPPATH)
+group = DefineGroup('libcpu', src, depend = [''], CPPPATH = CPPPATH)
 
 Return('group')

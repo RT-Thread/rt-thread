@@ -16,16 +16,8 @@
 #include "gicv3.h"
 #include "ioremap.h"
 
-
 /* exception and interrupt handler table */
 struct rt_irq_desc isr_table[MAX_HANDLERS];
-
-#ifndef RT_USING_SMP
-/* Those variables will be accessed in ISR, so we need to share them. */
-rt_ubase_t rt_interrupt_from_thread        = 0;
-rt_ubase_t rt_interrupt_to_thread          = 0;
-rt_ubase_t rt_thread_switch_interrupt_flag = 0;
-#endif
 
 #ifndef RT_CPUS_NR
 #define RT_CPUS_NR 1
@@ -38,7 +30,7 @@ extern void *system_vectors;
 #ifdef RT_USING_SMP
 #define rt_interrupt_nest rt_cpu_self()->irq_nest
 #else
-extern volatile rt_uint8_t rt_interrupt_nest;
+extern volatile rt_atomic_t rt_interrupt_nest;
 #endif
 
 #ifdef SOC_BCM283x
@@ -85,10 +77,7 @@ void rt_hw_interrupt_init(void)
     }
 
     /* init interrupt nest, and context in thread sp */
-    rt_interrupt_nest = 0;
-    rt_interrupt_from_thread = 0;
-    rt_interrupt_to_thread = 0;
-    rt_thread_switch_interrupt_flag = 0;
+    rt_atomic_store(&rt_interrupt_nest, 0);
 #else
     rt_uint64_t gic_cpu_base;
     rt_uint64_t gic_dist_base;
@@ -104,7 +93,7 @@ void rt_hw_interrupt_init(void)
     rt_memset(isr_table, 0x00, sizeof(isr_table));
 
     /* initialize ARM GIC */
-#ifdef RT_USING_SMART
+#if defined(RT_USING_SMART) || defined(RT_USING_OFW)
     gic_dist_base = (rt_uint64_t)rt_ioremap((void*)platform_get_gic_dist_base(), 0x40000);
     gic_cpu_base = (rt_uint64_t)rt_ioremap((void*)platform_get_gic_cpu_base(), 0x1000);
 #ifdef BSP_USING_GICV3
@@ -138,17 +127,17 @@ void rt_hw_interrupt_mask(int vector)
 #ifdef SOC_BCM283x
     if (vector < 32)
     {
-        IRQ_DISABLE1 = (1 << vector);
+        IRQ_DISABLE1 = (1UL << vector);
     }
     else if (vector < 64)
     {
         vector = vector % 32;
-        IRQ_DISABLE2 = (1 << vector);
+        IRQ_DISABLE2 = (1UL << vector);
     }
     else
     {
         vector = vector - 64;
-        IRQ_DISABLE_BASIC = (1 << vector);
+        IRQ_DISABLE_BASIC = (1UL << vector);
     }
 #else
     arm_gic_mask(0, vector);
@@ -164,17 +153,17 @@ void rt_hw_interrupt_umask(int vector)
 #ifdef SOC_BCM283x
 if (vector < 32)
     {
-        IRQ_ENABLE1 = (1 << vector);
+        IRQ_ENABLE1 = (1UL << vector);
     }
     else if (vector < 64)
     {
         vector = vector % 32;
-        IRQ_ENABLE2 = (1 << vector);
+        IRQ_ENABLE2 = (1UL << vector);
     }
     else
     {
         vector = vector - 64;
-        IRQ_ENABLE_BASIC = (1 << vector);
+        IRQ_ENABLE_BASIC = (1UL << vector);
     }
 #else
     arm_gic_umask(0, vector);
@@ -414,4 +403,49 @@ void rt_hw_ipi_handler_install(int ipi_vector, rt_isr_handler_t ipi_isr_handler)
     /* note: ipi_vector maybe different with irq_vector */
     rt_hw_interrupt_install(ipi_vector, ipi_isr_handler, 0, "IPI_HANDLER");
 }
+#endif
+
+#if defined(FINSH_USING_MSH) && defined(RT_USING_INTERRUPT_INFO)
+int list_isr()
+{
+    int idx;
+
+    rt_kprintf("%-*.*s nr   handler            param              counter         ", RT_NAME_MAX, RT_NAME_MAX, "irq");
+#ifdef RT_USING_SMP
+    for (int i = 0; i < RT_CPUS_NR; i++)
+    {
+        rt_kprintf(" cpu%2d  ", i);
+    }
+#endif
+    rt_kprintf("\n");
+    for (int i = 0; i < RT_NAME_MAX; i++)
+    {
+        rt_kprintf("-");
+    }
+    rt_kprintf(" ---- ------------------ ------------------ ----------------");
+#ifdef RT_USING_SMP
+    for (int i = 0; i < RT_CPUS_NR; i++)
+    {
+        rt_kprintf(" -------");
+    }
+#endif
+    rt_kprintf("\n");
+    for (idx = 0; idx < MAX_HANDLERS; idx++)
+    {
+        if (isr_table[idx].handler != RT_NULL)
+        {
+            rt_kprintf("%*.s %4d %p %p %16d", RT_NAME_MAX, isr_table[idx].name, idx, isr_table[idx].handler,
+                       isr_table[idx].param, isr_table[idx].counter);
+#ifdef RT_USING_SMP
+            for (int i = 0; i < RT_CPUS_NR; i++)
+                 rt_kprintf(" %7d", isr_table[idx].cpu_counter[i]);
+#endif
+            rt_kprintf("\n");
+        }
+    }
+    return 0;
+}
+
+#include "finsh.h"
+MSH_CMD_EXPORT(list_isr, list isr)
 #endif

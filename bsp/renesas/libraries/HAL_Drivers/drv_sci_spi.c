@@ -24,6 +24,14 @@
 #endif /* DRV_DEBUG */
 #include <rtdbg.h>
 
+#ifdef R_SCI_B_SPI_H
+#define R_SCI_SPI_Write R_SCI_B_SPI_Write
+#define R_SCI_SPI_Read R_SCI_B_SPI_Read
+#define R_SCI_SPI_WriteRead R_SCI_B_SPI_WriteRead
+#define R_SCI_SPI_Open R_SCI_B_SPI_Open
+#define R_SCI_SPI_Close R_SCI_B_SPI_Close
+#endif
+
 #define RA_SCI_SPI0_EVENT 0x0001
 #define RA_SCI_SPI1_EVENT 0x0002
 #define RA_SCI_SPI2_EVENT 0x0004
@@ -249,13 +257,21 @@ static rt_err_t ra_hw_spi_configure(struct rt_spi_device *device,
     configuration->data_width = configuration->data_width / 8;
     spi_dev->rt_spi_cfg_t = configuration;
 
+#ifdef R_SCI_B_SPI_H
+    sci_b_spi_extended_cfg_t spi_cfg = *(sci_b_spi_extended_cfg_t *)spi_dev->ra_spi_handle_t->spi_cfg_t->p_extend;
+#else
     sci_spi_extended_cfg_t *spi_cfg = (sci_spi_extended_cfg_t *)spi_dev->ra_spi_handle_t->spi_cfg_t->p_extend;
+#endif
 
     /**< Configure Select Line */
     rt_pin_write(device->cs_pin, PIN_HIGH);
 
     /**< config bitrate */
+#ifdef R_SCI_B_SPI_H
+    R_SCI_B_SPI_CalculateBitrate(spi_dev->rt_spi_cfg_t->max_hz, SCI_B_SPI_SOURCE_CLOCK_PCLK, &spi_cfg.clk_div);
+#else
     R_SCI_SPI_CalculateBitrate(spi_dev->rt_spi_cfg_t->max_hz, &spi_cfg->clk_div, false);
+#endif
 
     /**< init */
     err = R_SCI_SPI_Open((spi_ctrl_t *)spi_dev->ra_spi_handle_t->spi_ctrl_t, (spi_cfg_t const * const)spi_dev->ra_spi_handle_t->spi_cfg_t);

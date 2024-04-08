@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2024, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -11,7 +11,6 @@
 #include <rthw.h>
 #include <rtthread.h>
 
-#include <string.h>
 #include <drivers/ofw_fdt.h>
 #include <drivers/ofw_raw.h>
 #include <drivers/core/dm.h>
@@ -322,7 +321,7 @@ static rt_err_t fdt_reserved_memory_reg(int nodeoffset, const char *uname)
         }
         else
         {
-            while (len >= t_len)
+            for (; len >= t_len; len -= t_len)
             {
                 base = rt_fdt_next_cell(&prop, _root_addr_cells);
                 size = rt_fdt_next_cell(&prop, _root_size_cells);
@@ -665,12 +664,17 @@ void rt_fdt_earlycon_kick(int why)
         fdt_earlycon.console_kick(&fdt_earlycon, why);
     }
 
-    if (why == FDT_EARLYCON_KICK_COMPLETED && fdt_earlycon.msg_idx)
+    if (why == FDT_EARLYCON_KICK_COMPLETED)
     {
-        fdt_earlycon.msg_idx = 0;
+        fdt_earlycon.console_putc = RT_NULL;
 
-        /* Dump old messages */
-        rt_kputs(fdt_earlycon.msg);
+        if (fdt_earlycon.msg_idx)
+        {
+            fdt_earlycon.msg_idx = 0;
+
+            /* Dump old messages */
+            rt_kputs(fdt_earlycon.msg);
+        }
     }
 }
 
@@ -788,6 +792,8 @@ rt_err_t rt_fdt_scan_chosen_stdout(void)
                 if (options && *options && *options != ' ')
                 {
                     options_len = strchrnul(options, ' ') - options;
+
+                    rt_strncpy(fdt_earlycon.options, options, options_len);
                 }
 
                 /* console > stdout-path */
@@ -825,7 +831,7 @@ rt_err_t rt_fdt_scan_chosen_stdout(void)
 
                 if (best_earlycon_id && best_earlycon_id->setup)
                 {
-                    rt_bool_t used_options = RT_FALSE;
+                    const char earlycon_magic[] = { 'O', 'F', 'W', '\0' };
 
                     if (!con_type)
                     {
@@ -834,24 +840,25 @@ rt_err_t rt_fdt_scan_chosen_stdout(void)
                     fdt_earlycon.fdt = _fdt;
                     fdt_earlycon.nodeoffset = offset;
 
-                    err = best_earlycon_id->setup(&fdt_earlycon, options);
+                    options = &fdt_earlycon.options[options_len + 1];
+                    rt_strncpy((void *)options, earlycon_magic, RT_ARRAY_SIZE(earlycon_magic));
 
-                    for (int i = 0; i < options_len; ++i)
+                    err = best_earlycon_id->setup(&fdt_earlycon, fdt_earlycon.options);
+
+                    if (rt_strncmp(options, earlycon_magic, RT_ARRAY_SIZE(earlycon_magic)))
                     {
-                        if (options[i] == RT_FDT_EARLYCON_OPTION_SIGNATURE)
+                        const char *option_start = options - 1;
+
+                        while (option_start[-1] != '\0')
                         {
-                            /* Restore ',' */
-                            ((char *)options)[i++] = ',';
-                            options = &options[i];
-                            options_len -= i;
-                            used_options = RT_TRUE;
-                            break;
+                            --option_start;
                         }
+
+                        rt_memmove(fdt_earlycon.options, option_start, options - option_start);
                     }
-                    if (!used_options)
+                    else
                     {
-                        options = RT_NULL;
-                        options_len = 0;
+                        fdt_earlycon.options[0] = '\0';
                     }
                 }
             }
@@ -878,8 +885,8 @@ rt_err_t rt_fdt_scan_chosen_stdout(void)
 
     if (fdt_earlycon.mmio)
     {
-        LOG_I("Earlycon: %s at MMIO/PIO %p (options '%.*s')",
-                con_type, fdt_earlycon.mmio, options_len, options ? options : "");
+        LOG_I("Earlycon: %s at MMIO/PIO %p (options '%s')",
+                con_type, fdt_earlycon.mmio, fdt_earlycon.options);
     }
 
     return err;

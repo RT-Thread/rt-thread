@@ -1,0 +1,23 @@
+Import('RTT_ROOT')
+Import('rtconfig')
+from building import *
+
+cwd = GetCurrentDir()
+
+# add the general drivers.
+src = []
+
+if GetDepend(['BSP_USING_PIN']):
+    src += ['drv_gpio.c']
+
+if GetDepend(['BSP_USING_UART']):
+    src += ['drv_uart.c']
+
+if GetDepend(['BSP_USING_SOFT_I2C']):
+    src += ['drv_soft_i2c.c']
+
+path = [cwd]
+
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path)
+
+Return('group')

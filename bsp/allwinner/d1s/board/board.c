@@ -74,8 +74,6 @@ static void __rt_assert_handler(const char *ex_string, const char *func, rt_size
 // BSP的C入口
 void primary_cpu_entry(void)
 {
-    extern void entry(void);
-
     // 关中断
     rt_hw_interrupt_disable();
     rt_assert_set_hook(__rt_assert_handler);

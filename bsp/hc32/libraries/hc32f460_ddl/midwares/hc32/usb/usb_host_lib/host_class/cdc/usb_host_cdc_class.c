@@ -6,9 +6,10 @@
    Change Logs:
    Date             Author          Notes
    2022-03-31       CDT             First version
+   2023-06-30       CDT             Modify for variable alignment
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -60,28 +61,12 @@ CDC_Usercb_TypeDef UserCb;
 /*******************************************************************************
  * Local variable definitions ('static')
  ******************************************************************************/
-#ifdef USB_INTERNAL_DMA_ENABLED
-#if defined(__ICCARM__) /*!< IAR Compiler */
-#pragma data_alignment = 4
-#endif
-#endif /* USB_INTERNAL_DMA_ENABLED */
 __USB_ALIGN_BEGIN static CDC_Machine_TypeDef CDC_Machine;
 
-static CDC_Xfer_TypeDef CDC_TxParam;
-static CDC_Xfer_TypeDef CDC_RxParam;
+__USB_ALIGN_BEGIN static CDC_Xfer_TypeDef CDC_TxParam;
+__USB_ALIGN_BEGIN static CDC_Xfer_TypeDef CDC_RxParam;
 
-#ifdef USB_INTERNAL_DMA_ENABLED
-#if defined(__ICCARM__) /*!< IAR Compiler */
-#pragma data_alignment = 4
-#endif
-#endif /* USB_INTERNAL_DMA_ENABLED */
 __USB_ALIGN_BEGIN static uint8_t TxBuf[CDC_BUFFER_SIZE];
-
-#ifdef USB_INTERNAL_DMA_ENABLED
-#if defined(__ICCARM__) /*!< IAR Compiler */
-#pragma data_alignment = 4
-#endif
-#endif /* USB_INTERNAL_DMA_ENABLED */
 __USB_ALIGN_BEGIN static uint8_t RxBuf[CDC_BUFFER_SIZE];
 
 static uint8_t RX_Enabled = 0;
@@ -166,7 +151,7 @@ static HOST_STATUS usb_host_cdc_vendor_interface_init(usb_core_instance *pdev, v
             }
             /* distribute a channel for communication endpoint */
             CDC_Machine.CDC_CommItf.hc_num_in = usb_host_distrch(pdev,
-                                                CDC_Machine.CDC_CommItf.notificationEp);
+                                                                 CDC_Machine.CDC_CommItf.notificationEp);
 
             /* open channel for communication endpoint */
             usb_host_chopen(pdev,
@@ -186,10 +171,10 @@ static HOST_STATUS usb_host_cdc_vendor_interface_init(usb_core_instance *pdev, v
 
         /* distribute channels for cdc data endpoints */
         CDC_Machine.CDC_DataItf.hc_num_out = usb_host_distrch(pdev,
-                                             CDC_Machine.CDC_DataItf.cdcOutEp);
+                                                              CDC_Machine.CDC_DataItf.cdcOutEp);
 
         CDC_Machine.CDC_DataItf.hc_num_in = usb_host_distrch(pdev,
-                                            CDC_Machine.CDC_DataItf.cdcInEp);
+                                                             CDC_Machine.CDC_DataItf.cdcInEp);
 
         /* open cdc data endpoints */
         usb_host_chopen(pdev,
@@ -231,8 +216,8 @@ static HOST_STATUS usb_host_cdc_interface_init(usb_core_instance *pdev, void *ph
 
     /* Communication Interface */
     if ((pphost->device_prop.devitfdesc[0].bInterfaceClass == COMMUNICATION_DEVICE_CLASS_CODE) &&
-            (pphost->device_prop.devitfdesc[0].bInterfaceSubClass == ABSTRACT_CONTROL_MODEL) &&
-            (pphost->device_prop.devitfdesc[0].bInterfaceProtocol == COMMON_AT_COMMAND)) {
+        (pphost->device_prop.devitfdesc[0].bInterfaceSubClass == ABSTRACT_CONTROL_MODEL) &&
+        (pphost->device_prop.devitfdesc[0].bInterfaceProtocol == COMMON_AT_COMMAND)) {
         /* fill the communication endpoint address and length */
         CDC_Machine.CDC_CommItf.ep_addr = pphost->device_prop.devepdesc[0][0].bEndpointAddress;
         CDC_Machine.CDC_CommItf.length = pphost->device_prop.devepdesc[0][0].wMaxPacketSize;
@@ -243,7 +228,7 @@ static HOST_STATUS usb_host_cdc_interface_init(usb_core_instance *pdev, void *ph
         }
         /* distribute a channel for communication endpoint */
         CDC_Machine.CDC_CommItf.hc_num_in = usb_host_distrch(pdev,
-                                            CDC_Machine.CDC_CommItf.notificationEp);
+                                                             CDC_Machine.CDC_CommItf.notificationEp);
 
         /* open channel for communication endpoint */
         usb_host_chopen(pdev,
@@ -259,8 +244,8 @@ static HOST_STATUS usb_host_cdc_interface_init(usb_core_instance *pdev, void *ph
 
     /* Data Interface */
     if ((pphost->device_prop.devitfdesc[1].bInterfaceClass == DATA_INTERFACE_CLASS_CODE) &&
-            (pphost->device_prop.devitfdesc[1].bInterfaceSubClass == RESERVED) &&
-            (pphost->device_prop.devitfdesc[1].bInterfaceProtocol == NO_CLASS_SPECIFIC_PROTOCOL_CODE)) {
+        (pphost->device_prop.devitfdesc[1].bInterfaceSubClass == RESERVED) &&
+        (pphost->device_prop.devitfdesc[1].bInterfaceProtocol == NO_CLASS_SPECIFIC_PROTOCOL_CODE)) {
         /* fill cdc data endpoint address and length */
         CDC_Machine.CDC_DataItf.ep_addr = pphost->device_prop.devepdesc[1][0].bEndpointAddress;
         CDC_Machine.CDC_DataItf.length = pphost->device_prop.devepdesc[1][0].wMaxPacketSize;
@@ -279,10 +264,10 @@ static HOST_STATUS usb_host_cdc_interface_init(usb_core_instance *pdev, void *ph
 
         /* distribute channels for cdc data endpoints */
         CDC_Machine.CDC_DataItf.hc_num_out = usb_host_distrch(pdev,
-                                             CDC_Machine.CDC_DataItf.cdcOutEp);
+                                                              CDC_Machine.CDC_DataItf.cdcOutEp);
 
         CDC_Machine.CDC_DataItf.hc_num_in = usb_host_distrch(pdev,
-                                            CDC_Machine.CDC_DataItf.cdcInEp);
+                                                             CDC_Machine.CDC_DataItf.cdcInEp);
 
         /* open cdc data endpoints */
         usb_host_chopen(pdev,
@@ -427,6 +412,9 @@ static HOST_STATUS usb_host_cdc_class_process(usb_core_instance *pdev, void *pho
     /* application process */
     pphost->user_callbk->huser_application();
 
+    if (CDC_ReqState == CDC_SET_LINE_CODING_RQUEST) {
+        return status;
+    }
     /* send data process */
     usb_host_cdc_senddata_process(pdev, pphost);
 

@@ -15,6 +15,7 @@
 #include <rtconfig.h>
 #include <sys/types.h>
 #include <sys/time.h>
+#include <string.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -48,7 +49,7 @@ typedef struct _types_fd_set {
 #define FD_SET(n, p)    ((p)->fds_bits[(n)/NFDBITS] |= (1L << ((n) % NFDBITS)))
 #define FD_CLR(n, p)    ((p)->fds_bits[(n)/NFDBITS] &= ~(1L << ((n) % NFDBITS)))
 #define FD_ISSET(n, p)  ((p)->fds_bits[(n)/NFDBITS] & (1L << ((n) % NFDBITS)))
-#define FD_ZERO(p)      rt_memset((void*)(p), 0, sizeof(*(p)))
+#define FD_ZERO(p)      memset((void*)(p), 0, sizeof(*(p)))
 #endif /* _SYS_TYPES_FD_SET */
 
 int select(int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds, struct timeval *timeout);

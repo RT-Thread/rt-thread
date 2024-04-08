@@ -7,7 +7,7 @@
  * Date           Author       Notes
  * 2021-08-19     pjq          first version
  */
- 
+
 
 #ifndef __DRV_USART_H__
 #define __DRV_USART_H__

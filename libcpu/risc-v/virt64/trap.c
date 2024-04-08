@@ -149,6 +149,7 @@ static const char *get_exception_msg(int id)
 }
 
 #ifdef RT_USING_SMART
+#include "lwp.h"
 void handle_user(rt_size_t scause, rt_size_t stval, rt_size_t sepc, struct rt_hw_stack_frame *sp)
 {
     rt_size_t id = __MASKVALUE(scause, __MASK(63UL));
@@ -201,6 +202,7 @@ void handle_user(rt_size_t scause, rt_size_t stval, rt_size_t sepc, struct rt_hw
 
     if (fault_op)
     {
+        rt_base_t saved_stat;
         lwp = lwp_self();
         struct rt_aspace_fault_msg msg = {
             .fault_op = fault_op,
@@ -208,21 +210,30 @@ void handle_user(rt_size_t scause, rt_size_t stval, rt_size_t sepc, struct rt_hw
             .fault_vaddr = (void *)stval,
         };
 
+        __asm__ volatile ("csrrsi %0, sstatus, 2":"=r"(saved_stat));
         if (lwp && rt_aspace_fault_try_fix(lwp->aspace, &msg))
         {
+            __asm__ volatile ("csrw sstatus, %0"::"r"(saved_stat));
             return;
         }
+        __asm__ volatile ("csrw sstatus, %0"::"r"(saved_stat));
     }
     LOG_E("[FATAL ERROR] Exception %ld:%s\n", id, get_exception_msg(id));
     LOG_E("scause:0x%p,stval:0x%p,sepc:0x%p\n", scause, stval, sepc);
     dump_regs(sp);
 
-    rt_hw_backtrace((uint32_t *)sp->s0_fp, sepc);
+    rt_thread_t cur_thr = rt_thread_self();
+    struct rt_hw_backtrace_frame frame = {
+        .fp = sp->s0_fp,
+        .pc = sepc
+    };
+    rt_kprintf("fp = %p\n", frame.fp);
+    lwp_backtrace_frame(cur_thr, &frame);
 
-    LOG_E("User Fault, killing thread: %s", rt_thread_self()->parent.name);
+    LOG_E("User Fault, killing thread: %s", cur_thr->parent.name);
 
     EXIT_TRAP;
-    sys_exit(-1);
+    sys_exit_group(-1);
 }
 #endif
 
@@ -350,10 +361,14 @@ void handle_trap(rt_size_t scause, rt_size_t stval, rt_size_t sepc, struct rt_hw
 
         extern struct rt_thread *rt_current_thread;
         rt_kprintf("--------------Backtrace--------------\n");
-        rt_hw_backtrace((uint32_t *)sp->s0_fp, sepc);
+        struct rt_hw_backtrace_frame frame = {
+            .fp = sp->s0_fp,
+            .pc = sepc
+        };
+        rt_kprintf("fp = %p", frame.fp);
+        rt_backtrace_frame(&frame);
 
-        while (1)
-            ;
+        RT_ASSERT(0);
     }
 _exit:
     EXIT_TRAP;

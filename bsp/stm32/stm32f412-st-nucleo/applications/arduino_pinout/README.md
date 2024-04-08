@@ -69,7 +69,7 @@ I2C bus is `SCL/D15` and `SDA/D14` pins. Users can directly include the `#includ
 
 ### 3.2 SPI Bus
 
-This board doesn't support Arduino SPI header file and functions.
+The SPI bus of the Nucleo board is the `CS/D10`, `MOSI/D11`, `MISO/D12` and `SCK/D13` pins printed on the board. These `D11`, `D12` and `D13` pins It is taken over by the RT-Thread SPI device framework and there is no need to directly control these pins. User needs to operate `D10` chip select pin. Directly quote `#include <SPI.h>` (Arduino official SPI header file) to use. After using the SPI function, the PWM function of `D10` and `D11` will be irreversibly disabled and converted to the SPI function.
 
 ### 3.3 Serial
 

@@ -7,9 +7,13 @@
    Change Logs:
    Date             Author          Notes
    2022-03-31       CDT             First version
+   2022-06-30       CDT             Modify structure comments:stc_emb_monitor_tmr_pwm_t
+   2023-09-30       CDT             Update EMB_CTL_CMPEN0~2 to EMB_CTL_CMPEN1~3
+                                    Update EMB_INTEN_PORTINTEN to EMB_INTEN_PORTININTEN
+                                    Update EMB_INTEN_PWMINTEN to EMB_INTEN_PWMSINTEN
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -68,23 +72,23 @@ typedef struct {
  */
 typedef struct {
     uint32_t u32PortState;          /*!< Enable or disable EMB detect port in control function
-                                         This parameter can be a value of EMB_Port_Selection */
+                                         This parameter can be a value of @ref EMB_Port_Selection */
     uint32_t u32PortLevel;          /*!< EMB detect port level
-                                         This parameter can be a value of EMB_Detect_Port_Level */
+                                         This parameter can be a value of @ref EMB_Detect_Port_Level */
     uint32_t u32PortFilterDiv;      /*!< EMB port filter division
-                                         This parameter can be a value of EMB_Port_Filter_Clock_Division */
+                                         This parameter can be a value of @ref EMB_Port_Filter_Clock_Division */
     uint32_t u32PortFilterState;    /*!< EMB port filter division
-                                         This parameter can be a value of EMB_Port_Filter_Selection */
+                                         This parameter can be a value of @ref EMB_Port_Filter_Selection */
 } stc_emb_monitor_port_config_t;
 
 /**
- * @brief EMB monitor TMR4 or TMR6 PWM configuration
+ * @brief EMB monitor PWM configuration
  */
 typedef struct {
-    uint32_t u32PwmState;   /*!< Enable or disable EMB detect TMR4/6 PWM channel same phase function
-                                 This parameter can be a value of EMB_TMR4_PWM_Selection or EMB_TMR6_PWM_Selection */
-    uint32_t u32PwmLevel;   /*!< Detect TMR4/6 PWM channel polarity level
-                                 This parameter can be a value of EMB_Detect_TMR4_PWM_Level or EMB_Detect_TMR6_PWM_Level */
+    uint32_t u32PwmState;   /*!< Enable or disable EMB detect timer same phase function
+                                 This parameter can be a value of @ref EMB_Detect_PWM state. */
+    uint32_t u32PwmLevel;   /*!< Detect timer polarity level
+                                 This parameter can be a value of @ref EMB_Detect_PWM level */
 } stc_emb_monitor_tmr_pwm_t;
 
 /**
@@ -155,7 +159,7 @@ typedef struct {
                                              This parameter details refer @ref stc_emb_monitor_osc_t structure */
     stc_emb_monitor_port_t  stcPort;    /*!< EMB detect EMB port function
                                              This parameter details refer @ref stc_emb_monitor_port_t structure */
-    stc_emb_monitor_tmr6_t  stcTmr6;    /*!< EMB detect TMR4 function
+    stc_emb_monitor_tmr6_t  stcTmr6;    /*!< EMB detect TMR6 function
                                              This parameter details refer @ref stc_emb_monitor_tmr6_t structure */
 } stc_emb_tmr6_init_t;
 
@@ -178,11 +182,10 @@ typedef struct {
 #define EMB_CMP1_DISABLE                    (0UL)
 #define EMB_CMP2_DISABLE                    (0UL)
 #define EMB_CMP3_DISABLE                    (0UL)
-#define EMB_CMP4_DISABLE                    (0UL)
 
-#define EMB_CMP1_ENABLE                     (EMB_CTL_CMPEN0)
-#define EMB_CMP2_ENABLE                     (EMB_CTL_CMPEN1)
-#define EMB_CMP3_ENABLE                     (EMB_CTL_CMPEN2)
+#define EMB_CMP1_ENABLE                     (EMB_CTL_CMPEN1)
+#define EMB_CMP2_ENABLE                     (EMB_CTL_CMPEN2)
+#define EMB_CMP3_ENABLE                     (EMB_CTL_CMPEN3)
 /**
  * @}
  */
@@ -192,12 +195,15 @@ typedef struct {
  * @{
  */
 #define EMB_OSC_DISABLE                     (0UL)
-
 #define EMB_OSC_ENABLE                      (EMB_CTL_OSCSTPEN)
 /**
  * @}
  */
 
+/**
+ * @defgroup EMB_Detect_PWM EMB Detect PWM
+ * @{
+ */
 /**
  * @defgroup EMB_TMR4_PWM_Selection EMB TMR4 PWM Selection
  * @{
@@ -235,13 +241,6 @@ typedef struct {
 #define EMB_TMR6_1_PWM_DISABLE              (0UL)
 #define EMB_TMR6_2_PWM_DISABLE              (0UL)
 #define EMB_TMR6_3_PWM_DISABLE              (0UL)
-#define EMB_TMR6_4_PWM_DISABLE              (0UL)
-#define EMB_TMR6_5_PWM_DISABLE              (0UL)
-#define EMB_TMR6_6_PWM_DISABLE              (0UL)
-#define EMB_TMR6_7_PWM_DISABLE              (0UL)
-#define EMB_TMR6_8_PWM_DISABLE              (0UL)
-#define EMB_TMR6_9_PWM_DISABLE              (0UL)
-#define EMB_TMR6_10_PWM_DISABLE             (0UL)
 
 #define EMB_TMR6_1_PWM_ENABLE               (EMB_CTL_PWMSEN0)
 #define EMB_TMR6_2_PWM_ENABLE               (EMB_CTL_PWMSEN1)
@@ -251,19 +250,12 @@ typedef struct {
  */
 
 /**
- * @defgroup EMB_Detect_TMR6_PWM_Level EMB TMR6 PWM Level
+ * @defgroup EMB_Detect_TMR6_PWM_Level EMB Detect TMR6 PWM Level
  * @{
  */
 #define EMB_DETECT_TMR6_1_PWM_BOTH_LOW      (0UL)
 #define EMB_DETECT_TMR6_2_PWM_BOTH_LOW      (0UL)
 #define EMB_DETECT_TMR6_3_PWM_BOTH_LOW      (0UL)
-#define EMB_DETECT_TMR6_4_PWM_BOTH_LOW      (0UL)
-#define EMB_DETECT_TMR6_5_PWM_BOTH_LOW      (0UL)
-#define EMB_DETECT_TMR6_6_PWM_BOTH_LOW      (0UL)
-#define EMB_DETECT_TMR6_7_PWM_BOTH_LOW      (0UL)
-#define EMB_DETECT_TMR6_8_PWM_BOTH_LOW      (0UL)
-#define EMB_DETECT_TMR6_9_PWM_BOTH_LOW      (0UL)
-#define EMB_DETECT_TMR6_10_PWM_BOTH_LOW     (0UL)
 
 #define EMB_DETECT_TMR6_1_PWM_BOTH_HIGH     (EMB_PWMLV_PWMLV0)
 #define EMB_DETECT_TMR6_2_PWM_BOTH_HIGH     (EMB_PWMLV_PWMLV1)
@@ -273,15 +265,14 @@ typedef struct {
  */
 
 /**
+ * @}
+ */
+
+/**
  * @defgroup EMB_Port_Selection EMB Port Selection
  * @{
  */
 #define EMB_PORT1_DISABLE                   (0UL)
-#define EMB_PORT2_DISABLE                   (0UL)
-#define EMB_PORT3_DISABLE                   (0UL)
-#define EMB_PORT4_DISABLE                   (0UL)
-#define EMB_PORT5_DISABLE                   (0UL)
-#define EMB_PORT6_DISABLE                   (0UL)
 
 #define EMB_PORT1_ENABLE                    (EMB_CTL_PORTINEN)
 /**
@@ -293,11 +284,6 @@ typedef struct {
  * @{
  */
 #define EMB_PORT1_DETECT_LVL_HIGH           (0UL)
-#define EMB_PORT2_DETECT_LVL_HIGH           (0UL)
-#define EMB_PORT3_DETECT_LVL_HIGH           (0UL)
-#define EMB_PORT4_DETECT_LVL_HIGH           (0UL)
-#define EMB_PORT5_DETECT_LVL_HIGH           (0UL)
-#define EMB_PORT6_DETECT_LVL_HIGH           (0UL)
 
 #define EMB_PORT1_DETECT_LVL_LOW            (EMB_CTL_INVSEL)
 /**
@@ -309,11 +295,6 @@ typedef struct {
  * @{
  */
 #define EMB_PORT1_FILTER_DISABLE            (0UL)
-#define EMB_PORT2_FILTER_DISABLE            (0UL)
-#define EMB_PORT3_FILTER_DISABLE            (0UL)
-#define EMB_PORT4_FILTER_DISABLE            (0UL)
-#define EMB_PORT5_FILTER_DISABLE            (0UL)
-#define EMB_PORT6_FILTER_DISABLE            (0UL)
 
 #define EMB_PORT1_FILTER_ENABLE             (EMB_CTL_NFEN)
 /**
@@ -342,7 +323,7 @@ typedef struct {
 #define EMB_FLAG_PORT1                      (EMB_STAT_PORTINF)
 #define EMB_STAT_PWMS                       (EMB_STAT_PWMST)
 #define EMB_STAT_PORT1                      (EMB_STAT_PORTINST)
-#define EMB_FLAG_ALL                        (EMB_FLAG_PWMS | EMB_FLAG_CMP | EMB_FLAG_OSC | EMB_FLAG_PORT1  | \
+#define EMB_FLAG_ALL                        (EMB_FLAG_PWMS | EMB_FLAG_CMP | EMB_FLAG_OSC | EMB_FLAG_PORT1 | \
                                              EMB_STAT_PWMS | EMB_STAT_PORT1)
 /**
  * @}
@@ -352,10 +333,10 @@ typedef struct {
  * @defgroup EMB_Interrupt EMB Interrupt
  * @{
  */
-#define EMB_INT_PWMS                        (EMB_INTEN_PWMINTEN)
+#define EMB_INT_PWMS                        (EMB_INTEN_PWMSINTEN)
 #define EMB_INT_CMP                         (EMB_INTEN_CMPINTEN)
 #define EMB_INT_OSC                         (EMB_INTEN_OSINTEN)
-#define EMB_INT_PORT1                       (EMB_INTEN_PORTINTEN)
+#define EMB_INT_PORT1                       (EMB_INTEN_PORTININTEN)
 #define EMB_INT_ALL                         (EMB_INT_PWMS | EMB_INT_CMP | EMB_INT_OSC | EMB_INT_PORT1)
 /**
  * @}
