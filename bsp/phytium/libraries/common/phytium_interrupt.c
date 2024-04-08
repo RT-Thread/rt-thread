@@ -131,6 +131,9 @@ void phytium_interrupt_init(void)
     arm_gic_redist_address_set(0, redist_addr + GICV3_RD_OFFSET, 3);
 #endif
 #else
+#if defined(TARGET_E2000D)
+    rt_uint32_t cpu_offset =  2;
+#endif
 #if RT_CPUS_NR == 2
     arm_gic_redist_address_set(0, redist_addr + (1 + cpu_offset) * GICV3_RD_OFFSET, 1);
 #elif RT_CPUS_NR == 3
