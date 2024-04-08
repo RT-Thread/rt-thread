@@ -1,5 +1,6 @@
 #!/bin/bash
 
+source cvitek_bootloader/env.sh
 PROJECT_PATH=$1
 IMAGE_NAME=$2
 
