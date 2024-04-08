@@ -380,7 +380,6 @@ static rt_ssize_t phytium_qspi_xfer(struct rt_spi_device *device, struct rt_spi_
             rt_kprintf("Failed to config read, test result 0x%x.\r\n", ret);
             return -RT_ERROR;
         }
-        
         /* read norflash data */
         size_t read_len = QspiFlashReadData(&(qspi_bus->fqspi), addr, (u8 *)&rd_buf, len);
         if (read_len != len)

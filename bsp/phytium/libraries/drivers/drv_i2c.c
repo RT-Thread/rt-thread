@@ -28,7 +28,7 @@
 
 /*Please define the length of the mem_addr of the device*/
 #ifndef FI2C_DEVICE_MEMADDR_LEN
-    #define FI2C_DEVICE_MEMADDR_LEN 1 
+    #define FI2C_DEVICE_MEMADDR_LEN 1
 #endif
 #define FI2C_DEFAULT_ID 0
 #define I2C_USE_MIO
