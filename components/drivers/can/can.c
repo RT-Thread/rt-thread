@@ -152,7 +152,7 @@ rt_inline int _can_int_tx(struct rt_can_device *can, const struct rt_can_msg *da
         rt_list_remove(&tx_tosnd->list);
         rt_hw_interrupt_enable(level);
 
-        no = ((rt_uint32_t)tx_tosnd - (rt_uint32_t)tx_fifo->buffer) / sizeof(struct rt_can_sndbxinx_list);
+        no = ((rt_ubase_t)tx_tosnd - (rt_ubase_t)tx_fifo->buffer) / sizeof(struct rt_can_sndbxinx_list);
         tx_tosnd->result = RT_CAN_SND_RESULT_WAIT;
         rt_completion_init(&tx_tosnd->completion);
         if (can->ops->sendmsg(can, data, no) != RT_EOK)
