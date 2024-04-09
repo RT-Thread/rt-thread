@@ -32,7 +32,9 @@ $ scons --menuconfig
 ```shell
 Board Type (milkv-duo)  --->
     ( ) milkv-duo
+    ( ) milkv-duo-spinor
     (X) milkv-duo256m
+    ( ) milkv-duo256m-spinor
 ```
 
 2. 编译
@@ -74,6 +76,8 @@ $ scons
 $ wget http://security.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.1f-1ubuntu2_amd64.deb
 $ sudo dpkg -i libssl1.1_1.1.1f-1ubuntu2_amd64.deb
 ```
+
+3. 如发现切换开发板编译正常，但无法正常打包，请切换至自动下载的 `cvi_bootloader` 目录，并手工运行 `git pull` 更新，或删除该目录后重新自动下载。
 
 ## 联系人信息
 

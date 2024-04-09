@@ -32,7 +32,9 @@ Choose the target development board type that needs to be compiled:
 ```shell
 Board Type (milkv-duo)  --->
     ( ) milkv-duo
+    ( ) milkv-duo-spinor
     (X) milkv-duo256m
+    ( ) milkv-duo256m-spinor
 ```
 
 It will automatically download env related scripts to the ~/.env directory, then execute
