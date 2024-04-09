@@ -63,6 +63,37 @@ static char *alloc_device_name(void)
     return tty_dev_name;
 }
 
+#ifdef LWP_DEBUG_INIT
+static volatile int _early_input = 0;
+
+static void _set_debug(rt_device_t dev, rt_size_t size);
+RT_OBJECT_HOOKLIST_DEFINE_NODE(rt_hw_serial_rxind, _set_debug_node, _set_debug);
+
+static void _set_debug(rt_device_t dev, rt_size_t size)
+{
+    rt_list_remove(&_set_debug_node.list_node);
+    _early_input = 1;
+}
+
+static void _setup_debug_rxind_hook(void)
+{
+    rt_hw_serial_rxind_sethook(&_set_debug_node);
+}
+
+int lwp_startup_debug_request(void)
+{
+    return _early_input;
+}
+
+#else /* !LWP_DEBUG_INIT */
+
+static void _setup_debug_rxind_hook(void)
+{
+    return ;
+}
+
+#endif /* LWP_DEBUG_INIT */
+
 static void _tty_rx_notify(struct rt_device *device)
 {
     lwp_tty_t tp;
@@ -324,6 +355,8 @@ static int _tty_workqueue_init(void)
     _ttyworkq = rt_workqueue_create("ttyworkq", RT_SYSTEM_WORKQUEUE_STACKSIZE,
                                     LWP_TTY_WORKQUEUE_PRIORITY);
     RT_ASSERT(_ttyworkq != RT_NULL);
+
+    _setup_debug_rxind_hook();
 
     return RT_EOK;
 }

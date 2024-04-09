@@ -525,23 +525,23 @@ struct rt_object_information
  *     do_other_things();
  * }
  */
-#define _RT_OBJECT_HOOKLIST_CALL(nodetype, nested, list, lock, argv) \
-    do                                                               \
-    {                                                                \
-        nodetype iter;                                               \
-        rt_ubase_t level = rt_spin_lock_irqsave(&lock);              \
-        nested += 1;                                                 \
-        rt_spin_unlock_irqrestore(&lock, level);                     \
-        if (!rt_list_isempty(&list))                                 \
-        {                                                            \
-            rt_list_for_each_entry(iter, &list, list_node)           \
-            {                                                        \
-                iter->handler argv;                                  \
-            }                                                        \
-        }                                                            \
-        level = rt_spin_lock_irqsave(&lock);                         \
-        nested -= 1;                                                 \
-        rt_spin_unlock_irqrestore(&lock, level);                     \
+#define _RT_OBJECT_HOOKLIST_CALL(nodetype, nested, list, lock, argv)  \
+    do                                                                \
+    {                                                                 \
+        nodetype iter, next;                                          \
+        rt_ubase_t level = rt_spin_lock_irqsave(&lock);               \
+        nested += 1;                                                  \
+        rt_spin_unlock_irqrestore(&lock, level);                      \
+        if (!rt_list_isempty(&list))                                  \
+        {                                                             \
+            rt_list_for_each_entry_safe(iter, next, &list, list_node) \
+            {                                                         \
+                iter->handler argv;                                   \
+            }                                                         \
+        }                                                             \
+        level = rt_spin_lock_irqsave(&lock);                          \
+        nested -= 1;                                                  \
+        rt_spin_unlock_irqrestore(&lock, level);                      \
     } while (0)
 #define RT_OBJECT_HOOKLIST_CALL(name, argv)                        \
     _RT_OBJECT_HOOKLIST_CALL(name##_hooklistnode_t, name##_nested, \
