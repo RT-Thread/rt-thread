@@ -4,8 +4,9 @@
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
- * Date           Author       Notes
- * 2023-08-29   zmq810150896   first version
+ * Date             Author              Notes
+ * 2023-08-29       zmq810150896        first version
+ * 2024-04-08       TroyMitchell        Add all function comments
  */
 
 #include <rtthread.h>
@@ -50,6 +51,11 @@ static const struct dfs_file_ops signalfd_fops =
     .read       = signalfd_read,
 };
 
+/**
+ * @brief   Closes the file descriptor associated with a signalfd file.
+ * @param   file    Pointer to the file structure.
+ * @return  Upon successful completion, returns 0; otherwise, returns an error code.
+ */
 static int signalfd_close(struct dfs_file *file)
 {
     struct rt_signalfd_ctx *sfd;
@@ -68,6 +74,12 @@ static int signalfd_close(struct dfs_file *file)
     return 0;
 }
 
+/**
+ * @brief   Adds a signalfd file descriptor to the poll queue and checks for pending events.
+ * @param   file    Pointer to the file structure.
+ * @param   req     Pointer to the poll request structure.
+ * @return  The events that are ready on the file descriptor.
+ */
 static int signalfd_poll(struct dfs_file *file, struct rt_pollreq *req)
 {
     struct rt_signalfd_ctx *sfd;
@@ -92,8 +104,23 @@ static int signalfd_poll(struct dfs_file *file, struct rt_pollreq *req)
 }
 
 #ifndef RT_USING_DFS_V2
+/**
+ * @brief   Reads signals from a signalfd file descriptor.
+ * @param   file    Pointer to the file structure.
+ * @param   buf     Pointer to the buffer to store the signals.
+ * @param   count   Maximum number of bytes to read.
+ * @return  Upon successful completion, returns the number of bytes read; otherwise, returns an error code.
+ */
 static ssize_t signalfd_read(struct dfs_file *file, void *buf, size_t count)
 #else
+/**
+ * @brief   Reads signals from a signalfd file descriptor with file offset.
+ * @param   file    Pointer to the file structure.
+ * @param   buf     Pointer to the buffer to store the signals.
+ * @param   count   Maximum number of bytes to read.
+ * @param   pos     Pointer to the file offset.
+ * @return  Upon successful completion, returns the number of bytes read; otherwise, returns an negative error code.
+ */
 static ssize_t signalfd_read(struct dfs_file *file, void *buf, size_t count, off_t *pos)
 #endif
 {
@@ -158,6 +185,11 @@ static ssize_t signalfd_read(struct dfs_file *file, void *buf, size_t count, off
     return ret;
 }
 
+/**
+ * @brief   Callback function for signalfd file descriptor notifications.
+ * @param   signalfd_queue  Pointer to the signalfd queue.
+ * @param   signum          Signal number.
+ */
 static void signalfd_callback(rt_wqueue_t *signalfd_queue, int signum)
 {
     struct rt_signalfd_ctx *sfd;
@@ -180,6 +212,11 @@ static void signalfd_callback(rt_wqueue_t *signalfd_queue, int signum)
     }
 }
 
+/**
+ * @brief   Adds a signal file descriptor notification.
+ * @param   sfd Pointer to the signalfd context.
+ * @return  Upon successful completion, returns 0; otherwise, returns an error code.
+ */
 static int signalfd_add_notify(struct rt_signalfd_ctx *sfd)
 {
     struct rt_lwp_notify *lwp_notify;
@@ -236,6 +273,13 @@ static int signalfd_add_notify(struct rt_signalfd_ctx *sfd)
     return ret;
 }
 
+/**
+ * @brief   Creates a new signalfd file descriptor or modifies an existing one.
+ * @param   fd      File descriptor to modify (-1 to create a new one).
+ * @param   mask    Signal mask.
+ * @param   flags   File descriptor flags.
+ * @return  Upon successful completion, returns the file descriptor number; otherwise, returns an error code.
+ */
 static int signalfd_do(int fd, const sigset_t *mask, int flags)
 {
     struct dfs_file *df;
@@ -328,6 +372,13 @@ static int signalfd_do(int fd, const sigset_t *mask, int flags)
     return ret;
 }
 
+/**
+ * @brief   Creates a new signalfd file descriptor or modifies an existing one.
+ * @param   fd      File descriptor to modify (-1 to create a new one).
+ * @param   mask    Signal mask.
+ * @param   flags   File descriptor flags.
+ * @return  Upon successful completion, returns the file descriptor number; otherwise, returns an error code.
+ */
 int signalfd(int fd, const sigset_t *mask, int flags)
 {
     return signalfd_do(fd, mask, flags);

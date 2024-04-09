@@ -4,14 +4,21 @@
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
- * Date           Author       Notes
- * 2016-12-28     Bernard      first version
+ * Date           Author            Notes
+ * 2016-12-28     Bernard           first version
+ * 2024-04-08     TroyMitchell      Add all function comments
  */
 
 #include <rtthread.h>
 #include <poll.h>
 #include <sys/select.h>
 
+/**
+ * @brief   Initialize the file descriptor set to have zero bits for all file descriptors.
+ * @param   set     Pointer to the file descriptor set to be initialized.
+ * @param   nfds    The maximum file descriptor in the set plus one.
+ * @note    The actual size of the 'fd_set' is determined based on the parameter 'nfds'.
+ */
 static void fdszero(fd_set *set, int nfds)
 {
     fd_mask *m;
@@ -29,6 +36,15 @@ static void fdszero(fd_set *set, int nfds)
     }
 }
 
+/**
+ * @brief   Synchronous I/O multiplexing: multiplex input/output over a set of file descriptors.
+ * @param   nfds        The highest-numbered file descriptor in any of the three sets, plus 1.
+ * @param   readfds     A pointer to a set of file descriptors to be checked for read readiness.
+ * @param   writefds    A pointer to a set of file descriptors to be checked for write readiness.
+ * @param   exceptfds   A pointer to a set of file descriptors to be checked for exceptions.
+ * @param   timeout     The maximum time to wait for any of the specified file descriptors to become ready.
+ * @return  Upon successful completion, the total number of file descriptors in all the sets that are ready for the requested operation is returned; otherwise, -1 is returned on error.
+ */
 int select(int nfds, fd_set *readfds, fd_set *writefds, fd_set *exceptfds, struct timeval *timeout)
 {
     int fd;
