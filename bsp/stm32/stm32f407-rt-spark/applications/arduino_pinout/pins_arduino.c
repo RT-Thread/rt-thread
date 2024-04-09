@@ -43,9 +43,9 @@ const pin_map_t pin_map_table[]=
     {D19, GET_PIN(B, 2)},
     {D20, GET_PIN(G, 0)},
     {D21, GET_PIN(A, 0)},
-    {D22, GET_PIN(G, 5)},
-    {D23, GET_PIN(G, 3)},
-    {D24, GET_PIN(G, 1)},
+    {D22, GET_PIN(G, 5), "sspi1"},          /* SOFT-SPI-SCK */
+    {D23, GET_PIN(G, 3), "sspi1"},          /* SOFT-SPI-MISO */
+    {D24, GET_PIN(G, 1), "sspi1"},          /* SOFT-SPI-MOSI */
     {D25, GET_PIN(G, 7), "i2c1"},           /* I2C-SCL (Wire) */
     {D26, GET_PIN(D, 7), "i2c1"},           /* I2C-SDA (Wire) */
     {D27, GET_PIN(B, 6), "i2c2"},           /* I2C-SCL (Wire) */
