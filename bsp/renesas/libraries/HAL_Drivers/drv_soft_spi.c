@@ -189,7 +189,7 @@ static void ra_pin_init(void)
 {
     rt_size_t obj_num = sizeof(spi_obj) / sizeof(struct ra_soft_spi);
 
-    for(int i; i < obj_num; i++)
+    for(rt_size_t i; i < obj_num; i++)
     {
         ra_spi_gpio_init(&spi_obj[i]);
     }
@@ -218,7 +218,7 @@ int rt_hw_softspi_init(void)
     rt_size_t obj_num = sizeof(spi_obj) / sizeof(struct ra_soft_spi);
     rt_err_t result;
 
-    for (int i = 0; i < obj_num; i++)
+    for (rt_size_t i = 0; i < obj_num; i++)
     {
         memcpy(&spi_obj[i].ops, &ra_soft_spi_ops, sizeof(struct rt_spi_bit_ops));
         spi_obj[i].ops.data = (void *)&soft_spi_config[i];
