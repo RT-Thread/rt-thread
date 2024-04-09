@@ -78,7 +78,9 @@ RT-Thread Kernel  --->
 ```shell
 Board Type (milkv-duo)  --->
     ( ) milkv-duo
+    ( ) milkv-duo-spinor
     (X) milkv-duo256m
+    ( ) milkv-duo256m-spinor
 ```
 
 It will automatically download relevant scripts to the ~/.env directory, then execute:

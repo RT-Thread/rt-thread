@@ -12,20 +12,7 @@ fi
 ROOT_PATH=$(pwd)
 echo ${ROOT_PATH}
 
-function get_board_type()
-{
-	BOARD_CONFIG=("CONFIG_BOARD_TYPE_MILKV_DUO" "CONFIG_BOARD_TYPE_MILKV_DUO_SPINOR" "CONFIG_BOARD_TYPE_MILKV_DUO_SPINAND" "CONFIG_BOARD_TYPE_MILKV_DUO256M")
-	BOARD_VALUE=("milkv-duo" "milkv-duo-spinor" "milkv-duo-spinand" "milkv-duo256m")
-
-	for ((i=0;i<${#BOARD_CONFIG[@]};i++))
-	do
-		config_value=$(grep -w "${BOARD_CONFIG[i]}" ${PROJECT_PATH}/.config | cut -d= -f2)
-		if [ "$config_value" == "y" ]; then
-			BOARD_TYPE=${BOARD_VALUE[i]}
-			break
-		fi
-	done
-}
+. board_env.sh
 
 get_board_type
 
@@ -34,4 +21,24 @@ echo "start compress kernel..."
 lzma -c -9 -f -k ${PROJECT_PATH}/${IMAGE_NAME} > ${PROJECT_PATH}/dtb/${BOARD_TYPE}/Image.lzma
 
 mkdir -p ${ROOT_PATH}/output/${BOARD_TYPE}
-./mkimage -f ${PROJECT_PATH}/dtb/${BOARD_TYPE}/multi.its -r ${ROOT_PATH}/output/${BOARD_TYPE}/boot.sd
+./mkimage -f ${PROJECT_PATH}/dtb/${BOARD_TYPE}/multi.its -r ${ROOT_PATH}/output/${BOARD_TYPE}/boot.${STORAGE_TYPE}
+
+if [ "${STORAGE_TYPE}" == "spinor" ] || [ "${STORAGE_TYPE}" == "spinand" ]; then
+	
+	check_bootloader || exit 0
+
+	pushd cvitek_bootloader
+	
+	. env.sh
+	get_build_board ${BOARD_TYPE}
+	
+	CHIP_ARCH_L=$(echo $CHIP_ARCH | tr '[:upper:]' '[:lower:]')
+
+	echo "board: ${MV_BOARD_LINK}"
+	
+	IMGTOOL_PATH=build/tools/common/image_tool
+	FLASH_PARTITION_XML=build/boards/"${CHIP_ARCH_L}"/"${MV_BOARD_LINK}"/partition/partition_"${STORAGE_TYPE}".xml
+	python3 "$IMGTOOL_PATH"/raw2cimg.py "${ROOT_PATH}"/output/"${BOARD_TYPE}"/boot."$STORAGE_TYPE" "${ROOT_PATH}/output/${BOARD_TYPE}" "$FLASH_PARTITION_XML"
+
+	popd
+fi

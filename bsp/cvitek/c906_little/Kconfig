@@ -45,6 +45,14 @@ choice
 
     config BOARD_TYPE_MILKV_DUO
         bool "milkv-duo"
+
+    config BOARD_TYPE_MILKV_DUO_SPINOR
+        bool "milkv-duo-spinor"
+
     config BOARD_TYPE_MILKV_DUO256M
         bool "milkv-duo256m"
+
+    config BOARD_TYPE_MILKV_DUO256M_SPINOR
+        bool "milkv-duo256m-spinor"
+
 endchoice
