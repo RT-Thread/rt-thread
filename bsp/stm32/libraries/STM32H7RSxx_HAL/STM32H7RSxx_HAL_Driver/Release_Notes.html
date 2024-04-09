@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Release Notes for STM32H7RSxx HAL Drivers</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <link rel="stylesheet" href="_htmresc/mini-st_2020.css" />
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+  <link rel="icon" type="image/x-icon" href="_htmresc/favicon.png" />
+</head>
+<body>
+<div class="row">
+<div class="col-sm-12 col-lg-4">
+<center>
+<h1 id="release-notes-for">Release Notes for</h1>
+<h1 id="stm32h7rsxx-hal-drivers"><mark>STM32H7RSxx HAL Drivers</mark></h1>
+<p>Copyright © 2024 STMicroelectronics</p>
+<a href="https://www.st.com" class="logo"><img src="_htmresc/st_logo_2020.png" alt="ST logo" /></a>
+</center>
+<h1 id="purpose">Purpose</h1>
+<p>The STM32Cube HAL and LL, an STM32 abstraction layer embedded software, ensure maximized portability across STM32 portfolio.</p>
+<p>The portable APIs layer provides a generic, multi instanced and simple set of APIs to interact with the upper layer (application, libraries and stacks). It is composed of native and extended APIs set. It is directly built around a generic architecture and allows the build-upon layers, like the middleware layer, to implement its functions without knowing in-depth the used STM32 device. This improves the library code reusability and guarantees an easy portability on other devices and STM32 families.</p>
+<p>The Low Layer (LL) drivers are part of the STM32Cube firmware HAL that provides a basic set of optimized and one shot services. The Low layer drivers, contrary to the HAL ones are not fully portable across the STM32 families; the availability of some functions depends on the physical availability of the relative features on the product. The Low Layer (LL) drivers are designed to offer the following features:</p>
+<ul>
+<li>New set of inline functions for direct and atomic register access</li>
+<li>One-shot operations that can be used by the HAL drivers or from application level</li>
+<li>Full independence from HAL and standalone usage (without HAL drivers)</li>
+<li>Full features coverage of all the supported peripherals</li>
+</ul>
+</div>
+<div class="col-sm-12 col-lg-8">
+<h1 id="update-history">Update History</h1>
+<div class="collapse">
+<input type="checkbox" id="collapse-section1" checked aria-hidden="true"> <label for="collapse-section1" aria-hidden="true"><strong>V1.0.0 / 28-February-2024</strong></label>
+<div>
+<h2 id="first-release">First Release</h2>
+<ul>
+<li>First official Release of <strong>STM32CubeH7RS</strong> HAL/LL Drivers supporting <strong>STM32H7Rx/Sx</strong> devices</li>
+</ul>
+<h2 id="contents">Contents</h2>
+<ul>
+<li><strong>HAL</strong>: ADC, CEC, CORDIC, CORTEX, CRC, CRS, CRYP, DBGMCU, DCMIPP, DLB, DMA (HPDMA and GPDMA), DMA2D, DTS, ETH, EXTI, FDCAN, FLASH, FMC, GPIO, GFXMMU, GFXTIM, GPU2D, HASH, I2C, I3C, I2S, ICACHE, IRDA, IWDG, JPEG, LPTIM, LTDC, MCE, MDF, MDIOS, MMC/NAND/NOR/SD/SDRAM/SRAM, PKA, PSSI, PWR, RAMECC, RCC, RNG, RTC, SAI, SBS, SPDIFRX, SMARTCARD, SMBUS, SPI, TIM, UART, USART, USB (HCD and PCD), WWDG, XSPI</li>
+<li><strong>LL</strong>: ADC, CORDIC, CORTEX, CRC, CRS, DMA, EXTI, FMC, GPIO, I2C, I3C, ICACHE, LPTIM, LPUART, PKA, PWR, RCC, RNG, RTC, SDMMC, SPI, SYSTEM, TIM, USART, USB, UTILS, UCPD<br />
+</li>
+</ul>
+<h2 id="supported-devices-and-boards">Supported Devices and boards</h2>
+<ul>
+<li>STM32H7S7xx, STM32H7S3xx, STM32H7R7xx, STM32H7R3xx devices</li>
+</ul>
+<h2 id="backward-compatibility">Backward compatibility</h2>
+<ul>
+<li>Not applicable</li>
+</ul>
+<h2 id="known-limitations">Known Limitations</h2>
+<ul>
+<li>None</li>
+</ul>
+<h2 id="dependencies">Dependencies</h2>
+<ul>
+<li>None</li>
+</ul>
+<h2 id="notes">Notes</h2>
+<ul>
+<li>None</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<footer class="sticky">
+<div class="columns">
+<div class="column" style="width:95%;">
+<p>For complete documentation on STM32H7Rx/Sx,</p>
+<p>visit: <span style="font-color: blue;"><a href="https://www.st.com/content/st_com/en/products/microcontrollers-microprocessors/stm32-32-bit-arm-cortex-mcus/stm32-high-performance-mcus/stm32h7-series/stm32h7r7-7s7.html">www.st.com/stm32h7r7-7s7</a></span></p>
+<p>visit: <span style="font-color: blue;"><a href="https://www.st.com/content/st_com/en/products/microcontrollers-microprocessors/stm32-32-bit-arm-cortex-mcus/stm32-high-performance-mcus/stm32h7-series/stm32h7r3-7s3.html">www.st.com/stm32h7r3-7s3</a></span></p>
+<p><em>This release note uses up to date web standards and, for this reason, should not be opened with Internet Explorer but preferably with popular browsers such as Google Chrome, Mozilla Firefox, Opera or Microsoft Edge.</em></p>
+</div><div class="column" style="width:5%;">
+<p><abbr title="Based on template cx566953 version 2.0">Info</abbr></p>
+</div>
+</div>
+</footer>
+</body>
+</html>
