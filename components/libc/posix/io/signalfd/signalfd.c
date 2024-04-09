@@ -119,7 +119,7 @@ static ssize_t signalfd_read(struct dfs_file *file, void *buf, size_t count)
  * @param   buf     Pointer to the buffer to store the signals.
  * @param   count   Maximum number of bytes to read.
  * @param   pos     Pointer to the file offset.
- * @return  Upon successful completion, returns the number of bytes read; otherwise, returns an error code.
+ * @return  Upon successful completion, returns the number of bytes read; otherwise, returns an negative error code.
  */
 static ssize_t signalfd_read(struct dfs_file *file, void *buf, size_t count, off_t *pos)
 #endif
