@@ -626,6 +626,54 @@ int dfs_file_close(struct dfs_file *file)
     return ret;
 }
 
+ssize_t dfs_file_pread(struct dfs_file *file, void *buf, size_t len, off_t offset)
+{
+    ssize_t ret = -EBADF;
+
+    if (file)
+    {
+        /* check whether read */
+        if (!(dfs_fflags(file->flags) & DFS_F_FREAD))
+        {
+            ret = -EPERM;
+        }
+        else if (!file->fops || !file->fops->read)
+        {
+            ret = -ENOSYS;
+        }
+        else if (file->vnode && file->vnode->type != FT_DIRECTORY)
+        {
+            off_t pos = offset;
+
+            ret = rw_verify_area(file, &pos, len);
+            if (ret > 0)
+            {
+                len = ret;
+
+                if (dfs_is_mounted(file->vnode->mnt) == 0)
+                {
+#ifdef RT_USING_PAGECACHE
+                    if (file->vnode->aspace && !(file->flags & O_DIRECT))
+                    {
+                        ret = dfs_aspace_read(file, buf, len, &pos);
+                    }
+                    else
+#endif
+                    {
+                        ret = file->fops->read(file, buf, len, &pos);
+                    }
+                }
+                else
+                {
+                    ret = -EINVAL;
+                }
+            }
+        }
+    }
+
+    return ret;
+}
+
 ssize_t dfs_file_read(struct dfs_file *file, void *buf, size_t len)
 {
     ssize_t ret = -EBADF;
@@ -677,9 +725,9 @@ ssize_t dfs_file_read(struct dfs_file *file, void *buf, size_t len)
     return ret;
 }
 
-ssize_t dfs_file_write(struct dfs_file *file, const void *buf, size_t len)
+ssize_t dfs_file_pwrite(struct dfs_file *file, const void *buf, size_t len, off_t offset)
 {
-    size_t ret = -EBADF;
+    ssize_t ret = -EBADF;
 
     if (file)
     {
@@ -695,8 +743,7 @@ ssize_t dfs_file_write(struct dfs_file *file, const void *buf, size_t len)
         }
         else if (file->vnode && file->vnode->type != FT_DIRECTORY)
         {
-            /* fpos lock */
-            off_t pos = dfs_file_get_fpos(file);
+            off_t pos = offset;
 
             ret = rw_verify_area(file, &pos, len);
             if (ret > 0)
@@ -728,8 +775,77 @@ ssize_t dfs_file_write(struct dfs_file *file, const void *buf, size_t len)
                     ret = -EINVAL;
                 }
             }
-            /* fpos unlock */
-            dfs_file_set_fpos(file, pos);
+        }
+    }
+
+    return ret;
+}
+
+ssize_t dfs_file_write(struct dfs_file *file, const void *buf, size_t len)
+{
+    ssize_t ret = -EBADF;
+
+    if (file)
+    {
+        if (!(dfs_fflags(file->flags) & DFS_F_FWRITE))
+        {
+            LOG_W("bad write flags.");
+            ret = -EBADF;
+        }
+        else if (!file->fops || !file->fops->write)
+        {
+            LOG_W("no fops write.");
+            ret = -ENOSYS;
+        }
+        else if (file->vnode && file->vnode->type != FT_DIRECTORY)
+        {
+            off_t pos;
+
+            if (!(file->flags & O_APPEND))
+            {
+                /* fpos lock */
+                pos = dfs_file_get_fpos(file);
+            }
+            else
+            {
+                pos = file->vnode->size;
+            }
+
+            ret = rw_verify_area(file, &pos, len);
+            if (ret > 0)
+            {
+                len = ret;
+                DLOG(msg, "dfs_file", file->dentry->mnt->fs_ops->name, DLOG_MSG,
+                    "dfs_file_write(fd, buf, %d)", len);
+
+                if (dfs_is_mounted(file->vnode->mnt) == 0)
+                {
+#ifdef RT_USING_PAGECACHE
+                    if (file->vnode->aspace && !(file->flags & O_DIRECT))
+                    {
+                        ret = dfs_aspace_write(file, buf, len, &pos);
+                    }
+                    else
+#endif
+                    {
+                        ret = file->fops->write(file, buf, len, &pos);
+                    }
+
+                    if (file->flags & O_SYNC)
+                    {
+                        file->fops->flush(file);
+                    }
+                }
+                else
+                {
+                    ret = -EINVAL;
+                }
+            }
+            if (!(file->flags & O_APPEND))
+            {
+                /* fpos unlock */
+                dfs_file_set_fpos(file, pos);
+            }
         }
     }
 

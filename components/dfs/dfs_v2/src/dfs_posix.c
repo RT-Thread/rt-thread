@@ -1363,9 +1363,7 @@ ssize_t pread(int fd, void *buf, size_t len, off_t offset)
 
     /* fpos lock */
     fpos = dfs_file_get_fpos(file);
-    dfs_file_lseek(file, offset, SEEK_SET);
-    result = dfs_file_read(file, buf, len);
-    dfs_file_lseek(file, fpos, SEEK_SET);
+    result = dfs_file_pread(file, buf, len, offset);
     /* fpos unlock */
     dfs_file_set_fpos(file, fpos);
     if (result < 0)
@@ -1411,9 +1409,7 @@ ssize_t pwrite(int fd, const void *buf, size_t len, off_t offset)
     }
     /* fpos lock */
     fpos = dfs_file_get_fpos(file);
-    dfs_file_lseek(file, offset, SEEK_SET);
-    result = dfs_file_write(file, buf, len);
-    dfs_file_lseek(file, fpos, SEEK_SET);
+    result = dfs_file_pwrite(file, buf, len, offset);
     /* fpos unlock */
     dfs_file_set_fpos(file, fpos);
     if (result < 0)
