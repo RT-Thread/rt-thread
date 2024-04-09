@@ -33,7 +33,9 @@ $ scons --menuconfig
 ```shell
 Board Type (milkv-duo)  --->
     ( ) milkv-duo
+    ( ) milkv-duo-spinor
     (X) milkv-duo256m
+    ( ) milkv-duo256m-spinor
 ```
 
 它会自动下载 env 相关脚本到 ~/.env 目录，然后执行
