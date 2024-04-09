@@ -59,10 +59,10 @@
 #define A1        (44)
 #define A2        (45)
 #define A3        (46)
-#define DAC1      (47)
+#define DAC0      (47)
 
 
-#define RTDUINO_PIN_MAX_LIMIT DAC1 /* pin number max limit check */
+#define RTDUINO_PIN_MAX_LIMIT DAC0 /* pin number max limit check */
 
 #define F_CPU 168000000L /* CPU:168MHz */
 
@@ -75,9 +75,9 @@
 #define RTDUINO_DEFAULT_IIC_BUS_NAME "i2c5"
 
 
-/* spi1 : PG.5-SCK  PG.3-MISO  PG.1-MOSI */
-#define SS D31 /* Chip select pin of default spi */
-#define RTDUINO_DEFAULT_SPI_BUS_NAME "sspi1"
+/* spi1 : PA.5-SCK  PA.6-MISO  PA.7-MOSI */
+#define SS D32 /* Chip select pin of default spi */
+#define RTDUINO_DEFAULT_SPI_BUS_NAME "spi1"
 
 /* Serial2(uart2) : PA.2-TX  PA.3-RX */
 #define RTDUINO_SERIAL2_DEVICE_NAME "uart2"

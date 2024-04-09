@@ -68,5 +68,5 @@ const pin_map_t pin_map_table[]=
     {A1, GET_PIN(F, 7), "adc3", 5},         /* ADC */
     {A2, GET_PIN(F, 4), "adc3", 14},        /* ADC */
     {A3, GET_PIN(F, 5), "adc3", 15},        /* ADC */
-    {DAC1, GET_PIN(A, 4), "dac1", 1},       /* DAC */
+    {DAC0, GET_PIN(A, 4), "dac1", 1},       /* DAC */
 };
