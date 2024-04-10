@@ -116,7 +116,7 @@ int rt_hw_wdt_init(void)
 }
 INIT_DEVICE_EXPORT(rt_hw_wdt_init);
 
-void reboot(void)
+void rt_hw_cpu_reset(void)
 {
     unsigned int r;
 
@@ -131,5 +131,5 @@ void reboot(void)
 
     while (1);
 }
-MSH_CMD_EXPORT(reboot,reboot system...);
+MSH_CMD_EXPORT_ALIAS(rt_hw_cpu_reset, reboot, reboot system...);
 #endif /*BSP_USING_WDT */
