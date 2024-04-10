@@ -1,0 +1,15 @@
+Import('RTT_ROOT')
+Import('rtconfig')
+from building import *
+from gcc import *
+
+cwd = GetCurrentDir()
+src = []
+group = []
+CPPPATH = [ cwd + '/arm/CMSIS_5/CMSIS/Core_R/Include',
+                    cwd + '/fsp/inc',
+                    cwd + '/fsp/inc/api',
+                    cwd + '/fsp/inc/instances',]
+
+group = DefineGroup('', src, depend = [''], CPPPATH = CPPPATH)
+Return('group')

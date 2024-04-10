@@ -1,0 +1,12 @@
+Import('RTT_ROOT')
+Import('rtconfig')
+from building import *
+from gcc import *
+
+cwd = GetCurrentDir()
+src = []
+group = []
+CPPPATH = [cwd+'/fsp_cfg', cwd + '/fsp_cfg/bsp']
+
+group += DefineGroup('', src, depend = [''], CPPPATH = CPPPATH)
+Return('group')
