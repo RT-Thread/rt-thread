@@ -21,6 +21,7 @@
 #include <mmu.h>
 #include <mm_aspace.h> /* TODO: why need application space when RT_SMART off */
 #include <mm_page.h>
+#include "phytium_interrupt.h"
 
 #ifdef RT_USING_SMART
     #include <page.h>
@@ -157,7 +158,7 @@ void rt_hw_board_aarch64_init(void)
     rt_system_heap_init((void *)HEAP_BEGIN, (void *)HEAP_END);
 #endif
 
-    rt_hw_interrupt_init();
+    phytium_interrupt_init();
 
     rt_hw_gtimer_init();
 
