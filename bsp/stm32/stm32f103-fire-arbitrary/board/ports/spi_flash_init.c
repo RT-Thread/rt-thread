@@ -12,7 +12,8 @@
 #include "spi_flash.h"
 #include "spi_flash_sfud.h"
 #include "drv_spi.h"
-#include<drv_gpio.h>
+#include <drv_gpio.h>
+
 #if defined(BSP_USING_SPI_FLASH)
 static int rt_hw_spi_flash_init(void)
 {
