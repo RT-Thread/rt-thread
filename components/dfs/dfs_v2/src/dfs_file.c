@@ -51,6 +51,13 @@ static int _get_parent_path(const char *fullpath, char *path)
     char *str = 0;
 
     str = strrchr(fullpath, '/');
+
+    /* skip last '/' */
+    if (str && *(str + 1) == '\0')
+    {
+        str = strrchr(str - 1, '/');
+    }
+
     if (str)
     {
         len = str - fullpath;
@@ -82,6 +89,27 @@ static int _try_readlink(const char *path, struct dfs_mnt *mnt, char *link)
     dfs_dentry_unref(dentry);
 
     return ret;
+}
+
+static char *_dfs_normalize_path(const char *path, int path_len, const char *link_fn, int link_len)
+{
+    char *tmp_path, *fp;
+
+    tmp_path = (char *)rt_malloc(path_len + link_len + 2);
+    if (!tmp_path)
+    {
+        return RT_NULL;
+    }
+
+    memcpy(tmp_path, path, path_len);
+    tmp_path[path_len] = '/';
+    memcpy(tmp_path + path_len + 1, link_fn, link_len);
+    tmp_path[path_len + 1 + link_len] = '\0';
+
+    fp = dfs_normalize_path(NULL, tmp_path);
+    rt_free(tmp_path);
+
+    return fp;
 }
 
 static int _insert_link_path(const char *link_fn, int link_len, char *tmp_path, int *index)
@@ -284,16 +312,73 @@ char *dfs_file_realpath(struct dfs_mnt **mnt, const char *fullpath, int mode)
             link_len = _try_readlink(path, *mnt, link_fn);
             if (link_len > 0)
             {
-                int ret = _insert_link_path(link_fn, link_len, tmp_path, &index);
-
-                if (ret == 1)
+                if (link_fn[0] == '/')
                 {
-                    /* link_fn[0] == '/' */
+                    int ret = _insert_link_path(link_fn, link_len, tmp_path, &index);
+                    if (ret < 0)
+                    {
+                        goto _ERR_RET;
+                    }
                     path_len = 0;
                 }
-                else if (ret < 0)
+                else
                 {
-                    goto _ERR_RET;
+                    char *fp = _dfs_normalize_path(path, path_len, link_fn, link_len);
+                    if (fp)
+                    {
+                        int pos = rt_strncmp(path, fp, path_len);
+                        if (pos == 0)
+                        {
+                            int ret = _insert_link_path(fp + path_len, rt_strlen(fp + path_len), tmp_path, &index);
+                            if (ret < 0)
+                            {
+                                rt_free(fp);
+                                goto _ERR_RET;
+                            }
+                        }
+                        else
+                        {
+                            int pos;
+
+                            while(1)
+                            {
+                                while(path_len > 0 && path[path_len] != '/')
+                                {
+                                    path_len--;
+                                }
+
+                                if (path_len > 0)
+                                {
+                                    pos = rt_strncmp(path, fp, path_len);
+                                }
+                                else
+                                {
+                                    pos = -1;
+                                }
+
+                                if (pos == 0 || path_len == 0)
+                                {
+                                    int ret;
+
+                                    ret = _insert_link_path(fp + path_len, rt_strlen(fp + path_len), tmp_path, &index);
+                                    if (ret < 0)
+                                    {
+                                        rt_free(fp);
+                                        goto _ERR_RET;
+                                    }
+                                    else
+                                    {
+                                        break;
+                                    }
+                                }
+                                else
+                                {
+                                    path_len--;
+                                }
+                            }
+                        }
+                        rt_free(fp);
+                    }
                 }
             }
             else
