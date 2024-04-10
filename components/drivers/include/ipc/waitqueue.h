@@ -53,8 +53,9 @@ void rt_wqueue_wakeup_all(rt_wqueue_t *queue, void *key);
 
 #define DEFINE_WAIT_FUNC(name, function)                \
     struct rt_wqueue_node name = {                      \
-        rt_current_thread,                              \
+        rt_thread_self(),                               \
         RT_LIST_OBJECT_INIT(((name).list)),             \
+        NULL,                                           \
         function,                                       \
         0                                               \
     }
