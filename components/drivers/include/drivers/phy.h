@@ -52,6 +52,21 @@ typedef struct rt_phy_device
 
 typedef rt_int32_t rt_phy_status;
 
+#ifdef RT_USING_DM
+struct rt_phy_ops
+{
+    rt_phy_status (*init)(struct rt_phy_device *, void *object, rt_uint32_t phy_addr, rt_uint32_t src_clock_hz);
+    rt_phy_status (*exit)(struct rt_phy_device *, void *object, rt_uint32_t phy_addr);
+    rt_phy_status (*power_on)(struct rt_phy_device *);
+    rt_phy_status (*power_off)(struct rt_phy_device *);
+    rt_phy_status (*read)(struct rt_phy_device *, rt_uint32_t reg, rt_uint32_t *data);
+    rt_phy_status (*write)(struct rt_phy_device *, rt_uint32_t reg, rt_uint32_t data);
+    rt_phy_status (*loopback)(struct rt_phy_device *, rt_uint32_t mode, rt_uint32_t speed, rt_bool_t enable);
+    rt_phy_status (*get_link_status)(struct rt_phy_device *, rt_bool_t *status);
+    rt_phy_status (*get_link_speed_duplex)(struct rt_phy_device *, rt_uint32_t *speed, rt_uint32_t *duplex);
+    rt_err_t (*ofw_parse)(struct rt_phy_device *, struct rt_ofw_cell_args *phy_args);
+};
+#else
 struct rt_phy_ops
 {
     rt_phy_status (*init)(void *object, rt_uint32_t phy_addr, rt_uint32_t src_clock_hz);
@@ -61,8 +76,19 @@ struct rt_phy_ops
     rt_phy_status (*get_link_status)(rt_bool_t *status);
     rt_phy_status (*get_link_speed_duplex)(rt_uint32_t *speed, rt_uint32_t *duplex);
 };
+#endif
 
 rt_err_t rt_hw_phy_register(struct rt_phy_device *phy, const char *name);
+
+#ifdef RT_USING_DM
+rt_phy_status rt_phy_init(struct rt_phy_device *phy, void *object, rt_uint32_t phy_addr, rt_uint32_t src_clock_hz);
+rt_phy_status rt_phy_exit(struct rt_phy_device *phy, void *object, rt_uint32_t phy_addr);
+rt_phy_status rt_phy_power_on(struct rt_phy_device *phy);
+rt_phy_status rt_phy_power_off(struct rt_phy_device *phy);
+
+struct rt_phy_device *rt_phy_get_by_index(struct rt_device *dev, int index);
+struct rt_phy_device *rt_phy_get_by_name(struct rt_device *dev, const char *id);
+#endif /* RT_USING_DM */
 
 #ifdef __cplusplus
 }

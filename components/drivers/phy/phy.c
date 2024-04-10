@@ -74,3 +74,45 @@ rt_err_t rt_hw_phy_register(struct rt_phy_device *phy, const char *name)
 
     return ret;
 }
+
+#ifdef RT_USING_DM
+rt_phy_status rt_phy_init(struct rt_phy_device *phy, void *object, rt_uint32_t phy_addr, rt_uint32_t src_clock_hz)
+{
+    if (phy->ops->init)
+    {
+        return phy->ops->init(phy, object, phy_addr, src_clock_hz);
+    }
+
+    return PHY_STATUS_OK;
+}
+
+rt_phy_status rt_phy_exit(struct rt_phy_device *phy, void *object, rt_uint32_t phy_addr)
+{
+    if (phy->ops->exit)
+    {
+        return phy->ops->exit(phy, object, phy_addr);
+    }
+
+    return PHY_STATUS_OK;
+}
+
+rt_phy_status rt_phy_power_on(struct rt_phy_device *phy)
+{
+    if (phy->ops->power_on)
+    {
+        return phy->ops->power_on(phy);
+    }
+
+    return PHY_STATUS_OK;
+}
+
+rt_phy_status rt_phy_power_off(struct rt_phy_device *phy)
+{
+    if (phy->ops->power_off)
+    {
+        return phy->ops->power_off(phy);
+    }
+
+    return PHY_STATUS_OK;
+}
+#endif
