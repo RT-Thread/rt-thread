@@ -151,7 +151,9 @@ int dfs_file_close(struct dfs_file *file);
 
 off_t dfs_file_get_fpos(struct dfs_file *file);
 void dfs_file_set_fpos(struct dfs_file *file, off_t fpos);
+ssize_t dfs_file_pread(struct dfs_file *file, void *buf, size_t len, off_t offset);
 ssize_t dfs_file_read(struct dfs_file *file, void *buf, size_t len);
+ssize_t dfs_file_pwrite(struct dfs_file *file, const void *buf, size_t len, off_t offset);
 ssize_t dfs_file_write(struct dfs_file *file, const void *buf, size_t len);
 off_t generic_dfs_lseek(struct dfs_file *file, off_t offset, int whence);
 off_t dfs_file_lseek(struct dfs_file *file, off_t offset, int wherece);
