@@ -181,7 +181,8 @@ typedef int (*init_fn_t)(void);
 /* init platform, user code... */
 #define INIT_PLATFORM_EXPORT(fn)        INIT_EXPORT(fn, "1.2")
 /* init sys-timer, clk, pinctrl... */
-#define INIT_SUBSYS_EXPORT(fn)          INIT_EXPORT(fn, "1.3")
+#define INIT_SUBSYS_EARLY_EXPORT(fn)    INIT_EXPORT(fn, "1.3.0")
+#define INIT_SUBSYS_EXPORT(fn)          INIT_EXPORT(fn, "1.3.1")
 /* init early drivers */
 #define INIT_DRIVER_EARLY_EXPORT(fn)    INIT_EXPORT(fn, "1.4")
 
