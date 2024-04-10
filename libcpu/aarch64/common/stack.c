@@ -31,7 +31,8 @@ rt_uint8_t *rt_hw_stack_init(void *tentry, void *parameter,
 {
     rt_ubase_t *stk;
 
-    stk = (rt_ubase_t *)stack_addr;
+    /* The AAPCS64 requires 128-bit (16 byte) stack alignment */
+    stk = (rt_ubase_t*)RT_ALIGN_DOWN((rt_ubase_t)stack_addr, 16);
 
     for (int i = 0; i < 32; ++i)
     {
