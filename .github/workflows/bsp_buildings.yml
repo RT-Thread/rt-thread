@@ -179,6 +179,7 @@ jobs:
                 - "stm32/stm32h750-artpi"
                 - "stm32/stm32h750-weact-ministm32h7xx"
                 - "stm32/stm32h750-fk750m1-vbt6"
+                - "stm32/stm32h7s7-st-disco"
                 - "stm32/stm32mp157a-st-discovery"
                 - "stm32/stm32mp157a-st-ev1"
                 - "stm32/stm32u575-st-nucleo"
