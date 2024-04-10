@@ -187,8 +187,8 @@ static const struct rt_uart_ops _uart_ops =
     uart_getc,
 };
 
-void *earlycon_base = (void *)AUX_BASE;
-size_t earlycon_size = 0x1000;
+volatile void *earlycon_base = 0;
+const size_t earlycon_size = 0x1000;
 
 extern void early_putc(int c)
 {
@@ -198,6 +198,11 @@ extern void early_putc(int c)
     }
     while (!(AUX_MU_LSR_REG(earlycon_base) & 0x20));
     AUX_MU_IO_REG(earlycon_base) = c;
+}
+
+void rt_hw_earlycon_ioremap_early(void)
+{
+    earlycon_base = rt_ioremap_early((void *)AUX_BASE, earlycon_size);
 }
 
 void rt_hw_console_output(const char *str)
