@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2024, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -176,7 +176,7 @@ static rt_ssize_t ra_pin_read(rt_device_t dev, rt_base_t pin)
     return io_level;
 #else
     return R_BSP_PinRead(pin);
-#endif    
+#endif
 }
 
 static rt_err_t ra_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_uint8_t enabled)

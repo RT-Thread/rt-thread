@@ -6,7 +6,14 @@ from gcc import *
 cwd = GetCurrentDir()
 src = []
 group = []
-CPPPATH = [cwd]
+CPPPATH = []
 
-group = DefineGroup('', src, depend = [''], CPPPATH = CPPPATH)
+if rtconfig.PLATFORM in ['iccarm']:
+    Return('group')
+elif rtconfig.PLATFORM in GetGCCLikePLATFORM():
+    if GetOption('target') != 'mdk5':
+        src = Glob('*.c')
+        CPPPATH = [cwd, ]
+
+group = DefineGroup('rz_gen', src, depend = [''], CPPPATH = CPPPATH)
 Return('group')

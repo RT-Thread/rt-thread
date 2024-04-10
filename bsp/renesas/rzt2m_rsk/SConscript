@@ -7,10 +7,18 @@ from gcc import *
 
 cwd = GetCurrentDir()
 src = []
-list = os.listdir(cwd)
 CPPPATH = [cwd]
+group = []
+list = os.listdir(cwd)
 
-group = DefineGroup('', src, depend = [''], CPPPATH = CPPPATH)
+if rtconfig.PLATFORM in ['iccarm']:
+    group = DefineGroup('', src, depend = [''], CPPPATH = CPPPATH)
+elif rtconfig.PLATFORM in GetGCCLikePLATFORM():
+    if GetOption('target') != 'mdk5':
+        CPPPATH = [cwd]
+        src = Glob('./src/*.c')
+
+group = DefineGroup('Applications', src, depend = [''], CPPPATH = CPPPATH)
 
 for d in list:
     path = os.path.join(cwd, d)
