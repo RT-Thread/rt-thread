@@ -26,6 +26,10 @@
     #include <ioremap.h>
 #endif
 
+/*Please define the length of the mem_addr of the device*/
+#ifndef FI2C_DEVICE_MEMADDR_LEN
+    #define FI2C_DEVICE_MEMADDR_LEN 1
+#endif
 #define FI2C_DEFAULT_ID 0
 #define I2C_USE_MIO
 #if defined(I2C_USE_MIO)
@@ -167,15 +171,19 @@ static rt_ssize_t i2c_master_xfer(struct rt_i2c_bus_device *device, struct rt_i2
     struct rt_i2c_msg *pmsg;
     struct phytium_i2c_bus *i2c_bus;
     i2c_bus = (struct phytium_i2c_bus *)(device);
-    u8 mem_addr = msgs->buf[0];
+    u32 mem_addr;
 
     for (int i = 0; i < num; i++)
     {
-        pmsg = i2c_bus->msg = &msgs[i];
+        pmsg = &msgs[i];
+        for (u32 j = 0; j <FI2C_DEVICE_MEMADDR_LEN; j++)
+        {
+            mem_addr |= msgs[i].buf[j] << (8 * (FI2C_DEVICE_MEMADDR_LEN - 1 - j));
+        }
         i2c_bus->i2c_handle.config.slave_addr = pmsg->addr;
         if (pmsg->flags & RT_I2C_RD)
         {
-            ret = FI2cMasterReadPoll(&i2c_bus->i2c_handle, mem_addr, 1, &pmsg->buf[0], sizeof(pmsg->buf));
+            ret = FI2cMasterReadPoll(&i2c_bus->i2c_handle, mem_addr, FI2C_DEVICE_MEMADDR_LEN, &pmsg->buf[0], pmsg->len);
             if (ret != FI2C_SUCCESS)
             {
                 LOG_E("I2C master read failed!\n");
@@ -184,7 +192,7 @@ static rt_ssize_t i2c_master_xfer(struct rt_i2c_bus_device *device, struct rt_i2
         }
         else
         {
-            ret = FI2cMasterWritePoll(&i2c_bus->i2c_handle, mem_addr, 1, &pmsg->buf[1], sizeof(pmsg->buf) - 1);
+            ret = FI2cMasterWritePoll(&i2c_bus->i2c_handle, mem_addr, FI2C_DEVICE_MEMADDR_LEN, &pmsg->buf[FI2C_DEVICE_MEMADDR_LEN], pmsg->len);
             if (ret != FI2C_SUCCESS)
             {
                 LOG_E("I2C master write failed!\n");
