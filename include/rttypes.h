@@ -79,16 +79,16 @@ typedef rt_ubase_t                      rt_dev_t;       /**< Type for device */
 typedef rt_base_t                       rt_off_t;       /**< Type for offset */
 
 #ifdef __cplusplus
-typedef rt_ubase_t rt_atomic_t;
+    typedef rt_base_t rt_atomic_t;
 #else
-#if defined(RT_USING_HW_ATOMIC)
-typedef rt_ubase_t rt_atomic_t;
-#elif defined(RT_USING_STDC_ATOMIC)
-#include <stdatomic.h>
-typedef atomic_size_t rt_atomic_t;
-#else
-typedef rt_ubase_t rt_atomic_t;
-#endif /* RT_USING_STDC_ATOMIC */
+    #if defined(RT_USING_HW_ATOMIC)
+        typedef rt_base_t rt_atomic_t;
+    #elif defined(RT_USING_STDC_ATOMIC)
+        #include <stdatomic.h>
+        typedef atomic_intptr_t rt_atomic_t;
+    #else
+        typedef rt_base_t rt_atomic_t;
+    #endif /* RT_USING_STDC_ATOMIC */
 #endif /* __cplusplus */
 
 /* boolean type definitions */
