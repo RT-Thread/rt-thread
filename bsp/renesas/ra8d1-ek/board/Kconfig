@@ -112,6 +112,16 @@ menu "Hardware Drivers Config"
                     endif
             endif
 
+        menuconfig BSP_USING_ADC
+            bool "Enable ADC"
+            default n
+            select RT_USING_ADC
+            if BSP_USING_ADC
+                config BSP_USING_ADC0
+                    bool "Enable ADC0"
+                    default n
+            endif
+
         menuconfig BSP_USING_SCI_SPI
             bool "Enable SCI SPI BUS"
             default n
