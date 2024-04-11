@@ -20,7 +20,8 @@ tm4c123_driverlib/src/gpio.c
 if GetDepend(['RT_USING_SERIAL']):
     src += ['tm4c123_driverlib/src/uart.c']
 
-#if GetDepend(['RT_USING_I2C']):
+if GetDepend(['RT_USING_I2C']):
+    src += ['tm4c123_driverlib/src/i2c.c']
 
 
 if GetDepend(['RT_USING_SPI']):

@@ -188,21 +188,75 @@ menu "On-chip Peripheral Drivers"
                 default n
         endif
 
-    menuconfig BSP_USING_I2C1
-        bool "Enable I2C1 BUS (software simulation)"
+    menuconfig BSP_USING_I2C
+        bool "Enable I2C BUS"
         default n
         select RT_USING_I2C
-        select RT_USING_I2C_BITOPS
-        select RT_USING_PIN
-        if BSP_USING_I2C1
-            config BSP_I2C1_SCL_PIN
-                int "i2c1 scl pin number"
-                range 0 175
-                default 22
-            config BSP_I2C1_SDA_PIN
-                int "I2C1 sda pin number"
-                range 0 175
-                default 23
+        if BSP_USING_I2C
+            config BSP_USING_I2C0
+                bool "Enable I2C0 BUS"
+                default n
+            if BSP_USING_I2C0
+                choice
+                    prompt "I2C0 CLK frequency"
+                    default BSP_I2C0_CLK_100
+
+                    config BSP_I2C0_CLK_100
+                        bool "100kHz"
+
+                    config BSP_I2C0_CLK_400
+                        bool "400kHz"
+                endchoice
+            endif
+
+            config BSP_USING_I2C1
+                bool "Enable I2C1 BUS"
+                default n
+            if BSP_USING_I2C1
+                choice
+                    prompt "I2C1 CLK frequency"
+                    default BSP_I2C1_CLK_100
+
+                    config BSP_I2C1_CLK_100
+                        bool "100kHz"
+
+                    config BSP_I2C1_CLK_400
+                        bool "400kHz"
+                endchoice
+            endif
+
+            config BSP_USING_I2C2
+                bool "Enable I2C2 BUS"
+                default n
+            if BSP_USING_I2C2
+                choice
+                    prompt "I2C2 CLK frequency"
+                    default BSP_I2C3_CLK_100
+
+                    config BSP_I2C2_CLK_100
+                        bool "100kHz"
+
+                    config BSP_I2C2_CLK_400
+                        bool "400kHz"
+                endchoice
+            endif
+
+            config BSP_USING_I2C3
+                bool "Enable I2C3 BUS"
+                default n
+            if BSP_USING_I2C3
+                choice
+                    prompt "I2C3 CLK frequency"
+                    default BSP_I2C4_CLK_100
+
+                    config BSP_I2C3_CLK_100
+                        bool "100kHz"
+
+                    config BSP_I2C3_CLK_400
+                        bool "400kHz"
+                endchoice
+            endif
+
         endif
 
     menuconfig BSP_USING_TIM
