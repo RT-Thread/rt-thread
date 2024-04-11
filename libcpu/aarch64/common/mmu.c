@@ -625,7 +625,9 @@ void *rt_ioremap_early(void *paddr, size_t size)
         tbl = rt_hw_mmu_tbl_get();
     }
 
-    count = (size + ARCH_SECTION_MASK) >> ARCH_SECTION_SHIFT;
+    /* get the total size required including overhead for alignment */
+    count = (size + ((rt_ubase_t)paddr & ARCH_SECTION_MASK)
+            + ARCH_SECTION_MASK) >> ARCH_SECTION_SHIFT;
     base = (rt_ubase_t)paddr & (~ARCH_SECTION_MASK);
 
     while (count --> 0)

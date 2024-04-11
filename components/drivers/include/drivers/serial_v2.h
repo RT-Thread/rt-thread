@@ -103,6 +103,14 @@
     0                                                 \
 }
 
+/**
+ * @brief Sets a hook function when RX indicate is called
+ *
+ * @param thread is the target thread that initializing
+ */
+typedef void (*rt_hw_serial_rxind_hookproto_t)(rt_device_t dev, rt_size_t size);
+RT_OBJECT_HOOKLIST_DECLARE(rt_hw_serial_rxind_hookproto_t, rt_hw_serial_rxind);
+
 struct serial_configure
 {
     rt_uint32_t baud_rate;

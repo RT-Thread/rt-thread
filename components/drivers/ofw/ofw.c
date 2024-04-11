@@ -12,7 +12,7 @@
 #include <rtdevice.h>
 #include <drivers/platform.h>
 #include <drivers/core/bus.h>
-#include "../serial/serial_dm.h"
+#include <drivers/serial_dm.h>
 
 #define DBG_TAG "rtdm.ofw"
 #define DBG_LVL DBG_INFO

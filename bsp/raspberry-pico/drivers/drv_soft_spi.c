@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2023, RT-Thread Development Team
+ * Copyright (c) 2006-2024, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -23,6 +23,8 @@ static struct pico_soft_spi_config soft_spi_config[] =
     SOFT_SPI1_BUS_CONFIG,
 #endif
 };
+
+static struct pico_soft_spi spi_obj[sizeof(soft_spi_config) / sizeof(soft_spi_config[0])];
 
 /**
   * Attach the spi device to soft SPI bus, this function must be used after initialization.
@@ -153,9 +155,20 @@ static void pico_udelay(rt_uint32_t us)
     busy_wait_us_32(us);
 }
 
+static void pico_pin_init(void)
+{
+    rt_size_t obj_num = sizeof(spi_obj) / sizeof(struct pico_soft_spi);
+
+    for(rt_size_t i; i < obj_num; i++)
+    {
+        pico_spi_gpio_init(&spi_obj[i]);
+    }
+}
+
 static struct rt_spi_bit_ops pico_soft_spi_ops =
 {
     .data = RT_NULL,
+    .pin_init = pico_pin_init,
     .tog_sclk = pico_tog_sclk,
     .set_sclk = pico_set_sclk,
     .set_mosi = pico_set_mosi,
@@ -169,20 +182,18 @@ static struct rt_spi_bit_ops pico_soft_spi_ops =
     .delay_us = 1,
 };
 
-static struct pico_soft_spi spi_obj[sizeof(soft_spi_config) / sizeof(soft_spi_config[0])];
-
 /* Soft SPI initialization function */
 int rt_hw_softspi_init(void)
 {
     rt_size_t obj_num = sizeof(spi_obj) / sizeof(struct pico_soft_spi);
     rt_err_t result;
 
-    for (int i = 0; i < obj_num; i++)
+    for (rt_size_t i = 0; i < obj_num; i++)
     {
         pico_soft_spi_ops.data = (void *)&soft_spi_config[i];
         spi_obj[i].spi.ops = &pico_soft_spi_ops;
         spi_obj[i].cfg = (void *)&soft_spi_config[i];
-        pico_spi_gpio_init(&spi_obj[i]);
+
         result = rt_spi_bit_add_bus(&spi_obj[i].spi, soft_spi_config[i].bus_name, &pico_soft_spi_ops);
         RT_ASSERT(result == RT_EOK);
     }

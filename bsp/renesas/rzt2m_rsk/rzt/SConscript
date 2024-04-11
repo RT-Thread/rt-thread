@@ -1,0 +1,28 @@
+Import('RTT_ROOT')
+Import('rtconfig')
+from building import *
+from gcc import *
+
+cwd = GetCurrentDir()
+src = []
+group = []
+CPPPATH = []
+
+if rtconfig.PLATFORM in ['iccarm']:
+    Return('group')
+elif rtconfig.PLATFORM in GetGCCLikePLATFORM():
+    if GetOption('target') != 'mdk5':
+        src += Glob(cwd + '/fsp/src/bsp/mcu/all/*.c')
+        src += Glob(cwd + '/fsp/src/bsp/mcu/all/cr/*.c')
+        src += Glob(cwd + '/fsp/src/bsp/mcu/r*/*.c')
+        src += Glob(cwd + '/fsp/src/r_*/*.c')
+        src += Glob(cwd + '/fsp/src/bsp/cmsis/Device/RENESAS/Source/cr/*.c')
+        src += [cwd + '/fsp/src/bsp/cmsis/Device/RENESAS/Source/system.c']
+        src += [cwd + '/fsp/src/bsp/cmsis/Device/RENESAS/Source/startup.c']
+        CPPPATH = [ cwd + '/arm/CMSIS_5/CMSIS/Core_R/Include',
+                            cwd + '/fsp/inc',
+                            cwd + '/fsp/inc/api',
+                            cwd + '/fsp/inc/instances',]
+
+group = DefineGroup('rzt', src, depend = [''], CPPPATH = CPPPATH)
+Return('group')

@@ -7,6 +7,7 @@
  * Date           Author            Notes
  * 2021-07-29     KyleChan          first version
  * 2023-10-17     Rbb666            add ra8 adapt
+ * 2024-03-11    Wangyuqiang        add rzt2m adapt
  */
 
 #include <drv_usart_v2.h>
@@ -244,7 +245,7 @@ static int ra_uart_putc(struct rt_serial_device *serial, char c)
 
     p_ctrl->p_reg->TDR = c;
 
-#ifdef SOC_SERIES_R7FA8M85
+#if defined(SOC_SERIES_R7FA8M85) || defined(SOC_SERIES_R9A07G0)
     while ((p_ctrl->p_reg->CSR_b.TEND) == 0);
 #else
     while ((p_ctrl->p_reg->SSR_b.TEND) == 0);

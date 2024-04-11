@@ -35,9 +35,13 @@
 #undef putc
 #endif
 
+RT_OBJECT_HOOKLIST_DEFINE(rt_hw_serial_rxind);
+
 static rt_err_t serial_fops_rx_ind(rt_device_t dev, rt_size_t size)
 {
     rt_wqueue_wakeup(&(dev->wait_queue), (void*)POLLIN);
+
+    RT_OBJECT_HOOKLIST_CALL(rt_hw_serial_rxind, (dev, size));
 
     return RT_EOK;
 }

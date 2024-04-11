@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2024, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -118,7 +118,7 @@ static void ra_pin_mode(rt_device_t dev, rt_base_t pin, rt_uint8_t mode)
     switch (mode)
     {
     case PIN_MODE_OUTPUT:
-        err = R_IOPORT_PinCfg(&g_ioport_ctrl, pin, BSP_IO_DIRECTION_OUTPUT);
+        err = R_IOPORT_PinCfg(&g_ioport_ctrl, (bsp_io_port_pin_t)pin, BSP_IO_DIRECTION_OUTPUT);
         if (err != FSP_SUCCESS)
         {
             LOG_E("PIN_MODE_OUTPUT configuration failed");
@@ -127,7 +127,7 @@ static void ra_pin_mode(rt_device_t dev, rt_base_t pin, rt_uint8_t mode)
         break;
 
     case PIN_MODE_INPUT:
-        err = R_IOPORT_PinCfg(&g_ioport_ctrl, pin, BSP_IO_DIRECTION_INPUT);
+        err = R_IOPORT_PinCfg(&g_ioport_ctrl, (bsp_io_port_pin_t)pin, BSP_IO_DIRECTION_INPUT);
         if (err != FSP_SUCCESS)
         {
             LOG_E("PIN_MODE_INPUT configuration failed");
@@ -136,7 +136,7 @@ static void ra_pin_mode(rt_device_t dev, rt_base_t pin, rt_uint8_t mode)
         break;
 
     case PIN_MODE_OUTPUT_OD:
-        err = R_IOPORT_PinCfg(&g_ioport_ctrl, pin, IOPORT_CFG_NMOS_ENABLE);
+        err = R_IOPORT_PinCfg(&g_ioport_ctrl, (bsp_io_port_pin_t)pin, IOPORT_CFG_NMOS_ENABLE);
         if (err != FSP_SUCCESS)
         {
             LOG_E("PIN_MODE_OUTPUT_OD configuration failed");
@@ -156,7 +156,11 @@ static void ra_pin_write(rt_device_t dev, rt_base_t pin, rt_uint8_t value)
     }
 
     R_BSP_PinAccessEnable();
+#ifdef SOC_SERIES_R9A07G0
+    R_IOPORT_PinWrite(&g_ioport_ctrl, (bsp_io_port_pin_t)pin, (bsp_io_level_t)level);
+#else
     R_BSP_PinWrite(pin, level);
+#endif
     R_BSP_PinAccessDisable();
 }
 
@@ -166,7 +170,13 @@ static rt_ssize_t ra_pin_read(rt_device_t dev, rt_base_t pin)
     {
         return -RT_EINVAL;
     }
+#ifdef SOC_SERIES_R9A07G0
+    bsp_io_level_t io_level;
+    R_IOPORT_PinRead(&g_ioport_ctrl, (bsp_io_port_pin_t)pin, &io_level);
+    return io_level;
+#else
     return R_BSP_PinRead(pin);
+#endif
 }
 
 static rt_err_t ra_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_uint8_t enabled)
