@@ -499,9 +499,8 @@ static void sdif_ctrl_setup_interrupt(struct rt_mmcsd_host *host)
     sdif_info_t *host_info = (sdif_info_t *)host->private_data;
     FSdif *sdif = &(host_info->sdif);
     FSdifConfig *config_p = &sdif->config;
-    rt_uint32_t cpu_id = 0;
+    rt_uint32_t cpu_id = rt_hw_cpu_id();
 
-    GetCpuId((u32 *)&cpu_id);
     rt_hw_interrupt_set_target_cpus(config_p->irq_num, cpu_id);
     rt_hw_interrupt_set_priority(config_p->irq_num, 0xd0);
 

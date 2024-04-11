@@ -47,7 +47,7 @@ static struct rt_event rx_done_event;
 #define EVENT_RX_DONE (1 << 1)
 /*******************************Api Functions*********************************/
 static rt_err_t spim_configure(struct rt_spi_device *device, struct rt_spi_configuration *configuration);
-static rt_uint32_t spim_xfer(struct rt_spi_device *device, struct rt_spi_message *message);
+static rt_ssize_t spim_xfer(struct rt_spi_device *device, struct rt_spi_message *message);
 
 static FError FSpimSetupInterrupt(FSpim *instance_p)
 {
@@ -152,7 +152,7 @@ static rt_ssize_t spim_xfer(struct rt_spi_device *device, struct rt_spi_message 
     RT_ASSERT(device != RT_NULL);
     RT_ASSERT(device->parent.user_data != RT_NULL);
     RT_ASSERT(message != RT_NULL);
-    rt_ssize_t message_length;
+    rt_size_t message_length;
     rt_uint8_t *recv_buf;
     const rt_uint8_t *send_buf;
 
