@@ -18,6 +18,8 @@ Hardware Drivers Config --->
 
 更多引脚布局相关信息参见 [pins_arduino.c](pins_arduino.c) 和 [pins_arduino.h](pins_arduino.h)。
 
+![Rt-spark_Rtduino_Pin_Map.drawio](Rt-spark_Rtduino_Pin_Map.drawio.png)
+
 | Arduino引脚编号  | STM32引脚编号 | 5V容忍 | 备注  |
 | ------------------- | --------- | ---- | ------------------------------------------------------------------------- |
 | 0 (D0) | GET_PIN(A, 10) | 是 | Serial-RX,默认被RT-Thread的UART设备框架uart1接管 |
