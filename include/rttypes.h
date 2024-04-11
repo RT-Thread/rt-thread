@@ -85,7 +85,7 @@ typedef rt_base_t rt_atomic_t;
 typedef rt_base_t rt_atomic_t;
 #elif defined(RT_USING_STDC_ATOMIC)
 #include <stdatomic.h>
-typedef atomic_size_t rt_atomic_t;
+        typedef atomic_intptr_t rt_atomic_t;
 #else
 typedef rt_base_t rt_atomic_t;
 #endif /* RT_USING_STDC_ATOMIC */
