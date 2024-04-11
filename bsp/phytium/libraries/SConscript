@@ -49,6 +49,28 @@ if GetDepend(['TARGET_D2000']):
     src += Glob(cwd+'/port/soc_port/d2000/*.c')
     path += [PHYTIUM_SDK_DIR + '/soc/d2000'] 
 
+# board port
+if GetDepend(['E2000D_DEMO_BOARD']):
+    path += cwd + '/fboard_port/e2000d_demo'
+
+if GetDepend(['E2000D_DEMO_BOARD']):
+    path += cwd + '/fboard_port/e2000q_demo'
+
+if GetDepend(['FIREFLY_DEMO_BOARD']):  
+    path += cwd + '/fboard_port/firefly'
+
+if GetDepend(['BSP_USING_SDCARD_FATFS']):
+    if GetDepend(['E2000D_DEMO_BOARD']):
+        src += Glob(cwd + '/port/fboard_port/e2000d_demo/mnt_sdcard.c')
+
+    if GetDepend(['E2000Q_DEMO_BOARD']):
+        src += Glob(cwd + '/port/fboard_port/e2000q_demo/mnt_sdcard.c')
+
+    if GetDepend(['FIREFLY_DEMO_BOARD']):   
+        src += Glob(cwd + '/port/fboard_port/firefly/mnt_sdcard.c')
+else:
+    src += Glob(cwd + '/port/fboard_port/mnt_ramdisk.c')
+
 # driver
 path += [PORT_DRV_DIR]
 
@@ -148,7 +170,6 @@ src += Glob(cwd+'/port/fdriver_port/*.c')
 path += [cwd + '/port/fdriver_port']
 
 ## fboard port
-src += Glob(cwd+'/port/fboard_port/*.c')
 path += [cwd + '/port/fboard_port']
 
 ## lwip port
