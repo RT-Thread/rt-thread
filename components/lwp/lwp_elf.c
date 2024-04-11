@@ -797,6 +797,7 @@ int lwp_load(const char *filename, struct rt_lwp *lwp, uint8_t *load_addr, size_
 
     /* copy file name to process name */
     rt_strncpy(lwp->cmd, filename, RT_NAME_MAX);
+    lwp->exe_file = dfs_normalize_path(NULL, filename); // malloc
 
     ret = elf_file_load(&load_info);
     if (ret != RT_EOK)

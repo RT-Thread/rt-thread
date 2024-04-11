@@ -157,7 +157,7 @@ static void air32_pin_write(rt_device_t dev, rt_base_t pin, rt_uint8_t value)
     }
 }
 
-static rt_int8_t air32_pin_read(rt_device_t dev, rt_base_t pin)
+static rt_ssize_t air32_pin_read(rt_device_t dev, rt_base_t pin)
 {
     GPIO_TypeDef *gpio_port;
     uint16_t gpio_pin;
@@ -168,6 +168,10 @@ static rt_int8_t air32_pin_read(rt_device_t dev, rt_base_t pin)
         gpio_port = PIN_AIRPORT(pin);
         gpio_pin = PIN_AIRPIN(pin);
         value = GPIO_ReadInputDataBit(gpio_port, gpio_pin);
+    }
+    else
+    {
+        return -RT_EINVAL;
     }
 
     return value;

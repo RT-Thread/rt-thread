@@ -260,6 +260,7 @@ enable_mmu_page_table_early:
     mcr p15, 0, r0, c7, c5, 6    /* bpiall */
 
     mrc p15, 0, r0, c1, c0, 0
+    bic r0, r0, #0x7                    /* clear bit1~3 */
     orr r0, #((1 << 12) | (1 << 11))    /* instruction cache, branch prediction */
     orr r0, #((1 << 2) | (1 << 0))      /* data cache, mmu enable */
     mcr p15, 0, r0, c1, c0, 0

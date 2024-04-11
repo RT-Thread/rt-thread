@@ -103,5 +103,6 @@
 #define AUX_SPI1_CNTL1_REG(BASE)  HWREG32(BASE + 0xC4)   /* SPI 2 Control register 1 8bit */
 
 int rt_hw_uart_init(void);
+void rt_hw_earlycon_ioremap_early(void);
 
 #endif /* DRV_UART_H__ */

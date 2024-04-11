@@ -54,9 +54,8 @@ static FError FSpimSetupInterrupt(FSpim *instance_p)
     FASSERT(instance_p);
     FSpimConfig *config_p = &instance_p->config;
     uintptr base_addr = config_p->base_addr;
-    u32 cpu_id = 0;
+    rt_uint32_t cpu_id = rt_hw_cpu_id();
 
-    GetCpuId(&cpu_id);
     LOG_D("cpu_id is %d, irq_num is %d\n", cpu_id, config_p->irq_num);
     config_p->irq_prority = 0xd0;
     rt_hw_interrupt_set_target_cpus(config_p->irq_num, cpu_id);

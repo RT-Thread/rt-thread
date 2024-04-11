@@ -23,8 +23,8 @@
 #endif /* RT_USING_SERIAL */
 #endif /* RT_USING_SERIAL_V2 */
 
-#define DBG_TAG    "drv_common"
-#define DBG_LVL    DBG_INFO
+#define DBG_TAG "drv_common"
+#define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
 #ifdef RT_USING_FINSH
@@ -42,12 +42,15 @@ static uint32_t _systick_ms = 1;
 /* SysTick configuration */
 void rt_hw_systick_init(void)
 {
+    // Updates the variable SystemCoreClock
+    SystemCoreClockUpdate();
+
     HAL_SYSTICK_Config(SystemCoreClock / RT_TICK_PER_SECOND);
 
     NVIC_SetPriority(SysTick_IRQn, 0xFF);
 
     _systick_ms = 1000u / RT_TICK_PER_SECOND;
-    if(_systick_ms == 0)
+    if (_systick_ms == 0)
         _systick_ms = 1;
 }
 
@@ -60,7 +63,7 @@ void SysTick_Handler(void)
     /* enter interrupt */
     rt_interrupt_enter();
 
-    if(SysTick->CTRL & SysTick_CTRL_COUNTFLAG_Msk)
+    if (SysTick->CTRL & SysTick_CTRL_COUNTFLAG_Msk)
         HAL_IncTick();
 
     rt_tick_increase();
@@ -71,7 +74,7 @@ void SysTick_Handler(void)
 
 uint32_t HAL_GetTick(void)
 {
-    if(SysTick->CTRL & SysTick_CTRL_COUNTFLAG_Msk)
+    if (SysTick->CTRL & SysTick_CTRL_COUNTFLAG_Msk)
         HAL_IncTick();
 
     return uwTick;
@@ -115,10 +118,10 @@ HAL_StatusTypeDef HAL_InitTick(uint32_t TickPriority)
 }
 
 /**
-  * @brief  This function is executed in case of error occurrence.
-  * @param  None
-  * @retval None
-  */
+ * @brief  This function is executed in case of error occurrence.
+ * @param  None
+ * @retval None
+ */
 void _Error_Handler(char *s, int num)
 {
     /* USER CODE BEGIN Error_Handler */

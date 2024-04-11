@@ -35,9 +35,13 @@
 #undef putc
 #endif
 
+RT_OBJECT_HOOKLIST_DEFINE(rt_hw_serial_rxind);
+
 static rt_err_t serial_fops_rx_ind(rt_device_t dev, rt_size_t size)
 {
     rt_wqueue_wakeup(&(dev->wait_queue), (void*)POLLIN);
+
+    RT_OBJECT_HOOKLIST_CALL(rt_hw_serial_rxind, (dev, size));
 
     return RT_EOK;
 }
@@ -483,7 +487,8 @@ static rt_ssize_t _serial_fifo_tx_blocking_nbuf(struct rt_device        *dev,
                                 RT_SERIAL_TX_BLOCKING);
     /* Waiting for the transmission to complete */
     rt_completion_wait(&(tx_fifo->tx_cpt), RT_WAITING_FOREVER);
-
+    /* Inactive tx mode flag */
+    tx_fifo->activated = RT_FALSE;
     return rst;
 }
 

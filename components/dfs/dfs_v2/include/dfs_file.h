@@ -101,6 +101,7 @@ struct dfs_file
 
     void *data;
 };
+#define DFS_FILE_POS(dfs_file) ((dfs_file)->fpos)
 
 /* file is open for reading */
 #define FMODE_READ 0x1
@@ -150,7 +151,9 @@ int dfs_file_close(struct dfs_file *file);
 
 off_t dfs_file_get_fpos(struct dfs_file *file);
 void dfs_file_set_fpos(struct dfs_file *file, off_t fpos);
+ssize_t dfs_file_pread(struct dfs_file *file, void *buf, size_t len, off_t offset);
 ssize_t dfs_file_read(struct dfs_file *file, void *buf, size_t len);
+ssize_t dfs_file_pwrite(struct dfs_file *file, const void *buf, size_t len, off_t offset);
 ssize_t dfs_file_write(struct dfs_file *file, const void *buf, size_t len);
 off_t generic_dfs_lseek(struct dfs_file *file, off_t offset, int whence);
 off_t dfs_file_lseek(struct dfs_file *file, off_t offset, int wherece);
@@ -174,19 +177,24 @@ int dfs_file_isdir(const char *path);
 int dfs_file_access(const char *path, mode_t mode);
 int dfs_file_chdir(const char *path);
 char *dfs_file_getcwd(char *buf, size_t size);
-char *dfs_nolink_path(struct dfs_mnt **mnt, char *fullpath, int mode);
+
 #ifdef RT_USING_SMART
 int dfs_file_mmap2(struct dfs_file *file, struct dfs_mmap2_args *mmap2);
 
 int dfs_file_mmap(struct dfs_file *file, struct dfs_mmap2_args *mmap2);
 #endif
 
-char *dfs_nolink_path(struct dfs_mnt **mnt, char *fullpath, int mode);
-
 /* 0x5254 is just a magic number to make these relatively unique ("RT") */
 #define RT_FIOFTRUNCATE  0x52540000U
 #define RT_FIOGETADDR    0x52540001U
 #define RT_FIOMMAP2      0x52540002U
+
+/* dfs_file_realpath mode */
+#define DFS_REALPATH_EXCEPT_LAST    0
+#define DFS_REALPATH_EXCEPT_NONE    1
+#define DFS_REALPATH_ONLY_LAST      3
+
+char *dfs_file_realpath(struct dfs_mnt **mnt, const char *fullpath, int mode);
 
 #ifdef __cplusplus
 }

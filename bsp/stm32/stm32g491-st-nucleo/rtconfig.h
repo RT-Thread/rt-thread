@@ -4,6 +4,9 @@
 /* Automatically generated file; DO NOT EDIT. */
 /* RT-Thread Configuration */
 
+#define SOC_STM32G491RE
+#define BOARD_STM32G491_NUCLEO
+
 /* RT-Thread Kernel */
 
 #define RT_NAME_MAX 8
@@ -183,13 +186,18 @@
 
 /* peripheral libraries and drivers */
 
+/* HAL & SDK Drivers */
+
+/* STM32 HAL & SDK Drivers */
+
+
+/* Kendryte SDK */
+
+
 /* sensors drivers */
 
 
 /* touch drivers */
-
-
-/* Kendryte SDK */
 
 
 /* AI packages */
@@ -244,10 +252,9 @@
 
 #define SOC_FAMILY_STM32
 #define SOC_SERIES_STM32G4
+#define BOARD_SERIES_STM32_NUCLEO_64
 
 /* Hardware Drivers Config */
-
-#define SOC_STM32G491RE
 
 /* Onboard Peripheral Drivers */
 

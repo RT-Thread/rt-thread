@@ -325,16 +325,16 @@ static void swm_pin_write(rt_device_t dev, rt_base_t pin, rt_uint8_t value)
     }
 }
 
-static rt_int8_t swm_pin_read(rt_device_t dev, rt_base_t pin)
+static rt_ssize_t swm_pin_read(rt_device_t dev, rt_base_t pin)
 {
     const struct swm_pin_device *gpio_obj;
 
     gpio_obj = _pin2struct(pin);
     if (gpio_obj == RT_NULL)
     {
-        return PIN_LOW;
+        return -RT_EINVAL;
     }
-    return (rt_int8_t)GPIO_GetBit(gpio_obj->gpio, gpio_obj->pin);
+    return (rt_ssize_t)GPIO_GetBit(gpio_obj->gpio, gpio_obj->pin);
 }
 
 static rt_err_t swm_pin_attach_irq(struct rt_device *device,
@@ -496,14 +496,15 @@ out:
 }
 
 const static struct rt_pin_ops swm_pin_ops =
-    {
-        .pin_mode = swm_pin_mode,
-        .pin_write = swm_pin_write,
-        .pin_read = swm_pin_read,
-        .pin_attach_irq = swm_pin_attach_irq,
-        .pin_detach_irq = swm_pin_detach_irq,
-        .pin_irq_enable = swm_pin_irq_enable,
-        .pin_get = swm_pin_get};
+{
+    .pin_mode = swm_pin_mode,
+    .pin_write = swm_pin_write,
+    .pin_read = swm_pin_read,
+    .pin_attach_irq = swm_pin_attach_irq,
+    .pin_detach_irq = swm_pin_detach_irq,
+    .pin_irq_enable = swm_pin_irq_enable,
+    .pin_get = swm_pin_get
+};
 
 static void swm_pin_isr(GPIO_TypeDef *GPIOx)
 {

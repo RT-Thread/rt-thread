@@ -16,6 +16,7 @@
 //#define DRV_DEBUG
 #define LOG_TAG "drv.hwtimer"
 #include <drv_log.h>
+
 static void isr_timer(void *callback_arg, cyhal_timer_event_t event);
 
 #ifdef RT_USING_HWTIMER
@@ -58,14 +59,14 @@ static void timer_init(rt_hwtimer_t *timer, rt_uint32_t state)
     tim = (cyhal_timer_t *)timer->parent.user_data;
 
     const cyhal_timer_cfg_t init_timer_cfg =
-        {
-            .compare_value = 0,              /* Timer compare value, not used */
-            .period = 9999,                  /* Defines the timer period */
-            .direction = CYHAL_TIMER_DIR_UP, /* Timer counts up */
-            .is_compare = false,             /* Don't use compare mode */
-            .is_continuous = true,           /* Run timer indefinitely */
-            .value = 0                       /* Initial value of counter */
-        };
+    {
+        .compare_value = 0,              /* Timer compare value, not used */
+        .period = 9999,                  /* Defines the timer period */
+        .direction = CYHAL_TIMER_DIR_UP, /* Timer counts up */
+        .is_compare = false,             /* Don't use compare mode */
+        .is_continuous = true,           /* Run timer indefinitely */
+        .value = 0                       /* Initial value of counter */
+    };
 
     if (state)
     {
@@ -109,16 +110,16 @@ static rt_err_t timer_start(rt_hwtimer_t *timer, rt_uint32_t t, rt_hwtimer_mode_
     tim = (cyhal_timer_t *)timer->parent.user_data;
 
     const cyhal_timer_cfg_t init_timer_cfg =
-        {
-            .compare_value = 0,              /* Timer compare value, not used */
-            .period = t - 1,                 /* Defines the timer period */
-            .direction = CYHAL_TIMER_DIR_UP, /* Timer counts up */
-            .is_compare = false,             /* Don't use compare mode */
-            .is_continuous = true,           /* Run timer indefinitely */
-            .value = 0                       /* Initial value of counter */
-        };
+    {
+        .compare_value = 0,              /* Timer compare value, not used */
+        .period = t - 1,                 /* Defines the timer period */
+        .direction = CYHAL_TIMER_DIR_UP, /* Timer counts up */
+        .is_compare = false,             /* Don't use compare mode */
+        .is_continuous = true,           /* Run timer indefinitely */
+        .value = 0                       /* Initial value of counter */
+    };
     /* Configure timer period and operation mode such as count direction,
-   duration */
+    duration */
     cyhal_timer_configure(tim, &init_timer_cfg);
 
     if (opmode == HWTIMER_MODE_ONESHOT)
@@ -140,6 +141,7 @@ static rt_err_t timer_start(rt_hwtimer_t *timer, rt_uint32_t t, rt_hwtimer_mode_
 
     /* Assign the ISR to execute on timer interrupt */
     cyhal_timer_register_callback(tim, isr_timer, NULL);
+
     /* Set the event on which timer interrupt occurs and enable it */
     cyhal_timer_enable_event(tim, CYHAL_TIMER_IRQ_TERMINAL_COUNT, 1, true);
 
@@ -214,15 +216,14 @@ static rt_err_t timer_ctrl(rt_hwtimer_t *timer, rt_uint32_t cmd, void *arg)
 static const struct rt_hwtimer_info _info = TIM_DEV_INFO_CONFIG;
 
 static const struct rt_hwtimer_ops _ops =
-    {
-        .init = timer_init,
-        .start = timer_start,
-        .stop = timer_stop,
-        .count_get = timer_counter_get,
-        .control = timer_ctrl,
+{
+    .init = timer_init,
+    .start = timer_start,
+    .stop = timer_stop,
+    .count_get = timer_counter_get,
+    .control = timer_ctrl,
 };
 
-#ifdef BSP_USING_TIM1
 static void isr_timer(void *callback_arg, cyhal_timer_event_t event)
 {
     /* enter interrupt */
@@ -230,28 +231,15 @@ static void isr_timer(void *callback_arg, cyhal_timer_event_t event)
 
     (void)callback_arg;
     (void)event;
-
+#ifdef BSP_USING_TIM1
     rt_device_hwtimer_isr(&cyp_hwtimer_obj[TIM1_INDEX].time_device);
-
-    /* leave interrupt */
-    rt_interrupt_leave();
-}
 #endif
 #ifdef BSP_USING_TIM2
-static void isr_timer(void *callback_arg, cyhal_timer_event_t event)
-{
-    /* enter interrupt */
-    rt_interrupt_enter();
-
-    (void)callback_arg;
-    (void)event;
-
     rt_device_hwtimer_isr(&cyp_hwtimer_obj[TIM2_INDEX].time_device);
-
+#endif
     /* leave interrupt */
     rt_interrupt_leave();
 }
-#endif
 
 int cyp_hwtimer_init(void)
 {

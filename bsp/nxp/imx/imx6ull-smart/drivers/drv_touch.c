@@ -293,9 +293,9 @@ static rt_size_t gt911_read_point(struct rt_touch_device *touch, void *buf, rt_s
             off_set = read_index * 8;
             read_id = read_buf[off_set] & 0x0f;
             pre_id[read_index] = read_id;
-            input_x = read_buf[off_set + 1] | (read_buf[off_set + 2] << 8);	/* x */
-            input_y = read_buf[off_set + 3] | (read_buf[off_set + 4] << 8);	/* y */
-            input_w = read_buf[off_set + 5] | (read_buf[off_set + 6] << 8);	/* size */
+            input_x = read_buf[off_set + 1] | (read_buf[off_set + 2] << 8); /* x */
+            input_y = read_buf[off_set + 3] | (read_buf[off_set + 4] << 8); /* y */
+            input_w = read_buf[off_set + 5] | (read_buf[off_set + 6] << 8); /* size */
 
             gt911_touch_down(buf, read_id, input_x, input_y, input_w);
         }

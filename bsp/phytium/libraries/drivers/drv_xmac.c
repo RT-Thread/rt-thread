@@ -1001,8 +1001,7 @@ static void FxmacOsIntrHandler(s32 vector, void *args)
 
 static void FXmacSetupIsr(FXmacOs *instance_p)
 {
-    u32 cpu_id;
-    GetCpuId(&cpu_id);
+    rt_uint32_t cpu_id = rt_hw_cpu_id();
 
     /* Setup callbacks */
     FXmacSetHandler(&instance_p->instance, FXMAC_HANDLER_DMARECV, FXmacRecvSemaphoreHandler, instance_p);

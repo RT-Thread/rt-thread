@@ -252,6 +252,7 @@ struct rt_workqueue *rt_workqueue_create(const char *name, rt_uint16_t stack_siz
         queue->work_thread = rt_thread_create(name, _workqueue_thread_entry, queue, stack_size, priority, 10);
         if (queue->work_thread == RT_NULL)
         {
+            rt_sem_detach(&(queue->sem));
             RT_KERNEL_FREE(queue);
             return RT_NULL;
         }

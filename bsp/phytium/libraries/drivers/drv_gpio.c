@@ -63,10 +63,9 @@ extern FIOPadCtrl iopad_ctrl;
 /*******************************Api Functions*********************************/
 static void FGpioOpsSetupCtrlIRQ(FGpio *ctrl)
 {
-    u32 cpu_id;
+    rt_uint32_t cpu_id = rt_hw_cpu_id();
     u32 irq_num = ctrl->config.irq_num[0];
 
-    GetCpuId(&cpu_id);
     LOG_D("In FGpioOpsSetupCtrlIRQ() -> cpu_id %d, irq_num %d\r\n", cpu_id, irq_num);
     rt_hw_interrupt_set_target_cpus(irq_num, cpu_id);
     rt_hw_interrupt_set_priority(irq_num, ctrl->config.irq_priority); /* setup interrupt */
@@ -78,10 +77,9 @@ static void FGpioOpsSetupCtrlIRQ(FGpio *ctrl)
 /* setup gpio pin interrupt */
 static void FGpioOpsSetupPinIRQ(FGpio *ctrl, FGpioPin *const pin, FGpioOpsPinConfig *config)
 {
-    u32 cpu_id;
+    rt_uint32_t cpu_id = rt_hw_cpu_id();
     u32 irq_num = ctrl->config.irq_num[pin->index.pin];
 
-    GetCpuId(&cpu_id);
     LOG_D("in FGpioOpsSetupPinIRQ() -> cpu_id %d, irq_num %d", cpu_id, irq_num);
     rt_hw_interrupt_set_target_cpus(irq_num, cpu_id);
     rt_hw_interrupt_set_priority(irq_num, ctrl->config.irq_priority); /* setup interrupt */
@@ -186,7 +184,7 @@ void drv_pin_write(struct rt_device *device, rt_base_t pin, rt_uint8_t value)
     FGpioSetOutputValue(pin_instance, (value == PIN_HIGH) ? FGPIO_PIN_HIGH : FGPIO_PIN_LOW);
 }
 
-rt_int8_t drv_pin_read(struct rt_device *device, rt_base_t pin)
+rt_ssize_t drv_pin_read(struct rt_device *device, rt_base_t pin)
 {
     u32 ctrl_id = FGPIO_OPS_PIN_CTRL_ID(pin);
     u32 port_id = FGPIO_OPS_PIN_PORT_ID(pin);
@@ -195,11 +193,7 @@ rt_int8_t drv_pin_read(struct rt_device *device, rt_base_t pin)
 
     if (pin_instance == RT_NULL)
     {
-        rt_kprintf("Pin %d-%c-%d not set mode\n",
-                   ctrl_id,
-                   port_id == 0 ? 'a' : 'b',
-                   pin_id);
-        return -RT_ERROR;
+        return -RT_EINVAL;
     }
     return FGpioGetInputValue(pin_instance) == FGPIO_PIN_HIGH ? PIN_HIGH : PIN_LOW;
 }

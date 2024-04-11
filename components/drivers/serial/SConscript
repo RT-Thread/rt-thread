@@ -8,6 +8,9 @@ src = []
 if not GetDepend(['RT_USING_SERIAL']):
     Return('group')
 
+if GetDepend(['RT_USING_SMART']):
+    src += Glob('serial_tty.c')
+
 if GetDepend(['RT_USING_SERIAL_V2']):
     src += ['serial_v2.c']
 else:

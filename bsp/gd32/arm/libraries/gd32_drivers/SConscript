@@ -14,7 +14,10 @@ if GetDepend('RT_USING_PIN'):
 
 # add usart drivers.
 if GetDepend(['RT_USING_SERIAL']):
-    src += ['drv_usart.c']
+    if GetDepend(['RT_USING_SERIAL_V2']):
+        src += ['drv_usart_v2.c']
+    else:
+        src += ['drv_usart.c']
 
 # add i2c drivers.
 if GetDepend(['RT_USING_I2C', 'RT_USING_I2C_BITOPS']):

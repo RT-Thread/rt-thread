@@ -143,7 +143,9 @@ if GetDepend(['RT_USING_DAC']):
 
 if GetDepend(['RT_USING_HWTIMER']):
     src += ['mtb-hal-cat1/source/cyhal_timer.c']
-
+    src += ['mtb-hal-cat1/source/cyhal_tcpwm_common.c']
+    src += ['mtb-pdl-cat1/drivers/source/cy_tcpwm_counter.c']
+    
 path = [cwd + '/retarget-io',
         cwd + '/core-lib/include',
         cwd + '/mtb_shared/usbdev',

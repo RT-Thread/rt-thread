@@ -624,7 +624,7 @@ int rt_ofw_get_irq(struct rt_ofw_node *np, int index)
 
                 if ((rt_int64_t)cpuid >= 0)
                 {
-                    RT_DECLARE_BITMAP(affinity, RT_CPUS_NR) = { 0 };
+                    RT_BITMAP_DECLARE(affinity, RT_CPUS_NR) = { 0 };
 
                     rt_bitmap_set_bit(affinity, cpuid);
 

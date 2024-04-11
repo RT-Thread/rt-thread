@@ -229,6 +229,16 @@ int raise(int sig)
 }
 
 #include <sys/types.h>
+/**
+ * @brief    Sends a signal to the caller.
+ *
+ * This function sends the signal specified by @p sig to the caller.
+ *
+ * @param    sig The signal to be sent.
+ *           This should be one of the standard signal macros such as SIGUSR1, SIGUSR2, etc.
+ *
+ * @return   Returns 0 on success. If an error occurs, -1 is returned and errno is set appropriately.
+ */
 int sigqueue (pid_t pid, int signo, const union sigval value)
 {
     /* no support, signal queue */

@@ -112,7 +112,11 @@ const char *finsh_get_prompt(void)
     getcwd(&finsh_prompt[rt_strlen(finsh_prompt)], RT_CONSOLEBUF_SIZE - rt_strlen(finsh_prompt));
 #endif
 
-    strcat(finsh_prompt, ">");
+    if (rt_strlen(finsh_prompt) + 2 < RT_CONSOLEBUF_SIZE)
+    {
+        finsh_prompt[rt_strlen(finsh_prompt)] = '>';
+        finsh_prompt[rt_strlen(finsh_prompt) + 1] = '\0';
+    }
 
     return finsh_prompt;
 }
@@ -448,9 +452,27 @@ static void shell_push_history(struct finsh_shell *shell)
 }
 #endif
 
+#ifdef RT_USING_HOOK
+static void (*_finsh_thread_entry_hook)(void);
+
+/**
+ * @ingroup finsh
+ *
+ * @brief This function set a hook function at the entry of finsh thread
+ *
+ * @param hook the function point to be called
+ */
+void finsh_thread_entry_sethook(void (*hook)(void))
+{
+    _finsh_thread_entry_hook = hook;
+}
+#endif /* RT_USING_HOOK */
+
 static void finsh_thread_entry(void *parameter)
 {
     int ch;
+
+    RT_OBJECT_HOOK_CALL(_finsh_thread_entry_hook, ());
 
     /* normal is echo mode */
 #ifndef FINSH_ECHO_DISABLE_DEFAULT

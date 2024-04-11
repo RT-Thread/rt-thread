@@ -333,9 +333,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls>--c99 --gnu</MiscControls>
-              <Define>RT_USING_LIBC, RT_USING_ARMLIBC, __STDC_LIMIT_MACROS, __RTTHREAD__, __CLK_TCK=RT_TICK_PER_SECOND</Define>
+              <Define>__STDC_LIMIT_MACROS, RT_USING_ARMLIBC, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__, WM_W600</Define>
               <Undefine />
-              <IncludePath>..\..\components\drivers\include;..\..\components\net\lwip\lwip-2.0.3\src\include;..\..\components\libc\compilers\common\extension;..\..\components\net\sal\impl;..\..\components\net\lwip\lwip-2.0.3\src\include\ipv4;..\..\components\libc\compilers\common\include;..\..\components\net\sal\include\dfs_net;..\..\components\drivers\include;..\..\components\drivers\include;..\..\include;..\..\components\drivers\spi;..\..\libcpu\arm\cortex-m3;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\net\sal\include;..\..\components\dfs\dfs_v1\include;..\..\components\drivers\include;..\..\components\utilities\ulog;..\..\components\drivers\include;..\..\components\net\lwip\port;..\..\components\drivers\include;.;..\..\components\net\lwip\lwip-2.0.3\src\include\netif;..\..\components\libc\posix\ipc;..\..\components\drivers\hwcrypto;..\..\components\net\netdev\include;..\..\components\net\sal\include\socket\sys_socket;..\..\components\libc\posix\io\eventfd;..\..\components\drivers\wlan;..\..\components\net\lwip-dhcpd;..\..\components\drivers\include;applications;drivers;oneshot;..\..\libcpu\arm\common;..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\components\net\sal\include\socket;..\..\components\dfs\dfs_v1\filesystems\devfs;..\..\components\libc\posix\io\poll;..\..\components\libc\posix\io\epoll;..\..\components\finsh</IncludePath>
+              <IncludePath>..\..\components\drivers\include;packages\wm_libraries-latest\Platform\Common\crypto\math;..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\libcpu\arm\cortex-m3;oneshot;packages\wm_libraries-latest\Platform\Drivers\spi;..\..\components\drivers\include;packages\wm_libraries-latest\Include\Driver;packages\wm_libraries-latest\Platform\Common\Params;..\..\components\net\sal\include\socket\sys_socket;..\..\components\net\lwip\lwip-2.0.3\src\include\ipv4;..\..\components\net\lwip-dhcpd;..\..\components\libc\compilers\common\include;packages\netutils-latest\ntp;..\..\components\libc\posix\ipc;..\..\components\drivers\include;packages\wm_libraries-latest\Platform\Boot\gcc;..\..\libcpu\arm\common;packages\wm_libraries-latest\Platform\Inc;..\..\components\net\sal\include\dfs_net;..\..\components\net\sal\include;packages\wm_libraries-latest\Platform\Common\crypto;..\..\components\net\sal\include\socket;..\..\components\finsh;..\..\components\drivers\wlan;applications;..\..\components\dfs\dfs_v1\filesystems\devfs;..\..\components\net\lwip\port;..\..\components\drivers\include;..\..\include;..\..\components\net\netdev\include;..\..\components\libc\posix\io\eventfd;..\..\components\libc\posix\io\epoll;packages\wm_libraries-latest\Include;..\..\components\drivers\include;..\..\components\net\lwip\lwip-2.0.3\src\include;.;..\..\components\libc\posix\io\poll;packages\wm_libraries-latest\Include\WiFi;packages\wm_libraries-latest\Platform\Common\crypto\symmetric;..\..\components\drivers\include;..\..\components\drivers\include;..\..\components\drivers\spi;packages\wm_libraries-latest;packages\wm_libraries-latest\Include\Platform;..\..\components\net\sal\impl;..\..\components\libc\compilers\common\extension;..\..\components\drivers\include;drivers;packages\wm_libraries-latest\Platform\Common\crypto\digest;..\..\components\utilities\ulog;..\..\components\drivers\include;..\..\components\dfs\dfs_v1\include;packages\wm_libraries-latest\Include\OS;..\..\components\net\lwip\lwip-2.0.3\src\include\netif;..\..\components\drivers\hwcrypto;..\..\components\drivers\include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -446,43 +446,24 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>CPU</GroupName>
-          <Files>
-            <File>
-              <FileName>div0.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\libcpu\arm\common\div0.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>showmem.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\libcpu\arm\common\showmem.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>context_rvds.S</FileName>
-              <FileType>2</FileType>
-              <FilePath>..\..\libcpu\arm\cortex-m3\context_rvds.S</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cpuport.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\libcpu\arm\cortex-m3\cpuport.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
           <GroupName>DeviceDrivers</GroupName>
           <Files>
             <File>
               <FileName>device.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\drivers\core\device.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
           </Files>
           <Files>
@@ -490,6 +471,18 @@
               <FileName>hw_bignum.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\drivers\hwcrypto\hw_bignum.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
           </Files>
           <Files>
@@ -497,6 +490,18 @@
               <FileName>hw_crc.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\drivers\hwcrypto\hw_crc.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
           </Files>
           <Files>
@@ -504,6 +509,18 @@
               <FileName>hw_hash.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\drivers\hwcrypto\hw_hash.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
           </Files>
           <Files>
@@ -511,6 +528,18 @@
               <FileName>hw_rng.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\drivers\hwcrypto\hw_rng.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
           </Files>
           <Files>
@@ -518,6 +547,18 @@
               <FileName>hw_symmetric.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\drivers\hwcrypto\hw_symmetric.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
           </Files>
           <Files>
@@ -525,6 +566,18 @@
               <FileName>hwcrypto.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\drivers\hwcrypto\hwcrypto.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
           </Files>
           <Files>
@@ -532,6 +585,18 @@
               <FileName>hwtimer.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\drivers\hwtimer\hwtimer.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
           </Files>
           <Files>
@@ -539,6 +604,18 @@
               <FileName>i2c-bit-ops.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\drivers\i2c\i2c-bit-ops.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
           </Files>
           <Files>
@@ -546,6 +623,18 @@
               <FileName>i2c_core.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\drivers\i2c\i2c_core.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
           </Files>
           <Files>
@@ -553,6 +642,18 @@
               <FileName>i2c_dev.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\drivers\i2c\i2c_dev.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
           </Files>
           <Files>
@@ -560,6 +661,18 @@
               <FileName>completion.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\drivers\ipc\completion.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
           </Files>
           <Files>
@@ -567,6 +680,18 @@
               <FileName>dataqueue.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\drivers\ipc\dataqueue.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
           </Files>
           <Files>
@@ -574,6 +699,18 @@
               <FileName>pipe.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\drivers\ipc\pipe.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
           </Files>
           <Files>
@@ -581,6 +718,18 @@
               <FileName>ringblk_buf.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\drivers\ipc\ringblk_buf.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
           </Files>
           <Files>
@@ -588,6 +737,18 @@
               <FileName>ringbuffer.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\drivers\ipc\ringbuffer.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
           </Files>
           <Files>
@@ -595,6 +756,18 @@
               <FileName>waitqueue.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\drivers\ipc\waitqueue.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
           </Files>
           <Files>
@@ -602,13 +775,18 @@
               <FileName>workqueue.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\drivers\ipc\workqueue.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>pin.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\components\drivers\misc\pin.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
           </Files>
           <Files>
@@ -616,6 +794,37 @@
               <FileName>rt_drv_pwm.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\drivers\misc\rt_drv_pwm.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>pin.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\pin\pin.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
           </Files>
           <Files>
@@ -623,6 +832,18 @@
               <FileName>rtc.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\drivers\rtc\rtc.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
           </Files>
           <Files>
@@ -630,6 +851,18 @@
               <FileName>soft_rtc.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\drivers\rtc\soft_rtc.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
           </Files>
           <Files>
@@ -637,6 +870,18 @@
               <FileName>serial.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\drivers\serial\serial.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
           </Files>
           <Files>
@@ -644,6 +889,18 @@
               <FileName>spi_core.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\drivers\spi\spi_core.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
           </Files>
           <Files>
@@ -651,6 +908,18 @@
               <FileName>spi_dev.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\drivers\spi\spi_dev.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
           </Files>
           <Files>
@@ -658,6 +927,18 @@
               <FileName>watchdog.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\drivers\watchdog\watchdog.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
           </Files>
           <Files>
@@ -665,6 +946,18 @@
               <FileName>wlan_cfg.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\drivers\wlan\wlan_cfg.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
           </Files>
           <Files>
@@ -672,6 +965,18 @@
               <FileName>wlan_cmd.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\drivers\wlan\wlan_cmd.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
           </Files>
           <Files>
@@ -679,6 +984,18 @@
               <FileName>wlan_dev.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\drivers\wlan\wlan_dev.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
           </Files>
           <Files>
@@ -686,6 +1003,18 @@
               <FileName>wlan_lwip.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\drivers\wlan\wlan_lwip.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
           </Files>
           <Files>
@@ -693,6 +1022,18 @@
               <FileName>wlan_mgnt.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\drivers\wlan\wlan_mgnt.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
           </Files>
           <Files>
@@ -700,6 +1041,18 @@
               <FileName>wlan_prot.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\drivers\wlan\wlan_prot.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
           </Files>
           <Files>
@@ -707,6 +1060,18 @@
               <FileName>wlan_workqueue.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\drivers\wlan\wlan_workqueue.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
           </Files>
         </Group>
@@ -838,6 +1203,18 @@
               <FileName>clock.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\clock.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_KERNEL_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
           </Files>
           <Files>
@@ -845,6 +1222,18 @@
               <FileName>components.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\components.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_KERNEL_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
           </Files>
           <Files>
@@ -852,6 +1241,18 @@
               <FileName>idle.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\idle.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_KERNEL_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
           </Files>
           <Files>
@@ -859,6 +1260,18 @@
               <FileName>ipc.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\ipc.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_KERNEL_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
           </Files>
           <Files>
@@ -866,6 +1279,56 @@
               <FileName>irq.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\irq.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_KERNEL_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>kstdio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\klibc\kstdio.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_KERNEL_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>kstring.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\klibc\kstring.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_KERNEL_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
           </Files>
           <Files>
@@ -873,6 +1336,18 @@
               <FileName>kservice.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\kservice.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_KERNEL_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
           </Files>
           <Files>
@@ -880,6 +1355,18 @@
               <FileName>mem.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\mem.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_KERNEL_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
           </Files>
           <Files>
@@ -887,6 +1374,18 @@
               <FileName>mempool.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\mempool.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_KERNEL_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
           </Files>
           <Files>
@@ -894,6 +1393,37 @@
               <FileName>object.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\object.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_KERNEL_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>scheduler_comm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\src\scheduler_comm.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_KERNEL_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
           </Files>
           <Files>
@@ -901,6 +1431,18 @@
               <FileName>scheduler_up.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\scheduler_up.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_KERNEL_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
           </Files>
           <Files>
@@ -908,6 +1450,18 @@
               <FileName>thread.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\thread.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_KERNEL_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
           </Files>
           <Files>
@@ -915,6 +1469,395 @@
               <FileName>timer.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\src\timer.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_KERNEL_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>libcpu</GroupName>
+          <Files>
+            <File>
+              <FileName>div0.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\libcpu\arm\common\div0.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>showmem.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\libcpu\arm\common\showmem.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>context_rvds.S</FileName>
+              <FileType>2</FileType>
+              <FilePath>..\..\libcpu\arm\cortex-m3\context_rvds.S</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cpuport.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\libcpu\arm\cortex-m3\cpuport.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Libraries</GroupName>
+          <Files>
+            <File>
+              <FileName>wm_hostspi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wm_libraries-latest\Platform\Drivers\spi\wm_hostspi.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>pkcs.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wm_libraries-latest\Platform\Common\crypto\pubkey\pkcs.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>dh.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wm_libraries-latest\Platform\Common\crypto\pubkey\dh.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>wm_crypto_sha512.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wm_libraries-latest\Platform\Common\crypto\digest\wm_crypto_sha512.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>startup_venus.S</FileName>
+              <FileType>2</FileType>
+              <FilePath>packages\wm_libraries-latest\rtthread\startup\armcc\startup_venus.S</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>wm_gpio_afsel.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wm_libraries-latest\Platform\Drivers\gpio\wm_gpio_afsel.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>wm_crypto_base64.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wm_libraries-latest\Platform\Common\crypto\keyformat\wm_crypto_base64.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>wm_timer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wm_libraries-latest\Platform\Drivers\timer\wm_timer.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>idea.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wm_libraries-latest\Platform\Common\crypto\symmetric\idea.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>wm_cpu.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wm_libraries-latest\Platform\Drivers\cpu\wm_cpu.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>wm_rtc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wm_libraries-latest\Platform\Drivers\rtc\wm_rtc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>wm_crypto_x509.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wm_libraries-latest\Platform\Common\crypto\keyformat\wm_crypto_x509.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>wm_i2c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wm_libraries-latest\Platform\Drivers\i2c\wm_i2c.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>wm_pwm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wm_libraries-latest\Platform\Drivers\pwm\wm_pwm.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>des3.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wm_libraries-latest\Platform\Common\crypto\symmetric\des3.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>pubkey.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wm_libraries-latest\Platform\Common\crypto\pubkey\pubkey.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>prng.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wm_libraries-latest\Platform\Common\crypto\prng\prng.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>sha224.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wm_libraries-latest\Platform\Common\crypto\digest\sha224.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>wm_efuse.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wm_libraries-latest\Platform\Drivers\efuse\wm_efuse.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>wm_fwup.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wm_libraries-latest\Platform\Common\fwup\wm_fwup.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>wm_dma.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wm_libraries-latest\Platform\Drivers\dma\wm_dma.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>rc2.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wm_libraries-latest\Platform\Common\crypto\symmetric\rc2.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>wm_internal_fls.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wm_libraries-latest\Platform\Drivers\internalflash\wm_internal_fls.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>wm_crypto_rsa.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wm_libraries-latest\Platform\Common\crypto\pubkey\wm_crypto_rsa.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>wm_irq.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wm_libraries-latest\Platform\Drivers\irq\wm_irq.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>rtthread_patch.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wm_libraries-latest\rtthread\rtthread_patch.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>aesGCM.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wm_libraries-latest\Platform\Common\crypto\symmetric\aesGCM.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>wm_crypto_md4.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wm_libraries-latest\Platform\Common\crypto\digest\wm_crypto_md4.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>wm_io.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wm_libraries-latest\Platform\Drivers\io\wm_io.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>wm_crypto_hmac.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wm_libraries-latest\Platform\Common\crypto\digest\wm_crypto_hmac.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>yarrow.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wm_libraries-latest\Platform\Common\crypto\prng\yarrow.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>wm_gpio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wm_libraries-latest\Platform\Drivers\gpio\wm_gpio.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>wm_crypto_hard.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wm_libraries-latest\Platform\Common\crypto\wm_crypto_hard.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>wm_pmu.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wm_libraries-latest\Platform\Drivers\pmu\wm_pmu.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>wm_fls.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wm_libraries-latest\Platform\Drivers\flash\wm_fls.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>sha384.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wm_libraries-latest\Platform\Common\crypto\digest\sha384.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>wm_fls_gd25qxx.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wm_libraries-latest\Platform\Drivers\flash\wm_fls_gd25qxx.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>asn1.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wm_libraries-latest\Platform\Common\crypto\keyformat\asn1.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>seed.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wm_libraries-latest\Platform\Common\crypto\symmetric\seed.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>wm_adc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wm_libraries-latest\Platform\Drivers\adc\wm_adc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>wm_watchdog.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wm_libraries-latest\Platform\Drivers\watchdog\wm_watchdog.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>wm_param.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wm_libraries-latest\Platform\Common\Params\wm_param.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>utils.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wm_libraries-latest\rtthread\utils\utils.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>misc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wm_libraries-latest\Platform\Boot\armcc\misc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>pstm_mul_comba.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wm_libraries-latest\Platform\Common\crypto\math\pstm_mul_comba.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ecc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wm_libraries-latest\Platform\Common\crypto\pubkey\ecc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>wm_crypto_md2.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\wm_libraries-latest\Platform\Common\crypto\digest\wm_crypto_md2.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>libwlan_mdk.lib</FileName>
+              <FileType>4</FileType>
+              <FilePath>packages\wm_libraries-latest\Lib\Wlan\libwlan_mdk.lib</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>libwmoneshot_mdk.lib</FileName>
+              <FileType>4</FileType>
+              <FilePath>packages\wm_libraries-latest\Lib\oneshot\libwmoneshot_mdk.lib</FilePath>
             </File>
           </Files>
         </Group>
@@ -1184,6 +2127,16 @@
               <FileName>sys_arch.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\net\lwip\port\sys_arch.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>NetUtils</GroupName>
+          <Files>
+            <File>
+              <FileName>ntp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>packages\netutils-latest\ntp\ntp.c</FilePath>
             </File>
           </Files>
         </Group>

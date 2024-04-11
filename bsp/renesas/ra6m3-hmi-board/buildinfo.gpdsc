@@ -22,7 +22,6 @@
         <file category="include" name="ra/fsp/inc/"/>
         <file category="include" name="ra/fsp/inc/api/"/>
         <file category="include" name="ra/fsp/inc/instances/"/>
-        <file category="include" name="ra/tes/dave2d/inc/"/>
         <file category="header" name="ra/arm/CMSIS_5/CMSIS/Core/Include/cachel1_armv7.h" path=""/>
         <file category="header" name="ra/arm/CMSIS_5/CMSIS/Core/Include/cmsis_armcc.h" path=""/>
         <file category="header" name="ra/arm/CMSIS_5/CMSIS/Core/Include/cmsis_armclang.h" path=""/>
@@ -58,30 +57,14 @@
         <file category="source" name="ra/board/ra6m3/board_leds.c"/>
         <file category="header" name="ra/board/ra6m3/board_leds.h" path=""/>
         <file category="header" name="ra/fsp/inc/api/bsp_api.h" path=""/>
-        <file category="header" name="ra/fsp/inc/api/r_adc_api.h" path=""/>
-        <file category="header" name="ra/fsp/inc/api/r_display_api.h" path=""/>
-        <file category="header" name="ra/fsp/inc/api/r_elc_api.h" path=""/>
-        <file category="header" name="ra/fsp/inc/api/r_ether_api.h" path=""/>
-        <file category="header" name="ra/fsp/inc/api/r_ether_phy_api.h" path=""/>
         <file category="header" name="ra/fsp/inc/api/r_ioport_api.h" path=""/>
-        <file category="header" name="ra/fsp/inc/api/r_jpeg_api.h" path=""/>
-        <file category="header" name="ra/fsp/inc/api/r_sdmmc_api.h" path=""/>
-        <file category="header" name="ra/fsp/inc/api/r_timer_api.h" path=""/>
         <file category="header" name="ra/fsp/inc/api/r_transfer_api.h" path=""/>
         <file category="header" name="ra/fsp/inc/api/r_uart_api.h" path=""/>
         <file category="header" name="ra/fsp/inc/fsp_common_api.h" path=""/>
         <file category="header" name="ra/fsp/inc/fsp_features.h" path=""/>
         <file category="header" name="ra/fsp/inc/fsp_version.h" path=""/>
-        <file category="header" name="ra/fsp/inc/instances/r_adc.h" path=""/>
-        <file category="header" name="ra/fsp/inc/instances/r_dmac.h" path=""/>
-        <file category="header" name="ra/fsp/inc/instances/r_ether.h" path=""/>
-        <file category="header" name="ra/fsp/inc/instances/r_ether_phy.h" path=""/>
-        <file category="header" name="ra/fsp/inc/instances/r_glcdc.h" path=""/>
-        <file category="header" name="ra/fsp/inc/instances/r_gpt.h" path=""/>
         <file category="header" name="ra/fsp/inc/instances/r_ioport.h" path=""/>
-        <file category="header" name="ra/fsp/inc/instances/r_jpeg.h" path=""/>
         <file category="header" name="ra/fsp/inc/instances/r_sci_uart.h" path=""/>
-        <file category="header" name="ra/fsp/inc/instances/r_sdhi.h" path=""/>
         <file category="header" name="ra/fsp/src/bsp/cmsis/Device/RENESAS/Include/base_addresses.h" path=""/>
         <file category="header" name="ra/fsp/src/bsp/cmsis/Device/RENESAS/Include/renesas.h" path=""/>
         <file category="header" name="ra/fsp/src/bsp/cmsis/Device/RENESAS/Include/system.h" path=""/>
@@ -115,80 +98,9 @@
         <file category="header" name="ra/fsp/src/bsp/mcu/ra6m3/bsp_elc.h" path=""/>
         <file category="header" name="ra/fsp/src/bsp/mcu/ra6m3/bsp_feature.h" path=""/>
         <file category="header" name="ra/fsp/src/bsp/mcu/ra6m3/bsp_mcu_info.h" path=""/>
-        <file category="source" name="ra/fsp/src/r_adc/r_adc.c"/>
-        <file category="source" name="ra/fsp/src/r_dmac/r_dmac.c"/>
-        <file category="source" name="ra/fsp/src/r_drw/r_drw_base.c"/>
-        <file category="header" name="ra/fsp/src/r_drw/r_drw_base.h" path=""/>
-        <file category="source" name="ra/fsp/src/r_drw/r_drw_irq.c"/>
-        <file category="source" name="ra/fsp/src/r_drw/r_drw_memory.c"/>
-        <file category="source" name="ra/fsp/src/r_ether/r_ether.c"/>
-        <file category="source" name="ra/fsp/src/r_ether_phy/r_ether_phy.c"/>
-        <file category="source" name="ra/fsp/src/r_ether_phy/targets/DP83620/r_ether_phy_target_dp83620.c"/>
-        <file category="source" name="ra/fsp/src/r_ether_phy/targets/KSZ8041/r_ether_phy_target_ksz8041.c"/>
-        <file category="source" name="ra/fsp/src/r_ether_phy/targets/KSZ8091RNB/r_ether_phy_target_ksz8091rnb.c"/>
-        <file category="source" name="ra/fsp/src/r_glcdc/r_glcdc.c"/>
-        <file category="source" name="ra/fsp/src/r_gpt/r_gpt.c"/>
         <file category="source" name="ra/fsp/src/r_ioport/r_ioport.c"/>
-        <file category="source" name="ra/fsp/src/r_jpeg/r_jpeg.c"/>
         <file category="source" name="ra/fsp/src/r_sci_uart/r_sci_uart.c"/>
-        <file category="source" name="ra/fsp/src/r_sdhi/r_sdhi.c"/>
-        <file category="header" name="ra/fsp/src/r_sdhi/r_sdhi_private.h" path=""/>
         <file category="other" name="ra/SConscript"/>
-        <file category="header" name="ra/tes/dave2d/inc/dave_base.h" path=""/>
-        <file category="header" name="ra/tes/dave2d/inc/dave_driver.h" path=""/>
-        <file category="header" name="ra/tes/dave2d/inc/dave_errorcodes.h" path=""/>
-        <file category="header" name="ra/tes/dave2d/inc/dave_math.h" path=""/>
-        <file category="header" name="ra/tes/dave2d/inc/dave_types.h" path=""/>
-        <file category="source" name="ra/tes/dave2d/src/dave_64bitoperation.c"/>
-        <file category="source" name="ra/tes/dave2d/src/dave_base.c"/>
-        <file category="source" name="ra/tes/dave2d/src/dave_blit.c"/>
-        <file category="source" name="ra/tes/dave2d/src/dave_box.c"/>
-        <file category="header" name="ra/tes/dave2d/src/dave_box.h" path=""/>
-        <file category="source" name="ra/tes/dave2d/src/dave_circle.c"/>
-        <file category="header" name="ra/tes/dave2d/src/dave_circle.h" path=""/>
-        <file category="source" name="ra/tes/dave2d/src/dave_context.c"/>
-        <file category="header" name="ra/tes/dave2d/src/dave_context.h" path=""/>
-        <file category="source" name="ra/tes/dave2d/src/dave_curve.c"/>
-        <file category="header" name="ra/tes/dave2d/src/dave_curve.h" path=""/>
-        <file category="source" name="ra/tes/dave2d/src/dave_dlist.c"/>
-        <file category="header" name="ra/tes/dave2d/src/dave_dlist.h" path=""/>
-        <file category="source" name="ra/tes/dave2d/src/dave_driver.c"/>
-        <file category="source" name="ra/tes/dave2d/src/dave_edge.c"/>
-        <file category="header" name="ra/tes/dave2d/src/dave_edge.h" path=""/>
-        <file category="source" name="ra/tes/dave2d/src/dave_errorcodes.c"/>
-        <file category="source" name="ra/tes/dave2d/src/dave_gradient.c"/>
-        <file category="header" name="ra/tes/dave2d/src/dave_gradient.h" path=""/>
-        <file category="source" name="ra/tes/dave2d/src/dave_hardware.c"/>
-        <file category="header" name="ra/tes/dave2d/src/dave_hardware.h" path=""/>
-        <file category="header" name="ra/tes/dave2d/src/dave_intern.h" path=""/>
-        <file category="source" name="ra/tes/dave2d/src/dave_line.c"/>
-        <file category="header" name="ra/tes/dave2d/src/dave_line.h" path=""/>
-        <file category="source" name="ra/tes/dave2d/src/dave_math.c"/>
-        <file category="source" name="ra/tes/dave2d/src/dave_memory.c"/>
-        <file category="header" name="ra/tes/dave2d/src/dave_memory.h" path=""/>
-        <file category="source" name="ra/tes/dave2d/src/dave_pattern.c"/>
-        <file category="header" name="ra/tes/dave2d/src/dave_pattern.h" path=""/>
-        <file category="source" name="ra/tes/dave2d/src/dave_perfcount.c"/>
-        <file category="source" name="ra/tes/dave2d/src/dave_polyline.c"/>
-        <file category="header" name="ra/tes/dave2d/src/dave_polyline.h" path=""/>
-        <file category="source" name="ra/tes/dave2d/src/dave_quad.c"/>
-        <file category="header" name="ra/tes/dave2d/src/dave_quad.h" path=""/>
-        <file category="source" name="ra/tes/dave2d/src/dave_rbuffer.c"/>
-        <file category="header" name="ra/tes/dave2d/src/dave_rbuffer.h" path=""/>
-        <file category="header" name="ra/tes/dave2d/src/dave_registermap.h" path=""/>
-        <file category="source" name="ra/tes/dave2d/src/dave_render.c"/>
-        <file category="header" name="ra/tes/dave2d/src/dave_render.h" path=""/>
-        <file category="source" name="ra/tes/dave2d/src/dave_texture.c"/>
-        <file category="header" name="ra/tes/dave2d/src/dave_texture.h" path=""/>
-        <file category="source" name="ra/tes/dave2d/src/dave_triangle.c"/>
-        <file category="header" name="ra/tes/dave2d/src/dave_triangle.h" path=""/>
-        <file category="header" name="ra/tes/dave2d/src/dave_triarray.h" path=""/>
-        <file category="source" name="ra/tes/dave2d/src/dave_utility.c"/>
-        <file category="header" name="ra/tes/dave2d/src/dave_utility.h" path=""/>
-        <file category="source" name="ra/tes/dave2d/src/dave_viewport.c"/>
-        <file category="header" name="ra/tes/dave2d/src/dave_viewport.h" path=""/>
-        <file category="source" name="ra/tes/dave2d/src/dave_wedge.c"/>
-        <file category="header" name="ra/tes/dave2d/src/dave_wedge.h" path=""/>
       </files>
     </component>
     <component Cclass="Flex Software" Cgroup="Build Configuration">
@@ -201,17 +113,8 @@
         <file category="header" name="ra_cfg/fsp_cfg/bsp/bsp_mcu_device_pn_cfg.h" path=""/>
         <file category="header" name="ra_cfg/fsp_cfg/bsp/bsp_mcu_family_cfg.h" path=""/>
         <file category="header" name="ra_cfg/fsp_cfg/bsp/bsp_pin_cfg.h" path=""/>
-        <file category="header" name="ra_cfg/fsp_cfg/r_adc_cfg.h" path=""/>
-        <file category="header" name="ra_cfg/fsp_cfg/r_dmac_cfg.h" path=""/>
-        <file category="header" name="ra_cfg/fsp_cfg/r_drw_cfg.h" path=""/>
-        <file category="header" name="ra_cfg/fsp_cfg/r_ether_cfg.h" path=""/>
-        <file category="header" name="ra_cfg/fsp_cfg/r_ether_phy_cfg.h" path=""/>
-        <file category="header" name="ra_cfg/fsp_cfg/r_glcdc_cfg.h" path=""/>
-        <file category="header" name="ra_cfg/fsp_cfg/r_gpt_cfg.h" path=""/>
         <file category="header" name="ra_cfg/fsp_cfg/r_ioport_cfg.h" path=""/>
-        <file category="header" name="ra_cfg/fsp_cfg/r_jpeg_cfg.h" path=""/>
         <file category="header" name="ra_cfg/fsp_cfg/r_sci_uart_cfg.h" path=""/>
-        <file category="header" name="ra_cfg/fsp_cfg/r_sdhi_cfg.h" path=""/>
         <file category="other" name="ra_cfg/SConscript"/>
       </files>
     </component>

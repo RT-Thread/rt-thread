@@ -46,15 +46,16 @@
 #define RT_USING_SLAB
 #define RT_USING_SLAB_AS_HEAP
 #define RT_USING_HEAP
-
-/* Kernel Device Object */
-
 #define RT_USING_DEVICE
+#define RT_USING_DEVICE_OPS
 #define RT_USING_INTERRUPT_INFO
+#define RT_USING_SCHED_THREAD_CTX
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 256
 #define RT_CONSOLE_DEVICE_NAME "uart0"
-#define RT_VER_NUM 0x50002
+#define RT_VER_NUM 0x50100
+#define RT_USING_STDC_ATOMIC
+#define RT_BACKTRACE_LEVEL_MAX_NR 32
 
 /* AArch64 Architecture Configuration */
 
@@ -64,6 +65,7 @@
 #define ARCH_HAVE_EFFICIENT_UNALIGNED_ACCESS
 #define ARCH_CPU_64BIT
 #define RT_USING_CACHE
+#define RT_USING_CPU_FFS
 #define ARCH_MM_MMU
 #define ARCH_ARM
 #define ARCH_ARM_MMU
@@ -96,9 +98,7 @@
 #define DFS_USING_POSIX
 #define DFS_USING_WORKDIR
 #define DFS_FD_MAX 32
-#define RT_USING_DFS_V1
-#define DFS_FILESYSTEMS_MAX 4
-#define DFS_FILESYSTEM_TYPES_MAX 4
+#define RT_USING_DFS_V2
 #define RT_USING_DFS_ELMFAT
 
 /* elm-chan's FatFs, Generic FAT Filesystem Module */
@@ -128,10 +128,8 @@
 #define RT_USING_SERIAL_V1
 #define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 64
-#define RT_USING_HWTIMER
 #define RT_USING_I2C
 #define RT_USING_I2C_BITOPS
-#define RT_USING_PIN
 #define RT_USING_NULL
 #define RT_USING_ZERO
 #define RT_USING_RANDOM
@@ -148,7 +146,9 @@
 #define RT_USING_TOUCH
 #define RT_USING_LCD
 #define RT_USING_DEV_BUS
+#define RT_USING_PIN
 #define RT_USING_KTIME
+#define RT_USING_HWTIMER
 
 /* Using USB */
 
@@ -169,6 +169,7 @@
 #define RT_USING_POSIX_FS
 #define RT_USING_POSIX_DEVIO
 #define RT_USING_POSIX_STDIO
+#define RT_USING_POSIX_POLL
 #define RT_USING_POSIX_TERMIOS
 #define RT_USING_POSIX_DELAY
 #define RT_USING_POSIX_CLOCK
@@ -232,6 +233,7 @@
 #define RT_LWIP_REASSEMBLY_FRAG
 #define LWIP_NETIF_STATUS_CALLBACK 1
 #define LWIP_NETIF_LINK_CALLBACK 1
+#define RT_LWIP_NETIF_NAMESIZE 6
 #define SO_REUSE 1
 #define LWIP_SO_RCVTIMEO 1
 #define LWIP_SO_SNDTIMEO 1
@@ -240,6 +242,9 @@
 #define RT_LWIP_NETIF_LOOPBACK
 #define LWIP_NETIF_LOOPBACK 1
 #define RT_LWIP_USING_PING
+
+/* Memory protection */
+
 
 /* Utilities */
 
@@ -291,6 +296,9 @@
 /* u8g2: a monochrome graphic library */
 
 
+/* PainterEngine: A cross-platform graphics application framework written in C language */
+
+
 /* tools packages */
 
 
@@ -310,19 +318,11 @@
 
 /* peripheral libraries and drivers */
 
-/* sensors drivers */
-
-
-/* touch drivers */
-
 
 /* Kendryte SDK */
 
 
 /* AI packages */
-
-
-/* Signal Processing and Control Algorithm Packages */
 
 
 /* miscellaneous packages */
@@ -338,7 +338,7 @@
 /* Arduino libraries */
 
 
-/* Projects and Demos */
+/* Projects */
 
 
 /* Sensors */
@@ -363,11 +363,18 @@
 
 /* Other */
 
-
 /* Signal IO */
 
 
 /* Uncategorized */
+
+/* Privated Packages of RealThread */
+
+
+/* Network Utilities */
+
+
+/* RT-Thread Smart */
 
 #define BCM2711_SOC
 #define BSP_SUPPORT_FPU

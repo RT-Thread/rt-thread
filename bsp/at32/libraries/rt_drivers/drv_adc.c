@@ -135,8 +135,10 @@ static rt_err_t at32_get_adc_value(struct rt_adc_device *device, rt_int8_t chann
     /* adc_x regular channels configuration */
 #if defined (SOC_SERIES_AT32F435) || defined (SOC_SERIES_AT32F437) || \
     defined (SOC_SERIES_AT32F423)
+    adc_flag_clear(adc_x, ADC_OCCE_FLAG);
     adc_ordinary_channel_set(adc_x, (adc_channel_select_type)channel, 1, ADC_SAMPLETIME_247_5);
 #else
+    adc_flag_clear(adc_x, ADC_CCE_FLAG);
     adc_ordinary_channel_set(adc_x, (adc_channel_select_type)channel, 1, ADC_SAMPLETIME_239_5);
 #endif
 

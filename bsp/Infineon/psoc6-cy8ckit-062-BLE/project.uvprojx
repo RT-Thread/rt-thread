@@ -7,7 +7,6 @@
       <TargetName>rtthread</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
-      <pArmCC>6160000::V6.16::ARMCLANG</pArmCC>
       <pCCUsed>6160000::V6.16::ARMCLANG</pCCUsed>
       <uAC6>1</uAC6>
       <TargetOption>
@@ -184,6 +183,7 @@
             <RvdsVP>2</RvdsVP>
             <RvdsMve>0</RvdsMve>
             <RvdsCdeCp>0</RvdsCdeCp>
+            <nBranchProt>0</nBranchProt>
             <hadIRAM2>0</hadIRAM2>
             <hadIROM2>0</hadIROM2>
             <StupSel>8</StupSel>
@@ -337,7 +337,7 @@
               <MiscControls />
               <Define>CY_USING_HAL, __STDC_LIMIT_MACROS, RT_USING_ARMLIBC, CORE_NAME_CM0P_0, COMPONENT_CAT1A, RT_USING_LIBC, CY8C6347BZI_BLD53, __CLK_TCK=RT_TICK_PER_SECOND, COMPONENT_BSP_DESIGN_MODUS, CY_USING_PREBUILT_CM0P_IMAGE, __RTTHREAD__, COMPONENT_CAT1, CORE_NAME_CM4_0</Define>
               <Undefine />
-              <IncludePath>..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\devices\COMPONENT_CAT1A\include;..\libraries\IFX_PSOC6_HAL\mtb_shared\serial-flash;..\..\..\components\libc\compilers\common\extension;..\libraries\IFX_PSOC6_HAL\mtb_shared\usbdev;applications;libs\TARGET_CY8CKIT-062-BLE\config\GeneratedSource;..\libraries\IFX_PSOC6_HAL\mtb_shared\csdidac;..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\include_pvt;..\..\..\components\libc\compilers\common\include;..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\include;..\..\..\libcpu\arm\cortex-m4;board;..\..\..\include;..\libraries\IFX_PSOC6_HAL\psoc6cm0p;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\libraries\IFX_PSOC6_HAL\capsense;board\ports;..\libraries\IFX_PSOC6_HAL\core-lib\include;..\..\..\components\drivers\include;.;..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\drivers\include;..\libraries\HAL_Drivers\config;..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\posix\ipc;..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\COMPONENT_CAT1A\include;libs\TARGET_CY8CKIT-062-BLE;..\libraries\HAL_Drivers;..\..\..\components\drivers\include;..\libraries\IFX_PSOC6_HAL\retarget-io;..\..\..\libcpu\arm\common;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\components\libc\posix\io\eventfd;..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\cmsis\include;..\..\..\components\libc\posix\io\epoll;..\..\..\components\finsh</IncludePath>
+              <IncludePath>..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\include;..\..\..\libcpu\arm\cortex-m4;..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\libraries\HAL_Drivers\config;..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\drivers\include;applications;..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\devices\COMPONENT_CAT1A\include;..\libraries\IFX_PSOC6_HAL\mtb_shared\usbdev;..\libraries\IFX_PSOC6_HAL\mtb_shared\csdidac;..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\include_pvt;..\libraries\IFX_PSOC6_HAL\mtb_shared\serial-flash;..\..\..\components\libc\compilers\common\include;..\libraries\IFX_PSOC6_HAL\psoc6cm0p;libs\TARGET_CY8CKIT-062-BLE\config\GeneratedSource;board\ports;.;..\libraries\IFX_PSOC6_HAL\retarget-io;..\..\..\components\finsh;..\..\..\components\libc\posix\io\epoll;..\..\..\libcpu\arm\common;..\..\..\components\drivers\include;..\..\..\include;..\..\..\components\libc\posix\io\eventfd;..\libraries\IFX_PSOC6_HAL\capsense;..\..\..\components\libc\posix\io\poll;..\..\..\components\drivers\include;board;..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\COMPONENT_CAT1A\include;..\..\..\components\libc\compilers\common\extension;..\..\..\components\drivers\include;libs\TARGET_CY8CKIT-062-BLE;..\..\..\components\drivers\include;..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\cmsis\include;..\..\..\components\libc\posix\ipc;..\libraries\IFX_PSOC6_HAL\core-lib\include;..\libraries\HAL_Drivers</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -448,43 +448,24 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>CPU</GroupName>
-          <Files>
-            <File>
-              <FileName>div0.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\libcpu\arm\common\div0.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>showmem.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\libcpu\arm\common\showmem.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>context_rvds.S</FileName>
-              <FileType>2</FileType>
-              <FilePath>..\..\..\libcpu\arm\cortex-m4\context_rvds.S</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cpuport.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\libcpu\arm\cortex-m4\cpuport.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
           <GroupName>DeviceDrivers</GroupName>
           <Files>
             <File>
               <FileName>device.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\core\device.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
           </Files>
           <Files>
@@ -492,6 +473,18 @@
               <FileName>completion.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\ipc\completion.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
           </Files>
           <Files>
@@ -499,6 +492,18 @@
               <FileName>dataqueue.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\ipc\dataqueue.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
           </Files>
           <Files>
@@ -506,6 +511,18 @@
               <FileName>pipe.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\ipc\pipe.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
           </Files>
           <Files>
@@ -513,6 +530,18 @@
               <FileName>ringblk_buf.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\ipc\ringblk_buf.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
           </Files>
           <Files>
@@ -520,6 +549,18 @@
               <FileName>ringbuffer.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\ipc\ringbuffer.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
           </Files>
           <Files>
@@ -527,6 +568,18 @@
               <FileName>waitqueue.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\ipc\waitqueue.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
           </Files>
           <Files>
@@ -534,13 +587,37 @@
               <FileName>workqueue.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\ipc\workqueue.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
           </Files>
           <Files>
             <File>
               <FileName>pin.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\misc\pin.c</FilePath>
+              <FilePath>..\..\..\components\drivers\pin\pin.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
           </Files>
           <Files>
@@ -548,6 +625,18 @@
               <FileName>serial.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\serial\serial.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
           </Files>
         </Group>
@@ -627,6 +716,18 @@
               <FileName>clock.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\clock.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_KERNEL_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
           </Files>
           <Files>
@@ -634,6 +735,18 @@
               <FileName>components.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\components.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_KERNEL_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
           </Files>
           <Files>
@@ -641,6 +754,18 @@
               <FileName>idle.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\idle.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_KERNEL_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
           </Files>
           <Files>
@@ -648,6 +773,18 @@
               <FileName>ipc.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\ipc.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_KERNEL_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
           </Files>
           <Files>
@@ -655,6 +792,56 @@
               <FileName>irq.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\irq.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_KERNEL_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>kstdio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\klibc\kstdio.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_KERNEL_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>kstring.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\klibc\kstring.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_KERNEL_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
           </Files>
           <Files>
@@ -662,6 +849,18 @@
               <FileName>kservice.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\kservice.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_KERNEL_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
           </Files>
           <Files>
@@ -669,6 +868,18 @@
               <FileName>mem.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\mem.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_KERNEL_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
           </Files>
           <Files>
@@ -676,6 +887,18 @@
               <FileName>mempool.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\mempool.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_KERNEL_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
           </Files>
           <Files>
@@ -683,6 +906,37 @@
               <FileName>object.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\object.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_KERNEL_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>scheduler_comm.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\src\scheduler_comm.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_KERNEL_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
           </Files>
           <Files>
@@ -690,6 +944,18 @@
               <FileName>scheduler_up.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\scheduler_up.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_KERNEL_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
           </Files>
           <Files>
@@ -697,6 +963,18 @@
               <FileName>thread.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\thread.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_KERNEL_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
             </File>
           </Files>
           <Files>
@@ -704,6 +982,49 @@
               <FileName>timer.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\src\timer.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_KERNEL_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>libcpu</GroupName>
+          <Files>
+            <File>
+              <FileName>div0.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\libcpu\arm\common\div0.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>showmem.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\libcpu\arm\common\showmem.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>context_rvds.S</FileName>
+              <FileType>2</FileType>
+              <FilePath>..\..\..\libcpu\arm\cortex-m4\context_rvds.S</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cpuport.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\libcpu\arm\cortex-m4\cpuport.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -809,16 +1130,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>psoc6_03_cm0p_sleep.c</FileName>
+              <FileName>cy_ipc_drv.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\IFX_PSOC6_HAL\psoc6cm0p\COMPONENT_CM0P_SLEEP\psoc6_03_cm0p_sleep.c</FilePath>
+              <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\drivers\source\cy_ipc_drv.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>cy_ipc_drv.c</FileName>
+              <FileName>psoc6_01_cm0p_sleep.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\drivers\source\cy_ipc_drv.c</FilePath>
+              <FilePath>..\libraries\IFX_PSOC6_HAL\psoc6cm0p\COMPONENT_CM0P_SLEEP\psoc6_01_cm0p_sleep.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -872,6 +1193,13 @@
           </Files>
           <Files>
             <File>
+              <FileName>psoc6_03_cm0p_sleep.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\IFX_PSOC6_HAL\psoc6cm0p\COMPONENT_CM0P_SLEEP\psoc6_03_cm0p_sleep.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>cy_sysint.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\drivers\source\cy_sysint.c</FilePath>
@@ -893,6 +1221,13 @@
           </Files>
           <Files>
             <File>
+              <FileName>psoc6_02_cm0p_sleep.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\IFX_PSOC6_HAL\psoc6cm0p\COMPONENT_CM0P_SLEEP\psoc6_02_cm0p_sleep.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>cy_systick.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\drivers\source\cy_systick.c</FilePath>
@@ -910,13 +1245,6 @@
               <FileName>cy_trigmux.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\drivers\source\cy_trigmux.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>psoc6_01_cm0p_sleep.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\IFX_PSOC6_HAL\psoc6cm0p\COMPONENT_CM0P_SLEEP\psoc6_01_cm0p_sleep.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -949,13 +1277,6 @@
           </Files>
           <Files>
             <File>
-              <FileName>psoc6_02_cm0p_sleep.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\IFX_PSOC6_HAL\psoc6cm0p\COMPONENT_CM0P_SLEEP\psoc6_02_cm0p_sleep.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>cy_syspm.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\drivers\source\cy_syspm.c</FilePath>
@@ -973,23 +1294,16 @@
           <GroupName>libs</GroupName>
           <Files>
             <File>
-              <FileName>cycfg_routing.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libs\TARGET_CY8CKIT-062-BLE\config\GeneratedSource\cycfg_routing.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cybsp.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libs\TARGET_CY8CKIT-062-BLE\cybsp.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>cycfg_capsense.c</FileName>
               <FileType>1</FileType>
               <FilePath>libs\TARGET_CY8CKIT-062-BLE\config\GeneratedSource\cycfg_capsense.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cycfg_qspi_memslot.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libs\TARGET_CY8CKIT-062-BLE\config\GeneratedSource\cycfg_qspi_memslot.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1001,23 +1315,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>cycfg.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libs\TARGET_CY8CKIT-062-BLE\config\GeneratedSource\cycfg.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>cycfg_system.c</FileName>
               <FileType>1</FileType>
               <FilePath>libs\TARGET_CY8CKIT-062-BLE\config\GeneratedSource\cycfg_system.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>startup_psoc6_01_cm4.S</FileName>
-              <FileType>2</FileType>
-              <FilePath>libs\TARGET_CY8CKIT-062-BLE\COMPONENT_CM4\TOOLCHAIN_ARM\startup_psoc6_01_cm4.S</FilePath>
             </File>
           </Files>
           <Files>
@@ -1029,6 +1329,20 @@
           </Files>
           <Files>
             <File>
+              <FileName>cycfg.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libs\TARGET_CY8CKIT-062-BLE\config\GeneratedSource\cycfg.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cycfg_routing.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libs\TARGET_CY8CKIT-062-BLE\config\GeneratedSource\cycfg_routing.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>cycfg_clocks.c</FileName>
               <FileType>1</FileType>
               <FilePath>libs\TARGET_CY8CKIT-062-BLE\config\GeneratedSource\cycfg_clocks.c</FilePath>
@@ -1036,16 +1350,23 @@
           </Files>
           <Files>
             <File>
-              <FileName>cycfg_pins.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libs\TARGET_CY8CKIT-062-BLE\config\GeneratedSource\cycfg_pins.c</FilePath>
+              <FileName>startup_psoc6_01_cm4.S</FileName>
+              <FileType>2</FileType>
+              <FilePath>libs\TARGET_CY8CKIT-062-BLE\COMPONENT_CM4\TOOLCHAIN_ARM\startup_psoc6_01_cm4.S</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>cycfg_qspi_memslot.c</FileName>
+              <FileName>cybsp.c</FileName>
               <FileType>1</FileType>
-              <FilePath>libs\TARGET_CY8CKIT-062-BLE\config\GeneratedSource\cycfg_qspi_memslot.c</FilePath>
+              <FilePath>libs\TARGET_CY8CKIT-062-BLE\cybsp.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cycfg_pins.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libs\TARGET_CY8CKIT-062-BLE\config\GeneratedSource\cycfg_pins.c</FilePath>
             </File>
           </Files>
         </Group>

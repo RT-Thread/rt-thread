@@ -201,9 +201,9 @@ static void lpc_pin_write(rt_device_t dev, rt_base_t pin, rt_uint8_t value)
     GPIO_PinWrite(lpc_pin_map[pin].gpio, lpc_pin_map[pin].gpio_port, lpc_pin_map[pin].gpio_pin, value);
 }
 
-static rt_int8_t lpc_pin_read(rt_device_t dev, rt_base_t pin)
+static rt_ssize_t lpc_pin_read(rt_device_t dev, rt_base_t pin)
 {
-    int value;
+    rt_ssize_t value;
     if ((pin > __ARRAY_LEN(lpc_pin_map)) || (pin == 0))
     {
         return -RT_ERROR;

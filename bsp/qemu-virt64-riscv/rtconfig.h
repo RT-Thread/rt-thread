@@ -47,9 +47,6 @@
 #define RT_USING_SMALL_MEM_AS_HEAP
 #define RT_USING_MEMTRACE
 #define RT_USING_HEAP
-
-/* Kernel Device Object */
-
 #define RT_USING_DEVICE
 #define RT_USING_DEVICE_OPS
 #define RT_USING_CONSOLE
@@ -126,7 +123,6 @@
 #define RT_USING_CPUTIME
 #define RT_USING_CPUTIME_RISCV
 #define CPUTIME_TIMER_FREQ 10000000
-#define RT_USING_PIN
 #define RT_USING_NULL
 #define RT_USING_ZERO
 #define RT_USING_RANDOM
@@ -138,6 +134,7 @@
 #define RT_USING_VIRTIO_NET
 #define RT_USING_VIRTIO_CONSOLE
 #define RT_USING_VIRTIO_CONSOLE_PORT_MAX_NR 4
+#define RT_USING_PIN
 #define RT_USING_KTIME
 
 /* Using USB */
@@ -226,6 +223,7 @@
 #define RT_LWIP_ETHTHREAD_MBOX_SIZE 8
 #define LWIP_NETIF_STATUS_CALLBACK 1
 #define LWIP_NETIF_LINK_CALLBACK 1
+#define RT_LWIP_NETIF_NAMESIZE 6
 #define SO_REUSE 1
 #define LWIP_SO_RCVTIMEO 1
 #define LWIP_SO_SNDTIMEO 1
@@ -233,6 +231,9 @@
 #define LWIP_SO_LINGER 0
 #define LWIP_NETIF_LOOPBACK 0
 #define RT_LWIP_USING_PING
+
+/* Memory protection */
+
 
 /* Utilities */
 
@@ -245,9 +246,6 @@
 #define RT_USING_ADT_BITMAP
 #define RT_USING_ADT_HASHMAP
 #define RT_USING_ADT_REF
-
-/* Memory management */
-
 
 /* RT-Thread Utestcases */
 
@@ -263,6 +261,15 @@
 
 
 /* Wiced WiFi */
+
+
+/* CYW43012 WiFi */
+
+
+/* BL808 WiFi */
+
+
+/* CYW43439 WiFi */
 
 
 /* IoT Cloud */
@@ -287,9 +294,6 @@
 /* u8g2: a monochrome graphic library */
 
 
-/* PainterEngine: A cross-platform graphics application framework written in C language */
-
-
 /* tools packages */
 
 
@@ -309,11 +313,24 @@
 
 /* peripheral libraries and drivers */
 
+/* HAL & SDK Drivers */
+
+/* STM32 HAL & SDK Drivers */
+
 
 /* Kendryte SDK */
 
 
+/* sensors drivers */
+
+
+/* touch drivers */
+
+
 /* AI packages */
+
+
+/* Signal Processing and Control Algorithm Packages */
 
 
 /* miscellaneous packages */
@@ -329,7 +346,7 @@
 /* Arduino libraries */
 
 
-/* Projects */
+/* Projects and Demos */
 
 
 /* Sensors */
@@ -353,6 +370,7 @@
 
 
 /* Other */
+
 
 /* Signal IO */
 

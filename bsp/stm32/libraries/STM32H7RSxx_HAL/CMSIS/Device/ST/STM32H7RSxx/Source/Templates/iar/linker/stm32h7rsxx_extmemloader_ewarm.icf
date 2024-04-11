@@ -1,0 +1,34 @@
+/*###ICF### Section handled by ICF editor, don't touch! ****/
+/*-Editor annotation file-*/
+/* IcfEditorFile="$TOOLKIT_DIR$\config\ide\IcfEditor\cortex_v1_1.xml" */
+/*-Specials-*/
+define symbol __ICFEDIT_intvec_start__ = 0x00000000;
+
+/*-Memory Regions-*/
+define symbol __ICFEDIT_region_IRAM1_start__ = 0x00000040;
+define symbol __ICFEDIT_region_IRAM1_end__   = 0x0000EFFF;
+define symbol __ICFEDIT_region_IRAM2_start__ = 0x0000F000;
+define symbol __ICFEDIT_region_IRAM2_end__   = 0x0000FFFF;
+define symbol __ICFEDIT_region_DTCM_start__  = 0x20000000;
+define symbol __ICFEDIT_region_DTCM_end__    = 0x2000FFFF;
+/*-Sizes-*/
+define symbol __ICFEDIT_size_cstack__ = 0x400;
+define symbol __ICFEDIT_size_heap__   = 0x8;    /* not used defined the min size */
+/**** End of ICF editor section. ###ICF###*/
+
+define memory mem with size = 4G;
+define region IRAM_region   =   mem:[from __ICFEDIT_region_IRAM1_start__ to __ICFEDIT_region_IRAM1_end__];
+define region IRAM_region_2 =   mem:[from __ICFEDIT_region_IRAM2_start__ to __ICFEDIT_region_IRAM2_end__];
+define region DTCM_region   =   mem:[from __ICFEDIT_region_DTCM_start__ to __ICFEDIT_region_DTCM_end__];
+define block CSTACK    with alignment = 8, size = __ICFEDIT_size_cstack__   { };
+define block HEAP      with alignment = 8, size = __ICFEDIT_size_heap__     { };
+
+do not initialize { readwrite };
+do not initialize  { section .noinit };
+
+place at address mem:__ICFEDIT_intvec_start__ { section .intvec };
+place at start of IRAM_region { readonly };
+place in IRAM_region          { block RamTop with fixed order { readwrite, block CSTACK, block HEAP }};
+place in IRAM_region_2        { zi};
+place at start of DTCM_region { section RAMBUFFER_END };
+place at end of DTCM_region   { section RAMBUFFER_START };

@@ -141,6 +141,20 @@ extern "C"
 
 #endif /* SOC_SERIES_R7FA8M85 */
 
+#ifdef SOC_SERIES_R9A07G0
+#include "rzt/uart_config.h"
+#include "rzt/timer_config.h"
+
+#ifdef BSP_USING_PWM
+#include "rzt/pwm_config.h"
+#endif
+
+#ifdef BSP_USING_ADC
+#include "rzt/adc_config.h"
+#endif
+
+#endif /* SOC_SERIES_R9A07G0 */
+
 #ifdef __cplusplus
 }
 #endif

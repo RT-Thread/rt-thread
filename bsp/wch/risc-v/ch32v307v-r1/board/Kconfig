@@ -33,8 +33,8 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_TIM6_HWTIMER
         select BSP_USING_SOFT_I2C
         select BSP_USING_I2C1
+        select RTDUINO_USING_WIRE
         imply RTDUINO_USING_SERVO
-        imply RTDUINO_USING_WIRE
         default n
 
 endmenu
@@ -119,6 +119,21 @@ menu "On-chip Peripheral Drivers"
             config BSP_USING_DAC_CHANNEL2
                 bool "Enable DAC CHANNEL2"
                 default n
+        endif
+
+    menuconfig BSP_USING_I2C
+        bool "Enable I2C"
+        select RT_USING_I2C
+
+        if BSP_USING_I2C
+            config BSP_USING_I2C1
+                bool "Enable I2C1"
+                default n
+
+            config BSP_USING_I2C2
+                bool "Enable I2C2"
+                default n
+
         endif
 
     menuconfig BSP_USING_SOFT_I2C

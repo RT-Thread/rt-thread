@@ -20,9 +20,9 @@
 #include "raspi4.h"
 #include "drv_eth.h"
 
-#define DBG_LEVEL   DBG_LOG
+#define LOG_LVL     DBG_LOG
+#define LOG_TAG     "drv.eth"
 #include <rtdbg.h>
-#define LOG_TAG                "drv.eth"
 
 static int link_speed = 0;
 static int link_flag = 0;
@@ -536,17 +536,17 @@ static void link_task_entry(void *param)
     if ((bcmgenet_mdio_read(1, BCM54213PE_STATUS) & (1 << 10)) || (bcmgenet_mdio_read(1, BCM54213PE_STATUS) & (1 << 11)))
     {
         link_speed = 1000;
-        rt_kprintf("Support link mode Speed 1000M\n");
+        LOG_I("Support link mode Speed 1000M\n");
     }
     else if ((bcmgenet_mdio_read(1, 0x05) & (1 << 7)) || (bcmgenet_mdio_read(1, 0x05) & (1 << 8)) || (bcmgenet_mdio_read(1, 0x05) & (1 << 9)))
     {
         link_speed = 100;
-        rt_kprintf("Support link mode Speed 100M\n");
+        LOG_I("Support link mode Speed 100M\n");
     }
     else
     {
         link_speed = 10;
-        rt_kprintf("Support link mode Speed 10M\n");
+        LOG_I("Support link mode Speed 10M\n");
     }
 
     bcmgenet_gmac_eth_start();
@@ -573,7 +573,7 @@ static rt_err_t bcmgenet_eth_init(rt_device_t device)
         else if (major == 0)
             major = 1;
 
-        rt_kprintf("Uns upported GENETv%d.%d\n", major, (hw_reg >> 16) & 0x0f);
+        LOG_W("Unsupported GENETv%d.%d\n", major, (hw_reg >> 16) & 0x0f);
         return -RT_ERROR;
     }
     /* set interface */
@@ -623,7 +623,7 @@ rt_err_t rt_eth_tx(rt_device_t device, struct pbuf *p)
     /* lock eth device */
     if (link_flag != 1)
     {
-        rt_kprintf("link disconnected\n");
+        LOG_I("link disconnected\n");
         return -RT_ERROR;
     }
 
@@ -631,7 +631,7 @@ rt_err_t rt_eth_tx(rt_device_t device, struct pbuf *p)
     if (copy_len == 0)
     {
 
-        rt_kprintf("copy len is zero\n");
+        LOG_I("copy len is zero\n");
         return -RT_ERROR;
     }
     bcmgenet_gmac_eth_send((void *)eth_send_no_cache, p->tot_len);
@@ -664,9 +664,16 @@ struct pbuf *rt_eth_rx(rt_device_t device)
     return pbuf;
 }
 
+#ifdef RT_USING_DEVICE_OPS
+static struct rt_device_ops eth_devops = {
+    .init = bcmgenet_eth_init,
+    .control = bcmgenet_eth_control,
+};
+#endif /* RT_USING_DEVICE_OPS */
+
 int rt_hw_eth_init(void)
 {
-    rt_uint8_t mac_addr[6];
+    rt_uint8_t mac_addr[6] = {0xdc, 0xa6, 0x32, 0x28, 0x22, 0x50};
 
     rt_sem_init(&link_ack, "link_ack", 0, RT_IPC_FLAG_FIFO);
 
@@ -685,12 +692,16 @@ int rt_hw_eth_init(void)
     eth_dev.dev_addr[5] = mac_addr[5];
 
     eth_dev.parent.parent.type          = RT_Device_Class_NetIf;
+#ifdef RT_USING_DEVICE_OPS
+    eth_dev.parent.parent.ops           = &eth_devops;
+#else /* !RT_USING_DEVICE_OPS */
     eth_dev.parent.parent.init          = bcmgenet_eth_init;
     eth_dev.parent.parent.open          = RT_NULL;
     eth_dev.parent.parent.close         = RT_NULL;
     eth_dev.parent.parent.read          = RT_NULL;
     eth_dev.parent.parent.write         = RT_NULL;
     eth_dev.parent.parent.control       = bcmgenet_eth_control;
+#endif /* RT_USING_DEVICE_OPS */
     eth_dev.parent.parent.user_data     = RT_NULL;
 
     eth_dev.parent.eth_tx            = rt_eth_tx;

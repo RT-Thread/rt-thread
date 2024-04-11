@@ -34,7 +34,7 @@ static void avr32_i2c_gpio_init(struct avr32_i2c *i2c)
 
     rt_pin_mode(cfg->scl, PIN_MODE_OUTPUT_OD);
     gpio_set_gpio_open_drain_pin(cfg->scl);
-    
+
     rt_pin_mode(cfg->sda, PIN_MODE_OUTPUT_OD);
     gpio_set_gpio_open_drain_pin(cfg->sda);
 }
@@ -50,11 +50,11 @@ static void avr32_set_sda(void *data, rt_int32_t state)
     struct avr32_soft_i2c_config* cfg = (struct avr32_soft_i2c_config*)data;
     if (state)
     {
-	gpio_set_gpio_open_drain_pin(cfg->sda);
+    gpio_set_gpio_open_drain_pin(cfg->sda);
     }
     else
     {
-	gpio_clr_gpio_open_drain_pin(cfg->sda);
+    gpio_clr_gpio_open_drain_pin(cfg->sda);
     }
 }
 
@@ -69,11 +69,11 @@ static void avr32_set_scl(void *data, rt_int32_t state)
     struct avr32_soft_i2c_config* cfg = (struct avr32_soft_i2c_config*)data;
     if (state)
     {
-	gpio_set_gpio_open_drain_pin(cfg->scl);
+    gpio_set_gpio_open_drain_pin(cfg->scl);
     }
     else
     {
-	gpio_clr_gpio_open_drain_pin(cfg->scl);
+    gpio_clr_gpio_open_drain_pin(cfg->scl);
     }
 }
 
@@ -126,10 +126,10 @@ static rt_err_t avr32_i2c_bus_unlock(const struct avr32_soft_i2c_config *cfg)
     {
         while (i++ < 9)
         {
-	    gpio_set_gpio_open_drain_pin(cfg->scl);
-	    rt_hw_us_delay(100);
-	    gpio_clr_gpio_open_drain_pin(cfg->scl);
-	    rt_hw_us_delay(100);
+        gpio_set_gpio_open_drain_pin(cfg->scl);
+        rt_hw_us_delay(100);
+        gpio_clr_gpio_open_drain_pin(cfg->scl);
+        rt_hw_us_delay(100);
         }
     }
     if (PIN_LOW == gpio_get_gpio_open_drain_pin_output_value(cfg->sda))

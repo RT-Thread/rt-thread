@@ -242,6 +242,7 @@ int arch_set_thread_context(void (*exit)(void), void *new_thread_stack,
      * |                        |
      * +------------------------+ --> thread sp
      */
+    return 0;
 }
 
 #define ALGIN_BYTES (16)
@@ -315,6 +316,12 @@ void *arch_signal_ucontext_save(int signo, siginfo_t *psiginfo,
     }
 
     return new_sp;
+}
+
+void arch_syscall_set_errno(void *eframe, int expected, int code)
+{
+    /* NO support */
+    return ;
 }
 
 /**

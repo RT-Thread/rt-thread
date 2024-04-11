@@ -24,6 +24,10 @@
 #endif /* defined(RT_USING_SIGNALS) || defined(RT_USING_SMART) */
 #endif /* RT_USING_NANO */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 /**
  * RT-Thread basic data types definition
  */
@@ -75,15 +79,15 @@ typedef rt_ubase_t                      rt_dev_t;       /**< Type for device */
 typedef rt_base_t                       rt_off_t;       /**< Type for offset */
 
 #ifdef __cplusplus
-typedef rt_base_t rt_atomic_t;
+typedef rt_ubase_t rt_atomic_t;
 #else
 #if defined(RT_USING_HW_ATOMIC)
-typedef rt_base_t rt_atomic_t;
+typedef rt_ubase_t rt_atomic_t;
 #elif defined(RT_USING_STDC_ATOMIC)
 #include <stdatomic.h>
 typedef atomic_size_t rt_atomic_t;
 #else
-typedef rt_base_t rt_atomic_t;
+typedef rt_ubase_t rt_atomic_t;
 #endif /* RT_USING_STDC_ATOMIC */
 #endif /* __cplusplus */
 
@@ -211,6 +215,9 @@ struct rt_spinlock
 
 struct rt_spinlock
 {
+#ifdef RT_USING_DEBUG
+    rt_uint32_t critical_level;
+#endif /* RT_USING_DEBUG */
     rt_ubase_t lock;
 };
 #define RT_SPINLOCK_INIT {0}
@@ -219,5 +226,9 @@ struct rt_spinlock
 typedef struct rt_spinlock rt_spinlock_t;
 
 #define RT_DEFINE_SPINLOCK(x)  struct rt_spinlock x = RT_SPINLOCK_INIT
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif /* __RT_TYPES_H__ */

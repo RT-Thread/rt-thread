@@ -355,7 +355,7 @@ static void vega_pin_mode(rt_device_t dev, rt_base_t pin, rt_uint8_t mode)
     GPIO_PinInit(vega_pin_map[pin].gpio, vega_pin_map[pin].gpio_pin, &gpio);
 }
 
-static rt_int8_t vega_pin_read(rt_device_t dev, rt_base_t pin)
+static rt_ssize_t vega_pin_read(rt_device_t dev, rt_base_t pin)
 {
     uint32_t value;
 

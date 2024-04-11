@@ -22,6 +22,7 @@
  * 2023-10-16     Shell        Support a new backtrace framework
  * 2023-12-10     xqyjlj       fix spinlock in up
  * 2024-01-25     Shell        Add rt_susp_list for IPC primitives
+ * 2024-03-10     Meco Man     move std libc related functions to rtklibc
  */
 
 #ifndef __RT_THREAD_H__
@@ -32,6 +33,7 @@
 #include <rtservice.h>
 #include <rtm.h>
 #include <rtatomic.h>
+#include <rtklibc.h>
 #ifdef RT_USING_LEGACY
 #include <rtlegacy.h>
 #endif
@@ -212,6 +214,17 @@ void rt_system_scheduler_start(void);
 
 void rt_schedule(void);
 void rt_scheduler_do_irq_switch(void *context);
+
+#ifdef RT_USING_OVERFLOW_CHECK
+void rt_scheduler_stack_check(struct rt_thread *thread);
+
+#define RT_SCHEDULER_STACK_CHECK(thr) rt_scheduler_stack_check(thr)
+
+#else /* !RT_USING_OVERFLOW_CHECK */
+
+#define RT_SCHEDULER_STACK_CHECK(thr)
+
+#endif /* RT_USING_OVERFLOW_CHECK */
 
 rt_base_t rt_enter_critical(void);
 void rt_exit_critical(void);
@@ -736,11 +749,6 @@ rt_err_t rt_backtrace(void);
 rt_err_t rt_backtrace_thread(rt_thread_t thread);
 rt_err_t rt_backtrace_frame(struct rt_hw_backtrace_frame *frame);
 
-int rt_vsprintf(char *dest, const char *format, va_list arg_ptr);
-int rt_vsnprintf(char *buf, rt_size_t size, const char *fmt, va_list args);
-int rt_sprintf(char *buf, const char *format, ...);
-int rt_snprintf(char *buf, rt_size_t size, const char *format, ...);
-
 #if defined(RT_USING_DEVICE) && defined(RT_USING_CONSOLE)
 rt_device_t rt_console_set_device(const char *name);
 rt_device_t rt_console_get_device(void);
@@ -762,39 +770,6 @@ const char *rt_strerror(rt_err_t error);
 #endif /* !defined(RT_USING_NEWLIBC) && !defined(_WIN32) */
 
 int __rt_ffs(int value);
-
-#ifndef RT_KSERVICE_USING_STDLIB_MEMORY
-void *rt_memset(void *src, int c, rt_ubase_t n);
-void *rt_memcpy(void *dest, const void *src, rt_ubase_t n);
-void *rt_memmove(void *dest, const void *src, rt_size_t n);
-rt_int32_t rt_memcmp(const void *cs, const void *ct, rt_size_t count);
-#endif /* RT_KSERVICE_USING_STDLIB_MEMORY */
-char *rt_strdup(const char *s);
-rt_size_t rt_strnlen(const char *s, rt_ubase_t maxlen);
-#ifndef RT_KSERVICE_USING_STDLIB
-char *rt_strstr(const char *str1, const char *str2);
-rt_int32_t rt_strcasecmp(const char *a, const char *b);
-char *rt_strcpy(char *dst, const char *src);
-char *rt_strncpy(char *dest, const char *src, rt_size_t n);
-rt_int32_t rt_strncmp(const char *cs, const char *ct, rt_size_t count);
-rt_int32_t rt_strcmp(const char *cs, const char *ct);
-rt_size_t rt_strlen(const char *src);
-#else
-#include <string.h>
-#ifdef RT_KSERVICE_USING_STDLIB_MEMORY
-#define rt_memset(s, c, count)      memset(s, c, count)
-#define rt_memcpy(dst, src, count)  memcpy(dst, src, count)
-#define rt_memmove(dest, src, n)    memmove(dest, src, n)
-#define rt_memcmp(cs, ct, count)    memcmp(cs, ct, count)
-#endif /* RT_KSERVICE_USING_STDLIB_MEMORY */
-#define rt_strstr(str1, str2)       strstr(str1, str2)
-#define rt_strcasecmp(a, b)         strcasecmp(a, b)
-#define rt_strcpy(dest, src)        strcpy(dest, src)
-#define rt_strncpy(dest, src, n)    strncpy(dest, src, n)
-#define rt_strncmp(cs, ct, count)   strncmp(cs, ct, count)
-#define rt_strcmp(cs, ct)           strcmp(cs, ct)
-#define rt_strlen(src)              strlen(src)
-#endif /*RT_KSERVICE_USING_STDLIB*/
 
 void rt_show_version(void);
 

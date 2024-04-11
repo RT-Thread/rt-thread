@@ -1,4 +1,4 @@
-
+#include "rtconfig.h"
 
 #include "fsl_common.h"
 #include "fsl_port.h"
@@ -32,6 +32,10 @@ void BOARD_InitBootPins(void)
     PORT1->PCR[16]  = PORT_PCR_MUX(2) | PORT_PCR_PS(0) | PORT_PCR_PE(1) | PORT_PCR_IBE(1);     /* FC5_UART */
     PORT1->PCR[17]  = PORT_PCR_MUX(2) | PORT_PCR_PS(0) | PORT_PCR_PE(1) | PORT_PCR_IBE(1);     /* FC5_UART */
 
+    /* DAC */
+    // PORT4->PCR[2] = PORT_PCR_MUX(0) | PORT_PCR_PS(0) | PORT_PCR_PE(0) | PORT_PCR_IBE(0); /* DAC0 */
+    // PORT4->PCR[3] = PORT_PCR_MUX(0) | PORT_PCR_PS(0) | PORT_PCR_PE(0) | PORT_PCR_IBE(0); /* DAC1 */
+
     /* MCX_RST UART */
     PORT4->PCR[2]  = PORT_PCR_MUX(2) | PORT_PCR_PS(0) | PORT_PCR_PE(1) | PORT_PCR_IBE(1);     /* FC2_UART */
     PORT4->PCR[3]  = PORT_PCR_MUX(2) | PORT_PCR_PS(0) | PORT_PCR_PE(1) | PORT_PCR_IBE(1);     /* FC2_UART */
@@ -39,17 +43,27 @@ void BOARD_InitBootPins(void)
 
     PORT0->PCR[6]   = PORT_PCR_MUX(12) | PORT_PCR_PS(1) | PORT_PCR_PE(1) | PORT_PCR_IBE(1) | PORT_PCR_SRE(0) | PORT_PCR_ODE(0);     /* CLKOUT */
 
+#ifdef BSP_USING_I2C1
     PORT0->PCR[24]   = PORT_PCR_MUX(2) | PORT_PCR_PS(1) | PORT_PCR_PE(1) | PORT_PCR_IBE(1) | PORT_PCR_SRE(0) | PORT_PCR_ODE(0);     /* FC1 I2C_SDA */
     PORT0->PCR[25]   = PORT_PCR_MUX(2) | PORT_PCR_PS(1) | PORT_PCR_PE(1) | PORT_PCR_IBE(1) | PORT_PCR_SRE(0) | PORT_PCR_ODE(0);     /* FC1 I2C_SCL */
+#endif
 
     PORT0->PCR[16]   = PORT_PCR_MUX(2) | PORT_PCR_PS(1) | PORT_PCR_PE(1) | PORT_PCR_IBE(1) | PORT_PCR_SRE(0) | PORT_PCR_ODE(0);     /* FC0 I2C_SDA */
     PORT0->PCR[17]   = PORT_PCR_MUX(2) | PORT_PCR_PS(1) | PORT_PCR_PE(1) | PORT_PCR_IBE(1) | PORT_PCR_SRE(0) | PORT_PCR_ODE(0);     /* FC0 I2C_SCL */
 
 
-//    PORT0->PCR[24]   = PORT_PCR_MUX(2) | PORT_PCR_PS(1) | PORT_PCR_PE(1) | PORT_PCR_IBE(1);     /* FC1_0 */
-//    PORT0->PCR[25]   = PORT_PCR_MUX(2) | PORT_PCR_PS(1) | PORT_PCR_PE(1) | PORT_PCR_IBE(1);     /* FC1_1 */
-//    PORT0->PCR[26]   = PORT_PCR_MUX(2) | PORT_PCR_PS(1) | PORT_PCR_PE(1) | PORT_PCR_IBE(1);     /* FC1_2 */
-//    PORT0->PCR[27]   = PORT_PCR_MUX(2) | PORT_PCR_PS(1) | PORT_PCR_PE(1) | PORT_PCR_IBE(1);     /* FC1_3 */
+#ifdef BSP_USING_SPI1
+    /* Arduino D11(P0_24), D12(P0_26), D13(P0_25) as SPI function, for RW007 MOSI, MISO, CLK  */
+    PORT0->PCR[24]   = PORT_PCR_MUX(2) | PORT_PCR_PS(1) | PORT_PCR_PE(1) | PORT_PCR_IBE(1);     /* P0_24: FC1_0 */
+    PORT0->PCR[26]   = PORT_PCR_MUX(2) | PORT_PCR_PS(1) | PORT_PCR_PE(1) | PORT_PCR_IBE(1);     /* P0_26: FC1_2 */
+    PORT0->PCR[25]   = PORT_PCR_MUX(2) | PORT_PCR_PS(1) | PORT_PCR_PE(1) | PORT_PCR_IBE(1);     /* P0_25: FC1_1 */
+
+    /* Arduino D8(P0_28), D9(P0_10), D10(P0_27) as GPIO function, for RW007 RST, INT, CS */
+    /* drv_pin.c works well, follow lines just notice that pins we used as GPIO function */
+    // PORT0->PCR[28]   = PORT_PCR_MUX(0) | PORT_PCR_PS(1) | PORT_PCR_PE(1) | PORT_PCR_IBE(1);     /* P0_28: P0_28 */
+    // PORT0->PCR[10]   = PORT_PCR_MUX(0) | PORT_PCR_PS(0) | PORT_PCR_PE(1) | PORT_PCR_IBE(1);     /* P0_10: P0_27 */
+    // PORT0->PCR[27]   = PORT_PCR_MUX(0) | PORT_PCR_PS(1) | PORT_PCR_PE(1) | PORT_PCR_IBE(1);     /* P0_27: P0_27 */
+#endif
 
     /* PMOD */
     PORT1->PCR[0]   = PORT_PCR_MUX(2) | PORT_PCR_PS(0) | PORT_PCR_PE(0) | PORT_PCR_IBE(1);     /* FC3_0 SDO/D[0], FC3_SPI_MOSI */
@@ -59,6 +73,12 @@ void BOARD_InitBootPins(void)
 //    PORT1->PCR[3]   = PORT_PCR_MUX(2) | PORT_PCR_PS(0) | PORT_PCR_PE(0) | PORT_PCR_IBE(1);     /* FC3_3 CS0 */
 //    PORT1->PCR[4]   = PORT_PCR_MUX(2) | PORT_PCR_PS(0) | PORT_PCR_PE(0) | PORT_PCR_IBE(1);     /* FC3_4 D[3] */
 //    PORT1->PCR[5]   = PORT_PCR_MUX(2) | PORT_PCR_PS(0) | PORT_PCR_PE(0) | PORT_PCR_IBE(1);     /* FC3_5 D[2] */
+
+    /* SPI */
+    PORT3->PCR[8]   = PORT_PCR_MUX(3) | PORT_PCR_PS(0) | PORT_PCR_PE(0) | PORT_PCR_IBE(1);     /* FC7_P0, MOSI */
+    PORT3->PCR[9]   = PORT_PCR_MUX(3) | PORT_PCR_PS(0) | PORT_PCR_PE(0) | PORT_PCR_IBE(1);     /* FC7_P2, MISO */
+    PORT3->PCR[7]   = PORT_PCR_MUX(3) | PORT_PCR_PS(0) | PORT_PCR_PE(0) | PORT_PCR_IBE(1);     /* FC7_P1, CLK */
+    PORT3->PCR[0]   = PORT_PCR_MUX(3) | PORT_PCR_PS(0) | PORT_PCR_PE(0) | PORT_PCR_IBE(1);     /* FC7_P1, CS */
 
     PORT1->PCR[8]   = PORT_PCR_MUX(2) | PORT_PCR_PS(0) | PORT_PCR_PE(1) | PORT_PCR_IBE(1);     /* FC4_UART */
     PORT1->PCR[9]   = PORT_PCR_MUX(2) | PORT_PCR_PS(0) | PORT_PCR_PE(1) | PORT_PCR_IBE(1);     /* FC4_UART */
@@ -89,8 +109,12 @@ void BOARD_InitBootPins(void)
     PORT2->PCR[6]   = PORT_PCR_MUX(3) | PORT_PCR_PE(1) | PORT_PCR_PS(1) | PORT_PCR_IBE(1);   /* SDHC0_D3 */
     PORT2->PCR[7]   = PORT_PCR_MUX(3) | PORT_PCR_PE(1) | PORT_PCR_PS(1) | PORT_PCR_IBE(1);   /* SDHC0_D2 */
 
-    PORT3->PCR[20]   = PORT_PCR_MUX(3) | PORT_PCR_PS(0) | PORT_PCR_IBE(1);     /* FC6_P0 */
-    PORT3->PCR[21]   = PORT_PCR_MUX(3) | PORT_PCR_PS(0) | PORT_PCR_IBE(1);     /* FC6_P1 */
+    /* mikroBUS SPI6 */
+    PORT3->PCR[20]   = PORT_PCR_MUX(3) | PORT_PCR_PS(0) | PORT_PCR_PE(0) | PORT_PCR_IBE(1);     /* FC6_P0 SDO/D[0], FC6_SPI_MOSI */
+    PORT3->PCR[21]   = PORT_PCR_MUX(3) | PORT_PCR_PS(0) | PORT_PCR_PE(0) | PORT_PCR_IBE(1);     /* FC6_P1 SCK, FC6_SPI_CLK */
+    PORT3->PCR[22]   = PORT_PCR_MUX(3) | PORT_PCR_PS(0) | PORT_PCR_PE(0) | PORT_PCR_IBE(1);     /* FC6_P2 SDI/D[1], FC3_SPI_MISO */
+    PORT3->PCR[23]   = PORT_PCR_MUX(0) | PORT_PCR_PS(0) | PORT_PCR_PE(0) | PORT_PCR_IBE(1);     /* CS */
+
 
 //    PORT1->PCR[20]   = PORT_PCR_MUX(3) | PORT_PCR_PS(0) | PORT_PCR_PE(0) | PORT_PCR_IBE(1);     /* FC4_0 */
 //    PORT1->PCR[21]   = PORT_PCR_MUX(3) | PORT_PCR_PS(0) | PORT_PCR_PE(0) | PORT_PCR_IBE(1);     /* FC4_1 */

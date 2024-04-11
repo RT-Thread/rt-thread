@@ -143,4 +143,4 @@ RT-Thread está muy agradecido por el apoyo de todos los desarrolladores de la c
 
 # Contribución
 
-Si estás interesado en RT-Thread y quieres unirte al desarrollo de RT-Thread y convertirte en un contribuidor de código, por favor consulta la [Guía de Contribución de Código.](documentation/contribution_guide/contribution_guide.md).
+Si estás interesado en RT-Thread y quieres unirte al desarrollo de RT-Thread y convertirte en un contribuidor de código, por favor consulta la [Guía de Contribución de Código.](.github/CONTRIBUTING.md).

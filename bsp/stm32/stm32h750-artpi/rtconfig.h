@@ -84,9 +84,9 @@
 #define RT_SERIAL_USING_DMA
 #define RT_USING_I2C
 #define RT_USING_I2C_BITOPS
-#define RT_USING_PIN
 #define RT_USING_SPI
 #define RT_USING_TOUCH
+#define RT_USING_PIN
 
 /* Using USB */
 
@@ -139,6 +139,12 @@
 /* CYW43012 WiFi */
 
 
+/* BL808 WiFi */
+
+
+/* CYW43439 WiFi */
+
+
 /* IoT Cloud */
 
 
@@ -180,13 +186,18 @@
 
 /* peripheral libraries and drivers */
 
+/* HAL & SDK Drivers */
+
+/* STM32 HAL & SDK Drivers */
+
+
+/* Kendryte SDK */
+
+
 /* sensors drivers */
 
 
 /* touch drivers */
-
-
-/* Kendryte SDK */
 
 
 /* AI packages */

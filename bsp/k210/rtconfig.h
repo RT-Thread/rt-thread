@@ -46,6 +46,7 @@
 #define RT_USING_SLAB_AS_HEAP
 #define RT_USING_HEAP
 #define RT_USING_DEVICE
+#define RT_USING_SCHED_THREAD_CTX
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uarths"
@@ -113,7 +114,6 @@
 #define RT_USING_SERIAL_V1
 #define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 64
-#define RT_USING_PIN
 #define RT_USING_SPI
 #define RT_USING_SPI_MSD
 #define RT_USING_SFUD
@@ -121,6 +121,7 @@
 #define RT_SFUD_USING_FLASH_INFO_TABLE
 #define RT_SFUD_SPI_MAX_HZ 50000000
 #define RT_DEBUG_SFUD
+#define RT_USING_PIN
 #define RT_USING_KTIME
 
 /* Using USB */
@@ -236,16 +237,21 @@
 
 /* peripheral libraries and drivers */
 
-/* sensors drivers */
+/* HAL & SDK Drivers */
 
-
-/* touch drivers */
+/* STM32 HAL & SDK Drivers */
 
 
 /* Kendryte SDK */
 
 #define PKG_USING_K210_SDK
 #define PKG_USING_K210_SDK_LATEST_VERSION
+
+/* sensors drivers */
+
+
+/* touch drivers */
+
 
 /* AI packages */
 

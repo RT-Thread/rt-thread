@@ -223,6 +223,11 @@
           <state>_DLIB_FILE_DESCRIPTOR</state>
           <state>_DLIB_THREAD_SUPPORT</state>
           <state>__RTTHREAD__</state>
+          <state>WM_W600</state>
+          <state>__inline=inline</state>
+          <state>__inline__=inline</state>
+          <state>__RT_IPC_SOURCE__</state>
+          <state>__RT_KERNEL_SOURCE__</state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -348,39 +353,54 @@
         <option>
           <name>CCIncludePath2</name>
           <state />
+          <state>$PROJ_DIR$\packages\netutils-latest\ntp</state>
+          <state>$PROJ_DIR$\packages\wm_libraries-latest\Platform\Boot\gcc</state>
+          <state>$PROJ_DIR$\oneshot</state>
           <state>$PROJ_DIR$\..\..\components\dfs\dfs_v1\include</state>
           <state>$PROJ_DIR$\..\..\include</state>
           <state>$PROJ_DIR$\..\..\components\libc\posix\io\eventfd</state>
-          <state>$PROJ_DIR$\..\..\libcpu\arm\common</state>
           <state>$PROJ_DIR$\..\..\components\drivers\include</state>
-          <state>$PROJ_DIR$\..\..\components\dfs\dfs_v1\filesystems\devfs</state>
+          <state>$PROJ_DIR$\..\..\libcpu\arm\common</state>
+          <state>$PROJ_DIR$\packages\wm_libraries-latest\Include</state>
+          <state>$PROJ_DIR$\packages\wm_libraries-latest\Platform\Common\crypto\symmetric</state>
+          <state>$PROJ_DIR$\..\..\components\net\lwip\lwip-2.0.3\src\include</state>
           <state>$PROJ_DIR$\..\..\components\libc\posix\ipc</state>
-          <state>$PROJ_DIR$\..\..\components\finsh</state>
+          <state>$PROJ_DIR$\..\..\components\net\lwip-dhcpd</state>
           <state>$PROJ_DIR$\drivers</state>
           <state>$PROJ_DIR$\..\..\components\net\lwip\lwip-2.0.3\src\include\netif</state>
+          <state>$PROJ_DIR$\packages\wm_libraries-latest\Platform\Common\crypto\digest</state>
           <state>$PROJ_DIR$\.</state>
-          <state>$PROJ_DIR$\..\..\components\net\lwip\lwip-2.0.3\src\include</state>
+          <state>$PROJ_DIR$\packages\wm_libraries-latest\Include\OS</state>
+          <state>$PROJ_DIR$\..\..\components\dfs\dfs_v1\filesystems\devfs</state>
           <state>$PROJ_DIR$\..\..\components\utilities\ulog</state>
           <state>$PROJ_DIR$\..\..\components\libc\posix\io\poll</state>
           <state>$PROJ_DIR$\..\..\libcpu\arm\cortex-m3</state>
+          <state>$PROJ_DIR$\packages\wm_libraries-latest\Include\Platform</state>
           <state>$PROJ_DIR$\..\..\components\net\sal\include\dfs_net</state>
           <state>$PROJ_DIR$\..\..\components\drivers\hwcrypto</state>
-          <state>$PROJ_DIR$\oneshot</state>
+          <state>$PROJ_DIR$\packages\wm_libraries-latest\Platform\Inc</state>
+          <state>$PROJ_DIR$\packages\wm_libraries-latest\Include\WiFi</state>
+          <state>$PROJ_DIR$\packages\wm_libraries-latest\Platform\Common\Params</state>
           <state>$PROJ_DIR$\..\..\components\libc\compilers\common\include</state>
+          <state>$PROJ_DIR$\packages\wm_libraries-latest\Platform\Common\crypto</state>
+          <state>$PROJ_DIR$\packages\wm_libraries-latest\Platform\Drivers\spi</state>
           <state>$PROJ_DIR$\..\..\components\drivers\spi</state>
+          <state>$PROJ_DIR$\packages\wm_libraries-latest\Platform\Common\crypto\math</state>
           <state>$PROJ_DIR$\applications</state>
           <state>$PROJ_DIR$\..\..\components\libc\compilers\common\extension\fcntl\octal</state>
           <state>$PROJ_DIR$\..\..\components\net\lwip\lwip-2.0.3\src\include\ipv4</state>
           <state>$PROJ_DIR$\..\..\components\net\lwip\port</state>
-          <state>$PROJ_DIR$\..\..\components\net\lwip-dhcpd</state>
+          <state>$PROJ_DIR$\..\..\components\finsh</state>
           <state>$PROJ_DIR$\..\..\components\net\sal\include\socket\sys_socket</state>
           <state>$PROJ_DIR$\..\..\components\libc\compilers\common\extension</state>
           <state>$PROJ_DIR$\..\..\components\net\sal\include</state>
           <state>$PROJ_DIR$\..\..\components\net\sal\impl</state>
           <state>$PROJ_DIR$\..\..\components\net\netdev\include</state>
+          <state>$PROJ_DIR$\packages\wm_libraries-latest\Include\Driver</state>
           <state>$PROJ_DIR$\..\..\components\libc\posix\io\epoll</state>
           <state>$PROJ_DIR$\..\..\components\drivers\wlan</state>
           <state>$PROJ_DIR$\..\..\components\net\sal\include\socket</state>
+          <state>$PROJ_DIR$\packages\wm_libraries-latest</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -844,6 +864,8 @@
         <option>
           <name>IlinkAdditionalLibs</name>
           <state />
+          <state>$PROJ_DIR$\packages\wm_libraries-latest\Lib\Wlan\libwlan_iar.a</state>
+          <state>$PROJ_DIR$\packages\wm_libraries-latest\Lib\oneshot\libwmoneshot_iar.a</state>
         </option>
         <option>
           <name>IlinkOverrideProgramEntryLabel</name>
@@ -1278,6 +1300,11 @@
           <state>_DLIB_FILE_DESCRIPTOR</state>
           <state>_DLIB_THREAD_SUPPORT</state>
           <state>__RTTHREAD__</state>
+          <state>WM_W600</state>
+          <state>__inline=inline</state>
+          <state>__inline__=inline</state>
+          <state>__RT_IPC_SOURCE__</state>
+          <state>__RT_KERNEL_SOURCE__</state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -1403,39 +1430,54 @@
         <option>
           <name>CCIncludePath2</name>
           <state />
+          <state>$PROJ_DIR$\packages\netutils-latest\ntp</state>
+          <state>$PROJ_DIR$\packages\wm_libraries-latest\Platform\Boot\gcc</state>
+          <state>$PROJ_DIR$\oneshot</state>
           <state>$PROJ_DIR$\..\..\components\dfs\dfs_v1\include</state>
           <state>$PROJ_DIR$\..\..\include</state>
           <state>$PROJ_DIR$\..\..\components\libc\posix\io\eventfd</state>
-          <state>$PROJ_DIR$\..\..\libcpu\arm\common</state>
           <state>$PROJ_DIR$\..\..\components\drivers\include</state>
-          <state>$PROJ_DIR$\..\..\components\dfs\dfs_v1\filesystems\devfs</state>
+          <state>$PROJ_DIR$\..\..\libcpu\arm\common</state>
+          <state>$PROJ_DIR$\packages\wm_libraries-latest\Include</state>
+          <state>$PROJ_DIR$\packages\wm_libraries-latest\Platform\Common\crypto\symmetric</state>
+          <state>$PROJ_DIR$\..\..\components\net\lwip\lwip-2.0.3\src\include</state>
           <state>$PROJ_DIR$\..\..\components\libc\posix\ipc</state>
-          <state>$PROJ_DIR$\..\..\components\finsh</state>
+          <state>$PROJ_DIR$\..\..\components\net\lwip-dhcpd</state>
           <state>$PROJ_DIR$\drivers</state>
           <state>$PROJ_DIR$\..\..\components\net\lwip\lwip-2.0.3\src\include\netif</state>
+          <state>$PROJ_DIR$\packages\wm_libraries-latest\Platform\Common\crypto\digest</state>
           <state>$PROJ_DIR$\.</state>
-          <state>$PROJ_DIR$\..\..\components\net\lwip\lwip-2.0.3\src\include</state>
+          <state>$PROJ_DIR$\packages\wm_libraries-latest\Include\OS</state>
+          <state>$PROJ_DIR$\..\..\components\dfs\dfs_v1\filesystems\devfs</state>
           <state>$PROJ_DIR$\..\..\components\utilities\ulog</state>
           <state>$PROJ_DIR$\..\..\components\libc\posix\io\poll</state>
           <state>$PROJ_DIR$\..\..\libcpu\arm\cortex-m3</state>
+          <state>$PROJ_DIR$\packages\wm_libraries-latest\Include\Platform</state>
           <state>$PROJ_DIR$\..\..\components\net\sal\include\dfs_net</state>
           <state>$PROJ_DIR$\..\..\components\drivers\hwcrypto</state>
-          <state>$PROJ_DIR$\oneshot</state>
+          <state>$PROJ_DIR$\packages\wm_libraries-latest\Platform\Inc</state>
+          <state>$PROJ_DIR$\packages\wm_libraries-latest\Include\WiFi</state>
+          <state>$PROJ_DIR$\packages\wm_libraries-latest\Platform\Common\Params</state>
           <state>$PROJ_DIR$\..\..\components\libc\compilers\common\include</state>
+          <state>$PROJ_DIR$\packages\wm_libraries-latest\Platform\Common\crypto</state>
+          <state>$PROJ_DIR$\packages\wm_libraries-latest\Platform\Drivers\spi</state>
           <state>$PROJ_DIR$\..\..\components\drivers\spi</state>
+          <state>$PROJ_DIR$\packages\wm_libraries-latest\Platform\Common\crypto\math</state>
           <state>$PROJ_DIR$\applications</state>
           <state>$PROJ_DIR$\..\..\components\libc\compilers\common\extension\fcntl\octal</state>
           <state>$PROJ_DIR$\..\..\components\net\lwip\lwip-2.0.3\src\include\ipv4</state>
           <state>$PROJ_DIR$\..\..\components\net\lwip\port</state>
-          <state>$PROJ_DIR$\..\..\components\net\lwip-dhcpd</state>
+          <state>$PROJ_DIR$\..\..\components\finsh</state>
           <state>$PROJ_DIR$\..\..\components\net\sal\include\socket\sys_socket</state>
           <state>$PROJ_DIR$\..\..\components\libc\compilers\common\extension</state>
           <state>$PROJ_DIR$\..\..\components\net\sal\include</state>
           <state>$PROJ_DIR$\..\..\components\net\sal\impl</state>
           <state>$PROJ_DIR$\..\..\components\net\netdev\include</state>
+          <state>$PROJ_DIR$\packages\wm_libraries-latest\Include\Driver</state>
           <state>$PROJ_DIR$\..\..\components\libc\posix\io\epoll</state>
           <state>$PROJ_DIR$\..\..\components\drivers\wlan</state>
           <state>$PROJ_DIR$\..\..\components\net\sal\include\socket</state>
+          <state>$PROJ_DIR$\packages\wm_libraries-latest</state>
         </option>
         <option>
           <name>CCStdIncCheck</name>
@@ -1899,6 +1941,8 @@
         <option>
           <name>IlinkAdditionalLibs</name>
           <state />
+          <state>$PROJ_DIR$\packages\wm_libraries-latest\Lib\Wlan\libwlan_iar.a</state>
+          <state>$PROJ_DIR$\packages\wm_libraries-latest\Lib\oneshot\libwmoneshot_iar.a</state>
         </option>
         <option>
           <name>IlinkOverrideProgramEntryLabel</name>
@@ -2165,21 +2209,6 @@
     </file>
   </group>
   <group>
-    <name>CPU</name>
-    <file>
-      <name>$PROJ_DIR$\..\..\libcpu\arm\common\div0.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\libcpu\arm\common\showmem.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\libcpu\arm\cortex-m3\context_iar.S</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\libcpu\arm\cortex-m3\cpuport.c</name>
-    </file>
-  </group>
-  <group>
     <name>DeviceDrivers</name>
     <file>
       <name>$PROJ_DIR$\..\..\components\drivers\core\device.c</name>
@@ -2236,10 +2265,10 @@
       <name>$PROJ_DIR$\..\..\components\drivers\ipc\workqueue.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\drivers\misc\pin.c</name>
+      <name>$PROJ_DIR$\..\..\components\drivers\misc\rt_drv_pwm.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\components\drivers\misc\rt_drv_pwm.c</name>
+      <name>$PROJ_DIR$\..\..\components\drivers\pin\pin.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\components\drivers\rtc\rtc.c</name>
@@ -2356,6 +2385,12 @@
       <name>$PROJ_DIR$\..\..\src\irq.c</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\..\..\src\klibc\kstdio.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\src\klibc\kstring.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\..\src\kservice.c</name>
     </file>
     <file>
@@ -2368,6 +2403,9 @@
       <name>$PROJ_DIR$\..\..\src\object.c</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\..\..\src\scheduler_comm.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\..\src\scheduler_up.c</name>
     </file>
     <file>
@@ -2375,6 +2413,165 @@
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\src\timer.c</name>
+    </file>
+  </group>
+  <group>
+    <name>libcpu</name>
+    <file>
+      <name>$PROJ_DIR$\..\..\libcpu\arm\common\div0.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\libcpu\arm\common\showmem.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\libcpu\arm\cortex-m3\context_iar.S</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\libcpu\arm\cortex-m3\cpuport.c</name>
+    </file>
+  </group>
+  <group>
+    <name>Libraries</name>
+    <file>
+      <name>$PROJ_DIR$\packages\wm_libraries-latest\Platform\Drivers\spi\wm_hostspi.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\packages\wm_libraries-latest\Platform\Common\crypto\pubkey\pkcs.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\packages\wm_libraries-latest\Platform\Common\crypto\pubkey\dh.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\packages\wm_libraries-latest\Platform\Common\crypto\digest\wm_crypto_sha512.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\packages\wm_libraries-latest\Platform\Drivers\gpio\wm_gpio_afsel.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\packages\wm_libraries-latest\Platform\Common\crypto\keyformat\wm_crypto_base64.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\packages\wm_libraries-latest\Platform\Drivers\timer\wm_timer.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\packages\wm_libraries-latest\Platform\Common\crypto\symmetric\idea.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\packages\wm_libraries-latest\Platform\Drivers\cpu\wm_cpu.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\packages\wm_libraries-latest\Platform\Drivers\rtc\wm_rtc.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\packages\wm_libraries-latest\Platform\Common\crypto\keyformat\wm_crypto_x509.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\packages\wm_libraries-latest\Platform\Drivers\i2c\wm_i2c.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\packages\wm_libraries-latest\Platform\Boot\iar\misc.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\packages\wm_libraries-latest\Platform\Drivers\pwm\wm_pwm.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\packages\wm_libraries-latest\Platform\Common\crypto\symmetric\des3.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\packages\wm_libraries-latest\Platform\Common\crypto\pubkey\pubkey.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\packages\wm_libraries-latest\Platform\Common\crypto\prng\prng.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\packages\wm_libraries-latest\Platform\Common\crypto\digest\sha224.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\packages\wm_libraries-latest\Platform\Drivers\efuse\wm_efuse.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\packages\wm_libraries-latest\Platform\Common\fwup\wm_fwup.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\packages\wm_libraries-latest\Platform\Drivers\dma\wm_dma.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\packages\wm_libraries-latest\Platform\Common\crypto\symmetric\rc2.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\packages\wm_libraries-latest\Platform\Drivers\internalflash\wm_internal_fls.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\packages\wm_libraries-latest\Platform\Common\crypto\pubkey\wm_crypto_rsa.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\packages\wm_libraries-latest\Platform\Drivers\irq\wm_irq.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\packages\wm_libraries-latest\rtthread\rtthread_patch.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\packages\wm_libraries-latest\Platform\Common\crypto\symmetric\aesGCM.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\packages\wm_libraries-latest\Platform\Common\crypto\digest\wm_crypto_md4.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\packages\wm_libraries-latest\Platform\Drivers\io\wm_io.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\packages\wm_libraries-latest\Platform\Common\crypto\digest\wm_crypto_hmac.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\packages\wm_libraries-latest\Platform\Common\crypto\prng\yarrow.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\packages\wm_libraries-latest\Platform\Drivers\gpio\wm_gpio.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\packages\wm_libraries-latest\Platform\Common\crypto\wm_crypto_hard.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\packages\wm_libraries-latest\Platform\Drivers\pmu\wm_pmu.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\packages\wm_libraries-latest\Platform\Drivers\flash\wm_fls.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\packages\wm_libraries-latest\Platform\Common\crypto\digest\sha384.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\packages\wm_libraries-latest\Platform\Drivers\flash\wm_fls_gd25qxx.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\packages\wm_libraries-latest\Platform\Common\crypto\keyformat\asn1.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\packages\wm_libraries-latest\Platform\Common\crypto\symmetric\seed.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\packages\wm_libraries-latest\Platform\Drivers\adc\wm_adc.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\packages\wm_libraries-latest\Platform\Drivers\watchdog\wm_watchdog.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\packages\wm_libraries-latest\Platform\Common\Params\wm_param.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\packages\wm_libraries-latest\rtthread\utils\utils.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\packages\wm_libraries-latest\Platform\Common\crypto\math\pstm_mul_comba.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\packages\wm_libraries-latest\Platform\Common\crypto\pubkey\ecc.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\packages\wm_libraries-latest\rtthread\startup\iar\startup_venus.S</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\packages\wm_libraries-latest\Platform\Common\crypto\digest\wm_crypto_md2.c</name>
     </file>
   </group>
   <group>
@@ -2492,6 +2689,12 @@
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\components\net\lwip\port\sys_arch.c</name>
+    </file>
+  </group>
+  <group>
+    <name>NetUtils</name>
+    <file>
+      <name>$PROJ_DIR$\packages\netutils-latest\ntp\ntp.c</name>
     </file>
   </group>
   <group>

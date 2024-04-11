@@ -500,7 +500,11 @@ static void phy_monitor_thread_entry(void *parameter)
             EthHandle.Init.PhyAddress = i;
             HAL_ETH_ReadPHYRegister(&EthHandle, PHY_ID1_REG, (uint32_t *)&temp);
 
+#ifdef PHY_USING_YT8512C
+            if (temp != 0xFFFF)
+#else
             if (temp != 0xFFFF && temp != 0x00)
+#endif /* PHY_USING_YT8512C */
             {
                 phy_addr = i;
                 break;

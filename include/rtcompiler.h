@@ -27,7 +27,7 @@
 #define PRAGMA(x)                   _Pragma(#x)
 #define rt_align(n)                 PRAGMA(data_alignment=n)
 #define rt_weak                     __weak
-#define rt_typeof                   typeof
+#define rt_typeof                   __typeof
 #define rt_noreturn
 #define rt_inline                   static inline
 #define rt_always_inline            rt_inline

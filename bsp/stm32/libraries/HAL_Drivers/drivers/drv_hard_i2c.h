@@ -18,14 +18,13 @@
 #include <drv_common.h>
 #include "drv_dma.h"
 #include <ipc/completion.h>
-#ifdef (RT_USING_I2C && BSP_USING_I2C)
+#if defined(RT_USING_I2C) && defined(BSP_USING_I2C)
 
 /* C binding of definitions if building with C++ compiler */
 #ifdef __cplusplus
 extern "C"
 {
 #endif
-
 
 struct stm32_i2c_config
 {
