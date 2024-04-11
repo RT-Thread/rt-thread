@@ -19,13 +19,7 @@
 
 #include "drv_i2c.h"
 #include "inc/hw_memmap.h"
-#include <stdbool.h>
 #include "i2c_config.h"
-#include "driverlib/rom.h"
-#include "driverlib/sysctl.h"
-#include "driverlib/pin_map.h"
-#include "driverlib/gpio.h"
-#include "driverlib/i2c.h"
 
 enum {
 #ifdef BSP_USING_I2C0
@@ -184,23 +178,9 @@ static rt_ssize_t tm4c123_i2c_xfer(struct rt_i2c_bus_device *bus, struct rt_i2c_
 int rt_hw_i2c_init(void) {
     rt_err_t ret = RT_EOK;
 
+    i2c_hw_config();
+
     for (uint32_t i = 0; i < sizeof(tm4c123_i2cs) / sizeof(tm4c123_i2cs[0]); i++) {
-        ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOB);
-
-        ROM_GPIOPinConfigure(GPIO_PB2_I2C0SCL);
-        ROM_GPIOPinConfigure(GPIO_PB3_I2C0SDA);
-
-        ROM_GPIOPinTypeI2CSCL(GPIO_PORTB_BASE, GPIO_PIN_2);
-        ROM_GPIOPinTypeI2C(GPIO_PORTB_BASE, GPIO_PIN_3);
-
-        ROM_SysCtlPeripheralDisable(SYSCTL_PERIPH_I2C0);
-        ROM_SysCtlPeripheralReset(SYSCTL_PERIPH_I2C0);
-        ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_I2C0);
-        while (!SysCtlPeripheralReady(SYSCTL_PERIPH_I2C0));
-
-        // timeout:5ms
-        ROM_I2CMasterTimeoutSet(I2C0_BASE, 0x7d);
-
         if (tm4c123_i2cs[i].clk_freq == 400000) {
             ROM_I2CMasterInitExpClk(tm4c123_i2cs[i].base, ROM_SysCtlClockGet(), RT_TRUE);
         } else {
