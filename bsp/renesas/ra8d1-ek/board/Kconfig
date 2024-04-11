@@ -607,4 +607,41 @@ menu "Hardware Drivers Config"
             select RT_USING_NETDEV
             default n
     endmenu
+    menu "Board extended module Drivers"
+        menuconfig BSP_USING_RW007
+            bool "Enable RW007"
+            default n
+            select PKG_USING_RW007
+            select BSP_USING_SCI
+            select BSP_USING_SCI2
+            select BSP_USING_SCI2_SPI
+            select RT_USING_MEMPOOL
+            select RW007_NOT_USE_EXAMPLE_DRIVERS
+
+        if BSP_USING_RW007
+            config RA_RW007_SPI_BUS_NAME
+                string "RW007 BUS NAME"
+                default "scpi2"
+
+            config RA_RW007_CS_PIN
+                hex "(HEX)CS pin index"
+                default 0x0A05
+
+            config RA_RW007_BOOT0_PIN
+                hex "(HEX)BOOT0 pin index (same as spi clk pin)"
+                default 0x0A04
+
+            config RA_RW007_BOOT1_PIN
+                hex "(HEX)BOOT1 pin index (same as spi cs pin)"
+                default 0x0A05
+
+            config RA_RW007_INT_BUSY_PIN
+                hex "(HEX)INT/BUSY pin index"
+                default 0x0508
+
+            config RA_RW007_RST_PIN
+                hex "(HEX)RESET pin index"
+                default 0x0809
+        endif
+    endmenu
 endmenu
