@@ -99,6 +99,8 @@ void hal_entry(void)
 
 #### 1、使用 MDK 编译：
 
+**注意：如果使用master开发需要先打开ENV进入meuconfig然后退出保存配置，再输入scons --target=mdk5生成下工程**
+
 本 BSP 目前提供 MDK5 工程。下面以 MDK5 开发环境为例，介绍如何将系统运行起来。
 
 **编译下载**
