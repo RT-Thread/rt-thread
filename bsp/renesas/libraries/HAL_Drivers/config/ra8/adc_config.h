@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2023, RT-Thread Development Team
+ * Copyright (c) 2006-2024, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -19,18 +19,19 @@ extern "C" {
 #endif
 
 #if defined(BSP_USING_ADC0) || defined(BSP_USING_ADC1)
-struct ra_adc_map
+
+struct rt_adc_dev
 {
-    char name;
-    const adc_cfg_t *g_cfg;
-    const adc_instance_ctrl_t *g_ctrl;
-    const adc_channel_cfg_t   *g_channel_cfg;
+    struct rt_adc_ops ops;
+    struct rt_adc_device adc_device;
 };
 
-struct ra_dev
+struct ra_adc_map
 {
-    rt_adc_device_t     ra_adc_device_t;
-    struct ra_adc_map  *ra_adc_dev;
+    const char *device_name;
+    const adc_cfg_t *g_cfg;
+    const adc_ctrl_t *g_ctrl;
+    const adc_channel_cfg_t   *g_channel_cfg;
 };
 #endif
 #endif
