@@ -1,3 +1,5 @@
+
+**中文** | [English](README_en.md)
 # STM32H750-artpi 开发板 BSP 说明
 
 ## 简介
