@@ -296,28 +296,36 @@ static rt_err_t ra_pin_dettach_irq(struct rt_device *device, rt_base_t pin)
 static rt_base_t ra_pin_get(const char *name)
 {
     int pin_number = -1, port = -1, pin = -1;
+
     if (rt_strlen(name) != 4)
         return -1;
-    if ((name[0] == 'P') || (name[0] == 'p'))
+
+    if ((name[0] == 'P' || name[0] == 'p'))
     {
-        if ('0' <= (int)name[1] && (int)name[1] <= '9')
+        if ('0' <= name[1] && name[1] <= '9')
         {
-            port = ((int)name[1] - 48) * 16 * 16;
-            if ('0' <= (int)name[2] && (int)name[2] <= '9')
+            port = (name[1] - '0') * 16 * 16;
+            if ('0' <= name[2] && name[2] <= '9' && '0' <= name[3] && name[3] <= '9')
             {
-                if ('0' <= (int)name[3] && (int)name[3] <= '9')
-                {
-                    pin = ((int)name[2] - 48) * 10;
-                    pin += (int)name[3] - 48;
-                    pin_number = port + pin;
-                }
-                else return -1;
+                pin = (name[2] - '0') * 10 + (name[3] - '0');
+                pin_number = port + pin;
+
+                return pin_number;
             }
-            else return -1;
         }
-        else return -1;
+        else if ('A' <= name[1] && name[1] <= 'Z')
+        {
+            port = (name[1] - '0' - 7) * 16 * 16;
+            if ('0' <= name[2] && name[2] <= '9' && '0' <= name[3] && name[3] <= '9')
+            {
+                pin = (name[2] - '0') * 10 + (name[3] - '0');
+                pin_number = port + pin;
+
+                return pin_number;
+            }
+        }
     }
-    return pin_number;
+    return -1;
 }
 
 const static struct rt_pin_ops _ra_pin_ops =
