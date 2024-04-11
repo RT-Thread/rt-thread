@@ -222,6 +222,7 @@ jobs:
                 - "renesas/ra8m1-ek"
                 - "renesas/ra8d1-ek"
                 - "renesas/ra8d1-vision-board"
+                - "renesas/rzt2m_rsk"
                 - "frdm-k64f"
                 - "xplorer4330/M4"
          -  RTT_BSP: "gd32_n32_apm32"   
