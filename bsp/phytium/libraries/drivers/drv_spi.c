@@ -152,7 +152,7 @@ static rt_ssize_t spim_xfer(struct rt_spi_device *device, struct rt_spi_message 
     RT_ASSERT(device != RT_NULL);
     RT_ASSERT(device->parent.user_data != RT_NULL);
     RT_ASSERT(message != RT_NULL);
-    rt_size_t message_length;
+    rt_ssize_t message_length;
     rt_uint8_t *recv_buf;
     const rt_uint8_t *send_buf;
 
