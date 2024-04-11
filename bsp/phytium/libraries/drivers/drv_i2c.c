@@ -28,9 +28,8 @@
 
 /*Please define the length of the mem_addr of the device*/
 #ifndef FI2C_DEVICE_MEMADDR_LEN
-    #define FI2C_DEVICE_MEMADDR_LEN 1 
+    #define FI2C_DEVICE_MEMADDR_LEN 1
 #endif
-
 #define FI2C_DEFAULT_ID 0
 #define I2C_USE_MIO
 #if defined(I2C_USE_MIO)
@@ -170,18 +169,18 @@ static rt_ssize_t i2c_master_xfer(struct rt_i2c_bus_device *device, struct rt_i2
     RT_ASSERT(device);
     u32 ret;
     struct rt_i2c_msg *pmsg;
+    rt_ssize_t i;
     struct phytium_i2c_bus *i2c_bus;
     i2c_bus = (struct phytium_i2c_bus *)(device);
     u32 mem_addr;
 
-    for (int i = 0; i < num; i++)
+    for (i = 0; i < num; i++)
     {
         pmsg = &msgs[i];
         for (u32 j = 0; j <FI2C_DEVICE_MEMADDR_LEN; j++)
         {
             mem_addr |= msgs[i].buf[j] << (8 * (FI2C_DEVICE_MEMADDR_LEN - 1 - j));
         }
-        
         i2c_bus->i2c_handle.config.slave_addr = pmsg->addr;
         if (pmsg->flags & RT_I2C_RD)
         {
@@ -203,7 +202,7 @@ static rt_ssize_t i2c_master_xfer(struct rt_i2c_bus_device *device, struct rt_i2
         }
     }
 
-    return RT_EOK;
+    return i;
 }
 
 static const struct rt_i2c_bus_device_ops _i2c_ops =
