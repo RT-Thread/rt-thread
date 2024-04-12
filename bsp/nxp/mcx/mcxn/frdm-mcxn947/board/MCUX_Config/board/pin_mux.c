@@ -62,7 +62,7 @@ void BOARD_InitBootPins(void)
     /* drv_pin.c works well, follow lines just notice that pins we used as GPIO function */
     // PORT0->PCR[28]   = PORT_PCR_MUX(0) | PORT_PCR_PS(1) | PORT_PCR_PE(1) | PORT_PCR_IBE(1);     /* P0_28: P0_28 */
     // PORT0->PCR[10]   = PORT_PCR_MUX(0) | PORT_PCR_PS(0) | PORT_PCR_PE(1) | PORT_PCR_IBE(1);     /* P0_10: P0_27 */
-    // PORT0->PCR[27]   = PORT_PCR_MUX(0) | PORT_PCR_PS(1) | PORT_PCR_PE(1) | PORT_PCR_IBE(1);     /* P0_27: P0_27 */
+    PORT0->PCR[27]   = PORT_PCR_MUX(0) | PORT_PCR_PS(1) | PORT_PCR_PE(1) | PORT_PCR_IBE(1);     /* P0_27: P0_27 */
 #endif
 
     /* PMOD */
