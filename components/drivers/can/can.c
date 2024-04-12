@@ -407,19 +407,23 @@ static rt_err_t rt_can_close(struct rt_device *dev)
     {
         struct rt_can_rx_fifo *rx_fifo;
 
+        /* clear can rx interrupt */
+        can->ops->control(can, RT_DEVICE_CTRL_CLR_INT, (void *)RT_DEVICE_FLAG_INT_RX);
+
         rx_fifo = (struct rt_can_rx_fifo *)can->can_rx;
         RT_ASSERT(rx_fifo != RT_NULL);
 
         rt_free(rx_fifo);
         dev->open_flag &= ~RT_DEVICE_FLAG_INT_RX;
         can->can_rx = RT_NULL;
-        /* clear can rx interrupt */
-        can->ops->control(can, RT_DEVICE_CTRL_CLR_INT, (void *)RT_DEVICE_FLAG_INT_RX);
     }
 
     if (dev->open_flag & RT_DEVICE_FLAG_INT_TX)
     {
         struct rt_can_tx_fifo *tx_fifo;
+
+        /* clear can tx interrupt */
+        can->ops->control(can, RT_DEVICE_CTRL_CLR_INT, (void *)RT_DEVICE_FLAG_INT_TX);
 
         tx_fifo = (struct rt_can_tx_fifo *)can->can_tx;
         RT_ASSERT(tx_fifo != RT_NULL);
@@ -428,8 +432,6 @@ static rt_err_t rt_can_close(struct rt_device *dev)
         rt_free(tx_fifo);
         dev->open_flag &= ~RT_DEVICE_FLAG_INT_TX;
         can->can_tx = RT_NULL;
-        /* clear can tx interrupt */
-        can->ops->control(can, RT_DEVICE_CTRL_CLR_INT, (void *)RT_DEVICE_FLAG_INT_TX);
     }
 
     can->ops->control(can, RT_DEVICE_CTRL_CLR_INT, (void *)RT_DEVICE_CAN_INT_ERR);
