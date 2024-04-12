@@ -30,7 +30,6 @@
 #define RT_KPRINTF_USING_LONGLONG
 #define RT_USING_DEBUG
 #define RT_DEBUGING_COLOR
-#define RT_DEBUGING_CONTEXT
 
 /* Inter-Thread communication */
 
@@ -411,6 +410,12 @@
 #define BSP_USING_I2C
 #define I2C_USE_MIO
 #define RT_USING_MIO15
+#define BSP_USING_SDIF
+#define BSP_USING_SDCARD_FATFS
+#define USING_SDIF0
+#define USE_SDIF0_EMMC
+#define USING_SDIF1
+#define USE_SDIF1_TF
 #define BSP_USING_DC
 #define RT_USING_DC_CHANNEL1
 

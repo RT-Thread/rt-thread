@@ -13,7 +13,7 @@
  */
 #include <rtthread.h>
 #include <rtdbg.h>
-
+#ifndef RT_USING_SMART
 #include <dfs_fs.h>
 #include <dfs_file.h>
 
@@ -47,3 +47,4 @@ static int filesystem_mount(void)
     return ram_disk_mount("/"); /* mount ramdisk as / */
 }
 INIT_APP_EXPORT(filesystem_mount);
+#endif
