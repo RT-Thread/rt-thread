@@ -1,8 +1,8 @@
 import os
 from building import *
 
-src = []
 objs = []
+src = Glob('*.c')
 cwd  = GetCurrentDir()
 CPPPATH = [cwd]
 
