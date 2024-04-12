@@ -515,7 +515,7 @@ static rt_err_t rt_can_control(struct rt_device *dev,
 
     case RT_CAN_CMD_SET_PRIV:
         /* configure device */
-        if ((rt_uint32_t)args != can->config.privmode)
+        if ((rt_uint32_t)(rt_ubase_t)args != can->config.privmode)
         {
             int i;
             rt_base_t level;
