@@ -126,6 +126,8 @@ jobs:
          #- {RTT_BSP_NAME: "hk32_hk32f030c8-mini", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "hk32/hk32f030c8-mini"}  #scons dist有问题
           - {RTT_BSP_NAME: "hpmicro_hpm6750evk", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "hpmicro/hpm6750evk"}
           - {RTT_BSP_NAME: "hpmicro_hpm6750evkmini", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "hpmicro/hpm6750evkmini"}
+          - {RTT_BSP_NAME: "ht32f12366", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "ht32/ht32f12366"}
+          - {RTT_BSP_NAME: "ht32f52352", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "ht32/ht32f52352"}
          #- {RTT_BSP_NAME: "imx_imx6ull-smart", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "imx/imx6ull-smart"} # toolchain还没支持
           - {RTT_BSP_NAME: "imx6sx_cortex-a9", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "imx6sx/cortex-a9"}
           - {RTT_BSP_NAME: "imx6ul", RTT_TOOL_CHAIN: "sourcery-arm", RTT_BSP: "imx6ul"}

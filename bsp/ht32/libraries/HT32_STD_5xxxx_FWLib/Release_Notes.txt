@@ -1,0 +1,1674 @@
+/*********************************************************************************************************//**
+ * @file    Release_Notes.txt
+ * @version V1.9.1
+ * @date    2023-12-22
+ * @brief   The Release notes of HT32 Firmware Library.
+ *************************************************************************************************************
+ * @attention
+ *
+ * Firmware Disclaimer Information
+ *
+ * 1. The customer hereby acknowledges and agrees that the program technical documentation, including the
+ *    code, which is supplied by Holtek Semiconductor Inc., (hereinafter referred to as "HOLTEK") is the
+ *    proprietary and confidential intellectual property of HOLTEK, and is protected by copyright law and
+ *    other intellectual property laws.
+ *
+ * 2. The customer hereby acknowledges and agrees that the program technical documentation, including the
+ *    code, is confidential information belonging to HOLTEK, and must not be disclosed to any third parties
+ *    other than HOLTEK and the customer.
+ *
+ * 3. The program technical documentation, including the code, is provided "as is" and for customer reference
+ *    only. After delivery by HOLTEK, the customer shall use the program technical documentation, including
+ *    the code, at their own risk. HOLTEK disclaims any expressed, implied or statutory warranties, including
+ *    the warranties of merchantability, satisfactory quality and fitness for a particular purpose.
+ *
+ * <h2><center>Copyright (C) Holtek Semiconductor Inc. All rights reserved</center></h2>
+ ************************************************************************************************************/
+
+// Supported Device
+// ========================================
+//   HT32F50020, HT32F50030
+//   HT32F50220, HT32F50230
+//   HT32F50231, HT32F50241
+//   HT32F50343
+//   HT32F50431, HT32F50441
+//   HT32F50442, HT32F50452
+//   HT32F52220, HT32F52230
+//   HT32F52231, HT32F52241
+//   HT32F52234, HT32F52244
+//   HT32F52243, HT32F52253
+//   HT32F52331, HT32F52341
+//   HT32F52342, HT32F52352
+//   HT32F52344, HT32F52354
+//   HT32F52357, HT32F52367
+//   HT32F53231, HT32F53241
+//   HT32F53242, HT32F53252
+//   HT32F54231, HT32F54241
+//   HT32F54243, HT32F54253
+//   HT32F57331, HT32F57341
+//   HT32F57342, HT32F57352
+//   HT32F59041, HT32F59741
+//   HT32F59046, HT32F59746
+//   HT32F5826, HT32F5828
+//   HT32F0006
+//   HT32F0008
+//   HT32F52142
+//   HT32F61030, HT32F61041
+//   HT32F61141
+//   HT32F61244, HT32F61245
+//   HT32F61352
+//   HT32F61355, HT32F61356, HT32F61357
+//   HT32F61630, HT32F61641
+//   HT32F62030, HT32F62040, HT32F62050
+//   HT32F65230, HT32F65240
+//   HT32F65232
+//   HT32F67041, HT32F67051
+//   HT32F67232
+//   HT32F67233
+//   HT32F67741
+//   HT32F67742
+//   HT50F32002, HT50F32003
+//   HT50F3200S, HT50F3200T
+//   HF5032
+//   MXTX6306
+
+/*----------------------------------------------------------------------------------------------------------*/
+/* HT32_STD_5xxxx_FWLib_V1.9.1_7446                                                                         */
+/*----------------------------------------------------------------------------------------------------------*/
+  Release Date: 2023-12-22
+  Main Changes
+  + Add example support of BM18B367A DVB.
+  + Add "system_ht32f5xxxx_18.c" for BM18B367A DVB.
+  + Update "ht32f5xxxx_aes.c/h", changed API parameter 4 bytes to remove type conversion at driver layer.
+  + Update example, add "__ALIGN4" to variables and enforced type conversion for 4 bytes read/write API calls.
+    - "AES/CBC"
+    - "AES/CTR"
+    - "AES/ECB"
+  + Update USB example, add the process of detecting USB bus status before USBDCore_LowPower().
+    - "CKCU/HSI_AutoTrim_By_USB"
+    - "USBD/*"
+  + Update USART example for BM18B367A DVB, add the HSI auto trim by LSE related flow.
+    - "USART/Interrupt"
+    - "USART/Interrupt_FIFO"
+    - "USART/PDMA"
+    - "USART/Polling"
+    - "USART/Retarget"
+    - "USART/RS485_NMM_Slave"
+
+  Others
+  + Update comment, format, typing error, and coding style.
+
+/*----------------------------------------------------------------------------------------------------------*/
+/* HT32_STD_5xxxx_FWLib_V1.8.1_7371                                                                         */
+/*----------------------------------------------------------------------------------------------------------*/
+  Release Date: 2023-12-06
+  Main Changes
+  + Update "ht32f5xxxx_usbd.c", fix the USB buffer unaligned handling mechanism.
+  + Update "ht32f5xxxx_rtc.c", modify the RTC_LSECmd() related flow.
+  + Fix example IO define error of BM53A367A DVB.
+    - "I2C/PDMA"
+  + Update example IO define for the latest version of BM53A367A DVB.
+    - "TM/MatchOutputToggle"
+    - "TM/PWM"
+  + Update "ht32f5xxxx_adc.c" and "ht32f65xxx_66xxx_adc.c" to modify the ADC enable related flow.
+
+  Others
+  + Update comment, format, typing error, and coding style.
+
+/*----------------------------------------------------------------------------------------------------------*/
+/* HT32_STD_5xxxx_FWLib_V1.7.1_7327                                                                         */
+/*----------------------------------------------------------------------------------------------------------*/
+  Release Date: 2023-11-01
+  Main Changes
+  + Fix example IO define conflict with LED1 of HT32F57352 Starter Kit.
+    - "CMP/ComparatorInterrupt"
+  + Fix example IO define error of HT32F50441.
+    - "MCTM/ComplementaryOutput"
+  + Update "ht32f5xxxx_ckcu.c", modify the HSI Auto Trim initial function related flow.
+  + Update "ht32f5xxxx_adc.c" and "ht32f65xxx_66xxx_adc.c", modify the ADC enable related flow.
+  + Update "ht32_op.c" and "ht32_op.s" to support new version of bootloader waiting time setting address.
+    (The setting address is changed from 0x1FF0002C to 0x1FF0004C)
+  + Add "ht32_op_V107.c" and "ht32_op_V107.s" to support the use of older versions of bootloader.
+
+  Others
+  + Update comment, format, typing error, and coding style.
+  + Modify and check the example supportability of each IC.
+  + Add the below file, for the BMduino shield.
+    - "ht32_undef_IP.h"
+
+/*----------------------------------------------------------------------------------------------------------*/
+/* HT32_STD_5xxxx_FWLib_V1.6.2_7271                                                                         */
+/*----------------------------------------------------------------------------------------------------------*/
+  Release Date: 2023-10-03
+  Main Changes
+  + Add example support.
+    - HT32F53231/41, HT32F53242/52
+    - HT32F50431/41, HT32F50442/52
+    - HT32F52234/44
+  + Fix example IO define error of HT32F52367.
+    - "USBD/Mass_Storage"
+  + Modify the example below, add volatile qualifier on some variables (in the for loop usage)
+    to fix the Arm Compiler Version 6 optimization issue.
+    ("u32" to "vu32", unsigned int to volatile unsigned int).
+    - "FMC/FLASH_Security"
+  + Modify the example below, change the timer used from GPTM to BFTM to increase support.
+    - "PDMA/SoftwareTrigger"
+  + Add the below folder, For the BMduino shield/module Keil Driver.
+    - "BestModules"
+
+  Others
+  + Update comment, format, typing error, and coding style.
+  + Adjust "LIBCFG_xxxxx" definition below.
+    New:
+      "LIBCFG_ADC_IVREF_DEFAULT_08V"
+
+/*----------------------------------------------------------------------------------------------------------*/
+/* HT32_STD_5xxxx_FWLib_V1.6.1_7190                                                                         */
+/*----------------------------------------------------------------------------------------------------------*/
+  Release Date: 2023-08-31
+  Main Changes
+  + Add new device support.
+    - HT32F61030, HT32F61041
+    - HT32F50431, HT32F50441, HT32F50442, HT32F50452
+    - HT32F53231, HT32F53241, HT32F53242, HT32F53252
+  + Add Controller Area Network driver, "ht32f5xxxx_can.c/h".
+  + Add new "CAN/FIFO" example.
+
+  Others
+  + Update comment, format, typing error, and coding style.
+  + Update "project_template/Script" for adding project C++ source files and setting the chip model mechanism.
+    - The updated files are as follows:
+      "Script/_ProjectSource.bat"
+      "Script/_ProjectSource.ini"
+  + Update "project_template/Script" for improving script mechanism.
+    - The updated files are as follows:
+      "Script/_CreateProjectConfScript.bat"
+      "Script/_CreateProjectScript.bat"
+      "Script/_ht32_ic_name.ini"
+
+/*----------------------------------------------------------------------------------------------------------*/
+/* HT32_STD_5xxxx_FWLib_V1.5.1_7084                                                                         */
+/*----------------------------------------------------------------------------------------------------------*/
+  Release Date: 2023-08-01
+  Main Changes
+  + Add new device support.
+    - HT32F52234, HT32F52244
+  + Modify DAC related define (The left side old one is still kept for backward compatible).
+    - HT_DAC        -> HT_DAC0
+    - AFIO_FUN_DAC  -> AFIO_FUN_DAC0
+    - CKCU_PCLK_DAC -> CKCU_PCLK_DAC0
+  + Modify API as below, add parameter "HT_DAC_TypeDef* HT_DACn" to select DAC engine from the DAC peripherals.
+    Old API
+    - DAC_DeInit(void)
+    - DAC_ModeConfig(u8 ModeSel)
+    - DAC_ReferenceConfig(u8 DAC_Ch, u32 RefSel)
+    - DAC_ResolutionConfig(u8 DAC_Ch, u32 ResoSel)
+    - DAC_OutBufCmd(u8 DAC_Ch, ControlStatus NewState)
+    - DAC_Cmd(u8 DAC_Ch, ControlStatus NewState)
+    - DAC_SetData(u8 DAC_Ch, u32 Data)
+    - DAC_GetOutData(u8 DAC_Ch)
+    New API
+    - DAC_DeInit(HT_DAC_TypeDef* HT_DACn)
+    - DAC_ModeConfig(HT_DAC_TypeDef* HT_DACn, u8 ModeSel)
+    - DAC_ReferenceConfig(HT_DAC_TypeDef* HT_DACn, u8 DAC_Ch, u32 RefSel)
+    - DAC_ResolutionConfig(HT_DAC_TypeDef* HT_DACn, u8 DAC_Ch, u32 ResoSel)
+    - DAC_OutBufCmd(HT_DAC_TypeDef* HT_DACn, u8 DAC_Ch, ControlStatus NewState)
+    - DAC_Cmd(HT_DAC_TypeDef* HT_DACn, u8 DAC_Ch, ControlStatus NewState)
+    - DAC_SetData(HT_DAC_TypeDef* HT_DACn, u8 DAC_Ch, u32 Data)
+    - DAC_GetOutData(HT_DAC_TypeDef* HT_DACn, u8 DAC_Ch)
+  + Add API as below.
+    - "USART_LIN_SendBreak()" API for the USART/UART LIN mode send break to Tx.
+    - "USART_LIN_LengthSelect()" API for the USART/UART LIN mode configure the break detection length.
+    - "CKCU_Set_HSIReadyCounter" API for set HSI ready counter value.
+
+  Others
+  + Update comment, format, typing error, and coding style.
+  + Rename "LIBCFG_xxxxx" definition below.
+    - "LIBCFG_DAC"  to "LIBCFG_DAC0"
+  + Add HT32F61630/HT32F61641 related files for Create Project.
+
+/*----------------------------------------------------------------------------------------------------------*/
+/* HT32_STD_5xxxx_FWLib_V1.4.3_7026                                                                         */
+/*----------------------------------------------------------------------------------------------------------*/
+  Release Date: 2023-07-17
+
+  Main Changes
+  + Add new device support.
+    - HT32F59046, HT32F59746
+
+  Others
+  + Update comment, format, typing error, and coding style.
+  + Update and sync startup.s/system.c files.
+
+/*----------------------------------------------------------------------------------------------------------*/
+/* HT32_STD_5xxxx_FWLib_V1.4.2_6992                                                                         */
+/*----------------------------------------------------------------------------------------------------------*/
+  Release Date: 2023-06-20
+
+  Main Changes
+  + Add new device support.
+    - HT32F61630, HT32F61641
+    - HT32F62030, HT32F62040, HT32F62050
+    - HT32F67742
+  + Modify "RETARGET_Configuration()", add the operation of UxARTn peripheral clock enable.
+  + Update and sync "ht32f5xxxx_conf.h", modify related define of UxARTn retarget port.
+
+  Others
+  + Update comment, format, typing error, and coding style.
+
+/*----------------------------------------------------------------------------------------------------------*/
+/* HT32_STD_5xxxx_FWLib_V1.4.1_6948                                                                         */
+/*----------------------------------------------------------------------------------------------------------*/
+  Release Date: 2023-05-19
+
+  Main Changes
+  + Add new device support.
+    - HT50F3200S, HT50F3200T
+  + Add example support of HT32F67233.
+  + Add new "GPIO/PinLock" example.
+  + Add "Project or Target File Clearing" functions ("_ClearProject.bat" and "_ClearTarget.bat").
+  + Rename "ht32f652xx_opa.c/h" to "ht32f65xxx_66xxx_opa.c/h".
+  + Rename "ht32f652xx_adc.c/h" to "ht32f65xxx_66xxx_adc.c/h".
+  + Add "ht32f652xx_opa.c/h" and "ht32f652xx_adc.c/h" for backward compatible.
+  + Modify "ht32_time.h", "ht32f5xxxx_conf.h" and "ht32_time_conf.h" for "LIBCFG_CKCU_NO_APB_PRESCALER" series.
+    - To ensure the correct configuration of the timer clock, the "HTCFG_TIME_PCLK_DIV" is redefined as 0.
+  + Modify "syscall.c" to prevent redundant initialization of the heap index.
+  + Modify the examples below, use separate "if" statements instead of "if-else" to avoid double-entry ISR.
+    - "PWRCU/DeepSleepMode1"
+    - "PWRCU/DeepSleepMode2"
+  + Modify "ht32f5xxxx_01.h" below, ensure the defined register naming to be consistent with the document.
+      Old           New
+      -----         -----
+    - HT_OPA_TypeDef
+      "OFR"    to   "VOS"
+      "VALR"   to   "DAC"
+    - HT_CMP_TypeDef
+      "ICR"    to   "CI"
+      "OCR"    to   "CO"
+
+  Others
+  + Update comment, format, typing error, and coding style.
+  + Update e-Link32 Pro/Lite Command line tool as "V1.19" ("utilities/elink32pro/eLink32pro.exe").
+  + Update the LVDS setting method of "example\PWRCU\BOD_LVD" example ht32_board_config.h file.
+  + Update "system_ht32f5xxxx_nn.c" and "startup_ht32f5xxxx_nn.s" files.
+  + Modify "_ProjectConfigScript.bat" to prevent the creation of project that copy unused system/startup files.
+  + Modify the Sourcery G++ Lite toolchain project.
+    - Set C99 mode to fix issues after updating CMSIS v5.9.0 ("for" loop initial declarations).
+  + Modify and check the startup_ht32fxxxxx_nn files, fix _HT32FWID more than one digit problem.
+  + Adjust "LIBCFG_xxxxx" definition below.
+    New:
+      "LIBCFG_ADC_NO_OFFSET_REG"
+    Rename:
+      "LIBCFG_CMP_OCR" to "LIBCFG_CMP_CO"
+
+/*----------------------------------------------------------------------------------------------------------*/
+/* HT32_STD_5xxxx_FWLib_V1.3.4_6737                                                                         */
+/*----------------------------------------------------------------------------------------------------------*/
+  Release Date: 2023-02-17
+
+  Main Changes
+  + Add example support of HT32F61244, HT32F61245.
+  + Modify the example below, add volatile qualifier on some variables (in the for loop usage)
+    to fix the Arm Compiler Version 6 optimization issue.
+    ("u32" to "vu32", unsigned int to volatile unsigned int).
+    - "PWRCU/PowerDown_WAKEUPPin"
+    - "PWRCU/PowerDown_RTC"
+    - "TM/PWM"
+
+  Others
+  + Update comment, format, typing error, and coding style.
+  + Change the default RTC clock as LSI for the "PWRCU/PowerDownMode" example.
+  + Add the pin group of QSPI in "ht32f61245_sk.h".
+  + Add "ht32_board_config.h" for the "SYSTICK/DelayMicrosecond" example.
+
+/*----------------------------------------------------------------------------------------------------------*/
+/* HT32_STD_5xxxx_FWLib_V1.3.3_6685                                                                         */
+/*----------------------------------------------------------------------------------------------------------*/
+  Release Date: 2023-01-18
+
+  Main Changes
+  + Add new device support.
+    - HT32F61244, HT32F61245, HT32F67233
+  + Add new examples:
+    - "SRAM_Overwrite/Watchpoint_Heap"
+    - "SRAM_Overwrite/Watchpoint_Stack"
+  + Update "ht32f5xxxx_conf.h" for user layer HSE_VALUE setting.
+  + Update "ht32f5xxxx_midi.c/.h" for HT32F0006/61355/61356/61357/61244/61245.
+  + Add "PDMA_MIDI_IN", "PDMA_MIDI_OUT" define.
+  + Fix "MAX_EP_NUM" define error of HT32F61141.
+  + Update "SPI/PDMA" example, fix the function call order as below. The "SPI_SELOutputCmd()" shall be called
+    before the "SPI_Cmd()", to prevent SPI Master Mode Fault (MF) error if Chip Select pin did not have
+    an external pull-up.
+    "SPI_SELOutputCmd(HTCFG_SPIS_PORT, ENABLE);"
+    "SPI_Cmd(HTCFG_SPIS_PORT, ENABLE);"
+
+  Others
+  + Update comment, format, typing error, and coding style.
+  + Update and sync startup.s/system.c files.
+  + Modify "system_ht32fxxxxx_nn.c", add HSE_VALUE notice and update PLL Out formula.
+  + Update EEPROM Emulation middleware, improve efficacy and reduce resource usage.
+    "utilities/middleware/eeprom_emulation.c"
+    "utilities/middleware/ht32_eeprom_config_templet.h"
+  + Update I2C Master middleware, improve setting way and fix minor errors.
+    "utilities/middleware/i2c_master.c/.h"
+    "utilities/middleware/i2c_master_config_templet.h"
+
+/*----------------------------------------------------------------------------------------------------------*/
+/* HT32_STD_5xxxx_FWLib_V1.3.2_6448                                                                         */
+/*----------------------------------------------------------------------------------------------------------*/
+  Release Date: 2022-11-15
+
+  Main Changes
+  + Add new examples:
+    - "ADC/ADC_InternalReferenceVoltage_SWTriggerr"
+  + Add "LIBCFG_ADC_TRIG_DELAY" define to support "ADC_TrigDelayConfig" function for HT32F65230/65240.
+  + Update "ADC_24bit/Convert_Interrupt" example, fix "I2CMaster_Typedef" structure variable error (correct
+    "uTimeout_ms" to "uTimeout_us") of "ADC24_WriteRegNonBlock()" and "ADC24_ReadRegNonBlock()".
+  + Update "ht32_time.h", fix a formula error of "TIME_TICK2US()" and "TIME_TICK2MS()" macro.
+  + Modify "ht32_retarget.c", fix retarget can't work when the MicroLIB is not used in Keil's V6 compiler.
+
+  Others
+  + Upgrade CMSIS to v5.9.0.
+  + Update "ht32_op.s/c", allow "Bootloader Waiting Time" function for all series.
+  + Modify "HT32F5xxxx_01_DebugSupport.ini" content.
+
+/*----------------------------------------------------------------------------------------------------------*/
+/* HT32_STD_5xxxx_FWLib_V1.3.1_6405                                                                         */
+/*----------------------------------------------------------------------------------------------------------*/
+  Release Date: 2022-10-28
+
+  Main Changes
+  + Add new device support.
+    - HT32F50020, HT32F50030
+  + GPIO
+    - Add new define "GPIO_PIN_NUM_n" for GPIO pin number (n = 0 ~ 15).
+  + EXTI
+    - Add "gEXTIn_IRQn[]" and "EXTI_GetIRQn()"" macro to map GPIO pin number (0 ~ 15) to "EXTIn_IRQn".
+    - Add "GPIO2EXTI()"" macro to map GPIO pin to EXTI Channel.
+    - Change "AFIO_EXTISourceConfig()"" API, remove "AFIO_EXTI_CH_Enum" and "AFIO_ESS_Enum".
+      Old: "void AFIO_EXTISourceConfig(AFIO_EXTI_CH_Enum AFIO_EXTI_CH_n, AFIO_ESS_Enum AFIO_ESS_Px);"
+      New: "void AFIO_EXTISourceConfig(u32 GPIO_PIN_NUM_n, u32 GPIO_Px);"
+  + LEDC
+    - Fix typing error of the following define.
+      Old                  New
+      -------------        ----------------
+      LEDC_FLAG_FEAME      LEDC_FLAG_FRAME
+      LEDC_INT_FEAME       LEDC_INT_FRAME
+  + Fix the error that "TM_DeInit(HT_PWM2)" not works.
+  + Add new examples:
+    - "ADC/OneShot_SWTrigger"
+  + Rename examples as below.
+    IP         Old Name                           New Name
+    --------   --------                           --------
+    ADC        InternalReferenceVoltage           InternalReferenceVoltage_PWMTrigger
+  + Modify "EXTI/WakeUp_SleepMode" example, fix "EXTIn_IRQHandler()" ISR naming error of "ht32f5xxxx_01_it.c"
+    (HT32F652xx).
+
+  Others
+  + Update comment, format, typing error, and coding style.
+  + Update and sync startup.s/system.c files.
+  + Modify API parameter check macro of Library Debug Mode, fix parameter check error.
+  + Modify variable declaration of "PDMACH_InitTypeDef" to reduce memory size.
+  + Add a setting, "HT32_LIB_ENABLE_GET_CK_ADC" to control "ADC0_Freq/ADC1_Freq" calculation of the
+    "CKCU_GetClocksFrequency()" function (default off for code size consideration).
+
+/*----------------------------------------------------------------------------------------------------------*/
+/* HT32_STD_5xxxx_FWLib_V1.2.1_6192                                                                         */
+/*----------------------------------------------------------------------------------------------------------*/
+  Release Date: 2022-09-30
+
+  Main Changes
+  + Add new device support.
+    - HT32F67232
+    - HT32F67041, HT32F67051
+  + Add the following API for PDMA.
+    - "PDMA_DeInit()"
+    - "PDMA_AddrConfig()"
+    - "PDMA_SrcAddrConfig()"
+    - "PDMA_DstAddrConfig()"
+    - "PDMA_GetRemainBlkCnt()"
+  + Add the following API for ADC (HT32F652xx only).
+    - "ADC_ChannelDataAlign()"
+    - "ADC_ChannelOffsetValue()"
+    - "ADC_ChannelOffsetCmd()"
+  + Add the following API for OPA (HT32F652xx only).
+    - "OPA_SetUnProtectKey()"
+    - "OPA_ProtectConfig()"
+  + Update "OPA/OPA_Enable" example, add the un-protect key related functions.
+  + Update "FLASH_SetWaitState()" function, disable Pre-fetch and Branch Cache function before change
+    wait state.
+  + Fix "HT_ADC->OFR" define error of HT32F65232.
+  + Update "ht32_retarget.c", modify the retarget related functions for SEGGER Embedded Studio.
+  + Update following middleware.
+    "utilities/middleware/i2c_master.c/h"
+    "utilities/middleware/uart_module.c"
+
+  Others
+  + Update comment, format, typing error, and coding style.
+  + Update and sync startup.s/system.c files.
+  + Change "HT_PWRCU->BAKPSR" to "HT_PWRCU->LDOSR" of HT32F57352.
+  + Fix "HT_AES->KEYR" define error (from KEYR[8] to KEYR[4] for AES128).
+  + Update "BFTM/OneShot" example, fix the register access sequence and time calculation formula.
+  + Update "TM/PWM/main.c", add "HTCFG_PWM_TM_RELOAD" check.
+  + Update "SLED/*" example, for fix error and coding style.
+  + Update "HT32F_DVB_PBInit()" of "ht32f5xxxx_board_01.c", add "LIBCFG_EXTI_4_7_GROUP" support.
+  + Update e-Link32 Pro/Lite Command line tool as "V1.18" ("utilities/elink32pro/eLink32pro.exe").
+  + Change the project recommended minimum version of SEGGER Embedded Studio from V4.12 to V6.20.
+
+/*----------------------------------------------------------------------------------------------------------*/
+/* HT32_STD_5xxxx_FWLib_V1.1.1_5938                                                                         */
+/*----------------------------------------------------------------------------------------------------------*/
+  Release Date: 2022-06-08
+
+  Main Changes
+  + Add new "TM/TriggerCounter_FrequencyMeasure" example.
+  + Add following middleware.
+    "utilities/middleware/spi_module.c"
+    "utilities/middleware/spi_module.h"
+    "utilities/middleware/spi_module_config_templet.h"
+  + Fixed FW library compatibility with ARM compiler version 6 of MDK-ARM V5.37.
+    - Add MDK-ARMv537 project template for MDK-ARM V5.37.
+    - Update "project_template/Script". Those MDK-ARMv537 project templates will be added for use if choose
+      the target IDE is "Keil MDK-ARMv5". The fixed files are as follows:
+        "Script/_CreateProjectScript.bat"
+        "Script/_ProjectConfig.bat"
+        "Script/_ProjectSource.bat"
+    - Update "core_cm0plus.h", fix compiler error.
+    - Update "SLED/ARGB_GetLEDNum", fix compiler warning.
+    - Update "FMC/FLASH_OperationNoHalt", fix the compiler issue of Arm Compiler Version V6.18 and the
+      compiler warning of linker script file. The fixed files are as follows:
+        "FLASH_OperationNoHalt/main.c"
+        "FLASH_OperationNoHalt/linker.lin"
+    - Update following middleware, remove STRCAT3 usage to fix compiler error.
+        "utilities/middleware/uart_module.c"
+        "utilities/middleware/i2c_master.c"
+        "utilities/middleware/spi_module.c"
+  + Update "ht32_retarget.c". Implement __write function to fix compiler error in IAR EWARM Version 9.20
+    or later.
+  + Update GNU Arm makefile in the project_template, fix the compatibility issue that the makefile of GNU Arm
+    Version 11 cannot be compiled.
+  + Update EWARM in the project_template, fix the compiler error that header file path doesn't exist in
+    the file list of Workspace of IAR EWARM Version 7.
+  + Fix SPI initial PDMA parameter in the "utilities/common/spi_flash.c".
+
+  Others
+  + Update comment, format, typing error, and coding style.
+  + Update e-Link32 Pro/Lite Command line tool as "V1.16" ("utilities/elink32pro/eLink32pro.exe").
+  + Update the following examples to remove compiler warning of the IAR EWARM.
+    "BFTM/TimeMeasure"
+    "TM/PWMOut_PDMA_4CH"
+    "USBD/HID_Keyboard_Virtual_COM"
+    "USBD/USB_UAC_Sound"
+    "USBD/USB_Video"
+    "USBD/Virtual_COM"
+  + Update "TM/PWM" example, add the PWM channel initial function to "pwm.c".
+  + Update "WDT/Period_Reload" example, add WDT_ResetCmd function.
+  + Update and sync create project related files ("_ProjectConfig.bat", "_ProjectConfig.ini").
+  + Update content of "project_template/IP/Example/readme.txt", add MDK-ARM V5.37 related information.
+
+/*----------------------------------------------------------------------------------------------------------*/
+/* HT32_STD_5xxxx_FWLib_V1.0.25_5831                                                                        */
+/*----------------------------------------------------------------------------------------------------------*/
+  Release Date: 2022-04-19
+
+  Main Changes
+  + Add example support of BM53A367A.
+  + Add "LIBCFG_ADC_MVDDA" define, fix the issue that "ADC_MVDDACmd()" function is missing of HT32F50343.
+  + Update EEPROM Basic and EEPROM Emulation middleware, fix the include and define sequence.
+    "utilities/middleware/eeprom_basic.h"
+    "utilities/middleware/eeprom_emulation.h"
+  + Update UART Module middleware, add the "UARTM_IsTxFinished()" API.
+    "utilities/middleware/uart_module.c"
+    "utilities/middleware/uart_module.h"
+
+  Others
+  + Update comment, format, typing error, and coding style.
+  + Update e-Link32 Pro/Lite Command line tool as "V1.0.15" ("utilities/elink32pro/eLink32pro.exe").
+
+/*----------------------------------------------------------------------------------------------------------*/
+/* HT32_STD_5xxxx_FWLib_V1.0.24_5762                                                                        */
+/*----------------------------------------------------------------------------------------------------------*/
+  Release Date: 2022-03-08
+
+  Main Changes
+  + Change to the new Holtek version format (Vm.n.r).
+  + Add following middleware.
+    "utilities/middleware/uart_module.c"
+    "utilities/middleware/uart_module.h"
+  + Add new "FMC/FLASH_OperationNoHalt" example.
+  + Modify "utilities/common/ring_buffer.c", fix the thread-safe issue of "Buffer_GetLength()".
+
+  Others
+  + Update comment, format, typing error, and coding style.
+  + Update "startup_ht32fxxxxx_nn.s", support "USE_HT32_CHIP" define exist at startup.s and project Asm
+    setting in the same time (project's Asm Define has the higher priority).
+
+/*----------------------------------------------------------------------------------------------------------*/
+/* HT32_STD_5xxxx_FWLib_v023_5734                                                                           */
+/*----------------------------------------------------------------------------------------------------------*/
+  Release Date: 2022-02-10
+
+  Main Changes
+  + Add new device support.
+    - MXTX6306
+  + Rename previously "EXTI/GPIO_Interrupt" example to "EXTI/EXTI_Key_LED".
+  + Add new "EXTI/GPIO_Interrupt" example.
+  + Update the internal VREF level driver, add the missing voltage level setting/define for the HT32F542xx
+    series.
+    ADC_VREF_2V5
+    ADC_VREF_3V0
+    ADC_VREF_4V0
+    ADC_VREF_4V5
+
+  Others
+  + Update comment, format, typing error, and coding style.
+  + Modify "bool, TRUE, FALSE" define way for C++/.cpp applications.
+  + Add warning message for the HT32F54241 SK ("ht32f54241_sk.h" and "ht32_board_config.h" of the related
+    examples).
+  + Simplify the following examples to use less IO/LED/KEY.
+    - "GPIO/InputOutput"
+    - "EXTI/EXTI_Key_LED"
+  + Update "utilities/common/spi_flash.c and spi_lcd.c", change the SPI Clock prescaler from 2 to 4 when the
+    Core clock is large than 48 MHz.
+  + Update "eLink32pro.exe" from v1.1.2 to v1.1.3.
+  + Update related middleware (eeprom_basic and eeprom_emulation).
+  + Update "ADC/InternalReferenceVoltage" example, add the voltage level setting of the internal VREF for
+    the 5V MCU.
+
+/*----------------------------------------------------------------------------------------------------------*/
+/* HT32_STD_5xxxx_FWLib_v022_5673                                                                           */
+/*----------------------------------------------------------------------------------------------------------*/
+  Release Date: 2021-12-09
+
+  Main Changes
+  + Add new device support.
+    HT32F61141
+  + Add new board support.
+    HT32F54241 DVB
+    HT32F54253 DVB
+  + Add new examples:
+    - "SYSTICK/DelayMicrosecond"
+  + Update "ht32fxxxxx_sk.h", "spi_lcd.c/.h", fix the GPIO Chip SEL define mistake which cause the H/W SPI SEL
+    not work of the following SK model.
+    HT32F50230, HT32F50241, HT32F52241, HT32F52253, HT32F52341, HT32F54241, HT32F65232, HT32F65240
+  + Update "ht32f54241_sk.h" and "ht32f54253_sh.h", fix the COM port UART/Pin and SPI LCD BL typing error.
+  + Update "GNU_ARM/linker.ld", fix the heap/stack area overlap problem.
+  + Fix the following library configuration error of HT32F54241/54253.
+    Add: "LIBCFG_CKCU_PLLSRCDIV", "LIBCFG_PWRCU_PORF".
+    Remove: "LIBCFG_CMP" (HT32F54241 only, not support).
+  + Update "example/I2C/TouchKey/ht32_board_config.h", fix the typing error of I2C Port.
+
+  Others
+  + Rename "LIBCFG_NO_PWRCU_PORF" to "LIBCFG_NO_PWRCU_VDDPORF".
+  + Update comment, format, typing error, and coding style.
+  + Update "example/LEDC/7-SegmentDigitalDisplay/main.c", change the frame rate from 40 Hz to 50 Hz.
+
+/*----------------------------------------------------------------------------------------------------------*/
+/* HT32_STD_5xxxx_FWLib_v021_5582                                                                           */
+/*----------------------------------------------------------------------------------------------------------*/
+  Release Date: 2021-08-19
+
+  Main Changes
+  + Add example support of HT32F54241/54253.
+  + Update "SPI/Slave" example of HT32F52253, modify the SPI port and pin assignment from SPI1 to SPI0.
+  + Update "SPI/SEL_Software" example of HT32F52253, fix the typing error of SEL GPIO clock.
+  + Update "SPI/Master" example of HT32F52253.
+    - Fix the configuration typing error of "ht32_board_config.h".
+    - Modify the SPI port and pin assignment from SPI1 to SPI0.
+
+  Others
+  + Update comment, format, typing error, and coding style.
+  + Update "_ProjectConfig*.bat" files.
+  + Update "RSTCU/Peripheral_Reset_Function" example, modify "HTCFG_LED0_RST" to "HTCFG_LED1_RST".
+  + Update "SPI/Slave" example, move the IRQHandler define from "ht32f5xxxx_01_it.c" to "ht32_board_config.h"
+    to reduce maintenance time.
+  + Add "LCD_SPI_RST_UNUSE" define for "ht32fxxxxx_sk.h" and "spi_lcd.c", to decide the "spi_lcd.c" controls
+    the LCD_RST pin or not.
+  + Update e-Link32 Pro Commander to V1.10.
+
+/*----------------------------------------------------------------------------------------------------------*/
+/* HT32_STD_5xxxx_FWLib_v020_5545                                                                           */
+/*----------------------------------------------------------------------------------------------------------*/
+  Release Date: 2021-07-23
+
+  Main Changes
+  + Add new device support.
+    HT32F54231, HT32F54241
+    HT32F54243, HT32F54253
+    HT32F67741
+  + Add "ht32_time.c/.h" to support following new functions for delay, time measure, and timeout.
+    "Time_Init()"
+    "Time_Delay()"
+    "Time_GetTick()"
+  + Add new examples:
+    - "GPIO/Input"
+    - "GPIO/Output"
+    - "Time/TimeFun"
+    - "Time/TimeFun_UserConf"
+    - "TM/PWMOut_PDMA_4CH"
+    - "USART/RS485_NMM_Slave"
+  + Add new definition, "FLASH_WAITSTATE_MAX".
+  + Fix the problem that "FLASH_BranchCacheCmd()" is not exist of HT32F0006, HT32F61352, and HT32F6135x.
+  + Fix the problem that "PWRCU_WakeupMultiPinCmd()", "PWRCU_WAKEUP_PIN_1" are not exist of HT32F50343.
+  + Fix typing error which cause the "I2C2_IRQn" missing (from "USE_HT32F2243_53" to "USE_HT32F52243_53").
+  + Modify the following definition (CH4 to CH7 usually have the compare function only but the "TM_FLAG_CHnC"
+    definition is not compatible with the "TM_FLAG_CHnCC").
+    "TM_FLAG_CH4C" to "TM_FLAG_CH4CC"
+    "TM_FLAG_CH5C" to "TM_FLAG_CH5CC"
+    "TM_FLAG_CH6C" to "TM_FLAG_CH6CC"
+    "TM_FLAG_CH7C" to "TM_FLAG_CH7CC"
+  + Modify "TM_GetCaptureCompare()" to support TM_CH4 ~ TM_CH7 for 8 channel PWM timer.
+  + Add "TM_GetCaptureCompare4()" ~ "TM_GetCaptureCompare7()" functions.
+  + Add "USART_PARITY_MARK" and "USART_PARITY_SPACE" for the UART parity mode.
+  + Update "example/I2C/Interrupt/main.c", fix the configuration error of I2C slave.
+  + Update following example, modify the default value of "gIsINEmpty" from TRUE to FALSE. The default value
+    TRUE may cause the F/W to not send CSW after the first Inquiry CBW Command in a specific condition.
+    "example/USBD/HID_Keyboard_Mass_Storage"
+    "example/USBD/Mass_Storage"
+    "example/USBD/Mass_Storage_IAP"
+
+  Others
+  + Update comment, format, typing error, and coding style.
+  + Adjust and fix error of "LIBCFG_xxxxx" definition.
+    New:
+      "LIBCFG_FMC_PREFETCH",
+    Rename:
+      "LIBCFG_SINK_CURRENT_ENHANCED" to "LIBCFG_GPIO_SINK_CURRENT_ENHANCED"
+      "LIBCFG_WAKEUP_V01"            to "LIBCFG_PWRCU_WAKEUP_V01"
+      "LIBCFG_CACHE"                 to "LIBCFG_FMC_BRANCHCACHE"
+    Remove:
+      "LIBCFG_ADC_INTERNAL_CH_V02", "LIBCFG_NO_FMC_PRE_FETCH", "LIBCFG_NO_FMC_WAIT_STATUS",
+      "LIBCFG_ADC_INTERNAL_CH_V03", "LIBCFG_ADC_INTERNAL_CH_DAC"
+  + Remove unnecessary functions, "PWRCU_WakeupPinIntConfig()" and "PWRCU_WakeupMultiPinIntConfig()".
+  + Remove unuse global variable "DelayTime" of "ebi_lcd.c" and "spi_lcd.c".
+  + Change the member order of the "I2C_InitTypeDef".
+  + Modify the "USART_StickParityCmd()" function to set the PBE bit by default when the command is ENABLE.
+  + Remove compiler warning of GNU by adding the dummy "if" usage of the unused parameter.
+  + Fix the case error of "HT32_Board" include path.
+
+/*----------------------------------------------------------------------------------------------------------*/
+/* HT32_STD_5xxxx_FWLib_v019_5358                                                                           */
+/*----------------------------------------------------------------------------------------------------------*/
+  Release Date: 2021-05-11
+
+  Main Changes
+  + Add new examples:
+    - "ADC/OneShot_SWTrigger_ByTM"
+    - "CKCU/HSI_AutoTrim_By_LSE"
+  + Update startup/system files supported of specific MCU projects.
+      Old                                New
+      -------------------------          -------------------------
+    - HT32F0006/HT32F61352
+      system_ht32f0006.c            to   system_ht32f5xxxx_07.c
+      startup_ht32f5xxxx_xxx_01.s   to   startup_ht32f5xxxx_xxx_07.s
+    - HT32F52344/HT32F52354
+      startup_ht32f5xxxx_01.s       to   startup_ht32f5xxxx_03.s
+  + Fix the problem of Flash API of HT32F50343 that the AHB clock of the GPIO port was not enable ,but the
+    drive current of SPI_MOSI is adjusted. The fixed item is as follows:
+    - The function "SPI_FLASH_Init()", It is in the "utilities/common/spi_flash.c".
+    - Add new define "#define FLASH_SPI_MOSI_CLK(CK)      (CK.Bit.PB)", It is in the
+      "utilities/HT32_Board/ht32f50343_sk.h".
+  + Fixed the system was stuck in CKCU_HSIAutoTrimCmd() because of the misjudgment of CKCU_HSIAutoTrimIsReady().
+  + Fixed the problem that the example CKCU/HSI_AUTO_Trim_BY_USB uses HSE(CKCU_PLLSRC_HSE) as the USB PLL
+    clock source. Change the USB PLL Clock source to HSI(CKCU_PLLSRC_HSI).
+  + Fix the CHIP ID error in all HT32F6135x projects. Fixed "USE_HT32_CHIP=10" to "USE_HT32_CHIP=17".
+  + Remove the interrupt capability of the DAC. Modify the file as follows:
+    - "example/DAC/Async_2CH/ht32f5xxxx_01_it.c""
+    - "example/DAC/Async_2CH/main.c"
+    - "example/DAC/Sync_12bit_2CH/ht32f5xxxx_01_it.c"
+    - "example/DAC/Sync_12bit_2CH/main.c"
+    - "trunk/library/Device/Holtek/HT32F5xxxx/Include/ht32f5xxxx_01.h"
+    - "library/HT32F5xxxx_Driver/inc/ht32f5xxxx_dac.h"
+    - "library/HT32F5xxxx_Driver/src/ht32f5xxxx_dac.c"
+
+  Others
+  + Update comment, format, typing error, and coding style.
+  + Update LIBCFG of SCTM.
+    - Add the new definition of LIBCFG for a specific MCU:
+      "#define LIBCFG_SCTM0                      (1)"
+      "#define LIBCFG_SCTM1                      (1)"
+    - Remove the definition of LIBCFG for a specific MCU:
+      "#define LIBCFG_NO_SCTM                    (1)"
+    - Update ht325xxxx_tm.c to depend on the new definitions LIBCFG_SCTM0 and LIBCFG_SCTM1.
+  + Update the version of eLink32pro.exe to 1.0.1.1.
+  + Update the following project setting:
+    - IAR EWARM v6/v7: Modify "_ht32_project_source.c" to "_ht32_project_source.h".
+    - SEGGER Embedded Studio: Add the new definition "arm_compiler_variant="SEGGER"".
+  + Remove redundant SCTM definition of 57331/57341.
+
+/*----------------------------------------------------------------------------------------------------------*/
+/* HT32_STD_5xxxx_FWLib_v018_5303                                                                           */
+/*----------------------------------------------------------------------------------------------------------*/
+  Release Date: 2021-02-26
+
+  Main Changes
+  + Add "Create Project Configuration Menu" to choose the target IDE and Device when the first time to do the
+    create project operation of the example. The configuration file, "_CreateProjectConfig.bat" is saved to
+    the root path of the HT32 Firmware Library. You can reset the create project IDE/IC configuration anytime
+    by deleting the configuration file.
+    Target IDE/Compiler:
+    - Keil MDK-ARM v5
+    - Keil MDK-ARM v4
+    - IAR EWARM v8
+    - IAR EWARM v6/v7
+    - SEGGER Embedded Studio
+    - GNU [with Keil and GNU make]
+    - SourceryG++Lite [with Keil]
+    Target Device:
+    - xxxxx: Single Device
+    - xxx*: Series
+  + Add new examples:
+    - "ADC_24bit/Convert_Interrupt"
+    - "NVIC/Disable_Interrupt"
+    - "TM/InternalTrigger"
+    - "WDT/Auto_Enable"
+  + Add Flash programming function of GNU Maker (via e-Link32 Pro/Lite Commander).
+    "make IC=xxxxx eraseall"
+    "make IC=xxxxx program"
+    "make IC=xxxxx run"
+  + Update "CKCU_HSIAutoTrimCmd()" and "CKCU_HSIAutoTrimIsReady()" function to improve clock stability.
+  + Fix the cache address problem of "SDDISK_Read()" function.
+    "USBD/Mass_Storage/sd_disk.c"
+  + Update GNU project (*.uvprojx), fix the compile error when use new GNU Arm version
+    ("gcc-arm-none-eabi-10-2020-q2-preview-win32" or above).
+  + Fix Keil compiling error when disable both retarget and MicroLib.
+  + Update "ht32f1xxxx_01.h", fix the compatibility issue when user include "stdbool.h".
+  + Modify GNU compiler settings, output text file (disassembly) after building the code.
+  + Change the startup/system supporting files of specify MCU device.
+      Old                                New
+      -------------------------          -------------------------
+    - HT32F0006/HT32F61352
+      system_ht32f0006.c            to   system_ht32f5xxxx_07.c
+      startup_ht32f5xxxx_xxx_01.s   to   startup_ht32f5xxxx_xxx_07.s
+    - HT32F52344/HT32F52354
+      startup_ht32f5xxxx_01.s       to   startup_ht32f5xxxx_03.s
+  + Add "HT32_FWLIB_VER" and "HT32_FWLIB_SVN" in "ht32f1xxxx_lib.h" for the version information of
+    HT32 Firmware Library.
+    Example:
+    "#define HT32_FWLIB_VER                  (018)"
+    "#define HT32_FWLIB_VER                  (5303)"
+  + Add new AFIO define in "ht32f1xxxx_gpio.h".
+    - "AFIO_FUN_MCTM0", "AFIO_FUN_MCTM1"
+    - "AFIO_FUN_GPTM0", "AFIO_FUN_GPTM1", "AFIO_FUN_GPTM2", "AFIO_FUN_GPTM3"
+    - "AFIO_FUN_PWM0", "AFIO_FUN_PWM1", "AFIO_FUN_PWM2", "AFIO_FUN_PWM3"
+  + Add following alias of MCTM IRQ handler
+    "#define MCTM0_IRQn               MCTM0UP_IRQn"
+    "#define MCTM0_IRQHandler         MCTM0UP_IRQHandler"
+    "#define MCTM1_IRQn               MCTM1UP_IRQn"
+    "#define MCTM1_IRQHandler         MCTM1UP_IRQHandler"
+
+  Others
+  + Update comment, format, typing error, and coding style.
+  + Update "TM/PWM_Buzzer" example, move the buzzer function to "buzzer_pwm.c/.h".
+  + Update "_ProjectConfig*.bat" files.
+  + Add "Project Source File Setting" functions ("_ProjectSource.ini" and "_ProjectSource.bat").
+  + Rename "_CreateProjectUSB.bat" as "_CreateProject.bat".
+  + Add dummy xxTM C files, to notify the user that SCTM/PWM/GPTM/MCTM timer use the "ht32f5xxxx_tm.c" driver.
+    "ht32f5xxxx_gptm.c", "ht32f5xxxx_pwm.c", "ht32f5xxxx_sctm.c"
+  + Add "IS_IPN_MCTM()" and "IS_IPN_GPTM" macro, for use to confirm the xxTMn is GPTM or MCTM.
+  + Update comment and board/pin configuration of "ADC/OneShot_TMTrigger_PDMA" example.
+  + Update and sync startup.s/system.c files.
+
+/*----------------------------------------------------------------------------------------------------------*/
+/* HT32_STD_5xxxx_FWLib_v017_5137                                                                           */
+/*----------------------------------------------------------------------------------------------------------*/
+  Release Date: 2020-12-31
+
+  Main Changes
+  + Update IAR linker.icf, modify the ROM/RAM size.
+  + Add "LCDENS" related notice of "ht32f5xxxx_lcd.c/.h".
+  + Fix Keil compiling error when disable both retarget and MicroLib.
+  + Update "ht32f5xxxx_flash.c", fix the flash erase/program related flow.
+
+  Others
+  + Update comment, format, typing error, and coding style.
+  + Update SPI chip select define and SPI configuration of "utilities/common/spi_lcd.c & spi_lcd.h".
+  + Add "BOARD_DISABLE_EEPROM" define of "utilities/common/i2c_eeprom.c".
+  + Add notice of VREF stable time and output function.
+  + Update create project script.
+
+/*----------------------------------------------------------------------------------------------------------*/
+/* HT32_STD_5xxxx_FWLib_v017_5074                                                                           */
+/*----------------------------------------------------------------------------------------------------------*/
+  Release Date: 2020-11-08
+
+  Main Changes
+  + Add new device and example support.
+    HT32F65232, HT32F5828
+  + Add "ADC_DualModeConfig()" API for the dual ADC mode of HT32F65230/65240.
+  + Add "ADC/OneShot_PWMTrigger_Dual_ADC" example.
+  + Update "startup_ht32f5xxxx_*_05.s" to support HT32F5828.
+  + Add "system_ht32f5xxxx_08.c" and "startup_ht32f5xxxx_*_08.s" for HT32F652xx series.
+  + Fix the FIFF/TIFN(Fsampling/Event) setting error of the following function and typedef of the
+    HT32F65230/65240.
+    "TM_CaptureInit()"
+    "TM_PwmInputInit()"
+    "TM_CHFDIV_Enum"
+  + Modify the function "MCTM_UpdateDisable()" to "MCTM_UpdateEventDisable" and add "MCTM_UEV1UD/MCTM_UEV1OD"
+    enum for HT32F65230/65240.
+  + Add OCR support and update CMP_INPUT_x define for HT32F65232.
+  + Rename "startup_ht32f65230_40.s" to "startup_ht32fxxxx_08.s" for HT32F652xx series.
+  + Rename "ht32f65230_40_opa.c/h" to "ht32f652xx_opa.c/h".
+  + Rename "ht32f65230_40_adc.c/h" to "ht32f652xx_adc.c/h".
+  + Add missing define of ADC_TRIG_XXXX and modify "ht32f652xx_adc.c/h" for support HT32F652xx series.
+  + Modify "ht32f5xxxx_rtc.c/h", use LIBCFG_LSE to disable "RTC_SRC_LSE", "RTC_LSECmd()", and
+    "RTC_LSESMConfig()".
+  + Remove un-support functions of HT32F5xxxx series.
+    "TM_EtiExternalClockConfig()"
+    "TM_EtiConfig()"
+  + Add missing enum, "TM_CKDIV_8" for HT32F652xx series.
+  + Add "MCTM_CHBRKCTRConfig2()" MCTM to support Break2 of HT32F652xx series.
+  + Add missing MCTM interrupt define of HT32F652xx series.
+    "MCTM_INT_CH0CD"
+    "MCTM_INT_CH1CD"
+    "MCTM_INT_CH2CD"
+    "MCTM_INT_CH3CD"
+    "MCTM_INT_OVER"
+    "MCTM_INT_UNDER"
+
+  Others
+  + Update "system_ht32f5xxxx_04.c", remove unnecessary define.
+  + Update comment, format, typing error, and coding style.
+  + Add below notice of examples to inform the user to check the local structure variable without a
+    default value.
+    "Notice that the local variable (structure) did not have an initial value.
+     Please confirm that there are no missing members in the parameter settings below this function."
+  + Add "LIBCFG_EXTI_4_9_GROUP" define for the chip who supported extra EXTI interrupt channel.
+  + Update "MCTM_CHBRKCTRConfig()" function to keep "CHMOE" value.
+
+/*----------------------------------------------------------------------------------------------------------*/
+/* HT32_STD_5xxxx_FWLib_v016_4983                                                                           */
+/*----------------------------------------------------------------------------------------------------------*/
+  Release Date: 2020-10-16
+
+  Main Changes
+  + Add new device and example support.
+    HT32F61355, HT32F61356, HT32F61357
+  + Add new board support.
+    HT32F65240 Starter Kit
+  + Add more example support for HT32F65240 DVB.
+  + Add a new example.
+    "OPA/OPA_Enable"
+  + Change the default USB LDO setting from the enable mode to bypass mode.
+  + Update "SPI/FIFO_SEL_Hardware" example. Use timeout interrupt and RX_FIFO length to read the
+    corresponding data (Previously, it was fixed to read 4 bytes which may cause the data loss problem in
+    specific conditions).
+  + Update "CKCU/Clock_Configuration_LSI" example. Add wait for LSI clock ready before the system clock
+    source switches to LSI (Otherwise, the switching may fail).
+  + Update "SPI/Slave" example to fix missing EXTI interrupt service routine of HT32F52354.
+  + Modify "TM/PWM" example to output the complete PWM signal before stopping it.
+  + Update CMP driver, "ht32f5xxxx_cmp.c/h" and "ht32f65230_40_libcfg.h". Support new CMP function of
+    HT32F65230/65240.
+  + Update CMP example "CMP/ComparatorInterrupt" to support HT32F65230/65240 and improve readability.
+  + Remove "OFVCR" parameter of "HT_OPA_TypeDef" struct in the "ht32f5xxx_01.h". This register is not
+    supported by the HT32F65230/65240.
+  + Remove the following unnecessary API in the "ht32f65230_40_opa.c" and "ht32f65230_40_opa.h".
+    "void OPA_Config(HT_OPA_TypeDef* HT_OPAn, u32 mode, u32 cancellation)"
+    "void OPA_CancellationModeConfig(HT_OPA_TypeDef* HT_OPAn, u16 OPA_REF_INPUT)"
+    "void OPA_SetCancellationVaule(HT_OPA_TypeDef* HT_OPAn, u32 cancellation)"
+    "u32 OPA_GetCancellationVaule(HT_OPA_TypeDef* HT_OPAn)"
+
+  Others
+  + Update comment, format, typing error, and coding style.
+  + Update "I2C/Interrupt/main.c" to improve readability.
+  + Add below notice into USB examples to inform the user turn on the HSI Auto Trim function when the PLL
+    clock source is HSI (PLL for USB 48 MHz clock).
+    "Msut turn on if the USB clock source is from HSI (PLL clock Source)"
+  + Remove the following unnecessary files.
+    "WDT/Period_Reload/ht32_board_config.h"
+    "FMC/FLASH_Write_Protection/ht32_board_config.h"
+  + Remove the remote wake-up function in the "USB_Video/main.c".
+
+/*----------------------------------------------------------------------------------------------------------*/
+/* HT32_STD_5xxxx_FWLib_v015_4909                                                                           */
+/*----------------------------------------------------------------------------------------------------------*/
+  Release Date: 2020-08-11
+
+  Main Changes
+  + Add the following files to use e-Link32 Pro with SEGGER Embedded Studio. Refer to the
+    "readme e-Link32 Pro.txt" for how to use it.
+    "emStudiov4/readme e-Link32 Pro.txt"
+    "emStudiov4/Project_xxxxx.bat"
+    "emStudiov4/_MassErase.bat"
+  + Add QSPI support.
+    "ht32f5xxxx_spi.c".
+      "QSPI_QuadCmd()"
+      "QSPI_DirectionConfig()"
+    "utilities/common/spi_flash.c"
+      "SPI_FLASH_WriteStatus2()"
+      "QSPI_FLASH_BufferQuadRead()"
+      "QSPI_FLASH_BufferQuadReadByDMA()"
+      "QSPI_FLASH_BufferWrite()"
+      "QSPI_FLASH_BufferWriteByDMA()"
+    "utilities/HT32_Board"
+      "ht32f52367_sk.h"
+      "ht32f0006_dvb.h"
+  + Add new examples.
+    "TM/PWM"
+    "TM/UpdateEvent"
+    "QSPI/Flash_Quad_Mode_PDMA"
+  + Change the USB LDO default state from ON (PWRCU_VREG_ENABLE) to OFF (PWRCU_VREG_BYPASS) and
+    add below notice description.
+    "USB LDO Should be enabled (PWRCU_VREG_ENABLE) if the MCU VDD > 3.6 V."
+  + Change the driving current as 8 mA of LCD/SPI Flash utilities driver SPI pins for HT32F50343 (since the
+    default operation voltage of Starter Kit is 3.3 V).
+  + Add "SPI_FLASH_WaitForWriteEnd()" function in the end of the write status operation
+    ("SPI_FLASH_WriteStatus()").
+  + Fix typing error of the define, "LIBCFG_MAX_SPEED" for HT32F52220/52230/52231/52241/52243/52253.
+    There are a few examples that refer to this value to set the IP-related frequency.
+  + Fix the I2S clock setting error of the following example.
+    "I2S/CodecLoopback_PDMA"
+    "USBD/USB_UAC_Sound"
+    "USBD/USB_UAC_Sound_RateControl"
+  + Add below notice of examples to inform the user to check the local structure variable without a
+    default value.
+    "Notice that the local variable (structure) did not have an initial value.
+     Please confirm that there are no missing members in the parameter settings below this function."
+  + Fix defined problem of "utilities/common/ebi_lcd.c". Change "EBI_FUN_BYTELAND" / "EBI_FUN_ASYNCREADY" to
+    "LIBCFG_EBI_BYTELAND_ASYNCREADY".
+  + Fix the "I2S_FIFOTrigLevelConfig()" error which did not clear the field of I2S FCR correctly.
+  + Fix "RPRE_MASK" define error for "RTC_SetPrescaler()" function.
+  + Add utilities drivers into HT32F0006/HT32F61352 project.
+    "i2c_eeprom.c"
+    "spi_flash.c"
+    "spi_lcd.c"
+
+  Others
+  + Update comment, format, typing error, and coding style.
+  + Add below notice in the "FMC/FLASH_Security" example.
+    "The Option Byte will be write protected (cannot be changed again) after the
+     Security Protection is enabled. Refer to the user manual for details."
+  + Update and modify naming rule of the "HTCFG_xxxx" configuration define in the "ht32_board_config.h".
+    "I2S/CodecLoopback_PDMA"
+  + Update the following examples to remove compiler warning of the GNU compiler.
+    "SLED/ARGB_GetLEDNum"
+    "USART/PDMA"
+  + Add "-Waddress-of-packed-member" #pragma of below examples to remove compiler warning of the
+    GNU compiler.
+    "USBD/Mass_Storage"
+    "USBD/HID_Keyboard_Mass_Storage"
+  + Add the following notice in the Program/Erase related function.
+    "HSI must keep turn on when doing the Flash operation (Erase/Program)."
+  + Remove HSI disable setting of Configuration Wizard and add notice in the "system_xxxxx_nn.c".
+
+/*----------------------------------------------------------------------------------------------------------*/
+/* HT32_STD_5xxxx_FWLib_v014_4736                                                                           */
+/*----------------------------------------------------------------------------------------------------------*/
+  Release Date: 2020-04-08
+
+  Main Changes - Modification & Improvement
+  + Add "USBDClass_Reset()" into the "USBD/*" example to reset related flag for the self-power application.
+  + Modify "ht32f5xxxx_aes.c", fix "AES_SetKeyTable()" and "_AES_CryptData()" functions who did not clear
+    related fields before set it.
+  + Update UxART related example, turn on internal pull up to prevent unknown state.
+  + Remove unnecessary RTC compare match restart setting of the "RTC/Calendar_BackupDomain" example.
+    (which cause the time not correct after entering the low power mode).
+  + Make up the init structure member when the XXXXX_InitTypeDef is a local variable (which without the
+    default value). For example, add the following code.
+    "MCTM_OutputInitStructure.AsymmetricCompare = 0;"
+    "OutInit.ControlN = TM_CHCTL_DISABLE;"
+  + Update "TM/InputCapture" example, fix the Pulse Width Count formula (shall be plus with 1).
+  + Fix RAM size from 8K to 16K of HT32F0006 (LIBCFG_RAM_SIZE).
+  + Update the following example to improve readability.
+    "ADC/AnalogWatchdog"
+    "ADC/Continuous_Potentiometer"
+    "ADC/Discontinuous_EXTITrigger"
+    "ADC/InternalReferenceVoltage"
+    "ADC/OneShot_PWMTrigger"
+    "ADC/OneShot_PWMTrigger_with_Delay"
+    "ADC/OneShot_TMTrigger_PDMA"
+    "ADC/Two_Group_MaxCH"
+    "EXTI/GPIO_Interrupt"
+    "HWDIV/DIV32"
+    "TM/InputCapture"
+    "TM/MatchOutputActive"
+    "TM/MatchOutputToggle"
+    "TM/PWM_Buzzer"
+    "TM/PWMInput"
+    "TM/PWMOut_PDMA"
+    "TM/SinglePulseMode"
+    "TM/TriggerCounter"
+    "USART/Interrupt"
+    "USART/Interrupt_FIFO"
+    "USART/PDMA"
+    "USART/Polling"
+    "USART/Retarget"
+    "USBD/HID_Demo"
+    "USBD/HID_DemoVendorReport"
+
+  Main Changes - API Function & Compatibility
+  + Add "USART_GetIntStatus()" function to get the both enabled and occurred interrupt source.
+  + Remove the "I2C_Cmd()" in the "I2C_Init()" function since it shall be called after the I2C related
+    settings. User shall call the "I2C_Cmd()" by themself after the "I2C_Init()".
+  + Add "DR_8BIT", "DR_16BIT", and "DR_32BIT" define for the "HT_SLEDn" structure.
+  + Modify "ADC_RegularChannelConfig()", add the last variable-length argument for the code compatibility
+    between the general HT32 model and the specific model (with the independent sample & hold function of each
+    ADC channel).
+    "ADC_RegularChannelConfig(HT_ADC_TypeDef* HT_ADCn, u8 ADC_CH_n, u8 Rank, ...)"
+  + Modify the following MCTM IRQ define for compatibility.
+    Old                  New
+    -------------        ----------------
+    MCTM_BRK_IRQn        MCTM0_BRK_IRQn
+    MCTM_UP_IRQn         MCTM0_UP_IRQn
+    MCTM_TR_UP2_IRQn     MCTM0_TR_UP2_IRQn
+    MCTM_CC_IRQn         MCTM0_CC_IRQn
+    GPTM_G_IRQn          GPTM0_G_IRQn
+    GPTM_VCLK_IRQn       GPTM0_VCLK_IRQn
+  + Modify "AFIO_FUN_ADC" as AFIO_FUN_ADC0.
+  + Add the following functions of "ht32f5xxxx_div.c".
+    "DIV_IsDivByZero()": Return the division by zero flag.
+    "DIV_uDiv32()": Do the 32-bit unsigned division.
+    "DIV_uGetLastRemainder()": Get remainder of last 32-bit unsigned division.
+  + Add "u64" definition.
+  + Add the following definition for convenience.
+    PDMACH0_IRQn ~ PDMACH5_IRQn
+    AFIO_FUN_MCTM0
+    AFIO_FUN_GPTM0 ~ AFIO_FUN_GPTM3
+    AFIO_FUN_PWM0 ~ AFIO_FUN_PWM3
+    AFIO_FUN_SCTM0 ~ AFIO_FUN_SCTM3
+  + Add "LIBCFG_MAX_SPEED" in the file "ht32fxxxxx_libcfg.h" which indicate the maximum core speed.
+
+  Main Changes - New Example & Supporting
+  + Add new examples.
+    "BFTM/OneShot"
+    "BFTM/TimeMeasure"
+    "Mono_LCD/LCD_module" (for ESK32-A3A31 mono LCD module)
+    "SLED/ARGB_GetLEDNum"
+    "USBD/HID_DemoVendorReport"
+  + Add example support of HT32F65230/65240
+    ADC, BFTM, CRC, EXTI, FMC, GPIO, HWDIV, NVIC, PDMA, PWRCU, RSTCU, RTC, SWDIV, SYSTICK, TM, WDT
+  + Rename examples as below.
+    IP         Old Name                           New Name
+    --------   --------                           --------
+    ADC        EXTITrigger_DiscontinuousMode      Discontinuous_EXTITrigger
+    ADC        PDMA_ADCResult                     OneShot_TMTrigger_PDMA
+    ADC        Potentiometer_ContinuousMode       Continuous_Potentiometer
+    ADC        TM_Trigger                         OneShot_PWMTrigger
+    ADC        TM_Trigger_with_Delay              OneShot_PWMTrigger_with_Delay
+    QSPI       Flash                              Flash_Quad_Mode
+    TM         PWMOutput                          PWM_Buzzer
+    USART      HyperTerminal_TxRx                 Retarget
+    USART      HyperTerminal_TxRx_Interrupt       Interrupt
+    USART      HyperTerminal_TxRx_Interrupt_FIFO  Interrupt_FIFO
+    Mono_LCD   8CHAR_14SEG_Demo                   Demo
+
+  Others
+  + Update comment, format, typing error, and coding style.
+  + Update and modify naming rule of the "HTCFG_xxxx" configuration define in the "ht32_board_config.h".
+  + Update "ht32_series.c/h" and "ht32_retarget_usbdconf.h" to improve the compatibly of the
+    terminal software.
+  + Add ring buffer support of the "Virtual_COM" and "HID_Keyboard_Virtual_COM" examples.
+  + Fix interrupt mode of UxART retarget, remove unnecessary FIFO/interrupt configuration of the
+    retarget function.
+  + Update "system_ht32fxxxxx_nn.c" (coding style only).
+
+/*----------------------------------------------------------------------------------------------------------*/
+/* HT32_STD_5xxxx_FWLib_v013_4429                                                                           */
+/*----------------------------------------------------------------------------------------------------------*/
+  Release Date: 2019-12-05
+
+  Main Changes
+  + Update "USBD/Virtual_COM" example, add ZLP process for BULK transfer.
+  + Fix memory size error of HT32F65230.
+  + Modify "ht32f65230_40_libcfg.h", fix the "USE_MEM_HT32F65230" define problem of HT32F65230.
+
+  Others
+  + Fix typing error of ""USBD/HID_Keyboard_Virtual_COM" example.
+
+/*----------------------------------------------------------------------------------------------------------*/
+/* HT32_STD_5xxxx_FWLib_v013_4425                                                                           */
+/*----------------------------------------------------------------------------------------------------------*/
+  Release Date: 2019-11-29
+
+  Main Changes
+  + Add new device support.
+    HT32F65230
+  + Changes for HT32F65230 and HT32F65240
+    Change USE_HT32F65240 to USE_HT32F65230_40.
+    Rename "startup_ht3265240_xxx.s" to "startup_ht3265230_40_xxx.s".
+  + Update "HID_Demo_UI.exe" to support HID Report ID.
+  + Add "USBD/HID_DemoVendorReport" example.
+  + Add UART0_IRQn ~ UART3_IRQn define for HT32F52357/52367 (map to UART0_UART2_IRQn and UART1_UART3_IRQn).
+  + Add "RETARGET_UxART_BAUDRATE" setting to change the retarget UART baudrate in "ht32f5xxxx_conf.h".
+  + Add "RETARGET_HSI_ATM" setting to turn on/off the auto-trim function of HSI.
+  + Add "RETARGET_DEFINE_HANDLER" setting to remove the UxARTn_IRQHandler() define of the retarget.
+    This setting is used for the model who grouping two UART Interrupt into one vector.
+  + Add non-block mode of USB Virtual-COM retarget function ((Drop data if USB or terminal software is
+    not ready).
+  + Fix EXTI4_IRQn ~ EXTI15_IRQn define error of HT32F65230/65240.
+  + Add SWCLK toggle of "GPIO_DisableDebugPort()" function.
+
+  Others
+  + Add "USAGE_PAGE_L" define of "USB/HID_Demo" example.
+  + Add "UART0_UART2_IRQHandler()" and "UART1_UART3_IRQHandler" example in the file "ht32f5xxxx_01_it.c" for
+    HT32F52357/52367.
+  + Update format and coding style.
+
+/*----------------------------------------------------------------------------------------------------------*/
+/* HT32_STD_5xxxx_FWLib_v012_4285                                                                           */
+/*----------------------------------------------------------------------------------------------------------*/
+  Release Date: 2019-10-18
+
+  Main Changes
+  + Add new device support.
+    HT32F50343, HT32F59041, HT32F59741, HF5032
+  + Fix HT32F65240 IRQ number error of "USART0_IRQn" and "UART0_IRQn".
+  + Fix "ADC_CH_GND_VREF" and "ADC_CH_VDD_VREF" define error of HT32F65240.
+  + Add "GPIO_GetID()" function to convert the HT_GPIOx to GPIO_Px.
+  + Add "LIBCFG_PWRCU_NO_PORF" define of HT32F65240 to fix the "PWRCU_DeInit()" function not work.
+  + Update "system_ht32fxxxxx.c" and "startup_ht32fxxxxx_xx_nn.s".
+  + Rename "startup_ht32f5xxxx_01/02.s" of IAR as "startup_ht32f5xxxx_iar_01/02.s".
+  + Move the "common/*.h" include from the begin to the end (after the pin define) in the file
+    "HT32_Board/ht32fxxxx_sk/dvb.h". The original include way leads to the pin define lost when you
+    use the EBI_LCD->EBI_LCD_RAM outside the "ebi_lcd.c".
+  + Update "ebi_lcd.c", fix LCD_SPI_BL_GPIO_XXX define error (shall be LCD_EBI_BL_GPIO_XXX).
+  + Fix error of "_CreateProjectScript.bat" which cause the stack size and RW base can not be set by the
+    "_ProjectConfig.bat" of the emStudiov4 project.
+
+  Others
+  + Remove the wrong define, "LIBCFG_CKCU_USB_PLL_96M" of HT32F52367.
+  + Add calculation method of PLL clock in the file, "system_ht32f5xxxx_nn.c".
+  + Add "utilities/common/lcd.h" to put the lcd related register together.
+  + Update example to improve readability.
+
+/*----------------------------------------------------------------------------------------------------------*/
+/* HT32_STD_5xxxx_FWLib_v011_4188                                                                           */
+/*----------------------------------------------------------------------------------------------------------*/
+  Release Date: 2019-08-05
+
+  Main Changes
+  + Add new device support.
+    HT32F57331, HT32F57341, HT32F57342, HT32F57352, HT32F52357, HT32F52367, HT32F52142,
+    HT32F65240, HT32F61352, HT50F32002, HT50F32003
+  + Fix define error of "ht32fxxxxx_libcfg.h".
+  + Update "system_ht32fxxxxx.c" and "startup_ht32fxxxxx_xx_nn.s".
+  + Rename "startup_ht32f5xxxx_nn.s" of IAR as "startup_ht32f5xxxx_iar_nn.s".
+  + Modify ADC related define (The left side old one is still kept for backward compatible).
+    HT_ADC    ->    HT_ADC0
+    ADC       ->    ADC0
+    ADC_IRQn  ->    ADC0_IRQn
+  + Fix typing error of the function name below.
+    SPI_GUARDTCmd(), SPI_GUARDTConfig()
+
+  Others
+  + Update content of "readme.txt".
+  + Add s64 ("typedef signed long long  s64;").
+  + Update comment and coding style.
+  + Update and sync "ht32f5xxxx_conf.h".
+  + Update and sync create project related files ("_ProjectConfig.bat", "_CreateProjectScript.bat").
+  + Update "HT32F5xxxx_01_DebugSupport.ini".
+  + Update "ht32_op.s" and "ht32_op.c".
+
+/*----------------------------------------------------------------------------------------------------------*/
+/* HT32_STD_5xxxx_FWLib_v010_3748                                                                           */
+/*----------------------------------------------------------------------------------------------------------*/
+  Release Date: 2019-04-09
+
+  Main Changes
+  + Update functions of "ht32f5xxxx_dac_dual16.c".
+  + Update Create Project script, add Script folder in project_template.
+  + Fix VREFCR/VREFVALR register address error of HT_ADC_TypeDef.
+  + Fix "ADC_VREFConfig()" error (ADC_VREF_x shift error).
+  + Add "ADC_MVDDACmd()" function.
+  + Add "PWRCU_DeepSleep2Ex()" function for the case which wakeup by EXTI in the short time or the wakeup
+    source keeps active.
+    Notice: PWRCU_DeepSleep2Ex() function will affect the accuracy of RTC for the date/time application.
+  + Add "TM/TriggerCounter" example.
+  + Add "ADC/InternalReferenceVoltage" example.
+  + Update "ADC/Potentiometer_ContinuousMode" example, remove division in the ISR of ADC.
+
+  Others
+  + Update "ht32f5xxxx_usbd.c" and "ht32_usbd_core.c", add Force USB Reset Control function (apply to specific
+    model only).
+  + Update/sync startup.s/system.c files, fix PLL range and content errors.
+  + Update "BootProcess" function.
+  + Update/sync "ht32_op.s" and "ht32_op.c".
+  + Update "PWRCU/DeepSleepMode1" examples, fix compile error when set "DISABLE_DEBUG_PIN" = 1.
+  + Update "PWRCU/PowerDownMode" examples
+    - Update EXTI ISR to reduce maintenance time.
+    - Add "DISABLE_DEBUG_PIN" function.
+  + Update/sync "FlashMacro.mac".
+  + Update Keil after build setting
+    - Add double quotes (") in the command.
+    - Change filename keyword from "#L" to "!L" (relative path specification to the current folder).
+    - Update "fromelf.txt" and "objcopy.txt"
+
+/*----------------------------------------------------------------------------------------------------------*/
+/* HT32_STD_5xxxx_FWLib_v009_3383                                                                           */
+/*----------------------------------------------------------------------------------------------------------*/
+  Release Date: 2019-02-12
+
+  Main Changes
+  + Add SEGGER Embedded Studio IDE support (beta version).
+  + Update "EXTI/WakeUp_DeepSleepMode1" Example, fix channel error of EXTI clear wakeup flag and add LED3
+    (for some SK have only LED2 and LED3 on board).
+
+  Others
+  + Update comment and coding style.
+  + Add "USBD/USB_UAC_Sound_RateControl" Example.
+  + Add "USBD/HID_Keyboard_Mass_Storage" Example.
+  + Update utilities/common/spi_flash.c/h", change the way of HT_PDMA define.
+  + Update HT32F0006 MDK-ARM project related files (uvproj*). fix SRAM size.
+  + Update "LIBCFG_DAC" as "LIBCFG_DACDUAL16" for HT32F0006.
+  + Add "LIBCFG_DACDUAL16" define for "ht32f5xxxx_dac_dual16.h" of "ht32f5xxxx_lib.h".
+  + Fix missed "I2C2_IRQHandler" and "AES_IRQHandler" in "startup_ht32f5xxxx_01.s" files (both MDK-ARM and
+    EWARM).
+
+/*----------------------------------------------------------------------------------------------------------*/
+/* HT32_STD_5xxxx_FWLib_v008_3322                                                                           */
+/*----------------------------------------------------------------------------------------------------------*/
+  Release Date: 2018-12-17
+
+  Main Changes
+  + Fix filename error of IAR EWARM and GNU make file ("ht32f5xxxx_dac_dual16.c").
+
+  Others
+  + Update "startup_ht32f5xxxx_xxxx.s".
+
+/*----------------------------------------------------------------------------------------------------------*/
+/* HT32_STD_5xxxx_FWLib_v008_3314                                                                           */
+/*----------------------------------------------------------------------------------------------------------*/
+  Release Date: 2018-12-12
+
+  Main Changes
+  + Add new device support.
+    HT32F0006
+  + Modify Control IN/OUT method of USB Core, to fix USB transfer problem when CPU in the lower speed or late
+    USB interrupt case.
+  + Add workaround for PDMA CH3 issue (Interrupt Enable bit of CH3 is not work).
+  + Modify "CKCU_ATC_EXT_PIN" as "CKCU_ATC_CKIN".
+
+  Others
+  + Fix typing error of MCTM.
+  + Add "LIBCFG_ipname" define to the IP channel of "ht32f5xxxx_pdma.h".
+  + Add "USBD_DisableDefaultPull()" function to disable pull resistance when the USB is not use.
+  + Update comment and coding style.
+  + Rename RTC example as below.
+    "Calendar" -> "Time"
+    "Calendar_backup_Domain" -> "Time_BackupDomain"
+  + Add new example, "RTC/Calendar_BackupDomain".
+  + Update "EXTI/WakeUp_DeepSleepMode1" example.
+
+/*----------------------------------------------------------------------------------------------------------*/
+/* HT32_STD_5xxxx_FWLib_v007_3076                                                                           */
+/*----------------------------------------------------------------------------------------------------------*/
+  Release Date: 2018-09-30
+
+  Main Changes
+  + Update HardFault_Handler of "ht32f5xxxx_01_it.c",add the debug instruction and system reset.
+  + Update AES examples, add zero init of local Struct (AES_InitTypeDef AES_InitStruct).
+  + Add  "__HT_check_sp" and "__HT_check_heap" symbol into startup.s and watchpoint command into
+    "HT32F5xxxx_01_DebugSupport.ini" for debug stack/heap underflow, overflow, and overwrite.
+  + Add GNU Make support of GNU Arm compiler.
+  + Add 52354 IAR project files into  "project_template/IP/Template_USB".
+  + Add "LIBCFG_ADC_INTERNAL_CH_V02" define to fix the "ADC_CH_GNDREF/ADC_CH_VREF" mismatch of HT32F502xx
+    Series (The ADC input channel number of analog ground/power is different between HT32F502xx and other
+    series).
+  + Update "USBD/HID_Keyboard_Joystick" and "USBD/HID_Mouse" example, change the set flag sequence
+    (before USBDCore_EPTWriteINData).
+
+  Others
+  + Add "objcooy.txt" which shows how to use obj tools of GNU Arm compiler.
+  + Update format and coding style.
+
+/*----------------------------------------------------------------------------------------------------------*/
+/* HT32_STD_5xxxx_FWLib_v007_2962                                                                           */
+/*----------------------------------------------------------------------------------------------------------*/
+  Release Date: 2018-08-02
+
+  Main Changes
+  + Add GNU Arm compiler support.
+    - Add project_template related files
+    - "startup_ht32f5xxxx_gcc_nn.s"
+    - "linker.ld" (link script)
+  + Fix typing error of "ht32f52230_sk.h" file.
+    "COM1_IRQHandler" shall be "UART0_IRQHandler".
+  + Fix startup.s error of IAP example which cause UART not work.
+  + Rename "CreatProject.bat" to "_CreateProject.bat" and update its content.
+  + Update "ht32f5xxxx_tm.c/.h", add following functions which have TM_CH_n parameter.
+    void TM_ForcedOREF(HT_TM_TypeDef* TMx, TM_CH_Enum TM_CH_n, TM_OM_Enum ForcedAction)
+    void TM_SetCaptureCompare(HT_TM_TypeDef* TMx, TM_CH_Enum TM_CH_n, u16 Cmp)
+    void TM_SetAsymmetricCompare(HT_TM_TypeDef* TMx, TM_CH_Enum TM_CH_n, u16 Cmp)
+    u32 TM_GetCaptureCompare(HT_TM_TypeDef* TMx, TM_CH_Enum TM_CH_n)
+
+  Others
+  + Fix compile error when turn on Library debug mode (HT32_LIB_DEBUG = 1).
+  + Fix compile warning/error of GNU Arm compiler.
+
+/*----------------------------------------------------------------------------------------------------------*/
+/* HT32_STD_5xxxx_FWLib_v006_2891                                                                           */
+/*----------------------------------------------------------------------------------------------------------*/
+  Release Date: 2018-07-14
+
+  Main Changes
+  + None
+
+  Others
+  + Add "USBD/HID_Keyboard_Virtual_COM" example.
+  + Add "ADC/Two_Group_MaxCH" example.
+
+/*----------------------------------------------------------------------------------------------------------*/
+/* HT32_STD_5xxxx_FWLib_v006_2863                                                                           */
+/*----------------------------------------------------------------------------------------------------------*/
+  Release Date: 2018-06-11
+
+  Main Changes
+  + Add new device support.
+    HT32F52344, HT32F52354
+  + Add DMA support of "utilities/common/spi_flash.c".
+  + Add missed function prototype declaration of "GPIO_SinkConfig()" in "ht32f5xxxx_gpio.h".
+  + Add "EXTI_GetEdgeFlag()" function.
+  + Add LIBCFG_AES_SWAP function to process endian issue of AES.
+
+  Others
+  + Update project and "ht32f5826_libcfg.h" typing error of HT32F5826.
+  + Fix "LIBCFC_CKCU_USB_PLL" typing error of ht32fxxxx_libcfg.h and example code (shall be LIBCFG_CKCU_USB_PLL).
+  + Add LED3 toggle of "//project_template/IP/Example" since HT32F52253 Starter Kit using LED2 and LED3.
+  + Fix compiler error of "USBD/USB_UAC_Sound" Example.
+  + Remove unnecessary define "LIBCFG_CKCU_INTERRUPT_FLAG_V01".
+  + Update ht32_op.s and ht32_op.c (improve readability).
+  + FIx memory size typing error of HT32F0008 project.
+  + Add LIBCFG_FMC_CMD_READY_WAIT define to insert NOP after ISP command for specific model.
+  + Update USB's example, driver, an setting related to the LIBCFG_CKCU_USB_PLL_96M.
+  + Update comment and coding style.
+  + Add MDK_ARMv5 project of IAP example.
+  + Fix HT32F52352 IAP_PPBIT define error of "IAP/IAP_UI" example.
+  + Change buffer size of "IAP/IAP_UI" example for the MCU runs on the slower speed.
+  + Update "USBD/Mass_Storage" example.
+  + Update "ht32f5xxxx_ckcu.c" to remove unnecessary register write of PLL.
+  + Update "EXTI/GPIO_Interrupt" example to reduce maintenance effort.
+  + Update "ht32f52352_sk.h", "ht32f52354_sk.h", and "ebi_lcd.h" to support EBI 8-bit mode with SPI dual output.
+
+/*----------------------------------------------------------------------------------------------------------*/
+/* HT32_STD_5xxxx_FWLib_v006_2687                                                                           */
+/*----------------------------------------------------------------------------------------------------------*/
+  Release Date: 2018-04-12
+
+  Main Changes
+  + Add SourceryG++Lite compiler support.
+    - Add project_template related files
+    - "startup_ht32f5xxxx_cs3_nn.s"
+    - "linker.ld" (link script)
+  + Fix typing error of "Project_50241.uvproj" files.
+
+  Others
+  + Update "ht32f5xxxx_conf.h" for AUTO_RETURN (\r) option.
+  + Update "ht32f5xxxx_div.h" to remove compiler error of SourceryG++Lite compiler.
+
+/*----------------------------------------------------------------------------------------------------------*/
+/* HT32_STD_5xxxx_FWLib_v005_2639                                                                           */
+/*----------------------------------------------------------------------------------------------------------*/
+  Release Date: 2018-02-28
+
+  Main Changes
+  + Add "I2C_SpeedOffset" parameter of "I2C_InitTypeDef" struct to reach real I2C speed.
+  + Add "CKCU/HSI_AutoTrim_By_USB" Example.
+  + Add "USBD/HID_Keyboard_Joystick" Example.
+  + Update "CKCU_HSIAutoTrimIsReady" function of "ht32f5xxxx_ckcu.c".
+
+  Others
+  + Update SPI/PDMA example to support HT32F52243/52253.
+  + Add "I2C_SpeedOffset" parameter of I2C related examples.
+  + Update "i2c_eeprom.c" to remove warning on specify compiler.
+  + Modify EXTI related code of "USBD/HID_Keyboard" Example to reduce maintenance effort.
+
+/*----------------------------------------------------------------------------------------------------------*/
+/* HT32_STD_5xxxx_FWLib_v005_2481                                                                           */
+/*----------------------------------------------------------------------------------------------------------*/
+  Release Date: 2017-12-30
+
+  Main Changes
+  + None
+
+  Others
+  + Update I2S and USB UAC related examples (Coding style and remove unuse define).
+  + Fix I2S setting of "USB_UAC_Sound" example.
+  + Fix define error of "PWRCU/DeepSleepMode1" example.
+
+/*----------------------------------------------------------------------------------------------------------*/
+/* HT32_STD_5xxxx_FWLib_v005_2470                                                                           */
+/*----------------------------------------------------------------------------------------------------------*/
+  Release Date: 2017-12-29
+
+  Main Changes
+  + Add new device support.
+    HT32F50231, HT32F50241
+    Note: The examples of HT32F50220, HT32F50230, HT32F50231, HT32F50241 are under test. Please contact us if
+    any question. Thanks.
+  + Update boot related functions of "startup_ht32f5xxxx_nn.s" and "system_ht32f5xxxx_nn.c".
+  + Fix USB example code which forget to turn on USB PLL of HT32F0008.
+  + Update IAP example to support HT32F0008.
+  + Add "GPIO_DisableDebugPort()"" function to disable SWD function.
+  + Add "GPIO_SinkConfig()" function for sink current configuration (Apply to specific model only).
+  + Update "ht32_op.c" and "ht32_op.s" to support enable WDT function by Flash Option byte (Apply to specific
+    model only).
+  + Add "Clock_Configuration_LSI" example to show how to configure the system clock between High Speed
+    (PLL, HSI, or HSE) and LSI.
+
+  Others
+  + Fix errors of following examples (related to the MCU we added recently).
+    "EXTI/GPIO_Interrupt"
+    "PWRCU/BOD_LVD"
+    "PWRCU/PowerDownMode"
+    "RAND/Random_Number"
+    "SPI/Slave"
+    "TM/MatchOutputToggle"
+    "TM/PWMOut_PDMA"
+    "TM/PWMOutput"
+    "TM/SinglePulseMode"
+    "USART/HyperTerminal_TxRx_Interrupt_FIFO"
+    "USART/PDMA"
+  + Fix "LIBCFG_CHIPNAME" typing error of HT32F50220/50230.
+  + Remove useless "RTC_LSICmd()"" function.
+  + Update "RTC_LSILoadTrimData()" to prevent hardfault if RTC clock is not enabled when calling this function.
+  + Update typing error and coding style of "ht32f5xxxx_ckcu.h".
+  + Change pin assignment of HT32F0008's example.
+
+/*----------------------------------------------------------------------------------------------------------*/
+/* HT32_STD_5xxxx_FWLib_v005_2267                                                                           */
+/*----------------------------------------------------------------------------------------------------------*/
+  Release Date: 2017-11-30
+
+  Main Changes
+  + Add new device support.
+    HT32F0008
+    HT32F50220, HT32F50230
+
+  Others
+  + Update "ht32_virtual_com.inf" file, add Digital Signature.
+  + Update "ht32_usbd_core.c/.h", add vendor request call back capability.
+  + Fix compiler warning when turn on library debug mode.
+  + Fix IAR project setting of IAP related examples (Output format).
+
+/*----------------------------------------------------------------------------------------------------------*/
+/* HT32_STD_5xxxx_FWLib_v004_1996                                                                           */
+/*----------------------------------------------------------------------------------------------------------*/
+  Release Date: 2017-10-19
+
+  Main Changes
+  + Update "system_ht32F5xxxx_03.c", modify PLL related setting.
+  + Change "LIBCFG_WP_2PAGE_PER_BIT" to "LIBCFG_FLASH_2PAGE_PER_WPBIT".
+
+  Others
+  + Update "PWRCU/DeepSleepMode2" example, fix compiler error when DISABLE_DEBUG_PIN = 1.
+  + Update "WDT/Period_Reload" example, fix comment typing error.
+  + Add "LIBCFG_CHIPNAME" define.
+  + Update project setting.
+  + Update "NVIC/External_Interrupt" example, remove unuse define.
+
+/*----------------------------------------------------------------------------------------------------------*/
+/* HT32_STD_5xxxx_FWLib_v004_1790                                                                           */
+/*----------------------------------------------------------------------------------------------------------*/
+  Release Date: 2017-09-05
+
+  Main Changes
+  + Fix vector table error ("startup_ht32f5xxxx_01.s").
+
+  Others
+  + Update "system_ht32f5xxxx_xx.c".
+  + Update Keil project setting, enable "User->After Build Run #1" as default value to output Binary file.
+
+/*----------------------------------------------------------------------------------------------------------*/
+/* HT32_STD_5xxxx_FWLib_v004_1753                                                                           */
+/*----------------------------------------------------------------------------------------------------------*/
+  Release Date: 2017-08-31
+
+  Main Changes
+  + Rename "HT32F520xx_FWLib" to "HT32_STD_5xxxx_FWLib" and "520xx" to "5xxxx".
+    The following files are also renamed.
+    Old                                           New
+    ======================================        ======================================
+    startup_ht32f520xx_01.s                       startup_ht32f5xxxx_01.s
+    system_ht32f520xx_01.c                        system_ht32f5xxxx_01.c
+    system_ht32f5xxxx_02.c                        system_ht32f5xxxx_02.c
+    ht32f520xx_01_it.c                            ht32f5xxxx_01_it.c
+    ht32f523xx_01_usbdconf.h                      ht32f5xxxx_01_usbdconf.h
+    ht32f520xx_01_conf.h                          ht32f5xxxx_conf.h
+    HT32F520xx_01_DebugSupport.ini                HT32F5xxxx_01_DebugSupport.ini
+    ht32f520xx_sk.c                               ht32f5xxxx_board_01.c
+    ht32f520xx_01.h                               ht32f5xxxx_01.h
+
+  Others
+  + Update "ht32_usbd_core.c" to support vendor function.
+  + Add "USE_MEM_HT32F5xxxx" define into project.
+  + Add "USE_MEM_HT32F5xxxx" default define into "ht32f5xxxx_xx_libcfg.h".
+  + Update the IAP Example. Change IAP loader size from 3 KBytes to 4 KBytes (Since the code size of IAP
+    example for IAR EWARM is large than 3 KB).
+  + Add new device support
+    HT32F5826
+
+/*----------------------------------------------------------------------------------------------------------*/
+/* HT32F520xx_FWLib_v003_1661                                                                               */
+/*----------------------------------------------------------------------------------------------------------*/
+  Release Date: 2017-07-27
+
+  Main Changes
+  + Add hardware divider driver, "ht32f520xx_div.c/h"
+  + Update following example to support HT32F52243 and HT32F52253.
+    DIV, IAP, SPI, TM
+    Note: The code size of IAP example for IAR EWARM is large than 3 KB. It over Reserved size of the IAP
+          area. We will update it in the next version.
+
+  Others
+  + Update project related file and setting.
+  + Modify USB/Mass_Storage example for WIN10 compatibility issue.
+  + Update "ht32_op.c" and "ht32_op.s", add CK_CODE/CK_DATA/CK_CODEOP in Option Bytes (same format with e-Writer32).
+
+/*----------------------------------------------------------------------------------------------------------*/
+/* HT32F520xx_FWLib_v003_1566                                                                               */
+/*----------------------------------------------------------------------------------------------------------*/
+  Release Date: 2017-07-17
+
+  Main Changes
+  + Fix COM1 & BUZZER setting error of "ht32f52253_sk.h".
+  + Update following example to support HT32F52243 and HT32F52253.
+    ADC, I2C
+
+  Others
+  + Update ht32_op.s and ht32_op.c
+
+/*----------------------------------------------------------------------------------------------------------*/
+/* HT32F520xx_FWLib_v003_1534                                                                               */
+/*----------------------------------------------------------------------------------------------------------*/
+  Release Date: 2017-07-03
+
+  Main Changes
+  + Add new device support
+    HT32F52243, HT32F52253
+    Note: The following example is not supported yet for the HT32F52243 and HT32F52253.
+          ADC, DIV, I2C, IAP, SPI, TM
+  + Add IAR EWARMv8 project template (create by IAR EWARM v8.11).
+  + Update "system_ht32f520xx_01.c" and "system_ht32f520xx_02.c" to support different setting between
+    IAP and AP.
+  + Fix "ht32_retarget.c" error (UxART Rx interrupt is no need to turn on).
+  + Update UxART driver to sync with HT32_STD_1xxxx FW Library.
+  + Modify following variable name of "MCTM_CHBRKCTRInitTypeDef".
+    Break         -> Break0
+    BreakPolarity -> Break0Polarity
+
+  Others
+  + Update project related file and setting.
+  + Upgrade the version of IAR EWARM project template from v6.20 to v6.50.
+    Note:
+    1. Supported CMSIS-DAP: IAR EWARM v6.50 and above.
+    2. RDI/e-Link32 is not supported anymore from the v8.xx of IAR EWARM.
+    3. For the Cortex-M0+, you must use IAR EWARM v6.40 and above.
+  + Update file format and coding style.
+  + Modify "EXTI_DebounceCnt" of "EXTI_InitTypeDef" from u32 to u16, to prevent count setting over range.
+
+/*----------------------------------------------------------------------------------------------------------*/
+/* HT32F520xx_FWLib_v002_1320                                                                               */
+/*----------------------------------------------------------------------------------------------------------*/
+  Release Date: 2017-05-04
+
+  Main Changes
+  + Fix IAR compiler failed issue of "ht32_cm0plus_misc.c" (Tool Internal Error with Access violation error).
+
+  Others
+  + Fix config error of ADC example, "PWMTrigger_OneShotMode".
+  + Rename ADC example "PWMTrigger_OneShotMode" as "TM_Trigger".
+  + Add ADC example, "TM_Trigger_with_Delay".
+  + Fix I2C register naming (ADDBR to ADDSR).
+  + Fix build error when Library Debug mode enable.
+  + Fix IAP example, add "USART_ClearFlag(HTCFG_UART_PORT, USART_FLAG_TOUT)" in the UART ISR.
+  + Fix SPI Flash dual read, enable dual read function (SPI_DUALCmd()) before send dummy bytes.
+
+/*----------------------------------------------------------------------------------------------------------*/
+/* HT32F520xx_FWLib_v002_1143                                                                               */
+/*----------------------------------------------------------------------------------------------------------*/
+  Release Date: 2016-10-11
+
+  Main Changes
+  + Fix FLASH_WP_ALLPAGE_SET macro error.
+  + Add memory footprint information (ht32fxxxxx_xx_libcfg.h).
+
+  Others
+  + Update typing error and naming rule.
+  + Update "ht32f520xx_02.h" variable data type define to prevent data type confusion (such as const s32 not
+    equal to sc32).
+  + Modify Re-target to USB Tx buffer size from 63 to 1. Add notice message for SERIAL_Flush() when Tx buffer
+    size is lager than 1.
+  + Update MDK_ARMv5 project setting.
+
+/*----------------------------------------------------------------------------------------------------------*/
+/* HT32F520xx_FWLib_v002_966                                                                                */
+/*----------------------------------------------------------------------------------------------------------*/
+  Release Date: 2016-08-17
+
+  Main Changes
+  + Add "CKCU_HSIAutoTrimIsReady()" functions.
+  + Fix Re-target USB virtual bug (Bulk out 64 Bytes without zero length OUT is not allow).
+  + Add example code.
+  + Update IAR EWARM project of example codes.
+  + Add random number function/example.
+
+  Others
+  + Rename and update "HT32_Virtual_COM.inf". Add VID/PID for e-Link32Pro USB to UART function.
+  + Update pin assignment of HT32F52341 SPI/Master example.
+  + Fix "CKCU_GetClocksFrequency()" and "CKCU_GetPLLFrequency()" error.
+  + Update typing error and naming rule.
+  + Fix USB descriptor error of "ht32_retarget_desc.h".
+  + Fix CKCU/Clock_Configuration example error (CKOUT pin).
+
+/*----------------------------------------------------------------------------------------------------------*/
+/* HT32F520xx_FWLib_v002_820                                                                                */
+/*----------------------------------------------------------------------------------------------------------*/
+  Release Date: 2016-06-20
+
+  Main Changes
+  + Fix IAP_Text_RAM example setting error.
+  + Fix "_USBD_CopyMemory()" error.
+  + Fix EXTI init sequence of HT32F_DVB_PBInit() which may cause unexpect EXTI interrupt.
+  + Fix LIBCFG_WP_2PAGE_PER_BIT define error of HT32F52331/41.
+  + Add project files of MDK_ARMv5 (*.uvprojx), select CMSIS-DAP debug adapter as default setting.
+
+  Others
+  + Fix IAR scanf not work issue
+  + Add UART interrupt mode for Re-target.
+  + Improve efficiency of USB re-target (USB IN).
+  + Modify uIsTerminalOpened check method.
+  + Fix Re-target to USB bug (OUT data overrun the Rx buffer).
+  + Remove unnecessary divide/mod operation ("ring_buffer.c", "ht32_serial.c").
+  + Remove unnecessary code of "ht32f520xx_tm.c".
+  + Fix Buffer_GetLength error of "ring_buffer.c".
+  + Modify __RBIT as RBIT of "ht32_cm0plus_misc.c" (__RBIT is keyword of IAR).

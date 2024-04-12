@@ -1,0 +1,48 @@
+import rtconfig
+from building import *
+
+cwd = GetCurrentDir()
+
+src = Split("""
+    library/HT32F1xxxx_Driver/src/ht32_cm3_misc.c
+    library/HT32F1xxxx_Driver/src/ht32f1xxxx_adc.c
+    library/HT32F1xxxx_Driver/src/ht32f1xxxx_aes.c
+    library/HT32F1xxxx_Driver/src/ht32f1xxxx_bftm.c
+    library/HT32F1xxxx_Driver/src/ht32f1xxxx_ckcu.c
+    library/HT32F1xxxx_Driver/src/ht32f1xxxx_cmp.c
+    library/HT32F1xxxx_Driver/src/ht32f1xxxx_crc.c
+    library/HT32F1xxxx_Driver/src/ht32f1xxxx_ebi.c
+    library/HT32F1xxxx_Driver/src/ht32f1xxxx_exti.c
+    library/HT32F1xxxx_Driver/src/ht32f1xxxx_flash.c
+    library/HT32F1xxxx_Driver/src/ht32f1xxxx_gpio.c
+    library/HT32F1xxxx_Driver/src/ht32f1xxxx_i2c.c
+    library/HT32F1xxxx_Driver/src/ht32f1xxxx_i2s.c
+    library/HT32F1xxxx_Driver/src/ht32f1xxxx_mctm.c
+    library/HT32F1xxxx_Driver/src/ht32f1xxxx_pdma.c
+    library/HT32F1xxxx_Driver/src/ht32f1xxxx_pwrcu.c
+    library/HT32F1xxxx_Driver/src/ht32f1xxxx_rstcu.c
+    library/HT32F1xxxx_Driver/src/ht32f1xxxx_rtc.c
+    library/HT32F1xxxx_Driver/src/ht32f1xxxx_sci.c
+    library/HT32F1xxxx_Driver/src/ht32f1xxxx_sdio.c
+    library/HT32F1xxxx_Driver/src/ht32f1xxxx_spi.c
+    library/HT32F1xxxx_Driver/src/ht32f1xxxx_tm.c
+    library/HT32F1xxxx_Driver/src/ht32f1xxxx_usart.c
+    library/HT32F1xxxx_Driver/src/ht32f1xxxx_usbd.c
+    library/HT32F1xxxx_Driver/src/ht32f1xxxx_wdt.c
+
+    library/Device/Holtek/HT32F1xxxx/Source/system_ht32f1xxxx_02.c
+""")
+#HT32F1xxxx_Driver/src/ht32f1xxxx_csif.c
+
+path = [
+    cwd + '/library/HT32F1xxxx_Driver/inc',
+    cwd + '/library/CMSIS/Include',
+    cwd + '/library/Device/Holtek/HT32F1xxxx/Include'
+]
+
+CPPDEFINES = ['USE_HT32_DRIVER']
+
+group = DefineGroup('Libraries', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
+
+Return('group')
+

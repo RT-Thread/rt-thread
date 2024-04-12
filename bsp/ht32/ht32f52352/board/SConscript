@@ -1,0 +1,27 @@
+
+import os
+import rtconfig
+from building import *
+
+Import('SDK_LIB')
+
+cwd = GetCurrentDir()
+
+src = Glob('src/*.c')
+
+startup_path_prefix = SDK_LIB
+if rtconfig.CROSS_TOOL == 'gcc':
+    src += [startup_path_prefix + '/HT32_STD_5xxxx_FWLib/library/Device/Holtek/HT32F5xxxx/Source/GCC/startup_ht32f5xxxx_gcc_01.s']
+elif rtconfig.CROSS_TOOL == 'keil':
+    src += [startup_path_prefix + '/HT32_STD_5xxxx_FWLib/library/Device/Holtek/HT32F5xxxx/Source/ARM/startup_ht32f5xxxx_01.s']
+elif rtconfig.CROSS_TOOL == 'iar':
+    src += [startup_path_prefix + '/HT32_STD_5xxxx_FWLib/library/Device/Holtek/HT32F5xxxx/Source/IAR/startup_ht32f5xxxx_iar_01.s']
+
+path = [cwd]
+path = [cwd + '/inc']
+
+CPPDEFINES = ['USE_HT32F52352_SK, USE_HT32F52342_52, USE_MEM_HT32F52352']
+
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
+
+Return('group')
