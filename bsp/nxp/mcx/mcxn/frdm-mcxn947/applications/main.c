@@ -19,6 +19,10 @@
 #define LEDB_PIN        ((0*32)+10)
 #define BUTTON_PIN      ((0*32)+23)
 
+#ifdef BSP_USING_RW007
+#define LEDC_PIN        ((1*32)+2)
+#endif
+
 static void sw_pin_cb(void *args);
 
 int main(void)
@@ -33,7 +37,11 @@ int main(void)
     rt_kprintf("using gcc, version: %d.%d\n", __GNUC__, __GNUC_MINOR__);
 #endif
 
-    rt_pin_mode(LEDB_PIN, PIN_MODE_OUTPUT);  /* Set GPIO as Output */
+#if defined(BSP_USING_RW007)
+    rt_pin_mode(LEDC_PIN, PIN_MODE_OUTPUT);
+#else
+	  rt_pin_mode(LEDB_PIN, PIN_MODE_OUTPUT);  /* Set GPIO as Output */
+#endif
 
     rt_pin_mode(BUTTON_PIN, PIN_MODE_INPUT_PULLUP);
     rt_pin_attach_irq(BUTTON_PIN, PIN_IRQ_MODE_FALLING, sw_pin_cb, RT_NULL);
@@ -56,10 +64,17 @@ int main(void)
 
     while (1)
     {
-        rt_pin_write(LEDB_PIN, PIN_HIGH);    /* Set GPIO output 1 */
+#if defined(BSP_USING_RW007)
+        rt_pin_write(LEDC_PIN, PIN_HIGH);
+        rt_thread_mdelay(500);
+        rt_pin_write(LEDC_PIN, PIN_LOW);
+        rt_thread_mdelay(500);
+#else
+	      rt_pin_write(LEDB_PIN, PIN_HIGH);    /* Set GPIO output 1 */
         rt_thread_mdelay(500);               /* Delay 500mS */
         rt_pin_write(LEDB_PIN, PIN_LOW);     /* Set GPIO output 0 */
         rt_thread_mdelay(500);               /* Delay 500mS */
+#endif
     }
 }
 
