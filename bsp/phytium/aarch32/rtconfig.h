@@ -8,7 +8,7 @@
 
 #define RT_NAME_MAX 16
 #define RT_USING_SMP
-#define RT_CPUS_NR 2
+#define RT_CPUS_NR 4
 #define RT_ALIGN_SIZE 4
 #define RT_THREAD_PRIORITY_32
 #define RT_THREAD_PRIORITY_MAX 32
@@ -127,7 +127,6 @@
 #define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 1024
 #define RT_USING_CAN
-#define RT_CAN_USING_HDR
 #define RT_CAN_USING_CANFD
 #define RT_USING_I2C
 #define RT_USING_I2C_BITOPS
@@ -394,32 +393,26 @@
 #define RT_USING_UART0
 #define RT_USING_UART1
 #define BSP_USING_SPI
-#define RT_USING_SPIM2
+#define RT_USING_SPIM0
 #define BSP_USING_CAN
-#define RT_USING_CANFD
-#define RT_USING_FILTER
-#define RT_USING_CAN0
-#define RT_USING_CAN1
+#define BSP_USING_GPIO
 #define BSP_USING_QSPI
 #define RT_USING_QSPI0
 #define USING_QSPI_CHANNEL0
 #define BSP_USING_ETH
 #define RT_LWIP_PBUF_POOL_BUFSIZE 1700
 #define BSP_USING_PWM
-#define RT_USING_PWM6
+#define RT_USING_PWM2
 #define BSP_USING_I2C
 #define I2C_USE_MIO
-#define RT_USING_MIO15
-#define I2C_USE_CONTROLLER
-#define RT_USING_I2C0
+#define RT_USING_MIO0
+#define RT_USING_MIO1
 #define BSP_USING_SDIF
 #define BSP_USING_SDCARD_FATFS
-#define BSP_ROOTFS_SD_DEVICE "sd1"
-#define USING_SDIF0
-#define USE_SDIF0_EMMC
 #define USING_SDIF1
 #define USE_SDIF1_TF
 #define BSP_USING_DC
+#define RT_USING_DC_CHANNEL0
 #define RT_USING_DC_CHANNEL1
 
 /* Board extended module Drivers */
