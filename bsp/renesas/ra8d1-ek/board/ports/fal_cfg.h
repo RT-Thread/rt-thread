@@ -11,6 +11,7 @@
 #define _FAL_CFG_H_
 
 #include "hal_data.h"
+#include "rtconfig.h"
 
 extern const struct fal_flash_dev _onchip_flash_hp0;
 extern const struct fal_flash_dev _onchip_flash_hp1;

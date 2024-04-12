@@ -122,6 +122,16 @@ menu "Hardware Drivers Config"
                     default n
             endif
 
+        menuconfig BSP_USING_DAC
+            bool "Enable DAC"
+            default n
+            select RT_USING_DAC
+            if BSP_USING_DAC
+                config BSP_USING_DAC0
+                    bool "Enable DAC0"
+                    default n
+            endif
+
         menuconfig BSP_USING_SCI_SPI
             bool "Enable SCI SPI BUS"
             default n
@@ -621,7 +631,7 @@ menu "Hardware Drivers Config"
         if BSP_USING_RW007
             config RA_RW007_SPI_BUS_NAME
                 string "RW007 BUS NAME"
-                default "scpi2"
+                default "sci2s"
 
             config RA_RW007_CS_PIN
                 hex "(HEX)CS pin index"
