@@ -186,7 +186,10 @@ static enum rym_code _rym_send_end(
     rt_uint8_t *buf,
     rt_size_t len)
 {
+    struct custom_ctx *cctx = (struct custom_ctx *)ctx;
     rt_memset(buf, 0, len);
+    close(cctx->fd);
+    cctx->fd = -1;
 
     return RYM_CODE_SOH;
 }
