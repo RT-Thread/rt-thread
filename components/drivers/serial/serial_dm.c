@@ -9,7 +9,7 @@
  */
 
 #include <rtatomic.h>
-#include "serial_dm.h"
+#include <drivers/serial_dm.h>
 
 int serial_dev_set_name(struct rt_serial_device *sdev)
 {
@@ -82,8 +82,9 @@ void *serial_base_from_args(char *str)
     return (void *)base;
 }
 
-struct serial_configure serial_cfg_from_args(char *str)
+struct serial_configure serial_cfg_from_args(char *_str)
 {
+    char *str = _str;
     struct serial_configure cfg = RT_SERIAL_CONFIG_DEFAULT;
 
     /* Format baudrate/parity/bits/flow (BBBBPNF), Default is 115200n8 */

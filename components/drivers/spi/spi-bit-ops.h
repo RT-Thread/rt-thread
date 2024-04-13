@@ -21,6 +21,7 @@ extern "C" {
 struct rt_spi_bit_ops
 {
     void *data;            /* private data for lowlevel routines */
+    void (*const pin_init)(void);
     void (*const tog_sclk)(void *data);
     void (*const set_sclk)(void *data, rt_int32_t state);
     void (*const set_mosi)(void *data, rt_int32_t state);

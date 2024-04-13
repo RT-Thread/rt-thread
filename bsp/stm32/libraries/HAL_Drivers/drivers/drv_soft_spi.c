@@ -28,6 +28,8 @@ static struct stm32_soft_spi_config soft_spi_config[] =
 #endif
 };
 
+static struct stm32_soft_spi spi_obj[sizeof(soft_spi_config) / sizeof(soft_spi_config[0])];
+
 /**
   * Attach the spi device to soft SPI bus, this function must be used after initialization.
   */
@@ -184,9 +186,20 @@ static void stm32_udelay(rt_uint32_t us)
     }
 }
 
+static void stm32_pin_init(void)
+{
+    rt_size_t obj_num = sizeof(spi_obj) / sizeof(struct stm32_soft_spi);
+
+    for(rt_size_t i; i < obj_num; i++)
+    {
+        stm32_spi_gpio_init(&spi_obj[i]);
+    }
+}
+
 static struct rt_spi_bit_ops stm32_soft_spi_ops =
     {
         .data = RT_NULL,
+        .pin_init = stm32_pin_init,
         .tog_sclk = stm32_tog_sclk,
         .set_sclk = stm32_set_sclk,
         .set_mosi = stm32_set_mosi,
@@ -200,21 +213,18 @@ static struct rt_spi_bit_ops stm32_soft_spi_ops =
         .delay_us = 1,
 };
 
-static struct stm32_soft_spi spi_obj[sizeof(soft_spi_config) / sizeof(soft_spi_config[0])];
-
 /* Soft SPI initialization function */
 int rt_hw_softspi_init(void)
 {
     rt_size_t obj_num = sizeof(spi_obj) / sizeof(struct stm32_soft_spi);
     rt_err_t result;
 
-    for (int i = 0; i < obj_num; i++)
+    for (rt_size_t i = 0; i < obj_num; i++)
     {
         memcpy(&spi_obj[i].ops, &stm32_soft_spi_ops, sizeof(struct rt_spi_bit_ops));
         spi_obj[i].ops.data = (void *)&soft_spi_config[i];
         spi_obj[i].spi.ops = &stm32_soft_spi_ops;
         spi_obj[i].cfg = (void *)&soft_spi_config[i];
-        stm32_spi_gpio_init(&spi_obj[i]);
         result = rt_spi_bit_add_bus(&spi_obj[i].spi, soft_spi_config[i].bus_name, &spi_obj[i].ops);
         RT_ASSERT(result == RT_EOK);
     }

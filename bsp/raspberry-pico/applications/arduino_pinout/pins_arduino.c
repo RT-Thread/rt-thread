@@ -11,6 +11,14 @@
 #include <Arduino.h>
 #include <board.h>
 #include "pins_arduino.h"
+#include <pico/stdlib.h>
+#include <hardware/spi.h>
+#include <hardware/gpio.h>
+#include <pico/binary_info.h>
+
+#define DBG_TAG    "RTduino.pins_arduino"
+#define DBG_LVL    DBG_INFO
+#include <rtdbg.h>
 
 /*
  * {Arduino Pin, RT-Thread Pin [, Device Name, Channel]}
@@ -51,3 +59,28 @@ const pin_map_t pin_map_table[]=
     {A1, 27, "adc1", 1},                               /* ADC */
     {A2, 28, "adc2", 2},                               /* ADC */
 };
+
+#ifdef RTDUINO_USING_SPI
+void switchToSPI(const char *bus_name)
+{
+    if(!rt_strcmp(bus_name, "spi0"))
+    {
+        /**SPI0 GPIO Configuration
+        18u     ------> SPI0_SCK
+        16u     ------> SPI0_MISO
+        19u     ------> SPI0_MOSI
+        17u     ------> SPI0_CS
+        */
+        gpio_set_function(BSP_SPI0_SCK_PIN, GPIO_FUNC_SPI);
+        gpio_set_function(BSP_SPI0_MISO_PIN, GPIO_FUNC_SPI);
+        gpio_set_function(BSP_SPI0_MOSI_PIN, GPIO_FUNC_SPI);
+        gpio_init(BSP_SPI0_CS_PIN);
+        // Make the SPI pins available to picotool
+        bi_decl(bi_3pins_with_func(BSP_SPI0_MISO_PIN, BSP_SPI0_MOSI_PIN, BSP_SPI0_SCK_PIN, GPIO_FUNC_SPI));
+        // Make the CS pin available to picotool
+        bi_decl(bi_1pin_with_name(BSP_SPI0_CS_PIN, "SPI CS"));
+
+        LOG_I("D16, D17, D18 and D19 will switch from PWM to SPI");
+    }
+}
+#endif /* RTDUINO_USING_SPI */

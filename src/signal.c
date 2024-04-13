@@ -19,7 +19,11 @@
 #ifdef RT_USING_SIGNALS
 
 #ifndef RT_SIG_INFO_MAX
-#define RT_SIG_INFO_MAX 32
+    #ifdef ARCH_CPU_64BIT
+        #define RT_SIG_INFO_MAX 64
+    #else
+        #define RT_SIG_INFO_MAX 32
+    #endif /* ARCH_CPU_64BIT */
 #endif /* RT_SIG_INFO_MAX */
 
 #define DBG_TAG     "SIGN"
@@ -647,6 +651,7 @@ int rt_thread_kill(rt_thread_t tid, int sig)
     else
     {
         LOG_E("The allocation of signal info node failed.");
+        return -RT_EEMPTY;
     }
 
     /* deliver signal to this thread */

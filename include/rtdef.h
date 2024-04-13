@@ -53,6 +53,8 @@
  * 2023-10-10     Chushicheng  change version number to v5.1.0
  * 2023-10-11     zmshahaha    move specific devices related and driver to components/drivers
  * 2023-11-21     Meco Man     add RT_USING_NANO macro
+ * 2023-11-17     xqyjlj       add process group and session support
+ * 2023-12-01     Shell        Support of dynamic device
  * 2023-12-18     xqyjlj       add rt_always_inline
  * 2023-12-22     Shell        Support hook list
  * 2024-01-18     Shell        Seperate basical types to a rttypes.h
@@ -181,7 +183,8 @@ typedef int (*init_fn_t)(void);
 /* init platform, user code... */
 #define INIT_PLATFORM_EXPORT(fn)        INIT_EXPORT(fn, "1.2")
 /* init sys-timer, clk, pinctrl... */
-#define INIT_SUBSYS_EXPORT(fn)          INIT_EXPORT(fn, "1.3")
+#define INIT_SUBSYS_EARLY_EXPORT(fn)    INIT_EXPORT(fn, "1.3.0")
+#define INIT_SUBSYS_EXPORT(fn)          INIT_EXPORT(fn, "1.3.1")
 /* init early drivers */
 #define INIT_DRIVER_EARLY_EXPORT(fn)    INIT_EXPORT(fn, "1.4")
 
@@ -384,8 +387,10 @@ enum rt_object_class_type
     RT_Object_Class_Module        = 0x0b,      /**< The object is a module. */
     RT_Object_Class_Memory        = 0x0c,      /**< The object is a memory. */
     RT_Object_Class_Channel       = 0x0d,      /**< The object is a channel */
-    RT_Object_Class_Custom        = 0x0e,      /**< The object is a custom object */
-    RT_Object_Class_Unknown       = 0x0f,      /**< The object is unknown. */
+    RT_Object_Class_ProcessGroup  = 0x0e,      /**< The object is a process group */
+    RT_Object_Class_Session       = 0x0f,      /**< The object is a session */
+    RT_Object_Class_Custom        = 0x10,      /**< The object is a custom object */
+    RT_Object_Class_Unknown       = 0x11,      /**< The object is unknown. */
     RT_Object_Class_Static        = 0x80       /**< The object is a static object. */
 };
 
@@ -521,23 +526,23 @@ struct rt_object_information
  *     do_other_things();
  * }
  */
-#define _RT_OBJECT_HOOKLIST_CALL(nodetype, nested, list, lock, argv) \
-    do                                                               \
-    {                                                                \
-        nodetype iter;                                               \
-        rt_ubase_t level = rt_spin_lock_irqsave(&lock);              \
-        nested += 1;                                                 \
-        rt_spin_unlock_irqrestore(&lock, level);                     \
-        if (!rt_list_isempty(&list))                                 \
-        {                                                            \
-            rt_list_for_each_entry(iter, &list, list_node)           \
-            {                                                        \
-                iter->handler argv;                                  \
-            }                                                        \
-        }                                                            \
-        level = rt_spin_lock_irqsave(&lock);                         \
-        nested -= 1;                                                 \
-        rt_spin_unlock_irqrestore(&lock, level);                     \
+#define _RT_OBJECT_HOOKLIST_CALL(nodetype, nested, list, lock, argv)  \
+    do                                                                \
+    {                                                                 \
+        nodetype iter, next;                                          \
+        rt_ubase_t level = rt_spin_lock_irqsave(&lock);               \
+        nested += 1;                                                  \
+        rt_spin_unlock_irqrestore(&lock, level);                      \
+        if (!rt_list_isempty(&list))                                  \
+        {                                                             \
+            rt_list_for_each_entry_safe(iter, next, &list, list_node) \
+            {                                                         \
+                iter->handler argv;                                   \
+            }                                                         \
+        }                                                             \
+        level = rt_spin_lock_irqsave(&lock);                          \
+        nested -= 1;                                                  \
+        rt_spin_unlock_irqrestore(&lock, level);                      \
     } while (0)
 #define RT_OBJECT_HOOKLIST_CALL(name, argv)                        \
     _RT_OBJECT_HOOKLIST_CALL(name##_hooklistnode_t, name##_nested, \
@@ -794,17 +799,30 @@ struct lwp_sigaction {
     void (*sa_restorer)(void);
 };
 
+typedef struct lwp_siginfo_ext {
+    union {
+        /* for SIGCHLD */
+        struct {
+            int status;
+            clock_t utime;
+            clock_t stime;
+        } sigchld;
+    };
+} *lwp_siginfo_ext_t;
+
 typedef struct lwp_siginfo {
     rt_list_t node;
 
     struct {
         int signo;
         int code;
-        long value;
 
         int from_tid;
         pid_t from_pid;
     } ksiginfo;
+
+    /* the signal specified extension field */
+    struct lwp_siginfo_ext *ext;
 } *lwp_siginfo_t;
 
 typedef struct lwp_sigqueue {
@@ -1238,6 +1256,7 @@ enum rt_device_class_type
 #define RT_DEVICE_FLAG_ACTIVATED        0x010           /**< device is activated */
 #define RT_DEVICE_FLAG_SUSPENDED        0x020           /**< device is suspended */
 #define RT_DEVICE_FLAG_STREAM           0x040           /**< stream mode */
+#define RT_DEVICE_FLAG_DYNAMIC          0x080           /**< device is determined when open() */
 
 #define RT_DEVICE_FLAG_INT_RX           0x100           /**< INT mode on Rx */
 #define RT_DEVICE_FLAG_DMA_RX           0x200           /**< DMA mode on Rx */
@@ -1351,6 +1370,9 @@ struct rt_device
     const struct dfs_file_ops *fops;
     struct rt_wqueue wait_queue;
 #endif /* RT_USING_POSIX_DEVIO */
+
+    rt_err_t (*readlink)
+        (rt_device_t dev, char *buf, int len);          /**< for dynamic device */
 
     void                     *user_data;                /**< device private data */
 };

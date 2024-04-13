@@ -17,8 +17,19 @@
 
 enum
 {
+#ifdef BSP_USING_SPI1
+    SPI1_INDEX,
+#endif
 #ifdef BSP_USING_SPI3
     SPI3_INDEX,
+#endif
+
+#ifdef BSP_USING_SPI6
+    SPI6_INDEX,
+#endif
+
+#ifdef BSP_USING_SPI7
+    SPI7_INDEX,
 #endif
 };
 
@@ -47,6 +58,20 @@ struct lpc_spi
 
 static struct lpc_spi lpc_obj[] =
 {
+#ifdef BSP_USING_SPI1
+        {
+            .LPSPIx = LPSPI1,
+            .clock_attach_id = kFRO_HF_DIV_to_FLEXCOMM1,
+            .clock_div_name = kCLOCK_DivFlexcom1Clk,
+            .clock_name = kCLOCK_FroHf,
+            .tx_dma_request = kDmaRequestMuxLpFlexcomm1Tx,
+            .rx_dma_request = kDmaRequestMuxLpFlexcomm1Rx,
+            .DMAx = DMA0,
+            .tx_dma_chl = 0,
+            .rx_dma_chl = 1,
+            .name = "spi1",
+        },
+#endif
 #ifdef BSP_USING_SPI3
         {
             .LPSPIx = LPSPI3,
@@ -60,7 +85,34 @@ static struct lpc_spi lpc_obj[] =
             .rx_dma_chl = 3,
             .name = "spi3",
         },
-#endif
+#endif /* BSP_USING_SPI3 */
+#ifdef BSP_USING_SPI6
+        {
+            .LPSPIx = LPSPI6,
+            .clock_attach_id = kFRO_HF_DIV_to_FLEXCOMM6,
+            .clock_div_name = kCLOCK_DivFlexcom6Clk,
+            .clock_name = kCLOCK_FroHf,
+            .tx_dma_request = kDmaRequestMuxLpFlexcomm6Tx,
+            .rx_dma_request = kDmaRequestMuxLpFlexcomm6Rx,
+            .DMAx = DMA0,
+            .tx_dma_chl = 4,
+            .rx_dma_chl = 5,
+            .name = "spi6",
+#endif /* BSP_USING_SPI6 */
+#ifdef BSP_USING_SPI7
+        {
+            .LPSPIx = LPSPI7,
+            .clock_attach_id = kFRO_HF_DIV_to_FLEXCOMM7,
+            .clock_div_name = kCLOCK_DivFlexcom7Clk,
+            .clock_name = kCLOCK_FroHf,
+            .tx_dma_request = kDmaRequestMuxLpFlexcomm7Tx,
+            .rx_dma_request = kDmaRequestMuxLpFlexcomm7Rx,
+            .DMAx = DMA0,
+            .tx_dma_chl = 2,
+            .rx_dma_chl = 3,
+            .name = "spi7",
+        },
+#endif /* BSP_USING_SPI7 */
 };
 
 
@@ -68,8 +120,6 @@ struct lpc_sw_spi_cs
 {
     rt_uint32_t pin;
 };
-
-
 
 
 rt_err_t rt_hw_spi_device_attach(const char *bus_name, const char *device_name, rt_uint32_t pin)
@@ -89,14 +139,12 @@ rt_err_t rt_hw_spi_device_attach(const char *bus_name, const char *device_name, 
 }
 
 
-
 static rt_err_t spi_configure(struct rt_spi_device *device, struct rt_spi_configuration *cfg)
 {
     rt_err_t ret = RT_EOK;
 //    struct lpc_spi *spi = RT_NULL;
 //    spi = (struct lpc_spi *)(device->bus->parent.user_data);
 //    ret = lpc_spi_init(spi->SPIx, cfg);
-
     return ret;
 }
 
@@ -133,7 +181,7 @@ static rt_ssize_t spixfer(struct rt_spi_device *device, struct rt_spi_message *m
   //  if(message->length < MAX_DMA_TRANSFER_SIZE)
     if(0)
     {
-      //  SPI_MasterTransferBlocking(spi->SPIx, &transfer);
+        LPSPI_MasterTransferBlocking(spi->LPSPIx, &transfer);
     }
     else
     {

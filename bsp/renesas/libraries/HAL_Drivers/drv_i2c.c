@@ -16,68 +16,90 @@
 
 #ifdef BSP_USING_HW_I2C
 
-#define DBG_TAG              "drv.hwi2c"
-#ifdef DRV_DEBUG
-    #define DBG_LVL               DBG_LOG
-#else
-    #define DBG_LVL               DBG_INFO
-#endif /* DRV_DEBUG */
-#include <rtdbg.h>
+#define DRV_DEBUG
+#define LOG_TAG             "drv.hwi2c"
+#include <drv_log.h>
 
 #include <hal_data.h>
 
-static struct rt_i2c_bus_device prv_ra_i2c;
-static volatile i2c_master_event_t i2c_event = I2C_MASTER_EVENT_ABORTED;
+#define RA_SCI_EVENT_ABORTED        1
+#define RA_SCI_EVENT_RX_COMPLETE    2
+#define RA_SCI_EVENT_TX_COMPLETE    4
+#define RA_SCI_EVENT_ERROR          8
+#define RA_SCI_EVENT_ALL            15
+
+struct ra_i2c_handle
+{
+    struct rt_i2c_bus_device bus;
+    char bus_name[RT_NAME_MAX];
+    const i2c_master_cfg_t *i2c_cfg;
+    void *i2c_ctrl;
+    struct rt_event event;
+};
+
+static struct ra_i2c_handle ra_i2cs[] =
+{
+#ifdef BSP_USING_HW_I2C0
+    {.bus_name = "i2c0", .i2c_cfg = &g_i2c_master0_cfg, .i2c_ctrl = &g_i2c_master0_ctrl,},
+#endif
+#ifdef BSP_USING_HW_I2C1
+    {.bus_name = "i2c1", .i2c_cfg = &g_i2c_master1_cfg, .i2c_ctrl = &g_i2c_master1_ctrl,},
+#endif
+};
 
 void i2c_master_callback(i2c_master_callback_args_t *p_args)
 {
+    rt_interrupt_enter();
     if (NULL != p_args)
     {
         /* capture callback event for validating the i2c transfer event*/
-        i2c_event = p_args->event;
+        struct ra_i2c_handle *obj = (struct ra_i2c_handle *)p_args->p_context;
+        uint32_t event = 0;
+        RT_ASSERT(obj != RT_NULL);
+        switch (p_args->event)
+        {
+        case I2C_MASTER_EVENT_ABORTED:
+            event |= RA_SCI_EVENT_ABORTED;
+            break;
+        case I2C_MASTER_EVENT_RX_COMPLETE:
+            event |= RA_SCI_EVENT_RX_COMPLETE;
+            break;
+        case I2C_MASTER_EVENT_TX_COMPLETE:
+            event |= RA_SCI_EVENT_TX_COMPLETE;
+            break;
+        }
+        rt_event_send(&obj->event, event);
     }
+    rt_interrupt_leave();
 }
 
-static fsp_err_t validate_i2c_event(void)
+static rt_err_t validate_i2c_event(struct ra_i2c_handle *handle)
 {
-    uint16_t local_time_out = UINT16_MAX;
-
-    /* resetting call back event capture variable */
-    i2c_event = (i2c_master_event_t)0;
-
-    do
+    rt_uint32_t event = 0;
+    if (RT_EOK != rt_event_recv(&handle->event, RA_SCI_EVENT_ALL, RT_EVENT_FLAG_OR | RT_EVENT_FLAG_CLEAR, (int32_t)rt_tick_from_millisecond(100), &event))
     {
-        /* This is to avoid infinite loop */
-        --local_time_out;
-
-        if(0 == local_time_out)
-        {
-            return FSP_ERR_TRANSFER_ABORTED;
-        }
-
-    }while(i2c_event == 0);
-
-    if(i2c_event != I2C_MASTER_EVENT_ABORTED)
+        return -RT_ETIMEOUT;
+    }
+    if ((event & (RA_SCI_EVENT_ABORTED | RA_SCI_EVENT_ERROR)) == 0)
     {
-        /* Make sure this is always Reset before return*/
-        i2c_event = (i2c_master_event_t)0;
-        return FSP_SUCCESS;
+        return RT_EOK;
     }
 
-    /* Make sure this is always Reset before return */
-    i2c_event = (i2c_master_event_t)0;
-    return FSP_ERR_TRANSFER_ABORTED;
+    return -RT_ERROR;
 }
 
 static rt_ssize_t ra_i2c_mst_xfer(struct rt_i2c_bus_device *bus,
-                                struct rt_i2c_msg msgs[],
-                                rt_uint32_t num)
+                                  struct rt_i2c_msg msgs[],
+                                  rt_uint32_t num)
 {
     rt_size_t i;
     struct rt_i2c_msg *msg = msgs;
     RT_ASSERT(bus != RT_NULL);
-    fsp_err_t err     = FSP_SUCCESS;
+    fsp_err_t err = FSP_SUCCESS;
     bool restart = false;
+
+    struct ra_i2c_handle *ra_i2c = rt_container_of(bus, struct ra_i2c_handle, bus);
+    i2c_master_ctrl_t *master_ctrl = ra_i2c->i2c_ctrl;
 
     for (i = 0; i < num; i++)
     {
@@ -87,22 +109,19 @@ static rt_ssize_t ra_i2c_mst_xfer(struct rt_i2c_bus_device *bus,
         }
         if (msg[i].flags & RT_I2C_ADDR_10BIT)
         {
-            LOG_E("10Bit not support");
-            break;
+            R_IIC_MASTER_SlaveAddressSet(master_ctrl, msg[i].addr, I2C_MASTER_ADDR_MODE_10BIT);
         }
         else
         {
-            g_i2c_master1_ctrl.slave = msg[i].addr;
+            R_IIC_MASTER_SlaveAddressSet(master_ctrl, msg[i].addr, I2C_MASTER_ADDR_MODE_7BIT);
         }
 
         if (msg[i].flags & RT_I2C_RD)
         {
-            err = R_IIC_MASTER_Read(&g_i2c_master1_ctrl, msg[i].buf, msg[i].len, restart);
+            err = R_IIC_MASTER_Read(master_ctrl, msg[i].buf, msg[i].len, restart);
             if (FSP_SUCCESS == err)
             {
-                err = validate_i2c_event();
-                /* handle error */
-                if(FSP_ERR_TRANSFER_ABORTED == err)
+                if (RT_EOK != validate_i2c_event(ra_i2c))
                 {
                     LOG_E("POWER_CTL reg I2C read failed");
                     break;
@@ -112,18 +131,16 @@ static rt_ssize_t ra_i2c_mst_xfer(struct rt_i2c_bus_device *bus,
             else
             {
                 /* Write API returns itself is not successful */
-                LOG_E("R_IIC_MASTER_Write API failed");
+                LOG_E("R_I2C_MASTER_Write API failed");
                 break;
             }
         }
         else
         {
-            err = R_IIC_MASTER_Write(&g_i2c_master1_ctrl, msg[i].buf, msg[i].len, restart);
+            err = R_IIC_MASTER_Write(master_ctrl, msg[i].buf, msg[i].len, restart);
             if (FSP_SUCCESS == err)
             {
-                err = validate_i2c_event();
-                /* handle error */
-                if(FSP_ERR_TRANSFER_ABORTED == err)
+                if (RT_EOK != validate_i2c_event(ra_i2c))
                 {
                     LOG_E("POWER_CTL reg I2C write failed");
                     break;
@@ -133,12 +150,12 @@ static rt_ssize_t ra_i2c_mst_xfer(struct rt_i2c_bus_device *bus,
             else
             {
                 /* Write API returns itself is not successful */
-                LOG_E("R_IIC_MASTER_Write API failed");
+                LOG_E("R_I2C_MASTER_Write API failed");
                 break;
             }
         }
     }
-    return i;
+    return (rt_ssize_t)i;
 }
 
 static const struct rt_i2c_bus_device_ops ra_i2c_ops =
@@ -151,17 +168,32 @@ static const struct rt_i2c_bus_device_ops ra_i2c_ops =
 int ra_hw_i2c_init(void)
 {
     fsp_err_t err     = FSP_SUCCESS;
-    prv_ra_i2c.ops = &ra_i2c_ops;
-    prv_ra_i2c.priv = 0;
-    /* opening IIC master module */
-    err = R_IIC_MASTER_Open(&g_i2c_master1_ctrl, &g_i2c_master1_cfg);
-    /* handle error */
-    if (FSP_SUCCESS != err)
+    for (rt_uint32_t i = 0; i < sizeof(ra_i2cs) / sizeof(ra_i2cs[0]); i++)
     {
-        LOG_E("R_IIC_MASTER_Open API failed");
-        return err;
+        ra_i2cs[i].bus.ops = &ra_i2c_ops;
+        ra_i2cs[i].bus.priv = 0;
+
+        if (RT_EOK != rt_event_init(&ra_i2cs[i].event, ra_i2cs[i].bus_name, RT_IPC_FLAG_FIFO))
+        {
+            LOG_E("Init event failed");
+            continue;
+        }
+        /* opening IIC master module */
+        err = R_IIC_MASTER_Open(ra_i2cs[i].i2c_ctrl, ra_i2cs[i].i2c_cfg);
+        if (FSP_SUCCESS != err)
+        {
+            LOG_E("R_I2C_MASTER_Open API failed,%d", err);
+            continue;
+        }
+        err = R_IIC_MASTER_CallbackSet(ra_i2cs[i].i2c_ctrl, i2c_master_callback, &ra_i2cs[i], RT_NULL);
+        /* handle error */
+        if (FSP_SUCCESS != err)
+        {
+            LOG_E("R_I2C_CallbackSet API failed,%d", err);
+            continue;
+        }
+        rt_i2c_bus_device_register(&ra_i2cs[i].bus, ra_i2cs[i].bus_name);
     }
-    rt_i2c_bus_device_register(&prv_ra_i2c, "i2c1");
 
     return 0;
 }

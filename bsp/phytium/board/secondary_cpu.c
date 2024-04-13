@@ -40,6 +40,7 @@
 
 rt_uint64_t rt_cpu_mpidr_early[] =
 {
+
 #if defined(TARGET_E2000D)
     [0] = 0x80000200,
     [1] = 0x80000201,
@@ -78,7 +79,7 @@ void rt_hw_secondary_cpu_up(void)
         {
             continue;
         }
-        cpu_mask = 1 << phytium_cpu_id_mapping(i);
+        cpu_mask = 1<<phytium_cpu_id_mapping(i);
 
 #if defined(TARGET_ARMV8_AARCH64)
         /* code */
@@ -103,7 +104,6 @@ void rt_hw_secondary_cpu_up(void)
  */
 extern size_t MMUTable[];
 
-
 void rt_hw_secondary_cpu_bsp_start(void)
 {
     /*  spin lock init */
@@ -125,7 +125,7 @@ void rt_hw_secondary_cpu_bsp_start(void)
 #if defined(TARGET_ARMV8_AARCH64)
     arm_gic_cpu_init(0, 0);
 
-    arm_gic_redist_init(0, 0);
+    phytium_aarch64_arm_gic_redist_init();
     rt_kprintf("arm_gic_redist_init is over rt_hw_cpu_id() is %d \r\n", rt_hw_cpu_id());
 #else
     arm_gic_cpu_init(0);

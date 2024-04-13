@@ -9,7 +9,11 @@
  *                             to blocked thread.
  * 2022-01-24     THEWON       let rt_wqueue_wait return thread->error when using signal
  * 2023-09-15     xqyjlj       perf rt_hw_interrupt_disable/enable
+ * 2023-11-21     Shell        Support wakeup_all
  */
+#define DBG_TAG "ipc.waitqueue"
+#define DBG_LVL DBG_INFO
+#include <rtdbg.h>
 
 #include <stdint.h>
 #include <rthw.h>
@@ -64,7 +68,8 @@ int __wqueue_default_wake(struct rt_wqueue_node *wait, void *key)
 }
 
 /**
- * @brief    This function will wake up a pending thread on the specified waiting queue that meets the conditions.
+ * @brief    This function will wake up a pending thread on the specified
+ * waiting queue that meets the conditions.
  *
  * @param    queue is a pointer to the wait queue.
  *
@@ -94,17 +99,89 @@ void rt_wqueue_wakeup(rt_wqueue_t *queue, void *key)
             entry = rt_list_entry(node, struct rt_wqueue_node, list);
             if (entry->wakeup(entry, key) == 0)
             {
-                rt_thread_resume(entry->polling_thread);
-                need_schedule = 1;
+                /**
+                 * even though another thread may interrupt the thread and
+                 * wakeup it meanwhile, we can asuume that condition is ready
+                 */
+                entry->polling_thread->error = RT_EOK;
+                if (!rt_thread_resume(entry->polling_thread))
+                {
+                    need_schedule = 1;
 
-                rt_list_remove(&(entry->list));
-                break;
+                    rt_list_remove(&(entry->list));
+
+                    break;
+                }
             }
         }
     }
     rt_spin_unlock_irqrestore(&(queue->spinlock), level);
     if (need_schedule)
         rt_schedule();
+
+    return;
+}
+
+/**
+ * @brief    This function will wake up all pending thread on the specified
+ *           waiting queue that meets the conditions.
+ *
+ * @param    queue is a pointer to the wait queue.
+ *
+ * @param    key is the wakeup conditions, but it is not effective now, because
+ *           default wakeup function always return 0.
+ *           If user wants to use it, user should define their own wakeup
+ *           function.
+ */
+void rt_wqueue_wakeup_all(rt_wqueue_t *queue, void *key)
+{
+    rt_base_t level;
+    int need_schedule = 0;
+
+    rt_list_t *queue_list;
+    struct rt_list_node *node;
+    struct rt_wqueue_node *entry;
+
+    queue_list = &(queue->waiting_list);
+
+    level = rt_spin_lock_irqsave(&(queue->spinlock));
+    /* set wakeup flag in the queue */
+    queue->flag = RT_WQ_FLAG_WAKEUP;
+
+    if (!(rt_list_isempty(queue_list)))
+    {
+        for (node = queue_list->next; node != queue_list; )
+        {
+            entry = rt_list_entry(node, struct rt_wqueue_node, list);
+            if (entry->wakeup(entry, key) == 0)
+            {
+                /**
+                 * even though another thread may interrupt the thread and
+                 * wakeup it meanwhile, we can asuume that condition is ready
+                 */
+                entry->polling_thread->error = RT_EOK;
+                if (!rt_thread_resume(entry->polling_thread))
+                {
+                    need_schedule = 1;
+                }
+                else
+                {
+                    /* wakeup happened too soon that waker hadn't slept */
+                    LOG_D("%s: Thread resume failed", __func__);
+                }
+                node = node->next;
+            }
+            else
+            {
+                node = node->next;
+            }
+        }
+    }
+    rt_spin_unlock_irqrestore(&(queue->spinlock), level);
+    if (need_schedule)
+        rt_schedule();
+
+    return;
 }
 
 /**
@@ -184,7 +261,7 @@ __exit_wakeup:
 
     rt_wqueue_remove(&__wait);
 
-    return tid->error;
+    return tid->error > 0 ? -tid->error : tid->error;
 }
 
 int rt_wqueue_wait(rt_wqueue_t *queue, int condition, int msec)

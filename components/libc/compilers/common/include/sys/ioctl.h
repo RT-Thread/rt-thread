@@ -15,6 +15,10 @@
 extern "C" {
 #endif
 
+#ifdef RT_USING_MUSLLIBC
+#include_next <sys/ioctl.h>
+#else
+
 struct winsize
 {
     unsigned short ws_row;
@@ -23,9 +27,6 @@ struct winsize
     unsigned short ws_ypixel;
 };
 
-#ifdef RT_USING_MUSLLIBC
-#include <bits/ioctl.h>
-#else
 /*
  * Direction bits, which any architecture can choose to override
  * before including this file.

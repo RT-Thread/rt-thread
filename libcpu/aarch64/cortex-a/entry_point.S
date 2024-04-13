@@ -69,7 +69,8 @@ _head:
     .quad   0               /* Reserved */
     .ascii  "ARM\x64"       /* Magic number */
     .long   0               /* Reserved (used for PE COFF offset) */
-#endif
+#endif /* RT_USING_OFW */
+
 /* Variable registers: x21~x28 */
 dtb_paddr .req x21
 boot_arg0 .req x22
@@ -109,6 +110,7 @@ _start:
     /* Now we are in the end of boot cpu process */
     ldr     x8, =rtthread_startup
     b       init_mmu_early
+    /* never come back */
 
 kernel_start:
     /* jump to the PE's system entry */
@@ -172,12 +174,15 @@ init_cpu_el:
     lsr     x0, x0, #2
     and     x0, x0, #3
 
+    /* running at EL3? */
     cmp     x0, #3
     bne     .init_cpu_hyp
 
+    /* should never be executed, just for completeness. (EL3) */
     mov     x1, #(1 << 0)           /* EL0 and EL1 are in Non-Secure state */
     orr     x1, x1, #(1 << 4)       /* RES1 */
     orr     x1, x1, #(1 << 5)       /* RES1 */
+    /* bic  x1, x1, #(1 << 7)          disable Secure Monitor Call */
     orr     x1, x1, #(1 << 10)      /* The next lower level is AArch64 */
     msr     scr_el3, x1
 
@@ -193,7 +198,8 @@ init_cpu_el:
     eret
 
 .init_cpu_hyp:
-    cmp     x0, #2                  /* EL1 = 0100  */
+    /* running at EL2? */
+    cmp     x0, #2                  /* EL2 = 0b10  */
     bne     .init_cpu_sys
 
     /* Enable CNTP for EL1 */
@@ -220,7 +226,6 @@ init_cpu_el:
 
 .init_cpu_sys:
     mrs     x0, sctlr_el1
-    orr     x0, x0, #(1 << 12)      /* Enable Instruction */
     bic     x0, x0, #(3 << 3)       /* Disable SP Alignment check */
     bic     x0, x0, #(1 << 1)       /* Disable Alignment check */
     msr     sctlr_el1, x0
@@ -299,7 +304,9 @@ enable_mmu_early:
 
     ldr     x30, =kernel_start      /* Set LR to kernel_start function, it's virtual addresses */
 
+    /* Enable page table translation */
     mrs     x1, sctlr_el1
+    orr     x1, x1, #(1 << 12)      /* Stage 1 instruction access Cacheability control */
     orr     x1, x1, #(1 << 2)       /* Cacheable Normal memory in stage1 */
     orr     x1, x1, #(1 << 0)       /* MMU Enable */
     msr     sctlr_el1, x1

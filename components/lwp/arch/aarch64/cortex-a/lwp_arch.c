@@ -8,6 +8,7 @@
  * 2021-05-18     Jesven       first version
  * 2023-07-16     Shell        Move part of the codes to C from asm in signal handling
  * 2023-10-16     Shell        Support a new backtrace framework
+ * 2023-08-03     Shell        Support of syscall restart (SA_RESTART)
  */
 
 #include <armv8.h>
@@ -123,6 +124,7 @@ int arch_set_thread_context(void (*exit)(void), void *new_thread_stack,
 
 #define ALGIN_BYTES (16)
 
+/* the layout is part of ABI, dont change it */
 struct signal_ucontext
 {
     rt_int64_t sigreturn;
@@ -130,11 +132,62 @@ struct signal_ucontext
 
     siginfo_t si;
 
-    rt_align(16)
+    rt_align(ALGIN_BYTES)
     struct rt_hw_exp_stack frame;
 };
 
-void *arch_signal_ucontext_restore(rt_base_t user_sp)
+RT_STATIC_ASSERT(abi_offset_compatible, offsetof(struct signal_ucontext, si) == UCTX_ABI_OFFSET_TO_SI);
+
+void *arch_signal_ucontext_get_frame(struct signal_ucontext *uctx)
+{
+    return &uctx->frame;
+}
+
+/* internal used only */
+void arch_syscall_prepare_signal(rt_base_t rc, struct rt_hw_exp_stack *exp_frame)
+{
+    long x0 = exp_frame->x0;
+    exp_frame->x0 = rc;
+    exp_frame->x7 = x0;
+    return ;
+}
+
+void arch_syscall_restart(void *sp, void *ksp);
+
+void arch_syscall_set_errno(void *eframe, int expected, int code)
+{
+    struct rt_hw_exp_stack *exp_frame = eframe;
+    if (exp_frame->x0 == -expected)
+        exp_frame->x0 = -code;
+    return ;
+}
+
+void arch_signal_check_erestart(void *eframe, void *ksp)
+{
+    struct rt_hw_exp_stack *exp_frame = eframe;
+    long rc = exp_frame->x0;
+    long sys_id = exp_frame->x8;
+    (void)sys_id;
+
+    if (rc == -ERESTART)
+    {
+        LOG_D("%s(rc=%ld,sys_id=%ld,pid=%d)", __func__, rc, sys_id, lwp_self()->pid);
+        LOG_D("%s: restart rc = %ld", lwp_get_syscall_name(sys_id), rc);
+        exp_frame->x0 = exp_frame->x7;
+        arch_syscall_restart(eframe, ksp);
+    }
+
+    return ;
+}
+
+static void arch_signal_post_action(struct signal_ucontext *new_sp, rt_base_t kernel_sp)
+{
+    arch_signal_check_erestart(&new_sp->frame, (void *)kernel_sp);
+
+    return ;
+}
+
+void *arch_signal_ucontext_restore(rt_base_t user_sp, rt_base_t kernel_sp)
 {
     struct signal_ucontext *new_sp;
     new_sp = (void *)user_sp;
@@ -142,6 +195,7 @@ void *arch_signal_ucontext_restore(rt_base_t user_sp)
     if (lwp_user_accessable(new_sp, sizeof(*new_sp)))
     {
         lwp_thread_signal_mask(rt_thread_self(), LWP_SIG_MASK_CMD_SET_MASK, &new_sp->save_sigmask, RT_NULL);
+        arch_signal_post_action(new_sp, kernel_sp);
     }
     else
     {
@@ -157,7 +211,7 @@ void *arch_signal_ucontext_save(rt_base_t user_sp, siginfo_t *psiginfo,
                                 lwp_sigset_t *save_sig_mask)
 {
     struct signal_ucontext *new_sp;
-    new_sp = (void *)(user_sp - sizeof(struct signal_ucontext));
+    new_sp = (void *)((user_sp - sizeof(struct signal_ucontext)) & ~0xf);
 
     if (lwp_user_accessable(new_sp, sizeof(*new_sp)))
     {

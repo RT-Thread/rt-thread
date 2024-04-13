@@ -60,8 +60,25 @@ menu "On-chip Peripheral Drivers"
             default y
 
             if BSP_USING_SPI
+                config BSP_USING_SPI1
+                    bool "Enable Flexcomm1 as SPI"
+                    default n
+
                 config BSP_USING_SPI3
                     bool "Enable Flexcomm3 as SPI"
+                    default n
+
+                config BSP_USING_SPI6
+                    bool "Enable Flexcomm6 as SPI"
+                    default n
+                    if BSP_USING_SPI6
+                        config BSP_USING_SPI6_SAMPLE
+                            bool "Enable SPI6 BUS Sample"
+                            default n
+                    endif
+
+                config BSP_USING_SPI7
+                    bool "Enable Flexcomm7 as SPI"
                     default n
 
                 config BSP_USING_SPI8
@@ -135,6 +152,13 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_DFS_ELMFAT
         default y
 
+    config BSP_USING_ETH
+        bool "Enable Ethernet"
+        default n
+        select RT_USING_LWIP
+        select RT_USING_NETDEV
+        select RT_USING_SAL
+        
     config BSP_USING_RTC
         bool "Enable RTC"
         select RT_USING_RTC
@@ -162,11 +186,36 @@ menu "On-chip Peripheral Drivers"
                     bool "Enable on-board green LED as PWM output (pwm0, channel 3)"
                     default y
             endif
+
 endmenu
 
 
 menu "Board extended module Drivers"
+    menuconfig BSP_USING_RW007
+        bool "Enable RW007"
+        default n
+        select BSP_USING_SPI1
+        select PKG_USING_RW007
+        select RT_USING_MEMPOOL
+        select RW007_NOT_USE_EXAMPLE_DRIVERS
 
+    if BSP_USING_RW007
+        config BOARD_RW007_SPI_BUS_NAME
+            string "RW007 BUS NAME"
+            default "spi1"
+
+        config BOARD_RW007_CS_PIN
+            hex "CS pin index"
+            default 27
+
+        config BOARD_RW007_INT_BUSY_PIN
+            hex "INT/BUSY pin index"
+            default 10
+
+        config BOARD_RW007_RST_PIN
+            hex "RESET pin index"
+            default 28
+    endif
 endmenu
 
 endmenu

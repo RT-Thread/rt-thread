@@ -37,14 +37,17 @@ jobs:
       fail-fast: false
       matrix:
        legs:
-         -  RTT_BSP: "RT-Thread Online Packages"
+         -  RTT_BSP: "RT-Thread Online Packages (STM32F407 RT-Spark)"
             RTT_TOOL_CHAIN: "sourcery-arm"
             SUB_RTT_BSP:
                 - "stm32/stm32f407-rt-spark"
-         -  RTT_BSP: "RTduino/Arduino Libraries"
+         -  RTT_BSP: "RTduino/Arduino Libraries (STM32F412 Nucleo)"
             RTT_TOOL_CHAIN: "sourcery-arm"
             SUB_RTT_BSP:
                 - "stm32/stm32f412-st-nucleo"
+         -  RTT_BSP: "RTduino/Arduino Libraries (Raspberry Pico)"
+            RTT_TOOL_CHAIN: "sourcery-arm"
+            SUB_RTT_BSP:
                 - "raspberry-pico"
          -  RTT_BSP: "others_at32_hc32"
             RTT_TOOL_CHAIN: "sourcery-arm"
@@ -176,6 +179,7 @@ jobs:
                 - "stm32/stm32h750-artpi"
                 - "stm32/stm32h750-weact-ministm32h7xx"
                 - "stm32/stm32h750-fk750m1-vbt6"
+                - "stm32/stm32h7s7-st-disco"
                 - "stm32/stm32mp157a-st-discovery"
                 - "stm32/stm32mp157a-st-ev1"
                 - "stm32/stm32u575-st-nucleo"
@@ -218,6 +222,7 @@ jobs:
                 - "renesas/ra8m1-ek"
                 - "renesas/ra8d1-ek"
                 - "renesas/ra8d1-vision-board"
+                - "renesas/rzt2m_rsk"
                 - "frdm-k64f"
                 - "xplorer4330/M4"
          -  RTT_BSP: "gd32_n32_apm32"   

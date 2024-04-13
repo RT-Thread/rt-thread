@@ -4,6 +4,6 @@ cwd = GetCurrentDir()
 src = Glob('*.c') + Glob('*.cpp')
 inc = [cwd]
 
-group = DefineGroup('RTduino', src, depend = ['PKG_USING_RTDUINO'], CPPPATH = inc)
+group = DefineGroup('RTduino-pinout', src, depend = ['PKG_USING_RTDUINO'], CPPPATH = inc)
 
 Return('group')

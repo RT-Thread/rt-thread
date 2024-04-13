@@ -1,23 +1,49 @@
 #!/bin/bash
 
-set -e
+PROJECT_PATH=$1
+IMAGE_NAME=$2
 
-LITTLE_BIN=$1
+if [ -z "$PROJECT_PATH" ] || [ -z "$IMAGE_NAME" ]; then
+	echo "Usage: $0 <PROJECT_DIR> <IMAGE_NAME>"
+	exit 1
+fi
 
-. ./pre-build/fsbl/build/cv1800b_milkv_duo_sd/blmacros.env && \
-./pre-build/fsbl/plat/cv180x/fiptool.py -v genfip \
-	'fip.bin' \
-	--MONITOR_RUNADDR="${MONITOR_RUNADDR}" \
-	--BLCP_2ND_RUNADDR="${BLCP_2ND_RUNADDR}" \
-	--CHIP_CONF='./pre-build/fsbl/build/cv1800b_milkv_duo_sd/chip_conf.bin' \
-	--NOR_INFO='FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF' \
-	--NAND_INFO='00000000'\
-	--BL2='pre-build/fsbl/build/cv1800b_milkv_duo_sd/bl2.bin' \
-	--BLCP_IMG_RUNADDR=0x05200200 \
-	--BLCP_PARAM_LOADADDR=0 \
-	--BLCP=pre-build/fsbl/test/empty.bin \
-	--DDR_PARAM='pre-build/fsbl/test/cv181x/ddr_param.bin' \
-	--BLCP_2ND=$LITTLE_BIN \
-	--MONITOR='pre-build/fw_dynamic.bin' \
-	--LOADER_2ND='pre-build/u-boot-raw.bin' \
-	--compress='lzma'
+ROOT_PATH=$(pwd)
+echo $ROOT_PATH
+
+. board_env.sh
+
+get_board_type
+echo "board_type: ${BOARD_TYPE}"
+
+check_bootloader || exit 0
+
+export BLCP_2ND_PATH=${PROJECT_PATH}/${IMAGE_NAME}
+
+pushd cvitek_bootloader
+
+. env.sh
+
+get_build_board ${BOARD_TYPE}
+
+echo "board: ${MV_BOARD_LINK}"
+
+if [ ! -d opensbi/build/platform/generic ] || [ ! -d fsbl/build/${MV_BOARD_LINK} ] ||  [ ! -d u-boot-2021.10/build/${MV_BOARD_LINK} ]; then
+	do_build
+	
+	CHIP_ARCH_L=$(echo $CHIP_ARCH | tr '[:upper:]' '[:lower:]')
+	cp -rf build/output/${MV_BOARD_LINK}/cvi_board_memmap.ld ${ROOT_PATH}/c906_little/board/script/${CHIP_ARCH_L}
+else
+	echo "Build already done, skip build"
+
+	do_combine
+
+	if [ $? -ne 0 ]; then
+		do_build
+	fi
+fi
+
+popd
+
+mkdir -p output/${MV_BOARD}
+cp -rf cvitek_bootloader/install/soc_${MV_BOARD_LINK}/fip.bin output/${MV_BOARD}/fip.bin

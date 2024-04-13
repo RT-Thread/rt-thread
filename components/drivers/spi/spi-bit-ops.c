@@ -384,6 +384,11 @@ rt_err_t spi_bit_configure(struct rt_spi_device *device, struct rt_spi_configura
     RT_ASSERT(device != RT_NULL);
     RT_ASSERT(configuration != RT_NULL);
 
+    if(ops->pin_init != RT_NULL)
+    {
+        ops->pin_init();
+    }
+
     if (configuration->mode & RT_SPI_SLAVE)
     {
         return -RT_EIO;
