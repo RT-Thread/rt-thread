@@ -30,7 +30,7 @@
 | SPI          |     支持     | SPI0 -  SPI2                    |
 | ADC          |     支持     | ADC0 - ADC2                     |
 | TF CARD      |     支持     | SDIO                            |
-| SPI FLASH    |   暂不支持   |                                 |
+| SPI FLASH    |     支持     | SPI1                            |
 | **扩展模块** | **支持情况** | **备注**                        |
 | 暂无         |   暂不支持   | 暂不支持                        |
 
@@ -52,7 +52,7 @@
 
 #### 硬件连接
 
-使用数据线连接开发板到 PC，使用USB转TTL模块连接PA2(MCU TX)和PA3(MCU RX)，上电。
+使用数据线连接开发板到 PC，使用USB转TTL模块连接PA9(MCU TX)和PA10(MCU RX)，上电。
 
 #### 编译下载
 
@@ -69,9 +69,9 @@
 ```bash
  \ | /
 - RT -     Thread Operating System
- / | \     5.1.0 build Jan 13 2024 09:22:48
- 2006 - 2022 Copyright by RT-Thread team
-msh >
+ / | \     5.1.0 build Apr 13 2024 11:59:40
+ 2006 - 2024 Copyright by RT-Thread team
+
 ```
 
 ### 进阶使用

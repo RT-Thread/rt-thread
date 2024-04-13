@@ -101,12 +101,6 @@
 #define RT_DFS_ELM_MUTEX_TIMEOUT 3000
 #define RT_USING_DFS_DEVFS
 #define RT_USING_DFS_ROMFS
-#define RT_USING_FAL
-#define FAL_DEBUG_CONFIG
-#define FAL_DEBUG 1
-#define FAL_PART_HAS_TABLE_CFG
-#define FAL_USING_SFUD_PORT
-#define FAL_USING_NOR_FLASH_DEV_NAME "norflash0"
 
 /* Device Drivers */
 
@@ -116,20 +110,6 @@
 #define RT_USING_SERIAL_V1
 #define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 64
-#define RT_USING_I2C
-#define RT_USING_I2C_BITOPS
-#define RT_USING_PWM
-#define RT_USING_SDIO
-#define RT_SDIO_STACK_SIZE 512
-#define RT_SDIO_THREAD_PRIORITY 15
-#define RT_MMCSD_STACK_SIZE 1024
-#define RT_MMCSD_THREAD_PREORITY 22
-#define RT_MMCSD_MAX_PARTITION 16
-#define RT_USING_SPI
-#define RT_USING_SFUD
-#define RT_SFUD_USING_SFDP
-#define RT_SFUD_USING_FLASH_INFO_TABLE
-#define RT_SFUD_SPI_MAX_HZ 50000000
 #define RT_USING_PIN
 
 /* Using USB */
@@ -235,7 +215,6 @@
 
 /* touch drivers */
 
-#define SDIO_MAX_FREQ 24000000
 
 /* Kendryte SDK */
 
@@ -297,22 +276,11 @@
 
 /* Onboard Peripheral Drivers */
 
-#define BSP_USING_SPI_FLASH
-#define BSP_USING_FS
-#define BSP_USING_SDCARD_FATFS
-#define BSP_USING_FS_AUTO_MOUNT
-#define BSP_USING_FLASH_FATFS
-#define BSP_USING_FLASH_FS_AUTO_MOUNT
-#define BSP_USING_FAL
 
 /* On-chip Peripheral Drivers */
 
 #define BSP_USING_GPIO
 #define BSP_USING_UART
 #define BSP_USING_UART1
-#define BSP_USING_ON_CHIP_FLASH
-#define BSP_USING_SPI
-#define BSP_USING_SPI1
-#define BSP_USING_SDIO
 
 #endif
