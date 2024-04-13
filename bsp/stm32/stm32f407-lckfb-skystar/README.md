@@ -1,99 +1,82 @@
-# STM32F407 星火一号开发板 BSP 说明
+# STM32F407-lckfb-skystar立创天空星开发板BSP说明
 
 ## 简介
 
-本文档为 RT-Thread 开发团队为 STM32F407 星火1号开发板提供的 BSP (板级支持包) 说明。
+该开发板是由立创开发板精心打造的一款高性价比的开发工具，**软硬件全开源**。设计上充分考虑了与多种100脚封装的单片机的兼容性。这种设计使得它不仅适用于特定的芯片，还能够适配市场上多种不同厂家生产的100脚微控制器，极大地提高了适用范围和灵活性。该BSP适配立创梁山派·天空星开发板的主控芯片为STM32F407VET6。
 
-主要内容如下：
+为了最大限度的方便开发者和爱好者，该核心板通过排针将所有可用的IO（输入/输出）引脚都引出，这样大家就可以轻松地连接各种外部模块和设备，无需进行复杂的焊接工作。这一特点特别适合那些需要快速原型制作和迭代的场合，如学生电子竞赛、创客活动以及个人DIY项目。
 
-- 开发板资源介绍
-- BSP 快速上手
-- 进阶使用方法
+此外，这款核心板的设计考虑到了大家在电子竞赛中对于稳定性和可靠性的需求，以及在小型项目开发中对低成本的追求。具体请看硬件设计手册。
 
-通过阅读快速上手章节开发者可以快速地上手该 BSP，将 RT-Thread 运行在开发板上。在进阶使用指南章节，将会介绍更多高级功能，帮助开发者利用 RT-Thread 驱动更多板载资源。
+![[(lckfb.com)](https://lckfb.com/project/detail/lckfb-lspi-skystar-stm32f407vet6-lite?param=baseInfo)](figures/board.png)
 
-## 开发板介绍
+## 资料罗列：
 
-星火号 STM32F407 是RT-THREAD推出的一款基于 ARM Cortex-M4 内核的开发板，最高主频为 168Mhz，该开发板具有丰富的板载资源，可以充分发挥 STM32F407 的芯片性能。
-
-开发板外观如下图所示：
-
-![board](figures/board.png)
-
-该开发板常用 **板载资源** 如下：
-
-- MCU：STM32F407ZGT6，主频 168MHz，1024KB FLASH ，192KB RAM
-- 外部 FLASH：W25Q128（SPI，16MB）
-- 常用外设
-  - LED：2个，LED_R（红色，PF12），LED_B（绿色，PF11）
-  - 按键，4个，KEY_UP（兼具唤醒功能，PIN：PC5），KEY_DOWN（PIN：PC1），KEY_LEFT（PIN：PC0），KEY_RIGHT（PIN：PC4）
-- 常用接口：USB 转串口、SD 卡接口、USB SLAVE、USB HOST
-- 调试接口，标准ST-LINK
-
-开发板更多详细信息请参考官方文档 [STM32 星火一号开发板介绍](https://www.rt-thread.org/document/site/#/rt-thread-version/rt-thread-standard/hw-board/spark-1/spark-1)。
+* [硬件开源地址](https://oshwhub.com/li-chuang-kai-fa-ban/li-chuang-liang-shan-pai-tian-kong-xing-kai-fa-ban)
+* [硬件文档](https://lceda001.feishu.cn/wiki/D4cqwUkiTi6723knO2cczSThnYb)
+* [入门手册](https://lceda001.feishu.cn/wiki/Zawdwg0laig3Qnk2XuxcKrQRn2g)
+* [模块移植手册](https://lceda001.feishu.cn/wiki/GySKwn3jMitXbAkhX0GcDjtBnQd)
+* [购买地址](https://lckfb.com/project/detail/lckfb-lspi-skystar-stm32f407vet6-lite?param=baseInfo)
 
 ## 外设支持
 
 本 BSP 目前对外设的支持情况如下：
 
-| **板载外设** | **支持情况** |               **备注**                |
-| :------------ | :----------: | :-----------------------------------: |
-| USB 转串口(COM1) |     支持     |                                    |
-| COM2         |   支持  | 和以太网、PWM 冲突，如需使用该外设，请使用 CubeMX 重新配置 UART2 管脚 |
-| COM3         |  支持   |                                           |
-| **片上外设** | **支持情况** |               **备注**                |
-| UART         |     支持     |              UART1/2/3              |
-| SPI          |     支持     |               SPI1/2/3                |
-| ADC          |     支持     |                                       |
-| RTC          |     支持     | 支持外部晶振和内部低速时钟 |
-| WDT          |     支持     |                                       |
-
-
+| **片上外设** | **支持情况** | **备注**                        |
+| :----------- | :----------: | :------------------------------ |
+| GPIO         |     支持     | PA0, PA1... ---> PIN: 0, 1...81 |
+| UART         |     支持     | UART0 - UART6                   |
+| I2C          |     支持     | I2C1                            |
+| SPI          |     支持     | SPI0 -  SPI2                    |
+| ADC          |     支持     | ADC0 - ADC2                     |
+| TF CARD      |     支持     | SDIO                            |
+| SPI FLASH    |   暂不支持   |                                 |
+| **扩展模块** | **支持情况** | **备注**                        |
+| 暂无         |   暂不支持   | 暂不支持                        |
 
 ## 使用说明
 
 使用说明分为如下两个章节：
 
 - 快速上手
-
-    本章节是为刚接触 RT-Thread 的新手准备的使用说明，遵循简单的步骤即可将 RT-Thread 操作系统运行在该开发板上，看到实验效果 。
+  
+  本章节是为刚接触 RT-Thread 的新手准备的使用说明，遵循简单的步骤即可将 RT-Thread 操作系统运行在该开发板上，看到实验效果 。
 
 - 进阶使用
-
-    本章节是为需要在 RT-Thread 操作系统上使用更多开发板资源的开发者准备的。通过使用 ENV 工具对 BSP 进行配置，可以开启更多板载资源，实现更多高级功能。
-
+  
+  本章节是为需要在 RT-Thread 操作系统上使用更多开发板资源的开发者准备的。通过使用 ENV 工具对 BSP 进行配置，可以开启更多板载资源，实现更多高级功能。
 
 ### 快速上手
 
-本 BSP 为开发者提供 MDK5 和 IAR 工程，并且支持 GCC 开发环境。下面以 MDK5 开发环境为例，介绍如何将系统运行起来。
+本 BSP 为开发者提供 MDK4、MDK5 工程，并且支持 GCC 开发环境，也可使用RT-Thread Studio开发。下面以 MDK5 开发环境为例，介绍如何将系统运行起来。
 
 #### 硬件连接
 
-使用数据线连接开发板到 PC，打开电源开关。
+使用数据线连接开发板到 PC，使用USB转TTL模块连接PA2(MCU TX)和PA3(MCU RX)，上电。
 
 #### 编译下载
 
 双击 project.uvprojx 文件，打开 MDK5 工程，编译并下载程序到开发板。
 
-> 工程默认配置使用 JLink 下载程序，在通过 JLink 连接开发板的基础上，点击下载按钮即可下载程序到开发板
+> 工程默认配置使用 CMSIS-DAP 仿真器下载程序，在通过 CMSIS-DAP 连接开发板的基础上，点击下载按钮即可下载程序到开发板
 
 #### 运行结果
 
-下载程序成功之后，系统会自动运行，观察开发板上 LED 的运行效果，红色 LED 常亮、绿色 LED 会周期性闪烁。
+下载程序成功之后，系统会自动运行，LED 闪烁。
 
 连接开发板对应串口到 PC , 在终端工具里打开相应的串口（115200-8-1-N），复位设备后，可以看到 RT-Thread 的输出信息:
 
 ```bash
-
  \ | /
 - RT -     Thread Operating System
- / | \     5.0.1 build Jul  4 2023 07:49:10
+ / | \     5.1.0 build Jan 13 2024 09:22:48
  2006 - 2022 Copyright by RT-Thread team
 msh >
 ```
+
 ### 进阶使用
 
-此 BSP 默认只开启了 GPIO 和 串口1 的功能，如果需使用 SD 卡、Flash 等更多高级功能，需要利用 ENV 工具对BSP 进行配置，步骤如下：
+此 BSP 默认只开启了 GPIO 和 串口0的功能，如果需使用高级功能，需要利用 ENV 工具对BSP 进行配置，步骤如下：
 
 1. 在 bsp 下打开 env 工具。
 
@@ -101,9 +84,7 @@ msh >
 
 3. 输入`pkgs --update`命令更新软件包。
 
-4. 输入`scons --target=mdk5/iar` 命令重新生成工程。
-
-本章节更多详细的介绍请参考 [STM32 系列 BSP 外设驱动使用教程](../docs/STM32系列BSP外设驱动使用教程.md)。
+4. 输入`scons --target=mdk4/mdk5/iar` 命令重新生成工程。
 
 ## 注意事项
 
@@ -113,4 +94,4 @@ msh >
 
 维护人:
 
-- [Supperthomas](https://github.com/supperthomas)
+- [yuanzihao](https://github.com/zihao-yuan/), 邮箱：[y@yzh.email](mailto:y@yzh.email)
