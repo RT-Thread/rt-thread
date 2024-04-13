@@ -689,15 +689,16 @@ menu "Hardware Drivers Config"
             bool "Enable RW007"
             default n
             select PKG_USING_RW007
-            select BSP_USING_SCI_SPI
-            select BSP_USING_SCI_SPI3
+            select BSP_USING_SCI
+            select BSP_USING_SCI3
+            select BSP_USING_SCI3_SPI
             select RT_USING_MEMPOOL
             select RW007_NOT_USE_EXAMPLE_DRIVERS
 
         if BSP_USING_RW007
             config RA_RW007_SPI_BUS_NAME
                 string "RW007 BUS NAME"
-                default "scpi3"
+                default "sci_spi3"
 
             config RA_RW007_CS_PIN
                 hex "(HEX)CS pin index"
