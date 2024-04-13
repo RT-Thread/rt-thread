@@ -3,9 +3,9 @@ menu "Hardware Drivers Config"
 menu "Onboard Peripheral Drivers"
 
     config BSP_USING_SPI_FLASH
-        bool "Enable SPI FLASH (W25Q64 spi2)"
+        bool "Enable SPI FLASH (GD25Q32 spi1)"
         select BSP_USING_SPI
-        select BSP_USING_SPI2
+        select BSP_USING_SPI1
         select RT_USING_SFUD
         select RT_SFUD_USING_SFDP
         default n
@@ -29,7 +29,7 @@ menu "Onboard Peripheral Drivers"
             endif
 
             config BSP_USING_FLASH_FATFS
-                bool "Enable FAL filesystem partition base on W25Q64"
+                bool "Enable FAL filesystem partition base on GD25Q32"
                 select BSP_USING_FAL
                 default n
             if BSP_USING_FLASH_FATFS
@@ -40,19 +40,13 @@ menu "Onboard Peripheral Drivers"
         endif
 
     config BSP_USING_FAL
-        bool "Enable FAL (enable on-chip flash and spi2 flash)"
+        bool "Enable FAL (enable on-chip flash and spi1 flash)"
         select BSP_USING_SPI_FLASH
         select RT_USING_FAL
         select FAL_DEBUG_CONFIG
         select FAL_PART_HAS_TABLE_CFG
         select FAL_USING_SFUD_PORT
         select BSP_USING_ON_CHIP_FLASH
-
-    if BSP_USING_FAL
-        menuconfig BSP_USING_BOOTLOADER
-        bool "Enable bootloader partition table"
-        default n
-    endif
 
 endmenu
 

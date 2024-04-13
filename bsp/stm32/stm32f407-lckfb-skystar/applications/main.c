@@ -7,6 +7,7 @@
  * Date           Author       Notes
  * 2023-07-06     Supperthomas first version
  * 2023-12-03     Meco Man     support nano version
+ * 2024-04-13     yuanzihao    adaptation for SkyStar STM32F407 version
  */
 
 #include <board.h>
