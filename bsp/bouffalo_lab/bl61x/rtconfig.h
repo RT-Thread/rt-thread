@@ -8,7 +8,7 @@
 
 #define RT_NAME_MAX 8
 #define RT_CPUS_NR 1
-#define RT_ALIGN_SIZE 8
+#define RT_ALIGN_SIZE 32
 #define RT_THREAD_PRIORITY_32
 #define RT_THREAD_PRIORITY_MAX 32
 #define RT_TICK_PER_SECOND 1000
@@ -17,7 +17,7 @@
 #define RT_HOOK_USING_FUNC_PTR
 #define RT_USING_IDLE_HOOK
 #define RT_IDLE_HOOK_LIST_SIZE 4
-#define IDLE_THREAD_STACK_SIZE 512
+#define IDLE_THREAD_STACK_SIZE 2048
 #define RT_USING_TIMER_SOFT
 #define RT_TIMER_THREAD_PRIO 4
 #define RT_TIMER_THREAD_STACK_SIZE 512
@@ -49,6 +49,7 @@
 #define RT_CONSOLE_DEVICE_NAME "uart0"
 #define RT_VER_NUM 0x50100
 #define RT_BACKTRACE_LEVEL_MAX_NR 32
+#define RT_USING_CACHE
 #define ARCH_RISCV
 #define ARCH_RISCV_FPU
 #define ARCH_RISCV_FPU_S
@@ -117,9 +118,21 @@
 #define RT_MMCSD_THREAD_PREORITY 22
 #define RT_MMCSD_MAX_PARTITION 16
 #define RT_USING_PIN
-
-/* Using USB */
-
+#define RT_USING_CHERRYUSB
+#define RT_CHERRYUSB_HOST
+#define RT_CHERRYUSB_HOST_EHCI_BL
+#define RT_CHERRYUSB_HOST_CDC_ACM
+#define RT_CHERRYUSB_HOST_HID
+#define RT_CHERRYUSB_HOST_MSC
+#define RT_CHERRYUSB_HOST_TEMPLATE
+#define TEST_USBH_CDC_ACM 1
+#define TEST_USBH_HID 1
+#define TEST_USBH_MSC 0
+#define TEST_USBH_CDC_ECM 0
+#define TEST_USBH_RNDIS 0
+#define TEST_USBH_CDC_NCM 0
+#define TEST_USBH_ASIX 0
+#define TEST_USBH_RTL8152 0
 
 /* C/C++ and POSIX layer */
 
@@ -150,6 +163,9 @@
 /* Utilities */
 
 
+/* Using USB legacy version */
+
+
 /* RT-Thread Utestcases */
 
 
@@ -167,12 +183,6 @@
 
 
 /* CYW43012 WiFi */
-
-
-/* BL808 WiFi */
-
-
-/* CYW43439 WiFi */
 
 
 /* IoT Cloud */
@@ -216,18 +226,13 @@
 
 /* peripheral libraries and drivers */
 
-/* HAL & SDK Drivers */
-
-/* STM32 HAL & SDK Drivers */
-
-
-/* Kendryte SDK */
-
-
 /* sensors drivers */
 
 
 /* touch drivers */
+
+
+/* Kendryte SDK */
 
 
 /* AI packages */
