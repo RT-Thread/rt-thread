@@ -44,4 +44,7 @@ if RT_USING_SMART
 source "$RTT_DIR/components/lwp/Kconfig"
 source "$RTT_DIR/components/mm/Kconfig"
 endif
+
+source "$RTT_DIR/components/legacy/Kconfig"
+
 endmenu
