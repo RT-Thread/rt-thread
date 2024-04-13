@@ -112,24 +112,21 @@ struct ra_sci_object
     struct rt_event event;
 };
 
-#ifndef BIT
-    #define BIT(idx)            (1ul << (idx))
-#endif
-
-#ifndef BITS
-    #define BITS(b,e)           ((((uint32_t)-1)<<(b))&(((uint32_t)-1)>>(31-(e))))
-#endif
-
 #define _TO_STR(_a)                 #_a
 #define CONCAT3STR(_a,_b,_c)        _TO_STR(_a##_b##_c)
 
-#define RA_SCI_EVENT_ABORTED        BIT(0)
-#define RA_SCI_EVENT_RX_COMPLETE    BIT(1)
-#define RA_SCI_EVENT_TX_COMPLETE    BIT(2)
-#define RA_SCI_EVENT_ERROR          BIT(3)
-#define RA_SCI_EVENT_ALL            BITS(0,3)
+#define RA_SCI_EVENT_ABORTED        1
+#define RA_SCI_EVENT_RX_COMPLETE    2
+#define RA_SCI_EVENT_TX_COMPLETE    4
+#define RA_SCI_EVENT_ERROR          8
+#define RA_SCI_EVENT_ALL            15
 
-#define RA_SCI_HANDLE_ITEM(idx,type,id)    {.bus_name=CONCAT3STR(sci,idx,id),.sci_ctrl=&g_sci##idx##_ctrl,.sci_cfg=&g_sci##idx##_cfg,.ops=&sci_ops_##type}
+#if defined(SOC_SERIES_R7FA4M2)
+#define RA_SCI_HANDLE_ITEM(idx,type,id)    {.bus_name=CONCAT3STR(sci_,type,idx),.sci_ctrl=&g_sci##idx##_ctrl,.sci_cfg=&g_sci##idx##_cfg,.ops=&sci_ops_##type}
+#else
+#define RA_SCI_HANDLE_ITEM(idx,type,id)    {.bus_name=CONCAT3STR(sci_,type,idx),.sci_ctrl=&g_##type##idx##_ctrl,.sci_cfg=&g_##type##idx##_cfg,.ops=&sci_ops_##type}
+#endif
+
 
 const static struct ra_sci_param sci_param[] =
 {
@@ -671,7 +668,11 @@ static rt_err_t ra_hw_spi_configure(struct rt_spi_device *device,
 #ifdef R_SCI_B_SPI_H
     R_SCI_B_SPI_CalculateBitrate(obj->spi_cfg->max_hz, SCI_B_SPI_SOURCE_CLOCK_PCLK, &spi_cfg.clk_div);
 #else
+#if defined(SOC_SERIES_R7FA4M2)
     R_SCI_SPI_CalculateBitrate(obj->spi_cfg->max_hz, &cfg_ext->clk_div, false);
+#else
+    R_SCI_SPI_CalculateBitrate(obj->spi_cfg->max_hz, &spi_cfg->clk_div, false);
+#endif
 #endif
 
     /**< init */
