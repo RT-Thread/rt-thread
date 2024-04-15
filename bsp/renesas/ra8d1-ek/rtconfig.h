@@ -269,4 +269,7 @@
 #define BSP_UART9_RX_BUFSIZE 256
 #define BSP_UART9_TX_BUFSIZE 0
 
+/* Board extended module Drivers */
+
+
 #endif

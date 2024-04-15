@@ -266,8 +266,6 @@
 #define BSP_USING_UART7
 #define BSP_UART7_RX_BUFSIZE 256
 #define BSP_UART7_TX_BUFSIZE 0
-#define BSP_USING_SPI
-#define BSP_USING_SPI0
 
 /* Board extended module Drivers */
 

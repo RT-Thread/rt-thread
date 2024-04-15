@@ -121,12 +121,7 @@ struct ra_sci_object
 #define RA_SCI_EVENT_ERROR          8
 #define RA_SCI_EVENT_ALL            15
 
-#if defined(SOC_SERIES_R7FA4M2)
-#define RA_SCI_HANDLE_ITEM(idx,type,id)    {.bus_name=CONCAT3STR(sci_,type,idx),.sci_ctrl=&g_sci##idx##_ctrl,.sci_cfg=&g_sci##idx##_cfg,.ops=&sci_ops_##type}
-#else
-#define RA_SCI_HANDLE_ITEM(idx,type,id)    {.bus_name=CONCAT3STR(sci_,type,idx),.sci_ctrl=&g_##type##idx##_ctrl,.sci_cfg=&g_##type##idx##_cfg,.ops=&sci_ops_##type}
-#endif
-
+#define RA_SCI_HANDLE_ITEM(idx,type,id)    {.bus_name=CONCAT3STR(sci,idx,id),.sci_ctrl=&g_sci##idx##_ctrl,.sci_cfg=&g_sci##idx##_cfg,.ops=&sci_ops_##type}
 
 const static struct ra_sci_param sci_param[] =
 {
@@ -668,11 +663,7 @@ static rt_err_t ra_hw_spi_configure(struct rt_spi_device *device,
 #ifdef R_SCI_B_SPI_H
     R_SCI_B_SPI_CalculateBitrate(obj->spi_cfg->max_hz, SCI_B_SPI_SOURCE_CLOCK_PCLK, &spi_cfg.clk_div);
 #else
-#if defined(SOC_SERIES_R7FA4M2)
-    R_SCI_SPI_CalculateBitrate(obj->spi_cfg->max_hz, &cfg_ext->clk_div, false);
-#else
     R_SCI_SPI_CalculateBitrate(obj->spi_cfg->max_hz, &spi_cfg->clk_div, false);
-#endif
 #endif
 
     /**< init */

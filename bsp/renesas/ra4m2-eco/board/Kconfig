@@ -9,6 +9,20 @@ menu "Hardware Drivers Config"
 
     menu "Onboard Peripheral Drivers"
 
+        menuconfig BSP_USING_FS
+            bool "Enable filesystem"
+            default n
+            if BSP_USING_FS
+                config BSP_USING_SPICARD_FS
+                    bool "Enable SPI FLASH filesystem"
+                    select BSP_USING_SCI
+                    select BSP_USING_SCI9
+                    select BSP_USING_SCI9_SPI
+                    select RT_USING_SPI_MSD
+                    select RT_USING_DFS_ELMFAT
+                    default n
+            endif
+
     endmenu
 
     menu "On-chip Peripheral Drivers"
@@ -185,46 +199,358 @@ menu "Hardware Drivers Config"
                     endif
             endif
 
-    menuconfig BSP_USING_SPI
-            bool "Enable SPI"
+        menuconfig BSP_USING_SPI
+                bool "Enable SPI"
+                default n
+                select RT_USING_SPI
+                if BSP_USING_SPI
+                    config BSP_USING_SPI0
+                        bool "Enable SPI0 BUS"
+                        default n
+
+                    config BSP_USING_SPI1
+                        bool "Enable SPI1 BUS"
+                        default n
+                endif
+
+        menuconfig BSP_USING_SCI
+            bool "Enable SCI Controller"
             default n
-            select RT_USING_SPI
-            if BSP_USING_SPI
-                config BSP_USING_SPI0
-                    bool "Enable SPI0 BUS"
-                    default n
+            config BSP_USING_SCIn_SPI
+                bool
+                depends on BSP_USING_SCI
+                select RT_USING_SPI
+                default n
 
-                config BSP_USING_SPI1
-                    bool "Enable SPI1 BUS"
+            config BSP_USING_SCIn_I2C
+                bool
+                depends on BSP_USING_SCI
+                select RT_USING_I2C
+                default n
+
+            config BSP_USING_SCIn_UART
+                bool
+                depends on BSP_USING_SCI
+                select RT_USING_SERIAL
+                select RT_USING_SERIAL_V2
+                default n
+
+            if BSP_USING_SCI
+                config BSP_USING_SCI0
+                    bool "Enable SCI0"
                     default n
+                    if BSP_USING_SCI0
+                        choice
+                        prompt "choice sci mode"
+                        default BSP_USING_SCI0_SPI
+                        config BSP_USING_SCI0_SPI
+                            select BSP_USING_SCIn_SPI
+                            bool "SPI mode"
+                        config BSP_USING_SCI0_I2C
+                            select BSP_USING_SCIn_I2C
+                            bool "I2C mode"
+                        config BSP_USING_SCI0_UART
+                            select BSP_USING_SCIn_UART
+                            bool "UART mode"
+                        endchoice
+                        if BSP_USING_SCI0_UART
+                            config BSP_SCI0_UART_RX_BUFSIZE
+                                int "Set UART0 RX buffer size"
+                                range 64 65535
+                                depends on RT_USING_SERIAL_V2
+                                default 256
+
+                            config BSP_SCI0_UART_TX_BUFSIZE
+                                int "Set UART0 TX buffer size"
+                                range 0 65535
+                                depends on RT_USING_SERIAL_V2
+                                default 0
+                        endif
+                    endif
+                config BSP_USING_SCI1
+                    bool "Enable SCI1"
+                    default n
+                    if BSP_USING_SCI1
+                        choice
+                        prompt "choice sci mode"
+                        default BSP_USING_SCI1_SPI
+                        config BSP_USING_SCI1_SPI
+                            select BSP_USING_SCIn_SPI
+                            bool "SPI mode"
+                        config BSP_USING_SCI1_I2C
+                            select BSP_USING_SCIn_I2C
+                            bool "I2C mode"
+                        config BSP_USING_SCI1_UART
+                            select BSP_USING_SCIn_UART
+                            bool "UART mode"
+                        endchoice
+                        if BSP_USING_SCI1_UART
+                            config BSP_SCI1_UART_RX_BUFSIZE
+                                int "Set UART1 RX buffer size"
+                                range 64 65535
+                                depends on RT_USING_SERIAL_V2
+                                default 256
+
+                            config BSP_SCI1_UART_TX_BUFSIZE
+                                int "Set UART1 TX buffer size"
+                                range 0 65535
+                                depends on RT_USING_SERIAL_V2
+                                default 0
+                        endif
+                    endif
+                config BSP_USING_SCI2
+                    bool "Enable SCI2"
+                    default n
+                    if BSP_USING_SCI2
+                        choice
+                        prompt "choice sci mode"
+                        default BSP_USING_SCI2_SPI
+                        config BSP_USING_SCI2_SPI
+                            select BSP_USING_SCIn_SPI
+                            bool "SPI mode"
+                        config BSP_USING_SCI2_I2C
+                            select BSP_USING_SCIn_I2C
+                            bool "I2C mode"
+                        config BSP_USING_SCI2_UART
+                            select BSP_USING_SCIn_UART
+                            bool "UART mode"
+                        endchoice
+                        if BSP_USING_SCI2_UART
+                            config BSP_SCI2_UART_RX_BUFSIZE
+                                int "Set UART2 RX buffer size"
+                                range 64 65535
+                                depends on RT_USING_SERIAL_V2
+                                default 256
+
+                            config BSP_SCI2_UART_TX_BUFSIZE
+                                int "Set UART2 TX buffer size"
+                                range 0 65535
+                                depends on RT_USING_SERIAL_V2
+                                default 0
+                        endif
+                    endif
+                config BSP_USING_SCI3
+                    bool "Enable SCI3"
+                    default n
+                    if BSP_USING_SCI3
+                        choice
+                        prompt "choice sci mode"
+                        default BSP_USING_SCI3_SPI
+                        config BSP_USING_SCI3_SPI
+                            select BSP_USING_SCIn_SPI
+                            bool "SPI mode"
+                        config BSP_USING_SCI3_I2C
+                            select BSP_USING_SCIn_I2C
+                            bool "I2C mode"
+                        config BSP_USING_SCI3_UART
+                            select BSP_USING_SCIn_UART
+                            bool "UART mode"
+                        endchoice
+                        if BSP_USING_SCI3_UART
+                            config BSP_SCI3_UART_RX_BUFSIZE
+                                int "Set UART3 RX buffer size"
+                                range 64 65535
+                                depends on RT_USING_SERIAL_V2
+                                default 256
+
+                            config BSP_SCI3_UART_TX_BUFSIZE
+                                int "Set UART3 TX buffer size"
+                                range 0 65535
+                                depends on RT_USING_SERIAL_V2
+                                default 0
+                        endif
+                    endif
+                config BSP_USING_SCI4
+                    bool "Enable SCI4"
+                    default n
+                    if BSP_USING_SCI4
+                        choice
+                        prompt "choice sci mode"
+                        default BSP_USING_SCI4_SPI
+                        config BSP_USING_SCI4_SPI
+                            select BSP_USING_SCIn_SPI
+                            bool "SPI mode"
+                        config BSP_USING_SCI4_I2C
+                            select BSP_USING_SCIn_I2C
+                            bool "I2C mode"
+                        config BSP_USING_SCI4_UART
+                            select BSP_USING_SCIn_UART
+                            bool "UART mode"
+                        endchoice
+                        if BSP_USING_SCI4_UART
+                            config BSP_SCI4_UART_RX_BUFSIZE
+                                int "Set UART4 RX buffer size"
+                                range 64 65535
+                                depends on RT_USING_SERIAL_V2
+                                default 256
+
+                            config BSP_SCI4_UART_TX_BUFSIZE
+                                int "Set UART4 TX buffer size"
+                                range 0 65535
+                                depends on RT_USING_SERIAL_V2
+                                default 0
+                        endif
+                    endif
+                config BSP_USING_SCI5
+                    bool "Enable SCI5"
+                    default n
+                    if BSP_USING_SCI5
+                        choice
+                        prompt "choice sci mode"
+                        default BSP_USING_SCI5_SPI
+                        config BSP_USING_SCI5_SPI
+                            select BSP_USING_SCIn_SPI
+                            bool "SPI mode"
+                        config BSP_USING_SCI5_I2C
+                            select BSP_USING_SCIn_I2C
+                            bool "I2C mode"
+                        config BSP_USING_SCI5_UART
+                            select BSP_USING_SCIn_UART
+                            bool "UART mode"
+                        endchoice
+                        if BSP_USING_SCI5_UART
+                            config BSP_SCI5_UART_RX_BUFSIZE
+                                int "Set UART5 RX buffer size"
+                                range 64 65535
+                                depends on RT_USING_SERIAL_V2
+                                default 256
+
+                            config BSP_SCI5_UART_TX_BUFSIZE
+                                int "Set UART5 TX buffer size"
+                                range 0 65535
+                                depends on RT_USING_SERIAL_V2
+                                default 0
+                        endif
+                    endif
+                config BSP_USING_SCI6
+                    bool "Enable SCI6"
+                    default n
+                    if BSP_USING_SCI6
+                        choice
+                        prompt "choice sci mode"
+                        default BSP_USING_SCI6_SPI
+                        config BSP_USING_SCI6_SPI
+                            select BSP_USING_SCIn_SPI
+                            bool "SPI mode"
+                        config BSP_USING_SCI6_I2C
+                            select BSP_USING_SCIn_I2C
+                            bool "I2C mode"
+                        config BSP_USING_SCI6_UART
+                            select BSP_USING_SCIn_UART
+                            bool "UART mode"
+                        endchoice
+                        if BSP_USING_SCI6_UART
+                            config BSP_SCI6_UART_RX_BUFSIZE
+                                int "Set UART6 RX buffer size"
+                                range 64 65535
+                                depends on RT_USING_SERIAL_V2
+                                default 256
+
+                            config BSP_SCI6_UART_TX_BUFSIZE
+                                int "Set UART6 TX buffer size"
+                                range 0 65535
+                                depends on RT_USING_SERIAL_V2
+                                default 0
+                        endif
+                    endif
+                config BSP_USING_SCI7
+                    bool "Enable SCI7"
+                    default n
+                    if BSP_USING_SCI7
+                        choice
+                        prompt "choice sci mode"
+                        default BSP_USING_SCI7_SPI
+                        config BSP_USING_SCI7_SPI
+                            select BSP_USING_SCIn_SPI
+                            bool "SPI mode"
+                        config BSP_USING_SCI7_I2C
+                            select BSP_USING_SCIn_I2C
+                            bool "I2C mode"
+                        config BSP_USING_SCI7_UART
+                            select BSP_USING_SCIn_UART
+                            bool "UART mode"
+                        endchoice
+                        if BSP_USING_SCI7_UART
+                            config BSP_SCI7_UART_RX_BUFSIZE
+                                int "Set UART7 RX buffer size"
+                                range 64 65535
+                                depends on RT_USING_SERIAL_V2
+                                default 256
+
+                            config BSP_SCI7_UART_TX_BUFSIZE
+                                int "Set UART7 TX buffer size"
+                                range 0 65535
+                                depends on RT_USING_SERIAL_V2
+                                default 0
+                        endif
+                    endif
+                config BSP_USING_SCI8
+                    bool "Enable SCI8"
+                    default n
+                    if BSP_USING_SCI8
+                        choice
+                        prompt "choice sci mode"
+                        default BSP_USING_SCI8_SPI
+                        config BSP_USING_SCI8_SPI
+                            select BSP_USING_SCIn_SPI
+                            bool "SPI mode"
+                        config BSP_USING_SCI8_I2C
+                            select BSP_USING_SCIn_I2C
+                            bool "I2C mode"
+                        config BSP_USING_SCI8_UART
+                            select BSP_USING_SCIn_UART
+                            bool "UART mode"
+                        endchoice
+                        if BSP_USING_SCI8_UART
+                            config BSP_SCI8_UART_RX_BUFSIZE
+                                int "Set UART8 RX buffer size"
+                                range 64 65535
+                                depends on RT_USING_SERIAL_V2
+                                default 256
+
+                            config BSP_SCI8_UART_TX_BUFSIZE
+                                int "Set UART8 TX buffer size"
+                                range 0 65535
+                                depends on RT_USING_SERIAL_V2
+                                default 0
+                        endif
+                    endif
+                config BSP_USING_SCI9
+                    bool "Enable SCI9"
+                    default n
+                    if BSP_USING_SCI9
+                        choice
+                        prompt "choice sci mode"
+                        default BSP_USING_SCI9_SPI
+                        config BSP_USING_SCI9_SPI
+                            select BSP_USING_SCIn_SPI
+                            bool "SPI mode"
+                        config BSP_USING_SCI9_I2C
+                            select BSP_USING_SCIn_I2C
+                            bool "I2C mode"
+                        config BSP_USING_SCI9_UART
+                            select BSP_USING_SCIn_UART
+                            bool "UART mode"
+                        endchoice
+                        if BSP_USING_SCI9_UART
+                            config BSP_SCI9_UART_RX_BUFSIZE
+                                int "Set UART9 RX buffer size"
+                                range 64 65535
+                                depends on RT_USING_SERIAL_V2
+                                default 256
+
+                            config BSP_SCI9_UART_TX_BUFSIZE
+                                int "Set UART9 TX buffer size"
+                                range 0 65535
+                                depends on RT_USING_SERIAL_V2
+                                default 0
+                        endif
+                    endif
             endif
+        endmenu
 
-    menuconfig BSP_USING_SCI_SPI
-        bool "Enable SCI SPI BUS"
-        default n
-        select RT_USING_SPI
-        if BSP_USING_SCI_SPI 
-            config BSP_USING_SCI_SPI0
-                bool "Enable SCI SPI0 BUS"
-                default n
-            config BSP_USING_SCI_SPI1
-                bool "Enable SCI SPI1 BUS"
-                default n
-            config BSP_USING_SCI_SPI2
-                bool "Enable SCI SPI2 BUS"
-                default n
-            config BSP_USING_SCI_SPI3
-                bool "Enable SCI SPI3 BUS"
-                default n
-            config BSP_USING_SCI_SPI4
-                bool "Enable SCI SPI4 BUS"
-                default n
-            config BSP_USING_SCI_SPI9
-                bool "Enable SCI SPI9 BUS"
-                default n
-        endif
-    endmenu
     menu "Board extended module Drivers"
 
     endmenu
+
 endmenu
