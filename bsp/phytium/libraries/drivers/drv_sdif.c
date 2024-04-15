@@ -13,7 +13,7 @@
  */
 
 /***************************** Include Files *********************************/
-#include"rtconfig.h"
+#include "rtconfig.h"
 
 #ifdef BSP_USING_SDIF
 #include <rthw.h>
@@ -24,12 +24,12 @@
 #include <drivers/mmcsd_core.h>
 
 #ifdef RT_USING_SMART
-    #include "ioremap.h"
+#include "ioremap.h"
 #endif
 #include "mm_aspace.h"
 #include "interrupt.h"
 
-#define LOG_TAG      "sdif_drv"
+#define LOG_TAG "sdif_drv"
 #include "drv_log.h"
 
 #include "ftypes.h"
@@ -43,13 +43,13 @@
 
 #include "drv_sdif.h"
 /************************** Constant Definitions *****************************/
-#define SDIF_CARD_TYPE_MICRO_SD      1
-#define SDIF_CARD_TYPE_EMMC          2
-#define SDIF_CARD_TYPE_SDIO          3
+#define SDIF_CARD_TYPE_MICRO_SD 1
+#define SDIF_CARD_TYPE_EMMC 2
+#define SDIF_CARD_TYPE_SDIO 3
 
-#define SDIF_DMA_BLK_SZ              512U
-#define SDIF_MAX_BLK_TRANS           20U
-#define SDIF_DMA_ALIGN               SDIF_DMA_BLK_SZ
+#define SDIF_DMA_BLK_SZ 512U
+#define SDIF_MAX_BLK_TRANS 20U
+#define SDIF_DMA_ALIGN SDIF_DMA_BLK_SZ
 
 /* preserve pointer to host instance */
 static struct rt_mmcsd_host *mmc_host[FSDIF_NUM] = {RT_NULL};
@@ -58,17 +58,17 @@ static struct rt_mmcsd_host *mmc_host[FSDIF_NUM] = {RT_NULL};
 typedef struct
 {
     FSdif sdif;
-    rt_int32_t  sd_type;
+    rt_int32_t sd_type;
     FSdifIDmaDesc *rw_desc;
     uintptr_t rw_desc_dma;
     rt_size_t rw_desc_num;
     struct rt_event event;
-#define SDIF_EVENT_CARD_DETECTED    (1 << 0)
-#define SDIF_EVENT_COMMAND_DONE     (1 << 1)
-#define SDIF_EVENT_DATA_DONE        (1 << 2)
-#define SDIF_EVENT_ERROR_OCCUR      (1 << 3)
-#define SDIF_EVENT_SDIO_IRQ         (1 << 4)
-    void  *aligned_buffer;
+#define SDIF_EVENT_CARD_DETECTED (1 << 0)
+#define SDIF_EVENT_COMMAND_DONE (1 << 1)
+#define SDIF_EVENT_DATA_DONE (1 << 2)
+#define SDIF_EVENT_ERROR_OCCUR (1 << 3)
+#define SDIF_EVENT_SDIO_IRQ (1 << 4)
+    void *aligned_buffer;
     uintptr_t aligned_buffer_dma;
     rt_size_t aligned_buffer_size;
     FSdifCmdData req_cmd;
@@ -171,7 +171,7 @@ static rt_err_t sdif_pre_request(struct rt_mmcsd_host *host, struct rt_mmcsd_req
     if (host_info->sd_type != SDIF_CARD_TYPE_SDIO)
     {
         /* ignore SDIO detect command */
-        if ((req->cmd->cmd_code == SD_IO_SEND_OP_COND) || 
+        if ((req->cmd->cmd_code == SD_IO_SEND_OP_COND) ||
             (req->cmd->cmd_code == SD_IO_RW_DIRECT))
         {
             req->cmd->err = -1;
@@ -188,7 +188,7 @@ static rt_err_t sdif_pre_request(struct rt_mmcsd_host *host, struct rt_mmcsd_req
         {
             req->cmd->err = -1;
             mmcsd_req_complete(host);
-            err = RT_EEMPTY;            
+            err = RT_EEMPTY;
         }
 
         /* ignore mmcsd_send_if_cond(CMD-8) which will failed for eMMC
@@ -198,7 +198,7 @@ static rt_err_t sdif_pre_request(struct rt_mmcsd_host *host, struct rt_mmcsd_req
         {
             req->cmd->err = -1;
             mmcsd_req_complete(host);
-            err = RT_EEMPTY;              
+            err = RT_EEMPTY;
         }
     }
 
@@ -266,7 +266,7 @@ static void sdif_convert_command_info(struct rt_mmcsd_host *host, struct rt_mmcs
             (resp_type(in_cmd) != RESP_R4))
         {
             /* most cmds need CRC */
-            out_cmd->flag |= FSDIF_CMD_FLAG_NEED_RESP_CRC; 
+            out_cmd->flag |= FSDIF_CMD_FLAG_NEED_RESP_CRC;
         }
     }
 
@@ -310,14 +310,14 @@ static void sdif_convert_command_info(struct rt_mmcsd_host *host, struct rt_mmcs
             }
         }
 
-        LOG_D("buf@%p, blksz: %d, datalen: %ld", 
-              out_data->buf, 
-              out_data->blksz, 
+        LOG_D("buf@%p, blksz: %d, datalen: %ld",
+              out_data->buf,
+              out_data->blksz,
               out_data->datalen);
     }
 
     out_cmd->cmdidx = in_cmd->cmd_code;
-    out_cmd->cmdarg = in_cmd->arg;  
+    out_cmd->cmdarg = in_cmd->arg;
     LOG_D("cmdarg: 0x%x", out_cmd->cmdarg);
 }
 
@@ -351,7 +351,7 @@ static rt_err_t sdif_do_transfer(struct rt_mmcsd_host *host, FSdifCmdData *req_c
         /*
          * transfer without data: wait COMMAND_DONE event
          * transfer with data: wait COMMAND_DONE and DATA_DONE event
-        */
+         */
         if (rt_event_recv(&host_info->event,
                           (wait_event),
                           (RT_EVENT_FLAG_AND | RT_EVENT_FLAG_CLEAR),
@@ -362,14 +362,14 @@ static rt_err_t sdif_do_transfer(struct rt_mmcsd_host *host, FSdifCmdData *req_c
             break;
         }
 
-        /*  
-        * transfer with error: check if ERROR_OCCUR event exists, no wait
-        */
+        /*
+         * transfer with error: check if ERROR_OCCUR event exists, no wait
+         */
         if (rt_event_recv(&host_info->event,
-                        (SDIF_EVENT_ERROR_OCCUR),
-                        (RT_EVENT_FLAG_AND | RT_WAITING_NO),
-                        0,
-                        &event) == RT_EOK)
+                          (SDIF_EVENT_ERROR_OCCUR),
+                          (RT_EVENT_FLAG_AND | RT_WAITING_NO),
+                          0,
+                          &event) == RT_EOK)
         {
             LOG_E("Sdif DMA transfer endup with error !!!");
             return -RT_EIO;
@@ -434,13 +434,13 @@ static void sdif_send_request(struct rt_mmcsd_host *host, struct rt_mmcsd_req *r
         /* if it is read sd card, copy data to unaligned buffer and return */
         if ((uintptr)req->data->buf % SDIF_DMA_ALIGN)
         {
-            rt_memcpy((void *)req->data->buf, 
-                      (void *)host_info->aligned_buffer, 
+            rt_memcpy((void *)req->data->buf,
+                      (void *)host_info->aligned_buffer,
                       req_cmd->data_p->datalen);
         }
     }
 
-    mmcsd_req_complete(host);    
+    mmcsd_req_complete(host);
 }
 
 static void sdif_set_iocfg(struct rt_mmcsd_host *host, struct rt_mmcsd_io_cfg *io_cfg)
@@ -461,18 +461,18 @@ static void sdif_set_iocfg(struct rt_mmcsd_host *host, struct rt_mmcsd_io_cfg *i
 
     switch (io_cfg->bus_width)
     {
-        case MMCSD_BUS_WIDTH_1:
-            FSdifSetBusWidth(base_addr, 1U);
-            break;
-        case MMCSD_BUS_WIDTH_4:
-            FSdifSetBusWidth(base_addr, 4U);
-            break;
-        case MMCSD_BUS_WIDTH_8:
-            FSdifSetBusWidth(base_addr, 8U);
-            break;
-        default:
-            LOG_E("Invalid bus width %d", io_cfg->bus_width);
-            break;
+    case MMCSD_BUS_WIDTH_1:
+        FSdifSetBusWidth(base_addr, 1U);
+        break;
+    case MMCSD_BUS_WIDTH_4:
+        FSdifSetBusWidth(base_addr, 4U);
+        break;
+    case MMCSD_BUS_WIDTH_8:
+        FSdifSetBusWidth(base_addr, 8U);
+        break;
+    default:
+        LOG_E("Invalid bus width %d", io_cfg->bus_width);
+        break;
     }
 }
 
@@ -486,12 +486,12 @@ static rt_int32_t sdif_card_status(struct rt_mmcsd_host *host)
 }
 
 static const struct rt_mmcsd_host_ops ops =
-{
-    .request = sdif_send_request,
-    .set_iocfg = sdif_set_iocfg,
-    .get_card_status = sdif_card_status,
-    .enable_sdio_irq = RT_NULL,
-    .execute_tuning = RT_NULL,
+    {
+        .request = sdif_send_request,
+        .set_iocfg = sdif_set_iocfg,
+        .get_card_status = sdif_card_status,
+        .enable_sdio_irq = RT_NULL,
+        .execute_tuning = RT_NULL,
 };
 
 static void sdif_ctrl_setup_interrupt(struct rt_mmcsd_host *host)
@@ -551,28 +551,28 @@ static rt_err_t sdif_host_init(rt_uint32_t id, rt_uint32_t type)
     RT_ASSERT(RT_EOK == result);
 
     host_info->aligned_buffer_size = SDIF_DMA_BLK_SZ * SDIF_MAX_BLK_TRANS;
-    host_info->aligned_buffer = rt_malloc_align(host_info->aligned_buffer_size, 
+    host_info->aligned_buffer = rt_malloc_align(host_info->aligned_buffer_size,
                                                 SDIF_DMA_ALIGN);
     if (!host_info->aligned_buffer)
     {
         LOG_E("Malloc aligned buffer failed");
         result = RT_ENOMEM;
-        goto err_free;        
+        goto err_free;
     }
-    
+
     host_info->aligned_buffer_dma = (uintptr_t)host_info->aligned_buffer + PV_OFFSET;
     rt_memset(host_info->aligned_buffer, 0, host_info->aligned_buffer_size);
 
     host_info->rw_desc_num = (SDIF_DMA_BLK_SZ * SDIF_MAX_BLK_TRANS) / FSDIF_IDMAC_MAX_BUF_SIZE + 1;
     host_info->rw_desc = rt_malloc_align(host_info->rw_desc_num * sizeof(FSdifIDmaDesc),
-                                        SDIF_DMA_ALIGN);
+                                         SDIF_DMA_ALIGN);
     if (!host_info->rw_desc)
     {
         LOG_E("Malloc rw_desc failed");
         result = RT_ENOMEM;
         goto err_free;
     }
-    
+
     host_info->rw_desc_dma = (uintptr_t)host_info->rw_desc + PV_OFFSET;
     rt_memset(host_info->rw_desc, 0, host_info->rw_desc_num * sizeof(FSdifIDmaDesc));
 
@@ -590,9 +590,9 @@ static rt_err_t sdif_host_init(rt_uint32_t id, rt_uint32_t type)
 
     host->valid_ocr = VDD_32_33 | VDD_33_34; /* voltage 3.3v */
     host->flags = MMCSD_MUTBLKWRITE | MMCSD_BUSWIDTH_4;
-    host->max_seg_size = SDIF_DMA_BLK_SZ; /* used in block_dev.c */
+    host->max_seg_size = SDIF_DMA_BLK_SZ;    /* used in block_dev.c */
     host->max_dma_segs = SDIF_MAX_BLK_TRANS; /* physical segment number */
-    host->max_blk_size = SDIF_DMA_BLK_SZ; /* all the 4 para limits size of one blk tran */
+    host->max_blk_size = SDIF_DMA_BLK_SZ;    /* all the 4 para limits size of one blk tran */
     host->max_blk_count = SDIF_MAX_BLK_TRANS;
     host->private_data = host_info;
     host->name[0] = 's';
@@ -617,7 +617,7 @@ static rt_err_t sdif_host_init(rt_uint32_t id, rt_uint32_t type)
     {
         sdif_config.non_removable = TRUE; /* eMMC is unremovable on board */
     }
-    
+
     sdif_config.get_tuning = FSdifGetTimingSetting;
 
     if (FSDIF_SUCCESS != FSdifCfgInitialize(&host_info->sdif, &sdif_config))
@@ -627,9 +627,9 @@ static rt_err_t sdif_host_init(rt_uint32_t id, rt_uint32_t type)
         goto err_free;
     }
 
-    if (FSDIF_SUCCESS != FSdifSetIDMAList(&host_info->sdif, 
-                                          host_info->rw_desc, 
-                                          host_info->rw_desc_dma, 
+    if (FSDIF_SUCCESS != FSdifSetIDMAList(&host_info->sdif,
+                                          host_info->rw_desc,
+                                          host_info->rw_desc_dma,
                                           host_info->rw_desc_num))
     {
         LOG_E("SDIF controller setup DMA failed.");
