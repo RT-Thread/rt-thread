@@ -55,37 +55,9 @@ typedef BSP_CMSE_NONSECURE_CALL void (*volatile bsp_nonsecure_func_t)(void);
  #endif
 
  #if   defined(__IAR_SYSTEMS_ICC__) && BSP_TZ_SECURE_BUILD
-  #pragma section=".tz_flash_nsc_start"
-  #pragma section=".tz_ram_nsc_start"
-  #pragma section=".tz_ram_ns_start"
-  #pragma section=".tz_data_flash_ns_start"
-  #pragma section=".tz_sdram_ns_start"
-  #pragma section=".tz_qspi_flash_ns_start"
-  #pragma section=".tz_ospi_device_0_ns_start"
-  #pragma section=".tz_ospi_device_1_ns_start"
+  #pragma section=".tz_flash_ns_start"
 
-/* &__tz_<REGION>_C is the address of the non-secure callable section. Must assign value to this variable or
- * linker will give error. */
-
-/* &__tz_<REGION>_N is the start address of the non-secure region. */
-BSP_DONT_REMOVE void const * const __tz_FLASH_C BSP_ALIGN_VARIABLE(1024) @".tz_flash_nsc_start" = 0;
-BSP_DONT_REMOVE void * __tz_RAM_C               BSP_ALIGN_VARIABLE(1024) @".tz_ram_nsc_start";
-BSP_DONT_REMOVE void * __tz_RAM_N               BSP_ALIGN_VARIABLE(8192) @".tz_ram_ns_start";
-BSP_DONT_REMOVE void * __tz_DATA_FLASH_N        BSP_ALIGN_VARIABLE(1024) @".tz_data_flash_ns_start";
-
-  #if BSP_FEATURE_SDRAM_START_ADDRESS
-BSP_DONT_REMOVE void * __tz_SDRAM_N @".tz_sdram_ns_start";
-  #endif
-BSP_DONT_REMOVE void * __tz_QSPI_FLASH_N @".tz_qspi_flash_ns_start";
-  #if BSP_FEATURE_OSPI_DEVICE_0_START_ADDRESS
-BSP_DONT_REMOVE void * __tz_OSPI_DEVICE_0_N @".tz_ospi_device_0_ns_start";
-  #endif
-  #if BSP_FEATURE_OSPI_DEVICE_1_START_ADDRESS
-BSP_DONT_REMOVE void * __tz_OSPI_DEVICE_1_N @".tz_ospi_device_1_ns_start";
-  #endif
-
-extern void const * const              __tz_FLASH_N;
-BSP_DONT_REMOVE uint32_t const * const gp_start_of_nonsecure_flash = (uint32_t *) &__tz_FLASH_N;
+BSP_DONT_REMOVE uint32_t const * const gp_start_of_nonsecure_flash = (uint32_t *) __section_begin(".tz_flash_ns_start");
  #elif defined(__ARMCC_VERSION)
   #if BSP_FEATURE_BSP_HAS_ITCM
 extern const uint32_t Image$$__tz_ITCM_N$$Base;

@@ -13,7 +13,7 @@
 
 #include "drv_spi.h"
 
-#ifdef RT_USING_SPI
+#ifdef BSP_USING_SPI
 
 //#define DRV_DEBUG
 #define DBG_TAG              "drv.spi"
@@ -310,4 +310,4 @@ rt_err_t rt_hw_spi_device_attach(const char *bus_name, const char *device_name, 
 
     return result;
 }
-#endif /* RT_USING_SPI */
+#endif /* BSP_USING_SPI */

@@ -11,7 +11,7 @@
 #include <rtdbg.h>
 #ifdef BSP_USING_RW007
 #include <rtdevice.h>
-#include <drv_sci_spi.h>
+#include <drv_sci.h>
 #include <board.h>
 #include <spi_wifi_rw007.h>
 

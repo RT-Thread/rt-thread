@@ -115,6 +115,15 @@ static void ra_pin_mode(rt_device_t dev, rt_base_t pin, rt_uint8_t mode)
 {
     fsp_err_t err;
 
+    /* Initialize the IOPORT module and configure the pins */
+    err = R_IOPORT_Open(&g_ioport_ctrl, &g_bsp_pin_cfg);
+
+    if (err != FSP_SUCCESS)
+    {
+        LOG_E("GPIO open failed");
+        return;
+    }
+
     switch (mode)
     {
     case PIN_MODE_OUTPUT:
@@ -345,16 +354,6 @@ int rt_hw_pin_init(void)
     ra_irq_tab_init();
     ra_pin_map_init();
 #endif
-
-    fsp_err_t err;
-    /* Initialize the IOPORT module and configure the pins */
-    err = R_IOPORT_Open(&g_ioport_ctrl, &g_bsp_pin_cfg);
-
-    if (err != FSP_SUCCESS)
-    {
-        LOG_E("GPIO open failed");
-        return -1;
-    }
 
     return rt_device_pin_register("pin", &_ra_pin_ops, RT_NULL);
 }

@@ -103,11 +103,11 @@ static void sd_mount(void)
 
 #else
 #include <spi_msd.h>
-#include "drv_sci_spi.h"
+#include "drv_sci.h"
 int sd_mount(void)
 {
     uint32_t cs_pin = BSP_IO_PORT_06_PIN_11;
-    rt_hw_sci_spi_device_attach("scpi7", "scpi70", cs_pin);
+    rt_hw_sci_spi_device_attach("sci7s", "scpi70", cs_pin);
     msd_init("sd0", "scpi70");
     if (dfs_mount("sd0", "/", "elm", 0, 0) == 0)
     {

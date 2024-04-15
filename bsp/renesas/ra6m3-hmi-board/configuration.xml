@@ -771,7 +771,7 @@
       <property id="module.driver.ether_phy.flow_control" value="module.driver.ether_phy.flow_control.0"/>
     </module>
     <module id="module.driver.spi_on_sci_spi.148160771">
-      <property id="module.driver.spi.name" value="g_spi3"/>
+      <property id="module.driver.spi.name" value="g_sci3"/>
       <property id="module.driver.spi.channel" value="3"/>
       <property id="module.driver.spi.operating_mode" value="module.driver.spi.operating_mode.mode_master"/>
       <property id="module.driver.spi.clk_phase" value="module.driver.spi.clk_phase.clk_phase_edge_odd"/>

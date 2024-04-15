@@ -62,6 +62,27 @@
 
 #if !BSP_CFG_BOOT_IMAGE
 
+ #if BSP_FEATURE_BSP_HAS_OSIS_REG == 1
+
+/** ID code definitions defined here. */
+BSP_DONT_REMOVE static const uint32_t g_bsp_id_codes[] BSP_PLACE_IN_SECTION (BSP_SECTION_ID_CODE) =
+{
+    BSP_CFG_ID_CODE_LONG_1,
+  #if BSP_FEATURE_BSP_OSIS_PADDING
+    0xFFFFFFFFU,
+  #endif
+    BSP_CFG_ID_CODE_LONG_2,
+  #if BSP_FEATURE_BSP_OSIS_PADDING
+    0xFFFFFFFFU,
+  #endif
+    BSP_CFG_ID_CODE_LONG_3,
+  #if BSP_FEATURE_BSP_OSIS_PADDING
+    0xFFFFFFFFU,
+  #endif
+    BSP_CFG_ID_CODE_LONG_4
+};
+ #endif
+
  #if 33U != __CORTEX_M && 85U != __CORTEX_M // NOLINT(readability-magic-numbers)
 
 /** ROM registers defined here. Some have masks to make sure reserved bits are set appropriately. */
@@ -84,23 +105,22 @@ BSP_DONT_REMOVE static const uint32_t g_bsp_rom_registers[] BSP_PLACE_IN_SECTION
     (uint32_t) BSP_ROM_REG_MPU_CONTROL_SETTING
 };
 
-/** ID code definitions defined here. */
-BSP_DONT_REMOVE static const uint32_t g_bsp_id_codes[] BSP_PLACE_IN_SECTION (BSP_SECTION_ID_CODE) =
-{
-    BSP_CFG_ID_CODE_LONG_1,
-  #if BSP_FEATURE_BSP_OSIS_PADDING
-    0xFFFFFFFFU,
-  #endif
-    BSP_CFG_ID_CODE_LONG_2,
-  #if BSP_FEATURE_BSP_OSIS_PADDING
-    0xFFFFFFFFU,
-  #endif
-    BSP_CFG_ID_CODE_LONG_3,
-  #if BSP_FEATURE_BSP_OSIS_PADDING
-    0xFFFFFFFFU,
-  #endif
-    BSP_CFG_ID_CODE_LONG_4
-};
+ #elif BSP_FEATURE_BSP_HAS_OSIS_REG == 1
+
+    BSP_DONT_REMOVE static const uint32_t BSP_PLACE_IN_SECTION(".option_setting_ofs0") g_bsp_rom_ofs0 =
+        BSP_CFG_ROM_REG_OFS0;
+
+    BSP_DONT_REMOVE static const uint32_t BSP_PLACE_IN_SECTION(".option_setting_sas") g_bsp_rom_sas =
+        0xFFFFFFFF;
+
+    BSP_DONT_REMOVE static const uint32_t BSP_PLACE_IN_SECTION(".option_setting_ofs1_sec") g_bsp_rom_ofs1 =
+        BSP_ROM_REG_OFS1_SETTING;
+
+    BSP_DONT_REMOVE static const uint32_t BSP_PLACE_IN_SECTION(".option_setting_bps_sec0") g_bsp_rom_bps0 =
+        BSP_CFG_ROM_REG_BPS0;
+
+    BSP_DONT_REMOVE static const uint32_t BSP_PLACE_IN_SECTION(".option_setting_pbps_sec0") g_bsp_rom_pbps0 =
+        BSP_CFG_ROM_REG_PBPS0;
 
  #else                                 /* CM33 parts */
 
