@@ -22,83 +22,83 @@ extern "C" {
 #ifdef BSP_USING_UART
 #ifdef BSP_USING_USART0
 
-	#define HTCFG_USART0_IPN                          USART0
-	
-	#define _HTCFG_USART0_TX_GPIOX                    A
-	#define _HTCFG_USART0_TX_GPION                    8
-	#define _HTCFG_USART0_RX_GPIOX                    A
-	#define _HTCFG_USART0_RX_GPION                    10
+    #define HTCFG_USART0_IPN                          USART0
 
-	#define HTCFG_USART0_TX_GPIO_ID                   STRCAT2(GPIO_P,         _HTCFG_USART0_TX_GPIOX)
-	#define HTCFG_USART0_TX_GPIO_CLK                  STRCAT2(P,              _HTCFG_USART0_TX_GPIOX)
-	#define HTCFG_USART0_TX_GPIO_PORT                 STRCAT2(HT_GPIO,        _HTCFG_USART0_TX_GPIOX)
-	#define HTCFG_USART0_TX_GPIO_PIN                  STRCAT2(GPIO_PIN_,      _HTCFG_USART0_TX_GPION)
+    #define _HTCFG_USART0_TX_GPIOX                    A
+    #define _HTCFG_USART0_TX_GPION                    8
+    #define _HTCFG_USART0_RX_GPIOX                    A
+    #define _HTCFG_USART0_RX_GPION                    10
 
-	#define HTCFG_USART0_RX_GPIO_ID                   STRCAT2(GPIO_P,         _HTCFG_USART0_RX_GPIOX)
-	#define HTCFG_USART0_RX_GPIO_CLK                  STRCAT2(P,              _HTCFG_USART0_RX_GPIOX)
-	#define HTCFG_USART0_RX_GPIO_PORT                 STRCAT2(HT_GPIO,        _HTCFG_USART0_RX_GPIOX)
-	#define HTCFG_USART0_RX_GPIO_PIN                  STRCAT2(GPIO_PIN_,      _HTCFG_USART0_RX_GPION)
-	
+    #define HTCFG_USART0_TX_GPIO_ID                   STRCAT2(GPIO_P,         _HTCFG_USART0_TX_GPIOX)
+    #define HTCFG_USART0_TX_GPIO_CLK                  STRCAT2(P,              _HTCFG_USART0_TX_GPIOX)
+    #define HTCFG_USART0_TX_GPIO_PORT                 STRCAT2(HT_GPIO,        _HTCFG_USART0_TX_GPIOX)
+    #define HTCFG_USART0_TX_GPIO_PIN                  STRCAT2(GPIO_PIN_,      _HTCFG_USART0_TX_GPION)
+
+    #define HTCFG_USART0_RX_GPIO_ID                   STRCAT2(GPIO_P,         _HTCFG_USART0_RX_GPIOX)
+    #define HTCFG_USART0_RX_GPIO_CLK                  STRCAT2(P,              _HTCFG_USART0_RX_GPIOX)
+    #define HTCFG_USART0_RX_GPIO_PORT                 STRCAT2(HT_GPIO,        _HTCFG_USART0_RX_GPIOX)
+    #define HTCFG_USART0_RX_GPIO_PIN                  STRCAT2(GPIO_PIN_,      _HTCFG_USART0_RX_GPION)
+
 #endif
 #ifdef BSP_USING_USART1
 
-	#define HTCFG_USART1_IPN                          USART1
-	
-	#define _HTCFG_USART1_TX_GPIOX                    A
-	#define _HTCFG_USART1_TX_GPION                    4
-	#define _HTCFG_USART1_RX_GPIOX                    A
-	#define _HTCFG_USART1_RX_GPION                    5
+    #define HTCFG_USART1_IPN                          USART1
 
-	#define HTCFG_USART1_TX_GPIO_ID                   STRCAT2(GPIO_P,         _HTCFG_USART1_TX_GPIOX)
-	#define HTCFG_USART1_TX_GPIO_CLK                  STRCAT2(P,              _HTCFG_USART1_TX_GPIOX)
-	#define HTCFG_USART1_TX_GPIO_PORT                 STRCAT2(HT_GPIO,        _HTCFG_USART1_TX_GPIOX)
-	#define HTCFG_USART1_TX_GPIO_PIN                  STRCAT2(GPIO_PIN_,      _HTCFG_USART1_TX_GPION)
+    #define _HTCFG_USART1_TX_GPIOX                    A
+    #define _HTCFG_USART1_TX_GPION                    4
+    #define _HTCFG_USART1_RX_GPIOX                    A
+    #define _HTCFG_USART1_RX_GPION                    5
 
-	#define HTCFG_USART1_RX_GPIO_ID                   STRCAT2(GPIO_P,         _HTCFG_USART1_RX_GPIOX)
-	#define HTCFG_USART1_RX_GPIO_CLK                  STRCAT2(P,              _HTCFG_USART1_RX_GPIOX)
-	#define HTCFG_USART1_RX_GPIO_PORT                 STRCAT2(HT_GPIO,        _HTCFG_USART1_RX_GPIOX)
-	#define HTCFG_USART1_RX_GPIO_PIN                  STRCAT2(GPIO_PIN_,      _HTCFG_USART1_RX_GPION)
-	
+    #define HTCFG_USART1_TX_GPIO_ID                   STRCAT2(GPIO_P,         _HTCFG_USART1_TX_GPIOX)
+    #define HTCFG_USART1_TX_GPIO_CLK                  STRCAT2(P,              _HTCFG_USART1_TX_GPIOX)
+    #define HTCFG_USART1_TX_GPIO_PORT                 STRCAT2(HT_GPIO,        _HTCFG_USART1_TX_GPIOX)
+    #define HTCFG_USART1_TX_GPIO_PIN                  STRCAT2(GPIO_PIN_,      _HTCFG_USART1_TX_GPION)
+
+    #define HTCFG_USART1_RX_GPIO_ID                   STRCAT2(GPIO_P,         _HTCFG_USART1_RX_GPIOX)
+    #define HTCFG_USART1_RX_GPIO_CLK                  STRCAT2(P,              _HTCFG_USART1_RX_GPIOX)
+    #define HTCFG_USART1_RX_GPIO_PORT                 STRCAT2(HT_GPIO,        _HTCFG_USART1_RX_GPIOX)
+    #define HTCFG_USART1_RX_GPIO_PIN                  STRCAT2(GPIO_PIN_,      _HTCFG_USART1_RX_GPION)
+
 #endif
 #ifdef BSP_USING_UART0
 
-	#define HTCFG_UART0_IPN                          UART0
-	
-	#define _HTCFG_UART0_TX_GPIOX                    C
-	#define _HTCFG_UART0_TX_GPION                    9
-	#define _HTCFG_UART0_RX_GPIOX                    C
-	#define _HTCFG_UART0_RX_GPION                    10
+    #define HTCFG_UART0_IPN                          UART0
 
-	#define HTCFG_UART0_TX_GPIO_ID                   STRCAT2(GPIO_P,         _HTCFG_UART0_TX_GPIOX)
-	#define HTCFG_UART0_TX_GPIO_CLK                  STRCAT2(P,              _HTCFG_UART0_TX_GPIOX)
-	#define HTCFG_UART0_TX_GPIO_PORT                 STRCAT2(HT_GPIO,        _HTCFG_UART0_TX_GPIOX)
-	#define HTCFG_UART0_TX_GPIO_PIN                  STRCAT2(GPIO_PIN_,      _HTCFG_UART0_TX_GPION)
+    #define _HTCFG_UART0_TX_GPIOX                    C
+    #define _HTCFG_UART0_TX_GPION                    9
+    #define _HTCFG_UART0_RX_GPIOX                    C
+    #define _HTCFG_UART0_RX_GPION                    10
 
-	#define HTCFG_UART0_RX_GPIO_ID                   STRCAT2(GPIO_P,         _HTCFG_UART0_RX_GPIOX)
-	#define HTCFG_UART0_RX_GPIO_CLK                  STRCAT2(P,              _HTCFG_UART0_RX_GPIOX)
-	#define HTCFG_UART0_RX_GPIO_PORT                 STRCAT2(HT_GPIO,        _HTCFG_UART0_RX_GPIOX)
-	#define HTCFG_UART0_RX_GPIO_PIN                  STRCAT2(GPIO_PIN_,      _HTCFG_UART0_RX_GPION) 
-	
+    #define HTCFG_UART0_TX_GPIO_ID                   STRCAT2(GPIO_P,         _HTCFG_UART0_TX_GPIOX)
+    #define HTCFG_UART0_TX_GPIO_CLK                  STRCAT2(P,              _HTCFG_UART0_TX_GPIOX)
+    #define HTCFG_UART0_TX_GPIO_PORT                 STRCAT2(HT_GPIO,        _HTCFG_UART0_TX_GPIOX)
+    #define HTCFG_UART0_TX_GPIO_PIN                  STRCAT2(GPIO_PIN_,      _HTCFG_UART0_TX_GPION)
+
+    #define HTCFG_UART0_RX_GPIO_ID                   STRCAT2(GPIO_P,         _HTCFG_UART0_RX_GPIOX)
+    #define HTCFG_UART0_RX_GPIO_CLK                  STRCAT2(P,              _HTCFG_UART0_RX_GPIOX)
+    #define HTCFG_UART0_RX_GPIO_PORT                 STRCAT2(HT_GPIO,        _HTCFG_UART0_RX_GPIOX)
+    #define HTCFG_UART0_RX_GPIO_PIN                  STRCAT2(GPIO_PIN_,      _HTCFG_UART0_RX_GPION)
+
 #endif
 #ifdef BSP_USING_UART1
 
-	#define HTCFG_UART1_IPN                          UART1
-	
-	#define _HTCFG_UART1_TX_GPIOX                    C
-	#define _HTCFG_UART1_TX_GPION                    2
-	#define _HTCFG_UART1_RX_GPIOX                    C
-	#define _HTCFG_UART1_RX_GPION                    3
+    #define HTCFG_UART1_IPN                          UART1
 
-	#define HTCFG_UART1_TX_GPIO_ID                   STRCAT2(GPIO_P,         _HTCFG_UART1_TX_GPIOX)
-	#define HTCFG_UART1_TX_GPIO_CLK                  STRCAT2(P,              _HTCFG_UART1_TX_GPIOX)
-	#define HTCFG_UART1_TX_GPIO_PORT                 STRCAT2(HT_GPIO,        _HTCFG_UART1_TX_GPIOX)
-	#define HTCFG_UART1_TX_GPIO_PIN                  STRCAT2(GPIO_PIN_,      _HTCFG_UART1_TX_GPION)
+    #define _HTCFG_UART1_TX_GPIOX                    C
+    #define _HTCFG_UART1_TX_GPION                    2
+    #define _HTCFG_UART1_RX_GPIOX                    C
+    #define _HTCFG_UART1_RX_GPION                    3
 
-	#define HTCFG_UART1_RX_GPIO_ID                   STRCAT2(GPIO_P,         _HTCFG_UART1_RX_GPIOX)
-	#define HTCFG_UART1_RX_GPIO_CLK                  STRCAT2(P,              _HTCFG_UART1_RX_GPIOX)
-	#define HTCFG_UART1_RX_GPIO_PORT                 STRCAT2(HT_GPIO,        _HTCFG_UART1_RX_GPIOX)
-	#define HTCFG_UART1_RX_GPIO_PIN                  STRCAT2(GPIO_PIN_,      _HTCFG_UART1_RX_GPION)
-	
+    #define HTCFG_UART1_TX_GPIO_ID                   STRCAT2(GPIO_P,         _HTCFG_UART1_TX_GPIOX)
+    #define HTCFG_UART1_TX_GPIO_CLK                  STRCAT2(P,              _HTCFG_UART1_TX_GPIOX)
+    #define HTCFG_UART1_TX_GPIO_PORT                 STRCAT2(HT_GPIO,        _HTCFG_UART1_TX_GPIOX)
+    #define HTCFG_UART1_TX_GPIO_PIN                  STRCAT2(GPIO_PIN_,      _HTCFG_UART1_TX_GPION)
+
+    #define HTCFG_UART1_RX_GPIO_ID                   STRCAT2(GPIO_P,         _HTCFG_UART1_RX_GPIOX)
+    #define HTCFG_UART1_RX_GPIO_CLK                  STRCAT2(P,              _HTCFG_UART1_RX_GPIOX)
+    #define HTCFG_UART1_RX_GPIO_PORT                 STRCAT2(HT_GPIO,        _HTCFG_UART1_RX_GPIOX)
+    #define HTCFG_UART1_RX_GPIO_PIN                  STRCAT2(GPIO_PIN_,      _HTCFG_UART1_RX_GPION)
+
 #endif
 #endif
 
@@ -106,55 +106,55 @@ extern "C" {
 #ifdef BSP_USING_SPI
 #ifdef BSP_USING_SPI0
 
-	#define HTCFG_SPI0_IPN                           SPI0
-	
-	#define _HTCFG_SPI0_SCK_GPIOX                    B
-	#define _HTCFG_SPI0_SCK_GPION                    3
-	
-	#define _HTCFG_SPI0_MISO_GPIOX                   B
-	#define _HTCFG_SPI0_MISO_GPION                   5
-	
-	#define _HTCFG_SPI0_MOSI_GPIOX                   B
-	#define _HTCFG_SPI0_MOSI_GPION                   4
+    #define HTCFG_SPI0_IPN                           SPI0
 
-	#define HTCFG_SPI0_SCK_GPIO_CLK                  STRCAT2(P,              _HTCFG_SPI0_SCK_GPIOX)
-	#define HTCFG_SPI0_SCK_GPIO_ID                   STRCAT2(GPIO_P,         _HTCFG_SPI0_SCK_GPIOX)
-	#define HTCFG_SPI0_SCK_GPIO_PIN                  STRCAT2(GPIO_PIN_,      _HTCFG_SPI0_SCK_GPION)
+    #define _HTCFG_SPI0_SCK_GPIOX                    B
+    #define _HTCFG_SPI0_SCK_GPION                    3
 
-	#define HTCFG_SPI0_MISO_GPIO_CLK                 STRCAT2(P,              _HTCFG_SPI0_MISO_GPIOX)
-	#define HTCFG_SPI0_MISO_GPIO_ID                  STRCAT2(GPIO_P,         _HTCFG_SPI0_MISO_GPIOX)
-	#define HTCFG_SPI0_MISO_GPIO_PIN                 STRCAT2(GPIO_PIN_,      _HTCFG_SPI0_MISO_GPION)
+    #define _HTCFG_SPI0_MISO_GPIOX                   B
+    #define _HTCFG_SPI0_MISO_GPION                   5
 
-	#define HTCFG_SPI0_MOSI_GPIO_CLK                 STRCAT2(P,              _HTCFG_SPI0_MOSI_GPIOX)
-	#define HTCFG_SPI0_MOSI_GPIO_ID                  STRCAT2(GPIO_P,         _HTCFG_SPI0_MOSI_GPIOX)
-	#define HTCFG_SPI0_MOSI_GPIO_PIN                 STRCAT2(GPIO_PIN_,      _HTCFG_SPI0_MOSI_GPION)
-	
+    #define _HTCFG_SPI0_MOSI_GPIOX                   B
+    #define _HTCFG_SPI0_MOSI_GPION                   4
+
+    #define HTCFG_SPI0_SCK_GPIO_CLK                  STRCAT2(P,              _HTCFG_SPI0_SCK_GPIOX)
+    #define HTCFG_SPI0_SCK_GPIO_ID                   STRCAT2(GPIO_P,         _HTCFG_SPI0_SCK_GPIOX)
+    #define HTCFG_SPI0_SCK_GPIO_PIN                  STRCAT2(GPIO_PIN_,      _HTCFG_SPI0_SCK_GPION)
+
+    #define HTCFG_SPI0_MISO_GPIO_CLK                 STRCAT2(P,              _HTCFG_SPI0_MISO_GPIOX)
+    #define HTCFG_SPI0_MISO_GPIO_ID                  STRCAT2(GPIO_P,         _HTCFG_SPI0_MISO_GPIOX)
+    #define HTCFG_SPI0_MISO_GPIO_PIN                 STRCAT2(GPIO_PIN_,      _HTCFG_SPI0_MISO_GPION)
+
+    #define HTCFG_SPI0_MOSI_GPIO_CLK                 STRCAT2(P,              _HTCFG_SPI0_MOSI_GPIOX)
+    #define HTCFG_SPI0_MOSI_GPIO_ID                  STRCAT2(GPIO_P,         _HTCFG_SPI0_MOSI_GPIOX)
+    #define HTCFG_SPI0_MOSI_GPIO_PIN                 STRCAT2(GPIO_PIN_,      _HTCFG_SPI0_MOSI_GPION)
+
 #endif
 #ifdef BSP_USING_SPI1
 
-	#define HTCFG_SPI1_IPN                           SPI1
-	
-	#define _HTCFG_SPI1_SCK_GPIOX                    B
-	#define _HTCFG_SPI1_SCK_GPION                    7
-	
-	#define _HTCFG_SPI1_MISO_GPIOX                   B
-	#define _HTCFG_SPI1_MISO_GPION                   9
-	
-	#define _HTCFG_SPI1_MOSI_GPIOX                   B
-	#define _HTCFG_SPI1_MOSI_GPION                   8
+    #define HTCFG_SPI1_IPN                           SPI1
 
-	#define HTCFG_SPI1_SCK_GPIO_CLK                  STRCAT2(P,              _HTCFG_SPI1_SCK_GPIOX)
-	#define HTCFG_SPI1_SCK_GPIO_ID                   STRCAT2(GPIO_P,         _HTCFG_SPI1_SCK_GPIOX)
-	#define HTCFG_SPI1_SCK_GPIO_PIN                  STRCAT2(GPIO_PIN_,      _HTCFG_SPI1_SCK_GPION)
+    #define _HTCFG_SPI1_SCK_GPIOX                    B
+    #define _HTCFG_SPI1_SCK_GPION                    7
 
-	#define HTCFG_SPI1_MISO_GPIO_CLK                 STRCAT2(P,              _HTCFG_SPI1_MISO_GPIOX)
-	#define HTCFG_SPI1_MISO_GPIO_ID                  STRCAT2(GPIO_P,         _HTCFG_SPI1_MISO_GPIOX)
-	#define HTCFG_SPI1_MISO_GPIO_PIN                 STRCAT2(GPIO_PIN_,      _HTCFG_SPI1_MISO_GPION)
+    #define _HTCFG_SPI1_MISO_GPIOX                   B
+    #define _HTCFG_SPI1_MISO_GPION                   9
 
-	#define HTCFG_SPI1_MOSI_GPIO_CLK                 STRCAT2(P,              _HTCFG_SPI1_MOSI_GPIOX)
-	#define HTCFG_SPI1_MOSI_GPIO_ID                  STRCAT2(GPIO_P,         _HTCFG_SPI1_MOSI_GPIOX)
-	#define HTCFG_SPI1_MOSI_GPIO_PIN                 STRCAT2(GPIO_PIN_,      _HTCFG_SPI1_MOSI_GPION)
-	
+    #define _HTCFG_SPI1_MOSI_GPIOX                   B
+    #define _HTCFG_SPI1_MOSI_GPION                   8
+
+    #define HTCFG_SPI1_SCK_GPIO_CLK                  STRCAT2(P,              _HTCFG_SPI1_SCK_GPIOX)
+    #define HTCFG_SPI1_SCK_GPIO_ID                   STRCAT2(GPIO_P,         _HTCFG_SPI1_SCK_GPIOX)
+    #define HTCFG_SPI1_SCK_GPIO_PIN                  STRCAT2(GPIO_PIN_,      _HTCFG_SPI1_SCK_GPION)
+
+    #define HTCFG_SPI1_MISO_GPIO_CLK                 STRCAT2(P,              _HTCFG_SPI1_MISO_GPIOX)
+    #define HTCFG_SPI1_MISO_GPIO_ID                  STRCAT2(GPIO_P,         _HTCFG_SPI1_MISO_GPIOX)
+    #define HTCFG_SPI1_MISO_GPIO_PIN                 STRCAT2(GPIO_PIN_,      _HTCFG_SPI1_MISO_GPION)
+
+    #define HTCFG_SPI1_MOSI_GPIO_CLK                 STRCAT2(P,              _HTCFG_SPI1_MOSI_GPIOX)
+    #define HTCFG_SPI1_MOSI_GPIO_ID                  STRCAT2(GPIO_P,         _HTCFG_SPI1_MOSI_GPIOX)
+    #define HTCFG_SPI1_MOSI_GPIO_PIN                 STRCAT2(GPIO_PIN_,      _HTCFG_SPI1_MOSI_GPION)
+
 #endif
 #endif
 
@@ -162,41 +162,41 @@ extern "C" {
 #ifdef BSP_USING_I2C
 #ifdef BSP_USING_I2C0
 
-	#define HTCFG_I2C0_IPN                           I2C0
-	
-	#define _HTCFG_I2C0_SCL_GPIOX                    B
-	#define _HTCFG_I2C0_SCL_GPION                    12
-	
-	#define _HTCFG_I2C0_SDA_GPIOX                    B
-	#define _HTCFG_I2C0_SDA_GPION                    13
-	
-	#define HTCFG_I2C0_SCL_GPIO_CLK                  STRCAT2(P,              _HTCFG_I2C0_SCL_GPIOX)
-	#define HTCFG_I2C0_SCL_GPIO_ID                   STRCAT2(GPIO_P,         _HTCFG_I2C0_SCL_GPIOX)
-	#define HTCFG_I2C0_SCL_GPIO_PIN                  STRCAT2(GPIO_PIN_,      _HTCFG_I2C0_SCL_GPION)
+    #define HTCFG_I2C0_IPN                           I2C0
 
-	#define HTCFG_I2C0_SDA_GPIO_CLK                  STRCAT2(P,              _HTCFG_I2C0_SDA_GPIOX)
-	#define HTCFG_I2C0_SDA_GPIO_ID                   STRCAT2(GPIO_P,         _HTCFG_I2C0_SDA_GPIOX)
-	#define HTCFG_I2C0_SDA_GPIO_PIN                  STRCAT2(GPIO_PIN_,      _HTCFG_I2C0_SDA_GPION)
-	
+    #define _HTCFG_I2C0_SCL_GPIOX                    B
+    #define _HTCFG_I2C0_SCL_GPION                    12
+
+    #define _HTCFG_I2C0_SDA_GPIOX                    B
+    #define _HTCFG_I2C0_SDA_GPION                    13
+
+    #define HTCFG_I2C0_SCL_GPIO_CLK                  STRCAT2(P,              _HTCFG_I2C0_SCL_GPIOX)
+    #define HTCFG_I2C0_SCL_GPIO_ID                   STRCAT2(GPIO_P,         _HTCFG_I2C0_SCL_GPIOX)
+    #define HTCFG_I2C0_SCL_GPIO_PIN                  STRCAT2(GPIO_PIN_,      _HTCFG_I2C0_SCL_GPION)
+
+    #define HTCFG_I2C0_SDA_GPIO_CLK                  STRCAT2(P,              _HTCFG_I2C0_SDA_GPIOX)
+    #define HTCFG_I2C0_SDA_GPIO_ID                   STRCAT2(GPIO_P,         _HTCFG_I2C0_SDA_GPIOX)
+    #define HTCFG_I2C0_SDA_GPIO_PIN                  STRCAT2(GPIO_PIN_,      _HTCFG_I2C0_SDA_GPION)
+
 #endif
 #ifdef BSP_USING_I2C1
 
-	#define HTCFG_I2C1_IPN                           I2C1
-	
-	#define _HTCFG_I2C1_SCL_GPIOX                    A
-	#define _HTCFG_I2C1_SCL_GPION                    0
-	
-	#define _HTCFG_I2C1_SDA_GPIOX                    A
-	#define _HTCFG_I2C1_SDA_GPION                    1
-	
-	#define HTCFG_I2C1_SCL_GPIO_CLK                  STRCAT2(P,              _HTCFG_I2C1_SCL_GPIOX)
-	#define HTCFG_I2C1_SCL_GPIO_ID                   STRCAT2(GPIO_P,         _HTCFG_I2C1_SCL_GPIOX)
-	#define HTCFG_I2C1_SCL_GPIO_PIN                  STRCAT2(GPIO_PIN_,      _HTCFG_I2C1_SCL_GPION)
+    #define HTCFG_I2C1_IPN                           I2C1
 
-	#define HTCFG_I2C1_SDA_GPIO_CLK                  STRCAT2(P,              _HTCFG_I2C1_SDA_GPIOX)
-	#define HTCFG_I2C1_SDA_GPIO_ID                   STRCAT2(GPIO_P,         _HTCFG_I2C1_SDA_GPIOX)
-	#define HTCFG_I2C1_SDA_GPIO_PIN                  STRCAT2(GPIO_PIN_,      _HTCFG_I2C1_SDA_GPION)	
-	
+    #define _HTCFG_I2C1_SCL_GPIOX                    A
+    #define _HTCFG_I2C1_SCL_GPION                    0
+
+    #define _HTCFG_I2C1_SDA_GPIOX                    A
+    #define _HTCFG_I2C1_SDA_GPION                    1
+
+    #define HTCFG_I2C1_SCL_GPIO_CLK                  STRCAT2(P,              _HTCFG_I2C1_SCL_GPIOX)
+    #define HTCFG_I2C1_SCL_GPIO_ID                   STRCAT2(GPIO_P,         _HTCFG_I2C1_SCL_GPIOX)
+    #define HTCFG_I2C1_SCL_GPIO_PIN                  STRCAT2(GPIO_PIN_,      _HTCFG_I2C1_SCL_GPION)
+
+    #define HTCFG_I2C1_SDA_GPIO_CLK                  STRCAT2(P,              _HTCFG_I2C1_SDA_GPIOX)
+    #define HTCFG_I2C1_SDA_GPIO_ID                   STRCAT2(GPIO_P,         _HTCFG_I2C1_SDA_GPIOX)
+    #define HTCFG_I2C1_SDA_GPIO_PIN                  STRCAT2(GPIO_PIN_,      _HTCFG_I2C1_SDA_GPION)
+
 #endif
 #endif
 

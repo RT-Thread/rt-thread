@@ -695,7 +695,7 @@ void CKCU_SetPeripPrescaler(CKCU_PeripPrescaler_TypeDef Perip, CKCU_APBCLKPRE_Ty
  *             CKCU_PCLK_I2S,
  *             CKCU_PCLK_PWM0, CKCU_PCLK_PWM1
  *             CKCU_PCLK_AFE, CKCU_PCLK_DAC0, CKCU_PCLK_DAC1, CKCU_PCLK_MIDI
- *             CKCU_PCLK_LEDC, CKCU_PCLK_TKEY 
+ *             CKCU_PCLK_LEDC, CKCU_PCLK_TKEY
  * @retval Frequency in Hz
  ************************************************************************************************************/
 u32 CKCU_GetPeripFrequency(CKCU_PeripPrescaler_TypeDef Perip)

@@ -430,7 +430,7 @@ void SystemInit(void)
   } while (((HT_PWRCU->CR >> 4) & 3UL) != 0x0);
 #endif
 
-  ResetBit_BB((u32)(&HT_CKCU->APBCCR1), 6);                     /* disable Backup domain register clock     */  
+  ResetBit_BB((u32)(&HT_CKCU->APBCCR1), 6);                     /* disable Backup domain register clock     */
 
   /* Pre-fetch buffer configuration                                                                         */
 #if (PRE_FETCH_ENABLE == 0)

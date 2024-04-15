@@ -80,7 +80,7 @@
 
 /* Exported constants --------------------------------------------------------------------------------------*/
 #ifndef IS_IPN_BFTM
-#undef IPN_MCTM0 
+#undef IPN_MCTM0
 #undef IPN_MCTM1
 #undef IPN_GPTM0
 #undef IPN_GPTM1

@@ -61,7 +61,7 @@ static void _AES_Init(HT_AES_TypeDef* HT_AESn, AES_InitTypeDef* AES_InitStruct);
 void AES_DeInit(HT_AES_TypeDef* HT_AESn)
 {
   RSTCU_PeripReset_TypeDef RSTCUReset = {{0}};
-  
+
   if (HT_AESn == NULL) // Remove the compiler warning
   {
   }

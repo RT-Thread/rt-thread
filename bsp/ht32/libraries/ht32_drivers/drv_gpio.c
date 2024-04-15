@@ -12,8 +12,8 @@
 
 #ifdef RT_USING_PIN
 
-#define __HT32_PIN(index, gpio, pin)			\
-    {											\
+#define __HT32_PIN(index, gpio, pin)            \
+    {                                           \
         index, HT_GPIO##gpio, GPIO_PIN_##pin    \
     }
 
@@ -361,14 +361,14 @@ static rt_err_t ht32_pin_attach_irq(struct rt_device *device,
     index = get_pin(pin);
     if (index == RT_NULL)
     {
-        return RT_EINVAL;
+        return RT_ERROR;
     }
 
     hdr_index = bit2bitno(index->pin);
 
     if (hdr_index < 0 || hdr_index >= ITEM_NUM(pin_irq_map))
     {
-        return RT_EINVAL;
+        return RT_ERROR;
     }
 
     level = rt_hw_interrupt_disable();
@@ -383,7 +383,7 @@ static rt_err_t ht32_pin_attach_irq(struct rt_device *device,
     if (pin_irq_hdr_tab[hdr_index].pin != -1)
     {
         rt_hw_interrupt_enable(level);
-        return RT_EFULL;
+        return RT_ERROR;
     }
     pin_irq_hdr_tab[hdr_index].pin = pin;
     pin_irq_hdr_tab[hdr_index].hdr = hdr;
@@ -403,13 +403,13 @@ static rt_err_t ht32_pin_detach_irq(struct rt_device *device, rt_base_t pin)
     index = get_pin(pin);
     if (index == RT_NULL)
     {
-        return RT_EINVAL;
+        return RT_ERROR;
     }
 
     hdr_index = bit2bitno(index->pin);
     if (hdr_index < 0 || hdr_index >= ITEM_NUM(pin_irq_map))
     {
-        return RT_EINVAL;
+        return RT_ERROR;
     }
 
     level = rt_hw_interrupt_disable();
@@ -438,14 +438,14 @@ static rt_err_t ht32_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_
     index = get_pin(pin);
     if (index == RT_NULL)
     {
-        return RT_EINVAL;
+        return RT_ERROR;
     }
     if (enabled == PIN_IRQ_ENABLE)
     {
         hdr_index = bit2bitno(index->pin);
         if (hdr_index < 0 || hdr_index >= ITEM_NUM(pin_irq_map))
         {
-            return RT_EINVAL;
+            return RT_ERROR;
         }
 
         level = rt_hw_interrupt_disable();
@@ -453,7 +453,7 @@ static rt_err_t ht32_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_
         if (pin_irq_hdr_tab[hdr_index].pin == -1)
         {
             rt_hw_interrupt_enable(level);
-            return RT_EINVAL;
+            return RT_ERROR;
         }
 
         irqmap = &pin_irq_map[hdr_index];
@@ -554,7 +554,7 @@ static rt_err_t ht32_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_
             break;
         default:
             rt_hw_interrupt_enable(level);
-            return RT_EINVAL;
+            return RT_ERROR;
         }
 
         EXTI_InitStruct.EXTI_Channel = hdr_index;
@@ -574,7 +574,7 @@ static rt_err_t ht32_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_
         irqmap = get_pin_irq_map(index->pin);
         if (irqmap == RT_NULL)
         {
-            return RT_EINVAL;
+            return RT_ERROR;
         }
         if ((irqmap->irqno) == EXTI0_IRQn)
             EXTI_IntConfig(EXTI_CHANNEL_0, DISABLE);
@@ -611,7 +611,7 @@ static rt_err_t ht32_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_
     }
     else
     {
-        return RT_EINVAL;
+        return RT_ERROR;
     }
     return RT_EOK;
 }

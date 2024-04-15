@@ -136,8 +136,8 @@ static rt_err_t ht32_configure(struct rt_serial_device *serial, struct serial_co
         CKCUClock.Bit.UART3 = 1;
 #endif
     CKCU_PeripClockConfig(CKCUClock, ENABLE);
-	
-	/* UART gpio init */
+
+    /* UART gpio init */
     ht32_usart_gpio_init((void *)usart_instance->usart_x);
 
     /* baud rate */
@@ -159,8 +159,8 @@ static rt_err_t ht32_configure(struct rt_serial_device *serial, struct serial_co
         USART_InitStructure.USART_WordLength = USART_WORDLENGTH_8B;
         break;
     }
-	
-	/* stop bit */
+
+    /* stop bit */
     switch (cfg->stop_bits)
     {
     case STOP_BITS_1:
@@ -189,12 +189,12 @@ static rt_err_t ht32_configure(struct rt_serial_device *serial, struct serial_co
         USART_InitStructure.USART_Parity = USART_PARITY_NO;
         break;
     }
-	
+
     /* UART mode */
     USART_InitStructure.USART_Mode = USART_MODE_NORMAL;
-	/* UART init */
+    /* UART init */
     USART_Init((usart_instance->usart_x), &USART_InitStructure);
-	/*UART enable */
+    /*UART enable */
     USART_TxCmd((usart_instance->usart_x), ENABLE);
     USART_RxCmd((usart_instance->usart_x), ENABLE);
 
@@ -256,7 +256,7 @@ static int ht32_getc(struct rt_serial_device *serial)
 
 static rt_ssize_t ht32_dma_transmit(struct rt_serial_device *serial, rt_uint8_t *buf, rt_size_t size, int direction)
 {
-    return RT_EINVAL;
+    return RT_ERROR;
 }
 
 static const struct rt_uart_ops ht32_usart_ops =

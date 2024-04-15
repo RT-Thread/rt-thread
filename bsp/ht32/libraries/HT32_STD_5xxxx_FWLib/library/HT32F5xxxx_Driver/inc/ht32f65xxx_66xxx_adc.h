@@ -49,7 +49,7 @@
 /** @defgroup ADC_Exported_Constants ADC exported constants
   * @{
   */
-#if (LIBCFG_ADC1)  
+#if (LIBCFG_ADC1)
 #define IS_ADC(x)                               ((x == HT_ADC0) || (x == HT_ADC1))
 #else
 #define IS_ADC(x)                               (x == HT_ADC0)

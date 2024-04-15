@@ -176,7 +176,7 @@ static rt_err_t ht32_configure(struct rt_spi_device *device, struct rt_spi_confi
     }
     else
     {
-        return RT_EIO;
+        return RT_ERROR;
     }
 
     /* Set the polarity and phase of the SPI */

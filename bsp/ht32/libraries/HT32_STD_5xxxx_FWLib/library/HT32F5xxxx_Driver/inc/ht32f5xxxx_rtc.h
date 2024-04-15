@@ -161,7 +161,7 @@ typedef enum
  * @brief Used to check RTC_SRC_Enum parameter
  */
 #if (LIBCFG_LSE)
-#define IS_RTC_SRC_LSE(x)  (x == RTC_SRC_LSE) 
+#define IS_RTC_SRC_LSE(x)  (x == RTC_SRC_LSE)
 #else
 #define IS_RTC_SRC_LSE(x)  (0)
 #endif

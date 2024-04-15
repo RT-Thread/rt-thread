@@ -87,10 +87,10 @@ static rt_size_t ht32_i2c_init(struct ht32_i2c *i2c_drv)
     return RT_EOK;
 }
 
-static int ht32_i2c_read(struct ht32_i2c_config *hi2c, 
-						rt_uint16_t slave_address, 
-						rt_uint8_t *p_buffer, 
-						rt_uint16_t data_byte)
+static int ht32_i2c_read(struct ht32_i2c_config *hi2c,
+                        rt_uint16_t slave_address,
+                        rt_uint8_t *p_buffer,
+                        rt_uint16_t data_byte)
 {
     uint16_t date_num = 0;
     uint8_t data = 0xFF;
@@ -121,10 +121,10 @@ static int ht32_i2c_read(struct ht32_i2c_config *hi2c,
     return 0;
 }
 
-static int ht32_i2c_write(struct ht32_i2c_config *hi2c, 
-						uint16_t slave_address, 
-						uint8_t *p_buffer, 
-						uint16_t data_byte)
+static int ht32_i2c_write(struct ht32_i2c_config *hi2c,
+                        uint16_t slave_address,
+                        uint8_t *p_buffer,
+                        uint16_t data_byte)
 {
     uint16_t date_num = data_byte;
 
