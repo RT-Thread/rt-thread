@@ -8,8 +8,8 @@
  * 2018-07-28     liu2guang      the first version for STM32F469NI-Discovery.
  */
 
-#ifndef __DRV_LCD_H_
-#define __DRV_LCD_H_
+#ifndef __LCD_PORT_H_
+#define __LCD_PORT_H_
 
 #include <rtthread.h>
 #include <rtdevice.h>
@@ -31,4 +31,4 @@ typedef enum
 
 #define LCD_BL_PIN  BSP_IO_PORT_01_PIN_00
 
-#endif
+#endif  /* __LCD_PORT_H_ */

@@ -354,7 +354,7 @@
             #define BSP_CFG_ROM_REG_DUALSEL (0xFFFFFFF8U | (0x7U))
 #endif
 
-            /* Block Protection Register 0 */
+			/* Block Protection Register 0 */
 #ifndef BSP_CFG_ROM_REG_BPS0
             #define BSP_CFG_ROM_REG_BPS0 (~( 0U))
 #endif

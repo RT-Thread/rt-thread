@@ -90,6 +90,8 @@ FSP_HEADER
   #define BSP_MSTP_BIT_FSP_IP_KEY(channel)      (1U << 4U);
   #define BSP_MSTP_REG_FSP_IP_POEG(channel)     R_MSTP->MSTPCRD
   #define BSP_MSTP_BIT_FSP_IP_POEG(channel)     (1U << (14U - channel));
+  #define BSP_MSTP_REG_FSP_IP_ULPT(channel)     R_MSTP->MSTPCRE
+  #define BSP_MSTP_BIT_FSP_IP_ULPT(channel)     (1U << (9U - channel));
  #else
   #define BSP_MSTP_REG_FSP_IP_GPT(channel)      R_MSTP->MSTPCRE
   #define BSP_MSTP_BIT_FSP_IP_GPT(channel)      (1U << (31 - channel));

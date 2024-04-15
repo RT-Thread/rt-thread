@@ -333,9 +333,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls>-Wno-license-management -Wunused -Wuninitialized -Wall  -Wmissing-declarations  -Wpointer-arith  -Waggregate-return -Wfloat-equal</MiscControls>
-              <Define>RT_USING_LIBC, RT_USING_ARMLIBC, __STDC_LIMIT_MACROS, __RTTHREAD__, __CLK_TCK=RT_TICK_PER_SECOND</Define>
+              <Define>RT_USING_LIBC, __RTTHREAD__, __CLK_TCK=RT_TICK_PER_SECOND, RT_USING_ARMLIBC, __STDC_LIMIT_MACROS</Define>
               <Undefine />
-              <IncludePath>..\..\..\libcpu\arm\cortex-m4;..\..\..\components\libc\posix\io\epoll;..\libraries\HAL_Drivers;board\ports\wifi;..\..\..\components\libc\posix\io\eventfd;..\..\..\libcpu\arm\common;board\ports;..\..\..\components\libc\posix\ipc;..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\compilers\common\include;..\..\..\components\finsh;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;.;..\..\..\components\drivers\include;..\..\..\include;..\..\..\components\libc\compilers\common\extension;..\libraries\HAL_Drivers\config;board;..\..\..\components\libc\compilers\common\extension\fcntl\octal</IncludePath>
+              <IncludePath>..\..\..\components\libc\posix\io\eventfd;..\..\..\components\drivers\include;..\libraries\HAL_Drivers\config;board\ports;..\..\..\include;.;board;..\..\..\components\finsh;..\..\..\components\drivers\include;..\..\..\libcpu\arm\cortex-m4;..\libraries\HAL_Drivers;..\..\..\components\libc\compilers\common\extension;..\..\..\components\drivers\include;..\..\..\components\libc\compilers\common\extension\fcntl\octal;board\ports\wifi;..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\posix\io\epoll;..\..\..\components\libc\compilers\common\include;..\..\..\components\libc\posix\ipc;..\..\..\libcpu\arm\common;..\..\..\components\drivers\include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>

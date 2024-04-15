@@ -92,8 +92,6 @@
 #define RT_USING_SERIAL
 #define RT_USING_SERIAL_V2
 #define RT_SERIAL_USING_DMA
-#define RT_USING_SPI
-#define RT_USING_SPI_MSD
 #define RT_USING_PIN
 
 /* Using USB */
@@ -147,12 +145,6 @@
 /* CYW43012 WiFi */
 
 
-/* BL808 WiFi */
-
-
-/* CYW43439 WiFi */
-
-
 /* IoT Cloud */
 
 
@@ -194,18 +186,13 @@
 
 /* peripheral libraries and drivers */
 
-/* HAL & SDK Drivers */
-
-/* STM32 HAL & SDK Drivers */
-
-
-/* Kendryte SDK */
-
-
 /* sensors drivers */
 
 
 /* touch drivers */
+
+
+/* Kendryte SDK */
 
 
 /* AI packages */
@@ -267,6 +254,7 @@
 
 /* Onboard Peripheral Drivers */
 
+
 /* On-chip Peripheral Drivers */
 
 #define BSP_USING_GPIO
@@ -277,8 +265,6 @@
 #define BSP_USING_UART4
 #define BSP_UART4_RX_BUFSIZE 256
 #define BSP_UART4_TX_BUFSIZE 0
-#define BSP_USING_SCI_SPI
-#define BSP_USING_SCI_SPI9
 
 /* Board extended module Drivers */
 
