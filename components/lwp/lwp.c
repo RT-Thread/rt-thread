@@ -176,7 +176,7 @@ static int lwp_startup(void)
             else
             {
                 rt_lwp_t p = lwp_from_pid_locked(1);
-                p->sig_protected = 0;
+                p->sig_protected = 1;
 
                 error = 0;
             }
@@ -186,7 +186,7 @@ static int lwp_startup(void)
 
     if (error)
     {
-        LOG_E("%s: init program not found\n"
+        LOG_D("%s: init program not found\n"
             "Switching to legacy mode...", __func__);
     }
     return error;

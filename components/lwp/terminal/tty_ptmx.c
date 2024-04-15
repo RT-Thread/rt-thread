@@ -60,7 +60,7 @@ static int ptm_fops_close(struct dfs_file *file)
     lwp_tty_t tp;
     rt_device_t device;
 
-    if (file->vnode && file->vnode->data)
+    if (file->data)
     {
         if (file->vnode->ref_count != 1)
         {
@@ -68,7 +68,7 @@ static int ptm_fops_close(struct dfs_file *file)
         }
         else
         {
-            device = (rt_device_t)file->vnode->data;
+            device = (rt_device_t)file->data;
             tp = rt_container_of(device, struct lwp_tty, parent);
             rc = bsd_ptsdev_methods.fo_close(tp, rt_thread_self());
         }
@@ -92,9 +92,9 @@ static ssize_t ptm_fops_read(struct dfs_file *file, void *buf, size_t count,
     struct lwp_tty *tp;
     int oflags = file->flags;
 
-    if (file->vnode && file->vnode->data)
+    if (file->data)
     {
-        device = (rt_device_t)file->vnode->data;
+        device = (rt_device_t)file->data;
         tp = rt_container_of(device, struct lwp_tty, parent);
 
         /* setup uio parameters */
@@ -133,9 +133,9 @@ static ssize_t ptm_fops_write(struct dfs_file *file, const void *buf,
     struct lwp_tty *tp;
     int oflags = file->flags;
 
-    if (file->vnode && file->vnode->data)
+    if (file->data)
     {
-        device = (rt_device_t)file->vnode->data;
+        device = (rt_device_t)file->data;
         tp = rt_container_of(device, struct lwp_tty, parent);
 
         /* setup uio parameters */
@@ -172,9 +172,9 @@ static int ptm_fops_ioctl(struct dfs_file *file, int cmd, void *arg)
     rt_device_t device;
     rt_ubase_t cmd_normal = (unsigned int)cmd;
 
-    if (file->vnode && file->vnode->data)
+    if (file->data)
     {
-        device = (rt_device_t)file->vnode->data;
+        device = (rt_device_t)file->data;
         tp = rt_container_of(device, struct lwp_tty, parent);
 
         switch (cmd_normal)
@@ -239,9 +239,9 @@ static int ptm_fops_poll(struct dfs_file *file, struct rt_pollreq *req)
     rt_device_t device;
     struct lwp_tty *tp;
 
-    if (file->vnode && file->vnode->data)
+    if (file->data)
     {
-        device = (rt_device_t)file->vnode->data;
+        device = (rt_device_t)file->data;
         tp = rt_container_of(device, struct lwp_tty, parent);
 
         rc = bsd_ptsdev_methods.fo_poll(tp, req, 0, rt_thread_self());

@@ -803,13 +803,13 @@ int pts_alloc(int fflags, struct rt_thread *td, struct dfs_file *ptm_file)
 #else
     rootpath = ptyfs_get_rootpath(ptmx_device);
     RT_ASSERT(rootpath[strlen(rootpath) - 1] != '/');
-    snprintf(name_buf, DIRENT_NAME_MAX, "%s/%u", rootpath, psc->pts_unit);
+    snprintf(name_buf, DIRENT_NAME_MAX, "%s/%d", rootpath, psc->pts_unit);
 
     /* setup the pts */
     lwp_tty_register(tp, name_buf);
 
     /* now this file operating on new pty */
-    ptm_file->vnode->data = tp;
+    ptm_file->data = tp;
 #endif
 
     return 0;
