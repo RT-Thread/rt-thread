@@ -58,6 +58,9 @@ struct unix_conn
     int type;
     int proto;
 
+#ifdef SAL_USING_AF_UNIX
+    rt_atomic_t msg_count;
+#endif
     rt_uint32_t send_timeout;
     rt_uint32_t recv_timeout;
     rt_wqueue_t wq_read_head;
