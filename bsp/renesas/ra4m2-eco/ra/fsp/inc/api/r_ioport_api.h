@@ -69,6 +69,12 @@ typedef enum e_ioport_peripheral
 
     /** Pin will function as an AGT peripheral pin */
     IOPORT_PERIPHERAL_AGT = (0x01UL << IOPORT_PRV_PFS_PSEL_OFFSET),
+	
+	 /** Pin will function as an AGT peripheral pin */
+    IOPORT_PERIPHERAL_AGTW = (0x01UL << IOPORT_PRV_PFS_PSEL_OFFSET),
+	
+	 /** Pin will function as an AGT peripheral pin */
+    IOPORT_PERIPHERAL_AGT1 = (0x18UL << IOPORT_PRV_PFS_PSEL_OFFSET),
 
     /** Pin will function as a GPT peripheral pin */
     IOPORT_PERIPHERAL_GPT0 = (0x02UL << IOPORT_PRV_PFS_PSEL_OFFSET),

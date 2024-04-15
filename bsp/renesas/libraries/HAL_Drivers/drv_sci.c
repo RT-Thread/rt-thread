@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2023, RT-Thread Development Team
+ * Copyright (c) 2006-2024, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -80,7 +80,7 @@ struct ra_sci_param
 #ifdef RT_USING_SPI
     rt_weak const struct rt_spi_ops            sci_ops_spi;
 #endif
-#ifdef RT_USING_UART
+#ifdef RT_USING_SERIAL
     rt_weak const struct rt_uart_ops           sci_ops_uart;
 #endif
 
@@ -101,7 +101,7 @@ struct ra_sci_object
             struct rt_i2c_bus_device    ibus;
         };
 #endif
-#ifdef RT_USING_UART
+#ifdef RT_USING_SERIAL
         struct
         {
             struct rt_serial_device     ubus;
@@ -121,12 +121,14 @@ struct ra_sci_object
 #define RA_SCI_EVENT_ERROR          8
 #define RA_SCI_EVENT_ALL            15
 
-#if defined(SOC_SERIES_R7FA4M2)
-#define RA_SCI_HANDLE_ITEM(idx,type,id)    {.bus_name=CONCAT3STR(sci_,type,idx),.sci_ctrl=&g_sci##idx##_ctrl,.sci_cfg=&g_sci##idx##_cfg,.ops=&sci_ops_##type}
-#else
-#define RA_SCI_HANDLE_ITEM(idx,type,id)    {.bus_name=CONCAT3STR(sci_,type,idx),.sci_ctrl=&g_##type##idx##_ctrl,.sci_cfg=&g_##type##idx##_cfg,.ops=&sci_ops_##type}
-#endif
-
+/**
+ * Bus name format: sci[x][y], where x=0~9 and y=s/i/u
+ * Example:
+ * - sci_spi:  sci0s
+ * - sci_i2c:  sci0i
+ * - sci_uart: sci0u
+ */
+#define RA_SCI_HANDLE_ITEM(idx,type,id)    {.bus_name=CONCAT3STR(sci,idx,id),.sci_ctrl=&g_sci##idx##_ctrl,.sci_cfg=&g_sci##idx##_cfg,.ops=&sci_ops_##type}
 
 const static struct ra_sci_param sci_param[] =
 {
@@ -668,11 +670,7 @@ static rt_err_t ra_hw_spi_configure(struct rt_spi_device *device,
 #ifdef R_SCI_B_SPI_H
     R_SCI_B_SPI_CalculateBitrate(obj->spi_cfg->max_hz, SCI_B_SPI_SOURCE_CLOCK_PCLK, &spi_cfg.clk_div);
 #else
-#if defined(SOC_SERIES_R7FA4M2)
-    R_SCI_SPI_CalculateBitrate(obj->spi_cfg->max_hz, &cfg_ext->clk_div, false);
-#else
     R_SCI_SPI_CalculateBitrate(obj->spi_cfg->max_hz, &spi_cfg->clk_div, false);
-#endif
 #endif
 
     /**< init */
@@ -753,6 +751,7 @@ const struct rt_spi_ops sci_ops_spi =
 
 static int ra_hw_sci_init(void)
 {
+    int bufsz_idx = 0;
     for (rt_uint8_t idx = 0; idx < RA_SCI_INDEX_MAX; idx++)
     {
         struct ra_sci_object *obj = &sci_obj[idx];

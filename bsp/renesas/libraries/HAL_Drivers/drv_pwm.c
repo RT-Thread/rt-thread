@@ -10,7 +10,7 @@
 
 #include "drv_pwm.h"
 
-#ifdef RT_USING_PWM
+#ifdef BSP_USING_PWM
 
 /* Declare the control function first */
 static rt_err_t drv_pwm_control(struct rt_device_pwm *, int, void *);
@@ -217,4 +217,4 @@ int rt_hw_pwm_init(void)
     return ret;
 }
 INIT_BOARD_EXPORT(rt_hw_pwm_init);
-#endif /* RT_USING_PWM */
+#endif /* BSP_USING_PWM */

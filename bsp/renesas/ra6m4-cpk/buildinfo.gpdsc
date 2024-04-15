@@ -57,19 +57,14 @@
         <file category="source" name="ra/board/ra6m4_cpk/board_leds.c"/>
         <file category="header" name="ra/board/ra6m4_cpk/board_leds.h" path=""/>
         <file category="header" name="ra/fsp/inc/api/bsp_api.h" path=""/>
-        <file category="header" name="ra/fsp/inc/api/r_external_irq_api.h" path=""/>
         <file category="header" name="ra/fsp/inc/api/r_ioport_api.h" path=""/>
-        <file category="header" name="ra/fsp/inc/api/r_spi_api.h" path=""/>
         <file category="header" name="ra/fsp/inc/api/r_transfer_api.h" path=""/>
         <file category="header" name="ra/fsp/inc/api/r_uart_api.h" path=""/>
         <file category="header" name="ra/fsp/inc/fsp_common_api.h" path=""/>
         <file category="header" name="ra/fsp/inc/fsp_features.h" path=""/>
         <file category="header" name="ra/fsp/inc/fsp_version.h" path=""/>
-        <file category="header" name="ra/fsp/inc/instances/r_dtc.h" path=""/>
-        <file category="header" name="ra/fsp/inc/instances/r_icu.h" path=""/>
         <file category="header" name="ra/fsp/inc/instances/r_ioport.h" path=""/>
         <file category="header" name="ra/fsp/inc/instances/r_sci_uart.h" path=""/>
-        <file category="header" name="ra/fsp/inc/instances/r_spi.h" path=""/>
         <file category="header" name="ra/fsp/src/bsp/cmsis/Device/RENESAS/Include/base_addresses.h" path=""/>
         <file category="header" name="ra/fsp/src/bsp/cmsis/Device/RENESAS/Include/renesas.h" path=""/>
         <file category="header" name="ra/fsp/src/bsp/cmsis/Device/RENESAS/Include/system.h" path=""/>
@@ -103,11 +98,8 @@
         <file category="header" name="ra/fsp/src/bsp/mcu/ra6m4/bsp_elc.h" path=""/>
         <file category="header" name="ra/fsp/src/bsp/mcu/ra6m4/bsp_feature.h" path=""/>
         <file category="header" name="ra/fsp/src/bsp/mcu/ra6m4/bsp_mcu_info.h" path=""/>
-        <file category="source" name="ra/fsp/src/r_dtc/r_dtc.c"/>
-        <file category="source" name="ra/fsp/src/r_icu/r_icu.c"/>
         <file category="source" name="ra/fsp/src/r_ioport/r_ioport.c"/>
         <file category="source" name="ra/fsp/src/r_sci_uart/r_sci_uart.c"/>
-        <file category="source" name="ra/fsp/src/r_spi/r_spi.c"/>
         <file category="other" name="ra/SConscript"/>
       </files>
     </component>
@@ -120,11 +112,8 @@
         <file category="header" name="ra_cfg/fsp_cfg/bsp/bsp_mcu_device_pn_cfg.h" path=""/>
         <file category="header" name="ra_cfg/fsp_cfg/bsp/bsp_mcu_family_cfg.h" path=""/>
         <file category="header" name="ra_cfg/fsp_cfg/bsp/bsp_pin_cfg.h" path=""/>
-        <file category="header" name="ra_cfg/fsp_cfg/r_dtc_cfg.h" path=""/>
-        <file category="header" name="ra_cfg/fsp_cfg/r_icu_cfg.h" path=""/>
         <file category="header" name="ra_cfg/fsp_cfg/r_ioport_cfg.h" path=""/>
         <file category="header" name="ra_cfg/fsp_cfg/r_sci_uart_cfg.h" path=""/>
-        <file category="header" name="ra_cfg/fsp_cfg/r_spi_cfg.h" path=""/>
         <file category="other" name="ra_cfg/SConscript"/>
       </files>
     </component>
