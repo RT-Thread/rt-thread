@@ -337,7 +337,7 @@
               <MiscControls>-Wno-license-management -Wuninitialized -Wall -Wmissing-declarations -Wpointer-arith -Waggregate-return -Wfloat-equal</MiscControls>
               <Define>__STDC_LIMIT_MACROS, RT_USING_ARMLIBC, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__, BSP_CFG_RTOS = 2</Define>
               <Undefine />
-              <IncludePath>board;..\..\..\components\libc\compilers\common\include;..\libraries\HAL_Drivers\config;..\..\..\libcpu\arm\common;..\..\..\components\libc\compilers\common\extension;..\..\..\components\drivers\include;..\..\..\components\drivers\include;board\ports;..\..\..\include;..\..\..\components\libc\posix\io\eventfd;.;..\..\..\libcpu\arm\cortex-m85;..\..\..\components\drivers\include;..\..\..\components\libc\posix\ipc;..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\posix\io\epoll;..\..\..\components\finsh;..\libraries\HAL_Drivers;..\..\..\components\drivers\include;..\..\..\components\libc\compilers\common\extension\fcntl\octal</IncludePath>
+              <IncludePath>..\..\..\components\libc\posix\io\epoll;..\libraries\HAL_Drivers;..\..\..\components\libc\posix\ipc;..\..\..\components\libc\posix\io\poll;..\..\..\components\libc\posix\io\eventfd;..\..\..\libcpu\arm\cortex-m85;board;.;..\..\..\components\libc\compilers\common\include;..\..\..\components\finsh;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\libcpu\arm\common;board\ports;..\..\..\components\drivers\include;..\..\..\include;..\..\..\components\libc\compilers\common\extension;..\libraries\HAL_Drivers\config;..\..\..\components\libc\compilers\common\extension\fcntl\octal</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -463,6 +463,25 @@
               <FileName>completion.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\ipc\completion.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>condvar.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\ipc\condvar.c</FilePath>
               <FileOption>
                 <FileArmAds>
                   <Cads>

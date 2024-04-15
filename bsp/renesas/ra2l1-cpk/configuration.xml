@@ -150,10 +150,6 @@
       <description>SCI UART</description>
       <originalPack>Renesas.RA.3.5.0.pack</originalPack>
     </component>
-    <component apiversion="" class="HAL Drivers" condition="" group="all" subgroup="r_icu" variant="" vendor="Renesas" version="3.5.0">
-      <description>External Interrupt</description>
-      <originalPack>Renesas.RA.3.5.0.pack</originalPack>
-    </component>
   </raComponentSelection>
   <raElcConfiguration/>
   <raIcuConfiguration/>
@@ -192,25 +188,12 @@
       <property id="module.driver.uart.tei_ipl" value="board.icu.common.irq.priority2"/>
       <property id="module.driver.uart.eri_ipl" value="board.icu.common.irq.priority2"/>
     </module>
-    <module id="module.driver.external_irq_on_icu.832378872">
-      <property id="module.driver.external_irq.name" value="g_external_irq3"/>
-      <property id="module.driver.external_irq.channel" value="3"/>
-      <property id="module.driver.external_irq.trigger" value="module.driver.external_irq.trigger.trig_rising"/>
-      <property id="module.driver.external_irq.filter_enable" value="module.driver.external_irq.filter_enable.false"/>
-      <property id="module.driver.external_irq.pclk_div" value="module.driver.external_irq.pclk_div.pclk_div_by_64"/>
-      <property id="module.driver.external_irq.p_callback" value="irq_callback"/>
-      <property id="module.driver.external_irq.ipl" value="board.icu.common.irq.priority2"/>
-    </module>
     <context id="_hal.0">
       <stack module="module.driver.ioport_on_ioport.0"/>
       <stack module="module.driver.uart_on_sci_uart.629312687"/>
-      <stack module="module.driver.external_irq_on_icu.832378872"/>
     </context>
     <config id="config.driver.ioport">
       <property id="config.driver.ioport.checking" value="config.driver.ioport.checking.system"/>
-    </config>
-    <config id="config.driver.icu">
-      <property id="config.driver.icu.param_checking_enable" value="config.driver.icu.param_checking_enable.bsp"/>
     </config>
     <config id="config.driver.sci_uart">
       <property id="config.driver.sci_uart.param_checking_enable" value="config.driver.sci_uart.param_checking_enable.bsp"/>

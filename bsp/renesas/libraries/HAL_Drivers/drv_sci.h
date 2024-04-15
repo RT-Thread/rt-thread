@@ -23,7 +23,9 @@
 extern "C" {
 #endif
 
-rt_err_t drv_sci_spi_device_attach(const char *bus_name, const char *device_name, rt_base_t cs_pin);
+#ifdef BSP_USING_SCIn_SPI
+rt_err_t rt_hw_sci_spi_device_attach(const char *bus_name, const char *device_name, rt_base_t cs_pin);
+#endif
 
 #ifdef __cplusplus
 }

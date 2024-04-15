@@ -9,7 +9,7 @@
     <option key="#DeviceCommand#" value="R7FA8M1AH"/>
     <option key="#RTOS#" value="_none"/>
     <option key="#pinconfiguration#" value="R7FA8M1AHECBD.pincfg"/>
-    <option key="#FSPVersion#" value="5.0.0"/>
+    <option key="#FSPVersion#" value="5.1.0"/>
     <option key="#ConfigurationFragments#" value="Renesas##BSP##Board##ra8m1_ek##"/>
     <option key="#SELECTED_TOOLCHAIN#" value="com.arm.toolchain"/>
   </generalSettings>
@@ -90,7 +90,7 @@
       <property id="config.bsp.fsp.hoco_fll" value="config.bsp.fsp.hoco_fll.disabled"/>
       <property id="config.bsp.fsp.clock_settling_delay" value="config.bsp.fsp.clock_settling_delay.enabled"/>
       <property id="config.bsp.fsp.sleep_mode_delays" value="config.bsp.fsp.sleep_mode_delays.enabled"/>
-      <property id="config.bsp.fsp.rtos_sleep_delay" value="config.bsp.fsp.rtos_sleep_delay.enabled"/>
+      <property id="config.bsp.fsp.rtos_idle_sleep" value="config.bsp.fsp.rtos_idle_sleep.disabled"/>
       <property id="config.bsp.fsp.mstp_change_delays" value="config.bsp.fsp.mstp_change_delays.enabled"/>
       <property id="config.bsp.fsp.settling_delay_us" value="150"/>
       <property id="config.bsp.common.main_osc_wait" value="config.bsp.common.main_osc_wait.wait_8163"/>
@@ -112,6 +112,7 @@
       <property id="config.bsp.fsp.mcu.canfd.afl_rules_each_chnl" value="16"/>
       <property id="config.bsp.fsp.mcu.canfd.max_data_rate_hz" value="8"/>
       <property id="config.bsp.fsp.mcu.adc_dmac.samples_per_channel" value="32767"/>
+      <property id="config.bsp.fsp.mcu.sci_b_lin.max_baud" value="7500000"/>
       <property id="config.bsp.fsp.dcache" value="config.bsp.fsp.dcache.disabled"/>
     </config>
     <config id="config.bsp.ra">
@@ -207,57 +208,57 @@
     <node id="board.clock.octaspiclk.display" option="board.clock.octaspiclk.display.value"/>
   </raClockConfiguration>
   <raComponentSelection>
-    <component apiversion="" class="BSP" condition="" group="ra8m1" subgroup="device" variant="R7FA8M1AHECBD" vendor="Renesas" version="5.0.0">
-      <description>Board support package for R7FA8M1AHECBD</description>
-      <originalPack>Renesas.RA_mcu_ra8m1.5.0.0.pack</originalPack>
-    </component>
-    <component apiversion="" class="BSP" condition="" group="ra8m1" subgroup="device" variant="" vendor="Renesas" version="5.0.0">
-      <description>Board support package for RA8M1</description>
-      <originalPack>Renesas.RA_mcu_ra8m1.5.0.0.pack</originalPack>
-    </component>
-    <component apiversion="" class="BSP" condition="" group="ra8m1" subgroup="fsp" variant="" vendor="Renesas" version="5.0.0">
-      <description>Board support package for RA8M1 - FSP Data</description>
-      <originalPack>Renesas.RA_mcu_ra8m1.5.0.0.pack</originalPack>
-    </component>
-    <component apiversion="" class="Common" condition="" group="all" subgroup="fsp_common" variant="" vendor="Renesas" version="5.0.0">
-      <description>Board Support Package Common Files</description>
-      <originalPack>Renesas.RA.5.0.0.pack</originalPack>
-    </component>
-    <component apiversion="" class="HAL Drivers" condition="" group="all" subgroup="r_ioport" variant="" vendor="Renesas" version="5.0.0">
-      <description>I/O Port</description>
-      <originalPack>Renesas.RA.5.0.0.pack</originalPack>
-    </component>
-    <component apiversion="" class="HAL Drivers" condition="" group="all" subgroup="r_sci_b_uart" variant="" vendor="Renesas" version="5.0.0">
-      <description>SCI UART</description>
-      <originalPack>Renesas.RA.5.0.0.pack</originalPack>
-    </component>
-    <component apiversion="" class="CMSIS" condition="" group="CMSIS5" subgroup="CoreM" variant="" vendor="Arm" version="5.9.0+renesas.0.fsp.5.0.0">
-      <description>Arm CMSIS Version 5 - Core (M)</description>
-      <originalPack>Arm.CMSIS5.5.9.0+renesas.0.fsp.5.0.0.pack</originalPack>
-    </component>
-    <component apiversion="" class="BSP" condition="" group="Board" subgroup="ra8m1_ek" variant="" vendor="Renesas" version="5.0.0">
+    <component apiversion="" class="BSP" condition="" group="Board" subgroup="ra8m1_ek" variant="" vendor="Renesas" version="5.1.0">
       <description>RA8M1-EK Board Support Files</description>
-      <originalPack>Renesas.RA_board_ra8m1_ek.5.0.0.pack</originalPack>
+      <originalPack>Renesas.RA_board_ra8m1_ek.5.1.0.pack</originalPack>
     </component>
-    <component apiversion="" class="HAL Drivers" condition="" group="all" subgroup="r_gpt" variant="" vendor="Renesas" version="5.0.0">
-      <description>General PWM Timer</description>
-      <originalPack>Renesas.RA.5.0.0.pack</originalPack>
+    <component apiversion="" class="Common" condition="" group="all" subgroup="fsp_common" variant="" vendor="Renesas" version="5.1.0">
+      <description>Board Support Package Common Files</description>
+      <originalPack>Renesas.RA.5.1.0.pack</originalPack>
     </component>
-    <component apiversion="" class="HAL Drivers" condition="" group="all" subgroup="r_rtc" variant="" vendor="Renesas" version="5.0.0">
-      <description>Real Time Clock</description>
-      <originalPack>Renesas.RA.5.0.0.pack</originalPack>
-    </component>
-    <component apiversion="" class="HAL Drivers" condition="" group="all" subgroup="r_dtc" variant="" vendor="Renesas" version="5.0.0">
+    <component apiversion="" class="HAL Drivers" condition="" group="all" subgroup="r_dtc" variant="" vendor="Renesas" version="5.1.0">
       <description>Data Transfer Controller</description>
-      <originalPack>Renesas.RA.5.0.0.pack</originalPack>
+      <originalPack>Renesas.RA.5.1.0.pack</originalPack>
     </component>
-    <component apiversion="" class="HAL Drivers" condition="" group="all" subgroup="r_icu" variant="" vendor="Renesas" version="5.0.0">
+    <component apiversion="" class="HAL Drivers" condition="" group="all" subgroup="r_gpt" variant="" vendor="Renesas" version="5.1.0">
+      <description>General PWM Timer</description>
+      <originalPack>Renesas.RA.5.1.0.pack</originalPack>
+    </component>
+    <component apiversion="" class="HAL Drivers" condition="" group="all" subgroup="r_icu" variant="" vendor="Renesas" version="5.1.0">
       <description>External Interrupt</description>
-      <originalPack>Renesas.RA.5.0.0.pack</originalPack>
+      <originalPack>Renesas.RA.5.1.0.pack</originalPack>
     </component>
-    <component apiversion="" class="HAL Drivers" condition="" group="all" subgroup="r_sci_b_spi" variant="" vendor="Renesas" version="5.0.0">
+    <component apiversion="" class="HAL Drivers" condition="" group="all" subgroup="r_ioport" variant="" vendor="Renesas" version="5.1.0">
+      <description>I/O Port</description>
+      <originalPack>Renesas.RA.5.1.0.pack</originalPack>
+    </component>
+    <component apiversion="" class="HAL Drivers" condition="" group="all" subgroup="r_rtc" variant="" vendor="Renesas" version="5.1.0">
+      <description>Real Time Clock</description>
+      <originalPack>Renesas.RA.5.1.0.pack</originalPack>
+    </component>
+    <component apiversion="" class="HAL Drivers" condition="" group="all" subgroup="r_sci_b_uart" variant="" vendor="Renesas" version="5.1.0">
+      <description>SCI UART</description>
+      <originalPack>Renesas.RA.5.1.0.pack</originalPack>
+    </component>
+    <component apiversion="" class="HAL Drivers" condition="" group="all" subgroup="r_sci_b_spi" variant="" vendor="Renesas" version="5.1.0">
       <description>Serial Peripheral Interface on Serial Communications Interface</description>
-      <originalPack>Renesas.RA.5.0.0.pack</originalPack>
+      <originalPack>Renesas.RA.5.1.0.pack</originalPack>
+    </component>
+    <component apiversion="" class="BSP" condition="" group="ra8m1" subgroup="device" variant="R7FA8M1AHECBD" vendor="Renesas" version="5.1.0">
+      <description>Board support package for R7FA8M1AHECBD</description>
+      <originalPack>Renesas.RA_mcu_ra8m1.5.1.0.pack</originalPack>
+    </component>
+    <component apiversion="" class="BSP" condition="" group="ra8m1" subgroup="device" variant="" vendor="Renesas" version="5.1.0">
+      <description>Board support package for RA8M1</description>
+      <originalPack>Renesas.RA_mcu_ra8m1.5.1.0.pack</originalPack>
+    </component>
+    <component apiversion="" class="BSP" condition="" group="ra8m1" subgroup="fsp" variant="" vendor="Renesas" version="5.1.0">
+      <description>Board support package for RA8M1 - FSP Data</description>
+      <originalPack>Renesas.RA_mcu_ra8m1.5.1.0.pack</originalPack>
+    </component>
+    <component apiversion="" class="CMSIS" condition="" group="CMSIS5" subgroup="CoreM" variant="" vendor="Arm" version="5.9.0+renesas.0.fsp.5.1.0">
+      <description>Arm CMSIS Version 5 - Core (M)</description>
+      <originalPack>Arm.CMSIS5.5.9.0+renesas.0.fsp.5.1.0.pack</originalPack>
     </component>
   </raComponentSelection>
   <raElcConfiguration/>
@@ -368,7 +369,7 @@
       <property id="module.driver.external_irq.ipl" value="board.icu.common.irq.priority12"/>
     </module>
     <module id="module.driver.spi_on_sci_b_spi.264034304">
-      <property id="module.driver.spi.name" value="g_sci_spi0"/>
+      <property id="module.driver.spi.name" value="g_sci0"/>
       <property id="module.driver.spi.channel" value="0"/>
       <property id="module.driver.spi.operating_mode" value="module.driver.spi.operating_mode.mode_master"/>
       <property id="module.driver.spi.clk_phase" value="module.driver.spi.clk_phase.clk_phase_edge_odd"/>
@@ -376,7 +377,7 @@
       <property id="module.driver.spi.mode_fault" value="module.driver.spi.mode_fault.mode_fault_error_disable"/>
       <property id="module.driver.spi.bit_order" value="module.driver.spi.bit_order.bit_order_msb_first"/>
       <property id="module.driver.spi.clock_source" value="module.driver.spi.clock_source.pclk"/>
-      <property id="module.driver.spi.p_callback" value="sci_spi0_callback"/>
+      <property id="module.driver.spi.p_callback" value="sci_spi_irq_callback"/>
       <property id="module.driver.spi.rxi_ipl" value="board.icu.common.irq.priority12"/>
       <property id="module.driver.spi.txi_ipl" value="board.icu.common.irq.priority12"/>
       <property id="module.driver.spi.tei_ipl" value="board.icu.common.irq.priority12"/>
