@@ -139,6 +139,7 @@ jobs:
                 - "stm32/stm32f401-weact-blackpill"
                 - "stm32/stm32f405-smdz-breadfruit"
                 - "stm32/stm32f407-armfly-v5"
+                - "stm32/stm32f407-lckfb-skystar"
                 - "stm32/stm32f407-atk-explorer"
                 - "stm32/stm32f407-robomaster-c"
                 - "stm32/stm32f407-st-discovery"
