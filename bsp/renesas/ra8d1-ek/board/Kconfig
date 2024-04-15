@@ -9,43 +9,16 @@ menu "Hardware Drivers Config"
 
     menu "Onboard Peripheral Drivers"
 
-        menuconfig BSP_USING_FS
-            bool "Enable filesystem"
-            default n
-            if BSP_USING_FS
-                config BSP_USING_ONCHIP_FS
-                    bool "Enable ONCHIP filesystem"
-                    select RT_USING_FAL
-                    select RT_USING_DFS_ELMFAT
-                    select RT_USING_MTD_NOR
-                    select BSP_USING_ONCHIP_FLASH
-                    default n
-                config BSP_USING_SDCARD_FS
-                    bool "Enable SDCARD filesystem"
-                    select BSP_USING_SDHI
-                    select BSP_USING_SDHI1
-                    select RT_USING_DFS_ELMFAT
-                    default n
-                config BSP_USING_SPICARD_FS
-                    bool "Enable SPI FLASH filesystem"
-                    select BSP_USING_SCI_SPI
-                    select BSP_USING_SCI_SPI2
-                    select RT_USING_SPI_MSD
-                    select RT_USING_DFS_ELMFAT
-                    default n
-            endif
-
         menuconfig BSP_USING_LVGL
             bool "Enable LVGL for LCD"
             select PKG_USING_LVGL
             default n
-            if BSP_USING_LVGL      
+            if BSP_USING_LVGL
                 config BSP_USING_LCD_RGB
                     bool "Enable LVGL for LCD_RGB565"
                     select BSP_USING_LCD
                     default n
             endif
-
     endmenu
 
     menu "On-chip Peripheral Drivers"
@@ -110,6 +83,26 @@ menu "Hardware Drivers Config"
                             depends on RT_USING_SERIAL_V2
                             default 0
                     endif
+            endif
+
+        menuconfig BSP_USING_ADC
+            bool "Enable ADC"
+            default n
+            select RT_USING_ADC
+            if BSP_USING_ADC
+                config BSP_USING_ADC0
+                    bool "Enable ADC0"
+                    default n
+            endif
+
+        menuconfig BSP_USING_DAC
+            bool "Enable DAC"
+            default n
+            select RT_USING_DAC
+            if BSP_USING_DAC
+                config BSP_USING_DAC0
+                    bool "Enable DAC0"
+                    default n
             endif
 
         menuconfig BSP_USING_SCI_SPI
@@ -546,6 +539,12 @@ menu "Hardware Drivers Config"
             default n
             select RT_USING_PWM
             if BSP_USING_PWM
+                config BSP_USING_PWM3
+                    bool "Enable GPT3 (16-Bits) output PWM"
+                    default n
+                config BSP_USING_PWM6
+                    bool "Enable GPT6 (16-Bits) output PWM"
+                    default n
                 config BSP_USING_PWM12
                     bool "Enable GPT12 (16-Bits) output PWM"
                     default n
@@ -561,6 +560,23 @@ menu "Hardware Drivers Config"
                     default n
             endif
 
+        menuconfig BSP_USING_SDRAM
+            bool "Enable SDRAM"
+            if BSP_USING_SDRAM
+                config BSP_USING_SDRAM_SIZE
+                    hex "(HEX)SDRAM SIZE"
+                    default 0x8000000
+            endif
+
+        config BSP_USING_ETH
+            bool "Enable Ethernet"
+            select RT_USING_SAL
+            select RT_USING_LWIP
+            select RT_USING_NETDEV
+            default n
+    endmenu
+
+    menu "Board extended module Drivers"
         menuconfig BSP_USING_LCD
             bool "Enable LCD"
             default n
@@ -572,29 +588,52 @@ menu "Hardware Drivers Config"
                 config BSP_USING_MIPI_LCD
                     bool "Enable MIPI LCD"
                     default n
+                menuconfig BSP_USING_LCD_PWM_BACKLIGHT
+                    bool "Use pwm to drive lcd backlight"
+                    default n
+                    select BSP_USING_PWM
+                    select BSP_USING_PWM3
+                    if BSP_USING_LCD_PWM_BACKLIGHT
+                        config LCD_PWM_DEV_NAME
+                            string "lcd backlight pwm name"
+                            default "pwm3"
+                    endif
             endif
 
-        menuconfig BSP_USING_SDRAM
-            bool "Enable SDRAM"
-            if BSP_USING_SDRAM
-                config BSP_USING_SDRAM_SIZE
-                    hex "(HEX)SDRAM SIZE"
-                    default 0x8000000
-            endif
-
-        config BSP_USING_G2D
-            bool "Enable G2D"
+        menuconfig BSP_USING_RW007
+            bool "Enable RW007"
             default n
+            select PKG_USING_RW007
+            select BSP_USING_SCI
+            select BSP_USING_SCI2
+            select BSP_USING_SCI2_SPI
+            select RT_USING_MEMPOOL
+            select RW007_NOT_USE_EXAMPLE_DRIVERS
 
-        config BSP_USING_JPEG
-            bool "Enable JPEG"
-            default n
+        if BSP_USING_RW007
+            config RA_RW007_SPI_BUS_NAME
+                string "RW007 BUS NAME"
+                default "sci2s"
 
-        config BSP_USING_ETH
-            bool "Enable Ethernet"
-            select RT_USING_SAL
-            select RT_USING_LWIP
-            select RT_USING_NETDEV
-            default n
+            config RA_RW007_CS_PIN
+                hex "(HEX)CS pin index"
+                default 0x0A05
+
+            config RA_RW007_BOOT0_PIN
+                hex "(HEX)BOOT0 pin index (same as spi clk pin)"
+                default 0x0A04
+
+            config RA_RW007_BOOT1_PIN
+                hex "(HEX)BOOT1 pin index (same as spi cs pin)"
+                default 0x0A05
+
+            config RA_RW007_INT_BUSY_PIN
+                hex "(HEX)INT/BUSY pin index"
+                default 0x0508
+
+            config RA_RW007_RST_PIN
+                hex "(HEX)RESET pin index"
+                default 0x0809
+        endif
     endmenu
 endmenu

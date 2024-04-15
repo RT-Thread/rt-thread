@@ -167,11 +167,11 @@ static rt_ssize_t spixfer(struct rt_spi_device *device, struct rt_spi_message *m
 
 
     struct lpc_spi *spi = (struct lpc_spi *)(device->bus->parent.user_data);
-//    struct lpc_sw_spi_cs *cs = device->parent.user_data;
+    struct lpc_sw_spi_cs *cs = device->parent.user_data;
 
     if(message->cs_take)
     {
-        rt_pin_write(device->cs_pin, PIN_LOW);
+        rt_pin_write(cs->pin, PIN_LOW);
     }
 
     transfer.dataSize = message->length;
@@ -213,7 +213,7 @@ static rt_ssize_t spixfer(struct rt_spi_device *device, struct rt_spi_message *m
 
     if(message->cs_release)
     {
-        rt_pin_write(device->cs_pin, PIN_HIGH);
+        rt_pin_write(cs->pin, PIN_HIGH);
     }
 
     return message->length;

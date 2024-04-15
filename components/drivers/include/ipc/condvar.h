@@ -8,8 +8,8 @@
  * 2023-11-20     Shell        Add cond var API in kernel
  */
 
-#ifndef __LWP_TERMINAL_CONDVAR_H__
-#define __LWP_TERMINAL_CONDVAR_H__
+#ifndef IPC_CONDVAR_H__
+#define IPC_CONDVAR_H__
 
 #include <rtthread.h>
 
@@ -35,4 +35,4 @@ rt_inline void rt_condvar_detach(rt_condvar_t cv)
     return ;
 }
 
-#endif /* __LWP_TERMINAL_CONDVAR_H__ */
+#endif /* IPC_CONDVAR_H__ */

@@ -181,10 +181,6 @@ rt_err_t stm32_lcd_init(struct drv_lcd_device *lcd)
     {
         pLayerCfg.PixelFormat = LTDC_PIXEL_FORMAT_RGB888;
     }
-    else if (lcd->lcd_info.pixel_format == RTGRAPHIC_PIXEL_FORMAT_RGB888)
-    {
-        pLayerCfg.PixelFormat = LTDC_PIXEL_FORMAT_RGB888;
-    }
     else
     {
         LOG_E("unsupported pixel format");

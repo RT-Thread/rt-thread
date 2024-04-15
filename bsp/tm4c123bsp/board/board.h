@@ -47,6 +47,10 @@
     #include "drv_spi.h"
 #endif /* RT_USING_SPI*/
 
+#ifdef RT_USING_I2C
+#include "drv_i2c.h"
+#endif /* RT_USING_I2C*/
+
 #endif /*__BOARD_H__*/
 
 /************************** end of file ******************/

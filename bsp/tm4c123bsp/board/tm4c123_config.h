@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2020-06-27     AHTYDHD      the first version
+ * 2024-04-11     Astrozen     add i2c support
  */
 
 #ifndef __TM4C123GH6PZ_CONFIG_H__
@@ -27,6 +28,9 @@ void pwm_hw_config(void);
 #ifdef RT_USING_SPI
 void spi_hw_config(void);
 #endif /* RT_USING_SPI */
+#ifdef RT_USING_I2C
+void i2c_hw_config(void);
+#endif /* RT_USING_I2C */
 
 #ifdef __cplusplus
 }
