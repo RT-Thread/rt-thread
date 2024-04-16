@@ -569,13 +569,14 @@ struct rt_object_information
  */
 #define RT_TIMER_FLAG_DEACTIVATED       0x0             /**< timer is deactive */
 #define RT_TIMER_FLAG_ACTIVATED         0x1             /**< timer is active */
+#define RT_TIMER_FLAG_PROCESSING        0x2             /**< timer's timeout fuction is processing */
 #define RT_TIMER_FLAG_ONE_SHOT          0x0             /**< one shot timer */
-#define RT_TIMER_FLAG_PERIODIC          0x2             /**< periodic timer */
+#define RT_TIMER_FLAG_PERIODIC          0x4             /**< periodic timer */
 
 #define RT_TIMER_FLAG_HARD_TIMER        0x0             /**< hard timer,the timer's callback function will be called in tick isr. */
-#define RT_TIMER_FLAG_SOFT_TIMER        0x4             /**< soft timer,the timer's callback function will be called in timer thread. */
+#define RT_TIMER_FLAG_SOFT_TIMER        0x8             /**< soft timer,the timer's callback function will be called in timer thread. */
 #define RT_TIMER_FLAG_THREAD_TIMER \
-    (0x8 | RT_TIMER_FLAG_HARD_TIMER)                    /**< thread timer that cooperates with scheduler directly */
+    (0x10 | RT_TIMER_FLAG_HARD_TIMER)                    /**< thread timer that cooperates with scheduler directly */
 
 #define RT_TIMER_CTRL_SET_TIME          0x0             /**< set timer control command */
 #define RT_TIMER_CTRL_GET_TIME          0x1             /**< get timer control command */
