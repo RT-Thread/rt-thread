@@ -1028,7 +1028,7 @@ rt_ssize_t rt_ofw_count_of_clk(struct rt_ofw_node *clk_ofw_np)
 
             if (prop)
             {
-                rt_uint32_t max_idx, idx;
+                rt_uint32_t max_idx = 0, idx;
 
                 for (cell = rt_ofw_prop_next_u32(prop, RT_NULL, &idx);
                     cell;
