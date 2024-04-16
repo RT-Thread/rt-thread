@@ -29,6 +29,7 @@ struct serial_tty_context
 
 static struct rt_workqueue *_ttyworkq; /* system work queue */
 
+#ifndef RT_USING_DM
 static rt_atomic_t _device_id_counter = 0;
 
 static long get_dec_digits(rt_ubase_t val)
@@ -49,10 +50,28 @@ static long get_dec_digits(rt_ubase_t val)
     }
     return result;
 }
+#endif
 
-static char *alloc_device_name(void)
+static char *alloc_device_name(struct rt_serial_device *serial)
 {
     char *tty_dev_name;
+#ifdef RT_USING_DM
+    char *serial_name = serial->parent.parent.name;
+    /*
+     * if RT_USING_DM is defined, the name of the serial device
+     * must be obtained using the serial_dev_set_name function,
+     * and it should begin with "uart".
+     */
+    RT_ASSERT((strlen(serial_name) > strlen("uart")) && (strncmp(serial_name, "uart", 4) == 0));
+    long digits_len = (sizeof(TTY_NAME_PREFIX) - 1) /* raw prefix */
+                      + strlen(serial_name + sizeof("uart") - 1) /* suffix of serial device name*/
+                      + 1;  /* tailing \0 */
+
+    tty_dev_name = rt_malloc(digits_len);
+    if (tty_dev_name)
+        rt_sprintf(tty_dev_name, "%s%s", TTY_NAME_PREFIX, serial_name + sizeof("uart") - 1);
+#else
+    RT_UNUSED(serial);
     unsigned int devid = rt_atomic_add(&_device_id_counter, 1);
     long digits_len = (sizeof(TTY_NAME_PREFIX) - 1) /* raw prefix */
                       + get_dec_digits(devid) + 1;  /* tailing \0 */
@@ -60,6 +79,7 @@ static char *alloc_device_name(void)
     tty_dev_name = rt_malloc(digits_len);
     if (tty_dev_name)
         rt_sprintf(tty_dev_name, "%s%u", TTY_NAME_PREFIX, devid);
+#endif
     return tty_dev_name;
 }
 
@@ -146,7 +166,6 @@ rt_inline void _setup_serial(struct rt_serial_device *serial, lwp_tty_t tp,
 
     rt_device_init(&serial->parent);
 
-    rt_work_init(&softc->work, _tty_rx_worker, tp);
     rt_device_control(&serial->parent, RT_DEVICE_CTRL_NOTIFY_SET, &notify);
 }
 
@@ -287,7 +306,8 @@ rt_err_t rt_hw_serial_register_tty(struct rt_serial_device *serial)
     softc = rt_malloc(sizeof(struct serial_tty_context));
     if (softc)
     {
-        dev_name = alloc_device_name();
+        dev_name = alloc_device_name(serial);
+
         if (dev_name)
         {
             softc->parent = serial;
@@ -295,6 +315,7 @@ rt_err_t rt_hw_serial_register_tty(struct rt_serial_device *serial)
             if (tty)
             {
                 rc = lwp_tty_register(tty, dev_name);
+                rt_work_init(&softc->work, _tty_rx_worker, tty);
 
                 if (rc != RT_EOK)
                 {
