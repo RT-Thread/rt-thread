@@ -42,11 +42,11 @@ static int filesystem_mount(void)
 {
     struct rt_spi_device *spi70 = (struct rt_spi_device *)rt_malloc(sizeof(struct rt_spi_device));
 
-	  if(!spi70)
-	  {
-		    rt_kprintf("spi sample run failed! can't find %s device!\n","spi7");
+    if(!spi70)
+    {
+        rt_kprintf("spi sample run failed! can't find %s device!\n","spi7");
         return -RT_ERROR;
-	  }
+    }
 
     struct rt_spi_configuration cfg;
     cfg.data_width = 8;
