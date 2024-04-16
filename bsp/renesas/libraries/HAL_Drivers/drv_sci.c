@@ -80,7 +80,7 @@ struct ra_sci_param
 #ifdef RT_USING_SPI
     rt_weak const struct rt_spi_ops            sci_ops_spi;
 #endif
-#ifdef RT_USING_UART
+#ifdef RT_USING_SERIAL
     rt_weak const struct rt_uart_ops           sci_ops_uart;
 #endif
 
@@ -101,7 +101,7 @@ struct ra_sci_object
             struct rt_i2c_bus_device    ibus;
         };
 #endif
-#ifdef RT_USING_UART
+#ifdef RT_USING_SERIAL
         struct
         {
             struct rt_serial_device     ubus;
@@ -121,6 +121,10 @@ struct ra_sci_object
 #define RA_SCI_EVENT_ERROR          8
 #define RA_SCI_EVENT_ALL            15
 
+/**
+ * bus_name=sci[x][y], x=0~9, y=s/i/u
+ * 
+ */
 #define RA_SCI_HANDLE_ITEM(idx,type,id)    {.bus_name=CONCAT3STR(sci,idx,id),.sci_ctrl=&g_sci##idx##_ctrl,.sci_cfg=&g_sci##idx##_cfg,.ops=&sci_ops_##type}
 
 const static struct ra_sci_param sci_param[] =
@@ -744,6 +748,7 @@ const struct rt_spi_ops sci_ops_spi =
 
 static int ra_hw_sci_init(void)
 {
+    int bufsz_idx = 0;
     for (rt_uint8_t idx = 0; idx < RA_SCI_INDEX_MAX; idx++)
     {
         struct ra_sci_object *obj = &sci_obj[idx];
