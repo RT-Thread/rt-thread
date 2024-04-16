@@ -9,6 +9,7 @@
 #include <stdint.h>
 #include "types.h"
 
+#ifndef ARCH_ARM
 #define __raw_readb(a)        (*(volatile unsigned char *)(a))
 #define __raw_readw(a)        (*(volatile unsigned short *)(a))
 #define __raw_readl(a)        (*(volatile unsigned int *)(a))
@@ -39,13 +40,12 @@
 #define writew(v, c)    ({ __io_bw(); __raw_writew((v), (c)); __io_aw(); })
 #define writel(v, c)    ({ __io_bw(); __raw_writel((v), (c)); __io_aw(); })
 
-
 #ifdef CONFIG_64BIT
 #define readq(c)    ({ u64 __v; __io_br(); __v = __raw_readq(c); __io_ar(__v); __v; })
 #define writeq(v, c)    ({ __io_bw(); __raw_writeq((v), (c)); __io_aw(); })
 #endif // CONFIG_64BIT
 
-/*
+#else
 #define __raw_readb(a)        (*(volatile unsigned char *)(a))
 #define __raw_readw(a)        (*(volatile unsigned short *)(a))
 #define __raw_readl(a)        (*(volatile unsigned int *)(a))
@@ -69,7 +69,7 @@
 #define cpu_write8(a, v)    writeb(a, v)
 #define cpu_write16(a, v)   writew(a, v)
 #define cpu_write32(a, v)   writel(a, v)
-*/
+#endif /* ARCH_ARM */
 
 #define mmio_wr32 mmio_write_32
 #define mmio_rd32 mmio_read_32
