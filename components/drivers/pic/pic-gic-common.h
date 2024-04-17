@@ -12,10 +12,6 @@
 #define __IRQ_GIC_COMMON_H__
 
 #include <rtdef.h>
-
-#ifdef RT_PCI_MSI
-#include <drivers/pci_msi.h>
-#endif
 #include <drivers/ofw.h>
 
 #define GIC_SGI_NR  16
