@@ -343,6 +343,7 @@ rt_err_t rt_thread_init(struct rt_thread *thread,
     /* parameter check */
     RT_ASSERT(thread != RT_NULL);
     RT_ASSERT(stack_start != RT_NULL);
+    RT_ASSERT(tick != 0);
 
     /* initialize thread object */
     rt_object_init((rt_object_t)thread, RT_Object_Class_Thread, name);
@@ -512,6 +513,9 @@ rt_thread_t rt_thread_create(const char *name,
                              rt_uint8_t  priority,
                              rt_uint32_t tick)
 {
+    /* parameter check */
+    RT_ASSERT(tick != 0);
+
     struct rt_thread *thread;
     void *stack_start;
 

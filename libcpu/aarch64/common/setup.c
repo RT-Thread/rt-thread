@@ -253,6 +253,7 @@ void rt_hw_common_setup(void)
 
                 break;
             }
+            mem_region++;
         }
     }
 

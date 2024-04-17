@@ -870,7 +870,7 @@ struct rt_ofw_node *rt_ofw_get_cpu_node(int cpu, int *thread, rt_bool_t (*match_
 
     rt_ofw_foreach_cpu_node(cpu_np)
     {
-        rt_ssize_t prop_len;
+        rt_ssize_t prop_len = 0;
         rt_bool_t is_end = RT_FALSE;
         int tid, addr_cells = rt_ofw_io_addr_cells(cpu_np);
         const fdt32_t *cell = rt_ofw_prop_read_raw(cpu_np, propname, &prop_len);
