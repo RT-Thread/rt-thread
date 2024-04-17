@@ -55,7 +55,6 @@ static int filesystem_mount(void)
 
     /* legcy issue */
 
-//    rt_spi_bus_attach_device_cspin(spi70, W25Q64_SPI_DEVICE_NAME, W25Q64_SPI_BUS_NAME, 96, RT_NULL);
     rt_hw_spi_device_attach(W25Q64_SPI_BUS_NAME, W25Q64_SPI_DEVICE_NAME, 96);
 
     if(RT_NULL == rt_sfud_flash_probe(W25Q64_SPI_FLASH_NAME, W25Q64_SPI_DEVICE_NAME))
@@ -63,7 +62,6 @@ static int filesystem_mount(void)
         LOG_E("Flash sfud Failed!\n");
         return -RT_ERROR;
     }
-//    dfs_mkfs("elm", "W25Q64_SPI_FLASH_NAME");
     if(dfs_mount(W25Q64_SPI_FLASH_NAME, "/", "elm", 0, 0))
     {
         LOG_E("dfs mount dev:%s failed!\n", W25Q64_SPI_FLASH_NAME);
