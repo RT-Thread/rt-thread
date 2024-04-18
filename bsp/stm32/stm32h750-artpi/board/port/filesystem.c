@@ -32,7 +32,7 @@
 #define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
-
+#ifdef RT_USING_DFS_ROMFS
 #include "dfs_romfs.h"
 
 #ifdef RT_USING_DFS_ELMFAT
@@ -54,7 +54,7 @@ const struct romfs_dirent romfs_root =
 {
     ROMFS_DIRENT_DIR, "/", (rt_uint8_t *)_romfs_root, sizeof(_romfs_root) / sizeof(_romfs_root[0])
 };
-
+#endif
 
 #ifdef BSP_USING_SDCARD_FS
 
@@ -65,19 +65,19 @@ static void _sdcard_mount(void)
 {
     rt_device_t device;
 
-    device = rt_device_find("sd0");
+    device = rt_device_find("sd");
 
     if (device == NULL)
     {
         mmcsd_wait_cd_changed(0);
         sdcard_change();
         mmcsd_wait_cd_changed(RT_WAITING_FOREVER);
-        device = rt_device_find("sd0");
+        device = rt_device_find("sd");
     }
 
     if (device != RT_NULL)
     {
-        if (dfs_mount("sd0", "/sdcard", "elm", 0, 0) == RT_EOK)
+        if (dfs_mount("sd", "/sdcard", "elm", 0, 0) == RT_EOK)
         {
             LOG_I("sd card mount to '/sdcard'");
         }
