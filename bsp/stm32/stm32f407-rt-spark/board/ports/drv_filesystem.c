@@ -30,7 +30,7 @@
 #ifdef BSP_USING_SDCARD_FATFS
 static int onboard_sdcard_mount(void)
 {
-    if (dfs_mount("sd0", "/sdcard", "elm", 0, 0) == RT_EOK)
+    if (dfs_mount("sd", "/sdcard", "elm", 0, 0) == RT_EOK)
     {
         LOG_I("SD card mount to '/sdcard'");
     }
