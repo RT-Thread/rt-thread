@@ -26,9 +26,7 @@
     .globl vector_fiq
 vector_fiq:
     SAVE_IRQ_CONTEXT
-    stp     x0, x1, [sp, #-0x10]!
     bl      rt_hw_trap_fiq
-    ldp     x0, x1, [sp], #0x10
     RESTORE_IRQ_CONTEXT
 
 .globl      rt_interrupt_enter
@@ -36,18 +34,16 @@ vector_fiq:
 .globl      rt_thread_switch_interrupt_flag
 .globl      rt_interrupt_from_thread
 .globl      rt_interrupt_to_thread
+.globl      rt_hw_context_switch_interrupt_do
 
     .align  8
     .globl vector_irq
 vector_irq:
     SAVE_IRQ_CONTEXT
-    stp     x0, x1, [sp, #-0x10]!   /* X0 is thread sp */
 
     bl      rt_interrupt_enter
     bl      rt_hw_trap_irq
     bl      rt_interrupt_leave
-
-    ldp     x0, x1, [sp], #0x10
 
     /**
      * if rt_thread_switch_interrupt_flag set, jump to
@@ -61,15 +57,7 @@ vector_irq:
     mov     x2,  #0         // clear flag
     str     x2,  [x1]
 
-    ldr     x3,  =rt_interrupt_from_thread
-    ldr     x4,  [x3]
-    str     x0,  [x4]       // store sp in preempted tasks's tcb
-
-    ldr     x3,  =rt_interrupt_to_thread
-    ldr     x4,  [x3]
-    ldr     x0,  [x4]       // get new task's stack pointer
-
-    RESTORE_IRQ_CONTEXT
+    bl      rt_hw_context_switch_interrupt_do
 
 vector_irq_exit:
     RESTORE_IRQ_CONTEXT_WITHOUT_MMU_SWITCH
