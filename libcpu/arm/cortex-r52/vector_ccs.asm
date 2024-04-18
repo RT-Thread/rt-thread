@@ -29,6 +29,5 @@ resetEntry
         b   vector_dabort
         b   vector_resv
         b   IRQ_Handler
-        ldr pc,[pc,#-0x1b0]
 
 ;-------------------------------------------------------------------------------
