@@ -1,0 +1,876 @@
+/*********************************************************************************************************//**
+ * @file    Release_Notes.txt
+ * @version V1.4.1
+ * @date    2023-10-31
+ * @brief   The Release notes of HT32 Firmware Library.
+ *************************************************************************************************************
+ * @attention
+ *
+ * Firmware Disclaimer Information
+ *
+ * 1. The customer hereby acknowledges and agrees that the program technical documentation, including the
+ *    code, which is supplied by Holtek Semiconductor Inc., (hereinafter referred to as "HOLTEK") is the
+ *    proprietary and confidential intellectual property of HOLTEK, and is protected by copyright law and
+ *    other intellectual property laws.
+ *
+ * 2. The customer hereby acknowledges and agrees that the program technical documentation, including the
+ *    code, is confidential information belonging to HOLTEK, and must not be disclosed to any third parties
+ *    other than HOLTEK and the customer.
+ *
+ * 3. The program technical documentation, including the code, is provided "as is" and for customer reference
+ *    only. After delivery by HOLTEK, the customer shall use the program technical documentation, including
+ *    the code, at their own risk. HOLTEK disclaims any expressed, implied or statutory warranties, including
+ *    the warranties of merchantability, satisfactory quality and fitness for a particular purpose.
+ *
+ * <h2><center>Copyright (C) Holtek Semiconductor Inc. All rights reserved</center></h2>
+ ************************************************************************************************************/
+
+// Supported Device
+// ========================================
+//   HT32F1653, HT32F1654
+//   HT32F1655, HT32F1656
+//   HT32F12345
+//   HT32F12364
+//   HT32F12365, HT32F12366
+//   HT32F22366
+
+/*----------------------------------------------------------------------------------------------------------*/
+/* HT32_STD_1xxxx_FWLib_V1.4.1_2982                                                                         */
+/*----------------------------------------------------------------------------------------------------------*/
+  Release Date: 2023-10-31
+
+  Main Changes
+  + Add new example.
+    - "GPIO/PinLock"
+  + Modify examples below, add volatile qualifiers on some variables (in the for loop usage)
+    to fix the Arm Compiler Version 6 optimization issue.
+    ("u32" to "vu32", unsigned int to volatile unsigned int).
+    - “PWRCU/PowerDown_WAKEUPPin”
+    - “PWRCU/PowerDown_RTC”
+    - “TM/PWM”
+  + Modify examples below, use separate "if" statements instead of "if-else" to avoid double-entry ISR.
+    - "PWRCU/DeepSleepMode1"
+    - "PWRCU/DeepSleepMode2"
+  + Modify "ht32_time.h", "ht32f1xxxx_conf.h" and "ht32_time_conf.h" for "LIBCFG_CKCU_NO_APB_PRESCALER" series.
+    - To ensure the correct configuration of the timer clock, the "HTCFG_TIME_PCLK_DIV" is redefined as 0.
+  + Add "Project or Target File Clearing" functions ("_ClearProject.bat" and "_ClearTarget.bat").
+  + Modify "syscall.c" to prevent redundant initialization of the heap index.
+  + Modify "ht32f1xxxx_01.h" to add below definition.
+    - "sc64", "vs64", "vsc64", "uc64", "vu64", "vuc64"
+  + Modify PWRCU related define (The left side old one is still kept for backward compatible).
+    - PWRCU_FLAG_BAKPOR -> PWRCU_FLAG_PWRPOR
+  + Modify "RETARGET_Configuration()", add the operation of UxARTn peripheral clock enable.
+  + Update and sync "ht32f1xxxx_conf.h", modify related define of UxARTn retarget port.
+  + Update "ht32_op.c" and "ht32_op.s" to support new version of bootloader waiting time setting address.
+    (The setting address is changed from 0x1FF0002C to 0x1FF0004C)
+  + Add "ht32_op_V107.c" and "ht32_op_V107.s" to support the use of older versions of bootloader.
+  + Add "CKCU_ATCInit()" API for HSI Auto Trim initial function.
+  + Update "ht32f1xxxx_adc.c" and "ht32f1xxxx_adc_02.c", modify the ADC enable related flow.
+  + Add the below folder, For the BMduino shield/module Keil Driver.
+    - "BestModules"
+
+  Others
+  + Update comment, format, typing error, and coding style.
+  + Adjust "LIBCFG_xxxxx" definition below.
+    - "LIBCFG_CKCU_APBCLKFIX" rename to "LIBCFG_CKCU_NO_APB_PRESCALER"
+  + Modify the Sourcery G++ Lite toolchain project.
+    - Set C99 mode to fix issues after updating CMSIS v5.9.0 ("for" loop initial declarations).
+  + Update e-Link32 Pro/Lite Command line tool as "V1.19" ("utilities/elink32pro/eLink32pro.exe").
+  + Modify "_ProjectConfigScript.bat" to prevent the creation of project that copy unused system/startup files.
+  + Update "project_template/Script" for adding project C++ source files and setting the chip model mechanism.
+    - The updated files are as follows:
+      "Script/_ProjectSource.bat"
+      "Script/_ProjectSource.ini"
+  + Update "project_template/Script" for improving script mechanism.
+    - The updated files are as follows:
+      "Script/_CreateProjectConfScript.bat"
+      "Script/_CreateProjectScript.bat"
+      "Script/_ht32_ic_name.ini"
+  + Modify and check the example supportability of each IC.
+  + Add the below file, for the BMduino shield.
+    - "ht32_undef_IP.h"
+
+/*----------------------------------------------------------------------------------------------------------*/
+/* HT32_STD_1xxxx_FWLib_V1.3.2_2858                                                                         */
+/*----------------------------------------------------------------------------------------------------------*/
+  Release Date: 2023-02-02
+
+  Main Changes
+  + Add new examples:
+    - "SRAM_Overwrite/Watchpoint_Heap"
+    - "SRAM_Overwrite/Watchpoint_Stack"
+  + Update "ht32f1xxxx_conf.h" for user layer HSE_VALUE setting.
+
+  Others
+  + Update comment, format, typing error, and coding style.
+  + Modify "system_ht32fxxxxx_nn.c", add HSE_VALUE notice and update PLL Out formula.
+  + Update and sync system.c files.
+  + Update EEPROM Emulation middleware, improve efficacy and reduce resource usage.
+    "utilities/middleware/eeprom_emulation.c"
+    "utilities/middleware/ht32_eeprom_config_templet.h"
+  + Update I2C Master middleware, improve setting way and fix minor errors.
+    "utilities/middleware/i2c_master.c/.h"
+    "utilities/middleware/i2c_master_config_templet.h"
+
+/*----------------------------------------------------------------------------------------------------------*/
+/* HT32_STD_1xxxx_FWLib_V1.3.1_2808                                                                         */
+/*----------------------------------------------------------------------------------------------------------*/
+  Release Date: 2022-12-01
+
+  Main Changes
+  + Update "ht32_time.h", fix a formula error of "TIME_TICK2US()" and "TIME_TICK2MS()" macro.
+  + Modify "ht32_retarget.c", fix retarget can't work when the MicroLIB is not used in Keil's V6 compiler.
+  + Modify "ht32_serial.c/.h" and "ht32_retarget.c", fix ITM setting issue.
+  + Update "ht32fxxxx_sk.h", add TRACESWO pin assignment for ITM.
+  + Update "SPI/PDMA" example, change the order of API execution (SPI_SELOutputCmd() execution before SPI_Cmd()).
+  + Update "CSIF/Init" example, modify the datatype form and add comments to explain the length of the Rx buffer.
+  + Update following I2C example. (sync. with M0+)
+    - I2C/7_bit_mode
+    - I2C/10_bit_mode
+    - I2C/EEPROM_Simulate
+    - I2C/Interrupt
+    - I2C/PDMA
+  + GPIO
+    - Add new define "GPIO_PIN_NUM_n" for GPIO pin number (n = 0 ~ 15).
+  + EXTI
+    - Add "gEXTIn_IRQn[]" and "EXTI_GetIRQn()" macro to map GPIO pin number (0 ~ 15) to "EXTIn_IRQn".
+    - Add "GPIO2EXTI()" macro to map GPIO pin to EXTI Channel.
+    - Change "AFIO_EXTISourceConfig()" API, remove "AFIO_EXTI_CH_Enum" and "AFIO_ESS_Enum".
+      Old: void AFIO_EXTISourceConfig(AFIO_EXTI_CH_Enum AFIO_EXTI_CH_n, AFIO_ESS_Enum AFIO_ESS_Px)
+      New: void AFIO_EXTISourceConfig(u32 GPIO_PIN_NUM_n, u32 GPIO_Px)
+
+  Others
+  + Update comment, format, typing error, and coding style.
+  + Update "ht32_op.s/.c", allow "Bootloader Waiting Time" function for all series.
+  + Update "CKCU/HSI_AutoTrim_By_USB" example, add the following define to "ht32_board_config.h".
+    - "CKCU_PLL_CFG"
+    - "CKCU_SYSCLK_DIV_CFG"
+  + Upgrade CMSIS to v5.9.0.
+  + Modify API parameter check macro of Library Debug Mode, fix parameter check error.
+  + Modify variable declaration of "PDMACH_InitTypeDef" to reduce memory size.
+
+/*----------------------------------------------------------------------------------------------------------*/
+/* HT32_STD_1xxxx_FWLib_V1.2.1_2753                                                                         */
+/*----------------------------------------------------------------------------------------------------------*/
+  Release Date: 2022-10-11
+
+  Main Changes
+  + Add new examples:
+    - "I2C/7_bit_mode_master"
+    - "I2C/7_bit_mode_slave"
+  + Add the following API for PDMA.
+    - "PDMA_DeInit()"
+    - "PDMA_AddrConfig()"
+    - "PDMA_SrcAddrConfig()"
+    - "PDMA_DstAddrConfig()"
+    - "PDMA_GetRemainBlkCnt()"
+  + Add the following API for ADC.
+    - "ADC_ChannelDataAlign()"
+    - "ADC_ChannelOffsetValue()"
+    - "ADC_ChannelOffsetCmd()"
+  + Update "ht32_retarget.c", modify the retarget related functions for SEGGER Embedded Studio.
+  + Update "FLASH_SetWaitState()" function, disable Pre-fetch and Branch Cache function before change
+    wait state.
+  + Update following middleware.
+    "utilities/middleware/i2c_master.c/h"
+    "utilities/middleware/uart_module.c"
+
+  Others
+  + Update comment, format, typing error, and coding style.
+  + Update "BFTM/OneShot" example, fix the register access sequence and time calculation formula.
+  + Update "TM/PWM/main.c"
+    - Add "HTCFG_PWM_TM_RELOAD" check.
+    - Add PWM channel initial function.
+    - Remove "_ht32_project_source.h" (Use "_ProjectSource.ini" to add "pwm.c" into project compiling list).
+  + Fix the upper/lower case error of #include file name.
+  + Update e-Link32 Pro/Lite Command line tool as "V1.18" ("utilities/elink32pro/eLink32pro.exe").
+  + Change the project recommended minimum version of SEGGER Embedded Studio from V4.12 to V6.20.
+
+/*----------------------------------------------------------------------------------------------------------*/
+/* HT32_STD_1xxxx_FWLib_V1.1.1_2647                                                                         */
+/*----------------------------------------------------------------------------------------------------------*/
+  Release Date: 2022-06-10
+
+  Main Changes
+  + Add following middleware.
+    "utilities/middleware/spi_module.c"
+    "utilities/middleware/spi_module.h"
+    "utilities/middleware/spi_module_config_templet.h"
+  + Fixed FW library compatibility with ARM compiler version 6 of MDK-ARM V5.37.
+    - Add MDK-ARMv537 project template for MDK-ARM V5.37.
+    - Update "project_template/Script". Those MDK-ARMv537 project templates will be added for use if choose
+      the target IDE is "Keil MDK-ARMv5". The fixed files are as follows:
+        "Script/_CreateProjectScript.bat"
+        "Script/_ProjectConfig.bat"
+        "Script/_ProjectSource.bat"
+    - Update "core_cm3.h", fix compiler error.
+    - Update "FMC/FLASH_OperationNoHalt", fix the compiler issue of Arm Compiler Version V6.18 and the
+      compiler warning of linker script file. The fixed files are as follows:
+        "FLASH_OperationNoHalt/main.c"
+        "FLASH_OperationNoHalt/linker.lin"
+    - Update following middleware, remove STRCAT3 usage to fix compiler error.
+        "utilities/middleware/uart_module.c"
+        "utilities/middleware/i2c_master.c"
+        "utilities/middleware/spi_module.c"
+  + Update "ht32_retarget.c". Implement __write function to fix compiler error in IAR EWARM Version 9.20
+    or later.
+  + Update GNU Arm makefile in the project_template, fix the compatibility issue that the makefile of GNU Arm
+    Version 11 cannot be compiled.
+  + Update EWARM in the project_template, fix the compiler error that header file path doesn't exist in
+    the file list of Workspace of IAR EWARM Version 7.
+  + Fix SPI initial PDMA parameter in the "utilities/common/spi_flash.c".
+  + Sync M0+ I2C/EEPROM to fix compiler warning of the GNU compiler.
+  + Sync M0+ library\HT32F1xxxx_Driver\inc\ht32_dependency.h.
+
+  Others
+  + Update comment, format, typing error, and coding style.
+  + Update e-Link32 Pro/Lite Command line tool as "V1.16" ("utilities/elink32pro/eLink32pro.exe").
+  + Update the following examples to remove compiler warning of the IAR EWARM.
+    "BFTM\TimeMeasure"
+    "TM\PWMInput\ht32f1xxxx_01_it.c"
+    "USBD\HID_Keyboard_Virtual_COM\ht32_usbd_class.c"
+    "USBD\Mass_Storage_SDIO\sd_disk.c"
+    "USBD\USB_UAC_Sound\ht32_usbd_class.c"
+    "USBD\Virtual_COM\ht32_usbd_class.c"
+  + Update and sync create project related files ("_ProjectConfig.bat"、"_ProjectConfig.ini").
+  + Update content of "project_template/IP/Example/readme.txt", add MDK-ARM V5.37 related information.
+
+/*----------------------------------------------------------------------------------------------------------*/
+/* HT32_STD_1xxxx_FWLib_V1.0.10_2585                                                                        */
+/*----------------------------------------------------------------------------------------------------------*/
+  Release Date: 2022-04-14
+
+  Main Changes
+  + Update EEPROM Basic and EEPROM Emulation middleware, fix the include and define sequence.
+    "utilities/middleware/eeprom_basic.h"
+    "utilities/middleware/eeprom_emulation.h"
+  + Update UART Module middleware, add the "UARTM_IsTxFinished()" API.
+    "utilities/middleware/uart_module.c"
+    "utilities/middleware/uart_module.h"
+
+  Others
+  + Update e-Link32 Pro/Lite Command line tool as "V1.0.15" ("utilities/elink32pro/eLink32pro.exe").
+
+/*----------------------------------------------------------------------------------------------------------*/
+/* HT32_STD_1xxxx_FWLib_V1.0.10_2585                                                                        */
+/*----------------------------------------------------------------------------------------------------------*/
+  Release Date: 2022-04-14
+
+  Main Changes
+  + Update EEPROM Basic and EEPROM Emulation middleware, fix the include and define sequence.
+    "utilities/middleware/eeprom_basic.h"
+    "utilities/middleware/eeprom_emulation.h"
+  + Update UART Module middleware, add the "UARTM_IsTxFinished()" API.
+    "utilities/middleware/uart_module.c"
+    "utilities/middleware/uart_module.h"
+
+  Others
+  + Update e-Link32 Pro/Lite Command line tool as "V1.0.15" ("utilities/elink32pro/eLink32pro.exe").
+
+/*----------------------------------------------------------------------------------------------------------*/
+/* HT32_STD_1xxxx_FWLib_V1.0.9_2556                                                                         */
+/*----------------------------------------------------------------------------------------------------------*/
+  Release Date: 2022-03-15
+
+  Main Changes
+  + Change to the new Holtek version format (Vm.n.r).
+  + Add new "FMC/FLASH_OperationNoHalt" example.
+  + Modify "utilities/common/ring_buffer.c", fix the thread-safe issue of "Buffer_GetLength()".
+  + Update "GNU_ARM/linker.ld", fix the heap/stack area overlap problem.
+  + Add "ADC_SamplingTimeConfig()" function for the "ht32f1xxxx_adc_02.c".
+
+  Others
+  + Update comment, format, typing error, and coding style.
+  + Modify "bool, TRUE, FALSE" define way for C++/.cpp applications.
+  + Update "startup_ht32fxxxxx_nn.s", support "USE_HT32_CHIP" define exist at startup.s and project Asm
+    setting in the same time (project's Asm Define has the higher priority).
+  + Remove unuse global variable "DelayTime" of "ebi_lcd.c" and "spi_lcd.c".
+  + Update "spi_lcd.c/.h", fix the GPIO Chip SEL define mistake.
+  + Add following middleware.
+    "utilities/middleware/uart_module.c"
+    "utilities/middleware/uart_module.h"
+  + Update related middleware (eeprom_basic and eeprom_emulation).
+  + Update e-Link32 Pro/Lite Command line tool as "V1.0.14" ("utilities/elink32pro/eLink32pro.exe").
+
+/*----------------------------------------------------------------------------------------------------------*/
+/* HT32_STD_1xxxx_FWLib_v008_2470                                                                           */
+/*----------------------------------------------------------------------------------------------------------*/
+  Release Date: 2021-08-19
+
+  Main Changes
+  + Add "ht32_time.c/.h" to support following new functions for delay, time measure, and timeout.
+    "Time_Init()"
+    "Time_Delay()"
+    "Time_GetTick()"
+  + Add new examples:
+    - "ADC/OneShot_SWTrigger_ByTM"
+    - "GPIO/Input"
+    - "GPIO/Output"
+    - "Time/TimeFun"
+    - "Time/TimeFun_UserConf"
+    - "USART/RS485_NMM_Slave"
+  + Add new definition, "FLASH_WAITSTATE_MAX".
+  + Add "USART_PARITY_MARK" and "USART_PARITY_SPACE" for the UART parity mode.
+  + Update "ADC_RegularTrigConfig()" and "AC_TRIG_XXXX" define to support all the trigger source of ADC.
+  + Add "CKCU_ADCPRE_DIV1" parameter of "CKCU_SetADCnPrescaler()" for the HT32F12364.
+  + Modified "SDIO_ClearFlag()", disable Status Enable Register (SER) to clear SDIO_FLAG_BUF_OVERFLOW and
+    SDIO_FLAG_BUF_UNDERFLOW.
+  + Fix the result mistake of the marco below of HT32F12364 (LIBCFG_FLASH_2PAGE_PER_WPBIT is missing).
+    "#define FLASH_WP_PAGE_SET(OP, PAGE)"
+    "#define FLASH_WP_PAGE_CLEAR(OP, PAGE)"
+    "#define FLASH_IS_WP_PAGE(OP, PAGE)"
+  + Update following example, modify the default value of "gIsINEmpty" from TRUE to FALSE. The default value
+    TRUE may cause the F/W to not send CSW after the first Inquiry CBW Command in a specific condition.
+    "example/USBD/HID_Keyboard_Mass_Storage"
+    "example/USBD/Mass_Storage"
+    "example/USBD/Mass_Storage_IAP"
+    "example/USBD/Mass_Storage_SDIO"
+
+  Others
+  + Update comment, format, typing error, and coding style.
+  + Fix compile error when turn on Library debug mode (HT32_LIB_DEBUG = 1).
+  + Update e-Link32 Pro Commander to V1.10.
+
+/*----------------------------------------------------------------------------------------------------------*/
+/* HT32_STD_1xxxx_FWLib_v007_2414                                                                           */
+/*----------------------------------------------------------------------------------------------------------*/
+  Release Date: 2021-05-11
+
+  Main Changes
+  + Add new examples:
+    - "EXTI/GPIO_Interrupt"
+    - "CKCU/HSI_AutoTrim_By_LSE"
+  + Update the IAP example of HT32F12364 project:
+    - IAR EWARM v6/v7/v8: 
+        1. Modify "startup_ht32f1xxxx_03.s" to "startup_ht32f1xxxx_iar_03.s".
+        2. Modify "ht32f1xxxx_adc.c" to "ht32f1xxxx_adc_02.c".
+    - Keil MDK-ARM v4/v5: Modify "ht32f1xxxx_adc.c" to "ht32f1xxxx_adc_02.c".
+  + Fix the system stuck in CKCU_HSIAutoTrimCmd() because of the misjudgment of CKCU_HSIAutoTrimIsReady().
+  + Fix the CHIP ID error. Fixed "USE_HT32_CHIP=3" to "USE_HT32_CHIP=16". The fixed files are as follows:
+    - IAP/IAP_Text_RAM/EWARM/Project_12364_IAP.ewp
+    - IAP/IAP_UI/EWARM/Project_12364_IAP.ewp
+  + Fix the syntax error on the "IAP/IAP_Text_RAM/EWARM/startup_ht32f1xxxx_iar_03_iap.s".
+
+  Others
+  + Update comment, format, typing error, and coding style.
+  + Update the version of eLink32pro.exe to 1.0.1.1.
+  + Update the following project setting:
+    - IAR EWARM v6/v7: Modify "_ht32_project_source.c" to "_ht32_project_source.h".
+    - SEGGER Embedded Studio: Add the new definition "arm_compiler_variant="SEGGER"".
+
+/*----------------------------------------------------------------------------------------------------------*/
+/* HT32_STD_1xxxx_FWLib_v006_2361                                                                           */
+/*----------------------------------------------------------------------------------------------------------*/
+  Release Date: 2021-02-26
+
+  Main Changes
+  + Add "Create Project Configuration Menu" to choose the target IDE and Device when the first time to do the
+    create project operation of the example. The configuration file, "_CreateProjectConfig.bat" is saved to
+    the root path of the HT32 Firmware Library. You can reset the create project IDE/IC configuration anytime
+    by deleting the configuration file.
+    Target IDE/Compiler:
+    - Keil MDK-ARM v5
+    - Keil MDK-ARM v4
+    - IAR EWARM v8
+    - IAR EWARM v6/v7
+    - SEGGER Embedded Studio
+    - GNU [with Keil and GNU make]
+    - SourceryG++Lite [with Keil]
+    Target Device:
+    - xxxxx: Single Device
+    - xxx*: Series
+  + Add new examples:
+    - "NVIC/Disable_Interrupt"
+    - "TM/InternalTrigger"
+    - "TM/PWM_Buzzer"
+    - "WDT/Auto_Enable"
+  + Add Flash programming function of GNU Maker (via e-Link32 Pro/Lite Commander).
+    "make IC=xxxxx eraseall"
+    "make IC=xxxxx program"
+    "make IC=xxxxx run"
+  + Update "CKCU_HSIAutoTrimCmd()" and "CKCU_HSIAutoTrimIsReady()" function to improve clock stability.
+  + Fix the cache address problem of "SDDISK_Read()" function.
+    "USBD/Mass_Storage/sd_disk.c", "USBD/Mass_Storage_SDIO/sd_disk.c"
+  + Update GNU project (*.uvprojx), fix the compile error when use new GNU Arm version
+    ("gcc-arm-none-eabi-10-2020-q2-preview-win32" or above).
+  + Fix Keil compiling error when disable both retarget and MicroLib.
+  + Update "ht32f1xxxx_01.h", fix the compatibility issue when user include "stdbool.h".
+  + Modify GNU compiler settings, output text file (disassembly) after building the code.
+  + Add "HT32_FWLIB_VER" and "HT32_FWLIB_SVN" in "ht32f1xxxx_lib.h" for the version information of
+    HT32 Firmware Library.
+    Example:
+    "#define HT32_FWLIB_VER                  (006)"
+    "#define HT32_FWLIB_VER                  (2361)"
+  + Add new AFIO define in "ht32f1xxxx_gpio.h".
+    - "AFIO_FUN_MCTM1"
+    - "AFIO_FUN_PWM"
+    - "AFIO_FUN_PWM0", "AFIO_FUN_PWM1", "AFIO_FUN_PWM2", "AFIO_FUN_PWM3"
+  + Add following alias of MCTM IRQ handler
+    "#define MCTM0_IRQn               MCTM0UP_IRQn"
+    "#define MCTM0_IRQHandler         MCTM0UP_IRQHandler"
+    "#define MCTM1_IRQn               MCTM1UP_IRQn"
+    "#define MCTM1_IRQHandler         MCTM1UP_IRQHandler"
+
+  Others
+  + Update comment, format, typing error, and coding style.
+  + Update "SPI/FIFO_SEL_Hardware" example, add Rx FIFO Timeout function and fix data loss issue.
+  + Update "USBD/Mass_Storage" example, add "HTCFG_SD_MAXSPEED" define for different board.
+  + Update "utilities/common/spi_lcd.c".
+    - Remove duplicate SPI parameter setting of "LCD_Init()".
+    - Update SPI chip select define and SPI configuration by "LCD_SPI_SEL_AFIO_MODE".
+    - Swap the "GPIO_DirectionConfig()" and "GPIO_SetOutBits()" function to prevent transient state
+      of SPI_SEL pin.
+  + Update "_ProjectConfig*.bat" files.
+  + Add "Project Source File Setting" functions ("_ProjectSource.ini" and "_ProjectSource.bat").
+  + Rename "_CreateProjectUSB.bat" as "_CreateProject.bat".
+  + Add dummy xxTM C files, to notify the user that SCTM/PWM/GPTM/MCTM timer use the "ht32f1xxxx_tm.c" driver.
+    "ht32f1xxxx_gptm.c", "ht32f1xxxx_pwm.c", "ht32f1xxxx_sctm.c"
+  + Add "IS_IPN_MCTM()" and "IS_IPN_GPTM" macro, for use to confirm the xxTMn is GPTM or MCTM.
+  + Update comment and board/pin configuration of "ADC/OneShot_TMTrigger_PDMA" example.
+  + Update and sync startup.s/system.c files.
+
+/*----------------------------------------------------------------------------------------------------------*/
+/* HT32F1xxxx_FWLib_v005_2207                                                                               */
+/*----------------------------------------------------------------------------------------------------------*/
+  Release Date: 2020-08-11
+
+  Main Changes
+  + Add the following files to use e-Link32 Pro with SEGGER Embedded Studio. Refer to the
+    "readme e-Link32 Pro.txt" for how to use it.
+    "emStudiov4/readme e-Link32 Pro.txt"
+    "emStudiov4/Project_xxxxx.bat"
+    "emStudiov4/_MassErase.bat"
+  + Fix the "I2S_FIFOTrigLevelConfig()" error which did not clear the field of I2S FCR correctly.
+  + Fix "RPRE_MASK" define error for "RTC_SetPrescaler()" function.
+  + Add "SPI_FLASH_WaitForWriteEnd()" function in the end of the write status operation
+    ("SPI_FLASH_WriteStatus()").
+  + Modify "SPI_FLASH_WaitForWriteEnd()" function to return value of status register.
+  + Add below notice of examples to inform the user to check the local structure variable without a
+    default value.
+    "Notice that the local variable (structure) did not have an initial value.
+     Please confirm that there are no missing members in the parameter settings below this function."
+  + Add "LIBCFG_MAX_SPEED" in the file "ht32fxxxxx_libcfg.h" which indicate the maximum core speed.
+  + Add the following definition for convenience.
+    PDMACH0_IRQn ~ PDMACH5_IRQn
+    AFIO_FUN_MCTM0
+    AFIO_FUN_GPTM0 ~ AFIO_FUN_GPTM3
+    AFIO_FUN_PWM0
+    AFIO_FUN_SCTM0 ~ AFIO_FUN_SCTM2
+  + Add new examples.
+    "TM/PWM"
+    "TM/UpdateEvent"
+  + Add "s64/u64" definition.
+
+  Others
+  + Update comment, format, typing error, and coding style.
+  + Add below notice in the "FMC/FLASH_Security" example.
+    "The Option Byte will be write protected (cannot be changed again) after the
+     Security Protection is enabled. Refer to the user manual for details."
+  + Remove HSI disable setting of Configuration Wizard and add notice in the "system_xxxxx_nn.c".
+  + Update the following examples to remove compiler warning of the GNU compiler.
+    "USBD/Mass_Storage"
+    "USART/PDMA"
+    "USART/Interrupt"
+  + Add "-Waddress-of-packed-member" #pragma of below examples to remove compiler warning of the
+    GNU compiler.
+    "USBD/Mass_Storage"
+    "USBD/Mass_Storage_IAP"
+    "USBD/Mass_Storage_SDIO"
+    "USBD/HID_Keyboard"
+    "USBD/HID_Keyboard_Joystick"
+    "USBD/HID_Keyboard_Mass_Storage"
+    "USBD/HID_Keyboard_Virtual_COM"
+    "USBD/HID_Mouse"
+
+/*----------------------------------------------------------------------------------------------------------*/
+/* HT32F1xxxx_FWLib_v004_2103                                                                               */
+/*----------------------------------------------------------------------------------------------------------*/
+  Release Date: 2020-04-25
+
+  Main Changes
+  + Remove the "I2C_Cmd()" in the "I2C_Init()" function since it shall be called after the I2C related
+    settings. User shall call the "I2C_Cmd()" by themself after the "I2C_Init()".
+  + Update "system_ht32f1xxxx_02.c", modify the LDO related setting.
+  + Add "USART_GetIntStatus()" function to get the enabled interrupt source.
+  + Add "RETARGET_HSI_ATM" setting to turn on/off the auto-trim function of HSI ("ht32f1xxxx_conf.h").
+  + Add "USBDClass_Reset()" into the "USBD/*" example to reset related flag for the self-power application.
+  + Modify "ht32f5xxxx_aes.c", fix "AES_SetKeyTable()" and "_AES_CryptData()" functions who did not clear
+    related fields before set it.
+  + Rename examples as below.
+    IP         Old Name                           New Name
+    --------   --------                           --------
+    ADC        EXTITrigger_DiscontinuousMode      Discontinuous_EXTITrigger
+    ADC        PDMA_ADCResult                     OneShot_TMTrigger_PDMA
+    ADC        Potentiometer_ContinuousMode       Continuous_Potentiometer
+    ADC        TM_Trigger                         OneShot_PWMTrigger
+    ADC        TM_Trigger_with_Delay              OneShot_PWMTrigger_with_Delay
+    USART      HyperTerminal_TxRx                 Retarget
+    USART      HyperTerminal_TxRx_Interrupt       Interrupt
+    USART      HyperTerminal_TxRx_Interrupt_FIFO  Interrupt_FIFO
+  + Update the following example to improve readability.
+    "ADC/AnalogWatchdog"
+    "ADC/Continuous_Potentiometer"
+    "ADC/Discontinuous_EXTITrigger"
+    "ADC/InternalReferenceVoltage"
+    "ADC/OneShot_PWMTrigger"
+    "ADC/OneShot_PWMTrigger_with_Delay"
+    "ADC/OneShot_TMTrigger_PDMA"
+    "ADC/Two_Group_MaxCH"
+    "USART/Interrupt"
+    "USART/Interrupt_FIFO"
+    "USART/PDMA"
+    "USART/Polling"
+    "USART/Retarget"
+    "USBD/HID_Demo"
+    "USBD/HID_DemoVendorReport"
+  + Update UxART related example, turn on internal pull up to prevent unknown state.
+  + Add new examples.
+    "BFTM/OneShot"
+    "BFTM/TimeMeasure"
+  + Remove unnecessary RTC compare match restart setting of the RTC example
+    (which cause the time not correct after entering the low power mode).
+  + ADC to ADC0 related modification (to compatible with M0+ and ADC1).
+    Modify "HT_ADC" and "ADC_IRQn" to "HT_ADC0" and "ADC0_IRQn".
+    Modify "AFIO_FUN_ADC" as "AFIO_FUN_ADC0".
+    Modify "CKCU_SetADCPrescaler()" to "CKCU_SetADCnPrescaler()".
+    Add "CKCU_ADCPRE_ADCn_TypeDef".
+    Modify "ADC_Freq" to "ADC0_Freq" of "CKCU_ClocksTypeDef".
+    Modify "ADC" to "ADC0" of "RSTCU_PeripReset_TypeDef".
+    Add "HT_ADC", "ADC_IRQn", "AFIO_FUN_ADC" define for backward compatibility.
+  + Fix "HT_GPIOF" define error of HT32F12364.
+
+  Others
+  + Update "SPI/FIFO_SEL_Hardware" example, change the code location of the IP enable ("SPI_Cmd()").
+  + Update "system_ht32fxxxxx_nn.c" (coding style).
+  + Update "ht32_series.c/h" and "ht32_retarget_usbdconf.h" to improve the compatibly of the
+    terminal software.
+  + Update comment, format, typing error, and coding style.
+  + Fix interrupt mode of UxART retarget, remove unnecessary FIFO/interrupt configuration of the
+    retarget function.
+  + Update format of "CKCU_PeripClockConfig_TypeDef" and "RSTCU_PeripReset_TypeDef".
+  + Update and modify naming rule of the "HTCFG_xxxx" configuration define in the "ht32_board_config.h".
+  + Update settings of project files.
+
+/*----------------------------------------------------------------------------------------------------------*/
+/* HT32F1xxxx_FWLib_v004_1946                                                                               */
+/*----------------------------------------------------------------------------------------------------------*/
+  Release Date: 2019-11-28
+
+  Main Changes
+  + Move the "common/*.h" include from the begin to the end (after the pin define) in the file
+    "HT32_Board/ht32fxxxx_sk/dvb.h". The original include way leads to the pin define lost when you
+    use the EBI_LCD->EBI_LCD_RAM outside the "ebi_lcd.c".
+  + Fix error of "_CreateProjectScript.bat" which cause the stack size and RW base can not be set by the
+    "_ProjectConfig.bat" of the emStudiov4 project.
+  + Add "GPIO_GetID()" function to convert HT_GPIOx to GPIO_Px.
+  + Update "HID_Demo_UI.exe" to support HID Report ID.
+  + Add "USBD/HID_DemoVendorReport" example.
+  + Modify "SPI_Init()" function, fix SPIx Clock Prescaler setting of HT32F12364.
+  + Modify "system_ht32f1xxxx_03.c", fix PLLCFGR initiation error which cause the "PLL_CLK_SRC_DIV" setting
+    is not work.
+  + Add "RETARGET_UxART_BAUDRATE" setting to change the retarget UART baudrate in "ht32f1xxxx_conf.h".
+  + Add "RETARGET_HSI_ATM" setting to turn on/off the auto-trim function of HSI.
+  + Add "RETARGET_DEFINE_HANDLER" setting to remove the UxARTn_IRQHandler() define of the retarget.
+    This setting is used for the model who grouping two UART Interrupt into one vector.
+  + Add non-block mode of USB Virtual-COM retarget function ((Drop data if USB or terminal software is
+    not ready).
+  + Modify "PWRCU_SetLDOFTRM()" function, fix the error which cause the LDO output voltage fine trim is
+    not work.
+  + Update "PWRCU_DeepSleep2()" to restore the LDO output voltage fine trim after system wakeup.
+  + Add SWCLK toggle of "GPIO_DisableDebugPort()" function.
+
+  Others
+  + Add "utilities/common/lcd.h" to put the lcd related register together.
+  + Update format and coding style.
+  + Add PLL Output frequency comment of "system_ht32f1xxxx_nn.c".
+  + Update project files.
+    .c and .h files order.
+    Project format.
+    Include path order.
+  + Add "USAGE_PAGE_L" define of "USB/HID_Demo" example.
+  + Fix typing error of "ht32f1xxxx_conf.h".
+
+/*----------------------------------------------------------------------------------------------------------*/
+/* HT32F1xxxx_FWLib_v004_1812                                                                               */
+/*----------------------------------------------------------------------------------------------------------*/
+  Release Date: 2019-09-11
+
+  Main Changes
+  + Add new device support.
+    HT32F12364
+  + Update "ebi_lcd.c/h", fix LCD_SPI_BL_GPIO_XXX define error (shall be LCD_EBI_BL_GPIO_XXX).
+  + Update USB example, use USB PLL by default (if USB PLL exist).
+  + Fix function name typing error
+    SPI_GUADTCmd()   ->  SPI_GUARDTCmd()
+    SPI_GUADTConfig  ->  SPI_GUARDTConfig()
+  + Update "ADC_RegularGroupConfig()" and "ADC_HPGroupConfig()", prevent to enable the ADC directly after
+    the above function call. User shall use the "ADC_Cmd(HT_ADC, ENABLE);" to enable the ADC.
+  + Rename following files.
+    "IAR/startup_ht32f1xxxx_01.s" to "IARstartup_ht32f1xxxx_iar_01.s"
+    "IAR/startup_ht32f1xxxx_03.s" to "IARstartup_ht32f1xxxx_iar_03.s"
+
+  Others
+  + Update comment and coding style.
+  + Update "USART/HyperTerminal_TxRx_Interrupt" example, remove unnecessary configuration of LED.
+  + Update readme file of "EBI/LCD" example.
+  + Add "PWRCU/PowerDown_RTC" example.
+  + Add "PWRCU/PWRCU_PowerDown_WAKEUPPin" example.
+  + Add "RTC/Time" example.
+  + Update and sync "ht32f1xxxx_conf.h".
+  + Update and sync "HT32F1xxxx_01_DebugSupport.ini".
+  + Update "ht32f1xxxx_tm.c", remove unnecessary variable initialization.
+  + Update "ht32_op.c" and "ht32_op.s", edit comment of WDT Enable function.
+
+/*----------------------------------------------------------------------------------------------------------*/
+/* HT32F1xxxx_FWLib_v003_1679                                                                               */
+/*----------------------------------------------------------------------------------------------------------*/
+  Release Date: 2019-04-19
+
+  Main Changes
+  + Fix error of "CKCU_HSIAutoTrimClkConfig()" function which cause the HSI auto-trim not work.
+  + Modify following define of ADC.
+    ADC_CH_GNDREF -> ADC_CH_GND_VREF
+    ADC_CH_VREF   -> ADC_CH_VDD_VREF
+
+  Others
+  + None.
+
+/*----------------------------------------------------------------------------------------------------------*/
+/* HT32F1xxxx_FWLib_v003_1673                                                                               */
+/*----------------------------------------------------------------------------------------------------------*/
+  Release Date: 2019-04-09
+
+  Main Changes
+  + Add SEGGER Embedded Studio IDE support (beta version).
+  + Update "ht32f1xxxx_usbd.c" and "ht32_usbd_core.c", add Force USB Reset Control function (apply to specific
+    model only).
+  + Update Create Project script, add Script folder in project_template.
+  + Add "TM/TriggerCounter" example.
+  + Add "USBD/HID_Keyboard_Mass_Storage" example.
+
+  Others
+  + Update comment of example code.
+  + Update define of "USBD/Mass_Storage" example.
+  + Update "EXTI/WakeUp_DeepSleepMode1" Example, add LED3 (for some SK have only LED2 and LED3 on board).
+  + Update/sync startup.s/system.c files.
+  + Update/sync "HT32F1xxxx_01_DebugSupport.ini".
+  + Update/sync "ht32_op.s" and "ht32_op.c".
+  + Update "BootProcess" function.
+  + Update/sync "FlashMacro.mac".
+
+/*----------------------------------------------------------------------------------------------------------*/
+/* HT32F1xxxx_FWLib_v002_1496                                                                               */
+/*----------------------------------------------------------------------------------------------------------*/
+  Release Date: 2018-12-17
+
+  Main Changes
+  + Modify Control IN/OUT method of USB Core, to fix USB transfer problem when CPU in the lower speed or late
+    USB interrupt case.
+  + Add workaround for PDMA CH3 issue (Interrupt Enable bit of CH3 is not work).
+
+  Others
+  + Add "USBD_DisableDefaultPull()" function to disable pull resistance when the USB is not use.
+  + Rename RTC example as below.
+    "Calendar" -> "Time_BackupDomain"
+  + Add new example.
+    "RTC/Calendar_BackupDomain"
+    "FMC/EnableProtectionByFW"
+  + Update "EXTI/WakeUp_DeepSleepMode1" example.
+  + Update coding style.
+
+/*----------------------------------------------------------------------------------------------------------*/
+/* HT32F1xxxx_FWLib_v002_1406                                                                               */
+/*----------------------------------------------------------------------------------------------------------*/
+  Release Date: 2018-09-30
+
+  Main Changes
+  + Update HardFault_Handler of "ht32f1xxxx_01_it.c",add the debug instruction and system reset.
+  + Add "RAND/Random_Number" example and update "ht32_rand.c".
+  + Add  "__HT_check_sp" and "__HT_check_heap" symbol into startup.s and watchpoint command into
+    "HT32F1xxxx_01_DebugSupport.ini" for debug stack/heap underflow, overflow, and overwrite.
+  + Update "USBD/HID_Keyboard_Joystick" and "USBD/HID_Mouse" example, change the set flag sequence
+    (before USBDCore_EPTWriteINData).
+  + Add GNU Make support of GNU Arm compiler.
+
+  Others
+  + Add "objcooy.txt" which shows how to use obj tools of GNU Arm compiler.
+  + Update format and coding style.
+
+/*----------------------------------------------------------------------------------------------------------*/
+/* HT32F1xxxx_FWLib_v002_1367                                                                               */
+/*----------------------------------------------------------------------------------------------------------*/
+  Release Date: 2018-08-02
+
+  Main Changes
+  + Add GNU Arm compiler support.
+    - Add project_template related files
+    - "startup_ht32f5xxxx_gcc_nn.s"
+    - "linker.ld" (link script)
+  + Update "ht32f5xxxx_tm.c/.h", add following functions which have TM_CH_n parameter.
+    void TM_ForcedOREF(HT_TM_TypeDef* TMx, TM_CH_Enum TM_CH_n, TM_OM_Enum ForcedAction)
+    void TM_SetCaptureCompare(HT_TM_TypeDef* TMx, TM_CH_Enum TM_CH_n, u16 Cmp)
+    void TM_SetAsymmetricCompare(HT_TM_TypeDef* TMx, TM_CH_Enum TM_CH_n, u16 Cmp)
+    u32 TM_GetCaptureCompare(HT_TM_TypeDef* TMx, TM_CH_Enum TM_CH_n)
+
+  Others
+  + Add "USBD/HID_Keyboard_Virtual_COM" example.
+  + Fix compile error when turn on Library debug mode (HT32_LIB_DEBUG = 1).
+  + Modify "example/NVIC/Vector_Table_Offset" example code to support GUN compiler.
+  + Simplify "example/USART/HyperTerminal_TxRx_Interrupt" example.
+
+/*----------------------------------------------------------------------------------------------------------*/
+/* HT32F1xxxx_FWLib_v001_1302                                                                               */
+/*----------------------------------------------------------------------------------------------------------*/
+  Release Date: 2018-06-11
+
+  Main Changes
+  + Add SourceryG++Lite compiler support.
+    - Add project_template related files
+    - "startup_ht32f1xxxx_cs3_nn.s"
+    - "linker.ld" (link script)
+  + Add DMA support of "utilities/common/spi_flash.c".
+  + Add "EXTI_GetEdgeFlag()" function.
+  + Add LIBCFG_AES_SWAP function to process endian issue of AES.
+
+  Others
+  + Update "ht32f1xxxx_conf.h" for AUTO_RETURN (\r) option.
+  + Update format of IAR "startup_ht32f1xxxx_01.s".
+  + Fix "LIBCFC_CKCU_USB_PLL" typing error of ht32fxxxx_libcfg.h and example code (shall be LIBCFG_CKCU_USB_PLL).
+  + Fix IAP_PPBIT define error of "IAP/IAP_UI" example.
+  + Update "ht32f1xxxx_ckcu.c" to remove unnecessary register write of PLL.
+
+/*----------------------------------------------------------------------------------------------------------*/
+/* HT32F1xxxx_FWLib_v001_1153                                                                               */
+/*----------------------------------------------------------------------------------------------------------*/
+  Release Date: 2018-02-28
+
+  Main Changes
+  + Add "USBD/USB_UAC_Sound_RateControl" Example.
+  + Add "I2C_SpeedOffset" parameter of I2C_InitTypeDef to reach real I2C speed.
+    Note: Related examples are also updated.
+  + Change EBI timing of "ebi_lcd.c" to fix LCD display problem on HT32F12345 with ESK32-A2A31.
+  + Add "CKCU/HSI_AutoTrim_By_USB" Example.
+  + Update "CKCU_HSIAutoTrimIsReady" function of "ht32f5xxxx_ckcu.c".
+
+  Others
+  + Update format and coding style.
+
+/*----------------------------------------------------------------------------------------------------------*/
+/* HT32F1xxxx_FWLib_v001_1023                                                                               */
+/*----------------------------------------------------------------------------------------------------------*/
+  Release Date: 2017-12-30
+
+  Main Changes
+  + Update boot related functions of "startup_ht32f1xxxx_nn.s" and "system_ht32f1xxxx_nn.c".
+  + Update "ht32_op.c" and "ht32_op.s" to support enable WDT function by Flash Option byte (Apply to specific
+    model only).
+  + Add "GPIO_DisableDebugPort()"" function to disable SWD function.
+
+  Others
+  + Fix IAR Project setting error of IAP Example.
+  + Add "RTC_LSILoadTrimData()" function.
+  + Add "LIBCFG_RTC_LSI_LOAD_TRIM" define of HT32F165x.
+  + Remove useless "RTC_LSICmd()"" function.
+  + Update following examples, remove LSI enable code (LSI default on).
+    "PWRCU/DeepSleepMode1"
+    "PWRCU/BackupData"
+    "PWRCU/DeepSleepMode2"
+    "PWRCU/PowerDownMode"
+    "RTC/Calendar"
+  + Update I2S and USB UAC related examples (Coding style and remove unuse define).
+  + Update USB Example, remove invalid remote wakeup configuration by define (Only HID class support Remote
+    Wakeup).
+
+/*----------------------------------------------------------------------------------------------------------*/
+/* HT32F1xxxx_FWLib_v001_933                                                                                */
+/*----------------------------------------------------------------------------------------------------------*/
+  Release Date: 2017-11-17
+
+  Main Changes
+  + Fix AES typing error of "ht32f1xxxx_aes.c/.h" (EBC to ECB).
+  + Fix TM define error of "ht32f1xxxx_tm.c/.h".
+
+  Others
+  + Update "ht32_virtual_com.inf" file, add Digital Signature.
+  + Update typing error of example code.
+
+/*----------------------------------------------------------------------------------------------------------*/
+/* HT32F1xxxx_FWLib_v001_899                                                                                */
+/*----------------------------------------------------------------------------------------------------------*/
+  Release Date: 2017-10-19
+
+  Main Changes
+  + Update "SDIO/SDCard" Example code. Fix read Card SCR problem which causes SDIO working on 1-bit mode
+    abnormally.
+
+  Others
+  + Update project setting.
+  + Remove some project files. Use "CreateProject.bat" to copy project files automatically.
+  + Add "LIBCFG_CHIPNAME" define.
+
+/*----------------------------------------------------------------------------------------------------------*/
+/* HT32F1xxxx_FWLib_v001_785                                                                                */
+/*----------------------------------------------------------------------------------------------------------*/
+  Release Date: 2017-08-31
+
+  Main Changes
+  + Fix "ht32f1xxxx_conf.h" typing error ("_ADC" to "_AES").
+  + Fix AES typing error (EBC to ECB).
+
+  Others
+  + Update "ht32_usbd_core.c" to support vendor function.
+  + Add "USE_MEM_HT32F1xxxx" define into project.
+  + Add "USE_MEM_HT32F1xxxx" default define into "ht32f1xxxx_xx_libcfg.h".
+  + Rename "system_ht32f1xxxx.h" to "system_ht32f1xxxx_01.h" for PACK requirement.
+  + Update IAP examples.
+
+/*----------------------------------------------------------------------------------------------------------*/
+/* HT32F1xxxx_FWLib_v001_671                                                                                */
+/*----------------------------------------------------------------------------------------------------------*/
+  Release Date: 2017-07-27
+
+  Main Changes
+  + None
+
+  Others
+  + Update "ht32_op.c", add CK_CODE/CK_DATA/CK_CODEOP in Option Bytes (same format with e-Writer32).
+  + Modify USB/Mass_Storage example for WIN10 compatibility issue.
+  + Add "USE_MEM_HT32F1xxxx" support for memory size define (LIBCFG_FLASH_SIZE/LIBCFG_RAM_SIZE).
+  + Add IAR EWARMv8 project template (create by IAR EWARM v8.11).
+  + Upgrade the version of IAR EWARM project template from v6.20 to v6.50.
+    Note:
+    1. Supported CMSIS-DAP: IAR EWARM v6.50 and above.
+    2. RDI/e-Link32 is not supported anymore from the v8.xx of IAR EWARM.
+
+  Known Issue:
+  + IAP example is not ready, will be update in next release.
+
+/*----------------------------------------------------------------------------------------------------------*/
+/* HT32F1xxxx_FWLib_v001_552                                                                                */
+/*----------------------------------------------------------------------------------------------------------*/
+  Release Date: 2017-07-17
+
+  Main Changes
+  + Add example code.
+  + Update TM for PDMA support.
+  + Fix "USART_RXTL_01/04/08/14" define error.
+  + Fix "HT32F_DVB_BuzzerFun()" define error of "ht32f1xxxx_board_01.c".
+  + Fix pin assignment error of "ht32f12366_sk.h"
+
+  Others
+  + Add BUTTON_MODE_WAKE_UP support for "ht32f1xxxx_sk.c/.h".
+  + Update typing error and coding style.
+  + Remove warning on old MDK-ARM version.
+  + Update project setting.
+  + Add DEINIT_ENABLE setting of "ht32f1xxxx_system_nn.c".
+
+/*----------------------------------------------------------------------------------------------------------*/
+/* HT32F1xxxx_FWLib_v001_167                                                                                */
+/*----------------------------------------------------------------------------------------------------------*/
+  Release Date: 2017-06-14
+
+  Main Changes
+  + Initial version.
+
+  Others
+  +

@@ -43,7 +43,7 @@ static rt_err_t ofw_parse_irq_map(struct rt_ofw_node *np, struct rt_ofw_cell_arg
     struct rt_ofw_node *ic_np = RT_NULL;
     const fdt32_t *addr, *map, *map_mask;
     int child_address_cells, child_interrupt_cells;
-    int parent_address_cells, parent_interrupt_cells;
+    int parent_address_cells = 0, parent_interrupt_cells = 0;
     int addr_cells, pin_cells, icaddr_cells, idx1, idx2, limit;
 
     /*

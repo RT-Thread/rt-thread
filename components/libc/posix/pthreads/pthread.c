@@ -102,7 +102,10 @@ static inline void _destroy_item(int index, _pthread_data_t *ptd)
     }
 }
 
-#define NOT_USE_CXX_TLS -1
+#ifdef RT_USING_CPLUSPLUS11
+    #define NOT_USE_CXX_TLS -1
+#endif
+
 void _pthread_data_destroy(_pthread_data_t *ptd)
 {
     pthread_t pth;
@@ -114,10 +117,14 @@ void _pthread_data_destroy(_pthread_data_t *ptd)
          */
         if (ptd->tls != RT_NULL)
         {
-            extern pthread_key_t get_emutls_pthread_key(void);
-            pthread_key_t emutls_pthread_key = get_emutls_pthread_key();
-
             int index;
+#ifdef RT_USING_CPLUSPLUS11
+            /* If C++11 is enabled and emutls is used,
+             * destructors of C++ object must be called safely.
+             */
+            extern pthread_key_t emutls_get_pthread_key(void);
+            pthread_key_t emutls_pthread_key = emutls_get_pthread_key();
+
             if (emutls_pthread_key != NOT_USE_CXX_TLS)
             {
                 /* If execution reaches here, C++ 'thread_local' may be used.
@@ -131,8 +138,11 @@ void _pthread_data_destroy(_pthread_data_t *ptd)
                 }
             }
             else
+#endif
             {
-                /* Just iterate the _thread_keys from index 0. */
+                /* If only C TLS is used, that is, POSIX TLS or __Thread_local,
+                 * just iterate the _thread_keys from index 0.
+                 */
                 for (index = 0; index < PTHREAD_KEY_MAX; index ++)
                 {
                     _destroy_item(index, ptd);

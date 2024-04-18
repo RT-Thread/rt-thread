@@ -1,0 +1,77 @@
+menu "Hardware Drivers Config"
+
+config SOC_HT32F52352
+	bool
+	select SOC_SERIES_HT32F5
+	select RT_USING_COMPONENTS_INIT
+	select RT_USING_USER_MAIN
+	default y
+
+menu "Onboard Peripheral Drivers"
+
+endmenu
+
+menu "On-chip Peripheral Drivers"
+
+	config BSP_USING_GPIO
+        bool "Enable GPIO"
+        select RT_USING_PIN
+        default n
+
+   	menuconfig BSP_USING_UART
+        bool "Enable UART"
+        default n
+        select RT_USING_SERIAL
+        if BSP_USING_UART
+			config BSP_USING_USART0
+			bool "Enable USART0"
+			default n
+
+			config BSP_USING_USART1
+			bool "Enable USART1"
+			default n
+
+			config BSP_USING_UART0
+			bool "Enable UART0"
+			default n
+
+			config BSP_USING_UART1
+			bool "Enable UART1"
+			default n
+        endif
+
+	menuconfig BSP_USING_SPI
+		bool "Enable SPI Bus"
+		default n
+		select RT_USING_SPI
+		if BSP_USING_SPI
+			config BSP_USING_SPI0
+			bool "Enable SPI0 Bus"
+			default n
+
+			config BSP_USING_SPI1
+			bool "Enable SPI1 Bus"
+			default n
+		endif
+
+	menuconfig BSP_USING_I2C
+		bool "Enable I2C Bus"
+		default n
+		select RT_USING_I2C
+		if BSP_USING_I2C
+			config BSP_USING_I2C0
+			bool "Enable I2C0 Bus"
+			default n
+
+			config BSP_USING_I2C1
+			bool "Enable I2C1 Bus"
+			default n
+		endif
+
+endmenu
+
+menu "Board extended module Drivers"
+
+endmenu
+
+endmenu

@@ -59,6 +59,7 @@
  * 2023-12-22     Shell        Support hook list
  * 2024-01-18     Shell        Seperate basical types to a rttypes.h
  *                             Seperate the compiler portings to rtcompiler.h
+ * 2024-03-30     Meco Man     update version number to v5.2.0
  */
 
 #ifndef __RT_DEF_H__
@@ -79,7 +80,7 @@ extern "C" {
 
 /* RT-Thread version information */
 #define RT_VERSION_MAJOR                5               /**< Major version number (X.x.x) */
-#define RT_VERSION_MINOR                1               /**< Minor version number (x.X.x) */
+#define RT_VERSION_MINOR                2               /**< Minor version number (x.X.x) */
 #define RT_VERSION_PATCH                0               /**< Patch version number (x.x.X) */
 
 /* e.g. #if (RTTHREAD_VERSION >= RT_VERSION_CHECK(4, 1, 0) */
@@ -569,13 +570,14 @@ struct rt_object_information
  */
 #define RT_TIMER_FLAG_DEACTIVATED       0x0             /**< timer is deactive */
 #define RT_TIMER_FLAG_ACTIVATED         0x1             /**< timer is active */
+#define RT_TIMER_FLAG_PROCESSING        0x2             /**< timer's timeout fuction is processing */
 #define RT_TIMER_FLAG_ONE_SHOT          0x0             /**< one shot timer */
-#define RT_TIMER_FLAG_PERIODIC          0x2             /**< periodic timer */
+#define RT_TIMER_FLAG_PERIODIC          0x4             /**< periodic timer */
 
 #define RT_TIMER_FLAG_HARD_TIMER        0x0             /**< hard timer,the timer's callback function will be called in tick isr. */
-#define RT_TIMER_FLAG_SOFT_TIMER        0x4             /**< soft timer,the timer's callback function will be called in timer thread. */
+#define RT_TIMER_FLAG_SOFT_TIMER        0x8             /**< soft timer,the timer's callback function will be called in timer thread. */
 #define RT_TIMER_FLAG_THREAD_TIMER \
-    (0x8 | RT_TIMER_FLAG_HARD_TIMER)                    /**< thread timer that cooperates with scheduler directly */
+    (0x10 | RT_TIMER_FLAG_HARD_TIMER)                    /**< thread timer that cooperates with scheduler directly */
 
 #define RT_TIMER_CTRL_SET_TIME          0x0             /**< set timer control command */
 #define RT_TIMER_CTRL_GET_TIME          0x1             /**< get timer control command */
