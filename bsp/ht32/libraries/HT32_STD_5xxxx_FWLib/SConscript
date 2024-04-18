@@ -1,0 +1,49 @@
+import rtconfig
+from building import *
+Import('rtconfig')
+
+cwd = GetCurrentDir()
+src = []
+
+if GetDepend(['SOC_HT32F52352']):
+    src = Split("""
+    library/HT32F5xxxx_Driver/src/ht32_cm0plus_misc.c
+    library/HT32F5xxxx_Driver/src/ht32f5xxxx_adc.c
+    library/HT32F5xxxx_Driver/src/ht32f5xxxx_bftm.c
+    library/HT32F5xxxx_Driver/src/ht32f5xxxx_ckcu.c
+    library/HT32F5xxxx_Driver/src/ht32f5xxxx_cmp.c
+    library/HT32F5xxxx_Driver/src/ht32f5xxxx_crc.c
+    library/HT32F5xxxx_Driver/src/ht32f5xxxx_ebi.c
+    library/HT32F5xxxx_Driver/src/ht32f5xxxx_exti.c
+    library/HT32F5xxxx_Driver/src/ht32f5xxxx_flash.c
+    library/HT32F5xxxx_Driver/src/ht32f5xxxx_gpio.c
+    library/HT32F5xxxx_Driver/src/ht32f5xxxx_i2c.c
+    library/HT32F5xxxx_Driver/src/ht32f5xxxx_i2s.c
+    library/HT32F5xxxx_Driver/src/ht32f5xxxx_mctm.c
+    library/HT32F5xxxx_Driver/src/ht32f5xxxx_pdma.c
+    library/HT32F5xxxx_Driver/src/ht32f5xxxx_pwrcu.c
+    library/HT32F5xxxx_Driver/src/ht32f5xxxx_rstcu.c
+    library/HT32F5xxxx_Driver/src/ht32f5xxxx_rtc.c
+    library/HT32F5xxxx_Driver/src/ht32f5xxxx_sci.c
+    library/HT32F5xxxx_Driver/src/ht32f5xxxx_spi.c
+    library/HT32F5xxxx_Driver/src/ht32f5xxxx_tm.c
+    library/HT32F5xxxx_Driver/src/ht32f5xxxx_usart.c
+    library/HT32F5xxxx_Driver/src/ht32f5xxxx_usbd.c
+    library/HT32F5xxxx_Driver/src/ht32f5xxxx_wdt.c
+    library/Device/Holtek/HT32F5xxxx/Source/system_ht32f5xxxx_01.c
+    """)
+
+
+
+path = [
+    cwd + '/library/HT32F5xxxx_Driver/inc',
+    cwd + '/library/CMSIS/Include',
+    cwd + '/library/Device/Holtek/HT32F5xxxx/Include'
+]
+
+CPPDEFINES = ['USE_HT32_DRIVER']
+
+group = DefineGroup('Libraries', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
+
+Return('group')
+
