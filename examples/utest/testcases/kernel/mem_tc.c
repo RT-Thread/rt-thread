@@ -15,9 +15,6 @@
 struct rt_small_mem_item
 {
     rt_ubase_t              pool_ptr;         /**< small memory object addr */
-#ifdef ARCH_CPU_64BIT
-    rt_uint32_t             resv;
-#endif /* ARCH_CPU_64BIT */
     rt_size_t               next;             /**< next free item */
     rt_size_t               prev;             /**< prev free item */
 #ifdef RT_USING_MEMTRACE
