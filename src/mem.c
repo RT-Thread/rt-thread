@@ -59,9 +59,6 @@
 struct rt_small_mem_item
 {
     rt_ubase_t              pool_ptr;         /**< small memory object addr */
-#ifdef ARCH_CPU_64BIT
-    rt_uint32_t             resv;
-#endif /* ARCH_CPU_64BIT */
     rt_size_t               next;             /**< next free item */
     rt_size_t               prev;             /**< prev free item */
 #ifdef RT_USING_MEMTRACE
@@ -84,8 +81,6 @@ struct rt_small_mem
     struct rt_small_mem_item   *lfree;
     rt_size_t                   mem_size_aligned;       /**< aligned memory size */
 };
-
-#define HEAP_MAGIC 0x1ea0
 
 #define MIN_SIZE (sizeof(rt_ubase_t) + sizeof(rt_size_t) + sizeof(rt_size_t))
 
