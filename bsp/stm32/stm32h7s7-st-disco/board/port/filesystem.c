@@ -65,19 +65,19 @@ static void _sdcard_mount(void)
 {
     rt_device_t device;
 
-    device = rt_device_find("sd0");
+    device = rt_device_find("sd");
 
     if (device == NULL)
     {
         mmcsd_wait_cd_changed(0);
         sdcard_change();
         mmcsd_wait_cd_changed(RT_WAITING_FOREVER);
-        device = rt_device_find("sd0");
+        device = rt_device_find("sd");
     }
 
     if (device != RT_NULL)
     {
-        if (dfs_mount("sd0", "/sdcard", "elm", 0, 0) == RT_EOK)
+        if (dfs_mount("sd", "/sdcard", "elm", 0, 0) == RT_EOK)
         {
             LOG_I("sd card mount to '/sdcard'");
         }
