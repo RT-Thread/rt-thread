@@ -41,5 +41,4 @@ system_vectors:
         b   Reserved_Handler
         b   IRQ_Handler
         b   FIQ_Handler
-        ldr pc,[pc,#-0x1b0]
   END
