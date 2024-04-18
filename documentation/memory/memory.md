@@ -43,7 +43,13 @@ Any or none of these memory heap management algorithms can be chosen when the sy
 
 ### Small Memory Management Algorithm
 
-The small memory management algorithm is a simple memory allocation algorithm. Initially, it is a large piece of memory. When a memory block needs to be allocated, the matching memory block is segmented from the large memory block, and then this matching free memory block is returned to the heap management system. Each memory block contains data head for management use through which the used block and the free block are linked by a doubly linked list, as shown in the following figure:
+The small memory management algorithm is a simple memory allocation algorithm. Initially, it is a large piece of memory. When a memory block needs to be allocated, the matching memory block is segmented from the large memory block, and then this matching free memory block is returned to the heap management system. Each memory block contains data head for management use through which the used block and the free block are linked by a doubly linked list.
+
+
+
+**Use this implementation before 4.1.0**
+
+As shown in the following figure:
 
 ![Small Memory Management Working Mechanism Diagram](figures/08smem_work.png)
 
@@ -54,6 +60,22 @@ Each memory block (whether it is an allocated memory block or a free memory bloc
 **2)used**: Indicates whether the current memory block has been allocated.
 
 The performance of memory management is mainly reflected in the allocation and release of memory. The small memory management algorithm can be embodied by the following examples.
+
+
+
+**4.1.0 and later use this implementation**
+
+As shown in the following figure:
+
+![](figures/08smem_work4.png)
+
+**Heap Start**: The heap head address stores memory usage information, the heap head address pointer, the heap end address pointer, the minimum heap free address pointer, and the memory size.
+
+Each memory block (whether it is an allocated memory block or a free memory block) contains a data head, including:
+
+**pool_ptr**: Small memory object address. If the last bit of the memory block is 1, it is used. If the last bit of the memory block is 0, it is not used. When used, the structure members of the small memory algorithm can be quickly obtained by calc.
+
+
 
 As shown in the following figure, the free list pointer lfree initially points to a 32-byte block of memory. When the user thread wants to allocate a 64-byte memory block, since the memory block pointed to by this lfree pointer is only 32 bytes and does not meet the requirements, the memory manager will continue to search for the next memory block.  When the next memory block with 128 bytes is found, it meets the requirements of the allocation. Because this memory block is large, the allocator will split the memory block, and the remaining memory block (52 bytes) will remain in the lfree linked list, as shown in the following table which is after 64 bytes is allocated.
 
