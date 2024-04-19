@@ -58,6 +58,7 @@
 2. 启动 RT-Thread env 应用程序，在交互界面可以使用`cd`指令进入`aarch32`或`aarch64`目录
 3. 按照指导安装 [aarch32](./aarch32/README.md)或[aarch64](./aarch64/README.md)编译链，并进行相关配置
 4. 按照指导[启动镜像程序](./doc/how_to_flashed_binary.md)
+5. 参考[使用文件系统](./doc/how_to_use_file_system.md)制作和使用文件系统
 
 ### RT-Thread Studio 环境
 

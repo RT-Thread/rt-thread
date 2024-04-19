@@ -122,6 +122,7 @@
 #define RT_DFS_ELM_REENTRANT
 #define RT_DFS_ELM_MUTEX_TIMEOUT 3000
 #define RT_USING_DFS_DEVFS
+#define RT_USING_DFS_PTYFS
 #define RT_USING_PAGECACHE
 
 /* page cache config */
@@ -144,7 +145,6 @@
 #define RT_USING_SERIAL_V1
 #define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 64
-#define RT_USING_TTY
 #define RT_USING_CAN
 #define RT_CAN_USING_CANFD
 #define RT_USING_I2C
@@ -278,6 +278,8 @@
 #define LWP_TID_MAX_NR 64
 #define RT_LWP_SHM_MAX_NR 64
 #define RT_USING_LDSO
+#define LWP_USING_TERMINAL
+#define LWP_PTY_MAX_PARIS_LIMIT 64
 
 /* Memory management */
 
@@ -438,6 +440,13 @@
 #define RT_USING_MIO1
 #define RT_USING_MIO2
 #define RT_USING_MIO10
+#define BSP_USING_SDIF
+#define BSP_USING_SDCARD_FATFS
+#define USING_SDIF1
+#define USE_SDIF1_TF
+#define BSP_USING_DC
+#define RT_USING_DC_CHANNEL0
+#define RT_USING_DC_CHANNEL1
 
 /* Board extended module Drivers */
 
