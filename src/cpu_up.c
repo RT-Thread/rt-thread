@@ -30,8 +30,8 @@ void rt_spin_lock_init(struct rt_spinlock *lock)
  */
 void rt_spin_lock(struct rt_spinlock *lock)
 {
-    RT_UNUSED(lock);
     rt_enter_critical();
+    RT_SPIN_LOCK_DEBUG(lock);
 }
 
 /**
@@ -41,8 +41,9 @@ void rt_spin_lock(struct rt_spinlock *lock)
  */
 void rt_spin_unlock(struct rt_spinlock *lock)
 {
-    RT_UNUSED(lock);
-    rt_exit_critical();
+    rt_base_t critical_level;
+    RT_SPIN_UNLOCK_DEBUG(lock, critical_level);
+    rt_exit_critical_safe(critical_level);
 }
 
 /**
@@ -61,6 +62,7 @@ rt_base_t rt_spin_lock_irqsave(struct rt_spinlock *lock)
     RT_UNUSED(lock);
     level = rt_hw_interrupt_disable();
     rt_enter_critical();
+    RT_SPIN_LOCK_DEBUG(lock);
     return level;
 }
 
@@ -73,7 +75,8 @@ rt_base_t rt_spin_lock_irqsave(struct rt_spinlock *lock)
  */
 void rt_spin_unlock_irqrestore(struct rt_spinlock *lock, rt_base_t level)
 {
-    RT_UNUSED(lock);
-    rt_exit_critical();
+    rt_base_t critical_level;
+    RT_SPIN_UNLOCK_DEBUG(lock, critical_level);
+    rt_exit_critical_safe(critical_level);
     rt_hw_interrupt_enable(level);
 }

@@ -105,8 +105,8 @@ void rt_spin_unlock_irqrestore(struct rt_spinlock *lock, rt_base_t level)
 
     RT_SPIN_UNLOCK_DEBUG(lock, critical_level);
     rt_hw_spin_unlock(&lock->lock);
-    rt_hw_local_irq_enable(level);
     rt_exit_critical_safe(critical_level);
+    rt_hw_local_irq_enable(level);
 }
 RTM_EXPORT(rt_spin_unlock_irqrestore)
 

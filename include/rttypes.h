@@ -180,19 +180,15 @@ struct rt_spinlock
 
 #else /* !RT_DEBUGING_SPINLOCK */
 
-    #define _SPIN_LOCK_DEBUG_OWNER(lock)
-    #define _SPIN_UNLOCK_DEBUG_OWNER(lock)
+    #define _SPIN_LOCK_DEBUG_OWNER(lock)    RT_UNUSED(lock)
+    #define _SPIN_UNLOCK_DEBUG_OWNER(lock)  RT_UNUSED(lock)
 #endif /* RT_DEBUGING_SPINLOCK */
 
 #ifdef RT_USING_DEBUG
-    #define _SPIN_LOCK_DEBUG_CRITICAL(lock)                   \
-        do                                                    \
-        {                                                     \
-            struct rt_thread *_curthr = rt_thread_self();     \
-            if (_curthr != RT_NULL)                           \
-            {                                                 \
-                (lock)->critical_level = rt_critical_level(); \
-            }                                                 \
+    #define _SPIN_LOCK_DEBUG_CRITICAL(lock)               \
+        do                                                \
+        {                                                 \
+            (lock)->critical_level = rt_critical_level(); \
         } while (0)
 
     #define _SPIN_UNLOCK_DEBUG_CRITICAL(lock, critical) \
@@ -202,8 +198,8 @@ struct rt_spinlock
         } while (0)
 
 #else /* !RT_USING_DEBUG */
-    #define _SPIN_LOCK_DEBUG_CRITICAL(lock)
-    #define _SPIN_UNLOCK_DEBUG_CRITICAL(lock, critical) (critical = 0)
+    #define _SPIN_LOCK_DEBUG_CRITICAL(lock)             RT_UNUSED(lock)
+    #define _SPIN_UNLOCK_DEBUG_CRITICAL(lock, critical) do {critical = 0; RT_UNUSED(lock);} while (0)
 
 #endif /* RT_USING_DEBUG */
 
