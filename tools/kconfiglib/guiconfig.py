@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 # Copyright (c) 2019, Ulf Magnusson
 # SPDX-License-Identifier: ISC
@@ -95,7 +95,7 @@ an item will jump to it. Item values can be toggled directly within the dialog.\
 
 
 def _main():
-    menuconfig(standard_kconfig())
+    menuconfig(standard_kconfig(__doc__))
 
 
 # Global variables used below:
@@ -345,9 +345,9 @@ def _load_images():
     # Note: Base64 data can be put on the clipboard with
     #   $ base64 -w0 foo.gif | xclip
 
-    load_image("icon", "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")
-    load_image("n_bool", "R0lGODlhDgAOAHAAACH5BAEAAPwALAAAAAAOAA4AhwAAAAAAMwAAZgAAmQAAzAAA/wArAAArMwArZgArmQArzAAr/wBVAABVMwBVZgBVmQBVzABV/wCAAACAMwCAZgCAmQCAzACA/wCqAACqMwCqZgCqmQCqzACq/wDVAADVMwDVZgDVmQDVzADV/wD/AAD/MwD/ZgD/mQD/zAD//zMAADMAMzMAZjMAmTMAzDMA/zMrADMrMzMrZjMrmTMrzDMr/zNVADNVMzNVZjNVmTNVzDNV/zOAADOAMzOAZjOAmTOAzDOA/zOqADOqMzOqZjOqmTOqzDOq/zPVADPVMzPVZjPVmTPVzDPV/zP/ADP/MzP/ZjP/mTP/zDP//2YAAGYAM2YAZmYAmWYAzGYA/2YrAGYrM2YrZmYrmWYrzGYr/2ZVAGZVM2ZVZmZVmWZVzGZV/2aAAGaAM2aAZmaAmWaAzGaA/2aqAGaqM2aqZmaqmWaqzGaq/2bVAGbVM2bVZmbVmWbVzGbV/2b/AGb/M2b/Zmb/mWb/zGb//5kAAJkAM5kAZpkAmZkAzJkA/5krAJkrM5krZpkrmZkrzJkr/5lVAJlVM5lVZplVmZlVzJlV/5mAAJmAM5mAZpmAmZmAzJmA/5mqAJmqM5mqZpmqmZmqzJmq/5nVAJnVM5nVZpnVmZnVzJnV/5n/AJn/M5n/Zpn/mZn/zJn//8wAAMwAM8wAZswAmcwAzMwA/8wrAMwrM8wrZswrmcwrzMwr/8xVAMxVM8xVZsxVmcxVzMxV/8yAAMyAM8yAZsyAmcyAzMyA/8yqAMyqM8yqZsyqmcyqzMyq/8zVAMzVM8zVZszVmczVzMzV/8z/AMz/M8z/Zsz/mcz/zMz///8AAP8AM/8AZv8Amf8AzP8A//8rAP8rM/8rZv8rmf8rzP8r//9VAP9VM/9VZv9Vmf9VzP9V//+AAP+AM/+AZv+Amf+AzP+A//+qAP+qM/+qZv+qmf+qzP+q///VAP/VM//VZv/Vmf/VzP/V////AP//M///Zv//mf//zP///wAAAAAAAAAAAAAAAAgxAAEIHEiw4L6DCBMeFKiw4T6GDhNCjLgQAEWEEylmjLjRYceGHxWGlGjx4sOCKAcGBAA7")
-    load_image("y_bool", "R0lGODlhDwAPAHAAACH5BAEAAPwALAAAAAAPAA8AhwAAAAAAMwAAZgAAmQAAzAAA/wArAAArMwArZgArmQArzAAr/wBVAABVMwBVZgBVmQBVzABV/wCAAACAMwCAZgCAmQCAzACA/wCqAACqMwCqZgCqmQCqzACq/wDVAADVMwDVZgDVmQDVzADV/wD/AAD/MwD/ZgD/mQD/zAD//zMAADMAMzMAZjMAmTMAzDMA/zMrADMrMzMrZjMrmTMrzDMr/zNVADNVMzNVZjNVmTNVzDNV/zOAADOAMzOAZjOAmTOAzDOA/zOqADOqMzOqZjOqmTOqzDOq/zPVADPVMzPVZjPVmTPVzDPV/zP/ADP/MzP/ZjP/mTP/zDP//2YAAGYAM2YAZmYAmWYAzGYA/2YrAGYrM2YrZmYrmWYrzGYr/2ZVAGZVM2ZVZmZVmWZVzGZV/2aAAGaAM2aAZmaAmWaAzGaA/2aqAGaqM2aqZmaqmWaqzGaq/2bVAGbVM2bVZmbVmWbVzGbV/2b/AGb/M2b/Zmb/mWb/zGb//5kAAJkAM5kAZpkAmZkAzJkA/5krAJkrM5krZpkrmZkrzJkr/5lVAJlVM5lVZplVmZlVzJlV/5mAAJmAM5mAZpmAmZmAzJmA/5mqAJmqM5mqZpmqmZmqzJmq/5nVAJnVM5nVZpnVmZnVzJnV/5n/AJn/M5n/Zpn/mZn/zJn//8wAAMwAM8wAZswAmcwAzMwA/8wrAMwrM8wrZswrmcwrzMwr/8xVAMxVM8xVZsxVmcxVzMxV/8yAAMyAM8yAZsyAmcyAzMyA/8yqAMyqM8yqZsyqmcyqzMyq/8zVAMzVM8zVZszVmczVzMzV/8z/AMz/M8z/Zsz/mcz/zMz///8AAP8AM/8AZv8Amf8AzP8A//8rAP8rM/8rZv8rmf8rzP8r//9VAP9VM/9VZv9Vmf9VzP9V//+AAP+AM/+AZv+Amf+AzP+A//+qAP+qM/+qZv+qmf+qzP+q///VAP/VM//VZv/Vmf/VzP/V////AP//M///Zv//mf//zP///wAAAAAAAAAAAAAAAAhLAAEIHEiwIIB9CBMqTChwoUOEDR8iJHZjX0SJDS86HGjx4MGFBiJm/IhwxcWRB5WFJNkRosAYGlvuq0dwI0llMV1KXJjzocGfAwMCADs=")
+    load_image("icon", "R0lGODlhMAAwAPEDAAAAAADQAO7u7v///yH5BAUKAAMALAAAAAAwADAAAAL/nI+gy+2Pokyv2jazuZxryQjiSJZmyXxHeLbumH6sEATvW8OLNtf5bfLZRLFITzgEipDJ4mYxYv6A0ubuqYhWk66tVTE4enHer7jcKvt0LLUw6P45lvEprT6c0+v7OBuqhYdHohcoqIbSAHc4ljhDwrh1UlgSydRCWWlp5wiYZvmSuSh4IzrqV6p4cwhkCsmY+nhK6uJ6t1mrOhuJqfu6+WYiCiwl7HtLjNSZZZis/MeM7NY3TaRKS40ooDeoiVqIultsrav92bi9c3a5KkkOsOJZpSS99m4k/0zPng4Gks9JSbB+8DIcoQfnjwpZCHv5W+ip4aQrKrB0uOikYhiMCBw1/uPoQUMBADs=")
+    load_image("n_bool", "R0lGODdhEAAQAPAAAAgICP///ywAAAAAEAAQAAACIISPacHtvp5kcb5qG85hZ2+BkyiRF8BBaEqtrKkqslEAADs=")
+    load_image("y_bool", "R0lGODdhEAAQAPEAAAgICADQAP///wAAACwAAAAAEAAQAAACMoSPacLtvlh4YrIYsst2cV19AvaVF9CUXBNJJoum7ymrsKuCnhiupIWjSSjAFuWhSCIKADs=")
     load_image("n_tri", "R0lGODlhEAAQAPD/AAEBAf///yH5BAUKAAIALAAAAAAQABAAAAInlI+pBrAKQnCPSUlXvFhznlkfeGwjKZhnJ65h6nrfi6h0st2QXikFADs=")
     load_image("m_tri", "R0lGODlhEAAQAPEDAAEBAeQMuv///wAAACH5BAUKAAMALAAAAAAQABAAAAI5nI+pBrAWAhPCjYhiAJQCnWmdoElHGVBoiK5M21ofXFpXRIrgiecqxkuNciZIhNOZFRNI24PhfEoLADs=")
     load_image("y_tri", "R0lGODlhEAAQAPEDAAICAgDQAP///wAAACH5BAUKAAMALAAAAAAQABAAAAI0nI+pBrAYBhDCRRUypfmergmgZ4xjMpmaw2zmxk7cCB+pWiVqp4MzDwn9FhGZ5WFjIZeGAgA7")
@@ -355,7 +355,7 @@ def _load_images():
     load_image("y_my", "R0lGODlhEAAQAPH/AAAAAADQAAPRA////yH5BAUKAAQALAAAAAAQABAAAAM+SArcrhCMSSuIM9Q8rxxBWIXawIBkmWonupLd565Um9G1PIs59fKmzw8WnAlusBYR2SEIN6DmAmqBLBxYSAIAOw==")
     load_image("n_locked", "R0lGODlhEAAQAPABAAAAAP///yH5BAUKAAEALAAAAAAQABAAAAIgjB8AyKwN04pu0vMutpqqz4Hih4ydlnUpyl2r23pxUAAAOw==")
     load_image("m_locked", "R0lGODlhEAAQAPD/AAAAAOQMuiH5BAUKAAIALAAAAAAQABAAAAIylC8AyKwN04ohnGcqqlZmfXDWI26iInZoyiore05walolV39ftxsYHgL9QBBMBGFEFAAAOw==")
-    load_image("y_locked", "R0lGODlhDwAPAHAAACH5BAEAAPwALAAAAAAPAA8AhwAAAAAAMwAAZgAAmQAAzAAA/wArAAArMwArZgArmQArzAAr/wBVAABVMwBVZgBVmQBVzABV/wCAAACAMwCAZgCAmQCAzACA/wCqAACqMwCqZgCqmQCqzACq/wDVAADVMwDVZgDVmQDVzADV/wD/AAD/MwD/ZgD/mQD/zAD//zMAADMAMzMAZjMAmTMAzDMA/zMrADMrMzMrZjMrmTMrzDMr/zNVADNVMzNVZjNVmTNVzDNV/zOAADOAMzOAZjOAmTOAzDOA/zOqADOqMzOqZjOqmTOqzDOq/zPVADPVMzPVZjPVmTPVzDPV/zP/ADP/MzP/ZjP/mTP/zDP//2YAAGYAM2YAZmYAmWYAzGYA/2YrAGYrM2YrZmYrmWYrzGYr/2ZVAGZVM2ZVZmZVmWZVzGZV/2aAAGaAM2aAZmaAmWaAzGaA/2aqAGaqM2aqZmaqmWaqzGaq/2bVAGbVM2bVZmbVmWbVzGbV/2b/AGb/M2b/Zmb/mWb/zGb//5kAAJkAM5kAZpkAmZkAzJkA/5krAJkrM5krZpkrmZkrzJkr/5lVAJlVM5lVZplVmZlVzJlV/5mAAJmAM5mAZpmAmZmAzJmA/5mqAJmqM5mqZpmqmZmqzJmq/5nVAJnVM5nVZpnVmZnVzJnV/5n/AJn/M5n/Zpn/mZn/zJn//8wAAMwAM8wAZswAmcwAzMwA/8wrAMwrM8wrZswrmcwrzMwr/8xVAMxVM8xVZsxVmcxVzMxV/8yAAMyAM8yAZsyAmcyAzMyA/8yqAMyqM8yqZsyqmcyqzMyq/8zVAMzVM8zVZszVmczVzMzV/8z/AMz/M8z/Zsz/mcz/zMz///8AAP8AM/8AZv8Amf8AzP8A//8rAP8rM/8rZv8rmf8rzP8r//9VAP9VM/9VZv9Vmf9VzP9V//+AAP+AM/+AZv+Amf+AzP+A//+qAP+qM/+qZv+qmf+qzP+q///VAP/VM//VZv/Vmf/VzP/V////AP//M///Zv//mf//zP///wAAAAAAAAAAAAAAAAg1AAEIHEiwIIB9CBMqTChwoUOEDR8ujCiR4cGKFjFmNFhwX0OOBD1e1EgRY8mKJyWmfAgSZEAAOw==")
+    load_image("y_locked", "R0lGODlhEAAQAPD/AAAAAADQACH5BAUKAAIALAAAAAAQABAAAAIylC8AyKzNgnlCtoDTwvZwrHydIYpQmR3KWq4uK74IOnp0HQPmnD3cOVlUIAgKsShkFAAAOw==")
     load_image("not_selected", "R0lGODlhEAAQAPD/AAAAAP///yH5BAUKAAIALAAAAAAQABAAAAIrlA2px6IBw2IpWglOvTYhzmUbGD3kNZ5QqrKn2YrqigCxZoMelU6No9gdCgA7")
     load_image("selected", "R0lGODlhEAAQAPD/AAAAAP///yH5BAUKAAIALAAAAAAQABAAAAIzlA2px6IBw2IpWglOvTah/kTZhimASJomiqonlLov1qptHTsgKSEzh9H8QI0QzNPwmRoFADs=")
     load_image("edit", "R0lGODlhEAAQAPIFAAAAAKOLAMuuEPvXCvrxvgAAAAAAAAAAACH5BAUKAAUALAAAAAAQABAAAANCWLqw/gqMBp8cszJxcwVC2FEOEIAi5kVBi3IqWZhuCGMyfdpj2e4pnK+WAshmvxeAcETWlsxPkkBtsqBMa8TIBSQAADs=")
@@ -403,9 +403,8 @@ def _init_misc_ui():
 
     # Use the 'clam' theme on *nix if it's available. It looks nicer than the
     # 'default' theme.
-    style = ttk.Style()
-    style.theme_use("default")
     if _root.tk.call("tk", "windowingsystem") == "x11":
+        style = ttk.Style()
         if "clam" in style.theme_names():
             style.theme_use("clam")
 
@@ -556,7 +555,7 @@ def _create_kconfig_tree(parent):
     tree.tag_configure("y-locked", image=_y_locked_img)
     tree.tag_configure("not-selected", image=_not_selected_img)
     tree.tag_configure("selected", image=_selected_img)
-#     tree.tag_configure("edit", image=_edit_img)
+    tree.tag_configure("edit", image=_edit_img)
     tree.tag_configure("invisible", foreground="red")
 
     tree.grid(column=0, row=0, sticky="nsew")
@@ -1476,9 +1475,8 @@ def _toggle_showall(_):
 def _do_showall():
     # Updates the UI for the current show-all setting
 
-    # Don't allow turning off show-all if we're in single-menu mode and the
-    # current menu would become empty
-    if _single_menu and not _shown_menu_nodes(_cur_menu):
+    # Don't allow turning off show-all if we'd end up with no visible nodes
+    if _nothing_shown():
         _show_all_var.set(True)
         return
 
@@ -1511,6 +1509,17 @@ def _do_showall():
     _tree.yview(_item_row(stayput) - old_scroll)
 
     _tree.focus_set()
+
+
+def _nothing_shown():
+    # _do_showall() helper. Returns True if no nodes would get
+    # shown with the current show-all setting. Also handles the
+    # (obscure) case when there are no visible nodes in the entire
+    # tree, meaning guiconfig was automatically started in
+    # show-all mode, which mustn't be turned off.
+
+    return not _shown_menu_nodes(
+        _cur_menu if _single_menu else _kconf.top_node)
 
 
 def _toggle_tree_mode(_):
@@ -1952,9 +1961,7 @@ def _sorted_sc_nodes(cached_nodes=[]):
                          key=lambda choice: choice.name or "")
 
         cached_nodes += sorted(
-            [node
-             for choice in choices
-                 for node in choice.nodes],
+            [node for choice in choices for node in choice.nodes],
             key=lambda node: node.prompt[0] if node.prompt else "")
 
     return cached_nodes
@@ -2120,7 +2127,10 @@ def _defaults_info(sc):
     if not sc.defaults:
         return ""
 
-    s = "Defaults:\n"
+    s = "Default"
+    if len(sc.defaults) > 1:
+        s += "s"
+    s += ":\n"
 
     for val, cond in sc.orig_defaults:
         s += "  - "

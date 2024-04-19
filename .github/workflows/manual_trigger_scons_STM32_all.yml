@@ -141,7 +141,7 @@ jobs:
           chmod 777 install_ubuntu.sh
           ./install_ubuntu.sh
           git config --global http.postBuffer 524288000
-          python -c "import tools.menuconfig; tools.menuconfig.touch_env()"
+          python -c "import tools.menukconfig; tools.menukconfig.touch_env()"
           echo "RTT_ROOT=${{ github.workspace }}" >> $GITHUB_ENV
           echo "RTT_CC=gcc" >> $GITHUB_ENV
 

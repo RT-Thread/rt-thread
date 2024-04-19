@@ -52,7 +52,7 @@ jobs:
           git config --global http.postBuffer 524288000
           git remote -v
           git fetch origin
-          python -c "import tools.menuconfig; tools.menuconfig.touch_env()"
+          python -c "import tools.menukconfig; tools.menukconfig.touch_env()"
 
       - name: Install Arm ToolChains
         if: ${{ success() }}

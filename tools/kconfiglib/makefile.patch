@@ -1,0 +1,48 @@
+From 93daf46f309b0c8f86149ef58c4906387d054c22 Mon Sep 17 00:00:00 2001
+From: Ulf Magnusson <ulfalizer@gmail.com>
+Date: Tue, 9 Jun 2015 13:01:34 +0200
+Subject: [PATCH] Kconfiglib scripts/kconfig/Makefile patch
+
+---
+ scripts/kconfig/Makefile | 29 +++++++++++++++++++++++++++++
+ 1 file changed, 29 insertions(+)
+
+diff --git a/scripts/kconfig/Makefile b/scripts/kconfig/Makefile
+index 3f327e21f60e..8b7dd1292005 100644
+--- a/scripts/kconfig/Makefile
++++ b/scripts/kconfig/Makefile
+@@ -27,2 +27,31 @@ gconfig: $(obj)/gconf
+ 
++PHONY += scriptconfig iscriptconfig kmenuconfig guiconfig dumpvarsconfig
++
++PYTHONCMD ?= python
++kpython := PYTHONPATH=$(srctree)/Kconfiglib:$$PYTHONPATH $(PYTHONCMD)
++
++ifneq ($(filter scriptconfig,$(MAKECMDGOALS)),)
++ifndef SCRIPT
++$(error Use "make scriptconfig SCRIPT=<path to script> [SCRIPT_ARG=<argument>]")
++endif
++endif
++
++scriptconfig:
++	$(Q)$(kpython) $(SCRIPT) $(Kconfig) $(if $(SCRIPT_ARG),"$(SCRIPT_ARG)")
++
++iscriptconfig:
++	$(Q)$(kpython) -i -c \
++	  "import kconfiglib; \
++	   kconf = kconfiglib.Kconfig('$(Kconfig)'); \
++	   print('A Kconfig instance \'kconf\' for the architecture $(ARCH) has been created.')"
++
++kmenuconfig:
++	$(Q)$(kpython) $(srctree)/Kconfiglib/menuconfig.py $(Kconfig)
++
++guiconfig:
++	$(Q)$(kpython) $(srctree)/Kconfiglib/guiconfig.py $(Kconfig)
++
++dumpvarsconfig:
++	$(Q)$(kpython) $(srctree)/Kconfiglib/examples/dumpvars.py $(Kconfig)
++
+ menuconfig: $(obj)/mconf
+-- 
+2.20.1
+
