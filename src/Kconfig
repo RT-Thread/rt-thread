@@ -239,6 +239,12 @@ menuconfig RT_USING_DEBUG
             bool "Enable spinlock debugging"
             depends on RT_USING_SMP
             default n
+
+        config RT_DEBUGING_CRITICAL
+            bool "Enable critical level tracing"
+            depends on RT_USING_SMP
+            default y if RT_USING_SMART
+            default n
     endif
 
 menu "Inter-Thread communication"
