@@ -604,45 +604,12 @@ rt_thread_t rt_thread_defunct_dequeue(void);
  * spinlock
  */
 struct rt_spinlock;
-#ifdef RT_USING_SMP
 
 void rt_spin_lock_init(struct rt_spinlock *lock);
 void rt_spin_lock(struct rt_spinlock *lock);
 void rt_spin_unlock(struct rt_spinlock *lock);
 rt_base_t rt_spin_lock_irqsave(struct rt_spinlock *lock);
 void rt_spin_unlock_irqrestore(struct rt_spinlock *lock, rt_base_t level);
-#else
-
-rt_inline void rt_spin_lock_init(struct rt_spinlock *lock)
-{
-    RT_UNUSED(lock);
-}
-rt_inline void rt_spin_lock(struct rt_spinlock *lock)
-{
-    RT_UNUSED(lock);
-    rt_enter_critical();
-}
-rt_inline void rt_spin_unlock(struct rt_spinlock *lock)
-{
-    RT_UNUSED(lock);
-    rt_exit_critical();
-}
-rt_inline rt_base_t rt_spin_lock_irqsave(struct rt_spinlock *lock)
-{
-    rt_base_t level;
-    RT_UNUSED(lock);
-    level = rt_hw_interrupt_disable();
-    rt_enter_critical();
-    return level;
-}
-rt_inline void rt_spin_unlock_irqrestore(struct rt_spinlock *lock, rt_base_t level)
-{
-    RT_UNUSED(lock);
-    rt_exit_critical();
-    rt_hw_interrupt_enable(level);
-}
-
-#endif /* RT_USING_SMP */
 
 /**@}*/
 
