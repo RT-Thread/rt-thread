@@ -25,9 +25,9 @@ if GetDepend('RT_USING_DEVICE') == False:
     SrcRemove(src, ['device.c'])
 
 if GetDepend('RT_USING_SMP') == False:
-    SrcRemove(src, ['cpu.c', 'scheduler_mp.c'])
+    SrcRemove(src, ['cpu_mp.c', 'scheduler_mp.c'])
 else:
-    SrcRemove(src, ['scheduler_up.c'])
+    SrcRemove(src, ['cpu_up.c', 'scheduler_up.c'])
 
 LOCAL_CFLAGS = ''
 LINKFLAGS = ''

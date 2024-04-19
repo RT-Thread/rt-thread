@@ -135,62 +135,76 @@ struct rt_spinlock
 #endif /* RT_DEBUGING_SPINLOCK */
 };
 
-#ifdef RT_DEBUGING_SPINLOCK
+#ifndef RT_SPINLOCK_INIT
+#define RT_SPINLOCK_INIT {{0}} /* can be overridden by cpuport.h */
+#endif /* RT_SPINLOCK_INIT */
 
-#define __OWNER_MAGIC ((void *)0xdeadbeaf)
+#else /* !RT_USING_SMP */
 
-#if defined(__GNUC__)
-#define __GET_RETURN_ADDRESS __builtin_return_address(0)
-#else
-#define __GET_RETURN_ADDRESS RT_NULL
-#endif
+struct rt_spinlock
+{
+#ifdef RT_USING_DEBUG
+    rt_uint32_t critical_level;
+#endif /* RT_USING_DEBUG */
+    rt_ubase_t lock;
+};
+#define RT_SPINLOCK_INIT {0}
+#endif /* RT_USING_SMP */
+#if defined(RT_DEBUGING_SPINLOCK) && defined(RT_USING_SMP)
 
-#define _SPIN_LOCK_DEBUG_OWNER(lock)                  \
-    do                                                \
-    {                                                 \
-        struct rt_thread *_curthr = rt_thread_self(); \
-        if (_curthr != RT_NULL)                       \
-        {                                             \
-            (lock)->owner = _curthr;                  \
-            (lock)->pc = __GET_RETURN_ADDRESS;        \
-        }                                             \
-    } while (0)
+    #define __OWNER_MAGIC ((void *)0xdeadbeaf)
 
-#define _SPIN_UNLOCK_DEBUG_OWNER(lock) \
-    do                                 \
-    {                                  \
-        (lock)->owner = __OWNER_MAGIC; \
-        (lock)->pc = RT_NULL;          \
-    } while (0)
+    #if defined(__GNUC__)
+    #define __GET_RETURN_ADDRESS __builtin_return_address(0)
+    #else /* !__GNUC__ */
+    #define __GET_RETURN_ADDRESS RT_NULL
+    #endif /* __GNUC__ */
 
-#else
+    #define _SPIN_LOCK_DEBUG_OWNER(lock)                  \
+        do                                                \
+        {                                                 \
+            struct rt_thread *_curthr = rt_thread_self(); \
+            if (_curthr != RT_NULL)                       \
+            {                                             \
+                (lock)->owner = _curthr;                  \
+                (lock)->pc = __GET_RETURN_ADDRESS;        \
+            }                                             \
+        } while (0)
 
-#define _SPIN_LOCK_DEBUG_OWNER(lock)
-#define _SPIN_UNLOCK_DEBUG_OWNER(lock)
-#endif
+    #define _SPIN_UNLOCK_DEBUG_OWNER(lock) \
+        do                                 \
+        {                                  \
+            (lock)->owner = __OWNER_MAGIC; \
+            (lock)->pc = RT_NULL;          \
+        } while (0)
+
+#else /* !RT_DEBUGING_SPINLOCK */
+
+    #define _SPIN_LOCK_DEBUG_OWNER(lock)
+    #define _SPIN_UNLOCK_DEBUG_OWNER(lock)
+#endif /* RT_DEBUGING_SPINLOCK */
 
 #ifdef RT_USING_DEBUG
+    #define _SPIN_LOCK_DEBUG_CRITICAL(lock)                   \
+        do                                                    \
+        {                                                     \
+            struct rt_thread *_curthr = rt_thread_self();     \
+            if (_curthr != RT_NULL)                           \
+            {                                                 \
+                (lock)->critical_level = rt_critical_level(); \
+            }                                                 \
+        } while (0)
 
-#define _SPIN_LOCK_DEBUG_CRITICAL(lock)                   \
-    do                                                    \
-    {                                                     \
-        struct rt_thread *_curthr = rt_thread_self();     \
-        if (_curthr != RT_NULL)                           \
-        {                                                 \
-            (lock)->critical_level = rt_critical_level(); \
-        }                                                 \
-    } while (0)
+    #define _SPIN_UNLOCK_DEBUG_CRITICAL(lock, critical) \
+        do                                              \
+        {                                               \
+            (critical) = (lock)->critical_level;        \
+        } while (0)
 
-#define _SPIN_UNLOCK_DEBUG_CRITICAL(lock, critical) \
-    do                                              \
-    {                                               \
-        (critical) = (lock)->critical_level;        \
-    } while (0)
+#else /* !RT_USING_DEBUG */
+    #define _SPIN_LOCK_DEBUG_CRITICAL(lock)
+    #define _SPIN_UNLOCK_DEBUG_CRITICAL(lock, critical) (critical = 0)
 
-#else
-
-#define _SPIN_LOCK_DEBUG_CRITICAL(lock)
-#define _SPIN_UNLOCK_DEBUG_CRITICAL(lock, critical) (critical = 0)
 #endif /* RT_USING_DEBUG */
 
 #define RT_SPIN_LOCK_DEBUG(lock)         \
@@ -206,22 +220,6 @@ struct rt_spinlock
         _SPIN_UNLOCK_DEBUG_OWNER(lock);              \
         _SPIN_UNLOCK_DEBUG_CRITICAL(lock, critical); \
     } while (0)
-
-#ifndef RT_SPINLOCK_INIT
-#define RT_SPINLOCK_INIT {{0}} /* can be overridden by cpuport.h */
-#endif /* RT_SPINLOCK_INIT */
-
-#else
-
-struct rt_spinlock
-{
-#ifdef RT_USING_DEBUG
-    rt_uint32_t critical_level;
-#endif /* RT_USING_DEBUG */
-    rt_ubase_t lock;
-};
-#define RT_SPINLOCK_INIT {0}
-#endif /* RT_USING_SMP */
 
 typedef struct rt_spinlock rt_spinlock_t;
 

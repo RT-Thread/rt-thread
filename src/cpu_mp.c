@@ -21,7 +21,6 @@
 rt_base_t _cpus_critical_level;
 #endif /* RT_USING_DEBUG */
 
-#ifdef RT_USING_SMP
 static struct rt_cpu _cpus[RT_CPUS_NR];
 rt_hw_spinlock_t _cpus_lock;
 #if defined(RT_DEBUGING_SPINLOCK)
@@ -217,4 +216,3 @@ void rt_cpus_lock_status_restore(struct rt_thread *thread)
     rt_sched_post_ctx_switch(thread);
 }
 RTM_EXPORT(rt_cpus_lock_status_restore);
-#endif /* RT_USING_SMP */
