@@ -6,34 +6,36 @@ ART-pi smart采用了米尔科技的imx6ull核心板，硬件由韦东山团队�
 
 ![硬件资源](figures/hw_resources.png)
 
-## 应用列表
-
--[x] cpp_tc
-
--[x] hello
-
--[x] zlib_tc
-
--[x] smart-fetch
-
--[x] umailbox
-
--[x] busybox命令(可通过help查看)
-
--[x] WIFI
-
--[x] EMMC读写
-
-下列应用支持ash后才可以使用
-
--[ ] shm_ping
-
--[ ]shm_pong
-
--[ ]webclient
-
--[ ]webserver  
-
+> ## 当前支持情况
+> ### 内核
+> * [ ]  rt-thread
+> * [x]  rt-smart
+> 
+> ### 驱动
+> * [x]  uart
+> * [x]  SPI
+> * [x]  GPIO
+> * [x]  sdcard
+> * [x]  RW007
+> * [x]  enet
+> * [ ]  usb
+> * [x]  emmc
+> 
+> ### 组件
+> * [x]  fat文件系统
+> * [x]  LWIP网络协议栈
+> * [x]  wlan
+> 
+> ### 应用
+> * [x]  xmake 构建环境
+> * [x]  busybox
+> * [x]  smart-apps
+> 
+> ### 待完善、修复
+> * [ ]  ash  支持ash开机自启动
+> * [ ]  网络 以太网网络问题修复
+> * [ ]  emmc 从emmc启动内核、挂载文件系统
+ 
 ## 应用编译
 
 参考https://github.com/RT-Thread/userapps.git的README.md搭建xmake编译环境并编译smart应用
@@ -81,13 +83,3 @@ go 0x80001000
 ```bash
 fatload mmc 0:1 0x80001000 rtthread.bin; dcache flush; go 0x80001000
 ```
-
-## 待改进
-
-* 支持ash开机自启动
-
-* 以太网网络问题
-
-* Emmc1、2、3 mkfs失败
-
-* 从emmc启动内核
