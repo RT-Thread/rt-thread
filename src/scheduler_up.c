@@ -451,7 +451,7 @@ void rt_sched_remove_thread(struct rt_thread *thread)
     rt_hw_interrupt_enable(level);
 }
 
-#ifdef RT_USING_DEBUG
+#ifdef RT_DEBUGING_CRITICAL
 
 static volatile int _critical_error_occurred = 0;
 
@@ -482,14 +482,14 @@ void rt_exit_critical_safe(rt_base_t critical_level)
     rt_exit_critical();
 }
 
-#else
+#else /* !RT_DEBUGING_CRITICAL */
 
 void rt_exit_critical_safe(rt_base_t critical_level)
 {
     rt_exit_critical();
 }
 
-#endif
+#endif/* RT_DEBUGING_CRITICAL */
 RTM_EXPORT(rt_exit_critical_safe);
 
 /**

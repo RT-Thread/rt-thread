@@ -1056,7 +1056,7 @@ void rt_sched_post_ctx_switch(struct rt_thread *thread)
     pcpu->current_thread = thread;
 }
 
-#ifdef RT_USING_DEBUG
+#ifdef RT_DEBUGING_CRITICAL
 
 static volatile int _critical_error_occurred = 0;
 
@@ -1083,14 +1083,14 @@ void rt_exit_critical_safe(rt_base_t critical_level)
     rt_exit_critical();
 }
 
-#else
+#else /* !RT_DEBUGING_CRITICAL */
 
 void rt_exit_critical_safe(rt_base_t critical_level)
 {
     return rt_exit_critical();
 }
 
-#endif
+#endif /* RT_DEBUGING_CRITICAL */
 RTM_EXPORT(rt_exit_critical_safe);
 
 /**
