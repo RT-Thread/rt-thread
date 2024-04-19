@@ -14,6 +14,8 @@
 #ifdef BSP_USING_LCD
 #ifdef SOC_SERIES_R7FA8M85
 #include <ra8/lcd_config.h>
+#else
+#include <ra6m3/lcd_config.h>
 #endif
 #include <drv_lcd.h>
 
@@ -38,8 +40,6 @@ static uint16_t *lcd_current_working_buffer = (uint16_t *) &fb_background[0];
 
 #ifdef SOC_SERIES_R7FA8M85
 static uint8_t lcd_framebuffer[LCD_BUF_SIZE] BSP_ALIGN_VARIABLE(64) BSP_PLACE_IN_SECTION(".sdram");
-#else
-static uint8_t lcd_framebuffer[LCD_BUF_SIZE] BSP_ALIGN_VARIABLE(64);
 #endif
 
 // G2D
@@ -47,7 +47,9 @@ extern d2_device *d2_handle0;
 static d2_device **_d2_handle_user = &d2_handle0;
 static d2_renderbuffer *renderbuffer;
 
+#ifdef SOC_SERIES_R7FA8M85
 extern void ra8_mipi_lcd_init(void);
+#endif
 
 rt_weak void DisplayVsyncCallback(display_callback_args_t *p_args)
 {
@@ -260,6 +262,7 @@ static rt_err_t ra_lcd_control(rt_device_t device, int cmd, void *args)
     {
     case RTGRAPHIC_CTRL_RECT_UPDATE:
     {
+#ifdef SOC_SERIES_R7FA8M85
         struct rt_device_rect_info *info = (struct rt_device_rect_info *)args;
 #if defined (__DCACHE_PRESENT) && (__DCACHE_PRESENT == 1U)
         SCB_CleanInvalidateDCache_by_Addr((uint32_t *)lcd->lcd_info.framebuffer, sizeof(fb_background[0]));
@@ -276,6 +279,7 @@ static rt_err_t ra_lcd_control(rt_device_t device, int cmd, void *args)
         fsp_err_t err = R_GLCDC_BufferChange(&g_display0_ctrl, (uint8_t *) lcd_current_working_buffer, DISPLAY_FRAME_LAYER_1);
         RT_ASSERT(err == 0);
 #endif
+#endif  /* SOC_SERIES_R7FA8M85 */
         /* wait for vsync interrupt */
         vsync_wait();
     }
@@ -316,11 +320,13 @@ static rt_err_t drv_lcd_init(struct rt_device *device)
 
 static void reset_lcd_panel(void)
 {
+#ifdef LCD_RST_PIN
     rt_pin_mode(LCD_RST_PIN, PIN_MODE_OUTPUT);
     rt_pin_write(LCD_RST_PIN, PIN_LOW);
     rt_thread_mdelay(100);
     rt_pin_write(LCD_RST_PIN, PIN_HIGH);
     rt_thread_mdelay(100);
+#endif
 }
 
 static rt_err_t ra_bsp_lcd_init(void)
@@ -334,13 +340,14 @@ static rt_err_t ra_bsp_lcd_init(void)
     error = R_GLCDC_Open(&g_display0_ctrl, &g_display0_cfg);
     if (FSP_SUCCESS == error)
     {
+#ifdef SOC_SERIES_R7FA8M85
         /* config mipi */
         ra8_mipi_lcd_init();
-
+#endif
         /* Initialize g2d */
         error = g2d_drv_hwInit();
 
-        /**  Display driver start */
+        /* Display driver start */
         error = R_GLCDC_Start(&g_display0_ctrl);
     }
 
@@ -359,13 +366,11 @@ int rt_hw_lcd_init(void)
     _lcd.lcd_info.width = LCD_WIDTH;
     _lcd.lcd_info.bits_per_pixel = LCD_BITS_PER_PIXEL;
     _lcd.lcd_info.pixel_format = LCD_PIXEL_FORMAT;
-
+#ifdef SOC_SERIES_R7FA8M85
     _lcd.lcd_info.framebuffer = (uint8_t *)lcd_framebuffer;
-    if (_lcd.lcd_info.framebuffer == NULL)
-    {
-        LOG_E("alloc lcd framebuffer fail");
-        return -RT_ERROR;
-    }
+#else
+    _lcd.lcd_info.framebuffer = (uint8_t *)&fb_background[0];
+#endif
     LOG_D("\nlcd framebuffer address:%#x", _lcd.lcd_info.framebuffer);
     memset(_lcd.lcd_info.framebuffer, 0x0, LCD_BUF_SIZE);
 
