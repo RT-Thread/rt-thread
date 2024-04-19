@@ -30,7 +30,6 @@
 #define RT_KPRINTF_USING_LONGLONG
 #define RT_USING_DEBUG
 #define RT_DEBUGING_COLOR
-#define RT_DEBUGING_CONTEXT
 
 /* Inter-Thread communication */
 
@@ -240,8 +239,6 @@
 #define LWIP_SO_LINGER 0
 #define LWIP_NETIF_LOOPBACK 0
 #define RT_LWIP_USING_PING
-#define RT_LWIP_DEBUG
-#define RT_LWIP_NETIF_DEBUG
 
 /* Memory protection */
 
@@ -401,9 +398,7 @@
 #define RT_USING_SPIM3
 #define BSP_USING_CAN
 #define RT_USING_CANFD
-#define RT_USING_FILTER
 #define RT_USING_CAN0
-#define RT_USING_CAN1
 #define BSP_USING_GPIO
 #define BSP_USING_QSPI
 #define RT_USING_QSPI0
@@ -417,10 +412,12 @@
 #define RT_USING_MIO15
 #define BSP_USING_SDIF
 #define BSP_USING_SDCARD_FATFS
-#define BSP_USING_SDCARD_PARTITION "sd0"
+#define USING_SDIF0
+#define USE_SDIF0_EMMC
 #define USING_SDIF1
+#define USE_SDIF1_TF
 #define BSP_USING_DC
-#define RT_USING_DC_CHANNEL0
+#define RT_USING_DC_CHANNEL1
 
 /* Board extended module Drivers */
 

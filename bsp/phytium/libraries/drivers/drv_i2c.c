@@ -169,11 +169,12 @@ static rt_ssize_t i2c_master_xfer(struct rt_i2c_bus_device *device, struct rt_i2
     RT_ASSERT(device);
     u32 ret;
     struct rt_i2c_msg *pmsg;
+    rt_ssize_t i;
     struct phytium_i2c_bus *i2c_bus;
     i2c_bus = (struct phytium_i2c_bus *)(device);
     u32 mem_addr;
 
-    for (int i = 0; i < num; i++)
+    for (i = 0; i < num; i++)
     {
         pmsg = &msgs[i];
         for (u32 j = 0; j <FI2C_DEVICE_MEMADDR_LEN; j++)
@@ -201,7 +202,7 @@ static rt_ssize_t i2c_master_xfer(struct rt_i2c_bus_device *device, struct rt_i2
         }
     }
 
-    return RT_EOK;
+    return i;
 }
 
 static const struct rt_i2c_bus_device_ops _i2c_ops =

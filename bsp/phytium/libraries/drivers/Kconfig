@@ -228,25 +228,36 @@ menu "On-chip Peripheral Drivers"
                     select RT_USING_DFS_ELMFAT
                     default n
     
-                if BSP_USING_SDCARD_FATFS
-                    config BSP_USING_SDCARD_PARTITION
-                        string "Set SDCARD (FATFS) partition index"
-                        default "sd0"
+                config USING_SDIF0
+                    bool "Use SDIF0"
+
+                if USING_SDIF0
+                    choice 
+                    prompt "Select SD0 Usage"
+                    default USE_SDIF0_TF
+                        config USE_SDIF0_TF
+                            bool "SD0(TF)"
+
+                        config USE_SDIF0_EMMC
+                            bool "SD0(eMMC)"
+
+                    endchoice
                 endif
 
-                choice
-                    prompt "Choose a card to mount"
-                    default USING_SDIF1
+                config USING_SDIF1
+                    bool "Use SDIF1"
 
-                    config USING_SDIF0
-                        bool "Use SDIF0"
+                if USING_SDIF1
+                    choice 
+                    prompt "Select SD1 Usage"
+                    default USE_SDIF1_TF
+                        config USE_SDIF1_TF
+                            bool "SD1(TF)"
 
-                    config USING_SDIF1
-                        bool "Use SDIF1"
-
-                    config USING_EMMC
-                        bool "Use EMMC"
-                endchoice 
+                        config USE_SDIF1_EMMC
+                            bool "SD1(eMMC)"
+                    endchoice
+                endif
 
         endif
 

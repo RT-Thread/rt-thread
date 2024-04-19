@@ -394,7 +394,11 @@
 #define RT_USING_UART1
 #define BSP_USING_SPI
 #define RT_USING_SPIM0
+#define BSP_USING_CAN
 #define BSP_USING_GPIO
+#define BSP_USING_QSPI
+#define RT_USING_QSPI0
+#define USING_QSPI_CHANNEL0
 #define BSP_USING_ETH
 #define RT_LWIP_PBUF_POOL_BUFSIZE 1700
 #define BSP_USING_PWM
@@ -403,8 +407,15 @@
 #define I2C_USE_MIO
 #define RT_USING_MIO0
 #define RT_USING_MIO1
+#define BSP_USING_SDIF
+#define BSP_USING_SDCARD_FATFS
+#define USING_SDIF0
+#define USE_SDIF0_EMMC
+#define USING_SDIF1
+#define USE_SDIF1_TF
 #define BSP_USING_DC
 #define RT_USING_DC_CHANNEL0
+#define RT_USING_DC_CHANNEL1
 
 /* Board extended module Drivers */
 

@@ -20,7 +20,7 @@
 #ifdef DRV_DEBUG
     #define DBG_LVL               DBG_LOG
 #else
-    #define DBG_LVL               DBG_INFO
+    #define DBG_LVL               DBG_ERROR
 #endif /* DRV_DEBUG */
 
 #include <rtdbg.h>

@@ -410,6 +410,10 @@
 #define RT_USING_MIO1
 #define RT_USING_MIO2
 #define RT_USING_MIO10
+#define BSP_USING_SDIF
+#define BSP_USING_SDCARD_FATFS
+#define USING_SDIF1
+#define USE_SDIF1_TF
 #define BSP_USING_DC
 
 /* Board extended module Drivers */

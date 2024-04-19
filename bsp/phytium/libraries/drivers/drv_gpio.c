@@ -223,19 +223,12 @@ rt_err_t drv_pin_attach_irq(struct rt_device *device, rt_base_t pin,
     if (pin_config->en_irq)
     {
         FGpioSetInterruptMask(pin_instance, FALSE);
-        FGpioPinId pin_of_ctrl =
-        {
-            .ctrl = ctrl_id,
-            .port = FGPIO_PORT_A,
-            .pin = FGPIO_PIN_0
-        };
-
-        if (FGPIO_IRQ_BY_CONTROLLER == FGpioGetPinIrqSourceType(pin_of_ctrl)) /* setup for ctrl report interrupt */
+        if (FGPIO_IRQ_BY_CONTROLLER == FGpioGetPinIrqSourceType(*pin_instance)) /* setup for ctrl report interrupt */
         {
             FGpioOpsSetupCtrlIRQ(instance);
             LOG_I("GPIO-%d report irq by controller", ctrl_id);
         }
-        else if (FGPIO_IRQ_BY_PIN == FGpioGetPinIrqSourceType(pin_of_ctrl))
+        else if (FGPIO_IRQ_BY_PIN == FGpioGetPinIrqSourceType(*pin_instance))
         {
             FGpioOpsSetupPinIRQ(instance, pin_instance, pin_config);
             LOG_I("GPIO-%d report irq by pin", ctrl_id);
