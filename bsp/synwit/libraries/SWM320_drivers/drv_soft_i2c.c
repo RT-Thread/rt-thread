@@ -91,6 +91,16 @@ static void swm_i2c_gpio_init(struct swm_soft_i2c_device *i2c)
     rt_pin_write(soft_i2c_cfg->sda, PIN_HIGH);
 }
 
+static void swm_i2c_pin_init(void)
+{
+    rt_size_t obj_num = sizeof(i2c_obj) / sizeof(struct swm_soft_i2c_device);
+
+    for(rt_size_t i = 0; i < obj_num; i++)
+    {
+        swm_i2c_gpio_init(&i2c_obj[i]);
+    }
+}
+
 /**
  * This function sets the sda pin.
  *
@@ -191,27 +201,30 @@ static void swm_i2c_udelay(rt_uint32_t us)
 }
 
 static const struct rt_i2c_bit_ops swm_i2c_bit_ops =
-    {
+{
         .data = RT_NULL,
+        .pin_init = swm_i2c_pin_init,
         .set_sda = swm_i2c_set_sda,
         .set_scl = swm_i2c_set_scl,
         .get_sda = swm_i2c_get_sda,
         .get_scl = swm_i2c_get_scl,
         .udelay = swm_i2c_udelay,
         .delay_us = 1,
-        .timeout = 100};
+        .timeout = 100,
+        .i2c_pin_init_flag = RT_FALSE
+};
 
 /* I2C initialization function */
 int swm_i2c_init(void)
 {
     rt_err_t result;
 
-    for (int i = 0; i < sizeof(i2c_obj) / sizeof(struct swm_soft_i2c_device); i++)
+    for (rt_size_t i = 0; i < sizeof(i2c_obj) / sizeof(struct swm_soft_i2c_device); i++)
     {
         i2c_obj[i].ops = swm_i2c_bit_ops;
         i2c_obj[i].ops.data = (void *)&swm_soft_i2c_cfg[i];
         i2c_obj[i].i2c_bus.priv = &i2c_obj[i].ops;
-        swm_i2c_gpio_init(&i2c_obj[i]);
+
         result = rt_i2c_bit_add_bus(&i2c_obj[i].i2c_bus, swm_soft_i2c_cfg[i].name);
         RT_ASSERT(result == RT_EOK);
 

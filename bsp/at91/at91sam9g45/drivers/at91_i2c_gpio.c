@@ -13,7 +13,7 @@
 #include <at91sam9g45.h>
 
 
-static void at91_i2c_gpio_init()
+static void at91_i2c_gpio_init(void)
 {
     AT91C_BASE_PMC->PMC_PCER  = 1 << AT91C_ID_PIOA; //enable PIOA clock
     AT91C_BASE_PIOA->PIO_PUER = (1 << 23);
@@ -83,11 +83,11 @@ static const struct rt_i2c_bit_ops bit_ops = {
     at91_set_scl,
     at91_get_sda,
     at91_get_scl,
-
     at91_udelay,
-
     5,
-    100
+    100,
+    at91_i2c_gpio_init,
+    RT_FALSE
 };
 
 int at91_i2c_init(void)
@@ -104,8 +104,6 @@ int at91_i2c_init(void)
     rt_memset((void *)bus, 0, sizeof(struct rt_i2c_bus_device));
 
     bus->priv = (void *)&bit_ops;
-
-    at91_i2c_gpio_init();
 
     rt_i2c_bit_add_bus(bus, "i2c0");
 

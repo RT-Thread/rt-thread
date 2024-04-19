@@ -27,6 +27,9 @@ struct rt_i2c_bit_ops
 
     rt_uint32_t delay_us;  /* scl and sda line delay */
     rt_uint32_t timeout;   /* in tick */
+
+    void (*pin_init)(void);
+    rt_bool_t i2c_pin_init_flag;
 };
 
 rt_err_t rt_i2c_bit_add_bus(struct rt_i2c_bus_device *bus,
