@@ -18,6 +18,10 @@
 #include "dfs.h"
 #include "dfs_file.h"
 
+#define DBG_TAG    "spi-flash"
+#define DBG_LVL    DBG_INFO
+#include <rtdbg.h>
+
 #if DFS_FILESYSTEMS_MAX < 4
 #error "Please define DFS_FILESYSTEMS_MAX more than 4"
 #endif
