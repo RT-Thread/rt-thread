@@ -836,12 +836,6 @@ do                                                                            \
                     __FUNCTION__);                                            \
             RT_ASSERT(0)                                                      \
         }                                                                     \
-        if (interrupt_disabled == RT_TRUE)                                    \
-        {                                                                     \
-            rt_kprintf("Function[%s]: interrupt is disabled\n",               \
-                    __FUNCTION__);                                            \
-            RT_ASSERT(0)                                                      \
-        }                                                                     \
         RT_DEBUG_IN_THREAD_CONTEXT;                                           \
     }                                                                         \
 }                                                                             \
