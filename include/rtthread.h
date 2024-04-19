@@ -828,8 +828,6 @@ do                                                                            \
 {                                                                             \
     if (need_check)                                                           \
     {                                                                         \
-        rt_bool_t interrupt_disabled;                                         \
-        interrupt_disabled = rt_hw_interrupt_is_disabled();                   \
         if (rt_critical_level() != 0)                                         \
         {                                                                     \
             rt_kprintf("Function[%s]: scheduler is not available\n",          \
