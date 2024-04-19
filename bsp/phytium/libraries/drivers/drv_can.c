@@ -328,7 +328,7 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
     return RT_EOK;
 }
 
-static int _can_sendmsg(struct rt_can_device *can, const void *buf, rt_uint32_t box_num)
+static rt_ssize_t _can_sendmsg(struct rt_can_device *can, const void *buf, rt_uint32_t box_num)
 {
     RT_ASSERT(can);
     RT_ASSERT(buf);
@@ -365,7 +365,7 @@ static int _can_sendmsg(struct rt_can_device *can, const void *buf, rt_uint32_t 
     return (FCanSend(&drv_can->can_handle, &can_frame) == RT_EOK) ? RT_EOK : -RT_ERROR;
 }
 
-static int _can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t fifo)
+static rt_ssize_t _can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t fifo)
 {
     RT_ASSERT(can);
     RT_ASSERT(buf);
