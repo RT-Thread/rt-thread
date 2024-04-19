@@ -540,7 +540,7 @@
     </module>
     <module id="module.driver.display_on_glcdc.467730287">
       <property id="module.driver.display.name" value="g_display0"/>
-      <property id="module.driver.display.callback" value="_ra_port_display_callback"/>
+      <property id="module.driver.display.callback" value="DisplayVsyncCallback"/>
       <property id="module.driver.display.line_detect_ipl" value="board.icu.common.irq.priority12"/>
       <property id="module.driver.display.underflow_1_ipl" value="_disabled"/>
       <property id="module.driver.display.underflow_2_ipl" value="_disabled"/>
@@ -952,6 +952,9 @@
       <configSetting altId="glcdc0.lcd_data13.p301" configurationId="glcdc0.lcd_data13"/>
       <configSetting altId="glcdc0.lcd_data14.p302" configurationId="glcdc0.lcd_data14"/>
       <configSetting altId="glcdc0.lcd_data15.p303" configurationId="glcdc0.lcd_data15"/>
+      <configSetting altId="glcdc0.lcd_tcon0.p102" configurationId="glcdc0.lcd_tcon0"/>
+      <configSetting altId="glcdc0.lcd_tcon1.p103" configurationId="glcdc0.lcd_tcon1"/>
+      <configSetting altId="glcdc0.lcd_tcon2.p104" configurationId="glcdc0.lcd_tcon2"/>
       <configSetting altId="glcdc0.mode.rgb565.free" configurationId="glcdc0.mode"/>
       <configSetting altId="gpt0.gtioca.p512" configurationId="gpt0.gtioca"/>
       <configSetting altId="gpt0.mode.gtiocaorgtiocb.free" configurationId="gpt0.mode"/>
@@ -983,6 +986,15 @@
       <configSetting altId="p101.glcdc0.lcd_clk" configurationId="p101"/>
       <configSetting altId="p101.gpio_speed.gpio_speed_high" configurationId="p101.gpio_drivecapacity"/>
       <configSetting altId="p101.gpio_mode.gpio_mode_peripheral" configurationId="p101.gpio_mode"/>
+      <configSetting altId="p102.glcdc0.lcd_tcon0" configurationId="p102"/>
+      <configSetting altId="p102.gpio_speed.gpio_speed_high" configurationId="p102.gpio_drivecapacity"/>
+      <configSetting altId="p102.gpio_mode.gpio_mode_peripheral" configurationId="p102.gpio_mode"/>
+      <configSetting altId="p103.glcdc0.lcd_tcon1" configurationId="p103"/>
+      <configSetting altId="p103.gpio_speed.gpio_speed_high" configurationId="p103.gpio_drivecapacity"/>
+      <configSetting altId="p103.gpio_mode.gpio_mode_peripheral" configurationId="p103.gpio_mode"/>
+      <configSetting altId="p104.glcdc0.lcd_tcon2" configurationId="p104"/>
+      <configSetting altId="p104.gpio_speed.gpio_speed_high" configurationId="p104.gpio_drivecapacity"/>
+      <configSetting altId="p104.gpio_mode.gpio_mode_peripheral" configurationId="p104.gpio_mode"/>
       <configSetting altId="p106.glcdc0.lcd_data00" configurationId="p106"/>
       <configSetting altId="p106.gpio_speed.gpio_speed_high" configurationId="p106.gpio_drivecapacity"/>
       <configSetting altId="p106.gpio_mode.gpio_mode_peripheral" configurationId="p106.gpio_mode"/>
