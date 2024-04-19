@@ -28,7 +28,7 @@ int rw007_wifi_init(void)
         rt_kprintf("%s wi-fi configuration file not exist in sd card!\n", WIFI_SH_PATH);
     }
 
-    return 0
+    return 0;
 }
 INIT_APP_EXPORT(rw007_wifi_init);
 #endif
