@@ -104,7 +104,7 @@ int rt_posix_stdio_set_console(const char* device_name, int mode)
             _GLOBAL_REENT->_stderr = std_console;
         }
 
-#if (NEWLIB_VERSION_NUM < 30400U) || (NEWLIB_VERSION_NUM >= 40000U && NEWLIB_VERSION_NUM < 40300U)
+#if (NEWLIB_VERSION_NUM < 30400U) || (NEWLIB_VERSION_NUM >= 40000U && NEWLIB_VERSION_NUM < 40200U)
         _GLOBAL_REENT->__sdidinit = 1; /* __sdidinit is obselete */
 #endif
     }
