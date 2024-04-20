@@ -2,6 +2,7 @@ import os
 import sys
 import rtconfig
 import re
+import subprocess
 
 if os.getenv('RTT_ROOT'):
     RTT_ROOT = os.getenv('RTT_ROOT')
@@ -22,6 +23,8 @@ with open("rtconfig.h") as f:
             for token in line.split(" "):
                 if re.match(r'RT_BACKTRACE_FUNCTION_NAME$', token, flags=0):
                     TRACE_CONFIG = " "
+        if line.find("RT_USING_VDSO") != -1:
+            USING_VDSO = True
 
 DefaultEnvironment(tools=[])
 env = Environment(tools = ['mingw'],
@@ -33,6 +36,24 @@ env = Environment(tools = ['mingw'],
 env.PrependENVPath('PATH', rtconfig.EXEC_PATH)
 env['ASCOM'] = env['ASPPCOM']
 env['LINKCOM'] = '$LINK -o $TARGET $LINKFLAGS $__RPATH $SOURCES $_LIBDIRFLAGS -Wl,--start-group $_LIBFLAGS -Wl,--end-group'
+
+if USING_VDSO:
+    vdso_file = os.path.join(RTT_ROOT, 'components', 'vdso', 'usr', 'xmake.lua')
+    vdso_so = os.path.join(RTT_ROOT, 'components', 'vdso', 'usr', 'build')
+    command = ["xmake", "-F", vdso_file]
+    result = subprocess.run(command)
+    if result.returncode == 0:
+        print("Command executed successfully")
+    else:
+        print("Command failed with exit code:", result.returncode)
+        exit(1)
+
+    clear = "rm -rf {vdso_path}".format(vdso_path=vdso_so)
+    env.Command(
+        target = "build_vdso",
+        source = "",
+        action = [clear]
+    )
 
 Export('RTT_ROOT')
 Export('rtconfig')

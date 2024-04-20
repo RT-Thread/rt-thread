@@ -1,0 +1,21 @@
+import os
+import rtconfig
+from building import *
+Import('RTT_ROOT')
+
+group = []
+
+if not GetDepend(['RT_USING_VDSO']):
+    Return('group')
+
+cwd = GetCurrentDir()
+list = os.listdir(cwd)
+src     = Glob('src/*.c')
+src     +=Glob('src/*.S')
+CPPPATH = [cwd + '/include']
+group = DefineGroup('VDSO', src, depend = ['RT_USING_VDSO'], CPPPATH = CPPPATH)
+
+for item in list:
+    if os.path.isfile(os.path.join(cwd, item, 'SConscript')):
+        group = group + SConscript(os.path.join(item, 'SConscript'))
+Return('group')
