@@ -23,6 +23,7 @@ on:
 
 jobs:
   build:
+    if: false # disable this job
     runs-on: ubuntu-latest
     name: doxygen_doc generate
     if: github.repository_owner == 'RT-Thread'
