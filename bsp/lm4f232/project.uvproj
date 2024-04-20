@@ -384,16 +384,16 @@
           <GroupName>Applications</GroupName>
           <Files>
             <File>
-              <FileName>startup.c</FileName>
+              <FileName>application.c</FileName>
               <FileType>1</FileType>
-              <FilePath>applications\startup.c</FilePath>
+              <FilePath>applications\application.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>application.c</FileName>
+              <FileName>startup.c</FileName>
               <FileType>1</FileType>
-              <FilePath>applications\application.c</FilePath>
+              <FilePath>applications\startup.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -482,6 +482,25 @@
               <FileName>completion.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\drivers\ipc\completion.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>condvar.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\ipc\condvar.c</FilePath>
               <FileOption>
                 <FileArmAds>
                   <Cads>
@@ -1027,9 +1046,16 @@
           <GroupName>Libraries</GroupName>
           <Files>
             <File>
-              <FileName>comp.c</FileName>
+              <FileName>driverlib_timer.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\driverlib\comp.c</FilePath>
+              <FilePath>Libraries\driverlib\timer.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>uart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\driverlib\uart.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1041,23 +1067,23 @@
           </Files>
           <Files>
             <File>
-              <FileName>fan.c</FileName>
+              <FileName>interrupt.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\driverlib\fan.c</FilePath>
+              <FilePath>Libraries\driverlib\interrupt.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>cpu.c</FileName>
+              <FileName>fpu.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\driverlib\cpu.c</FilePath>
+              <FilePath>Libraries\driverlib\fpu.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>sysctl.c</FileName>
+              <FileName>hibernate.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\driverlib\sysctl.c</FilePath>
+              <FilePath>Libraries\driverlib\hibernate.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1069,30 +1095,30 @@
           </Files>
           <Files>
             <File>
-              <FileName>usb.c</FileName>
+              <FileName>fan.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\driverlib\usb.c</FilePath>
+              <FilePath>Libraries\driverlib\fan.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>peci.c</FileName>
+              <FileName>gpio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\driverlib\peci.c</FilePath>
+              <FilePath>Libraries\driverlib\gpio.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>sysexc.c</FileName>
+              <FileName>sysctl.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\driverlib\sysexc.c</FilePath>
+              <FilePath>Libraries\driverlib\sysctl.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>mpu.c</FileName>
+              <FileName>comp.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\driverlib\mpu.c</FilePath>
+              <FilePath>Libraries\driverlib\comp.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1111,27 +1137,6 @@
           </Files>
           <Files>
             <File>
-              <FileName>flash.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\driverlib\flash.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>hibernate.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\driverlib\hibernate.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>eeprom.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\driverlib\eeprom.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>ethernet.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\driverlib\ethernet.c</FilePath>
@@ -1139,16 +1144,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>uart.c</FileName>
+              <FileName>cpu.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\driverlib\uart.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>driverlib_timer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\driverlib\timer.c</FilePath>
+              <FilePath>Libraries\driverlib\cpu.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1160,9 +1158,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>adc.c</FileName>
+              <FileName>usb.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\driverlib\adc.c</FilePath>
+              <FilePath>Libraries\driverlib\usb.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1174,44 +1172,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>systick.c</FileName>
+              <FileName>eeprom.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\driverlib\systick.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>lpc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\driverlib\lpc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>watchdog.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\driverlib\watchdog.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>gpio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\driverlib\gpio.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>qei.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\driverlib\qei.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>fpu.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\driverlib\fpu.c</FilePath>
+              <FilePath>Libraries\driverlib\eeprom.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1223,6 +1186,62 @@
           </Files>
           <Files>
             <File>
+              <FileName>sysexc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\driverlib\sysexc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>lpc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\driverlib\lpc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>adc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\driverlib\adc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>systick.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\driverlib\systick.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>peci.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\driverlib\peci.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>flash.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\driverlib\flash.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>watchdog.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\driverlib\watchdog.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>mpu.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\driverlib\mpu.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>start_rvds.S</FileName>
               <FileType>2</FileType>
               <FilePath>Libraries\startup\arm\start_rvds.S</FilePath>
@@ -1230,9 +1249,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>interrupt.c</FileName>
+              <FileName>qei.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\driverlib\interrupt.c</FilePath>
+              <FilePath>Libraries\driverlib\qei.c</FilePath>
             </File>
           </Files>
         </Group>

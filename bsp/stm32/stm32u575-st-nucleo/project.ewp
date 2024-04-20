@@ -2240,6 +2240,9 @@
       <name>$PROJ_DIR$\..\..\..\components\drivers\ipc\completion.c</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\..\..\..\components\drivers\ipc\condvar.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\..\..\components\drivers\ipc\dataqueue.c</name>
     </file>
     <file>
@@ -2501,10 +2504,10 @@
       <name>$PROJ_DIR$\..\..\..\components\mprotect\examples\mprotect_example_exclusive_region.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\mprotect\examples\mprotect_example_exception_hook.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\mprotect\mprotect.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\mprotect\mprotect.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\mprotect\examples\mprotect_example_exception_hook.c</name>
     </file>
   </group>
   <group>

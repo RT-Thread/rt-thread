@@ -485,6 +485,25 @@
           </Files>
           <Files>
             <File>
+              <FileName>condvar.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\components\drivers\ipc\condvar.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>dataqueue.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\components\drivers\ipc\dataqueue.c</FilePath>
@@ -1049,16 +1068,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>boottime.c</FileName>
+              <FileName>hrtimer.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\drivers\ktime\src\boottime.c</FilePath>
+              <FilePath>..\..\..\..\components\drivers\ktime\src\hrtimer.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>hrtimer.c</FileName>
+              <FileName>boottime.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\components\drivers\ktime\src\hrtimer.c</FilePath>
+              <FilePath>..\..\..\..\components\drivers\ktime\src\boottime.c</FilePath>
             </File>
           </Files>
         </Group>

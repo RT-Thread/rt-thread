@@ -527,6 +527,25 @@
           </Files>
           <Files>
             <File>
+              <FileName>condvar.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\ipc\condvar.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>dataqueue.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\ipc\dataqueue.c</FilePath>
@@ -1070,6 +1089,13 @@
           <GroupName>ktime</GroupName>
           <Files>
             <File>
+              <FileName>cputimer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\ktime\src\cputimer.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>hrtimer.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\ktime\src\hrtimer.c</FilePath>
@@ -1080,13 +1106,6 @@
               <FileName>boottime.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\ktime\src\boottime.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cputimer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\drivers\ktime\src\cputimer.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1160,16 +1179,9 @@
           <GroupName>Platform</GroupName>
           <Files>
             <File>
-              <FileName>interrupt.c</FileName>
+              <FileName>reset.c</FileName>
               <FileType>1</FileType>
-              <FilePath>platform\interrupt.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>rt_low_level_init.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>platform\rt_low_level_init.c</FilePath>
+              <FilePath>platform\reset.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1181,9 +1193,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>reset.c</FileName>
+              <FileName>interrupt.c</FileName>
               <FileType>1</FileType>
-              <FilePath>platform\reset.c</FilePath>
+              <FilePath>platform\interrupt.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>rt_low_level_init.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>platform\rt_low_level_init.c</FilePath>
             </File>
           </Files>
         </Group>

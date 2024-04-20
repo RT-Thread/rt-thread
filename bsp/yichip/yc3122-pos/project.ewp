@@ -2153,6 +2153,9 @@
       <name>$PROJ_DIR$\..\..\..\components\drivers\ipc\completion.c</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\..\..\..\components\drivers\ipc\condvar.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\..\..\components\drivers\ipc\dataqueue.c</name>
     </file>
     <file>
@@ -2291,25 +2294,25 @@
   <group>
     <name>Libraries</name>
     <file>
-      <name>$PROJ_DIR$\Libraries\CMSIS\Device\YICHIP\YC3122\Source\Templates\system_yc3122.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\sdk\yc_uart.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\CMSIS\Device\YICHIP\YC3122\Source\Templates\iar\startup_yc3122.s</name>
+      <name>$PROJ_DIR$\Libraries\core\system.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\Libraries\sdk\yc_gpio.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\core\system.c</name>
+      <name>$PROJ_DIR$\Libraries\sdk\yc_exti.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\Libraries\sdk\yc_wdt.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\sdk\yc_exti.c</name>
+      <name>$PROJ_DIR$\Libraries\CMSIS\Device\YICHIP\YC3122\Source\Templates\system_yc3122.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\CMSIS\Device\YICHIP\YC3122\Source\Templates\iar\startup_yc3122.s</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\sdk\yc_uart.c</name>
     </file>
   </group>
   <group>

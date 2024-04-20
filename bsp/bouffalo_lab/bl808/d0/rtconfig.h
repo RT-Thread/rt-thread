@@ -91,6 +91,7 @@
 #define DFS_FD_MAX 16
 #define RT_USING_DFS_V2
 #define RT_USING_DFS_DEVFS
+#define RT_USING_DFS_PTYFS
 #define RT_USING_PAGECACHE
 
 /* page cache config */
@@ -113,7 +114,6 @@
 #define RT_USING_SERIAL_V1
 #define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 64
-#define RT_USING_TTY
 #define RT_USING_I2C
 #define RT_USING_I2C_BITOPS
 #define RT_USING_NULL
@@ -180,6 +180,8 @@
 #define LWP_TID_MAX_NR 64
 #define RT_LWP_SHM_MAX_NR 64
 #define RT_USING_LDSO
+#define LWP_USING_TERMINAL
+#define LWP_PTY_MAX_PARIS_LIMIT 64
 
 /* Memory management */
 

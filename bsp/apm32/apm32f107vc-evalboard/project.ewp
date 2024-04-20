@@ -2265,6 +2265,9 @@
       <name>$PROJ_DIR$\..\..\..\components\drivers\ipc\completion.c</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\..\..\..\components\drivers\ipc\condvar.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\..\..\components\drivers\ipc\dataqueue.c</name>
     </file>
     <file>

@@ -384,16 +384,16 @@
           <GroupName>Applications</GroupName>
           <Files>
             <File>
-              <FileName>application.c</FileName>
+              <FileName>startup.c</FileName>
               <FileType>1</FileType>
-              <FilePath>applications\application.c</FilePath>
+              <FilePath>applications\startup.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>startup.c</FileName>
+              <FileName>application.c</FileName>
               <FileType>1</FileType>
-              <FilePath>applications\startup.c</FilePath>
+              <FilePath>applications\application.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -506,6 +506,25 @@
               <FileName>completion.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\components\drivers\ipc\completion.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>condvar.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\components\drivers\ipc\condvar.c</FilePath>
               <FileOption>
                 <FileArmAds>
                   <Cads>
@@ -677,13 +696,6 @@
           <GroupName>Drivers</GroupName>
           <Files>
             <File>
-              <FileName>lpc177x_8x_emc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>drivers\lpc177x_8x_emc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>uart.c</FileName>
               <FileType>1</FileType>
               <FilePath>drivers\uart.c</FilePath>
@@ -691,23 +703,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>lpc177x_8x_pinsel.c</FileName>
+              <FileName>lpc177x_8x_emc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>drivers\lpc177x_8x_pinsel.c</FilePath>
+              <FilePath>drivers\lpc177x_8x_emc.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>lpc177x_8x_uart.c</FileName>
+              <FileName>sdram.c</FileName>
               <FileType>1</FileType>
-              <FilePath>drivers\lpc177x_8x_uart.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>board.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>drivers\board.c</FilePath>
+              <FilePath>drivers\sdram.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -719,9 +724,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>sdram.c</FileName>
+              <FileName>lpc177x_8x_uart.c</FileName>
               <FileType>1</FileType>
-              <FilePath>drivers\sdram.c</FilePath>
+              <FilePath>drivers\lpc177x_8x_uart.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -736,6 +741,20 @@
               <FileName>lpc177x_8x_clkpwr.c</FileName>
               <FileType>1</FileType>
               <FilePath>drivers\lpc177x_8x_clkpwr.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>board.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>drivers\board.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>lpc177x_8x_pinsel.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>drivers\lpc177x_8x_pinsel.c</FilePath>
             </File>
           </Files>
         </Group>

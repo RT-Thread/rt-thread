@@ -391,16 +391,9 @@
           <GroupName>Applications</GroupName>
           <Files>
             <File>
-              <FileName>vbus_drv.c</FileName>
+              <FileName>application.c</FileName>
               <FileType>1</FileType>
-              <FilePath>applications\vbus_drv.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>board.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>applications\board.c</FilePath>
+              <FilePath>applications\application.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -412,9 +405,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>application.c</FileName>
+              <FileName>vbus_drv.c</FileName>
               <FileType>1</FileType>
-              <FilePath>applications\application.c</FilePath>
+              <FilePath>applications\vbus_drv.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>board.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>applications\board.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -520,6 +520,25 @@
               <FileName>completion.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\..\components\drivers\ipc\completion.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>condvar.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\components\drivers\ipc\condvar.c</FilePath>
               <FileOption>
                 <FileArmAds>
                   <Cads>
@@ -1051,20 +1070,6 @@
           <GroupName>VBus</GroupName>
           <Files>
             <File>
-              <FileName>vbus_chnx.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\components\vbus\vbus_chnx.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>watermark_queue.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\components\vbus\watermark_queue.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>vbus.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\..\components\vbus\vbus.c</FilePath>
@@ -1072,9 +1077,23 @@
           </Files>
           <Files>
             <File>
+              <FileName>vbus_chnx.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\components\vbus\vbus_chnx.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>prio_queue.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\..\components\vbus\prio_queue.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>watermark_queue.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\components\vbus\watermark_queue.c</FilePath>
             </File>
           </Files>
         </Group>

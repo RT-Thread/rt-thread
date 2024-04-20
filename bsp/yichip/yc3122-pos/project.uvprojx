@@ -487,6 +487,25 @@
           </Files>
           <Files>
             <File>
+              <FileName>condvar.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\ipc\condvar.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls>  --c99</MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>dataqueue.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\ipc\dataqueue.c</FilePath>
@@ -1156,6 +1175,13 @@
           </Files>
           <Files>
             <File>
+              <FileName>system_yc3122.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\CMSIS\Device\YICHIP\YC3122\Source\Templates\system_yc3122.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>startup_yc3122.s</FileName>
               <FileType>2</FileType>
               <FilePath>Libraries\CMSIS\Device\YICHIP\YC3122\Source\Templates\arm\startup_yc3122.s</FilePath>
@@ -1166,13 +1192,6 @@
               <FileName>yc_gpio.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\sdk\yc_gpio.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>yc_wdt.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\sdk\yc_wdt.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1191,16 +1210,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>system_yc3122.c</FileName>
+              <FileName>yc_uart.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\CMSIS\Device\YICHIP\YC3122\Source\Templates\system_yc3122.c</FilePath>
+              <FilePath>Libraries\sdk\yc_uart.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>yc_uart.c</FileName>
+              <FileName>yc_wdt.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\sdk\yc_uart.c</FilePath>
+              <FilePath>Libraries\sdk\yc_wdt.c</FilePath>
             </File>
           </Files>
         </Group>

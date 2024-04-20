@@ -2144,10 +2144,10 @@
   <group>
     <name>Applications</name>
     <file>
-      <name>$PROJ_DIR$\applications\smartconfig_app.c</name>
+      <name>$PROJ_DIR$\applications\main.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\applications\main.c</name>
+      <name>$PROJ_DIR$\applications\smartconfig_app.c</name>
     </file>
   </group>
   <group>
@@ -2205,6 +2205,9 @@
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\components\drivers\ipc\completion.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\components\drivers\ipc\condvar.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\components\drivers\ipc\dataqueue.c</name>

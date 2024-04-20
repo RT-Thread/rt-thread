@@ -608,6 +608,25 @@
           </Files>
           <Files>
             <File>
+              <FileName>condvar.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\ipc\condvar.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>dataqueue.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\ipc\dataqueue.c</FilePath>
@@ -801,9 +820,9 @@
           <GroupName>Drivers</GroupName>
           <Files>
             <File>
-              <FileName>drv_soft_i2c.c</FileName>
+              <FileName>drv_pm.c</FileName>
               <FileType>1</FileType>
-              <FilePath>drivers\drv_soft_i2c.c</FilePath>
+              <FilePath>drivers\drv_pm.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -811,6 +830,13 @@
               <FileName>drv_rtc.c</FileName>
               <FileType>1</FileType>
               <FilePath>drivers\drv_rtc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>drv_adc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>drivers\drv_adc.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -829,16 +855,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>drv_wdt.c</FileName>
+              <FileName>drv_soft_i2c.c</FileName>
               <FileType>1</FileType>
-              <FilePath>drivers\drv_wdt.c</FilePath>
+              <FilePath>drivers\drv_soft_i2c.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>drv_pm.c</FileName>
+              <FileName>drv_gpio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>drivers\drv_pm.c</FilePath>
+              <FilePath>drivers\drv_gpio.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -850,9 +876,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>board.c</FileName>
+              <FileName>drv_wdt.c</FileName>
               <FileType>1</FileType>
-              <FilePath>drivers\board.c</FilePath>
+              <FilePath>drivers\drv_wdt.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -864,16 +890,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>drv_adc.c</FileName>
+              <FileName>board.c</FileName>
               <FileType>1</FileType>
-              <FilePath>drivers\drv_adc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>drv_gpio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>drivers\drv_gpio.c</FilePath>
+              <FilePath>drivers\board.c</FilePath>
             </File>
           </Files>
         </Group>

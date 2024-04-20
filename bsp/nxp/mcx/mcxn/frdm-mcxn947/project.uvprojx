@@ -337,7 +337,7 @@
               <MiscControls>--target=arm-arm-none-eabi</MiscControls>
               <Define>__STDC_LIMIT_MACROS, RT_USING_ARMLIBC, CPU_MCXN947VDF_cm33_core0, RT_USING_LIBC, __CLK_TCK=RT_TICK_PER_SECOND, __RTTHREAD__, DEBUG</Define>
               <Undefine />
-              <IncludePath>..\..\..\..\..\include;..\..\..\..\..\libcpu\arm\common;..\Libraries\drivers;..\..\..\..\..\libcpu\arm\cortex-m33;..\..\..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\..\..\..\..\components\libc\posix\ipc;..\Libraries\MCXN947\middleware\sdmmc\inc;..\..\..\..\..\components\libc\posix\io\poll;.;..\..\..\..\..\components\libc\compilers\common\extension;..\..\..\..\..\components\drivers\include;..\Libraries\MCXN947\MCXN947\drivers;board\MCUX_Config\board;..\..\..\..\..\components\drivers\include;..\Libraries\MCXN947\middleware\sdmmc\port;..\..\..\..\..\components\libc\compilers\common\include;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\finsh;..\..\..\..\..\components\utilities\ulog;..\Libraries\MCXN947\MCXN947;board;..\Libraries\CMSIS\Core\Include;..\..\..\..\..\components\libc\posix\io\eventfd;applications;..\..\..\..\..\components\drivers\include;..\Libraries\MCXN947\components\codec;..\Libraries\drivers\config;..\..\..\..\..\components\libc\posix\io\epoll;..\..\..\..\..\components\drivers\include</IncludePath>
+              <IncludePath>..\Libraries\MCXN947\middleware\sdmmc\port;..\..\..\..\..\components\libc\compilers\common\extension\fcntl\octal;..\Libraries\MCXN947\MCXN947;..\Libraries\drivers;..\Libraries\MCXN947\components\codec;..\..\..\..\..\components\libc\compilers\common\include;applications;board\MCUX_Config\board;.;..\..\..\..\..\components\finsh;..\Libraries\drivers\config;..\..\..\..\..\components\libc\posix\io\epoll;..\Libraries\MCXN947\MCXN947\drivers;..\..\..\..\..\libcpu\arm\common;..\..\..\..\..\components\drivers\include;..\..\..\..\..\include;..\..\..\..\..\components\libc\posix\io\eventfd;..\..\..\..\..\components\libc\posix\io\poll;..\Libraries\CMSIS\Core\Include;..\..\..\..\..\libcpu\arm\cortex-m33;..\..\..\..\..\components\drivers\include;..\Libraries\MCXN947\middleware\sdmmc\inc;..\..\..\..\..\components\libc\compilers\common\extension;..\..\..\..\..\components\drivers\include;board;..\..\..\..\..\components\utilities\ulog;..\..\..\..\..\components\drivers\include;..\..\..\..\..\components\libc\posix\ipc;..\..\..\..\..\components\drivers\include</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -1434,19 +1434,29 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>Utilities</GroupName>
+          <GroupName>rt_kprintf</GroupName>
           <Files>
             <File>
-              <FileName>ulog.c</FileName>
+              <FileName>rt_vsnprintf.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\components\utilities\ulog\ulog.c</FilePath>
+              <FilePath>packages\rt_vsnprintf_full-latest\rt_vsnprintf.c</FilePath>
             </File>
           </Files>
+        </Group>
+        <Group>
+          <GroupName>Utilities</GroupName>
           <Files>
             <File>
               <FileName>console_be.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\..\components\utilities\ulog\backend\console_be.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>ulog.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\components\utilities\ulog\ulog.c</FilePath>
             </File>
           </Files>
         </Group>

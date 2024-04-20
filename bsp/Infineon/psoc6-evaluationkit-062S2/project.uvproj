@@ -510,6 +510,25 @@
           </Files>
           <Files>
             <File>
+              <FileName>condvar.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\ipc\condvar.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>dataqueue.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\ipc\dataqueue.c</FilePath>
@@ -1088,13 +1107,6 @@
           </Files>
           <Files>
             <File>
-              <FileName>psoc6_03_cm0p_sleep.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\IFX_PSOC6_HAL\psoc6cm0p\COMPONENT_CM0P_SLEEP\psoc6_03_cm0p_sleep.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>cyhal_irq_impl.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\source\cyhal_irq_impl.c</FilePath>
@@ -1158,6 +1170,20 @@
           </Files>
           <Files>
             <File>
+              <FileName>psoc6_03_cm0p_sleep.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\IFX_PSOC6_HAL\psoc6cm0p\COMPONENT_CM0P_SLEEP\psoc6_03_cm0p_sleep.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>psoc6_02_cm0p_sleep.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\IFX_PSOC6_HAL\psoc6cm0p\COMPONENT_CM0P_SLEEP\psoc6_02_cm0p_sleep.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>psoc6_01_cm0p_sleep.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\IFX_PSOC6_HAL\psoc6cm0p\COMPONENT_CM0P_SLEEP\psoc6_01_cm0p_sleep.c</FilePath>
@@ -1207,6 +1233,13 @@
           </Files>
           <Files>
             <File>
+              <FileName>psoc6_04_cm0p_sleep.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\IFX_PSOC6_HAL\psoc6cm0p\COMPONENT_CM0P_SLEEP\psoc6_04_cm0p_sleep.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>cy_prot.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\drivers\source\cy_prot.c</FilePath>
@@ -1231,13 +1264,6 @@
               <FileName>cy_sysint.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\drivers\source\cy_sysint.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>psoc6_04_cm0p_sleep.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\IFX_PSOC6_HAL\psoc6cm0p\COMPONENT_CM0P_SLEEP\psoc6_04_cm0p_sleep.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1284,13 +1310,6 @@
           </Files>
           <Files>
             <File>
-              <FileName>psoc6_02_cm0p_sleep.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\IFX_PSOC6_HAL\psoc6cm0p\COMPONENT_CM0P_SLEEP\psoc6_02_cm0p_sleep.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>cy_syspm.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\drivers\source\cy_syspm.c</FilePath>
@@ -1308,13 +1327,6 @@
           <GroupName>libs</GroupName>
           <Files>
             <File>
-              <FileName>cycfg_connectivity_bt.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libs\TARGET_RTT-062S2\config\GeneratedSource\cycfg_connectivity_bt.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>cybsp.c</FileName>
               <FileType>1</FileType>
               <FilePath>libs\TARGET_RTT-062S2\cybsp.c</FilePath>
@@ -1322,23 +1334,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>cycfg_qspi_memslot.c</FileName>
+              <FileName>cycfg_capsense.c</FileName>
               <FileType>1</FileType>
-              <FilePath>libs\TARGET_RTT-062S2\config\GeneratedSource\cycfg_qspi_memslot.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cycfg_system.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libs\TARGET_RTT-062S2\config\GeneratedSource\cycfg_system.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cycfg_peripherals.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libs\TARGET_RTT-062S2\config\GeneratedSource\cycfg_peripherals.c</FilePath>
+              <FilePath>libs\TARGET_RTT-062S2\config\GeneratedSource\cycfg_capsense.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1357,16 +1355,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>cycfg_capsense.c</FileName>
+              <FileName>cycfg_connectivity_bt.c</FileName>
               <FileType>1</FileType>
-              <FilePath>libs\TARGET_RTT-062S2\config\GeneratedSource\cycfg_capsense.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cycfg_clocks.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libs\TARGET_RTT-062S2\config\GeneratedSource\cycfg_clocks.c</FilePath>
+              <FilePath>libs\TARGET_RTT-062S2\config\GeneratedSource\cycfg_connectivity_bt.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1378,6 +1369,20 @@
           </Files>
           <Files>
             <File>
+              <FileName>cycfg_peripherals.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libs\TARGET_RTT-062S2\config\GeneratedSource\cycfg_peripherals.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cycfg_clocks.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libs\TARGET_RTT-062S2\config\GeneratedSource\cycfg_clocks.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>cycfg_routing.c</FileName>
               <FileType>1</FileType>
               <FilePath>libs\TARGET_RTT-062S2\config\GeneratedSource\cycfg_routing.c</FilePath>
@@ -1385,9 +1390,23 @@
           </Files>
           <Files>
             <File>
+              <FileName>cycfg_qspi_memslot.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libs\TARGET_RTT-062S2\config\GeneratedSource\cycfg_qspi_memslot.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>cycfg.c</FileName>
               <FileType>1</FileType>
               <FilePath>libs\TARGET_RTT-062S2\config\GeneratedSource\cycfg.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cycfg_system.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libs\TARGET_RTT-062S2\config\GeneratedSource\cycfg_system.c</FilePath>
             </File>
           </Files>
         </Group>

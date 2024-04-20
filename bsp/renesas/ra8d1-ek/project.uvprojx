@@ -13,7 +13,7 @@
         <TargetCommonOption>
           <Device>R7FA8D1BH</Device>
           <Vendor>Renesas</Vendor>
-          <PackID>Renesas.RA_DFP.5.1.0</PackID>
+          <PackID>Renesas.RA8_DFP.0.0.2</PackID>
           <PackURL>https://www2.renesas.eu/Keil_MDK_Packs/</PackURL>
           <Cpu>IRAM(0x22000000,0xE0000) IRAM2(0x0,0x10000) IROM(0x02000000,0x001F8000) XRAM(0x20000000,0x10000) CPUTYPE("Cortex-M85") FPU3(DFPU) DSP TZ MVE(FP) PACBTI CLOCK(12000000) ELITTLE</Cpu>
           <FlashUtilSpec />
@@ -77,7 +77,7 @@
             <nStopB2X>0</nStopB2X>
           </BeforeMake>
           <AfterMake>
-            <RunUserProg1>1</RunUserProg1>
+            <RunUserProg1>0</RunUserProg1>
             <RunUserProg2>0</RunUserProg2>
             <UserProg1Name>cmd /c "start "Renesas" /w cmd /c ""$Slauncher\rasc_launcher.bat" "$Prasc_version.txt" -nosplash --launcher.suppressErrors --gensmartbundle --compiler ARMv6 "$Pconfiguration.xml" "$L%L" 2&gt; "%%TEMP%%\rasc_stderr.out"""</UserProg1Name>
             <UserProg2Name />
@@ -335,9 +335,9 @@
             <v6Rtti>0</v6Rtti>
             <VariousControls>
               <MiscControls>-Wno-license-management -Wuninitialized -Wall -Wmissing-declarations -Wpointer-arith -Waggregate-return -Wfloat-equal</MiscControls>
-              <Define>__RTTHREAD__, __CLK_TCK=RT_TICK_PER_SECOND, RT_USING_ARMLIBC, __STDC_LIMIT_MACROS, RT_USING_LIBC</Define>
+              <Define>RT_USING_LIBC, RT_USING_ARMLIBC, __STDC_LIMIT_MACROS, __RTTHREAD__, __CLK_TCK=RT_TICK_PER_SECOND</Define>
               <Undefine />
-              <IncludePath>..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\include;..\..\..\components\libc\compilers\common\extension;..\..\..\components\libc\posix\io\poll;board\ports;..\libraries\HAL_Drivers\config;board;..\libraries\HAL_Drivers;..\..\..\components\libc\posix\io\epoll;..\..\..\libcpu\arm\cortex-m85;..\..\..\components\drivers\include;..\..\..\components\libc\compilers\common\include;..\..\..\libcpu\arm\common;..\..\..\components\finsh;..\..\..\components\libc\posix\ipc;..\..\..\components\libc\posix\io\eventfd;.;..\..\..\components\libc\compilers\common\extension\fcntl\octal;board\ports\wifi;..\..\..\components\drivers\include</IncludePath>
+              <IncludePath>..\..\..\libcpu\arm\cortex-m85;..\..\..\components\libc\compilers\common\include;..\libraries\HAL_Drivers\config;..\..\..\libcpu\arm\common;..\..\..\components\libc\compilers\common\extension;..\..\..\components\drivers\include;..\..\..\components\drivers\include;..\..\..\include;board;..\..\..\components\libc\posix\io\eventfd;.;..\..\..\components\libc\posix\io\poll;..\..\..\components\drivers\include;..\..\..\components\libc\posix\ipc;board\ports;..\..\..\components\libc\posix\io\epoll;..\..\..\components\finsh;..\libraries\HAL_Drivers;..\..\..\components\drivers\include;board\ports\wifi;..\..\..\components\libc\compilers\common\extension\fcntl\octal</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -751,6 +751,13 @@
           <GroupName>Finsh</GroupName>
           <Files>
             <File>
+              <FileName>shell.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\finsh\shell.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>msh.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\finsh\msh.c</FilePath>
@@ -761,13 +768,6 @@
               <FileName>msh_parse.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\finsh\msh_parse.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>shell.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\finsh\shell.c</FilePath>
             </File>
           </Files>
           <Files>

@@ -2153,6 +2153,9 @@
       <name>$PROJ_DIR$\..\..\components\drivers\ipc\completion.c</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\..\..\components\drivers\ipc\condvar.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\..\components\drivers\ipc\dataqueue.c</name>
     </file>
     <file>
@@ -2273,58 +2276,58 @@
       <name>$PROJ_DIR$\Libraries\MM32L0xx\Source\system_MM32L0xx.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\MM32L0xx\HAL_lib\src\HAL_dma.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\MM32L0xx\HAL_lib\src\HAL_i2c.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\MM32L0xx\HAL_lib\src\HAL_flash.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\MM32L0xx\HAL_lib\src\HAL_rcc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\MM32L0xx\HAL_lib\src\HAL_uart.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\MM32L0xx\HAL_lib\src\HAL_misc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\MM32L0xx\HAL_lib\src\HAL_gpio.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\Libraries\MM32L0xx\HAL_lib\src\HAL_wwdg.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\MM32L0xx\HAL_lib\src\HAL_adc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\MM32L0xx\HAL_lib\src\HAL_comp.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\MM32L0xx\HAL_lib\src\HAL_iwdg.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\MM32L0xx\HAL_lib\src\HAL_syscfg.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\MM32L0xx\HAL_lib\src\HAL_spi.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\MM32L0xx\HAL_lib\src\HAL_exti.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\Libraries\MM32L0xx\Source\IAR_StartAsm\startup_MM32L0xx.s</name>
     </file>
     <file>
       <name>$PROJ_DIR$\Libraries\MM32L0xx\HAL_lib\src\HAL_pwr.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\Libraries\MM32L0xx\HAL_lib\src\HAL_bkp.c</name>
+      <name>$PROJ_DIR$\Libraries\MM32L0xx\HAL_lib\src\HAL_flash.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\MM32L0xx\HAL_lib\src\HAL_uart.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\Libraries\MM32L0xx\HAL_lib\src\HAL_can.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\MM32L0xx\HAL_lib\src\HAL_dma.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\MM32L0xx\HAL_lib\src\HAL_exti.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\MM32L0xx\HAL_lib\src\HAL_misc.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\MM32L0xx\HAL_lib\src\HAL_i2c.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\MM32L0xx\HAL_lib\src\HAL_comp.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\MM32L0xx\HAL_lib\src\HAL_gpio.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\MM32L0xx\HAL_lib\src\HAL_adc.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\MM32L0xx\HAL_lib\src\HAL_iwdg.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\MM32L0xx\HAL_lib\src\HAL_rcc.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\MM32L0xx\HAL_lib\src\HAL_spi.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\MM32L0xx\Source\IAR_StartAsm\startup_MM32L0xx.s</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\MM32L0xx\HAL_lib\src\HAL_bkp.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\Libraries\MM32L0xx\HAL_lib\src\HAL_syscfg.c</name>
     </file>
   </group>
   <group>

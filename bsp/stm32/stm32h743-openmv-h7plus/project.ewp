@@ -220,7 +220,6 @@
           <state>RT_USING_LIBC</state>
           <state>_DLIB_ADD_EXTRA_SYMBOLS=0</state>
           <state>_DLIB_FILE_DESCRIPTOR</state>
-          <state>_DLIB_THREAD_SUPPORT</state>
           <state>STM32H743xx</state>
           <state>__RTTHREAD__</state>
           <state>USE_HAL_DRIVER</state>
@@ -1272,7 +1271,6 @@
           <state>RT_USING_LIBC</state>
           <state>_DLIB_ADD_EXTRA_SYMBOLS=0</state>
           <state>_DLIB_FILE_DESCRIPTOR</state>
-          <state>_DLIB_THREAD_SUPPORT</state>
           <state>STM32H743xx</state>
           <state>__RTTHREAD__</state>
           <state>USE_HAL_DRIVER</state>
@@ -2180,6 +2178,9 @@
       <name>$PROJ_DIR$\..\..\..\components\drivers\ipc\completion.c</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\..\..\..\components\drivers\ipc\condvar.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\..\..\components\drivers\ipc\dataqueue.c</name>
     </file>
     <file>
@@ -2534,10 +2535,10 @@
   <group>
     <name>rt_usbd</name>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\usb\usbdevice\core\usbdevice_core.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\drivers\usb\usbdevice\class\cdc_vcom.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\usb\usbdevice\class\cdc_vcom.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\drivers\usb\usbdevice\core\usbdevice_core.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\components\drivers\usb\usbdevice\core\usbdevice.c</name>

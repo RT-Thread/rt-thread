@@ -229,7 +229,6 @@
           <state>RT_USING_LIBC</state>
           <state>_DLIB_ADD_EXTRA_SYMBOLS=0</state>
           <state>_DLIB_FILE_DESCRIPTOR</state>
-          <state>_DLIB_THREAD_SUPPORT</state>
           <state>CPU_MIMXRT1021DAG5A</state>
           <state>ENDIANNESS</state>
           <state>STD=C99</state>
@@ -1151,6 +1150,9 @@
       <name>$PROJ_DIR$\..\..\..\..\..\components\drivers\ipc\completion.c</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\..\..\..\..\..\components\drivers\ipc\condvar.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\..\..\..\..\components\drivers\ipc\dataqueue.c</name>
     </file>
     <file>
@@ -1379,25 +1381,25 @@
   <group>
     <name>rt_usbd</name>
     <file>
-      <name>$PROJ_DIR$\..\..\..\..\..\components\drivers\usb\usbdevice\class\cdc_vcom.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\..\..\components\drivers\usb\usbdevice\class\mstorage.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\..\..\..\..\components\drivers\usb\usbdevice\core\usbdevice_core.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\..\..\components\drivers\usb\usbdevice\core\usbdevice.c</name>
     </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\..\..\components\drivers\usb\usbdevice\class\cdc_vcom.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\..\..\components\drivers\usb\usbdevice\class\mstorage.c</name>
+    </file>
   </group>
   <group>
     <name>xip</name>
     <file>
-      <name>$PROJ_DIR$\xip\fsl_flexspi_nor_boot.c</name>
+      <name>$PROJ_DIR$\xip\fsl_flexspi_nor_flash.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\xip\fsl_flexspi_nor_flash.c</name>
+      <name>$PROJ_DIR$\xip\fsl_flexspi_nor_boot.c</name>
     </file>
   </group>
 </project>

@@ -510,6 +510,25 @@
           </Files>
           <Files>
             <File>
+              <FileName>condvar.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\ipc\condvar.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>dataqueue.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\ipc\dataqueue.c</FilePath>
@@ -1088,9 +1107,23 @@
           </Files>
           <Files>
             <File>
+              <FileName>psoc6_02_cm0p_sleep.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\IFX_PSOC6_HAL\psoc6cm0p\COMPONENT_CM0P_SLEEP\psoc6_02_cm0p_sleep.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>cyhal_clock.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\source\cyhal_clock.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>psoc6_01_cm0p_sleep.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\IFX_PSOC6_HAL\psoc6cm0p\COMPONENT_CM0P_SLEEP\psoc6_01_cm0p_sleep.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1116,13 +1149,6 @@
           </Files>
           <Files>
             <File>
-              <FileName>psoc6_02_cm0p_sleep.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\IFX_PSOC6_HAL\psoc6cm0p\COMPONENT_CM0P_SLEEP\psoc6_02_cm0p_sleep.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>cyhal_gpio.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\source\cyhal_gpio.c</FilePath>
@@ -1140,6 +1166,13 @@
               <FileName>cy_ipc_sema.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\drivers\source\cy_ipc_sema.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>psoc6_04_cm0p_sleep.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\libraries\IFX_PSOC6_HAL\psoc6cm0p\COMPONENT_CM0P_SLEEP\psoc6_04_cm0p_sleep.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1182,13 +1215,6 @@
               <FileName>cyhal_lptimer.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\source\cyhal_lptimer.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>psoc6_03_cm0p_sleep.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\IFX_PSOC6_HAL\psoc6cm0p\COMPONENT_CM0P_SLEEP\psoc6_03_cm0p_sleep.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1249,13 +1275,6 @@
           </Files>
           <Files>
             <File>
-              <FileName>psoc6_01_cm0p_sleep.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\libraries\IFX_PSOC6_HAL\psoc6cm0p\COMPONENT_CM0P_SLEEP\psoc6_01_cm0p_sleep.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>cyhal_interconnect.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-hal-cat1\source\cyhal_interconnect.c</FilePath>
@@ -1284,16 +1303,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>cy_syspm.c</FileName>
+              <FileName>psoc6_03_cm0p_sleep.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\drivers\source\cy_syspm.c</FilePath>
+              <FilePath>..\libraries\IFX_PSOC6_HAL\psoc6cm0p\COMPONENT_CM0P_SLEEP\psoc6_03_cm0p_sleep.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>psoc6_04_cm0p_sleep.c</FileName>
+              <FileName>cy_syspm.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\libraries\IFX_PSOC6_HAL\psoc6cm0p\COMPONENT_CM0P_SLEEP\psoc6_04_cm0p_sleep.c</FilePath>
+              <FilePath>..\libraries\IFX_PSOC6_HAL\mtb-pdl-cat1\drivers\source\cy_syspm.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1308,51 +1327,9 @@
           <GroupName>libs</GroupName>
           <Files>
             <File>
-              <FileName>cycfg_routing.c</FileName>
+              <FileName>cycfg_system.c</FileName>
               <FileType>1</FileType>
-              <FilePath>libs\TARGET_CY8CKIT-062-WIFI-BT\config\GeneratedSource\cycfg_routing.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cycfg_connectivity_bt.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libs\TARGET_CY8CKIT-062-WIFI-BT\config\GeneratedSource\cycfg_connectivity_bt.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cycfg_pins.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libs\TARGET_CY8CKIT-062-WIFI-BT\config\GeneratedSource\cycfg_pins.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cycfg_qspi_memslot.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libs\TARGET_CY8CKIT-062-WIFI-BT\config\GeneratedSource\cycfg_qspi_memslot.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cycfg.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libs\TARGET_CY8CKIT-062-WIFI-BT\config\GeneratedSource\cycfg.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>startup_psoc6_01_cm4.s</FileName>
-              <FileType>2</FileType>
-              <FilePath>libs\TARGET_CY8CKIT-062-WIFI-BT\COMPONENT_CM4\TOOLCHAIN_ARM\startup_psoc6_01_cm4.s</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>system_psoc6_cm4.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>libs\TARGET_CY8CKIT-062-WIFI-BT\COMPONENT_CM4\system_psoc6_cm4.c</FilePath>
+              <FilePath>libs\TARGET_CY8CKIT-062-WIFI-BT\config\GeneratedSource\cycfg_system.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1364,9 +1341,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>cycfg_system.c</FileName>
+              <FileName>system_psoc6_cm4.c</FileName>
               <FileType>1</FileType>
-              <FilePath>libs\TARGET_CY8CKIT-062-WIFI-BT\config\GeneratedSource\cycfg_system.c</FilePath>
+              <FilePath>libs\TARGET_CY8CKIT-062-WIFI-BT\COMPONENT_CM4\system_psoc6_cm4.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cycfg_pins.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libs\TARGET_CY8CKIT-062-WIFI-BT\config\GeneratedSource\cycfg_pins.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1374,6 +1358,20 @@
               <FileName>cycfg_clocks.c</FileName>
               <FileType>1</FileType>
               <FilePath>libs\TARGET_CY8CKIT-062-WIFI-BT\config\GeneratedSource\cycfg_clocks.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cycfg_qspi_memslot.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libs\TARGET_CY8CKIT-062-WIFI-BT\config\GeneratedSource\cycfg_qspi_memslot.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cycfg_connectivity_bt.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libs\TARGET_CY8CKIT-062-WIFI-BT\config\GeneratedSource\cycfg_connectivity_bt.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1388,6 +1386,27 @@
               <FileName>cycfg_peripherals.c</FileName>
               <FileType>1</FileType>
               <FilePath>libs\TARGET_CY8CKIT-062-WIFI-BT\config\GeneratedSource\cycfg_peripherals.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cycfg_routing.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libs\TARGET_CY8CKIT-062-WIFI-BT\config\GeneratedSource\cycfg_routing.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>startup_psoc6_01_cm4.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>libs\TARGET_CY8CKIT-062-WIFI-BT\COMPONENT_CM4\TOOLCHAIN_ARM\startup_psoc6_01_cm4.s</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cycfg.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>libs\TARGET_CY8CKIT-062-WIFI-BT\config\GeneratedSource\cycfg.c</FilePath>
             </File>
           </Files>
         </Group>

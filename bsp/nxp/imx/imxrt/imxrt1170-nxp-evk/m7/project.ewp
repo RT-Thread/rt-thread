@@ -1131,10 +1131,10 @@
   <group>
     <name>Applications</name>
     <file>
-      <name>$PROJ_DIR$\applications\main.c</name>
+      <name>$PROJ_DIR$\applications\mnt.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\applications\mnt.c</name>
+      <name>$PROJ_DIR$\applications\main.c</name>
     </file>
   </group>
   <group>
@@ -1192,6 +1192,9 @@
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\..\..\..\components\drivers\ipc\completion.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\..\..\..\components\drivers\ipc\condvar.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\..\..\..\components\drivers\ipc\dataqueue.c</name>
@@ -1416,10 +1419,10 @@
   <group>
     <name>xip</name>
     <file>
-      <name>$PROJ_DIR$\xip\evkmimxrt1170_flexspi_nor_config.c</name>
+      <name>$PROJ_DIR$\xip\fsl_flexspi_nor_boot.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\xip\fsl_flexspi_nor_boot.c</name>
+      <name>$PROJ_DIR$\xip\evkmimxrt1170_flexspi_nor_config.c</name>
     </file>
   </group>
 </project>

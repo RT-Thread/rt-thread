@@ -2148,6 +2148,9 @@
       <name>$PROJ_DIR$\..\..\..\components\drivers\ipc\completion.c</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\..\..\..\components\drivers\ipc\condvar.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\..\..\components\drivers\ipc\dataqueue.c</name>
     </file>
     <file>
@@ -2265,10 +2268,34 @@
   <group>
     <name>Libraries</name>
     <file>
-      <name>$PROJ_DIR$\..\libraries\SWM320_CSL\SWM320_StdPeriph_Driver\SWM320_gpio.c</name>
+      <name>$PROJ_DIR$\..\libraries\SWM320_CSL\SWM320_StdPeriph_Driver\SWM320_norflash.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\libraries\SWM320_CSL\SWM320_StdPeriph_Driver\SWM320_exti.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\libraries\SWM320_CSL\SWM320_StdPeriph_Driver\SWM320_sdio.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\libraries\SWM320_CSL\SWM320_StdPeriph_Driver\SWM320_uart.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\libraries\SWM320_CSL\SWM320_StdPeriph_Driver\SWM320_gpio.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\libraries\SWM320_CSL\SWM320_StdPeriph_Driver\SWM320_spi.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\libraries\SWM320_CSL\SWM320_StdPeriph_Driver\SWM320_flash.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\libraries\SWM320_CSL\SWM320_StdPeriph_Driver\SWM320_adc.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\libraries\SWM320_CSL\SWM320_StdPeriph_Driver\SWM320_lcd.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\libraries\SWM320_CSL\SWM320_StdPeriph_Driver\SWM320_port.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\libraries\SWM320_CSL\SWM320_StdPeriph_Driver\SWM320_timr.c</name>
@@ -2277,58 +2304,34 @@
       <name>$PROJ_DIR$\..\libraries\SWM320_CSL\SWM320_StdPeriph_Driver\SWM320_wdt.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\SWM320_CSL\SWM320_StdPeriph_Driver\SWM320_adc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\SWM320_CSL\SWM320_StdPeriph_Driver\SWM320_uart.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\SWM320_CSL\SWM320_StdPeriph_Driver\SWM320_sdio.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\SWM320_CSL\SWM320_StdPeriph_Driver\SWM320_spi.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\SWM320_CSL\SWM320_StdPeriph_Driver\SWM320_sram.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\SWM320_CSL\SWM320_StdPeriph_Driver\SWM320_port.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\SWM320_CSL\SWM320_StdPeriph_Driver\SWM320_flash.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\SWM320_CSL\SWM320_StdPeriph_Driver\SWM320_crc.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\SWM320_CSL\SWM320_StdPeriph_Driver\SWM320_lcd.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\SWM320_CSL\SWM320_StdPeriph_Driver\SWM320_i2c.c</name>
+      <name>$PROJ_DIR$\..\libraries\SWM320_CSL\SWM320_StdPeriph_Driver\SWM320_can.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\libraries\SWM320_CSL\CMSIS\DeviceSupport\system_SWM320.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\SWM320_CSL\SWM320_StdPeriph_Driver\SWM320_norflash.c</name>
+      <name>$PROJ_DIR$\..\libraries\SWM320_CSL\SWM320_StdPeriph_Driver\SWM320_dma.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\libraries\SWM320_CSL\SWM320_StdPeriph_Driver\SWM320_sdram.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\SWM320_CSL\SWM320_StdPeriph_Driver\SWM320_dma.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\libraries\SWM320_CSL\SWM320_StdPeriph_Driver\SWM320_can.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\libraries\SWM320_CSL\SWM320_StdPeriph_Driver\SWM320_pwm.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\libraries\SWM320_CSL\SWM320_StdPeriph_Driver\SWM320_rtc.c</name>
+      <name>$PROJ_DIR$\..\libraries\SWM320_CSL\SWM320_StdPeriph_Driver\SWM320_crc.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\libraries\SWM320_CSL\SWM320_StdPeriph_Driver\SWM320_i2c.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\libraries\SWM320_CSL\SWM320_StdPeriph_Driver\SWM320_sram.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\libraries\SWM320_CSL\CMSIS\DeviceSupport\startup\iar\startup_SWM320.s</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\libraries\SWM320_CSL\SWM320_StdPeriph_Driver\SWM320_rtc.c</name>
     </file>
   </group>
   <group>

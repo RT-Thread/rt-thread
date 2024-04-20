@@ -1134,6 +1134,9 @@
       <name>$PROJ_DIR$\..\..\..\..\..\components\drivers\ipc\completion.c</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\..\..\..\..\..\components\drivers\ipc\condvar.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\..\..\..\..\components\drivers\ipc\dataqueue.c</name>
     </file>
     <file>
@@ -1290,13 +1293,13 @@
   <group>
     <name>xip</name>
     <file>
+      <name>$PROJ_DIR$\xip\evkmimxrt1064_sdram_ini_dcd.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\xip\fsl_flexspi_nor_boot.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\xip\evkmimxrt1064_flexspi_nor_config.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\xip\evkmimxrt1064_sdram_ini_dcd.c</name>
     </file>
   </group>
 </project>

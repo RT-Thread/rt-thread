@@ -677,6 +677,25 @@
           </Files>
           <Files>
             <File>
+              <FileName>condvar.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\ipc\condvar.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>dataqueue.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\drivers\ipc\dataqueue.c</FilePath>
@@ -2223,16 +2242,16 @@
           <GroupName>Utilities</GroupName>
           <Files>
             <File>
-              <FileName>ulog.c</FileName>
+              <FileName>console_be.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\utilities\ulog\ulog.c</FilePath>
+              <FilePath>..\..\components\utilities\ulog\backend\console_be.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>console_be.c</FileName>
+              <FileName>ulog.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\components\utilities\ulog\backend\console_be.c</FilePath>
+              <FilePath>..\..\components\utilities\ulog\ulog.c</FilePath>
             </File>
           </Files>
         </Group>

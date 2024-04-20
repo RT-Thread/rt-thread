@@ -545,6 +545,25 @@
           </Files>
           <Files>
             <File>
+              <FileName>condvar.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\drivers\ipc\condvar.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>dataqueue.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\components\drivers\ipc\dataqueue.c</FilePath>
@@ -1440,9 +1459,16 @@
           <GroupName>mprotect</GroupName>
           <Files>
             <File>
-              <FileName>mprotect.c</FileName>
+              <FileName>mprotect_example_ro_data.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\mprotect\mprotect.c</FilePath>
+              <FilePath>..\..\..\components\mprotect\examples\mprotect_example_ro_data.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>mprotect_example_exception_hook.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\components\mprotect\examples\mprotect_example_exception_hook.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1454,16 +1480,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>mprotect_example_ro_data.c</FileName>
+              <FileName>mprotect.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\components\mprotect\examples\mprotect_example_ro_data.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>mprotect_example_exception_hook.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\..\..\components\mprotect\examples\mprotect_example_exception_hook.c</FilePath>
+              <FilePath>..\..\..\components\mprotect\mprotect.c</FilePath>
             </File>
           </Files>
         </Group>

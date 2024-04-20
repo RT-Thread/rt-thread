@@ -229,7 +229,6 @@
           <state>RT_USING_LIBC</state>
           <state>_DLIB_ADD_EXTRA_SYMBOLS=0</state>
           <state>_DLIB_FILE_DESCRIPTOR</state>
-          <state>_DLIB_THREAD_SUPPORT</state>
           <state>STM32H750xx</state>
           <state>__RTTHREAD__</state>
           <state>USE_HAL_DRIVER</state>
@@ -1305,7 +1304,6 @@
           <state>RT_USING_LIBC</state>
           <state>_DLIB_ADD_EXTRA_SYMBOLS=0</state>
           <state>_DLIB_FILE_DESCRIPTOR</state>
-          <state>_DLIB_THREAD_SUPPORT</state>
           <state>STM32H750xx</state>
           <state>__RTTHREAD__</state>
           <state>USE_HAL_DRIVER</state>
@@ -2215,6 +2213,9 @@
       <name>$PROJ_DIR$\..\..\..\components\drivers\ipc\completion.c</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\..\..\..\components\drivers\ipc\condvar.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\..\..\components\drivers\ipc\dataqueue.c</name>
     </file>
     <file>
@@ -2323,7 +2324,7 @@
       <name>$PROJ_DIR$\..\..\..\components\fal\src\fal_flash.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\fal\src\fal_partition.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\fal\src\fal.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\components\fal\samples\porting\fal_flash_sfud_port.c</name>
@@ -2332,7 +2333,7 @@
       <name>$PROJ_DIR$\..\..\..\components\fal\src\fal_rtt.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\fal\src\fal.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\fal\src\fal_partition.c</name>
     </file>
   </group>
   <group>

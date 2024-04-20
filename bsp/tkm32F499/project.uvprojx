@@ -488,6 +488,25 @@
           </Files>
           <Files>
             <File>
+              <FileName>condvar.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\ipc\condvar.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>dataqueue.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\drivers\ipc\dataqueue.c</FilePath>
@@ -1048,30 +1067,16 @@
           <GroupName>TKM32_Lib</GroupName>
           <Files>
             <File>
-              <FileName>HAL_misc.c</FileName>
+              <FileName>HAL_gpio.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\Hal_lib\src\HAL_misc.c</FilePath>
+              <FilePath>Libraries\Hal_lib\src\HAL_gpio.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>HAL_dma_bak.c</FileName>
+              <FileName>HAL_wwdg.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\Hal_lib\src\HAL_dma_bak.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>HAL_tim.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\Hal_lib\src\HAL_tim.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>HAL_pwr.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\Hal_lib\src\HAL_pwr.c</FilePath>
+              <FilePath>Libraries\Hal_lib\src\HAL_wwdg.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1083,13 +1088,6 @@
           </Files>
           <Files>
             <File>
-              <FileName>startup_Tk499.s</FileName>
-              <FileType>2</FileType>
-              <FilePath>Libraries\CMSIS_and_startup\startup_Tk499.s</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>HAL_spi.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\Hal_lib\src\HAL_spi.c</FilePath>
@@ -1097,16 +1095,51 @@
           </Files>
           <Files>
             <File>
-              <FileName>HAL_exti.c</FileName>
+              <FileName>HAL_iwdg.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\Hal_lib\src\HAL_exti.c</FilePath>
+              <FilePath>Libraries\Hal_lib\src\HAL_iwdg.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>HAL_dma.c</FileName>
+              <FileName>HAL_tim.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\Hal_lib\src\HAL_dma.c</FilePath>
+              <FilePath>Libraries\Hal_lib\src\HAL_tim.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>startup_Tk499.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>Libraries\CMSIS_and_startup\startup_Tk499.s</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>HAL_misc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\Hal_lib\src\HAL_misc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>HAL_rcc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\Hal_lib\src\HAL_rcc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>HAL_can.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\Hal_lib\src\HAL_can.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>HAL_dma_bak.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\Hal_lib\src\HAL_dma_bak.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1125,6 +1158,13 @@
           </Files>
           <Files>
             <File>
+              <FileName>HAL_exti.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>Libraries\Hal_lib\src\HAL_exti.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>HAL_uart.c</FileName>
               <FileType>1</FileType>
               <FilePath>Libraries\Hal_lib\src\HAL_uart.c</FilePath>
@@ -1132,37 +1172,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>HAL_can.c</FileName>
+              <FileName>HAL_dma.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\Hal_lib\src\HAL_can.c</FilePath>
+              <FilePath>Libraries\Hal_lib\src\HAL_dma.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>HAL_wwdg.c</FileName>
+              <FileName>HAL_pwr.c</FileName>
               <FileType>1</FileType>
-              <FilePath>Libraries\Hal_lib\src\HAL_wwdg.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>HAL_iwdg.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\Hal_lib\src\HAL_iwdg.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>HAL_gpio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\Hal_lib\src\HAL_gpio.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>HAL_rcc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>Libraries\Hal_lib\src\HAL_rcc.c</FilePath>
+              <FilePath>Libraries\Hal_lib\src\HAL_pwr.c</FilePath>
             </File>
           </Files>
         </Group>

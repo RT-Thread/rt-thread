@@ -2211,6 +2211,9 @@
       <name>$PROJ_DIR$\..\..\..\components\drivers\ipc\completion.c</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\..\..\..\components\drivers\ipc\condvar.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\..\..\components\drivers\ipc\dataqueue.c</name>
     </file>
     <file>
@@ -2238,10 +2241,10 @@
   <group>
     <name>Drivers</name>
     <file>
-      <name>$PROJ_DIR$\drivers\drv_gpio.c</name>
+      <name>$PROJ_DIR$\drivers\drv_uart.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\drivers\drv_uart.c</name>
+      <name>$PROJ_DIR$\drivers\drv_gpio.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\drivers\board.c</name>

@@ -545,6 +545,25 @@
           </Files>
           <Files>
             <File>
+              <FileName>condvar.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\..\..\..\components\drivers\ipc\condvar.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>dataqueue.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\..\..\..\components\drivers\ipc\dataqueue.c</FilePath>
@@ -1462,9 +1481,9 @@
           <GroupName>rt_usbd</GroupName>
           <Files>
             <File>
-              <FileName>cdc_vcom.c</FileName>
+              <FileName>mstorage.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\components\drivers\usb\usbdevice\class\cdc_vcom.c</FilePath>
+              <FilePath>..\..\..\..\..\components\drivers\usb\usbdevice\class\mstorage.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1476,16 +1495,16 @@
           </Files>
           <Files>
             <File>
-              <FileName>usbdevice.c</FileName>
+              <FileName>cdc_vcom.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\components\drivers\usb\usbdevice\core\usbdevice.c</FilePath>
+              <FilePath>..\..\..\..\..\components\drivers\usb\usbdevice\class\cdc_vcom.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>mstorage.c</FileName>
+              <FileName>usbdevice.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\..\..\..\..\components\drivers\usb\usbdevice\class\mstorage.c</FilePath>
+              <FilePath>..\..\..\..\..\components\drivers\usb\usbdevice\core\usbdevice.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1493,16 +1512,16 @@
           <GroupName>xip</GroupName>
           <Files>
             <File>
-              <FileName>fsl_flexspi_nor_flash.c</FileName>
+              <FileName>fsl_flexspi_nor_boot.c</FileName>
               <FileType>1</FileType>
-              <FilePath>xip\fsl_flexspi_nor_flash.c</FilePath>
+              <FilePath>xip\fsl_flexspi_nor_boot.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>fsl_flexspi_nor_boot.c</FileName>
+              <FileName>fsl_flexspi_nor_flash.c</FileName>
               <FileType>1</FileType>
-              <FilePath>xip\fsl_flexspi_nor_boot.c</FilePath>
+              <FilePath>xip\fsl_flexspi_nor_flash.c</FilePath>
             </File>
           </Files>
         </Group>

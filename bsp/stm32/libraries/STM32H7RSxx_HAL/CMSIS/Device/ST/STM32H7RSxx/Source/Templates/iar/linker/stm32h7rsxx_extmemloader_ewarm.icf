@@ -13,7 +13,7 @@ define symbol __ICFEDIT_region_DTCM_start__  = 0x20000000;
 define symbol __ICFEDIT_region_DTCM_end__    = 0x2000FFFF;
 /*-Sizes-*/
 define symbol __ICFEDIT_size_cstack__ = 0x400;
-define symbol __ICFEDIT_size_heap__   = 0x8;    /* not used defined the min size */
+define symbol __ICFEDIT_size_heap__   = 0x000;    /* not used defined the min size */
 /**** End of ICF editor section. ###ICF###*/
 
 define memory mem with size = 4G;

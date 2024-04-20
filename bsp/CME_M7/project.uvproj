@@ -545,6 +545,25 @@
           </Files>
           <Files>
             <File>
+              <FileName>condvar.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\..\components\drivers\ipc\condvar.c</FilePath>
+              <FileOption>
+                <FileArmAds>
+                  <Cads>
+                    <VariousControls>
+                      <MiscControls> </MiscControls>
+                      <Define>__RT_IPC_SOURCE__</Define>
+                      <Undefine> </Undefine>
+                      <IncludePath> </IncludePath>
+                    </VariousControls>
+                  </Cads>
+                </FileArmAds>
+              </FileOption>
+            </File>
+          </Files>
+          <Files>
+            <File>
               <FileName>dataqueue.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\..\components\drivers\ipc\dataqueue.c</FilePath>
@@ -1147,79 +1166,9 @@
           <GroupName>Libraries</GroupName>
           <Files>
             <File>
-              <FileName>cmem7_efuse.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>StdPeriph_Driver\src\cmem7_efuse.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cmem7_eth.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>StdPeriph_Driver\src\cmem7_eth.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cmem7_flash.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>StdPeriph_Driver\src\cmem7_flash.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cmem7_adc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>StdPeriph_Driver\src\cmem7_adc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
               <FileName>cmem7_i2c.c</FileName>
               <FileType>1</FileType>
               <FilePath>StdPeriph_Driver\src\cmem7_i2c.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cmem7_dma.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>StdPeriph_Driver\src\cmem7_dma.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cmem7_gpio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>StdPeriph_Driver\src\cmem7_gpio.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cmem7_misc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>StdPeriph_Driver\src\cmem7_misc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cmem7_wdg.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>StdPeriph_Driver\src\cmem7_wdg.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cmem7_rtc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>StdPeriph_Driver\src\cmem7_rtc.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cmem7_can.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>StdPeriph_Driver\src\cmem7_can.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1231,16 +1180,9 @@
           </Files>
           <Files>
             <File>
-              <FileName>cmem7_spi.c</FileName>
+              <FileName>cmem7_wdg.c</FileName>
               <FileType>1</FileType>
-              <FilePath>StdPeriph_Driver\src\cmem7_spi.c</FilePath>
-            </File>
-          </Files>
-          <Files>
-            <File>
-              <FileName>cmem7_ddr.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>StdPeriph_Driver\src\cmem7_ddr.c</FilePath>
+              <FilePath>StdPeriph_Driver\src\cmem7_wdg.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1252,9 +1194,37 @@
           </Files>
           <Files>
             <File>
-              <FileName>cmem7_usb.c</FileName>
+              <FileName>cmem7_eth.c</FileName>
               <FileType>1</FileType>
-              <FilePath>StdPeriph_Driver\src\cmem7_usb.c</FilePath>
+              <FilePath>StdPeriph_Driver\src\cmem7_eth.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cmem7_gpio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>StdPeriph_Driver\src\cmem7_gpio.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cmem7_spi.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>StdPeriph_Driver\src\cmem7_spi.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cmem7_dma.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>StdPeriph_Driver\src\cmem7_dma.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cmem7_rtc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>StdPeriph_Driver\src\cmem7_rtc.c</FilePath>
             </File>
           </Files>
           <Files>
@@ -1262,6 +1232,55 @@
               <FileName>cmem7_uart.c</FileName>
               <FileType>1</FileType>
               <FilePath>StdPeriph_Driver\src\cmem7_uart.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cmem7_flash.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>StdPeriph_Driver\src\cmem7_flash.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cmem7_can.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>StdPeriph_Driver\src\cmem7_can.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cmem7_usb.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>StdPeriph_Driver\src\cmem7_usb.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cmem7_ddr.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>StdPeriph_Driver\src\cmem7_ddr.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cmem7_adc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>StdPeriph_Driver\src\cmem7_adc.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cmem7_efuse.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>StdPeriph_Driver\src\cmem7_efuse.c</FilePath>
+            </File>
+          </Files>
+          <Files>
+            <File>
+              <FileName>cmem7_misc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>StdPeriph_Driver\src\cmem7_misc.c</FilePath>
             </File>
           </Files>
         </Group>

@@ -229,7 +229,6 @@
           <state>RT_USING_LIBC</state>
           <state>_DLIB_ADD_EXTRA_SYMBOLS=0</state>
           <state>_DLIB_FILE_DESCRIPTOR</state>
-          <state>_DLIB_THREAD_SUPPORT</state>
           <state>__RTTHREAD__</state>
           <state>SDK_DEBUGCONSOLE=0</state>
           <state>CORE_M4</state>
@@ -1302,7 +1301,6 @@
           <state>RT_USING_LIBC</state>
           <state>_DLIB_ADD_EXTRA_SYMBOLS=0</state>
           <state>_DLIB_FILE_DESCRIPTOR</state>
-          <state>_DLIB_THREAD_SUPPORT</state>
           <state>__RTTHREAD__</state>
           <state>SDK_DEBUGCONSOLE=0</state>
           <state>CORE_M4</state>
@@ -2219,6 +2217,9 @@
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\..\components\drivers\ipc\completion.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\..\components\drivers\ipc\condvar.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\..\components\drivers\ipc\dataqueue.c</name>

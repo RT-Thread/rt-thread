@@ -160,7 +160,6 @@
           <state>RT_USING_LIBC</state>
           <state>_DLIB_ADD_EXTRA_SYMBOLS=0</state>
           <state>_DLIB_FILE_DESCRIPTOR</state>
-          <state>_DLIB_THREAD_SUPPORT</state>
           <state>__RTTHREAD__</state>
           <state>__RT_IPC_SOURCE__</state>
           <state>__RT_KERNEL_SOURCE__</state>
@@ -1060,7 +1059,6 @@
           <state>RT_USING_LIBC</state>
           <state>_DLIB_ADD_EXTRA_SYMBOLS=0</state>
           <state>_DLIB_FILE_DESCRIPTOR</state>
-          <state>_DLIB_THREAD_SUPPORT</state>
           <state>__RTTHREAD__</state>
           <state>__RT_IPC_SOURCE__</state>
           <state>__RT_KERNEL_SOURCE__</state>
@@ -1878,6 +1876,9 @@
       <name>$PROJ_DIR$\..\..\..\..\components\drivers\ipc\completion.c</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\..\..\..\..\components\drivers\ipc\condvar.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\..\..\..\components\drivers\ipc\dataqueue.c</name>
     </file>
     <file>
@@ -1905,22 +1906,22 @@
   <group>
     <name>Drivers</name>
     <file>
-      <name>$PROJ_DIR$\drivers\board.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\drivers\sd.c</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\drivers\led.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\drivers\spi.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\drivers\board.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\drivers\emac.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\drivers\uart.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\drivers\led.c</name>
     </file>
   </group>
   <group>
