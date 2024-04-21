@@ -1,0 +1,11 @@
+# Available style options are described in https://clang.llvm.org/docs/ClangFormatStyleOptions.html
+#
+# An easy way to create the .clang-format file is:
+#
+# clang-format -style=llvm -dump-config > .clang-format
+#
+---
+Language: Cpp
+DisableFormat: true
+---
+
