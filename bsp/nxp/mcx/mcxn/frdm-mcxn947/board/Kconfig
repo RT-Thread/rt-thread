@@ -57,6 +57,7 @@ menu "On-chip Peripheral Drivers"
         config BSP_USING_SPI
             bool "Enable SPI"
             select RT_USING_SPI
+            select BSP_USING_PIN
             default y
 
             if BSP_USING_SPI
@@ -194,6 +195,7 @@ menu "Board extended module Drivers"
     menuconfig BSP_USING_RW007
         bool "Enable RW007"
         default n
+        select BSP_USING_SPI
         select BSP_USING_SPI1
         select PKG_USING_RW007
         select RT_USING_MEMPOOL
