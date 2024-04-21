@@ -18,7 +18,7 @@
 * Description : This function handles I2S interrupt request.
 * Input       : 
 * Outpu       : 
-* Author      : Chris_Kyle                         Data : 2020Äê
+* Author      : Chris_Kyle                         Data : 2020å¹´
 **********************************************************************************/
 void HAL_I2S_IRQHandler(I2S_HandleTypeDef *hi2s)
 {
@@ -61,7 +61,7 @@ void HAL_I2S_IRQHandler(I2S_HandleTypeDef *hi2s)
 * Description : 
 * Input       : 
 * Outpu       : 
-* Author      : Chris_Kyle                         Data : 2020Äê
+* Author      : Chris_Kyle                         Data : 2020å¹´
 **********************************************************************************/
 __weak void HAL_I2S_MspInit(I2S_HandleTypeDef *hi2s)
 {
@@ -101,7 +101,7 @@ __weak void HAL_I2S_MspInit(I2S_HandleTypeDef *hi2s)
 * Description : 
 * Input       : 
 * Outpu       : 
-* Author      : Chris_Kyle                         Data : 2020Äê
+* Author      : Chris_Kyle                         Data : 2020å¹´
 **********************************************************************************/
 __weak void HAL_I2S_MspDeInit(I2S_HandleTypeDef *hi2s)
 {
@@ -133,7 +133,7 @@ __weak void HAL_I2S_MspDeInit(I2S_HandleTypeDef *hi2s)
 * Input       : hi2s: pointer to a I2S_HandleTypeDef structure that contains
 *                     the configuration information for I2S module
 * Outpu       : 
-* Author      : Chris_Kyle                         Data : 2020Äê
+* Author      : Chris_Kyle                         Data : 2020å¹´
 **********************************************************************************/
 HAL_StatusTypeDef HAL_I2S_Init(I2S_HandleTypeDef *hi2s)
 {
@@ -155,7 +155,7 @@ HAL_StatusTypeDef HAL_I2S_Init(I2S_HandleTypeDef *hi2s)
     hi2s->Instance->CTL = 0x00000000;
     hi2s->Instance->PSC = 0x00000000;
 
-    /* Mode¡¢Standard¡¢CPOL¡¢Dataformat */
+    /* Modeã€Standardã€CPOLã€Dataformat */
     hi2s->Instance->CTL = hi2s->Init.u32_Mode | hi2s->Init.u32_Standard | hi2s->Init.u32_CPOL | hi2s->Init.u32_DataFormat;
     /* Frequency */
     hi2s->Instance->PSC = hi2s->Init.u32_MCLKOutput | hi2s->Init.u32_FreqOF | hi2s->Init.u32_FreqDIV;
@@ -178,7 +178,7 @@ HAL_StatusTypeDef HAL_I2S_Init(I2S_HandleTypeDef *hi2s)
 * Input       : hi2s: pointer to a I2S_HandleTypeDef structure that contains
 *                     the configuration information for I2S module
 * Outpu       : 
-* Author      : Chris_Kyle                         Data : 2020Äê
+* Author      : Chris_Kyle                         Data : 2020å¹´
 **********************************************************************************/
 HAL_StatusTypeDef HAL_I2S_DeInit(I2S_HandleTypeDef *hi2s)
 {
@@ -205,7 +205,7 @@ HAL_StatusTypeDef HAL_I2S_DeInit(I2S_HandleTypeDef *hi2s)
 * Input       : Size: number of data sample to be sent
 * Input       : fu32_Timeout: Timeout duration
 * Outpu       : 
-* Author      : Chris_Kyle                         Data : 2020Äê
+* Author      : Chris_Kyle                         Data : 2020å¹´
 **********************************************************************************/
 HAL_StatusTypeDef HAL_I2S_Transmit(I2S_HandleTypeDef *hi2s, uint32_t *fp32_Data, uint32_t fu32_Size, uint32_t fu32_Timeout)
 {
@@ -270,7 +270,7 @@ HAL_StatusTypeDef HAL_I2S_Transmit(I2S_HandleTypeDef *hi2s, uint32_t *fp32_Data,
 * Input       : Size: number of data sample to be Receive
 * Input       : fu32_Timeout: Timeout duration
 * Outpu       : 
-* Author      : Chris_Kyle                         Data : 2020Äê
+* Author      : Chris_Kyle                         Data : 2020å¹´
 **********************************************************************************/
 HAL_StatusTypeDef HAL_I2S_Receive(I2S_HandleTypeDef *hi2s, uint32_t *fp32_Data, uint32_t fu32_Size, uint32_t fu32_Timeout)
 {
@@ -338,7 +338,7 @@ HAL_StatusTypeDef HAL_I2S_Receive(I2S_HandleTypeDef *hi2s, uint32_t *fp32_Data, 
 * Input       : fp32_Data: a 32-bit pointer to data buffer.
 * Input       : Size: number of data sample to be send
 * Outpu       : 
-* Author      : Chris_Kyle                         Data : 2020Äê
+* Author      : Chris_Kyle                         Data : 2020å¹´
 **********************************************************************************/
 HAL_StatusTypeDef HAL_I2S_Transmit_IT(I2S_HandleTypeDef *hi2s, uint32_t *fp32_Data, uint32_t fu32_Size)
 {
@@ -373,7 +373,7 @@ HAL_StatusTypeDef HAL_I2S_Transmit_IT(I2S_HandleTypeDef *hi2s, uint32_t *fp32_Da
 * Input       : fp32_Data: a 32-bit pointer to data buffer.
 * Input       : Size: number of data sample to be Receive
 * Outpu       : 
-* Author      : Chris_Kyle                         Data : 2020Äê
+* Author      : Chris_Kyle                         Data : 2020å¹´
 **********************************************************************************/
 HAL_StatusTypeDef HAL_I2S_Receive_IT(I2S_HandleTypeDef *hi2s, uint32_t *fp32_Data, uint32_t fu32_Size)
 {
@@ -419,7 +419,7 @@ HAL_StatusTypeDef HAL_I2S_Receive_IT(I2S_HandleTypeDef *hi2s, uint32_t *fp32_Dat
 * Input       : fp32_Data: 32-bit pointer to data buffer.
 * Input       : Size: number of data sample to be sent
 * Outpu       : 
-* Author      : Chris_Kyle                         Data : 2020Äê
+* Author      : Chris_Kyle                         Data : 2020å¹´
 **********************************************************************************/
 HAL_StatusTypeDef HAL_I2S_Transmit_DMA(I2S_HandleTypeDef *hi2s, uint32_t *fp32_Data, uint32_t fu32_Size)
 {
@@ -458,7 +458,7 @@ HAL_StatusTypeDef HAL_I2S_Transmit_DMA(I2S_HandleTypeDef *hi2s, uint32_t *fp32_D
 * Input       : fp32_Data: a 32-bit pointer to data buffer.
 * Input       : Size: number of data sample to be Receive
 * Outpu       : 
-* Author      : Chris_Kyle                         Data : 2020Äê
+* Author      : Chris_Kyle                         Data : 2020å¹´
 **********************************************************************************/
 HAL_StatusTypeDef HAL_I2S_Receive_DMA(I2S_HandleTypeDef *hi2s, uint32_t *fp32_Data, uint32_t fu32_Size)
 {
