@@ -358,6 +358,8 @@ rt_err_t rt_hw_serial_unregister_tty(struct rt_serial_device *serial)
     softc = tty_softc(tp);
     serial->rx_notify = softc->backup_notify;
 
+    tty_lock(tp);
+
     tty_rel_gone(tp);
 
     /* device unregister? */

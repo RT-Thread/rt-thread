@@ -18,7 +18,7 @@
 * Description : LPUART IRQHander 
 * Input       : 
 * Outpu       : 
-* Author      : CWT                         Data : 2020Äê
+* Author      : CWT                         Data : 2020å¹´
 **********************************************************************************/ 
 void HAL_LPUART_IRQHander(LPUART_HandleTypeDef *hlpuart)  
 {
@@ -85,7 +85,7 @@ __weak void HAL_LPUART_MSPInit(LPUART_HandleTypeDef *hlpuart)
 * Input       : hcan : pointer to a CAN_HandleTypeDef structure that contains
 *                      the configuration information for CAN module
 * Output      : 
-* Author      : CWT                         Data : 2020Äê
+* Author      : CWT                         Data : 2020å¹´
 **********************************************************************************/
 void HAL_LPUART_MspDeInit(LPUART_HandleTypeDef *hlpuart)
 {
@@ -224,7 +224,7 @@ uint8_t HAL_LPUART_Config(LPUART_HandleTypeDef *hlpuart)
 * Description : Select the LPUART clock. 
 * Input       : lpuart_clk_src:Could be LPUART_CLOCK_SOURCE_RC32K        LPUART_CLOCK_SOURCE_XTAL       LPUART_CLOCK_SOURCE_PLL_DIV
 * Outpu       : 
-* Author      : CWT                         Data : 2020Äê
+* Author      : CWT                         Data : 2020å¹´
 **********************************************************************************/ 
 void LPUART_Clock_Select(uint8_t lpuart_clk_src)
 {

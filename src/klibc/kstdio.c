@@ -32,16 +32,16 @@
  *
  * @return the duplicated string pointer.
  */
-#ifdef RT_KPRINTF_USING_LONGLONG
+#ifdef RT_KLIBC_USING_PRINTF_LONGLONG
 rt_inline int divide(unsigned long long *n, int base)
 #else
 rt_inline int divide(unsigned long *n, int base)
-#endif /* RT_KPRINTF_USING_LONGLONG */
+#endif /* RT_KLIBC_USING_PRINTF_LONGLONG */
 {
     int res;
 
     /* optimized for processor which does not support divide instructions. */
-#ifdef RT_KPRINTF_USING_LONGLONG
+#ifdef RT_KLIBC_USING_PRINTF_LONGLONG
     res = (int)((*n) % base);
     *n = (long long)((*n) / base);
 #else
@@ -71,11 +71,11 @@ rt_inline int skip_atoi(const char **s)
 
 static char *print_number(char *buf,
                           char *end,
-#ifdef RT_KPRINTF_USING_LONGLONG
+#ifdef RT_KLIBC_USING_PRINTF_LONGLONG
                           unsigned long long  num,
 #else
                           unsigned long  num,
-#endif /* RT_KPRINTF_USING_LONGLONG */
+#endif /* RT_KLIBC_USING_PRINTF_LONGLONG */
                           int   base,
                           int   qualifier,
                           int   s,
@@ -83,11 +83,11 @@ static char *print_number(char *buf,
                           int   type)
 {
     char c = 0, sign = 0;
-#ifdef RT_KPRINTF_USING_LONGLONG
+#ifdef RT_KLIBC_USING_PRINTF_LONGLONG
     char tmp[64] = {0};
 #else
     char tmp[32] = {0};
-#endif /* RT_KPRINTF_USING_LONGLONG */
+#endif /* RT_KLIBC_USING_PRINTF_LONGLONG */
     int precision_bak = precision;
     const char *digits = RT_NULL;
     static const char small_digits[] = "0123456789abcdef";
@@ -307,11 +307,11 @@ static char *print_number(char *buf,
  */
 rt_weak int rt_vsnprintf(char *buf, rt_size_t size, const char *fmt, va_list args)
 {
-#ifdef RT_KPRINTF_USING_LONGLONG
+#ifdef RT_KLIBC_USING_PRINTF_LONGLONG
     unsigned long long num = 0;
 #else
     unsigned long num = 0;
-#endif /* RT_KPRINTF_USING_LONGLONG */
+#endif /* RT_KLIBC_USING_PRINTF_LONGLONG */
     int i = 0, len = 0;
     char *str = RT_NULL, *end = RT_NULL, c = 0;
     const char *s = RT_NULL;
@@ -402,20 +402,20 @@ rt_weak int rt_vsnprintf(char *buf, rt_size_t size, const char *fmt, va_list arg
         qualifier = 0; /* get the conversion qualifier */
 
         if (*fmt == 'h' || *fmt == 'l' ||
-#ifdef RT_KPRINTF_USING_LONGLONG
+#ifdef RT_KLIBC_USING_PRINTF_LONGLONG
             *fmt == 'L' ||
-#endif /* RT_KPRINTF_USING_LONGLONG */
+#endif /* RT_KLIBC_USING_PRINTF_LONGLONG */
             *fmt == 'z')
         {
             qualifier = *fmt;
             ++fmt;
-#ifdef RT_KPRINTF_USING_LONGLONG
+#ifdef RT_KLIBC_USING_PRINTF_LONGLONG
             if (qualifier == 'l' && *fmt == 'l')
             {
                 qualifier = 'L';
                 ++fmt;
             }
-#endif /* RT_KPRINTF_USING_LONGLONG */
+#endif /* RT_KLIBC_USING_PRINTF_LONGLONG */
             if (qualifier == 'h' && *fmt == 'h')
             {
                 qualifier = 'H';

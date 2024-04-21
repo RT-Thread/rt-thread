@@ -1,4 +1,4 @@
-/*
+﻿/*
   ******************************************************************************
   * @file    HAL_RTC.c
   * @version V1.0.0
@@ -24,7 +24,7 @@
 * Description : Initialize the RTC peripheral
 * Input       :
 * Outpu       :
-* Author      : Chris_Kyle                         Data : 2020定
+* Author      : Chris_Kyle                         Data : 2020年
 **********************************************************************************/
 HAL_StatusTypeDef HAL_RTC_Config(RTC_ConfigTypeDef *hrtc)
 {

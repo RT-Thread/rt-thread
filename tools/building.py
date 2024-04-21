@@ -22,7 +22,7 @@
 # 2015-01-20     Bernard      Add copyright information
 # 2015-07-25     Bernard      Add LOCAL_CCFLAGS/LOCAL_CPPPATH/LOCAL_CPPDEFINES for
 #                             group definition.
-#
+# 2024-04-21     Bernard      Add toolchain detection in sdk packages
 
 import os
 import sys
@@ -36,7 +36,6 @@ from SCons.Script import *
 from utils import _make_path_relative
 from mkdist import do_copy_file
 from options import AddOptions
-
 
 BuildOptions = {}
 Projects = []
@@ -196,10 +195,26 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
         os.environ['RTT_CC_PREFIX'] = exec_prefix
 
     # auto change the 'RTT_EXEC_PATH' when 'rtconfig.EXEC_PATH' get failed
-    if not os.path.exists(rtconfig.EXEC_PATH):
+    if not os.path.exists(os.path.join(rtconfig.EXEC_PATH, rtconfig.CC)):
         if 'RTT_EXEC_PATH' in os.environ:
             # del the 'RTT_EXEC_PATH' and using the 'EXEC_PATH' setting on rtconfig.py
             del os.environ['RTT_EXEC_PATH']
+
+        try:
+            # try to detect toolchains in env
+            envm = utils.ImportModule('env')
+            # from env import GetSDKPath
+            exec_path = envm.GetSDKPath(rtconfig.CC)
+            if 'gcc' in rtconfig.CC:
+                exec_path = os.path.join(exec_path, 'bin')
+
+            if os.path.exists(exec_path):
+                print('set CC to ' + exec_path)
+                rtconfig.EXEC_PATH = exec_path
+                os.environ['RTT_EXEC_PATH'] = exec_path
+        except Exception as e:
+            # detect failed, ignore
+            pass
 
     exec_path = GetOption('exec-path')
     if exec_path:
