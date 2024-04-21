@@ -1,0 +1,5 @@
+{
+    cmdlines = {
+        "xmake lua /usr/share/xmake/actions/build/cleaner.lua --file=/home/rcitachi/workspace/rt-thread/bsp/qemu-virt64-aarch64/../../components/vdso/usr/xmake.lua"
+    }
+}

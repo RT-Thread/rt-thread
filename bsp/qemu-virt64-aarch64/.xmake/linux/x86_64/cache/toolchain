@@ -1,0 +1,30 @@
+{
+    ["aarch64-smart-musleabi_arch_aarch64_plat_cross"] = {
+        plat = "cross",
+        arch = "aarch64",
+        __global = true,
+        bindir = "/opt/aarch64-linux-musleabi/bin",
+        cross = "aarch64-linux-musleabi-",
+        sdkdir = "/opt/aarch64-linux-musleabi/bin//../"
+    },
+    tool_target_rtos_vdso_cross_aarch64_sh = {
+        program = "/opt/aarch64-linux-musleabi/bin/aarch64-linux-musleabi-g++",
+        toolname = "gxx",
+        toolchain_info = {
+            plat = "cross",
+            arch = "aarch64",
+            name = "aarch64-smart-musleabi",
+            cachekey = "aarch64-smart-musleabi_arch_aarch64_plat_cross"
+        }
+    },
+    tool_target_rtos_vdso_cross_aarch64_cc = {
+        program = "/opt/aarch64-linux-musleabi/bin/aarch64-linux-musleabi-gcc",
+        toolname = "gcc",
+        toolchain_info = {
+            plat = "cross",
+            arch = "aarch64",
+            name = "aarch64-smart-musleabi",
+            cachekey = "aarch64-smart-musleabi_arch_aarch64_plat_cross"
+        }
+    }
+}

@@ -1,0 +1,12 @@
+{
+    cmdlines = {
+        "xmake -F /home/rcitachi/workspace/rt-thread/bsp/qemu-virt64-aarch64/../../components/vdso/usr/xmake.lua",
+        "xmake -F /home/rcitachi/workspace/rt-thread/bsp/qemu-virt64-aarch64/../../components/vdso/usr/xmake.lua",
+        "xmake -F /home/rcitachi/workspace/rt-thread/bsp/qemu-virt64-aarch64/../../components/vdso/usr/xmake.lua",
+        "xmake -F /home/rcitachi/workspace/rt-thread/bsp/qemu-virt64-aarch64/../../components/vdso/usr/xmake.lua",
+        "xmake -F /home/rcitachi/workspace/rt-thread/bsp/qemu-virt64-aarch64/../../components/vdso/usr/xmake.lua",
+        "xmake -F /home/rcitachi/workspace/rt-thread/bsp/qemu-virt64-aarch64/../../components/vdso/usr/xmake.lua",
+        "xmake -F /home/rcitachi/workspace/rt-thread/bsp/qemu-virt64-aarch64/../../components/vdso/usr/xmake.lua",
+        "xmake -F /home/rcitachi/workspace/rt-thread/bsp/qemu-virt64-aarch64/../../components/vdso/usr/xmake.lua"
+    }
+}

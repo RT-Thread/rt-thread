@@ -1,8 +1,8 @@
 #include <rtthread.h>
 #include <lwp_user_mm.h>
 
-#include "vdso.h"
 #include "vdso_datapage.h"
+#include "vdso.h"
 
 #define DBG_TAG    "vdso"
 #define DBG_LVL    DBG_INFO

@@ -15,7 +15,7 @@ from building import *
 
 TARGET = 'rtthread.' + rtconfig.TARGET_EXT
 TRACE_CONFIG = ""
-
+USING_VDSO = False
 content = ""
 with open("rtconfig.h") as f:
     for line in f.readlines():

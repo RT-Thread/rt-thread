@@ -12,7 +12,6 @@ extern "C" {
 
 #define VDSO_DATAPAGE __attribute__((section(".data.vdso.datapage")))///< vdso分页数据区
 
-extern char __vdso_data_start[];	///< 数据区起始地址 __vdso_data_start < __vdso_text_start
 extern char __vdso_text_start[];	///< 代码区起始地址
 extern char __vdso_text_end[];	///< 代码区结束地址
 

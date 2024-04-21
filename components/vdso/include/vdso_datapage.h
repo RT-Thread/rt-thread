@@ -18,6 +18,30 @@ typedef struct {//Vdso数据页结构体
 } VdsoDataPage;
 
 
+extern char __vdso_data_start[];	///< 数据区起始地址 __vdso_data_start < __vdso_text_start
+static inline const  VdsoDataPage *__arch_get_vdso_data(void)
+{
+	const VdsoDataPage *ret;
+
+	/*
+	 * This simply puts &_vdso_data into ret. The reason why we don't use
+	 * `ret = _vdso_data` is that the compiler tends to optimise this in a
+	 * very suboptimal way: instead of keeping &_vdso_data in a register,
+	 * it goes through a relocation almost every time _vdso_data must be
+	 * accessed (even in subfunctions). This is both time and space
+	 * consuming: each relocation uses a word in the code section, and it
+	 * has to be loaded at runtime.
+	 *
+	 * This trick hides the assignment from the compiler. Since it cannot
+	 * track where the pointer comes from, it will only use one relocation
+	 * where __arch_get_vdso_data() is called, and then keep the result in
+	 * a register.
+	 */
+	asm volatile("mov %0, %1" : "=r"(ret) : "r"(__vdso_data_start));
+
+	return ret;
+};
+
 #ifdef __cplusplus
 #if __cplusplus
 }

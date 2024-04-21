@@ -1,0 +1,3 @@
+{
+    projectfile = "/home/rcitachi/workspace/rt-thread/bsp/qemu-virt64-aarch64/../../components/vdso/usr/xmake.lua"
+}

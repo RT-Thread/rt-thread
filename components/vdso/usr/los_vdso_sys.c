@@ -64,9 +64,8 @@ int
 __kernel_clock_gettime(clockid_t clock, struct timespec *ts)
 {	
 	int ret;
-	size_t vdsoStart;
-     
-	VdsoDataPage *usrVdsoDataPage = (VdsoDataPage *)(uintptr_t)vdsoStart;
+
+	VdsoDataPage *usrVdsoDataPage = __arch_get_vdso_data();
 
     switch (clock)
     {
