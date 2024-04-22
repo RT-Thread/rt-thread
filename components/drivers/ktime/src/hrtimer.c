@@ -356,37 +356,46 @@ rt_err_t rt_ktime_hrtimer_detach(rt_ktime_hrtimer_t timer)
 
 /************************** delay ***************************/
 
-rt_err_t rt_ktime_hrtimer_sleep(unsigned long cnt)
+void rt_ktime_hrtimer_delay_init(struct rt_ktime_hrtimer *timer)
 {
-    struct rt_ktime_hrtimer timer;
+    rt_ktime_hrtimer_init(timer, "hrtimer_sleep", 0, RT_TIMER_FLAG_ONE_SHOT | RT_TIMER_FLAG_HARD_TIMER,
+                          _sleep_timeout, &(timer->sem));
+}
+
+void rt_ktime_hrtimer_delay_detach(struct rt_ktime_hrtimer *timer)
+{
+    rt_ktime_hrtimer_detach(timer);
+}
+
+rt_err_t rt_ktime_hrtimer_sleep(struct rt_ktime_hrtimer *timer, unsigned long cnt)
+{
     rt_err_t err;
 
     if (cnt == 0)
         return -RT_EINVAL;
 
-    rt_ktime_hrtimer_init(&timer, "hrtimer_sleep", cnt, RT_TIMER_FLAG_ONE_SHOT | RT_TIMER_FLAG_HARD_TIMER,
-                          _sleep_timeout, &(timer.sem));
+    timer->timeout_cnt  = cnt + rt_ktime_cputimer_getcnt();
+    timer->init_cnt     = cnt;
 
-    rt_ktime_hrtimer_start(&timer); /* reset the timeout of thread timer and start it */
-    err = rt_sem_take_interruptible(&(timer.sem), RT_WAITING_FOREVER);
-    rt_ktime_hrtimer_keep_errno(&timer, err);
+    rt_ktime_hrtimer_start(timer); /* reset the timeout of thread timer and start it */
+    err = rt_sem_take_interruptible(&(timer->sem), RT_WAITING_FOREVER);
+    rt_ktime_hrtimer_keep_errno(timer, err);
 
-    rt_ktime_hrtimer_detach(&timer);
     return RT_EOK;
 }
 
-rt_err_t rt_ktime_hrtimer_ndelay(unsigned long ns)
+rt_err_t rt_ktime_hrtimer_ndelay(struct rt_ktime_hrtimer *timer, unsigned long ns)
 {
     unsigned long res = rt_ktime_cputimer_getres();
-    return rt_ktime_hrtimer_sleep((ns * RT_KTIME_RESMUL) / res);
+    return rt_ktime_hrtimer_sleep(timer, (ns * RT_KTIME_RESMUL) / res);
 }
 
-rt_err_t rt_ktime_hrtimer_udelay(unsigned long us)
+rt_err_t rt_ktime_hrtimer_udelay(struct rt_ktime_hrtimer *timer, unsigned long us)
 {
-    return rt_ktime_hrtimer_ndelay(us * 1000);
+    return rt_ktime_hrtimer_ndelay(timer, us * 1000);
 }
 
-rt_err_t rt_ktime_hrtimer_mdelay(unsigned long ms)
+rt_err_t rt_ktime_hrtimer_mdelay(struct rt_ktime_hrtimer *timer, unsigned long ms)
 {
-    return rt_ktime_hrtimer_ndelay(ms * 1000000);
+    return rt_ktime_hrtimer_ndelay(timer, ms * 1000000);
 }

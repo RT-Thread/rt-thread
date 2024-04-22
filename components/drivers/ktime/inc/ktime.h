@@ -139,13 +139,16 @@ rt_inline void rt_ktime_hrtimer_keep_errno(rt_ktime_hrtimer_t timer, rt_err_t er
     rt_set_errno(-err);
 }
 
+void rt_ktime_hrtimer_delay_init(struct rt_ktime_hrtimer *timer);
+void rt_ktime_hrtimer_delay_detach(struct rt_ktime_hrtimer *timer);
+
 /**
  * @brief sleep by the cputimer cnt value
  *
  * @param cnt: the cputimer cnt value
  * @return rt_err_t
  */
-rt_err_t rt_ktime_hrtimer_sleep(unsigned long cnt);
+rt_err_t rt_ktime_hrtimer_sleep(struct rt_ktime_hrtimer *timer, unsigned long cnt);
 
 /**
  * @brief sleep by ns
@@ -153,7 +156,7 @@ rt_err_t rt_ktime_hrtimer_sleep(unsigned long cnt);
  * @param ns: ns
  * @return rt_err_t
  */
-rt_err_t rt_ktime_hrtimer_ndelay(unsigned long ns);
+rt_err_t rt_ktime_hrtimer_ndelay(struct rt_ktime_hrtimer *timer, unsigned long ns);
 
 /**
  * @brief sleep by us
@@ -161,7 +164,7 @@ rt_err_t rt_ktime_hrtimer_ndelay(unsigned long ns);
  * @param us: us
  * @return rt_err_t
  */
-rt_err_t rt_ktime_hrtimer_udelay(unsigned long us);
+rt_err_t rt_ktime_hrtimer_udelay(struct rt_ktime_hrtimer *timer, unsigned long us);
 
 /**
  * @brief sleep by ms
@@ -169,6 +172,6 @@ rt_err_t rt_ktime_hrtimer_udelay(unsigned long us);
  * @param ms: ms
  * @return rt_err_t
  */
-rt_err_t rt_ktime_hrtimer_mdelay(unsigned long ms);
+rt_err_t rt_ktime_hrtimer_mdelay(struct rt_ktime_hrtimer *timer, unsigned long ms);
 
 #endif
