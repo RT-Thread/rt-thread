@@ -165,7 +165,7 @@ rt_err_t rt_data_queue_push(struct rt_data_queue *queue,
     }
 
     /* there is at least one thread in suspended list */
-    if (rt_susp_list_dequeue(&queue->suspended_push_list,
+    if (rt_susp_list_dequeue(&queue->suspended_pop_list,
                              RT_THREAD_RESUME_RES_THR_ERR))
     {
         /* unlock and perform a schedule */
