@@ -181,6 +181,26 @@ SECTIONS
         KEEP(*(.init))
         KEEP(*(.fini))
 
+        /* section information for finsh shell */
+        . = ALIGN(4);
+        __fsymtab_start = .;
+        KEEP(*(FSymTab))
+        __fsymtab_end = .;
+
+        . = ALIGN(4);
+        __vsymtab_start = .;
+        KEEP(*(VSymTab))
+        __vsymtab_end = .;
+
+        /* section information for initial. */
+        . = ALIGN(4);
+        __rt_init_start = .;
+        KEEP(*(SORT(.rti_fn*)))
+        __rt_init_end = .;
+
+        . = ALIGN(4);
+        KEEP(*(FalPartTable))
+
         /* .ctors */
         *crtbegin.o(.ctors)
         *crtbegin?.o(.ctors)
@@ -212,6 +232,14 @@ SECTIONS
         __usb_descriptor_end_hs = .;
 
         KEEP(*(.eh_frame*))
+
+        /* new GCC version uses .init_array */
+        PROVIDE(__ctors_start__ = .);
+        KEEP (*(SORT(.init_array.*)))
+        KEEP (*(.init_array))
+        PROVIDE(__ctors_end__ = .);
+
+        . = ALIGN(4);
 
         __ROM_End = .;
     } > FLASH = 0xFF
