@@ -252,45 +252,45 @@ int rt_hw_uart_init(void)
     PINMUX_CONFIG(UART0_RX, UART0_RX);
     PINMUX_CONFIG(UART0_TX, UART0_TX);
     BSP_INSTALL_UART_DEVICE(0);
-#if defined(ARCH_ARM) && defined(RT_USING_SMART)
+#if defined(ARCH_ARM)
     uart->hw_base = (rt_size_t)rt_ioremap((void*)uart->hw_base, 0x10000);
-#endif /* defined(ARCH_ARM) && defined(RT_USING_SMART) */
+#endif /* defined(ARCH_ARM) */
 #endif
 
 #ifdef RT_USING_UART1
     PINMUX_CONFIG(IIC0_SDA, UART1_RX);
     PINMUX_CONFIG(IIC0_SCL, UART1_TX);
     BSP_INSTALL_UART_DEVICE(1);
-#if defined(ARCH_ARM) && defined(RT_USING_SMART)
+#if defined(ARCH_ARM)
     uart->hw_base = (rt_size_t)rt_ioremap((void*)uart->hw_base, 0x10000);
-#endif /* defined(ARCH_ARM) && defined(RT_USING_SMART) */
+#endif /* defined(ARCH_ARM) */
 #endif
 
 #ifdef RT_USING_UART2
     PINMUX_CONFIG(SD1_D1, UART2_RX);
     PINMUX_CONFIG(SD1_D2, UART2_TX);
     BSP_INSTALL_UART_DEVICE(2);
-#if defined(ARCH_ARM) && defined(RT_USING_SMART)
+#if defined(ARCH_ARM)
     uart->hw_base = (rt_size_t)rt_ioremap((void*)uart->hw_base, 0x10000);
-#endif /* defined(ARCH_ARM) && defined(RT_USING_SMART) */
+#endif /* defined(ARCH_ARM) */
 #endif
 
 #ifdef RT_USING_UART3
     PINMUX_CONFIG(SD1_D1, UART3_RX);
     PINMUX_CONFIG(SD1_D2, UART3_TX);
     BSP_INSTALL_UART_DEVICE(3);
-#if defined(ARCH_ARM) && defined(RT_USING_SMART)
+#if defined(ARCH_ARM)
     uart->hw_base = (rt_size_t)rt_ioremap((void*)uart->hw_base, 0x10000);
-#endif /* defined(ARCH_ARM) && defined(RT_USING_SMART) */
+#endif /* defined(ARCH_ARM) */
 #endif
 
 #ifdef RT_USING_UART4
     PINMUX_CONFIG(SD1_GP0, UART4_RX);
     PINMUX_CONFIG(SD1_GP1, UART4_TX);
     BSP_INSTALL_UART_DEVICE(4);
-#if defined(ARCH_ARM) && defined(RT_USING_SMART)
+#if defined(ARCH_ARM)
     uart->hw_base = (rt_size_t)rt_ioremap((void*)uart->hw_base, 0x10000);
-#endif /* defined(ARCH_ARM) && defined(RT_USING_SMART) */
+#endif /* defined(ARCH_ARM) */
 #endif
 
     return 0;
