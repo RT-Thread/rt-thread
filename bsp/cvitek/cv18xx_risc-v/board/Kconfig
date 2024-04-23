@@ -66,4 +66,12 @@ menu "General Drivers Configuration"
             
         endif
 
+    config BSP_USING_SDH
+        select RT_USING_SDIO
+        select RT_USING_DFS
+        select RT_USING_DFS_ELMFAT
+        select RT_USING_DFS_ROMFS
+        bool "Enable Secure Digital Host Controller"
+        default n
+        
 endmenu
