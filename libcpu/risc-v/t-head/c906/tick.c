@@ -49,3 +49,22 @@ int rt_hw_tick_init(void)
 
     return 0;
 }
+
+/**
+ * This function will delay for some us.
+ *
+ * @param us the delay time of us
+ */
+void rt_hw_us_delay(rt_uint32_t us)
+{
+    unsigned long start_time;
+    unsigned long end_time;
+    unsigned long run_time;
+
+    start_time = get_ticks();
+    end_time = start_time + us * (TIMER_CLK_FREQ / 1000000);
+    do
+    {
+        run_time = get_ticks();
+    } while(run_time < end_time);
+}
