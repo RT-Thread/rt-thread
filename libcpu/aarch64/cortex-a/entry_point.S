@@ -278,7 +278,7 @@ init_mmu_early:
     get_phy x1, .early_tbl1_page
 
     get_pvoff x2 x3
-    ldr     x2, =0x40000000         /* Map 1G memory for kernel space */
+    ldr     x2, =ARCH_EARLY_MAP_SIZE    /* Map 1G memory for kernel space */
     bl      rt_hw_mem_setup_early
 
     b       enable_mmu_early

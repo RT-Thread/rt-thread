@@ -643,11 +643,11 @@ static rt_varea_t _varea_create(void *start, rt_size_t size)
 #define _IS_OVERFLOW(start, length) ((length) > (0ul - (uintptr_t)(start)))
 #define _IS_OVERSIZE(start, length, limit_s, limit_sz) (((length) + (rt_size_t)((char *)(start) - (char *)(limit_start))) > (limit_size))
 
-static inline int _not_in_range(void *start, rt_size_t length,
+static inline int _not_in_range(rt_size_t flags, void *start, rt_size_t length,
                                 void *limit_start, rt_size_t limit_size)
 {
     /* assuming (base + length) will not overflow except (0) */
-    int rc = start != RT_NULL
+    int rc = (flags & MMF_MAP_FIXED || start != RT_NULL)
                ? (_IS_OVERFLOW(start, length) || start < limit_start ||
                   _IS_OVERSIZE(start, length, limit_start, limit_size))
                : length > limit_size;
@@ -684,7 +684,7 @@ int rt_aspace_map(rt_aspace_t aspace, void **addr, rt_size_t length,
         LOG_I("%s(%p, %p, %lx, %lx, %lx, %p, %lx): Invalid input",
             __func__, aspace, addr, length, attr, flags, mem_obj, offset);
     }
-    else if (_not_in_range(*addr, length, aspace->start, aspace->size))
+    else if (_not_in_range(flags, *addr, length, aspace->start, aspace->size))
     {
         err = -RT_EINVAL;
         LOG_I("%s(addr:%p, len:%lx): out of range", __func__, *addr, length);
@@ -716,7 +716,7 @@ int rt_aspace_map_static(rt_aspace_t aspace, rt_varea_t varea, void **addr,
     int err;
 
     if (!aspace || !varea || !addr || !mem_obj || length == 0 ||
-        _not_in_range(*addr, length, aspace->start, aspace->size))
+        _not_in_range(flags, *addr, length, aspace->start, aspace->size))
     {
         err = -RT_EINVAL;
         LOG_W("%s: Invalid input", __func__);
@@ -766,9 +766,9 @@ int _mm_aspace_map_phy(rt_aspace_t aspace, rt_varea_t varea,
         LOG_W("%s: not aligned", __func__);
         err = -RT_EINVAL;
     }
-    else if (_not_in_range(hint->limit_start, hint->limit_range_size, aspace->start,
+    else if (_not_in_range(hint->flags, hint->limit_start, hint->limit_range_size, aspace->start,
                       aspace->size) ||
-        _not_in_range(hint->prefer, hint->map_size, aspace->start,
+        _not_in_range(hint->flags, hint->prefer, hint->map_size, aspace->start,
                       aspace->size))
     {
         LOG_W("%s: not in range", __func__);
@@ -892,7 +892,7 @@ int rt_aspace_unmap(rt_aspace_t aspace, void *addr)
         LOG_I("%s: Invalid input", __func__);
         error = -RT_EINVAL;
     }
-    else if (_not_in_range(addr, 1, aspace->start, aspace->size))
+    else if (_not_in_range(MMF_MAP_FIXED, addr, 1, aspace->start, aspace->size))
     {
         LOG_I("%s: %lx not in range of aspace[%lx:%lx]", __func__, addr,
               aspace->start, (char *)aspace->start + aspace->size);
@@ -1041,7 +1041,7 @@ int rt_aspace_unmap_range(rt_aspace_t aspace, void *addr, size_t length)
         LOG_I("%s: Invalid input", __func__);
         error = -RT_EINVAL;
     }
-    else if (_not_in_range(addr, length, aspace->start, aspace->size))
+    else if (_not_in_range(MMF_MAP_FIXED, addr, length, aspace->start, aspace->size))
     {
         LOG_I("%s: %lx not in range of aspace[%lx:%lx]", __func__, addr,
               aspace->start, (char *)aspace->start + aspace->size);
@@ -1069,7 +1069,7 @@ int rt_aspace_unmap_range(rt_aspace_t aspace, void *addr, size_t length)
 }
 
 void *rt_aspace_mremap_range(rt_aspace_t aspace, void *old_address, size_t old_size,
-                                size_t new_size, int flags, void *new_address)
+                             size_t new_size, int flags, void *new_address)
 {
     void *ret = RT_NULL;
 
@@ -1077,7 +1077,8 @@ void *rt_aspace_mremap_range(rt_aspace_t aspace, void *old_address, size_t old_s
     {
         LOG_I("%s: Invalid input", __func__);
     }
-    else if (_not_in_range(old_address, old_size, aspace->start, aspace->size))
+    else if (_not_in_range(MMF_MAP_FIXED, old_address, old_size,
+                           aspace->start, aspace->size))
     {
         LOG_I("%s: %lx not in range of aspace[%lx:%lx]", __func__, old_address,
               aspace->start, (char *)aspace->start + aspace->size);
@@ -1282,8 +1283,8 @@ int rt_aspace_load_page(rt_aspace_t aspace, void *addr, rt_size_t npage)
         err = -RT_ENOENT;
     }
     else if ((char *)addr >= end || (rt_size_t)addr & ARCH_PAGE_MASK ||
-             _not_in_range(addr, npage << ARCH_PAGE_SHIFT, varea->start,
-                           varea->size))
+             _not_in_range(MMF_MAP_FIXED, addr, npage << ARCH_PAGE_SHIFT,
+                           varea->start, varea->size))
     {
         LOG_W("%s: Unaligned parameter or out of range", __func__);
         err = -RT_EINVAL;
@@ -1310,7 +1311,8 @@ int rt_varea_map_page(rt_varea_t varea, void *vaddr, void *page)
         LOG_W("%s: page is not in kernel space", __func__);
         err = -RT_ERROR;
     }
-    else if (_not_in_range(vaddr, ARCH_PAGE_SIZE, varea->start, varea->size))
+    else if (_not_in_range(MMF_MAP_FIXED, vaddr, ARCH_PAGE_SIZE,
+                           varea->start, varea->size))
     {
         LOG_W("%s(%p,%lx): not in range of varea(%p,%lx)", __func__,
             vaddr, ARCH_PAGE_SIZE, varea->start, varea->size);
@@ -1349,7 +1351,8 @@ int rt_varea_map_range(rt_varea_t varea, void *vaddr, void *paddr, rt_size_t len
         LOG_W("%s(%p,%p,%p,%lx): invalid input", __func__, varea, vaddr, paddr, length);
         err = -RT_EINVAL;
     }
-    else if (_not_in_range(vaddr, length, varea->start, varea->size))
+    else if (_not_in_range(MMF_MAP_FIXED, vaddr, length,
+                           varea->start, varea->size))
     {
         LOG_W("%s(%p,%lx): not in range of varea(%p,%lx)", __func__,
             vaddr, length, varea->start, varea->size);
@@ -1382,7 +1385,8 @@ int rt_varea_unmap_range(rt_varea_t varea, void *vaddr, rt_size_t length)
         LOG_W("%s(%p,%p,%lx): invalid input", __func__, varea, vaddr, length);
         err = -RT_EINVAL;
     }
-    else if (_not_in_range(vaddr, length, varea->start, varea->size))
+    else if (_not_in_range(MMF_MAP_FIXED, vaddr, length,
+                           varea->start, varea->size))
     {
         LOG_W("%s(%p,%lx): not in range of varea(%p,%lx)", __func__,
             vaddr, length, varea->start, varea->size);
