@@ -1047,8 +1047,6 @@ static int list_irq(int argc, char**argv)
         }
     }
 
-    level = rt_hw_interrupt_disable();
-
     rt_kprintf("%-*.s %-*.s %s %-*.s %-*.s %-*.s %-*.sUsers%-*.s",
             6, "IRQ",
             6, "HW-IRQ",
@@ -1149,8 +1147,6 @@ static int list_irq(int argc, char**argv)
 
         ++irq_nr;
     }
-
-    rt_hw_interrupt_enable(level);
 
     rt_kprintf("%d IRQs found\n", irq_nr);
 
