@@ -599,7 +599,8 @@ static void do_output(rt_uint32_t level, const char *tag, rt_bool_t is_raw, cons
         }
         else if (ulog.async_rb)
         {
-            rt_ringbuffer_put(ulog.async_rb, (const rt_uint8_t *)log_buf, (rt_uint16_t)log_buf_size);
+            /* log_buf_size contain the tail \0, which will lead discard follow char, so only put log_buf_size -1  */
+            rt_ringbuffer_put(ulog.async_rb, (const rt_uint8_t *)log_buf, (rt_uint16_t)log_buf_size - 1);
             /* send a notice */
             rt_sem_release(&ulog.async_notice);
         }
@@ -793,8 +794,11 @@ void ulog_raw(const char *format, ...)
     fmt_result = rt_vsnprintf(log_buf, ULOG_LINE_BUF_SIZE, format, args);
     va_end(args);
 
-    /* calculate log length */
-    if ((fmt_result > -1) && (fmt_result <= ULOG_LINE_BUF_SIZE))
+    /* calculate log length
+     * rt_vsnprintf would add \0 to the end, push \0 to ulog.async_rb will discard the follow char
+     * if fmt_result = ULOG_LINE_BUF_SIZE, then the last char must be \0
+     */
+    if ((fmt_result > -1) && (fmt_result < ULOG_LINE_BUF_SIZE))
     {
         log_len = fmt_result;
     }

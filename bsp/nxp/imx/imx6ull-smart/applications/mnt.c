@@ -20,20 +20,10 @@ int mnt_init(void)
     rt_thread_mdelay(500);
 
     int part_id = 0;
-    if (dfs_mount("emmc0", "/", "elm", 0, (void *)part_id) != 0)
-    {
-        rt_kprintf("Dir / emmc mount failed!\n");
-        return -1;
-    }
-    else
-    {
-        rt_kprintf("emmc file system initialization done!\n");
-    }
 
-    part_id = 0;
-    if (dfs_mount("sd0", "/mnt/sd0", "elm", 0, (void *)part_id) != 0)
+    if (dfs_mount("sd0", "/", "elm", 0, (void *)part_id) != 0)
     {
-        rt_kprintf("Dir /mnt/sd0 mount failed!\n");
+        rt_kprintf("Dir / mount failed!\n");
         return -1;
     }
     else

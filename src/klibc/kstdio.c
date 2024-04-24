@@ -21,7 +21,6 @@
 #endif /* defined (RT_DEBUG_DEVICE) */
 #include <rtdbg.h>
 
-/* private function */
 #define _ISDIGIT(c)  ((unsigned)((c) - '0') < 10)
 
 /**
@@ -33,16 +32,16 @@
  *
  * @return the duplicated string pointer.
  */
-#ifdef RT_KPRINTF_USING_LONGLONG
+#ifdef RT_KLIBC_USING_PRINTF_LONGLONG
 rt_inline int divide(unsigned long long *n, int base)
 #else
 rt_inline int divide(unsigned long *n, int base)
-#endif /* RT_KPRINTF_USING_LONGLONG */
+#endif /* RT_KLIBC_USING_PRINTF_LONGLONG */
 {
     int res;
 
     /* optimized for processor which does not support divide instructions. */
-#ifdef RT_KPRINTF_USING_LONGLONG
+#ifdef RT_KLIBC_USING_PRINTF_LONGLONG
     res = (int)((*n) % base);
     *n = (long long)((*n) / base);
 #else
@@ -72,11 +71,11 @@ rt_inline int skip_atoi(const char **s)
 
 static char *print_number(char *buf,
                           char *end,
-#ifdef RT_KPRINTF_USING_LONGLONG
+#ifdef RT_KLIBC_USING_PRINTF_LONGLONG
                           unsigned long long  num,
 #else
                           unsigned long  num,
-#endif /* RT_KPRINTF_USING_LONGLONG */
+#endif /* RT_KLIBC_USING_PRINTF_LONGLONG */
                           int   base,
                           int   qualifier,
                           int   s,
@@ -84,11 +83,11 @@ static char *print_number(char *buf,
                           int   type)
 {
     char c = 0, sign = 0;
-#ifdef RT_KPRINTF_USING_LONGLONG
+#ifdef RT_KLIBC_USING_PRINTF_LONGLONG
     char tmp[64] = {0};
 #else
     char tmp[32] = {0};
-#endif /* RT_KPRINTF_USING_LONGLONG */
+#endif /* RT_KLIBC_USING_PRINTF_LONGLONG */
     int precision_bak = precision;
     const char *digits = RT_NULL;
     static const char small_digits[] = "0123456789abcdef";
@@ -308,11 +307,11 @@ static char *print_number(char *buf,
  */
 rt_weak int rt_vsnprintf(char *buf, rt_size_t size, const char *fmt, va_list args)
 {
-#ifdef RT_KPRINTF_USING_LONGLONG
+#ifdef RT_KLIBC_USING_PRINTF_LONGLONG
     unsigned long long num = 0;
 #else
     unsigned long num = 0;
-#endif /* RT_KPRINTF_USING_LONGLONG */
+#endif /* RT_KLIBC_USING_PRINTF_LONGLONG */
     int i = 0, len = 0;
     char *str = RT_NULL, *end = RT_NULL, c = 0;
     const char *s = RT_NULL;
@@ -403,20 +402,20 @@ rt_weak int rt_vsnprintf(char *buf, rt_size_t size, const char *fmt, va_list arg
         qualifier = 0; /* get the conversion qualifier */
 
         if (*fmt == 'h' || *fmt == 'l' ||
-#ifdef RT_KPRINTF_USING_LONGLONG
+#ifdef RT_KLIBC_USING_PRINTF_LONGLONG
             *fmt == 'L' ||
-#endif /* RT_KPRINTF_USING_LONGLONG */
+#endif /* RT_KLIBC_USING_PRINTF_LONGLONG */
             *fmt == 'z')
         {
             qualifier = *fmt;
             ++fmt;
-#ifdef RT_KPRINTF_USING_LONGLONG
+#ifdef RT_KLIBC_USING_PRINTF_LONGLONG
             if (qualifier == 'l' && *fmt == 'l')
             {
                 qualifier = 'L';
                 ++fmt;
             }
-#endif /* RT_KPRINTF_USING_LONGLONG */
+#endif /* RT_KLIBC_USING_PRINTF_LONGLONG */
             if (qualifier == 'h' && *fmt == 'h')
             {
                 qualifier = 'H';
@@ -684,3 +683,155 @@ int rt_sprintf(char *buf, const char *format, ...)
     return n;
 }
 RTM_EXPORT(rt_sprintf);
+
+/* errno functions */
+
+/**
+ * @brief A global variable used to store the error code.
+ *
+ * This volatile static integer is used to store the most recent error code globally.
+ * Its volatile nature ensures that every read operation fetches the most current value,
+ * providing real-time error status across different parts of the program.
+ */
+static volatile int __rt_errno;
+
+/**
+ * @struct _errno_str_t
+ * @brief Structure for mapping error codes to corresponding error strings.
+ *
+ * This structure is used to create a mapping that associates an rt_err_t type error code
+ * with a corresponding error description string.
+ */
+struct _errno_str_t
+{
+    rt_err_t error;      /**< Error code of type rt_err_t, representing different kinds of errors. */
+    const char *str;     /**< Pointer to the error description string. */
+};
+
+/**
+ * @brief An array containing mappings of error codes to their corresponding error strings.
+ *
+ * This array uses the _errno_str_t structure to define several error codes and their
+ * corresponding error description strings. These mappings can be used at runtime
+ * to provide more readable error information.
+ */
+static struct _errno_str_t  rt_errno_strs[] =
+{
+    {RT_EOK     , "OK     "},  /**< Operation successful. */
+    {RT_ERROR   , "ERROR  "},  /**< General error. */
+    {RT_ETIMEOUT, "ETIMOUT"},  /**< Operation timed out. */
+    {RT_EFULL   , "ERSFULL"},  /**< Resource is full. */
+    {RT_EEMPTY  , "ERSEPTY"},  /**< Resource is empty. */
+    {RT_ENOMEM  , "ENOMEM "},  /**< Not enough memory. */
+    {RT_ENOSYS  , "ENOSYS "},  /**< Function not implemented. */
+    {RT_EBUSY   , "EBUSY  "},  /**< Resource is busy. */
+    {RT_EIO     , "EIO    "},  /**< Input/output error. */
+    {RT_EINTR   , "EINTRPT"},  /**< Interrupted system call. */
+    {RT_EINVAL  , "EINVAL "},  /**< Invalid argument. */
+    {RT_ENOENT  , "ENOENT "},  /**< No such file or directory. */
+    {RT_ENOSPC  , "ENOSPC "},  /**< No space left on device. */
+    {RT_EPERM   , "EPERM  "},  /**< Operation not permitted. */
+    {RT_ETRAP   , "ETRAP  "},  /**< Trap error. */
+};
+
+/**
+ * @brief This function return a pointer to a string that contains the
+ * message of error.
+ *
+ * @param error the errorno code
+ * @return a point to error message string
+ */
+const char *rt_strerror(rt_err_t error)
+{
+    int i = 0;
+
+    if (error < 0)
+        error = -error;
+
+    for (i = 0; i < sizeof(rt_errno_strs) / sizeof(rt_errno_strs[0]); i++)
+    {
+        if (rt_errno_strs[i].error == error)
+            return rt_errno_strs[i].str;
+    }
+
+    return "EUNKNOW";
+}
+RTM_EXPORT(rt_strerror);
+
+/**
+ * @brief This function gets the global errno for the current thread.
+ *
+ * @return errno
+ */
+rt_err_t rt_get_errno(void)
+{
+    rt_thread_t tid = RT_NULL;
+
+    if (rt_interrupt_get_nest() != 0)
+    {
+        /* it's in interrupt context */
+        return __rt_errno;
+    }
+
+    tid = rt_thread_self();
+    if (tid == RT_NULL)
+    {
+        return __rt_errno;
+    }
+
+    return tid->error;
+}
+RTM_EXPORT(rt_get_errno);
+
+/**
+ * @brief This function sets the global errno for the current thread.
+ *
+ * @param error is the errno shall be set.
+ */
+void rt_set_errno(rt_err_t error)
+{
+    rt_thread_t tid = RT_NULL;
+
+    if (rt_interrupt_get_nest() != 0)
+    {
+        /* it's in interrupt context */
+        __rt_errno = error;
+
+        return;
+    }
+
+    tid = rt_thread_self();
+    if (tid == RT_NULL)
+    {
+        __rt_errno = error;
+
+        return;
+    }
+
+    tid->error = error;
+}
+RTM_EXPORT(rt_set_errno);
+
+/**
+ * @brief This function returns the address of the current thread errno.
+ *
+ * @return The errno address.
+ */
+int *_rt_errno(void)
+{
+    rt_thread_t tid = RT_NULL;
+
+    if (rt_interrupt_get_nest() != 0)
+    {
+        return (int *)&__rt_errno;
+    }
+
+    tid = rt_thread_self();
+    if (tid != RT_NULL)
+    {
+        return (int *) & (tid->error);
+    }
+
+    return (int *)&__rt_errno;
+}
+RTM_EXPORT(_rt_errno);

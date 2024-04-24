@@ -21,7 +21,6 @@
 rt_base_t _cpus_critical_level;
 #endif /* RT_USING_DEBUG */
 
-#ifdef RT_USING_SMP
 static struct rt_cpu _cpus[RT_CPUS_NR];
 rt_hw_spinlock_t _cpus_lock;
 #if defined(RT_DEBUGING_SPINLOCK)
@@ -106,8 +105,8 @@ void rt_spin_unlock_irqrestore(struct rt_spinlock *lock, rt_base_t level)
 
     RT_SPIN_UNLOCK_DEBUG(lock, critical_level);
     rt_hw_spin_unlock(&lock->lock);
-    rt_hw_local_irq_enable(level);
     rt_exit_critical_safe(critical_level);
+    rt_hw_local_irq_enable(level);
 }
 RTM_EXPORT(rt_spin_unlock_irqrestore)
 
@@ -217,4 +216,3 @@ void rt_cpus_lock_status_restore(struct rt_thread *thread)
     rt_sched_post_ctx_switch(thread);
 }
 RTM_EXPORT(rt_cpus_lock_status_restore);
-#endif /* RT_USING_SMP */

@@ -36,7 +36,11 @@ if GetDepend(['BSP_USING_SPI']):
 if GetDepend('BSP_USING_PWM'):
     src += ['drv_pwm.c']
     CPPPATH += [cwd + r'/libraries/cv180x/pwm']
-    
+
+if GetDepend('BSP_USING_SDH'):
+    src += ['drv_sdhci.c', 'port/mnt.c']
+    CPPPATH += [cwd + r'/libraries/sdif']
+
 CPPDEFINES += ['-DCONFIG_64BIT']
 
 if GetDepend('BSP_USING_RTC'):

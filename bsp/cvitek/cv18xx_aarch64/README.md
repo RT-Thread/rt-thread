@@ -63,7 +63,7 @@ scons -j12
 
 ## 3. 运行
 
-> 目前仅支持使用uboot对 `rtthread.bin` 文件进行加载，uboot对 `boot.sd` 的加载方式后续会实现。
+### 3.1 uboot加载rtthread.bin
 
 1. 将 SD 卡分为 2 个分区，第 1 个分区用于存放 bin 文件，第 2 个分区用于作为数据存储分区，分区格式为 `FAT32`。
 
@@ -80,6 +80,22 @@ go 0x80200000
 ```
 
 > 0x80200000为rtthread.bin加载到内存的位置，可在menuconfig中自己修改，注意不能与小核固件加载位置重叠。
+
+### 3.2 uboot加载boot.sd
+
+1. 将 SD 卡分为 2 个分区，第 1 个分区用于存放 bin 文件，第 2 个分区用于作为数据存储分区，分区格式为 `FAT32`。
+
+2. 将bsp的boot目录下的 `fip.bin` 和编译生成的 `boot.sd` 复制 SD 卡第一个分区中。后续更新固件只需要复制 `boot.sd` 文件即可。
+
+配置**串口0**参数： 115200 8N1 ，硬件和软件流控为关。
+
+直接上电运行，uboot会自动调用bootcmd解析boot.sd文件，然后加载`rtthread.bin`运行。
+
+### 3.3 如何生成fip.bin
+
+在本bsp的boot/milkv-duo256m目录下存放了所有需要构建出fip.bin的一些依赖文件和相关脚本。用户只需要在boot目录下执行`combine.sh`即可生成fip.bin。
+
+> 如何用户编译了小核c906_little的bsp，那么`combine.sh`脚本将会生成带有小核程序的fip.bin。未编译则不会。
 
 完成后可以看到串口的输出信息：
 

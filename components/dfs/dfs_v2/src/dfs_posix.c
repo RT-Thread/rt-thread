@@ -1180,6 +1180,7 @@ int chdir(const char *path)
         /* this is a not exist directory */
         dfs_unlock();
 
+        rt_set_errno(-ENOTDIR);
         return -1;
     }
 

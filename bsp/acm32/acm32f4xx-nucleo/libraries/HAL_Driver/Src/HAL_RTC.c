@@ -24,7 +24,7 @@
 * Description : Initialize the RTC peripheral
 * Input       : 
 * Outpu       : 
-* Author      : Chris_Kyle                         Data : 2020Äê
+* Author      : Chris_Kyle                         Data : 2020å¹´
 **********************************************************************************/
 HAL_StatusTypeDef HAL_RTC_Config(RTC_ConfigTypeDef *hrtc)
 {
@@ -75,7 +75,7 @@ HAL_StatusTypeDef HAL_RTC_Config(RTC_ConfigTypeDef *hrtc)
 * Description : Set RTC current time.
 * Input       : fp_Time Pointer to Time structure.
 * Outpu       : 
-* Author      : Chris_Kyle                         Data : 2020Äê
+* Author      : Chris_Kyle                         Data : 2020å¹´
 **********************************************************************************/
 void HAL_RTC_SetTime(RTC_TimeTypeDef *fp_Time)
 {
@@ -102,7 +102,7 @@ void HAL_RTC_SetTime(RTC_TimeTypeDef *fp_Time)
 * Description : Get RTC current time.
 * Input       : fp_Time Pointer to Time structure.
 * Outpu       : 
-* Author      : Chris_Kyle                         Data : 2020Äê
+* Author      : Chris_Kyle                         Data : 2020å¹´
 **********************************************************************************/
 void HAL_RTC_GetTime(RTC_TimeTypeDef *fp_Time)
 {
@@ -116,7 +116,7 @@ void HAL_RTC_GetTime(RTC_TimeTypeDef *fp_Time)
 * Description : Set RTC current Date.
 * Input       : fp_Date Pointer to Date structure.
 * Outpu       : 
-* Author      : Chris_Kyle                         Data : 2020Äê
+* Author      : Chris_Kyle                         Data : 2020å¹´
 **********************************************************************************/
 void HAL_RTC_SetDate(RTC_DateTypeDef *fp_Date)
 {
@@ -145,7 +145,7 @@ void HAL_RTC_SetDate(RTC_DateTypeDef *fp_Date)
 * Description : Get RTC current Date.
 * Input       : fp_Date Pointer to Date structure.
 * Outpu       : 
-* Author      : Chris_Kyle                         Data : 2020Äê
+* Author      : Chris_Kyle                         Data : 2020å¹´
 **********************************************************************************/
 void HAL_RTC_GetDate(RTC_DateTypeDef *fp_Date)
 {
@@ -160,7 +160,7 @@ void HAL_RTC_GetDate(RTC_DateTypeDef *fp_Date)
 * Description : Alarm Config
 * Input       : fp_Alarm Pointer to ALarm structure.
 * Outpu       : 
-* Author      : Chris_Kyle                         Data : 2020Äê
+* Author      : Chris_Kyle                         Data : 2020å¹´
 **********************************************************************************/
 void HAL_RTC_AlarmConfig(RTC_AlarmTypeDef *fp_Alarm)
 {
@@ -197,7 +197,7 @@ void HAL_RTC_AlarmConfig(RTC_AlarmTypeDef *fp_Alarm)
         lu32_WeekDay = fp_Alarm->u32_AlarmDay;
     }
 
-    /* Coinfig Week/Day¡¢Hour¡¢Min¡¢Sec */
+    /* Coinfig Week/Dayã€Hourã€Minã€Sec */
     RTC->ALM = fp_Alarm->u32_AlarmMode | lu32_WeekDay | fp_Alarm->u32_Hours << 16 | fp_Alarm->u32_Minutes << 8 | fp_Alarm->u32_Seconds;
 
     /* Interrupt Enable */
@@ -218,7 +218,7 @@ void HAL_RTC_AlarmConfig(RTC_AlarmTypeDef *fp_Alarm)
 * Description : Alarm Enable
 * Input       : 
 * Outpu       : 
-* Author      : Chris_Kyle                         Data : 2020Äê
+* Author      : Chris_Kyle                         Data : 2020å¹´
 **********************************************************************************/
 void HAL_RTC_AlarmEnable(void)
 {
@@ -230,7 +230,7 @@ void HAL_RTC_AlarmEnable(void)
 * Description : Alarm Disable
 * Input       : 
 * Outpu       : 
-* Author      : Chris_Kyle                         Data : 2020Äê
+* Author      : Chris_Kyle                         Data : 2020å¹´
 **********************************************************************************/
 void HAL_RTC_AlarmDisable(void)
 {
@@ -239,10 +239,10 @@ void HAL_RTC_AlarmDisable(void)
 
 /*********************************************************************************
 * Function    : HAL_RTC_Tamper
-* Description : Temper1 use PC13¡¢Temper2 use PA0
+* Description : Temper1 use PC13ã€Temper2 use PA0
 * Input       : 
 * Outpu       : 
-* Author      : Chris_Kyle                         Data : 2020Äê
+* Author      : Chris_Kyle                         Data : 2020å¹´
 **********************************************************************************/
 void HAL_RTC_Tamper(enum_Temper_t fe_Temper, RTC_TemperTypeDef *fp_Temper)
 {
@@ -342,7 +342,7 @@ void HAL_RTC_Tamper(enum_Temper_t fe_Temper, RTC_TemperTypeDef *fp_Temper)
 * Description : 
 * Input       : 
 * Outpu       : 
-* Author      : Chris_Kyle                         Data : 2020Äê
+* Author      : Chris_Kyle                         Data : 2020å¹´
 **********************************************************************************/
 void HAL_RTC_TamperEnable(enum_Temper_t fe_Temper)
 {
@@ -361,7 +361,7 @@ void HAL_RTC_TamperEnable(enum_Temper_t fe_Temper)
 * Description : 
 * Input       : 
 * Outpu       : 
-* Author      : Chris_Kyle                         Data : 2020Äê
+* Author      : Chris_Kyle                         Data : 2020å¹´
 **********************************************************************************/
 void HAL_RTC_TamperDisable(enum_Temper_t fe_Temper)
 {
@@ -382,7 +382,7 @@ void HAL_RTC_TamperDisable(enum_Temper_t fe_Temper)
 *                         1: Falling edge
 *               fe_Wakeup  : wakeup source select, STANDBY_WAKEUP_RISING, STANDBY_WAKEUP_FALLING  
 * Outpu       : 
-* Author      : Chris_Kyle                         Data : 2020Äê
+* Author      : Chris_Kyle                         Data : 2020å¹´
 *******************************************************************************************************/
 void HAL_RTC_Standby_Wakeup(enum_WKUP_t fe_Wakeup, uint32_t fu32_Edge)
 {
@@ -395,7 +395,7 @@ void HAL_RTC_Standby_Wakeup(enum_WKUP_t fe_Wakeup, uint32_t fu32_Edge)
         case RTC_WAKEUP_WKUP5: 
         case RTC_WAKEUP_WKUP6:   
         {
-            /* Clear flags¡¢Standby Enable */
+            /* Clear flagsã€Standby Enable */
             PMU->CR1 |= RPMU_CR_STB_EN | RPMU_CR_CWUF | RPMU_CR_CSBF;
 
             /* Wakeup IO Filter Enable */
@@ -430,7 +430,7 @@ void HAL_RTC_Standby_Wakeup(enum_WKUP_t fe_Wakeup, uint32_t fu32_Edge)
         case RTC_WAKEUP_HOUR:
         case RTC_WAKEUP_DATE:     
         {
-            /* Clear flags¡¢Standby Enable */
+            /* Clear flagsã€Standby Enable */
             PMU->CR1 |= RPMU_CR_STB_EN | RPMU_CR_CWUF | RPMU_CR_CSBF;
 
             RTC->SR |= fe_Wakeup;

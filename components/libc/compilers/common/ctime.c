@@ -530,6 +530,9 @@ int nanosleep(const struct timespec *rqtp, struct timespec *rmtp)
 {
     struct timespec old_ts = {0};
     struct timespec new_ts = {0};
+    struct rt_ktime_hrtimer timer;
+
+    rt_ktime_hrtimer_delay_init(&timer);
 
     if (rqtp == RT_NULL)
     {
@@ -544,7 +547,7 @@ int nanosleep(const struct timespec *rqtp, struct timespec *rmtp)
     }
     unsigned long ns = rqtp->tv_sec * NANOSECOND_PER_SECOND + rqtp->tv_nsec;
     rt_ktime_boottime_get_ns(&old_ts);
-    rt_ktime_hrtimer_ndelay(ns);
+    rt_ktime_hrtimer_ndelay(&timer, ns);
     if (rt_get_errno() == RT_EINTR)
     {
         if (rmtp)
@@ -565,9 +568,13 @@ int nanosleep(const struct timespec *rqtp, struct timespec *rmtp)
                 rmtp->tv_nsec = rnsec;
             }
         }
+
+        rt_ktime_hrtimer_delay_detach(&timer);
         rt_set_errno(EINTR);
         return -1;
     }
+
+    rt_ktime_hrtimer_delay_detach(&timer);
     return 0;
 }
 RTM_EXPORT(nanosleep);
