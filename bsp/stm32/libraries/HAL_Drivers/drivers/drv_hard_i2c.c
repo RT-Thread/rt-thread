@@ -203,11 +203,11 @@ static rt_ssize_t stm32_i2c_master_xfer(struct rt_i2c_bus_device *bus,
                                                                                                                                                          : "nuknown mode");
             if ((i2c_obj->i2c_dma_flag & I2C_USING_RX_DMA_FLAG) && (msg->len >= DMA_TRANS_MIN_LEN))
             {
-                ret = HAL_I2C_Master_Seq_Receive_DMA(handle, msg->addr, msg->buf, msg->len, mode);
+                ret = HAL_I2C_Master_Seq_Receive_DMA(handle, (msg->addr<<1), msg->buf, msg->len, mode);
             }
             else
             {
-                ret = HAL_I2C_Master_Seq_Receive_IT(handle, msg->addr, msg->buf, msg->len, mode);
+                ret = HAL_I2C_Master_Seq_Receive_IT(handle, (msg->addr<<1), msg->buf, msg->len, mode);
             }
             if (ret != RT_EOK)
             {
@@ -228,11 +228,11 @@ static rt_ssize_t stm32_i2c_master_xfer(struct rt_i2c_bus_device *bus,
                                                                                                                                                          : "nuknown mode");
             if ((i2c_obj->i2c_dma_flag & I2C_USING_TX_DMA_FLAG) && (msg->len >= DMA_TRANS_MIN_LEN))
             {
-                ret = HAL_I2C_Master_Seq_Transmit_DMA(handle, msg->addr, msg->buf, msg->len, mode);
+                ret = HAL_I2C_Master_Seq_Transmit_DMA(handle, (msg->addr<<1), msg->buf, msg->len, mode);
             }
             else
             {
-                ret = HAL_I2C_Master_Seq_Transmit_IT(handle, msg->addr, msg->buf, msg->len, mode);
+                ret = HAL_I2C_Master_Seq_Transmit_IT(handle, (msg->addr<<1), msg->buf, msg->len, mode);
             }
             if (ret != RT_EOK)
             {
@@ -263,11 +263,11 @@ static rt_ssize_t stm32_i2c_master_xfer(struct rt_i2c_bus_device *bus,
                                                                                                                                                    : "nuknown mode");
         if ((i2c_obj->i2c_dma_flag & I2C_USING_RX_DMA_FLAG) && (msg->len >= DMA_TRANS_MIN_LEN))
         {
-            ret = HAL_I2C_Master_Seq_Receive_DMA(handle, msg->addr, msg->buf, msg->len, mode);
+            ret = HAL_I2C_Master_Seq_Receive_DMA(handle, (msg->addr<<1), msg->buf, msg->len, mode);
         }
         else
         {
-            ret = HAL_I2C_Master_Seq_Receive_IT(handle, msg->addr, msg->buf, msg->len, mode);
+            ret = HAL_I2C_Master_Seq_Receive_IT(handle,(msg->addr<<1), msg->buf, msg->len, mode);
         }
         if (ret != RT_EOK)
         {
@@ -287,11 +287,11 @@ static rt_ssize_t stm32_i2c_master_xfer(struct rt_i2c_bus_device *bus,
                                                                                                                                                    : "nuknown mode");
         if ((i2c_obj->i2c_dma_flag & I2C_USING_TX_DMA_FLAG) && (msg->len >= DMA_TRANS_MIN_LEN))
         {
-            ret = HAL_I2C_Master_Seq_Transmit_DMA(handle, msg->addr, msg->buf, msg->len, mode);
+            ret = HAL_I2C_Master_Seq_Transmit_DMA(handle, (msg->addr<<1), msg->buf, msg->len, mode);
         }
         else
         {
-            ret = HAL_I2C_Master_Seq_Transmit_IT(handle, msg->addr, msg->buf, msg->len, mode);
+            ret = HAL_I2C_Master_Seq_Transmit_IT(handle, (msg->addr<<1), msg->buf, msg->len, mode);
         }
         if (ret != RT_EOK)
         {
