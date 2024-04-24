@@ -51,8 +51,9 @@
 #define MMU_TBL_PAGE_4k_LEVEL  3
 #define MMU_TBL_LEVEL_NR       4
 
+/* restrict virtual address on usage of RT_NULL */
 #ifndef KERNEL_VADDR_START
-#define KERNEL_VADDR_START ARCH_TEXT_OFFSET
+#define KERNEL_VADDR_START 0x1000
 #endif
 
 volatile unsigned long MMUTable[512] __attribute__((aligned(4 * 1024)));
