@@ -20,10 +20,32 @@ on:
 jobs:
     change:
         uses: RT-Thread/pkgs-test/.github/workflows/pkgs-action.yml@main
-        if: github.repository_owner == 'RT-Thread'
+        if: github.repository_owner == 'LZerro'
         with:
             rt-thread-versions: "branch:master"
             test-specific-pkgs: true
             pkgs: |
                 hello
+                PAJ7620
+                ad7746
+                adt74xx
+                aht10
+                ap3216c
+                as7341
+                balance
+                bh1750
+                bma400
+                bme280
+                bme680
+                bmi088
+                bmi160_bmx160
+                bmp180
+                bmp280
+                ccs811
+                cw2015
+                da270
+                df220
+                dht11
+                dhtxx
+                ds18b20
 
