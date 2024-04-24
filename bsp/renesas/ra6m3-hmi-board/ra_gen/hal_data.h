@@ -15,9 +15,46 @@ FSP_HEADER
             extern const uart_cfg_t g_uart9_cfg;
             extern const sci_uart_extended_cfg_t g_uart9_cfg_extend;
 
+            #ifndef user_uart0_callback
+            void user_uart0_callback(uart_callback_args_t * p_args);
+            #endif
+
+            #ifndef user_uart1_callback
+            void user_uart1_callback(uart_callback_args_t * p_args);
+            #endif
+
+            #ifndef user_uart2_callback
+            void user_uart2_callback(uart_callback_args_t * p_args);
+            #endif
+
+            #ifndef user_uart3_callback
+            void user_uart3_callback(uart_callback_args_t * p_args);
+            #endif
+
+            #ifndef user_uart4_callback
+            void user_uart4_callback(uart_callback_args_t * p_args);
+            #endif
+
+            #ifndef user_uart5_callback
+            void user_uart5_callback(uart_callback_args_t * p_args);
+            #endif
+
+            #ifndef user_uart6_callback
+            void user_uart6_callback(uart_callback_args_t * p_args);
+            #endif
+
+            #ifndef user_uart7_callback
+            void user_uart7_callback(uart_callback_args_t * p_args);
+            #endif
+
+            #ifndef user_uart8_callback
+            void user_uart8_callback(uart_callback_args_t * p_args);
+            #endif
+
             #ifndef user_uart9_callback
             void user_uart9_callback(uart_callback_args_t * p_args);
             #endif
+
 void hal_entry(void);
 void g_hal_init(void);
 FSP_FOOTER
