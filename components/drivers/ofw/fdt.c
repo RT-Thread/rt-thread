@@ -492,17 +492,14 @@ static rt_err_t fdt_scan_memory(void)
              */
 
             /* case 0 */
-            if (res_region->start >= region->start && res_region->end <= region->end)
+            if (res_region->start > region->start && res_region->end < region->end)
             {
                 rt_size_t new_size = region->end - res_region->end;
 
                 region->end = res_region->start;
 
                 /* Commit part next block */
-                if (new_size)
-                {
-                    err = commit_memregion(region->name, res_region->end, new_size, RT_FALSE);
-                }
+                err = commit_memregion(region->name, res_region->end, new_size, RT_FALSE);
 
                 if (!err)
                 {
