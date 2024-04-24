@@ -22,8 +22,6 @@ struct acm32_soft_i2c_config
 {
     rt_uint8_t scl;
     rt_uint8_t sda;
-    rt_uint8_t scl_pin_port;
-    rt_uint8_t sda_pin_port;
     const char *bus_name;
 };
 /* acm32 i2c dirver class */
@@ -39,8 +37,6 @@ struct acm32_i2c
     {                                                    \
         .scl = BSP_I2C0_SCL_PIN,                         \
         .sda = BSP_I2C0_SDA_PIN,                         \
-        .scl_pin_port = BSP_I2C0_SCL_PIN_PORT,           \
-        .sda_pin_port = BSP_I2C0_SDA_PIN_PORT,           \
         .bus_name = "i2c0",                              \
     }
 #endif

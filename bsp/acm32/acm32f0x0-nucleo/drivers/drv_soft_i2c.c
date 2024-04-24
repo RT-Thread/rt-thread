@@ -32,22 +32,12 @@ static struct acm32_i2c i2c_obj[sizeof(soft_i2c_config) / sizeof(soft_i2c_config
 static void drv_i2c_gpio_init(struct acm32_i2c* i2c)
 {
     struct acm32_soft_i2c_config* cfg = (struct acm32_soft_i2c_config*)i2c->ops.data;
-    GPIO_InitTypeDef GPIO_Handle;
 
-    GPIO_Handle.Pin            = cfg->sda;
-    GPIO_Handle.Mode           = GPIO_MODE_OUTPUT_OD;
-    GPIO_Handle.Pull           = GPIO_PULLUP;
-    GPIO_Handle.Alternate      = GPIO_FUNCTION_0;
-    HAL_GPIO_Init(cfg->sda_pin_port, &GPIO_Handle);
+    rt_pin_mode(cfg->scl, PIN_MODE_OUTPUT_OD);
+    rt_pin_mode(cfg->sda, PIN_MODE_OUTPUT_OD);
 
-    GPIO_Handle.Pin            = cfg->scl;
-    GPIO_Handle.Mode           = GPIO_MODE_OUTPUT_OD;
-    GPIO_Handle.Pull           = GPIO_PULLUP;
-    GPIO_Handle.Alternate      = GPIO_FUNCTION_0;
-    HAL_GPIO_Init(cfg->scl_pin_port, &GPIO_Handle);
-
-    HAL_GPIO_WritePin(cfg->sda_pin_port, cfg->sda, GPIO_PIN_SET);
-    HAL_GPIO_WritePin(cfg->scl_pin_port, cfg->scl, GPIO_PIN_SET);
+    rt_pin_write(cfg->scl, PIN_HIGH);
+    rt_pin_write(cfg->sda, PIN_HIGH);
 }
 
 static void acm32_i2c_pin_init(void)
@@ -66,11 +56,11 @@ static void _set_sda(void *data, rt_int32_t state)
 
     if (state)
     {
-        HAL_GPIO_WritePin(cfg->sda_pin_port, cfg->sda, GPIO_PIN_SET);
+        rt_pin_write(cfg->sda, PIN_HIGH);
     }
     else
     {
-        HAL_GPIO_WritePin(cfg->sda_pin_port, cfg->sda, GPIO_PIN_CLEAR);
+        rt_pin_write(cfg->sda, PIN_LOW);
     }
 }
 
@@ -80,11 +70,11 @@ static void _set_scl(void *data, rt_int32_t state)
 
     if (state)
     {
-        HAL_GPIO_WritePin(cfg->scl_pin_port, cfg->scl, GPIO_PIN_SET);
+        rt_pin_write(cfg->scl, PIN_HIGH);
     }
     else
     {
-        HAL_GPIO_WritePin(cfg->scl_pin_port, cfg->scl, GPIO_PIN_CLEAR);
+        rt_pin_write(cfg->scl, PIN_LOW);
     }
 }
 
@@ -92,14 +82,14 @@ static rt_int32_t _get_sda(void *data)
 {
     struct acm32_soft_i2c_config* cfg = (struct acm32_soft_i2c_config*)data;
 
-    return HAL_GPIO_ReadPin(cfg->sda_pin_port, cfg->sda);
+    return rt_pin_read(cfg->sda);
 }
 
 static rt_int32_t _get_scl(void *data)
 {
     struct acm32_soft_i2c_config* cfg = (struct acm32_soft_i2c_config*)data;
 
-    return HAL_GPIO_ReadPin(cfg->scl_pin_port, cfg->scl);
+    return rt_pin_read(cfg->scl);
 }
 
 static void acm32_udelay(rt_uint32_t us)
@@ -159,12 +149,10 @@ int rt_soft_i2c_init(void)
         result = rt_i2c_bit_add_bus(&i2c_obj[i].i2c_bus, soft_i2c_config[i].bus_name);
         RT_ASSERT(result == RT_EOK);
 
-        LOG_D("software simulation %s init done, pin scl: %d, pin sda: %d, scl pin port: %d, sda pin port: %d",
+        LOG_D("software simulation %s init done, pin scl: %d, pin sda: %d",
         soft_i2c_config[i].bus_name,
         soft_i2c_config[i].scl,
-        soft_i2c_config[i].sda,
-        soft_i2c_config[i].scl_pin_port,
-        soft_i2c_config[i].sda_pin_port);
+        soft_i2c_config[i].sda);
     }
 
     return RT_EOK;

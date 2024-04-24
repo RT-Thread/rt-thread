@@ -118,17 +118,13 @@ menu "On-chip Peripheral Drivers"
                 default n
                 if BSP_USING_I2C0
                     config BSP_I2C0_SCL_PIN
-                        hex "i2c0 scl pin number (PD, 6)"
-                        default 0x0040
+                        int "i2c0 scl pin number (PD, 6)"
+                        range 0 63
+                        default 54
                     config BSP_I2C0_SDA_PIN
-                        hex "I2C0 sda pin number (PD, 7)"
-                        default 0x0080
-                    config BSP_I2C0_SCL_PIN_PORT
-                        int "I2C0 SCL Pin Port (GPIOD)"
-                        default 3
-                    config BSP_I2C0_SDA_PIN_PORT
-                        int "I2C0 SDA Pin Port (GPIOD)"
-                        default 3
+                        int "I2C0 sda pin number (PD, 7)"
+                        range 0 63
+                        default 55
                 endif
         endif
 
