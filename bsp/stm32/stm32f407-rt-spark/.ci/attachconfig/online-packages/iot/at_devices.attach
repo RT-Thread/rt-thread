@@ -1,3 +1,5 @@
+# scons: --strict
+
 CONFIG_PKG_USING_AT_DEVICE=y
 
 # Quectel M26/MC20
