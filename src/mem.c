@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2024, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -565,9 +565,16 @@ static int memcheck(int argc, char *argv[])
         object = rt_list_entry(node, struct rt_object, list);
         /* find the specified object */
         if (name != RT_NULL && rt_strncmp(name, object->name, RT_NAME_MAX) != 0)
+        {
             continue;
+        }
         /* mem object */
         m = (struct rt_small_mem *)object;
+        if(rt_strncmp(m->parent.algorithm, "small", RT_NAME_MAX) != 0)
+        {
+            continue;
+        }
+
         /* check mem */
         for (mem = (struct rt_small_mem_item *)m->heap_ptr; mem != m->heap_end; mem = (struct rt_small_mem_item *)&m->heap_ptr[mem->next])
         {
@@ -611,9 +618,15 @@ static int memtrace(int argc, char **argv)
         object = rt_list_entry(node, struct rt_object, list);
         /* find the specified object */
         if (name != RT_NULL && rt_strncmp(name, object->name, RT_NAME_MAX) != 0)
+        {
             continue;
+        }
         /* mem object */
         m = (struct rt_small_mem *)object;
+        if(rt_strncmp(m->parent.algorithm, "small", RT_NAME_MAX) != 0)
+        {
+            continue;
+        }
         /* show memory information */
         rt_kprintf("\nmemory heap address:\n");
         rt_kprintf("name    : %s\n", m->parent.parent.name);
