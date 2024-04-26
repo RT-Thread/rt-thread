@@ -557,7 +557,7 @@ rt_ssize_t rt_pipe_write(rt_device_t device, rt_off_t pos, const void *buffer, r
     }
 
     pbuf = (uint8_t*)buffer;
-    rt_mutex_take(&pipe->lock, -1);
+    rt_mutex_take(&pipe->lock, RT_WAITING_FOREVER);
 
     while (write_bytes < count)
     {
@@ -619,6 +619,14 @@ rt_pipe_t *rt_pipe_create(const char *name, int bufsz)
     rt_pipe_t *pipe;
     rt_device_t dev;
 
+    RT_ASSERT(name != RT_NULL);
+    RT_ASSERT(bufsz < 0xFFFF);
+
+    if (rt_device_find(name) != RT_NULL)
+    {
+        /* pipe device has been created */
+        return RT_NULL;
+    }
     pipe = (rt_pipe_t *)rt_malloc(sizeof(rt_pipe_t));
     if (pipe == RT_NULL) return RT_NULL;
 
@@ -635,7 +643,6 @@ rt_pipe_t *rt_pipe_create(const char *name, int bufsz)
     pipe->writer = 0;
     pipe->reader = 0;
 
-    RT_ASSERT(bufsz < 0xFFFF);
     pipe->bufsz = bufsz;
 
     dev = &pipe->parent;
@@ -654,15 +661,8 @@ rt_pipe_t *rt_pipe_create(const char *name, int bufsz)
     dev->rx_indicate = RT_NULL;
     dev->tx_complete = RT_NULL;
 
-    if (rt_device_register(&pipe->parent, name, RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_REMOVABLE) != 0)
-    {
-        rt_mutex_detach(&pipe->lock);
-#if defined(RT_USING_POSIX_DEVIO) && defined(RT_USING_POSIX_PIPE)
-        resource_id_put(&id_mgr, pipe->pipeno);
-#endif
-        rt_free(pipe);
-        return RT_NULL;
-    }
+    rt_device_register(&pipe->parent, name, RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_REMOVABLE);
+
 #if defined(RT_USING_POSIX_DEVIO) && defined(RT_USING_POSIX_PIPE)
     dev->fops = (void *)&pipe_fops;
 #endif
@@ -762,13 +762,15 @@ int pipe(int fildes[2])
     fildes[1] = open(dev_name, O_WRONLY, 0);
     if (fildes[1] < 0)
     {
-        close(fildes[0]);
+        rt_pipe_delete(dname);
         return -1;
     }
 
     fildes[0] = open(dev_name, O_RDONLY, 0);
     if (fildes[0] < 0)
     {
+        close(fildes[1]);
+        rt_pipe_delete(dname);
         return -1;
     }
 
