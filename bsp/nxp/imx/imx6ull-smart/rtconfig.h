@@ -22,8 +22,11 @@
 
 /* kservice optimization */
 
-#define RT_KSERVICE_USING_STDLIB
 /* end of kservice optimization */
+
+/* klibc optimization */
+
+/* end of klibc optimization */
 #define RT_USING_DEBUG
 #define RT_DEBUGING_COLOR
 #define RT_DEBUGING_CONTEXT
@@ -223,6 +226,7 @@
 #define RT_USING_POSIX_FS
 #define RT_USING_POSIX_DEVIO
 #define RT_USING_POSIX_STDIO
+#define RT_USING_POSIX_POLL
 #define RT_USING_POSIX_TERMIOS
 #define RT_USING_POSIX_DELAY
 #define RT_USING_POSIX_CLOCK
