@@ -527,12 +527,15 @@ rt_sensor_t rt_sensor_device_find(const char *name)
     char device_name[RT_NAME_MAX];
     rt_device_t device;
 
-    for (index = 0; sensor_name_str[index] != RT_NULL; index++) {
+    for (index = 0; sensor_name_str[index] != RT_NULL; index++) 
+    {
         rt_memset(device_name, 0, sizeof(device_name));
         rt_snprintf(device_name, sizeof(device_name), "%s%s", sensor_name_str[index], name);
         device = rt_device_find(device_name);
-        if (device != RT_NULL)
+        if (device != RT_NULL) 
+        {
             return (rt_sensor_t)device;
+        }
     }
 
     return RT_NULL;
