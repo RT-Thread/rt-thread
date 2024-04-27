@@ -630,9 +630,9 @@ static int memtrace(int argc, char **argv)
         /* show memory information */
         rt_kprintf("\nmemory heap address:\n");
         rt_kprintf("name    : %s\n", m->parent.parent.name);
-        rt_kprintf("total   : 0x%d\n", m->parent.total);
-        rt_kprintf("used    : 0x%d\n", m->parent.used);
-        rt_kprintf("max_used: 0x%d\n", m->parent.max);
+        rt_kprintf("total   : %d\n", m->parent.total);
+        rt_kprintf("used    : %d\n", m->parent.used);
+        rt_kprintf("max_used: %d\n", m->parent.max);
         rt_kprintf("heap_ptr: 0x%08x\n", m->heap_ptr);
         rt_kprintf("lfree   : 0x%08x\n", m->lfree);
         rt_kprintf("heap_end: 0x%08x\n", m->heap_end);
