@@ -16,6 +16,7 @@
 #include <rtthread.h>
 #include <rtdevice.h>
 #include <terminal/terminal.h>
+#include <drivers/serial.h>
 
 #define TTY_NAME_PREFIX "S" /* (S)erial */
 #define LWP_TTY_WORKQUEUE_PRIORITY 3
@@ -294,7 +295,6 @@ static struct lwp_ttydevsw serial_ttydevsw = {
     .tsw_outwakeup = serial_tty_outwakeup,
 };
 
-extern speed_t _get_speed(int baudrate);
 rt_err_t rt_hw_serial_register_tty(struct rt_serial_device *serial)
 {
     rt_err_t rc;
