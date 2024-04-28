@@ -317,6 +317,7 @@ rt_err_t rt_hw_serial_register_tty(struct rt_serial_device *serial)
             tty = lwp_tty_create(&serial_ttydevsw, softc);
             if (tty)
             {
+                tty->t_termios_init_in.__c_ispeed = tty->t_termios_init_in.__c_ospeed = _get_speed(serial->config.baud_rate);
                 rc = lwp_tty_register(tty, dev_name);
                 rt_work_init(&softc->work, _tty_rx_worker, tty);
 

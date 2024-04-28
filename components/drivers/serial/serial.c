@@ -949,7 +949,7 @@ static const struct speed_baudrate_item _tbl[] =
     {B4000000, BAUD_RATE_4000000},
 };
 
-static speed_t _get_speed(int baudrate)
+speed_t _get_speed(int baudrate)
 {
     size_t index;
 
@@ -1175,7 +1175,7 @@ static rt_err_t rt_serial_control(struct rt_device *dev,
 
                 config = serial->config;
 
-                baudrate = _get_baudrate(cfgetospeed(tio));
+                baudrate = _get_baudrate(tio->__c_ispeed);
                 config.baud_rate = baudrate;
 
                 switch (tio->c_cflag & CSIZE)
