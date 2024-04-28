@@ -1105,7 +1105,7 @@ int dfs_aspace_read(struct dfs_file *file, void *buf, size_t count, off_t *pos)
                 }
 
                 len = count > len ? len : count;
-                if (len)
+                if (len > 0)
                 {
                     rt_memcpy(ptr, page->page + *pos - page->fpos, len);
                     ptr += len;
