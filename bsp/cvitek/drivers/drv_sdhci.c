@@ -10,9 +10,12 @@
 #include <rthw.h>
 #include <rtthread.h>
 #include <rtdevice.h>
-#include "stdbool.h"
+#include <stdbool.h>
+#include <stdlib.h>
+#include <stdio.h>
 
 #include "board.h"
+#include "cache.h"
 
 #define DBG_TAG     "drv.sdio"
 #define DBG_LEVEL   DBG_INFO
@@ -227,7 +230,7 @@ uint32_t sdhci_prepare_data(struct rthw_sdhci *sdhci, struct rt_mmcsd_cmd *cmd, 
 
     load_addr = (uint64_t)dma_config->dma_des_buffer_start_addr;
 
-    csi_dcache_clean_invalid_range((uint64_t *)load_addr, dma_config->dma_des_buffer_len);
+    rt_hw_cpu_dcache_clean((void *)load_addr, dma_config->dma_des_buffer_len);
 
     mmio_write_32(BASE + SDIF_ADMA_SA_LOW, load_addr);
     mmio_write_32(BASE + SDIF_ADMA_SA_HIGH, (load_addr >> 32));
@@ -367,7 +370,7 @@ static rt_err_t sdhci_send_data_cmd(struct rthw_sdhci *sdhci, struct rt_mmcsd_cm
 
         if (data->flags & DATA_DIR_READ)
         {
-            csi_dcache_invalid_range((uint64_t *)dma_config.dma_des_buffer_start_addr, dma_config.dma_des_buffer_len);
+            rt_hw_cpu_dcache_invalidate((uint64_t *)dma_config.dma_des_buffer_start_addr, dma_config.dma_des_buffer_len);
             if (src_unalign)
             {
                 memcpy((void *)data->buf, src_align, dma_config.dma_des_buffer_len);
@@ -862,7 +865,7 @@ static void rthw_sdhci_request(struct rt_mmcsd_host *host, struct rt_mmcsd_req *
                 data ? data->blksize : 0,
                 data ? data->blks * data->blksize : 0);
 
-        if (cmd->cmd_code == 5)
+        if (cmd->cmd_code == SD_IO_SEND_OP_COND)
         {
             cmd->err = -RT_ERROR;
 
@@ -1003,7 +1006,7 @@ static int rthw_sdhci_init(void)
     /* set host default attributes */
     host->ops = &ops;
     host->freq_min = 400000;
-    host->freq_max = 40000000;
+    host->freq_max = 50 * 1000 * 1000;
     host->valid_ocr = VDD_31_32 | VDD_32_33 | VDD_33_34;
     host->flags = MMCSD_BUSWIDTH_4 | MMCSD_MUTBLKWRITE | MMCSD_SUP_HIGHSPEED;
     host->max_seg_size = 512;
@@ -1021,12 +1024,12 @@ static int rthw_sdhci_init(void)
 }
 INIT_DEVICE_EXPORT(rthw_sdhci_init);
 
-void sdhci_register_dump(uint8_t argc, char **argv)
+void sdhci_reg_dump(uint8_t argc, char **argv)
 {
     rt_uint32_t *base;
     if (argc < 2)
     {
-        rt_kprintf("Usage: sdhci_register_dump 0/1/2\n");
+        rt_kprintf("Usage: sdhci_reg_dump 0/1/2\n");
         return;
     }
 
@@ -1088,4 +1091,4 @@ void sdhci_register_dump(uint8_t argc, char **argv)
            mmio_read_32(BASE + SDIF_ADMA_ADDRESS));
     rt_kprintf("============================================\n");
 }
-MSH_CMD_EXPORT(sdhci_register_dump, Dump SDHCI register);
+MSH_CMD_EXPORT(sdhci_reg_dump, dump sdhci register);

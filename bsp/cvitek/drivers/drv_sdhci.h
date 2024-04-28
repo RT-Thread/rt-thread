@@ -14,8 +14,6 @@
 #include "dw_sdmmc.h"
 #include "dw_mmc_reg.h"
 
-#include "core_rv64.h"
-
 #ifndef BIT
 #define BIT(nr)      (UINT64_C(1) << (nr))
 #endif
