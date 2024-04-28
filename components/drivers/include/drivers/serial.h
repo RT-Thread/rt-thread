@@ -15,7 +15,6 @@
 #define __SERIAL_H__
 
 #include <rtthread.h>
-#include <termios.h>
 
 #define BAUD_RATE_2400                  2400
 #define BAUD_RATE_4800                  4800
@@ -195,6 +194,5 @@ rt_err_t rt_hw_serial_register(struct rt_serial_device *serial,
                                void                    *data);
 
 rt_err_t rt_hw_serial_register_tty(struct rt_serial_device *serial);
-speed_t _get_speed(int baudrate);
 
 #endif

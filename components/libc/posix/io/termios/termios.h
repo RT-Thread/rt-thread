@@ -240,6 +240,7 @@ pid_t tcgetsid (int);
 
 void cfmakeraw(struct termios *);
 int cfsetspeed(struct termios *, speed_t);
+speed_t _get_speed(int baudrate);
 
 #ifdef __cplusplus
 }

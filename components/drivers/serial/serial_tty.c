@@ -16,7 +16,6 @@
 #include <rtthread.h>
 #include <rtdevice.h>
 #include <terminal/terminal.h>
-#include <drivers/serial.h>
 
 #define TTY_NAME_PREFIX "S" /* (S)erial */
 #define LWP_TTY_WORKQUEUE_PRIORITY 3
