@@ -184,7 +184,7 @@ void page_read(struct rt_varea *varea, struct rt_aspace_io_msg *msg)
                varea->start, varea->size, varea->offset, varea->attr, varea->flag);
 
         ret = dfs_aspace_mmap_read(file, varea, msg);
-        if (ret > 0)
+        if (ret >= 0)
         {
             msg->response.status = MM_FAULT_STATUS_OK;
             if (ret < ARCH_PAGE_SIZE)
