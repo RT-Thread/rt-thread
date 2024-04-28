@@ -294,6 +294,7 @@ static struct lwp_ttydevsw serial_ttydevsw = {
     .tsw_outwakeup = serial_tty_outwakeup,
 };
 
+extern speed_t _get_speed(int baudrate);
 rt_err_t rt_hw_serial_register_tty(struct rt_serial_device *serial)
 {
     rt_err_t rc;
