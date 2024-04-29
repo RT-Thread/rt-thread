@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<flash_board>
+  <pass>
+    <loader>$PROJ_DIR$/../libraries/hc32f472_ddl/cmsis/Device/HDSC/hc32f4xx/Source/IAR/flashloader/FlashHC32F472xE.flash</loader>
+    <range>CODE 0x0 0x7FFFF</range>
+  </pass>
+  <pass>
+    <loader>$PROJ_DIR$/../libraries/hc32f472_ddl/cmsis/Device/HDSC/hc32f4xx/Source/IAR/flashloader/FlashHC32F472_otp.flash</loader>
+    <range>CODE 0x03000000 0x030017FF</range>
+  </pass>
+  <pass>
+    <loader>$PROJ_DIR$/../libraries/hc32f472_ddl/cmsis/Device/HDSC/hc32f4xx/Source/IAR/flashloader/FlashHC32F472_qspi.flash</loader>
+    <range>CODE 0x98000000 0x987FFFFF</range>
+  </pass>
+</flash_board>
