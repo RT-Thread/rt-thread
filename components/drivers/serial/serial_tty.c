@@ -175,7 +175,7 @@ rt_inline void _restore_serial(struct rt_serial_device *serial, lwp_tty_t tp,
     rt_device_control(&serial->parent, RT_DEVICE_CTRL_NOTIFY_SET, &softc->backup_notify);
 }
 
-static speed_t serial_tty_get_speed(struct lwp_tty *tp)
+static speed_t _serial_tty_get_speed(struct lwp_tty *tp)
 {
     struct serial_tty_context *softc = (struct serial_tty_context *)(tp->t_devswsoftc);
     struct rt_serial_device *serial;
