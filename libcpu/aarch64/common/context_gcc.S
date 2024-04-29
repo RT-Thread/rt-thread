@@ -44,7 +44,11 @@ int rt_hw_cpu_id(void)
 .weak rt_hw_cpu_id
 .type rt_hw_cpu_id, @function
 rt_hw_cpu_id:
+#if RT_CPUS_NR > 1
     mrs x0, tpidr_el1
+#else
+    mov x0, xzr
+#endif
     ret
 
 /*

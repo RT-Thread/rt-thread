@@ -146,7 +146,7 @@ rt_base_t rt_cpus_lock(void)
     pcpu = rt_cpu_self();
     if (pcpu->current_thread != RT_NULL)
     {
-        register rt_ubase_t lock_nest = rt_atomic_load(&(pcpu->current_thread->cpus_lock_nest));
+        rt_ubase_t lock_nest = rt_atomic_load(&(pcpu->current_thread->cpus_lock_nest));
 
         rt_atomic_add(&(pcpu->current_thread->cpus_lock_nest), 1);
         if (lock_nest == 0)

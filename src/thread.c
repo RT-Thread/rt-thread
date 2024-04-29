@@ -363,7 +363,8 @@ rt_thread_t rt_thread_self(void)
     self = rt_cpu_self()->current_thread;
     rt_hw_local_irq_enable(lock);
     return self;
-#else
+
+#else /* !RT_USING_SMP */
     extern rt_thread_t rt_current_thread;
 
     return rt_current_thread;
