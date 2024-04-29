@@ -175,6 +175,19 @@ rt_inline void _restore_serial(struct rt_serial_device *serial, lwp_tty_t tp,
     rt_device_control(&serial->parent, RT_DEVICE_CTRL_NOTIFY_SET, &softc->backup_notify);
 }
 
+static speed_t serial_tty_get_speed(struct lwp_tty *tp)
+{
+    struct serial_tty_context *softc = (struct serial_tty_context *)(tp->t_devswsoftc);
+    struct rt_serial_device *serial;
+    struct termios *t;
+
+    RT_ASSERT(softc);
+    serial = softc->parent;
+
+    rt_device_control(&(serial->parent), TCGETS, t);
+    return cfgetospeed(t);
+}
+
 static int _serial_isbusy(struct rt_serial_device *serial)
 {
     rt_thread_t user_thread = rt_console_current_user();
@@ -317,7 +330,7 @@ rt_err_t rt_hw_serial_register_tty(struct rt_serial_device *serial)
             tty = lwp_tty_create(&serial_ttydevsw, softc);
             if (tty)
             {
-                tty->t_termios_init_in.__c_ispeed = tty->t_termios_init_in.__c_ospeed = _get_speed(serial->config.baud_rate);
+                tty->t_termios_init_in.__c_ispeed = tty->t_termios_init_in.__c_ospeed = serial_tty_get_speed(tty);
                 rc = lwp_tty_register(tty, dev_name);
                 rt_work_init(&softc->work, _tty_rx_worker, tty);
 

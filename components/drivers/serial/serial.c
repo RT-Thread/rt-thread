@@ -949,7 +949,7 @@ static const struct speed_baudrate_item _tbl[] =
     {B4000000, BAUD_RATE_4000000},
 };
 
-speed_t _get_speed(int baudrate)
+static speed_t _get_speed(int baudrate)
 {
     size_t index;
 
