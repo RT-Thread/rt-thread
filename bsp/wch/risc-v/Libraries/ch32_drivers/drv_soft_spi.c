@@ -193,7 +193,7 @@ static void ch32_pin_init(void)
 {
     rt_size_t obj_num = sizeof(spi_obj) / sizeof(struct ch32_soft_spi);
 
-    for(rt_size_t i; i < obj_num; i++)
+    for(rt_size_t i = 0; i < obj_num; i++)
     {
         ch32_spi_gpio_init(&spi_obj[i]);
     }
