@@ -1985,10 +1985,10 @@
   <group>
     <name>Applications</name>
     <file>
-      <name>$PROJ_DIR$\applications\main.c</name>
+      <name>$PROJ_DIR$\applications\xtal32_fcm.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\applications\xtal32_fcm.c</name>
+      <name>$PROJ_DIR$\applications\main.c</name>
     </file>
   </group>
   <group>
@@ -2233,5 +2233,8 @@
     <file>
       <name>$PROJ_DIR$\..\libraries\hc32f472_ddl\hc32_ll_driver\src\hc32_ll_dma.c</name>
     </file>
+  </group>
+  <group>
+    <name>POSIX</name>
   </group>
 </project>

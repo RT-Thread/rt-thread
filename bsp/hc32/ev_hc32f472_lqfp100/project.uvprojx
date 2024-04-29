@@ -381,16 +381,16 @@
           <GroupName>Applications</GroupName>
           <Files>
             <File>
-              <FileName>xtal32_fcm.c</FileName>
+              <FileName>main.c</FileName>
               <FileType>1</FileType>
-              <FilePath>applications\xtal32_fcm.c</FilePath>
+              <FilePath>applications\main.c</FilePath>
             </File>
           </Files>
           <Files>
             <File>
-              <FileName>main.c</FileName>
+              <FileName>xtal32_fcm.c</FileName>
               <FileType>1</FileType>
-              <FilePath>applications\main.c</FilePath>
+              <FilePath>applications\xtal32_fcm.c</FilePath>
             </File>
           </Files>
         </Group>
