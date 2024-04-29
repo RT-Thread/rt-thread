@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2023, RT-Thread Development Team
+ * Copyright (c) 2006-2024, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -131,7 +131,7 @@ void lv_port_indev_init(void)
     lv_indev_drv_init(&indev_drv);           /* Basic initialization */
     indev_drv.type = LV_INDEV_TYPE_POINTER;  /* Touch pad is a pointer-like device */
     indev_drv.read_cb = touchpad_read;       /* Set your driver function */
-    
+
     /* Register the driver in LVGL and save the created input device object */
     touch_indev = lv_indev_drv_register(&indev_drv);
 #else
