@@ -17,18 +17,21 @@
 #ifdef PKG_USING_ILI9341
     #include "lcd_ili9341.h"
 #else
-    #include "lcd_port.h"
+    #include <ra6m3/lcd_config.h>
 #endif
 
+#if LVGL_VERSION_MAJOR < 9
 #define COLOR_BUFFER  (LV_HOR_RES_MAX * LV_VER_RES_MAX / 4)
-
 /*A static or global variable to store the buffers*/
 static lv_disp_draw_buf_t disp_buf;
-
 /*Descriptor of a display driver*/
 static lv_disp_drv_t disp_drv;
-static struct rt_device_graphic_info info;
+#endif
 
+static rt_sem_t _SemaphoreVsync = RT_NULL;
+static uint8_t lvgl_init_flag = 0;
+
+#if LVGL_VERSION_MAJOR < 9
 /*Static or global buffer(s). The second buffer is optional*/
 // 0x1FFE0000    0x20040000
 lv_color_t buf_1[COLOR_BUFFER];
@@ -45,12 +48,20 @@ static void color_to16_maybe(lv_color16_t *dst, lv_color_t *src)
 #endif
 }
 #endif
+#endif
 
-void _ra_port_display_callback(display_callback_args_t *p_args)
+void DisplayVsyncCallback(display_callback_args_t *p_args)
 {
-    /* TFT-Callback */
+    rt_interrupt_enter();
+    if (DISPLAY_EVENT_LINE_DETECTION == p_args->event)
+    {
+        if (lvgl_init_flag != 0)
+            rt_sem_release(_SemaphoreVsync);
+    }
+    rt_interrupt_leave();
 }
 
+#if LVGL_VERSION_MAJOR < 9
 static void disp_flush(lv_disp_drv_t *disp_drv, const lv_area_t *area, lv_color_t *color_p)
 {
 #ifdef PKG_USING_ILI9341
@@ -102,25 +113,40 @@ static void disp_flush(lv_disp_drv_t *disp_drv, const lv_area_t *area, lv_color_
 #endif
     lv_disp_flush_ready(disp_drv);
 }
+#else
+static void vsync_wait_cb(lv_display_t *display)
+{
+    if (!lv_display_flush_is_last(display)) return;
+
+    //
+    // If Vsync semaphore has already been set, clear it then wait to avoid tearing
+    //
+    rt_sem_take(_SemaphoreVsync, RT_WAITING_FOREVER);
+}
+
+static void disp_flush(lv_display_t *display, const lv_area_t *area, uint8_t *px_map)
+{
+    if (!lv_display_flush_is_last(display)) return;
+
+    R_GLCDC_BufferChange(&g_display0_ctrl,
+                         (uint8_t *) px_map,
+                         (display_frame_layer_t) 0);
+}
+#endif
 
 void lv_port_disp_init(void)
 {
+    _SemaphoreVsync = rt_sem_create("lvgl_sem", 1, RT_IPC_FLAG_PRIO);
+
+    if (RT_NULL == _SemaphoreVsync)
+    {
+        rt_kprintf("lvgl semaphore create failed\r\n");
+        RT_ASSERT(0);
+    }
 #ifdef PKG_USING_ILI9341
     spi_lcd_init(20);
-#else
-    static rt_device_t device;
-    /* LCD Device Init */
-    device = rt_device_find("lcd");
-    RT_ASSERT(device != RT_NULL);
-
-    if (rt_device_open(device, RT_DEVICE_OFLAG_RDWR) == RT_EOK)
-    {
-        rt_device_control(device, RTGRAPHIC_CTRL_GET_INFO, &info);
-    }
-
-    RT_ASSERT(info.bits_per_pixel == 8 || info.bits_per_pixel == 16 ||
-              info.bits_per_pixel == 24 || info.bits_per_pixel == 32);
 #endif
+#if LVGL_VERSION_MAJOR < 9
     /*Initialize `disp_buf` with the buffer(s). With only one buffer use NULL instead buf_2 */
     lv_disp_draw_buf_init(&disp_buf, buf_1, NULL, COLOR_BUFFER);
 
@@ -143,4 +169,15 @@ void lv_port_disp_init(void)
 
     /*Finally register the driver*/
     lv_disp_drv_register(&disp_drv);
+#else
+    /*------------------------------------
+     * Create a display and set a flush_cb
+     * -----------------------------------*/
+    lv_display_t *disp = lv_display_create(LV_HOR_RES_MAX, LV_VER_RES_MAX);
+    lv_display_set_flush_cb(disp, disp_flush);
+    lv_display_set_flush_wait_cb(disp, vsync_wait_cb);
+    lv_display_set_buffers(disp, &fb_background[0][0], &fb_background[1][0], sizeof(fb_background[0]), LV_DISPLAY_RENDER_MODE_DIRECT);
+
+    lvgl_init_flag = 1;
+#endif
 }

@@ -1,5 +1,5 @@
 /***********************************************************************************************************************
- * Copyright [2020-2021] Renesas Electronics Corporation and/or its affiliates.  All Rights Reserved.
+ * Copyright [2020-2023] Renesas Electronics Corporation and/or its affiliates.  All Rights Reserved.
  *
  * This software and documentation are supplied by Renesas Electronics America Inc. and may only be used with products
  * of Renesas Electronics Corp. and its affiliates ("Renesas").  No other uses are authorized.  Renesas products are
@@ -32,9 +32,6 @@
  * - Hardware resource locking during a transaction
  * - CTS/RTS hardware flow control support (with an associated IOPORT pin)
  *
- * Implemented by:
- * - @ref SCI_UART
- * - @ref SCI_B_UART
  *
  * @{
  **********************************************************************************************************************/
@@ -62,6 +59,7 @@ FSP_HEADER
  **********************************************************************************************************************/
 
 /** UART Event codes */
+#ifndef BSP_OVERRIDE_UART_EVENT_T
 typedef enum e_sf_event
 {
     UART_EVENT_RX_COMPLETE   = (1UL << 0), ///< Receive complete event
@@ -73,6 +71,8 @@ typedef enum e_sf_event
     UART_EVENT_BREAK_DETECT  = (1UL << 6), ///< Break detect error event
     UART_EVENT_TX_DATA_EMPTY = (1UL << 7), ///< Last byte is transmitting, ready for more data
 } uart_event_t;
+#endif
+#ifndef BSP_OVERRIDE_UART_DATA_BITS_T
 
 /** UART Data bit length definition */
 typedef enum e_uart_data_bits
@@ -81,6 +81,8 @@ typedef enum e_uart_data_bits
     UART_DATA_BITS_8 = 2U,             ///< Data bits 8-bit
     UART_DATA_BITS_7 = 3U,             ///< Data bits 7-bit
 } uart_data_bits_t;
+#endif
+#ifndef BSP_OVERRIDE_UART_PARITY_T
 
 /** UART Parity definition */
 typedef enum e_uart_parity
@@ -89,6 +91,7 @@ typedef enum e_uart_parity
     UART_PARITY_EVEN = 2U,             ///< Even parity
     UART_PARITY_ODD  = 3U,             ///< Odd parity
 } uart_parity_t;
+#endif
 
 /** UART Stop bits definition */
 typedef enum e_uart_stop_bits
@@ -161,8 +164,6 @@ typedef struct st_uart_cfg
 } uart_cfg_t;
 
 /** UART control block.  Allocate an instance specific control block to pass into the UART API calls.
- * @par Implemented as
- * - sci_uart_instance_ctrl_t
  */
 typedef void uart_ctrl_t;
 
@@ -170,9 +171,6 @@ typedef void uart_ctrl_t;
 typedef struct st_uart_api
 {
     /** Open  UART device.
-     * @par Implemented as
-     * - @ref R_SCI_UART_Open()
-     * - @ref R_SCI_B_UART_Open()
      *
      * @param[in,out]  p_ctrl     Pointer to the UART control block. Must be declared by user. Value set here.
      * @param[in]      uart_cfg_t Pointer to UART configuration structure. All elements of this structure must be set by
@@ -184,9 +182,6 @@ typedef struct st_uart_api
      * callback is called with event UART_EVENT_RX_COMPLETE.  Bytes received outside an active transfer are received in
      * the callback function with event UART_EVENT_RX_CHAR.
      * The maximum transfer size is reported by infoGet().
-     * @par Implemented as
-     * - @ref R_SCI_UART_Read()
-     * - @ref R_SCI_B_UART_Read()
      *
      * @param[in]   p_ctrl     Pointer to the UART control block for the channel.
      * @param[in]   p_dest     Destination address to read data from.
@@ -198,9 +193,6 @@ typedef struct st_uart_api
      * contents until the write is finished.  When the write is complete (all bytes are fully transmitted on the wire),
      * the callback called with event UART_EVENT_TX_COMPLETE.
      * The maximum transfer size is reported by infoGet().
-     * @par Implemented as
-     * - @ref R_SCI_UART_Write()
-     * - @ref R_SCI_B_UART_Write()
      *
      * @param[in]   p_ctrl     Pointer to the UART control block.
      * @param[in]   p_src      Source address  to write data to.
@@ -212,9 +204,6 @@ typedef struct st_uart_api
      * @warning Calling this API aborts any in-progress transmission and disables reception until the new baud
      * settings have been applied.
      *
-     * @par Implemented as
-     * - @ref R_SCI_UART_BaudSet()
-     * - @ref R_SCI_B_UART_BaudSet()
      *
      * @param[in]   p_ctrl          Pointer to the UART control block.
      * @param[in]   p_baudrate_info Pointer to module specific information for configuring baud rate.
@@ -222,9 +211,6 @@ typedef struct st_uart_api
     fsp_err_t (* baudSet)(uart_ctrl_t * const p_ctrl, void const * const p_baudrate_info);
 
     /** Get the driver specific information.
-     * @par Implemented as
-     * - @ref R_SCI_UART_InfoGet()
-     * - @ref R_SCI_B_UART_InfoGet()
      *
      * @param[in]   p_ctrl     Pointer to the UART control block.
      * @param[in]   baudrate   Baud rate in bps.
@@ -233,9 +219,6 @@ typedef struct st_uart_api
 
     /**
      * Abort ongoing transfer.
-     * @par Implemented as
-     * - @ref R_SCI_UART_Abort()
-     * - @ref R_SCI_B_UART_Abort()
      *
      * @param[in]   p_ctrl                   Pointer to the UART control block.
      * @param[in]   communication_to_abort   Type of abort request.
@@ -244,9 +227,6 @@ typedef struct st_uart_api
 
     /**
      * Specify callback function and optional context pointer and working memory pointer.
-     * @par Implemented as
-     * - R_SCI_Uart_CallbackSet()
-     * - R_SCI_B_Uart_CallbackSet()
      *
      * @param[in]   p_ctrl                   Pointer to the UART control block.
      * @param[in]   p_callback               Callback function
@@ -254,25 +234,19 @@ typedef struct st_uart_api
      * @param[in]   p_working_memory         Pointer to volatile memory where callback structure can be allocated.
      *                                       Callback arguments allocated here are only valid during the callback.
      */
-    fsp_err_t (* callbackSet)(uart_ctrl_t * const p_api_ctrl, void (* p_callback)(uart_callback_args_t *),
+    fsp_err_t (* callbackSet)(uart_ctrl_t * const p_ctrl, void (* p_callback)(uart_callback_args_t *),
                               void const * const p_context, uart_callback_args_t * const p_callback_memory);
 
     /** Close UART device.
-     * @par Implemented as
-     * - @ref R_SCI_UART_Close()
-     * - @ref R_SCI_B_UART_Close()
      *
      * @param[in]   p_ctrl     Pointer to the UART control block.
      */
     fsp_err_t (* close)(uart_ctrl_t * const p_ctrl);
 
     /** Stop ongoing read and return the number of bytes remaining in the read.
-     * @par Implemented as
-     * - @ref R_SCI_UART_ReadStop()
-     * - @ref R_SCI_B_UART_ReadStop()
      *
-     * @param[in]   p_ctrl                  Pointer to the UART control block.
-     * @param[in,out]   remaining_bytes     Pointer to location to store remaining bytes for read.
+     * @param[in]      p_ctrl                Pointer to the UART control block.
+     * @param[in,out]  remaining_bytes       Pointer to location to store remaining bytes for read.
      */
     fsp_err_t (* readStop)(uart_ctrl_t * const p_ctrl, uint32_t * remaining_bytes);
 } uart_api_t;

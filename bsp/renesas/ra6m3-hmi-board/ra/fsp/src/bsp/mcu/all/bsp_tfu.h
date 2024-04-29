@@ -1,5 +1,5 @@
 /***********************************************************************************************************************
- * Copyright [2020-2021] Renesas Electronics Corporation and/or its affiliates.  All Rights Reserved.
+ * Copyright [2020-2023] Renesas Electronics Corporation and/or its affiliates.  All Rights Reserved.
  *
  * This software and documentation are supplied by Renesas Electronics America Inc. and may only be used with products
  * of Renesas Electronics Corp. and its affiliates ("Renesas").  No other uses are authorized.  Renesas products are
@@ -40,34 +40,36 @@ FSP_HEADER
  * @{
  **********************************************************************************************************************/
 
+#if BSP_FEATURE_TFU_SUPPORTED
+
 /***********************************************************************************************************************
  * Macro definitions
  **********************************************************************************************************************/
 
-#define R_TFU_HYPOT_SCALING_FACTOR    0.607252935f
+ #define R_TFU_HYPOT_SCALING_FACTOR    0.607252935f
 
-#ifdef __GNUC__                        /* and (arm)clang */
- #if (__STDC_VERSION__ < 199901L) && defined(__STRICT_ANSI__) && !defined(__cplusplus)
+ #ifdef __GNUC__                       /* and (arm)clang */
+  #if (__STDC_VERSION__ < 199901L) && defined(__STRICT_ANSI__) && !defined(__cplusplus)
 
 /* No form of inline is available, it happens only when -std=c89, gnu89 and
  * above are OK */
-  #warning \
+   #warning \
     "-std=c89 doesn't support type checking on TFU. Please use -std=gnu89 or higher for example -std=c99"
- #else
-  #ifdef __GNUC_GNU_INLINE__
+  #else
+   #ifdef __GNUC_GNU_INLINE__
 
 /* gnu89 semantics of inline and extern inline are essentially the exact
  * opposite of those in C99 */
-   #define BSP_TFU_INLINE    extern inline __attribute__((always_inline))
-  #else                                /* __GNUC_STDC_INLINE__ */
-   #define BSP_TFU_INLINE    static inline __attribute__((always_inline))
+    #define BSP_TFU_INLINE    extern inline __attribute__((always_inline))
+   #else                               /* __GNUC_STDC_INLINE__ */
+    #define BSP_TFU_INLINE    static inline __attribute__((always_inline))
+   #endif
   #endif
+ #elif __ICCARM__
+  #define BSP_TFU_INLINE
+ #else
+  #error "Compiler not supported!"
  #endif
-#elif __ICCARM__
- #define BSP_TFU_INLINE
-#else
- #error "Compiler not supported!"
-#endif
 
 /***********************************************************************************************************************
  * Typedef definitions
@@ -87,9 +89,9 @@ FSP_HEADER
  *
  * @retval Sine value of an angle.
  **********************************************************************************************************************/
-#if __ICCARM__
- #pragma inline = forced
-#endif
+ #if __ICCARM__
+  #pragma inline = forced
+ #endif
 BSP_TFU_INLINE float __sinf (float angle)
 {
     /* Set the angle to R_TFU->SCDT1 */
@@ -105,9 +107,9 @@ BSP_TFU_INLINE float __sinf (float angle)
  *
  * @retval Cosine value of an angle.
  **********************************************************************************************************************/
-#if __ICCARM__
- #pragma inline = forced
-#endif
+ #if __ICCARM__
+  #pragma inline = forced
+ #endif
 BSP_TFU_INLINE float __cosf (float angle)
 {
     /* Set the angle to R_TFU->SCDT1 */
@@ -123,9 +125,9 @@ BSP_TFU_INLINE float __cosf (float angle)
  * @param[out]   sin    Sine value of an angle.
  * @param[out]   cos    Cosine value of an angle.
  **********************************************************************************************************************/
-#if __ICCARM__
- #pragma inline = forced
-#endif
+ #if __ICCARM__
+  #pragma inline = forced
+ #endif
 BSP_TFU_INLINE void __sincosf (float angle, float * sin, float * cos)
 {
     /* Set the angle to R_TFU->SCDT1 */
@@ -145,9 +147,9 @@ BSP_TFU_INLINE void __sincosf (float angle, float * sin, float * cos)
  *
  * @retval Arc tangent for given values.
  **********************************************************************************************************************/
-#if __ICCARM__
- #pragma inline = forced
-#endif
+ #if __ICCARM__
+  #pragma inline = forced
+ #endif
 BSP_TFU_INLINE float __atan2f (float y_cord, float x_cord)
 {
     /* Set X-cordinate to R_TFU->ATDT0 */
@@ -167,9 +169,9 @@ BSP_TFU_INLINE float __atan2f (float y_cord, float x_cord)
  *
  * @retval Hypotenuse for given values.
  **********************************************************************************************************************/
-#if __ICCARM__
- #pragma inline = forced
-#endif
+ #if __ICCARM__
+  #pragma inline = forced
+ #endif
 BSP_TFU_INLINE float __hypotf (float x_cord, float y_cord)
 {
     /* Set X-coordinate to R_TFU->ATDT0 */
@@ -189,9 +191,9 @@ BSP_TFU_INLINE float __hypotf (float x_cord, float y_cord)
  * @param[out]   atan2   Arc tangent for given values.
  * @param[out]   hypot   Hypotenuse for given values.
  **********************************************************************************************************************/
-#if __ICCARM__
- #pragma inline = forced
-#endif
+ #if __ICCARM__
+  #pragma inline = forced
+ #endif
 BSP_TFU_INLINE void __atan2hypotf (float y_cord, float x_cord, float * atan2, float * hypot)
 {
     /* Set X-coordinate to R_TFU->ATDT0 */
@@ -207,18 +209,20 @@ BSP_TFU_INLINE void __atan2hypotf (float y_cord, float x_cord, float * atan2, fl
     *hypot = R_TFU->ATDT0 * R_TFU_HYPOT_SCALING_FACTOR;
 }
 
-#if BSP_CFG_USE_TFU_MATHLIB
- #define sinf(x)                    __sinf(x)
- #define cosf(x)                    __cosf(x)
- #define atan2f(y, x)               __atan2f(y, x)
- #define hypotf(x, y)               __hypotf(x, y)
- #define atan2hypotf(y, x, a, h)    __atan2hypotf(y, x, a, h)
- #define sincosf(a, s, c)           __sincosf(a, s, c)
-#endif
+ #if BSP_CFG_USE_TFU_MATHLIB
+  #define sinf(x)                    __sinf(x)
+  #define cosf(x)                    __cosf(x)
+  #define atan2f(y, x)               __atan2f(y, x)
+  #define hypotf(x, y)               __hypotf(x, y)
+  #define atan2hypotf(y, x, a, h)    __atan2hypotf(y, x, a, h)
+  #define sincosf(a, s, c)           __sincosf(a, s, c)
+ #endif
 
 /***********************************************************************************************************************
  * Exported global functions (to be accessed by other files)
  **********************************************************************************************************************/
+
+#endif
 
 /** @} (end addtogroup BSP_MCU) */
 

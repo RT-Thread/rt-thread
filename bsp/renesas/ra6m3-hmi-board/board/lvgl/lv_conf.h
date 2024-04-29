@@ -13,15 +13,9 @@
 
 #include <rtconfig.h>
 
-/* Enable additional color format support */
-#define DLG_LVGL_CF             1
+#define LV_USE_DRAW_DAVE2D          1
 
-/* Enable sub byte color formats to be swapped. If disabled, which is recommended for
- * performance, bitmaps need to be in correct order */
-#define DLG_LVGL_CF_SUB_BYTE_SWAP   0
-
-#define DLG_LVGL_USE_GPU_RA6M3      0
-
+#define LV_USE_SYSMON               1
 #define LV_USE_PERF_MONITOR         1
 #define LV_COLOR_DEPTH              16
 
@@ -36,31 +30,40 @@
     #define LV_DPI_DEF              89
 #endif
 
-#ifdef BSP_USING_LVGL_VIDEO_DEMO
-#define LV_USE_FILE_EXPLORER    1
-#if LV_USE_FILE_EXPLORER
-    /*Maximum length of path*/
-    #define LV_FILE_EXPLORER_PATH_MAX_LEN        (128)
-    /*Quick access bar, 1:use, 0:not use*/
-    /*Requires: lv_list*/
-    #define LV_FILE_EXPLORER_QUICK_ACCESS        0
-#endif
+#ifdef BSP_USING_LVGL_WIDGETS_DEMO
+    #define LV_USE_DEMO_WIDGETS 1
+    #define LV_DEMO_WIDGETS_SLIDESHOW   0
+#endif  /* BSP_USING_LVGL_WIDGETS_DEMO */
 
-#define LV_USE_FS_STDIO 1
-#if LV_USE_FS_STDIO
-    #define LV_FS_STDIO_LETTER '/'      /*Set an upper cased letter on which the drive will accessible (e.g. 'A')*/
-    #define LV_FS_STDIO_PATH "/"        /*Set the working directory. File/directory paths will be appended to it.*/
-    #define LV_FS_STDIO_CACHE_SIZE  0   /*>0 to cache this number of bytes in lv_fs_read()*/
-#endif
-#endif
+/*Benchmark your system*/
+#ifdef BSP_USING_LVGL_BENCHMARK_DEMO
+    #define LV_USE_DEMO_BENCHMARK 1
+    /*Use RGB565A8 images with 16 bit color depth instead of ARGB8565*/
+    #define LV_DEMO_BENCHMARK_RGB565A8  1
+    #define LV_FONT_MONTSERRAT_14       1
+    #define LV_FONT_MONTSERRAT_24       1
+#endif  /* BSP_USING_LVGL_BENCHMARK_DEMO */
 
-#ifdef PKG_USING_LV_MUSIC_DEMO
-/* music player demo */
-#define LV_USE_DEMO_RTT_MUSIC       1
-#define LV_DEMO_RTT_MUSIC_AUTO_PLAY 1
-#define LV_FONT_MONTSERRAT_12       1
-#define LV_FONT_MONTSERRAT_16       1
-#define LV_COLOR_SCREEN_TRANSP      0
-#endif /* PKG_USING_LV_MUSIC_DEMO */
+/*Stress test for LVGL*/
+#ifdef BSP_USING_LVGL_STRESS_DEMO
+    #define LV_USE_DEMO_STRESS 1
+#endif  /* BSP_USING_LVGL_STRESS_DEMO */
+
+/*Render test for LVGL*/
+#ifdef BSP_USING_LVGL_RENDER_DEMO
+    #define LV_USE_DEMO_RENDER 1
+#endif  /* BSP_USING_LVGL_RENDER_DEMO */
+
+/*Music player demo*/
+#ifdef BSP_USING_LVGL_MUSIC_DEMO
+    #define LV_USE_DEMO_MUSIC 1
+    #define LV_DEMO_MUSIC_SQUARE    1
+    #define LV_DEMO_MUSIC_LANDSCAPE 0
+    #define LV_DEMO_MUSIC_ROUND     0
+    #define LV_DEMO_MUSIC_LARGE     0
+    #define LV_DEMO_MUSIC_AUTO_PLAY 1
+    #define LV_FONT_MONTSERRAT_12   1
+    #define LV_FONT_MONTSERRAT_16   1
+#endif  /* BSP_USING_LVGL_MUSIC_DEMO */
 
 #endif
