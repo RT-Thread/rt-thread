@@ -111,8 +111,10 @@ int hc32_flash_write(rt_uint32_t addr, const rt_uint8_t *buf, size_t size)
     /* calculate sector information */
     FirstSector = addr / SECTOR_SIZE,
     NbOfSectors = GetSectorNum(addr, size);
+#if defined (HC32F4A0) || defined (HC32F472) || defined (HC32F448)
     /* Sectors disable write protection */
     EFM_SequenceSectorOperateCmd(FirstSector, NbOfSectors, ENABLE);
+#endif
     /* Word align */
     if (0U != (addr % 4))
     {
@@ -149,8 +151,10 @@ int hc32_flash_write(rt_uint32_t addr, const rt_uint8_t *buf, size_t size)
     }
 
 __exit:
+#if defined (HC32F4A0) || defined (HC32F472) || defined (HC32F448)
     /* Sectors enable write protection */
     EFM_SequenceSectorOperateCmd(FirstSector, NbOfSectors, DISABLE);
+#endif
     EFM_FWMC_Cmd(DISABLE);
 
     if (result != RT_EOK)
@@ -189,8 +193,10 @@ int hc32_flash_erase(rt_uint32_t addr, size_t size)
     /* calculate sector information */
     FirstSector = addr / SECTOR_SIZE,
     NbOfSectors = GetSectorNum(addr, size);
+#if defined (HC32F4A0) || defined (HC32F472) || defined (HC32F448)
     /* Sectors disable write protection */
     EFM_SequenceSectorOperateCmd(FirstSector, NbOfSectors, ENABLE);
+#endif
     /* Erase sector */
     for (SectorVal = FirstSector; SectorVal < NbOfSectors; SectorVal++)
     {
@@ -201,8 +207,10 @@ int hc32_flash_erase(rt_uint32_t addr, size_t size)
             break;
         }
     }
+#if defined (HC32F4A0) || defined (HC32F472) || defined (HC32F448)
     /* Sectors enable write protection */
     EFM_SequenceSectorOperateCmd(FirstSector, NbOfSectors, DISABLE);
+#endif
     EFM_FWMC_Cmd(DISABLE);
 
     if (result != RT_EOK)

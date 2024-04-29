@@ -1,0 +1,18 @@
+import os
+import rtconfig
+from building import *
+
+Import('SDK_LIB')
+
+cwd = GetCurrentDir()
+
+# add general drivers
+src = []
+path = [cwd]
+
+if GetDepend(['BSP_USING_TCA9539']):
+    src += Glob('tca9539.c')
+
+group = DefineGroup('PLATFORM', src, depend = ['BSP_USING_TCA9539'], CPPPATH = path)
+
+Return('group')
