@@ -1,8 +1,8 @@
-# XHSC EV_F472_LQ80_Rev1.0 开发板 BSP 说明
+# XHSC EV_F472_LQ100_Rev1.0 开发板 BSP 说明
 
 ## 简介
 
-本文档为小华半导体为 EV_F472_LQ80_Rev1.0 开发板提供的 BSP (板级支持包) 说明。
+本文档为小华半导体为 EV_F472_LQ100_Rev1.0 开发板提供的 BSP (板级支持包) 说明。
 
 主要内容如下：
 
@@ -14,37 +14,36 @@
 
 ## 开发板介绍
 
-EV_F472_LQ80_Rev1.0 是 XHSC 官方推出的开发板，搭载 HC32F472PETI 芯片，基于 ARM Cortex-M4 内核，最高主频 200 MHz，具有丰富的板载资源，可以充分发挥 HC32F472PETI 的芯片性能。
+EV_F472_LQ100_Rev1.0 是 XHSC 官方推出的开发板，搭载 HC32F472PETI 芯片，基于 ARM Cortex-M4 内核，最高主频 120 MHz，具有丰富的板载资源，可以充分发挥 HC32F472PETI 的芯片性能。
 
 开发板外观如下图所示：
 
  ![board](figures/board.png)
 
-EV_F472_LQ80_Rev1.0 开发板常用 **板载资源** 如下：
+EV_F472_LQ100_Rev1.0 开发板常用 **板载资源** 如下：
 
 - **MCU**
   - HC32F472PETI
-  - 主频200MHz
-  - 256KB FLASH
+  - 主频120MHz
+  - 512KB FLASH
   - 68KB RAM
 - **外部Memory**
   - BL24C256（EEPROM, 256Kbits）
   - W25Q64（SPI NOR，64MB）
   - IS62WV51216（SRAM， 1MB）
 - **常用外设**
-  - LED: 4 个，User LED（LED0，LED1，LED2，LED3）。
-  - 按键: 5 个，矩阵键盘（K1~K4）， WAKEUP（K5），RESET（K0）
+  - LED: 4 个，User LED（LED0，LED1，LED2，LED5）。
+  - 按键: 9 个，矩阵键盘（K1~K9）， WAKEUP（K10），RESET（K0）
 - **常用接口**
   - USB转串口
-  - CAN DB9接口 * 2
-  - TFT接口
+  - CAN DB9接口 * 3
   - SmartCard接口
   - I2C/USART/SPI接口
 - **调试接口**
   - 板载DAP调试器
   - 标准JTAG/SWD/Trace
 
-开发板更多详细信息请参考小华半导体半导体[EV_F472_LQ80_Rev1.0](https://www.xhsc.com.cn)
+开发板更多详细信息请参考小华半导体半导体[EV_F472_LQ100_Rev1.0](https://www.xhsc.com.cn)
 
 ## 外设支持
 
@@ -57,12 +56,10 @@ EV_F472_LQ80_Rev1.0 开发板常用 **板载资源** 如下：
 
 | **片上外设**  | **支持情况** |               **备注**                |
 | :------------ | :-----------: | :-----------------------------------: |
-| ADC           |     支持     | ADC1: CH10, CH11, <br>ADC3: CH1 |
-| CAN           |     支持     |              CAN1、CAN2                      |
-| GPIO          |     支持     | PA0, PA1... PH2 ---> PIN: 0, 1...82 |
+| GPIO          |     支持     | PA0, PA1... PF8 ---> PIN: 0, 1...88 |
 | I2C           |     支持     | 软件模拟<br>硬件I2C1~2<br>I2C1支持EEPROM（BL24C256） |
-| Hwtimer           |     支持     | Hwtimer1~5 |
 | SPI           |     支持     | SPI1~3<br>SPI1支持W25Q |
+| QSPI          |     支持     | 支持W25Q |
 | UART          |     支持     |              UART1~6<br>UART2为console使用                 |
 
 
@@ -81,7 +78,7 @@ EV_F472_LQ80_Rev1.0 开发板常用 **板载资源** 如下：
 
 ### 快速上手
 
-本 BSP 为开发者提供 MDK5 和 IAR 工程，并且支持 GCC 开发环境。下面以 MDK5 开发环境为例，介绍如何将系统运行起来。
+本 BSP 为开发者提供 MDK5 和 IAR 工程。下面以 MDK5 开发环境为例，介绍如何将系统运行起来。
 
 #### 硬件连接
 
@@ -95,7 +92,7 @@ EV_F472_LQ80_Rev1.0 开发板常用 **板载资源** 如下：
 
 #### 运行结果
 
-下载程序成功之后，系统会自动运行，观察开发板上LED的运行效果，绿色LED3会周期性闪烁。
+下载程序成功之后，系统会自动运行，观察开发板上LED的运行效果，绿色LED5会周期性闪烁。
 
 USB虚拟COM端口默认连接串口2，在终端工具里打开相应的串口，复位设备后，可以看到 RT-Thread 的输出信息:
 
