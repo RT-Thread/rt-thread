@@ -186,6 +186,10 @@
       <description>Arm CMSIS Version 5 - Core (M)</description>
       <originalPack>Arm.CMSIS5.5.9.0+renesas.0.fsp.5.1.0.pack</originalPack>
     </component>
+    <component apiversion="" class="HAL Drivers" condition="" group="all" subgroup="r_icu" variant="" vendor="Renesas" version="5.1.0">
+      <description>External Interrupt</description>
+      <originalPack>Renesas.RA.5.1.0.pack</originalPack>
+    </component>
   </raComponentSelection>
   <raElcConfiguration/>
   <raIcuConfiguration/>
@@ -458,6 +462,15 @@
       <property id="module.driver.drw.handle_name" value="d2_handle0"/>
       <property id="module.driver.drw.int_ipl" value="board.icu.common.irq.priority2"/>
     </module>
+    <module id="module.driver.external_irq_on_icu.1273263484">
+      <property id="module.driver.external_irq.name" value="g_external_irq9"/>
+      <property id="module.driver.external_irq.channel" value="9"/>
+      <property id="module.driver.external_irq.trigger" value="module.driver.external_irq.trigger.trig_rising"/>
+      <property id="module.driver.external_irq.filter_enable" value="module.driver.external_irq.filter_enable.true"/>
+      <property id="module.driver.external_irq.clock_source_div" value="module.driver.external_irq.clock_source_div.clock_source_div_by_64"/>
+      <property id="module.driver.external_irq.p_callback" value="irq_callback"/>
+      <property id="module.driver.external_irq.ipl" value="board.icu.common.irq.priority12"/>
+    </module>
     <context id="_hal.0">
       <stack module="module.driver.ioport_on_ioport.0"/>
       <stack module="module.driver.uart_on_sci_uart.552817864"/>
@@ -466,6 +479,7 @@
       <stack module="module.driver.drw.202162755">
         <stack module="module.driver.tes.dave2d.2043918604" requires="module.driver.drw.requires.dave2d_driver"/>
       </stack>
+      <stack module="module.driver.external_irq_on_icu.1273263484"/>
     </context>
     <config id="config.driver.glcdc">
       <property id="config.driver.glcdc.param_checking_enable" value="config.driver.glcdc.param_checking_enable.bsp"/>
@@ -473,6 +487,9 @@
     </config>
     <config id="config.driver.ioport">
       <property id="config.driver.ioport.checking" value="config.driver.ioport.checking.system"/>
+    </config>
+    <config id="config.driver.icu">
+      <property id="config.driver.icu.param_checking_enable" value="config.driver.icu.param_checking_enable.bsp"/>
     </config>
     <config id="config.driver.sci_uart">
       <property id="config.driver.sci_uart.param_checking_enable" value="config.driver.sci_uart.param_checking_enable.bsp"/>
@@ -548,6 +565,7 @@
       <configSetting altId="gpt8.gtioca.p605" configurationId="gpt8.gtioca"/>
       <configSetting altId="gpt8.gtiocb.p604" configurationId="gpt8.gtiocb"/>
       <configSetting altId="gpt8.mode.gtiocaorgtiocb.free" configurationId="gpt8.mode"/>
+      <configSetting altId="irq0.irq09.p004" configurationId="irq0.irq09"/>
       <configSetting altId="irq0.irq13.p015" configurationId="irq0.irq13"/>
       <configSetting altId="irq0.mode.enabled" configurationId="irq0.mode"/>
       <configSetting altId="p000.asel" configurationId="p000"/>
@@ -558,6 +576,9 @@
       <configSetting altId="p002.gpio_mode.gpio_mode_an" configurationId="p002.gpio_mode"/>
       <configSetting altId="p003.asel" configurationId="p003"/>
       <configSetting altId="p003.gpio_mode.gpio_mode_an" configurationId="p003.gpio_mode"/>
+      <configSetting altId="p004.irq0.irq09" configurationId="p004"/>
+      <configSetting altId="p004.gpio_irq.gpio_irq_enabled" configurationId="p004.gpio_irq"/>
+      <configSetting altId="p004.gpio_mode.gpio_mode_irq" configurationId="p004.gpio_mode"/>
       <configSetting altId="p008.asel" configurationId="p008"/>
       <configSetting altId="p008.gpio_mode.gpio_mode_an" configurationId="p008.gpio_mode"/>
       <configSetting altId="p014.asel" configurationId="p014"/>
