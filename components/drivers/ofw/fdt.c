@@ -476,6 +476,19 @@ static rt_err_t fdt_scan_memory(void)
             }
 
             /*
+             *  +--------+                                    +--------+
+             *  | memory |                                    | memory |
+             *  +--------+  +----------+        +----------+  +--------+
+             *              | reserved |        | reserved |
+             *              +----------+        +----------+
+             */
+            if (res_region->start >= region->end || res_region->end <= region->start)
+            {
+                /* No adjustments needed */
+                continue;
+            }
+
+            /*
              * case 0:                      case 1:
              *  +------------------+             +----------+
              *  |      memory      |             |  memory  |
@@ -490,56 +503,49 @@ static rt_err_t fdt_scan_memory(void)
              *                 | reserved |  | reserved |
              *                 +----------+  +----------+
              */
-
-            /* case 0 */
-            if (res_region->start >= region->start && res_region->end <= region->end)
+            if (res_region->start > region->start)
             {
-                rt_size_t new_size = region->end - res_region->end;
-
-                region->end = res_region->start;
-
-                /* Commit part next block */
-                if (new_size)
+                if (res_region->end < region->end)
                 {
+                    /* case 0 */
+                    rt_size_t new_size = region->end - res_region->end;
+
+                    region->end = res_region->start;
+
+                    /* Commit part next block */
                     err = commit_memregion(region->name, res_region->end, new_size, RT_FALSE);
+
+                    if (!err)
+                    {
+                        ++no;
+
+                        /* Scan again */
+                        region = &_memregion[0];
+                        --region;
+
+                        break;
+                    }
                 }
-
-                if (!err)
+                else
                 {
-                    ++no;
-
-                    /* Scan again */
-                    region = &_memregion[0];
-                    --region;
+                    /* case 2 */
+                    region->end = res_region->start;
+                }
+            }
+            else
+            {
+                if (res_region->end < region->end)
+                {
+                    /* case 3 */
+                    region->start = res_region->end;
+                }
+                else
+                {
+                    /* case 1 */
+                    region->name = RT_NULL;
 
                     break;
                 }
-
-                continue;
-            }
-
-            /* case 1 */
-            if (res_region->start <= region->start && res_region->end >= region->end)
-            {
-                region->name = RT_NULL;
-
-                break;
-            }
-
-            /* case 2 */
-            if (res_region->start <= region->end && res_region->end >= region->end)
-            {
-                region->end = res_region->start;
-
-                continue;
-            }
-
-            /* case 3 */
-            if (res_region->start <= region->start && res_region->end >= region->start)
-            {
-                region->start = res_region->end;
-
-                continue;
             }
         }
     }
