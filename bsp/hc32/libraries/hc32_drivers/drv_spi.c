@@ -8,6 +8,7 @@
  * 2022-04-28     CDT          first version
  * 2023-09-30     CDT          Delete dma transmit interrupt
  * 2024-02-20     CDT          support HC32F448
+ * 2024-04-16     CDT          support HC32F472
  */
 
 /*******************************************************************************
@@ -293,7 +294,7 @@ static rt_err_t hc32_spi_init(struct hc32_spi *spi_drv, struct rt_spi_configurat
 #endif
 
     /* Enable error interrupt */
-#if defined (HC32F448)
+#if defined (HC32F448) || defined (HC32F472)
     INTC_IntSrcCmd(spi_drv->config->err_irq.irq_config.int_src, ENABLE);
 #endif
     NVIC_EnableIRQ(spi_drv->config->err_irq.irq_config.irq_num);
@@ -311,7 +312,7 @@ static void hc32_spi_enable(CM_SPI_TypeDef *SPIx)
     {
         SPI_Cmd(SPIx, ENABLE);
     }
-#elif defined (HC32F448)
+#elif defined (HC32F448) || defined (HC32F472)
     if ((SPIx->CR & SPI_CR_SPE) != SPI_CR_SPE)
     {
         SPI_Cmd(SPIx, ENABLE);
@@ -332,7 +333,7 @@ static void hc32_spi_set_trans_mode(CM_SPI_TypeDef *SPIx, uint32_t u32Mode)
     {
         CLR_REG32_BIT(SPIx->CR1, SPI_CR1_TXMDS);
     }
-#elif defined (HC32F448)
+#elif defined (HC32F448) || defined (HC32F472)
     if (SPI_SEND_ONLY == u32Mode)
     {
         SET_REG32_BIT(SPIx->CR, SPI_CR_TXMDS);
@@ -351,7 +352,7 @@ static uint32_t hc32_spi_get_trans_mode(CM_SPI_TypeDef *SPIx)
 {
 #if defined (HC32F460) || defined (HC32F4A0)
     return READ_REG32_BIT(SPIx->CR1, SPI_CR1_TXMDS);
-#elif defined (HC32F448)
+#elif defined (HC32F448) || defined (HC32F472)
     return READ_REG32_BIT(SPIx->CR, SPI_CR_TXMDS);
 #else
 #error "Please select first the target HC32xxxx device used in your application."
@@ -679,7 +680,7 @@ rt_err_t rt_hw_spi_device_attach(const char *bus_name, const char *device_name, 
 
 static void hc32_spi_err_irq_handle(struct hc32_spi *spi)
 {
-#if defined (HC32F448)
+#if defined (HC32F448) ||defined (HC32F472)
 #define SPI_FLAG_OVERLOAD       SPI_FLAG_OVERRUN
 #define SPI_FLAG_UNDERLOAD      SPI_FLAG_UNDERRUN
 #endif
@@ -715,12 +716,12 @@ static void hc32_spi1_err_irq_handler(void)
     rt_interrupt_leave();
 }
 
-#if defined (HC32F448)
+#if defined (HC32F448) ||defined (HC32F472)
 void SPI1_Handler(void)
 {
     hc32_spi1_err_irq_handler();
 }
-#endif /* HC32F448 */
+#endif /* HC32F448, HC32F472 */
 
 #endif /* BSP_USING_SPI1 */
 
@@ -733,12 +734,12 @@ static void hc32_spi2_err_irq_handler(void)
     /* leave interrupt */
     rt_interrupt_leave();
 }
-#if defined (HC32F448)
+#if defined (HC32F448) ||defined (HC32F472)
 void SPI2_Handler(void)
 {
     hc32_spi2_err_irq_handler();
 }
-#endif /* HC32F448 */
+#endif /* HC32F448, HC32F472 */
 
 #endif /* BSP_USING_SPI2 */
 
@@ -751,12 +752,12 @@ static void hc32_spi3_err_irq_handler(void)
     /* leave interrupt */
     rt_interrupt_leave();
 }
-#if defined (HC32F448)
+#if defined (HC32F448) ||defined (HC32F472)
 void SPI3_Handler(void)
 {
     hc32_spi3_err_irq_handler();
 }
-#endif /* HC32F448 */
+#endif /* HC32F448, HC32F472 */
 
 #endif /* BSP_USING_SPI3 */
 
