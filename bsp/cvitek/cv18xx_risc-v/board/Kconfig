@@ -73,5 +73,11 @@ menu "General Drivers Configuration"
         select RT_USING_DFS_ROMFS
         bool "Enable Secure Digital Host Controller"
         default n
-        
+
+    config BSP_USING_ETH
+        bool "Enable Ethernet"
+        default n
+        select RT_USING_LWIP
+        select RT_USING_POSIX_FS
+        select RT_USING_POSIX_SOCKET
 endmenu

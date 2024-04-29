@@ -64,6 +64,7 @@ $ scons
 | timer | 支持 |  |
 | wdt | 支持 |  |
 | sdio | 支持 |  |
+| eth | 支持 |  |
 
 ## 支持开发板
 - milk-v duo: [https://milkv.io/duo](https://milkv.io/duo)

@@ -41,6 +41,16 @@ if GetDepend('BSP_USING_SDH'):
     src += ['drv_sdhci.c', 'port/mnt.c']
     CPPPATH += [cwd + r'/libraries/sdif']
 
+
+if GetDepend('BSP_USING_ETH'):
+    src += Split('''
+        drv_eth.c
+        libraries/eth/dw_eth_mac.c
+        libraries/eth/cvi_eth_phy.c
+        libraries/eth/eth_phy_cvitek.c
+    ''')
+    CPPPATH += [cwd + r'/libraries/eth']
+
 CPPDEFINES += ['-DCONFIG_64BIT']
 
 if GetDepend('BSP_USING_RTC'):
