@@ -1,6 +1,16 @@
 config SOC_FAMILY_AT32
     bool
 
+config SOC_SERIES_AT32A403A
+    bool
+    select ARCH_ARM_CORTEX_M4
+    select SOC_FAMILY_AT32
+
+config SOC_SERIES_AT32A423
+    bool
+    select ARCH_ARM_CORTEX_M4
+    select SOC_FAMILY_AT32
+
 config SOC_SERIES_AT32F402
     bool
     select ARCH_ARM_CORTEX_M4
