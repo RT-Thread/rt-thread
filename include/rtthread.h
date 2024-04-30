@@ -780,7 +780,6 @@ while (0)
  *     1) the scheduler has been started.
  *     2) not in interrupt context.
  *     3) scheduler is not locked.
- *     4) interrupt is not disabled.
  */
 #define RT_DEBUG_SCHEDULER_AVAILABLE(need_check)                              \
 do                                                                            \
@@ -810,7 +809,27 @@ rt_inline rt_bool_t rt_in_thread_context(void)
 
 rt_inline rt_bool_t rt_scheduler_is_available(void)
 {
-    return !rt_hw_interrupt_is_disabled() && rt_critical_level() == 0 && rt_in_thread_context();
+    return rt_critical_level() == 0 && rt_in_thread_context();
+}
+
+rt_inline rt_bool_t rt_scheduler_is_binding(rt_thread_t thread)
+{
+    if (thread == RT_NULL)
+    {
+        thread = rt_thread_self();
+    }
+    return !thread || RT_SCHED_CTX(thread).bind_cpu != RT_CPUS_NR;
+}
+
+/* A safe API with debugging feature to be called in most codes */
+rt_inline rt_base_t rt_cpu_get_id(void)
+{
+
+    RT_ASSERT(rt_scheduler_is_binding(RT_NULL) ||
+              rt_hw_interrupt_is_disabled() ||
+              !rt_scheduler_is_available());
+
+    return rt_hw_cpu_id();
 }
 
 /**@}*/
