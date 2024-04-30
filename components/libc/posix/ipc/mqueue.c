@@ -4,13 +4,29 @@
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
- * Date           Author       Notes
+ * Date             Author          Notes
+ * 2023-07-20       zmq810150896    first version
+ * 2024-04-30       TroyMitchell    Add comments for all functions
  */
 
 #include <dfs_file.h>
 #include <unistd.h>
 #include "mqueue.h"
 
+/**
+ * @brief   Sets the attributes of a message queue.
+ * @param   id Identifier of the message queue.
+ * @param   mqstat Pointer to a struct mq_attr containing the new attributes (ignored).
+ * @param   omqstat Pointer to a struct mq_attr where the old attributes will be stored.
+ * @return  Upon successful completion, returns 0; otherwise, returns -1 and sets errno to indicate the error.
+ *
+ * @note    This function sets the attributes of the message queue specified by id.
+ *          The new attributes are provided in the mqstat parameter, but this implementation ignores it.
+ *          Instead, the function calls mq_getattr() to retrieve the current attributes of the message queue
+ *          and stores them in the struct mq_attr pointed to by omqstat.
+ *          If mqstat is RT_NULL, the function behaves as a query and retrieves the attributes without setting new values.
+ *          If an error occurs during the operation, errno is set to indicate the error, and the function returns -1.
+ */
 int mq_setattr(mqd_t                 id,
                const struct mq_attr *mqstat,
                struct mq_attr       *omqstat)
@@ -24,6 +40,21 @@ int mq_setattr(mqd_t                 id,
 }
 RTM_EXPORT(mq_setattr);
 
+/**
+ * @brief   Gets the attributes of a message queue.
+ * @param   id Identifier of the message queue.
+ * @param   mqstat Pointer to a struct mq_attr where the attributes will be stored.
+ * @return  Upon successful completion, returns 0; otherwise, returns -1 and sets errno to indicate the error.
+ *
+ * @note    This function retrieves the attributes of the message queue specified by id.
+ *          The attributes include the maximum number of messages that can be queued (mq_maxmsg),
+ *          the maximum size of each message (mq_msgsize), the number of messages currently in the queue (mq_curmsgs),
+ *          and the flags associated with the queue (mq_flags).
+ *          The attributes are stored in the struct mq_attr pointed to by mqstat.
+ *          If the message queue identified by id does not exist or if mqstat is a null pointer, errno is set to EBADF,
+ *          indicating a bad file descriptor, and the function returns -1.
+ *          Otherwise, the function retrieves the attributes from the message queue and stores them in mqstat, returning 0 to indicate success.
+ */
 int mq_getattr(mqd_t id, struct mq_attr *mqstat)
 {
     rt_mq_t mq;
@@ -45,6 +76,30 @@ int mq_getattr(mqd_t id, struct mq_attr *mqstat)
 }
 RTM_EXPORT(mq_getattr);
 
+/**
+ * @brief   Opens or creates a message queue.
+ * @param   name Name of the message queue.
+ * @param   oflag Flags indicating the access mode and creation options (O_CREAT, O_EXCL, etc.).
+ * @param   ... Additional arguments for creation options (mode, attr) (ignored).
+ * @return  Upon successful completion, returns a message queue descriptor (mqd_t);
+ *          otherwise, returns (mqd_t)(-1) and sets errno to indicate the error.
+ *
+ * @note    This function opens or creates a message queue specified by name with the specified flags.
+ *          If the name starts with '/', the leading '/' is ignored.
+ *          The function then checks the length of the name and verifies if it exceeds the maximum allowed length.
+ *          If the name is too long, errno is set to ENAMETOOLONG, indicating a name too long error.
+ *          Next, the function attempts to find the message queue file corresponding to the name.
+ *          If the file exists and O_CREAT and O_EXCL flags are both set, indicating exclusive creation,
+ *          errno is set to EEXIST, indicating that the file already exists.
+ *          If the file does not exist and O_CREAT flag is set, the function checks the message queue attributes.
+ *          If the maximum number of messages (mq_maxmsg) in the attributes is less than or equal to 0,
+ *          errno is set to EINVAL, indicating an invalid argument for the maximum number of messages.
+ *          If the file does not exist and O_CREAT flag is not set, errno is set to ENOENT, indicating no such file or directory.
+ *          If the message queue needs to be created (O_CREAT flag set), a new mqueue_file structure is allocated and initialized
+ *          with the specified message queue attributes, and it is inserted into the message queue filesystem.
+ *          Finally, the function constructs the path to the message queue device file, opens it with the specified flags,
+ *          and returns the file descriptor as a message queue descriptor (mqd_t).
+ */
 mqd_t mq_open(const char *name, int oflag, ...)
 {
     int mq_fd;
@@ -115,6 +170,26 @@ mqd_t mq_open(const char *name, int oflag, ...)
 }
 RTM_EXPORT(mq_open);
 
+/**
+ * @brief   Receives a message from a message queue.
+ * @param   id Message queue descriptor.
+ * @param   msg_ptr Pointer to the buffer where the received message will be stored.
+ * @param   msg_len Maximum size of the message buffer.
+ * @param   msg_prio Pointer to an unsigned integer where the priority of the received message will be stored (ignored).
+ * @return  Upon successful completion, returns the number of bytes received;
+ *          otherwise, returns -1 and sets errno to indicate the error.
+ *
+ * @note    This function receives a message from the message queue identified by id.
+ *          The received message is stored in the buffer pointed to by msg_ptr, with a maximum size of msg_len bytes.
+ *          The priority of the received message is stored in the unsigned integer pointed to by msg_prio (ignored in this implementation).
+ *          If either the message queue identified by id or the msg_ptr buffer is a null pointer, errno is set to EINVAL,
+ *          indicating an invalid argument, and the function returns -1.
+ *          The function then attempts to receive a message from the message queue using the rt_mq_recv_prio() function
+ *          with an infinite timeout and uninterruptible mode.
+ *          If a message is successfully received, the function returns the number of bytes received.
+ *          If an error occurs during the receive operation, errno is set to EBADF, indicating a bad file descriptor,
+ *          and the function returns -1.
+ */
 ssize_t mq_receive(mqd_t id, char *msg_ptr, size_t msg_len, unsigned *msg_prio)
 {
     rt_mq_t mq;
@@ -137,6 +212,26 @@ ssize_t mq_receive(mqd_t id, char *msg_ptr, size_t msg_len, unsigned *msg_prio)
 }
 RTM_EXPORT(mq_receive);
 
+/**
+ * @brief   Sends a message to a message queue.
+ * @param   id Message queue descriptor.
+ * @param   msg_ptr Pointer to the buffer containing the message to be sent.
+ * @param   msg_len Size of the message to be sent.
+ * @param   msg_prio Priority of the message to be sent.
+ * @return  Upon successful completion, returns 0;
+ *          otherwise, returns -1 and sets errno to indicate the error.
+ *
+ * @note    This function sends a message to the message queue identified by id.
+ *          The message to be sent is contained in the buffer pointed to by msg_ptr, with a size of msg_len bytes.
+ *          The priority of the message is specified by the msg_prio parameter.
+ *          If either the message queue identified by id or the msg_ptr buffer is a null pointer, errno is set to EINVAL,
+ *          indicating an invalid argument, and the function returns -1.
+ *          The function then attempts to send the message to the message queue using the rt_mq_send_wait_prio() function
+ *          with zero timeout and uninterruptible mode.
+ *          If the message is successfully sent, the function returns 0.
+ *          If an error occurs during the send operation, errno is set to EBADF, indicating a bad file descriptor,
+ *          and the function returns -1.
+ */
 int mq_send(mqd_t id, const char *msg_ptr, size_t msg_len, unsigned msg_prio)
 {
     rt_mq_t mq;
@@ -160,6 +255,31 @@ int mq_send(mqd_t id, const char *msg_ptr, size_t msg_len, unsigned msg_prio)
 }
 RTM_EXPORT(mq_send);
 
+/**
+ * @brief   Receives a message from a message queue with a timeout.
+ * @param   id Message queue descriptor.
+ * @param   msg_ptr Pointer to the buffer where the received message will be stored.
+ * @param   msg_len Maximum size of the message buffer.
+ * @param   msg_prio Pointer to an unsigned integer where the priority of the received message will be stored.
+ * @param   abs_timeout Pointer to a struct timespec specifying the absolute timeout value (ignored if null).
+ * @return  Upon successful completion, returns the number of bytes received;
+ *          otherwise, returns -1 and sets errno to indicate the error.
+ *
+ * @note    This function receives a message from the message queue identified by id with a specified timeout.
+ *          The received message is stored in the buffer pointed to by msg_ptr, with a maximum size of msg_len bytes.
+ *          The priority of the received message is stored in the unsigned integer pointed to by msg_prio.
+ *          If either the message queue identified by id or the msg_ptr buffer is a null pointer, errno is set to EINVAL,
+ *          indicating an invalid argument, and the function returns -1.
+ *          The function then converts the absolute timeout value specified by abs_timeout to system ticks,
+ *          or sets the timeout to RT_WAITING_FOREVER if abs_timeout is null.
+ *          It attempts to receive a message from the message queue using the rt_mq_recv_prio() function
+ *          with the specified timeout and uninterruptible mode.
+ *          If a message is successfully received, the function returns the number of bytes received.
+ *          If the receive operation times out, errno is set to ETIMEDOUT, indicating a timeout error.
+ *          If the received message is too large for the specified buffer, errno is set to EMSGSIZE, indicating a message too large error.
+ *          If an unknown error occurs during the receive operation, errno is set to EBADMSG, indicating a bad message error,
+ *          and the function returns -1.
+ */
 ssize_t mq_timedreceive(mqd_t                  id,
                         char                  *msg_ptr,
                         size_t                 msg_len,
@@ -199,6 +319,23 @@ ssize_t mq_timedreceive(mqd_t                  id,
 }
 RTM_EXPORT(mq_timedreceive);
 
+/**
+ * @brief   Sends a message to a message queue with a timeout (not supported).
+ * @param   id Message queue descriptor.
+ * @param   msg_ptr Pointer to the buffer containing the message to be sent.
+ * @param   msg_len Size of the message to be sent.
+ * @param   msg_prio Priority of the message to be sent.
+ * @param   abs_timeout Pointer to a struct timespec specifying the absolute timeout value (ignored).
+ * @return  Upon successful completion, returns 0;
+ *          otherwise, returns -1 and sets errno to indicate the error.
+ *
+ * @note    This function attempts to send a message to the message queue identified by id with a specified timeout,
+ *          but timed send is not supported in the RT-Thread environment.
+ *          Therefore, the function simply delegates the message sending operation to the mq_send() function,
+ *          which does not involve a timeout.
+ *          The abs_timeout parameter is ignored, and the message is sent without waiting for a timeout to occur.
+ *          The function returns the result of the mq_send() function, which indicates whether the message was successfully sent.
+ */
 int mq_timedsend(mqd_t                  id,
                  const char            *msg_ptr,
                  size_t                 msg_len,
@@ -210,6 +347,18 @@ int mq_timedsend(mqd_t                  id,
 }
 RTM_EXPORT(mq_timedsend);
 
+/**
+ * @brief   Registers for notification when a message is available in a message queue (not supported).
+ * @param   id Message queue descriptor.
+ * @param   notification Pointer to a struct sigevent specifying the notification settings (ignored).
+ * @return  Upon successful completion, returns 0;
+ *          otherwise, returns -1 and sets errno to indicate the error.
+ *
+ * @note    This function attempts to register for notification when a message is available in the message queue identified by id.
+ *          However, message queue notification is not supported in the RT-Thread environment.
+ *          Therefore, this function simply sets errno to EBADF, indicating a bad file descriptor,
+ *          and returns -1 to indicate that the operation is not supported.
+ */
 int mq_notify(mqd_t id, const struct sigevent *notification)
 {
     rt_mq_t mq;
@@ -227,6 +376,17 @@ int mq_notify(mqd_t id, const struct sigevent *notification)
 }
 RTM_EXPORT(mq_notify);
 
+/**
+ * @brief   Closes a message queue descriptor.
+ * @param   id Message queue descriptor to be closed.
+ * @return  Upon successful completion, returns 0;
+ *          otherwise, returns -1 and sets errno to indicate the error.
+ *
+ * @note    This function closes the message queue descriptor specified by id.
+ *          It delegates the closing operation to the close() function, which closes the file descriptor associated with the message queue.
+ *          If the close operation is successful, the function returns 0.
+ *          If an error occurs during the close operation, errno is set to indicate the error, and the function returns -1.
+ */
 int mq_close(mqd_t id)
 {
     return close(id);
