@@ -31,22 +31,7 @@ void system_clock_config(void)
   {
   }
 
-  /* config pll clock resource
-  common frequency config list: pll source selected  hick or hext(8mhz)
-  _______________________________________________________________________________________
-  |        |         |         |         |         |         |         |        |        |
-  |pll(mhz)|   288   |   252   |   216   |   180   |   144   |   108   |   72   |   36   |
-  |________|_________|_________|_________|_________|_________|_________|_________________|
-  |        |         |         |         |         |         |         |        |        |
-  |pll_ns  |   72    |   63    |   108   |   90    |   72    |   108   |   72   |   72   |
-  |        |         |         |         |         |         |         |        |        |
-  |pll_ms  |   1     |   1     |   1     |   1     |   1     |   1     |   1    |   1    |
-  |        |         |         |         |         |         |         |        |        |
-  |pll_fr  |   FR_2  |   FR_2  |   FR_4  |   FR_4  |   FR_4  |   FR_8  |   FR_8 |   FR_16|
-  |________|_________|_________|_________|_________|_________|_________|________|________|
-
-  if pll clock source selects hext with other frequency values, or configure pll to other
-  frequency values, please use the at32 new clock  configuration tool for configuration.  */
+  /* config pll clock resource */
   crm_pll_config(CRM_PLL_SOURCE_HEXT, 125, 1, CRM_PLL_FR_4);
 
   /* enable pll */
