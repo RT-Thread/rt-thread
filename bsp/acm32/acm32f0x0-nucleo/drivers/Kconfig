@@ -106,6 +106,28 @@ menu "On-chip Peripheral Drivers"
             select RT_USING_I2C
     endmenu
 
+    menuconfig BSP_USING_SOFT_I2C
+        bool "Enable Soft I2C"
+        select RT_USING_I2C
+        select RT_USING_I2C_BITOPS
+        select RT_USING_PIN
+        default n
+        if BSP_USING_SOFT_I2C
+            menuconfig BSP_USING_I2C0
+                bool "Enable I2C1 BUS (software simulation)"
+                default n
+                if BSP_USING_I2C0
+                    config BSP_I2C0_SCL_PIN
+                        int "i2c0 scl pin number (PD, 6)"
+                        range 0 63
+                        default 54
+                    config BSP_I2C0_SDA_PIN
+                        int "I2C0 sda pin number (PD, 7)"
+                        range 0 63
+                        default 55
+                endif
+        endif
+
     menu "Hardware CAN"
         config BSP_USING_CAN1
             bool "Enable CAN1"
