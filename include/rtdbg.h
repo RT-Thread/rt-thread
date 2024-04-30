@@ -43,6 +43,9 @@ extern "C" {
 
 /* it will force output color log when RT_DEBUGING_COLOR macro is defined */
 #if defined(RT_DEBUGING_COLOR) && !defined(DBG_COLOR)
+#ifndef DBG_ENABLE
+#define DBG_ENABLE
+#endif
 #define DBG_COLOR
 #endif
 

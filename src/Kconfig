@@ -220,10 +220,6 @@ menuconfig RT_USING_DEBUG
     default y
 
     if RT_USING_DEBUG
-        config RT_DEBUGING_COLOR
-            bool "Enable color debugging log"
-            default y
-
         config RT_DEBUGING_CONTEXT
             bool "Enable debugging of environment and context check"
             default y
@@ -248,6 +244,10 @@ menuconfig RT_USING_DEBUG
             default y if RT_USING_SMART
             default n
     endif
+
+config RT_DEBUGING_COLOR
+    bool "Enable logs with color"
+    default y
 
 menu "Inter-Thread communication"
 
