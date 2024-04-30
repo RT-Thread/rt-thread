@@ -75,7 +75,7 @@ rt_err_t _uep_mod_set(uint8_t ep_idx, uint8_t value)
         case 5:
         case 6: USBFSD->UEP5_6_MOD = value; break;
         case 7: USBFSD->UEP7_MOD = value; break;
-        default: return RT_ERROR;
+        default: return -RT_ERROR;
     }
     return RT_EOK;
 }
@@ -113,7 +113,7 @@ uint8_t _uep_rx_en(uint8_t ep_idx)
 rt_err_t usbd_set_address(rt_uint8_t address)
 {
     if(address > 0x7f)
-        return RT_ERROR;
+        return -RT_ERROR;
     USBFSD->DEV_ADDR = (USBFSD->DEV_ADDR & USBFS_UDA_GP_BIT) | address;
     return RT_EOK;
 }
@@ -166,7 +166,7 @@ rt_err_t usbd_ep_enable(struct uendpoint* ep)
         uint8_t mod = _is_dir_in(address) ? _uep_tx_en(ep_idx) : _uep_rx_en(ep_idx);
         mod = _uep_mod_get(ep_idx) | mod;
         _uep_mod_set(ep_idx, mod);
-    } else return RT_ERROR;
+    } else return -RT_ERROR;
 
     return RT_EOK;
 }
@@ -184,7 +184,7 @@ rt_err_t usbd_ep_disable(struct uendpoint* ep)
         uint8_t mod = _is_dir_in(address) ? _uep_tx_en(ep_idx) : _uep_rx_en(ep_idx);
         mod = _uep_mod_get(ep_idx) & ~mod;
         _uep_mod_set(ep_idx, mod);
-    } else return RT_ERROR;
+    } else return -RT_ERROR;
 
     return RT_EOK;
 }
