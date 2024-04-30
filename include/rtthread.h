@@ -812,6 +812,7 @@ rt_inline rt_bool_t rt_scheduler_is_available(void)
     return rt_critical_level() == 0 && rt_in_thread_context();
 }
 
+#ifdef RT_USING_SMP
 rt_inline rt_bool_t rt_scheduler_is_binding(rt_thread_t thread)
 {
     if (thread == RT_NULL)
@@ -820,6 +821,10 @@ rt_inline rt_bool_t rt_scheduler_is_binding(rt_thread_t thread)
     }
     return !thread || RT_SCHED_CTX(thread).bind_cpu != RT_CPUS_NR;
 }
+
+#else
+#define rt_scheduler_is_binding(thread) (RT_TRUE)
+#endif
 
 /* A safe API with debugging feature to be called in most codes */
 rt_inline rt_base_t rt_cpu_get_id(void)
