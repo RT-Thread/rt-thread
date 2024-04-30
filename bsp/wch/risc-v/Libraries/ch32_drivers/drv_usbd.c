@@ -10,7 +10,7 @@
 
 #include "board.h"
 #include "drv_usbd.h"
-#define BSP_USING_USBD
+
 #ifdef BSP_USING_USBD
 
 #define LOG_TAG "drv.usbd"
@@ -38,16 +38,16 @@ static struct udcd udcd;
 USBOTG_FS_TypeDef *USBFSD = USBOTG_FS;
 
 static struct ep_id endpoint_pool[] =
-        {
-                {0x0,  USB_EP_ATTR_CONTROL,   USB_DIR_INOUT, 64,  ID_ASSIGNED  },
-                {0x1,  USB_EP_ATTR_BULK,      USB_DIR_IN,    512, ID_UNASSIGNED},
-                {0x1,  USB_EP_ATTR_BULK,      USB_DIR_OUT,   512, ID_UNASSIGNED},
-                {0x2,  USB_EP_ATTR_INT,       USB_DIR_IN,    512, ID_UNASSIGNED},
-                {0x2,  USB_EP_ATTR_INT,       USB_DIR_OUT,   512, ID_UNASSIGNED},
-                {0x3,  USB_EP_ATTR_ISOC,      USB_DIR_IN,    512, ID_UNASSIGNED},
-                {0x3,  USB_EP_ATTR_ISOC,      USB_DIR_OUT,   512, ID_UNASSIGNED},
-                {0xFF, USB_EP_ATTR_TYPE_MASK, USB_DIR_MASK,  0,   ID_ASSIGNED  },
-        };
+{
+    {0x0,  USB_EP_ATTR_CONTROL,   USB_DIR_INOUT, 64,  ID_ASSIGNED  },
+    {0x1,  USB_EP_ATTR_BULK,      USB_DIR_IN,    512, ID_UNASSIGNED},
+    {0x1,  USB_EP_ATTR_BULK,      USB_DIR_OUT,   512, ID_UNASSIGNED},
+    {0x2,  USB_EP_ATTR_INT,       USB_DIR_IN,    512, ID_UNASSIGNED},
+    {0x2,  USB_EP_ATTR_INT,       USB_DIR_OUT,   512, ID_UNASSIGNED},
+    {0x3,  USB_EP_ATTR_ISOC,      USB_DIR_IN,    512, ID_UNASSIGNED},
+    {0x3,  USB_EP_ATTR_ISOC,      USB_DIR_OUT,   512, ID_UNASSIGNED},
+    {0xFF, USB_EP_ATTR_TYPE_MASK, USB_DIR_MASK,  0,   ID_ASSIGNED  },
+};
 
 uint8_t _uep_mod_get(uint8_t ep_idx)
 {
@@ -320,9 +320,9 @@ void USBD_IRQHandler()
     uint8_t int_fg = USBFSD->INT_FG;
 
     if (int_fg & USBFS_UIF_TRANSFER) {
-        uint8_t ep_idx = USBFS_DEVICE->INT_ST & USBFS_UIS_ENDP_MASK;
+        uint8_t ep_idx = USBFSD->INT_ST & USBFS_UIS_ENDP_MASK;
         uint8_t tog;
-        switch (USBFS_DEVICE->INT_ST & USBFS_UIS_TOKEN_MASK) {
+        switch (USBFSD->INT_ST & USBFS_UIS_TOKEN_MASK) {
             case USBFS_UIS_TOKEN_SETUP:
                 _set_rx_ctrl(ep_idx, USBFS_UEP_R_RES_NAK);
                 break;
@@ -350,7 +350,6 @@ void USBD_IRQHandler()
                     {
                         tog = _get_rx_ctrl(ep_idx) & USBFS_UEP_R_TOG;
                         _set_rx_ctrl(ep_idx, (_get_rx_ctrl(ep_idx) & 0b11111000) | ~tog | USBFS_UEP_R_RES_NAK);
-                        rt_usbd_ep0_out_handler(&udcd, _get_rx_len(ep_idx));
                     }
                     else
                     {
@@ -359,7 +358,7 @@ void USBD_IRQHandler()
                 }
                 else
                 {
-                    USBFSD->RX_CTRL = USBFS_UEP_R_RES_NAK;
+                    _set_rx_ctrl(ep_idx, (_get_rx_ctrl(ep_idx) & ~USBFS_UEP_R_RES_MASK) | USBFS_UEP_R_RES_NAK);
                     if (USBFSD->INT_ST & USBFS_UIS_TOG_OK) {
                         _set_rx_ctrl(ep_idx, (_get_rx_ctrl(ep_idx) & ~USBFS_UEP_R_RES_MASK) | USBFS_UEP_R_RES_NAK);
                         rt_usbd_ep_out_handler(&udcd, ep_idx | USB_DIR_OUT, 0);
@@ -370,26 +369,26 @@ void USBD_IRQHandler()
                 break;
         }
 
-        USBFS_DEVICE->INT_FG = USBFS_UIF_TRANSFER;
+        USBFSD->INT_FG = USBFS_UIF_TRANSFER;
     } else if (int_fg & USBFS_UIF_BUS_RST) {
-        USBFS_DEVICE->UEP0_TX_LEN = 0;
-        USBFS_DEVICE->UEP0_TX_CTRL = USBFS_UEP_T_RES_NAK;
-        USBFS_DEVICE->UEP0_RX_CTRL = USBFS_UEP_R_RES_NAK;
+        USBFSD->UEP0_TX_LEN = 0;
+        USBFSD->UEP0_TX_CTRL = USBFS_UEP_T_RES_NAK;
+        USBFSD->UEP0_RX_CTRL = USBFS_UEP_R_RES_NAK;
 
         for (uint8_t i = 1; i < 8; i++) {
             _set_tx_len(i, 0);
-            _set_tx_ctrl(i, USBFS_UEP_T_RES_NAK | USBFS_UEP_AUTO_TOG);
-            _set_rx_ctrl(i, USBFS_UEP_R_RES_NAK | USBFS_UEP_AUTO_TOG);
+            _set_tx_ctrl(i, USBFS_UEP_T_RES_NAK | USBFS_UEP_T_AUTO_TOG);
+            _set_rx_ctrl(i, USBFS_UEP_R_RES_NAK | USBFS_UEP_R_AUTO_TOG);
         }
 
         _set_rx_ctrl(0, USBFS_UEP_R_RES_ACK);
         rt_usbd_reset_handler(&udcd);
 
-        USBFS_DEVICE->INT_FG |= USBFS_UIF_BUS_RST;
+        USBFSD->INT_FG |= USBFS_UIF_BUS_RST;
     } else if (int_fg & USBFS_UIF_SUSPEND) {
-        USBFS_DEVICE->INT_FG = USBFS_UIF_SUSPEND;
+        USBFSD->INT_FG = USBFS_UIF_SUSPEND;
     } else {
-        USBFS_DEVICE->INT_FG = int_fg;
+        USBFSD->INT_FG = int_fg;
     }
 
     rt_interrupt_leave();
