@@ -69,6 +69,8 @@ jobs:
                 - "synwit/swm341-mini"
                 - "beaglebone"
                 - "zynqmp-r5-axu4ev"
+                - "at32/at32a403a-start"
+                - "at32/at32a423-start"
                 - "at32/at32f402-start"
                 - "at32/at32f403a-start"
                 - "at32/at32f405-start"
