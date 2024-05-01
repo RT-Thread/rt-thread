@@ -23,6 +23,8 @@
 #include <stdlib.h>
 #include <ioremap.h>
 #include <rtdevice.h>
+#include <gic.h>
+#include <gicv3.h>
 
 #define SIZE_KB  1024
 #define SIZE_MB (1024 * SIZE_KB)
@@ -497,7 +499,13 @@ rt_weak void rt_hw_secondary_cpu_bsp_start(void)
 #ifdef RT_USING_PIC
     rt_pic_irq_init();
 #else
-    rt_hw_interrupt_init();
+    /* initialize vector table */
+    rt_hw_vector_init();
+
+    arm_gic_cpu_init(0, 0);
+#ifdef BSP_USING_GICV3
+    arm_gic_redist_init(0, 0);
+#endif /* BSP_USING_GICV3 */
 #endif
 
     rt_dm_secondary_cpu_init();
