@@ -202,18 +202,10 @@ void dlmodule_destroy_subthread(struct rt_dlmodule *module, rt_thread_t thread)
     /* lock scheduler to prevent scheduling in cleanup function. */
     rt_enter_critical();
 
-    /* remove thread from thread_list (ready or defunct thread list) */
+    rt_thread_close(thread);
+
+    /* remove thread from thread_list (defunct thread list) */
     rt_list_remove(&RT_THREAD_LIST_NODE(thread));
-
-    if ((thread->stat & RT_THREAD_STAT_MASK) != RT_THREAD_CLOSE &&
-        (thread->thread_timer.parent.type == (RT_Object_Class_Static | RT_Object_Class_Timer)))
-    {
-        /* release thread timer */
-        rt_timer_detach(&(thread->thread_timer));
-    }
-
-    /* change stat */
-    thread->stat = RT_THREAD_CLOSE;
 
     /* invoke thread cleanup */
     if (thread->cleanup != RT_NULL)
