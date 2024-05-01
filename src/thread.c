@@ -402,7 +402,7 @@ RTM_EXPORT(rt_thread_startup);
 /**
  * @brief   This function will close a thread. The thread object will be removed from
  *          thread queue and detached/deleted from the system object management.
- *          It's different from rt_thread_[delete|detach] that this will not enqueue
+ *          It's different from rt_thread_delete or rt_thread_detach that this will not enqueue
  *          the closing thread to cleanup queue.
  *
  * @param   thread is the thread to be closed.
