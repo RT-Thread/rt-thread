@@ -416,7 +416,7 @@ rt_err_t rt_thread_close(rt_thread_t thread)
     rt_uint8_t thread_status;
 
     /* forbid scheduling on current core if closing current thread */
-    RT_ASSERT(thread == rt_thread_self() && rt_critical_level());
+    RT_ASSERT(thread != rt_thread_self() || rt_critical_level());
 
     /* before checking status of scheduler */
     rt_sched_lock(&slvl);
