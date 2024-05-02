@@ -33,7 +33,7 @@ extern "C" {
  */
 
 typedef int                             rt_bool_t;      /**< boolean type */
-typedef signed long                     rt_base_t;      /**< Nbit CPU related date type */
+typedef signed long                     rt_base_t;      /**< Nbit CPU related data type */
 typedef unsigned long                   rt_ubase_t;     /**< Nbit unsigned CPU related data type */
 
 #ifndef RT_USING_ARCH_DATA_TYPE

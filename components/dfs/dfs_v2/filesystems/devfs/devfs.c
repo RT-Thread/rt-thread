@@ -382,7 +382,6 @@ static const struct dfs_file_ops _dev_fops =
 {
     .open = dfs_devfs_open,
     .close = dfs_devfs_close,
-    .lseek = generic_dfs_lseek,
     .read = dfs_devfs_read,
     .write = dfs_devfs_write,
     .ioctl = dfs_devfs_ioctl,

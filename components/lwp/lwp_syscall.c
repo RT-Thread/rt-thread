@@ -4718,9 +4718,10 @@ __exit:
 }
 #endif
 
-char *sys_getcwd(char *buf, size_t size)
+long sys_getcwd(char *buf, size_t size)
 {
-    char *tmp, *ret = RT_NULL;
+    char *tmp = RT_NULL;
+    long ret = -1;
 
     if (!lwp_user_accessable((void *)buf, size))
     {
@@ -4737,7 +4738,10 @@ char *sys_getcwd(char *buf, size_t size)
     {
         if (lwp_put_to_user(buf, tmp, size) > 0)
         {
-            ret = buf;
+            if (buf != RT_NULL)
+                ret = strlen(buf);
+            else
+                ret = -EFAULT;
         }
     }
 

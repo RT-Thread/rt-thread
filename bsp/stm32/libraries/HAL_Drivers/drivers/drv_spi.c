@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2023, RT-Thread Development Team
+ * Copyright (c) 2006-2024, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -370,6 +370,35 @@ static rt_ssize_t spixfer(struct rt_spi_device *device, struct rt_spi_message *m
                 /* send_buf doesn't align with 4 bytes, so creat a cache buffer with 4 bytes aligned */
                 dma_aligned_buffer = (rt_uint32_t *)rt_malloc(send_length); /* aligned with RT_ALIGN_SIZE (8 bytes by default) */
                 rt_memcpy(dma_aligned_buffer, send_buf, send_length);
+                p_txrx_buffer = dma_aligned_buffer;
+            }
+#endif /* SOC_SERIES_STM32H7 || SOC_SERIES_STM32F7 */
+        }
+        else if ((spi_drv->spi_dma_flag & SPI_USING_RX_DMA_FLAG) && (send_length >= DMA_TRANS_MIN_LEN))
+        {
+#if defined(SOC_SERIES_STM32H7) || defined(SOC_SERIES_STM32F7)
+            if (RT_IS_ALIGN((rt_uint32_t)recv_buf, 32) && recv_buf != RT_NULL) /* aligned with 32 bytes? */
+            {
+                p_txrx_buffer = (rt_uint32_t *)recv_buf; /* recv_buf aligns with 32 bytes, no more operations */
+            }
+            else
+            {
+                /* recv_buf doesn't align with 32 bytes, so creat a cache buffer with 32 bytes aligned */
+                dma_aligned_buffer = (rt_uint32_t *)rt_malloc_align(send_length, 32);
+                rt_memcpy(dma_aligned_buffer, recv_buf, send_length);
+                p_txrx_buffer = dma_aligned_buffer;
+            }
+            rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, dma_aligned_buffer, send_length);
+#else
+            if (RT_IS_ALIGN((rt_uint32_t)recv_buf, 4) && recv_buf != RT_NULL) /* aligned with 4 bytes? */
+            {
+                p_txrx_buffer = (rt_uint32_t *)recv_buf; /* recv_buf aligns with 4 bytes, no more operations */
+            }
+            else
+            {
+                /* recv_buf doesn't align with 4 bytes, so creat a cache buffer with 4 bytes aligned */
+                dma_aligned_buffer = (rt_uint32_t *)rt_malloc(send_length); /* aligned with RT_ALIGN_SIZE (8 bytes by default) */
+                rt_memcpy(dma_aligned_buffer, recv_buf, send_length);
                 p_txrx_buffer = dma_aligned_buffer;
             }
 #endif /* SOC_SERIES_STM32H7 || SOC_SERIES_STM32F7 */

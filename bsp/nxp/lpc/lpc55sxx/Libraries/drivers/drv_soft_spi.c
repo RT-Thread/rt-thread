@@ -185,7 +185,7 @@ static void lpc_pin_init(void)
 {
     rt_size_t obj_num = sizeof(spi_obj) / sizeof(struct lpc_soft_spi);
 
-    for(rt_size_t i; i < obj_num; i++)
+    for(rt_size_t i = 0; i < obj_num; i++)
     {
         lpc_spi_gpio_init(&spi_obj[i]);
     }

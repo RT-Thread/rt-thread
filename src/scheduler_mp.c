@@ -985,6 +985,8 @@ void rt_sched_remove_thread(struct rt_thread *thread)
 
     /* remove thread from scheduler ready list  */
     _sched_remove_thread_locked(thread);
+
+    RT_SCHED_CTX(thread).stat = RT_THREAD_SUSPEND_UNINTERRUPTIBLE;
 }
 
 /* thread status initialization and setting up on startup */

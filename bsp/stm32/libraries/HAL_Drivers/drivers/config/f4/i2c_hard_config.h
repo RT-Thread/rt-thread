@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2024-02-06     Dyyt587   first version
+ * 2024-04-23     Zeidan    Add I2Cx_xx_DMA_CONFIG
  */
 #ifndef __I2C_HARD_CONFIG_H__
 #define __I2C_HARD_CONFIG_H__
@@ -32,6 +33,15 @@ extern "C" {
 
 #ifdef BSP_I2C1_TX_USING_DMA
 #ifndef I2C1_TX_DMA_CONFIG
+#if defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7)
+#define I2C1_TX_DMA_CONFIG                          \
+    {                                               \
+        .dma_rcc = I2C1_TX_DMA_RCC,                 \
+        .Instance = I2C1_TX_DMA_INSTANCE,           \
+        .dma_irq = I2C1_TX_DMA_IRQ,                 \
+        .channel = I2C1_TX_DMA_CHANNEL              \
+    }
+#elif defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32G0) || defined(SOC_SERIES_STM32MP1) || defined(SOC_SERIES_STM32WB) || defined(SOC_SERIES_STM32H7)
 #define I2C1_TX_DMA_CONFIG                          \
     {                                               \
         .dma_rcc = I2C1_TX_DMA_RCC,                 \
@@ -39,11 +49,21 @@ extern "C" {
         .dma_irq = I2C1_TX_DMA_IRQ,                 \
         .request = DMA_REQUEST_I2C1_TX              \
     }
+#endif /* defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7) */
 #endif /* I2C1_TX_DMA_CONFIG */
 #endif /* BSP_I2C1_TX_USING_DMA */
 
 #ifdef BSP_I2C1_RX_USING_DMA
 #ifndef I2C1_RX_DMA_CONFIG
+#if defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7)
+#define I2C1_RX_DMA_CONFIG                          \
+    {                                               \
+        .dma_rcc = I2C1_RX_DMA_RCC,                 \
+        .Instance = I2C1_RX_DMA_INSTANCE,           \
+        .dma_irq = I2C1_RX_DMA_IRQ,                 \
+        .channel = I2C1_RX_DMA_CHANNEL,             \
+    }
+#elif defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32G0) || defined(SOC_SERIES_STM32MP1) || defined(SOC_SERIES_STM32WB) || defined(SOC_SERIES_STM32H7)
 #define I2C1_RX_DMA_CONFIG                          \
     {                                               \
         .dma_rcc = I2C1_RX_DMA_RCC,                 \
@@ -51,6 +71,7 @@ extern "C" {
         .dma_irq = I2C1_RX_DMA_IRQ,                 \
         .request = DMA_REQUEST_I2C1_RX              \
     }
+#endif /* defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7) */
 #endif /* I2C1_RX_DMA_CONFIG */
 #endif /* BSP_I2C1_RX_USING_DMA */
 
@@ -70,6 +91,15 @@ extern "C" {
 
 #ifdef BSP_I2C2_TX_USING_DMA
 #ifndef I2C2_TX_DMA_CONFIG
+#if defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7)
+#define I2C2_TX_DMA_CONFIG                          \
+    {                                               \
+        .dma_rcc = I2C2_TX_DMA_RCC,                 \
+        .Instance = I2C2_TX_DMA_INSTANCE,           \
+        .dma_irq = I2C2_TX_DMA_IRQ,                 \
+        .channel = I2C2_TX_DMA_CHANNEL,             \
+    }
+#elif defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32G0) || defined(SOC_SERIES_STM32MP1) || defined(SOC_SERIES_STM32WB) || defined(SOC_SERIES_STM32H7)
 #define I2C2_TX_DMA_CONFIG                          \
     {                                               \
         .dma_rcc = I2C2_TX_DMA_RCC,                 \
@@ -77,11 +107,21 @@ extern "C" {
         .dma_irq = I2C2_TX_DMA_IRQ,                 \
         .request = DMA_REQUEST_I2C2_TX              \
     }
+#endif /* defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7) */
 #endif /* I2C2_TX_DMA_CONFIG */
 #endif /* BSP_I2C2_TX_USING_DMA */
 
 #ifdef BSP_I2C2_RX_USING_DMA
 #ifndef I2C2_RX_DMA_CONFIG
+#if defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7)
+#define I2C2_RX_DMA_CONFIG                          \
+    {                                               \
+        .dma_rcc = I2C2_RX_DMA_RCC,                 \
+        .Instance = I2C2_RX_DMA_INSTANCE,           \
+        .dma_irq = I2C2_RX_DMA_IRQ,                 \
+        .channel = I2C2_RX_DMA_CHANNEL,             \
+    }
+#elif defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32G0) || defined(SOC_SERIES_STM32MP1) || defined(SOC_SERIES_STM32WB) || defined(SOC_SERIES_STM32H7)
 #define I2C2_RX_DMA_CONFIG                          \
     {                                               \
         .dma_rcc = I2C2_RX_DMA_RCC,                 \
@@ -89,6 +129,7 @@ extern "C" {
         .dma_irq = I2C2_RX_DMA_IRQ,                 \
         .request = DMA_REQUEST_I2C2_RX              \
     }
+#endif /* defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7) */
 #endif /* I2C2_RX_DMA_CONFIG */
 #endif /* BSP_I2C2_RX_USING_DMA */
 
@@ -108,6 +149,15 @@ extern "C" {
 
 #ifdef BSP_I2C3_TX_USING_DMA
 #ifndef I2C3_TX_DMA_CONFIG
+#if defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7)
+#define I2C3_TX_DMA_CONFIG                          \
+    {                                               \
+        .dma_rcc = I2C3_TX_DMA_RCC,                 \
+        .Instance = I2C3_TX_DMA_INSTANCE,           \
+        .dma_irq = I2C3_TX_DMA_IRQ,                 \
+        .channel = I2C3_TX_DMA_CHANNEL,             \
+    }
+#elif defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32G0) || defined(SOC_SERIES_STM32MP1) || defined(SOC_SERIES_STM32WB) || defined(SOC_SERIES_STM32H7)
 #define I2C3_TX_DMA_CONFIG                          \
     {                                               \
         .dma_rcc = I2C3_TX_DMA_RCC,                 \
@@ -115,11 +165,21 @@ extern "C" {
         .dma_irq = I2C3_TX_DMA_IRQ,                 \
         .request = DMA_REQUEST_I2C3_TX              \
     }
+#endif /* defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7) */
 #endif /* I2C3_TX_DMA_CONFIG */
 #endif /* BSP_I2C3_TX_USING_DMA */
 
 #ifdef BSP_I2C3_RX_USING_DMA
 #ifndef I2C3_RX_DMA_CONFIG
+#if defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7)
+#define I2C3_RX_DMA_CONFIG                          \
+    {                                               \
+        .dma_rcc = I2C3_RX_DMA_RCC,                 \
+        .Instance = I2C3_RX_DMA_INSTANCE,           \
+        .dma_irq = I2C3_RX_DMA_IRQ,                 \
+        .channel = I2C3_RX_DMA_CHANNEL,             \
+    }
+#elif defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32G0) || defined(SOC_SERIES_STM32MP1) || defined(SOC_SERIES_STM32WB) || defined(SOC_SERIES_STM32H7)
 #define I2C3_RX_DMA_CONFIG                          \
     {                                               \
         .dma_rcc = I2C3_RX_DMA_RCC,                 \
@@ -127,6 +187,7 @@ extern "C" {
         .dma_irq = I2C3_RX_DMA_IRQ,                 \
         .request = DMA_REQUEST_I2C3_RX              \
     }
+#endif /* defined(SOC_SERIES_STM32F2) || defined(SOC_SERIES_STM32F4) || defined(SOC_SERIES_STM32F7) */
 #endif /* I2C3_RX_DMA_CONFIG */
 #endif /* BSP_I2C3_RX_USING_DMA */
 

@@ -23,18 +23,18 @@
 #define  PAD_MIPI_TXM0__MIPI_TXM0 0
 #define  PAD_MIPI_TXP0__MIPI_TXP0 0
 
-#if defined(ARCH_ARM) && defined(RT_USING_SMART)
+#if defined(ARCH_ARM)
 extern rt_ubase_t pinmux_base_ioremap(void);
 #define PINMUX_BASE pinmux_base_ioremap()
 #else
 #define PINMUX_BASE 0x03001000
-#endif /* defined(ARCH_ARM) && defined(RT_USING_SMART) */
+#endif /* defined(ARCH_ARM) */
 #define PINMUX_MASK(PIN_NAME) FMUX_GPIO_FUNCSEL_##PIN_NAME##_MASK
 #define PINMUX_OFFSET(PIN_NAME) FMUX_GPIO_FUNCSEL_##PIN_NAME##_OFFSET
 #define PINMUX_VALUE(PIN_NAME, FUNC_NAME) PIN_NAME##__##FUNC_NAME
 #define PINMUX_CONFIG(PIN_NAME, FUNC_NAME) \
-		mmio_clrsetbits_32(PINMUX_BASE + FMUX_GPIO_FUNCSEL_##PIN_NAME, \
-		PINMUX_MASK(PIN_NAME) << PINMUX_OFFSET(PIN_NAME), \
-		PINMUX_VALUE(PIN_NAME, FUNC_NAME))
+        mmio_clrsetbits_32(PINMUX_BASE + FMUX_GPIO_FUNCSEL_##PIN_NAME, \
+        PINMUX_MASK(PIN_NAME) << PINMUX_OFFSET(PIN_NAME), \
+        PINMUX_VALUE(PIN_NAME, FUNC_NAME))
 
 #endif /* __PINCTRL_CV181X_H__ */

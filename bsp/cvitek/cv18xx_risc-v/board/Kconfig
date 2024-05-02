@@ -66,4 +66,18 @@ menu "General Drivers Configuration"
             
         endif
 
+    config BSP_USING_SDH
+        select RT_USING_SDIO
+        select RT_USING_DFS
+        select RT_USING_DFS_ELMFAT
+        select RT_USING_DFS_ROMFS
+        bool "Enable Secure Digital Host Controller"
+        default n
+
+    config BSP_USING_ETH
+        bool "Enable Ethernet"
+        default n
+        select RT_USING_LWIP
+        select RT_USING_POSIX_FS
+        select RT_USING_POSIX_SOCKET
 endmenu

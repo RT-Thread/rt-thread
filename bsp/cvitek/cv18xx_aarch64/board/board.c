@@ -14,8 +14,15 @@
 #include <mm_page.h>
 #include <drv_uart.h>
 #include <gtimer.h>
+#include <setup.h>
 
 extern size_t MMUTable[];
+
+#ifndef RT_USING_OFW
+void idle_wfi(void)
+{
+    asm volatile("wfi");
+}
 
 #ifdef RT_USING_SMART
 struct mem_desc platform_mem_desc[] = {
@@ -30,13 +37,6 @@ struct mem_desc platform_mem_desc[] =
 #endif
 
 const rt_uint32_t platform_mem_desc_size = sizeof(platform_mem_desc) / sizeof(platform_mem_desc[0]);
-
-void idle_wfi(void)
-{
-    asm volatile("wfi");
-}
-
-static rt_ubase_t pinmux_base = RT_NULL;
 
 void rt_hw_board_init(void)
 {
@@ -76,6 +76,21 @@ void rt_hw_board_init(void)
     rt_components_board_init();
 #endif
 }
+#else
+void rt_hw_board_init(void)
+{
+    rt_fdt_commit_memregion_early(&(rt_region_t)
+    {
+        .name  = "memheap",
+        .start = (rt_size_t)rt_kmem_v2p((void *)HEAP_BEGIN),
+        .end   = (rt_size_t)rt_kmem_v2p((void *)HEAP_END),
+    }, RT_TRUE);
+
+    rt_hw_common_setup();
+}
+#endif /* RT_USING_OFW */
+
+static rt_ubase_t pinmux_base = RT_NULL;
 
 rt_ubase_t pinmux_base_ioremap(void)
 {

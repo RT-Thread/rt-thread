@@ -60,6 +60,11 @@ $ scons
 | i2c  | 支持 |  |
 | adc | 支持 |  |
 | spi | 支持 | 默认CS引脚，每个数据之间CS会拉高，请根据时序选择GPIO作为CS。若读取数据，tx需持续dummy数据。|
+| pwm | 支持 |  |
+| timer | 支持 |  |
+| wdt | 支持 |  |
+| sdio | 支持 |  |
+| eth | 支持 |  |
 
 ## 支持开发板
 - milk-v duo: [https://milkv.io/duo](https://milkv.io/duo)

@@ -376,6 +376,12 @@ static rt_ssize_t i2c_bit_xfer(struct rt_i2c_bus_device *bus,
     rt_uint32_t i;
     rt_uint16_t ignore_nack;
 
+    if((ops->i2c_pin_init_flag == RT_FALSE) && (ops->pin_init != RT_NULL))
+    {
+        ops->pin_init();
+        ops->i2c_pin_init_flag = RT_TRUE;
+    }
+
     if (num == 0) return 0;
 
     for (i = 0; i < num; i++)

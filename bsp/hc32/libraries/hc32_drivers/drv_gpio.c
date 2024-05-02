@@ -29,6 +29,8 @@
     #define PIN_MAX_NUM                     ((GPIO_PORT_H * 16) + (__CLZ(__RBIT(GPIO_PIN_02))) + 1)
 #elif defined (HC32F448)
     #define PIN_MAX_NUM                     ((GPIO_PORT_H * 16) + (__CLZ(__RBIT(GPIO_PIN_02))) + 1)
+#elif defined (HC32F472)
+    #define PIN_MAX_NUM                     ((GPIO_PORT_F * 16) + (__CLZ(__RBIT(GPIO_PIN_08))) + 1)
 #endif
 
 #define ITEM_NUM(items)                 sizeof(items) / sizeof(items[0])
@@ -252,6 +254,9 @@ static void hc32_pin_mode(struct rt_device *device, rt_base_t pin, rt_uint8_t mo
     case PIN_MODE_INPUT_PULLDOWN:
         stcGpioInit.u16PinDir   = PIN_DIR_IN;
         stcGpioInit.u16PullUp   = PIN_PU_OFF;
+#if defined (HC32F448) || defined (HC32F472)
+        stcGpioInit.u16PullDown = PIN_PD_ON;
+#endif
         break;
     case PIN_MODE_OUTPUT_OD:
         stcGpioInit.u16PinDir        = PIN_DIR_OUT;

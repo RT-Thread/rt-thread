@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<flash_device>
+  <exe>$PROJ_DIR$/../libraries/hc32f472_ddl/cmsis/Device/HDSC/hc32f4xx/Source/IAR/flashloader/FlashHC32F472_otp.out</exe>
+  <page>4</page>
+  <block>1 0x1800</block>
+  <flash_base>0x03000000</flash_base>
+  <macro>$PROJ_DIR$/../libraries/hc32f472_ddl/cmsis/Device/HDSC/hc32f4xx/Source/IAR/flashloader/FlashHC32F472.mac</macro>
+  <aggregate>0</aggregate>
+</flash_device>

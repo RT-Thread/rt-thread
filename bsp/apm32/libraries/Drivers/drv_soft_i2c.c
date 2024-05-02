@@ -86,6 +86,16 @@ static void apm32_soft_i2c_gpio_init(struct apm32_soft_i2c *i2c)
     rt_pin_write(cfg->sda_pin, PIN_HIGH);
 }
 
+static void apm32_i2c_pin_init(void)
+{
+    rt_size_t obj_num = sizeof(i2c_obj) / sizeof(struct apm32_soft_i2c);
+
+    for(rt_size_t i = 0; i < obj_num; i++)
+    {
+        apm32_soft_i2c_gpio_init(&i2c_obj[i]);
+    }
+}
+
 /**
  * @brief    This function sets the sda pin.
  *
@@ -199,13 +209,15 @@ static rt_err_t apm32_i2c_bus_unlock(const struct apm32_soft_i2c_config *cfg)
 static const struct rt_i2c_bit_ops apm32_bit_ops_default =
 {
     .data     = RT_NULL,
+    .pin_init = apm32_i2c_pin_init,
     .set_sda  = apm32_soft_i2c_set_sda,
     .set_scl  = apm32_soft_i2c_set_scl,
     .get_sda  = apm32_soft_i2c_get_sda,
     .get_scl  = apm32_soft_i2c_get_scl,
     .udelay   = apm32_soft_i2c_udelay,
     .delay_us = 1,
-    .timeout  = 100
+    .timeout  = 100,
+    .i2c_pin_init_flag = RT_FALSE
 };
 
 /**
@@ -218,12 +230,11 @@ int rt_hw_i2c_init(void)
     rt_size_t obj_num = sizeof(i2c_obj) / sizeof(struct apm32_soft_i2c);
     rt_err_t result;
 
-    for (int i = 0; i < obj_num; i++)
+    for (rt_size_t i = 0; i < obj_num; i++)
     {
         i2c_obj[i].ops = apm32_bit_ops_default;
         i2c_obj[i].ops.data = (void *)&soft_i2c_config[i];
         i2c_obj[i].i2c_bus.priv = &i2c_obj[i].ops;
-        apm32_soft_i2c_gpio_init(&i2c_obj[i]);
 
         result = rt_i2c_bit_add_bus(&i2c_obj[i].i2c_bus, soft_i2c_config[i].bus_name);
 

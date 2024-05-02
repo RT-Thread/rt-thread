@@ -243,6 +243,18 @@ def exclude_utestcases(RTT_ROOT):
             if line.find('examples/utest/testcases/Kconfig') == -1:
                 f.write(line)
 
+# fix locale for kconfiglib
+def kconfiglib_fix_locale():
+    import os
+    import locale
+
+    # Get the list of supported locales
+    supported_locales = set(locale.locale_alias.keys())
+
+    # Check if LANG is set and its value is not in the supported locales
+    if 'LANG' in os.environ and os.environ['LANG'] not in supported_locales:
+        os.environ['LANG'] = 'C'
+
 # menuconfig for Linux and Windows
 def menuconfig(RTT_ROOT):
     import menuconfig
@@ -261,6 +273,10 @@ def menuconfig(RTT_ROOT):
     fn_old = '.config.old'
 
     sys.argv = ['menuconfig', 'Kconfig']
+
+    # fix vscode console
+    kconfiglib_fix_locale()
+
     menuconfig._main()
 
     if os.path.isfile(fn):

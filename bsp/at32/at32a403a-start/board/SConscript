@@ -1,0 +1,29 @@
+import os
+import rtconfig
+from building import *
+
+Import('SDK_LIB')
+
+cwd = GetCurrentDir()
+
+# add general drivers
+src = Split('''
+src/board.c
+src/at32_msp.c
+''')
+
+path = [cwd]
+path += [cwd + '/inc']
+
+startup_path_prefix = SDK_LIB
+
+if rtconfig.PLATFORM in ['gcc']:
+    src += [startup_path_prefix + '/AT32A403A_Firmware_Library/cmsis/cm4/device_support/startup/gcc/startup_at32a403a.s']
+elif rtconfig.PLATFORM in ['armcc', 'armclang']:
+    src += [startup_path_prefix + '/AT32A403A_Firmware_Library/cmsis/cm4/device_support/startup/mdk/startup_at32a403a.s']
+elif rtconfig.PLATFORM in ['iccarm']:
+    src += [startup_path_prefix + '/AT32A403A_Firmware_Library/cmsis/cm4/device_support/startup/iar/startup_at32a403a.s']
+
+CPPDEFINES = ['AT32A403AVGT7']
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
+Return('group')

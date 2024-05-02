@@ -175,6 +175,19 @@ rt_inline void _restore_serial(struct rt_serial_device *serial, lwp_tty_t tp,
     rt_device_control(&serial->parent, RT_DEVICE_CTRL_NOTIFY_SET, &softc->backup_notify);
 }
 
+static void _serial_tty_set_speed(struct lwp_tty *tp)
+{
+    struct serial_tty_context *softc = (struct serial_tty_context *)(tp->t_devswsoftc);
+    struct rt_serial_device *serial;
+
+    RT_ASSERT(softc);
+    serial = softc->parent;
+
+    rt_device_control(&(serial->parent), TCGETS, &tp->t_termios_init_in);
+
+    tp->t_termios_init_in.__c_ispeed = tp->t_termios_init_in.__c_ospeed = cfgetospeed(&tp->t_termios_init_in);
+}
+
 static int _serial_isbusy(struct rt_serial_device *serial)
 {
     rt_thread_t user_thread = rt_console_current_user();
@@ -262,15 +275,6 @@ static int serial_tty_ioctl(struct lwp_tty *tp, rt_ubase_t cmd, rt_caddr_t data,
     int error;
     switch (cmd)
     {
-        case TCSETS:
-        case TCSETSW:
-        case TCSETSF:
-            RT_ASSERT(tp->t_devswsoftc);
-            struct serial_tty_context *softc = (struct serial_tty_context *)(tp->t_devswsoftc);
-            struct rt_serial_device *serial = softc->parent;
-            struct termios *termios = (struct termios *)data;
-            rt_device_control(&(serial->parent), cmd, termios);
-            error = -ENOIOCTL;
         default:
             /**
              * Note: for the most case, we don't let serial layer handle ioctl,
@@ -284,10 +288,22 @@ static int serial_tty_ioctl(struct lwp_tty *tp, rt_ubase_t cmd, rt_caddr_t data,
     return error;
 }
 
+static int serial_tty_param(struct lwp_tty *tp, struct termios *t)
+{
+    struct serial_tty_context *softc = (struct serial_tty_context *)(tp->t_devswsoftc);
+    struct rt_serial_device *serial;
+
+    RT_ASSERT(softc);
+    serial = softc->parent;
+
+    return rt_device_control(&(serial->parent), TCSETS, t);
+}
+
 static struct lwp_ttydevsw serial_ttydevsw = {
     .tsw_open = serial_tty_open,
     .tsw_close = serial_tty_close,
     .tsw_ioctl = serial_tty_ioctl,
+    .tsw_param = serial_tty_param,
     .tsw_outwakeup = serial_tty_outwakeup,
 };
 
@@ -314,6 +330,7 @@ rt_err_t rt_hw_serial_register_tty(struct rt_serial_device *serial)
             tty = lwp_tty_create(&serial_ttydevsw, softc);
             if (tty)
             {
+                _serial_tty_set_speed(tty);
                 rc = lwp_tty_register(tty, dev_name);
                 rt_work_init(&softc->work, _tty_rx_worker, tty);
 

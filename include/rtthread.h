@@ -160,6 +160,7 @@ rt_thread_t rt_thread_create(const char *name,
                              rt_uint8_t  priority,
                              rt_uint32_t tick);
 rt_err_t rt_thread_delete(rt_thread_t thread);
+rt_err_t rt_thread_close(rt_thread_t thread);
 #endif /* RT_USING_HEAP */
 rt_thread_t rt_thread_self(void);
 rt_thread_t rt_thread_find(char *name);

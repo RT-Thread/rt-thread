@@ -57,7 +57,7 @@ struct hc32_uart_config
     struct hc32_uart_irq_config rxerr_irq;
     struct hc32_uart_irq_config rx_irq;
     struct hc32_uart_irq_config tx_irq;
-#elif defined (HC32F448)
+#elif defined (HC32F448) || defined (HC32F472)
     IRQn_Type                   irq_num;
     en_int_src_t                rxerr_int_src;
     en_int_src_t                tx_int_src;

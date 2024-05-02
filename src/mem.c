@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2024, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -565,9 +565,16 @@ static int memcheck(int argc, char *argv[])
         object = rt_list_entry(node, struct rt_object, list);
         /* find the specified object */
         if (name != RT_NULL && rt_strncmp(name, object->name, RT_NAME_MAX) != 0)
+        {
             continue;
+        }
         /* mem object */
         m = (struct rt_small_mem *)object;
+        if(rt_strncmp(m->parent.algorithm, "small", RT_NAME_MAX) != 0)
+        {
+            continue;
+        }
+
         /* check mem */
         for (mem = (struct rt_small_mem_item *)m->heap_ptr; mem != m->heap_end; mem = (struct rt_small_mem_item *)&m->heap_ptr[mem->next])
         {
@@ -611,15 +618,21 @@ static int memtrace(int argc, char **argv)
         object = rt_list_entry(node, struct rt_object, list);
         /* find the specified object */
         if (name != RT_NULL && rt_strncmp(name, object->name, RT_NAME_MAX) != 0)
+        {
             continue;
+        }
         /* mem object */
         m = (struct rt_small_mem *)object;
+        if(rt_strncmp(m->parent.algorithm, "small", RT_NAME_MAX) != 0)
+        {
+            continue;
+        }
         /* show memory information */
         rt_kprintf("\nmemory heap address:\n");
         rt_kprintf("name    : %s\n", m->parent.parent.name);
-        rt_kprintf("total   : 0x%d\n", m->parent.total);
-        rt_kprintf("used    : 0x%d\n", m->parent.used);
-        rt_kprintf("max_used: 0x%d\n", m->parent.max);
+        rt_kprintf("total   : %d\n", m->parent.total);
+        rt_kprintf("used    : %d\n", m->parent.used);
+        rt_kprintf("max_used: %d\n", m->parent.max);
         rt_kprintf("heap_ptr: 0x%08x\n", m->heap_ptr);
         rt_kprintf("lfree   : 0x%08x\n", m->lfree);
         rt_kprintf("heap_end: 0x%08x\n", m->heap_end);
