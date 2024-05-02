@@ -239,7 +239,6 @@ static void dma_recv_isr (struct rt_serial_device *serial)
     uart = rt_container_of(serial, struct gd32_uart, serial);
 
     recv_len = 0;
-    
     level = rt_hw_interrupt_disable();
     counter = dma_transfer_number_get(uart->dma.rx.periph, uart->dma.rx.channel);
     if (counter <= uart->dma.last_index)
