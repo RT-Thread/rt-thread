@@ -303,3 +303,9 @@ def ImportModule(module):
         return module
     else:
         return __import__(module, fromlist=[module])
+
+def VerTuple(version_str):
+    ver_parts = version_str.split('.')
+    ver = tuple(int(part) for part in ver_parts)
+
+    return ver
