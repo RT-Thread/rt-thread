@@ -177,7 +177,7 @@ static rt_ssize_t stm32_i2c_master_xfer(struct rt_i2c_bus_device *bus,
         LOG_D("xfer       msgs[%d] addr=0x%2x buf=0x%x len= 0x%x flags= 0x%x", i, msg->addr, msg->buf, msg->len, msg->flags);
         next_msg = &msgs[i + 1];
         next_flag = next_msg->flags;
-        timeout = msg->len/TRANS_TIMEOUT_PERSEC + 1;
+        timeout = msg->len/TRANS_TIMEOUT_PERSEC + 5;
         if (next_flag & RT_I2C_NO_START)
         {
             if ((next_flag & RT_I2C_RD) == (msg->flags & RT_I2C_RD))
@@ -250,7 +250,7 @@ static rt_ssize_t stm32_i2c_master_xfer(struct rt_i2c_bus_device *bus,
     }
     /* last msg */
     msg = &msgs[i];
-        timeout = msg->len/TRANS_TIMEOUT_PERSEC+1;
+        timeout = msg->len/TRANS_TIMEOUT_PERSEC + 5;
     if (msg->flags & RT_I2C_NO_STOP)
         mode = I2C_LAST_FRAME_NO_STOP;
     else
