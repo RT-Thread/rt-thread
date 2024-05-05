@@ -1,12 +1,5 @@
 menu "Hardware Drivers Config"
 
-config SOC_STM32WLE5CB
-    bool
-    select SOC_SERIES_STM32WL
-    select RT_USING_COMPONENTS_INIT
-    select RT_USING_USER_MAIN
-    default y
-
 menu "Onboard Peripheral Drivers"
 
     config BSP_USING_USB_TO_UART
