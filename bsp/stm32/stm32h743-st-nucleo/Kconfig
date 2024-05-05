@@ -15,6 +15,13 @@ config PKGS_DIR
     option env="PKGS_ROOT"
     default "packages"
 
+config SOC_STM32H743ZI
+    bool
+    select SOC_SERIES_STM32H7
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+    default y
+
 config BOARD_STM32H743_NUCLEO
     bool
     select BOARD_SERIES_STM32_NUCLEO_144

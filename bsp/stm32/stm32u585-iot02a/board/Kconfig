@@ -1,13 +1,5 @@
 menu "Hardware Drivers Config"
 
-config SOC_STM32U585AIIxQ
-    bool
-    select SOC_SERIES_STM32U5
-    select RT_USING_COMPONENTS_INIT
-    select RT_USING_USER_MAIN
-    default y
-
-
 menu "On-chip Peripheral Drivers"
 
     config BSP_USING_GPIO
