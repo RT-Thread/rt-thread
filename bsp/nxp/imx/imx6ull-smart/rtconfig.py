@@ -41,6 +41,7 @@ if PLATFORM == 'gcc':
         CFLAGS   += ' -Os'
         CXXFLAGS += ' -Os'
     CXXFLAGS += ' -Woverloaded-virtual -fno-rtti'
+    MKIMAGE = '-t imximage -b rtthread.bin -o rtthread.imx -g rtthread.img -a 0x80001000'
 
     M_CFLAGS = CFLAGS + ' -mlong-calls -fPIC '
     M_CXXFLAGS = CXXFLAGS + ' -mlong-calls -fPIC'
@@ -49,4 +50,5 @@ if PLATFORM == 'gcc':
     M_POST_ACTION = STRIP + ' -R .hash $TARGET\n' + SIZE + ' $TARGET \n'
 
     DUMP_ACTION = OBJDUMP + ' -D -S $TARGET > rtt.asm\n'
-    POST_ACTION = OBJCPY + ' -O binary $TARGET rtthread.bin\n' + SIZE + ' $TARGET \n'
+    POST_ACTION = OBJCPY + ' -O binary $TARGET rtthread.bin\n' + SIZE + ' $TARGET \n' +\
+              'python3 mkimage.py ' + MKIMAGE + '\n'

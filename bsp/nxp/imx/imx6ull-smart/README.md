@@ -30,11 +30,14 @@ ART-pi smart采用了米尔科技的imx6ull核心板，硬件由韦东山团队�
 > * [x]  xmake 构建环境
 > * [x]  busybox
 > * [x]  smart-apps
+> * [x]  ash  支持ash开机自启动
+> * [x]  emmc 从emmc启动内核、挂载文件系统
 > 
 > ### 待完善、修复
-> * [ ]  ash  支持ash开机自启动
+
 > * [ ]  网络 以太网网络问题修复
-> * [ ]  emmc 从emmc启动内核、挂载文件系统
+> * [ ]  信号 信号处理问题修复
+
  
 ## 应用编译
 
@@ -64,7 +67,7 @@ scons -j12
 
 ## 启动内核
 
-* 从eMMC中加载运行(目前不推荐)
+* 从eMMC中加载运行
 
 ```bash
 bootcmd=fatload mmc 1:1 0x80001000 /kernel/rtthread.bin; dcache flush; go 0x80001000
@@ -78,8 +81,24 @@ dcache flush
 go 0x80001000
 ```
 
-* 从sd卡启动 (目前推荐)
+* 从sd卡启动
 
 ```bash
 fatload mmc 0:1 0x80001000 rtthread.bin; dcache flush; go 0x80001000
 ```
+
+## 制作从emmc启动所用映像文件
+
+* 在rt-thread/bsp/nxp/imx/imx6ull-smart/emmc下按照emmc.sh内容进行制作，
+  生成物art-pi.img在rt-thread/bsp/nxp/imx/imx6ull-smart/emmc/image/images下
+
+* 使用100ask_imx6ull_flashing_tool.exe工具进行烧写
+
+* 工具获取https://github.com/100askTeam/gui_for_nxp_uuu/blob/master/100ask_imx6ull%E7%83%A7%E5%86%99%E5%B7%A5%E5%85%B7/100ask_imx6ull_flashing_tool.exe
+  
+* 烧写说明：
+  
+  * 在烧写软件的基础版，点击更新uboot![alt text](image-1.png)
+  
+  * 在烧写软件的专业版，烧写制作的映像文件art-pi.img![alt text](image-2.png)
+  
