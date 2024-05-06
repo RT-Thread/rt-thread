@@ -18,6 +18,8 @@
 #undef DBG_TAG
 #undef DBG_LVL
 
+#define DBG_ENABLE
+
 #define DBG_TAG              "testcase"
 #ifdef UTEST_DEBUG
 #define DBG_LVL              DBG_LOG
