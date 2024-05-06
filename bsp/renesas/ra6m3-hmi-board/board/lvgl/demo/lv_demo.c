@@ -42,7 +42,7 @@ static const demo_entry_info_t demos_entry_info[] =
     { "widgets", .entry_cb = lv_demo_widgets },
 #endif
 
-#if LV_USE_DEMO_MUSIC
+#if LV_USE_DEMO_MUSIC == 1 || defined(LV_USE_DEMO_RTT_MUSIC)
     { "music", .entry_cb = lv_demo_music },
 #endif
 
@@ -78,7 +78,7 @@ bool lv_demos_create(const char *name)
     const demo_entry_info_t *entry_info = NULL;
     for (int i = 0; i < demos_count; i++)
     {
-        if (lv_strcmp(name, demos_entry_info[i].name) == 0)
+        if (rt_strcmp(name, demos_entry_info[i].name) == 0)
         {
             entry_info = &demos_entry_info[i];
         }
@@ -116,7 +116,7 @@ void lv_demos_show_help(void)
 void lv_user_gui_init(void)
 {
     /* display demo; you may replace with your LVGL application at here */
-#if LV_USE_DEMO_MUSIC
+#if LV_USE_DEMO_MUSIC == 1 || defined(LV_USE_DEMO_RTT_MUSIC)
     lv_demos_create("music");
 #elif LV_USE_DEMO_BENCHMARK
     lv_demos_create("benchmark");

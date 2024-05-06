@@ -5,8 +5,8 @@
  * @date     07. April 2022
  ******************************************************************************/
 /*
- * Copyright (c) 2009-2018 Arm Limited.
- * Copyright (c) 2018-2022 Arm China.
+ * Copyright (c) 2009-2018 Arm Limited. 
+ * Copyright (c) 2018-2022 Arm China. 
  * All rights reserved.
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -535,7 +535,7 @@ typedef struct
   __IOM uint32_t CSSELR;                 /*!< Offset: 0x084 (R/W)  Cache Size Selection Register */
   __IOM uint32_t CPACR;                  /*!< Offset: 0x088 (R/W)  Coprocessor Access Control Register */
   __IOM uint32_t NSACR;                  /*!< Offset: 0x08C (R/W)  Non-Secure Access Control Register */
-        uint32_t RESERVED_ADD1[21U];
+        uint32_t RESERVED_ADD1[21U];      
   __IOM uint32_t SFSR;                   /*!< Offset: 0x0E4 (R/W)  Secure Fault Status Register */
   __IOM uint32_t SFAR;                   /*!< Offset: 0x0E8 (R/W)  Secure Fault Address Register */
         uint32_t RESERVED3[69U];
@@ -559,9 +559,9 @@ typedef struct
 
 typedef struct
 {
-  __IOM uint32_t CACR;                     /*!< Offset: 0x0 (R/W)  L1 Cache Control Register */
-  __IOM uint32_t ITCMCR;                   /*!< Offset: 0x10 (R/W)  Instruction Tightly-Coupled Memory Control Register */
-  __IOM uint32_t DTCMCR;                   /*!< Offset: 0x14 (R/W)  Data Tightly-Coupled Memory Control Registers */
+  __IOM uint32_t CACR;				       /*!< Offset: 0x0 (R/W)  L1 Cache Control Register */
+  __IOM uint32_t ITCMCR;				   /*!< Offset: 0x10 (R/W)  Instruction Tightly-Coupled Memory Control Register */
+  __IOM uint32_t DTCMCR;				   /*!< Offset: 0x14 (R/W)  Data Tightly-Coupled Memory Control Registers */ 
 }EMSS_Type;
 
 /* SCB CPUID Register Definitions */
@@ -2130,7 +2130,7 @@ typedef struct
   #define DCB_BASE            (0xE000EDF0UL)                             /*!< DCB Base Address */
   #define DIB_BASE            (0xE000EFB0UL)                             /*!< DIB Base Address */
   #define EMSS_BASE           (0xE001E000UL)                             /*!<Enhanced Memory SubSystem Base Address */
-
+  
   #define SysTick_BASE        (SCS_BASE +  0x0010UL)                     /*!< SysTick Base Address */
   #define NVIC_BASE           (SCS_BASE +  0x0100UL)                     /*!< NVIC Base Address */
   #define SCB_BASE            (SCS_BASE +  0x0D00UL)                     /*!< System Control Block Base Address */
@@ -2246,7 +2246,7 @@ typedef struct
 
 /* Special LR values for Secure/Non-Secure call handling and exception handling                                               */
 
-/* Function Return Payload (from ARMv8-M Architecture Reference Manual) LR value on entry from Secure BLXNS                   */
+/* Function Return Payload (from ARMv8-M Architecture Reference Manual) LR value on entry from Secure BLXNS                   */ 
 #define FNC_RETURN                 (0xFEFFFFFFUL)     /* bit [0] ignored when processing a branch                             */
 
 /* The following EXC_RETURN mask values are used to evaluate the LR on exception entry */
@@ -2261,7 +2261,7 @@ typedef struct
 /* Integrity Signature (from ARMv8-M Architecture Reference Manual) for exception context stacking                            */
 #if defined (__FPU_PRESENT) && (__FPU_PRESENT == 1U)  /* Value for processors with floating-point extension:                  */
 #define EXC_INTEGRITY_SIGNATURE     (0xFEFA125AUL)     /* bit [0] SFTC must match LR bit[4] EXC_RETURN_FTYPE                   */
-#else
+#else 
 #define EXC_INTEGRITY_SIGNATURE     (0xFEFA125BUL)     /* Value for processors without floating-point extension                */
 #endif
 
@@ -2653,7 +2653,7 @@ __NO_RETURN __STATIC_INLINE void __SW_SystemReset(void)
   SCB->AIRCR  = (uint32_t)((0x5FAUL << SCB_AIRCR_VECTKEY_Pos)    |
                            (SCB->AIRCR & SCB_AIRCR_BFHFNMINS_Msk) | /* Keep BFHFNMINS unchanged. Use this Reset function in case your case need to keep it */
                            (SCB->AIRCR & SCB_AIRCR_PRIGROUP_Msk) | /* Keep priority group unchanged */
-                            SCB_AIRCR_SYSRESETREQ_Msk    );
+                            SCB_AIRCR_SYSRESETREQ_Msk    );         
   __DSB();                                                          /* Ensure completion of memory access */
 
   for(;;)                                                           /* wait until reset */
@@ -3349,10 +3349,10 @@ __STATIC_FORCEINLINE void SCB_CleanInvalidateDCache (void)
 __STATIC_FORCEINLINE void SCB_InvalidateDCache_by_Addr (void *addr, int32_t dsize)
 {
   #if defined (__DCACHE_PRESENT) && (__DCACHE_PRESENT == 1U)
-    if ( dsize > 0 ) {
+    if ( dsize > 0 ) { 
        int32_t op_size = dsize + (((uint32_t)addr) & (__SCB_DCACHE_LINE_SIZE - 1U));
       uint32_t op_addr = (uint32_t)addr /* & ~(__SCB_DCACHE_LINE_SIZE - 1U) */;
-
+    
       __DSB();
 
       do {
@@ -3379,10 +3379,10 @@ __STATIC_FORCEINLINE void SCB_InvalidateDCache_by_Addr (void *addr, int32_t dsiz
 __STATIC_FORCEINLINE void SCB_CleanDCache_by_Addr (uint32_t *addr, int32_t dsize)
 {
   #if defined (__DCACHE_PRESENT) && (__DCACHE_PRESENT == 1U)
-    if ( dsize > 0 ) {
+    if ( dsize > 0 ) { 
        int32_t op_size = dsize + (((uint32_t)addr) & (__SCB_DCACHE_LINE_SIZE - 1U));
       uint32_t op_addr = (uint32_t)addr /* & ~(__SCB_DCACHE_LINE_SIZE - 1U) */;
-
+    
       __DSB();
 
       do {
@@ -3409,10 +3409,10 @@ __STATIC_FORCEINLINE void SCB_CleanDCache_by_Addr (uint32_t *addr, int32_t dsize
 __STATIC_FORCEINLINE void SCB_CleanInvalidateDCache_by_Addr (uint32_t *addr, int32_t dsize)
 {
   #if defined (__DCACHE_PRESENT) && (__DCACHE_PRESENT == 1U)
-    if ( dsize > 0 ) {
+    if ( dsize > 0 ) { 
        int32_t op_size = dsize + (((uint32_t)addr) & (__SCB_DCACHE_LINE_SIZE - 1U));
       uint32_t op_addr = (uint32_t)addr /* & ~(__SCB_DCACHE_LINE_SIZE - 1U) */;
-
+    
       __DSB();
 
       do {

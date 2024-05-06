@@ -23,8 +23,12 @@ extern "C" {
 #include "keypad_encoder/lv_demo_keypad_encoder.h"
 #endif
 
-#if LV_USE_DEMO_MUSIC
+#if LV_USE_DEMO_MUSIC == 1 || defined(LV_USE_DEMO_RTT_MUSIC)
+#if LVGL_VERSION_MAJOR < 9
+extern void lv_demo_music(void);
+#else
 #include "music/lv_demo_music.h"
+#endif
 #endif
 
 #if LV_USE_DEMO_STRESS
