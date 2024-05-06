@@ -30,11 +30,14 @@ ART-pi smart采用了米尔科技的imx6ull核心板，硬件由韦东山团队�
 > * [x]  xmake 构建环境
 > * [x]  busybox
 > * [x]  smart-apps
+> * [x]  ash  支持ash开机自启动
+> * [x]  emmc 从emmc启动内核、挂载文件系统
 > 
 > ### 待完善、修复
-> * [ ]  ash  支持ash开机自启动
+
 > * [ ]  网络 以太网网络问题修复
-> * [ ]  emmc 从emmc启动内核、挂载文件系统
+> * [ ]  信号 信号处理问题修复
+
  
 ## 应用编译
 
