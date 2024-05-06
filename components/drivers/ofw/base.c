@@ -1051,7 +1051,7 @@ rt_err_t ofw_alias_scan(void)
 
     rt_ofw_foreach_prop(np, prop)
     {
-        int id = 0, rate = 1;
+        int id = 0;
         struct alias_info *info;
         const char *name = prop->name, *end;
 
@@ -1066,17 +1066,17 @@ rt_err_t ofw_alias_scan(void)
             continue;
         }
 
-        end = name + rt_strlen(name) - 1;
+        end = name + rt_strlen(name);
 
-        while (*end && !(*end >= '0' && *end <= '9') && end > name)
+        while (*(end - 1) && (*(end - 1) >= '0' && *(end - 1) <= '9') && end > name)
         {
             --end;
         }
 
         while (*end && (*end >= '0' && *end <= '9'))
         {
-            id += (*end - '0') * rate;
-            rate *= 10;
+            id *= 10;
+            id += (*end - '0');
 
             ++end;
         }
@@ -1093,7 +1093,7 @@ rt_err_t ofw_alias_scan(void)
 
         info->id = id;
         info->tag = name;
-        info->tag_len = end - name - 1;
+        info->tag_len = end - name;
         info->np = tmp;
 
         rt_list_insert_after(&_aliases_nodes, &info->list);
