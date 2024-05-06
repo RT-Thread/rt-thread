@@ -380,11 +380,7 @@ void rt_thread_idle_init(void)
  */
 rt_thread_t rt_thread_idle_gethandler(void)
 {
-#ifdef RT_USING_SMP
     int id = rt_cpu_get_id();
-#else
-    int id = 0;
-#endif /* RT_USING_SMP */
 
     return (rt_thread_t)(&idle_thread[id]);
 }

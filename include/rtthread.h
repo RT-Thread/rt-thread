@@ -675,11 +675,19 @@ void rt_interrupt_leave(void);
 
 rt_base_t rt_cpus_lock(void);
 void rt_cpus_unlock(rt_base_t level);
+void rt_cpus_lock_status_restore(struct rt_thread *thread);
 
 struct rt_cpu *rt_cpu_self(void);
 struct rt_cpu *rt_cpu_index(int index);
 
-void rt_cpus_lock_status_restore(struct rt_thread *thread);
+#ifdef RT_USING_DEBUG
+    rt_base_t rt_cpu_get_id(void);
+#else /* !RT_USING_DEBUG */
+    #define rt_cpu_get_id rt_hw_cpu_id
+#endif /* RT_USING_DEBUG */
+
+#else /* !RT_USING_SMP */
+#define rt_cpu_get_id()  (0)
 
 #endif /* RT_USING_SMP */
 
@@ -807,13 +815,15 @@ rt_inline rt_bool_t rt_in_thread_context(void)
     return rt_thread_self() != RT_NULL && rt_interrupt_get_nest() == 0;
 }
 
+/* is scheduler available */
 rt_inline rt_bool_t rt_scheduler_is_available(void)
 {
     return rt_critical_level() == 0 && rt_in_thread_context();
 }
 
 #ifdef RT_USING_SMP
-rt_inline rt_bool_t rt_scheduler_is_binding(rt_thread_t thread)
+/* is thread bond on core */
+rt_inline rt_bool_t rt_sched_thread_is_binding(rt_thread_t thread)
 {
     if (thread == RT_NULL)
     {
@@ -823,19 +833,8 @@ rt_inline rt_bool_t rt_scheduler_is_binding(rt_thread_t thread)
 }
 
 #else
-#define rt_scheduler_is_binding(thread) (RT_TRUE)
+#define rt_sched_thread_is_binding(thread) (RT_TRUE)
 #endif
-
-/* A safe API with debugging feature to be called in most codes */
-rt_inline rt_base_t rt_cpu_get_id(void)
-{
-
-    RT_ASSERT(rt_scheduler_is_binding(RT_NULL) ||
-              rt_hw_interrupt_is_disabled() ||
-              !rt_scheduler_is_available());
-
-    return rt_hw_cpu_id();
-}
 
 /**@}*/
 
