@@ -1,0 +1,18 @@
+import os
+import rtconfig
+from building import *
+
+Import('SDK_LIB')
+
+cwd = GetCurrentDir()
+
+# add general drivers
+src = []
+path = [cwd]
+
+if GetDepend(['BSP_USING_SPI_FLASH']):
+    src += Glob('drv_spi_flash.c')
+
+group = DefineGroup('PLATFORM', src, depend = ['RT_USING_SFUD'], CPPPATH = path)
+
+Return('group')

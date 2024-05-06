@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<flash_device>
+  <exe>$PROJ_DIR$/../libraries/hc32f472_ddl/cmsis/Device/HDSC/hc32f4xx/Source/IAR/flashloader/FlashHC32F472_qspi.out</exe>
+  <page>256</page>
+  <block>2048 0x1000</block>
+  <flash_base>0x98000000</flash_base>
+  <aggregate>0</aggregate>
+</flash_device>

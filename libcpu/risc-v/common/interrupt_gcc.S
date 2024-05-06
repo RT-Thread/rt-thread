@@ -214,6 +214,7 @@ SW_handler:
 
   .section      .text.trap_entry
   .align 2
+  .weak trap_entry
   .global trap_entry
 trap_entry:
 #ifdef ARCH_RISCV_FPU

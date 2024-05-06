@@ -66,7 +66,7 @@ static void _uart_console_reconfig(void)
 
  * @retval None
  */
-__WEAKDEF void pwc_seep_enter(uint8_t u8SleepType)
+__WEAKDEF void pwc_sleep_enter(uint8_t u8SleepType)
 {
     DDL_ASSERT(IS_PWC_UNLOCKED());
 
@@ -96,7 +96,7 @@ __WEAKDEF void pwc_seep_enter(uint8_t u8SleepType)
 static void _sleep_enter_idle(void)
 {
     struct pm_sleep_mode_idle_config sleep_idle_cfg = PM_SLEEP_IDLE_CFG;
-    pwc_seep_enter(sleep_idle_cfg.pwc_sleep_type);
+    pwc_sleep_enter(sleep_idle_cfg.pwc_sleep_type);
 }
 
 static void _sleep_enter_deep(void)

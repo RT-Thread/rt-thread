@@ -850,6 +850,11 @@ def DoBuilding(target, objects):
         objects = sorted(objects)
         objects.append(objects_in_group)
 
+        # generate build/compile_commands.json
+        if GetOption('cdb') and utils.VerTuple(SCons.__version__) >= (4, 0, 0):
+            Env.Tool("compilation_db")
+            Env.CompilationDatabase('build/compile_commands.json')
+
         program = Env.Program(target, objects)
 
     EndBuilding(target, program)

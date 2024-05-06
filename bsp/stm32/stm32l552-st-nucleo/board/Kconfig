@@ -1,12 +1,5 @@
 menu "Hardware Drivers Config"
 
-config SOC_STM32L552ZE
-    bool
-    select SOC_SERIES_STM32L5
-    select RT_USING_COMPONENTS_INIT
-    select RT_USING_USER_MAIN
-    default y
-
 menu "Onboard Peripheral Drivers"
 
 endmenu

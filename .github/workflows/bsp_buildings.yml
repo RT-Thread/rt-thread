@@ -69,6 +69,8 @@ jobs:
                 - "synwit/swm341-mini"
                 - "beaglebone"
                 - "zynqmp-r5-axu4ev"
+                - "at32/at32a403a-start"
+                - "at32/at32a423-start"
                 - "at32/at32f402-start"
                 - "at32/at32f403a-start"
                 - "at32/at32f405-start"
@@ -84,6 +86,7 @@ jobs:
                 - "hc32/ev_hc32f4a0_lqfp176"
                 - "hc32/ev_hc32f448_lqfp80"
                 - "hc32/ev_hc32f460_lqfp100_v2"
+                - "hc32/ev_hc32f472_lqfp100"
                 - "hc32l196"
                 - "mm32/mm32f3270-100ask-pitaya"
                 - "mm32f327x"
@@ -349,7 +352,6 @@ jobs:
       - name: Install Tools
         shell: bash
         run: |
-          sudo apt-get update
           wget https://raw.githubusercontent.com/RT-Thread/env/master/install_ubuntu.sh
           chmod 777 install_ubuntu.sh
           ./install_ubuntu.sh

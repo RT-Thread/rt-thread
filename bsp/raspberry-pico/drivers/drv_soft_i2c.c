@@ -38,6 +38,16 @@ static void pico_i2c_gpio_init(struct pico_i2c *i2c)
     rt_pin_write(cfg->sda, PIN_HIGH);
 }
 
+static void pico_i2c_pin_init(void)
+{
+    rt_size_t obj_num = sizeof(i2c_obj) / sizeof(struct pico_i2c);
+
+    for(rt_size_t i = 0; i < obj_num; i++)
+    {
+        pico_i2c_gpio_init(&i2c_obj[i]);
+    }
+}
+
 /**
  * This function sets the sda pin.
  *
@@ -111,13 +121,15 @@ static void pico_udelay(rt_uint32_t us)
 static const struct rt_i2c_bit_ops pico_bit_ops_default =
 {
     .data     = RT_NULL,
+    .pin_init = pico_i2c_pin_init,
     .set_sda  = pico_set_sda,
     .set_scl  = pico_set_scl,
     .get_sda  = pico_get_sda,
     .get_scl  = pico_get_scl,
     .udelay   = pico_udelay,
     .delay_us = 1,
-    .timeout  = 100
+    .timeout  = 100,
+    .i2c_pin_init_flag = RT_FALSE
 };
 
 /**
@@ -159,7 +171,7 @@ int rt_soft_i2c_init(void)
         i2c_obj[i].ops = pico_bit_ops_default;
         i2c_obj[i].ops.data = (void*)&soft_i2c_config[i];
         i2c_obj[i].i2c_bus.priv = &i2c_obj[i].ops;
-        pico_i2c_gpio_init(&i2c_obj[i]);
+
         result = rt_i2c_bit_add_bus(&i2c_obj[i].i2c_bus, soft_i2c_config[i].bus_name);
         RT_ASSERT(result == RT_EOK);
         pico_i2c_bus_unlock(&soft_i2c_config[i]);

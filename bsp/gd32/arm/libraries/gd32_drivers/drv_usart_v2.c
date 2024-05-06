@@ -233,13 +233,14 @@ static void dma_recv_isr (struct rt_serial_device *serial)
 {
     struct gd32_uart *uart;
     rt_size_t recv_len, counter;
+    rt_base_t level;
 
     RT_ASSERT(serial != RT_NULL);
     uart = rt_container_of(serial, struct gd32_uart, serial);
 
     recv_len = 0;
+    level = rt_hw_interrupt_disable();
     counter = dma_transfer_number_get(uart->dma.rx.periph, uart->dma.rx.channel);
-
     if (counter <= uart->dma.last_index)
     {
         recv_len = uart->dma.last_index - counter;
@@ -248,10 +249,11 @@ static void dma_recv_isr (struct rt_serial_device *serial)
     {
         recv_len = serial->config.rx_bufsz + uart->dma.last_index - counter;
     }
+    uart->dma.last_index = counter;
+    rt_hw_interrupt_enable(level);
 
     if (recv_len)
     {
-        uart->dma.last_index = counter;
         rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_DMADONE | (recv_len << 8));
     }
 }

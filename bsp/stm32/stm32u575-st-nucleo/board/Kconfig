@@ -1,12 +1,5 @@
 menu "Hardware Drivers Config"
 
-config SOC_STM32U575ZI
-    bool
-    select SOC_SERIES_STM32U5
-    select RT_USING_COMPONENTS_INIT
-    select RT_USING_USER_MAIN
-    default y
-
 menu "Onboard Peripheral Drivers"
 
     config BSP_USING_ARDUINO

@@ -8,6 +8,7 @@
  * 2022-05-16   shelton        first version
  * 2023-04-08   shelton        add support f423
  * 2023-10-18   shelton        add support f402/f405
+ * 2024-04-12   shelton        add support a403a and a423
  */
 
 #include <rtthread.h>
@@ -24,7 +25,7 @@
 #define BKUP_REG_DATA                   0xA5A5
 
 #if   defined (SOC_SERIES_AT32F403A) || defined (SOC_SERIES_AT32F407) || \
-      defined (SOC_SERIES_AT32F413)
+      defined (SOC_SERIES_AT32F413)  || defined (SOC_SERIES_AT32A403A)
 #define Alarm_IRQn                      RTCAlarm_IRQn
 #define Alarm_IRQHandler                RTCAlarm_IRQHandler
 #elif defined (SOC_SERIES_AT32F421)  || defined (SOC_SERIES_AT32F425)
@@ -50,7 +51,8 @@ static time_t get_rtc_timestamp(void)
 #if defined (SOC_SERIES_AT32F435) || defined (SOC_SERIES_AT32F437) || \
     defined (SOC_SERIES_AT32F415) || defined (SOC_SERIES_AT32F421) || \
     defined (SOC_SERIES_AT32F425) || defined (SOC_SERIES_AT32F423) || \
-    defined (SOC_SERIES_AT32F402) || defined (SOC_SERIES_AT32F405)
+    defined (SOC_SERIES_AT32F402) || defined (SOC_SERIES_AT32F405) || \
+    defined (SOC_SERIES_AT32A423)
     struct tm tm_new;
     ertc_time_type ertc_time_struct;
 
@@ -76,7 +78,8 @@ static rt_err_t set_rtc_time_stamp(time_t time_stamp)
 #if defined (SOC_SERIES_AT32F435) || defined (SOC_SERIES_AT32F437) || \
     defined (SOC_SERIES_AT32F415) || defined (SOC_SERIES_AT32F421) || \
     defined (SOC_SERIES_AT32F425) || defined (SOC_SERIES_AT32F423) || \
-    defined (SOC_SERIES_AT32F402) || defined (SOC_SERIES_AT32F405)
+    defined (SOC_SERIES_AT32F402) || defined (SOC_SERIES_AT32F405) || \
+    defined (SOC_SERIES_AT32A423)
     struct tm now;
 
     gmtime_r(&time_stamp, &now);
@@ -122,7 +125,8 @@ static rt_err_t rt_rtc_config(void)
 #if defined (SOC_SERIES_AT32F435) || defined (SOC_SERIES_AT32F437) || \
     defined (SOC_SERIES_AT32F415) || defined (SOC_SERIES_AT32F421) || \
     defined (SOC_SERIES_AT32F425) || defined (SOC_SERIES_AT32F423) || \
-    defined (SOC_SERIES_AT32F402) || defined (SOC_SERIES_AT32F405)
+    defined (SOC_SERIES_AT32F402) || defined (SOC_SERIES_AT32F405) || \
+    defined (SOC_SERIES_AT32A423)
 
     /* select rtc clock source */
 #ifdef BSP_RTC_USING_LICK
@@ -179,7 +183,7 @@ static rt_err_t _rtc_init(void)
     crm_periph_clock_enable(CRM_PWC_PERIPH_CLOCK, TRUE);
 
 #if defined (SOC_SERIES_AT32F403A) || defined (SOC_SERIES_AT32F407) || \
-    defined (SOC_SERIES_AT32F413)
+    defined (SOC_SERIES_AT32F413)  || defined (SOC_SERIES_AT32A403A)
     crm_periph_clock_enable(CRM_BPR_PERIPH_CLOCK, TRUE);
 #endif
 
@@ -228,7 +232,7 @@ static rt_err_t rtc_alarm_time_set(struct rtc_device_object* p_dev)
     exint_init_type exint_init_struct;
 
 #if defined (SOC_SERIES_AT32F403A) || defined (SOC_SERIES_AT32F407) || \
-    defined (SOC_SERIES_AT32F413)
+    defined (SOC_SERIES_AT32F413)  || defined (SOC_SERIES_AT32A403A)
     struct tm tm_new;
     time_t sec_count;
 #endif
@@ -244,7 +248,7 @@ static rt_err_t rtc_alarm_time_set(struct rtc_device_object* p_dev)
         nvic_irq_enable(Alarm_IRQn, 0, 0);
 
 #if defined (SOC_SERIES_AT32F403A) || defined (SOC_SERIES_AT32F407) || \
-    defined (SOC_SERIES_AT32F413)
+    defined (SOC_SERIES_AT32F413)  || defined (SOC_SERIES_AT32A403A)
         /* clear alarm flag */
         rtc_flag_clear(RTC_TA_FLAG);
         /* wait for the register write to complete */
@@ -287,7 +291,7 @@ void Alarm_IRQHandler(void)
     rt_interrupt_enter();
 
 #if defined (SOC_SERIES_AT32F403A) || defined (SOC_SERIES_AT32F407) || \
-    defined (SOC_SERIES_AT32F413)
+    defined (SOC_SERIES_AT32F413)  || defined (SOC_SERIES_AT32A403A)
     if(rtc_flag_get(RTC_TA_FLAG) != RESET)
     {
         /* clear exint line flag */
