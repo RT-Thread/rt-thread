@@ -7,7 +7,6 @@ cwd = GetCurrentDir()
 # The set of source files associated with this SConscript file.
 
 src = Split('''
-CMSIS/Device/ST/STM32L4xx/Source/Templates/system_stm32l4xx.c
 STM32L4xx_HAL_Driver/Src/stm32l4xx_hal.c
 STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_comp.c
 STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_cortex.c
@@ -110,8 +109,7 @@ if GetDepend(['BSP_USING_DSI']):
 if GetDepend(['BSP_USING_SRAM']):
     src += ['STM32L4xx_HAL_Driver/Src/stm32l4xx_hal_sram.c']
 
-path = [cwd + '/STM32L4xx_HAL_Driver/Inc',
-    cwd + '/CMSIS/Device/ST/STM32L4xx/Include']
+path = [cwd + '/STM32L4xx_HAL_Driver/Inc']
 
 CPPDEFINES = ['USE_HAL_DRIVER']
 group = DefineGroup('Libraries', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
