@@ -220,7 +220,7 @@ menuconfig RT_USING_DEBUG
     default y
 
     if RT_USING_DEBUG
-        config RT_USING_ASSERT
+        config RT_DEBUGING_ASSERT
             bool "Enable debugging using assertion"
             default y
 
