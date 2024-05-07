@@ -112,7 +112,7 @@ rt_err_t rt_completion_wait_flags(struct rt_completion *completion,
         else if (expected_value == RT_WAKING)
         {
             /* previous wake is not done yet, yield thread & try again */
-            rt_schedule();
+            rt_thread_yield();
         }
         else
         {

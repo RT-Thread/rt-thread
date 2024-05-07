@@ -5,7 +5,6 @@ menuconfig RT_USING_DEVICE_IPC
 if RT_USING_DEVICE_IPC
     config RT_UNAMED_PIPE_NUMBER
         int "The number of unamed pipe"
-        depends on RT_USING_DEVICE_IPC
         default 64
 
     config RT_USING_SYSTEM_WORKQUEUE

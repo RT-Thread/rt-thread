@@ -110,8 +110,8 @@ __try_again:
                 {
                     /* reset the timeout of thread timer and start it */
                     rt_timer_control(&(thread->thread_timer),
-                                    RT_TIMER_CTRL_SET_TIME,
-                                    &timeout);
+                                     RT_TIMER_CTRL_SET_TIME,
+                                     &timeout);
                     rt_timer_start(&(thread->thread_timer));
                 }
                 /* enable interrupt */
