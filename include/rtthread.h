@@ -745,7 +745,7 @@ if (!(EX))                                                                    \
 }
 #else
 #define RT_ASSERT(EX)
-#endif /* RT_USING_ASSERT */
+#endif /* RT_DEBUGING_ASSERT */
 
 #ifdef RT_DEBUGING_CONTEXT
 /* Macro to check current context */
