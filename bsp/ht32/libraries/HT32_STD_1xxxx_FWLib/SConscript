@@ -1,38 +1,33 @@
+import os
+import sys
 import rtconfig
 from building import *
+Import('rtconfig')
+
+tools_path = os.path.normpath(os.getcwd() + '../../..' + '/tools')
+sys.path.append(tools_path)
+from sdk_dist import get_source
+
+source_file_path = os.path.join(os.getcwd(), 'Source_file')
+base_path = 'library/HT32F1xxxx_Driver/src/'
+system_path = 'library/Device/Holtek/HT32F1xxxx/Source/'
+source_path = []
+ic_list = [
+    'HT32F1654',
+    'HT32F1656',
+    'HT32F12345',
+    'HT32F12364',
+    'HT32F12366'
+]
 
 cwd = GetCurrentDir()
+src = []
 
-src = Split("""
-    library/HT32F1xxxx_Driver/src/ht32_cm3_misc.c
-    library/HT32F1xxxx_Driver/src/ht32f1xxxx_adc.c
-    library/HT32F1xxxx_Driver/src/ht32f1xxxx_aes.c
-    library/HT32F1xxxx_Driver/src/ht32f1xxxx_bftm.c
-    library/HT32F1xxxx_Driver/src/ht32f1xxxx_ckcu.c
-    library/HT32F1xxxx_Driver/src/ht32f1xxxx_cmp.c
-    library/HT32F1xxxx_Driver/src/ht32f1xxxx_crc.c
-    library/HT32F1xxxx_Driver/src/ht32f1xxxx_ebi.c
-    library/HT32F1xxxx_Driver/src/ht32f1xxxx_exti.c
-    library/HT32F1xxxx_Driver/src/ht32f1xxxx_flash.c
-    library/HT32F1xxxx_Driver/src/ht32f1xxxx_gpio.c
-    library/HT32F1xxxx_Driver/src/ht32f1xxxx_i2c.c
-    library/HT32F1xxxx_Driver/src/ht32f1xxxx_i2s.c
-    library/HT32F1xxxx_Driver/src/ht32f1xxxx_mctm.c
-    library/HT32F1xxxx_Driver/src/ht32f1xxxx_pdma.c
-    library/HT32F1xxxx_Driver/src/ht32f1xxxx_pwrcu.c
-    library/HT32F1xxxx_Driver/src/ht32f1xxxx_rstcu.c
-    library/HT32F1xxxx_Driver/src/ht32f1xxxx_rtc.c
-    library/HT32F1xxxx_Driver/src/ht32f1xxxx_sci.c
-    library/HT32F1xxxx_Driver/src/ht32f1xxxx_sdio.c
-    library/HT32F1xxxx_Driver/src/ht32f1xxxx_spi.c
-    library/HT32F1xxxx_Driver/src/ht32f1xxxx_tm.c
-    library/HT32F1xxxx_Driver/src/ht32f1xxxx_usart.c
-    library/HT32F1xxxx_Driver/src/ht32f1xxxx_usbd.c
-    library/HT32F1xxxx_Driver/src/ht32f1xxxx_wdt.c
+for ic_name in ic_list:
+    if GetDepend(['SOC_' + ic_name]):
+        source_path = get_source(ic_name,source_file_path,system_path,base_path)
 
-    library/Device/Holtek/HT32F1xxxx/Source/system_ht32f1xxxx_02.c
-""")
-#HT32F1xxxx_Driver/src/ht32f1xxxx_csif.c
+src = Split(source_path)
 
 path = [
     cwd + '/library/HT32F1xxxx_Driver/inc',
