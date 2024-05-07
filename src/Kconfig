@@ -221,7 +221,7 @@ menuconfig RT_USING_DEBUG
 
     if RT_USING_DEBUG
         config RT_DEBUGING_ASSERT
-            bool "Enable debugging using assertion"
+            bool "Enable assertion debugging"
             default y
 
         config RT_DEBUGING_COLOR
