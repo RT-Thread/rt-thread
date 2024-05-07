@@ -220,6 +220,10 @@ menuconfig RT_USING_DEBUG
     default y
 
     if RT_USING_DEBUG
+        config RT_DEBUGING_ASSERT
+            bool "Enable assertion debugging"
+            default y
+
         config RT_DEBUGING_COLOR
             bool "Enable color debugging log"
             default y

@@ -733,7 +733,7 @@ int __rt_ffs(int value);
 
 void rt_show_version(void);
 
-#ifdef RT_USING_DEBUG
+#ifdef RT_DEBUGING_ASSERT
 extern void (*rt_assert_hook)(const char *ex, const char *func, rt_size_t line);
 void rt_assert_set_hook(void (*hook)(const char *ex, const char *func, rt_size_t line));
 void rt_assert_handler(const char *ex, const char *func, rt_size_t line);
@@ -745,7 +745,7 @@ if (!(EX))                                                                    \
 }
 #else
 #define RT_ASSERT(EX)
-#endif /* RT_USING_DEBUG */
+#endif /* RT_DEBUGING_ASSERT */
 
 #ifdef RT_DEBUGING_CONTEXT
 /* Macro to check current context */
