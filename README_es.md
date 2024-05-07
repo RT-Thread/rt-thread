@@ -53,14 +53,14 @@ Incluye:
 
 | Name          | Descripción                                             |
 | ------------- | ------------------------------------------------------- |
-| BSP          | Board Support Package basado en la portación de varias placas de desarrollo |
+| bsp        | Board Support Package basado en la portación de varias placas de desarrollo |
 | componentes    | Componentes, como finsh shell, sistema de archivos, pila de protocolos, etc.|
-| documentación | Documentos relacionados, como el estilo de codificación, doxygen, etc.       |
-| ejemplos      | Código de ejemplo relacionado                            |
-| incluir       | Archivos de cabecera del kernel RT-Thread.                |
-| libcpu        | Código de portabilidad de CPUs como ARM/MIPS/RISC-V, etc.|
+| documentation | Documentos relacionados, como el estilo de codificación, doxygen, etc.       |
+| examples | Código de ejemplo relacionado                            |
+| include | Archivos de cabecera del kernel RT-Thread.                |
+| libcpu  | Código de portabilidad de CPUs como ARM/MIPS/RISC-V, etc.|
 | src           | Los archivos fuente del kernel RT-Thread. |
-| herramientas  | Los archivos de script para la herramienta de construcción de comandos de RT-Thread. |
+| tools | Los archivos de script para la herramienta de construcción de comandos de RT-Thread. |
 
 RT-Thread ha sido portado para casi 200 placas de desarrollo, la mayoría de los BSPs soportan el MDK, el entorno de desarrollo IAR y el compilador GCC, y han proporcionado un proyecto MDK e IAR por defecto, que permite a los usuarios añadir su propio código de aplicación directamente basado en el proyecto. Cada BSP tiene una estructura de directorio similar, y la mayoría de los BSPs proporcionan un archivo README.md, que es un archivo con formato markdown que contiene la introducción básica del BSP, y presenta cómo empezar a usar el BSP de forma sencilla.
 
