@@ -124,14 +124,16 @@ __try_again:
 
                 if (completion->susp_thread_n_flag != waiting_stat)
                 {
-                    /*  */
+                    /* completion may be completed after we suspend */
                     timeout = 0;
                     goto __try_again;
                 }
                 else
                 {
+                    /* no changes, waiting failed */
                     result = thread->error;
                     result = result > 0 ? -result : result;
+                    RT_ASSERT(result != RT_EOK);
                 }
             }
         }
