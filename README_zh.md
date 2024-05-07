@@ -57,7 +57,7 @@ RT-Thread源代码目录结构如下图所示：
 
 | 名称          | 描述                                                    |
 | ------------- | ------------------------------------------------------- |
-| BSP           | Board Support Package（板级支持包）基于各种开发板的移植 |
+| bsp           | Board Support Package（板级支持包）基于各种开发板的移植 |
 | components    | RT-Thread 的各个组件代码，例如 finsh，gui 等。          |
 | documentation | 相关文档，如编码规范等                                  |
 | examples      | 相关示例代码                                            |
