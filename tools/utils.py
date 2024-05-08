@@ -309,23 +309,3 @@ def VerTuple(version_str):
     ver = tuple(int(part) for part in ver_parts)
 
     return ver
-
-def CmdExists(cmd):
-    import platform
-
-    cmd_list = cmd.split(' ')
-    cmd = cmd_list[0]
-    if os.path.isfile(cmd):
-        return True
-    else:
-        # check cmd(.exe|.bat|.ps1) under Windows
-        if platform.system() == 'Windows':
-            if cmd.find('exe') != -1 or cmd.find('bat') != -1 or cmd.find('ps1') != -1:
-                return False
-
-            # add .exe then check whether the cmd exists
-            cmd = cmd + '.exe'
-            if os.path.isfile(cmd):
-                return True
-
-        return False
