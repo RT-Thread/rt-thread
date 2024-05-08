@@ -65,9 +65,12 @@ static void (*rt_scheduler_switch_hook)(struct rt_thread *tid);
  * @brief pause usage measure
  * 
  */
-rt_weak void rt_usage_measure_pause(void)
+#if RT_USING_CPU_USAGE
+rt_weak
+#endif /* RT_USING_CPU_USAGE */
+void rt_usage_measure_pause(void)
 {
-    /* do nothing in it */
+    /* do nothing in it, implemented in another file */
 }
 /**
  * @brief start usage measure
@@ -75,9 +78,12 @@ rt_weak void rt_usage_measure_pause(void)
  * @param from 
  * @param to 
  */
-rt_weak void rt_usage_measure_start(struct rt_thread *from, struct rt_thread *to)
+#if RT_USING_CPU_USAGE
+rt_weak
+#endif /* RT_USING_CPU_USAGE */
+void rt_usage_measure_start(struct rt_thread *from, struct rt_thread *to)
 {
-    /* do nothing in it */
+    /* do nothing in it, implemented in another file */
 }
 
 /**
