@@ -119,6 +119,12 @@ config RT_USING_OVERFLOW_CHECK
         Enable thread stack overflow checking. The stack overflow is checking when
         each thread switch.
 
+config RT_USING_CPU_USAGE
+    bool "thread usage measurement"
+    default y
+    help
+        Measure thread cpu usage.
+               
 config RT_USING_HOOK
     bool "Enable system hook"
     default y

@@ -62,6 +62,25 @@ static void (*rt_scheduler_switch_hook)(struct rt_thread *tid);
 /**@{*/
 
 /**
+ * @brief pause usage measure
+ * 
+ */
+rt_weak void rt_usage_measure_pause(void)
+{
+    /* do nothing in it */
+}
+/**
+ * @brief start usage measure
+ * 
+ * @param from 
+ * @param to 
+ */
+rt_weak void rt_usage_measure_start(struct rt_thread *from, struct rt_thread *to)
+{
+    /* do nothing in it */
+}
+
+/**
  * @brief This function will set a hook function, which will be invoked when thread
  *        switch happens.
  *
@@ -207,6 +226,9 @@ void rt_schedule(void)
     /* disable interrupt */
     level = rt_hw_interrupt_disable();
 
+    /*to avoid schedule interference*/
+    rt_usage_measure_pause();
+
     /* check the scheduler is enabled or not */
     if (rt_scheduler_lock_nest == 0)
     {
@@ -276,9 +298,6 @@ void rt_schedule(void)
                     rt_hw_context_switch((rt_ubase_t)&from_thread->sp,
                             (rt_ubase_t)&to_thread->sp);
 
-                    /* enable interrupt */
-                    rt_hw_interrupt_enable(level);
-
 #ifdef RT_USING_SIGNALS
                     /* check stat of thread for signal */
                     level = rt_hw_interrupt_disable();
@@ -295,7 +314,6 @@ void rt_schedule(void)
                     }
                     else
                     {
-                        rt_hw_interrupt_enable(level);
                     }
 #endif /* RT_USING_SIGNALS */
                     goto __exit;
@@ -316,10 +334,10 @@ void rt_schedule(void)
         }
     }
 
+__exit:
+    rt_usage_measure_start(from_thread, to_thread);
     /* enable interrupt */
     rt_hw_interrupt_enable(level);
-
-__exit:
     return;
 }
 
