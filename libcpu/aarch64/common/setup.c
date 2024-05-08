@@ -420,7 +420,7 @@ void rt_hw_common_setup(void)
 #ifndef RT_HWTIMER_ARM_ARCH
     /* initialize timer for os tick */
     rt_hw_gtimer_init();
-#endif /* RT_HWTIMER_ARM_ARCH */
+#endif /* !RT_HWTIMER_ARM_ARCH */
 
 #ifdef RT_USING_COMPONENTS_INIT
     rt_components_board_init();
@@ -513,7 +513,7 @@ rt_weak void rt_hw_secondary_cpu_bsp_start(void)
 #ifndef RT_HWTIMER_ARM_ARCH
     /* initialize timer for os tick */
     rt_hw_gtimer_local_enable();
-#endif /* RT_HWTIMER_ARM_ARCH */
+#endif /* !RT_HWTIMER_ARM_ARCH */
 
     rt_dm_secondary_cpu_init();
 
