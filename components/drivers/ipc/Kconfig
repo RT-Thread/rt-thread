@@ -1,0 +1,23 @@
+menuconfig RT_USING_DEVICE_IPC
+    bool "Using device drivers IPC"
+    default y
+
+if RT_USING_DEVICE_IPC
+    config RT_UNAMED_PIPE_NUMBER
+        int "The number of unamed pipe"
+        default 64
+
+    config RT_USING_SYSTEM_WORKQUEUE
+        bool "Using system default workqueue"
+        default n
+
+    if RT_USING_SYSTEM_WORKQUEUE
+        config RT_SYSTEM_WORKQUEUE_STACKSIZE
+            int "The stack size for system workqueue thread"
+            default 2048
+
+        config RT_SYSTEM_WORKQUEUE_PRIORITY
+            int "The priority level of system workqueue thread"
+            default 23
+    endif
+endif

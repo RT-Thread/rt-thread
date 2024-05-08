@@ -1,0 +1,7 @@
+menu "Utest IPC Testcase"
+
+config UTEST_COMPLETION_TC
+    bool "rt_completion testcase"
+    default n
+
+endmenu

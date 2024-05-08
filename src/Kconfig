@@ -35,6 +35,7 @@ config RT_USING_SMART
     select RT_USING_POSIX_TERMIOS
     select RT_USING_KTIME
     select RT_USING_STDC_ATOMIC
+    select RT_USING_SYSTEM_WORKQUEUE
     depends on ARCH_ARM_CORTEX_M || ARCH_ARM_ARM9 || ARCH_ARM_CORTEX_A || ARCH_ARMV8 || ARCH_RISCV64
     depends on !RT_USING_NANO
     help
