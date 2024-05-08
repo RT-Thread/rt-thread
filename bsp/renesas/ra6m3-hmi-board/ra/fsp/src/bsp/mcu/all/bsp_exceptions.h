@@ -1,5 +1,5 @@
 /***********************************************************************************************************************
- * Copyright [2020] Renesas Electronics Corporation and/or its affiliates.  All Rights Reserved.
+ * Copyright [2020-2023] Renesas Electronics Corporation and/or its affiliates.  All Rights Reserved.
  *
  * This software and documentation are supplied by Renesas Electronics America Inc. and may only be used with products
  * of Renesas Electronics Corp. and its affiliates ("Renesas").  No other uses are authorized.  Renesas products are
@@ -18,43 +18,41 @@
  * OF SUCH LOSS, DAMAGES, CLAIMS OR COSTS.
  **********************************************************************************************************************/
 
-/*******************************************************************************************************************//**
- * @ingroup BOARD_RA6M4_CPK
- * @defgroup BOARD_RA6M4_CPK_ETHERNET_PHY Board Ethernet Phy
- * @brief Ethernet Phy information for this board.
- *
- * This is code specific to the RA6M4_CPK board.
- *
- * @{
- **********************************************************************************************************************/
+/** @} (end addtogroup BSP_MCU) */
 
-#ifndef BSP_ETHERNET_PHY_H
-#define BSP_ETHERNET_PHY_H
+#ifndef BSP_EXCEPTIONS_H
+ #define BSP_EXCEPTIONS_H
 
-/** Common macro for FSP header files. There is also a corresponding FSP_FOOTER macro at the end of this file. */
-FSP_HEADER
+ #ifdef __cplusplus
+extern "C" {
+ #endif
 
 /***********************************************************************************************************************
  * Macro definitions
  **********************************************************************************************************************/
-#define BOARD_PHY_TYPE       (0)
-#define BOARD_PHY_REF_CLK    (1)
 
 /***********************************************************************************************************************
  * Typedef definitions
  **********************************************************************************************************************/
 
-/***********************************************************************************************************************
- * Exported global variables
- **********************************************************************************************************************/
+/* This list includes only Arm standard exceptions. Renesas interrupts are defined in vector_data.h. */
+typedef enum IRQn
+{
+    Reset_IRQn            = -15,       /*  1 Reset Vector invoked on Power up and warm reset */
+    NonMaskableInt_IRQn   = -14,       /*  2 Non maskable Interrupt cannot be stopped or preempted */
+    HardFault_IRQn        = -13,       /*  3 Hard Fault all classes of Fault */
+    MemoryManagement_IRQn = -12,       /*  4 Memory Management MPU mismatch, including Access Violation and No Match */
+    BusFault_IRQn         = -11,       /*  5 Bus Fault Pre-Fetch-, Memory Access, other address/memory Fault */
+    UsageFault_IRQn       = -10,       /*  6 Usage Fault i.e. Undef Instruction, Illegal State Transition */
+    SecureFault_IRQn      = -9,        /*  7 Secure Fault Interrupt */
+    SVCall_IRQn           = -5,        /* 11 System Service Call via SVC instruction */
+    DebugMonitor_IRQn     = -4,        /* 12 Debug Monitor */
+    PendSV_IRQn           = -2,        /* 14 Pendable request for system service */
+    SysTick_IRQn          = -1,        /* 15 System Tick Timer */
+} IRQn_Type;
 
-/***********************************************************************************************************************
- * Public Functions
- **********************************************************************************************************************/
-
-/** Common macro for FSP header files. There is also a corresponding FSP_HEADER macro at the top of this file. */
-FSP_FOOTER
+ #ifdef __cplusplus
+}
+ #endif
 
 #endif
-
-/** @} (end defgroup BOARD_RA6M4_CPK_ETHERNET_PHY) */

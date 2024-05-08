@@ -1,5 +1,5 @@
 /***********************************************************************************************************************
- * Copyright [2020-2021] Renesas Electronics Corporation and/or its affiliates.  All Rights Reserved.
+ * Copyright [2020-2023] Renesas Electronics Corporation and/or its affiliates.  All Rights Reserved.
  *
  * This software and documentation are supplied by Renesas Electronics America Inc. and may only be used with products
  * of Renesas Electronics Corp. and its affiliates ("Renesas").  No other uses are authorized.  Renesas products are
@@ -71,6 +71,10 @@ __STATIC_INLINE void R_BSP_IrqStatusClear (IRQn_Type irq)
 {
     /* Clear the IR bit in the selected IELSR register. */
     R_ICU->IELSR_b[irq].IR = 0U;
+
+    /* Read back the IELSR register to ensure that the IR bit is cleared.
+     * See section "13.5.1 Operations During an Interrupt" in the RA8M1 manual R01UH0994EJ0100. */
+    FSP_REGISTER_READ(R_ICU->IELSR[irq]);
 }
 
 /*******************************************************************************************************************//**
@@ -85,6 +89,9 @@ __STATIC_INLINE void R_BSP_IrqClearPending (IRQn_Type irq)
 {
     /* Clear the IR bit in the selected IELSR register. */
     R_BSP_IrqStatusClear(irq);
+
+    /* Flush memory transactions to ensure that the IR bit is cleared before clearing the pending bit in the NVIC. */
+    __DMB();
 
     /* The following statement is used in place of NVIC_ClearPendingIRQ to avoid including a branch for system
      * exceptions every time an interrupt is cleared in the NVIC. */
@@ -133,7 +140,10 @@ __STATIC_INLINE void R_BSP_IrqEnableNoClear (IRQn_Type const irq)
     /* The following statement is used in place of NVIC_EnableIRQ to avoid including a branch for system exceptions
      * every time an interrupt is enabled in the NVIC. */
     uint32_t _irq = (uint32_t) irq;
-    NVIC->ISER[(((uint32_t) irq) >> 5UL)] = (uint32_t) (1UL << (_irq & 0x1FUL));
+
+    __COMPILER_BARRIER();
+    NVIC->ISER[(_irq >> 5UL)] = (uint32_t) (1UL << (_irq & 0x1FUL));
+    __COMPILER_BARRIER();
 }
 
 /*******************************************************************************************************************//**
