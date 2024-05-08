@@ -284,6 +284,15 @@ void rt_hw_common_setup(void)
         .end = (rt_size_t)kernel_end,
     }, RT_TRUE);
 
+#ifndef RT_USING_SMART
+    rt_fdt_commit_memregion_early(&(rt_region_t)
+    {
+        .name = "null",
+        .start = (rt_size_t)RT_NULL,
+        .end = (rt_size_t)RT_NULL + ARCH_PAGE_SIZE,
+    }, RT_TRUE);
+#endif /* !RT_USING_SMART */
+
     if (rt_fdt_prefetch(fdt_ptr))
     {
         /* Platform cannot be initialized */
@@ -332,7 +341,10 @@ void rt_hw_common_setup(void)
     if (!rt_fdt_commit_memregion_request(&mem_region, &mem_region_nr, RT_FALSE))
     {
         rt_ubase_t best_offset = ~0UL;
-        rt_region_t *usable_mem_region = mem_region, *page_region = RT_NULL, init_page_region = { 0 };
+        rt_region_t *usable_mem_region = mem_region, *page_region = RT_NULL;
+        rt_region_t init_page_region = { 0 };
+        rt_region_t defer_hi = { 0 };
+        rt_err_t error;
 
         LOG_I("Usable memory:");
 
@@ -369,6 +381,16 @@ void rt_hw_common_setup(void)
 
         RT_ASSERT(page_region != RT_NULL);
 
+        /* don't map more than ARCH_EARLY_MAP_SIZE */
+        if (page_region->end - page_region->start > ARCH_PAGE_INIT_THRESHOLD)
+        {
+            defer_hi.name = page_region->name;
+            defer_hi.end = page_region->end;
+            defer_hi.start = RT_ALIGN_DOWN(page_region->start + ARCH_PAGE_INIT_THRESHOLD,
+                                           ARCH_SECTION_SIZE);
+            page_region->end = defer_hi.start;
+        }
+
         init_page_region.start = page_region->start - PV_OFFSET;
         init_page_region.end = page_region->end - PV_OFFSET;
 
@@ -389,13 +411,34 @@ void rt_hw_common_setup(void)
 
         mem_region = usable_mem_region;
 
+        if (defer_hi.start)
+        {
+            /* to virt address */
+            init_page_region.start = defer_hi.start - PV_OFFSET;
+            init_page_region.end = defer_hi.end - PV_OFFSET;
+            error = rt_page_install(init_page_region);
+
+            if (error)
+            {
+                LOG_W("Deferred page installation FAILED:");
+                LOG_W("  %-*.s [%p, %p]", RT_NAME_MAX,
+                    defer_hi.name, defer_hi.start, defer_hi.end);
+            }
+            else
+            {
+                LOG_I("Deferred page installation SUCCEED:");
+                LOG_I("  %-*.s [%p, %p]", RT_NAME_MAX,
+                      defer_hi.name, defer_hi.start, defer_hi.end);
+            }
+        }
+
         for (int i = 0; i < mem_region_nr; ++i, ++mem_region)
         {
             if (mem_region != page_region && mem_region->name)
             {
-                mem_region->start -= PV_OFFSET;
-                mem_region->end -= PV_OFFSET;
-                rt_page_install(*mem_region);
+                init_page_region.start = mem_region->start - PV_OFFSET;
+                init_page_region.end = mem_region->end - PV_OFFSET;
+                rt_page_install(init_page_region);
             }
         }
     }
