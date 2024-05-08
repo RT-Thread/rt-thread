@@ -74,8 +74,8 @@ void rt_usage_measure_pause(void)
 /**
  * @brief start usage measure
  *
- * @param from 
- * @param to 
+ * @param from wait to turn on
+ * @param to turn to be
  */
 #if RT_USING_CPU_USAGE
 rt_weak
