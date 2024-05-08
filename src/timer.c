@@ -526,7 +526,6 @@ static void _timer_check(rt_list_t *timer_list, struct rt_spinlock *lock)
             t->timeout_func(t->parameter);
 
             RT_OBJECT_HOOK_CALL(rt_timer_exit_hook, (t));
-            LOG_D("current tick: %d", current_tick);
 
             level = rt_spin_lock_irqsave(lock);
 
@@ -750,8 +749,6 @@ void rt_timer_check(void)
 {
     RT_ASSERT(rt_interrupt_get_nest() > 0);
 
-    LOG_D("timer check enter");
-
 #ifdef RT_USING_SMP
     /* Running on core 0 only */
     if (rt_cpu_get_id() != 0)
@@ -760,8 +757,6 @@ void rt_timer_check(void)
     }
 #endif
     _timer_check(_timer_list, &_htimer_lock);
-
-    LOG_D("timer check leave");
 }
 
 /**
@@ -823,12 +818,7 @@ static void _timer_thread_entry(void *parameter)
             }
         }
 
-        /* check software timer */
-        LOG_D("software timer check enter");
-
-        _timer_check(_soft_timer_list, &_stimer_lock);
-
-        LOG_D("software timer check leave");
+        _timer_check(_soft_timer_list, &_stimer_lock); /* check software timer */
     }
 }
 #endif /* RT_USING_TIMER_SOFT */
