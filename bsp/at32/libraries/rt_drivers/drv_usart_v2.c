@@ -386,7 +386,7 @@ static void at32_dma_config(struct rt_serial_device *serial, rt_ubase_t flag)
 }
 #endif
 
-static rt_size_t at32_transmit(struct rt_serial_device *serial, rt_uint8_t *buf, rt_size_t size, rt_uint32_t tx_flag)
+static rt_ssize_t at32_transmit(struct rt_serial_device *serial, rt_uint8_t *buf, rt_size_t size, rt_uint32_t tx_flag)
 {
     struct at32_uart *instance;
 
