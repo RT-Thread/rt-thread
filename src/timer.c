@@ -684,7 +684,7 @@ void rt_timer_check(void)
 
 #ifdef RT_USING_SMP
     /* Running on core 0 only */
-    if (rt_hw_cpu_id() != 0)
+    if (rt_cpu_get_id() != 0)
     {
         rt_spin_unlock_irqrestore(&_htimer_lock, level);
         return;
