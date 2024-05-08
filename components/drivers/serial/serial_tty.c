@@ -296,6 +296,7 @@ static int serial_tty_param(struct lwp_tty *tp, struct termios *t)
     RT_ASSERT(softc);
     serial = softc->parent;
 
+    cfsetispeed(t, t->__c_ispeed);
     return rt_device_control(&(serial->parent), TCSETS, t);
 }
 

@@ -1148,8 +1148,6 @@ static rt_err_t rt_serial_control(struct rt_device *dev,
                 {
                     _termios_to_termio(tio, args);
                 }
-
-                tio->__c_ispeed = tio->__c_ospeed = cfgetospeed(tio);
             }
             break;
         case TCSETAW:
@@ -1176,8 +1174,7 @@ static rt_err_t rt_serial_control(struct rt_device *dev,
                 if (tio == RT_NULL) return -RT_EINVAL;
 
                 config = serial->config;
-                tio->__c_ispeed = tio->__c_ospeed = cfgetospeed(tio);
-                baudrate = _get_baudrate(tio->__c_ispeed);
+                baudrate = _get_baudrate(cfgetospeed(tio));
                 config.baud_rate = baudrate;
 
                 switch (tio->c_cflag & CSIZE)
