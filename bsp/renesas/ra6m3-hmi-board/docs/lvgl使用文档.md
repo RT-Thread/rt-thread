@@ -8,17 +8,18 @@
 
 ## RGB 屏使用配置
 
-在 `Hardware Drivers Config → On-chip Peripheral Drivers → Enable LVGL for LCD` 中使能 `Enable LVGL for LCD_RGB565` 选项
+在 `Hardware Drivers Config → On-chip Peripheral Drivers ` 使能 Enable LVGL demo for LCD 选项
 
 ![](picture/lvgl/22.png)
 
-* 进入Enable LVGL demo for LCD 中使能 LVGL stress demo
+* 进入Enable LVGL demo for LCD 中使能 LVGL demo
 
-![](picture/lvgl/23.png)
+  * Enable LVGL music demo 绑定的是LVGL8.3.x 版本
+  * Enable LVGL stress demo 绑定的是LVGL9.x 版本
 
-进入 RT-Thread online packages → multimedia packages → LVGL: powerful and easy-to-use embedded GUI library中，选择配套的LVGL版本：8.3.X 或者 9.X
-
-![](picture/lvgl/24.png)
+  ![](picture/lvgl/24.png)
+* 接下来进入:  `RT-Thread online packages → multimedia packages → LVGL: powerful and easy-to-use embedded GUI library → LVGL (official): Light and Versatile Graphics Library` 中选择LVGL版本
+  ![](picture/lvgl/23.png)
 
 接下来退出菜单界面，输入 `pkgs --update` 命令手动联网获取 lvgl 的软件包到 `packages` 文件夹下
 
@@ -36,7 +37,7 @@
 
 我们默认在fsp中使能了屏幕和Dave2d的外设
 
-![](C:\Users\RTT\AppData\Roaming\Typora\typora-user-images\image-20240429162653262.png)
+![](picture/lvgl/26.png)
 
 点击 `Generate Project Content` 生成配置相关代码
 
