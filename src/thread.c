@@ -912,25 +912,28 @@ rt_err_t rt_thread_suspend_to_list(rt_thread_t thread, rt_list_t *susp_list, int
     }
 
 #ifdef RT_USING_SMART
-    rt_sched_unlock(slvl);
-
-    /* check pending signals for thread before suspend */
-    if (lwp_thread_signal_suspend_check(thread, suspend_flag) == 0)
+    if (thread->lwp)
     {
-        /* not to suspend */
-        return -RT_EINTR;
-    }
+        rt_sched_unlock(slvl);
 
-    rt_sched_lock(&slvl);
-    if (stat == RT_THREAD_READY)
-    {
-        stat = rt_sched_thread_get_stat(thread);
-
-        if (stat != RT_THREAD_READY)
+        /* check pending signals for thread before suspend */
+        if (lwp_thread_signal_suspend_check(thread, suspend_flag) == 0)
         {
-            /* status updated while we check for signal */
-            rt_sched_unlock(slvl);
-            return -RT_ERROR;
+            /* not to suspend */
+            return -RT_EINTR;
+        }
+
+        rt_sched_lock(&slvl);
+        if (stat == RT_THREAD_READY)
+        {
+            stat = rt_sched_thread_get_stat(thread);
+
+            if (stat != RT_THREAD_READY)
+            {
+                /* status updated while we check for signal */
+                rt_sched_unlock(slvl);
+                return -RT_ERROR;
+            }
         }
     }
 #endif

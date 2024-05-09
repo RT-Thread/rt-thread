@@ -195,7 +195,7 @@ START_POINT_END(_thread_start)
     LDP     X2, X3, [SP], #0x10
     LDP     X0, X1, [SP], #0x10
     RESTORE_FPU SP
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
     BEQ     arch_ret_to_user
 #endif
     ERET
@@ -204,7 +204,7 @@ START_POINT_END(_thread_start)
 .macro RESTORE_CONTEXT
     /* Set the SP to point to the stack of the task being restored. */
     MOV     SP, X0
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
     BL      rt_thread_self
     MOV     X19, X0
     BL      lwp_aspace_switch
@@ -238,7 +238,7 @@ START_POINT_END(_thread_start)
     LDP     X2, X3, [SP], #0x10
     LDP     X0, X1, [SP], #0x10
     RESTORE_FPU SP
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
     BEQ     arch_ret_to_user
 #endif
     ERET
@@ -274,7 +274,7 @@ START_POINT_END(_thread_start)
     LDP     X2, X3, [SP], #0x10
     LDP     X0, X1, [SP], #0x10
     RESTORE_FPU SP
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
     BEQ     arch_ret_to_user
 #endif
     ERET
@@ -368,15 +368,14 @@ rt_hw_context_switch_to:
     MOV     SP, X0
     MOV     X0, X1
     BL      rt_cpus_lock_status_restore
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
     BL      rt_thread_self
     BL      lwp_user_setting_restore
 #endif
     B       rt_hw_context_switch_exit
 
 /*
- * void rt_hw_context_switch(rt_uint32 from, rt_uint32
-to, struct rt_thread *to_thread);
+ * void rt_hw_context_switch(rt_uint32 from, rt_uint32 to, struct rt_thread *to_thread);
  * X0 --> from (from_thread stack)
  * X1 --> to (to_thread stack)
  * X2 --> to_thread
@@ -384,17 +383,21 @@ to, struct rt_thread *to_thread);
 .globl rt_hw_context_switch
 rt_hw_context_switch:
     SAVE_CONTEXT_FROM_EL1
-    MOV    X3, SP
-    STR    X3, [X0]            // store sp in preempted tasks TCB
-    LDR    X0, [X1]            // get new task stack pointer
-    MOV    SP, X0
-    MOV    X0, X2
-    BL     rt_cpus_lock_status_restore
-#ifdef RT_USING_LWP
-    BL     rt_thread_self
-    BL     lwp_user_setting_restore
+    mov     X3, SP
+    str     X3, [X0]            // store sp in preempted tasks TCB
+    ldr     X0, [X1]            // get new task stack pointer
+    mov     SP, X0
+
+    /* backup thread self */
+    mov     x19, x2
+
+    mov     x0, x19
+    bl      rt_cpus_lock_status_restore
+#ifdef RT_USING_SMART
+    mov     x0, x19
+    bl      lwp_user_setting_restore
 #endif
-    B      rt_hw_context_switch_exit
+    b       rt_hw_context_switch_exit
 
 /*
  * void rt_hw_context_switch_interrupt(context, from sp, to sp, tp tcb)
@@ -408,7 +411,7 @@ rt_hw_context_switch_interrupt:
     STP     X0, X1, [SP, #-0x10]!
     STP     X2, X3, [SP, #-0x10]!
     STP     X29, X30, [SP, #-0x10]!
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
     BL      rt_thread_self
     BL      lwp_user_setting_save
 #endif
@@ -422,7 +425,7 @@ rt_hw_context_switch_interrupt:
     MOV     X19, X0
     BL      rt_cpus_lock_status_restore
     MOV     X0, X19
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
     BL      lwp_user_setting_restore
 #endif
     B       rt_hw_context_switch_exit
@@ -437,11 +440,11 @@ START_POINT(vector_irq)
 
     BL      rt_interrupt_enter
     LDP     X0, X1, [SP]
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
     SAVE_USER_CTX
 #endif
     BL      rt_hw_trap_irq
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
     LDP     X0, X1, [SP]
     RESTORE_USER_CTX X0
 #endif
@@ -505,7 +508,7 @@ rt_hw_context_switch_interrupt:
     MOV     X7, #1              // set rt_thread_switch_interrupt_flag to 1
     STR     X7, [X6]
     STP     X1, X30, [SP, #-0x10]!
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
     MOV     X0, X2
     BL      lwp_user_setting_save
 #endif
@@ -579,12 +582,12 @@ vector_irq_exit:
 START_POINT(vector_exception)
     SAVE_CONTEXT
     STP     X0, X1, [SP, #-0x10]!
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
     SAVE_USER_CTX
 #endif
 
     BL      rt_hw_trap_exception
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
     LDP     X0, X1, [SP]
     RESTORE_USER_CTX X0
 #endif
@@ -596,7 +599,7 @@ START_POINT_END(vector_exception)
 
 START_POINT(vector_serror)
     SAVE_CONTEXT
-#ifdef RT_USING_LWP
+#ifdef RT_USING_SMART
     SAVE_USER_CTX
 #endif
     STP     X0, X1, [SP, #-0x10]!
