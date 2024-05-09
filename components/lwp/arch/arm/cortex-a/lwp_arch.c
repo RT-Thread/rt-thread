@@ -198,6 +198,11 @@ void arch_syscall_set_errno(void *eframe, int expected, int code)
     return ;
 }
 
+void *arch_kernel_mmu_table_get(void)
+{
+    return rt_kernel_space.page_table;
+}
+
 #ifdef LWP_ENABLE_ASID
 #define MAX_ASID_BITS 8
 #define MAX_ASID (1 << MAX_ASID_BITS)
