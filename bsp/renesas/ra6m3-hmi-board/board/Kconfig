@@ -96,19 +96,26 @@ menu "Hardware Drivers Config"
                     select BSP_USING_LCD
                     select BSP_USING_TOUCH
                     default n
-                menuconfig BSP_USING_LVGL_DEMO
-                bool "Enable LVGL demo for LCD"
-                if BSP_USING_LVGL_DEMO
-                    config BSP_USING_LVGL_MUSIC_DEMO
-                        bool "Enable LVGL music demo"
-                        depends on PKG_LVGL_VER_NUM < 0x900000
-                        select PKG_USING_LV_MUSIC_DEMO
-                        default n
-                    config BSP_USING_LVGL_STRESS_DEMO
-                        bool "Enable LVGL stress demo"
-                        depends on PKG_LVGL_VER_NUM > 0x900000
-                        default n
-                endif
+            endif
+
+        menuconfig BSP_USING_LVGL_DEMO
+            bool "Enable LVGL demo for LCD"
+            select BSP_USING_LVGL
+            select BSP_USING_LCD_RGB
+            if BSP_USING_LVGL_DEMO
+                config BSP_USING_LVGL_MUSIC_DEMO
+                    bool "Enable LVGL music demo"
+                    select PKG_USING_LV_MUSIC_DEMO
+                    default n
+                    help
+                        Enable this option to include LVGL music demo. -- LVGL8.3.x
+                
+                config BSP_USING_LVGL_STRESS_DEMO
+                    bool "Enable LVGL stress demo"
+                    default n
+                    depends on !BSP_USING_LVGL_MUSIC_DEMO
+                    help
+                        Enable this option to include LVGL stress demo. -- LVGL9.3.x
             endif
     endmenu
 
