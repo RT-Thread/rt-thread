@@ -13,7 +13,7 @@
 
 #include <rtthread.h>
 #include <rtdevice.h>
-#include <string.h>
+#include <posix/string.h>
 
 int serial_dev_set_name(struct rt_serial_device *sdev);
 
@@ -22,7 +22,7 @@ struct serial_configure serial_cfg_from_args(char *str);
 
 #define serial_for_each_args(arg, args)                                 \
     for (char *context = (arg = (typeof(arg))args, (void *)RT_NULL),    \
-        *context_end = rt_strchrnul((char *)args, ' ');                 \
+        *context_end = strchrnul((char *)args, ' ');                    \
          (arg = strtok_r(arg, ",", &context)) && arg < context_end;     \
          arg = RT_NULL)
 
