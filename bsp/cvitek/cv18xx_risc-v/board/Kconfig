@@ -42,6 +42,25 @@ menu "General Drivers Configuration"
         select RT_USING_SPI
         default n
 
+    menuconfig BSP_USING_WDT
+        bool "Enable Watchdog Timer"
+        select RT_USING_WDT
+        default n
+
+        if BSP_USING_WDT
+            config BSP_USING_WDT0
+                bool "Enable WDT0"
+                default n
+
+            config BSP_USING_WDT1
+                bool "Enable WDT1"
+                default n
+
+            config BSP_USING_WDT2
+                bool "Enable WDT2"
+                default n
+        endif
+
     menuconfig BSP_USING_PWM
         bool "Using PWM"
         select RT_USING_PWM
@@ -80,4 +99,5 @@ menu "General Drivers Configuration"
         select RT_USING_LWIP
         select RT_USING_POSIX_FS
         select RT_USING_POSIX_SOCKET
+
 endmenu
