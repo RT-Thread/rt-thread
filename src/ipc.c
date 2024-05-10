@@ -3091,10 +3091,12 @@ rt_err_t rt_mq_init(rt_mq_t     mq,
     struct rt_mq_message *head;
     rt_base_t temp;
     register rt_size_t msg_align_size;
+    rt_size_t correct_max_msgs;
 
     /* parameter check */
     RT_ASSERT(mq != RT_NULL);
     RT_ASSERT((flag == RT_IPC_FLAG_FIFO) || (flag == RT_IPC_FLAG_PRIO));
+    RT_ASSERT((msg_size <= RT_MQ_MSG_SIZE_MAX));
 
     /* initialize object */
     rt_object_init(&(mq->parent.parent), RT_Object_Class_MessageQueue, name);
@@ -3111,12 +3113,14 @@ rt_err_t rt_mq_init(rt_mq_t     mq,
     /* get correct message size */
     msg_align_size = RT_ALIGN(msg_size, RT_ALIGN_SIZE);
     mq->msg_size = msg_size;
-    mq->max_msgs = pool_size / (msg_align_size + sizeof(struct rt_mq_message));
 
-    if (0 == mq->max_msgs)
+    /* set the max of messages */
+    correct_max_msgs = pool_size / (msg_align_size + sizeof(struct rt_mq_message));
+    if ((0 == correct_max_msgs) || (correct_max_msgs > RT_MQ_MAX_MSGS_MAX))
     {
         return -RT_EINVAL;
     }
+    mq->max_msgs = correct_max_msgs;
 
     /* initialize message list */
     mq->msg_queue_head = RT_NULL;
@@ -3228,6 +3232,8 @@ rt_mq_t rt_mq_create(const char *name,
     rt_base_t temp;
     register rt_size_t msg_align_size;
 
+    RT_ASSERT((msg_size <= RT_MQ_MSG_SIZE_MAX));
+    RT_ASSERT((max_msgs <= RT_MQ_MAX_MSGS_MAX));
     RT_ASSERT((flag == RT_IPC_FLAG_FIFO) || (flag == RT_IPC_FLAG_PRIO));
 
     RT_DEBUG_NOT_IN_INTERRUPT;
