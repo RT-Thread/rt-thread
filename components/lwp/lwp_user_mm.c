@@ -136,23 +136,27 @@ int lwp_user_space_init(struct rt_lwp *lwp, rt_bool_t is_fork)
 void lwp_aspace_switch(struct rt_thread *thread)
 {
     struct rt_lwp *lwp = RT_NULL;
-    rt_aspace_t aspace;
-    void *from_tbl;
+    rt_aspace_t to_aspace;
+    void *from_tbl, *to_table;
 
     if (thread->lwp)
     {
         lwp = (struct rt_lwp *)thread->lwp;
-        aspace = lwp->aspace;
+        to_aspace = lwp->aspace;
+        to_table = to_aspace->page_table;
     }
     else
     {
-        aspace = &rt_kernel_space;
+        to_aspace = &rt_kernel_space;
+        /* the page table is arch dependent but not aspace->page_table */
+        to_table = arch_kernel_mmu_table_get();
     }
 
+    /* must fetch the effected page table to avoid hot update */
     from_tbl = rt_hw_mmu_tbl_get();
-    if (aspace->page_table != from_tbl)
+    if (to_table != from_tbl)
     {
-        rt_hw_aspace_switch(aspace);
+        rt_hw_aspace_switch(to_aspace);
     }
 }
 
