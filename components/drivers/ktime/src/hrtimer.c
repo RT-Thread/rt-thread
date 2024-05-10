@@ -111,32 +111,29 @@ static void _sleep_timeout(void *parameter)
     rt_completion_done(&timer->completion);
 }
 
-static void _set_next_timeout(void);
+static void _set_next_timeout_n_unlock(rt_base_t level);
 static void _timeout_callback(void *parameter)
 {
     rt_ktime_hrtimer_t timer;
     timer = (rt_ktime_hrtimer_t)parameter;
     rt_base_t level;
 
+    level     = rt_spin_lock_irqsave(&_spinlock);
+    _nowtimer = RT_NULL;
+    rt_list_remove(&(timer->row));
+
     if (timer->parent.flag & RT_TIMER_FLAG_ACTIVATED)
     {
         timer->timeout_func(timer->parameter);
     }
 
-    level     = rt_spin_lock_irqsave(&_spinlock);
-    _nowtimer = RT_NULL;
-    rt_list_remove(&(timer->row));
-    rt_spin_unlock_irqrestore(&_spinlock, level);
-
-    _set_next_timeout();
+    _set_next_timeout_n_unlock(level);
 }
 
-static void _set_next_timeout(void)
+static void _set_next_timeout_n_unlock(rt_base_t level)
 {
     rt_ktime_hrtimer_t t;
-    rt_base_t          level;
 
-    level = rt_spin_lock_irqsave(&_spinlock);
     if (&_timer_list != _timer_list.prev)
     {
         t = rt_list_entry((&_timer_list)->next, struct rt_ktime_hrtimer, row);
@@ -202,9 +199,6 @@ rt_err_t rt_ktime_hrtimer_start(rt_ktime_hrtimer_t timer)
     /* parameter check */
     RT_ASSERT(timer != RT_NULL);
 
-    /* notify the timer stop event */
-    rt_completion_wakeup_by_errno(&timer->completion, RT_ERROR);
-
     level = rt_spin_lock_irqsave(&_spinlock);
     rt_list_remove(&timer->row); /* remove timer from list */
     /* change status of timer */
@@ -228,9 +222,8 @@ rt_err_t rt_ktime_hrtimer_start(rt_ktime_hrtimer_t timer)
     }
     rt_list_insert_after(timer_list, &(timer->row));
     timer->parent.flag |= RT_TIMER_FLAG_ACTIVATED;
-    rt_spin_unlock_irqrestore(&_spinlock, level);
 
-    _set_next_timeout();
+    _set_next_timeout_n_unlock(level);
 
     return RT_EOK;
 }
@@ -250,9 +243,8 @@ rt_err_t rt_ktime_hrtimer_stop(rt_ktime_hrtimer_t timer)
     _nowtimer = RT_NULL;
     rt_list_remove(&timer->row);
     timer->parent.flag &= ~RT_TIMER_FLAG_ACTIVATED; /* change status */
-    rt_spin_unlock_irqrestore(&_spinlock, level);
 
-    _set_next_timeout();
+    _set_next_timeout_n_unlock(level);
 
     return RT_EOK;
 }
@@ -344,8 +336,7 @@ rt_err_t rt_ktime_hrtimer_detach(rt_ktime_hrtimer_t timer)
     {
         _nowtimer = RT_NULL;
         rt_list_remove(&timer->row);
-        rt_spin_unlock_irqrestore(&_spinlock, level);
-        _set_next_timeout();
+        _set_next_timeout_n_unlock(level);
     }
     else
     {
