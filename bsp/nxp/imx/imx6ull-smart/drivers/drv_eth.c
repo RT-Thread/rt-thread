@@ -387,10 +387,11 @@ rt_err_t rt_imx6ul_eth_tx(rt_device_t dev, struct pbuf *p)
         offset = offset + q->len;
         if(status == kStatus_Success)
         {
+            ret = RT_EOK;
         }
         else
         {
-            return RT_ERROR;
+            ret = RT_ERROR;
         }
     }
     if(offset > ENET_FRAME_MAX_FRAMELEN)
