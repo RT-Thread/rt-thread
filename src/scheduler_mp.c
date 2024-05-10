@@ -138,6 +138,30 @@ static void (*rt_scheduler_switch_hook)(struct rt_thread *tid);
 /**@{*/
 
 /**
+ * @brief pause usage measure
+ */
+#ifdef RT_USING_CPU_USAGE
+rt_weak
+#endif /* RT_USING_CPU_USAGE */
+void rt_usage_measure_pause(void)
+{
+    /* do nothing in it, implemented in another file */
+}
+/**
+ * @brief start usage measure
+ *
+ * @param from wait to turn on
+ * @param to turn to be
+ */
+#ifdef RT_USING_CPU_USAGE
+rt_weak
+#endif /* RT_USING_CPU_USAGE */
+void rt_usage_measure_start(struct rt_thread *from, struct rt_thread *to)
+{
+    /* do nothing in it, implemented in another file */
+}
+
+/**
  * @brief This function will set a hook function, which will be invoked when thread
  *        switch happens.
  *
@@ -857,7 +881,8 @@ void rt_schedule(void)
                   cpu_id, RT_SCHED_PRIV(to_thread).current_priority,
                   RT_NAME_MAX, to_thread->parent.name, to_thread->sp,
                   RT_NAME_MAX, current_thread->parent.name, current_thread->sp);
-
+            rt_usage_measure_pause();
+            rt_usage_measure_start(current_thread,to_thread);
             rt_hw_context_switch((rt_ubase_t)&current_thread->sp,
                                  (rt_ubase_t)&to_thread->sp, to_thread);
         }
