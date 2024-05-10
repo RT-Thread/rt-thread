@@ -36,6 +36,9 @@
 #include <unistd.h>
 #ifdef RT_USING_SMART
 #include <lwp.h>
+#ifdef RT_USING_VDSO
+#include <vdso.h>
+#endif
 #endif
 #ifdef RT_USING_POSIX_DELAY
 #include <delay.h>
@@ -645,6 +648,26 @@ int clock_gettime(clockid_t clockid, struct timespec *tp)
     }
 }
 RTM_EXPORT(clock_gettime);
+
+#ifdef RT_USING_VDSO
+static struct rt_spinlock _vdso_time_lock = RT_SPINLOCK_INIT;
+extern time_t init_vdso_time;
+void rt_vdso_timeget(VdsoDataPage *vdsoDataPage)
+{
+    struct timespec monotime,realtime = {0};
+    RT_ASSERT(vdsoDataPage != RT_NULL);
+
+    rt_spin_lock(&_vdso_time_lock);
+    rt_ktime_boottime_get_ns(&monotime);
+    vdsoDataPage->monoTimeSec = monotime.tv_sec;
+    vdsoDataPage->monoTimeNsec = monotime.tv_nsec;
+    
+    rt_ktime_boottime_get_ns(&realtime);
+    vdsoDataPage->realTimeSec = init_vdso_time + realtime.tv_sec;
+    vdsoDataPage->realTimeNsec = realtime.tv_nsec;
+    rt_spin_unlock(&_vdso_time_lock);
+}
+#endif
 
 int clock_nanosleep(clockid_t clockid, int flags, const struct timespec *rqtp, struct timespec *rmtp)
 {

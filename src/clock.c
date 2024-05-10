@@ -23,6 +23,10 @@
 #include <rtthread.h>
 #include <rtatomic.h>
 
+#if defined(RT_USING_SMART) && defined(RT_USING_VDSO)
+#include <vdso.h>
+#endif
+
 #ifdef RT_USING_SMP
 #define rt_tick rt_cpu_index(0)->tick
 #else
@@ -95,6 +99,10 @@ void rt_tick_increase(void)
 #else
     rt_atomic_add(&(rt_tick), 1);
 #endif /* RT_USING_SMP */
+
+#ifdef RT_USING_VDSO
+    rt_vdso_time_val_update();
+#endif
 
     /* check time slice */
     rt_sched_tick_increase();

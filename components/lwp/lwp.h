@@ -196,6 +196,10 @@ struct rt_lwp
     unsigned int asid;
 #endif
     struct rusage rt_rusage;
+
+#ifdef RT_USING_VDSO
+    void *vdso_vbase;
+#endif
 };
 
 

@@ -1,0 +1,38 @@
+import os
+import rtconfig
+import subprocess
+from building import *
+Import('RTT_ROOT')
+
+group = []
+
+if not GetDepend(['RT_USING_VDSO']):
+    Return('group')
+
+cwd = GetCurrentDir()
+list = os.listdir(cwd)
+src     = Glob('src/*.c')
+src     +=Glob('src/*.S')
+CPPPATH = [cwd + '/include']
+
+vdso_file = os.path.join(cwd, 'usr', 'xmake.lua')
+command = ["xmake", "-F", vdso_file]
+clean = ["xmake", "clean"]
+if not GetOption('clean'):
+    result = subprocess.run(command)
+else:
+    result = subprocess.run(clean)
+
+if result.returncode == 0:
+    print("Command executed successfully")
+else:
+    print("Command failed with exit code:", result.returncode)
+    exit(1)
+
+
+group = DefineGroup('VDSO', src, depend = ['RT_USING_SMART','RT_USING_VDSO'], CPPPATH = CPPPATH)
+
+for item in list:
+    if os.path.isfile(os.path.join(cwd, item, 'SConscript')):
+        group = group + SConscript(os.path.join(item, 'SConscript'))
+Return('group')
