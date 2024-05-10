@@ -391,7 +391,7 @@ rt_err_t rt_imx6ul_eth_tx(rt_device_t dev, struct pbuf *p)
         }
         else
         {
-            ret = RT_ERROR;
+            ret = -RT_ERROR;
         }
     }
     if(offset > ENET_FRAME_MAX_FRAMELEN)
