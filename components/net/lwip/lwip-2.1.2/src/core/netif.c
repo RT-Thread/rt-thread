@@ -1763,12 +1763,8 @@ netif_find(const char *name)
     return NULL;
   }
 
-  /* Out netif's name is e0, e1... */
-  num = (u8_t)atoi(&name[1]);
-
   NETIF_FOREACH(netif) {
-    if (num == netif->num &&
-        name[0] == netif->name[0] &&
+    if (name[0] == netif->name[0] &&
         name[1] == netif->name[1]) {
       LWIP_DEBUGF(NETIF_DEBUG, ("netif_find: found %c%c\n", name[0], name[1]));
       return netif;

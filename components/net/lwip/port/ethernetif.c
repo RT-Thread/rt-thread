@@ -257,6 +257,10 @@ int lwip_netdev_ping(struct netdev *netif, const char *host, size_t data_len,
 #endif
     if (isbind) {
         lwip_bind(s, (struct sockaddr *)&local, sizeof(struct sockaddr_in));
+        struct ifreq *iface = (struct ifreq *)rt_malloc(sizeof(struct ifreq));
+        strcpy(iface->ifr_name, netif->name);
+        lwip_setsockopt(s, SOL_SOCKET, SO_BINDTODEVICE, iface, sizeof(struct ifreq));
+        rt_free(iface);
     }
 
     lwip_setsockopt(s, SOL_SOCKET, SO_RCVTIMEO, &recv_timeout, sizeof(recv_timeout));
