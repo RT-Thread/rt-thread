@@ -56,6 +56,10 @@ struct rt_sched_thread_ctx
     rt_uint8_t                  sched_flag_locked:1;    /**< calling thread have the scheduler locked */
     rt_uint8_t                  sched_flag_ttmr_set:1;  /**< thread timer is start */
 
+#ifdef ARCH_USING_HW_THREAD_SELF
+    rt_uint8_t                  critical_switch_flag:1; /**< critical switch pending */
+#endif /* ARCH_USING_HW_THREAD_SELF */
+
 #ifdef RT_USING_SMP
     rt_uint8_t                  bind_cpu;               /**< thread is bind to cpu */
     rt_uint8_t                  oncpu;                  /**< process on cpu */
@@ -138,6 +142,8 @@ rt_bool_t rt_sched_is_locked(void);
 
 #define RT_SCHED_DEBUG_IS_LOCKED
 #define RT_SCHED_DEBUG_IS_UNLOCKED
+
+extern struct rt_thread *rt_current_thread;
 #endif /* RT_USING_SMP */
 
 /**

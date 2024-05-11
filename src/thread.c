@@ -348,6 +348,30 @@ rt_err_t rt_thread_init(struct rt_thread *thread,
 }
 RTM_EXPORT(rt_thread_init);
 
+#ifdef RT_USING_SMP
+static rt_thread_t _mp_thread_self(void)
+{
+#ifdef ARCH_USING_HW_THREAD_SELF
+    return rt_hw_thread_self();
+
+#else /* !ARCH_USING_HW_THREAD_SELF */
+    rt_thread_t self;
+    rt_base_t lock;
+
+    lock = rt_hw_local_irq_disable();
+    self = rt_cpu_self()->current_thread;
+    rt_hw_local_irq_enable(lock);
+
+    return self;
+#endif /* ARCH_USING_HW_THREAD_SELF */
+}
+#define THREAD_SELF _mp_thread_self()
+
+#else /* !RT_USING_SMP */
+#define THREAD_SELF rt_current_thread
+
+#endif /* RT_USING_SMP */
+
 /**
  * @brief   This function will return self thread object.
  *
@@ -355,20 +379,7 @@ RTM_EXPORT(rt_thread_init);
  */
 rt_thread_t rt_thread_self(void)
 {
-#ifdef RT_USING_SMP
-    rt_base_t lock;
-    rt_thread_t self;
-
-    lock = rt_hw_local_irq_disable();
-    self = rt_cpu_self()->current_thread;
-    rt_hw_local_irq_enable(lock);
-    return self;
-
-#else /* !RT_USING_SMP */
-    extern rt_thread_t rt_current_thread;
-
-    return rt_current_thread;
-#endif /* RT_USING_SMP */
+    return THREAD_SELF;
 }
 RTM_EXPORT(rt_thread_self);
 

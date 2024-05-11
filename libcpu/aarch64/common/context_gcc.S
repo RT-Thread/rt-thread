@@ -8,6 +8,7 @@
  * 2021-05-18     Jesven       the first version
  * 2023-06-24     WangXiaoyao  Support backtrace for user thread
  * 2024-01-06     Shell        Fix barrier on irq_disable/enable
+ * 2024-01-18     Shell        fix implicit dependency of cpuid management
  */
 
 #ifndef __ASSEMBLY__
@@ -27,15 +28,28 @@ rt_thread_switch_interrupt_flag: .zero  8
 #endif
 
 .text
-.weak rt_hw_cpu_id_set
+
 .type rt_hw_cpu_id_set, @function
 rt_hw_cpu_id_set:
-    mrs x0, mpidr_el1           /* MPIDR_EL1: Multi-Processor Affinity Register */
+#ifdef ARCH_USING_GENERIC_CPUID
+    .globl rt_hw_cpu_id_set
+#else /* !ARCH_USING_GENERIC_CPUID */
+    .weak rt_hw_cpu_id_set
+#endif /* ARCH_USING_GENERIC_CPUID */
+
+#ifndef RT_USING_OFW
+    mrs     x0, mpidr_el1           /* MPIDR_EL1: Multi-Processor Affinity Register */
 #ifdef ARCH_ARM_CORTEX_A55
-    lsr x0, x0, #8
+    lsr     x0, x0, #8
+#endif /* ARCH_ARM_CORTEX_A55 */
+    and     x0, x0, #15
+#endif /* !RT_USING_OFW */
+
+#ifdef ARCH_USING_GENERIC_CPUID
+    msr     tpidrro_el0, x0
+#else
+    msr     tpidr_el1, x0
 #endif
-    and x0, x0, #15
-    msr tpidr_el1, x0
     ret
 
 /*

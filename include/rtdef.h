@@ -740,8 +740,10 @@ struct rt_cpu
         struct rt_thread        *current_thread;
 
         rt_uint8_t              irq_switch_flag:1;
-        rt_uint8_t              critical_switch_flag:1;
         rt_uint8_t              sched_lock_flag:1;
+#ifndef ARCH_USING_HW_THREAD_SELF
+        rt_uint8_t              critical_switch_flag:1;
+#endif /* ARCH_USING_HW_THREAD_SELF */
 
         rt_uint8_t              current_priority;
         rt_list_t               priority_table[RT_THREAD_PRIORITY_MAX];
