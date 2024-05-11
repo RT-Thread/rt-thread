@@ -311,21 +311,18 @@ def VerTuple(version_str):
     return ver
 
 def CmdExists(cmd):
-    import platform
-
-    cmd_list = cmd.split(' ')
-    cmd = cmd_list[0]
+    # Check if the path directly points to an existing file.
     if os.path.isfile(cmd):
         return True
     else:
-        # check cmd(.exe|.bat|.ps1) under Windows
-        if platform.system() == 'Windows':
-            if cmd.find('exe') != -1 or cmd.find('bat') != -1 or cmd.find('ps1') != -1:
-                return False
+        # On Windows systems, check for common script file extensions
+        # if the file does not exist as specified.
+        if sys.platform.startswith('win'):
+            # Loop through possible extensions to cover cases where the extension is omitted in the input.
+            for ext in ['.exe', '.bat', '.ps1']:
+                # Append the extension to the command path and check if this file exists.
+                if os.path.isfile(cmd + ext):
+                    return True
 
-            # add .exe then check whether the cmd exists
-            cmd = cmd + '.exe'
-            if os.path.isfile(cmd):
-                return True
-
-        return False
+    # If none of the checks confirm the file exists, return False.
+    return False
