@@ -6,6 +6,10 @@
  * Change Logs:
  * Date           Author       Notes
  * 2021-04-27     peterfan     Add copyright header.
+ * 2024-04-15     atwww        Add emutls_get_pthread_key to make c++11's thread_local destructe safely.
+ *                                 Use emutls_pthread_key to determine whether C++11 thread_local is used.
+ *                             Move this file from components\libc\cplusplus\cpp11 to components\libc\posix\tls,
+ *                                 because _Thread_local in C will also use emutls.
  */
 
 /* ===---------- emutls.c - Implements __emutls_get_address ---------------===
@@ -109,7 +113,16 @@ typedef struct emutls_address_array
     void *data[];
 } emutls_address_array;
 
-static pthread_key_t emutls_pthread_key;
+static pthread_key_t emutls_pthread_key = -1; /* -1 means that TLS in C or C++ is not used. */
+
+pthread_key_t emutls_get_pthread_key(void)
+{
+    /* If program uses C or C++ TLS keyword, _Thread_local、__thread or thread_local,
+     * the function emutls_get_index will ensure that emutls_pthread_key is initialized once
+     * when it is first used. Therefore, there is no need to use synchronization measures here.
+     */
+    return emutls_pthread_key;
+}
 
 static void emutls_key_destructor(void *ptr)
 {
