@@ -11,8 +11,6 @@
 #include <rtdevice.h>
 #include "drv_pwm.h"
 
-#ifdef BSP_USING_PWM
-
 #define DBG_LEVEL   DBG_LOG
 #include <rtdbg.h>
 #define LOG_TAG "DRV.PWM"
@@ -208,5 +206,3 @@ int rt_hw_pwm_init(void)
 #endif
 }
 INIT_BOARD_EXPORT(rt_hw_pwm_init);
-
-#endif /* BSP_USING_PWM */
