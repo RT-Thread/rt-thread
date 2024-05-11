@@ -50,6 +50,7 @@ static void cvi_pwm_get_config(rt_ubase_t reg_base, struct rt_pwm_configuration 
     period_clk = cvi_pwm_get_period_ch(reg_base, (cfg->channel & PWM_MAX_CH));
     cfg->period = period_clk * NSEC_COUNT / count_unit;
 }
+
 static rt_err_t _pwm_control(struct rt_device_pwm *device, int cmd, void *arg)
 {
     struct rt_pwm_configuration *cfg = (struct rt_pwm_configuration *)arg;
@@ -58,7 +59,7 @@ static rt_err_t _pwm_control(struct rt_device_pwm *device, int cmd, void *arg)
     const uint64_t count_unit = 100000000;  // 100M count per second
     const uint64_t NSEC_COUNT = 1000000000;  // ns
 
-    if (cfg->channel > PWM_MAX_CH)
+    if (cfg->channel >= PWM_CHANNEL_NUM)
         return -RT_EINVAL;
 
     switch (cmd)
@@ -148,61 +149,5 @@ int rt_hw_pwm_init(void)
         }
     }
     return RT_EOK;
-#if 0
-#ifdef BSP_USING_PWM0
-    static struct cvi_pwm_dev cvi_pwm0;
-
-    cvi_pwm0.name = "pwm0";
-    cvi_pwm0.reg_base = CVI_PWM0_BASE;
-
-    result = rt_device_pwm_register(&cvi_pwm0.device, cvi_pwm0.name, &cvi_pwm_ops, &cvi_pwm0);
-    if (result != RT_EOK)
-    {
-        LOG_E("device %s register failed.", cvi_pwm0.name);
-        return result;
-    }
-#endif
-
-#ifdef BSP_USING_PWM1
-    static struct cvi_pwm_dev cvi_pwm1;
-    cvi_pwm1.name = "pwm1";
-    cvi_pwm1.reg_base = CVI_PWM1_BASE;
-
-    result = rt_device_pwm_register(&cvi_pwm1.device, cvi_pwm1.name, &cvi_pwm_ops, &cvi_pwm1);
-    if (result != RT_EOK)
-    {
-        LOG_E("device %s register failed.", cvi_pwm1.name);
-        return result;
-    }
-#endif
-
-#ifdef BSP_USING_PWM2
-    static struct cvi_pwm_dev cvi_pwm2;
-    cvi_pwm2.name = "pwm2";
-    cvi_pwm2.reg_base = CVI_PWM2_BASE;
-
-    result = rt_device_pwm_register(&cvi_pwm2.device, cvi_pwm2.name, &cvi_pwm_ops, &cvi_pwm2);
-    if (result != RT_EOK)
-    {
-        LOG_E("device %s register failed.", cvi_pwm2.name);
-        return result;
-    }
-#endif
-
-#ifdef BSP_USING_PWM3
-    static struct cvi_pwm_dev cvi_pwm3;
-    cvi_pwm3.name = "pwm3";
-    cvi_pwm3.reg_base = CVI_PWM3_BASE;
-
-    result = rt_device_pwm_register(&cvi_pwm3.device, cvi_pwm3.name, &cvi_pwm_ops, &cvi_pwm3);
-    if (result != RT_EOK)
-    {
-        LOG_E("device %s register failed.",  cvi_pwm3.name);
-        return result;
-    }
-#endif
-
-    return RT_EOK;
-#endif
 }
 INIT_BOARD_EXPORT(rt_hw_pwm_init);
