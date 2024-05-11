@@ -1053,7 +1053,7 @@ rt_err_t ofw_alias_scan(void)
     {
         int id = 0;
         struct alias_info *info;
-        const char *name = prop->name, *end;
+        const char *name = prop->name, *end, *id_start;
 
         /* Maybe the bootloader will set the name, or other nodes reference the aliases */
         if (!rt_strcmp(name, "name") || !rt_strcmp(name, "phandle"))
@@ -1073,12 +1073,13 @@ rt_err_t ofw_alias_scan(void)
             --end;
         }
 
-        while (*end && (*end >= '0' && *end <= '9'))
+        id_start = end;
+        while (*id_start && (*id_start >= '0' && *id_start <= '9'))
         {
             id *= 10;
-            id += (*end - '0');
+            id += (*id_start - '0');
 
-            ++end;
+            ++id_start;
         }
 
         info = rt_malloc(sizeof(*info));
