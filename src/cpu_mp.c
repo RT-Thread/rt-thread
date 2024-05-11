@@ -219,6 +219,7 @@ RTM_EXPORT(rt_cpus_lock_status_restore);
 
 /* A safe API with debugging feature to be called in most codes */
 
+#undef rt_cpu_get_id
 /**
  * @brief Get logical CPU ID
  *

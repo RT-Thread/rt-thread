@@ -326,11 +326,11 @@ rt_err_t rt_completion_wakeup_by_errno(struct rt_completion *completion,
                     }
 
                     /* safe to assume publication done even on resume failure */
-                    rt_thread_resume(suspend_thread);
                     RT_ASSERT(rt_atomic_load(&completion->susp_thread_n_flag) ==
                               RT_WAKING);
                     IPC_STORE(&completion->susp_thread_n_flag, RT_UNCOMPLETED,
                               memory_order_release);
+                    rt_thread_resume(suspend_thread);
                     error = RT_EOK;
                     break;
                 }
