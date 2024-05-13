@@ -103,7 +103,13 @@ static const struct rt_adc_ops _adc_ops =
 int rt_hw_adc_init(void)
 {
     rt_uint8_t i;
-    for (i = 0; i < sizeof(adc_dev_config) / sizeof(adc_dev_config[0]); i ++)
+
+    for (i = 0; i < sizeof(adc_dev_config) / sizeof(adc_dev_config[0]); i++)
+    {
+        cvi_do_calibration(adc_dev_config[i].base);
+    }
+
+    for (i = 0; i < sizeof(adc_dev_config) / sizeof(adc_dev_config[0]); i++)
     {
         if (rt_hw_adc_register(&adc_dev_config[i].device, adc_dev_config[i].name, &_adc_ops, &adc_dev_config[i]) != RT_EOK)
         {
