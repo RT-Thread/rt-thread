@@ -4,6 +4,7 @@ cwd     = GetCurrentDir()
 src     = Split('''
     drv_uart.c
     drv_por.c
+    drv_gpio.c
 ''')
 CPPDEFINES = []
 
@@ -17,9 +18,6 @@ elif GetDepend('BOARD_TYPE_MILKV_DUO') or GetDepend('BOARD_TYPE_MILKV_DUO_SPINOR
 
 CPPPATH += [cwd + r'/libraries']
 CPPPATH += [cwd + r'/libraries/' + CHIP_TYPE]
-
-if GetDepend('BSP_USING_CV18XX'):
-    src += ['drv_gpio.c']
 
 if GetDepend('BSP_USING_I2C'):
     src += ['drv_hw_i2c.c']

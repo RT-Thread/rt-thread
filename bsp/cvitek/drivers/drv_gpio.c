@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2023, RT-Thread Development Team
+ * Copyright (c) 2006-2024, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -28,8 +28,6 @@
 #define GPIO_PORTA_EOI      0x4c
 
 #define GPIO_EXT_PORTA      0x50
-
-#define DWAPB_DRIVER_NAME   "gpio-dwapb"
 
 #define DWAPB_GPIOA_BASE    0x03020000
 #define DWAPB_GPIOE_BASE    0x05021000
@@ -307,17 +305,6 @@ static void rt_hw_gpio_isr(int irqno, void *param)
 
 int rt_hw_gpio_init(void)
 {
-#ifdef RT_USING_SMART
-#define BSP_IOREMAP_GPIO_DEVICE(no)     \
-    rt_ioremap((void *)(DWAPB_GPIOA_BASE + (no) * DWAPB_GPIO_SIZE), DWAPB_GPIO_SIZE);
-
-    dwapb_gpio_base = (rt_size_t)BSP_IOREMAP_GPIO_DEVICE(0);
-    BSP_IOREMAP_GPIO_DEVICE(1);
-    BSP_IOREMAP_GPIO_DEVICE(2);
-    BSP_IOREMAP_GPIO_DEVICE(3);
-    dwapb_gpio_base_e = (rt_size_t)rt_ioremap((void *)DWAPB_GPIOE_BASE, DWAPB_GPIO_SIZE);
-#endif
-
     rt_device_pin_register("gpio", &_dwapb_ops, RT_NULL);
 
 #define INT_INSTALL_GPIO_DEVICE(no)     \
