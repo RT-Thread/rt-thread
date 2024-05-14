@@ -105,6 +105,11 @@ menu "General Drivers Configuration"
             default n
         endif
 
+    config BSP_USING_RTC
+        bool "Enable RTC"
+        select RT_USING_RTC
+        default n
+
     config BSP_USING_SDH
         select RT_USING_SDIO
         select RT_USING_DFS
