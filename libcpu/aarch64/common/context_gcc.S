@@ -19,13 +19,7 @@
 #include "asm-generic.h"
 #include "asm-fpu.h"
 #include "armv8.h"
-
-#ifndef RT_USING_SMP
-.section .data
-rt_interrupt_from_thread: .zero  8
-rt_interrupt_to_thread: .zero  8
-rt_thread_switch_interrupt_flag: .zero  8
-#endif
+#include "include/context_gcc.h"
 
 .text
 
@@ -165,36 +159,6 @@ START_POINT_END(_thread_start)
     STP     X2, X3, [SP, #-0x10]!
 
     MOV     X0, SP   /* Move SP into X0 for saving. */
-.endm
-
-.macro SAVE_CONTEXT_FROM_EL1
-    /* Save the entire context. */
-    SAVE_FPU SP
-    STP     X0, X1, [SP, #-0x10]!
-    STP     X2, X3, [SP, #-0x10]!
-    STP     X4, X5, [SP, #-0x10]!
-    STP     X6, X7, [SP, #-0x10]!
-    STP     X8, X9, [SP, #-0x10]!
-    STP     X10, X11, [SP, #-0x10]!
-    STP     X12, X13, [SP, #-0x10]!
-    STP     X14, X15, [SP, #-0x10]!
-    STP     X16, X17, [SP, #-0x10]!
-    STP     X18, X19, [SP, #-0x10]!
-    STP     X20, X21, [SP, #-0x10]!
-    STP     X22, X23, [SP, #-0x10]!
-    STP     X24, X25, [SP, #-0x10]!
-    STP     X26, X27, [SP, #-0x10]!
-    STP     X28, X29, [SP, #-0x10]!
-    MRS     X28, FPCR
-    MRS     X29, FPSR
-    STP     X28, X29, [SP, #-0x10]!
-    MRS     X29, SP_EL0
-    STP     X29, X30, [SP, #-0x10]!
-
-    MOV     X19, #((3 << 6) | 0x4 | 0x1)  /* el1h, disable interrupt */
-    MOV     X18, X30
-
-    STP     X18, X19, [SP, #-0x10]!
 .endm
 
 #ifdef RT_USING_SMP
@@ -390,80 +354,6 @@ rt_hw_interrupt_enable:
 
 #ifdef RT_USING_SMP
 
-/*
- * void rt_hw_context_switch_to(rt_uint3 to, struct rt_thread *to_thread);
- * X0 --> to (thread stack)
- * X1 --> to_thread
- */
-
-.globl rt_hw_context_switch_to
-rt_hw_context_switch_to:
-    LDR     X0, [X0]
-    MOV     SP, X0
-    MOV     X0, X1
-    BL      rt_cpus_lock_status_restore
-#ifdef RT_USING_SMART
-    BL      rt_thread_self
-    BL      lwp_user_setting_restore
-#endif
-    B       rt_hw_context_switch_exit
-
-/*
- * void rt_hw_context_switch(rt_uint32 from, rt_uint32 to, struct rt_thread *to_thread);
- * X0 --> from (from_thread stack)
- * X1 --> to (to_thread stack)
- * X2 --> to_thread
- */
-.globl rt_hw_context_switch
-rt_hw_context_switch:
-    SAVE_CONTEXT_FROM_EL1
-    mov     X3, SP
-    str     X3, [X0]            // store sp in preempted tasks TCB
-    ldr     X0, [X1]            // get new task stack pointer
-    mov     SP, X0
-
-    /* backup thread self */
-    mov     x19, x2
-
-    mov     x0, x19
-    bl      rt_cpus_lock_status_restore
-#ifdef RT_USING_SMART
-    mov     x0, x19
-    bl      lwp_user_setting_restore
-#endif
-    b       rt_hw_context_switch_exit
-
-/*
- * void rt_hw_context_switch_interrupt(context, from sp, to sp, tp tcb)
- * X0 :interrupt context
- * X1 :addr of from_thread's sp
- * X2 :addr of to_thread's sp
- * X3 :to_thread's tcb
- */
-.globl rt_hw_context_switch_interrupt
-rt_hw_context_switch_interrupt:
-    STP     X0, X1, [SP, #-0x10]!
-    STP     X2, X3, [SP, #-0x10]!
-    STP     X29, X30, [SP, #-0x10]!
-#ifdef RT_USING_SMART
-    BL      rt_thread_self
-    BL      lwp_user_setting_save
-#endif
-    LDP     X29, X30, [SP], #0x10
-    LDP     X2, X3, [SP], #0x10
-    LDP     X0, X1, [SP], #0x10
-    STR     X0, [X1]
-    LDR     X0, [X2]
-    MOV     SP, X0
-    MOV     X0, X3
-    MOV     X19, X0
-    BL      rt_cpus_lock_status_restore
-    MOV     X0, X19
-#ifdef RT_USING_SMART
-    BL      lwp_user_setting_restore
-#endif
-    B       rt_hw_context_switch_exit
-
 .globl vector_fiq
 vector_fiq:
     B       .
@@ -489,68 +379,8 @@ START_POINT(vector_irq)
     B       rt_hw_context_switch_exit
 START_POINT_END(vector_irq)
 
-.global rt_hw_context_switch_exit
-rt_hw_context_switch_exit:
-    CLREX
-    MOV     X0, SP
-    RESTORE_CONTEXT
-
 #else   /* !RT_USING_SMP */
 
-/*
- * void rt_hw_context_switch_to(rt_ubase_t to);
- * X0 --> to sp
- */
-.globl rt_hw_context_switch_to
-rt_hw_context_switch_to:
-    CLREX
-    LDR     X0, [X0]
-    RESTORE_CONTEXT
-
-/*
- * void rt_hw_context_switch(rt_ubase_t from, rt_ubase_t to);
- * X0 --> from sp
- * X1 --> to sp
- * X2 --> to thread
- */
-.globl rt_hw_context_switch
-rt_hw_context_switch:
-    CLREX
-    SAVE_CONTEXT_FROM_EL1
-
-    MOV    X2, SP
-    STR    X2, [X0]            // store sp in preempted tasks TCB
-    LDR    X0, [X1]            // get new task stack pointer
-
-    RESTORE_CONTEXT
-
-/*
- * void rt_hw_context_switch_interrupt(rt_ubase_t from, rt_ubase_t to, rt_thread_t from_thread, rt_thread_t to_thread);
- */
-.globl rt_thread_switch_interrupt_flag
-.globl rt_interrupt_from_thread
-.globl rt_interrupt_to_thread
-.globl rt_hw_context_switch_interrupt
-rt_hw_context_switch_interrupt:
-    CLREX
-    LDR     X6, =rt_thread_switch_interrupt_flag
-    LDR     X7, [X6]
-    CMP     X7, #1
-    B.EQ     _reswitch
-    LDR     X4, =rt_interrupt_from_thread   // set rt_interrupt_from_thread
-    STR     X0, [X4]
-    MOV     X7, #1              // set rt_thread_switch_interrupt_flag to 1
-    STR     X7, [X6]
-    STP     X1, X30, [SP, #-0x10]!
-#ifdef RT_USING_SMART
-    MOV     X0, X2
-    BL      lwp_user_setting_save
-#endif
-    LDP     X1, X30, [SP], #0x10
-_reswitch:
-    LDR     X6, =rt_interrupt_to_thread     // set rt_interrupt_to_thread
-    STR     X1, [X6]
-    RET
 
 .text
 
