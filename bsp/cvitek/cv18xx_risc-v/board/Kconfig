@@ -42,15 +42,130 @@ menu "General Drivers Configuration"
         if BSP_USING_I2C
             config BSP_USING_I2C0
                 bool "Enable I2C0"
+                depends on BOARD_TYPE_MILKV_DUO || BOARD_TYPE_MILKV_DUO_SPINOR
                 default n
+
+                if BSP_USING_I2C0
+                    choice
+                        prompt "SCL"
+
+                        config BSP_USING_IIC0_SCL__IIC0_SCL
+                            bool "IIC0_SCL/GP0"
+                    endchoice
+
+                    choice
+                        prompt "SDA"
+
+                        config BSP_USING_IIC0_SDA__IIC0_SDA
+                            bool "IIC0_SDA/GP1"
+                    endchoice
+                endif
 
             config BSP_USING_I2C1
                 bool "Enable I2C1"
                 default n
 
+                if BSP_USING_I2C1
+                    choice
+                        prompt "SCL"
+
+                        if BOARD_TYPE_MILKV_DUO || BOARD_TYPE_MILKV_DUO_SPINOR
+                            config BSP_USING_SD1_D2__IIC1_SCL
+                                bool "SD1_D2/GP4"
+                            config BSP_USING_SD1_D3__IIC1_SCL
+                                bool "SD1_D3/GP9"
+                            config BSP_USING_PAD_MIPIRX0N__IIC1_SCL
+                                bool "PAD_MIPIRX0N/GP11"
+                        endif
+
+                        if BOARD_TYPE_MILKV_DUO256M || BOARD_TYPE_MILKV_DUO256M_SPINOR
+                            config BSP_USING_SD1_D2__IIC1_SCL
+                                bool "SD1_D2/GP4"
+                            config BSP_USING_SD1_D3__IIC1_SCL
+                                bool "SD1_D3/GP9"
+                        endif
+
+                    endchoice
+
+                    choice
+                        prompt "SDA"
+
+                        if BOARD_TYPE_MILKV_DUO || BOARD_TYPE_MILKV_DUO_SPINOR
+                            config BSP_USING_SD1_D1__IIC1_SDA
+                                bool "SD1_D1/GP5"
+                            config BSP_USING_SD1_D0__IIC1_SDA
+                                bool "SD1_D0/GP8"
+                            config BSP_USING_PAD_MIPIRX1P__IIC1_SDA
+                                bool "PAD_MIPIRX1P/GP10"
+                        endif
+
+                        if BOARD_TYPE_MILKV_DUO256M || BOARD_TYPE_MILKV_DUO256M_SPINOR
+                            config BSP_USING_SD1_D1__IIC1_SDA
+                                bool "SD1_D1/GP5"
+                            config BSP_USING_SD1_D0__IIC1_SDA
+                                bool "SD1_D0/GP8"
+                        endif
+                    endchoice
+                endif
+
+            config BSP_USING_I2C2
+                bool "Enable I2C2"
+                depends on BOARD_TYPE_MILKV_DUO256M || BOARD_TYPE_MILKV_DUO256M_SPINOR
+                default n
+
+                if BSP_USING_I2C2
+                    choice
+                        prompt "SCL"
+
+                        config BSP_USING_PAD_MIPI_TXP1__IIC2_SCL
+                            bool "PAD_MIPI_TXP1/GP11"
+                    endchoice
+
+                    choice
+                        prompt "SDA"
+
+                        config BSP_USING_PAD_MIPI_TXM1__IIC2_SDA
+                            bool "PAD_MIPI_TXM1/GP10"
+                    endchoice
+                endif
+
+            config BSP_USING_I2C3
+                bool "Enable I2C3"
+                default n
+
+                if BSP_USING_I2C3
+                    choice
+                        prompt "SCL"
+
+                        if BOARD_TYPE_MILKV_DUO || BOARD_TYPE_MILKV_DUO_SPINOR
+                            config BSP_USING_SD1_CMD__IIC3_SCL
+                                bool "SD1_CMD/GP7"
+                        endif
+
+                        if BOARD_TYPE_MILKV_DUO256M || BOARD_TYPE_MILKV_DUO256M_SPINOR
+                            config BSP_USING_SD1_CMD__IIC3_SCL
+                                bool "SD1_CMD/GP7"
+                        endif
+                    endchoice
+
+                    choice
+                        prompt "SDA"
+
+                        if BOARD_TYPE_MILKV_DUO || BOARD_TYPE_MILKV_DUO_SPINOR
+                            config BSP_USING_SD1_CLK__IIC3_SDA
+                                bool "SD1_CLK/GP6"
+                        endif
+
+                        if BOARD_TYPE_MILKV_DUO256M || BOARD_TYPE_MILKV_DUO256M_SPINOR
+                            config BSP_USING_SD1_CLK__IIC3_SDA
+                                bool "SD1_CLK/GP6"
+                        endif
+                    endchoice
+                endif
+
             config I2C_IRQ_BASE
-            int
-            default 49
+                int
+                default 49
         endif
 
     config BSP_USING_ADC
