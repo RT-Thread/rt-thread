@@ -31,7 +31,28 @@ menu "General Drivers Configuration"
             default n
 
         endif
-        
+
+    menuconfig BSP_USING_I2C
+        bool "Using HW I2C"
+        select RT_USING_I2C
+        select RT_USING_I2C_BITOPS
+        select RT_USING_PIN
+        default n
+
+        if BSP_USING_I2C
+            config BSP_USING_I2C0
+                bool "Enable I2C0"
+                default n
+
+            config BSP_USING_I2C1
+                bool "Enable I2C1"
+                default n
+
+            config I2C_IRQ_BASE
+            int
+            default 49
+        endif
+
     config BSP_USING_ADC
         bool "Using ADC"
         select RT_USING_ADC
@@ -82,7 +103,6 @@ menu "General Drivers Configuration"
             config BSP_USING_PWM3
             bool "Enable PWM 3"
             default n
-            
         endif
 
     config BSP_USING_SDH
