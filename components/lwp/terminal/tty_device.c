@@ -25,7 +25,7 @@ static char *alloc_device_name(const char *name)
 {
     char *tty_dev_name;
     long name_buf_len = (sizeof(TTY_NAME_PREFIX) - 1) /* raw prefix */
-                        + rt_strlen(name)             /* custom name */
+                        + rt_strlen(name)        /* custom name */
                         + 1;                          /* tailing \0 */
 
     tty_dev_name = rt_malloc(name_buf_len);

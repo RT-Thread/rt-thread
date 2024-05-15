@@ -17,7 +17,7 @@
  */
 
 #define DBG_TAG "lwp"
-#define DBG_LVL DBG_WARNING
+#define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
 #include <rthw.h>
@@ -62,29 +62,6 @@ static const char elf_magic[] = {0x7f, 'E', 'L', 'F'};
 extern char working_directory[];
 #endif
 
-/**
- * @brief The default console is only a backup device with lowest priority.
- *        It's always recommended to scratch the console from the boot arguments.
- *        And dont forget to register the device with a higher priority.
- */
-static rt_err_t lwp_default_console_setup(void)
-{
-    rt_device_t bakdev = rt_device_find("ttyS0");
-    rt_err_t rc;
-
-    if (bakdev)
-    {
-        lwp_console_register_backend(bakdev, LWP_CONSOLE_LOWEST_PRIOR);
-        rc = RT_EOK;
-    }
-    else
-    {
-        rc = -RT_EINVAL;
-    }
-
-    return rc;
-}
-
 static int lwp_component_init(void)
 {
     int rc;
@@ -103,10 +80,6 @@ static int lwp_component_init(void)
     else if ((rc = lwp_futex_init()) != RT_EOK)
     {
         LOG_E("%s: lwp_futex_init() failed", __func__);
-    }
-    else if ((rc = lwp_default_console_setup()) != RT_EOK)
-    {
-        LOG_E("%s: lwp_default_console_setup() failed", __func__);
     }
     return rc;
 }

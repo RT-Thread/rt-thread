@@ -355,6 +355,9 @@ struct rt_object
 };
 typedef struct rt_object *rt_object_t;                   /**< Type for kernel objects. */
 
+/* used for iterator */
+typedef rt_err_t (*rt_object_iter_t)(rt_object_t object, void *data);
+
 /**
  *  The object type can be one of the follows with specific
  *  macros enabled:
