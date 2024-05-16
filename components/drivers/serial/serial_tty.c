@@ -179,11 +179,13 @@ static void _serial_tty_set_speed(struct lwp_tty *tp)
 {
     struct serial_tty_context *softc = (struct serial_tty_context *)(tp->t_devswsoftc);
     struct rt_serial_device *serial;
+    struct termios serial_hw_config;
 
     RT_ASSERT(softc);
     serial = softc->parent;
 
-    rt_device_control(&(serial->parent), TCGETS, &tp->t_termios_init_in);
+    rt_device_control(&(serial->parent), TCGETS, &serial_hw_config);
+    tp->t_termios_init_in.c_cflag |= serial_hw_config.c_cflag;
 
     tp->t_termios_init_in.__c_ispeed = tp->t_termios_init_in.__c_ospeed = cfgetospeed(&tp->t_termios_init_in);
 }
