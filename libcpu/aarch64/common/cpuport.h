@@ -32,7 +32,7 @@ typedef struct
  */
 #ifdef ARCH_USING_GENERIC_CPUID
 
-#if RT_CPUS_NR > 0
+#if RT_CPUS_NR > 1
 
 rt_inline int rt_hw_cpu_id(void)
 {
