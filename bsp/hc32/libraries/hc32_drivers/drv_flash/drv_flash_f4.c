@@ -30,30 +30,20 @@
  */
 static rt_uint32_t GetSectorNum(rt_uint32_t addr, size_t size)
 {
-    rt_uint32_t firstSector = 0, temp = 0;
-    rt_uint32_t sectorNum = 0;
+    rt_uint32_t firstSector = 0, lastSector = 0;
+    rt_uint32_t temp = 0;
+    rt_uint32_t NumOfSectors = 0;
 
     firstSector = addr / SECTOR_SIZE;
-    if (0U != (addr % SECTOR_SIZE))
+    temp = addr + size;
+    lastSector = temp / SECTOR_SIZE;
+    if (0U != (temp % SECTOR_SIZE))
     {
-        temp = (firstSector + 1U) * SECTOR_SIZE - addr;
-        sectorNum = 1U;
-        if (temp >= size)
-        {
-            return sectorNum;
-        }
-        else
-        {
-            size = size - temp;
-        }
+        lastSector += 1U;
     }
-    sectorNum += size / SECTOR_SIZE;
-    if (0U != (size % SECTOR_SIZE))
-    {
-        sectorNum += 1U;
-    }
+    NumOfSectors = lastSector - firstSector + 1U;
 
-    return sectorNum;
+    return NumOfSectors;
 }
 
 /**
@@ -92,9 +82,11 @@ int hc32_flash_write(rt_uint32_t addr, const rt_uint8_t *buf, size_t size)
 {
     uint8_t u8MemBuf[4] = {0xFF, 0xFF, 0xFF, 0xFF};
     rt_err_t result = RT_EOK;
-    rt_uint32_t FirstSector = 0, NbOfSectors = 0;
     rt_uint32_t newAddr = addr, offsetVal = 0;
     rt_uint32_t index = 0, u32Cnt = 0;
+#if defined (HC32F4A0) || defined (HC32F472) || defined (HC32F448)
+    rt_uint32_t FirstSector = 0, NumOfSectors = 0;
+#endif
 
     if ((addr + size) > HC32_FLASH_END_ADDRESS)
     {
@@ -108,12 +100,12 @@ int hc32_flash_write(rt_uint32_t addr, const rt_uint8_t *buf, size_t size)
 
     /* EFM_FWMC write enable */
     EFM_FWMC_Cmd(ENABLE);
+#if defined (HC32F4A0) || defined (HC32F472) || defined (HC32F448)
     /* calculate sector information */
     FirstSector = addr / SECTOR_SIZE,
-    NbOfSectors = GetSectorNum(addr, size);
-#if defined (HC32F4A0) || defined (HC32F472) || defined (HC32F448)
+    NumOfSectors = GetSectorNum(addr, size);
     /* Sectors disable write protection */
-    EFM_SequenceSectorOperateCmd(FirstSector, NbOfSectors, ENABLE);
+    EFM_SequenceSectorOperateCmd(FirstSector, NumOfSectors, ENABLE);
 #endif
     /* Word align */
     if (0U != (addr % 4))
@@ -153,7 +145,7 @@ int hc32_flash_write(rt_uint32_t addr, const rt_uint8_t *buf, size_t size)
 __exit:
 #if defined (HC32F4A0) || defined (HC32F472) || defined (HC32F448)
     /* Sectors enable write protection */
-    EFM_SequenceSectorOperateCmd(FirstSector, NbOfSectors, DISABLE);
+    EFM_SequenceSectorOperateCmd(FirstSector, NumOfSectors, DISABLE);
 #endif
     EFM_FWMC_Cmd(DISABLE);
 
@@ -175,8 +167,11 @@ __exit:
 int hc32_flash_erase(rt_uint32_t addr, size_t size)
 {
     rt_err_t result = RT_EOK;
-    rt_uint32_t FirstSector = 0, NbOfSectors = 0;
-    rt_uint32_t SectorVal = 0, u32Addr;
+    rt_uint32_t NumOfSectors = 0;
+    rt_uint32_t SectorVal = 0, u32Addr = addr;
+#if defined (HC32F4A0) || defined (HC32F472) || defined (HC32F448)
+    rt_uint32_t FirstSector = 0;
+#endif
 
     if ((addr + size) > HC32_FLASH_END_ADDRESS)
     {
@@ -191,25 +186,25 @@ int hc32_flash_erase(rt_uint32_t addr, size_t size)
     /* EFM_FWMC write enable */
     EFM_FWMC_Cmd(ENABLE);
     /* calculate sector information */
-    FirstSector = addr / SECTOR_SIZE,
-    NbOfSectors = GetSectorNum(addr, size);
+    NumOfSectors = GetSectorNum(addr, size);
 #if defined (HC32F4A0) || defined (HC32F472) || defined (HC32F448)
+    FirstSector = addr / SECTOR_SIZE,
     /* Sectors disable write protection */
-    EFM_SequenceSectorOperateCmd(FirstSector, NbOfSectors, ENABLE);
+    EFM_SequenceSectorOperateCmd(FirstSector, NumOfSectors, ENABLE);
 #endif
     /* Erase sector */
-    for (SectorVal = FirstSector; SectorVal < NbOfSectors; SectorVal++)
+    for (SectorVal = 0U; SectorVal < NumOfSectors; SectorVal++)
     {
-        u32Addr = EFM_SECTOR_ADDR(SectorVal);
         if (LL_OK != EFM_SectorErase(u32Addr))
         {
             result = -RT_ERROR;
             break;
         }
+        u32Addr += SECTOR_SIZE;
     }
 #if defined (HC32F4A0) || defined (HC32F472) || defined (HC32F448)
     /* Sectors enable write protection */
-    EFM_SequenceSectorOperateCmd(FirstSector, NbOfSectors, DISABLE);
+    EFM_SequenceSectorOperateCmd(FirstSector, NumOfSectors, DISABLE);
 #endif
     EFM_FWMC_Cmd(DISABLE);
 
