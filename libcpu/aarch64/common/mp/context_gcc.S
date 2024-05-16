@@ -16,6 +16,7 @@
 #endif
 
 #include "context_gcc.h"
+#include "../include/vector_gcc.h"
 
 #include <rtconfig.h>
 #include <asm-generic.h>

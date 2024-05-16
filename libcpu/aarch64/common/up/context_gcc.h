@@ -29,8 +29,51 @@
     bl      lwp_aspace_switch
     mov     x0, x19
     bl      lwp_user_setting_restore
-#endif
+#endif /* RT_USING_SMART */
     _RESTORE_CONTEXT_SWITCH
+.endm
+
+.macro RESTORE_IRQ_CONTEXT
+    /* Set the SP to point to the stack of the task being restored. */
+    MOV     SP, X0
+#ifdef RT_USING_SMART
+    BL      rt_thread_self
+    MOV     X19, X0
+    BL      lwp_aspace_switch
+    MOV     X0, X19
+    BL      lwp_user_setting_restore
+#endif
+    LDP     X2, X3, [SP], #0x10  /* SPSR and ELR. */
+
+    TST     X3, #0x1f
+    MSR     SPSR_EL1, X3
+    MSR     ELR_EL1, X2
+
+    LDP     X29, X30, [SP], #0x10
+    MSR     SP_EL0, X29
+    LDP     X28, X29, [SP], #0x10
+    MSR     FPCR, X28
+    MSR     FPSR, X29
+    LDP     X28, X29, [SP], #0x10
+    LDP     X26, X27, [SP], #0x10
+    LDP     X24, X25, [SP], #0x10
+    LDP     X22, X23, [SP], #0x10
+    LDP     X20, X21, [SP], #0x10
+    LDP     X18, X19, [SP], #0x10
+    LDP     X16, X17, [SP], #0x10
+    LDP     X14, X15, [SP], #0x10
+    LDP     X12, X13, [SP], #0x10
+    LDP     X10, X11, [SP], #0x10
+    LDP     X8, X9, [SP], #0x10
+    LDP     X6, X7, [SP], #0x10
+    LDP     X4, X5, [SP], #0x10
+    LDP     X2, X3, [SP], #0x10
+    LDP     X0, X1, [SP], #0x10
+    RESTORE_FPU SP
+#ifdef RT_USING_SMART
+    BEQ     arch_ret_to_user
+#endif
+    ERET
 .endm
 
 #endif /* __ARM64_CONTEXT_H__ */
