@@ -115,7 +115,7 @@ void usart_init(usart_type* usart_x, uint32_t baud_rate, usart_data_bit_num_type
   crm_clocks_freq_type clocks_freq;
   uint32_t apb_clock, temp_val;
   crm_clocks_freq_get(&clocks_freq);
-  if((usart_x == USART1) || (usart_x == USART6) ||  (usart_x == UART7) || (usart_x == UART8))
+  if((usart_x == USART1) || (usart_x == USART6))
   {
     apb_clock = clocks_freq.apb2_freq;
   }

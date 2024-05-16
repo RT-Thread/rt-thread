@@ -398,7 +398,9 @@ static rt_ssize_t at32_transmit(struct rt_serial_device *serial, rt_uint8_t *buf
 
     if(instance->uart_dma_flag & RT_DEVICE_FLAG_DMA_TX)
     {
+#ifdef RT_SERIAL_USING_DMA
         _uart_dma_transmit(instance, buf, size);
+#endif
         return size;
     }
 
