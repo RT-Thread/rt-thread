@@ -616,7 +616,7 @@ rt_err_t rt_object_for_each(rt_uint8_t type, rt_object_iter_t iter, void *data)
         {
             rt_spin_unlock_irqrestore(&(information->spinlock), level);
 
-            return error;
+            return error >= 0 ? RT_EOK : error;
         }
     }
 
@@ -631,7 +631,9 @@ static rt_err_t _match_name(struct rt_object *obj, void *data)
     if (rt_strncmp(obj->name, name, RT_NAME_MAX) == 0)
     {
         *(rt_object_t *)data = obj;
-        return -1;
+
+        /* notify an early break of loop, but not on error */
+        return 1;
     }
 
     return RT_EOK;

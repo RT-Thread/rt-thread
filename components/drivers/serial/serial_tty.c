@@ -422,7 +422,7 @@ static rt_err_t _match_tty_iter(struct rt_object *obj, void *data)
             {
                 /* matched, early return */
                 *(rt_device_t *)data = device;
-                return -1;
+                return 1;
             }
         }
     }
