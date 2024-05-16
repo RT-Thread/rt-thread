@@ -8,6 +8,7 @@
  * 2011-09-15     Bernard      first version
  * 2019-07-28     zdzn         add smp support
  * 2023-02-21     GuEe-GUI     mov cpu ofw init to setup
+ * 2024-04-29     Shell        Add generic ticket spinlock using C11 atomic
  */
 
 #include <rthw.h>
@@ -55,64 +56,100 @@ rt_weak rt_uint64_t rt_cpu_mpidr_early[] =
 };
 #endif /* RT_USING_SMART */
 
-static inline void arch_spin_lock(arch_spinlock_t *lock)
-{
-    unsigned int tmp;
+/* in support of C11 atomic */
+#if __STDC_VERSION__ >= 201112L
+#include <stdatomic.h>
 
-    asm volatile(
-    "   sevl\n"
-    "1: wfe\n"
-    "2: ldaxr   %w0, %1\n"
-    "   cbnz    %w0, 1b\n"
-    "   stxr    %w0, %w2, %1\n"
-    "   cbnz    %w0, 2b\n"
-    : "=&r" (tmp), "+Q" (lock->lock)
-    : "r" (1)
-    : "cc", "memory");
+union _spinlock
+{
+    _Atomic(rt_uint32_t) _value;
+    struct
+    {
+        _Atomic(rt_uint16_t) owner;
+        _Atomic(rt_uint16_t) next;
+    } ticket;
+};
+
+void rt_hw_spin_lock_init(rt_hw_spinlock_t *_lock)
+{
+    union _spinlock *lock = (void *)_lock;
+
+    /**
+     * just a dummy note that this is an atomic operation, though it alway is
+     * even without usage of atomic API in arm64
+     */
+    atomic_store_explicit(&lock->_value, 0, memory_order_relaxed);
 }
 
-static inline int arch_spin_trylock(arch_spinlock_t *lock)
+rt_bool_t rt_hw_spin_trylock(rt_hw_spinlock_t *_lock)
 {
-    unsigned int tmp;
+    rt_bool_t rc;
+    rt_uint32_t readonce;
+    union _spinlock temp;
+    union _spinlock *lock = (void *)_lock;
 
-    asm volatile(
-    "  ldaxr   %w0, %1\n"
-    "  cbnz    %w0, 1f\n"
-    "  stxr    %w0, %w2, %1\n"
-    "1:\n"
-    : "=&r" (tmp), "+Q" (lock->lock)
-    : "r" (1)
-    : "cc", "memory");
+    readonce = atomic_load_explicit(&lock->_value, memory_order_acquire);
+    temp._value = readonce;
 
-    return !tmp;
+    if (temp.ticket.owner != temp.ticket.next)
+    {
+        rc = RT_FALSE;
+    }
+    else
+    {
+        temp.ticket.next += 1;
+        rc = atomic_compare_exchange_strong_explicit(
+            &lock->_value, &readonce, temp._value,
+            memory_order_acquire, memory_order_relaxed);
+    }
+    return rc;
 }
 
-static inline void arch_spin_unlock(arch_spinlock_t *lock)
+rt_inline rt_base_t _load_acq_exclusive(_Atomic(rt_uint16_t) *halfword)
 {
-    asm volatile(
-    " stlr    %w1, %0\n"
-    : "=Q" (lock->lock) : "r" (0) : "memory");
+    rt_uint32_t old;
+    __asm__ volatile("ldaxrh %w0, [%1]"
+                     : "=&r"(old)
+                     : "r"(halfword)
+                     :  "memory");
+    return old;
 }
 
-void rt_hw_spin_lock_init(arch_spinlock_t *lock)
+rt_inline void _send_event_local(void)
 {
-    lock->lock = 0;
+    __asm__ volatile("sevl");
 }
 
-void rt_hw_spin_lock(rt_hw_spinlock_t *lock)
+rt_inline void _wait_for_event(void)
 {
-    arch_spin_lock(lock);
+    __asm__ volatile("wfe" ::: "memory");
 }
 
-void rt_hw_spin_unlock(rt_hw_spinlock_t *lock)
+void rt_hw_spin_lock(rt_hw_spinlock_t *_lock)
 {
-    arch_spin_unlock(lock);
+    union _spinlock *lock = (void *)_lock;
+    rt_uint16_t ticket =
+        atomic_fetch_add_explicit(&lock->ticket.next, 1, memory_order_relaxed);
+
+    if (atomic_load_explicit(&lock->ticket.owner, memory_order_acquire) !=
+        ticket)
+    {
+        _send_event_local();
+        do
+        {
+            _wait_for_event();
+        }
+        while (_load_acq_exclusive(&lock->ticket.owner) != ticket);
+    }
 }
 
-rt_bool_t rt_hw_spin_trylock(rt_hw_spinlock_t *lock)
+void rt_hw_spin_unlock(rt_hw_spinlock_t *_lock)
 {
-    return arch_spin_trylock(lock);
+    union _spinlock *lock = (void *)_lock;
+    atomic_fetch_add_explicit(&lock->ticket.owner, 1, memory_order_release);
 }
+
+#endif
 
 static int _cpus_init_data_hardcoded(int num_cpus, rt_uint64_t *cpu_hw_ids, struct cpu_ops_t *cpu_ops[])
 {
