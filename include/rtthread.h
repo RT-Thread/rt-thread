@@ -75,6 +75,7 @@ rt_err_t rt_custom_object_destroy(rt_object_t obj);
 #endif /* RT_USING_HEAP */
 rt_bool_t rt_object_is_systemobject(rt_object_t object);
 rt_uint8_t rt_object_get_type(rt_object_t object);
+rt_err_t rt_object_for_each(rt_uint8_t type, rt_object_iter_t iter, void *data);
 rt_object_t rt_object_find(const char *name, rt_uint8_t type);
 rt_err_t rt_object_get_name(rt_object_t object, char *name, rt_uint8_t name_size);
 

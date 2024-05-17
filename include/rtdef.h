@@ -356,6 +356,15 @@ struct rt_object
 typedef struct rt_object *rt_object_t;                   /**< Type for kernel objects. */
 
 /**
+ * iterator of rt_object_for_each()
+ *
+ * data is the data passing in to rt_object_for_each(). iterator can return
+ * RT_EOK to continue the iteration; or any positive value to break the loop
+ * successfully; or any negative errno to break the loop on failure.
+ */
+typedef rt_err_t (*rt_object_iter_t)(rt_object_t object, void *data);
+
+/**
  *  The object type can be one of the follows with specific
  *  macros enabled:
  *  - Thread
