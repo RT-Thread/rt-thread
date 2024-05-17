@@ -4,6 +4,12 @@ menuconfig RT_USING_PIC
     depends on RT_USING_DM
     default n
 
+config RT_USING_PIC_STATISTICS
+    bool "Enable ISR execution time statistics"
+    depends on RT_USING_PIC
+    depends on RT_USING_INTERRUPT_INFO
+    default n
+
 config MAX_HANDLERS
     int "IRQ max handlers"
     depends on RT_USING_PIC

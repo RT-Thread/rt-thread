@@ -91,6 +91,16 @@ struct rt_pic_isr
     struct rt_irq_desc action;
 };
 
+#ifdef RT_USING_PIC_STATISTICS
+struct rt_pic_irq_statistics
+{
+    rt_ubase_t current_irq_begin[RT_CPUS_NR];
+    rt_ubase_t max_irq_time_ns;
+    rt_ubase_t min_irq_time_ns;
+    rt_ubase_t sum_irq_time_ns;
+};
+#endif
+
 struct rt_pic_irq
 {
     int irq;
@@ -120,6 +130,9 @@ struct rt_pic_irq
 
     struct rt_pic *pic;
     struct rt_pic_irq *parent;
+#ifdef RT_USING_PIC_STATISTICS
+    struct rt_pic_irq_statistics stat;
+#endif
 };
 
 void rt_pic_default_name(struct rt_pic *pic);
