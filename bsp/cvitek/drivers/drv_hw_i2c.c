@@ -11,8 +11,6 @@
 #include <rtdevice.h>
 #include <board.h>
 
-#ifdef RT_USING_I2C
-
 #define DBG_TAG              "drv.i2c"
 #define DBG_LVL               DBG_INFO
 #include <rtdbg.h>
@@ -816,5 +814,3 @@ int rt_hw_i2c_init(void)
     return result;
 }
 INIT_BOARD_EXPORT(rt_hw_i2c_init);
-
-#endif /* RT_USING_I2C */
