@@ -33,7 +33,7 @@ menu "General Drivers Configuration"
         endif
 
     menuconfig BSP_USING_I2C
-        bool "Using HW I2C"
+        bool "Using I2C"
         select RT_USING_I2C
         select RT_USING_I2C_BITOPS
         select RT_USING_PIN
