@@ -39,20 +39,32 @@ config TIMER_CLK_FREQ
     int
     default 25000000
 
+config SOC_TYPE_CV180X
+    bool
+    default n
+
+config SOC_TYPE_SG2002
+    bool
+    default n
+
 choice
     prompt "Board Type"
     default BOARD_TYPE_MILKV_DUO256M
 
     config BOARD_TYPE_MILKV_DUO
+        select SOC_TYPE_CV180X
         bool "milkv-duo"
 
     config BOARD_TYPE_MILKV_DUO_SPINOR
+        select SOC_TYPE_CV180X
         bool "milkv-duo-spinor"
 
     config BOARD_TYPE_MILKV_DUO256M
+        select SOC_TYPE_SG2002
         bool "milkv-duo256m"
 
     config BOARD_TYPE_MILKV_DUO256M_SPINOR
+        select SOC_TYPE_SG2002
         bool "milkv-duo256m-spinor"
 
 endchoice
