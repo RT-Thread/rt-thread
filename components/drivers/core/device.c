@@ -21,7 +21,7 @@
 #ifdef RT_DEBUG_DEVICE
 #define DBG_LVL           DBG_LOG
 #else
-#define DBG_LVL           DBG_WARNING
+#define DBG_LVL           DBG_INFO
 #endif /* defined (RT_DEBUG_DEVICE) */
 #include <rtdbg.h>
 
@@ -340,7 +340,6 @@ rt_ssize_t rt_device_read(rt_device_t dev,
     /* parameter check */
     RT_ASSERT(dev != RT_NULL);
     RT_ASSERT(rt_object_get_type(&dev->parent) == RT_Object_Class_Device);
-
     if (dev->ref_count == 0)
     {
         rt_set_errno(-RT_ERROR);
