@@ -491,7 +491,6 @@
 #define RT_USING_FILTER
 #define RT_USING_CAN0
 #define RT_USING_CAN1
-#define BSP_USING_GPIO
 #define BSP_USING_QSPI
 #define RT_USING_QSPI0
 #define USING_QSPI_CHANNEL0
