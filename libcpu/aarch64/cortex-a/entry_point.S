@@ -95,7 +95,6 @@ _start:
 
     /* Save cpu stack */
     get_phy stack_top, .boot_cpu_stack_top
-
     /* Save cpu id temp */
 #ifdef ARCH_USING_HW_THREAD_SELF
     msr     tpidrro_el0, xzr

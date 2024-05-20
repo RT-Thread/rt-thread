@@ -142,8 +142,6 @@ rt_bool_t rt_sched_is_locked(void);
 
 #define RT_SCHED_DEBUG_IS_LOCKED
 #define RT_SCHED_DEBUG_IS_UNLOCKED
-
-extern struct rt_thread *rt_current_thread;
 #endif /* RT_USING_SMP */
 
 /**
@@ -176,6 +174,7 @@ rt_err_t rt_sched_thread_timer_stop(struct rt_thread *thread);
 rt_err_t rt_sched_thread_timer_start(struct rt_thread *thread);
 void rt_sched_insert_thread(struct rt_thread *thread);
 void rt_sched_remove_thread(struct rt_thread *thread);
+struct rt_thread *rt_sched_thread_self(void);
 
 #endif /* defined(__RT_KERNEL_SOURCE__) || defined(__RT_IPC_SOURCE__) */
 

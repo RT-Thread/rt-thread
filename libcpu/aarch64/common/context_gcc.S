@@ -29,12 +29,19 @@ rt_thread_switch_interrupt_flag: .zero  8
 
 .text
 
+/**
+ * #ifdef RT_USING_OFW
+ * void rt_hw_cpu_id_set(long cpuid)
+ * #else
+ * void rt_hw_cpu_id_set(void)
+ * #endif
+ */
 .type rt_hw_cpu_id_set, @function
 rt_hw_cpu_id_set:
 #ifdef ARCH_USING_GENERIC_CPUID
-    .globl rt_hw_cpu_id_set
+    .globl  rt_hw_cpu_id_set
 #else /* !ARCH_USING_GENERIC_CPUID */
-    .weak rt_hw_cpu_id_set
+    .weak   rt_hw_cpu_id_set
 #endif /* ARCH_USING_GENERIC_CPUID */
 
 #ifndef RT_USING_OFW
@@ -45,11 +52,11 @@ rt_hw_cpu_id_set:
     and     x0, x0, #15
 #endif /* !RT_USING_OFW */
 
-#ifdef ARCH_USING_GENERIC_CPUID
+#ifdef ARCH_USING_HW_THREAD_SELF
     msr     tpidrro_el0, x0
-#else
+#else /* !ARCH_USING_HW_THREAD_SELF */
     msr     tpidr_el1, x0
-#endif
+#endif /* ARCH_USING_HW_THREAD_SELF */
     ret
 
 /*

@@ -101,10 +101,14 @@ static struct rt_spinlock _mp_scheduler_lock;
     } while (0)
 
 #ifdef ARCH_USING_HW_THREAD_SELF
-#define CRITICAL_SWITCH_FLAG(pcpu, curthr) (RT_SCHED_CTX(curthr).critical_switch_flag)
+#define IS_CRITICAL_SWITCH_PEND(pcpu, curthr)  (RT_SCHED_CTX(curthr).critical_switch_flag)
+#define SET_CRITICAL_SWITCH_FLAG(pcpu, curthr) (RT_SCHED_CTX(curthr).critical_switch_flag = 1)
+#define CLR_CRITICAL_SWITCH_FLAG(pcpu, curthr) (RT_SCHED_CTX(curthr).critical_switch_flag = 0)
 
 #else /* !ARCH_USING_HW_THREAD_SELF */
-#define CRITICAL_SWITCH_FLAG(pcpu, curthr) ((pcpu)->critical_switch_flag)
+#define IS_CRITICAL_SWITCH_PEND(pcpu, curthr)  ((pcpu)->critical_switch_flag)
+#define SET_CRITICAL_SWITCH_FLAG(pcpu, curthr) ((pcpu)->critical_switch_flag = 1)
+#define CLR_CRITICAL_SWITCH_FLAG(pcpu, curthr) ((pcpu)->critical_switch_flag = 0)
 
 #endif /* ARCH_USING_HW_THREAD_SELF */
 
@@ -758,7 +762,7 @@ rt_err_t rt_sched_unlock_n_resched(rt_sched_lock_level_t level)
         /* leaving critical region of global context since we can't schedule */
         SCHEDULER_CONTEXT_UNLOCK(pcpu);
 
-        CRITICAL_SWITCH_FLAG(pcpu, current_thread) = 1;
+        SET_CRITICAL_SWITCH_FLAG(pcpu, current_thread);
         error = -RT_ESCHEDLOCKED;
 
         SCHEDULER_EXIT_CRITICAL(current_thread);
@@ -766,7 +770,7 @@ rt_err_t rt_sched_unlock_n_resched(rt_sched_lock_level_t level)
     else
     {
         /* flush critical switch flag since a scheduling is done */
-        CRITICAL_SWITCH_FLAG(pcpu, current_thread) = 0;
+        CLR_CRITICAL_SWITCH_FLAG(pcpu, current_thread);
 
         /* pick the highest runnable thread, and pass the control to it */
         to_thread = _prepare_context_switch_locked(cpu_id, pcpu, current_thread);
@@ -837,7 +841,7 @@ void rt_schedule(void)
     /* whether caller had locked the local scheduler already */
     if (RT_SCHED_CTX(current_thread).critical_lock_nest > 1)
     {
-        CRITICAL_SWITCH_FLAG(pcpu, current_thread) = 1;
+        SET_CRITICAL_SWITCH_FLAG(pcpu, current_thread);
 
         SCHEDULER_EXIT_CRITICAL(current_thread);
 
@@ -846,7 +850,7 @@ void rt_schedule(void)
     else
     {
         /* flush critical switch flag since a scheduling is done */
-        CRITICAL_SWITCH_FLAG(pcpu, current_thread) = 0;
+        CLR_CRITICAL_SWITCH_FLAG(pcpu, current_thread);
         pcpu->irq_switch_flag = 0;
 
         /**
@@ -921,13 +925,13 @@ void rt_scheduler_do_irq_switch(void *context)
     /* whether caller had locked the local scheduler already */
     if (RT_SCHED_CTX(current_thread).critical_lock_nest > 1)
     {
-        CRITICAL_SWITCH_FLAG(pcpu, current_thread) = 1;
+        SET_CRITICAL_SWITCH_FLAG(pcpu, current_thread);
         SCHEDULER_EXIT_CRITICAL(current_thread);
     }
     else if (rt_atomic_load(&(pcpu->irq_nest)) == 0)
     {
         /* flush critical & irq switch flag since a scheduling is done */
-        CRITICAL_SWITCH_FLAG(pcpu, current_thread) = 0;
+        CLR_CRITICAL_SWITCH_FLAG(pcpu, current_thread);
         pcpu->irq_switch_flag = 0;
 
         SCHEDULER_CONTEXT_LOCK(pcpu);
@@ -1137,23 +1141,18 @@ rt_base_t rt_enter_critical(void)
 
     pcpu = rt_cpu_self();
     current_thread = pcpu->current_thread;
-    if (!current_thread)
-    {
-        rt_hw_local_irq_enable(level);
-        /* scheduler unavailable */
-        return -RT_EINVAL;
-    }
 
 #else /* !ARCH_USING_HW_THREAD_SELF */
-
     current_thread = rt_hw_thread_self();
+
+#endif /* ARCH_USING_HW_THREAD_SELF */
+
     if (!current_thread)
     {
+        FREE_THREAD_SELF(level);
         /* scheduler unavailable */
         return -RT_EINVAL;
     }
-
-#endif /* ARCH_USING_HW_THREAD_SELF */
 
     /* critical for local cpu */
     RT_SCHED_CTX(current_thread).critical_lock_nest++;
@@ -1182,20 +1181,17 @@ void rt_exit_critical(void)
 
     pcpu = rt_cpu_self();
     current_thread = pcpu->current_thread;
-    if (!current_thread)
-    {
-        rt_hw_local_irq_enable(level);
-        return;
-    }
 
 #else /* !ARCH_USING_HW_THREAD_SELF */
-
     current_thread = rt_hw_thread_self();
+
+#endif /* ARCH_USING_HW_THREAD_SELF */
+
     if (!current_thread)
     {
+        FREE_THREAD_SELF(level);
         return;
     }
-#endif /* ARCH_USING_HW_THREAD_SELF */
 
     /* the necessary memory barrier is done on irq_(dis|en)able */
     RT_SCHED_CTX(current_thread).critical_lock_nest--;
@@ -1204,8 +1200,8 @@ void rt_exit_critical(void)
     if (RT_SCHED_CTX(current_thread).critical_lock_nest == 0)
     {
         /* is there any scheduling request unfinished? */
-        need_resched = CRITICAL_SWITCH_FLAG(pcpu, current_thread);
-        CRITICAL_SWITCH_FLAG(pcpu, current_thread) = 0;
+        need_resched = IS_CRITICAL_SWITCH_PEND(pcpu, current_thread);
+        CLR_CRITICAL_SWITCH_FLAG(pcpu, current_thread);
 
         FREE_THREAD_SELF(level);
 
@@ -1333,6 +1329,23 @@ rt_err_t rt_sched_thread_bind_cpu(struct rt_thread *thread, int cpu)
     }
 
     return RT_EOK;
+}
+
+rt_thread_t rt_sched_thread_self(void)
+{
+#ifdef ARCH_USING_HW_THREAD_SELF
+    return rt_hw_thread_self();
+
+#else /* !ARCH_USING_HW_THREAD_SELF */
+    rt_thread_t self;
+    rt_base_t lock;
+
+    lock = rt_hw_local_irq_disable();
+    self = rt_cpu_self()->current_thread;
+    rt_hw_local_irq_enable(lock);
+
+    return self;
+#endif /* ARCH_USING_HW_THREAD_SELF */
 }
 
 /**@}*/
