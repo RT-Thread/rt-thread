@@ -381,7 +381,7 @@ void rt_object_init(struct rt_object         *object,
     /* set object type to static */
     object->type = type | RT_Object_Class_Static;
 #if RT_NAME_MAX > 0
-    rt_strncpy(object->name, name, RT_NAME_MAX);  /* copy name */
+    rt_strncpy(object->name, name, RT_NAME_MAX - 1);  /* copy name */
 #else
     object->name = name;
 #endif /* RT_NAME_MAX > 0 */
