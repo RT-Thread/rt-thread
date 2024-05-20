@@ -17,7 +17,7 @@
  */
 
 #define DBG_TAG "lwp"
-#define DBG_LVL DBG_WARNING
+#define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
 #include <rthw.h>
@@ -69,11 +69,46 @@ extern char working_directory[];
  */
 static rt_err_t lwp_default_console_setup(void)
 {
-    rt_device_t bakdev = rt_device_find("ttyS0");
+    int uart_id;
     rt_err_t rc;
+    char *ttyname;
+    rt_device_t bakdev;
+    char *bakdev_name;
+
+    size_t tail_len = 1;
+
+    bakdev = rt_console_get_device();
+    if (!bakdev)
+    {
+        return -RT_ENOENT;
+    }
+
+    bakdev_name = bakdev->parent.name;
+    if (sscanf(bakdev_name, "uart%d", &uart_id))
+    {
+        while (uart_id > 0)
+        {
+            tail_len += 2;
+            uart_id >>= 4;
+        }
+        tail_len += sizeof("ttyS");
+        ttyname = rt_malloc(tail_len);
+        rt_snprintf(ttyname, tail_len, "ttyS%d", uart_id);
+        bakdev = rt_device_find(ttyname);
+    }
+
+    if (!bakdev)
+    {
+        LOG_W("No compatible tty device found for /dev/%s(/dev/%s)", bakdev_name, ttyname);
+
+        /* fall back */
+        ttyname = "ttyS0";
+        bakdev = rt_device_find(ttyname);
+    }
 
     if (bakdev)
     {
+        LOG_I("Using /dev/%s as default console", ttyname);
         lwp_console_register_backend(bakdev, LWP_CONSOLE_LOWEST_PRIOR);
         rc = RT_EOK;
     }
@@ -83,6 +118,15 @@ static rt_err_t lwp_default_console_setup(void)
     }
 
     return rc;
+}
+
+static void _update_process_times(void);
+static int _set_usage_hook(void)
+{
+#ifdef LWP_DEBUG_CPU_USAGE
+    rt_tick_sethook(_update_process_times);
+#endif /* LWP_DEBUG_CPU_USAGE */
+    return RT_EOK;
 }
 
 static int lwp_component_init(void)
@@ -103,6 +147,10 @@ static int lwp_component_init(void)
     else if ((rc = lwp_futex_init()) != RT_EOK)
     {
         LOG_E("%s: lwp_futex_init() failed", __func__);
+    }
+    else if ((rc = _set_usage_hook()) != RT_EOK)
+    {
+        LOG_E("%s: _set_usage_hook() failed", __func__);
     }
     else if ((rc = lwp_default_console_setup()) != RT_EOK)
     {
@@ -1616,3 +1664,4 @@ void rt_update_process_times(void)
 #endif
     }
 }
+
