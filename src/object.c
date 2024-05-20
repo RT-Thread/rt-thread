@@ -619,10 +619,9 @@ rt_err_t rt_object_for_each(rt_uint8_t type, rt_object_iter_t iter, void *data)
             return error >= 0 ? RT_EOK : error;
         }
     }
-
     rt_spin_unlock_irqrestore(&(information->spinlock), level);
 
-    return RT_EOK;
+    return -RT_ERROR;
 }
 
 static rt_err_t _match_name(struct rt_object *obj, void *data)
@@ -662,13 +661,11 @@ rt_object_t rt_object_find(const char *name, rt_uint8_t type)
     /* which is invoke in interrupt status */
     RT_DEBUG_NOT_IN_INTERRUPT;
 
-    rt_object_for_each(type, _match_name, &data);
-    if (data != name)
+    if (rt_object_for_each(type, _match_name, &data) == RT_EOK)
     {
         return data;
     }
-
-    return RT_NULL;
+    return NULL;
 }
 
 /**
