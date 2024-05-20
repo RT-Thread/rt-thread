@@ -15,7 +15,7 @@ static void test_rt_device_find(void)
 {
     char _device_name[RT_NAME_MAX + 1] = {0};
     rt_device_t console;
-    rt_device_t device1, device2;
+    rt_device_t device1, device2, device3;
 
     console = rt_console_get_device();
     uassert_not_null(console);
@@ -36,6 +36,10 @@ static void test_rt_device_find(void)
         uassert_not_null(device2);
         uassert_true(device2 != device1);
     }
+
+    /* Test finding a device 3 */
+    device3 = rt_device_find(console->parent.name);
+    uassert_true(device1 == device3);
 }
 
 static rt_err_t utest_tc_init(void)
