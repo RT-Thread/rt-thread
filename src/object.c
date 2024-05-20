@@ -627,10 +627,11 @@ rt_err_t rt_object_for_each(rt_uint8_t type, rt_object_iter_t iter, void *data)
 
 static rt_err_t _match_name(struct rt_object *obj, void *data)
 {
-    const char *name = *(const char **)data;
+    void **rc = data;
+    const char *name = rc[0];
     if (rt_strncmp(obj->name, name, RT_NAME_MAX) == 0)
     {
-        *(rt_object_t *)data = obj;
+        rc[1] = obj;
 
         /* notify an early break of loop, but not on error */
         return 1;
@@ -654,7 +655,7 @@ static rt_err_t _match_name(struct rt_object *obj, void *data)
  */
 rt_object_t rt_object_find(const char *name, rt_uint8_t type)
 {
-    void *data = (void *)name;
+    void *data[2] = {(void *)name, RT_NULL};
 
     /* parameter check */
     if (name == RT_NULL) return RT_NULL;
@@ -662,13 +663,8 @@ rt_object_t rt_object_find(const char *name, rt_uint8_t type)
     /* which is invoke in interrupt status */
     RT_DEBUG_NOT_IN_INTERRUPT;
 
-    rt_object_for_each(type, _match_name, &data);
-    if (data != name)
-    {
-        return data;
-    }
-
-    return RT_NULL;
+    rt_object_for_each(type, _match_name, data);
+    return data[1];
 }
 
 /**
