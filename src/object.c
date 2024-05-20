@@ -346,9 +346,9 @@ void rt_object_init(struct rt_object         *object,
                     const char               *name)
 {
     rt_base_t level;
-#ifdef RT_USING_DEBUG
+#ifdef RT_DEBUGING_ASSERT
     struct rt_list_node *node = RT_NULL;
-#endif
+#endif /* RT_DEBUGING_ASSERT */
     struct rt_object_information *information;
 #ifdef RT_USING_MODULE
     struct rt_dlmodule *module = dlmodule_self();
@@ -358,7 +358,7 @@ void rt_object_init(struct rt_object         *object,
     information = rt_object_get_information(type);
     RT_ASSERT(information != RT_NULL);
 
-#ifdef RT_USING_DEBUG
+#ifdef RT_DEBUGING_ASSERT
     /* check object type to avoid re-initialization */
 
     /* enter critical */
@@ -375,7 +375,7 @@ void rt_object_init(struct rt_object         *object,
     }
     /* leave critical */
     rt_spin_unlock_irqrestore(&(information->spinlock), level);
-#endif
+#endif /* RT_DEBUGING_ASSERT */
 
     /* initialize object's parameters */
     /* set object type to static */
