@@ -22,7 +22,7 @@ config PKGS_DIR
 
 source "$RTT_DIR/Kconfig"
 source "$PKGS_DIR/Kconfig"
-source "$BSP_DIR/libraries/drivers/Kconfig"
+source "$BSP_ROOT/libraries/drivers/Kconfig"
 
 config PHYTIUM_ARCH_AARCH32
     bool
@@ -48,7 +48,7 @@ menu "Standalone Setting"
             Use the Aarch64 to Aarch32 mode function
 
     source "$SDK_DIR/soc/soc.kconfig"
-    source "$BSP_DIR/board/board.kconfig"
+    source "$BSP_ROOT/board/board.kconfig"
     source "$SDK_DIR/common/common.kconfig"
 endmenu
 
