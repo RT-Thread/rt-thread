@@ -453,7 +453,6 @@
 #define BSP_USING_CAN
 #define RT_USING_CANFD
 #define RT_USING_CAN0
-#define BSP_USING_GPIO
 #define BSP_USING_QSPI
 #define RT_USING_QSPI0
 #define USING_QSPI_CHANNEL0
