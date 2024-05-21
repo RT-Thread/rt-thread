@@ -83,6 +83,7 @@ void lwp_pid_lock_take(void)
     rc = lwp_mutex_take_safe(&pid_mtx, RT_WAITING_FOREVER, 0);
     /* should never failed */
     RT_ASSERT(rc == RT_EOK);
+    RT_UNUSED(rc);
 }
 
 void lwp_pid_lock_release(void)
