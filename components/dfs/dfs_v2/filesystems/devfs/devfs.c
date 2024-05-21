@@ -427,7 +427,7 @@ mode_t dfs_devfs_device_to_mode(struct rt_device *device)
 static void dfs_devfs_mkdir(const char *fullpath, mode_t mode)
 {
     int len = rt_strlen(fullpath);
-    char *path = (char *)rt_malloc(len);
+    char *path = (char *)rt_malloc(len + 1);
 
     if (path)
     {
