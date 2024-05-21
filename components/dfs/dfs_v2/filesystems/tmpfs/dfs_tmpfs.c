@@ -294,18 +294,18 @@ find_subpath:
 
 static ssize_t dfs_tmpfs_read(struct dfs_file *file, void *buf, size_t count, off_t *pos)
 {
-    rt_size_t length;
+    ssize_t length;
     struct tmpfs_file *d_file;
-
+    ssize_t size = (ssize_t)file->vnode->size;
     d_file = (struct tmpfs_file *)file->vnode->data;
     RT_ASSERT(d_file != NULL);
 
     rt_mutex_take(&file->vnode->lock, RT_WAITING_FOREVER);
 
-    if (count < file->vnode->size - *pos)
+    if ((ssize_t)count < size - *pos)
         length = count;
     else
-        length = file->vnode->size - *pos;
+        length = size - *pos;
 
     if (length > 0)
         memcpy(buf, &(d_file->data[*pos]), length);
