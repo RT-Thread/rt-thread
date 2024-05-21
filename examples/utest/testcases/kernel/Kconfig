@@ -56,6 +56,10 @@ config UTEST_THREAD_TC
     select RT_USING_TIMER_SOFT
     select RT_USING_THREAD
 
+config UTEST_DEVICE_TC
+    bool "device test"
+    default n
+
 config UTEST_ATOMIC_TC
     bool "atomic test"
     default n
