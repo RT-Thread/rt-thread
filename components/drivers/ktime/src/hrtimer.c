@@ -120,7 +120,15 @@ static void _timeout_callback(void *parameter)
 
     level     = rt_spin_lock_irqsave(&_spinlock);
     _nowtimer = RT_NULL;
-    rt_list_remove(&(timer->row));
+
+    if (timer->parent.flag & RT_TIMER_FLAG_PERIODIC)
+    {
+        timer->timeout_cnt = timer->init_cnt + rt_ktime_cputimer_getcnt();
+    }
+    else
+    {
+        rt_list_remove(&(timer->row));
+    }
 
     if (timer->parent.flag & RT_TIMER_FLAG_ACTIVATED)
     {
