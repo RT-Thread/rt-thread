@@ -22,10 +22,11 @@
 
 struct rt_ktime_hrtimer
 {
-    struct rt_object     parent; /**< inherit from rt_object */
-    rt_list_t            row;
-    void                 *parameter;
-    unsigned long        init_cnt;
+    rt_uint8_t           flag; /**< compatible to tick timer's flag */
+    const char          *name;
+    rt_list_t            node;
+    void                *parameter;
+    unsigned long        delay_cnt;
     unsigned long        timeout_cnt;
     rt_err_t             error;
     struct rt_completion completion;
