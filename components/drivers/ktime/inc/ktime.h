@@ -125,11 +125,10 @@ rt_err_t rt_ktime_hrtimer_settimeout(unsigned long cnt, void (*timeout)(void *pa
 
 void     rt_ktime_hrtimer_init(rt_ktime_hrtimer_t timer,
                                const char        *name,
-                               unsigned long      cnt,
                                rt_uint8_t         flag,
                                void (*timeout)(void *parameter),
                                void *parameter);
-rt_err_t rt_ktime_hrtimer_start(rt_ktime_hrtimer_t timer);
+rt_err_t rt_ktime_hrtimer_start(rt_ktime_hrtimer_t timer, unsigned long cnt);
 rt_err_t rt_ktime_hrtimer_stop(rt_ktime_hrtimer_t timer);
 rt_err_t rt_ktime_hrtimer_control(rt_ktime_hrtimer_t timer, int cmd, void *arg);
 rt_err_t rt_ktime_hrtimer_detach(rt_ktime_hrtimer_t timer);
