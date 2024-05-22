@@ -999,7 +999,7 @@ static void FxmacOsIntrHandler(s32 vector, void *args)
 
 static void FXmacSetupIsr(FXmacOs *instance_p)
 {
-    
+
     /* Setup callbacks */
     FXmacSetHandler(&instance_p->instance, FXMAC_HANDLER_DMARECV, FXmacRecvSemaphoreHandler, instance_p);
     FXmacSetHandler(&instance_p->instance, FXMAC_HANDLER_ERROR, FXmacErrorHandler, instance_p);
