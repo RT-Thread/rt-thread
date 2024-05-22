@@ -11,8 +11,6 @@
 #include <rtthread.h>
 #include <rtdevice.h>
 
-#ifdef BSP_USING_RTC
-
 #define DBG_TAG "DRV.RTC"
 #define DBG_LVL DBG_WARNING
 #include <rtdbg.h>
@@ -405,5 +403,3 @@ static int rt_hw_rtc_init(void)
     return RT_EOK;
 }
 INIT_DEVICE_EXPORT(rt_hw_rtc_init);
-
-#endif /* BSP_USING_RTC */
