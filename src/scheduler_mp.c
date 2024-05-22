@@ -1331,22 +1331,5 @@ rt_err_t rt_sched_thread_bind_cpu(struct rt_thread *thread, int cpu)
     return RT_EOK;
 }
 
-rt_thread_t rt_sched_thread_self(void)
-{
-#ifdef ARCH_USING_HW_THREAD_SELF
-    return rt_hw_thread_self();
-
-#else /* !ARCH_USING_HW_THREAD_SELF */
-    rt_thread_t self;
-    rt_base_t lock;
-
-    lock = rt_hw_local_irq_disable();
-    self = rt_cpu_self()->current_thread;
-    rt_hw_local_irq_enable(lock);
-
-    return self;
-#endif /* ARCH_USING_HW_THREAD_SELF */
-}
-
 /**@}*/
 /**@endcond*/

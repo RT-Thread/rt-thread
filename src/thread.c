@@ -355,7 +355,22 @@ RTM_EXPORT(rt_thread_init);
  */
 rt_thread_t rt_thread_self(void)
 {
-    return rt_sched_thread_self();
+#ifndef RT_USING_SMP
+    return rt_cpu_self()->current_thread;
+
+#elif defined (ARCH_USING_HW_THREAD_SELF)
+    return rt_hw_thread_self();
+
+#else /* !ARCH_USING_HW_THREAD_SELF */
+    rt_thread_t self;
+    rt_base_t lock;
+
+    lock = rt_hw_local_irq_disable();
+    self = rt_cpu_self()->current_thread;
+    rt_hw_local_irq_enable(lock);
+
+    return self;
+#endif /* ARCH_USING_HW_THREAD_SELF */
 }
 RTM_EXPORT(rt_thread_self);
 

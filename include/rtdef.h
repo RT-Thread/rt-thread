@@ -765,9 +765,18 @@ struct rt_cpu
     struct rt_cpu_usage_stats   cpu_stat;
 #endif
 };
-typedef struct rt_cpu *rt_cpu_t;
+
+#else /* !RT_USING_SMP */
+struct rt_cpu
+{
+    struct rt_thread            *current_thread;
+};
 
 #endif /* RT_USING_SMP */
+
+typedef struct rt_cpu *rt_cpu_t;
+/* Noted: As API to reject writing to this variable from application codes */
+#define rt_current_thread rt_thread_self()
 
 struct rt_thread;
 
