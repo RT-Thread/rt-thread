@@ -13,6 +13,10 @@
 #include <rthw.h>
 #include <rtthread.h>
 
+#define DBG_SECTION_NAME               "drv.ktime"
+#define DBG_LEVEL                      DBG_INFO
+#include <rtdbg.h>
+
 #include "ktime.h"
 
 #ifdef ARCH_CPU_64BIT
@@ -139,6 +143,8 @@ static void _timeout_callback(void *parameter)
     rt_ktime_hrtimer_t timer;
     timer = (rt_ktime_hrtimer_t)parameter;
     rt_base_t level;
+
+    LOG_D("Expected wake-up in CPU time: %lu, actual wake-up in CPU time %lu", timer->timeout_cnt, rt_ktime_cputimer_getcnt());
 
     level     = rt_spin_lock_irqsave(&_spinlock);
     _current_timer = RT_NULL;
