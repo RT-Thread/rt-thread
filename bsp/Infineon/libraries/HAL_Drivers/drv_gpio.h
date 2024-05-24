@@ -23,7 +23,11 @@
 struct pin_irq_map
 {
     rt_uint16_t port;
+#if defined(SOC_SERIES_IFX_XMC)
+    rt_uint32_t irqno;
+#else
     IRQn_Type irqno;
+#endif
 };
 
 int rt_hw_pin_init(void);
