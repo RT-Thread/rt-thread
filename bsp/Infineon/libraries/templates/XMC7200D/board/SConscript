@@ -1,0 +1,61 @@
+import os
+import rtconfig
+from building import *
+
+Import('SDK_LIB')
+
+objs = []
+cwd = GetCurrentDir()
+
+# add general drivers
+src = Split('''
+board.c
+''')
+
+path = [cwd]
+path += [cwd + '/ports']
+
+startup_path_prefix = SDK_LIB
+Tool_path = None
+index = 'Infineon_mtb-pdl-cat1'
+
+for filename in os.listdir(startup_path_prefix):
+    if index in filename:
+        Tool_path = os.path.join(startup_path_prefix, filename)
+
+if rtconfig.PLATFORM in ['gcc']:
+    src += [Tool_path +
+            '/drivers/source/TOOLCHAIN_GCC_ARM/cy_syslib_ext.S']
+elif rtconfig.PLATFORM in ['armclang']:
+    src += [Tool_path +
+            '/drivers/source/TOOLCHAIN_ARM/cy_syslib_ext.s']
+
+CPPDEFINES = ['XMC7200D_E272K8384',
+              'COMPONENT_APP_KIT_XMC72_EVK',
+              'COMPONENT_CAT1',
+              'COMPONENT_CAT1C',
+              'COMPONENT_CAT1C8M',
+              'COMPONENT_CM7',
+              'COMPONENT_CM7_0',
+              'COMPONENT_Debug'
+              'COMPONENT_GCC_ARM',
+              'COMPONENT_MW_CAT1CM0P',
+              'COMPONENT_MW_CMSIS',
+              'COMPONENT_MW_CORE_LIB',
+              'COMPONENT_MW_CORE_MAKE',
+              'COMPONENT_MW_MTB_HAL_CAT1',
+              'COMPONENT_MW_MTB_PDL_CAT1',
+              'COMPONENT_MW_RECIPE_MAKE_CAT1C',
+              'COMPONENT_MW_RETARGET_IO',
+              'COMPONENT_SOFTFP',
+              'COMPONENT_XMC7x_CM0P_SLEEP',
+              'CORE_NAME_CM7_0=1',
+              'CYBSP_WIFI_WL_REG_ON_GPIO_DRIVE_MODE=CYHAL_GPIO_DRIVE_STRONG',
+              'CY_SUPPORTS_DEVICE_VALIDATION',
+              'CY_TARGET_BOARD=APP_KIT_XMC72_EVK',
+              'CY_USING_HAL',
+              'DEBUG',
+              'TARGET_APP_KIT_XMC72_EVK']
+group = DefineGroup('Drivers', src, depend=[''], CPPPATH=path, CPPDEFINES=CPPDEFINES)
+
+Return('group')
