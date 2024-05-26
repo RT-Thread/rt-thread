@@ -35,7 +35,7 @@ arch_start_umode:
     // load kstack for user process
     csrw sscratch, a3
     li t0, SSTATUS_SPP | SSTATUS_SIE    // set as user mode, close interrupt
-    csrc sstatus, t0 
+    csrc sstatus, t0
     li t0, SSTATUS_SPIE // enable interrupt when return to user mode
     csrs sstatus, t0
 
@@ -112,7 +112,7 @@ arch_signal_quit:
     mv sp, a0
 
     /* restore user sp before enter trap */
-    addi a0, sp, CTX_REG_NR * REGBYTES 
+    addi a0, sp, CTX_REG_NR * REGBYTES
     csrw sscratch, a0
 
 
@@ -234,8 +234,7 @@ __restore_sp_from_sscratch: // from kernel
     j __move_stack_context
 
 __restore_sp_from_tcb: // from user
-    la a0, rt_current_thread
-    LOAD a0, 0(a0)
+    jal rt_thread_self
     jal get_thread_kernel_stack_top
     mv t0, a0
 
@@ -272,7 +271,7 @@ copy_context_loop:
     call syscall_handler
     j arch_syscall_exit
 START_POINT_END(syscall_entry)
-    
+
 .global arch_syscall_exit
 arch_syscall_exit:
     CLOSE_INTERRUPT
