@@ -1,11 +1,12 @@
 /*
- * Copyright (c) 2006-2023, RT-Thread Development Team
+ * Copyright (c) 2006-2024, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author        Notes
- * 2011-07-25     weety     first version
+ * 2011-07-25     weety         first version
+ * 2024-05-24     HPMicro       add HS400 support
  */
 
 #ifndef __MMCSD_CARD_H__
@@ -130,6 +131,7 @@ struct rt_sdio_function {
 struct rt_mmc_ext_csd
 {
     rt_uint32_t cache_size;
+    rt_uint32_t enhanced_data_strobe;
 };
 
 struct rt_mmcsd_card {
@@ -156,13 +158,14 @@ struct rt_mmcsd_card {
 #define CARD_FLAG_HIGHSPEED  (1 << 0)   /* SDIO bus speed 50MHz */
 #define CARD_FLAG_SDHC       (1 << 1)   /* SDHC card */
 #define CARD_FLAG_SDXC       (1 << 2)   /* SDXC card */
-#define CARD_FLAG_HIGHSPEED_DDR  (1 << 3)   /*HIGH SPEED DDR*/
-#define CARD_FLAG_HS200      (1 << 4)   /* BUS SPEED 200mHz*/
+#define CARD_FLAG_HIGHSPEED_DDR  (1 << 3)   /* HIGH SPEED DDR */
+#define CARD_FLAG_HS200      (1 << 4)   /* BUS SPEED 200MHz */
+#define CARD_FLAG_HS400      (1 << 5)   /* BUS SPEED 400MHz */
     struct rt_sd_scr    scr;
     struct rt_mmcsd_csd csd;
     rt_uint32_t     hs_max_data_rate;  /* max data transfer rate in high speed mode */
 
-    rt_uint8_t      sdio_function_num;  /* totol number of SDIO functions */
+    rt_uint8_t      sdio_function_num;  /* total number of SDIO functions */
     struct rt_sdio_cccr    cccr;  /* common card info */
     struct rt_sdio_cis     cis;  /* common tuple info */
     struct rt_sdio_function *sdio_function[SDIO_MAX_FUNCTIONS + 1]; /* SDIO functions (devices) */

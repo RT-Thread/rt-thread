@@ -1,11 +1,12 @@
 /*
- * Copyright (c) 2006-2023, RT-Thread Development Team
+ * Copyright (c) 2006-2024, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author        Notes
- * 2015-06-15     hichard         first version
+ * 2015-06-15     hichard       first version
+ * 2024-05-25     HPMicro       add strobe support
  */
 
 #ifndef __MMC_H__
@@ -45,6 +46,7 @@ extern "C" {
 #define EXT_CSD_PART_CONFIG             179 /* R/W */
 #define EXT_CSD_ERASED_MEM_CONT         181 /* RO */
 #define EXT_CSD_BUS_WIDTH               183 /* R/W */
+#define EXT_CSD_STROBE_SUPPORT          184 /* RO */
 #define EXT_CSD_HS_TIMING               185 /* R/W */
 #define EXT_CSD_POWER_CLASS             187 /* R/W */
 #define EXT_CSD_REV                     192 /* RO */
@@ -130,8 +132,9 @@ extern "C" {
 #define EXT_CSD_BUS_WIDTH_8             2   /* Card is in 8 bit mode */
 #define EXT_CSD_DDR_BUS_WIDTH_4         5   /* Card is in 4 bit DDR mode */
 #define EXT_CSD_DDR_BUS_WIDTH_8         6   /* Card is in 8 bit DDR mode */
+#define EXT_CSD_DDR_BUS_WIDTH_8_EH_DS   0x86/* Card is in 8 bit DDR mode with Enhanced Data Strobe */
 
-#define EXT_CSD_TIMING_BC               0   /* Backwards compatility */
+#define EXT_CSD_TIMING_BC               0   /* Backwards compatibility */
 #define EXT_CSD_TIMING_HS               1   /* High speed */
 #define EXT_CSD_TIMING_HS200            2   /* HS200 */
 #define EXT_CSD_TIMING_HS400            3   /* HS400 */
