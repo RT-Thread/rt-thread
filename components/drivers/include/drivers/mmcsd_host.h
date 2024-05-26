@@ -7,6 +7,7 @@
  * Date           Author        Notes
  * 2011-07-25     weety         first version
  * 2024-05-25     HPMicro       add HS400 support
+ * 2024-05-26     HPMicro       add UHS-I support
  */
 
 #ifndef __HOST_H__
@@ -87,6 +88,7 @@ struct rt_mmcsd_host_ops
     rt_int32_t (*get_card_status)(struct rt_mmcsd_host *host);
     void (*enable_sdio_irq)(struct rt_mmcsd_host *host, rt_int32_t en);
     rt_int32_t (*execute_tuning)(struct rt_mmcsd_host *host, rt_int32_t opcode);
+    rt_int32_t (*switch_uhs_voltage)(struct rt_mmcsd_host *host);
 };
 
 struct rt_mmcsd_host
@@ -115,6 +117,7 @@ struct rt_mmcsd_host
 #define VDD_33_34       (1 << 21)   /* VDD voltage 3.3 ~ 3.4 */
 #define VDD_34_35       (1 << 22)   /* VDD voltage 3.4 ~ 3.5 */
 #define VDD_35_36       (1 << 23)   /* VDD voltage 3.5 ~ 3.6 */
+#define OCR_S18R        (1 << 24)   /* Switch to 1V8 Request */
     rt_uint32_t  flags; /* define device capabilities */
 #define MMCSD_BUSWIDTH_4    (1 << 0)
 #define MMCSD_BUSWIDTH_8    (1 << 1)
@@ -135,6 +138,9 @@ struct rt_mmcsd_host
 #define MMCSD_SUP_HS400_1V2  (1 << 13)
 #define MMCSD_SUP_HS400      (MMCSD_SUP_HS400_1V2 | MMCSD_SUP_HS400_1V8) /* hs400 ddr */
 #define MMCSD_SUP_ENH_DS     (1 << 14)
+#define MMCSD_SUP_SDR50      (1 << 15)
+#define MMCSD_SUP_SDR104     (1 << 16)
+#define MMCSD_SUP_DDR50      (1 << 17)
 
     rt_uint32_t max_seg_size;   /* maximum size of one dma segment */
     rt_uint32_t max_dma_segs;   /* maximum number of dma segments in one request */
