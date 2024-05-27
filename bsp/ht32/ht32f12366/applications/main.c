@@ -12,9 +12,9 @@
 #include <rtdevice.h>
 #include "board.h"
 
-/* defined the led2 pin: pd15 */
+/* defined the led1 pin: pd15 */
 #define LED1_PIN    GET_PIN(D, 15)
-/* defined the led3 pin: pe0 */
+/* defined the led2 pin: pe0 */
 #define LED2_PIN    GET_PIN(E, 0)
 
 int main(void)

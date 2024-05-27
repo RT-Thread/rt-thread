@@ -14,6 +14,9 @@ if GetDepend('RT_USING_OFW') == False:
 if GetDepend('RT_USING_PIC') == True:
     SrcRemove(src, ['gicv3.c', 'gic.c', 'gtimer.c', 'interrupt.c'])
 
+if GetDepend('RT_HWTIMER_ARM_ARCH') == True:
+    SrcRemove(src, ['gtimer.c'])
+
 group = DefineGroup('libcpu', src, depend = [''], CPPPATH = CPPPATH)
 
 # build for sub-directory

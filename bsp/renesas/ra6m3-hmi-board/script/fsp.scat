@@ -4,12 +4,16 @@
 ; This scatter-file places the vector table, application code, data, stacks and heap at suitable addresses in the memory map.
 
 #define ROM_REGISTERS_START 0x400
+; Uncomment and set XIP_SECONDARY_SLOT_IMAGE to 1 below for the secondary XIP application image.
+; #define XIP_SECONDARY_SLOT_IMAGE 1
 
 #ifdef FLASH_BOOTLOADER_LENGTH
 
-#define BL_FLASH_IMAGE_START        (FLASH_APPLICATION_IMAGE_NUMBER == 1 ? FLASH_BOOTLOADER_LENGTH + FLASH_BOOTLOADER_HEADER_LENGTH : \
-                                    FLASH_BOOTLOADER_LENGTH + FLASH_BOOTLOADER_SCRATCH_LENGTH + FLASH_APPLICATION_S_LENGTH + FLASH_BOOTLOADER_HEADER_LENGTH)
+#define BL_FLASH_IMAGE_START        (FLASH_APPLICATION_IMAGE_NUMBER == 1 ? FLASH_START + FLASH_BOOTLOADER_LENGTH + FLASH_BOOTLOADER_HEADER_LENGTH : \
+                                    FLASH_START + FLASH_BOOTLOADER_LENGTH + FLASH_BOOTLOADER_SCRATCH_LENGTH + FLASH_APPLICATION_S_LENGTH + FLASH_BOOTLOADER_HEADER_LENGTH)
 #define BL_FLASH_IMAGE_END          (BL_FLASH_IMAGE_START + FLASH_APPLICATION_S_LENGTH - FLASH_BOOTLOADER_HEADER_LENGTH)
+#define BL_XIP_SECONDARY_FLASH_IMAGE_START    (FLASH_BOOTLOADER_LENGTH + FLASH_APPLICATION_S_LENGTH + FLASH_BOOTLOADER_HEADER_LENGTH)
+#define BL_XIP_SECONDARY_FLASH_IMAGE_END      (BL_XIP_SECONDARY_FLASH_IMAGE_START + FLASH_APPLICATION_S_LENGTH - FLASH_BOOTLOADER_HEADER_LENGTH)
 #define BL_FLASH_NS_START           (FLASH_APPLICATION_NS_LENGTH == 0 ? BL_FLASH_IMAGE_END : \
                                     BL_FLASH_IMAGE_START - FLASH_BOOTLOADER_HEADER_LENGTH + FLASH_APPLICATION_S_LENGTH)
 #define BL_FLASH_NSC_START          (FLASH_APPLICATION_NS_LENGTH == 0 ? BL_FLASH_IMAGE_END : \
@@ -29,7 +33,13 @@
 
 #elif defined FLASH_IMAGE_START
 
+#if defined XIP_SECONDARY_SLOT_IMAGE
+#define FLASH_ORIGIN                (XIP_SECONDARY_SLOT_IMAGE == 1 ? XIP_SECONDARY_FLASH_IMAGE_START : FLASH_IMAGE_START)
+#else
 #define FLASH_ORIGIN                FLASH_IMAGE_START
+#endif
+
+
 #ifdef FLASH_NS_START
 #define LIMITED_FLASH_LENGTH        FLASH_NS_START - FLASH_IMAGE_START
 #else
@@ -109,11 +119,11 @@
 #endif
 
 #ifndef FLASH_NSC_START
-#define FLASH_NSC_START     +0 ALIGN 1024
+#define FLASH_NSC_START     (AlignExpr(ImageLength(LOAD_REGION_FLASH) + ImageBase(LOAD_REGION_FLASH), 1024))
 #endif
 
 #ifndef FLASH_NS_START
-#define FLASH_NS_START      +0 ALIGN 32768
+#define FLASH_NS_START       AlignExpr(+0, 32768)
 #endif
 
 #endif
@@ -168,7 +178,13 @@
 #define OSPI_DEVICE_1_PRV_LENGTH OSPI_DEVICE_1_LENGTH
 #endif
 
-#define OPTION_SETTING_NS_OFFSET    0x80
+#ifdef PROJECT_NONSECURE
+#define OPTION_SETTING_START_NS (OPTION_SETTING_START)
+#else
+#define OPTION_SETTING_START_NS (OPTION_SETTING_START + 0x80)
+#endif
+
+#define ID_CODE_OVERLAP   ((ID_CODE_START > OPTION_SETTING_START) && (ID_CODE_START < OPTION_SETTING_START + OPTION_SETTING_LENGTH))
 
 LOAD_REGION_FLASH FLASH_ORIGIN ALIGN 0x80 LIMITED_FLASH_LENGTH
 {
@@ -280,6 +296,13 @@ LOAD_REGION_FLASH FLASH_ORIGIN ALIGN 0x80 LIMITED_FLASH_LENGTH
   RAM_END +0 EMPTY 4
   {
   }
+  __tz_RAM_C RAM_NSC_START EMPTY 0
+  {
+  }
+
+  __tz_RAM_N RAM_NS_START EMPTY 0
+  {
+  }
 
   ; Support for OctaRAM
   OSPI_DEVICE_0_NO_LOAD OSPI_DEVICE_0_START UNINIT NOCOMPRESS
@@ -293,14 +316,6 @@ LOAD_REGION_FLASH FLASH_ORIGIN ALIGN 0x80 LIMITED_FLASH_LENGTH
     *(.ospi_device_1_no_load*)
   }
 
-  __tz_RAM_C RAM_NSC_START EMPTY 0
-  {
-  }
-
-  __tz_RAM_N RAM_NS_START EMPTY 0
-  {
-  }
-
 #ifdef FLASH_BOOTLOADER_LENGTH
 
   __bl_FLASH_IMAGE_START BL_FLASH_IMAGE_START OVERLAY UNINIT 4
@@ -308,11 +323,22 @@ LOAD_REGION_FLASH FLASH_ORIGIN ALIGN 0x80 LIMITED_FLASH_LENGTH
     *(.bl_boundary.bl_flash_image_start)
   }
 
+  __bl_XIP_SECONDARY_FLASH_IMAGE_START BL_XIP_SECONDARY_FLASH_IMAGE_START OVERLAY UNINIT 4
+  {
+    *(.bl_boundary.bl_xip_secondary_flash_image_start)
+  }
+
+
 #if FLASH_APPLICATION_NS_LENGTH == 0
 
   __bl_FLASH_IMAGE_END BL_FLASH_IMAGE_END OVERLAY UNINIT 4
   {
     *(.bl_boundary.bl_flash_image_end)
+  }
+
+  __bl_XIP_SECONDARY_FLASH_IMAGE_END BL_XIP_SECONDARY_FLASH_IMAGE_END OVERLAY UNINIT 4
+  {
+    *(.bl_boundary.bl_xip_secondary_flash_image_end)
   }
 
 #else
@@ -363,9 +389,100 @@ LOAD_REGION_FLASH FLASH_ORIGIN ALIGN 0x80 LIMITED_FLASH_LENGTH
   }
 #endif
 
-  RAM_LIMIT RAM_START+RAM_LENGTH EMPTY 4
+  RAM_LIMIT RAM_START + RAM_LENGTH EMPTY 4
   {
   }
+
+#if ITCM_LENGTH > 0
+  ; ALIGN will align both the load address and execution address.
+  ; The required minimum execution address alignment is an 8 byte boundary for ECC compatibility.
+  ; Aligning instead to a 16 byte boundary meets the above requirement and also aligns the load address to FCACHE2 for RA8 to optimize copying.
+  __tz_ITCM_S ITCM_START ALIGN 16 EMPTY 0
+  {
+  }
+
+  ITCM_DATA +0 NOCOMPRESS ITCM_LENGTH
+  {
+    *(.itcm_data*)
+  }
+
+  ; The required minimum ending alignment is an 8 byte boundary for ECC compatibility.
+  ; There is no way to control the ending alignment of ITCM_DATA, so this dedicated section acts as padding and as the true load and execution section limit of ITCM_DATA.
+  ; "Load Addr" will show "-" in the map file making it seem as if no padding is actually in the binary, but "Load base:" will show otherwise.
+  ITCM_PAD (ImageLimit(ITCM_DATA)) FILL 0 NOCOMPRESS (AlignExpr(ImageLength(ITCM_DATA), 8) - ImageLength(ITCM_DATA))
+  {
+  }
+
+#ifndef ITCM_NS_START
+#define ITCM_NS_START AlignExpr(+0, 8192)
+#endif
+  __tz_ITCM_N ITCM_NS_START ALIGN 8 EMPTY 0
+  {
+  }
+
+  ScatterAssert((ITCM_START AND 0xF) == 0)
+  ScatterAssert((ITCM_LENGTH AND 0x7) == 0)
+  ScatterAssert(((LoadLength(ITCM_DATA) + LoadLength(ITCM_PAD)) AND 0x7) == 0)
+  ScatterAssert(LoadLimit(ITCM_DATA) == LoadBase(ITCM_PAD))
+  ScatterAssert(ImageLimit(ITCM_DATA) == ImageBase(ITCM_PAD))
+
+#endif
+
+
+
+#if DTCM_LENGTH > 0
+  ; ALIGN will align both the load address and execution address.
+  ; The required minimum execution address alignment is an 8 byte boundary for ECC compatibility.
+  ; Aligning instead to a 16 byte boundary meets the above requirement and also aligns the load address to FCACHE2 for RA8 to optimize copying.
+  __tz_DTCM_S DTCM_START ALIGN 16 EMPTY 0
+  {
+  }
+
+  DTCM_DATA +0 NOCOMPRESS DTCM_LENGTH
+  {
+    *(.dtcm_data*)
+  }
+
+  ; The required minimum ending alignment is an 8 byte boundary for ECC compatibility.
+  ; There is no way to control the ending alignment of DTCM_DATA, so this dedicated section acts as padding and as the true load and execution section limit of DTCM_DATA.
+  ; "Load Addr" will show "-" in the map file making it seem as if no padding is actually in the binary, but "Load base:" will show otherwise.
+  DTCM_PAD (ImageLimit(DTCM_DATA)) FILL 0 NOCOMPRESS (AlignExpr(ImageLength(DTCM_DATA), 8) - ImageLength(DTCM_DATA))
+  {
+  }
+
+  DTCM_BSS (ImageLimit(DTCM_PAD)) UNINIT NOCOMPRESS (DTCM_LENGTH - ImageLength(DTCM_DATA) - ImageLength(DTCM_PAD))
+  {
+    ; .bss prefix is required for AC6 to not create a load image data for this section.
+    ; Only .bss prefixed sections can be ZI.
+    ; Only ZI sections with UNINIT can be uninitialized.
+    *(.bss.dtcm_bss)
+  }
+
+  ; The required minimum ending alignment is an 8 byte boundary for ECC compatibility.
+  ; There is no way to control the ending alignment of DTCM_BSS, so this dedicated section acts as padding and as the true execution section limit of DTCM_BSS.
+  DTCM_BSS_PAD (ImageLimit(DTCM_BSS)) EMPTY NOCOMPRESS (AlignExpr(ImageLength(DTCM_BSS), 8) - ImageLength(DTCM_BSS))
+  {
+  }
+
+#ifndef DTCM_NS_START
+#define DTCM_NS_START AlignExpr(+0, 8192)
+#endif
+  __tz_DTCM_N DTCM_NS_START ALIGN 8 EMPTY 0
+  {
+  }
+
+  ScatterAssert((DTCM_START AND 0xF) == 0)
+  ScatterAssert((DTCM_LENGTH AND 0x7) == 0)
+  ScatterAssert(((LoadLength(DTCM_DATA) + LoadLength(DTCM_PAD)) AND 0x7) == 0)
+  ScatterAssert(((ImageLength(DTCM_BSS) + ImageLength(DTCM_BSS_PAD)) AND 0x7) == 0)
+  ScatterAssert(LoadLimit(DTCM_DATA) == LoadBase(DTCM_PAD))
+  ScatterAssert(LoadLimit(DTCM_PAD) == LoadBase(DTCM_BSS))
+  ScatterAssert(LoadLimit(DTCM_BSS) == LoadBase(DTCM_BSS_PAD))
+  ScatterAssert(ImageLimit(DTCM_DATA) == ImageBase(DTCM_PAD))
+  ScatterAssert(ImageLimit(DTCM_PAD) == ImageBase(DTCM_BSS))
+  ScatterAssert(ImageLimit(DTCM_BSS) == ImageBase(DTCM_BSS_PAD))
+
+#endif
 }
 
 LOAD_REGION_NSC_FLASH FLASH_NSC_START
@@ -384,6 +501,8 @@ LOAD_REGION_NSC_FLASH FLASH_NSC_START
   }
 }
 
+#if ID_CODE_OVERLAP == 0
+
 #if ID_CODE_LENGTH != 0
 LOAD_REGION_ID_CODE ID_CODE_START ID_CODE_LENGTH
 {
@@ -391,13 +510,15 @@ LOAD_REGION_ID_CODE ID_CODE_START ID_CODE_LENGTH
   {
   }
 
+  ; Set this symbol to the same value as __tz_ID_CODE_S so the RA configuration tool does not split the ID_CODE
+  ; memory region between TrustZone projects.
+  __tz_ID_CODE_N +0 EMPTY 0
+  {
+  }
+
   ID_CODE +0 FIXED
   {
     *(.id_code*)
-  }
-
-  __tz_ID_CODE_N +0 EMPTY 0
-  {
   }
 }
 #else
@@ -413,6 +534,8 @@ LOAD_REGION_ID_CODE ID_CODE_START 4
 }
 #endif
 
+#endif
+
 #if OPTION_SETTING_LENGTH != 0
 LOAD_REGION_OPTION_SETTING OPTION_SETTING_START OPTION_SETTING_LENGTH
 {
@@ -421,84 +544,144 @@ LOAD_REGION_OPTION_SETTING OPTION_SETTING_START OPTION_SETTING_LENGTH
   }
 
 #ifndef PROJECT_NONSECURE
-  OFS0 OPTION_SETTING_START+0 FIXED
+  OFS0 OPTION_SETTING_START + 0 FIXED
   {
     *(.option_setting_ofs0)
   }
 
-  UNUSED_0 (ImageBase(OFS0)+ImageLength(OFS0)) FIXED FILL 0xFFFFFFFF (ImageBase(OFS0) + 0x10 - (ImageBase(OFS0)+ImageLength(OFS0)))
+  UNUSED_0 (ImageBase(OFS0)+ImageLength(OFS0)) FIXED FILL 0xFFFFFFFF (ImageBase(OFS0) + 0x04 - (ImageBase(OFS0)+ImageLength(OFS0)))
   {
 
   }
 
-  DUALSEL 0x0100A100+0x10 FIXED
+  OFS2 OPTION_SETTING_START + 0x04 FIXED
+  {
+    *(.option_setting_ofs2)
+  }
+
+  UNUSED_1 (ImageBase(OFS2)+ImageLength(OFS2)) FIXED FILL 0xFFFFFFFF (ImageBase(OFS0) + 0x10 - (ImageBase(OFS2)+ImageLength(OFS2)))
+  {
+
+  }
+
+  DUALSEL OPTION_SETTING_START + 0x10 FIXED
   {
     *(.option_setting_dualsel)
   }
 
-  UNUSED_1 (ImageBase(DUALSEL)+ImageLength(DUALSEL)) FIXED FILL 0xFFFFFFFF (ImageBase(OFS0) + 0x34 - (ImageBase(DUALSEL)+ImageLength(DUALSEL)))
+#if ID_CODE_OVERLAP == 0
+
+  UNUSED_2 (ImageBase(DUALSEL)+ImageLength(DUALSEL)) FIXED FILL 0xFFFFFFFF (ImageBase(OFS0) + 0x34 - (ImageBase(DUALSEL)+ImageLength(DUALSEL)))
   {
 
   }
 
-  SAS 0x0100A100+0x34 FIXED
+#else
+
+  UNUSED_BEFORE_ID_CODE (ImageBase(DUALSEL)+ImageLength(DUALSEL)) FIXED FILL 0xFFFFFFFF (ImageBase(OFS0) + 0x20 - (ImageBase(DUALSEL)+ImageLength(DUALSEL)))
+  {
+
+  }
+
+  __tz_ID_CODE_S ID_CODE_START EMPTY 0
+  {
+  }
+
+  ; Set this symbol to the same value as __tz_ID_CODE_S so the RA configuration tool does not split the ID_CODE
+  ; memory region between TrustZone projects.
+  __tz_ID_CODE_N +0 EMPTY 0
+  {
+  }
+
+  ID_CODE ID_CODE_START FIXED
+  {
+    *(.id_code*)
+  }
+
+  UNUSED_AFTER_ID_CODE (ID_CODE_START + ID_CODE_LENGTH) FIXED FILL 0xFFFFFFFF (ImageBase(OFS0) + 0x34 - (ID_CODE_START + ID_CODE_LENGTH) )
+  {
+
+  }
+
+#endif
+
+  SAS OPTION_SETTING_START + 0x34 FIXED
   {
     *(.option_setting_sas)
   }
 
-  UNUSED_2 (ImageBase(SAS)+ImageLength(SAS)) FIXED FILL 0xFFFFFFFF (ImageBase(OFS0) + 0x80 - (ImageBase(SAS)+ImageLength(SAS)))
+  UNUSED_3 (ImageBase(SAS)+ImageLength(SAS)) FIXED FILL 0xFFFFFFFF (ImageBase(OFS0) + 0x80 - (ImageBase(SAS)+ImageLength(SAS)))
   {
 
   }
+
+  __tz_OPTION_SETTING_N OPTION_SETTING_START_NS EMPTY 0
+  {
+  }
+
 #else
-  OFS1 0x0100A100+0x80 FIXED
+
+  __tz_OPTION_SETTING_N OPTION_SETTING_START EMPTY 0
+  {
+  }
+
+  OFS1 OPTION_SETTING_START FIXED
   {
     *(.option_setting_ofs1)
   }
 
-  UNUSED_3 (ImageBase(OFS1)+ImageLength(OFS1)) FIXED FILL 0xFFFFFFFF (ImageBase(OFS1) + 0x10 - (ImageBase(OFS1)+ImageLength(OFS1)))
+  UNUSED_4 (ImageBase(OFS1)+ImageLength(OFS1)) FIXED FILL 0xFFFFFFFF (ImageBase(OFS1) + 0x04 - (ImageBase(OFS1)+ImageLength(OFS1)))
   {
 
   }
 
-  BANKSEL 0x0100A100+0x90 FIXED
+  OFS3 OPTION_SETTING_START + 0x04 FIXED
+  {
+    *(.option_setting_ofs3)
+  }
+
+  UNUSED_5 (ImageBase(OFS3)+ImageLength(OFS3)) FIXED FILL 0xFFFFFFFF (ImageBase(OFS1) + 0x10 - (ImageBase(OFS3)+ImageLength(OFS3)))
+  {
+
+  }
+
+  BANKSEL OPTION_SETTING_START + 0x10 FIXED
   {
     *(.option_setting_banksel)
   }
 
-  UNUSED_4 (ImageBase(BANKSEL)+ImageLength(BANKSEL)) FIXED FILL 0xFFFFFFFF (ImageBase(OFS1) + 0x40 - (ImageBase(BANKSEL)+ImageLength(BANKSEL)))
+  UNUSED_6 (ImageBase(BANKSEL)+ImageLength(BANKSEL)) FIXED FILL 0xFFFFFFFF (ImageBase(OFS1) + 0x40 - (ImageBase(BANKSEL)+ImageLength(BANKSEL)))
   {
 
   }
 
-  BPS 0x0100A100+0xC0 FIXED
+  BPS OPTION_SETTING_START + 0x40 FIXED
   {
     *(.option_setting_bps0)
     *(.option_setting_bps1)
     *(.option_setting_bps2)
+    *(.option_setting_bps3)
   }
 
-  UNUSED_5 (ImageBase(BPS)+ImageLength(BPS)) FIXED FILL 0xFFFFFFFF (ImageBase(OFS1) + 0x60 - (ImageBase(BPS)+ImageLength(BPS)))
+  UNUSED_7 (ImageBase(BPS)+ImageLength(BPS)) FIXED FILL 0xFFFFFFFF (ImageBase(OFS1) + 0x60 - (ImageBase(BPS)+ImageLength(BPS)))
   {
 
   }
 
-  PBPS 0x0100A100+0xE0 FIXED
+  PBPS OPTION_SETTING_START + 0x60 FIXED
   {
     *(.option_setting_pbps0)
     *(.option_setting_pbps1)
     *(.option_setting_pbps2)
+    *(.option_setting_pbps3)
   }
 
-  UNUSED_6 (ImageBase(PBPS)+ImageLength(PBPS)) FIXED FILL 0xFFFFFFFF (ImageBase(OFS1) + 0x80 - (ImageBase(PBPS)+ImageLength(PBPS)))
+  UNUSED_8 (ImageBase(PBPS)+ImageLength(PBPS)) FIXED FILL 0xFFFFFFFF (ImageBase(OFS1) + 0x80 - (ImageBase(PBPS)+ImageLength(PBPS)))
   {
 
   }
 #endif
 
-  __tz_OPTION_SETTING_N OPTION_SETTING_START + OPTION_SETTING_NS_OFFSET EMPTY 0
-  {
-  }
 }
 
 #if OPTION_SETTING_S_LENGTH != 0
@@ -510,78 +693,101 @@ LOAD_REGION_OPTION_SETTING_S OPTION_SETTING_S_START OPTION_SETTING_S_LENGTH
 
 #ifndef PROJECT_NONSECURE
 
-  OFS1_SEC OPTION_SETTING_S_START+0 FIXED
+  OFS1_SEC OPTION_SETTING_S_START + 0 FIXED
   {
     *(.option_setting_ofs1_sec)
   }
 
-  UNUSED_7 (ImageBase(OFS1_SEC)+ImageLength(OFS1_SEC)) FIXED FILL 0xFFFFFFFF (ImageBase(OFS1_SEC) + 0x10 - (ImageBase(OFS1_SEC)+ImageLength(OFS1_SEC)))
+  UNUSED_7 (ImageBase(OFS1_SEC)+ImageLength(OFS1_SEC)) FIXED FILL 0xFFFFFFFF (ImageBase(OFS1_SEC) + 0x04 - (ImageBase(OFS1_SEC)+ImageLength(OFS1_SEC)))
   {
 
   }
 
-  BANKSEL_SEC OPTION_SETTING_S_START+0x10 FIXED
+  OFS3_SEC OPTION_SETTING_S_START + 0x04 FIXED
+  {
+    *(.option_setting_ofs3_sec)
+  }
+
+  UNUSED_8 (ImageBase(OFS3_SEC)+ImageLength(OFS3_SEC)) FIXED FILL 0xFFFFFFFF (ImageBase(OFS1_SEC) + 0x10 - (ImageBase(OFS3_SEC)+ImageLength(OFS3_SEC)))
+  {
+
+  }
+
+  BANKSEL_SEC OPTION_SETTING_S_START + 0x10 FIXED
   {
     *(.option_setting_banksel_sec)
   }
 
-  UNUSED_8 (ImageBase(BANKSEL_SEC)+ImageLength(BANKSEL_SEC)) FIXED FILL 0xFFFFFFFF (ImageBase(OFS1_SEC) + 0x40 - (ImageBase(BANKSEL_SEC)+ImageLength(BANKSEL_SEC)))
+  UNUSED_9 (ImageBase(BANKSEL_SEC)+ImageLength(BANKSEL_SEC)) FIXED FILL 0xFFFFFFFF (ImageBase(OFS1_SEC) + 0x40 - (ImageBase(BANKSEL_SEC)+ImageLength(BANKSEL_SEC)))
   {
 
   }
 
-  BPS_SEC OPTION_SETTING_S_START+0x40 FIXED
+  BPS_SEC OPTION_SETTING_S_START + 0x40 FIXED
   {
     *(.option_setting_bps_sec0)
     *(.option_setting_bps_sec1)
     *(.option_setting_bps_sec2)
+    *(.option_setting_bps_sec3)
   }
 
-  UNUSED_9 (ImageBase(BPS_SEC)+ImageLength(BPS_SEC)) FIXED FILL 0xFFFFFFFF (ImageBase(OFS1_SEC) + 0x60 - (ImageBase(BPS_SEC)+ImageLength(BPS_SEC)))
+  UNUSED_10 (ImageBase(BPS_SEC)+ImageLength(BPS_SEC)) FIXED FILL 0xFFFFFFFF (ImageBase(OFS1_SEC) + 0x60 - (ImageBase(BPS_SEC)+ImageLength(BPS_SEC)))
   {
 
   }
 
-  PBPS_SEC OPTION_SETTING_S_START+0x60 FIXED
+  PBPS_SEC OPTION_SETTING_S_START + 0x60 FIXED
   {
     *(.option_setting_pbps_sec0)
     *(.option_setting_pbps_sec1)
     *(.option_setting_pbps_sec2)
+    *(.option_setting_pbps_sec3)
   }
 
-  UNUSED_10 (ImageBase(PBPS_SEC)+ImageLength(PBPS_SEC)) FIXED FILL 0xFFFFFFFF (ImageBase(OFS1_SEC) + 0x80 - (ImageBase(PBPS_SEC)+ImageLength(PBPS_SEC)))
+  UNUSED_11 (ImageBase(PBPS_SEC)+ImageLength(PBPS_SEC)) FIXED FILL 0xFFFFFFFF (ImageBase(OFS1_SEC) + 0x80 - (ImageBase(PBPS_SEC)+ImageLength(PBPS_SEC)))
   {
 
   }
 
-  OFS1_SEL OPTION_SETTING_S_START+0x80 FIXED
+  OFS1_SEL OPTION_SETTING_S_START + 0x80 FIXED
   {
     *(.option_setting_ofs1_sel)
   }
 
-  UNUSED_11 (ImageBase(OFS1_SEL)+ImageLength(OFS1_SEL)) FIXED FILL 0xFFFFFFFF (ImageBase(OFS1_SEC) + 0x90 - (ImageBase(OFS1_SEL)+ImageLength(OFS1_SEL)))
+  UNUSED_12 (ImageBase(OFS1_SEL)+ImageLength(OFS1_SEL)) FIXED FILL 0xFFFFFFFF (ImageBase(OFS1_SEC) + 0x84 - (ImageBase(OFS1_SEL)+ImageLength(OFS1_SEL)))
   {
 
   }
 
-  BANKSEL_SEL OPTION_SETTING_S_START+0x90 FIXED
+  OFS3_SEL OPTION_SETTING_S_START + 0x84 FIXED
+  {
+    *(.option_setting_ofs3_sel)
+  }
+
+  UNUSED_13 (ImageBase(OFS3_SEL)+ImageLength(OFS3_SEL)) FIXED FILL 0xFFFFFFFF (ImageBase(OFS1_SEC) + 0x90 - (ImageBase(OFS3_SEL)+ImageLength(OFS3_SEL)))
+  {
+
+  }
+
+  BANKSEL_SEL OPTION_SETTING_S_START + 0x90 FIXED
   {
     *(.option_setting_banksel_sel)
   }
 
-  UNUSED_12 (ImageBase(BANKSEL_SEL)+ImageLength(BANKSEL_SEL)) FIXED FILL 0xFFFFFFFF (ImageBase(OFS1_SEC) + 0xC0 - (ImageBase(BANKSEL_SEL)+ImageLength(BANKSEL_SEL)))
+  UNUSED_14 (ImageBase(BANKSEL_SEL)+ImageLength(BANKSEL_SEL)) FIXED FILL 0xFFFFFFFF (ImageBase(OFS1_SEC) + 0xC0 - (ImageBase(BANKSEL_SEL)+ImageLength(BANKSEL_SEL)))
   {
 
   }
 
-  BPS_SEL OPTION_SETTING_S_START+0xC0 FIXED
+  BPS_SEL OPTION_SETTING_S_START + 0xC0 FIXED
   {
     *(.option_setting_bps_sel0)
     *(.option_setting_bps_sel1)
     *(.option_setting_bps_sel2)
+    *(.option_setting_bps_sel3)
   }
 
-  UNUSED_13 (ImageBase(BPS_SEL)+ImageLength(BPS_SEL)) FIXED FILL 0xFFFFFFFF (ImageBase(OFS1_SEC) + 0x100 - (ImageBase(BPS_SEL)+ImageLength(BPS_SEL)))
+  UNUSED_15 (ImageBase(BPS_SEL)+ImageLength(BPS_SEL)) FIXED FILL 0xFFFFFFFF (ImageBase(OFS1_SEC) + 0x100 - (ImageBase(BPS_SEL)+ImageLength(BPS_SEL)))
   {
 
   }
@@ -600,7 +806,7 @@ LOAD_REGION_DATA_FLASH DATA_FLASH_START DATA_FLASH_LENGTH
   __tz_DATA_FLASH_S DATA_FLASH_S_START EMPTY 0
   {
   }
-  DATA_FLASH +0 FIXED
+  DATA_FLASH +0
   {
     *(.data_flash*)
   }
@@ -659,11 +865,13 @@ LOAD_REGION_SDRAM SDRAM_START SDRAM_LENGTH
   __tz_SDRAM_S SDRAM_S_START EMPTY 0
   {
   }
+
   SDRAM +0 FIXED
   {
     *(.sdram*)
     *(.frame*)
   }
+
   __tz_SDRAM_N SDRAM_NS_START EMPTY 0
   {
   }

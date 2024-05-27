@@ -142,7 +142,7 @@ static void _signal_deliver(rt_thread_t tid)
                 int cpu_id;
 
                 cpu_id = RT_SCHED_CTX(tid).oncpu;
-                if ((cpu_id != RT_CPU_DETACHED) && (cpu_id != rt_hw_cpu_id()))
+                if ((cpu_id != RT_CPU_DETACHED) && (cpu_id != rt_cpu_get_id()))
                 {
                     rt_uint32_t cpu_mask;
 
@@ -181,7 +181,7 @@ void *rt_signal_check(void* context)
 
     level = rt_spin_lock_irqsave(&_thread_signal_lock);
 
-    cpu_id = rt_hw_cpu_id();
+    cpu_id = rt_cpu_get_id();
     pcpu   = rt_cpu_index(cpu_id);
     current_thread = pcpu->current_thread;
 

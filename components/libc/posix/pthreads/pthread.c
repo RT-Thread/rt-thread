@@ -9,6 +9,8 @@
  *                             thread.
  * 2019-02-07     Bernard      Add _pthread_destroy to release pthread resource.
  * 2022-05-10     xiangxistu   Modify the recycle logic about resource of pthread.
+ * 2024-04-15     atwww        Modify the recycle logic of TLS in function _pthread_data_destroy,
+ *                                    make it safe for C++11's thread_local destructors.
  */
 
 #include <rthw.h>
@@ -85,9 +87,27 @@ pthread_t _pthread_data_create(void)
     return index;
 }
 
-void _pthread_data_destroy(_pthread_data_t *ptd)
+static inline void _destroy_item(int index, _pthread_data_t *ptd)
 {
     extern _pthread_key_data_t _thread_keys[PTHREAD_KEY_MAX];
+    void *data;
+
+    if (_thread_keys[index].is_used)
+    {
+        data = ptd->tls[index];
+        if (data && _thread_keys[index].destructor)
+        {
+            _thread_keys[index].destructor(data);
+        }
+    }
+}
+
+#ifdef RT_USING_CPLUSPLUS11
+    #define NOT_USE_CXX_TLS -1
+#endif
+
+void _pthread_data_destroy(_pthread_data_t *ptd)
+{
     pthread_t pth;
 
     if (ptd)
@@ -97,18 +117,37 @@ void _pthread_data_destroy(_pthread_data_t *ptd)
          */
         if (ptd->tls != RT_NULL)
         {
-            void *data;
-            rt_uint32_t index;
-            for (index = 0; index < PTHREAD_KEY_MAX; index ++)
+            int index;
+#ifdef RT_USING_CPLUSPLUS11
+            /* If C++11 is enabled and emutls is used,
+             * destructors of C++ object must be called safely.
+             */
+            extern pthread_key_t emutls_get_pthread_key(void);
+            pthread_key_t emutls_pthread_key = emutls_get_pthread_key();
+
+            if (emutls_pthread_key != NOT_USE_CXX_TLS)
             {
-                if (_thread_keys[index].is_used)
+                /* If execution reaches here, C++ 'thread_local' may be used.
+                 * Destructors of c++ class object must be called before emutls_key_destructor.
+                 */
+                int start = ((emutls_pthread_key - 1 + PTHREAD_KEY_MAX) % PTHREAD_KEY_MAX);
+                int i = 0;
+                for (index = start; i < PTHREAD_KEY_MAX; index = (index - 1 + PTHREAD_KEY_MAX) % PTHREAD_KEY_MAX, i ++)
                 {
-                    data = ptd->tls[index];
-                    if (data && _thread_keys[index].destructor)
-                        _thread_keys[index].destructor(data);
+                    _destroy_item(index, ptd);
                 }
             }
-
+            else
+#endif
+            {
+                /* If only C TLS is used, that is, POSIX TLS or __Thread_local,
+                 * just iterate the _thread_keys from index 0.
+                 */
+                for (index = 0; index < PTHREAD_KEY_MAX; index ++)
+                {
+                    _destroy_item(index, ptd);
+                }
+            }
             /* release tls area */
             rt_free(ptd->tls);
             ptd->tls = RT_NULL;

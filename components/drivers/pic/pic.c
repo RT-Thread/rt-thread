@@ -16,6 +16,7 @@
 #include <rtdbg.h>
 
 #include <drivers/pic.h>
+#include <ktime.h>
 
 struct irq_traps
 {
@@ -91,7 +92,8 @@ void rt_pic_default_name(struct rt_pic *pic)
     if (pic)
     {
     #if RT_NAME_MAX > 0
-        rt_strncpy(pic->parent.name, "PIC", RT_NAME_MAX);
+        rt_strncpy(pic->parent.name, "PIC", RT_NAME_MAX - 1);
+        pic->parent.name[RT_NAME_MAX - 1] = '\0';
     #else
         pic->parent.name = "PIC";
     #endif
@@ -366,7 +368,11 @@ rt_err_t rt_pic_attach_irq(int irq, rt_isr_handler_t handler, void *uid, const c
             isr->action.param = uid;
         #ifdef RT_USING_INTERRUPT_INFO
             isr->action.counter = 0;
-            rt_strncpy(isr->action.name, name, RT_NAME_MAX);
+            rt_strncpy(isr->action.name, name, RT_NAME_MAX - 1);
+            isr->action.name[RT_NAME_MAX - 1] = '\0';
+        #ifdef RT_USING_SMP
+            rt_memset(isr->action.cpu_counter, 0, sizeof(isr->action.cpu_counter));
+        #endif
         #endif
 
             rt_spin_unlock_irqrestore(&pirq->rw_lock, level);
@@ -407,6 +413,9 @@ rt_err_t rt_pic_detach_irq(int irq, void *uid)
             #ifdef RT_USING_INTERRUPT_INFO
                 isr->action.counter = next_isr->action.counter;
                 rt_strncpy(isr->action.name, next_isr->action.name, RT_NAME_MAX);
+            #ifdef RT_USING_SMP
+                rt_memcpy(isr->action.cpu_counter, next_isr->action.cpu_counter, sizeof(next_isr->action.cpu_counter));
+            #endif
             #endif
 
                 isr = next_isr;
@@ -496,9 +505,18 @@ rt_err_t rt_pic_handle_isr(struct rt_pic_irq *pirq)
     rt_err_t err = -RT_EEMPTY;
     rt_list_t *handler_nodes;
     struct rt_irq_desc *action;
+#ifdef RT_USING_PIC_STATISTICS
+    struct timespec ts;
+    rt_ubase_t irq_time_ns;
+#endif
 
     RT_ASSERT(pirq != RT_NULL);
     RT_ASSERT(pirq->pic != RT_NULL);
+
+#ifdef RT_USING_PIC_STATISTICS
+    rt_ktime_boottime_get_ns(&ts);
+    pirq->stat.current_irq_begin[rt_hw_cpu_id()] = ts.tv_sec * (1000UL * 1000 * 1000) + ts.tv_nsec;
+#endif
 
     /* Corrected irq affinity */
     rt_bitmap_set_bit(pirq->affinity, rt_hw_cpu_id());
@@ -525,6 +543,9 @@ rt_err_t rt_pic_handle_isr(struct rt_pic_irq *pirq)
         action->handler(pirq->irq, action->param);
     #ifdef RT_USING_INTERRUPT_INFO
         action->counter++;
+    #ifdef RT_USING_SMP
+        action->cpu_counter[rt_hw_cpu_id()]++;
+    #endif
     #endif
 
         if (!rt_list_isempty(handler_nodes))
@@ -540,12 +561,29 @@ rt_err_t rt_pic_handle_isr(struct rt_pic_irq *pirq)
                 action->handler(pirq->irq, action->param);
             #ifdef RT_USING_INTERRUPT_INFO
                 action->counter++;
+            #ifdef RT_USING_SMP
+                action->cpu_counter[rt_hw_cpu_id()]++;
+            #endif
             #endif
             }
         }
 
         err = RT_EOK;
     }
+
+#ifdef RT_USING_PIC_STATISTICS
+    rt_ktime_boottime_get_ns(&ts);
+    irq_time_ns = ts.tv_sec * (1000UL * 1000 * 1000) + ts.tv_nsec - pirq->stat.current_irq_begin[rt_hw_cpu_id()];
+    pirq->stat.sum_irq_time_ns += irq_time_ns;
+    if (irq_time_ns < pirq->stat.min_irq_time_ns || pirq->stat.min_irq_time_ns == 0)
+    {
+        pirq->stat.min_irq_time_ns = irq_time_ns;
+    }
+    if (irq_time_ns > pirq->stat.max_irq_time_ns)
+    {
+        pirq->stat.max_irq_time_ns = irq_time_ns;
+    }
+#endif
 
     return err;
 }
@@ -1008,7 +1046,6 @@ rt_err_t rt_pic_init(void)
 #if defined(RT_USING_CONSOLE) && defined(RT_USING_MSH)
 static int list_irq(int argc, char**argv)
 {
-    rt_ubase_t level;
     rt_size_t irq_nr = 0;
     rt_bool_t dump_all = RT_FALSE;
     const char *const irq_modes[] =
@@ -1033,11 +1070,9 @@ static int list_irq(int argc, char**argv)
         }
     }
 
-    level = rt_hw_interrupt_disable();
-
-    rt_kprintf("%-*.s %-*.s %s %-*.s %-*.s %-*.s %-*.sUsers%s\n",
-            10, "IRQ",
-            10, "HW-IRQ",
+    rt_kprintf("%-*.s %-*.s %s %-*.s %-*.s %-*.s %-*.sUsers%-*.s",
+            6, "IRQ",
+            6, "HW-IRQ",
             "MSI",
             _pic_name_max, "PIC",
             12, "Mode",
@@ -1048,12 +1083,25 @@ static int list_irq(int argc, char**argv)
         #endif
         #ifdef RT_USING_INTERRUPT_INFO
             11, "Count",
-            ""
+            5, ""
         #else
             0, 0,
-            "-Number"
+            10, "-Number"
         #endif
             );
+
+#if defined(RT_USING_SMP) && defined(RT_USING_INTERRUPT_INFO)
+    for (int i = 0; i < RT_CPUS_NR; i++)
+    {
+        rt_kprintf(" cpu%2d     ", i);
+    }
+#endif
+
+#ifdef RT_USING_PIC_STATISTICS
+    rt_kprintf(" max/ns      avg/ns      min/ns");
+#endif
+
+    rt_kputs("\n");
 
     for (int i = 0; i < RT_ARRAY_SIZE(_pirq_hash); ++i)
     {
@@ -1064,7 +1112,7 @@ static int list_irq(int argc, char**argv)
             continue;
         }
 
-        rt_snprintf(info, sizeof(info), "%-10d %-10d %c   %-*.s %-*.s ",
+        rt_snprintf(info, sizeof(info), "%-6d %-6d %c   %-*.s %-*.s ",
                 pirq->irq,
                 pirq->hwirq,
                 pirq->msi_desc ? 'Y' : 'N',
@@ -1090,7 +1138,16 @@ static int list_irq(int argc, char**argv)
 
     #ifdef RT_USING_INTERRUPT_INFO
         rt_kprintf(" %-10d ", pirq->isr.action.counter);
-        rt_kputs(pirq->isr.action.name);
+        rt_kprintf("%-*.s", 10, pirq->isr.action.name);
+    #ifdef RT_USING_SMP
+        for (int cpuid = 0; cpuid < RT_CPUS_NR; cpuid++)
+        {
+            rt_kprintf(" %-10d", pirq->isr.action.cpu_counter[cpuid]);
+        }
+    #endif
+    #ifdef RT_USING_PIC_STATISTICS
+        rt_kprintf(" %-10d  %-10d  %-10d", pirq->stat.max_irq_time_ns, pirq->stat.sum_irq_time_ns/pirq->isr.action.counter, pirq->stat.min_irq_time_ns);
+    #endif
         rt_kputs("\n");
 
         if (!rt_list_isempty(&pirq->isr.list))
@@ -1104,7 +1161,16 @@ static int list_irq(int argc, char**argv)
                 rt_kputs(cpumask);
             #endif
                 rt_kprintf("%-10d ", repeat_isr->action.counter);
-                rt_kputs(repeat_isr->action.name);
+                rt_kprintf("%-*.s", 10, repeat_isr->action.name);
+            #ifdef RT_USING_SMP
+                for (int cpuid = 0; cpuid < RT_CPUS_NR; cpuid++)
+                {
+                    rt_kprintf(" %-10d", repeat_isr->action.cpu_counter[cpuid]);
+                }
+            #endif
+            #ifdef RT_USING_PIC_STATISTICS
+                rt_kprintf(" ---         ---         ---");
+            #endif
                 rt_kputs("\n");
             }
         }
@@ -1114,8 +1180,6 @@ static int list_irq(int argc, char**argv)
 
         ++irq_nr;
     }
-
-    rt_hw_interrupt_enable(level);
 
     rt_kprintf("%d IRQs found\n", irq_nr);
 

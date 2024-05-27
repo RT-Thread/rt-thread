@@ -146,7 +146,7 @@ rt_base_t rt_cpus_lock(void)
     pcpu = rt_cpu_self();
     if (pcpu->current_thread != RT_NULL)
     {
-        register rt_ubase_t lock_nest = rt_atomic_load(&(pcpu->current_thread->cpus_lock_nest));
+        rt_ubase_t lock_nest = rt_atomic_load(&(pcpu->current_thread->cpus_lock_nest));
 
         rt_atomic_add(&(pcpu->current_thread->cpus_lock_nest), 1);
         if (lock_nest == 0)
@@ -216,3 +216,21 @@ void rt_cpus_lock_status_restore(struct rt_thread *thread)
     rt_sched_post_ctx_switch(thread);
 }
 RTM_EXPORT(rt_cpus_lock_status_restore);
+
+/* A safe API with debugging feature to be called in most codes */
+
+#undef rt_cpu_get_id
+/**
+ * @brief Get logical CPU ID
+ *
+ * @return logical CPU ID
+ */
+rt_base_t rt_cpu_get_id(void)
+{
+
+    RT_ASSERT(rt_sched_thread_is_binding(RT_NULL) ||
+              rt_hw_interrupt_is_disabled() ||
+              !rt_scheduler_is_available());
+
+    return rt_hw_cpu_id();
+}

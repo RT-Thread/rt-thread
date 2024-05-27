@@ -978,7 +978,7 @@ int __rt_ffs(int value)
 #endif /* RT_USING_TINY_FFS */
 #endif /* RT_USING_CPU_FFS */
 
-#ifdef RT_USING_DEBUG
+#ifdef RT_DEBUGING_ASSERT
 /* RT_ASSERT(EX)'s hook */
 
 void (*rt_assert_hook)(const char *ex, const char *func, rt_size_t line);
@@ -1028,6 +1028,6 @@ void rt_assert_handler(const char *ex_string, const char *func, rt_size_t line)
     }
 }
 RTM_EXPORT(rt_assert_handler);
-#endif /* RT_USING_DEBUG */
+#endif /* RT_DEBUGING_ASSERT */
 
 /**@}*/

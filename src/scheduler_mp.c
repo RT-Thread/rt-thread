@@ -1089,6 +1089,7 @@ void rt_exit_critical_safe(rt_base_t critical_level)
 
 void rt_exit_critical_safe(rt_base_t critical_level)
 {
+    RT_UNUSED(critical_level);
     return rt_exit_critical();
 }
 

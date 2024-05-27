@@ -101,7 +101,7 @@ void rt_tick_increase(void)
 
     /* check timer */
 #ifdef RT_USING_SMP
-    if (rt_hw_cpu_id() != 0)
+    if (rt_cpu_get_id() != 0)
     {
         return;
     }

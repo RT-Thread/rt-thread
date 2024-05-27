@@ -31,7 +31,143 @@ menu "General Drivers Configuration"
             default n
 
         endif
-        
+
+    menuconfig BSP_USING_I2C
+        bool "Using I2C"
+        select RT_USING_I2C
+        select RT_USING_I2C_BITOPS
+        select RT_USING_PIN
+        default n
+
+        if BSP_USING_I2C
+            config BSP_USING_I2C0
+                bool "Enable I2C0"
+                depends on BOARD_TYPE_MILKV_DUO || BOARD_TYPE_MILKV_DUO_SPINOR
+                default n
+
+                if BSP_USING_I2C0
+                    choice
+                        prompt "SCL"
+
+                        config BSP_USING_IIC0_SCL__IIC0_SCL
+                            bool "IIC0_SCL/GP0"
+                    endchoice
+
+                    choice
+                        prompt "SDA"
+
+                        config BSP_USING_IIC0_SDA__IIC0_SDA
+                            bool "IIC0_SDA/GP1"
+                    endchoice
+                endif
+
+            config BSP_USING_I2C1
+                bool "Enable I2C1"
+                default n
+
+                if BSP_USING_I2C1
+                    choice
+                        prompt "SCL"
+
+                        if BOARD_TYPE_MILKV_DUO || BOARD_TYPE_MILKV_DUO_SPINOR
+                            config BSP_USING_SD1_D2__IIC1_SCL
+                                bool "SD1_D2/GP4"
+                            config BSP_USING_SD1_D3__IIC1_SCL
+                                bool "SD1_D3/GP9"
+                            config BSP_USING_PAD_MIPIRX0N__IIC1_SCL
+                                bool "PAD_MIPIRX0N/GP11"
+                        endif
+
+                        if BOARD_TYPE_MILKV_DUO256M || BOARD_TYPE_MILKV_DUO256M_SPINOR
+                            config BSP_USING_SD1_D2__IIC1_SCL
+                                bool "SD1_D2/GP4"
+                            config BSP_USING_SD1_D3__IIC1_SCL
+                                bool "SD1_D3/GP9"
+                        endif
+
+                    endchoice
+
+                    choice
+                        prompt "SDA"
+
+                        if BOARD_TYPE_MILKV_DUO || BOARD_TYPE_MILKV_DUO_SPINOR
+                            config BSP_USING_SD1_D1__IIC1_SDA
+                                bool "SD1_D1/GP5"
+                            config BSP_USING_SD1_D0__IIC1_SDA
+                                bool "SD1_D0/GP8"
+                            config BSP_USING_PAD_MIPIRX1P__IIC1_SDA
+                                bool "PAD_MIPIRX1P/GP10"
+                        endif
+
+                        if BOARD_TYPE_MILKV_DUO256M || BOARD_TYPE_MILKV_DUO256M_SPINOR
+                            config BSP_USING_SD1_D1__IIC1_SDA
+                                bool "SD1_D1/GP5"
+                            config BSP_USING_SD1_D0__IIC1_SDA
+                                bool "SD1_D0/GP8"
+                        endif
+                    endchoice
+                endif
+
+            config BSP_USING_I2C2
+                bool "Enable I2C2"
+                depends on BOARD_TYPE_MILKV_DUO256M || BOARD_TYPE_MILKV_DUO256M_SPINOR
+                default n
+
+                if BSP_USING_I2C2
+                    choice
+                        prompt "SCL"
+
+                        config BSP_USING_PAD_MIPI_TXP1__IIC2_SCL
+                            bool "PAD_MIPI_TXP1/GP11"
+                    endchoice
+
+                    choice
+                        prompt "SDA"
+
+                        config BSP_USING_PAD_MIPI_TXM1__IIC2_SDA
+                            bool "PAD_MIPI_TXM1/GP10"
+                    endchoice
+                endif
+
+            config BSP_USING_I2C3
+                bool "Enable I2C3"
+                default n
+
+                if BSP_USING_I2C3
+                    choice
+                        prompt "SCL"
+
+                        if BOARD_TYPE_MILKV_DUO || BOARD_TYPE_MILKV_DUO_SPINOR
+                            config BSP_USING_SD1_CMD__IIC3_SCL
+                                bool "SD1_CMD/GP7"
+                        endif
+
+                        if BOARD_TYPE_MILKV_DUO256M || BOARD_TYPE_MILKV_DUO256M_SPINOR
+                            config BSP_USING_SD1_CMD__IIC3_SCL
+                                bool "SD1_CMD/GP7"
+                        endif
+                    endchoice
+
+                    choice
+                        prompt "SDA"
+
+                        if BOARD_TYPE_MILKV_DUO || BOARD_TYPE_MILKV_DUO_SPINOR
+                            config BSP_USING_SD1_CLK__IIC3_SDA
+                                bool "SD1_CLK/GP6"
+                        endif
+
+                        if BOARD_TYPE_MILKV_DUO256M || BOARD_TYPE_MILKV_DUO256M_SPINOR
+                            config BSP_USING_SD1_CLK__IIC3_SDA
+                                bool "SD1_CLK/GP6"
+                        endif
+                    endchoice
+                endif
+
+            config I2C_IRQ_BASE
+                int
+                default 49
+        endif
+
     config BSP_USING_ADC
         bool "Using ADC"
         select RT_USING_ADC
@@ -41,6 +177,25 @@ menu "General Drivers Configuration"
         bool "Using SPI"
         select RT_USING_SPI
         default n
+
+    menuconfig BSP_USING_WDT
+        bool "Enable Watchdog Timer"
+        select RT_USING_WDT
+        default n
+
+        if BSP_USING_WDT
+            config BSP_USING_WDT0
+                bool "Enable WDT0"
+                default n
+
+            config BSP_USING_WDT1
+                bool "Enable WDT1"
+                default n
+
+            config BSP_USING_WDT2
+                bool "Enable WDT2"
+                default n
+        endif
 
     menuconfig BSP_USING_PWM
         bool "Using PWM"
@@ -63,8 +218,12 @@ menu "General Drivers Configuration"
             config BSP_USING_PWM3
             bool "Enable PWM 3"
             default n
-            
         endif
+
+    config BSP_USING_RTC
+        bool "Enable RTC"
+        select RT_USING_RTC
+        default n
 
     config BSP_USING_SDH
         select RT_USING_SDIO
@@ -80,4 +239,5 @@ menu "General Drivers Configuration"
         select RT_USING_LWIP
         select RT_USING_POSIX_FS
         select RT_USING_POSIX_SOCKET
+
 endmenu

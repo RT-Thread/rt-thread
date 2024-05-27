@@ -1,5 +1,5 @@
 /***********************************************************************************************************************
- * Copyright [2020-2021] Renesas Electronics Corporation and/or its affiliates.  All Rights Reserved.
+ * Copyright [2020-2023] Renesas Electronics Corporation and/or its affiliates.  All Rights Reserved.
  *
  * This software and documentation are supplied by Renesas Electronics America Inc. and may only be used with products
  * of Renesas Electronics Corp. and its affiliates ("Renesas").  No other uses are authorized.  Renesas products are
@@ -41,7 +41,19 @@ FSP_HEADER
 
 /* The number of cycles required per software delay loop. */
 #ifndef BSP_DELAY_LOOP_CYCLES
- #define BSP_DELAY_LOOP_CYCLES    (4)
+ #if defined(RENESAS_CORTEX_M85)
+
+/* On M85 cores, code alignment can affect execution speed. bsp_prv_software_delay_loop is aligned to 8 bytes for
+ * GCC and AC6, but IAR does not support aligning code. The below ensures the correct loop cycle count is used in
+ * this case. */
+  #if defined(__ICCARM__)
+   #define BSP_DELAY_LOOP_CYCLES    (((uint32_t) bsp_prv_software_delay_loop & 0x6) ? 2 : 1)
+  #else
+   #define BSP_DELAY_LOOP_CYCLES    (1)
+  #endif
+ #else
+  #define BSP_DELAY_LOOP_CYCLES     (4)
+ #endif
 #endif
 
 /* Calculates the number of delay loops to pass to bsp_prv_software_delay_loop to achieve at least the requested cycle

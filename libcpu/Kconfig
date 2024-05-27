@@ -12,6 +12,9 @@ if ARCH_ARMV8 && ARCH_CPU_64BIT
     config ARCH_HAVE_EFFICIENT_UNALIGNED_ACCESS
         bool
         default y
+    config ARCH_USING_GENERIC_CPUID
+        bool "Using generic cpuid implemenation"
+        default n
     endmenu
 endif
 

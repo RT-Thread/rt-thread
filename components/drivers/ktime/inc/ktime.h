@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2023-07-10     xqyjlj       The first version.
+ * 2024-04-26     Shell        Improve ipc performance
  */
 
 #ifndef __KTIME_H__
@@ -13,6 +14,7 @@
 
 #include <stdint.h>
 #include <sys/time.h>
+#include <ipc/completion.h>
 
 #include "rtthread.h"
 
@@ -20,13 +22,13 @@
 
 struct rt_ktime_hrtimer
 {
-    struct rt_object    parent; /**< inherit from rt_object */
-    rt_list_t           row;
-    void               *parameter;
-    unsigned long       init_cnt;
-    unsigned long       timeout_cnt;
-    rt_err_t            error;
-    struct rt_semaphore sem;
+    struct rt_object     parent; /**< inherit from rt_object */
+    rt_list_t            row;
+    void                 *parameter;
+    unsigned long        init_cnt;
+    unsigned long        timeout_cnt;
+    rt_err_t             error;
+    struct rt_completion completion;
     void (*timeout_func)(void *parameter);
 };
 typedef struct rt_ktime_hrtimer *rt_ktime_hrtimer_t;

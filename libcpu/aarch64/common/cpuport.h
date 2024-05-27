@@ -17,10 +17,42 @@
 #include <rtdef.h>
 
 #ifdef RT_USING_SMP
-typedef struct {
-    volatile unsigned int lock;
+
+/**
+ * Spinlock
+ */
+
+typedef struct
+{
+    rt_uint32_t value;
 } rt_hw_spinlock_t;
-#endif
+
+/**
+ * Generic hw-cpu-id
+ */
+#ifdef ARCH_USING_GENERIC_CPUID
+
+#if RT_CPUS_NR > 1
+
+rt_inline int rt_hw_cpu_id(void)
+{
+    long cpuid;
+    __asm__ volatile("mrs %0, tpidr_el1":"=r"(cpuid));
+    return cpuid;
+}
+
+#else
+
+rt_inline int rt_hw_cpu_id(void)
+{
+    return 0;
+}
+
+#endif /* RT_CPUS_NR > 1 */
+
+#endif /* ARCH_USING_GENERIC_CPUID */
+
+#endif /* RT_USING_SMP */
 
 #define rt_hw_barrier(cmd, ...) \
     __asm__ volatile (RT_STRINGIFY(cmd) " "RT_STRINGIFY(__VA_ARGS__):::"memory")

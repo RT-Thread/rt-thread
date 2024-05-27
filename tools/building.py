@@ -195,7 +195,7 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
         os.environ['RTT_CC_PREFIX'] = exec_prefix
 
     # auto change the 'RTT_EXEC_PATH' when 'rtconfig.EXEC_PATH' get failed
-    if not os.path.exists(os.path.join(rtconfig.EXEC_PATH, rtconfig.CC)):
+    if not utils.CmdExists(os.path.join(rtconfig.EXEC_PATH, rtconfig.CC)):
         if 'RTT_EXEC_PATH' in os.environ:
             # del the 'RTT_EXEC_PATH' and using the 'EXEC_PATH' setting on rtconfig.py
             del os.environ['RTT_EXEC_PATH']
@@ -849,6 +849,11 @@ def DoBuilding(target, objects):
         objects_in_group = sorted(objects_in_group)
         objects = sorted(objects)
         objects.append(objects_in_group)
+
+        # generate build/compile_commands.json
+        if GetOption('cdb') and utils.VerTuple(SCons.__version__) >= (4, 0, 0):
+            Env.Tool("compilation_db")
+            Env.CompilationDatabase('build/compile_commands.json')
 
         program = Env.Program(target, objects)
 

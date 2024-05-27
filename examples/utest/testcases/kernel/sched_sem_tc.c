@@ -29,7 +29,7 @@
 #error the thread priority should at least be greater than idle
 #endif
 
-static rt_atomic_t _star_counter = 1;
+static rt_atomic_t _star_counter;
 static struct rt_semaphore _thr_exit_sem;
 static struct rt_semaphore _level_waiting[TEST_LEVEL_COUNTS];
 static rt_thread_t _thread_matrix[TEST_LEVEL_COUNTS][KERN_TEST_CONCURRENT_THREADS];
@@ -157,6 +157,8 @@ static void scheduler_tc(void)
 static rt_err_t utest_tc_init(void)
 {
     LOG_I("Setup environment...");
+    _star_counter = 1;
+    rt_memset(_load_average, 0, sizeof(_load_average));
     rt_sem_init(&_thr_exit_sem, "test", 0, RT_IPC_FLAG_PRIO);
 
     for (size_t i = 0; i < TEST_LEVEL_COUNTS; i++)

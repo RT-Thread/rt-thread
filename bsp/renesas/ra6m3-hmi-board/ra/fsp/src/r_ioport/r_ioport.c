@@ -1,5 +1,5 @@
 /***********************************************************************************************************************
- * Copyright [2020-2021] Renesas Electronics Corporation and/or its affiliates.  All Rights Reserved.
+ * Copyright [2020-2023] Renesas Electronics Corporation and/or its affiliates.  All Rights Reserved.
  *
  * This software and documentation are supplied by Renesas Electronics America Inc. and may only be used with products
  * of Renesas Electronics Corp. and its affiliates ("Renesas").  No other uses are authorized.  Renesas products are
@@ -46,10 +46,6 @@
 /* Shift to get port in bsp_io_port_t and bsp_io_port_pin_t enums. */
 #define IOPORT_PRV_PORT_OFFSET            (8U)
 
-#ifndef BSP_MCU_VBATT_SUPPORT
- #define BSP_MCU_VBATT_SUPPORT            (0U)
-#endif
-
 #define IOPORT_PRV_PORT_BITS              (0xFF00U)
 #define IOPORT_PRV_PIN_BITS               (0x00FFU)
 
@@ -84,7 +80,7 @@ static void r_ioport_hw_pin_event_output_data_write(bsp_io_port_t  port,
 
 static void r_ioport_pfs_write(bsp_io_port_pin_t pin, uint32_t value);
 
-#if BSP_MCU_VBATT_SUPPORT
+#if BSP_FEATURE_SYSC_HAS_VBTICTLR || BSP_FEATURE_RTC_HAS_TCEN
 static void bsp_vbatt_init(ioport_cfg_t const * const p_pin_cfg); // Used internally by BSP
 
 #endif
@@ -106,7 +102,6 @@ const ioport_api_t g_ioport_on_ioport =
     .pinCfg               = R_IOPORT_PinCfg,
     .pinEventInputRead    = R_IOPORT_PinEventInputRead,
     .pinEventOutputWrite  = R_IOPORT_PinEventOutputWrite,
-    .pinEthernetModeCfg   = R_IOPORT_EthernetModeCfg,
     .pinRead              = R_IOPORT_PinRead,
     .pinWrite             = R_IOPORT_PinWrite,
     .portDirectionSet     = R_IOPORT_PortDirectionSet,
@@ -116,7 +111,7 @@ const ioport_api_t g_ioport_on_ioport =
     .portWrite            = R_IOPORT_PortWrite,
 };
 
-#if BSP_MCU_VBATT_SUPPORT
+#if BSP_FEATURE_SYSC_HAS_VBTICTLR || BSP_FEATURE_RTC_HAS_TCEN
 static const bsp_io_port_pin_t g_vbatt_pins_input[] =
 {
     BSP_IO_PORT_04_PIN_02,             ///< Associated with VBTICTLR->VCH0INEN
@@ -148,7 +143,7 @@ fsp_err_t R_IOPORT_Open (ioport_ctrl_t * const p_ctrl, const ioport_cfg_t * p_cf
 #if (1 == IOPORT_CFG_PARAM_CHECKING_ENABLE)
     FSP_ASSERT(NULL != p_instance_ctrl);
     FSP_ASSERT(NULL != p_cfg);
-    FSP_ASSERT(NULL != p_cfg->p_pin_cfg_data);
+    FSP_ASSERT(NULL != p_cfg->p_pin_cfg_data || 0 == p_cfg->number_of_pins);
     FSP_ERROR_RETURN(IOPORT_OPEN != p_instance_ctrl->open, FSP_ERR_ALREADY_OPEN);
 #else
     FSP_PARAMETER_NOT_USED(p_ctrl);
@@ -238,7 +233,7 @@ fsp_err_t R_IOPORT_PinCfg (ioport_ctrl_t * const p_ctrl, bsp_io_port_pin_t pin, 
     FSP_PARAMETER_NOT_USED(p_ctrl);
 #endif
 
-#if BSP_MCU_VBATT_SUPPORT
+#if BSP_FEATURE_SYSC_HAS_VBTICTLR || BSP_FEATURE_RTC_HAS_TCEN
 
     /* Create temporary structure for handling VBATT pins. */
     ioport_cfg_t     temp_cfg;
@@ -673,39 +668,6 @@ fsp_err_t R_IOPORT_PinEventOutputWrite (ioport_ctrl_t * const p_ctrl, bsp_io_por
     return FSP_SUCCESS;
 }
 
-/***********************************************************************************************************************
- * DEPRECATED Configures Ethernet channel PHY mode. Implements @ref ioport_api_t::pinEthernetModeCfg.
- *
- * @retval FSP_SUCCESS              Ethernet PHY mode set
- * @retval FSP_ERR_INVALID_ARGUMENT Channel or mode not valid
- * @retval FSP_ERR_UNSUPPORTED      Ethernet configuration not supported on this device.
- * @retval FSP_ERR_NOT_OPEN         The module has not been opened
- * @retval FSP_ERR_ASSERTION        NULL pointer
- *
- * @note This function is not re-entrant.
- **********************************************************************************************************************/
-fsp_err_t R_IOPORT_EthernetModeCfg (ioport_ctrl_t * const     p_ctrl,
-                                    ioport_ethernet_channel_t channel,
-                                    ioport_ethernet_mode_t    mode)
-{
-    FSP_ERROR_RETURN(1U == BSP_FEATURE_IOPORT_HAS_ETHERNET, FSP_ERR_UNSUPPORTED);
-
-#if (1 == IOPORT_CFG_PARAM_CHECKING_ENABLE)
-    ioport_instance_ctrl_t * p_instance_ctrl = (ioport_instance_ctrl_t *) p_ctrl;
-    FSP_ASSERT(NULL != p_instance_ctrl);
-    FSP_ERROR_RETURN(IOPORT_OPEN == p_instance_ctrl->open, FSP_ERR_NOT_OPEN);
-    FSP_ERROR_RETURN(channel < IOPORT_ETHERNET_CHANNEL_END, FSP_ERR_INVALID_ARGUMENT);
-    FSP_ERROR_RETURN(mode < IOPORT_ETHERNET_MODE_END, FSP_ERR_INVALID_ARGUMENT);
-#else
-    FSP_PARAMETER_NOT_USED(p_ctrl);
-    FSP_PARAMETER_NOT_USED(channel);
-#endif
-
-    R_PMISC->PFENET = (uint8_t) mode;
-
-    return FSP_SUCCESS;
-}
-
 /*******************************************************************************************************************//**
  * @} (end addtogroup IOPORT)
  **********************************************************************************************************************/
@@ -721,7 +683,7 @@ fsp_err_t R_IOPORT_EthernetModeCfg (ioport_ctrl_t * const     p_ctrl,
  **********************************************************************************************************************/
 void r_ioport_pins_config (const ioport_cfg_t * p_cfg)
 {
-#if BSP_MCU_VBATT_SUPPORT
+#if BSP_FEATURE_SYSC_HAS_VBTICTLR || BSP_FEATURE_RTC_HAS_TCEN
 
     /* Handle any VBATT domain pin configuration. */
     bsp_vbatt_init(p_cfg);
@@ -812,7 +774,7 @@ static void r_ioport_pfs_write (bsp_io_port_pin_t pin, uint32_t value)
     R_PFS->PORT[pin >> IOPORT_PRV_PORT_OFFSET].PIN[pin & BSP_IO_PRV_8BIT_MASK].PmnPFS = value;
 }
 
-#if BSP_MCU_VBATT_SUPPORT
+#if BSP_FEATURE_SYSC_HAS_VBTICTLR || BSP_FEATURE_RTC_HAS_TCEN
 
 /*******************************************************************************************************************//**
  * @brief Initializes VBTICTLR register based on pin configuration.
@@ -826,12 +788,31 @@ static void bsp_vbatt_init (ioport_cfg_t const * const p_pin_cfg)
 {
     uint32_t pin_index;
     uint32_t vbatt_index;
-    uint8_t  local_vbtictlr_set;       ///< Will hold bits to set in VBTICTLR
-    uint8_t  local_vbtictlr_clear;     ///< Will hold bits to clear in VBTICTLR
 
-    /* Make no changes unless required. */
-    local_vbtictlr_set   = 0U;
-    local_vbtictlr_clear = 0U;
+ #if BSP_FEATURE_SYSC_HAS_VBTICTLR
+    R_SYSTEM_Type * p_system = R_SYSTEM;
+ #endif
+ #if BSP_FEATURE_RTC_HAS_TCEN
+    R_RTC_Type * p_rtc = R_RTC;
+ #endif
+
+ #if BSP_TZ_SECURE_BUILD && BSP_FEATURE_TZ_NS_OFFSET > 0
+  #if BSP_FEATURE_SYSC_HAS_VBTICTLR
+    if (1 == R_SYSTEM->BBFSAR_b.NONSEC2)
+    {
+        /* If security attribution of VBTICTLR is set to non-secure, then use the non-secure alias. */
+        p_system = (R_SYSTEM_Type *) ((uint32_t) p_system | BSP_FEATURE_TZ_NS_OFFSET);
+    }
+  #endif
+
+  #if BSP_FEATURE_RTC_HAS_TCEN
+    if (1 == R_PSCU->PSARE_b.PSARE2)
+    {
+        /* If security attribution of RTC is set to non-secure, then use the non-secure alias. */
+        p_rtc = (R_RTC_Type *) ((uint32_t) p_rtc | BSP_FEATURE_TZ_NS_OFFSET);
+    }
+  #endif
+ #endif
 
     /* Must loop over all pins as pin configuration table is unordered. */
     for (pin_index = 0U; pin_index < p_pin_cfg->number_of_pins; pin_index++)
@@ -850,29 +831,92 @@ static void bsp_vbatt_init (ioport_cfg_t const * const p_pin_cfg)
                 if ((IOPORT_PERIPHERAL_AGT == pfs_psel_value) || (IOPORT_PERIPHERAL_CLKOUT_COMP_RTC == pfs_psel_value))
                 {
                     /* Bit should be set to 1. */
-                    local_vbtictlr_set |= (uint8_t) (1U << vbatt_index);
+ #if BSP_FEATURE_SYSC_HAS_VBTICTLR
+  #if BSP_TZ_NONSECURE_BUILD
+                    if (0 == R_SYSTEM->BBFSAR_b.NONSEC2)
+                    {
+                        /* Do nothing: non secure build can't configure secure VBTICTLR register. */
+                    }
+                    else
+  #endif
+                    if (0 == (p_system->VBTICTLR & (uint8_t) (1U << vbatt_index)))
+                    {
+                        R_BSP_RegisterProtectDisable(BSP_REG_PROTECT_OM_LPC_BATT);
+                        p_system->VBTICTLR |= (uint8_t) (1U << vbatt_index);
+                        R_BSP_RegisterProtectEnable(BSP_REG_PROTECT_OM_LPC_BATT);
+                    }
+                    else
+                    {
+                        /* Do nothing: it is already enabled. */
+                    }
+ #endif
+ #if BSP_FEATURE_RTC_HAS_TCEN
+  #if BSP_TZ_NONSECURE_BUILD
+                    if (0 == R_PSCU->PSARE_b.PSARE2)
+                    {
+                        /* Do nothing: non secure build can't configure secure RTC registers. */
+                    }
+                    else
+  #endif
+                    {
+                        if (0 == p_rtc->RTCCR[vbatt_index].RTCCR_b.TCEN)
+                        {
+                            p_rtc->RTCCR[vbatt_index].RTCCR_b.TCEN = 1;
+                            R_BSP_SoftwareDelay(BSP_PRV_RTC_RESET_DELAY_US, BSP_DELAY_UNITS_MICROSECONDS);
+                        }
+                        else
+                        {
+                            /* Do nothing: it is already enabled. */
+                        }
+                    }
+ #endif
                 }
                 else
                 {
                     /* Bit should be cleared to 0. */
-                    local_vbtictlr_clear |= (uint8_t) (1U << vbatt_index);
+ #if BSP_FEATURE_SYSC_HAS_VBTICTLR
+  #if BSP_TZ_NONSECURE_BUILD
+                    if (0 == R_SYSTEM->BBFSAR_b.NONSEC2)
+                    {
+                        /* Do nothing: non secure build can't configure secure VBTICTLR register. */
+                    }
+                    else
+  #endif
+                    if ((p_system->VBTICTLR & (uint8_t) (1U << vbatt_index)) > 0)
+                    {
+                        R_BSP_RegisterProtectDisable(BSP_REG_PROTECT_OM_LPC_BATT);
+                        p_system->VBTICTLR &= (uint8_t) ~(1U << vbatt_index);
+                        R_BSP_RegisterProtectEnable(BSP_REG_PROTECT_OM_LPC_BATT);
+                    }
+                    else
+                    {
+                        /* Do nothing: it is already disabled. */
+                    }
+ #endif
+ #if BSP_FEATURE_RTC_HAS_TCEN
+  #if BSP_TZ_NONSECURE_BUILD
+                    if (0 == R_PSCU->PSARE_b.PSARE2)
+                    {
+                        /* Do nothing: non secure build can't configure secure RTC registers. */
+                    }
+                    else
+  #endif
+                    {
+                        if (p_rtc->RTCCR[vbatt_index].RTCCR_b.TCEN > 0)
+                        {
+                            p_rtc->RTCCR[vbatt_index].RTCCR_b.TCEN = 0;
+                            R_BSP_SoftwareDelay(BSP_PRV_RTC_RESET_DELAY_US, BSP_DELAY_UNITS_MICROSECONDS);
+                        }
+                        else
+                        {
+                            /* Do nothing: it is already disabled. */
+                        }
+                    }
+ #endif
                 }
             }
         }
     }
-
-    /* Disable write protection on VBTICTLR. */
-    R_BSP_RegisterProtectDisable(BSP_REG_PROTECT_OM_LPC_BATT);
-
-    /* Read value, set and clear bits as needed and write back. */
-    uint8_t local_vbtictlr = R_SYSTEM->VBTICTLR;
-    local_vbtictlr |= local_vbtictlr_set;              ///< Set appropriate bits
-    local_vbtictlr &= (uint8_t) ~local_vbtictlr_clear; ///< Clear appropriate bits
-
-    R_SYSTEM->VBTICTLR = local_vbtictlr;
-
-    /* Enable write protection on VBTICTLR. */
-    R_BSP_RegisterProtectEnable(BSP_REG_PROTECT_OM_LPC_BATT);
 }
 
 #endif

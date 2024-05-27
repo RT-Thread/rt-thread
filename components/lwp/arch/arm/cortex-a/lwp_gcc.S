@@ -21,7 +21,7 @@
 #define  Mode_UDF       0x1B
 #define  Mode_SYS       0x1F
 
-#define A_Bit        0x100 
+#define A_Bit        0x100
 #define I_Bit        0x80 @; when I bit is set, IRQ is disabled
 #define F_Bit        0x40 @; when F bit is set, FIQ is disabled
 #define T_Bit        0x20
@@ -197,6 +197,7 @@ arch_syscall_exit:
 
 .global arch_ret_to_user
 arch_ret_to_user:
+    /* save all context for signal handler */
     push {r0-r12, lr}
     bl lwp_check_debug
     bl lwp_check_exit_request
@@ -208,19 +209,15 @@ arch_ret_to_user:
     mov r0, sp
     /* r0 -> exp frame */
     bl lwp_thread_signal_catch
-    pop {r0-r12, lr}
 
-    push {r0}
     ldr r0, =rt_dbg_ops
     ldr r0, [r0]
     cmp r0, #0
-    pop  {r0}
     beq 2f
-    push {r0-r3, r12, lr}
     mov r0, lr
     bl dbg_attach_req
-    pop {r0-r3, r12, lr}
 2:
+    pop {r0-r12, lr}
     movs pc, lr
 
 #ifdef RT_USING_SMART
@@ -318,12 +315,16 @@ arch_signal_quit:
 arch_thread_signal_enter:
     mov r4, r0
     mov r5, r3
+    mov r6, r2
 
     cps #Mode_SYS
     mov r0, lr
     mov r3, sp
     cps #Mode_SVC
     bl arch_signal_ucontext_save
+
+    /* drop volatile frame {r0-r12, lr} */
+    add sp, r6, #14*4
 
     /* reset user sp */
     cps #Mode_SYS
@@ -334,18 +335,18 @@ arch_thread_signal_enter:
     /* r1,r2 <- new_user_sp */
     mov r1, r0
     mov r2, r0
+
+    mcr p15, 0, r0, c7, c11, 1   ;//dc cmvau
+    add r0, #4
+    mcr p15, 0, r0, c7, c11, 1   ;//dc cmvau
+    dsb
+    isb
+    mcr p15, 0, r1, c7, c5, 0   ;//iciallu
+    dsb
+    isb
+
     /* r0 <- signo */
     mov r0, r4
-
-    mov r1, r0
-    mcr p15, 0, r1, c7, c11, 1   ;//dc cmvau
-    add r1, #4
-    mcr p15, 0, r1, c7, c11, 1   ;//dc cmvau
-    dsb
-    isb
-    mcr p15, 0, r0, c7, c5, 0   ;//iciallu
-    dsb
-    isb
 
     /* r4 <- &sigreturn */
     mov r4, r2

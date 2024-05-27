@@ -52,12 +52,19 @@ def GenerateCFiles(env):
         cc = os.path.abspath(cc).replace('\\', '/')
 
         config_obj = {}
-        config_obj['name'] = 'Win32'
+        config_obj['name'] = 'rt-thread'
         config_obj['defines'] = info['CPPDEFINES']
-        config_obj['intelliSenseMode'] = 'clang-x64'
+
+        intelliSenseMode = 'gcc-arm'
+        if cc.find('aarch64') != -1:
+            intelliSenseMode = 'gcc-arm64'
+        elif cc.find('arm') != -1:
+            intelliSenseMode = 'gcc-arm'
+        config_obj['intelliSenseMode'] = intelliSenseMode
         config_obj['compilerPath'] = cc
         config_obj['cStandard'] = "c99"
         config_obj['cppStandard'] = "c++11"
+        config_obj['compileCommands'] ="build/compile_commands.json"
 
         # format "a/b," to a/b. remove first quotation mark("),and remove end (",)
         includePath = []

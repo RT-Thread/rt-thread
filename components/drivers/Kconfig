@@ -7,30 +7,7 @@ config RT_USING_DM
         Enable device driver model with device tree (FDT). It will use more memory
         to parse and support device tree feature.
 
-config RT_USING_DEVICE_IPC
-    bool "Using device drivers IPC"
-    default y
-
-config RT_UNAMED_PIPE_NUMBER
-    int "The number of unamed pipe"
-    depends on RT_USING_DEVICE_IPC
-    default 64
-
-if RT_USING_DEVICE_IPC
-    config RT_USING_SYSTEM_WORKQUEUE
-        bool "Using system default workqueue"
-        default n
-
-    if RT_USING_SYSTEM_WORKQUEUE
-        config RT_SYSTEM_WORKQUEUE_STACKSIZE
-            int "The stack size for system workqueue thread"
-            default 2048
-
-        config RT_SYSTEM_WORKQUEUE_PRIORITY
-            int "The priority level of system workqueue thread"
-            default 23
-    endif
-endif
+source "$RTT_DIR/components/drivers/ipc/Kconfig"
 
 menuconfig RT_USING_SERIAL
     bool "USING Serial device drivers"

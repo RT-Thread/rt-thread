@@ -1,11 +1,12 @@
 /*
- * Copyright (c) 2006-2023, RT-Thread Development Team
+ * Copyright (c) 2006-2024, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author        Notes
- * 2011-07-25     weety     first version
+ * 2011-07-25     weety         first version
+ * 2024-05-25     HPMicro       add HS400 support
  */
 
 #ifndef __HOST_H__
@@ -60,6 +61,7 @@ struct rt_mmcsd_io_cfg
 #define MMCSD_TIMING_MMC_DDR52  8
 #define MMCSD_TIMING_MMC_HS200  9
 #define MMCSD_TIMING_MMC_HS400  10
+#define MMCSD_TIMING_MMC_HS400_ENH_DS  11
 
     unsigned char   drv_type;       /* driver type (A, B, C, D) */
 
@@ -120,15 +122,19 @@ struct rt_mmcsd_host
 #define MMCSD_HOST_IS_SPI   (1 << 3)
 #define controller_is_spi(host) (host->flags & MMCSD_HOST_IS_SPI)
 #define MMCSD_SUP_SDIO_IRQ  (1 << 4)    /* support signal pending SDIO IRQs */
-#define MMCSD_SUP_HIGHSPEED (1 << 5)    /* support high speed SDR*/
+#define MMCSD_SUP_HIGHSPEED (1 << 5)    /* support high speed SDR */
 #define MMCSD_SUP_DDR_3V3    (1 << 6)
 #define MMCSD_SUP_DDR_1V8    (1 << 7)
 #define MMCSD_SUP_DDR_1V2    (1 << 8)
-#define MMCSD_SUP_HIGHSPEED_DDR (MMCSD_SUP_DDR_3V3 | MMCSD_SUP_DDR_1V8 | MMCSD_SUP_DDR_1V2)/* HIGH SPEED DDR*/
+#define MMCSD_SUP_HIGHSPEED_DDR (MMCSD_SUP_DDR_3V3 | MMCSD_SUP_DDR_1V8 | MMCSD_SUP_DDR_1V2)/* HIGH SPEED DDR */
 #define MMCSD_SUP_HS200_1V8  (1 << 9)
 #define MMCSD_SUP_HS200_1V2  (1 << 10)
 #define MMCSD_SUP_HS200     (MMCSD_SUP_HS200_1V2 | MMCSD_SUP_HS200_1V8) /* hs200 sdr */
 #define MMCSD_SUP_NONREMOVABLE  (1 << 11)
+#define MMCSD_SUP_HS400_1V8  (1 << 12)
+#define MMCSD_SUP_HS400_1V2  (1 << 13)
+#define MMCSD_SUP_HS400      (MMCSD_SUP_HS400_1V2 | MMCSD_SUP_HS400_1V8) /* hs400 ddr */
+#define MMCSD_SUP_ENH_DS     (1 << 14)
 
     rt_uint32_t max_seg_size;   /* maximum size of one dma segment */
     rt_uint32_t max_dma_segs;   /* maximum number of dma segments in one request */

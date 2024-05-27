@@ -5,6 +5,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
+ * 2024-04-28     Shell        Add new wait_flags() & wakeup_by_errno() API
  */
 #ifndef COMPLETION_H_
 #define COMPLETION_H_
@@ -13,7 +14,7 @@
 #include <rtconfig.h>
 
 /**
- * Completion - A tiny IPC implementation for resource-constrained scenarios
+ * Completion - A tiny & rapid IPC primitive for resource-constrained scenarios
  *
  * It's an IPC using one CPU word with the encoding:
  *
@@ -24,7 +25,7 @@
 struct rt_completion
 {
     /* suspended thread, and completed flag */
-    rt_base_t susp_thread_n_flag;
+    rt_atomic_t susp_thread_n_flag;
 };
 
 #define RT_COMPLETION_INIT(comp) {0}
@@ -32,7 +33,9 @@ struct rt_completion
 void rt_completion_init(struct rt_completion *completion);
 rt_err_t rt_completion_wait(struct rt_completion *completion,
                             rt_int32_t            timeout);
+rt_err_t rt_completion_wait_flags(struct rt_completion *completion,
+                                  rt_int32_t timeout, int suspend_flag);
 void rt_completion_done(struct rt_completion *completion);
 rt_err_t rt_completion_wakeup(struct rt_completion *completion);
-
+rt_err_t rt_completion_wakeup_by_errno(struct rt_completion *completion, rt_err_t error);
 #endif

@@ -15,6 +15,20 @@ config PKGS_DIR
     option env="PKGS_ROOT"
     default "packages"
 
+config SOC_STM32H7RS
+    bool
+    select SOC_SERIES_STM32H7RS
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+    select RT_USING_CACHE
+    default y
+
+config SOC_SERIES_STM32H7RS
+    bool
+    select ARCH_ARM_CORTEX_M7
+    select SOC_FAMILY_STM32
+    default y
+
 source "$RTT_DIR/Kconfig"
 source "$PKGS_DIR/Kconfig"
 source "../libraries/Kconfig"

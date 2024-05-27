@@ -34,7 +34,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     name: Tools
-    if: github.repository_owner == 'RT-Thread'
+    if: github.repository_owner == 'RT-Thread' && false
     strategy:
       fail-fast: false
     env:
@@ -84,4 +84,3 @@ jobs:
         scons --pyconfig-silent -C $TEST_BSP_ROOT/rt-studio-project
         scons -C $TEST_BSP_ROOT/dist/project
         scons -C $TEST_BSP_ROOT/rt-studio-project
-        

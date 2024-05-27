@@ -8,6 +8,11 @@ if not GetDepend('RT_USING_HEAP'):
     SrcRemove(src, 'dataqueue.c')
     SrcRemove(src, 'pipe.c')
 
+if not GetDepend('RT_USING_SMP'):
+    SrcRemove(src, 'completion_mp.c')
+else:
+    SrcRemove(src, 'completion_up.c')
+
 group = DefineGroup('DeviceDrivers', src, depend = ['RT_USING_DEVICE_IPC'], CPPPATH = CPPPATH, LOCAL_CPPDEFINES=['__RT_IPC_SOURCE__'])
 
 Return('group')

@@ -22,6 +22,7 @@
         <file category="include" name="ra/fsp/inc/"/>
         <file category="include" name="ra/fsp/inc/api/"/>
         <file category="include" name="ra/fsp/inc/instances/"/>
+        <file category="include" name="ra/tes/dave2d/inc/"/>
         <file category="header" name="ra/arm/CMSIS_5/CMSIS/Core/Include/cachel1_armv7.h" path=""/>
         <file category="header" name="ra/arm/CMSIS_5/CMSIS/Core/Include/cmsis_armcc.h" path=""/>
         <file category="header" name="ra/arm/CMSIS_5/CMSIS/Core/Include/cmsis_armclang.h" path=""/>
@@ -43,34 +44,30 @@
         <file category="header" name="ra/arm/CMSIS_5/CMSIS/Core/Include/core_cm4.h" path=""/>
         <file category="header" name="ra/arm/CMSIS_5/CMSIS/Core/Include/core_cm55.h" path=""/>
         <file category="header" name="ra/arm/CMSIS_5/CMSIS/Core/Include/core_cm7.h" path=""/>
+        <file category="header" name="ra/arm/CMSIS_5/CMSIS/Core/Include/core_cm85.h" path=""/>
         <file category="header" name="ra/arm/CMSIS_5/CMSIS/Core/Include/core_sc000.h" path=""/>
         <file category="header" name="ra/arm/CMSIS_5/CMSIS/Core/Include/core_sc300.h" path=""/>
+        <file category="header" name="ra/arm/CMSIS_5/CMSIS/Core/Include/core_starmc1.h" path=""/>
         <file category="header" name="ra/arm/CMSIS_5/CMSIS/Core/Include/mpu_armv7.h" path=""/>
         <file category="header" name="ra/arm/CMSIS_5/CMSIS/Core/Include/mpu_armv8.h" path=""/>
+        <file category="header" name="ra/arm/CMSIS_5/CMSIS/Core/Include/pac_armv81.h" path=""/>
         <file category="header" name="ra/arm/CMSIS_5/CMSIS/Core/Include/pmu_armv8.h" path=""/>
         <file category="header" name="ra/arm/CMSIS_5/CMSIS/Core/Include/tz_context.h" path=""/>
         <file category="other" name="ra/arm/CMSIS_5/LICENSE.txt"/>
-        <file category="header" name="ra/board/ra6m3/board.h" path=""/>
-        <file category="header" name="ra/board/ra6m3/board_ethernet_phy.h" path=""/>
-        <file category="source" name="ra/board/ra6m3/board_init.c"/>
-        <file category="header" name="ra/board/ra6m3/board_init.h" path=""/>
-        <file category="source" name="ra/board/ra6m3/board_leds.c"/>
-        <file category="header" name="ra/board/ra6m3/board_leds.h" path=""/>
         <file category="header" name="ra/fsp/inc/api/bsp_api.h" path=""/>
+        <file category="header" name="ra/fsp/inc/api/fsp_common_api.h" path=""/>
         <file category="header" name="ra/fsp/inc/api/r_ioport_api.h" path=""/>
         <file category="header" name="ra/fsp/inc/api/r_transfer_api.h" path=""/>
         <file category="header" name="ra/fsp/inc/api/r_uart_api.h" path=""/>
-        <file category="header" name="ra/fsp/inc/fsp_common_api.h" path=""/>
         <file category="header" name="ra/fsp/inc/fsp_features.h" path=""/>
         <file category="header" name="ra/fsp/inc/fsp_version.h" path=""/>
         <file category="header" name="ra/fsp/inc/instances/r_ioport.h" path=""/>
         <file category="header" name="ra/fsp/inc/instances/r_sci_uart.h" path=""/>
-        <file category="header" name="ra/fsp/src/bsp/cmsis/Device/RENESAS/Include/base_addresses.h" path=""/>
+        <file category="header" name="ra/fsp/src/bsp/cmsis/Device/RENESAS/Include/R7FA6M3AH.h" path=""/>
         <file category="header" name="ra/fsp/src/bsp/cmsis/Device/RENESAS/Include/renesas.h" path=""/>
         <file category="header" name="ra/fsp/src/bsp/cmsis/Device/RENESAS/Include/system.h" path=""/>
         <file category="source" name="ra/fsp/src/bsp/cmsis/Device/RENESAS/Source/startup.c"/>
         <file category="source" name="ra/fsp/src/bsp/cmsis/Device/RENESAS/Source/system.c"/>
-        <file category="header" name="ra/fsp/src/bsp/mcu/all/bsp_arm_exceptions.h" path=""/>
         <file category="source" name="ra/fsp/src/bsp/mcu/all/bsp_clocks.c"/>
         <file category="header" name="ra/fsp/src/bsp/mcu/all/bsp_clocks.h" path=""/>
         <file category="source" name="ra/fsp/src/bsp/mcu/all/bsp_common.c"/>
@@ -78,6 +75,7 @@
         <file category="header" name="ra/fsp/src/bsp/mcu/all/bsp_compiler_support.h" path=""/>
         <file category="source" name="ra/fsp/src/bsp/mcu/all/bsp_delay.c"/>
         <file category="header" name="ra/fsp/src/bsp/mcu/all/bsp_delay.h" path=""/>
+        <file category="header" name="ra/fsp/src/bsp/mcu/all/bsp_exceptions.h" path=""/>
         <file category="source" name="ra/fsp/src/bsp/mcu/all/bsp_group_irq.c"/>
         <file category="header" name="ra/fsp/src/bsp/mcu/all/bsp_group_irq.h" path=""/>
         <file category="source" name="ra/fsp/src/bsp/mcu/all/bsp_guard.c"/>

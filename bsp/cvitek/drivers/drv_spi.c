@@ -9,7 +9,6 @@
  */
 
 #include "drv_spi.h"
-#ifdef RT_USING_SPI
 
 #define DBG_TAG "drv.spi"
 #define DBG_LVL DBG_INFO
@@ -231,5 +230,3 @@ int rt_hw_spi_init(void)
     return ret;
 }
 INIT_BOARD_EXPORT(rt_hw_spi_init);
-
-#endif /* RT_USING_SPI */
