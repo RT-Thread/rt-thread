@@ -806,7 +806,7 @@ void init_cycfg_system(void)
     #ifdef CY_CFG_SYSCLK_ILO_ENABLED
         Cy_SysClk_IloInit();
     #endif
-    
+
     #ifndef CY_CFG_SYSCLK_IMO_ENABLED
         #error the IMO must be enabled for proper chip operation
     #endif
@@ -814,7 +814,7 @@ void init_cycfg_system(void)
     #ifdef CY_CFG_SYSCLK_MFO_ENABLED
         Cy_SysClk_MfoInit();
     #endif
-    
+
     #ifdef CY_CFG_SYSCLK_CLKMF_ENABLED
         Cy_SysClk_ClkMfInit();
     #endif
@@ -837,7 +837,7 @@ void init_cycfg_system(void)
     #endif
 
     Cy_SysClk_ClkHf0Init();
-    
+
     #ifdef CY_CFG_SYSCLK_CLKFAST_0_ENABLED
         Cy_SysClk_ClkFast_0_Init();
     #endif
