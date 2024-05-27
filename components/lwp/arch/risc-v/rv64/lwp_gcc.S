@@ -40,7 +40,7 @@ arch_start_umode:
     csrs sstatus, t0
 
     csrw sepc, a1
-    mv a3, a2
+    mv sp, a2
     sret//enter user mode
 
 /*
