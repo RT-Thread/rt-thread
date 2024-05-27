@@ -36,6 +36,8 @@ Export('rtconfig')
 
 SDK_ROOT = os.path.abspath('./')
 
+libraries_path_prefix = SDK_ROOT
+
 if os.path.exists(SDK_ROOT + '/packages'):
     libraries_path_prefix = SDK_ROOT + '/packages'
 else:
