@@ -1219,12 +1219,12 @@ long list_process(void)
 
     maxlen = RT_NAME_MAX;
 #ifdef RT_USING_SMP
-    rt_kprintf("%-*.s %-*.s %-*.s cpu pri  status      sp     stack size max used left tick  error\n", 4, "PID", maxlen, "CMD", maxlen, item_title);
-    object_split(4);rt_kprintf(" ");object_split(maxlen);rt_kprintf(" ");object_split(maxlen);rt_kprintf(" ");
+    rt_kprintf("%-*.s %-*.s %-*.s %-*.s cpu pri  status      sp     stack size max used left tick  error\n", 4, "PID", 4, "TID", maxlen, "CMD", maxlen, item_title);
+    object_split(4);rt_kprintf(" ");object_split(4);rt_kprintf(" ");object_split(maxlen);rt_kprintf(" ");object_split(maxlen);rt_kprintf(" ");
     rt_kprintf(                  "--- ---  ------- ---------- ----------  ------  ---------- ---\n");
 #else
-    rt_kprintf("%-*.s %-*.s %-*.s pri  status      sp     stack size max used left tick  error\n", 4, "PID", maxlen, "CMD", maxlen, item_title);
-    object_split(4);rt_kprintf(" ");object_split(maxlen);rt_kprintf(" ");object_split(maxlen);rt_kprintf(" ");
+    rt_kprintf("%-*.s %-*.s %-*.s %-*.s pri  status      sp     stack size max used left tick  error\n", 4, "PID", 4, "TID", maxlen, "CMD", maxlen, item_title);
+    object_split(4);rt_kprintf(" ");object_split(4);rt_kprintf(" ");object_split(maxlen);rt_kprintf(" ");object_split(maxlen);rt_kprintf(" ");
     rt_kprintf(                  "---  ------- ---------- ----------  ------  ---------- ---\n");
 #endif /*RT_USING_SMP*/
 
@@ -1256,8 +1256,8 @@ long list_process(void)
                     rt_spin_unlock_irqrestore(&thread->spinlock, level);
 
                     if (th.lwp == RT_NULL)
-                    {
-                        rt_kprintf("     %-*.*s ", maxlen, RT_NAME_MAX, "kernel");
+                    {   
+                        rt_kprintf("          %-*.*s ",maxlen, RT_NAME_MAX, "kernel");
                         print_thread_info(&th, maxlen);
                     }
                 }
@@ -1276,7 +1276,7 @@ long list_process(void)
             for (node = list->next; node != list; node = node->next)
             {
                 thread = rt_list_entry(node, struct rt_thread, sibling);
-                rt_kprintf("%4d %-*.*s ", lwp_to_pid(lwp), maxlen, RT_NAME_MAX, lwp->cmd);
+                rt_kprintf("%4d %4d %-*.*s ", lwp_to_pid(lwp), thread->tid,maxlen, RT_NAME_MAX, lwp->cmd);
                 print_thread_info(thread, maxlen);
             }
         }
