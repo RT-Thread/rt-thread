@@ -189,13 +189,33 @@
 
 /* peripheral libraries and drivers */
 
+/* HAL & SDK Drivers */
+
+/* STM32 HAL & SDK Drivers */
+
+
+/* Infineon HAL Packages */
+
+#define PKG_USING_INFINEON_CAT1CM0P
+#define PKG_USING_INFINEON_CAT1CM0P_LATEST_VERSION
+#define PKG_USING_INFINEON_CMSIS
+#define PKG_USING_INFINEON_CMSIS_LATEST_VERSION
+#define PKG_USING_INFINEON_CORE_LIB
+#define PKG_USING_INFINEON_CORE_LIB_LATEST_VERSION
+#define PKG_USING_INFINEON_MTB_HAL_CAT1
+#define PKG_USING_INFINEON_MTB_HAL_CAT1_LATEST_VERSION
+#define PKG_USING_INFINEON_MTB_PDL_CAT1
+#define PKG_USING_INFINEON_MTB_PDL_CAT1_LATEST_VERSION
+#define PKG_USING_INFINEON_RETARGET_IO
+#define PKG_USING_INFINEON_RETARGET_IO_LATEST_VERSION
+
+/* Kendryte SDK */
+
+
 /* sensors drivers */
 
 
 /* touch drivers */
-
-
-/* Kendryte SDK */
 
 
 /* AI packages */
