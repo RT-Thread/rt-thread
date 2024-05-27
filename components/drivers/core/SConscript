@@ -10,6 +10,9 @@ if GetDepend(['RT_USING_DEV_BUS']) or GetDepend(['RT_USING_DM']):
 if GetDepend(['RT_USING_DM']):
     src = src + ['dm.c', 'driver.c', 'platform.c']
 
+    if GetDepend(['RT_USING_DFS']):
+        src += ['mnt.c'];
+
 if GetDepend(['RT_USING_OFW']):
     src += ['platform_ofw.c']
 
