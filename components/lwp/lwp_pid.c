@@ -1256,7 +1256,7 @@ long list_process(void)
                     rt_spin_unlock_irqrestore(&thread->spinlock, level);
 
                     if (th.lwp == RT_NULL)
-                    {   
+                    {
                         rt_kprintf("          %-*.*s ",maxlen, RT_NAME_MAX, "kernel");
                         print_thread_info(&th, maxlen);
                     }
