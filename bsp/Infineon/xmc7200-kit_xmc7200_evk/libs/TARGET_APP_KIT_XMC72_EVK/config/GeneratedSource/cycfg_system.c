@@ -827,7 +827,7 @@ void init_cycfg_system(void)
         #if (defined (CY_CFG_PWR_ENABLED) && defined (CY_CFG_SYSCLK_CLKHF1_ENABLED))
             Cy_SysLib_SetWaitStates(false, CY_CFG_SYSCLK_CLKHF1_FREQ_MHZ);
         #endif
-    
+
     #ifdef CY_CFG_SYSCLK_CLKPATH0_ENABLED
         Cy_SysClk_ClkPath0Init();
     #endif
@@ -837,11 +837,11 @@ void init_cycfg_system(void)
     #endif
 
     Cy_SysClk_ClkHf0Init();
-    
+
     #ifdef CY_CFG_SYSCLK_CLKFAST_0_ENABLED
         Cy_SysClk_ClkFast_0_Init();
     #endif
-    
+
     #ifdef CY_CFG_SYSCLK_CLKFAST_1_ENABLED
         Cy_SysClk_ClkFast_1_Init();
     #endif
