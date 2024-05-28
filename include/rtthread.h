@@ -669,6 +669,12 @@ rt_err_t  rt_device_control(rt_device_t dev, int cmd, void *arg);
 void rt_interrupt_enter(void);
 void rt_interrupt_leave(void);
 
+/**
+ * CPU object
+ */
+struct rt_cpu *rt_cpu_self(void);
+struct rt_cpu *rt_cpu_index(int index);
+
 #ifdef RT_USING_SMP
 
 /*
@@ -678,9 +684,6 @@ void rt_interrupt_leave(void);
 rt_base_t rt_cpus_lock(void);
 void rt_cpus_unlock(rt_base_t level);
 void rt_cpus_lock_status_restore(struct rt_thread *thread);
-
-struct rt_cpu *rt_cpu_self(void);
-struct rt_cpu *rt_cpu_index(int index);
 
 #ifdef RT_USING_DEBUG
     rt_base_t rt_cpu_get_id(void);
