@@ -249,7 +249,7 @@ void lwp_user_setting_restore(rt_thread_t thread);
 void lwp_uthread_ctx_save(void *ctx);
 void lwp_uthread_ctx_restore(void);
 
-int lwp_setaffinity(pid_t pid, int cpu);
+int lwp_setaffinity(int tid, int cpu);
 
 pid_t exec(char *filename, int debug, int argc, char **argv);
 

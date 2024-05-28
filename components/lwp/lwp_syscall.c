@@ -5426,6 +5426,12 @@ sysret_t sys_sched_setaffinity(pid_t pid, size_t size, void *set)
         if (CPU_ISSET_S(i, size, kset))
         {
             kmem_put(kset);
+
+            /**
+             * yes it's tricky.
+             * But when we talk about 'pid' from GNU libc, it's the 'task-id'
+             * aka 'thread->tid' known in kernel.
+             */
             return lwp_setaffinity(pid, i);
         }
     }
