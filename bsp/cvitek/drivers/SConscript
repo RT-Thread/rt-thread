@@ -5,6 +5,7 @@ src     = Split('''
     drv_uart.c
     drv_por.c
     drv_gpio.c
+    drv_pinmux.c
 ''')
 CPPDEFINES = []
 
