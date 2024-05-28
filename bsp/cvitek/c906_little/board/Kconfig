@@ -190,20 +190,80 @@ menu "General Drivers Configuration"
 
         if BSP_USING_PWM
             config BSP_USING_PWM0
-            bool "Enable PWM 0"
-            default n
+                bool "Enable PWM 0"
+                default n
+
+                if BSP_USING_PWM0
+                    config BSP_PWM0_0_PINNAME
+                        string "pwm[0] pin name"
+                        default ""
+                    config BSP_PWM0_1_PINNAME
+                        string "pwm[1] pin name"
+                        default ""
+                    config BSP_PWM0_2_PINNAME
+                        string "pwm[2] pin name"
+                        default ""
+                    config BSP_PWM0_3_PINNAME
+                        string "pwm[3] pin name"
+                        default ""
+                endif
 
             config BSP_USING_PWM1
-            bool "Enable PWM 1"
-            default n
+                bool "Enable PWM 1"
+                default n
+
+                if BSP_USING_PWM1
+                    config BSP_PWM1_4_PINNAME
+                        string "pwm[4] pin name"
+                        default ""
+                    config BSP_PWM1_5_PINNAME
+                        string "pwm[5] pin name"
+                        default ""
+                    config BSP_PWM1_6_PINNAME
+                        string "pwm[6] pin name"
+                        default ""
+                    config BSP_PWM1_7_PINNAME
+                        string "pwm[7] pin name"
+                        default ""
+                endif
 
             config BSP_USING_PWM2
-            bool "Enable PWM 2"
-            default n
+                bool "Enable PWM 2"
+                default n
+
+                if BSP_USING_PWM2
+                    config BSP_PWM2_8_PINNAME
+                        string "pwm[8] pin name"
+                        default ""
+                    config BSP_PWM2_9_PINNAME
+                        string "pwm[9] pin name"
+                        default ""
+                    config BSP_PWM2_10_PINNAME
+                        string "pwm[10] pin name"
+                        default ""
+                    config BSP_PWM2_11_PINNAME
+                        string "pwm[11] pin name"
+                        default ""
+                endif
 
             config BSP_USING_PWM3
-            bool "Enable PWM 3"
-            default n
+                bool "Enable PWM 3"
+                default n
+
+                if BSP_USING_PWM3
+                    config BSP_PWM3_12_PINNAME
+                        string "pwm[12] pin name"
+                        default ""
+                    config BSP_PWM3_13_PINNAME
+                        string "pwm[13] pin name"
+                        default ""
+                    config BSP_PWM3_14_PINNAME
+                        string "pwm[14] pin name"
+                        default ""
+                    config BSP_PWM3_15_PINNAME
+                        string "pwm[15] pin name"
+                        default ""
+                endif
         endif
 
     config BSP_USING_RTC
