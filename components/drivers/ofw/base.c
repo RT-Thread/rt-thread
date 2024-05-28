@@ -1224,6 +1224,138 @@ int rt_ofw_get_alias_last_id(const char *tag)
     return id;
 }
 
+static rt_err_t ofw_map_id(struct rt_ofw_node *np, rt_uint32_t id, const char *map_name, const char *map_mask_name,
+        const fdt32_t *map, rt_ssize_t map_len, struct rt_ofw_node **ref_np, rt_uint32_t *out_id)
+{
+    rt_err_t err = RT_EOK;
+    rt_uint32_t masked_id, map_mask;
+
+    /* Select all bits default */
+    map_mask = 0xffffffff;
+
+    if (map_mask_name)
+    {
+        rt_ofw_prop_read_u32(np, map_mask_name, &map_mask);
+    }
+
+    masked_id = map_mask & id;
+
+    for (; map_len > 0; map_len -= 4 * sizeof(*map), map += 4)
+    {
+        struct rt_ofw_node *phandle_node;
+        rt_uint32_t id_base = fdt32_to_cpu(*(map + 0));
+        rt_uint32_t phandle = fdt32_to_cpu(*(map + 1));
+        rt_uint32_t out_base = fdt32_to_cpu(*(map + 2));
+        rt_uint32_t id_len = fdt32_to_cpu(*(map + 3));
+
+        if (id_base & ~map_mask)
+        {
+            LOG_E("%s: Invalid %s translation - %s(0x%x) for id-base = 0x%x",
+                    np->full_name, map_name, map_mask_name, map_mask, id_base);
+
+            err = -RT_ERROR;
+            break;
+        }
+
+        if (masked_id < id_base || masked_id >= id_base + id_len)
+        {
+            continue;
+        }
+
+        phandle_node = rt_ofw_find_node_by_phandle((rt_phandle)phandle);
+
+        if (!phandle_node)
+        {
+            err = -RT_EEMPTY;
+            break;
+        }
+
+        if (ref_np)
+        {
+            if (*ref_np)
+            {
+                rt_ofw_node_put(phandle_node);
+            }
+            else
+            {
+                *ref_np = phandle_node;
+            }
+
+            if (*ref_np != phandle_node)
+            {
+                continue;
+            }
+        }
+
+        if (out_id)
+        {
+            *out_id = masked_id - id_base + out_base;
+        }
+
+        LOG_D("%s: Get %s translation - %s(0x%x) for id-base = 0x%x, out-base = 0x%x, length = %d, id: 0x%x -> 0x%x",
+                np->full_name, map_name, map_mask_name, map_mask,
+                id_base, out_base, id_len, id, masked_id - id_base + out_base);
+
+        break;
+    }
+
+    if (map_len <= 0)
+    {
+        LOG_I("%s: No %s translation for id(0x%x) on %s", np->full_name, map_name,
+                id, ref_np && *ref_np ? *ref_np : RT_NULL);
+
+        /* Bypasses translation */
+        if (out_id)
+        {
+            *out_id = id;
+        }
+    }
+
+    return err;
+}
+
+rt_err_t rt_ofw_map_id(struct rt_ofw_node *np, rt_uint32_t id, const char *map_name, const char *map_mask_name,
+        struct rt_ofw_node **ref_np, rt_uint32_t *out_id)
+{
+    rt_err_t err;
+
+    if (np && map_name && (ref_np || out_id))
+    {
+        rt_ssize_t map_len;
+        const fdt32_t *map = rt_ofw_prop_read_raw(np, map_name, &map_len);
+
+        if (!map)
+        {
+            if (ref_np)
+            {
+                err = -RT_EEMPTY;
+            }
+            else
+            {
+                *out_id = id;
+            }
+
+            err = RT_EOK;
+        }
+        else if (!map_len || map_len % (4 * sizeof(*map)))
+        {
+            LOG_E("%s: Invalid %s length = %u", np->full_name, map_name, map_len);
+
+            err = -RT_EINVAL;
+        }
+        else
+        {
+            err = ofw_map_id(np, id, map_name, map_mask_name, map, map_len, ref_np, out_id);
+        }
+    }
+    else
+    {
+        err = -RT_EINVAL;
+    }
+
+    return err;
+}
+
 struct rt_ofw_node *rt_ofw_append_child(struct rt_ofw_node *parent, const char *full_name)
 {
     rt_phandle phandle;
