@@ -430,6 +430,20 @@ menu "Hardware Drivers Config"
                     endif
             endif
 
+        menuconfig BSP_USING_DAC
+            bool "Enable DAC"
+            default n
+            select RT_USING_DAC
+            if BSP_USING_DAC
+                config BSP_USING_DAC0
+                    bool "Enable DAC0"
+                    default n
+
+                config BSP_USING_DAC1
+                    bool "Enable DAC1"
+                    default n
+            endif
+
     endmenu
 
     menu "Board extended module Drivers"
