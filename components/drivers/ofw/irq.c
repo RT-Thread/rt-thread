@@ -196,8 +196,8 @@ static rt_err_t ofw_parse_irq_map(struct rt_ofw_node *np, struct rt_ofw_cell_arg
             break;
         }
 
-        map_len = sizeof(fdt32_t);
-        map_mask_len = sizeof(fdt32_t);
+        map_len /= sizeof(fdt32_t);
+        map_mask_len /= sizeof(fdt32_t);
 
         err = -RT_EINVAL;
 
