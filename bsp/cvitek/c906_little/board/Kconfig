@@ -164,6 +164,84 @@ menu "General Drivers Configuration"
         select RT_USING_SPI
         default n
 
+        if BSP_USING_SPI
+            config BSP_USING_SPI0
+                bool "Enable SPI 0"
+                default n
+
+                if BSP_USING_SPI0
+                    config BSP_SPI0_SCK_PINNAME
+                        string "spi0 sck pin name"
+                        default ""
+                    config BSP_SPI0_SDO_PINNAME
+                        string "spi0 sdo pin name"
+                        default ""
+                    config BSP_SPI0_SDI_PINNAME
+                        string "spi0 sdi pin name"
+                        default ""
+                    config BSP_SPI0_CS_PINNAME
+                        string "spi0 cs pin name"
+                        default ""
+                endif
+
+            config BSP_USING_SPI1
+                bool "Enable SPI 1"
+                default n
+
+                if BSP_USING_SPI1
+                    config BSP_SPI1_SCK_PINNAME
+                        string "spi1 sck pin name"
+                        default ""
+                    config BSP_SPI1_SDO_PINNAME
+                        string "spi1 sdo pin name"
+                        default ""
+                    config BSP_SPI1_SDI_PINNAME
+                        string "spi1 sdi pin name"
+                        default ""
+                    config BSP_SPI1_CS_PINNAME
+                        string "spi1 cs pin name"
+                        default ""
+                endif
+
+            config BSP_USING_SPI2
+                bool "Enable SPI 2"
+                default n
+
+                if BSP_USING_SPI2
+                    config BSP_SPI2_SCK_PINNAME
+                        string "spi2 sck pin name"
+                        default ""
+                    config BSP_SPI2_SDO_PINNAME
+                        string "spi2 sdo pin name"
+                        default ""
+                    config BSP_SPI2_SDI_PINNAME
+                        string "spi2 sdi pin name"
+                        default ""
+                    config BSP_SPI2_CS_PINNAME
+                        string "spi2 cs pin name"
+                        default ""
+                endif
+
+            config BSP_USING_SPI3
+                bool "Enable SPI 3"
+                default n
+
+                if BSP_USING_SPI3
+                    config BSP_SPI3_SCK_PINNAME
+                        string "spi3 sck pin name"
+                        default ""
+                    config BSP_SPI3_SDO_PINNAME
+                        string "spi3 sdo pin name"
+                        default ""
+                    config BSP_SPI3_SDI_PINNAME
+                        string "spi3 sdi pin name"
+                        default ""
+                    config BSP_SPI3_CS_PINNAME
+                        string "spi3 cs pin name"
+                        default ""
+                endif
+        endif
+
     menuconfig BSP_USING_WDT
         bool "Enable Watchdog Timer"
         select RT_USING_WDT
