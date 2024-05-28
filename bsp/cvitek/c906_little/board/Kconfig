@@ -31,9 +31,66 @@ menu "General Drivers Configuration"
                 bool "Enable I2C0"
                 default n
 
+                if BSP_USING_I2C0
+                    config BSP_I2C0_SCL_PINNAME
+                        string "i2c0 scl pin name"
+                        default ""
+                    config BSP_I2C0_SDA_PINNAME
+                        string "i2c0 sda pin name"
+                        default ""
+                endif
+
             config BSP_USING_I2C1
                 bool "Enable I2C1"
                 default n
+
+                if BSP_USING_I2C1
+                    config BSP_I2C1_SCL_PINNAME
+                        string "i2c1 scl pin name"
+                        default ""
+                    config BSP_I2C1_SDA_PINNAME
+                        string "i2c1 sda pin name"
+                        default ""
+                endif
+
+            config BSP_USING_I2C2
+                bool "Enable I2C2"
+                default n
+
+                if BSP_USING_I2C2
+                    config BSP_I2C2_SCL_PINNAME
+                        string "i2c2 scl pin name"
+                        default ""
+                    config BSP_I2C2_SDA_PINNAME
+                        string "i2c2 sda pin name"
+                        default ""
+                endif
+
+            config BSP_USING_I2C3
+                bool "Enable I2C3"
+                default n
+
+                if BSP_USING_I2C3
+                    config BSP_I2C3_SCL_PINNAME
+                        string "i2c3 scl pin name"
+                        default ""
+                    config BSP_I2C3_SDA_PINNAME
+                        string "i2c3 sda pin name"
+                        default ""
+                endif
+
+            config BSP_USING_I2C4
+                bool "Enable I2C4"
+                default n
+
+                if BSP_USING_I2C4
+                    config BSP_I2C4_SCL_PINNAME
+                        string "i2c4 scl pin name"
+                        default ""
+                    config BSP_I2C4_SDA_PINNAME
+                        string "i2c4 sda pin name"
+                        default ""
+                endif
 
             config I2C_IRQ_BASE
                 int
