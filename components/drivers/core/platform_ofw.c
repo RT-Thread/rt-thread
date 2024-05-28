@@ -92,9 +92,7 @@ static struct rt_platform_device *alloc_ofw_platform_device(struct rt_ofw_node *
         rt_ofw_node_get(np);
         rt_ofw_node_set_flag(np, RT_OFW_F_PLATFORM);
 
-#ifdef RT_USING_OFW
         pdev->parent.ofw_node = np;
-#endif
 
         ofw_device_rename(&pdev->parent);
     }
@@ -232,3 +230,27 @@ static int platform_ofw_device_probe(void)
     return (int)err;
 }
 INIT_PLATFORM_EXPORT(platform_ofw_device_probe);
+
+rt_err_t rt_platform_ofw_free(struct rt_platform_device *pdev)
+{
+    rt_err_t err = RT_EOK;
+
+    if (pdev)
+    {
+        struct rt_ofw_node *np = pdev->parent.ofw_node;
+
+        if (np)
+        {
+            rt_ofw_node_clear_flag(np, RT_OFW_F_PLATFORM);
+            rt_ofw_node_put(np);
+
+            pdev->parent.ofw_node = RT_NULL;
+        }
+    }
+    else
+    {
+        err = -RT_EINVAL;
+    }
+
+    return err;
+}
