@@ -192,10 +192,17 @@ static void config_pirq(struct rt_pic *pic, struct rt_pic_irq *pirq, int irq, in
 int rt_pic_config_ipi(struct rt_pic *pic, int ipi_index, int hwirq)
 {
     int ipi = ipi_index;
+    struct rt_pic_irq *pirq;
 
     if (pic && ipi < RT_ARRAY_SIZE(_ipi_hash) && hwirq >= 0 && pic->ops->irq_send_ipi)
     {
-        config_pirq(pic, &_pirq_hash[ipi], ipi, hwirq);
+        pirq = &_pirq_hash[ipi];
+        config_pirq(pic, pirq, ipi, hwirq);
+
+        for (int cpuid = 0; cpuid < RT_CPUS_NR; ++cpuid)
+        {
+            RT_IRQ_AFFINITY_SET(pirq->affinity, cpuid);
+        }
 
         LOG_D("%s config %s %d to hwirq %d", pic->ops->name, "ipi", ipi, hwirq);
     }
@@ -404,7 +411,7 @@ rt_err_t rt_pic_detach_irq(int irq, void *uid)
             }
             else
             {
-                struct rt_pic_isr *next_isr = rt_list_entry(isr->list.next, struct rt_pic_isr, list);
+                struct rt_pic_isr *next_isr = rt_list_first_entry(&isr->list, struct rt_pic_isr, list);
 
                 rt_list_remove(&next_isr->list);
 
@@ -517,9 +524,6 @@ rt_err_t rt_pic_handle_isr(struct rt_pic_irq *pirq)
     rt_ktime_boottime_get_ns(&ts);
     pirq->stat.current_irq_begin[rt_hw_cpu_id()] = ts.tv_sec * (1000UL * 1000 * 1000) + ts.tv_nsec;
 #endif
-
-    /* Corrected irq affinity */
-    rt_bitmap_set_bit(pirq->affinity, rt_hw_cpu_id());
 
     handler_nodes = &pirq->isr.list;
     action = &pirq->isr.action;

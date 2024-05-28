@@ -66,6 +66,8 @@ static void gicv2_dist_init(struct gicv2 *gic)
     rt_uint32_t i;
     rt_uint32_t cpumask = gicv2_cpumask_map(gic);
 
+    _init_cpu_id = rt_hw_cpu_id();
+
     gic->max_irq = HWREG32(base + GIC_DIST_TYPE) & 0x1f;
     gic->max_irq = (gic->max_irq + 1) * 32;
 
@@ -102,7 +104,7 @@ static void gicv2_cpu_init(struct gicv2 *gic)
     rt_uint32_t cpumask;
     void *base = gic->cpu_base;
     rt_uint32_t config = GICC_ENABLE;
-    int cpu_id = _init_cpu_id = rt_hw_cpu_id();
+    int cpu_id = rt_hw_cpu_id();
 
     cpumask = gicv2_cpumask_map(gic);
     _gicv2_cpumask_map[cpu_id] = cpumask;
@@ -204,6 +206,11 @@ static rt_err_t gicv2_irq_set_affinity(struct rt_pic_irq *pirq, rt_bitmap_t *aff
     rt_uint8_t valb = _gicv2_cpumask_map[__rt_ffs(target_list) - 1];
     void *io_addr = gic->dist_base + GIC_DIST_TARGET + hwirq;
 
+    if (valb == 0xfe)
+    {
+        return -RT_EIO;
+    }
+
     if (needs_rmw_access)
     {
         /* RMW write byte */
@@ -278,7 +285,15 @@ static int gicv2_irq_map(struct rt_pic *pic, int hwirq, rt_uint32_t mode)
     {
         pirq->mode = mode;
         pirq->priority = GICD_INT_DEF_PRI;
-        rt_bitmap_set_bit(pirq->affinity, _init_cpu_id);
+
+        if (hwirq < 32)
+        {
+            gic_fill_ppi_affinity(pirq->affinity);
+        }
+        else
+        {
+            RT_IRQ_AFFINITY_SET(pirq->affinity, _init_cpu_id);
+        }
 
         irq = rt_pic_config_irq(pic, irq_index, hwirq);
 
@@ -326,7 +341,7 @@ static rt_err_t gicv2_irq_parse(struct rt_pic *pic, struct rt_ofw_cell_args *arg
     return err;
 }
 
-static struct rt_pic_ops gicv2_ops =
+const static struct rt_pic_ops gicv2_ops =
 {
     .name = "GICv2",
     .irq_init = gicv2_irq_init,
