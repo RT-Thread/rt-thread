@@ -31,9 +31,9 @@
 
 | **片上外设** | **支持情况** | **备注** |
 | :----------: | :----------: | :------: |
-|  USB 转串口  |     支持     |  UART5   |
+|  USB 转串口  |     支持     |  UART3   |
 |     GPIO     |     支持     |    —     |
-|     UART     |     支持     | UART0-5  |
+|     UART     |     支持     | UART0-3  |
 
 ## 快速上手
 
@@ -47,17 +47,19 @@
 
 #### 编译下载
 
-1、生成MDK工程：在ENV环境下输入SCons --target==MDK5，ENV会自动生成MDK5工程
+1、下载软件包：在ENV环境下输入`pkgs --update`命令，将所需要的HAL库软件包下载下来，文件会存放在`Packages`目录下。
 
-2、配置工程：
+2、生成MDK工程：在ENV环境下输入`SCons --target==MDK5`命令，ENV会自动生成MDK5工程
 
-首先打开 MDK ，若没有安装 `Infineon-XMC7200` 的芯片支持包会提示在线安装，根据提示安装即可。若受网络问题，可以进入 [keil](https://www.keil.com/dd2/pack) 官网下载安装包，离线安装。
+3、配置工程：
 
-![mdk_package](./figures/mdk_package.png)
+首先打开 MDK ，若没有安装 `Infineon-XMC7200` 的芯片支持包会提示在线安装，根据提示安装即可。若受网络问题，可以进入 [Arm Keil | CMSIS Packs](https://www.keil.arm.com/packs/)官网下载安装包，离线安装。
 
-3、 编译此工程：在安装好芯片支持包后，在 `MDK`工程中进行编译，生成HEX文件。
+![image-20240528161254510](figures/image-20240528161254510.png)
 
-4、下载此工程：
+4、 编译此工程：在安装好芯片支持包后，在 `MDK`工程中进行编译，生成HEX文件。
+
+5、下载此工程：
 
 在Cypress programmer中首先找到刚刚MDK生成的`.hex`文件，一般在`Build/Keil/Obj`目录下，然后在软件中选择此文件，点击Connect连接到开发板，然后再点击Program下载文件即可完成
 
