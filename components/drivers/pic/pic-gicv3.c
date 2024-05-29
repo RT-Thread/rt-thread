@@ -187,6 +187,14 @@ static void *gicv3_hwirq_reg_base(int hwirq, rt_uint32_t offset, rt_uint32_t *in
     return base + gicv3_hwirq_convert_offset_index(hwirq, offset, index);
 }
 
+static rt_bool_t gicv3_hwirq_peek(int hwirq, rt_uint32_t offset)
+{
+    rt_uint32_t index;
+    void *base = gicv3_hwirq_reg_base(hwirq, offset, &index);
+
+    return !!HWREG32(base + (index / 32) * 4);
+}
+
 static void gicv3_hwirq_poke(int hwirq, rt_uint32_t offset)
 {
     rt_uint32_t index;
@@ -600,6 +608,79 @@ static void gicv3_irq_send_ipi(struct rt_pic_irq *pirq, rt_bitmap_t *cpumask)
 #undef __mpidr_to_sgi_affinity
 }
 
+static rt_err_t gicv3_irq_set_state(struct rt_pic *pic, int hwirq, int type, rt_bool_t state)
+{
+    rt_err_t err = RT_EOK;
+    rt_uint32_t offset = 0;
+
+    if (hwirq >= 8192)
+    {
+        type = -1;
+    }
+
+    switch (type)
+    {
+    case RT_IRQ_STATE_PENDING:
+        offset = state ? GICD_ISPENDR : GICD_ICPENDR;
+        break;
+    case RT_IRQ_STATE_ACTIVE:
+        offset = state ? GICD_ISACTIVER : GICD_ICACTIVER;
+        break;
+    case RT_IRQ_STATE_MASKED:
+        if (state)
+        {
+            struct rt_pic_irq pirq = {};
+
+            pirq.hwirq = hwirq;
+            gicv3_irq_mask(&pirq);
+        }
+        else
+        {
+            offset = GICD_ISENABLER;
+        }
+        break;
+    default:
+        err = -RT_EINVAL;
+        break;
+    }
+
+    if (!err && offset)
+    {
+        gicv3_hwirq_poke(hwirq, offset);
+    }
+
+    return err;
+}
+
+static rt_err_t gicv3_irq_get_state(struct rt_pic *pic, int hwirq, int type, rt_bool_t *out_state)
+{
+    rt_err_t err = RT_EOK;
+    rt_uint32_t offset = 0;
+
+    switch (type)
+    {
+    case RT_IRQ_STATE_PENDING:
+        offset = GICD_ISPENDR;
+        break;
+    case RT_IRQ_STATE_ACTIVE:
+        offset = GICD_ISACTIVER;
+        break;
+    case RT_IRQ_STATE_MASKED:
+        offset = GICD_ISENABLER;
+        break;
+    default:
+        err = -RT_EINVAL;
+        break;
+    }
+
+    if (!err)
+    {
+        *out_state = gicv3_hwirq_peek(hwirq, offset);
+    }
+
+    return err;
+}
+
 static int gicv3_irq_map(struct rt_pic *pic, int hwirq, rt_uint32_t mode)
 {
     struct rt_pic_irq *pirq;
@@ -716,6 +797,8 @@ const static struct rt_pic_ops gicv3_ops =
     .irq_set_affinity = gicv3_irq_set_affinity,
     .irq_set_triger_mode = gicv3_irq_set_triger_mode,
     .irq_send_ipi = gicv3_irq_send_ipi,
+    .irq_set_state = gicv3_irq_set_state,
+    .irq_get_state = gicv3_irq_get_state,
     .irq_map = gicv3_irq_map,
     .irq_parse = gicv3_irq_parse,
 };
