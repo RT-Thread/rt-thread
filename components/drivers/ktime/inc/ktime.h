@@ -18,7 +18,7 @@
 
 #include "rtthread.h"
 
-#define RT_KTIME_RESMUL (1000000UL)
+#define RT_KTIME_RESMUL (1000000ULL)
 
 struct rt_ktime_hrtimer
 {
@@ -69,14 +69,14 @@ rt_uint64_t rt_ktime_cputimer_getres(void);
  *
  * @return frequency
  */
-rt_uint64_t rt_ktime_cputimer_getfrq(void);
+unsigned long rt_ktime_cputimer_getfrq(void);
 
 /**
  * @brief Get cputimer the value of the cnt counter
  *
  * @return cnt
  */
-rt_uint64_t rt_ktime_cputimer_getcnt(void);
+unsigned long rt_ktime_cputimer_getcnt(void);
 
 /**
  * @brief Get cputimer the cnt value corresponding to 1 os tick
@@ -103,14 +103,14 @@ rt_uint64_t rt_ktime_hrtimer_getres(void);
  *
  * @return frequency
  */
-rt_uint64_t rt_ktime_hrtimer_getfrq(void);
+unsigned long rt_ktime_hrtimer_getfrq(void);
 
 /**
  * @brief Get hrtimer the value of the cnt counter
  *
  * @return cnt
  */
-rt_uint64_t rt_ktime_hrtimer_getcnt(void);
+unsigned long rt_ktime_hrtimer_getcnt(void);
 
 /**
  * @brief set hrtimer timeout, when timeout, the timer callback will call timeout

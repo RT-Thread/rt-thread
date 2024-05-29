@@ -15,12 +15,12 @@ rt_weak rt_uint64_t rt_ktime_cputimer_getres(void)
     return ((1000ULL * 1000 * 1000) * RT_KTIME_RESMUL) / RT_TICK_PER_SECOND;
 }
 
-rt_weak rt_uint64_t rt_ktime_cputimer_getfrq(void)
+rt_weak unsigned long rt_ktime_cputimer_getfrq(void)
 {
     return RT_TICK_PER_SECOND;
 }
 
-rt_weak rt_uint64_t rt_ktime_cputimer_getcnt(void)
+rt_weak unsigned long rt_ktime_cputimer_getcnt(void)
 {
     return rt_tick_get();
 }

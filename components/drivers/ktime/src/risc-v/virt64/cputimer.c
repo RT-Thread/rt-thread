@@ -10,19 +10,19 @@
 
 #include "ktime.h"
 
-static volatile rt_uint64_t _init_cnt = 0;
+static volatile unsigned long _init_cnt = 0;
 
 rt_uint64_t rt_ktime_cputimer_getres(void)
 {
     return ((1000ULL * 1000 * 1000) * RT_KTIME_RESMUL) / CPUTIME_TIMER_FREQ;
 }
 
-rt_uint64_t rt_ktime_cputimer_getfrq(void)
+unsigned long rt_ktime_cputimer_getfrq(void)
 {
     return CPUTIME_TIMER_FREQ;
 }
 
-rt_uint64_t rt_ktime_cputimer_getcnt(void)
+unsigned long rt_ktime_cputimer_getcnt(void)
 {
     unsigned long time_elapsed;
     __asm__ __volatile__("rdtime %0" : "=r"(time_elapsed));
