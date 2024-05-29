@@ -11,19 +11,19 @@
 #include "gtimer.h"
 #include "ktime.h"
 
-static volatile unsigned long _init_cnt = 0;
+static volatile rt_uint64_t _init_cnt = 0;
 
-unsigned long rt_ktime_cputimer_getres(void)
+rt_uint64_t rt_ktime_cputimer_getres(void)
 {
-    return ((1000UL * 1000 * 1000) * RT_KTIME_RESMUL) / rt_hw_get_gtimer_frq();
+    return ((1000ULL * 1000 * 1000) * RT_KTIME_RESMUL) / rt_hw_get_gtimer_frq();
 }
 
-unsigned long rt_ktime_cputimer_getfrq(void)
+rt_uint64_t rt_ktime_cputimer_getfrq(void)
 {
     return rt_hw_get_gtimer_frq();
 }
 
-unsigned long rt_ktime_cputimer_getcnt(void)
+rt_uint64_t rt_ktime_cputimer_getcnt(void)
 {
     return rt_hw_get_cntpct_val() - _init_cnt;
 }
