@@ -508,6 +508,7 @@ rt_err_t rt_pic_handle_isr(struct rt_pic_irq *pirq)
 #ifdef RT_USING_PIC_STATISTICS
     struct timespec ts;
     rt_ubase_t irq_time_ns;
+    rt_ubase_t current_irq_begin;
 #endif
 
     RT_ASSERT(pirq != RT_NULL);
@@ -515,7 +516,7 @@ rt_err_t rt_pic_handle_isr(struct rt_pic_irq *pirq)
 
 #ifdef RT_USING_PIC_STATISTICS
     rt_ktime_boottime_get_ns(&ts);
-    pirq->stat.current_irq_begin[rt_hw_cpu_id()] = ts.tv_sec * (1000UL * 1000 * 1000) + ts.tv_nsec;
+    current_irq_begin = ts.tv_sec * (1000UL * 1000 * 1000) + ts.tv_nsec;
 #endif
 
     /* Corrected irq affinity */
@@ -573,7 +574,7 @@ rt_err_t rt_pic_handle_isr(struct rt_pic_irq *pirq)
 
 #ifdef RT_USING_PIC_STATISTICS
     rt_ktime_boottime_get_ns(&ts);
-    irq_time_ns = ts.tv_sec * (1000UL * 1000 * 1000) + ts.tv_nsec - pirq->stat.current_irq_begin[rt_hw_cpu_id()];
+    irq_time_ns = ts.tv_sec * (1000UL * 1000 * 1000) + ts.tv_nsec - current_irq_begin;
     pirq->stat.sum_irq_time_ns += irq_time_ns;
     if (irq_time_ns < pirq->stat.min_irq_time_ns || pirq->stat.min_irq_time_ns == 0)
     {
