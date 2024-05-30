@@ -1,0 +1,49 @@
+menuconfig RT_USING_PCI
+    bool "Using Peripheral Component Interconnect Express (PCIe/PCI)"
+    depends on RT_USING_DM
+    depends on RT_USING_PIC
+    select RT_USING_ADT
+    select RT_USING_ADT_BITMAP
+    default n
+
+config RT_PCI_MSI
+    bool "PCI MSI/MSI-X"
+    depends on RT_USING_PCI
+    default y
+
+config RT_PCI_ENDPOINT
+    bool "PCI Endpoint"
+    depends on RT_USING_PCI
+    select RT_USING_ADT_REF
+    default n
+
+config RT_PCI_SYS_64BIT
+    bool "PCI System 64bit"
+    depends on RT_USING_PCI
+    depends on ARCH_CPU_64BIT
+    default y
+
+config RT_PCI_CACHE_LINE_SIZE
+    int "PCI Cache line size"
+    depends on RT_USING_PCI
+    default 8 if ARCH_CPU_64BIT
+    default 4
+
+config RT_PCI_LOCKLESS
+    bool "PCI Lock less in options"
+    depends on RT_USING_PCI
+    default n
+
+if RT_USING_PCI
+
+comment "PCI Device Drivers"
+
+config RT_PCI_ECAM
+    bool "PCIe ECAM"
+    depends on RT_USING_PCI
+    default y
+    help
+        PCIe Express Enhanced Configuration Access Mechanism
+
+rsource "host/Kconfig"
+endif
