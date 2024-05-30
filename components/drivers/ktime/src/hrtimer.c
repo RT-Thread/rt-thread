@@ -137,18 +137,10 @@ static void _insert_timer_to_list_locked(rt_ktime_hrtimer_t timer)
     timer->flag |= RT_TIMER_FLAG_ACTIVATED;
 }
 
-static void _set_next_timeout_n_unlock(rt_base_t level);
-static void _timeout_callback(void *parameter)
+static void _set_next_timeout_locked(void);
+
+static void _exec_timeout_locked(rt_ktime_hrtimer_t timer)
 {
-    rt_ktime_hrtimer_t timer;
-    timer = (rt_ktime_hrtimer_t)parameter;
-    rt_base_t level;
-
-    LOG_D("Expected wake-up in CPU time: %lu, actual wake-up in CPU time %lu", timer->timeout_cnt, rt_ktime_cputimer_getcnt());
-
-    level     = rt_spin_lock_irqsave(&_spinlock);
-    _current_timer = RT_NULL;
-
     if (timer->flag & RT_TIMER_FLAG_PERIODIC)
     {
         timer->timeout_cnt = timer->delay_cnt + rt_ktime_cputimer_getcnt();
@@ -164,41 +156,49 @@ static void _timeout_callback(void *parameter)
         timer->timeout_func(timer->parameter);
     }
 
-    _set_next_timeout_n_unlock(level);
+    _set_next_timeout_locked();
 }
 
-static void _set_next_timeout_n_unlock(rt_base_t level)
+static void _timeout_callback(void *parameter)
+{
+    rt_ktime_hrtimer_t timer;
+    timer = (rt_ktime_hrtimer_t)parameter;
+    rt_base_t level;
+
+    LOG_D("Expected wake-up in CPU time: %lu, actual wake-up in CPU time %lu", timer->timeout_cnt, rt_ktime_cputimer_getcnt());
+
+    level     = rt_spin_lock_irqsave(&_spinlock);
+
+    _exec_timeout_locked(timer);
+
+    rt_spin_unlock_irqrestore(&_spinlock, level);
+}
+
+static void _set_next_timeout_locked(void)
 {
     rt_ktime_hrtimer_t t;
+    rt_ubase_t timeout_hrtimer_cnt;
 
     if (&_timer_list != _timer_list.prev)
     {
         t = rt_list_entry(_timer_list.next, struct rt_ktime_hrtimer, node);
-        if (_current_timer != RT_NULL)
+        if (_current_timer != t)
         {
-            if (t != _current_timer && t->timeout_cnt < _current_timer->timeout_cnt)
+            _current_timer = t;
+            timeout_hrtimer_cnt = _cnt_convert(_current_timer->timeout_cnt);
+            if (timeout_hrtimer_cnt > 0)
             {
-                _current_timer = t;
-                rt_spin_unlock_irqrestore(&_spinlock, level);
-                rt_ktime_hrtimer_settimeout(_cnt_convert(_current_timer->timeout_cnt), _timeout_callback, _current_timer);
+                rt_ktime_hrtimer_settimeout(timeout_hrtimer_cnt, _timeout_callback, _current_timer);
             }
             else
             {
-                rt_spin_unlock_irqrestore(&_spinlock, level);
+                _exec_timeout_locked(_current_timer);
             }
-        }
-        else
-        {
-            _current_timer = t;
-            rt_spin_unlock_irqrestore(&_spinlock, level);
-            rt_ktime_hrtimer_settimeout(_cnt_convert(_current_timer->timeout_cnt), _timeout_callback, _current_timer);
         }
     }
     else
     {
         _current_timer = RT_NULL;
-        rt_spin_unlock_irqrestore(&_spinlock, level);
-        rt_ktime_hrtimer_settimeout(0, RT_NULL, RT_NULL);
     }
 }
 
@@ -239,7 +239,9 @@ rt_err_t rt_ktime_hrtimer_start(rt_ktime_hrtimer_t timer, unsigned long delay_cn
 
     _insert_timer_to_list_locked(timer);
 
-    _set_next_timeout_n_unlock(level);
+    _set_next_timeout_locked();
+
+    rt_spin_unlock_irqrestore(&_spinlock, level);
 
     return RT_EOK;
 }
@@ -260,7 +262,9 @@ rt_err_t rt_ktime_hrtimer_stop(rt_ktime_hrtimer_t timer)
     rt_list_remove(&timer->node);
     timer->flag &= ~RT_TIMER_FLAG_ACTIVATED; /* change status */
 
-    _set_next_timeout_n_unlock(level);
+    _set_next_timeout_locked();
+
+    rt_spin_unlock_irqrestore(&_spinlock, level);
 
     return RT_EOK;
 }
@@ -352,12 +356,10 @@ rt_err_t rt_ktime_hrtimer_detach(rt_ktime_hrtimer_t timer)
     {
         _current_timer = RT_NULL;
         rt_list_remove(&timer->node);
-        _set_next_timeout_n_unlock(level);
+        _set_next_timeout_locked();
     }
-    else
-    {
-        rt_spin_unlock_irqrestore(&_spinlock, level);
-    }
+
+    rt_spin_unlock_irqrestore(&_spinlock, level);
 
     return RT_EOK;
 }
