@@ -21,9 +21,26 @@ static rt_uint16_t calc_random(void)
 
 static rt_ssize_t random_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size)
 {
-    rt_uint16_t rand = calc_random();
-    ssize_t ret = sizeof(rand);
-    rt_memcpy(buffer, &rand, ret);
+    rt_uint16_t rand;
+    ssize_t ret = 0;
+    while (size >= sizeof(rand))
+    {
+        /* update rand */
+        rand = calc_random();
+
+        *(rt_uint16_t *)buffer = rand;
+        buffer = (char *)buffer + sizeof(rand);
+        ret += sizeof(rand);
+        size -= sizeof(rand);
+    }
+
+    if (size)
+    {
+        rand = calc_random();
+        memcpy(buffer, &rand, size);
+        ret += size;
+    }
+
     return ret;
 }
 
@@ -95,9 +112,26 @@ static rt_uint16_t calc_urandom(void)
 
 static rt_ssize_t random_uread(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size)
 {
-    rt_uint16_t rand = calc_urandom();
-    ssize_t ret = sizeof(rand);
-    rt_memcpy(buffer, &rand, ret);
+    rt_uint16_t rand;
+    ssize_t ret = 0;
+    while (size >= sizeof(rand))
+    {
+        /* update rand */
+        rand = calc_urandom();
+
+        *(rt_uint16_t *)buffer = rand;
+        buffer = (char *)buffer + sizeof(rand);
+        ret += sizeof(rand);
+        size -= sizeof(rand);
+    }
+
+    if (size)
+    {
+        rand = calc_urandom();
+        memcpy(buffer, &rand, size);
+        ret += size;
+    }
+
     return ret;
 }
 
