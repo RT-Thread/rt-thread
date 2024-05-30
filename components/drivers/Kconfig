@@ -931,6 +931,7 @@ menuconfig RT_USING_VIRTIO
     endif
 
 source "$RTT_DIR/components/drivers/ofw/Kconfig"
+source "$RTT_DIR/components/drivers/pci/Kconfig"
 source "$RTT_DIR/components/drivers/pic/Kconfig"
 source "$RTT_DIR/components/drivers/pin/Kconfig"
 source "$RTT_DIR/components/drivers/pinctrl/Kconfig"
