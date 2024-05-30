@@ -20,3 +20,9 @@ config RT_FDT_EARLYCON_MSG_SIZE
     int "Earlycon message buffer size (KB)"
     depends on RT_USING_OFW
     default 128
+
+config RT_USING_OFW_BUS_RANGES_NUMBER
+    int "Max bus ranges number"
+    depends on RT_USING_OFW
+    default 8 if ARCH_CPU_64BIT
+    default 4

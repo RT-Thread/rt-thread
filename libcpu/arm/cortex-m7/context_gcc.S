@@ -156,8 +156,7 @@ switch_to_thread:
 
 #if defined (RT_USING_MEM_PROTECTION)
     PUSH    {r0-r3, r12, lr}
-    LDR     r1, =rt_current_thread
-    LDR     r0, [r1]
+    BL      rt_thread_self
     BL      rt_hw_mpu_table_switch
     POP     {r0-r3, r12, lr}
 #endif

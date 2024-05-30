@@ -14,6 +14,8 @@ if ARCH_ARMV8 && ARCH_CPU_64BIT
         default y
     config ARCH_USING_GENERIC_CPUID
         bool "Using generic cpuid implemenation"
+        select ARCH_USING_HW_THREAD_SELF
+        default y if RT_USING_OFW
         default n
     endmenu
 endif
@@ -268,5 +270,9 @@ config ARCH_HOST_SIMULATOR
     bool
 
 config ARCH_CPU_STACK_GROWS_UPWARD
+    bool
+    default n
+
+config ARCH_USING_HW_THREAD_SELF
     bool
     default n

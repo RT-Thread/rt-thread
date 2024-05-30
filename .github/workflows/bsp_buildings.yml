@@ -284,6 +284,7 @@ jobs:
                 - "Infineon/psoc6-cy8ckit-062-WIFI-BT"
                 - "Infineon/psoc6-cy8cproto-062S3-4343W"
                 - "Infineon/psoc6-evaluationkit-062S2"
+                - "Infineon/xmc7200-kit_xmc7200_evk"
                 - "fujitsu/mb9x/mb9bf500r"
                 - "fujitsu/mb9x/mb9bf506r"
                 - "fujitsu/mb9x/mb9bf618s"

@@ -40,7 +40,7 @@ struct rt_pic
 
     rt_list_t list;
 
-    struct rt_pic_ops *ops;
+    const struct rt_pic_ops *ops;
 
     void *priv_data;
     void *user_data;
@@ -91,6 +91,10 @@ struct rt_pic_isr
     struct rt_irq_desc action;
 };
 
+#define RT_IRQ_AFFINITY_DECLARE(name)           RT_BITMAP_DECLARE(name, RT_CPUS_NR)
+#define RT_IRQ_AFFINITY_SET(affinity, cpuid)    rt_bitmap_set_bit(affinity, cpuid)
+#define RT_IRQ_AFFINITY_CLEAR(affinity, cpuid)  rt_bitmap_clear_bit(affinity, cpuid)
+
 #ifdef RT_USING_PIC_STATISTICS
 struct rt_pic_irq_statistics
 {
@@ -116,7 +120,7 @@ struct rt_pic_irq
     rt_uint32_t mode;
 
     rt_uint32_t priority;
-    RT_BITMAP_DECLARE(affinity, RT_CPUS_NR);
+    RT_IRQ_AFFINITY_DECLARE(affinity);
 
     rt_list_t list;
     rt_list_t children_nodes;

@@ -539,15 +539,15 @@ int lwp_tty_ioctl_adapter(lwp_tty_t tp, int cmd, int oflags, void *args, rt_thre
             args->cmd = TIOCMSET;
             error = (sys_ioctl(td, (struct ioctl_args *)args));
             break;
-
+#endif /* USING_BSD_IOCTL_EXT */
             /* TIOCGSOFTCAR */
             /* TIOCSSOFTCAR */
 
         case FIONREAD: /* TIOCINQ */
-            args->cmd = FIONREAD;
-            error = (sys_ioctl(td, (struct ioctl_args *)args));
+            error = (IOCTL(FIONREAD, args, fflags, td));
             break;
 
+#ifdef USING_BSD_IOCTL_EXT
             /* TIOCLINUX */
 
         case TIOCCONS:

@@ -232,6 +232,24 @@ int rt_hw_cpu_boot_secondary(int num_cpus, rt_uint64_t *cpu_hw_ids, struct cpu_o
 #endif /*RT_USING_SMP*/
 
 /**
+ * Generic hw-cpu-id
+ */
+#ifdef ARCH_USING_GENERIC_CPUID
+
+int rt_hw_cpu_id(void)
+{
+#if RT_CPUS_NR > 1
+    long cpuid;
+    __asm__ volatile("mrs %0, tpidrro_el0":"=r"(cpuid));
+    return cpuid;
+#else
+    return 0;
+#endif /* RT_CPUS_NR > 1 */
+}
+
+#endif /* ARCH_USING_GENERIC_CPUID */
+
+/**
  * @addtogroup ARM CPU
  */
 /*@{*/

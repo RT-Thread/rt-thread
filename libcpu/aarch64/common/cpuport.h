@@ -7,6 +7,7 @@
  * Date           Author       Notes
  * 2023-10-25     Shell        Move ffs to cpuport, add general implementation
  *                             by inline assembly
+ * 2024-01-18     Shell        support rt_hw_thread_self to improve overall performance
  */
 
 #ifndef  CPUPORT_H__
@@ -26,31 +27,6 @@ typedef struct
 {
     rt_uint32_t value;
 } rt_hw_spinlock_t;
-
-/**
- * Generic hw-cpu-id
- */
-#ifdef ARCH_USING_GENERIC_CPUID
-
-#if RT_CPUS_NR > 1
-
-rt_inline int rt_hw_cpu_id(void)
-{
-    long cpuid;
-    __asm__ volatile("mrs %0, tpidr_el1":"=r"(cpuid));
-    return cpuid;
-}
-
-#else
-
-rt_inline int rt_hw_cpu_id(void)
-{
-    return 0;
-}
-
-#endif /* RT_CPUS_NR > 1 */
-
-#endif /* ARCH_USING_GENERIC_CPUID */
 
 #endif /* RT_USING_SMP */
 
@@ -106,5 +82,21 @@ rt_inline int __rt_ffs(int value)
 }
 
 #endif /* RT_USING_CPU_FFS */
+
+#ifdef ARCH_USING_HW_THREAD_SELF
+rt_inline struct rt_thread *rt_hw_thread_self(void)
+{
+    struct rt_thread *thread;
+    __asm__ volatile ("mrs %0, tpidr_el1":"=r"(thread));
+
+    return thread;
+}
+
+rt_inline void rt_hw_thread_set_self(struct rt_thread *thread)
+{
+    __asm__ volatile ("msr tpidr_el1, %0"::"r"(thread));
+}
+
+#endif /* ARCH_USING_HW_THREAD_SELF */
 
 #endif  /*CPUPORT_H__*/

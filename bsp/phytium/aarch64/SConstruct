@@ -9,14 +9,13 @@ IS_EXPORTED = False
 if os.getenv('RTT_ROOT'):
     RTT_ROOT = os.getenv('RTT_ROOT')
 else:
-    RTT_ROOT = os.getcwd() + '/../../..'
+    RTT_ROOT = os.path.join(os.getcwd(),'..','..','..')
 
 sys.path = sys.path + [os.path.join(RTT_ROOT, 'tools')]
 try:
     from building import *
-except:
+except Exception as e:
     print('Cannot found RT-Thread root directory, please check RTT_ROOT')
-    print(RTT_ROOT)
     exit(-1)
 
 if RTT_ROOT == 'rt-thread':
@@ -26,7 +25,7 @@ if RTT_ROOT == 'rt-thread':
 if IS_EXPORTED:
     BSP_ROOT = '.'
 else:
-    BSP_ROOT = RTT_ROOT + '/bsp/phytium'
+    BSP_ROOT = os.path.join(RTT_ROOT ,'bsp','phytium') 
 
 TARGET = 'rtthread_a64.' + rtconfig.TARGET_EXT
 
@@ -40,19 +39,23 @@ env = Environment(tools = ['mingw'],
 env.PrependENVPath('PATH', rtconfig.EXEC_PATH)
 env['ASCOM'] = env['ASPPCOM']
 
+os.environ["BSP_ROOT"] = BSP_ROOT
+os.environ["SDK_DIR"] = os.path.join(BSP_ROOT,'libraries','phytium_standalone_sdk')
+
+
 Export('RTT_ROOT')
 Export('BSP_ROOT')
 Export('rtconfig')
 
 def is_phytium_sdk_installed():
-    py_target_folder = os.getcwd() + "/../libraries/phytium_standalone_sdk"
+    py_target_folder =  os.path.join(BSP_ROOT,"libraries","phytium_standalone_sdk")
     return os.path.exists(py_target_folder)
 
 def install_phytium_sdk():
     if is_phytium_sdk_installed():
         return 0
 
-    install_script_path = os.getcwd() + "/../libraries/phytium_standalone_sdk_install.py"
+    install_script_path = os.path.join(BSP_ROOT,"libraries","phytium_standalone_sdk_install.py")
 
     if os.path.exists(install_script_path):
         try:
@@ -74,10 +77,10 @@ objs = PrepareBuilding(env, RTT_ROOT, has_libcpu = False)
 
 if not IS_EXPORTED: # if project is not exported, libraries and board need to manually add
     # include libraries
-    objs.extend(SConscript(os.path.join(BSP_ROOT + '/libraries', 'SConscript')))
+    objs.extend(SConscript(os.path.join(BSP_ROOT,'libraries','SConscript')))
 
     # include board
-    objs.extend(SConscript(os.path.join(BSP_ROOT + '/board', 'SConscript')))
+    objs.extend(SConscript(os.path.join(BSP_ROOT,'board','SConscript')))
 
 # make a building
 DoBuilding(TARGET, objs)

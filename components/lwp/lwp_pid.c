@@ -83,6 +83,7 @@ void lwp_pid_lock_take(void)
     rc = lwp_mutex_take_safe(&pid_mtx, RT_WAITING_FOREVER, 0);
     /* should never failed */
     RT_ASSERT(rc == RT_EOK);
+    RT_UNUSED(rc);
 }
 
 void lwp_pid_lock_release(void)
@@ -1599,35 +1600,25 @@ static void _resr_cleanup(struct rt_lwp *lwp)
     }
 }
 
-static int _lwp_setaffinity(pid_t pid, int cpu)
+static int _lwp_setaffinity(int tid, int cpu)
 {
-    struct rt_lwp *lwp;
+    rt_thread_t thread;
     int ret = -1;
 
-    lwp_pid_lock_take();
-    lwp = lwp_from_pid_locked(pid);
+    thread = lwp_tid_get_thread_and_inc_ref(tid);
 
-    if (lwp)
+    if (thread)
     {
 #ifdef RT_USING_SMP
-        rt_list_t *list;
-
-        lwp->bind_cpu = cpu;
-        for (list = lwp->t_grp.next; list != &lwp->t_grp; list = list->next)
-        {
-            rt_thread_t thread;
-
-            thread = rt_list_entry(list, struct rt_thread, sibling);
-            rt_thread_control(thread, RT_THREAD_CTRL_BIND_CPU, (void *)(rt_size_t)cpu);
-        }
+        rt_thread_control(thread, RT_THREAD_CTRL_BIND_CPU, (void *)(rt_ubase_t)cpu);
 #endif
         ret = 0;
     }
-    lwp_pid_lock_release();
+    lwp_tid_dec_ref(thread);
     return ret;
 }
 
-int lwp_setaffinity(pid_t pid, int cpu)
+int lwp_setaffinity(int tid, int cpu)
 {
     int ret;
 
@@ -1637,7 +1628,7 @@ int lwp_setaffinity(pid_t pid, int cpu)
         cpu = RT_CPUS_NR;
     }
 #endif
-    ret = _lwp_setaffinity(pid, cpu);
+    ret = _lwp_setaffinity(tid, cpu);
     return ret;
 }
 

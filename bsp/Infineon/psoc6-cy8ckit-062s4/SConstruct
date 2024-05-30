@@ -36,10 +36,12 @@ Export('rtconfig')
 
 SDK_ROOT = os.path.abspath('./')
 
-if os.path.exists(SDK_ROOT + '/libraries'):
-    libraries_path_prefix = SDK_ROOT + '/libraries'
+libraries_path_prefix = SDK_ROOT
+
+if os.path.exists(SDK_ROOT + '/packages'):
+    libraries_path_prefix = SDK_ROOT + '/packages'
 else:
-    libraries_path_prefix = os.path.dirname(SDK_ROOT) + '/libraries'
+    print("Error: Don't have Packages for HAL_Driver, Please Use \"pkgs --Update\" in ENV")
 
 SDK_LIB = libraries_path_prefix
 Export('SDK_LIB')
@@ -47,14 +49,11 @@ Export('SDK_LIB')
 # prepare building environment
 objs = PrepareBuilding(env, RTT_ROOT, has_libcpu=False)
 
-IFX_library = 'IFX_PSOC6_HAL'
+IFX_library = 'Packages'
 rtconfig.BSP_LIBRARY_TYPE = IFX_library
 
-# include libraries
-objs.extend(SConscript(os.path.join(libraries_path_prefix, IFX_library, 'SConscript')))
-
 # include drivers
-objs.extend(SConscript(os.path.join(libraries_path_prefix, 'HAL_Drivers', 'SConscript')))
+objs.extend(SConscript(os.path.join('../libraries', 'HAL_Drivers', 'SConscript')))
 
 # make a building
 DoBuilding(TARGET, objs)

@@ -740,8 +740,10 @@ struct rt_cpu
         struct rt_thread        *current_thread;
 
         rt_uint8_t              irq_switch_flag:1;
-        rt_uint8_t              critical_switch_flag:1;
         rt_uint8_t              sched_lock_flag:1;
+#ifndef ARCH_USING_HW_THREAD_SELF
+        rt_uint8_t              critical_switch_flag:1;
+#endif /* ARCH_USING_HW_THREAD_SELF */
 
         rt_uint8_t              current_priority;
         rt_list_t               priority_table[RT_THREAD_PRIORITY_MAX];
@@ -763,9 +765,18 @@ struct rt_cpu
     struct rt_cpu_usage_stats   cpu_stat;
 #endif
 };
-typedef struct rt_cpu *rt_cpu_t;
+
+#else /* !RT_USING_SMP */
+struct rt_cpu
+{
+    struct rt_thread            *current_thread;
+};
 
 #endif /* RT_USING_SMP */
+
+typedef struct rt_cpu *rt_cpu_t;
+/* Noted: As API to reject writing to this variable from application codes */
+#define rt_current_thread rt_thread_self()
 
 struct rt_thread;
 
@@ -1352,6 +1363,7 @@ struct rt_device
 #ifdef RT_USING_OFW
     void *ofw_node;                                     /**< ofw node get from device tree */
 #endif /* RT_USING_OFW */
+    void *power_domain_unit;
 #endif /* RT_USING_DM */
 
     enum rt_device_class_type type;                     /**< device type */

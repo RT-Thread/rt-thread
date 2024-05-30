@@ -220,7 +220,7 @@ static void rt_defunct_execute(void)
         /* store the point of "thread->cleanup" avoid to lose */
         cleanup = thread->cleanup;
 
-        /* if it's a system object, not delete it */
+        /* if it's a system object, detach it */
         object_is_systemobject = rt_object_is_systemobject((rt_object_t)thread);
         if (object_is_systemobject == RT_TRUE)
         {
