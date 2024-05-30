@@ -622,10 +622,13 @@ static int gicv3_irq_map(struct rt_pic *pic, int hwirq, rt_uint32_t mode)
 
         switch (gicv3_hwirq_type(hwirq))
         {
+        case PPI_TYPE:
+            gic_fill_ppi_affinity(pirq->affinity);
+            break;
         case SPI_TYPE:
         case ESPI_TYPE:
             pirq->priority = GICD_INT_DEF_PRI;
-            rt_bitmap_set_bit(pirq->affinity, _init_cpu_id);
+            RT_IRQ_AFFINITY_SET(pirq->affinity, _init_cpu_id);
         default:
             break;
         }
@@ -701,7 +704,7 @@ static rt_err_t gicv3_irq_parse(struct rt_pic *pic, struct rt_ofw_cell_args *arg
     return err;
 }
 
-static struct rt_pic_ops gicv3_ops =
+const static struct rt_pic_ops gicv3_ops =
 {
     .name = "GICv3",
     .irq_init = gicv3_irq_init,

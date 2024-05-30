@@ -7,6 +7,7 @@
  * 2020-01-15     bigmagic     the first version
  * 2020-08-10     SummerGift   support clang compiler
  * 2023-04-29     GuEe-GUI     support kernel's ARM64 boot header
+ * 2024-01-18     Shell        fix implicit dependency of cpuid management
  */
 
 #ifndef __ASSEMBLY__
@@ -95,6 +96,10 @@ _start:
     /* Save cpu stack */
     get_phy stack_top, .boot_cpu_stack_top
     /* Save cpu id temp */
+#ifdef ARCH_USING_HW_THREAD_SELF
+    msr     tpidrro_el0, xzr
+    /* Save thread self */
+#endif /* ARCH_USING_HW_THREAD_SELF */
     msr     tpidr_el1, xzr
 
     bl      init_cpu_el
@@ -149,11 +154,10 @@ _secondary_cpu_entry:
 
     /* Get cpu id success */
     sub     x0, x2, #1
-    msr     tpidr_el1, x0           /* Save cpu id global */
-#else
-    bl      rt_hw_cpu_id_set
-    mrs     x0, tpidr_el1
 #endif /* RT_USING_OFW */
+    /* Save cpu id global */
+    bl      rt_hw_cpu_id_set
+    bl      rt_hw_cpu_id
 
     /* Set current cpu's stack top */
     sub     x0, x0, #1

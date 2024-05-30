@@ -33,6 +33,7 @@
  * 2023-12-10     xqyjlj       use rt_hw_spinlock
  * 2024-01-05     Shell        Fixup of data racing in rt_critical_level
  * 2024-01-18     Shell        support rt_sched_thread of scheduling status for better mt protection
+ * 2024-01-18     Shell        support rt_hw_thread_self to improve overall performance
  */
 
 #include <rtthread.h>
@@ -98,6 +99,18 @@ static struct rt_spinlock _mp_scheduler_lock;
         SCHEDULER_EXIT_CRITICAL(_curthr);  \
         rt_hw_local_irq_enable(level);     \
     } while (0)
+
+#ifdef ARCH_USING_HW_THREAD_SELF
+#define IS_CRITICAL_SWITCH_PEND(pcpu, curthr)  (RT_SCHED_CTX(curthr).critical_switch_flag)
+#define SET_CRITICAL_SWITCH_FLAG(pcpu, curthr) (RT_SCHED_CTX(curthr).critical_switch_flag = 1)
+#define CLR_CRITICAL_SWITCH_FLAG(pcpu, curthr) (RT_SCHED_CTX(curthr).critical_switch_flag = 0)
+
+#else /* !ARCH_USING_HW_THREAD_SELF */
+#define IS_CRITICAL_SWITCH_PEND(pcpu, curthr)  ((pcpu)->critical_switch_flag)
+#define SET_CRITICAL_SWITCH_FLAG(pcpu, curthr) ((pcpu)->critical_switch_flag = 1)
+#define CLR_CRITICAL_SWITCH_FLAG(pcpu, curthr) ((pcpu)->critical_switch_flag = 0)
+
+#endif /* ARCH_USING_HW_THREAD_SELF */
 
 static rt_uint32_t rt_thread_ready_priority_group;
 #if RT_THREAD_PRIORITY_MAX > 32
@@ -749,7 +762,7 @@ rt_err_t rt_sched_unlock_n_resched(rt_sched_lock_level_t level)
         /* leaving critical region of global context since we can't schedule */
         SCHEDULER_CONTEXT_UNLOCK(pcpu);
 
-        pcpu->critical_switch_flag = 1;
+        SET_CRITICAL_SWITCH_FLAG(pcpu, current_thread);
         error = -RT_ESCHEDLOCKED;
 
         SCHEDULER_EXIT_CRITICAL(current_thread);
@@ -757,7 +770,7 @@ rt_err_t rt_sched_unlock_n_resched(rt_sched_lock_level_t level)
     else
     {
         /* flush critical switch flag since a scheduling is done */
-        pcpu->critical_switch_flag = 0;
+        CLR_CRITICAL_SWITCH_FLAG(pcpu, current_thread);
 
         /* pick the highest runnable thread, and pass the control to it */
         to_thread = _prepare_context_switch_locked(cpu_id, pcpu, current_thread);
@@ -828,7 +841,7 @@ void rt_schedule(void)
     /* whether caller had locked the local scheduler already */
     if (RT_SCHED_CTX(current_thread).critical_lock_nest > 1)
     {
-        pcpu->critical_switch_flag = 1;
+        SET_CRITICAL_SWITCH_FLAG(pcpu, current_thread);
 
         SCHEDULER_EXIT_CRITICAL(current_thread);
 
@@ -837,7 +850,7 @@ void rt_schedule(void)
     else
     {
         /* flush critical switch flag since a scheduling is done */
-        pcpu->critical_switch_flag = 0;
+        CLR_CRITICAL_SWITCH_FLAG(pcpu, current_thread);
         pcpu->irq_switch_flag = 0;
 
         /**
@@ -912,13 +925,13 @@ void rt_scheduler_do_irq_switch(void *context)
     /* whether caller had locked the local scheduler already */
     if (RT_SCHED_CTX(current_thread).critical_lock_nest > 1)
     {
-        pcpu->critical_switch_flag = 1;
+        SET_CRITICAL_SWITCH_FLAG(pcpu, current_thread);
         SCHEDULER_EXIT_CRITICAL(current_thread);
     }
     else if (rt_atomic_load(&(pcpu->irq_nest)) == 0)
     {
         /* flush critical & irq switch flag since a scheduling is done */
-        pcpu->critical_switch_flag = 0;
+        CLR_CRITICAL_SWITCH_FLAG(pcpu, current_thread);
         pcpu->irq_switch_flag = 0;
 
         SCHEDULER_CONTEXT_LOCK(pcpu);
@@ -1056,6 +1069,9 @@ void rt_sched_post_ctx_switch(struct rt_thread *thread)
     }
     /* safe to access since irq is masked out */
     pcpu->current_thread = thread;
+#ifdef ARCH_USING_HW_THREAD_SELF
+    rt_hw_thread_set_self(thread);
+#endif /* ARCH_USING_HW_THREAD_SELF */
 }
 
 #ifdef RT_DEBUGING_CRITICAL
@@ -1096,14 +1112,28 @@ void rt_exit_critical_safe(rt_base_t critical_level)
 #endif /* RT_DEBUGING_CRITICAL */
 RTM_EXPORT(rt_exit_critical_safe);
 
+#ifdef ARCH_USING_HW_THREAD_SELF
+#define FREE_THREAD_SELF(lvl)
+
+#else /* !ARCH_USING_HW_THREAD_SELF */
+#define FREE_THREAD_SELF(lvl)        \
+    do                               \
+    {                                \
+        rt_hw_local_irq_enable(lvl); \
+    } while (0)
+
+#endif /* ARCH_USING_HW_THREAD_SELF */
+
 /**
  * @brief This function will lock the thread scheduler.
  */
 rt_base_t rt_enter_critical(void)
 {
-    rt_base_t level;
     rt_base_t critical_level;
     struct rt_thread *current_thread;
+
+#ifndef ARCH_USING_HW_THREAD_SELF
+    rt_base_t level;
     struct rt_cpu *pcpu;
 
     /* disable interrupt */
@@ -1111,9 +1141,15 @@ rt_base_t rt_enter_critical(void)
 
     pcpu = rt_cpu_self();
     current_thread = pcpu->current_thread;
+
+#else /* !ARCH_USING_HW_THREAD_SELF */
+    current_thread = rt_hw_thread_self();
+
+#endif /* ARCH_USING_HW_THREAD_SELF */
+
     if (!current_thread)
     {
-        rt_hw_local_irq_enable(level);
+        FREE_THREAD_SELF(level);
         /* scheduler unavailable */
         return -RT_EINVAL;
     }
@@ -1122,8 +1158,7 @@ rt_base_t rt_enter_critical(void)
     RT_SCHED_CTX(current_thread).critical_lock_nest++;
     critical_level = RT_SCHED_CTX(current_thread).critical_lock_nest;
 
-    /* enable interrupt */
-    rt_hw_local_irq_enable(level);
+    FREE_THREAD_SELF(level);
 
     return critical_level;
 }
@@ -1134,9 +1169,11 @@ RTM_EXPORT(rt_enter_critical);
  */
 void rt_exit_critical(void)
 {
-    rt_base_t level;
     struct rt_thread *current_thread;
     rt_bool_t need_resched;
+
+#ifndef ARCH_USING_HW_THREAD_SELF
+    rt_base_t level;
     struct rt_cpu *pcpu;
 
     /* disable interrupt */
@@ -1144,9 +1181,15 @@ void rt_exit_critical(void)
 
     pcpu = rt_cpu_self();
     current_thread = pcpu->current_thread;
+
+#else /* !ARCH_USING_HW_THREAD_SELF */
+    current_thread = rt_hw_thread_self();
+
+#endif /* ARCH_USING_HW_THREAD_SELF */
+
     if (!current_thread)
     {
-        rt_hw_local_irq_enable(level);
+        FREE_THREAD_SELF(level);
         return;
     }
 
@@ -1157,11 +1200,10 @@ void rt_exit_critical(void)
     if (RT_SCHED_CTX(current_thread).critical_lock_nest == 0)
     {
         /* is there any scheduling request unfinished? */
-        need_resched = pcpu->critical_switch_flag;
-        pcpu->critical_switch_flag = 0;
+        need_resched = IS_CRITICAL_SWITCH_PEND(pcpu, current_thread);
+        CLR_CRITICAL_SWITCH_FLAG(pcpu, current_thread);
 
-        /* enable interrupt */
-        rt_hw_local_irq_enable(level);
+        FREE_THREAD_SELF(level);
 
         if (need_resched)
             rt_schedule();
@@ -1171,8 +1213,7 @@ void rt_exit_critical(void)
         /* each exit_critical is strictly corresponding to an enter_critical */
         RT_ASSERT(RT_SCHED_CTX(current_thread).critical_lock_nest > 0);
 
-        /* enable interrupt */
-        rt_hw_local_irq_enable(level);
+        FREE_THREAD_SELF(level);
     }
 }
 RTM_EXPORT(rt_exit_critical);

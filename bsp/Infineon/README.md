@@ -12,6 +12,15 @@ PSOC6 系列 BSP 目前支持情况如下表所示：
 | [psoc6-cy8ckit-062-WIFI-BT](psoc6-cy8ckit-062-WIFI-BT)     | Infineon 官方 psoc6-cy8ckit-062-WIFI-BT 开发板              |
 | [psoc6-cy8ckit-062s4](psoc6-cy8ckit-062s4)                 | Infineon 官方 psoc6-cy8ckit-062s4 开发板                    |
 
+XMC 系列 BSP 目前支持情况如下表所示：
+
+| 更多操作**BSP 文件夹名称**                         | **开发板名称**                               |
+| -------------------------------------------------- | -------------------------------------------- |
+| **XMC系列**                                        |                                              |
+| [xmc7200-kit_xmc7200_evk](xmc7200-kit_xmc7200_evk) | Infineon 官方 xmc7200-kit_xmc7200_evk 开发板 |
+
+
+
 可以通过阅读相应 BSP 下的 README 来快速上手，如果想要使用 BSP 更多功能可参考 docs 文件夹下提供的说明文档，如下表所示：
 
 | **BSP 制作与提交**                           | **简介**                                                     |

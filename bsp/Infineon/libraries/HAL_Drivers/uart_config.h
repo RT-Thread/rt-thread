@@ -19,6 +19,28 @@ extern "C"
 {
 #endif
 
+#if defined(SOC_SERIES_IFX_XMC)
+#if defined(UART_CPU_IRQ_Number)
+#if (UART_CPU_IRQ_Number == 0)
+    #define UART_NvicMuxN_IRQn NvicMux0_IRQn
+#elif(UART_CPU_IRQ_Number == 1)
+    #define UART_NvicMuxN_IRQn NvicMux1_IRQn
+#elif (UART_CPU_IRQ_Number == 2)
+    #define UART_NvicMuxN_IRQn NvicMux2_IRQn
+#elif (UART_CPU_IRQ_Number == 3)
+    #define UART_NvicMuxN_IRQn NvicMux3_IRQn
+#elif (UART_CPU_IRQ_Number == 4)
+    #define UART_NvicMuxN_IRQn NvicMux4_IRQn
+#elif (UART_CPU_IRQ_Number == 5)
+    #define UART_NvicMuxN_IRQn NvicMux5_IRQn
+#elif (UART_CPU_IRQ_Number == 6)
+    #define UART_NvicMuxN_IRQn NvicMux6_IRQn
+#elif (UART_CPU_IRQ_Number == 7)
+    #define UART_NvicMuxN_IRQn NvicMux7_IRQn
+#endif
+#endif
+#endif
+
 #ifdef BSP_USING_UART0
     /* UART0 device driver structure */
     cy_stc_sysint_t UART0_SCB_IRQ_cfg =
@@ -47,7 +69,11 @@ extern "C"
     /* UART3 device driver structure */
     cy_stc_sysint_t UART3_SCB_IRQ_cfg =
         {
+#if defined(SOC_SERIES_IFX_XMC)
+            .intrSrc = ((UART_NvicMuxN_IRQn << 16) | (cy_en_intr_t)scb_3_interrupt_IRQn),
+#else
             .intrSrc = (IRQn_Type)scb_3_interrupt_IRQn,
+#endif
             .intrPriority = (7u),
     };
 #endif
@@ -67,7 +93,6 @@ extern "C"
             .intrPriority = (7u),
     };
 #endif
-
 #ifdef BSP_USING_UART6
     /* UART6 device driver structure */
     cy_stc_sysint_t UART6_SCB_IRQ_cfg =
@@ -76,6 +101,7 @@ extern "C"
             .intrPriority = (7u),
     };
 #endif
+
 #if defined(BSP_USING_UART0)
 #ifndef UART0_CONFIG
 #define UART0_CONFIG                            \
@@ -139,6 +165,18 @@ extern "C"
 
 #if defined(BSP_USING_UART3)
 #ifndef UART3_CONFIG
+#if defined(SOC_XMC7200D_E272K8384AA)
+#define UART3_CONFIG                            \
+    {                                           \
+        .name = "uart3",                        \
+        .tx_pin = P13_1,                        \
+        .rx_pin = P13_0,                        \
+        .usart_x = SCB3,                        \
+        .intrSrc = scb_3_interrupt_IRQn,        \
+        .userIsr = uart_isr_callback(uart3),    \
+        .UART_SCB_IRQ_cfg = &UART3_SCB_IRQ_cfg, \
+    }
+#else
 #define UART3_CONFIG                            \
     {                                           \
         .name = "uart3",                        \
@@ -149,6 +187,7 @@ extern "C"
         .userIsr = uart_isr_callback(uart3),    \
         .UART_SCB_IRQ_cfg = &UART3_SCB_IRQ_cfg, \
     }
+#endif
     void uart3_isr_callback(void);
 #endif /* UART3_CONFIG */
 #endif /* BSP_USING_UART3 */

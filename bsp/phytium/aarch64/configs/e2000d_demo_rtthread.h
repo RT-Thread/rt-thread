@@ -1,9 +1,6 @@
 #ifndef RT_CONFIG_H__
 #define RT_CONFIG_H__
 
-/* Automatically generated file; DO NOT EDIT. */
-/* RT-Thread Project Configuration */
-
 /* RT-Thread Kernel */
 
 #define RT_NAME_MAX 16
@@ -26,9 +23,14 @@
 
 /* kservice optimization */
 
-#define RT_KSERVICE_USING_STDLIB
-#define RT_KPRINTF_USING_LONGLONG
+/* end of kservice optimization */
+
+/* klibc optimization */
+
+#define RT_KLIBC_USING_PRINTF_LONGLONG
+/* end of klibc optimization */
 #define RT_USING_DEBUG
+#define RT_DEBUGING_ASSERT
 #define RT_DEBUGING_COLOR
 
 /* Inter-Thread communication */
@@ -38,6 +40,7 @@
 #define RT_USING_EVENT
 #define RT_USING_MAILBOX
 #define RT_USING_MESSAGEQUEUE
+/* end of Inter-Thread communication */
 
 /* Memory Management */
 
@@ -48,13 +51,16 @@
 #define RT_USING_SLAB_AS_HEAP
 #define RT_USING_HEAP_ISR
 #define RT_USING_HEAP
+/* end of Memory Management */
 #define RT_USING_DEVICE
 #define RT_USING_SCHED_THREAD_CTX
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uart1"
-#define RT_VER_NUM 0x50100
+#define RT_VER_NUM 0x50200
+#define RT_USING_STDC_ATOMIC
 #define RT_BACKTRACE_LEVEL_MAX_NR 32
+/* end of RT-Thread Kernel */
 
 /* AArch64 Architecture Configuration */
 
@@ -62,6 +68,7 @@
 #define ARCH_RAM_OFFSET 0x80000000
 #define ARCH_SECONDARY_CPU_STACK_SIZE 4096
 #define ARCH_HAVE_EFFICIENT_UNALIGNED_ACCESS
+/* end of AArch64 Architecture Configuration */
 #define ARCH_CPU_64BIT
 #define RT_USING_CACHE
 #define RT_USING_HW_ATOMIC
@@ -117,8 +124,10 @@
 #define RT_DFS_ELM_MAX_SECTOR_SIZE 512
 #define RT_DFS_ELM_REENTRANT
 #define RT_DFS_ELM_MUTEX_TIMEOUT 3000
+/* end of elm-chan's FatFs, Generic FAT Filesystem Module */
 #define RT_USING_DFS_DEVFS
 #define RT_USING_DFS_RAMFS
+/* end of DFS: device virtual file system */
 
 /* Device Drivers */
 
@@ -155,6 +164,8 @@
 
 /* Using USB */
 
+/* end of Using USB */
+/* end of Device Drivers */
 
 /* C/C++ and POSIX layer */
 
@@ -166,6 +177,8 @@
 #define RT_LIBC_TZ_DEFAULT_HOUR 8
 #define RT_LIBC_TZ_DEFAULT_MIN 0
 #define RT_LIBC_TZ_DEFAULT_SEC 0
+/* end of Timezone and Daylight Saving Time */
+/* end of ISO-ANSI C layer */
 
 /* POSIX (Portable Operating System Interface) layer */
 
@@ -182,6 +195,9 @@
 
 /* Socket is in the 'Network' category */
 
+/* end of Interprocess Communication (IPC) */
+/* end of POSIX (Portable Operating System Interface) layer */
+/* end of C/C++ and POSIX layer */
 
 /* Network */
 
@@ -191,6 +207,7 @@
 /* Docking with protocol stacks */
 
 #define SAL_USING_LWIP
+/* end of Docking with protocol stacks */
 #define SAL_USING_POSIX
 #define RT_USING_NETDEV
 #define NETDEV_USING_IFCONFIG
@@ -212,6 +229,7 @@
 #define RT_LWIP_IPADDR "192.168.4.10"
 #define RT_LWIP_GWADDR "192.168.4.1"
 #define RT_LWIP_MSKADDR "255.255.255.0"
+/* end of Static IPv4 Address */
 #define RT_LWIP_UDP
 #define RT_LWIP_TCP
 #define RT_LWIP_RAW
@@ -223,12 +241,13 @@
 #define RT_LWIP_TCP_SEG_NUM 40
 #define RT_LWIP_TCP_SND_BUF 8196
 #define RT_LWIP_TCP_WND 8196
-#define RT_LWIP_TCPTHREAD_PRIORITY 12
+#define RT_LWIP_TCPTHREAD_PRIORITY 16
 #define RT_LWIP_TCPTHREAD_MBOX_SIZE 8
 #define RT_LWIP_TCPTHREAD_STACKSIZE 16184
 #define RT_LWIP_ETHTHREAD_PRIORITY 12
 #define RT_LWIP_ETHTHREAD_STACKSIZE 8192
 #define RT_LWIP_ETHTHREAD_MBOX_SIZE 8
+#define RT_LWIP_REASSEMBLY_FRAG
 #define LWIP_NETIF_STATUS_CALLBACK 1
 #define LWIP_NETIF_LINK_CALLBACK 1
 #define RT_LWIP_NETIF_NAMESIZE 6
@@ -239,9 +258,11 @@
 #define LWIP_SO_LINGER 0
 #define LWIP_NETIF_LOOPBACK 0
 #define RT_LWIP_USING_PING
+/* end of Network */
 
 /* Memory protection */
 
+/* end of Memory protection */
 
 /* Utilities */
 
@@ -253,9 +274,12 @@
 #define RT_USING_ADT_BITMAP
 #define RT_USING_ADT_HASHMAP
 #define RT_USING_ADT_REF
+/* end of Utilities */
+/* end of RT-Thread Components */
 
 /* RT-Thread Utestcases */
 
+/* end of RT-Thread Utestcases */
 
 /* RT-Thread online packages */
 
@@ -266,121 +290,153 @@
 
 /* Marvell WiFi */
 
+/* end of Marvell WiFi */
 
 /* Wiced WiFi */
 
-
-/* CYW43012 WiFi */
-
-
-/* BL808 WiFi */
-
-
-/* CYW43439 WiFi */
-
+/* end of Wiced WiFi */
+/* end of Wi-Fi */
 
 /* IoT Cloud */
 
+/* end of IoT Cloud */
+/* end of IoT - internet of things */
 
 /* security packages */
 
+/* end of security packages */
 
 /* language packages */
 
 /* JSON: JavaScript Object Notation, a lightweight data-interchange format */
 
+/* end of JSON: JavaScript Object Notation, a lightweight data-interchange format */
 
 /* XML: Extensible Markup Language */
 
+/* end of XML: Extensible Markup Language */
+/* end of language packages */
 
 /* multimedia packages */
 
 /* LVGL: powerful and easy-to-use embedded GUI library */
 
+/* end of LVGL: powerful and easy-to-use embedded GUI library */
 
 /* u8g2: a monochrome graphic library */
 
+/* end of u8g2: a monochrome graphic library */
+/* end of multimedia packages */
 
 /* tools packages */
 
+/* end of tools packages */
 
 /* system packages */
 
 /* enhanced kernel services */
 
+/* end of enhanced kernel services */
 
 /* acceleration: Assembly language or algorithmic acceleration packages */
 
+/* end of acceleration: Assembly language or algorithmic acceleration packages */
 
 /* CMSIS: ARM Cortex-M Microcontroller Software Interface Standard */
 
+/* end of CMSIS: ARM Cortex-M Microcontroller Software Interface Standard */
 
 /* Micrium: Micrium software products porting for RT-Thread */
 
+/* end of Micrium: Micrium software products porting for RT-Thread */
+/* end of system packages */
 
 /* peripheral libraries and drivers */
 
 /* sensors drivers */
 
+/* end of sensors drivers */
 
 /* touch drivers */
 
+/* end of touch drivers */
 
 /* Kendryte SDK */
 
+/* end of Kendryte SDK */
+/* end of peripheral libraries and drivers */
 
 /* AI packages */
 
+/* end of AI packages */
 
 /* Signal Processing and Control Algorithm Packages */
 
+/* end of Signal Processing and Control Algorithm Packages */
 
 /* miscellaneous packages */
 
 /* project laboratory */
+
+/* end of project laboratory */
 
 /* samples: kernel and components samples */
 
 #define PKG_USING_KERNEL_SAMPLES
 #define PKG_USING_KERNEL_SAMPLES_LATEST_VERSION
 #define PKG_USING_KERNEL_SAMPLES_EN
+/* end of samples: kernel and components samples */
 
 /* entertainment: terminal games and other interesting software packages */
 
+/* end of entertainment: terminal games and other interesting software packages */
+/* end of miscellaneous packages */
 
 /* Arduino libraries */
 
 
 /* Projects and Demos */
 
+/* end of Projects and Demos */
 
 /* Sensors */
 
+/* end of Sensors */
 
 /* Display */
 
+/* end of Display */
 
 /* Timing */
 
+/* end of Timing */
 
 /* Data Processing */
 
+/* end of Data Processing */
 
 /* Data Storage */
 
 /* Communication */
 
+/* end of Communication */
 
 /* Device Control */
 
+/* end of Device Control */
 
 /* Other */
 
+/* end of Other */
 
 /* Signal IO */
 
+/* end of Signal IO */
 
 /* Uncategorized */
+
+/* end of Arduino libraries */
+/* end of RT-Thread online packages */
 
 /* Hardware Drivers */
 
@@ -399,7 +455,6 @@
 #define BSP_USING_CAN
 #define RT_USING_CANFD
 #define RT_USING_CAN0
-#define BSP_USING_GPIO
 #define BSP_USING_QSPI
 #define RT_USING_QSPI0
 #define USING_QSPI_CHANNEL0
@@ -418,9 +473,11 @@
 #define USE_SDIF1_TF
 #define BSP_USING_DC
 #define RT_USING_DC_CHANNEL1
+/* end of On-chip Peripheral Drivers */
 
 /* Board extended module Drivers */
 
+/* end of Hardware Drivers */
 #define BSP_USING_GIC
 #define BSP_USING_GICV3
 #define PHYTIUM_ARCH_AARCH64
@@ -442,6 +499,7 @@
 #define F64BIT_MEMORY_LENGTH 0x800000000
 #define TARGET_E2000
 #define DEFAULT_DEBUG_PRINT_UART1
+/* end of Soc configuration */
 
 /* Board Configuration */
 
@@ -450,12 +508,17 @@
 
 /* IO mux configuration when board start up */
 
+/* end of IO mux configuration when board start up */
+/* end of Board Configuration */
 
 /* Sdk common configuration */
 
 #define LOG_DEBUG
+/* end of Sdk common configuration */
 
 /* Image information configuration */
 
+/* end of Image information configuration */
+/* end of Standalone Setting */
 
 #endif

@@ -42,6 +42,14 @@ config TIMER_CLK_FREQ
     int
     default 25000000
 
+config GPIO_IRQ_BASE
+    int
+    default 60
+
+config SYS_GPIO_IRQ_BASE
+    int
+    default 70
+    
 config __STACKSIZE__
     int "stack size for interrupt"
     default 4096

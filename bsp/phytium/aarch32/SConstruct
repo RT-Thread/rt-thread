@@ -40,6 +40,9 @@ env = Environment(tools = ['mingw'],
 env.PrependENVPath('PATH', rtconfig.EXEC_PATH)
 env['ASCOM'] = env['ASPPCOM']
 
+os.environ["BSP_ROOT"] = BSP_ROOT
+os.environ["SDK_DIR"] = os.path.join(BSP_ROOT,'libraries','phytium_standalone_sdk')
+
 Export('RTT_ROOT')
 Export('BSP_ROOT')
 Export('rtconfig')

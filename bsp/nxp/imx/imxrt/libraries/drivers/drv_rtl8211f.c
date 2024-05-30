@@ -6,6 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2022-08-15     xjy198903    the first version
+ * 2024-04-18     Jiading      add a parameter passed into rt_phy_ops APIs
  */
 #include <rtthread.h>
 
@@ -215,7 +216,7 @@ static rt_phy_status rt_phy_init(void *object, rt_uint32_t phy_addr, rt_uint32_t
     /* Check PHY ID. */
     do
     {
-        result = phy_rtl8211f.ops->read(PHY_ID1_REG, &regValue);
+        result = phy_rtl8211f.ops->read(NULL, PHY_ID1_REG, &regValue);
         if (result != PHY_STATUS_OK)
         {
             return result;
@@ -244,7 +245,7 @@ static rt_phy_status rt_phy_init(void *object, rt_uint32_t phy_addr, rt_uint32_t
     }
 
     /* Set Tx Delay */
-    result = phy_rtl8211f.ops->read(PHY_RGMII_TX_DELAY_REG, &regValue);
+    result = phy_rtl8211f.ops->read(NULL, PHY_RGMII_TX_DELAY_REG, &regValue);
     if (PHY_STATUS_OK == result)
     {
         regValue |= PHY_RGMII_TX_DELAY_MASK;
@@ -260,7 +261,7 @@ static rt_phy_status rt_phy_init(void *object, rt_uint32_t phy_addr, rt_uint32_t
     }
 
     /* Set Rx Delay */
-    result = phy_rtl8211f.ops->read(PHY_RGMII_RX_DELAY_REG, &regValue);
+    result = phy_rtl8211f.ops->read(NULL, PHY_RGMII_RX_DELAY_REG, &regValue);
     if (PHY_STATUS_OK == result)
     {
         regValue |= PHY_RGMII_RX_DELAY_MASK;
@@ -298,7 +299,7 @@ static rt_phy_status rt_phy_init(void *object, rt_uint32_t phy_addr, rt_uint32_t
         result = phy_rtl8211f.ops->write(PHY_1000BASET_CONTROL_REG, PHY_1000BASET_FULLDUPLEX_MASK);
         if (result == PHY_STATUS_OK)
         {
-            result = phy_rtl8211f.ops->read(PHY_BASICCONTROL_REG, &regValue);
+            result = phy_rtl8211f.ops->read(NULL, PHY_BASICCONTROL_REG, &regValue);
             if (result == PHY_STATUS_OK)
             {
                 result = phy_rtl8211f.ops->write(PHY_BASICCONTROL_REG, (regValue | PHY_BCTL_AUTONEG_MASK | PHY_BCTL_RESTART_AUTONEG_MASK));
@@ -309,7 +310,7 @@ static rt_phy_status rt_phy_init(void *object, rt_uint32_t phy_addr, rt_uint32_t
     return result;
 }
 
-static rt_phy_status rt_phy_read(rt_uint32_t reg, rt_uint32_t *data)
+static rt_phy_status rt_phy_read(rt_phy_t *phy, rt_uint32_t reg, rt_uint32_t *data)
 {
     rt_mdio_t *mdio_bus = phy_rtl8211f.bus;
     rt_uint32_t device_id = phy_rtl8211f.addr;
@@ -321,7 +322,7 @@ static rt_phy_status rt_phy_read(rt_uint32_t reg, rt_uint32_t *data)
     return PHY_STATUS_FAIL;
 }
 
-static rt_phy_status rt_phy_write(rt_uint32_t reg, rt_uint32_t data)
+static rt_phy_status rt_phy_write(rt_phy_t *phy, rt_uint32_t reg, rt_uint32_t data)
 {
     rt_mdio_t *mdio_bus = phy_rtl8211f.bus;
     rt_uint32_t device_id = phy_rtl8211f.addr;
@@ -333,7 +334,7 @@ static rt_phy_status rt_phy_write(rt_uint32_t reg, rt_uint32_t data)
     return PHY_STATUS_FAIL;
 }
 
-static rt_phy_status rt_phy_loopback(rt_uint32_t mode, rt_uint32_t speed, rt_bool_t enable)
+static rt_phy_status rt_phy_loopback(rt_phy_t *phy, rt_uint32_t mode, rt_uint32_t speed, rt_bool_t enable)
 {
     /* This PHY only supports local loopback. */
     //    rt_assert(mode == PHY_LOCAL_LOOP);
@@ -361,7 +362,7 @@ static rt_phy_status rt_phy_loopback(rt_uint32_t mode, rt_uint32_t speed, rt_boo
     else
     {
         /* First read the current status in control register. */
-        result = phy_rtl8211f.ops->read(PHY_BASICCONTROL_REG, &regValue);
+        result = phy_rtl8211f.ops->read(NULL, PHY_BASICCONTROL_REG, &regValue);
         if (result == PHY_STATUS_OK)
         {
             regValue &= ~PHY_BCTL_LOOP_MASK;
@@ -371,7 +372,7 @@ static rt_phy_status rt_phy_loopback(rt_uint32_t mode, rt_uint32_t speed, rt_boo
     return result;
 }
 
-static rt_phy_status get_link_status(rt_bool_t *status)
+static rt_phy_status get_link_status(rt_phy_t *phy, rt_bool_t *status)
 {
     // assert(status);
 
@@ -396,7 +397,7 @@ static rt_phy_status get_link_status(rt_bool_t *status)
     return result;
 }
 
-static rt_phy_status get_link_speed_duplex(rt_uint32_t *speed, rt_uint32_t *duplex)
+static rt_phy_status get_link_speed_duplex(rt_phy_t *phy, rt_uint32_t *speed, rt_uint32_t *duplex)
 {
     // assert(!((speed == NULL) && (duplex == NULL)));
 
@@ -404,7 +405,7 @@ static rt_phy_status get_link_speed_duplex(rt_uint32_t *speed, rt_uint32_t *dupl
     uint32_t regValue;
 
     /* Read the status register. */
-    result = phy_rtl8211f.ops->read(PHY_SPECIFIC_STATUS_REG, &regValue);
+    result = phy_rtl8211f.ops->read(NULL, PHY_SPECIFIC_STATUS_REG, &regValue);
     if (result == PHY_STATUS_OK)
     {
         if (speed != NULL)

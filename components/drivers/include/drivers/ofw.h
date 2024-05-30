@@ -205,6 +205,9 @@ struct rt_ofw_node *rt_ofw_get_alias_node(const char *tag, int id);
 int rt_ofw_get_alias_id(struct rt_ofw_node *np, const char *tag);
 int rt_ofw_get_alias_last_id(const char *tag);
 
+rt_err_t rt_ofw_map_id(struct rt_ofw_node *np, rt_uint32_t id, const char *map_name, const char *map_mask_name,
+        struct rt_ofw_node **ref_np, rt_uint32_t *out_id);
+
 struct rt_ofw_node *rt_ofw_append_child(struct rt_ofw_node *parent, const char *full_name);
 rt_err_t rt_ofw_append_prop(struct rt_ofw_node *np, const char *name, int length, void *value);
 
