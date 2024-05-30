@@ -12,6 +12,7 @@
 #define __MISC_H__
 
 #include <rtdef.h>
+#include <cpuport.h>
 
 #ifdef ARCH_CPU_64BIT
 #define RT_BITS_PER_LONG 64
@@ -33,6 +34,9 @@
             (((__x) - ((__d) / 2)) / (__d));    \
 })
 
+#define RT_FIELD_PREP(mask, val)    (((rt_uint64_t)(val) << (__rt_ffsl((mask)) - 1)) & (mask))
+#define RT_FIELD_GET(mask, val)     (((val) & (mask)) >> (__rt_ffsl((mask)) - 1))
+
 #define RT_BIT(n)               (1UL << (n))
 #define RT_BIT_ULL(n)           (1ULL << (n))
 #define RT_BIT_MASK(nr)         (1UL << ((nr) % RT_BITS_PER_LONG))
@@ -47,6 +51,13 @@
 #define RT_GENMASK_ULL(h, l)    (((~0ULL) << (l)) & (~0ULL >> (RT_BITS_PER_LONG_LONG - 1 - (h))))
 
 #define RT_ARRAY_SIZE(arr)      (sizeof(arr) / sizeof(arr[0]))
+
+#define rt_offsetof(s, field)   ((rt_size_t)&((s *)0)->field)
+
+#define rt_upper_32_bits(n)     ((rt_uint32_t)(((n) >> 16) >> 16))
+#define rt_lower_32_bits(n)     ((rt_uint32_t)((n) & 0xffffffff))
+#define rt_upper_16_bits(n)     ((rt_uint16_t)((n) >> 16))
+#define rt_lower_16_bits(n)     ((rt_uint16_t)((n) & 0xffff))
 
 #define rt_min(x, y)            \
 ({                              \
@@ -71,6 +82,13 @@
     _x < _y ? _x: _y;           \
 })
 
+#define rt_max_t(type, x, y)    \
+({                              \
+    type _x = (x);              \
+    type _y = (y);              \
+    _x > _y ? _x: _y;           \
+})
+
 #define rt_clamp(val, lo, hi)   rt_min((typeof(val))rt_max(val, lo), hi)
 
 #define rt_do_div(n, base)              \
@@ -82,5 +100,19 @@
         ++(n);                          \
     _rem;                               \
 })
+
+#ifndef rt_ilog2
+rt_inline int rt_ilog2(rt_ubase_t v)
+{
+    int l = 0;
+
+    while ((1UL << l) < v)
+    {
+        l++;
+    }
+
+    return l;
+}
+#endif /* !rt_ilog2 */
 
 #endif /* __MISC_H__ */
