@@ -121,6 +121,13 @@ menu "On-chip Peripheral Drivers"
                 default n
         endif
 
+    menuconfig BSP_USING_ETH
+        bool "Enable Ethernet"
+        default n
+        select RT_USING_LWIP
+        select RT_USING_NETDEV
+        select RT_USING_SAL
+
     config BSP_USING_USBH
         bool "Enable USB Host"
         select RT_USING_USB_HOST
