@@ -430,6 +430,8 @@ rt_inline rt_bool_t rt_ofw_node_is_type(const struct rt_ofw_node *np, const char
 struct rt_ofw_stub *rt_ofw_stub_probe_range(struct rt_ofw_node *np,
         const struct rt_ofw_stub *stub_start, const struct rt_ofw_stub *stub_end);
 
+struct rt_object *rt_ofw_parse_object(struct rt_ofw_node *np, const char *obj_name, const char *cells_name);
+
 rt_err_t rt_ofw_console_setup(void);
 const char *rt_ofw_bootargs_select(const char *key, int index);
 
