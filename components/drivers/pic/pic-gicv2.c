@@ -276,6 +276,70 @@ static void gicv2_irq_send_ipi(struct rt_pic_irq *pirq, rt_bitmap_t *cpumask)
     }
 }
 
+static rt_err_t gicv2_irq_set_state(struct rt_pic *pic, int hwirq, int type, rt_bool_t state)
+{
+    rt_err_t err = RT_EOK;
+    rt_uint32_t offset = 0;
+    struct gicv2 *gic = raw_to_gicv2(pic);
+
+    switch (type)
+    {
+    case RT_IRQ_STATE_PENDING:
+        offset = state ? GIC_DIST_PENDING_SET : GIC_DIST_PENDING_CLEAR;
+        break;
+    case RT_IRQ_STATE_ACTIVE:
+        offset = state ? GIC_DIST_ACTIVE_SET : GIC_DIST_ACTIVE_CLEAR;
+        break;
+    case RT_IRQ_STATE_MASKED:
+        offset = state ? GIC_DIST_ENABLE_CLEAR : GIC_DIST_ENABLE_SET;
+        break;
+    default:
+        err = -RT_EINVAL;
+        break;
+    }
+
+    if (!err)
+    {
+        rt_uint32_t mask = 1 << (hwirq % 32);
+
+        HWREG32(gic->dist_base + offset + (hwirq / 32) * 4) = mask;
+    }
+
+    return err;
+}
+
+static rt_err_t gicv2_irq_get_state(struct rt_pic *pic, int hwirq, int type, rt_bool_t *out_state)
+{
+    rt_err_t err = RT_EOK;
+    rt_uint32_t offset = 0;
+    struct gicv2 *gic = raw_to_gicv2(pic);
+
+    switch (type)
+    {
+    case RT_IRQ_STATE_PENDING:
+        offset = GIC_DIST_PENDING_SET;
+        break;
+    case RT_IRQ_STATE_ACTIVE:
+        offset = GIC_DIST_ACTIVE_SET;
+        break;
+    case RT_IRQ_STATE_MASKED:
+        offset = GIC_DIST_ENABLE_SET;
+        break;
+    default:
+        err = -RT_EINVAL;
+        break;
+    }
+
+    if (!err)
+    {
+        rt_uint32_t mask = 1 << (hwirq % 32);
+
+        *out_state = !!(HWREG32(gic->dist_base + offset + (hwirq / 32) * 4) & mask);
+    }
+
+    return err;
+}
+
 static int gicv2_irq_map(struct rt_pic *pic, int hwirq, rt_uint32_t mode)
 {
     int irq, irq_index = hwirq - GIC_SGI_NR;
@@ -353,6 +417,8 @@ const static struct rt_pic_ops gicv2_ops =
     .irq_set_affinity = gicv2_irq_set_affinity,
     .irq_set_triger_mode = gicv2_irq_set_triger_mode,
     .irq_send_ipi = gicv2_irq_send_ipi,
+    .irq_set_state = gicv2_irq_set_state,
+    .irq_get_state = gicv2_irq_get_state,
     .irq_map = gicv2_irq_map,
     .irq_parse = gicv2_irq_parse,
 };
