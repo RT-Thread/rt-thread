@@ -19,13 +19,6 @@
  * @{
  */
 
-/* i2s channel slot mask */
-#define I2S_CHANNEL_SLOT_MASK(x) (1U << (x))
-/* convert audio depth value into CFGR[DATASIZ] value map */
-#define I2S_CFGR_DATASIZ(x) ((x - 16) >> 3)
-/* convert channel length value into CFGR[CHSIZ] value map */
-#define I2S_CFGR_CHSIZ(x)   ((x - 16) >> 4)
-
 /**
  * @brief I2S data line
  */
@@ -50,7 +43,8 @@ typedef struct i2s_config {
     bool use_external_fclk;
     bool enable_mclk_out;
     bool frame_start_at_rising_edge;
-    uint16_t fifo_threshold;
+    uint16_t tx_fifo_threshold;
+    uint16_t rx_fifo_threshold;
 } i2s_config_t;
 
 /**
@@ -234,6 +228,8 @@ static inline void i2s_disable_irq(I2S_Type *ptr, uint32_t mask)
 /**
  * @brief I2S enable
  *
+ * @note dropped API, please use i2s_start
+ *
  * @param [in] ptr I2S base address
  */
 static inline void i2s_enable(I2S_Type *ptr)
@@ -244,9 +240,31 @@ static inline void i2s_enable(I2S_Type *ptr)
 /**
  * @brief I2S disable
  *
+ * @note dropped API, please use i2s_stop
+ *
  * @param [in] ptr I2S base address
  */
 static inline void i2s_disable(I2S_Type *ptr)
+{
+    ptr->CTRL &= ~I2S_CTRL_I2S_EN_MASK;
+}
+
+/**
+ * @brief I2S start
+ *
+ * @param [in] ptr I2S base address
+ */
+static inline void i2s_start(I2S_Type *ptr)
+{
+    ptr->CTRL |= I2S_CTRL_I2S_EN_MASK;
+}
+
+/**
+ * @brief I2S stop
+ *
+ * @param [in] ptr I2S base address
+ */
+static inline void i2s_stop(I2S_Type *ptr)
 {
     ptr->CTRL &= ~I2S_CTRL_I2S_EN_MASK;
 }
@@ -296,30 +314,6 @@ static inline void i2s_disable_tx(I2S_Type *ptr, uint8_t tx_mask)
 }
 
 /**
- * @brief I2S clear tx fifo
- *
- * @param [in] ptr I2S base address
- */
-static inline void i2s_clear_tx_fifo(I2S_Type *ptr)
-{
-    ptr->CTRL |= I2S_CTRL_TXFIFOCLR_MASK;
-    while (ptr->CTRL & I2S_CTRL_TXFIFOCLR_MASK) {
-    }
-}
-
-/**
- * @brief I2S clear rx fifo
- *
- * @param [in] ptr I2S base address
- */
-static inline void i2s_clear_rx_fifo(I2S_Type *ptr)
-{
-    ptr->CTRL |= I2S_CTRL_RXFIFOCLR_MASK;
-    while (ptr->CTRL & I2S_CTRL_RXFIFOCLR_MASK) {
-    }
-}
-
-/**
  * @brief I2S reset clock generator
  *
  * @param [in] ptr I2S base address
@@ -333,24 +327,67 @@ static inline void i2s_reset_clock_gen(I2S_Type *ptr)
 /**
  * @brief I2S reset tx function
  *
+ * @note This API will disable I2S, reset tx function
+ * Please ensure that there is a valid BCLK when calling this function
+ *
  * @param [in] ptr I2S base address
  */
 static inline void i2s_reset_tx(I2S_Type *ptr)
 {
-    ptr->CTRL |= I2S_CTRL_SFTRST_TX_MASK;
-    ptr->CTRL &= ~I2S_CTRL_SFTRST_TX_MASK;
+    /* disable I2S */
+    ptr->CTRL &= ~I2S_CTRL_I2S_EN_MASK;
+
+    /* reset tx and clear fifo */
+    ptr->CTRL |= (I2S_CTRL_TXFIFOCLR_MASK | I2S_CTRL_SFTRST_TX_MASK);
+    ptr->CTRL &= ~(I2S_CTRL_TXFIFOCLR_MASK | I2S_CTRL_SFTRST_TX_MASK);
 }
 
 /**
  * @brief I2S reset rx function
  *
+ * @note This API will disable I2S, reset rx function
+ * Please ensure that there is a valid BCLK when calling this function
+ *
  * @param [in] ptr I2S base address
  */
 static inline void i2s_reset_rx(I2S_Type *ptr)
 {
-    ptr->CTRL |= I2S_CTRL_SFTRST_RX_MASK;
-    ptr->CTRL &= ~I2S_CTRL_SFTRST_RX_MASK;
+    /* disable I2S */
+    ptr->CTRL &= ~I2S_CTRL_I2S_EN_MASK;
+
+    /* reset rx and clear fifo */
+    ptr->CTRL |= (I2S_CTRL_RXFIFOCLR_MASK | I2S_CTRL_SFTRST_RX_MASK);
+    ptr->CTRL &= ~(I2S_CTRL_RXFIFOCLR_MASK | I2S_CTRL_SFTRST_RX_MASK);
 }
+
+/**
+ * @brief I2S reset tx and rx function
+ *
+ * @note This API will disable I2S, reset tx/rx function
+ * Please ensure that there is a valid BCLK when calling this function
+ *
+ * @param [in] ptr I2S base address
+ */
+static inline void i2s_reset_tx_rx(I2S_Type *ptr)
+{
+    /* disable I2S */
+    ptr->CTRL &= ~I2S_CTRL_I2S_EN_MASK;
+
+    /* reset tx/rx and clear fifo */
+    ptr->CTRL |= (I2S_CTRL_TXFIFOCLR_MASK | I2S_CTRL_RXFIFOCLR_MASK | I2S_CTRL_SFTRST_TX_MASK | I2S_CTRL_SFTRST_RX_MASK);
+    ptr->CTRL &= ~(I2S_CTRL_TXFIFOCLR_MASK | I2S_CTRL_RXFIFOCLR_MASK | I2S_CTRL_SFTRST_TX_MASK | I2S_CTRL_SFTRST_RX_MASK);
+}
+
+/**
+ * @brief I2S reset tx/rx and clock generator module
+ *
+ * @note This API will disable I2S, reset tx/rx and clock generator module
+ * This function uses an internal clock to generate BCLK, then do reset operation,
+ * and finally restores the previous clock settings
+ *
+ * @param [in] ptr I2S base address
+ */
+void i2s_reset_all(I2S_Type *ptr);
 
 /**
  * @brief I2S get tx fifo level
@@ -469,6 +506,8 @@ static inline void i2s_stop_transfer(I2S_Type *ptr)
 /**
  * @brief I2S config tx
  *
+ * @note This API will disable I2S and configure parameters, could call i2s_enable() to enable I2S
+ *
  * @param [in] ptr I2S base address
  * @param [in] mclk_in_hz mclk frequency in Hz
  * @param [in] config i2s_transfer_config_t
@@ -479,6 +518,8 @@ hpm_stat_t i2s_config_tx(I2S_Type *ptr, uint32_t mclk_in_hz, i2s_transfer_config
 /**
  * @brief I2S config tx for slave
  *
+ * @note This API will disable I2S and configure parameters, could call i2s_enable() to enable I2S
+ *
  * @param [in] ptr I2S base address
  * @param [in] config i2s_transfer_config_t
  */
@@ -486,6 +527,8 @@ hpm_stat_t i2s_config_tx_slave(I2S_Type *ptr, i2s_transfer_config_t *config);
 
 /**
  * @brief I2S config rx
+ *
+ * @note This API will disable I2S and configure parameters, could call i2s_enable() to enable I2S
  *
  * @param [in] ptr I2S base address
  * @param [in] mclk_in_hz mclk frequency in Hz
@@ -497,6 +540,8 @@ hpm_stat_t i2s_config_rx(I2S_Type *ptr, uint32_t mclk_in_hz, i2s_transfer_config
 /**
  * @brief I2S config rx for slave
  *
+ * @note This API will disable I2S and configure parameters, could call i2s_enable() to enable I2S
+ *
  * @param [in] ptr I2S base address
  * @param [in] config i2s_transfer_config_t
  * @retval hpm_stat_t status_invalid_argument or status_success
@@ -505,6 +550,8 @@ hpm_stat_t i2s_config_rx_slave(I2S_Type *ptr, i2s_transfer_config_t *config);
 
 /**
  * @brief I2S config transfer
+ *
+ * @note This API will disable I2S and configure parameters, could call i2s_enable() to enable I2S
  *
  * @param [in] ptr I2S base address
  * @param [in] mclk_in_hz mclk frequency in Hz
@@ -515,6 +562,8 @@ hpm_stat_t i2s_config_transfer(I2S_Type *ptr, uint32_t mclk_in_hz, i2s_transfer_
 
 /**
  * @brief I2S config transfer for slave
+ *
+ * @note This API will disable I2S and configure parameters, could call i2s_enable() to enable I2S
  *
  * @param [in] ptr I2S base address
  * @param [in] config i2s_transfer_config_t
@@ -608,6 +657,19 @@ void i2s_get_default_transfer_config_for_dao(i2s_transfer_config_t *transfer);
  * @param [out] transfer i2s_transfer_config_t
  */
 void i2s_get_default_transfer_config(i2s_transfer_config_t *transfer);
+
+/**
+ * @brief I2S fill dummy data into TX fifo
+ *
+ * @note workaround: fill dummy data into TX fifo to avoid TX underflow during tx start
+ *
+ * @param [in] ptr I2S base address
+ * @param [in] data_line data line
+ * @param [in] data_count dummy data count, This value should be the same as the number of audio channels
+ *
+ * @retval status_success if no error occurred
+ */
+hpm_stat_t i2s_fill_tx_dummy_data(I2S_Type *ptr, uint8_t data_line, uint8_t data_count);
 
 /**
  * @}

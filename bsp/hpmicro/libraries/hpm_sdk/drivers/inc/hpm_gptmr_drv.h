@@ -267,7 +267,7 @@ static inline bool gptmr_check_status(GPTMR_Type *ptr, uint32_t mask)
  */
 static inline void gptmr_clear_status(GPTMR_Type *ptr, uint32_t mask)
 {
-    ptr->SR |= mask;
+    ptr->SR = mask;
 }
 
 /**
@@ -330,6 +330,7 @@ static inline void gptmr_disable_cmp_output(GPTMR_Type *ptr, uint8_t ch_index)
  *
  * @param [in] ptr GPTMR base address
  * @param [in] ch_index channel index
+ * @param [in] mode enum gptmr_work_mode_capture_at_rising_edge or gptmr_work_mode_capture_at_falling_edge and so on
  */
 static inline void gptmr_channel_set_capmode(GPTMR_Type *ptr, uint8_t ch_index, gptmr_work_mode_t mode)
 {

@@ -12,10 +12,10 @@
 typedef struct {
     __RW uint32_t GCR;                         /* 0x0: Global control register */
     __RW uint32_t RLD;                         /* 0x4: Counter reload register */
-    __RW uint32_t SYNT_NEW;                    /* 0x8: sync timer new value register */
+    __RW uint32_t TIMESTAMP_NEW;               /* 0x8: timestamp new value register */
     __R  uint32_t CNT;                         /* 0xC: Counter */
-    __R  uint32_t SYNT_SAVE;                   /* 0x10: sync timer trig save value */
-    __R  uint32_t SYNT_READ;                   /* 0x14: sync timer read value */
+    __R  uint32_t TIMESTAMP_SAV;               /* 0x10: timestamp trig save value */
+    __R  uint32_t TIMESTAMP_CUR;               /* 0x14: timestamp read value */
     __R  uint8_t  RESERVED0[8];                /* 0x18 - 0x1F: Reserved */
     __RW uint32_t CMP[4];                      /* 0x20 - 0x2C: Comparator */
 } SYNT_Type;
@@ -23,74 +23,74 @@ typedef struct {
 
 /* Bitfield definition for register: GCR */
 /*
- * SYNC_TIMER_INC (WO)
+ * TIMESTAMP_INC_NEW (WO)
  *
- * set to increase the sync timer with new_value, auto clr
+ * set to increase the timesamp with new value, auto clr
  */
-#define SYNT_GCR_SYNC_TIMER_INC_MASK (0x80000000UL)
-#define SYNT_GCR_SYNC_TIMER_INC_SHIFT (31U)
-#define SYNT_GCR_SYNC_TIMER_INC_SET(x) (((uint32_t)(x) << SYNT_GCR_SYNC_TIMER_INC_SHIFT) & SYNT_GCR_SYNC_TIMER_INC_MASK)
-#define SYNT_GCR_SYNC_TIMER_INC_GET(x) (((uint32_t)(x) & SYNT_GCR_SYNC_TIMER_INC_MASK) >> SYNT_GCR_SYNC_TIMER_INC_SHIFT)
+#define SYNT_GCR_TIMESTAMP_INC_NEW_MASK (0x80000000UL)
+#define SYNT_GCR_TIMESTAMP_INC_NEW_SHIFT (31U)
+#define SYNT_GCR_TIMESTAMP_INC_NEW_SET(x) (((uint32_t)(x) << SYNT_GCR_TIMESTAMP_INC_NEW_SHIFT) & SYNT_GCR_TIMESTAMP_INC_NEW_MASK)
+#define SYNT_GCR_TIMESTAMP_INC_NEW_GET(x) (((uint32_t)(x) & SYNT_GCR_TIMESTAMP_INC_NEW_MASK) >> SYNT_GCR_TIMESTAMP_INC_NEW_SHIFT)
 
 /*
- * SYNC_TIMER_DEC (WO)
+ * TIMESTAMP_DEC_NEW (WO)
  *
- * set to decrease the sync timer with new_value, auto clr
+ * set to decrease the timesamp with new value, auto clr
  */
-#define SYNT_GCR_SYNC_TIMER_DEC_MASK (0x40000000UL)
-#define SYNT_GCR_SYNC_TIMER_DEC_SHIFT (30U)
-#define SYNT_GCR_SYNC_TIMER_DEC_SET(x) (((uint32_t)(x) << SYNT_GCR_SYNC_TIMER_DEC_SHIFT) & SYNT_GCR_SYNC_TIMER_DEC_MASK)
-#define SYNT_GCR_SYNC_TIMER_DEC_GET(x) (((uint32_t)(x) & SYNT_GCR_SYNC_TIMER_DEC_MASK) >> SYNT_GCR_SYNC_TIMER_DEC_SHIFT)
+#define SYNT_GCR_TIMESTAMP_DEC_NEW_MASK (0x40000000UL)
+#define SYNT_GCR_TIMESTAMP_DEC_NEW_SHIFT (30U)
+#define SYNT_GCR_TIMESTAMP_DEC_NEW_SET(x) (((uint32_t)(x) << SYNT_GCR_TIMESTAMP_DEC_NEW_SHIFT) & SYNT_GCR_TIMESTAMP_DEC_NEW_MASK)
+#define SYNT_GCR_TIMESTAMP_DEC_NEW_GET(x) (((uint32_t)(x) & SYNT_GCR_TIMESTAMP_DEC_NEW_MASK) >> SYNT_GCR_TIMESTAMP_DEC_NEW_SHIFT)
 
 /*
- * SYNC_TIMER_NEW (WO)
+ * TIMESTAMP_SET_NEW (WO)
  *
- * set  the sync timer to new_value, auto clr
+ * set  the timesamp to new value, auto clr
  */
-#define SYNT_GCR_SYNC_TIMER_NEW_MASK (0x20000000UL)
-#define SYNT_GCR_SYNC_TIMER_NEW_SHIFT (29U)
-#define SYNT_GCR_SYNC_TIMER_NEW_SET(x) (((uint32_t)(x) << SYNT_GCR_SYNC_TIMER_NEW_SHIFT) & SYNT_GCR_SYNC_TIMER_NEW_MASK)
-#define SYNT_GCR_SYNC_TIMER_NEW_GET(x) (((uint32_t)(x) & SYNT_GCR_SYNC_TIMER_NEW_MASK) >> SYNT_GCR_SYNC_TIMER_NEW_SHIFT)
+#define SYNT_GCR_TIMESTAMP_SET_NEW_MASK (0x20000000UL)
+#define SYNT_GCR_TIMESTAMP_SET_NEW_SHIFT (29U)
+#define SYNT_GCR_TIMESTAMP_SET_NEW_SET(x) (((uint32_t)(x) << SYNT_GCR_TIMESTAMP_SET_NEW_SHIFT) & SYNT_GCR_TIMESTAMP_SET_NEW_MASK)
+#define SYNT_GCR_TIMESTAMP_SET_NEW_GET(x) (((uint32_t)(x) & SYNT_GCR_TIMESTAMP_SET_NEW_MASK) >> SYNT_GCR_TIMESTAMP_SET_NEW_SHIFT)
 
 /*
- * SYNC_TIMER_RESET (WO)
+ * TIMESTAMP_RESET (WO)
  *
- * reset sync timer to 0, auto clr
+ * reset timesamp  to 0, auto clr
  */
-#define SYNT_GCR_SYNC_TIMER_RESET_MASK (0x10000000UL)
-#define SYNT_GCR_SYNC_TIMER_RESET_SHIFT (28U)
-#define SYNT_GCR_SYNC_TIMER_RESET_SET(x) (((uint32_t)(x) << SYNT_GCR_SYNC_TIMER_RESET_SHIFT) & SYNT_GCR_SYNC_TIMER_RESET_MASK)
-#define SYNT_GCR_SYNC_TIMER_RESET_GET(x) (((uint32_t)(x) & SYNT_GCR_SYNC_TIMER_RESET_MASK) >> SYNT_GCR_SYNC_TIMER_RESET_SHIFT)
+#define SYNT_GCR_TIMESTAMP_RESET_MASK (0x10000000UL)
+#define SYNT_GCR_TIMESTAMP_RESET_SHIFT (28U)
+#define SYNT_GCR_TIMESTAMP_RESET_SET(x) (((uint32_t)(x) << SYNT_GCR_TIMESTAMP_RESET_SHIFT) & SYNT_GCR_TIMESTAMP_RESET_MASK)
+#define SYNT_GCR_TIMESTAMP_RESET_GET(x) (((uint32_t)(x) & SYNT_GCR_TIMESTAMP_RESET_MASK) >> SYNT_GCR_TIMESTAMP_RESET_SHIFT)
 
 /*
- * SYNC_TIMER_STOPEN (RW)
+ * TIMESTAMP_DEBUG_EN (RW)
  *
- * set to enable cpu_debug_mode to stop the sync timer
+ * set to enable cpu_debug_mode to stop the timesamp
  */
-#define SYNT_GCR_SYNC_TIMER_STOPEN_MASK (0x20U)
-#define SYNT_GCR_SYNC_TIMER_STOPEN_SHIFT (5U)
-#define SYNT_GCR_SYNC_TIMER_STOPEN_SET(x) (((uint32_t)(x) << SYNT_GCR_SYNC_TIMER_STOPEN_SHIFT) & SYNT_GCR_SYNC_TIMER_STOPEN_MASK)
-#define SYNT_GCR_SYNC_TIMER_STOPEN_GET(x) (((uint32_t)(x) & SYNT_GCR_SYNC_TIMER_STOPEN_MASK) >> SYNT_GCR_SYNC_TIMER_STOPEN_SHIFT)
+#define SYNT_GCR_TIMESTAMP_DEBUG_EN_MASK (0x20U)
+#define SYNT_GCR_TIMESTAMP_DEBUG_EN_SHIFT (5U)
+#define SYNT_GCR_TIMESTAMP_DEBUG_EN_SET(x) (((uint32_t)(x) << SYNT_GCR_TIMESTAMP_DEBUG_EN_SHIFT) & SYNT_GCR_TIMESTAMP_DEBUG_EN_MASK)
+#define SYNT_GCR_TIMESTAMP_DEBUG_EN_GET(x) (((uint32_t)(x) & SYNT_GCR_TIMESTAMP_DEBUG_EN_MASK) >> SYNT_GCR_TIMESTAMP_DEBUG_EN_SHIFT)
 
 /*
- * SYNC_TIMER_ENABLE (RW)
+ * TIMESTAMP_ENABLE (RW)
  *
- * set to enable the sync timer, clr to stop
+ * set to enable the timesamp , clr to stop
  */
-#define SYNT_GCR_SYNC_TIMER_ENABLE_MASK (0x10U)
-#define SYNT_GCR_SYNC_TIMER_ENABLE_SHIFT (4U)
-#define SYNT_GCR_SYNC_TIMER_ENABLE_SET(x) (((uint32_t)(x) << SYNT_GCR_SYNC_TIMER_ENABLE_SHIFT) & SYNT_GCR_SYNC_TIMER_ENABLE_MASK)
-#define SYNT_GCR_SYNC_TIMER_ENABLE_GET(x) (((uint32_t)(x) & SYNT_GCR_SYNC_TIMER_ENABLE_MASK) >> SYNT_GCR_SYNC_TIMER_ENABLE_SHIFT)
+#define SYNT_GCR_TIMESTAMP_ENABLE_MASK (0x10U)
+#define SYNT_GCR_TIMESTAMP_ENABLE_SHIFT (4U)
+#define SYNT_GCR_TIMESTAMP_ENABLE_SET(x) (((uint32_t)(x) << SYNT_GCR_TIMESTAMP_ENABLE_SHIFT) & SYNT_GCR_TIMESTAMP_ENABLE_MASK)
+#define SYNT_GCR_TIMESTAMP_ENABLE_GET(x) (((uint32_t)(x) & SYNT_GCR_TIMESTAMP_ENABLE_MASK) >> SYNT_GCR_TIMESTAMP_ENABLE_SHIFT)
 
 /*
- * STOPEN (RW)
+ * COUNTER_DEBUG_EN (RW)
  *
  * set to enable cpu_debug_mode to stop the counter
  */
-#define SYNT_GCR_STOPEN_MASK (0x4U)
-#define SYNT_GCR_STOPEN_SHIFT (2U)
-#define SYNT_GCR_STOPEN_SET(x) (((uint32_t)(x) << SYNT_GCR_STOPEN_SHIFT) & SYNT_GCR_STOPEN_MASK)
-#define SYNT_GCR_STOPEN_GET(x) (((uint32_t)(x) & SYNT_GCR_STOPEN_MASK) >> SYNT_GCR_STOPEN_SHIFT)
+#define SYNT_GCR_COUNTER_DEBUG_EN_MASK (0x4U)
+#define SYNT_GCR_COUNTER_DEBUG_EN_SHIFT (2U)
+#define SYNT_GCR_COUNTER_DEBUG_EN_SET(x) (((uint32_t)(x) << SYNT_GCR_COUNTER_DEBUG_EN_SHIFT) & SYNT_GCR_COUNTER_DEBUG_EN_MASK)
+#define SYNT_GCR_COUNTER_DEBUG_EN_GET(x) (((uint32_t)(x) & SYNT_GCR_COUNTER_DEBUG_EN_MASK) >> SYNT_GCR_COUNTER_DEBUG_EN_SHIFT)
 
 /*
  * CRST (RW)
@@ -123,16 +123,16 @@ typedef struct {
 #define SYNT_RLD_RLD_SET(x) (((uint32_t)(x) << SYNT_RLD_RLD_SHIFT) & SYNT_RLD_RLD_MASK)
 #define SYNT_RLD_RLD_GET(x) (((uint32_t)(x) & SYNT_RLD_RLD_MASK) >> SYNT_RLD_RLD_SHIFT)
 
-/* Bitfield definition for register: SYNT_NEW */
+/* Bitfield definition for register: TIMESTAMP_NEW */
 /*
- * NEW_VALUE (RW)
+ * VALUE (RW)
  *
- * new value for sync timer, can be used as update/inc/dec
+ * new value for timesamp , can be used as set/inc/dec
  */
-#define SYNT_SYNT_NEW_NEW_VALUE_MASK (0xFFFFFFFFUL)
-#define SYNT_SYNT_NEW_NEW_VALUE_SHIFT (0U)
-#define SYNT_SYNT_NEW_NEW_VALUE_SET(x) (((uint32_t)(x) << SYNT_SYNT_NEW_NEW_VALUE_SHIFT) & SYNT_SYNT_NEW_NEW_VALUE_MASK)
-#define SYNT_SYNT_NEW_NEW_VALUE_GET(x) (((uint32_t)(x) & SYNT_SYNT_NEW_NEW_VALUE_MASK) >> SYNT_SYNT_NEW_NEW_VALUE_SHIFT)
+#define SYNT_TIMESTAMP_NEW_VALUE_MASK (0xFFFFFFFFUL)
+#define SYNT_TIMESTAMP_NEW_VALUE_SHIFT (0U)
+#define SYNT_TIMESTAMP_NEW_VALUE_SET(x) (((uint32_t)(x) << SYNT_TIMESTAMP_NEW_VALUE_SHIFT) & SYNT_TIMESTAMP_NEW_VALUE_MASK)
+#define SYNT_TIMESTAMP_NEW_VALUE_GET(x) (((uint32_t)(x) & SYNT_TIMESTAMP_NEW_VALUE_MASK) >> SYNT_TIMESTAMP_NEW_VALUE_SHIFT)
 
 /* Bitfield definition for register: CNT */
 /*
@@ -144,25 +144,25 @@ typedef struct {
 #define SYNT_CNT_CNT_SHIFT (0U)
 #define SYNT_CNT_CNT_GET(x) (((uint32_t)(x) & SYNT_CNT_CNT_MASK) >> SYNT_CNT_CNT_SHIFT)
 
-/* Bitfield definition for register: SYNT_SAVE */
+/* Bitfield definition for register: TIMESTAMP_SAV */
 /*
- * TIME_SAVE (RO)
+ * VALUE (RO)
  *
- * use the trigger to save sync timer here
+ * use the trigger to save timesamp  here
  */
-#define SYNT_SYNT_SAVE_TIME_SAVE_MASK (0xFFFFFFFFUL)
-#define SYNT_SYNT_SAVE_TIME_SAVE_SHIFT (0U)
-#define SYNT_SYNT_SAVE_TIME_SAVE_GET(x) (((uint32_t)(x) & SYNT_SYNT_SAVE_TIME_SAVE_MASK) >> SYNT_SYNT_SAVE_TIME_SAVE_SHIFT)
+#define SYNT_TIMESTAMP_SAV_VALUE_MASK (0xFFFFFFFFUL)
+#define SYNT_TIMESTAMP_SAV_VALUE_SHIFT (0U)
+#define SYNT_TIMESTAMP_SAV_VALUE_GET(x) (((uint32_t)(x) & SYNT_TIMESTAMP_SAV_VALUE_MASK) >> SYNT_TIMESTAMP_SAV_VALUE_SHIFT)
 
-/* Bitfield definition for register: SYNT_READ */
+/* Bitfield definition for register: TIMESTAMP_CUR */
 /*
- * SYNC_TIME (RO)
+ * VALUE (RO)
  *
- * current sync timer value
+ * current timesamp  value
  */
-#define SYNT_SYNT_READ_SYNC_TIME_MASK (0xFFFFFFFFUL)
-#define SYNT_SYNT_READ_SYNC_TIME_SHIFT (0U)
-#define SYNT_SYNT_READ_SYNC_TIME_GET(x) (((uint32_t)(x) & SYNT_SYNT_READ_SYNC_TIME_MASK) >> SYNT_SYNT_READ_SYNC_TIME_SHIFT)
+#define SYNT_TIMESTAMP_CUR_VALUE_MASK (0xFFFFFFFFUL)
+#define SYNT_TIMESTAMP_CUR_VALUE_SHIFT (0U)
+#define SYNT_TIMESTAMP_CUR_VALUE_GET(x) (((uint32_t)(x) & SYNT_TIMESTAMP_CUR_VALUE_MASK) >> SYNT_TIMESTAMP_CUR_VALUE_SHIFT)
 
 /* Bitfield definition for register array: CMP */
 /*

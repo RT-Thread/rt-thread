@@ -24,10 +24,10 @@
  */
 typedef enum trgm_filter_mode {
     trgm_filter_mode_bypass = 0,
-    trgm_filter_mode_rapid_change = 1,
-    trgm_filter_mode_delay = 2,
-    trgm_filter_mode_stable_low = 3,
-    trgm_filter_mode_stable_high = 4,
+    trgm_filter_mode_rapid_change = 4,
+    trgm_filter_mode_delay = 5,
+    trgm_filter_mode_stable_high = 6,
+    trgm_filter_mode_stable_low = 7,
 } trgm_filter_mode_t;
 
 /**
@@ -47,7 +47,7 @@ typedef enum trgm_output_type {
 typedef struct trgm_input_filter {
     bool invert;                /**< Invert output */
     bool sync;                  /**< Sync with TRGM clock */
-    uint16_t filter_length;     /**< Filter length in TRGM clock cycle */
+    uint32_t filter_length;     /**< Filter length in TRGM clock cycle */
     trgm_filter_mode_t mode;    /**< Filter working mode */
 } trgm_input_filter_t;
 
@@ -91,12 +91,50 @@ static inline void trgm_disable_io_output(TRGM_Type *ptr, uint32_t mask)
  *
  * @param[in] ptr TRGM base address
  * @param[in] input Input selection
- * @param[in] length Filter length in TRGM clock cycles (0 ~ 0xFFF)
+ * @param[in] length Filter length in TRGM clock cycles
  */
-static inline void trgm_input_filter_set_filter_length(TRGM_Type *ptr, uint8_t input, uint16_t length)
+static inline void trgm_input_filter_set_filter_length(TRGM_Type *ptr, uint8_t input, uint32_t length)
 {
-    ptr->FILTCFG[input] = (ptr->FILTCFG[input] & TRGM_FILTCFG_FILTLEN_MASK)
+#if defined(TRGM_SOC_HAS_FILTER_SHIFT) && TRGM_SOC_HAS_FILTER_SHIFT
+    uint32_t len = length;
+    uint8_t shift;
+    for (shift = 0; shift <= (TRGM_FILTCFG_FILTLEN_SHIFT_MASK >> TRGM_FILTCFG_FILTLEN_SHIFT_SHIFT); shift++) {
+        if (shift > 0) {
+            len >>= 1u;
+        }
+        if (len <= (TRGM_FILTCFG_FILTLEN_BASE_MASK >> TRGM_FILTCFG_FILTLEN_BASE_SHIFT)) {
+            break;
+        }
+    }
+    if (len > (TRGM_FILTCFG_FILTLEN_BASE_MASK >> TRGM_FILTCFG_FILTLEN_BASE_SHIFT)) {
+        len = (TRGM_FILTCFG_FILTLEN_BASE_MASK >> TRGM_FILTCFG_FILTLEN_BASE_SHIFT);
+        shift = (TRGM_FILTCFG_FILTLEN_SHIFT_MASK >> TRGM_FILTCFG_FILTLEN_SHIFT_SHIFT);
+    }
+    ptr->FILTCFG[input] = (ptr->FILTCFG[input] & ~(TRGM_FILTCFG_FILTLEN_BASE_MASK | TRGM_FILTCFG_FILTLEN_SHIFT_MASK))
+                        | TRGM_FILTCFG_FILTLEN_BASE_SET(len) | TRGM_FILTCFG_FILTLEN_SHIFT_SET(shift);
+#else
+    ptr->FILTCFG[input] = (ptr->FILTCFG[input] & ~TRGM_FILTCFG_FILTLEN_MASK)
                         | TRGM_FILTCFG_FILTLEN_SET(length);
+#endif
+}
+
+/**
+ * @brief   Set filter length
+ *
+ * @param[in] ptr TRGM base address
+ * @param[in] input Input selection
+ * @param[in] shift Filter length shift
+ */
+static inline void trgm_input_filter_set_filter_shift(TRGM_Type *ptr, uint8_t input, uint8_t shift)
+{
+#if defined(TRGM_SOC_HAS_FILTER_SHIFT) && TRGM_SOC_HAS_FILTER_SHIFT
+    ptr->FILTCFG[input] = (ptr->FILTCFG[input] & ~TRGM_FILTCFG_FILTLEN_SHIFT_MASK)
+                        | TRGM_FILTCFG_FILTLEN_SHIFT_SET(shift);
+#else
+    (void) ptr;
+    (void) input;
+    (void) shift;
+#endif
 }
 
 /**
@@ -130,7 +168,7 @@ static inline void trgm_input_filter_disable_sync(TRGM_Type *ptr, uint8_t input)
  */
 static inline void trgm_input_filter_set_mode(TRGM_Type *ptr, uint8_t input, trgm_filter_mode_t mode)
 {
-    ptr->FILTCFG[input] = (ptr->FILTCFG[input] & TRGM_FILTCFG_MODE_MASK)
+    ptr->FILTCFG[input] = (ptr->FILTCFG[input] & ~TRGM_FILTCFG_MODE_MASK)
                         | TRGM_FILTCFG_MODE_SET(mode);
 }
 
@@ -143,7 +181,7 @@ static inline void trgm_input_filter_set_mode(TRGM_Type *ptr, uint8_t input, trg
  */
 static inline void trgm_input_filter_invert(TRGM_Type *ptr, uint8_t input, bool invert)
 {
-    ptr->FILTCFG[input] = (ptr->FILTCFG[input] & TRGM_FILTCFG_OUTINV_MASK)
+    ptr->FILTCFG[input] = (ptr->FILTCFG[input] & ~TRGM_FILTCFG_OUTINV_MASK)
                         | TRGM_FILTCFG_OUTINV_SET(invert);
 }
 
@@ -158,8 +196,8 @@ static inline void trgm_input_filter_config(TRGM_Type *ptr, uint8_t input, trgm_
 {
     ptr->FILTCFG[input] = TRGM_FILTCFG_OUTINV_SET(filter->invert)
                         | TRGM_FILTCFG_MODE_SET(filter->mode)
-                        | TRGM_FILTCFG_SYNCEN_SET(filter->sync)
-                        | TRGM_FILTCFG_FILTLEN_SET(filter->filter_length);
+                        | TRGM_FILTCFG_SYNCEN_SET(filter->sync);
+    trgm_input_filter_set_filter_length(ptr, input, filter->filter_length);
 }
 
 /**
@@ -199,7 +237,11 @@ static inline void trgm_output_config(TRGM_Type *ptr, uint8_t output, trgm_outpu
  */
 static inline void trgm_dma_request_config(TRGM_Type *ptr, uint8_t dma_out, uint8_t dma_src)
 {
+#if defined(TRGM_SOC_HAS_DMAMUX_EN) && TRGM_SOC_HAS_DMAMUX_EN
+    ptr->DMACFG[dma_out] = TRGM_DMACFG_DMASRCSEL_SET(dma_src) | TRGM_DMACFG_DMAMUX_EN_MASK;
+#else
     ptr->DMACFG[dma_out] = TRGM_DMACFG_DMASRCSEL_SET(dma_src);
+#endif
 }
 
 #ifdef __cplusplus

@@ -9,6 +9,7 @@
 
 void gptmr_channel_get_default_config(GPTMR_Type *ptr, gptmr_channel_config_t *config)
 {
+    (void) ptr;
     config->mode = gptmr_work_mode_no_capture;
     config->dma_request_event = gptmr_dma_request_disabled;
     config->synci_edge = gptmr_synci_edge_none;

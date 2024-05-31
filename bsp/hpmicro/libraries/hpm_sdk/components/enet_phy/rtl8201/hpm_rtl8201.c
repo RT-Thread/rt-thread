@@ -12,7 +12,6 @@
 #include "hpm_enet_drv.h"
 #include "hpm_rtl8201_regs.h"
 #include "hpm_rtl8201.h"
-#include "board.h"
 
 /*---------------------------------------------------------------------
  * Internal API
@@ -51,13 +50,15 @@ void rtl8201_reset(ENET_Type *ptr)
 
 void rtl8201_basic_mode_default_config(ENET_Type *ptr, rtl8201_config_t *config)
 {
-    config->loopback         = 0;                            /* Disable PCS loopback mode */
-    #if __DISABLE_AUTO_NEGO
+    (void)ptr;
+
+    config->loopback         = false;                        /* Disable PCS loopback mode */
+    #if defined(__DISABLE_AUTO_NEGO) && (__DISABLE_AUTO_NEGO)
     config->auto_negotiation = false;                        /* Disable Auto-Negotiation */
     config->speed            = enet_phy_port_speed_100mbps;
     config->duplex           = enet_phy_duplex_full;
     #else
-    config->auto_negotiation = 1;                            /* Enable Auto-Negotiation */
+    config->auto_negotiation = true;                         /* Enable Auto-Negotiation */
     #endif
     config->txc_input        = true;                         /* Set TXC as input mode */
 }

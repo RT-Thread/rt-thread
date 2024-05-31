@@ -8,10 +8,10 @@
 #define HPM_ADC_H
 
 #include "hpm_common.h"
-#ifdef CONFIG_HAS_HPMSDK_ADC12
+#ifdef HPMSOC_HAS_HPMSDK_ADC12
 #include "hpm_adc12_drv.h"
 #endif
-#ifdef CONFIG_HAS_HPMSDK_ADC16
+#ifdef HPMSOC_HAS_HPMSDK_ADC16
 #include "hpm_adc16_drv.h"
 #endif
 #include "hpm_soc_feature.h"
@@ -27,10 +27,10 @@
  *
  */
 typedef union {
-#ifdef CONFIG_HAS_HPMSDK_ADC12
+#ifdef HPMSOC_HAS_HPMSDK_ADC12
     ADC12_Type *adc12;
 #endif
-#ifdef CONFIG_HAS_HPMSDK_ADC16
+#ifdef HPMSOC_HAS_HPMSDK_ADC16
     ADC16_Type *adc16;
 #endif
 } adc_base;
@@ -55,10 +55,10 @@ typedef struct {
     adc_module module;
     adc_base adc_base;
     struct {
-#ifdef CONFIG_HAS_HPMSDK_ADC12
+#ifdef HPMSOC_HAS_HPMSDK_ADC12
         adc12_config_t adc12;
 #endif
-#ifdef CONFIG_HAS_HPMSDK_ADC16
+#ifdef HPMSOC_HAS_HPMSDK_ADC16
         adc16_config_t adc16;
 #endif
     } config;
@@ -72,10 +72,10 @@ typedef struct {
     adc_module module;
     adc_base adc_base;
     struct {
-#ifdef CONFIG_HAS_HPMSDK_ADC12
+#ifdef HPMSOC_HAS_HPMSDK_ADC12
         adc12_channel_config_t adc12_ch;
 #endif
-#ifdef CONFIG_HAS_HPMSDK_ADC16
+#ifdef HPMSOC_HAS_HPMSDK_ADC16
         adc16_channel_config_t adc16_ch;
 #endif
     } config;
@@ -89,10 +89,10 @@ typedef struct {
     adc_module module;
     adc_base adc_base;
     struct {
-#ifdef CONFIG_HAS_HPMSDK_ADC12
+#ifdef HPMSOC_HAS_HPMSDK_ADC12
         adc12_dma_config_t adc12;
 #endif
-#ifdef CONFIG_HAS_HPMSDK_ADC16
+#ifdef HPMSOC_HAS_HPMSDK_ADC16
         adc16_dma_config_t adc16;
 #endif
     } config;
@@ -106,10 +106,10 @@ typedef struct {
     adc_module module;
     adc_base adc_base;
     struct {
-#ifdef CONFIG_HAS_HPMSDK_ADC12
+#ifdef HPMSOC_HAS_HPMSDK_ADC12
         adc12_prd_config_t adc12;
 #endif
-#ifdef CONFIG_HAS_HPMSDK_ADC16
+#ifdef HPMSOC_HAS_HPMSDK_ADC16
         adc16_prd_config_t adc16;
 #endif
     } config;
@@ -123,10 +123,10 @@ typedef struct {
     adc_module module;
     adc_base adc_base;
     struct {
-#ifdef CONFIG_HAS_HPMSDK_ADC12
+#ifdef HPMSOC_HAS_HPMSDK_ADC12
         adc12_seq_config_t adc12;
 #endif
-#ifdef CONFIG_HAS_HPMSDK_ADC16
+#ifdef HPMSOC_HAS_HPMSDK_ADC16
         adc16_seq_config_t adc16;
 #endif
     } config;
@@ -140,10 +140,10 @@ typedef struct {
     adc_module module;
     adc_base adc_base;
     struct {
-#ifdef CONFIG_HAS_HPMSDK_ADC12
+#ifdef HPMSOC_HAS_HPMSDK_ADC12
         adc12_pmt_config_t adc12;
 #endif
-#ifdef CONFIG_HAS_HPMSDK_ADC16
+#ifdef HPMSOC_HAS_HPMSDK_ADC16
         adc16_pmt_config_t adc16;
 #endif
     } config;
@@ -170,11 +170,11 @@ extern "C" {
 static inline void hpm_adc_init_default_config(adc_config_t *config)
 {
     if (config->module == adc_module_adc12) {
-#ifdef CONFIG_HAS_HPMSDK_ADC12
+#ifdef HPMSOC_HAS_HPMSDK_ADC12
         adc12_get_default_config(&config->config.adc12);
 #endif
     } else if (config->module == adc_module_adc16) {
-#ifdef CONFIG_HAS_HPMSDK_ADC16
+#ifdef HPMSOC_HAS_HPMSDK_ADC16
         adc16_get_default_config(&config->config.adc16);
 #endif
     }
@@ -189,11 +189,11 @@ static inline void hpm_adc_init_default_config(adc_config_t *config)
 static inline void hpm_adc_init_channel_default_config(adc_channel_config_t *config)
 {
     if (config->module == adc_module_adc12) {
-#ifdef CONFIG_HAS_HPMSDK_ADC12
+#ifdef HPMSOC_HAS_HPMSDK_ADC12
         adc12_get_channel_default_config(&config->config.adc12_ch);
 #endif
     } else if (config->module == adc_module_adc16) {
-#ifdef CONFIG_HAS_HPMSDK_ADC16
+#ifdef HPMSOC_HAS_HPMSDK_ADC16
         adc16_get_channel_default_config(&config->config.adc16_ch);
 #endif
     }
@@ -209,13 +209,13 @@ static inline void hpm_adc_init_channel_default_config(adc_channel_config_t *con
 static inline hpm_stat_t hpm_adc_init(adc_config_t *config)
 {
     if (config->module == adc_module_adc12) {
-#ifdef CONFIG_HAS_HPMSDK_ADC12
+#ifdef HPMSOC_HAS_HPMSDK_ADC12
         return adc12_init(config->adc_base.adc12, &config->config.adc12);
 #else
         return status_invalid_argument;
 #endif
     } else if (config->module == adc_module_adc16) {
-#ifdef CONFIG_HAS_HPMSDK_ADC16
+#ifdef HPMSOC_HAS_HPMSDK_ADC16
         return adc16_init(config->adc_base.adc16, &config->config.adc16);
 #else
         return status_invalid_argument;
@@ -235,13 +235,13 @@ static inline hpm_stat_t hpm_adc_init(adc_config_t *config)
 static inline hpm_stat_t hpm_adc_channel_init(adc_channel_config_t *config)
 {
     if (config->module == adc_module_adc12) {
-#ifdef CONFIG_HAS_HPMSDK_ADC12
+#ifdef HPMSOC_HAS_HPMSDK_ADC12
         return adc12_init_channel(config->adc_base.adc12, &config->config.adc12_ch);
 #else
         return status_invalid_argument;
 #endif
     } else if (config->module == adc_module_adc16) {
-#ifdef CONFIG_HAS_HPMSDK_ADC16
+#ifdef HPMSOC_HAS_HPMSDK_ADC16
         return adc16_init_channel(config->adc_base.adc16, &config->config.adc16_ch);
 #else
         return status_invalid_argument;
@@ -262,13 +262,13 @@ static inline hpm_stat_t hpm_adc_channel_init(adc_channel_config_t *config)
 static inline hpm_stat_t hpm_adc_set_period_config(adc_prd_config_t *config)
 {
     if (config->module == adc_module_adc12) {
-#ifdef CONFIG_HAS_HPMSDK_ADC12
+#ifdef HPMSOC_HAS_HPMSDK_ADC12
         return adc12_set_prd_config(config->adc_base.adc12, &config->config.adc12);
 #else
         return status_invalid_argument;
 #endif
     } else if (config->module == adc_module_adc16) {
-#ifdef CONFIG_HAS_HPMSDK_ADC16
+#ifdef HPMSOC_HAS_HPMSDK_ADC16
         return adc16_set_prd_config(config->adc_base.adc16, &config->config.adc16);
 #else
         return status_invalid_argument;
@@ -288,13 +288,13 @@ static inline hpm_stat_t hpm_adc_set_period_config(adc_prd_config_t *config)
 static inline hpm_stat_t hpm_adc_set_sequence_config(adc_seq_config_t *config)
 {
     if (config->module == adc_module_adc12) {
-#ifdef CONFIG_HAS_HPMSDK_ADC12
+#ifdef HPMSOC_HAS_HPMSDK_ADC12
         return adc12_set_seq_config(config->adc_base.adc12, &config->config.adc12);
 #else
         return status_invalid_argument;
 #endif
     } else if (config->module == adc_module_adc16) {
-#ifdef CONFIG_HAS_HPMSDK_ADC16
+#ifdef HPMSOC_HAS_HPMSDK_ADC16
         return adc16_set_seq_config(config->adc_base.adc16, &config->config.adc16);
 #else
         return status_invalid_argument;
@@ -314,13 +314,13 @@ static inline hpm_stat_t hpm_adc_set_sequence_config(adc_seq_config_t *config)
 static inline hpm_stat_t hpm_adc_set_preempt_config(adc_pmt_config_t *config)
 {
     if (config->module == adc_module_adc12) {
-#ifdef CONFIG_HAS_HPMSDK_ADC12
+#ifdef HPMSOC_HAS_HPMSDK_ADC12
         return adc12_set_pmt_config(config->adc_base.adc12, &config->config.adc12);
 #else
         return status_invalid_argument;
 #endif
     } else if (config->module == adc_module_adc16) {
-#ifdef CONFIG_HAS_HPMSDK_ADC16
+#ifdef HPMSOC_HAS_HPMSDK_ADC16
         return adc16_set_pmt_config(config->adc_base.adc16, &config->config.adc16);
 #else
         return status_invalid_argument;
@@ -339,11 +339,11 @@ static inline hpm_stat_t hpm_adc_set_preempt_config(adc_pmt_config_t *config)
 static inline void hpm_adc_set_seq_stop_pos(adc_type *ptr, uint16_t stop_pos)
 {
     if (ptr->module == adc_module_adc12) {
-#ifdef CONFIG_HAS_HPMSDK_ADC12
+#ifdef HPMSOC_HAS_HPMSDK_ADC12
         adc12_set_seq_stop_pos(ptr->adc_base.adc12, stop_pos);
 #endif
     } else if (ptr->module == adc_module_adc16) {
-#ifdef CONFIG_HAS_HPMSDK_ADC16
+#ifdef HPMSOC_HAS_HPMSDK_ADC16
         adc16_set_seq_stop_pos(ptr->adc_base.adc16, stop_pos);
 #endif
     }
@@ -358,11 +358,11 @@ static inline void hpm_adc_set_seq_stop_pos(adc_type *ptr, uint16_t stop_pos)
 static inline void hpm_adc_init_pmt_dma(adc_type *ptr, uint32_t addr)
 {
     if (ptr->module == adc_module_adc12) {
-#ifdef CONFIG_HAS_HPMSDK_ADC12
+#ifdef HPMSOC_HAS_HPMSDK_ADC12
         adc12_init_pmt_dma(ptr->adc_base.adc12, addr);
 #endif
     } else if (ptr->module == adc_module_adc16) {
-#ifdef CONFIG_HAS_HPMSDK_ADC16
+#ifdef HPMSOC_HAS_HPMSDK_ADC16
         adc16_init_pmt_dma(ptr->adc_base.adc16, addr);
 #endif
     }
@@ -376,11 +376,11 @@ static inline void hpm_adc_init_pmt_dma(adc_type *ptr, uint32_t addr)
 static inline void hpm_adc_init_seq_dma(adc_dma_config_t *config)
 {
     if (config->module == adc_module_adc12) {
-#ifdef CONFIG_HAS_HPMSDK_ADC12
+#ifdef HPMSOC_HAS_HPMSDK_ADC12
         adc12_init_seq_dma(config->adc_base.adc12, &config->config.adc12);
 #endif
     } else if (config->module == adc_module_adc16) {
-#ifdef CONFIG_HAS_HPMSDK_ADC16
+#ifdef HPMSOC_HAS_HPMSDK_ADC16
         adc16_init_seq_dma(config->adc_base.adc16, &config->config.adc16);
 #endif
     }
@@ -395,11 +395,11 @@ static inline void hpm_adc_init_seq_dma(adc_dma_config_t *config)
 static inline void hpm_adc_disable_busywait(adc_dma_config_t *config)
 {
     if (config->module == adc_module_adc12) {
-#ifdef CONFIG_HAS_HPMSDK_ADC12
+#ifdef HPMSOC_HAS_HPMSDK_ADC12
         adc12_disable_busywait(config->adc_base.adc12);
 #endif
     } else if (config->module == adc_module_adc16) {
-#ifdef CONFIG_HAS_HPMSDK_ADC16
+#ifdef HPMSOC_HAS_HPMSDK_ADC16
         adc16_disable_busywait(config->adc_base.adc16);
 #endif
     }
@@ -414,11 +414,11 @@ static inline void hpm_adc_disable_busywait(adc_dma_config_t *config)
 static inline void hpm_adc_enable_busywait(adc_dma_config_t *config)
 {
     if (config->module == adc_module_adc12) {
-#ifdef CONFIG_HAS_HPMSDK_ADC12
+#ifdef HPMSOC_HAS_HPMSDK_ADC12
         adc12_enable_busywait(config->adc_base.adc12);
 #endif
     } else if (config->module == adc_module_adc16) {
-#ifdef CONFIG_HAS_HPMSDK_ADC16
+#ifdef HPMSOC_HAS_HPMSDK_ADC16
         adc16_enable_busywait(config->adc_base.adc16);
 #endif
     }
@@ -435,13 +435,13 @@ static inline void hpm_adc_enable_busywait(adc_dma_config_t *config)
 static inline uint32_t hpm_adc_get_status_flags(adc_type *ptr)
 {
     if (ptr->module == adc_module_adc12) {
-#ifdef CONFIG_HAS_HPMSDK_ADC12
+#ifdef HPMSOC_HAS_HPMSDK_ADC12
         return adc12_get_status_flags(ptr->adc_base.adc12);
 #else
         return status_invalid_argument;
 #endif
     } else if (ptr->module == adc_module_adc16) {
-#ifdef CONFIG_HAS_HPMSDK_ADC16
+#ifdef HPMSOC_HAS_HPMSDK_ADC16
         return adc16_get_status_flags(ptr->adc_base.adc16);
 #else
         return status_invalid_argument;
@@ -463,13 +463,13 @@ static inline uint32_t hpm_adc_get_status_flags(adc_type *ptr)
 static inline bool hpm_adc_get_conv_valid_status(adc_type *ptr, uint8_t ch)
 {
     if (ptr->module == adc_module_adc12) {
-#ifdef CONFIG_HAS_HPMSDK_ADC12
+#ifdef HPMSOC_HAS_HPMSDK_ADC12
         return adc12_get_conv_valid_status(ptr->adc_base.adc12, ch);
 #else
         return status_invalid_argument;
 #endif
     } else if (ptr->module == adc_module_adc16) {
-#ifdef CONFIG_HAS_HPMSDK_ADC16
+#ifdef HPMSOC_HAS_HPMSDK_ADC16
         return adc16_get_conv_valid_status(ptr->adc_base.adc16, ch);
 #else
         return status_invalid_argument;
@@ -490,11 +490,11 @@ static inline bool hpm_adc_get_conv_valid_status(adc_type *ptr, uint8_t ch)
 static inline void hpm_adc_clear_status_flags(adc_type *ptr, uint32_t mask)
 {
     if (ptr->module == adc_module_adc12) {
-#ifdef CONFIG_HAS_HPMSDK_ADC12
+#ifdef HPMSOC_HAS_HPMSDK_ADC12
         adc12_clear_status_flags(ptr->adc_base.adc12, mask);
 #endif
     } else if (ptr->module == adc_module_adc16) {
-#ifdef CONFIG_HAS_HPMSDK_ADC16
+#ifdef HPMSOC_HAS_HPMSDK_ADC16
         adc16_clear_status_flags(ptr->adc_base.adc16, mask);
 #endif
     }
@@ -509,11 +509,11 @@ static inline void hpm_adc_clear_status_flags(adc_type *ptr, uint32_t mask)
 static inline void hpm_adc_enable_interrupts(adc_type *ptr, uint32_t mask)
 {
     if (ptr->module == adc_module_adc12) {
-#ifdef CONFIG_HAS_HPMSDK_ADC12
+#ifdef HPMSOC_HAS_HPMSDK_ADC12
         adc12_enable_interrupts(ptr->adc_base.adc12, mask);
 #endif
     } else if (ptr->module == adc_module_adc16) {
-#ifdef CONFIG_HAS_HPMSDK_ADC16
+#ifdef HPMSOC_HAS_HPMSDK_ADC16
         adc16_enable_interrupts(ptr->adc_base.adc16, mask);
 #endif
     }
@@ -528,11 +528,11 @@ static inline void hpm_adc_enable_interrupts(adc_type *ptr, uint32_t mask)
 static inline void hpm_adc_disable_interrupts(adc_type *ptr, uint32_t mask)
 {
     if (ptr->module == adc_module_adc12) {
-#ifdef CONFIG_HAS_HPMSDK_ADC12
+#ifdef HPMSOC_HAS_HPMSDK_ADC12
         adc12_disable_interrupts(ptr->adc_base.adc12, mask);
 #endif
     } else if (ptr->module == adc_module_adc16) {
-#ifdef CONFIG_HAS_HPMSDK_ADC16
+#ifdef HPMSOC_HAS_HPMSDK_ADC16
         adc16_disable_interrupts(ptr->adc_base.adc16, mask);
 #endif
     }
@@ -551,13 +551,13 @@ static inline void hpm_adc_disable_interrupts(adc_type *ptr, uint32_t mask)
 static inline hpm_stat_t hpm_adc_get_oneshot_result(adc_type *ptr, uint8_t ch, uint16_t *result)
 {
     if (ptr->module == adc_module_adc12) {
-#ifdef CONFIG_HAS_HPMSDK_ADC12
+#ifdef HPMSOC_HAS_HPMSDK_ADC12
         return adc12_get_oneshot_result(ptr->adc_base.adc12, ch, result);
 #else
         return status_invalid_argument;
 #endif
     } else if (ptr->module == adc_module_adc16) {
-#ifdef CONFIG_HAS_HPMSDK_ADC16
+#ifdef HPMSOC_HAS_HPMSDK_ADC16
         return adc16_get_oneshot_result(ptr->adc_base.adc16, ch, result);
 #else
         return status_invalid_argument;
@@ -580,13 +580,13 @@ static inline hpm_stat_t hpm_adc_get_oneshot_result(adc_type *ptr, uint8_t ch, u
 static inline hpm_stat_t hpm_adc_get_prd_result(adc_type *ptr, uint8_t ch, uint16_t *result)
 {
     if (ptr->module == adc_module_adc12) {
-#ifdef CONFIG_HAS_HPMSDK_ADC12
+#ifdef HPMSOC_HAS_HPMSDK_ADC12
         return adc12_get_prd_result(ptr->adc_base.adc12, ch, result);
 #else
         return status_invalid_argument;
 #endif
     } else if (ptr->module == adc_module_adc16) {
-#ifdef CONFIG_HAS_HPMSDK_ADC16
+#ifdef HPMSOC_HAS_HPMSDK_ADC16
         return adc16_get_prd_result(ptr->adc_base.adc16, ch, result);
 #else
         return status_invalid_argument;
@@ -605,11 +605,11 @@ static inline hpm_stat_t hpm_adc_get_prd_result(adc_type *ptr, uint8_t ch, uint1
 static inline hpm_stat_t hpm_adc_trigger_seq_by_sw(adc_type *ptr)
 {
      if (ptr->module == adc_module_adc12) {
-#ifdef CONFIG_HAS_HPMSDK_ADC12
+#ifdef HPMSOC_HAS_HPMSDK_ADC12
         return adc12_trigger_seq_by_sw(ptr->adc_base.adc12);
 #endif
     } else if (ptr->module == adc_module_adc16) {
-#ifdef CONFIG_HAS_HPMSDK_ADC16
+#ifdef HPMSOC_HAS_HPMSDK_ADC16
         return adc16_trigger_seq_by_sw(ptr->adc_base.adc16);
 #endif
     } else {

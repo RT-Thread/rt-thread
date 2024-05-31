@@ -26,8 +26,7 @@ typedef struct {
     __RW uint32_t DMASA_UV1;                   /* 0x50: Pixel UV DMA Frame Buffer 1 Address */
     __RW uint32_t DMASA_UV2;                   /* 0x54: Pixel UV DMA Frame Buffer 2 Address */
     __RW uint32_t CR20;                        /* 0x58: Control CR20 Register */
-    __RW uint32_t MAX_WN_CYCLE;                /* 0x5C: Max Window Size Register */
-    __R  uint8_t  RESERVED4[16];               /* 0x60 - 0x6F: Reserved */
+    __R  uint8_t  RESERVED4[20];               /* 0x5C - 0x6F: Reserved */
     __RW uint32_t CSC_COEF0;                   /* 0x70: Color Space Conversion Config Register 0 */
     __RW uint32_t CSC_COEF1;                   /* 0x74: Color Space Conversion Config Register 1 */
     __RW uint32_t CSC_COEF2;                   /* 0x78: Color Space Conversion Config Register 2 */
@@ -628,27 +627,6 @@ typedef struct {
 #define CAM_CR20_THRESHOLD_SET(x) (((uint32_t)(x) << CAM_CR20_THRESHOLD_SHIFT) & CAM_CR20_THRESHOLD_MASK)
 #define CAM_CR20_THRESHOLD_GET(x) (((uint32_t)(x) & CAM_CR20_THRESHOLD_MASK) >> CAM_CR20_THRESHOLD_SHIFT)
 
-/* Bitfield definition for register: MAX_WN_CYCLE */
-/*
- * ROW (RW)
- *
- * Max Width-1
- */
-#define CAM_MAX_WN_CYCLE_ROW_MASK (0xFFFF0000UL)
-#define CAM_MAX_WN_CYCLE_ROW_SHIFT (16U)
-#define CAM_MAX_WN_CYCLE_ROW_SET(x) (((uint32_t)(x) << CAM_MAX_WN_CYCLE_ROW_SHIFT) & CAM_MAX_WN_CYCLE_ROW_MASK)
-#define CAM_MAX_WN_CYCLE_ROW_GET(x) (((uint32_t)(x) & CAM_MAX_WN_CYCLE_ROW_MASK) >> CAM_MAX_WN_CYCLE_ROW_SHIFT)
-
-/*
- * COL (RW)
- *
- * Max Height-1
- */
-#define CAM_MAX_WN_CYCLE_COL_MASK (0xFFFFU)
-#define CAM_MAX_WN_CYCLE_COL_SHIFT (0U)
-#define CAM_MAX_WN_CYCLE_COL_SET(x) (((uint32_t)(x) << CAM_MAX_WN_CYCLE_COL_SHIFT) & CAM_MAX_WN_CYCLE_COL_MASK)
-#define CAM_MAX_WN_CYCLE_COL_GET(x) (((uint32_t)(x) & CAM_MAX_WN_CYCLE_COL_MASK) >> CAM_MAX_WN_CYCLE_COL_SHIFT)
-
 /* Bitfield definition for register: CSC_COEF0 */
 /*
  * YCBCR_MODE (RW)
@@ -824,17 +802,6 @@ typedef struct {
 
 /* Bitfield definition for register: PRO_CTRL */
 /*
- * ASYNC_FIFO_SEL (RW)
- *
- * 0 use fifo for sync
- * 1 use flipflop for sync
- */
-#define CAM_PRO_CTRL_ASYNC_FIFO_SEL_MASK (0x8000U)
-#define CAM_PRO_CTRL_ASYNC_FIFO_SEL_SHIFT (15U)
-#define CAM_PRO_CTRL_ASYNC_FIFO_SEL_SET(x) (((uint32_t)(x) << CAM_PRO_CTRL_ASYNC_FIFO_SEL_SHIFT) & CAM_PRO_CTRL_ASYNC_FIFO_SEL_MASK)
-#define CAM_PRO_CTRL_ASYNC_FIFO_SEL_GET(x) (((uint32_t)(x) & CAM_PRO_CTRL_ASYNC_FIFO_SEL_MASK) >> CAM_PRO_CTRL_ASYNC_FIFO_SEL_SHIFT)
-
-/*
  * ERR_INJECT (RW)
  *
  * 0 generate alarm in normal mode
@@ -844,59 +811,6 @@ typedef struct {
 #define CAM_PRO_CTRL_ERR_INJECT_SHIFT (14U)
 #define CAM_PRO_CTRL_ERR_INJECT_SET(x) (((uint32_t)(x) << CAM_PRO_CTRL_ERR_INJECT_SHIFT) & CAM_PRO_CTRL_ERR_INJECT_MASK)
 #define CAM_PRO_CTRL_ERR_INJECT_GET(x) (((uint32_t)(x) & CAM_PRO_CTRL_ERR_INJECT_MASK) >> CAM_PRO_CTRL_ERR_INJECT_SHIFT)
-
-/*
- * BAYER_BIG_ENDIAN (RW)
- *
- * 0 bayer data is little-endian
- * 1 bayer data is big-endian
- */
-#define CAM_PRO_CTRL_BAYER_BIG_ENDIAN_MASK (0x2000U)
-#define CAM_PRO_CTRL_BAYER_BIG_ENDIAN_SHIFT (13U)
-#define CAM_PRO_CTRL_BAYER_BIG_ENDIAN_SET(x) (((uint32_t)(x) << CAM_PRO_CTRL_BAYER_BIG_ENDIAN_SHIFT) & CAM_PRO_CTRL_BAYER_BIG_ENDIAN_MASK)
-#define CAM_PRO_CTRL_BAYER_BIG_ENDIAN_GET(x) (((uint32_t)(x) & CAM_PRO_CTRL_BAYER_BIG_ENDIAN_MASK) >> CAM_PRO_CTRL_BAYER_BIG_ENDIAN_SHIFT)
-
-/*
- * READY_ERROR (W1C)
- *
- * indicate cam_te_b0_ready and cam_te_b1_ready assert at the same time
- * clear by writing 1
- */
-#define CAM_PRO_CTRL_READY_ERROR_MASK (0x1000U)
-#define CAM_PRO_CTRL_READY_ERROR_SHIFT (12U)
-#define CAM_PRO_CTRL_READY_ERROR_SET(x) (((uint32_t)(x) << CAM_PRO_CTRL_READY_ERROR_SHIFT) & CAM_PRO_CTRL_READY_ERROR_MASK)
-#define CAM_PRO_CTRL_READY_ERROR_GET(x) (((uint32_t)(x) & CAM_PRO_CTRL_READY_ERROR_MASK) >> CAM_PRO_CTRL_READY_ERROR_SHIFT)
-
-/*
- * READY_ENABLE (RO)
- *
- * indicate cam_in_init assert
- */
-#define CAM_PRO_CTRL_READY_ENABLE_MASK (0x800U)
-#define CAM_PRO_CTRL_READY_ENABLE_SHIFT (11U)
-#define CAM_PRO_CTRL_READY_ENABLE_GET(x) (((uint32_t)(x) & CAM_PRO_CTRL_READY_ENABLE_MASK) >> CAM_PRO_CTRL_READY_ENABLE_SHIFT)
-
-/*
- * READY_DISABLE (RW)
- *
- * indicate cam_out_init de-assert
- */
-#define CAM_PRO_CTRL_READY_DISABLE_MASK (0x400U)
-#define CAM_PRO_CTRL_READY_DISABLE_SHIFT (10U)
-#define CAM_PRO_CTRL_READY_DISABLE_SET(x) (((uint32_t)(x) << CAM_PRO_CTRL_READY_DISABLE_SHIFT) & CAM_PRO_CTRL_READY_DISABLE_MASK)
-#define CAM_PRO_CTRL_READY_DISABLE_GET(x) (((uint32_t)(x) & CAM_PRO_CTRL_READY_DISABLE_MASK) >> CAM_PRO_CTRL_READY_DISABLE_SHIFT)
-
-/*
- * BUFFER_SWITCH (RW)
- *
- * 00 switch buffer every frame
- * 01 switch buffer every 8 lines
- * 10 switch buffer every 16 lines
- */
-#define CAM_PRO_CTRL_BUFFER_SWITCH_MASK (0x300U)
-#define CAM_PRO_CTRL_BUFFER_SWITCH_SHIFT (8U)
-#define CAM_PRO_CTRL_BUFFER_SWITCH_SET(x) (((uint32_t)(x) << CAM_PRO_CTRL_BUFFER_SWITCH_SHIFT) & CAM_PRO_CTRL_BUFFER_SWITCH_MASK)
-#define CAM_PRO_CTRL_BUFFER_SWITCH_GET(x) (((uint32_t)(x) & CAM_PRO_CTRL_BUFFER_SWITCH_MASK) >> CAM_PRO_CTRL_BUFFER_SWITCH_SHIFT)
 
 /*
  * ROI_UPDATE (RW)

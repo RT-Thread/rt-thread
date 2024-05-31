@@ -46,13 +46,12 @@ typedef struct {
     __RW uint32_t ENDPTFLUSH;                  /* 0x1B4: Endpoint Flush Register */
     __R  uint32_t ENDPTSTAT;                   /* 0x1B8: Endpoint Status Register */
     __RW uint32_t ENDPTCOMPLETE;               /* 0x1BC: Endpoint Complete Register */
-    __RW uint32_t ENDPTCTRL[8];                /* 0x1C0 - 0x1DC: Endpoint Control0 Register... Endpoint Control7 Register */
-    __R  uint8_t  RESERVED7[32];               /* 0x1E0 - 0x1FF: Reserved */
+    __RW uint32_t ENDPTCTRL[16];               /* 0x1C0 - 0x1FC: Endpoint Control0 Register... Endpoint Control7 Register */
     __RW uint32_t OTG_CTRL0;                   /* 0x200:  */
-    __R  uint8_t  RESERVED8[12];               /* 0x204 - 0x20F: Reserved */
+    __R  uint8_t  RESERVED7[12];               /* 0x204 - 0x20F: Reserved */
     __RW uint32_t PHY_CTRL0;                   /* 0x210:  */
     __RW uint32_t PHY_CTRL1;                   /* 0x214:  */
-    __R  uint8_t  RESERVED9[8];                /* 0x218 - 0x21F: Reserved */
+    __R  uint8_t  RESERVED8[8];                /* 0x218 - 0x21F: Reserved */
     __RW uint32_t TOP_STATUS;                  /* 0x220:  */
     __RW uint32_t PHY_STATUS;                  /* 0x224:  */
 } USB_Type;
@@ -1022,7 +1021,7 @@ typedef struct {
  * device sends a NAK handshake on a received IN token for the corresponding endpoint.
  * Bit [N] - Endpoint #[N], N is 0-7
  */
-#define USB_ENDPTNAK_EPTN_MASK (0xFF0000UL)
+#define USB_ENDPTNAK_EPTN_MASK (0xFFFF0000UL)
 #define USB_ENDPTNAK_EPTN_SHIFT (16U)
 #define USB_ENDPTNAK_EPTN_SET(x) (((uint32_t)(x) << USB_ENDPTNAK_EPTN_SHIFT) & USB_ENDPTNAK_EPTN_MASK)
 #define USB_ENDPTNAK_EPTN_GET(x) (((uint32_t)(x) & USB_ENDPTNAK_EPTN_MASK) >> USB_ENDPTNAK_EPTN_SHIFT)
@@ -1036,7 +1035,7 @@ typedef struct {
  * device sends a NAK handshake on a received OUT or PING token for the corresponding endpoint.
  * Bit [N] - Endpoint #[N], N is 0-7
  */
-#define USB_ENDPTNAK_EPRN_MASK (0xFFU)
+#define USB_ENDPTNAK_EPRN_MASK (0xFFFFU)
 #define USB_ENDPTNAK_EPRN_SHIFT (0U)
 #define USB_ENDPTNAK_EPRN_SET(x) (((uint32_t)(x) << USB_ENDPTNAK_EPRN_SHIFT) & USB_ENDPTNAK_EPRN_MASK)
 #define USB_ENDPTNAK_EPRN_GET(x) (((uint32_t)(x) & USB_ENDPTNAK_EPRN_MASK) >> USB_ENDPTNAK_EPRN_SHIFT)
@@ -1051,7 +1050,7 @@ typedef struct {
  * corresponding TX Endpoint NAK bit is set, the NAK Interrupt bit is set.
  * Bit [N] - Endpoint #[N], N is 0-7
  */
-#define USB_ENDPTNAKEN_EPTNE_MASK (0xFF0000UL)
+#define USB_ENDPTNAKEN_EPTNE_MASK (0xFFFF0000UL)
 #define USB_ENDPTNAKEN_EPTNE_SHIFT (16U)
 #define USB_ENDPTNAKEN_EPTNE_SET(x) (((uint32_t)(x) << USB_ENDPTNAKEN_EPTNE_SHIFT) & USB_ENDPTNAKEN_EPTNE_MASK)
 #define USB_ENDPTNAKEN_EPTNE_GET(x) (((uint32_t)(x) & USB_ENDPTNAKEN_EPTNE_MASK) >> USB_ENDPTNAKEN_EPTNE_SHIFT)
@@ -1065,7 +1064,7 @@ typedef struct {
  * corresponding RX Endpoint NAK bit is set, the NAK Interrupt bit is set.
  * Bit [N] - Endpoint #[N], N is 0-7
  */
-#define USB_ENDPTNAKEN_EPRNE_MASK (0xFFU)
+#define USB_ENDPTNAKEN_EPRNE_MASK (0xFFFFU)
 #define USB_ENDPTNAKEN_EPRNE_SHIFT (0U)
 #define USB_ENDPTNAKEN_EPRNE_SET(x) (((uint32_t)(x) << USB_ENDPTNAKEN_EPRNE_SHIFT) & USB_ENDPTNAKEN_EPRNE_MASK)
 #define USB_ENDPTNAKEN_EPRNE_GET(x) (((uint32_t)(x) & USB_ENDPTNAKEN_EPRNE_MASK) >> USB_ENDPTNAKEN_EPRNE_SHIFT)
@@ -1654,7 +1653,7 @@ typedef struct {
  * The response to a setup packet as in the order of operations and total response time is crucial to limit bus time outs while the setup lock out mechanism is engaged.
  * This register is only used in device mode.
  */
-#define USB_ENDPTSETUPSTAT_ENDPTSETUPSTAT_MASK (0xFFU)
+#define USB_ENDPTSETUPSTAT_ENDPTSETUPSTAT_MASK (0xFFFFU)
 #define USB_ENDPTSETUPSTAT_ENDPTSETUPSTAT_SHIFT (0U)
 #define USB_ENDPTSETUPSTAT_ENDPTSETUPSTAT_SET(x) (((uint32_t)(x) << USB_ENDPTSETUPSTAT_ENDPTSETUPSTAT_SHIFT) & USB_ENDPTSETUPSTAT_ENDPTSETUPSTAT_MASK)
 #define USB_ENDPTSETUPSTAT_ENDPTSETUPSTAT_GET(x) (((uint32_t)(x) & USB_ENDPTSETUPSTAT_ENDPTSETUPSTAT_MASK) >> USB_ENDPTSETUPSTAT_ENDPTSETUPSTAT_SHIFT)
@@ -1674,7 +1673,7 @@ typedef struct {
  * is retired, and the dQH is updated.
  * PETB[N] - Endpoint #N, N is in 0..7
  */
-#define USB_ENDPTPRIME_PETB_MASK (0xFF0000UL)
+#define USB_ENDPTPRIME_PETB_MASK (0xFFFF0000UL)
 #define USB_ENDPTPRIME_PETB_SHIFT (16U)
 #define USB_ENDPTPRIME_PETB_SET(x) (((uint32_t)(x) << USB_ENDPTPRIME_PETB_SHIFT) & USB_ENDPTPRIME_PETB_MASK)
 #define USB_ENDPTPRIME_PETB_GET(x) (((uint32_t)(x) & USB_ENDPTPRIME_PETB_MASK) >> USB_ENDPTPRIME_PETB_SHIFT)
@@ -1691,7 +1690,7 @@ typedef struct {
  * is retired, and the dQH is updated.
  * PERB[N] - Endpoint #N, N is in 0..7
  */
-#define USB_ENDPTPRIME_PERB_MASK (0xFFU)
+#define USB_ENDPTPRIME_PERB_MASK (0xFFFFU)
 #define USB_ENDPTPRIME_PERB_SHIFT (0U)
 #define USB_ENDPTPRIME_PERB_SET(x) (((uint32_t)(x) << USB_ENDPTPRIME_PERB_SHIFT) & USB_ENDPTPRIME_PERB_MASK)
 #define USB_ENDPTPRIME_PERB_GET(x) (((uint32_t)(x) & USB_ENDPTPRIME_PERB_MASK) >> USB_ENDPTPRIME_PERB_SHIFT)
@@ -1706,7 +1705,7 @@ typedef struct {
  * Hardware clears this register after the endpoint flush operation is successful.
  * FETB[N] - Endpoint #N, N is in 0..7
  */
-#define USB_ENDPTFLUSH_FETB_MASK (0xFF0000UL)
+#define USB_ENDPTFLUSH_FETB_MASK (0xFFFF0000UL)
 #define USB_ENDPTFLUSH_FETB_SHIFT (16U)
 #define USB_ENDPTFLUSH_FETB_SET(x) (((uint32_t)(x) << USB_ENDPTFLUSH_FETB_SHIFT) & USB_ENDPTFLUSH_FETB_MASK)
 #define USB_ENDPTFLUSH_FETB_GET(x) (((uint32_t)(x) & USB_ENDPTFLUSH_FETB_MASK) >> USB_ENDPTFLUSH_FETB_SHIFT)
@@ -1720,7 +1719,7 @@ typedef struct {
  * Hardware clears this register after the endpoint flush operation is successful.
  * FERB[N] - Endpoint #N, N is in 0..7
  */
-#define USB_ENDPTFLUSH_FERB_MASK (0xFFU)
+#define USB_ENDPTFLUSH_FERB_MASK (0xFFFFU)
 #define USB_ENDPTFLUSH_FERB_SHIFT (0U)
 #define USB_ENDPTFLUSH_FERB_SET(x) (((uint32_t)(x) << USB_ENDPTFLUSH_FERB_SHIFT) & USB_ENDPTFLUSH_FERB_MASK)
 #define USB_ENDPTFLUSH_FERB_GET(x) (((uint32_t)(x) & USB_ENDPTFLUSH_FERB_MASK) >> USB_ENDPTFLUSH_FERB_SHIFT)
@@ -1738,7 +1737,7 @@ typedef struct {
  * NOTE: These bits are momentarily cleared by hardware during hardware endpoint re-priming operations when a dTD is retired, and the dQH is updated.
  * ETBR[N] - Endpoint #N, N is in 0..7
  */
-#define USB_ENDPTSTAT_ETBR_MASK (0xFF0000UL)
+#define USB_ENDPTSTAT_ETBR_MASK (0xFFFF0000UL)
 #define USB_ENDPTSTAT_ETBR_SHIFT (16U)
 #define USB_ENDPTSTAT_ETBR_GET(x) (((uint32_t)(x) & USB_ENDPTSTAT_ETBR_MASK) >> USB_ENDPTSTAT_ETBR_SHIFT)
 
@@ -1756,7 +1755,7 @@ typedef struct {
  * when a dTD is retired, and the dQH is updated.
  * ERBR[N] - Endpoint #N, N is in 0..7
  */
-#define USB_ENDPTSTAT_ERBR_MASK (0xFFU)
+#define USB_ENDPTSTAT_ERBR_MASK (0xFFFFU)
 #define USB_ENDPTSTAT_ERBR_SHIFT (0U)
 #define USB_ENDPTSTAT_ERBR_GET(x) (((uint32_t)(x) & USB_ENDPTSTAT_ERBR_MASK) >> USB_ENDPTSTAT_ERBR_SHIFT)
 
@@ -1769,7 +1768,7 @@ typedef struct {
  * If the corresponding IOC bit is set in the Transfer Descriptor, then this bit is set simultaneously with the USBINT . Writing one clears the corresponding bit in this register.
  * ETCE[N] - Endpoint #N, N is in 0..7
  */
-#define USB_ENDPTCOMPLETE_ETCE_MASK (0xFF0000UL)
+#define USB_ENDPTCOMPLETE_ETCE_MASK (0xFFFF0000UL)
 #define USB_ENDPTCOMPLETE_ETCE_SHIFT (16U)
 #define USB_ENDPTCOMPLETE_ETCE_SET(x) (((uint32_t)(x) << USB_ENDPTCOMPLETE_ETCE_SHIFT) & USB_ENDPTCOMPLETE_ETCE_MASK)
 #define USB_ENDPTCOMPLETE_ETCE_GET(x) (((uint32_t)(x) & USB_ENDPTCOMPLETE_ETCE_MASK) >> USB_ENDPTCOMPLETE_ETCE_SHIFT)
@@ -1784,7 +1783,7 @@ typedef struct {
  * USBINT . Writing one clears the corresponding bit in this register.
  * ERCE[N] - Endpoint #N, N is in 0..7
  */
-#define USB_ENDPTCOMPLETE_ERCE_MASK (0xFFU)
+#define USB_ENDPTCOMPLETE_ERCE_MASK (0xFFFFU)
 #define USB_ENDPTCOMPLETE_ERCE_SHIFT (0U)
 #define USB_ENDPTCOMPLETE_ERCE_SET(x) (((uint32_t)(x) << USB_ENDPTCOMPLETE_ERCE_SHIFT) & USB_ENDPTCOMPLETE_ERCE_MASK)
 #define USB_ENDPTCOMPLETE_ERCE_GET(x) (((uint32_t)(x) & USB_ENDPTCOMPLETE_ERCE_MASK) >> USB_ENDPTCOMPLETE_ERCE_SHIFT)
@@ -2192,6 +2191,14 @@ typedef struct {
 #define USB_ENDPTCTRL_ENDPTCTRL5 (5UL)
 #define USB_ENDPTCTRL_ENDPTCTRL6 (6UL)
 #define USB_ENDPTCTRL_ENDPTCTRL7 (7UL)
+#define USB_ENDPTCTRL_ENDPTCTRL8 (8UL)
+#define USB_ENDPTCTRL_ENDPTCTRL9 (9UL)
+#define USB_ENDPTCTRL_ENDPTCTRL10 (10UL)
+#define USB_ENDPTCTRL_ENDPTCTRL11 (11UL)
+#define USB_ENDPTCTRL_ENDPTCTRL12 (12UL)
+#define USB_ENDPTCTRL_ENDPTCTRL13 (13UL)
+#define USB_ENDPTCTRL_ENDPTCTRL14 (14UL)
+#define USB_ENDPTCTRL_ENDPTCTRL15 (15UL)
 
 
 #endif /* HPM_USB_H */

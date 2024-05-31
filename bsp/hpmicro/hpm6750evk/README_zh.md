@@ -53,7 +53,7 @@ HPM6750EVK 是由先楫半导体推出的一款基于RISCV内核的开发板，�
 - 步骤 2: 准备 [toolcahin](https://github.com/helloeagleyang/riscv32-gnu-toolchain-win/archive/2022.04.12.zip)
     - 下载并解压到指定的目录，如: `C:\DevTools\riscv32-gnu-toolchain`
 - 步骤 3: 设置环境变量： `RTT_RISCV_TOOLCHAIN` 为 `<TOOLCHAIN_DIR>\bin`， 如: `C:\DevTools\riscv32-gnu-toolchain\bin`
-- 步骤 4: 准备 [OpenOCD](https://github.com/hpmicro/rtt-debugger-support-package/archive/v0.3.0.zip)
+- 步骤 4: 准备 [OpenOCD](https://github.com/hpmicro/rtt-debugger-support-package/archive/v0.4.0.zip)
   - 下载并解压到指定目录，如: `C:\DevTools\openocd-hpmicro`
   - 将 `OPENOCD_HPMICRO`环境变量设置为 `<OPENOCD_HPMICRO_DIR>\bin`，如： `C:\DevTools\openocd-hpmicro\bin`
 

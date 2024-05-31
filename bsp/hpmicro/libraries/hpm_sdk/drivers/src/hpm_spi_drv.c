@@ -255,6 +255,7 @@ hpm_stat_t spi_write_read_data(SPI_Type *ptr, uint8_t data_len_in_bytes, uint8_t
 
 static hpm_stat_t spi_no_data(SPI_Type *ptr, spi_mode_selection_t mode, spi_control_config_t *config)
 {
+    (void) ptr;
     if (mode == spi_master_mode) {
         if (config->master_config.cmd_enable == false && config->master_config.addr_enable == false) {
             return status_invalid_argument;
@@ -304,6 +305,9 @@ void spi_master_get_default_control_config(spi_control_config_t *config)
     config->common_config.trans_mode = spi_trans_write_only;
     config->common_config.data_phase_fmt = spi_single_io_mode;
     config->common_config.dummy_cnt = spi_dummy_count_2;
+#if defined(HPM_IP_FEATURE_SPI_CS_SELECT) && (HPM_IP_FEATURE_SPI_CS_SELECT == 1)
+    config->common_config.cs_index = spi_cs_0;
+#endif
 }
 
 void spi_slave_get_default_control_config(spi_control_config_t *config)
@@ -314,18 +318,27 @@ void spi_slave_get_default_control_config(spi_control_config_t *config)
     config->common_config.trans_mode = spi_trans_read_only;
     config->common_config.data_phase_fmt = spi_single_io_mode;
     config->common_config.dummy_cnt = spi_dummy_count_2;
+#if defined(HPM_IP_FEATURE_SPI_CS_SELECT) && (HPM_IP_FEATURE_SPI_CS_SELECT == 1)
+    config->common_config.cs_index = spi_cs_0;
+#endif
 }
 
 hpm_stat_t spi_master_timing_init(SPI_Type *ptr, spi_timing_config_t *config)
 {
     uint8_t sclk_div;
-
+    uint8_t div_remainder;
+    uint8_t div_integer;
     if (config->master_config.sclk_freq_in_hz == 0) {
         return status_invalid_argument;
     }
 
     if (config->master_config.clk_src_freq_in_hz > config->master_config.sclk_freq_in_hz) {
-        sclk_div = (config->master_config.clk_src_freq_in_hz / config->master_config.sclk_freq_in_hz) / 2 - 1;
+        div_remainder = (config->master_config.clk_src_freq_in_hz % config->master_config.sclk_freq_in_hz);
+        div_integer  = (config->master_config.clk_src_freq_in_hz / config->master_config.sclk_freq_in_hz);
+        if ((div_remainder != 0) || ((div_integer % 2) != 0)) {
+            return status_invalid_argument;
+        }
+        sclk_div = (div_integer / 2) - 1;
     } else {
         sclk_div = 0xff;
     }
@@ -351,10 +364,11 @@ void spi_format_init(SPI_Type *ptr, spi_format_config_t *config)
 
 hpm_stat_t spi_control_init(SPI_Type *ptr, spi_control_config_t *config, uint32_t wcount, uint32_t rcount)
 {
-    if (wcount > SPI_SOC_TRANSFER_COUNT_MAX || rcount > SPI_SOC_TRANSFER_COUNT_MAX) {
+#if defined (SPI_SOC_TRANSFER_COUNT_MAX) && (SPI_SOC_TRANSFER_COUNT_MAX == 512)
+    if ((wcount > SPI_SOC_TRANSFER_COUNT_MAX) || (rcount > SPI_SOC_TRANSFER_COUNT_MAX)) {
         return status_invalid_argument;
     }
-
+#endif
     /* slave data only mode only works on write read together transfer mode */
     if (config->slave_config.slave_data_only == true && config->common_config.trans_mode != spi_trans_write_read_together) {
         return status_invalid_argument;
@@ -371,6 +385,15 @@ hpm_stat_t spi_control_init(SPI_Type *ptr, spi_control_config_t *config, uint32_
                      SPI_TRANSCTRL_TOKENVALUE_SET(config->master_config.token_value) |
                      SPI_TRANSCTRL_DUMMYCNT_SET(config->common_config.dummy_cnt) |
                      SPI_TRANSCTRL_RDTRANCNT_SET(rcount - 1);
+
+#if defined(HPM_IP_FEATURE_SPI_CS_SELECT) && (HPM_IP_FEATURE_SPI_CS_SELECT == 1)
+    ptr->CTRL = (ptr->CTRL & ~SPI_CTRL_CS_EN_MASK) | SPI_CTRL_CS_EN_SET(config->common_config.cs_index);
+#endif
+
+#if defined(HPM_IP_FEATURE_SPI_NEW_TRANS_COUNT) && (HPM_IP_FEATURE_SPI_NEW_TRANS_COUNT == 1)
+    ptr->WR_TRANS_CNT = wcount - 1;
+    ptr->RD_TRANS_CNT = rcount - 1;
+#endif
 
     /* reset txfifo, rxfifo and control */
     ptr->CTRL |= SPI_CTRL_TXFIFORST_MASK | SPI_CTRL_RXFIFORST_MASK | SPI_CTRL_SPIRST_MASK;
@@ -481,3 +504,120 @@ hpm_stat_t spi_setup_dma_transfer(SPI_Type *ptr,
     return stat;
 }
 
+
+#if defined(HPM_IP_FEATURE_SPI_SUPPORT_DIRECTIO) && (HPM_IP_FEATURE_SPI_SUPPORT_DIRECTIO == 1)
+hpm_stat_t spi_directio_enable_output(SPI_Type *ptr, spi_directio_pin_t pin)
+{
+    hpm_stat_t stat = status_success;
+    switch (pin) {
+    case hold_pin:
+        ptr->DIRECTIO |= SPI_DIRECTIO_HOLD_OE_MASK;
+        break;
+    case wp_pin:
+        ptr->DIRECTIO |= SPI_DIRECTIO_WP_OE_MASK;
+        break;
+    case miso_pin:
+        ptr->DIRECTIO |= SPI_DIRECTIO_MISO_OE_MASK;
+        break;
+    case mosi_pin:
+        ptr->DIRECTIO |= SPI_DIRECTIO_MOSI_OE_MASK;
+        break;
+    case sclk_pin:
+        ptr->DIRECTIO |= SPI_DIRECTIO_SCLK_OE_MASK;
+        break;
+    case cs_pin:
+        ptr->DIRECTIO |= SPI_DIRECTIO_CS_OE_MASK;
+        break;
+    default:
+        stat = status_invalid_argument;
+        break;
+    }
+    return stat;
+}
+
+hpm_stat_t spi_directio_disable_output(SPI_Type *ptr, spi_directio_pin_t pin)
+{
+    hpm_stat_t stat = status_success;
+    switch (pin) {
+    case hold_pin:
+        ptr->DIRECTIO &= ~SPI_DIRECTIO_HOLD_OE_MASK;
+        break;
+    case wp_pin:
+        ptr->DIRECTIO &= ~SPI_DIRECTIO_WP_OE_MASK;
+        break;
+    case miso_pin:
+        ptr->DIRECTIO &= ~SPI_DIRECTIO_MISO_OE_MASK;
+        break;
+    case mosi_pin:
+        ptr->DIRECTIO &= ~SPI_DIRECTIO_MOSI_OE_MASK;
+        break;
+    case sclk_pin:
+        ptr->DIRECTIO &= ~SPI_DIRECTIO_SCLK_OE_MASK;
+        break;
+    case cs_pin:
+        ptr->DIRECTIO &= ~SPI_DIRECTIO_CS_OE_MASK;
+        break;
+    default:
+        stat = status_invalid_argument;
+        break;
+    }
+    return stat;
+}
+
+hpm_stat_t spi_directio_write(SPI_Type *ptr, spi_directio_pin_t pin, bool high)
+{
+    hpm_stat_t stat = status_success;
+    switch (pin) {
+    case hold_pin:
+        (high == true) ? (ptr->DIRECTIO |= SPI_DIRECTIO_HOLD_O_MASK) : (ptr->DIRECTIO &= ~SPI_DIRECTIO_HOLD_O_MASK);
+        break;
+    case wp_pin:
+        (high == true) ? (ptr->DIRECTIO |= SPI_DIRECTIO_WP_O_MASK) : (ptr->DIRECTIO &= ~SPI_DIRECTIO_WP_O_MASK);
+        break;
+    case miso_pin:
+        (high == true) ? (ptr->DIRECTIO |= SPI_DIRECTIO_MISO_O_MASK) : (ptr->DIRECTIO &= ~SPI_DIRECTIO_MISO_O_MASK);
+        break;
+    case mosi_pin:
+        (high == true) ? (ptr->DIRECTIO |= SPI_DIRECTIO_MOSI_O_MASK) : (ptr->DIRECTIO &= ~SPI_DIRECTIO_MOSI_O_MASK);
+        break;
+    case sclk_pin:
+        (high == true) ? (ptr->DIRECTIO |= SPI_DIRECTIO_SCLK_O_MASK) : (ptr->DIRECTIO &= ~SPI_DIRECTIO_SCLK_O_MASK);
+        break;
+    case cs_pin:
+        (high == true) ? (ptr->DIRECTIO |= SPI_DIRECTIO_CS_O_MASK) : (ptr->DIRECTIO &= ~SPI_DIRECTIO_CS_O_MASK);
+        break;
+    default:
+        stat = status_invalid_argument;
+        break;
+    }
+    return stat;
+}
+
+uint8_t spi_directio_read(SPI_Type *ptr, spi_directio_pin_t pin)
+{
+    uint8_t io_sta = 0;
+    switch (pin) {
+    case hold_pin:
+        io_sta = SPI_DIRECTIO_HOLD_I_GET(ptr->DIRECTIO);
+        break;
+    case wp_pin:
+        io_sta = SPI_DIRECTIO_WP_I_GET(ptr->DIRECTIO);
+        break;
+    case miso_pin:
+        io_sta = SPI_DIRECTIO_MISO_I_GET(ptr->DIRECTIO);
+        break;
+    case mosi_pin:
+        io_sta = SPI_DIRECTIO_MOSI_I_GET(ptr->DIRECTIO);
+        break;
+    case sclk_pin:
+        io_sta = SPI_DIRECTIO_SCLK_I_GET(ptr->DIRECTIO);
+        break;
+    case cs_pin:
+        io_sta = SPI_DIRECTIO_CS_I_GET(ptr->DIRECTIO);
+        break;
+    default:
+        break;
+    }
+    return io_sta;
+}
+#endif

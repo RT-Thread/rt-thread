@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 HPMicro
+ * Copyright (c) 2021-2024 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -63,7 +63,6 @@
  */
 #define DMA_SOC_TRANSFER_WIDTH_MAX(x) (((x) == HPM_XDMA) ? DMA_TRANSFER_WIDTH_DOUBLE_WORD : DMA_TRANSFER_WIDTH_WORD)
 #define DMA_SOC_TRANSFER_PER_BURST_MAX(x) (((x) == HPM_XDMA) ? DMA_NUM_TRANSFER_PER_BURST_1024T : DMA_NUM_TRANSFER_PER_BURST_128T)
-#define DMA_SOC_BUS_NUM (1U)
 #define DMA_SOC_CHANNEL_NUM (8U)
 #define DMA_SOC_MAX_COUNT (2U)
 #define DMA_SOC_CHN_TO_DMAMUX_CHN(x, n) (((x) == HPM_XDMA) ? (DMAMUX_MUXCFG_XDMA_MUX0 + n) : (DMAMUX_MUXCFG_HDMA_MUX0 + n))
@@ -72,7 +71,7 @@
  * PDMA Section
  */
 #define PDMA_SOC_PS_MAX_COUNT (2U)
-
+#define PDMA_SOC_SUPPORT_BS16 (1U)
 /*
  * LCDC Section
  */
@@ -88,18 +87,15 @@
 
 #define USB_SOC_DCD_QTD_NEXT_INVALID               (1U)
 #define USB_SOC_DCD_QHD_BUFFER_COUNT               (5U)
-#define USB_SOC_DCD_QTD_ALIGNMENT                  (32U)
-#define USB_SOC_DCD_QHD_ALIGNMENT                  (64U)
 #define USB_SOC_DCD_MAX_ENDPOINT_COUNT             (8U)
-#define USB_SOC_DCD_MAX_QTD_COUNT                  (USB_SOC_DCD_MAX_ENDPOINT_COUNT * 2U)
+#ifndef USB_SOC_DCD_QTD_COUNT_EACH_ENDPOINT
+#define USB_SOC_DCD_QTD_COUNT_EACH_ENDPOINT        (8U)
+#endif
+#define USB_SOC_DCD_MAX_QTD_COUNT                  (USB_SOC_DCD_MAX_ENDPOINT_COUNT * 2U * USB_SOC_DCD_QTD_COUNT_EACH_ENDPOINT)
 #define USB_SOS_DCD_MAX_QHD_COUNT                  (USB_SOC_DCD_MAX_ENDPOINT_COUNT * 2U)
 #define USB_SOC_DCD_DATA_RAM_ADDRESS_ALIGNMENT     (2048U)
 
-#define USB_SOC_HCD_QTD_BUFFER_COUNT               (5U)
-#define USB_SOC_HCD_QTD_ALIGNMENT                  (32U)
-#define USB_SOC_HCD_QHD_ALIGNMENT                  (32U)
 #define USB_SOC_HCD_FRAMELIST_MAX_ELEMENTS         (1024U)
-#define USB_SOC_HCD_DATA_RAM_ADDRESS_ALIGNMENT     (4096U)
 
 /*
  * ENET Section
@@ -122,6 +118,7 @@
 /*
  * ADC Section
  */
+#define ADC_SOC_IP_VERSION                         (0U)
 #define ADC_SOC_SEQ_MAX_LEN                        (16U)
 #define ADC_SOC_MAX_TRIG_CH_LEN                    (4U)
 #define ADC_SOC_MAX_TRIG_CH_NUM                    (11U)
@@ -192,6 +189,9 @@
 /*
  * OTP Section
  */
+#define OTP_SOC_MAC0_IDX   (65U)
+#define OTP_SOC_MAC0_LEN   (6U)  /* in bytes */
+
 #define OTP_SOC_UUID_IDX   (88U)
 #define OTP_SOC_UUID_LEN   (16U) /* in bytes */
 
@@ -202,13 +202,5 @@
 #define PWM_SOC_HRPWM_SUPPORT  (0U)
 #define PWM_SOC_SHADOW_TRIG_SUPPORT (0U)
 #define PWM_SOC_TIMER_RESET_SUPPORT (0U)
-
-
-/**
- * IOC Section
- *
- */
-#define IOC_SOC_PAD_MAX     (491)
-
 
 #endif /* HPM_SOC_FEATURE_H */

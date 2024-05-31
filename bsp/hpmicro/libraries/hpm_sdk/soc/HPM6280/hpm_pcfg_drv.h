@@ -20,11 +20,9 @@
  */
 #define PCFG_CLOCK_GATE_MODE_ALWAYS_ON          (0x3UL)
 #define PCFG_CLOCK_GATE_MODE_ALWAYS_OFF         (0x2UL)
-#define PCFG_CLOCK_GATE_MODE_ALWAYS_FOLLOW_FLOW (0x1UL)
 
 #define PCFG_PERIPH_KEEP_CLOCK_ON(p) (PCFG_CLOCK_GATE_MODE_ALWAYS_ON << (p))
 #define PCFG_PERIPH_KEEP_CLOCK_OFF(p) (PCFG_CLOCK_GATE_MODE_ALWAYS_OFF << (p))
-#define PCFG_PERIPH_SET_CLOCK_AUTO(p) (PCFG_CLOCK_GATE_MODE_ALWAYS_FOLLOW_FLOW << (p))
 
 /* @brief PCFG irc24m reference */
 typedef enum {
@@ -154,26 +152,6 @@ static inline void pcfg_bandgap_reload_trim(PCFG_Type *ptr)
 }
 
 /**
- * @brief turn off LDO 1V
- *
- * @param[in] ptr base address
- */
-static inline void pcfg_ldo1p1_turn_off(PCFG_Type *ptr)
-{
-    ptr->LDO1P1 &= ~PCFG_LDO1P1_ENABLE_MASK;
-}
-
-/**
- * @brief turn of LDO 1V
- *
- * @param[in] ptr base address
- */
-static inline void pcfg_ldo1p1_turn_on(PCFG_Type *ptr)
-{
-    ptr->LDO1P1 |= PCFG_LDO1P1_ENABLE_MASK;
-}
-
-/**
  * @brief turn off LDO2P5
  *
  * @param[in] ptr base address
@@ -229,12 +207,12 @@ static inline void pcfg_dcdc_set_mode(PCFG_Type *ptr, uint8_t mode)
  *
  * @param[in] ptr base address
  * @param[in] limit current limit at low power mode
- * @param[in] over_limit set to true means current is greater than limit
+ * @param[in] over_limit unused parameter, will be discarded
  */
 static inline void pcfg_dcdc_set_lp_current_limit(PCFG_Type *ptr, pcfg_dcdc_lp_current_limit_t limit, bool over_limit)
 {
-    ptr->DCDC_PROT = (ptr->DCDC_PROT & ~(PCFG_DCDC_PROT_ILIMIT_LP_MASK | PCFG_DCDC_PROT_OVERLOAD_LP_MASK))
-        | PCFG_DCDC_PROT_ILIMIT_LP_SET(limit) | PCFG_DCDC_PROT_OVERLOAD_LP_SET(over_limit);
+    (void) over_limit;
+    ptr->DCDC_PROT = (ptr->DCDC_PROT & ~PCFG_DCDC_PROT_ILIMIT_LP_MASK) | PCFG_DCDC_PROT_ILIMIT_LP_SET(limit);
 }
 
 /**

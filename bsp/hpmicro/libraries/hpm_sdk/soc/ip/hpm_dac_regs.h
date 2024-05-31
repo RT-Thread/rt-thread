@@ -90,6 +90,9 @@ typedef struct {
  * 00: direct mode, DAC output the fixed configured data(from sw_dac_data)
  * 01: step mode, DAC output from start_point to end point, with configured step, can step up or step down
  * 10: buffer mode,  read data from buffer, then output to analog, internal DMA will load next burst if enough space in local FIFO;
+ * 11: trigger mode,  DAC output from external trigger signals
+ * Note:
+ * Trigger mode is not supported in hpm63xx and hpm62xx families.
  */
 #define DAC_CFG0_DAC_MODE_MASK (0x30U)
 #define DAC_CFG0_DAC_MODE_SHIFT (4U)
@@ -125,6 +128,7 @@ typedef struct {
  * ANA_CLK_EN (RW)
  *
  * set to enable analog clock(divided by ana_div_cfg)
+ * need to be set in direct mode and trigger mode
  */
 #define DAC_CFG1_ANA_CLK_EN_MASK (0x40000UL)
 #define DAC_CFG1_ANA_CLK_EN_SHIFT (18U)
@@ -148,8 +152,12 @@ typedef struct {
 /*
  * DIV_CFG (RW)
  *
- * how many clk_dac cycles to change data to analog, should configured to less than 1MHz data rate.
- * Used for step mode and buffer mode, if set to continual trigger mode
+ * step mode and buffer mode:
+ *   defines how many clk_dac cycles to change data to analog, should configured to less than 1MHz data rate.
+ * Direct mode and trigger mode:
+ *   defines how many clk_dac cycles to accpet the input data, dac will not accept new written data or trigger data before the clock cycles passed. should configured to less than 1MHz.
+ * Note:
+ * For direct mode and trigger mode, this config is not supported in hpm63xx and hpm62xx families.
  */
 #define DAC_CFG1_DIV_CFG_MASK (0xFFFFU)
 #define DAC_CFG1_DIV_CFG_SHIFT (0U)

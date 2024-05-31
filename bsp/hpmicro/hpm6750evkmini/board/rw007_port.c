@@ -118,4 +118,4 @@ void spi_wifi_int_cmd(rt_bool_t cmd)
     rt_pin_irq_enable(RW007_INT_BUSY_PIN, cmd);
 }
 
-#endif /* if defined(RT_USING_WIFI) && defined(BSP_USING_SPI1) */
+#endif /* ifdefined(RT_USING_WIFI) && defined(BSP_USING_SPI1) */

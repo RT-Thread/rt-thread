@@ -12,6 +12,7 @@
 #include "hpm_enet_drv.h"
 #include "hpm_dp83848_regs.h"
 #include "hpm_dp83848.h"
+
 /*---------------------------------------------------------------------
  * Internal API
  *---------------------------------------------------------------------
@@ -49,8 +50,10 @@ void dp83848_reset(ENET_Type *ptr)
 
 void dp83848_basic_mode_default_config(ENET_Type *ptr, dp83848_config_t *config)
 {
+    (void)ptr;
+
     config->loopback         = false;                        /* Disable PCS loopback mode */
-    #if __DISABLE_AUTO_NEGO
+    #if defined(__DISABLE_AUTO_NEGO) && (__DISABLE_AUTO_NEGO)
     config->auto_negotiation = false;                        /* Disable Auto-Negotiation */
     config->speed            = enet_phy_port_speed_100mbps;
     config->duplex           = enet_phy_duplex_full;

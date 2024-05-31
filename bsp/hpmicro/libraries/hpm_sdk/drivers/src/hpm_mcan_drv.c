@@ -8,14 +8,24 @@
 #include <string.h>
 #include <assert.h>
 
-#define MCAN_CAN_BAUDRATE_DEFAULT (500UL * 1000UL)          /*!< Default CAN2.0 baudrate:500 kbps */
-#define MCAN_CANFD_BAUDRATE_DEFAULT (2UL * 1000UL * 1000UL)  /*!< Default CANFD baudrate: 2 Mbps */
-
 /***********************************************************************************************************************
  *
  *  Definitions
  *
  **********************************************************************************************************************/
+
+#define MCAN_CAN_BAUDRATE_DEFAULT (500UL * 1000UL)          /*!< Default CAN2.0 baudrate:500 kbps */
+#define MCAN_CANFD_BAUDRATE_DEFAULT (2UL * 1000UL * 1000UL)  /*!< Default CANFD baudrate: 2 Mbps */
+
+/* Hardware restriction of each types of element for MCAN */
+#define MCAN_STD_FILTER_ELEM_CNT_MAX (128U)
+#define MCAN_EXT_FILTER_ELEM_CNT_MAX (64U)
+#define MCAN_RXFIFO_ELEM_CNT_MAX     (64U)
+#define MCAN_RXBUF_ELEM_CNT_MAX      (64U)
+#define MCAN_TXEVT_FIFO_ELEM_CNT_MAX (32U)
+#define MCAN_TXBUF_ELEM_CNT_MAX      (32U)
+
+
 #define NUM_TQ_SYNC_SEG (1U)
 
 /**
@@ -625,10 +635,19 @@ void mcan_get_default_config(MCAN_Type *ptr, mcan_config_t *config)
     /* Default TSU configuration */
     mcan_tsu_config_t *tsu_config = &config->tsu_config;
     tsu_config->prescaler = 1U;
-    tsu_config->ext_timebase_src = MCAN_TSU_EXT_TIMEBASE_SRC_PTP;
+#if defined(MCAN_SOC_TSU_SRC_TWO_STAGES) && (MCAN_SOC_TSU_SRC_TWO_STAGES == 1)
+    tsu_config->ext_timebase_src = MCAN_TSU_EXT_TIMEBASE_SRC_TBSEL_0;
+    tsu_config->tbsel_option = MCAN_TSU_TBSEL_PTPC0;
+#else
+    tsu_config->ext_timebase_src = MCAN_TSU_EXT_TIMEBASE_SRC_PTPC;
+#endif
     tsu_config->use_ext_timebase = false;
     tsu_config->capture_on_sof = false;
     tsu_config->enable_tsu = false;
+
+    config->timeout_cfg.enable_timeout_counter = false;
+    config->timeout_cfg.timeout_period = 0xFFFFU;
+    config->timeout_cfg.timeout_sel = mcan_timeout_continuous_operation;
 }
 
 static void mcan_config_rxfifo(MCAN_Type *ptr, uint32_t index, uint32_t reg_val)
@@ -648,6 +667,9 @@ hpm_stat_t mcan_config_ram(MCAN_Type *ptr, mcan_ram_config_t *config)
         uint32_t elem_count;
         uint32_t start_addr = mcan_get_ram_offset(ptr);
         if (config->enable_std_filter) {
+            if (config->std_filter_elem_count > MCAN_STD_FILTER_ELEM_CNT_MAX) {
+                break;
+            }
             mcan_filter_config_t filter_config = { .reg_val = 0 };
             filter_config.list_size = config->std_filter_elem_count;
             filter_config.list_start_addr = start_addr;
@@ -658,6 +680,9 @@ hpm_stat_t mcan_config_ram(MCAN_Type *ptr, mcan_ram_config_t *config)
         }
 
         if (config->enable_ext_filter) {
+            if (config->ext_filter_elem_count > MCAN_EXT_FILTER_ELEM_CNT_MAX) {
+                break;
+            }
             mcan_filter_config_t filter_config = { .reg_val = 0 };
             filter_config.list_size = config->ext_filter_elem_count;
             filter_config.list_start_addr = start_addr;
@@ -671,9 +696,12 @@ hpm_stat_t mcan_config_ram(MCAN_Type *ptr, mcan_ram_config_t *config)
 
         for (uint32_t i = 0; i < ARRAY_SIZE(config->rxfifos); i++) {
             if (config->rxfifos[i].enable) {
-                elem_bytes =
-                    mcan_get_data_field_size(config->rxfifos[i].data_field_size) + MCAN_MESSAGE_HEADER_SIZE_IN_BYTES;
+                elem_bytes = mcan_get_data_field_size(config->rxfifos[i].data_field_size)
+                           + MCAN_MESSAGE_HEADER_SIZE_IN_BYTES;
                 elem_count = config->rxfifos[i].elem_count;
+                if (elem_count > MCAN_RXFIFO_ELEM_CNT_MAX) {
+                    return status_invalid_argument;
+                }
                 mcan_rxfifo_config_t rxfifo_config = { .reg_val = 0 };
                 rxfifo_config.start_addr = start_addr;
                 rxfifo_config.watermark = 1U;
@@ -701,10 +729,13 @@ hpm_stat_t mcan_config_ram(MCAN_Type *ptr, mcan_ram_config_t *config)
         if (config->enable_rxbuf) {
             elem_bytes = mcan_get_data_field_size(config->rxbuf_data_field_size) + MCAN_MESSAGE_HEADER_SIZE_IN_BYTES;
             elem_count = config->rxbuf_elem_count;
+            if (elem_count > MCAN_RXFIFO_ELEM_CNT_MAX) {
+                break;
+            }
             ptr->RXBC = start_addr;
             rx_fifo_buf_elem_config.buf_data_field_size = config->rxbuf_data_field_size;
 
-            start_addr += elem_bytes * elem_count;;
+            start_addr += elem_bytes * elem_count;
         } else {
             rx_fifo_buf_elem_config.buf_data_field_size = 0;
             ptr->RXBC = MCAN_RAM_ADDR_INVALID;
@@ -719,6 +750,10 @@ hpm_stat_t mcan_config_ram(MCAN_Type *ptr, mcan_ram_config_t *config)
             txbuf_config.tx_fifo_queue_mode = config->txfifo_or_txqueue_mode;
 
             elem_count = config->txbuf_fifo_or_queue_elem_count + config->txbuf_dedicated_txbuf_elem_count;
+            if (elem_count > MCAN_TXEVT_FIFO_ELEM_CNT_MAX) {
+                break;
+            }
+
             elem_bytes = mcan_get_data_field_size(config->txbuf_data_field_size) + MCAN_MESSAGE_HEADER_SIZE_IN_BYTES;
 
             start_addr += elem_count * elem_bytes;
@@ -733,6 +768,10 @@ hpm_stat_t mcan_config_ram(MCAN_Type *ptr, mcan_ram_config_t *config)
         if (config->enable_tx_evt_fifo) {
             elem_bytes = sizeof(mcan_tx_event_fifo_elem_t);
             elem_count = config->tx_evt_fifo_elem_count;
+            if (elem_count > MCAN_TXEVT_FIFO_ELEM_CNT_MAX) {
+                break;
+            }
+
             txevt_fifo_config.start_addr = start_addr;
             txevt_fifo_config.fifo_size = elem_count;
             txevt_fifo_config.fifo_watermark = 1U;
@@ -762,30 +801,45 @@ hpm_stat_t mcan_config_ram_with_flexible_config(MCAN_Type *ptr, mcan_ram_flexibl
     hpm_stat_t status = status_invalid_argument;
     do {
         if (config->enable_std_filter) {
+            if (config->std_filter_config.list_size > MCAN_STD_FILTER_ELEM_CNT_MAX) {
+                break;
+            }
             ptr->SIDFC = config->std_filter_config.reg_val;
         } else {
             ptr->SIDFC = MCAN_RAM_ADDR_INVALID;
         }
 
         if (config->enable_ext_filter) {
+            if (config->std_filter_config.list_size > MCAN_EXT_FILTER_ELEM_CNT_MAX) {
+                break;
+            }
             ptr->XIDFC = config->ext_filter_config.reg_val;
         } else {
             ptr->XIDFC = MCAN_RAM_ADDR_INVALID;
         }
 
         if (config->enable_rxfifo0) {
+            if (config->rxfifo0_config.fifo_size > MCAN_RXFIFO_ELEM_CNT_MAX) {
+                break;
+            }
             ptr->RXF0C = config->rxfifo0_config.reg_val;
         } else {
             ptr->RXF0C = MCAN_RAM_ADDR_INVALID;
         }
 
         if (config->enable_rxfifo1) {
+            if (config->rxfifo1_config.fifo_size > MCAN_RXFIFO_ELEM_CNT_MAX) {
+                break;
+            }
             ptr->RXF1C = config->rxfifo1_config.reg_val;
         } else {
             ptr->RXF1C = MCAN_RAM_ADDR_INVALID;
         }
 
         if (config->enable_rxbuf) {
+            /* NOTE: There is no register field for SW to validate the rxbuf element count,
+             *       users should ensure the parameters are in valid range.
+             */
             ptr->RXBC = config->rxbuf_config.start_addr;
         } else {
             ptr->RXBC = MCAN_RAM_ADDR_INVALID;
@@ -793,6 +847,10 @@ hpm_stat_t mcan_config_ram_with_flexible_config(MCAN_Type *ptr, mcan_ram_flexibl
 
         ptr->RXESC = config->rx_elem_config.reg_val;
         if (config->enable_txbuf) {
+            uint32_t tx_fifo_size = config->txbuf_config.fifo_queue_size + config->txbuf_config.dedicated_tx_buf_size;
+            if (tx_fifo_size > MCAN_TXBUF_ELEM_CNT_MAX) {
+                break;
+            }
             ptr->TXESC = config->txbuf_elem_config.data_field_size;
         } else {
             ptr->TXESC = MCAN_RAM_ADDR_INVALID;
@@ -801,6 +859,9 @@ hpm_stat_t mcan_config_ram_with_flexible_config(MCAN_Type *ptr, mcan_ram_flexibl
         ptr->TXBC = config->txbuf_config.reg_val;
 
         if (config->enable_tx_evt_fifo) {
+            if (config->tx_evt_fifo_config.fifo_size > MCAN_TXEVT_FIFO_ELEM_CNT_MAX) {
+                break;
+            }
             ptr->TXEFC = config->tx_evt_fifo_config.reg_val;
         } else {
             ptr->TXEFC = MCAN_RAM_ADDR_INVALID;
@@ -896,6 +957,9 @@ static hpm_stat_t mcan_set_tsu(MCAN_Type *ptr, mcan_tsu_config_t *config)
         if (config->use_ext_timebase) {
             tscfg |= MCAN_TSCFG_TBCS_MASK;
             mcan_set_tsu_ext_timebase_src(ptr, config->ext_timebase_src);
+#if defined(MCAN_SOC_TSU_SRC_TWO_STAGES) && (MCAN_SOC_TSU_SRC_TWO_STAGES == 1)
+            mcan_set_tsu_tbsel_option(ptr, config->ext_timebase_src, config->tbsel_option);
+#endif
         }
         if (config->enable_64bit_timestamp) {
             tscfg |= MCAN_TSCFG_EN64_MASK;
@@ -937,10 +1001,32 @@ hpm_stat_t mcan_init(MCAN_Type *ptr, mcan_config_t *config, uint32_t src_clk_fre
             break;
         }
 
-        ptr->CCCR |= MCAN_CCCR_INIT_MASK;
-        while ((ptr->CCCR & MCAN_CCCR_INIT_MASK) == 0) {
-
+        mcan_enable_clock(ptr);
+        uint32_t retry_cnt = 10000UL;
+        do {
+            retry_cnt--;
+            if (retry_cnt == 0UL) {
+                break;
+            }
+        } while (!mcan_is_clock_enabled(ptr));
+        if (retry_cnt == 0UL) {
+            status = status_timeout;
+            break;
         }
+
+        ptr->CCCR |= MCAN_CCCR_INIT_MASK;
+        retry_cnt = 10000UL;
+        while ((ptr->CCCR & MCAN_CCCR_INIT_MASK) == 0U) {
+            retry_cnt--;
+            if (retry_cnt == 0UL) {
+                break;
+            }
+        }
+        if (retry_cnt == 0UL) {
+            status = status_timeout;
+            break;
+        }
+
         ptr->CCCR |= MCAN_CCCR_CCE_MASK;
 
         if (!config->use_lowlevel_timing_setting) {
@@ -1027,6 +1113,18 @@ hpm_stat_t mcan_init(MCAN_Type *ptr, mcan_config_t *config, uint32_t src_clk_fre
             ptr->CCCR &= ~MCAN_CCCR_EFBI_MASK;
         }
 
+        if (config->disable_auto_retransmission) {
+            ptr->CCCR |= MCAN_CCCR_DAR_MASK;
+        } else {
+            ptr->CCCR &= ~MCAN_CCCR_DAR_MASK;
+        }
+
+        if (config->enable_restricted_operation_mode) {
+            ptr->CCCR |= MCAN_CCCR_ASM_MASK;
+        } else {
+            ptr->CCCR &= ~MCAN_CCCR_ASM_MASK;
+        }
+
         /* Configure Transmitter Delay Compensation */
         if (config->enable_tdc) {
             ptr->DBTP |= MCAN_DBTP_TDC_MASK;
@@ -1070,8 +1168,23 @@ hpm_stat_t mcan_init(MCAN_Type *ptr, mcan_config_t *config, uint32_t src_clk_fre
         status = mcan_config_all_filters(ptr, &config->all_filters_config);
         HPM_BREAK_IF(status != status_success);
 
+        /* Disable all interrupts by default */
+        mcan_disable_interrupts(ptr, ~0UL);
+        mcan_disable_txbuf_transmission_interrupt(ptr, ~0UL);
+        mcan_disable_txbuf_cancel_finish_interrupt(ptr, ~0UL);
+        /* Enable interrupts on demand */
+        mcan_enable_interrupts(ptr, config->interrupt_mask);
+        mcan_enable_txbuf_transmission_interrupt(ptr, config->txbuf_trans_interrupt_mask);
+        mcan_enable_txbuf_cancel_finish_interrupt(ptr, config->txbuf_cancel_finish_interrupt_mask);
+
         /* Clear all Interrupt Flags */
         mcan_clear_interrupt_flags(ptr, ~0UL);
+
+        /* Configure timeout */
+        const mcan_timeout_config_t *timeout_cfg = &config->timeout_cfg;
+        ptr->TOCC = MCAN_TOCC_RP_SET(timeout_cfg->enable_timeout_counter) |
+                    MCAN_TOCC_TOP_SET(timeout_cfg->timeout_period) |
+                    MCAN_TOCC_TOS_SET(timeout_cfg->timeout_sel);
 
         ptr->CCCR &= ~MCAN_CCCR_INIT_MASK;
         while ((ptr->CCCR & MCAN_CCCR_INIT_MASK) != 0U) {
@@ -1082,6 +1195,42 @@ hpm_stat_t mcan_init(MCAN_Type *ptr, mcan_config_t *config, uint32_t src_clk_fre
     } while (false);
 
     return status;
+}
+
+void mcan_deinit(MCAN_Type *ptr)
+{
+    if (ptr != NULL) {
+
+        mcan_enter_init_mode(ptr);              /* Stop MCAN function */
+
+        /* Enable write access to protected configuration registers */
+        mcan_enable_write_to_prot_config_registers(ptr);
+
+        /* Restore critical registers to default values */
+        ptr->RWD = 0UL;
+        ptr->TSCC = 0UL;
+        ptr->GFC = 0UL;
+        ptr->SIDFC = 0UL;
+        ptr->XIDAM = 0UL;
+        ptr->XIDAM = 0x1FFFFFFFUL;
+        ptr->RXBC = 0UL;
+        ptr->RXF1C = 0UL;
+        ptr->RXESC = 0UL;
+        ptr->TXBC = 0UL;
+        ptr->TXESC = 0UL;
+        ptr->TXEFC = 0UL;
+
+        ptr->TSCFG = 0UL;
+
+        /* Disable all interrupts and clear all flags */
+        mcan_disable_interrupts(ptr, ~0UL);
+        mcan_clear_interrupt_flags(ptr, ~0UL);
+        mcan_disable_txbuf_transmission_interrupt(ptr, ~0UL);
+        mcan_disable_txbuf_cancel_finish_interrupt(ptr, ~0UL);
+
+        /* Restore CCCR to default value */
+        ptr->CCCR = MCAN_CCCR_INIT_MASK;
+    }
 }
 
 hpm_stat_t mcan_set_filter_element(MCAN_Type *ptr, const mcan_filter_elem_t *filter_elem, uint32_t index)
@@ -1463,19 +1612,11 @@ hpm_stat_t mcan_transmit_blocking(MCAN_Type *ptr, mcan_tx_frame_t *tx_frame)
 {
     hpm_stat_t status = status_invalid_argument;
     do {
-        if ((ptr == NULL) || (tx_frame == NULL)) {
+        uint32_t put_index = 0;
+        status = mcan_transmit_via_txfifo_nonblocking(ptr, tx_frame, &put_index);
+        if (status != status_success) {
             break;
         }
-        if (mcan_is_txfifo_full(ptr)) {
-            status = status_mcan_txfifo_full;
-            break;
-        }
-
-        status = mcan_write_txfifo(ptr, tx_frame);
-        HPM_BREAK_IF(status != status_success);
-
-        uint32_t put_index = mcan_get_txfifo_put_index(ptr);
-        mcan_send_add_request(ptr, put_index);
 
         uint32_t retry_cnt = 0;
         while (!mcan_is_transmit_occurred(ptr, put_index)) {
@@ -1490,6 +1631,35 @@ hpm_stat_t mcan_transmit_blocking(MCAN_Type *ptr, mcan_tx_frame_t *tx_frame)
             status = status_success;
         }
     } while (false);
+    return status;
+}
+
+hpm_stat_t mcan_transmit_via_txfifo_nonblocking(MCAN_Type *ptr, mcan_tx_frame_t *tx_frame, uint32_t *fifo_index)
+{
+    hpm_stat_t status = status_invalid_argument;
+    do {
+        if ((ptr == NULL) || (tx_frame == NULL)) {
+            break;
+        }
+        if (mcan_is_txfifo_full(ptr)) {
+            status = status_mcan_txfifo_full;
+            break;
+        }
+
+        status = mcan_write_txfifo(ptr, tx_frame);
+        HPM_BREAK_IF(status != status_success);
+
+        uint32_t put_index = mcan_get_txfifo_put_index(ptr);
+        mcan_send_add_request(ptr, put_index);
+
+        if (fifo_index != NULL) {
+            *fifo_index = put_index;
+        }
+
+        status = status_success;
+
+    } while (false);
+
     return status;
 }
 
@@ -1679,6 +1849,58 @@ hpm_stat_t mcan_get_timestamp_from_received_message(MCAN_Type *ptr,
         } else {
             status = status_mcan_timestamp_not_exist;
         }
+    } while (false);
+
+    return status;
+}
+
+hpm_stat_t mcan_parse_protocol_status(uint32_t psr, mcan_protocol_status_t *protocol_status)
+{
+    if (protocol_status == NULL) {
+        return status_invalid_argument;
+    }
+    memset(protocol_status, 0, sizeof(mcan_protocol_status_t));
+    uint32_t psr_val = psr;
+    if (MCAN_PSR_PXE_GET(psr_val) != 0U) {
+        protocol_status->protocol_exception_evt_occurred = true;
+    }
+    if (MCAN_PSR_RFDF_GET(psr_val) != 0U) {
+        protocol_status->canfd_msg_received = true;
+    }
+    if (MCAN_PSR_RBRS_GET(psr_val) != 0U) {
+        protocol_status->brs_flag_set_in_last_rcv_canfd_msg = true;
+    }
+    if (MCAN_PSR_RESI_GET(psr_val) != 0U) {
+        protocol_status->esi_flag_set_in_last_rcv_canfd_msg = true;
+    }
+    if (MCAN_PSR_BO_GET(psr_val) != 0U) {
+        protocol_status->in_bus_off_state = true;
+    }
+    if (MCAN_PSR_EW_GET(psr_val) != 0U) {
+        protocol_status->in_warning_state = true;
+    }
+    if (MCAN_PSR_EP_GET(psr_val) != 0U) {
+        protocol_status->in_error_passive_state = true;
+    }
+    protocol_status->activity = (mcan_activity_state_t) MCAN_PSR_ACT_GET(psr_val);
+    protocol_status->tdc_val = MCAN_PSR_TDCV_GET(psr_val);
+
+    if (protocol_status->brs_flag_set_in_last_rcv_canfd_msg) {
+        protocol_status->last_error_code = (mcan_last_err_code_t) MCAN_PSR_DLEC_GET(psr_val);
+    } else {
+        protocol_status->last_error_code = (mcan_last_err_code_t) MCAN_PSR_LEC_GET(psr_val);
+    }
+    return status_success;
+}
+
+hpm_stat_t mcan_get_protocol_status(MCAN_Type *ptr, mcan_protocol_status_t *protocol_status)
+{
+    hpm_stat_t status = status_invalid_argument;
+
+    do {
+        HPM_BREAK_IF((ptr == NULL) || (protocol_status == NULL));
+        status = mcan_parse_protocol_status(ptr->PSR, protocol_status);
+
     } while (false);
 
     return status;

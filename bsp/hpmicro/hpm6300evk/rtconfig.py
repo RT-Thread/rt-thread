@@ -81,8 +81,8 @@ if PLATFORM == 'gcc':
         LFLAGS += ' -O0'
         LINKER_FILE = 'board/linker_scripts/ram_rtt.ld'
     elif BUILD == 'ram_release':
-        CFLAGS += ' -O2 -Os'
-        LFLAGS += ' -O2 -Os'
+        CFLAGS += ' -O2'
+        LFLAGS += ' -O2'
         LINKER_FILE = 'board/linker_scripts/ram_rtt.ld'
     elif BUILD == 'flash_debug':
         CFLAGS += ' -gdwarf-2'
@@ -92,13 +92,13 @@ if PLATFORM == 'gcc':
         CFLAGS += ' -DFLASH_XIP=1'
         LINKER_FILE = 'board/linker_scripts/flash_rtt.ld'
     elif BUILD == 'flash_release':
-        CFLAGS += ' -O2 -Os'
-        LFLAGS += ' -O2 -Os'
+        CFLAGS += ' -O2'
+        LFLAGS += ' -O2'
         CFLAGS += ' -DFLASH_XIP=1'
         LINKER_FILE = 'board/linker_scripts/flash_rtt.ld'
     else:
-        CFLAGS += ' -O2 -Os'
-        LFLAGS += ' -O2 -Os'
+        CFLAGS += ' -O2'
+        LFLAGS += ' -O2'
         LINKER_FILE = 'board/linker_scripts/flash_rtt.ld'
     LFLAGS += ' -T ' + LINKER_FILE
 

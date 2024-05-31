@@ -49,7 +49,7 @@ The BSP support being build via the 'scons' command, below is the steps of compi
     - Download the package and extract it into a specified directory, for example: `C:\DevTools\riscv32-gnu-toolchain`
 - Step 3: Set environment variable `RTT_RISCV_TOOLCHAIN` to `<TOOLCHAIN_DIR>\bin`
     - For example: `C:\DevTools\riscv32-gnu-toolchain\bin`
-- Step 4: Prepare [OpenOCD](https://github.com/hpmicro/rtt-debugger-support-package/archive/v0.3.0.zip)
+- Step 4: Prepare [OpenOCD](https://github.com/hpmicro/rtt-debugger-support-package/archive/v0.4.0.zip)
   - Download and extract it to specified directory, for example: `C:\DevTools\openocd-hpmicro`
   - Add `OpenOCD` environment variable `OPENOCD_HPMICRO` to `<OPENOCD_HPMICRO_DIR>\bin`
     - For example: `C:\DevTools\openocd-hpmicro\bin`

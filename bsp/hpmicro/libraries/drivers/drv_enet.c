@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 - 2023 HPMicro
+ * Copyright (c) 2021-2024 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -50,7 +50,7 @@ static enet_ptp_config_t ptp_config0 = {.timestamp_rollover_mode = enet_ts_dig_r
                                        };
 #endif
 
-static hpm_enet_t enet0 = {.name            = "ETH0",
+static hpm_enet_t enet0 = {.name            = "E0",
                            .base            = HPM_ENET0,
                            .irq_num         = IRQn_ENET0,
                            .inf             = BOARD_ENET0_INF,
@@ -74,6 +74,11 @@ static hpm_enet_t enet0 = {.name            = "ETH0",
 #endif
                           };
 #endif
+
+mac_init_t mac_init[] = {
+    {MAC0_ADDR0, MAC0_ADDR1, MAC0_ADDR2, MAC0_ADDR3, MAC0_ADDR4, MAC0_ADDR5},
+    {MAC1_ADDR0, MAC1_ADDR1, MAC1_ADDR2, MAC1_ADDR3, MAC1_ADDR4, MAC1_ADDR5}
+};
 
 #ifdef BSP_USING_ETH1
 
@@ -109,7 +114,7 @@ static enet_ptp_config_t ptp_config1 = {.timestamp_rollover_mode = enet_ts_dig_r
                                        };
 #endif
 
-static hpm_enet_t enet1 = {.name            = "ETH1",
+static hpm_enet_t enet1 = {.name            = "E1",
                            .base            = HPM_ENET1,
                            .irq_num         = IRQn_ENET1,
                            .inf             = BOARD_ENET1_INF,
@@ -144,37 +149,55 @@ static hpm_enet_t *s_geths[] = {
 #endif
 };
 
-ATTR_WEAK void enet_get_mac_address(uint8_t *mac)
+ATTR_WEAK uint8_t enet_get_mac_address(ENET_Type *ptr, uint8_t *mac)
 {
-    uint32_t uuid[OTP_SOC_UUID_LEN / sizeof(uint32_t)];
+    uint32_t macl, mach;
+    uint8_t i;
 
-       for (int i = 0; i < ARRAY_SIZE(uuid); i++) {
-           uuid[i] = otp_read_from_shadow(OTP_SOC_UUID_IDX + i);
-       }
+    i = (ptr == HPM_ENET0) ? 0 : 1;
 
-       if (!IS_UUID_INVALID(uuid)) {
-           uuid[0] &= 0xfc;
-           memcpy(mac, &uuid, ENET_MAC);
-       } else {
-           mac[0] = MAC_ADDR0;
-           mac[1] = MAC_ADDR1;
-           mac[2] = MAC_ADDR2;
-           mac[3] = MAC_ADDR3;
-           mac[4] = MAC_ADDR4;
-           mac[5] = MAC_ADDR5;
-       }
+        if (mac == NULL) {
+            return ENET_MAC_ADDR_PARA_ERROR;
+        }
+
+        /* load mac address from OTP MAC area */
+        if (i == 0) {
+            macl = otp_read_from_shadow(OTP_SOC_MAC0_IDX);
+            mach = otp_read_from_shadow(OTP_SOC_MAC0_IDX + 1);
+
+            mac[0] = (macl >>  0) & 0xff;
+            mac[1] = (macl >>  8) & 0xff;
+            mac[2] = (macl >> 16) & 0xff;
+            mac[3] = (macl >> 24) & 0xff;
+            mac[4] = (mach >>  0) & 0xff;
+            mac[5] = (mach >>  8) & 0xff;
+        } else {
+            macl = otp_read_from_shadow(OTP_SOC_MAC0_IDX + 1);
+            mach = otp_read_from_shadow(OTP_SOC_MAC0_IDX + 2);
+
+            mac[0] = (macl >> 16) & 0xff;
+            mac[1] = (macl >> 24) & 0xff;
+            mac[2] = (mach >>  0) & 0xff;
+            mac[3] = (mach >>  8) & 0xff;
+            mac[4] = (mach >> 16) & 0xff;
+            mac[5] = (mach >> 24) & 0xff;
+        }
+
+        if (!IS_MAC_INVALID(mac)) {
+            return ENET_MAC_ADDR_FROM_OTP_MAC;
+        }
+
+        /* load MAC address from MACRO definitions */
+        memcpy(mac, &mac_init[i], ENET_MAC);
+        return ENET_MAC_ADDR_FROM_MACRO;
 }
 
 static rt_err_t hpm_enet_init(enet_device *init)
 {
-    /* Initialize eth controller */
-    enet_controller_init(init->instance, init->media_interface, &init->desc, &init->mac_config, &init->int_config);
-
     if (init->media_interface == enet_inf_rmii)
     {
         /* Initialize reference clock */
         board_init_enet_rmii_reference_clock(init->instance, init->int_refclk);
-        enet_rmii_enable_clock(init->instance, init->int_refclk);
     }
 
 #if ENET_SOC_RGMII_EN
@@ -185,6 +208,9 @@ static rt_err_t hpm_enet_init(enet_device *init)
         enet_rgmii_set_clock_delay(init->instance, init->tx_delay, init->rx_delay);
    }
 #endif
+
+    /* Initialize eth controller */
+   enet_controller_init(init->instance, init->media_interface, &init->desc, &init->mac_config, &init->int_config);
 
 #if __USE_ENET_PTP
    /* initialize PTP Clock */
@@ -217,7 +243,7 @@ static rt_err_t rt_hpm_eth_init(rt_device_t dev)
     board_reset_enet_phy(enet_dev->instance);
 
     /* Get MAC address */
-    enet_get_mac_address(mac);
+    enet_get_mac_address(enet_dev->instance, mac);
 
     /* Set mac0 address */
     enet_dev->mac_config.mac_addr_high[0] = mac[5] << 8 | mac[4];
@@ -233,7 +259,7 @@ static rt_err_t rt_hpm_eth_init(rt_device_t dev)
     else
     {
         LOG_D("Ethernet control initialize unsuccessfully\n");
-        return RT_ERROR;
+        return -RT_ERROR;
     }
 }
 
@@ -260,13 +286,14 @@ static rt_ssize_t rt_hpm_eth_write(rt_device_t dev, rt_off_t pos, const void * b
 static rt_err_t rt_hpm_eth_control(rt_device_t dev, int cmd, void * args)
 {
     uint8_t *mac = (uint8_t *)args;
+    enet_device *enet_dev = (enet_device *)dev->user_data;
 
     switch (cmd)
     {
     case NIOCTL_GADDR:
         if (args != NULL)
         {
-            enet_get_mac_address((uint8_t *)mac);
+            enet_get_mac_address(enet_dev->instance, (uint8_t *)mac);
             SMEMCPY(args, mac, ENET_MAC);
         }
         else
@@ -406,54 +433,57 @@ static struct pbuf *rt_hpm_eth_rx(rt_device_t dev)
     {
         /* allocate a pbuf chain of pbufs from the Lwip buffer pool */
         p = pbuf_alloc(PBUF_RAW, len, PBUF_POOL);
-    }
 
-    if (p != NULL)
-    {
-        dma_rx_desc = frame.rx_desc;
-        buffer_offset = 0;
-        for (q = p; q != NULL; q = q->next)
+        if (p != NULL)
         {
-            bytes_left_to_copy = q->len;
-            payload_offset = 0;
-
-            /* Check if the length of bytes to copy in current pbuf is bigger than Rx buffer size*/
-            while ((bytes_left_to_copy + buffer_offset) > rx_buff_size)
+            dma_rx_desc = frame.rx_desc;
+            buffer_offset = 0;
+            for (q = p; q != NULL; q = q->next)
             {
-                /* Copy data to pbuf */
-                SMEMCPY((uint8_t *)((uint8_t *)q->payload + payload_offset), (uint8_t *)((uint8_t *)buffer + buffer_offset), (rx_buff_size - buffer_offset));
+                bytes_left_to_copy = q->len;
+                payload_offset = 0;
 
-                /* Point to next descriptor */
-                dma_rx_desc = (enet_rx_desc_t *)(dma_rx_desc->rdes3_bm.next_desc);
-                buffer = (uint8_t *)(dma_rx_desc->rdes2_bm.buffer1);
+                /* Check if the length of bytes to copy in current pbuf is bigger than Rx buffer size*/
+                while ((bytes_left_to_copy + buffer_offset) > rx_buff_size)
+                {
+                    /* Copy data to pbuf */
+                    SMEMCPY((uint8_t *)((uint8_t *)q->payload + payload_offset), (uint8_t *)((uint8_t *)buffer + buffer_offset), (rx_buff_size - buffer_offset));
 
-                bytes_left_to_copy = bytes_left_to_copy - (rx_buff_size - buffer_offset);
-                payload_offset = payload_offset + (rx_buff_size - buffer_offset);
-                buffer_offset = 0;
+                    /* Point to next descriptor */
+                    dma_rx_desc = (enet_rx_desc_t *)(dma_rx_desc->rdes3_bm.next_desc);
+                    buffer = (uint8_t *)(dma_rx_desc->rdes2_bm.buffer1);
+
+                    bytes_left_to_copy = bytes_left_to_copy - (rx_buff_size - buffer_offset);
+                    payload_offset = payload_offset + (rx_buff_size - buffer_offset);
+                    buffer_offset = 0;
+                }
+                /* Copy remaining data in pbuf */
+                q->payload = (void *)sys_address_to_core_local_mem(0, (uint32_t)buffer);
+                buffer_offset = buffer_offset + bytes_left_to_copy;
             }
-            /* Copy remaining data in pbuf */
-            q->payload = (void *)sys_address_to_core_local_mem(0, (uint32_t)buffer);
-            buffer_offset = buffer_offset + bytes_left_to_copy;
         }
+
+        /* Release descriptors to DMA */
+        /* Point to first descriptor */
+        dma_rx_desc = frame.rx_desc;
+
+        /* Set Own bit in Rx descriptors: gives the buffers back to DMA */
+        for (i = 0; i < enet_dev->desc.rx_frame_info.seg_count; i++)
+        {
+            dma_rx_desc->rdes0_bm.own = 1;
+            dma_rx_desc = (enet_rx_desc_t*)(dma_rx_desc->rdes3_bm.next_desc);
+        }
+
+        /* Clear Segment_Count */
+        enet_dev->desc.rx_frame_info.seg_count = 0;
     }
-    else
+
+    /* Resume Rx Process */
+    if (ENET_DMA_STATUS_RU_GET(enet_dev->instance->DMA_STATUS))
     {
-        return NULL;
+        enet_dev->instance->DMA_STATUS = ENET_DMA_STATUS_RU_MASK;
+        enet_dev->instance->DMA_RX_POLL_DEMAND = 1;
     }
-
-    /* Release descriptors to DMA */
-    /* Point to first descriptor */
-    dma_rx_desc = frame.rx_desc;
-
-    /* Set Own bit in Rx descriptors: gives the buffers back to DMA */
-    for (i = 0; i < enet_dev->desc.rx_frame_info.seg_count; i++)
-    {
-        dma_rx_desc->rdes0_bm.own = 1;
-        dma_rx_desc = (enet_rx_desc_t*)(dma_rx_desc->rdes3_bm.next_desc);
-    }
-
-    /* Clear Segment_Count */
-    enet_dev->desc.rx_frame_info.seg_count = 0;
 
     return p;
 }
@@ -526,7 +556,7 @@ int rt_hw_eth_init(void)
         s_geths[i]->enet_dev->desc.rx_buff_cfg.size = s_geths[i]->rx_buff_cfg->size;
 
         /* Set DMA PBL */
-        s_geths[i]->enet_dev->mac_config.dma_pbl = board_enet_get_dma_pbl(s_geths[i]->base);
+        s_geths[i]->enet_dev->mac_config.dma_pbl = board_get_enet_dma_pbl(s_geths[i]->base);
 
         /* Set instance */
         s_geths[i]->enet_dev->instance = s_geths[i]->base;
@@ -578,11 +608,11 @@ int rt_hw_eth_init(void)
 
         if (RT_EOK == err)
         {
-            LOG_D("Ethernet device initialize successfully!\n");
+            LOG_D("Ethernet device %d initialize successfully!\n", i);
         }
         else
         {
-            LOG_D("Ethernet device initialize unsuccessfully!\n");
+            LOG_D("Ethernet device %d initialize unsuccessfully!\n");
             return err;
         }
     }

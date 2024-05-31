@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 HPMicro
+ * Copyright (c) 2021-2023 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -14,8 +14,7 @@ typedef struct {
         __RW uint32_t CONTROL;                 /* 0x0: Glitch and clock monitor control */
         __RW uint32_t STATUS;                  /* 0x4: Glitch and clock monitor status */
     } MONITOR[4];
-    __RW uint32_t TEST_MODE;                   /* 0x20:  */
-    __R  uint8_t  RESERVED0[28];               /* 0x24 - 0x3F: Reserved */
+    __R  uint8_t  RESERVED0[32];               /* 0x20 - 0x3F: Reserved */
     __RW uint32_t IRQ_FLAG;                    /* 0x40:  */
     __RW uint32_t IRQ_ENABLE;                  /* 0x44:  */
 } MON_Type;
@@ -59,28 +58,13 @@ typedef struct {
 #define MON_MONITOR_STATUS_FLAG_SET(x) (((uint32_t)(x) << MON_MONITOR_STATUS_FLAG_SHIFT) & MON_MONITOR_STATUS_FLAG_MASK)
 #define MON_MONITOR_STATUS_FLAG_GET(x) (((uint32_t)(x) & MON_MONITOR_STATUS_FLAG_MASK) >> MON_MONITOR_STATUS_FLAG_SHIFT)
 
-/* Bitfield definition for register: TEST_MODE */
-/*
- * DISABLE (RW)
- *
- * disable test mode entry, any non-zero value written to this register causes disable bit set
- * 0: test mode enabled
- * 1: test mode disabled
- * Note: This register only available in BATT domain
- */
-#define MON_TEST_MODE_DISABLE_MASK (0xFFFFFFFFUL)
-#define MON_TEST_MODE_DISABLE_SHIFT (0U)
-#define MON_TEST_MODE_DISABLE_SET(x) (((uint32_t)(x) << MON_TEST_MODE_DISABLE_SHIFT) & MON_TEST_MODE_DISABLE_MASK)
-#define MON_TEST_MODE_DISABLE_GET(x) (((uint32_t)(x) & MON_TEST_MODE_DISABLE_MASK) >> MON_TEST_MODE_DISABLE_SHIFT)
-
 /* Bitfield definition for register: IRQ_FLAG */
 /*
  * FLAG (RW)
  *
  * interrupt flag, each bit represents for one monitor, write 1 to clear interrupt flag
- * 0: no monitor interrupt 
+ * 0: no monitor interrupt
  * 1: monitor interrupt happened
- * Note: This register only available in PMIC domain
  */
 #define MON_IRQ_FLAG_FLAG_MASK (0xFU)
 #define MON_IRQ_FLAG_FLAG_SHIFT (0U)
@@ -94,7 +78,6 @@ typedef struct {
  * interrupt enable, each bit represents for one monitor
  * 0: monitor interrupt disabled
  * 1: monitor interrupt enabled
- * Note: This register only available in PMIC domain
  */
 #define MON_IRQ_ENABLE_ENABLE_MASK (0xFU)
 #define MON_IRQ_ENABLE_ENABLE_SHIFT (0U)

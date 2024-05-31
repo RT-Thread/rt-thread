@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 HPMicro
+ * Copyright (c) 2021-2023 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -7,6 +7,10 @@
 
 #include "hpm_common.h"
 #include "hpm_soc.h"
+
+#ifdef __ICCRISCV__
+#pragma language = extended
+#endif
 
 /********************** MCAUSE exception types **************************************/
 #define MCAUSE_INSTR_ADDR_MISALIGNED (0U)       //!< Instruction Address misaligned
@@ -48,6 +52,11 @@ __attribute__((weak)) void swi_isr(void)
 
 __attribute__((weak)) void syscall_handler(long n, long a0, long a1, long a2, long a3)
 {
+    (void) n;
+    (void) a0;
+    (void) a1;
+    (void) a2;
+    (void) a3;
 }
 
 __attribute__((weak)) long exception_handler(long cause, long epc)
@@ -88,10 +97,16 @@ __attribute__((weak)) long exception_handler(long cause, long epc)
     return epc;
 }
 
-#if !defined(CONFIG_FREERTOS) && !defined(CONFIG_UCOS_III) && !defined(CONFIG_THREADX)
-void irq_handler_trap(void) __attribute__ ((section(".isr_vector"), interrupt("machine"), aligned(4)));
+#if !defined(CONFIG_FREERTOS) && !defined(CONFIG_UCOS_III) && !defined(CONFIG_THREADX) && !defined(CONFIG_RTTHREAD)
+HPM_ATTR_MACHINE_INTERRUPT void irq_handler_trap(void);
+#define IRQ_HANDLER_TRAP_AS_ISR 1
 #else
 void irq_handler_trap(void) __attribute__ ((section(".isr_vector")));
+#endif
+
+#if defined(__ICCRISCV__) && (IRQ_HANDLER_TRAP_AS_ISR == 1)
+extern int __vector_table[];
+HPM_ATTR_MACHINE_INTERRUPT
 #endif
 void irq_handler_trap(void)
 {

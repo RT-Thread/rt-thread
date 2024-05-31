@@ -37,10 +37,11 @@ void pwm_get_captured_count(PWM_Type *pwm_x, uint32_t *buf, pwm_counter_type_t c
 
 void pwm_get_default_cmp_config(PWM_Type *pwm_x, pwm_cmp_config_t *config)
 {
+    (void) pwm_x;
     config->mode = pwm_cmp_mode_output_compare;
     config->update_trigger = pwm_shadow_register_update_on_modify;
     config->enable_ex_cmp = false;
-#if PWM_SOC_HRPWM_SUPPORT
+#if defined(PWM_SOC_HRPWM_SUPPORT) && PWM_SOC_HRPWM_SUPPORT
     config->enable_hrcmp = false;
     config->hrcmp = 0;
 #endif
@@ -52,6 +53,7 @@ void pwm_get_default_cmp_config(PWM_Type *pwm_x, pwm_cmp_config_t *config)
 
 void pwm_get_default_output_channel_config(PWM_Type *pwm_x, pwm_output_channel_t *config)
 {
+    (void) pwm_x;
     config->cmp_start_index = 0;
     config->cmp_end_index = 0;
     config->invert_output = false;
@@ -59,6 +61,7 @@ void pwm_get_default_output_channel_config(PWM_Type *pwm_x, pwm_output_channel_t
 
 void pwm_get_default_pwm_config(PWM_Type *pwm_x, pwm_config_t *config)
 {
+    (void) pwm_x;
     config->enable_output = false;
     config->update_trigger = pwm_shadow_register_update_on_modify;
     config->fault_mode = pwm_fault_mode_force_output_highz;
@@ -156,7 +159,7 @@ hpm_stat_t pwm_update_raw_cmp_central_aligned(PWM_Type *pwm_x, uint8_t cmp1_inde
     pwm_cmp_update_cmp_value(pwm_x, cmp2_index, target_cmp2, 0);
     return status_success;
 }
-#if PWM_SOC_HRPWM_SUPPORT
+#if defined(PWM_SOC_HRPWM_SUPPORT) && PWM_SOC_HRPWM_SUPPORT
 
 hpm_stat_t pwm_update_raw_hrcmp_edge_aligned(PWM_Type *pwm_x, uint8_t cmp_index, uint32_t target_cmp,
             uint16_t target_hrcmp)

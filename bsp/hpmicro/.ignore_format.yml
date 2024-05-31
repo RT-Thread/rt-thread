@@ -8,4 +8,7 @@ dir_path:
   - hpm6750evk/startup
   - hpm6750evk2/startup
   - hpm6750evkmini/startup
+  - hpm5300evk/startup
+  - hpm5301evklite/startup
+  - hpm6800evk/startup
   - libraries/hpm_sdk

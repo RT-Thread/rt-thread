@@ -362,6 +362,50 @@ static inline uint32_t qei_get_current_count(QEI_Type *qei_x,
 }
 
 /**
+ * @brief get current phcnt value
+ *
+ * @param qei_x QEI base address, HPM_QEIx(x=0...n)
+ * @return phcnt value 
+ */
+static inline uint32_t qei_get_current_phase_phcnt(QEI_Type *qei_x)
+{
+    return QEI_COUNT_PH_PHCNT_GET(qei_get_current_count(qei_x, qei_counter_type_phase));
+}
+
+/**
+ * @brief get current a phase status
+ *
+ * @param qei_x QEI base address, HPM_QEIx(x=0...n)
+ * @return a phase level
+ */
+static inline bool qei_get_current_phase_astat(QEI_Type *qei_x)
+{
+    return QEI_COUNT_PH_ASTAT_GET(qei_get_current_count(qei_x, qei_counter_type_phase));
+}
+
+/**
+ * @brief get current b phase status
+ *
+ * @param qei_x QEI base address, HPM_QEIx(x=0...n)
+ * @return b phase level
+ */
+static inline bool qei_get_current_phase_bstat(QEI_Type *qei_x)
+{
+    return QEI_COUNT_PH_BSTAT_GET(qei_get_current_count(qei_x, qei_counter_type_phase));
+}
+
+/**
+ * @brief get current phase dir
+ *
+ * @param qei_x QEI base address, HPM_QEIx(x=0...n)
+ * @return dir
+ */
+static inline bool qei_get_current_phase_dir(QEI_Type *qei_x)
+{
+    return QEI_COUNT_PH_DIR_GET(qei_get_current_count(qei_x, qei_counter_type_phase));
+}
+
+/**
  * @brief get read event count value
  *
  * @param[in] qei_x QEI base address, HPM_QEIx(x=0...n)

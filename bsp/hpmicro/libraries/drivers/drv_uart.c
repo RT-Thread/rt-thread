@@ -16,6 +16,7 @@
 #include "hpm_uart_drv.h"
 #include "hpm_sysctl_drv.h"
 
+
 #ifdef RT_USING_SERIAL
 
 #define UART_ROOT_CLK_FREQ BOARD_APP_UART_SRC_FREQ
@@ -350,15 +351,8 @@ static void hpm_uart_isr(struct rt_serial_device *serial)
 
     uart = (struct hpm_uart *)serial->parent.user_data;
     RT_ASSERT(uart != RT_NULL);
-
-    /* enter interrupt */
-    rt_interrupt_enter();
-
     /* UART in mode Receiver */
     rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_IND);
-
-    /* leave interrupt */
-    rt_interrupt_leave();
 }
 
 

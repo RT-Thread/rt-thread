@@ -1,11 +1,12 @@
 /*
- * Copyright (c) 2021 - 2023 HPMicro
+ * Copyright (c) 2023-2024 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
  * Change Logs:
  * Date           Author       Notes
  * 2023-04-07     HPMicro      the first version
+ * 2023-05-31     HPMicro      add MCAN4-MCAN7 support
  */
 
 #include <rtthread.h>
@@ -13,6 +14,7 @@
 #include <rthw.h>
 #include "board.h"
 #include "hpm_mcan_drv.h"
+
 
 
 #define CAN_SEND_WAIT_MS_MAX   (1000U)       /* CAN maximum wait time for transmission */
@@ -128,7 +130,7 @@ static hpm_can_t dev_can0 =
 {
     .can_base = HPM_MCAN0,
     .name = "can0",
-    .irq_num = IRQn_CAN0,
+    .irq_num = IRQn_MCAN0,
     .fifo_index = 0,
 };
 
@@ -136,7 +138,7 @@ void can0_isr(void)
 {
     hpm_mcan_isr(&dev_can0);
 }
-SDK_DECLARE_EXT_ISR_M(IRQn_CAN0, can0_isr);
+SDK_DECLARE_EXT_ISR_M(IRQn_MCAN0, can0_isr);
 
 #endif
 
@@ -145,14 +147,14 @@ static hpm_can_t dev_can1 =
 {
         .can_base = HPM_MCAN1,
         .name = "can1",
-        .irq_num = IRQn_CAN1,
+        .irq_num = IRQn_MCAN1,
         .fifo_index = 1,
 };
 void can1_isr(void)
 {
     hpm_mcan_isr(&dev_can1);
 }
-SDK_DECLARE_EXT_ISR_M(IRQn_CAN1, can1_isr);
+SDK_DECLARE_EXT_ISR_M(IRQn_MCAN1, can1_isr);
 #endif
 
 #if defined(HPM_MCAN2_BASE) && defined(BSP_USING_MCAN2)
@@ -160,14 +162,14 @@ static hpm_can_t dev_can2 =
 {
         .can_base = HPM_MCAN2,
         .name = "can2",
-        .irq_num = IRQn_CAN2,
+        .irq_num = IRQn_MCAN2,
         .fifo_index = 2,
 };
 void can2_isr(void)
 {
     hpm_mcan_isr(&dev_can2);
 }
-SDK_DECLARE_EXT_ISR_M(IRQn_CAN2, can2_isr);
+SDK_DECLARE_EXT_ISR_M(IRQn_MCAN2, can2_isr);
 #endif
 
 #if defined(HPM_MCAN3_BASE) && defined(BSP_USING_MCAN3)
@@ -175,14 +177,74 @@ static hpm_can_t dev_can3 =
 {
         .can_base = HPM_MCAN3,
         .name = "can3",
-        .irq_num = IRQn_CAN3,
+        .irq_num = IRQn_MCAN3,
         .fifo_index = 3,
 };
 void can3_isr(void)
 {
     hpm_mcan_isr(&dev_can3);
 }
-SDK_DECLARE_EXT_ISR_M(IRQn_CAN3, can3_isr);
+SDK_DECLARE_EXT_ISR_M(IRQn_MCAN3, can3_isr);
+#endif
+
+#if defined(HPM_MCAN4_BASE) && defined(BSP_USING_MCAN4)
+static hpm_can_t dev_can4 =
+{
+        .can_base = HPM_MCAN4,
+        .name = "can4",
+        .irq_num = IRQn_MCAN4,
+        .fifo_index = 4,
+};
+void can4_isr(void)
+{
+    hpm_mcan_isr(&dev_can4);
+}
+SDK_DECLARE_EXT_ISR_M(IRQn_MCAN4, can4_isr);
+#endif
+
+#if defined(HPM_MCAN5_BASE) && defined(BSP_USING_MCAN5)
+static hpm_can_t dev_can5 =
+{
+        .can_base = HPM_MCAN5,
+        .name = "can5",
+        .irq_num = IRQn_MCAN5,
+        .fifo_index = 5,
+};
+void can5_isr(void)
+{
+    hpm_mcan_isr(&dev_can5);
+}
+SDK_DECLARE_EXT_ISR_M(IRQn_MCAN5, can5_isr);
+#endif
+
+#if defined(HPM_MCAN6_BASE) && defined(BSP_USING_MCAN6)
+static hpm_can_t dev_can6 =
+{
+        .can_base = HPM_MCAN6,
+        .name = "can6",
+        .irq_num = IRQn_MCAN6,
+        .fifo_index = 6,
+};
+void can6_isr(void)
+{
+    hpm_mcan_isr(&dev_can6);
+}
+SDK_DECLARE_EXT_ISR_M(IRQn_MCAN6, can6_isr);
+#endif
+
+#if defined(HPM_MCAN7_BASE) && defined(BSP_USING_MCAN7)
+static hpm_can_t dev_can7 =
+{
+        .can_base = HPM_MCAN7,
+        .name = "can7",
+        .irq_num = IRQn_MCAN7,
+        .fifo_index = 7,
+};
+void can7_isr(void)
+{
+    hpm_mcan_isr(&dev_can7);
+}
+SDK_DECLARE_EXT_ISR_M(IRQn_MCAN7, can7_isr);
 #endif
 
 static hpm_can_t *hpm_cans[] = {
@@ -197,6 +259,18 @@ static hpm_can_t *hpm_cans[] = {
 #endif
 #if defined(HPM_MCAN3_BASE) && defined(BSP_USING_MCAN3)
         &dev_can3,
+#endif
+#if defined(HPM_MCAN4_BASE) && defined(BSP_USING_MCAN4)
+        &dev_can4,
+#endif
+#if defined(HPM_MCAN5_BASE) && defined(BSP_USING_MCAN5)
+        &dev_can5,
+#endif
+#if defined(HPM_MCAN6_BASE) && defined(BSP_USING_MCAN6)
+        &dev_can6,
+#endif
+#if defined(HPM_MCAN7_BASE) && defined(BSP_USING_MCAN7)
+        &dev_can7,
 #endif
         };
 
@@ -339,6 +413,7 @@ static rt_err_t hpm_mcan_configure(struct rt_can_device *can, struct can_configu
     drv_can->can_config.all_filters_config.ext_id_filter_list.filter_elem_list                        = &drv_can->ext_can_filters[0];
     drv_can->can_config.all_filters_config.ext_id_filter_list.mcan_filter_elem_count                  = drv_can->ext_filter_num;
     drv_can->can_config.all_filters_config.ext_id_mask                                                = (1UL << 30) - 1UL;
+    drv_can->can_config.txbuf_trans_interrupt_mask                                                    = ~0UL;
 
     hpm_stat_t status = mcan_init(drv_can->can_base, &drv_can->can_config, can_clk);
     if (status != status_success)
@@ -360,6 +435,7 @@ static rt_err_t hpm_mcan_control(struct rt_can_device *can, int cmd, void *arg)
     rt_err_t err = RT_EOK;
 
     uint32_t temp;
+    uint32_t irq_txrx_mask;
 
     switch (cmd)
     {
@@ -368,19 +444,22 @@ static rt_err_t hpm_mcan_control(struct rt_can_device *can, int cmd, void *arg)
         intc_m_disable_irq(drv_can->irq_num);
         if (arg_val == RT_DEVICE_FLAG_INT_RX)
         {
-            uint32_t irq_txrx_mask = MCAN_EVENT_RECEIVE;
+            irq_txrx_mask = MCAN_EVENT_RECEIVE;
             drv_can->irq_txrx_err_enable_mask &= ~irq_txrx_mask;
+            drv_can->can_config.interrupt_mask &= ~irq_txrx_mask;
             mcan_disable_interrupts(drv_can->can_base, drv_can->irq_txrx_err_enable_mask);
         }
         else if (arg_val == RT_DEVICE_FLAG_INT_TX)
         {
-            uint32_t irq_txrx_mask = MCAN_EVENT_TRANSMIT;
+            irq_txrx_mask = MCAN_EVENT_TRANSMIT;
             drv_can->irq_txrx_err_enable_mask &= ~irq_txrx_mask;
+            drv_can->can_config.interrupt_mask &= ~irq_txrx_mask;
             mcan_disable_interrupts(drv_can->can_base, drv_can->irq_txrx_err_enable_mask);
             mcan_disable_txbuf_interrupt(drv_can->can_base, ~0UL);
         } else if (arg_val == RT_DEVICE_CAN_INT_ERR) {
-            uint32_t irq_txrx_mask = MCAN_EVENT_ERROR;
+            irq_txrx_mask = MCAN_EVENT_ERROR;
             drv_can->irq_txrx_err_enable_mask &= ~irq_txrx_mask;
+            drv_can->can_config.interrupt_mask &= ~irq_txrx_mask;
             mcan_disable_interrupts(drv_can->can_base, drv_can->irq_txrx_err_enable_mask);
         } else {
             err = -RT_ERROR;
@@ -390,23 +469,26 @@ static rt_err_t hpm_mcan_control(struct rt_can_device *can, int cmd, void *arg)
         arg_val = (uint32_t) arg;
         if (arg_val == RT_DEVICE_FLAG_INT_RX)
         {
-            uint32_t irq_txrx_mask = MCAN_EVENT_RECEIVE;
+            irq_txrx_mask = MCAN_EVENT_RECEIVE;
             drv_can->irq_txrx_err_enable_mask |= irq_txrx_mask;
+            drv_can->can_config.interrupt_mask |= irq_txrx_mask;
             mcan_enable_interrupts(drv_can->can_base, drv_can->irq_txrx_err_enable_mask);
             intc_m_enable_irq_with_priority(drv_can->irq_num, 1);
         }
         else if (arg_val == RT_DEVICE_FLAG_INT_TX)
         {
-            uint32_t irq_txrx_mask = MCAN_EVENT_TRANSMIT;
+            irq_txrx_mask = MCAN_EVENT_TRANSMIT;
             drv_can->irq_txrx_err_enable_mask |= irq_txrx_mask;
+            drv_can->can_config.interrupt_mask |= irq_txrx_mask;
             mcan_enable_interrupts(drv_can->can_base, drv_can->irq_txrx_err_enable_mask);
             mcan_enable_txbuf_interrupt(drv_can->can_base, ~0UL);
             intc_m_enable_irq_with_priority(drv_can->irq_num, 1);
         }
         else if (arg_val == RT_DEVICE_CAN_INT_ERR)
         {
-            uint32_t irq_txrx_mask = MCAN_EVENT_ERROR;
+            irq_txrx_mask = MCAN_EVENT_ERROR;
             drv_can->irq_txrx_err_enable_mask |= irq_txrx_mask;
+            drv_can->can_config.interrupt_mask |= irq_txrx_mask;
             mcan_enable_interrupts(drv_can->can_base, drv_can->irq_txrx_err_enable_mask);
             intc_m_enable_irq_with_priority(drv_can->irq_num, 1);
         }
@@ -491,6 +573,12 @@ static rt_err_t hpm_mcan_control(struct rt_can_device *can, int cmd, void *arg)
                 drv_can->can_config.all_filters_config.ext_id_filter_list.mcan_filter_elem_count                      = 1;
             }
             err = hpm_mcan_configure(can, &drv_can->can_dev.config);
+#ifdef RT_CAN_USING_HDR
+            if (filter == RT_NULL) {
+                /*if use RT_CAN_USING_HDR, but if want to receive everything without filtering, use default filter, need to return NO-RT-OK status*/
+                err = -RT_ETRAP;
+            }
+#endif
         }
         break;
     case RT_CAN_CMD_SET_MODE:
@@ -587,6 +675,7 @@ static rt_err_t hpm_mcan_control(struct rt_can_device *can, int cmd, void *arg)
         rt_memcpy(arg, &drv_can->can_dev.status, sizeof(drv_can->can_dev.status));
         break;
     }
+    return err;
 }
 
 static int hpm_mcan_sendmsg(struct rt_can_device *can, const void *buf, rt_uint32_t boxno)
@@ -620,10 +709,10 @@ static int hpm_mcan_sendmsg(struct rt_can_device *can, const void *buf, rt_uint3
     }
 
  #ifdef RT_CAN_USING_CANFD
+    tx_frame.bitrate_switch = can_msg->brs;
     if (can_msg->fd_frame != 0)
     {
         tx_frame.canfd_frame    = 1;
-        tx_frame.bitrate_switch = 1;
         RT_ASSERT(can_msg->len <= 15);
     }
     else
@@ -688,13 +777,20 @@ static int hpm_mcan_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t bo
         else {
             can_msg->rtr = RT_CAN_DTR;
         }
-
+#ifdef RT_CAN_USING_CANFD
+        can_msg->fd_frame = rx_buf.canfd_frame;
+        can_msg->brs = rx_buf.bitrate_switch;
+#endif
         can_msg->len = rx_buf.dlc;
         uint32_t msg_len = mcan_get_message_size_from_dlc(can_msg->len);
         for(uint32_t i = 0; i < msg_len; i++) {
             can_msg->data[i] = rx_buf.data_8[i];
         }
-
+#ifdef RT_CAN_USING_HDR
+        /* Hardware filter messages are valid */
+        can_msg->hdr_index = boxno;
+        can->hdr[can_msg->hdr_index].connected = 1;
+#endif
     }
     else
     {
@@ -710,7 +806,9 @@ int rt_hw_mcan_init(void)
     config.privmode = RT_CAN_MODE_NOPRIV;
     config.sndboxnumber = CAN_SENDBOX_NUM;
     config.ticks = 50;
-
+#ifdef RT_CAN_USING_HDR
+    config.maxhdr = 32;
+#endif
     for (uint32_t i = 0; i < ARRAY_SIZE(hpm_cans); i++)
     {
         hpm_cans[i]->can_dev.config = config;
