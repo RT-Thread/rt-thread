@@ -18,13 +18,13 @@
 
 #include "rtthread.h"
 
-#define RT_KTIME_RESMUL (1000000UL)
+#define RT_KTIME_RESMUL (1000000ULL)
 
 struct rt_ktime_hrtimer
 {
     struct rt_object     parent; /**< inherit from rt_object */
     rt_list_t            row;
-    void                 *parameter;
+    void                *parameter;
     unsigned long        init_cnt;
     unsigned long        timeout_cnt;
     rt_err_t             error;
@@ -62,7 +62,7 @@ rt_err_t rt_ktime_boottime_get_ns(struct timespec *ts);
  *
  * @return (resolution * RT_KTIME_RESMUL)
  */
-unsigned long rt_ktime_cputimer_getres(void);
+rt_uint64_t rt_ktime_cputimer_getres(void);
 
 /**
  * @brief Get cputimer frequency
@@ -96,7 +96,7 @@ void rt_ktime_cputimer_init(void);
  *
  * @return (resolution * RT_KTIME_RESMUL)
  */
-unsigned long rt_ktime_hrtimer_getres(void);
+rt_uint64_t rt_ktime_hrtimer_getres(void);
 
 /**
  * @brief Get hrtimer frequency

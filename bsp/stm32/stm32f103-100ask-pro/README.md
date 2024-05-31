@@ -45,6 +45,7 @@ STM32F103 Pro开发板是百问网推出的一块基于ARM Cortex-M3内核的开
 | 电位器       |     支持     | ADC1/2/3 CH10                                                |
 | SPI FLASH    |     支持     | W25Q64                                                       |
 | EEPROM       |     支持     | 软件i2c1                                                     |
+| SRAM         |     支持     | IS62WV51216BLL                                               |
 | **片上外设** | **支持情况** | **备注**                                                     |
 | GPIO         |     支持     | PA0, PA1... PK15 ---> PIN: 0, 1...176                        |
 | UART         |     支持     | UART1/2/3                                                    |
