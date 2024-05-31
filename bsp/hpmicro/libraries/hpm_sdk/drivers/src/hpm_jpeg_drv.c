@@ -66,8 +66,8 @@ void jpeg_reset(JPEG_Type *ptr)
 
 void jpeg_init(JPEG_Type *ptr)
 {
-    jpeg_clear_cfg(ptr);
     jpeg_reset(ptr);
+    jpeg_clear_cfg(ptr);
 }
 
 static bool jpeg_need_csc(jpeg_pixel_format_t in, jpeg_pixel_format_t out)
@@ -107,6 +107,7 @@ static void jpeg_config_interal_regs(JPEG_Type *ptr,
                                 uint32_t macro_block_count,
                                 uint8_t format)
 {
+    (void) decoding;
     uint8_t hy, vy, hc, vc;
     hy = JPEG_HY(&jpeg_supported_sampling[format]);
     vy = JPEG_VY(&jpeg_supported_sampling[format]);
@@ -274,7 +275,7 @@ hpm_stat_t jpeg_start_decode(JPEG_Type *ptr,
         | JPEG_OUTDMA_MISC_PACK_DIR_SET(config->out_byte_order);
     ptr->OUTDMABASE = JPEG_OUTDMABASE_ADDR_SET(config->out_buffer);
     ptr->OUTDMA_CTRL0 = JPEG_OUTDMA_CTRL0_TTLEN_SET(total_bytes)
-        | JPEG_OUTDMA_CTRL0_PITCH_SET(config->width_in_pixel * jpeg_supported_pixel_format[config->in_pixel_format].pixel_width);
+        | JPEG_OUTDMA_CTRL0_PITCH_SET(config->width_in_pixel * jpeg_supported_pixel_format[config->out_pixel_format].pixel_width);
     ptr->OUTDMA_CTRL1 = JPEG_OUTDMA_CTRL1_ROWLEN_SET(total_bytes >> 16);
     ptr->ONXT_CMD = JPEG_ONXT_CMD_ADDR_SET(5) | JPEG_ONXT_CMD_OP_VALID_MASK;
 
@@ -301,7 +302,7 @@ hpm_stat_t jpeg_start_decode(JPEG_Type *ptr,
 #define JPEG_TABLE_WIDTH(x)  (((x) & 0xF00000UL) >> 20)
 #define JPEG_TABLE_LENGTH(x) (((x) & 0xFFFF0UL) >> 4)
 #define JPEG_TABLE_TYPE(x)   (((x) & 0xFUL))
-#define JPEG_TABLE_VALUE_MASK(x) (((x) == 4) ? (0xFFFFFFFFUL) : ((1 << ((x) << 3)) - 1))
+#define JPEG_TABLE_VALUE_MASK(x) (((x) == 4) ? (0xFFFFFFFFUL) : (uint32_t) ((1 << ((x) << 3)) - 1))
 
 hpm_stat_t jpeg_fill_table(JPEG_Type *ptr, jpeg_table_t table, uint8_t *data, uint32_t count)
 {

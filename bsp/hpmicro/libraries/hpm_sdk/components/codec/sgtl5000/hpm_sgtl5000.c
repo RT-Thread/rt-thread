@@ -426,6 +426,15 @@ hpm_stat_t sgtl_set_mute(sgtl_context_t *context, sgtl_module_t module, bool mut
     return stat;
 }
 
+static bool sgtl_check_clock_tolerance(uint32_t source, uint32_t target)
+{
+    uint32_t delta = (source >= target) ? (source - target) : (target - source);
+    if (delta * 100 <= HPM_SGTL5000_MCLK_TOLERANCE * target) {
+        return true;
+    }
+    return false;
+}
+
 hpm_stat_t sgtl_config_data_format(sgtl_context_t *context, uint32_t mclk, uint32_t sample_rate, uint32_t bits)
 {
     uint16_t val     = 0;
@@ -515,11 +524,12 @@ hpm_stat_t sgtl_config_data_format(sgtl_context_t *context, uint32_t mclk, uint3
     }
 
     mul_div = mclk / sysFs;
-    if (abs(mul_div - 256) <= 256 * HPM_SGTL5000_MCLK_TOLERANCE) {
+
+    if (sgtl_check_clock_tolerance(mul_div, 256)) {
         mul_div = 256;
-    } else if (abs(mul_div - 384) <= 384 * HPM_SGTL5000_MCLK_TOLERANCE) {
+    } else if (sgtl_check_clock_tolerance(mul_div, 384)) {
         mul_div = 384;
-    } else if (abs(mul_div - 512) <= 512 * HPM_SGTL5000_MCLK_TOLERANCE) {
+    } else if (sgtl_check_clock_tolerance(mul_div, 512)) {
         mul_div = 512;
     } else {
         return status_invalid_argument;

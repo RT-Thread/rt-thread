@@ -20,8 +20,13 @@
 #define HPM_UART_BAUDRATE_DIV_MAX (0xFFFFU)
 #define HPM_UART_BAUDRATE_DIV_MIN (1U)
 
+#ifndef UART_SOC_OVERSAMPLE_MAX
+#define UART_SOC_OVERSAMPLE_MAX HPM_UART_OSC_MAX
+#endif
+
 void uart_default_config(UART_Type *ptr, uart_config_t *config)
 {
+    (void) ptr;
     config->baudrate = 115200;
     config->word_length = word_length_8_bits;
     config->parity = parity_none;
@@ -33,13 +38,20 @@ void uart_default_config(UART_Type *ptr, uart_config_t *config)
     config->modem_config.auto_flow_ctrl_en = false;
     config->modem_config.loop_back_en = false;
     config->modem_config.set_rts_high = false;
-#if defined(UART_SOC_HAS_RXLINE_IDLE_DETECTION) && (UART_SOC_HAS_RXLINE_IDLE_DETECTION == 1)
+#if defined(HPM_IP_FEATURE_UART_RX_IDLE_DETECT) && (HPM_IP_FEATURE_UART_RX_IDLE_DETECT == 1)
     config->rxidle_config.detect_enable = false;
     config->rxidle_config.detect_irq_enable = false;
     config->rxidle_config.idle_cond = uart_rxline_idle_cond_rxline_logic_one;
     config->rxidle_config.threshold = 10; /* 10-bit for typical UART configuration (8-N-1) */
 #endif
-#if defined(UART_SOC_HAS_RXEN_CFG) && (UART_SOC_HAS_RXEN_CFG == 1)
+    /* if have 9bit_mode function, it's has be tx_idle function */
+#if defined(HPM_IP_FEATURE_UART_9BIT_MODE) && (HPM_IP_FEATURE_UART_9BIT_MODE == 1)
+    config->txidle_config.detect_enable = false;
+    config->txidle_config.detect_irq_enable = false;
+    config->txidle_config.idle_cond = uart_rxline_idle_cond_rxline_logic_one;
+    config->txidle_config.threshold = 10; /* 10-bit for typical UART configuration (8-N-1) */
+#endif
+#if defined(HPM_IP_FEATURE_UART_RX_EN) && (HPM_IP_FEATURE_UART_RX_EN == 1)
     config->rx_enable = true;
 #endif
 }
@@ -57,18 +69,8 @@ static bool uart_calculate_baudrate(uint32_t freq, uint32_t baudrate, uint16_t *
 
     tmp = (float) freq / baudrate;
 
-    for (uint8_t i = 0; i < HPM_UART_OSC_MAX; i += 2) {
-        /* osc range: 0 - 32, even number */
-        if (i == 0) {
-            /* osc == 0 in bitfield, oversample rate is 32 */
-            osc = HPM_UART_OSC_MAX;
-        } else if (i <= 8) {
-            /* osc <= 8 in bitfield, oversample rate is 8 */
-            osc = HPM_UART_OSC_MIN;
-        } else {
-            /* osc > 8 && osc < 32 in bitfield, oversample rate is osc */
-            osc = i;
-        }
+    for (osc = HPM_UART_OSC_MIN; osc <= UART_SOC_OVERSAMPLE_MAX; osc += 2) {
+        /* osc range: HPM_UART_OSC_MIN - UART_SOC_OVERSAMPLE_MAX, even number */
         delta = 0;
         div = (uint16_t)(tmp / osc);
         if (div < HPM_UART_BAUDRATE_DIV_MIN) {
@@ -76,15 +78,15 @@ static bool uart_calculate_baudrate(uint32_t freq, uint32_t baudrate, uint16_t *
             continue;
         }
         if (div * osc > tmp) {
-            delta = div * osc - tmp;
+            delta = (uint16_t)(div * osc - tmp);
         } else if (div * osc < tmp) {
-            delta = tmp - div * osc;
+            delta = (uint16_t)(tmp - div * osc);
         }
         if (delta && ((delta * 100 / tmp) > HPM_UART_BAUDRATE_TOLERANCE)) {
             continue;
         } else {
             *div_out = div;
-            *osc_out = (i <= 8 && i) ? osc : i;
+            *osc_out = (osc == HPM_UART_OSC_MAX) ? 0 : osc; /* osc == 0 in bitfield, oversample rate is 32 */
             return true;
         }
     }
@@ -105,6 +107,7 @@ hpm_stat_t uart_init(UART_Type *ptr, uart_config_t *config)
     if (!uart_calculate_baudrate(config->src_freq_in_hz, config->baudrate, &div, &osc)) {
         return status_uart_no_suitable_baudrate_parameter_found;
     }
+
     ptr->OSCR = (ptr->OSCR & ~UART_OSCR_OSC_MASK)
         | UART_OSCR_OSC_SET(osc);
     ptr->DLL = UART_DLL_DLL_SET(div >> 0);
@@ -156,40 +159,35 @@ hpm_stat_t uart_init(UART_Type *ptr, uart_config_t *config)
 
     ptr->LCR = tmp | UART_LCR_WLS_SET(config->word_length);
 
-#if defined(UART_SOC_HAS_NEW_FIFO_THR) && (UART_SOC_HAS_NEW_FIFO_THR == 1)
+#if defined(HPM_IP_FEATURE_UART_FINE_FIFO_THRLD) && (HPM_IP_FEATURE_UART_FINE_FIFO_THRLD == 1)
+    /* reset TX and RX fifo */
     ptr->FCRR = UART_FCRR_TFIFORST_MASK | UART_FCRR_RFIFORST_MASK;
-    if (config->fifo_enable) {
-        /* Enable FIFO, reset TX and RX. */
-        if (config->using_new_fifo_thr) {
-            ptr->FCRR = UART_FCRR_FIFOT4EN_MASK
-            | UART_FCRR_FIFOE_MASK
-            | UART_FCRR_TFIFOT4_SET(config->tx_fifo_level)
-            | UART_FCRR_RFIFOT4_SET(config->rx_fifo_level)
-            | UART_FCRR_DMAE_SET(config->dma_enable);
-        } else {
-            ptr->FCR = UART_FCRR_FIFOE_MASK
-            | UART_FCRR_TFIFOT_SET(config->tx_fifo_level)
-            | UART_FCRR_RFIFOT_SET(config->rx_fifo_level)
-            | UART_FCRR_DMAE_SET(config->dma_enable);
-        }
-    }
+    /* Enable FIFO */
+    ptr->FCRR = UART_FCRR_FIFOT4EN_MASK
+        | UART_FCRR_FIFOE_SET(config->fifo_enable)
+        | UART_FCRR_TFIFOT4_SET(config->tx_fifo_level)
+        | UART_FCRR_RFIFOT4_SET(config->rx_fifo_level)
+        | UART_FCRR_DMAE_SET(config->dma_enable);
+
 #else
+    /* reset TX and RX fifo */
     ptr->FCR = UART_FCR_TFIFORST_MASK | UART_FCR_RFIFORST_MASK;
-    if (config->fifo_enable) {
-        /* Enable FIFO, reset TX and RX. */
-        ptr->FCR = UART_FCR_FIFOE_MASK
-            | UART_FCR_TFIFOT_SET(config->tx_fifo_level)
-            | UART_FCR_RFIFOT_SET(config->rx_fifo_level)
-            | UART_FCR_DMAE_SET(config->dma_enable);
-    }
+    /* Enable FIFO */
+    tmp = UART_FCR_FIFOE_SET(config->fifo_enable)
+        | UART_FCR_TFIFOT_SET(config->tx_fifo_level)
+        | UART_FCR_RFIFOT_SET(config->rx_fifo_level)
+        | UART_FCR_DMAE_SET(config->dma_enable);
+    ptr->FCR = tmp;
+    /* store FCR register value */
+    ptr->GPR = tmp;
 #endif
 
     uart_modem_config(ptr, &config->modem_config);
 
-#if defined(UART_SOC_HAS_RXLINE_IDLE_DETECTION) && (UART_SOC_HAS_RXLINE_IDLE_DETECTION == 1)
+#if defined(HPM_IP_FEATURE_UART_RX_IDLE_DETECT) && (HPM_IP_FEATURE_UART_RX_IDLE_DETECT == 1)
     uart_init_rxline_idle_detection(ptr, config->rxidle_config);
 #endif
-#if defined(UART_SOC_HAS_RXEN_CFG) && (UART_SOC_HAS_RXEN_CFG == 1)
+#if defined(HPM_IP_FEATURE_UART_RX_EN) && (HPM_IP_FEATURE_UART_RX_EN == 1)
     if (config->rx_enable) {
         ptr->IDLE_CFG |= UART_IDLE_CFG_RXEN_MASK;
     }
@@ -304,12 +302,15 @@ hpm_stat_t uart_send_data(UART_Type *ptr, uint8_t *source, uint32_t size_in_byte
 }
 
 
-#if defined(UART_SOC_HAS_RXLINE_IDLE_DETECTION) && (UART_SOC_HAS_RXLINE_IDLE_DETECTION == 1)
+#if defined(HPM_IP_FEATURE_UART_RX_IDLE_DETECT) && (HPM_IP_FEATURE_UART_RX_IDLE_DETECT == 1)
 hpm_stat_t uart_init_rxline_idle_detection(UART_Type *ptr, uart_rxline_idle_config_t rxidle_config)
 {
-    ptr->IDLE_CFG = UART_IDLE_CFG_RX_IDLE_EN_SET(rxidle_config.detect_enable)
-                      | UART_IDLE_CFG_RX_IDLE_THR_SET(rxidle_config.threshold)
-                      | UART_IDLE_CFG_RX_IDLE_COND_SET(rxidle_config.idle_cond);
+    ptr->IDLE_CFG &= ~(UART_IDLE_CFG_RX_IDLE_EN_MASK
+                    | UART_IDLE_CFG_RX_IDLE_THR_MASK
+                    | UART_IDLE_CFG_RX_IDLE_COND_MASK);
+    ptr->IDLE_CFG |= UART_IDLE_CFG_RX_IDLE_EN_SET(rxidle_config.detect_enable)
+                    | UART_IDLE_CFG_RX_IDLE_THR_SET(rxidle_config.threshold)
+                    | UART_IDLE_CFG_RX_IDLE_COND_SET(rxidle_config.idle_cond);
 
     if (rxidle_config.detect_irq_enable) {
         uart_enable_irq(ptr, uart_intr_rx_line_idle);
@@ -321,11 +322,30 @@ hpm_stat_t uart_init_rxline_idle_detection(UART_Type *ptr, uart_rxline_idle_conf
 }
 #endif
 
-#if defined(UART_SOC_HAS_NEW_FIFO_THR) && (UART_SOC_HAS_NEW_FIFO_THR == 1)
-void uart_config_trig_mode(UART_Type *ptr, uart_trig_config_t *config)
+/* if have 9bit_mode function, it's has be tx_idle function */
+#if defined(HPM_IP_FEATURE_UART_9BIT_MODE) && (HPM_IP_FEATURE_UART_9BIT_MODE == 1)
+hpm_stat_t uart_init_txline_idle_detection(UART_Type *ptr, uart_rxline_idle_config_t txidle_config)
 {
-    ptr->MOTO_CFG &= ~UART_MOTO_CFG_TXSTP_BITS_MASK;
+    ptr->IDLE_CFG &= ~(UART_IDLE_CFG_TX_IDLE_EN_MASK
+                    | UART_IDLE_CFG_TX_IDLE_THR_MASK
+                    | UART_IDLE_CFG_TX_IDLE_COND_MASK);
+    ptr->IDLE_CFG |= UART_IDLE_CFG_TX_IDLE_EN_SET(txidle_config.detect_enable)
+                    | UART_IDLE_CFG_TX_IDLE_THR_SET(txidle_config.threshold)
+                    | UART_IDLE_CFG_TX_IDLE_COND_SET(txidle_config.idle_cond);
 
+    if (txidle_config.detect_irq_enable) {
+        uart_enable_irq(ptr, uart_intr_tx_line_idle);
+    } else {
+        uart_disable_irq(ptr, uart_intr_tx_line_idle);
+    }
+
+    return status_success;
+}
+#endif
+
+#if defined(HPM_IP_FEATURE_UART_TRIG_MODE) && (HPM_IP_FEATURE_UART_TRIG_MODE == 1)
+void uart_config_transfer_trig_mode(UART_Type *ptr, uart_trig_config_t *config)
+{
     ptr->MOTO_CFG = UART_MOTO_CFG_TXSTP_BITS_SET(config->stop_bit_len)
                     | UART_MOTO_CFG_HWTRG_EN_SET(config->hardware_trig)
                     | UART_MOTO_CFG_TRG_MODE_SET(config->trig_mode)
@@ -334,13 +354,28 @@ void uart_config_trig_mode(UART_Type *ptr, uart_trig_config_t *config)
 }
 #endif
 
-/* FCR is WO register, preprae all bit field to write */
+/* fifo control register(FCR) is WO access, if support FCCR register, it is RW access. */
 void uart_config_fifo_ctrl(UART_Type *ptr, uart_fifo_ctrl_t *ctrl)
 {
+#if defined(HPM_IP_FEATURE_UART_FINE_FIFO_THRLD) && (HPM_IP_FEATURE_UART_FINE_FIFO_THRLD == 1)
+    ptr->FCRR = UART_FCRR_FIFOT4EN_MASK
+                | UART_FCRR_TFIFOT4_SET(ctrl->tx_fifo_level)
+                | UART_FCRR_RFIFOT4_SET(ctrl->rx_fifo_level)
+                | UART_FCRR_DMAE_SET(ctrl->dma_enable)
+                | UART_FCRR_TFIFORST_SET(ctrl->reset_tx_fifo)
+                | UART_FCRR_RFIFORST_SET(ctrl->reset_rx_fifo)
+                | UART_FCRR_FIFOE_SET(ctrl->fifo_enable);
+#else
     ptr->FCR =  UART_FCR_TFIFOT_SET(ctrl->tx_fifo_level)
                 | UART_FCR_RFIFOT_SET(ctrl->rx_fifo_level)
                 | UART_FCR_TFIFORST_SET(ctrl->reset_tx_fifo)
                 | UART_FCR_RFIFORST_SET(ctrl->reset_rx_fifo)
                 | UART_FCR_DMAE_SET(ctrl->dma_enable)
                 | UART_FCR_FIFOE_SET(ctrl->fifo_enable);
+    /* store FCR to GPR */
+    ptr->GPR =  UART_FCR_TFIFOT_SET(ctrl->tx_fifo_level)
+                | UART_FCR_RFIFOT_SET(ctrl->rx_fifo_level)
+                | UART_FCR_DMAE_SET(ctrl->dma_enable)
+                | UART_FCR_FIFOE_SET(ctrl->fifo_enable);
+#endif
 }

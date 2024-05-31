@@ -54,9 +54,9 @@
 #define GT911_TOUCH_YH                  (0x8149U)
 #define GT911_VENDOR_ID                 (0x814AU)
 #define GT911_STATUS                    (0x814EU)
-#define   GT911_GET_STATUS_NUM_OF_POINTS(x)  ((x) & 0xFU)
-#define   GT911_GET_STATUS_LARGE_DETECT(x)   (((x) & 0x40U) >> 6)
-#define   GT911_GET_STATUS_BUFFER_STAT(x)    (((x) & 0x80U) >> 7)
+#define GT911_GET_STATUS_NUM_OF_POINTS(x)  ((x) & 0xFU)
+#define GT911_GET_STATUS_LARGE_DETECT(x)   (((x) & 0x40U) >> 6)
+#define GT911_GET_STATUS_BUFFER_STAT(x)    (((x) & 0x80U) >> 7)
 #define GT911_FIRST_POINT               (0x814FU)
 
 #define GT911_MAX_TOUCH_POINTS             (5U)

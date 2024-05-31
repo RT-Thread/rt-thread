@@ -69,7 +69,7 @@ static hpm_stat_t rng_rand(RNG_Type *ptr, void *buf, uint32_t count_in_byte, boo
         } while (!fifo_level && wait);
 
         if (fifo_level) {
-            *(uint32_t *)(buf + i * sizeof(uint32_t)) = ptr->FO2B;
+            *(uint32_t *)((uint32_t)buf + i * sizeof(uint32_t)) = ptr->FO2B;
         } else {
             stat = status_rng_not_available;
             break;

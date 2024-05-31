@@ -35,6 +35,7 @@ typedef struct {
     __RW uint32_t MCR;                         /* 0x30: Modem Control Register ( */
     __R  uint32_t LSR;                         /* 0x34: Line Status Register */
     __R  uint32_t MSR;                         /* 0x38: Modem Status Register */
+    __RW uint32_t GPR;                         /* 0x3C: GPR Register */
 } UART_Type;
 
 
@@ -205,7 +206,7 @@ typedef struct {
 /*
  * RXIDLE_FLAG (W1C)
  *
- * UART RX IDLE Flag, assert after rxd low and then rx idle timeout, write one clear
+ * UART RX IDLE Flag, assert after rxd high and then rx idle timeout, write one clear
  * 0 - UART RX is busy
  * 1 - UART RX is idle
  */
@@ -217,7 +218,7 @@ typedef struct {
 /*
  * TXIDLE_FLAG (W1C)
  *
- * UART TX IDLE Flag, assert after txd low and then tx idle timeout, write one clear
+ * UART TX IDLE Flag, assert after txd high and then tx idle timeout, write one clear
  * 0 - UART TX is busy
  * 1 - UART TX is idle
  */
@@ -301,7 +302,7 @@ typedef struct {
  * Over-sample control
  * The value must be an even number; any odd value
  * writes to this field will be converted to an even value.
- * OSC=0: The over-sample ratio is 32
+ * OSC=0: reserved
  * OSC<=8: The over-sample ratio is 8
  * 8 < OSC< 32: The over sample ratio is OSC
  */
@@ -1025,6 +1026,17 @@ typedef struct {
 #define UART_MSR_DCTS_MASK (0x1U)
 #define UART_MSR_DCTS_SHIFT (0U)
 #define UART_MSR_DCTS_GET(x) (((uint32_t)(x) & UART_MSR_DCTS_MASK) >> UART_MSR_DCTS_SHIFT)
+
+/* Bitfield definition for register: GPR */
+/*
+ * DATA (RW)
+ *
+ * An one-byte storage register
+ */
+#define UART_GPR_DATA_MASK (0xFFU)
+#define UART_GPR_DATA_SHIFT (0U)
+#define UART_GPR_DATA_SET(x) (((uint32_t)(x) << UART_GPR_DATA_SHIFT) & UART_GPR_DATA_MASK)
+#define UART_GPR_DATA_GET(x) (((uint32_t)(x) & UART_GPR_DATA_MASK) >> UART_GPR_DATA_SHIFT)
 
 
 

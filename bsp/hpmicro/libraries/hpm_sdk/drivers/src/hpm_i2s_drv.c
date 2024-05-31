@@ -13,6 +13,9 @@
 #define HPM_I2S_BCLK_TOLERANCE (4U)
 #endif
 
+#define HPM_I2S_SLOT_MASK I2S_TXDSLOT_EN_MASK /* TX/RX has same SLOT MASK */
+
+
 static bool i2s_audio_depth_is_valid(uint8_t bits)
 {
     /* i2s audio depth only support 16bits, 24bits, 32bits */
@@ -31,31 +34,54 @@ static bool i2s_channel_length_is_valid(uint8_t bits)
     return false;
 }
 
+/* work around: fill dummy data into TX fifo to avoid TX underflow during tx start */
+hpm_stat_t i2s_fill_tx_dummy_data(I2S_Type *ptr, uint8_t data_line, uint8_t data_count)
+{
+    uint32_t retry = 0;
+
+    if (data_count > I2S_SOC_MAX_TX_FIFO_DEPTH) {
+        return status_invalid_argument;
+    }
+
+    /* check dummy data count in TX FIFO */
+    while (i2s_get_tx_line_fifo_level(ptr, data_line) < data_count) {
+        ptr->TXD[data_line] = 0;
+        if (retry > HPM_I2S_DRV_DEFAULT_RETRY_COUNT * data_count) {
+            return status_timeout;
+        }
+        retry++;
+    }
+
+    return status_success;
+}
+
+/* The I2S software reset function relies on a working BCLK */
 void i2s_reset_all(I2S_Type *ptr)
 {
-    /* gate off bclk */
-    ptr->CFGR |= I2S_CFGR_BCLK_GATEOFF_MASK;
-    /* gate off mclk */
-    ptr->MISC_CFGR |= I2S_MISC_CFGR_MCLK_GATEOFF_MASK;
-    /*
-     * clear fifos
-     */
-    ptr->CTRL |= I2S_CTRL_TXFIFOCLR_MASK | I2S_CTRL_RXFIFOCLR_MASK;
-    ptr->CTRL &= ~(I2S_CTRL_TXFIFOCLR_MASK | I2S_CTRL_RXFIFOCLR_MASK);
+    uint32_t cfgr_temp, misc_cfgr_temp;
 
-    /*
-     * software reset all blocks
-     */
-    ptr->CTRL |= I2S_CTRL_SFTRST_CLKGEN_MASK | I2S_CTRL_SFTRST_TX_MASK | I2S_CTRL_SFTRST_RX_MASK;
-    ptr->CTRL &= ~(I2S_CTRL_SFTRST_CLKGEN_MASK | I2S_CTRL_SFTRST_TX_MASK | I2S_CTRL_SFTRST_RX_MASK);
-    /*
-     * disable i2s
-     */
+    /* disable I2S */
     ptr->CTRL &= ~I2S_CTRL_I2S_EN_MASK;
+
+    /* enable internal clock for software reset function */
+    cfgr_temp = ptr->CFGR;
+    ptr->CFGR |= I2S_CFGR_BCLK_DIV_SET(1);
+    ptr->CFGR &= ~(I2S_CFGR_MCK_SEL_OP_MASK | I2S_CFGR_BCLK_SEL_OP_MASK | I2S_CFGR_FCLK_SEL_OP_MASK | I2S_CFGR_BCLK_GATEOFF_MASK);
+    misc_cfgr_temp = ptr->MISC_CFGR;
+    ptr->MISC_CFGR &= ~I2S_MISC_CFGR_MCLK_GATEOFF_MASK;
+
+    /* reset function block and clear fifo */
+    ptr->CTRL |= (I2S_CTRL_TXFIFOCLR_MASK | I2S_CTRL_RXFIFOCLR_MASK | I2S_CTRL_SFTRST_CLKGEN_MASK | I2S_CTRL_SFTRST_TX_MASK | I2S_CTRL_SFTRST_RX_MASK);
+    ptr->CTRL &= ~(I2S_CTRL_TXFIFOCLR_MASK | I2S_CTRL_RXFIFOCLR_MASK | I2S_CTRL_SFTRST_CLKGEN_MASK | I2S_CTRL_SFTRST_TX_MASK | I2S_CTRL_SFTRST_RX_MASK);
+
+    /* Restore the value of the register */
+    ptr->CFGR = cfgr_temp;
+    ptr->MISC_CFGR = misc_cfgr_temp;
 }
 
 void i2s_get_default_config(I2S_Type *ptr, i2s_config_t *config)
 {
+    (void) ptr;
     config->invert_mclk_out = false;
     config->invert_mclk_in = false;
     config->use_external_mclk = false;
@@ -67,7 +93,8 @@ void i2s_get_default_config(I2S_Type *ptr, i2s_config_t *config)
     config->use_external_fclk = false;
     config->enable_mclk_out = false;
     config->frame_start_at_rising_edge = false;
-    config->fifo_threshold = 4;
+    config->tx_fifo_threshold = 4;
+    config->rx_fifo_threshold = 4;
 }
 
 void i2s_init(I2S_Type *ptr, i2s_config_t *config)
@@ -88,18 +115,8 @@ void i2s_init(I2S_Type *ptr, i2s_config_t *config)
             & ~(I2S_MISC_CFGR_MCLKOE_MASK
                 | I2S_MISC_CFGR_MCLK_GATEOFF_MASK))
         | I2S_MISC_CFGR_MCLKOE_SET(config->enable_mclk_out);
-    ptr->FIFO_THRESH = I2S_FIFO_THRESH_TX_SET(config->fifo_threshold)
-        | I2S_FIFO_THRESH_RX_SET(config->fifo_threshold);
-    /**
-     * @brief i2s interrupt work_around
-     *
-     */
-    for (uint32_t i = 0; i <= I2S_DATA_LINE_MAX; i++) {
-        ptr->TXDSLOT[i] = 0;
-        for (uint32_t j = 0; j <= I2S_SOC_MAX_TX_CHANNEL_NUM; j++) {
-            ptr->TXD[i] = 0x01;
-        }
-    }
+    ptr->FIFO_THRESH = I2S_FIFO_THRESH_TX_SET(config->tx_fifo_threshold)
+        | I2S_FIFO_THRESH_RX_SET(config->rx_fifo_threshold);
 }
 
 static void i2s_config_cfgr(I2S_Type *ptr,
@@ -159,22 +176,26 @@ static bool i2s_calculate_bclk_divider(uint32_t mclk_in_hz, uint32_t bclk_in_hz,
 static hpm_stat_t _i2s_config_tx(I2S_Type *ptr, i2s_transfer_config_t *config)
 {
     /* channel_num_per_frame has to even. non TDM mode, it has be 2 */
+    uint8_t channel_num_per_frame = HPM_NUM_TO_EVEN_CEILING(config->channel_num_per_frame);
     if (!i2s_audio_depth_is_valid(config->audio_depth)
         || !i2s_channel_length_is_valid(config->channel_length)
         || !config->sample_rate
-        || !config->channel_num_per_frame
-        || (config->channel_num_per_frame > I2S_SOC_MAX_CHANNEL_NUM)
-        || (config->channel_num_per_frame & 1U)
-        || ((!config->enable_tdm_mode) && (config->channel_num_per_frame > 2))) {
+        || !channel_num_per_frame
+        || (channel_num_per_frame > I2S_SOC_MAX_CHANNEL_NUM)
+        || ((!config->enable_tdm_mode) && (channel_num_per_frame > 2))
+        || ((config->channel_slot_mask & HPM_I2S_SLOT_MASK) == 0)) {
         return status_invalid_argument;
     }
 
-    if (config->channel_slot_mask) {
-        ptr->TXDSLOT[config->data_line] = config->channel_slot_mask;
+    ptr->TXDSLOT[config->data_line] = config->channel_slot_mask;
+
+    /* work around: fill dummy data into TX fifo to avoid TX underflow during tx start */
+    if (i2s_fill_tx_dummy_data(ptr, config->data_line, config->channel_num_per_frame) != status_success) {
+        return status_invalid_argument;
     }
+
     ptr->CTRL = (ptr->CTRL & ~(I2S_CTRL_TX_EN_MASK))
-        | I2S_CTRL_TX_EN_SET(1 << config->data_line)
-        | I2S_CTRL_I2S_EN_MASK;
+        | I2S_CTRL_TX_EN_SET(1 << config->data_line);
 
     return status_success;
 }
@@ -182,22 +203,20 @@ static hpm_stat_t _i2s_config_tx(I2S_Type *ptr, i2s_transfer_config_t *config)
 static hpm_stat_t _i2s_config_rx(I2S_Type *ptr, i2s_transfer_config_t *config)
 {
     /* channel_num_per_frame has to even. non TDM mode, it has be 2 */
+    uint8_t channel_num_per_frame = HPM_NUM_TO_EVEN_CEILING(config->channel_num_per_frame);
     if (!i2s_audio_depth_is_valid(config->audio_depth)
         || !i2s_channel_length_is_valid(config->channel_length)
         || !config->sample_rate
-        || !config->channel_num_per_frame
-        || (config->channel_num_per_frame > I2S_SOC_MAX_CHANNEL_NUM)
-        || (config->channel_num_per_frame & 1U)
-        || ((!config->enable_tdm_mode) && (config->channel_num_per_frame > 2))) {
+        || !channel_num_per_frame
+        || (channel_num_per_frame > I2S_SOC_MAX_CHANNEL_NUM)
+        || ((!config->enable_tdm_mode) && (channel_num_per_frame > 2))
+        || ((config->channel_slot_mask & HPM_I2S_SLOT_MASK) == 0)) {
         return status_invalid_argument;
     }
 
-    if (config->channel_slot_mask) {
-        ptr->RXDSLOT[config->data_line] = config->channel_slot_mask;
-    }
+    ptr->RXDSLOT[config->data_line] = config->channel_slot_mask;
     ptr->CTRL = (ptr->CTRL & ~(I2S_CTRL_RX_EN_MASK))
-            | I2S_CTRL_RX_EN_SET(1 << config->data_line)
-            | I2S_CTRL_I2S_EN_MASK;
+            | I2S_CTRL_RX_EN_SET(1 << config->data_line);
 
     return status_success;
 }
@@ -205,31 +224,29 @@ static hpm_stat_t _i2s_config_rx(I2S_Type *ptr, i2s_transfer_config_t *config)
 static hpm_stat_t _i2s_config_transfer(I2S_Type *ptr, i2s_transfer_config_t *config)
 {
     /* channel_num_per_frame has to even. non TDM mode, it has be 2 */
+    uint8_t channel_num_per_frame = HPM_NUM_TO_EVEN_CEILING(config->channel_num_per_frame);
     if (!i2s_audio_depth_is_valid(config->audio_depth)
         || !i2s_channel_length_is_valid(config->channel_length)
         || !config->sample_rate
-        || !config->channel_num_per_frame
-        || (config->channel_num_per_frame > I2S_SOC_MAX_CHANNEL_NUM)
-        || (config->channel_num_per_frame & 1U)
-        || ((!config->enable_tdm_mode) && (config->channel_num_per_frame > 2))) {
+        || !channel_num_per_frame
+        || (channel_num_per_frame > I2S_SOC_MAX_CHANNEL_NUM)
+        || ((!config->enable_tdm_mode) && (channel_num_per_frame > 2))
+        || ((config->channel_slot_mask & HPM_I2S_SLOT_MASK) == 0)) {
         return status_invalid_argument;
     }
 
-    if (config->channel_slot_mask) {
-        /* Suppose RX and TX use same channel */
-        ptr->RXDSLOT[config->data_line] = config->channel_slot_mask;
-        ptr->TXDSLOT[config->data_line] = config->channel_slot_mask;
-    } else {
-        /**
-         * @brief i2s interrupt work_around
-         *
-         */
-        ptr->TXDSLOT[config->data_line] = 0x0000ffff;
+    /* Suppose RX and TX use same channel */
+    ptr->RXDSLOT[config->data_line] = config->channel_slot_mask;
+    ptr->TXDSLOT[config->data_line] = config->channel_slot_mask;
+
+    /* work around: fill dummy data into TX fifo to avoid TX underflow during tx start */
+    if (i2s_fill_tx_dummy_data(ptr, config->data_line, config->channel_num_per_frame) != status_success) {
+        return status_invalid_argument;
     }
+
     ptr->CTRL = (ptr->CTRL & ~(I2S_CTRL_RX_EN_MASK | I2S_CTRL_TX_EN_MASK))
             | I2S_CTRL_RX_EN_SET(1 << config->data_line)
-            | I2S_CTRL_TX_EN_SET(1 << config->data_line)
-            | I2S_CTRL_I2S_EN_MASK;
+            | I2S_CTRL_TX_EN_SET(1 << config->data_line);
 
     return status_success;
 }
@@ -238,8 +255,9 @@ hpm_stat_t i2s_config_tx(I2S_Type *ptr, uint32_t mclk_in_hz, i2s_transfer_config
 {
     uint32_t bclk_in_hz;
     uint32_t bclk_div;
+    uint8_t channel_num_per_frame = HPM_NUM_TO_EVEN_CEILING(config->channel_num_per_frame);
 
-    bclk_in_hz = config->sample_rate * config->channel_length * config->channel_num_per_frame;
+    bclk_in_hz = config->sample_rate * config->channel_length * channel_num_per_frame;
     if (!i2s_calculate_bclk_divider(mclk_in_hz, bclk_in_hz, &bclk_div)) {
         return status_invalid_argument;
     }
@@ -263,7 +281,8 @@ hpm_stat_t i2s_config_rx(I2S_Type *ptr, uint32_t mclk_in_hz, i2s_transfer_config
     uint32_t bclk_in_hz;
     uint32_t bclk_div;
 
-    bclk_in_hz = config->sample_rate * config->channel_length * config->channel_num_per_frame;
+    uint8_t channel_num_per_frame = HPM_NUM_TO_EVEN_CEILING(config->channel_num_per_frame);
+    bclk_in_hz = config->sample_rate * config->channel_length * channel_num_per_frame;
     if (!i2s_calculate_bclk_divider(mclk_in_hz, bclk_in_hz, &bclk_div)) {
         return status_invalid_argument;
     }
@@ -287,7 +306,8 @@ hpm_stat_t i2s_config_transfer(I2S_Type *ptr, uint32_t mclk_in_hz, i2s_transfer_
     uint32_t bclk_in_hz;
     uint32_t bclk_div;
 
-    bclk_in_hz = config->sample_rate * config->channel_length * config->channel_num_per_frame;
+    uint8_t channel_num_per_frame = HPM_NUM_TO_EVEN_CEILING(config->channel_num_per_frame);
+    bclk_in_hz = config->sample_rate * config->channel_length * channel_num_per_frame;
     if (!i2s_calculate_bclk_divider(mclk_in_hz, bclk_in_hz, &bclk_div)) {
         return status_invalid_argument;
     }
@@ -399,7 +419,7 @@ void i2s_get_default_transfer_config_for_dao(i2s_transfer_config_t *transfer)
     transfer->enable_tdm_mode = false;
     transfer->protocol = I2S_PROTOCOL_MSB_JUSTIFIED;
     transfer->data_line = I2S_DATA_LINE_0;
-    transfer->channel_slot_mask = 0xFFFF;
+    transfer->channel_slot_mask = 0x3;
 }
 
 void i2s_get_default_transfer_config(i2s_transfer_config_t *transfer)
@@ -411,5 +431,5 @@ void i2s_get_default_transfer_config(i2s_transfer_config_t *transfer)
     transfer->enable_tdm_mode = false;
     transfer->protocol = I2S_PROTOCOL_MSB_JUSTIFIED;
     transfer->data_line = I2S_DATA_LINE_0;
-    transfer->channel_slot_mask = 0xFFFF;
+    transfer->channel_slot_mask = 0x3;
 }

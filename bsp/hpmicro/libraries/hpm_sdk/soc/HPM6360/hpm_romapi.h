@@ -344,7 +344,7 @@ typedef struct {
     /**< Bootloader API table: copyright string address */
     const char *copyright;
     /**< Bootloader API table: run_bootloader API */
-    const hpm_stat_t (*run_bootloader)(void *arg);
+    hpm_stat_t (*run_bootloader)(void *arg);
     /**< Bootloader API table: otp driver interface address */
     const otp_driver_interface_t *otp_driver_if;
     /**< Bootloader API table: xpi driver interface address */
@@ -748,7 +748,7 @@ static inline bool rom_xpi_nor_exip_region_config(XPI_Type *base, uint32_t index
 
 /**
  * @brief Disable EXiP Feature on specified EXiP Region
- * @@param [in] base XPI base address
+ * @param [in] base XPI base address
  * @param [in] index EXiP Region index
  */
 ATTR_RAMFUNC
@@ -768,7 +768,7 @@ static inline void rom_xpi_nor_exip_region_disable(XPI_Type *base, uint32_t inde
 
 /**
  * @brief Enable global EXiP logic
- * @@param [in] base XPI base address
+ * @param [in] base XPI base address
  */
 ATTR_RAMFUNC
 static inline void rom_xpi_nor_exip_enable(XPI_Type *base)
@@ -785,7 +785,7 @@ static inline void rom_xpi_nor_exip_enable(XPI_Type *base)
 
 /**
  * @brief Disable global EXiP logic
- * @@param [in] base XPI base address
+ * @param [in] base XPI base address
  */
 ATTR_RAMFUNC
 static inline void rom_xpi_nor_exip_disable(XPI_Type *base)
@@ -1065,6 +1065,7 @@ static inline hpm_stat_t rom_sm4_crypt_ecb(sm4_context_t *ctx, uint32_t mode, ui
  * @param [in] ctx SM4 context
  * @param [in] mode SM4 operation: 1 - ENCRYPT, 0 - DECRYPT
  * @param [in] length Data length for SM4 encryption/decryption
+ * @param [in] iv The initial vector for SM4 CBC crypto operation
  * @param [in] input Input data
  * @param [out] output Output data
  * @return API execution status

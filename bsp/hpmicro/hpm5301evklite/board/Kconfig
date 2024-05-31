@@ -1,0 +1,189 @@
+menu "Hardware Drivers Config"
+
+config SOC_HPM5000
+    bool
+    select SOC_SERIES_HPM5300
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+    default y
+
+menu "On-chip Peripheral Drivers"
+    config BSP_USING_GPIO
+        bool "Enable GPIO"
+        select RT_USING_PIN if BSP_USING_GPIO
+        default n
+
+    menuconfig BSP_USING_UART
+        bool "Enable UART"
+        default y
+        select RT_USING_SERIAL
+
+        if BSP_USING_UART
+            menuconfig BSP_USING_UART0
+                bool "Enable UART0 (Debugger)"
+                default y
+                if BSP_USING_UART0
+                    config BSP_UART0_RX_USING_DMA
+                        bool "Enable UART0 RX DMA"
+                        depends on BSP_USING_UART0 && RT_SERIAL_USING_DMA
+                        default n
+                    config BSP_UART0_TX_USING_DMA
+                        bool "Enable UART0 TX DMA"
+                        depends on BSP_USING_UART0 && RT_SERIAL_USING_DMA
+                        default n
+                    config BSP_UART0_RX_BUFSIZE
+                        int "Set UART0 RX buffer size"
+                        range 64 65535
+                        depends on RT_USING_SERIAL_V2
+                        default 128
+                    config BSP_UART0_TX_BUFSIZE
+                        int "Set UART0 TX buffer size"
+                        range 0 65535
+                        depends on RT_USING_SERIAL_V2
+                        default 0
+                endif
+            menuconfig BSP_USING_UART2
+                bool "Enable UART2"
+                default y
+                if BSP_USING_UART2
+                    config BSP_UART2_RX_USING_DMA
+                        bool "Enable UART2 RX DMA"
+                        depends on BSP_USING_UART2 && RT_SERIAL_USING_DMA
+                        default y
+                    config BSP_UART2_TX_USING_DMA
+                        bool "Enable UART2 TX DMA"
+                        depends on BSP_USING_UART6 && RT_SERIAL_USING_DMA
+                        default n
+                    config BSP_UART2_RX_BUFSIZE
+                        int "Set UART2 RX buffer size"
+                        range 64 65535
+                        depends on RT_USING_SERIAL_V2
+                        default 1024
+                    config BSP_UART2_TX_BUFSIZE
+                        int "Set UART2 TX buffer size"
+                        range 0 65535
+                        depends on RT_USING_SERIAL_V2
+                        default 0
+                endif
+            menuconfig BSP_USING_UART6
+                bool "Enable UART6"
+                default n
+                if BSP_USING_UART6
+                    config BSP_UART6_RX_USING_DMA
+                        bool "Enable UART6 RX DMA"
+                        depends on BSP_USING_UART6 && RT_SERIAL_USING_DMA
+                        default n
+                    config BSP_UART6_TX_USING_DMA
+                        bool "Enable UART6 TX DMA"
+                        depends on BSP_USING_UART6 && RT_SERIAL_USING_DMA
+                        default n
+                    config BSP_UART6_RX_BUFSIZE
+                        int "Set UART6 RX buffer size"
+                        range 64 65535
+                        depends on RT_USING_SERIAL_V2
+                        default 1024
+                    config BSP_UART6_TX_BUFSIZE
+                        int "Set UART6 TX buffer size"
+                        range 0 65535
+                        depends on RT_USING_SERIAL_V2
+                        default 0
+                endif
+        endif
+
+    menuconfig BSP_USING_SPI
+        bool "Enable SPI"
+        default n
+        select RT_USING_SPI if BSP_USING_SPI
+        if BSP_USING_SPI
+            config BSP_USING_SPI1
+                bool "Enable SPI1"
+                default y
+            config BSP_USING_SPI2
+                bool "Enable SPI2"
+                default n
+            config BSP_USING_SPI3
+                bool "Enable SPI3"
+                default n
+        endif
+
+    menuconfig BSP_USING_GPTMR
+        bool "Enable GPTMR"
+        default n
+        select RT_USING_HWTIMER if BSP_USING_GPTMR
+        if BSP_USING_GPTMR
+            config BSP_USING_GPTMR1
+                bool "Enable GPTMR1"
+                default n
+        endif
+
+    menuconfig BSP_USING_I2C
+        bool "Enable I2C"
+        default n
+        if BSP_USING_I2C
+            config BSP_USING_I2C0
+                bool "Enable I2C0"
+                default y
+            if BSP_USING_I2C0
+                config BSP_I2C0_USING_DMA
+                    bool "Enable I2C0 DMA"
+                    default n
+            endif
+
+            config BSP_USING_I2C3
+                bool "Enable I2C3"
+                default n
+            if BSP_USING_I2C3
+                config BSP_I2C3_USING_DMA
+                    bool "Enable I2C3 DMA"
+                    default n
+            endif
+        endif
+
+    menuconfig BSP_USING_XPI_FLASH
+        bool "Enable XPI FLASH"
+        default n
+        select RT_USING_FAL if BSP_USING_XPI_FLASH
+
+    menuconfig BSP_USING_USB
+       bool "Enable USB"
+       default n
+       if BSP_USING_USB
+            config BSP_USING_USB_DEVICE
+                bool "Enable USB Device"
+                default n
+            config BSP_USING_USB_HOST
+                bool "Enable USB HOST"
+                select RT_USING_CACHE
+                default n
+       endif
+
+     menuconfig BSP_USING_EWDG
+        bool "Enable EWDG"
+        default n
+        select RT_USING_WDT if BSP_USING_EWDG
+        if BSP_USING_EWDG
+            config BSP_USING_EWDG0
+                bool "Enable EWDG0"
+                default n
+            config BSP_USING_EWDG1
+                bool "Enable EWDG1"
+                default n
+        endif
+
+     menuconfig BSP_USING_ADC
+        bool "Enable ADC"
+        default n
+        select RT_USING_ADC if BSP_USING_ADC
+        if BSP_USING_ADC
+            menuconfig BSP_USING_ADC16
+            bool "Enable ADC16"
+            default y
+            if BSP_USING_ADC16
+                config BSP_USING_ADC0
+                    bool "Enable ADC0"
+                    default y
+            endif
+        endif
+endmenu
+
+endmenu

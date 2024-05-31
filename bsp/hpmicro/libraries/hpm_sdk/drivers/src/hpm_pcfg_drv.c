@@ -17,8 +17,7 @@ hpm_stat_t pcfg_ldo1p1_set_voltage(PCFG_Type *ptr, uint16_t mv)
             || (mv > PCFG_SOC_LDO1P1_MAX_VOLTAGE_IN_MV)) {
         return status_pcfg_ldo_out_of_range;
     }
-    ptr->LDO1P1 &= ~PCFG_LDO1P1_ENABLE_MASK;
-    ptr->LDO1P1 = PCFG_LDO1P1_ENABLE_MASK | PCFG_LDO1P1_VOLT_SET(mv);
+    ptr->LDO1P1 = (ptr->LDO1P1 & ~PCFG_LDO1P1_VOLT_MASK) | PCFG_LDO1P1_VOLT_SET(mv);
     return status_success;
 }
 

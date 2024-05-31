@@ -54,6 +54,12 @@ typedef struct {
         __RW uint32_t CLEAR;                   /* 0x708: GPIO interrupt asynchronous clear */
         __RW uint32_t TOGGLE;                  /* 0x70C: GPIO interrupt asynchronous toggle */
     } AS[16];
+    struct {
+        __RW uint32_t VALUE;                   /* 0x800: GPIO dual edge interrupt enable value */
+        __RW uint32_t SET;                     /* 0x804: GPIO dual edge interrupt enable set */
+        __RW uint32_t CLEAR;                   /* 0x808: GPIO dual edge interrupt enable clear */
+        __RW uint32_t TOGGLE;                  /* 0x80C: GPIO dual edge interrupt enable toggle */
+    } PD[16];
 } GPIO_Type;
 
 
@@ -398,6 +404,58 @@ typedef struct {
 #define GPIO_AS_TOGGLE_IRQ_ASYNC_SET(x) (((uint32_t)(x) << GPIO_AS_TOGGLE_IRQ_ASYNC_SHIFT) & GPIO_AS_TOGGLE_IRQ_ASYNC_MASK)
 #define GPIO_AS_TOGGLE_IRQ_ASYNC_GET(x) (((uint32_t)(x) & GPIO_AS_TOGGLE_IRQ_ASYNC_MASK) >> GPIO_AS_TOGGLE_IRQ_ASYNC_SHIFT)
 
+/* Bitfield definition for register of struct array PD: VALUE */
+/*
+ * IRQ_DUAL (RW)
+ *
+ * GPIO dual edge interrupt enable
+ * 0: single edge interrupt
+ * 1: dual edge interrupt enable
+ */
+#define GPIO_PD_VALUE_IRQ_DUAL_MASK (0x1U)
+#define GPIO_PD_VALUE_IRQ_DUAL_SHIFT (0U)
+#define GPIO_PD_VALUE_IRQ_DUAL_SET(x) (((uint32_t)(x) << GPIO_PD_VALUE_IRQ_DUAL_SHIFT) & GPIO_PD_VALUE_IRQ_DUAL_MASK)
+#define GPIO_PD_VALUE_IRQ_DUAL_GET(x) (((uint32_t)(x) & GPIO_PD_VALUE_IRQ_DUAL_MASK) >> GPIO_PD_VALUE_IRQ_DUAL_SHIFT)
+
+/* Bitfield definition for register of struct array PD: SET */
+/*
+ * IRQ_DUAL (RW)
+ *
+ * GPIO dual edge interrupt enable set
+ * 0: keep original edge interrupt type
+ * 1: dual edge interrupt enable
+ */
+#define GPIO_PD_SET_IRQ_DUAL_MASK (0x1U)
+#define GPIO_PD_SET_IRQ_DUAL_SHIFT (0U)
+#define GPIO_PD_SET_IRQ_DUAL_SET(x) (((uint32_t)(x) << GPIO_PD_SET_IRQ_DUAL_SHIFT) & GPIO_PD_SET_IRQ_DUAL_MASK)
+#define GPIO_PD_SET_IRQ_DUAL_GET(x) (((uint32_t)(x) & GPIO_PD_SET_IRQ_DUAL_MASK) >> GPIO_PD_SET_IRQ_DUAL_SHIFT)
+
+/* Bitfield definition for register of struct array PD: CLEAR */
+/*
+ * IRQ_DUAL (RW)
+ *
+ * GPIO dual edge interrupt enable clear
+ * 0: keep original edge interrupt type
+ * 1: single edge interrupt enable
+ */
+#define GPIO_PD_CLEAR_IRQ_DUAL_MASK (0x1U)
+#define GPIO_PD_CLEAR_IRQ_DUAL_SHIFT (0U)
+#define GPIO_PD_CLEAR_IRQ_DUAL_SET(x) (((uint32_t)(x) << GPIO_PD_CLEAR_IRQ_DUAL_SHIFT) & GPIO_PD_CLEAR_IRQ_DUAL_MASK)
+#define GPIO_PD_CLEAR_IRQ_DUAL_GET(x) (((uint32_t)(x) & GPIO_PD_CLEAR_IRQ_DUAL_MASK) >> GPIO_PD_CLEAR_IRQ_DUAL_SHIFT)
+
+/* Bitfield definition for register of struct array PD: TOGGLE */
+/*
+ * IRQ_DUAL (RW)
+ *
+ * GPIO dual edge interrupt enable toggle
+ * 0: keep original edge interrupt type
+ * 1: change original edge interrupt type to another one.
+ */
+#define GPIO_PD_TOGGLE_IRQ_DUAL_MASK (0x1U)
+#define GPIO_PD_TOGGLE_IRQ_DUAL_SHIFT (0U)
+#define GPIO_PD_TOGGLE_IRQ_DUAL_SET(x) (((uint32_t)(x) << GPIO_PD_TOGGLE_IRQ_DUAL_SHIFT) & GPIO_PD_TOGGLE_IRQ_DUAL_MASK)
+#define GPIO_PD_TOGGLE_IRQ_DUAL_GET(x) (((uint32_t)(x) & GPIO_PD_TOGGLE_IRQ_DUAL_MASK) >> GPIO_PD_TOGGLE_IRQ_DUAL_SHIFT)
+
 
 
 /* DI register group index macro definition */
@@ -487,6 +545,17 @@ typedef struct {
 #define GPIO_AS_GPIOX (13UL)
 #define GPIO_AS_GPIOY (14UL)
 #define GPIO_AS_GPIOZ (15UL)
+
+/* PD register group index macro definition */
+#define GPIO_PD_GPIOA (0UL)
+#define GPIO_PD_GPIOB (1UL)
+#define GPIO_PD_GPIOC (2UL)
+#define GPIO_PD_GPIOD (3UL)
+#define GPIO_PD_GPIOE (4UL)
+#define GPIO_PD_GPIOF (5UL)
+#define GPIO_PD_GPIOX (13UL)
+#define GPIO_PD_GPIOY (14UL)
+#define GPIO_PD_GPIOZ (15UL)
 
 
 #endif /* HPM_GPIO_H */

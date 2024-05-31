@@ -81,7 +81,7 @@ typedef struct wm8960_config {
 } wm8960_config_t;
 
 typedef struct {
-    I2C_Type *ptr;;                    /* I2C bus */
+    I2C_Type *ptr;                     /* I2C bus */
     uint8_t slave_address;             /* code device address */
 } wm8960_control_t;
 

@@ -14,8 +14,9 @@
 
 void sdm_get_default_module_control(SDM_Type *ptr, sdm_control_t *control)
 {
-    control->clk_signal_sync = true;
-    control->data_signal_sync = true;
+    (void) ptr;
+    control->clk_signal_sync = 0xf; /*!< configure clk sync for all channels */
+    control->data_signal_sync = 0xf; /*!< configure data sync for all channels */
     control->interrupt_en = false;
 }
 
@@ -32,6 +33,7 @@ void sdm_init_module(SDM_Type *ptr, sdm_control_t *control)
 
 void sdm_get_channel_common_setting(SDM_Type *ptr, sdm_channel_common_config_t *config)
 {
+    (void) ptr;
     config->sampling_mode = sdm_sampling_rising_clk_edge;
     config->enable_err_interrupt = false;
     config->enable_data_ready_interrupt = false;
@@ -53,6 +55,7 @@ void sdm_config_channel_common_setting(SDM_Type *ptr, uint8_t ch_index, sdm_chan
 
 void sdm_get_channel_default_filter_config(SDM_Type *ptr, sdm_filter_config_t *filter_config)
 {
+    (void) ptr;
     filter_config->fifo_threshold = 8;
     filter_config->en_fifo_threshold_int = true;
     filter_config->manchester_threshold = 0;
@@ -79,6 +82,7 @@ void sdm_get_channel_default_filter_config(SDM_Type *ptr, sdm_filter_config_t *f
 
 void sdm_get_channel_default_comparator_config(SDM_Type *ptr, sdm_comparator_config_t *cmp_config)
 {
+    (void) ptr;
     cmp_config->high_threshold = 0xffff;
     cmp_config->zero_cross_threshold = 0xffff;
     cmp_config->low_threshold = 0x0;
@@ -102,7 +106,7 @@ void sdm_config_channel_filter(SDM_Type *ptr, uint8_t ch_index, sdm_filter_confi
     ptr->CH[ch_index].SDCTRLE = SDM_CH_SDCTRLE_SGD_ORDR_SET(filter_config->filter_type)
                                 | SDM_CH_SDCTRLE_PWMSYNC_SET(filter_config->pwm_signal_sync)
                                 | SDM_CH_SDCTRLE_CIC_SCL_SET(filter_config->output_offset)
-                                | SDM_CH_SDCTRLE_CIC_DEC_RATIO_SET(filter_config->oversampling_rate - 1)
+                                | SDM_CH_SDCTRLE_CIC_DEC_RATIO_SET(filter_config->oversampling_rate)
                                 | SDM_CH_SDCTRLE_IGN_INI_SAMPLES_SET(filter_config->ignore_invalid_samples);
 
     ptr->CH[ch_index].SDCTRLP = SDM_CH_SDCTRLP_MANCH_THR_SET(filter_config->manchester_threshold)

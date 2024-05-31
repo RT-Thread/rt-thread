@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 HPMicro
+ * Copyright (c) 2021-2024 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -25,6 +25,9 @@
 #else
 #define ADC16_IS_CHANNEL_INVALID(CH) (CH > ADC16_SOC_MAX_CH_NUM)
 #endif
+
+/** @brief Define ADC16 validity check for the channel sample cycle */
+#define ADC16_IS_CHANNEL_SAMPLE_CYCLE_INVALID(CYC) (CYC == 0)
 
 /** @brief Define ADC16 validity check for the trigger number */
 #define ADC16_IS_TRIG_CH_INVLAID(CH) (CH > ADC_SOC_MAX_TRIG_CH_NUM)
@@ -57,7 +60,7 @@ typedef enum {
     adc16_conv_mode_preemption
 } adc16_conversion_mode_t;
 
-/** @brief  Define adc16 Clock Divider */
+/** @brief  Define ADC16 Clock Divider */
 typedef enum {
     adc16_clock_divider_1 = 1,
     adc16_clock_divider_2,
@@ -116,7 +119,7 @@ typedef struct {
     uint8_t conv_mode;
     uint32_t adc_clk_div;
     uint16_t conv_duration;
-    bool port3_rela_time;
+    bool port3_realtime;
     bool wait_dis;
     bool sel_sync_ahb;
     bool adc_ahb_en;
@@ -127,9 +130,17 @@ typedef struct {
    uint8_t ch;
    uint16_t thshdh;
    uint16_t thshdl;
+   bool wdog_int_en;
    uint8_t sample_cycle_shift;
    uint32_t sample_cycle;
 } adc16_channel_config_t;
+
+/** @brief ADC16 channel configuration struct. */
+typedef struct {
+   uint8_t ch;
+   uint16_t thshdh;
+   uint16_t thshdl;
+} adc16_channel_threshold_t;
 
 /** @brief ADC16 DMA configuration struct. */
 typedef struct {
@@ -140,6 +151,7 @@ typedef struct {
 } adc16_dma_config_t;
 
 /** @brief ADC16 DMA configuration struct for the sequence mode. */
+#if defined(ADC_SOC_IP_VERSION) && (ADC_SOC_IP_VERSION < 2)
 typedef struct {
     uint32_t result    :16;
     uint32_t seq_num   :4;
@@ -148,8 +160,18 @@ typedef struct {
     uint32_t           :2;
     uint32_t cycle_bit :1;
 } adc16_seq_dma_data_t;
+#else
+typedef struct {
+    uint32_t result    :16;
+    uint32_t seq_num   :4;
+    uint32_t adc_ch    :5;
+    uint32_t           :6;
+    uint32_t cycle_bit :1;
+} adc16_seq_dma_data_t;
+#endif
 
 /** @brief ADC16 DMA configuration struct for the preemption mode. */
+#if defined(ADC_SOC_IP_VERSION) && (ADC_SOC_IP_VERSION < 2)
 typedef struct {
     uint32_t result    :16;
     uint32_t seq_num   :2;
@@ -159,8 +181,18 @@ typedef struct {
     uint32_t           :2;
     uint32_t cycle_bit :1;
 } adc16_pmt_dma_data_t;
+#else
+typedef struct {
+    uint32_t result    :16;
+    uint32_t           :4;
+    uint32_t adc_ch    :5;
+    uint32_t trig_ch   :4;
+    uint32_t seq_num   :2;
+    uint32_t cycle_bit :1;
+} adc16_pmt_dma_data_t;
+#endif
 
-/** @brief ADC16 configuration struct for the the period mode. */
+/** @brief ADC16 configuration struct for the period mode. */
 typedef struct {
     uint8_t ch;
     uint8_t prescale;
@@ -215,6 +247,16 @@ void adc16_get_default_config(adc16_config_t *config);
 void adc16_get_channel_default_config(adc16_channel_config_t *config);
 
 /**
+ * @brief De-initialize an ADC16 instance.
+ *
+ * @param[in] ptr An ADC16 peripheral base address.
+ * @return A result of de-initializing an ADC16 instance.
+ * @retval status_success De-initialize an ADC16 instance successfully. Please refer to @ref hpm_stat_t.
+ * @retval status_invalid_argument De-initialize an ADC16 instance unsuccessfully due to passing one or more invalid arguments. Please refer to @ref hpm_stat_t.
+ */
+hpm_stat_t adc16_deinit(ADC16_Type *ptr);
+
+/**
  * @brief Initialize an ADC16 instance.
  *
  * @param[in] ptr An ADC16 peripheral base address.
@@ -235,6 +277,34 @@ hpm_stat_t adc16_init(ADC16_Type *ptr, adc16_config_t *config);
  * @retval status_invalid_argument Initialize an ADC16 channel unsuccessfully due to passing one or more invalid arguments. Please refer to @ref hpm_stat_t.
  */
 hpm_stat_t adc16_init_channel(ADC16_Type *ptr, adc16_channel_config_t *config);
+
+/**
+ * @brief Get thresholds of an ADC16 channel
+ *
+ * @param[in] ptr An ADC16 peripheral base address.
+ * @param[in] ch An ADC16 channel number
+ * @param[out] config A pointer to the structure of channel threshold
+ * @return A result of getting thresholds of an ADC16 channel .
+ * @retval status_success Initialize an ADC16 channel successfully. Please refer to @ref hpm_stat_t.
+ * @retval status_invalid_argument Initialize an ADC16 channel unsuccessfully due to passing one or more invalid arguments. Please refer to @ref hpm_stat_t.
+ */
+hpm_stat_t adc16_get_channel_threshold(ADC16_Type *ptr, uint8_t ch, adc16_channel_threshold_t *config);
+
+#if defined (ADC_SOC_BUSMODE_ENABLE_CTRL_SUPPORT) && ADC_SOC_BUSMODE_ENABLE_CTRL_SUPPORT
+/**
+ * @brief Enable oneshot mode (bus mode)
+ *
+ * @param[in] ptr An ADC16 peripheral base address.
+ */
+void adc16_enable_oneshot_mode(ADC16_Type *ptr);
+
+/**
+ * @brief Disable oneshot mode (bus mode)
+ *
+ * @param[in] ptr An ADC16 peripheral base address.
+ */
+void adc16_disable_oneshot_mode(ADC16_Type *ptr);
+#endif
 
 /**
  * @brief Configure the the period mode for an ADC16 instance.
@@ -275,6 +345,7 @@ hpm_stat_t adc16_set_pmt_config(ADC16_Type *ptr, adc16_pmt_config_t *config);
  * @param[in] ptr An ADC16 peripheral base address.
  * @param[in] trig_ch An ADC16 peripheral trigger channel.
  * @param[in] enable A enable control
+ * @return A result of setting queue enable in preemption
  * @retval status_success Get the result of an ADC16 conversion in oneshot mode successfully.
  * @retval status_invalid_argument Get the result of an ADC16 conversion in oneshot mode unsuccessfully due to passing invalid arguments.
  */
@@ -311,7 +382,7 @@ static inline void adc16_init_pmt_dma(ADC16_Type *ptr, uint32_t addr)
 }
 
 /**
- * @brief Configure the start address of DMA write operation for the preemption mode.
+ * @brief Configure the start address of DMA write operation for the sequence mode.
  *
  * @param[in] ptr An ADC16 peripheral base address.
  * @param[in] config A pointer to configuration struct of @ref adc16_dma_config_t.
@@ -345,6 +416,7 @@ static inline uint32_t adc16_get_status_flags(ADC16_Type *ptr)
  * until the ADC has completed its conversion.
  *
  * @param[in] ptr An ADC16 peripheral base address.
+ * @deprecated This API will be removed from V2.0.x
  */
 static inline void adc16_disable_busywait(ADC16_Type *ptr)
 {
@@ -356,6 +428,7 @@ static inline void adc16_disable_busywait(ADC16_Type *ptr)
  * until the ADC completes the conversion.
  *
  * @param[in] ptr An ADC16 peripheral base address.
+ * @deprecated This API will be removed from V2.0.x
  */
 static inline void adc16_enable_busywait(ADC16_Type *ptr)
 {
@@ -363,11 +436,47 @@ static inline void adc16_enable_busywait(ADC16_Type *ptr)
 }
 
 /**
+ * @brief Set nonblocking read in oneshot mode.
+ * @note An ADC does not block access to the associated peripheral whether it completes a conversion or not.
+ *
+ * @param[in] ptr An ADC16 peripheral base address.
+ */
+static inline void adc16_set_nonblocking_read(ADC16_Type *ptr)
+{
+    ptr->BUF_CFG0 |= ADC16_BUF_CFG0_WAIT_DIS_MASK;
+}
+
+/**
+ * @brief Set blocking read in oneshot mode.
+ * @note An ADC blocks access to the associated peripheral bus until it completes a conversion.
+ *
+ * @param[in] ptr An ADC16 peripheral base address.
+ */
+static inline void adc16_set_blocking_read(ADC16_Type *ptr)
+{
+    ptr->BUF_CFG0 &= ~ADC16_BUF_CFG0_WAIT_DIS_MASK;
+}
+
+/**
+ * @brief Judge whether the current setting is none-blocking mode or not.
+ *
+ * @param[in] ptr An ADC16 peripheral base address.
+ * @return A result indicating the status of bus waiting.
+ * @retval True means that nonblocking reading.
+ * @retval False means that blocking reading.
+ *
+ */
+static inline bool adc16_is_nonblocking_mode(ADC16_Type *ptr)
+{
+    return (ADC16_BUF_CFG0_WAIT_DIS_GET(ptr->BUF_CFG0)  ? true : false);
+}
+
+/**
  * @brief Get the status of a conversion validity.
  *
  * @param[in] ptr An ADC16 peripheral base address.
  * @param[in] ch An ADC16 peripheral channel.
- * @retval Status indicating the validity of the current conversion result.
+ * @return Status indicating the validity of the current conversion result.
  *
  * @note This function is only used when the WAIT_DIS bit in the BUF_RESULT register is 1.
  */
@@ -387,7 +496,7 @@ static inline bool adc16_get_conv_valid_status(ADC16_Type *ptr, uint8_t ch)
  */
 static inline void adc16_clear_status_flags(ADC16_Type *ptr, uint32_t mask)
 {
-    ptr->INT_STS |= mask;
+    ptr->INT_STS = mask;
 }
 
 /** @} */
@@ -487,6 +596,16 @@ void adc16_enable_temp_sensor(ADC16_Type *ptr);
  */
 void adc16_disable_temp_sensor(ADC16_Type *ptr);
 #endif
+
+/**
+ * @brief enable the transmission of adc data to the motor sensor unit.
+ *
+ * @param[in] ptr An ADC16 peripheral base address.
+ */
+static inline void adc16_enable_motor(ADC16_Type *ptr)
+{
+    ptr->ANA_CTRL0 |= ADC16_ANA_CTRL0_MOTO_EN_MASK;
+}
 
 /** @} */
 

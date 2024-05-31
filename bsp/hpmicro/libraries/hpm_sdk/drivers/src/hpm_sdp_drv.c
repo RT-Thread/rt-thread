@@ -510,7 +510,6 @@ static hpm_stat_t aes_ccm_auth_crypt(SDP_Type *base,
         uint8_t *b = (uint8_t *) &aes_ctx->buf0;
         uint8_t *y = (uint8_t *) &aes_ctx->buf1;
         uint8_t *ctr = (uint8_t *) &aes_ctx->buf2;
-        uint32_t i = 0;
 
         /* Format B0 */
         aes_ccm_format_b0(b, iv, iv_len, tag_len, aad_len, input_len);
@@ -544,7 +543,6 @@ static hpm_stat_t aes_ccm_auth_crypt(SDP_Type *base,
             aad_src += calc_len;
             remaining_len -= calc_len;
             /* Calculate Y(i) = CIPHk(B(i) ^ Y(i-1)) */
-            ++i;
             sdp_aes_crypt_cbc(base, aes_ctx, sdp_aes_op_encrypt, 16, b, y, y);
 
             while (remaining_len > 0U) {
@@ -556,16 +554,13 @@ static hpm_stat_t aes_ccm_auth_crypt(SDP_Type *base,
                 aad_src += calc_len;
                 remaining_len -= calc_len;
                 /* Calculate Y(i) = CIPHk(B(i) ^ Y(i-1)) */
-                ++i;
                 sdp_aes_crypt_cbc(base, aes_ctx, sdp_aes_op_encrypt, 16, b, y, y);
             }
         }
 
         aes_ccm_format_ctr0(ctr, iv, iv_len);
-        i = 0;
         /* Encryption/Decryption starts from CTR1 */
         sdp_increment_bn(ctr, 16);
-        ++i;
         /* Continue CBC-MAC calculation + Encryption/Decryption */
         uint32_t remaining_len = input_len;
         uint8_t *src = (uint8_t *) input;
@@ -592,7 +587,6 @@ static hpm_stat_t aes_ccm_auth_crypt(SDP_Type *base,
             src += calc_len;
             dst += calc_len;
             remaining_len -= calc_len;
-            ++i;
         }
 
         /* Get CTR0 */
@@ -723,6 +717,7 @@ hpm_stat_t sdp_hash_init(SDP_Type *base, sdp_hash_ctx_t *hash_ctx, sdp_hash_alg_
 
 static void sdp_hash_internal_engine_init(SDP_Type *base, sdp_hash_ctx_t *hash_ctx)
 {
+    (void) base;
     sdp_hash_internal_ctx_t *ctx_internal = (sdp_hash_internal_ctx_t *) &hash_ctx->internal;
 
     ctx_internal->hash_init = true;
@@ -906,6 +901,7 @@ hpm_stat_t sdp_hash_finish(SDP_Type *base, sdp_hash_ctx_t *hash_ctx, uint8_t *di
 
 hpm_stat_t sdp_memcpy(SDP_Type *base, sdp_dma_ctx_t *dma_ctx, void *dst, const void *src, uint32_t length)
 {
+    (void) dma_ctx;
     hpm_stat_t status = status_invalid_argument;
 
     if (length == 0) {
@@ -947,6 +943,7 @@ hpm_stat_t sdp_memcpy(SDP_Type *base, sdp_dma_ctx_t *dma_ctx, void *dst, const v
 
 hpm_stat_t sdp_memset(SDP_Type *base, sdp_dma_ctx_t *sdp_ctx, void *dst, uint8_t pattern, uint32_t length)
 {
+    (void) sdp_ctx;
     hpm_stat_t status;
 
     uint32_t

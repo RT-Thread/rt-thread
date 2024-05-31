@@ -57,7 +57,6 @@ hpm_stat_t hpm_smbus_master_write_byte_in_command(I2C_Type *ptr, uint8_t slave_a
 hpm_stat_t hpm_smbus_master_write_word_in_command(I2C_Type *ptr, uint8_t slave_address, uint8_t command, uint16_t data)
 {
     hpm_stat_t stat;
-    uint8_t pec;
     uint8_t buf[5];
     /* addr + rw bit*/
     buf[0] = slave_address << 1;
@@ -129,7 +128,6 @@ hpm_stat_t hpm_smbus_master_read_word_in_command(I2C_Type *ptr, uint8_t slave_ad
 hpm_stat_t hpm_smbus_master_write_block_in_command(I2C_Type *ptr, uint8_t slave_address, uint8_t command, uint8_t *data, uint32_t size)
 {
     hpm_stat_t stat;
-    uint8_t pec;
     uint8_t buf[I2C_SOC_TRANSFER_COUNT_MAX];
     uint16_t buf_size;
     /* frame included addr, command, data, and pec */
@@ -150,7 +148,6 @@ hpm_stat_t hpm_smbus_master_read_block_in_command(I2C_Type *ptr, uint8_t slave_a
     hpm_stat_t stat;
     uint8_t pec;
     uint8_t buf[I2C_SOC_TRANSFER_COUNT_MAX];
-    uint16_t buf_size;
     /* frame included addr, command, data, and pec */
     assert(size > 0 && size <= (I2C_SOC_TRANSFER_COUNT_MAX - 3));
     /* addr + rw bit*/
@@ -182,7 +179,6 @@ hpm_stat_t hpm_smbus_master_read_block_in_command(I2C_Type *ptr, uint8_t slave_a
 hpm_stat_t hpm_smbus_master_write(I2C_Type *ptr, uint8_t slave_address, uint8_t *data, uint32_t size)
 {
     hpm_stat_t stat;
-    uint8_t pec;
     uint8_t buf[I2C_SOC_TRANSFER_COUNT_MAX];
     uint16_t buf_size;
     /* frame included addr, data, and pec */
@@ -201,7 +197,6 @@ hpm_stat_t hpm_smbus_master_read(I2C_Type *ptr, uint8_t slave_address, uint8_t *
     hpm_stat_t stat;
     uint8_t pec;
     uint8_t buf[I2C_SOC_TRANSFER_COUNT_MAX];
-    uint16_t buf_size;
     /* frame included addr, data, and pec */
     assert(size > 0 && size <= (I2C_SOC_TRANSFER_COUNT_MAX - 2));
     buf[0] = (slave_address << 1);
@@ -220,7 +215,6 @@ hpm_stat_t hpm_smbus_master_read(I2C_Type *ptr, uint8_t slave_address, uint8_t *
 hpm_stat_t hpm_smbus_slave_write(I2C_Type *ptr, uint8_t *data, uint32_t size)
 {
     hpm_stat_t stat;
-    uint8_t pec;
     uint8_t buf[I2C_SOC_TRANSFER_COUNT_MAX];
     uint16_t buf_size;
     uint8_t slave_address;
@@ -241,7 +235,6 @@ hpm_stat_t hpm_smbus_slave_read(I2C_Type *ptr, uint8_t *data, uint32_t size)
     hpm_stat_t stat;
     uint8_t pec;
     uint8_t buf[I2C_SOC_TRANSFER_COUNT_MAX];
-    uint16_t buf_size;
     uint8_t slave_address;
     /* frame included addr, data, and pec */
     assert(size > 0 && size <= (I2C_SOC_TRANSFER_COUNT_MAX - 2));

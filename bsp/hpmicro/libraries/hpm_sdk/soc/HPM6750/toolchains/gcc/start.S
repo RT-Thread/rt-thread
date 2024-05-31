@@ -16,6 +16,7 @@ _start:
     .option push
     .option norelax
     la gp, __global_pointer$
+    la tp, __thread_pointer$
     .option pop
 
     /* reset mstatus to 0*/
@@ -30,6 +31,12 @@ _start:
     fscsr zero
 #endif
 
+    /* Enable LMM1 clock */
+    la t0, 0xF4000800
+    lw t1, 0(t0)
+    ori t1, t1, 0x80
+    sw t1, 0(t0)
+
 #ifdef INIT_EXT_RAM_FOR_DATA
     la t0, _stack_safe
     mv sp, t0
@@ -39,6 +46,19 @@ _start:
     /* Initialize stack pointer */
     la t0, _stack
     mv sp, t0
+
+#ifdef CONFIG_NOT_ENABLE_ICACHE
+    call l1c_ic_disable
+#else
+    call l1c_ic_enable
+#endif
+#ifdef CONFIG_NOT_ENABLE_DCACHE
+    call l1c_dc_invalidate_all
+    call l1c_dc_disable
+#else
+    call l1c_dc_enable
+    call l1c_dc_invalidate_all
+#endif
 
     /*
      * Initialize LMA/VMA sections.
@@ -85,6 +105,14 @@ _start:
 
     /* Use mscratch to store isr level */
     csrw mscratch, 0
+
+#elif defined(CONFIG_RTTHREAD) && CONFIG_RTTHREAD
+    #define HANDLER_TRAP rtt_risc_v_trap_handler
+    #define HANDLER_S_TRAP rtt_risc_v_trap_handler
+
+    /* Use mscratch to store isr level */
+    csrw mscratch, 0
+
 #else
     #define HANDLER_TRAP irq_handler_trap
 #endif

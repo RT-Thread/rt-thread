@@ -248,9 +248,12 @@ static hpm_stat_t spi_setup_trans_with_dma_chain(spi_context_t *context, spi_con
     DMAMUX_Type *dmamux_ptr = context->dma_context.dmamux_ptr;
     dma_linked_descriptor_t *dma_linked_descriptor = context->dma_linked_descriptor;
     uint32_t *spi_transctrl = context->spi_transctrl;
-    uint32_t dma_channel;
+    uint32_t dma_channel = 0;
     uint32_t trans_count;
     dma_channel_config_t dma_ch_config = {0};
+
+    /* use a dummy dma transfer to start SPI trans dma chain */
+    static uint32_t dummy_data1 = 0xff, dummy_data2 = 0xff;
 
     trans_count = hpm_spi_get_trans_count(context, config);
 
@@ -294,10 +297,9 @@ static hpm_stat_t spi_setup_trans_with_dma_chain(spi_context_t *context, spi_con
         if (stat != status_success) {
             return stat;
         }
+    } else {
+        return status_invalid_argument;
     }
-
-    /* use a dummy dma transfer to start SPI trans dma chain */
-    static uint32_t dummy_data1 = 0xff, dummy_data2 = 0xff;
 
     dma_default_channel_config(context->dma_context.dma_ptr, &dma_ch_config);
     dma_ch_config.src_addr = core_local_mem_to_sys_address(context->running_core, (uint32_t)&dummy_data1);
@@ -372,7 +374,6 @@ hpm_stat_t hpm_spi_setup_dma_transfer(spi_context_t *context, spi_control_config
     assert(context->per_trans_max);
 
     hpm_stat_t stat = status_success;
-    uint32_t trans_mode = config->common_config.trans_mode;
 
     if (l1c_dc_is_enabled()) {
         /* cache writeback for tx buff */
@@ -393,9 +394,9 @@ hpm_stat_t hpm_spi_setup_dma_transfer(spi_context_t *context, spi_control_config
 
     if ((context->rx_count > context->per_trans_max) || (context->tx_count > context->per_trans_max)) {
         /* multiple SPI transmissions with chained DMA */
-        assert(trans_mode == spi_trans_read_only || trans_mode == spi_trans_dummy_read
-                || trans_mode == spi_trans_write_only || trans_mode == spi_trans_dummy_write
-                || trans_mode == spi_trans_write_read_together);
+        assert(config->common_config.trans_mode == spi_trans_read_only || config->common_config.trans_mode == spi_trans_dummy_read
+                || config->common_config.trans_mode == spi_trans_write_only || config->common_config.trans_mode == spi_trans_dummy_write
+                || config->common_config.trans_mode == spi_trans_write_read_together);
         /* master mode */
         assert((context->ptr->TRANSFMT & SPI_TRANSFMT_SLVMODE_MASK) != SPI_TRANSFMT_SLVMODE_MASK);
         /* GPIO should be used to replace SPI CS pin for SPI chained DMA transmissions */

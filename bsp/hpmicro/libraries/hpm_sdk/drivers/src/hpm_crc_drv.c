@@ -23,7 +23,6 @@ void crc_get_default_channel_config(crc_channel_config_t *cfg)
 hpm_stat_t crc_setup_channel_config(CRC_Type *ptr, uint32_t ch_index,
                             crc_channel_config_t *cfg)
 {
-    ptr->CHN[ch_index].CLR |= CRC_CHN_CLR_CLR_MASK;
     ptr->CHN[ch_index].PRE_SET = cfg->preset;
 
     if (!ptr->CHN[ch_index].PRE_SET) {

@@ -392,8 +392,8 @@ typedef struct {
  *
  * threshold high, assert interrupt(if enabled) if result exceed high or low.
  */
-#define ADC12_PRD_CFG_PRD_THSHD_CFG_THSHDH_MASK (0xFFFF0000UL)
-#define ADC12_PRD_CFG_PRD_THSHD_CFG_THSHDH_SHIFT (16U)
+#define ADC12_PRD_CFG_PRD_THSHD_CFG_THSHDH_MASK (0xFFF00000UL)
+#define ADC12_PRD_CFG_PRD_THSHD_CFG_THSHDH_SHIFT (20U)
 #define ADC12_PRD_CFG_PRD_THSHD_CFG_THSHDH_SET(x) (((uint32_t)(x) << ADC12_PRD_CFG_PRD_THSHD_CFG_THSHDH_SHIFT) & ADC12_PRD_CFG_PRD_THSHD_CFG_THSHDH_MASK)
 #define ADC12_PRD_CFG_PRD_THSHD_CFG_THSHDH_GET(x) (((uint32_t)(x) & ADC12_PRD_CFG_PRD_THSHD_CFG_THSHDH_MASK) >> ADC12_PRD_CFG_PRD_THSHD_CFG_THSHDH_SHIFT)
 
@@ -402,8 +402,8 @@ typedef struct {
  *
  * threshold low
  */
-#define ADC12_PRD_CFG_PRD_THSHD_CFG_THSHDL_MASK (0xFFFFU)
-#define ADC12_PRD_CFG_PRD_THSHD_CFG_THSHDL_SHIFT (0U)
+#define ADC12_PRD_CFG_PRD_THSHD_CFG_THSHDL_MASK (0xFFF0U)
+#define ADC12_PRD_CFG_PRD_THSHD_CFG_THSHDL_SHIFT (4U)
 #define ADC12_PRD_CFG_PRD_THSHD_CFG_THSHDL_SET(x) (((uint32_t)(x) << ADC12_PRD_CFG_PRD_THSHD_CFG_THSHDL_SHIFT) & ADC12_PRD_CFG_PRD_THSHD_CFG_THSHDL_MASK)
 #define ADC12_PRD_CFG_PRD_THSHD_CFG_THSHDL_GET(x) (((uint32_t)(x) & ADC12_PRD_CFG_PRD_THSHD_CFG_THSHDL_MASK) >> ADC12_PRD_CFG_PRD_THSHD_CFG_THSHDL_SHIFT)
 
@@ -502,7 +502,7 @@ typedef struct {
 
 /* Bitfield definition for register: INT_STS */
 /*
- * TRIG_CMPT (W1C)
+ * TRIG_CMPT (RW1C)
  *
  * interrupt for one trigger conversion complete if enabled
  */
@@ -512,7 +512,7 @@ typedef struct {
 #define ADC12_INT_STS_TRIG_CMPT_GET(x) (((uint32_t)(x) & ADC12_INT_STS_TRIG_CMPT_MASK) >> ADC12_INT_STS_TRIG_CMPT_SHIFT)
 
 /*
- * TRIG_SW_CFLCT (W1C)
+ * TRIG_SW_CFLCT (RW1C)
  *
  */
 #define ADC12_INT_STS_TRIG_SW_CFLCT_MASK (0x40000000UL)
@@ -521,7 +521,7 @@ typedef struct {
 #define ADC12_INT_STS_TRIG_SW_CFLCT_GET(x) (((uint32_t)(x) & ADC12_INT_STS_TRIG_SW_CFLCT_MASK) >> ADC12_INT_STS_TRIG_SW_CFLCT_SHIFT)
 
 /*
- * TRIG_HW_CFLCT (RW)
+ * TRIG_HW_CFLCT (RW1C)
  *
  */
 #define ADC12_INT_STS_TRIG_HW_CFLCT_MASK (0x20000000UL)
@@ -530,7 +530,7 @@ typedef struct {
 #define ADC12_INT_STS_TRIG_HW_CFLCT_GET(x) (((uint32_t)(x) & ADC12_INT_STS_TRIG_HW_CFLCT_MASK) >> ADC12_INT_STS_TRIG_HW_CFLCT_SHIFT)
 
 /*
- * READ_CFLCT (W1C)
+ * READ_CFLCT (RW1C)
  *
  * read conflict interrup, set if wait_dis is set, one conversion is in progress, SW read another channel
  */
@@ -540,7 +540,7 @@ typedef struct {
 #define ADC12_INT_STS_READ_CFLCT_GET(x) (((uint32_t)(x) & ADC12_INT_STS_READ_CFLCT_MASK) >> ADC12_INT_STS_READ_CFLCT_SHIFT)
 
 /*
- * SEQ_SW_CFLCT (W1C)
+ * SEQ_SW_CFLCT (RW1C)
  *
  * sequence queue conflict interrup, set if HW or SW trigger received during conversion
  */
@@ -550,7 +550,7 @@ typedef struct {
 #define ADC12_INT_STS_SEQ_SW_CFLCT_GET(x) (((uint32_t)(x) & ADC12_INT_STS_SEQ_SW_CFLCT_MASK) >> ADC12_INT_STS_SEQ_SW_CFLCT_SHIFT)
 
 /*
- * SEQ_HW_CFLCT (RW)
+ * SEQ_HW_CFLCT (RW1C)
  *
  */
 #define ADC12_INT_STS_SEQ_HW_CFLCT_MASK (0x4000000UL)
@@ -559,7 +559,7 @@ typedef struct {
 #define ADC12_INT_STS_SEQ_HW_CFLCT_GET(x) (((uint32_t)(x) & ADC12_INT_STS_SEQ_HW_CFLCT_MASK) >> ADC12_INT_STS_SEQ_HW_CFLCT_SHIFT)
 
 /*
- * SEQ_DMAABT (W1C)
+ * SEQ_DMAABT (RW1C)
  *
  * dma abort interrupt, set if seqence dma write pointer reachs sw read pointer if stop_en is set
  */
@@ -569,7 +569,7 @@ typedef struct {
 #define ADC12_INT_STS_SEQ_DMAABT_GET(x) (((uint32_t)(x) & ADC12_INT_STS_SEQ_DMAABT_MASK) >> ADC12_INT_STS_SEQ_DMAABT_SHIFT)
 
 /*
- * SEQ_CMPT (W1C)
+ * SEQ_CMPT (RW1C)
  *
  * the whole sequence complete interrupt
  */
@@ -579,7 +579,7 @@ typedef struct {
 #define ADC12_INT_STS_SEQ_CMPT_GET(x) (((uint32_t)(x) & ADC12_INT_STS_SEQ_CMPT_MASK) >> ADC12_INT_STS_SEQ_CMPT_SHIFT)
 
 /*
- * SEQ_CVC (W1C)
+ * SEQ_CVC (RW1C)
  *
  * one conversion complete in seq_queue if related seq_int_en is set
  */
@@ -589,7 +589,7 @@ typedef struct {
 #define ADC12_INT_STS_SEQ_CVC_GET(x) (((uint32_t)(x) & ADC12_INT_STS_SEQ_CVC_MASK) >> ADC12_INT_STS_SEQ_CVC_SHIFT)
 
 /*
- * DMA_FIFO_FULL (RW)
+ * DMA_FIFO_FULL (RW1C)
  *
  */
 #define ADC12_INT_STS_DMA_FIFO_FULL_MASK (0x400000UL)
@@ -598,7 +598,7 @@ typedef struct {
 #define ADC12_INT_STS_DMA_FIFO_FULL_GET(x) (((uint32_t)(x) & ADC12_INT_STS_DMA_FIFO_FULL_MASK) >> ADC12_INT_STS_DMA_FIFO_FULL_SHIFT)
 
 /*
- * AHB_ERR (RW)
+ * AHB_ERR (RW1C)
  *
  * set if got hresp=1
  */
@@ -608,7 +608,7 @@ typedef struct {
 #define ADC12_INT_STS_AHB_ERR_GET(x) (((uint32_t)(x) & ADC12_INT_STS_AHB_ERR_MASK) >> ADC12_INT_STS_AHB_ERR_SHIFT)
 
 /*
- * WDOG (W1C)
+ * WDOG (RW1C)
  *
  * set if one chanel watch dog event triggered
  */
@@ -619,7 +619,7 @@ typedef struct {
 
 /* Bitfield definition for register: INT_EN */
 /*
- * TRIG_CMPT (W1C)
+ * TRIG_CMPT (RW)
  *
  * interrupt for one trigger conversion complete if enabled
  */
@@ -629,7 +629,7 @@ typedef struct {
 #define ADC12_INT_EN_TRIG_CMPT_GET(x) (((uint32_t)(x) & ADC12_INT_EN_TRIG_CMPT_MASK) >> ADC12_INT_EN_TRIG_CMPT_SHIFT)
 
 /*
- * TRIG_SW_CFLCT (W1C)
+ * TRIG_SW_CFLCT (RW)
  *
  */
 #define ADC12_INT_EN_TRIG_SW_CFLCT_MASK (0x40000000UL)
@@ -647,7 +647,7 @@ typedef struct {
 #define ADC12_INT_EN_TRIG_HW_CFLCT_GET(x) (((uint32_t)(x) & ADC12_INT_EN_TRIG_HW_CFLCT_MASK) >> ADC12_INT_EN_TRIG_HW_CFLCT_SHIFT)
 
 /*
- * READ_CFLCT (W1C)
+ * READ_CFLCT (RW)
  *
  * read conflict interrup, set if wait_dis is set, one conversion is in progress, SW read another channel
  */
@@ -657,7 +657,7 @@ typedef struct {
 #define ADC12_INT_EN_READ_CFLCT_GET(x) (((uint32_t)(x) & ADC12_INT_EN_READ_CFLCT_MASK) >> ADC12_INT_EN_READ_CFLCT_SHIFT)
 
 /*
- * SEQ_SW_CFLCT (W1C)
+ * SEQ_SW_CFLCT (RW)
  *
  * sequence queue conflict interrup, set if HW or SW trigger received during conversion
  */
@@ -676,7 +676,7 @@ typedef struct {
 #define ADC12_INT_EN_SEQ_HW_CFLCT_GET(x) (((uint32_t)(x) & ADC12_INT_EN_SEQ_HW_CFLCT_MASK) >> ADC12_INT_EN_SEQ_HW_CFLCT_SHIFT)
 
 /*
- * SEQ_DMAABT (W1C)
+ * SEQ_DMAABT (RW)
  *
  * dma abort interrupt, set if seqence dma write pointer reachs sw read pointer if stop_en is set
  */
@@ -686,7 +686,7 @@ typedef struct {
 #define ADC12_INT_EN_SEQ_DMAABT_GET(x) (((uint32_t)(x) & ADC12_INT_EN_SEQ_DMAABT_MASK) >> ADC12_INT_EN_SEQ_DMAABT_SHIFT)
 
 /*
- * SEQ_CMPT (W1C)
+ * SEQ_CMPT (RW)
  *
  * the whole sequence complete interrupt
  */
@@ -696,7 +696,7 @@ typedef struct {
 #define ADC12_INT_EN_SEQ_CMPT_GET(x) (((uint32_t)(x) & ADC12_INT_EN_SEQ_CMPT_MASK) >> ADC12_INT_EN_SEQ_CMPT_SHIFT)
 
 /*
- * SEQ_CVC (W1C)
+ * SEQ_CVC (RW)
  *
  * one conversion complete in seq_queue if related seq_int_en is set
  */
@@ -706,7 +706,7 @@ typedef struct {
 #define ADC12_INT_EN_SEQ_CVC_GET(x) (((uint32_t)(x) & ADC12_INT_EN_SEQ_CVC_MASK) >> ADC12_INT_EN_SEQ_CVC_SHIFT)
 
 /*
- * DMA_FIFO_FULL (W1C)
+ * DMA_FIFO_FULL (RW)
  *
  * DMA fifo full interrupt, user need to check clock frequency if it's set.
  */
@@ -716,7 +716,7 @@ typedef struct {
 #define ADC12_INT_EN_DMA_FIFO_FULL_GET(x) (((uint32_t)(x) & ADC12_INT_EN_DMA_FIFO_FULL_MASK) >> ADC12_INT_EN_DMA_FIFO_FULL_SHIFT)
 
 /*
- * AHB_ERR (W1C)
+ * AHB_ERR (RW)
  *
  * set if got hresp=1, generally caused by wrong trg_dma_addr or seq_dma_addr
  */
@@ -726,7 +726,7 @@ typedef struct {
 #define ADC12_INT_EN_AHB_ERR_GET(x) (((uint32_t)(x) & ADC12_INT_EN_AHB_ERR_MASK) >> ADC12_INT_EN_AHB_ERR_SHIFT)
 
 /*
- * WDOG (W1C)
+ * WDOG (RW)
  *
  * set if one chanel watch dog event triggered
  */

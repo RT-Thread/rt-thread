@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 HPMicro
+ * Copyright (c) 2021-2023 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -228,7 +228,7 @@ void enet_set_duplex_mode(ENET_Type *ptr, enet_duplex_mode_t mode)
     ptr->MACCFG |= ENET_MACCFG_DM_SET(mode);
 }
 
-int enet_controller_init(ENET_Type *ptr, enet_inf_type_t inf_type, enet_desc_t *desc, enet_mac_config_t *config, enet_int_config_t *int_config)
+hpm_stat_t enet_controller_init(ENET_Type *ptr, enet_inf_type_t inf_type, enet_desc_t *desc, enet_mac_config_t *config, enet_int_config_t *int_config)
 {
     /* select an interface */
     enet_intf_selection(ptr, inf_type);
@@ -248,13 +248,20 @@ int enet_controller_init(ENET_Type *ptr, enet_inf_type_t inf_type, enet_desc_t *
     /* mask the mmc tx interrupts */
     enet_mask_mmc_tx_interrupt_event(ptr, int_config->mmc_intr_mask_tx);
 
-    return true;
+    return status_success;
 }
 
 /*****************************************************************************
  *                           DMA API
- *****************************************************************************
- */
+ ****************************************************************************/
+void enet_rx_resume(ENET_Type *ptr)
+{
+    if (ENET_DMA_STATUS_RU_GET(ptr->DMA_STATUS)) {
+        ptr->DMA_STATUS = ENET_DMA_STATUS_RU_MASK;
+        ptr->DMA_RX_POLL_DEMAND = 1;
+    }
+}
+
 uint32_t enet_check_received_frame(enet_rx_desc_t **parent_rx_desc_list_cur, enet_rx_frame_info_t *rx_frame_info)
 {
     enet_rx_desc_t *rx_desc_list_cur = *parent_rx_desc_list_cur;
@@ -381,6 +388,7 @@ enet_frame_t enet_get_received_frame_interrupt(enet_rx_desc_t **parent_rx_desc_l
 
 void enet_get_default_tx_control_config(ENET_Type *ptr, enet_tx_control_config_t *config)
 {
+    (void) ptr;
     config->enable_ioc  = false;
     config->disable_crc = true;
     config->disable_pad = false;

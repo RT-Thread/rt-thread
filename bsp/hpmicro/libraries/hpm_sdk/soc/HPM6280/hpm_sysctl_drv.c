@@ -102,6 +102,7 @@ hpm_stat_t sysctl_cpu1_set_gpr(SYSCTL_Type *ptr, uint8_t start, uint8_t count, u
 
 void sysctl_monitor_get_default_config(SYSCTL_Type *ptr, monitor_config_t *config)
 {
+    (void) ptr;
     config->mode = monitor_work_mode_record;
     config->accuracy = monitor_accuracy_1khz;
     config->reference = monitor_reference_24mhz;
@@ -113,16 +114,16 @@ void sysctl_monitor_get_default_config(SYSCTL_Type *ptr, monitor_config_t *confi
     config->target = monitor_target_clk_top_cpu0;
 }
 
-void sysctl_monitor_init(SYSCTL_Type *ptr, uint8_t slice, monitor_config_t *config)
+void sysctl_monitor_init(SYSCTL_Type *ptr, uint8_t monitor_index, monitor_config_t *config)
 {
-    ptr->MONITOR[slice].CONTROL &= ~(SYSCTL_MONITOR_CONTROL_START_MASK | SYSCTL_MONITOR_CONTROL_OUTEN_MASK);
+    ptr->MONITOR[monitor_index].CONTROL &= ~(SYSCTL_MONITOR_CONTROL_START_MASK | SYSCTL_MONITOR_CONTROL_OUTEN_MASK);
 
     if (config->mode == monitor_work_mode_compare) {
-        ptr->MONITOR[slice].HIGH_LIMIT = SYSCTL_MONITOR_HIGH_LIMIT_FREQUENCY_SET(config->high_limit);
-        ptr->MONITOR[slice].LOW_LIMIT = SYSCTL_MONITOR_LOW_LIMIT_FREQUENCY_SET(config->low_limit);
+        ptr->MONITOR[monitor_index].HIGH_LIMIT = SYSCTL_MONITOR_HIGH_LIMIT_FREQUENCY_SET(config->high_limit);
+        ptr->MONITOR[monitor_index].LOW_LIMIT = SYSCTL_MONITOR_LOW_LIMIT_FREQUENCY_SET(config->low_limit);
     }
 
-    ptr->MONITOR[slice].CONTROL = (ptr->MONITOR[slice].CONTROL &
+    ptr->MONITOR[monitor_index].CONTROL = (ptr->MONITOR[monitor_index].CONTROL &
         ~(SYSCTL_MONITOR_CONTROL_DIV_MASK | SYSCTL_MONITOR_CONTROL_MODE_MASK | SYSCTL_MONITOR_CONTROL_ACCURACY_MASK |
             SYSCTL_MONITOR_CONTROL_REFERENCE_MASK | SYSCTL_MONITOR_CONTROL_SELECTION_MASK)) |
         (SYSCTL_MONITOR_CONTROL_DIV_SET(config->divide_by - 1) | SYSCTL_MONITOR_CONTROL_MODE_SET(config->mode) |
@@ -172,28 +173,79 @@ hpm_stat_t sysctl_set_cpu0_wakeup_entry(SYSCTL_Type *ptr, uint32_t entry)
 
 hpm_stat_t sysctl_enable_group_resource(SYSCTL_Type *ptr,
                                         uint8_t group,
-                                        sysctl_resource_t linkable_resource,
+                                        sysctl_resource_t resource,
                                         bool enable)
 {
     uint32_t index, offset;
-    if (linkable_resource < sysctl_resource_linkable_start) {
+    if (resource < sysctl_resource_linkable_start) {
         return status_invalid_argument;
     }
 
-    index = (linkable_resource - sysctl_resource_linkable_start) / 32;
-    offset = (linkable_resource - sysctl_resource_linkable_start) % 32;
+    index = (resource - sysctl_resource_linkable_start) / 32;
+    offset = (resource - sysctl_resource_linkable_start) % 32;
     switch (group) {
     case SYSCTL_RESOURCE_GROUP0:
         ptr->GROUP0[index].VALUE = (ptr->GROUP0[index].VALUE & ~(1UL << offset)) | (enable ? (1UL << offset) : 0);
+        if (enable) {
+            while (sysctl_resource_target_is_busy(ptr, resource)) {
+                ;
+            }
+        }
         break;
     case SYSCTL_RESOURCE_GROUP1:
         ptr->GROUP1[index].VALUE = (ptr->GROUP1[index].VALUE & ~(1UL << offset)) | (enable ? (1UL << offset) : 0);
+        if (enable) {
+            while (sysctl_resource_target_is_busy(ptr, resource)) {
+                ;
+            }
+        }
         break;
     default:
         return status_invalid_argument;
     }
 
     return status_success;
+}
+
+bool sysctl_check_group_resource_enable(SYSCTL_Type *ptr,
+                                        uint8_t group,
+                                        sysctl_resource_t resource)
+{
+    uint32_t index, offset;
+    bool enable;
+
+    index = (resource - sysctl_resource_linkable_start) / 32;
+    offset = (resource - sysctl_resource_linkable_start) % 32;
+    switch (group) {
+    case SYSCTL_RESOURCE_GROUP0:
+        enable = ((ptr->GROUP0[index].VALUE & (1UL << offset)) != 0) ? true : false;
+        break;
+    case SYSCTL_RESOURCE_GROUP1:
+        enable = ((ptr->GROUP1[index].VALUE & (1UL << offset)) != 0) ? true : false;
+        break;
+    default:
+        enable =  false;
+        break;
+    }
+
+    return enable;
+}
+
+uint32_t sysctl_get_group_resource_value(SYSCTL_Type *ptr, uint8_t group, uint8_t index)
+{
+    uint32_t value;
+    switch (group) {
+    case SYSCTL_RESOURCE_GROUP0:
+        value = ptr->GROUP0[index].VALUE;
+        break;
+    case SYSCTL_RESOURCE_GROUP1:
+        value = ptr->GROUP1[index].VALUE;
+        break;
+    default:
+        value = 0;
+        break;
+    }
+    return value;
 }
 
 hpm_stat_t sysctl_add_resource_to_cpu0(SYSCTL_Type *ptr, sysctl_resource_t resource)
@@ -216,9 +268,8 @@ hpm_stat_t sysctl_remove_resource_from_cpu1(SYSCTL_Type *ptr, sysctl_resource_t 
     return sysctl_enable_group_resource(ptr, SYSCTL_RESOURCE_GROUP1, resource, false);
 }
 
-hpm_stat_t sysctl_update_divider(SYSCTL_Type *ptr, clock_node_t node_index, uint32_t divide_by)
+hpm_stat_t sysctl_update_divider(SYSCTL_Type *ptr, clock_node_t node, uint32_t divide_by)
 {
-    uint32_t node = (uint32_t) node_index;
     if (node >= clock_node_adc_start) {
         return status_invalid_argument;
     }
@@ -229,9 +280,8 @@ hpm_stat_t sysctl_update_divider(SYSCTL_Type *ptr, clock_node_t node_index, uint
     return status_success;
 }
 
-hpm_stat_t sysctl_config_clock(SYSCTL_Type *ptr, clock_node_t node_index, clock_source_t source, uint32_t divide_by)
+hpm_stat_t sysctl_config_clock(SYSCTL_Type *ptr, clock_node_t node, clock_source_t source, uint32_t divide_by)
 {
-    uint32_t node = (uint32_t) node_index;
     if (node >= clock_node_adc_start) {
         return status_invalid_argument;
     }

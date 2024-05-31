@@ -87,6 +87,12 @@ SECTIONS
 
         /* RT-Thread related sections - end */
 
+        /* section information for usbh class */
+        . = ALIGN(8);
+        __usbh_class_info_start__ = .;
+        KEEP(*(.usbh_class_info))
+        __usbh_class_info_end__ = .;
+
         PROVIDE (__etext = .);
         PROVIDE (_etext = .);
         PROVIDE (etext = .);
