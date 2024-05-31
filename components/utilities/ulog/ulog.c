@@ -169,6 +169,12 @@ rt_size_t ulog_ultoa(char *s, unsigned long int n)
 
     do
     {
+        /* add \' every 3 digits */
+        if (len % 4 == 3)
+        {
+            s[len++] = '\'';
+        }
+        
         s[len++] = n % 10 + '0';
     } while (n /= 10);
     s[len] = '\0';
