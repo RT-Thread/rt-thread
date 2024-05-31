@@ -174,7 +174,7 @@ void gic_common_cpu_config(void *base, int nr, void (*sync_access)(void *), void
     }
 }
 
-void gic_fill_ppi_affinity(bitmap_t *affinity)
+void gic_fill_ppi_affinity(rt_bitmap_t *affinity)
 {
     for (int cpuid = 0; cpuid < RT_CPUS_NR; ++cpuid)
     {

@@ -43,7 +43,7 @@ rt_err_t gic_common_configure_irq(void *base, int irq, rt_uint32_t mode, void (*
 void gic_common_dist_config(void *base, int max_irqs, void (*sync_access)(void *), void *data);
 void gic_common_cpu_config(void *base, int nr, void (*sync_access)(void *), void *data);
 
-void gic_fill_ppi_affinity(bitmap_t *affinity);
+void gic_fill_ppi_affinity(rt_bitmap_t *affinity);
 
 #ifdef RT_PIC_ARM_GIC_V2M
 rt_err_t gicv2m_ofw_probe(struct rt_ofw_node *ic_np, const struct rt_ofw_node_id *id);
