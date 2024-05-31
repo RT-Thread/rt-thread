@@ -1277,7 +1277,7 @@ long list_process(void)
             for (node = list->next; node != list; node = node->next)
             {
                 thread = rt_list_entry(node, struct rt_thread, sibling);
-                rt_kprintf("%4d %4d %-*.*s ", lwp_to_pid(lwp), thread->tid,maxlen, RT_NAME_MAX, lwp->cmd);
+                rt_kprintf("%4d %4d %-*.*s ", lwp_to_pid(lwp), thread->tid, maxlen, RT_NAME_MAX, lwp->cmd);
                 print_thread_info(thread, maxlen);
             }
         }
