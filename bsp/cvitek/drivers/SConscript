@@ -31,6 +31,8 @@ if GetDepend('BSP_USING_WDT'):
 
 if GetDepend(['BSP_USING_SPI']):
     src += ['drv_spi.c']
+    src += ['libraries/spi/dw_spi.c']
+    CPPPATH += [cwd + r'/libraries/spi']
 
 if GetDepend('BSP_USING_PWM'):
     src += ['drv_pwm.c']
