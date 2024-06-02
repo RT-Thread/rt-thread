@@ -68,7 +68,7 @@ if GetDepend(['BSP_USING_FEMC']):
 if GetDepend(['BSP_USING_PWM']):
     src += ['drivers/src/hpm_pwm_drv.c']
 
-if GetDepend(['BSP_USING_USB']):
+if GetDepend(['BSP_USING_USB']) or GetDepend(['RT_USING_CHERRYUSB']):
     src += ['drivers/src/hpm_usb_drv.c']
 
 if GetDepend(['BSP_USING_I2S']):

@@ -1,0 +1,47 @@
+*.c linguist-language=C
+*.C linguist-language=C
+*.h linguist-language=C
+*.H linguist-language=C
+
+* text=auto
+
+*.S text
+*.asm text
+*.c text
+*.cc text
+*.cpp text
+*.cxx text
+*.h text
+*.htm text
+*.html text
+*.in text
+*.ld text
+*.m4 text
+*.mak text
+*.mk text
+*.py text
+*.rb text
+*.s text
+*.sct text
+*.sh text
+*.txt text
+*.xml text
+SConscript text
+Makefile text
+AUTHORS text
+COPYING text
+
+*.LZO -text
+*.Opt -text
+*.Uv2 -text
+*.ewp -text
+*.eww -text
+*.vcproj -text
+*.bat -text
+*.dos -text
+*.icf -text
+*.inf -text
+*.ini -text
+*.sct -text
+*.xsd -text
+Jamfile -text
