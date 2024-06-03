@@ -931,7 +931,13 @@ int timer_create(clockid_t clockid, struct sigevent *evp, timer_t *timerid)
     static int num = 0;
     int _timerid = 0;
     struct timer_obj *timer;
-    char timername[RT_NAME_MAX] = {0};
+    char *timername = rt_malloc(RT_NAME_MAX);
+
+    if (timername == RT_NULL)
+    {
+        rt_set_errno(ENOMEM);
+        return -1;
+    }
 
     if (evp == RT_NULL || timerid == RT_NULL)
     {
