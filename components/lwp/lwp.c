@@ -686,37 +686,3 @@ rt_err_t lwp_backtrace_frame(rt_thread_t uthread, struct rt_hw_backtrace_frame *
     }
     return rc;
 }
-
-void rt_update_process_times(void)
-{
-    struct rt_thread *thread;
-#ifdef RT_USING_SMP
-    struct rt_cpu* pcpu;
-
-    pcpu = rt_cpu_self();
-#endif
-
-    thread = rt_thread_self();
-
-    if (!IS_USER_MODE(thread))
-    {
-        thread->user_time += 1;
-#ifdef RT_USING_SMP
-        pcpu->cpu_stat.user += 1;
-#endif
-    }
-    else
-    {
-        thread->system_time += 1;
-#ifdef RT_USING_SMP
-        if (thread == pcpu->idle_thread)
-        {
-            pcpu->cpu_stat.idle += 1;
-        }
-        else
-        {
-            pcpu->cpu_stat.system += 1;
-        }
-#endif
-    }
-}

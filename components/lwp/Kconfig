@@ -12,9 +12,9 @@ if RT_USING_LWP
 
     if LWP_DEBUG
         config LWP_DEBUG_INIT
-        select RT_USING_HOOKLIST
-        bool "Enable debug mode of init process"
-        default n
+            select RT_USING_HOOKLIST
+            bool "Enable debug mode of init process"
+            default n
     endif
 
     config RT_LWP_MAX_NR

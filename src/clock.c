@@ -79,6 +79,36 @@ void rt_tick_set(rt_tick_t tick)
     rt_atomic_store(&(rt_tick), tick);
 }
 
+#ifdef RT_USING_CPU_USAGE_TRACER
+static void _update_process_times(void)
+{
+    struct rt_thread *thread = rt_thread_self();
+    struct rt_cpu *pcpu = rt_cpu_self();
+
+    if (!LWP_IS_USER_MODE(thread))
+    {
+        thread->user_time += 1;
+        pcpu->cpu_stat.user += 1;
+    }
+    else
+    {
+        thread->system_time += 1;
+        if (thread == pcpu->idle_thread)
+        {
+            pcpu->cpu_stat.idle += 1;
+        }
+        else
+        {
+            pcpu->cpu_stat.system += 1;
+        }
+    }
+}
+
+#else
+
+#define _update_process_times()
+#endif /* RT_USING_CPU_USAGE_TRACER */
+
 /**
  * @brief    This function will notify kernel there is one tick passed.
  *           Normally, this function is invoked by clock ISR.
@@ -88,6 +118,10 @@ void rt_tick_increase(void)
     RT_ASSERT(rt_interrupt_get_nest() > 0);
 
     RT_OBJECT_HOOK_CALL(rt_tick_hook, ());
+
+    /* tracing cpu usage */
+    _update_process_times();
+
     /* increase the global tick */
 #ifdef RT_USING_SMP
     /* get percpu and increase the tick */
