@@ -775,6 +775,7 @@ struct rt_cpu
 struct rt_cpu
 {
     struct rt_thread            *current_thread;
+    struct rt_thread            *idle_thread;
 
 #ifdef RT_USING_CPU_USAGE_TRACER
     struct rt_cpu_usage_stats   cpu_stat;
