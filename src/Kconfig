@@ -183,6 +183,14 @@ if RT_USING_TIMER_SOFT
         default 512
 endif
 
+config RT_USING_CPU_USAGE_TRACER
+    select RT_USING_HOOK
+    bool "Enable cpu usage tracing"
+    help
+        Enable cpu usage tracer for application like top.
+    default y if RT_USING_SMART
+    default n
+
 menu "kservice optimization"
     config RT_USING_TINY_FFS
         bool "Enable kservice to use tiny finding first bit set method"
