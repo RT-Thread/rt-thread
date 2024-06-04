@@ -22,8 +22,8 @@
 
 struct rt_ktime_hrtimer
 {
-    rt_uint8_t           flag; /**< compatible to tick timer's flag */
-    const char          *name;
+    rt_uint8_t           flag;                  /**< compatible to tick timer's flag */
+    char                 name[RT_NAME_MAX];
     rt_list_t            node;
     void                *parameter;
     unsigned long        delay_cnt;
