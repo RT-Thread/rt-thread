@@ -10,6 +10,7 @@
 #include <rtthread.h>
 #include <rtdevice.h>
 #include "drv_adc.h"
+#include "drv_pinmux.h"
 
 #define DBG_LEVEL   DBG_LOG
 #include <rtdbg.h>
@@ -100,9 +101,100 @@ static const struct rt_adc_ops _adc_ops =
     .convert = _adc_convert,
 };
 
+
+#if defined(BOARD_TYPE_MILKV_DUO) || defined(BOARD_TYPE_MILKV_DUO_SPINOR)
+
+/*
+ * cv180xb supports
+ * - adc1 & adc2 for active domain
+ * - adc3 for no-die domain
+ *
+ * FIXME: currnet adc driver only support adc1 in active domain
+ */
+#ifdef BSP_USING_ADC_ACTIVE
+static const char *pinname_whitelist_adc1_active[] = {
+    "ADC1",
+    NULL,
+};
+static const char *pinname_whitelist_adc2_active[] = {
+    NULL,
+};
+static const char *pinname_whitelist_adc3_active[] = {
+    NULL,
+};
+#endif
+
+#ifdef BSP_USING_ADC_NODIE
+static const char *pinname_whitelist_adc1_nodie[] = {
+    NULL,
+};
+static const char *pinname_whitelist_adc2_nodie[] = {
+    NULL,
+};
+static const char *pinname_whitelist_adc3_nodie[] = {
+    NULL,
+};
+#endif
+
+#elif defined(BOARD_TYPE_MILKV_DUO256M) || defined(BOARD_TYPE_MILKV_DUO256M_SPINOR)
+
+/*
+ * sg2002 supports
+ * - adc1 for active domain
+ * - adc1/adc2/adc3 for no-die domain
+ *
+ * FIXME: currnet adc driver only support adc1 in active domain
+ */
+
+#ifdef BSP_USING_ADC_ACTIVE
+static const char *pinname_whitelist_adc1_active[] = {
+    "ADC1",
+    NULL,
+};
+static const char *pinname_whitelist_adc2_active[] = {
+    NULL,
+};
+static const char *pinname_whitelist_adc3_active[] = {
+    NULL,
+};
+#endif
+
+#ifdef BSP_USING_ADC_NODIE
+static const char *pinname_whitelist_adc1_nodie[] = {
+    NULL,
+};
+static const char *pinname_whitelist_adc2_nodie[] = {
+    NULL,
+};
+static const char *pinname_whitelist_adc3_nodie[] = {
+    NULL,
+};
+#endif
+
+#else
+    #error "Unsupported board type!"
+#endif
+
+static void rt_hw_adc_pinmux_config()
+{
+#ifdef BSP_USING_ADC_ACTIVE
+    pinmux_config(BSP_ACTIVE_ADC1_PINNAME, XGPIOB_3, pinname_whitelist_adc1_active);
+    pinmux_config(BSP_ACTIVE_ADC2_PINNAME, XGPIOB_6, pinname_whitelist_adc2_active);
+    /* cv1800b & sg2002 don't support ADC3 either in active domain */
+#endif
+
+#ifdef BSP_USING_ADC_NODIE
+    pinmux_config(BSP_NODIE_ADC1_PINNAME, PWR_GPIO_2, pinname_whitelist_adc1_nodie);
+    pinmux_config(BSP_NODIE_ADC2_PINNAME, PWR_GPIO_1, pinname_whitelist_adc2_nodie);
+    pinmux_config(BSP_NODIE_ADC3_PINNAME, PWR_VBAT_DET, pinname_whitelist_adc3_nodie);
+#endif
+}
+
 int rt_hw_adc_init(void)
 {
     rt_uint8_t i;
+
+    rt_hw_adc_pinmux_config();
 
     for (i = 0; i < sizeof(adc_dev_config) / sizeof(adc_dev_config[0]); i++)
     {

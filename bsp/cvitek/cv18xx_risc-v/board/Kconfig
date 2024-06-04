@@ -154,10 +154,44 @@ menu "General Drivers Configuration"
                 default 49
         endif
 
-    config BSP_USING_ADC
+    menuconfig BSP_USING_ADC
         bool "Using ADC"
         select RT_USING_ADC
         default n
+
+        if BSP_USING_ADC
+            config BSP_USING_ADC_ACTIVE
+                bool "Enable ADC Controller in Active Domain"
+                default n
+
+                if BSP_USING_ADC_ACTIVE
+                    config BSP_ACTIVE_ADC1_PINNAME
+                        string "Pin name for VIN1 in Active Domain"
+                        default ""
+                    config BSP_ACTIVE_ADC2_PINNAME
+                        string "Pin name for VIN2 in Active Domain"
+                        default ""
+                    config BSP_ACTIVE_ADC3_PINNAME
+                        string "Pin name for VIN3 in Active Domain"
+                        default ""
+                endif
+
+            config BSP_USING_ADC_NODIE
+                bool "Enable ADC Controller in No-die Domain"
+                default n
+
+                if BSP_USING_ADC_NODIE
+                    config BSP_NODIE_ADC1_PINNAME
+                        string "Pin name for VIN1 in No-die Domain"
+                        default ""
+                    config BSP_NODIE_ADC2_PINNAME
+                        string "Pin name for VIN2 in No-die Domain"
+                        default ""
+                    config BSP_NODIE_ADC3_PINNAME
+                        string "Pin name for VIN3 in No-die Domain"
+                        default ""
+                endif
+        endif
 
     config BSP_USING_SPI
         bool "Using SPI"
