@@ -366,7 +366,7 @@ void handle_trap(rt_size_t scause, rt_size_t stval, rt_size_t sepc, struct rt_hw
             .pc = sepc
         };
         rt_kprintf("fp = %p", frame.fp);
-        rt_backtrace_frame(&frame);
+        rt_backtrace_frame(rt_thread_self(), &frame);
 
         RT_ASSERT(0);
     }

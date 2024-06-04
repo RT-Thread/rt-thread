@@ -296,6 +296,7 @@ void rt_mp_free_sethook(void (*hook)(struct rt_mempool *mp, void *block));
  * heap memory interface
  */
 void rt_system_heap_init(void *begin_addr, void *end_addr);
+void rt_system_heap_init_generic(void *begin_addr, void *end_addr);
 
 void *rt_malloc(rt_size_t size);
 void rt_free(void *ptr);
@@ -729,7 +730,10 @@ void rt_kputs(const char *str);
 
 rt_err_t rt_backtrace(void);
 rt_err_t rt_backtrace_thread(rt_thread_t thread);
-rt_err_t rt_backtrace_frame(struct rt_hw_backtrace_frame *frame);
+rt_err_t rt_backtrace_frame(rt_thread_t thread, struct rt_hw_backtrace_frame *frame);
+rt_err_t rt_backtrace_formatted_print(rt_ubase_t *buffer, long buflen);
+rt_err_t rt_backtrace_to_buffer(rt_thread_t thread, struct rt_hw_backtrace_frame *frame,
+                                long skip, rt_ubase_t *buffer, long buflen);
 
 #if defined(RT_USING_DEVICE) && defined(RT_USING_CONSOLE)
 rt_device_t rt_console_set_device(const char *name);
