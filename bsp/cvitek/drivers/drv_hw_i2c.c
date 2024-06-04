@@ -1,11 +1,11 @@
 /*
- * Copyright (c) 2006-2023, RT-Thread Development Team
+ * Copyright (c) 2006-2024, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
- *2024-02-14      ShichengChu  first version
+ * 2024-02-14     ShichengChu  first version
  */
 #include "drv_hw_i2c.h"
 #include <rtdevice.h>
@@ -16,458 +16,416 @@
 #define DBG_LVL               DBG_INFO
 #include <rtdbg.h>
 
-#define false 0
-#define true  1
-struct _i2c_bus
+struct dw_iic_bus
 {
     struct rt_i2c_bus_device parent;
-    uint8_t i2c_id;
+    dw_iic_regs_t *iic_base;
+    rt_uint32_t irq;
     char *device_name;
 };
 
-static struct _i2c_bus _i2c_obj[] =
+static struct dw_iic_bus _i2c_obj[] =
 {
 #ifdef BSP_USING_I2C0
     {
-        .i2c_id = I2C0,
-        .device_name = "i2c0",
+        .iic_base       = (dw_iic_regs_t *)I2C0_BASE,
+        .device_name    = "i2c0",
+        .irq            = I2C0_IRQ,
     },
 #endif /* BSP_USING_I2C0 */
 #ifdef BSP_USING_I2C1
     {
-        .i2c_id = I2C1,
-        .device_name = "i2c1",
+        .iic_base       = (dw_iic_regs_t *)I2C1_BASE,
+        .device_name    = "i2c1",
+        .irq            = I2C1_IRQ,
     },
 #endif /* BSP_USING_I2C1 */
+#ifdef BSP_USING_I2C2
+    {
+        .iic_base       = (dw_iic_regs_t *)I2C2_BASE,
+        .device_name    = "i2c2",
+        .irq            = I2C2_IRQ,
+    },
+#endif /* BSP_USING_I2C2 */
+#ifdef BSP_USING_I2C3
+    {
+        .iic_base       = (dw_iic_regs_t *)I2C3_BASE,
+        .device_name    = "i2c3",
+        .irq            = I2C3_IRQ,
+    },
+#endif /* BSP_USING_I2C3 */
+#ifdef BSP_USING_I2C4
+    {
+        .iic_base       = (dw_iic_regs_t *)I2C4_BASE,
+        .device_name    = "i2c4",
+        .irq            = I2C4_IRQ,
+    },
+#endif /* BSP_USING_I2C4 */
 };
 
-static struct i2c_regs *get_i2c_base(uint8_t i2c_id)
-{
-    struct i2c_regs *i2c_base = NULL;
-
-    switch (i2c_id) {
-    case I2C0:
-        i2c_base = (struct i2c_regs *)I2C0_BASE;
-        break;
-    case I2C1:
-        i2c_base = (struct i2c_regs *)I2C1_BASE;
-        break;
-    case I2C2:
-        i2c_base = (struct i2c_regs *)I2C2_BASE;
-        break;
-    case I2C3:
-        i2c_base = (struct i2c_regs *)I2C3_BASE;
-        break;
-    case I2C4:
-        i2c_base = (struct i2c_regs *)I2C4_BASE;
-        break;
-    }
-
-    return i2c_base;
-}
-
-static uint32_t get_i2c_intr(uint8_t i2c_id)
-{
-    uint32_t i2c_intr = 0;
-
-    switch (i2c_id) {
-    case I2C0:
-        i2c_intr = I2C0_IRQ;
-        break;
-    case I2C1:
-        i2c_intr = I2C1_IRQ;
-        break;
-    case I2C2:
-        i2c_intr = I2C2_IRQ;
-        break;
-    case I2C3:
-        i2c_intr = I2C3_IRQ;
-        break;
-    case I2C4:
-        i2c_intr = I2C4_IRQ;
-        break;
-    }
-
-    return i2c_intr;
-}
-
-void i2c_write_cmd_data(struct i2c_regs *i2c, uint16_t value)
-{
-    mmio_write_32((uintptr_t)&i2c->ic_cmd_data, value);
-}
-
-static void i2c_enable(struct i2c_regs *i2c, uint8_t enable)
-{
-    uint32_t ena = enable ? IC_ENABLE : 0;
-    int timeout = 100;
-
-    do {
-        mmio_write_32((uintptr_t)&i2c->ic_enable, ena);
-        if ((mmio_read_32((uintptr_t)&i2c->ic_enable_status) & IC_ENABLE) == ena)
-            return;
-
-        /*
-         * Wait 10 times the signaling period of the highest I2C
-         * transfer supported by the driver (for 400KHz this is
-         * 25us) as described in the DesignWare I2C databook.
-         */
-        rt_hw_us_delay(25);
-    } while (timeout--);
-
-    LOG_I("timeout in %sabling I2C adapter\n", enable ? "en" : "dis");
-}
-
-static void i2c_disable(struct i2c_regs *i2c)
-{
-    int timeout = 100;
-
-    do {
-        mmio_write_32((uintptr_t)&i2c->ic_enable, 0x0);
-        if ((mmio_read_32((uintptr_t)&i2c->ic_enable_status) & IC_ENABLE) == 0x0)
-            return;
-
-        /*
-         * Wait 10 times the signaling period of the highest I2C
-         * transfer supported by the driver (for 400KHz this is
-         * 25us) as described in the DesignWare I2C databook.
-         */
-        rt_hw_us_delay(25);
-    } while (timeout--);
-
-    LOG_I("timeout in disabling I2C adapter\n");
-}
-
-/*
- * i2c_flush_rxfifo - Flushes the i2c RX FIFO
- *
- * Flushes the i2c RX FIFO
- */
-static void i2c_flush_rxfifo(struct i2c_regs *i2c)
-{
-    while (mmio_read_32((uintptr_t)&i2c->ic_status) & IC_STATUS_RFNE)
-        mmio_read_32((uintptr_t)&i2c->ic_cmd_data);
-}
-
-/*
- * i2c_wait_for_bb - Waits for bus busy
- *
- * Waits for bus busy
- */
-static int i2c_wait_for_bb(struct i2c_regs *i2c)
+static rt_uint32_t dw_iic_wait_for_bb(dw_iic_regs_t *iic_base)
 {
     uint16_t    timeout = 0;
-
-    while ((mmio_read_32((uintptr_t)&i2c->ic_status) & IC_STATUS_MA) ||
-           !(mmio_read_32((uintptr_t)&i2c->ic_status) & IC_STATUS_TFE)) {
-
+    while ((iic_base->IC_STATUS & DW_IIC_MST_ACTIVITY_STATE) || !(iic_base->IC_STATUS & DW_IIC_TXFIFO_EMPTY_STATE))
+    {
         /* Evaluate timeout */
         rt_hw_us_delay(5);
-        timeout++;
-        if (timeout > 200) /* exceed 1 ms */
+        timeout ++;
+        if (timeout > 200)
+        {
+            /* exceed 1 ms */
+            LOG_E("Timed out waiting for bus busy");
             return 1;
+        }
     }
 
     return 0;
 }
 
-/*
- * i2c_setaddress - Sets the target slave address
- * @i2c_addr:    target i2c address
- *
- * Sets the target slave address.
- */
-static void i2c_setaddress(struct i2c_regs *i2c, uint16_t i2c_addr)
+void dw_iic_set_reg_address(dw_iic_regs_t *iic_base, rt_uint32_t addr, uint8_t addr_len)
 {
-    /* Disable i2c */
-    i2c_enable(i2c, false);
-    mmio_write_32((uintptr_t)&i2c->ic_tar, i2c_addr);
-    /* Enable i2c */
-    i2c_enable(i2c, true);
-}
-
-
-static int i2c_xfer_init(struct i2c_regs *i2c, uint16_t chip, uint16_t addr, uint16_t alen)
-{
-    if (i2c_wait_for_bb(i2c))
-        return 1;
-
-    i2c_setaddress(i2c, chip);
-
-    while (alen) {
-        alen--;
+    while (addr_len)
+    {
+        addr_len --;
         /* high byte address going out first */
-        i2c_write_cmd_data(i2c, (addr >> (alen * 8)) & 0xff); // TODO
-        //mmio_write_32((uintptr_t)&i2c_base->ic_cmd_data, (addr >> (alen * 8)) & 0xff);
+        dw_iic_transmit_data(iic_base, (addr >> (addr_len * 8)) & 0xff);
     }
-    return 0;
 }
 
-static int i2c_xfer_finish(struct i2c_regs *i2c)
+static void dw_iic_set_target_address(dw_iic_regs_t *iic_base, rt_uint32_t address)
 {
-    uint16_t timeout = 0;
-    while (1) {
-        if ((mmio_read_32((uintptr_t)&i2c->ic_raw_intr_stat) & IC_STOP_DET)) {
-            mmio_read_32((uintptr_t)&i2c->ic_clr_stop_det);
+    rt_uint32_t i2c_status;
+    i2c_status = dw_iic_get_iic_status(iic_base);
+    dw_iic_disable(iic_base);
+    iic_base->IC_TAR = (iic_base->IC_TAR & ~0x3ff) | address; /* this register can be written only when the I2C is disabled*/
+
+    if (i2c_status == DW_IIC_EN)
+    {
+        dw_iic_enable(iic_base);
+    }
+}
+
+static int dw_iic_xfer_init(dw_iic_regs_t *iic_base, rt_uint32_t dev_addr)
+{
+    if (dw_iic_wait_for_bb(iic_base))
+        return -RT_ERROR;
+
+    dw_iic_set_target_address(iic_base, dev_addr);
+    dw_iic_enable(iic_base);
+
+    return RT_EOK;
+}
+
+static int dw_iic_xfer_finish(dw_iic_regs_t *iic_base)
+{
+    rt_uint32_t timeout = 0;
+
+    while (1)
+    {
+        if (iic_base->IC_RAW_INTR_STAT & DW_IIC_RAW_STOP_DET)
+        {
+            iic_base->IC_CLR_STOP_DET;
             break;
-        } else {
-            timeout++;
+        }
+        else
+        {
+            timeout ++;
             rt_hw_us_delay(5);
-            if (timeout > I2C_STOPDET_TO * 100) {
-                LOG_I("%s, tiemout\n", __func__);
+            if (timeout > 10000)
+            {
+                LOG_E("xfer finish tiemout");
                 break;
             }
         }
     }
 
-    if (i2c_wait_for_bb(i2c))
-        return 1;
+    if (dw_iic_wait_for_bb(iic_base))
+    {
+        return -RT_ERROR;
+    }
 
-    i2c_flush_rxfifo(i2c);
+    dw_iic_flush_rxfifo(iic_base);
 
-    return 0;
+    return RT_EOK;
 }
 
-/*
- * i2c_read - Read from i2c memory
- * @chip:    target i2c address
- * @addr:    address to read from
- * @alen:
- * @buffer:    buffer for read data
- * @len:    no of bytes to be read
- *
- * Read from i2c memory.
- */
-static int hal_i2c_read(uint8_t i2c_id, uint8_t dev, uint16_t addr, uint16_t alen, uint8_t *buffer, uint16_t len)
+static void dw_iic_set_slave_mode(dw_iic_regs_t *iic_base)
 {
-    unsigned int active = 0;
-    unsigned int time_count = 0;
-    struct i2c_regs *i2c;
-    int ret = 0;
+    rt_uint32_t i2c_status;
+    i2c_status = dw_iic_get_iic_status(iic_base);
+    dw_iic_disable(iic_base);
+    rt_uint32_t val = DW_IIC_CON_MASTER_EN | DW_IIC_CON_SLAVE_EN;
+    iic_base->IC_CON &= ~val;  ///< set 0 to disabled master mode; set 0 to enabled slave mode
 
-    i2c = get_i2c_base(i2c_id);
+    if (i2c_status == DW_IIC_EN)
+    {
+        dw_iic_enable(iic_base);
+    }
+}
 
-    i2c_enable(i2c, true);
+static void dw_iic_set_master_mode(dw_iic_regs_t *iic_base)
+{
+    rt_uint32_t i2c_status;
+    i2c_status = dw_iic_get_iic_status(iic_base);
+    dw_iic_disable(iic_base);
+    rt_uint32_t val = DW_IIC_CON_MASTER_EN | DW_IIC_CON_SLAVE_EN; ///< set 1 to enabled master mode; set 1 to disabled slave mode
+    iic_base->IC_CON |= val;
 
-    if (i2c_xfer_init(i2c, dev, addr, alen))
-        return 1;
+    if (i2c_status == DW_IIC_EN)
+    {
+        dw_iic_enable(iic_base);
+    }
+}
 
-    while (len) {
-        if (!active) {
-            /*
-             * Avoid writing to ic_cmd_data multiple times
-             * in case this loop spins too quickly and the
-             * ic_status RFNE bit isn't set after the first
-             * write. Subsequent writes to ic_cmd_data can
-             * trigger spurious i2c transfer.
-             */
-            i2c_write_cmd_data(i2c, (dev <<1) | BIT_I2C_CMD_DATA_READ_BIT | BIT_I2C_CMD_DATA_STOP_BIT);
-            //mmio_write_32((uintptr_t)&i2c_base->ic_cmd_data, (dev <<1) | BIT_I2C_CMD_DATA_READ_BIT | BIT_I2C_CMD_DATA_STOP_BIT);
-            active = 1;
+static rt_err_t dw_iic_recv(dw_iic_regs_t *iic_base, rt_uint32_t devaddr, rt_uint8_t *data, rt_uint32_t size, rt_uint32_t timeout)
+{
+    rt_err_t ret = RT_EOK;
+    rt_uint32_t timecount = 0;
+
+    RT_ASSERT(data != RT_NULL);
+
+    if (dw_iic_xfer_init(iic_base, devaddr))
+    {
+        ret = -RT_EIO;
+        goto ERR_EXIT;
+    }
+
+    timecount = timeout + rt_tick_get_millisecond();
+
+    for (int i = 0 ; i < size; i ++)
+    {
+        if(i != (size - 1))
+        {
+            dw_iic_transmit_data(iic_base, DW_IIC_DATA_CMD);
         }
-
-        if (mmio_read_32((uintptr_t)&i2c->ic_raw_intr_stat) & BIT_I2C_INT_RX_FULL) {
-            *buffer++ = (uint8_t)mmio_read_32((uintptr_t)&i2c->ic_cmd_data);
-            len--;
-            time_count = 0;
-            active = 0;
-        }
-        else {
-            rt_hw_us_delay(5);
-            time_count++;
-            if (time_count  >= I2C_BYTE_TO * 100)
-                return 1;
+        else
+        {
+            dw_iic_transmit_data(iic_base, DW_IIC_DATA_CMD | DW_IIC_DATA_STOP);
         }
     }
 
-    ret = i2c_xfer_finish(i2c);
-    i2c_disable(i2c);
+    while (size > 0)
+    {
+        if (iic_base->IC_STATUS & DW_IIC_RXFIFO_NOT_EMPTY_STATE)
+        {
+            *data ++ = dw_iic_receive_data(iic_base);
+            -- size;
+        }
+        else if (rt_tick_get_millisecond() >= timecount)
+        {
+            LOG_E("Timed out read ic_cmd_data");
+            ret = -RT_ETIMEOUT;
+            goto ERR_EXIT;
+        }
+    }
+
+    if (dw_iic_xfer_finish(iic_base))
+    {
+        ret = -RT_EIO;
+        goto ERR_EXIT;
+    }
+
+ERR_EXIT:
+    dw_iic_disable(iic_base);
 
     return ret;
 }
 
-/*
- * i2c_write - Write to i2c memory
- * @chip:    target i2c address
- * @addr:    address to read from
- * @alen:
- * @buffer:    buffer for read data
- * @len:    no of bytes to be read
- *
- * Write to i2c memory.
- */
-
-static int hal_i2c_write(uint8_t i2c_id, uint8_t dev, uint16_t addr, uint16_t alen, uint8_t *buffer, uint16_t len)
+static rt_err_t dw_iic_send(dw_iic_regs_t *iic_base, rt_uint32_t devaddr, const uint8_t *data, rt_uint32_t size, rt_uint32_t timeout)
 {
-    struct i2c_regs *i2c;
-    int ret = 0;
-    i2c = get_i2c_base(i2c_id);
+    rt_err_t ret = RT_EOK;
+    rt_uint32_t timecount;
 
-    i2c_enable(i2c, true);
+    RT_ASSERT(data != RT_NULL);
 
-    if (i2c_xfer_init(i2c, dev, addr, alen))
-        return 1;
+    if (dw_iic_xfer_init(iic_base, devaddr))
+    {
+        ret = -RT_EIO;
+        goto ERR_EXIT;
+    }
 
-    while (len) {
-        if (i2c->ic_status & IC_STATUS_TFNF) {
-            if (--len == 0) {
-                i2c_write_cmd_data(i2c, *buffer | IC_STOP);
-                //mmio_write_32((uintptr_t)&i2c_base->ic_cmd_data, *buffer | IC_STOP);
-            } else {
-                i2c_write_cmd_data(i2c, *buffer);
-                //mmio_write_32((uintptr_t)&i2c_base->ic_cmd_data, *buffer);
+    timecount = timeout + rt_tick_get_millisecond();
+
+    while (size > 0)
+    {
+        if (iic_base->IC_STATUS & DW_IIC_TXFIFO_NOT_FULL_STATE)
+        {
+            if (-- size == 0)
+            {
+                dw_iic_transmit_data(iic_base, *data ++ | DW_IIC_DATA_STOP);
             }
-            buffer++;
-        } else
-            LOG_I("len=%d, ic status is not TFNF\n", len);
+            else
+            {
+                dw_iic_transmit_data(iic_base, *data ++);
+            }
+        }
+        else if (rt_tick_get_millisecond() >= timecount)
+        {
+            LOG_D("ic status is not TFNF\n");
+            ret = -RT_ETIMEOUT;
+            goto ERR_EXIT;
+        }
     }
-    ret = i2c_xfer_finish(i2c);
-    i2c_disable(i2c);
+
+    LOG_D("dw_iic_xfer_finish");
+
+    if (dw_iic_xfer_finish(iic_base))
+    {
+        ret = -RT_EIO;
+        goto ERR_EXIT;
+    }
+
+ERR_EXIT:
+    dw_iic_disable(iic_base);
+
     return ret;
 }
 
-/*
- * hal_i2c_set_bus_speed - Set the i2c speed
- * @speed:    required i2c speed
- *
- * Set the i2c speed.
- */
-static void i2c_set_bus_speed(struct i2c_regs *i2c, unsigned int speed)
-{
-    unsigned int cntl;
-    unsigned int hcnt, lcnt;
-    int i2c_spd;
-
-    if (speed > I2C_FAST_SPEED)
-        i2c_spd = IC_SPEED_MODE_MAX;
-    else if ((speed <= I2C_FAST_SPEED) && (speed > I2C_STANDARD_SPEED))
-        i2c_spd = IC_SPEED_MODE_FAST;
-    else
-        i2c_spd = IC_SPEED_MODE_STANDARD;
-
-    /* to set speed cltr must be disabled */
-    i2c_enable(i2c, false);
-
-    cntl = (mmio_read_32((uintptr_t)&i2c->ic_con) & (~IC_CON_SPD_MSK));
-
-    switch (i2c_spd) {
-    case IC_SPEED_MODE_MAX:
-        cntl |= IC_CON_SPD_HS;
-            //hcnt = (u16)(((IC_CLK * MIN_HS100pF_SCL_HIGHTIME) / 1000) - 8);
-            /* 7 = 6+1 == MIN LEN +IC_FS_SPKLEN */
-            //lcnt = (u16)(((IC_CLK * MIN_HS100pF_SCL_LOWTIME) / 1000) - 1);
-            hcnt = 6;
-            lcnt = 8;
-
-        mmio_write_32((uintptr_t)&i2c->ic_hs_scl_hcnt, hcnt);
-        mmio_write_32((uintptr_t)&i2c->ic_hs_scl_lcnt, lcnt);
-        break;
-
-    case IC_SPEED_MODE_STANDARD:
-        cntl |= IC_CON_SPD_SS;
-
-        hcnt = (uint16_t)(((IC_CLK * MIN_SS_SCL_HIGHTIME) / 1000) - 7);
-        lcnt = (uint16_t)(((IC_CLK * MIN_SS_SCL_LOWTIME) / 1000) - 1);
-
-        mmio_write_32((uintptr_t)&i2c->ic_ss_scl_hcnt, hcnt);
-        mmio_write_32((uintptr_t)&i2c->ic_ss_scl_lcnt, lcnt);
-        break;
-
-    case IC_SPEED_MODE_FAST:
-    default:
-        cntl |= IC_CON_SPD_FS;
-        hcnt = (uint16_t)(((IC_CLK * MIN_FS_SCL_HIGHTIME) / 1000) - 7);
-        lcnt = (uint16_t)(((IC_CLK * MIN_FS_SCL_LOWTIME) / 1000) - 1);
-
-        mmio_write_32((uintptr_t)&i2c->ic_fs_scl_hcnt, hcnt);
-        mmio_write_32((uintptr_t)&i2c->ic_fs_scl_lcnt, lcnt);
-        break;
-    }
-
-    mmio_write_32((uintptr_t)&i2c->ic_con, cntl);
-
-    /* Enable back i2c now speed set */
-    i2c_enable(i2c, true);
-}
-
-/*
- * __hal_i2c_init - Init function
- * @speed:    required i2c speed
- * @slaveaddr:    slave address for the device
- *
- * Initialization function.
- */
-static void hal_i2c_init(uint8_t i2c_id)
-{
-    struct i2c_regs *i2c;
-    uint32_t i2c_intr;
-
-    LOG_I("%s, i2c-%d\n", __func__, i2c_id);
-    /* Disable i2c */
-    //Need to acquire lock here
-
-    i2c = get_i2c_base(i2c_id);
-    i2c_intr = get_i2c_intr(i2c_id);
-
-    // request_irq(i2c_intr, i2c_dw_isr, 0, "IC2_INTR int", &dw_i2c[i2c_id]);
-
-    i2c_enable(i2c, false);
-    mmio_write_32((uintptr_t)&i2c->ic_con, (IC_CON_SD | IC_CON_SPD_FS | IC_CON_MM | IC_CON_RE));
-    mmio_write_32((uintptr_t)&i2c->ic_rx_tl, IC_RX_TL);
-    mmio_write_32((uintptr_t)&i2c->ic_tx_tl, IC_TX_TL);
-    mmio_write_32((uintptr_t)&i2c->ic_intr_mask, 0x0);
-    i2c_set_bus_speed(i2c, I2C_SPEED);
-    //mmio_write_32((uintptr_t)&i2c->ic_sar, slaveaddr);
-    /* Enable i2c */
-    i2c_enable(i2c, false);
-
-    //Need to release lock here
-}
-
-static rt_ssize_t _master_xfer(struct rt_i2c_bus_device *bus,
-                             struct rt_i2c_msg msgs[],
-                             rt_uint32_t num)
+static rt_ssize_t dw_iic_master_xfer(struct rt_i2c_bus_device *bus, struct rt_i2c_msg msgs[], rt_uint32_t num)
 {
     struct rt_i2c_msg *msg;
     rt_uint32_t i;
     rt_ssize_t ret = -RT_ERROR;
+    rt_uint32_t timeout;
 
-    struct _i2c_bus *i2c = (struct _i2c_bus *)bus;
+    struct dw_iic_bus *i2c_bus = (struct dw_iic_bus *)bus;
+    dw_iic_regs_t *iic_base = i2c_bus->iic_base;
 
     for (i = 0; i < num; i++)
     {
         msg = &msgs[i];
 
-        if (msg->flags & RT_I2C_RD)
+        if (msg->flags & RT_I2C_ADDR_10BIT)
         {
-            hal_i2c_read(i2c->i2c_id, msg->addr, RT_NULL, 1, msg->buf, msg->len);
+            dw_iic_set_master_10bit_addr_mode(iic_base);
+            dw_iic_set_slave_10bit_addr_mode(iic_base);
         }
         else
         {
-            hal_i2c_write(i2c->i2c_id, msg->addr, RT_NULL, 1, msg->buf, msg->len);
+            dw_iic_set_master_7bit_addr_mode(iic_base);
+            dw_iic_set_slave_7bit_addr_mode(iic_base);
+        }
+
+        if (msg->flags & RT_I2C_RD)
+        {
+            timeout = 1000;
+            ret = dw_iic_recv(iic_base, msg->addr, msg->buf, msg->len, timeout);
+            if (ret != RT_EOK)
+                LOG_E("dw_iic_recv error: %d", ret);
+        }
+        else
+        {
+            timeout = 100;
+            ret = dw_iic_send(iic_base, msg->addr, msg->buf, msg->len, timeout);
+            if (ret != RT_EOK)
+                LOG_E("dw_iic_send error: %d", ret);
         }
     }
 
-    return ret;
+    return ret == RT_EOK ? num : ret;
 }
 
-static void rt_hw_i2c_isr(int irqno, void *param)
+static void dw_iic_set_transfer_speed_high(dw_iic_regs_t *iic_base)
 {
-    uint32_t stat, enabled;
-    struct i2c_regs *i2c = (struct i2c_regs *)param;
+    rt_uint32_t speed_config = iic_base->IC_CON;
+    speed_config &= ~(DW_IIC_CON_SPEEDL_EN | DW_IIC_CON_SPEEDH_EN);
+    speed_config |= DW_IIC_CON_SPEEDL_EN | DW_IIC_CON_SPEEDH_EN;
+    iic_base->IC_CON = speed_config;
+}
 
-    enabled = mmio_read_32((uintptr_t)&i2c->ic_enable);
-    stat = mmio_read_32((uintptr_t)&i2c->ic_intr_stat);
+static void dw_iic_set_transfer_speed_fast(dw_iic_regs_t *iic_base)
+{
+    rt_uint32_t speed_config = iic_base->IC_CON;
+    speed_config &= ~(DW_IIC_CON_SPEEDL_EN | DW_IIC_CON_SPEEDH_EN);
+    speed_config |= DW_IIC_CON_SPEEDH_EN;
+    iic_base->IC_CON = speed_config;
+}
 
-    LOG_I("i2c interrupt stat: 0x%08x", stat);
+static void dw_iic_set_transfer_speed_standard(dw_iic_regs_t *iic_base)
+{
+    rt_uint32_t speed_config = iic_base->IC_CON;
+    speed_config &= ~(DW_IIC_CON_SPEEDL_EN | DW_IIC_CON_SPEEDH_EN);
+    speed_config |= DW_IIC_CON_SPEEDL_EN;
+    iic_base->IC_CON = speed_config;
+}
+
+static rt_err_t dw_iic_bus_control(struct rt_i2c_bus_device *bus, int cmd, void *args)
+{
+    struct dw_iic_bus *i2c_bus = (struct dw_iic_bus *)bus;
+
+    RT_ASSERT(bus != RT_NULL);
+
+    dw_iic_regs_t *iic_base = i2c_bus->iic_base;
+
+    switch (cmd)
+    {
+        case RT_I2C_DEV_CTRL_CLK:
+        {
+            rt_uint32_t speed = *(rt_uint32_t *)args;
+            if (speed == 100 * 1000)
+            {
+                dw_iic_set_transfer_speed_standard(iic_base);
+                dw_iic_set_standard_scl_hcnt(iic_base, (((IC_CLK * 4000U) / 1000U) - 7U));
+                dw_iic_set_standard_scl_lcnt(iic_base, (((IC_CLK * 4700) / 1000U) - 1U));
+            }
+            else if (speed == 400 * 1000)
+            {
+                dw_iic_set_transfer_speed_fast(iic_base);
+                dw_iic_set_fast_scl_hcnt(iic_base, (((IC_CLK * 600U) / 1000U) - 7U));
+                dw_iic_set_fast_scl_lcnt(iic_base, (((IC_CLK * 1300U) / 1000U) - 1U));
+            }
+            else if (speed == 4 * 1000 * 1000)
+            {
+                dw_iic_set_transfer_speed_high(iic_base);
+                dw_iic_set_high_scl_hcnt(iic_base, 6U);
+                dw_iic_set_high_scl_lcnt(iic_base, 8U);
+            }
+            else
+            {
+                return -RT_EIO;
+            }
+        }
+        break;
+
+        case RT_I2C_DEV_CTRL_10BIT:
+            dw_iic_set_master_10bit_addr_mode(iic_base);
+            dw_iic_set_slave_10bit_addr_mode(iic_base);
+        break;
+
+        default:
+            return -RT_EIO;
+        break;
+    }
+
+    return RT_EOK;
 }
 
 static const struct rt_i2c_bus_device_ops i2c_ops =
 {
-    .master_xfer      = _master_xfer,
+    .master_xfer      = dw_iic_master_xfer,
     .slave_xfer       = RT_NULL,
-    .i2c_bus_control  = RT_NULL
+    .i2c_bus_control  = dw_iic_bus_control,
 };
 
+static void dw_iic_init(dw_iic_regs_t *iic_base)
+{
+    dw_iic_disable(iic_base);
+    dw_iic_clear_all_irq(iic_base);
+    dw_iic_disable_all_irq(iic_base);
+
+    iic_base->IC_SAR = 0;
+
+    dw_iic_set_receive_fifo_threshold(iic_base, 0x1);
+    dw_iic_set_transmit_fifo_threshold(iic_base, 0x0);
+    dw_iic_set_sda_hold_time(iic_base, 0x1e);
+
+    dw_iic_set_master_mode(iic_base);
+    dw_iic_enable_restart(iic_base);
+
+    dw_iic_set_transfer_speed_standard(iic_base);
+    dw_iic_set_standard_scl_hcnt(iic_base, (((IC_CLK * 4000U) / 1000U) - 7U));
+    dw_iic_set_standard_scl_lcnt(iic_base, (((IC_CLK * 4700) / 1000U) - 1U));
+}
 
 #if defined(BOARD_TYPE_MILKV_DUO) || defined(BOARD_TYPE_MILKV_DUO_SPINOR)
 
@@ -531,7 +489,7 @@ static const char *pinname_whitelist_i2c4_sda[] = {
 #elif defined(BOARD_TYPE_MILKV_DUO256M) || defined(BOARD_TYPE_MILKV_DUO256M_SPINOR)
 
 #ifdef BSP_USING_I2C0
-// I2C0 is not ALLOWED for Duo
+// I2C0 is not ALLOWED for Duo256
 static const char *pinname_whitelist_i2c0_scl[] = {
     NULL,
 };
@@ -576,7 +534,7 @@ static const char *pinname_whitelist_i2c3_sda[] = {
 #endif
 
 #ifdef BSP_USING_I2C4
-// I2C4 is not ALLOWED for Duo
+// I2C4 is not ALLOWED for Duo256
 static const char *pinname_whitelist_i2c4_scl[] = {
     NULL,
 };
@@ -623,9 +581,9 @@ int rt_hw_i2c_init(void)
 
     rt_hw_i2c_pinmux_config();
 
-    for (rt_size_t i = 0; i < sizeof(_i2c_obj) / sizeof(struct _i2c_bus); i++)
+    for (rt_size_t i = 0; i < sizeof(_i2c_obj) / sizeof(struct dw_iic_bus); i++)
     {
-        hal_i2c_init(_i2c_obj->i2c_id);
+        dw_iic_init(_i2c_obj->iic_base);
 
         _i2c_obj[i].parent.ops = &i2c_ops;
 
@@ -639,10 +597,6 @@ int rt_hw_i2c_init(void)
             LOG_E("%s register failed", _i2c_obj[i].device_name);
             result = -RT_ERROR;
         }
-
-        uint32_t irqno = get_i2c_intr(_i2c_obj[i].i2c_id);
-        struct i2c_regs *_i2c = get_i2c_base(_i2c_obj[i].i2c_id);
-        rt_hw_interrupt_install(irqno, rt_hw_i2c_isr, _i2c, _i2c_obj[i].device_name);
     }
 
     return result;
