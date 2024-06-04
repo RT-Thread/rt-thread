@@ -476,36 +476,4 @@ menu "On-chip Peripheral Drivers"
         default n
 endmenu
 
-menu "Segger SystemView Config"
-    config BSP_USING_SYSTEMVIEW
-        select RT_USING_SYSTEMVIEW
-        select RT_USING_LEGACY
-        bool "Enable Segger SystemView"
-        default n
-
-    if BSP_USING_SYSTEMVIEW
-        menuconfig BSP_SYSTEMVIEW_RTT_SECTION
-            bool "enable SystemView RTT section"
-            default y
-            if BSP_SYSTEMVIEW_RTT_SECTION
-                config SEGGER_RTT_SECTION
-                    string "segger rtt section"
-                    default ".noncacheable.bss"
-                config SEGGER_RTT_BUFFER_SECTION
-                    string "segger rtt buffer section"
-                    default ".noncacheable.bss"
-                config SEGGER_SYSVIEW_SECTION
-                    string "segger sysview section"
-                    default ".noncacheable.bss"
-            endif
-        source "$RTT_DIR/../libraries/misc/systemview/Kconfig"
-    endif
-endmenu
-
-menu "Hpmicro Interrupt Config"
-    config HPM_USING_VECTOR_PREEMPTED_MODE
-        bool "Enable Vector and Preempted Mode"
-        default n
-endmenu
-
 endmenu

@@ -127,16 +127,6 @@ menu "On-chip Peripheral Drivers"
        bool "Enable RTC"
        default n
 
-    menuconfig BSP_USING_SDXC
-        bool "Enable SDXC"
-        default n
-        select RT_USING_SDIO if BSP_USING_SDXC
-        if BSP_USING_SDXC
-            config BSP_USING_SDXC0
-                bool "Enable SDXC0"
-                default n
-        endif
-
     menuconfig BSP_USING_GPTMR
         bool "Enable GPTMR"
         default n
@@ -147,6 +137,9 @@ menu "On-chip Peripheral Drivers"
                 default n
             config BSP_USING_GPTMR2
                 bool "Enable GPTMR2"
+                default n
+            config BSP_USING_GPTMR3
+                bool "Enable GPTMR3"
                 default n
         endif
 
@@ -247,38 +240,6 @@ menu "On-chip Peripheral Drivers"
                     default n
             endif
         endif
-endmenu
-
-menu "Segger SystemView Config"
-    config BSP_USING_SYSTEMVIEW
-        select RT_USING_SYSTEMVIEW
-        select RT_USING_LEGACY
-        bool "Enable Segger SystemView"
-        default n
-
-    if BSP_USING_SYSTEMVIEW
-        menuconfig BSP_SYSTEMVIEW_RTT_SECTION
-            bool "enable SystemView RTT section"
-            default y
-            if BSP_SYSTEMVIEW_RTT_SECTION
-                config SEGGER_RTT_SECTION
-                    string "segger rtt section"
-                    default ".noncacheable.bss"
-                config SEGGER_RTT_BUFFER_SECTION
-                    string "segger rtt buffer section"
-                    default ".noncacheable.bss"
-                config SEGGER_SYSVIEW_SECTION
-                    string "segger sysview section"
-                    default ".noncacheable.bss"
-            endif
-        source "$RTT_DIR/../libraries/misc/systemview/Kconfig"
-    endif
-endmenu
-
-menu "Hpmicro Interrupt Config"
-    config HPM_USING_VECTOR_PREEMPTED_MODE
-        bool "Enable Vector and Preempted Mode"
-        default n
 endmenu
 
 endmenu
