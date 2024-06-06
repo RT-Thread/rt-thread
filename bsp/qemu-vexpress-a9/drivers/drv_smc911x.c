@@ -14,7 +14,7 @@
 #include <automac.h>
 #include <netif/ethernetif.h>
 #include <lwipopts.h>
-
+#include "delay.h"
 #include "mmu.h"
 #include "drv_smc911x.h"
 
