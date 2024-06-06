@@ -114,14 +114,17 @@ unsigned long rt_ktime_hrtimer_getfrq(void);
 unsigned long rt_ktime_hrtimer_getcnt(void);
 
 /**
- * @brief set hrtimer timeout, when timeout, the timer callback will call timeout
+ * @brief set hrtimer interrupt timeout count (cnt), you should re-implemented it in hrtimer device driver
  *
  * @param cnt: hrtimer requires a timing cnt value
- * @param timeout: timeout callback
- * @param param: parameter
  * @return rt_err_t
  */
-rt_err_t rt_ktime_hrtimer_settimeout(unsigned long cnt, void (*timeout)(void *param), void *param);
+rt_err_t rt_ktime_hrtimer_settimeout(unsigned long cnt);
+
+/**
+ * @brief called in hrtimer device driver isr routinue, it will process the timeouts
+ */
+void     rt_ktime_hrtimer_process(void);
 
 void     rt_ktime_hrtimer_init(rt_ktime_hrtimer_t timer,
                                const char        *name,
@@ -143,6 +146,7 @@ rt_inline void rt_ktime_hrtimer_keep_errno(rt_ktime_hrtimer_t timer, rt_err_t er
 
 void rt_ktime_hrtimer_delay_init(struct rt_ktime_hrtimer *timer);
 void rt_ktime_hrtimer_delay_detach(struct rt_ktime_hrtimer *timer);
+void rt_ktime_hrtimer_process(void);
 
 /**
  * @brief sleep by the cputimer cnt value
