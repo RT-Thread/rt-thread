@@ -206,13 +206,16 @@ rt_inline rt_size_t lwp_user_mm_flag_to_kernel(int flags)
     return k_flags;
 }
 
+#ifndef MMU_MAP_U_ROCB
+#define MMU_MAP_U_ROCB MMU_MAP_U_RWCB
+#endif /* MMU_MAP_U_ROCB */
+
 rt_inline rt_size_t lwp_user_mm_attr_to_kernel(int prot)
 {
     RT_UNUSED(prot);
 
     rt_size_t k_attr = 0;
 
-#ifdef IMPL_MPROTECT
     if ((prot & PROT_EXEC) || (prot & PROT_WRITE) ||
         ((prot & PROT_READ) && (prot & PROT_WRITE)))
         k_attr = MMU_MAP_U_RWCB;
@@ -220,9 +223,6 @@ rt_inline rt_size_t lwp_user_mm_attr_to_kernel(int prot)
         k_attr = MMU_MAP_K_RWCB;
     else
         k_attr = MMU_MAP_U_ROCB;
-#else
-    k_attr = MMU_MAP_U_RWCB;
-#endif /* IMPL_MPROTECT */
 
     return k_attr;
 }

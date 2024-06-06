@@ -116,6 +116,10 @@ rt_inline size_t rt_hw_mmu_attr_rm_perm(size_t attr, rt_base_t prot)
         case RT_HW_MMU_PROT_WRITE | RT_HW_MMU_PROT_USER:
             attr &= ~PTE_W;
             break;
+        /* remove write permission for kernel */
+        case RT_HW_MMU_PROT_WRITE | RT_HW_MMU_PROT_KERNEL:
+            attr &= ~PTE_W;
+            break;
         default:
             RT_ASSERT(0);
     }
@@ -135,7 +139,7 @@ rt_inline size_t rt_hw_mmu_attr_add_perm(size_t attr, rt_base_t prot)
     {
         /* add write permission for user */
         case RT_HW_MMU_PROT_WRITE | RT_HW_MMU_PROT_USER:
-            attr |= PTE_W;
+            attr |= (PTE_R | PTE_W | PTE_U);
             break;
         default:
             RT_ASSERT(0);
@@ -153,14 +157,25 @@ rt_inline size_t rt_hw_mmu_attr_add_perm(size_t attr, rt_base_t prot)
 rt_inline rt_bool_t rt_hw_mmu_attr_test_perm(size_t attr, rt_base_t prot)
 {
     rt_bool_t rc = 0;
-    switch (prot)
+    switch (prot & ~RT_HW_MMU_PROT_USER)
     {
         /* test write permission for user */
-        case RT_HW_MMU_PROT_WRITE | RT_HW_MMU_PROT_USER:
-            rc = !!(attr & PTE_W);
+        case RT_HW_MMU_PROT_WRITE:
+            rc = ((attr & PTE_W) && (attr & PTE_R));
+            break;
+        case RT_HW_MMU_PROT_READ:
+            rc = !!(attr & PTE_R);
+            break;
+        case RT_HW_MMU_PROT_EXECUTE:
+            rc = !!(attr & PTE_X);
             break;
         default:
             RT_ASSERT(0);
+    }
+
+    if (rc && (prot & RT_HW_MMU_PROT_USER))
+    {
+        rc = !!(attr & PTE_U);
     }
     return rc;
 }

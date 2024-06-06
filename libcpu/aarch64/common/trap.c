@@ -75,7 +75,7 @@ rt_inline int _get_type(unsigned long esr)
         case 0xd:
         case 0xe:
         case 0xf:
-            ret = MM_FAULT_TYPE_ACCESS_FAULT;
+            ret = MM_FAULT_TYPE_RWX_PERM;
             break;
         case 0x8:
         case 0x9:
@@ -96,6 +96,7 @@ rt_inline long _irq_is_disable(long cpsr)
 static int user_fault_fixable(unsigned long esr, struct rt_hw_exp_stack *regs)
 {
     rt_ubase_t level;
+    rt_bool_t is_write = esr & 0x40;
     unsigned char ec;
     void *dfar;
     int ret = 0;
@@ -114,7 +115,7 @@ static int user_fault_fixable(unsigned long esr, struct rt_hw_exp_stack *regs)
     case 0x21:
     case 0x24:
     case 0x25:
-        fault_op = MM_FAULT_OP_WRITE;
+        fault_op = is_write ? MM_FAULT_OP_WRITE : MM_FAULT_OP_READ;
         fault_type = _get_type(esr);
         break;
     default:

@@ -1743,7 +1743,7 @@ rt_err_t rt_aspace_page_put(rt_aspace_t aspace, void *page_va, void *buffer)
                     RDWR_LOCK(aspace);
                     struct rt_aspace_fault_msg msg;
                     msg.fault_op = MM_FAULT_OP_WRITE;
-                    msg.fault_type = MM_FAULT_TYPE_ACCESS_FAULT;
+                    msg.fault_type = MM_FAULT_TYPE_GENERIC_MMU;
                     msg.fault_vaddr = page_va;
                     rc = rt_varea_fix_private_locked(varea, rt_hw_mmu_v2p(aspace, page_va),
                                                     &msg, RT_TRUE);
