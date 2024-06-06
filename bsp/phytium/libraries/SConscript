@@ -108,6 +108,10 @@ if GetDepend(['BSP_USING_SDIF']):
 if GetDepend(['BSP_USING_GPIO']):
     src += Glob(PHYTIUM_SDK_DIR+'/drivers/pin/fgpio/*.c') + Glob(PORT_DRV_DIR+'/drv_gpio.c')
     path += [PHYTIUM_SDK_DIR + '/drivers/pin/fgpio/']
+    if GetDepend(['TARGET_E2000']):
+        src +=  Glob(PHYTIUM_SDK_DIR+'/soc/e2000/fgpio_table.c')
+    if GetDepend(['TARGET_PHYTIUMPI']):
+        src +=  Glob(PHYTIUM_SDK_DIR+'/soc/phytiumpi/fgpio_table.c')
 
 ## pwm
 if GetDepend(['BSP_USING_PWM']):

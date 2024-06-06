@@ -178,13 +178,6 @@ int FPsciAffinityInfo(unsigned long target_affinity, u32 lowest_affinity_level)
     struct FSmcccRes res;
     FASSERT((fpsci_ringt_bit_flg & (FPSCI_AFFINITY_INFO_AARCH32_BIT | FPSCI_AFFINITY_INFO_AARCH64_BIT)) != 0);
     FASSERT((*f_psci_invoke));
-    unsigned long cpu_on_id  ;
-
-#if defined(FAARCH64_USE)
-    cpu_on_id = FPSCI_CPU_ON_AARCH64 ;
-#else
-    cpu_on_id = FPSCI_CPU_ON_AARCH32;
-#endif
 
     (*f_psci_invoke)(FPSCI_FAFFINITY_INFO_AARCH32, target_affinity, lowest_affinity_level, 0, 0, 0, 0, 0, &res);
     return res.a0;

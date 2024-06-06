@@ -28,6 +28,7 @@
 
 #ifdef RT_USING_SMP
 #include <interrupt.h>
+#include "phytium_interrupt.h"
 
 #if defined(TARGET_ARMV8_AARCH64)
     #include "psci.h"
