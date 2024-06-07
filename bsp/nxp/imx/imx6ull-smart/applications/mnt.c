@@ -22,7 +22,7 @@ int mnt_init(void)
     int part_id = 0;
     if (dfs_mount("sd0", "/", "elm", 0, (void *)part_id) != 0)
     {
-         if (dfs_mount("emmc0", "/", "elm", 0, (void *)part_id) != 0)
+        if (dfs_mount("emmc0", "/", "elm", 0, (void *)part_id) != 0)
         {
             rt_kprintf("Dir / mount failed!\n");
             return -1;
