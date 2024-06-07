@@ -62,7 +62,7 @@ static void _check_fault(struct rt_hw_exp_stack *regs, uint32_t pc_adj, char *in
 rt_inline int _get_type(unsigned long esr)
 {
     int ret;
-    int fsc = ARM64_ABORT_FETCH_FSC(esr);
+    int fsc = ARM64_ESR_EXTRACT_FSC(esr);
     switch (fsc)
     {
         case ARM64_FSC_TRANSLATION_FAULT_LEVEL_0:
@@ -101,7 +101,7 @@ static int user_fault_fixable(unsigned long esr, struct rt_hw_exp_stack *regs)
     struct rt_lwp *lwp;
     void *dfar;
     int ret = 0;
-    unsigned char ec = ARM64_ABORT_FETCH_EC(esr);
+    unsigned char ec = ARM64_ESR_EXTRACT_EC(esr);
     rt_bool_t is_write = ARM64_ABORT_WNR(esr);
 
     switch (ec)

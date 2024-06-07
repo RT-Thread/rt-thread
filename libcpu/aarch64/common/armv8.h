@@ -150,9 +150,9 @@ void rt_hw_set_elx_env(void);
 void rt_hw_set_current_vbar(rt_ubase_t addr);
 
 /* ESR:generic */
-#define ARM64_ABORT_WNR(esr) ((esr) & 0x40)
-#define ARM64_ABORT_FETCH_EC(esr) ((unsigned char)(((esr) >> 26) & 0x3fU))
-#define ARM64_ABORT_FETCH_FSC(esr) ((esr) & 0x3f)
+#define ARM64_ABORT_WNR(esr)        ((esr) & 0x40)
+#define ARM64_ESR_EXTRACT_EC(esr)   ((((esr) >> 26) & 0x3fU))
+#define ARM64_ESR_EXTRACT_FSC(esr)  ((esr) & 0x3f)
 
 /* ESR:EC */
 #define ARM64_EC_INST_ABORT_FROM_LO_EXCEPTION   (0b100000)
