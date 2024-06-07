@@ -62,26 +62,26 @@ static void _check_fault(struct rt_hw_exp_stack *regs, uint32_t pc_adj, char *in
 rt_inline int _get_type(unsigned long esr)
 {
     int ret;
-    int fsc = esr & 0x3f;
+    int fsc = ARM64_ESR_EXTRACT_FSC(esr);
     switch (fsc)
     {
-        case 0x4:
-        case 0x5:
-        case 0x6:
-        case 0x7:
+        case ARM64_FSC_TRANSLATION_FAULT_LEVEL_0:
+        case ARM64_FSC_TRANSLATION_FAULT_LEVEL_1:
+        case ARM64_FSC_TRANSLATION_FAULT_LEVEL_2:
+        case ARM64_FSC_TRANSLATION_FAULT_LEVEL_3:
             ret = MM_FAULT_TYPE_PAGE_FAULT;
             break;
-        case 0xc:
-        case 0xd:
-        case 0xe:
-        case 0xf:
-            ret = MM_FAULT_TYPE_ACCESS_FAULT;
+        case ARM64_FSC_PERMISSION_FAULT_LEVEL_0:
+        case ARM64_FSC_PERMISSION_FAULT_LEVEL_1:
+        case ARM64_FSC_PERMISSION_FAULT_LEVEL_2:
+        case ARM64_FSC_PERMISSION_FAULT_LEVEL_3:
+            ret = MM_FAULT_TYPE_RWX_PERM;
             break;
-        case 0x8:
-        case 0x9:
-        case 0xa:
-        case 0xb:
-            /* access flag fault */
+        case ARM64_FSC_ACCESS_FLAG_FAULT_LEVEL_0:
+        case ARM64_FSC_ACCESS_FLAG_FAULT_LEVEL_1:
+        case ARM64_FSC_ACCESS_FLAG_FAULT_LEVEL_2:
+        case ARM64_FSC_ACCESS_FLAG_FAULT_LEVEL_3:
+            /* access flag fault, not handle currently */
         default:
             ret = MM_FAULT_TYPE_GENERIC;
     }
@@ -96,28 +96,28 @@ rt_inline long _irq_is_disable(long cpsr)
 static int user_fault_fixable(unsigned long esr, struct rt_hw_exp_stack *regs)
 {
     rt_ubase_t level;
-    unsigned char ec;
-    void *dfar;
-    int ret = 0;
-
-    ec = (unsigned char)((esr >> 26) & 0x3fU);
     enum rt_mm_fault_op fault_op;
     enum rt_mm_fault_type fault_type;
     struct rt_lwp *lwp;
+    void *dfar;
+    int ret = 0;
+    unsigned char ec = ARM64_ESR_EXTRACT_EC(esr);
+    rt_bool_t is_write = ARM64_ABORT_WNR(esr);
 
     switch (ec)
     {
-    case 0x20:
+    case ARM64_EC_INST_ABORT_FROM_LO_EXCEPTION:
         fault_op = MM_FAULT_OP_EXECUTE;
         fault_type = _get_type(esr);
         break;
-    case 0x21:
-    case 0x24:
-    case 0x25:
-        fault_op = MM_FAULT_OP_WRITE;
+    case ARM64_EC_INST_ABORT_WITHOUT_A_CHANGE:
+    case ARM64_EC_DATA_ABORT_FROM_LO_EXCEPTION:
+    case ARM64_EC_DATA_ABORT_WITHOUT_A_CHANGE:
+        fault_op = is_write ? MM_FAULT_OP_WRITE : MM_FAULT_OP_READ;
         fault_type = _get_type(esr);
         break;
     default:
+        /* non-fixable */
         fault_op = 0;
         break;
     }
