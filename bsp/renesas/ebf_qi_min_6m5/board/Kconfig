@@ -458,6 +458,52 @@ menu "Hardware Drivers Config"
                     default n
             endif
 
+        menuconfig BSP_USING_PWM
+            bool "Enable PWM"
+            default n
+            select RT_USING_PWM
+            if BSP_USING_PWM
+                config BSP_USING_PWM0
+                    bool "Enable GPT0 (32-Bits) output PWM"
+                    default n
+
+                config BSP_USING_PWM1
+                    bool "Enable GPT1 (32-Bits) output PWM"
+                    default n
+
+                config BSP_USING_PWM2
+                    bool "Enable GPT2 (32-Bits) output PWM"
+                    default n
+
+                config BSP_USING_PWM3
+                    bool "Enable GPT3 (32-Bits) output PWM"
+                    default n
+
+                config BSP_USING_PWM4
+                    bool "Enable GPT4 (16-Bits) output PWM"
+                    default n
+
+                config BSP_USING_PWM5
+                    bool "Enable GPT5 (16-Bits) output PWM"
+                    default n
+
+                config BSP_USING_PWM6
+                    bool "Enable GPT6 (16-Bits) output PWM"
+                    default n
+
+                config BSP_USING_PWM7
+                    bool "Enable GPT7 (16-Bits) output PWM"
+                    default n
+
+                config BSP_USING_PWM8
+                    bool "Enable GPT8 (16-Bits) output PWM"
+                    default n
+
+                config BSP_USING_PWM9
+                    bool "Enable GPT9 (16-Bits) output PWM"
+                    default n
+            endif
+
     endmenu
 
     menu "Board extended module Drivers"
