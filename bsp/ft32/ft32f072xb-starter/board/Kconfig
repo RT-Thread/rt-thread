@@ -41,7 +41,7 @@ menu "On-chip Peripheral Drivers"
                 depends on BSP_USING_UART2 && RT_SERIAL_USING_DMA
                 default n
         endif
-    source "../libraries/Drivers/Kconfig"
+    rsource "../../libraries/Drivers/Kconfig"
 
 endmenu
 

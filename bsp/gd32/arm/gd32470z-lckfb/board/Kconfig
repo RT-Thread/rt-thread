@@ -379,7 +379,7 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_SDRAM
         default n
 
-    source "../libraries/gd32_drivers/Kconfig"
+    rsource "../../libraries/gd32_drivers/Kconfig"
 
 endmenu
 

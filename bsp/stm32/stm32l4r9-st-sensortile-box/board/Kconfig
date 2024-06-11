@@ -23,7 +23,7 @@ menu "On-chip Peripheral Drivers"
         default y
 
 
-    source "$BSP_DIR/../libraries/HAL_Drivers/drivers/Kconfig"
+    source "$(BSP_DIR)/../libraries/HAL_Drivers/drivers/Kconfig"
 
 endmenu
 

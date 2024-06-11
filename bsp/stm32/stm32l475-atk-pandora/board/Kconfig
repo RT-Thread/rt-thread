@@ -572,7 +572,7 @@ menu "On-chip Peripheral Drivers"
             BSP_USING_STM32_SDIO use drv_sdio_adapter.c,and
             BSP_USING_SDIO use drv_sdio.c
 
-    source "$BSP_DIR/../libraries/HAL_Drivers/drivers/Kconfig"
+    source "$(BSP_DIR)/../libraries/HAL_Drivers/drivers/Kconfig"
 
 endmenu
 
