@@ -755,6 +755,25 @@ static rt_int32_t mmcsd_sd_init_card(struct rt_mmcsd_host *host,
             goto err1;
     }
 
+    /*
+     * change SD card to the highest supported speed
+     */
+    err = mmcsd_switch(card);
+    if (err)
+        goto err1;
+
+    /* set bus speed */
+    max_data_rate = (unsigned int)-1;
+    if (max_data_rate < card->hs_max_data_rate)
+    {
+        max_data_rate = card->hs_max_data_rate;
+    }
+    if (max_data_rate < card->max_data_rate)
+    {
+        max_data_rate = card->max_data_rate;
+    }
+
+    mmcsd_set_clock(host, max_data_rate);
     /*switch bus width*/
     if ((host->flags & MMCSD_BUSWIDTH_4) && (card->scr.sd_bus_widths & SD_SCR_BUS_WIDTH_4))
     {
@@ -779,26 +798,6 @@ static rt_int32_t mmcsd_sd_init_card(struct rt_mmcsd_host *host,
          */
         card->flags |= CARD_FLAG_SDR50 | CARD_FLAG_SDR104 | CARD_FLAG_DDR50;
     }
-
-    /*
-     * change SD card to the highest supported speed
-     */
-    err = mmcsd_switch(card);
-    if (err)
-        goto err1;
-
-    /* set bus speed */
-    max_data_rate = (unsigned int)-1;
-    if (max_data_rate < card->hs_max_data_rate)
-    {
-        max_data_rate = card->hs_max_data_rate;
-    }
-    if (max_data_rate < card->max_data_rate)
-    {
-        max_data_rate = card->max_data_rate;
-    }
-
-    mmcsd_set_clock(host, max_data_rate);
 
     host->card = card;
 
