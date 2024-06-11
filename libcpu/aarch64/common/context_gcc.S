@@ -62,12 +62,21 @@ rt_hw_cpu_id_set:
 /*
 int rt_hw_cpu_id(void)
 */
-.weak rt_hw_cpu_id
 .type rt_hw_cpu_id, @function
 rt_hw_cpu_id:
+#ifdef ARCH_USING_GENERIC_CPUID
+    .globl rt_hw_cpu_id
+#else /* !ARCH_USING_GENERIC_CPUID */
+    .weak rt_hw_cpu_id
+#endif /* ARCH_USING_GENERIC_CPUID */
+
 #if RT_CPUS_NR > 1
-    mrs x0, tpidr_el1
-#else
+    #ifdef ARCH_USING_GENERIC_CPUID
+        mrs x0, tpidrro_el0
+    #else /* !ARCH_USING_GENERIC_CPUID */
+        mrs x0, tpidr_el1
+    #endif /* ARCH_USING_GENERIC_CPUID */
+#else /* RT_CPUS_NR == 1 */
     mov x0, xzr
 #endif
     ret
