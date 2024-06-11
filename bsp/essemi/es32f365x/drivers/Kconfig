@@ -8,7 +8,7 @@ menu "Hardware Drivers Config"
             select RT_USING_PIN
             default y
 
-    source "drivers/ES/Kconfig"
+    rsource "ES/Kconfig"
 
     endmenu
 

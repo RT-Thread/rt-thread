@@ -221,7 +221,7 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_WDT
         default n
 
- source "$BSP_DIR/../libraries/HAL_Drivers/drivers/Kconfig"
+ source "$(BSP_DIR)/../libraries/HAL_Drivers/drivers/Kconfig"
 
 endmenu
 

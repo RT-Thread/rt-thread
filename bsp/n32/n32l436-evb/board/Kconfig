@@ -164,7 +164,7 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_CAN
         default n
 
-    source "../libraries/n32_drivers/Kconfig"
+    rsource "../../libraries/n32_drivers/Kconfig"
 
 endmenu
 
