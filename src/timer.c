@@ -413,11 +413,6 @@ static rt_err_t _timer_start(rt_list_t *timer_list, rt_timer_t timer)
     unsigned int tst_nr;
     static unsigned int random_nr;
 
-    if (timer->parent.flag & RT_TIMER_FLAG_PROCESSING)
-    {
-        return -RT_ERROR;
-    }
-
     /* remove timer from list */
     _timer_remove(timer);
     /* change status of timer */
@@ -526,7 +521,6 @@ static void _timer_check(rt_list_t *timer_list, struct rt_spinlock *lock)
                 t->parent.flag &= ~RT_TIMER_FLAG_ACTIVATED;
             }
 
-            t->parent.flag |= RT_TIMER_FLAG_PROCESSING;
             /* add timer to temporary list  */
             rt_list_insert_after(&list, &(t->row[RT_TIMER_SKIP_LIST_LEVEL - 1]));
 
@@ -538,8 +532,6 @@ static void _timer_check(rt_list_t *timer_list, struct rt_spinlock *lock)
             RT_OBJECT_HOOK_CALL(rt_timer_exit_hook, (t));
 
             level = rt_spin_lock_irqsave(lock);
-
-            t->parent.flag &= ~RT_TIMER_FLAG_PROCESSING;
 
             /* Check whether the timer object is detached or started again */
             if (rt_list_isempty(&list))
