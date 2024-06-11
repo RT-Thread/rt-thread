@@ -126,14 +126,9 @@ def bsp_update_kconfig(dist_dir):
     with open(os.path.join(dist_dir, 'Kconfig'), 'r') as f:
         data = f.readlines()
     with open(os.path.join(dist_dir, 'Kconfig'), 'w') as f:
-        found = 0
         for line in data:
-            if line.find('RTT_ROOT') != -1:
-                found = 1
-            if line.find('default') != -1 and found:
-                position = line.find('default')
-                line = line[0:position] + 'default "rt-thread"\n'
-                found = 0
+            if line.find('RTT_DIR') != -1 and line.find(':=') != -1:
+                line = 'RTT_DIR := rt-thread\n'
             f.write(line)
 
 def bsp_update_kconfig_library(dist_dir):
@@ -144,14 +139,9 @@ def bsp_update_kconfig_library(dist_dir):
     with open(os.path.join(dist_dir, 'Kconfig'), 'r') as f:
         data = f.readlines()
     with open(os.path.join(dist_dir, 'Kconfig'), 'w') as f:
-        found = 0
         for line in data:
-            if line.find('RTT_ROOT') != -1:
-                found = 1
-            if line.find('../libraries') != -1 and found:
-                position = line.find('../libraries')
-                line = line[0:position] + 'libraries/Kconfig"\n'
-                found = 0
+            if line.find('source') != -1 and line.find('../libraries') != -1:
+                line = line.replace('../libraries', 'libraries')
             f.write(line)
 
     # change board/kconfig path
@@ -162,9 +152,8 @@ def bsp_update_kconfig_library(dist_dir):
         data = f.readlines()
     with open(os.path.join(dist_dir, 'board/Kconfig'), 'w') as f:
         for line in data:
-            if line.find('../libraries/HAL_Drivers/drivers/Kconfig') != -1:
-                position = line.find('../libraries/HAL_Drivers/drivers/Kconfig')
-                line = line[0:position] + 'libraries/HAL_Drivers/drivers/Kconfig"\n'
+            if line.find('source') != -1 and line.find('../libraries') != -1:
+                line = line.replace('../libraries', 'libraries')
             f.write(line)
 
 def zip_dist(dist_dir, dist_name):
