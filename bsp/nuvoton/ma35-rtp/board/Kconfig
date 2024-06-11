@@ -1,7 +1,7 @@
 menu "Hardware Drivers Config"
 
     menu "On-chip Peripheral Drivers"
-        source "$BSP_DIR/../libraries/ma35/rtt_port/Kconfig"
+        source "$(BSP_DIR)/../libraries/ma35/rtt_port/Kconfig"
     endmenu
 
     menu "On-board Peripheral Drivers"
@@ -18,6 +18,6 @@ menu "Hardware Drivers Config"
 
     endmenu
 
-    source "$BSP_DIR/../libraries/nu_packages/Kconfig"
+    source "$(BSP_DIR)/../libraries/nu_packages/Kconfig"
 
 endmenu

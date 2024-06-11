@@ -3,7 +3,7 @@ menuconfig DRIVERS_SOUND
     default y
 
 if DRIVERS_SOUND
-source "drivers/hal/source/sound/codecs/Kconfig"
-source "drivers/hal/source/sound/platform/Kconfig"
-source "drivers/hal/source/sound/component/Kconfig"
+rsource "codecs/Kconfig"
+rsource "platform/Kconfig"
+rsource "component/Kconfig"
 endif # SOUND

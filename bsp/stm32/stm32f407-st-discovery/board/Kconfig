@@ -63,7 +63,7 @@ menu "On-chip Peripheral Drivers"
                 range 1 216
                 default 25
         endif
-    source "$BSP_DIR/../libraries/HAL_Drivers/drivers/Kconfig"
+    source "$(BSP_DIR)/../libraries/HAL_Drivers/drivers/Kconfig"
 
 endmenu
 
