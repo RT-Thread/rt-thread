@@ -9,8 +9,8 @@ config RT_USING_EXTERNAL_LIBC
         RT_USING_EXTERNAL_LIBC in software package's Kconfig
         This option is not available for users to select.
 
-source "$RTT_DIR/components/libc/compilers/common/Kconfig"
-source "$RTT_DIR/components/libc/posix/Kconfig"
-source "$RTT_DIR/components/libc/cplusplus/Kconfig"
+rsource "compilers/common/Kconfig"
+rsource "posix/Kconfig"
+rsource "cplusplus/Kconfig"
 
 endmenu
