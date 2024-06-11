@@ -35,7 +35,7 @@ int mnt_init(void)
     else
     {
         rt_kprintf("emmc file system initialization done!\n");
-    }   
+    }
 #else
     rt_thread_mdelay(500);
     if (dfs_mount(NULL, "/", "rom", 0, &romfs_root) != 0)
