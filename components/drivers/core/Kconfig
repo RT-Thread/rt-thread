@@ -1,0 +1,11 @@
+config RT_USING_DM
+    bool "Enable device driver model with device tree"
+    default n
+    help
+        Enable device driver model with device tree (FDT). It will use more memory
+        to parse and support device tree feature.
+
+config RT_USING_DEV_BUS
+    bool "Using Device Bus device drivers"
+    default y if RT_USING_SMART
+    default n

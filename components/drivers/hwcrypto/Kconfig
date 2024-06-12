@@ -1,0 +1,165 @@
+menuconfig RT_USING_HWCRYPTO
+        bool "Using Hardware Crypto drivers"
+        default n
+
+    if RT_USING_HWCRYPTO
+        config RT_HWCRYPTO_DEFAULT_NAME
+            string "Hardware crypto device name"
+            default "hwcryto"
+
+        config RT_HWCRYPTO_IV_MAX_SIZE
+            int "IV max size"
+            default "16"
+
+        config RT_HWCRYPTO_KEYBIT_MAX_SIZE
+            int "Key max bit length"
+            default 256
+
+        config RT_HWCRYPTO_USING_GCM
+            bool "Using Hardware GCM"
+            default n
+
+        config RT_HWCRYPTO_USING_AES
+            bool "Using Hardware AES"
+            default n
+
+        if RT_HWCRYPTO_USING_AES
+            config RT_HWCRYPTO_USING_AES_ECB
+                bool "Using Hardware AES ECB mode"
+                default y
+
+            config RT_HWCRYPTO_USING_AES_CBC
+                bool "Using Hardware AES CBC mode"
+                default n
+
+            config RT_HWCRYPTO_USING_AES_CFB
+                bool "Using Hardware AES CFB mode"
+                default n
+
+            config RT_HWCRYPTO_USING_AES_CTR
+                bool "Using Hardware AES CTR mode"
+                default n
+
+            config RT_HWCRYPTO_USING_AES_OFB
+                bool "Using Hardware AES OFB mode"
+                default n
+        endif
+
+        config RT_HWCRYPTO_USING_DES
+            bool "Using Hardware DES"
+            default n
+
+        if RT_HWCRYPTO_USING_DES
+            config RT_HWCRYPTO_USING_DES_ECB
+                bool "Using Hardware DES ECB mode"
+                default y
+
+            config RT_HWCRYPTO_USING_DES_CBC
+                bool "Using Hardware DES CBC mode"
+                default n
+        endif
+
+        config RT_HWCRYPTO_USING_3DES
+            bool "Using Hardware 3DES"
+            default n
+
+        if RT_HWCRYPTO_USING_3DES
+            config RT_HWCRYPTO_USING_3DES_ECB
+                bool "Using Hardware 3DES ECB mode"
+                default y
+
+            config RT_HWCRYPTO_USING_3DES_CBC
+                bool "Using Hardware 3DES CBC mode"
+                default n
+        endif
+
+        config RT_HWCRYPTO_USING_RC4
+            bool "Using Hardware RC4"
+            default n
+
+        config RT_HWCRYPTO_USING_MD5
+            bool "Using Hardware MD5"
+            default n
+
+        config RT_HWCRYPTO_USING_SHA1
+            bool "Using Hardware SHA1"
+            default n
+
+        config RT_HWCRYPTO_USING_SHA2
+            bool "Using Hardware SHA2"
+            default n
+
+        if RT_HWCRYPTO_USING_SHA2
+            config RT_HWCRYPTO_USING_SHA2_224
+                bool "Using Hardware SHA2_224 mode"
+                default n
+
+            config RT_HWCRYPTO_USING_SHA2_256
+                bool "Using Hardware SHA2_256 mode"
+                default y
+
+            config RT_HWCRYPTO_USING_SHA2_384
+                bool "Using Hardware SHA2_384 mode"
+                default n
+
+            config RT_HWCRYPTO_USING_SHA2_512
+                bool "Using Hardware SHA2_512 mode"
+                default n
+        endif
+
+        config RT_HWCRYPTO_USING_RNG
+            bool "Using Hardware RNG"
+            default n
+
+        config RT_HWCRYPTO_USING_CRC
+            bool "Using Hardware CRC"
+            default n
+
+        if RT_HWCRYPTO_USING_CRC
+            config RT_HWCRYPTO_USING_CRC_07
+                bool "Using Hardware CRC-8 0x07 polynomial"
+                default n
+
+            config RT_HWCRYPTO_USING_CRC_8005
+                bool "Using Hardware CRC-16 0x8005 polynomial"
+                default n
+
+            config RT_HWCRYPTO_USING_CRC_1021
+                bool "Using Hardware CRC-16 0x1021 polynomial"
+                default n
+
+            config RT_HWCRYPTO_USING_CRC_3D65
+                bool "Using Hardware CRC-16 0x3D65 polynomial"
+                default n
+
+            config RT_HWCRYPTO_USING_CRC_04C11DB7
+                bool "Using Hardware CRC-32 0x04C11DB7 polynomial"
+                default n
+        endif
+
+        config RT_HWCRYPTO_USING_BIGNUM
+            bool "Using Hardware bignum"
+            default n
+
+        if RT_HWCRYPTO_USING_BIGNUM
+            config RT_HWCRYPTO_USING_BIGNUM_EXPTMOD
+                bool "Using Hardware bignum expt_mod operation"
+                default y
+
+            config RT_HWCRYPTO_USING_BIGNUM_MULMOD
+                bool "Using Hardware bignum mul_mod operation"
+                default y
+
+            config RT_HWCRYPTO_USING_BIGNUM_MUL
+                bool "Using Hardware bignum mul operation"
+                default n
+
+            config RT_HWCRYPTO_USING_BIGNUM_ADD
+                bool "Using Hardware bignum add operation"
+                default n
+
+            config RT_HWCRYPTO_USING_BIGNUM_SUB
+                bool "Using Hardware bignum sub operation"
+                default n
+        endif
+    endif

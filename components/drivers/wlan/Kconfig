@@ -1,0 +1,154 @@
+menuconfig RT_USING_WIFI
+    bool "Using Wi-Fi framework"
+    default n
+
+    if RT_USING_WIFI
+        config RT_WLAN_DEVICE_STA_NAME
+            string "The device name for station"
+            default "wlan0"
+
+        config RT_WLAN_DEVICE_AP_NAME
+            string "The device name for ap"
+            default "wlan1"
+
+        config RT_WLAN_SSID_MAX_LENGTH
+            int "SSID maximum length"
+            default 32
+
+        config RT_WLAN_PASSWORD_MAX_LENGTH
+            int "Password maximum length"
+            default 32
+
+        config RT_WLAN_DEV_EVENT_NUM
+            int "Driver events maxcount"
+            default 2
+
+        config RT_WLAN_MANAGE_ENABLE
+            bool "Connection management Enable"
+            default y
+
+        if RT_WLAN_MANAGE_ENABLE
+            config RT_WLAN_SCAN_WAIT_MS
+                int "Set scan timeout time(ms)"
+                default 10000
+
+            config RT_WLAN_CONNECT_WAIT_MS
+                int "Set connect timeout time(ms)"
+                default 10000
+
+            config RT_WLAN_SCAN_SORT
+                bool "Automatic sorting of scan results"
+                default y
+
+            config RT_WLAN_MSH_CMD_ENABLE
+                bool "MSH command Enable"
+                default y
+
+            config RT_WLAN_JOIN_SCAN_BY_MGNT
+                bool "Enable wlan join scan"
+                default y
+
+            config RT_WLAN_AUTO_CONNECT_ENABLE
+                bool "Auto connect Enable"
+                select RT_WLAN_CFG_ENABLE
+                select RT_WLAN_WORK_THREAD_ENABLE
+                default y
+
+            if RT_WLAN_AUTO_CONNECT_ENABLE
+                config AUTO_CONNECTION_PERIOD_MS
+                    int "Auto connect period(ms)"
+                    default 2000
+            endif
+        endif
+
+        config RT_WLAN_CFG_ENABLE
+            bool "WiFi information automatically saved Enable"
+            default y
+
+        if RT_WLAN_CFG_ENABLE
+            config RT_WLAN_CFG_INFO_MAX
+                int "Maximum number of WiFi information automatically saved"
+                default 3
+        endif
+
+        config RT_WLAN_PROT_ENABLE
+            bool "Transport protocol manage Enable"
+            default y
+
+        if RT_WLAN_PROT_ENABLE
+            config RT_WLAN_PROT_NAME_LEN
+                int "Transport protocol name length"
+                default 8
+
+            config RT_WLAN_PROT_MAX
+                int "Transport protocol maxcount"
+                default 2
+
+            config RT_WLAN_DEFAULT_PROT
+                string "Default transport protocol"
+                default "lwip"
+
+            config RT_WLAN_PROT_LWIP_ENABLE
+                bool "LWIP transport protocol Enable"
+                select RT_USING_LWIP
+                default y
+
+            if RT_WLAN_PROT_LWIP_ENABLE
+                config RT_WLAN_PROT_LWIP_NAME
+                    string "LWIP transport protocol name"
+                    default "lwip"
+
+                config RT_WLAN_PROT_LWIP_PBUF_FORCE
+                    bool "Forced use of PBUF transmission"
+                    default n
+            endif
+        endif
+
+        config RT_WLAN_WORK_THREAD_ENABLE
+            bool "WLAN work queue thread Enable"
+            default y
+
+        if RT_WLAN_WORK_THREAD_ENABLE
+            config RT_WLAN_WORKQUEUE_THREAD_NAME
+                string "WLAN work queue thread name"
+                default "wlan"
+
+            config RT_WLAN_WORKQUEUE_THREAD_SIZE
+                int "WLAN work queue thread size"
+                default 2048
+
+            config RT_WLAN_WORKQUEUE_THREAD_PRIO
+                int "WLAN work queue thread priority"
+                default 15
+        endif
+
+        menuconfig RT_WLAN_DEBUG
+            bool "Enable WLAN Debugging Options"
+            default n
+
+        if RT_WLAN_DEBUG
+            config RT_WLAN_CMD_DEBUG
+                bool "Enable Debugging of wlan_cmd.c"
+                default n
+
+            config RT_WLAN_MGNT_DEBUG
+                bool "Enable Debugging of wlan_mgnt.c"
+                default n
+
+            config RT_WLAN_DEV_DEBUG
+                bool "Enable Debugging of wlan_dev.c"
+                default n
+
+            config RT_WLAN_PROT_DEBUG
+                bool "Enable Debugging of wlan_prot.c"
+                default n
+
+            config RT_WLAN_CFG_DEBUG
+                bool "Enable Debugging of wlan_cfg.c"
+                default n
+
+            config RT_WLAN_LWIP_DEBUG
+                bool "Enable Debugging of wlan_lwip.c"
+                default n
+        endif
+    endif
