@@ -760,6 +760,7 @@ static rt_int32_t mmcsd_sd_init_card(struct rt_mmcsd_host *host,
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     /*switch bus width*/
     if ((host->flags & MMCSD_BUSWIDTH_4) && (card->scr.sd_bus_widths & SD_SCR_BUS_WIDTH_4))
     {
@@ -810,6 +811,8 @@ static rt_int32_t mmcsd_sd_init_card(struct rt_mmcsd_host *host,
 >>>>>>> parent of 53f142378 (Update sd.c)
 =======
 >>>>>>> parent of 53f142378 (Update sd.c)
+=======
+>>>>>>> 448adf8b42f27ac7c6b74dcb973a68e963663669
     /*switch bus width*/
     if ((host->flags & MMCSD_BUSWIDTH_4) && (card->scr.sd_bus_widths & SD_SCR_BUS_WIDTH_4))
     {
@@ -834,7 +837,6 @@ static rt_int32_t mmcsd_sd_init_card(struct rt_mmcsd_host *host,
          */
         card->flags |= CARD_FLAG_SDR50 | CARD_FLAG_SDR104 | CARD_FLAG_DDR50;
     }
->>>>>>> parent of 53f142378 (Update sd.c)
 
     /*
      * change SD card to the highest supported speed
