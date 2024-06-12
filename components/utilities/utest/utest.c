@@ -308,7 +308,7 @@ static void utest_thr_entry(const char *utest_name)
     utest_run(utest_name);
 }
 
-void utest_testcase_run(int argc, char** argv)
+long utest_testcase_run(int argc, char** argv)
 {
 
     static char utest_name[UTEST_NAME_MAX_LEN];
@@ -319,7 +319,7 @@ void utest_testcase_run(int argc, char** argv)
     if (argc == 1)
     {
         utest_run(RT_NULL);
-        return;
+        return 0;
     }
     else if (argc == 2 || argc == 3 || argc == 4)
     {
@@ -356,6 +356,7 @@ void utest_testcase_run(int argc, char** argv)
         LOG_E("[  error   ] at (%s:%d), in param error.", __func__, __LINE__);
         utest_help();
     }
+    return 0;
 }
 MSH_CMD_EXPORT_ALIAS(utest_testcase_run, utest_run, utest_run [-thread or -help] [testcase name] [loop num]);
 
