@@ -131,7 +131,7 @@ int utest_init(void)
 }
 INIT_COMPONENT_EXPORT(utest_init);
 
-static void utest_tc_list(void)
+static long utest_tc_list(void)
 {
     rt_size_t i = 0;
 
@@ -141,6 +141,8 @@ static void utest_tc_list(void)
     {
         LOG_I("[testcase name]:%s; [run timeout]:%d", tc_table[i].name, tc_table[i].run_timeout);
     }
+
+    return 0;
 }
 MSH_CMD_EXPORT_ALIAS(utest_tc_list, utest_list, output all utest testcase);
 
@@ -196,8 +198,6 @@ static void utest_run(const char *utest_name)
     rt_bool_t is_find;
     rt_uint32_t tc_fail_num = 0;
     rt_uint32_t tc_run_num = 0;
-
-    rt_thread_mdelay(1000);
 
     for (index = 0; index < tc_loop; index ++)
     {
@@ -300,9 +300,16 @@ static void utest_run(const char *utest_name)
     }
 }
 
-static void utest_testcase_run(int argc, char** argv)
+static void utest_thr_entry(const char *utest_name)
 {
-    void *thr_param = RT_NULL;
+    /* see commit:0dc7b9a for details */
+    rt_thread_mdelay(1000);
+
+    utest_run(utest_name);
+}
+
+void utest_testcase_run(int argc, char** argv)
+{
 
     static char utest_name[UTEST_NAME_MAX_LEN];
     rt_memset(utest_name, 0x0, sizeof(utest_name));
@@ -322,13 +329,12 @@ static void utest_testcase_run(int argc, char** argv)
             if (argc == 3 || argc == 4)
             {
                 rt_strncpy(utest_name, argv[2], sizeof(utest_name) -1);
-                thr_param = (void*)utest_name;
 
                 if (argc == 4) tc_loop = atoi(argv[3]);
             }
             tid = rt_thread_create("utest",
-                                    (void (*)(void *))utest_run, thr_param,
-                                    UTEST_THREAD_STACK_SIZE, UTEST_THREAD_PRIORITY, 10);
+                                   (void (*)(void *))utest_thr_entry, utest_name,
+                                   UTEST_THREAD_STACK_SIZE, UTEST_THREAD_PRIORITY, 10);
             if (tid != NULL)
             {
                 rt_thread_startup(tid);
