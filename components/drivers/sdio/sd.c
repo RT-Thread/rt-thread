@@ -754,6 +754,31 @@ static rt_int32_t mmcsd_sd_init_card(struct rt_mmcsd_host *host,
         if (err)
             goto err1;
     }
+    mmcsd_set_timing(host, MMCSD_TIMING_LEGACY);
+    mmcsd_set_clock(host, 25000000);
+
+    /*switch bus width*/
+    if ((host->flags & MMCSD_BUSWIDTH_4) && (card->scr.sd_bus_widths & SD_SCR_BUS_WIDTH_4))
+    {
+        err = mmcsd_app_set_bus_width(card, MMCSD_BUS_WIDTH_4);
+        if (err)
+            goto err1;
+
+        mmcsd_set_bus_width(host, MMCSD_BUS_WIDTH_4);
+    }
+
+    /* Read and decode SD Status and check whether UHS mode is supported */
+    union rt_sd_status sd_status;
+    err = mmcsd_read_sd_status(card, sd_status.status_words);
+    if (err)
+        goto err1;
+    if ((sd_status.uhs_speed_grade > 0) && (ocr & VDD_165_195))
+    {
+        /* Assume the card supports all UHS-I modes because we cannot find any mainstreaming card
+         * that can support only part of the following modes.
+         */
+        card->flags |= CARD_FLAG_SDR50 | CARD_FLAG_SDR104 | CARD_FLAG_DDR50;
+    }
 
     /*
      * change SD card to the highest supported speed
@@ -774,30 +799,6 @@ static rt_int32_t mmcsd_sd_init_card(struct rt_mmcsd_host *host,
     }
 
     mmcsd_set_clock(host, max_data_rate);
-    /*switch bus width*/
-    if ((host->flags & MMCSD_BUSWIDTH_4) && (card->scr.sd_bus_widths & SD_SCR_BUS_WIDTH_4))
-    {
-        err = mmcsd_app_set_bus_width(card, MMCSD_BUS_WIDTH_4);
-        if (err)
-            goto err1;
-
-        mmcsd_set_bus_width(host, MMCSD_BUS_WIDTH_4);
-    }
-    mmcsd_set_timing(host, MMCSD_TIMING_LEGACY);
-    mmcsd_set_clock(host, 25000000);
-
-    /* Read and decode SD Status and check whether UHS mode is supported */
-    union rt_sd_status sd_status;
-    err = mmcsd_read_sd_status(card, sd_status.status_words);
-    if (err)
-        goto err1;
-    if ((sd_status.uhs_speed_grade > 0) && (ocr & VDD_165_195))
-    {
-        /* Assume the card supports all UHS-I modes because we cannot find any mainstreaming card
-         * that can support only part of the following modes.
-         */
-        card->flags |= CARD_FLAG_SDR50 | CARD_FLAG_SDR104 | CARD_FLAG_DDR50;
-    }
 
     host->card = card;
 
