@@ -155,7 +155,6 @@ rt_err_t drv_pin_attach_irq(struct rt_device *device, rt_base_t pin,
     }
 
     FGpioRegisterInterruptCB(&instance[index], hdr, args); /* register intr callback */
-    
     rt_hw_interrupt_enable(level);
 
     return RT_EOK;
@@ -175,7 +174,6 @@ rt_err_t drv_pin_detach_irq(struct rt_device *device, rt_base_t pin)
     {
         map->irq_cbs[instance[index].config.pin] = NULL;
     }
-    
     rt_hw_interrupt_enable(level);
 
     return RT_EOK;

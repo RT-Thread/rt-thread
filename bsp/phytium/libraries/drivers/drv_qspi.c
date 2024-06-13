@@ -83,9 +83,7 @@ rt_err_t FQspiInit(phytium_qspi_bus *phytium_qspi_bus)
 #endif
 
 #ifdef RT_USING_SMART
-    phytium_qspi_bus->fqspi.config.mem_start = (uintptr)rt_ioremap((void *)phytium_qspi_bus->fqspi.config.mem_start, 
-                                                                           (phytium_qspi_bus->fqspi.config.channel + 1) 
-                                                                           *(phytium_qspi_bus->fqspi.flash_size));
+    phytium_qspi_bus->fqspi.config.mem_start = (uintptr)rt_ioremap((void *)phytium_qspi_bus->fqspi.config.mem_start, (phytium_qspi_bus->fqspi.config.channel + 1) * (phytium_qspi_bus->fqspi.flash_size));
 #endif
 
     return RT_EOK;
@@ -277,7 +275,6 @@ __exit:
             rt_free(qspi_device);
         }
     }
-    
     return  result;
 }
 
