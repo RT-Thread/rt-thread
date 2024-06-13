@@ -51,10 +51,14 @@ menu "Hardware Drivers Config"
 
         menuconfig BSP_USING_HW_I2C
             bool "Enable hardware I2C BUS"
+            select RT_USING_I2C
             default n
             if BSP_USING_HW_I2C
                 config BSP_USING_HW_I2C1
                     bool "Enable Hardware I2C1 BUS"
+                    default n
+                config BSP_USING_HW_I2C2
+                    bool "Enable Hardware I2C2 BUS"
                     default n
             endif
 
