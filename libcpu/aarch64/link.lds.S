@@ -111,19 +111,19 @@ SECTIONS
     . = ALIGN(8);
     .ctors :
     {
-        PROVIDE(__ctors_start = .);
+        PROVIDE(__ctors_start__ = .);
         /* new GCC version uses .init_array */
         KEEP(*(SORT(.init_array.*)))
         KEEP(*(.init_array))
-        PROVIDE(__ctors_end = .);
+        PROVIDE(__ctors_end__ = .);
     }
 
     .dtors :
     {
-        PROVIDE(__dtors_start = .);
+        PROVIDE(__dtors_start__ = .);
         KEEP(*(SORT(.dtors.*)))
         KEEP(*(.dtors))
-        PROVIDE(__dtors_end = .);
+        PROVIDE(__dtors_end__ = .);
     }
 
     . = ALIGN(16);

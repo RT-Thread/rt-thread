@@ -5,7 +5,7 @@
 
 #define RT_NAME_MAX 16
 #define RT_USING_SMP
-#define RT_CPUS_NR 4
+#define RT_CPUS_NR 2
 #define RT_ALIGN_SIZE 4
 #define RT_THREAD_PRIORITY_32
 #define RT_THREAD_PRIORITY_MAX 32
@@ -297,6 +297,18 @@
 /* Wiced WiFi */
 
 /* end of Wiced WiFi */
+
+/* CYW43012 WiFi */
+
+/* end of CYW43012 WiFi */
+
+/* BL808 WiFi */
+
+/* end of BL808 WiFi */
+
+/* CYW43439 WiFi */
+
+/* end of CYW43439 WiFi */
 /* end of Wi-Fi */
 
 /* IoT Cloud */
@@ -355,6 +367,17 @@
 
 /* peripheral libraries and drivers */
 
+/* HAL & SDK Drivers */
+
+/* STM32 HAL & SDK Drivers */
+
+/* end of STM32 HAL & SDK Drivers */
+
+/* Kendryte SDK */
+
+/* end of Kendryte SDK */
+/* end of HAL & SDK Drivers */
+
 /* sensors drivers */
 
 /* end of sensors drivers */
@@ -362,10 +385,6 @@
 /* touch drivers */
 
 /* end of touch drivers */
-
-/* Kendryte SDK */
-
-/* end of Kendryte SDK */
 /* end of peripheral libraries and drivers */
 
 /* AI packages */
@@ -449,6 +468,10 @@
 #define BSP_USING_SPI
 #define RT_USING_SPIM0
 #define BSP_USING_CAN
+#define RT_USING_CANFD
+#define RT_USING_CAN0
+#define RT_USING_CAN1
+#define BSP_USING_GPIO
 #define BSP_USING_QSPI
 #define RT_USING_QSPI0
 #define USING_QSPI_CHANNEL0
@@ -462,6 +485,8 @@
 #define RT_USING_MIO1
 #define BSP_USING_SDIF
 #define BSP_USING_SDCARD_FATFS
+#define USING_SDIF0
+#define USE_SDIF0_EMMC
 #define USING_SDIF1
 #define USE_SDIF1_TF
 #define BSP_USING_DC
@@ -481,9 +506,10 @@
 
 /* Soc configuration */
 
-#define TARGET_PHYTIUMPI
-#define SOC_NAME "phytiumpi"
-#define SOC_CORE_NUM 4
+#define TARGET_E2000D
+#define SOC_NAME "e2000"
+#define TARGET_TYPE_NAME "d"
+#define SOC_CORE_NUM 2
 #define F32BIT_MEMORY_ADDRESS 0x80000000
 #define F32BIT_MEMORY_LENGTH 0x80000000
 #define F64BIT_MEMORY_ADDRESS 0x2000000000
@@ -494,8 +520,8 @@
 
 /* Board Configuration */
 
-#define BOARD_NAME "firefly"
-#define FIREFLY_DEMO_BOARD
+#define E2000D_DEMO_BOARD
+#define BOARD_NAME "demo"
 
 /* IO mux configuration when board start up */
 
@@ -504,6 +530,7 @@
 
 /* Sdk common configuration */
 
+#define ELOG_LINE_BUF_SIZE 0x100
 #define LOG_ERROR
 #define USE_DEFAULT_INTERRUPT_CONFIG
 #define INTERRUPT_ROLE_MASTER

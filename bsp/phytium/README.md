@@ -78,6 +78,8 @@
 
 - [Phytium_PI上开发和固化RT-Thread程序](./doc/use_phytium_pi_sd_image.md)，解决Phytium PI上使用RT-Thread读写操作影响 SD 卡的固件问题
 
+- [C++支持](./doc/cpp_support.md)
+
 ## 6. 维护人信息
 
 - huanghe:  huanghe@phytium.com.cn
