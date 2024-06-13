@@ -22,7 +22,7 @@
 
 #include <rtdef.h>
 
-#if defined (RT_USING_CACHE) || defined(RT_USING_SMP)
+#if defined (RT_USING_CACHE) || defined(RT_USING_SMP) || defined(RT_HW_INCLUDE_CPUPORT)
 #include <cpuport.h> /* include spinlock, cache ops, etc. */
 #endif
 

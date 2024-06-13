@@ -370,7 +370,7 @@ void rt_hw_trap_exception(struct rt_hw_exp_stack *regs)
 #endif
 
     struct rt_hw_backtrace_frame frame = {.fp = regs->x29, .pc = regs->pc};
-    rt_backtrace_frame(&frame);
+    rt_backtrace_frame(rt_thread_self(), &frame);
     rt_hw_cpu_shutdown();
 }
 
