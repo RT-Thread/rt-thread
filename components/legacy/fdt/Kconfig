@@ -1,0 +1,12 @@
+config RT_USING_FDT
+    bool "Using fdt legacy version"
+    default n
+    if RT_USING_FDT
+        config RT_USING_FDTLIB
+            bool "Using fdt lib for device drivers"
+            default y
+        config FDT_USING_DEBUG
+            bool "Using fdt debug function "
+            default n
+
+    endif
