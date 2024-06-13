@@ -10,21 +10,9 @@
 #include <stdio.h>
 #include "hpm_sgtl5000.h"
 
-/*******************************************************************************
- * Definitations
- ******************************************************************************/
-
-/*******************************************************************************
- * Prototypes
- ******************************************************************************/
-
-/*******************************************************************************
- * Variables
- ******************************************************************************/
-
-/*******************************************************************************
- * Code
- ******************************************************************************/
+#ifndef HPM_SGTL5000_MCLK_TOLERANCE
+#define HPM_SGTL5000_MCLK_TOLERANCE (4U)
+#endif
 
 hpm_stat_t sgtl_init(sgtl_context_t *context, sgtl_config_t *config)
 {
@@ -56,7 +44,7 @@ hpm_stat_t sgtl_init(sgtl_context_t *context, sgtl_config_t *config)
     /* Volume and Mute Control
        Configure HP_OUT left and right volume to minimum, unmute.
        HP_OUT and ramp the volume up to desired volume.*/
-    if (sgtl_write_reg(context, CHIP_ANA_HP_CTRL, 0x1818U) != status_success)
+    if (sgtl_write_reg(context, CHIP_ANA_HP_CTRL, 0x0C0CU) != status_success)
     {
         return status_fail;
     }
@@ -470,11 +458,20 @@ hpm_stat_t sgtl_set_mute(sgtl_context_t *context, sgtl_module_t module, bool mut
     return stat;
 }
 
+static bool sgtl_check_clock_tolerance(uint32_t source, uint32_t target)
+{
+    uint32_t delta = (source >= target) ? (source - target) : (target - source);
+    if (delta * 100 <= HPM_SGTL5000_MCLK_TOLERANCE * target) {
+        return true;
+    }
+    return false;
+}
+
 hpm_stat_t sgtl_config_data_format(sgtl_context_t *context, uint32_t mclk, uint32_t sample_rate, uint32_t bits)
 {
     uint16_t val     = 0;
     uint16_t regVal  = 0;
-    uint16_t mul_clk = 0U;
+    uint32_t mul_div = 0U;
     uint32_t sysFs   = 0U;
     hpm_stat_t stat     = status_success;
 
@@ -574,21 +571,18 @@ hpm_stat_t sgtl_config_data_format(sgtl_context_t *context, uint32_t mclk, uint3
         return status_fail;
     }
 
-    /* While as slave, Fs is input */
-    if ((regVal & SGTL5000_I2S_MS_GET_MASK) == 0U)
-    {
-        sysFs = sample_rate;
-    }
-    mul_clk = (uint16_t)(mclk / sysFs);
-    /* Configure the mul_clk. Sgtl-5000 only support 256, 384 and 512 oversample rate */
-    if ((mul_clk / 128U - 2U) > 2U)
-    {
+    mul_div = mclk / sysFs;
+
+    if (sgtl_check_clock_tolerance(mul_div, 256)) {
+        mul_div = 256;
+    } else if (sgtl_check_clock_tolerance(mul_div, 384)) {
+        mul_div = 384;
+    } else if (sgtl_check_clock_tolerance(mul_div, 512)) {
+        mul_div = 512;
+    } else {
         return status_invalid_argument;
     }
-    else
-    {
-        val |= (mul_clk / 128U - 2U);
-    }
+    val |= (mul_div / 128U - 2U);
 
     if (sgtl_write_reg(context, CHIP_CLK_CTRL, val) != status_success)
     {

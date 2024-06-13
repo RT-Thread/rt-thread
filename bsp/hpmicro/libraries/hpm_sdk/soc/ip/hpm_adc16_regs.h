@@ -23,7 +23,8 @@ typedef struct {
     __R  uint32_t SEQ_WR_ADDR;                 /* 0x808:  */
     __RW uint32_t SEQ_DMA_CFG;                 /* 0x80C:  */
     __RW uint32_t SEQ_QUE[16];                 /* 0x810 - 0x84C:  */
-    __R  uint8_t  RESERVED3[944];              /* 0x850 - 0xBFF: Reserved */
+    __RW uint32_t SEQ_HIGH_CFG;                /* 0x850:  */
+    __R  uint8_t  RESERVED3[940];              /* 0x854 - 0xBFF: Reserved */
     struct {
         __RW uint32_t PRD_CFG;                 /* 0xC00:  */
         __RW uint32_t PRD_THSHD_CFG;           /* 0xC04:  */
@@ -388,6 +389,25 @@ typedef struct {
 #define ADC16_SEQ_QUE_CHAN_NUM_4_0_SET(x) (((uint32_t)(x) << ADC16_SEQ_QUE_CHAN_NUM_4_0_SHIFT) & ADC16_SEQ_QUE_CHAN_NUM_4_0_MASK)
 #define ADC16_SEQ_QUE_CHAN_NUM_4_0_GET(x) (((uint32_t)(x) & ADC16_SEQ_QUE_CHAN_NUM_4_0_MASK) >> ADC16_SEQ_QUE_CHAN_NUM_4_0_SHIFT)
 
+/* Bitfield definition for register: SEQ_HIGH_CFG */
+/*
+ * STOP_POS_HIGH (RW)
+ *
+ */
+#define ADC16_SEQ_HIGH_CFG_STOP_POS_HIGH_MASK (0xFFF000UL)
+#define ADC16_SEQ_HIGH_CFG_STOP_POS_HIGH_SHIFT (12U)
+#define ADC16_SEQ_HIGH_CFG_STOP_POS_HIGH_SET(x) (((uint32_t)(x) << ADC16_SEQ_HIGH_CFG_STOP_POS_HIGH_SHIFT) & ADC16_SEQ_HIGH_CFG_STOP_POS_HIGH_MASK)
+#define ADC16_SEQ_HIGH_CFG_STOP_POS_HIGH_GET(x) (((uint32_t)(x) & ADC16_SEQ_HIGH_CFG_STOP_POS_HIGH_MASK) >> ADC16_SEQ_HIGH_CFG_STOP_POS_HIGH_SHIFT)
+
+/*
+ * BUF_LEN_HIGH (RW)
+ *
+ */
+#define ADC16_SEQ_HIGH_CFG_BUF_LEN_HIGH_MASK (0xFFFU)
+#define ADC16_SEQ_HIGH_CFG_BUF_LEN_HIGH_SHIFT (0U)
+#define ADC16_SEQ_HIGH_CFG_BUF_LEN_HIGH_SET(x) (((uint32_t)(x) << ADC16_SEQ_HIGH_CFG_BUF_LEN_HIGH_SHIFT) & ADC16_SEQ_HIGH_CFG_BUF_LEN_HIGH_MASK)
+#define ADC16_SEQ_HIGH_CFG_BUF_LEN_HIGH_GET(x) (((uint32_t)(x) & ADC16_SEQ_HIGH_CFG_BUF_LEN_HIGH_MASK) >> ADC16_SEQ_HIGH_CFG_BUF_LEN_HIGH_SHIFT)
+
 /* Bitfield definition for register of struct array PRD_CFG: PRD_CFG */
 /*
  * PRESCALE (RW)
@@ -467,7 +487,7 @@ typedef struct {
 /*
  * CONVERT_CLOCK_NUMBER (RW)
  *
- * convert clock numbers, set to 21 (0x15) for 16bit mode, which means convert need 22 adc clock cycles(based on clock after divider);
+ * convert clock numbers, set to 21 (0x15) for 16bit mode, which means convert need 21 adc clock cycles(based on clock after divider);
  * user can use small value to get faster convertion, but less accuracy, need to config cov_end_cnt at adc16_config1 also.
  * Ex: use 200MHz bus clock for adc, set sample_clock_number to 4, sample_clock_number_shift to 0, covert_clk_number to 21 for 16bit mode, clock_divder to 3, then each ADC convertion(plus sample) need 25 cycles(50MHz).
  */
@@ -536,7 +556,7 @@ typedef struct {
 
 /* Bitfield definition for register: INT_STS */
 /*
- * TRIG_CMPT (W1C)
+ * TRIG_CMPT (RW1C)
  *
  * interrupt for one trigger conversion complete if enabled
  */
@@ -546,7 +566,7 @@ typedef struct {
 #define ADC16_INT_STS_TRIG_CMPT_GET(x) (((uint32_t)(x) & ADC16_INT_STS_TRIG_CMPT_MASK) >> ADC16_INT_STS_TRIG_CMPT_SHIFT)
 
 /*
- * TRIG_SW_CFLCT (W1C)
+ * TRIG_SW_CFLCT (RW1C)
  *
  */
 #define ADC16_INT_STS_TRIG_SW_CFLCT_MASK (0x40000000UL)
@@ -555,7 +575,7 @@ typedef struct {
 #define ADC16_INT_STS_TRIG_SW_CFLCT_GET(x) (((uint32_t)(x) & ADC16_INT_STS_TRIG_SW_CFLCT_MASK) >> ADC16_INT_STS_TRIG_SW_CFLCT_SHIFT)
 
 /*
- * TRIG_HW_CFLCT (RW)
+ * TRIG_HW_CFLCT (RW1C)
  *
  */
 #define ADC16_INT_STS_TRIG_HW_CFLCT_MASK (0x20000000UL)
@@ -564,7 +584,7 @@ typedef struct {
 #define ADC16_INT_STS_TRIG_HW_CFLCT_GET(x) (((uint32_t)(x) & ADC16_INT_STS_TRIG_HW_CFLCT_MASK) >> ADC16_INT_STS_TRIG_HW_CFLCT_SHIFT)
 
 /*
- * READ_CFLCT (W1C)
+ * READ_CFLCT (RW1C)
  *
  * read conflict interrup, set if wait_dis is set, one conversion is in progress, SW read another channel
  */
@@ -574,7 +594,7 @@ typedef struct {
 #define ADC16_INT_STS_READ_CFLCT_GET(x) (((uint32_t)(x) & ADC16_INT_STS_READ_CFLCT_MASK) >> ADC16_INT_STS_READ_CFLCT_SHIFT)
 
 /*
- * SEQ_SW_CFLCT (W1C)
+ * SEQ_SW_CFLCT (RW1C)
  *
  * sequence queue conflict interrup, set if HW or SW trigger received during conversion
  */
@@ -584,7 +604,7 @@ typedef struct {
 #define ADC16_INT_STS_SEQ_SW_CFLCT_GET(x) (((uint32_t)(x) & ADC16_INT_STS_SEQ_SW_CFLCT_MASK) >> ADC16_INT_STS_SEQ_SW_CFLCT_SHIFT)
 
 /*
- * SEQ_HW_CFLCT (RW)
+ * SEQ_HW_CFLCT (RW1C)
  *
  */
 #define ADC16_INT_STS_SEQ_HW_CFLCT_MASK (0x4000000UL)
@@ -593,7 +613,7 @@ typedef struct {
 #define ADC16_INT_STS_SEQ_HW_CFLCT_GET(x) (((uint32_t)(x) & ADC16_INT_STS_SEQ_HW_CFLCT_MASK) >> ADC16_INT_STS_SEQ_HW_CFLCT_SHIFT)
 
 /*
- * SEQ_DMAABT (W1C)
+ * SEQ_DMAABT (RW1C)
  *
  * dma abort interrupt, set if seqence dma write pointer reachs sw read pointer if stop_en is set
  */
@@ -603,7 +623,7 @@ typedef struct {
 #define ADC16_INT_STS_SEQ_DMAABT_GET(x) (((uint32_t)(x) & ADC16_INT_STS_SEQ_DMAABT_MASK) >> ADC16_INT_STS_SEQ_DMAABT_SHIFT)
 
 /*
- * SEQ_CMPT (W1C)
+ * SEQ_CMPT (RW1C)
  *
  * the whole sequence complete interrupt
  */
@@ -613,7 +633,7 @@ typedef struct {
 #define ADC16_INT_STS_SEQ_CMPT_GET(x) (((uint32_t)(x) & ADC16_INT_STS_SEQ_CMPT_MASK) >> ADC16_INT_STS_SEQ_CMPT_SHIFT)
 
 /*
- * SEQ_CVC (W1C)
+ * SEQ_CVC (RW1C)
  *
  * one conversion complete in seq_queue if related seq_int_en is set
  */
@@ -623,7 +643,7 @@ typedef struct {
 #define ADC16_INT_STS_SEQ_CVC_GET(x) (((uint32_t)(x) & ADC16_INT_STS_SEQ_CVC_MASK) >> ADC16_INT_STS_SEQ_CVC_SHIFT)
 
 /*
- * DMA_FIFO_FULL (RW)
+ * DMA_FIFO_FULL (RW1C)
  *
  * DMA fifo full interrupt, user need to check clock frequency if it's set.
  */
@@ -633,7 +653,7 @@ typedef struct {
 #define ADC16_INT_STS_DMA_FIFO_FULL_GET(x) (((uint32_t)(x) & ADC16_INT_STS_DMA_FIFO_FULL_MASK) >> ADC16_INT_STS_DMA_FIFO_FULL_SHIFT)
 
 /*
- * AHB_ERR (RW)
+ * AHB_ERR (RW1C)
  *
  * set if got hresp=1, generally caused by wrong trg_dma_addr or seq_dma_addr
  */
@@ -643,7 +663,7 @@ typedef struct {
 #define ADC16_INT_STS_AHB_ERR_GET(x) (((uint32_t)(x) & ADC16_INT_STS_AHB_ERR_MASK) >> ADC16_INT_STS_AHB_ERR_SHIFT)
 
 /*
- * WDOG (W1C)
+ * WDOG (RW1C)
  *
  * set if one chanel watch dog event triggered
  */
@@ -654,7 +674,7 @@ typedef struct {
 
 /* Bitfield definition for register: INT_EN */
 /*
- * TRIG_CMPT (W1C)
+ * TRIG_CMPT (RW)
  *
  * interrupt for one trigger conversion complete if enabled
  */
@@ -664,7 +684,7 @@ typedef struct {
 #define ADC16_INT_EN_TRIG_CMPT_GET(x) (((uint32_t)(x) & ADC16_INT_EN_TRIG_CMPT_MASK) >> ADC16_INT_EN_TRIG_CMPT_SHIFT)
 
 /*
- * TRIG_SW_CFLCT (W1C)
+ * TRIG_SW_CFLCT (RW)
  *
  */
 #define ADC16_INT_EN_TRIG_SW_CFLCT_MASK (0x40000000UL)
@@ -682,7 +702,7 @@ typedef struct {
 #define ADC16_INT_EN_TRIG_HW_CFLCT_GET(x) (((uint32_t)(x) & ADC16_INT_EN_TRIG_HW_CFLCT_MASK) >> ADC16_INT_EN_TRIG_HW_CFLCT_SHIFT)
 
 /*
- * READ_CFLCT (W1C)
+ * READ_CFLCT (RW)
  *
  * read conflict interrup, set if wait_dis is set, one conversion is in progress, SW read another channel
  */
@@ -692,7 +712,7 @@ typedef struct {
 #define ADC16_INT_EN_READ_CFLCT_GET(x) (((uint32_t)(x) & ADC16_INT_EN_READ_CFLCT_MASK) >> ADC16_INT_EN_READ_CFLCT_SHIFT)
 
 /*
- * SEQ_SW_CFLCT (W1C)
+ * SEQ_SW_CFLCT (RW)
  *
  * sequence queue conflict interrup, set if HW or SW trigger received during conversion
  */
@@ -711,7 +731,7 @@ typedef struct {
 #define ADC16_INT_EN_SEQ_HW_CFLCT_GET(x) (((uint32_t)(x) & ADC16_INT_EN_SEQ_HW_CFLCT_MASK) >> ADC16_INT_EN_SEQ_HW_CFLCT_SHIFT)
 
 /*
- * SEQ_DMAABT (W1C)
+ * SEQ_DMAABT (RW)
  *
  * dma abort interrupt, set if seqence dma write pointer reachs sw read pointer if stop_en is set
  */
@@ -721,7 +741,7 @@ typedef struct {
 #define ADC16_INT_EN_SEQ_DMAABT_GET(x) (((uint32_t)(x) & ADC16_INT_EN_SEQ_DMAABT_MASK) >> ADC16_INT_EN_SEQ_DMAABT_SHIFT)
 
 /*
- * SEQ_CMPT (W1C)
+ * SEQ_CMPT (RW)
  *
  * the whole sequence complete interrupt
  */
@@ -731,7 +751,7 @@ typedef struct {
 #define ADC16_INT_EN_SEQ_CMPT_GET(x) (((uint32_t)(x) & ADC16_INT_EN_SEQ_CMPT_MASK) >> ADC16_INT_EN_SEQ_CMPT_SHIFT)
 
 /*
- * SEQ_CVC (W1C)
+ * SEQ_CVC (RW)
  *
  * one conversion complete in seq_queue if related seq_int_en is set
  */
@@ -761,7 +781,7 @@ typedef struct {
 #define ADC16_INT_EN_AHB_ERR_GET(x) (((uint32_t)(x) & ADC16_INT_EN_AHB_ERR_MASK) >> ADC16_INT_EN_AHB_ERR_SHIFT)
 
 /*
- * WDOG (W1C)
+ * WDOG (RW)
  *
  * set if one chanel watch dog event triggered
  */
@@ -771,6 +791,17 @@ typedef struct {
 #define ADC16_INT_EN_WDOG_GET(x) (((uint32_t)(x) & ADC16_INT_EN_WDOG_MASK) >> ADC16_INT_EN_WDOG_SHIFT)
 
 /* Bitfield definition for register: ANA_CTRL0 */
+/*
+ * MOTO_EN (RW)
+ *
+ * "set to enable moto_soc and moto_valid.
+ * Should use AHB clock for adc, this bit can be used avoid async output"
+ */
+#define ADC16_ANA_CTRL0_MOTO_EN_MASK (0x80000000UL)
+#define ADC16_ANA_CTRL0_MOTO_EN_SHIFT (31U)
+#define ADC16_ANA_CTRL0_MOTO_EN_SET(x) (((uint32_t)(x) << ADC16_ANA_CTRL0_MOTO_EN_SHIFT) & ADC16_ANA_CTRL0_MOTO_EN_MASK)
+#define ADC16_ANA_CTRL0_MOTO_EN_GET(x) (((uint32_t)(x) & ADC16_ANA_CTRL0_MOTO_EN_MASK) >> ADC16_ANA_CTRL0_MOTO_EN_SHIFT)
+
 /*
  * ADC_CLK_ON (RW)
  *

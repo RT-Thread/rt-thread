@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022-2023 HPMicro
+ * Copyright (c) 2022-2024 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -20,8 +20,8 @@
 #define FREQ_PRESET1_PLL1_CLK2 (250000000UL)
 #define FREQ_PRESET1_PLL1_CLK0 (480000000UL)
 #define FREQ_PRESET1_PLL1_CLK1 (320000000UL)
-#define FREQ_PRESET1_PLL2_CLK0 (5160960000UL)
-#define FREQ_PRESET1_PLL2_CLK1 (4515840000UL)
+#define FREQ_PRESET1_PLL2_CLK0 (516096000UL)
+#define FREQ_PRESET1_PLL2_CLK1 (451584000UL)
 #define FREQ_32KHz (32768UL)
 #define ADC_INSTANCE_NUM ARRAY_SIZE(HPM_SYSCTL->ADCCLK)
 #define DAC_INSTANCE_NUM ARRAY_SIZE(HPM_SYSCTL->DACCLK)
@@ -59,6 +59,11 @@ static uint32_t get_frequency_for_dac(uint32_t instance);
  * @brief Get Clock frequency for WDG
  */
 static uint32_t get_frequency_for_wdg(uint32_t instance);
+
+/**
+ * @brief Get Clock frequency for PWDG
+ */
+static uint32_t get_frequency_for_pwdg(void);
 
 /**
  * @brief Turn on/off the IP clock
@@ -104,6 +109,9 @@ uint32_t clock_get_frequency(clock_name_t clock_name)
         break;
     case CLK_SRC_GROUP_WDG:
         clk_freq = get_frequency_for_wdg(node_or_instance);
+        break;
+    case CLK_SRC_GROUP_PWDG:
+        clk_freq = get_frequency_for_pwdg();
         break;
     case CLK_SRC_GROUP_PMIC:
         clk_freq = FREQ_PRESET1_OSC0_CLK0;
@@ -236,10 +244,22 @@ static uint32_t get_frequency_for_wdg(uint32_t instance)
     uint32_t freq_in_hz;
     /* EXT clock is chosen */
     if (WDG_CTRL_CLKSEL_GET(s_wdgs[instance]->CTRL) == 0) {
-        freq_in_hz = get_frequency_for_cpu();
+        freq_in_hz = get_frequency_for_ahb();
     }
         /* PCLK is chosen */
     else {
+        freq_in_hz = FREQ_32KHz;
+    }
+
+    return freq_in_hz;
+}
+
+static uint32_t get_frequency_for_pwdg(void)
+{
+    uint32_t freq_in_hz;
+    if (WDG_CTRL_CLKSEL_GET(HPM_PWDG->CTRL) == 0) {
+        freq_in_hz = FREQ_PRESET1_OSC0_CLK0;
+    } else {
         freq_in_hz = FREQ_32KHz;
     }
 
@@ -282,11 +302,21 @@ clk_src_t clock_get_source(clock_name_t clock_name)
             clk_src_index = SYSCTL_ADCCLK_MUX_GET(HPM_SYSCTL->ADCCLK[node_or_instance]);
         }
         break;
+    case CLK_SRC_GROUP_DAC:
+        if (node_or_instance < DAC_INSTANCE_NUM) {
+           clk_src_group = CLK_SRC_GROUP_DAC;
+           clk_src_index = SYSCTL_DACCLK_MUX_GET(HPM_SYSCTL->DACCLK[node_or_instance]);
+        }
+        break;
     case CLK_SRC_GROUP_WDG:
         if (node_or_instance < WDG_INSTANCE_NUM) {
             clk_src_group = CLK_SRC_GROUP_WDG;
-            clk_src_index = (WDG_CTRL_CLKSEL_GET(s_wdgs[node_or_instance]->CTRL) == 0);
+            clk_src_index = WDG_CTRL_CLKSEL_GET(s_wdgs[node_or_instance]->CTRL);
         }
+        break;
+    case CLK_SRC_GROUP_PWDG:
+        clk_src_group = CLK_SRC_GROUP_PWDG;
+        clk_src_index = WDG_CTRL_CLKSEL_GET(HPM_PWDG->CTRL);
         break;
     case CLK_SRC_GROUP_PMIC:
         clk_src_group = CLK_SRC_GROUP_COMMON;
@@ -316,6 +346,42 @@ clk_src_t clock_get_source(clock_name_t clock_name)
     return clk_src;
 }
 
+uint32_t clock_get_divider(clock_name_t clock_name)
+{
+    uint32_t clk_divider = CLOCK_DIV_INVALID;
+    uint32_t clk_src_type = GET_CLK_SRC_GROUP_FROM_NAME(clock_name);
+    uint32_t node_or_instance = GET_CLK_NODE_FROM_NAME(clock_name);
+    switch (clk_src_type) {
+    case CLK_SRC_GROUP_COMMON:
+        clk_divider = 1UL + SYSCTL_CLOCK_DIV_GET(HPM_SYSCTL->CLOCK[node_or_instance]);
+        break;
+    case CLK_SRC_GROUP_WDG:
+        if (node_or_instance < WDG_INSTANCE_NUM) {
+            clk_divider = 1UL;
+        }
+        break;
+    case CLK_SRC_GROUP_PWDG:
+        clk_divider = 1UL;
+        break;
+    case CLK_SRC_GROUP_PMIC:
+        clk_divider = 1UL;
+        break;
+    case CLK_SRC_GROUP_CPU0:
+        clk_divider = 1UL + SYSCTL_CLOCK_CPU_DIV_GET(HPM_SYSCTL->CLOCK_CPU[0]);
+        break;
+    case CLK_SRC_GROUP_AHB:
+        clk_divider = 1UL + SYSCTL_CLOCK_CPU_SUB1_DIV_GET(HPM_SYSCTL->CLOCK_CPU[0]);
+        break;
+    case CLK_SRC_GROUP_AXI:
+        clk_divider = 1UL + SYSCTL_CLOCK_CPU_SUB0_DIV_GET(HPM_SYSCTL->CLOCK_CPU[0]);
+        break;
+    default:
+        clk_divider = CLOCK_DIV_INVALID;
+        break;
+    }
+    return clk_divider;
+}
+
 hpm_stat_t clock_set_adc_source(clock_name_t clock_name, clk_src_t src)
 {
     uint32_t clk_src_type = GET_CLK_SRC_GROUP_FROM_NAME(clock_name);
@@ -325,13 +391,13 @@ hpm_stat_t clock_set_adc_source(clock_name_t clock_name, clk_src_t src)
         return status_clk_invalid;
     }
 
-    if ((src <= clk_adc_src_ahb0) || (src >= clk_adc_src_ana2)) {
+    if ((src < clk_adc_src_ana0) || (src > clk_adc_src_ahb0)) {
         return status_clk_src_invalid;
     }
 
     uint32_t clk_src_index = GET_CLK_SRC_INDEX(src);
     HPM_SYSCTL->ADCCLK[node_or_instance] =
-        (HPM_SYSCTL->ADCCLK[node_or_instance] & SYSCTL_ADCCLK_MUX_MASK) | SYSCTL_ADCCLK_MUX_SET(clk_src_index);
+        (HPM_SYSCTL->ADCCLK[node_or_instance] & ~SYSCTL_ADCCLK_MUX_MASK) | SYSCTL_ADCCLK_MUX_SET(clk_src_index);
 
     return status_success;
 }
@@ -351,7 +417,7 @@ hpm_stat_t clock_set_dac_source(clock_name_t clock_name, clk_src_t src)
 
     uint32_t clk_src_index = GET_CLK_SRC_INDEX(src);
     HPM_SYSCTL->DACCLK[node_or_instance] =
-        (HPM_SYSCTL->DACCLK[node_or_instance] & SYSCTL_DACCLK_MUX_MASK) | SYSCTL_DACCLK_MUX_SET(clk_src_index);
+        (HPM_SYSCTL->DACCLK[node_or_instance] & ~SYSCTL_DACCLK_MUX_MASK) | SYSCTL_DACCLK_MUX_SET(clk_src_index);
 
     return status_success;
 }
@@ -366,22 +432,16 @@ hpm_stat_t clock_set_source_divider(clock_name_t clock_name, clk_src_t src, uint
         if ((div < 1U) || (div > 256U)) {
             status = status_clk_div_invalid;
         } else {
-            sysctl_config_clock(HPM_SYSCTL, (clock_node_t) node_or_instance, (clock_source_t) src, div);
+            clock_source_t clk_src = GET_CLOCK_SOURCE_FROM_CLK_SRC(src);
+            sysctl_config_clock(HPM_SYSCTL, (clock_node_t) node_or_instance, clk_src, div);
         }
         break;
     case CLK_SRC_GROUP_ADC:
-        status = status_clk_operation_unsupported;
-        break;
+    case CLK_SRC_GROUP_DAC:
     case CLK_SRC_GROUP_WDG:
-        if (node_or_instance < WDG_INSTANCE_NUM) {
-            if (src == clk_wdg_src_ahb0) {
-                s_wdgs[node_or_instance]->CTRL &= ~WDG_CTRL_CLKSEL_MASK;
-            } else if (src == clk_wdg_src_osc32k) {
-                s_wdgs[node_or_instance]->CTRL |= WDG_CTRL_CLKSEL_MASK;
-            } else {
-                status = status_clk_src_invalid;
-            }
-        }
+    case CLK_SRC_GROUP_PWDG:
+    case CLK_SRC_GROUP_SRC:
+        status = status_clk_operation_unsupported;
         break;
     case CLK_SRC_GROUP_PMIC:
         status = status_clk_fixed;
@@ -406,9 +466,6 @@ hpm_stat_t clock_set_source_divider(clock_name_t clock_name, clk_src_t src, uint
             status = status_clk_shared_cpu0;
         }
         break;
-    case CLK_SRC_GROUP_SRC:
-        status = status_clk_operation_unsupported;
-        break;
     default:
         status = status_clk_src_invalid;
         break;
@@ -417,7 +474,7 @@ hpm_stat_t clock_set_source_divider(clock_name_t clock_name, clk_src_t src, uint
     return status;
 }
 
-void switch_ip_clock(clock_name_t clock_name, bool on)
+static void switch_ip_clock(clock_name_t clock_name, bool on)
 {
     uint32_t resource = GET_CLK_RESOURCE_FROM_NAME(clock_name);
 
@@ -444,8 +501,6 @@ void clock_add_to_group(clock_name_t clock_name, uint32_t group)
 
     if (resource < sysctl_resource_end) {
         sysctl_enable_group_resource(HPM_SYSCTL, group, resource, true);
-    } else if (resource == RESOURCE_SHARED_PTPC) {
-        sysctl_enable_group_resource(HPM_SYSCTL, group, sysctl_resource_ptpc, true);
     }
 }
 
@@ -455,9 +510,14 @@ void clock_remove_from_group(clock_name_t clock_name, uint32_t group)
 
     if (resource < sysctl_resource_end) {
         sysctl_enable_group_resource(HPM_SYSCTL, group, resource, false);
-    } else if (resource == RESOURCE_SHARED_PTPC) {
-        sysctl_enable_group_resource(HPM_SYSCTL, group, sysctl_resource_ptpc, false);
     }
+}
+
+bool clock_check_in_group(clock_name_t clock_name, uint32_t group)
+{
+    uint32_t resource = GET_CLK_RESOURCE_FROM_NAME(clock_name);
+
+    return sysctl_check_group_resource_enable(HPM_SYSCTL, group, resource);
 }
 
 void clock_connect_group_to_cpu(uint32_t group, uint32_t cpu)

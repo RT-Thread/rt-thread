@@ -25,6 +25,15 @@ _start:
     ori t1, t1, 0x80
     sw t1, 0(t0)
 
+#ifdef __riscv_flen
+    /* Enable FPU */
+    li t0, CSR_MSTATUS_FS_MASK
+    csrrs t0, mstatus, t0
+
+    /* Initialize FCSR */
+    fscsr zero
+#endif
+
 #ifdef INIT_EXT_RAM_FOR_DATA
     la t0, _stack_in_dlm
     mv sp, t0

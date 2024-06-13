@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 HPMicro
+ * Copyright (c) 2021-2024 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -27,10 +27,10 @@ typedef struct {
     } AFFILIATE[1];
     __R  uint8_t  RESERVED2[16];               /* 0x910 - 0x91F: Reserved */
     struct {
-        __RW uint32_t VALUE;                   /* 0x920: Retention Contol */
-        __RW uint32_t SET;                     /* 0x924: Retention Contol */
-        __RW uint32_t CLEAR;                   /* 0x928: Retention Contol */
-        __RW uint32_t TOGGLE;                  /* 0x92C: Retention Contol */
+        __RW uint32_t VALUE;                   /* 0x920: Retention Control */
+        __RW uint32_t SET;                     /* 0x924: Retention Control */
+        __RW uint32_t CLEAR;                   /* 0x928: Retention Control */
+        __RW uint32_t TOGGLE;                  /* 0x92C: Retention Control */
     } RETENTION[1];
     __R  uint8_t  RESERVED3[1744];             /* 0x930 - 0xFFF: Reserved */
     struct {
@@ -396,7 +396,7 @@ typedef struct {
  *
  * perform reset and release imediately
  * 0: reset is released
- * 1 reset is asserted and will release automaticly
+ * 1 reset is asserted and will release automatically
  */
 #define SYSCTL_RESET_CONTROL_RESET_MASK (0x1U)
 #define SYSCTL_RESET_CONTROL_RESET_SHIFT (0U)
@@ -880,7 +880,7 @@ typedef struct {
 /*
  * REFERENCE (RW)
  *
- * refrence clock selection,
+ * reference clock selection,
  * 0: 32k
  * 1: 24M
  */

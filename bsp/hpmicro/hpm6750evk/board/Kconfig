@@ -7,6 +7,14 @@ config SOC_HPM6000
     select RT_USING_USER_MAIN
     default y
 
+config BSP_USING_ENET_PHY_DP83867
+    bool
+    default n
+
+config BSP_USING_ENET_PHY_DP83848
+    bool
+    default n
+
 menu "On-chip Peripheral Drivers"
     config BSP_USING_GPIO
         bool "Enable GPIO"
@@ -27,37 +35,22 @@ menu "On-chip Peripheral Drivers"
                         bool "Enable UART0 RX DMA"
                         depends on BSP_USING_UART0 && RT_SERIAL_USING_DMA
                         default n
-
                     config BSP_UART0_TX_USING_DMA
                         bool "Enable UART0 TX DMA"
                         depends on BSP_USING_UART0 && RT_SERIAL_USING_DMA
                         default n
-
-                    config BSP_UART0_RX_DMA_CHANNEL
-                        int "Set UART0 RX DMA CHANNEL"
-                        range 0 7
-                        depends on BSP_USING_UART0 && RT_SERIAL_USING_DMA
-                        default 0
-
-                    config BSP_UART0_TX_DMA_CHANNEL
-                        int "Set UART0 TX DMA CHANNEL"
-                        range 0 7
-                        depends on BSP_USING_UART0 && RT_SERIAL_USING_DMA
-                        default 1
-
                     config BSP_UART0_RX_BUFSIZE
                         int "Set UART0 RX buffer size"
                         range 64 65535
                         depends on RT_USING_SERIAL_V2
                         default 128
-
                     config BSP_UART0_TX_BUFSIZE
                         int "Set UART0 TX buffer size"
                         range 0 65535
                         depends on RT_USING_SERIAL_V2
                         default 0
                 endif
-                menuconfig BSP_USING_UART6
+            menuconfig BSP_USING_UART6
                 bool "Enable UART6"
                 default n
                 if BSP_USING_UART6
@@ -70,70 +63,41 @@ menu "On-chip Peripheral Drivers"
                         bool "Enable UART6 TX DMA"
                         depends on BSP_USING_UART6 && RT_SERIAL_USING_DMA
                         default n
-
-                    config BSP_UART6_RX_DMA_CHANNEL
-                        int "Set UART6 RX DMA CHANNEL"
-                        range 0 7
-                        depends on BSP_USING_UART6 && RT_SERIAL_USING_DMA
-                        default 0
-
-                    config BSP_UART6_TX_DMA_CHANNEL
-                        int "Set UART6 TX DMA CHANNEL"
-                        range 0 7
-                        depends on BSP_USING_UART6 && RT_SERIAL_USING_DMA
-                        default 1
-
                     config BSP_UART6_RX_BUFSIZE
                         int "Set UART6 RX buffer size"
                         range 64 65535
                         depends on RT_USING_SERIAL_V2
                         default 128
-
                     config BSP_UART6_TX_BUFSIZE
                         int "Set UART6 TX buffer size"
                         range 0 65535
                         depends on RT_USING_SERIAL_V2
                         default 0
                 endif
-                menuconfig BSP_USING_UART13
+            menuconfig BSP_USING_UART13
                 bool "Enable UART13"
-                default n
+                default y
                 if BSP_USING_UART13
                     config BSP_UART13_RX_USING_DMA
                         bool "Enable UART13 RX DMA"
                         depends on BSP_USING_UART13 && RT_SERIAL_USING_DMA
                         default n
-
                     config BSP_UART13_TX_USING_DMA
                         bool "Enable UART13 TX DMA"
                         depends on BSP_USING_UART13 && RT_SERIAL_USING_DMA
                         default n
-
-                    config BSP_UART13_RX_DMA_CHANNEL
-                        int "Set UART13 RX DMA CHANNEL"
-                        range 0 7
-                        depends on BSP_USING_UART13 && RT_SERIAL_USING_DMA
-                        default 0
-
-                    config BSP_UART13_TX_DMA_CHANNEL
-                        int "Set UART13 TX DMA CHANNEL"
-                        range 0 7
-                        depends on BSP_USING_UART13 && RT_SERIAL_USING_DMA
-                        default 1
-
                     config BSP_UART13_RX_BUFSIZE
                         int "Set UART13 RX buffer size"
                         range 64 65535
                         depends on RT_USING_SERIAL_V2
                         default 128
-
                     config BSP_UART13_TX_BUFSIZE
                         int "Set UART13 TX buffer size"
                         range 0 65535
                         depends on RT_USING_SERIAL_V2
                         default 0
                 endif
-                menuconfig BSP_USING_UART14
+            menuconfig BSP_USING_UART14
                 bool "Enable UART14"
                 default n
                 if BSP_USING_UART14
@@ -141,30 +105,15 @@ menu "On-chip Peripheral Drivers"
                         bool "Enable UART14 RX DMA"
                         depends on BSP_USING_UART14 && RT_SERIAL_USING_DMA
                         default n
-
                     config BSP_UART14_TX_USING_DMA
                         bool "Enable UART14 TX DMA"
                         depends on BSP_USING_UART14 && RT_SERIAL_USING_DMA
                         default n
-
-                    config BSP_UART14_RX_DMA_CHANNEL
-                        int "Set UART14 RX DMA CHANNEL"
-                        range 0 7
-                        depends on BSP_USING_UART14 && RT_SERIAL_USING_DMA
-                        default 0
-
-                    config BSP_UART14_TX_DMA_CHANNEL
-                        int "Set UART14 TX DMA CHANNEL"
-                        range 0 7
-                        depends on BSP_USING_UART14 && RT_SERIAL_USING_DMA
-                        default 1
-
                     config BSP_UART14_RX_BUFSIZE
                         int "Set UART14 RX buffer size"
                         range 64 65535
                         depends on RT_USING_SERIAL_V2
                         default 128
-
                     config BSP_UART14_TX_BUFSIZE
                         int "Set UART14 TX buffer size"
                         range 0 65535
@@ -182,13 +131,28 @@ menu "On-chip Peripheral Drivers"
         if BSP_USING_SPI
             config BSP_USING_SPI1
                 bool "Enable SPI1"
-                    default y
+                default y
+                if BSP_USING_SPI1
+                    config BSP_SPI1_USING_DMA
+                    bool "Enable SPI1 DMA"
+                    default n
+                endif
             config BSP_USING_SPI2
                 bool "Enable SPI2"
+                default n
+                if BSP_USING_SPI2
+                    config BSP_SPI2_USING_DMA
+                    bool "Enable SPI2 DMA"
                     default n
+                endif
             config BSP_USING_SPI3
                 bool "Enable SPI3"
+                default n
+                if BSP_USING_SPI3
+                    config BSP_SPI3_USING_DMA
+                    bool "Enable SPI3 DMA"
                     default n
+                endif
         endif
 
     menuconfig BSP_USING_RTC
@@ -201,14 +165,15 @@ menu "On-chip Peripheral Drivers"
 
        select RT_USING_ETH
        if BSP_USING_ETH
-            choice
-        prompt "ETH"
-            config BSP_USING_ETH0
-            bool "Enable ETH0"
+               config BSP_USING_ETH0
+               bool "Enable ETH0"
+               default y
+               select BSP_USING_ENET_PHY_DP83867
 
-            config BSP_USING_ETH1
-            bool "Enable ETH1"
-        endchoice
+               config BSP_USING_ETH1
+               bool "Enable ETH1"
+               default n
+               select BSP_USING_ENET_PHY_DP83848
        endif
 
     menuconfig BSP_USING_SDXC
@@ -218,11 +183,65 @@ menu "On-chip Peripheral Drivers"
         if BSP_USING_SDXC
             config BSP_USING_SDXC0
                 bool "Enable SDXC0"
-                    default n
+                default n
+            if BSP_USING_SDXC0
+                choice
+                    prompt "Select BUS_WIDTH"
+                    default BSP_SDXC0_BUS_WIDTH_8BIT
+                    config BSP_SDXC0_BUS_WIDTH_1BIT
+                        bool "1-bit"
+                    config BSP_SDXC0_BUS_WIDTH_4BIT
+                        bool "4-bit"
+                    config BSP_SDXC0_BUS_WIDTH_8BIT
+                        bool "8-bit"
+                endchoice
+                choice
+                    prompt "Select Voltage"
+                    default BSP_SDXC0_VOLTAGE_3V3
+                    config BSP_SDXC0_VOLTAGE_3V3
+                        bool "3.3V"
+                    config BSP_SDXC0_VOLTAGE_1V8
+                        bool "1.8V"
+                    config BSP_SDXC0_VOLTAGE_DUAL
+                        bool "Dual voltage 3.3V / 1.8V"
+                endchoice
+                config BSP_SDXC0_VSEL_PIN
+                    default "None"
+                    string "VSEL pin name"
+                config BSP_SDXC0_PWR_PIN
+                    default "None"
+                    string "PWR pin name"
+            endif
 
             config BSP_USING_SDXC1
                 bool "Enable SDXC1"
-                    default y
+                default n
+            if BSP_USING_SDXC1
+                choice
+                    prompt "Select BUS_WIDTH"
+                    default BSP_SDXC1_BUS_WIDTH_4BIT
+                    config BSP_SDXC1_BUS_WIDTH_1BIT
+                        bool "1-bit"
+                    config BSP_SDXC1_BUS_WIDTH_4BIT
+                        bool "4-bit"
+                endchoice
+                choice
+                    prompt "Select Voltage"
+                    default BSP_SDXC1_VOLTAGE_3V3
+                    config BSP_SDXC1_VOLTAGE_3V3
+                        bool "3.3V"
+                    config BSP_SDXC1_VOLTAGE_1V8
+                        bool "1.8V"
+                    config BSP_SDXC1_VOLTAGE_DUAL
+                        bool "Dual voltage 3.3V / 1.8V"
+                endchoice
+                config BSP_SDXC1_VSEL_PIN
+                    default "None"
+                    string "VSEL pin name"
+                config BSP_SDXC1_PWR_PIN
+                    default "None"
+                    string "PWR pin name"
+            endif
         endif
 
     menuconfig BSP_USING_TOUCH
@@ -231,16 +250,21 @@ menu "On-chip Peripheral Drivers"
         if BSP_USING_TOUCH
             config BSP_USING_TOUCH_GT911
                 bool "Enable GT911"
-                    default y
+                default y
 
             config BSP_USING_TOUCH_FT5406
                 bool "Enable FT5406"
-                    default n
+                default n
         endif
 
     menuconfig BSP_USING_LCD
         bool "Enable LCD"
         default n
+        if BSP_USING_LCD
+            config BSP_USING_LCD_ISR
+                bool "Enable LCD interrupt"
+                default n
+        endif
 
     menuconfig BSP_USING_LVGL
         bool "Enable LVGL"
@@ -287,7 +311,12 @@ menu "On-chip Peripheral Drivers"
         if BSP_USING_I2C
             config BSP_USING_I2C0
                 bool "Enable I2C0"
-                    default y
+                default y
+        endif
+        if BSP_USING_I2C0
+            config BSP_I2C0_USING_DMA
+                bool "Enable I2C0 DMA"
+                default n
         endif
 
     menuconfig BSP_USING_FEMC
@@ -300,12 +329,12 @@ menu "On-chip Peripheral Drivers"
 
     menuconfig BSP_USING_XPI_FLASH
         bool "Enable XPI FLASH"
-    default n
-        select PKG_USING_FAL if BSP_USING_XPI_FLASH
+        default n
+        select RT_USING_FAL if BSP_USING_XPI_FLASH
 
     menuconfig BSP_USING_PWM
         bool "Enable PWM"
-    default n
+        default n
 
     menuconfig BSP_USING_DAO
         bool "Enable Audio DAO play"
@@ -324,7 +353,10 @@ menu "On-chip Peripheral Drivers"
         if BSP_USING_I2S
             config BSP_USING_I2S0
                 bool "Enable I2S0"
-                    default y
+                default y
+            config BSP_USING_AUDIO_CODEC_SGTL5000
+                bool "Enable audio codec on board"
+                default y
         endif
 
     menuconfig BSP_USING_USB
@@ -333,14 +365,15 @@ menu "On-chip Peripheral Drivers"
        if BSP_USING_USB
             config BSP_USING_USB_DEVICE
                 bool "Enable USB Device"
-                    default n
+                default n
             config BSP_USING_USB_HOST
                 bool "Enable USB Host"
-                    default n
+                select RT_USING_CACHE
+                default n
        endif
 
 
-     menuconfig BSP_USING_WDG
+    menuconfig BSP_USING_WDG
         bool "Enable Watchdog"
         default n
         select RT_USING_WDT if BSP_USING_WDG
@@ -359,7 +392,7 @@ menu "On-chip Peripheral Drivers"
                 default n
         endif
 
-     menuconfig BSP_USING_CAN
+    menuconfig BSP_USING_CAN
         bool "Enable CAN"
         default n
         select RT_USING_CAN if BSP_USING_CAN
@@ -376,7 +409,7 @@ menu "On-chip Peripheral Drivers"
             config BSP_USING_CAN3
                 bool "Enable CAN3"
                 default n
-     endif
+        endif
 
     menuconfig BSP_USING_ADC
         bool "Enable ADC"
@@ -384,8 +417,8 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_ADC if BSP_USING_ADC
         if BSP_USING_ADC
             menuconfig BSP_USING_ADC12
-            bool "Enable ADC12"
-            default n
+                bool "Enable ADC12"
+                default n
                 if BSP_USING_ADC12
                     config BSP_USING_ADC0
                         bool "Enable ADC0"
@@ -398,8 +431,8 @@ menu "On-chip Peripheral Drivers"
                         default n
                 endif
             menuconfig BSP_USING_ADC16
-            bool "Enable ADC16"
-            default n
+                bool "Enable ADC16"
+                default n
                 if BSP_USING_ADC16
                     config BSP_USING_ADC3
                         bool "Enable ADC3"
@@ -407,8 +440,46 @@ menu "On-chip Peripheral Drivers"
                 endif
         endif
 
+    menuconfig BSP_USING_CAMERA
+        bool "Enable camera"
+        default n
+        if BSP_USING_CAMERA
+            config BSP_USING_CAMERA_MT9M114
+                bool "Enable mt9m114"
+                default y
+
+            config BSP_USING_CAMERA_OV5640
+                bool "Enable ov5640"
+                default n
+
+            config BSP_USING_CAMERA_OV7725
+                bool "Enable ov7725"
+                default n
+            endif
+
+     menuconfig BSP_USING_JPEG
+                bool "Enable JPEG Driver"
+                default n
+
+            menuconfig BSP_USING_CAM
+                bool "Enable CAM Driver"
+                default n
+
+    menuconfig  BSP_USING_PANEL
+        bool "Enable panel"
+        default n
+        if BSP_USING_PANEL
+            config BSP_USEING_PANEL_RGB_TM070RDH13
+                bool "Enable RGB TM070RDH13"
+                default y
+            endif
+
+    menuconfig BSP_USING_RTT_LCD_DRIVER
+        bool "Enable RTT LCD Driver"
+        select BSP_USING_LCD
+        default n
+
+
 endmenu
-
-
 
 endmenu

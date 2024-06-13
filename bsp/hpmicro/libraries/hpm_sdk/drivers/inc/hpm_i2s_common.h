@@ -22,6 +22,13 @@
 #define I2S_PROTOCOL_RIGHT_JUSTIFIED (2U)
 #define I2S_PROTOCOL_PCM (3U)
 
+/* i2s channel slot mask */
+#define I2S_CHANNEL_SLOT_MASK(x) (1U << (x))
+/* convert audio depth value into CFGR[DATASIZ] value map */
+#define I2S_CFGR_DATASIZ(x) ((x - 16) >> 3)
+/* convert channel length value into CFGR[CHSIZ] value map */
+#define I2S_CFGR_CHSIZ(x)   ((x - 16) >> 4)
+
 /**
  * @brief I2S audio depth
  */

@@ -261,7 +261,7 @@ static void usb_host_qtd_init(hcd_qtd_t *p_qtd, void *buffer, uint16_t total_byt
     if (buffer != NULL) {
         p_qtd->buffer[0] = (uint32_t)buffer;
 
-        for (uint8_t i = 1; i < USB_SOC_HCD_QTD_BUFFER_COUNT; i++) {
+        for (uint8_t i = 1; i < USB_SOC_DCD_QHD_BUFFER_COUNT; i++) {
             p_qtd->buffer[i] |= usb_host_align4k(p_qtd->buffer[i-1]) + 4096UL;
         }
     }

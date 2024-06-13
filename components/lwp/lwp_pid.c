@@ -1167,11 +1167,11 @@ static void print_thread_info(struct rt_thread* thread, int maxlen)
 
 #ifdef RT_USING_SMP
     if (RT_SCHED_CTX(thread).oncpu != RT_CPU_DETACHED)
-        rt_kprintf("%-*.*s %3d %3d ", maxlen, RT_NAME_MAX, thread->parent.name, RT_SCHED_CTX(thread).oncpu, RT_SCHED_PRIV(thread).current_priority);
+        rt_kprintf("%3d %3d ", RT_SCHED_CTX(thread).oncpu, RT_SCHED_PRIV(thread).current_priority);
     else
-        rt_kprintf("%-*.*s N/A %3d ", maxlen, RT_NAME_MAX, thread->parent.name, RT_SCHED_PRIV(thread).current_priority);
+        rt_kprintf("N/A %3d ", RT_SCHED_PRIV(thread).current_priority);
 #else
-    rt_kprintf("%-*.*s %3d ", maxlen, RT_NAME_MAX, thread->parent.name, RT_SCHED_PRIV(thread).current_priority);
+    rt_kprintf("%3d ", RT_SCHED_PRIV(thread).current_priority);
 #endif /*RT_USING_SMP*/
 
     stat = (RT_SCHED_CTX(thread).stat & RT_THREAD_STAT_MASK);
@@ -1195,7 +1195,7 @@ static void print_thread_info(struct rt_thread* thread, int maxlen)
     ptr = (rt_uint8_t *)thread->stack_addr;
     while (*ptr == '#')ptr++;
 
-    rt_kprintf(" 0x%08x 0x%08x    %02d%%   0x%08x %03d\n",
+    rt_kprintf(" 0x%08x 0x%08x    %02d%%   0x%08x %03d",
             (thread->stack_size + (rt_uint32_t)(rt_size_t)thread->stack_addr - (rt_uint32_t)(rt_size_t)thread->sp),
             thread->stack_size,
             (thread->stack_size + (rt_uint32_t)(rt_size_t)thread->stack_addr - (rt_uint32_t)(rt_size_t)ptr) * 100
@@ -1203,6 +1203,7 @@ static void print_thread_info(struct rt_thread* thread, int maxlen)
             RT_SCHED_PRIV(thread).remaining_tick,
             thread->error);
 #endif
+    rt_kprintf("   %-.*s\n",rt_strlen(thread->parent.name), thread->parent.name);
 }
 
 long list_process(void)
@@ -1219,13 +1220,13 @@ long list_process(void)
 
     maxlen = RT_NAME_MAX;
 #ifdef RT_USING_SMP
-    rt_kprintf("%-*.s %-*.s %-*.s cpu pri  status      sp     stack size max used left tick  error\n", 4, "PID", maxlen, "CMD", maxlen, item_title);
-    object_split(4);rt_kprintf(" ");object_split(maxlen);rt_kprintf(" ");object_split(maxlen);rt_kprintf(" ");
-    rt_kprintf(                  "--- ---  ------- ---------- ----------  ------  ---------- ---\n");
+    rt_kprintf("%-*.s %-*.s %-*.s cpu pri  status      sp     stack size max used left tick  error %-*.s\n", 4, "PID", 4, "TID", maxlen, item_title, maxlen, "cmd");
+    object_split(4);rt_kprintf(" ");object_split(4);rt_kprintf(" ");object_split(maxlen);rt_kprintf(" ");
+    rt_kprintf(                  "--- ---  ------- ---------- ---------- -------- ---------- -----");rt_kprintf(" ");object_split(maxlen);rt_kprintf("\n");
 #else
-    rt_kprintf("%-*.s %-*.s %-*.s pri  status      sp     stack size max used left tick  error\n", 4, "PID", maxlen, "CMD", maxlen, item_title);
-    object_split(4);rt_kprintf(" ");object_split(maxlen);rt_kprintf(" ");object_split(maxlen);rt_kprintf(" ");
-    rt_kprintf(                  "---  ------- ---------- ----------  ------  ---------- ---\n");
+    rt_kprintf("%-*.s %-*.s %-*.s pri  status      sp     stack size max used left tick  error\n", 4, "PID", 4, "TID", maxlen, item_title, maxlen, "cmd");
+    object_split(4);rt_kprintf(" ");object_split(4);rt_kprintf(" ");object_split(maxlen);rt_kprintf(" ");
+    rt_kprintf(                  "---  ------- ---------- ---------- -------- ---------- -----");rt_kprintf(" ");object_split(maxlen);rt_kprintf("\n");
 #endif /*RT_USING_SMP*/
 
     count = rt_object_get_length(RT_Object_Class_Thread);
@@ -1257,7 +1258,7 @@ long list_process(void)
 
                     if (th.lwp == RT_NULL)
                     {
-                        rt_kprintf("     %-*.*s ", maxlen, RT_NAME_MAX, "kernel");
+                        rt_kprintf("          %-*.*s ", maxlen, RT_NAME_MAX, "kernel");
                         print_thread_info(&th, maxlen);
                     }
                 }
@@ -1276,7 +1277,7 @@ long list_process(void)
             for (node = list->next; node != list; node = node->next)
             {
                 thread = rt_list_entry(node, struct rt_thread, sibling);
-                rt_kprintf("%4d %-*.*s ", lwp_to_pid(lwp), maxlen, RT_NAME_MAX, lwp->cmd);
+                rt_kprintf("%4d %4d %-*.*s ", lwp_to_pid(lwp), thread->tid, maxlen, RT_NAME_MAX, lwp->cmd);
                 print_thread_info(thread, maxlen);
             }
         }

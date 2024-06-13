@@ -9,6 +9,7 @@
 #include "hpm_touch.h"
 #include "hpm_gpio_drv.h"
 #include "hpm_gt911.h"
+#include "hpm_touch.h"
 
 gt911_context_t gt911 = {0};
 
@@ -23,16 +24,21 @@ hpm_stat_t touch_get_data(touch_point_t *points, uint8_t *num_of_points)
         printf("gt911 read data failed\n");
         return stat;
     }
-
-    num = GT911_GET_STATUS_NUM_OF_POINTS(touch_data.status);
-    *num_of_points = num;
-    if (num > 0 && num < GT911_MAX_TOUCH_POINTS) {
-        for (i = 0; i < num; i++) {
-            points[i].x = (touch_data.points[i].x_h & 0xF) << 8 | touch_data.points[i].x_l;
-            points[i].y = (touch_data.points[i].y_h & 0xF) << 8 | touch_data.points[i].y_l;
+    /* the buffer status is ready*/
+    if (GT911_GET_STATUS_BUFFER_STAT(touch_data.status) == 1) {
+        num = GT911_GET_STATUS_NUM_OF_POINTS(touch_data.status);
+        *num_of_points = num;
+        if (num > 0 && num <= GT911_MAX_TOUCH_POINTS) {
+            for (i = 0; i < num; i++) {
+                points[i].x = (touch_data.points[i].x_h & 0xF) << 8 | touch_data.points[i].x_l;
+                points[i].y = (touch_data.points[i].y_h & 0xF) << 8 | touch_data.points[i].y_l;
+            }
+        } else {
+            stat = status_touch_points_over_number;
         }
+    } else {
+        stat = status_touch_buffer_no_ready;
     }
-
     gt911_write_register(&gt911, GT911_STATUS, 0);
     return stat;
 }
@@ -40,7 +46,7 @@ hpm_stat_t touch_get_data(touch_point_t *points, uint8_t *num_of_points)
 void pull_int_pin(bool high)
 {
     gpio_set_pin_output(BOARD_CAP_INTR_GPIO, BOARD_CAP_INTR_GPIO_INDEX, BOARD_CAP_INTR_GPIO_PIN);
-    gpio_write_pin(BOARD_CAP_INTR_GPIO, BOARD_CAP_INTR_GPIO_INDEX, BOARD_CAP_INTR_GPIO_PIN, 1);
+    gpio_write_pin(BOARD_CAP_INTR_GPIO, BOARD_CAP_INTR_GPIO_INDEX, BOARD_CAP_INTR_GPIO_PIN, high);
 }
 
 void float_int_pin(void)

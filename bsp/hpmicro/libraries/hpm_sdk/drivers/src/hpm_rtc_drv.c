@@ -21,6 +21,21 @@ time_t rtc_get_time(RTC_Type *base)
     return time;
 }
 
+struct timeval rtc_get_timeval(RTC_Type *base)
+{
+    struct timeval tm;
+
+    base->SUB_SNAP = 0; /* Lock shadow registers first */
+
+    /* Convert sub-second ticks into micro-second */
+    uint32_t sub_sec = (uint32_t)((base->SUB_SNAP >> 17) * 1.0 * 1000000 / 32768);
+
+    tm.tv_sec   = base->SEC_SNAP;
+    tm.tv_usec  = sub_sec;
+
+    return tm;
+}
+
 hpm_stat_t rtc_config_alarm(RTC_Type *base, rtc_alarm_config_t *config)
 {
     hpm_stat_t status = status_invalid_argument;

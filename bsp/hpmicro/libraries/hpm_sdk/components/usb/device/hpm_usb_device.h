@@ -132,13 +132,16 @@ void usb_device_disconnect(usb_device_handle_t *handle);
 bool usb_device_edpt_open(usb_device_handle_t *handle, usb_endpoint_config_t *config);
 
 /* Submit a transfe */
-bool usb_device_edpt_xfer(usb_device_handle_t *handle, uint8_t ep_addr, uint8_t *buffer, uint16_t total_bytes);
+bool usb_device_edpt_xfer(usb_device_handle_t *handle, uint8_t ep_addr, uint8_t *buffer, uint32_t total_bytes);
 
 /* Stall endpoint */
 void usb_device_edpt_stall(usb_device_handle_t *handle, uint8_t ep_addr);
 
 /* clear stall */
 void usb_device_edpt_clear_stall(usb_device_handle_t *handle, uint8_t ep_addr);
+
+/* check stall */
+bool usb_device_edpt_check_stall(usb_device_handle_t *handle, uint8_t ep_addr);
 
 /* close a specified endpoint */
 void usb_device_edpt_close(usb_device_handle_t *handle, uint8_t ep_addr);

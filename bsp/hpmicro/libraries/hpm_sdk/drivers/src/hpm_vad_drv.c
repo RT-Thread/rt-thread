@@ -9,6 +9,7 @@
 
 void vad_get_default_config(VAD_Type *ptr, vad_config_t *config)
 {
+    (void) ptr;
     config->enable_buffer = true;
     config->enable_pdm_clock_out = true;
     config->enable_two_channels = true;

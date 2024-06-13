@@ -7,7 +7,6 @@ src = Split("""
     board.c
     rtt_board.c
     pinmux.c
-    eth_phy_port.c
     fal_flash_port.c
     hpm_wm8960.c
 """)

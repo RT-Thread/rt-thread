@@ -114,13 +114,6 @@ config RT_TICK_PER_SECOND
     help
         System's tick frequency, Hz.
 
-config RT_USING_OVERFLOW_CHECK
-    bool "Using stack overflow checking"
-    default y
-    help
-        Enable thread stack overflow checking. The stack overflow is checking when
-        each thread switch.
-
 config RT_USING_HOOK
     bool "Enable system hook"
     default y
@@ -182,6 +175,14 @@ if RT_USING_TIMER_SOFT
         default 2048 if ARCH_CPU_64BIT
         default 512
 endif
+
+config RT_USING_CPU_USAGE_TRACER
+    select RT_USING_HOOK
+    bool "Enable cpu usage tracing"
+    help
+        Enable cpu usage tracer for application like top.
+    default y if RT_USING_SMART
+    default n
 
 menu "kservice optimization"
     config RT_USING_TINY_FFS
@@ -253,6 +254,13 @@ menuconfig RT_USING_DEBUG
             depends on RT_USING_SMP
             default y if RT_USING_SMART
             default n
+
+        config RT_USING_OVERFLOW_CHECK
+            bool "Using stack overflow checking"
+            default y
+            help
+                Enable thread stack overflow checking. The stack overflow is checking when
+                each thread switch.
     endif
 
 menu "Inter-Thread communication"

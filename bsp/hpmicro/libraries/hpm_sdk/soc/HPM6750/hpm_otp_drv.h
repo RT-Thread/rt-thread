@@ -120,7 +120,7 @@ extern "C" {
     /**
      * @return Write data to OTP shadow register
      * @param [in] addr OTP word index
-     * @param [val] val Data to be written
+     * @param [in] val Data to be written
      * @return API execution status
      */
     hpm_stat_t otp_write_shadow_register(uint32_t addr, uint32_t val);

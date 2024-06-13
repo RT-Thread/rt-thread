@@ -127,6 +127,7 @@ typedef struct {
     uint8_t idle_timeout_in_ns;
     uint8_t data_width_in_byte;
     uint8_t auto_refresh_count_in_one_burst;
+    bool delay_cell_disable;            /**< Delay cell disable */
     uint8_t delay_cell_value;           /**< Delay cell value */
 } femc_sdram_config_t;
 

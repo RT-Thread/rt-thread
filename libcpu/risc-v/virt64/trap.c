@@ -162,11 +162,11 @@ void handle_user(rt_size_t scause, rt_size_t stval, rt_size_t sepc, struct rt_hw
     {
         case EP_LOAD_PAGE_FAULT:
             fault_op = MM_FAULT_OP_READ;
-            fault_type = MM_FAULT_TYPE_PAGE_FAULT;
+            fault_type = MM_FAULT_TYPE_GENERIC_MMU;
             break;
         case EP_LOAD_ACCESS_FAULT:
             fault_op = MM_FAULT_OP_READ;
-            fault_type = MM_FAULT_TYPE_ACCESS_FAULT;
+            fault_type = MM_FAULT_TYPE_BUS_ERROR;
             break;
         case EP_LOAD_ADDRESS_MISALIGNED:
             fault_op = MM_FAULT_OP_READ;
@@ -174,11 +174,11 @@ void handle_user(rt_size_t scause, rt_size_t stval, rt_size_t sepc, struct rt_hw
             break;
         case EP_STORE_PAGE_FAULT:
             fault_op = MM_FAULT_OP_WRITE;
-            fault_type = MM_FAULT_TYPE_PAGE_FAULT;
+            fault_type = MM_FAULT_TYPE_GENERIC_MMU;
             break;
         case EP_STORE_ACCESS_FAULT:
             fault_op = MM_FAULT_OP_WRITE;
-            fault_type = MM_FAULT_TYPE_ACCESS_FAULT;
+            fault_type = MM_FAULT_TYPE_BUS_ERROR;
             break;
         case EP_STORE_ADDRESS_MISALIGNED:
             fault_op = MM_FAULT_OP_WRITE;
@@ -186,11 +186,11 @@ void handle_user(rt_size_t scause, rt_size_t stval, rt_size_t sepc, struct rt_hw
             break;
         case EP_INSTRUCTION_PAGE_FAULT:
             fault_op = MM_FAULT_OP_EXECUTE;
-            fault_type = MM_FAULT_TYPE_PAGE_FAULT;
+            fault_type = MM_FAULT_TYPE_GENERIC_MMU;
             break;
         case EP_INSTRUCTION_ACCESS_FAULT:
             fault_op = MM_FAULT_OP_EXECUTE;
-            fault_type = MM_FAULT_TYPE_ACCESS_FAULT;
+            fault_type = MM_FAULT_TYPE_BUS_ERROR;
             break;
         case EP_INSTRUCTION_ADDRESS_MISALIGNED:
             fault_op = MM_FAULT_OP_EXECUTE;
@@ -366,7 +366,7 @@ void handle_trap(rt_size_t scause, rt_size_t stval, rt_size_t sepc, struct rt_hw
             .pc = sepc
         };
         rt_kprintf("fp = %p", frame.fp);
-        rt_backtrace_frame(&frame);
+        rt_backtrace_frame(rt_thread_self(), &frame);
 
         RT_ASSERT(0);
     }

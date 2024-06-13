@@ -10,6 +10,7 @@
 
 #include "hpm_common.h"
 #include "hpm_gpio_regs.h"
+#include "hpm_soc_feature.h"
 
 #ifndef PORT_PIN_COUNT
 #define PORT_PIN_COUNT (32U)
@@ -33,6 +34,9 @@ typedef enum gpio_interrupt_trigger {
     gpio_interrupt_trigger_level_low,
     gpio_interrupt_trigger_edge_rising,
     gpio_interrupt_trigger_edge_falling,
+#if defined(GPIO_SOC_HAS_EDGE_BOTH_INTERRUPT) && (GPIO_SOC_HAS_EDGE_BOTH_INTERRUPT == 1)
+    gpio_interrupt_trigger_edge_both,
+#endif
 } gpio_interrupt_trigger_t;
 
 #ifdef __cplusplus
@@ -51,6 +55,20 @@ extern "C" {
 static inline uint8_t gpio_read_pin(GPIO_Type *ptr, uint32_t port, uint8_t pin)
 {
     return (ptr->DI[port].VALUE & (1 << pin)) >> pin;
+}
+
+/**
+ * @brief   Read target pin output state
+ *
+ * @param ptr GPIO base address
+ * @param port Port index
+ * @param pin Pin index
+ *
+ * @return Pin output state
+ */
+static inline uint32_t gpio_get_pin_output_status(GPIO_Type *ptr, uint32_t port, uint8_t pin)
+{
+    return (ptr->DO[port].VALUE & (1 << pin)) >> pin;
 }
 
 /**
@@ -153,7 +171,7 @@ static inline void gpio_clear_pin_interrupt_flag(GPIO_Type *ptr, uint32_t port, 
  */
 static inline bool gpio_check_pin_interrupt_enabled(GPIO_Type *ptr, uint32_t port, uint8_t pin)
 {
-    return (ptr->IE[port].VALUE & (1 << pin)) == (1 << pin);
+    return (ptr->IE[port].VALUE & (1 << pin)) == (uint32_t) (1 << pin);
 }
 
 /**

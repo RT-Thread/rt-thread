@@ -19,8 +19,8 @@
 #define MCAN_TSU_EXT_TIMEBASE_SRC_MCAN1 (1U)
 #define MCAN_TSU_EXT_TIMEBASE_SRC_MCAN2 (2U)
 #define MCAN_TSU_EXT_TIMEBASE_SRC_MCAN3 (3U)
-#define MCAN_TSU_EXT_TIMEBASE_SRC_PTP   (4U)
-#define MCAN_TSU_EXT_TIMEBASE_SRC_MAX   (MCAN_TSU_EXT_TIMEBASE_SRC_PTP)
+#define MCAN_TSU_EXT_TIMEBASE_SRC_PTPC  (4U)
+#define MCAN_TSU_EXT_TIMEBASE_SRC_MAX   (MCAN_TSU_EXT_TIMEBASE_SRC_PTPC)
 
 #ifdef __cpluspus
 extern "C" {
@@ -71,6 +71,7 @@ static inline uint32_t mcan_get_ram_base(MCAN_Type *ptr)
  */
 static inline uint32_t mcan_get_ram_offset(MCAN_Type *ptr)
 {
+    (void) ptr;
     return 0U;
 }
 

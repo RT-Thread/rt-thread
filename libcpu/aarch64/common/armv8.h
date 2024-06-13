@@ -149,6 +149,31 @@ rt_ubase_t rt_hw_get_current_el(void);
 void rt_hw_set_elx_env(void);
 void rt_hw_set_current_vbar(rt_ubase_t addr);
 
+/* ESR:generic */
+#define ARM64_ABORT_WNR(esr)        ((esr) & 0x40)
+#define ARM64_ESR_EXTRACT_EC(esr)   ((((esr) >> 26) & 0x3fU))
+#define ARM64_ESR_EXTRACT_FSC(esr)  ((esr) & 0x3f)
+
+/* ESR:EC */
+#define ARM64_EC_INST_ABORT_FROM_LO_EXCEPTION   (0b100000)
+#define ARM64_EC_INST_ABORT_WITHOUT_A_CHANGE    (0b100001)
+#define ARM64_EC_DATA_ABORT_FROM_LO_EXCEPTION   (0b100100)
+#define ARM64_EC_DATA_ABORT_WITHOUT_A_CHANGE    (0b100101)
+
+/* ESR:FSC */
+#define ARM64_FSC_TRANSLATION_FAULT_LEVEL_0     (0b000100)
+#define ARM64_FSC_TRANSLATION_FAULT_LEVEL_1     (0b000101)
+#define ARM64_FSC_TRANSLATION_FAULT_LEVEL_2     (0b000110)
+#define ARM64_FSC_TRANSLATION_FAULT_LEVEL_3     (0b000111)
+#define ARM64_FSC_PERMISSION_FAULT_LEVEL_0      (0b001100)
+#define ARM64_FSC_PERMISSION_FAULT_LEVEL_1      (0b001101)
+#define ARM64_FSC_PERMISSION_FAULT_LEVEL_2      (0b001110)
+#define ARM64_FSC_PERMISSION_FAULT_LEVEL_3      (0b001111)
+#define ARM64_FSC_ACCESS_FLAG_FAULT_LEVEL_0     (0b001000)
+#define ARM64_FSC_ACCESS_FLAG_FAULT_LEVEL_1     (0b001001)
+#define ARM64_FSC_ACCESS_FLAG_FAULT_LEVEL_2     (0b001010)
+#define ARM64_FSC_ACCESS_FLAG_FAULT_LEVEL_3     (0b001011)
+
 #endif /* __ASSEMBLY__ */
 
 #endif

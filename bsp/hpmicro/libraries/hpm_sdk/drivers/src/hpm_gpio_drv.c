@@ -43,6 +43,9 @@ void gpio_config_pin_interrupt(GPIO_Type *ptr, uint32_t gpio_index, uint8_t pin_
         break;
     case gpio_interrupt_trigger_edge_falling:
     case gpio_interrupt_trigger_edge_rising:
+#if defined(GPIO_SOC_HAS_EDGE_BOTH_INTERRUPT) && (GPIO_SOC_HAS_EDGE_BOTH_INTERRUPT == 1)
+        ptr->PD[gpio_index].CLEAR = 1 << pin_index;
+#endif
         ptr->TP[gpio_index].SET = 1 << pin_index;
         if (trigger == gpio_interrupt_trigger_edge_rising) {
             ptr->PL[gpio_index].CLEAR = 1 << pin_index;
@@ -50,6 +53,12 @@ void gpio_config_pin_interrupt(GPIO_Type *ptr, uint32_t gpio_index, uint8_t pin_
             ptr->PL[gpio_index].SET = 1 << pin_index;
         }
         break;
+#if defined(GPIO_SOC_HAS_EDGE_BOTH_INTERRUPT) && (GPIO_SOC_HAS_EDGE_BOTH_INTERRUPT == 1)
+    case gpio_interrupt_trigger_edge_both:
+        ptr->TP[gpio_index].SET = 1 << pin_index;
+        ptr->PD[gpio_index].SET = 1 << pin_index;
+        break;
+#endif
     default:
         return;
     }

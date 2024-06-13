@@ -5,7 +5,9 @@
  *
  */
 
+#ifndef __ICCRISCV__
 #include <sys/stat.h>
+#endif
 #include "hpm_debug_console.h"
 #include "hpm_uart_drv.h"
 
@@ -61,7 +63,7 @@ FILE *stderr = &__SEGGER_RTL_stderr_file; /* NOTE: Provide implementation of std
 
 int __SEGGER_RTL_X_file_write(__SEGGER_RTL_FILE *file, const char *data, unsigned int size)
 {
-    int count;
+    unsigned int count;
     (void)file;
     for (count = 0; count < size; count++) {
         if (data[count] == '\n') {
@@ -80,6 +82,7 @@ int __SEGGER_RTL_X_file_write(__SEGGER_RTL_FILE *file, const char *data, unsigne
 int __SEGGER_RTL_X_file_read(__SEGGER_RTL_FILE *file, char *s, unsigned int size)
 {
     (void)file;
+    (void) size;
     while (status_success != uart_receive_byte(g_console_uart, (uint8_t *)s)) {
     }
     return 1;
@@ -87,11 +90,13 @@ int __SEGGER_RTL_X_file_read(__SEGGER_RTL_FILE *file, char *s, unsigned int size
 
 int __SEGGER_RTL_X_file_stat(__SEGGER_RTL_FILE *stream)
 {
+    (void) stream;
     return 0;
 }
 
 int __SEGGER_RTL_X_file_bufsize(__SEGGER_RTL_FILE *stream)
 {
+    (void) stream;
     return 1;
 }
 
@@ -111,6 +116,7 @@ int __SEGGER_RTL_X_file_unget(__SEGGER_RTL_FILE *stream, int c)
 
 int  __SEGGER_RTL_X_file_flush(__SEGGER_RTL_FILE *__stream)
 {
+    (void) __stream;
     return 1;
 }
 
@@ -136,13 +142,32 @@ int _write(int file, char *data, int size)
 int _read(int file, char *s, int size)
 {
     (void)file;
+    (void) size;
     while (status_success != uart_receive_byte(g_console_uart, (uint8_t *)s)) {
     }
     return 1;
 }
 
+#ifndef __ICCRISCV__
 int _fstat(int file, struct stat *s)
 {
+    (void) file;
     s->st_mode = S_IFCHR;
     return 0;
 }
+#else
+
+#ifndef _DLIB_FILE_DESCRIPTOR
+#define _DLIB_FILE_DESCRIPTOR 0
+#endif
+
+int __write(int file, char *data, int size)
+{
+    return _write(file, data, size);
+}
+
+int __read(int file, char *s, int size)
+{
+    return _read(file, s, size);
+}
+#endif

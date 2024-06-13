@@ -194,12 +194,13 @@ typedef struct {
 #define PDMA_STAT_BLOCKX_GET(x) (((uint32_t)(x) & PDMA_STAT_BLOCKX_MASK) >> PDMA_STAT_BLOCKX_SHIFT)
 
 /*
- * PDMA_DONE (RO)
+ * PDMA_DONE (W1C)
  *
  * PDMA one image done
  */
 #define PDMA_STAT_PDMA_DONE_MASK (0x200U)
 #define PDMA_STAT_PDMA_DONE_SHIFT (9U)
+#define PDMA_STAT_PDMA_DONE_SET(x) (((uint32_t)(x) << PDMA_STAT_PDMA_DONE_SHIFT) & PDMA_STAT_PDMA_DONE_MASK)
 #define PDMA_STAT_PDMA_DONE_GET(x) (((uint32_t)(x) & PDMA_STAT_PDMA_DONE_MASK) >> PDMA_STAT_PDMA_DONE_SHIFT)
 
 /*
@@ -242,13 +243,12 @@ typedef struct {
 #define PDMA_STAT_AXI_0_READ_ERR_GET(x) (((uint32_t)(x) & PDMA_STAT_AXI_0_READ_ERR_MASK) >> PDMA_STAT_AXI_0_READ_ERR_SHIFT)
 
 /*
- * IRQ (W1C)
+ * IRQ (RO)
  *
  * Asserted to indicate a IRQ event
  */
 #define PDMA_STAT_IRQ_MASK (0x1U)
 #define PDMA_STAT_IRQ_SHIFT (0U)
-#define PDMA_STAT_IRQ_SET(x) (((uint32_t)(x) << PDMA_STAT_IRQ_SHIFT) & PDMA_STAT_IRQ_MASK)
 #define PDMA_STAT_IRQ_GET(x) (((uint32_t)(x) & PDMA_STAT_IRQ_MASK) >> PDMA_STAT_IRQ_SHIFT)
 
 /* Bitfield definition for register: OUT_CTRL */

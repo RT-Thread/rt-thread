@@ -216,7 +216,10 @@ typedef struct {
     uint8_t trans_mode;
     uint8_t data_phase_fmt;
     uint8_t dummy_cnt;
-} spi_common_control_config_t;
+#if defined(HPM_IP_FEATURE_SPI_CS_SELECT) && (HPM_IP_FEATURE_SPI_CS_SELECT == 1)
+    uint8_t cs_index;
+#endif
+} spi_common_control_config_t; /*!< value in spi_cs_index_t */
 
 /**
  * @brief spi control config structure
@@ -226,6 +229,33 @@ typedef struct {
     spi_slave_control_config_t  slave_config;
     spi_common_control_config_t common_config;
 } spi_control_config_t;
+
+#if defined(HPM_IP_FEATURE_SPI_CS_SELECT) && (HPM_IP_FEATURE_SPI_CS_SELECT == 1)
+typedef enum {
+    spi_cs_0 = 1,
+    spi_cs_1 = 2,
+    spi_cs_2 = 4,
+    spi_cs_3 = 8,
+} spi_cs_index_t;
+#endif
+
+typedef enum {
+    addrlen_8bit = 0,
+    addrlen_16bit,
+    addrlen_24bit,
+    addrlen_32bit
+} spi_address_len_t;
+
+#if defined(HPM_IP_FEATURE_SPI_SUPPORT_DIRECTIO) && (HPM_IP_FEATURE_SPI_SUPPORT_DIRECTIO == 1)
+typedef enum {
+    hold_pin = 0,
+    wp_pin,
+    miso_pin,
+    mosi_pin,
+    sclk_pin,
+    cs_pin
+} spi_directio_pin_t;
+#endif
 
 #if defined(__cplusplus)
 extern "C" {
@@ -616,7 +646,11 @@ static inline void spi_disable_rx_dma(SPI_Type *ptr)
  */
 static inline uint32_t spi_slave_get_sent_data_count(SPI_Type *ptr)
 {
+#if defined(HPM_IP_FEATURE_SPI_NEW_TRANS_COUNT) && (HPM_IP_FEATURE_SPI_NEW_TRANS_COUNT == 1)
+    return ptr->SLVDATAWCNT;
+#else
     return SPI_SLVDATACNT_WCNT_GET(ptr->SLVDATACNT);
+#endif
 }
 
 /**
@@ -627,7 +661,11 @@ static inline uint32_t spi_slave_get_sent_data_count(SPI_Type *ptr)
  */
 static inline uint32_t spi_slave_get_received_data_count(SPI_Type *ptr)
 {
+#if defined(HPM_IP_FEATURE_SPI_NEW_TRANS_COUNT) && (HPM_IP_FEATURE_SPI_NEW_TRANS_COUNT == 1)
+    return ptr->SLVDATARCNT;
+#else
     return SPI_SLVDATACNT_RCNT_GET(ptr->SLVDATACNT);
+#endif
 }
 
 /**
@@ -677,7 +715,8 @@ static inline spi_sclk_idle_state_t spi_get_clock_polarity(SPI_Type *ptr)
 /**
  * @brief set spi the length of each data unit in bits
  *
- * @param [in] nbit the actual bits number of a data
+ * @param [in] ptr SPI base address
+ * @param [in] nbits the actual bits number of a data
  * @retval hpm_stat_t status_success if spi transfer without any error
  */
 static inline hpm_stat_t spi_set_data_bits(SPI_Type *ptr, uint8_t nbits)
@@ -685,7 +724,7 @@ static inline hpm_stat_t spi_set_data_bits(SPI_Type *ptr, uint8_t nbits)
     if (nbits > 32) {
         return status_invalid_argument;
     } else {
-        ptr->TRANSFMT |= SPI_TRANSFMT_DATALEN_SET(nbits - 1);
+        ptr->TRANSFMT = (ptr->TRANSFMT & ~SPI_TRANSFMT_DATALEN_MASK) | SPI_TRANSFMT_DATALEN_SET(nbits - 1);
         return status_success;
     }
 }
@@ -718,6 +757,135 @@ static inline void spi_receive_fifo_reset(SPI_Type *ptr)
 static inline void spi_reset(SPI_Type *ptr)
 {
     ptr->CTRL |= SPI_CTRL_SPIRST_MASK;
+}
+
+/**
+ * @brief set spi the length of address
+ *
+ * @param [in] ptr SPI base address
+ * @param [in] addrlen address lenth enum
+ */
+static inline void spi_set_address_len(SPI_Type *ptr, spi_address_len_t addrlen)
+{
+    ptr->TRANSFMT = (ptr->TRANSFMT & ~SPI_TRANSFMT_ADDRLEN_MASK) | SPI_TRANSFMT_ADDRLEN_SET(addrlen);
+}
+
+/**
+ * @brief   Enable SPI data merge
+ *
+ * @param [in] ptr SPI base address
+ */
+static inline void spi_enable_data_merge(SPI_Type *ptr)
+{
+    ptr->TRANSFMT |= SPI_TRANSFMT_DATAMERGE_MASK;
+}
+
+/**
+ * @brief   Disable SPI data merge
+ *
+ * @param [in] ptr SPI base address
+ */
+static inline void spi_disable_data_merge(SPI_Type *ptr)
+{
+    ptr->TRANSFMT &= ~SPI_TRANSFMT_DATAMERGE_MASK;
+}
+
+#if defined(HPM_IP_FEATURE_SPI_SUPPORT_DIRECTIO) && (HPM_IP_FEATURE_SPI_SUPPORT_DIRECTIO == 1)
+/**
+ * @brief enable specific pin output for spi directio
+ *
+ * @note must be used spi_enable_directio API before enable output function
+ *
+ * @param [in] ptr SPI base address
+ * @param [in] pin spi_directio_pin_t enum
+ */
+hpm_stat_t spi_directio_enable_output(SPI_Type *ptr, spi_directio_pin_t pin);
+
+/**
+ * @brief disable specific pin output for spi directio
+ *
+ * @param [in] ptr SPI base address
+ * @param [in] pin spi_directio_pin_t enum
+ */
+hpm_stat_t spi_directio_disable_output(SPI_Type *ptr, spi_directio_pin_t pin);
+
+/**
+ * @brief write specified pin level  for spi directio
+ *
+ * @param [in] ptr SPI base address
+ * @param [in] pin spi_directio_pin_t enum
+ * @param [in] high Pin level set to high when it is set to true
+ */
+hpm_stat_t spi_directio_write(SPI_Type *ptr, spi_directio_pin_t pin, bool high);
+
+/**
+ * @brief   Read specified pin level for spi directio
+ *
+ * @param [in] ptr SPI base address
+ * @param pin spi_directio_pin_t enum
+ *
+ * @return Pin status
+ */
+uint8_t spi_directio_read(SPI_Type *ptr, spi_directio_pin_t pin);
+
+/**
+ * @brief   Enable SPI directIO control function
+ *
+ * @note if SPI transmission is required, the function must be disable
+ *
+ * @param [in] ptr SPI base address
+ */
+static inline void spi_enable_directio(SPI_Type *ptr)
+{
+    ptr->DIRECTIO |= SPI_DIRECTIO_DIRECTIOEN_MASK;
+}
+
+/**
+ * @brief   Disable SPI directIO control function
+ *
+ * @param [in] ptr SPI base address
+ */
+static inline void spi_disable_directio(SPI_Type *ptr)
+{
+    ptr->DIRECTIO &= ~SPI_DIRECTIO_DIRECTIOEN_MASK;
+}
+
+/**
+ * @brief  get whether spi directio function is enabled
+ *
+ * @param [in] ptr SPI base address
+ *
+ * @return if pi directio function is enable, it will return 1
+ */
+static inline uint8_t spi_get_directio_enable_status(SPI_Type *ptr)
+{
+    return SPI_DIRECTIO_DIRECTIOEN_GET(ptr->DIRECTIO);
+}
+
+#endif
+
+/**
+ * @brief  Get valid data size in receive FIFO
+ *
+ * @param [in] ptr SPI base address
+ * 
+ * @return rx fifo valid data size
+ */
+static inline uint8_t spi_get_rx_fifo_valid_data_size(SPI_Type *ptr)
+{
+    return ((SPI_STATUS_RXNUM_7_6_GET(ptr->STATUS) << 5) | SPI_STATUS_RXNUM_5_0_GET(ptr->STATUS));
+}
+
+/**
+ * @brief  Get valid data size in transmit FIFO
+ *
+ * @param [in] ptr SPI base address
+ * 
+ * @return tx fifo valid data size
+ */
+static inline uint8_t spi_get_tx_fifo_valid_data_size(SPI_Type *ptr)
+{
+    return ((SPI_STATUS_TXNUM_7_6_GET(ptr->STATUS) << 5) | SPI_STATUS_TXNUM_5_0_GET(ptr->STATUS));
 }
 /**
  * @}

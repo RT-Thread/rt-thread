@@ -11,6 +11,13 @@
 #include "hpm_common.h"
 #include "hpm_sdm_regs.h"
 
+/**
+ * @brief SDM APIs
+ * @defgroup sdm_interface SDM driver APIs
+ * @ingroup sdm_interfaces
+ * @{
+ */
+
 /* defined channel mask macro */
 #define SAMPLING_MODE_MASK (0x7U)
 #define CHN_SAMPLING_MODE_SHIFT(ch) ((ch) * 3U + SDM_CTRL_CHMD_SHIFT)
@@ -39,8 +46,8 @@ typedef enum {
 } sdm_filter_type_t;
 
 typedef struct {
-    bool clk_signal_sync;
-    bool data_signal_sync;
+    uint8_t clk_signal_sync; /* clk sync for channel */
+    uint8_t data_signal_sync; /* data sync for channel */
     bool interrupt_en;
 } sdm_control_t;
 

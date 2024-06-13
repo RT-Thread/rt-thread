@@ -72,14 +72,16 @@ SECTIONS
         KEEP(*irq.o (.text .text* .rodata .rodata*))
         KEEP(*clock.o (.text .text* .rodata .rodata*))
         KEEP(*kservice.o (.text .text* .rodata .rodata*))
-        KEEP(*scheduler.o (.text .text* .rodata .rodata*))
+        KEEP(*scheduler*.o (.text .text* .rodata .rodata*))
         KEEP(*trap*.o (.text .text* .rodata .rodata*))
         KEEP(*idle.o (.text .text* .rodata .rodata*))
         KEEP(*ipc.o (.text .text* .rodata .rodata*))
+        KEEP(*slab.o (.text .text* .rodata .rodata*))
         KEEP(*thread.o (.text .text* .rodata .rodata*))
         KEEP(*object.o (.text .text* .rodata .rodata*))
         KEEP(*timer.o (.text .text* .rodata .rodata*))
         KEEP(*mem.o (.text .text* .rodata .rodata*))
+        KEEP(*memheap.o (.text .text* .rodata .rodata*))
         KEEP(*mempool.o (.text .text* .rodata .rodata*))
         /* RT-Thread Core End */
 
@@ -162,6 +164,12 @@ SECTIONS
         __rtmsymtab_end = .;
 
         /* RT-Thread related sections - end */
+
+        /* section information for usbh class */
+        . = ALIGN(8);
+        __usbh_class_info_start__ = .;
+        KEEP(*(.usbh_class_info))
+        __usbh_class_info_end__ = .;
 
     } > XPI0
 

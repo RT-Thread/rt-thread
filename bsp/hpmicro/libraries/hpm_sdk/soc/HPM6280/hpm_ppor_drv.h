@@ -11,15 +11,7 @@
 
 typedef enum {
     ppor_reset_brownout = 1 << 0,
-    ppor_reset_temperature = 1 << 1,
-    ppor_reset_pin = 1 << 2,
     ppor_reset_debug = 1 << 4,
-    ppor_reset_security_violation = 1 << 5,
-    ppor_reset_jtag = 1 << 6,
-    ppor_reset_cpu0_lockup = 1 << 8,
-    ppor_reset_cpu1_lockup = 1 << 9,
-    ppor_reset_cpu0_request = 1 << 10,
-    ppor_reset_cpu1_request = 1 << 11,
     ppor_reset_wdog0 = 1 << 16,
     ppor_reset_wdog1 = 1 << 17,
     ppor_reset_wdog2 = 1 << 18,
@@ -92,7 +84,31 @@ static inline uint32_t ppor_reset_get_flags(PPOR_Type *ptr)
  */
 static inline void ppor_reset_clear_flags(PPOR_Type *ptr, uint32_t mask)
 {
-    ptr->RESET_FLAG |= mask;
+    ptr->RESET_FLAG = mask;
+}
+
+/*
+ * get reset hold
+ */
+static inline uint32_t ppor_reset_get_hold(PPOR_Type *ptr)
+{
+    return ptr->RESET_HOLD;
+}
+
+/*
+ * set reset hold
+ */
+static inline void ppor_reset_set_hold_enable(PPOR_Type *ptr, uint32_t mask)
+{
+    ptr->RESET_HOLD |= mask;
+}
+
+/*
+ * clear reset hold
+ */
+static inline void ppor_reset_clear_hold_enable(PPOR_Type *ptr, uint32_t mask)
+{
+    ptr->RESET_HOLD &= ~mask;
 }
 
 /*
@@ -100,7 +116,7 @@ static inline void ppor_reset_clear_flags(PPOR_Type *ptr, uint32_t mask)
  */
 static inline void ppor_reset_set_cold_reset_enable(PPOR_Type *ptr, uint32_t mask)
 {
-    ptr->RESET_COLD = mask;
+    ptr->RESET_COLD |= mask;
 }
 
 /*
@@ -116,7 +132,7 @@ static inline void ppor_reset_clear_cold_reset_enable(PPOR_Type *ptr, uint32_t m
  */
 static inline void ppor_reset_set_hot_reset_enable(PPOR_Type *ptr, uint32_t mask)
 {
-    ptr->RESET_HOT = mask;
+    ptr->RESET_HOT |= mask;
 }
 
 /*
