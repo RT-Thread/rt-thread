@@ -565,33 +565,91 @@ rt_err_t rt_fdt_scan_memory(void)
     return err;
 }
 
-rt_err_t rt_fdt_scan_initrd(rt_uint64_t *ranges)
+static rt_err_t fdt_scan_initrd(rt_uint64_t *ranges, const char *name, const char *oem)
 {
+    char    tmp_name[32];
     rt_err_t err = -RT_EEMPTY;
 
     if (_fdt && ranges)
     {
-        int s_len, e_len;
-        const fdt32_t *start = RT_NULL, *end = RT_NULL;
         int offset = fdt_path_offset(_fdt, "/chosen");
 
         if (offset >= 0)
         {
-            start = fdt_getprop(_fdt, offset, "linux,initrd-start", &s_len);
-            end = fdt_getprop(_fdt, offset, "linux,initrd-end", &e_len);
+            int s_len, e_len;
+            const fdt32_t *start = RT_NULL, *end = RT_NULL;
+
+            rt_snprintf(tmp_name, sizeof(tmp_name), "%s,%d-start", oem, name);
+            start = fdt_getprop(_fdt, offset, tmp_name, &s_len);
+            rt_snprintf(tmp_name, sizeof(tmp_name), "%s,%d-end", oem, name);
+            end = fdt_getprop(_fdt, offset, tmp_name, &e_len);
+
+            if (start && end)
+            {
+                s_len /= sizeof(*start);
+                e_len /= sizeof(*end);
+
+                ranges[0] = rt_fdt_read_number(start, s_len);
+                ranges[1] = rt_fdt_read_number(end, e_len);
+
+                err = RT_EOK;
+            }
         }
 
-        if (start && end)
+        if (err)
         {
-            s_len /= sizeof(*start);
-            e_len /= sizeof(*end);
+            int len;
+            const char *options, *bootargs = fdt_getprop(_fdt, offset, "bootargs", &len);
 
-            ranges[0] = rt_fdt_read_number(start, s_len);
-            ranges[1] = rt_fdt_read_number(end, e_len);
+            rt_snprintf(tmp_name, sizeof(tmp_name), "%s=", name);
 
+            if (bootargs && (options = rt_strstr(bootargs, tmp_name)))
+            {
+                rt_uint64_t value;
+
+                options += rt_strlen(tmp_name) + sizeof("0x") - 1;
+                err      = RT_EOK;
+
+                for (int i = 0; i < 2 && !err; ++i)
+                {
+                    value = 0;
+
+                    while (*options && *options != ',' && *options != ' ')
+                    {
+                        /* To lowercase or keep number */
+                        char ch = *options | ' ';
+
+                        value *= 16;
+
+                        if (ch >= '0' && ch <= '9')
+                        {
+                            value += ch - '0';
+                        }
+                        else if (ch >= 'a' && ch <= 'f')
+                        {
+                            value += ch - 'a' + 10;
+                        }
+                        else
+                        {
+                            err = -RT_EINVAL;
+                            break;
+                        }
+
+                        ++options;
+                    }
+
+                    ranges[i]  = value;
+                    options   += sizeof(",0x") - 1;
+                }
+
+                /* This is initrd's size, convert to initrd's end */
+                ranges[1] += ranges[0];
+            }
+        }
+
+        if (!err)
+        {
             commit_memregion("initrd", ranges[0], ranges[1] - ranges[0], RT_TRUE);
-
-            err = RT_EOK;
         }
     }
     else if (!ranges)
@@ -601,6 +659,21 @@ rt_err_t rt_fdt_scan_initrd(rt_uint64_t *ranges)
 
     return err;
 }
+
+rt_err_t rt_fdt_scan_initrd(rt_uint64_t *ranges)
+{
+    rt_err_t err;
+
+    err = fdt_scan_initrd(ranges, "cromfs", "rt-thread");
+
+    if (err && err == -RT_EEMPTY)
+    {
+        err = fdt_scan_initrd(ranges, "initrd", "linux");
+    }
+
+    return err;
+}
+
 
 rt_err_t rt_fdt_model_dump(void)
 {
