@@ -7,6 +7,7 @@
  * Date           Author       Notes
  * 2020-10-14     wangqiang    the first version
  * 2022-08-29     xjy198903    add rt1170 support
+ * 2024-04-18     Jiading      add a parameter passed into rt_phy_ops APIs
  */
 
 #include <rtthread.h>
@@ -140,7 +141,7 @@ static rt_phy_status rt_phy_init(void *object, rt_uint32_t phy_addr, rt_uint32_t
     /* Initialization after PHY stars to work. */
     while ((id_reg != PHY_CONTROL_ID1) && (counter != 0))
     {
-        phy_ksz8081.ops->read(PHY_ID1_REG, &id_reg);
+        phy_ksz8081.ops->read(NULL, PHY_ID1_REG, &id_reg);
         counter--;
     }
 
@@ -151,17 +152,17 @@ static rt_phy_status rt_phy_init(void *object, rt_uint32_t phy_addr, rt_uint32_t
 
     /* Reset PHY. */
     counter = PHY_TIMEOUT_COUNT;
-    result = phy_ksz8081.ops->write(PHY_BASICCONTROL_REG, PHY_BCTL_RESET_MASK);
+    result = phy_ksz8081.ops->write(NULL, PHY_BASICCONTROL_REG, PHY_BCTL_RESET_MASK);
     if (PHY_STATUS_OK == result)
     {
         #if defined(FSL_FEATURE_PHYKSZ8081_USE_RMII50M_MODE)
         rt_uint32_t data = 0;
-        result = phy_ksz8081.ops->read(PHY_CONTROL2_REG, &data);
+        result = phy_ksz8081.ops->read(NULL, PHY_CONTROL2_REG, &data);
         if (PHY_STATUS_FAIL == result)
         {
             return PHY_STATUS_FAIL;
         }
-        result = phy_ksz8081.ops->write(PHY_CONTROL2_REG, (data | PHY_CTL2_REFCLK_SELECT_MASK));
+        result = phy_ksz8081.ops->write(NULL, PHY_CONTROL2_REG, (data | PHY_CTL2_REFCLK_SELECT_MASK));
         if (PHY_STATUS_FAIL == result)
         {
             return PHY_STATUS_FAIL;
@@ -169,21 +170,21 @@ static rt_phy_status rt_phy_init(void *object, rt_uint32_t phy_addr, rt_uint32_t
         #endif  /* FSL_FEATURE_PHYKSZ8081_USE_RMII50M_MODE */
 
         /* Set the negotiation. */
-        result = phy_ksz8081.ops->write(PHY_AUTONEG_ADVERTISE_REG,
+        result = phy_ksz8081.ops->write(NULL, PHY_AUTONEG_ADVERTISE_REG,
                                         (PHY_100BASETX_FULLDUPLEX_MASK | PHY_100BASETX_HALFDUPLEX_MASK |
                                         PHY_10BASETX_FULLDUPLEX_MASK | PHY_10BASETX_HALFDUPLEX_MASK | 0x1U));
         if (PHY_STATUS_OK == result)
         {
-            result = phy_ksz8081.ops->write(PHY_BASICCONTROL_REG, (PHY_BCTL_AUTONEG_MASK | PHY_BCTL_RESTART_AUTONEG_MASK));
+            result = phy_ksz8081.ops->write(NULL, PHY_BASICCONTROL_REG, (PHY_BCTL_AUTONEG_MASK | PHY_BCTL_RESTART_AUTONEG_MASK));
             if (PHY_STATUS_OK == result)
             {
                 /* Check auto negotiation complete. */
                 while (counter--)
                 {
-                    result = phy_ksz8081.ops->read(PHY_BASICSTATUS_REG, &bss_reg);
+                    result = phy_ksz8081.ops->read(NULL, PHY_BASICSTATUS_REG, &bss_reg);
                     if (PHY_STATUS_OK == result)
                     {
-                        phy_ksz8081.ops->read(PHY_CONTROL1_REG, &ctl_reg);
+                        phy_ksz8081.ops->read(NULL, PHY_CONTROL1_REG, &ctl_reg);
                         if (((bss_reg & PHY_BSTATUS_AUTONEGCOMP_MASK) != 0) && (ctl_reg & PHY_LINK_READY_MASK))
                         {
                             /* Wait a moment for Phy status stable. */
@@ -208,7 +209,7 @@ static rt_phy_status rt_phy_init(void *object, rt_uint32_t phy_addr, rt_uint32_t
 }
 
 
-static rt_phy_status rt_phy_read(rt_uint32_t reg, rt_uint32_t *data)
+static rt_phy_status rt_phy_read(rt_phy_t *phy, rt_uint32_t reg, rt_uint32_t *data)
 {
     rt_mdio_t *mdio_bus = phy_ksz8081.bus;
     rt_uint32_t device_id = phy_ksz8081.addr;
@@ -220,7 +221,7 @@ static rt_phy_status rt_phy_read(rt_uint32_t reg, rt_uint32_t *data)
     return PHY_STATUS_FAIL;
 }
 
-static rt_phy_status rt_phy_write(rt_uint32_t reg, rt_uint32_t data)
+static rt_phy_status rt_phy_write(rt_phy_t *phy, rt_uint32_t reg, rt_uint32_t data)
 {
     rt_mdio_t *mdio_bus = phy_ksz8081.bus;
     rt_uint32_t device_id = phy_ksz8081.addr;
@@ -232,7 +233,7 @@ static rt_phy_status rt_phy_write(rt_uint32_t reg, rt_uint32_t data)
     return PHY_STATUS_FAIL;
 }
 
-static rt_phy_status rt_phy_loopback(rt_uint32_t mode, rt_uint32_t speed, rt_bool_t enable)
+static rt_phy_status rt_phy_loopback(rt_phy_t *phy, rt_uint32_t mode, rt_uint32_t speed, rt_bool_t enable)
 {
     rt_uint32_t data = 0;
     rt_phy_status result;
@@ -250,15 +251,15 @@ static rt_phy_status rt_phy_loopback(rt_uint32_t mode, rt_uint32_t speed, rt_boo
             {
                 data = PHY_BCTL_DUPLEX_MASK | PHY_BCTL_LOOP_MASK;
             }
-            return phy_ksz8081.ops->write(PHY_BASICCONTROL_REG, data);
+            return phy_ksz8081.ops->write(NULL, PHY_BASICCONTROL_REG, data);
         }
         else
         {
             /* First read the current status in control register. */
-            result = phy_ksz8081.ops->read(PHY_CONTROL2_REG, &data);
+            result = phy_ksz8081.ops->read(NULL, PHY_CONTROL2_REG, &data);
             if (PHY_STATUS_OK == result)
             {
-                return phy_ksz8081.ops->write(PHY_CONTROL2_REG, (data | PHY_CTL2_REMOTELOOP_MASK));
+                return phy_ksz8081.ops->write(NULL, PHY_CONTROL2_REG, (data | PHY_CTL2_REMOTELOOP_MASK));
             }
         }
     }
@@ -268,33 +269,33 @@ static rt_phy_status rt_phy_loopback(rt_uint32_t mode, rt_uint32_t speed, rt_boo
         if (PHY_LOCAL_LOOP == mode)
         {
             /* First read the current status in control register. */
-            result = phy_ksz8081.ops->read(PHY_BASICCONTROL_REG, &data);
+            result = phy_ksz8081.ops->read(NULL, PHY_BASICCONTROL_REG, &data);
             if (PHY_STATUS_OK == result)
             {
                 data &= ~PHY_BCTL_LOOP_MASK;
-                return phy_ksz8081.ops->write(PHY_BASICCONTROL_REG, (data | PHY_BCTL_RESTART_AUTONEG_MASK));
+                return phy_ksz8081.ops->write(NULL, PHY_BASICCONTROL_REG, (data | PHY_BCTL_RESTART_AUTONEG_MASK));
             }
         }
         else
         {
             /* First read the current status in control one register. */
-            result = phy_ksz8081.ops->read(PHY_CONTROL2_REG, &data);
+            result = phy_ksz8081.ops->read(NULL, PHY_CONTROL2_REG, &data);
             if (PHY_STATUS_OK == result)
             {
-                return phy_ksz8081.ops->write(PHY_CONTROL2_REG, (data & ~PHY_CTL2_REMOTELOOP_MASK));
+                return phy_ksz8081.ops->write(NULL, PHY_CONTROL2_REG, (data & ~PHY_CTL2_REMOTELOOP_MASK));
             }
         }
     }
     return result;
 }
 
-static rt_phy_status get_link_status(rt_bool_t *status)
+static rt_phy_status get_link_status(rt_phy_t *phy, rt_bool_t *status)
 {
     rt_phy_status result;
     rt_uint32_t data;
 
     /* Read the basic status register. */
-    result = phy_ksz8081.ops->read(PHY_BASICSTATUS_REG, &data);
+    result = phy_ksz8081.ops->read(NULL, PHY_BASICSTATUS_REG, &data);
     if (PHY_STATUS_OK == result)
     {
         if (!(PHY_BSTATUS_LINKSTATUS_MASK & data))
@@ -310,13 +311,13 @@ static rt_phy_status get_link_status(rt_bool_t *status)
     }
     return result;
 }
-static rt_phy_status get_link_speed_duplex(rt_uint32_t *speed, rt_uint32_t *duplex)
+static rt_phy_status get_link_speed_duplex(rt_phy_t *phy, rt_uint32_t *speed, rt_uint32_t *duplex)
 {
     rt_phy_status result = PHY_STATUS_OK;
     rt_uint32_t data, ctl_reg;
 
     /* Read the control two register. */
-    result = phy_ksz8081.ops->read(PHY_CONTROL1_REG, &ctl_reg);
+    result = phy_ksz8081.ops->read(NULL, PHY_CONTROL1_REG, &ctl_reg);
     if (PHY_STATUS_OK == result)
     {
         data = ctl_reg & PHY_CTL1_SPEEDUPLX_MASK;

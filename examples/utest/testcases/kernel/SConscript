@@ -41,6 +41,9 @@ if GetDepend(['UTEST_MAILBOX_TC']):
 if GetDepend(['UTEST_THREAD_TC']):
     src += ['thread_tc.c']
 
+if GetDepend(['UTEST_DEVICE_TC']):
+    src += ['device_tc.c']
+
 if GetDepend(['UTEST_ATOMIC_TC']):
     src += ['atomic_tc.c']
 

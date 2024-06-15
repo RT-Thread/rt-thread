@@ -11,6 +11,7 @@
 #include "board.h"
 #include "drv_rtc.h"
 #include "hpm_rtc_drv.h"
+#include "hpm_bpor_drv.h"
 
 #include <rtthread.h>
 #include <rtdevice.h>
@@ -69,6 +70,8 @@ static struct rt_device hpm_rtc= {
  ******************************************************************************************/
 static rt_err_t hpm_rtc_init(rt_device_t dev)
 {
+    /* Enable Power retention mode for the battery domain */
+    bpor_enable_reg_value_retention(HPM_BPOR);
     return RT_EOK;
 }
 static rt_err_t hpm_rtc_open(rt_device_t dev, rt_uint16_t oflag)

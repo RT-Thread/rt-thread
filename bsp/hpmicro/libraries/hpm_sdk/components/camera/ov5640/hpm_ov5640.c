@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 HPMicro
+ * Copyright (c) 2021-2023 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -8,12 +8,23 @@
 #include "hpm_ov5640.h"
 
 static const ov5640_reg_val_t ov5640_init_param[] = {
-    /* system setting */
-    {0x3008, 0x42}, /* software power down, bit[6] */
-    {0x3103, 0x03}, /*  system clock from PLL, bit[1] */
-    {0x3037, 0x13}, /*  PLL root divider, bit[4], PLL pre-divider, bit[3:0] */
-    {0x3108, 0x01}, /*  PCLK root divider, bit[5:4], SCLK2x root divider, bit[3:2], SCLK root divider, bit[1:0] */
-
+    {0x3008, 0x42},
+    /* System setting. */
+    {0x3103, 0x03},
+    {0x3000, 0x00},
+    {0x3004, 0xff},
+    {0x3002, 0x1c},
+    {0x3006, 0xc3},
+    {0x302e, 0x08},
+    {0x3037, 0x13},
+    {0x3108, 0x01},
+    {0x3618, 0x00},
+    {0x3612, 0x29},
+    {0x3708, 0x64},
+    {0x3709, 0x52},
+    {0x370c, 0x03},
+    {0x3820, 0x41},
+    {0x3821, 0x07},
     {0x3630, 0x36},
     {0x3631, 0x0e},
     {0x3632, 0xe2},
@@ -21,24 +32,6 @@ static const ov5640_reg_val_t ov5640_init_param[] = {
     {0x3621, 0xe0},
     {0x3704, 0xa0},
     {0x3703, 0x5a},
-
-    {0x302c, 0xc2}, /* pad control */
-    {0x4004, 0x02}, /* BLC 2 lines */
-    {0x3002, 0x1c}, /* reset JFIFO, SFIFO, JPEG */
-    {0x3006, 0xc3}, /* disable clock of JPEG2x, JPEG */
-    {0x4713, 0x03}, /* JPEG mode 3 */
-    {0x4407, 0x04}, /* Quantization scale */
-    {0x460b, 0x35},
-    {0x5001, 0xa3}, /* SDE on, scale on, UV average off, color matrix on, AWB on */
-    {0x3503, 0x00}, /* AEC/AGC on */
-    {0x3c07, 0x08}, /* light meter 1 threshold [7:0] */
-    {0x3820, 0x41}, /* Sensor flip off, ISP flip on */
-    {0x3821, 0x07}, /* Sensor mirror on, ISP mirror on, H binning on */
-    {0x3618, 0x00},
-    {0x3612, 0x29},
-    {0x3709, 0x52},
-    {0x370c, 0x03},
-
     {0x3715, 0x78},
     {0x3717, 0x01},
     {0x370b, 0x60},
@@ -47,49 +40,122 @@ static const ov5640_reg_val_t ov5640_init_param[] = {
     {0x3906, 0x10},
     {0x3901, 0x0a},
     {0x3731, 0x12},
-    {0x3600, 0x08}, /* VCM control */
-    {0x3601, 0x33}, /* VCM control */
-    {0x302d, 0x60}, /* system control */
+    {0x3600, 0x08},
+    {0x3601, 0x33},
+    {0x302d, 0x60},
     {0x3620, 0x52},
     {0x371b, 0x20},
     {0x471c, 0x50},
-    {0x3a13, 0x43}, /* pre-gain = 1.047x */
-    {0x3a18, 0x00}, /* gain ceiling */
-    {0x3a19, 0xf8}, /* gain ceiling = 15.5x */
+    {0x3a13, 0x43},
+    {0x3a18, 0x00},
+    {0x3a19, 0x7c},
     {0x3635, 0x13},
     {0x3636, 0x03},
     {0x3634, 0x40},
     {0x3622, 0x01},
-    /* 50/60Hz detection */
-    {0x3a02, 0x0b}, /* 60Hz max exposure, night mode 5fps */
-    {0x3a03, 0x88}, /* 60Hz max exposure */
-    {0x3a14, 0x0b}, /* 50Hz max exposure, night mode 5fps */
-    {0x3a15, 0x88}, /* 50Hz max exposure */
-    {0x3c01, 0x34}, /* Band auto, bit[7] */
-    {0x3c04, 0x28}, /* threshold low sum */
-    {0x3c05, 0x98}, /* threshold high sum */
-    {0x3c06, 0x00}, /* light meter 1 threshold[15:8] */
-    {0x3c07, 0x08}, /* light meter 1 threshold[7:0] */
-    {0x3c08, 0x00}, /* light meter 2 threshold[15:8] */
-    {0x3c09, 0x1c}, /* light meter 2 threshold[7:0] */
-    {0x3c0a, 0x9c}, /* sample number[15:8] */
-    {0x3c0b, 0x40}, /* sample number[7:0] */
-    {0x3708, 0x64},
-    {0x4001, 0x02}, /* BLC start from line 2 */
-    {0x4005, 0x1a}, /* BLC always update */
-    {0x3000, 0x00}, /* enable blocks */
-    {0x3004, 0xff}, /* enable clocks */
-    {0x302e, 0x00},
-    {0x440e, 0x00},
-    {0x5000, 0xa7}, /* Lenc on, raw gamma on, BPC on, WPC on, CIP on */
-    /* AEC target */
-    {0x3a0f, 0x30}, /* stable range in high */
-    {0x3a10, 0x28}, /* stable range in low */
-    {0x3a1b, 0x30}, /* stable range out high */
-    {0x3a1e, 0x26}, /* stable range out low */
-    {0x3a11, 0x60}, /* fast zone high */
-    {0x3a1f, 0x14}, /* fast zone low */
-    /* Lens correction */
+    {0x3c01, 0x00},
+    {0x3a00, 0x58},
+    {0x4001, 0x02},
+    {0x4004, 0x02},
+    {0x4005, 0x1a},
+    {0x5001, 0xa3},
+
+    /* AEC */
+    {0x3a0f, 0x30},
+    {0x3a10, 0x28},
+    {0x3a1b, 0x30},
+    {0x3a1e, 0x26},
+    {0x3a11, 0x60},
+    {0x3a1f, 0x14},
+
+    /* AWB */
+    {0x5180, 0xff},
+    {0x5181, 0xf2},
+    {0x5182, 0x00},
+    {0x5183, 0x14},
+    {0x5184, 0x25},
+    {0x5185, 0x24},
+    {0x5186, 0x09},
+    {0x5187, 0x09},
+    {0x5188, 0x09},
+    {0x5189, 0x88},
+    {0x518a, 0x54},
+    {0x518b, 0xee},
+    {0x518c, 0xb2},
+    {0x518d, 0x50},
+    {0x518e, 0x34},
+    {0x518f, 0x6b},
+    {0x5190, 0x46},
+    {0x5191, 0xf8},
+    {0x5192, 0x04},
+    {0x5193, 0x70},
+    {0x5194, 0xf0},
+    {0x5195, 0xf0},
+    {0x5196, 0x03},
+    {0x5197, 0x01},
+    {0x5198, 0x04},
+    {0x5199, 0x6c},
+    {0x519a, 0x04},
+    {0x519b, 0x00},
+    {0x519c, 0x09},
+    {0x519d, 0x2b},
+    {0x519e, 0x38},
+
+    /* Color Matrix */
+    {0x5381, 0x1e},
+    {0x5382, 0x5b},
+    {0x5383, 0x08},
+    {0x5384, 0x0a},
+    {0x5385, 0x7e},
+    {0x5386, 0x88},
+    {0x5387, 0x7c},
+    {0x5388, 0x6c},
+    {0x5389, 0x10},
+    {0x538a, 0x01},
+    {0x538b, 0x98},
+
+    /* sharp */
+    {0x5300, 0x08},
+    {0x5301, 0x30},
+    {0x5302, 0x10},
+    {0x5303, 0x00},
+    {0x5304, 0x08},
+    {0x5305, 0x30},
+    {0x5306, 0x08},
+    {0x5307, 0x16},
+    {0x5309, 0x08},
+    {0x530a, 0x30},
+    {0x530b, 0x04},
+    {0x530c, 0x06},
+
+    /* Gamma */
+    {0x5480, 0x01},
+    {0x5481, 0x08},
+    {0x5482, 0x14},
+    {0x5483, 0x28},
+    {0x5484, 0x51},
+    {0x5485, 0x65},
+    {0x5486, 0x71},
+    {0x5487, 0x7d},
+    {0x5488, 0x87},
+    {0x5489, 0x91},
+    {0x548a, 0x9a},
+    {0x548b, 0xaa},
+    {0x548c, 0xb8},
+    {0x548d, 0xcd},
+    {0x548e, 0xdd},
+    {0x548f, 0xea},
+    {0x5490, 0x1d},
+
+    /* UV adjust. */
+    {0x5580, 0x02},
+    {0x5583, 0x40},
+    {0x5584, 0x10},
+    {0x5589, 0x10},
+    {0x558a, 0x00},
+    {0x558b, 0xf8},
+
+    /* Lens correction. */
     {0x5800, 0x23},
     {0x5801, 0x14},
     {0x5802, 0x0f},
@@ -151,94 +217,32 @@ static const ov5640_reg_val_t ov5640_init_param[] = {
     {0x583a, 0x26},
     {0x583b, 0x28},
     {0x583c, 0x42},
-    {0x583d, 0xce}, /* lenc BR offset */
-    /* AWB */
-    {0x5180, 0xff}, /* AWB B block */
-    {0x5181, 0xf2}, /* AWB control */
-    {0x5182, 0x00}, /* [7:4] max local counter, [3:0] max fast counter */
-    {0x5183, 0x14}, /* AWB advanced */
-    {0x5184, 0x25},
-    {0x5185, 0x24},
-    {0x5186, 0x09},
-    {0x5187, 0x09},
-    {0x5188, 0x09},
-    {0x5189, 0x75},
-    {0x518a, 0x54},
-    {0x518b, 0xe0},
-    {0x518c, 0xb2},
-    {0x518d, 0x42},
-    {0x518e, 0x3d},
-    {0x518f, 0x56},
-    {0x5190, 0x46},
-    {0x5191, 0xf8}, /* AWB top limit */
-    {0x5192, 0x04}, /* AWB bottom limit */
-    {0x5193, 0x70}, /* red limit */
-    {0x5194, 0xf0}, /* green limit */
-    {0x5195, 0xf0}, /* blue limit */
-    {0x5196, 0x03}, /* AWB control */
-    {0x5197, 0x01}, /* local limit */
-    {0x5198, 0x04},
-    {0x5199, 0x12},
-    {0x519a, 0x04},
-    {0x519b, 0x00},
-    {0x519c, 0x06},
-    {0x519d, 0x82},
-    {0x519e, 0x38}, /* AWB control */
+    {0x583d, 0xce},
+    {0x481c, 0x00},
+    {0x481d, 0x1},
 
-    /* Gamma */
-    {0x5480, 0x01}, /* Gamma bias plus on, bit[0] */
-    {0x5481, 0x08},
-    {0x5482, 0x14},
-    {0x5483, 0x28},
-    {0x5484, 0x51},
-    {0x5485, 0x65},
-    {0x5486, 0x71},
-    {0x5487, 0x7d},
-    {0x5488, 0x87},
-    {0x5489, 0x91},
-    {0x548a, 0x9a},
-    {0x548b, 0xaa},
-    {0x548c, 0xb8},
-    {0x548d, 0xcd},
-    {0x548e, 0xdd},
-    {0x548f, 0xea},
-    {0x5490, 0x1d},
-    /* color matrix */
-    {0x5381, 0x1e}, /* CMX1 for Y */
-    {0x5382, 0x5b}, /* CMX2 for Y */
-    {0x5383, 0x08}, /* CMX3 for Y */
-    {0x5384, 0x0a}, /* CMX4 for U */
-    {0x5385, 0x7e}, /* CMX5 for U */
-    {0x5386, 0x88}, /* CMX6 for U */
-    {0x5387, 0x7c}, /* CMX7 for V */
-    {0x5388, 0x6c}, /* CMX8 for V */
-    {0x5389, 0x10}, /* CMX9 for V */
-    {0x538a, 0x01}, /* sign[9] */
-    {0x538b, 0x98}, /* sign[8:1] */
-    /* UV adjust */
-    {0x5580, 0x06}, /* saturation on, bit[1] */
-    {0x5583, 0x40},
-    {0x5584, 0x10},
-    {0x5003, 0x08},
-    {0x5589, 0x10},
-    {0x558a, 0x00},
-    {0x558b, 0xf8},
-    {0x501d, 0x40}, /* enable manual offset of contrast */
-    /* CIP */
-    {0x5300, 0x08}, /* CIP sharpen MT threshold 1 */
-    {0x5301, 0x30}, /* CIP sharpen MT threshold 2 */
-    {0x5302, 0x10}, /* CIP sharpen MT offset 1 */
-    {0x5303, 0x00}, /* CIP sharpen MT offset 2 */
-    {0x5304, 0x08}, /* CIP DNS threshold 1 */
-    {0x5305, 0x30}, /* CIP DNS threshold 2 */
-    {0x5306, 0x08}, /* CIP DNS offset 1 */
-    {0x5307, 0x16}, /* CIP DNS offset 2 */
-    {0x5309, 0x08}, /* CIP sharpen TH threshold 1 */
-    {0x530a, 0x30}, /* CIP sharpen TH threshold 2 */
-    {0x530b, 0x04}, /* CIP sharpen TH offset 1 */
-    {0x530c, 0x06}, /* CIP sharpen TH offset 2 */
-    {0x5025, 0x00},
-    {0x3008, 0x02}, /* wake up from standby, bit[6] */
+    /* 50/60Hz detection */
+    {0x3a02, 0x0b}, /* 60Hz max exposure, night mode 5fps */
+    {0x3a03, 0x88}, /* 60Hz max exposure */
+    {0x3a14, 0x0b}, /* 50Hz max exposure, night mode 5fps */
+    {0x3a15, 0x88}, /* 50Hz max exposure */
+    {0x3c01, 0x34}, /* Band auto, bit[7] */
+    {0x3c04, 0x28}, /* threshold low sum */
+    {0x3c05, 0x98}, /* threshold high sum */
+    {0x3c06, 0x00}, /* light meter 1 threshold[15:8] */
+    {0x3c07, 0x08}, /* light meter 1 threshold[7:0] */
+    {0x3c08, 0x00}, /* light meter 2 threshold[15:8] */
+    {0x3c09, 0x1c}, /* light meter 2 threshold[7:0] */
+    {0x3c0a, 0x9c}, /* sample number[15:8] */
+    {0x3c0b, 0x40}, /* sample number[7:0] */
+    {0x3708, 0x64},
+    {0x4001, 0x02}, /* BLC start from line 2 */
+    {0x4005, 0x1a}, /* BLC always update */
+    {0x3000, 0x00}, /* enable blocks */
+    {0x3004, 0xff}, /* enable clocks */
+    {0x302e, 0x00},
+    {0x440e, 0x00},
+    {0x5000, 0xa7}, /* Lenc on, raw gamma on, BPC on, WPC on, CIP on */
 };
 
 /* Resolution configuration */
@@ -339,6 +343,58 @@ static const ov5640_clock_config_t ov5640_dvp_clock_configs[] = {
         .vfifoctrl0c = 0x20,
         .pclkdiv     = 0x04,
         .pclkperiod  = 0x16,
+    },
+};
+
+/* MIPI clock */
+static const ov5640_clock_config_t ov5640_mipi_clock_configs[] = {
+    {
+        .resolution  = (uint32_t)video_resolution_800_480,
+        .pllctrl1    = 0x14,
+        .pllctrl2    = 0x38,
+        .vfifoctrl0c = 0x22,
+        .pclkdiv     = 0x02,
+        .pclkperiod  = 0x0a,
+    },
+    {
+        .resolution  = (uint32_t)video_resolution_vga,
+        .pllctrl1    = 0x14,
+        .pllctrl2    = 0x38,
+        .vfifoctrl0c = 0x22,
+        .pclkdiv     = 0x02,
+        .pclkperiod  = 0x0a,
+    },
+    {
+        .resolution  = (uint32_t)video_resolution_qvga,
+        .pllctrl1    = 0x14,
+        .pllctrl2    = 0x38,
+        .vfifoctrl0c = 0x22,
+        .pclkdiv     = 0x02,
+        .pclkperiod  = 0x0a,
+    },
+    {
+        .resolution  = (uint32_t)video_resolution_480_272,
+        .pllctrl1    = 0x14,
+        .pllctrl2    = 0x38,
+        .vfifoctrl0c = 0x22,
+        .pclkdiv     = 0x02,
+        .pclkperiod  = 0x0a,
+    },
+    {
+        .resolution  = (uint32_t)video_resolution_720p,
+        .pllctrl1    = 0x21,
+        .pllctrl2    = 0x54,
+        .vfifoctrl0c = 0x20,
+        .pclkdiv     = 0x04,
+        .pclkperiod  = 0x0a,
+    },
+    {
+        .resolution  = (uint32_t)video_resolution_1080p,
+        .pllctrl1    = 0x11,
+        .pllctrl2    = 0x54,
+        .vfifoctrl0c = 0x20,
+        .pclkdiv     = 0x04,
+        .pclkperiod  = 0x0a,
     },
 };
 
@@ -462,6 +518,12 @@ static const ov5640_clock_config_t *ov5640_get_clock_config(const camera_config_
                 return &ov5640_dvp_clock_configs[i];
             }
         }
+    } else if (camera_interface_mipi == config->interface) {
+        for (i = 0; i < ARRAY_SIZE(ov5640_mipi_clock_configs); i++) {
+            if (HPM_CAMERA_RESOLUTION(config->width, config->height) == ov5640_mipi_clock_configs[i].resolution) {
+                return &ov5640_mipi_clock_configs[i];
+            }
+        }
     }
 
     return NULL;
@@ -518,6 +580,10 @@ hpm_stat_t ov5640_set_pixel_format(camera_context_t *context, display_pixel_form
     case display_pixel_format_y8:
     case display_pixel_format_yuv422:
         HPM_CHECK_RET(ov5640_write_register(context, 0x4300, 0x30));
+        HPM_CHECK_RET(ov5640_write_register(context, 0x501f, 0x00));
+        break;
+    case display_pixel_format_ycbcr422:
+        HPM_CHECK_RET(ov5640_write_register(context, 0x4300, 0x32));
         HPM_CHECK_RET(ov5640_write_register(context, 0x501f, 0x00));
         break;
     case display_pixel_format_rgb565:
@@ -614,6 +680,17 @@ hpm_stat_t ov5640_set_interface(camera_context_t *context, camera_config_t *ov_c
 
         /* DVP mode */
         HPM_CHECK_RET(ov5640_write_register(context, 0x300e, 0x58));
+    } else if (camera_interface_mipi == ov_config->interface) {
+        HPM_CHECK_RET(ov5640_write_register(context, 0x481D, 0x20));
+        HPM_CHECK_RET(ov5640_write_register(context, 0x481C, 0x0));
+        HPM_CHECK_RET(ov5640_write_register(context, 0x3034, 0x18));
+        HPM_CHECK_RET(ov5640_write_register(context, 0x3017, 0x00));
+        HPM_CHECK_RET(ov5640_write_register(context, 0x3018, 0x00));
+        /* 2lanes mode */
+        HPM_CHECK_RET(ov5640_write_register(context, 0x300e, 0x45));
+        HPM_CHECK_RET(ov5640_write_register(context, 0x302e, 0x08));
+
+        HPM_CHECK_RET(ov5640_write_register(context, 0x4800, 0x04));
     }
 
     return stat;
@@ -798,13 +875,21 @@ hpm_stat_t ov5640_init(camera_context_t *context, camera_config_t *ov_config)
 
 void ov5640_power_up(camera_context_t *context)
 {
-    assert((context->delay_ms != NULL) && (context->write_rst != NULL) && (context->write_pwdn != NULL));
+    assert(context->delay_ms != NULL);
 
-    context->write_rst(OV5640_RST_ACTIVE);
-    context->write_pwdn(OV5640_PWDN_ACTIVE);
+    if (context->write_rst) {
+        context->write_rst(OV5640_RST_ACTIVE);
+    }
+    if (context->write_pwdn) {
+        context->write_pwdn(OV5640_PWDN_ACTIVE);
+    }
     context->delay_ms(5);
-    context->write_pwdn(OV5640_PWDN_INACTIVE);
+    if (context->write_pwdn) {
+        context->write_pwdn(OV5640_PWDN_INACTIVE);
+    }
     context->delay_ms(2);
-    context->write_rst(OV5640_RST_INACTIVE);
+    if (context->write_rst) {
+        context->write_rst(OV5640_RST_INACTIVE);
+    }
     context->delay_ms(20);
 }

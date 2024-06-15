@@ -404,6 +404,7 @@ rt_err_t rt_workqueue_cancel_work_sync(struct rt_workqueue *queue, struct rt_wor
     {
         /* wait for work completion */
         rt_sem_take(&(queue->sem), RT_WAITING_FOREVER);
+        /* Note that because work items are automatically deleted after execution, they do not need to be deleted again */
     }
     else
     {

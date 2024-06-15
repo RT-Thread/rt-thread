@@ -154,26 +154,6 @@ static inline void pcfg_bandgap_reload_trim(PCFG_Type *ptr)
 }
 
 /**
- * @brief turn off LDO 1V
- *
- * @param[in] ptr base address
- */
-static inline void pcfg_ldo1p1_turn_off(PCFG_Type *ptr)
-{
-    ptr->LDO1P1 &= ~PCFG_LDO1P1_ENABLE_MASK;
-}
-
-/**
- * @brief turn of LDO 1V
- *
- * @param[in] ptr base address
- */
-static inline void pcfg_ldo1p1_turn_on(PCFG_Type *ptr)
-{
-    ptr->LDO1P1 |= PCFG_LDO1P1_ENABLE_MASK;
-}
-
-/**
  * @brief turn off LDO2P5
  *
  * @param[in] ptr base address
@@ -229,12 +209,12 @@ static inline void pcfg_dcdc_set_mode(PCFG_Type *ptr, uint8_t mode)
  *
  * @param[in] ptr base address
  * @param[in] limit current limit at low power mode
- * @param[in] over_limit set to true means current is greater than limit
+ * @param[in] over_limit unused parameter, will be discarded
  */
 static inline void pcfg_dcdc_set_lp_current_limit(PCFG_Type *ptr, pcfg_dcdc_lp_current_limit_t limit, bool over_limit)
 {
-    ptr->DCDC_PROT = (ptr->DCDC_PROT & ~(PCFG_DCDC_PROT_ILIMIT_LP_MASK | PCFG_DCDC_PROT_OVERLOAD_LP_MASK))
-        | PCFG_DCDC_PROT_ILIMIT_LP_SET(limit) | PCFG_DCDC_PROT_OVERLOAD_LP_SET(over_limit);
+    (void) over_limit;
+    ptr->DCDC_PROT = (ptr->DCDC_PROT & ~PCFG_DCDC_PROT_ILIMIT_LP_MASK) | PCFG_DCDC_PROT_ILIMIT_LP_SET(limit);
 }
 
 /**
@@ -578,6 +558,31 @@ static inline bool pcfg_irc24m_is_trimmed(PCFG_Type *ptr)
 static inline void pcfg_irc24m_reload_trim(PCFG_Type *ptr)
 {
     ptr->RC24M &= ~PCFG_RC24M_RC_TRIMMED_MASK;
+}
+
+/**
+ * @brief dcdc switch to dcm mode
+ *
+ * @param[in] ptr base address
+ */
+static inline void pcfg_dcdc_switch_to_dcm_mode(PCFG_Type *ptr)
+{
+    const uint8_t pcfc_dcdc_min_duty_cycle[] = {
+        0x6E, 0x6E, 0x70, 0x70, 0x70, 0x70, 0x72, 0x72,
+        0x72, 0x72, 0x74, 0x74, 0x74, 0x74, 0x76, 0x76,
+        0x76, 0x78, 0x78, 0x78, 0x78, 0x7A, 0x7A, 0x7A,
+        0x7A, 0x7C, 0x7C, 0x7C, 0x7E, 0x7E, 0x7E, 0x7E
+    };
+    uint16_t voltage;
+
+    ptr->DCDC_MODE |= 0x77000u;
+    ptr->DCDC_ADVMODE = (ptr->DCDC_ADVMODE & ~0x73F0067u) | 0x4120067u;
+    ptr->DCDC_PROT &= ~PCFG_DCDC_PROT_SHORT_CURRENT_MASK;
+    ptr->DCDC_PROT |= PCFG_DCDC_PROT_DISABLE_SHORT_MASK;
+    ptr->DCDC_MISC = 0x100000u;
+    voltage = PCFG_DCDC_MODE_VOLT_GET(ptr->DCDC_MODE);
+    voltage = (voltage - 600) / 25;
+    ptr->DCDC_ADVPARAM = (ptr->DCDC_ADVPARAM & ~PCFG_DCDC_ADVPARAM_MIN_DUT_MASK) | PCFG_DCDC_ADVPARAM_MIN_DUT_SET(pcfc_dcdc_min_duty_cycle[voltage]);
 }
 
 /**

@@ -12,6 +12,7 @@
 extern "C" {
 #endif
 void init_uart_pins(UART_Type *ptr);
+void init_uart_pin_as_gpio(UART_Type *ptr);
 void init_i2c_pins(I2C_Type *ptr);
 void init_gpio_pins(void);
 void init_spi_pins(SPI_Type *ptr);
@@ -37,6 +38,10 @@ void init_trgmux_pins(uint32_t pin);
 void init_pla_pins(void);
 void init_lin_pins(LIN_Type *ptr);
 void init_sdm_pins(void);
+void init_pla_tamagawa_pins(void);
+void init_motor_over_zero_sensorless_adc_pins(void);
+void init_tamper_pins(void);
+
 #ifdef __cplusplus
 }
 #endif

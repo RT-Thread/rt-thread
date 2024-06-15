@@ -2162,10 +2162,6 @@ rt_weak sysret_t sys_vfork(void)
     return sys_fork();
 }
 
-struct process_aux *lwp_argscopy(struct rt_lwp *lwp, int argc, char **argv, char **envp);
-int lwp_load(const char *filename, struct rt_lwp *lwp, uint8_t *load_addr, size_t addr_size, struct process_aux *aux);
-void lwp_user_obj_free(struct rt_lwp *lwp);
-
 #define _swap_lwp_data(lwp_used, lwp_new, type, member) \
     do {\
         type tmp;\
@@ -2174,339 +2170,17 @@ void lwp_user_obj_free(struct rt_lwp *lwp);
         lwp_new->member = tmp;\
     } while (0)
 
-static char *_insert_args(int new_argc, char *new_argv[], struct lwp_args_info *args)
-{
-    void *page = NULL;
-    int err = 0;
-    char **nargv;
-    char **nenvp;
-    char *p;
-    int i, len;
-    int nsize;
-
-    if (new_argc == 0)
-    {
-        goto quit;
-    }
-    page = rt_pages_alloc_ext(0, PAGE_ANY_AVAILABLE); /* 1 page */
-    if (!page)
-    {
-        goto quit;
-    }
-
-    nsize = new_argc * sizeof(char *);
-    for (i = 0; i < new_argc; i++)
-    {
-        nsize += lwp_strlen(lwp_self(), new_argv[i]) + 1;
-    }
-    if (nsize + args->size > ARCH_PAGE_SIZE)
-    {
-        err = 1;
-        goto quit;
-    }
-    nargv = (char **)page;
-    nenvp = nargv + args->argc + new_argc + 1;
-    p = (char *)(nenvp + args->envc + 1);
-    /* insert argv */
-    for (i = 0; i < new_argc; i++)
-    {
-        nargv[i] = p;
-        len = lwp_strlen(lwp_self(), new_argv[i]) + 1;
-        lwp_memcpy(p, new_argv[i], len);
-        p += len;
-    }
-    /* copy argv */
-    nargv += new_argc;
-    for (i = 0; i < args->argc; i++)
-    {
-        nargv[i] = p;
-        len = lwp_strlen(lwp_self(), args->argv[i]) + 1;
-        lwp_memcpy(p, args->argv[i], len);
-        p += len;
-    }
-    nargv[i] = NULL;
-    /* copy envp */
-    for (i = 0; i < args->envc; i++)
-    {
-        nenvp[i] = p;
-        len = lwp_strlen(lwp_self(), args->envp[i]) + 1;
-        lwp_memcpy(p, args->envp[i], len);
-        p += len;
-    }
-    nenvp[i] = NULL;
-
-    /* update args */
-    args->argv = (char **)page;
-    args->argc = args->argc + new_argc;
-    args->envp = args->argv + args->argc + 1;
-    /* args->envc no change */
-    args->size = args->size + nsize;
-
-quit:
-    if (err && page)
-    {
-        rt_pages_free(page, 0);
-        page = NULL;
-    }
-    return page;
-}
-
-#define INTERP_BUF_SIZE 128
-static char *_load_script(const char *filename, void *old_page, struct lwp_args_info *args)
-{
-    char *new_page = NULL;
-    int fd = -RT_ERROR;
-    int len;
-    char interp[INTERP_BUF_SIZE];
-    char *cp;
-    char *i_name;
-    char *i_arg;
-
-    fd = open(filename, O_BINARY | O_RDONLY, 0);
-    if (fd < 0)
-    {
-        goto quit;
-    }
-    len = read(fd, interp, INTERP_BUF_SIZE);
-    if (len < 2)
-    {
-        goto quit;
-    }
-    /*
-    * match find file header the first line.
-    * eg: #!/bin/sh
-    */
-    if ((interp[0] != '#') || (interp[1] != '!'))
-    {
-        goto quit;
-    }
-
-    if (len == INTERP_BUF_SIZE)
-    {
-        len--;
-    }
-    interp[len] = '\0';
-
-    if ((cp = strchr(interp, '\n')) == NULL)
-    {
-        cp = interp + INTERP_BUF_SIZE - 1;
-    }
-    *cp = '\0';
-    while (cp > interp)
-    {
-        cp--;
-        if ((*cp == ' ') || (*cp == '\t'))
-        {
-            *cp = '\0';
-        }
-        else
-        {
-            break;
-        }
-    }
-    for (cp = interp + 2; (*cp == ' ') || (*cp == '\t'); cp++)
-    {
-        /* nothing */
-    }
-    if (*cp == '\0')
-    {
-        goto quit; /* No interpreter name found */
-    }
-    i_name = cp;
-    i_arg = NULL;
-    for (; *cp && (*cp != ' ') && (*cp != '\t'); cp++)
-    {
-        /* nothing */
-    }
-    while ((*cp == ' ') || (*cp == '\t'))
-    {
-        *cp++ = '\0';
-    }
-    if (*cp)
-    {
-        i_arg = cp;
-    }
-
-    if (i_arg)
-    {
-        new_page = _insert_args(1, &i_arg, args);
-        if (!new_page)
-        {
-            goto quit;
-        }
-        rt_pages_free(old_page, 0);
-        old_page = new_page;
-    }
-    new_page = _insert_args(1, &i_name, args);
-    if (!new_page)
-    {
-        goto quit;
-    }
-    rt_pages_free(old_page, 0);
-
-quit:
-    if (fd >= 0)
-    {
-        close(fd);
-    }
-    return new_page;
-}
-
-int load_ldso(struct rt_lwp *lwp, char *exec_name, char *const argv[], char *const envp[])
-{
-    int ret = -1;
-    int i;
-    void *page;
-    void *new_page;
-    int argc = 0;
-    int envc = 0;
-    int size;
-    char **kargv;
-    char **kenvp;
-    size_t len;
-    char *p;
-    char *i_arg;
-    struct lwp_args_info args_info;
-    struct process_aux *aux;
-
-    size = sizeof(char *);
-    if (argv)
-    {
-        while (1)
-        {
-            if (!argv[argc])
-            {
-                break;
-            }
-            len = lwp_strlen(lwp, (const char *)argv[argc]);
-            size += sizeof(char *) + len + 1;
-            argc++;
-        }
-    }
-    if (envp)
-    {
-        while (1)
-        {
-            if (!envp[envc])
-            {
-                break;
-            }
-            len = lwp_strlen(lwp, (const char *)envp[envc]);
-            size += sizeof(char *) + len + 1;
-            envc++;
-        }
-    }
-
-    page = rt_pages_alloc_ext(0, PAGE_ANY_AVAILABLE); /* 1 page */
-    if (!page)
-    {
-        SET_ERRNO(ENOMEM);
-        goto quit;
-    }
-    kargv = (char **)page;
-    kenvp = kargv + argc + 1;
-    p = (char *)(kenvp + envc + 1);
-    /* copy argv */
-    if (argv)
-    {
-        for (i = 0; i < argc; i++)
-        {
-            kargv[i] = p;
-            len = lwp_strlen(lwp, argv[i]) + 1;
-            lwp_memcpy(p, argv[i], len);
-            p += len;
-        }
-        kargv[i] = NULL;
-    }
-    /* copy envp */
-    if (envp)
-    {
-        for (i = 0; i < envc; i++)
-        {
-            kenvp[i] = p;
-            len = lwp_strlen(lwp, envp[i]) + 1;
-            lwp_memcpy(p, envp[i], len);
-            p += len;
-        }
-        kenvp[i] = NULL;
-    }
-
-    args_info.argc = argc;
-    args_info.argv = kargv;
-    args_info.envc = envc;
-    args_info.envp = kenvp;
-    args_info.size = size;
-
-    new_page = _insert_args(1, &exec_name, &args_info);
-    if (!new_page)
-    {
-        SET_ERRNO(ENOMEM);
-        goto quit;
-    }
-    rt_pages_free(page, 0);
-    page = new_page;
-
-    i_arg = "-e";
-    new_page = _insert_args(1, &i_arg, &args_info);
-    if (!new_page)
-    {
-        SET_ERRNO(ENOMEM);
-        goto quit;
-    }
-    rt_pages_free(page, 0);
-    page = new_page;
-
-    i_arg = "ld.so";
-    new_page = _insert_args(1, &i_arg, &args_info);
-    if (!new_page)
-    {
-        SET_ERRNO(ENOMEM);
-        goto quit;
-    }
-    rt_pages_free(page, 0);
-    page = new_page;
-
-    if ((aux = lwp_argscopy(lwp, args_info.argc, args_info.argv, args_info.envp)) == NULL)
-    {
-        SET_ERRNO(ENOMEM);
-        goto quit;
-    }
-
-    ret = lwp_load("/lib/ld.so", lwp, RT_NULL, 0, aux);
-
-    rt_strncpy(lwp->cmd, exec_name, RT_NAME_MAX - 1);
-quit:
-    if (page)
-    {
-        rt_pages_free(page, 0);
-    }
-    return (ret < 0 ? GET_ERRNO() : ret);
-}
-
 sysret_t sys_execve(const char *path, char *const argv[], char *const envp[])
 {
-    int ret = -1;
-    int argc = 0;
-    int envc = 0;
-    void *page = NULL;
-    void *new_page;
-    int size = 0;
+    int error = -1;
     size_t len;
-    char **kargv;
-    char **kenvp;
-    char *p;
     struct rt_lwp *new_lwp = NULL;
     struct rt_lwp *lwp;
     int uni_thread;
     rt_thread_t thread;
     struct process_aux *aux;
-    int i;
     struct lwp_args_info args_info;
-
-    if (access(path, X_OK) != 0)
-    {
-        return -EACCES;
-    }
+    char *kpath = RT_NULL;
 
     lwp = lwp_self();
     thread = rt_thread_self();
@@ -2525,163 +2199,108 @@ sysret_t sys_execve(const char *path, char *const argv[], char *const envp[])
 
     if (!uni_thread)
     {
-        SET_ERRNO(EINVAL);
-        goto quit;
+        return -EINVAL;
     }
 
     len = lwp_user_strlen(path);
     if (len <= 0)
     {
-        SET_ERRNO(EFAULT);
-        goto quit;
+        return -EFAULT;
     }
 
-    size += sizeof(char *);
-    if (argv)
+    kpath = rt_malloc(len + 1);
+    if (!kpath)
     {
-        while (1)
-        {
-            if (!lwp_user_accessable((void *)(argv + argc), sizeof(char *)))
-            {
-                SET_ERRNO(EFAULT);
-                goto quit;
-            }
-            if (!argv[argc])
-            {
-                break;
-            }
-            len = lwp_user_strlen((const char *)argv[argc]);
-            if (len < 0)
-            {
-                SET_ERRNO(EFAULT);
-                goto quit;
-            }
-            size += sizeof(char *) + len + 1;
-            argc++;
-        }
-    }
-    size += sizeof(char *);
-    if (envp)
-    {
-        while (1)
-        {
-            if (!lwp_user_accessable((void *)(envp + envc), sizeof(char *)))
-            {
-                SET_ERRNO(EFAULT);
-                goto quit;
-            }
-            if (!envp[envc])
-            {
-                break;
-            }
-            len = lwp_user_strlen((const char *)envp[envc]);
-            if (len < 0)
-            {
-                SET_ERRNO(EFAULT);
-                goto quit;
-            }
-            size += sizeof(char *) + len + 1;
-            envc++;
-        }
-    }
-    if (size > ARCH_PAGE_SIZE)
-    {
-        SET_ERRNO(EINVAL);
-        goto quit;
-    }
-    page = rt_pages_alloc_ext(0, PAGE_ANY_AVAILABLE); /* 1 page */
-    if (!page)
-    {
-        SET_ERRNO(ENOMEM);
-        goto quit;
+        return -ENOMEM;
     }
 
-    kargv = (char **)page;
-    kenvp = kargv + argc + 1;
-    p = (char *)(kenvp + envc + 1);
-    /* copy argv */
+    if (lwp_get_from_user(kpath, (void *)path, len) != len)
+    {
+        rt_free(kpath);
+        return -EFAULT;
+    }
+    kpath[len] = '\0';
+
+    if (access(kpath, X_OK) != 0)
+    {
+        rt_free(kpath);
+        return -EACCES;
+    }
+
+    /* setup args */
+    error = lwp_args_init(&args_info);
+    if (error)
+    {
+        rt_free(kpath);
+        return -ENOMEM;
+    }
+
     if (argv)
     {
-        for (i = 0; i < argc; i++)
+        error = lwp_args_put_argv(&args_info, (void *)argv);
+        if (error)
         {
-            kargv[i] = p;
-            len = lwp_user_strlen(argv[i]) + 1;
-            lwp_memcpy(p, argv[i], len);
-            p += len;
+            error = -EFAULT;
+            goto quit;
         }
-        kargv[i] = NULL;
     }
-    /* copy envp */
+
     if (envp)
     {
-        for (i = 0; i < envc; i++)
+        error = lwp_args_put_envp(&args_info, (void *)envp);
+        if (error)
         {
-            kenvp[i] = p;
-            len = lwp_user_strlen(envp[i]) + 1;
-            lwp_memcpy(p, envp[i], len);
-            p += len;
+            error = -EFAULT;
+            goto quit;
         }
-        kenvp[i] = NULL;
     }
 
     /* alloc new lwp to operation */
     new_lwp = lwp_create(LWP_CREATE_FLAG_NONE);
     if (!new_lwp)
     {
-        SET_ERRNO(ENOMEM);
+        error = -ENOMEM;
         goto quit;
     }
 
-    ret = lwp_user_space_init(new_lwp, 0);
-    if (ret != 0)
+    error = lwp_user_space_init(new_lwp, 0);
+    if (error != 0)
     {
-        SET_ERRNO(ENOMEM);
+        error = -ENOMEM;
         goto quit;
     }
+
     /* file is a script ? */
-    args_info.argc = argc;
-    args_info.argv = kargv;
-    args_info.envc = envc;
-    args_info.envp = kenvp;
-    args_info.size = size;
+    path = kpath;
     while (1)
     {
-        new_page = _load_script(path, page, &args_info);
-        if (!new_page)
+        error = lwp_args_load_script(&args_info, path);
+        if (error != 0)
         {
             break;
         }
-
-        page = new_page;
-        path = args_info.argv[0];
+        path = lwp_args_get_argv_0(&args_info);
     }
 
     /* now load elf */
-    if ((aux = lwp_argscopy(new_lwp, args_info.argc, args_info.argv, args_info.envp)) == NULL)
+    if ((aux = lwp_argscopy(new_lwp, &args_info)) == NULL)
     {
-        SET_ERRNO(ENOMEM);
+        error = -ENOMEM;
         goto quit;
     }
-    ret = lwp_load(path, new_lwp, RT_NULL, 0, aux);
-    if (ret == 1)
-    {
-        /* dynamic */
-        lwp_unmap_user(new_lwp, (void *)(USER_VADDR_TOP - ARCH_PAGE_SIZE));
-        ret = load_ldso(new_lwp, (char *)path, args_info.argv, args_info.envp);
-    }
-    if (ret == RT_EOK)
+    error = lwp_load(path, new_lwp, RT_NULL, 0, aux);
+    if (error == RT_EOK)
     {
         int off = 0;
         int last_backslash = 0;
-        char *run_name = args_info.argv[0];
 
         /* clear all user objects */
         lwp_user_object_clear(lwp);
 
-        /* find last \ or / */
+        /* find last \ or / to get base name */
         while (1)
         {
-            char c = run_name[off++];
+            char c = path[off++];
 
             if (c == '\0')
             {
@@ -2700,12 +2319,10 @@ sysret_t sys_execve(const char *path, char *const argv[], char *const envp[])
          */
         RT_ASSERT(rt_list_entry(lwp->t_grp.prev, struct rt_thread, sibling) == thread);
 
-        strncpy(thread->parent.name, run_name + last_backslash, RT_NAME_MAX - 1);
+        strncpy(thread->parent.name, path + last_backslash, RT_NAME_MAX - 1);
         strncpy(lwp->cmd, new_lwp->cmd, RT_NAME_MAX);
         rt_free(lwp->exe_file);
         lwp->exe_file = strndup(new_lwp->exe_file, DFS_PATH_MAX);
-
-        rt_pages_free(page, 0);
 
 #ifdef ARCH_MM_MMU
         _swap_lwp_data(lwp, new_lwp, struct rt_aspace *, aspace);
@@ -2737,17 +2354,18 @@ sysret_t sys_execve(const char *path, char *const argv[], char *const envp[])
                 (char *)thread->stack_addr + thread->stack_size);
         /* never reach here */
     }
-    return -EINVAL;
+    error = -EINVAL;
 quit:
-    if (page)
+    if (kpath)
     {
-        rt_pages_free(page, 0);
+        rt_free(kpath);
     }
+    lwp_args_detach(&args_info);
     if (new_lwp)
     {
         lwp_ref_dec(new_lwp);
     }
-    return (ret < 0 ? GET_ERRNO() : ret);
+    return error;
 }
 #endif /* ARCH_MM_MMU */
 
@@ -4842,11 +4460,11 @@ sysret_t sys_mkdir(const char *path, mode_t mode)
         return -EINVAL;
     }
 
-    err = mkdir(kpath, mode);
+    err = _SYS_WRAP(mkdir(kpath, mode));
 
     kmem_put(kpath);
 
-    return (err < 0 ? GET_ERRNO() : err);
+    return err;
 #else
     int ret = mkdir(path, mode);
     return (ret < 0 ? GET_ERRNO() : ret);
@@ -5426,6 +5044,12 @@ sysret_t sys_sched_setaffinity(pid_t pid, size_t size, void *set)
         if (CPU_ISSET_S(i, size, kset))
         {
             kmem_put(kset);
+
+            /**
+             * yes it's tricky.
+             * But when we talk about 'pid' from GNU libc, it's the 'task-id'
+             * aka 'thread->tid' known in kernel.
+             */
             return lwp_setaffinity(pid, i);
         }
     }

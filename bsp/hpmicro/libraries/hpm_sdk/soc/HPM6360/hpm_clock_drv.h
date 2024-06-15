@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 HPMicro
+ * Copyright (c) 2021-2024 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -11,6 +11,7 @@
 #include "hpm_sysctl_drv.h"
 #include "hpm_csr_drv.h"
 
+#define CLOCK_DIV_INVALID (~0UL)
 
 /**
  * @brief Error codes for clock driver
@@ -45,6 +46,7 @@ enum {
 #define CLK_SRC_GROUP_DAC   (7U)
 #define CLK_SRC_GROUP_CPU0   (9U)
 #define CLK_SRC_GROUP_SRC    (10U)
+#define CLK_SRC_GROUP_PWDG    (11U)
 #define CLK_SRC_GROUP_INVALID (15U)
 
 #define MAKE_CLK_SRC(src_grp, index) (((uint8_t)(src_grp)<<4) | (index))
@@ -65,17 +67,22 @@ typedef enum _clock_sources {
     clk_src_pll2_clk1 = MAKE_CLK_SRC(CLK_SRC_GROUP_COMMON, 7),
     clk_src_osc32k = MAKE_CLK_SRC(CLK_SRC_GROUP_COMMON, 8),
 
-    clk_adc_src_ana = MAKE_CLK_SRC(CLK_SRC_GROUP_ADC, 0),
-    clk_adc_src_ahb = MAKE_CLK_SRC(CLK_SRC_GROUP_ADC, 1),
+    clk_adc_src_ana0 = MAKE_CLK_SRC(CLK_SRC_GROUP_ADC, 0),
+    clk_adc_src_ana1 = MAKE_CLK_SRC(CLK_SRC_GROUP_ADC, 0),
+    clk_adc_src_ana2 = MAKE_CLK_SRC(CLK_SRC_GROUP_ADC, 0),
+    clk_adc_src_ahb0 = MAKE_CLK_SRC(CLK_SRC_GROUP_ADC, 1),
 
-    clk_dac_src_ana = MAKE_CLK_SRC(CLK_SRC_GROUP_DAC, 0),
-    clk_dac_src_ahb = MAKE_CLK_SRC(CLK_SRC_GROUP_DAC, 1),
+    clk_dac_src_ana3 = MAKE_CLK_SRC(CLK_SRC_GROUP_DAC, 0),
+    clk_dac_src_ahb0 = MAKE_CLK_SRC(CLK_SRC_GROUP_DAC, 1),
 
     clk_i2s_src_aud0 = MAKE_CLK_SRC(CLK_SRC_GROUP_I2S, 0),
     clk_i2s_src_aud1 = MAKE_CLK_SRC(CLK_SRC_GROUP_I2S, 1),
 
     clk_wdg_src_ahb0 = MAKE_CLK_SRC(CLK_SRC_GROUP_WDG, 0),
     clk_wdg_src_osc32k = MAKE_CLK_SRC(CLK_SRC_GROUP_WDG, 1),
+
+    clk_pwdg_src_osc24m = MAKE_CLK_SRC(CLK_SRC_GROUP_PWDG, 0),
+    clk_pwdg_src_osc32k = MAKE_CLK_SRC(CLK_SRC_GROUP_PWDG, 1),
 
     clk_src_invalid = MAKE_CLK_SRC(CLK_SRC_GROUP_INVALID, 15),
 } clk_src_t;
@@ -135,11 +142,11 @@ typedef enum _clock_name {
     clock_ptpc = MAKE_CLOCK_NAME(sysctl_resource_ptpc, CLK_SRC_GROUP_COMMON, clock_node_ptpc),
     clock_ptp0 = MAKE_CLOCK_NAME(RESOURCE_SHARED_PTPC, CLK_SRC_GROUP_COMMON, clock_node_ptp0),
     clock_ref0 = MAKE_CLOCK_NAME(sysctl_resource_ref0, CLK_SRC_GROUP_COMMON, clock_node_ref0),
-    clock_ref1 = MAKE_CLOCK_NAME(sysctl_resource_ref1, CLK_SRC_GROUP_COMMON, clock_node_ref0),
+    clock_ref1 = MAKE_CLOCK_NAME(sysctl_resource_ref1, CLK_SRC_GROUP_COMMON, clock_node_ref1),
     clock_watchdog0 = MAKE_CLOCK_NAME(sysctl_resource_wdg0, CLK_SRC_GROUP_WDG, 0),
     clock_watchdog1 = MAKE_CLOCK_NAME(sysctl_resource_wdg1, CLK_SRC_GROUP_WDG, 1),
     clock_puart = MAKE_CLOCK_NAME(RESOURCE_INVALID, CLK_SRC_GROUP_PMIC, 0),
-    clock_pwdg = MAKE_CLOCK_NAME(RESOURCE_INVALID, CLK_SRC_GROUP_PMIC, 1),
+    clock_pwdg = MAKE_CLOCK_NAME(RESOURCE_INVALID, CLK_SRC_GROUP_PWDG, 0),
     clock_eth0 = MAKE_CLOCK_NAME(sysctl_resource_eth0, CLK_SRC_GROUP_COMMON, clock_node_eth0),
     clock_sdp = MAKE_CLOCK_NAME(sysctl_resource_sdp0, CLK_SRC_GROUP_AXI, 0),
     clock_xdma = MAKE_CLOCK_NAME(sysctl_resource_dma1, CLK_SRC_GROUP_AXI, 1),
@@ -154,8 +161,8 @@ typedef enum _clock_name {
     clock_mot0 = MAKE_CLOCK_NAME(sysctl_resource_mot0, CLK_SRC_GROUP_AHB, 6),
     clock_mot1 = MAKE_CLOCK_NAME(sysctl_resource_mot1, CLK_SRC_GROUP_AHB, 7),
     clock_acmp = MAKE_CLOCK_NAME(sysctl_resource_acmp, CLK_SRC_GROUP_AHB, 10),
-    clock_pdm = MAKE_CLOCK_NAME(sysctl_resource_i2spdm0, CLK_SRC_GROUP_AHB, 11),
-    clock_dao = MAKE_CLOCK_NAME(sysctl_resource_i2sdao, CLK_SRC_GROUP_AHB, 12),
+    clock_pdm = MAKE_CLOCK_NAME(sysctl_resource_i2spdm0, CLK_SRC_GROUP_I2S, 0),
+    clock_dao = MAKE_CLOCK_NAME(sysctl_resource_i2sdao, CLK_SRC_GROUP_I2S, 1),
     clock_msyn = MAKE_CLOCK_NAME(sysctl_resource_msyn, CLK_SRC_GROUP_AHB, 13),
     clock_ffa0 = MAKE_CLOCK_NAME(sysctl_resource_ffa0, CLK_SRC_GROUP_AHB, 14),
     clock_lmm0 = MAKE_CLOCK_NAME(sysctl_resource_lmm0, CLK_SRC_GROUP_CPU0, 0),
@@ -182,7 +189,7 @@ typedef enum _clock_name {
 
     /* Clock sources */
     clk_osc0clk0 = MAKE_CLOCK_NAME(sysctl_resource_xtal, CLK_SRC_GROUP_SRC, 0),
-    clk_pll0clk0 = MAKE_CLOCK_NAME(sysctl_resource_clk0_pll1, CLK_SRC_GROUP_SRC, 1),
+    clk_pll0clk0 = MAKE_CLOCK_NAME(sysctl_resource_clk0_pll0, CLK_SRC_GROUP_SRC, 1),
     clk_pll0clk1 = MAKE_CLOCK_NAME(sysctl_resource_clk1_pll0, CLK_SRC_GROUP_SRC, 2),
     clk_pll0clk2 = MAKE_CLOCK_NAME(sysctl_resource_clk2_pll0, CLK_SRC_GROUP_SRC, 3),
     clk_pll1clk0 = MAKE_CLOCK_NAME(sysctl_resource_clk0_pll1, CLK_SRC_GROUP_SRC, 4),
@@ -218,6 +225,14 @@ uint32_t get_frequency_for_source(clock_source_t source);
  * @return IP clock source
  */
 clk_src_t clock_get_source(clock_name_t clock_name);
+
+/**
+ * @brief Get the IP clock divider
+ *        Note:This API return the direct clock divider
+ * @param [in] clock_name clock name
+ * @return IP clock divider
+ */
+uint32_t clock_get_divider(clock_name_t clock_name);
 
 /**
  * @brief Set ADC clock source
@@ -295,6 +310,14 @@ void clock_add_to_group(clock_name_t clock_name, uint32_t group);
  * @param[in] group resource group index, valid value: 0/1/2/3
  */
 void clock_remove_from_group(clock_name_t clock_name, uint32_t group);
+
+/**
+ * @brief Check IP in specified group
+ * @param[in] clock_name IP clock name
+ * @param[in] group resource group index, valid value: 0/1/2/3
+ * @return true if in group, false if not in group
+ */
+bool clock_check_in_group(clock_name_t clock_name, uint32_t group);
 
 /**
  * @brief Disconnect the clock group from specified CPU

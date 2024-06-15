@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 HPMicro
+ * Copyright (c) 2021-2024 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -60,8 +60,6 @@
 #define HPM_TRGM0_INPUT_SRC_GPTMR1_OUT3                    (0x33UL)
 #define HPM_TRGM0_INPUT_SRC_CMP0_OUT                       (0x34UL)
 #define HPM_TRGM0_INPUT_SRC_CMP1_OUT                       (0x35UL)
-#define HPM_TRGM0_INPUT_SRC_CMP2_OUT                       (0x36UL)
-#define HPM_TRGM0_INPUT_SRC_CMP3_OUT                       (0x37UL)
 #define HPM_TRGM0_INPUT_SRC_DEBUG_FLAG                     (0x38UL)
 
 /* trgm1_input mux definitions */
@@ -115,8 +113,6 @@
 #define HPM_TRGM1_INPUT_SRC_GPTMR3_OUT3                    (0x33UL)
 #define HPM_TRGM1_INPUT_SRC_CMP0_OUT                       (0x34UL)
 #define HPM_TRGM1_INPUT_SRC_CMP1_OUT                       (0x35UL)
-#define HPM_TRGM1_INPUT_SRC_CMP2_OUT                       (0x36UL)
-#define HPM_TRGM1_INPUT_SRC_CMP3_OUT                       (0x37UL)
 #define HPM_TRGM1_INPUT_SRC_DEBUG_FLAG                     (0x38UL)
 
 /* trgm0_output mux definitions */

@@ -356,6 +356,15 @@ struct rt_object
 typedef struct rt_object *rt_object_t;                   /**< Type for kernel objects. */
 
 /**
+ * iterator of rt_object_for_each()
+ *
+ * data is the data passing in to rt_object_for_each(). iterator can return
+ * RT_EOK to continue the iteration; or any positive value to break the loop
+ * successfully; or any negative errno to break the loop on failure.
+ */
+typedef rt_err_t (*rt_object_iter_t)(rt_object_t object, void *data);
+
+/**
  *  The object type can be one of the follows with specific
  *  macros enabled:
  *  - Thread
@@ -692,6 +701,18 @@ enum
 #define RT_THREAD_CTRL_INFO             0x03                /**< Get thread information. */
 #define RT_THREAD_CTRL_BIND_CPU         0x04                /**< Set thread bind cpu. */
 
+/**
+ * CPU usage statistics data
+ */
+struct rt_cpu_usage_stats
+{
+    rt_ubase_t user;
+    rt_ubase_t system;
+    rt_ubase_t irq;
+    rt_ubase_t idle;
+};
+typedef struct rt_cpu_usage_stats *rt_cpu_usage_stats_t;
+
 #ifdef RT_USING_SMP
 
 #define RT_CPU_DETACHED                 RT_CPUS_NR          /**< The thread not running on cpu. */
@@ -704,15 +725,6 @@ enum
 #ifndef RT_STOP_IPI
 #define RT_STOP_IPI                     1
 #endif /* RT_STOP_IPI */
-
-struct rt_cpu_usage_stats
-{
-    rt_uint64_t user;
-    rt_uint64_t system;
-    rt_uint64_t irq;
-    rt_uint64_t idle;
-};
-typedef struct rt_cpu_usage_stats *rt_cpu_usage_stats_t;
 
 #define _SCHEDULER_CONTEXT(fileds) fileds
 
@@ -731,8 +743,10 @@ struct rt_cpu
         struct rt_thread        *current_thread;
 
         rt_uint8_t              irq_switch_flag:1;
-        rt_uint8_t              critical_switch_flag:1;
         rt_uint8_t              sched_lock_flag:1;
+#ifndef ARCH_USING_HW_THREAD_SELF
+        rt_uint8_t              critical_switch_flag:1;
+#endif /* ARCH_USING_HW_THREAD_SELF */
 
         rt_uint8_t              current_priority;
         rt_list_t               priority_table[RT_THREAD_PRIORITY_MAX];
@@ -751,12 +765,28 @@ struct rt_cpu
 
 #ifdef RT_USING_SMART
     struct rt_spinlock          spinlock;
+#endif /* RT_USING_SMART */
+#ifdef RT_USING_CPU_USAGE_TRACER
     struct rt_cpu_usage_stats   cpu_stat;
-#endif
+#endif /* RT_USING_CPU_USAGE_TRACER */
 };
-typedef struct rt_cpu *rt_cpu_t;
+
+#else /* !RT_USING_SMP */
+struct rt_cpu
+{
+    struct rt_thread            *current_thread;
+    struct rt_thread            *idle_thread;
+
+#ifdef RT_USING_CPU_USAGE_TRACER
+    struct rt_cpu_usage_stats   cpu_stat;
+#endif /* RT_USING_CPU_USAGE_TRACER */
+};
 
 #endif /* RT_USING_SMP */
+
+typedef struct rt_cpu *rt_cpu_t;
+/* Noted: As API to reject writing to this variable from application codes */
+#define rt_current_thread rt_thread_self()
 
 struct rt_thread;
 
@@ -927,9 +957,6 @@ struct rt_thread
     void                        *susp_recycler;         /**< suspended recycler on this thread */
     void                        *robust_list;           /**< pi lock, very carefully, it's a userspace list!*/
 
-    rt_uint64_t                 user_time;
-    rt_uint64_t                 system_time;
-
 #ifndef ARCH_MM_MMU
     lwp_sighandler_t            signal_handler[32];
 #else
@@ -942,6 +969,11 @@ struct rt_thread
     int                         *clear_child_tid;
 #endif /* ARCH_MM_MMU */
 #endif /* RT_USING_SMART */
+
+#ifdef RT_USING_CPU_USAGE_TRACER
+    rt_ubase_t                  user_time;              /**< Ticks on user */
+    rt_ubase_t                  system_time;            /**< Ticks on system */
+#endif /* RT_USING_CPU_USAGE_TRACER */
 
 #ifdef RT_USING_MEM_PROTECTION
     void *mem_regions;
@@ -956,7 +988,9 @@ struct rt_thread
 typedef struct rt_thread *rt_thread_t;
 
 #ifdef RT_USING_SMART
-#define IS_USER_MODE(t) ((t)->user_ctx.ctx == RT_NULL)
+#define LWP_IS_USER_MODE(t) ((t)->user_ctx.ctx == RT_NULL)
+#else
+#define LWP_IS_USER_MODE(t) (0)
 #endif /* RT_USING_SMART */
 
 /**@}*/
@@ -1343,6 +1377,7 @@ struct rt_device
 #ifdef RT_USING_OFW
     void *ofw_node;                                     /**< ofw node get from device tree */
 #endif /* RT_USING_OFW */
+    void *power_domain_unit;
 #endif /* RT_USING_DM */
 
     enum rt_device_class_type type;                     /**< device type */

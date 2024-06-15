@@ -1,5 +1,5 @@
 /***********************************************************************************************************************
- * Copyright [2020-2021] Renesas Electronics Corporation and/or its affiliates.  All Rights Reserved.
+ * Copyright [2020-2023] Renesas Electronics Corporation and/or its affiliates.  All Rights Reserved.
  *
  * This software and documentation are supplied by Renesas Electronics America Inc. and may only be used with products
  * of Renesas Electronics Corp. and its affiliates ("Renesas").  No other uses are authorized.  Renesas products are
@@ -27,9 +27,6 @@
  * @section TRANSFER_API_SUMMARY Summary
  * The transfer interface supports background data transfer (no CPU intervention).
  *
- * Implemented by:
- * - @ref DTC
- * - @ref DMAC
  *
  * @{
  **********************************************************************************************************************/
@@ -64,11 +61,10 @@ FSP_HEADER
  **********************************************************************************************************************/
 
 /** Transfer control block.  Allocate an instance specific control block to pass into the transfer API calls.
- * @par Implemented as
- * - dtc_instance_ctrl_t
- * - dmac_instance_ctrl_t
  */
 typedef void transfer_ctrl_t;
+
+#ifndef BSP_OVERRIDE_TRANSFER_MODE_T
 
 /** Transfer mode describes what will happen when a transfer request occurs. */
 typedef enum e_transfer_mode
@@ -98,6 +94,10 @@ typedef enum e_transfer_mode
     TRANSFER_MODE_REPEAT_BLOCK = 3
 } transfer_mode_t;
 
+#endif
+
+#ifndef BSP_OVERRIDE_TRANSFER_SIZE_T
+
 /** Transfer size specifies the size of each individual transfer.
  *  Total transfer length = transfer_size_t * transfer_length_t
  */
@@ -107,6 +107,10 @@ typedef enum e_transfer_size
     TRANSFER_SIZE_2_BYTE = 1,          ///< Each transfer transfers a 16-bit value
     TRANSFER_SIZE_4_BYTE = 2           ///< Each transfer transfers a 32-bit value
 } transfer_size_t;
+
+#endif
+
+#ifndef BSP_OVERRIDE_TRANSFER_ADDR_MODE_T
 
 /** Address mode specifies whether to modify (increment or decrement) pointer after each transfer. */
 typedef enum e_transfer_addr_mode
@@ -124,6 +128,10 @@ typedef enum e_transfer_addr_mode
     TRANSFER_ADDR_MODE_DECREMENTED = 3
 } transfer_addr_mode_t;
 
+#endif
+
+#ifndef BSP_OVERRIDE_TRANSFER_REPEAT_AREA_T
+
 /** Repeat area options (source or destination).  In @ref TRANSFER_MODE_REPEAT, the selected pointer returns to its
  *  original value after transfer_info_t::length transfers.  In @ref TRANSFER_MODE_BLOCK and @ref TRANSFER_MODE_REPEAT_BLOCK,
  *  the selected pointer returns to its original value after each transfer. */
@@ -135,6 +143,10 @@ typedef enum e_transfer_repeat_area
     /** Source area repeated in @ref TRANSFER_MODE_REPEAT or @ref TRANSFER_MODE_BLOCK or @ref TRANSFER_MODE_REPEAT_BLOCK. */
     TRANSFER_REPEAT_AREA_SOURCE = 1
 } transfer_repeat_area_t;
+
+#endif
+
+#ifndef BSP_OVERRIDE_TRANSFER_CHAIN_MODE_T
 
 /** Chain transfer mode options.
  *  @note Only applies for DTC. */
@@ -150,6 +162,10 @@ typedef enum e_transfer_chain_mode
     TRANSFER_CHAIN_MODE_END = 3
 } transfer_chain_mode_t;
 
+#endif
+
+#ifndef BSP_OVERRIDE_TRANSFER_IRQ_T
+
 /** Interrupt options. */
 typedef enum e_transfer_irq
 {
@@ -164,6 +180,8 @@ typedef enum e_transfer_irq
     TRANSFER_IRQ_EACH = 1
 } transfer_irq_t;
 
+#endif
+
 /** Driver specific information. */
 typedef struct st_transfer_properties
 {
@@ -172,6 +190,8 @@ typedef struct st_transfer_properties
     uint32_t transfer_length_max;       ///< Maximum number of transfers
     uint32_t transfer_length_remaining; ///< Number of transfers remaining
 } transfer_properties_t;
+
+#ifndef BSP_OVERRIDE_TRANSFER_INFO_T
 
 /** This structure specifies the properties of the transfer.
  *  @warning  When using DTC, this structure corresponds to the descriptor block registers required by the DTC.
@@ -213,7 +233,8 @@ typedef struct st_transfer_info
 
             /** Select mode from @ref transfer_mode_t. */
             transfer_mode_t mode : 2;
-        };
+        } transfer_settings_word_b;
+
         uint32_t transfer_settings_word;
     };
 
@@ -230,6 +251,8 @@ typedef struct st_transfer_info
      *  see HAL driver for details. */
     volatile uint16_t length;
 } transfer_info_t;
+
+#endif
 
 /** Driver configuration set in @ref transfer_api_t::open. All elements except p_extend are required and must be
  *  initialized. */
@@ -253,9 +276,6 @@ typedef enum e_transfer_start_mode
 typedef struct st_transfer_api
 {
     /** Initial configuration.
-     * @par Implemented as
-     * - @ref R_DTC_Open()
-     * - @ref R_DMAC_Open()
      *
      * @param[in,out] p_ctrl   Pointer to control block. Must be declared by user. Elements set here.
      * @param[in]     p_cfg    Pointer to configuration structure. All elements of this structure
@@ -265,9 +285,6 @@ typedef struct st_transfer_api
 
     /** Reconfigure the transfer.
      * Enable the transfer if p_info is valid.
-     * @par Implemented as
-     * - @ref R_DTC_Reconfigure()
-     * - @ref R_DMAC_Reconfigure()
      *
      * @param[in,out] p_ctrl   Pointer to control block. Must be declared by user. Elements set here.
      * @param[in]     p_info   Pointer to a new transfer info structure.
@@ -276,9 +293,6 @@ typedef struct st_transfer_api
 
     /** Reset source address pointer, destination address pointer, and/or length, keeping all other settings the same.
      * Enable the transfer if p_src, p_dest, and length are valid.
-     * @par Implemented as
-     * - @ref R_DTC_Reset()
-     * - @ref R_DMAC_Reset()
      *
      * @param[in]     p_ctrl         Control block set in @ref transfer_api_t::open call for this transfer.
      * @param[in]     p_src          Pointer to source. Set to NULL if source pointer should not change.
@@ -291,32 +305,24 @@ typedef struct st_transfer_api
                         uint16_t const num_transfers);
 
     /** Enable transfer. Transfers occur after the activation source event (or when
-     * @ref transfer_api_t::softwareStart is called if ELC_EVENT_ELC_NONE is chosen as activation source).
-     * @par Implemented as
-     * - @ref R_DTC_Enable()
-     * - @ref R_DMAC_Enable()
+     * @ref transfer_api_t::softwareStart is called if no peripheral event is chosen as activation source).
      *
      * @param[in]     p_ctrl   Control block set in @ref transfer_api_t::open call for this transfer.
      */
     fsp_err_t (* enable)(transfer_ctrl_t * const p_ctrl);
 
     /** Disable transfer. Transfers do not occur after the activation source event (or when
-     * @ref transfer_api_t::softwareStart is called if ELC_EVENT_ELC_NONE is chosen as the DMAC activation source).
+     * @ref transfer_api_t::softwareStart is called if no peripheral event is chosen as the DMAC activation source).
      * @note If a transfer is in progress, it will be completed.  Subsequent transfer requests do not cause a
      * transfer.
-     * @par Implemented as
-     * - @ref R_DTC_Disable()
-     * - @ref R_DMAC_Disable()
      *
      * @param[in]     p_ctrl   Control block set in @ref transfer_api_t::open call for this transfer.
      */
     fsp_err_t (* disable)(transfer_ctrl_t * const p_ctrl);
 
     /** Start transfer in software.
-     * @warning Only works if ELC_EVENT_ELC_NONE is chosen as the DMAC activation source.
+     * @warning Only works if no peripheral event is chosen as the DMAC activation source.
      * @note Not supported for DTC.
-     * @par Implemented as
-     * - @ref R_DMAC_SoftwareStart()
      *
      * @param[in]     p_ctrl   Control block set in @ref transfer_api_t::open call for this transfer.
      * @param[in]     mode     Select mode from @ref transfer_start_mode_t.
@@ -326,18 +332,13 @@ typedef struct st_transfer_api
     /** Stop transfer in software. The transfer will stop after completion of the current transfer.
      * @note Not supported for DTC.
      * @note Only applies for transfers started with TRANSFER_START_MODE_REPEAT.
-     * @warning Only works if ELC_EVENT_ELC_NONE is chosen as the DMAC activation source.
-     * @par Implemented as
-     * - @ref R_DMAC_SoftwareStop()
+     * @warning Only works if no peripheral event is chosen as the DMAC activation source.
      *
      * @param[in]     p_ctrl   Control block set in @ref transfer_api_t::open call for this transfer.
      */
     fsp_err_t (* softwareStop)(transfer_ctrl_t * const p_ctrl);
 
     /** Provides information about this transfer.
-     * @par Implemented as
-     * - @ref R_DTC_InfoGet()
-     * - @ref R_DMAC_InfoGet()
      *
      * @param[in]     p_ctrl         Control block set in @ref transfer_api_t::open call for this transfer.
      * @param[out]    p_properties   Driver specific information.
@@ -345,12 +346,21 @@ typedef struct st_transfer_api
     fsp_err_t (* infoGet)(transfer_ctrl_t * const p_ctrl, transfer_properties_t * const p_properties);
 
     /** Releases hardware lock.  This allows a transfer to be reconfigured using @ref transfer_api_t::open.
-     * @par Implemented as
-     * - @ref R_DTC_Close()
-     * - @ref R_DMAC_Close()
+     *
      * @param[in]     p_ctrl    Control block set in @ref transfer_api_t::open call for this transfer.
      */
     fsp_err_t (* close)(transfer_ctrl_t * const p_ctrl);
+
+    /** To update next transfer information without interruption during transfer.
+     *  Allow further transfer continuation.
+     *
+     * @param[in]     p_ctrl         Control block set in @ref transfer_api_t::open call for this transfer.
+     * @param[in]     p_src          Pointer to source. Set to NULL if source pointer should not change.
+     * @param[in]     p_dest         Pointer to destination. Set to NULL if destination pointer should not change.
+     * @param[in]     num_transfers  Transfer length in normal mode or block mode.
+     */
+    fsp_err_t (* reload)(transfer_ctrl_t * const p_ctrl, void const * p_src, void * p_dest,
+                         uint32_t const num_transfers);
 } transfer_api_t;
 
 /** This structure encompasses everything that is needed to use an instance of this interface. */

@@ -9,22 +9,22 @@
 #include "hpm_common.h"
 
 /* ! @brief Commands for probing the FLASH device */
-#define kSerialFlash_ReadSFDP (0x5AU)
-#define kSerialFlash_ReadManufacturerId (0x9FU)
+#define SERIAL_FLASH_READ_SFDP (0x5AU)
+#define SERIAL_FLASH_READ_MANUFACTURE_ID (0x9FU)
 
 /* !@brief SFDP related definitions */
 #define SFDP_SIGNATURE (0x50444653UL) /* ASCII: SFDP */
-#define kSfdp_Version_Major_1_0 (1U)
-#define kSfdp_Version_Minor_0 (0U) /* JESD216 */
-#define kSfdp_Version_Minor_A (5U) /* JESD216A */
-#define kSfdp_Version_Minor_B (6U) /* JESD216B */
-#define kSfdp_Version_Minor_C (7U) /* JESD216C */
-#define kSfdp_Version_Minor_D (8U) /* JESD216D */
-#define kSfdp_BasicProtocolTableSize_Rev0 (36U)
-#define kSfdp_BasicProtocolTableSize_RevA (64U)
-#define kSfdp_BasicProtocolTableSize_RevB kSfdp_BasicProtocolTableSize_RevA
-#define kSfdp_BasicProtocolTableSize_RevC (80U)
-#define kSfdp_BasicProtocolTableSize_RevD kSfdp_BasicProtocolTableSize_RevC
+#define SFDP_VERSION_MAJOR_1_0 (1U)
+#define SFDP_VERSION_MINOR_0 (0U) /* JESD216 */
+#define SFDP_VERSION_MINOR_A (5U) /* JESD216A */
+#define SFDP_VERSION_MINOR_B (6U) /* JESD216B */
+#define SFDP_VERSION_MINOR_C (7U) /* JESD216C */
+#define SFDP_VERSION_MINOR_D (8U) /* JESD216D */
+#define SFDP_BASIC_PROTOCOL_TABLE_SIZE_REV0 (36U)
+#define SFDP_BASIC_PROTOCOL_TABLE_SIZE_REVA (64U)
+#define SFDP_BASIC_PROTOCOL_TABLE_SIZE_REVB SFDP_BASIC_PROTOCOL_TABLE_SIZE_REVA
+#define SFDP_BASIC_PROTOCOL_TABLE_SIZE_REVC (80U)
+#define SFDP_BASIC_PROTOCOL_TABLE_SIZE_REVD SFDP_BASIC_PROTOCOL_TABLE_SIZE_REVC
 
 typedef union _sfdp_header {
     uint32_t words[2];
@@ -39,28 +39,28 @@ typedef union _sfdp_header {
 } sfdp_header_t;
 
 /* !@brief SFDP parameter Type ID definitions */
-#define kParameterID_BasicSpiProtocol (0xFF00U)
+#define PARAMETER_ID_BASIC_SPIPROTOCOL (0xFF00U)
 /* New Table added in JESD216B */
-#define kParameterID_SectorMap (0xFF81U)
-#define kParameterID_4ByteAddressInstructionTable (0xFF84U)
+#define PARAMETER_ID_SECTOR_MAP (0xFF81U)
+#define PARAMETER_ID_4BYTEADDRESS_INSTRUCTION_TABLE (0xFF84U)
 /* New Table added in JESD216C */
-#define kParameterID_xSpiProfile1_0 (0xFF05U)
-#define kParameterID_xSpiOrofile2_0 (0xFF06U)
-#define kParameterID_StaCtrlCfgRegMap (0xFF87U)
-#define kParameterID_OpiEnableSeq (0xFF09U)
-#define kParameterID_CmdSeqChangeToOctalDdr (0xFF0AU)
+#define PARAMETER_ID_XSPIPROFILE1_0 (0xFF05U)
+#define PARAMETER_ID_XSPIOROFILE2_0 (0xFF06U)
+#define PARAMETER_ID_STACTRLCFGREGMAP (0xFF87U)
+#define PARAMETER_ID_OPIENABLESEQ (0xFF09U)
+#define PARAMETER_ID_CMDSEQ_CHANGE_TO_OCTAL_DDR (0xFF0AU)
 
-#define kNorFlash_AddressBits_3B (0U)
-#define kNorFlash_AddressBits_3B_4B (1U)
-#define kNorFlash_AddressBits_4B (2U)
+#define NORFLASH_ADDRESSBITS_3B (0U)
+#define NORFLASH_ADDRESSBITS_3B_4B (1U)
+#define NORFLASH_ADDRESSBITS_4B (2U)
 
-#define kCommandExtensionSameAsCommand (0U)
-#define kCommandExtensionInverseOfCommand (1U)
-#define kCommandAndCommandExtension16BitWord (2U)
+#define COMMAND_EXTENSION_SAME_AS_COMMAND (0U)
+#define COMMAND_EXTENSION_INVERSE_OF_COMMAND (1U)
+#define COMMAND_AND_COMMANDEXTENSION_16BITWORD (2U)
 
 /* !@brief Supported methods to enter 8-8-8 mode from 1-1-1 mode, More details please refer to JESD216C/D */
-#define kEnterOctalMode_Option0 HPM_BITSMASK(1U, 1)
-#define kEnterOctalMode_Option1 HPM_BITSMASK(1U, 2)
+#define ENTER_OCTAL_MODE_OPTION0 HPM_BITSMASK(1U, 1)
+#define ENTER_OCTAL_MODE_OPTION1 HPM_BITSMASK(1U, 2)
 
 /* !@brief SFDP Parameter Header, see JESD216D doc for more details */
 typedef union _sfdp_parameter_header {
@@ -104,12 +104,12 @@ typedef union _jedec_flash_param_table {
             uint32_t inst_1_1_4_read : 8;
         } read_1_4_info; /* 3rd word */
         struct {
-            uint32_t dummy_clocks_1_2_2_read : 5;
-            uint32_t mode_clocks_1_2_2_read : 3;
-            uint32_t inst_1_2_2_read : 8;
             uint32_t dummy_clocks_1_1_2_read : 5;
             uint32_t mode_clocks_1_1_2_read : 3;
             uint32_t inst_1_1_2_read : 8;
+            uint32_t dummy_clocks_1_2_2_read : 5;
+            uint32_t mode_clocks_1_2_2_read : 3;
+            uint32_t inst_1_2_2_read : 8;
         } read_1_2_info; /* 4th word */
 
         struct {
@@ -373,30 +373,30 @@ typedef struct _jdec_query_table {
 
 
 /* !@brief Typical Serial NOR commands supported by most Serial NOR devices */
-#define kSerialNorCmd_BasicRead_3B (0x03U)
-#define kSerialNorCmd_BasicRead_4B (0x13U)
-#define kSerialNorCmd_PageProgram_1_1_1_3B (0x02U)
-#define kSerialNorCmd_PageProgram_1_1_1_4B (0x12U)
-#define kSerialNorCmd_PageProgram_1_4_4_4B (0x3EU)
-#define kSerialNorCmd_PageProgram_1_1_4_4B (0x34U)
-#define kSerialNorCmd_Read_SDR_1_4_4_3B (0xEBU)
-#define kSerialNorCmd_Read_DDR_1_4_4_3B (0xEDU)
-#define kSerialNorCmd_Read_SDR_1_4_4_4B (0xECU)
-#define kSerialNorCmd_Read_SDR_1_1_4_4B (0x6CU)
-#define kSerialNorCmd_Read_DDR_1_4_4_4B (0xEEU)
-#define kSerialNorCmd_ChipErase (0x60U)
-#define kSerialNorCmd_WriteEnable (0x06U)
-#define kSerialNorCmd_WriteStatusReg1 (0x01U)
-#define kSerialNorCmd_ReadStatusReg1 (0x05U)
-#define kSerialNorCmd_WriteStatusReg2 (0x3EU)
-#define kSerialNorCmd_ReadStatusReg2 (0x3FU)
-#define kSerialNorCmd_ReadFlagReg (0x70U)
-#define kSerialNorCmd_ReadId (0x9FU)
-#define kSerialNorCmd_Read_DDR_4B (0x0CU)
-#define kSerialNorCmd_Read_DDR_3B (0x0BU)
-#define kSerialNorCmd_SE4K_3B (0x20U)
-#define kSerialNorCmd_SE4K_4B (0x21U)
-#define kSerialNorCmd_SE64K_3B (0xD8U)
-#define kSerialNorCmd_SE64K_4B (0xDCU)
+#define SERIALNOR_CMD_BASICREAD_3B (0x03U)
+#define SERIALNOR_CMD_BASICREAD_4B (0x13U)
+#define SERIALNOR_CMD_PAGEPROGRAM_1_1_1_3B (0x02U)
+#define SERIALNOR_CMD_PAGEPROGRAM_1_1_1_4B (0x12U)
+#define SERIALNOR_CMD_PAGEPROGRAM_1_4_4_4B (0x3EU)
+#define SERIALNOR_CMD_PAGEPROGRAM_1_1_4_4B (0x34U)
+#define SERIALNOR_CMD_READ_SDR_1_4_4_3B (0xEBU)
+#define SERIALNOR_CMD_READ_DDR_1_4_4_3B (0xEDU)
+#define SERIALNOR_CMD_READ_SDR_1_4_4_4B (0xECU)
+#define SERIALNOR_CMD_READ_SDR_1_1_4_4B (0x6CU)
+#define SERIALNOR_CMD_READ_DDR_1_4_4_4B (0xEEU)
+#define SERIALNOR_CMD_CHIPERASE (0x60U)
+#define SERIALNOR_CMD_WRITEENABLE (0x06U)
+#define SERIALNOR_CMD_WRITE_STATUS_REG1 (0x01U)
+#define SERIALNOR_CMD_READ_STATUS_REG1 (0x05U)
+#define SERIALNOR_CMD_WRITE_STATUS_REG2 (0x3EU)
+#define SERIALNOR_CMD_READ_STATUS_REG2 (0x3FU)
+#define SERIALNOR_CMD_READ_FLAGREG (0x70U)
+#define SERIALNOR_CMD_READID (0x9FU)
+#define SERIALNOR_CMD_READ_DDR_4B (0x0CU)
+#define SERIALNOR_CMD_READ_DDR_3B (0x0BU)
+#define SERIALNOR_CMD_SE4K_3B (0x20U)
+#define SERIALNOR_CMD_SE4K_4B (0x21U)
+#define SERIALNOR_CMD_SE64K_3B (0xD8U)
+#define SERIALNOR_CMD_SE64K_4B (0xDCU)
 
 #endif

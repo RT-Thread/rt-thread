@@ -11,7 +11,7 @@
 
 typedef struct {
     __RW uint32_t CTRL;                        /* 0x0:  */
-    __R  uint32_t STATUS;                      /* 0x4:  */
+    __RW uint32_t STATUS;                      /* 0x4:  */
     __RW uint32_t INT_EN;                      /* 0x8:  */
     __R  uint8_t  RESERVED0[20];               /* 0xC - 0x1F: Reserved */
     __RW uint32_t OP_CTRL;                     /* 0x20:  */
@@ -71,66 +71,73 @@ typedef struct {
 
 /* Bitfield definition for register: STATUS */
 /*
- * FIR_OV (RO)
+ * FIR_OV (W1C)
  *
  * FIR Overflow err
  */
 #define FFA_STATUS_FIR_OV_MASK (0x80U)
 #define FFA_STATUS_FIR_OV_SHIFT (7U)
+#define FFA_STATUS_FIR_OV_SET(x) (((uint32_t)(x) << FFA_STATUS_FIR_OV_SHIFT) & FFA_STATUS_FIR_OV_MASK)
 #define FFA_STATUS_FIR_OV_GET(x) (((uint32_t)(x) & FFA_STATUS_FIR_OV_MASK) >> FFA_STATUS_FIR_OV_SHIFT)
 
 /*
- * FFT_OV (RO)
+ * FFT_OV (W1C)
  *
  * FFT Overflow Err
  */
 #define FFA_STATUS_FFT_OV_MASK (0x40U)
 #define FFA_STATUS_FFT_OV_SHIFT (6U)
+#define FFA_STATUS_FFT_OV_SET(x) (((uint32_t)(x) << FFA_STATUS_FFT_OV_SHIFT) & FFA_STATUS_FFT_OV_MASK)
 #define FFA_STATUS_FFT_OV_GET(x) (((uint32_t)(x) & FFA_STATUS_FFT_OV_MASK) >> FFA_STATUS_FFT_OV_SHIFT)
 
 /*
- * WR_ERR (RO)
+ * WR_ERR (W1C)
  *
  * AXI Data Write Error
  */
 #define FFA_STATUS_WR_ERR_MASK (0x20U)
 #define FFA_STATUS_WR_ERR_SHIFT (5U)
+#define FFA_STATUS_WR_ERR_SET(x) (((uint32_t)(x) << FFA_STATUS_WR_ERR_SHIFT) & FFA_STATUS_WR_ERR_MASK)
 #define FFA_STATUS_WR_ERR_GET(x) (((uint32_t)(x) & FFA_STATUS_WR_ERR_MASK) >> FFA_STATUS_WR_ERR_SHIFT)
 
 /*
- * RD_NXT_ERR (RO)
+ * RD_NXT_ERR (W1C)
  *
  * AXI Read Bus Error for NXT DATA
  */
 #define FFA_STATUS_RD_NXT_ERR_MASK (0x10U)
 #define FFA_STATUS_RD_NXT_ERR_SHIFT (4U)
+#define FFA_STATUS_RD_NXT_ERR_SET(x) (((uint32_t)(x) << FFA_STATUS_RD_NXT_ERR_SHIFT) & FFA_STATUS_RD_NXT_ERR_MASK)
 #define FFA_STATUS_RD_NXT_ERR_GET(x) (((uint32_t)(x) & FFA_STATUS_RD_NXT_ERR_MASK) >> FFA_STATUS_RD_NXT_ERR_SHIFT)
 
 /*
- * RD_ERR (RO)
+ * RD_ERR (W1C)
  *
  * AXI Data Read Error
  */
 #define FFA_STATUS_RD_ERR_MASK (0x8U)
 #define FFA_STATUS_RD_ERR_SHIFT (3U)
+#define FFA_STATUS_RD_ERR_SET(x) (((uint32_t)(x) << FFA_STATUS_RD_ERR_SHIFT) & FFA_STATUS_RD_ERR_MASK)
 #define FFA_STATUS_RD_ERR_GET(x) (((uint32_t)(x) & FFA_STATUS_RD_ERR_MASK) >> FFA_STATUS_RD_ERR_SHIFT)
 
 /*
- * NXT_CMD_RD_DONE (RO)
+ * NXT_CMD_RD_DONE (W1C)
  *
  * Indicate that next command sequence is already read into the module.
  */
 #define FFA_STATUS_NXT_CMD_RD_DONE_MASK (0x2U)
 #define FFA_STATUS_NXT_CMD_RD_DONE_SHIFT (1U)
+#define FFA_STATUS_NXT_CMD_RD_DONE_SET(x) (((uint32_t)(x) << FFA_STATUS_NXT_CMD_RD_DONE_SHIFT) & FFA_STATUS_NXT_CMD_RD_DONE_MASK)
 #define FFA_STATUS_NXT_CMD_RD_DONE_GET(x) (((uint32_t)(x) & FFA_STATUS_NXT_CMD_RD_DONE_MASK) >> FFA_STATUS_NXT_CMD_RD_DONE_SHIFT)
 
 /*
- * OP_CMD_DONE (RO)
+ * OP_CMD_DONE (W1C)
  *
  * Indicate that operation cmd is done, and data are available in system memory.
  */
 #define FFA_STATUS_OP_CMD_DONE_MASK (0x1U)
 #define FFA_STATUS_OP_CMD_DONE_SHIFT (0U)
+#define FFA_STATUS_OP_CMD_DONE_SET(x) (((uint32_t)(x) << FFA_STATUS_OP_CMD_DONE_SHIFT) & FFA_STATUS_OP_CMD_DONE_MASK)
 #define FFA_STATUS_OP_CMD_DONE_GET(x) (((uint32_t)(x) & FFA_STATUS_OP_CMD_DONE_MASK) >> FFA_STATUS_OP_CMD_DONE_SHIFT)
 
 /* Bitfield definition for register: INT_EN */

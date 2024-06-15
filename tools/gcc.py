@@ -252,11 +252,11 @@ def GCCResult(rtconfig, str):
             if re.search('union[ \t]+sigval', line):
                 have_sigval = 1
 
-            if re.search('char\* version', line):
-                version = re.search(r'\"([^"]+)\"', line).groups()[0]
+            if re.search(r'char\* version', line):
+                version = re.search(r'"([^"]+)"', line).groups()[0]
 
-            if re.findall('iso_c_visible = [\d]+', line):
-                stdc = re.findall('[\d]+', line)[0]
+            if re.findall(r'iso_c_visible = \d+', line):
+                stdc = re.findall(r'\d+', line)[0]
 
             if re.findall('pthread_create', line):
                 posix_thread = 1

@@ -57,6 +57,7 @@ void pdma_enable_irq(PDMA_Type *ptr, uint32_t mask, bool enable)
 
 void pdma_get_default_config(PDMA_Type *ptr, pdma_config_t *config, display_pixel_format_t pixel_format)
 {
+    (void) ptr;
     config->block_size = pdma_blocksize_16x16;
     config->enable_plane = pdma_plane_src;
 
@@ -73,6 +74,7 @@ void pdma_get_default_config(PDMA_Type *ptr, pdma_config_t *config, display_pixe
 
 void pdma_get_default_plane_config(PDMA_Type *ptr, pdma_plane_config_t *config, display_pixel_format_t pixel_format)
 {
+    (void) ptr;
     config->swap_byte3_byte1 = false;
     config->byteorder = display_byteorder_a3a2a1a0;
     config->use_background_as_clear = true;
@@ -112,6 +114,7 @@ void pdma_get_default_plane_config(PDMA_Type *ptr, pdma_plane_config_t *config, 
 
 void pdma_get_default_yuv2rgb_coef_config(PDMA_Type *ptr, display_yuv2rgb_coef_t *yuv2rgb_coef, display_pixel_format_t source_format)
 {
+    (void) ptr;
     /* Two plane share one YUV2RGB_COEF, not support one plane format is yuv422 and another is ycbcr422 */
 
     switch (source_format) {
@@ -147,6 +150,7 @@ void pdma_get_default_yuv2rgb_coef_config(PDMA_Type *ptr, display_yuv2rgb_coef_t
 
 void pdma_get_default_output_config(PDMA_Type *ptr, pdma_output_config_t *config, display_pixel_format_t pixel_format)
 {
+    (void) ptr;
     uint8_t i;
     config->alphablend.dst_alpha = 0x0;
     config->alphablend.src_alpha = 0x0;
@@ -239,10 +243,11 @@ void pdma_init(PDMA_Type *ptr, pdma_config_t *config)
         mask = 0;
         break;
     }
-
+#if defined(PDMA_SOC_SUPPORT_BS16) && (PDMA_SOC_SUPPORT_BS16 == 1)
     if (config->block_size == pdma_blocksize_16x16) {
         mask |= PDMA_CTRL_BS16_MASK;
     }
+#endif
 
     ptr->CTRL = PDMA_CTRL_PACK_DIR_SET(config->byteorder) | mask;
 }
@@ -378,12 +383,12 @@ void pdma_config_output(PDMA_Type *ptr, pdma_output_config_t *config)
         | PDMA_OUT_LRC_Y_SET(config->height);
     ptr->OUT_PS[0].ULC = PDMA_OUT_PS_ULC_X_SET(config->plane[0].x)
         | PDMA_OUT_PS_ULC_Y_SET(config->plane[0].y);
-    ptr->OUT_PS[0].LRC = PDMA_OUT_PS_LRC_X_SET(config->plane[0].width)
-        | PDMA_OUT_PS_LRC_Y_SET(config->plane[0].height);
+    ptr->OUT_PS[0].LRC = PDMA_OUT_PS_LRC_X_SET(config->plane[0].x + config->plane[0].width - 1)
+        | PDMA_OUT_PS_LRC_Y_SET(config->plane[0].y + config->plane[0].height - 1);
     ptr->OUT_PS[1].ULC = PDMA_OUT_PS_ULC_X_SET(config->plane[1].x)
         | PDMA_OUT_PS_ULC_Y_SET(config->plane[1].y);
-    ptr->OUT_PS[1].LRC = PDMA_OUT_PS_LRC_X_SET(config->plane[1].width)
-        | PDMA_OUT_PS_LRC_Y_SET(config->plane[1].height);
+    ptr->OUT_PS[1].LRC = PDMA_OUT_PS_LRC_X_SET(config->plane[1].x + config->plane[1].width - 1)
+        | PDMA_OUT_PS_LRC_Y_SET(config->plane[1].y + config->plane[1].height - 1);
     ptr->OUT_CTRL = PDMA_OUT_CTRL_DSTALPHA_SET(config->alphablend.dst_alpha)
         | PDMA_OUT_CTRL_SRCALPHA_SET(config->alphablend.src_alpha)
         | PDMA_OUT_CTRL_DSTALPHA_OP_SET(config->alphablend.dst_alpha_op)
@@ -784,4 +789,138 @@ hpm_stat_t pdma_scale(PDMA_Type *ptr,
     }
     return status_success;
 
+}
+
+typedef struct pdma_buf2plane_format {
+    display_pixel_format_t format;
+    display_byteorder_t byteorder;
+} pdma_buf2plane_format_t;
+
+static const pdma_buf2plane_format_t plane_format_tab[display_buf_format_max] = {
+    [display_buf_format_argb8888] = {display_pixel_format_argb8888, display_byteorder_a3a2a1a0},
+    [display_buf_format_bgra8888] = {display_pixel_format_argb8888, display_byteorder_a0a1a2a3},
+    [display_buf_format_rgb565] = {display_pixel_format_rgb565, display_byteorder_a3a2a1a0},
+    [display_buf_format_rgb565_swap] = {display_pixel_format_rgb565, display_byteorder_a2a3a0a1},
+    [display_buf_format_yuyv] = {display_pixel_format_ycbcr422, display_byteorder_a3a2a1a0},
+    [display_buf_format_uyvy] = {display_pixel_format_ycbcr422, display_byteorder_a2a3a0a1},
+    [display_buf_format_y8] = {display_pixel_format_y8, display_byteorder_a3a2a1a0},
+};
+
+static const pdma_buf2plane_format_t out_format_tab[display_buf_format_max] = {
+    [display_buf_format_argb8888] = {display_pixel_format_argb8888, display_byteorder_a3a2a1a0},
+    [display_buf_format_bgra8888] = {display_pixel_format_argb8888, display_byteorder_a0a1a2a3},
+    [display_buf_format_rgb565] = {display_pixel_format_rgb565, display_byteorder_a3a2a1a0},
+    [display_buf_format_rgb565_swap] = {display_pixel_format_rgb565, display_byteorder_a2a3a0a1},
+    [display_buf_format_yuyv] = {display_pixel_format_ycbcr422, display_byteorder_a2a3a0a1},
+    [display_buf_format_uyvy] = {display_pixel_format_ycbcr422, display_byteorder_a3a2a1a0},
+    [display_buf_format_y8] = {display_pixel_format_y8, display_byteorder_a3a2a1a0},
+};
+
+void pdma_get_default_blit_option(pdma_blit_option_t *op)
+{
+    op->blend = display_alphablend_mode_src_over;
+    op->flip = pdma_flip_none;
+    op->rotate = pdma_rotate_0_degree;
+    op->scale.x = 1.0;
+    op->scale.y = 1.0;
+    op->translate.x = 0;
+    op->translate.y = 0;
+}
+
+hpm_stat_t pdma_blit_ex(PDMA_Type *ptr,
+                     display_buf_t *dst,
+                     display_buf_t *src,
+                     pdma_blit_option_t *op,
+                     bool wait, uint32_t *status)
+{
+    if ((!dst) || (!src) || (!src->buf) || (!dst->buf) ||
+        (op->scale.x > 4096) || (op->scale.y > 4096) ||
+        /* YUV422 requires width to be 2-pixel aligned */
+        ((display_pixel_format_is_yuv_format(plane_format_tab[src->format].format)) && (src->width & 1)) ||
+        ((display_pixel_format_is_yuv_format(plane_format_tab[dst->format].format)) && (dst->width & 1))) {
+        return status_invalid_argument;
+    }
+
+    pdma_decimation_t x_dec;
+    pdma_decimation_t y_dec;
+    uint32_t x_scale;
+    uint32_t y_scale;
+
+    pdma_config_t config;
+    pdma_plane_config_t plane_src;
+    pdma_plane_config_t plane_dst;
+    display_yuv2rgb_coef_t yuv2rgb_coef;
+    pdma_output_config_t output;
+
+    pdma_calculate_scale(65536, (uint32_t)(65536 * op->scale.x), &x_dec, &x_scale);
+    pdma_calculate_scale(65536, (uint32_t)(65536 * op->scale.y), &y_dec, &y_scale);
+
+    pdma_get_default_plane_config(ptr, &plane_src, plane_format_tab[src->format].format);
+    pdma_get_default_plane_config(ptr, &plane_dst, plane_format_tab[dst->format].format);
+    pdma_get_default_yuv2rgb_coef_config(ptr, &yuv2rgb_coef, plane_format_tab[src->format].format);
+    pdma_get_default_output_config(ptr, &output, out_format_tab[dst->format].format);
+
+    config.enable_plane = pdma_plane_both;
+    config.block_size = pdma_blocksize_8x8;
+    config.byteorder = out_format_tab[dst->format].byteorder;
+    pdma_init(ptr, &config);
+
+    plane_src.buffer = (uint32_t)src->buf;
+    plane_src.byteorder = plane_format_tab[src->format].byteorder;
+    plane_src.width = src->width;
+    plane_src.height = src->height;
+    plane_src.pitch = src->stride;
+    plane_src.x_scale = x_scale;
+    plane_src.x_dec = x_dec;
+    plane_src.y_scale = y_scale;
+    plane_src.y_dec = y_dec;
+    plane_src.background = 0x00000000; /* alpha must be 0 */
+    plane_src.x_offset = PDMA_YUV_SCALE_DEFAULT_X_OFFSET;
+    plane_src.flip = op->flip;
+    plane_src.rotate = op->rotate;
+
+    plane_dst.buffer = (uint32_t)dst->buf;
+    plane_dst.byteorder = plane_format_tab[dst->format].byteorder;
+    plane_dst.width = dst->width;
+    plane_dst.height = dst->height;
+    plane_dst.pitch = dst->stride;
+    pdma_config_planes(ptr, &plane_src, &plane_dst, &yuv2rgb_coef);
+
+    output.buffer = plane_dst.buffer;
+    output.plane[pdma_plane_src].x = op->translate.x;
+    output.plane[pdma_plane_src].y = op->translate.y;
+
+    /*
+     * aligned to lower right of dst window and non-overlapping area is filled by background of src.
+     * so alpha that background of src must be 0.
+     */
+    output.plane[pdma_plane_src].width = dst->width - op->translate.x;
+    output.plane[pdma_plane_src].height = dst->height - op->translate.y;
+
+    output.plane[pdma_plane_dst].x = 0;
+    output.plane[pdma_plane_dst].y = 0;
+    output.plane[pdma_plane_dst].width = plane_dst.width;
+    output.plane[pdma_plane_dst].height = plane_dst.height;
+
+    output.alphablend.src_alpha = src->alpha.val;
+    output.alphablend.src_alpha_op = src->alpha.op;
+    output.alphablend.dst_alpha = dst->alpha.val;
+    output.alphablend.dst_alpha_op = dst->alpha.op;
+    output.alphablend.mode = op->blend;
+
+    output.width = plane_dst.width;
+    output.height = plane_dst.height;
+    output.pitch = plane_dst.pitch;
+
+    pdma_config_output(ptr, &output);
+    pdma_start(ptr);
+    if (wait) {
+        hpm_stat_t stat;
+        do {
+            stat = pdma_check_status(ptr, status);
+        } while ((stat != status_pdma_done) && (stat != status_pdma_error));
+        pdma_stop(ptr);
+        return stat;
+    }
+    return status_success;
 }

@@ -220,7 +220,7 @@ static void rt_defunct_execute(void)
         /* store the point of "thread->cleanup" avoid to lose */
         cleanup = thread->cleanup;
 
-        /* if it's a system object, not delete it */
+        /* if it's a system object, detach it */
         object_is_systemobject = rt_object_is_systemobject((rt_object_t)thread);
         if (object_is_systemobject == RT_TRUE)
         {
@@ -261,7 +261,7 @@ static void idle_thread_entry(void *parameter)
 {
     RT_UNUSED(parameter);
 #ifdef RT_USING_SMP
-    if (rt_hw_cpu_id() != 0)
+    if (rt_cpu_get_id() != 0)
     {
         while (1)
         {
@@ -346,9 +346,11 @@ void rt_thread_idle_init(void)
                 32);
 #ifdef RT_USING_SMP
         rt_thread_control(&idle_thread[i], RT_THREAD_CTRL_BIND_CPU, (void*)i);
-
-        rt_cpu_index(i)->idle_thread = &idle_thread[i];
 #endif /* RT_USING_SMP */
+
+        /* update */
+        rt_cpu_index(i)->idle_thread = &idle_thread[i];
+
         /* startup */
         rt_thread_startup(&idle_thread[i]);
     }
@@ -380,11 +382,7 @@ void rt_thread_idle_init(void)
  */
 rt_thread_t rt_thread_idle_gethandler(void)
 {
-#ifdef RT_USING_SMP
-    int id = rt_hw_cpu_id();
-#else
-    int id = 0;
-#endif /* RT_USING_SMP */
+    int id = rt_cpu_get_id();
 
     return (rt_thread_t)(&idle_thread[id]);
 }

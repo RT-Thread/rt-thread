@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 HPMicro
+ * Copyright (c) 2021-2024 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -611,8 +611,8 @@ hpm_stat_t can_get_default_config(can_config_t *config)
 
         config->mode = can_mode_normal;
         config->enable_self_ack = false;
-        config->disable_re_transmission_for_stb = false;
-        config->disable_re_transmission_for_ptb = false;
+        config->disable_stb_retransmission = false;
+        config->disable_ptb_retransmission = false;
         config->enable_tx_buffer_priority_mode = false;
         config->enable_tdc = false;
 
@@ -671,17 +671,6 @@ hpm_stat_t can_init(CAN_Type *base, can_config_t *config, uint32_t src_clk_freq)
 
         HPM_BREAK_IF(status != status_success);
 
-        if (config->disable_re_transmission_for_ptb) {
-            base->CMD_STA_CMD_CTRL |= CAN_CMD_STA_CMD_CTRL_TPSS_MASK;
-        } else {
-            base->CMD_STA_CMD_CTRL &= ~CAN_CMD_STA_CMD_CTRL_TPSS_MASK;
-        }
-
-        if (config->disable_re_transmission_for_stb) {
-            base->CMD_STA_CMD_CTRL |= CAN_CMD_STA_CMD_CTRL_TSSS_MASK;
-        } else {
-            base->CMD_STA_CMD_CTRL &= ~CAN_CMD_STA_CMD_CTRL_TSSS_MASK;
-        }
 
         /* Configure CAN filters */
         if (config->filter_list_num > CAN_FILTER_NUM_MAX) {
@@ -710,6 +699,13 @@ hpm_stat_t can_init(CAN_Type *base, can_config_t *config, uint32_t src_clk_freq)
 
         can_reset(base, false);
 
+        /* The following mode must be set when the CAN controller is not in reset mode */
+
+        /* Disable re-transmission on PTB on demand */
+        can_disable_ptb_retransmission(base, config->disable_ptb_retransmission);
+        /* Disable re-transmission on STB on demand */
+        can_disable_stb_retransmission(base, config->disable_stb_retransmission);
+
         /* Set Self-ack mode*/
         can_enable_self_ack(base, config->enable_self_ack);
 
@@ -729,4 +725,12 @@ hpm_stat_t can_init(CAN_Type *base, can_config_t *config, uint32_t src_clk_freq)
     } while (false);
 
     return status;
+}
+
+void can_deinit(CAN_Type *base)
+{
+    do {
+        HPM_BREAK_IF(base == NULL);
+        can_reset(base, true);
+    } while (false);
 }

@@ -26,13 +26,19 @@ path = [cwd]
 path += [cwd + '/ports']
 
 startup_path_prefix = SDK_LIB
+Tool_path = None
+index = 'Infineon_mtb-pdl-cat1'
+
+for filename in os.listdir(startup_path_prefix):
+    if index in filename:
+        Tool_path = os.path.join(startup_path_prefix, filename)
 
 if rtconfig.PLATFORM in ['gcc']:
-    src += [startup_path_prefix +
-            '/IFX_PSOC6_HAL/mtb-pdl-cat1/drivers/source/TOOLCHAIN_GCC_ARM/cy_syslib_ext.S']
+    src += [Tool_path +
+            '/drivers/source/TOOLCHAIN_GCC_ARM/cy_syslib_ext.S']
 elif rtconfig.PLATFORM in ['armclang']:
-    src += [startup_path_prefix +
-            '/IFX_PSOC6_HAL/mtb-pdl-cat1/drivers/source/TOOLCHAIN_ARM/cy_syslib_ext.S']
+    src += [Tool_path +
+            '/drivers/source/TOOLCHAIN_ARM/cy_syslib_ext.S']
 
 CPPDEFINES = ['CY8C6245LQI_S3D72', 'CORE_NAME_CM0P_0', 'CORE_NAME_CM4_0', 'CY_USING_PREBUILT_CM0P_IMAGE', 'CY_USING_HAL', 'COMPONENT_CAT1A', 'COMPONENT_CAT1', 'COMPONENT_BSP_DESIGN_MODUS']
 group = DefineGroup('Drivers', src, depend=[''], CPPPATH=path, CPPDEFINES=CPPDEFINES)

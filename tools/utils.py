@@ -309,3 +309,20 @@ def VerTuple(version_str):
     ver = tuple(int(part) for part in ver_parts)
 
     return ver
+
+def CmdExists(cmd):
+    # Check if the path directly points to an existing file.
+    if os.path.isfile(cmd):
+        return True
+    else:
+        # On Windows systems, check for common script file extensions
+        # if the file does not exist as specified.
+        if sys.platform.startswith('win'):
+            # Loop through possible extensions to cover cases where the extension is omitted in the input.
+            for ext in ['.exe', '.bat', '.ps1']:
+                # Append the extension to the command path and check if this file exists.
+                if os.path.isfile(cmd + ext):
+                    return True
+
+    # If none of the checks confirm the file exists, return False.
+    return False

@@ -50,6 +50,7 @@ struct alias_info
 struct bus_ranges
 {
     rt_size_t nr;
+    struct rt_ofw_node *np;
 
     rt_uint64_t *child_addr;
     rt_uint64_t *parent_addr;

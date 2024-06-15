@@ -1239,8 +1239,6 @@ int netdev_cmd_ping(char* target_name, char *netdev_name, rt_uint32_t times, rt_
 
     if (!NETDEV_PING_IS_COMMONICABLE(netdev))
     {
-        /* using first internet up status network interface device */
-        netdev = netdev_get_first_by_flags(NETDEV_FLAG_LINK_UP);
         if (netdev == RT_NULL)
         {
             rt_kprintf("ping: not found available network interface device.\n");

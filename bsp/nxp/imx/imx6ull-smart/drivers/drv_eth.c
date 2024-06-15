@@ -171,13 +171,13 @@ rt_err_t enet_buffer_init(enet_buffer_config_t *buffConfig)
        ((SYS_PAGE_SIZE<<TX_BUFFER_INDEX_NUM)<buffConfig->txBufferTotalSize))
     {
         LOG_E("ERROR: alloc mem not enough for enet driver");
-        return RT_ERROR;
+        return -RT_ERROR;
     }
     rx_buff_addr = rt_pages_alloc(RX_BUFFER_INDEX_NUM);
     if(!rx_buff_addr)
     {
         LOG_E("ERROR: rx buff page alloc failed");
-        return RT_ERROR;
+        return -RT_ERROR;
     }
     buffConfig->rxBufferAlign = (void *)rt_ioremap_nocache(virtual_to_physical(rx_buff_addr), (SYS_PAGE_SIZE<<RX_BUFFER_INDEX_NUM));
     buffConfig->rxPhyBufferAlign = (void *)virtual_to_physical(rx_buff_addr);
@@ -186,7 +186,7 @@ rt_err_t enet_buffer_init(enet_buffer_config_t *buffConfig)
     if(!tx_buff_addr)
     {
         LOG_E("ERROR: tx buff page alloc failed");
-        return RT_ERROR;
+        return -RT_ERROR;
     }
     buffConfig->txBufferAlign = (void *)rt_ioremap_nocache(virtual_to_physical(tx_buff_addr), (SYS_PAGE_SIZE<<TX_BUFFER_INDEX_NUM));
     buffConfig->txPhyBufferAlign = (void *)virtual_to_physical(tx_buff_addr);
@@ -195,7 +195,7 @@ rt_err_t enet_buffer_init(enet_buffer_config_t *buffConfig)
     if(!rx_bd_addr)
     {
         LOG_E("ERROR: rx bd page alloc failed");
-        return RT_ERROR;
+        return -RT_ERROR;
     }
     buffConfig->rxBdStartAddrAlign = (void *)rt_ioremap_nocache(virtual_to_physical(rx_bd_addr), (SYS_PAGE_SIZE<<RX_BD_INDEX_NUM));
     buffConfig->rxPhyBdStartAddrAlign = virtual_to_physical(rx_bd_addr);
@@ -204,7 +204,7 @@ rt_err_t enet_buffer_init(enet_buffer_config_t *buffConfig)
     if(!tx_bd_addr)
     {
         LOG_E("ERROR: tx bd page alloc failed");
-        return RT_ERROR;
+        return -RT_ERROR;
     }
     buffConfig->txBdStartAddrAlign = (void *)rt_ioremap_nocache(virtual_to_physical(tx_bd_addr), (SYS_PAGE_SIZE<<TX_BD_INDEX_NUM));
     buffConfig->txPhyBdStartAddrAlign = virtual_to_physical(tx_bd_addr);
@@ -387,10 +387,11 @@ rt_err_t rt_imx6ul_eth_tx(rt_device_t dev, struct pbuf *p)
         offset = offset + q->len;
         if(status == kStatus_Success)
         {
+            ret = RT_EOK;
         }
         else
         {
-            return RT_ERROR;
+            ret = -RT_ERROR;
         }
     }
     if(offset > ENET_FRAME_MAX_FRAMELEN)

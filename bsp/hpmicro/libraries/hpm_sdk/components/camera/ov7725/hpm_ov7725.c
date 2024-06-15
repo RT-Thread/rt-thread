@@ -334,13 +334,21 @@ hpm_stat_t ov7725_init(camera_context_t *context, camera_config_t *ov_config)
 
 void ov7725_power_up(camera_context_t *context)
 {
-    assert((context->delay_ms != NULL) && (context->write_rst != NULL) && (context->write_pwdn != NULL));
+    assert(context->delay_ms != NULL);
 
-    context->write_rst(OV7725_RST_ACTIVE);
-    context->write_pwdn(OV7725_PWDN_ACTIVE);
+    if (context->write_rst) {
+        context->write_rst(OV7725_RST_ACTIVE);
+    }
+    if (context->write_pwdn) {
+        context->write_pwdn(OV7725_PWDN_ACTIVE);
+    }
     context->delay_ms(5);
-    context->write_pwdn(OV7725_PWDN_INACTIVE);
+    if (context->write_pwdn) {
+        context->write_pwdn(OV7725_PWDN_INACTIVE);
+    }
     context->delay_ms(2);
-    context->write_rst(OV7725_RST_INACTIVE);
+    if (context->write_rst) {
+        context->write_rst(OV7725_RST_INACTIVE);
+    }
     context->delay_ms(20);
 }

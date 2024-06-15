@@ -112,11 +112,11 @@ static uint32_t hpm_adc_init_clock(struct rt_adc_device *device)
 #if defined(ADC12_SOC_MAX_CH_NUM)
     if (hpm_adc->is_adc12)
     {
-        clock_freq = board_init_adc12_clock((ADC12_Type*)hpm_adc->adc_base);
+        clock_freq = board_init_adc12_clock((ADC12_Type*)hpm_adc->adc_base,true);
     } else
 #endif
     {
-        clock_freq = board_init_adc16_clock((ADC16_Type*)hpm_adc->adc_base);
+        clock_freq = board_init_adc16_clock((ADC16_Type*)hpm_adc->adc_base,true);
     }
     return clock_freq;
 }
@@ -135,7 +135,7 @@ static rt_err_t init_adc_config(hpm_rtt_adc *adc)
         cfg.adc_clk_div    = 3;
         ret = adc12_init((ADC12_Type *)adc->adc_base, &cfg);
         if (ret != status_success) {
-            return RT_ERROR;
+            return -RT_ERROR;
         }
 #endif
     } else {
@@ -151,8 +151,12 @@ static rt_err_t init_adc_config(hpm_rtt_adc *adc)
         cfg.wait_dis = 0;
         ret = adc16_init((ADC16_Type *)adc->adc_base, &cfg);
         if (ret != status_success) {
-        return RT_ERROR;
+        return -RT_ERROR;
         }
+#endif
+#if defined(ADC_SOC_BUSMODE_ENABLE_CTRL_SUPPORT) && ADC_SOC_BUSMODE_ENABLE_CTRL_SUPPORT
+    /* enable oneshot mode */
+    adc16_enable_oneshot_mode((ADC16_Type *)adc->adc_base);
 #endif
     }
     return RT_EOK;
@@ -167,13 +171,13 @@ static rt_err_t init_channel_config(hpm_rtt_adc *adc, uint16_t channel)
         adc12_channel_config_t ch_cfg;
 
         adc12_get_channel_default_config(&ch_cfg);
-        ch_cfg.ch           = adc->channel;
+        ch_cfg.ch           = channel;
         ch_cfg.diff_sel     = adc12_sample_signal_single_ended;
         ch_cfg.sample_cycle = 20;
 
         ret = adc12_init_channel((ADC12_Type *)adc->adc_base, &ch_cfg);
         if (ret != status_success) {
-            return RT_ERROR;
+            return -RT_ERROR;
         }
 #endif
     } else {
@@ -185,7 +189,7 @@ static rt_err_t init_channel_config(hpm_rtt_adc *adc, uint16_t channel)
         ch_cfg.sample_cycle = 20;
         ret = adc16_init_channel((ADC16_Type *)adc->adc_base, &ch_cfg);
         if (ret != status_success) {
-            return RT_ERROR;
+            return -RT_ERROR;
         }
 #endif
     }
@@ -207,7 +211,7 @@ static rt_err_t hpm_adc_enabled(struct rt_adc_device *device, rt_int8_t channel,
                 (void)hpm_adc_init_clock(device);
                 ret = init_adc_config(hpm_adc);
                 if (ret != RT_EOK) {
-                    return RT_ERROR;
+                    return -RT_ERROR;
                 }
                 hpm_adc->adc_enabled = true;
             }
@@ -215,7 +219,7 @@ static rt_err_t hpm_adc_enabled(struct rt_adc_device *device, rt_int8_t channel,
 
             ret = init_channel_config(hpm_adc, channel);
             if (ret != RT_EOK) {
-                return RT_ERROR;
+                return -RT_ERROR;
             }
         }
     }

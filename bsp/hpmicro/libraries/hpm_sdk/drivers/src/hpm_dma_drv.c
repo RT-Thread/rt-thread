@@ -60,7 +60,8 @@ hpm_stat_t dma_setup_channel(DMA_Type *ptr, uint8_t ch_num, dma_channel_config_t
 
 void dma_default_channel_config(DMA_Type *ptr, dma_channel_config_t *ch)
 {
-    ch->priority = 0;
+    (void) ptr;
+    ch->priority = DMA_CHANNEL_PRIORITY_LOW;
     ch->src_mode = DMA_HANDSHAKE_MODE_NORMAL;
     ch->dst_mode = DMA_HANDSHAKE_MODE_NORMAL;
     ch->src_burst_size = DMA_NUM_TRANSFER_PER_BURST_1T;
@@ -132,7 +133,7 @@ hpm_stat_t dma_start_memcpy(DMA_Type *ptr, uint8_t ch_num,
     /* burst size checking (1-byte burst length will cause heavy overhead */
     if (!burst_len_in_byte || burst_len_in_byte == 1 || burst_len_in_byte > size
         || burst_len_in_byte >
-            ((1 << DMA_SOC_TRANSFER_WIDTH_MAX(ptr)) << DMA_SOC_TRANSFER_PER_BURST_MAX(ptr))) {
+            (uint32_t) ((1 << DMA_SOC_TRANSFER_WIDTH_MAX(ptr)) << DMA_SOC_TRANSFER_PER_BURST_MAX(ptr))) {
         return status_invalid_argument;
     }
 
@@ -183,6 +184,7 @@ hpm_stat_t dma_start_memcpy(DMA_Type *ptr, uint8_t ch_num,
 
 void dma_default_handshake_config(DMA_Type *ptr, dma_handshake_config_t *config)
 {
+    (void) ptr;
     memset(config, 0, sizeof(dma_handshake_config_t));
 }
 

@@ -28,6 +28,7 @@
 #define RT_KLIBC_USING_PRINTF_LONGLONG
 /* end of klibc optimization */
 #define RT_USING_DEBUG
+#define RT_DEBUGING_ASSERT
 #define RT_DEBUGING_COLOR
 #define RT_DEBUGING_CONTEXT
 
@@ -440,7 +441,10 @@
 #define C906_PLIC_PHY_ADDR 0x70000000
 #define IRQ_MAX_NR 64
 #define TIMER_CLK_FREQ 25000000
+#define GPIO_IRQ_BASE 60
+#define SYS_GPIO_IRQ_BASE 70
 #define __STACKSIZE__ 8192
+#define SOC_TYPE_SG2002
 #define BOARD_TYPE_MILKV_DUO256M
 
 #endif

@@ -173,3 +173,11 @@ void gic_common_cpu_config(void *base, int nr, void (*sync_access)(void *), void
         sync_access(data);
     }
 }
+
+void gic_fill_ppi_affinity(rt_bitmap_t *affinity)
+{
+    for (int cpuid = 0; cpuid < RT_CPUS_NR; ++cpuid)
+    {
+        RT_IRQ_AFFINITY_SET(affinity, cpuid);
+    }
+}

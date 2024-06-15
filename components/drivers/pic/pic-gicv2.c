@@ -66,6 +66,8 @@ static void gicv2_dist_init(struct gicv2 *gic)
     rt_uint32_t i;
     rt_uint32_t cpumask = gicv2_cpumask_map(gic);
 
+    _init_cpu_id = rt_hw_cpu_id();
+
     gic->max_irq = HWREG32(base + GIC_DIST_TYPE) & 0x1f;
     gic->max_irq = (gic->max_irq + 1) * 32;
 
@@ -102,7 +104,7 @@ static void gicv2_cpu_init(struct gicv2 *gic)
     rt_uint32_t cpumask;
     void *base = gic->cpu_base;
     rt_uint32_t config = GICC_ENABLE;
-    int cpu_id = _init_cpu_id = rt_hw_cpu_id();
+    int cpu_id = rt_hw_cpu_id();
 
     cpumask = gicv2_cpumask_map(gic);
     _gicv2_cpumask_map[cpu_id] = cpumask;
@@ -204,6 +206,11 @@ static rt_err_t gicv2_irq_set_affinity(struct rt_pic_irq *pirq, rt_bitmap_t *aff
     rt_uint8_t valb = _gicv2_cpumask_map[__rt_ffs(target_list) - 1];
     void *io_addr = gic->dist_base + GIC_DIST_TARGET + hwirq;
 
+    if (valb == 0xfe)
+    {
+        return -RT_EIO;
+    }
+
     if (needs_rmw_access)
     {
         /* RMW write byte */
@@ -269,6 +276,70 @@ static void gicv2_irq_send_ipi(struct rt_pic_irq *pirq, rt_bitmap_t *cpumask)
     }
 }
 
+static rt_err_t gicv2_irq_set_state(struct rt_pic *pic, int hwirq, int type, rt_bool_t state)
+{
+    rt_err_t err = RT_EOK;
+    rt_uint32_t offset = 0;
+    struct gicv2 *gic = raw_to_gicv2(pic);
+
+    switch (type)
+    {
+    case RT_IRQ_STATE_PENDING:
+        offset = state ? GIC_DIST_PENDING_SET : GIC_DIST_PENDING_CLEAR;
+        break;
+    case RT_IRQ_STATE_ACTIVE:
+        offset = state ? GIC_DIST_ACTIVE_SET : GIC_DIST_ACTIVE_CLEAR;
+        break;
+    case RT_IRQ_STATE_MASKED:
+        offset = state ? GIC_DIST_ENABLE_CLEAR : GIC_DIST_ENABLE_SET;
+        break;
+    default:
+        err = -RT_EINVAL;
+        break;
+    }
+
+    if (!err)
+    {
+        rt_uint32_t mask = 1 << (hwirq % 32);
+
+        HWREG32(gic->dist_base + offset + (hwirq / 32) * 4) = mask;
+    }
+
+    return err;
+}
+
+static rt_err_t gicv2_irq_get_state(struct rt_pic *pic, int hwirq, int type, rt_bool_t *out_state)
+{
+    rt_err_t err = RT_EOK;
+    rt_uint32_t offset = 0;
+    struct gicv2 *gic = raw_to_gicv2(pic);
+
+    switch (type)
+    {
+    case RT_IRQ_STATE_PENDING:
+        offset = GIC_DIST_PENDING_SET;
+        break;
+    case RT_IRQ_STATE_ACTIVE:
+        offset = GIC_DIST_ACTIVE_SET;
+        break;
+    case RT_IRQ_STATE_MASKED:
+        offset = GIC_DIST_ENABLE_SET;
+        break;
+    default:
+        err = -RT_EINVAL;
+        break;
+    }
+
+    if (!err)
+    {
+        rt_uint32_t mask = 1 << (hwirq % 32);
+
+        *out_state = !!(HWREG32(gic->dist_base + offset + (hwirq / 32) * 4) & mask);
+    }
+
+    return err;
+}
+
 static int gicv2_irq_map(struct rt_pic *pic, int hwirq, rt_uint32_t mode)
 {
     int irq, irq_index = hwirq - GIC_SGI_NR;
@@ -278,7 +349,15 @@ static int gicv2_irq_map(struct rt_pic *pic, int hwirq, rt_uint32_t mode)
     {
         pirq->mode = mode;
         pirq->priority = GICD_INT_DEF_PRI;
-        rt_bitmap_set_bit(pirq->affinity, _init_cpu_id);
+
+        if (hwirq < 32)
+        {
+            gic_fill_ppi_affinity(pirq->affinity);
+        }
+        else
+        {
+            RT_IRQ_AFFINITY_SET(pirq->affinity, _init_cpu_id);
+        }
 
         irq = rt_pic_config_irq(pic, irq_index, hwirq);
 
@@ -326,7 +405,7 @@ static rt_err_t gicv2_irq_parse(struct rt_pic *pic, struct rt_ofw_cell_args *arg
     return err;
 }
 
-static struct rt_pic_ops gicv2_ops =
+const static struct rt_pic_ops gicv2_ops =
 {
     .name = "GICv2",
     .irq_init = gicv2_irq_init,
@@ -338,6 +417,8 @@ static struct rt_pic_ops gicv2_ops =
     .irq_set_affinity = gicv2_irq_set_affinity,
     .irq_set_triger_mode = gicv2_irq_set_triger_mode,
     .irq_send_ipi = gicv2_irq_send_ipi,
+    .irq_set_state = gicv2_irq_set_state,
+    .irq_get_state = gicv2_irq_get_state,
     .irq_map = gicv2_irq_map,
     .irq_parse = gicv2_irq_parse,
 };

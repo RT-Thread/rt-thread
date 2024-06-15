@@ -10,12 +10,18 @@ path = [ cwd + '/arch', cwd + "/drivers/inc", cwd + '/soc/ip']
 # The set of source files associated with this SConscript file.
 src = []
 
+CPPDEFINES=[]
+
 src += ['drivers/src/hpm_pmp_drv.c']
 src += ['drivers/src/hpm_pllctl_drv.c']
 src += ['drivers/src/hpm_pllctlv2_drv.c']
-src += ['drivers/src/hpm_dma_drv.c']
 src += ['drivers/src/hpm_pcfg_drv.c']
 
+if rtconfig.CHIP_NAME == "HPM6750" or rtconfig.CHIP_NAME == "HPM6360" or rtconfig.CHIP_NAME == "HPM6280":
+    src += ['drivers/src/hpm_dma_drv.c']
+else:
+    src += ['drivers/src/hpm_dmav2_drv.c']
+    CPPDEFINES = ['HPMSOC_HAS_HPMSDK_DMAV2']
 
 if GetDepend(['BSP_USING_GPIO']):
     src += ['drivers/src/hpm_gpio_drv.c']
@@ -34,6 +40,9 @@ if GetDepend(['BSP_USING_RTC']):
 
 if GetDepend(['BSP_USING_WDG']):
     src += ['drivers/src/hpm_wdg_drv.c']
+
+if GetDepend(['BSP_USING_EWDG']):
+    src += ['drivers/src/hpm_ewdg_drv.c']
 
 if GetDepend(['BSP_USING_ADC']):
     if GetDepend(['BSP_USING_ADC12']):
@@ -59,7 +68,7 @@ if GetDepend(['BSP_USING_SDXC']):
 if GetDepend(['BSP_USING_LCD']):
     src += ['drivers/src/hpm_lcdc_drv.c']
 
-if GetDepend(['BSP_USING_GPTMR']):
+if GetDepend(['BSP_USING_GPTMR']) or GetDepend('HPM_USING_VECTOR_PREEMPTED_MODE'):
     src += ['drivers/src/hpm_gptmr_drv.c']
 
 if GetDepend(['BSP_USING_FEMC']):
@@ -68,7 +77,7 @@ if GetDepend(['BSP_USING_FEMC']):
 if GetDepend(['BSP_USING_PWM']):
     src += ['drivers/src/hpm_pwm_drv.c']
 
-if GetDepend(['BSP_USING_USB']):
+if GetDepend(['BSP_USING_USB']) or GetDepend(['RT_USING_CHERRYUSB']):
     src += ['drivers/src/hpm_usb_drv.c']
 
 if GetDepend(['BSP_USING_I2S']):
@@ -85,6 +94,22 @@ if GetDepend(['BSP_USING_DAO']):
 if GetDepend(['BSP_USING_PDMA']):
     src += ['drivers/src/hpm_pdma_drv.c']
 
-group = DefineGroup('Libraries', src, depend = [''], CPPPATH = path)
+if GetDepend(['BSP_USING_JPEG']):
+    src += ['drivers/src/hpm_jpeg_drv.c']
+
+if GetDepend(['BSP_USING_CAM']):
+    src += ['drivers/src/hpm_cam_drv.c']
+
+if GetDepend(['BSP_USING_PIXELMUX']):
+    src += ['drivers/src/hpm_pixelmux_drv.c']
+
+if GetDepend(['BSP_USING_MIPI_CSI']):
+    src += ['drivers/src/hpm_mipi_csi_drv.c']
+    src += ['drivers/src/hpm_mipi_csi_phy_drv.c']
+
+if GetDepend(['BSP_USING_MIPI_DSI']):
+    src += ['drivers/src/hpm_mipi_dsi_drv.c']
+    src += ['drivers/src/hpm_mipi_dsi_phy_drv.c']
+group = DefineGroup('Libraries', src, depend = [''], CPPPATH = path, CPPDEFINES=CPPDEFINES)
 
 Return ('group')

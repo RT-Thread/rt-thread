@@ -5,6 +5,7 @@ config BSP_USING_BL61X
     select ARCH_RISCV32
     select ARCH_RISCV_FPU_S
     select BSP_USING_ROMAPI
+    select RT_USING_CACHE
     default y
 
 config BSP_USING_ROMAPI

@@ -836,7 +836,7 @@ typedef struct _sgtl_config {
 } sgtl_config_t;
 
 typedef struct {
-    I2C_Type *ptr;;                    /*!< sgtl I2C pointer */
+    I2C_Type *ptr;                     /*!< sgtl I2C pointer */
     uint8_t slave_address;             /*!< code device slave address */
 } sgtl_context_t;
 

@@ -111,21 +111,8 @@ extern "C" {
 #endif
 
 /**
- * @brief Reset CRC channel
- *
- * @param[in] ptr CRC base address
- * @param[in] ch_index Index of the channel to be reset
- *
- */
-static inline void crc_reset(CRC_Type *ptr, uint32_t ch_index)
-{
-    ptr->CHN[ch_index].CLR |= CRC_CHN_CLR_CLR_MASK;
-}
-
-/**
  * @brief Get default channel config
  *
- * @param[in] ptr CRC base address
  * @param[in] cfg Channel config
  */
 void crc_get_default_channel_config(crc_channel_config_t *cfg);

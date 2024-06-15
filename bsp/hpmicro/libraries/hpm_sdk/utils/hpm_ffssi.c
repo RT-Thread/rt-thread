@@ -9,7 +9,7 @@
 
 int __ffssi2(int x)
 {
-    int i = 0;
+    uint32_t i = 0;
     if (!x) {
         return 0;
     }

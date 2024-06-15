@@ -756,14 +756,12 @@ void FXmacErrorHandler(void *arg, u8 direction, u32 error_word)
                 if (error_word & FXMAC_RXSR_RXOVR_MASK)
                 {
                     LOG_I("Receive over run.");
-                    FXmacRecvHandler(instance_p);
-                    SetupRxBds(instance_p, rxring);
+                    FXmacRecvHandler(arg);
                 }
                 if (error_word & FXMAC_RXSR_BUFFNA_MASK)
                 {
                     LOG_I("Receive buffer not available.");
                     FXmacRecvHandler(arg);
-                    SetupRxBds(instance_p, rxring);
                 }
                 break;
             case FXMAC_SEND:
@@ -1001,7 +999,6 @@ static void FxmacOsIntrHandler(s32 vector, void *args)
 
 static void FXmacSetupIsr(FXmacOs *instance_p)
 {
-    rt_uint32_t cpu_id = rt_hw_cpu_id();
 
     /* Setup callbacks */
     FXmacSetHandler(&instance_p->instance, FXMAC_HANDLER_DMARECV, FXmacRecvSemaphoreHandler, instance_p);
@@ -1222,34 +1219,18 @@ FError FXmacOsTx(FXmacOs *instance_p, void *tx_buf)
 {
     FXmacBdRing *txring;
     FError ret;
-    u32 n_pbufs;
     struct pbuf *p;
-    struct pbuf *q;
     FASSERT(instance_p != NULL);
-    if (tx_buf == NULL)
-    {
-        LOG_E("tx_buf is null.");
-        return FREERTOS_XMAC_PARAM_ERROR;
-    }
+    FASSERT(tx_buf != NULL);
 
     p = tx_buf;
     txring = &(FXMAC_GET_TXRING(instance_p->instance));
-
-    for (q = p, n_pbufs = 0; q != NULL; q = q->next)
-    {
-        n_pbufs++;
-    }
+    FXmacProcessSentBds(instance_p, txring);
 
     /* check if space is available to send */
-    if (txring->free_cnt < n_pbufs)
-    {
-        FXmacProcessSentBds(instance_p, txring);
-    }
-
     if (IsTxSpaceAvailable(instance_p))
     {
-        FXmacOsOutput(instance_p, p);
-        ret = FT_SUCCESS;
+        ret = FXmacOsOutput(instance_p, p);
     }
     else
     {
@@ -1406,8 +1387,6 @@ rt_err_t rt_xmac_tx(rt_device_t dev, struct pbuf *p)
         return -RT_ENOMEM;
     }
 
-
-
 #if RT_LWIP_ETH_PAD_SIZE
     pbuf_header(p, -RT_LWIP_ETH_PAD_SIZE); /* reclaim the padding word */
 #endif
@@ -1431,7 +1410,6 @@ struct pbuf *rt_xmac_rx(rt_device_t dev)
     FXmacOs *pOsMac;
     struct eth_device *pXmacParent;
     struct pbuf *p;
-    rt_base_t level;
 
     pXmacParent = rt_container_of(dev, struct eth_device, parent);
     if (NULL == pXmacParent)
@@ -1445,10 +1423,8 @@ struct pbuf *rt_xmac_rx(rt_device_t dev)
         return RT_NULL;
     }
 
-    level = rt_hw_interrupt_disable();
     FXmacRecvHandler(pOsMac);
     p = FXmacOsRx(pOsMac);
-    rt_hw_interrupt_enable(level);
     return p;
 }
 

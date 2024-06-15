@@ -136,23 +136,27 @@ int lwp_user_space_init(struct rt_lwp *lwp, rt_bool_t is_fork)
 void lwp_aspace_switch(struct rt_thread *thread)
 {
     struct rt_lwp *lwp = RT_NULL;
-    rt_aspace_t aspace;
-    void *from_tbl;
+    rt_aspace_t to_aspace;
+    void *from_tbl, *to_table;
 
     if (thread->lwp)
     {
         lwp = (struct rt_lwp *)thread->lwp;
-        aspace = lwp->aspace;
+        to_aspace = lwp->aspace;
+        to_table = to_aspace->page_table;
     }
     else
     {
-        aspace = &rt_kernel_space;
+        to_aspace = &rt_kernel_space;
+        /* the page table is arch dependent but not aspace->page_table */
+        to_table = arch_kernel_mmu_table_get();
     }
 
+    /* must fetch the effected page table to avoid hot update */
     from_tbl = rt_hw_mmu_tbl_get();
-    if (aspace->page_table != from_tbl)
+    if (to_table != from_tbl)
     {
-        rt_hw_aspace_switch(aspace);
+        rt_hw_aspace_switch(to_aspace);
     }
 }
 
@@ -985,73 +989,6 @@ size_t lwp_strlen(struct rt_lwp *lwp, const char *s)
         return lwp_user_strlen_ext(lwp, s);
     else
         return strlen(s);
-}
-
-char** lwp_get_command_line_args(struct rt_lwp *lwp)
-{
-    size_t argc = 0;
-    char** argv = NULL;
-    int ret;
-    size_t i;
-    size_t len;
-
-    if (lwp)
-    {
-        ret = lwp_data_get(lwp, &argc, lwp->args, sizeof(argc));
-        if (ret == 0)
-        {
-            return RT_NULL;
-        }
-        argv = (char**)rt_malloc((argc + 1) * sizeof(char*));
-
-        if (argv)
-        {
-            for (i = 0; i < argc; i++)
-            {
-                char *argvp = NULL;
-                ret = lwp_data_get(lwp, &argvp, &((char **)lwp->args)[1 + i], sizeof(argvp));
-                if (ret == 0)
-                {
-                    lwp_free_command_line_args(argv);
-                    return RT_NULL;
-                }
-                len = lwp_user_strlen_ext(lwp, argvp);
-
-                if (len > 0)
-                {
-                    argv[i] = (char*)rt_malloc(len + 1);
-                    ret = lwp_data_get(lwp, argv[i], argvp, len);
-                    if (ret == 0)
-                    {
-                        lwp_free_command_line_args(argv);
-                        return RT_NULL;
-                    }
-                    argv[i][len] = '\0';
-                }
-                else
-                {
-                    argv[i] = NULL;
-                }
-            }
-            argv[argc] = NULL;
-        }
-    }
-
-    return argv;
-}
-
-void lwp_free_command_line_args(char** argv)
-{
-    size_t i;
-
-    if (argv)
-    {
-        for (i = 0; argv[i]; i++)
-        {
-            rt_free(argv[i]);
-        }
-        rt_free(argv);
-    }
 }
 
 #endif

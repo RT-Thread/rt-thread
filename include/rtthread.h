@@ -75,6 +75,7 @@ rt_err_t rt_custom_object_destroy(rt_object_t obj);
 #endif /* RT_USING_HEAP */
 rt_bool_t rt_object_is_systemobject(rt_object_t object);
 rt_uint8_t rt_object_get_type(rt_object_t object);
+rt_err_t rt_object_for_each(rt_uint8_t type, rt_object_iter_t iter, void *data);
 rt_object_t rt_object_find(const char *name, rt_uint8_t type);
 rt_err_t rt_object_get_name(rt_object_t object, char *name, rt_uint8_t name_size);
 
@@ -160,8 +161,8 @@ rt_thread_t rt_thread_create(const char *name,
                              rt_uint8_t  priority,
                              rt_uint32_t tick);
 rt_err_t rt_thread_delete(rt_thread_t thread);
-rt_err_t rt_thread_close(rt_thread_t thread);
 #endif /* RT_USING_HEAP */
+rt_err_t rt_thread_close(rt_thread_t thread);
 rt_thread_t rt_thread_self(void);
 rt_thread_t rt_thread_find(char *name);
 rt_err_t rt_thread_startup(rt_thread_t thread);
@@ -295,6 +296,7 @@ void rt_mp_free_sethook(void (*hook)(struct rt_mempool *mp, void *block));
  * heap memory interface
  */
 void rt_system_heap_init(void *begin_addr, void *end_addr);
+void rt_system_heap_init_generic(void *begin_addr, void *end_addr);
 
 void *rt_malloc(rt_size_t size);
 void rt_free(void *ptr);
@@ -668,6 +670,12 @@ rt_err_t  rt_device_control(rt_device_t dev, int cmd, void *arg);
 void rt_interrupt_enter(void);
 void rt_interrupt_leave(void);
 
+/**
+ * CPU object
+ */
+struct rt_cpu *rt_cpu_self(void);
+struct rt_cpu *rt_cpu_index(int index);
+
 #ifdef RT_USING_SMP
 
 /*
@@ -676,11 +684,16 @@ void rt_interrupt_leave(void);
 
 rt_base_t rt_cpus_lock(void);
 void rt_cpus_unlock(rt_base_t level);
-
-struct rt_cpu *rt_cpu_self(void);
-struct rt_cpu *rt_cpu_index(int index);
-
 void rt_cpus_lock_status_restore(struct rt_thread *thread);
+
+#ifdef RT_USING_DEBUG
+    rt_base_t rt_cpu_get_id(void);
+#else /* !RT_USING_DEBUG */
+    #define rt_cpu_get_id rt_hw_cpu_id
+#endif /* RT_USING_DEBUG */
+
+#else /* !RT_USING_SMP */
+#define rt_cpu_get_id()  (0)
 
 #endif /* RT_USING_SMP */
 
@@ -717,7 +730,10 @@ void rt_kputs(const char *str);
 
 rt_err_t rt_backtrace(void);
 rt_err_t rt_backtrace_thread(rt_thread_t thread);
-rt_err_t rt_backtrace_frame(struct rt_hw_backtrace_frame *frame);
+rt_err_t rt_backtrace_frame(rt_thread_t thread, struct rt_hw_backtrace_frame *frame);
+rt_err_t rt_backtrace_formatted_print(rt_ubase_t *buffer, long buflen);
+rt_err_t rt_backtrace_to_buffer(rt_thread_t thread, struct rt_hw_backtrace_frame *frame,
+                                long skip, rt_ubase_t *buffer, long buflen);
 
 #if defined(RT_USING_DEVICE) && defined(RT_USING_CONSOLE)
 rt_device_t rt_console_set_device(const char *name);
@@ -733,7 +749,7 @@ int __rt_ffs(int value);
 
 void rt_show_version(void);
 
-#ifdef RT_USING_DEBUG
+#ifdef RT_DEBUGING_ASSERT
 extern void (*rt_assert_hook)(const char *ex, const char *func, rt_size_t line);
 void rt_assert_set_hook(void (*hook)(const char *ex, const char *func, rt_size_t line));
 void rt_assert_handler(const char *ex, const char *func, rt_size_t line);
@@ -745,7 +761,7 @@ if (!(EX))                                                                    \
 }
 #else
 #define RT_ASSERT(EX)
-#endif /* RT_USING_DEBUG */
+#endif /* RT_DEBUGING_ASSERT */
 
 #ifdef RT_DEBUGING_CONTEXT
 /* Macro to check current context */
@@ -781,7 +797,6 @@ while (0)
  *     1) the scheduler has been started.
  *     2) not in interrupt context.
  *     3) scheduler is not locked.
- *     4) interrupt is not disabled.
  */
 #define RT_DEBUG_SCHEDULER_AVAILABLE(need_check)                              \
 do                                                                            \
@@ -809,10 +824,26 @@ rt_inline rt_bool_t rt_in_thread_context(void)
     return rt_thread_self() != RT_NULL && rt_interrupt_get_nest() == 0;
 }
 
+/* is scheduler available */
 rt_inline rt_bool_t rt_scheduler_is_available(void)
 {
-    return !rt_hw_interrupt_is_disabled() && rt_critical_level() == 0 && rt_in_thread_context();
+    return rt_critical_level() == 0 && rt_in_thread_context();
 }
+
+#ifdef RT_USING_SMP
+/* is thread bond on core */
+rt_inline rt_bool_t rt_sched_thread_is_binding(rt_thread_t thread)
+{
+    if (thread == RT_NULL)
+    {
+        thread = rt_thread_self();
+    }
+    return !thread || RT_SCHED_CTX(thread).bind_cpu != RT_CPUS_NR;
+}
+
+#else
+#define rt_sched_thread_is_binding(thread) (RT_TRUE)
+#endif
 
 /**@}*/
 

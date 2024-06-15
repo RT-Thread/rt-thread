@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 HPMicro
+ * Copyright (c) 2021-2024 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -22,13 +22,39 @@
 #define PLLCTL_FRAC_PLL_MIN_REF (10000000U)
 #define PLLCTL_INT_PLL_MIN_REF (1000000U)
 
+
+hpm_stat_t pllctl_set_pll_work_mode(PLLCTL_Type *ptr, uint8_t pll, bool int_mode)
+{
+    if ((ptr == NULL) || (pll >= PLLCTL_SOC_PLL_MAX_COUNT)) {
+        return status_invalid_argument;
+    }
+    if (int_mode) {
+        if (!(ptr->PLL[pll].CFG0 & PLLCTL_PLL_CFG0_DSMPD_MASK)) {
+            /* it was at frac mode, then it needs to be power down */
+            pllctl_pll_powerdown(ptr, pll);
+            ptr->PLL[pll].CFG0 |= PLLCTL_PLL_CFG0_DSMPD_MASK;
+            pllctl_pll_poweron(ptr, pll);
+        }
+    } else {
+        if (ptr->PLL[pll].CFG0 & PLLCTL_PLL_CFG0_DSMPD_MASK) {
+            /* pll has to be powered down to configure frac mode */
+            pllctl_pll_powerdown(ptr, pll);
+            ptr->PLL[pll].CFG0 &= ~PLLCTL_PLL_CFG0_DSMPD_MASK;
+            pllctl_pll_poweron(ptr, pll);
+        }
+    }
+
+    return status_success;
+}
+
 hpm_stat_t pllctl_set_refdiv(PLLCTL_Type *ptr, uint8_t pll, uint8_t div)
 {
     uint32_t min_ref;
 
-    if ((pll > (PLLCTL_SOC_PLL_MAX_COUNT - 1))
-            || (!div)
-            || (div > (PLLCTL_PLL_CFG0_REFDIV_MASK >> PLLCTL_PLL_CFG0_REFDIV_SHIFT))) {
+    if ((ptr == NULL)
+        || (pll > (PLLCTL_SOC_PLL_MAX_COUNT - 1))
+        || (div == 0U)
+        || (div > (PLLCTL_PLL_CFG0_REFDIV_MASK >> PLLCTL_PLL_CFG0_REFDIV_SHIFT))) {
         return status_invalid_argument;
     }
 
@@ -47,6 +73,7 @@ hpm_stat_t pllctl_set_refdiv(PLLCTL_Type *ptr, uint8_t pll, uint8_t div)
         pllctl_pll_powerdown(ptr, pll);
         ptr->PLL[pll].CFG0 = (ptr->PLL[pll].CFG0 & ~PLLCTL_PLL_CFG0_REFDIV_MASK)
             | PLLCTL_PLL_CFG0_REFDIV_SET(div);
+        pllctl_pll_poweron(ptr, pll);
     }
     return status_success;
 }
@@ -54,6 +81,9 @@ hpm_stat_t pllctl_set_refdiv(PLLCTL_Type *ptr, uint8_t pll, uint8_t div)
 hpm_stat_t pllctl_init_int_pll_with_freq(PLLCTL_Type *ptr, uint8_t pll,
                                     uint32_t freq_in_hz)
 {
+    if ((ptr == NULL) || (pll >= PLLCTL_SOC_PLL_MAX_COUNT)) {
+        return status_invalid_argument;
+    }
     uint32_t freq, fbdiv, refdiv, postdiv;
     if ((freq_in_hz < PLLCTL_PLL_VCO_FREQ_MIN)
             || (freq_in_hz > PLLCTL_PLL_VCO_FREQ_MAX)) {
@@ -118,6 +148,9 @@ hpm_stat_t pllctl_init_int_pll_with_freq(PLLCTL_Type *ptr, uint8_t pll,
 hpm_stat_t pllctl_init_frac_pll_with_freq(PLLCTL_Type *ptr, uint8_t pll,
                                     uint32_t freq_in_hz)
 {
+    if ((ptr == NULL) || (pll >= PLLCTL_SOC_PLL_MAX_COUNT)) {
+        return status_invalid_argument;
+    }
     uint32_t frac, refdiv, fbdiv, freq, postdiv;
     double div;
     if ((freq_in_hz < PLLCTL_PLL_VCO_FREQ_MIN)
@@ -164,7 +197,7 @@ hpm_stat_t pllctl_init_frac_pll_with_freq(PLLCTL_Type *ptr, uint8_t pll,
 
     div = (double) freq / PLLCTL_SOC_PLL_REFCLK_FREQ * (refdiv * postdiv);
     fbdiv = freq / (PLLCTL_SOC_PLL_REFCLK_FREQ / (refdiv * postdiv));
-    frac = (div - fbdiv) * (1 << 24);
+    frac = (uint32_t)((div - fbdiv) * (1 << 24));
 
     /*
      * pll has to be powered down to configure frac mode
@@ -186,6 +219,9 @@ hpm_stat_t pllctl_init_frac_pll_with_freq(PLLCTL_Type *ptr, uint8_t pll,
 
 uint32_t pllctl_get_pll_freq_in_hz(PLLCTL_Type *ptr, uint8_t pll)
 {
+    if ((ptr == NULL) || (pll >= PLLCTL_SOC_PLL_MAX_COUNT)) {
+        return status_invalid_argument;
+    }
     uint32_t fbdiv, frac, refdiv, postdiv, refclk, freq;
     if (ptr->PLL[pll].CFG1 & PLLCTL_PLL_CFG1_PLLPD_SW_MASK) {
         /* pll is powered down */
@@ -204,7 +240,7 @@ uint32_t pllctl_get_pll_freq_in_hz(PLLCTL_Type *ptr, uint8_t pll)
         /* pll frac mode */
         fbdiv = PLLCTL_PLL_FREQ_FBDIV_FRAC_GET(ptr->PLL[pll].FREQ);
         frac = PLLCTL_PLL_FREQ_FRAC_GET(ptr->PLL[pll].FREQ);
-        freq = refclk * (fbdiv + ((double) frac / (1 << 24)));
+        freq = (uint32_t)((refclk * (fbdiv + ((double) frac / (1 << 24)))) + 0.5);
     }
     return freq;
 }

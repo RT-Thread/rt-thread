@@ -22,7 +22,7 @@ config PKGS_DIR
 
 source "$RTT_DIR/Kconfig"
 source "$PKGS_DIR/Kconfig"
-source "$BSP_DIR/libraries/drivers/Kconfig"
+source "$BSP_ROOT/libraries/drivers/Kconfig"
 
 config BSP_USING_GIC
     bool
@@ -72,7 +72,7 @@ menu "Standalone Setting"
         default y
 
     source "$SDK_DIR/soc/soc.kconfig"
-    source "$BSP_DIR/board/board.kconfig"
+    source "$BSP_ROOT/board/board.kconfig"
     source "$SDK_DIR/common/common.kconfig"
 
 endmenu

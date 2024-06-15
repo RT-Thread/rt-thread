@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 HPMicro
+ * Copyright (c) 2021-2024 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -107,18 +107,6 @@ typedef struct {
 
 /* Bitfield definition for register: LDO1P1 */
 /*
- * ENABLE (RW)
- *
- * LDO enable
- * 0: turn off LDO
- * 1: turn on LDO
- */
-#define PCFG_LDO1P1_ENABLE_MASK (0x10000UL)
-#define PCFG_LDO1P1_ENABLE_SHIFT (16U)
-#define PCFG_LDO1P1_ENABLE_SET(x) (((uint32_t)(x) << PCFG_LDO1P1_ENABLE_SHIFT) & PCFG_LDO1P1_ENABLE_MASK)
-#define PCFG_LDO1P1_ENABLE_GET(x) (((uint32_t)(x) & PCFG_LDO1P1_ENABLE_MASK) >> PCFG_LDO1P1_ENABLE_SHIFT)
-
-/*
  * VOLT (RW)
  *
  * LDO output voltage in mV,  value valid through 700-1320, , step 20mV.  Hardware select voltage no less than target if not on valid steps, with maximum 1320mV.
@@ -186,7 +174,7 @@ typedef struct {
  * MODE (RW)
  *
  * DCDC work mode
- * XX0: trun off
+ * XX0: turn off
  * 001: basic mode
  * 011: generic mode
  * 101: automatic mode
@@ -240,7 +228,7 @@ typedef struct {
 #define PCFG_DCDC_PROT_ILIMIT_LP_GET(x) (((uint32_t)(x) & PCFG_DCDC_PROT_ILIMIT_LP_MASK) >> PCFG_DCDC_PROT_ILIMIT_LP_SHIFT)
 
 /*
- * OVERLOAD_LP (RW)
+ * OVERLOAD_LP (RO)
  *
  * over current in low power mode
  * 0: current is below setting
@@ -248,7 +236,6 @@ typedef struct {
  */
 #define PCFG_DCDC_PROT_OVERLOAD_LP_MASK (0x1000000UL)
 #define PCFG_DCDC_PROT_OVERLOAD_LP_SHIFT (24U)
-#define PCFG_DCDC_PROT_OVERLOAD_LP_SET(x) (((uint32_t)(x) << PCFG_DCDC_PROT_OVERLOAD_LP_SHIFT) & PCFG_DCDC_PROT_OVERLOAD_LP_MASK)
 #define PCFG_DCDC_PROT_OVERLOAD_LP_GET(x) (((uint32_t)(x) & PCFG_DCDC_PROT_OVERLOAD_LP_MASK) >> PCFG_DCDC_PROT_OVERLOAD_LP_SHIFT)
 
 /*
@@ -277,7 +264,7 @@ typedef struct {
 /*
  * DISABLE_OVERVOLTAGE (RW)
  *
- * ouput over voltage protection
+ * output over voltage protection
  * 0: protection enabled, DCDC will shut down is output voltage is unexpected high
  * 1: protection disabled, DCDC continue to adjust output voltage
  */
@@ -301,7 +288,7 @@ typedef struct {
  * DISABLE_SHORT (RW)
  *
  * disable output short circuit protection
- * 0: short circuits protection enabled, DCDC shut down if short circuit on ouput detected
+ * 0: short circuits protection enabled, DCDC shut down if short circuit on output detected
  * 1: short circuit protection disabled
  */
 #define PCFG_DCDC_PROT_DISABLE_SHORT_MASK (0x80U)
@@ -417,18 +404,6 @@ typedef struct {
 #define PCFG_DCDC_ADVMODE_EN_FF_LOOP_SHIFT (5U)
 #define PCFG_DCDC_ADVMODE_EN_FF_LOOP_SET(x) (((uint32_t)(x) << PCFG_DCDC_ADVMODE_EN_FF_LOOP_SHIFT) & PCFG_DCDC_ADVMODE_EN_FF_LOOP_MASK)
 #define PCFG_DCDC_ADVMODE_EN_FF_LOOP_GET(x) (((uint32_t)(x) & PCFG_DCDC_ADVMODE_EN_FF_LOOP_MASK) >> PCFG_DCDC_ADVMODE_EN_FF_LOOP_SHIFT)
-
-/*
- * EN_AUTOLP (RW)
- *
- * enable auto enter low power mode
- * 0: do not enter low power mode
- * 1: enter low power mode if current is detected low
- */
-#define PCFG_DCDC_ADVMODE_EN_AUTOLP_MASK (0x10U)
-#define PCFG_DCDC_ADVMODE_EN_AUTOLP_SHIFT (4U)
-#define PCFG_DCDC_ADVMODE_EN_AUTOLP_SET(x) (((uint32_t)(x) << PCFG_DCDC_ADVMODE_EN_AUTOLP_SHIFT) & PCFG_DCDC_ADVMODE_EN_AUTOLP_MASK)
-#define PCFG_DCDC_ADVMODE_EN_AUTOLP_GET(x) (((uint32_t)(x) & PCFG_DCDC_ADVMODE_EN_AUTOLP_MASK) >> PCFG_DCDC_ADVMODE_EN_AUTOLP_SHIFT)
 
 /*
  * EN_DCM_EXIT (RW)

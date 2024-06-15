@@ -60,7 +60,7 @@ static int _write_fault(rt_varea_t varea, void *pa, struct rt_aspace_fault_msg *
     if (rt_varea_is_private_locked(varea))
     {
         if (VAREA_IS_WRITABLE(varea) && (
-            msg->fault_type == MM_FAULT_TYPE_ACCESS_FAULT ||
+            msg->fault_type == MM_FAULT_TYPE_RWX_PERM ||
             msg->fault_type == MM_FAULT_TYPE_PAGE_FAULT))
         {
             RDWR_LOCK(aspace);
@@ -102,6 +102,44 @@ static int _exec_fault(rt_varea_t varea, void *pa, struct rt_aspace_fault_msg *m
     return err;
 }
 
+static void _determine_precise_fault_type(struct rt_aspace_fault_msg *msg, rt_ubase_t pa, rt_varea_t varea)
+{
+    if (msg->fault_type == MM_FAULT_TYPE_GENERIC_MMU)
+    {
+        rt_base_t requesting_perm;
+        switch (msg->fault_op)
+        {
+        case MM_FAULT_OP_READ:
+            requesting_perm = RT_HW_MMU_PROT_READ | RT_HW_MMU_PROT_USER;
+            break;
+        case MM_FAULT_OP_WRITE:
+            requesting_perm = RT_HW_MMU_PROT_WRITE | RT_HW_MMU_PROT_USER;
+            break;
+        case MM_FAULT_OP_EXECUTE:
+            requesting_perm = RT_HW_MMU_PROT_EXECUTE | RT_HW_MMU_PROT_USER;
+            break;
+        }
+
+        /**
+         * always checking the user privileges since dynamic permission is not
+         * supported in kernel. So those faults are never fixable. Hence, adding
+         * permission check never changes the result of checking. In other
+         * words, { 0 && (expr) } is always false.
+         */
+        if (rt_hw_mmu_attr_test_perm(varea->attr, requesting_perm))
+        {
+            if (pa == (rt_ubase_t)ARCH_MAP_FAILED)
+            {
+                msg->fault_type = MM_FAULT_TYPE_PAGE_FAULT;
+            }
+            else
+            {
+                msg->fault_type = MM_FAULT_TYPE_RWX_PERM;
+            }
+        }
+    }
+}
+
 int rt_aspace_fault_try_fix(rt_aspace_t aspace, struct rt_aspace_fault_msg *msg)
 {
     int err = MM_FAULT_FIXABLE_FALSE;
@@ -121,6 +159,8 @@ int rt_aspace_fault_try_fix(rt_aspace_t aspace, struct rt_aspace_fault_msg *msg)
         if (varea)
         {
             void *pa = rt_hw_mmu_v2p(aspace, msg->fault_vaddr);
+            _determine_precise_fault_type(msg, (rt_ubase_t)pa, varea);
+
             if (pa != ARCH_MAP_FAILED && msg->fault_type == MM_FAULT_TYPE_PAGE_FAULT)
             {
                 LOG_D("%s(fault=%p) has already fixed", __func__, msg->fault_vaddr);

@@ -212,9 +212,8 @@ void tty_rel_gone(struct lwp_tty *tp);
 #define tty_lock_notrecused(tp) (rt_mutex_get_hold(tty_getlock(tp)) == 1)
 #define tty_assert_locked(tp)   RT_ASSERT(tty_lock_owned(tp))
 #define tty_lock_assert(tp, option)                        \
-    (((option) == (MA_OWNED | MA_NOTRECURSED))             \
-         ? (tty_lock_owned(tp) && tty_lock_notrecused(tp)) \
-         : rt_assert_handler("Operation not allowed", __func__, __LINE__))
+    RT_ASSERT(((option) == (MA_OWNED | MA_NOTRECURSED)) && \
+    (tty_lock_owned(tp) && tty_lock_notrecused(tp)))
 
 /* System messages. */
 int tty_checkoutq(struct lwp_tty *tp);

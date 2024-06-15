@@ -4,7 +4,7 @@ sci_uart_instance_ctrl_t     g_uart9_ctrl;
 
             baud_setting_t               g_uart9_baud_setting =
             {
-                /* Baud rate calculated with 0.160% error. */ .abcse = 0, .abcs = 0, .bgdm = 1, .cks = 0, .brr = 64, .mddr = (uint8_t) 256, .brme = false
+                /* Baud rate calculated with 0.160% error. */ .semr_baudrate_bits_b.abcse = 0, .semr_baudrate_bits_b.abcs = 0, .semr_baudrate_bits_b.bgdm = 1, .cks = 0, .brr = 64, .mddr = (uint8_t) 256, .semr_baudrate_bits_b.brme = false
             };
 
             /** UART extended configuration for UARTonSCI HAL driver */
@@ -21,6 +21,15 @@ sci_uart_instance_ctrl_t     g_uart9_ctrl;
                 #else
                 .flow_control_pin       = (bsp_io_port_pin_t) UINT16_MAX,
                 #endif
+                .rs485_setting = {
+                    .enable = SCI_UART_RS485_DISABLE,
+                    .polarity = SCI_UART_RS485_DE_POLARITY_HIGH,
+                #if 0xFF != 0xFF
+                    .de_control_pin = BSP_IO_PORT_FF_PIN_0xFF,
+                #else
+                    .de_control_pin       = (bsp_io_port_pin_t) UINT16_MAX,
+                #endif
+                },
             };
 
             /** UART interface configuration */

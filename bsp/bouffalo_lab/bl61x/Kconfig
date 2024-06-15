@@ -15,12 +15,7 @@ config PKGS_DIR
     option env="PKGS_ROOT"
     default "packages"
 
-config LIBRARIES_DIR
-    string
-    option env="LIBRARIES_DIR"
-    default "../libraries"
-
 source "$RTT_DIR/Kconfig"
 source "$PKGS_DIR/Kconfig"
 source "board/Kconfig"
-source "$LIBRARIES_DIR/Kconfig"
+source "../libraries/Kconfig"

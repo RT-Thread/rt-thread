@@ -1,7 +1,7 @@
 import os
 from building import *
 
-objs = []
+group = []
 
 if GetDepend('ARCH_ARM_CORTEX_A') or GetDepend('ARCH_ARMV8') or GetDepend('ARCH_RISCV64'):
     cwd  = GetCurrentDir()
@@ -13,12 +13,4 @@ if GetDepend('ARCH_ARM_CORTEX_A') or GetDepend('ARCH_ARMV8') or GetDepend('ARCH_
 
     group = DefineGroup('mm', src, depend = ['ARCH_MM_MMU'], CPPPATH = CPPPATH)
 
-    objs = [group]
-    list = os.listdir(cwd)
-
-    for d in list:
-        path = os.path.join(cwd, d)
-        if os.path.isfile(os.path.join(path, 'SConscript')):
-            objs = objs + SConscript(os.path.join(d, 'SConscript'))
-
-Return('objs')
+Return('group')

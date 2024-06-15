@@ -13,9 +13,9 @@
 
 static volatile unsigned long _init_cnt = 0;
 
-unsigned long rt_ktime_cputimer_getres(void)
+rt_uint64_t rt_ktime_cputimer_getres(void)
 {
-    return ((1000UL * 1000 * 1000) * RT_KTIME_RESMUL) / rt_hw_get_gtimer_frq();
+    return ((1000ULL * 1000 * 1000) * RT_KTIME_RESMUL) / rt_hw_get_gtimer_frq();
 }
 
 unsigned long rt_ktime_cputimer_getfrq(void)

@@ -888,7 +888,7 @@ typedef struct {
  * 0001b - 2 bpp (pixel width must be multiples of 16), pixel sequence is from LSB to MSB in 32b word.
  * 0010b - 4 bpp (pixel width must be multiples of 8), pixel sequence is from LSB to MSB in 32b word.
  * 0011b - 8 bpp  (pixel width must be multiples of 4), pixel sequence is from LSB to MSB in 32b word.
- * 0100b - 16 bpp (RGB565), byte sequence as B,R
+ * 0100b - 16 bpp (RGB565), the low byte contains teh full R component.
  * 0111b - YCbCr422 (Only layer 0/1 can support this format), byte sequence determined by LAYCTRL[YUV_FORMAT]
  * 1001b - 32 bpp (ARGB8888), byte sequence as B,G,R,A
  * 1011b - Y8  (pixel width must be multiples of 4), byte sequence as Y1,Y2,Y3,Y4

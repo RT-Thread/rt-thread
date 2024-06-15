@@ -346,9 +346,9 @@ void rt_object_init(struct rt_object         *object,
                     const char               *name)
 {
     rt_base_t level;
-#ifdef RT_USING_DEBUG
+#ifdef RT_DEBUGING_ASSERT
     struct rt_list_node *node = RT_NULL;
-#endif
+#endif /* RT_DEBUGING_ASSERT */
     struct rt_object_information *information;
 #ifdef RT_USING_MODULE
     struct rt_dlmodule *module = dlmodule_self();
@@ -358,7 +358,7 @@ void rt_object_init(struct rt_object         *object,
     information = rt_object_get_information(type);
     RT_ASSERT(information != RT_NULL);
 
-#ifdef RT_USING_DEBUG
+#ifdef RT_DEBUGING_ASSERT
     /* check object type to avoid re-initialization */
 
     /* enter critical */
@@ -375,7 +375,7 @@ void rt_object_init(struct rt_object         *object,
     }
     /* leave critical */
     rt_spin_unlock_irqrestore(&(information->spinlock), level);
-#endif
+#endif /* RT_DEBUGING_ASSERT */
 
     /* initialize object's parameters */
     /* set object type to static */
@@ -575,6 +575,78 @@ rt_uint8_t rt_object_get_type(rt_object_t object)
 }
 
 /**
+ * @brief This function will iterate through each object from object
+ *        container.
+ *
+ * @param type is the type of object
+ * @param iter is the iterator
+ * @param data is the specified data passed to iterator
+ *
+ * @return RT_EOK on succeed, otherwise the error from `iter`
+ *
+ * @note this function shall not be invoked in interrupt status.
+ */
+rt_err_t rt_object_for_each(rt_uint8_t type, rt_object_iter_t iter, void *data)
+{
+    struct rt_object *object = RT_NULL;
+    struct rt_list_node *node = RT_NULL;
+    struct rt_object_information *information = RT_NULL;
+    rt_base_t level;
+    rt_err_t error;
+
+    information = rt_object_get_information((enum rt_object_class_type)type);
+
+    /* parameter check */
+    if (information == RT_NULL)
+    {
+        return -RT_EINVAL;
+    }
+
+    /* which is invoke in interrupt status */
+    RT_DEBUG_NOT_IN_INTERRUPT;
+
+    /* enter critical */
+    level = rt_spin_lock_irqsave(&(information->spinlock));
+
+    /* try to find object */
+    rt_list_for_each(node, &(information->object_list))
+    {
+        object = rt_list_entry(node, struct rt_object, list);
+        if ((error = iter(object, data)) != RT_EOK)
+        {
+            rt_spin_unlock_irqrestore(&(information->spinlock), level);
+
+            return error >= 0 ? RT_EOK : error;
+        }
+    }
+
+    rt_spin_unlock_irqrestore(&(information->spinlock), level);
+
+    return RT_EOK;
+}
+
+struct _obj_find_param
+{
+    const char *match_name;
+    rt_object_t matched_obj;
+};
+
+static rt_err_t _match_name(struct rt_object *obj, void *data)
+{
+    struct _obj_find_param *param = data;
+    const char *name = param->match_name;
+    if (rt_strncmp(obj->name, name, RT_NAME_MAX) == 0)
+    {
+        param->matched_obj = obj;
+
+        /* notify an early break of loop, but not on error */
+        return 1;
+    }
+
+    return RT_EOK;
+}
+
+/**
  * @brief This function will find specified name object from object
  *        container.
  *
@@ -589,37 +661,20 @@ rt_uint8_t rt_object_get_type(rt_object_t object)
  */
 rt_object_t rt_object_find(const char *name, rt_uint8_t type)
 {
-    struct rt_object *object = RT_NULL;
-    struct rt_list_node *node = RT_NULL;
-    struct rt_object_information *information = RT_NULL;
-    rt_base_t level;
-
-    information = rt_object_get_information((enum rt_object_class_type)type);
+    struct _obj_find_param param =
+    {
+        .match_name = name,
+        .matched_obj = RT_NULL,
+    };
 
     /* parameter check */
-    if ((name == RT_NULL) || (information == RT_NULL)) return RT_NULL;
+    if (name == RT_NULL) return RT_NULL;
 
     /* which is invoke in interrupt status */
     RT_DEBUG_NOT_IN_INTERRUPT;
 
-    /* enter critical */
-    level = rt_spin_lock_irqsave(&(information->spinlock));
-
-    /* try to find object */
-    rt_list_for_each(node, &(information->object_list))
-    {
-        object = rt_list_entry(node, struct rt_object, list);
-        if (rt_strncmp(object->name, name, RT_NAME_MAX) == 0)
-        {
-            rt_spin_unlock_irqrestore(&(information->spinlock), level);
-
-            return object;
-        }
-    }
-
-    rt_spin_unlock_irqrestore(&(information->spinlock), level);
-
-    return RT_NULL;
+    rt_object_for_each(type, _match_name, &param);
+    return param.matched_obj;
 }
 
 /**

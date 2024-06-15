@@ -1,11 +1,13 @@
 /*
- * Copyright (c) 2006-2023, RT-Thread Development Team
+ * Copyright (c) 2006-2024, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author        Notes
- * 2011-07-25     weety     first version
+ * 2011-07-25     weety         first version
+ * 2024-05-24     HPMicro       add HS400 support
+ * 2024-05-26     HPMicro       add UHS-I support for SD card
  */
 
 #ifndef __MMCSD_CARD_H__
@@ -83,6 +85,51 @@ struct rt_sdio_cccr {
 
 };
 
+/*
+ * SD Status
+ */
+union rt_sd_status {
+    rt_uint32_t status_words[16];
+    struct {
+        rt_uint32_t reserved[12];
+        rt_uint64_t : 8;
+        rt_uint64_t uhs_au_size: 4;
+        rt_uint64_t uhs_speed_grade: 4;
+        rt_uint64_t erase_offset: 2;
+        rt_uint64_t erase_timeout: 6;
+        rt_uint64_t erase_size: 16;
+        rt_uint64_t : 4;
+        rt_uint64_t au_size: 4;
+        rt_uint64_t performance_move: 8;
+        rt_uint64_t speed_class: 8;
+
+        rt_uint32_t size_of_protected_area;
+
+        rt_uint32_t sd_card_type: 16;
+        rt_uint32_t : 6;
+        rt_uint32_t : 7;
+        rt_uint32_t secured_mode: 1;
+        rt_uint32_t data_bus_width: 2;
+    };
+};
+
+/*
+ * SD Speed Class
+ */
+#define SD_SPEED_CLASS_0    0
+#define SD_SPEED_CLASS_2    1
+#define SD_SPEED_CLASS_4    2
+#define SD_SPEED_CLASS_6    3
+#define SD_SPEED_CLASS_10   4
+
+/*
+ * UHS Speed Grade
+ */
+#define UHS_SPEED_GRADE_0   0
+#define UHS_SPEED_GRADE_1   1
+#define UHS_SPEED_GRADE_3   3
+
+
 struct rt_sdio_cis {
     rt_uint16_t     manufacturer;
     rt_uint16_t     product;
@@ -130,6 +177,7 @@ struct rt_sdio_function {
 struct rt_mmc_ext_csd
 {
     rt_uint32_t cache_size;
+    rt_uint32_t enhanced_data_strobe;
 };
 
 struct rt_mmcsd_card {
@@ -156,13 +204,17 @@ struct rt_mmcsd_card {
 #define CARD_FLAG_HIGHSPEED  (1 << 0)   /* SDIO bus speed 50MHz */
 #define CARD_FLAG_SDHC       (1 << 1)   /* SDHC card */
 #define CARD_FLAG_SDXC       (1 << 2)   /* SDXC card */
-#define CARD_FLAG_HIGHSPEED_DDR  (1 << 3)   /*HIGH SPEED DDR*/
-#define CARD_FLAG_HS200      (1 << 4)   /* BUS SPEED 200mHz*/
+#define CARD_FLAG_HIGHSPEED_DDR  (1 << 3)   /* HIGH SPEED DDR */
+#define CARD_FLAG_HS200      (1 << 4)   /* BUS SPEED 200MHz */
+#define CARD_FLAG_HS400      (1 << 5)   /* BUS SPEED 400MHz */
+#define CARD_FLAG_SDR50      (1 << 6)   /* BUS SPEED 100MHz */
+#define CARD_FLAG_SDR104     (1 << 7)   /* BUS SPEED 200MHz */
+#define CARD_FLAG_DDR50      (1 << 8)   /* DDR50, works on 1.8V only */
     struct rt_sd_scr    scr;
     struct rt_mmcsd_csd csd;
     rt_uint32_t     hs_max_data_rate;  /* max data transfer rate in high speed mode */
 
-    rt_uint8_t      sdio_function_num;  /* totol number of SDIO functions */
+    rt_uint8_t      sdio_function_num;  /* total number of SDIO functions */
     struct rt_sdio_cccr    cccr;  /* common card info */
     struct rt_sdio_cis     cis;  /* common tuple info */
     struct rt_sdio_function *sdio_function[SDIO_MAX_FUNCTIONS + 1]; /* SDIO functions (devices) */

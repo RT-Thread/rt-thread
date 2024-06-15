@@ -275,7 +275,7 @@ extern "C" {
  * @brief Configure one channel of aoi_16to8
  *
  * @param pla @ref PLA_Type
- * @param cfg @ref pla_aoi_16to8_cfg_t
+ * @param cfg @ref pla_aoi_16to8_chn_cfg_t
  */
 void pla_set_aoi_16to8_one_channel(PLA_Type * pla,
                                     pla_aoi_16to8_chn_cfg_t *cfg);
@@ -353,7 +353,7 @@ void pla_get_aoi_8to7_one_channel(PLA_Type *pla,
  *
  * @param pla @ref PLA_Type
  * @param chn @ref pla_channel_type_t
- * @param aoi_16to8_chn @ref pla_aoi_8to7_channel_type_t
+ * @param aoi_8to7_chn @ref pla_aoi_8to7_channel_type_t
  * @param cfg @ref pla_aoi_8to7_cfg_unit_t
  */
 void pla_set_aoi_8to7_input_signal(PLA_Type *pla,

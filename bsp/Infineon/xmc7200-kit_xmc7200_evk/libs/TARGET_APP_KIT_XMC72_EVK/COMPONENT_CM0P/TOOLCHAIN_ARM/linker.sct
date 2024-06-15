@@ -1,0 +1,115 @@
+#! armclang -E --target=arm-arm-none-eabi -x c -mcpu=cortex-m0
+; The first line specifies a preprocessor command that the linker invokes
+; to pass a scatter file through a C preprocessor.
+
+;*******************************************************************************
+;* \file xmc7200_x8384_cm0plus.sct
+;* \version 1.0
+;*
+;* Linker file for the ARMCC.
+;*
+;* The main purpose of the linker script is to describe how the sections in the
+;* input files should be mapped into the output file, and to control the memory
+;* layout of the output file.
+;*
+;* \note The entry point location is fixed and starts at 0x10000000. The valid
+;* application image should be placed there.
+;*
+;* \note The linker files included with the PDL template projects must be
+;* generic and handle all common use cases. Your project may not use every
+;* section defined in the linker files. In that case you may see the warnings
+;* during the build process: L6314W (no section matches pattern) and/or L6329W
+;* (pattern only matches removed unused sections). In your project, you can
+;* suppress the warning by passing the "--diag_suppress=L6314W,L6329W" option to
+;* the linker, simply comment out or remove the relevant code in the linker
+;* file.
+;*
+;*******************************************************************************
+;* \copyright
+;* Copyright 2016-2021 Cypress Semiconductor Corporation
+;* SPDX-License-Identifier: Apache-2.0
+;*
+;* Licensed under the Apache License, Version 2.0 (the "License");
+;* you may not use this file except in compliance with the License.
+;* You may obtain a copy of the License at
+;*
+;*     http://www.apache.org/licenses/LICENSE-2.0
+;*
+;* Unless required by applicable law or agreed to in writing, software
+;* distributed under the License is distributed on an "AS IS" BASIS,
+;* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+;* See the License for the specific language governing permissions and
+;* limitations under the License.
+;******************************************************************************/
+
+; The defines below describe the location and size of blocks of memory in the target.
+; Use these defines to specify the memory regions available for allocation.
+
+; The following defines control RAM and flash memory allocation for the CM0+ core.
+; You can change the memory allocation by editing the RAM and Flash defines.
+; Your changes must be aligned with the corresponding defines for the CM7 core in 'xxx_cm7.sct',
+; where 'xx' is the device group; for example, 'xmc7200d_x8384_cm7.sct'.
+
+#define SRAM_START_RESERVE              0
+#define SRAM_PRIVATE_FOR_SROM           0x800 /* 2K Private SRAM for SROM (e.g. API processing). Reserved at the beginning */
+#define STACK_SIZE                      0x1000
+#define RAMVECTORS_ALIGNMENT            128
+
+; SRAM reservations
+#define SRAM_BASE_ADDRESS               0x28000000  /* SRAM START */
+#define CM0PLUS_SRAM_RESERVE            0x00004000  /* 16K : cm0 sram size */
+#define BASE_SRAM_CM0P                  SRAM_BASE_ADDRESS + SRAM_START_RESERVE + SRAM_PRIVATE_FOR_SROM
+#define SIZE_SRAM_CM0P                  CM0PLUS_SRAM_RESERVE - SRAM_START_RESERVE - SRAM_PRIVATE_FOR_SROM
+#define SRAM_CM0P_START                 BASE_SRAM_CM0P
+#define SRAM_CM0P_SIZE                  SIZE_SRAM_CM0P
+
+; Code flash reservations
+#define CODE_FLASH_BASE_ADDRESS         0x10000000  /* FLASH START */
+#define CM0PLUS_CODE_FLASH_RESERVE      0x00080000  /* 512K: cm0 flash size */
+#define BASE_CODE_FLASH_CM0P            CODE_FLASH_BASE_ADDRESS
+#define SIZE_CODE_FLASH_CM0P            CM0PLUS_CODE_FLASH_RESERVE
+#define CODE_FLASH_CM0P_START           BASE_CODE_FLASH_CM0P
+#define CODE_FLASH_CM0P_SIZE            SIZE_CODE_FLASH_CM0P
+
+; Cortex-M0+ application flash area
+LR_IROM1 CODE_FLASH_CM0P_START CODE_FLASH_CM0P_SIZE
+{
+    ER_FLASH_VECTORS +0
+    {
+        * (RESET, +FIRST)
+    }
+
+    ER_FLASH_CODE +0 FIXED
+    {
+        * (InRoot$$Sections)
+        * (+RO)
+    }
+
+    ER_RAM_VECTORS SRAM_CM0P_START UNINIT
+    {
+        * (RESET_RAM, +FIRST)
+    }
+
+    RW_RAM_DATA +0
+    {
+        * (+RW, +ZI)
+    }
+
+    ; Place variables in the section that should not be initialized during the
+    ; device startup.
+    RW_IRAM1 +0 UNINIT
+    {
+        * (.noinit)
+        * (.bss.noinit)
+    }
+
+    ; Application heap area (HEAP)
+    ARM_LIB_HEAP  +0 EMPTY SRAM_CM0P_START+SRAM_CM0P_SIZE-STACK_SIZE-AlignExpr(ImageLimit(RW_IRAM1), 8)
+    {
+    }
+
+    ; Stack region growing down
+    ARM_LIB_STACK (SRAM_CM0P_START+SRAM_CM0P_SIZE) EMPTY -STACK_SIZE
+    {
+    }
+}

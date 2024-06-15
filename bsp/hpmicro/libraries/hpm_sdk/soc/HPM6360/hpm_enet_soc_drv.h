@@ -55,6 +55,9 @@ static inline hpm_stat_t enet_disable_lpi_interrupt(ENET_Type *ptr)
 
 static inline hpm_stat_t enet_rgmii_set_clock_delay(ENET_Type *ptr, uint8_t tx_delay, uint8_t rx_delay)
 {
+    (void) ptr;
+    (void) tx_delay;
+    (void) rx_delay;
     hpm_stat_t stat = status_fail;
 
     return stat;

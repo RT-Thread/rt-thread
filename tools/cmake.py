@@ -38,7 +38,7 @@ def GenerateCFiles(env,project):
     else:
         CXXFLAGS = CFLAGS
     AFLAGS = rtconfig.AFLAGS.replace('\\', "/").replace('\"', "\\\"")
-    LFLAGS = rtconfig.LFLAGS.replace('\\', "/").replace('\"', "\\\"")
+    LFLAGS = env['LINKFLAGS'].replace('\\', "/").replace('\"', "\\\"")
 
     if "win32" in sys.platform:
         CC += ".exe"

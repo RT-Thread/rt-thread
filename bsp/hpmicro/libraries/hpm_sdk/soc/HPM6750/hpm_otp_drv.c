@@ -1,5 +1,5 @@
 /*
-* Copyright (c) 2021 HPMicro
+* Copyright (c) 2021-2024 HPMicro
 *
 * SPDX-License-Identifier: BSD-3-Clause
 *
@@ -8,12 +8,14 @@
 #include "hpm_common.h"
 #include "hpm_soc.h"
 #include "hpm_otp_drv.h"
+#include "hpm_clock_drv.h"
 
 /***********************************************************************************************************************
  * Definitions
  **********************************************************************************************************************/
 #define SHADOW_INDEX_IN_PMIC_OTP_END (15U)
 #define OTP_UNLOCK_MAGIC_NUM (0x4E45504FUL) /*!< ASCII: OPEN */
+#define OTP_LOCK_MAGIC_NUM (~OTP_UNLOCK_MAGIC_NUM)
 #define OTP_CMD_PROGRAM      (0x574F4C42UL) /*!< ASCII: BLOW */
 #define OTP_CMD_READ         (0x44414552UL) /*!< ASCII: READ */
 
@@ -45,12 +47,7 @@ uint32_t otp_read_from_ip(uint32_t addr)
 {
     uint32_t  ret_val = 0;
     if (addr < ARRAY_SIZE(HPM_OTP->SHADOW)) {
-        HPM_OTP->ADDR = addr;
-        HPM_OTP->INT_FLAG = OTP_INT_FLAG_READ_MASK; /* Write-1-Clear */
-        HPM_OTP->CMD = OTP_CMD_READ;
-        while (!IS_HPM_BITMASK_SET(HPM_OTP->INT_FLAG, OTP_INT_FLAG_READ_MASK)) {
-        }
-        ret_val = HPM_OTP->DATA;
+        ret_val = HPM_OTP->FUSE[addr];
     }
     return ret_val;
 }
@@ -65,26 +62,13 @@ hpm_stat_t otp_program(uint32_t addr, const uint32_t *src, uint32_t num_of_words
         /* Enable 2.5V LDO for FUSE programming */
         uint32_t reg_val = (HPM_PCFG->LDO2P5 & ~PCFG_LDO2P5_VOLT_MASK) | PCFG_LDO2P5_ENABLE_MASK | PCFG_LDO2P5_VOLT_SET(2500);
         HPM_PCFG->LDO2P5 = reg_val;
-        /* TODO: delay 1ms, wait for design team's update to get a steady bit (bit28 in this reg) */
+        clock_cpu_delay_ms(1);
 
+        HPM_OTP->UNLOCK = OTP_UNLOCK_MAGIC_NUM;
         for (uint32_t i = 0; i < num_of_words; i++) {
-            /*
-            HPM_OTP->UNLOCK = OTP_UNLOCK_MAGIC_NUM;
             HPM_OTP->FUSE[addr++] = *src++;
-            */
-            HPM_OTP->UNLOCK = OTP_UNLOCK_MAGIC_NUM;
-            HPM_OTP->ADDR = addr;
-            HPM_OTP->DATA = *src;
-            HPM_OTP->INT_FLAG = OTP_INT_FLAG_WRITE_MASK; /* Write-1-Clear */
-            HPM_OTP->CMD = OTP_CMD_PROGRAM;
-
-            ++src;
-            ++addr;
-            while (!IS_HPM_BITMASK_SET(HPM_OTP->INT_FLAG, OTP_INT_FLAG_WRITE_MASK)) {
-
-            }
-
         }
+        HPM_OTP->UNLOCK = OTP_LOCK_MAGIC_NUM;
         /* Disable 2.5V LDO after FUSE programming for saving power */
         HPM_PCFG->LDO2P5 &= ~PCFG_LDO2P5_ENABLE_MASK;
         status = status_success;
@@ -108,7 +92,6 @@ hpm_stat_t otp_reload(otp_region_t region)
     return status;
 }
 
-
 hpm_stat_t otp_lock_otp(uint32_t addr, otp_lock_option_t lock_option)
 {
     hpm_stat_t status = status_invalid_argument;
@@ -131,7 +114,6 @@ hpm_stat_t otp_lock_otp(uint32_t addr, otp_lock_option_t lock_option)
     return status;
 }
 
-
 hpm_stat_t otp_lock_shadow(uint32_t addr, otp_lock_option_t lock_option)
 {
     hpm_stat_t status = status_invalid_argument;
@@ -153,9 +135,6 @@ hpm_stat_t otp_lock_shadow(uint32_t addr, otp_lock_option_t lock_option)
 
     return status;
 }
-
-
-
 
 hpm_stat_t otp_set_configurable_region(uint32_t start, uint32_t num_of_words)
 {

@@ -38,6 +38,7 @@ enum {
     status_mcan_tx_evt_fifo_empty,
     status_mcan_timestamp_not_exist,
     status_mcan_ram_out_of_range,
+    status_mcan_timeout,
 };
 
 /**
@@ -78,12 +79,12 @@ enum {
 #define MCAN_INT_RXFIFO0_MSG_LOST           MCAN_IR_RF0L_MASK   /*!< RX FIFO0 Message Lost */
 #define MCAN_INT_RXFIFO0_FULL               MCAN_IR_RF0F_MASK   /*!< RX FIFO0 Full */
 #define MCAN_INT_RXFIFO0_WMK_REACHED        MCAN_IR_RF0W_MASK   /*!< RX FIFO0 Watermark Reached */
-#define MCAN_INT_RXFIFI0_NEW_MSG            MCAN_IR_RF0N_MASK   /*!< RX FIFO0 New Message */
+#define MCAN_INT_RXFIFO0_NEW_MSG            MCAN_IR_RF0N_MASK   /*!< RX FIFO0 New Message */
 
 /**
  * @brief MCAN Receive Event Flags
  */
-#define MCAN_EVENT_RECEIVE (MCAN_INT_RXFIFI0_NEW_MSG | MCAN_INT_RXFIFO1_NEW_MSG | MCAN_INT_MSG_STORE_TO_RXBUF)
+#define MCAN_EVENT_RECEIVE (MCAN_INT_RXFIFO0_NEW_MSG | MCAN_INT_RXFIFO1_NEW_MSG | MCAN_INT_MSG_STORE_TO_RXBUF)
 
 /**
  * @brief MCAN Transmit Event Flags
@@ -93,7 +94,8 @@ enum {
  * @brief MCAN Error Event Flags
  */
 #define MCAN_EVENT_ERROR (MCAN_INT_BUS_OFF_STATUS | MCAN_INT_WARNING_STATUS \
-                        | MCAN_INT_ERROR_PASSIVE | MCAN_INT_BIT_ERROR_UNCORRECTED)
+                        | MCAN_INT_ERROR_PASSIVE | MCAN_INT_BIT_ERROR_UNCORRECTED \
+                        | MCAN_INT_PROTOCOL_ERR_IN_DATA_PHASE | MCAN_INT_PROTOCOL_ERR_IN_ARB_PHASE)
 
 /**
  * @brief Maximum Transmission Retry Count
@@ -103,6 +105,30 @@ enum {
  * @brief Maximum Receive Wait Retry Count
  */
 #define MCAN_RX_RETRY_COUNT_MAX (80000000UL)
+
+/**
+ * @brief MCAN Last Error Code
+ */
+typedef enum mcan_last_error_code {
+    mcan_last_error_code_no_error = 0,      /*!< No error happened */
+    mcan_last_error_code_stuff_error,       /*!< Stuff Error */
+    mcan_last_error_code_format_error,      /*!< Format Error */
+    mcan_last_error_code_ack_error,         /*!< Acknowledge Error */
+    mcan_last_error_code_bit1_error,        /*!< Sent logic 1 but monitored value is logic 0 */
+    mcan_last_error_code_bit0_error,        /*!< Sent logic 0 but monitored value is logic 1 */
+    mcan_last_error_code_crc_error,         /*!< CRC checksum for received message is wrong */
+    mcan_last_error_code_no_change,         /*!< Error code was not changed */
+} mcan_last_err_code_t;
+
+/**
+ * @brief MCAN Communication State
+ */
+typedef enum mcan_activity_enum {
+    mcan_activity_sync = 0,                 /*!< Node is synchronizing on CAN communication */
+    mcan_activity_idle,                     /*!< Node is neither receiver nor transmitter */
+    mcan_activity_receiver,                 /*!< Node is operating as receiver */
+    mcan_activity_transmitter,              /*!< Node is operating as transmitter */
+} mcan_activity_state_t;
 
 /***********************************************************************************************************************
  * @brief Default CAN RAM definitions
@@ -385,7 +411,7 @@ typedef union {
 /**
  * @brief MCAN RAM Flexible Configuration
  *
- * @Note This Configration provides the full MCAN RAM configuration, this configuration is recommended only for
+ * @note This Configuration provides the full MCAN RAM configuration, this configuration is recommended only for
  *       experienced developers who is skilled at the MCAN IP
  */
 typedef struct mcan_ram_flexible_config_struct {
@@ -413,7 +439,7 @@ typedef struct mcan_ram_flexible_config_struct {
 /**
  * @brief MCAN RAM configuration
  *
- * @Note: This Configuration focuses on the minimum required information for MCAN RAM configuration
+ * @note: This Configuration focuses on the minimum required information for MCAN RAM configuration
  *        The Start address of each BUF/FIFO will be automatically calculated by the MCAN Driver API
  *        This RAM configuration is recommended for the most developers
  */
@@ -513,7 +539,7 @@ typedef struct mcan_std_id_filter_elem_struct {
         };
         /* This definition takes effect if the filter configuration is "store into RX Buffer or as debug message"
          *
-         *  In this definition, only the extact ID matching mode is activated
+         *  In this definition, only the exact ID matching mode is activated
          */
         struct {
             uint32_t match_id;          /*!< Matching ID */
@@ -536,7 +562,7 @@ typedef struct mcan_filter_elem_list_struct {
 /**
  * @brief MCAN Configuration for all filters
  *
- * @Note The MCAN RAM related settings are excluded
+ * @note The MCAN RAM related settings are excluded
  */
 typedef struct mcan_all_filters_config_struct {
     mcan_global_filter_config_t global_filter_config;   /*!< Global Filter configuration */
@@ -578,7 +604,8 @@ typedef struct mcan_tsu_config_struct {
     uint16_t prescaler;             /*!< Prescaler for MCAN clock, Clock source: AHB clock */
     bool capture_on_sof;            /*!< Capture On SOF, true - Capture on SOF, false - Capture on EOF */
     bool use_ext_timebase;          /*!< Use External Timebase */
-    uint16_t ext_timebase_src;      /*!< External Timebase source, see the hpm_mcan_soc.h for more details */
+    uint8_t ext_timebase_src;       /*!< External Timebase source, see the hpm_mcan_soc.h for more details */
+    uint8_t tbsel_option;           /*!< Timebase selection option, see the hpm_mcan_soc.h for more details */
     bool enable_tsu;                /*!< Enable Timestamp Unit */
     bool enable_64bit_timestamp;    /*!< Enable 64bit Timestamp */
 } mcan_tsu_config_t;
@@ -601,11 +628,30 @@ typedef struct mcan_internal_timestamp_config_struct {
 } mcan_internal_timestamp_config_t;
 
 /**
+ * @brief MCAN Timeout Selection Options
+ */
+typedef enum mcan_timeout_sel_enum {
+    mcan_timeout_continuous_operation     = 0,  /*!< Continuously count down timeout after writing to TOCV register */
+    mcan_timeout_triggered_by_tx_evt_fifo = 1,  /*!< Count down if the TX EVT FIFO is not empty */
+    mcan_timeout_triggered_by_rx_fifo0    = 2,  /*!< Count down if the RX FIFO0 is not empty */
+    mcan_timeout_triggered_by_rx_fifo1    = 3,  /*!< Count down if the RX FIFO1 is not empty */
+} mcan_timeout_sel_t;
+
+/**
+ * @brief MCAN Timeout configuration structure
+ */
+typedef struct mcan_timeout_config_struct {
+    bool enable_timeout_counter;        /*!< Enable Timeout Counter */
+    mcan_timeout_sel_t timeout_sel;     /*!< Timeout source selection */
+    uint16_t timeout_period;            /*!< Timeout period */
+} mcan_timeout_config_t;
+
+/**
  * @brief MCAN Configuration Structure
  */
 typedef struct mcan_config_struct {
     union {
-        /* This struct takes effect if use_lowlevl_timing_setting = false */
+        /* This struct takes effect if "use_lowlevel_timing_setting = false" */
         struct {
             uint32_t baudrate;                      /*!< CAN 2.0 baudrate/CAN-FD Nominal Baudrate, in terms of bps */
             uint32_t baudrate_fd;                   /*!< CANFD data baudrate, in terms of bps */
@@ -614,7 +660,7 @@ typedef struct mcan_config_struct {
             uint16_t canfd_samplepoint_min;         /*!< Value = Minimum CANFD sample point * 10 */
             uint16_t canfd_samplepoint_max;         /*!< Value = Maximum CANFD sample point * 10 */
         };
-        /* This struct takes effect if use_lowlevl_timing_setting = true */
+        /* This struct takes effect if "use_lowlevel_timing_setting = true" */
         struct {
             mcan_bit_timing_param_t can_timing;     /*!< CAN2.0/CANFD nominal timing setting */
             mcan_bit_timing_param_t canfd_timing;   /*!< CANFD data timing setting */
@@ -630,10 +676,19 @@ typedef struct mcan_config_struct {
     bool use_timestamping_unit;                     /*!< Use external Timestamp Unit */
     bool enable_canfd;                              /*!< Enable CANFD mode */
     bool enable_tdc;                                /*!< Enable transmitter delay compensation */
+    bool enable_restricted_operation_mode;          /*!< Enable Restricted Operation Mode: Receive only */
+    bool disable_auto_retransmission;               /*!< Disable auto retransmission */
+    uint8_t padding[2];
     mcan_internal_timestamp_config_t timestamp_cfg; /*!< Internal Timestamp Configuration */
     mcan_tsu_config_t tsu_config;                   /*!< TSU configuration */
     mcan_ram_config_t ram_config;                   /*!< MCAN RAM configuration */
     mcan_all_filters_config_t all_filters_config;   /*!< All Filter configuration */
+
+    mcan_timeout_config_t timeout_cfg;              /*!< Timeout configuration */
+
+    uint32_t interrupt_mask;                        /*!< Interrupt Enable mask */
+    uint32_t txbuf_trans_interrupt_mask;            /*!< Tx Buffer Transmission Interrupt Enable mask */
+    uint32_t txbuf_cancel_finish_interrupt_mask;    /*!< TX Buffer Cancellation Finished Interrupt Enable Mask */
 } mcan_config_t;
 
 /**
@@ -662,6 +717,22 @@ typedef struct mcan_error_count_struct {
     bool receive_error_passive;         /*!< The Receive Error Counter has reached the error passive level */
     uint8_t can_error_logging_count;    /*!< CAN Error Logging count */
 } mcan_error_count_t;
+
+/**
+ * @brief MCAN Protocol Status
+ */
+typedef struct mcan_protocol_status {
+    uint8_t tdc_val;                            /*!< Transmitter Delay Compensation Value */
+    mcan_activity_state_t activity;             /*!< Current communication state */
+    mcan_last_err_code_t last_error_code;       /*!< Last Error code */
+    bool protocol_exception_evt_occurred;       /*!< Protocol Exception Event occurred */
+    bool canfd_msg_received;                    /*!< CANFD message was received */
+    bool brs_flag_set_in_last_rcv_canfd_msg;    /*!< Bitrate Switch bit is set in last received CANFD message */
+    bool esi_flag_set_in_last_rcv_canfd_msg;    /*!< Error State Indicator bit is set in last received CANFD message */
+    bool in_bus_off_state;                      /*!< Node is in bus-off state */
+    bool in_warning_state;                      /*!< Node is in warning state */
+    bool in_error_passive_state;                /*!< Node is in error passive state */
+} mcan_protocol_status_t;
 
 /**
  * @brief MCAN Transmitter Delay Compensation Configuration
@@ -839,6 +910,38 @@ static inline void mcan_disable_auto_retransmission(MCAN_Type *ptr)
 }
 
 /**
+ * @brief Enable Bus monitoring Mode
+ * @param [in] ptr MCAN base
+ */
+static inline void mcan_enable_bus_monitoring_mode(MCAN_Type *ptr)
+{
+    ptr->CCCR |= MCAN_CCCR_MON_MASK;
+}
+
+/**
+ * @brief Stop MCAN clock
+ * @param [in] ptr MCAN base
+ */
+static inline void mcan_stop_clock(MCAN_Type *ptr)
+{
+    ptr->CCCR |= MCAN_CCCR_CSR_MASK;
+}
+
+/**
+ * @brief Enable MCAN clock
+ * @param [in] ptr MCAN base
+ */
+static inline void mcan_enable_clock(MCAN_Type *ptr)
+{
+    ptr->CCCR &= ~MCAN_CCCR_CSR_MASK;
+}
+
+static inline bool mcan_is_clock_enabled(MCAN_Type *ptr)
+{
+    return ((ptr->CCCR & MCAN_CCCR_CSR_MASK) == 0UL);
+}
+
+/**
  * @brief Disable Bus monitoring Mode
  * @param [in] ptr MCAN base
  */
@@ -848,39 +951,21 @@ static inline void mcan_disable_bus_monitoring_mode(MCAN_Type *ptr)
 }
 
 /**
- * @brief Enable Clock Stop Request
+ * @brief Check whether CAN clock is stopped or not
  * @param [in] ptr MCAN base
  */
-static inline void mcan_enable_clock_stop_request(MCAN_Type *ptr)
+static inline bool mcan_is_clock_stopped(MCAN_Type *ptr)
 {
-    ptr->CCCR |= MCAN_CCCR_CSR_MASK;
+    return ((ptr->CCCR & MCAN_CCCR_CSA_MASK) != 0U);
 }
 
 /**
- * @brief Disable Clock Stop Request
+ * @brief Enable Restricted Operation Mode
  * @param [in] ptr MCAN base
  */
-static inline void mcan_disable_clock_stop_request(MCAN_Type *ptr)
+static inline void mcan_enable_restricted_operation_mode(MCAN_Type *ptr)
 {
-    ptr->CCCR &= ~MCAN_CCCR_CSR_MASK;
-}
-
-/**
- * @brief Enable Clock Stop Acknowledge
- * @param [in] ptr MCAN base
- */
-static inline void mcan_enable_clock_stop_acknowledge(MCAN_Type *ptr)
-{
-    ptr->CCCR |= MCAN_CCCR_CSA_MASK;
-}
-
-/**
- * @brief Disable Clock Stop Acknowledge
- * @param [in] ptr MCAN base
- */
-static inline void mcan_disable_clock_stop_acknowledge(MCAN_Type *ptr)
-{
-    ptr->CCCR &= ~MCAN_CCCR_CSA_MASK;
+    ptr->CCCR |= MCAN_CCCR_ASM_MASK;
 }
 
 /**
@@ -890,6 +975,24 @@ static inline void mcan_disable_clock_stop_acknowledge(MCAN_Type *ptr)
 static inline void mcan_disable_restricted_operation_mode(MCAN_Type *ptr)
 {
     ptr->CCCR &= ~MCAN_CCCR_ASM_MASK;
+}
+
+/**
+ * @brief Enable Write Access to Protected Configuration Registers
+ * @param [in] ptr MCAN base
+ */
+static inline void mcan_enable_write_to_prot_config_registers(MCAN_Type *ptr)
+{
+    ptr->CCCR |= MCAN_CCCR_CCE_MASK;
+}
+
+/**
+ * @brief Disalbe Write Access to Protected Configuration Registers
+ * @param [in] ptr MCAN base
+ */
+static inline void mcan_disable_write_to_prot_config_registers(MCAN_Type *ptr)
+{
+    ptr->CCCR &= ~MCAN_CCCR_CCE_MASK;
 }
 
 /**
@@ -903,6 +1006,24 @@ static inline uint16_t mcan_get_timestamp_counter_value(MCAN_Type *ptr)
 }
 
 /**
+ * @brief Switch MCAN to Initialization mode
+ * @param [in] ptr MCAN base
+ */
+static inline void mcan_enter_init_mode(MCAN_Type *ptr)
+{
+    ptr->CCCR |= MCAN_CCCR_INIT_MASK;
+}
+
+/**
+ * @brief Switch MCAN to Normal mode
+ * @param [in] ptr MCAN base
+ */
+static inline void mcan_enter_normal_mode(MCAN_Type *ptr)
+{
+    ptr->CCCR &= ~MCAN_CCCR_INIT_MASK;
+}
+
+/**
  * @brief Get Timeout value
  * @param [in] ptr MCAN base
  * @return timeout value
@@ -910,6 +1031,16 @@ static inline uint16_t mcan_get_timestamp_counter_value(MCAN_Type *ptr)
 static inline uint16_t mcan_get_timeout_counter_value(MCAN_Type *ptr)
 {
     return ptr->TOCV;
+}
+
+/**
+ * @brief Reset Timeout counter value
+ *
+ * @param [in] ptr MCAN base
+ */
+static inline void mcan_reset_timeout_counter_value(MCAN_Type *ptr)
+{
+    *((volatile uint32_t *) &ptr->TOCV) = 0;
 }
 
 /**
@@ -989,6 +1120,7 @@ static inline bool mcan_is_in_busoff_state(MCAN_Type *ptr)
 /**
  * @brief Get the Last Data Phase Error
  * @param [in] ptr MCAN base
+ * @deprecated This API will be removed in later SDK release
  * @return  The last Data Phase Error
  */
 static inline uint8_t mcan_get_data_phase_last_error_code(MCAN_Type *ptr)
@@ -1080,6 +1212,7 @@ static inline void mcan_enable_interrupts(MCAN_Type *ptr, uint32_t mask)
 
 /**
  * @brief Enable TXBUF Interrupt
+ * @deprecated This API is deprecated, will be removed in later SDK release
  * @param [in] ptr MCAN base
  * @param [in] mask Interrupt mask
  */
@@ -1090,6 +1223,7 @@ static inline void mcan_enable_txbuf_interrupt(MCAN_Type *ptr, uint32_t mask)
 
 /**
  * @brief Disable TXBUF Interrupt
+ * @deprecated This API is deprecated, will be removed in later SDK release
  * @param [in] ptr MCAN base
  * @param [in] mask Interrupt mask
  */
@@ -1262,6 +1396,14 @@ static inline bool mcan_is_interrupt_flag_set(MCAN_Type *ptr, uint32_t mask)
     return ((ptr->IR & mask) != 0U);
 }
 
+/**
+ * @brief Check whether the TSU timestamp is available
+ *
+ * @param [in] ptr MCAN base
+ * @param [in] index Timestamp pointer
+ * @retval true TSU Timestamp is available
+ * @retval false TSU timestamp is unavailable
+ */
 static inline bool mcan_is_tsu_timestamp_available(MCAN_Type *ptr, uint32_t index)
 {
     bool is_available = false;
@@ -1308,6 +1450,12 @@ void mcan_get_default_config(MCAN_Type *ptr, mcan_config_t *config);
  */
 uint8_t mcan_get_message_size_from_dlc(uint8_t dlc);
 
+/**
+ * @brief Get the Data field size from data field size option
+ *
+ * @param [in] data_field_size_option Data size option
+ * @return data field size in bytes
+ */
 uint8_t mcan_get_data_field_size(uint8_t data_field_size_option);
 
 /**
@@ -1320,16 +1468,21 @@ uint8_t mcan_get_data_field_size(uint8_t data_field_size_option);
  *      - Dedicated TXBUF element count: 16
  *      - TXFIFO/QQueue element count: 16
  *      - Data Field Size: 8
+ *      .
  *   - RXFIFO0 Elements Info:
  *      - Element Count :32
  *      - Data Field Size: 8
+ *      .
  *   - RXFIFO1 Elements Info:
  *      - Element Count : 32
  *      - Data Field Size: 8
+ *      .
  *    - RXBUF Element Info:
  *      - Element Count: 16
  *      - Data Field Size : 8
+ *      .
  *    - TX Event FIFO Element Count: 32
+ *  .
  * If the device is configured as CANFD node, the default CAN RAM settings are as below:
  *  - Standard Identifier Filter Elements: 16
  *  - Extended Identifier Filter Elements: 16
@@ -1338,17 +1491,21 @@ uint8_t mcan_get_data_field_size(uint8_t data_field_size_option);
  *      - Dedicated TXBUF element count: 4
  *      - TXFIFO/QQueue element count: 4
  *      - Data Field Size: 64
+ *      .
  *   - RXFIFO0 Elements Info:
  *      - Element Count : 8
  *      - Data Field Size: 64
+ *      .
  *   - RXFIFO1 Elements Info:
  *      - Element Count : 8
  *      - Data Field Size: 64
+ *      .
  *    - RXBUF Element Info:
  *      - Element Count: 4
  *      - Data Field Size : 64
+ *      .
  *    - TX Event FIFO Element Count: 8
- *
+ *    .
  * @param [in] ptr MCAN base
  * @param [out] ram_config CAN RAM Configuration
  * @param [in] enable_canfd CANFD enable flag
@@ -1365,16 +1522,21 @@ void mcan_get_default_ram_flexible_config(MCAN_Type *ptr, mcan_ram_flexible_conf
  *      - Dedicated TXBUF element count: 16
  *      - TXFIFO/QQueue element count: 16
  *      - Data Field Size: 8
+ *      .
  *   - RXFIFO0 Elements Info:
  *      - Element Count :32
  *      - Data Field Size: 8
+ *      .
  *   - RXFIFO1 Elements Info:
  *      - Element Count : 32
  *      - Data Field Size: 8
+ *      .
  *    - RXBUF Element Info:
  *      - Element Count: 16
  *      - Data Field Size : 8
+ *      .
  *    - TX Event FIFO Element Count: 32
+ *    .
  * If the device is configured as CANFD node, the default CAN RAM settings are as below:
  *  - Standard Identifier Filter Elements: 16
  *  - Extended Identifier Filter Elements: 16
@@ -1383,19 +1545,23 @@ void mcan_get_default_ram_flexible_config(MCAN_Type *ptr, mcan_ram_flexible_conf
  *      - Dedicated TXBUF element count: 4
  *      - TXFIFO/QQueue element count: 4
  *      - Data Field Size: 64
+ *      .
  *   - RXFIFO0 Elements Info:
  *      - Element Count : 8
  *      - Data Field Size: 64
+ *      .
  *   - RXFIFO1 Elements Info:
  *      - Element Count : 8
  *      - Data Field Size: 64
+ *      .
  *    - RXBUF Element Info:
  *      - Element Count: 4
  *      - Data Field Size : 64
+ *      .
  *    - TX Event FIFO Element Count: 8
- *
+ *    .
  * @param [in] ptr MCAN base
- * @param [out] ram_config CAN RAM Configuration
+ * @param [out] simple_config Simple CAN RAM Configuration
  * @param [in] enable_canfd CANFD enable flag
  */
 void mcan_get_default_ram_config(MCAN_Type *ptr, mcan_ram_config_t *simple_config, bool enable_canfd);
@@ -1409,6 +1575,13 @@ void mcan_get_default_ram_config(MCAN_Type *ptr, mcan_ram_config_t *simple_confi
  * @retval status_invalid_argument if any parameters are invalid
  */
 hpm_stat_t mcan_init(MCAN_Type *ptr, mcan_config_t *config, uint32_t src_clk_freq);
+
+/**
+ * @brief De-Initialize CAN controller
+ *
+ * @param [in] ptr MCAN base
+ */
+void mcan_deinit(MCAN_Type *ptr);
 
 /**
  * @brief Configure MCAN RAM will Full RAM configuration
@@ -1513,8 +1686,19 @@ hpm_stat_t mcan_read_tx_evt_fifo(MCAN_Type *ptr, mcan_tx_event_fifo_elem_t *tx_e
 hpm_stat_t mcan_transmit_blocking(MCAN_Type *ptr, mcan_tx_frame_t *tx_frame);
 
 /**
- * @brief Transmit CAN message via TX in blocking way
+ * @brief Transmit CAN message via TX FIFO in non-blocking way
  * @param [in] ptr MCAN base
+ * @param [in] tx_frame CAN Transmit Message buffer
+ * @param [out] fifo_index The index of the element in FIFO assigned to the tx_frame
+ *
+ * @return status_success if no errors reported
+ */
+hpm_stat_t mcan_transmit_via_txfifo_nonblocking(MCAN_Type *ptr, mcan_tx_frame_t *tx_frame, uint32_t *fifo_index);
+
+/**
+ * @brief Transmit CAN message via TX in non-blocking way
+ * @param [in] ptr MCAN base
+ * @param [in] index Index of TX Buffer
  * @param [in] tx_frame CAN Transmit Message buffer
  * @return status_success if no errors reported
  */
@@ -1563,6 +1747,26 @@ hpm_stat_t mcan_get_timestamp_from_tx_event(MCAN_Type *ptr,
 hpm_stat_t mcan_get_timestamp_from_received_message(MCAN_Type *ptr,
                                                     const mcan_rx_message_t *rx_msg,
                                                     mcan_timestamp_value_t *timestamp);
+
+/**
+ * @brief Parse the Protocol Status register value
+ * @param [in] psr Protocol Status Register Value
+ * @param [out] protocol_status Translated Protocol Status
+ *
+ * @retval status_invalid_argument if any parameters are invalid
+ * @retval status_success if no errors happened
+ */
+hpm_stat_t mcan_parse_protocol_status(uint32_t psr, mcan_protocol_status_t *protocol_status);
+
+/**
+ * @brief Get MCAN Protocol Status
+ * @param [in] ptr MCAN base
+ * @param [out] protocol_status Translated Protocol status
+ *
+ * @retval status_invalid_argument if any parameters are invalid
+ * @retval status_success if no errors happened
+ */
+hpm_stat_t mcan_get_protocol_status(MCAN_Type *ptr, mcan_protocol_status_t *protocol_status);
 
 /**
  * @}

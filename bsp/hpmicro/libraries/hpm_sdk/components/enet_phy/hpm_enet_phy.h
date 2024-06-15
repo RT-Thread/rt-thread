@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 HPMicro
+ * Copyright (c) 2021-2024 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -7,6 +7,11 @@
 #ifndef HPM_ENET_PHY_H
 #define HPM_ENET_PHY_H
 #include <stdint.h>
+
+typedef enum {
+  enet_phy_link_down = 0,
+  enet_phy_link_up
+} enet_phy_link_status_t;
 
 typedef enum {
     enet_phy_port_speed_10mbps = 0,

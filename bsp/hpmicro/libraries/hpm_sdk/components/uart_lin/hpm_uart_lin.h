@@ -143,6 +143,16 @@ void hpm_uart_lin_slave_send_data(uart_lin_slave_config_t *config);
  */
 uart_lin_stat_t hpm_uart_lin_slave_receive_data(uart_lin_slave_config_t *config);
 
+/**
+ * @brief uart_lin send break signal
+ *
+ * @note The low-level length of the wakeup signal is defined as HPM_UART_LIN_WAKEUP_LENGTH
+ *
+ * @param [in] ptr UART base address
+ * @param [in] pin_ctrl uart_lin_master_pin_ctrl_t
+ */
+void hpm_uart_lin_send_wakeup(UART_Type *ptr, uart_lin_master_pin_ctrl_t *pin_ctrl);
+
 #ifdef __cplusplus
 }
 #endif

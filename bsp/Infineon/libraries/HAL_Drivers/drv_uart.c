@@ -226,7 +226,11 @@ static rt_err_t ifx_control(struct rt_serial_device *serial, int cmd, void *arg)
         Cy_SysInt_Init(uart->config->UART_SCB_IRQ_cfg, uart->config->userIsr);
 
         /* Enable the interrupt */
+#if defined(SOC_SERIES_IFX_XMC)
+        NVIC_EnableIRQ(UART_NvicMuxN_IRQn);
+#else
         NVIC_EnableIRQ(uart->config->intrSrc);
+#endif
         break;
     }
 

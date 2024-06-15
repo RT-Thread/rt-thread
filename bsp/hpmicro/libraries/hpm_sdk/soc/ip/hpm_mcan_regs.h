@@ -63,7 +63,7 @@ typedef struct {
     __R  uint32_t TXEFS;                       /* 0xF4: tx event fifo status */
     __RW uint32_t TXEFA;                       /* 0xF8: tx event fifo acknowledge */
     __R  uint8_t  RESERVED7[260];              /* 0xFC - 0x1FF: Reserved */
-    __R  uint32_t TS_SEL[16];                  /* 0x200 - 0x23C: timestamp 0-15 */
+    __R  uint32_t TS_SEL[16];                  /* 0x200 - 0x23C: timestamp 0 */
     __R  uint32_t CREL;                        /* 0x240: core release register */
     __RW uint32_t TSCFG;                       /* 0x244: timestamp configuration */
     __R  uint32_t TSS1;                        /* 0x248: timestamp status1 */
@@ -106,7 +106,8 @@ typedef struct {
  * DBRP (RW)
  *
  * Data Bit Rate Prescaler
- * The value by which the oscillator frequency is divided for generating the bit time quanta. The bit time is built up from a multiple of this quanta. Valid values for the Bit Rate Prescaler are 0 to 31. When TDC = ‘1’, the range is limited to 0,1. The actual interpretation by the hardware of this value is such that one more than the value programmed here is used.
+ * The value by which the oscillator frequency is divided for generating the bit time quanta. The bit time is built up from a multiple of this quanta. Valid values for the Bit Rate Prescaler are 0 to 31.
+ * When TDC = ‘1’, the range is limited to 0,1. The actual interpretation by the hardware of this value is such that one more than the value programmed here is used.
  */
 #define MCAN_DBTP_DBRP_MASK (0x1F0000UL)
 #define MCAN_DBTP_DBRP_SHIFT (16U)
@@ -531,7 +532,8 @@ typedef struct {
  * TSC (RC)
  *
  * Timestamp Counter
- * The internal/external Timestamp Counter value is captured on start of frame (both Rx and Tx).When TSCC.TSS = “01”, the Timestamp Counter is incremented in multiples of CAN bit times [1…16] depending on the configuration of TSCC.TCP. A wrap around sets interrupt flag IR.TSW. Write access resets the counter to zero. When TSCC.TSS = “10”, TSC reflects the external Timestamp Counter value. A write access has no impact.
+ * The internal/external Timestamp Counter value is captured on start of frame (both Rx and Tx).When TSCC.TSS = “01”, the Timestamp Counter is incremented in multiples of CAN bit times [1…16] depending on the configuration of TSCC.TCP.
+ * A wrap around sets interrupt flag IR.TSW. Write access resets the counter to zero. When TSCC.TSS = “10”, TSC reflects the external Timestamp Counter value. A write access has no impact.
  */
 #define MCAN_TSCV_TSC_MASK (0xFFFFU)
 #define MCAN_TSCV_TSC_SHIFT (0U)
@@ -553,7 +555,8 @@ typedef struct {
  * TOS (RW)
  *
  * Timeout Select
- * When operating in Continuous mode, a write to TOCV presets the counter to the value configured by TOCC.TOP and continues down-counting. When the Timeout Counter is controlled by one of the FIFOs, an empty FIFO presets the counter to the value configured by TOCC.TOP. Down-counting is started when the first FIFO element is stored.
+ * When operating in Continuous mode, a write to TOCV presets the counter to the value configured by TOCC.TOP and continues down-counting.
+ * When the Timeout Counter is controlled by one of the FIFOs, an empty FIFO presets the counter to the value configured by TOCC.TOP. Down-counting is started when the first FIFO element is stored.
  * 00= Continuous operation
  * 01= Timeout controlled by Tx Event FIFO
  * 10= Timeout controlled by Rx FIFO 0
@@ -581,7 +584,8 @@ typedef struct {
  * TOC (RC)
  *
  * Timeout Counter
- * The Timeout Counter is decremented in multiples of CAN bit times [1…16] depending on the configuration of TSCC.TCP. When decremented to zero, interrupt flag IR.TOO is set and the Timeout Counter is stopped. Start and reset/restart conditions are configured via TOCC.TOS.
+ * The Timeout Counter is decremented in multiples of CAN bit times [1…16] depending on the configuration of TSCC.TCP.
+ * When decremented to zero, interrupt flag IR.TOO is set and the Timeout Counter is stopped. Start and reset/restart conditions are configured via TOCC.TOS.
  * Note: Byte access: when TOCC.TOS = “00，writing one of the register bytes 3/2/1/0 will preset the Timeout Counter.
  */
 #define MCAN_TOCV_TOC_MASK (0xFFFFU)
@@ -593,7 +597,8 @@ typedef struct {
  * CEL (X)
  *
  * CAN Error Logging
- * The counter is incremented each time when a CAN protocol error causes the 8-bit Transmit Error Counter TEC or the 7-bit Receive Error Counter REC to be incremented. The counter is also incremented when the Bus_Off limit is reached. It is not incremented when only RP is set without changing REC. The increment of CEL follows after the increment of REC or TEC.
+ * The counter is incremented each time when a CAN protocol error causes the 8-bit Transmit Error Counter TEC or the 7-bit Receive Error Counter REC to be incremented.
+ * The counter is also incremented when the Bus_Off limit is reached. It is not incremented when only RP is set without changing REC. The increment of CEL follows after the increment of REC or TEC.
  * The counter is reset by read access to CEL. The counter stops at 0xFF; the next increment of TEC or REC sets interrupt flag IR.ELO.
  * Note: Byte access: Reading byte 2 will reset CEL to zero, reading bytes 3/1/0 has no impact.
  */
@@ -638,7 +643,8 @@ typedef struct {
  * TDCV (R)
  *
  * Transmitter Delay Compensation Value
- * Position of the secondary sample point, defined by the sum of the measured delay from m_can_tx to m_can_rx and TDCR.TDCO. The SSP position is, in the data phase, the number of mtq between the start of the transmitted bit and the secondary sample point. Valid values are 0 to 127 mtq.
+ * Position of the secondary sample point, defined by the sum of the measured delay from m_can_tx to m_can_rx and TDCR.TDCO.
+ * The SSP position is, in the data phase, the number of mtq between the start of the transmitted bit and the secondary sample point. Valid values are 0 to 127 mtq.
  */
 #define MCAN_PSR_TDCV_MASK (0x7F0000UL)
 #define MCAN_PSR_TDCV_SHIFT (16U)
@@ -767,12 +773,16 @@ typedef struct {
  * 4= Bit1Error: During the transmission of a message (with the exception of the arbitration field),
  * the device wanted to send a recessive level (bit of logical value ‘1’), but the monitored bus
  * value was dominant.
- * 5= Bit0Error: During the transmission of a message (or acknowledge bit, or active error flag, or overload flag), the device wanted to send a dominant level (data or identifier bit logical value‘0’), but the monitored bus value was recessive. During Bus_Off recovery this status is set each time a sequence of 11 recessive bits has been monitored. This enables the CPU to monitor the proceeding of the Bus_Off recovery sequence (indicating the bus is not stuck at
+ * 5= Bit0Error: During the transmission of a message (or acknowledge bit, or active error flag, or overload flag), the device wanted to send a dominant level (data or identifier bit logical value‘0’), but the monitored bus value was recessive.
+ *  During Bus_Off recovery this status is set each time a sequence of 11 recessive bits has been monitored. This enables the CPU to monitor the proceeding of the Bus_Off recovery sequence (indicating the bus is not stuck at
  * dominant or continuously disturbed).
  * 6= CRCError: The CRC check sum of a received message was incorrect. The CRC of an incoming message does not match with the CRC calculated from the received data.
  * 7= NoChange: Any read access to the Protocol Status Register re-initializes the LEC to ‘7’. When the LEC shows the value ‘7’, no CAN bus event was detected since the last CPU read access to the Protocol Status Register.
  * Note: When a frame in CAN FD format has reached the data phase with BRS flag set, the next CAN event (error or valid frame) will be shown in DLEC instead of LEC. An error in a fixed stuff bit of a CAN FD CRC sequence will be shown as a Form Error, not Stuff Error.
- * Note: The Bus_Off recovery sequence (see ISO 11898-1:2015) cannot be shortened by setting or resetting CCCR.INIT. If the device goes Bus_Off, it will set CCCR.INIT of its own accord,stopping all bus activities. Once CCCR.INIT has been cleared by the CPU, the device will then wait for 129 occurrences of Bus Idle (129 * 11 consecutive recessive bits) before resuming normal operation. At the end of the Bus_Off recovery sequence, the Error Management Counters will be reset. During the waiting time after the resetting of CCCR.INIT, each time a sequence of 11 recessive bits has been monitored, a Bit0Error code is written to PSR.LEC, enabling the CPU to readily check up whether the CAN bus is stuck at dominant or continuously disturbed and to monitor the Bus_Off recovery sequence. ECR.REC is used to count these sequences.
+ * Note: The Bus_Off recovery sequence (see ISO 11898-1:2015) cannot be shortened by setting or resetting CCCR.INIT. If the device goes Bus_Off, it will set CCCR.INIT of its own accord,stopping all bus activities.
+ *  Once CCCR.INIT has been cleared by the CPU, the device will then wait for 129 occurrences of Bus Idle (129 * 11 consecutive recessive bits) before resuming normal operation.
+ * At the end of the Bus_Off recovery sequence, the Error Management Counters will be reset. During the waiting time after the resetting of CCCR.INIT, each time a sequence of 11 recessive bits has been monitored, a Bit0Error code is written to PSR.LEC,
+ * enabling the CPU to readily check up whether the CAN bus is stuck at dominant or continuously disturbed and to monitor the Bus_Off recovery sequence. ECR.REC is used to count these sequences.
  * Note: Byte access: Reading byte 0 will set LEC to “111”, reading bytes 3/2/1 has no impact.
  */
 #define MCAN_PSR_LEC_MASK (0x7U)
@@ -795,7 +805,8 @@ typedef struct {
  * TDCF (RW)
  *
  * Transmitter Delay Compensation Filter Window Length
- * Defines the minimum value for the SSP position, dominant edges on m_can_rx that would result in an earlier SSP position are ignored for transmitter delay measurement. The feature is enabled when TDCF is configured to a value greater than TDCO. Valid values are 0 to 127 mtq.
+ * Defines the minimum value for the SSP position, dominant edges on m_can_rx that would result in an earlier SSP position are ignored for transmitter delay measurement.
+ * The feature is enabled when TDCF is configured to a value greater than TDCO. Valid values are 0 to 127 mtq.
  */
 #define MCAN_TDCR_TDCF_MASK (0x7FU)
 #define MCAN_TDCR_TDCF_SHIFT (0U)
@@ -903,7 +914,8 @@ typedef struct {
  * BEU (RW)
  *
  * Bit Error Uncorrected
- * Message RAM bit error detected, uncorrected. Controlled by input signal m_can_aeim_berr[1] generated by an optional external parity / ECC logic attached to the Message RAM. An uncorrected Message RAM bit error sets CCCR.INIT to ‘1’. This is done to avoid transmission of corrupted data.
+ * Message RAM bit error detected, uncorrected. Controlled by input signal m_can_aeim_berr[1] generated by an optional external parity / ECC logic attached to the Message RAM.
+ * An uncorrected Message RAM bit error sets CCCR.INIT to ‘1’. This is done to avoid transmission of corrupted data.
  * 0= No bit error detected when reading from Message RAM
  * 1= Bit error detected, uncorrected (e.g. parity logic)
  */
@@ -1910,7 +1922,8 @@ typedef struct {
  * EIDM (RW)
  *
  * Extended ID Mask
- * For acceptance filtering of extended frames the Extended ID AND Mask is ANDed with the Message ID of a received frame. Intended for masking of 29-bit IDs in SAE J1939. With the reset value of all bits set to one the mask is not active.
+ * For acceptance filtering of extended frames the Extended ID AND Mask is ANDed with the Message ID of a received frame.
+ *  Intended for masking of 29-bit IDs in SAE J1939. With the reset value of all bits set to one the mask is not active.
  */
 #define MCAN_XIDAM_EIDM_MASK (0x1FFFFFFFUL)
 #define MCAN_XIDAM_EIDM_SHIFT (0U)
@@ -1968,7 +1981,8 @@ typedef struct {
  * ND1 (RW)
  *
  * New Data[31:0]
- * The register holds the New Data flags of Rx Buffers 0 to 31. The flags are set when the respective Rx Buffer has been updated from a received frame. The flags remain set until the Host clears them.A flag is cleared by writing a ’1’ to the corresponding bit position. Writing a ’0’ has no effect. A hard reset will clear the register.
+ * The register holds the New Data flags of Rx Buffers 0 to 31. The flags are set when the respective Rx Buffer has been updated from a received frame.
+ * The flags remain set until the Host clears them.A flag is cleared by writing a ’1’ to the corresponding bit position. Writing a ’0’ has no effect. A hard reset will clear the register.
  * 0= Rx Buffer not updated
  * 1= Rx Buffer updated from new message
  */
@@ -1982,7 +1996,8 @@ typedef struct {
  * ND2 (RW)
  *
  * New Data[63:32]
- * The register holds the New Data flags of Rx Buffers 32 to 63. The flags are set when the respective Rx Buffer has been updated from a received frame. The flags remain set until the Host clears them. A flag is cleared by writing a ’1’ to the corresponding bit position. Writing a ’0’ has no effect. A hard reset will clear the register.
+ * The register holds the New Data flags of Rx Buffers 32 to 63. The flags are set when the respective Rx Buffer has been updated from a received frame.
+ * The flags remain set until the Host clears them. A flag is cleared by writing a ’1’ to the corresponding bit position. Writing a ’0’ has no effect. A hard reset will clear the register.
  * 0= Rx Buffer not updated
  * 1= Rx Buffer updated from new message
  */
@@ -2103,7 +2118,8 @@ typedef struct {
  * F0AI (RW)
  *
  * Rx FIFO 0 Acknowledge Index
- * After the Host has read a message or a sequence of messages from Rx FIFO 0 it has to write the buffer index of the last element read from Rx FIFO 0 to F0AI. This will set the Rx FIFO 0 Get Index RXF0S.F0GI to F0AI + 1 and update the FIFO 0 Fill Level RXF0S.F0FL.
+ * After the Host has read a message or a sequence of messages from Rx FIFO 0 it has to write the buffer index of the last element read from Rx FIFO 0 to F0AI.
+ * This will set the Rx FIFO 0 Get Index RXF0S.F0GI to F0AI + 1 and update the FIFO 0 Fill Level RXF0S.F0FL.
  */
 #define MCAN_RXF0A_F0AI_MASK (0x3FU)
 #define MCAN_RXF0A_F0AI_SHIFT (0U)
@@ -2247,7 +2263,8 @@ typedef struct {
  * F1AI (RW)
  *
  * Rx FIFO 1 Acknowledge Index
- * After the Host has read a message or a sequence of messages from Rx FIFO 1 it has to write the buffer index of the last element read from Rx FIFO 1 to F1AI. This will set the Rx FIFO 1 Get Index RXF1S.F1GI to F1AI + 1 and update the FIFO 1 Fill Level RXF1S.F1FL.
+ * After the Host has read a message or a sequence of messages from Rx FIFO 1 it has to write the buffer index of the last element read from Rx FIFO 1 to F1AI.
+ * This will set the Rx FIFO 1 Get Index RXF1S.F1GI to F1AI + 1 and update the FIFO 1 Fill Level RXF1S.F1FL.
  */
 #define MCAN_RXF1A_F1AI_MASK (0x3FU)
 #define MCAN_RXF1A_F1AI_SHIFT (0U)
@@ -2303,7 +2320,8 @@ typedef struct {
  * 101= 32 byte data field
  * 110= 48 byte data field
  * 111= 64 byte data field
- * Note: In case the data field size of an accepted CAN frame exceeds the data field size configured for the matching Rx Buffer or Rx FIFO, only the number of bytes as configured by RXESC are stored to the Rx Buffer resp. Rx FIFO element. The rest of the frame’s data field is ignored.
+ * Note: In case the data field size of an accepted CAN frame exceeds the data field size configured for the matching Rx Buffer or Rx FIFO,
+ * only the number of bytes as configured by RXESC are stored to the Rx Buffer resp. Rx FIFO element. The rest of the frame’s data field is ignored.
  */
 #define MCAN_RXESC_F0DS_MASK (0x7U)
 #define MCAN_RXESC_F0DS_SHIFT (0U)
@@ -2436,7 +2454,8 @@ typedef struct {
  * TXBCR.
  * TXBRP bits are set only for those Tx Buffers configured via TXBC. After a TXBRP bit has been set, a Tx scan (see Section 3.5, Tx Handling) is started to check for the pending Tx request with the
  * highest priority (Tx Buffer with lowest Message ID).
- * A cancellation request resets the corresponding transmission request pending bit of register TXBRP. In case a transmission has already been started when a cancellation is requested, this is done at the end of the transmission, regardless whether the transmission was successful or not. The cancellation request bits are reset directly after the corresponding TXBRP bit has been reset.
+ * A cancellation request resets the corresponding transmission request pending bit of register TXBRP. In case a transmission has already been started when a cancellation is requested,
+ * this is done at the end of the transmission, regardless whether the transmission was successful or not. The cancellation request bits are reset directly after the corresponding TXBRP bit has been reset.
  * After a cancellation has been requested, a finished cancellation is signalled via TXBCF
  * ? after successful transmission together with the corresponding TXBTO bit
  * ? when the transmission has not yet been started at the point of cancellation
@@ -2473,7 +2492,8 @@ typedef struct {
  * CR (RW)
  *
  * Cancellation Request
- * Each Tx Buffer has its own Cancellation Request bit. Writing a ‘1’ will set the corresponding Cancellation Request bit; writing a ‘0’ has no impact. This enables the Host to set cancellation requests for multiple Tx Buffers with one write to TXBCR. TXBCR bits are set only for those Tx Buffers configured via TXBC. The bits remain set until the corresponding bit of TXBRP is reset.
+ * Each Tx Buffer has its own Cancellation Request bit. Writing a ‘1’ will set the corresponding Cancellation Request bit; writing a ‘0’ has no impact.
+ * This enables the Host to set cancellation requests for multiple Tx Buffers with one write to TXBCR. TXBCR bits are set only for those Tx Buffers configured via TXBC. The bits remain set until the corresponding bit of TXBRP is reset.
  * 0= No cancellation pending
  * 1= Cancellation pending
  */
@@ -2500,7 +2520,8 @@ typedef struct {
  * CF (R)
  *
  * Cancellation Finished
- * Each Tx Buffer has its own Cancellation Finished bit. The bits are set when the corresponding TXBRP bit is cleared after a cancellation was requested via TXBCR. In case the corresponding TXBRP bit was not set at the point of cancellation, CF is set immediately. The bits are reset when a new transmission is requested by writing a ‘1’ to the corresponding bit of register TXBAR.
+ * Each Tx Buffer has its own Cancellation Finished bit. The bits are set when the corresponding TXBRP bit is cleared after a cancellation was requested via TXBCR.
+ * In case the corresponding TXBRP bit was not set at the point of cancellation, CF is set immediately. The bits are reset when a new transmission is requested by writing a ‘1’ to the corresponding bit of register TXBAR.
  * 0= No transmit buffer cancellation
  * 1= Transmit buffer cancellation finished
  */
@@ -2881,8 +2902,9 @@ typedef struct {
 /*
  * TSU_TBIN_SEL (RW)
  *
+ * external timestamp select. each CAN block has 4 timestamp input, this register is used to select one of them as timestame if TSCFG.TBCS is set to 1
  */
-#define MCAN_GLB_CTL_TSU_TBIN_SEL_MASK (0x7U)
+#define MCAN_GLB_CTL_TSU_TBIN_SEL_MASK (0x3U)
 #define MCAN_GLB_CTL_TSU_TBIN_SEL_SHIFT (0U)
 #define MCAN_GLB_CTL_TSU_TBIN_SEL_SET(x) (((uint32_t)(x) << MCAN_GLB_CTL_TSU_TBIN_SEL_SHIFT) & MCAN_GLB_CTL_TSU_TBIN_SEL_MASK)
 #define MCAN_GLB_CTL_TSU_TBIN_SEL_GET(x) (((uint32_t)(x) & MCAN_GLB_CTL_TSU_TBIN_SEL_MASK) >> MCAN_GLB_CTL_TSU_TBIN_SEL_SHIFT)

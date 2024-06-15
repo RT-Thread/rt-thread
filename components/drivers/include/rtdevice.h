@@ -41,6 +41,8 @@ extern "C" {
 
 #ifdef RT_USING_DM
 #include "drivers/core/dm.h"
+#include "drivers/core/numa.h"
+#include "drivers/core/power_domain.h"
 #include "drivers/platform.h"
 
 #ifdef RT_USING_OFW

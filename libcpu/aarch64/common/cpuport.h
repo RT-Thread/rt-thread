@@ -7,6 +7,7 @@
  * Date           Author       Notes
  * 2023-10-25     Shell        Move ffs to cpuport, add general implementation
  *                             by inline assembly
+ * 2024-01-18     Shell        support rt_hw_thread_self to improve overall performance
  */
 
 #ifndef  CPUPORT_H__
@@ -17,10 +18,17 @@
 #include <rtdef.h>
 
 #ifdef RT_USING_SMP
-typedef struct {
-    volatile unsigned int lock;
+
+/**
+ * Spinlock
+ */
+
+typedef struct
+{
+    rt_uint32_t value;
 } rt_hw_spinlock_t;
-#endif
+
+#endif /* RT_USING_SMP */
 
 #define rt_hw_barrier(cmd, ...) \
     __asm__ volatile (RT_STRINGIFY(cmd) " "RT_STRINGIFY(__VA_ARGS__):::"memory")
@@ -74,5 +82,21 @@ rt_inline int __rt_ffs(int value)
 }
 
 #endif /* RT_USING_CPU_FFS */
+
+#ifdef ARCH_USING_HW_THREAD_SELF
+rt_inline struct rt_thread *rt_hw_thread_self(void)
+{
+    struct rt_thread *thread;
+    __asm__ volatile ("mrs %0, tpidr_el1":"=r"(thread));
+
+    return thread;
+}
+
+rt_inline void rt_hw_thread_set_self(struct rt_thread *thread)
+{
+    __asm__ volatile ("msr tpidr_el1, %0"::"r"(thread));
+}
+
+#endif /* ARCH_USING_HW_THREAD_SELF */
 
 #endif  /*CPUPORT_H__*/
