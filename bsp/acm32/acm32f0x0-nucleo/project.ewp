@@ -229,6 +229,8 @@
           <state>RT_USING_LIBC</state>
           <state>_DLIB_ADD_EXTRA_SYMBOLS=0</state>
           <state>__RTTHREAD__</state>
+          <state>__RT_IPC_SOURCE__</state>
+          <state>__RT_KERNEL_SOURCE__</state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -355,19 +357,20 @@
           <name>CCIncludePath2</name>
           <state />
           <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\extension\fcntl\octal</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\epoll</state>
           <state>$PROJ_DIR$\libraries\HAL_Driver\Inc</state>
           <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\include</state>
           <state>$PROJ_DIR$\..\..\..\components\libc\posix\ipc</state>
           <state>$PROJ_DIR$\applications</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\eventfd</state>
           <state>$PROJ_DIR$\..\..\..\components\drivers\include</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\stdio</state>
+          <state>$PROJ_DIR$\.</state>
           <state>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m0</state>
           <state>$PROJ_DIR$\libraries\Device</state>
           <state>$PROJ_DIR$\..\..\..\components\finsh</state>
           <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\poll</state>
           <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\extension</state>
           <state>$PROJ_DIR$\..\..\..\libcpu\arm\common</state>
-          <state>$PROJ_DIR$\.</state>
           <state>$PROJ_DIR$\..\..\..\include</state>
           <state>$PROJ_DIR$\drivers</state>
           <state>$PROJ_DIR$\libraries\CMSIS</state>
@@ -1286,6 +1289,8 @@
           <state>RT_USING_LIBC</state>
           <state>_DLIB_ADD_EXTRA_SYMBOLS=0</state>
           <state>__RTTHREAD__</state>
+          <state>__RT_IPC_SOURCE__</state>
+          <state>__RT_KERNEL_SOURCE__</state>
         </option>
         <option>
           <name>CCPreprocFile</name>
@@ -1412,19 +1417,20 @@
           <name>CCIncludePath2</name>
           <state />
           <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\extension\fcntl\octal</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\epoll</state>
           <state>$PROJ_DIR$\libraries\HAL_Driver\Inc</state>
           <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\include</state>
           <state>$PROJ_DIR$\..\..\..\components\libc\posix\ipc</state>
           <state>$PROJ_DIR$\applications</state>
+          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\eventfd</state>
           <state>$PROJ_DIR$\..\..\..\components\drivers\include</state>
-          <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\stdio</state>
+          <state>$PROJ_DIR$\.</state>
           <state>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m0</state>
           <state>$PROJ_DIR$\libraries\Device</state>
           <state>$PROJ_DIR$\..\..\..\components\finsh</state>
           <state>$PROJ_DIR$\..\..\..\components\libc\posix\io\poll</state>
           <state>$PROJ_DIR$\..\..\..\components\libc\compilers\common\extension</state>
           <state>$PROJ_DIR$\..\..\..\libcpu\arm\common</state>
-          <state>$PROJ_DIR$\.</state>
           <state>$PROJ_DIR$\..\..\..\include</state>
           <state>$PROJ_DIR$\drivers</state>
           <state>$PROJ_DIR$\libraries\CMSIS</state>
@@ -2171,9 +2177,6 @@
       <name>$PROJ_DIR$\..\..\..\components\libc\compilers\common\cctype.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\common\cstdio.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\..\..\components\libc\compilers\common\cstdlib.c</name>
     </file>
     <file>
@@ -2181,6 +2184,9 @@
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\components\libc\compilers\common\ctime.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\libc\compilers\common\cunistd.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\components\libc\compilers\common\cwchar.c</name>
@@ -2214,22 +2220,10 @@
     </file>
   </group>
   <group>
-    <name>CPU</name>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\libcpu\arm\common\div0.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\libcpu\arm\common\showmem.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m0\context_iar.S</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m0\cpuport.c</name>
-    </file>
-  </group>
-  <group>
     <name>DeviceDrivers</name>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\components\drivers\core\device.c</name>
+    </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\components\drivers\hwtimer\hwtimer.c</name>
     </file>
@@ -2258,7 +2252,7 @@
       <name>$PROJ_DIR$\..\..\..\components\drivers\misc\adc.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\components\drivers\misc\pin.c</name>
+      <name>$PROJ_DIR$\..\..\..\components\drivers\pin\pin.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\components\drivers\serial\serial.c</name>
@@ -2270,37 +2264,37 @@
   <group>
     <name>Drivers</name>
     <file>
-      <name>$PROJ_DIR$\drivers\drv_spi.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\drivers\board.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\drivers\drv_gpio.c</name>
+      <name>$PROJ_DIR$\drivers\drv_i2c.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\drivers\drv_wdt.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\drivers\drv_soft_i2c.c</name>
-    </file>
-    <file>
-      <name>$PROJ_DIR$\drivers\drv_i2c.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\drivers\drv_rtc.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\drivers\drv_uart.c</name>
+      <name>$PROJ_DIR$\drivers\drv_spi.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\drivers\drv_adc.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\drivers\drv_gpio.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\drivers\drv_hwtimer.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\drivers\drv_pm.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\drivers\drv_soft_i2c.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\drivers\board.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\drivers\drv_uart.c</name>
     </file>
   </group>
   <group>
@@ -2327,9 +2321,6 @@
       <name>$PROJ_DIR$\..\..\..\src\components.c</name>
     </file>
     <file>
-      <name>$PROJ_DIR$\..\..\..\src\device.c</name>
-    </file>
-    <file>
       <name>$PROJ_DIR$\..\..\..\src\idle.c</name>
     </file>
     <file>
@@ -2337,6 +2328,12 @@
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\src\irq.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\src\klibc\kstdio.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\src\klibc\kstring.c</name>
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\src\kservice.c</name>
@@ -2351,6 +2348,9 @@
       <name>$PROJ_DIR$\..\..\..\src\object.c</name>
     </file>
     <file>
+      <name>$PROJ_DIR$\..\..\..\src\scheduler_comm.c</name>
+    </file>
+    <file>
       <name>$PROJ_DIR$\..\..\..\src\scheduler_up.c</name>
     </file>
     <file>
@@ -2358,6 +2358,21 @@
     </file>
     <file>
       <name>$PROJ_DIR$\..\..\..\src\timer.c</name>
+    </file>
+  </group>
+  <group>
+    <name>libcpu</name>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\libcpu\arm\common\div0.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\libcpu\arm\common\showmem.c</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m0\context_iar.S</name>
+    </file>
+    <file>
+      <name>$PROJ_DIR$\..\..\..\libcpu\arm\cortex-m0\cpuport.c</name>
     </file>
   </group>
   <group>

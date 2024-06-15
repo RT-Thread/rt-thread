@@ -1,11 +1,12 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
  * 2021-10-19     JasonHu      first version
+ * 2023-04-22     flyingcys    add C906_PLIC_PHY_ADDR macro judge
  */
 
 #ifndef __RISCV64_PLIC_H__
@@ -13,7 +14,9 @@
 
 #include <rt_interrupt.h>
 
+#ifndef C906_PLIC_PHY_ADDR
 #define C906_PLIC_PHY_ADDR              (0x10000000)
+#endif
 #define C906_PLIC_NR_EXT_IRQS           (IRQ_MAX_NR)
 #define C906_NR_CPUS                    (NR_CPUS)
 

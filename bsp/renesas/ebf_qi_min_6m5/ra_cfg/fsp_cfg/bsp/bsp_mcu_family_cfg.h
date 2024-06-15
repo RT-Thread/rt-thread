@@ -1,7 +1,11 @@
 /* generated configuration header file - do not edit */
 #ifndef BSP_MCU_FAMILY_CFG_H_
 #define BSP_MCU_FAMILY_CFG_H_
-#include "bsp_mcu_device_pn_cfg.h"
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+            #include "bsp_mcu_device_pn_cfg.h"
             #include "bsp_mcu_device_cfg.h"
             #include "../../../ra/fsp/src/bsp/mcu/ra6m5/bsp_mcu_info.h"
             #include "bsp_clock_cfg.h"
@@ -23,7 +27,6 @@
 
             #define BSP_CORTEX_VECTOR_TABLE_ENTRIES    (16U)
             #define BSP_VECTOR_TABLE_MAX_ENTRIES       (112U)
-            #define BSP_MCU_VBATT_SUPPORT              (1)
 
             #if defined(_RA_TZ_SECURE)
             #define BSP_TZ_SECURE_BUILD           (1)
@@ -294,6 +297,11 @@
     #define BSP_TZ_CFG_BUSSARB (0xFFFFFFFFU)
 #endif
 
+            /* Enable Uninitialized Non-Secure Application Fallback. */
+#ifndef BSP_TZ_CFG_NON_SECURE_APPLICATION_FALLBACK
+    #define BSP_TZ_CFG_NON_SECURE_APPLICATION_FALLBACK (1U)
+#endif
+
 
             #define OFS_SEQ1 0xA001A001 | (1 << 1) | (3 << 2)
             #define OFS_SEQ2 (15 << 4) | (3 << 8) | (3 << 10)
@@ -333,6 +341,10 @@
 #ifndef BSP_CFG_ROM_REG_BPS2
             #define BSP_CFG_ROM_REG_BPS2 (~( 0U))
 #endif
+            /* Block Protection Register 3 */
+#ifndef BSP_CFG_ROM_REG_BPS3
+            #define BSP_CFG_ROM_REG_BPS3 (0xFFFFFFFFU)
+#endif
             /* Permanent Block Protection Register 0 */
 #ifndef BSP_CFG_ROM_REG_PBPS0
             #define BSP_CFG_ROM_REG_PBPS0 (~( 0U))
@@ -344,6 +356,10 @@
             /* Permanent Block Protection Register 2 */
 #ifndef BSP_CFG_ROM_REG_PBPS2
             #define BSP_CFG_ROM_REG_PBPS2 (~( 0U))
+#endif
+            /* Permanent Block Protection Register 3 */
+#ifndef BSP_CFG_ROM_REG_PBPS3
+            #define BSP_CFG_ROM_REG_PBPS3 (0xFFFFFFFFU)
 #endif
             /* Security Attribution for Block Protection Register 0 (If any blocks are marked as protected in the secure application, then mark them as secure) */
 #ifndef BSP_CFG_ROM_REG_BPS_SEL0
@@ -357,7 +373,15 @@
 #ifndef BSP_CFG_ROM_REG_BPS_SEL2
             #define BSP_CFG_ROM_REG_BPS_SEL2 (BSP_CFG_ROM_REG_BPS2 & BSP_CFG_ROM_REG_PBPS2)
 #endif
+            /* Security Attribution for Block Protection Register 3 (If any blocks are marked as protected in the secure application, then mark them as secure) */
+#ifndef BSP_CFG_ROM_REG_BPS_SEL3
+            #define BSP_CFG_ROM_REG_BPS_SEL3 (BSP_CFG_ROM_REG_BPS3 & BSP_CFG_ROM_REG_PBPS3)
+#endif
 #ifndef BSP_CLOCK_CFG_MAIN_OSC_WAIT
             #define BSP_CLOCK_CFG_MAIN_OSC_WAIT (9)
+#endif
+
+#ifdef __cplusplus
+}
 #endif
 #endif /* BSP_MCU_FAMILY_CFG_H_ */

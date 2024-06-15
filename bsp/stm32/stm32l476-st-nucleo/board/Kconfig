@@ -1,12 +1,5 @@
 menu "Hardware Drivers Config"
 
-config SOC_STM32L476RG
-    bool
-    select SOC_SERIES_STM32L4
-    select RT_USING_COMPONENTS_INIT
-    select RT_USING_USER_MAIN
-    default y
-
 menu "Onboard Peripheral Drivers"
 
     config BSP_USING_STLINK_TO_USART
@@ -20,6 +13,8 @@ menu "Onboard Peripheral Drivers"
         select PKG_USING_RTDUINO
         select BSP_USING_STLINK_TO_USART
         select BSP_USING_GPIO
+        select BSP_USING_TIM
+        select BSP_USING_TIM7
         select BSP_USING_ADC
         select BSP_USING_ADC1
         select BSP_USING_PWM
@@ -35,8 +30,13 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_PWM17_CH1
         select BSP_USING_I2C
         select BSP_USING_I2C1
+        select BSP_USING_SPI
+        select BSP_USING_SPI1
+        select BSP_SPI1_TX_USING_DMA
+        select BSP_SPI1_RX_USING_DMA
+        select RTDUINO_USING_WIRE
+        select RTDUINO_USING_SPI
         imply RTDUINO_USING_SERVO
-        imply RTDUINO_USING_WIRE
         default n
 
 endmenu
@@ -140,21 +140,6 @@ menu "On-chip Peripheral Drivers"
                 select BSP_SPI1_TX_USING_DMA
                 default n
 
-            config BSP_USING_SPI2
-                bool "Enable SPI2 BUS"
-                default n
-
-            config BSP_SPI2_TX_USING_DMA
-                bool "Enable SPI2 TX DMA"
-                depends on BSP_USING_SPI2
-                default n
-
-            config BSP_SPI2_RX_USING_DMA
-                bool "Enable SPI2 RX DMA"
-                depends on BSP_USING_SPI2
-                select BSP_SPI2_TX_USING_DMA
-                default n
-
             config BSP_USING_SPI3
                 bool "Enable SPI3 BUS"
                 default n
@@ -176,6 +161,10 @@ menu "On-chip Peripheral Drivers"
         default n
         select RT_USING_HWTIMER
         if BSP_USING_TIM
+            config BSP_USING_TIM7
+                bool "Enable TIM7"
+                default n
+
             config BSP_USING_TIM15
                 bool "Enable TIM15"
                 default n
@@ -273,7 +262,7 @@ menu "On-chip Peripheral Drivers"
             endchoice
         endif
 
-    source "../libraries/HAL_Drivers/Kconfig"
+    source "$BSP_DIR/../libraries/HAL_Drivers/drivers/Kconfig"
 
 endmenu
 

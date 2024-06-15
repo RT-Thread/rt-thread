@@ -14,6 +14,8 @@
  * 2021-03-04     lizhirui     modify for new version of rt-smart
  * 2021-11-22     JasonHu      add lwp_set_thread_context
  * 2021-11-30     JasonHu      add clone/fork support
+ * 2023-07-16     Shell        Move part of the codes to C from asm in signal handling
+ * 2023-10-16     Shell        Support a new backtrace framework
  */
 #include <rthw.h>
 #include <rtthread.h>
@@ -26,7 +28,7 @@
 #define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
-#include <lwp.h>
+#include <lwp_internal.h>
 #include <lwp_arch.h>
 #include <lwp_user_mm.h>
 #include <page.h>
@@ -34,6 +36,7 @@
 #include <cpuport.h>
 #include <encoding.h>
 #include <stack.h>
+#include <cache.h>
 
 extern rt_ubase_t MMUTable[];
 
@@ -47,7 +50,7 @@ void *lwp_copy_return_code_to_user_stack()
     {
         rt_size_t size = (rt_size_t)lwp_thread_return_end - (rt_size_t)lwp_thread_return;
         rt_size_t userstack = (rt_size_t)tid->user_stack + tid->user_stack_size - size;
-        rt_memcpy((void *)userstack, lwp_thread_return, size);
+        lwp_memcpy((void *)userstack, lwp_thread_return, size);
         return (void *)userstack;
     }
 
@@ -91,17 +94,13 @@ int arch_user_space_init(struct rt_lwp *lwp)
 {
     rt_ubase_t *mmu_table;
 
-    mmu_table = (rt_ubase_t *)rt_pages_alloc(0);
+    mmu_table = rt_hw_mmu_pgtbl_create();
     if (!mmu_table)
     {
         return -RT_ENOMEM;
     }
 
     lwp->end_heap = USER_HEAP_VADDR;
-
-    rt_memcpy(mmu_table, rt_kernel_space.page_table, ARCH_PAGE_SIZE);
-    rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, mmu_table, ARCH_PAGE_SIZE);
-
     lwp->aspace = rt_aspace_create(
         (void *)USER_VADDR_START, USER_VADDR_TOP - USER_VADDR_START, mmu_table);
     if (!lwp->aspace)
@@ -127,7 +126,7 @@ void arch_user_space_free(struct rt_lwp *lwp)
         rt_aspace_delete(lwp->aspace);
 
         /* must be freed after aspace delete, pgtbl is required for unmap */
-        rt_pages_free(pgtbl, 0);
+        rt_hw_mmu_pgtbl_delete(pgtbl);
         lwp->aspace = RT_NULL;
     }
     else
@@ -243,6 +242,86 @@ int arch_set_thread_context(void (*exit)(void), void *new_thread_stack,
      * |                        |
      * +------------------------+ --> thread sp
      */
+    return 0;
+}
+
+#define ALGIN_BYTES (16)
+
+struct signal_ucontext
+{
+    rt_int64_t sigreturn;
+    lwp_sigset_t save_sigmask;
+
+    siginfo_t si;
+
+    rt_align(16)
+    struct rt_hw_stack_frame frame;
+};
+
+void *arch_signal_ucontext_restore(rt_base_t user_sp)
+{
+    struct signal_ucontext *new_sp;
+    new_sp = (void *)user_sp;
+
+    if (lwp_user_accessable(new_sp, sizeof(*new_sp)))
+    {
+        lwp_thread_signal_mask(rt_thread_self(), LWP_SIG_MASK_CMD_SET_MASK, &new_sp->save_sigmask, RT_NULL);
+    }
+    else
+    {
+        LOG_I("User frame corrupted during signal handling\nexiting...");
+        sys_exit_group(EXIT_FAILURE);
+    }
+
+    return (void *)&new_sp->frame;
+}
+
+void *arch_signal_ucontext_save(int signo, siginfo_t *psiginfo,
+                         struct rt_hw_stack_frame *exp_frame, rt_base_t user_sp,
+                         lwp_sigset_t *save_sig_mask)
+{
+    struct signal_ucontext *new_sp;
+    new_sp = (void *)(user_sp - sizeof(struct signal_ucontext));
+
+    if (lwp_user_accessable(new_sp, sizeof(*new_sp)))
+    {
+        /* push psiginfo */
+        if (psiginfo)
+        {
+            lwp_memcpy(&new_sp->si, psiginfo, sizeof(*psiginfo));
+        }
+
+        lwp_memcpy(&new_sp->frame, exp_frame, sizeof(*exp_frame));
+
+        /* copy the save_sig_mask */
+        lwp_memcpy(&new_sp->save_sigmask, save_sig_mask, sizeof(lwp_sigset_t));
+
+        /* copy lwp_sigreturn */
+        const size_t lwp_sigreturn_bytes = 8;
+        extern void lwp_sigreturn(void);
+        /* -> ensure that the sigreturn start at the outer most boundary */
+        lwp_memcpy(&new_sp->sigreturn,  &lwp_sigreturn, lwp_sigreturn_bytes);
+
+        /**
+         * synchronize dcache & icache if target is
+         * a Harvard Architecture machine, otherwise
+         * do nothing
+         */
+        rt_hw_sync_cache_local(&new_sp->sigreturn, 8);
+    }
+    else
+    {
+        LOG_I("%s: User stack overflow", __func__);
+        sys_exit_group(EXIT_FAILURE);
+    }
+
+    return new_sp;
+}
+
+void arch_syscall_set_errno(void *eframe, int expected, int code)
+{
+    /* NO support */
+    return ;
 }
 
 /**
@@ -253,9 +332,26 @@ void lwp_exec_user(void *args, void *kernel_stack, void *user_entry)
     arch_start_umode(args, user_entry, (void *)USER_STACK_VEND, kernel_stack);
 }
 
-void *arch_get_usp_from_uctx(struct rt_user_context *uctx)
-{
-    return uctx->sp;
-}
-
 #endif /* ARCH_MM_MMU */
+
+int arch_backtrace_uthread(rt_thread_t thread)
+{
+    struct rt_hw_backtrace_frame frame;
+    struct rt_hw_stack_frame *stack;
+
+    if (thread && thread->lwp)
+    {
+        stack = thread->user_ctx.ctx;
+        if ((long)stack > (unsigned long)thread->stack_addr
+            && (long)stack < (unsigned long)thread->stack_addr + thread->stack_size)
+        {
+            frame.pc = stack->epc;
+            frame.fp = stack->s0_fp;
+            lwp_backtrace_frame(thread, &frame);
+            return 0;
+        }
+        else
+            return -1;
+    }
+    return -1;
+}

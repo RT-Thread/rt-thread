@@ -1,28 +1,13 @@
 menu "Device Drivers"
 
-config RT_USING_DEVICE_IPC
-    bool "Using device drivers IPC"
-    default y
+config RT_USING_DM
+    bool "Enable device driver model with device tree"
+    default n
+    help
+        Enable device driver model with device tree (FDT). It will use more memory
+        to parse and support device tree feature.
 
-config RT_UNAMED_PIPE_NUMBER
-    int "The number of unamed pipe"
-    default 64
-
-if RT_USING_DEVICE_IPC
-    config RT_USING_SYSTEM_WORKQUEUE
-        bool "Using system default workqueue"
-        default n
-
-    if RT_USING_SYSTEM_WORKQUEUE
-        config RT_SYSTEM_WORKQUEUE_STACKSIZE
-            int "The stack size for system workqueue thread"
-            default 2048
-
-        config RT_SYSTEM_WORKQUEUE_PRIORITY
-            int "The priority level of system workqueue thread"
-            default 23
-    endif
-endif
+source "$RTT_DIR/components/drivers/ipc/Kconfig"
 
 menuconfig RT_USING_SERIAL
     bool "USING Serial device drivers"
@@ -49,17 +34,6 @@ menuconfig RT_USING_SERIAL
             default 64
     endif
 
-config RT_USING_TTY
-    bool "Using TTY SYSTEM"
-    depends on RT_USING_SMART
-    default y
-
-if RT_USING_TTY
-    config RT_TTY_DEBUG
-        bool "Using TTY DEBUG"
-        default n
-endif
-
 config RT_USING_CAN
     bool "Using CAN device drivers"
     default n
@@ -72,10 +46,6 @@ if RT_USING_CAN
         bool "Enable CANFD support"
         default n
 endif
-
-config RT_USING_HWTIMER
-    bool "Using hardware timer device drivers"
-    default n
 
 config RT_USING_CPUTIME
     bool "Enable CPU time for high resolution clock counter"
@@ -130,15 +100,211 @@ if RT_USING_I2C
             bool "Use simulate I2C debug message"
             default n
     endif
+
+    config RT_USING_SOFT_I2C
+        bool "Use GPIO to soft simulate I2C"
+        default n
+        select RT_USING_PIN
+        select RT_USING_I2C_BITOPS
+    if RT_USING_SOFT_I2C
+        config RT_USING_SOFT_I2C1
+            bool "Enable I2C1 Bus (software simulation)"
+            default y
+            if RT_USING_SOFT_I2C1
+                config RT_SOFT_I2C1_SCL_PIN
+                    int "SCL pin number"
+                    range 0 32767
+                    default 1
+                config RT_SOFT_I2C1_SDA_PIN
+                    int "SDA pin number"
+                    range 0 32767
+                    default 2
+                config RT_SOFT_I2C1_BUS_NAME
+                    string "Bus name"
+                    default "i2c1"
+                config RT_SOFT_I2C1_TIMING_DELAY
+                    int "Timing delay (us)"
+                    range 0 32767
+                    default 10
+                config RT_SOFT_I2C1_TIMING_TIMEOUT
+                    int "Timing timeout (tick)"
+                    range 0 32767
+                    default 10
+            endif
+        config RT_USING_SOFT_I2C2
+            bool "Enable I2C2 Bus (software simulation)"
+            default n
+            if RT_USING_SOFT_I2C2
+                config RT_SOFT_I2C2_SCL_PIN
+                    int "SCL pin number"
+                    range 0 32767
+                    default 3
+                config RT_SOFT_I2C2_SDA_PIN
+                    int "SDA pin number"
+                    range 0 32767
+                    default 4
+                config RT_SOFT_I2C2_BUS_NAME
+                    string "Bus name"
+                    default "i2c2"
+                config RT_SOFT_I2C2_TIMING_DELAY
+                    int "Timing delay (us)"
+                    range 0 32767
+                    default 10
+                config RT_SOFT_I2C2_TIMING_TIMEOUT
+                    int "Timing timeout (tick)"
+                    range 0 32767
+                    default 10
+            endif
+        config RT_USING_SOFT_I2C3
+            bool "Enable I2C3 Bus (software simulation)"
+            default n
+            if RT_USING_SOFT_I2C3
+                config RT_SOFT_I2C3_SCL_PIN
+                    int "SCL pin number"
+                    range 0 32767
+                    default 5
+                config RT_SOFT_I2C3_SDA_PIN
+                    int "SDA pin number"
+                    range 0 32767
+                    default 6
+                config RT_SOFT_I2C3_BUS_NAME
+                    string "Bus name"
+                    default "i2c3"
+                config RT_SOFT_I2C3_TIMING_DELAY
+                    int "Timing delay (us)"
+                    range 0 32767
+                    default 10
+                config RT_SOFT_I2C3_TIMING_TIMEOUT
+                    int "Timing timeout (tick)"
+                    range 0 32767
+                    default 10
+            endif
+        config RT_USING_SOFT_I2C4
+            bool "Enable I2C4 Bus (software simulation)"
+            default n
+            if RT_USING_SOFT_I2C4
+                config RT_SOFT_I2C4_SCL_PIN
+                    int "SCL pin number"
+                    range 0 32767
+                    default 7
+                config RT_SOFT_I2C4_SDA_PIN
+                    int "SDA pin number"
+                    range 0 32767
+                    default 8
+                config RT_SOFT_I2C4_BUS_NAME
+                    string "Bus name"
+                    default "i2c4"
+                config RT_SOFT_I2C4_TIMING_DELAY
+                    int "Timing delay (us)"
+                    range 0 32767
+                    default 10
+                config RT_SOFT_I2C4_TIMING_TIMEOUT
+                    int "Timing timeout (tick)"
+                    range 0 32767
+                    default 10
+            endif
+        config RT_USING_SOFT_I2C5
+            bool "Enable I2C5 Bus (software simulation)"
+            default n
+            if RT_USING_SOFT_I2C5
+                config RT_SOFT_I2C5_SCL_PIN
+                    int "SCL pin number"
+                    range 0 32767
+                    default 9
+                config RT_SOFT_I2C5_SDA_PIN
+                    int "SDA pin number"
+                    range 0 32767
+                    default 10
+                config RT_SOFT_I2C5_BUS_NAME
+                    string "Bus name"
+                    default "i2c5"
+                config RT_SOFT_I2C5_TIMING_DELAY
+                    int "Timing delay (us)"
+                    range 0 32767
+                    default 10
+                config RT_SOFT_I2C5_TIMING_TIMEOUT
+                    int "Timing timeout (tick)"
+                    range 0 32767
+                    default 10
+            endif
+        config RT_USING_SOFT_I2C6
+            bool "Enable I2C6 Bus (software simulation)"
+            default n
+            if RT_USING_SOFT_I2C6
+                config RT_SOFT_I2C6_SCL_PIN
+                    int "SCL pin number"
+                    range 0 32767
+                    default 11
+                config RT_SOFT_I2C6_SDA_PIN
+                    int "SDA pin number"
+                    range 0 32767
+                    default 12
+                config RT_SOFT_I2C6_BUS_NAME
+                    string "Bus name"
+                    default "i2c6"
+                config RT_SOFT_I2C6_TIMING_DELAY
+                    int "Timing delay (us)"
+                    range 0 32767
+                    default 10
+                config RT_SOFT_I2C6_TIMING_TIMEOUT
+                    int "Timing timeout (tick)"
+                    range 0 32767
+                    default 10
+            endif
+        config RT_USING_SOFT_I2C7
+            bool "Enable I2C7 Bus (software simulation)"
+            default n
+            if RT_USING_SOFT_I2C7
+                config RT_SOFT_I2C7_SCL_PIN
+                    int "SCL pin number"
+                    range 0 32767
+                    default 13
+                config RT_SOFT_I2C7_SDA_PIN
+                    int "SDA pin number"
+                    range 0 32767
+                    default 14
+                config RT_SOFT_I2C7_BUS_NAME
+                    string "Bus name"
+                    default "i2c7"
+                config RT_SOFT_I2C7_TIMING_DELAY
+                    int "Timing delay (us)"
+                    range 0 32767
+                    default 10
+                config RT_SOFT_I2C7_TIMING_TIMEOUT
+                    int "Timing timeout (tick)"
+                    range 0 32767
+                    default 10
+            endif
+        config RT_USING_SOFT_I2C8
+            bool "Enable I2C8 Bus (software simulation)"
+            default n
+            if RT_USING_SOFT_I2C8
+                config RT_SOFT_I2C8_SCL_PIN
+                    int "SCL pin number"
+                    range 0 32767
+                    default 15
+                config RT_SOFT_I2C8_SDA_PIN
+                    int "SDA pin number"
+                    range 0 32767
+                    default 16
+                config RT_SOFT_I2C8_BUS_NAME
+                    string "Bus name"
+                    default "i2c8"
+                config RT_SOFT_I2C8_TIMING_DELAY
+                    int "Timing delay (us)"
+                    range 0 32767
+                    default 10
+                config RT_SOFT_I2C8_TIMING_TIMEOUT
+                    int "Timing timeout (tick)"
+                    range 0 32767
+                    default 10
+            endif
+    endif
 endif
 
 config RT_USING_PHY
     bool "Using ethernet phy device drivers"
     default n
-
-config RT_USING_PIN
-    bool "Using generic GPIO device drivers"
-    default y
 
 config RT_USING_ADC
     bool "Using ADC device drivers"
@@ -216,19 +382,6 @@ config RT_USING_PM
                 int "PM standby mode threashold time"
                 default 100
         endif
-    endif
-
-config RT_USING_FDT
-    bool "Using fdt interface for device drivers"
-    default n
-    if RT_USING_FDT
-        config RT_USING_FDTLIB
-            bool "Using fdt lib for device drivers"
-            default y
-        config FDT_USING_DEBUG
-            bool "Using fdt debug function "
-            default n
-
     endif
 
 config RT_USING_RTC
@@ -370,9 +523,13 @@ config RT_USING_SENSOR
     default n
 
 if RT_USING_SENSOR
+    config RT_USING_SENSOR_V2
+        bool "Enable Sensor Framework v2"
+        default n
+
     config RT_USING_SENSOR_CMD
         bool "Using Sensor cmd"
-        select PKG_USING_RT_VSNPRINTF_FULL
+        select PKG_USING_RT_VSNPRINTF_FULL if RT_USING_SENSOR_V2
         default y
 endif
 
@@ -572,7 +729,7 @@ endif
 config RT_USING_DEV_BUS
     bool "Using Device Bus device drivers"
     default y if RT_USING_SMART
-    default n if !RT_USING_SMART
+    default n
 
 menuconfig RT_USING_WIFI
     bool "Using Wi-Fi framework"
@@ -618,6 +775,10 @@ menuconfig RT_USING_WIFI
 
             config RT_WLAN_MSH_CMD_ENABLE
                 bool "MSH command Enable"
+                default y
+
+            config RT_WLAN_JOIN_SCAN_BY_MGNT
+                bool "Enable wlan join scan"
                 default y
 
             config RT_WLAN_AUTO_CONNECT_ENABLE
@@ -769,204 +930,13 @@ menuconfig RT_USING_VIRTIO
             default y
     endif
 
-menu "Using USB"
-    config RT_USING_USB
-        bool
-        default n
+source "$RTT_DIR/components/drivers/ofw/Kconfig"
+source "$RTT_DIR/components/drivers/pic/Kconfig"
+source "$RTT_DIR/components/drivers/pin/Kconfig"
+source "$RTT_DIR/components/drivers/pinctrl/Kconfig"
+source "$RTT_DIR/components/drivers/ktime/Kconfig"
+source "$RTT_DIR/components/drivers/clk/Kconfig"
+source "$RTT_DIR/components/drivers/hwtimer/Kconfig"
+source "$RTT_DIR/components/drivers/usb/cherryusb/Kconfig"
 
-    config RT_USING_USB_HOST
-        bool "Using USB host"
-        default n
-        select RT_USING_USB
-
-        if RT_USING_USB_HOST
-            config RT_USBH_MSTORAGE
-                bool "Enable Udisk Drivers"
-                default n
-                if RT_USBH_MSTORAGE
-                    config UDISK_MOUNTPOINT
-                        string "Udisk mount dir"
-                        default "/"
-                endif
-            config RT_USBH_HID
-                bool "Enable HID Drivers"
-                default n
-                if RT_USBH_HID
-                    config RT_USBH_HID_MOUSE
-                        bool "Enable HID mouse protocol"
-                        default n
-                    config RT_USBH_HID_KEYBOARD
-                        bool "Enable HID keyboard protocol"
-                        default n
-                endif
-        endif
-    config RT_USING_USB_DEVICE
-        bool "Using USB device"
-        default n
-        select RT_USING_USB
-
-        if RT_USING_USB_DEVICE || RT_USING_USB_HOST
-            config RT_USBD_THREAD_STACK_SZ
-                int "usb thread stack size"
-                default 4096
-        endif
-        if RT_USING_USB_DEVICE
-            config USB_VENDOR_ID
-                hex "USB Vendor ID"
-                default 0x0FFE
-            config USB_PRODUCT_ID
-                hex "USB Product ID"
-                default 0x0001
-
-            config RT_USB_DEVICE_COMPOSITE
-                bool "Enable composite device"
-                default n
-                choice
-                    prompt "Device type"
-                    default _RT_USB_DEVICE_NONE
-                    depends on !RT_USB_DEVICE_COMPOSITE
-                    config _RT_USB_DEVICE_NONE
-                        bool "Using custom class by register interface"
-                        select RT_USB_DEVICE_NONE
-                    config _RT_USB_DEVICE_CDC
-                        bool "Enable to use device as CDC device"
-                        select RT_USB_DEVICE_CDC
-                    config _RT_USB_DEVICE_MSTORAGE
-                        bool "Enable to use device as Mass Storage device"
-                        select RT_USB_DEVICE_MSTORAGE
-                    config _RT_USB_DEVICE_HID
-                        bool "Enable to use device as HID device"
-                        select RT_USB_DEVICE_HID
-                    config _RT_USB_DEVICE_RNDIS
-                        bool "Enable to use device as rndis device"
-                        select RT_USB_DEVICE_RNDIS
-                        depends on RT_USING_LWIP
-                    config _RT_USB_DEVICE_ECM
-                        bool "Enable to use device as ecm device"
-                        select RT_USB_DEVICE_ECM
-                        depends on RT_USING_LWIP
-                    config _RT_USB_DEVICE_WINUSB
-                        bool "Enable to use device as winusb device"
-                        select RT_USB_DEVICE_WINUSB
-                    config _RT_USB_DEVICE_AUDIO
-                        bool "Enable to use device as audio device"
-                        select RT_USB_DEVICE_AUDIO
-                endchoice
-                if RT_USB_DEVICE_COMPOSITE
-                    config RT_USB_DEVICE_CDC
-                        bool "Enable to use device as CDC device"
-                        default n
-                    config RT_USB_DEVICE_NONE
-                        bool
-                        default y
-                    config RT_USB_DEVICE_MSTORAGE
-                        bool "Enable to use device as Mass Storage device"
-                        default n
-                    config RT_USB_DEVICE_HID
-                        bool "Enable to use device as HID device"
-                        default n
-                    config RT_USB_DEVICE_RNDIS
-                        bool "Enable to use device as rndis device"
-                        default n
-                        depends on RT_USING_LWIP
-                    config RT_USB_DEVICE_ECM
-                        bool "Enable to use device as ecm device"
-                        default n
-                        depends on RT_USING_LWIP
-                    config RT_USB_DEVICE_WINUSB
-                        bool "Enable to use device as winusb device"
-                        default n
-                    config RT_USB_DEVICE_AUDIO
-                        bool "Enable to use device as audio device"
-                        default n
-                endif
-                if RT_USB_DEVICE_CDC
-                    config RT_VCOM_TASK_STK_SIZE
-                        int "virtual com thread stack size"
-                        default 512
-                    config RT_CDC_RX_BUFSIZE
-                        int "virtual com rx buffer size"
-                        default 128
-                    config RT_VCOM_TX_USE_DMA
-                        bool "Enable to use dma for vcom tx"
-                        default n
-                    config RT_VCOM_SERNO
-                        string "serial number of virtual com"
-                        default "32021919830108"
-                    config RT_VCOM_SER_LEN
-                        int "serial number length of virtual com"
-                        default 14
-                    config RT_VCOM_TX_TIMEOUT
-                        int "tx timeout(ticks) of virtual com"
-                        default 1000
-                endif
-                if RT_USB_DEVICE_WINUSB
-                    config RT_WINUSB_GUID
-                    string "Guid for winusb"
-                    default "{6860DC3C-C05F-4807-8807-1CA861CC1D66}"
-                endif
-                if RT_USB_DEVICE_MSTORAGE
-                    config RT_USB_MSTORAGE_DISK_NAME
-                    string "msc class disk name"
-                    default "flash0"
-                endif
-
-                if RT_USB_DEVICE_RNDIS
-                    config RNDIS_DELAY_LINK_UP
-                        bool "Delay linkup media connection"
-                        select RT_USING_TIMER_SOFT
-                        default n
-                endif
-
-                if RT_USB_DEVICE_HID
-                    config RT_USB_DEVICE_HID_KEYBOARD
-                        bool "Use to HID device as Keyboard"
-                        default n
-                    if RT_USB_DEVICE_HID_KEYBOARD
-                        config RT_USB_DEVICE_HID_KEYBOARD_NUMBER
-                        int "Number of Keyboard(max 3)"
-                        default 1
-                        range 1 3
-                    endif
-                    config RT_USB_DEVICE_HID_MOUSE
-                        bool "Use to HID device as Mouse"
-                        default n
-                    config RT_USB_DEVICE_HID_GENERAL
-                        bool "Use to HID device as General HID device"
-                        default y
-                        if RT_USB_DEVICE_HID_GENERAL
-                            config RT_USB_DEVICE_HID_GENERAL_OUT_REPORT_LENGTH
-                                int "General HID device out report length"
-                                default 63
-                                range 0 63
-
-                            config RT_USB_DEVICE_HID_GENERAL_IN_REPORT_LENGTH
-                                int "General HID device in report length"
-                                default 63
-                                range 0 63
-                        endif
-                    config RT_USB_DEVICE_HID_MEDIA
-                        bool "Use to HID device as media keyboard"
-                        default y
-                endif
-                if RT_USB_DEVICE_AUDIO
-                    config RT_USB_DEVICE_AUDIO_MIC
-                        bool "Use usb mic device as audio device"
-                        default n
-                        if RT_USB_DEVICE_AUDIO_MIC
-                            config RT_USBD_MIC_DEVICE_NAME
-                            string "audio mic device name"
-                            default "mic0"
-                        endif
-                    config RT_USB_DEVICE_AUDIO_SPEAKER
-                        bool "Use usb speaker device as audio device"
-                        default n
-                        if RT_USB_DEVICE_AUDIO_SPEAKER
-                            config RT_USBD_SPEAKER_DEVICE_NAME
-                            string "audio speaker device name"
-                            default "sound0"
-                        endif
-                endif
-        endif
-    endmenu
 endmenu

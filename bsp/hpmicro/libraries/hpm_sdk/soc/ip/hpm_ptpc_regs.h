@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 hpmicro
+ * Copyright (c) 2021-2023 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -29,6 +29,8 @@ typedef struct {
     __RW uint32_t TIME_SEL;                    /* 0x2000:  */
     __W  uint32_t INT_STS;                     /* 0x2004:  */
     __RW uint32_t INT_EN;                      /* 0x2008:  */
+    __R  uint8_t  RESERVED0[4084];             /* 0x200C - 0x2FFF: Reserved */
+    __RW uint32_t PTPC_CAN_TS_SEL;             /* 0x3000:  */
 } PTPC_Type;
 
 
@@ -109,8 +111,8 @@ typedef struct {
 /*
  * FINE_COARSE_SEL (RW)
  *
- * 0: fine update, ns counter add ss_incr[7:0] each time addend counter overflow
- * 1: coarse update, ns counter add ss_incr[7:0] each clk
+ * 0: coarse update, ns counter add ss_incr[7:0] each clk
+ * 1: fine update, ns counter add ss_incr[7:0] each time addend counter overflow
  */
 #define PTPC_PTPC_CTRL0_FINE_COARSE_SEL_MASK (0x2U)
 #define PTPC_PTPC_CTRL0_FINE_COARSE_SEL_SHIFT (1U)
@@ -398,6 +400,43 @@ typedef struct {
 #define PTPC_INT_EN_PPS_INT_STS0_SHIFT (0U)
 #define PTPC_INT_EN_PPS_INT_STS0_SET(x) (((uint32_t)(x) << PTPC_INT_EN_PPS_INT_STS0_SHIFT) & PTPC_INT_EN_PPS_INT_STS0_MASK)
 #define PTPC_INT_EN_PPS_INT_STS0_GET(x) (((uint32_t)(x) & PTPC_INT_EN_PPS_INT_STS0_MASK) >> PTPC_INT_EN_PPS_INT_STS0_SHIFT)
+
+/* Bitfield definition for register: PTPC_CAN_TS_SEL */
+/*
+ * TSU_TBIN3_SEL (RW)
+ *
+ */
+#define PTPC_PTPC_CAN_TS_SEL_TSU_TBIN3_SEL_MASK (0xFC000000UL)
+#define PTPC_PTPC_CAN_TS_SEL_TSU_TBIN3_SEL_SHIFT (26U)
+#define PTPC_PTPC_CAN_TS_SEL_TSU_TBIN3_SEL_SET(x) (((uint32_t)(x) << PTPC_PTPC_CAN_TS_SEL_TSU_TBIN3_SEL_SHIFT) & PTPC_PTPC_CAN_TS_SEL_TSU_TBIN3_SEL_MASK)
+#define PTPC_PTPC_CAN_TS_SEL_TSU_TBIN3_SEL_GET(x) (((uint32_t)(x) & PTPC_PTPC_CAN_TS_SEL_TSU_TBIN3_SEL_MASK) >> PTPC_PTPC_CAN_TS_SEL_TSU_TBIN3_SEL_SHIFT)
+
+/*
+ * TSU_TBIN2_SEL (RW)
+ *
+ */
+#define PTPC_PTPC_CAN_TS_SEL_TSU_TBIN2_SEL_MASK (0x3F00000UL)
+#define PTPC_PTPC_CAN_TS_SEL_TSU_TBIN2_SEL_SHIFT (20U)
+#define PTPC_PTPC_CAN_TS_SEL_TSU_TBIN2_SEL_SET(x) (((uint32_t)(x) << PTPC_PTPC_CAN_TS_SEL_TSU_TBIN2_SEL_SHIFT) & PTPC_PTPC_CAN_TS_SEL_TSU_TBIN2_SEL_MASK)
+#define PTPC_PTPC_CAN_TS_SEL_TSU_TBIN2_SEL_GET(x) (((uint32_t)(x) & PTPC_PTPC_CAN_TS_SEL_TSU_TBIN2_SEL_MASK) >> PTPC_PTPC_CAN_TS_SEL_TSU_TBIN2_SEL_SHIFT)
+
+/*
+ * TSU_TBIN1_SEL (RW)
+ *
+ */
+#define PTPC_PTPC_CAN_TS_SEL_TSU_TBIN1_SEL_MASK (0xFC000UL)
+#define PTPC_PTPC_CAN_TS_SEL_TSU_TBIN1_SEL_SHIFT (14U)
+#define PTPC_PTPC_CAN_TS_SEL_TSU_TBIN1_SEL_SET(x) (((uint32_t)(x) << PTPC_PTPC_CAN_TS_SEL_TSU_TBIN1_SEL_SHIFT) & PTPC_PTPC_CAN_TS_SEL_TSU_TBIN1_SEL_MASK)
+#define PTPC_PTPC_CAN_TS_SEL_TSU_TBIN1_SEL_GET(x) (((uint32_t)(x) & PTPC_PTPC_CAN_TS_SEL_TSU_TBIN1_SEL_MASK) >> PTPC_PTPC_CAN_TS_SEL_TSU_TBIN1_SEL_SHIFT)
+
+/*
+ * TSU_TBIN0_SEL (RW)
+ *
+ */
+#define PTPC_PTPC_CAN_TS_SEL_TSU_TBIN0_SEL_MASK (0x3F00U)
+#define PTPC_PTPC_CAN_TS_SEL_TSU_TBIN0_SEL_SHIFT (8U)
+#define PTPC_PTPC_CAN_TS_SEL_TSU_TBIN0_SEL_SET(x) (((uint32_t)(x) << PTPC_PTPC_CAN_TS_SEL_TSU_TBIN0_SEL_SHIFT) & PTPC_PTPC_CAN_TS_SEL_TSU_TBIN0_SEL_MASK)
+#define PTPC_PTPC_CAN_TS_SEL_TSU_TBIN0_SEL_GET(x) (((uint32_t)(x) & PTPC_PTPC_CAN_TS_SEL_TSU_TBIN0_SEL_MASK) >> PTPC_PTPC_CAN_TS_SEL_TSU_TBIN0_SEL_SHIFT)
 
 
 

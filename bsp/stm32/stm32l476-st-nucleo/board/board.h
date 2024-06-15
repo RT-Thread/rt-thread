@@ -11,10 +11,8 @@
 #ifndef __BOARD_H__
 #define __BOARD_H__
 
-#include <rtthread.h>
 #include <stm32l4xx.h>
-#include "drv_common.h"
-#include "drv_gpio.h"
+#include <rtconfig.h>
 
 #ifdef __cplusplus
 extern "C" {

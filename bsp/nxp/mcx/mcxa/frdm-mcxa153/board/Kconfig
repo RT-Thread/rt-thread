@@ -1,0 +1,173 @@
+menu "Hardware Drivers Config"
+
+config SOC_MCXN947
+    bool
+    select SOC_MCXN947_SERIES
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+    default y
+
+menu "On-chip Peripheral Drivers"
+
+    config BSP_USING_DMA
+        bool "Enable DMA"
+        select RT_USING_DMA
+        default n
+
+    config BSP_USING_PIN
+        bool "Enable GPIO"
+        select RT_USING_PIN
+        default y
+
+    menuconfig BSP_USING_UART
+        config BSP_USING_UART
+            bool "Enable UART"
+            select RT_USING_UART
+            default y
+
+            if BSP_USING_UART
+                config BSP_USING_UART0
+                    bool "Enable LPUART as UART"
+                    default y
+
+            endif
+
+
+    menuconfig BSP_USING_I2C
+        config BSP_USING_I2C
+            bool "Enable I2C"
+            select RT_USING_I2C
+            default y
+
+            if BSP_USING_I2C
+                config BSP_USING_I2C0
+                    bool "Enable Flexcomm0 I2C"
+                    default y
+                config BSP_USING_I2C1
+                    bool "Enable Flexcomm1 I2C"
+                    default y
+            endif
+
+    menuconfig BSP_USING_SPI
+        config BSP_USING_SPI
+            bool "Enable SPI"
+            select RT_USING_SPI
+            default y
+
+            if BSP_USING_SPI
+                config BSP_USING_SPI3
+                    bool "Enable Flexcomm3 as SPI"
+                    default n
+
+                config BSP_USING_SPI8
+                    bool "Enable Flexcomm8 as High Speed SPI"
+                    default y
+            endif
+
+    menuconfig BSP_USING_ADC
+        config BSP_USING_ADC
+            bool "Enable ADC Channel"
+            select RT_USING_ADC
+            default y
+
+            if BSP_USING_ADC
+                config BSP_USING_ADC0_CH0
+                    bool "Enable ADC0 Channel0"
+                    default y
+
+                config BSP_USING_ADC0_CH1
+                    bool "Enable ADC0 Channel1"
+                    default n
+
+                config BSP_USING_ADC0_CH8
+                    bool "Enable ADC0 Channel8"
+                    default n
+
+        
+                config BSP_USING_ADC0_CH13
+                    bool "Enable ADC0 Channel13"
+                    default n
+
+
+                config BSP_USING_ADC0_CH26
+                    bool "Enable ADC0 Channel26"
+                    default n
+
+            endif
+
+    config BSP_USING_SDIO
+        bool "Enable SDIO SD Card Interface"
+        select RT_USING_SDIO
+        select RT_USING_DFS
+        select RT_USING_DFS_ELMFAT
+        default y
+
+    config BSP_USING_RTC
+        bool "Enable RTC"
+        select RT_USING_RTC
+        default y
+
+    config BSP_USING_WDT
+        bool "Enable WatchDog"
+        select RT_USING_WDT
+        default n
+
+    menuconfig BSP_USING_HWTIMER
+        config BSP_USING_HWTIMER
+            bool "Enable Timer"
+            select RT_USING_HWTIMER
+            default y
+
+            if BSP_USING_HWTIMER
+                config BSP_USING_CTIMER0
+                    bool "Enable CIMER0"
+                    default y
+
+                config BSP_USING_CTIMER1
+                    bool "Enable CIMER1"
+                    default n
+
+                config BSP_USING_CTIMER3
+                    bool "Enable CIMER3"
+                    default n
+
+                config BSP_USING_CTIMER4
+                    bool "Enable CIMER4"
+                    default n
+            endif
+
+    menuconfig BSP_USING_PWM
+        config BSP_USING_PWM
+            bool "Enable PWM"
+            select RT_USING_PWM
+            default y
+
+            if BSP_USING_PWM
+                config BSP_USING_CTIMER1_MAT0
+                    bool "Enable CIMER1 Match0 as PWM output"
+                    default y
+
+                config BSP_USING_CTIMER2_MAT0
+                    bool "Enable CIMER2 Match0 as PWM output"
+                    default n
+
+                config BSP_USING_CTIMER2_MAT1
+                    bool "Enable CIMER2 Match1 as PWM output"
+                    default n
+
+                config BSP_USING_CTIMER2_MAT2
+                    bool "Enable CIMER2 Match2 as PWM output"
+                    default n
+
+                config BSP_USING_CTIMER3_MAT2
+                    bool "Enable CIMER3 Match2 as PWM output"
+                    default n
+            endif
+endmenu
+
+
+menu "Board extended module Drivers"
+
+endmenu
+
+endmenu

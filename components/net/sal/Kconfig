@@ -1,13 +1,13 @@
 menuconfig RT_USING_SAL
     bool "SAL: socket abstraction layer"
     select RT_USING_NETDEV
-    select RT_USING_SYSTEM_WORKQUEUE
     default n
 
 if RT_USING_SAL
 
     config SAL_INTERNET_CHECK
         bool "Enable the ability that check internet status"
+        select RT_USING_SYSTEM_WORKQUEUE
         default y
         help
             The ability that check internet status is provided by RT-Thread.
@@ -33,11 +33,6 @@ if RT_USING_SAL
         help
             Enable BSD socket operated by file system API
             Let BSD socket operated by file system API, such as read/write and involveed in select/poll POSIX APIs.
-
-    config SAL_USING_AF_UNIX
-        bool "Enable support AF_UNIX socket"
-        default n
-        default y if RT_USING_SMART
 
     config SAL_SOCKETS_NUM
         int "the maximum number of sockets"

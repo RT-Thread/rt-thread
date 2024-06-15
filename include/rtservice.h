@@ -16,6 +16,8 @@
 #ifndef __RT_SERVICE_H__
 #define __RT_SERVICE_H__
 
+#include <rtdef.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -151,9 +153,9 @@ rt_inline unsigned int rt_list_len(const rt_list_t *l)
  * @param member the name of the list_struct within the struct.
  */
 #define rt_list_for_each_entry(pos, head, member) \
-    for (pos = rt_list_entry((head)->next, typeof(*pos), member); \
+    for (pos = rt_list_entry((head)->next, rt_typeof(*pos), member); \
          &pos->member != (head); \
-         pos = rt_list_entry(pos->member.next, typeof(*pos), member))
+         pos = rt_list_entry(pos->member.next, rt_typeof(*pos), member))
 
 /**
  * rt_list_for_each_entry_safe - iterate over list of given type safe against removal of list entry
@@ -163,10 +165,10 @@ rt_inline unsigned int rt_list_len(const rt_list_t *l)
  * @param member the name of the list_struct within the struct.
  */
 #define rt_list_for_each_entry_safe(pos, n, head, member) \
-    for (pos = rt_list_entry((head)->next, typeof(*pos), member), \
-         n = rt_list_entry(pos->member.next, typeof(*pos), member); \
+    for (pos = rt_list_entry((head)->next, rt_typeof(*pos), member), \
+         n = rt_list_entry(pos->member.next, rt_typeof(*pos), member); \
          &pos->member != (head); \
-         pos = n, n = rt_list_entry(n->member.next, typeof(*n), member))
+         pos = n, n = rt_list_entry(n->member.next, rt_typeof(*n), member))
 
 /**
  * rt_list_first_entry - get the first element from a list
@@ -280,9 +282,9 @@ rt_inline int rt_slist_isempty(rt_slist_t *l)
  * @param member the name of the list_struct within the struct.
  */
 #define rt_slist_for_each_entry(pos, head, member) \
-    for (pos = rt_slist_entry((head)->next, typeof(*pos), member); \
-         &pos->member != (RT_NULL); \
-         pos = rt_slist_entry(pos->member.next, typeof(*pos), member))
+    for (pos = ((head)->next == (RT_NULL) ? (RT_NULL) : rt_slist_entry((head)->next, rt_typeof(*pos), member)); \
+         pos != (RT_NULL) && &pos->member != (RT_NULL); \
+         pos = (pos->member.next == (RT_NULL) ? (RT_NULL) : rt_slist_entry(pos->member.next, rt_typeof(*pos), member)))
 
 /**
  * rt_slist_first_entry - get the first element from a slist

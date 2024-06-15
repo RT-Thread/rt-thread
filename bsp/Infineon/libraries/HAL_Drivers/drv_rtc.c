@@ -94,6 +94,11 @@ static rt_err_t ifx_rtc_get_timeval(struct timeval *tv)
 
 static rt_err_t _rtc_init(void)
 {
+#ifdef BSP_RTC_USING_LSE
+    Cy_RTC_SelectClockSource(CY_RTC_CLK_SELECT_WCO);
+#else
+    Cy_RTC_SelectClockSource(CY_RTC_CLK_SELECT_ILO);
+#endif /* BSP_RTC_USING_LSE */
     if (cyhal_rtc_init(&rtc_obj) != RT_EOK)
     {
         LOG_E("rtc init failed.");

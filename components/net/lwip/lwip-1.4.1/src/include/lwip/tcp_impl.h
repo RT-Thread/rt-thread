@@ -186,7 +186,7 @@ PACK_STRUCT_END
 /** Flags used on input processing, not on pcb->flags
 */
 #define TF_RESET     (u8_t)0x08U   /* Connection was reset. */
-#define TF_CLOSED    (u8_t)0x10U   /* Connection was sucessfully closed. */
+#define TF_CLOSED    (u8_t)0x10U   /* Connection was successfully closed. */
 #define TF_GOT_FIN   (u8_t)0x20U   /* Connection was closed by the remote end. */
 
 

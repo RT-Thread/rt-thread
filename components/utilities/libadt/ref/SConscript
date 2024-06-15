@@ -1,0 +1,9 @@
+from building import *
+
+cwd     = GetCurrentDir()
+src     = list()
+CPPPATH = [cwd]
+group   = []
+
+group = DefineGroup('LIBADT', src, depend = ['RT_USING_ADT_REF'], CPPPATH = CPPPATH)
+Return('group')

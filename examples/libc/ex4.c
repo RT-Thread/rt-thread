@@ -58,7 +58,7 @@ char * str_accumulate(const char * s)
   accu = (char *) pthread_getspecific(str_key);
   /* It's initially NULL, meaning that we must allocate the buffer first. */
   if (accu == NULL) {
-    accu = malloc(1024);
+    accu = (char *)malloc(1024);
     if (accu == NULL) return NULL;
     accu[0] = 0;
     /* Store the buffer pointer in the thread-specific data. */

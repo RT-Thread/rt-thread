@@ -1,0 +1,19 @@
+from building import *
+
+cwd = GetCurrentDir()
+
+# add general drivers
+src = Split('''
+board.c
+CubeMX_Config/Core/Src/stm32l4xx_hal_msp.c
+''')
+
+path =  [cwd]
+path += [cwd + '/CubeMX_Config/Core/Inc']
+
+CPPDEFINES = ['STM32L431xx']
+
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
+
+Return('group')
+

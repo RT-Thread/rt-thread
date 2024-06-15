@@ -49,7 +49,7 @@
 |[M25P80](https://www.micron.com/~/media/documents/products/data-sheet/nor-flash/serial-nor/m25p/m25p80.pdf)|Micron|8Mb|75Mhz|不支持|未测试| by [redocCheng](https://github.com/redocCheng)|
 |[M25P32](https://www.micron.com/~/media/documents/products/data-sheet/nor-flash/serial-nor/m25p/m25p32.pdf)|Micron|32Mb|75Mhz|不支持|不支持||
 |[EN25Q32B](http://www.kean.com.au/oshw/WR703N/teardown/EN25Q32B%2032Mbit%20SPI%20Flash.pdf)|EON|32Mb|104MHz|不支持|未测试||
-|[GD25Q16B](http://www.gigadevice.com/product/detail/5/410.html)|GigaDevice|16Mb|120Mhz|不支持|未测试| by [TanekLiang](https://github.com/TanekLiang) |
+|[GD25Q16B](http://www.gigadevice.com/product/detail/5/410.html)|GigaDevice|16Mb|120Mhz|不支持|未测试| by [Liang Yongxiang](https://github.com/liangyongxiang) |
 |[GD25Q64B](http://www.gigadevice.com/product/detail/5/364.html)|GigaDevice|64Mb|120Mhz|不支持|双线||
 |[S25FL216K](http://www.cypress.com/file/197346/download)|Cypress|16Mb|65Mhz|不支持|双线||
 |[S25FL032P](http://www.cypress.com/file/196861/download)|Cypress|32Mb|104Mhz|不支持|未测试| by [yc_911](https://gitee.com/yc_911) |

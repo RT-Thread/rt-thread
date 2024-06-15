@@ -175,17 +175,6 @@ void rt_hw_context_switch_interrupt(rt_uint32_t from, rt_uint32_t to)
 }
 
 /**
- * shut down the chip
- *
- * @author LXZ (2014/11/8)
- */
-rt_weak void rt_hw_cpu_shutdown(void)
-{
-    rt_kprintf("shutdown...\n");
-
-    RT_ASSERT(0);
-}
-/**
  * switch to the first thread,it just call one time
  *
  * @author LXZ (2014/11/8)

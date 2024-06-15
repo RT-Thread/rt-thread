@@ -182,7 +182,7 @@ rt_base_t rt_hw_cpu_dcache_status()
  *  shutdown CPU
  *
  */
-rt_weak void rt_hw_cpu_shutdown()
+void rt_hw_cpu_shutdown(void)
 {
     rt_base_t level;
     rt_kprintf("shutdown...\n");

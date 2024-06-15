@@ -1,0 +1,63 @@
+menu "Board Configuration"
+
+choice 
+    prompt "Board select"
+	default FIREFLY_DEMO_BOARD
+
+    config E2000D_DEMO_BOARD
+        select BSP_USING_IOPAD
+        bool
+        prompt "Use E2000D demo board"
+        depends on TARGET_E2000D
+        help
+            select E2000D demo board config
+        if E2000D_DEMO_BOARD
+            config BOARD_NAME
+				string
+				default "demo"
+            source "$SDK_DIR/board/e2000d_demo/e2000d_demo.kconfig"
+        endif
+
+    config E2000Q_DEMO_BOARD
+        select BSP_USING_IOPAD
+        bool
+        prompt "Use E2000Q demo board"
+        depends on TARGET_E2000Q
+        help
+            select E2000Q demo board config
+        if E2000Q_DEMO_BOARD
+            config BOARD_NAME
+				string
+				default "demo"
+            source "$SDK_DIR/board/e2000q_demo/e2000q_demo.kconfig"
+        endif
+        
+    config FIREFLY_DEMO_BOARD
+        select BSP_USING_IOPAD
+        bool
+        prompt "Use firefly board"
+        depends on TARGET_PHYTIUMPI
+        help
+            select firefly board config
+        if FIREFLY_DEMO_BOARD
+            config BOARD_NAME
+				string
+				default "firefly"
+            source "$SDK_DIR/board/firefly/firefly.kconfig"
+        endif
+
+    config CUS_DEMO_BOARD
+        select USE_IOMUX
+        bool
+        prompt "Use Customization board"
+        help
+            select Customization board config
+        if CUS_DEMO_BOARD
+            config BOARD_NAME
+				string "Write name"
+				default "none" 
+#           source "$SDK_DIR/board/""/"".kconfig"    
+        endif
+endchoice
+
+endmenu

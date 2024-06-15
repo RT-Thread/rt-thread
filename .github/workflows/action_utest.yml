@@ -28,6 +28,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     name: ${{ matrix.legs.UTEST }}
+    if: github.repository_owner == 'RT-Thread'
     strategy:
       fail-fast: false
       matrix:
@@ -37,6 +38,7 @@ jobs:
          - {UTEST: "kernel/irq",       RTT_BSP: "bsp/qemu-vexpress-a9",    QEMU_ARCH: "arm",      QEMU_MACHINE: "vexpress-a9", CONFIG_FILE: "kernel/irq.conf",     SD_FILE: "sd.bin", RUN: "yes"}
          - {UTEST: "kernel/timer",     RTT_BSP: "bsp/qemu-vexpress-a9",    QEMU_ARCH: "arm",      QEMU_MACHINE: "vexpress-a9", CONFIG_FILE: "kernel/timer.conf",   SD_FILE: "sd.bin", RUN: "yes"}
          - {UTEST: "kernel/thread",    RTT_BSP: "bsp/qemu-vexpress-a9",    QEMU_ARCH: "arm",      QEMU_MACHINE: "vexpress-a9", CONFIG_FILE: "kernel/thread.conf",  SD_FILE: "sd.bin", RUN: "yes"}
+         - {UTEST: "kernel/device",    RTT_BSP: "bsp/qemu-vexpress-a9",    QEMU_ARCH: "arm",      QEMU_MACHINE: "vexpress-a9", CONFIG_FILE: "kernel/device.conf",  SD_FILE: "sd.bin", RUN: "yes"}
          - {UTEST: "kernel/atomic",    RTT_BSP: "bsp/qemu-vexpress-a9",    QEMU_ARCH: "arm",      QEMU_MACHINE: "vexpress-a9", CONFIG_FILE: "kernel/atomic.conf",  SD_FILE: "sd.bin", RUN: "yes"}
          - {UTEST: "kernel/atomic_c11",    RTT_BSP: "bsp/qemu-vexpress-a9",    QEMU_ARCH: "arm",      QEMU_MACHINE: "vexpress-a9", CONFIG_FILE: "kernel/atomic_c11.conf",  SD_FILE: "sd.bin", RUN: "yes"}
          - {UTEST: "components/utest", RTT_BSP: "bsp/qemu-vexpress-a9",    QEMU_ARCH: "arm",      QEMU_MACHINE: "vexpress-a9", CONFIG_FILE: "utest_self/self.conf", SD_FILE: "sd.bin", RUN: "yes"}
@@ -54,7 +56,7 @@ jobs:
       TEST_CONFIG_FILE: ${{ matrix.legs.CONFIG_FILE }}
       TEST_SD_FILE: ${{ matrix.legs.SD_FILE }}
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - name: Install Tools
       shell: bash

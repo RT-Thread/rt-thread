@@ -1,0 +1,39 @@
+import os
+import rtconfig
+from building import *
+
+Import('SDK_LIB')
+
+cwd = GetCurrentDir()
+
+# add general drivers
+src = Split('''
+board.c
+CubeMX_Config/Src/stm32f4xx_hal_msp.c
+''')
+path =  [cwd]
+path += [cwd + '/CubeMX_Config/Inc']
+
+
+startup_path_prefix = SDK_LIB
+
+if rtconfig.PLATFORM in ['gcc', 'llvm-arm']:
+    src += [startup_path_prefix + '/STM32F4xx_HAL/CMSIS/Device/ST/STM32F4xx/Source/Templates/gcc/startup_stm32f407xx.s']
+elif rtconfig.PLATFORM in ['armcc', 'armclang']:
+    src += [startup_path_prefix + '/STM32F4xx_HAL/CMSIS/Device/ST/STM32F4xx/Source/Templates/arm/startup_stm32f407xx.s']
+elif rtconfig.PLATFORM in ['iccarm']:
+    src += [startup_path_prefix + '/STM32F4xx_HAL/CMSIS/Device/ST/STM32F4xx/Source/Templates/iar/startup_stm32f407xx.s']
+
+CPPDEFINES = ['STM32F407xx']
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
+
+
+# if os.path.isfile(os.path.join(cwd, "ports", 'SConscript')):
+#     group = group + SConscript(os.path.join("ports", 'SConscript'))
+
+list = os.listdir(cwd)
+for item in list:
+    if os.path.isfile(os.path.join(cwd, item, 'SConscript')):
+        group = group + SConscript(os.path.join(item, 'SConscript'))
+
+Return('group')

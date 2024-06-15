@@ -32,6 +32,13 @@ rt_err_t rt_i2c_bus_device_register(struct rt_i2c_bus_device *bus,
 
     LOG_I("I2C bus [%s] registered", bus_name);
 
+#ifdef RT_USING_DM
+    if (!res)
+    {
+        i2c_bus_scan_clients(bus);
+    }
+#endif
+
     return res;
 }
 
@@ -89,14 +96,14 @@ rt_ssize_t rt_i2c_transfer(struct rt_i2c_bus_device *bus,
 }
 
 rt_err_t rt_i2c_control(struct rt_i2c_bus_device *bus,
-                        rt_uint32_t               cmd,
-                        rt_uint32_t               arg)
+                        int                       cmd,
+                        void                      *args)
 {
     rt_err_t ret;
 
     if(bus->ops->i2c_bus_control)
     {
-        ret = bus->ops->i2c_bus_control(bus, cmd, arg);
+        ret = bus->ops->i2c_bus_control(bus, cmd, args);
         return ret;
     }
     else
@@ -122,7 +129,7 @@ rt_ssize_t rt_i2c_master_send(struct rt_i2c_bus_device *bus,
 
     ret = rt_i2c_transfer(bus, &msg, 1);
 
-    return ret;
+    return (ret == 1) ? count : ret;
 }
 
 rt_ssize_t rt_i2c_master_recv(struct rt_i2c_bus_device *bus,
@@ -142,5 +149,5 @@ rt_ssize_t rt_i2c_master_recv(struct rt_i2c_bus_device *bus,
 
     ret = rt_i2c_transfer(bus, &msg, 1);
 
-    return ret;
+    return (ret == 1) ? count : ret;
 }

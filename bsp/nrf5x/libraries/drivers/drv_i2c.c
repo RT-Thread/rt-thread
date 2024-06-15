@@ -53,7 +53,7 @@ static drv_i2c_cfg_t drv_i2c_2 =
     .sda_pin = BSP_I2C2_SDA_PIN,
     .twi_instance = NRFX_TWIM_INSTANCE(2)
 };
-static struct rt_i2c_bus_device i2c2_bus;
+static struct rt_i2c_bus_device i2c_bus;
 #endif
 #ifdef BSP_USING_I2C3
 static drv_i2c_cfg_t drv_i2c_3 =
@@ -153,11 +153,11 @@ int rt_hw_i2c_init(void)
     rt_i2c_bus_device_register(&i2c1_bus, "i2c1");
 #endif
 #ifdef BSP_USING_I2C2
-        i2c2_bus.ops= &_i2c_ops;
-        i2c2_bus.timeout = 0;
-        i2c2_bus.priv = (void *)&drv_i2c_2;
-        twi_master_init(&i2c2_bus);
-        rt_i2c_bus_device_register(&i2c2_bus, "i2c2");
+        i2c_bus.ops= &_i2c_ops;
+        i2c_bus.timeout = 0;
+        i2c_bus.priv = (void *)&drv_i2c_2;
+        twi_master_init(&i2c_bus);
+        rt_i2c_bus_device_register(&i2c_bus, "i2c2");
 #endif
 #ifdef BSP_USING_I2C3
         i2c3_bus.ops= &_i2c_ops;

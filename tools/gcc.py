@@ -20,10 +20,12 @@
 # Change Logs:
 # Date           Author       Notes
 # 2018-05-22     Bernard      The first version
+# 2023-11-03     idings       return file path in GetHeader
 
 import os
 import re
 import platform
+import subprocess
 
 def GetGCCRoot(rtconfig):
     exec_path = rtconfig.EXEC_PATH
@@ -39,12 +41,78 @@ def GetGCCRoot(rtconfig):
 
     return root_path
 
-def CheckHeader(rtconfig, filename):
-    root = GetGCCRoot(rtconfig)
+# https://stackoverflow.com/questions/4980819/what-are-the-gcc-default-include-directories
+# https://stackoverflow.com/questions/53937211/how-can-i-parse-gcc-output-by-regex-to-get-default-include-paths
+def match_pattern(pattern, input, start = 0, stop = -1, flags = 0):
+    length = len(input)
 
+    if length == 0:
+        return None
+
+    end_it = max(0, length - 1)
+
+    if start >= end_it:
+        return None
+
+    if stop<0:
+        stop = length
+
+    if stop <= start:
+        return None
+
+    for it in range(max(0, start), min(stop, length)):
+        elem = input[it]
+        match = re.match(pattern, elem, flags)
+        if match:
+            return it
+
+def GetGccDefaultSearchDirs(rtconfig):
+    start_pattern = r' *#include <\.\.\.> search starts here: *'
+    end_pattern = r' *End of search list\. *'
+
+    gcc_cmd = os.path.join(rtconfig.EXEC_PATH, rtconfig.CC)
+    device_flags = rtconfig.DEVICE.split()
+    command = [gcc_cmd] + device_flags + ['-xc', '-E', '-v', os.devnull]
+
+    # if gcc_cmd can not access , return empty list
+    if not os.access(gcc_cmd, os.X_OK):
+        return []
+
+    if(platform.system() == 'Windows'):
+        child = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+    else:
+        child = subprocess.Popen(' '.join(command), stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+
+    stdout = child.communicate()
+    stdout_string = (b''.join(stdout)).decode()
+    lines = stdout_string.splitlines()
+
+    start_it = match_pattern(start_pattern, lines)
+    if start_it == None:
+        return []
+
+    end_it = match_pattern(end_pattern, lines, start_it)
+    if end_it == None:
+        return []
+
+    # theres no paths between them
+    if (end_it - start_it) == 1:
+        return []
+
+    return lines[start_it + 1 : end_it]
+
+def GetHeader(rtconfig, filename):
+    include_dirs = GetGccDefaultSearchDirs(rtconfig)
+    for directory in include_dirs:
+        fn = os.path.join(directory, filename).strip()
+        if os.path.isfile(fn):
+            return fn
+
+    # fallback to use fixed method if can't autodetect
+    root = GetGCCRoot(rtconfig)
     fn = os.path.join(root, 'include', filename)
     if os.path.isfile(fn):
-        return True
+        return fn
 
     # Usually the cross compiling gcc toolchain has directory as:
     #
@@ -62,59 +130,77 @@ def CheckHeader(rtconfig, filename):
 
     fn = os.path.join(root, prefix, 'include', filename)
     if os.path.isfile(fn):
-        return True
+        return fn
 
-    return False
+    return None
 
-def GetNewLibVersion(rtconfig):
-    version = 'unknown'
-    root = GetGCCRoot(rtconfig)
-    if CheckHeader(rtconfig, '_newlib_version.h'): # get version from _newlib_version.h file
-        f = open(os.path.join(root, 'include', '_newlib_version.h'), 'r')
+# GCC like means the toolchains which are compatible with GCC
+def GetGCCLikePLATFORM():
+    return ['gcc', 'armclang', 'llvm-arm']
+
+def GetPicoLibcVersion(rtconfig):
+    version = None
+    try:
+        rtconfig.PREFIX
+    except:
+        return version
+
+    # get version from picolibc.h
+    fn = GetHeader(rtconfig, 'picolibc.h')
+
+    if fn:
+        f = open(fn, 'r')
         if f:
             for line in f:
-                if line.find('_NEWLIB_VERSION') != -1 and line.find('"') != -1:
+                if line.find('__PICOLIBC_VERSION__') != -1 and line.find('"') != -1:
                     version = re.search(r'\"([^"]+)\"', line).groups()[0]
             f.close()
-    elif CheckHeader(rtconfig, 'newlib.h'): # get version from newlib.h
-        f = open(os.path.join(root, 'include', 'newlib.h'), 'r')
-        if f:
-            for line in f:
-                if line.find('_NEWLIB_VERSION') != -1 and line.find('"') != -1:
-                    version = re.search(r'\"([^"]+)\"', line).groups()[0]
-            f.close()
+
     return version
 
-# FIXME: it's not very good
-def CheckMUSLLibc(rtconfig):
-    if 'musl' in rtconfig.PREFIX:
-        return True
-    return False
+def GetNewLibVersion(rtconfig):
+    version = None
+
+    try:
+        rtconfig.PREFIX
+    except:
+        return version
+
+    # if find picolibc.h, use picolibc
+    fn = GetHeader(rtconfig, 'picolibc.h')
+    if fn:
+        return version
+
+    # get version from _newlib_version.h file
+    fn = GetHeader(rtconfig, '_newlib_version.h')
+
+    # get version from newlib.h
+    if not fn:
+        fn = GetHeader(rtconfig, 'newlib.h')
+
+    if fn:
+        f = open(fn, 'r')
+        for line in f:
+            if line.find('_NEWLIB_VERSION') != -1 and line.find('"') != -1:
+                version = re.search(r'\"([^"]+)\"', line).groups()[0]
+        f.close()
+
+    return version
 
 # FIXME: there is no musl version or musl macros can be found officially
 def GetMuslVersion(rtconfig):
-    version = 'unknown'
-    # root = GetGCCRoot(rtconfig)
-    # print(root)
+    version = None
+
+    try:
+        rtconfig.PREFIX
+    except:
+        return version
+
+    if 'musl' in rtconfig.PREFIX:
+        version = 'unknown'
     return version
 
-# return libc name and version
-def GetGCCLibcNameVersion(rtconfig):
-    if rtconfig.PLATFORM != 'gcc':
-        return ('unknown', 'unknown')
-
-    newlib_version = GetNewLibVersion(rtconfig)
-    if newlib_version != 'unknown':
-        return ('newlib', newlib_version) # libc: newlib, version: newlib_version
-    elif CheckMUSLLibc(rtconfig) == True:
-        GetMuslVersion(rtconfig)
-        return ('musl', 'unknown') #libc: musl, version: unknown
-    else:
-        return ('unknown', 'unknown') # libc: unknown, version: unknown
-
 def GCCResult(rtconfig, str):
-    import subprocess
-
     result = ''
 
     def checkAndGetResult(pattern, string):
@@ -166,11 +252,11 @@ def GCCResult(rtconfig, str):
             if re.search('union[ \t]+sigval', line):
                 have_sigval = 1
 
-            if re.search('char\* version', line):
-                version = re.search(r'\"([^"]+)\"', line).groups()[0]
+            if re.search(r'char\* version', line):
+                version = re.search(r'"([^"]+)"', line).groups()[0]
 
-            if re.findall('iso_c_visible = [\d]+', line):
-                stdc = re.findall('[\d]+', line)[0]
+            if re.findall(r'iso_c_visible = \d+', line):
+                stdc = re.findall(r'\d+', line)[0]
 
             if re.findall('pthread_create', line):
                 posix_thread = 1
@@ -197,49 +283,3 @@ def GCCResult(rtconfig, str):
 
         os.remove('__tmp.c')
     return result
-
-def GenerateGCCConfig(rtconfig):
-    # The cconfig.h will NOT generate in the lastest RT-Thread code.
-    # When you want to use it, you can uncomment out the following code.
-
-    # str = ''
-    # cc_header = ''
-    # cc_header += '#ifndef CCONFIG_H__\n'
-    # cc_header += '#define CCONFIG_H__\n'
-    # cc_header += '/* Automatically generated file; DO NOT EDIT. */\n'
-    # cc_header += '/* compiler configure file for RT-Thread in GCC*/\n\n'
-
-    # if CheckHeader(rtconfig, 'newlib.h'):
-    #     str += '#include <newlib.h>\n'
-    #     cc_header += '#define HAVE_NEWLIB_H 1\n'
-    #     cc_header += '#define LIBC_VERSION "newlib %s"\n\n' % GetNewLibVersion(rtconfig)
-
-    # if CheckHeader(rtconfig, 'sys/signal.h'):
-    #     str += '#include <sys/signal.h>\n'
-    #     cc_header += '#define HAVE_SYS_SIGNAL_H 1\n'
-    # if CheckHeader(rtconfig, 'sys/select.h'):
-    #     str += '#include <sys/select.h>\n'
-    #     cc_header += '#define HAVE_SYS_SELECT_H 1\n'
-    # if CheckHeader(rtconfig, 'pthread.h'):
-    #     str += "#include <pthread.h>\n"
-    #     cc_header += '#define HAVE_PTHREAD_H 1\n'
-
-    # # if CheckHeader(rtconfig, 'sys/dirent.h'):
-    # #    str += '#include <sys/dirent.h>\n'
-
-    # # add some common features
-    # str += 'const char* version = __VERSION__;\n'
-    # str += 'const int iso_c_visible = __ISO_C_VISIBLE;\n'
-    # str += '\n#ifdef HAVE_INITFINI_ARRAY\n'
-    # str += 'const int init_fini_array = HAVE_INITFINI_ARRAY;\n'
-    # str += '#endif\n'
-
-    # cc_header += '\n'
-    # cc_header += GCCResult(rtconfig, str)
-    # cc_header += '\n#endif\n'
-
-    # cc_file = open('cconfig.h', 'w')
-    # if cc_file:
-    #     cc_file.write(cc_header)
-    #     cc_file.close()
-    pass

@@ -8,13 +8,15 @@
  * 2013-07-20     Bernard      first version
  */
 
-#include <backtrace.h>
-#include <board.h>
 #include <rthw.h>
 #include <rtthread.h>
+#include <board.h>
+#include <backtrace.h>
 
 #include "interrupt.h"
 #include "mm_fault.h"
+
+#include <rtdbg.h>
 
 #ifdef RT_USING_FINSH
 extern long list_thread(void);
@@ -28,7 +30,6 @@ extern long list_thread(void);
 #include <lwp_core_dump.h>
 #endif
 
-void sys_exit(int value);
 void check_user_fault(struct rt_hw_exp_stack *regs, uint32_t pc_adj, char *info)
 {
     uint32_t mode = regs->cpsr;
@@ -39,27 +40,51 @@ void check_user_fault(struct rt_hw_exp_stack *regs, uint32_t pc_adj, char *info)
 #ifdef LWP_USING_CORE_DUMP
         lwp_core_dump(regs, pc_adj);
 #endif
-        sys_exit(-1);
+        sys_exit_group(-1);
     }
 }
 
-int check_user_stack(struct rt_hw_exp_stack *regs)
+int check_data_abort(struct rt_hw_exp_stack *regs)
 {
+    struct rt_lwp *lwp;
     void *dfar = RT_NULL;
-    asm volatile("MRC p15, 0, %0, c6, c0, 0" : "=r"(dfar));
+    rt_base_t dfsr = RT_NULL;
+    __asm__ volatile("mrc p15, 0, %0, c6, c0, 0" : "=r"(dfar));
+    __asm__ volatile("mrc p15, 0, %0, c5, c0, 0" : "=r"(dfsr));
 
-    if ((dfar >= (void *)USER_STACK_VSTART) && (dfar < (void *)USER_STACK_VEND))
+    struct rt_aspace_fault_msg msg = {
+        .fault_op = MM_FAULT_OP_WRITE,
+        .fault_type = MM_FAULT_TYPE_PAGE_FAULT,
+        .fault_vaddr = dfar,
+    };
+    lwp = lwp_self();
+    if (lwp && rt_aspace_fault_try_fix(lwp->aspace, &msg))
     {
-        struct rt_aspace_fault_msg msg = {
-            .fault_op = MM_FAULT_OP_WRITE,
-            .fault_type = MM_FAULT_TYPE_PAGE_FAULT,
-            .fault_vaddr = dfar,
-        };
-        if (rt_aspace_fault_try_fix(&msg))
-        {
-            regs->pc -= 8;
-            return 1;
-        }
+        regs->pc -= 8;
+        return 1;
+    }
+
+    return 0;
+}
+
+int check_prefetch_abort(struct rt_hw_exp_stack *regs)
+{
+    struct rt_lwp *lwp;
+    void *ifar = RT_NULL;
+    rt_base_t ifsr = RT_NULL;
+    __asm__ volatile("mrc p15, 0, %0, c6, c0, 2" : "=r"(ifar));
+    __asm__ volatile("mrc p15, 0, %0, c5, c0, 1" : "=r"(ifsr));
+
+    struct rt_aspace_fault_msg msg = {
+        .fault_op = MM_FAULT_OP_READ,
+        .fault_type = MM_FAULT_TYPE_PAGE_FAULT,
+        .fault_vaddr = ifar,
+    };
+    lwp = lwp_self();
+    if (lwp && rt_aspace_fault_try_fix(lwp->aspace, &msg))
+    {
+        regs->pc -= 4;
+        return 1;
     }
 
     return 0;
@@ -184,6 +209,10 @@ void rt_hw_trap_pabt(struct rt_hw_exp_stack *regs)
     {
         return;
     }
+    if (check_prefetch_abort(regs))
+    {
+        return;
+    }
     check_user_fault(regs, 4, "User prefetch abort");
 #endif
     rt_unwind(regs, 4);
@@ -210,7 +239,7 @@ void rt_hw_trap_dabt(struct rt_hw_exp_stack *regs)
     {
         return;
     }
-    if (check_user_stack(regs))
+    if (check_data_abort(regs))
     {
         return;
     }

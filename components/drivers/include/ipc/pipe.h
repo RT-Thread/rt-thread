@@ -10,7 +10,9 @@
 #ifndef PIPE_H__
 #define PIPE_H__
 
-#include <rtthread.h>
+#include <rtdef.h>
+#include <rtconfig.h>
+#include "condvar.h"
 
 /**
  * Pipe Device
@@ -33,11 +35,17 @@ struct rt_pipe_device
     int writer;
     int reader;
 
+    struct rt_condvar waitfor_parter;
     struct rt_mutex lock;
 };
 typedef struct rt_pipe_device rt_pipe_t;
 
 rt_pipe_t *rt_pipe_create(const char *name, int bufsz);
+rt_err_t rt_pipe_open(rt_device_t device, rt_uint16_t oflag);
+rt_ssize_t rt_pipe_read(rt_device_t device, rt_off_t pos, void *buffer, rt_size_t count);
+rt_ssize_t rt_pipe_write(rt_device_t device, rt_off_t pos, const void *buffer, rt_size_t count);
+rt_err_t rt_pipe_control(rt_device_t dev, int cmd, void *args);
+rt_err_t rt_pipe_close(rt_device_t device);
 int rt_pipe_delete(const char *name);
 
 #endif /* PIPE_H__ */

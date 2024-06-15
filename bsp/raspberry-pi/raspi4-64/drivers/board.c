@@ -10,6 +10,9 @@
  * 2023-03-28     WangXiaoyao    sync works & memory layout fixups
  *                               code formats
  */
+#define DBG_TAG "board"
+#define DBG_LVL DBG_INFO
+#include <rtdbg.h>
 
 #include <rthw.h>
 #include <rtthread.h>
@@ -60,7 +63,7 @@ struct mem_desc platform_mem_desc[] = {
 };
 #else
 struct mem_desc platform_mem_desc[] = {
-    {0x00200000, (128ul << 20) - 1, 0x00200000, NORMAL_MEM},
+    {0x00200000, (256ul << 20) - 1, 0x00200000, NORMAL_MEM},
     {0xFC000000, 0x000100000000 - 1, 0xFC000000, DEVICE_MEM},
 };
 #endif
@@ -90,16 +93,14 @@ rt_region_t init_page_region = {
  */
 void rt_hw_board_init(void)
 {
-    extern void (*system_off)(void);
-    extern void reboot(void);
-    system_off = reboot;
+    rt_hw_earlycon_ioremap_early();
 
     /* io device remap */
 #ifdef RT_USING_SMART
     rt_hw_mmu_map_init(&rt_kernel_space, (void*)0xfffffffff0000000, 0x10000000, MMUTable, PV_OFFSET);
 #else
-    rt_hw_mmu_map_init(&rt_kernel_space, (void*)0x000400000000, 0x10000000, MMUTable, 0);
-#endif
+    rt_hw_mmu_map_init(&rt_kernel_space, (void*)0x080000000000, 0x10000000, MMUTable, 0);
+#endif /* RT_USING_SMART */
     rt_page_init(init_page_region);
     rt_hw_mmu_setup(&rt_kernel_space, platform_mem_desc, platform_mem_desc_size);
 
@@ -151,8 +152,6 @@ void rt_hw_board_init(void)
     rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
 #endif /* RT_USING_CONSOLE */
 
-    rt_kprintf("heap: 0x%08x - 0x%08x\n", HEAP_BEGIN, HEAP_END);
-
 #ifdef RT_USING_COMPONENTS_INIT
     rt_components_board_init();
 #endif
@@ -174,33 +173,6 @@ static unsigned long cpu_release_paddr[] =
     [4] = 0x00
 };
 
-#ifndef RT_USING_SMART
-static void *_remap(void *paddr, size_t size)
-{
-    int ret;
-    static void *va = 0;
-    size_t low_off = (size_t)paddr & ARCH_PAGE_MASK;
-    if (va)
-        return va + low_off;
-
-    va = rt_kernel_space.start;
-    while (1)
-    {
-        int rt_kmem_map_phy(void *va, void *pa, rt_size_t length, rt_size_t attr);
-        ret = rt_kmem_map_phy(va, 0x0, ARCH_PAGE_SIZE, MMU_MAP_K_DEVICE);
-        if (ret == RT_EOK)
-        {
-            break;
-        }
-        else
-        {
-            va += ARCH_PAGE_SIZE;
-        }
-    }
-    return va + low_off;
-}
-#endif /* RT_USING_SMART */
-
 void rt_hw_secondary_cpu_up(void)
 {
     int i;
@@ -208,11 +180,7 @@ void rt_hw_secondary_cpu_up(void)
 
     for (i = 1; i < RT_CPUS_NR && cpu_release_paddr[i]; ++i)
     {
-#ifdef RT_USING_SMART
         release_addr = rt_ioremap((void *)cpu_release_paddr[i], sizeof(cpu_release_paddr[0]));
-#else
-        release_addr = _remap((void *)cpu_release_paddr[i], sizeof(cpu_release_paddr[0]));
-#endif
         __asm__ volatile ("str %0, [%1]"::"rZ"((unsigned long)_secondary_cpu_entry + PV_OFFSET), "r"(release_addr));
         rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, release_addr, sizeof(release_addr));
         asm volatile ("dsb sy");

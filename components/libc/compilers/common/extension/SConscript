@@ -9,7 +9,7 @@ group = []
 
 src += Glob('*.c')
 
-if rtconfig.PLATFORM != 'gcc':
+if rtconfig.PLATFORM not in ['gcc', 'llvm-arm']:
     group = DefineGroup('Compiler', src, depend = [''], CPPPATH = CPPPATH)
 
 list = os.listdir(cwd)

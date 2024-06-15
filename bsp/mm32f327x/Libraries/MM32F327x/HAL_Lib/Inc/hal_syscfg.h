@@ -23,7 +23,7 @@
 // Files includes
 #include "types.h"
 #include "mm32_device.h"
-#include "hal_EXTI.H"
+#include "hal_exti.h"
 ////////////////////////////////////////////////////////////////////////////////
 /// @addtogroup MM32_Hardware_Abstract_Layer
 /// @{

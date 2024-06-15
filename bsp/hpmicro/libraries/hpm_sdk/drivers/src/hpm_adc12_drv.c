@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 hpmicro
+ * Copyright (c) 2021-2024 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -12,8 +12,8 @@ void adc12_get_default_config(adc12_config_t *config)
 {
     config->res                = adc12_res_12_bits;
     config->conv_mode          = adc12_conv_mode_oneshot;
-    config->adc_clk_div        = 1;
-    config->wait_dis           = 0;
+    config->adc_clk_div        = adc12_clock_divider_1;
+    config->wait_dis           = true;
     config->sel_sync_ahb       = true;
     config->adc_ahb_en         = false;
 }
@@ -24,8 +24,9 @@ void adc12_get_channel_default_config(adc12_channel_config_t *config)
     config->diff_sel           = adc12_sample_signal_single_ended;
     config->sample_cycle       = 10;
     config->sample_cycle_shift = 0;
-    config->thshdh             = 0;
-    config->thshdl             = 0;
+    config->thshdh             = 0xfff;
+    config->thshdl             = 0x000;
+    config->wdog_int_en        = false;
 }
 
 static hpm_stat_t adc12_do_calibration(ADC12_Type *ptr, adc12_sample_signal_t diff_sel)
@@ -38,10 +39,11 @@ static hpm_stat_t adc12_do_calibration(ADC12_Type *ptr, adc12_sample_signal_t di
     }
 
     /*Set diff_sel temporarily */
-    ptr->SAMPLE_CFG[0] = ADC12_SAMPLE_CFG_DIFF_SEL_SET(diff_sel);
+    ptr->SAMPLE_CFG[0] &= ~ADC12_SAMPLE_CFG_DIFF_SEL_MASK;
+    ptr->SAMPLE_CFG[0] |= ADC12_SAMPLE_CFG_DIFF_SEL_SET(diff_sel);
 
     /* Set resetcal and resetadc */
-    ptr->ANA_CTRL0 |= ADC12_ANA_CTRL0_RESETCAL_MASK;
+    ptr->ANA_CTRL0 |= ADC12_ANA_CTRL0_RESETCAL_MASK | ADC12_ANA_CTRL0_RESETADC_MASK;
 
     /* Clear resetcal and resetadc */
     ptr->ANA_CTRL0 &= ~(ADC12_ANA_CTRL0_RESETCAL_MASK | ADC12_ANA_CTRL0_RESETADC_MASK);
@@ -80,6 +82,14 @@ static hpm_stat_t adc12_do_calibration(ADC12_Type *ptr, adc12_sample_signal_t di
     return status_success;
 }
 
+hpm_stat_t adc12_deinit(ADC12_Type *ptr)
+{
+    /* disable all interrupts */
+    ptr->INT_EN = 0;
+
+    return status_success;
+}
+
 hpm_stat_t adc12_init(ADC12_Type *ptr, adc12_config_t *config)
 {
     uint32_t adc_clk_div;
@@ -102,23 +112,20 @@ hpm_stat_t adc12_init(ADC12_Type *ptr, adc12_config_t *config)
                    | ADC12_ANA_CTRL1_SELRES_SET(config->res);
 
     /* Set convert clock number and clock period */
-    if (config->adc_clk_div > ADC12_CONV_CFG1_CLOCK_DIVIDER_MASK)  {
+    if ((config->adc_clk_div - 1) > ADC12_CONV_CFG1_CLOCK_DIVIDER_MASK)  {
         return status_invalid_argument;
     }
 
     /* Set ADC minimum conversion cycle and ADC clock divider */
     ptr->CONV_CFG1 = ADC12_CONV_CFG1_CONVERT_CLOCK_NUMBER_SET(2 * config->res + 7)
-                   | ADC12_CONV_CFG1_CLOCK_DIVIDER_SET(config->adc_clk_div);
+                   | ADC12_CONV_CFG1_CLOCK_DIVIDER_SET(config->adc_clk_div - 1);
 
     /* Set ADC Config0 */
     ptr->ADC_CFG0 = ADC12_ADC_CFG0_SEL_SYNC_AHB_SET(config->sel_sync_ahb)
                   | ADC12_ADC_CFG0_ADC_AHB_EN_SET(config->adc_ahb_en);
 
     /* Set wait_dis */
-    if (config->conv_mode == adc12_conv_mode_oneshot) {
-        /* Set wait_dis */
-        ptr->BUF_CFG0 = ADC12_BUF_CFG0_WAIT_DIS_SET(config->wait_dis);
-    }
+    ptr->BUF_CFG0 = ADC12_BUF_CFG0_WAIT_DIS_SET(config->wait_dis);
 
     /*-------------------------------------------------------------------------------
      *                                 Calibration
@@ -153,7 +160,8 @@ hpm_stat_t adc12_init(ADC12_Type *ptr, adc12_config_t *config)
 
     /*-------------------------------------------------------------------------------
      *                                 End of calibration
-     *------------------------------------------------------------------------------*/
+     *------------------------------------------------------------------------------
+     */
 
     return status_success;
 }
@@ -161,7 +169,12 @@ hpm_stat_t adc12_init(ADC12_Type *ptr, adc12_config_t *config)
 hpm_stat_t adc12_init_channel(ADC12_Type *ptr, adc12_channel_config_t *config)
 {
     /* Check the specified channel number */
-    if (ADC12_IS_CHANNEL_INVALID(ptr, config->ch)) {
+    if (ADC12_IS_CHANNEL_INVALID(config->ch)) {
+        return status_invalid_argument;
+    }
+
+    /* Check sample cycle */
+    if (ADC12_IS_CHANNEL_SAMPLE_CYCLE_INVALID(config->sample_cycle)) {
         return status_invalid_argument;
     }
 
@@ -175,6 +188,25 @@ hpm_stat_t adc12_init_channel(ADC12_Type *ptr, adc12_channel_config_t *config)
     ptr->SAMPLE_CFG[config->ch] = ADC12_SAMPLE_CFG_DIFF_SEL_SET(config->diff_sel)
                                 | ADC12_SAMPLE_CFG_SAMPLE_CLOCK_NUMBER_SHIFT_SET(config->sample_cycle_shift)
                                 | ADC12_SAMPLE_CFG_SAMPLE_CLOCK_NUMBER_SET(config->sample_cycle);
+
+    /* Enable watchdog interrupt */
+    if (config->wdog_int_en) {
+        ptr->INT_EN |= 1 << config->ch;
+    }
+
+    return status_success;
+}
+
+hpm_stat_t adc12_get_channel_threshold(ADC12_Type *ptr, uint8_t ch, adc12_channel_threshold_t *config)
+{
+    /* Check the specified channel number */
+    if (ADC12_IS_CHANNEL_INVALID(ch)) {
+        return status_invalid_argument;
+    }
+
+    config->ch     = ch;
+    config->thshdh = ADC12_PRD_CFG_PRD_THSHD_CFG_THSHDH_GET(ptr->PRD_CFG[ch].PRD_THSHD_CFG);
+    config->thshdl = ADC12_PRD_CFG_PRD_THSHD_CFG_THSHDL_GET(ptr->PRD_CFG[ch].PRD_THSHD_CFG);
 
     return status_success;
 }
@@ -215,7 +247,7 @@ hpm_stat_t adc12_init_seq_dma(ADC12_Type *ptr, adc12_dma_config_t *dma_config)
 hpm_stat_t adc12_set_prd_config(ADC12_Type *ptr, adc12_prd_config_t *config)
 {
     /* Check the specified channel number */
-    if (ADC12_IS_CHANNEL_INVALID(ptr, config->ch)) {
+    if (ADC12_IS_CHANNEL_INVALID(config->ch)) {
         return status_invalid_argument;
     }
 
@@ -228,17 +260,21 @@ hpm_stat_t adc12_set_prd_config(ADC12_Type *ptr, adc12_prd_config_t *config)
     ptr->PRD_CFG[config->ch].PRD_CFG = (ptr->PRD_CFG[config->ch].PRD_CFG & ~ADC12_PRD_CFG_PRD_CFG_PRESCALE_MASK)
                                      | ADC12_PRD_CFG_PRD_CFG_PRESCALE_SET(config->prescale);
 
-
     /* Set period count */
     ptr->PRD_CFG[config->ch].PRD_CFG = (ptr->PRD_CFG[config->ch].PRD_CFG & ~ADC12_PRD_CFG_PRD_CFG_PRD_MASK)
-                                         | ADC12_PRD_CFG_PRD_CFG_PRD_SET(config->period_count);
+                                     | ADC12_PRD_CFG_PRD_CFG_PRD_SET(config->period_count);
 
     return status_success;
 }
 
-void adc12_trigger_seq_by_sw(ADC12_Type *ptr)
+hpm_stat_t adc12_trigger_seq_by_sw(ADC12_Type *ptr)
 {
+    if (ADC12_INT_STS_SEQ_SW_CFLCT_GET(ptr->INT_STS)) {
+        return status_fail;
+    }
     ptr->SEQ_CFG0 |= ADC12_SEQ_CFG0_SW_TRIG_MASK;
+
+    return status_success;
 }
 
 /* Note: the sequence length can not be larger or equal than 2 in HPM6750EVK Revision A0 */
@@ -258,13 +294,20 @@ hpm_stat_t adc12_set_seq_config(ADC12_Type *ptr, adc12_seq_config_t *config)
     /* Set sequence queue */
     for (int i = 0; i < config->seq_len; i++) {
         /* Check the specified channel number */
-        if (ADC12_IS_CHANNEL_INVALID(ptr, config->queue[i].ch)) {
+        if (ADC12_IS_CHANNEL_INVALID(config->queue[i].ch)) {
             return status_invalid_argument;
         }
 
         ptr->SEQ_QUE[i] = ADC12_SEQ_QUE_SEQ_INT_EN_SET(config->queue[i].seq_int_en)
                         | ADC12_SEQ_QUE_CHAN_NUM_4_0_SET(config->queue[i].ch);
     }
+
+    return status_success;
+}
+
+hpm_stat_t adc12_trigger_pmt_by_sw(ADC12_Type *ptr, uint8_t trig_ch)
+{
+    ptr->TRG_SW_STA = ADC12_TRG_SW_STA_TRG_SW_STA_MASK | ADC12_TRG_SW_STA_TRIG_SW_INDEX_SET(trig_ch);
 
     return status_success;
 }
@@ -278,10 +321,15 @@ hpm_stat_t adc12_set_pmt_config(ADC12_Type *ptr, adc12_pmt_config_t *config)
         return status_invalid_argument;
     }
 
+	/* Check the triggier channel */
+    if (ADC12_IS_TRIG_CH_INVLAID(config->trig_ch)) {
+        return status_invalid_argument;
+    }
+
     temp |= ADC12_CONFIG_TRIG_LEN_SET(config->trig_len - 1);
 
     for (int i = 0; i < config->trig_len; i++) {
-        if (ADC12_IS_CHANNEL_INVALID(ptr, config->trig_ch)) {
+        if (ADC12_IS_CHANNEL_INVALID(config->adc_ch[i])) {
             return status_invalid_argument;
         }
 
@@ -296,12 +344,21 @@ hpm_stat_t adc12_set_pmt_config(ADC12_Type *ptr, adc12_pmt_config_t *config)
 
 hpm_stat_t adc12_get_oneshot_result(ADC12_Type *ptr, uint8_t ch, uint16_t *result)
 {
+    uint32_t bus_res;
+
     /* Check the specified channel number */
-    if (ADC12_IS_CHANNEL_INVALID(ptr, ch)) {
+    if (ADC12_IS_CHANNEL_INVALID(ch)) {
         return status_invalid_argument;
     }
 
-    *result = ADC12_BUS_RESULT_CHAN_RESULT_GET(ptr->BUS_RESULT[ch]);
+    bus_res = ptr->BUS_RESULT[ch];
+    *result = ADC12_BUS_RESULT_CHAN_RESULT_GET(bus_res);
+
+    if (ADC12_BUF_CFG0_WAIT_DIS_GET(ptr->BUF_CFG0)) {
+        if (!ADC12_BUS_RESULT_VALID_GET(bus_res)) {
+            return status_fail;
+        }
+    }
 
     return status_success;
 }
@@ -309,11 +366,11 @@ hpm_stat_t adc12_get_oneshot_result(ADC12_Type *ptr, uint8_t ch, uint16_t *resul
 hpm_stat_t adc12_get_prd_result(ADC12_Type *ptr, uint8_t ch, uint16_t *result)
 {
     /* Check the specified channel number */
-    if (ADC12_IS_CHANNEL_INVALID(ptr, ch)) {
+    if (ADC12_IS_CHANNEL_INVALID(ch)) {
         return status_invalid_argument;
     }
 
-    *result = ptr->PRD_CFG[ch].PRD_RESULT;
+    *result = ADC12_PRD_CFG_PRD_RESULT_CHAN_RESULT_GET(ptr->PRD_CFG[ch].PRD_RESULT);
 
     return status_success;
 }

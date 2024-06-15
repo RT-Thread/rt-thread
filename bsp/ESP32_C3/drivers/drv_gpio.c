@@ -21,9 +21,9 @@ static void mcu_pin_write(rt_device_t dev, rt_base_t pin, rt_uint8_t value)
     /*TODO:set gpio out put mode */
 }
 
-static rt_int8_t mcu_pin_read(rt_device_t dev, rt_base_t pin)
+static rt_ssize_t mcu_pin_read(rt_device_t dev, rt_base_t pin)
 {
-    rt_int8_t value;
+    rt_ssize_t value;
     value = gpio_get_level(pin);
     return value;
 }
@@ -53,7 +53,7 @@ static rt_err_t mcu_pin_attach_irq(struct rt_device *device, rt_base_t pin,
     return -RT_ENOSYS;
 }
 
-static rt_err_t mcu_pin_detach_irq(struct rt_device *device, rt_int32_t pin)
+static rt_err_t mcu_pin_detach_irq(struct rt_device *device, rt_base_t pin)
 {
     /*TODO:disable gpio irq handle */
     return RT_EOK;

@@ -351,8 +351,8 @@ struct rt_can_ops
 {
     rt_err_t (*configure)(struct rt_can_device *can, struct can_configure *cfg);
     rt_err_t (*control)(struct rt_can_device *can, int cmd, void *arg);
-    int (*sendmsg)(struct rt_can_device *can, const void *buf, rt_uint32_t boxno);
-    int (*recvmsg)(struct rt_can_device *can, void *buf, rt_uint32_t boxno);
+    rt_ssize_t (*sendmsg)(struct rt_can_device *can, const void *buf, rt_uint32_t boxno);
+    rt_ssize_t (*recvmsg)(struct rt_can_device *can, void *buf, rt_uint32_t boxno);
 };
 
 rt_err_t rt_hw_can_register(struct rt_can_device    *can,

@@ -28,7 +28,7 @@ void rt_hw_interrupt_enable(rt_base_t level)
     __asm__ __volatile__("pushl %0 ; popfl": :"g" (level):"memory", "cc");
 }
 
-void rt_hw_context_switch_interrupt(rt_ubase_t from, rt_ubase_t to)
+void rt_hw_context_switch_interrupt(rt_ubase_t from, rt_ubase_t to, rt_thread_t from_thread, rt_thread_t to_thread)
 {
     if (rt_thread_switch_interrupt_flag == 0)
         rt_interrupt_from_thread = from;

@@ -11,19 +11,26 @@
 #ifndef  LWP_ARCH_H__
 #define  LWP_ARCH_H__
 
-#include <lwp.h>
-#include <lwp_arch_comm.h>
+#include <rtconfig.h>
 
 #ifdef ARCH_MM_MMU
 
 #define USER_VADDR_TOP    0x0001000000000000UL
-#define USER_HEAP_VEND    0x0000ffffB0000000UL
-#define USER_HEAP_VADDR   0x0000ffff80000000UL
+#define USER_HEAP_VADDR   (0x0000ffff40000000UL)
+#define USER_HEAP_VEND    USER_STACK_VSTART
 #define USER_STACK_VSTART 0x0000ffff70000000UL
-#define USER_STACK_VEND   USER_HEAP_VADDR
+#define USER_STACK_VEND   (USER_STACK_VSTART + 0x10000000)
+#define USER_ARG_VADDR    USER_STACK_VEND
 #define LDSO_LOAD_VADDR   0x60000000UL
 #define USER_VADDR_START  0x00200000UL
 #define USER_LOAD_VADDR   USER_VADDR_START
+
+#define UCTX_ABI_OFFSET_TO_SI 16
+
+#ifndef __ASSEMBLY__
+
+#include <lwp.h>
+#include <lwp_arch_comm.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -33,13 +40,37 @@ unsigned long rt_hw_ffz(unsigned long x);
 
 rt_inline void icache_invalid_all(void)
 {
-    asm volatile ("ic ialluis\n\tisb sy":::"memory");
+    __asm__ volatile ("ic ialluis\n\tisb sy":::"memory");
 }
+
+/**
+ * @brief Save signal-related context to user stack
+ *
+ * @param user_sp the current sp of user
+ * @param exp_frame exception frame to resume former execution
+ * @param psiginfo pointer to the siginfo
+ * @param elr pc of former execution
+ * @param spsr program status of former execution
+ * @return void* the new user sp
+ */
+void *arch_signal_ucontext_save(rt_base_t user_sp, siginfo_t *psiginfo,
+                                struct rt_hw_exp_stack *exp_frame,
+                                lwp_sigset_t *save_sig_mask);
+
+/**
+ * @brief Restore the signal mask after return
+ *
+ * @param user_sp sp of user
+ * @return void*
+ */
+void *arch_signal_ucontext_restore(rt_base_t user_sp, rt_base_t kernel_sp);
+void arch_syscall_restart(void *sp, void *ksp);
 
 #ifdef __cplusplus
 }
 #endif
+#endif /* __ASSEMBLY__ */
 
-#endif
+#endif /* ARCH_MM_MMU */
 
 #endif  /*LWP_ARCH_H__*/

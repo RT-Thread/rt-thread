@@ -1,6 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
- * Copyright (c) 2022, Xiaohua Semiconductor Co., Ltd.
+ * Copyright (C) 2022-2024, Xiaohua Semiconductor Co., Ltd.
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -48,6 +47,10 @@ struct hc32_irq_config
 rt_err_t hc32_install_irq_handler(struct hc32_irq_config *irq_config,
                                   void (*irq_hdr)(void),
                                   rt_bool_t irq_enable);
+#if defined (HC32F448) || defined (HC32F472)
+rt_err_t hc32_install_independ_irq_handler(struct hc32_irq_config *irq_config,
+        rt_bool_t irq_enable);
+#endif
 
 #ifdef __cplusplus
 }

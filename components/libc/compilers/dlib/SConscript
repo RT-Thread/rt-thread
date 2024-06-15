@@ -13,7 +13,8 @@ if rtconfig.PLATFORM in ['iccarm']:
         from iar import IARVersion
 
         CPPDEFINES = CPPDEFINES + ['_DLIB_FILE_DESCRIPTOR']
-        if LooseVersion(IARVersion()) < LooseVersion("8.20.1"):
+        iar_version = LooseVersion(IARVersion())
+        if iar_version != LooseVersion("0.0") and iar_version < LooseVersion("8.20.1"):
             CPPDEFINES = CPPDEFINES + ['_DLIB_THREAD_SUPPORT']
 
     group = DefineGroup('Compiler', src, depend = [''], CPPDEFINES = CPPDEFINES)

@@ -55,6 +55,10 @@ OF SUCH DAMAGE.
  #error "Please select the target GD32F4xx device in gd32f4xx.h file"
 #endif /* undefine GD32F4xx tip */
 
+#ifdef LCKFB_SKYSTART_GD32F407V
+#define HXTAL_VALUE    ((uint32_t)8000000)
+#endif
+
 /* define value of high speed crystal oscillator (HXTAL) in Hz */
 #if !defined  (HXTAL_VALUE)
 #define HXTAL_VALUE    ((uint32_t)25000000)

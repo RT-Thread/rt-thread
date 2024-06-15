@@ -76,18 +76,30 @@ static void bflb_i2c_set_frequence(struct bflb_device_s *dev, uint32_t freq)
     uint32_t regval;
     uint32_t reg_base;
     uint32_t phase;
+    uint32_t tmp;
 
     reg_base = dev->reg_base;
 
     phase = bflb_clk_get_peripheral_clock(BFLB_DEVICE_TYPE_I2C, dev->idx) / (freq * 4) - 1;
 
-    regval = phase << I2C_CR_I2C_PRD_S_PH_0_SHIFT;
-    regval |= phase << I2C_CR_I2C_PRD_S_PH_1_SHIFT;
-    regval |= phase << I2C_CR_I2C_PRD_S_PH_2_SHIFT;
-    regval |= phase << I2C_CR_I2C_PRD_S_PH_3_SHIFT;
+    if (freq > 100000) {
+        tmp = ((phase / 4) / 0.5);
+    } else {
+        tmp = (phase / 4);
+    }
+
+    regval = (phase - tmp) << I2C_CR_I2C_PRD_S_PH_0_SHIFT;
+    regval |= (phase + tmp) << I2C_CR_I2C_PRD_S_PH_1_SHIFT;
+    regval |= (phase) << I2C_CR_I2C_PRD_S_PH_2_SHIFT;
+    regval |= (phase) << I2C_CR_I2C_PRD_S_PH_3_SHIFT;
 
     putreg32(regval, reg_base + I2C_PRD_START_OFFSET);
     putreg32(regval, reg_base + I2C_PRD_STOP_OFFSET);
+
+    regval = (phase - tmp) << I2C_CR_I2C_PRD_D_PH_0_SHIFT;
+    regval |= (phase + tmp) << I2C_CR_I2C_PRD_D_PH_1_SHIFT;
+    regval |= (phase + tmp) << I2C_CR_I2C_PRD_D_PH_2_SHIFT;
+    regval |= (phase - tmp) << I2C_CR_I2C_PRD_D_PH_3_SHIFT;
     putreg32(regval, reg_base + I2C_PRD_DATA_OFFSET);
 }
 
@@ -117,6 +129,22 @@ static inline bool bflb_i2c_isend(struct bflb_device_s *dev)
     regval = getreg32(reg_base + I2C_INT_STS_OFFSET);
 
     if (regval & I2C_END_INT) {
+        return true;
+    }
+
+    return false;
+}
+
+static inline bool bflb_i2c_isnak(struct bflb_device_s *dev)
+{
+    uint32_t regval;
+    uint32_t reg_base;
+
+    reg_base = dev->reg_base;
+
+    regval = getreg32(reg_base + I2C_INT_STS_OFFSET);
+
+    if (regval & I2C_NAK_INT) {
         return true;
     }
 
@@ -178,7 +206,7 @@ static int bflb_i2c_write_bytes(struct bflb_device_s *dev, uint8_t *data, uint32
     uint32_t reg_base;
     uint32_t temp = 0;
     uint8_t *tmp_buf;
-    uint64_t start_time;
+    // uint64_t start_time;
 
     reg_base = dev->reg_base;
     tmp_buf = data;
@@ -188,12 +216,12 @@ static int bflb_i2c_write_bytes(struct bflb_device_s *dev, uint8_t *data, uint32
         }
         tmp_buf += 4;
         len -= 4;
-        start_time = bflb_mtimer_get_time_ms();
-        while ((getreg32(reg_base + I2C_FIFO_CONFIG_1_OFFSET) & I2C_TX_FIFO_CNT_MASK) == 0) {
-            if ((bflb_mtimer_get_time_ms() - start_time) > 100) {
-                return -ETIMEDOUT;
-            }
-        }
+        // start_time = bflb_mtimer_get_time_ms();
+        // while ((getreg32(reg_base + I2C_FIFO_CONFIG_1_OFFSET) & I2C_TX_FIFO_CNT_MASK) == 0) {
+        //     if ((bflb_mtimer_get_time_ms() - start_time) > 100) {
+        //         return -ETIMEDOUT;
+        //     }
+        // }
         putreg32(temp, reg_base + I2C_FIFO_WDATA_OFFSET);
         if (!bflb_i2c_isenable(dev)) {
             bflb_i2c_enable(dev);
@@ -205,24 +233,24 @@ static int bflb_i2c_write_bytes(struct bflb_device_s *dev, uint8_t *data, uint32
         for (uint8_t i = 0; i < len; i++) {
             temp += (tmp_buf[i] << ((i % 4) * 8));
         }
-        start_time = bflb_mtimer_get_time_ms();
-        while ((getreg32(reg_base + I2C_FIFO_CONFIG_1_OFFSET) & I2C_TX_FIFO_CNT_MASK) == 0) {
-            if ((bflb_mtimer_get_time_ms() - start_time) > 100) {
-                return -ETIMEDOUT;
-            }
-        }
+        // start_time = bflb_mtimer_get_time_ms();
+        // while ((getreg32(reg_base + I2C_FIFO_CONFIG_1_OFFSET) & I2C_TX_FIFO_CNT_MASK) == 0) {
+        //     if ((bflb_mtimer_get_time_ms() - start_time) > 100) {
+        //         return -ETIMEDOUT;
+        //     }
+        // }
         putreg32(temp, reg_base + I2C_FIFO_WDATA_OFFSET);
         if (!bflb_i2c_isenable(dev)) {
             bflb_i2c_enable(dev);
         }
     }
 
-    start_time = bflb_mtimer_get_time_ms();
-    while (bflb_i2c_isbusy(dev) || !bflb_i2c_isend(dev)) {
-        if ((bflb_mtimer_get_time_ms() - start_time) > 100) {
-            return -ETIMEDOUT;
-        }
-    }
+    // start_time = bflb_mtimer_get_time_ms();
+    // while (bflb_i2c_isbusy(dev) || !bflb_i2c_isend(dev) || bflb_i2c_isnak(dev)) {
+    //     if ((bflb_mtimer_get_time_ms() - start_time) > 100) {
+    //         return -ETIMEDOUT;
+    //     }
+    // }
     bflb_i2c_disable(dev);
 
     return 0;
@@ -233,7 +261,7 @@ static int bflb_i2c_read_bytes(struct bflb_device_s *dev, uint8_t *data, uint32_
     uint32_t reg_base;
     uint32_t temp = 0;
     uint8_t *tmp_buf;
-    uint64_t start_time;
+    // uint64_t start_time;
 
     reg_base = dev->reg_base;
     tmp_buf = data;
@@ -241,12 +269,12 @@ static int bflb_i2c_read_bytes(struct bflb_device_s *dev, uint8_t *data, uint32_
     bflb_i2c_enable(dev);
 
     while (len >= 4) {
-        start_time = bflb_mtimer_get_time_ms();
-        while ((getreg32(reg_base + I2C_FIFO_CONFIG_1_OFFSET) & I2C_RX_FIFO_CNT_MASK) == 0) {
-            if ((bflb_mtimer_get_time_ms() - start_time) > 100) {
-                return -ETIMEDOUT;
-            }
-        }
+        // start_time = bflb_mtimer_get_time_ms();
+        // while ((getreg32(reg_base + I2C_FIFO_CONFIG_1_OFFSET) & I2C_RX_FIFO_CNT_MASK) == 0) {
+        //     if ((bflb_mtimer_get_time_ms() - start_time) > 100) {
+        //         return -ETIMEDOUT;
+        //     }
+        // }
         temp = getreg32(reg_base + I2C_FIFO_RDATA_OFFSET);
         PUT_UINT32_LE(tmp_buf, temp);
         tmp_buf += 4;
@@ -254,12 +282,12 @@ static int bflb_i2c_read_bytes(struct bflb_device_s *dev, uint8_t *data, uint32_
     }
 
     if (len > 0) {
-        start_time = bflb_mtimer_get_time_ms();
-        while ((getreg32(reg_base + I2C_FIFO_CONFIG_1_OFFSET) & I2C_RX_FIFO_CNT_MASK) == 0) {
-            if ((bflb_mtimer_get_time_ms() - start_time) > 100) {
-                return -ETIMEDOUT;
-            }
-        }
+        // start_time = bflb_mtimer_get_time_ms();
+        // while ((getreg32(reg_base + I2C_FIFO_CONFIG_1_OFFSET) & I2C_RX_FIFO_CNT_MASK) == 0) {
+        //     if ((bflb_mtimer_get_time_ms() - start_time) > 100) {
+        //         return -ETIMEDOUT;
+        //     }
+        // }
         temp = getreg32(reg_base + I2C_FIFO_RDATA_OFFSET);
 
         for (uint8_t i = 0; i < len; i++) {
@@ -267,12 +295,12 @@ static int bflb_i2c_read_bytes(struct bflb_device_s *dev, uint8_t *data, uint32_
         }
     }
 
-    start_time = bflb_mtimer_get_time_ms();
-    while (bflb_i2c_isbusy(dev) || !bflb_i2c_isend(dev)) {
-        if ((bflb_mtimer_get_time_ms() - start_time) > 100) {
-            return -ETIMEDOUT;
-        }
-    }
+    // start_time = bflb_mtimer_get_time_ms();
+    // while (bflb_i2c_isbusy(dev) || !bflb_i2c_isend(dev)) {
+    //     if ((bflb_mtimer_get_time_ms() - start_time) > 100) {
+    //         return -ETIMEDOUT;
+    //     }
+    // }
     bflb_i2c_disable(dev);
 
     return 0;

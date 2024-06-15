@@ -53,14 +53,14 @@ Incluye:
 
 | Name          | Descripción                                             |
 | ------------- | ------------------------------------------------------- |
-| BSP          | Board Support Package basado en la portación de varias placas de desarrollo |
+| bsp        | Board Support Package basado en la portación de varias placas de desarrollo |
 | componentes    | Componentes, como finsh shell, sistema de archivos, pila de protocolos, etc.|
-| documentación | Documentos relacionados, como el estilo de codificación, doxygen, etc.       |
-| ejemplos      | Código de ejemplo relacionado                            |
-| incluir       | Archivos de cabecera del kernel RT-Thread.                |
-| libcpu        | Código de portabilidad de CPUs como ARM/MIPS/RISC-V, etc.|
+| documentation | Documentos relacionados, como el estilo de codificación, doxygen, etc.       |
+| examples | Código de ejemplo relacionado                            |
+| include | Archivos de cabecera del kernel RT-Thread.                |
+| libcpu  | Código de portabilidad de CPUs como ARM/MIPS/RISC-V, etc.|
 | src           | Los archivos fuente del kernel RT-Thread. |
-| herramientas  | Los archivos de script para la herramienta de construcción de comandos de RT-Thread. |
+| tools | Los archivos de script para la herramienta de construcción de comandos de RT-Thread. |
 
 RT-Thread ha sido portado para casi 200 placas de desarrollo, la mayoría de los BSPs soportan el MDK, el entorno de desarrollo IAR y el compilador GCC, y han proporcionado un proyecto MDK e IAR por defecto, que permite a los usuarios añadir su propio código de aplicación directamente basado en el proyecto. Cada BSP tiene una estructura de directorio similar, y la mayoría de los BSPs proporcionan un archivo README.md, que es un archivo con formato markdown que contiene la introducción básica del BSP, y presenta cómo empezar a usar el BSP de forma sencilla.
 
@@ -82,7 +82,7 @@ RT-Thread es compatible con muchas arquitecturas, y ha cubierto las principales 
 - **ARM9**：manufacturers like Allwinner、Xilinx 、GOKE
 - **ARM11**：manufacturers like Fullhan
 - **MIPS32**：manufacturers like loongson、Ingenic
-- **RISC-V RV32E/RV32I[F]/RV64[D]**：manufacturers like Hifive、[Kendryte](https://github.com/RT-Thread/rt-thread/tree/master/bsp/k210)、[bouffalo_lab](https://github.com/RT-Thread/rt-thread/tree/master/bsp/bouffalo_lab)、[Nuclei](https://nucleisys.com/)、[T-Head](https://www.t-head.cn/)
+- **RISC-V RV32E/RV32I[F]/RV64[D]**：manufacturers like Hifive、[Kendryte](https://github.com/RT-Thread/rt-thread/tree/master/bsp/k210)、[bouffalo_lab](https://github.com/RT-Thread/rt-thread/tree/master/bsp/bouffalo_lab)、[Nuclei](https://nucleisys.com/)、[T-Head](https://www.t-head.cn/)、[HPMicro](https://github.com/RT-Thread/rt-thread/tree/master/bsp/hpmicro)
 - **ARC**：manufacturers like SYNOPSYS
 - **DSP**：manufacturers like TI
 - **C-Sky**
@@ -107,7 +107,7 @@ RT-Thread Studio IDE (también conocido como RT-Studio) es un entorno de desarro
 
 ## Herramienta Env
 
-[User Manual](documentation/env/env/) | [Tutorial Videos](https://www.youtube.com/watch?v=dEK94o_YoSo)
+[User Manual](documentation/env/env.md) | [Tutorial Videos](https://www.youtube.com/watch?v=dEK94o_YoSo)
 
 En la etapa inicial, el equipo de RT-Thread también creó una herramienta auxiliar llamada Env. Es una herramienta auxiliar con una TUI (interfaz de usuario basada en texto). Los desarrolladores pueden utilizar la herramienta Env para configurar y generar los proyectos GCC, Keil MDK e IAR.
 
@@ -143,5 +143,4 @@ RT-Thread está muy agradecido por el apoyo de todos los desarrolladores de la c
 
 # Contribución
 
-Si estás interesado en RT-Thread y quieres unirte al desarrollo de RT-Thread y convertirte en un contribuidor de código, por favor consulta la [Guía de Contribución de Código.](documentation/contribution_guide/contribution_guide.md).
-
+Si estás interesado en RT-Thread y quieres unirte al desarrollo de RT-Thread y convertirte en un contribuidor de código, por favor consulta la [Guía de Contribución de Código.](.github/CONTRIBUTING.md).

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -12,153 +12,34 @@
 
 #include <dfs.h>
 #include <dfs_fs.h>
+#include <dfs_dentry.h>
 #include <dfs_file.h>
+#include <dfs_mnt.h>
+
+#include <rtservice.h>
+
 #include "dfs_private.h"
+
+#define DBG_TAG    "DFS"
+#define DBG_LVL    DBG_INFO
+#include <rtdbg.h>
+
 #ifdef RT_USING_SMART
 #include <lwp.h>
 #endif
-
-#ifdef RT_USING_POSIX_STDIO
-#include <libc.h>
-#endif /* RT_USING_POSIX_STDIO */
-
-/* Global variables */
-const struct dfs_filesystem_ops *filesystem_operation_table[DFS_FILESYSTEM_TYPES_MAX];
-struct dfs_filesystem filesystem_table[DFS_FILESYSTEMS_MAX];
-
-/* device filesystem lock */
-static struct rt_mutex fslock;
-static struct rt_mutex fdlock;
 
 #ifdef DFS_USING_WORKDIR
 char working_directory[DFS_PATH_MAX] = {"/"};
 #endif
 
-static struct dfs_fdtable _fdtab;
-static int  fd_alloc(struct dfs_fdtable *fdt, int startfd);
+static rt_bool_t _dfs_init_ok = RT_FALSE;
 
-/**
- * @addtogroup DFS
- * @{
- */
+/* device filesystem lock */
+static struct rt_mutex fslock;
+static struct rt_mutex fdlock;
+static struct dfs_fdtable _fdtab = {0};
 
-/**
- * this function will initialize device file system.
- */
-int dfs_init(void)
-{
-    static rt_bool_t init_ok = RT_FALSE;
-
-    if (init_ok)
-    {
-        rt_kprintf("dfs already init.\n");
-        return 0;
-    }
-
-    /* init vnode hash table */
-    dfs_vnode_mgr_init();
-
-    /* clear filesystem operations table */
-    rt_memset((void *)filesystem_operation_table, 0, sizeof(filesystem_operation_table));
-    /* clear filesystem table */
-    rt_memset(filesystem_table, 0, sizeof(filesystem_table));
-    /* clean fd table */
-    rt_memset(&_fdtab, 0, sizeof(_fdtab));
-
-    /* create device filesystem lock */
-    rt_mutex_init(&fslock, "fslock", RT_IPC_FLAG_PRIO);
-    rt_mutex_init(&fdlock, "fdlock", RT_IPC_FLAG_PRIO);
-
-#ifdef DFS_USING_WORKDIR
-    /* set current working directory */
-    rt_memset(working_directory, 0, sizeof(working_directory));
-    working_directory[0] = '/';
-#endif
-
-#ifdef RT_USING_DFS_TMPFS
-    {
-        extern int dfs_tmpfs_init(void);
-        dfs_tmpfs_init();
-    }
-#endif
-
-#ifdef RT_USING_DFS_DEVFS
-    {
-        extern int devfs_init(void);
-
-        /* if enable devfs, initialize and mount it as soon as possible */
-        devfs_init();
-
-        dfs_mount(NULL, "/dev", "devfs", 0, 0);
-    }
-#if defined(RT_USING_DEV_BUS) && defined(RT_USING_DFS_TMPFS)
-    mkdir("/dev/shm", 0x777);
-    if (dfs_mount(RT_NULL, "/dev/shm", "tmp", 0, 0) != 0)
-    {
-        rt_kprintf("Dir /dev/shm mount failed!\n");
-    }
-#endif
-#endif
-
-    init_ok = RT_TRUE;
-
-    return 0;
-}
-INIT_PREV_EXPORT(dfs_init);
-
-/**
- * this function will lock device file system.
- *
- * @note please don't invoke it on ISR.
- */
-void dfs_lock(void)
-{
-    rt_err_t result = -RT_EBUSY;
-
-    while (result == -RT_EBUSY)
-    {
-        result = rt_mutex_take(&fslock, RT_WAITING_FOREVER);
-    }
-
-    if (result != RT_EOK)
-    {
-        RT_ASSERT(0);
-    }
-}
-
-void dfs_file_lock(void)
-{
-    rt_err_t result = -RT_EBUSY;
-
-    while (result == -RT_EBUSY)
-    {
-        result = rt_mutex_take(&fdlock, RT_WAITING_FOREVER);
-    }
-
-    if (result != RT_EOK)
-    {
-        RT_ASSERT(0);
-    }
-}
-
-/**
- * this function will lock device file system.
- *
- * @note please don't invoke it on ISR.
- */
-void dfs_unlock(void)
-{
-    rt_mutex_release(&fslock);
-}
-
-#ifdef DFS_USING_POSIX
-
-void dfs_file_unlock(void)
-{
-    rt_mutex_release(&fdlock);
-}
-
-static int fd_slot_expand(struct dfs_fdtable *fdt, int fd)
+static int _fdt_slot_expand(struct dfs_fdtable *fdt, int fd)
 {
     int nr;
     int index;
@@ -189,13 +70,13 @@ static int fd_slot_expand(struct dfs_fdtable *fdt, int fd)
     {
         fds[index] = NULL;
     }
-    fdt->fds   = fds;
+    fdt->fds = fds;
     fdt->maxfd = nr;
 
     return fd;
 }
 
-static int fd_slot_alloc(struct dfs_fdtable *fdt, int startfd)
+static int _fdt_slot_alloc(struct dfs_fdtable *fdt, int startfd)
 {
     int idx;
 
@@ -213,36 +94,101 @@ static int fd_slot_alloc(struct dfs_fdtable *fdt, int startfd)
     {
         idx = startfd;
     }
-    if (fd_slot_expand(fdt, idx) < 0)
+
+    if (_fdt_slot_expand(fdt, idx) < 0)
     {
         return -1;
     }
+
     return idx;
 }
-static int fd_alloc(struct dfs_fdtable *fdt, int startfd)
+
+static int _fdt_fd_alloc(struct dfs_fdtable *fdt, int startfd)
 {
     int idx;
-    struct dfs_file *fd = NULL;
 
-    idx = fd_slot_alloc(fdt, startfd);
-
-    /* allocate  'struct dfs_file' */
-    if (idx < 0)
-    {
-        return -1;
-    }
-    fd = (struct dfs_file *)rt_calloc(1, sizeof(struct dfs_file));
-    if (!fd)
-    {
-        return -1;
-    }
-    fd->ref_count = 1;
-    fd->magic = DFS_FD_MAGIC;
-    fd->vnode = NULL;
-    fdt->fds[idx] = fd;
+    idx = _fdt_slot_alloc(fdt, startfd);
 
     return idx;
 }
+
+/**
+ * this function will lock device file system.
+ *
+ * @note please don't invoke it on ISR.
+ */
+rt_err_t dfs_lock(void)
+{
+    rt_err_t result = -RT_EBUSY;
+
+    while (result == -RT_EBUSY)
+    {
+        result = rt_mutex_take(&fslock, RT_WAITING_FOREVER);
+    }
+
+    return result;
+}
+
+/**
+ * this function will lock device file system.
+ *
+ * @note please don't invoke it on ISR.
+ */
+void dfs_unlock(void)
+{
+    rt_mutex_release(&fslock);
+}
+
+/** @addtogroup DFS
+ *
+ *
+ *  @{
+ */
+rt_err_t dfs_file_lock(void)
+{
+    rt_err_t result = -RT_EBUSY;
+
+    if (!_dfs_init_ok)
+    {
+        return -RT_ENOSYS;
+    }
+
+    while (result == -RT_EBUSY)
+    {
+        result = rt_mutex_take(&fdlock, RT_WAITING_FOREVER);
+    }
+
+    return result;
+}
+
+void dfs_file_unlock(void)
+{
+    rt_mutex_release(&fdlock);
+}
+
+/**
+ * this function will initialize device file system.
+ */
+int dfs_init(void)
+{
+    if (_dfs_init_ok)
+    {
+        LOG_E("DFS was already initialized.\n");
+        return 0;
+    }
+
+    /* create device filesystem lock */
+    rt_mutex_init(&fslock, "fslock", RT_IPC_FLAG_FIFO);
+    rt_mutex_init(&fdlock, "fdlock", RT_IPC_FLAG_FIFO);
+
+    /* clean fd table */
+    dfs_dentry_init();
+
+    _dfs_init_ok = RT_TRUE;
+
+    return 0;
+}
+INIT_PREV_EXPORT(dfs_init);
 
 /**
  * @ingroup Fd
@@ -252,30 +198,79 @@ static int fd_alloc(struct dfs_fdtable *fdt, int startfd)
  */
 int fdt_fd_new(struct dfs_fdtable *fdt)
 {
-    int idx;
+    int idx = -1;
 
     /* lock filesystem */
-    dfs_file_lock();
+    if (dfs_file_lock() != RT_EOK)
+    {
+        return -RT_ENOSYS;
+    }
 
     /* find an empty fd entry */
-    idx = fd_alloc(fdt, DFS_STDIO_OFFSET);
-
+    idx = _fdt_fd_alloc(fdt, (fdt == &_fdtab) ? DFS_STDIO_OFFSET : 0);
     /* can't find an empty fd entry */
     if (idx < 0)
     {
         LOG_E("DFS fd new is failed! Could not found an empty fd entry.");
     }
+    else if (!fdt->fds[idx])
+    {
+        struct dfs_file *file;
+
+        file = (struct dfs_file *)rt_calloc(1, sizeof(struct dfs_file));
+
+        if (file)
+        {
+            file->magic = DFS_FD_MAGIC;
+            file->ref_count = 1;
+            rt_mutex_init(&file->pos_lock, "fpos", RT_IPC_FLAG_PRIO);
+            fdt->fds[idx] = file;
+
+            LOG_D("allocate a new fd @ %d", idx);
+        }
+        else
+        {
+            fdt->fds[idx] = RT_NULL;
+            idx = -1;
+        }
+    }
+    else
+    {
+        LOG_E("DFS not found an empty fds entry.");
+        idx = -1;
+    }
 
     dfs_file_unlock();
+
     return idx;
 }
 
-int fd_new(void)
+void fdt_fd_release(struct dfs_fdtable *fdt, int fd)
 {
-    struct dfs_fdtable *fdt = NULL;
+    if (fd < fdt->maxfd)
+    {
+        struct dfs_file *file;
 
-    fdt = dfs_fdtable_get();
-    return fdt_fd_new(fdt);
+        file = fdt_get_file(fdt, fd);
+
+        if (file && file->ref_count == 1)
+        {
+            rt_mutex_detach(&file->pos_lock);
+
+            if (file->mmap_context)
+            {
+                rt_free(file->mmap_context);
+            }
+
+            rt_free(file);
+        }
+        else
+        {
+            rt_atomic_sub(&(file->ref_count), 1);
+        }
+
+        fdt->fds[fd] = RT_NULL;
+    }
 }
 
 /**
@@ -288,36 +283,72 @@ int fd_new(void)
  * pointer.
  */
 
-struct dfs_file *fdt_fd_get(struct dfs_fdtable* fdt, int fd)
+struct dfs_file *fdt_get_file(struct dfs_fdtable *fdt, int fd)
 {
-    struct dfs_file *d;
+    struct dfs_file *f;
 
     if (fd < 0 || fd >= (int)fdt->maxfd)
     {
         return NULL;
     }
 
-    dfs_file_lock();
-    d = fdt->fds[fd];
+    f = fdt->fds[fd];
 
-    /* check dfs_file valid or not */
-    if ((d == NULL) || (d->magic != DFS_FD_MAGIC))
+    /* check file valid or not */
+    if ((f == NULL) || (f->magic != DFS_FD_MAGIC))
     {
-        dfs_file_unlock();
         return NULL;
     }
 
-    dfs_file_unlock();
-
-    return d;
+    return f;
 }
 
-struct dfs_file *fd_get(int fd)
+int fdt_fd_associate_file(struct dfs_fdtable *fdt, int fd, struct dfs_file *file)
+{
+    int retfd = -1;
+
+    if (!file)
+    {
+        return retfd;
+    }
+    if (!fdt)
+    {
+        return retfd;
+    }
+
+    if (dfs_file_lock() != RT_EOK)
+    {
+        return -RT_ENOSYS;
+    }
+
+    /* check old fd */
+    if ((fd < 0) || (fd >= fdt->maxfd))
+    {
+        goto exit;
+    }
+
+    if (fdt->fds[fd])
+    {
+        goto exit;
+    }
+
+    /* inc ref_count */
+    rt_atomic_add(&(file->ref_count), 1);
+    fdt->fds[fd] = file;
+    retfd = fd;
+
+exit:
+    dfs_file_unlock();
+    return retfd;
+}
+
+int fd_new(void)
 {
     struct dfs_fdtable *fdt;
 
     fdt = dfs_fdtable_get();
-    return fdt_fd_get(fdt, fd);
+
+    return fdt_fd_new(fdt);
 }
 
 /**
@@ -325,46 +356,6 @@ struct dfs_file *fd_get(int fd)
  *
  * This function will put the file descriptor.
  */
-void fdt_fd_release(struct dfs_fdtable* fdt, int fd)
-{
-    struct dfs_file *fd_slot = NULL;
-
-    RT_ASSERT(fdt != NULL);
-
-    dfs_file_lock();
-
-    if ((fd < 0) || (fd >= fdt->maxfd))
-    {
-        dfs_file_unlock();
-        return;
-    }
-
-    fd_slot = fdt->fds[fd];
-    if (fd_slot == NULL)
-    {
-        dfs_file_unlock();
-        return;
-    }
-    fdt->fds[fd] = NULL;
-
-    /* check fd */
-    RT_ASSERT(fd_slot->magic == DFS_FD_MAGIC);
-
-    fd_slot->ref_count--;
-
-    /* clear this fd entry */
-    if (fd_slot->ref_count == 0)
-    {
-        struct dfs_vnode *vnode = fd_slot->vnode;
-        if (vnode)
-        {
-            vnode->ref_count--;
-        }
-        rt_free(fd_slot);
-    }
-    dfs_file_unlock();
-}
-
 void fd_release(int fd)
 {
     struct dfs_fdtable *fdt;
@@ -373,12 +364,175 @@ void fd_release(int fd)
     fdt_fd_release(fdt, fd);
 }
 
-rt_err_t sys_dup(int oldfd)
+struct dfs_file *fd_get(int fd)
+{
+    struct dfs_fdtable *fdt;
+
+    fdt = dfs_fdtable_get();
+
+    return fdt_get_file(fdt, fd);
+}
+
+/**
+ * This function will get the file descriptor table of current process.
+ */
+struct dfs_fdtable *dfs_fdtable_get(void)
+{
+    struct dfs_fdtable *fdt;
+#ifdef RT_USING_SMART
+    struct rt_lwp *lwp = NULL;
+    rt_thread_t thread = rt_thread_self();
+
+    if (thread)
+    {
+        lwp = (struct rt_lwp *)thread->lwp;
+    }
+
+    if (lwp)
+        fdt = &lwp->fdt;
+    else
+        fdt = &_fdtab;
+#else
+    fdt = &_fdtab;
+#endif
+
+    return fdt;
+}
+
+#ifdef RT_USING_SMART
+struct dfs_fdtable *dfs_fdtable_get_from_pid(int pid)
+{
+    struct rt_lwp *lwp = RT_NULL;
+    struct dfs_fdtable *fdt = RT_NULL;
+
+    lwp_pid_lock_take();
+    lwp = lwp_from_pid_locked(pid);
+    if (lwp)
+    {
+        fdt = &lwp->fdt;
+    }
+    lwp_pid_lock_release();
+
+    return fdt;
+}
+#endif
+
+struct dfs_fdtable *dfs_fdtable_get_global(void)
+{
+    return &_fdtab;
+}
+
+/**
+ * @brief  Dup the specified fd_src from fdt_src to fdt_dst.
+ *
+ * @param  fdt_dst is the fd table for destination, if empty, use global (_fdtab).
+ *
+ * @param  fdt_src is the fd table for source, if empty, use global (_fdtab).
+ *
+ * @param  fd_src is the fd in the designate fdt_src table.
+ *
+ * @return -1 on failed or the allocated file descriptor.
+ */
+int dfs_fdtable_dup(struct dfs_fdtable *fdt_dst, struct dfs_fdtable *fdt_src, int fd_src)
+{
+    int newfd = -1;
+
+    if (dfs_file_lock() != RT_EOK)
+    {
+        return -RT_ENOSYS;
+    }
+
+    if (fdt_src == NULL)
+    {
+        fdt_src = &_fdtab;
+    }
+
+    if (fdt_dst == NULL)
+    {
+        fdt_dst = &_fdtab;
+    }
+
+    /* check fd */
+    if ((fd_src < 0) || (fd_src >= fdt_src->maxfd))
+    {
+        goto _EXIT;
+    }
+    if (!fdt_src->fds[fd_src])
+    {
+        goto _EXIT;
+    }
+
+    /* get a new fd*/
+    newfd = fdt_fd_new(fdt_dst);
+    if (newfd >= 0)
+    {
+        fdt_dst->fds[newfd]->mode = fdt_src->fds[fd_src]->mode;
+        fdt_dst->fds[newfd]->flags = fdt_src->fds[fd_src]->flags;
+        fdt_dst->fds[newfd]->fops = fdt_src->fds[fd_src]->fops;
+        fdt_dst->fds[newfd]->dentry = dfs_dentry_ref(fdt_src->fds[fd_src]->dentry);
+        fdt_dst->fds[newfd]->vnode = fdt_src->fds[fd_src]->vnode;
+        fdt_dst->fds[newfd]->mmap_context = RT_NULL;
+        fdt_dst->fds[newfd]->data = fdt_src->fds[fd_src]->data;
+
+        /*
+        * dma-buf/socket fd is without dentry, so should used the vnode reference.
+        */
+        if (!fdt_dst->fds[newfd]->dentry)
+        {
+            rt_atomic_add(&(fdt_dst->fds[newfd]->vnode->ref_count), 1);
+        }
+    }
+
+_EXIT:
+    dfs_file_unlock();
+
+    return newfd;
+}
+
+/**
+ * @brief  drop fd from the fd table.
+ *
+ * @param  fdt is the fd table, if empty, use global (_fdtab).
+ *
+ * @param  fd is the fd in the designate fd table.
+ *
+ * @return -1 on failed the drop file descriptor.
+ */
+int dfs_fdtable_drop_fd(struct dfs_fdtable *fdt, int fd)
+{
+    int err = 0;
+
+    if (fdt == NULL)
+    {
+        fdt = &_fdtab;
+    }
+
+    if (dfs_file_lock() != RT_EOK)
+    {
+        return -RT_ENOSYS;
+    }
+
+    err = dfs_file_close(fdt->fds[fd]);
+    if (!err)
+    {
+        fdt_fd_release(fdt, fd);
+    }
+
+    dfs_file_unlock();
+
+    return err;
+}
+
+int dfs_dup(int oldfd, int startfd)
 {
     int newfd = -1;
     struct dfs_fdtable *fdt = NULL;
 
-    dfs_file_lock();
+    if (dfs_file_lock() != RT_EOK)
+    {
+        return -RT_ENOSYS;
+    }
+
     /* check old fd */
     fdt = dfs_fdtable_get();
     if ((oldfd < 0) || (oldfd >= fdt->maxfd))
@@ -390,79 +544,137 @@ rt_err_t sys_dup(int oldfd)
         goto exit;
     }
     /* get a new fd */
-    newfd = fd_slot_alloc(fdt, DFS_STDIO_OFFSET);
+    newfd = _fdt_slot_alloc(fdt, startfd);
     if (newfd >= 0)
     {
         fdt->fds[newfd] = fdt->fds[oldfd];
+
         /* inc ref_count */
-        fdt->fds[newfd]->ref_count++;
+        rt_atomic_add(&(fdt->fds[newfd]->ref_count), 1);
     }
 exit:
     dfs_file_unlock();
     return newfd;
 }
 
-#endif /* DFS_USING_POSIX */
-
 /**
- * @ingroup Fd
+ * @brief  The fd in the current process dup to designate fd table.
  *
- * This function will return whether this file has been opend.
+ * @param  oldfd is the fd in current process.
  *
- * @param pathname the file path name.
+ * @param  fdtab is the fd table to dup, if empty, use global (_fdtab).
  *
- * @return 0 on file has been open successfully, -1 on open failed.
+ * @return -1 on failed or the allocated file descriptor.
  */
-int fd_is_open(const char *pathname)
+int dfs_dup_to(int oldfd, struct dfs_fdtable *fdtab)
 {
-    char *fullpath;
-    unsigned int index;
-    struct dfs_filesystem *fs;
-    struct dfs_file *fd;
-    struct dfs_fdtable *fdt;
+    int newfd = -1;
+    struct dfs_fdtable *fdt = NULL;
 
-    fdt = dfs_fdtable_get();
-    fullpath = dfs_normalize_path(NULL, pathname);
-    if (fullpath != NULL)
+    if (dfs_file_lock() != RT_EOK)
     {
-        char *mountpath;
-        fs = dfs_filesystem_lookup(fullpath);
-        if (fs == NULL)
-        {
-            /* can't find mounted file system */
-            rt_free(fullpath);
-
-            return -1;
-        }
-
-        /* get file path name under mounted file system */
-        if (fs->path[0] == '/' && fs->path[1] == '\0')
-            mountpath = fullpath;
-        else
-            mountpath = fullpath + strlen(fs->path);
-
-        dfs_lock();
-
-        for (index = 0; index < fdt->maxfd; index++)
-        {
-            fd = fdt->fds[index];
-            if (fd == NULL || fd->vnode->fops == NULL || fd->vnode->path == NULL) continue;
-
-            if (fd->vnode->fs == fs && strcmp(fd->vnode->path, mountpath) == 0)
-            {
-                /* found file in file descriptor table */
-                rt_free(fullpath);
-                dfs_unlock();
-
-                return 0;
-            }
-        }
-        dfs_unlock();
-
-        rt_free(fullpath);
+        return -RT_ENOSYS;
     }
 
-    return -1;
+    if (fdtab == NULL)
+    {
+        fdtab = &_fdtab;
+    }
+
+    /* check old fd */
+    fdt = dfs_fdtable_get();
+    if ((oldfd < 0) || (oldfd >= fdt->maxfd))
+    {
+        goto exit;
+    }
+    if (!fdt->fds[oldfd])
+    {
+        goto exit;
+    }
+    /* get a new fd*/
+    newfd = _fdt_slot_alloc(fdtab, DFS_STDIO_OFFSET);
+    if (newfd >= 0)
+    {
+        fdtab->fds[newfd] = fdt->fds[oldfd];
+
+        /* inc ref_count */
+        rt_atomic_add(&(fdtab->fds[newfd]->ref_count), 1);
+    }
+exit:
+    dfs_file_unlock();
+
+    return newfd;
+}
+
+/**
+ * @brief  The fd in the designate fd table dup to current process.
+ *
+ * @param  oldfd is the fd in the designate fd table.
+ *
+ * @param  fdtab is the fd table for oldfd, if empty, use global (_fdtab).
+ *
+ * @return -1 on failed or the allocated file descriptor.
+ */
+int dfs_dup_from(int oldfd, struct dfs_fdtable *fdtab)
+{
+    int newfd = -1;
+    struct dfs_file *file;
+
+    if (dfs_file_lock() != RT_EOK)
+    {
+        return -RT_ENOSYS;
+    }
+
+    if (fdtab == NULL)
+    {
+        fdtab = &_fdtab;
+    }
+
+    /* check old fd */
+    if ((oldfd < 0) || (oldfd >= fdtab->maxfd))
+    {
+        goto exit;
+    }
+    if (!fdtab->fds[oldfd])
+    {
+        goto exit;
+    }
+    /* get a new fd*/
+    newfd = fd_new();
+    file = fd_get(newfd);
+    if (newfd >= 0 && file)
+    {
+        file->mode = fdtab->fds[oldfd]->mode;
+        file->flags = fdtab->fds[oldfd]->flags;
+        file->fops = fdtab->fds[oldfd]->fops;
+        file->dentry = dfs_dentry_ref(fdtab->fds[oldfd]->dentry);
+        file->vnode = fdtab->fds[oldfd]->vnode;
+        file->mmap_context = RT_NULL;
+        file->data = fdtab->fds[oldfd]->data;
+    }
+
+    dfs_file_close(fdtab->fds[oldfd]);
+
+exit:
+    fdt_fd_release(fdtab, oldfd);
+    dfs_file_unlock();
+
+    return newfd;
+}
+
+#ifdef RT_USING_SMART
+sysret_t sys_dup(int oldfd)
+#else
+int sys_dup(int oldfd)
+#endif
+{
+    int newfd = dfs_dup(oldfd, (dfs_fdtable_get() == &_fdtab) ? DFS_STDIO_OFFSET : 0);
+
+#ifdef RT_USING_SMART
+    return (sysret_t)newfd;
+#else
+    return newfd;
+#endif
 }
 
 rt_err_t sys_dup2(int oldfd, int newfd)
@@ -471,7 +683,11 @@ rt_err_t sys_dup2(int oldfd, int newfd)
     int ret = 0;
     int retfd = -1;
 
-    dfs_file_lock();
+    if (dfs_file_lock() != RT_EOK)
+    {
+        return -RT_ENOSYS;
+    }
+
     /* check old fd */
     fdt = dfs_fdtable_get();
     if ((oldfd < 0) || (oldfd >= fdt->maxfd))
@@ -488,7 +704,7 @@ rt_err_t sys_dup2(int oldfd, int newfd)
     }
     if (newfd >= fdt->maxfd)
     {
-        newfd = fd_slot_expand(fdt, newfd);
+        newfd = _fdt_slot_expand(fdt, newfd);
         if (newfd < 0)
         {
             goto exit;
@@ -513,89 +729,11 @@ rt_err_t sys_dup2(int oldfd, int newfd)
 
     fdt->fds[newfd] = fdt->fds[oldfd];
     /* inc ref_count */
-    fdt->fds[newfd]->ref_count++;
+    rt_atomic_add(&(fdt->fds[newfd]->ref_count), 1);
     retfd = newfd;
 exit:
     dfs_file_unlock();
     return retfd;
-}
-
-static int fd_get_fd_index_form_fdt(struct dfs_fdtable *fdt, struct dfs_file *file)
-{
-    int fd = -1;
-
-    if (file == RT_NULL)
-    {
-        return -1;
-    }
-
-    dfs_file_lock();
-
-    for(int index = 0; index < (int)fdt->maxfd; index++)
-    {
-        if(fdt->fds[index] == file)
-        {
-            fd = index;
-            break;
-        }
-    }
-
-    dfs_file_unlock();
-
-    return fd;
-}
-
-int fd_get_fd_index(struct dfs_file *file)
-{
-    struct dfs_fdtable *fdt;
-
-    fdt = dfs_fdtable_get();
-    return fd_get_fd_index_form_fdt(fdt, file);
-}
-
-int fd_associate(struct dfs_fdtable *fdt, int fd, struct dfs_file *file)
-{
-    int retfd = -1;
-
-    if (!file)
-    {
-        return retfd;
-    }
-    if (!fdt)
-    {
-        return retfd;
-    }
-
-    dfs_file_lock();
-    /* check old fd */
-    if ((fd < 0) || (fd >= fdt->maxfd))
-    {
-        goto exit;
-    }
-
-    if (fdt->fds[fd])
-    {
-        goto exit;
-    }
-    /* inc ref_count */
-    file->ref_count++;
-    fdt->fds[fd] = file;
-    retfd = fd;
-exit:
-    dfs_file_unlock();
-    return retfd;
-}
-
-void fd_init(struct dfs_file *fd)
-{
-    if (fd)
-    {
-        fd->magic = DFS_FD_MAGIC;
-        fd->ref_count = 1;
-        fd->pos = 0;
-        fd->vnode = NULL;
-        fd->data = NULL;
-    }
 }
 
 /**
@@ -616,7 +754,7 @@ const char *dfs_subdir(const char *directory, const char *filename)
     dir = filename + strlen(directory);
     if ((*dir != '/') && (dir != filename))
     {
-        dir --;
+        dir--;
     }
 
     return dir;
@@ -660,10 +798,19 @@ char *dfs_normalize_path(const char *directory, const char *filename)
 
     if (filename[0] != '/') /* it's a absolute path, use it directly */
     {
-        fullpath = (char *)rt_malloc(strlen(directory) + strlen(filename) + 2);
+        int path_len;
 
-        if (fullpath == NULL)
+        path_len = strlen(directory) + strlen(filename) + 2;
+        if (path_len > DFS_PATH_MAX)
+        {
             return NULL;
+        }
+
+        fullpath = (char *)rt_malloc(path_len);
+        if (fullpath == NULL)
+        {
+            return NULL;
+        }
 
         /* join path and file name */
         rt_snprintf(fullpath, strlen(directory) + strlen(filename) + 2,
@@ -687,7 +834,8 @@ char *dfs_normalize_path(const char *directory, const char *filename)
 
         if (c == '.')
         {
-            if (!src[1]) src++; /* '.' and ends */
+            if (!src[1])
+                src++; /* '.' and ends */
             else if (src[1] == '/')
             {
                 /* './' case */
@@ -734,17 +882,12 @@ char *dfs_normalize_path(const char *directory, const char *filename)
 
         continue;
 
-up_one:
-        /* keep the topmost root directory */
-        if (dst - dst0 != 1 || dst[-1] != '/')
+    up_one:
+        dst--;
+        if (dst < dst0)
         {
-            dst--;
-
-            if (dst < dst0)
-            {
-                rt_free(fullpath);
-                return NULL;
-            }
+            rt_free(fullpath);
+            return NULL;
         }
         while (dst0 < dst && dst[-1] != '/')
             dst--;
@@ -754,7 +897,7 @@ up_one:
 
     /* remove '/' in the end of path if exist */
     dst--;
-    if ((dst != fullpath) && (*dst == '/'))
+    if (dst > fullpath && (*dst == '/'))
         *dst = '\0';
 
     /* final check fullpath is not empty, for the special path of lwext "/.." */
@@ -768,49 +911,8 @@ up_one:
 }
 RTM_EXPORT(dfs_normalize_path);
 
-/**
- * This function will get the file descriptor table of current process.
- */
-struct dfs_fdtable *dfs_fdtable_get(void)
-{
-    struct dfs_fdtable *fdt;
-#ifdef RT_USING_SMART
-    struct rt_lwp *lwp;
-
-    lwp = (struct rt_lwp *)rt_thread_self()->lwp;
-    if (lwp)
-        fdt = &lwp->fdt;
-    else
-        fdt = &_fdtab;
-#else
-    fdt = &_fdtab;
-#endif
-
-    return fdt;
-}
-
-#ifdef RT_USING_SMART
-struct dfs_fdtable *dfs_fdtable_get_pid(int pid)
-{
-    struct rt_lwp *lwp = RT_NULL;
-    struct dfs_fdtable *fdt = RT_NULL;
-
-    lwp = lwp_from_pid(pid);
-    if (lwp)
-    {
-        fdt = &lwp->fdt;
-    }
-
-    return fdt;
-}
-#endif
-
-struct dfs_fdtable *dfs_fdtable_get_global(void)
-{
-    return &_fdtab;
-}
-
 #ifdef RT_USING_FINSH
+#include <finsh.h>
 int list_fd(void)
 {
     int index;
@@ -819,101 +921,29 @@ int list_fd(void)
     fd_table = dfs_fdtable_get();
     if (!fd_table) return -1;
 
-    dfs_lock();
+    rt_enter_critical();
 
     rt_kprintf("fd type    ref magic  path\n");
     rt_kprintf("-- ------  --- ----- ------\n");
     for (index = 0; index < (int)fd_table->maxfd; index++)
     {
-        struct dfs_file *fd = fd_table->fds[index];
+        struct dfs_file *file = fd_table->fds[index];
 
-        if (fd && fd->vnode->fops)
+        if (file && file->vnode)
         {
             rt_kprintf("%2d ", index);
-            if (fd->vnode->type == FT_DIRECTORY)    rt_kprintf("%-7.7s ", "dir");
-            else if (fd->vnode->type == FT_REGULAR) rt_kprintf("%-7.7s ", "file");
-            else if (fd->vnode->type == FT_SOCKET)  rt_kprintf("%-7.7s ", "socket");
-            else if (fd->vnode->type == FT_USER)    rt_kprintf("%-7.7s ", "user");
-            else if (fd->vnode->type == FT_DEVICE)  rt_kprintf("%-7.7s ", "device");
+            if (file->vnode->type == FT_DIRECTORY)    rt_kprintf("%-7.7s ", "dir");
+            else if (file->vnode->type == FT_REGULAR) rt_kprintf("%-7.7s ", "file");
+            else if (file->vnode->type == FT_SOCKET)  rt_kprintf("%-7.7s ", "socket");
+            else if (file->vnode->type == FT_USER)    rt_kprintf("%-7.7s ", "user");
+            else if (file->vnode->type == FT_DEVICE)  rt_kprintf("%-7.7s ", "device");
             else rt_kprintf("%-8.8s ", "unknown");
-            rt_kprintf("%3d ", fd->vnode->ref_count);
-            rt_kprintf("%04x  ", fd->magic);
-            if (fd->vnode->path)
+            rt_kprintf("%3d ", file->ref_count);
+            rt_kprintf("%04x  ", file->magic);
+
+            if (file->dentry)
             {
-                rt_kprintf("%s\n", fd->vnode->path);
-            }
-            else
-            {
-                rt_kprintf("\n");
-            }
-        }
-    }
-    dfs_unlock();
-
-    return 0;
-}
-
-#ifdef RT_USING_SMART
-static int lsofp(int pid)
-{
-    int index;
-    struct dfs_fdtable *fd_table = RT_NULL;
-
-    if (pid == (-1))
-    {
-        fd_table = dfs_fdtable_get();
-        if (!fd_table) return -1;
-    }
-    else
-    {
-        fd_table = dfs_fdtable_get_pid(pid);
-        if (!fd_table)
-        {
-            rt_kprintf("PID %s is not a applet(lwp)\n", pid);
-            return -1;
-        }
-    }
-
-    rt_kprintf("--- -- ------  ------ ----- ---------- ---------- ---------- ------\n");
-
-    rt_enter_critical();
-    for (index = 0; index < (int)fd_table->maxfd; index++)
-    {
-        struct dfs_file *fd = fd_table->fds[index];
-
-        if (fd && fd->vnode->fops)
-        {
-            if(pid == (-1))
-            {
-                rt_kprintf("  K ");
-            }
-            else
-            {
-                rt_kprintf("%3d ", pid);
-            }
-
-            rt_kprintf("%2d ", index);
-            if (fd->vnode->type == FT_DIRECTORY)    rt_kprintf("%-7.7s ", "dir");
-            else if (fd->vnode->type == FT_REGULAR) rt_kprintf("%-7.7s ", "file");
-            else if (fd->vnode->type == FT_SOCKET)  rt_kprintf("%-7.7s ", "socket");
-            else if (fd->vnode->type == FT_USER)    rt_kprintf("%-7.7s ", "user");
-            else if (fd->vnode->type == FT_DEVICE)  rt_kprintf("%-7.7s ", "device");
-            else rt_kprintf("%-8.8s ", "unknown");
-            rt_kprintf("%6d ", fd->vnode->ref_count);
-            rt_kprintf("%04x  0x%.8x ", fd->magic, (int)(size_t)fd->vnode);
-
-            if(fd->vnode == RT_NULL)
-            {
-                rt_kprintf("0x%.8x 0x%.8x ", (int)0x00000000, (int)(size_t)fd);
-            }
-            else
-            {
-                rt_kprintf("0x%.8x 0x%.8x ", (int)(size_t)(fd->vnode->data), (int)(size_t)fd);
-            }
-
-            if (fd->vnode->path)
-            {
-                rt_kprintf("%s \n", fd->vnode->path);
+                rt_kprintf("%s%s\n", file->dentry->mnt->fullpath, file->dentry->pathname);
             }
             else
             {
@@ -925,46 +955,70 @@ static int lsofp(int pid)
 
     return 0;
 }
+MSH_CMD_EXPORT(list_fd, list file descriptor);
 
-int lsof(int argc, char *argv[])
+int dfs_fd_dump(int argc, char** argv)
 {
-    rt_kprintf("PID fd type    fd-ref magic vnode      vnode/data addr       path  \n");
+    int index;
 
-    if (argc == 1)
+    if (dfs_file_lock() != RT_EOK)
     {
-        struct rt_list_node *node, *list;
-        struct lwp_avl_struct *pids = lwp_get_pid_ary();
+        return -RT_ENOSYS;
+    }
 
-        lsofp(-1);
-
-        for (int index = 0; index < RT_LWP_MAX_NR; index++)
+    for (index = 0; index < _fdtab.maxfd; index++)
+    {
+        struct dfs_file *file = _fdtab.fds[index];
+        if (file)
         {
-            struct rt_lwp *lwp = (struct rt_lwp *)pids[index].data;
-
-            if (lwp)
+            char* fullpath = dfs_dentry_full_path(file->dentry);
+            if (fullpath)
             {
-                list = &lwp->t_grp;
-                for (node = list->next; node != list; node = node->next)
-                {
-                    lsofp(lwp_to_pid(lwp));
-                }
+                printf("[%d] - %s, ref_count %zd\n", index,
+                    fullpath, (size_t)rt_atomic_load(&(file->ref_count)));
+                rt_free(fullpath);
+            }
+            else
+            {
+                printf("[%d] - %s, ref_count %zd\n", index,
+                    file->dentry->pathname, (size_t)rt_atomic_load(&(file->ref_count)));
             }
         }
     }
-    else if (argc == 3)
+    dfs_file_unlock();
+
+    return 0;
+}
+MSH_CMD_EXPORT_ALIAS(dfs_fd_dump, fd_dump, fd dump);
+
+#ifdef PKG_USING_DLOG
+
+int dfs_dlog(int argc, char** argv)
+{
+    if (argc == 2)
     {
-        if (argv[1][0] == '-' && argv[1][1] == 'p')
+        if (strcmp(argv[1], "on") == 0)
         {
-            int pid = atoi(argv[2]);
-            lsofp(pid);
+            dlog_session_start();
+            dlog_participant("dfs");
+            dlog_participant("dfs_file");
+            dlog_participant("dentry");
+            dlog_participant("vnode");
+            dlog_participant("mnt");
+            dlog_participant("rom");
+            dlog_participant("devfs");
+        }
+        else if (strcmp(argv[1], "off") == 0)
+        {
+            dlog_session_stop();
         }
     }
 
     return 0;
 }
-MSH_CMD_EXPORT(lsof, list open files);
-#endif /* RT_USING_SMART */
+MSH_CMD_EXPORT(dfs_dlog, dfs dlog on|off);
 
 #endif
-/**@}*/
 
+#endif
+/** @} */

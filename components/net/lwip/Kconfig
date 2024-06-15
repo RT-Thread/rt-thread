@@ -92,15 +92,15 @@ if RT_USING_LWIP
     menu "Static IPv4 Address"
             config RT_LWIP_IPADDR
                 string "IPv4: IP address"
-                default 192.168.1.30
+                default "192.168.1.30"
 
             config RT_LWIP_GWADDR
                 string "IPv4: Gateway address"
-                default 192.168.1.1
+                default "192.168.1.1"
 
             config RT_LWIP_MSKADDR
                 string "IPv4: Mask address"
-                default 255.255.255.0
+                default "255.255.255.0"
     endmenu
 
     config RT_LWIP_UDP
@@ -210,6 +210,10 @@ if RT_USING_LWIP
         int "Enable netif link status callback"
         default 1
 
+    config RT_LWIP_NETIF_NAMESIZE
+        int "netif name length"
+        default 6
+
     config SO_REUSE
         int "Enable SO_REUSEADDR option"
         default 1
@@ -261,7 +265,7 @@ if RT_USING_LWIP
     if LWIP_USING_DHCPD
         config DHCPD_SERVER_IP
             string "DHCPD SERVER IP address"
-            default 192.168.169.1
+            default "192.168.169.1"
 
         config DHCPD_USING_ROUTER
             bool "alloc gateway ip for router"
@@ -273,7 +277,7 @@ if RT_USING_LWIP
         if LWIP_USING_CUSTOMER_DNS_SERVER
             config DHCP_DNS_SERVER_IP
                 string "Custom DNS server IP address"
-                default 1.1.1.1
+                default "1.1.1.1"
         endif
     endif
 

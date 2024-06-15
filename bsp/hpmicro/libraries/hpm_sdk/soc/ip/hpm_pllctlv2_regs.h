@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 hpmicro
+ * Copyright (c) 2021-2023 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -25,7 +25,7 @@ typedef struct {
         __R  uint8_t  RESERVED0[28];           /* 0xA4 - 0xBF: Reserved */
         __RW uint32_t DIV[3];                  /* 0xC0 - 0xC8: PLL0 divider output 0 configuration register */
         __R  uint8_t  RESERVED1[52];           /* 0xCC - 0xFF: Reserved */
-    } PLL[3];
+    } PLL[7];
 } PLLCTLV2_Type;
 
 
@@ -249,9 +249,9 @@ typedef struct {
  * 0: divider is working
  * 1: divider is changing status
  */
-#define PLLCTLV2_DIV_BUSY_MASK (0x80000000UL)
-#define PLLCTLV2_DIV_BUSY_SHIFT (31U)
-#define PLLCTLV2_DIV_BUSY_GET(x) (((uint32_t)(x) & PLLCTLV2_DIV_BUSY_MASK) >> PLLCTLV2_DIV_BUSY_SHIFT)
+#define PLLCTLV2_PLL_DIV_BUSY_MASK (0x80000000UL)
+#define PLLCTLV2_PLL_DIV_BUSY_SHIFT (31U)
+#define PLLCTLV2_PLL_DIV_BUSY_GET(x) (((uint32_t)(x) & PLLCTLV2_PLL_DIV_BUSY_MASK) >> PLLCTLV2_PLL_DIV_BUSY_SHIFT)
 
 /*
  * RESPONSE (RO)
@@ -260,9 +260,9 @@ typedef struct {
  * 0: Divider is not stable
  * 1: Divider is stable for use
  */
-#define PLLCTLV2_DIV_RESPONSE_MASK (0x20000000UL)
-#define PLLCTLV2_DIV_RESPONSE_SHIFT (29U)
-#define PLLCTLV2_DIV_RESPONSE_GET(x) (((uint32_t)(x) & PLLCTLV2_DIV_RESPONSE_MASK) >> PLLCTLV2_DIV_RESPONSE_SHIFT)
+#define PLLCTLV2_PLL_DIV_RESPONSE_MASK (0x20000000UL)
+#define PLLCTLV2_PLL_DIV_RESPONSE_SHIFT (29U)
+#define PLLCTLV2_PLL_DIV_RESPONSE_GET(x) (((uint32_t)(x) & PLLCTLV2_PLL_DIV_RESPONSE_MASK) >> PLLCTLV2_PLL_DIV_RESPONSE_SHIFT)
 
 /*
  * ENABLE (RO)
@@ -271,9 +271,9 @@ typedef struct {
  * 0: Divider is off
  * 1: Divider is on
  */
-#define PLLCTLV2_DIV_ENABLE_MASK (0x10000000UL)
-#define PLLCTLV2_DIV_ENABLE_SHIFT (28U)
-#define PLLCTLV2_DIV_ENABLE_GET(x) (((uint32_t)(x) & PLLCTLV2_DIV_ENABLE_MASK) >> PLLCTLV2_DIV_ENABLE_SHIFT)
+#define PLLCTLV2_PLL_DIV_ENABLE_MASK (0x10000000UL)
+#define PLLCTLV2_PLL_DIV_ENABLE_SHIFT (28U)
+#define PLLCTLV2_PLL_DIV_ENABLE_GET(x) (((uint32_t)(x) & PLLCTLV2_PLL_DIV_ENABLE_MASK) >> PLLCTLV2_PLL_DIV_ENABLE_SHIFT)
 
 /*
  * DIV (RW)
@@ -285,10 +285,10 @@ typedef struct {
  * . . .
  * 63: divide by 13.6
  */
-#define PLLCTLV2_DIV_DIV_MASK (0x3FU)
-#define PLLCTLV2_DIV_DIV_SHIFT (0U)
-#define PLLCTLV2_DIV_DIV_SET(x) (((uint32_t)(x) << PLLCTLV2_DIV_DIV_SHIFT) & PLLCTLV2_DIV_DIV_MASK)
-#define PLLCTLV2_DIV_DIV_GET(x) (((uint32_t)(x) & PLLCTLV2_DIV_DIV_MASK) >> PLLCTLV2_DIV_DIV_SHIFT)
+#define PLLCTLV2_PLL_DIV_DIV_MASK (0x3FU)
+#define PLLCTLV2_PLL_DIV_DIV_SHIFT (0U)
+#define PLLCTLV2_PLL_DIV_DIV_SET(x) (((uint32_t)(x) << PLLCTLV2_PLL_DIV_DIV_SHIFT) & PLLCTLV2_PLL_DIV_DIV_MASK)
+#define PLLCTLV2_PLL_DIV_DIV_GET(x) (((uint32_t)(x) & PLLCTLV2_PLL_DIV_DIV_MASK) >> PLLCTLV2_PLL_DIV_DIV_SHIFT)
 
 
 
@@ -301,6 +301,10 @@ typedef struct {
 #define PLLCTLV2_PLL_PLL0 (0UL)
 #define PLLCTLV2_PLL_PLL1 (1UL)
 #define PLLCTLV2_PLL_PLL2 (2UL)
+#define PLLCTLV2_PLL_PLL3 (3UL)
+#define PLLCTLV2_PLL_PLL4 (4UL)
+#define PLLCTLV2_PLL_PLL5 (5UL)
+#define PLLCTLV2_PLL_PLL6 (6UL)
 
 
 #endif /* HPM_PLLCTLV2_H */

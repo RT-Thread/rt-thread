@@ -516,6 +516,7 @@ int bflb_spi_feature_control(struct bflb_device_s *dev, int cmd, size_t arg)
     int ret = 0;
     uint32_t reg_base;
     uint32_t regval;
+    uint32_t div;
 
     reg_base = dev->reg_base;
 
@@ -576,6 +577,118 @@ int bflb_spi_feature_control(struct bflb_device_s *dev, int cmd, size_t arg)
                 regval &= ~SPI_CR_SPI_RXD_IGNR_EN;
             }
             putreg32(regval, reg_base + SPI_CONFIG_OFFSET);
+            break;
+
+        case SPI_CMD_SET_MODE:
+            /* set spi mode (clk phase and polarity),  arg use @ref SPI_MODE*/
+            regval = getreg32(reg_base + SPI_CONFIG_OFFSET);
+            switch (arg) {
+                case SPI_MODE0:
+                    /* CPOL=0 CHPHA=0 */
+                    regval &= ~SPI_CR_SPI_SCLK_POL;
+                    regval |= SPI_CR_SPI_SCLK_PH;
+                    break;
+                case SPI_MODE1:
+                    /* CPOL=0 CHPHA=1 */
+                    regval &= ~SPI_CR_SPI_SCLK_POL;
+                    regval &= ~SPI_CR_SPI_SCLK_PH;
+                    break;
+                case SPI_MODE2:
+                    /* CPOL=1 CHPHA=0 */
+                    regval |= SPI_CR_SPI_SCLK_POL;
+                    regval |= SPI_CR_SPI_SCLK_PH;
+                    break;
+                case SPI_MODE3:
+                    /* CPOL=1 CHPHA=1 */
+                    regval |= SPI_CR_SPI_SCLK_POL;
+                    regval &= ~SPI_CR_SPI_SCLK_PH;
+                    break;
+                default:
+                    break;
+            }
+            putreg32(regval, reg_base + SPI_CONFIG_OFFSET);
+            break;
+
+        case SPI_CMD_GET_MODE:
+            /* get spi mode (clk phase and polarity),  ret @ref SPI_MODE*/
+            regval = getreg32(reg_base + SPI_CONFIG_OFFSET);
+            if (regval & SPI_CR_SPI_SCLK_POL) {
+                if (regval & SPI_CR_SPI_SCLK_PH) {
+                    ret = SPI_MODE2;
+                } else {
+                    ret = SPI_MODE3;
+                }
+            } else {
+                if (regval & SPI_CR_SPI_SCLK_PH) {
+                    ret = SPI_MODE0;
+                } else {
+                    ret = SPI_MODE1;
+                }
+            }
+            break;
+
+        case SPI_CMD_SET_FREQ:
+            /* set clk frequence, should be less than spi_clk/2*/
+            /* integer frequency segmentation by rounding */
+            div = (bflb_clk_get_peripheral_clock(BFLB_DEVICE_TYPE_SPI, dev->idx) / 2 * 10 / arg + 5) / 10;
+            div = (div) ? (div - 1) : 0;
+            div = (div > 0xff) ? 0xff : div;
+
+            regval = 0;
+            regval |= div << SPI_CR_SPI_PRD_D_PH_0_SHIFT;
+            regval |= div << SPI_CR_SPI_PRD_D_PH_1_SHIFT;
+            regval |= div << SPI_CR_SPI_PRD_S_SHIFT;
+            regval |= div << SPI_CR_SPI_PRD_P_SHIFT;
+            putreg32(regval, reg_base + SPI_PRD_0_OFFSET);
+            break;
+
+        case SPI_CMD_GET_FREQ:
+            /* get clk frequence */
+            regval = getreg32(reg_base + SPI_PRD_0_OFFSET);
+            div = (regval & SPI_CR_SPI_PRD_D_PH_0_MASK) >> SPI_CR_SPI_PRD_D_PH_0_SHIFT;
+            div += (regval & SPI_CR_SPI_PRD_D_PH_1_MASK) >> SPI_CR_SPI_PRD_D_PH_1_SHIFT;
+
+            ret = bflb_clk_get_peripheral_clock(BFLB_DEVICE_TYPE_SPI, dev->idx) / div;
+            break;
+
+        case SPI_CMD_SET_BIT_ORDER:
+            /* set bit order, arg use @ref SPI_BIT_ORDER */
+            regval = getreg32(reg_base + SPI_CONFIG_OFFSET);
+            if (arg == SPI_BIT_LSB) {
+                regval |= SPI_CR_SPI_BIT_INV;
+            } else {
+                regval &= ~SPI_CR_SPI_BIT_INV;
+            }
+            putreg32(regval, reg_base + SPI_CONFIG_OFFSET);
+            break;
+
+        case SPI_CMD_GET_BIT_ORDER:
+            regval = getreg32(reg_base + SPI_CONFIG_OFFSET);
+            if (regval & SPI_CR_SPI_BIT_INV) {
+                ret = SPI_BIT_LSB;
+            } else {
+                ret = !SPI_BIT_LSB;
+            }
+            break;
+
+        case SPI_CMD_SET_BYTE_ORDER:
+            /* set byte order, arg use @ref SPI_BYTE_ORDER */
+            regval = getreg32(reg_base + SPI_CONFIG_OFFSET);
+            if (arg == SPI_BYTE_LSB) {
+                regval &= ~SPI_CR_SPI_BYTE_INV;
+            } else {
+                regval |= SPI_CR_SPI_BYTE_INV;
+            }
+            putreg32(regval, reg_base + SPI_CONFIG_OFFSET);
+            break;
+
+        case SPI_CMD_GET_BYTE_ORDER:
+            regval = getreg32(reg_base + SPI_CONFIG_OFFSET);
+            if (regval & SPI_CR_SPI_BYTE_INV) {
+                ret = !SPI_BYTE_LSB;
+            } else {
+                ret = SPI_BYTE_LSB;
+            }
             break;
 
         default:

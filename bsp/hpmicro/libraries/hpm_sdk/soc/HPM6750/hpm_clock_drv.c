@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 hpmicro
+ * Copyright (c) 2021-2024 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -9,8 +9,7 @@
 #include "hpm_clock_drv.h"
 #include "hpm_sysctl_drv.h"
 #include "hpm_pllctl_drv.h"
-#include "hpm_csr_regs.h"
-#include "riscv/riscv_core.h"
+
 /***********************************************************************************************************************
  * Definitions
  **********************************************************************************************************************/
@@ -60,11 +59,16 @@ static uint32_t get_frequency_for_i2s_or_adc(uint32_t clk_src_type, uint32_t ins
 static uint32_t get_frequency_for_wdg(uint32_t instance);
 
 /**
+ * @brief Get Clock frequency for PWDG
+ */
+static uint32_t get_frequency_for_pwdg(void);
+
+/**
  * @brief Turn on/off the IP clock
  */
 static void switch_ip_clock(clock_name_t clock_name, bool on);
 
-static uint64_t get_core_mcycle(void);
+static uint64_t hpm_csr_get_core_cycle(void);
 
 /***********************************************************************************************************************
  * Variables
@@ -106,6 +110,9 @@ uint32_t clock_get_frequency(clock_name_t clock_name)
         break;
     case CLK_SRC_GROUP_WDG:
         clk_freq = get_frequency_for_wdg(node_or_instance);
+        break;
+    case CLK_SRC_GROUP_PWDG:
+        clk_freq = get_frequency_for_pwdg();
         break;
     case CLK_SRC_GROUP_PMIC:
         clk_freq = FREQ_PRESET1_OSC0_CLK0;
@@ -220,7 +227,11 @@ static uint32_t get_frequency_for_i2s_or_adc(uint32_t clk_src_type, uint32_t ins
     }
 
     if (is_mux_valid) {
-        clk_freq = get_frequency_for_ip_in_common_group(node);
+        if (node == clock_node_ahb0) {
+            clk_freq = get_frequency_for_ip_in_common_group(clock_node_ahb0);
+        } else {
+            clk_freq = get_frequency_for_ip_in_common_group(node);
+        }
     }
     return clk_freq;
 }
@@ -234,6 +245,18 @@ static uint32_t get_frequency_for_wdg(uint32_t instance)
     }
         /* PCLK is chosen */
     else {
+        freq_in_hz = FREQ_32KHz;
+    }
+
+    return freq_in_hz;
+}
+
+static uint32_t get_frequency_for_pwdg(void)
+{
+    uint32_t freq_in_hz;
+    if (WDG_CTRL_CLKSEL_GET(HPM_PWDG->CTRL) == 0) {
+        freq_in_hz = FREQ_PRESET1_OSC0_CLK0;
+    } else {
         freq_in_hz = FREQ_32KHz;
     }
 
@@ -266,8 +289,12 @@ clk_src_t clock_get_source(clock_name_t clock_name)
     case CLK_SRC_GROUP_WDG:
         if (node_or_instance < WDG_INSTANCE_NUM) {
             clk_src_group = CLK_SRC_GROUP_WDG;
-            clk_src_index = (WDG_CTRL_CLKSEL_GET(s_wdgs[node_or_instance]->CTRL) == 0);
+            clk_src_index = WDG_CTRL_CLKSEL_GET(s_wdgs[node_or_instance]->CTRL);
         }
+        break;
+    case CLK_SRC_GROUP_PWDG:
+        clk_src_group = CLK_SRC_GROUP_PWDG;
+        clk_src_index = WDG_CTRL_CLKSEL_GET(HPM_PWDG->CTRL);
         break;
     case CLK_SRC_GROUP_PMIC:
         clk_src_group = CLK_SRC_GROUP_COMMON;
@@ -315,6 +342,51 @@ clk_src_t clock_get_source(clock_name_t clock_name)
     return clk_src;
 }
 
+uint32_t clock_get_divider(clock_name_t clock_name)
+{
+    uint32_t clk_divider = CLOCK_DIV_INVALID;
+    uint32_t clk_src_type = GET_CLK_SRC_GROUP_FROM_NAME(clock_name);
+    uint32_t node_or_instance = GET_CLK_NODE_FROM_NAME(clock_name);
+    switch (clk_src_type) {
+    case CLK_SRC_GROUP_COMMON:
+        clk_divider = 1UL + SYSCTL_CLOCK_DIV_GET(HPM_SYSCTL->CLOCK[node_or_instance]);
+        break;
+    case CLK_SRC_GROUP_WDG:
+        if (node_or_instance < WDG_INSTANCE_NUM) {
+            clk_divider = 1UL;
+        }
+        break;
+    case CLK_SRC_GROUP_PWDG:
+        clk_divider = 1UL;
+        break;
+    case CLK_SRC_GROUP_PMIC:
+        clk_divider = 1UL;
+        break;
+    case CLK_SRC_GROUP_AHB:
+        clk_divider = 1UL + SYSCTL_CLOCK_DIV_GET(HPM_SYSCTL->CLOCK[(uint32_t) clock_node_ahb0]);
+        break;
+    case CLK_SRC_GROUP_AXI0:
+        clk_divider = 1UL + SYSCTL_CLOCK_DIV_GET(HPM_SYSCTL->CLOCK[(uint32_t) clock_node_axi0]);
+        break;
+    case CLK_SRC_GROUP_AXI1:
+        clk_divider = 1UL + SYSCTL_CLOCK_DIV_GET(HPM_SYSCTL->CLOCK[(uint32_t) clock_node_axi1]);
+        break;
+    case CLK_SRC_GROUP_AXI2:
+        clk_divider = SYSCTL_CLOCK_DIV_GET(HPM_SYSCTL->CLOCK[(uint32_t) clock_node_axi2]);
+        break;
+    case CLK_SRC_GROUP_CPU0:
+        clk_divider = 1UL + SYSCTL_CLOCK_DIV_GET(HPM_SYSCTL->CLOCK[(uint32_t) clock_node_cpu0]);
+        break;
+    case CLK_SRC_GROUP_CPU1:
+        clk_divider = 1UL + SYSCTL_CLOCK_DIV_GET(HPM_SYSCTL->CLOCK[(uint32_t) clock_node_cpu1]);
+        break;
+    default:
+        clk_divider = CLOCK_DIV_INVALID;
+        break;
+    }
+    return clk_divider;
+}
+
 hpm_stat_t clock_set_adc_source(clock_name_t clock_name, clk_src_t src)
 {
     uint32_t clk_src_type = GET_CLK_SRC_GROUP_FROM_NAME(clock_name);
@@ -324,13 +396,13 @@ hpm_stat_t clock_set_adc_source(clock_name_t clock_name, clk_src_t src)
         return status_clk_invalid;
     }
 
-    if ((src <= clk_adc_src_ahb0) || (src >= clk_adc_src_ana2)) {
+    if ((src < clk_adc_src_ahb0) || (src > clk_adc_src_ana2)) {
         return status_clk_src_invalid;
     }
 
     uint32_t clk_src_index = GET_CLK_SRC_INDEX(src);
     HPM_SYSCTL->ADCCLK[node_or_instance] =
-            (HPM_SYSCTL->ADCCLK[node_or_instance] & SYSCTL_ADCCLK_MUX_MASK) | SYSCTL_ADCCLK_MUX_SET(clk_src_index);
+            (HPM_SYSCTL->ADCCLK[node_or_instance] & ~SYSCTL_ADCCLK_MUX_MASK) | SYSCTL_ADCCLK_MUX_SET(clk_src_index);
 
     return status_success;
 }
@@ -350,7 +422,7 @@ hpm_stat_t clock_set_i2s_source(clock_name_t clock_name, clk_src_t src)
 
     uint32_t clk_src_index = GET_CLK_SRC_INDEX(src);
     HPM_SYSCTL->I2SCLK[node_or_instance] =
-            (HPM_SYSCTL->I2SCLK[node_or_instance] & SYSCTL_I2SCLK_MUX_MASK) | SYSCTL_I2SCLK_MUX_SET(clk_src_index);
+            (HPM_SYSCTL->I2SCLK[node_or_instance] & ~SYSCTL_I2SCLK_MUX_MASK) | SYSCTL_I2SCLK_MUX_SET(clk_src_index);
 
     return status_success;
 }
@@ -370,21 +442,11 @@ hpm_stat_t clock_set_source_divider(clock_name_t clock_name, clk_src_t src, uint
         }
         break;
     case CLK_SRC_GROUP_ADC:
-        status = status_clk_operation_unsupported;
-        break;
     case CLK_SRC_GROUP_I2S:
-        status = status_clk_operation_unsupported;
-        break;
     case CLK_SRC_GROUP_WDG:
-        if (node_or_instance < WDG_INSTANCE_NUM) {
-            if (src == clk_wdg_src_ahb0) {
-                s_wdgs[node_or_instance]->CTRL &= ~WDG_CTRL_CLKSEL_MASK;
-            } else if (src == clk_wdg_src_osc32k) {
-                s_wdgs[node_or_instance]->CTRL |= WDG_CTRL_CLKSEL_MASK;
-            } else {
-                status = status_clk_src_invalid;
-            }
-        }
+    case CLK_SRC_GROUP_PWDG:
+    case CLK_SRC_GROUP_SRC:
+        status = status_clk_operation_unsupported;
         break;
     case CLK_SRC_GROUP_PMIC:
         status = status_clk_fixed;
@@ -407,9 +469,6 @@ hpm_stat_t clock_set_source_divider(clock_name_t clock_name, clk_src_t src, uint
     case CLK_SRC_GROUP_CPU1:
         status = status_clk_shared_cpu1;
         break;
-    case CLK_SRC_GROUP_SRC:
-        status = status_clk_operation_unsupported;
-        break;
     default:
         status = status_clk_src_invalid;
         break;
@@ -418,7 +477,7 @@ hpm_stat_t clock_set_source_divider(clock_name_t clock_name, clk_src_t src, uint
     return status;
 }
 
-void switch_ip_clock(clock_name_t clock_name, bool on)
+static void switch_ip_clock(clock_name_t clock_name, bool on)
 {
     uint32_t resource = GET_CLK_RESOURCE_FROM_NAME(clock_name);
 
@@ -458,6 +517,13 @@ void clock_remove_from_group(clock_name_t clock_name, uint32_t group)
     }
 }
 
+bool clock_check_in_group(clock_name_t clock_name, uint32_t group)
+{
+    uint32_t resource = GET_CLK_RESOURCE_FROM_NAME(clock_name);
+
+    return sysctl_check_group_resource_enable(HPM_SYSCTL, group, resource);
+}
+
 void clock_connect_group_to_cpu(uint32_t group, uint32_t cpu)
 {
     if (cpu < 2U) {
@@ -472,35 +538,19 @@ void clock_disconnect_group_from_cpu(uint32_t group, uint32_t cpu)
     }
 }
 
-
-static uint64_t get_core_mcycle(void)
-{
-    uint64_t result;
-    uint32_t resultl_first = read_csr(CSR_CYCLE);
-    uint32_t resulth = read_csr(CSR_CYCLEH);
-    uint32_t resultl_second = read_csr(CSR_CYCLE);
-    if (resultl_first < resultl_second) {
-        result = ((uint64_t)resulth << 32) | resultl_first; /* if MCYCLE didn't roll over, return the value directly */
-    } else {
-        resulth = read_csr(CSR_CYCLEH);
-        result = ((uint64_t)resulth << 32) | resultl_second; /* if MCYCLE rolled over, need to get the MCYCLEH again */
-    }
-    return result;
- }
-
 void clock_cpu_delay_us(uint32_t us)
 {
     uint32_t ticks_per_us = (hpm_core_clock + FREQ_1MHz - 1U) / FREQ_1MHz;
-    uint64_t expected_ticks = get_core_mcycle() + ticks_per_us * us;
-    while (get_core_mcycle() < expected_ticks) {
+    uint64_t expected_ticks = hpm_csr_get_core_cycle() + ticks_per_us * us;
+    while (hpm_csr_get_core_cycle() < expected_ticks) {
     }
 }
 
 void clock_cpu_delay_ms(uint32_t ms)
 {
     uint32_t ticks_per_us = (hpm_core_clock + FREQ_1MHz - 1U) / FREQ_1MHz;
-    uint64_t expected_ticks = get_core_mcycle() + (uint64_t)ticks_per_us * 1000UL * ms;
-    while (get_core_mcycle() < expected_ticks) {
+    uint64_t expected_ticks = hpm_csr_get_core_cycle() + (uint64_t)ticks_per_us * 1000UL * ms;
+    while (hpm_csr_get_core_cycle() < expected_ticks) {
     }
 }
 

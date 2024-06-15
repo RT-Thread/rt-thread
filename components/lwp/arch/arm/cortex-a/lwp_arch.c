@@ -1,16 +1,18 @@
 /*
- * Copyright (c) 2006-2018, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
  * 2019-10-28     Jesven       first version
+ * 2023-07-16     Shell        Move part of the codes to C from asm in signal handling
  */
 
 #include <rthw.h>
 #include <rtthread.h>
 #include <stddef.h>
+#include <stdlib.h>
 
 #ifdef ARCH_MM_MMU
 
@@ -21,13 +23,11 @@
 #include <lwp_arch.h>
 #include <lwp_user_mm.h>
 
-#define KPTE_START (KERNEL_VADDR_START >> ARCH_SECTION_SHIFT)
-
 int arch_user_space_init(struct rt_lwp *lwp)
 {
     size_t *mmu_table;
 
-    mmu_table = (size_t *)rt_pages_alloc(2);
+    mmu_table = rt_hw_mmu_pgtbl_create();
     if (!mmu_table)
     {
         return -RT_ENOMEM;
@@ -35,9 +35,6 @@ int arch_user_space_init(struct rt_lwp *lwp)
 
     lwp->end_heap = USER_HEAP_VADDR;
 
-    rt_memcpy(mmu_table + KPTE_START, (size_t *)rt_kernel_space.page_table + KPTE_START, ARCH_PAGE_SIZE);
-    rt_memset(mmu_table, 0, 3 * ARCH_PAGE_SIZE);
-    rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, mmu_table, 4 * ARCH_PAGE_SIZE);
 
     lwp->aspace = rt_aspace_create((void *)USER_VADDR_START, USER_VADDR_TOP - USER_VADDR_START, mmu_table);
     if (!lwp->aspace)
@@ -52,10 +49,13 @@ static struct rt_varea kuser_varea;
 
 void arch_kuser_init(rt_aspace_t aspace, void *vectors)
 {
-    const size_t kuser_size = 0x1000;
     int err;
-    extern char __kuser_helper_start[], __kuser_helper_end[];
-    int kuser_sz = __kuser_helper_end - __kuser_helper_start;
+    const size_t kuser_size = 0x1000;
+    extern char __kuser_helper_start[];
+    extern char __kuser_helper_end[];
+    rt_base_t start = (rt_base_t)__kuser_helper_start;
+    rt_base_t end = (rt_base_t)__kuser_helper_end;
+    int kuser_sz = end - start;
 
     err = rt_aspace_map_static(aspace, &kuser_varea, &vectors, kuser_size,
                                MMU_MAP_U_RO, MMF_MAP_FIXED | MMF_PREFETCH,
@@ -64,7 +64,7 @@ void arch_kuser_init(rt_aspace_t aspace, void *vectors)
         while (1)
             ; // early failed
 
-    rt_memcpy((void *)((char *)vectors + 0x1000 - kuser_sz), __kuser_helper_start, kuser_sz);
+    lwp_memcpy((void *)((char *)vectors + 0x1000 - kuser_sz), __kuser_helper_start, kuser_sz);
     /*
      * vectors + 0xfe0 = __kuser_get_tls
      * vectors + 0xfe8 = hardware TLS instruction at 0xffff0fe8
@@ -82,7 +82,7 @@ void arch_user_space_free(struct rt_lwp *lwp)
         rt_aspace_delete(lwp->aspace);
 
         /* must be freed after aspace delete, pgtbl is required for unmap */
-        rt_pages_free(pgtbl, 2);
+        rt_hw_mmu_pgtbl_delete(pgtbl);
         lwp->aspace = RT_NULL;
     }
     else
@@ -108,6 +108,99 @@ int arch_expand_user_stack(void *addr)
         }
     }
     return ret;
+}
+#define ALGIN_BYTES 8
+#define lwp_sigreturn_bytes 8
+struct signal_regs {
+    rt_base_t lr;
+    rt_base_t spsr;
+    rt_base_t r0_to_r12[13];
+    rt_base_t ip;
+};
+
+struct signal_ucontext
+{
+    rt_base_t sigreturn[lwp_sigreturn_bytes / sizeof(rt_base_t)];
+    lwp_sigset_t save_sigmask;
+
+    siginfo_t si;
+
+    rt_align(8)
+    struct signal_regs frame;
+};
+
+void *arch_signal_ucontext_restore(rt_base_t user_sp)
+{
+    struct signal_ucontext *new_sp;
+    rt_base_t ip;
+    new_sp = (void *)user_sp;
+
+    if (lwp_user_accessable(new_sp, sizeof(*new_sp)))
+    {
+        lwp_thread_signal_mask(rt_thread_self(), LWP_SIG_MASK_CMD_SET_MASK, &new_sp->save_sigmask, RT_NULL);
+        ip = new_sp->frame.ip;
+        /* let user restore its lr from frame.ip */
+        new_sp->frame.ip = new_sp->frame.lr;
+        /* kernel will pick eip from frame.lr */
+        new_sp->frame.lr = ip;
+    }
+    else
+    {
+        LOG_I("User frame corrupted during signal handling\nexiting...");
+        sys_exit_group(EXIT_FAILURE);
+    }
+
+    return (void *)&new_sp->frame;
+}
+
+void *arch_signal_ucontext_save(rt_base_t lr, siginfo_t *psiginfo,
+                                struct signal_regs *exp_frame, rt_base_t user_sp,
+                                lwp_sigset_t *save_sig_mask)
+{
+    rt_base_t spsr;
+    struct signal_ucontext *new_sp;
+    new_sp = (void *)(user_sp - sizeof(struct signal_ucontext));
+
+    if (lwp_user_accessable(new_sp, sizeof(*new_sp)))
+    {
+        /* push psiginfo */
+        if (psiginfo)
+        {
+            lwp_memcpy(&new_sp->si, psiginfo, sizeof(*psiginfo));
+        }
+
+        lwp_memcpy(&new_sp->frame.r0_to_r12, exp_frame, sizeof(new_sp->frame.r0_to_r12) + sizeof(rt_base_t));
+        new_sp->frame.lr = lr;
+
+        __asm__ volatile("mrs %0, spsr":"=r"(spsr));
+        new_sp->frame.spsr = spsr;
+
+        /* copy the save_sig_mask */
+        lwp_memcpy(&new_sp->save_sigmask, save_sig_mask, sizeof(lwp_sigset_t));
+
+        /* copy lwp_sigreturn */
+        extern void lwp_sigreturn(void);
+        /* -> ensure that the sigreturn start at the outer most boundary */
+        lwp_memcpy(&new_sp->sigreturn,  &lwp_sigreturn, lwp_sigreturn_bytes);
+    }
+    else
+    {
+        LOG_I("%s: User stack overflow", __func__);
+        sys_exit_group(EXIT_FAILURE);
+    }
+
+    return new_sp;
+}
+
+void arch_syscall_set_errno(void *eframe, int expected, int code)
+{
+    /* NO support */
+    return ;
+}
+
+void *arch_kernel_mmu_table_get(void)
+{
+    return rt_kernel_space.page_table;
 }
 
 #ifdef LWP_ENABLE_ASID

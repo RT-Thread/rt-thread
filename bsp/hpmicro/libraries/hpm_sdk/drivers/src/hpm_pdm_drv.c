@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 hpmicro
+ * Copyright (c) 2021 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -9,6 +9,7 @@
 
 void pdm_get_default_config(PDM_Type *ptr, pdm_config_t *config)
 {
+    (void) ptr;
     config->sof_at_ref_clk_falling_edge = true;
     config->bypass_pdm_clk_div = false;
     config->enable_pdm_clk_out = true;

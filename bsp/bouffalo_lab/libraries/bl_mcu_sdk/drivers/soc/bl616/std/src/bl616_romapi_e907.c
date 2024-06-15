@@ -678,13 +678,6 @@ BL_Err_Type GLB_Set_ETH_REF_O_CLK_Sel(GLB_ETH_REF_CLK_OUT_Type clkSel){
 
 #if 0
 __ALWAYS_INLINE ATTR_TCM_SECTION
-BL_Err_Type GLB_Set_PEC_CLK(uint8_t enable, GLB_PEC_CLK_Type clkSel, uint8_t div){
-    return RomDriver_GLB_Set_PEC_CLK(enable,clkSel,div);
-}
-#endif
-
-#if 0
-__ALWAYS_INLINE ATTR_TCM_SECTION
 BL_Err_Type GLB_Set_I2C_CLK(uint8_t enable, GLB_I2C_CLK_Type clkSel, uint8_t div){
     return RomDriver_GLB_Set_I2C_CLK(enable,clkSel,div);
 }

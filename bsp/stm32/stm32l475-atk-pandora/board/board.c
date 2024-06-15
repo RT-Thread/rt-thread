@@ -5,12 +5,11 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2009-01-05     Bernard      first implementation
  * 2019-05-09     Zero-Free    Adding multiple configurations for system clock frequency
  */
 
 #include <board.h>
-#include <rtthread.h>
+#include <drv_common.h>
 
 void SystemClock_Config(void)
 {
@@ -243,4 +242,4 @@ void SystemClock_ReConfig(uint8_t mode)
     // SystemClock_MSI_OFF();
 }
 
-#endif
+#endif /* RT_USING_PM */

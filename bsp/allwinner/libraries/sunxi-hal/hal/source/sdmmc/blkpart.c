@@ -8,6 +8,7 @@
 #include <string.h>
 #include <blkpart.h>
 #include <rtthread.h>
+#include <rtdevice.h>
 #define MIN(a, b) ((a) > (b) ? (b) : (a))
 #define ALIGN_DOWN(x, a) __ALIGN_KERNEL((x) - ((a) - 1), (a))
 #define __ALIGN_KERNEL(x, a) __ALIGN_KERNEL_MASK(x, (typeof(x))(a) - 1)

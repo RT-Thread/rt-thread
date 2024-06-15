@@ -1,0 +1,24 @@
+from building import *
+
+group = []
+
+if not GetDepend(['RT_USING_PIC']):
+    Return('group')
+
+cwd = GetCurrentDir()
+CPPPATH = [cwd + '/../include']
+
+src = ['pic.c', 'pic_rthw.c']
+
+if GetDepend(['RT_PIC_ARM_GIC']) or GetDepend(['RT_PIC_ARM_GIC_V3']):
+    src += ['pic-gic-common.c']
+
+if GetDepend(['RT_PIC_ARM_GIC']):
+    src += ['pic-gicv2.c']
+
+if GetDepend(['RT_PIC_ARM_GIC_V3']):
+    src += ['pic-gicv3.c']
+
+group = DefineGroup('DeviceDrivers', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

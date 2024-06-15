@@ -10,6 +10,7 @@
 
 #include <rtthread.h>
 #include <string.h>
+#include <stdlib.h>
 
 #if !defined(SAL_USING_POSIX)
 #error "Please enable SAL_USING_POSIX!"
@@ -72,7 +73,7 @@ static void tcpclient(void *arg)
     /* 创建一个socket，类型是SOCKET_STREAM，TCP类型 */
     if ((sock = socket(AF_INET, SOCK_STREAM, 0)) == -1)
     {
-        /* Failed on creatinf socket */
+        /* Failed on creating socket */
         /* 创建socket失败 */
         LOG_E("Create socket error");
         goto __exit;
@@ -87,7 +88,7 @@ static void tcpclient(void *arg)
     /* 连接到服务端 */
     if (connect(sock, (struct sockaddr *)&server_addr, sizeof(struct sockaddr)) == -1)
     {
-        /*Failed on connecting to server*/
+        /* Failed on connecting to server */
         /* 连接失败 */
         LOG_E("Connect fail!");
         goto __exit;
@@ -114,19 +115,19 @@ static void tcpclient(void *arg)
         {
             /* Receive failed and close the connection */
             /* 接收失败，关闭这个连接 */
-            LOG_E("Received error, close the socket.");
+            LOG_E("Received error(%d), close the socket.", errno);
             goto __exit;
         }
         else if (bytes_received == 0)
         {
-            /* Print warning message when recv function return 0 */
-            /* 打印recv函数返回值为0的警告信息 */
-            LOG_W("Received warning, recv function return 0.");
-            continue;
+            /* Socket has performed an orderly shutdown. */
+            /* 连接已断开 */
+            LOG_E("Socket has performed an orderly shutdown.");
+            goto __exit;
         }
         else
         {
-            /* Receive data sucessfully and append '\0' at the end of message */
+            /* Receive data successfully and append '\0' at the end of message */
             /* 有接收到数据，把末端清零 */
             recv_data[bytes_received] = '\0';
 
@@ -151,14 +152,19 @@ static void tcpclient(void *arg)
         {
             /* Send failed, close the connection */
             /* 发送失败，关闭这个连接 */
-            LOG_I("send error, close the socket.");
+            LOG_I("send error(%d), close the socket.", errno);
             goto __exit;
         }
         else if (ret == 0)
         {
-            /* Print warning message when send function return 0 */
-            /* 打印send函数返回值为0的警告信息 */
-            LOG_W("Send warning, send function return 0.");
+            /* Socket has performed an orderly shutdown. */
+            /* 连接已断开 */
+            LOG_E("Socket has performed an orderly shutdown.");
+            goto __exit;
+        }
+        else if (ret != rt_strlen(send_data))
+        {
+            LOG_W("%d out of %d bytes sent.", ret, rt_strlen(send_data));
         }
     }
 

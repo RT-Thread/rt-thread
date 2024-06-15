@@ -18,8 +18,9 @@ void *rt_ioremap_start;
 size_t rt_ioremap_size;
 
 #ifdef RT_USING_SMART
-
 #include <lwp_mm.h>
+#endif
+
 #define DBG_TAG "mm.ioremap"
 #define DBG_LVL DBG_LOG
 #include <rtdbg.h>
@@ -33,12 +34,12 @@ enum ioremap_type
 
 static void *_ioremap_type(void *paddr, size_t size, enum ioremap_type type)
 {
-    void *v_addr = NULL;
+    char *v_addr = NULL;
     size_t attr;
     size_t lo_off;
     int err;
 
-    lo_off = (uintptr_t)paddr & ARCH_PAGE_MASK;
+    lo_off = (rt_ubase_t)paddr & ARCH_PAGE_MASK;
 
     struct rt_mm_va_hint hint = {
         .prefer = RT_NULL,
@@ -62,7 +63,7 @@ static void *_ioremap_type(void *paddr, size_t size, enum ioremap_type type)
     default:
         return v_addr;
     }
-    err = rt_aspace_map_phy(&rt_kernel_space, &hint, attr, MM_PA_TO_OFF(paddr), &v_addr);
+    err = rt_aspace_map_phy(&rt_kernel_space, &hint, attr, MM_PA_TO_OFF(paddr), (void **)&v_addr);
 
     if (err)
     {
@@ -74,6 +75,16 @@ static void *_ioremap_type(void *paddr, size_t size, enum ioremap_type type)
         v_addr = v_addr + lo_off;
     }
     return v_addr;
+}
+
+rt_weak void *rt_ioremap_early(void *paddr, size_t size)
+{
+    if (!size)
+    {
+        return RT_NULL;
+    }
+
+    return paddr;
 }
 
 void *rt_ioremap(void *paddr, size_t size)
@@ -101,23 +112,3 @@ void rt_iounmap(volatile void *vaddr)
     rt_aspace_unmap(&rt_kernel_space, (void *)vaddr);
 }
 
-#else
-void *rt_ioremap(void *paddr, size_t size)
-{
-    return paddr;
-}
-
-void *rt_ioremap_nocache(void *paddr, size_t size)
-{
-    return paddr;
-}
-
-void *rt_ioremap_cached(void *paddr, size_t size)
-{
-    return paddr;
-}
-
-void rt_iounmap(volatile void *vaddr)
-{
-}
-#endif

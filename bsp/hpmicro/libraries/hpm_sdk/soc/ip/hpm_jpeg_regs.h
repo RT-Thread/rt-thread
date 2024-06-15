@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 hpmicro
+ * Copyright (c) 2021-2023 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -591,7 +591,7 @@ typedef struct {
 
 /* Bitfield definition for register: STAT */
 /*
- * BUSY (ROI)
+ * BUSY (RO)
  *
  * When 1 means that the module is busy doing conversion and data transfer.
  */
@@ -600,7 +600,7 @@ typedef struct {
 #define JPEG_STAT_BUSY_GET(x) (((uint32_t)(x) & JPEG_STAT_BUSY_MASK) >> JPEG_STAT_BUSY_SHIFT)
 
 /*
- * AXI_ERR_ID (ROI)
+ * AXI_ERR_ID (RO)
  *
  * the axi err id
  */
@@ -609,7 +609,7 @@ typedef struct {
 #define JPEG_STAT_AXI_ERR_ID_GET(x) (((uint32_t)(x) & JPEG_STAT_AXI_ERR_ID_MASK) >> JPEG_STAT_AXI_ERR_ID_SHIFT)
 
 /*
- * AXI_READ_ERR (ROI)
+ * AXI_READ_ERR (RO)
  *
  * in-dma axi bus error
  */
@@ -618,7 +618,7 @@ typedef struct {
 #define JPEG_STAT_AXI_READ_ERR_GET(x) (((uint32_t)(x) & JPEG_STAT_AXI_READ_ERR_MASK) >> JPEG_STAT_AXI_READ_ERR_SHIFT)
 
 /*
- * AXI_WRITE_ERR (ROI)
+ * AXI_WRITE_ERR (RO)
  *
  * out-dma axi bus error
  */
@@ -750,7 +750,7 @@ typedef struct {
 
 /* Bitfield definition for register: OUTDMACNT */
 /*
- * VAL (ROI)
+ * VAL (RO)
  *
  * The out DMA counter
  */

@@ -162,9 +162,9 @@ def bsp_update_kconfig_library(dist_dir):
         data = f.readlines()
     with open(os.path.join(dist_dir, 'board/Kconfig'), 'w') as f:
         for line in data:
-            if line.find('../libraries/HAL_Drivers/Kconfig') != -1:
-                position = line.find('../libraries/HAL_Drivers/Kconfig')
-                line = line[0:position] + 'libraries/HAL_Drivers/Kconfig"\n'
+            if line.find('../libraries/HAL_Drivers/drivers/Kconfig') != -1:
+                position = line.find('../libraries/HAL_Drivers/drivers/Kconfig')
+                line = line[0:position] + 'libraries/HAL_Drivers/drivers/Kconfig"\n'
             f.write(line)
 
 def zip_dist(dist_dir, dist_name):
@@ -181,133 +181,6 @@ def zip_dist(dist_dir, dist_name):
             zip.write(pathfile, arcname)
 
     zip.close()
-
-def MkDist_Strip(program, BSP_ROOT, RTT_ROOT, Env):
-    global source_list
-
-    print('make distribution and strip useless files....')
-
-    dist_name = os.path.basename(BSP_ROOT)
-    dist_dir  = os.path.join(BSP_ROOT, 'dist-strip', dist_name)
-    rtt_dir_path = os.path.join(dist_dir, 'rt-thread')
-
-    print('=> %s' % os.path.basename(BSP_ROOT))
-    bsp_copy_files(BSP_ROOT, dist_dir)
-
-    # copy stm32 bsp libiary files
-    if os.path.basename(os.path.dirname(BSP_ROOT)) == 'stm32':
-        print("=> copy stm32 bsp library")
-        library_path = os.path.join(os.path.dirname(BSP_ROOT), 'libraries')
-        library_dir  = os.path.join(dist_dir, 'libraries')
-        bsp_copy_files(os.path.join(library_path, 'HAL_Drivers'), os.path.join(library_dir, 'HAL_Drivers'))
-        bsp_copy_files(os.path.join(library_path, Env['bsp_lib_type']), os.path.join(library_dir, Env['bsp_lib_type']))
-        shutil.copyfile(os.path.join(library_path, 'Kconfig'), os.path.join(library_dir, 'Kconfig'))
-
-    # do bsp special dist handle
-    if 'dist_handle' in Env:
-        print("=> start dist handle")
-        dist_handle = Env['dist_handle']
-        dist_handle(BSP_ROOT, dist_dir)
-
-    # get all source files from program
-    for item in program:
-        walk_children(item)
-    source_list.sort()
-
-    # copy the source files without libcpu and components/libc in RT-Thread
-    target_list = []
-    libcpu_dir = os.path.join(RTT_ROOT, 'libcpu').lower()
-    libc_dir = os.path.join(RTT_ROOT, 'components', 'libc', 'compilers').lower()
-    sal_dir = os.path.join(RTT_ROOT, 'components', 'net', 'sal_socket').lower()
-    sources_include_sal = False
-    for src in source_list:
-        if src.lower().startswith(BSP_ROOT.lower()):
-            continue
-
-        # skip libc and libcpu dir
-        if src.lower().startswith(libcpu_dir):
-            continue
-        if src.lower().startswith(libc_dir):
-            continue
-        if src.lower().startswith(sal_dir):
-            sources_include_sal = True
-            continue
-
-        if src.lower().startswith(RTT_ROOT.lower()):
-            target_list.append(src)
-    source_list = target_list
-
-    # get source directory
-    src_dir = []
-    for src in source_list:
-        src = src.replace(RTT_ROOT, '')
-        if src[0] == os.sep or src[0] == '/':
-            src = src[1:]
-
-        path = os.path.dirname(src)
-        sub_path = path.split(os.sep)
-        full_path = RTT_ROOT
-        for item in sub_path:
-            full_path = os.path.join(full_path, item)
-            if full_path not in src_dir:
-                src_dir.append(full_path)
-
-    # add all of SConscript files
-    for item in src_dir:
-        source_list.append(os.path.join(item, 'SConscript'))
-
-    # add all of Kconfig files
-    walk_kconfig(RTT_ROOT, source_list)
-
-    # copy all files to target directory
-    source_list.sort()
-    for src in source_list:
-        dst = src.replace(RTT_ROOT, '')
-        if dst[0] == os.sep or dst[0] == '/':
-            dst = dst[1:]
-
-        print('=> %s' % dst)
-        dst = os.path.join(rtt_dir_path, dst)
-        do_copy_file(src, dst)
-
-    # copy tools directory
-    print('=> tools')
-    do_copy_folder(os.path.join(RTT_ROOT, 'tools'), os.path.join(rtt_dir_path, 'tools'), ignore_patterns('*.pyc'))
-    do_copy_file(os.path.join(RTT_ROOT, 'Kconfig'), os.path.join(rtt_dir_path, 'Kconfig'))
-    do_copy_file(os.path.join(RTT_ROOT, 'AUTHORS'), os.path.join(rtt_dir_path, 'AUTHORS'))
-    do_copy_file(os.path.join(RTT_ROOT, 'COPYING'), os.path.join(rtt_dir_path, 'COPYING'))
-    do_copy_file(os.path.join(RTT_ROOT, 'README.md'), os.path.join(rtt_dir_path, 'README.md'))
-    do_copy_file(os.path.join(RTT_ROOT, 'README_zh.md'), os.path.join(rtt_dir_path, 'README_zh.md'))
-
-    print('=> %s' % os.path.join('components', 'libc', 'compilers'))
-    do_copy_folder(os.path.join(RTT_ROOT, 'components', 'libc', 'compilers'), os.path.join(rtt_dir_path, 'components', 'libc', 'compilers'))
-
-    if sources_include_sal:
-        print('=> %s' % os.path.join('components', 'net', 'sal_socket'))
-        do_copy_folder(os.path.join(RTT_ROOT, 'components', 'net', 'sal_socket'), os.path.join(rtt_dir_path, 'components', 'net', 'sal_socket'))
-
-    # copy all libcpu/ARCH directory
-    import rtconfig
-    print('=> %s' % (os.path.join('libcpu', rtconfig.ARCH, rtconfig.CPU)))
-    do_copy_folder(os.path.join(RTT_ROOT, 'libcpu', rtconfig.ARCH, rtconfig.CPU), os.path.join(rtt_dir_path, 'libcpu', rtconfig.ARCH, rtconfig.CPU))
-    if os.path.exists(os.path.join(RTT_ROOT, 'libcpu', rtconfig.ARCH, 'common')):
-        print('=> %s' % (os.path.join('libcpu', rtconfig.ARCH, 'common')))
-        do_copy_folder(os.path.join(RTT_ROOT, 'libcpu', rtconfig.ARCH, 'common'), os.path.join(rtt_dir_path, 'libcpu', rtconfig.ARCH, 'common'))
-    do_copy_file(os.path.join(RTT_ROOT, 'libcpu', 'Kconfig'), os.path.join(rtt_dir_path, 'libcpu', 'Kconfig'))
-    do_copy_file(os.path.join(RTT_ROOT, 'libcpu', 'SConscript'), os.path.join(rtt_dir_path, 'libcpu', 'SConscript'))
-
-    print('Update configuration files...')
-    # change RTT_ROOT in SConstruct
-    bsp_update_sconstruct(dist_dir)
-    # change RTT_ROOT in Kconfig
-    bsp_update_kconfig(dist_dir)
-    bsp_update_kconfig_library(dist_dir)
-    # delete testcases in Kconfig
-    bsp_update_kconfig_testcases(dist_dir)
-    # make zip package
-    zip_dist(dist_dir, dist_name)
-
-    print('done!')
 
 def MkDist(program, BSP_ROOT, RTT_ROOT, Env, project_name, project_path):
     print('make distribution....')
@@ -370,19 +243,19 @@ def MkDist(program, BSP_ROOT, RTT_ROOT, Env, project_name, project_path):
     # delete testcases in Kconfig
     bsp_update_kconfig_testcases(dist_dir)
 
-    # make zip package
-    if project_path == None:
-        zip_dist(dist_dir, project_name)
-
     target_project_type = GetOption('target')
     if target_project_type:
-        child = subprocess.Popen('scons --target={} --project-name={}'.format(target_project_type, project_name), cwd=dist_dir, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        child = subprocess.Popen('scons --target={} --project-name="{}"'.format(target_project_type, project_name), cwd=dist_dir, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         stdout, stderr = child.communicate()
         if child.returncode == 0:
             print(stdout)
         else:
             print(stderr)
     else:
-        print('suggest to use command scons --dist [--target=xxx] [--project-name=xxx] [--project-path=xxx]')
+        print('suggest to use command scons --dist [--target=xxx] [--project-name="xxx"] [--project-path="xxx"]')
+
+    # make zip package
+    if project_path == None:
+        zip_dist(dist_dir, project_name)
 
     print('dist project successfully!')

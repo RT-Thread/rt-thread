@@ -9,6 +9,7 @@
  */
 
 #include <rtthread.h>
+#include <rtdevice.h>
 
 #include <virtio_gpu.h>
 #include <virtio_input.h>
@@ -103,8 +104,7 @@ void graphic_thread(void *param)
         {
             int i = 0;
 
-            rt_memset(graphic_info.framebuffer, 0xff,
-                    graphic_info.width * graphic_info.height * graphic_info.bits_per_pixel);
+            rt_memset(graphic_info.framebuffer, 0xff, graphic_info.pitch * graphic_info.height);
 
             cur_last_points[0] = graphic_info.width / 2;
             cur_last_points[1] = graphic_info.height / 2;
@@ -207,7 +207,7 @@ _graphic_fail:
     }
 }
 
-int graphic_init(void)
+int graphic_test(void)
 {
     rt_thread_t graphic_tid = rt_thread_create("graphic work", graphic_thread, RT_NULL,
             GRAPHIC_THREAD_STACK_SIZE, GRAPHIC_THREAD_PRIORITY, GRAPHIC_THREAD_TIMESLICE);
@@ -221,8 +221,4 @@ int graphic_init(void)
 
     return -RT_ERROR;
 }
-#ifdef RT_USING_SMP
-INIT_ENV_EXPORT(graphic_init);
-#else
-MSH_CMD_EXPORT(graphic_init, Graphic initialize);
-#endif
+MSH_CMD_EXPORT(graphic_test, Graphic test);

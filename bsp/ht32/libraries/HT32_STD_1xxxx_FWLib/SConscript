@@ -1,0 +1,43 @@
+import os
+import sys
+import rtconfig
+from building import *
+Import('rtconfig')
+
+tools_path = os.path.normpath(os.getcwd() + '../../..' + '/tools')
+sys.path.append(tools_path)
+from sdk_dist import get_source
+
+source_file_path = os.path.join(os.getcwd(), 'Source_file')
+base_path = 'library/HT32F1xxxx_Driver/src/'
+system_path = 'library/Device/Holtek/HT32F1xxxx/Source/'
+source_path = []
+ic_list = [
+    'HT32F1654',
+    'HT32F1656',
+    'HT32F12345',
+    'HT32F12364',
+    'HT32F12366'
+]
+
+cwd = GetCurrentDir()
+src = []
+
+for ic_name in ic_list:
+    if GetDepend(['SOC_' + ic_name]):
+        source_path = get_source(ic_name,source_file_path,system_path,base_path)
+
+src = Split(source_path)
+
+path = [
+    cwd + '/library/HT32F1xxxx_Driver/inc',
+    cwd + '/library/CMSIS/Include',
+    cwd + '/library/Device/Holtek/HT32F1xxxx/Include'
+]
+
+CPPDEFINES = ['USE_HT32_DRIVER']
+
+group = DefineGroup('Libraries', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
+
+Return('group')
+

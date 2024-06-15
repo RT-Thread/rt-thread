@@ -159,25 +159,6 @@ rt_isr_handler_t rt_hw_interrupt_install(int vector, rt_isr_handler_t handler,
     return old_handler;
 }
 
-/**
- * this function will reset CPU
- *
- */
-rt_weak void rt_hw_cpu_reset(void)
-{
-}
-
-/**
- * this function will shutdown CPU
- *
- */
-rt_weak void rt_hw_cpu_shutdown()
-{
-    rt_kprintf("shutdown...\n");
-
-    while (1);
-}
-
 void rt_hw_trap_irq(void)
 {
     int irqno;

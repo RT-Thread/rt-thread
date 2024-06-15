@@ -6,9 +6,15 @@
    Change Logs:
    Date             Author          Notes
    2022-03-31       CDT             First version
+   2022-10-31       CDT             Comments optimization
+   2023-06-30       CDT             Modify typo
+                                    Update about split 16bit register TMRA_BCSTR into two 8bit registers TMRA_BCSTRH and TMRA_BCSTRL
+                                    Delete union in stc_tmra_init_t structure
+   2023-09-30       CDT             Modify some of member type of struct stc_tmra_init_t and relate fuction about these member
+                                    Rename marco definition IS_TMRA_CMPVAL_BUF_COND to IS_TMRA_BUF_TRANS_COND
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -65,8 +71,8 @@
  * @defgroup TMRA_Configuration_Bit_Mask TMRA Configuration Bit Mask
  * @{
  */
-#define TMRA_BCSTR_INT_MASK                 (TMRA_BCSTR_ITENUDF | TMRA_BCSTR_ITENOVF)
-#define TMRA_BCSTR_FLAG_MASK                (TMRA_BCSTR_UDFF | TMRA_BCSTR_OVFF)
+#define TMRA_BCSTRH_INT_MASK                (TMRA_BCSTRH_ITENUDF | TMRA_BCSTRH_ITENOVF)
+#define TMRA_BCSTRH_FLAG_MASK               (TMRA_BCSTRH_UDFF | TMRA_BCSTRH_OVFF)
 #define TMRA_FCONR_FILTER_CLK_MASK          (0x3UL)
 #define TMRA_CCONR_FILTER_CLK_MASK          (TMRA_CCONR_NOFICKCP)
 #define TMRA_PWM_POLARITY_MASK              (TMRA_PCONR_STAC)
@@ -76,7 +82,6 @@
 
 /**
  * @defgroup TMRA_Filter_Pin_Max TMRA Pin With Filter Max
- * @note TMRA_1 and TMRA_2 of HC32M423 do NOT contain pin TMRA_PIN_PWM2.
  * @{
  */
 #define TMRA_PIN_MAX                        (TMRA_PIN_PWM8)
@@ -90,7 +95,6 @@
  */
 #define IS_TMRA_BIT_MASK(x, mask)   (((x) != 0U) && (((x) | (mask)) == (mask)))
 
-/* Unit check */
 #define IS_TMRA_UNIT(x)                                                        \
 (   ((x) == CM_TMRA_1)                      ||                                 \
     ((x) == CM_TMRA_2)                      ||                                 \
@@ -99,7 +103,6 @@
     ((x) == CM_TMRA_5)                      ||                                 \
     ((x) == CM_TMRA_6))
 
-/* Sync unit check */
 #define IS_TMRA_SYNC_UNIT(x)                                                   \
 (    ((x) == CM_TMRA_2)                     ||                                 \
      ((x) == CM_TMRA_3)                     ||                                 \
@@ -109,7 +112,6 @@
 
 #define IS_TMRA_CH(x)               ((x) <= TMRA_CH8)
 
-/* Unit and channel */
 #define IS_TMRA_UNIT_CH(unit, ch)   (IS_TMRA_UNIT(unit) && IS_TMRA_CH(ch))
 
 #define IS_TMRA_CNT_SRC(x)          (((x) == TMRA_CNT_SRC_SW) || ((x) == TMRA_CNT_SRC_HW))
@@ -119,8 +121,6 @@
 #define IS_TMRA_DIR(x)              (((x) == TMRA_DIR_DOWN) || ((x) == TMRA_DIR_UP))
 
 #define IS_TMRA_MD(x)               (((x) == TMRA_MD_SAWTOOTH) || ((x) == TMRA_MD_TRIANGLE))
-
-/* Counter reload */
 
 #define IS_TMRA_CMPVAL_BUF_CH(x)                                               \
 (   ((x) == TMRA_CH1) || ((x) == TMRA_CH3) || ((x) == TMRA_CH5) || ((x) == TMRA_CH7))
@@ -154,21 +154,15 @@
 
 #define IS_TMRA_FILTER_CLK_DIV(x)       ((x) <= TMRA_FILTER_CLK_DIV64)
 
-/* Special check of TMRA_1 & TMRA_2 of HC32M423 */
-
-/* Unit and interrupt */
 #define IS_TMRA_UNIT_INT(u, x)      (IS_TMRA_UNIT(u) && IS_TMRA_INT(x))
 
-/* Unit and event of channel */
 #define IS_TMRA_CH_EVT(u, x)        (IS_TMRA_UNIT(u) && IS_TMRA_EVT(x))
 
-/* Unit and pin with filter */
 #define IS_TMRA_UNIT_FPIN(u, x)     (IS_TMRA_UNIT(u) && IS_TMRA_FILTER_PIN(x))
 
-/* Unit and flag */
 #define IS_TMRA_UNIT_FLAG(u, x)     (IS_TMRA_UNIT(u) && IS_TMRA_FLAG(x))
 
-#define IS_TMRA_CMPVAL_BUF_COND(x)                                             \
+#define IS_TMRA_BUF_TRANS_COND(x)                                              \
 (   ((x) == TMRA_BUF_TRANS_COND_OVF_UDF_CLR)    ||                             \
     ((x) == TMRA_BUF_TRANS_COND_PEAK)           ||                             \
     ((x) == TMRA_BUF_TRANS_COND_VALLEY)         ||                             \
@@ -272,13 +266,13 @@ int32_t TMRA_Init(CM_TMRA_TypeDef *TMRAx, const stc_tmra_init_t *pstcTmraInit)
         DDL_ASSERT(IS_TMRA_CNT_SRC(pstcTmraInit->u8CountSrc));
 
         if (pstcTmraInit->u8CountSrc == TMRA_CNT_SRC_SW) {
-            DDL_ASSERT(IS_TMRA_MD(pstcTmraInit->sw_count.u16CountMode));
-            DDL_ASSERT(IS_TMRA_DIR(pstcTmraInit->sw_count.u16CountDir));
-            DDL_ASSERT(IS_TMRA_CLK_DIV(pstcTmraInit->sw_count.u16ClockDiv));
+            DDL_ASSERT(IS_TMRA_MD(pstcTmraInit->sw_count.u8CountMode));
+            DDL_ASSERT(IS_TMRA_DIR(pstcTmraInit->sw_count.u8CountDir));
+            DDL_ASSERT(IS_TMRA_CLK_DIV(pstcTmraInit->sw_count.u8ClockDiv));
 
-            WRITE_REG16(TMRAx->BCSTR, pstcTmraInit->sw_count.u16CountMode | \
-                        pstcTmraInit->sw_count.u16CountDir  | \
-                        pstcTmraInit->sw_count.u16ClockDiv);
+            WRITE_REG8(TMRAx->BCSTRL, pstcTmraInit->sw_count.u8CountMode | \
+                       pstcTmraInit->sw_count.u8CountDir                 | \
+                       pstcTmraInit->sw_count.u8ClockDiv);
         } else {
             DDL_ASSERT(IS_TMRA_CNT_UP_COND(pstcTmraInit->hw_count.u16CountUpCond) || \
                        (pstcTmraInit->hw_count.u16CountUpCond == TMRA_CNT_UP_COND_INVD));
@@ -287,8 +281,6 @@ int32_t TMRA_Init(CM_TMRA_TypeDef *TMRAx, const stc_tmra_init_t *pstcTmraInit)
             WRITE_REG16(TMRAx->HCUPR, pstcTmraInit->hw_count.u16CountUpCond);
             WRITE_REG16(TMRAx->HCDOR, pstcTmraInit->hw_count.u16CountDownCond);
         }
-
-        /* Counter reload */
 
         /* Specifies period value. */
         TMRA_SetPeriodValue(TMRAx, pstcTmraInit->u32PeriodValue);
@@ -312,12 +304,13 @@ int32_t TMRA_StructInit(stc_tmra_init_t *pstcTmraInit)
     int32_t i32Ret = LL_ERR_INVD_PARAM;
 
     if (pstcTmraInit != NULL) {
-        pstcTmraInit->u8CountSrc            = TMRA_CNT_SRC_SW;
-        pstcTmraInit->sw_count.u16ClockDiv  = TMRA_CLK_DIV1;
-        pstcTmraInit->sw_count.u16CountMode = TMRA_MD_SAWTOOTH;
-        pstcTmraInit->sw_count.u16CountDir  = TMRA_DIR_UP;
-        pstcTmraInit->u32PeriodValue        = (TMRA_REG_TYPE)0xFFFFFFFFUL;
-        /* Counter reload */
+        pstcTmraInit->u8CountSrc                = TMRA_CNT_SRC_SW;
+        pstcTmraInit->sw_count.u8ClockDiv       = TMRA_CLK_DIV1;
+        pstcTmraInit->sw_count.u8CountMode      = TMRA_MD_SAWTOOTH;
+        pstcTmraInit->sw_count.u8CountDir       = TMRA_DIR_UP;
+        pstcTmraInit->hw_count.u16CountUpCond   = TMRA_CNT_UP_COND_INVD;
+        pstcTmraInit->hw_count.u16CountDownCond = TMRA_CNT_DOWN_COND_INVD;
+        pstcTmraInit->u32PeriodValue            = (TMRA_REG_TYPE)0xFFFFFFFFUL;
         i32Ret = LL_OK;
     }
 
@@ -329,17 +322,17 @@ int32_t TMRA_StructInit(stc_tmra_init_t *pstcTmraInit)
  * @param  [in]  TMRAx                  Pointer to TMRA instance register base.
  *                                      This parameter can be a value of the following:
  *   @arg  CM_TMRA_x or CM_TMRA
- * @param  [in]  u16Mode                Count mode.
+ * @param  [in]  u8Mode                 Count mode.
  *                                      This parameter can be a value of @ref TMRA_Count_Mode
  *   @arg  TMRA_MD_SAWTOOTH:            Count mode is sawtooth wave.
  *   @arg  TMRA_MD_TRIANGLE:            Count mode is triangle wave.
  * @retval None
  */
-void TMRA_SetCountMode(CM_TMRA_TypeDef *TMRAx, uint16_t u16Mode)
+void TMRA_SetCountMode(CM_TMRA_TypeDef *TMRAx, uint8_t u8Mode)
 {
     DDL_ASSERT(IS_TMRA_UNIT(TMRAx));
-    DDL_ASSERT(IS_TMRA_MD(u16Mode));
-    MODIFY_REG16(TMRAx->BCSTR, TMRA_BCSTR_MODE, u16Mode);
+    DDL_ASSERT(IS_TMRA_MD(u8Mode));
+    MODIFY_REG8(TMRAx->BCSTRL, TMRA_BCSTRL_MODE, u8Mode);
 }
 
 /**
@@ -347,33 +340,33 @@ void TMRA_SetCountMode(CM_TMRA_TypeDef *TMRAx, uint16_t u16Mode)
  * @param  [in]  TMRAx                  Pointer to TMRA instance register base.
  *                                      This parameter can be a value of the following:
  *   @arg  CM_TMRA_x or CM_TMRA
- * @param  [in]  u16Dir                 Count direction.
+ * @param  [in]  u8Dir                  Count direction.
  *                                      This parameter can be a value of @ref TMRA_Count_Dir
  *   @arg  TMRA_DIR_DOWN:               TMRA count down.
  *   @arg  TMRA_DIR_UP:                 TMRA count up.
  * @retval None
  */
-void TMRA_SetCountDir(CM_TMRA_TypeDef *TMRAx, uint16_t u16Dir)
+void TMRA_SetCountDir(CM_TMRA_TypeDef *TMRAx, uint8_t u8Dir)
 {
     DDL_ASSERT(IS_TMRA_UNIT(TMRAx));
-    DDL_ASSERT(IS_TMRA_DIR(u16Dir));
-    MODIFY_REG16(TMRAx->BCSTR, TMRA_BCSTR_DIR, u16Dir);
+    DDL_ASSERT(IS_TMRA_DIR(u8Dir));
+    MODIFY_REG8(TMRAx->BCSTRL, TMRA_BCSTRL_DIR, u8Dir);
 }
 
 /**
- * @brief  Specifies the clcok divider for the specified TMRA unit.
+ * @brief  Specifies the clock divider for the specified TMRA unit.
  * @param  [in]  TMRAx                  Pointer to TMRA instance register base.
  *                                      This parameter can be a value of the following:
  *   @arg  CM_TMRA_x or CM_TMRA
- * @param  [in]  u16Div                 Clcok divider.
+ * @param  [in]  u8Div                  Clock divider.
  *                                      This parameter can be a value of @ref TMRA_Clock_Divider
  * @retval None
  */
-void TMRA_SetClockDiv(CM_TMRA_TypeDef *TMRAx, uint16_t u16Div)
+void TMRA_SetClockDiv(CM_TMRA_TypeDef *TMRAx, uint8_t u8Div)
 {
     DDL_ASSERT(IS_TMRA_UNIT(TMRAx));
-    DDL_ASSERT(IS_TMRA_CLK_DIV(u16Div));
-    MODIFY_REG16(TMRAx->BCSTR, TMRA_BCSTR_CKDIV, u16Div);
+    DDL_ASSERT(IS_TMRA_CLK_DIV(u8Div));
+    MODIFY_REG8(TMRAx->BCSTRL, TMRA_BCSTRL_CKDIV, u8Div);
 }
 
 /**
@@ -427,7 +420,7 @@ void TMRA_HWCountDownCondCmd(CM_TMRA_TypeDef *TMRAx, uint16_t u16Cond, en_functi
  * @param  [in]  TMRAx                  Pointer to TMRA instance register base.
  *                                      This parameter can be a value of the following:
  *   @arg  CM_TMRA_x or CM_TMRA
- * @param  [in]  u16Func                Function mode of TRMA.
+ * @param  [in]  u16Func                Function mode of TMRA.
  *                                      This parameter can be a value of @ref TMRA_Function_Mode
  * @param  [in]  u32Ch                  TMRA channel.
  *                                      This parameter can be a value of @ref TMRA_Channel
@@ -544,7 +537,7 @@ void TMRA_PWM_OutputCmd(CM_TMRA_TypeDef *TMRAx, uint32_t u32Ch, en_functional_st
  * @param  [in]  u16Polarity            The polarity of PWM.
  *                                      This parameter can be a value @ref TMRA_PWM_Polarity
  * @retval None
- * @note   The polarity(high or low) of couting start is only valid when the clock is not divided(BCSTR.CKDIV == 0).
+ * @note   The polarity(high or low) when counting start is only valid when the clock is not divided(BCSTRL.CKDIV == 0).
  */
 void TMRA_PWM_SetPolarity(CM_TMRA_TypeDef *TMRAx, uint32_t u32Ch, uint8_t u8CountState, uint16_t u16Polarity)
 {
@@ -606,7 +599,6 @@ void TMRA_HWCaptureCondCmd(CM_TMRA_TypeDef *TMRAx, uint32_t u32Ch, uint16_t u16C
         DDL_ASSERT(u32Ch == TMRA_CH3);
     }
 #endif
-
     u32CCONRAddr = (uint32_t)&TMRAx->CCONR1 + (u32Ch * 4U);
     if (enNewState == ENABLE) {
         SET_REG16_BIT(RW_MEM16(u32CCONRAddr), u16Cond);
@@ -676,7 +668,6 @@ void TMRA_HWClearCondCmd(CM_TMRA_TypeDef *TMRAx, uint16_t u16Cond, en_functional
     DDL_ASSERT(IS_TMRA_UNIT(TMRAx));
     DDL_ASSERT(IS_TMRA_CLR_COND(u16Cond));
     DDL_ASSERT(IS_FUNCTIONAL_STATE(enNewState));
-
     if (enNewState == ENABLE) {
         SET_REG16_BIT(TMRAx->HCONR, u16Cond);
     } else {
@@ -791,7 +782,8 @@ void TMRA_DeInit(CM_TMRA_TypeDef *TMRAx)
 
     SET_VAL_BY_ADDR(u32PERARAddr, 0xFFFFFFFFUL);
     SET_VAL_BY_ADDR(u32CNTERAddr, 0x0U);
-    WRITE_REG16(TMRAx->BCSTR, 0x2U);
+    WRITE_REG8(TMRAx->BCSTRL, 0x2U);
+    WRITE_REG8(TMRAx->BCSTRH, 0x0U);
     WRITE_REG16(TMRAx->ICONR, 0x0U);
     WRITE_REG16(TMRAx->ECONR, 0x0U);
     WRITE_REG16(TMRAx->FCONR, 0x0U);
@@ -799,7 +791,6 @@ void TMRA_DeInit(CM_TMRA_TypeDef *TMRAx)
     WRITE_REG16(TMRAx->HCONR, 0x0U);
     WRITE_REG16(TMRAx->HCUPR, 0x0U);
     WRITE_REG16(TMRAx->HCDOR, 0x0U);
-
     WRITE_REG16(TMRAx->BCONR1, 0x0U);
     WRITE_REG16(TMRAx->BCONR2, 0x0U);
     WRITE_REG16(TMRAx->BCONR3, 0x0U);
@@ -811,14 +802,14 @@ void TMRA_DeInit(CM_TMRA_TypeDef *TMRAx)
  * @param  [in]  TMRAx                  Pointer to TMRA instance register base.
  *                                      This parameter can be a value of the following:
  *   @arg  CM_TMRA_x or CM_TMRA
- * @retval An uint16_t type value of counting direction.
+ * @retval An uint8_t type value of counting direction.
  *          -TMRA_DIR_DOWN:             TMRA count down.
  *          -TMRA_DIR_UP:               TMRA count up.
  */
-uint16_t TMRA_GetCountDir(const CM_TMRA_TypeDef *TMRAx)
+uint8_t TMRA_GetCountDir(const CM_TMRA_TypeDef *TMRAx)
 {
     DDL_ASSERT(IS_TMRA_UNIT(TMRAx));
-    return READ_REG16_BIT(TMRAx->BCSTR, TMRA_BCSTR_DIR);
+    return READ_REG8_BIT(TMRAx->BCSTRL, TMRA_BCSTRL_DIR);
 }
 
 /**
@@ -828,8 +819,8 @@ uint16_t TMRA_GetCountDir(const CM_TMRA_TypeDef *TMRAx)
  *   @arg  CM_TMRA_x or CM_TMRA
  * @param  [in]  u32Value               The period value to be set.
  *                                      This parameter can be a number between:
- *                                      0UL and 0xFFFFFFFFUL for TimerA1 and TimerA2 of HC32F472.
- *                                      0UL and 0xFFFFUL for TimerA3/4/5/6 of HC32F472 and all TimerA units of other MCUs.
+ *                                      0UL and 0xFFFFFFFFUL for 32-bit TimerA units.
+ *                                      0UL and 0xFFFFUL for 16-bit TimerA units.
  * @retval None
  */
 void TMRA_SetPeriodValue(CM_TMRA_TypeDef *TMRAx, uint32_t u32Value)
@@ -847,8 +838,8 @@ void TMRA_SetPeriodValue(CM_TMRA_TypeDef *TMRAx, uint32_t u32Value)
  *                                      This parameter can be a value of the following:
  *   @arg  CM_TMRA_x or CM_TMRA
  * @retval An uint32_t type type value of period value between:
- *         - 0UL and 0xFFFFFFFFUL for TimerA1 and TimerA2 of HC32F472.
- *         - 0UL and 0xFFFFUL for TimerA3/4/5/6 of HC32F472 and all TimerA units of other MCUs.
+ *         - 0UL and 0xFFFFFFFFUL for 32-bit TimerA units.
+ *         - 0UL and 0xFFFFUL for 16-bit TimerA units.
  */
 uint32_t TMRA_GetPeriodValue(const CM_TMRA_TypeDef *TMRAx)
 {
@@ -863,8 +854,8 @@ uint32_t TMRA_GetPeriodValue(const CM_TMRA_TypeDef *TMRAx)
  *   @arg  CM_TMRA_x or CM_TMRA
  * @param  [in]  u32Value               The general counter value to be set.
  *                                      This parameter can be a number between:
- *                                      0UL and 0xFFFFFFFFUL for TimerA1 and TimerA2 of HC32F472.
- *                                      0UL and 0xFFFFUL for TimerA3/4/5/6 of HC32F472 and all TimerA units of other MCUs.
+ *                                      0UL and 0xFFFFFFFFUL for 32-bit TimerA units.
+ *                                      0UL and 0xFFFFUL for 16-bit TimerA units.
  * @retval None
  */
 void TMRA_SetCountValue(CM_TMRA_TypeDef *TMRAx, uint32_t u32Value)
@@ -882,8 +873,8 @@ void TMRA_SetCountValue(CM_TMRA_TypeDef *TMRAx, uint32_t u32Value)
  *                                      This parameter can be a value of the following:
  *   @arg  CM_TMRA_x or CM_TMRA
  * @retval An uint32_t type type value of counter value between:
- *         - 0UL and 0xFFFFFFFFUL for TimerA1 and TimerA2 of HC32F472.
- *         - 0UL and 0xFFFFUL for TimerA3/4/5/6 of HC32F472 and all TimerA units of other MCUs.
+ *         - 0UL and 0xFFFFFFFFUL for 32-bit TimerA units.
+ *         - 0UL and 0xFFFFUL for 16-bit TimerA units.
  */
 uint32_t TMRA_GetCountValue(const CM_TMRA_TypeDef *TMRAx)
 {
@@ -900,8 +891,8 @@ uint32_t TMRA_GetCountValue(const CM_TMRA_TypeDef *TMRAx)
  *                                      This parameter can be a value of @ref TMRA_Channel
  * @param  [in]  u32Value               The comparison value to be set.
  *                                      This parameter can be a number between:
- *                                      0UL and 0xFFFFFFFFUL for TimerA1 and TimerA2 of HC32F472.
- *                                      0UL and 0xFFFFUL for TimerA3/4/5/6 of HC32F472 and all TimerA units of other MCUs.
+ *                                      0UL and 0xFFFFFFFFUL for 32-bit TimerA units.
+ *                                      0UL and 0xFFFFUL for 16-bit TimerA units.
  * @retval None
  */
 void TMRA_SetCompareValue(CM_TMRA_TypeDef *TMRAx, uint32_t u32Ch, uint32_t u32Value)
@@ -922,8 +913,8 @@ void TMRA_SetCompareValue(CM_TMRA_TypeDef *TMRAx, uint32_t u32Ch, uint32_t u32Va
  * @param  [in]  u32Ch                  TMRA channel.
  *                                      This parameter can be a value of @ref TMRA_Channel
  * @retval An uint32_t type type value of comparison value value between:
- *         - 0UL and 0xFFFFFFFFUL for TimerA1 and TimerA2 of HC32F472.
- *         - 0UL and 0xFFFFUL for TimerA3/4/5/6 of HC32F472 and all TimerA units of other MCUs.
+ *         - 0UL and 0xFFFFFFFFUL for 32-bit TimerA units.
+ *         - 0UL and 0xFFFFUL for 16-bit TimerA units.
  */
 uint32_t TMRA_GetCompareValue(const CM_TMRA_TypeDef *TMRAx, uint32_t u32Ch)
 {
@@ -935,7 +926,6 @@ uint32_t TMRA_GetCompareValue(const CM_TMRA_TypeDef *TMRAx, uint32_t u32Ch)
     return GET_VAL_BY_ADDR(u32CMPARAddr);
 }
 
-/* Sync start. */
 /**
  * @brief  Enable or disable synchronous-start. When an even unit enables synchronous-start function,
  *         start the symmetric odd unit can start the even unit at the same time.
@@ -952,11 +942,9 @@ void TMRA_SyncStartCmd(CM_TMRA_TypeDef *TMRAx, en_functional_state_t enNewState)
     DDL_ASSERT(IS_TMRA_SYNC_UNIT(TMRAx));
     DDL_ASSERT(IS_FUNCTIONAL_STATE(enNewState));
 
-    u32Addr = (uint32_t)&TMRAx->BCSTR;
-    WRITE_REG32(PERIPH_BIT_BAND(u32Addr, TMRA_BCSTR_SYNST_POS), enNewState);
+    u32Addr = (uint32_t)&TMRAx->BCSTRL;
+    WRITE_REG32(PERIPH_BIT_BAND(u32Addr, TMRA_BCSTRL_SYNST_POS), enNewState);
 }
-
-/* Reload and continue counting when overflow/underflow? */
 
 /**
  * @brief  Specifies the condition of compare value buffer transmission.
@@ -974,7 +962,10 @@ void TMRA_SyncStartCmd(CM_TMRA_TypeDef *TMRAx, en_functional_state_t enNewState)
  *                                      transfer CMMARm(m=2,4,6,8,...) to CMMARn(n=1,3,5,7,...).
  *   @arg  TMRA_BUF_TRANS_COND_VALLEY:  In triangle wave count mode, when count reached valley,
  *                                      transfer CMMARm(m=2,4,6,8,...) to CMMARn(n=1,3,5,7,...).
+ *   @arg  TMRA_BUF_TRANS_COND_PEAK_VALLEY: In triangle wave count mode, when count reached peak or valley,
+ *                                      transfer CMPARm(m=2,4,6,8,...) to CMPARn(n=1,3,5,7,...).
  * @retval None
+ * @note The specified condition is only valid when TMRA_BCONR.BEN is set.
  */
 void TMRA_SetCompareBufCond(CM_TMRA_TypeDef *TMRAx, uint32_t u32Ch, uint16_t u16Cond)
 {
@@ -982,7 +973,7 @@ void TMRA_SetCompareBufCond(CM_TMRA_TypeDef *TMRAx, uint32_t u32Ch, uint16_t u16
 
     DDL_ASSERT(IS_TMRA_UNIT(TMRAx));
     DDL_ASSERT(IS_TMRA_CMPVAL_BUF_CH(u32Ch));
-    DDL_ASSERT(IS_TMRA_CMPVAL_BUF_COND(u16Cond));
+    DDL_ASSERT(IS_TMRA_BUF_TRANS_COND(u16Cond));
 
     u32BCONRAddr = (uint32_t)&TMRAx->BCONR1 + u32Ch * 4U;
     MODIFY_REG16(RW_MEM16(u32BCONRAddr), TMRA_BUF_TRANS_COND_PEAK_VALLEY, u16Cond);
@@ -997,6 +988,7 @@ void TMRA_SetCompareBufCond(CM_TMRA_TypeDef *TMRAx, uint32_t u32Ch, uint16_t u16
  *                                      This parameter can be one of the odd channels of @ref TMRA_Channel
  * @param  [in]  enNewState             An @ref en_functional_state_t enumeration value.
  * @retval None
+ * @note DO NOT set both TMRA_BCONR.BSEN and TMRA_BCONR.BEN to '1'.
  */
 void TMRA_CompareBufCmd(CM_TMRA_TypeDef *TMRAx, uint32_t u32Ch, en_functional_state_t enNewState)
 {
@@ -1007,6 +999,7 @@ void TMRA_CompareBufCmd(CM_TMRA_TypeDef *TMRAx, uint32_t u32Ch, en_functional_st
     DDL_ASSERT(IS_FUNCTIONAL_STATE(enNewState));
 
     u32BCONRAddr = (uint32_t)&TMRAx->BCONR1 + u32Ch * 4U;
+
     WRITE_REG32(PERIPH_BIT_BAND(u32BCONRAddr, TMRA_BCONR_BEN_POS), enNewState);
 }
 
@@ -1021,18 +1014,18 @@ void TMRA_CompareBufCmd(CM_TMRA_TypeDef *TMRAx, uint32_t u32Ch, en_functional_st
  */
 en_flag_status_t TMRA_GetStatus(const CM_TMRA_TypeDef *TMRAx, uint32_t u32Flag)
 {
-    uint16_t u16BCSTR;
+    uint8_t u8BCSTR;
     uint16_t u16STFLR;
     en_flag_status_t enStatus = RESET;
 
     DDL_ASSERT(IS_TMRA_UNIT_FLAG(TMRAx, u32Flag));
 
-    u16BCSTR = (uint16_t)(u32Flag & TMRA_BCSTR_FLAG_MASK);
+    u8BCSTR = (uint8_t)(u32Flag & TMRA_BCSTRH_FLAG_MASK);
     u16STFLR = (uint16_t)(u32Flag >> 16U);
-    u16BCSTR = READ_REG16_BIT(TMRAx->BCSTR, u16BCSTR);
+    u8BCSTR = READ_REG8_BIT(TMRAx->BCSTRH, u8BCSTR);
     u16STFLR = READ_REG16_BIT(TMRAx->STFLR, u16STFLR);
 
-    if ((u16BCSTR != 0U) || (u16STFLR != 0U)) {
+    if ((u8BCSTR != 0U) || (u16STFLR != 0U)) {
         enStatus = SET;
     }
 
@@ -1052,7 +1045,7 @@ void TMRA_ClearStatus(CM_TMRA_TypeDef *TMRAx, uint32_t u32Flag)
 {
     DDL_ASSERT(IS_TMRA_UNIT_FLAG(TMRAx, u32Flag));
 
-    CLR_REG16_BIT(TMRAx->BCSTR, u32Flag & TMRA_BCSTR_FLAG_MASK);
+    CLR_REG8_BIT(TMRAx->BCSTRH, u32Flag & TMRA_BCSTRH_FLAG_MASK);
     CLR_REG16_BIT(TMRAx->STFLR, u32Flag >> 16U);
 }
 
@@ -1068,19 +1061,19 @@ void TMRA_ClearStatus(CM_TMRA_TypeDef *TMRAx, uint32_t u32Flag)
  */
 void TMRA_IntCmd(CM_TMRA_TypeDef *TMRAx, uint32_t u32IntType, en_functional_state_t enNewState)
 {
-    uint32_t u32BCSTR;
+    uint32_t u32BCSTRH;
     uint32_t u32ICONR;
 
     DDL_ASSERT(IS_TMRA_UNIT_INT(TMRAx, u32IntType));
     DDL_ASSERT(IS_FUNCTIONAL_STATE(enNewState));
 
-    u32BCSTR = u32IntType & TMRA_BCSTR_INT_MASK;
-    u32ICONR = u32IntType >> 16U;
+    u32BCSTRH = u32IntType & TMRA_BCSTRH_INT_MASK;
+    u32ICONR  = u32IntType >> 16U;
     if (enNewState == ENABLE) {
-        SET_REG16_BIT(TMRAx->BCSTR, u32BCSTR);
+        SET_REG8_BIT(TMRAx->BCSTRH, u32BCSTRH);
         SET_REG16_BIT(TMRAx->ICONR, u32ICONR);
     } else {
-        CLR_REG16_BIT(TMRAx->BCSTR, u32BCSTR);
+        CLR_REG8_BIT(TMRAx->BCSTRH, u32BCSTRH);
         CLR_REG16_BIT(TMRAx->ICONR, u32ICONR);
     }
 }
@@ -1117,7 +1110,7 @@ void TMRA_EventCmd(CM_TMRA_TypeDef *TMRAx, uint32_t u32EventType, en_functional_
 void TMRA_Start(CM_TMRA_TypeDef *TMRAx)
 {
     DDL_ASSERT(IS_TMRA_UNIT(TMRAx));
-    SET_REG16_BIT(TMRAx->BCSTR, TMRA_BCSTR_START);
+    SET_REG8_BIT(TMRAx->BCSTRL, TMRA_BCSTRL_START);
 }
 
 /**
@@ -1130,7 +1123,7 @@ void TMRA_Start(CM_TMRA_TypeDef *TMRAx)
 void TMRA_Stop(CM_TMRA_TypeDef *TMRAx)
 {
     DDL_ASSERT(IS_TMRA_UNIT(TMRAx));
-    CLR_REG16_BIT(TMRAx->BCSTR, TMRA_BCSTR_START);
+    CLR_REG8_BIT(TMRAx->BCSTRL, TMRA_BCSTRL_START);
 }
 /**
  * @}
@@ -1143,8 +1136,8 @@ void TMRA_Stop(CM_TMRA_TypeDef *TMRAx)
  */
 
 /**
-* @}
-*/
+ * @}
+ */
 
 /******************************************************************************
  * EOF (not truncated)

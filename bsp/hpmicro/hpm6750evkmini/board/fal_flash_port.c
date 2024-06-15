@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 hpmicro
+ * Copyright (c) 2022-2023 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -8,6 +8,7 @@
  * 2022-03-09   hpmicro     First implementation
  * 2022-08-01   hpmicro     Fixed random crashing during kvdb_init
  * 2022-08-03   hpmicro     Improved erase speed
+ * 2023-05-15   hpmicro     Disable global interrupt during FLASH operation for FLASH build
  *
  */
 #include <rtthread.h>
@@ -20,25 +21,26 @@
 
 #if defined(FLASH_XIP) && (FLASH_XIP == 1)
 
+static rt_base_t s_interrupt_level;
 #define FAL_ENTER_CRITICAL() do {\
-        rt_enter_critical();\
-        disable_irq_from_intc();\
+        rt_enter_critical(); \
         fencei();\
+        s_interrupt_level = rt_hw_interrupt_disable();\
     }while(0)
 
 #define FAL_EXIT_CRITICAL() do {\
         ROM_API_TABLE_ROOT->xpi_driver_if->software_reset(BOARD_APP_XPI_NOR_XPI_BASE);\
         fencei();\
         rt_exit_critical();\
-        enable_irq_from_intc();\
+        rt_hw_interrupt_enable(s_interrupt_level);\
     }while(0)
 
 #define FAL_RAMFUNC __attribute__((section(".isr_vector")))
 
 #else
-#define FAL_ENTER_CRITICAL()
+#define FAL_ENTER_CRITICAL() rt_enter_critical()
 
-#define FAL_EXIT_CRITICAL()
+#define FAL_EXIT_CRITICAL() rt_exit_critical()
 
 #define FAL_RAMFUNC
 

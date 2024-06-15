@@ -237,29 +237,12 @@
       <configSetting altId="iic0.pairing.b" configurationId="iic0.pairing"/>
       <configSetting altId="iic0.scl.p408" configurationId="iic0.scl"/>
       <configSetting altId="iic0.sda.p407" configurationId="iic0.sda"/>
-      <configSetting altId="irq0.irq07.p001" configurationId="irq0.irq07"/>
-      <configSetting altId="irq0.irq08.p002" configurationId="irq0.irq08"/>
-      <configSetting altId="irq0.mode.enabled" configurationId="irq0.mode"/>
-      <configSetting altId="p001.irq0.irq07" configurationId="p001"/>
-      <configSetting altId="p001.gpio_irq.gpio_irq_enabled" configurationId="p001.gpio_irq"/>
-      <configSetting altId="p001.gpio_mode.gpio_mode_irq" configurationId="p001.gpio_mode"/>
-      <configSetting altId="p002.irq0.irq08" configurationId="p002"/>
-      <configSetting altId="p002.gpio_irq.gpio_irq_enabled" configurationId="p002.gpio_irq"/>
-      <configSetting altId="p002.gpio_mode.gpio_mode_irq" configurationId="p002.gpio_mode"/>
       <configSetting altId="p005.adc0.an05" configurationId="p005"/>
       <configSetting altId="p005.gpio_mode.gpio_mode_an" configurationId="p005.gpio_mode"/>
       <configSetting altId="p007.adc0.an07" configurationId="p007"/>
       <configSetting altId="p007.gpio_mode.gpio_mode_an" configurationId="p007.gpio_mode"/>
       <configSetting altId="p014.dac0.da" configurationId="p014"/>
       <configSetting altId="p014.gpio_mode.gpio_mode_an" configurationId="p014.gpio_mode"/>
-      <configSetting altId="p100.spi1.miso" configurationId="p100"/>
-      <configSetting altId="p100.gpio_mode.gpio_mode_peripheral" configurationId="p100.gpio_mode"/>
-      <configSetting altId="p101.spi1.mosi" configurationId="p101"/>
-      <configSetting altId="p101.gpio_mode.gpio_mode_peripheral" configurationId="p101.gpio_mode"/>
-      <configSetting altId="p102.spi1.rspck" configurationId="p102"/>
-      <configSetting altId="p102.gpio_mode.gpio_mode_peripheral" configurationId="p102.gpio_mode"/>
-      <configSetting altId="p103.spi1.ssl0" configurationId="p103"/>
-      <configSetting altId="p103.gpio_mode.gpio_mode_peripheral" configurationId="p103.gpio_mode"/>
       <configSetting altId="p108.debug0.tms" configurationId="p108"/>
       <configSetting altId="p108.gpio_mode.gpio_mode_peripheral" configurationId="p108.gpio_mode"/>
       <configSetting altId="p109.debug0.tdo" configurationId="p109"/>
@@ -350,11 +333,6 @@
       <configSetting altId="sdhi0.dat0.p208" configurationId="sdhi0.dat0"/>
       <configSetting altId="sdhi0.mode.sd_mmc1mbit.b" configurationId="sdhi0.mode"/>
       <configSetting altId="sdhi0.pairing.b" configurationId="sdhi0.pairing"/>
-      <configSetting altId="spi1.miso.p100" configurationId="spi1.miso"/>
-      <configSetting altId="spi1.mode.custom.a" configurationId="spi1.mode"/>
-      <configSetting altId="spi1.mosi.p101" configurationId="spi1.mosi"/>
-      <configSetting altId="spi1.rspck.p102" configurationId="spi1.rspck"/>
-      <configSetting altId="spi1.ssl0.p103" configurationId="spi1.ssl0"/>
       <configSetting altId="ssi0.mode.duplex.a" configurationId="ssi0.mode"/>
       <configSetting altId="ssi0.ssirxd.p406" configurationId="ssi0.ssirxd"/>
       <configSetting altId="ssi0.ssisck.p403" configurationId="ssi0.ssisck"/>

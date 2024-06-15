@@ -4,8 +4,10 @@
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
- * Date           Author       Notes
- * 2017/12/30     Bernard      The first version.
+ * Date           Author            Notes
+ * 2017/12/30     Bernard           The first version.
+ * 2024/03/26     TroyMitchelle     Added some function comments
+ * 2024/03/27     TroyMitchelle     Fix the issue of incorrect return of invalid parameters in aio_write
  */
 
 #include <rtthread.h>
@@ -63,7 +65,7 @@ int aio_cancel(int fd, struct aiocb *cb)
  * asynchronous I/O operation is the errno value that would be set by the corresponding
  * read(), write(),
  */
-int aio_error (const struct aiocb *cb)
+int aio_error(const struct aiocb *cb)
 {
     if (cb)
     {
@@ -134,6 +136,18 @@ static void aio_fync_work(struct rt_work* work, void* work_data)
     return ;
 }
 
+/**
+ * @brief   Initiates an asynchronous fsync operation.
+ *
+ * This function initiates an asynchronous fsync operation on the file associated
+ * with the specified aiocb structure. The operation is queued to the workqueue
+ * for execution.
+ *
+ * @param   op  The operation to be performed. This parameter is ignored.
+ * @param   cb  Pointer to the aiocb structure representing the asynchronous fsync operation.
+ *
+ * @return  Returns 0 on success.
+ */
 int aio_fsync(int op, struct aiocb *cb)
 {
     rt_base_t level;
@@ -149,6 +163,16 @@ int aio_fsync(int op, struct aiocb *cb)
     return 0;
 }
 
+/**
+ * @brief   Worker function for asynchronous read operation.
+ *
+ * This function performs the actual reading of data from the file associated with
+ * the specified aiocb structure. It sets the result of the operation in the
+ * aio_result field of the aiocb structure.
+ *
+ * @param   work       Pointer to the work item.
+ * @param   work_data  Pointer to the aiocb structure representing the asynchronous read operation.
+ */
 static void aio_read_work(struct rt_work* work, void* work_data)
 {
     int len;
@@ -290,6 +314,16 @@ int aio_suspend(const struct aiocb *const list[], int nent,
     return -ENOSYS;
 }
 
+/**
+ * @brief   Worker function for asynchronous write operation.
+ *
+ * This function performs the actual writing of data to the file associated with
+ * the specified aiocb structure. It sets the result of the operation in the
+ * aio_result field of the aiocb structure.
+ *
+ * @param   work       Pointer to the work item.
+ * @param   work_data  Pointer to the aiocb structure representing the asynchronous write operation.
+ */
 static void aio_write_work(struct rt_work* work, void* work_data)
 {
     rt_base_t level;
@@ -368,7 +402,8 @@ int aio_write(struct aiocb *cb)
 
     /* check access mode */
     oflags = fcntl(cb->aio_fildes, F_GETFL, 0);
-    if ((oflags & O_ACCMODE) != O_WRONLY ||
+    /* If the flag is not in write only or read-write mode, it cannot be written then an invalid parameter is returned  */
+    if ((oflags & O_ACCMODE) != O_WRONLY &&
         (oflags & O_ACCMODE) != O_RDWR)
         return -EINVAL;
 
@@ -453,6 +488,14 @@ int lio_listio(int mode, struct aiocb * const list[], int nent,
     return -ENOSYS;
 }
 
+/**
+ * @brief   Initializes the asynchronous I/O system.
+ *
+ * This function initializes the asynchronous I/O system by creating a workqueue
+ * for asynchronous I/O operations.
+ *
+ * @return  Returns 0 on success.
+ */
 int aio_system_init(void)
 {
     aio_queue = rt_workqueue_create("aio", 2048, RT_THREAD_PRIORITY_MAX/2);

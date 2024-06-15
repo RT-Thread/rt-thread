@@ -1,0 +1,20 @@
+from building import *
+
+cwd = GetCurrentDir()
+
+# add the general drivers.
+src = Split("""
+board.c
+MCUX_Config/board/clock_config.c
+MCUX_Config/board/pin_mux.c
+""")
+
+if GetDepend(['PKG_USING_RW007']):
+    src += ['ports/rw007_port.c']
+
+CPPPATH = [cwd, cwd + '/MCUX_Config/board']
+CPPDEFINES = ['DEBUG', 'CPU_LPC55S69JBD100_cm33_core0']
+
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = CPPPATH, CPPDEFINES=CPPDEFINES)
+
+Return('group')

@@ -6,10 +6,10 @@
  * Change Logs:
  * Date           Author       Notes
  * 2018-08-25     armink       the first version
+ * 2023-09-15     xqyjlj       perf rt_hw_interrupt_disable/enable
  */
 
 #include <rthw.h>
-#include <rtthread.h>
 #include <rtdevice.h>
 
 /**
@@ -45,6 +45,7 @@ void rt_rbb_init(rt_rbb_t rbb, rt_uint8_t *buf, rt_size_t buf_size, rt_rbb_blk_t
         rt_slist_init(&block_set[i].list);
         rt_slist_insert(&rbb->free_list, &block_set[i].list);
     }
+    rt_spin_lock_init(&(rbb->spinlock));
 }
 RTM_EXPORT(rt_rbb_init);
 
@@ -174,7 +175,7 @@ rt_rbb_blk_t rt_rbb_blk_alloc(rt_rbb_t rbb, rt_size_t blk_size)
     RT_ASSERT(rbb);
     RT_ASSERT(blk_size < (1L << 24));
 
-    level = rt_hw_interrupt_disable();
+    level = rt_spin_lock_irqsave(&(rbb->spinlock));
 
     new_rbb = find_empty_blk_in_set(rbb);
 
@@ -214,6 +215,7 @@ rt_rbb_blk_t rt_rbb_blk_alloc(rt_rbb_t rbb, rt_size_t blk_size)
                 else
                 {
                     /* no space */
+                    rt_slist_insert(&rbb->free_list, &new_rbb->list);
                     new_rbb = RT_NULL;
                 }
             }
@@ -238,6 +240,7 @@ rt_rbb_blk_t rt_rbb_blk_alloc(rt_rbb_t rbb, rt_size_t blk_size)
                 else
                 {
                     /* no space */
+                    rt_slist_insert(&rbb->free_list, &new_rbb->list);
                     new_rbb = RT_NULL;
                 }
             }
@@ -245,18 +248,23 @@ rt_rbb_blk_t rt_rbb_blk_alloc(rt_rbb_t rbb, rt_size_t blk_size)
         else
         {
             /* the list is empty */
-            list_append(rbb, &new_rbb->list);
-            new_rbb->status = RT_RBB_BLK_INITED;
-            new_rbb->buf = rbb->buf;
-            new_rbb->size = blk_size;
+            if(blk_size <= rbb->buf_size)
+            {
+                list_append(rbb, &new_rbb->list);
+                new_rbb->status = RT_RBB_BLK_INITED;
+                new_rbb->buf = rbb->buf;
+                new_rbb->size = blk_size;
+            }
+            else
+            {
+                /* no space */
+                rt_slist_insert(&rbb->free_list, &new_rbb->list);
+                new_rbb = RT_NULL;
+            }
         }
     }
-    else
-    {
-        new_rbb = RT_NULL;
-    }
 
-    rt_hw_interrupt_enable(level);
+    rt_spin_unlock_irqrestore(&(rbb->spinlock), level);
 
     return new_rbb;
 }
@@ -295,7 +303,7 @@ rt_rbb_blk_t rt_rbb_blk_get(rt_rbb_t rbb)
     if (rt_slist_isempty(&rbb->blk_list))
         return 0;
 
-    level = rt_hw_interrupt_disable();
+    level = rt_spin_lock_irqsave(&(rbb->spinlock));
 
     for (node = rt_slist_first(&rbb->blk_list); node; node = rt_slist_next(node))
     {
@@ -311,7 +319,7 @@ rt_rbb_blk_t rt_rbb_blk_get(rt_rbb_t rbb)
 
 __exit:
 
-    rt_hw_interrupt_enable(level);
+    rt_spin_unlock_irqrestore(&(rbb->spinlock), level);
 
     return block;
 }
@@ -361,12 +369,12 @@ void rt_rbb_blk_free(rt_rbb_t rbb, rt_rbb_blk_t block)
     RT_ASSERT(block);
     RT_ASSERT(block->status != RT_RBB_BLK_UNUSED);
 
-    level = rt_hw_interrupt_disable();
+    level = rt_spin_lock_irqsave(&(rbb->spinlock));
     /* remove it on rbb block list */
     list_remove(rbb, &block->list);
     block->status = RT_RBB_BLK_UNUSED;
     rt_slist_insert(&rbb->free_list, &block->list);
-    rt_hw_interrupt_enable(level);
+    rt_spin_unlock_irqrestore(&(rbb->spinlock), level);
 }
 RTM_EXPORT(rt_rbb_blk_free);
 
@@ -406,7 +414,7 @@ rt_size_t rt_rbb_blk_queue_get(rt_rbb_t rbb, rt_size_t queue_data_len, rt_rbb_bl
     if (rt_slist_isempty(&rbb->blk_list))
         return 0;
 
-    level = rt_hw_interrupt_disable();
+    level = rt_spin_lock_irqsave(&(rbb->spinlock));
 
     node = rt_slist_first(&rbb->blk_list);
     if (node != RT_NULL)
@@ -455,7 +463,7 @@ rt_size_t rt_rbb_blk_queue_get(rt_rbb_t rbb, rt_size_t queue_data_len, rt_rbb_bl
         blk_queue->blk_num++;
     }
 
-    rt_hw_interrupt_enable(level);
+    rt_spin_unlock_irqrestore(&(rbb->spinlock), level);
 
     return data_total_size;
 }
@@ -542,7 +550,7 @@ rt_size_t rt_rbb_next_blk_queue_len(rt_rbb_t rbb)
     if (rt_slist_isempty(&rbb->blk_list))
         return 0;
 
-    level = rt_hw_interrupt_disable();
+    level = rt_spin_lock_irqsave(&(rbb->spinlock));
 
     for (node = rt_slist_first(&rbb->blk_list); node; node = rt_slist_next(node))
     {
@@ -574,7 +582,7 @@ rt_size_t rt_rbb_next_blk_queue_len(rt_rbb_t rbb)
         data_len += last_block->size;
     }
 
-    rt_hw_interrupt_enable(level);
+    rt_spin_unlock_irqrestore(&(rbb->spinlock), level);
 
     return data_len;
 }

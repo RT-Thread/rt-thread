@@ -19,6 +19,7 @@
 
 #define IRQ_MODE_TRIG_LEVEL         (0x00) /* Trigger: level triggered interrupt */
 #define IRQ_MODE_TRIG_EDGE          (0x01) /* Trigger: edge triggered interrupt */
+#define IRQ_MODE_MASK               (0x01)
 
 void rt_hw_vector_init(void);
 
@@ -29,7 +30,7 @@ void rt_hw_interrupt_umask(int vector);
 int rt_hw_interrupt_get_irq(void);
 void rt_hw_interrupt_ack(int vector);
 
-void rt_hw_interrupt_set_target_cpus(int vector, unsigned int cpu_mask);
+void rt_hw_interrupt_set_target_cpus(int vector, unsigned long cpu_mask);
 unsigned int rt_hw_interrupt_get_target_cpus(int vector);
 
 void rt_hw_interrupt_set_triger_mode(int vector, unsigned int mode);
@@ -51,8 +52,7 @@ unsigned int rt_hw_interrupt_get_prior_group_bits(void);
 rt_isr_handler_t rt_hw_interrupt_install(int vector, rt_isr_handler_t handler,
         void *param, const char *name);
 
-#ifdef RT_USING_SMP
-void rt_hw_ipi_send(int ipi_vector, unsigned int cpu_mask);
+#if defined(RT_USING_SMP) || defined(RT_USING_AMP)
 void rt_hw_ipi_handler_install(int ipi_vector, rt_isr_handler_t ipi_isr_handler);
 #endif
 

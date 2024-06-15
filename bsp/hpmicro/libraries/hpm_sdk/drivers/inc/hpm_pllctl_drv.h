@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 hpmicro
+ * Copyright (c) 2021 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -219,7 +219,7 @@ static inline hpm_stat_t pllctl_set_postdiv1(PLLCTL_Type *ptr, uint8_t pll, uint
 static inline hpm_stat_t pllctl_set_fbdiv_int(PLLCTL_Type *ptr, uint8_t pll, uint16_t fbdiv)
 {
     if ((pll > (PLLCTL_SOC_PLL_MAX_COUNT - 1))
-            || ((fbdiv - 1) > (PLLCTL_PLL_CFG2_FBDIV_INT_MASK >> PLLCTL_PLL_CFG2_FBDIV_INT_SHIFT))) {
+            || ((fbdiv - 1) > (uint16_t)(PLLCTL_PLL_CFG2_FBDIV_INT_MASK >> PLLCTL_PLL_CFG2_FBDIV_INT_SHIFT))) {
         return status_invalid_argument;
     }
 
@@ -242,7 +242,7 @@ static inline hpm_stat_t pllctl_set_fbdiv_int(PLLCTL_Type *ptr, uint8_t pll, uin
 static inline hpm_stat_t pllctl_set_fbdiv_frac(PLLCTL_Type *ptr, uint8_t pll, uint16_t fbdiv)
 {
     if ((pll > (PLLCTL_SOC_PLL_MAX_COUNT - 1))
-            || ((fbdiv - 1) > (PLLCTL_PLL_FREQ_FBDIV_FRAC_MASK >> PLLCTL_PLL_FREQ_FBDIV_FRAC_SHIFT))) {
+            || ((fbdiv - 1) > (uint16_t) (PLLCTL_PLL_FREQ_FBDIV_FRAC_MASK >> PLLCTL_PLL_FREQ_FBDIV_FRAC_SHIFT))) {
         return status_invalid_argument;
     }
 
@@ -307,7 +307,7 @@ static inline hpm_stat_t pllctl_set_div(PLLCTL_Type *ptr, uint8_t pll, uint8_t d
 {
     if ((pll > (PLLCTL_SOC_PLL_MAX_COUNT - 1))
             || !(PLLCTL_SOC_PLL_HAS_DIV0(pll))
-            || ((div - 1) > (PLLCTL_PLL_DIV0_DIV_MASK >> PLLCTL_PLL_DIV0_DIV_SHIFT))) {
+            || ((div - 1) > (uint16_t) (PLLCTL_PLL_DIV0_DIV_MASK >> PLLCTL_PLL_DIV0_DIV_SHIFT))) {
         return status_invalid_argument;
     }
 
@@ -388,6 +388,17 @@ static inline void pllctl_xtal_set_rampup_time(PLLCTL_Type *ptr, uint32_t cycles
 {
     ptr->XTAL = (ptr->XTAL & ~PLLCTL_XTAL_RAMP_TIME_MASK) | PLLCTL_XTAL_RAMP_TIME_SET(cycles);
 }
+
+/**
+ * @brief   Set pll work mode
+ *
+ * @param[in] ptr PLLCTL base address
+ * @param[in] pll Target PLL index
+ * @param[in] int_mode true: integer mode, false - fraction mode
+ *
+ * @return status_success if everything is okay
+ */
+hpm_stat_t pllctl_set_pll_work_mode(PLLCTL_Type *ptr, uint8_t pll, bool int_mode);
 
 /**
  * @brief   Set refdiv

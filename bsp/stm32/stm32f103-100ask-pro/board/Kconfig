@@ -1,12 +1,5 @@
 menu "Hardware Drivers Config"
 
-config SOC_STM32F103ZE
-    bool
-    select SOC_SERIES_STM32F1
-    select RT_USING_COMPONENTS_INIT
-    select RT_USING_USER_MAIN
-    default y
-
 menu "Onboard Peripheral Drivers"
 
     config BSP_USING_USB_TO_USART
@@ -43,6 +36,12 @@ menu "Onboard Peripheral Drivers"
         bool "Enable I2C EEPROM (i2c1)"
         select BSP_USING_I2C1
         default n
+
+    config BSP_USING_EXT_SRAM
+        bool "Enable external sram"
+        default n
+        help
+            Chip name is IS62WV51216BLL, 1Mbytes static RAMs organized as 512K words by 16bits.
 
 endmenu
 
@@ -208,7 +207,7 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_CAN
         default n
 
-    source "../libraries/HAL_Drivers/Kconfig"
+    source "$BSP_DIR/../libraries/HAL_Drivers/drivers/Kconfig"
 
 endmenu
 

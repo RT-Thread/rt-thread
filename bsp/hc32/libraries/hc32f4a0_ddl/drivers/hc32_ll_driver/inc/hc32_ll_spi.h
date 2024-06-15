@@ -7,9 +7,12 @@
    Change Logs:
    Date             Author          Notes
    2022-03-31       CDT             First version
+   2023-06-30       CDT             Add SPI_SetSckPolarity,SPI_SetSckPhase functions
+                                    Add group SPI_SCK_Polarity_Define, SPI_SCK_Phase_Define
+                                    Modify return type of fuction SPI_DeInit
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -210,10 +213,10 @@ typedef struct {
  *                                   after enough data frame write to the SPI_DR
  * @{
  */
-#define SPI_1_FRAME                 (0UL)                                 /*!< Data 1 frame */
-#define SPI_2_FRAME                 (SPI_CFG1_FTHLV_0)                    /*!< Data 2 frame.*/
-#define SPI_3_FRAME                 (SPI_CFG1_FTHLV_1)                    /*!< Data 3 frame.*/
-#define SPI_4_FRAME                 (SPI_CFG1_FTHLV_0 | SPI_CFG1_FTHLV_1) /*!< Data 4 frame.*/
+#define SPI_1_FRAME                 (0UL)                   /*!< Data 1 frame */
+#define SPI_2_FRAME                 (SPI_CFG1_FTHLV_0)      /*!< Data 2 frame.*/
+#define SPI_3_FRAME                 (SPI_CFG1_FTHLV_1)      /*!< Data 3 frame.*/
+#define SPI_4_FRAME                 (SPI_CFG1_FTHLV)        /*!< Data 4 frame.*/
 /**
  * @}
  */
@@ -293,6 +296,26 @@ typedef struct {
                                                                          MOSI/MISO pin data valid in even edge, \
                                                                          MOSI/MISO pin data change in odd edge */
 
+/**
+ * @}
+ */
+
+/**
+ * @defgroup SPI_SCK_Polarity_Define SPI SCK Polarity Define
+ * @{
+ */
+#define SPI_SCK_POLARITY_LOW        (0UL)                   /*!< SCK pin output low in idle state  */
+#define SPI_SCK_POLARITY_HIGH       (SPI_CFG2_CPOL)         /*!< SCK pin output high in idle state */
+/**
+ * @}
+ */
+
+/**
+ * @defgroup SPI_SCK_Phase_Define SPI SCK Phase Define
+ * @{
+ */
+#define SPI_SCK_PHASE_ODD_EDGE_SAMPLE   (0UL)               /*!< MOSI/MISO pin data sample in odd edge, MOSI/MISO pin data change in even edge */
+#define SPI_SCK_PHASE_EVEN_EDGE_SAMPLE  (SPI_CFG2_CPHA)     /*!< MOSI/MISO pin data sample in even edge, MOSI/MISO pin data change in odd edge */
 /**
  * @}
  */
@@ -385,7 +408,7 @@ typedef struct {
  */
 int32_t SPI_StructInit(stc_spi_init_t *pstcSpiInit);
 int32_t SPI_Init(CM_SPI_TypeDef *SPIx, const stc_spi_init_t *pstcSpiInit);
-void SPI_DeInit(CM_SPI_TypeDef *SPIx);
+int32_t SPI_DeInit(CM_SPI_TypeDef *SPIx);
 
 void SPI_IntCmd(CM_SPI_TypeDef *SPIx, uint32_t u32IntType, en_functional_state_t enNewState);
 void SPI_Cmd(CM_SPI_TypeDef *SPIx, en_functional_state_t enNewState);
@@ -397,6 +420,8 @@ void SPI_ClearStatus(CM_SPI_TypeDef *SPIx, uint32_t u32Flag);
 void SPI_LoopbackModeConfig(CM_SPI_TypeDef *SPIx, uint32_t u32Mode);
 void SPI_ParityCheckCmd(CM_SPI_TypeDef *SPIx, en_functional_state_t enNewState);
 void SPI_SSValidLevelConfig(CM_SPI_TypeDef *SPIx, uint32_t u32SSPin, en_functional_state_t enNewState);
+void SPI_SetSckPolarity(CM_SPI_TypeDef *SPIx, uint32_t u32Polarity);
+void SPI_SetSckPhase(CM_SPI_TypeDef *SPIx, uint32_t u32Phase);
 
 int32_t SPI_DelayTimeConfig(CM_SPI_TypeDef *SPIx, const stc_spi_delay_t *pstcDelayConfig);
 void SPI_SSPinSelect(CM_SPI_TypeDef *SPIx, uint32_t u32SSPin);

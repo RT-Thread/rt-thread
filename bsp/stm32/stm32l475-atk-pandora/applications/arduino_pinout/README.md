@@ -60,6 +60,10 @@ Hardware Drivers Config --->
 | 33 (D33)              | PC6       | 是       | I2C1-SCL，默认被RT-Thread的I2C设备框架i2c1总线接管        |
 | 34 (D34)              | PA2       |         | Serial2-Tx，默认被RT-Thread的UART设备框架uart2接管      |
 | 35 (D35)              | PA3       |         | Serial2-Rx，默认被RT-Thread的UART设备框架uart2接管      |
+| 36 (D36)              | PD7       | 是       | LCD 片选 CS                                    |
+| 37 (D37)              | PB6       | 是       | LCD 复位 RESET                                 |
+| 38 (D38)              | PB4       | 是       | LCD D/C 数据命令选择 即RW读写选择                       |
+| 39 (D39)              | PB7       | 是       | LCD 背光电源，PWM4-CH2，默认被RT-Thread的PWM设备框架pwm4接管 |
 | A0                    | PC2       | 是（但不建议） | ADC1-CH3，默认被RT-Thread的ADC设备框架adc1接管          |
 | A1                    | PC4       | 是（但不建议） | ADC1-CH13，默认被RT-Thread的ADC设备框架adc1接管         |
 | A2                    | --        |         | 芯片内部参考电压 ADC1-CH0，默认被RT-Thread的ADC设备框架adc1接管 |

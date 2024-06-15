@@ -1,0 +1,3 @@
+# scons: --strict
+
+CONFIG_RT_KLIBC_USING_PRINTF_LONGLONG=y

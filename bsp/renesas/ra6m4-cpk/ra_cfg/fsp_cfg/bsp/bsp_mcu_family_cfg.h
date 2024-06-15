@@ -190,7 +190,7 @@
             /* Security attribution for registers for IRQ channels. */
 #ifndef BSP_TZ_CFG_ICUSARA
 #define BSP_TZ_CFG_ICUSARA (\
-            (((1 > 0) ? 0U : 1U) << 0U) /* External IRQ0 */ | \
+            (((RA_NOT_DEFINED > 0) ? 0U : 1U) << 0U) /* External IRQ0 */ | \
             (((RA_NOT_DEFINED > 0) ? 0U : 1U) << 1U) /* External IRQ1 */ | \
             (((RA_NOT_DEFINED > 0) ? 0U : 1U) << 2U) /* External IRQ2 */ | \
             (((RA_NOT_DEFINED > 0) ? 0U : 1U) << 3U) /* External IRQ3 */ | \

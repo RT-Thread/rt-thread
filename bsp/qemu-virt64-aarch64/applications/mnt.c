@@ -22,6 +22,17 @@ int mnt_init(void)
         {
             rt_kprintf("file system initialization done!\n");
         }
+        else
+        {
+            if (dfs_mount("virtio-blk0", "/", "ext", 0, RT_NULL) == 0)
+            {
+                rt_kprintf("file system initialization done!\n");
+            }
+            else
+            {
+                rt_kprintf("file system initialization fail!\n");
+            }
+        }
     }
 
     return 0;

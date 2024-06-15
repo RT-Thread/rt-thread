@@ -2,8 +2,8 @@ from building import *
 import os
 
 src = Glob('*.c')
+src += Glob('klibc/*.c')
 cwd = GetCurrentDir()
-
 inc = [os.path.join(cwd, '..', 'include')]
 
 if GetDepend('RT_USING_SMALL_MEM') == False:
@@ -25,14 +25,28 @@ if GetDepend('RT_USING_DEVICE') == False:
     SrcRemove(src, ['device.c'])
 
 if GetDepend('RT_USING_SMP') == False:
-    SrcRemove(src, ['cpu.c','scheduler_mp.c'])
+    SrcRemove(src, ['cpu_mp.c', 'scheduler_mp.c'])
+else:
+    SrcRemove(src, ['cpu_up.c', 'scheduler_up.c'])
 
-if GetDepend('RT_USING_SMP') == True:
-    SrcRemove(src, ['scheduler_up.c'])
+LOCAL_CFLAGS = ''
+LINKFLAGS = ''
 
-if GetDepend('RT_USING_DM') == False:
-    SrcRemove(src, ['driver.c'])
+if rtconfig.PLATFORM in ['gcc']: # only for GCC
+    LOCAL_CFLAGS += ' -Wunused' # unused warning
+    LOCAL_CFLAGS += ' -Wformat -Wformat-security' # printf/scanf format warning
+    LOCAL_CFLAGS += ' -Warray-bounds -Wuninitialized' # memory access warning
+    LOCAL_CFLAGS += ' -Wreturn-type -Wcomment -Wswitch' # code style warning
+    LOCAL_CFLAGS += ' -Wparentheses -Wlogical-op ' # operation warning
+    LOCAL_CFLAGS += ' -Wmissing-declarations -Wmissing-prototypes -Wstrict-prototypes' # function declaration warning
+    if 'mips' not in rtconfig.PREFIX: # mips toolchain does not support
+        LOCAL_CFLAGS += ' -Wimplicit-fallthrough' # implicit fallthrough warning
+        LOCAL_CFLAGS += ' -Wduplicated-cond -Wduplicated-branches' # duplicated condition warning
+    if rtconfig.ARCH not in ['sim']:
+        LINKFLAGS += ' -Wl,--gc-sections,--print-memory-usage' # remove unused sections and print memory usage
 
-group = DefineGroup('Kernel', src, depend = [''], CPPPATH = inc, CPPDEFINES = ['__RTTHREAD__'])
+group = DefineGroup('Kernel', src, depend=[''], CPPPATH=inc,
+                    LINKFLAGS=LINKFLAGS, LOCAL_CFLAGS=LOCAL_CFLAGS,
+                    CPPDEFINES=['__RTTHREAD__'], LOCAL_CPPDEFINES=['__RT_KERNEL_SOURCE__'])
 
 Return('group')

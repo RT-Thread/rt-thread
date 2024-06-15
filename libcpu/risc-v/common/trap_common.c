@@ -48,7 +48,6 @@ rt_weak rt_isr_handler_t rt_hw_interrupt_install(int vector, rt_isr_handler_t ha
 {
     rt_isr_handler_t old_handler = RT_NULL;
     void *user_param = param;
-    char *user_name = name;
 
     if(vector < ISR_NUMBER)
     {
@@ -109,4 +108,11 @@ rt_weak void rt_show_stack_frame(void)
     rt_kprintf("t5      : 0x%08x\r\n", s_stack_frame->t5);
     rt_kprintf("t6      : 0x%08x\r\n", s_stack_frame->t6);
 #endif
+}
+
+/**
+ * Trap Handler
+ */
+rt_weak void handle_trap(rt_uint32_t mcause, rt_uint32_t mepc, rt_uint32_t sp)
+{
 }

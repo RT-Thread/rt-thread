@@ -1,5 +1,5 @@
 /******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -11,8 +11,8 @@
 /*  File        HC32F460xE.ld                                                */
 /*  Abstract    Linker script for HC32F460 Device with                       */
 /*              512KByte FLASH, 192KByte RAM                                 */
-/*  Version     V1.0                                                          */
-/*  Date        2022-04-28                                                   */
+/*  Version     V1.0                                                         */
+/*  Date        2022-03-31                                                   */
 /*****************************************************************************/
 
 /* Custom defines, according to section 7.7 of the user manual.
@@ -163,42 +163,6 @@ SECTIONS
         __data_end__ = .;
     } >RAM
 
-    __etext_ret_ram = __etext + ALIGN (SIZEOF(.data), 4);
-    .ret_ram_data : AT (__etext_ret_ram)
-    {
-        . = ALIGN(4);
-        __data_start_ret_ram__ = .;
-        *(.ret_ram_data)
-        *(.ret_ram_data*)
-        . = ALIGN(4);
-        __data_end_ret_ram__ = .;
-    } >RET_RAM
-
-    __bss_start = .;
-    .bss :
-    {
-        . = ALIGN(4);
-        _sbss = .;
-        __bss_start__ = _sbss;
-        *(.bss)
-        *(.bss*)
-        *(COMMON)
-        . = ALIGN(4);
-        _ebss = .;
-        __bss_end__ = _ebss;
-    } >RAM
-    __bss_end = .;
-
-    .ret_ram_bss :
-    {
-        . = ALIGN(4);
-        __bss_start_ret_ram__ = .;
-        *(.ret_ram_bss)
-        *(.ret_ram_bss*)
-        . = ALIGN(4);
-        __bss_end_ret_ram__ = .;
-    } >RET_RAM
-
     .heap_stack (COPY) :
     {
         . = ALIGN(8);
@@ -214,6 +178,45 @@ SECTIONS
         . = ALIGN(8);
         __StackTop = .;
     } >RAM
+
+    __etext_ret_ram = __etext + ALIGN (SIZEOF(.data), 4);
+    .ramb_data : AT (__etext_ret_ram)
+    {
+        . = ALIGN(4);
+        __data_start_ret_ram__ = .;
+        *(.ramb_data)
+        *(.ramb_data*)
+        . = ALIGN(4);
+        __data_end_ret_ram__ = .;
+    } >RET_RAM
+
+    __bss_start = .;
+    .bss __StackTop (NOLOAD):
+    {
+        . = ALIGN(4);
+        _sbss = .;
+        __bss_start__ = _sbss;
+        *(.bss)
+        *(.bss*)
+        *(COMMON)
+        . = ALIGN(4);
+        _ebss = .;
+        __bss_end__ = _ebss;
+        . = ALIGN(4);
+        *(.noinit*)
+        . = ALIGN(4);
+    } >RAM
+    __bss_end = .;
+
+    .ramb_bss :
+    {
+        . = ALIGN(4);
+        __bss_start_ret_ram__ = .;
+        *(.ramb_bss)
+        *(.ramb_bss*)
+        . = ALIGN(4);
+        __bss_end_ret_ram__ = .;
+    } >RET_RAM
 
     /DISCARD/ :
     {

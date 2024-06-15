@@ -7,14 +7,12 @@ config SOC_ESP32_C3
     select SOC_ESPRESSIF
     select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN
-    select PKG_USING_ESP_IDF if BSP_USING_LOCAL_ESP_IDF = n
+    select PKG_USING_ESP_IDF
+    select PKG_USING_FREERTOS_WRAPPER
+    select PKG_FREERTOS_USING_CONFIG_H
     default y
 
 menu "Hardware Drivers Config"
-
-config BSP_USING_LOCAL_ESP_IDF
-    bool "Use local ESP-IDF installation"
-    default n
 
 choice
     prompt "Select BSP board "
@@ -64,11 +62,80 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_SERIAL_V1
         default y
 
-    config BSP_USING_I2C0
-        bool "Enable I2C0"
+    menuconfig BSP_USING_I2C
+        bool "Enable I2C"
+        default n
         select RT_USING_I2C
-        default n        
+        if BSP_USING_I2C
+            config BSP_USING_I2C0
+                bool "Enable I2C0"
+                default n
+        endif   
+    
+    config BSP_USING_WIFI
+        bool "Enable WIFI"
+        select RT_USING_WIFI
+        default n
+    
+    config BSP_USING_BLE
+        bool "Enable BLE"
+        default n
+
+    menuconfig BSP_USING_HWTIMER
+        bool "Enable HWTIMER"
+        select RT_USING_HWTIMER
+        default n
+        if BSP_USING_HWTIMER
+            config BSP_USING_TIMER0
+                bool "Enable HWTIMER0"
+                default n
+        endif
+
+    menuconfig BSP_USING_ADC
+        bool "Enable ADC"
+        default n
+        select RT_USING_ADC
+        if BSP_USING_ADC
+            config BSP_USING_ADC1
+                bool "Enable ADC1"
+                default n
+        endif
+
+    menuconfig BSP_USING_PWM
+        bool "Enable PWM"
+        default n
+        select RT_USING_PWM
+        if BSP_USING_PWM
+            menuconfig BSP_USING_PWM0
+                bool "Enable PWM0"
+                default n
+                if BSP_USING_PWM0
+                    config BSP_LEDC_CH0_GPIO
+                        int "LEDC CH0 GPIO PIN SET"
+                        default 12
+                    config BSP_LEDC_CH1_GPIO
+                        int "LEDC CH1 GPIO PIN SET"
+                        default 6
+                    config BSP_LEDC_CH2_GPIO
+                        int "LEDC CH2 GPIO PIN SET"
+                        default 2
+                    config BSP_LEDC_CH3_GPIO
+                        int "LEDC CH3 GPIO PIN SET"
+                        default 10
+                    config BSP_LEDC_CH4_GPIO
+                        int "LEDC CH4 GPIO PIN SET"
+                        default 8
+                    config BSP_LEDC_CH5_GPIO
+                        int "LEDC CH5 GPIO PIN SET"
+                        default 18
+                endif
+        endif
+
 endmenu
+
+config BSP_ENABLE_GDBSTUB
+    bool "Enable ESP_GDBSTUB compontent"
+    default n
 
 endmenu
 

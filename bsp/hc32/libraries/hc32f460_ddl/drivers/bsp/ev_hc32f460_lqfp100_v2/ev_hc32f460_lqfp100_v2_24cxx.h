@@ -9,7 +9,7 @@
    2022-03-31       CDT             First version
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -57,7 +57,7 @@ extern "C"
  * Global pre-processor symbols/macros ('#define')
  ******************************************************************************/
 /**
- * @defgroup EV_HC32F460_LQFP100_V2_24CXX_Configure EV_HC32F460_LQFP100_V2 24CXX Configure
+ * @defgroup EV_HC32F460_LQFP100_V2_24CXX_Global_Macros EV_HC32F460_LQFP100_V2 24CXX Global Macros
  * @{
  */
 /* I2C unit define */

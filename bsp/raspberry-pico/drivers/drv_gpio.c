@@ -9,10 +9,12 @@
  */
 
 #include "drv_gpio.h"
+#include <hardware/gpio.h>
+#include <hardware/platform_defs.h>
 
-static void pico_pin_mode(struct rt_device *dev, rt_base_t pin, rt_base_t mode)
+static void pico_pin_mode(struct rt_device *dev, rt_base_t pin, rt_uint8_t mode)
 {
-    RT_ASSERT((0 <= pin) && (pin < N_GPIOS));
+    RT_ASSERT((0 <= pin) && (pin < NUM_BANK0_GPIOS));
 
     gpio_init(pin);
     switch (mode)
@@ -35,15 +37,15 @@ static void pico_pin_mode(struct rt_device *dev, rt_base_t pin, rt_base_t mode)
     }
 }
 
-static void pico_pin_write(struct rt_device *dev, rt_base_t pin, rt_base_t value)
+static void pico_pin_write(struct rt_device *dev, rt_base_t pin, rt_uint8_t value)
 {
-    RT_ASSERT((0 <= pin) && (pin < N_GPIOS));
+    RT_ASSERT((0 <= pin) && (pin < NUM_BANK0_GPIOS));
     gpio_put(pin, value);
 }
 
-static int pico_pin_read(struct rt_device *device, rt_base_t pin)
+static rt_ssize_t pico_pin_read(struct rt_device *device, rt_base_t pin)
 {
-    RT_ASSERT((0 <= pin) && (pin < N_GPIOS));
+    RT_ASSERT((0 <= pin) && (pin < NUM_BANK0_GPIOS));
     return (gpio_get(pin)? PIN_HIGH : PIN_LOW);
 }
 

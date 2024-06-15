@@ -13,6 +13,7 @@
 #include "lwp_arch.h"
 #include "lwp_user_mm.h"
 #include "mm_aspace.h"
+#include "mm_flag.h"
 #include "mmu.h"
 
 /**
@@ -50,11 +51,11 @@ static void test_user_map_varea(void)
     const size_t buf_sz = ARCH_PAGE_SIZE * 4;
     struct rt_lwp *lwp;
     rt_varea_t varea;
-    lwp = lwp_new();
+    lwp = lwp_create(LWP_CREATE_FLAG_NONE);
 
+    /* prepare environment */
     uassert_true(!!lwp);
-    uassert_true(!lwp_user_space_init(lwp, 0));
-
+    uassert_true(!lwp_user_space_init(lwp, 1));
     TEST_VAREA_INSERT(
         varea = lwp_map_user_varea(lwp, 0, buf_sz),
         lwp->aspace);
@@ -62,11 +63,11 @@ static void test_user_map_varea(void)
     uassert_true(varea->attr == (MMU_MAP_U_RWCB));
     uassert_true(varea->size == buf_sz);
     uassert_true(varea->aspace == lwp->aspace);
-    uassert_true(varea->flag == 0);
+    uassert_true(varea->flag == MMF_MAP_PRIVATE);
     uassert_true(varea->start != 0);
     uassert_true(varea->start >= (void *)USER_VADDR_START && varea->start < (void *)USER_VADDR_TOP);
 
-    uassert_true(!lwp_ref_dec(lwp));
+    uassert_true(!(lwp_ref_dec(lwp) - 1));
 }
 
 static void test_user_map_varea_ext(void)
@@ -74,10 +75,10 @@ static void test_user_map_varea_ext(void)
     const size_t buf_sz = ARCH_PAGE_SIZE * 4;
     struct rt_lwp *lwp;
     rt_varea_t varea;
-    lwp = lwp_new();
+    lwp = lwp_create(LWP_CREATE_FLAG_NONE);
 
     uassert_true(!!lwp);
-    uassert_true(!lwp_user_space_init(lwp, 0));
+    uassert_true(!lwp_user_space_init(lwp, 1));
 
     TEST_VAREA_INSERT(
         varea = lwp_map_user_varea_ext(lwp, 0, buf_sz, LWP_MAP_FLAG_NOCACHE),
@@ -86,17 +87,40 @@ static void test_user_map_varea_ext(void)
     uassert_true(varea->attr == (MMU_MAP_U_RW));
     uassert_true(varea->size == buf_sz);
     uassert_true(varea->aspace == lwp->aspace);
-    uassert_true(varea->flag == 0);
+    uassert_true(varea->flag == MMF_MAP_PRIVATE);
     uassert_true(varea->start != 0);
     uassert_true(varea->start >= (void *)USER_VADDR_START && varea->start < (void *)USER_VADDR_TOP);
 
-    uassert_true(!lwp_ref_dec(lwp));
+    uassert_true(!(lwp_ref_dec(lwp) - 1));
 }
 
 static void user_map_varea_tc(void)
 {
     CONSIST_HEAP(test_user_map_varea());
     CONSIST_HEAP(test_user_map_varea_ext());
+}
+
+static void test_user_accessible(void)
+{
+    /* Prepare Environment */
+    char *test_address = (char *)(USER_STACK_VEND);
+    struct rt_lwp *lwp;
+    lwp = lwp_create(LWP_CREATE_FLAG_NONE);
+    uassert_true(!!lwp);
+    uassert_true(!lwp_user_space_init(lwp, 0));
+
+    /* test if user accessible can operate */
+    uassert_true(!lwp_user_accessible_ext(lwp, test_address + 0x1, 0x1));
+    /* test if mapping exist, accessible can fill the page and return True */
+    uassert_true(lwp_user_accessible_ext(lwp, test_address - 0x10, 0x10));
+
+    /* Cleanup */
+    lwp_ref_dec(lwp);
+}
+
+static void accessible_tc(void)
+{
+    CONSIST_HEAP(test_user_accessible());
 }
 
 static rt_err_t utest_tc_init(void)
@@ -112,5 +136,6 @@ static rt_err_t utest_tc_cleanup(void)
 static void testcase(void)
 {
     UTEST_UNIT_RUN(user_map_varea_tc);
+    UTEST_UNIT_RUN(accessible_tc);
 }
 UTEST_TC_EXPORT(testcase, "testcases.lwp.mm_tc", utest_tc_init, utest_tc_cleanup, 20);

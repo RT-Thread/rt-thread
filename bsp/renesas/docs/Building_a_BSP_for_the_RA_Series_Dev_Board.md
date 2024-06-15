@@ -362,7 +362,7 @@ The guidelines consist of project configuration, ENV configuration, and IDE conf
 #### 4.1.2 ENV Configuration
 
 - The system tick is set as 1000 (The macro: RT_TICK_PER_SECOND)
-- Enable asserting in Debug options (The macro: RT_DEBUG)
+- Enable asserting in Debug options (The macro: RT_USING_DEBUG)
 - The stack size of the system idle thread is set to be 256 (The macro: IDLE_THREAD_STACK_SIZE)
 - Enable component auto initialization (The macro: RT_USING_COMPONENTS_INIT)
 - Enable the `user main` option (The macro: RT_USING_USER_MAIN)

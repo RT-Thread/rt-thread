@@ -20,7 +20,7 @@
 #define GPIO_DEVICE_ID XPAR_XGPIOPS_0_DEVICE_ID
 static XGpioPs Gpio; /* The driver instance for GPIO Device. */
 
-void xgpiops_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
+void xgpiops_pin_mode(rt_device_t dev, rt_base_t pin, rt_uint8_t mode)
 {
     switch (mode)
     {
@@ -39,7 +39,7 @@ void xgpiops_pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
     }
 }
 
-void xgpiops_pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
+void xgpiops_pin_write(rt_device_t dev, rt_base_t pin, rt_uint8_t value)
 {
     if (pin >= Gpio.MaxPinNum)
         return;
@@ -47,24 +47,26 @@ void xgpiops_pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
     XGpioPs_WritePin(&Gpio, pin, (value == PIN_HIGH)?1:0);
 }
 
-int xgpiops_pin_read(rt_device_t dev, rt_base_t pin)
+rt_ssize_t xgpiops_pin_read(rt_device_t dev, rt_base_t pin)
 {
     if (pin >= Gpio.MaxPinNum)
-        return 0;
+    {
+        return -RT_EINVAL;
+    }
 
     int DataRead = XGpioPs_ReadPin(&Gpio, pin);
     return DataRead?PIN_HIGH:PIN_LOW;
 }
 
 const static struct rt_pin_ops _xgpiops_pin_ops =
-    {
-        xgpiops_pin_mode,
-        xgpiops_pin_write,
-        xgpiops_pin_read,
-        RT_NULL,
-        RT_NULL,
-        RT_NULL,
-        RT_NULL,
+{
+    xgpiops_pin_mode,
+    xgpiops_pin_write,
+    xgpiops_pin_read,
+    RT_NULL,
+    RT_NULL,
+    RT_NULL,
+    RT_NULL,
 };
 
 int rt_hw_pin_init(void)

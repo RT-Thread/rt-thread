@@ -1,12 +1,5 @@
 menu "Hardware Drivers Config"
 
-config SOC_STM32F767IG
-    bool
-    select SOC_SERIES_STM32F7
-    select RT_USING_COMPONENTS_INIT
-    select RT_USING_USER_MAIN
-    default y
-
 menu "Onboard Peripheral Drivers"
 
     config BSP_USING_USB_TO_USART
@@ -175,7 +168,7 @@ menu "On-chip Peripheral Drivers"
         bool
         default n
 
-    source "../libraries/HAL_Drivers/Kconfig"
+    source "$BSP_DIR/../libraries/HAL_Drivers/drivers/Kconfig"
 
 endmenu
 

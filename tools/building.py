@@ -22,7 +22,7 @@
 # 2015-01-20     Bernard      Add copyright information
 # 2015-07-25     Bernard      Add LOCAL_CCFLAGS/LOCAL_CPPPATH/LOCAL_CPPDEFINES for
 #                             group definition.
-#
+# 2024-04-21     Bernard      Add toolchain detection in sdk packages
 
 import os
 import sys
@@ -36,7 +36,6 @@ from SCons.Script import *
 from utils import _make_path_relative
 from mkdist import do_copy_file
 from options import AddOptions
-
 
 BuildOptions = {}
 Projects = []
@@ -121,34 +120,6 @@ class Win32Spawn:
 
         return proc.wait()
 
-# generate cconfig.h file
-def GenCconfigFile(env, BuildOptions):
-    # The cconfig.h will NOT generate in the lastest RT-Thread code.
-    # When you want to use it, you can uncomment out the following code.
-     
-    # if rtconfig.PLATFORM in ['gcc']:
-    #     contents = ''
-    #     if not os.path.isfile('cconfig.h'):
-    #         import gcc
-    #         gcc.GenerateGCCConfig(rtconfig)
-
-    #     # try again
-    #     if os.path.isfile('cconfig.h'):
-    #         f = open('cconfig.h', 'r')
-    #         if f:
-    #             contents = f.read()
-    #             f.close()
-
-    #             prep = PatchedPreProcessor()
-    #             prep.process_contents(contents)
-    #             options = prep.cpp_namespace
-
-    #             BuildOptions.update(options)
-
-    #             # add HAVE_CCONFIG_H definition
-    #             env.AppendUnique(CPPDEFINES = ['HAVE_CCONFIG_H'])
-    pass
-
 def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = []):
 
     global BuildOptions
@@ -167,10 +138,20 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
 
     # set RTT_ROOT in ENV
     Env['RTT_ROOT'] = Rtt_Root
+    os.environ["RTT_DIR"] = Rtt_Root
     # set BSP_ROOT in ENV
     Env['BSP_ROOT'] = Dir('#').abspath
+    os.environ["BSP_DIR"] = Dir('#').abspath
+    # set PKGS_ROOT in ENV
+    if not "PKGS_DIR" in os.environ:
+        if "ENV_ROOT" in os.environ:
+            os.environ["PKGS_DIR"] = os.path.join(os.environ["ENV_ROOT"], "packages")
+        elif sys.platform == "win32":
+            os.environ["PKGS_DIR"] = os.path.join(os.environ["USERPROFILE"], ".env/packages")
+        else:
+            os.environ["PKGS_DIR"] = os.path.join(os.environ["HOME"], ".env/packages")
 
-    sys.path = sys.path + [os.path.join(Rtt_Root, 'tools')]
+    sys.path = sys.path + [os.path.join(Rtt_Root, 'tools'), os.path.join(Rtt_Root, 'tools/kconfiglib')]
 
     # {target_name:(CROSS_TOOL, PLATFORM)}
     tgt_dict = {'mdk':('keil', 'armcc'),
@@ -214,10 +195,26 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
         os.environ['RTT_CC_PREFIX'] = exec_prefix
 
     # auto change the 'RTT_EXEC_PATH' when 'rtconfig.EXEC_PATH' get failed
-    if not os.path.exists(rtconfig.EXEC_PATH):
+    if not utils.CmdExists(os.path.join(rtconfig.EXEC_PATH, rtconfig.CC)):
         if 'RTT_EXEC_PATH' in os.environ:
             # del the 'RTT_EXEC_PATH' and using the 'EXEC_PATH' setting on rtconfig.py
             del os.environ['RTT_EXEC_PATH']
+
+        try:
+            # try to detect toolchains in env
+            envm = utils.ImportModule('env')
+            # from env import GetSDKPath
+            exec_path = envm.GetSDKPath(rtconfig.CC)
+            if 'gcc' in rtconfig.CC:
+                exec_path = os.path.join(exec_path, 'bin')
+
+            if os.path.exists(exec_path):
+                print('set CC to ' + exec_path)
+                rtconfig.EXEC_PATH = exec_path
+                os.environ['RTT_EXEC_PATH'] = exec_path
+        except Exception as e:
+            # detect failed, ignore
+            pass
 
     exec_path = GetOption('exec-path')
     if exec_path:
@@ -235,6 +232,7 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
         env['LINK'] = rtconfig.LINK
     if exec_path:
         env.PrependENVPath('PATH', rtconfig.EXEC_PATH)
+    env['ASCOM']= env['ASPPCOM']
 
     if GetOption('strict-compiling'):
         STRICT_FLAGS = ''
@@ -312,28 +310,25 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
         # found or something like that).
         rtconfig.POST_ACTION = ''
 
-    # generate cconfig.h file
-    GenCconfigFile(env, BuildOptions)
-
     # auto append '_REENT_SMALL' when using newlib 'nano.specs' option
     if rtconfig.PLATFORM in ['gcc'] and str(env['LINKFLAGS']).find('nano.specs') != -1:
         env.AppendUnique(CPPDEFINES = ['_REENT_SMALL'])
 
-    add_rtconfig = GetOption('add_rtconfig')
-    if add_rtconfig:
-        add_rtconfig = add_rtconfig.split(',')
-        if isinstance(add_rtconfig, list):
-            for config in add_rtconfig:
+    attach_global_macros = GetOption('global-macros')
+    if attach_global_macros:
+        attach_global_macros = attach_global_macros.split(',')
+        if isinstance(attach_global_macros, list):
+            for config in attach_global_macros:
                 if isinstance(config, str):
-                    AddDepend(add_rtconfig)
+                    AddDepend(attach_global_macros)
                     env.Append(CFLAGS=' -D' + config, CXXFLAGS=' -D' + config, AFLAGS=' -D' + config)
                 else:
-                    print('add_rtconfig arguements are illegal!')
+                    print('--global-macros arguments are illegal!')
         else:
-            print('add_rtconfig arguements are illegal!')
+            print('--global-macros arguments are illegal!')
 
     if GetOption('genconfig'):
-        from genconf import genconfig
+        from menukconfig import genconfig
         genconfig()
         exit(0)
 
@@ -341,25 +336,25 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
         from WCS import ThreadStackStaticAnalysis
         ThreadStackStaticAnalysis(Env)
         exit(0)
-    if platform.system() != 'Windows':
-        if GetOption('menuconfig'):
-            from menuconfig import menuconfig
-            menuconfig(Rtt_Root)
-            exit(0)
 
-    if GetOption('pyconfig_silent'):
-        from menuconfig import guiconfig_silent
+    if GetOption('menuconfig'):
+        from menukconfig import menuconfig
+        menuconfig(Rtt_Root)
+        exit(0)
+
+    if GetOption('pyconfig-silent'):
+        from menukconfig import guiconfig_silent
         guiconfig_silent(Rtt_Root)
         exit(0)
 
     elif GetOption('pyconfig'):
-        from menuconfig import guiconfig
+        from menukconfig import guiconfig
         guiconfig(Rtt_Root)
         exit(0)
 
     configfn = GetOption('useconfig')
     if configfn:
-        from menuconfig import mk_rtconfig
+        from menukconfig import mk_rtconfig
         mk_rtconfig(configfn)
         exit(0)
 
@@ -513,6 +508,23 @@ def AddDepend(option):
     else:
         print('AddDepend arguements are illegal!')
 
+def Preprocessing(input, suffix, output = None, CPPPATH = None):
+    if hasattr(rtconfig, "CPP") and hasattr(rtconfig, "CPPFLAGS"):
+        if output == None:
+            import re
+            output = re.sub(r'[\.]+.*', suffix, input)
+        inc = ' '
+        cpppath = CPPPATH
+        for cpppath_item in cpppath:
+            inc += ' -I' + cpppath_item
+        CPP = rtconfig.EXEC_PATH + '/' + rtconfig.CPP
+        if not os.path.exists(CPP):
+            CPP = rtconfig.CPP
+        CPP += rtconfig.CPPFLAGS
+        path = GetCurrentDir() + '/'
+        os.system(CPP + inc + ' ' + path + input + ' -o ' + path + output)
+    else:
+        print('CPP tool or CPPFLAGS is undefined in rtconfig!')
 
 def MergeGroup(src_group, group):
     src_group['src'] = src_group['src'] + group['src']
@@ -784,8 +796,8 @@ def DoBuilding(target, objects):
             CFLAGS = Env.get('CFLAGS', '') + group.get('LOCAL_CFLAGS', '')
             CCFLAGS = Env.get('CCFLAGS', '') + group.get('LOCAL_CCFLAGS', '')
             CXXFLAGS = Env.get('CXXFLAGS', '') + group.get('LOCAL_CXXFLAGS', '')
-            CPPPATH = Env.get('CPPPATH', ['']) + group.get('LOCAL_CPPPATH', [''])
-            CPPDEFINES = Env.get('CPPDEFINES', ['']) + group.get('LOCAL_CPPDEFINES', [''])
+            CPPPATH = list(Env.get('CPPPATH', [''])) + group.get('LOCAL_CPPPATH', [''])
+            CPPDEFINES = list(Env.get('CPPDEFINES', [''])) + group.get('LOCAL_CPPDEFINES', [''])
             ASFLAGS = Env.get('ASFLAGS', '') + group.get('LOCAL_ASFLAGS', '')
 
             for source in group['src']:
@@ -796,6 +808,7 @@ def DoBuilding(target, objects):
 
         return False
 
+    PreBuilding()
     objects = one_list(objects)
 
     program = None
@@ -836,6 +849,11 @@ def DoBuilding(target, objects):
         objects_in_group = sorted(objects_in_group)
         objects = sorted(objects)
         objects.append(objects_in_group)
+
+        # generate build/compile_commands.json
+        if GetOption('cdb') and utils.VerTuple(SCons.__version__) >= (4, 0, 0):
+            Env.Tool("compilation_db")
+            Env.CompilationDatabase('build/compile_commands.json')
 
         program = Env.Program(target, objects)
 
@@ -886,6 +904,9 @@ def GenTargetProject(program = None):
     if GetOption('target') == 'vsc':
         from vsc import GenerateVSCode
         GenerateVSCode(Env)
+        if GetOption('cmsispack'):
+            from vscpyocd import GenerateVSCodePyocdConfig
+            GenerateVSCodePyocdConfig(GetOption('cmsispack'))
 
     if GetOption('target') == 'cdk':
         from cdk import CDKProject
@@ -920,7 +941,7 @@ def GenTargetProject(program = None):
         ESPIDFProject(Env, Projects)
 
 def EndBuilding(target, program = None):
-    from mkdist import MkDist, MkDist_Strip
+    from mkdist import MkDist
 
     need_exit = False
 
@@ -951,15 +972,12 @@ def EndBuilding(target, program = None):
     if GetOption('make-dist') and program != None:
         MkDist(program, BSP_ROOT, Rtt_Root, Env, project_name, project_path)
         need_exit = True
-    if GetOption('make-dist-strip') and program != None:
-        MkDist_Strip(program, BSP_ROOT, Rtt_Root, Env)
-        need_exit = True
     if GetOption('make-dist-ide') and program != None:
         import subprocess
         if not isinstance(project_path, str) or len(project_path) == 0 :
             project_path = os.path.join(BSP_ROOT, 'rt-studio-project')
         MkDist(program, BSP_ROOT, Rtt_Root, Env, project_name, project_path)
-        child = subprocess.Popen('scons --target=eclipse --project-name=' + project_name, cwd=project_path, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
+        child = subprocess.Popen('scons --target=eclipse --project-name="{}"'.format(project_name), cwd=project_path, stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True)
         stdout, stderr = child.communicate()
         need_exit = True
     if GetOption('cscope'):

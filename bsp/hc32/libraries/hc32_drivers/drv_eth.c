@@ -1,6 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
- * Copyright (c) 2022, Xiaohua Semiconductor Co., Ltd.
+ * Copyright (C) 2022-2024, Xiaohua Semiconductor Co., Ltd.
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -37,7 +36,7 @@ struct hc32_eth
 {
     /* inherit from ethernet device */
     struct eth_device       parent;
-#if !(defined(PHY_USING_INTERRUPT_MODE) && defined(ETH_USING_INTERFACE_RMII))
+#if !(defined(ETH_PHY_USING_INTERRUPT_MODE))
     rt_timer_t              poll_link_timer;
 #endif
     /* interface address info, hw address */
@@ -90,7 +89,6 @@ static struct hc32_eth hc32_eth_device =
 static rt_err_t rt_hc32_eth_init(rt_device_t dev)
 {
     stc_eth_init_t stcEthInit;
-    uint16_t u16RegVal;
 
     /* Enable ETH clock */
     FCG_Fcg1PeriphClockCmd(FCG1_PERIPH_ETHMAC, ENABLE);
@@ -109,13 +107,13 @@ static rt_err_t rt_hc32_eth_init(rt_device_t dev)
     EthHandle.stcCommInit.au8MacAddr[3] = hc32_eth_device.dev_addr[3];
     EthHandle.stcCommInit.au8MacAddr[4] = hc32_eth_device.dev_addr[4];
     EthHandle.stcCommInit.au8MacAddr[5] = hc32_eth_device.dev_addr[5];
-#ifdef ETH_USING_INTERFACE_RMII
+    EthHandle.stcCommInit.u32ReceiveMode = ETH_RX_MD_INT;
+#if defined(ETH_INTERFACE_USING_RMII)
     EthHandle.stcCommInit.u32Interface  = ETH_MAC_IF_RMII;
 #else
     EthHandle.stcCommInit.u32Interface  = ETH_MAC_IF_MII;
 #endif
-    EthHandle.stcCommInit.u32ReceiveMode = ETH_RX_MD_INT;
-#ifdef RT_LWIP_USING_HW_CHECKSUM
+#if defined(RT_LWIP_USING_HW_CHECKSUM)
     EthHandle.stcCommInit.u32ChecksumMode = ETH_MAC_CHECKSUM_MD_HW;
 #else
     EthHandle.stcCommInit.u32ChecksumMode = ETH_MAC_CHECKSUM_MD_SW;
@@ -147,21 +145,6 @@ static rt_err_t rt_hc32_eth_init(rt_device_t dev)
         LOG_E("eth hardware start faild");
         return -RT_ERROR;
     }
-
-    /* Configure PHY LED mode */
-    u16RegVal = PHY_PAGE_ADDR_7;
-    (void)ETH_PHY_WriteReg(&EthHandle, PHY_PSR, u16RegVal);
-    (void)ETH_PHY_ReadReg(&EthHandle, PHY_P7_IWLFR, &u16RegVal);
-    MODIFY_REG16(u16RegVal, PHY_LED_SELECT, PHY_LED_SELECT_10);
-    (void)ETH_PHY_WriteReg(&EthHandle, PHY_P7_IWLFR, u16RegVal);
-    u16RegVal = PHY_PAGE_ADDR_0;
-    (void)ETH_PHY_WriteReg(&EthHandle, PHY_PSR, u16RegVal);
-#ifdef ETH_USING_INTERFACE_RMII
-    /* Disable Power Saving Mode */
-    (void)ETH_PHY_ReadReg(&EthHandle, PHY_PSMR, &u16RegVal);
-    CLR_REG16_BIT(u16RegVal, PHY_EN_PWR_SAVE);
-    (void)ETH_PHY_WriteReg(&EthHandle, PHY_PSMR, u16RegVal);
-#endif
 
     return RT_EOK;
 }
@@ -270,7 +253,7 @@ rt_err_t rt_hc32_eth_tx(rt_device_t dev, struct pbuf *p)
         bufferOffset = bufferOffset + byteCnt;
         frameLength = frameLength + byteCnt;
     }
-    LOG_D("transmit frame length :%d", framelength);
+    LOG_D("transmit frame length :%d", frameLength);
     /* Prepare transmit descriptors to give to DMA */
     (void)ETH_DMA_SetTransFrame(&EthHandle, frameLength);
     errval = (err_t)ERR_OK;
@@ -396,9 +379,12 @@ static void hc32_phy_link_change(void)
 {
     static rt_uint8_t phy_status = 0;
     rt_uint8_t phy_status_new = 0;
+#if defined (ETH_PHY_USING_RTL8201F)
     uint16_t u16RegVal = 0U;
     uint16_t u16Page = 0U;
+#endif
 
+#if defined (ETH_PHY_USING_RTL8201F)
     /* Switch page */
     (void)ETH_PHY_ReadReg(&EthHandle, PHY_PSR, &u16Page);
     if (u16Page != PHY_PAGE_ADDR_0)
@@ -414,11 +400,15 @@ static void hc32_phy_link_change(void)
         if (u16RegVal & (PHY_AUTONEGO_COMPLETE_MASK | PHY_LINKED_STATUS_MASK))
         {
             phy_status_new |= ETH_PHY_LINK;
-            if (0U != (u16RegVal & (PHY_100BASE_TX_FD | PHY_10BASE_T_FD)))
+            /* Read the result of the auto-negotiation */
+            ETH_PHY_ReadReg(&EthHandle, PHY_SR, &u16RegVal);
+            /* Configure ETH duplex mode according to the result of automatic negotiation */
+            if (0U != (u16RegVal & PHY_DUPLEX_STATUS))
             {
                 phy_status_new |= ETH_PHY_FULL_DUPLEX;
             }
-            if (0U != (u16RegVal & (PHY_100BASE_TX_FD | PHY_100BASE_TX_HD)))
+            /* Configure ETH speed according to the result of automatic negotiation */
+            if (0U != (u16RegVal & PHY_SPEED_STATUS))
             {
                 phy_status_new |= ETH_PHY_100M;
             }
@@ -429,6 +419,7 @@ static void hc32_phy_link_change(void)
     {
         (void)ETH_PHY_WriteReg(&EthHandle, PHY_PSR, u16Page);
     }
+#endif
 
     if (phy_status != phy_status_new)
     {
@@ -451,6 +442,8 @@ static void hc32_phy_link_change(void)
             {
                 hc32_eth_device.eth_speed = ETH_MAC_SPEED_10M;
             }
+            ETH_MAC_SetDuplexSpeed(hc32_eth_device.eth_mode, hc32_eth_device.eth_speed);
+            ETH_Start();
             LOG_D("link up");
             eth_device_linkchange(&hc32_eth_device.parent, RT_TRUE);
         }
@@ -458,17 +451,22 @@ static void hc32_phy_link_change(void)
         {
             LOG_I("link down");
             eth_device_linkchange(&hc32_eth_device.parent, RT_FALSE);
+            ETH_Stop();
+            (void)ETH_DMA_TxDescListInit(&EthHandle, EthDmaTxDscrTab, EthTxBuff, ETH_TX_BUF_NUM);
+            (void)ETH_DMA_RxDescListInit(&EthHandle, EthDmaRxDscrTab, EthRxBuff, ETH_RX_BUF_NUM);
         }
     }
 }
 
-#if defined(PHY_USING_INTERRUPT_MODE) && defined(ETH_USING_INTERFACE_RMII)
+#if defined(ETH_PHY_USING_INTERRUPT_MODE)
 static void eth_phy_irq_handler(void *args)
 {
+#if defined (ETH_PHY_USING_RTL8201F)
     rt_uint16_t status = 0;
 
     ETH_PHY_ReadReg(&EthHandle, PHY_IISDR, &status);
     LOG_D("phy interrupt status reg is 0x%X", status);
+#endif
     hc32_phy_link_change();
 }
 #endif
@@ -477,6 +475,7 @@ static void hc32_phy_monitor_thread(void *parameter)
 {
     uint8_t phy_addr = 0xFF;
     uint8_t detected_count = 0;
+    uint16_t u16RegVal;
 
     /* phy search */
     while (phy_addr == 0xFF)
@@ -507,13 +506,36 @@ static void hc32_phy_monitor_thread(void *parameter)
     rt_thread_mdelay(2000);
     ETH_PHY_WriteReg(&EthHandle, PHY_BASIC_CONTROL_REG, PHY_AUTO_NEGOTIATION_MASK);
     hc32_phy_link_change();
-#if defined(PHY_USING_INTERRUPT_MODE) && defined(ETH_USING_INTERFACE_RMII)
-    /* configuration intterrupt pin */
-    rt_pin_mode(ETH_PHY_INT_PIN, PIN_MODE_INPUT_PULLUP);
-    rt_pin_attach_irq(ETH_PHY_INT_PIN, PIN_IRQ_MODE_FALLING, eth_phy_irq_handler, (void *)"callbackargs");
-    rt_pin_irq_enable(ETH_PHY_INT_PIN, PIN_IRQ_ENABLE);
 
-    uint16_t u16RegVal;
+#if defined (ETH_PHY_USING_RTL8201F)
+    /* Configure PHY LED mode */
+    u16RegVal = PHY_PAGE_ADDR_7;
+    (void)ETH_PHY_WriteReg(&EthHandle, PHY_PSR, u16RegVal);
+    (void)ETH_PHY_ReadReg(&EthHandle, PHY_PSR, &u16RegVal);
+
+    (void)ETH_PHY_ReadReg(&EthHandle, PHY_P7_IWLFR, &u16RegVal);
+    MODIFY_REG16(u16RegVal, PHY_LED_SELECT, PHY_LED_SELECT_10);
+    (void)ETH_PHY_WriteReg(&EthHandle, PHY_P7_IWLFR, u16RegVal);
+    (void)ETH_PHY_ReadReg(&EthHandle, PHY_P7_IWLFR, &u16RegVal);
+
+    u16RegVal = PHY_PAGE_ADDR_0;
+    (void)ETH_PHY_WriteReg(&EthHandle, PHY_PSR, u16RegVal);
+    (void)ETH_PHY_ReadReg(&EthHandle, PHY_PSR, &u16RegVal);
+#if defined(ETH_PHY_USING_RTL8201F) && defined(ETH_INTERFACE_USING_RMII)
+    /* Disable Power Saving Mode */
+    (void)ETH_PHY_ReadReg(&EthHandle, PHY_PSMR, &u16RegVal);
+    CLR_REG16_BIT(u16RegVal, PHY_EN_PWR_SAVE);
+    (void)ETH_PHY_WriteReg(&EthHandle, PHY_PSMR, u16RegVal);
+#endif
+#endif
+
+#if defined(ETH_PHY_USING_INTERRUPT_MODE)
+    /* configuration intterrupt pin */
+    rt_pin_mode(ETH_PHY_INTERRUPT_PIN, PIN_MODE_INPUT_PULLUP);
+    rt_pin_attach_irq(ETH_PHY_INTERRUPT_PIN, PIN_IRQ_MODE_FALLING, eth_phy_irq_handler, (void *)"callbackargs");
+    rt_pin_irq_enable(ETH_PHY_INTERRUPT_PIN, PIN_IRQ_ENABLE);
+
+#if defined (ETH_PHY_USING_RTL8201F)
     /* Configure PHY to generate an interrupt when Eth Link state changes */
     u16RegVal = PHY_PAGE_ADDR_7;
     (void)ETH_PHY_WriteReg(&EthHandle, PHY_PSR, u16RegVal);
@@ -523,6 +545,7 @@ static void hc32_phy_monitor_thread(void *parameter)
     (void)ETH_PHY_WriteReg(&EthHandle, PHY_P7_IWLFR, u16RegVal);
     u16RegVal = PHY_PAGE_ADDR_0;
     (void)ETH_PHY_WriteReg(&EthHandle, PHY_PSR, u16RegVal);
+#endif
 #else
     hc32_eth_device.poll_link_timer = rt_timer_create("eth_phy_link", (void (*)(void *))hc32_phy_link_change,
                                       NULL, RT_TICK_PER_SECOND, RT_TIMER_FLAG_PERIODIC);
@@ -575,11 +598,11 @@ static int rt_hw_hc32_eth_init(void)
     /* 00-80 uid */
     hc32_eth_device.dev_addr[0] = 0x02;
     hc32_eth_device.dev_addr[1] = 0x80;
-    hc32_eth_device.dev_addr[2] = 0x00;
     /* generate MAC addr from unique ID */
-    hc32_eth_device.dev_addr[3] = (rt_uint8_t)READ_REG32(CM_EFM->UQID0);
-    hc32_eth_device.dev_addr[4] = (rt_uint8_t)READ_REG32(CM_EFM->UQID1);
-    hc32_eth_device.dev_addr[5] = (rt_uint8_t)READ_REG32(CM_EFM->UQID2);
+    hc32_eth_device.dev_addr[2] = (rt_uint8_t)(READ_REG32(CM_EFM->UQID1) >> 8U);
+    hc32_eth_device.dev_addr[3] = (rt_uint8_t)(READ_REG32(CM_EFM->UQID1) >> 16U);
+    hc32_eth_device.dev_addr[4] = (rt_uint8_t)READ_REG32(CM_EFM->UQID2);
+    hc32_eth_device.dev_addr[5] = (rt_uint8_t)(READ_REG32(CM_EFM->UQID2) >> 8U);
 
     hc32_eth_device.parent.parent.init      = rt_hc32_eth_init;
     hc32_eth_device.parent.parent.open      = rt_hc32_eth_open;

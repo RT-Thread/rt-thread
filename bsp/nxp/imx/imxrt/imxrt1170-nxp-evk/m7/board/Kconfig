@@ -1,0 +1,273 @@
+menu "Hardware Drivers Config"
+
+config BSP_USING_QSPIFLASH
+    bool
+    default n
+
+config SOC_MIMXRT1176DVMAA
+    bool
+    select SOC_IMXRT1170_SERIES
+    select BSP_USING_QSPIFLASH
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+    default y
+
+config BSP_USING_LCD_MIPI
+    bool
+    default n
+
+menu "On-chip Peripheral Drivers"
+
+    config BSP_USING_DMA
+        bool "Enable DMA"
+        default n
+
+    config BSP_USING_GPIO
+        bool "Enable GPIO"
+        select RT_USING_PIN
+        default y
+
+    config BSP_USING_RTC
+        bool "Enable RTC"
+        select RT_USING_RTC
+        default n
+
+    config BSP_USING_USB
+        bool "Enable USB"
+        select RT_USING_USB_HOST
+        default n
+
+    if BSP_USING_USB
+    config BSP_USB0_HOST
+        bool "Enable USB0"
+        default n
+
+    config BSP_USB1_HOST
+        bool "Enable USB1"
+        default n
+    endif
+
+    config BSP_USING_SDIO
+        bool "Enable SDIO"
+        select RT_USING_SDIO
+        select RT_USING_DFS
+        default n
+
+        if BSP_USING_SDIO
+            config CODE_STORED_ON_SDCARD
+                bool "Enable Code STORED On SDCARD"
+                default n
+                help
+                    "SD CARD work as boot devive"
+        endif
+
+    menuconfig BSP_USING_LPUART
+        bool "Enable UART"
+        select RT_USING_SERIAL
+        default y
+
+        if BSP_USING_LPUART
+            config BSP_USING_LPUART1
+                bool "Enable LPUART1"
+                default y
+
+        config BSP_LPUART1_RX_USING_DMA
+            bool "Enable LPUART1 RX DMA"
+            depends on BSP_USING_LPUART1
+            select BSP_USING_DMA
+            select RT_SERIAL_USING_DMA
+            default n
+
+        config BSP_LPUART1_RX_DMA_CHANNEL
+        depends on BSP_LPUART1_RX_USING_DMA
+        int "Set LPUART1 RX DMA channel (0-32)"
+        default 0
+
+                config BSP_LPUART1_TX_USING_DMA
+                    bool "Enable LPUART1 TX DMA"
+                    depends on BSP_USING_LPUART1
+                    select BSP_USING_DMA
+                    select RT_SERIAL_USING_DMA
+                    default n
+
+                    config BSP_LPUART1_TX_DMA_CHANNEL
+                        depends on BSP_LPUART1_TX_USING_DMA
+                        int "Set LPUART1 TX DMA channel (0-32)"
+                        default 1
+
+            config BSP_USING_LPUART3
+                bool "Enable LPUART3"
+                default n
+
+                config BSP_LPUART3_RX_USING_DMA
+                    bool "Enable LPUART3 RX DMA"
+                    depends on BSP_USING_LPUART3
+                    select BSP_USING_DMA
+                    select RT_SERIAL_USING_DMA
+                    default n
+
+                    config BSP_LPUART3_RX_DMA_CHANNEL
+                        depends on BSP_LPUART3_RX_USING_DMA
+                        int "Set LPUART3 RX DMA channel (0-32)"
+                        default 0
+
+                config BSP_LPUART3_TX_USING_DMA
+                    bool "Enable LPUART3 TX DMA"
+                    depends on BSP_USING_LPUART3
+                    select BSP_USING_DMA
+                    select RT_SERIAL_USING_DMA
+                    default n
+
+                    config BSP_LPUART3_TX_DMA_CHANNEL
+                        depends on BSP_LPUART3_TX_USING_DMA
+                        int "Set LPUART3 TX DMA channel (0-32)"
+                        default 1
+        endif
+
+        menuconfig BSP_USING_CAN
+            bool "Enable CAN"
+            select RT_USING_CAN
+            default n
+            if BSP_USING_CAN
+                config BSP_USING_CAN3
+                    bool "Enable FLEXCAN3"
+                    default n
+            endif
+
+        menuconfig BSP_USING_FLEXSPI
+            bool "Enable FLEXSPI"
+            default n
+            if BSP_USING_FLEXSPI
+                config BSP_USING_FLEXSPI1
+                    bool "Enable FLEXSPI1"
+                    default n
+                config BSP_USING_FLEXSPI2
+                    bool "Enable FLEXSPI2"
+                    default n
+            endif
+endmenu
+
+menu "Onboard Peripheral Drivers"
+
+    config BSP_USING_SDRAM
+        bool "Enable SDRAM"
+        default n
+
+    menuconfig BSP_USING_ETH
+    bool "Enable Ethernet"
+    select RT_USING_NETDEV
+    select RT_USING_LWIP
+    default n
+
+
+    if BSP_USING_ETH
+        config BSP_USING_PHY
+            select RT_USING_PHY
+            bool "Enable ethernet phy"
+            default y
+
+        if BSP_USING_PHY
+            config PHY_USING_KSZ8081
+                bool "i.MX RT1176EVK uses ksz8081 phy"
+                default y
+
+            if PHY_USING_KSZ8081
+                config PHY_KSZ8081_ADDRESS
+                int "Specify address of phy device"
+                default 2
+
+                config PHY_RESET_KSZ8081_PORT
+                    int "indicate port of reset"
+                    default 6
+
+                config PHY_RESET_KSZ8081_PIN
+                    int "indicate pin of reset"
+                    default 12
+
+                config FSL_FEATURE_PHYKSZ8081_USE_RMII50M_MODE
+                    bool "Enable the PHY ksz8081 RMII50M mode"
+                    depends on PHY_USING_KSZ8081
+                    default y
+            endif
+        endif
+
+        if BSP_USING_PHY
+                config PHY_USING_RTL8211F
+                    bool "i.MX RT1176EVK uses rtl8211f phy"
+                    default y
+
+                if PHY_USING_RTL8211F
+                    config PHY_RTL8211F_ADDRESS
+                    int "Specify address of phy device"
+                    default 1
+
+                    config PHY_RESET_RTL8211F_PORT
+                        int "indicate port of reset"
+                        default 5
+
+                    config PHY_RESET_RTL8211F_PIN
+                        int "indicate pin of reset"
+                        default 14
+
+                endif
+        endif
+    endif
+
+    menuconfig BSP_USING_FS
+        bool "Enable File System"
+        select RT_USING_DFS_DEVFS
+        select RT_USING_DFS
+        default n
+
+        if BSP_USING_FS
+            config BSP_USING_SDCARD_FATFS
+                bool "Enable SDCARD (FATFS)"
+                select BSP_USING_SDIO
+                select RT_USING_DFS_ELMFAT
+                default n
+        endif
+
+    menuconfig BSP_USING_VGLITE
+        bool "Enable VGLite"
+        select RT_USING_PIN
+        select BSP_USING_LCD_MIPI
+        default n
+
+        if BSP_USING_VGLITE
+            choice
+                prompt "Select display panel"
+                default DISPLAY_USING_RK055AHD091
+                
+                config DISPLAY_USING_RK055AHD091
+                    bool "RK055AHD091-CTG (RK055HDMIPI4M 720 * 1280)"
+                    
+                config DISPLAY_USING_RK055IQH091
+                    bool "RK055IQH091-CTG (540 * 960)"
+                    
+                config DISPLAY_USING_RK055MHD091
+                    bool "RK055MHD091A0-CTG (RK055HDMIPI4MA0 720 * 1280)"
+            endchoice
+
+            choice
+                prompt "Select display controller"
+                default BSP_USING_LCDIFV2
+                
+                config BSP_USING_ELCDIF
+                    bool "ELCDIF"
+                
+                config BSP_USING_LCDIFV2
+                    bool "LCDIFV2"
+            endchoice
+
+            config VGLITE_USING_ELM
+            bool "Enable Elementary"
+            default y
+        endif
+
+endmenu
+
+menu "Board extended module Drivers"
+
+endmenu
+
+endmenu

@@ -1,0 +1,11 @@
+from building import *
+
+cwd = GetCurrentDir()
+src = []
+
+if GetDepend(['BSP_USING_ARDUINO_ST7789_DEMO']):
+    src += ['ST7789_demo.cpp']
+
+group = DefineGroup('RTduino-libraries', src, depend = ['BSP_USING_ARDUINO'])
+
+Return('group')

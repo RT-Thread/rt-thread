@@ -57,7 +57,7 @@ RT-Thread源代码目录结构如下图所示：
 
 | 名称          | 描述                                                    |
 | ------------- | ------------------------------------------------------- |
-| BSP           | Board Support Package（板级支持包）基于各种开发板的移植 |
+| bsp           | Board Support Package（板级支持包）基于各种开发板的移植 |
 | components    | RT-Thread 的各个组件代码，例如 finsh，gui 等。          |
 | documentation | 相关文档，如编码规范等                                  |
 | examples      | 相关示例代码                                            |
@@ -93,7 +93,7 @@ RT-Thread RTOS 支持许多架构，并且已经涵盖了当前应用中的主�
 - ARM9：如芯片制造商Allwinner、Xilinx 、GOKE
 - ARM11：如芯片制造商Fullhan
 - MIPS32：如芯片制造商loongson、Ingenic
-- RISC-V RV32E/RV32I[F]/RV64[D]：如芯片制造商sifive、[嘉楠Kendryte](https://github.com/RT-Thread/rt-thread/tree/master/bsp/k210)、[博流](https://github.com/RT-Thread/rt-thread/tree/master/bsp/bouffalo_lab)、[芯来Nuclei](https://nucleisys.com/)、[平头哥T-Head](https://www.t-head.cn/)
+- RISC-V RV32E/RV32I[F]/RV64[D]：如芯片制造商sifive、[嘉楠Kendryte](https://github.com/RT-Thread/rt-thread/tree/master/bsp/k210)、[博流](https://github.com/RT-Thread/rt-thread/tree/master/bsp/bouffalo_lab)、[芯来Nuclei](https://nucleisys.com/)、[平头哥T-Head](https://www.t-head.cn/)、[先楫](https://github.com/RT-Thread/rt-thread/tree/master/bsp/hpmicro)
 - ARC：如芯片制造商SYNOPSYS
 - DSP：如芯片制造商 TI
 - C-Sky

@@ -16,7 +16,28 @@ And confirm in which case or board has been tested. -->
 #### 你的解决方案是什么 (what is your solution)
 
 
-#### 在什么测试环境下测试通过 (what is the test environment)
+
+#### 请提供验证的bsp和config (provide the config and bsp) 
+
+<!-- 请填写验证bsp目录下面的目录比如bsp/stm32/stm32l496-st-nucleo
+
+Please provide the path of verfied bsp. Like bsp/stm32/stm32l496-st-nucleo  bsp/ESP32_C3 -->
+
+- BSP:
+
+<!-- 请填写.config 文件中需要改动的config
+
+Please provide the changed config of .config file to how to verify the PR file like CONFIG_BSP_USING_I2C CONFIG_BSP_USING_WDT -->
+
+- .config:
+
+<!-- 请提供自己仓库的PR branch的action的编译链接相关PR文件成功的链接：
+
+Please provide the link of action triggered by your own repo's action  
+
+https://github.com/RT-Thread/rt-thread/actions/workflows/manual_dist.yml -->
+
+- action:
 
 ]
 
@@ -40,4 +61,4 @@ The following content must not be changed in the submitted PR message. Otherwise
 - [ ] 所有变更均有原因及合理的，并且不会影响到其他软件组件代码或BSP All modifications are justified and not affect other components or BSP
 - [ ] 对难懂代码均提供对应的注释 I've commented appropriately where code is tricky
 - [ ] 代码是高质量的 Code in this PR is of high quality
-- [ ] 已经使用[formatting](https://github.com/mysterywolf/formatting)等源码格式化工具确保格式符合[RT-Thread代码规范](https://github.com/RT-Thread/rt-thread/blob/master/documentation/contribution_guide/coding_style_cn.md) This PR complies with [RT-Thread code specification](https://github.com/RT-Thread/rt-thread/blob/master/documentation/contribution_guide/coding_style_en.md) 
+- [ ] 已经使用[formatting](https://github.com/mysterywolf/formatting) 等源码格式化工具确保格式符合[RT-Thread代码规范](https://github.com/RT-Thread/rt-thread/blob/master/documentation/contribution_guide/coding_style_cn.md) This PR complies with [RT-Thread code specification](https://github.com/RT-Thread/rt-thread/blob/master/documentation/contribution_guide/coding_style_en.md) 

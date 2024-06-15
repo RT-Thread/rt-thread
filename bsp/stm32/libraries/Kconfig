@@ -45,6 +45,7 @@ config SOC_SERIES_STM32L4
     bool
     select ARCH_ARM_CORTEX_M4
     select SOC_FAMILY_STM32
+    select PKG_USING_STM32L4_HAL_DRIVER
 
 config SOC_SERIES_STM32L5
     bool
@@ -71,6 +72,11 @@ config SOC_SERIES_STM32U5
     select ARCH_ARM_CORTEX_M33
     select SOC_FAMILY_STM32
 
+config SOC_SERIES_STM32H5
+    bool
+    select ARCH_ARM_CORTEX_M33
+    select SOC_FAMILY_STM32
+
 config SOC_SERIES_STM32MP1
     bool
     select ARCH_ARM_CORTEX_M4
@@ -86,4 +92,11 @@ config SOC_SERIES_STM32WB
     select ARCH_ARM_CORTEX_M4
     select SOC_FAMILY_STM32
 
+config BOARD_SERIES_STM32_NUCLEO_32
+    bool
 
+config BOARD_SERIES_STM32_NUCLEO_64
+    bool
+
+config BOARD_SERIES_STM32_NUCLEO_144
+    bool

@@ -191,7 +191,7 @@ static int dfs_win32_open(struct dfs_file *file)
         len = strlen(wdirp->finddata.name) + 1;
         wdirp->handle = handle;
         //wdirp->nfiles = 1;
-        wdirp->start = malloc(len); //not rt_malloc!
+        wdirp->start = (char *)malloc(len); //not rt_malloc!
         wdirp->end = wdirp->curr = wdirp->start;
         wdirp->end += len;
         rt_strncpy(wdirp->curr, wdirp->finddata.name, len);
@@ -346,7 +346,7 @@ static int dfs_win32_getdents(struct dfs_file *file, struct dirent *dirp, rt_uin
     else
         d->d_type = DT_REG;
     d->d_namlen = (rt_uint8_t)strlen(wdirp->curr);
-    strncpy(d->d_name, wdirp->curr, DFS_PATH_MAX);
+    strncpy(d->d_name, wdirp->curr, DIRENT_NAME_MAX);
     d->d_reclen = (rt_uint16_t)sizeof(struct dirent);
     wdirp->curr += (strlen(wdirp->curr) + 1);
     file->pos = wdirp->curr - wdirp->start + sizeof(struct dirent);//NOTE!

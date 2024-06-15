@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 hpmicro
+ * Copyright (c) 2021 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -9,7 +9,7 @@
 
 int __ffssi2(int x)
 {
-    int i = 0;
+    uint32_t i = 0;
     if (!x) {
         return 0;
     }

@@ -18,6 +18,9 @@
  */
 
 #include <rtthread.h>
+#ifdef RT_USING_HW_STACK_GUARD
+#include <mprotect.h>
+#endif
 
 #if               /* ARMCC */ (  (defined ( __CC_ARM ) && defined ( __TARGET_FPU_VFP ))    \
                   /* Clang */ || (defined ( __clang__ ) && defined ( __VFP_FP__ ) && !defined(__SOFTFP__)) \
@@ -174,6 +177,28 @@ rt_uint8_t *rt_hw_stack_init(void       *tentry,
     /* return task's current stack address */
     return stk;
 }
+
+#ifdef RT_USING_HW_STACK_GUARD
+void rt_hw_stack_guard_init(rt_thread_t thread)
+{
+    rt_mem_region_t stack_top_region, stack_bottom_region;
+    rt_ubase_t stack_bottom = (rt_ubase_t)thread->stack_addr;
+    rt_ubase_t stack_top = (rt_ubase_t)((rt_uint8_t *)thread->stack_addr + thread->stack_size);
+    rt_ubase_t stack_bottom_region_start = RT_ALIGN(stack_bottom, MPU_MIN_REGION_SIZE);
+    rt_ubase_t stack_top_region_start = RT_ALIGN_DOWN(stack_top - MPU_MIN_REGION_SIZE, MPU_MIN_REGION_SIZE);
+    stack_top_region.start = (void *)stack_top_region_start;
+    stack_top_region.size = MPU_MIN_REGION_SIZE;
+    stack_top_region.attr = RT_MEM_REGION_P_NA_U_NA;
+    stack_bottom_region.start = (void *)stack_bottom_region_start;
+    stack_bottom_region.size = MPU_MIN_REGION_SIZE;
+    stack_bottom_region.attr = RT_MEM_REGION_P_NA_U_NA;
+    rt_mprotect_add_region(thread, &stack_top_region);
+    rt_mprotect_add_region(thread, &stack_bottom_region);
+    thread->stack_buf = thread->stack_addr;
+    thread->stack_addr = (void *)(stack_bottom_region_start + MPU_MIN_REGION_SIZE);
+    thread->stack_size = (rt_uint32_t)(stack_top_region_start - stack_bottom_region_start - MPU_MIN_REGION_SIZE);
+}
+#endif
 
 /**
  * This function set the hook, which is invoked on fault exception handling.
@@ -428,19 +453,9 @@ void rt_hw_hard_fault_exception(struct exception_info *exception_info)
 }
 
 /**
- * shutdown CPU
- */
-rt_weak void rt_hw_cpu_shutdown(void)
-{
-    rt_kprintf("shutdown...\n");
-
-    RT_ASSERT(0);
-}
-
-/**
  * reset CPU
  */
-rt_weak void rt_hw_cpu_reset(void)
+void rt_hw_cpu_reset(void)
 {
     SCB_AIRCR = SCB_RESET_VALUE;
 }

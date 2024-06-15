@@ -176,7 +176,7 @@ extern "C" {
 /* DMA2 channel4 */
 #if defined(BSP_UART6_RX_USING_DMA) && !defined(UART6_RX_DMA_CHANNEL)
 #define UART6_RX_DMA_IRQHandler         DMA2_Channel4_IRQHandler
-#define UART6_RX_DMA_CLOCK              CRM_DMA4_PERIPH_CLOCK
+#define UART6_RX_DMA_CLOCK              CRM_DMA2_PERIPH_CLOCK
 #define UART6_RX_DMA_CHANNEL            DMA2_CHANNEL4
 #define UART6_RX_DMA_IRQ                DMA2_Channel4_IRQn
 #define UART6_RX_DMA_MUX_CHANNEL        DMA2MUX_CHANNEL4

@@ -26,6 +26,10 @@
 #define R_RISCV_TLS_TPREL32   10
 #define R_RISCV_TLS_TPREL64   11
 
+#define DBG_TAG           "posix.libdl.arch"
+#define DBG_LVL           DBG_INFO
+#include <rtdbg.h>
+
 int dlmodule_relocate(struct rt_dlmodule *module, Elf_Rel *rel, Elf_Addr sym_val)
 {
     Elf64_Addr *where, tmp;
@@ -41,18 +45,18 @@ int dlmodule_relocate(struct rt_dlmodule *module, Elf_Rel *rel, Elf_Addr sym_val
             break;
         case R_RISCV_64:
             *where = (Elf64_Addr)(sym_val + rel->r_addend);
-            RT_DEBUG_LOG(RT_DEBUG_MODULE, ("R_RISCV_64: %x -> %x\n",where, *where));
+            LOG_D("R_RISCV_64: %x -> %x",where, *where);
             break;
         case R_RISCV_RELATIVE:
             *where = (Elf64_Addr)((rt_uint8_t *)module->mem_space - module->vstart_addr + rel->r_addend);
-            RT_DEBUG_LOG(RT_DEBUG_MODULE, ("R_RISCV_RELATIVE: %x -> %x\n",where, *where));
+            LOG_D("R_RISCV_RELATIVE: %x -> %x",where, *where);
             break;
         case R_RISCV_JUMP_SLOT:
             *where = (Elf64_Addr)sym_val;
-            RT_DEBUG_LOG(RT_DEBUG_MODULE, ("R_RISCV_JUMP_SLOT: %x -> %x\n",where, *where));
+            LOG_D("R_RISCV_JUMP_SLOT: %x -> %x",where, *where);
             break;
         default:
-            RT_DEBUG_LOG(RT_DEBUG_MODULE, ("__riscv__ELF: invalid relocate TYPE %d\n", ELF64_R_TYPE(rel->r_info)));
+            LOG_D("__riscv__ELF: invalid relocate TYPE %d", ELF64_R_TYPE(rel->r_info));
             return -1;
     }
     return 0;

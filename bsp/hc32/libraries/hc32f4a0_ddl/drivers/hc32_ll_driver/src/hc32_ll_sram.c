@@ -6,9 +6,12 @@
    Change Logs:
    Date             Author          Notes
    2022-03-31       CDT             First version
+   2022-10-31       CDT             Deleted redundant comments
+   2023-06-30       CDT             API fixed: SRAM_ClearStatus()
+   2023-09-30       CDT             API fixed: SRAM_SetWaitCycle()
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -84,8 +87,6 @@
     ((x) == SRAM_ECC_MD1)                   ||                                 \
     ((x) == SRAM_ECC_MD2)                   ||                                 \
     ((x) == SRAM_ECC_MD3))
-
-/* Error injection */
 
 /**
  * @}
@@ -174,8 +175,8 @@ void SRAM_SetWaitCycle(uint32_t u32SramSel, uint32_t u32WriteCycle, uint32_t u32
 
     while (u32SramSel != 0UL) {
         if ((u32SramSel & 0x1UL) != 0UL) {
-            u8OfsWt = i * 8U;
-            u8OfsRd = u8OfsWt + 4U;
+            u8OfsRd = i * 8U;
+            u8OfsWt = u8OfsRd + 4U;
             MODIFY_REG32(CM_SRAMC->WTCR,
                          ((SRAM_CYCLE_MASK << u8OfsWt) | (SRAM_CYCLE_MASK << u8OfsRd)),
                          ((u32WriteCycle << u8OfsWt) | (u32ReadCycle << u8OfsRd)));
@@ -285,7 +286,7 @@ en_flag_status_t SRAM_GetStatus(uint32_t u32Flag)
 void SRAM_ClearStatus(uint32_t u32Flag)
 {
     DDL_ASSERT(IS_SRAM_FLAG(u32Flag));
-    SET_REG32_BIT(CM_SRAMC->CKSR, u32Flag);
+    WRITE_REG32(CM_SRAMC->CKSR, u32Flag);
 }
 
 /**
@@ -299,8 +300,8 @@ void SRAM_ClearStatus(uint32_t u32Flag)
  */
 
 /**
-* @}
-*/
+ * @}
+ */
 
 /******************************************************************************
  * EOF (not truncated)

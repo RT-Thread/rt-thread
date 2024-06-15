@@ -116,7 +116,15 @@
   #endif
  #endif
 #endif
-
+#if BSP_FEATURE_BSP_HAS_USB60_CLOCK_REQ
+ #define BSP_CLOCKS_USB60_CLOCK_DIV_1            (0) // Divide USB source clock by 1
+ #define BSP_CLOCKS_USB60_CLOCK_DIV_2            (1) // Divide USB source clock by 2
+ #define BSP_CLOCKS_USB60_CLOCK_DIV_3            (5) // Divide USB source clock by 3
+ #define BSP_CLOCKS_USB60_CLOCK_DIV_4            (2) // Divide USB source clock by 4
+ #define BSP_CLOCKS_USB60_CLOCK_DIV_5            (6) // Divide USB source clock by 5
+ #define BSP_CLOCKS_USB60_CLOCK_DIV_6            (3) // Divide USB source clock by 6
+ #define BSP_CLOCKS_USB60_CLOCK_DIV_8            (4) // Divide USB source clock by 8
+#endif /* BSP_FEATURE_BSP_HAS_USB60_CLOCK_REQ*/
 /* Choose the value to write to FLLCR2 (if applicable). */
 #if BSP_PRV_HOCO_USE_FLL
  #if 1U == BSP_CFG_HOCO_FREQUENCY
@@ -267,6 +275,24 @@
                                                      BSP_PRV_PLLCCR2_PLL_DIV_Q_BIT) |                    \
                                                     (BSP_CFG_PLODIVP & BSP_PRV_PLLCCR2_PLL_DIV_MASK))
  #endif
+ #if (4U == BSP_FEATURE_CGC_PLLCCR_TYPE)
+  #if BSP_CLOCKS_SOURCE_CLOCK_SUBCLOCK == BSP_CFG_PLL_SOURCE
+   #define BSP_PRV_PLL_USED                        (1)
+  #else
+   #define BSP_PRV_PLL_USED                        (0)
+  #endif
+
+  #define BSP_PRV_PLLCCR_PLLMUL_MASK               (0xFFU)   // PLLMUL is 8 bits wide
+  #define BSP_PRV_PLLCCR_PLLMUL_BIT                (8)       // PLLMUL starts at bit 8
+  #define BSP_PRV_PLSET_MASK                       (0x01U)   // PLSET is 1 bit wide
+  #define BSP_PRV_PLSET_BIT                        (6)       // PLSET starts at bit 6
+  #define BSP_PRV_PLLCCR_RESET                     (0x0008U) // Bit 3 must be written as 1
+  #define BSP_PRV_PLLCCR                           (((BSP_CFG_PLL_MUL & BSP_PRV_PLLCCR_PLLMUL_MASK) << \
+                                                     BSP_PRV_PLLCCR_PLLMUL_BIT) |                      \
+                                                    ((BSP_CFG_PLSET & BSP_PRV_PLSET_MASK) <<           \
+                                                     BSP_PRV_PLSET_BIT) |                              \
+                                                    BSP_PRV_PLLCCR_RESET
+ #endif
 #endif
 
 #if BSP_FEATURE_CGC_HAS_PLL2
@@ -338,13 +364,15 @@
  #define BSP_PRV_MAIN_OSC_USED                    (1)
 #elif defined(BSP_CFG_IICCLK_SOURCE) && (BSP_CFG_IICCLK_SOURCE == BSP_CLOCKS_SOURCE_CLOCK_MAIN_OSC)
  #define BSP_PRV_MAIN_OSC_USED                    (1)
+#elif defined(BSP_CFG_CECCLK_SOURCE) && (BSP_CFG_CECCLK_SOURCE == BSP_CLOCKS_SOURCE_CLOCK_MAIN_OSC)
+ #define BSP_PRV_MAIN_OSC_USED                    (1)
 #elif defined(BSP_CFG_I3CCLK_SOURCE) && (BSP_CFG_I3CCLK_SOURCE == BSP_CLOCKS_SOURCE_CLOCK_MAIN_OSC)
  #define BSP_PRV_MAIN_OSC_USED                    (1)
 #elif defined(BSP_CFG_ADCCLK_SOURCE) && (BSP_CFG_ADCCLK_SOURCE == BSP_CLOCKS_SOURCE_CLOCK_MAIN_OSC)
  #define BSP_PRV_MAIN_OSC_USED                    (1)
 #elif defined(BSP_CFG_LCDCLK_SOURCE) && (BSP_CFG_LCDCLK_SOURCE == BSP_CLOCKS_SOURCE_CLOCK_MAIN_OSC)
  #define BSP_PRV_MAIN_OSC_USED                    (1)
-#elif defined(BSP_CFG_UHSCLK_SOURCE) && (BSP_CFG_UHSCLK_SOURCE == BSP_CLOCKS_SOURCE_CLOCK_MAIN_OSC)
+#elif defined(BSP_CFG_U60CLK_SOURCE) && (BSP_CFG_U60CLK_SOURCE == BSP_CLOCKS_SOURCE_CLOCK_MAIN_OSC)
  #define BSP_PRV_MAIN_OSC_USED                    (1)
 #elif defined(BSP_CFG_OCTA_SOURCE) && (BSP_CFG_OCTA_SOURCE == BSP_CLOCKS_SOURCE_CLOCK_MAIN_OSC)
  #define BSP_PRV_MAIN_OSC_USED                    (1)
@@ -352,7 +380,7 @@
  #define BSP_PRV_MAIN_OSC_USED                    (0)
 #endif
 
-/* All clocks with configurable source can use HOCO except the I3CCLK. */
+/* All clocks with configurable source can use HOCO except the CECCLK and I3CCLK. */
 #if (BSP_CFG_CLOCK_SOURCE == BSP_CLOCKS_SOURCE_CLOCK_HOCO)
  #define BSP_PRV_HOCO_USED                        (1)
  #define BSP_PRV_STABILIZE_HOCO                   (1)
@@ -383,7 +411,7 @@
  #define BSP_PRV_HOCO_USED                        (1)
 #elif defined(BSP_CFG_LCDCLK_SOURCE) && (BSP_CFG_LCDCLK_SOURCE == BSP_CLOCKS_SOURCE_CLOCK_HOCO)
  #define BSP_PRV_HOCO_USED                        (1)
-#elif defined(BSP_CFG_UHSCLK_SOURCE) && (BSP_CFG_UHSCLK_SOURCE == BSP_CLOCKS_SOURCE_CLOCK_HOCO)
+#elif defined(BSP_CFG_U60CLK_SOURCE) && (BSP_CFG_U60CLK_SOURCE == BSP_CLOCKS_SOURCE_CLOCK_HOCO)
  #define BSP_PRV_HOCO_USED                        (1)
 #elif defined(BSP_CFG_OCTA_SOURCE) && (BSP_CFG_OCTA_SOURCE == BSP_CLOCKS_SOURCE_CLOCK_HOCO)
  #define BSP_PRV_HOCO_USED                        (1)
@@ -418,7 +446,7 @@
  #define BSP_PRV_MOCO_USED                        (1)
 #elif defined(BSP_CFG_LCDCLK_SOURCE) && (BSP_CFG_LCDCLK_SOURCE == BSP_CLOCKS_SOURCE_CLOCK_MOCO)
  #define BSP_PRV_MOCO_USED                        (1)
-#elif defined(BSP_CFG_UHSCLK_SOURCE) && (BSP_CFG_UHSCLK_SOURCE == BSP_CLOCKS_SOURCE_CLOCK_MOCO)
+#elif defined(BSP_CFG_U60CLK_SOURCE) && (BSP_CFG_U60CLK_SOURCE == BSP_CLOCKS_SOURCE_CLOCK_MOCO)
  #define BSP_PRV_MOCO_USED                        (1)
 #elif defined(BSP_CFG_OCTA_SOURCE) && (BSP_CFG_OCTA_SOURCE == BSP_CLOCKS_SOURCE_CLOCK_MOCO)
  #define BSP_PRV_MOCO_USED                        (1)
@@ -476,8 +504,10 @@
     (BSP_FEATURE_BSP_HAS_SPI_CLOCK && (BSP_CFG_SPICLK_SOURCE != BSP_CLOCKS_CLOCK_DISABLED)) ||       \
     (BSP_FEATURE_BSP_HAS_GPT_CLOCK && (BSP_CFG_GPTCLK_SOURCE != BSP_CLOCKS_CLOCK_DISABLED)) ||       \
     (BSP_FEATURE_BSP_HAS_IIC_CLOCK && (BSP_CFG_IICCLK_SOURCE != BSP_CLOCKS_CLOCK_DISABLED)) ||       \
+    (BSP_FEATURE_BSP_HAS_CEC_CLOCK && (BSP_CFG_CECCLK_SOURCE != BSP_CLOCKS_CLOCK_DISABLED)) ||       \
     (BSP_FEATURE_BSP_HAS_I3C_CLOCK && (BSP_CFG_I3CCLK_SOURCE != BSP_CLOCKS_CLOCK_DISABLED)) ||       \
     (BSP_FEATURE_BSP_HAS_ADC_CLOCK && (BSP_CFG_ADCCLK_SOURCE != BSP_CLOCKS_CLOCK_DISABLED)) ||       \
+    (BSP_FEATURE_BSP_HAS_USB60_CLOCK_REQ && (BSP_CFG_U60CK_SOURCE != BSP_CLOCKS_CLOCK_DISABLED)) ||  \
     (BSP_FEATURE_BSP_HAS_LCD_CLOCK && (BSP_CFG_LCDCLK_SOURCE != BSP_CLOCKS_CLOCK_DISABLED))
 
  #define BSP_PRV_HAS_ENABLED_PERIPHERAL_CLOCKS    (1U)
@@ -1132,6 +1162,8 @@ static void bsp_clock_freq_var_init (void)
     g_clock_freq[BSP_CLOCKS_SOURCE_CLOCK_PLL]   = BSP_CFG_PLL1P_FREQUENCY_HZ;
     g_clock_freq[BSP_CLOCKS_SOURCE_CLOCK_PLL1Q] = BSP_CFG_PLL1Q_FREQUENCY_HZ;
     g_clock_freq[BSP_CLOCKS_SOURCE_CLOCK_PLL1R] = BSP_CFG_PLL1R_FREQUENCY_HZ;
+ #elif (4U == BSP_FEATURE_CGC_PLLCCR_TYPE)
+    g_clock_freq[BSP_CLOCKS_SOURCE_CLOCK_PLL] = (g_clock_freq[BSP_CFG_PLL_SOURCE] * (BSP_CFG_PLL_MUL + 1U)) >> 1U;
  #else
     g_clock_freq[BSP_CLOCKS_SOURCE_CLOCK_PLL] = ((g_clock_freq[BSP_CFG_PLL_SOURCE] * (BSP_CFG_PLL_MUL + 1U)) >> 1U) >>
                                                 BSP_CFG_PLL_DIV;
@@ -1583,6 +1615,11 @@ void bsp_clock_init (void)
     bsp_peripheral_clock_set(&R_SYSTEM->IICCKCR, &R_SYSTEM->IICCKDIVCR, BSP_CFG_IICCLK_DIV, BSP_CFG_IICCLK_SOURCE);
 #endif
 
+    /* Set the CEC clock if it exists on the MCU */
+#if BSP_FEATURE_BSP_HAS_CEC_CLOCK && (BSP_CFG_CECCLK_SOURCE != BSP_CLOCKS_CLOCK_DISABLED)
+    bsp_peripheral_clock_set(&R_SYSTEM->CECCKCR, &R_SYSTEM->CECCKDIVCR, BSP_CFG_CECCLK_DIV, BSP_CFG_CECCLK_SOURCE);
+#endif
+
     /* Set the I3C clock if it exists on the MCU */
 #if BSP_FEATURE_BSP_HAS_I3C_CLOCK && (BSP_CFG_I3CCLK_SOURCE != BSP_CLOCKS_CLOCK_DISABLED)
     bsp_peripheral_clock_set(&R_SYSTEM->I3CCKCR, &R_SYSTEM->I3CCKDIVCR, BSP_CFG_I3CCLK_DIV, BSP_CFG_I3CCLK_SOURCE);
@@ -1599,8 +1636,8 @@ void bsp_clock_init (void)
 #endif
 
     /* Set the USB-HS clock if it exists on the MCU */
-#if BSP_FEATURE_BSP_HAS_USBHS_CLOCK && (BSP_CFG_UHSCK_SOURCE != BSP_CLOCKS_CLOCK_DISABLED)
-    bsp_peripheral_clock_set(&R_SYSTEM->USBHSCKCR, &R_SYSTEM->USBHSCKDIVCR, BSP_CFG_UHSCK_DIV, BSP_CFG_UHSCK_SOURCE);
+#if BSP_FEATURE_BSP_HAS_USB60_CLOCK_REQ && (BSP_CFG_U60CK_SOURCE != BSP_CLOCKS_CLOCK_DISABLED)
+    bsp_peripheral_clock_set(&R_SYSTEM->USB60CKCR, &R_SYSTEM->USB60CKDIVCR, BSP_CFG_U60CK_DIV, BSP_CFG_U60CK_SOURCE);
 #endif
 
     /* Lock CGC and LPM protection registers. */

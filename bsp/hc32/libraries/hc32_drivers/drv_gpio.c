@@ -1,12 +1,12 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
- * Copyright (c) 2022, Xiaohua Semiconductor Co., Ltd.
+ * Copyright (C) 2022-2024, Xiaohua Semiconductor Co., Ltd.
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
  * 2022-04-28     CDT          first version
+ * 2023-10-09     CDT          support HC32F448
  */
 
 #include <rtthread.h>
@@ -14,7 +14,9 @@
 #include "drv_gpio.h"
 #include "board_config.h"
 
-#ifdef RT_USING_PIN
+#if defined(RT_USING_PIN)
+
+#if defined(BSP_USING_GPIO)
 
 #define GPIO_PIN_INDEX(pin)             ((uint8_t)((pin) & 0x0F))
 #define PIN_NUM(port, pin)              (((((port) & 0x0F) << 4) | ((pin) & 0x0F)))
@@ -25,6 +27,10 @@
     #define PIN_MAX_NUM                     ((GPIO_PORT_I * 16) + (__CLZ(__RBIT(GPIO_PIN_13))) + 1)
 #elif defined (HC32F460)
     #define PIN_MAX_NUM                     ((GPIO_PORT_H * 16) + (__CLZ(__RBIT(GPIO_PIN_02))) + 1)
+#elif defined (HC32F448)
+    #define PIN_MAX_NUM                     ((GPIO_PORT_H * 16) + (__CLZ(__RBIT(GPIO_PIN_02))) + 1)
+#elif defined (HC32F472)
+    #define PIN_MAX_NUM                     ((GPIO_PORT_F * 16) + (__CLZ(__RBIT(GPIO_PIN_08))) + 1)
 #endif
 
 #define ITEM_NUM(items)                 sizeof(items) / sizeof(items[0])
@@ -222,7 +228,7 @@ static void extint15_irq_handler(void)
     rt_interrupt_leave();
 }
 
-static void hc32_pin_mode(struct rt_device *device, rt_base_t pin, rt_base_t mode)
+static void hc32_pin_mode(struct rt_device *device, rt_base_t pin, rt_uint8_t mode)
 {
     stc_gpio_init_t stcGpioInit;
 
@@ -248,6 +254,9 @@ static void hc32_pin_mode(struct rt_device *device, rt_base_t pin, rt_base_t mod
     case PIN_MODE_INPUT_PULLDOWN:
         stcGpioInit.u16PinDir   = PIN_DIR_IN;
         stcGpioInit.u16PullUp   = PIN_PU_OFF;
+#if defined (HC32F448) || defined (HC32F472)
+        stcGpioInit.u16PullDown = PIN_PD_ON;
+#endif
         break;
     case PIN_MODE_OUTPUT_OD:
         stcGpioInit.u16PinDir        = PIN_DIR_OUT;
@@ -259,7 +268,7 @@ static void hc32_pin_mode(struct rt_device *device, rt_base_t pin, rt_base_t mod
     GPIO_Init(GPIO_PORT(pin), GPIO_PIN(pin), &stcGpioInit);
 }
 
-static void hc32_pin_write(struct rt_device *device, rt_base_t pin, rt_base_t value)
+static void hc32_pin_write(struct rt_device *device, rt_base_t pin, rt_uint8_t value)
 {
     uint8_t  gpio_port;
     uint16_t gpio_pin;
@@ -279,7 +288,7 @@ static void hc32_pin_write(struct rt_device *device, rt_base_t pin, rt_base_t va
     }
 }
 
-static int hc32_pin_read(struct rt_device *device, rt_base_t pin)
+static rt_ssize_t hc32_pin_read(struct rt_device *device, rt_base_t pin)
 {
     uint8_t  gpio_port;
     uint16_t gpio_pin;
@@ -298,12 +307,16 @@ static int hc32_pin_read(struct rt_device *device, rt_base_t pin)
             value = PIN_HIGH;
         }
     }
+    else
+    {
+        return -RT_EINVAL;
+    }
 
     return value;
 }
 
-static rt_err_t hc32_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
-                                    rt_uint32_t mode, void (*hdr)(void *args), void *args)
+static rt_err_t hc32_pin_attach_irq(struct rt_device *device, rt_base_t pin,
+                                    rt_uint8_t mode, void (*hdr)(void *args), void *args)
 {
     rt_base_t level;
     rt_int32_t irqindex = -1;
@@ -341,7 +354,7 @@ static rt_err_t hc32_pin_attach_irq(struct rt_device *device, rt_int32_t pin,
     return RT_EOK;
 }
 
-static rt_err_t hc32_pin_detach_irq(struct rt_device *device, rt_int32_t pin)
+static rt_err_t hc32_pin_detach_irq(struct rt_device *device, rt_base_t pin)
 {
     rt_base_t level;
     rt_int32_t irqindex = -1;
@@ -381,7 +394,7 @@ static void gpio_irq_config(uint8_t u8Port, uint16_t u16Pin, uint16_t u16ExInt)
     MODIFY_REG16(*PCRx, GPIO_PCR_INTE, u16ExInt);
 }
 
-static rt_err_t hc32_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_uint32_t enabled)
+static rt_err_t hc32_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_uint8_t enabled)
 {
     struct hc32_pin_irq_map *irq_map;
     rt_base_t level;
@@ -503,6 +516,7 @@ int rt_hw_pin_init(void)
 
     return rt_device_pin_register("pin", &hc32_pin_ops, RT_NULL);
 }
-INIT_BOARD_EXPORT(rt_hw_pin_init);
+
+#endif
 
 #endif  /* RT_USING_PIN */

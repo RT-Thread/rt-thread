@@ -47,6 +47,20 @@ void dfs_vnode_mgr_init(void)
     }
 }
 
+int dfs_vnode_init(struct dfs_vnode *vnode, int type, const struct dfs_file_ops *fops)
+{
+    if (vnode)
+    {
+        rt_memset(vnode, 0, sizeof(struct dfs_vnode));
+        vnode->type = type;
+        vnode->fops = fops;
+
+        rt_list_init(&(vnode->list));
+        vnode->ref_count = 1;
+    }
+    return 0;
+}
+
 /* BKDR Hash Function */
 static unsigned int bkdr_hash(const char *str)
 {
@@ -295,13 +309,6 @@ int dfs_file_close(struct dfs_file *fd)
             result = vnode->fops->close(fd);
         }
 
-        /* close fd error, return */
-        if (result < 0)
-        {
-            dfs_fm_unlock();
-            return result;
-        }
-
         if (vnode->ref_count == 1)
         {
             /* remove from hash */
@@ -375,7 +382,7 @@ int dfs_file_ioctl(struct dfs_file *fd, int cmd, void *args)
  *
  * @return the actual read data bytes or 0 on end of file or failed.
  */
-int dfs_file_read(struct dfs_file *fd, void *buf, size_t len)
+ssize_t dfs_file_read(struct dfs_file *fd, void *buf, size_t len)
 {
     int result = 0;
 
@@ -489,7 +496,7 @@ __exit:
  *
  * @return the actual written data length.
  */
-int dfs_file_write(struct dfs_file *fd, const void *buf, size_t len)
+ssize_t dfs_file_write(struct dfs_file *fd, const void *buf, size_t len)
 {
     if (fd == NULL)
     {
@@ -530,7 +537,7 @@ int dfs_file_flush(struct dfs_file *fd)
  *
  * @return the current position after seek.
  */
-int dfs_file_lseek(struct dfs_file *fd, off_t offset)
+off_t dfs_file_lseek(struct dfs_file *fd, off_t offset)
 {
     int result;
 
@@ -577,39 +584,23 @@ int dfs_file_stat(const char *path, struct stat *buf)
         return -ENOENT;
     }
 
-    if ((fullpath[0] == '/' && fullpath[1] == '\0') ||
-        (dfs_subdir(fs->path, fullpath) == NULL))
+    if (fs->ops->stat == NULL)
     {
-        /* it's the root directory */
-        buf->st_dev   = 0;
-
-        buf->st_mode  = S_IRUSR | S_IRGRP | S_IROTH |
-                        S_IWUSR | S_IWGRP | S_IWOTH;
-        buf->st_mode |= S_IFDIR | S_IXUSR | S_IXGRP | S_IXOTH;
-
-        buf->st_size    = 0;
-        buf->st_mtime   = 0;
-
-        /* release full path */
         rt_free(fullpath);
+        LOG_E("the filesystem didn't implement this function");
 
-        return RT_EOK;
+        return -ENOSYS;
+    }
+    /* get the real file path and get file stat */
+    if (fs->ops->flags & DFS_FS_FLAG_FULLPATH)
+    {
+        result = fs->ops->stat(fs, fullpath, buf);
     }
     else
     {
-        if (fs->ops->stat == NULL)
-        {
-            rt_free(fullpath);
-            LOG_E("the filesystem didn't implement this function");
-
-            return -ENOSYS;
-        }
-
-        /* get the real file path and get file stat */
-        if (fs->ops->flags & DFS_FS_FLAG_FULLPATH)
-            result = fs->ops->stat(fs, fullpath, buf);
-        else
-            result = fs->ops->stat(fs, dfs_subdir(fs->path, fullpath), buf);
+        const char *subdir = dfs_subdir(fs->path, fullpath);
+        subdir = subdir ? subdir : "/";
+        result = fs->ops->stat(fs, subdir, buf);
     }
 
     rt_free(fullpath);
@@ -722,6 +713,7 @@ int dfs_file_ftruncate(struct dfs_file *fd, off_t length)
     return result;
 }
 
+#ifdef RT_USING_SMART
 int dfs_file_mmap2(struct dfs_file *fd, struct dfs_mmap2_args *mmap2)
 {
     int ret = 0;
@@ -745,6 +737,7 @@ int dfs_file_mmap2(struct dfs_file *fd, struct dfs_mmap2_args *mmap2)
 
     return ret;
 }
+#endif
 
 #ifdef RT_USING_FINSH
 #include <finsh.h>
@@ -888,7 +881,7 @@ static void copyfile(const char *src, const char *dst)
         return;
     }
     fd_init(&fd);
-    if (dfs_file_open(&fd, dst, O_WRONLY | O_CREAT) < 0)
+    if (dfs_file_open(&fd, dst, O_WRONLY | O_CREAT | O_TRUNC) < 0)
     {
         rt_free(block_ptr);
         dfs_file_close(&src_fd);

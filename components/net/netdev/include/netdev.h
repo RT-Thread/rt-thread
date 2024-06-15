@@ -67,6 +67,8 @@ enum netdev_cb_type
     NETDEV_CB_STATUS_INTERNET_DOWN,    /* changed to 'internet down' */
     NETDEV_CB_STATUS_DHCP_ENABLE,      /* enable DHCP capability */
     NETDEV_CB_STATUS_DHCP_DISABLE,     /* disable DHCP capability */
+    NETDEV_CB_REGISTER,                /* netdev register */
+    NETDEV_CB_DEFAULT_CHANGE,          /* netdev default change */
 };
 
 struct netdev;
@@ -109,7 +111,8 @@ struct netdev
 extern struct netdev *netdev_list;
 /* The default network interface device */
 extern struct netdev *netdev_default;
-
+/* The local virtual network device */
+extern struct netdev *netdev_lo;
 /* The network interface device ping response object */
 struct netdev_ping_resp
 {
@@ -134,7 +137,7 @@ struct netdev_ops
 
 #ifdef RT_USING_FINSH
     /* set network interface device common network interface device operations */
-    int (*ping)(struct netdev *netdev, const char *host, size_t data_len, uint32_t timeout, struct netdev_ping_resp *ping_resp);
+    int (*ping)(struct netdev *netdev, const char *host, size_t data_len, uint32_t timeout, struct netdev_ping_resp *ping_resp, rt_bool_t isbind);
     void (*netstat)(struct netdev *netdev);
 #endif
 
@@ -157,6 +160,7 @@ int netdev_family_get(struct netdev *netdev);
 
 /* Set default network interface device in list */
 void netdev_set_default(struct netdev *netdev);
+void netdev_set_default_change_callback(netdev_callback_fn register_callback);
 
 /*  Set network interface device status */
 int netdev_set_up(struct netdev *netdev);
@@ -176,6 +180,7 @@ int netdev_set_gw(struct netdev *netdev, const ip_addr_t *gw);
 int netdev_set_dns_server(struct netdev *netdev, uint8_t dns_num, const ip_addr_t *dns_server);
 
 /* Set network interface device callback, it can be called when the status or address changed */
+void netdev_set_register_callback(netdev_callback_fn status_callback);
 void netdev_set_status_callback(struct netdev *netdev, netdev_callback_fn status_callback);
 void netdev_set_addr_callback(struct netdev *netdev, netdev_callback_fn addr_callback);
 

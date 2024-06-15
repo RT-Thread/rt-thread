@@ -8,17 +8,16 @@
  * Change Logs:
  * Date        Author       Notes
  * 2022-10-26  huanghe      first commit
- *
+ * 2023-04-27  huanghe      support RT-Smart
  */
 
+#include "rtconfig.h"
+
 #include "board.h"
+#include <mmu.h>
 #include "drv_usart.h"
 #include "interrupt.h"
 #include "fpl011.h"
-#include "rtconfig.h"
-#include "fprintk.h"
-
-#ifdef RT_USING_SERIAL
 
 extern u32 FUart_GetInterruptMask(FPl011 *uart_ptr);
 
@@ -41,6 +40,10 @@ static rt_err_t uart_configure(struct rt_serial_device *serial, struct serial_co
     uart = rt_container_of(serial, struct drv_usart, serial);
     uart_hw = uart->handle;
     config = *(const FPl011Config *)FPl011LookupConfig(uart->config.uart_instance);
+
+#ifdef RT_USING_SMART
+    config.base_address = (uintptr)rt_ioremap((void *)config.base_address, 0x1000);
+#endif
 
     RT_ASSERT(FPl011CfgInitialize(uart_hw, &config) == FT_SUCCESS);
     FPl011SetHandler(uart_hw, Ft_Os_Uart_Callback, serial);
@@ -71,15 +74,15 @@ static rt_err_t uart_control(struct rt_serial_device *serial, int cmd, void *arg
 
     switch (cmd)
     {
-    case RT_DEVICE_CTRL_CLR_INT:
-        /* disable rx irq */
-        rt_hw_interrupt_mask(uart_ptr->config.irq_num);
-        break;
+        case RT_DEVICE_CTRL_CLR_INT:
+            /* disable rx irq */
+            rt_hw_interrupt_mask(uart_ptr->config.irq_num);
+            break;
 
-    case RT_DEVICE_CTRL_SET_INT:
-        /* enable rx irq */
-        rt_hw_interrupt_umask(uart_ptr->config.irq_num);
-        break;
+        case RT_DEVICE_CTRL_SET_INT:
+            /* enable rx irq */
+            rt_hw_interrupt_umask(uart_ptr->config.irq_num);
+            break;
     }
 
     return RT_EOK;
@@ -92,7 +95,9 @@ static void Ft_Os_Uart_Callback(void *Args, u32 Event, u32 EventData)
     if (FPL011_EVENT_RECV_DATA == Event || FPL011_EVENT_RECV_TOUT == Event)
     {
         if (serial->serial_rx)
+        {
             rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_IND);
+        }
     }
     else if (FPL011_EVENT_RECV_ERROR == Event)
     {
@@ -129,13 +134,13 @@ static int uart_putc(struct rt_serial_device *serial, char c)
     return 1;
 }
 
-u8 FPl011RecvByteNoBlocking(u32 addr)
+u32 FPl011RecvByteNoBlocking(uintptr addr)
 {
     u32 recieved_byte;
 
-    while (FUART_ISRECEIVEDATA(addr))
+    while (FUART_RECEIVEDATAEMPTY(addr))
     {
-        return 0xff;
+        return 0xffff;
     }
     recieved_byte = FUART_READREG32(addr, FPL011DR_OFFSET);
     return recieved_byte;
@@ -152,14 +157,13 @@ static int uart_getc(struct rt_serial_device *serial)
     uart_ptr = uart->handle;
 
     ch = FPl011RecvByteNoBlocking(uart_ptr->config.base_address);
-    if (ch == 0xff)
+    if (ch == 0xffff)
     {
         ch = -1;
-        rt_kprintf("") ;
     }
     else
     {
-        //
+        ch &= 0xff;
     }
 
     return ch;
@@ -174,60 +178,60 @@ static const struct rt_uart_ops _uart_ops =
     NULL
 };
 
-#define RT_USING_UART0
-#define RT_USING_UART1
+static int uart_init(struct drv_usart *uart_dev)
+{
+    struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT;
 
+    config.bufsz = RT_SERIAL_RB_BUFSZ;
+    uart_dev->serial.ops = &_uart_ops;
+    uart_dev->serial.config = config;
+
+    uart_dev->config.isr_priority = 0xd0;
+    uart_dev->config.isr_event_mask = (RTOS_UART_ISR_OEIM_MASK | RTOS_UART_ISR_BEIM_MASK | RTOS_UART_ISR_PEIM_MASK | RTOS_UART_ISR_FEIM_MASK | RTOS_UART_ISR_RTIM_MASK | RTOS_UART_ISR_RXIM_MASK);
+    uart_dev->config.uart_baudrate = 115200;
+
+    rt_hw_serial_register(&uart_dev->serial, uart_dev->name,
+                          RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
+                          uart_dev);
+
+    return 0;
+}
 
 #ifdef RT_USING_UART0
     static FPl011 Ft_Uart0;
-    static struct drv_usart _RtUart0;
+    static struct drv_usart drv_uart0;
 #endif
-
 #ifdef RT_USING_UART1
     static FPl011 Ft_Uart1;
-    static struct drv_usart _RtUart1;
+    static struct drv_usart drv_uart1;
+#endif
+#ifdef RT_USING_UART2
+    static FPl011 Ft_Uart2;
+    static struct drv_usart drv_uart2;
 #endif
 
 int rt_hw_uart_init(void)
 {
-    struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT;
 
 #ifdef RT_USING_UART0
-    config.bufsz = RT_SERIAL_RB_BUFSZ;
-    _RtUart0.serial.ops = &_uart_ops;
-    _RtUart0.serial.config = config;
-    // Ft_Uart0.config.instance_id = FUART0_ID;
-
-    _RtUart0.handle = &Ft_Uart0;
-    _RtUart0.config.uart_instance = FUART0_ID;
-    _RtUart0.config.isr_priority = 0xd0;
-    _RtUart0.config.isr_event_mask = (RTOS_UART_ISR_OEIM_MASK | RTOS_UART_ISR_BEIM_MASK | RTOS_UART_ISR_PEIM_MASK | RTOS_UART_ISR_FEIM_MASK | RTOS_UART_ISR_RTIM_MASK | RTOS_UART_ISR_RXIM_MASK);
-    _RtUart0.config.uart_baudrate = 115200;
-
-    rt_hw_serial_register(&_RtUart0.serial, "uart0",
-                          RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
-                          &_RtUart0);
+    drv_uart0.name = "uart0";
+    drv_uart0.handle = &Ft_Uart0;
+    drv_uart0.config.uart_instance = FUART0_ID;
+    uart_init(&drv_uart0);
 #endif
-
 #ifdef RT_USING_UART1
-    config.bufsz = RT_SERIAL_RB_BUFSZ;
-    _RtUart1.serial.ops = &_uart_ops;
-    _RtUart1.serial.config = config;
-    // Ft_Uart1.config.instance_id = FUART1_ID;
-    _RtUart1.handle = &Ft_Uart1;
-
-    _RtUart1.config.uart_instance = FUART1_ID;
-    _RtUart1.config.isr_priority = 0xd0;
-    _RtUart1.config.isr_event_mask = (RTOS_UART_ISR_OEIM_MASK | RTOS_UART_ISR_BEIM_MASK | RTOS_UART_ISR_PEIM_MASK | RTOS_UART_ISR_FEIM_MASK | RTOS_UART_ISR_RTIM_MASK | RTOS_UART_ISR_RXIM_MASK);
-    _RtUart1.config.uart_baudrate = 115200;
-
-    rt_hw_serial_register(&_RtUart1.serial, "uart1",
-                          RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
-                          &_RtUart1);
+    drv_uart1.name = "uart1";
+    drv_uart1.handle = &Ft_Uart1;
+    drv_uart1.config.uart_instance = FUART1_ID;
+    uart_init(&drv_uart1);
+#endif
+#ifdef RT_USING_UART2
+    drv_uart2.name = "uart2";
+    drv_uart2.handle = &Ft_Uart2;
+    drv_uart2.config.uart_instance = FUART2_ID;
+    uart_init(&drv_uart2);
 #endif
 
     return 0;
 }
 INIT_BOARD_EXPORT(rt_hw_uart_init);
-
-#endif /* RT_USING_SERIAL */

@@ -19,4 +19,8 @@ void msh_auto_complete(char *prefix);
 int msh_exec_module(const char *cmd_line, int size);
 int msh_exec_script(const char *cmd_line, int size);
 
+#ifdef FINSH_USING_OPTION_COMPLETION
+void msh_opt_auto_complete(char *prefix);
+
+#endif /* FINSH_USING_OPTION_COMPLETION */
 #endif

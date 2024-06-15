@@ -9,7 +9,8 @@
  * 2019-04-09     WillianChan  add stm32f103-dofly-M3S BSP
  */
 
-#include "board.h"
+#include <board.h>
+#include <drv_common.h>
 
 void SystemClock_Config(void)
 {

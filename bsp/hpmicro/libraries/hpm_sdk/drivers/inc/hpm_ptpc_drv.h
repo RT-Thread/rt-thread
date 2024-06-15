@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 hpmicro
+ * Copyright (c) 2021 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -290,7 +290,7 @@ static inline uint32_t ptpc_get_capture_second(PTPC_Type *ptr, uint8_t index)
  */
 static inline void ptpc_clear_irq_status(PTPC_Type *ptr, uint32_t mask)
 {
-    ptr->INT_STS |= mask;
+    ptr->INT_STS = mask;
 }
 
 /**

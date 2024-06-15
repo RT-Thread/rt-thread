@@ -1,7 +1,7 @@
 from building import *
 
 cwd = GetCurrentDir()
-src = []
+src = ['drv_common.c']
 path =  [cwd]
 
 if  GetDepend('SOC_RISCV_FAMILY_CH32'):
@@ -18,6 +18,9 @@ if  GetDepend('SOC_RISCV_FAMILY_CH32'):
     if GetDepend('BSP_USING_DAC'):
         src += ['drv_dac.c']
 
+    if GetDepend('BSP_USING_I2C'):
+        src += ['drv_i2c.c']
+
     if GetDepend('BSP_USING_SOFT_I2C'):
         src += ['drv_soft_i2c.c']
 
@@ -26,6 +29,12 @@ if  GetDepend('SOC_RISCV_FAMILY_CH32'):
 
     if GetDepend('BSP_USING_RTC'):
         src += ['drv_rtc.c']
+
+    if GetDepend('BSP_USING_USBH'):
+        src += ['drv_usbh.c']
+
+    if GetDepend('BSP_USING_USBD'):
+        src += ['drv_usbd.c']
 
     if GetDepend('BSP_USING_IWDT'):
         src += ['drv_iwdt.c']

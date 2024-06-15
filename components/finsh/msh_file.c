@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -18,6 +18,13 @@
 #include <dfs_file.h>
 #include <unistd.h>
 #include <fcntl.h>
+#ifdef RT_USING_DFS_V2
+#include <dfs_mnt.h>
+#endif
+
+#ifdef RT_USING_SMART
+#include "lwp.h"
+#endif /* RT_USING_SMART */
 
 static int msh_readline(int fd, char *line_buf, int size)
 {
@@ -156,7 +163,11 @@ static int cmd_ls(int argc, char **argv)
     if (argc == 1)
     {
 #ifdef DFS_USING_WORKDIR
+#ifdef RT_USING_SMART
+        ls(lwp_getcwd());
+#else
         ls(working_directory);
+#endif
 #else
         ls("/");
 #endif
@@ -169,6 +180,46 @@ static int cmd_ls(int argc, char **argv)
     return 0;
 }
 MSH_CMD_EXPORT_ALIAS(cmd_ls, ls, List information about the FILEs.);
+
+#ifdef RT_USING_DFS_V2
+static int cmd_ln(int argc, char **argv)
+{
+    if (argc < 3)
+    {
+        rt_kprintf("Usage: ln target link_name\n");
+        rt_kprintf("Make symbolic link between files.\n");
+    }
+    else
+    {
+        for(int i = 0; i + 3 <= argc; i ++)
+        {
+            dfs_file_symlink(argv[1], argv[2 + i]);
+        }
+    }
+
+    return 0;
+}
+MSH_CMD_EXPORT_ALIAS(cmd_ln, ln, Make symbolic link between files);
+
+static int cmd_link(int argc, char **argv)
+{
+    if (argc < 3)
+    {
+        rt_kprintf("Usage: link target link_name\n");
+        rt_kprintf("Make link between files.\n");
+    }
+    else
+    {
+        for(int i = 0; i + 3 <= argc; i ++)
+        {
+            dfs_file_link(argv[1], argv[2 + i]);
+        }
+    }
+
+    return 0;
+}
+MSH_CMD_EXPORT_ALIAS(cmd_link, link, Make link between files);
+#endif
 
 static int cmd_cp(int argc, char **argv)
 {
@@ -300,8 +351,13 @@ static void directory_delete_for_msh(const char *pathname, char f, char v)
         if (rt_strcmp(".", dirent->d_name) != 0 &&
                 rt_strcmp("..", dirent->d_name) != 0)
         {
+            if (strlen(pathname) + 1 + strlen(dirent->d_name) > DFS_PATH_MAX)
+            {
+                rt_kprintf("cannot remove '%s/%s', path too long.\n", pathname, dirent->d_name);
+                continue;
+            }
             rt_sprintf(full_path, "%s/%s", pathname, dirent->d_name);
-            if (dirent->d_type == DT_REG)
+            if (dirent->d_type != DT_DIR)
             {
                 if (unlink(full_path) != 0)
                 {
@@ -313,7 +369,7 @@ static void directory_delete_for_msh(const char *pathname, char f, char v)
                     rt_kprintf("removed '%s'\n", full_path);
                 }
             }
-            else if (dirent->d_type == DT_DIR)
+            else
             {
                 directory_delete_for_msh(full_path, f, v);
             }
@@ -321,7 +377,7 @@ static void directory_delete_for_msh(const char *pathname, char f, char v)
     }
     closedir(dir);
     rt_free(full_path);
-    if (unlink(pathname) != 0)
+    if (rmdir(pathname) != 0)
     {
         if (f == 0)
             rt_kprintf("cannot remove '%s'\n", pathname);
@@ -373,16 +429,20 @@ static int cmd_rm(int argc, char **argv)
     for (index = 1; index < argc; index ++)
     {
         struct stat s;
+#ifdef RT_USING_DFS_V2
+        if (dfs_file_lstat(argv[index], &s) == 0)
+#else
         if (stat(argv[index], &s) == 0)
+#endif
         {
-            if (s.st_mode & S_IFDIR)
+            if (S_ISDIR(s.st_mode))
             {
                 if (r == 0)
                     rt_kprintf("cannot remove '%s': Is a directory\n", argv[index]);
                 else
                     directory_delete_for_msh(argv[index], f, v);
             }
-            else if (s.st_mode & S_IFREG)
+            else
             {
                 if (unlink(argv[index]) != 0)
                 {
@@ -479,8 +539,6 @@ static int cmd_mkfs(int argc, char **argv)
 }
 MSH_CMD_EXPORT_ALIAS(cmd_mkfs, mkfs, format disk with file system);
 
-extern struct dfs_filesystem filesystem_table[];
-
 /*
  * If no argument is specified, display the mount history;
  * If there are 3 arguments, mount the filesystem.
@@ -493,6 +551,14 @@ static int cmd_mount(int argc, char **argv)
 {
     if (argc == 1)
     {
+#ifdef RT_USING_DFS_V2
+        /* display the mount history */
+        rt_kprintf("filesystem  device  mountpoint  refcount\n");
+        rt_kprintf("----------  ------  ----------  --------\n");
+
+        dfs_mnt_list(RT_NULL);
+#else
+        extern struct dfs_filesystem filesystem_table[];
         struct dfs_filesystem *iter;
 
         /* display the mount history */
@@ -507,6 +573,7 @@ static int cmd_mount(int argc, char **argv)
                            iter->ops->name, iter->dev_id->parent.name, iter->path);
             }
         }
+#endif
         return 0;
     }
     else if (argc == 4)
@@ -564,6 +631,7 @@ MSH_CMD_EXPORT_ALIAS(cmd_mount, mount, mount <device> <mountpoint> <fstype>);
 /* unmount the filesystem from the specified mountpoint */
 static int cmd_umount(int argc, char **argv)
 {
+#ifndef RT_USING_DFS_V2
     char *path = argv[1];
 
     if (argc != 2)
@@ -583,12 +651,42 @@ static int cmd_umount(int argc, char **argv)
         rt_kprintf("succeed!\n");
         return 0;
     }
+#else
+    int flags = 0;
+    char *path = argv[1];
+
+    if (argc < 2)
+    {
+        rt_kprintf("Usage: unmount [-f] <mountpoint>.\n");
+        return -1;
+    }
+
+    if (argc > 2)
+    {
+        flags = strcmp(argv[1], "-f") == 0 ? MNT_FORCE : 0;
+        path  = argv[2];
+    }
+
+    rt_kprintf("unmount %s ... ", path);
+    if (dfs_umount(path, flags) < 0)
+    {
+        rt_kprintf("failed!\n");
+        return -1;
+    }
+    else
+    {
+        rt_kprintf("succeed!\n");
+        return 0;
+    }
+#endif
 }
 MSH_CMD_EXPORT_ALIAS(cmd_umount, umount, Unmount the mountpoint);
 
-extern int df(const char *path);
 static int cmd_df(int argc, char **argv)
 {
+#ifndef RT_USING_DFS_V2
+    extern int df(const char *path);
+
     if (argc != 2)
     {
         df("/");
@@ -604,6 +702,7 @@ static int cmd_df(int argc, char **argv)
             df(argv[1]);
         }
     }
+#endif
 
     return 0;
 }
@@ -741,5 +840,305 @@ static int cmd_tail(int argc, char **argv)
     return 0;
 }
 MSH_CMD_EXPORT_ALIAS(cmd_tail, tail, print the last N - lines data of the given file);
+
+#ifdef RT_USING_DFS_V2
+
+static void directory_setattr(const char *pathname, struct dfs_attr *attr, char f, char v)
+{
+    DIR *dir = NULL;
+    struct dirent *dirent = NULL;
+    char *full_path;
+
+    if (pathname == RT_NULL)
+        return;
+
+    full_path = (char *)rt_malloc(DFS_PATH_MAX);
+    if (full_path == RT_NULL)
+        return;
+
+    dir = opendir(pathname);
+    if (dir == RT_NULL)
+    {
+        if (f == 0)
+        {
+            rt_kprintf("cannot open '%s'\n", pathname);
+        }
+        rt_free(full_path);
+        return;
+    }
+
+    while (1)
+    {
+        dirent = readdir(dir);
+        if (dirent == RT_NULL)
+            break;
+        if (rt_strcmp(".", dirent->d_name) != 0 &&
+            rt_strcmp("..", dirent->d_name) != 0)
+        {
+            if (strlen(pathname) + 1 + strlen(dirent->d_name) > DFS_PATH_MAX)
+            {
+                rt_kprintf("'%s/%s' setattr failed, path too long.\n", pathname, dirent->d_name);
+                continue;
+            }
+            rt_sprintf(full_path, "%s/%s", pathname, dirent->d_name);
+            if (dirent->d_type == DT_REG)
+            {
+                if (dfs_file_setattr(full_path, attr) != 0)
+                {
+                    if (f == 0)
+                    {
+                        rt_kprintf("'%s' setattr failed, no such file or directory\n", full_path);
+                    }
+                }
+                else if (v)
+                {
+                    rt_kprintf("'%s' setattr 0x%X\n", full_path, attr->st_mode);
+                }
+            }
+            else if (dirent->d_type == DT_DIR)
+            {
+                directory_setattr(full_path, attr, f, v);
+            }
+        }
+    }
+    closedir(dir);
+    rt_free(full_path);
+    if (dfs_file_setattr(pathname, attr) != 0)
+    {
+        if (f == 0)
+        {
+            rt_kprintf("'%s' setattr failed, no such file or directory\n", pathname);
+        }
+    }
+    else if (v)
+    {
+        rt_kprintf("'%s' setattr 0x%X\n", pathname, attr->st_mode);
+    }
+}
+
+static int cmd_chmod(int argc, char **argv)
+{
+    if (argc < 3)
+    {
+        rt_kprintf("Usage: chmod [OPTION]... MODE[,MODE]... FILE...\n");
+        rt_kprintf("  chmod [-f|v|r] [u|g|o|a][+/-/=][r|w|x] file...\n");
+        rt_kprintf("  -f  suppress most error messages\n");
+        rt_kprintf("  -v  output a diagnostic for every file processed\n");
+        rt_kprintf("  -r  change files and directories recursively\n");
+        rt_kprintf("Change the mode of each FILE to MODE.\n");
+    }
+    else
+    {
+        int argv_c = 1;
+        char f = 0, r = 0, v = 0;
+
+        if (argv[argv_c][0] == '-')
+        {
+            for (int i = 1; argv[argv_c][i]; i++)
+            {
+                switch (argv[argv_c][i])
+                {
+                case 'f':
+                    f = 1;
+                    break;
+                case 'r':
+                    r = 1;
+                    break;
+                case 'v':
+                    v = 1;
+                    break;
+                default:
+                    rt_kprintf("Error: Bad option: %c\n", argv[argv_c][i]);
+                    return 0;
+                }
+            }
+            argv_c++;
+        }
+
+        if (argc - argv_c > 1)
+        {
+            int U = 1, G = 2, O = 4, ALL = 7;
+            int off[5] = {0, 6, 3, 0, 0};
+            int ADD = 1, SUB = 2, SET = 4;
+            int R = 4, W = 2, X = 1;
+            int user[3] = {0}, change[3] = {0}, mode[3] = {0};
+            struct dfs_attr attr;
+            char *cmd = argv[argv_c];
+            int index = 0, num = 0;
+
+            while (cmd[index] != '\0')
+            {
+                switch (cmd[index])
+                {
+                case 'u':
+                    user[num] |= U;
+                    break;
+                case 'g':
+                    user[num] |= G;
+                    break;
+                case 'o':
+                    user[num] |= O;
+                    break;
+                case 'a':
+                    user[num] |= ALL;
+                    break;
+                case ',':
+                    if (num < 2)
+                        num++;
+                    break;
+                }
+                index++;
+            }
+
+            index = 0;
+            num = 0;
+
+            while (cmd[index] != '\0')
+            {
+                switch (cmd[index])
+                {
+                case '+':
+                    change[num] = ADD;
+                    break;
+                case '-':
+                    change[num] = SUB;
+                    break;
+                case '=':
+                    change[num] = SET;
+                    break;
+                case ',':
+                    if (num < 2)
+                        num++;
+                    break;
+                }
+                index++;
+            }
+
+            index = 0;
+            num = 0;
+
+            while (cmd[index] != '\0')
+            {
+                switch (cmd[index])
+                {
+                case 'r':
+                    mode[num] |= R;
+                    break;
+                case 'w':
+                    mode[num] |= W;
+                    break;
+                case 'x':
+                    mode[num] |= X;
+                    break;
+                case ',':
+                    if (num < 2)
+                        num++;
+                    break;
+                }
+                index++;
+            }
+
+            attr.st_mode = 0;
+
+            for (int i = 0; i <= num; i++)
+            {
+                if (change[i] == ADD)
+                {
+                    if (user[i] & U)
+                    {
+                        attr.st_mode |= mode[i] << off[user[i] & U];
+                    }
+
+                    if (user[i] & G)
+                    {
+                        attr.st_mode |= mode[i] << off[user[i] & G];
+                    }
+
+                    if (user[i] & O)
+                    {
+                        attr.st_mode |= mode[i] << off[user[i] & O];
+                    }
+                }
+                else if (change[i] == SUB)
+                {
+                    if (user[i] & U)
+                    {
+                        attr.st_mode &= ~(mode[i] << off[user[i] & U]);
+                    }
+
+                    if (user[i] & G)
+                    {
+                        attr.st_mode &= ~(mode[i] << off[user[i] & G]);
+                    }
+
+                    if (user[i] & O)
+                    {
+                        attr.st_mode &= ~(mode[i] << off[user[i] & O]);
+                    }
+                }
+                else if (change[i] == SET)
+                {
+                    if (user[i] & U)
+                    {
+                        attr.st_mode &= ~(7 << off[user[i] & U]);
+                        attr.st_mode |= mode[i] << off[user[i] & U];
+                    }
+
+                    if (user[i] & G)
+                    {
+                        attr.st_mode &= ~(7 << off[user[i] & G]);
+                        attr.st_mode |= mode[i] << off[user[i] & G];
+                    }
+
+                    if (user[i] & O)
+                    {
+                        attr.st_mode &= ~(7 << off[user[i] & O]);
+                        attr.st_mode |= mode[i] << off[user[i] & O];
+                    }
+                }
+            }
+
+            argv_c++;
+
+            for (int i = argv_c; i < argc; i++)
+            {
+                if (r)
+                {
+                    struct stat s;
+                    if (stat(argv[i], &s) == 0)
+                    {
+                        if (S_ISDIR(s.st_mode))
+                        {
+                            directory_setattr(argv[i], &attr, f, v);
+                        }
+                        else if (f == 0)
+                        {
+                            rt_kprintf("'%s' is not a directory\n", argv[i]);
+                        }
+                    }
+                }
+                else
+                {
+                    if (dfs_file_setattr(argv[i], &attr) != 0)
+                    {
+                        if (f == 0)
+                        {
+                            rt_kprintf("'%s' setattr failed, no such file or directory\n", argv[i]);
+                        }
+                    }
+                    else if (v)
+                    {
+                        rt_kprintf("'%s' setattr 0x%X\n", argv[i], attr.st_mode);
+                    }
+                }
+            }
+        }
+    }
+
+    return 0;
+}
+MSH_CMD_EXPORT_ALIAS(cmd_chmod, chmod, Change the file attr.);
+
+#endif
 
 #endif /* defined(RT_USING_FINSH) && defined(DFS_USING_POSIX) */

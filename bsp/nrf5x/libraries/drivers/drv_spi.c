@@ -80,6 +80,7 @@ static struct nrfx_drv_spi_pin_config bsp_spi_pin[] =
 #endif
 
 #ifdef BSP_USING_SPI3
+    {
         .sck_pin = BSP_SPI3_SCK_PIN,
         .mosi_pin = BSP_SPI3_MOSI_PIN,
         .miso_pin = BSP_SPI3_MISO_PIN,

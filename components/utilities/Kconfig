@@ -15,7 +15,7 @@ config RT_USING_RYM
         default y
     endif
 
-config RT_USING_ULOG
+menuconfig RT_USING_ULOG
     bool "Enable ulog"
     default n
 
@@ -216,11 +216,11 @@ config RT_USING_VAR_EXPORT
     bool "Enable Var Export"
     default n
 
-config RT_USING_ADT
-    bool "Enable ADT(abstract data type), such as AVL tree"
-    default y if ARCH_MM_MMU
+config RT_USING_RESOURCE_ID
+    bool "Enable resource id"
     default n
 
+source "$RTT_DIR/components/utilities/libadt/Kconfig"
 source "$RTT_DIR/components/utilities/rt-link/Kconfig"
 
 endmenu

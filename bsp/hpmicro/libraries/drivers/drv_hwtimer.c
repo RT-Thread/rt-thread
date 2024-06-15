@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 hpmicro
+ * Copyright (c) 2022-2023 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -13,6 +13,7 @@
 #include "drv_hwtimer.h"
 #include "board.h"
 #include "hpm_gptmr_drv.h"
+
 
 typedef struct _hpm_gptimer
 {
@@ -168,10 +169,10 @@ SDK_DECLARE_EXT_ISR_M(IRQn_GPTMR7, gptmr7_isr);
 static void hpm_hwtmr_isr(hpm_gptimer_t *timer)
 {
     uint32_t hwtmr_stat = gptmr_get_status(timer->base);
-    if ((hwtmr_stat & GPTMR_CH_CMP_STAT_MASK(0, 0)) != 0U)
+    if ((hwtmr_stat & GPTMR_CH_RLD_STAT_MASK(timer->channel)) != 0U)
     {
         rt_device_hwtimer_isr(&timer->timer);
-        gptmr_clear_status(timer->base, GPTMR_CH_CMP_STAT_MASK(0, 0));
+        gptmr_clear_status(timer->base, GPTMR_CH_RLD_STAT_MASK(timer->channel));
     }
 }
 
@@ -196,7 +197,7 @@ static rt_err_t hpm_hwtimer_start(rt_hwtimer_t *timer, rt_uint32_t cnt, rt_hwtim
 
     gptmr_channel_config_t config;
     gptmr_channel_get_default_config(base, &config);
-    config.cmp[0] = cnt;
+    config.cmp[0] = 0;
     config.reload = cnt;
 
     timer->mode = mode;
@@ -204,7 +205,7 @@ static rt_err_t hpm_hwtimer_start(rt_hwtimer_t *timer, rt_uint32_t cnt, rt_hwtim
     gptmr_channel_config(base, hpm_gptmr->channel, &config, true);
 
     gptmr_clear_status(base, 0xFU);
-    gptmr_enable_irq(base, GPTMR_CH_CMP_IRQ_MASK(0, 0));
+    gptmr_enable_irq(base, GPTMR_CH_RLD_IRQ_MASK(hpm_gptmr->channel));
 
     gptmr_channel_update_count(base, hpm_gptmr->channel, 0);
     gptmr_start_counter(base, hpm_gptmr->channel);
@@ -275,5 +276,7 @@ int rt_hw_hwtimer_init(void)
 
     return ret;
 }
+
+INIT_BOARD_EXPORT(rt_hw_hwtimer_init);
 
 #endif /* BSP_USING_GPTMR */

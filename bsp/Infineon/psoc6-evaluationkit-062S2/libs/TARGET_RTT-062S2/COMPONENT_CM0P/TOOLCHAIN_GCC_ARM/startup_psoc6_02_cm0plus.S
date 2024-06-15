@@ -287,7 +287,7 @@ Reset_Handler:
     bl    SystemInit
 #endif
 
-    bl    entry
+    bl    main
 
     /* Should never get here */
     b   .

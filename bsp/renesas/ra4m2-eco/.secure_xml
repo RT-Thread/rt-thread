@@ -9,7 +9,7 @@
     <option key="#DeviceCommand#" value="R7FA4M2AD"/>
     <option key="#RTOS#" value="_none"/>
     <option key="#pinconfiguration#" value="R7FA4M2AD3CFP.pincfg"/>
-    <option key="#FSPVersion#" value="4.1.0"/>
+    <option key="#FSPVersion#" value="4.2.0"/>
     <option key="#SELECTED_TOOLCHAIN#" value="com.arm.toolchain"/>
   </generalSettings>
   <raClockConfiguration>

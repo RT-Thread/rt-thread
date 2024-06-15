@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 hpmicro
+ * Copyright (c) 2021-2023 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -30,19 +30,6 @@ typedef struct {
 #define DAO_CTRL_HPF_EN_SHIFT (17U)
 #define DAO_CTRL_HPF_EN_SET(x) (((uint32_t)(x) << DAO_CTRL_HPF_EN_SHIFT) & DAO_CTRL_HPF_EN_MASK)
 #define DAO_CTRL_HPF_EN_GET(x) (((uint32_t)(x) & DAO_CTRL_HPF_EN_MASK) >> DAO_CTRL_HPF_EN_SHIFT)
-
-/*
- * SAT_ERR_IE (RW)
- *
- * Error interrupt enable
- * This bit controls the generation of an interrupt when an error condition  (saturation) occurs.
- * 0: Error interrupt is masked
- * 1: Error interrupt is enabled
- */
-#define DAO_CTRL_SAT_ERR_IE_MASK (0x10000UL)
-#define DAO_CTRL_SAT_ERR_IE_SHIFT (16U)
-#define DAO_CTRL_SAT_ERR_IE_SET(x) (((uint32_t)(x) << DAO_CTRL_SAT_ERR_IE_SHIFT) & DAO_CTRL_SAT_ERR_IE_MASK)
-#define DAO_CTRL_SAT_ERR_IE_GET(x) (((uint32_t)(x) & DAO_CTRL_SAT_ERR_IE_MASK) >> DAO_CTRL_SAT_ERR_IE_SHIFT)
 
 /*
  * MONO (RW)
@@ -142,6 +129,18 @@ typedef struct {
 
 /* Bitfield definition for register: RX_CFGR */
 /*
+ * FRAME_EDGE (RW)
+ *
+ * The start edge of a frame
+ * 0: Falling edge indicates a new frame (Just like standard I2S Philips standard)
+ * 1: Rising edge indicates a new frame
+ */
+#define DAO_RX_CFGR_FRAME_EDGE_MASK (0x800U)
+#define DAO_RX_CFGR_FRAME_EDGE_SHIFT (11U)
+#define DAO_RX_CFGR_FRAME_EDGE_SET(x) (((uint32_t)(x) << DAO_RX_CFGR_FRAME_EDGE_SHIFT) & DAO_RX_CFGR_FRAME_EDGE_MASK)
+#define DAO_RX_CFGR_FRAME_EDGE_GET(x) (((uint32_t)(x) & DAO_RX_CFGR_FRAME_EDGE_MASK) >> DAO_RX_CFGR_FRAME_EDGE_SHIFT)
+
+/*
  * CH_MAX (RW)
  *
  * CH_MAX[3:0] is the number if channels supported in TDM mode. When not in TDM mode, it must be set as 2.
@@ -154,6 +153,63 @@ typedef struct {
 #define DAO_RX_CFGR_CH_MAX_SHIFT (6U)
 #define DAO_RX_CFGR_CH_MAX_SET(x) (((uint32_t)(x) << DAO_RX_CFGR_CH_MAX_SHIFT) & DAO_RX_CFGR_CH_MAX_MASK)
 #define DAO_RX_CFGR_CH_MAX_GET(x) (((uint32_t)(x) & DAO_RX_CFGR_CH_MAX_MASK) >> DAO_RX_CFGR_CH_MAX_SHIFT)
+
+/*
+ * TDM_EN (RW)
+ *
+ * TDM mode
+ * 0: not TDM mode
+ * 1: TDM mode
+ */
+#define DAO_RX_CFGR_TDM_EN_MASK (0x20U)
+#define DAO_RX_CFGR_TDM_EN_SHIFT (5U)
+#define DAO_RX_CFGR_TDM_EN_SET(x) (((uint32_t)(x) << DAO_RX_CFGR_TDM_EN_SHIFT) & DAO_RX_CFGR_TDM_EN_MASK)
+#define DAO_RX_CFGR_TDM_EN_GET(x) (((uint32_t)(x) & DAO_RX_CFGR_TDM_EN_MASK) >> DAO_RX_CFGR_TDM_EN_SHIFT)
+
+/*
+ * STD (RW)
+ *
+ * I2S standard selection
+ * 00: I2S Philips standard.
+ * 01: MSB justified standard (left justified)
+ * 10: LSB justified standard (right justified)
+ * 11: PCM standard
+ * For more details on I2S standards.
+ * Note: For correct operation, these bits should be configured when the I2S is disabled.
+ */
+#define DAO_RX_CFGR_STD_MASK (0x18U)
+#define DAO_RX_CFGR_STD_SHIFT (3U)
+#define DAO_RX_CFGR_STD_SET(x) (((uint32_t)(x) << DAO_RX_CFGR_STD_SHIFT) & DAO_RX_CFGR_STD_MASK)
+#define DAO_RX_CFGR_STD_GET(x) (((uint32_t)(x) & DAO_RX_CFGR_STD_MASK) >> DAO_RX_CFGR_STD_SHIFT)
+
+/*
+ * DATSIZ (RW)
+ *
+ * Data length to be transferred
+ * 00: 16-bit data length
+ * 01: 24-bit data length
+ * 10: 32-bit data length
+ * 11: Not allowed
+ * Note: For correct operation, these bits should be configured when the I2S is disabled.
+ */
+#define DAO_RX_CFGR_DATSIZ_MASK (0x6U)
+#define DAO_RX_CFGR_DATSIZ_SHIFT (1U)
+#define DAO_RX_CFGR_DATSIZ_SET(x) (((uint32_t)(x) << DAO_RX_CFGR_DATSIZ_SHIFT) & DAO_RX_CFGR_DATSIZ_MASK)
+#define DAO_RX_CFGR_DATSIZ_GET(x) (((uint32_t)(x) & DAO_RX_CFGR_DATSIZ_MASK) >> DAO_RX_CFGR_DATSIZ_SHIFT)
+
+/*
+ * CHSIZ (RW)
+ *
+ * Channel length (number of bits per audio channel)
+ * 0: 16-bit wide
+ * 1: 32-bit wide
+ * The bit write operation has a meaning only if DATLEN = 00 otherwise the channel length is fixed to 32-bit by hardware whatever the value filled in.
+ * Note: For correct operation, this bit should be configured when the I2S is disabled.
+ */
+#define DAO_RX_CFGR_CHSIZ_MASK (0x1U)
+#define DAO_RX_CFGR_CHSIZ_SHIFT (0U)
+#define DAO_RX_CFGR_CHSIZ_SET(x) (((uint32_t)(x) << DAO_RX_CFGR_CHSIZ_SHIFT) & DAO_RX_CFGR_CHSIZ_MASK)
+#define DAO_RX_CFGR_CHSIZ_GET(x) (((uint32_t)(x) & DAO_RX_CFGR_CHSIZ_MASK) >> DAO_RX_CFGR_CHSIZ_SHIFT)
 
 /* Bitfield definition for register: RXSLT */
 /*

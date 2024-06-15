@@ -59,6 +59,9 @@ void rt_hw_board_init()
 #ifdef RT_USING_PWM
     rt_hw_pwm_init();
 #endif
+#ifdef RT_USING_I2C
+    rt_hw_i2c_init();
+#endif
     /* Call components board initial (use INIT_BOARD_EXPORT()) */
 #ifdef RT_USING_COMPONENTS_INIT
     rt_components_board_init();

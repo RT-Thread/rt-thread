@@ -1,10 +1,12 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
+ * 2022-09-30     RT-Thread    the general porting API for lwp
+ * 2023-07-18     Shell        New signal arch API arch_thread_signal_enter
  */
 
 #ifndef __LWP_ARCH_COMM__
@@ -21,8 +23,8 @@
 /* syscall handlers */
 void arch_clone_exit(void);
 void arch_fork_exit(void);
-void arch_syscall_exit();
-void arch_ret_to_user();
+void arch_syscall_exit(void);
+void arch_ret_to_user(void);
 
 /* ELF relocation */
 #ifdef ARCH_MM_MMU
@@ -53,5 +55,16 @@ int arch_expand_user_stack(void *addr);
 void arch_set_thread_area(void *p);
 void* arch_get_tidr(void);
 void arch_set_tidr(void *p);
+
+/** entry point of architecture signal handling */
+rt_noreturn void arch_thread_signal_enter(int signo, siginfo_t *psiginfo,
+                                          void *exp_frame, void *entry_uaddr,
+                                          lwp_sigset_t *save_sig_mask);
+
+void arch_signal_check_erestart(void *eframe, void *ksp);
+
+void arch_syscall_set_errno(void *eframe, int expected, int code);
+
+int arch_backtrace_uthread(rt_thread_t thread);
 
 #endif /* __LWP_ARCH_COMM__ */

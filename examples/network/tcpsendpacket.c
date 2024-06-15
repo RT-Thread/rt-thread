@@ -76,7 +76,7 @@ void tcp_senddata(const char *url, int port, int length)
         else if (result == 0)
         {
             /* 打印send函数返回值为0的警告信息 */
-            rt_kprintf("\n Send warning,send function return 0.\r\n");
+            rt_kprintf("\n Send warning,send function returns 0.\r\n");
         }
     }
 }

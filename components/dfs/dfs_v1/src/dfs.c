@@ -19,7 +19,7 @@
 #endif
 
 #ifdef RT_USING_POSIX_STDIO
-#include <libc.h>
+#include <posix/stdio.h>
 #endif /* RT_USING_POSIX_STDIO */
 
 /* Global variables */
@@ -359,6 +359,11 @@ void fdt_fd_release(struct dfs_fdtable* fdt, int fd)
         if (vnode)
         {
             vnode->ref_count--;
+            if(vnode->ref_count == 0)
+            {
+                rt_free(vnode);
+                fd_slot->vnode = RT_NULL;
+            }
         }
         rt_free(fd_slot);
     }
@@ -754,7 +759,7 @@ up_one:
 
     /* remove '/' in the end of path if exist */
     dst--;
-    if ((dst != fullpath) && (*dst == '/'))
+    if (dst > fullpath && (*dst == '/'))
         *dst = '\0';
 
     /* final check fullpath is not empty, for the special path of lwext "/.." */
@@ -795,11 +800,13 @@ struct dfs_fdtable *dfs_fdtable_get_pid(int pid)
     struct rt_lwp *lwp = RT_NULL;
     struct dfs_fdtable *fdt = RT_NULL;
 
-    lwp = lwp_from_pid(pid);
+    lwp_pid_lock_take();
+    lwp = lwp_from_pid_locked(pid);
     if (lwp)
     {
         fdt = &lwp->fdt;
     }
+    lwp_pid_lock_release();
 
     return fdt;
 }

@@ -1,11 +1,12 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
  * 2012-01-10     bernard      porting to AM1808
+ * 2023-10-10     Shell        Add permission control API
  */
 
 #include <rthw.h>
@@ -55,6 +56,67 @@ void rt_hw_mmu_setmtt(rt_uint32_t vaddrStart, rt_uint32_t vaddrEnd,
         *pTT = attr | (((paddrStart >> 20) + i) << 20);
         pTT++;
     }
+}
+
+void init_mm_setup(unsigned int *mtbl, unsigned int size, unsigned int pv_off)
+{
+    unsigned int va;
+
+    for (va = 0; va < 0x1000; va++)
+    {
+        unsigned int vaddr = (va << 20);
+
+        if (vaddr >= KERNEL_VADDR_START && vaddr - KERNEL_VADDR_START < size)
+        {
+            mtbl[va] = ((va << 20) + pv_off) | NORMAL_MEM;
+        }
+        else if (vaddr >= (KERNEL_VADDR_START + pv_off) && vaddr - (KERNEL_VADDR_START + pv_off) < size)
+        {
+            mtbl[va] = (va << 20) | NORMAL_MEM;
+        }
+        else
+        {
+            mtbl[va] = 0;
+        }
+    }
+}
+
+#ifndef RT_USING_SMART
+static void _init_map_section(rt_uint32_t *mmu_table, rt_uint32_t va,
+                        rt_uint32_t size,rt_uint32_t pa, rt_uint32_t attr)
+{
+    volatile rt_uint32_t *ptt;
+    volatile int i, num_section;
+    ptt  = (rt_uint32_t *)mmu_table + (va >> ARCH_SECTION_SHIFT);
+    num_section = size >> ARCH_SECTION_SHIFT;
+    for(i = 0; i <= num_section; i++)
+    {
+        *ptt = attr | (((pa >> ARCH_SECTION_SHIFT) + i) << ARCH_SECTION_SHIFT);
+        ptt++;
+    }
+}
+#endif
+
+void rt_hw_mem_setup_early(rt_uint32_t *early_mmu_talbe,
+                            rt_uint32_t pv_off)
+{
+    rt_uint32_t size  = 0;
+
+    size = 0x100000 +  (rt_uint32_t)&__bss_end;
+    size &= ~(0x100000 - 1);
+#ifdef RT_USING_SMART
+    size -= KERNEL_VADDR_START;
+    init_mm_setup(early_mmu_talbe, size, pv_off);
+#else
+    rt_uint32_t normal_attr = NORMAL_MEM;
+    extern unsigned char _reset;
+    rt_uint32_t va = (rt_uint32_t) &_reset;
+    /* The starting virtual address is aligned along 0x1000000. */
+    va &= (0x1000000 - 1);
+    size -= va;
+    _init_map_section(early_mmu_talbe, va, size, va + pv_off, normal_attr);
+#endif
+
 }
 
 void rt_hw_init_mmu_table(struct mem_desc *mdesc, rt_uint32_t size)
@@ -146,7 +208,7 @@ int rt_hw_mmu_map_init(struct rt_aspace *aspace, void* v_address, size_t size, s
     rt_ioremap_size = size;
     rt_mpr_start = rt_ioremap_start - rt_mpr_size;
 #else
-    rt_mpr_start = (void *)0 - rt_mpr_size;
+    rt_mpr_start = (void *)((rt_size_t)0 - rt_mpr_size);
 #endif
 
     return 0;
@@ -362,29 +424,6 @@ void rt_hw_aspace_switch(rt_aspace_t aspace)
     }
 }
 
-void init_mm_setup(unsigned int *mtbl, unsigned int size, unsigned int pv_off)
-{
-    unsigned int va;
-
-    for (va = 0; va < 0x1000; va++)
-    {
-        unsigned int vaddr = (va << 20);
-
-        if (vaddr >= KERNEL_VADDR_START && vaddr - KERNEL_VADDR_START < size)
-        {
-            mtbl[va] = ((va << 20) + pv_off) | NORMAL_MEM;
-        }
-        else if (vaddr >= (KERNEL_VADDR_START + pv_off) && vaddr - (KERNEL_VADDR_START + pv_off) < size)
-        {
-            mtbl[va] = (va << 20) | NORMAL_MEM;
-        }
-        else
-        {
-            mtbl[va] = 0;
-        }
-    }
-}
-
 void *rt_hw_mmu_v2p(rt_aspace_t aspace, void* v_addr)
 {
     size_t l1_off, l2_off;
@@ -439,4 +478,26 @@ int rt_hw_mmu_control(struct rt_aspace *aspace, void *vaddr, size_t size,
                       enum rt_mmu_cntl cmd)
 {
     return -RT_ENOSYS;
+}
+
+#define KPTE_START (KERNEL_VADDR_START >> ARCH_SECTION_SHIFT)
+
+void *rt_hw_mmu_pgtbl_create(void)
+{
+    size_t *mmu_table;
+    mmu_table = (size_t *)rt_pages_alloc_ext(2, PAGE_ANY_AVAILABLE);
+    if (!mmu_table)
+    {
+        return RT_NULL;
+    }
+    rt_memcpy(mmu_table + KPTE_START, (size_t *)rt_kernel_space.page_table + KPTE_START, ARCH_PAGE_SIZE);
+    rt_memset(mmu_table, 0, 3 * ARCH_PAGE_SIZE);
+    rt_hw_cpu_dcache_ops(RT_HW_CACHE_FLUSH, mmu_table, 4 * ARCH_PAGE_SIZE);
+
+    return mmu_table;
+}
+
+void rt_hw_mmu_pgtbl_delete(void *pgtbl)
+{
+    rt_pages_free(pgtbl, 2);
 }

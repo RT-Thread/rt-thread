@@ -1,0 +1,3804 @@
+/*
+ * Copyright (C) 2021 Shanghai Eastsoft Microelectronics Co., Ltd.
+ *
+ */
+
+#ifndef __es_conf_info_map_H__
+#define __es_conf_info_map_H__
+
+#include "ald_conf.h"
+
+#define __ES_PIN(index, gpio, gpio_index) {index, GPIO##gpio, ALD_GPIO_PIN_##gpio_index}
+#define __ES_PIN_DEFAULT {-1, 0, 0}
+
+struct pin_index
+{
+    int index;
+    GPIO_TypeDef *gpio;
+    uint32_t pin;
+};
+
+#if 0
+#define   ES_GPIO_ADC_CH10_GPIO     GPIOC
+#define   ES_GPIO_ADC_CH10_PIN      GPIO_PIN_0
+#define   ES_GPIO_ADC_CH11_GPIO     GPIOC
+#define   ES_GPIO_ADC_CH11_PIN      GPIO_PIN_1
+#define   ES_GPIO_ADC_CH12_GPIO     GPIOC
+#define   ES_GPIO_ADC_CH12_PIN      GPIO_PIN_2
+#define   ES_GPIO_ADC_CH13_GPIO     GPIOC
+#define   ES_GPIO_ADC_CH13_PIN      GPIO_PIN_3
+#define   ES_GPIO_ADC_CH0_GPIO     GPIOA
+#define   ES_GPIO_ADC_CH0_PIN      GPIO_PIN_0
+#define   ES_GPIO_ADC_CH1_GPIO     GPIOA
+#define   ES_GPIO_ADC_CH1_PIN      GPIO_PIN_1
+#define   ES_GPIO_ADC_CH2_GPIO     GPIOA
+#define   ES_GPIO_ADC_CH2_PIN      GPIO_PIN_2
+#define   ES_GPIO_ADC_CH3_GPIO     GPIOA
+#define   ES_GPIO_ADC_CH3_PIN      GPIO_PIN_3
+#define   ES_GPIO_ADC_CH4_GPIO     GPIOA
+#define   ES_GPIO_ADC_CH4_PIN      GPIO_PIN_4
+#define   ES_GPIO_ADC_CH5_GPIO     GPIOA
+#define   ES_GPIO_ADC_CH5_PIN      GPIO_PIN_5
+#define   ES_GPIO_ADC_CH6_GPIO     GPIOA
+#define   ES_GPIO_ADC_CH6_PIN      GPIO_PIN_6
+#define   ES_GPIO_ADC_CH7_GPIO     GPIOA
+#define   ES_GPIO_ADC_CH7_PIN      GPIO_PIN_7
+#define   ES_GPIO_ADC_CH14_GPIO     GPIOC
+#define   ES_GPIO_ADC_CH14_PIN      GPIO_PIN_4
+#define   ES_GPIO_ADC_CH15_GPIO     GPIOC
+#define   ES_GPIO_ADC_CH15_PIN      GPIO_PIN_5
+#define   ES_GPIO_ADC_CH8_GPIO     GPIOB
+#define   ES_GPIO_ADC_CH8_PIN      GPIO_PIN_0
+#define   ES_GPIO_ADC_CH9_GPIO     GPIOB
+#define   ES_GPIO_ADC_CH9_PIN      GPIO_PIN_1
+#define   ES_GPIO_ADC_CH15_GPIO     GPIOB
+#define   ES_GPIO_ADC_CH15_PIN      GPIO_PIN_8
+
+
+
+static const struct pin_index pins[] =
+{
+    __ES_PIN_DEFAULT,
+    __ES_PIN_DEFAULT,
+    __ES_PIN(2,C,13),
+    __ES_PIN(3,C,14),
+    __ES_PIN(4,C,15),
+    __ES_PIN(5,D,0),
+    __ES_PIN(6,D,1),
+    __ES_PIN_DEFAULT,
+    __ES_PIN(8,C,0),
+    __ES_PIN(9,C,1),
+    __ES_PIN(10,C,2),
+    __ES_PIN(11,C,3),
+    __ES_PIN_DEFAULT,
+    __ES_PIN_DEFAULT,
+    __ES_PIN(14,A,0),
+    __ES_PIN(15,A,1),
+    __ES_PIN(16,A,2),
+    __ES_PIN(17,A,3),
+    __ES_PIN_DEFAULT,
+    __ES_PIN_DEFAULT,
+    __ES_PIN(20,A,4),
+    __ES_PIN(21,A,5),
+    __ES_PIN(22,A,6),
+    __ES_PIN(23,A,7),
+    __ES_PIN(24,C,4),
+    __ES_PIN(25,C,5),
+    __ES_PIN(26,B,0),
+    __ES_PIN(27,B,1),
+    __ES_PIN(28,B,2),
+    __ES_PIN(29,B,10),
+    __ES_PIN(30,B,11),
+    __ES_PIN_DEFAULT,
+    __ES_PIN_DEFAULT,
+    __ES_PIN(33,B,12),
+    __ES_PIN(34,B,13),
+    __ES_PIN(35,B,14),
+    __ES_PIN(36,B,15),
+    __ES_PIN(37,C,6),
+    __ES_PIN(38,C,7),
+    __ES_PIN(39,C,8),
+    __ES_PIN(40,C,9),
+    __ES_PIN(41,A,8),
+    __ES_PIN(42,A,9),
+    __ES_PIN(43,A,10),
+    __ES_PIN(44,A,11),
+    __ES_PIN(45,A,12),
+    __ES_PIN(46,A,13),
+    __ES_PIN_DEFAULT,
+    __ES_PIN_DEFAULT,
+    __ES_PIN(49,A,14),
+    __ES_PIN(50,A,15),
+    __ES_PIN(51,C,10),
+    __ES_PIN(52,C,11),
+    __ES_PIN(53,C,12),
+    __ES_PIN(54,D,2),
+    __ES_PIN(55,B,3),
+    __ES_PIN(56,B,4),
+    __ES_PIN(57,B,5),
+    __ES_PIN(58,B,6),
+    __ES_PIN(59,B,7),
+    __ES_PIN_DEFAULT,
+    __ES_PIN(61,B,8),
+    __ES_PIN(62,B,9),
+    __ES_PIN_DEFAULT,
+    __ES_PIN_DEFAULT,
+};
+
+#endif
+
+
+#define   ES_GPIO_ADC_CH0_GPIO     GPIOC
+#define   ES_GPIO_ADC_CH0_PIN      ALD_GPIO_PIN_0
+#define   ES_GPIO_ADC_CH1_GPIO     GPIOC
+#define   ES_GPIO_ADC_CH1_PIN      ALD_GPIO_PIN_1
+#define   ES_GPIO_ADC_CH2_GPIO     GPIOC
+#define   ES_GPIO_ADC_CH2_PIN      ALD_GPIO_PIN_2
+#define   ES_GPIO_ADC_CH3_GPIO     GPIOC
+#define   ES_GPIO_ADC_CH3_PIN      ALD_GPIO_PIN_3
+#define   ES_GPIO_ADC_CH4_GPIO     GPIOC
+#define   ES_GPIO_ADC_CH4_PIN      ALD_GPIO_PIN_4
+#define   ES_GPIO_ADC_CH5_GPIO     GPIOA
+#define   ES_GPIO_ADC_CH5_PIN      ALD_GPIO_PIN_5
+#define   ES_GPIO_ADC_CH6_GPIO     GPIOA
+#define   ES_GPIO_ADC_CH6_PIN      ALD_GPIO_PIN_6
+#define   ES_GPIO_ADC_CH7_GPIO     GPIOA
+#define   ES_GPIO_ADC_CH7_PIN      ALD_GPIO_PIN_7
+#define   ES_GPIO_ADC_CH8_GPIO     GPIOB
+#define   ES_GPIO_ADC_CH8_PIN      ALD_GPIO_PIN_0
+#define   ES_GPIO_ADC_CH9_GPIO     GPIOB
+#define   ES_GPIO_ADC_CH9_PIN      ALD_GPIO_PIN_1
+#define   ES_GPIO_ADC_CH10_GPIO     GPIOC
+#define   ES_GPIO_ADC_CH10_PIN      ALD_GPIO_PIN_5
+#define   ES_GPIO_ADC_CH11_GPIO     GPIOA
+#define   ES_GPIO_ADC_CH11_PIN      ALD_GPIO_PIN_0
+#define   ES_GPIO_ADC_CH12_GPIO     GPIOA
+#define   ES_GPIO_ADC_CH12_PIN      ALD_GPIO_PIN_1
+#define   ES_GPIO_ADC_CH13_GPIO     GPIOA
+#define   ES_GPIO_ADC_CH13_PIN      ALD_GPIO_PIN_2
+#define   ES_GPIO_ADC_CH14_GPIO     GPIOA
+#define   ES_GPIO_ADC_CH14_PIN      ALD_GPIO_PIN_3
+#define   ES_GPIO_ADC_CH15_GPIO     GPIOA
+#define   ES_GPIO_ADC_CH15_PIN      ALD_GPIO_PIN_4
+#define   ES_GPIO_ADC_CH16_GPIO     GPIOB
+#define   ES_GPIO_ADC_CH16_PIN      ALD_GPIO_PIN_8
+
+
+static const struct pin_index pins[] =
+{
+    __ES_PIN_DEFAULT,
+    __ES_PIN(1,C,13),
+    __ES_PIN(2,C,14),
+    __ES_PIN(3,C,15),
+    __ES_PIN(4,D,0),
+    __ES_PIN(5,D,1),
+    __ES_PIN(6,C,0),
+    __ES_PIN(7,C,1),
+    __ES_PIN(8,C,2),
+    __ES_PIN(9,C,3),
+    __ES_PIN(10,A,0),
+    __ES_PIN(11,A,1),
+    __ES_PIN(12,A,2),
+    __ES_PIN(13,A,3),
+    __ES_PIN(14,A,4),
+    __ES_PIN(15,A,5),
+    __ES_PIN(16,A,6),
+    __ES_PIN(17,A,7),
+    __ES_PIN(18,C,4),
+    __ES_PIN(19,C,5),
+    __ES_PIN(20,B,0),
+    __ES_PIN(21,B,1),
+    __ES_PIN(22,B,2),
+    __ES_PIN(23,B,10),
+    __ES_PIN(24,B,11),
+    __ES_PIN(25,B,12),
+    __ES_PIN(26,B,13),
+    __ES_PIN(27,B,14),
+    __ES_PIN(28,B,15),
+    __ES_PIN(29,C,6),
+    __ES_PIN(30,C,7),
+    __ES_PIN(31,C,8),
+    __ES_PIN(32,C,9),
+    __ES_PIN(33,A,8),
+    __ES_PIN(34,A,9),
+    __ES_PIN(35,A,10),
+    __ES_PIN(36,A,11),
+    __ES_PIN(37,A,12),
+    __ES_PIN(38,A,13),
+    __ES_PIN(39,A,14),
+    __ES_PIN(40,A,15),
+    __ES_PIN(41,C,10),
+    __ES_PIN(42,C,11),
+    __ES_PIN(43,C,12),
+    __ES_PIN(44,D,2),
+    __ES_PIN(45,B,3),
+    __ES_PIN(46,B,4),
+    __ES_PIN(47,B,5),
+    __ES_PIN(48,B,6),
+    __ES_PIN(49,B,7),
+    __ES_PIN(50,B,8),
+    __ES_PIN(51,B,9),
+};
+
+#define   ES_PIN_GPIO_C_13   1
+#define   ES_PIN_GPIO_C_14   2
+#define   ES_PIN_GPIO_C_15   3
+#define   ES_PIN_GPIO_D_0   4
+#define   ES_PIN_GPIO_D_1   5
+#define   ES_PIN_GPIO_C_0   6
+#define   ES_PIN_GPIO_C_1   7
+#define   ES_PIN_GPIO_C_2   8
+#define   ES_PIN_GPIO_C_3   9
+#define   ES_PIN_GPIO_A_0   10
+#define   ES_PIN_GPIO_A_1   11
+#define   ES_PIN_GPIO_A_2   12
+#define   ES_PIN_GPIO_A_3   13
+#define   ES_PIN_GPIO_A_4   14
+#define   ES_PIN_GPIO_A_5   15
+#define   ES_PIN_GPIO_A_6   16
+#define   ES_PIN_GPIO_A_7   17
+#define   ES_PIN_GPIO_C_4   18
+#define   ES_PIN_GPIO_C_5   19
+#define   ES_PIN_GPIO_B_0   20
+#define   ES_PIN_GPIO_B_1   21
+#define   ES_PIN_GPIO_B_2   22
+#define   ES_PIN_GPIO_B_10   23
+#define   ES_PIN_GPIO_B_11   24
+#define   ES_PIN_GPIO_B_12   25
+#define   ES_PIN_GPIO_B_13   26
+#define   ES_PIN_GPIO_B_14   27
+#define   ES_PIN_GPIO_B_15   28
+#define   ES_PIN_GPIO_C_6   29
+#define   ES_PIN_GPIO_C_7   30
+#define   ES_PIN_GPIO_C_8   31
+#define   ES_PIN_GPIO_C_9   32
+#define   ES_PIN_GPIO_A_8   33
+#define   ES_PIN_GPIO_A_9   34
+#define   ES_PIN_GPIO_A_10   35
+#define   ES_PIN_GPIO_A_11   36
+#define   ES_PIN_GPIO_A_12   37
+#define   ES_PIN_GPIO_A_13   38
+#define   ES_PIN_GPIO_A_14   39
+#define   ES_PIN_GPIO_A_15   40
+#define   ES_PIN_GPIO_C_10   41
+#define   ES_PIN_GPIO_C_11   42
+#define   ES_PIN_GPIO_C_12   43
+#define   ES_PIN_GPIO_D_2   44
+#define   ES_PIN_GPIO_B_3   45
+#define   ES_PIN_GPIO_B_4   46
+#define   ES_PIN_GPIO_B_5   47
+#define   ES_PIN_GPIO_B_6   48
+#define   ES_PIN_GPIO_B_7   49
+#define   ES_PIN_GPIO_B_8   50
+#define   ES_PIN_GPIO_B_9   51
+
+
+#if 1
+
+#ifndef ES_MAP__PIN_PA2_USED
+#define ES_MAP__PIN_PA2_USED
+#ifndef ES_CUART1_TX_GPIO_FUNC
+#define ES_CUART1_TX_GPIO_FUNC  ALD_GPIO_FUNC_2
+#endif
+#ifndef ES_CUART1_TX_GPIO_PORT
+#define ES_CUART1_TX_GPIO_PORT  GPIOA
+#endif
+#ifndef ES_CUART1_TX_GPIO_PIN
+#define ES_CUART1_TX_GPIO_PIN  ALD_GPIO_PIN_2
+#endif
+
+#ifndef ES_CUART1_TX_PIN
+#ifdef ES_PIN_GPIO_A_2
+#define ES_CUART1_TX_PIN ES_PIN_GPIO_A_2
+#endif
+#endif
+#endif
+
+#ifndef ES_MAP__PIN_PA3_USED
+#define ES_MAP__PIN_PA3_USED
+#ifndef ES_CUART1_RX_GPIO_FUNC
+#define ES_CUART1_RX_GPIO_FUNC  ALD_GPIO_FUNC_2
+#endif
+#ifndef ES_CUART1_RX_GPIO_PORT
+#define ES_CUART1_RX_GPIO_PORT  GPIOA
+#endif
+#ifndef ES_CUART1_RX_GPIO_PIN
+#define ES_CUART1_RX_GPIO_PIN  ALD_GPIO_PIN_3
+#endif
+
+#ifndef ES_CUART1_RX_PIN
+#ifdef ES_PIN_GPIO_A_3
+#define ES_CUART1_RX_PIN ES_PIN_GPIO_A_3
+#endif
+#endif
+#endif
+
+#ifndef ES_MAP__PIN_PA7_USED
+#define ES_MAP__PIN_PA7_USED
+#ifndef ES_SPI0_MOSI_GPIO_FUNC
+#define ES_SPI0_MOSI_GPIO_FUNC  ALD_GPIO_FUNC_2
+#endif
+#ifndef ES_SPI0_MOSI_GPIO_PORT
+#define ES_SPI0_MOSI_GPIO_PORT  GPIOA
+#endif
+#ifndef ES_SPI0_MOSI_GPIO_PIN
+#define ES_SPI0_MOSI_GPIO_PIN  ALD_GPIO_PIN_7
+#endif
+
+#ifndef ES_SPI0_MOSI_PIN
+#ifdef ES_PIN_GPIO_A_7
+#define ES_SPI0_MOSI_PIN ES_PIN_GPIO_A_7
+#endif
+#endif
+#endif
+
+#ifndef ES_MAP__PIN_PA6_USED
+#define ES_MAP__PIN_PA6_USED
+#ifndef ES_SPI0_MISO_GPIO_FUNC
+#define ES_SPI0_MISO_GPIO_FUNC  ALD_GPIO_FUNC_2
+#endif
+#ifndef ES_SPI0_MISO_GPIO_PORT
+#define ES_SPI0_MISO_GPIO_PORT  GPIOA
+#endif
+#ifndef ES_SPI0_MISO_GPIO_PIN
+#define ES_SPI0_MISO_GPIO_PIN  ALD_GPIO_PIN_6
+#endif
+
+#ifndef ES_SPI0_MISO_PIN
+#ifdef ES_PIN_GPIO_A_6
+#define ES_SPI0_MISO_PIN ES_PIN_GPIO_A_6
+#endif
+#endif
+#endif
+
+#ifndef ES_MAP__PIN_PB2_USED
+#define ES_MAP__PIN_PB2_USED
+#ifndef ES_I2C0_SCL_GPIO_FUNC
+#define ES_I2C0_SCL_GPIO_FUNC  ALD_GPIO_FUNC_5
+#endif
+#ifndef ES_I2C0_SCL_GPIO_PORT
+#define ES_I2C0_SCL_GPIO_PORT  GPIOB
+#endif
+#ifndef ES_I2C0_SCL_GPIO_PIN
+#define ES_I2C0_SCL_GPIO_PIN  ALD_GPIO_PIN_2
+#endif
+
+#ifndef ES_I2C0_SCL_PIN
+#ifdef ES_PIN_GPIO_B_2
+#define ES_I2C0_SCL_PIN ES_PIN_GPIO_B_2
+#endif
+#endif
+#endif
+
+#ifndef ES_MAP__PIN_PB3_USED
+#define ES_MAP__PIN_PB3_USED
+#ifndef ES_I2C0_SDA_GPIO_FUNC
+#define ES_I2C0_SDA_GPIO_FUNC  ALD_GPIO_FUNC_5
+#endif
+#ifndef ES_I2C0_SDA_GPIO_PORT
+#define ES_I2C0_SDA_GPIO_PORT  GPIOB
+#endif
+#ifndef ES_I2C0_SDA_GPIO_PIN
+#define ES_I2C0_SDA_GPIO_PIN  ALD_GPIO_PIN_3
+#endif
+
+#ifndef ES_I2C0_SDA_PIN
+#ifdef ES_PIN_GPIO_B_3
+#define ES_I2C0_SDA_PIN ES_PIN_GPIO_B_3
+#endif
+#endif
+#endif
+
+#endif
+
+#if 1
+
+#ifndef ES_MAP__PIN_PC13_USED
+#define ES_MAP__PIN_PC13_USED
+#ifndef ES_EUART1_RX_GPIO_FUNC
+#define ES_EUART1_RX_GPIO_FUNC  ALD_GPIO_FUNC_2
+#endif
+#ifndef ES_EUART1_RX_GPIO_PORT
+#define ES_EUART1_RX_GPIO_PORT  GPIOC
+#endif
+#ifndef ES_EUART1_RX_GPIO_PIN
+#define ES_EUART1_RX_GPIO_PIN  ALD_GPIO_PIN_13
+#endif
+
+#ifndef ES_EUART1_RX_PIN
+#ifdef ES_PIN_GPIO_C_13
+#define ES_EUART1_RX_PIN ES_PIN_GPIO_C_13
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PC13_USED
+#define ES_MAP__PIN_PC13_USED
+#ifndef ES_GP16C4T0_CH4_GPIO_FUNC
+#define ES_GP16C4T0_CH4_GPIO_FUNC  ALD_GPIO_FUNC_3
+#endif
+#ifndef ES_GP16C4T0_CH4_GPIO_PORT
+#define ES_GP16C4T0_CH4_GPIO_PORT  GPIOC
+#endif
+#ifndef ES_GP16C4T0_CH4_GPIO_PIN
+#define ES_GP16C4T0_CH4_GPIO_PIN  ALD_GPIO_PIN_13
+#endif
+
+#ifndef ES_GP16C4T0_CH4_PIN
+#ifdef ES_PIN_GPIO_C_13
+#define ES_GP16C4T0_CH4_PIN ES_PIN_GPIO_C_13
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PC13_USED
+#define ES_MAP__PIN_PC13_USED
+#ifndef ES_SPI1_SCK_GPIO_FUNC
+#define ES_SPI1_SCK_GPIO_FUNC  ALD_GPIO_FUNC_5
+#endif
+#ifndef ES_SPI1_SCK_GPIO_PORT
+#define ES_SPI1_SCK_GPIO_PORT  GPIOC
+#endif
+#ifndef ES_SPI1_SCK_GPIO_PIN
+#define ES_SPI1_SCK_GPIO_PIN  ALD_GPIO_PIN_13
+#endif
+
+#ifndef ES_SPI1_SCK_PIN
+#ifdef ES_PIN_GPIO_C_13
+#define ES_SPI1_SCK_PIN ES_PIN_GPIO_C_13
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PC14_USED
+#define ES_MAP__PIN_PC14_USED
+#ifndef ES_EUART1_TX_GPIO_FUNC
+#define ES_EUART1_TX_GPIO_FUNC  ALD_GPIO_FUNC_2
+#endif
+#ifndef ES_EUART1_TX_GPIO_PORT
+#define ES_EUART1_TX_GPIO_PORT  GPIOC
+#endif
+#ifndef ES_EUART1_TX_GPIO_PIN
+#define ES_EUART1_TX_GPIO_PIN  ALD_GPIO_PIN_14
+#endif
+
+#ifndef ES_EUART1_TX_PIN
+#ifdef ES_PIN_GPIO_C_14
+#define ES_EUART1_TX_PIN ES_PIN_GPIO_C_14
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PC14_USED
+#define ES_MAP__PIN_PC14_USED
+#ifndef ES_AD16C4T0_CH1_GPIO_FUNC
+#define ES_AD16C4T0_CH1_GPIO_FUNC  ALD_GPIO_FUNC_3
+#endif
+#ifndef ES_AD16C4T0_CH1_GPIO_PORT
+#define ES_AD16C4T0_CH1_GPIO_PORT  GPIOC
+#endif
+#ifndef ES_AD16C4T0_CH1_GPIO_PIN
+#define ES_AD16C4T0_CH1_GPIO_PIN  ALD_GPIO_PIN_14
+#endif
+
+#ifndef ES_AD16C4T0_CH1_PIN
+#ifdef ES_PIN_GPIO_C_14
+#define ES_AD16C4T0_CH1_PIN ES_PIN_GPIO_C_14
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PC14_USED
+#define ES_MAP__PIN_PC14_USED
+#ifndef ES_SPI1_MISO_GPIO_FUNC
+#define ES_SPI1_MISO_GPIO_FUNC  ALD_GPIO_FUNC_5
+#endif
+#ifndef ES_SPI1_MISO_GPIO_PORT
+#define ES_SPI1_MISO_GPIO_PORT  GPIOC
+#endif
+#ifndef ES_SPI1_MISO_GPIO_PIN
+#define ES_SPI1_MISO_GPIO_PIN  ALD_GPIO_PIN_14
+#endif
+
+#ifndef ES_SPI1_MISO_PIN
+#ifdef ES_PIN_GPIO_C_14
+#define ES_SPI1_MISO_PIN ES_PIN_GPIO_C_14
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PC15_USED
+#define ES_MAP__PIN_PC15_USED
+#ifndef ES_GP16C4T2_CH4_GPIO_FUNC
+#define ES_GP16C4T2_CH4_GPIO_FUNC  ALD_GPIO_FUNC_2
+#endif
+#ifndef ES_GP16C4T2_CH4_GPIO_PORT
+#define ES_GP16C4T2_CH4_GPIO_PORT  GPIOC
+#endif
+#ifndef ES_GP16C4T2_CH4_GPIO_PIN
+#define ES_GP16C4T2_CH4_GPIO_PIN  ALD_GPIO_PIN_15
+#endif
+
+#ifndef ES_GP16C4T2_CH4_PIN
+#ifdef ES_PIN_GPIO_C_15
+#define ES_GP16C4T2_CH4_PIN ES_PIN_GPIO_C_15
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PC15_USED
+#define ES_MAP__PIN_PC15_USED
+#ifndef ES_AD16C4T0_CH2_GPIO_FUNC
+#define ES_AD16C4T0_CH2_GPIO_FUNC  ALD_GPIO_FUNC_3
+#endif
+#ifndef ES_AD16C4T0_CH2_GPIO_PORT
+#define ES_AD16C4T0_CH2_GPIO_PORT  GPIOC
+#endif
+#ifndef ES_AD16C4T0_CH2_GPIO_PIN
+#define ES_AD16C4T0_CH2_GPIO_PIN  ALD_GPIO_PIN_15
+#endif
+
+#ifndef ES_AD16C4T0_CH2_PIN
+#ifdef ES_PIN_GPIO_C_15
+#define ES_AD16C4T0_CH2_PIN ES_PIN_GPIO_C_15
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PC15_USED
+#define ES_MAP__PIN_PC15_USED
+#ifndef ES_SPI1_MOSI_GPIO_FUNC
+#define ES_SPI1_MOSI_GPIO_FUNC  ALD_GPIO_FUNC_5
+#endif
+#ifndef ES_SPI1_MOSI_GPIO_PORT
+#define ES_SPI1_MOSI_GPIO_PORT  GPIOC
+#endif
+#ifndef ES_SPI1_MOSI_GPIO_PIN
+#define ES_SPI1_MOSI_GPIO_PIN  ALD_GPIO_PIN_15
+#endif
+
+#ifndef ES_SPI1_MOSI_PIN
+#ifdef ES_PIN_GPIO_C_15
+#define ES_SPI1_MOSI_PIN ES_PIN_GPIO_C_15
+#endif
+#endif
+#endif
+
+
+
+#ifndef ES_MAP__PIN_PC11_USED
+#define ES_MAP__PIN_PC11_USED
+#ifndef ES_CUART2_RX_GPIO_FUNC
+#define ES_CUART2_RX_GPIO_FUNC  ALD_GPIO_FUNC_4
+#endif
+#ifndef ES_CUART2_RX_GPIO_PORT
+#define ES_CUART2_RX_GPIO_PORT  GPIOC
+#endif
+#ifndef ES_CUART2_RX_GPIO_PIN
+#define ES_CUART2_RX_GPIO_PIN  ALD_GPIO_PIN_11
+#endif
+
+#ifndef ES_CUART2_RX_PIN
+#ifdef ES_PIN_GPIO_C_11
+#define ES_CUART2_RX_PIN ES_PIN_GPIO_C_11
+#endif
+#endif
+#endif
+
+#ifndef ES_MAP__PIN_PD0_USED
+#define ES_MAP__PIN_PD0_USED
+#ifndef ES_CUART2_RX_GPIO_FUNC
+#define ES_CUART2_RX_GPIO_FUNC  ALD_GPIO_FUNC_2
+#endif
+#ifndef ES_CUART2_RX_GPIO_PORT
+#define ES_CUART2_RX_GPIO_PORT  GPIOD
+#endif
+#ifndef ES_CUART2_RX_GPIO_PIN
+#define ES_CUART2_RX_GPIO_PIN  ALD_GPIO_PIN_0
+#endif
+
+#ifndef ES_CUART2_RX_PIN
+#ifdef ES_PIN_GPIO_D_0
+#define ES_CUART2_RX_PIN ES_PIN_GPIO_D_0
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PD0_USED
+#define ES_MAP__PIN_PD0_USED
+#ifndef ES_AD16C4T0_CH3_GPIO_FUNC
+#define ES_AD16C4T0_CH3_GPIO_FUNC  ALD_GPIO_FUNC_3
+#endif
+#ifndef ES_AD16C4T0_CH3_GPIO_PORT
+#define ES_AD16C4T0_CH3_GPIO_PORT  GPIOD
+#endif
+#ifndef ES_AD16C4T0_CH3_GPIO_PIN
+#define ES_AD16C4T0_CH3_GPIO_PIN  ALD_GPIO_PIN_0
+#endif
+
+#ifndef ES_AD16C4T0_CH3_PIN
+#ifdef ES_PIN_GPIO_D_0
+#define ES_AD16C4T0_CH3_PIN ES_PIN_GPIO_D_0
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PD0_USED
+#define ES_MAP__PIN_PD0_USED
+#ifndef ES_I2C1_SCL_GPIO_FUNC
+#define ES_I2C1_SCL_GPIO_FUNC  ALD_GPIO_FUNC_7
+#endif
+#ifndef ES_I2C1_SCL_GPIO_PORT
+#define ES_I2C1_SCL_GPIO_PORT  GPIOD
+#endif
+#ifndef ES_I2C1_SCL_GPIO_PIN
+#define ES_I2C1_SCL_GPIO_PIN  ALD_GPIO_PIN_0
+#endif
+
+#ifndef ES_I2C1_SCL_PIN
+#ifdef ES_PIN_GPIO_D_0
+#define ES_I2C1_SCL_PIN ES_PIN_GPIO_D_0
+#endif
+#endif
+#endif
+
+
+
+#ifndef ES_MAP__PIN_PC10_USED
+#define ES_MAP__PIN_PC10_USED
+#ifndef ES_CUART2_TX_GPIO_FUNC
+#define ES_CUART2_TX_GPIO_FUNC  ALD_GPIO_FUNC_4
+#endif
+#ifndef ES_CUART2_TX_GPIO_PORT
+#define ES_CUART2_TX_GPIO_PORT  GPIOC
+#endif
+#ifndef ES_CUART2_TX_GPIO_PIN
+#define ES_CUART2_TX_GPIO_PIN  ALD_GPIO_PIN_10
+#endif
+
+#ifndef ES_CUART2_TX_PIN
+#ifdef ES_PIN_GPIO_C_10
+#define ES_CUART2_TX_PIN ES_PIN_GPIO_C_10
+#endif
+#endif
+#endif
+
+#ifndef ES_MAP__PIN_PD1_USED
+#define ES_MAP__PIN_PD1_USED
+#ifndef ES_CUART2_TX_GPIO_FUNC
+#define ES_CUART2_TX_GPIO_FUNC  ALD_GPIO_FUNC_2
+#endif
+#ifndef ES_CUART2_TX_GPIO_PORT
+#define ES_CUART2_TX_GPIO_PORT  GPIOD
+#endif
+#ifndef ES_CUART2_TX_GPIO_PIN
+#define ES_CUART2_TX_GPIO_PIN  ALD_GPIO_PIN_1
+#endif
+
+#ifndef ES_CUART2_TX_PIN
+#ifdef ES_PIN_GPIO_D_1
+#define ES_CUART2_TX_PIN ES_PIN_GPIO_D_1
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PD1_USED
+#define ES_MAP__PIN_PD1_USED
+#ifndef ES_AD16C4T0_CH4_GPIO_FUNC
+#define ES_AD16C4T0_CH4_GPIO_FUNC  ALD_GPIO_FUNC_3
+#endif
+#ifndef ES_AD16C4T0_CH4_GPIO_PORT
+#define ES_AD16C4T0_CH4_GPIO_PORT  GPIOD
+#endif
+#ifndef ES_AD16C4T0_CH4_GPIO_PIN
+#define ES_AD16C4T0_CH4_GPIO_PIN  ALD_GPIO_PIN_1
+#endif
+
+#ifndef ES_AD16C4T0_CH4_PIN
+#ifdef ES_PIN_GPIO_D_1
+#define ES_AD16C4T0_CH4_PIN ES_PIN_GPIO_D_1
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PD1_USED
+#define ES_MAP__PIN_PD1_USED
+#ifndef ES_GP16C4T2_CH3_GPIO_FUNC
+#define ES_GP16C4T2_CH3_GPIO_FUNC  ALD_GPIO_FUNC_4
+#endif
+#ifndef ES_GP16C4T2_CH3_GPIO_PORT
+#define ES_GP16C4T2_CH3_GPIO_PORT  GPIOD
+#endif
+#ifndef ES_GP16C4T2_CH3_GPIO_PIN
+#define ES_GP16C4T2_CH3_GPIO_PIN  ALD_GPIO_PIN_1
+#endif
+
+#ifndef ES_GP16C4T2_CH3_PIN
+#ifdef ES_PIN_GPIO_D_1
+#define ES_GP16C4T2_CH3_PIN ES_PIN_GPIO_D_1
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PD1_USED
+#define ES_MAP__PIN_PD1_USED
+#ifndef ES_SPI1_NSS_GPIO_FUNC
+#define ES_SPI1_NSS_GPIO_FUNC  ALD_GPIO_FUNC_5
+#endif
+#ifndef ES_SPI1_NSS_GPIO_PORT
+#define ES_SPI1_NSS_GPIO_PORT  GPIOD
+#endif
+#ifndef ES_SPI1_NSS_GPIO_PIN
+#define ES_SPI1_NSS_GPIO_PIN  ALD_GPIO_PIN_1
+#endif
+
+#ifndef ES_SPI1_NSS_PIN
+#ifdef ES_PIN_GPIO_D_1
+#define ES_SPI1_NSS_PIN ES_PIN_GPIO_D_1
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PD1_USED
+#define ES_MAP__PIN_PD1_USED
+#ifndef ES_I2C1_SDA_GPIO_FUNC
+#define ES_I2C1_SDA_GPIO_FUNC  ALD_GPIO_FUNC_7
+#endif
+#ifndef ES_I2C1_SDA_GPIO_PORT
+#define ES_I2C1_SDA_GPIO_PORT  GPIOD
+#endif
+#ifndef ES_I2C1_SDA_GPIO_PIN
+#define ES_I2C1_SDA_GPIO_PIN  ALD_GPIO_PIN_1
+#endif
+
+#ifndef ES_I2C1_SDA_PIN
+#ifdef ES_PIN_GPIO_D_1
+#define ES_I2C1_SDA_PIN ES_PIN_GPIO_D_1
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PC0_USED
+#define ES_MAP__PIN_PC0_USED
+#ifndef ES_CUART1_TX_GPIO_FUNC
+#define ES_CUART1_TX_GPIO_FUNC  ALD_GPIO_FUNC_2
+#endif
+#ifndef ES_CUART1_TX_GPIO_PORT
+#define ES_CUART1_TX_GPIO_PORT  GPIOC
+#endif
+#ifndef ES_CUART1_TX_GPIO_PIN
+#define ES_CUART1_TX_GPIO_PIN  ALD_GPIO_PIN_0
+#endif
+
+#ifndef ES_CUART1_TX_PIN
+#ifdef ES_PIN_GPIO_C_0
+#define ES_CUART1_TX_PIN ES_PIN_GPIO_C_0
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PC0_USED
+#define ES_MAP__PIN_PC0_USED
+#ifndef ES_SPI0_NSS_GPIO_FUNC
+#define ES_SPI0_NSS_GPIO_FUNC  ALD_GPIO_FUNC_3
+#endif
+#ifndef ES_SPI0_NSS_GPIO_PORT
+#define ES_SPI0_NSS_GPIO_PORT  GPIOC
+#endif
+#ifndef ES_SPI0_NSS_GPIO_PIN
+#define ES_SPI0_NSS_GPIO_PIN  ALD_GPIO_PIN_0
+#endif
+
+#ifndef ES_SPI0_NSS_PIN
+#ifdef ES_PIN_GPIO_C_0
+#define ES_SPI0_NSS_PIN ES_PIN_GPIO_C_0
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PC0_USED
+#define ES_MAP__PIN_PC0_USED
+#ifndef ES_AD16C4T0_CH4_GPIO_FUNC
+#define ES_AD16C4T0_CH4_GPIO_FUNC  ALD_GPIO_FUNC_4
+#endif
+#ifndef ES_AD16C4T0_CH4_GPIO_PORT
+#define ES_AD16C4T0_CH4_GPIO_PORT  GPIOC
+#endif
+#ifndef ES_AD16C4T0_CH4_GPIO_PIN
+#define ES_AD16C4T0_CH4_GPIO_PIN  ALD_GPIO_PIN_0
+#endif
+
+#ifndef ES_AD16C4T0_CH4_PIN
+#ifdef ES_PIN_GPIO_C_0
+#define ES_AD16C4T0_CH4_PIN ES_PIN_GPIO_C_0
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PC0_USED
+#define ES_MAP__PIN_PC0_USED
+#ifndef ES_I2C1_SDA_GPIO_FUNC
+#define ES_I2C1_SDA_GPIO_FUNC  ALD_GPIO_FUNC_5
+#endif
+#ifndef ES_I2C1_SDA_GPIO_PORT
+#define ES_I2C1_SDA_GPIO_PORT  GPIOC
+#endif
+#ifndef ES_I2C1_SDA_GPIO_PIN
+#define ES_I2C1_SDA_GPIO_PIN  ALD_GPIO_PIN_0
+#endif
+
+#ifndef ES_I2C1_SDA_PIN
+#ifdef ES_PIN_GPIO_C_0
+#define ES_I2C1_SDA_PIN ES_PIN_GPIO_C_0
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PC1_USED
+#define ES_MAP__PIN_PC1_USED
+#ifndef ES_CUART1_RX_GPIO_FUNC
+#define ES_CUART1_RX_GPIO_FUNC  ALD_GPIO_FUNC_2
+#endif
+#ifndef ES_CUART1_RX_GPIO_PORT
+#define ES_CUART1_RX_GPIO_PORT  GPIOC
+#endif
+#ifndef ES_CUART1_RX_GPIO_PIN
+#define ES_CUART1_RX_GPIO_PIN  ALD_GPIO_PIN_1
+#endif
+
+#ifndef ES_CUART1_RX_PIN
+#ifdef ES_PIN_GPIO_C_1
+#define ES_CUART1_RX_PIN ES_PIN_GPIO_C_1
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PC1_USED
+#define ES_MAP__PIN_PC1_USED
+#ifndef ES_SPI0_SCK_GPIO_FUNC
+#define ES_SPI0_SCK_GPIO_FUNC  ALD_GPIO_FUNC_3
+#endif
+#ifndef ES_SPI0_SCK_GPIO_PORT
+#define ES_SPI0_SCK_GPIO_PORT  GPIOC
+#endif
+#ifndef ES_SPI0_SCK_GPIO_PIN
+#define ES_SPI0_SCK_GPIO_PIN  ALD_GPIO_PIN_1
+#endif
+
+#ifndef ES_SPI0_SCK_PIN
+#ifdef ES_PIN_GPIO_C_1
+#define ES_SPI0_SCK_PIN ES_PIN_GPIO_C_1
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PC1_USED
+#define ES_MAP__PIN_PC1_USED
+#ifndef ES_AD16C4T0_ET_GPIO_FUNC
+#define ES_AD16C4T0_ET_GPIO_FUNC  ALD_GPIO_FUNC_4
+#endif
+#ifndef ES_AD16C4T0_ET_GPIO_PORT
+#define ES_AD16C4T0_ET_GPIO_PORT  GPIOC
+#endif
+#ifndef ES_AD16C4T0_ET_GPIO_PIN
+#define ES_AD16C4T0_ET_GPIO_PIN  ALD_GPIO_PIN_1
+#endif
+
+#ifndef ES_AD16C4T0_ET_PIN
+#ifdef ES_PIN_GPIO_C_1
+#define ES_AD16C4T0_ET_PIN ES_PIN_GPIO_C_1
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PC1_USED
+#define ES_MAP__PIN_PC1_USED
+#ifndef ES_I2C1_SCL_GPIO_FUNC
+#define ES_I2C1_SCL_GPIO_FUNC  ALD_GPIO_FUNC_5
+#endif
+#ifndef ES_I2C1_SCL_GPIO_PORT
+#define ES_I2C1_SCL_GPIO_PORT  GPIOC
+#endif
+#ifndef ES_I2C1_SCL_GPIO_PIN
+#define ES_I2C1_SCL_GPIO_PIN  ALD_GPIO_PIN_1
+#endif
+
+#ifndef ES_I2C1_SCL_PIN
+#ifdef ES_PIN_GPIO_C_1
+#define ES_I2C1_SCL_PIN ES_PIN_GPIO_C_1
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PC2_USED
+#define ES_MAP__PIN_PC2_USED
+#ifndef ES_SPI0_MISO_GPIO_FUNC
+#define ES_SPI0_MISO_GPIO_FUNC  ALD_GPIO_FUNC_3
+#endif
+#ifndef ES_SPI0_MISO_GPIO_PORT
+#define ES_SPI0_MISO_GPIO_PORT  GPIOC
+#endif
+#ifndef ES_SPI0_MISO_GPIO_PIN
+#define ES_SPI0_MISO_GPIO_PIN  ALD_GPIO_PIN_2
+#endif
+
+#ifndef ES_SPI0_MISO_PIN
+#ifdef ES_PIN_GPIO_C_2
+#define ES_SPI0_MISO_PIN ES_PIN_GPIO_C_2
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PC2_USED
+#define ES_MAP__PIN_PC2_USED
+#ifndef ES_GP16C4T2_CH1_GPIO_FUNC
+#define ES_GP16C4T2_CH1_GPIO_FUNC  ALD_GPIO_FUNC_5
+#endif
+#ifndef ES_GP16C4T2_CH1_GPIO_PORT
+#define ES_GP16C4T2_CH1_GPIO_PORT  GPIOC
+#endif
+#ifndef ES_GP16C4T2_CH1_GPIO_PIN
+#define ES_GP16C4T2_CH1_GPIO_PIN  ALD_GPIO_PIN_2
+#endif
+
+#ifndef ES_GP16C4T2_CH1_PIN
+#ifdef ES_PIN_GPIO_C_2
+#define ES_GP16C4T2_CH1_PIN ES_PIN_GPIO_C_2
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PC3_USED
+#define ES_MAP__PIN_PC3_USED
+#ifndef ES_SPI0_MOSI_GPIO_FUNC
+#define ES_SPI0_MOSI_GPIO_FUNC  ALD_GPIO_FUNC_3
+#endif
+#ifndef ES_SPI0_MOSI_GPIO_PORT
+#define ES_SPI0_MOSI_GPIO_PORT  GPIOC
+#endif
+#ifndef ES_SPI0_MOSI_GPIO_PIN
+#define ES_SPI0_MOSI_GPIO_PIN  ALD_GPIO_PIN_3
+#endif
+
+#ifndef ES_SPI0_MOSI_PIN
+#ifdef ES_PIN_GPIO_C_3
+#define ES_SPI0_MOSI_PIN ES_PIN_GPIO_C_3
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PC3_USED
+#define ES_MAP__PIN_PC3_USED
+#ifndef ES_GP16C4T2_CH2_GPIO_FUNC
+#define ES_GP16C4T2_CH2_GPIO_FUNC  ALD_GPIO_FUNC_5
+#endif
+#ifndef ES_GP16C4T2_CH2_GPIO_PORT
+#define ES_GP16C4T2_CH2_GPIO_PORT  GPIOC
+#endif
+#ifndef ES_GP16C4T2_CH2_GPIO_PIN
+#define ES_GP16C4T2_CH2_GPIO_PIN  ALD_GPIO_PIN_3
+#endif
+
+#ifndef ES_GP16C4T2_CH2_PIN
+#ifdef ES_PIN_GPIO_C_3
+#define ES_GP16C4T2_CH2_PIN ES_PIN_GPIO_C_3
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PA0_USED
+#define ES_MAP__PIN_PA0_USED
+#ifndef ES_GP16C4T0_CH1_GPIO_FUNC
+#define ES_GP16C4T0_CH1_GPIO_FUNC  ALD_GPIO_FUNC_3
+#endif
+#ifndef ES_GP16C4T0_CH1_GPIO_PORT
+#define ES_GP16C4T0_CH1_GPIO_PORT  GPIOA
+#endif
+#ifndef ES_GP16C4T0_CH1_GPIO_PIN
+#define ES_GP16C4T0_CH1_GPIO_PIN  ALD_GPIO_PIN_0
+#endif
+
+#ifndef ES_GP16C4T0_CH1_PIN
+#ifdef ES_PIN_GPIO_A_0
+#define ES_GP16C4T0_CH1_PIN ES_PIN_GPIO_A_0
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PA0_USED
+#define ES_MAP__PIN_PA0_USED
+#ifndef ES_GP16C4T0_ET_GPIO_FUNC
+#define ES_GP16C4T0_ET_GPIO_FUNC  ALD_GPIO_FUNC_4
+#endif
+#ifndef ES_GP16C4T0_ET_GPIO_PORT
+#define ES_GP16C4T0_ET_GPIO_PORT  GPIOA
+#endif
+#ifndef ES_GP16C4T0_ET_GPIO_PIN
+#define ES_GP16C4T0_ET_GPIO_PIN  ALD_GPIO_PIN_0
+#endif
+
+#ifndef ES_GP16C4T0_ET_PIN
+#ifdef ES_PIN_GPIO_A_0
+#define ES_GP16C4T0_ET_PIN ES_PIN_GPIO_A_0
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PA0_USED
+#define ES_MAP__PIN_PA0_USED
+#ifndef ES_AD16C4T0_CH1_GPIO_FUNC
+#define ES_AD16C4T0_CH1_GPIO_FUNC  ALD_GPIO_FUNC_5
+#endif
+#ifndef ES_AD16C4T0_CH1_GPIO_PORT
+#define ES_AD16C4T0_CH1_GPIO_PORT  GPIOA
+#endif
+#ifndef ES_AD16C4T0_CH1_GPIO_PIN
+#define ES_AD16C4T0_CH1_GPIO_PIN  ALD_GPIO_PIN_0
+#endif
+
+#ifndef ES_AD16C4T0_CH1_PIN
+#ifdef ES_PIN_GPIO_A_0
+#define ES_AD16C4T0_CH1_PIN ES_PIN_GPIO_A_0
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PA1_USED
+#define ES_MAP__PIN_PA1_USED
+#ifndef ES_GP16C4T0_CH2_GPIO_FUNC
+#define ES_GP16C4T0_CH2_GPIO_FUNC  ALD_GPIO_FUNC_3
+#endif
+#ifndef ES_GP16C4T0_CH2_GPIO_PORT
+#define ES_GP16C4T0_CH2_GPIO_PORT  GPIOA
+#endif
+#ifndef ES_GP16C4T0_CH2_GPIO_PIN
+#define ES_GP16C4T0_CH2_GPIO_PIN  ALD_GPIO_PIN_1
+#endif
+
+#ifndef ES_GP16C4T0_CH2_PIN
+#ifdef ES_PIN_GPIO_A_1
+#define ES_GP16C4T0_CH2_PIN ES_PIN_GPIO_A_1
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PA1_USED
+#define ES_MAP__PIN_PA1_USED
+#ifndef ES_SPI0_SCK_GPIO_FUNC
+#define ES_SPI0_SCK_GPIO_FUNC  ALD_GPIO_FUNC_4
+#endif
+#ifndef ES_SPI0_SCK_GPIO_PORT
+#define ES_SPI0_SCK_GPIO_PORT  GPIOA
+#endif
+#ifndef ES_SPI0_SCK_GPIO_PIN
+#define ES_SPI0_SCK_GPIO_PIN  ALD_GPIO_PIN_1
+#endif
+
+#ifndef ES_SPI0_SCK_PIN
+#ifdef ES_PIN_GPIO_A_1
+#define ES_SPI0_SCK_PIN ES_PIN_GPIO_A_1
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PA1_USED
+#define ES_MAP__PIN_PA1_USED
+#ifndef ES_AD16C4T0_CH2_GPIO_FUNC
+#define ES_AD16C4T0_CH2_GPIO_FUNC  ALD_GPIO_FUNC_5
+#endif
+#ifndef ES_AD16C4T0_CH2_GPIO_PORT
+#define ES_AD16C4T0_CH2_GPIO_PORT  GPIOA
+#endif
+#ifndef ES_AD16C4T0_CH2_GPIO_PIN
+#define ES_AD16C4T0_CH2_GPIO_PIN  ALD_GPIO_PIN_1
+#endif
+
+#ifndef ES_AD16C4T0_CH2_PIN
+#ifdef ES_PIN_GPIO_A_1
+#define ES_AD16C4T0_CH2_PIN ES_PIN_GPIO_A_1
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PA2_USED
+#define ES_MAP__PIN_PA2_USED
+#ifndef ES_CUART1_TX_GPIO_FUNC
+#define ES_CUART1_TX_GPIO_FUNC  ALD_GPIO_FUNC_2
+#endif
+#ifndef ES_CUART1_TX_GPIO_PORT
+#define ES_CUART1_TX_GPIO_PORT  GPIOA
+#endif
+#ifndef ES_CUART1_TX_GPIO_PIN
+#define ES_CUART1_TX_GPIO_PIN  ALD_GPIO_PIN_2
+#endif
+
+#ifndef ES_CUART1_TX_PIN
+#ifdef ES_PIN_GPIO_A_2
+#define ES_CUART1_TX_PIN ES_PIN_GPIO_A_2
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PA2_USED
+#define ES_MAP__PIN_PA2_USED
+#ifndef ES_GP16C4T0_CH3_GPIO_FUNC
+#define ES_GP16C4T0_CH3_GPIO_FUNC  ALD_GPIO_FUNC_3
+#endif
+#ifndef ES_GP16C4T0_CH3_GPIO_PORT
+#define ES_GP16C4T0_CH3_GPIO_PORT  GPIOA
+#endif
+#ifndef ES_GP16C4T0_CH3_GPIO_PIN
+#define ES_GP16C4T0_CH3_GPIO_PIN  ALD_GPIO_PIN_2
+#endif
+
+#ifndef ES_GP16C4T0_CH3_PIN
+#ifdef ES_PIN_GPIO_A_2
+#define ES_GP16C4T0_CH3_PIN ES_PIN_GPIO_A_2
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PA2_USED
+#define ES_MAP__PIN_PA2_USED
+#ifndef ES_SPI0_MISO_GPIO_FUNC
+#define ES_SPI0_MISO_GPIO_FUNC  ALD_GPIO_FUNC_4
+#endif
+#ifndef ES_SPI0_MISO_GPIO_PORT
+#define ES_SPI0_MISO_GPIO_PORT  GPIOA
+#endif
+#ifndef ES_SPI0_MISO_GPIO_PIN
+#define ES_SPI0_MISO_GPIO_PIN  ALD_GPIO_PIN_2
+#endif
+
+#ifndef ES_SPI0_MISO_PIN
+#ifdef ES_PIN_GPIO_A_2
+#define ES_SPI0_MISO_PIN ES_PIN_GPIO_A_2
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PA2_USED
+#define ES_MAP__PIN_PA2_USED
+#ifndef ES_AD16C4T0_CH3_GPIO_FUNC
+#define ES_AD16C4T0_CH3_GPIO_FUNC  ALD_GPIO_FUNC_5
+#endif
+#ifndef ES_AD16C4T0_CH3_GPIO_PORT
+#define ES_AD16C4T0_CH3_GPIO_PORT  GPIOA
+#endif
+#ifndef ES_AD16C4T0_CH3_GPIO_PIN
+#define ES_AD16C4T0_CH3_GPIO_PIN  ALD_GPIO_PIN_2
+#endif
+
+#ifndef ES_AD16C4T0_CH3_PIN
+#ifdef ES_PIN_GPIO_A_2
+#define ES_AD16C4T0_CH3_PIN ES_PIN_GPIO_A_2
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PA3_USED
+#define ES_MAP__PIN_PA3_USED
+#ifndef ES_CUART1_RX_GPIO_FUNC
+#define ES_CUART1_RX_GPIO_FUNC  ALD_GPIO_FUNC_2
+#endif
+#ifndef ES_CUART1_RX_GPIO_PORT
+#define ES_CUART1_RX_GPIO_PORT  GPIOA
+#endif
+#ifndef ES_CUART1_RX_GPIO_PIN
+#define ES_CUART1_RX_GPIO_PIN  ALD_GPIO_PIN_3
+#endif
+
+#ifndef ES_CUART1_RX_PIN
+#ifdef ES_PIN_GPIO_A_3
+#define ES_CUART1_RX_PIN ES_PIN_GPIO_A_3
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PA3_USED
+#define ES_MAP__PIN_PA3_USED
+#ifndef ES_GP16C4T0_CH4_GPIO_FUNC
+#define ES_GP16C4T0_CH4_GPIO_FUNC  ALD_GPIO_FUNC_3
+#endif
+#ifndef ES_GP16C4T0_CH4_GPIO_PORT
+#define ES_GP16C4T0_CH4_GPIO_PORT  GPIOA
+#endif
+#ifndef ES_GP16C4T0_CH4_GPIO_PIN
+#define ES_GP16C4T0_CH4_GPIO_PIN  ALD_GPIO_PIN_3
+#endif
+
+#ifndef ES_GP16C4T0_CH4_PIN
+#ifdef ES_PIN_GPIO_A_3
+#define ES_GP16C4T0_CH4_PIN ES_PIN_GPIO_A_3
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PA3_USED
+#define ES_MAP__PIN_PA3_USED
+#ifndef ES_SPI0_MOSI_GPIO_FUNC
+#define ES_SPI0_MOSI_GPIO_FUNC  ALD_GPIO_FUNC_4
+#endif
+#ifndef ES_SPI0_MOSI_GPIO_PORT
+#define ES_SPI0_MOSI_GPIO_PORT  GPIOA
+#endif
+#ifndef ES_SPI0_MOSI_GPIO_PIN
+#define ES_SPI0_MOSI_GPIO_PIN  ALD_GPIO_PIN_3
+#endif
+
+#ifndef ES_SPI0_MOSI_PIN
+#ifdef ES_PIN_GPIO_A_3
+#define ES_SPI0_MOSI_PIN ES_PIN_GPIO_A_3
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PA3_USED
+#define ES_MAP__PIN_PA3_USED
+#ifndef ES_AD16C4T0_CH4_GPIO_FUNC
+#define ES_AD16C4T0_CH4_GPIO_FUNC  ALD_GPIO_FUNC_5
+#endif
+#ifndef ES_AD16C4T0_CH4_GPIO_PORT
+#define ES_AD16C4T0_CH4_GPIO_PORT  GPIOA
+#endif
+#ifndef ES_AD16C4T0_CH4_GPIO_PIN
+#define ES_AD16C4T0_CH4_GPIO_PIN  ALD_GPIO_PIN_3
+#endif
+
+#ifndef ES_AD16C4T0_CH4_PIN
+#ifdef ES_PIN_GPIO_A_3
+#define ES_AD16C4T0_CH4_PIN ES_PIN_GPIO_A_3
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PA4_USED
+#define ES_MAP__PIN_PA4_USED
+#ifndef ES_SPI0_NSS_GPIO_FUNC
+#define ES_SPI0_NSS_GPIO_FUNC  ALD_GPIO_FUNC_2
+#endif
+#ifndef ES_SPI0_NSS_GPIO_PORT
+#define ES_SPI0_NSS_GPIO_PORT  GPIOA
+#endif
+#ifndef ES_SPI0_NSS_GPIO_PIN
+#define ES_SPI0_NSS_GPIO_PIN  ALD_GPIO_PIN_4
+#endif
+
+#ifndef ES_SPI0_NSS_PIN
+#ifdef ES_PIN_GPIO_A_4
+#define ES_SPI0_NSS_PIN ES_PIN_GPIO_A_4
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PA4_USED
+#define ES_MAP__PIN_PA4_USED
+#ifndef ES_GP16C4T1_CH3_GPIO_FUNC
+#define ES_GP16C4T1_CH3_GPIO_FUNC  ALD_GPIO_FUNC_4
+#endif
+#ifndef ES_GP16C4T1_CH3_GPIO_PORT
+#define ES_GP16C4T1_CH3_GPIO_PORT  GPIOA
+#endif
+#ifndef ES_GP16C4T1_CH3_GPIO_PIN
+#define ES_GP16C4T1_CH3_GPIO_PIN  ALD_GPIO_PIN_4
+#endif
+
+#ifndef ES_GP16C4T1_CH3_PIN
+#ifdef ES_PIN_GPIO_A_4
+#define ES_GP16C4T1_CH3_PIN ES_PIN_GPIO_A_4
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PA5_USED
+#define ES_MAP__PIN_PA5_USED
+#ifndef ES_SPI0_SCK_GPIO_FUNC
+#define ES_SPI0_SCK_GPIO_FUNC  ALD_GPIO_FUNC_2
+#endif
+#ifndef ES_SPI0_SCK_GPIO_PORT
+#define ES_SPI0_SCK_GPIO_PORT  GPIOA
+#endif
+#ifndef ES_SPI0_SCK_GPIO_PIN
+#define ES_SPI0_SCK_GPIO_PIN  ALD_GPIO_PIN_5
+#endif
+
+#ifndef ES_SPI0_SCK_PIN
+#ifdef ES_PIN_GPIO_A_5
+#define ES_SPI0_SCK_PIN ES_PIN_GPIO_A_5
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PA5_USED
+#define ES_MAP__PIN_PA5_USED
+#ifndef ES_EUART1_RX_GPIO_FUNC
+#define ES_EUART1_RX_GPIO_FUNC  ALD_GPIO_FUNC_3
+#endif
+#ifndef ES_EUART1_RX_GPIO_PORT
+#define ES_EUART1_RX_GPIO_PORT  GPIOA
+#endif
+#ifndef ES_EUART1_RX_GPIO_PIN
+#define ES_EUART1_RX_GPIO_PIN  ALD_GPIO_PIN_5
+#endif
+
+#ifndef ES_EUART1_RX_PIN
+#ifdef ES_PIN_GPIO_A_5
+#define ES_EUART1_RX_PIN ES_PIN_GPIO_A_5
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PA5_USED
+#define ES_MAP__PIN_PA5_USED
+#ifndef ES_GP16C4T1_CH4_GPIO_FUNC
+#define ES_GP16C4T1_CH4_GPIO_FUNC  ALD_GPIO_FUNC_4
+#endif
+#ifndef ES_GP16C4T1_CH4_GPIO_PORT
+#define ES_GP16C4T1_CH4_GPIO_PORT  GPIOA
+#endif
+#ifndef ES_GP16C4T1_CH4_GPIO_PIN
+#define ES_GP16C4T1_CH4_GPIO_PIN  ALD_GPIO_PIN_5
+#endif
+
+#ifndef ES_GP16C4T1_CH4_PIN
+#ifdef ES_PIN_GPIO_A_5
+#define ES_GP16C4T1_CH4_PIN ES_PIN_GPIO_A_5
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PA5_USED
+#define ES_MAP__PIN_PA5_USED
+#ifndef ES_I2C1_SCL_GPIO_FUNC
+#define ES_I2C1_SCL_GPIO_FUNC  ALD_GPIO_FUNC_7
+#endif
+#ifndef ES_I2C1_SCL_GPIO_PORT
+#define ES_I2C1_SCL_GPIO_PORT  GPIOA
+#endif
+#ifndef ES_I2C1_SCL_GPIO_PIN
+#define ES_I2C1_SCL_GPIO_PIN  ALD_GPIO_PIN_5
+#endif
+
+#ifndef ES_I2C1_SCL_PIN
+#ifdef ES_PIN_GPIO_A_5
+#define ES_I2C1_SCL_PIN ES_PIN_GPIO_A_5
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PA6_USED
+#define ES_MAP__PIN_PA6_USED
+#ifndef ES_SPI0_MISO_GPIO_FUNC
+#define ES_SPI0_MISO_GPIO_FUNC  ALD_GPIO_FUNC_2
+#endif
+#ifndef ES_SPI0_MISO_GPIO_PORT
+#define ES_SPI0_MISO_GPIO_PORT  GPIOA
+#endif
+#ifndef ES_SPI0_MISO_GPIO_PIN
+#define ES_SPI0_MISO_GPIO_PIN  ALD_GPIO_PIN_6
+#endif
+
+#ifndef ES_SPI0_MISO_PIN
+#ifdef ES_PIN_GPIO_A_6
+#define ES_SPI0_MISO_PIN ES_PIN_GPIO_A_6
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PA6_USED
+#define ES_MAP__PIN_PA6_USED
+#ifndef ES_GP16C4T1_CH1_GPIO_FUNC
+#define ES_GP16C4T1_CH1_GPIO_FUNC  ALD_GPIO_FUNC_3
+#endif
+#ifndef ES_GP16C4T1_CH1_GPIO_PORT
+#define ES_GP16C4T1_CH1_GPIO_PORT  GPIOA
+#endif
+#ifndef ES_GP16C4T1_CH1_GPIO_PIN
+#define ES_GP16C4T1_CH1_GPIO_PIN  ALD_GPIO_PIN_6
+#endif
+
+#ifndef ES_GP16C4T1_CH1_PIN
+#ifdef ES_PIN_GPIO_A_6
+#define ES_GP16C4T1_CH1_PIN ES_PIN_GPIO_A_6
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PA6_USED
+#define ES_MAP__PIN_PA6_USED
+#ifndef ES_GP16C4T2_ET_GPIO_FUNC
+#define ES_GP16C4T2_ET_GPIO_FUNC  ALD_GPIO_FUNC_5
+#endif
+#ifndef ES_GP16C4T2_ET_GPIO_PORT
+#define ES_GP16C4T2_ET_GPIO_PORT  GPIOA
+#endif
+#ifndef ES_GP16C4T2_ET_GPIO_PIN
+#define ES_GP16C4T2_ET_GPIO_PIN  ALD_GPIO_PIN_6
+#endif
+
+#ifndef ES_GP16C4T2_ET_PIN
+#ifdef ES_PIN_GPIO_A_6
+#define ES_GP16C4T2_ET_PIN ES_PIN_GPIO_A_6
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PA6_USED
+#define ES_MAP__PIN_PA6_USED
+#ifndef ES_I2C1_SDA_GPIO_FUNC
+#define ES_I2C1_SDA_GPIO_FUNC  ALD_GPIO_FUNC_7
+#endif
+#ifndef ES_I2C1_SDA_GPIO_PORT
+#define ES_I2C1_SDA_GPIO_PORT  GPIOA
+#endif
+#ifndef ES_I2C1_SDA_GPIO_PIN
+#define ES_I2C1_SDA_GPIO_PIN  ALD_GPIO_PIN_6
+#endif
+
+#ifndef ES_I2C1_SDA_PIN
+#ifdef ES_PIN_GPIO_A_6
+#define ES_I2C1_SDA_PIN ES_PIN_GPIO_A_6
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PA7_USED
+#define ES_MAP__PIN_PA7_USED
+#ifndef ES_SPI0_MOSI_GPIO_FUNC
+#define ES_SPI0_MOSI_GPIO_FUNC  ALD_GPIO_FUNC_2
+#endif
+#ifndef ES_SPI0_MOSI_GPIO_PORT
+#define ES_SPI0_MOSI_GPIO_PORT  GPIOA
+#endif
+#ifndef ES_SPI0_MOSI_GPIO_PIN
+#define ES_SPI0_MOSI_GPIO_PIN  ALD_GPIO_PIN_7
+#endif
+
+#ifndef ES_SPI0_MOSI_PIN
+#ifdef ES_PIN_GPIO_A_7
+#define ES_SPI0_MOSI_PIN ES_PIN_GPIO_A_7
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PA7_USED
+#define ES_MAP__PIN_PA7_USED
+#ifndef ES_GP16C4T1_CH2_GPIO_FUNC
+#define ES_GP16C4T1_CH2_GPIO_FUNC  ALD_GPIO_FUNC_3
+#endif
+#ifndef ES_GP16C4T1_CH2_GPIO_PORT
+#define ES_GP16C4T1_CH2_GPIO_PORT  GPIOA
+#endif
+#ifndef ES_GP16C4T1_CH2_GPIO_PIN
+#define ES_GP16C4T1_CH2_GPIO_PIN  ALD_GPIO_PIN_7
+#endif
+
+#ifndef ES_GP16C4T1_CH2_PIN
+#ifdef ES_PIN_GPIO_A_7
+#define ES_GP16C4T1_CH2_PIN ES_PIN_GPIO_A_7
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PA7_USED
+#define ES_MAP__PIN_PA7_USED
+#ifndef ES_AD16C4T0_CH1N_GPIO_FUNC
+#define ES_AD16C4T0_CH1N_GPIO_FUNC  ALD_GPIO_FUNC_4
+#endif
+#ifndef ES_AD16C4T0_CH1N_GPIO_PORT
+#define ES_AD16C4T0_CH1N_GPIO_PORT  GPIOA
+#endif
+#ifndef ES_AD16C4T0_CH1N_GPIO_PIN
+#define ES_AD16C4T0_CH1N_GPIO_PIN  ALD_GPIO_PIN_7
+#endif
+
+#ifndef ES_AD16C4T0_CH1N_PIN
+#ifdef ES_PIN_GPIO_A_7
+#define ES_AD16C4T0_CH1N_PIN ES_PIN_GPIO_A_7
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PC4_USED
+#define ES_MAP__PIN_PC4_USED
+#ifndef ES_EUART1_RX_GPIO_FUNC
+#define ES_EUART1_RX_GPIO_FUNC  ALD_GPIO_FUNC_2
+#endif
+#ifndef ES_EUART1_RX_GPIO_PORT
+#define ES_EUART1_RX_GPIO_PORT  GPIOC
+#endif
+#ifndef ES_EUART1_RX_GPIO_PIN
+#define ES_EUART1_RX_GPIO_PIN  ALD_GPIO_PIN_4
+#endif
+
+#ifndef ES_EUART1_RX_PIN
+#ifdef ES_PIN_GPIO_C_4
+#define ES_EUART1_RX_PIN ES_PIN_GPIO_C_4
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PC4_USED
+#define ES_MAP__PIN_PC4_USED
+#ifndef ES_I2C0_SCL_GPIO_FUNC
+#define ES_I2C0_SCL_GPIO_FUNC  ALD_GPIO_FUNC_3
+#endif
+#ifndef ES_I2C0_SCL_GPIO_PORT
+#define ES_I2C0_SCL_GPIO_PORT  GPIOC
+#endif
+#ifndef ES_I2C0_SCL_GPIO_PIN
+#define ES_I2C0_SCL_GPIO_PIN  ALD_GPIO_PIN_4
+#endif
+
+#ifndef ES_I2C0_SCL_PIN
+#ifdef ES_PIN_GPIO_C_4
+#define ES_I2C0_SCL_PIN ES_PIN_GPIO_C_4
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PC4_USED
+#define ES_MAP__PIN_PC4_USED
+#ifndef ES_GP16C4T0_ET_GPIO_FUNC
+#define ES_GP16C4T0_ET_GPIO_FUNC  ALD_GPIO_FUNC_4
+#endif
+#ifndef ES_GP16C4T0_ET_GPIO_PORT
+#define ES_GP16C4T0_ET_GPIO_PORT  GPIOC
+#endif
+#ifndef ES_GP16C4T0_ET_GPIO_PIN
+#define ES_GP16C4T0_ET_GPIO_PIN  ALD_GPIO_PIN_4
+#endif
+
+#ifndef ES_GP16C4T0_ET_PIN
+#ifdef ES_PIN_GPIO_C_4
+#define ES_GP16C4T0_ET_PIN ES_PIN_GPIO_C_4
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PC4_USED
+#define ES_MAP__PIN_PC4_USED
+#ifndef ES_GP16C4T2_CH3_GPIO_FUNC
+#define ES_GP16C4T2_CH3_GPIO_FUNC  ALD_GPIO_FUNC_5
+#endif
+#ifndef ES_GP16C4T2_CH3_GPIO_PORT
+#define ES_GP16C4T2_CH3_GPIO_PORT  GPIOC
+#endif
+#ifndef ES_GP16C4T2_CH3_GPIO_PIN
+#define ES_GP16C4T2_CH3_GPIO_PIN  ALD_GPIO_PIN_4
+#endif
+
+#ifndef ES_GP16C4T2_CH3_PIN
+#ifdef ES_PIN_GPIO_C_4
+#define ES_GP16C4T2_CH3_PIN ES_PIN_GPIO_C_4
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PC5_USED
+#define ES_MAP__PIN_PC5_USED
+#ifndef ES_EUART1_TX_GPIO_FUNC
+#define ES_EUART1_TX_GPIO_FUNC  ALD_GPIO_FUNC_2
+#endif
+#ifndef ES_EUART1_TX_GPIO_PORT
+#define ES_EUART1_TX_GPIO_PORT  GPIOC
+#endif
+#ifndef ES_EUART1_TX_GPIO_PIN
+#define ES_EUART1_TX_GPIO_PIN  ALD_GPIO_PIN_5
+#endif
+
+#ifndef ES_EUART1_TX_PIN
+#ifdef ES_PIN_GPIO_C_5
+#define ES_EUART1_TX_PIN ES_PIN_GPIO_C_5
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PC5_USED
+#define ES_MAP__PIN_PC5_USED
+#ifndef ES_I2C0_SDA_GPIO_FUNC
+#define ES_I2C0_SDA_GPIO_FUNC  ALD_GPIO_FUNC_3
+#endif
+#ifndef ES_I2C0_SDA_GPIO_PORT
+#define ES_I2C0_SDA_GPIO_PORT  GPIOC
+#endif
+#ifndef ES_I2C0_SDA_GPIO_PIN
+#define ES_I2C0_SDA_GPIO_PIN  ALD_GPIO_PIN_5
+#endif
+
+#ifndef ES_I2C0_SDA_PIN
+#ifdef ES_PIN_GPIO_C_5
+#define ES_I2C0_SDA_PIN ES_PIN_GPIO_C_5
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PC5_USED
+#define ES_MAP__PIN_PC5_USED
+#ifndef ES_GP16C4T1_ET_GPIO_FUNC
+#define ES_GP16C4T1_ET_GPIO_FUNC  ALD_GPIO_FUNC_4
+#endif
+#ifndef ES_GP16C4T1_ET_GPIO_PORT
+#define ES_GP16C4T1_ET_GPIO_PORT  GPIOC
+#endif
+#ifndef ES_GP16C4T1_ET_GPIO_PIN
+#define ES_GP16C4T1_ET_GPIO_PIN  ALD_GPIO_PIN_5
+#endif
+
+#ifndef ES_GP16C4T1_ET_PIN
+#ifdef ES_PIN_GPIO_C_5
+#define ES_GP16C4T1_ET_PIN ES_PIN_GPIO_C_5
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PB0_USED
+#define ES_MAP__PIN_PB0_USED
+#ifndef ES_GP16C4T1_CH3_GPIO_FUNC
+#define ES_GP16C4T1_CH3_GPIO_FUNC  ALD_GPIO_FUNC_2
+#endif
+#ifndef ES_GP16C4T1_CH3_GPIO_PORT
+#define ES_GP16C4T1_CH3_GPIO_PORT  GPIOB
+#endif
+#ifndef ES_GP16C4T1_CH3_GPIO_PIN
+#define ES_GP16C4T1_CH3_GPIO_PIN  ALD_GPIO_PIN_0
+#endif
+
+#ifndef ES_GP16C4T1_CH3_PIN
+#ifdef ES_PIN_GPIO_B_0
+#define ES_GP16C4T1_CH3_PIN ES_PIN_GPIO_B_0
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PB0_USED
+#define ES_MAP__PIN_PB0_USED
+#ifndef ES_AD16C4T0_CH2N_GPIO_FUNC
+#define ES_AD16C4T0_CH2N_GPIO_FUNC  ALD_GPIO_FUNC_3
+#endif
+#ifndef ES_AD16C4T0_CH2N_GPIO_PORT
+#define ES_AD16C4T0_CH2N_GPIO_PORT  GPIOB
+#endif
+#ifndef ES_AD16C4T0_CH2N_GPIO_PIN
+#define ES_AD16C4T0_CH2N_GPIO_PIN  ALD_GPIO_PIN_0
+#endif
+
+#ifndef ES_AD16C4T0_CH2N_PIN
+#ifdef ES_PIN_GPIO_B_0
+#define ES_AD16C4T0_CH2N_PIN ES_PIN_GPIO_B_0
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PB0_USED
+#define ES_MAP__PIN_PB0_USED
+#ifndef ES_CUART0_RX_GPIO_FUNC
+#define ES_CUART0_RX_GPIO_FUNC  ALD_GPIO_FUNC_5
+#endif
+#ifndef ES_CUART0_RX_GPIO_PORT
+#define ES_CUART0_RX_GPIO_PORT  GPIOB
+#endif
+#ifndef ES_CUART0_RX_GPIO_PIN
+#define ES_CUART0_RX_GPIO_PIN  ALD_GPIO_PIN_0
+#endif
+
+#ifndef ES_CUART0_RX_PIN
+#ifdef ES_PIN_GPIO_B_0
+#define ES_CUART0_RX_PIN ES_PIN_GPIO_B_0
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PB1_USED
+#define ES_MAP__PIN_PB1_USED
+#ifndef ES_GP16C4T1_CH4_GPIO_FUNC
+#define ES_GP16C4T1_CH4_GPIO_FUNC  ALD_GPIO_FUNC_2
+#endif
+#ifndef ES_GP16C4T1_CH4_GPIO_PORT
+#define ES_GP16C4T1_CH4_GPIO_PORT  GPIOB
+#endif
+#ifndef ES_GP16C4T1_CH4_GPIO_PIN
+#define ES_GP16C4T1_CH4_GPIO_PIN  ALD_GPIO_PIN_1
+#endif
+
+#ifndef ES_GP16C4T1_CH4_PIN
+#ifdef ES_PIN_GPIO_B_1
+#define ES_GP16C4T1_CH4_PIN ES_PIN_GPIO_B_1
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PB1_USED
+#define ES_MAP__PIN_PB1_USED
+#ifndef ES_AD16C4T0_CH3N_GPIO_FUNC
+#define ES_AD16C4T0_CH3N_GPIO_FUNC  ALD_GPIO_FUNC_3
+#endif
+#ifndef ES_AD16C4T0_CH3N_GPIO_PORT
+#define ES_AD16C4T0_CH3N_GPIO_PORT  GPIOB
+#endif
+#ifndef ES_AD16C4T0_CH3N_GPIO_PIN
+#define ES_AD16C4T0_CH3N_GPIO_PIN  ALD_GPIO_PIN_1
+#endif
+
+#ifndef ES_AD16C4T0_CH3N_PIN
+#ifdef ES_PIN_GPIO_B_1
+#define ES_AD16C4T0_CH3N_PIN ES_PIN_GPIO_B_1
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PB1_USED
+#define ES_MAP__PIN_PB1_USED
+#ifndef ES_CUART0_TX_GPIO_FUNC
+#define ES_CUART0_TX_GPIO_FUNC  ALD_GPIO_FUNC_5
+#endif
+#ifndef ES_CUART0_TX_GPIO_PORT
+#define ES_CUART0_TX_GPIO_PORT  GPIOB
+#endif
+#ifndef ES_CUART0_TX_GPIO_PIN
+#define ES_CUART0_TX_GPIO_PIN  ALD_GPIO_PIN_1
+#endif
+
+#ifndef ES_CUART0_TX_PIN
+#ifdef ES_PIN_GPIO_B_1
+#define ES_CUART0_TX_PIN ES_PIN_GPIO_B_1
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PB2_USED
+#define ES_MAP__PIN_PB2_USED
+#ifndef ES_GP16C4T0_CH1_GPIO_FUNC
+#define ES_GP16C4T0_CH1_GPIO_FUNC  ALD_GPIO_FUNC_2
+#endif
+#ifndef ES_GP16C4T0_CH1_GPIO_PORT
+#define ES_GP16C4T0_CH1_GPIO_PORT  GPIOB
+#endif
+#ifndef ES_GP16C4T0_CH1_GPIO_PIN
+#define ES_GP16C4T0_CH1_GPIO_PIN  ALD_GPIO_PIN_2
+#endif
+
+#ifndef ES_GP16C4T0_CH1_PIN
+#ifdef ES_PIN_GPIO_B_2
+#define ES_GP16C4T0_CH1_PIN ES_PIN_GPIO_B_2
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PB2_USED
+#define ES_MAP__PIN_PB2_USED
+#ifndef ES_EUART0_RX_GPIO_FUNC
+#define ES_EUART0_RX_GPIO_FUNC  ALD_GPIO_FUNC_3
+#endif
+#ifndef ES_EUART0_RX_GPIO_PORT
+#define ES_EUART0_RX_GPIO_PORT  GPIOB
+#endif
+#ifndef ES_EUART0_RX_GPIO_PIN
+#define ES_EUART0_RX_GPIO_PIN  ALD_GPIO_PIN_2
+#endif
+
+#ifndef ES_EUART0_RX_PIN
+#ifdef ES_PIN_GPIO_B_2
+#define ES_EUART0_RX_PIN ES_PIN_GPIO_B_2
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PB2_USED
+#define ES_MAP__PIN_PB2_USED
+#ifndef ES_EUART1_TX_GPIO_FUNC
+#define ES_EUART1_TX_GPIO_FUNC  ALD_GPIO_FUNC_4
+#endif
+#ifndef ES_EUART1_TX_GPIO_PORT
+#define ES_EUART1_TX_GPIO_PORT  GPIOB
+#endif
+#ifndef ES_EUART1_TX_GPIO_PIN
+#define ES_EUART1_TX_GPIO_PIN  ALD_GPIO_PIN_2
+#endif
+
+#ifndef ES_EUART1_TX_PIN
+#ifdef ES_PIN_GPIO_B_2
+#define ES_EUART1_TX_PIN ES_PIN_GPIO_B_2
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PB2_USED
+#define ES_MAP__PIN_PB2_USED
+#ifndef ES_I2C0_SCL_GPIO_FUNC
+#define ES_I2C0_SCL_GPIO_FUNC  ALD_GPIO_FUNC_5
+#endif
+#ifndef ES_I2C0_SCL_GPIO_PORT
+#define ES_I2C0_SCL_GPIO_PORT  GPIOB
+#endif
+#ifndef ES_I2C0_SCL_GPIO_PIN
+#define ES_I2C0_SCL_GPIO_PIN  ALD_GPIO_PIN_2
+#endif
+
+#ifndef ES_I2C0_SCL_PIN
+#ifdef ES_PIN_GPIO_B_2
+#define ES_I2C0_SCL_PIN ES_PIN_GPIO_B_2
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PB10_USED
+#define ES_MAP__PIN_PB10_USED
+#ifndef ES_I2C1_SCL_GPIO_FUNC
+#define ES_I2C1_SCL_GPIO_FUNC  ALD_GPIO_FUNC_2
+#endif
+#ifndef ES_I2C1_SCL_GPIO_PORT
+#define ES_I2C1_SCL_GPIO_PORT  GPIOB
+#endif
+#ifndef ES_I2C1_SCL_GPIO_PIN
+#define ES_I2C1_SCL_GPIO_PIN  ALD_GPIO_PIN_10
+#endif
+
+#ifndef ES_I2C1_SCL_PIN
+#ifdef ES_PIN_GPIO_B_10
+#define ES_I2C1_SCL_PIN ES_PIN_GPIO_B_10
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PB10_USED
+#define ES_MAP__PIN_PB10_USED
+#ifndef ES_CUART2_TX_GPIO_FUNC
+#define ES_CUART2_TX_GPIO_FUNC  ALD_GPIO_FUNC_3
+#endif
+#ifndef ES_CUART2_TX_GPIO_PORT
+#define ES_CUART2_TX_GPIO_PORT  GPIOB
+#endif
+#ifndef ES_CUART2_TX_GPIO_PIN
+#define ES_CUART2_TX_GPIO_PIN  ALD_GPIO_PIN_10
+#endif
+
+#ifndef ES_CUART2_TX_PIN
+#ifdef ES_PIN_GPIO_B_10
+#define ES_CUART2_TX_PIN ES_PIN_GPIO_B_10
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PB10_USED
+#define ES_MAP__PIN_PB10_USED
+#ifndef ES_GP16C4T0_CH3_GPIO_FUNC
+#define ES_GP16C4T0_CH3_GPIO_FUNC  ALD_GPIO_FUNC_4
+#endif
+#ifndef ES_GP16C4T0_CH3_GPIO_PORT
+#define ES_GP16C4T0_CH3_GPIO_PORT  GPIOB
+#endif
+#ifndef ES_GP16C4T0_CH3_GPIO_PIN
+#define ES_GP16C4T0_CH3_GPIO_PIN  ALD_GPIO_PIN_10
+#endif
+
+#ifndef ES_GP16C4T0_CH3_PIN
+#ifdef ES_PIN_GPIO_B_10
+#define ES_GP16C4T0_CH3_PIN ES_PIN_GPIO_B_10
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PB10_USED
+#define ES_MAP__PIN_PB10_USED
+#ifndef ES_AD16C4T0_CH2N_GPIO_FUNC
+#define ES_AD16C4T0_CH2N_GPIO_FUNC  ALD_GPIO_FUNC_5
+#endif
+#ifndef ES_AD16C4T0_CH2N_GPIO_PORT
+#define ES_AD16C4T0_CH2N_GPIO_PORT  GPIOB
+#endif
+#ifndef ES_AD16C4T0_CH2N_GPIO_PIN
+#define ES_AD16C4T0_CH2N_GPIO_PIN  ALD_GPIO_PIN_10
+#endif
+
+#ifndef ES_AD16C4T0_CH2N_PIN
+#ifdef ES_PIN_GPIO_B_10
+#define ES_AD16C4T0_CH2N_PIN ES_PIN_GPIO_B_10
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PB11_USED
+#define ES_MAP__PIN_PB11_USED
+#ifndef ES_I2C1_SDA_GPIO_FUNC
+#define ES_I2C1_SDA_GPIO_FUNC  ALD_GPIO_FUNC_2
+#endif
+#ifndef ES_I2C1_SDA_GPIO_PORT
+#define ES_I2C1_SDA_GPIO_PORT  GPIOB
+#endif
+#ifndef ES_I2C1_SDA_GPIO_PIN
+#define ES_I2C1_SDA_GPIO_PIN  ALD_GPIO_PIN_11
+#endif
+
+#ifndef ES_I2C1_SDA_PIN
+#ifdef ES_PIN_GPIO_B_11
+#define ES_I2C1_SDA_PIN ES_PIN_GPIO_B_11
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PB11_USED
+#define ES_MAP__PIN_PB11_USED
+#ifndef ES_CUART2_RX_GPIO_FUNC
+#define ES_CUART2_RX_GPIO_FUNC  ALD_GPIO_FUNC_3
+#endif
+#ifndef ES_CUART2_RX_GPIO_PORT
+#define ES_CUART2_RX_GPIO_PORT  GPIOB
+#endif
+#ifndef ES_CUART2_RX_GPIO_PIN
+#define ES_CUART2_RX_GPIO_PIN  ALD_GPIO_PIN_11
+#endif
+
+#ifndef ES_CUART2_RX_PIN
+#ifdef ES_PIN_GPIO_B_11
+#define ES_CUART2_RX_PIN ES_PIN_GPIO_B_11
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PB11_USED
+#define ES_MAP__PIN_PB11_USED
+#ifndef ES_GP16C4T0_CH4_GPIO_FUNC
+#define ES_GP16C4T0_CH4_GPIO_FUNC  ALD_GPIO_FUNC_4
+#endif
+#ifndef ES_GP16C4T0_CH4_GPIO_PORT
+#define ES_GP16C4T0_CH4_GPIO_PORT  GPIOB
+#endif
+#ifndef ES_GP16C4T0_CH4_GPIO_PIN
+#define ES_GP16C4T0_CH4_GPIO_PIN  ALD_GPIO_PIN_11
+#endif
+
+#ifndef ES_GP16C4T0_CH4_PIN
+#ifdef ES_PIN_GPIO_B_11
+#define ES_GP16C4T0_CH4_PIN ES_PIN_GPIO_B_11
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PB11_USED
+#define ES_MAP__PIN_PB11_USED
+#ifndef ES_AD16C4T0_CH3N_GPIO_FUNC
+#define ES_AD16C4T0_CH3N_GPIO_FUNC  ALD_GPIO_FUNC_5
+#endif
+#ifndef ES_AD16C4T0_CH3N_GPIO_PORT
+#define ES_AD16C4T0_CH3N_GPIO_PORT  GPIOB
+#endif
+#ifndef ES_AD16C4T0_CH3N_GPIO_PIN
+#define ES_AD16C4T0_CH3N_GPIO_PIN  ALD_GPIO_PIN_11
+#endif
+
+#ifndef ES_AD16C4T0_CH3N_PIN
+#ifdef ES_PIN_GPIO_B_11
+#define ES_AD16C4T0_CH3N_PIN ES_PIN_GPIO_B_11
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PB12_USED
+#define ES_MAP__PIN_PB12_USED
+#ifndef ES_SPI1_NSS_GPIO_FUNC
+#define ES_SPI1_NSS_GPIO_FUNC  ALD_GPIO_FUNC_2
+#endif
+#ifndef ES_SPI1_NSS_GPIO_PORT
+#define ES_SPI1_NSS_GPIO_PORT  GPIOB
+#endif
+#ifndef ES_SPI1_NSS_GPIO_PIN
+#define ES_SPI1_NSS_GPIO_PIN  ALD_GPIO_PIN_12
+#endif
+
+#ifndef ES_SPI1_NSS_PIN
+#ifdef ES_PIN_GPIO_B_12
+#define ES_SPI1_NSS_PIN ES_PIN_GPIO_B_12
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PB13_USED
+#define ES_MAP__PIN_PB13_USED
+#ifndef ES_SPI1_SCK_GPIO_FUNC
+#define ES_SPI1_SCK_GPIO_FUNC  ALD_GPIO_FUNC_2
+#endif
+#ifndef ES_SPI1_SCK_GPIO_PORT
+#define ES_SPI1_SCK_GPIO_PORT  GPIOB
+#endif
+#ifndef ES_SPI1_SCK_GPIO_PIN
+#define ES_SPI1_SCK_GPIO_PIN  ALD_GPIO_PIN_13
+#endif
+
+#ifndef ES_SPI1_SCK_PIN
+#ifdef ES_PIN_GPIO_B_13
+#define ES_SPI1_SCK_PIN ES_PIN_GPIO_B_13
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PB13_USED
+#define ES_MAP__PIN_PB13_USED
+#ifndef ES_AD16C4T0_CH1N_GPIO_FUNC
+#define ES_AD16C4T0_CH1N_GPIO_FUNC  ALD_GPIO_FUNC_4
+#endif
+#ifndef ES_AD16C4T0_CH1N_GPIO_PORT
+#define ES_AD16C4T0_CH1N_GPIO_PORT  GPIOB
+#endif
+#ifndef ES_AD16C4T0_CH1N_GPIO_PIN
+#define ES_AD16C4T0_CH1N_GPIO_PIN  ALD_GPIO_PIN_13
+#endif
+
+#ifndef ES_AD16C4T0_CH1N_PIN
+#ifdef ES_PIN_GPIO_B_13
+#define ES_AD16C4T0_CH1N_PIN ES_PIN_GPIO_B_13
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PB14_USED
+#define ES_MAP__PIN_PB14_USED
+#ifndef ES_SPI1_MISO_GPIO_FUNC
+#define ES_SPI1_MISO_GPIO_FUNC  ALD_GPIO_FUNC_2
+#endif
+#ifndef ES_SPI1_MISO_GPIO_PORT
+#define ES_SPI1_MISO_GPIO_PORT  GPIOB
+#endif
+#ifndef ES_SPI1_MISO_GPIO_PIN
+#define ES_SPI1_MISO_GPIO_PIN  ALD_GPIO_PIN_14
+#endif
+
+#ifndef ES_SPI1_MISO_PIN
+#ifdef ES_PIN_GPIO_B_14
+#define ES_SPI1_MISO_PIN ES_PIN_GPIO_B_14
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PB14_USED
+#define ES_MAP__PIN_PB14_USED
+#ifndef ES_AD16C4T0_CH2N_GPIO_FUNC
+#define ES_AD16C4T0_CH2N_GPIO_FUNC  ALD_GPIO_FUNC_4
+#endif
+#ifndef ES_AD16C4T0_CH2N_GPIO_PORT
+#define ES_AD16C4T0_CH2N_GPIO_PORT  GPIOB
+#endif
+#ifndef ES_AD16C4T0_CH2N_GPIO_PIN
+#define ES_AD16C4T0_CH2N_GPIO_PIN  ALD_GPIO_PIN_14
+#endif
+
+#ifndef ES_AD16C4T0_CH2N_PIN
+#ifdef ES_PIN_GPIO_B_14
+#define ES_AD16C4T0_CH2N_PIN ES_PIN_GPIO_B_14
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PB14_USED
+#define ES_MAP__PIN_PB14_USED
+#ifndef ES_GP16C4T2_CH1_GPIO_FUNC
+#define ES_GP16C4T2_CH1_GPIO_FUNC  ALD_GPIO_FUNC_5
+#endif
+#ifndef ES_GP16C4T2_CH1_GPIO_PORT
+#define ES_GP16C4T2_CH1_GPIO_PORT  GPIOB
+#endif
+#ifndef ES_GP16C4T2_CH1_GPIO_PIN
+#define ES_GP16C4T2_CH1_GPIO_PIN  ALD_GPIO_PIN_14
+#endif
+
+#ifndef ES_GP16C4T2_CH1_PIN
+#ifdef ES_PIN_GPIO_B_14
+#define ES_GP16C4T2_CH1_PIN ES_PIN_GPIO_B_14
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PB15_USED
+#define ES_MAP__PIN_PB15_USED
+#ifndef ES_SPI1_MOSI_GPIO_FUNC
+#define ES_SPI1_MOSI_GPIO_FUNC  ALD_GPIO_FUNC_2
+#endif
+#ifndef ES_SPI1_MOSI_GPIO_PORT
+#define ES_SPI1_MOSI_GPIO_PORT  GPIOB
+#endif
+#ifndef ES_SPI1_MOSI_GPIO_PIN
+#define ES_SPI1_MOSI_GPIO_PIN  ALD_GPIO_PIN_15
+#endif
+
+#ifndef ES_SPI1_MOSI_PIN
+#ifdef ES_PIN_GPIO_B_15
+#define ES_SPI1_MOSI_PIN ES_PIN_GPIO_B_15
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PB15_USED
+#define ES_MAP__PIN_PB15_USED
+#ifndef ES_AD16C4T0_CH3N_GPIO_FUNC
+#define ES_AD16C4T0_CH3N_GPIO_FUNC  ALD_GPIO_FUNC_3
+#endif
+#ifndef ES_AD16C4T0_CH3N_GPIO_PORT
+#define ES_AD16C4T0_CH3N_GPIO_PORT  GPIOB
+#endif
+#ifndef ES_AD16C4T0_CH3N_GPIO_PIN
+#define ES_AD16C4T0_CH3N_GPIO_PIN  ALD_GPIO_PIN_15
+#endif
+
+#ifndef ES_AD16C4T0_CH3N_PIN
+#ifdef ES_PIN_GPIO_B_15
+#define ES_AD16C4T0_CH3N_PIN ES_PIN_GPIO_B_15
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PB15_USED
+#define ES_MAP__PIN_PB15_USED
+#ifndef ES_EUART0_RX_GPIO_FUNC
+#define ES_EUART0_RX_GPIO_FUNC  ALD_GPIO_FUNC_4
+#endif
+#ifndef ES_EUART0_RX_GPIO_PORT
+#define ES_EUART0_RX_GPIO_PORT  GPIOB
+#endif
+#ifndef ES_EUART0_RX_GPIO_PIN
+#define ES_EUART0_RX_GPIO_PIN  ALD_GPIO_PIN_15
+#endif
+
+#ifndef ES_EUART0_RX_PIN
+#ifdef ES_PIN_GPIO_B_15
+#define ES_EUART0_RX_PIN ES_PIN_GPIO_B_15
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PB15_USED
+#define ES_MAP__PIN_PB15_USED
+#ifndef ES_GP16C4T2_CH2_GPIO_FUNC
+#define ES_GP16C4T2_CH2_GPIO_FUNC  ALD_GPIO_FUNC_5
+#endif
+#ifndef ES_GP16C4T2_CH2_GPIO_PORT
+#define ES_GP16C4T2_CH2_GPIO_PORT  GPIOB
+#endif
+#ifndef ES_GP16C4T2_CH2_GPIO_PIN
+#define ES_GP16C4T2_CH2_GPIO_PIN  ALD_GPIO_PIN_15
+#endif
+
+#ifndef ES_GP16C4T2_CH2_PIN
+#ifdef ES_PIN_GPIO_B_15
+#define ES_GP16C4T2_CH2_PIN ES_PIN_GPIO_B_15
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PC6_USED
+#define ES_MAP__PIN_PC6_USED
+#ifndef ES_AD16C4T0_CH1_GPIO_FUNC
+#define ES_AD16C4T0_CH1_GPIO_FUNC  ALD_GPIO_FUNC_2
+#endif
+#ifndef ES_AD16C4T0_CH1_GPIO_PORT
+#define ES_AD16C4T0_CH1_GPIO_PORT  GPIOC
+#endif
+#ifndef ES_AD16C4T0_CH1_GPIO_PIN
+#define ES_AD16C4T0_CH1_GPIO_PIN  ALD_GPIO_PIN_6
+#endif
+
+#ifndef ES_AD16C4T0_CH1_PIN
+#ifdef ES_PIN_GPIO_C_6
+#define ES_AD16C4T0_CH1_PIN ES_PIN_GPIO_C_6
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PC6_USED
+#define ES_MAP__PIN_PC6_USED
+#ifndef ES_EUART0_RX_GPIO_FUNC
+#define ES_EUART0_RX_GPIO_FUNC  ALD_GPIO_FUNC_3
+#endif
+#ifndef ES_EUART0_RX_GPIO_PORT
+#define ES_EUART0_RX_GPIO_PORT  GPIOC
+#endif
+#ifndef ES_EUART0_RX_GPIO_PIN
+#define ES_EUART0_RX_GPIO_PIN  ALD_GPIO_PIN_6
+#endif
+
+#ifndef ES_EUART0_RX_PIN
+#ifdef ES_PIN_GPIO_C_6
+#define ES_EUART0_RX_PIN ES_PIN_GPIO_C_6
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PC6_USED
+#define ES_MAP__PIN_PC6_USED
+#ifndef ES_GP16C4T1_CH1_GPIO_FUNC
+#define ES_GP16C4T1_CH1_GPIO_FUNC  ALD_GPIO_FUNC_4
+#endif
+#ifndef ES_GP16C4T1_CH1_GPIO_PORT
+#define ES_GP16C4T1_CH1_GPIO_PORT  GPIOC
+#endif
+#ifndef ES_GP16C4T1_CH1_GPIO_PIN
+#define ES_GP16C4T1_CH1_GPIO_PIN  ALD_GPIO_PIN_6
+#endif
+
+#ifndef ES_GP16C4T1_CH1_PIN
+#ifdef ES_PIN_GPIO_C_6
+#define ES_GP16C4T1_CH1_PIN ES_PIN_GPIO_C_6
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PC7_USED
+#define ES_MAP__PIN_PC7_USED
+#ifndef ES_I2C1_SCL_GPIO_FUNC
+#define ES_I2C1_SCL_GPIO_FUNC  ALD_GPIO_FUNC_2
+#endif
+#ifndef ES_I2C1_SCL_GPIO_PORT
+#define ES_I2C1_SCL_GPIO_PORT  GPIOC
+#endif
+#ifndef ES_I2C1_SCL_GPIO_PIN
+#define ES_I2C1_SCL_GPIO_PIN  ALD_GPIO_PIN_7
+#endif
+
+#ifndef ES_I2C1_SCL_PIN
+#ifdef ES_PIN_GPIO_C_7
+#define ES_I2C1_SCL_PIN ES_PIN_GPIO_C_7
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PC7_USED
+#define ES_MAP__PIN_PC7_USED
+#ifndef ES_EUART0_TX_GPIO_FUNC
+#define ES_EUART0_TX_GPIO_FUNC  ALD_GPIO_FUNC_3
+#endif
+#ifndef ES_EUART0_TX_GPIO_PORT
+#define ES_EUART0_TX_GPIO_PORT  GPIOC
+#endif
+#ifndef ES_EUART0_TX_GPIO_PIN
+#define ES_EUART0_TX_GPIO_PIN  ALD_GPIO_PIN_7
+#endif
+
+#ifndef ES_EUART0_TX_PIN
+#ifdef ES_PIN_GPIO_C_7
+#define ES_EUART0_TX_PIN ES_PIN_GPIO_C_7
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PC7_USED
+#define ES_MAP__PIN_PC7_USED
+#ifndef ES_GP16C4T1_CH2_GPIO_FUNC
+#define ES_GP16C4T1_CH2_GPIO_FUNC  ALD_GPIO_FUNC_4
+#endif
+#ifndef ES_GP16C4T1_CH2_GPIO_PORT
+#define ES_GP16C4T1_CH2_GPIO_PORT  GPIOC
+#endif
+#ifndef ES_GP16C4T1_CH2_GPIO_PIN
+#define ES_GP16C4T1_CH2_GPIO_PIN  ALD_GPIO_PIN_7
+#endif
+
+#ifndef ES_GP16C4T1_CH2_PIN
+#ifdef ES_PIN_GPIO_C_7
+#define ES_GP16C4T1_CH2_PIN ES_PIN_GPIO_C_7
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PC7_USED
+#define ES_MAP__PIN_PC7_USED
+#ifndef ES_CUART0_RX_GPIO_FUNC
+#define ES_CUART0_RX_GPIO_FUNC  ALD_GPIO_FUNC_5
+#endif
+#ifndef ES_CUART0_RX_GPIO_PORT
+#define ES_CUART0_RX_GPIO_PORT  GPIOC
+#endif
+#ifndef ES_CUART0_RX_GPIO_PIN
+#define ES_CUART0_RX_GPIO_PIN  ALD_GPIO_PIN_7
+#endif
+
+#ifndef ES_CUART0_RX_PIN
+#ifdef ES_PIN_GPIO_C_7
+#define ES_CUART0_RX_PIN ES_PIN_GPIO_C_7
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PC8_USED
+#define ES_MAP__PIN_PC8_USED
+#ifndef ES_I2C1_SDA_GPIO_FUNC
+#define ES_I2C1_SDA_GPIO_FUNC  ALD_GPIO_FUNC_2
+#endif
+#ifndef ES_I2C1_SDA_GPIO_PORT
+#define ES_I2C1_SDA_GPIO_PORT  GPIOC
+#endif
+#ifndef ES_I2C1_SDA_GPIO_PIN
+#define ES_I2C1_SDA_GPIO_PIN  ALD_GPIO_PIN_8
+#endif
+
+#ifndef ES_I2C1_SDA_PIN
+#ifdef ES_PIN_GPIO_C_8
+#define ES_I2C1_SDA_PIN ES_PIN_GPIO_C_8
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PC8_USED
+#define ES_MAP__PIN_PC8_USED
+#ifndef ES_GP16C4T1_CH3_GPIO_FUNC
+#define ES_GP16C4T1_CH3_GPIO_FUNC  ALD_GPIO_FUNC_4
+#endif
+#ifndef ES_GP16C4T1_CH3_GPIO_PORT
+#define ES_GP16C4T1_CH3_GPIO_PORT  GPIOC
+#endif
+#ifndef ES_GP16C4T1_CH3_GPIO_PIN
+#define ES_GP16C4T1_CH3_GPIO_PIN  ALD_GPIO_PIN_8
+#endif
+
+#ifndef ES_GP16C4T1_CH3_PIN
+#ifdef ES_PIN_GPIO_C_8
+#define ES_GP16C4T1_CH3_PIN ES_PIN_GPIO_C_8
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PC8_USED
+#define ES_MAP__PIN_PC8_USED
+#ifndef ES_CUART0_TX_GPIO_FUNC
+#define ES_CUART0_TX_GPIO_FUNC  ALD_GPIO_FUNC_5
+#endif
+#ifndef ES_CUART0_TX_GPIO_PORT
+#define ES_CUART0_TX_GPIO_PORT  GPIOC
+#endif
+#ifndef ES_CUART0_TX_GPIO_PIN
+#define ES_CUART0_TX_GPIO_PIN  ALD_GPIO_PIN_8
+#endif
+
+#ifndef ES_CUART0_TX_PIN
+#ifdef ES_PIN_GPIO_C_8
+#define ES_CUART0_TX_PIN ES_PIN_GPIO_C_8
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PC9_USED
+#define ES_MAP__PIN_PC9_USED
+#ifndef ES_SPI1_NSS_GPIO_FUNC
+#define ES_SPI1_NSS_GPIO_FUNC  ALD_GPIO_FUNC_2
+#endif
+#ifndef ES_SPI1_NSS_GPIO_PORT
+#define ES_SPI1_NSS_GPIO_PORT  GPIOC
+#endif
+#ifndef ES_SPI1_NSS_GPIO_PIN
+#define ES_SPI1_NSS_GPIO_PIN  ALD_GPIO_PIN_9
+#endif
+
+#ifndef ES_SPI1_NSS_PIN
+#ifdef ES_PIN_GPIO_C_9
+#define ES_SPI1_NSS_PIN ES_PIN_GPIO_C_9
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PC9_USED
+#define ES_MAP__PIN_PC9_USED
+#ifndef ES_GP16C4T1_CH4_GPIO_FUNC
+#define ES_GP16C4T1_CH4_GPIO_FUNC  ALD_GPIO_FUNC_4
+#endif
+#ifndef ES_GP16C4T1_CH4_GPIO_PORT
+#define ES_GP16C4T1_CH4_GPIO_PORT  GPIOC
+#endif
+#ifndef ES_GP16C4T1_CH4_GPIO_PIN
+#define ES_GP16C4T1_CH4_GPIO_PIN  ALD_GPIO_PIN_9
+#endif
+
+#ifndef ES_GP16C4T1_CH4_PIN
+#ifdef ES_PIN_GPIO_C_9
+#define ES_GP16C4T1_CH4_PIN ES_PIN_GPIO_C_9
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PA8_USED
+#define ES_MAP__PIN_PA8_USED
+#ifndef ES_AD16C4T0_CH1_GPIO_FUNC
+#define ES_AD16C4T0_CH1_GPIO_FUNC  ALD_GPIO_FUNC_3
+#endif
+#ifndef ES_AD16C4T0_CH1_GPIO_PORT
+#define ES_AD16C4T0_CH1_GPIO_PORT  GPIOA
+#endif
+#ifndef ES_AD16C4T0_CH1_GPIO_PIN
+#define ES_AD16C4T0_CH1_GPIO_PIN  ALD_GPIO_PIN_8
+#endif
+
+#ifndef ES_AD16C4T0_CH1_PIN
+#ifdef ES_PIN_GPIO_A_8
+#define ES_AD16C4T0_CH1_PIN ES_PIN_GPIO_A_8
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PA9_USED
+#define ES_MAP__PIN_PA9_USED
+#ifndef ES_CUART0_TX_GPIO_FUNC
+#define ES_CUART0_TX_GPIO_FUNC  ALD_GPIO_FUNC_2
+#endif
+#ifndef ES_CUART0_TX_GPIO_PORT
+#define ES_CUART0_TX_GPIO_PORT  GPIOA
+#endif
+#ifndef ES_CUART0_TX_GPIO_PIN
+#define ES_CUART0_TX_GPIO_PIN  ALD_GPIO_PIN_9
+#endif
+
+#ifndef ES_CUART0_TX_PIN
+#ifdef ES_PIN_GPIO_A_9
+#define ES_CUART0_TX_PIN ES_PIN_GPIO_A_9
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PA9_USED
+#define ES_MAP__PIN_PA9_USED
+#ifndef ES_AD16C4T0_CH2_GPIO_FUNC
+#define ES_AD16C4T0_CH2_GPIO_FUNC  ALD_GPIO_FUNC_3
+#endif
+#ifndef ES_AD16C4T0_CH2_GPIO_PORT
+#define ES_AD16C4T0_CH2_GPIO_PORT  GPIOA
+#endif
+#ifndef ES_AD16C4T0_CH2_GPIO_PIN
+#define ES_AD16C4T0_CH2_GPIO_PIN  ALD_GPIO_PIN_9
+#endif
+
+#ifndef ES_AD16C4T0_CH2_PIN
+#ifdef ES_PIN_GPIO_A_9
+#define ES_AD16C4T0_CH2_PIN ES_PIN_GPIO_A_9
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PA9_USED
+#define ES_MAP__PIN_PA9_USED
+#ifndef ES_GP16C4T0_ET_GPIO_FUNC
+#define ES_GP16C4T0_ET_GPIO_FUNC  ALD_GPIO_FUNC_4
+#endif
+#ifndef ES_GP16C4T0_ET_GPIO_PORT
+#define ES_GP16C4T0_ET_GPIO_PORT  GPIOA
+#endif
+#ifndef ES_GP16C4T0_ET_GPIO_PIN
+#define ES_GP16C4T0_ET_GPIO_PIN  ALD_GPIO_PIN_9
+#endif
+
+#ifndef ES_GP16C4T0_ET_PIN
+#ifdef ES_PIN_GPIO_A_9
+#define ES_GP16C4T0_ET_PIN ES_PIN_GPIO_A_9
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PA9_USED
+#define ES_MAP__PIN_PA9_USED
+#ifndef ES_AD16C4T0_CH1N_GPIO_FUNC
+#define ES_AD16C4T0_CH1N_GPIO_FUNC  ALD_GPIO_FUNC_5
+#endif
+#ifndef ES_AD16C4T0_CH1N_GPIO_PORT
+#define ES_AD16C4T0_CH1N_GPIO_PORT  GPIOA
+#endif
+#ifndef ES_AD16C4T0_CH1N_GPIO_PIN
+#define ES_AD16C4T0_CH1N_GPIO_PIN  ALD_GPIO_PIN_9
+#endif
+
+#ifndef ES_AD16C4T0_CH1N_PIN
+#ifdef ES_PIN_GPIO_A_9
+#define ES_AD16C4T0_CH1N_PIN ES_PIN_GPIO_A_9
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PA10_USED
+#define ES_MAP__PIN_PA10_USED
+#ifndef ES_CUART0_RX_GPIO_FUNC
+#define ES_CUART0_RX_GPIO_FUNC  ALD_GPIO_FUNC_2
+#endif
+#ifndef ES_CUART0_RX_GPIO_PORT
+#define ES_CUART0_RX_GPIO_PORT  GPIOA
+#endif
+#ifndef ES_CUART0_RX_GPIO_PIN
+#define ES_CUART0_RX_GPIO_PIN  ALD_GPIO_PIN_10
+#endif
+
+#ifndef ES_CUART0_RX_PIN
+#ifdef ES_PIN_GPIO_A_10
+#define ES_CUART0_RX_PIN ES_PIN_GPIO_A_10
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PA10_USED
+#define ES_MAP__PIN_PA10_USED
+#ifndef ES_AD16C4T0_CH3_GPIO_FUNC
+#define ES_AD16C4T0_CH3_GPIO_FUNC  ALD_GPIO_FUNC_3
+#endif
+#ifndef ES_AD16C4T0_CH3_GPIO_PORT
+#define ES_AD16C4T0_CH3_GPIO_PORT  GPIOA
+#endif
+#ifndef ES_AD16C4T0_CH3_GPIO_PIN
+#define ES_AD16C4T0_CH3_GPIO_PIN  ALD_GPIO_PIN_10
+#endif
+
+#ifndef ES_AD16C4T0_CH3_PIN
+#ifdef ES_PIN_GPIO_A_10
+#define ES_AD16C4T0_CH3_PIN ES_PIN_GPIO_A_10
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PA10_USED
+#define ES_MAP__PIN_PA10_USED
+#ifndef ES_GP16C4T1_ET_GPIO_FUNC
+#define ES_GP16C4T1_ET_GPIO_FUNC  ALD_GPIO_FUNC_4
+#endif
+#ifndef ES_GP16C4T1_ET_GPIO_PORT
+#define ES_GP16C4T1_ET_GPIO_PORT  GPIOA
+#endif
+#ifndef ES_GP16C4T1_ET_GPIO_PIN
+#define ES_GP16C4T1_ET_GPIO_PIN  ALD_GPIO_PIN_10
+#endif
+
+#ifndef ES_GP16C4T1_ET_PIN
+#ifdef ES_PIN_GPIO_A_10
+#define ES_GP16C4T1_ET_PIN ES_PIN_GPIO_A_10
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PA10_USED
+#define ES_MAP__PIN_PA10_USED
+#ifndef ES_AD16C4T0_CH2N_GPIO_FUNC
+#define ES_AD16C4T0_CH2N_GPIO_FUNC  ALD_GPIO_FUNC_5
+#endif
+#ifndef ES_AD16C4T0_CH2N_GPIO_PORT
+#define ES_AD16C4T0_CH2N_GPIO_PORT  GPIOA
+#endif
+#ifndef ES_AD16C4T0_CH2N_GPIO_PIN
+#define ES_AD16C4T0_CH2N_GPIO_PIN  ALD_GPIO_PIN_10
+#endif
+
+#ifndef ES_AD16C4T0_CH2N_PIN
+#ifdef ES_PIN_GPIO_A_10
+#define ES_AD16C4T0_CH2N_PIN ES_PIN_GPIO_A_10
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PA11_USED
+#define ES_MAP__PIN_PA11_USED
+#ifndef ES_CUART2_TX_GPIO_FUNC
+#define ES_CUART2_TX_GPIO_FUNC  ALD_GPIO_FUNC_3
+#endif
+#ifndef ES_CUART2_TX_GPIO_PORT
+#define ES_CUART2_TX_GPIO_PORT  GPIOA
+#endif
+#ifndef ES_CUART2_TX_GPIO_PIN
+#define ES_CUART2_TX_GPIO_PIN  ALD_GPIO_PIN_11
+#endif
+
+#ifndef ES_CUART2_TX_PIN
+#ifdef ES_PIN_GPIO_A_11
+#define ES_CUART2_TX_PIN ES_PIN_GPIO_A_11
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PA11_USED
+#define ES_MAP__PIN_PA11_USED
+#ifndef ES_AD16C4T0_CH4_GPIO_FUNC
+#define ES_AD16C4T0_CH4_GPIO_FUNC  ALD_GPIO_FUNC_4
+#endif
+#ifndef ES_AD16C4T0_CH4_GPIO_PORT
+#define ES_AD16C4T0_CH4_GPIO_PORT  GPIOA
+#endif
+#ifndef ES_AD16C4T0_CH4_GPIO_PIN
+#define ES_AD16C4T0_CH4_GPIO_PIN  ALD_GPIO_PIN_11
+#endif
+
+#ifndef ES_AD16C4T0_CH4_PIN
+#ifdef ES_PIN_GPIO_A_11
+#define ES_AD16C4T0_CH4_PIN ES_PIN_GPIO_A_11
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PA11_USED
+#define ES_MAP__PIN_PA11_USED
+#ifndef ES_AD16C4T0_CH3N_GPIO_FUNC
+#define ES_AD16C4T0_CH3N_GPIO_FUNC  ALD_GPIO_FUNC_5
+#endif
+#ifndef ES_AD16C4T0_CH3N_GPIO_PORT
+#define ES_AD16C4T0_CH3N_GPIO_PORT  GPIOA
+#endif
+#ifndef ES_AD16C4T0_CH3N_GPIO_PIN
+#define ES_AD16C4T0_CH3N_GPIO_PIN  ALD_GPIO_PIN_11
+#endif
+
+#ifndef ES_AD16C4T0_CH3N_PIN
+#ifdef ES_PIN_GPIO_A_11
+#define ES_AD16C4T0_CH3N_PIN ES_PIN_GPIO_A_11
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PA12_USED
+#define ES_MAP__PIN_PA12_USED
+#ifndef ES_CUART2_RX_GPIO_FUNC
+#define ES_CUART2_RX_GPIO_FUNC  ALD_GPIO_FUNC_3
+#endif
+#ifndef ES_CUART2_RX_GPIO_PORT
+#define ES_CUART2_RX_GPIO_PORT  GPIOA
+#endif
+#ifndef ES_CUART2_RX_GPIO_PIN
+#define ES_CUART2_RX_GPIO_PIN  ALD_GPIO_PIN_12
+#endif
+
+#ifndef ES_CUART2_RX_PIN
+#ifdef ES_PIN_GPIO_A_12
+#define ES_CUART2_RX_PIN ES_PIN_GPIO_A_12
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PA12_USED
+#define ES_MAP__PIN_PA12_USED
+#ifndef ES_AD16C4T0_ET_GPIO_FUNC
+#define ES_AD16C4T0_ET_GPIO_FUNC  ALD_GPIO_FUNC_4
+#endif
+#ifndef ES_AD16C4T0_ET_GPIO_PORT
+#define ES_AD16C4T0_ET_GPIO_PORT  GPIOA
+#endif
+#ifndef ES_AD16C4T0_ET_GPIO_PIN
+#define ES_AD16C4T0_ET_GPIO_PIN  ALD_GPIO_PIN_12
+#endif
+
+#ifndef ES_AD16C4T0_ET_PIN
+#ifdef ES_PIN_GPIO_A_12
+#define ES_AD16C4T0_ET_PIN ES_PIN_GPIO_A_12
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PA13_USED
+#define ES_MAP__PIN_PA13_USED
+#ifndef ES_CUART1_TX_GPIO_FUNC
+#define ES_CUART1_TX_GPIO_FUNC  ALD_GPIO_FUNC_2
+#endif
+#ifndef ES_CUART1_TX_GPIO_PORT
+#define ES_CUART1_TX_GPIO_PORT  GPIOA
+#endif
+#ifndef ES_CUART1_TX_GPIO_PIN
+#define ES_CUART1_TX_GPIO_PIN  ALD_GPIO_PIN_13
+#endif
+
+#ifndef ES_CUART1_TX_PIN
+#ifdef ES_PIN_GPIO_A_13
+#define ES_CUART1_TX_PIN ES_PIN_GPIO_A_13
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PA13_USED
+#define ES_MAP__PIN_PA13_USED
+#ifndef ES_EUART0_RX_GPIO_FUNC
+#define ES_EUART0_RX_GPIO_FUNC  ALD_GPIO_FUNC_3
+#endif
+#ifndef ES_EUART0_RX_GPIO_PORT
+#define ES_EUART0_RX_GPIO_PORT  GPIOA
+#endif
+#ifndef ES_EUART0_RX_GPIO_PIN
+#define ES_EUART0_RX_GPIO_PIN  ALD_GPIO_PIN_13
+#endif
+
+#ifndef ES_EUART0_RX_PIN
+#ifdef ES_PIN_GPIO_A_13
+#define ES_EUART0_RX_PIN ES_PIN_GPIO_A_13
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PA13_USED
+#define ES_MAP__PIN_PA13_USED
+#ifndef ES_GP16C4T0_CH2_GPIO_FUNC
+#define ES_GP16C4T0_CH2_GPIO_FUNC  ALD_GPIO_FUNC_4
+#endif
+#ifndef ES_GP16C4T0_CH2_GPIO_PORT
+#define ES_GP16C4T0_CH2_GPIO_PORT  GPIOA
+#endif
+#ifndef ES_GP16C4T0_CH2_GPIO_PIN
+#define ES_GP16C4T0_CH2_GPIO_PIN  ALD_GPIO_PIN_13
+#endif
+
+#ifndef ES_GP16C4T0_CH2_PIN
+#ifdef ES_PIN_GPIO_A_13
+#define ES_GP16C4T0_CH2_PIN ES_PIN_GPIO_A_13
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PA13_USED
+#define ES_MAP__PIN_PA13_USED
+#ifndef ES_I2C0_SDA_GPIO_FUNC
+#define ES_I2C0_SDA_GPIO_FUNC  ALD_GPIO_FUNC_5
+#endif
+#ifndef ES_I2C0_SDA_GPIO_PORT
+#define ES_I2C0_SDA_GPIO_PORT  GPIOA
+#endif
+#ifndef ES_I2C0_SDA_GPIO_PIN
+#define ES_I2C0_SDA_GPIO_PIN  ALD_GPIO_PIN_13
+#endif
+
+#ifndef ES_I2C0_SDA_PIN
+#ifdef ES_PIN_GPIO_A_13
+#define ES_I2C0_SDA_PIN ES_PIN_GPIO_A_13
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PA14_USED
+#define ES_MAP__PIN_PA14_USED
+#ifndef ES_CUART1_RX_GPIO_FUNC
+#define ES_CUART1_RX_GPIO_FUNC  ALD_GPIO_FUNC_2
+#endif
+#ifndef ES_CUART1_RX_GPIO_PORT
+#define ES_CUART1_RX_GPIO_PORT  GPIOA
+#endif
+#ifndef ES_CUART1_RX_GPIO_PIN
+#define ES_CUART1_RX_GPIO_PIN  ALD_GPIO_PIN_14
+#endif
+
+#ifndef ES_CUART1_RX_PIN
+#ifdef ES_PIN_GPIO_A_14
+#define ES_CUART1_RX_PIN ES_PIN_GPIO_A_14
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PA14_USED
+#define ES_MAP__PIN_PA14_USED
+#ifndef ES_EUART0_TX_GPIO_FUNC
+#define ES_EUART0_TX_GPIO_FUNC  ALD_GPIO_FUNC_3
+#endif
+#ifndef ES_EUART0_TX_GPIO_PORT
+#define ES_EUART0_TX_GPIO_PORT  GPIOA
+#endif
+#ifndef ES_EUART0_TX_GPIO_PIN
+#define ES_EUART0_TX_GPIO_PIN  ALD_GPIO_PIN_14
+#endif
+
+#ifndef ES_EUART0_TX_PIN
+#ifdef ES_PIN_GPIO_A_14
+#define ES_EUART0_TX_PIN ES_PIN_GPIO_A_14
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PA14_USED
+#define ES_MAP__PIN_PA14_USED
+#ifndef ES_GP16C4T0_CH3_GPIO_FUNC
+#define ES_GP16C4T0_CH3_GPIO_FUNC  ALD_GPIO_FUNC_4
+#endif
+#ifndef ES_GP16C4T0_CH3_GPIO_PORT
+#define ES_GP16C4T0_CH3_GPIO_PORT  GPIOA
+#endif
+#ifndef ES_GP16C4T0_CH3_GPIO_PIN
+#define ES_GP16C4T0_CH3_GPIO_PIN  ALD_GPIO_PIN_14
+#endif
+
+#ifndef ES_GP16C4T0_CH3_PIN
+#ifdef ES_PIN_GPIO_A_14
+#define ES_GP16C4T0_CH3_PIN ES_PIN_GPIO_A_14
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PA14_USED
+#define ES_MAP__PIN_PA14_USED
+#ifndef ES_I2C0_SCL_GPIO_FUNC
+#define ES_I2C0_SCL_GPIO_FUNC  ALD_GPIO_FUNC_5
+#endif
+#ifndef ES_I2C0_SCL_GPIO_PORT
+#define ES_I2C0_SCL_GPIO_PORT  GPIOA
+#endif
+#ifndef ES_I2C0_SCL_GPIO_PIN
+#define ES_I2C0_SCL_GPIO_PIN  ALD_GPIO_PIN_14
+#endif
+
+#ifndef ES_I2C0_SCL_PIN
+#ifdef ES_PIN_GPIO_A_14
+#define ES_I2C0_SCL_PIN ES_PIN_GPIO_A_14
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PA15_USED
+#define ES_MAP__PIN_PA15_USED
+#ifndef ES_GP16C4T0_CH1_GPIO_FUNC
+#define ES_GP16C4T0_CH1_GPIO_FUNC  ALD_GPIO_FUNC_2
+#endif
+#ifndef ES_GP16C4T0_CH1_GPIO_PORT
+#define ES_GP16C4T0_CH1_GPIO_PORT  GPIOA
+#endif
+#ifndef ES_GP16C4T0_CH1_GPIO_PIN
+#define ES_GP16C4T0_CH1_GPIO_PIN  ALD_GPIO_PIN_15
+#endif
+
+#ifndef ES_GP16C4T0_CH1_PIN
+#ifdef ES_PIN_GPIO_A_15
+#define ES_GP16C4T0_CH1_PIN ES_PIN_GPIO_A_15
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PA15_USED
+#define ES_MAP__PIN_PA15_USED
+#ifndef ES_SPI0_NSS_GPIO_FUNC
+#define ES_SPI0_NSS_GPIO_FUNC  ALD_GPIO_FUNC_3
+#endif
+#ifndef ES_SPI0_NSS_GPIO_PORT
+#define ES_SPI0_NSS_GPIO_PORT  GPIOA
+#endif
+#ifndef ES_SPI0_NSS_GPIO_PIN
+#define ES_SPI0_NSS_GPIO_PIN  ALD_GPIO_PIN_15
+#endif
+
+#ifndef ES_SPI0_NSS_PIN
+#ifdef ES_PIN_GPIO_A_15
+#define ES_SPI0_NSS_PIN ES_PIN_GPIO_A_15
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PA15_USED
+#define ES_MAP__PIN_PA15_USED
+#ifndef ES_GP16C4T2_ET_GPIO_FUNC
+#define ES_GP16C4T2_ET_GPIO_FUNC  ALD_GPIO_FUNC_5
+#endif
+#ifndef ES_GP16C4T2_ET_GPIO_PORT
+#define ES_GP16C4T2_ET_GPIO_PORT  GPIOA
+#endif
+#ifndef ES_GP16C4T2_ET_GPIO_PIN
+#define ES_GP16C4T2_ET_GPIO_PIN  ALD_GPIO_PIN_15
+#endif
+
+#ifndef ES_GP16C4T2_ET_PIN
+#ifdef ES_PIN_GPIO_A_15
+#define ES_GP16C4T2_ET_PIN ES_PIN_GPIO_A_15
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PC10_USED
+#define ES_MAP__PIN_PC10_USED
+#ifndef ES_SPI1_SCK_GPIO_FUNC
+#define ES_SPI1_SCK_GPIO_FUNC  ALD_GPIO_FUNC_2
+#endif
+#ifndef ES_SPI1_SCK_GPIO_PORT
+#define ES_SPI1_SCK_GPIO_PORT  GPIOC
+#endif
+#ifndef ES_SPI1_SCK_GPIO_PIN
+#define ES_SPI1_SCK_GPIO_PIN  ALD_GPIO_PIN_10
+#endif
+
+#ifndef ES_SPI1_SCK_PIN
+#ifdef ES_PIN_GPIO_C_10
+#define ES_SPI1_SCK_PIN ES_PIN_GPIO_C_10
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PC10_USED
+#define ES_MAP__PIN_PC10_USED
+#ifndef ES_GP16C4T0_CH1_GPIO_FUNC
+#define ES_GP16C4T0_CH1_GPIO_FUNC  ALD_GPIO_FUNC_3
+#endif
+#ifndef ES_GP16C4T0_CH1_GPIO_PORT
+#define ES_GP16C4T0_CH1_GPIO_PORT  GPIOC
+#endif
+#ifndef ES_GP16C4T0_CH1_GPIO_PIN
+#define ES_GP16C4T0_CH1_GPIO_PIN  ALD_GPIO_PIN_10
+#endif
+
+#ifndef ES_GP16C4T0_CH1_PIN
+#ifdef ES_PIN_GPIO_C_10
+#define ES_GP16C4T0_CH1_PIN ES_PIN_GPIO_C_10
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PC10_USED
+#define ES_MAP__PIN_PC10_USED
+#ifndef ES_EUART1_TX_GPIO_FUNC
+#define ES_EUART1_TX_GPIO_FUNC  ALD_GPIO_FUNC_7
+#endif
+#ifndef ES_EUART1_TX_GPIO_PORT
+#define ES_EUART1_TX_GPIO_PORT  GPIOC
+#endif
+#ifndef ES_EUART1_TX_GPIO_PIN
+#define ES_EUART1_TX_GPIO_PIN  ALD_GPIO_PIN_10
+#endif
+
+#ifndef ES_EUART1_TX_PIN
+#ifdef ES_PIN_GPIO_C_10
+#define ES_EUART1_TX_PIN ES_PIN_GPIO_C_10
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PC11_USED
+#define ES_MAP__PIN_PC11_USED
+#ifndef ES_SPI1_MISO_GPIO_FUNC
+#define ES_SPI1_MISO_GPIO_FUNC  ALD_GPIO_FUNC_2
+#endif
+#ifndef ES_SPI1_MISO_GPIO_PORT
+#define ES_SPI1_MISO_GPIO_PORT  GPIOC
+#endif
+#ifndef ES_SPI1_MISO_GPIO_PIN
+#define ES_SPI1_MISO_GPIO_PIN  ALD_GPIO_PIN_11
+#endif
+
+#ifndef ES_SPI1_MISO_PIN
+#ifdef ES_PIN_GPIO_C_11
+#define ES_SPI1_MISO_PIN ES_PIN_GPIO_C_11
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PC11_USED
+#define ES_MAP__PIN_PC11_USED
+#ifndef ES_GP16C4T0_CH2_GPIO_FUNC
+#define ES_GP16C4T0_CH2_GPIO_FUNC  ALD_GPIO_FUNC_3
+#endif
+#ifndef ES_GP16C4T0_CH2_GPIO_PORT
+#define ES_GP16C4T0_CH2_GPIO_PORT  GPIOC
+#endif
+#ifndef ES_GP16C4T0_CH2_GPIO_PIN
+#define ES_GP16C4T0_CH2_GPIO_PIN  ALD_GPIO_PIN_11
+#endif
+
+#ifndef ES_GP16C4T0_CH2_PIN
+#ifdef ES_PIN_GPIO_C_11
+#define ES_GP16C4T0_CH2_PIN ES_PIN_GPIO_C_11
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PC11_USED
+#define ES_MAP__PIN_PC11_USED
+#ifndef ES_I2C1_SCL_GPIO_FUNC
+#define ES_I2C1_SCL_GPIO_FUNC  ALD_GPIO_FUNC_5
+#endif
+#ifndef ES_I2C1_SCL_GPIO_PORT
+#define ES_I2C1_SCL_GPIO_PORT  GPIOC
+#endif
+#ifndef ES_I2C1_SCL_GPIO_PIN
+#define ES_I2C1_SCL_GPIO_PIN  ALD_GPIO_PIN_11
+#endif
+
+#ifndef ES_I2C1_SCL_PIN
+#ifdef ES_PIN_GPIO_C_11
+#define ES_I2C1_SCL_PIN ES_PIN_GPIO_C_11
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PC11_USED
+#define ES_MAP__PIN_PC11_USED
+#ifndef ES_EUART1_RX_GPIO_FUNC
+#define ES_EUART1_RX_GPIO_FUNC  ALD_GPIO_FUNC_7
+#endif
+#ifndef ES_EUART1_RX_GPIO_PORT
+#define ES_EUART1_RX_GPIO_PORT  GPIOC
+#endif
+#ifndef ES_EUART1_RX_GPIO_PIN
+#define ES_EUART1_RX_GPIO_PIN  ALD_GPIO_PIN_11
+#endif
+
+#ifndef ES_EUART1_RX_PIN
+#ifdef ES_PIN_GPIO_C_11
+#define ES_EUART1_RX_PIN ES_PIN_GPIO_C_11
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PC12_USED
+#define ES_MAP__PIN_PC12_USED
+#ifndef ES_SPI1_MOSI_GPIO_FUNC
+#define ES_SPI1_MOSI_GPIO_FUNC  ALD_GPIO_FUNC_2
+#endif
+#ifndef ES_SPI1_MOSI_GPIO_PORT
+#define ES_SPI1_MOSI_GPIO_PORT  GPIOC
+#endif
+#ifndef ES_SPI1_MOSI_GPIO_PIN
+#define ES_SPI1_MOSI_GPIO_PIN  ALD_GPIO_PIN_12
+#endif
+
+#ifndef ES_SPI1_MOSI_PIN
+#ifdef ES_PIN_GPIO_C_12
+#define ES_SPI1_MOSI_PIN ES_PIN_GPIO_C_12
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PC12_USED
+#define ES_MAP__PIN_PC12_USED
+#ifndef ES_GP16C4T0_CH3_GPIO_FUNC
+#define ES_GP16C4T0_CH3_GPIO_FUNC  ALD_GPIO_FUNC_3
+#endif
+#ifndef ES_GP16C4T0_CH3_GPIO_PORT
+#define ES_GP16C4T0_CH3_GPIO_PORT  GPIOC
+#endif
+#ifndef ES_GP16C4T0_CH3_GPIO_PIN
+#define ES_GP16C4T0_CH3_GPIO_PIN  ALD_GPIO_PIN_12
+#endif
+
+#ifndef ES_GP16C4T0_CH3_PIN
+#ifdef ES_PIN_GPIO_C_12
+#define ES_GP16C4T0_CH3_PIN ES_PIN_GPIO_C_12
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PC12_USED
+#define ES_MAP__PIN_PC12_USED
+#ifndef ES_I2C1_SDA_GPIO_FUNC
+#define ES_I2C1_SDA_GPIO_FUNC  ALD_GPIO_FUNC_5
+#endif
+#ifndef ES_I2C1_SDA_GPIO_PORT
+#define ES_I2C1_SDA_GPIO_PORT  GPIOC
+#endif
+#ifndef ES_I2C1_SDA_GPIO_PIN
+#define ES_I2C1_SDA_GPIO_PIN  ALD_GPIO_PIN_12
+#endif
+
+#ifndef ES_I2C1_SDA_PIN
+#ifdef ES_PIN_GPIO_C_12
+#define ES_I2C1_SDA_PIN ES_PIN_GPIO_C_12
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PD2_USED
+#define ES_MAP__PIN_PD2_USED
+#ifndef ES_GP16C4T1_ET_GPIO_FUNC
+#define ES_GP16C4T1_ET_GPIO_FUNC  ALD_GPIO_FUNC_2
+#endif
+#ifndef ES_GP16C4T1_ET_GPIO_PORT
+#define ES_GP16C4T1_ET_GPIO_PORT  GPIOD
+#endif
+#ifndef ES_GP16C4T1_ET_GPIO_PIN
+#define ES_GP16C4T1_ET_GPIO_PIN  ALD_GPIO_PIN_2
+#endif
+
+#ifndef ES_GP16C4T1_ET_PIN
+#ifdef ES_PIN_GPIO_D_2
+#define ES_GP16C4T1_ET_PIN ES_PIN_GPIO_D_2
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PD2_USED
+#define ES_MAP__PIN_PD2_USED
+#ifndef ES_CUART2_RX_GPIO_FUNC
+#define ES_CUART2_RX_GPIO_FUNC  ALD_GPIO_FUNC_3
+#endif
+#ifndef ES_CUART2_RX_GPIO_PORT
+#define ES_CUART2_RX_GPIO_PORT  GPIOD
+#endif
+#ifndef ES_CUART2_RX_GPIO_PIN
+#define ES_CUART2_RX_GPIO_PIN  ALD_GPIO_PIN_2
+#endif
+
+#ifndef ES_CUART2_RX_PIN
+#ifdef ES_PIN_GPIO_D_2
+#define ES_CUART2_RX_PIN ES_PIN_GPIO_D_2
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PD2_USED
+#define ES_MAP__PIN_PD2_USED
+#ifndef ES_GP16C4T2_CH4_GPIO_FUNC
+#define ES_GP16C4T2_CH4_GPIO_FUNC  ALD_GPIO_FUNC_4
+#endif
+#ifndef ES_GP16C4T2_CH4_GPIO_PORT
+#define ES_GP16C4T2_CH4_GPIO_PORT  GPIOD
+#endif
+#ifndef ES_GP16C4T2_CH4_GPIO_PIN
+#define ES_GP16C4T2_CH4_GPIO_PIN  ALD_GPIO_PIN_2
+#endif
+
+#ifndef ES_GP16C4T2_CH4_PIN
+#ifdef ES_PIN_GPIO_D_2
+#define ES_GP16C4T2_CH4_PIN ES_PIN_GPIO_D_2
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PB3_USED
+#define ES_MAP__PIN_PB3_USED
+#ifndef ES_GP16C4T0_CH2_GPIO_FUNC
+#define ES_GP16C4T0_CH2_GPIO_FUNC  ALD_GPIO_FUNC_2
+#endif
+#ifndef ES_GP16C4T0_CH2_GPIO_PORT
+#define ES_GP16C4T0_CH2_GPIO_PORT  GPIOB
+#endif
+#ifndef ES_GP16C4T0_CH2_GPIO_PIN
+#define ES_GP16C4T0_CH2_GPIO_PIN  ALD_GPIO_PIN_3
+#endif
+
+#ifndef ES_GP16C4T0_CH2_PIN
+#ifdef ES_PIN_GPIO_B_3
+#define ES_GP16C4T0_CH2_PIN ES_PIN_GPIO_B_3
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PB3_USED
+#define ES_MAP__PIN_PB3_USED
+#ifndef ES_SPI0_SCK_GPIO_FUNC
+#define ES_SPI0_SCK_GPIO_FUNC  ALD_GPIO_FUNC_3
+#endif
+#ifndef ES_SPI0_SCK_GPIO_PORT
+#define ES_SPI0_SCK_GPIO_PORT  GPIOB
+#endif
+#ifndef ES_SPI0_SCK_GPIO_PIN
+#define ES_SPI0_SCK_GPIO_PIN  ALD_GPIO_PIN_3
+#endif
+
+#ifndef ES_SPI0_SCK_PIN
+#ifdef ES_PIN_GPIO_B_3
+#define ES_SPI0_SCK_PIN ES_PIN_GPIO_B_3
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PB3_USED
+#define ES_MAP__PIN_PB3_USED
+#ifndef ES_CUART2_TX_GPIO_FUNC
+#define ES_CUART2_TX_GPIO_FUNC  ALD_GPIO_FUNC_4
+#endif
+#ifndef ES_CUART2_TX_GPIO_PORT
+#define ES_CUART2_TX_GPIO_PORT  GPIOB
+#endif
+#ifndef ES_CUART2_TX_GPIO_PIN
+#define ES_CUART2_TX_GPIO_PIN  ALD_GPIO_PIN_3
+#endif
+
+#ifndef ES_CUART2_TX_PIN
+#ifdef ES_PIN_GPIO_B_3
+#define ES_CUART2_TX_PIN ES_PIN_GPIO_B_3
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PB3_USED
+#define ES_MAP__PIN_PB3_USED
+#ifndef ES_I2C0_SDA_GPIO_FUNC
+#define ES_I2C0_SDA_GPIO_FUNC  ALD_GPIO_FUNC_5
+#endif
+#ifndef ES_I2C0_SDA_GPIO_PORT
+#define ES_I2C0_SDA_GPIO_PORT  GPIOB
+#endif
+#ifndef ES_I2C0_SDA_GPIO_PIN
+#define ES_I2C0_SDA_GPIO_PIN  ALD_GPIO_PIN_3
+#endif
+
+#ifndef ES_I2C0_SDA_PIN
+#ifdef ES_PIN_GPIO_B_3
+#define ES_I2C0_SDA_PIN ES_PIN_GPIO_B_3
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PB4_USED
+#define ES_MAP__PIN_PB4_USED
+#ifndef ES_GP16C4T1_CH1_GPIO_FUNC
+#define ES_GP16C4T1_CH1_GPIO_FUNC  ALD_GPIO_FUNC_2
+#endif
+#ifndef ES_GP16C4T1_CH1_GPIO_PORT
+#define ES_GP16C4T1_CH1_GPIO_PORT  GPIOB
+#endif
+#ifndef ES_GP16C4T1_CH1_GPIO_PIN
+#define ES_GP16C4T1_CH1_GPIO_PIN  ALD_GPIO_PIN_4
+#endif
+
+#ifndef ES_GP16C4T1_CH1_PIN
+#ifdef ES_PIN_GPIO_B_4
+#define ES_GP16C4T1_CH1_PIN ES_PIN_GPIO_B_4
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PB4_USED
+#define ES_MAP__PIN_PB4_USED
+#ifndef ES_SPI0_MISO_GPIO_FUNC
+#define ES_SPI0_MISO_GPIO_FUNC  ALD_GPIO_FUNC_3
+#endif
+#ifndef ES_SPI0_MISO_GPIO_PORT
+#define ES_SPI0_MISO_GPIO_PORT  GPIOB
+#endif
+#ifndef ES_SPI0_MISO_GPIO_PIN
+#define ES_SPI0_MISO_GPIO_PIN  ALD_GPIO_PIN_4
+#endif
+
+#ifndef ES_SPI0_MISO_PIN
+#ifdef ES_PIN_GPIO_B_4
+#define ES_SPI0_MISO_PIN ES_PIN_GPIO_B_4
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PB4_USED
+#define ES_MAP__PIN_PB4_USED
+#ifndef ES_CUART2_RX_GPIO_FUNC
+#define ES_CUART2_RX_GPIO_FUNC  ALD_GPIO_FUNC_4
+#endif
+#ifndef ES_CUART2_RX_GPIO_PORT
+#define ES_CUART2_RX_GPIO_PORT  GPIOB
+#endif
+#ifndef ES_CUART2_RX_GPIO_PIN
+#define ES_CUART2_RX_GPIO_PIN  ALD_GPIO_PIN_4
+#endif
+
+#ifndef ES_CUART2_RX_PIN
+#ifdef ES_PIN_GPIO_B_4
+#define ES_CUART2_RX_PIN ES_PIN_GPIO_B_4
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PB4_USED
+#define ES_MAP__PIN_PB4_USED
+#ifndef ES_EUART0_RX_GPIO_FUNC
+#define ES_EUART0_RX_GPIO_FUNC  ALD_GPIO_FUNC_5
+#endif
+#ifndef ES_EUART0_RX_GPIO_PORT
+#define ES_EUART0_RX_GPIO_PORT  GPIOB
+#endif
+#ifndef ES_EUART0_RX_GPIO_PIN
+#define ES_EUART0_RX_GPIO_PIN  ALD_GPIO_PIN_4
+#endif
+
+#ifndef ES_EUART0_RX_PIN
+#ifdef ES_PIN_GPIO_B_4
+#define ES_EUART0_RX_PIN ES_PIN_GPIO_B_4
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PB5_USED
+#define ES_MAP__PIN_PB5_USED
+#ifndef ES_GP16C4T1_CH2_GPIO_FUNC
+#define ES_GP16C4T1_CH2_GPIO_FUNC  ALD_GPIO_FUNC_3
+#endif
+#ifndef ES_GP16C4T1_CH2_GPIO_PORT
+#define ES_GP16C4T1_CH2_GPIO_PORT  GPIOB
+#endif
+#ifndef ES_GP16C4T1_CH2_GPIO_PIN
+#define ES_GP16C4T1_CH2_GPIO_PIN  ALD_GPIO_PIN_5
+#endif
+
+#ifndef ES_GP16C4T1_CH2_PIN
+#ifdef ES_PIN_GPIO_B_5
+#define ES_GP16C4T1_CH2_PIN ES_PIN_GPIO_B_5
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PB5_USED
+#define ES_MAP__PIN_PB5_USED
+#ifndef ES_SPI0_MOSI_GPIO_FUNC
+#define ES_SPI0_MOSI_GPIO_FUNC  ALD_GPIO_FUNC_4
+#endif
+#ifndef ES_SPI0_MOSI_GPIO_PORT
+#define ES_SPI0_MOSI_GPIO_PORT  GPIOB
+#endif
+#ifndef ES_SPI0_MOSI_GPIO_PIN
+#define ES_SPI0_MOSI_GPIO_PIN  ALD_GPIO_PIN_5
+#endif
+
+#ifndef ES_SPI0_MOSI_PIN
+#ifdef ES_PIN_GPIO_B_5
+#define ES_SPI0_MOSI_PIN ES_PIN_GPIO_B_5
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PB5_USED
+#define ES_MAP__PIN_PB5_USED
+#ifndef ES_EUART0_TX_GPIO_FUNC
+#define ES_EUART0_TX_GPIO_FUNC  ALD_GPIO_FUNC_5
+#endif
+#ifndef ES_EUART0_TX_GPIO_PORT
+#define ES_EUART0_TX_GPIO_PORT  GPIOB
+#endif
+#ifndef ES_EUART0_TX_GPIO_PIN
+#define ES_EUART0_TX_GPIO_PIN  ALD_GPIO_PIN_5
+#endif
+
+#ifndef ES_EUART0_TX_PIN
+#ifdef ES_PIN_GPIO_B_5
+#define ES_EUART0_TX_PIN ES_PIN_GPIO_B_5
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PB6_USED
+#define ES_MAP__PIN_PB6_USED
+#ifndef ES_I2C0_SCL_GPIO_FUNC
+#define ES_I2C0_SCL_GPIO_FUNC  ALD_GPIO_FUNC_2
+#endif
+#ifndef ES_I2C0_SCL_GPIO_PORT
+#define ES_I2C0_SCL_GPIO_PORT  GPIOB
+#endif
+#ifndef ES_I2C0_SCL_GPIO_PIN
+#define ES_I2C0_SCL_GPIO_PIN  ALD_GPIO_PIN_6
+#endif
+
+#ifndef ES_I2C0_SCL_PIN
+#ifdef ES_PIN_GPIO_B_6
+#define ES_I2C0_SCL_PIN ES_PIN_GPIO_B_6
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PB6_USED
+#define ES_MAP__PIN_PB6_USED
+#ifndef ES_GP16C4T2_CH1_GPIO_FUNC
+#define ES_GP16C4T2_CH1_GPIO_FUNC  ALD_GPIO_FUNC_3
+#endif
+#ifndef ES_GP16C4T2_CH1_GPIO_PORT
+#define ES_GP16C4T2_CH1_GPIO_PORT  GPIOB
+#endif
+#ifndef ES_GP16C4T2_CH1_GPIO_PIN
+#define ES_GP16C4T2_CH1_GPIO_PIN  ALD_GPIO_PIN_6
+#endif
+
+#ifndef ES_GP16C4T2_CH1_PIN
+#ifdef ES_PIN_GPIO_B_6
+#define ES_GP16C4T2_CH1_PIN ES_PIN_GPIO_B_6
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PB6_USED
+#define ES_MAP__PIN_PB6_USED
+#ifndef ES_CUART0_TX_GPIO_FUNC
+#define ES_CUART0_TX_GPIO_FUNC  ALD_GPIO_FUNC_4
+#endif
+#ifndef ES_CUART0_TX_GPIO_PORT
+#define ES_CUART0_TX_GPIO_PORT  GPIOB
+#endif
+#ifndef ES_CUART0_TX_GPIO_PIN
+#define ES_CUART0_TX_GPIO_PIN  ALD_GPIO_PIN_6
+#endif
+
+#ifndef ES_CUART0_TX_PIN
+#ifdef ES_PIN_GPIO_B_6
+#define ES_CUART0_TX_PIN ES_PIN_GPIO_B_6
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PB6_USED
+#define ES_MAP__PIN_PB6_USED
+#ifndef ES_AD16C4T0_CH1_GPIO_FUNC
+#define ES_AD16C4T0_CH1_GPIO_FUNC  ALD_GPIO_FUNC_5
+#endif
+#ifndef ES_AD16C4T0_CH1_GPIO_PORT
+#define ES_AD16C4T0_CH1_GPIO_PORT  GPIOB
+#endif
+#ifndef ES_AD16C4T0_CH1_GPIO_PIN
+#define ES_AD16C4T0_CH1_GPIO_PIN  ALD_GPIO_PIN_6
+#endif
+
+#ifndef ES_AD16C4T0_CH1_PIN
+#ifdef ES_PIN_GPIO_B_6
+#define ES_AD16C4T0_CH1_PIN ES_PIN_GPIO_B_6
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PB7_USED
+#define ES_MAP__PIN_PB7_USED
+#ifndef ES_I2C0_SDA_GPIO_FUNC
+#define ES_I2C0_SDA_GPIO_FUNC  ALD_GPIO_FUNC_2
+#endif
+#ifndef ES_I2C0_SDA_GPIO_PORT
+#define ES_I2C0_SDA_GPIO_PORT  GPIOB
+#endif
+#ifndef ES_I2C0_SDA_GPIO_PIN
+#define ES_I2C0_SDA_GPIO_PIN  ALD_GPIO_PIN_7
+#endif
+
+#ifndef ES_I2C0_SDA_PIN
+#ifdef ES_PIN_GPIO_B_7
+#define ES_I2C0_SDA_PIN ES_PIN_GPIO_B_7
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PB7_USED
+#define ES_MAP__PIN_PB7_USED
+#ifndef ES_GP16C4T2_CH2_GPIO_FUNC
+#define ES_GP16C4T2_CH2_GPIO_FUNC  ALD_GPIO_FUNC_3
+#endif
+#ifndef ES_GP16C4T2_CH2_GPIO_PORT
+#define ES_GP16C4T2_CH2_GPIO_PORT  GPIOB
+#endif
+#ifndef ES_GP16C4T2_CH2_GPIO_PIN
+#define ES_GP16C4T2_CH2_GPIO_PIN  ALD_GPIO_PIN_7
+#endif
+
+#ifndef ES_GP16C4T2_CH2_PIN
+#ifdef ES_PIN_GPIO_B_7
+#define ES_GP16C4T2_CH2_PIN ES_PIN_GPIO_B_7
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PB7_USED
+#define ES_MAP__PIN_PB7_USED
+#ifndef ES_CUART0_RX_GPIO_FUNC
+#define ES_CUART0_RX_GPIO_FUNC  ALD_GPIO_FUNC_4
+#endif
+#ifndef ES_CUART0_RX_GPIO_PORT
+#define ES_CUART0_RX_GPIO_PORT  GPIOB
+#endif
+#ifndef ES_CUART0_RX_GPIO_PIN
+#define ES_CUART0_RX_GPIO_PIN  ALD_GPIO_PIN_7
+#endif
+
+#ifndef ES_CUART0_RX_PIN
+#ifdef ES_PIN_GPIO_B_7
+#define ES_CUART0_RX_PIN ES_PIN_GPIO_B_7
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PB7_USED
+#define ES_MAP__PIN_PB7_USED
+#ifndef ES_AD16C4T0_CH2_GPIO_FUNC
+#define ES_AD16C4T0_CH2_GPIO_FUNC  ALD_GPIO_FUNC_5
+#endif
+#ifndef ES_AD16C4T0_CH2_GPIO_PORT
+#define ES_AD16C4T0_CH2_GPIO_PORT  GPIOB
+#endif
+#ifndef ES_AD16C4T0_CH2_GPIO_PIN
+#define ES_AD16C4T0_CH2_GPIO_PIN  ALD_GPIO_PIN_7
+#endif
+
+#ifndef ES_AD16C4T0_CH2_PIN
+#ifdef ES_PIN_GPIO_B_7
+#define ES_AD16C4T0_CH2_PIN ES_PIN_GPIO_B_7
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PB8_USED
+#define ES_MAP__PIN_PB8_USED
+#ifndef ES_GP16C4T2_CH3_GPIO_FUNC
+#define ES_GP16C4T2_CH3_GPIO_FUNC  ALD_GPIO_FUNC_2
+#endif
+#ifndef ES_GP16C4T2_CH3_GPIO_PORT
+#define ES_GP16C4T2_CH3_GPIO_PORT  GPIOB
+#endif
+#ifndef ES_GP16C4T2_CH3_GPIO_PIN
+#define ES_GP16C4T2_CH3_GPIO_PIN  ALD_GPIO_PIN_8
+#endif
+
+#ifndef ES_GP16C4T2_CH3_PIN
+#ifdef ES_PIN_GPIO_B_8
+#define ES_GP16C4T2_CH3_PIN ES_PIN_GPIO_B_8
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PB8_USED
+#define ES_MAP__PIN_PB8_USED
+#ifndef ES_I2C0_SCL_GPIO_FUNC
+#define ES_I2C0_SCL_GPIO_FUNC  ALD_GPIO_FUNC_3
+#endif
+#ifndef ES_I2C0_SCL_GPIO_PORT
+#define ES_I2C0_SCL_GPIO_PORT  GPIOB
+#endif
+#ifndef ES_I2C0_SCL_GPIO_PIN
+#define ES_I2C0_SCL_GPIO_PIN  ALD_GPIO_PIN_8
+#endif
+
+#ifndef ES_I2C0_SCL_PIN
+#ifdef ES_PIN_GPIO_B_8
+#define ES_I2C0_SCL_PIN ES_PIN_GPIO_B_8
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PB8_USED
+#define ES_MAP__PIN_PB8_USED
+#ifndef ES_EUART0_RX_GPIO_FUNC
+#define ES_EUART0_RX_GPIO_FUNC  ALD_GPIO_FUNC_4
+#endif
+#ifndef ES_EUART0_RX_GPIO_PORT
+#define ES_EUART0_RX_GPIO_PORT  GPIOB
+#endif
+#ifndef ES_EUART0_RX_GPIO_PIN
+#define ES_EUART0_RX_GPIO_PIN  ALD_GPIO_PIN_8
+#endif
+
+#ifndef ES_EUART0_RX_PIN
+#ifdef ES_PIN_GPIO_B_8
+#define ES_EUART0_RX_PIN ES_PIN_GPIO_B_8
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PB8_USED
+#define ES_MAP__PIN_PB8_USED
+#ifndef ES_AD16C4T0_CH3_GPIO_FUNC
+#define ES_AD16C4T0_CH3_GPIO_FUNC  ALD_GPIO_FUNC_5
+#endif
+#ifndef ES_AD16C4T0_CH3_GPIO_PORT
+#define ES_AD16C4T0_CH3_GPIO_PORT  GPIOB
+#endif
+#ifndef ES_AD16C4T0_CH3_GPIO_PIN
+#define ES_AD16C4T0_CH3_GPIO_PIN  ALD_GPIO_PIN_8
+#endif
+
+#ifndef ES_AD16C4T0_CH3_PIN
+#ifdef ES_PIN_GPIO_B_8
+#define ES_AD16C4T0_CH3_PIN ES_PIN_GPIO_B_8
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PB9_USED
+#define ES_MAP__PIN_PB9_USED
+#ifndef ES_GP16C4T2_CH4_GPIO_FUNC
+#define ES_GP16C4T2_CH4_GPIO_FUNC  ALD_GPIO_FUNC_2
+#endif
+#ifndef ES_GP16C4T2_CH4_GPIO_PORT
+#define ES_GP16C4T2_CH4_GPIO_PORT  GPIOB
+#endif
+#ifndef ES_GP16C4T2_CH4_GPIO_PIN
+#define ES_GP16C4T2_CH4_GPIO_PIN  ALD_GPIO_PIN_9
+#endif
+
+#ifndef ES_GP16C4T2_CH4_PIN
+#ifdef ES_PIN_GPIO_B_9
+#define ES_GP16C4T2_CH4_PIN ES_PIN_GPIO_B_9
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PB9_USED
+#define ES_MAP__PIN_PB9_USED
+#ifndef ES_I2C0_SDA_GPIO_FUNC
+#define ES_I2C0_SDA_GPIO_FUNC  ALD_GPIO_FUNC_3
+#endif
+#ifndef ES_I2C0_SDA_GPIO_PORT
+#define ES_I2C0_SDA_GPIO_PORT  GPIOB
+#endif
+#ifndef ES_I2C0_SDA_GPIO_PIN
+#define ES_I2C0_SDA_GPIO_PIN  ALD_GPIO_PIN_9
+#endif
+
+#ifndef ES_I2C0_SDA_PIN
+#ifdef ES_PIN_GPIO_B_9
+#define ES_I2C0_SDA_PIN ES_PIN_GPIO_B_9
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PB9_USED
+#define ES_MAP__PIN_PB9_USED
+#ifndef ES_EUART0_TX_GPIO_FUNC
+#define ES_EUART0_TX_GPIO_FUNC  ALD_GPIO_FUNC_4
+#endif
+#ifndef ES_EUART0_TX_GPIO_PORT
+#define ES_EUART0_TX_GPIO_PORT  GPIOB
+#endif
+#ifndef ES_EUART0_TX_GPIO_PIN
+#define ES_EUART0_TX_GPIO_PIN  ALD_GPIO_PIN_9
+#endif
+
+#ifndef ES_EUART0_TX_PIN
+#ifdef ES_PIN_GPIO_B_9
+#define ES_EUART0_TX_PIN ES_PIN_GPIO_B_9
+#endif
+#endif
+#endif
+
+
+#ifndef ES_MAP__PIN_PB9_USED
+#define ES_MAP__PIN_PB9_USED
+#ifndef ES_AD16C4T0_CH1N_GPIO_FUNC
+#define ES_AD16C4T0_CH1N_GPIO_FUNC  ALD_GPIO_FUNC_5
+#endif
+#ifndef ES_AD16C4T0_CH1N_GPIO_PORT
+#define ES_AD16C4T0_CH1N_GPIO_PORT  GPIOB
+#endif
+#ifndef ES_AD16C4T0_CH1N_GPIO_PIN
+#define ES_AD16C4T0_CH1N_GPIO_PIN  ALD_GPIO_PIN_9
+#endif
+
+#ifndef ES_AD16C4T0_CH1N_PIN
+#ifdef ES_PIN_GPIO_B_9
+#define ES_AD16C4T0_CH1N_PIN ES_PIN_GPIO_B_9
+#endif
+#endif
+#endif
+
+
+
+
+#endif
+
+#define   ES_RTT_APP_LED_PIN   ES_PIN_GPIO_A_15
+
+
+
+#endif

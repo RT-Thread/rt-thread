@@ -1,11 +1,12 @@
 /*
- * Copyright (c) 2021 - 2022 hpmicro
+ * Copyright (c) 2021-2023 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
  * Change Logs:
  * Date           Author       Notes
- * 2022-05-08     hpmicro      the first version
+ * 2022-05-08     HPMicro      the first version
+ * 2023-05-08     HPMicro      Adapt RT-Thread v5.0.0
  */
 
 #include <rtthread.h>
@@ -398,7 +399,7 @@ static rt_err_t hpm_can_control(struct rt_can_device *can, int cmd, void *arg)
                 RT_ASSERT(filter->count <= CAN_FILTER_NUM_MAX);
                 for (uint32_t i=0; i<filter->count; i++)
                 {
-                    drv_can->filter_list[i].index = (filter->items[i].hdr_bank == -1) ? i : filter->items[i].hdr_bank;
+                    drv_can->filter_list[i].index = i;
                     drv_can->filter_list[i].enable = (filter->actived != 0U) ? true : false;
                     drv_can->filter_list[i].code = filter->items[i].id;
                     drv_can->filter_list[i].id_mode = (filter->items[i].ide != 0U) ? can_filter_id_mode_extended_frames : can_filter_id_mode_standard_frames;
@@ -410,6 +411,12 @@ static rt_err_t hpm_can_control(struct rt_can_device *can, int cmd, void *arg)
                 drv_can->filter_num = 0;
             }
             err = hpm_can_configure(can, &drv_can->can_dev.config);
+#ifdef RT_CAN_USING_HDR
+            if (filter == RT_NULL) {
+                /*if use RT_CAN_USING_HDR, but if want to receive everything without filtering, use default filter, need to return NO-RT-OK status*/
+                err = -RT_ETRAP;
+            }
+#endif
         }
         break;
     case RT_CAN_CMD_SET_MODE:
@@ -504,6 +511,7 @@ static rt_err_t hpm_can_control(struct rt_can_device *can, int cmd, void *arg)
         rt_memcpy(arg, &drv_can->can_dev.status, sizeof(drv_can->can_dev.status));
         break;
     }
+    return err;
 }
 
 static int hpm_can_sendmsg(struct rt_can_device *can, const void *buf, rt_uint32_t boxno)
@@ -536,11 +544,10 @@ static int hpm_can_sendmsg(struct rt_can_device *can, const void *buf, rt_uint32
     }
 
 #ifdef RT_CAN_USING_CANFD
+    tx_buf.bitrate_switch = can_msg->brs;
     if (can_msg->fd_frame != 0)
     {
         tx_buf.canfd_frame = 1;
-        tx_buf.bitrate_switch = 1;
-
         RT_ASSERT(can_msg->len <= 15);
     }
     else
@@ -626,12 +633,20 @@ static int hpm_can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t box
         else {
             can_msg->rtr = RT_CAN_DTR;
         }
-
+#ifdef RT_CAN_USING_CANFD
+        can_msg->fd_frame = rx_buf.canfd_frame;
+        can_msg->brs = rx_buf.bitrate_switch;
+#endif
         can_msg->len = rx_buf.dlc;
         uint32_t msg_len = can_get_data_bytes_from_dlc(can_msg->len);
         for(uint32_t i = 0; i < msg_len; i++) {
             can_msg->data[i] = rx_buf.data[i];
         }
+#ifdef RT_CAN_USING_HDR
+        /* Hardware filter messages are valid */
+        can_msg->hdr_index = boxno;
+        can->hdr[can_msg->hdr_index].connected = 1;
+#endif
     }
     else {
         return -RT_EEMPTY;
@@ -685,7 +700,9 @@ int rt_hw_can_init(void)
     config.privmode = RT_CAN_MODE_NOPRIV;
     config.sndboxnumber = CAN_SENDBOX_NUM;
     config.ticks = 50;
-
+#ifdef RT_CAN_USING_HDR
+    config.maxhdr = 16;
+#endif
     for (uint32_t i = 0; i < ARRAY_SIZE(hpm_cans); i++)
     {
         hpm_cans[i]->can_dev.config = config;
@@ -699,5 +716,3 @@ int rt_hw_can_init(void)
 INIT_BOARD_EXPORT(rt_hw_can_init);
 
 #endif
-
-

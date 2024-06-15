@@ -12,6 +12,8 @@
 #ifndef Pins_Arduino_h
 #define Pins_Arduino_h
 
+#include <rtconfig.h>
+
 /* pins alias. Must keep in sequence */
 #define D0        (0)
 #define D1        (1)
@@ -49,30 +51,53 @@
 #define D33       (33)
 #define D34       (34)
 #define D35       (35)
-#define A0        (36)
-#define A1        (37)
-#define A2        (38)
-#define A3        (39)
-#define DAC0      (40)
+#define D36       (36)
+#define D37       (37)
+#define D38       (38)
+#define D39       (39)
+#define A0        (40)
+#define A1        (41)
+#define A2        (42)
+#define A3        (43)
+#define DAC0      (44)
+
+#define RTDUINO_PIN_MAX_LIMIT DAC0 /* pin number max limit check */
 
 #define F_CPU          80000000L  /* CPU:80MHz */
 
 #define LED_BUILTIN     D22  /* Default Built-in LED */
 
-/*
- * i2c1 - PC7-SDA PC6-SCL (User I2C)
- * i2c3 - ICM20608, AP3216C (On Board)
- * i2c4 - AHT10 (On Board)
- */
-#define RTDUINO_DEFAULT_IIC_BUS_NAME    "i2c4"
+/* Serial2 - PA2-TX  PA3-RX */
+#define RTDUINO_SERIAL2_DEVICE_NAME     "uart2"
 
+#define RTDUINO_TONE_HWTIMER_DEVICE_NAME "timer7"
+
+/* I2C */
+#if defined(BSP_USING_ARDUINO_AHT10)
+#define RTDUINO_DEFAULT_IIC_BUS_NAME    "i2c4" /* i2c4 - AHT10 (On Board) */
+#elif defined(BSP_USING_ARDUINO_AP3216) || defined(BSP_USING_ARDUINO_ICM20608)
+#define RTDUINO_DEFAULT_IIC_BUS_NAME    "i2c3" /* i2c3 - ICM20608, AP3216C (On Board) */
+#else
+#define RTDUINO_DEFAULT_IIC_BUS_NAME    "i2c1" /* i2c1 - PC7-SDA PC6-SCL (User I2C) */
+#endif /* BSP_USING_ARDUINO_AHT10 */
+
+/* SPI */
+#if defined(BSP_USING_ARDUINO_ST7789)
+/*
+ * SPI LCD ST7789 (spi3)
+ * LCD-SPI-SDA  PB5
+ * LCD-SPI-SCK  PB3
+ * LCD-SPI-CS   PD7
+ * LCD-POWER    PB7
+ * LCD-RESET    PB6
+ * LCD-WR/DC    PB4
+ */
+#define SS      D36  /* LCD-SPI-CS PD7 */
+#define RTDUINO_DEFAULT_SPI_BUS_NAME      "spi3" /* LCD SPI Bus */
+#else
 /* spi2 - PB13-SCK  PB14-MISO  PB15-MOSI */
 #define SS      D28  /* Chip select pin of default spi */
 #define RTDUINO_DEFAULT_SPI_BUS_NAME      "spi2"
-
-/* Serial2 - PA2-TX  PA3-RX */
-#define RTDUINO_SERIAL2_DEVICE_NAME      "uart2"
-
-#define RTDUINO_DEFAULT_HWTIMER_DEVICE_NAME      "timer7"
+#endif /* BSP_USING_ARDUINO_ST7789 */
 
 #endif /* Pins_Arduino_h */

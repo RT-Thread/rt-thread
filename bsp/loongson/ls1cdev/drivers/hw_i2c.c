@@ -57,8 +57,8 @@ rt_size_t rt_i2c_master_xfer(struct rt_i2c_bus_device *bus,
 }
 
 rt_err_t rt_i2c_bus_control(struct rt_i2c_bus_device *bus,
-                          rt_uint32_t               cmd,
-                          rt_uint32_t               arg)
+                          int                       cmd,
+                          void                      *args)
 {
     struct ls1c_i2c_bus * i2c_bus = (struct ls1c_i2c_bus *)bus;
 

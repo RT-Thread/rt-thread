@@ -79,13 +79,13 @@ hal_library = 'sunxi-hal'
 rtconfig.BSP_LIBRARY_TYPE = hal_library
 
 # include libraries
-objs.extend(SConscript(os.path.join(libraries_path_prefix, hal_library, 'SConscript')))
+objs.extend(SConscript(os.path.join(libraries_path_prefix, hal_library, 'SConscript'), variant_dir='build/libraries/sunxi-hal', duplicate=0))
 
 # include drivers
-objs.extend(SConscript(os.path.join(libraries_path_prefix, 'drivers', 'SConscript')))
+objs.extend(SConscript(os.path.join(libraries_path_prefix, 'drivers', 'SConscript'), variant_dir='build/libraries/drivers', duplicate=0))
 
 # include libos
-objs.extend(SConscript(os.path.join(libraries_path_prefix, 'libos', 'SConscript')))
+objs.extend(SConscript(os.path.join(libraries_path_prefix, 'libos', 'SConscript'), variant_dir='build/libraries/libos', duplicate=0))
 
 if rtconfig.PLATFORM == 'gcc':
     env['LINKCOM'] = '$LINK -o $TARGET $LINKFLAGS $__RPATH $SOURCES $_LIBDIRFLAGS -Wl,--start-group $_LIBFLAGS -Wl,--end-group'

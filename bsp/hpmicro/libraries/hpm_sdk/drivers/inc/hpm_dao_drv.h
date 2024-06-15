@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 hpmicro
+ * Copyright (c) 2021 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -12,6 +12,7 @@
 #include "hpm_common.h"
 #include "hpm_dao_regs.h"
 #include "hpm_i2s_common.h"
+#include "hpm_soc_feature.h"
 
 /**
  * @brief DAO driver APIs
@@ -43,7 +44,20 @@ typedef struct dao_config {
     bool enable_mono_output;
     uint8_t default_output_level;
     uint8_t channel_count;
+#if defined(DAO_SOC_SUPPORT_DATA_FORMAT_CONFIG) && (DAO_SOC_SUPPORT_DATA_FORMAT_CONFIG == 1)
+    bool enable_tdm_mode;
+    bool frame_start_at_rising_edge;
+    uint8_t protocol;
+    uint8_t channel_length;
+    uint8_t audio_depth;
+#endif
+    uint8_t channel_slot_mask;
 } dao_config_t;
+
+typedef enum {
+    dao_right_channel = DAO_CTRL_RIGHT_EN_MASK,
+    dao_left_channel = DAO_CTRL_LEFT_EN_MASK,
+} dao_channel_t;
 
 #ifdef __cplusplus
 extern "C" {
@@ -91,30 +105,10 @@ static inline void dao_disable_hpf(DAO_Type *ptr)
 }
 
 /**
- * @brief enable error irq
- *
- * @param [in] ptr DAO base address
- */
-static inline void dao_enable_error_irq(DAO_Type *ptr)
-{
-    ptr->CTRL |= DAO_CTRL_SAT_ERR_IE_MASK;
-}
-
-/**
- * @brief disable error irq
- *
- * @param [in] ptr DAO base address
- */
-static inline void dao_disable_error_irq(DAO_Type *ptr)
-{
-    ptr->CTRL &= ~DAO_CTRL_SAT_ERR_IE_MASK;
-}
-
-/**
  * @brief enable channel
  *
  * @param [in] ptr DAO base address
- * @param [in] ch channel number
+ * @param [in] ch channel defined in dao_channel_t
  */
 static inline void dao_enable_channel(DAO_Type *ptr, uint32_t ch)
 {
@@ -125,7 +119,7 @@ static inline void dao_enable_channel(DAO_Type *ptr, uint32_t ch)
  * @brief disable channel
  *
  * @param [in] ptr DAO base address
- * @param [in] ch channel number
+ * @param [in] ch channel defined in dao_channel_t
  */
 static inline void dao_disable_channel(DAO_Type *ptr, uint32_t ch)
 {

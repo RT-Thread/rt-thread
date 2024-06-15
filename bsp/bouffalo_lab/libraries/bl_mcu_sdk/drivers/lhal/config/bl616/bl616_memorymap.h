@@ -80,7 +80,6 @@
 #define CKS_BASE                             ((uint32_t)0x2000a700)
 #define DBI_BASE                             ((uint32_t)0x2000a800)
 #define I2C1_BASE                            ((uint32_t)0x2000a900)
-#define ISO11898_BASE                        ((uint32_t)0x2000aa00)
 #define I2S_BASE                             ((uint32_t)0x2000ab00)
 #define AUADC_BASE                           ((uint32_t)0x2000ac00)
 #define QSPI_BASE                            ((uint32_t)0x2000b000)
@@ -104,5 +103,6 @@
 #define EMAC_BASE                            ((uint32_t)0x20070000)
 #define USB_BASE                             ((uint32_t)0x20072000)
 #define HBN_RAM_BASE                         ((uint32_t)0x20010000)
+#define PLFM_DMA_BASE                        ((uint32_t)0x24A00000)
 
 #endif

@@ -8,6 +8,8 @@
  * Change Logs:
  * Date        Author       Notes
  * 2022-10-26  huanghe      first commit
+ * 2022-04-13  zhugengyu    support RT-Smart
+ * 2023-07-27  liqiaozhong  add gpio pin definition
  *
  */
 
@@ -17,6 +19,11 @@
 #include "fparameters.h"
 #include "phytium_cpu.h"
 
+#include "mmu.h"
+#ifdef RT_USING_SMART
+    #include "ioremap.h"
+#endif
+
 #if defined(__CC_ARM)
     extern int Image$$RW_IRAM1$$ZI$$Limit;
     #define HEAP_BEGIN ((void *)&Image$$RW_IRAM1$$ZI$$Limit)
@@ -25,7 +32,26 @@
     #define HEAP_BEGIN ((void *)&__bss_end)
 #endif
 
-#define HEAP_END (void *)(0x80000000 + 1024 * 1024 * 1024)
+#ifdef RT_USING_SMART
+    #define HEAP_END        (rt_size_t)((rt_size_t)KERNEL_VADDR_START + 64 * 1024 * 1024)
+    #define PAGE_START      HEAP_END + 1 * 1024 * 1024
+    #define PAGE_END        (rt_size_t)((rt_size_t)KERNEL_VADDR_START + 128 * 1024 * 1024)
+#else
+    #define HEAP_END        (rt_size_t)(HEAP_BEGIN + 64*1024*1024)
+    #define PAGE_POOL_SIZE  (8ul << 20)
+    #define PAGE_START      (rt_size_t)(HEAP_END)
+    #define PAGE_END        (PAGE_START +PAGE_POOL_SIZE)
+#endif
+
+#ifdef RT_USING_PIN
+/* gpio pin_index handle */
+#define FGPIO_OPS_PIN_INDEX(ctrl, port, pin)      SET_REG32_BITS(ctrl, 19, 12) | \
+                                                  SET_REG32_BITS(port, 11, 8) | \
+                                                  SET_REG32_BITS(pin, 7, 0)
+#define FGPIO_OPS_PIN_CTRL_ID(pin_idx)            GET_REG32_BITS(pin_idx, 19, 12)
+#define FGPIO_OPS_PIN_PORT_ID(pin_idx)            GET_REG32_BITS(pin_idx, 11, 8)
+#define FGPIO_OPS_PIN_ID(pin_idx)                 GET_REG32_BITS(pin_idx, 7, 0)
+#endif
 
 void rt_hw_board_init(void);
 

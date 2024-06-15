@@ -43,10 +43,13 @@
         <file category="header" name="ra/arm/CMSIS_5/CMSIS/Core/Include/core_cm4.h" path=""/>
         <file category="header" name="ra/arm/CMSIS_5/CMSIS/Core/Include/core_cm55.h" path=""/>
         <file category="header" name="ra/arm/CMSIS_5/CMSIS/Core/Include/core_cm7.h" path=""/>
+        <file category="header" name="ra/arm/CMSIS_5/CMSIS/Core/Include/core_cm85.h" path=""/>
         <file category="header" name="ra/arm/CMSIS_5/CMSIS/Core/Include/core_sc000.h" path=""/>
         <file category="header" name="ra/arm/CMSIS_5/CMSIS/Core/Include/core_sc300.h" path=""/>
+        <file category="header" name="ra/arm/CMSIS_5/CMSIS/Core/Include/core_starmc1.h" path=""/>
         <file category="header" name="ra/arm/CMSIS_5/CMSIS/Core/Include/mpu_armv7.h" path=""/>
         <file category="header" name="ra/arm/CMSIS_5/CMSIS/Core/Include/mpu_armv8.h" path=""/>
+        <file category="header" name="ra/arm/CMSIS_5/CMSIS/Core/Include/pac_armv81.h" path=""/>
         <file category="header" name="ra/arm/CMSIS_5/CMSIS/Core/Include/pmu_armv8.h" path=""/>
         <file category="header" name="ra/arm/CMSIS_5/CMSIS/Core/Include/tz_context.h" path=""/>
         <file category="other" name="ra/arm/CMSIS_5/LICENSE.txt"/>
@@ -59,7 +62,7 @@
         <file category="header" name="ra/fsp/inc/fsp_version.h" path=""/>
         <file category="header" name="ra/fsp/inc/instances/r_ioport.h" path=""/>
         <file category="header" name="ra/fsp/inc/instances/r_sci_uart.h" path=""/>
-        <file category="header" name="ra/fsp/src/bsp/cmsis/Device/RENESAS/Include/base_addresses.h" path=""/>
+        <file category="header" name="ra/fsp/src/bsp/cmsis/Device/RENESAS/Include/R7FA6M5BH.h" path=""/>
         <file category="header" name="ra/fsp/src/bsp/cmsis/Device/RENESAS/Include/renesas.h" path=""/>
         <file category="header" name="ra/fsp/src/bsp/cmsis/Device/RENESAS/Include/system.h" path=""/>
         <file category="source" name="ra/fsp/src/bsp/cmsis/Device/RENESAS/Source/startup.c"/>

@@ -1,0 +1,154 @@
+### uVision2 Project, (C) Keil Software
+### Do not modify !
+
+Target (rtthread-lpc2148), 0x0004 // Tools: 'ARM-ADS'
+
+Group (Applications)
+Group (Compiler)
+Group (DeviceDrivers)
+Group (Drivers)
+Group (Finsh)
+Group (Kernel)
+Group (libcpu)
+Group (POSIX)
+
+File 1,1,<applications\application.c><application.c>
+File 1,1,<applications\startup.c><startup.c>
+File 2,1,<..\..\..\..\components\libc\compilers\armlibc\syscall_mem.c><syscall_mem.c>
+File 2,1,<..\..\..\..\components\libc\compilers\armlibc\syscalls.c><syscalls.c>
+File 2,1,<..\..\..\..\components\libc\compilers\common\cctype.c><cctype.c>
+File 2,1,<..\..\..\..\components\libc\compilers\common\cstdlib.c><cstdlib.c>
+File 2,1,<..\..\..\..\components\libc\compilers\common\cstring.c><cstring.c>
+File 2,1,<..\..\..\..\components\libc\compilers\common\ctime.c><ctime.c>
+File 2,1,<..\..\..\..\components\libc\compilers\common\cunistd.c><cunistd.c>
+File 2,1,<..\..\..\..\components\libc\compilers\common\cwchar.c><cwchar.c>
+File 3,1,<..\..\..\..\components\drivers\core\device.c><device.c>
+File 3,1,<..\..\..\..\components\drivers\ipc\completion.c><completion.c>
+File 3,1,<..\..\..\..\components\drivers\ipc\dataqueue.c><dataqueue.c>
+File 3,1,<..\..\..\..\components\drivers\ipc\pipe.c><pipe.c>
+File 3,1,<..\..\..\..\components\drivers\ipc\ringblk_buf.c><ringblk_buf.c>
+File 3,1,<..\..\..\..\components\drivers\ipc\ringbuffer.c><ringbuffer.c>
+File 3,1,<..\..\..\..\components\drivers\ipc\waitqueue.c><waitqueue.c>
+File 3,1,<..\..\..\..\components\drivers\ipc\workqueue.c><workqueue.c>
+File 3,1,<..\..\..\..\components\drivers\pin\pin.c><pin.c>
+File 3,1,<..\..\..\..\components\drivers\serial\serial.c><serial.c>
+File 4,1,<drivers\board.c><board.c>
+File 4,1,<drivers\serial.c><drivers_serial.c>
+File 5,1,<..\..\..\..\components\finsh\shell.c><shell.c>
+File 5,1,<..\..\..\..\components\finsh\msh.c><msh.c>
+File 5,1,<..\..\..\..\components\finsh\msh_parse.c><msh_parse.c>
+File 5,1,<..\..\..\..\components\finsh\cmd.c><cmd.c>
+File 6,1,<..\..\..\..\src\clock.c><clock.c>
+File 6,1,<..\..\..\..\src\components.c><components.c>
+File 6,1,<..\..\..\..\src\idle.c><idle.c>
+File 6,1,<..\..\..\..\src\ipc.c><ipc.c>
+File 6,1,<..\..\..\..\src\irq.c><irq.c>
+File 6,1,<..\..\..\..\src\klibc\kstdio.c><kstdio.c>
+File 6,1,<..\..\..\..\src\klibc\kstring.c><kstring.c>
+File 6,1,<..\..\..\..\src\kservice.c><kservice.c>
+File 6,1,<..\..\..\..\src\mem.c><mem.c>
+File 6,1,<..\..\..\..\src\mempool.c><mempool.c>
+File 6,1,<..\..\..\..\src\object.c><object.c>
+File 6,1,<..\..\..\..\src\scheduler_comm.c><scheduler_comm.c>
+File 6,1,<..\..\..\..\src\scheduler_up.c><scheduler_up.c>
+File 6,1,<..\..\..\..\src\thread.c><thread.c>
+File 6,1,<..\..\..\..\src\timer.c><timer.c>
+File 7,1,<..\..\..\..\libcpu\arm\common\div0.c><div0.c>
+File 7,1,<..\..\..\..\libcpu\arm\common\showmem.c><showmem.c>
+File 7,2,<..\..\..\..\libcpu\arm\lpc214x\context_rvds.S><context_rvds.S>
+File 7,1,<..\..\..\..\libcpu\arm\lpc214x\cpuport.c><cpuport.c>
+File 7,2,<..\..\..\..\libcpu\arm\lpc214x\start_rvds.S><start_rvds.S>
+
+
+
+
+Options 1,0,0  // Target 'rtthread-lpc2148'
+ Device (LPC2148)
+ Vendor (NXP (founded by Philips))
+ Cpu (IRAM(0x40000000-0x40007FFF) IROM(0-0x7FFFF) CLOCK(12000000) CPUTYPE(ARM7TDMI))
+ FlashUt (LPC210x_ISP.EXE ("#H" ^X $D COM1: 38400 1))
+ StupF ("STARTUP\Philips\Startup.s" ("Philips LPC2100 Startup Code"))
+ FlashDR (UL2ARM(-U268761108 -O7 -C0 -FO15 -FD40000000 -FC800 -FN1 -FF0LPC_IAP2_512 -FS00 -FL07D000))
+ DevID (3880)
+ Rgf (LPC214X.H)
+ Mem ()
+ C ()
+ A ()
+ RL ()
+ OH ()
+ DBC_IFX ()
+ DBC_CMS ()
+ DBC_AMS ()
+ DBC_LMS ()
+ UseEnv=0
+ EnvBin ()
+ EnvInc ()
+ EnvLib ()
+ EnvReg (Philips\)
+ OrgReg (Philips\)
+ TgStat=16
+ OutDir (.\build\)
+ OutName (rtthread-lpc2148)
+ GenApp=1
+ GenLib=0
+ GenHex=0
+ Debug=1
+ Browse=1
+ LstDir (.\build\)
+ HexSel=1
+ MG32K=0
+ TGMORE=0
+ RunUsr 0 0 <>
+ RunUsr 1 0 <>
+ BrunUsr 0 0 <>
+ BrunUsr 1 0 <>
+ CrunUsr 0 0 <>
+ CrunUsr 1 0 <>
+ SVCSID <>
+ GLFLAGS=1790
+ ADSFLGA { 243,31,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
+ ACPUTYP (ARM7TDMI)
+ RVDEV ()
+ ADSTFLGA { 0,12,0,2,99,0,0,66,0,0,0,0,0,0,0,0,0,0,0,0 }
+ OCMADSOCM { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
+ OCMADSIRAM { 0,0,0,0,64,0,128,0,0 }
+ OCMADSIROM { 1,0,0,0,0,0,0,8,0 }
+ OCMADSXRAM { 0,0,0,0,0,0,0,0,0 }
+ OCR_RVCT { 1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,8,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,64,0,128,0,0,0,0,0,0,0,0,0,0,0 }
+ RV_STAVEC ()
+ ADSCCFLG { 5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
+ ADSCMISC ()
+ ADSCDEFN (RT_USING_LIBC, RT_USING_ARMLIBC, __STDC_LIMIT_MACROS, __RTTHREAD__, __CLK_TCK=RT_TICK_PER_SECOND)
+ ADSCUDEF ()
+ ADSCINCD (..\..\..\..\components\libc\compilers\common\extension;..\..\..\..\components\libc\posix\io\poll;..\..\..\..\libcpu\arm\lpc214x;..\..\..\..\components\libc\compilers\common\include;..\..\..\..\components\libc\posix\io\eventfd;drivers;..\..\..\..\components\libc\compilers\common\extension\fcntl\octal;.;..\..\..\..\components\libc\posix\io\epoll;applications;..\..\..\..\components\libc\posix\ipc;..\..\..\..\libcpu\arm\common;..\..\..\..\components\finsh;..\..\..\..\include;..\..\..\..\components\drivers\include)
+ ADSASFLG { 1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
+ ADSAMISC ()
+ ADSADEFN ()
+ ADSAUDEF ()
+ ADSAINCD ()
+ PropFld { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
+ IncBld=1
+ AlwaysBuild=0
+ GenAsm=0
+ AsmAsm=0
+ PublicsOnly=0
+ StopCode=3
+ CustArgs ()
+ LibMods ()
+ ADSLDFG { 17,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 }
+ ADSLDTA (0x00000000)
+ ADSLDDA (0x40000000)
+ ADSLDSC ()
+ ADSLDIB ()
+ ADSLDIC ()
+ ADSLDMC ()
+ ADSLDIF ()
+ ADSLDDW ()
+  OPTDL (SARM.DLL)(-cLPC2100)(DARMP.DLL)(-pLPC2148)(SARM.DLL)()(TARMP.DLL)(-pLPC2148)
+  OPTDBG 48125,0,()()()()()()()()()() (BIN\UL2ARM.DLL)()()()
+ FLASH1 { 1,0,0,0,0,0,0,0,255,255,255,255,0,0,0,0,0,0,0,0 }
+ FLASH2 ()
+ FLASH3 ("LPC210x_ISP.EXE" ("#H" ^X $D COM1: 38400 1))
+ FLASH4 ()
+EndOpt
+

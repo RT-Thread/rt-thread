@@ -52,6 +52,7 @@ void *dtb_node_load_from_fs(char *dtb_filename)
         if (dtb_node_check(fdt) == RT_FALSE)
         {
             free(fdt);
+            fdt=NULL;
         }
     }
 
@@ -86,7 +87,7 @@ void *dtb_node_load_from_memory(void *dtb_ptr, rt_bool_t is_clone)
         size_t dtb_sz = fdt_totalsize(dtb_ptr);
         if (dtb_sz > 0)
         {
-            if ((fdt = malloc(dtb_sz)) != NULL)
+            if ((fdt = (size_t *)malloc(dtb_sz)) != NULL)
             {
                 memcpy(fdt, dtb_ptr, dtb_sz);
             }

@@ -1,8 +1,5 @@
 import os
-import rtconfig
 from building import *
-
-Import('SDK_LIB')
 
 cwd = GetCurrentDir()
 
@@ -13,48 +10,39 @@ CubeMX_Config/Src/stm32l4xx_hal_msp.c
 ''')
 
 path =  [cwd]
-path += [cwd + '/CubeMX_Config/Inc']
+path += [os.path.join(cwd, 'CubeMX_Config', 'Inc')]
 
-if GetDepend(['BSP_USING_KEY']):
-    src += Glob('ports/drv_key.c')
+if not GetDepend(['RT_USING_NANO']):
+    if GetDepend(['BSP_USING_KEY']):
+        src += [os.path.join('ports', 'drv_key.c')]
 
-if GetDepend(['BSP_USING_QSPI_FLASH']):
-    src += Glob('ports/drv_qspi_flash.c')
+    if GetDepend(['BSP_USING_QSPI_FLASH']):
+        src += [os.path.join('ports', 'drv_qspi_flash.c')]
 
-if GetDepend(['BSP_USING_FS']):
-    src += Glob('ports/drv_filesystem.c')
-    if GetDepend(['BSP_USING_SPI_FLASH_LITTLEFS']):
-        src += Glob('ports/fal/fal_spi_flash_sfud_port.c')
-        path += [cwd + '/ports/fal']
+    if GetDepend(['BSP_USING_FS']):
+        src += [os.path.join('ports', 'drv_filesystem.c')]
+        if GetDepend(['BSP_USING_SPI_FLASH_LITTLEFS']):
+            src += [os.path.join('ports', 'fal', 'fal_spi_flash_sfud_port.c')]
+            path += [os.path.join(cwd, 'ports', 'fal')]
 
-if GetDepend(['RT_USING_SENSOR']):
-    src += Glob('ports/drv_sensors.c')
+    if GetDepend(['RT_USING_SENSOR']):
+        src += [os.path.join('ports', 'drv_sensors.c')]
 
-if GetDepend(['BSP_USING_AUDIO']):
-    src += Glob('ports/audio/drv_es8388.c')
-    src += Glob('ports/audio/drv_sound.c')
+    if GetDepend(['BSP_USING_AUDIO']):
+        src += [os.path.join('ports', 'audio', 'drv_es8388.c')]
+        src += [os.path.join('ports', 'audio', 'drv_sound.c')]
 
-if GetDepend(['BSP_USING_AUDIO_RECORD']):
-    src += Glob('ports/audio/drv_mic.c')
+    if GetDepend(['BSP_USING_AUDIO_RECORD']):
+        src += [os.path.join('ports', 'audio', 'drv_mic.c')]
 
-if GetDepend(['BSP_USING_STM32_SDIO']):
-    src += Glob('ports/drv_sdio_adapter.c')
+    if GetDepend(['BSP_USING_STM32_SDIO']):
+        src += [os.path.join('ports', 'drv_sdio_adapter.c')]
 
-
-
-if GetDepend(['BSP_USING_AUDIO']):
-    path += [cwd + '/ports/audio']
-
-startup_path_prefix = SDK_LIB
-
-if rtconfig.PLATFORM in ['gcc']:
-    src += [startup_path_prefix + '/STM32L4xx_HAL/CMSIS/Device/ST/STM32L4xx/Source/Templates/gcc/startup_stm32l475xx.s']
-elif rtconfig.PLATFORM in ['armcc', 'armclang']:
-    src += [startup_path_prefix + '/STM32L4xx_HAL/CMSIS/Device/ST/STM32L4xx/Source/Templates/arm/startup_stm32l475xx.s']
-elif rtconfig.PLATFORM in ['iccarm']:
-    src += [startup_path_prefix + '/STM32L4xx_HAL/CMSIS/Device/ST/STM32L4xx/Source/Templates/iar/startup_stm32l475xx.s']
+    if GetDepend(['BSP_USING_AUDIO']):
+        path += [os.path.join(cwd, 'ports', 'audio')]
 
 CPPDEFINES = ['STM32L475xx']
+
 group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
 
 Return('group')

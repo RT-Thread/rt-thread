@@ -7,9 +7,10 @@
    Change Logs:
    Date             Author          Notes
    2022-03-31       CDT             First version
+   2023-06-30       CDT             Modify API OTS_DeInit()
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -151,7 +152,7 @@ __STATIC_INLINE void OTS_Stop(void)
 
 int32_t OTS_Init(const stc_ots_init_t *pstcOTSInit);
 int32_t OTS_StructInit(stc_ots_init_t *pstcOTSInit);
-void OTS_DeInit(void);
+int32_t OTS_DeInit(void);
 
 int32_t OTS_Polling(float32_t *pf32Temp, uint32_t u32Timeout);
 

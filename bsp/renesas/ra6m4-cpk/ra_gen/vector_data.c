@@ -8,7 +8,6 @@
             [1] = sci_uart_txi_isr, /* SCI7 TXI (Transmit data empty) */
             [2] = sci_uart_tei_isr, /* SCI7 TEI (Transmit end) */
             [3] = sci_uart_eri_isr, /* SCI7 ERI (Receive error) */
-            [4] = r_icu_isr, /* ICU IRQ0 (External pin interrupt 0) */
         };
         const bsp_interrupt_event_t g_interrupt_event_link_select[BSP_ICU_VECTOR_MAX_ENTRIES] =
         {
@@ -16,6 +15,5 @@
             [1] = BSP_PRV_IELS_ENUM(EVENT_SCI7_TXI), /* SCI7 TXI (Transmit data empty) */
             [2] = BSP_PRV_IELS_ENUM(EVENT_SCI7_TEI), /* SCI7 TEI (Transmit end) */
             [3] = BSP_PRV_IELS_ENUM(EVENT_SCI7_ERI), /* SCI7 ERI (Receive error) */
-            [4] = BSP_PRV_IELS_ENUM(EVENT_ICU_IRQ0), /* ICU IRQ0 (External pin interrupt 0) */
         };
         #endif

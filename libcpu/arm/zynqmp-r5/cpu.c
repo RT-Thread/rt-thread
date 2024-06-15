@@ -18,19 +18,3 @@ void rt_hw_cpu_reset()
     while (1);  /* loop forever and wait for reset to happen */
     /* NEVER REACHED */
 }
-
-/**
- *  shutdown CPU
- *
- */
-void rt_hw_cpu_shutdown()
-{
-    rt_base_t level;
-    rt_kprintf("shutdown...\n");
-
-    level = rt_hw_interrupt_disable();
-    while (level)
-    {
-        RT_ASSERT(0);
-    }
-}

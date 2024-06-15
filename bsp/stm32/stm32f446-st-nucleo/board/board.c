@@ -9,7 +9,8 @@
  * 2019-01-08     AndeyQi      add stm32f446-st-nucleo bsp
  */
 
-#include "board.h"
+#include <board.h>
+#include <drv_common.h>
 
 void SystemClock_Config(void)
 {

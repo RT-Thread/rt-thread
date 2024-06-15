@@ -1,5 +1,0 @@
-cmake_minimum_required(VERSION 3.16)
-set(COMPONENTS esptool_py main)
-include($ENV{IDF_PATH}/tools/cmake/project.cmake)
-set(freertos_root /Users/tangyi/rt-thread/bsp/ESP32_C3/packages/FreeRTOS_Wrapper-latest/FreeRTOS)
-project(rtthread)

@@ -47,6 +47,8 @@
 #define A8        (32)
 #define A9        (33)
 
+#define RTDUINO_PIN_MAX_LIMIT A9 /* pin number max limit check */
+
 #define F_CPU          84000000L  /* CPU:84MHz */
 
 #define LED_BUILTIN     D0  /* Default Built-in LED */

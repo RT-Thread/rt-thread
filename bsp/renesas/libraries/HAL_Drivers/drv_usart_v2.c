@@ -1,11 +1,13 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author            Notes
  * 2021-07-29     KyleChan          first version
+ * 2023-10-17     Rbb666            add ra8 adapt
+ * 2024-03-11    Wangyuqiang        add rzt2m adapt
  */
 
 #include <drv_usart_v2.h>
@@ -209,7 +211,11 @@ static rt_err_t ra_uart_configure(struct rt_serial_device *serial, struct serial
     uart = rt_container_of(serial, struct ra_uart, serial);
     RT_ASSERT(uart != RT_NULL);
 
+#ifdef SOC_SERIES_R7FA8M85
+    err = R_SCI_B_UART_Open(uart->config->p_api_ctrl, uart->config->p_cfg);
+#else
     err = R_SCI_UART_Open(uart->config->p_api_ctrl, uart->config->p_cfg);
+#endif
     if (FSP_SUCCESS != err)
     {
         return -RT_ERROR;
@@ -231,10 +237,19 @@ static int ra_uart_putc(struct rt_serial_device *serial, char c)
     uart = rt_container_of(serial, struct ra_uart, serial);
     RT_ASSERT(uart != RT_NULL);
 
+#ifdef SOC_SERIES_R7FA8M85
+    sci_b_uart_instance_ctrl_t *p_ctrl = (sci_b_uart_instance_ctrl_t *)uart->config->p_api_ctrl;
+#else
     sci_uart_instance_ctrl_t *p_ctrl = (sci_uart_instance_ctrl_t *)uart->config->p_api_ctrl;
+#endif
 
     p_ctrl->p_reg->TDR = c;
+
+#if defined(SOC_SERIES_R7FA8M85) || defined(SOC_SERIES_R9A07G0)
+    while ((p_ctrl->p_reg->CSR_b.TEND) == 0);
+#else
     while ((p_ctrl->p_reg->SSR_b.TEND) == 0);
+#endif
 
     return RT_EOK;
 }
@@ -245,15 +260,16 @@ static int ra_uart_getc(struct rt_serial_device *serial)
 }
 
 static rt_ssize_t ra_uart_transmit(struct rt_serial_device     *serial,
-                                  rt_uint8_t           *buf,
-                                  rt_size_t             size,
-                                  rt_uint32_t           tx_flag)
+                                   rt_uint8_t           *buf,
+                                   rt_size_t             size,
+                                   rt_uint32_t           tx_flag)
 {
     struct ra_uart *uart;
 
     RT_ASSERT(serial != RT_NULL);
     RT_ASSERT(buf != RT_NULL);
     uart = rt_container_of(serial, struct ra_uart, serial);
+    RT_ASSERT(uart != RT_NULL);
 
     ra_uart_control(serial, RT_DEVICE_CTRL_SET_INT, (void *)tx_flag);
 

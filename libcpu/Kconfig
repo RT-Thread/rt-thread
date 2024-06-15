@@ -1,3 +1,25 @@
+if ARCH_ARMV8 && ARCH_CPU_64BIT
+    menu "AArch64 Architecture Configuration"
+    config ARCH_TEXT_OFFSET
+        hex "Text offset"
+        default 0x200000
+    config ARCH_RAM_OFFSET
+        hex "RAM offset"
+        default 0
+    config ARCH_SECONDARY_CPU_STACK_SIZE
+        int "Secondary CPU stack size"
+        default 4096
+    config ARCH_HAVE_EFFICIENT_UNALIGNED_ACCESS
+        bool
+        default y
+    config ARCH_USING_GENERIC_CPUID
+        bool "Using generic cpuid implemenation"
+        select ARCH_USING_HW_THREAD_SELF
+        default y if RT_USING_OFW
+        default n
+    endmenu
+endif
+
 config ARCH_CPU_64BIT
     bool
 
@@ -37,6 +59,10 @@ config ARCH_ARM_CORTEX_M
     bool
     select ARCH_ARM
 
+config ARCH_ARM_CORTEX_R
+    bool
+    select ARCH_ARM
+
 config ARCH_ARM_CORTEX_FPU
     bool
 
@@ -69,6 +95,16 @@ config ARCH_ARM_CORTEX_M7
     select ARCH_ARM_CORTEX_M
     select RT_USING_CPU_FFS
     select RT_USING_CACHE
+
+config ARCH_ARM_CORTEX_M85
+    bool
+    select ARCH_ARM_CORTEX_M
+    select RT_USING_CPU_FFS
+    select RT_USING_HW_ATOMIC
+
+config ARCH_ARM_CORTEX_M23
+    bool
+    select ARCH_ARM_CORTEX_M
     select RT_USING_HW_ATOMIC
 
 config ARCH_ARM_CORTEX_M33
@@ -82,6 +118,10 @@ config ARCH_ARM_CORTEX_R
     select ARCH_ARM
     select RT_USING_HW_ATOMIC
 
+config ARCH_ARM_CORTEX_R52
+    bool
+    select ARCH_ARM_CORTEX_R
+
 config ARCH_ARM_MMU
     bool
     select RT_USING_CACHE
@@ -89,18 +129,18 @@ config ARCH_ARM_MMU
     depends on ARCH_ARM
 
 if RT_USING_SMART
-config KERNEL_VADDR_START
-    hex "The virtural address of kernel start"
-    default 0xffff000000000000 if ARCH_ARMV8
-    default 0xc0000000 if ARCH_ARM
-    default 0x80000000 if ARCH_RISCV
-    depends on ARCH_MM_MMU
+    config KERNEL_VADDR_START
+        hex "The virtural address of kernel start"
+        default 0xffff000000000000 if ARCH_ARMV8
+        default 0xc0000000 if ARCH_ARM
+        default 0x80000000 if ARCH_RISCV
+        depends on ARCH_MM_MMU
 
-config RT_IOREMAP_LATE
-    bool "Support to create IO mapping in the kernel address space after system initlalization."
-    default n
-    depends on ARCH_ARM_CORTEX_A
-    depends on ARCH_MM_MMU
+    config RT_IOREMAP_LATE
+        bool "Support to create IO mapping in the kernel address space after system initlalization."
+        default n
+        depends on ARCH_ARM_CORTEX_A
+        depends on ARCH_MM_MMU
 endif
 
 config ARCH_ARM_ARM9
@@ -152,6 +192,10 @@ config ARCH_ARM_CORTEX_A9
     bool
     select ARCH_ARM_CORTEX_A
 
+config ARCH_ARM_CORTEX_A55
+    bool
+    select ARCH_ARM_CORTEX_A
+
 config ARCH_ARM_SECURE_MODE
     bool "Running in secure mode [ARM Cortex-A]"
     default n
@@ -166,7 +210,7 @@ config ARCH_ARMV8
     bool
     select ARCH_ARM
     select ARCH_ARM_MMU
-    select RT_USING_HW_ATOMIC
+    select RT_USING_CPU_FFS
 
 config ARCH_MIPS
     bool
@@ -226,5 +270,9 @@ config ARCH_HOST_SIMULATOR
     bool
 
 config ARCH_CPU_STACK_GROWS_UPWARD
+    bool
+    default n
+
+config ARCH_USING_HW_THREAD_SELF
     bool
     default n

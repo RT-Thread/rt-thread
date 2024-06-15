@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 hpmicro
+ * Copyright (c) 2021 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -32,37 +32,35 @@
  */
 #define CAM_SENSOR_BITWIDTH_8BITS (CAM_CR1_SENSOR_BIT_WIDTH_SET(0))
 #define CAM_SENSOR_BITWIDTH_10BITS (CAM_CR1_SENSOR_BIT_WIDTH_SET(1))
+#define CAM_SENSOR_BITWIDTH_24BITS (CAM_CR1_SENSOR_BIT_WIDTH_SET(3))
 
 /**
- * @brief CAM IRQ flag
+ * @brief CAM IRQ mask
  */
-#define CAM_IRQ_UNSUPPORTED_CONFIGURATION (CAM_INT_EN_ERR_CL_BWID_CFG_INT_EN_MASK)
-#define CAM_IRQ_HIST_CALCULATION_DONE (CAM_INT_EN_HIST_DONE_INT_EN_MASK)
-#define CAM_IRQ_HRESPONSE_ERROR (CAM_INT_EN_HRESP_ERR_EN_MASK)
-#define CAM_IRQ_END_OF_FRAME (CAM_INT_EN_EOF_INT_EN_MASK)
-#define CAM_IRQ_STAT_FIFO_OVERRUN (CAM_INT_EN_SF_OR_INT_EN_MASK)
-#define CAM_IRQ_RX_FIFO_OVERRUN (CAM_INT_EN_RF_OR_INT_EN_MASK)
-#define CAM_IRQ_STAT_FIFO_DMA_TRANSFER_DONE (CAM_INT_EN_SFF_DMA_DONE_INT_EN_MASK)
-#define CAM_IRQ_FB2_DMA_TRANSFER_DONE (CAM_INT_EN_FB2_DMA_DONE_INT_EN_MASK)
-#define CAM_IRQ_FB1_DMA_TRANSFER_DONE (CAM_INT_EN_FB1_DMA_DONE_INT_EN_MASK)
-#define CAM_IRQ_START_OF_FRAME (CAM_INT_EN_SOF_INT_EN_MASK)
+typedef enum {
+    cam_irq_unsupported_configuration = CAM_INT_EN_ERR_CL_BWID_CFG_INT_EN_MASK,
+    cam_irq_hist_calculation_done = CAM_INT_EN_HIST_DONE_INT_EN_MASK,
+    cam_irq_hresponse_error = CAM_INT_EN_HRESP_ERR_EN_MASK,
+    cam_irq_end_of_frame = CAM_INT_EN_EOF_INT_EN_MASK,
+    cam_irq_rx_fifo_overrun = CAM_INT_EN_RF_OR_INTEN_MASK,
+    cam_irq_fb2_dma_transfer_done = CAM_INT_EN_FB2_DMA_DONE_INTEN_MASK,
+    cam_irq_fb1_dma_transfer_done = CAM_INT_EN_FB1_DMA_DONE_INTEN_MASK,
+    cam_irq_start_of_frame = CAM_INT_EN_SOF_INT_EN_MASK
+} cam_irq_mask_t;
 
 /**
- * @brief CAM status flag
+ * @brief CAM status mask
  */
-#define CAM_STATUS_UNSUPPORTED_CONFIGURATION (CAM_STA_ERR_CL_BWID_CFG_MASK)
-#define CAM_STATUS_HIST_CALCULATION_DONE (CAM_STA_HIST_DONE_MASK)
-#define CAM_STATUS_STAT_FIFO_OVERRUN (CAM_STA_SF_OR_INT_MASK)
-#define CAM_STATUS_RX_FIFO_OVERRUN (CAM_STA_RF_OR_INT_MASK)
-#define CAM_STATUS_STAT_FIFO_DMA_TRANSFER_DONE (CAM_STA_DMA_TSF_DONE_SFF_MASK)
-#define CAM_STATUS_STAT_FIFO_FULL (CAM_STA_STATFF_INT_MASK)
-#define CAM_STATUS_FB2_DMA_TRANSFER_DONE (CAM_STA_DMA_TSF_DONE_FB2_MASK)
-#define CAM_STATUS_FB1_DMA_TRANSFER_DONE (CAM_STA_DMA_TSF_DONE_FB1_MASK)
-#define CAM_STATUS_RX_FIFO_FULL (CAM_STA_RXFF_INT_MASK)
-#define CAM_STATUS_END_OF_FRAME (CAM_STA_EOF_INT_MASK)
-#define CAM_STATUS_START_OF_FRAME (CAM_STA_SOF_INT_MASK)
-#define CAM_STATUS_HRESPONSE_ERROR (CAM_STA_HRESP_ERR_INT_MASK)
-#define CAM_STATUS_DATA_READY (CAM_STA_DRDY_MASK)
+typedef enum {
+    cam_status_unsupported_configuration = CAM_STA_ERR_CL_BWID_CFG_MASK,
+    cam_status_hist_calculation_done = CAM_STA_HIST_DONE_MASK,
+    cam_status_rx_fifo_overrun = CAM_STA_RF_OR_INT_MASK,
+    cam_status_fb2_dma_transfer_done = CAM_STA_DMA_TSF_DONE_FB2_MASK,
+    cam_status_fb1_dma_transfer_done = CAM_STA_DMA_TSF_DONE_FB1_MASK,
+    cam_status_end_of_frame = CAM_STA_EOF_INT_MASK,
+    cam_status_start_of_frame = CAM_STA_SOF_INT_MASK,
+    cam_status_hresponse_error = CAM_STA_HRESP_ERR_INT_MASK
+} cam_status_mask_t;
 
 /**
  * @brief CAM input color format
@@ -72,6 +70,8 @@
 #define CAM_COLOR_FORMAT_RGB555 (CAM_CR1_COLOR_FORMATS_SET(6))
 #define CAM_COLOR_FORMAT_YCBCR422 (CAM_CR1_COLOR_FORMATS_SET(7))
 #define CAM_COLOR_FORMAT_YUV444 (CAM_CR1_COLOR_FORMATS_SET(8))
+#define CAM_COLOR_FORMAT_RAW8 (CAM_CR1_COLOR_FORMATS_SET(0xf))
+#define CAM_COLOR_FORMAT_UNSUPPORTED (1)
 
 /**
  * @brief CAM config
@@ -80,12 +80,12 @@ typedef struct {
     uint32_t width;
     uint32_t height;
     bool pixclk_sampling_falling;
+    bool de_active_low; /* de_active_low must is same with hsync_active_low when dvp be used */
     bool hsync_active_low;
     bool vsync_active_low;
     bool color_ext;
     bool data_pack_msb;
-    bool enable_buffer2;
-    uint8_t data_store_mode;
+    uint16_t data_store_mode;
     uint8_t color_format;
     uint8_t sensor_bitwidth;
     uint32_t buffer1;
@@ -120,6 +120,26 @@ typedef enum {
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+/**
+ * @brief cam get pixel format value
+ *
+ * @param format display_pixel_format_t
+ * @return uint32_t cam color format, like CAM_COLOR_FORMAT_RGB565
+ */
+static inline uint32_t cam_get_pixel_format(display_pixel_format_t format)
+{
+    switch (format) {
+    case display_pixel_format_rgb565:
+        return CAM_COLOR_FORMAT_RGB565;
+    case display_pixel_format_ycbcr422:
+        return CAM_COLOR_FORMAT_YCBCR422;
+    case display_pixel_format_raw8:
+        return CAM_COLOR_FORMAT_RAW8;
+    default:
+        return CAM_COLOR_FORMAT_UNSUPPORTED;
+    }
+}
 
 /**
  * @brief CAM set high and low limits of color key
@@ -163,9 +183,33 @@ void cam_start(CAM_Type *ptr);
 /**
  * @brief CAM stop
  *
+ * @note this API will stop CAM immediately no matter there's any frame is being processed or not
+ *
  * @param [in] ptr CAM base address
  */
 void cam_stop(CAM_Type *ptr);
+
+/**
+ * @brief CAM update DMASA_FB1 buffer
+ *
+ * @param [in] ptr CAM base address
+ * @param [in] buffer buffer point address
+ */
+static inline void cam_update_buffer(CAM_Type *ptr, uint32_t buffer)
+{
+    ptr->DMASA_FB1 = buffer;
+}
+
+/**
+ * @brief CAM update DMASA_FB2 buffer
+ *
+ * @param [in] ptr CAM base address
+ * @param [in] buffer buffer point address
+ */
+static inline void cam_update_buffer2(CAM_Type *ptr, uint32_t buffer)
+{
+    ptr->DMASA_FB2 = buffer;
+}
 
 /**
  * @brief CAM enable binary output
@@ -234,6 +278,62 @@ static inline void cam_set_input_pixel_byte_order(CAM_Type *ptr, cam_input_pixel
 {
     ptr->CR2 = (ptr->CR2 & (~CAM_CR2_CLRBITFORMAT_MASK)) | CAM_CR2_CLRBITFORMAT_SET(order);
 }
+
+/**
+ * @brief CAM enable irq
+ *
+ * @param [in] ptr CAM base address
+ * @param [in] irq_mask irq mask value
+ */
+static inline void cam_enable_irq(CAM_Type *ptr, cam_irq_mask_t irq_mask)
+{
+    ptr->INT_EN |= irq_mask;
+}
+
+
+/**
+ * @brief CAM disable irq
+ *
+ * @param [in] ptr CAM base address
+ * @param [in] irq_mask irq mask value
+ */
+static inline void cam_disable_irq(CAM_Type *ptr, cam_irq_mask_t irq_mask)
+{
+    ptr->INT_EN &= ~irq_mask;
+}
+
+/**
+ * @brief Check CAM status according to the given status mask
+ *
+ * @param [in] ptr CAM base address
+ * @param sta_mask sta_mask refer to cam_status_mask_t
+ * @retval true if any bit in given mask is set
+ * @retval false if none of any bit in given mask is set
+ */
+static inline bool cam_check_status(CAM_Type *ptr, cam_status_mask_t sta_mask)
+{
+    return ((ptr->STA & sta_mask) != 0U) ? true : false;
+}
+
+/**
+ * @brief Clear CAM status according to the given status mask
+ *
+ * @param [in] ptr CAM base address
+ * @param sta_mask sta_mask refer to cam_status_mask_t
+ */
+static inline void cam_clear_status(CAM_Type *ptr, cam_status_mask_t sta_mask)
+{
+    ptr->STA = sta_mask;
+}
+
+/**
+ * @brief CAM safety stop
+ *
+ * @note this API will wait for end-of-frame event before stopping CAM
+ *
+ * @param [in] ptr CAM base address
+ */
+void cam_stop_safely(CAM_Type *ptr);
 
 /**
  * @}

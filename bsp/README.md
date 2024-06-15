@@ -51,6 +51,7 @@ RT-THREAD bsp company list
   - [lm3s8962](lm3s8962)
   - [dm365](dm365)
   - [beaglebone](beaglebone)
+  - [msp432e401y-LaunchPad](msp432e401y-LaunchPad)
 - Samsung
   - [wh44b0](wh44b0)
   - [mini4020](mini4020)
@@ -96,13 +97,6 @@ RT-THREAD bsp company list
   - [mm32f103x](mm32f103x)
 - 兆易创新GD32
   - [gd32](gd32) series
-  - [gd32350r-eval](gd32350r-eval)
-  - [gd32450z-eval](gd32450z-eval)
-  - [gd32e230k-start](gd32e230k-start)
-  - [gd32vf103v-eval](gd32vf103v-eval)
-  - [gd32303e-eval](gd32303e-eval)
-  - [gd32107c-eval](gd32107c-eval)
-  - [gd32105c-eval](gd32105c-eval)
 - Realtek
   - [amebaz](amebaz)
 - 国民科技N32

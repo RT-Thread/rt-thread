@@ -13,7 +13,7 @@
 ;   <o> Stack Size (in Bytes) <0x0-0xFFFFFFFF:8>
 ; </h>
 
-Stack_Size      EQU     0x00001000
+Stack_Size      EQU     0x00000400
 
                 AREA    STACK, NOINIT, READWRITE, ALIGN=3
 Stack_Mem       SPACE   Stack_Size
@@ -23,7 +23,7 @@ __initial_sp
 ;   <o>  Heap Size (in Bytes) <0x0-0xFFFFFFFF:8>
 ; </h>
 
-Heap_Size       EQU     0x00001000
+Heap_Size       EQU     0x00000000
 
                 AREA    HEAP, NOINIT, READWRITE, ALIGN=3
 __heap_base
@@ -118,70 +118,70 @@ __Vectors       DCD     __initial_sp               ; Top of Stack
                 DCD     DMA2_Channel2_IRQHandler   ; DMA2 Channel2
                 DCD     DMA2_Channel3_IRQHandler   ; DMA2 Channel3
                 DCD     DMA2_Channel4_5_IRQHandler ; DMA2 Channel4 & Channel5
-				DCD     0                          ; Reserved
-				DCD     0                          ; Reserved
-				DCD     0                          ; Reserved
-				DCD     0                          ; Reserved
-				DCD     0                          ; Reserved	
-				DCD     0                          ; Reserved
-				DCD     0                          ; Reserved
-				DCD     0                          ; Reserved					
+                DCD     0                          ; Reserved
+                DCD     0                          ; Reserved
+                DCD     0                          ; Reserved
+                DCD     0                          ; Reserved
+                DCD     0                          ; Reserved	
+                DCD     0                          ; Reserved
+                DCD     0                          ; Reserved
+                DCD     0                          ; Reserved					
                 DCD     SYMC_IRQHandler
                 DCD     RNG_IRQHandler 
                 DCD     SENSOR_IRQHandler
-				DCD		0
-				DCD		0
-				DCD		0
-				DCD		0		
-				DCD		0
-				DCD		0
-				DCD		0
-				DCD		0
-				DCD		0
-				DCD		0
-				DCD		0
-				DCD		0		
-				DCD		0
-				DCD		0
-				DCD		0
-				DCD		0
-				DCD		0
-				DCD		0
-				DCD		0
-				DCD		0		
-				DCD		0
-				DCD		0
-				DCD		0
-				DCD		0
-				DCD		0
-				DCD		0
-				DCD		0
-				DCD		0		
-				DCD		0
-				DCD		0
-				DCD		0
-				DCD		0
-				DCD		0
-				DCD		0
-				DCD		0
-				DCD		0
-				DCD		0
-				DCD		0		
-				DCD		0
-				DCD		0
-				DCD		0
-				DCD		0		
-				DCD		0
-				DCD		0
-				DCD		0
-				DCD		0		
-				DCD		0
-				DCD		0
-				DCD		0
-				;DCD		0X20005000
+                DCD		0
+                DCD		0
+                DCD		0
+                DCD		0		
+                DCD		0
+                DCD		0
+                DCD		0
+                DCD		0
+                DCD		0
+                DCD		0
+                DCD		0
+                DCD		0		
+                DCD		0
+                DCD		0
+                DCD		0
+                DCD		0
+                DCD		0
+                DCD		0
+                DCD		0
+                DCD		0		
+                DCD		0
+                DCD		0
+                DCD		0
+                DCD		0
+                DCD		0
+                DCD		0
+                DCD		0
+                DCD		0		
+                DCD		0
+                DCD		0
+                DCD		0
+                DCD		0
+                DCD		0
+                DCD		0
+                DCD		0
+                DCD		0
+                DCD		0
+                DCD		0		
+                DCD		0
+                DCD		0
+                DCD		0
+                DCD		0		
+                DCD		0
+                DCD		0
+                DCD		0
+                DCD		0		
+                DCD		0
+                DCD		0
+                DCD		0
+                ;DCD		0X20005000
                 ;DCD     BOOT_RAM
-					
-					
+                    
+                    
 __Vectors_End
 
 __Vectors_Size  EQU  __Vectors_End - __Vectors
@@ -189,7 +189,7 @@ __Vectors_Size  EQU  __Vectors_End - __Vectors
                 AREA    |.text|, CODE, READONLY
                 
 ;
-BOOT_RAM  		PROC
+BOOT_RAM        PROC
                 EXPORT  BOOT_RAM             [WEAK]
                 IMPORT  __main
                 IMPORT  SystemInit
@@ -198,10 +198,40 @@ BOOT_RAM  		PROC
                 LDR     R0, =__main
                 BX      R0
                 ENDP			
-				
+                
 ; Reset handler
 Reset_Handler   PROC
                 EXPORT  Reset_Handler             [WEAK]
+                LDR  R0,=0x400210F0
+                MOV R1,#0x00000001
+                STR R1,[R0]
+                LDR R2,=0x40016C00
+                LDR R3,=0xa7d93a86
+                STR R3,[R2]
+                LDR R3,=0xab12dfcd
+                STR R3,[R2]
+                LDR R3,=0xcded3526
+                STR R3,[R2]
+                LDR R3,=0x200183FF
+                STR R3,[R2,#0x18]
+                LDR R4,=0x4002228c
+                LDR R5,=0xa5a5a5a5
+                STR R5,[R4]
+                ;lock
+                LDR R2,=0x400210F0
+                LDR R3,=0x00000000
+                STR R3,[R2]
+                LDR R2,=0x40016C00
+                LDR R3,=0x5826c579
+                STR R3,[R2]
+                LDR R3,=0x54ed2032
+                STR R3,[R2]
+                LDR R3,=0x3212cad9
+                STR R3,[R2]
+                LDR R2,=0x4002228c
+                LDR R3,=0x5a5a5a5a
+                STR R3,[R2]
+                MOV R1,#0x00000000	
                 IMPORT  __main
                 IMPORT  SystemInit
                 LDR     R0, =SystemInit

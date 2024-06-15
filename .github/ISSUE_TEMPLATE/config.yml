@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Document Center
+    url: https://www.rt-thread.org/document/site
+    about: How to use or develop RT-Thread for beginner, please visit Document Center
+  - name: Community Forum
+    url: https://club.rt-thread.org
+    about: For questions about RT-Thread or related components, it is recommended to visit the RT-Thread Forum first

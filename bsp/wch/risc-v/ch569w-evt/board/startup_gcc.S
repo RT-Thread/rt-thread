@@ -85,31 +85,32 @@ _vector_base:
     .weak   pmt_irq_handler
     .weak   ecdc_irq_handler
 
-nmi_handler:        j .L_rip
-hardfault_handler:  j .L_rip
-systick_handler:    j .L_rip
-swi_handler:        j .L_rip
-wdog_irq_handler:   j .L_rip
-tmr0_irq_handler:   j .L_rip
-gpio_irq_handler:   j .L_rip
-spi0_irq_handler:   j .L_rip
-usbss_irq_handler:  j .L_rip
-link_irq_handler:   j .L_rip
-tmr1_irq_handler:   j .L_rip
-tmr2_irq_handler:   j .L_rip
-uart0_irq_handler:  j .L_rip
-usbhs_irq_handler:  j .L_rip
-emmc_irq_handler:   j .L_rip
-dvp_irq_handler:    j .L_rip
-hspi_irq_handler:   j .L_rip
-spi1_irq_handler:   j .L_rip
-uart1_irq_handler:  j .L_rip
-uart2_irq_handler:  j .L_rip
-uart3_irq_handler:  j .L_rip
-serdes_irq_handler: j .L_rip
-eth_irq_handler:    j .L_rip
-pmt_irq_handler:    j .L_rip
-ecdc_irq_handler:   j .L_rip
+nmi_handler:
+hardfault_handler:
+systick_handler:
+swi_handler:
+wdog_irq_handler:
+tmr0_irq_handler:
+gpio_irq_handler:
+spi0_irq_handler:
+usbss_irq_handler:
+link_irq_handler:
+tmr1_irq_handler:
+tmr2_irq_handler:
+uart0_irq_handler:
+usbhs_irq_handler:
+emmc_irq_handler:
+dvp_irq_handler:
+hspi_irq_handler:
+spi1_irq_handler:
+uart1_irq_handler:
+uart2_irq_handler:
+uart3_irq_handler:
+serdes_irq_handler:
+eth_irq_handler:
+pmt_irq_handler:
+ecdc_irq_handler:
+    j .L_rip
 
 .L_rip:
     csrr t0, mepc
@@ -165,7 +166,7 @@ handle_reset:
 2:
 	/* leave all interrupt disabled */
     li t0, 0x1800
-    csrs mstatus, t0
+    csrw mstatus, t0
 	la t0, _vector_base
     ori t0, t0, 1
 	csrw mtvec, t0

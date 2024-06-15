@@ -6,12 +6,12 @@ SourceFiles=..\Src\main.c;..\Src\stm32l4xx_it.c;..\Src\stm32l4xx_hal_msp.c;F:\ST
 HeaderPath=F:\STM32Cube\Repository\STM32Cube_FW_L4_V1.15.1\Drivers\STM32L4xx_HAL_Driver\Inc;F:\STM32Cube\Repository\STM32Cube_FW_L4_V1.15.1\Drivers\STM32L4xx_HAL_Driver\Inc\Legacy;F:\STM32Cube\Repository\STM32Cube_FW_L4_V1.15.1\Drivers\CMSIS\Device\ST\STM32L4xx\Include;F:\STM32Cube\Repository\STM32Cube_FW_L4_V1.15.1\Drivers\CMSIS\Include;..\Inc;
 CDefines=USE_HAL_DRIVER;STM32L476xx;USE_HAL_DRIVER;USE_HAL_DRIVER;
 
+[]
+SourceFiles=;;
+
 [PreviousGenFiles]
 HeaderPath=..\Inc
 HeaderFiles=stm32l4xx_it.h;stm32l4xx_hal_conf.h;main.h;
 SourcePath=..\Src
 SourceFiles=stm32l4xx_it.c;stm32l4xx_hal_msp.c;main.c;
-
-[]
-SourceFiles=;;
 

@@ -56,6 +56,11 @@ void *_rt_hw_stack_init(rt_ubase_t *sp, rt_ubase_t ra, rt_ubase_t sstatus)
     return (void *)sp;
 }
 
+int rt_hw_cpu_id(void)
+{
+    return 0;
+}
+
 /**
  * This function will initialize thread stack, we assuming
  * when scheduler restore this new thread, context will restore
@@ -108,7 +113,7 @@ void rt_hw_context_switch_interrupt(rt_ubase_t from, rt_ubase_t to, rt_thread_t 
 #endif /* end of RT_USING_SMP */
 
 /** shutdown CPU */
-void rt_hw_cpu_shutdown()
+void rt_hw_cpu_shutdown(void)
 {
     rt_uint32_t level;
     rt_kprintf("shutdown...\n");

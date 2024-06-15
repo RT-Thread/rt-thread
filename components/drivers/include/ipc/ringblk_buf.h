@@ -11,6 +11,9 @@
 #ifndef _RINGBLK_BUF_H_
 #define _RINGBLK_BUF_H_
 
+#include <rtdef.h>
+#include <rtconfig.h>
+
 /*
  * Introduction:
  * The rbb is the ring buffer which is composed with many blocks. It is different from the ring buffer.
@@ -75,6 +78,7 @@ struct rt_rbb
     rt_slist_t *tail;
     /* free node list */
     rt_slist_t free_list;
+    struct rt_spinlock spinlock;
 };
 typedef struct rt_rbb *rt_rbb_t;
 

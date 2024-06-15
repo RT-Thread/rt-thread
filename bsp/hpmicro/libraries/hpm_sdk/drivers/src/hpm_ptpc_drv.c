@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 hpmicro
+ * Copyright (c) 2021 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -12,6 +12,7 @@
 
 void ptpc_get_default_config(PTPC_Type *ptr, ptpc_config_t *config)
 {
+    (void) ptr;
     config->capture_trigger = ptpc_capture_trigger_none;
     config->ns_rollover_mode = ptpc_ns_counter_rollover_digital;
     config->capture_keep = true;

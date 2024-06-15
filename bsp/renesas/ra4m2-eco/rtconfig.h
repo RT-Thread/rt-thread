@@ -7,6 +7,7 @@
 /* RT-Thread Kernel */
 
 #define RT_NAME_MAX 8
+#define RT_CPUS_NR 1
 #define RT_ALIGN_SIZE 8
 #define RT_THREAD_PRIORITY_32
 #define RT_THREAD_PRIORITY_MAX 32
@@ -23,8 +24,9 @@
 
 /* kservice optimization */
 
-#define RT_DEBUG
-#define RT_DEBUG_COLOR
+#define RT_USING_DEBUG
+#define RT_DEBUGING_COLOR
+#define RT_DEBUGING_CONTEXT
 
 /* Inter-Thread communication */
 
@@ -36,18 +38,15 @@
 
 /* Memory Management */
 
-#define RT_PAGE_MAX_ORDER 11
 #define RT_USING_SMALL_MEM
 #define RT_USING_SMALL_MEM_AS_HEAP
 #define RT_USING_HEAP
-
-/* Kernel Device Object */
-
 #define RT_USING_DEVICE
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uart4"
-#define RT_VER_NUM 0x50000
+#define RT_VER_NUM 0x50100
+#define RT_BACKTRACE_LEVEL_MAX_NR 32
 #define RT_USING_HW_ATOMIC
 #define RT_USING_CPU_FFS
 #define ARCH_ARM
@@ -73,12 +72,17 @@
 #define MSH_USING_BUILT_IN_COMMANDS
 #define FINSH_USING_DESCRIPTION
 #define FINSH_ARG_MAX 10
+#define FINSH_USING_OPTION_COMPLETION
+
+/* DFS: device virtual file system */
+
 #define RT_USING_DFS
 #define DFS_USING_POSIX
 #define DFS_USING_WORKDIR
+#define DFS_FD_MAX 16
+#define RT_USING_DFS_V1
 #define DFS_FILESYSTEMS_MAX 4
 #define DFS_FILESYSTEM_TYPES_MAX 4
-#define DFS_FD_MAX 16
 #define RT_USING_DFS_DEVFS
 
 /* Device Drivers */
@@ -89,15 +93,20 @@
 #define RT_USING_SERIAL_V2
 #define RT_SERIAL_USING_DMA
 #define RT_USING_PIN
-#define RT_USING_SPI
-#define RT_USING_SPI_MSD
 
 /* Using USB */
 
 
 /* C/C++ and POSIX layer */
 
-#define RT_LIBC_DEFAULT_TIMEZONE 8
+/* ISO-ANSI C layer */
+
+/* Timezone and Daylight Saving Time */
+
+#define RT_LIBC_USING_LIGHT_TZ_DST
+#define RT_LIBC_TZ_DEFAULT_HOUR 8
+#define RT_LIBC_TZ_DEFAULT_MIN 0
+#define RT_LIBC_TZ_DEFAULT_SEC 0
 
 /* POSIX (Portable Operating System Interface) layer */
 
@@ -109,6 +118,9 @@
 
 
 /* Network */
+
+
+/* Memory protection */
 
 
 /* Utilities */
@@ -128,6 +140,9 @@
 
 
 /* Wiced WiFi */
+
+
+/* CYW43012 WiFi */
 
 
 /* IoT Cloud */
@@ -199,7 +214,7 @@
 /* Arduino libraries */
 
 
-/* Projects */
+/* Projects and Demos */
 
 
 /* Sensors */
@@ -239,6 +254,7 @@
 
 /* Onboard Peripheral Drivers */
 
+
 /* On-chip Peripheral Drivers */
 
 #define BSP_USING_GPIO
@@ -249,7 +265,6 @@
 #define BSP_USING_UART4
 #define BSP_UART4_RX_BUFSIZE 256
 #define BSP_UART4_TX_BUFSIZE 0
-#define BSP_USING_SPI
 
 /* Board extended module Drivers */
 

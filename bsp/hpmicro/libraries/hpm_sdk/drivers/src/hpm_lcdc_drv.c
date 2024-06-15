@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 hpmicro
+ * Copyright (c) 2021 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -13,16 +13,20 @@
 static uint32_t lcdc_pixel_format(display_pixel_format_t format)
 {
     switch (format) {
-        case display_pixel_format_argb8888:
-            return 9;
-        case display_pixel_format_rgb565:
-            return 4;
-        case display_pixel_format_yuv422:
-            return 7;
-        case display_pixel_format_ycbcr422:
-            return 7;
-        default:
-            return 9;
+    case display_pixel_format_argb8888:
+        return 9;
+    case display_pixel_format_rgb565:
+        return 4;
+    case display_pixel_format_yuv422:
+        return 7;
+    case display_pixel_format_ycbcr422:
+        return 7;
+    case display_pixel_format_y8:
+        return 0xb;
+    case display_pixel_format_raw8:
+        return 0xb;
+    default:
+        return 9;
     }
 }
 
@@ -35,17 +39,18 @@ static uint32_t lcdc_pixel_format(display_pixel_format_t format)
 static uint8_t lcdc_byteorder(display_byteorder_t byteorder)
 {
     switch (byteorder) {
-        case display_byteorder_a3a2a1a0: /* LSB */
-            return 0;
-        case display_byteorder_a0a1a2a3: /* MSB */
-            return 1;
-        default:
-            return 0;
+    case display_byteorder_a3a2a1a0: /* LSB */
+        return 0;
+    case display_byteorder_a0a1a2a3: /* MSB */
+        return 1;
+    default:
+        return 0;
     }
 }
 
 void lcdc_get_default_layer_config(LCDC_Type *ptr, lcdc_layer_config_t *layer, display_pixel_format_t pixel_format, uint8_t layer_index)
 {
+    (void) ptr;
     layer->max_bytes = lcdc_layer_max_bytes_64;
     /* different layer has different max_ot configuration */
     if (layer_index < LCDC_SOC_MAX_CSC_LAYER_COUNT) {
@@ -66,46 +71,48 @@ void lcdc_get_default_layer_config(LCDC_Type *ptr, lcdc_layer_config_t *layer, d
     layer->alphablend.src_alpha_op = display_alpha_op_invalid;
     layer->alphablend.dst_alpha_op = display_alpha_op_invalid;
     layer->alphablend.mode = display_alphablend_mode_clear;
+    layer->stride = 0;
 
-    switch(pixel_format) {
-        case display_pixel_format_yuv422:
-            layer->csc_config.enable = true;
-            layer->csc_config.ycbcr_mode = false;
-            layer->csc_config.yuv2rgb_coef.c0 = 0x100;
-            layer->csc_config.yuv2rgb_coef.uv_offset = 0;
-            layer->csc_config.yuv2rgb_coef.y_offset = 0;
-            layer->csc_config.yuv2rgb_coef.c1 = 0x123;
-            layer->csc_config.yuv2rgb_coef.c2 = 0x76B;
-            layer->csc_config.yuv2rgb_coef.c3 = 0x79C;
-            layer->csc_config.yuv2rgb_coef.c4 = 0x208;
-            break;
-        case display_pixel_format_ycbcr422:
-            layer->csc_config.enable = true;
-            layer->csc_config.ycbcr_mode = true;
-            layer->csc_config.yuv2rgb_coef.c0 = 0x12A;
-            layer->csc_config.yuv2rgb_coef.uv_offset = 0x180;
-            layer->csc_config.yuv2rgb_coef.y_offset = 0x1F0;
-            layer->csc_config.yuv2rgb_coef.c1 = 0x198;
-            layer->csc_config.yuv2rgb_coef.c2 = 0x730;
-            layer->csc_config.yuv2rgb_coef.c3 = 0x79C;
-            layer->csc_config.yuv2rgb_coef.c4 = 0x204;
-            break;
-        default:
-            layer->csc_config.enable = false;
-            layer->csc_config.ycbcr_mode = false;
-            layer->csc_config.yuv2rgb_coef.c0 = 0;
-            layer->csc_config.yuv2rgb_coef.uv_offset = 0;
-            layer->csc_config.yuv2rgb_coef.y_offset = 0;
-            layer->csc_config.yuv2rgb_coef.c1 = 0;
-            layer->csc_config.yuv2rgb_coef.c2 = 0;
-            layer->csc_config.yuv2rgb_coef.c3 = 0;
-            layer->csc_config.yuv2rgb_coef.c4 = 0;
-            break;
+    switch (pixel_format) {
+    case display_pixel_format_yuv422:
+        layer->csc_config.enable = true;
+        layer->csc_config.ycbcr_mode = false;
+        layer->csc_config.yuv2rgb_coef.c0 = 0x100;
+        layer->csc_config.yuv2rgb_coef.uv_offset = 0;
+        layer->csc_config.yuv2rgb_coef.y_offset = 0;
+        layer->csc_config.yuv2rgb_coef.c1 = 0x123;
+        layer->csc_config.yuv2rgb_coef.c2 = 0x76B;
+        layer->csc_config.yuv2rgb_coef.c3 = 0x79C;
+        layer->csc_config.yuv2rgb_coef.c4 = 0x208;
+        break;
+    case display_pixel_format_ycbcr422:
+        layer->csc_config.enable = true;
+        layer->csc_config.ycbcr_mode = true;
+        layer->csc_config.yuv2rgb_coef.c0 = 0x12A;
+        layer->csc_config.yuv2rgb_coef.uv_offset = 0x180;
+        layer->csc_config.yuv2rgb_coef.y_offset = 0x1F0;
+        layer->csc_config.yuv2rgb_coef.c1 = 0x198;
+        layer->csc_config.yuv2rgb_coef.c2 = 0x730;
+        layer->csc_config.yuv2rgb_coef.c3 = 0x79C;
+        layer->csc_config.yuv2rgb_coef.c4 = 0x204;
+        break;
+    default:
+        layer->csc_config.enable = false;
+        layer->csc_config.ycbcr_mode = false;
+        layer->csc_config.yuv2rgb_coef.c0 = 0;
+        layer->csc_config.yuv2rgb_coef.uv_offset = 0;
+        layer->csc_config.yuv2rgb_coef.y_offset = 0;
+        layer->csc_config.yuv2rgb_coef.c1 = 0;
+        layer->csc_config.yuv2rgb_coef.c2 = 0;
+        layer->csc_config.yuv2rgb_coef.c3 = 0;
+        layer->csc_config.yuv2rgb_coef.c4 = 0;
+        break;
     }
 }
 
 void lcdc_get_default_config(LCDC_Type *ptr, lcdc_config_t *config)
 {
+    (void) ptr;
     config->resolution_x = 480;
     config->resolution_y = 272;
     config->hsync.front_porch_pulse = 40;
@@ -208,7 +215,7 @@ hpm_stat_t lcdc_config_layer(LCDC_Type *ptr,
     ptr->LAYER[layer_index].ALPHAS = LCDC_LAYER_ALPHAS_LOCD_SET(layer->alphablend.src_alpha)
         | LCDC_LAYER_ALPHAS_IND_SET(layer->alphablend.dst_alpha);
 
-    pitch = display_get_pitch_length_in_byte(layer->pixel_format, layer->width);
+    pitch = layer->stride > 0 ? layer->stride : display_get_pitch_length_in_byte(layer->pixel_format, layer->width);
     ptr->LAYER[layer_index].LINECFG = LCDC_LAYER_LINECFG_MPT_SIZE_SET(layer->max_bytes)
         | LCDC_LAYER_LINECFG_MAX_OT_SET(layer->max_ot)
         | LCDC_LAYER_LINECFG_PITCH_SET(pitch);
@@ -258,13 +265,15 @@ void lcdc_turn_off_display(LCDC_Type *ptr)
 
         /* 1. wait for current frame end */
         ptr->ST = 0xFFFFFFFF;
-        while((ptr->ST & LCDC_ST_VS_BLANK_MASK) == 0);
+        while ((ptr->ST & LCDC_ST_VS_BLANK_MASK) == 0) {
+        }
 
         /* 2. issue display off */
         ptr->ST = 0xFFFFFFFF;
         lcdc_software_reset(ptr);
         ptr->CTRL &= ~LCDC_CTRL_DISP_ON_MASK;
-        while((ptr->ST & LCDC_ST_VS_BLANK_MASK) == 0);
+        while ((ptr->ST & LCDC_ST_VS_BLANK_MASK) == 0) {
+        }
     }
     return;
 }

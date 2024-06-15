@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2024, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -93,6 +93,11 @@ rt_err_t command_send(sdhi_instance_ctrl_t *p_ctrl, struct rt_mmcsd_cmd *cmd)
             {
                 cmd->cmd_code |= SDHI_CMD_DATA_DIR_READ;
             }
+        }
+        if (data->blks > 1)
+        {
+            cmd->cmd_code |= SDHI_BLK_TRANSFER;
+            cmd->cmd_code |= SDHI_BLK_NOT_AUTO_STOP;
         }
     }
     p_ctrl->p_reg->SD_CMD = cmd->cmd_code;
@@ -491,14 +496,21 @@ struct rt_mmcsd_host *sdio_host_create(struct ra_sdhi *sdhi_des)
     ra_sdhi_enable_sdio_irq(host, 1);
 
     /* ready to change */
-    mmcsd_change(host);
+//    mmcsd_change(host);
 
     return host;
 }
 
 int rt_hw_sdhi_init(void)
 {
+#if defined(BSP_USING_SDHI0)
     sdhi.instance = &g_sdmmc0;
+#elif defined(BSP_USING_SDHI1)
+    sdhi.instance = &g_sdmmc1;
+#else
+#error "please defined the g_sdmmc handle"
+#endif
+
     sdhi.instance->p_api->open(sdhi.instance->p_ctrl, sdhi.instance->p_cfg);
     host = sdio_host_create(&sdhi);
     if (host == RT_NULL)
@@ -508,3 +520,8 @@ int rt_hw_sdhi_init(void)
     return 0;
 }
 INIT_DEVICE_EXPORT(rt_hw_sdhi_init);
+
+void sdcard_change(void)
+{
+    mmcsd_change(host);
+}

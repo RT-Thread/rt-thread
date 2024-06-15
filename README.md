@@ -53,7 +53,7 @@ It includes:
 
 | Name          | Description                                             |
 | ------------- | ------------------------------------------------------- |
-| BSP          | Board Support Package based on the porting of various development boards |
+| bsp        | Board Support Package based on the porting of various development boards |
 | components    | Components, such as finsh shell, file system, protocol stack etc. |
 | documentation | Related documents, like coding style, doxygen etc.        |
 | examples      | Related sample code                                     |
@@ -82,7 +82,7 @@ RT-Thread supports many architectures, and has covered the major architectures i
 - **ARM9**：manufacturers like Allwinner、Xilinx 、GOKE
 - **ARM11**：manufacturers like Fullhan
 - **MIPS32**：manufacturers like loongson、Ingenic
-- **RISC-V RV32E/RV32I[F]/RV64[D]**：manufacturers like sifive、[Canaan Kendryte](https://github.com/RT-Thread/rt-thread/tree/master/bsp/k210)、[bouffalo_lab](https://github.com/RT-Thread/rt-thread/tree/master/bsp/bouffalo_lab)、[Nuclei](https://nucleisys.com/)、[T-Head](https://www.t-head.cn/)
+- **RISC-V RV32E/RV32I[F]/RV64[D]**：manufacturers like sifive、[Canaan Kendryte](https://github.com/RT-Thread/rt-thread/tree/master/bsp/k210)、[bouffalo_lab](https://github.com/RT-Thread/rt-thread/tree/master/bsp/bouffalo_lab)、[Nuclei](https://nucleisys.com/)、[T-Head](https://www.t-head.cn/)、[HPMicro](https://github.com/RT-Thread/rt-thread/tree/master/bsp/hpmicro)
 - **ARC**：manufacturers like SYNOPSYS
 - **DSP**：manufacturers like TI
 - **C-Sky**
@@ -107,7 +107,7 @@ RT-Thread Studio IDE (a.k.a. RT-Studio) is a one-stop intergrated development en
 
 ## Env Tool
 
-[User Manual](documentation/env/env/) | [Tutorial Videos](https://www.youtube.com/watch?v=dEK94o_YoSo)
+[User Manual](documentation/env/env.md) | [Tutorial Videos](https://www.youtube.com/watch?v=dEK94o_YoSo)
 
 In the early stage, RT-Thread team also created an auxiliary tool called Env. It is an auxiliary tool with a TUI (Text-based user interface). Developers can use Env tool to configure and generate the GCC, Keil MDK, and IAR projects.
 
@@ -144,7 +144,7 @@ RT-Thread is very grateful for the support from all community developers, and if
 
 # Contribution
 
-If you are interested in RT-Thread and want to join in the development of RT-Thread and become a code contributor,please refer to the [Code Contribution Guide](documentation/contribution_guide/contribution_guide.md).
+If you are interested in RT-Thread and want to join in the development of RT-Thread and become a code contributor,please refer to the [Code Contribution Guide](.github/CONTRIBUTING.md).
 
 ## Thanks for the following contributors!
 

@@ -11,7 +11,7 @@
             <name>C-SPY</name>
             <archiveVersion>2</archiveVersion>
             <data>
-                <version>31</version>
+                <version>32</version>
                 <wantNonLocal>1</wantNonLocal>
                 <debug>0</debug>
                 <option>
@@ -44,7 +44,7 @@
                 </option>
                 <option>
                     <name>MemFile</name>
-                    <state>$PROJ_DIR$/../libraries/hc32f460_ddl/drivers/cmsis/Device/HDSC/hc32f4xx/Source/IAR/svd/HDSC_HC32F460.svd</state>
+                    <state>$PROJ_DIR$/../libraries/hc32f460_ddl/drivers/cmsis/Device/HDSC/hc32f4xx/Source/IAR/svd/HC32F460.svd</state>
                 </option>
                 <option>
                     <name>RunToEnable</name>
@@ -80,7 +80,7 @@
                 </option>
                 <option>
                     <name>OCProductVersion</name>
-                    <state>8.40.1.21529</state>
+                    <state>7.70.1.11471</state>
                 </option>
                 <option>
                     <name>OCDynDriverList</name>
@@ -88,7 +88,7 @@
                 </option>
                 <option>
                     <name>OCLastSavedByProductVersion</name>
-                    <state>8.40.1.21529</state>
+                    <state>8.50.9.33458</state>
                 </option>
                 <option>
                     <name>UseFlashLoader</name>
@@ -112,7 +112,7 @@
                 </option>
                 <option>
                     <name>FlashLoadersV3</name>
-                    <state>$PROJ_DIR$/../libraries/hc32f460_ddl/config/flashloader/HC32F460xE.board</state>
+                    <state>$PROJ_DIR$/../libraries/hc32f460_ddl/config/flashloader/FlashHC32F460xE.board</state>
                 </option>
                 <option>
                     <name>OCImagesSuppressCheck1</name>
@@ -217,6 +217,10 @@
                 <option>
                     <name>OCMulticoreSessionFile</name>
                     <state></state>
+                </option>
+                <option>
+                    <name>OCTpiuBaseOption</name>
+                    <state>1</state>
                 </option>
             </data>
         </settings>
@@ -1003,7 +1007,7 @@
             <name>STLINK_ID</name>
             <archiveVersion>2</archiveVersion>
             <data>
-                <version>6</version>
+                <version>7</version>
                 <wantNonLocal>1</wantNonLocal>
                 <debug>0</debug>
                 <option>
@@ -1118,8 +1122,8 @@
                 </option>
                 <option>
                     <name>CCSTLinkProbeList</name>
-                    <version>0</version>
-                    <state>1</state>
+                    <version>1</version>
+                    <state>0</state>
                 </option>
             </data>
         </settings>
@@ -1375,7 +1379,7 @@
                 <option>
                     <name>CCXds100ProbeList</name>
                     <version>0</version>
-                    <state>3</state>
+                    <state>2</state>
                 </option>
                 <option>
                     <name>CCXds100SWOPortRadio</name>
@@ -1441,11 +1445,11 @@
                 <loadFlag>0</loadFlag>
             </plugin>
             <plugin>
-                <file>$TOOLKIT_DIR$\plugins\rtos\SMX\smxAwareIarArm8.ewplugin</file>
+                <file>$TOOLKIT_DIR$\plugins\rtos\SMX\smxAwareIarArm8b.ewplugin</file>
                 <loadFlag>0</loadFlag>
             </plugin>
             <plugin>
-                <file>$TOOLKIT_DIR$\plugins\rtos\SMX\smxAwareIarArm8BE.ewplugin</file>
+                <file>$TOOLKIT_DIR$\plugins\rtos\SMX\smxAwareIarArm8bBE.ewplugin</file>
                 <loadFlag>0</loadFlag>
             </plugin>
             <plugin>
@@ -1492,7 +1496,7 @@
             <name>C-SPY</name>
             <archiveVersion>2</archiveVersion>
             <data>
-                <version>31</version>
+                <version>32</version>
                 <wantNonLocal>1</wantNonLocal>
                 <debug>0</debug>
                 <option>
@@ -1521,11 +1525,11 @@
                 </option>
                 <option>
                     <name>MemOverride</name>
-                    <state>1</state>
+                    <state>0</state>
                 </option>
                 <option>
                     <name>MemFile</name>
-                    <state>$PROJ_DIR$/../libraries/hc32f460_ddl/drivers/cmsis/Device/HDSC/hc32f4xx/Source/IAR/svd/HDSC_HC32F460.svd</state>
+                    <state>$PROJ_DIR$/../libraries/hc32f460_ddl/drivers/cmsis/Device/HDSC/hc32f4xx/Source/IAR/svd/HC32F460.svd</state>
                 </option>
                 <option>
                     <name>RunToEnable</name>
@@ -1561,15 +1565,15 @@
                 </option>
                 <option>
                     <name>OCProductVersion</name>
-                    <state>8.40.1.21529</state>
+                    <state>7.70.1.11471</state>
                 </option>
                 <option>
                     <name>OCDynDriverList</name>
-                    <state>CMSISDAP_ID</state>
+                    <state>ARMSIM_ID</state>
                 </option>
                 <option>
                     <name>OCLastSavedByProductVersion</name>
-                    <state>8.40.1.21529</state>
+                    <state></state>
                 </option>
                 <option>
                     <name>UseFlashLoader</name>
@@ -1593,7 +1597,7 @@
                 </option>
                 <option>
                     <name>FlashLoadersV3</name>
-                    <state>$PROJ_DIR$/../libraries/hc32f460_ddl/config/flashloader/HC32F460xE.board</state>
+                    <state>$PROJ_DIR$/../libraries/hc32f460_ddl/config/flashloader/FlashHC32F460xE.board</state>
                 </option>
                 <option>
                     <name>OCImagesSuppressCheck1</name>
@@ -1621,7 +1625,7 @@
                 </option>
                 <option>
                     <name>OverrideDefFlashBoard</name>
-                    <state>1</state>
+                    <state>0</state>
                 </option>
                 <option>
                     <name>OCImagesOffset1</name>
@@ -1661,7 +1665,7 @@
                 </option>
                 <option>
                     <name>OCMulticoreNrOfCores</name>
-                    <state>1</state>
+                    <state></state>
                 </option>
                 <option>
                     <name>OCMulticoreWorkspace</name>
@@ -1698,6 +1702,10 @@
                 <option>
                     <name>OCMulticoreSessionFile</name>
                     <state></state>
+                </option>
+                <option>
+                    <name>OCTpiuBaseOption</name>
+                    <state>1</state>
                 </option>
             </data>
         </settings>
@@ -2484,7 +2492,7 @@
             <name>STLINK_ID</name>
             <archiveVersion>2</archiveVersion>
             <data>
-                <version>6</version>
+                <version>7</version>
                 <wantNonLocal>1</wantNonLocal>
                 <debug>0</debug>
                 <option>
@@ -2599,8 +2607,8 @@
                 </option>
                 <option>
                     <name>CCSTLinkProbeList</name>
-                    <version>0</version>
-                    <state>1</state>
+                    <version>1</version>
+                    <state>0</state>
                 </option>
             </data>
         </settings>
@@ -2856,7 +2864,7 @@
                 <option>
                     <name>CCXds100ProbeList</name>
                     <version>0</version>
-                    <state>3</state>
+                    <state>2</state>
                 </option>
                 <option>
                     <name>CCXds100SWOPortRadio</name>
@@ -2922,11 +2930,11 @@
                 <loadFlag>0</loadFlag>
             </plugin>
             <plugin>
-                <file>$TOOLKIT_DIR$\plugins\rtos\SMX\smxAwareIarArm8.ewplugin</file>
+                <file>$TOOLKIT_DIR$\plugins\rtos\SMX\smxAwareIarArm8b.ewplugin</file>
                 <loadFlag>0</loadFlag>
             </plugin>
             <plugin>
-                <file>$TOOLKIT_DIR$\plugins\rtos\SMX\smxAwareIarArm8BE.ewplugin</file>
+                <file>$TOOLKIT_DIR$\plugins\rtos\SMX\smxAwareIarArm8bBE.ewplugin</file>
                 <loadFlag>0</loadFlag>
             </plugin>
             <plugin>

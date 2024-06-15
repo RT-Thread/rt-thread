@@ -7,9 +7,10 @@
    Change Logs:
    Date             Author          Notes
    2022-03-31       CDT             First version
+   2022-10-31       CDT             Delete the __low_level_init function of IAR and $Sub$$main function of MDK
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -22,9 +23,7 @@
 /*******************************************************************************
  * Include files
  ******************************************************************************/
-#include "hc32f4xx.h"
-#include "hc32f4xx_conf.h"
-#include "hc32_ll_def.h"
+#include "system_hc32f460.h"
 
 /**
  * @addtogroup CMSIS
@@ -52,11 +51,6 @@
 #ifndef VECT_TAB_OFFSET
 #define VECT_TAB_OFFSET                 (0x0UL)     /*!< This value must be a multiple of 0x400. */
 #endif
-
-/* Re-define main function */
-#ifndef RE_DEFINE_MAIN
-#define RE_DEFINE_MAIN                  (1)         /*!< Non-zero value to re-define main function. */
-#endif
 /**
  * @}
  */
@@ -70,9 +64,9 @@
  */
 
 /*!< System clock frequency (Core clock) */
-uint32_t SystemCoreClock;
+__NO_INIT uint32_t SystemCoreClock;
 /*!< High speed RC frequency (HCR clock) */
-uint32_t HRC_VALUE;
+__NO_INIT uint32_t HRC_VALUE;
 
 /**
  * @}
@@ -163,32 +157,6 @@ void SystemCoreClockUpdate(void)
     }
 }
 
-#if (RE_DEFINE_MAIN)
-#if (defined (__CC_ARM) || defined (__CLANG_ARM)) || \
-    (defined (__ARMCC_VERSION) && (__ARMCC_VERSION >= 6010050))
-extern int32_t $Super$$main(void);
-/* re-define main function */
-int $Sub$$main(void)
-{
-    SystemCoreClockUpdate();
-    $Super$$main();
-    return 0;
-}
-#elif defined (__ICCARM__)
-extern int32_t main(void);
-/* __low_level_init will auto called by IAR cstartup */
-extern void __iar_data_init3(void);
-int __low_level_init(void)
-{
-    /* call IAR table copy function. */
-    __iar_data_init3();
-    SystemCoreClockUpdate();
-    main();
-    return 0;
-}
-#endif
-#endif  /* RE_DEFINE_MAIN */
-
 #if defined (ROM_EXT_QSPI)
 /**
  * @brief  Initialize the QSPI memory.
@@ -218,9 +186,6 @@ __WEAKDEF void SystemInit_QspiMem(void)
     CM_QSPI->CR   = 0x0002000D;
     CM_QSPI->CSCR = 0x00000001;
     CM_QSPI->FCR  = 0x00008332;
-    /* XIP */
-    CM_QSPI->XCMD = 0x20;
-    CM_QSPI->CR |= QSPI_CR_XIPE;
 }
 #endif /* ROM_EXT_QSPI */
 

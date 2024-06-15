@@ -217,9 +217,6 @@ int arm_gic_dist_init(rt_uint32_t index, rt_uint32_t dist_base, int irq_start)
     if ((rt_cpu_get_smp_id() & 0xF) != 0)
         return 0;
 #endif
-#ifdef RT_USING_VMM
-    return 0;
-#endif
 
     cpumask |= cpumask << 8;
     cpumask |= cpumask << 16;
@@ -262,9 +259,6 @@ int arm_gic_cpu_init(rt_uint32_t index, rt_uint32_t cpu_base)
      * by BootStrapProcessor. */
     if ((rt_cpu_get_smp_id() & 0xF) != 0)
         return 0;
-#endif
-#ifdef RT_USING_VMM
-    return 0;
 #endif
 
     GIC_CPU_PRIMASK(cpu_base) = 0xf0;

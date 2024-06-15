@@ -1,11 +1,12 @@
 /*
- * Copyright (c) 2006-2023, RT-Thread Development Team
+ * Copyright (c) 2006-2024, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
  * 2015-06-15     hichard      first version
+ * 2024-05-25     HPMicro      add HS400 support
  */
 
 #include <drivers/mmcsd_core.h>
@@ -193,12 +194,19 @@ static int mmc_parse_ext_csd(struct rt_mmcsd_card *card, rt_uint8_t *ext_csd)
     }
 
     host = card->host;
-    if (host->flags & MMCSD_SUP_HS200)
+
+    uint8_t device_type = ext_csd[EXT_CSD_CARD_TYPE];
+    if ((host->flags & MMCSD_SUP_HS400) && (device_type & EXT_CSD_CARD_TYPE_HS400))
+    {
+        card->flags |=  CARD_FLAG_HS400;
+        card->max_data_rate = 200000000;
+    }
+    else if ((host->flags & MMCSD_SUP_HS200) && (device_type & EXT_CSD_CARD_TYPE_HS200))
     {
         card->flags |=  CARD_FLAG_HS200;
-        card->hs_max_data_rate = 200000000;
+        card->max_data_rate = 200000000;
     }
-    else if (host->flags & MMCSD_SUP_HIGHSPEED_DDR)
+    else if ((host->flags & MMCSD_SUP_HIGHSPEED_DDR) && (device_type & EXT_CSD_CARD_TYPE_DDR_52))
     {
         card->flags |=  CARD_FLAG_HIGHSPEED_DDR;
         card->hs_max_data_rate = 52000000;
@@ -208,6 +216,17 @@ static int mmc_parse_ext_csd(struct rt_mmcsd_card *card, rt_uint8_t *ext_csd)
         card->flags |=  CARD_FLAG_HIGHSPEED;
         card->hs_max_data_rate = 52000000;
     }
+
+    if (ext_csd[EXT_CSD_STROBE_SUPPORT] != 0)
+    {
+        card->ext_csd.enhanced_data_strobe = 1;
+    }
+
+    card->ext_csd.cache_size =
+        ext_csd[EXT_CSD_CACHE_SIZE + 0] << 0 |
+        ext_csd[EXT_CSD_CACHE_SIZE + 1] << 8 |
+        ext_csd[EXT_CSD_CACHE_SIZE + 2] << 16 |
+        ext_csd[EXT_CSD_CACHE_SIZE + 3] << 24;
 
     card_capacity = *((rt_uint32_t *)&ext_csd[EXT_CSD_SEC_CNT]);
     card->card_sec_cnt = card_capacity;
@@ -301,7 +320,7 @@ out:
 }
 
 /*
- * Select the bus width amoung 4-bit and 8-bit(SDR).
+ * Select the bus width among 4-bit and 8-bit(SDR).
  * If the bus width is changed successfully, return the selected width value.
  * Zero is returned instead of error value if the wide width is not supported.
  */
@@ -331,22 +350,21 @@ static int mmc_select_bus_width(struct rt_mmcsd_card *card, rt_uint8_t *ext_csd)
         ddr = 2;
     }
     /*
-    * Unlike SD, MMC cards dont have a configuration register to notify
+    * Unlike SD, MMC cards don't have a configuration register to notify
     * supported bus width. So bus test command should be run to identify
-    * the supported bus width or compare the ext csd values of current
-    * bus width and ext csd values of 1 bit mode read earlier.
+    * the supported bus width or compare the EXT_CSD values of current
+    * bus width and EXT_CSD values of 1 bit mode read earlier.
     */
     for (idx = 0; idx < sizeof(bus_widths) / sizeof(rt_uint32_t); idx++)
     {
         /*
-        * Host is capable of 8bit transfer, then switch
-        * the device to work in 8bit transfer mode. If the
-        * mmc switch command returns error then switch to
-        * 4bit transfer mode. On success set the corresponding
-        * bus width on the host. Meanwhile, mmc core would
-        * bail out early if corresponding bus capable wasn't
-        * set by drivers.
-        */
+         * Determine BUS WIDTH mode according to the capability of host
+         */
+        if (((ext_csd_bits[idx][0] == EXT_CSD_BUS_WIDTH_8) && ((host->flags & MMCSD_BUSWIDTH_8) == 0)) ||
+            ((ext_csd_bits[idx][0] == EXT_CSD_BUS_WIDTH_4) && ((host->flags & MMCSD_BUSWIDTH_4) == 0)))
+        {
+            continue;
+        }
         bus_width = bus_widths[idx];
         if (bus_width == MMCSD_BUS_WIDTH_1)
         {
@@ -405,6 +423,7 @@ static int mmc_select_bus_width(struct rt_mmcsd_card *card, rt_uint8_t *ext_csd)
 
     return err;
 }
+
 rt_err_t mmc_send_op_cond(struct rt_mmcsd_host *host,
                           rt_uint32_t ocr, rt_uint32_t *rocr)
 {
@@ -479,29 +498,112 @@ static int mmc_select_hs200(struct rt_mmcsd_card *card)
         return ret;
 
     mmcsd_set_timing(card->host, MMCSD_TIMING_MMC_HS200);
-    mmcsd_set_clock(card->host, 200000000);
+    mmcsd_set_clock(card->host, card->max_data_rate);
 
     ret = mmcsd_excute_tuning(card);
 
     return ret;
 }
 
+static int mmc_switch_to_hs400(struct rt_mmcsd_card *card)
+{
+    struct rt_mmcsd_host *host = card->host;
+    int err;
+    rt_uint8_t ext_csd_bus_width;
+    rt_uint32_t hs_timing;
+
+    /* Switch to HS_TIMING to 0x01 (High Speed) */
+    err = mmc_switch(card, EXT_CSD_CMD_SET_NORMAL,
+                           EXT_CSD_HS_TIMING, EXT_CSD_TIMING_HS);
+    if (err != RT_EOK)
+    {
+        return err;
+    }
+    mmcsd_set_timing(card->host, MMCSD_TIMING_MMC_HS);
+    /* Host changes frequency to <= 52MHz  */
+    mmcsd_set_clock(card->host, 52000000);
+
+    rt_bool_t support_enhanced_ds = ((card->ext_csd.enhanced_data_strobe != 0) &&
+                                     ((host->flags & MMCSD_SUP_ENH_DS) != 0));
+
+    /* Set the bus width to:
+     *  0x86 if enhanced data strobe is supported, or
+     *  0x06 if enhanced data strobe is not supported
+     */
+    ext_csd_bus_width = support_enhanced_ds ?
+                        EXT_CSD_DDR_BUS_WIDTH_8_EH_DS :
+                        EXT_CSD_DDR_BUS_WIDTH_8;
+
+    err = mmc_switch(card, EXT_CSD_CMD_SET_NORMAL,
+                     EXT_CSD_BUS_WIDTH,
+                     ext_csd_bus_width);
+    if (err != RT_EOK)
+    {
+        return err;
+    }
+
+    /* Set HS_TIMING to 0x03 (HS400) */
+    err = mmc_switch(card,
+                     EXT_CSD_CMD_SET_NORMAL,
+                     EXT_CSD_HS_TIMING,
+                     EXT_CSD_TIMING_HS400);
+    if (err != RT_EOK)
+    {
+        return err;
+    }
+
+    /* Change the Host timing accordingly */
+    hs_timing = support_enhanced_ds ?
+                MMCSD_TIMING_MMC_HS400_ENH_DS :
+                MMCSD_TIMING_MMC_HS400;
+    mmcsd_set_timing(host, hs_timing);
+
+    /* Host may changes frequency to <= 200MHz */
+    mmcsd_set_clock(card->host, card->max_data_rate);
+
+    return RT_EOK;
+}
+
+static int mmc_select_hs400(struct rt_mmcsd_card *card)
+{
+    int ret;
+    struct rt_mmcsd_host *host = card->host;
+    /* if the card or host doesn't support enhanced data strobe, switch to HS200 and perform tuning process first */
+    if ((card->ext_csd.enhanced_data_strobe == 0) || ((host->flags & MMCSD_SUP_ENH_DS) == 0))
+    {
+        ret = mmc_select_hs200(card);
+        if (ret != RT_EOK)
+        {
+            return ret;
+        }
+    }
+    return mmc_switch_to_hs400(card);
+}
+
 static int mmc_select_timing(struct rt_mmcsd_card *card)
 {
     int ret = 0;
 
-    if (card->flags & CARD_FLAG_HS200)
+    if (card->flags & CARD_FLAG_HS400)
     {
+        LOG_I("emmc: switch to HS400 mode\n");
+        ret = mmc_select_hs400(card);
+    }
+    else if (card->flags & CARD_FLAG_HS200)
+    {
+        LOG_I("emmc: switch to HS200 mode\n");
         ret = mmc_select_hs200(card);
     }
     else if (card->flags & CARD_FLAG_HIGHSPEED_DDR)
     {
+        LOG_I("emmc: switch to HIGH Speed DDR mode\n");
         mmcsd_set_timing(card->host, MMCSD_TIMING_MMC_DDR52);
         mmcsd_set_clock(card->host, card->hs_max_data_rate);
     }
     else
     {
-        mmcsd_set_timing(card->host, MMCSD_TIMING_UHS_SDR50);
+        LOG_I("emmc: switch to HIGH Speed mode\n");
+        mmcsd_set_timing(card->host, MMCSD_TIMING_MMC_HS);
         mmcsd_set_clock(card->host, card->hs_max_data_rate);
     }
 
@@ -611,6 +713,12 @@ static rt_int32_t mmcsd_mmc_init_card(struct rt_mmcsd_host *host,
     {
         LOG_E("mmc select timing fail");
         goto err0;
+    }
+
+    if (card->ext_csd.cache_size > 0)
+    {
+        mmc_switch(card, EXT_CSD_CMD_SET_NORMAL,
+                   EXT_CSD_CACHE_CTRL, 1);
     }
 
     host->card = card;

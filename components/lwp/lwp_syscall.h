@@ -11,7 +11,11 @@
 #ifndef __LWP_SYSCALL_H__
 #define __LWP_SYSCALL_H__
 
-#include <syscall_generic.h>
+#ifdef RT_USING_MUSLLIBC
+#include "libc_musl.h"
+#endif
+
+#include "syscall_generic.h"
 
 #include <stdint.h>
 #include <rtthread.h>
@@ -44,10 +48,11 @@ typedef uint32_t id_t;          /* may contain pid, uid or gid */
 const char *lwp_get_syscall_name(rt_uint32_t number);
 const void *lwp_get_sys_api(rt_uint32_t number);
 
-void sys_exit(int value);
+sysret_t sys_exit(int value);
+sysret_t sys_exit_group(int status);
 ssize_t sys_read(int fd, void *buf, size_t nbyte);
 ssize_t sys_write(int fd, const void *buf, size_t nbyte);
-off_t sys_lseek(int fd, off_t offset, int whence);
+size_t sys_lseek(int fd, size_t offset, int whence);
 sysret_t sys_open(const char *name, int mode, ...);
 sysret_t sys_close(int fd);
 sysret_t sys_ioctl(int fd, unsigned long cmd, void* data);
@@ -103,9 +108,14 @@ sysret_t sys_log(const char* log, int size);
 
 #ifdef ARCH_MM_MMU
 sysret_t sys_futex(int *uaddr, int op, int val, const struct timespec *timeout, int *uaddr2, int val3);
-sysret_t sys_pmutex(void *umutex, int op, void *arg);
 sysret_t sys_cacheflush(void *addr, int len, int cache);
 #endif /* ARCH_MM_MMU */
+
+sysret_t sys_setsid(void);
+sysret_t sys_getsid(pid_t pid);
+sysret_t sys_setpgid(pid_t pid, pid_t pgid);
+sysret_t sys_getpgid(pid_t pid);
+
 
 #ifdef __cplusplus
 }

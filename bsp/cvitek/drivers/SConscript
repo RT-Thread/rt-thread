@@ -1,0 +1,59 @@
+from building import *
+
+cwd     = GetCurrentDir()
+src     = Split('''
+    drv_uart.c
+    drv_por.c
+    drv_gpio.c
+''')
+CPPDEFINES = []
+
+CPPPATH = [cwd]
+
+CHIP_TYPE = 'cv180x'
+if GetDepend('BOARD_TYPE_MILKV_DUO256M') or GetDepend('BOARD_TYPE_MILKV_DUO256M_SPINOR') or GetDepend('BOARD_TYPE_MILKV_DUO256M_SPINAND'):
+    CHIP_TYPE = 'cv181x'
+elif GetDepend('BOARD_TYPE_MILKV_DUO') or GetDepend('BOARD_TYPE_MILKV_DUO_SPINOR') or GetDepend('BOARD_TYPE_MILKV_DUO_SPINAND'):
+    CHIP_TYPE = 'cv180x'
+
+CPPPATH += [cwd + r'/libraries']
+CPPPATH += [cwd + r'/libraries/' + CHIP_TYPE]
+
+if GetDepend('BSP_USING_I2C'):
+    src += ['drv_hw_i2c.c']
+
+if GetDepend('BSP_USING_ADC'):
+    src += ['drv_adc.c']
+
+if GetDepend('BSP_USING_WDT'):
+    src += ['drv_wdt.c']
+
+if GetDepend(['BSP_USING_SPI']):
+    src += ['drv_spi.c']
+
+if GetDepend('BSP_USING_PWM'):
+    src += ['drv_pwm.c']
+    CPPPATH += [cwd + r'/libraries/cv180x/pwm']
+
+if GetDepend('BSP_USING_SDH'):
+    src += ['drv_sdhci.c', 'port/mnt.c']
+    CPPPATH += [cwd + r'/libraries/sdif']
+
+
+if GetDepend('BSP_USING_ETH'):
+    src += Split('''
+        drv_eth.c
+        libraries/eth/dw_eth_mac.c
+        libraries/eth/cvi_eth_phy.c
+        libraries/eth/eth_phy_cvitek.c
+    ''')
+    CPPPATH += [cwd + r'/libraries/eth']
+
+CPPDEFINES += ['-DCONFIG_64BIT']
+
+if GetDepend('BSP_USING_RTC'):
+    src += ['drv_rtc.c']
+
+group = DefineGroup('drivers', src, depend = [''], CPPDEFINES = CPPDEFINES, CPPPATH = CPPPATH)
+
+Return('group')

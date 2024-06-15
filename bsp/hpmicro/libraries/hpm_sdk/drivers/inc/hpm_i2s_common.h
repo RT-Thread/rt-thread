@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 hpmicro
+ * Copyright (c) 2021 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -22,13 +22,29 @@
 #define I2S_PROTOCOL_RIGHT_JUSTIFIED (2U)
 #define I2S_PROTOCOL_PCM (3U)
 
-#define I2S_AUDIO_DEPTH_16_BITS (0U)
-#define I2S_AUDIO_DEPTH_24_BITS (1U)
-#define I2S_AUDIO_DEPTH_32_BITS (2U)
-#define I2S_AUDIO_DEPTH_IS_NOT_VALID(x) ((x) > I2S_AUDIO_DEPTH_32_BITS)
+/* i2s channel slot mask */
+#define I2S_CHANNEL_SLOT_MASK(x) (1U << (x))
+/* convert audio depth value into CFGR[DATASIZ] value map */
+#define I2S_CFGR_DATASIZ(x) ((x - 16) >> 3)
+/* convert channel length value into CFGR[CHSIZ] value map */
+#define I2S_CFGR_CHSIZ(x)   ((x - 16) >> 4)
 
-#define I2S_CHANNEL_LENGTH_16_BITS (0U)
-#define I2S_CHANNEL_LENGTH_32_BITS (1U)
+/**
+ * @brief I2S audio depth
+ */
+enum {
+    i2s_audio_depth_16_bits = 16,
+    i2s_audio_depth_24_bits = 24,
+    i2s_audio_depth_32_bits = 32,
+};
+
+/**
+ * @brief I2S channel length
+ */
+enum {
+    i2s_channel_length_16_bits = 16,
+    i2s_channel_length_32_bits = 32,
+};
 
 /**
  * @brief I2S stereo/mono channel

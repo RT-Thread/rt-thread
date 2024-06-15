@@ -1,0 +1,4 @@
+config SOC_MCX
+    bool
+    select ARCH_ARM_CORTEX_M33
+    select ARCH_ARM_CORTEX_FPU

@@ -2,17 +2,6 @@
 #ifndef __RTTHREAD_CFG_H__
 #define __RTTHREAD_CFG_H__
 
-/* #define RT_DEBUG_IRQ 1 */
-/* #define RT_DEBUG_TIMER 1 */
-
-/* #define RT_DEBUG_MEM 1 */
-/* #define RT_DEBUG_MEMHEAP 1 */
-/* #define RT_DEBUG_MODULE 1 */
-/* #define RT_DEBUG_SCHEDULER 1 */
-/* #define RT_DEBUG_SLAB 1 */
-/* #define RT_DEBUG_THREAD 1 */
-/* #define RT_DEBUG_IPC 1 */
-
 /* RT_NAME_MAX*/
 #define RT_NAME_MAX	8
 

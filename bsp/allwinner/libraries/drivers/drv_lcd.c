@@ -1,11 +1,12 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
  * Change Logs:
  * Date           Author       Notes
  * 2018-04-12     RT-Thread    the first version
+ * 2023-09-02     zbtrs        support sdl2
  */
 
 #include "rtthread.h"
@@ -28,11 +29,13 @@
 #endif
 
 #include <video/sunxi_display2.h>
+#include <dfs_file.h>
 #include "dev_disp.h"
 
 #define DEFAULT_SCREEN (0)
 
 #define LCD_DRV_FB_SZ (lcd_drv->lcd_info.width * lcd_drv->lcd_info.height * sizeof(rt_uint32_t))
+
 
 enum state_buff
 {
@@ -56,10 +59,10 @@ struct buff_info
 struct lcd_device
 {
     struct rt_device lcd;
+    struct rt_device fb;
     struct rt_device_graphic_info lcd_info; /* rtdef.h */
     struct rt_event lcd_evt;
     int use_screen; /* screen index */
-
     void *framebuffer;
     void *framebuffer_phy;
 
@@ -81,6 +84,8 @@ static rt_uint8_t lcd_bn = 80;
 extern void rt_hw_cpu_dcache_clean(void *addr, int size);
 extern int disp_ioctl(int cmd, void *arg);
 extern int disp_probe(void);
+
+struct lcd_device *g_lcd = RT_NULL;
 
 /* set up the lcd pin function */
 static void lcd_gpio_config(void)
@@ -418,8 +423,6 @@ static rt_err_t rt_lcd_init(rt_device_t dev)
     return RT_EOK;
 }
 
-struct lcd_device *g_lcd = RT_NULL;
-
 void turn_on_lcd_backlight(void)
 {
     if (_panel->bl_pin >= 0)
@@ -610,6 +613,110 @@ static rt_err_t rt_lcd_control(rt_device_t dev, int cmd, void *args)
     return RT_EOK;
 }
 
+static rt_err_t fb_open(rt_device_t dev,rt_uint16_t oflag)
+{
+    return RT_EOK;
+}
+
+static rt_err_t fb_close(rt_device_t dev)
+{
+    return RT_EOK;
+}
+
+static rt_err_t fb_control(rt_device_t dev, int cmd, void *args)
+{
+    switch(cmd) {
+        case FBIOGET_PIXELINFO:
+        {
+            int *fmt = (int *)args;
+            *fmt = RTGRAPHIC_PIXEL_FORMAT_ARGB888;
+            break;
+        }
+        case FBIOPAN_DISPLAY:
+        {
+            struct lcd_device *lcd_drv = g_lcd;
+            rt_hw_cpu_dcache_clean(lcd_drv->framebuffer, LCD_DRV_FB_SZ);
+            rt_lcd_control((rt_device_t)g_lcd, RTGRAPHIC_CTRL_RECT_UPDATE, RT_NULL);
+            break;
+        }
+        case FBIOGET_FSCREENINFO:
+        {
+            rt_lcd_control((rt_device_t)g_lcd,FBIOGET_FSCREENINFO,args);
+            break;
+        }
+        case FBIOGET_VSCREENINFO:
+        {
+            struct lcd_device *lcd_drv = g_lcd;
+            struct fb_var_screeninfo *info = (struct fb_var_screeninfo *)args;
+            info->xres = lcd_drv->lcd_info.width;
+            info->yres = lcd_drv->lcd_info.height;
+            break;
+        }
+        case RT_FIOMMAP2:
+        {
+            struct dfs_mmap2_args *mmap2 = (struct dfs_mmap2_args *)args;
+            if (mmap2)
+            {
+                mmap2->ret = lwp_map_user_phy(lwp_self(),RT_NULL,g_lcd->framebuffer,mmap2->length,1);
+            }
+            else
+            {
+                return -EIO;
+            }
+
+            break;
+        }
+        default:
+            break;
+    }
+
+    return RT_EOK;
+}
+
+#ifdef RT_USING_DEVICE_OPS
+const static struct rt_device_ops fb_ops =
+{
+    RT_NULL,
+    fb_open,
+    fb_close,
+    RT_NULL,
+    RT_NULL,
+    fb_control
+};
+#endif
+
+/* register framebuffer device */
+static int fb_init(rt_device_t fb)
+{
+    static rt_bool_t fb_init_ok = RT_FALSE;
+
+    if (fb_init_ok)
+    {
+        return 0;
+    }
+    RT_ASSERT(!rt_device_find("fb0"));
+    fb->type    = RT_Device_Class_Miscellaneous;
+
+#ifdef RT_USING_DEVICE_OPS
+    fb->ops     = &fb_ops;
+#else
+
+    fb->init    = RT_NULL;
+    fb->open    = fb_open;
+    fb->close   = fb_close;
+    fb->read    = RT_NULL;
+    fb->write   = RT_NULL;
+    fb->control = fb_control;
+    fb->user_data = RT_NULL;
+#endif
+
+    rt_device_register(fb,"fb0",RT_DEVICE_FLAG_RDWR);
+
+    fb_init_ok = RT_TRUE;
+
+    return RT_EOK;
+}
+
 /* set up the 'lcd_device' and register it */
 int rt_hw_lcd_init(void)
 {
@@ -634,6 +741,12 @@ int rt_hw_lcd_init(void)
     rt_device_register(&lcd_drv->lcd, "lcd", RT_DEVICE_FLAG_RDWR);
 
     rt_lcd_init((rt_device_t)lcd_drv);
+
+    if (fb_init(&(lcd_drv->fb)) != RT_EOK)
+    {
+        rt_kprintf("fb device init failure\n");
+        return -RT_ERROR;
+    }
 
     return RT_EOK;
 }
@@ -697,5 +810,4 @@ void lcd_pwm_test(int argc, char **argv)
 }
 
 MSH_CMD_EXPORT(lcd_pwm_test, set pwm);
-
 #endif

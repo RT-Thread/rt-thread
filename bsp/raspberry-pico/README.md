@@ -31,7 +31,13 @@ Support GCC 6 and above compilers.
 
 ## Program firmware
 
-### Step 1: build
+### Step 1: download pico sdk
+
+```bash
+pkgs --update
+```
+
+### Step 2: build
 
 ```bash
 scons -c
@@ -40,7 +46,7 @@ scons
 
 **gcc version >= 6.x.x**
 
-### Step 2: flash
+### Step 3: flash
 
 scons generates a UF2 file:
 
@@ -48,6 +54,13 @@ scons generates a UF2 file:
 
 - Copy the rtthread-pico.uf2 file to the "RPI-RP2" disk
 - Then led blink.
+
+Or you can use the picotool by:
+
+```bash
+picotool load rtthread-pico.uf2
+picotool reboot
+```
 
 ## Running Result
 
@@ -68,10 +81,12 @@ msh >
 | ----- | ------- | ------- |
 | UART  | Support | UART0/1 |
 | GPIO  | Support | 0-29    |
-| I2C   | -       | -       |
-| RTC   | -       | -       |
+| I2C   | Support | -       |
+| RTC   | Support | -       |
 | SDIO  | -       | -       |
-| SPI   | -       | -       |
-| TIMER | -       | -       |
-| WDT   | -       | -       |
-
+| SPI   | Support | -       |
+| TIMER | Support | -       |
+| WDT   | Support | -       |
+| ADC   | Support | -       |
+| FLASH | Support | -       |
+| PWM   | Support | -       |

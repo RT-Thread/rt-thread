@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 hpmicro
+ * Copyright (c) 2021 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -10,6 +10,7 @@
 
 #include "hpm_common.h"
 #include "hpm_pwm_regs.h"
+#include "hpm_soc_feature.h"
 /**
  * @brief PWM driver APIs
  * @defgroup pwm_interface PWM driver APIs
@@ -62,7 +63,7 @@ typedef enum pwm_register_update {
 } pwm_shadow_register_update_trigger_t;
 
 /**
- * @brief configure the state of channel 0∼7 outputs when the forced output is in effect
+ * @brief configure the state of channel 0-7 outputs when the forced output is in effect
  *
  */
 typedef enum pwm_fault_mode {
@@ -132,11 +133,17 @@ typedef enum pwm_output_type {
 typedef struct pwm_cmp_config {
     uint32_t cmp;         /**< compare value */
     bool enable_ex_cmp;   /**< enable extended compare value */
+#if defined(PWM_SOC_HRPWM_SUPPORT) && PWM_SOC_HRPWM_SUPPORT
+    bool enable_hrcmp;     /**< enable high precision pwm */
+#endif
     uint8_t mode;         /**< compare work mode: pwm_cmp_mode_output_compare or pwm_cmp_mode_input_capture */
     uint8_t update_trigger;  /**< compare configuration update trigger */
     uint8_t ex_cmp;       /**< extended compare value */
     uint8_t half_clock_cmp; /**< half clock compare value*/
     uint8_t jitter_cmp;     /**< jitter compare value */
+#if defined(PWM_SOC_HRPWM_SUPPORT) && PWM_SOC_HRPWM_SUPPORT
+    uint8_t hrcmp;         /**< high precision pwm */
+#endif
 } pwm_cmp_config_t;
 
 /**
@@ -153,10 +160,11 @@ typedef struct pwm_output_channel {
  *
  */
 typedef struct pwm_fault_source_config {
-    uint32_t source_mask;               /**< fault source mask*/
-    bool fault_recover_at_rising_edge;  /**< recover fault at rising edge */
-    bool external_fault_active_low;     /**< active external fault by low */
-    uint8_t fault_output_recovery_trigger; /**< fault output recoverty trigger */
+    uint32_t source_mask;                   /**< fault source mask*/
+    bool fault_recover_at_rising_edge;      /**< recover fault at rising edge */
+    bool fault_external_0_active_low;       /**< active external fault0 by low */
+    bool fault_external_1_active_low;       /**< active external fault1 by low */
+    uint8_t fault_output_recovery_trigger;  /**< fault output recoverty trigger */
 } pwm_fault_source_config_t;
 
 /**
@@ -164,6 +172,9 @@ typedef struct pwm_fault_source_config {
  *
  */
 typedef struct pwm_config {
+#if defined(PWM_SOC_HRPWM_SUPPORT) && PWM_SOC_HRPWM_SUPPORT
+    bool hrpwm_update_mode;             /**< mode one or zero, HR CMP update timing */
+#endif
     bool enable_output;                 /**< enable pwm output */
     bool invert_output;                 /**< invert pwm output level */
     uint8_t update_trigger;             /**< pwm config update trigger */
@@ -184,6 +195,33 @@ typedef struct pwm_pair_config {
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+/**
+ * @brief pwm deinitialize function
+ *
+ * @param[in] pwm_x PWM base address, HPM_PWMx(x=0..n)
+ *
+ */
+static inline void pwm_deinit(PWM_Type *pwm_x)
+{
+    pwm_x->IRQEN = 0;
+    pwm_x->DMAEN = 0;
+    pwm_x->SR |= pwm_x->SR;
+    pwm_x->STA = 0;
+    pwm_x->RLD = PWM_RLD_RLD_MASK;
+    for (uint8_t i = 0; i < PWM_SOC_CMP_MAX_COUNT; i++) {
+        pwm_x->CMP[i] = PWM_CMP_CMP_MASK;
+        pwm_x->CMPCFG[i] = 0;
+        pwm_x->CHCFG[i] = PWM_CHCFG_CMPSELEND_SET(PWM_SOC_CMP_MAX_COUNT - 1) | PWM_CHCFG_CMPSELBEG_SET(PWM_SOC_CMP_MAX_COUNT - 1);
+    }
+    pwm_x->FRCMD = 0;
+    pwm_x->GCR = 0;
+    pwm_x->SHCR = 0;
+    pwm_x->HRPWM_CFG = 0;
+    for (uint8_t i = 0; i < PWM_SOC_OUTPUT_TO_PWM_MAX_COUNT; i++) {
+        pwm_x->PWMCFG[i] = 0;
+    }
+}
 
 /**
  * @brief issue all shawdow register
@@ -238,6 +276,22 @@ static inline void pwm_set_start_count(PWM_Type *pwm_x,
         | PWM_STA_STA_SET(start);
 }
 
+#if defined(PWM_SOC_HRPWM_SUPPORT) && PWM_SOC_HRPWM_SUPPORT
+
+/**
+ * @brief set hrpwm counter start value
+ *
+ * @param pwm_x PWM base address, HPM_PWMx(x=0..n)
+ * @param start pwm timer counter start value
+ */
+static inline void pwm_set_hrpwm_start_count(PWM_Type *pwm_x,
+                                        uint32_t start)
+{
+    pwm_x->STA_HRPWM = PWM_STA_HRPWM_STA_SET(start);
+}
+
+#endif
+
 /**
  * @brief set the reload value
  *
@@ -254,6 +308,26 @@ static inline void pwm_set_reload(PWM_Type *pwm_x,
         | PWM_RLD_RLD_SET(reload);
 }
 
+#if defined(PWM_SOC_HRPWM_SUPPORT) && PWM_SOC_HRPWM_SUPPORT
+
+/**
+ * @brief set the hr pwm reload value
+ *
+ * @param pwm_x PWM base address, HPM_PWMx(x=0..n)
+ * @param hr_reload pwm timer counter hrpwm reload value
+ * @param reload pwm timer counter reload value
+ */
+static inline void pwm_set_hrpwm_reload(PWM_Type *pwm_x,
+                                   uint16_t hrpwm_reload,
+                                   uint32_t reload)
+{
+    pwm_shadow_register_unlock(pwm_x);
+    pwm_x->RLD_HRPWM = PWM_RLD_HRPWM_RLD_HR_SET(hrpwm_reload)
+        | PWM_RLD_HRPWM_RLD_SET(reload);
+}
+
+#endif
+
 /**
  * @brief clear pwm status register
  *
@@ -269,6 +343,20 @@ static inline void pwm_clear_status(PWM_Type *pwm_x, uint32_t mask)
 {
     pwm_x->SR |= mask;
 }
+
+#if defined(PWM_SOC_TIMER_RESET_SUPPORT) && PWM_SOC_TIMER_RESET_SUPPORT
+
+/**
+ * @brief Reset timer and extension timer
+ *
+ * @param pwm_x PWM base address, HPM_PWMx(x=0..n)
+ */
+static inline void pwm_timer_reset(PWM_Type *pwm_x)
+{
+     pwm_x->GCR = ((pwm_x->GCR & ~(PWM_GCR_TIMERRESET_MASK)) | PWM_GCR_TIMERRESET_SET(1));
+}
+
+#endif
 
 /**
  * @brief get pwm status register
@@ -388,24 +476,69 @@ static inline void pwm_set_load_counter_shadow_register_trigger(PWM_Type *pwm_x,
 }
 
 /**
- * @brief configure the hardware to trigger the shadow register to update the CMP
+ * @brief Configure input capture cmp to trigger shadow register updates
  *
  * @param[in] pwm_x PWM base address, HPM_PWMx(x=0..n)
  * @param[in] index cmp index (0..(PWM_SOC_CMP_MAX_COUNT-1))
- * @param[in] edge  which edge is used as shadow register hardware load event
+ * @param[in] is_falling_edge  which edge is used as shadow register hardware load event
  *  @arg 1- falling edge
  *  @arg 0- rising edge
  */
 static inline void pwm_load_cmp_shadow_on_capture(PWM_Type *pwm_x,
                                                    uint8_t index,
-                                                   bool edge)
+                                                   bool is_falling_edge)
 {
     pwm_x->CMPCFG[index] |= PWM_CMPCFG_CMPMODE_MASK;
     pwm_x->GCR = ((pwm_x->GCR & ~(PWM_GCR_CMPSHDWSEL_MASK | PWM_GCR_HWSHDWEDG_MASK))
             | PWM_GCR_CMPSHDWSEL_SET(index)
-            | PWM_GCR_HWSHDWEDG_SET(edge));
+            | PWM_GCR_HWSHDWEDG_SET(is_falling_edge));
 }
 
+#if defined(PWM_SOC_SHADOW_TRIG_SUPPORT) && PWM_SOC_SHADOW_TRIG_SUPPORT
+
+/**
+ * @brief RLD, STA shadow registers take effect at the reload point
+ *
+ * @param pwm_x pwm_x PWM base address, HPM_PWMx(x=0..n)
+ * @param is_enable true or false
+ */
+static inline void pwm_set_cnt_shadow_trig_reload(PWM_Type *pwm_x, bool is_enable)
+{
+	pwm_x->SHCR = ((pwm_x->SHCR & ~PWM_SHCR_CNT_UPDATE_RELOAD_MASK)
+            | PWM_SHCR_CNT_UPDATE_RELOAD_SET(is_enable));
+}
+
+/**
+ * @brief Set the timer shadow register to update the trigger edge
+ *
+ * @param[in] pwm_x pwm_x PWM base address, HPM_PWMx(x=0..n)
+ * @param[in] is_falling_edge which edge is used as shadow register hardware load event
+ *  @arg 1- falling edge
+ *  @arg 0- rising edge
+ */
+static inline void pwm_set_cnt_shadow_trig_edge(PWM_Type *pwm_x,
+                                                   bool is_falling_edge)
+{
+    pwm_x->SHCR = ((pwm_x->SHCR & ~PWM_SHCR_CNT_UPDATE_EDGE_MASK)
+            | PWM_SHCR_CNT_UPDATE_EDGE_SET(is_falling_edge));
+}
+
+/**
+ * @brief Set the force output shadow register to update the trigger edge
+ *
+ * @param[in] pwm_x pwm_x PWM base address, HPM_PWMx(x=0..n)
+ * @param[in] is_falling_edge which edge is used as shadow register hardware load event
+ *  @arg 1- falling edge
+ *  @arg 0- rising edge
+ */
+static inline void pwm_set_force_shadow_trig_edge(PWM_Type *pwm_x,
+                                                   bool is_falling_edge)
+{
+    pwm_x->SHCR = ((pwm_x->SHCR & ~PWM_SHCR_FORCE_UPDATE_EDGE_MASK)
+            | PWM_SHCR_FORCE_UPDATE_EDGE_SET(is_falling_edge));
+}
+
+#endif
 /**
  * @brief disable pwn cmp half clock
  *
@@ -455,6 +588,35 @@ static inline void pwm_cmp_update_cmp_value(PWM_Type *pwm_x, uint8_t index,
         | PWM_CMP_CMP_SET(cmp) | PWM_CMP_XCMP_SET(ex_cmp);
 }
 
+#if defined(PWM_SOC_HRPWM_SUPPORT) && PWM_SOC_HRPWM_SUPPORT
+/**
+ * @brief update high-precision cmp value
+ *
+ * @param[in] pwm_x PWM base address, HPM_PWMx(x=0..n)
+ * @param[in] index cmp index (0..(PWM_SOC_CMP_MAX_COUNT-1))
+ * @param[in] cmp clock counter compare value
+ * @param[in] hrcmp high-precision pwm
+ */
+static inline void pwm_cmp_update_hrcmp_value(PWM_Type *pwm_x, uint8_t index,
+                                            uint32_t cmp, uint16_t hrcmp)
+{
+    pwm_x->CMP_HRPWM[index] = (pwm_x->CMP_HRPWM[index] & ~(PWM_CMP_HRPWM_CMP_MASK | PWM_CMP_HRPWM_CMP_HR_MASK))
+        | PWM_CMP_HRPWM_CMP_SET(cmp) | PWM_CMP_HRPWM_CMP_HR_SET(hrcmp);
+}
+#endif
+
+/**
+ * @brief Forced update of pwm cmp register value, cmp content guaranteed accurate by user
+ *
+ * @param[in] pwm_x PWM base address, HPM_PWMx(x=0..n)
+ * @param[in] index cmp index (0..(PWM_SOC_CMP_MAX_COUNT-1))
+ * @param[in] cmp cmp register data
+ */
+static inline void pwm_cmp_force_value(PWM_Type *pwm_x, uint8_t index, uint32_t cmp)
+{
+    pwm_x->CMP[index] = cmp;
+}
+
 /**
  * @brief config pwm cmp
  *
@@ -466,12 +628,22 @@ static inline void pwm_config_cmp(PWM_Type *pwm_x, uint8_t index, pwm_cmp_config
 {
     pwm_shadow_register_unlock(pwm_x);
     if (config->mode == pwm_cmp_mode_output_compare) {
-        pwm_x->CMPCFG[index] = PWM_CMPCFG_XCNTCMPEN_SET(config->enable_ex_cmp)
+#if defined(PWM_SOC_HRPWM_SUPPORT) && PWM_SOC_HRPWM_SUPPORT
+        if (config->enable_hrcmp) {
+            pwm_x->CMPCFG[index] = PWM_CMPCFG_CMPSHDWUPT_SET(config->update_trigger);
+            pwm_x->CMP[index] = PWM_CMP_HRPWM_CMP_SET(config->cmp)
+                        | PWM_CMP_HRPWM_CMP_HR_SET(config->hrcmp);
+        } else {
+#endif
+            pwm_x->CMPCFG[index] = (config->enable_ex_cmp ? PWM_CMPCFG_XCNTCMPEN_MASK : 0)
                         | PWM_CMPCFG_CMPSHDWUPT_SET(config->update_trigger);
-        pwm_x->CMP[index] = PWM_CMP_CMP_SET(config->cmp)
+            pwm_x->CMP[index] = PWM_CMP_CMP_SET(config->cmp)
                         | PWM_CMP_XCMP_SET(config->ex_cmp)
                         | PWM_CMP_CMPHLF_SET(config->half_clock_cmp)
                         | PWM_CMP_CMPJIT_SET(config->jitter_cmp);
+#if defined(PWM_SOC_HRPWM_SUPPORT) && PWM_SOC_HRPWM_SUPPORT
+        }
+#endif
     } else {
         pwm_x->CMPCFG[index] |= PWM_CMPCFG_CMPMODE_MASK;
     }
@@ -505,7 +677,7 @@ static inline void pwm_config_fault_source(PWM_Type *pwm_x, pwm_fault_source_con
                 | PWM_GCR_FAULTRECEDG_MASK | PWM_GCR_FAULTEXPOL_MASK
                 | PWM_GCR_FAULTRECHWSEL_MASK))
         | config->source_mask
-        | PWM_GCR_FAULTEXPOL_SET(config->external_fault_active_low)
+        | PWM_GCR_FAULTEXPOL_SET((config->fault_external_0_active_low ? 0x1 : 0) | (config->fault_external_1_active_low ? 0x2 : 0))
         | PWM_GCR_FAULTRECEDG_SET(config->fault_recover_at_rising_edge)
         | PWM_GCR_FAULTRECHWSEL_SET(config->fault_output_recovery_trigger);
 }
@@ -518,6 +690,7 @@ static inline void pwm_config_fault_source(PWM_Type *pwm_x, pwm_fault_source_con
 static inline void pwm_clear_fault(PWM_Type *pwm_x)
 {
     pwm_x->GCR |= PWM_GCR_FAULTCLR_MASK;
+    pwm_x->GCR &= ~PWM_GCR_FAULTCLR_MASK;
 }
 
 /**
@@ -669,7 +842,54 @@ static inline void pwm_config_pwm(PWM_Type *pwm_x, uint8_t index,
         | PWM_PWMCFG_FAULTRECTIME_SET(config->fault_recovery_trigger)
         | PWM_PWMCFG_FRCSRCSEL_SET(config->force_source)
         | PWM_PWMCFG_PAIR_SET(enable_pair_mode)
+#if defined(PWM_SOC_HRPWM_SUPPORT) && PWM_SOC_HRPWM_SUPPORT
+        | PWM_PWMCFG_HR_UPDATE_MODE_SET(config->hrpwm_update_mode)
+#endif
         | PWM_PWMCFG_DEADAREA_SET(config->dead_zone_in_half_cycle);
+}
+
+/**
+ * @brief getting the counter reload value for a pwm timer
+ *
+ * @param pwm_x PWM base address, HPM_PWMx(x=0..n)
+ * @retval pwm reload value
+ */
+static inline uint32_t pwm_get_reload_val(PWM_Type *pwm_x)
+{
+    return PWM_RLD_RLD_GET(pwm_x->RLD);
+}
+
+/**
+ * @brief getting the extended counter reload value for a pwm timer
+ *
+ * @param pwm_x PWM base address, HPM_PWMx(x=0..n)
+ * @retval pwm extended reload value
+ */
+static inline uint32_t pwm_get_ex_reload_val(PWM_Type *pwm_x)
+{
+    return PWM_RLD_XRLD_GET(pwm_x->RLD);
+}
+
+/**
+ * @brief getting the value of the pwm counter
+ *
+ * @param pwm_x PWM base address, HPM_PWMx(x=0..n)
+ * @retval pwm counter value
+ */
+static inline uint32_t pwm_get_counter_val(PWM_Type *pwm_x)
+{
+    return PWM_CNT_CNT_GET(pwm_x->CNT);
+}
+
+/**
+ * @brief getting the value of the pwm extended counter
+ *
+ * @param pwm_x PWM base address, HPM_PWMx(x=0..n)
+ * @retval pwm counter value
+ */
+static inline uint32_t pwm_get_ex_counter_val(PWM_Type *pwm_x)
+{
+    return PWM_CNT_XCNT_GET(pwm_x->CNT);
 }
 
 /**
@@ -771,14 +991,131 @@ hpm_stat_t pwm_update_raw_cmp_edge_aligned(PWM_Type *pwm_x, uint8_t cmp_index,
  * @brief update raw compare value for central aligned waveform
  *
  * @param[in] pwm_x PWM base address, HPM_PWMx(x=0..n)
- * @param[in] cmp1_index index of cmp1 to be adjusted (cmp1_index must even number)
- * @param[in] cmp2_index index of cmp2 to be adjusted (cmp2_index must odd number)
+ * @param[in] cmp1_index index of cmp1 to be adjusted (cmp1_index must be even number)
+ * @param[in] cmp2_index index of cmp2 to be adjusted (cmp2_index must be odd number)
  * @param[in] target_cmp1 target compare value for cmp1
  * @param[in] target_cmp2 target compare value for cmp2
  * @retval hpm_stat_t @ref status_invalid_argument or @ref status_success cmp1_index
  */
 hpm_stat_t pwm_update_raw_cmp_central_aligned(PWM_Type *pwm_x, uint8_t cmp1_index,
                                        uint8_t cmp2_index, uint32_t target_cmp1, uint32_t target_cmp2);
+#if defined(PWM_SOC_HRPWM_SUPPORT) && PWM_SOC_HRPWM_SUPPORT
+/**
+ * @brief Enable high-precision pwm
+ *
+ * @param[in] pwm_x @ref PWM_Type PWM base address
+ */
+static inline void pwm_enable_hrpwm(PWM_Type *pwm_x)
+{
+    pwm_x->GCR = (pwm_x->GCR & ~(PWM_GCR_HR_PWM_EN_MASK)) | PWM_GCR_HR_PWM_EN_SET(1);
+}
+
+/**
+ * @brief Disable high-precision pwm
+ *
+ * @param[in] pwm_x @ref PWM_Type PWM base address
+ */
+static inline void pwm_disable_hrpwm(PWM_Type *pwm_x)
+{
+    pwm_x->GCR = pwm_x->GCR & ~(PWM_GCR_HR_PWM_EN_MASK);
+}
+
+/**
+ * @brief Calibrate all channels of hrpwm
+ *
+ * @param[in] pwm_x @ref PWM_Type PWM base address
+ */
+static inline void pwm_cal_hrpwm_start(PWM_Type *pwm_x)
+{
+    pwm_x->HRPWM_CFG |= PWM_HRPWM_CFG_CAL_START_MASK;
+}
+
+/**
+ * @brief Calibrate specified hrpwm channels
+ *
+ * @param[in] pwm_x @ref PWM_Type PWM base address
+ * @param[in] chn Channel number
+ */
+static inline void pwm_cal_hrpwm_chn_start(PWM_Type *pwm_x, uint8_t chn)
+{
+    pwm_x->HRPWM_CFG |= PWM_HRPWM_CFG_CAL_START_SET(chn);
+}
+
+/**
+ * @brief Wait for the completion of calibration of the specified channel of high-precision PWM, blocking
+ *
+ * @param[in] pwm_x @ref PWM_Type PWM base address
+ * @param[in] chn Channel number
+ */
+static inline void pwm_cal_hrpwm_chn_wait(PWM_Type *pwm_x, uint8_t chn)
+{
+    while (PWM_ANASTS_CALON_GET(pwm_x->ANASTS[chn])) {
+    };
+}
+
+/**
+ * @brief get calibration status
+ *
+ * @param[in] pwm_x pwm_x @ref PWM_Type PWM base address
+ * @param[in] chn Channel number
+ * @return uint32_t  finished will be set zero.
+ */
+static inline uint32_t pwm_get_cal_hrpwm_status(PWM_Type *pwm_x, uint8_t chn)
+{
+    return PWM_ANASTS_CALON_GET(pwm_x->ANASTS[chn]);
+}
+
+/**
+ * @brief getting the counter reload value for hrpwm counter
+ *
+ * @param pwm_x pwm_x @ref PWM_Type PWM base address
+ * @return uint32_t hrpwm reload
+ */
+static inline uint32_t pwm_get_hrpwm_reload_val(PWM_Type *pwm_x)
+{
+    return PWM_RLD_HRPWM_RLD_GET(pwm_x->RLD_HRPWM);
+}
+
+/**
+ * @brief getting the counter reload value for hrpwm hr counter
+ *
+ * @param pwm_x pwm_x @ref PWM_Type PWM base address
+ * @return uint32_t hrpwm hr reload
+ */
+static inline uint32_t pwm_get_hrpwm_hr_reload_val(PWM_Type *pwm_x)
+{
+    return PWM_RLD_HRPWM_RLD_HR_GET(pwm_x->RLD_HRPWM);
+}
+
+
+/**
+ * @brief update raw high-precision compare value for edge aligned waveform
+ *
+ * @param[in] pwm_x PWM base address, HPM_PWMx(x=0..n)
+ * @param[in] cmp_index index of cmp to be adjusted (0..(PWM_SOC_PWM_MAX_COUNT-1))
+ * @param[in] target_cmp target compare value
+ * @param[in] target_hrcmp target high-precision compare value
+ * @return hpm_stat_t
+ */
+hpm_stat_t pwm_update_raw_hrcmp_edge_aligned(PWM_Type *pwm_x, uint8_t cmp_index, uint32_t target_cmp,
+            uint16_t target_hrcmp);
+
+/**
+ * @brief update raw high-precision compare value for central aligned waveform
+ *
+ * @param[in] pwm_x PWM base address, HPM_PWMx(x=0..n)
+ * @param[in] cmp1_index index of cmp1 to be adjusted (cmp1_index must be even number)
+ * @param[in] cmp2_index index of cmp2 to be adjusted (cmp2_index must be odd number)
+ * @param[in] target_cmp1 target compare value for cmp1
+ * @param[in] target_cmp2 target compare value for cmp2
+ * @param[in] target_hrcmp1 target high-precision compare value for cmp1
+ * @param[in] target_hrcmp2 target high-precision compare value for cmp2
+ * @return hpm_stat_t
+ */
+hpm_stat_t pwm_update_raw_hrcmp_central_aligned(PWM_Type *pwm_x, uint8_t cmp1_index,
+                                       uint8_t cmp2_index, uint32_t target_cmp1, uint32_t target_cmp2,
+                                        uint16_t target_hrcmp1, uint16_t target_hrcmp2);
+#endif
 
 #ifdef __cplusplus
 }

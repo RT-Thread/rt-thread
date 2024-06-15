@@ -28,6 +28,7 @@
 
 #ifdef RT_USING_SMART
 #include <lwp_arch.h>
+void rt_hw_backtrace(rt_uint32_t *ffp, rt_ubase_t sepc);
 #else
 #define rt_hw_backtrace(...) (0)
 #endif
@@ -155,6 +156,7 @@ static const char *get_exception_msg(int id)
 void handle_user(rt_size_t scause, rt_size_t stval, rt_size_t sepc, struct rt_hw_stack_frame *sp)
 {
     rt_size_t id = __MASKVALUE(scause, __MASK(63UL));
+    struct rt_lwp *lwp;
 
     /* user page fault */
     enum rt_mm_fault_op fault_op;
@@ -167,7 +169,7 @@ void handle_user(rt_size_t scause, rt_size_t stval, rt_size_t sepc, struct rt_hw
             break;
         case EP_LOAD_ACCESS_FAULT:
             fault_op = MM_FAULT_OP_READ;
-            fault_type = MM_FAULT_TYPE_ACCESS_FAULT;
+            fault_type = MM_FAULT_TYPE_GENERIC;
             break;
         case EP_LOAD_ADDRESS_MISALIGNED:
             fault_op = MM_FAULT_OP_READ;
@@ -179,7 +181,7 @@ void handle_user(rt_size_t scause, rt_size_t stval, rt_size_t sepc, struct rt_hw
             break;
         case EP_STORE_ACCESS_FAULT:
             fault_op = MM_FAULT_OP_WRITE;
-            fault_type = MM_FAULT_TYPE_ACCESS_FAULT;
+            fault_type = MM_FAULT_TYPE_GENERIC;
             break;
         case EP_STORE_ADDRESS_MISALIGNED:
             fault_op = MM_FAULT_OP_WRITE;
@@ -191,7 +193,7 @@ void handle_user(rt_size_t scause, rt_size_t stval, rt_size_t sepc, struct rt_hw
             break;
         case EP_INSTRUCTION_ACCESS_FAULT:
             fault_op = MM_FAULT_OP_EXECUTE;
-            fault_type = MM_FAULT_TYPE_ACCESS_FAULT;
+            fault_type = MM_FAULT_TYPE_GENERIC;
             break;
         case EP_INSTRUCTION_ADDRESS_MISALIGNED:
             fault_op = MM_FAULT_OP_EXECUTE;
@@ -203,16 +205,21 @@ void handle_user(rt_size_t scause, rt_size_t stval, rt_size_t sepc, struct rt_hw
 
     if (fault_op)
     {
+        rt_base_t saved_stat;
+        lwp = lwp_self();
         struct rt_aspace_fault_msg msg = {
             .fault_op = fault_op,
             .fault_type = fault_type,
             .fault_vaddr = (void *)stval,
         };
 
-        if (rt_aspace_fault_try_fix(&msg))
+        __asm__ volatile ("csrrsi %0, sstatus, 2":"=r"(saved_stat));
+        if (lwp && rt_aspace_fault_try_fix(lwp->aspace, &msg))
         {
+            __asm__ volatile ("csrw sstatus, %0"::"r"(saved_stat));
             return;
         }
+        __asm__ volatile ("csrw sstatus, %0"::"r"(saved_stat));
     }
     LOG_E("[FATAL ERROR] Exception %ld:%s\n", id, get_exception_msg(id));
     LOG_E("scause:0x%p,stval:0x%p,sepc:0x%p\n", scause, stval, sepc);
@@ -223,7 +230,7 @@ void handle_user(rt_size_t scause, rt_size_t stval, rt_size_t sepc, struct rt_hw
     LOG_E("User Fault, killing thread: %s", rt_thread_self()->parent.name);
 
     EXIT_TRAP;
-    sys_exit(-1);
+    sys_exit_group(-1);
 }
 #endif
 

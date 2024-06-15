@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -120,9 +120,7 @@ static void lcd_gpio_init(void)
     rt_pin_mode(LCD_RES_PIN, PIN_MODE_OUTPUT);
 
     rt_pin_write(LCD_RES_PIN, PIN_LOW);
-
-    //wait at least 100ms for reset
-    rt_thread_delay(RT_TICK_PER_SECOND / 10);
+    rt_thread_delay(RT_TICK_PER_SECOND / 10); /* wait at least 100ms for reset */
     rt_pin_write(LCD_RES_PIN, PIN_HIGH);
 }
 
@@ -216,7 +214,7 @@ static int rt_hw_lcd_init(void)
 
     return RT_EOK;
 }
-INIT_DEVICE_EXPORT(rt_hw_lcd_init);
+INIT_COMPONENT_EXPORT(rt_hw_lcd_init);
 
 #ifndef BSP_USING_LVGL
 /**

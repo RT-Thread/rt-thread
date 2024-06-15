@@ -24,10 +24,9 @@
 /* kservice optimization */
 
 #define RT_KPRINTF_USING_LONGLONG
-#define RT_DEBUG
-#define RT_DEBUG_COLOR
-#define RT_DEBUG_INIT_CONFIG
-#define RT_DEBUG_INIT 1
+#define RT_USING_DEBUG
+#define RT_DEBUGING_COLOR
+#define RT_DEBUGING_CONTEXT
 
 /* Inter-Thread communication */
 
@@ -40,21 +39,19 @@
 
 /* Memory Management */
 
-#define RT_PAGE_MAX_ORDER 11
 #define RT_USING_MEMPOOL
 #define RT_USING_SLAB
 #define RT_USING_MEMHEAP
 #define RT_MEMHEAP_FAST_MODE
 #define RT_USING_SLAB_AS_HEAP
 #define RT_USING_HEAP
-
-/* Kernel Device Object */
-
 #define RT_USING_DEVICE
+#define RT_USING_SCHED_THREAD_CTX
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "uarths"
-#define RT_VER_NUM 0x50000
+#define RT_VER_NUM 0x50100
+#define RT_BACKTRACE_LEVEL_MAX_NR 32
 #define ARCH_CPU_64BIT
 #define RT_USING_HW_ATOMIC
 #define ARCH_RISCV
@@ -81,12 +78,17 @@
 #define MSH_USING_BUILT_IN_COMMANDS
 #define FINSH_USING_DESCRIPTION
 #define FINSH_ARG_MAX 10
+#define FINSH_USING_OPTION_COMPLETION
+
+/* DFS: device virtual file system */
+
 #define RT_USING_DFS
 #define DFS_USING_POSIX
 #define DFS_USING_WORKDIR
+#define DFS_FD_MAX 64
+#define RT_USING_DFS_V1
 #define DFS_FILESYSTEMS_MAX 16
 #define DFS_FILESYSTEM_TYPES_MAX 16
-#define DFS_FD_MAX 64
 #define RT_USING_DFS_ELMFAT
 
 /* elm-chan's FatFs, Generic FAT Filesystem Module */
@@ -112,7 +114,6 @@
 #define RT_USING_SERIAL_V1
 #define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 64
-#define RT_USING_PIN
 #define RT_USING_SPI
 #define RT_USING_SPI_MSD
 #define RT_USING_SFUD
@@ -120,13 +121,22 @@
 #define RT_SFUD_USING_FLASH_INFO_TABLE
 #define RT_SFUD_SPI_MAX_HZ 50000000
 #define RT_DEBUG_SFUD
+#define RT_USING_PIN
+#define RT_USING_KTIME
 
 /* Using USB */
 
 
 /* C/C++ and POSIX layer */
 
-#define RT_LIBC_DEFAULT_TIMEZONE 8
+/* ISO-ANSI C layer */
+
+/* Timezone and Daylight Saving Time */
+
+#define RT_LIBC_USING_LIGHT_TZ_DST
+#define RT_LIBC_TZ_DEFAULT_HOUR 8
+#define RT_LIBC_TZ_DEFAULT_MIN 0
+#define RT_LIBC_TZ_DEFAULT_SEC 0
 
 /* POSIX (Portable Operating System Interface) layer */
 
@@ -140,6 +150,9 @@
 #define RT_USING_CPLUSPLUS
 
 /* Network */
+
+
+/* Memory protection */
 
 
 /* Utilities */
@@ -172,6 +185,15 @@
 
 
 /* Wiced WiFi */
+
+
+/* CYW43012 WiFi */
+
+
+/* BL808 WiFi */
+
+
+/* CYW43439 WiFi */
 
 
 /* IoT Cloud */
@@ -215,16 +237,21 @@
 
 /* peripheral libraries and drivers */
 
-/* sensors drivers */
+/* HAL & SDK Drivers */
 
-
-/* touch drivers */
+/* STM32 HAL & SDK Drivers */
 
 
 /* Kendryte SDK */
 
 #define PKG_USING_K210_SDK
 #define PKG_USING_K210_SDK_LATEST_VERSION
+
+/* sensors drivers */
+
+
+/* touch drivers */
+
 
 /* AI packages */
 
@@ -245,7 +272,7 @@
 /* Arduino libraries */
 
 
-/* Projects */
+/* Projects and Demos */
 
 
 /* Sensors */
@@ -288,23 +315,6 @@
 #define BSP_USING_UART1
 #define BSP_UART1_TXD_PIN 20
 #define BSP_UART1_RXD_PIN 21
-#define BSP_USING_SPI1
-#define BSP_SPI1_CLK_PIN 27
-#define BSP_SPI1_D0_PIN 28
-#define BSP_SPI1_D1_PIN 26
-#define BSP_SPI1_USING_SS0
-#define BSP_SPI1_SS0_PIN 29
-#define BSP_USING_LCD
-#define BSP_LCD_CS_PIN 36
-#define BSP_LCD_WR_PIN 39
-#define BSP_LCD_DC_PIN 38
-#define BSP_LCD_RST_PIN 37
-#define BSP_LCD_BACKLIGHT_PIN -1
-#define BSP_LCD_BACKLIGHT_ACTIVE_LOW
-#define BSP_LCD_CLK_FREQ 15000000
-#define BSP_BOARD_K210_OPENMV_TEST
-#define BSP_LCD_X_MAX 240
-#define BSP_LCD_Y_MAX 320
 #define __STACKSIZE__ 4096
 
 #endif

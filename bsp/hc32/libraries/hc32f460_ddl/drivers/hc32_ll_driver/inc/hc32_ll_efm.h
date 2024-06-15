@@ -7,9 +7,12 @@
    Change Logs:
    Date             Author          Notes
    2022-03-31       CDT             First version
+   2022-10-31       CDT             Add Flash protect level define
+   2023-01-15       CDT             Code refine
+   2023-09-30       CDT             Add FLASH security addr define
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -67,7 +70,6 @@ typedef struct {
     uint32_t u32Addr;
     uint32_t u32Size;
 } stc_efm_remap_init_t;
-
 /**
  * @}
  */
@@ -90,6 +92,8 @@ typedef struct {
 #define EFM_OTP_END_ADDR                (0x03000FFBUL)    /*!< OTP end address */
 #define EFM_OTP_LOCK_ADDR_START         (0x03000FC0UL)    /*!< OTP lock start address */
 #define EFM_OTP_LOCK_ADDR_END           (0x03000FFCUL)    /*!< OTP lock end address */
+#define EFM_SECURITY_START_ADDR         (0x0317FFE0UL)    /*!< Flash security start address */
+#define EFM_SECURITY_END_ADDR           (0x0317FFFFUL)    /*!< Flash security end address */
 
 /**
  * @}
@@ -266,8 +270,7 @@ typedef struct {
 
 /**
  * @defgroup EFM_OTP_Lock_Address EFM Otp Lock_address
- * @note    x at range of 0~14 while HC32F460, HC32F451, HC32F452
- *          x at range of 0~181 while HC32F4A0, HC32F472
+ * @note    x at range of 0~14
  * @{
  */
 #define EFM_OTP_BLOCK_LOCKADDR(x)    (EFM_OTP_LOCK_ADDR + 0x04UL * (x))   /*!< OTP block x  lock address */
@@ -284,7 +287,7 @@ typedef struct {
  * @{
  */
 #define EFM_REMAP_OFF               (0UL)
-#define EFM_REMAP_ON                EFM_MMF_REMCR_EN
+#define EFM_REMAP_ON                (EFM_MMF_REMCR_EN)
 /**
  * @}
  */
@@ -334,6 +337,28 @@ typedef struct {
 
 #define EFM_REMAP_RAM_START_ADDR    (0x1FFF8000UL)
 #define EFM_REMAP_RAM_END_ADDR      (0x1FFFFFFFUL)
+/**
+ * @}
+ */
+
+/**
+ * @defgroup EFM_Protect_Level EFM protect level
+ * @{
+ */
+#define EFM_PROTECT_LEVEL1          (1U)
+#define EFM_PROTECT_LEVEL2          (2U)
+/**
+ * @}
+ */
+
+/**
+ * @defgroup EFM_MCU_Status EFM protect level
+ * @{
+ */
+#define EFM_MCU_PROTECT1_FREE       (0U)
+#define EFM_MCU_PROTECT1_LOCK       (1U)
+#define EFM_MCU_PROTECT1_UNLOCK     (2U)
+#define EFM_MCU_PROTECT2_LOCK       (4U)
 /**
  * @}
  */
@@ -415,6 +440,7 @@ en_flag_status_t EFM_GetAnyStatus(uint32_t u32Flag);
 en_flag_status_t EFM_GetStatus(uint32_t u32Flag);
 void EFM_GetUID(stc_efm_unique_id_t *pstcUID);
 
+void EFM_DataCacheResetCmd(en_functional_state_t enNewState);
 void EFM_CacheCmd(en_functional_state_t enNewState);
 
 void EFM_LowVoltageReadCmd(en_functional_state_t enNewState);
@@ -432,6 +458,9 @@ void EFM_REMAP_SetSize(uint8_t u8RemapIdx, uint32_t u32Size);
 void EFM_LowVoltageCmd(en_functional_state_t enNewState);
 
 void EFM_SetWindowProtectAddr(uint32_t u32StartAddr, uint32_t u32EndAddr);
+
+void EFM_Protect_Enable(uint8_t u8Level);
+int32_t EFM_WriteSecurityCode(uint8_t *pu8Buf, uint32_t u32Len);
 
 /**
  * @}

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 hpmicro
+ * Copyright (c) 2021 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -11,6 +11,9 @@
 #include "hpm_dac_regs.h"
 #include "hpm_soc_feature.h"
 
+/* The range of DAC output value setting is from 0.0 to 10000.0, which is mapped to 0 to 100 in percentage. */
+#define DAC_OUTPUT(PERCENT) (PERCENT / 10000.0f * DAC_SOC_MAX_DATA)
+
 #define DAC_AHB_ERROR_EVENT     DAC_IRQ_EN_AHB_ERROR_MASK
 #define DAC_FIFO_EMPTY_EVENT    DAC_IRQ_EN_FIFO_EMPTY_MASK
 #define DAC_BUF1_COMPLETE_EVENT DAC_IRQ_EN_BUF1_CMPT_MASK
@@ -20,7 +23,8 @@
 typedef enum {
     dac_mode_direct = 0,
     dac_mode_step,
-    dac_mode_buffer
+    dac_mode_buffer,
+    dac_mode_trig
 } dac_mode_t;
 
 typedef enum {
@@ -33,8 +37,7 @@ typedef enum {
 typedef struct {
     bool sync_mode;
     uint8_t dac_mode;
-    uint8_t clk_dac_div;
-    uint16_t div_cfg;
+    uint8_t ana_div;
 } dac_config_t;
 
 typedef enum {

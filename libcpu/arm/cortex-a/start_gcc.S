@@ -8,9 +8,14 @@
  * 2013-07-05     Bernard      the first version
  * 2018-11-22     Jesven       in the interrupt context, use rt_scheduler_do_irq_switch checks
  *                             and switches to a new thread
+ * 2024-01-16     huanghe      restructure this code section following the aarch64 architectural style
  */
 
 #include "rtconfig.h"
+
+#define ARM_CPU_STACK_SIZE_OFFSET   12
+#define ARM_CPU_STACK_SIZE  (1<<ARM_CPU_STACK_SIZE_OFFSET)
+
 .equ Mode_USR,        0x10
 .equ Mode_FIQ,        0x11
 .equ Mode_IRQ,        0x12
@@ -22,17 +27,73 @@
 .equ I_Bit,           0x80   /* when I bit is set, IRQ is disabled */
 .equ F_Bit,           0x40   /* when F bit is set, FIQ is disabled */
 
-#ifdef RT_USING_SMART
-.data
-.align 14
-init_mtbl:
-    .space 16*1024
+/*Load the physical address of a symbol into a register. 
+  Through pv_off calculates the offset of the physical address */
+.macro get_phy, reg, symbol, _pvoff
+    ldr \reg, =\symbol
+    add \reg, \_pvoff
+.endm
+/*Calculate the offset between the physical address and the virtual address of the "_reset".*/
+.macro get_pvoff, tmp, out
+    ldr     \tmp, =_reset
+    adr     \out, _reset
+    sub     \out, \out, \tmp
+.endm
+
+pv_off       .req r11 /* Used to store the offset between physical address and the virtual address */
+cpu_id       .req r10 /* Used to store the cpu id */
+
+/* reset entry */
+    .globl _reset
+_reset:
+    /* Calculate the offset between the physical address and the virtual address */
+    get_pvoff r0, pv_off
+
+    /* exit hyp mode  */
+    bl init_cpu_mode
+    /* clear bss section */
+    bl init_kernel_bss
+    /* Initializes the assembly environment stack  */
+    bl init_cpu_stack_early
+
+    /* init mmu  */
+    b init_mmu_page_table_early
+
+init_cpu_stack_early:
+
+    cps #Mode_SVC
+    
+    get_phy r0, svc_stack_top, pv_off
+    mov     sp, r0
+
+#ifdef RT_USING_FPU
+    mov r4, #0xfffffff
+    mcr p15, 0, r4, c1, c0, 2
 #endif
 
-.text
-/* reset entry */
-.globl _reset
-_reset:
+    mov pc, lr
+
+init_kernel_bss:
+
+    /* enable I cache + branch prediction */
+    mrc p15, 0, r0, c1, c0, 0
+    orr     r0, r0, #(1<<12)
+    orr     r0, r0, #(1<<11)
+    mcr p15, 0, r0, c1, c0, 0
+
+    mov r0,#0                   /* get a zero      */
+    get_phy r1, __bss_start, pv_off
+    get_phy r2, __bss_end, pv_off
+
+bss_loop:
+    cmp r1,r2                   /* check if data to clear           */
+    strlo r0,[r1],#4            /* clear 4 bytes                    */
+    blo bss_loop                /* loop until done                  */
+
+    mov pc, lr
+
+init_cpu_mode:
+
 #ifdef ARCH_ARMV8
     /* Check for HYP mode */
     mrs r0, cpsr_all
@@ -40,20 +101,26 @@ _reset:
     mov r8, #0x1A
     cmp r0, r8
     beq overHyped
-    b continue
+    b continue_exit
 
 overHyped: /* Get out of HYP mode */
-    adr r1, continue
+    mov r9, lr 
+    /* HYP mode has a dedicated register, called ELR_hyp, 
+    to store the exception return address.
+    The lr register needs to be temporarily saved,
+    otherwise "mov pc lr" cannot be used after switching modes. */
+    adr r1, continue_exit
     msr ELR_hyp, r1
     mrs r1, cpsr_all
-    and r1, r1, #0x1f    /* CPSR_MODE_MASK */
-    orr r1, r1, #0x13    /* CPSR_MODE_SUPERVISOR */
+    and r1, r1, #0xFFFFFFE0    /* CPSR_MODE_MASK */
+    orr r1, r1, #0x13          /* CPSR_MODE_SUPERVISOR */
     msr SPSR_hyp, r1
     eret
 
-continue:
+continue_exit:
+    mov lr ,r9
+    
 #endif
-
 #ifdef SOC_BCM283x
     /* Suspend the other cpu cores */
     mrc p15, 0, r0, c0, c0, 5
@@ -69,23 +136,30 @@ continue:
     mov r8, #0x1A
     cmp r0, r8
     beq overHyped
-    b continue
+    b continue_exit
 
 overHyped: /* Get out of HYP mode */
-    adr r1, continue
+    mov r9, lr 
+    /* HYP mode has a dedicated register, called ELR_hyp, 
+    to store the exception return address.
+    The lr register needs to be temporarily saved,
+    otherwise "mov pc lr" cannot be used after switching modes. */
+    adr r1, continue_exit
     msr ELR_hyp, r1
     mrs r1, cpsr_all
-    and r1, r1, #0x1f    /* CPSR_MODE_MASK */
-    orr r1, r1, #0x13    /* CPSR_MODE_SUPERVISOR */
+    and r1, r1, #0xFFFFFFE0    /* CPSR_MODE_MASK */
+    orr r1, r1, #0x13          /* CPSR_MODE_SUPERVISOR */
     msr SPSR_hyp, r1
     eret
 
-continue:
+continue_exit:
+    mov lr ,r9
     /* set the cpu to SVC32 mode and disable interrupt */
     mrs r0, cpsr
     bic r0, r0, #0x1f
     orr r0, r0, #0x13
     msr cpsr_c, r0
+    
 #endif
 
     /* invalid tlb before enable mmu */
@@ -94,6 +168,7 @@ continue:
     mcr p15, 0, r0, c1, c0, 0
     dsb
     isb
+
     mov r0, #0
     mcr p15, 0, r0, c8, c7, 0
     mcr p15, 0, r0, c7, c5, 0    /* iciallu */
@@ -101,158 +176,82 @@ continue:
     dsb
     isb
 
-#ifdef RT_USING_SMART
-    /* load r5 with PV_OFFSET */
-    ldr r7, =_reset
-    adr r5, _reset
-    sub r5, r5, r7
+    mov pc, lr
 
-    mov r7, #0x100000
-    sub r7, #1
-    mvn r8, r7
+init_mmu_page_table_early:
+    get_phy r0, init_mtbl, pv_off
+    mov r1, pv_off
+    bl rt_hw_mem_setup_early
 
+    /* get cpu id */
+    bl rt_hw_cpu_id_early
+    mov cpu_id ,r0
+    /* enable_mmu_page_table_early is changed to master_core_startup */
+    ldr     lr, =master_core_startup
+    
+    cmp cpu_id, #0
+    beq enable_mmu_page_table_early
 
-    ldr r9, =KERNEL_VADDR_START
-
-    ldr r6, =__bss_end
-    add r6, r7
-    and r6, r8    /* r6 end vaddr align up to 1M */
-    sub r6, r9    /* r6 is size */
-
-    ldr sp, =svc_stack_n_limit
-    add sp, r5    /* use paddr */
-
-    ldr r0, =init_mtbl
-    add r0, r5
-    mov r1, r6
-    mov r2, r5
-    bl init_mm_setup
-
-    ldr lr, =after_enable_mmu
-    ldr r0, =init_mtbl
-    add r0, r5
-    b enable_mmu
-
-after_enable_mmu:
-#endif
-#ifndef SOC_BCM283x
-    /* set the cpu to SVC32 mode and disable interrupt */
-    cps #Mode_SVC
-#endif
-
-#ifdef RT_USING_FPU
-    mov r4, #0xfffffff
-    mcr p15, 0, r4, c1, c0, 2
-#endif
-
-    /* disable the data alignment check */
-    mrc p15, 0, r1, c1, c0, 0
-    bic r1, #(1<<1)             /* Disable Alignment fault checking */
-#ifndef RT_USING_SMART
-    bic r1, #(1<<0)             /* Disable MMU */
-    bic r1, #(1<<2)             /* Disable data cache */
-    bic r1, #(1<<11)            /* Disable program flow prediction */
-    bic r1, #(1<<12)            /* Disable instruction cache */
-    bic r1, #(3<<19)            /* bit[20:19] must be zero */
-#endif /* RT_USING_SMART */
-    mcr p15, 0, r1, c1, c0, 0
-
-    /* enable I cache + branch prediction */
-    mrc p15, 0, r0, c1, c0, 0
-    orr     r0, r0, #(1<<12)
-    orr     r0, r0, #(1<<11)
-    mcr p15, 0, r0, c1, c0, 0
-
-    /* setup stack */
-    bl  stack_setup
-
-    /* clear .bss */
-    mov r0,#0                   /* get a zero                       */
-    ldr r1,=__bss_start         /* bss start                        */
-    ldr r2,=__bss_end           /* bss end                          */
-
-bss_loop:
-    cmp r1,r2                   /* check if data to clear           */
-    strlo r0,[r1],#4            /* clear 4 bytes                    */
-    blo bss_loop                /* loop until done                  */
-
-    mov r0, r5
-    bl rt_kmem_pvoff_set
 
 #ifdef RT_USING_SMP
-    mrc p15, 0, r1, c1, c0, 1
-    mov r0, #(1<<6)
-    orr r1, r0
-    mcr p15, 0, r1, c1, c0, 1   /* enable smp */
+#ifdef RT_SMP_AUTO_BOOT
+    /* if cpu id > 0, stop or wait */
+    ldr r0, =secondary_cpu_entry
+    mov r1, #0
+    str r1, [r0] /* clean secondary_cpu_entry */
+#endif
 #endif
 
-    /**
-     * void rt_hw_init_mmu_table(struct mem_desc *mdesc, rt_uint32_t size)
-     * initialize the mmu table and enable mmu
-     */
-    ldr r0, =platform_mem_desc
-    ldr r1, =platform_mem_desc_size
-    ldr r1, [r1]
-    bl rt_hw_init_mmu_table
+secondary_loop:
+    @ cpu core 1 goes into sleep until core 0 wakeup it
+    wfe
+#ifdef RT_SMP_AUTO_BOOT
+    ldr r1, =secondary_cpu_entry
+    ldr r0, [r1]
+    cmp r0, #0
+    blxne r0 /* if(secondary_cpu_entry) secondary_cpu_entry(); */
+#endif /* RT_SMP_AUTO_BOOT */
+    b secondary_loop
+    
+enable_mmu_page_table_early:
+    /* init TTBR0  */
+    get_phy r0, init_mtbl, pv_off
+    mcr     p15, #0, r0, c2, c0, #0
+    dmb
+    
+    ldr     r0,=#0x55555555
+    mcr     p15, #0, r0, c3, c0, #0
 
-#ifdef RT_USING_SMART
-    ldr r0, =MMUTable     /* vaddr    */
-    add r0, r5            /* to paddr */
-    bl  rt_hw_mmu_switch
-#else
-    bl rt_hw_mmu_init
-#endif
-
-    /* start RT-Thread Kernel */
-    ldr     pc, _rtthread_startup
-_rtthread_startup:
-    .word rtthread_startup
-
-stack_setup:
-
-#ifdef RT_USING_SMP
-    /* cpu id */
-    mrc p15, 0, r0, c0, c0, 5
-    and r0, r0, #0xf
-    add r0, r0, #1
-#else
-    mov r0, #1
-#endif
-
-    cps #Mode_UND
-    ldr r1, =und_stack_n
-    add sp, r1, r0, asl #12
-
-    cps #Mode_IRQ
-    ldr r1, =irq_stack_n
-    add sp, r1, r0, asl #12
-
-    cps #Mode_FIQ
-    ldr r1, =irq_stack_n
-    add sp, r1, r0, asl #12
-
-    cps #Mode_ABT
-    ldr r1, =abt_stack_n
-    add sp, r1, r0, asl #12
-
-    cps #Mode_SVC
-    ldr r1, =svc_stack_n
-    add sp, r1, r0, asl #12
-
-    bx      lr
-
-#ifdef RT_USING_SMART
-.align 2
-.global enable_mmu
-enable_mmu:
-    orr r0, #0x18
-    mcr p15, 0, r0, c2, c0, 0    /* ttbr0 */
-
+    /* disable ttbr1 */
     mov r0, #(1 << 5)            /* PD1=1 */
     mcr p15, 0, r0, c2, c0, 2    /* ttbcr */
 
-    mov r0, #1
-    mcr p15, 0, r0, c3, c0, 0    /* dacr */
+    
+    /*  init stack for cpu mod */
+    cps #Mode_UND
+    ldr r1,=und_stack_top
+    sub sp, r1, cpu_id, asl #ARM_CPU_STACK_SIZE_OFFSET
+
+
+    cps #Mode_IRQ
+    ldr r1, =irq_stack_top
+    sub sp, r1, cpu_id, asl #ARM_CPU_STACK_SIZE_OFFSET
+
+
+    cps #Mode_FIQ
+    ldr r1, =irq_stack_top
+    sub sp, r1, cpu_id, asl #ARM_CPU_STACK_SIZE_OFFSET
+
+
+    cps #Mode_ABT
+    ldr r1, =abt_stack_top
+    sub sp, r1, cpu_id, asl #ARM_CPU_STACK_SIZE_OFFSET
+
+
+    cps #Mode_SVC
+    ldr r1, =svc_stack_top
+    sub sp, r1, cpu_id, asl #ARM_CPU_STACK_SIZE_OFFSET
+
 
     /* invalid tlb before enable mmu */
     mov r0, #0
@@ -261,33 +260,20 @@ enable_mmu:
     mcr p15, 0, r0, c7, c5, 6    /* bpiall */
 
     mrc p15, 0, r0, c1, c0, 0
+    bic r0, r0, #0x7                    /* clear bit1~3 */
     orr r0, #((1 << 12) | (1 << 11))    /* instruction cache, branch prediction */
     orr r0, #((1 << 2) | (1 << 0))      /* data cache, mmu enable */
     mcr p15, 0, r0, c1, c0, 0
     dsb
     isb
+
     mov pc, lr
 
-.global rt_hw_set_process_id
-rt_hw_set_process_id:
-    LSL r0, r0, #8
-    MCR p15, 0, r0, c13, c0, 1
-    mov pc, lr
+master_core_startup :
+    mov r0 ,pv_off
+    bl rt_kmem_pvoff_set
 
-#endif
-.global rt_hw_mmu_switch
-rt_hw_mmu_switch:
-    orr r0, #0x18
-    mcr p15, 0, r0, c2, c0, 0       // ttbr0
-
-                                    //invalid tlb
-    mov r0, #0
-    mcr p15, 0, r0, c8, c7, 0
-    mcr p15, 0, r0, c7, c5, 0       //iciallu
-    mcr p15, 0, r0, c7, c5, 6       //bpiall 
-
-    dsb
-    isb
+    ldr     lr, =rtthread_startup
     mov pc, lr
 
 .global rt_hw_mmu_tbl_get
@@ -296,9 +282,29 @@ rt_hw_mmu_tbl_get:
     bic r0, #0x18
     mov pc, lr
 
-_halt:
-    wfe
-    b _halt
+.weak rt_hw_cpu_id_early
+rt_hw_cpu_id_early:
+    mrc p15, 0, r0, c0, c0, 5
+    and r0, r0, #0xf
+    mov pc, lr
+
+#ifdef RT_USING_SMP
+.global rt_secondary_cpu_entry
+rt_secondary_cpu_entry:
+    ldr r0, =_reset
+    adr pv_off, _reset
+    sub pv_off, pv_off, r0
+
+    bl init_cpu_stack_early
+
+    /* init mmu  */
+    bl rt_hw_cpu_id_early
+    mov cpu_id ,r0
+
+    ldr lr ,= rt_hw_secondary_cpu_bsp_start
+    b enable_mmu_page_table_early
+#endif
+
 
 /* exception handlers: undef, swi, padt, dabt, resv, irq, fiq */
 .section .text.isr, "ax"
@@ -324,8 +330,6 @@ vector_fiq:
 .globl vector_irq
 vector_irq:
 #ifdef RT_USING_SMP
-    clrex
-
     stmfd   sp!, {r0, r1}
     cps     #Mode_SVC
     mov     r0, sp          /* svc_sp */
@@ -465,8 +469,8 @@ rt_hw_context_switch_interrupt_do:
     ldr     r6,  [r6]
     ldr     sp,  [r6]       /* get new task's stack pointer */
 
-    bl      rt_thread_self
 #ifdef RT_USING_SMART
+    bl      rt_thread_self
     mov     r4, r0
     bl      lwp_aspace_switch
     mov     r0, r4
@@ -538,8 +542,8 @@ vector_swi:
 vector_undef:
     push_svc_reg
     bl      rt_hw_trap_undef
-    cps     #Mode_UND
 #ifdef RT_USING_FPU
+    cps     #Mode_UND
     sub     sp, sp, #17 * 4
     ldr     lr, [sp, #15*4]
     ldmia   sp, {r0 - r12}
@@ -616,65 +620,76 @@ rt_hw_clz:
     clz r0, r0
     bx lr
 
-#ifdef RT_USING_SMP
 
-.global rt_secondary_cpu_entry
-rt_secondary_cpu_entry:
-#ifdef RT_USING_SMART
-    ldr     r0, =_reset
-    adr     r5, _reset
-    sub     r5, r5, r0
+#include "asm-generic.h"
 
-    ldr     lr, =after_enable_mmu_n
-    ldr     r0, =init_mtbl
-    add     r0, r5
-    b       enable_mmu
+START_POINT(_thread_start)
+    mov     r10, lr
+    blx     r1
+    blx     r10
+    b       .   /* never here */
+START_POINT_END(_thread_start)
 
-after_enable_mmu_n:
-    ldr     r0, =MMUTable
-    add     r0, r5
-    bl      rt_hw_mmu_switch
-#endif
+.data
+.align 14
+init_mtbl:
+    .space  (4*4096) /* The  L1 translation table therefore contains 4096 32-bit (word-sized) entries.  */
 
-#ifdef RT_USING_FPU
-    mov r4, #0xfffffff
-    mcr p15, 0, r4, c1, c0, 2
-#endif
+.global rt_hw_mmu_switch
+rt_hw_mmu_switch:
+    orr r0, #0x18
+    mcr p15, 0, r0, c2, c0, 0       // ttbr0
+                                    //invalid tlb
+    mov r0, #0
+    mcr p15, 0, r0, c8, c7, 0
+    mcr p15, 0, r0, c7, c5, 0       //iciallu
+    mcr p15, 0, r0, c7, c5, 6       //bpiall
 
-    mrc p15, 0, r1, c1, c0, 1
-    mov r0, #(1<<6)
-    orr r1, r0
-    mcr p15, 0, r1, c1, c0, 1    /* enable smp */
+    dsb
+    isb
+    mov pc, lr
 
-    mrc p15, 0, r0, c1, c0, 0
-    bic r0, #(1<<13)
-    mcr p15, 0, r0, c1, c0, 0
 
-    bl stack_setup
+.global rt_hw_set_process_id
+rt_hw_set_process_id:
+    LSL r0, r0, #8
+    MCR p15, 0, r0, c13, c0, 1
+    mov pc, lr
 
-    /* initialize the mmu table and enable mmu */
-#ifndef RT_USING_SMART
-    bl rt_hw_mmu_init
-#endif
-
-    b rt_hw_secondary_cpu_bsp_start
-#endif
-
-#ifndef RT_CPUS_NR
-#define RT_CPUS_NR 1
-#endif
 
 .bss
 .align 3     /* align to  2~3=8 */
+
+.cpus_stack:
 svc_stack_n:
-    .space (RT_CPUS_NR << 12)
-svc_stack_n_limit:
+#if defined(RT_USING_SMP) && (RT_CPUS_NR > 1)
+    .space ((RT_CPUS_NR - 1) * ARM_CPU_STACK_SIZE)
+#endif
+    .space (ARM_CPU_STACK_SIZE)
+svc_stack_top:
 
 irq_stack_n:
-    .space (RT_CPUS_NR << 12)
+#if defined(RT_USING_SMP) && (RT_CPUS_NR > 1)
+    .space ((RT_CPUS_NR - 1) * ARM_CPU_STACK_SIZE)
+#endif
+    .space (ARM_CPU_STACK_SIZE)
+irq_stack_top:
+
 
 und_stack_n:
-    .space (RT_CPUS_NR << 12)
+#if defined(RT_USING_SMP) && (RT_CPUS_NR > 1)
+    .space ((RT_CPUS_NR - 1) * ARM_CPU_STACK_SIZE)
+#endif
+    .space (ARM_CPU_STACK_SIZE)
+und_stack_top:
 
 abt_stack_n:
-    .space (RT_CPUS_NR << 12)
+#if defined(RT_USING_SMP) && (RT_CPUS_NR > 1)
+    .space ((RT_CPUS_NR - 1) * ARM_CPU_STACK_SIZE)
+#endif
+    .space (ARM_CPU_STACK_SIZE)
+abt_stack_top:
+
+
+
+

@@ -1,20 +1,21 @@
 /*
- * Copyright 2022 hpmicro
+ * Copyright (c) 2022-2023 HPMicro
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
 ENTRY(_start)
 
-STACK_SIZE = DEFINED(_stack_size) ? _stack_size : 0x4000;
-HEAP_SIZE = DEFINED(_heap_size) ? _heap_size : 0x4000;
+STACK_SIZE = _stack_size;
+HEAP_SIZE = _heap_size;
 
 MEMORY
 {
     XPI0 (rx) : ORIGIN = 0x80003000, LENGTH = _flash_size - 0x3000
-    ILM (wx) : ORIGIN = 0, LENGTH = 128K
-    DLM (wx) : ORIGIN = 0x80000, LENGTH = 128K
-    AXI_SRAM (wx) : ORIGIN = 0x1080000, LENGTH = 256K
+    ILM (wx) : ORIGIN = 0x00000000, LENGTH = 128K
+    DLM (w) : ORIGIN = 0x00080000, LENGTH = 128K
+    AXI_SRAM (wx) : ORIGIN = 0x01080000, LENGTH = 256K
     AXI_SRAM_NONCACHEABLE (wx) : ORIGIN = 0x010C0000, LENGTH = 256K
+    AHB_SRAM (w) : ORIGIN = 0xF0300000, LENGTH = 32k
 }
 
 SECTIONS
@@ -24,7 +25,19 @@ SECTIONS
         KEEP(*(.start))
     } > XPI0
 
-    .text : {
+    __vector_load_addr__ = ADDR(.start) + SIZEOF(.start);
+    .vectors ORIGIN(ILM) : AT(__vector_load_addr__) {
+        . = ALIGN(8);
+        __vector_ram_start__ = .;
+        KEEP(*(.vector_table))
+        KEEP(*(.isr_vector))
+        KEEP(*(.vector_s_table))
+        KEEP(*(.isr_s_vector))
+        . = ALIGN(8);
+        __vector_ram_end__ = .;
+    } > ILM
+
+    .text (__vector_load_addr__ + SIZEOF(.vectors)) : {
         . = ALIGN(8);
         *(.text)
         *(.text*)
@@ -43,6 +56,38 @@ SECTIONS
 
         KEEP (*(.init))
         KEEP (*(.fini))
+
+        /* section information for usbh class */
+        . = ALIGN(8);
+        __usbh_class_info_start__ = .;
+        KEEP(*(.usbh_class_info))
+        __usbh_class_info_end__ = .;
+
+        /* RT-Thread related sections - Start */
+        /* section information for finsh shell */
+        . = ALIGN(4);
+        __fsymtab_start = .;
+        KEEP(*(FSymTab))
+        __fsymtab_end = .;
+        . = ALIGN(4);
+        __vsymtab_start = .;
+        KEEP(*(VSymTab))
+        __vsymtab_end = .;
+        . = ALIGN(4);
+
+        . = ALIGN(4);
+        __rt_init_start = .;
+        KEEP(*(SORT(.rti_fn*)))
+        __rt_init_end = .;
+        . = ALIGN(4);
+
+        /* section information for modules */
+        . = ALIGN(4);
+        __rtmsymtab_start = .;
+        KEEP(*(RTMSymTab))
+        __rtmsymtab_end = .;
+
+        /* RT-Thread related sections - end */
         . = ALIGN(8);
     } > XPI0
 
@@ -54,16 +99,8 @@ SECTIONS
     PROVIDE (_etext = .);
     PROVIDE (etext = .);
 
-    .vectors ORIGIN(ILM) : AT(etext) {
-        . = ALIGN(8);
-        __vector_ram_start__ = .;
-        KEEP(*(.vector_table))
-        KEEP(*(.isr_vector))
-        . = ALIGN(8);
-        __vector_ram_end__ = .;
-    } > ILM
-
-    .data : AT(etext + __vector_ram_end__ - __vector_ram_start__) {
+    __data_load_addr__ = etext;
+    .data : AT(__data_load_addr__) {
         . = ALIGN(8);
         __data_start__ = .;
         __global_pointer$ = . + 0x800;
@@ -71,8 +108,6 @@ SECTIONS
         *(.data*)
         *(.sdata)
         *(.sdata*)
-        *(.tdata)
-        *(.tdata*)
 
         KEEP(*(.jcr))
         KEEP(*(.dynamic))
@@ -116,36 +151,52 @@ SECTIONS
         PROVIDE (edata = .);
     } > AXI_SRAM
 
-    .fast : AT(etext + __vector_ram_end__ - __vector_ram_start__ + __data_end__ - __data_start__) {
+    __fast_load_addr__ = etext + SIZEOF(.data);
+    .fast : AT(__fast_load_addr__) {
         . = ALIGN(8);
-        __ramfunc_start__ = .;
+        PROVIDE(__ramfunc_start__ = .);
         *(.fast)
+        *(.fast.*)
         . = ALIGN(8);
-        __ramfunc_end__ = .;
-    } > AXI_SRAM
+        PROVIDE(__ramfunc_end__ = .);
+    } > ILM
 
-    .bss : {
+    .bss (NOLOAD) : {
         . = ALIGN(8);
         __bss_start__ = .;
         *(.bss)
         *(.bss*)
-        *(.tbss*)
         *(.sbss*)
         *(.scommon)
         *(.scommon*)
-        *(.tcommon*)
         *(.dynsbss*)
         *(COMMON)
         . = ALIGN(8);
         _end = .;
         __bss_end__ = .;
-    } > DLM
+    } > AXI_SRAM
 
-    .heap : {
+    .tbss (NOLOAD) : {
         . = ALIGN(8);
-        __heap_start__ = .;
-        . += HEAP_SIZE;
-        __heap_end__ = .;
+        PROVIDE(__tbss_start__ = .);
+        __thread_pointer$ = .;
+        *(.tbss)
+        *(.tbss.*)
+        *(.gnu.linkonce.tb.*)
+        *(.tcommon)
+        . = ALIGN(8);
+        PROVIDE(__tbss_end__ = .);
+    } > AXI_SRAM
+
+    __tdata_load_addr__ = etext + SIZEOF(.data) + SIZEOF(.fast);
+    .tdata : AT(__tdata_load_addr__) {
+        . = ALIGN(8);
+        PROVIDE(__tdata_start__ = .);
+        *(.tdata)
+        *(.tdata.*)
+        *(.gnu.linkonce.td.*)
+        . = ALIGN(8);
+        PROVIDE(__tdata_end__ = .);
     } > AXI_SRAM
 
     .framebuffer (NOLOAD) : {
@@ -154,11 +205,17 @@ SECTIONS
         . = ALIGN(8);
     } > AXI_SRAM
 
-    .noncacheable : AT(etext + __vector_ram_end__ - __vector_ram_start__ + __data_end__ - __data_start__ + __ramfunc_end__ - __ramfunc_start__){
+    __noncacheable_init_load_addr__ = etext + SIZEOF(.data) + SIZEOF(.fast) + SIZEOF(.tdata);
+    .noncacheable.init : AT(__noncacheable_init_load_addr__) {
         . = ALIGN(8);
         __noncacheable_init_start__ = .;
         KEEP(*(.noncacheable.init))
         __noncacheable_init_end__ = .;
+        . = ALIGN(8);
+    } > AXI_SRAM_NONCACHEABLE
+
+    .noncacheable.bss (NOLOAD) : {
+        . = ALIGN(8);
         KEEP(*(.noncacheable))
         __noncacheable_bss_start__ = .;
         KEEP(*(.noncacheable.bss))
@@ -166,7 +223,22 @@ SECTIONS
         . = ALIGN(8);
     } > AXI_SRAM_NONCACHEABLE
 
-    .stack : {
+    .ahb_sram (NOLOAD) : {
+        KEEP(*(.ahb_sram))
+    } > AHB_SRAM
+
+    .fast_ram (NOLOAD) : {
+        KEEP(*(.fast_ram))
+    } > DLM
+
+    .heap (NOLOAD) : {
+        . = ALIGN(8);
+        __heap_start__ = .;
+        . += HEAP_SIZE;
+        __heap_end__ = .;
+    } > DLM
+
+    .stack (NOLOAD) : {
         . = ALIGN(8);
         __stack_base__ = .;
         . += STACK_SIZE;
@@ -177,4 +249,7 @@ SECTIONS
 
     __noncacheable_start__ = ORIGIN(AXI_SRAM_NONCACHEABLE);
     __noncacheable_end__ = ORIGIN(AXI_SRAM_NONCACHEABLE) + LENGTH(AXI_SRAM_NONCACHEABLE);
+
+    __fw_size__ = SIZEOF(.start) + SIZEOF(.vectors) + SIZEOF(.rel) + SIZEOF(.text) + SIZEOF(.data) + SIZEOF(.fast) + SIZEOF(.tdata) + SIZEOF(.noncacheable.init);
+    ASSERT(__fw_size__ <= LENGTH(XPI0), "******  FAILED! XPI0 has not enough space!  ******")
 }

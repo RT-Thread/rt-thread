@@ -18,12 +18,12 @@
 
 #include "riscv_mmu.h"
 
-void mmu_enable_user_page_access()
+void mmu_enable_user_page_access(void)
 {
     set_csr(sstatus,SSTATUS_SUM);
 }
 
-void mmu_disable_user_page_access()
+void mmu_disable_user_page_access(void)
 {
     clear_csr(sstatus,SSTATUS_SUM);
 }

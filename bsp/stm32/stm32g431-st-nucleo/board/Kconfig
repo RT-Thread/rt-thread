@@ -1,12 +1,5 @@
 menu "Hardware Drivers Config"
 
-config SOC_STM32G431RB
-    bool
-    select SOC_SERIES_STM32G4
-    select RT_USING_COMPONENTS_INIT
-    select RT_USING_USER_MAIN
-    default y
-
 menu "Onboard Peripheral Drivers"
 
 endmenu
@@ -59,7 +52,7 @@ menu "On-chip Peripheral Drivers"
                 depends on BSP_USING_UART4 && RT_SERIAL_USING_DMA
                 default n
         endif
-    source "../libraries/HAL_Drivers/Kconfig"
+    source "$BSP_DIR/../libraries/HAL_Drivers/drivers/Kconfig"
 
 endmenu
 

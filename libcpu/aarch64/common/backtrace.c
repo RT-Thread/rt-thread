@@ -6,63 +6,132 @@
  * Change Logs:
  * Date           Author       Notes
  * 2022-06-02     Jesven       the first version
+ * 2023-06-24     WangXiaoyao  Support backtrace for non-active thread
+ * 2023-10-16     Shell        Support a new backtrace framework
  */
 
+
 #include <rtthread.h>
-#include <backtrace.h>
+#include <rthw.h>
 
-#define BT_NESTING_MAX 100
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
-static int unwind_frame(struct bt_frame *frame)
+#include "mm_aspace.h"
+#include "mmu.h"
+
+#define INST_WORD_BYTES                 4
+#define WORD                            sizeof(rt_base_t)
+#define ARCH_CONTEXT_FETCH(pctx, id)    (*(((unsigned long *)pctx) + (id)))
+#define PTR_NORMALIZE(ptr)              (ptr = rt_backtrace_ptr_normalize(ptr))
+
+rt_weak void *rt_backtrace_ptr_normalize(void *ptr)
 {
-    unsigned long fp = frame->fp;
-
-    if ((fp & 0x7)
-#ifdef RT_USING_LWP
-         || fp < KERNEL_VADDR_START
-#endif
-            )
-    {
-        return 1;
-    }
-    frame->fp = *(unsigned long *)fp;
-    frame->pc = *(unsigned long *)(fp + 8);
-    return 0;
+    return ptr;
 }
 
-static void walk_unwind(unsigned long pc, unsigned long fp)
+rt_inline rt_err_t _bt_kaddr(rt_ubase_t *fp, struct rt_hw_backtrace_frame *frame)
 {
-    struct bt_frame frame;
-    unsigned long lr = pc;
-    int nesting = 0;
+    rt_err_t rc;
 
-    frame.fp = fp;
-    while (nesting < BT_NESTING_MAX)
+    PTR_NORMALIZE(fp);
+
+    frame->fp = *fp;
+    frame->pc = *(fp + 1) - INST_WORD_BYTES;
+
+    if ((rt_ubase_t)fp == frame->fp)
     {
-        rt_kprintf(" %p", (void *)lr);
-        if (unwind_frame(&frame))
+        rc = -RT_ERROR;
+    }
+    else
+    {
+        rc = RT_EOK;
+    }
+    return rc;
+}
+
+#ifdef RT_USING_SMART
+#include <lwp_user_mm.h>
+rt_inline rt_err_t _bt_uaddr(rt_lwp_t lwp, rt_ubase_t *fp, struct rt_hw_backtrace_frame *frame)
+{
+    rt_err_t rc;
+    if (lwp_data_get(lwp, &frame->fp, fp, WORD) != WORD)
+    {
+        rc = -RT_EFAULT;
+    }
+    else if (lwp_data_get(lwp, &frame->pc, fp + 1, WORD) != WORD)
+    {
+        rc = -RT_EFAULT;
+    }
+    else if ((rt_base_t)fp == frame->fp)
+    {
+        rc = -RT_ERROR;
+    }
+    else
+    {
+        frame->pc -= INST_WORD_BYTES;
+        rc = RT_EOK;
+    }
+    return rc;
+}
+#endif /* RT_USING_SMART */
+
+rt_err_t rt_hw_backtrace_frame_unwind(rt_thread_t thread, struct rt_hw_backtrace_frame *frame)
+{
+    rt_err_t rc = -RT_ERROR;
+    rt_ubase_t *fp = (rt_ubase_t *)frame->fp;
+
+    if (fp && !((long)fp & 0x7))
+    {
+#ifdef RT_USING_SMART
+        if (thread && thread->lwp && rt_scheduler_is_available())
         {
-            break;
+            rt_lwp_t lwp = thread->lwp;
+            void *this_lwp = lwp_self();
+            if (this_lwp == lwp && rt_kmem_v2p(fp) != ARCH_MAP_FAILED)
+            {
+                rc = _bt_kaddr(fp, frame);
+            }
+            else if (lwp_user_accessible_ext(lwp, fp, sizeof(rt_base_t)))
+            {
+                rc = _bt_uaddr(lwp, fp, frame);
+            }
+            else
+            {
+                rc = -RT_EFAULT;
+            }
         }
-        lr = frame.pc;
-        nesting++;
+        else
+#endif
+        if (rt_kmem_v2p(fp) != ARCH_MAP_FAILED)
+        {
+            rc = _bt_kaddr(fp, frame);
+        }
+        else
+        {
+            rc = -RT_EFAULT;
+        }
     }
+    else
+    {
+        rc = -RT_EFAULT;
+    }
+    return rc;
 }
 
-void backtrace(unsigned long pc, unsigned long lr, unsigned long fp)
+rt_err_t rt_hw_backtrace_frame_get(rt_thread_t thread, struct rt_hw_backtrace_frame *frame)
 {
-    rt_kprintf("please use: addr2line -e rtthread.elf -a -f %p", (void *)pc);
-    walk_unwind(lr, fp);
-    rt_kprintf("\n");
+    rt_err_t rc;
+    if (!thread || !frame)
+    {
+        rc = -RT_EINVAL;
+    }
+    else
+    {
+        frame->pc = ARCH_CONTEXT_FETCH(thread->sp, 3);
+        frame->fp = ARCH_CONTEXT_FETCH(thread->sp, 7);
+        rc = RT_EOK;
+    }
+    return rc;
 }
-
-int rt_backtrace(void)
-{
-    unsigned long pc = (unsigned long)backtrace;
-    unsigned long ra = (unsigned long)__builtin_return_address(0U);
-    unsigned long fr = (unsigned long)__builtin_frame_address(0U);
-
-    backtrace(pc, ra, fr);
-    return 0;
-}
-MSH_CMD_EXPORT_ALIAS(rt_backtrace, bt_test, backtrace test);

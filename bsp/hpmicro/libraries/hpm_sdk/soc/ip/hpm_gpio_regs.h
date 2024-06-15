@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 hpmicro
+ * Copyright (c) 2021-2023 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -11,10 +11,8 @@
 
 typedef struct {
     struct {
-        __RW uint32_t VALUE;                   /* 0x0: GPIO input value */
-        __RW uint32_t SET;                     /* 0x4: GPIO input set */
-        __RW uint32_t CLEAR;                   /* 0x8: GPIO input clear */
-        __RW uint32_t TOGGLE;                  /* 0xC: GPIO input toggle */
+        __R  uint32_t VALUE;                   /* 0x0: GPIO input value */
+        __R  uint8_t  RESERVED0[12];           /* 0x4 - 0xF: Reserved */
     } DI[16];
     struct {
         __RW uint32_t VALUE;                   /* 0x100: GPIO output value */
@@ -30,9 +28,7 @@ typedef struct {
     } OE[16];
     struct {
         __W  uint32_t VALUE;                   /* 0x300: GPIO interrupt flag value */
-        __RW uint32_t SET;                     /* 0x304: GPIO interrupt flag set */
-        __RW uint32_t CLEAR;                   /* 0x308: GPIO interrupt flag clear */
-        __RW uint32_t TOGGLE;                  /* 0x30C: GPIO interrupt flag toggle */
+        __R  uint8_t  RESERVED0[12];           /* 0x304 - 0x30F: Reserved */
     } IF[16];
     struct {
         __RW uint32_t VALUE;                   /* 0x400: GPIO interrupt enable value */
@@ -58,12 +54,18 @@ typedef struct {
         __RW uint32_t CLEAR;                   /* 0x708: GPIO interrupt asynchronous clear */
         __RW uint32_t TOGGLE;                  /* 0x70C: GPIO interrupt asynchronous toggle */
     } AS[16];
+    struct {
+        __RW uint32_t VALUE;                   /* 0x800: GPIO dual edge interrupt enable value */
+        __RW uint32_t SET;                     /* 0x804: GPIO dual edge interrupt enable set */
+        __RW uint32_t CLEAR;                   /* 0x808: GPIO dual edge interrupt enable clear */
+        __RW uint32_t TOGGLE;                  /* 0x80C: GPIO dual edge interrupt enable toggle */
+    } PD[16];
 } GPIO_Type;
 
 
 /* Bitfield definition for register of struct array DI: VALUE */
 /*
- * INPUT (RW)
+ * INPUT (RO)
  *
  * GPIO input bus value, each bit represents a bus bit
  * 0: low level presents on chip pin
@@ -71,47 +73,7 @@ typedef struct {
  */
 #define GPIO_DI_VALUE_INPUT_MASK (0xFFFFFFFFUL)
 #define GPIO_DI_VALUE_INPUT_SHIFT (0U)
-#define GPIO_DI_VALUE_INPUT_SET(x) (((uint32_t)(x) << GPIO_DI_VALUE_INPUT_SHIFT) & GPIO_DI_VALUE_INPUT_MASK)
 #define GPIO_DI_VALUE_INPUT_GET(x) (((uint32_t)(x) & GPIO_DI_VALUE_INPUT_MASK) >> GPIO_DI_VALUE_INPUT_SHIFT)
-
-/* Bitfield definition for register of struct array DI: SET */
-/*
- * INPUT (RW)
- *
- * GPIO input bus value, each bit represents a bus bit
- * 0: low level presents on chip pin
- * 1: high level presents on chip pin
- */
-#define GPIO_DI_SET_INPUT_MASK (0xFFFFFFFFUL)
-#define GPIO_DI_SET_INPUT_SHIFT (0U)
-#define GPIO_DI_SET_INPUT_SET(x) (((uint32_t)(x) << GPIO_DI_SET_INPUT_SHIFT) & GPIO_DI_SET_INPUT_MASK)
-#define GPIO_DI_SET_INPUT_GET(x) (((uint32_t)(x) & GPIO_DI_SET_INPUT_MASK) >> GPIO_DI_SET_INPUT_SHIFT)
-
-/* Bitfield definition for register of struct array DI: CLEAR */
-/*
- * INPUT (RW)
- *
- * GPIO input bus value, each bit represents a bus bit
- * 0: low level presents on chip pin
- * 1: high level presents on chip pin
- */
-#define GPIO_DI_CLEAR_INPUT_MASK (0xFFFFFFFFUL)
-#define GPIO_DI_CLEAR_INPUT_SHIFT (0U)
-#define GPIO_DI_CLEAR_INPUT_SET(x) (((uint32_t)(x) << GPIO_DI_CLEAR_INPUT_SHIFT) & GPIO_DI_CLEAR_INPUT_MASK)
-#define GPIO_DI_CLEAR_INPUT_GET(x) (((uint32_t)(x) & GPIO_DI_CLEAR_INPUT_MASK) >> GPIO_DI_CLEAR_INPUT_SHIFT)
-
-/* Bitfield definition for register of struct array DI: TOGGLE */
-/*
- * INPUT (RW)
- *
- * GPIO input bus value, each bit represents a bus bit
- * 0: low level presents on chip pin
- * 1: high level presents on chip pin
- */
-#define GPIO_DI_TOGGLE_INPUT_MASK (0xFFFFFFFFUL)
-#define GPIO_DI_TOGGLE_INPUT_SHIFT (0U)
-#define GPIO_DI_TOGGLE_INPUT_SET(x) (((uint32_t)(x) << GPIO_DI_TOGGLE_INPUT_SHIFT) & GPIO_DI_TOGGLE_INPUT_MASK)
-#define GPIO_DI_TOGGLE_INPUT_GET(x) (((uint32_t)(x) & GPIO_DI_TOGGLE_INPUT_MASK) >> GPIO_DI_TOGGLE_INPUT_SHIFT)
 
 /* Bitfield definition for register of struct array DO: VALUE */
 /*
@@ -229,45 +191,6 @@ typedef struct {
 #define GPIO_IF_VALUE_IRQ_FLAG_SHIFT (0U)
 #define GPIO_IF_VALUE_IRQ_FLAG_SET(x) (((uint32_t)(x) << GPIO_IF_VALUE_IRQ_FLAG_SHIFT) & GPIO_IF_VALUE_IRQ_FLAG_MASK)
 #define GPIO_IF_VALUE_IRQ_FLAG_GET(x) (((uint32_t)(x) & GPIO_IF_VALUE_IRQ_FLAG_MASK) >> GPIO_IF_VALUE_IRQ_FLAG_SHIFT)
-
-/* Bitfield definition for register of struct array IF: SET */
-/*
- * IRQ_FLAG (RW)
- *
- * GPIO interrupt flag, write 1 to clear this flag
- * 0: no irq
- * 1: irq pending
- */
-#define GPIO_IF_SET_IRQ_FLAG_MASK (0xFFFFFFFFUL)
-#define GPIO_IF_SET_IRQ_FLAG_SHIFT (0U)
-#define GPIO_IF_SET_IRQ_FLAG_SET(x) (((uint32_t)(x) << GPIO_IF_SET_IRQ_FLAG_SHIFT) & GPIO_IF_SET_IRQ_FLAG_MASK)
-#define GPIO_IF_SET_IRQ_FLAG_GET(x) (((uint32_t)(x) & GPIO_IF_SET_IRQ_FLAG_MASK) >> GPIO_IF_SET_IRQ_FLAG_SHIFT)
-
-/* Bitfield definition for register of struct array IF: CLEAR */
-/*
- * IRQ_FLAG (RW)
- *
- * GPIO interrupt flag, write 1 to clear this flag
- * 0: no irq
- * 1: irq pending
- */
-#define GPIO_IF_CLEAR_IRQ_FLAG_MASK (0xFFFFFFFFUL)
-#define GPIO_IF_CLEAR_IRQ_FLAG_SHIFT (0U)
-#define GPIO_IF_CLEAR_IRQ_FLAG_SET(x) (((uint32_t)(x) << GPIO_IF_CLEAR_IRQ_FLAG_SHIFT) & GPIO_IF_CLEAR_IRQ_FLAG_MASK)
-#define GPIO_IF_CLEAR_IRQ_FLAG_GET(x) (((uint32_t)(x) & GPIO_IF_CLEAR_IRQ_FLAG_MASK) >> GPIO_IF_CLEAR_IRQ_FLAG_SHIFT)
-
-/* Bitfield definition for register of struct array IF: TOGGLE */
-/*
- * IRQ_FLAG (RW)
- *
- * GPIO interrupt flag, write 1 to clear this flag
- * 0: no irq
- * 1: irq pending
- */
-#define GPIO_IF_TOGGLE_IRQ_FLAG_MASK (0xFFFFFFFFUL)
-#define GPIO_IF_TOGGLE_IRQ_FLAG_SHIFT (0U)
-#define GPIO_IF_TOGGLE_IRQ_FLAG_SET(x) (((uint32_t)(x) << GPIO_IF_TOGGLE_IRQ_FLAG_SHIFT) & GPIO_IF_TOGGLE_IRQ_FLAG_MASK)
-#define GPIO_IF_TOGGLE_IRQ_FLAG_GET(x) (((uint32_t)(x) & GPIO_IF_TOGGLE_IRQ_FLAG_MASK) >> GPIO_IF_TOGGLE_IRQ_FLAG_SHIFT)
 
 /* Bitfield definition for register of struct array IE: VALUE */
 /*
@@ -481,6 +404,58 @@ typedef struct {
 #define GPIO_AS_TOGGLE_IRQ_ASYNC_SET(x) (((uint32_t)(x) << GPIO_AS_TOGGLE_IRQ_ASYNC_SHIFT) & GPIO_AS_TOGGLE_IRQ_ASYNC_MASK)
 #define GPIO_AS_TOGGLE_IRQ_ASYNC_GET(x) (((uint32_t)(x) & GPIO_AS_TOGGLE_IRQ_ASYNC_MASK) >> GPIO_AS_TOGGLE_IRQ_ASYNC_SHIFT)
 
+/* Bitfield definition for register of struct array PD: VALUE */
+/*
+ * IRQ_DUAL (RW)
+ *
+ * GPIO dual edge interrupt enable
+ * 0: single edge interrupt
+ * 1: dual edge interrupt enable
+ */
+#define GPIO_PD_VALUE_IRQ_DUAL_MASK (0x1U)
+#define GPIO_PD_VALUE_IRQ_DUAL_SHIFT (0U)
+#define GPIO_PD_VALUE_IRQ_DUAL_SET(x) (((uint32_t)(x) << GPIO_PD_VALUE_IRQ_DUAL_SHIFT) & GPIO_PD_VALUE_IRQ_DUAL_MASK)
+#define GPIO_PD_VALUE_IRQ_DUAL_GET(x) (((uint32_t)(x) & GPIO_PD_VALUE_IRQ_DUAL_MASK) >> GPIO_PD_VALUE_IRQ_DUAL_SHIFT)
+
+/* Bitfield definition for register of struct array PD: SET */
+/*
+ * IRQ_DUAL (RW)
+ *
+ * GPIO dual edge interrupt enable set
+ * 0: keep original edge interrupt type
+ * 1: dual edge interrupt enable
+ */
+#define GPIO_PD_SET_IRQ_DUAL_MASK (0x1U)
+#define GPIO_PD_SET_IRQ_DUAL_SHIFT (0U)
+#define GPIO_PD_SET_IRQ_DUAL_SET(x) (((uint32_t)(x) << GPIO_PD_SET_IRQ_DUAL_SHIFT) & GPIO_PD_SET_IRQ_DUAL_MASK)
+#define GPIO_PD_SET_IRQ_DUAL_GET(x) (((uint32_t)(x) & GPIO_PD_SET_IRQ_DUAL_MASK) >> GPIO_PD_SET_IRQ_DUAL_SHIFT)
+
+/* Bitfield definition for register of struct array PD: CLEAR */
+/*
+ * IRQ_DUAL (RW)
+ *
+ * GPIO dual edge interrupt enable clear
+ * 0: keep original edge interrupt type
+ * 1: single edge interrupt enable
+ */
+#define GPIO_PD_CLEAR_IRQ_DUAL_MASK (0x1U)
+#define GPIO_PD_CLEAR_IRQ_DUAL_SHIFT (0U)
+#define GPIO_PD_CLEAR_IRQ_DUAL_SET(x) (((uint32_t)(x) << GPIO_PD_CLEAR_IRQ_DUAL_SHIFT) & GPIO_PD_CLEAR_IRQ_DUAL_MASK)
+#define GPIO_PD_CLEAR_IRQ_DUAL_GET(x) (((uint32_t)(x) & GPIO_PD_CLEAR_IRQ_DUAL_MASK) >> GPIO_PD_CLEAR_IRQ_DUAL_SHIFT)
+
+/* Bitfield definition for register of struct array PD: TOGGLE */
+/*
+ * IRQ_DUAL (RW)
+ *
+ * GPIO dual edge interrupt enable toggle
+ * 0: keep original edge interrupt type
+ * 1: change original edge interrupt type to another one.
+ */
+#define GPIO_PD_TOGGLE_IRQ_DUAL_MASK (0x1U)
+#define GPIO_PD_TOGGLE_IRQ_DUAL_SHIFT (0U)
+#define GPIO_PD_TOGGLE_IRQ_DUAL_SET(x) (((uint32_t)(x) << GPIO_PD_TOGGLE_IRQ_DUAL_SHIFT) & GPIO_PD_TOGGLE_IRQ_DUAL_MASK)
+#define GPIO_PD_TOGGLE_IRQ_DUAL_GET(x) (((uint32_t)(x) & GPIO_PD_TOGGLE_IRQ_DUAL_MASK) >> GPIO_PD_TOGGLE_IRQ_DUAL_SHIFT)
+
 
 
 /* DI register group index macro definition */
@@ -570,6 +545,17 @@ typedef struct {
 #define GPIO_AS_GPIOX (13UL)
 #define GPIO_AS_GPIOY (14UL)
 #define GPIO_AS_GPIOZ (15UL)
+
+/* PD register group index macro definition */
+#define GPIO_PD_GPIOA (0UL)
+#define GPIO_PD_GPIOB (1UL)
+#define GPIO_PD_GPIOC (2UL)
+#define GPIO_PD_GPIOD (3UL)
+#define GPIO_PD_GPIOE (4UL)
+#define GPIO_PD_GPIOF (5UL)
+#define GPIO_PD_GPIOX (13UL)
+#define GPIO_PD_GPIOY (14UL)
+#define GPIO_PD_GPIOZ (15UL)
 
 
 #endif /* HPM_GPIO_H */

@@ -9,12 +9,15 @@
  * 2019-04-27     misonyo      update to cortex-m7 series
  */
 
+#include <rtthread.h>
 #include <rthw.h>
 #include <rtdef.h>
 #include <board.h>
 
 /* The L1-caches on all CortexÂ®-M7s are divided into lines of 32 bytes. */
 #define L1CACHE_LINESIZE_BYTE       (32)
+
+#ifdef RT_USING_CACHE
 
 void rt_hw_cpu_icache_enable(void)
 {
@@ -88,3 +91,6 @@ void rt_hw_cpu_dcache_ops(int ops, void* addr, int size)
         RT_ASSERT(0);
     }
 }
+
+#endif /* RT_USING_CACHE */
+

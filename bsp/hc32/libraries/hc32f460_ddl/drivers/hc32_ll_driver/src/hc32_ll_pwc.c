@@ -6,9 +6,16 @@
    Change Logs:
    Date             Author          Notes
    2022-03-31       CDT             First version
+   2022-06-30       CDT             Refine API PWC_STOP_Enter()
+   2022-10-31       CDT             Bug fixed# PWC_PD_VdrCmd() and disable VDDR when enter PD3/4
+   2023-01-15       CDT             Optimize API PWC_STOP_ClockSelect() & comment
+                                    Modify API PWC_HighSpeedToLowSpeed() & PWC_HighPerformanceToLowSpeed() base um_Rev1.42
+   2023-06-30       CDT             Modify typo
+                                    Add api PWC_LVD_DeInit()
+                                    Modify API PWC_STOP_Enter() & add assert IS_PWC_STOP_TYPE()
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -51,52 +58,59 @@
 
 /* Get the backup register address of PWC */
 
-#define PWC_SYSCLK_SRC_HRC          (0U)
-#define PWC_SYSCLK_SRC_PLL          (5U)
+#define PWC_SYSCLK_SRC_HRC              (0U)
+#define PWC_SYSCLK_SRC_PLL              (5U)
 
-#define PWC_MD_SWITCH_TIMEOUT       (30UL)
-#define PWC_MD_SWITCH_TIMEOUT2      (0x1000UL)
-#define PWC_MD_SWITCH_CMD           (0x10U)
+#define PWC_MD_SWITCH_TIMEOUT           (30UL)
+#define PWC_MD_SWITCH_TIMEOUT2          (0x1000UL)
+#define PWC_MD_SWITCH_CMD               (0x10U)
 
-#define PWC_LVD_EN_REG              (CM_PWC->PVDCR0)
-#define PWC_LVD_EN_BIT              (PWC_PVDCR0_PVD1EN)
-#define PWC_LVD_EXT_INPUT_EN_REG    (CM_PWC->PVDCR0)
-#define PWC_LVD_EXT_INPUT_EN_BIT    (PWC_PVDCR0_EXVCCINEN)
-#define PWC_LVD_CMP_OUTPUT_EN_REG   (CM_PWC->PVDCR1)
-#define PWC_LVD_CMP_OUTPUT_EN_BIT   (PWC_PVDCR1_PVD1CMPOE)
-#define PWC_LVD_FILTER_EN_REG       (CM_PWC->PVDFCR)
-#define PWC_LVD_FILTER_EN_BIT       (PWC_PVDFCR_PVD1NFDIS)
-#define PWC_LVD_STATUS_REG          (CM_PWC->PVDDSR)
+#define PWC_LVD_EN_REG                  (CM_PWC->PVDCR0)
+#define PWC_LVD_EN_BIT                  (PWC_PVDCR0_PVD1EN)
+#define PWC_LVD_EXT_INPUT_EN_REG        (CM_PWC->PVDCR0)
+#define PWC_LVD_EXT_INPUT_EN_BIT        (PWC_PVDCR0_EXVCCINEN)
+#define PWC_LVD_CMP_OUTPUT_EN_REG       (CM_PWC->PVDCR1)
+#define PWC_LVD_CMP_OUTPUT_EN_BIT       (PWC_PVDCR1_PVD1CMPOE)
+#define PWC_LVD_FILTER_EN_REG           (CM_PWC->PVDFCR)
+#define PWC_LVD_FILTER_EN_BIT           (PWC_PVDFCR_PVD1NFDIS)
+#define PWC_LVD_STATUS_REG              (CM_PWC->PVDDSR)
 
-#define PWC_LVD2_POS                (4U)
-#define PWC_LVD_BIT_OFFSET(x)       ((uint8_t)((x) * PWC_LVD2_POS))
-#define PWC_LVD_EN_BIT_OFFSET(x)    (x)
+#define PWC_LVD2_POS                    (4U)
+#define PWC_LVD_BIT_OFFSET(x)           ((uint8_t)((x) * PWC_LVD2_POS))
+#define PWC_LVD_EN_BIT_OFFSET(x)        (x)
 
-#define PWC_PRAM_MASK               (PWC_RAM_PD_SRAM1   | PWC_RAM_PD_SDIO0 |    \
-                                     PWC_RAM_PD_SRAM2   | PWC_RAM_PD_SDIO1 |    \
-                                     PWC_RAM_PD_SRAM3   | PWC_RAM_PD_CAN   |    \
-                                     PWC_RAM_PD_SRAMH   | PWC_RAM_PD_CACHE |    \
-                                     PWC_RAM_PD_USBFS)
+#define PWC_PRAM_MASK                   (PWC_RAM_PD_SRAM1   | PWC_RAM_PD_SDIO0 |    \
+                                         PWC_RAM_PD_SRAM2   | PWC_RAM_PD_SDIO1 |    \
+                                         PWC_RAM_PD_SRAM3   | PWC_RAM_PD_CAN   |    \
+                                         PWC_RAM_PD_SRAMH   | PWC_RAM_PD_CACHE |    \
+                                         PWC_RAM_PD_USBFS)
 
-#define PWC_LVD_FLAG_MASK           (PWC_LVD1_FLAG_MON | PWC_LVD1_FLAG_DETECT | \
-                                     PWC_LVD2_FLAG_MON | PWC_LVD2_FLAG_DETECT)
+#define PWC_LVD_FLAG_MASK               (PWC_LVD1_FLAG_MON | PWC_LVD1_FLAG_DETECT | \
+                                         PWC_LVD2_FLAG_MON | PWC_LVD2_FLAG_DETECT)
 
-#define PWC_LVD_EXP_NMI_POS         (8U)
+#define PWC_LVD_EXP_NMI_POS             (8U)
 
 /**
  * @defgroup PWC_Check_Parameters_Validity PWC Check Parameters Validity
  * @{
  */
 /* Check CLK register lock status. */
-#define IS_PWC_CLK_UNLOCKED()       ((CM_PWC->FPRC & PWC_FPRC_FPRCB0) == PWC_FPRC_FPRCB0)
+#define IS_PWC_CLK_UNLOCKED()           ((CM_PWC->FPRC & PWC_FPRC_FPRCB0) == PWC_FPRC_FPRCB0)
 
 /* Check PWC register lock status. */
-#define IS_PWC_UNLOCKED()           ((CM_PWC->FPRC & PWC_FPRC_FPRCB1) == PWC_FPRC_FPRCB1)
+#define IS_PWC_UNLOCKED()               ((CM_PWC->FPRC & PWC_FPRC_FPRCB1) == PWC_FPRC_FPRCB1)
 /* Check PWC LVD register lock status. */
-#define IS_PWC_LVD_UNLOCKED()       ((CM_PWC->FPRC & PWC_FPRC_FPRCB3) == PWC_FPRC_FPRCB3)
+#define IS_PWC_LVD_UNLOCKED()           ((CM_PWC->FPRC & PWC_FPRC_FPRCB3) == PWC_FPRC_FPRCB3)
 /* Parameter validity check for EFM lock status. */
-#define IS_PWC_EFM_UNLOCKED()       (CM_EFM->FAPRT == 0x00000001UL)
+#define IS_PWC_EFM_UNLOCKED()           (CM_EFM->FAPRT == 0x00000001UL)
 
+/* Parameter validity check for stop type */
+#define IS_PWC_STOP_TYPE(x)                                                     \
+(   ((x) == PWC_STOP_WFI)                           ||                          \
+    ((x) == PWC_STOP_WFE_INT)                       ||                          \
+    ((x) == PWC_STOP_WFE_EVT))
+
+/* Parameter validity check for stop wake-up source */
 #define IS_PWC_STOP_WKUP_SRC(x)                                                 \
 (   ((x) == INT_SRC_USART1_WUPI)                    ||                          \
     ((x) == INT_SRC_TMR0_1_CMP_A)                   ||                          \
@@ -126,108 +140,108 @@
 
 /* Parameter validity check for peripheral RAM setting of power mode control */
 #define IS_PWC_PRAM_CONTROL(x)                                                  \
-(   ((x) != 0x00UL)                           &&                                \
+(   ((x) != 0x00UL)                                 &&                          \
     (((x) | PWC_PRAM_MASK) == PWC_PRAM_MASK))
 
 /* Parameter validity check for RAM setting of MCU operating mode */
 #define IS_PWC_RAM_MD(x)                                                        \
-(   ((x) == PWC_RAM_HIGH_SPEED)               ||                                \
+(   ((x) == PWC_RAM_HIGH_SPEED)                     ||                          \
     ((x) == PWC_RAM_ULOW_SPEED))
 
 /* Parameter validity check for LVD channel. */
 #define IS_PWC_LVD_CH(x)                                                        \
-(   ((x) == PWC_LVD_CH1)                      ||                                \
+(   ((x) == PWC_LVD_CH1)                            ||                          \
     ((x) == PWC_LVD_CH2))
 
 /* Parameter validity check for LVD function setting. */
 #define IS_PWC_LVD_EN(x)                                                        \
-(   ((x) == PWC_LVD_ON)                       ||                                \
+(   ((x) == PWC_LVD_ON)                             ||                          \
     ((x) == PWC_LVD_OFF))
 
 /* Parameter validity check for LVD compare output setting. */
 #define IS_PWC_LVD_CMP_EN(x)                                                    \
-(   ((x) == PWC_LVD_CMP_ON)                   ||                                \
+(   ((x) == PWC_LVD_CMP_ON)                         ||                          \
     ((x) == PWC_LVD_CMP_OFF))
 
 /*  Parameter validity check for PWC LVD exception type. */
 #define IS_PWC_LVD_EXP_TYPE(x)                                                  \
-(   ((x) == PWC_LVD_EXP_TYPE_NONE)             ||                               \
-    ((x) == PWC_LVD_EXP_TYPE_INT)              ||                               \
-    ((x) == PWC_LVD_EXP_TYPE_NMI)              ||                               \
+(   ((x) == PWC_LVD_EXP_TYPE_NONE)                  ||                          \
+    ((x) == PWC_LVD_EXP_TYPE_INT)                   ||                          \
+    ((x) == PWC_LVD_EXP_TYPE_NMI)                   ||                          \
     ((x) == PWC_LVD_EXP_TYPE_RST))
 
 /* Parameter validity check for LVD digital noise filter function setting. */
 #define IS_PWC_LVD_FILTER_EN(x)                                                 \
-(   ((x) == PWC_LVD_FILTER_ON)               ||                                 \
+(   ((x) == PWC_LVD_FILTER_ON)                      ||                          \
     ((x) == PWC_LVD_FILTER_OFF))
 
 /* Parameter validity check for LVD digital noise filter clock setting. */
 #define IS_PWC_LVD_FILTER_CLK(x)                                                \
-(   ((x) == PWC_LVD_FILTER_LRC_DIV1)         ||                                 \
-    ((x) == PWC_LVD_FILTER_LRC_DIV2)         ||                                 \
-    ((x) == PWC_LVD_FILTER_LRC_DIV4)         ||                                 \
+(   ((x) == PWC_LVD_FILTER_LRC_DIV1)                ||                          \
+    ((x) == PWC_LVD_FILTER_LRC_DIV2)                ||                          \
+    ((x) == PWC_LVD_FILTER_LRC_DIV4)                ||                          \
     ((x) == PWC_LVD_FILTER_LRC_MUL2))
 
 /* Parameter validity check for LVD detect voltage setting. */
 #define IS_PWC_LVD_THRESHOLD_VOLTAGE(x)                                         \
-(   ((x) == PWC_LVD_THRESHOLD_LVL0)          ||                                 \
-    ((x) == PWC_LVD_THRESHOLD_LVL1)          ||                                 \
-    ((x) == PWC_LVD_THRESHOLD_LVL2)          ||                                 \
-    ((x) == PWC_LVD_THRESHOLD_LVL3)          ||                                 \
-    ((x) == PWC_LVD_THRESHOLD_LVL4)          ||                                 \
-    ((x) == PWC_LVD_THRESHOLD_LVL5)          ||                                 \
-    ((x) == PWC_LVD_THRESHOLD_LVL6)          ||                                 \
+(   ((x) == PWC_LVD_THRESHOLD_LVL0)                 ||                          \
+    ((x) == PWC_LVD_THRESHOLD_LVL1)                 ||                          \
+    ((x) == PWC_LVD_THRESHOLD_LVL2)                 ||                          \
+    ((x) == PWC_LVD_THRESHOLD_LVL3)                 ||                          \
+    ((x) == PWC_LVD_THRESHOLD_LVL4)                 ||                          \
+    ((x) == PWC_LVD_THRESHOLD_LVL5)                 ||                          \
+    ((x) == PWC_LVD_THRESHOLD_LVL6)                 ||                          \
     ((x) == PWC_LVD_THRESHOLD_LVL7))
 
 /* Parameter validity check for LVD NMI function setting. */
 #define IS_PWC_LVD_NMI(x)                                                       \
-(   ((x) == PWC_LVD_INT_MASK)                 ||                                \
+(   ((x) == PWC_LVD_INT_MASK)                       ||                          \
     ((x) == PWC_LVD_INT_NONMASK))
 
 /* Parameter validity check for LVD trigger setting. */
 #define IS_PWC_LVD_TRIG_EDGE(x)                                                 \
-(   ((x) == PWC_LVD_TRIG_FALLING)          ||                                   \
-    ((x) == PWC_LVD_TRIG_RISING)           ||                                   \
+(   ((x) == PWC_LVD_TRIG_FALLING)                   ||                          \
+    ((x) == PWC_LVD_TRIG_RISING)                    ||                          \
     ((x) == PWC_LVD_TRIG_BOTH))
 
 /* Parameter validity check for LVD trigger setting. */
 #define IS_PWC_LVD_CLR_FLAG(x)                                                  \
-(   ((x) == PWC_LVD1_FLAG_DETECT)             ||                                \
+(   ((x) == PWC_LVD1_FLAG_DETECT)                   ||                          \
     ((x) == PWC_LVD2_FLAG_DETECT))
 
 /* Parameter validity check for LVD flag. */
 #define IS_PWC_LVD_GET_FLAG(x)                                                  \
-(   ((x) != 0x00U)                           &&                                 \
+(   ((x) != 0x00U)                                  &&                          \
     (((x) | PWC_LVD_FLAG_MASK) == PWC_LVD_FLAG_MASK))
 
-/* Parameter validity check for power down mode wakeup event with trigger. */
+/* Parameter validity check for power down mode wake up event with trigger. */
 #define IS_PWC_WAKEUP_TRIG_EVT(x)                                               \
-(   ((x) != 0x00U)                            &&                                \
+(   ((x) != 0x00U)                                  &&                          \
     (((x) | PWC_PD_WKUP_TRIG_ALL) == PWC_PD_WKUP_TRIG_ALL))
 
-/* Parameter validity check for power down mode wakeup trigger edge. */
+/* Parameter validity check for power down mode wake up trigger edge. */
 #define IS_PWC_WAKEUP_TRIG(x)                                                   \
-(   ((x) == PWC_PD_WKUP_TRIG_FALLING)        ||                                 \
+(   ((x) == PWC_PD_WKUP_TRIG_FALLING)               ||                          \
     ((x) == PWC_PD_WKUP_TRIG_RISING))
 
 /* Parameter validity check for wake up flag. */
 #define IS_PWC_WKUP_FLAG(x)                                                     \
-(   ((x) != 0x00U)                           &&                                 \
+(   ((x) != 0x00U)                                  &&                          \
     (((x) | PWC_PD_WKUP_FLAG_ALL) == PWC_PD_WKUP_FLAG_ALL))
 
 /* Parameter validity check for stop mode drive capacity. */
 #define IS_PWC_STOP_DRV(drv)                                                    \
-(   ((drv) == PWC_STOP_DRV_HIGH)                ||                              \
+(   ((drv) == PWC_STOP_DRV_HIGH)                    ||                          \
     ((drv) == PWC_STOP_DRV_LOW))
 
 /* Parameter validity check for clock setting after wake-up from stop mode. */
 #define IS_PWC_STOP_CLK(x)                                                      \
-(   ((x) == PWC_STOP_CLK_KEEP)                ||                                \
+(   ((x) == PWC_STOP_CLK_KEEP)                      ||                          \
     ((x) == PWC_STOP_CLK_MRC))
 
 /* Parameter validity check for flash wait setting after wake-up from stop mode. */
 #define IS_PWC_STOP_FLASH_WAIT(x)                                               \
-(   ((x)== PWC_STOP_FLASH_WAIT_ON)             ||                               \
+(   ((x)== PWC_STOP_FLASH_WAIT_ON)                  ||                          \
     ((x)== PWC_STOP_FLASH_WAIT_OFF))
 
 #define IS_PWC_LDO_SEL(x)                                                       \
@@ -236,12 +250,12 @@
 
 /* Parameter validity check for WKT Clock Source. */
 #define IS_PWC_WKT_CLK_SRC(x)                                                   \
-(   ((x)== PWC_WKT_CLK_SRC_64HZ)             ||                                 \
-    ((x)== PWC_WKT_CLK_SRC_XTAL32)           ||                                 \
+(   ((x)== PWC_WKT_CLK_SRC_64HZ)                    ||                          \
+    ((x)== PWC_WKT_CLK_SRC_XTAL32)                  ||                          \
     ((x)== PWC_WKT_CLK_SRC_LRC))
 
 /* Parameter validity check for WKT Comparision Value. */
-#define IS_PWC_WKT_COMPARISION_VALUE(x)       ((x) <= 0x0FFFU)
+#define IS_PWC_WKT_COMPARISION_VALUE(x)             ((x) <= 0x0FFFU)
 
 /**
  * @}
@@ -271,7 +285,7 @@ static uint8_t  m_u8HrcState = 0U;
 static uint8_t  m_u8MrcState = 0U;
 static uint8_t  m_u8WkupIntCount = 0U;
 static uint8_t  m_u8StopFlag = 0U;
-static uint8_t  m_u8SysClockSrouce = 1U;
+static uint8_t  m_u8SysClockSource = 1U;
 /**
  * @}
  */
@@ -347,7 +361,7 @@ static void PWC_ClockBackup(void)
     /* HRC state backup. */
     m_u8HrcState = READ_REG8_BIT(CM_CMU->HRCCR, CMU_HRCCR_HRCSTP);
     /* System clock backup*/
-    m_u8SysClockSrouce = CM_CMU->CKSWR & CMU_CKSWR_CKSW;
+    m_u8SysClockSource = CM_CMU->CKSWR & CMU_CKSWR_CKSW;
 
     /* Enable HRC  before enter stop mode. */
     if (0U != m_u8HrcState) {
@@ -359,10 +373,10 @@ static void PWC_ClockBackup(void)
     }
 
     /* When system clock source is HRC or MPLL, set MRC as system clock. . */
-    if ((PWC_SYSCLK_SRC_HRC == m_u8SysClockSrouce) || (PWC_SYSCLK_SRC_PLL == m_u8SysClockSrouce)) {
+    if ((PWC_SYSCLK_SRC_HRC == m_u8SysClockSource) || (PWC_SYSCLK_SRC_PLL == m_u8SysClockSource)) {
         if (0U == READ_REG8_BIT(CM_PWC->STPMCR, PWC_STPMCR_CKSMRC)) {
             /* MRC state backup. */
-            m_u8MrcState = READ_REG8_BIT(CM_CMU->MRCCR, CMU_MRCCR_MRCSTP);
+            m_u8MrcState = READ_REG(CM_CMU->MRCCR);
             if (0x80U != m_u8MrcState) {
                 CM_CMU->MRCCR = 0x80U;
                 __NOP();
@@ -377,7 +391,7 @@ static void PWC_ClockBackup(void)
 }
 
 /**
- * @brief  Recover HRC/MRC state and system clock after wakeup stop mode.
+ * @brief  Recover HRC/MRC state and system clock after wake up stop mode.
  * @param  None
  * @retval None
  */
@@ -386,12 +400,12 @@ static void PWC_ClockRecover(void)
     DDL_ASSERT(IS_PWC_CLK_UNLOCKED());
 
     if (0U == READ_REG8_BIT(CM_PWC->STPMCR, PWC_STPMCR_CKSMRC)) {
-        if ((PWC_SYSCLK_SRC_HRC == m_u8SysClockSrouce) || (PWC_SYSCLK_SRC_PLL == m_u8SysClockSrouce)) {
+        if ((PWC_SYSCLK_SRC_HRC == m_u8SysClockSource) || (PWC_SYSCLK_SRC_PLL == m_u8SysClockSource)) {
             /* Recover MRC state & system clock source. */
-            PWC_SetSysClk(m_u8SysClockSrouce);
-            MODIFY_REG8(CM_CMU->MRCCR, CMU_MRCCR_MRCSTP, m_u8MrcState);
+            PWC_SetSysClk(m_u8SysClockSource);
+            WRITE_REG8(CM_CMU->MRCCR, m_u8MrcState);
         }
-        /* Recover HRC state after wakeup stop mode. */
+        /* Recover HRC state after wake up stop mode. */
         WRITE_REG8(CM_CMU->HRCCR, m_u8HrcState);
     }
     /* Update system clock */
@@ -413,6 +427,10 @@ static void PWC_ClockRecover(void)
 __RAM_FUNC void PWC_PD_Enter(void)
 {
     WRITE_REG16(CM_PWC->FPRC, PWC_UNLOCK_CODE1);
+
+    if (PWC_PWRC0_PDMDS_1 == READ_REG8_BIT(CM_PWC->PWRC0, PWC_PWRC0_PDMDS_1)) {
+        SET_REG8_BIT(CM_PWC->PWRC0, PWC_PWRC0_VVDRSD);
+    }
 
     CLR_REG8_BIT(CM_PWC->PVDCR1, PWC_PVDCR1_PVD1IRS | PWC_PVDCR1_PVD2IRS);
     SET_REG16_BIT(CM_PWC->STPMCR, PWC_STPMCR_STOP);
@@ -450,7 +468,7 @@ void PWC_STOP_NvicBackup(void)
 
     for (u8Count = 0U; u8Count < 128U; u8Count++) {
         INTC_SELx = (__IO uint32_t *)((uint32_t)(&CM_INTC->SEL0) + (4UL * u8Count));
-        /* Disable NVIC if it is the wakeup-able source from stop mode */
+        /* Disable NVIC if it is the wake up-able source from stop mode */
         u32WakeupSrc = (uint32_t)(*INTC_SELx) & INTC_SEL_INTSEL;
         if (IS_PWC_STOP_WKUP_SRC((en_int_src_t)u32WakeupSrc)) {
             switch (u32WakeupSrc) {
@@ -583,7 +601,7 @@ void PWC_STOP_NvicBackup(void)
                     break;
             }
         } else if ((uint32_t)INT_SRC_MAX != u32WakeupSrc) {
-            /* Disable NVIC for all none-wakeup source */
+            /* Disable NVIC for all none-wake up source */
             NVIC_DisableIRQ((IRQn_Type)u8Count);
         } else {
             ;
@@ -592,7 +610,7 @@ void PWC_STOP_NvicBackup(void)
 }
 
 /**
- * @brief  NVIC recover after wakeup from stop mode
+ * @brief  NVIC recover after wake up from stop mode
  * @param  None
  * @retval None
  */
@@ -626,7 +644,7 @@ void PWC_STOP_ClockBackup(void)
 }
 
 /**
- * @brief  Clock recover after wakeup stop mode.
+ * @brief  Clock recover after wake up stop mode.
  * @param  None
  * @retval None
  */
@@ -638,7 +656,7 @@ void PWC_STOP_ClockRecover(void)
     /* Mark the system clock will be switch as MRC, and has waked_up from stop mode. */
     m_u8StopFlag = 0U;
 
-    /* Recover HRC/MRC state and system clock after wakeup stop mode. */
+    /* Recover HRC/MRC state and system clock after wake up stop mode. */
     PWC_ClockRecover();
 
     /* Enable all interrupt. */
@@ -646,7 +664,7 @@ void PWC_STOP_ClockRecover(void)
 }
 
 /**
- * @brief  Clock backup before exit wakup interrupt.
+ * @brief  Clock backup before exit wake up interrupt.
  * @param  None
  * @retval None
  */
@@ -660,13 +678,13 @@ void PWC_STOP_IrqClockBackup(void)
 }
 
 /**
- * @brief  Clock recover after enter wakeup interrupt.
+ * @brief  Clock recover after enter wake up interrupt.
  * @param  None
  * @retval None
  */
 void PWC_STOP_IrqClockRecover(void)
 {
-    /* The varibale to display how many waked_up interrupt has been occured
+    /* The variable to display how many waked_up interrupt has been occurred
        simultaneously and to decided whether backup clock before exit wake_up
        interrupt. */
     m_u8WkupIntCount++;
@@ -679,13 +697,17 @@ void PWC_STOP_IrqClockRecover(void)
 
 /**
  * @brief  Enter stop mode.
- * @param  None
+ * @param  [in] u8StopType specifies the XTAL initial config.
+ *   @arg  PWC_STOP_WFI             Enter stop mode by WFI, and wake-up by interrupt handle.
+ *   @arg  PWC_STOP_WFE_INT         Enter stop mode by WFE, and wake-up by interrupt request.
+ *   @arg  PWC_STOP_WFE_EVT         Enter stop mode by WFE, and wake-up by event.
  * @retval None
  */
-void PWC_STOP_Enter(void)
+void PWC_STOP_Enter(uint8_t u8StopType)
 {
 
     DDL_ASSERT(IS_PWC_UNLOCKED());
+    DDL_ASSERT(IS_PWC_STOP_TYPE(u8StopType));
 
     /* NVIC backup and disable before entry from stop mode.*/
     PWC_STOP_NvicBackup();
@@ -694,12 +716,21 @@ void PWC_STOP_Enter(void)
 
     SET_REG16_BIT(CM_PWC->STPMCR, PWC_STPMCR_STOP);
     CLR_REG8_BIT(CM_PWC->PWRC0, PWC_PWRC0_PWDN);
-
-    __WFI();
-
-    /* Recover HRC/MRC state and system clock after wakeup from stop mode. */
+    if (PWC_STOP_WFI == u8StopType) {
+        __WFI();
+    } else {
+        if (PWC_STOP_WFE_INT == u8StopType) {
+            SET_REG32_BIT(SCB->SCR, SCB_SCR_SEVONPEND_Msk);
+        } else {
+            CLR_REG32_BIT(SCB->SCR, SCB_SCR_SEVONPEND_Msk);
+        }
+        __SEV();
+        __WFE();
+        __WFE();
+    }
+    /* Recover HRC/MRC state and system clock after wake up from stop mode. */
     PWC_STOP_ClockRecover();
-    /* NVIC recover after wakeup from stop mode. */
+    /* NVIC recover after wake up from stop mode. */
     PWC_STOP_NvicRecover();
 }
 
@@ -736,7 +767,7 @@ void PWC_RamModeConfig(uint16_t u16Mode)
 /**
  * @brief  Initialize LVD config structure. Fill each pstcLvdInit with default value
  * @param  [in] pstcLvdInit Pointer to a stc_pwc_lvd_init_t structure that contains configuration information.
-  * @retval int32_t:
+ * @retval int32_t:
  *          - LL_OK: LVD structure initialize successful
  *          - LL_ERR_INVD_PARAM: NULL pointer
  */
@@ -760,11 +791,9 @@ int32_t PWC_LVD_StructInit(stc_pwc_lvd_init_t *pstcLvdInit)
 
 /**
  * @brief LVD configuration.
- * @param [in] u8Ch LVD channel
- *  @arg    PWC_LVD_CH1
- *  @arg    PWC_LVD_CH2
+ * @param [in] u8Ch LVD channel @ref PWC_LVD_Channel.
  * @param [in] pstcLvdInit Pointer to a stc_pwc_lvd_init_t structure that contains configuration information.
-  * @retval int32_t:
+ * @retval int32_t:
  *          - LL_OK: LVD initialize successful
  *          - LL_ERR_INVD_PARAM: NULL pointer
  */
@@ -808,10 +837,36 @@ int32_t PWC_LVD_Init(uint8_t u8Ch, const stc_pwc_lvd_init_t *pstcLvdInit)
 }
 
 /**
+ * @brief De-initialize PWC LVD.
+ * @param [in] u8Ch LVD channel @ref PWC_LVD_Channel.
+ * @retval None
+ */
+void PWC_LVD_DeInit(uint8_t u8Ch)
+{
+    DDL_ASSERT(IS_PWC_LVD_CH(u8Ch));
+    DDL_ASSERT(IS_PWC_LVD_UNLOCKED());
+
+    /* Disable LVD */
+    CLR_REG_BIT(CM_PWC->PVDCR0, PWC_PVDCR0_PVD1EN << u8Ch);
+    /* Disable Ext-Vcc */
+    if (PWC_LVD_CH2 == u8Ch) {
+        CLR_REG8_BIT(CM_PWC->PVDCR0, PWC_PVDCR0_EXVCCINEN);
+    } else {
+        /* rsvd */
+    }
+    /* Reset filter */
+    CLR_REG8_BIT(CM_PWC->PVDFCR, (PWC_PVDFCR_PVD1NFDIS | PWC_PVDFCR_PVD1NFCKS)  << PWC_LVD_BIT_OFFSET(u8Ch));
+    /* Reset configure */
+    CLR_REG8_BIT(CM_PWC->PVDCR1, (PWC_PVDCR1_PVD1IRE | PWC_PVDCR1_PVD1IRS | PWC_PVDCR1_PVD1CMPOE) << \
+                 PWC_LVD_BIT_OFFSET(u8Ch));
+    CLR_REG8_BIT(CM_PWC->PVDICR, PWC_PVDICR_PVD1NMIS << PWC_LVD_BIT_OFFSET(u8Ch));
+    /* Reset threshold voltage */
+    CLR_REG8_BIT(CM_PWC->PVDLCR, PWC_PVDLCR_PVD1LVL << PWC_LVD_BIT_OFFSET(u8Ch));
+}
+
+/**
  * @brief  Enable or disable LVD.
- * @param  [in] u8Ch Specifies whitch channel to operate.
- *  @arg    PWC_LVD_CH1
- *  @arg    PWC_LVD_CH2
+ * @param  [in] u8Ch Specifies which channel to operate. @ref PWC_LVD_Channel.
  * @param  [in] enNewState An @ref en_functional_state_t enumeration value.
  * @retval None
  */
@@ -832,8 +887,7 @@ void PWC_LVD_Cmd(uint8_t u8Ch, en_functional_state_t enNewState)
  * @brief  Enable or disable LVD external input.
  * @param  [in] enNewState An @ref en_functional_state_t enumeration value.
  * @retval None
- * @note   While enable external input, should choose PWC_LVD_CH2 to initialize,
- *         and threshold voltage must set PWC_LVD1_2V9_LVD2_1V1.
+ * @note   While enable external input, should choose PWC_LVD_CH2 to initialize and threshold voltage must set PWC_LVD_EXTVCC
  */
 void PWC_LVD_ExtInputCmd(en_functional_state_t enNewState)
 {
@@ -849,9 +903,7 @@ void PWC_LVD_ExtInputCmd(en_functional_state_t enNewState)
 
 /**
  * @brief  Enable or disable LVD compare output.
- * @param  [in] u8Ch Specifies whitch channel to operate.
- *  @arg    PWC_LVD_CH1
- *  @arg    PWC_LVD_CH2
+ * @param  [in] u8Ch Specifies which channel to operate. @ref PWC_LVD_Channel.
  * @param  [in] enNewState An @ref en_functional_state_t enumeration value.
  * @retval None
  */
@@ -870,9 +922,7 @@ void PWC_LVD_CompareOutputCmd(uint8_t u8Ch, en_functional_state_t enNewState)
 
 /**
  * @brief  Enable or disable LVD digital filter.
- * @param  [in] u8Ch Specifies whitch channel to operate.
- *  @arg    PWC_LVD_CH1
- *  @arg    PWC_LVD_CH2
+ * @param  [in] u8Ch Specifies which channel to operate. @ref PWC_LVD_Channel.
  * @param  [in] enNewState An @ref en_functional_state_t enumeration value.
  * @retval None
  */
@@ -891,14 +941,8 @@ void PWC_LVD_DigitalFilterCmd(uint8_t u8Ch, en_functional_state_t enNewState)
 
 /**
  * @brief  Enable or disable LVD compare output.
- * @param  [in] u8Ch Specifies whitch channel to operate.
- *  @arg    PWC_LVD_CH1
- *  @arg    PWC_LVD_CH2
- * @param  [in] u32Clock Specifies filter clock.
- *  @arg    PWC_LVD_FILTER_LRC_DIV4
- *  @arg    PWC_LVD_FILTER_LRC_DIV2
- *  @arg    PWC_LVD_FILTER_LRC_DIV1
- *  @arg    PWC_LVD_FILTER_LRC_MUL2
+ * @param  [in] u8Ch Specifies which channel to operate. @ref PWC_LVD_Channel.
+ * @param  [in] u32Clock Specifies filter clock. @ref PWC_LVD_DFS_Clk_Sel
  * @retval None
  */
 void PWC_LVD_SetFilterClock(uint8_t u8Ch, uint32_t u32Clock)
@@ -911,13 +955,11 @@ void PWC_LVD_SetFilterClock(uint8_t u8Ch, uint32_t u32Clock)
 }
 
 /**
- * @brief  Enable or disable LVD compare output.
- * @param  [in] u8Ch        Specifies whitch channel to operate.
- *  @arg    PWC_LVD_CH1
- *  @arg    PWC_LVD_CH2
+ * @brief Set LVD threshold voltage.
+ * @param  [in] u8Ch        Specifies which channel to operate. @ref PWC_LVD_Channel.
  * @param  [in] u32Voltage  Specifies threshold voltage. @ref PWC_LVD_Detection_Voltage_Sel
  * @retval None
- * @note    While PWC_LVD_CH2, PWC_LVD1_2V9_LVD2_1V1 only valid while EXTINPUT enable.
+ * @note    While PWC_LVD_CH2, PWC_LVD_EXTVCC only valid while EXTINPUT enable.
  */
 void PWC_LVD_SetThresholdVoltage(uint8_t u8Ch, uint32_t u32Voltage)
 {
@@ -933,8 +975,7 @@ void PWC_LVD_SetThresholdVoltage(uint8_t u8Ch, uint32_t u32Voltage)
  * @brief  Get LVD flag.
  * @param  [in] u8Flag LVD flag to be get @ref PWC_LVD_Flag
  * @retval An @ref en_flag_status_t enumeration value
-
- * @note   PVDxDETFLG is avaliable when PVDCR0.PVDxEN and PVDCR1.PVDxCMPOE are set to '1'
+ * @note   PVDxDETFLG is available when PVDCR0.PVDxEN and PVDCR1.PVDxCMPOE are set to '1'
  */
 en_flag_status_t PWC_LVD_GetStatus(uint8_t u8Flag)
 {
@@ -948,8 +989,7 @@ en_flag_status_t PWC_LVD_GetStatus(uint8_t u8Flag)
  *  @arg      PWC_LVD1_FLAG_DETECT
  *  @arg      PWC_LVD2_FLAG_DETECT
  * @retval None
- * @note   PWC_LVD2_FLAG_DETECT only valid while HC32F460, HC32M423, HC32F451, HC32F452
- *         PWC_LVD1_FLAG_DETECT could clear both LVD1 & LVD2 flag while HC32F4A0
+ * @note   PWC_LVD2_FLAG_DETECT only valid
  */
 void PWC_LVD_ClearStatus(uint8_t u8Flag)
 {
@@ -984,7 +1024,7 @@ void PWC_LDO_Cmd(uint16_t u16Ldo, en_functional_state_t enNewState)
 /**
  * @brief  Switch high speed to ultra low speed, set the drive ability.
  * @param  None
-  * @retval int32_t:
+ * @retval int32_t:
  *          - LL_OK: Mode switch successful.
  *          - LL_ERR: Mode switch failure, check whether EFM was unlocked please.
  * @note   Before calling this API, please switch system clock to the required
@@ -1016,7 +1056,7 @@ int32_t PWC_HighSpeedToLowSpeed(void)
         }
     }
 
-    MODIFY_REG8(CM_PWC->PWRC2, PWC_PWRC2_DDAS | PWC_PWRC2_DVS, PWC_PWRC2_DDAS_0 | PWC_PWRC2_DVS_1);
+    MODIFY_REG8(CM_PWC->PWRC2, PWC_PWRC2_DDAS | PWC_PWRC2_DVS, PWC_PWRC2_DDAS_3 | PWC_PWRC2_DVS_1);
     WRITE_REG8(CM_PWC->MDSWCR, PWC_MD_SWITCH_CMD);
 
     /* Delay 30uS*/
@@ -1028,7 +1068,7 @@ int32_t PWC_HighSpeedToLowSpeed(void)
 /**
  * @brief  Switch ultra low speed to high speed, set the drive ability.
  * @param  None
-  * @retval int32_t:
+ * @retval int32_t:
  *          - LL_OK: Mode switch successful.
  *          - LL_ERR: Mode switch failure, check whether EFM was unlocked please.
  * @note   After calling this API, the system clock is able to switch high frequency.
@@ -1036,7 +1076,7 @@ int32_t PWC_HighSpeedToLowSpeed(void)
 /**
  * @brief  Switch ultra low speed to high speed, set the drive ability.
  * @param  None
-  * @retval int32_t:
+ * @retval int32_t:
  *          - LL_OK: Mode switch successful.
  *          - LL_ERR: Mode switch failure, check whether EFM was unlocked please.
  * @note   After calling this API, the system clock is able to switch high frequency.
@@ -1047,7 +1087,7 @@ int32_t PWC_LowSpeedToHighSpeed(void)
 
     DDL_ASSERT(IS_PWC_UNLOCKED());
     DDL_ASSERT(IS_PWC_EFM_UNLOCKED());
-    MODIFY_REG8(CM_PWC->PWRC2, PWC_PWRC2_DDAS | PWC_PWRC2_DVS, PWC_PWRC2_DDAS | PWC_PWRC2_DVS);
+    SET_REG8_BIT(CM_PWC->PWRC2, PWC_PWRC2_DDAS | PWC_PWRC2_DVS);
     WRITE_REG8(CM_PWC->MDSWCR, PWC_MD_SWITCH_CMD);
 
     /* Delay 30uS*/
@@ -1077,7 +1117,7 @@ int32_t PWC_LowSpeedToHighSpeed(void)
 /**
  * @brief  Switch high speed to high performance, set the drive ability.
  * @param  None
-  * @retval int32_t:
+ * @retval int32_t:
  *          - LL_OK: Mode switch successful.
  *          - LL_ERR: Mode switch failure, check whether EFM was unlocked please.
  * @note   After calling this API, the system clock is able to switch high frequency..
@@ -1098,7 +1138,7 @@ int32_t PWC_HighSpeedToHighPerformance(void)
 /**
  * @brief  Switch high performance to high speed, set the drive ability.
  * @param  None
-  * @retval int32_t:
+ * @retval int32_t:
  *          - LL_OK: Mode switch successful.
  *          - LL_ERR: Mode switch failure, check whether EFM was unlocked please.
  * @note   Before calling this API, please switch system clock to the required
@@ -1121,7 +1161,7 @@ int32_t PWC_HighPerformanceToHighSpeed(void)
 /**
  * @brief  Switch low speed to high performance, set the drive ability.
  * @param  None
-  * @retval int32_t:
+ * @retval int32_t:
  *          - LL_OK: Mode switch successful.
  *          - LL_ERR: Mode switch failure, check whether EFM was unlocked please.
  * @note   After calling this API, the system clock is able to switch high frequency..
@@ -1164,7 +1204,7 @@ int32_t PWC_LowSpeedToHighPerformance(void)
 /**
  * @brief  Switch high performance to low speed, set the drive ability.
  * @param  None
-  * @retval int32_t:
+ * @retval int32_t:
  *          - LL_OK: Mode switch successful.
  *          - LL_ERR: Mode switch failure, check whether EFM was unlocked please.
  * @note   Before calling this API, please switch system clock to the required
@@ -1197,7 +1237,7 @@ int32_t PWC_HighPerformanceToLowSpeed(void)
         }
     }
 
-    MODIFY_REG8(CM_PWC->PWRC2, PWC_PWRC2_DDAS | PWC_PWRC2_DVS, PWC_PWRC2_DDAS_0 | PWC_PWRC2_DVS_0);
+    MODIFY_REG8(CM_PWC->PWRC2, PWC_PWRC2_DDAS | PWC_PWRC2_DVS, PWC_PWRC2_DDAS_3 | PWC_PWRC2_DVS_1);
     WRITE_REG8(CM_PWC->MDSWCR, PWC_MD_SWITCH_CMD);
 
     /* Delay 30uS*/
@@ -1207,7 +1247,7 @@ int32_t PWC_HighPerformanceToLowSpeed(void)
 }
 
 /**
- * @brief  VDR area power down commond.
+ * @brief  VDR area power down command.
  * @param  [in] enNewState An @ref en_functional_state_t enumeration value.
  *  @arg    ENABLE:      Power down mode
  *  @arg    DISABLE:     Run mode
@@ -1219,15 +1259,15 @@ void PWC_PD_VdrCmd(en_functional_state_t enNewState)
     DDL_ASSERT(IS_PWC_UNLOCKED());
 
     if (ENABLE == enNewState) {
-        SET_REG8_BIT(CM_PWC->PWRC0, PWC_PWRC0_VVDRSD);
-    } else {
         CLR_REG8_BIT(CM_PWC->PWRC0, PWC_PWRC0_VVDRSD);
+    } else {
+        SET_REG8_BIT(CM_PWC->PWRC0, PWC_PWRC0_VVDRSD);
     }
 }
 
 /**
- * @brief  Ram area power down commond.
- * @param  [in] u32PeriphRam Specifies whitch ram to operate. @ref PWC_PD_Periph_Ram
+ * @brief  Ram area power down command.
+ * @param  [in] u32PeriphRam Specifies which ram to operate. @ref PWC_PD_Periph_Ram
  * @param  [in] enNewState An @ref en_functional_state_t enumeration value.
  *  @arg    ENABLE:      Power down mode
  *  @arg    DISABLE:     Run mode
@@ -1250,7 +1290,7 @@ void PWC_PD_PeriphRamCmd(uint32_t u32PeriphRam, en_functional_state_t enNewState
  * @brief  Initialize Power down mode config structure. Fill each pstcPDModeConfig with default value
  * @param  [in] pstcPDModeConfig Pointer to a stc_pwc_pd_mode_config_t structure that
  *                            contains configuration information.
-  * @retval int32_t:
+ * @retval int32_t:
  *          - LL_OK: Power down mode structure initialize successful
  *          - LL_ERR_INVD_PARAM: NULL pointer
  */
@@ -1273,7 +1313,7 @@ int32_t PWC_PD_StructInit(stc_pwc_pd_mode_config_t *pstcPDModeConfig)
  * @brief  Power down mode config structure.
  * @param  [in] pstcPDModeConfig Pointer to a stc_pwc_pd_mode_config_t structure that
  *                            contains configuration information.
-  * @retval int32_t:
+ * @retval int32_t:
  *          - LL_OK: Power down mode config successful
  *          - LL_ERR_INVD_PARAM: NULL pointer
  */
@@ -1318,7 +1358,7 @@ void PWC_PD_WakeupCmd(uint32_t u32Event, en_functional_state_t enNewState)
 
 /**
  * @brief  Power down mode wake up event trigger config.
- * @param  [in] u8Event PVD and wakeup pin. @ref PWC_WKUP_Trigger_Event_Sel
+ * @param  [in] u8Event PVD and wake up pin. @ref PWC_WKUP_Trigger_Event_Sel
  * @param  [in] u8TrigEdge The trigger edge.
  *  @arg PWC_PD_WKUP_TRIG_FALLING
  *  @arg PWC_PD_WKUP_TRIG_RISING
@@ -1356,7 +1396,7 @@ en_flag_status_t PWC_PD_GetWakeupStatus(uint16_t u16Flag)
 }
 
 /**
- * @brief  Get wake up event flag.
+ * @brief  Clear wake up event flag.
  * @param  [in] u16Flag Wake up event. @ref PWC_WKUP_Event_Flag_Sel
  * @retval None
  */
@@ -1381,7 +1421,7 @@ void PWC_PD_ClearWakeupStatus(uint16_t u16Flag)
  *  @arg    u16Clock, System clock setting after wake-up from stop mode.
  *  @arg    u16FlashWait, Whether wait flash stable after wake-up from stop mode.
  *  @arg    u16ExBusHold, ExBus status in stop mode.
-  * @retval int32_t:
+ * @retval int32_t:
  *          - LL_OK: Stop mode config successful
  *          - LL_ERR_INVD_PARAM: NULL pointer
  */
@@ -1393,15 +1433,16 @@ int32_t PWC_STOP_Config(const stc_pwc_stop_mode_config_t *pstcStopConfig)
     if (NULL == pstcStopConfig) {
         i32Ret = LL_ERR_INVD_PARAM;
     } else {
-        DDL_ASSERT(IS_PWC_STOP_CLK(pstcStopConfig->u16Clock));
+
         DDL_ASSERT(IS_PWC_UNLOCKED());
 
+        DDL_ASSERT(IS_PWC_STOP_CLK(pstcStopConfig->u16Clock));
         DDL_ASSERT(IS_PWC_STOP_DRV(pstcStopConfig->u8StopDrv));
-        MODIFY_REG8(CM_PWC->PWRC1, PWC_PWRC1_STPDAS, pstcStopConfig->u8StopDrv);
         DDL_ASSERT(IS_PWC_STOP_FLASH_WAIT(pstcStopConfig->u16FlashWait));
-
+        MODIFY_REG8(CM_PWC->PWRC1, PWC_PWRC1_STPDAS, pstcStopConfig->u8StopDrv);
         MODIFY_REG16(CM_PWC->STPMCR, (PWC_STPMCR_CKSMRC | PWC_STPMCR_FLNWT), \
                      (pstcStopConfig->u16Clock | pstcStopConfig->u16FlashWait));
+
     }
     return i32Ret;
 }
@@ -1410,7 +1451,7 @@ int32_t PWC_STOP_Config(const stc_pwc_stop_mode_config_t *pstcStopConfig)
  * @brief  Initialize stop mode config structure. Fill each pstcStopConfig with default value
  * @param  [in] pstcStopConfig Pointer to a stc_pwc_stop_mode_config_t structure that
  *                            contains configuration information.
-  * @retval int32_t:
+ * @retval int32_t:
  *          - LL_OK: Stop down mode structure initialize successful
  *          - LL_ERR_INVD_PARAM: NULL pointer
  */
@@ -1431,11 +1472,8 @@ int32_t PWC_STOP_StructInit(stc_pwc_stop_mode_config_t *pstcStopConfig)
 
 /**
  * @brief Stop mode wake up clock config.
- * @param [in] u8Clock System clock setting after wake-up from stop mode.
- *  @arg    PWC_STOP_CLK_KEEP
- *  @arg    PWC_STOP_CLK_MRC or PWC_STOP_CLK_HRC
+ * @param [in] u8Clock System clock setting after wake-up from stop mode. @ref PWC_STOP_CLK_Sel
  * @retval None
- * @note   PWC_STOP_CLK_HRC only valid while HC32F160.
  */
 void PWC_STOP_ClockSelect(uint8_t u8Clock)
 {
@@ -1457,9 +1495,9 @@ void PWC_STOP_FlashWaitCmd(en_functional_state_t enNewState)
     DDL_ASSERT(IS_PWC_UNLOCKED());
 
     if (ENABLE == enNewState) {
-        MODIFY_REG8(CM_PWC->STPMCR, PWC_STPMCR_FLNWT, PWC_STOP_FLASH_WAIT_ON);
+        CLR_REG16_BIT(CM_PWC->STPMCR, PWC_STPMCR_FLNWT);
     } else {
-        MODIFY_REG8(CM_PWC->STPMCR, PWC_STPMCR_FLNWT, PWC_STOP_FLASH_WAIT_OFF);
+        SET_REG16_BIT(CM_PWC->STPMCR, PWC_STPMCR_FLNWT);
     }
 }
 
@@ -1499,10 +1537,7 @@ void PWC_PowerMonitorCmd(en_functional_state_t enNewState)
 /**
  * @brief  WKT Timer Initialize.
  * @param  [in] u16ClkSrc                Clock source.
- *         This parameter can be one of the following values:
- *  @arg    PWC_WKT_CLK_SRC_64HZ:     64Hz Clock
- *  @arg    PWC_WKT_CLK_SRC_XTAL32:   XTAL32 Clock
- *  @arg    PWC_WKT_CLK_SRC_RTCLRC:   RTCLRC Clock
+ *         This parameter can be one of the values @ref PWC_WKT_Clock_Source.
  * @param  [in] u16CmpVal               Comparison value of the Counter.
  *  @arg    This parameter can be a number between Min_Data = 0 and Max_Data = 0xFFF.
  * @retval None
@@ -1534,7 +1569,7 @@ void PWC_WKT_SetCompareValue(uint16_t u16CmpVal)
 /**
  * @brief  Get WKT Timer compare value.
  * @param  None
- * @retval uint16_t                     WKT Compara value
+ * @retval uint16_t                     WKT Compare value
  */
 uint16_t PWC_WKT_GetCompareValue(void)
 {
@@ -1568,7 +1603,6 @@ void PWC_WKT_Cmd(en_functional_state_t enNewState)
  * @brief  Get WKT Timer count match flag.
  * @param  None
  * @retval An @ref en_flag_status_t enumeration type value. enumeration value:
-
  */
 en_flag_status_t PWC_WKT_GetStatus(void)
 {
@@ -1611,7 +1645,7 @@ void PWC_XTAL32_PowerCmd(en_functional_state_t enNewState)
 }
 
 /**
- * @brief  Ret_Sram area power commond.
+ * @brief  Ret_Sram area power command.
  * @param  [in] enNewState An @ref en_functional_state_t enumeration value.
  *  @arg    ENABLE:      Power on
  *  @arg    DISABLE:     Power off
@@ -1640,8 +1674,8 @@ void PWC_RetSram_PowerCmd(en_functional_state_t enNewState)
  */
 
 /**
-* @}
-*/
+ * @}
+ */
 
 /******************************************************************************
  * EOF (not truncated)

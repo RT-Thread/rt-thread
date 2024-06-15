@@ -9,7 +9,8 @@
 #ifndef DATAQUEUE_H__
 #define DATAQUEUE_H__
 
-#include <rtthread.h>
+#include <rtdef.h>
+#include <rtconfig.h>
 
 #define RT_DATAQUEUE_EVENT_UNKNOWN   0x00
 #define RT_DATAQUEUE_EVENT_POP       0x01
@@ -32,6 +33,7 @@ struct rt_data_queue
     rt_uint16_t is_full   : 1;
 
     struct rt_data_item *queue;
+    struct rt_spinlock spinlock;
 
     rt_list_t suspended_push_list;
     rt_list_t suspended_pop_list;

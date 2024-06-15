@@ -51,6 +51,18 @@ static struct utest local_utest = {UTEST_PASSED, 0, 0};
 
 #if defined(__ICCARM__) || defined(__ICCRX__)         /* for IAR compiler */
 #pragma section="UtestTcTab"
+#elif defined(_MSC_VER)
+#pragma section("UtestTcTab$a", read)
+__declspec(allocate("UtestTcTab$a")) const struct utest_tc_export __tc_export_begin =
+{
+    "__start",
+};
+
+#pragma section("UtestTcTab$z", read)
+__declspec(allocate("UtestTcTab$z")) const struct utest_tc_export __tc_export_end =
+{
+    "__end",
+};
 #endif
 
 #define TC_FAIL_LIST_SIZE                (RT_ALIGN(tc_num, 8) / 8)
@@ -76,11 +88,33 @@ int utest_init(void)
 #elif defined (__ICCARM__) || defined(__ICCRX__)    /* for IAR Compiler */
     tc_table = (utest_tc_export_t)__section_begin("UtestTcTab");
     tc_num = (utest_tc_export_t)__section_end("UtestTcTab") - tc_table;
-#elif defined (__GNUC__)                            /* for GCC Compiler */
+#else
+    unsigned int *ptr_begin, *ptr_end;
+#if defined(__GNUC__)
     extern const int __rt_utest_tc_tab_start;
     extern const int __rt_utest_tc_tab_end;
-    tc_table = (utest_tc_export_t)&__rt_utest_tc_tab_start;
-    tc_num = (utest_tc_export_t) &__rt_utest_tc_tab_end - tc_table;
+    ptr_begin = (unsigned int *)&__rt_utest_tc_tab_start;
+    ptr_end = (unsigned int *)&__rt_utest_tc_tab_end;
+#elif defined(_MSC_VER)
+    ptr_begin = (unsigned int *)&__tc_export_begin;
+    ptr_end = (unsigned int *)&__tc_export_end;
+    ptr_begin += (sizeof(struct utest_tc_export) / sizeof(unsigned int));
+#endif
+    while (*ptr_begin == 0) ptr_begin++;
+    ptr_end--;
+    while (*ptr_end == 0) ptr_end--;
+    /* copy tc_table from rodata section to ram */
+    for (unsigned int *ptr = ptr_begin; ptr < ptr_end;)
+    {
+        if (!tc_table)
+            tc_table = (utest_tc_export_t)rt_malloc(sizeof(struct utest_tc_export));
+        else
+            tc_table = (utest_tc_export_t)rt_realloc(tc_table, (tc_num + 1)* sizeof(struct utest_tc_export));
+        RT_ASSERT(tc_table);
+        tc_table[tc_num++] = *((utest_tc_export_t)ptr);
+        ptr += (sizeof(struct utest_tc_export) / sizeof(unsigned int));
+        while (*ptr == 0) ptr++;
+    }
 #endif
 
     LOG_I("utest is initialize success.");
@@ -97,7 +131,7 @@ int utest_init(void)
 }
 INIT_COMPONENT_EXPORT(utest_init);
 
-static void utest_tc_list(void)
+static long utest_tc_list(void)
 {
     rt_size_t i = 0;
 
@@ -107,6 +141,8 @@ static void utest_tc_list(void)
     {
         LOG_I("[testcase name]:%s; [run timeout]:%d", tc_table[i].name, tc_table[i].run_timeout);
     }
+
+    return 0;
 }
 MSH_CMD_EXPORT_ALIAS(utest_tc_list, utest_list, output all utest testcase);
 
@@ -162,8 +198,6 @@ static void utest_run(const char *utest_name)
     rt_bool_t is_find;
     rt_uint32_t tc_fail_num = 0;
     rt_uint32_t tc_run_num = 0;
-
-    rt_thread_mdelay(1000);
 
     for (index = 0; index < tc_loop; index ++)
     {
@@ -266,9 +300,16 @@ static void utest_run(const char *utest_name)
     }
 }
 
-static void utest_testcase_run(int argc, char** argv)
+static void utest_thr_entry(const char *utest_name)
 {
-    void *thr_param = RT_NULL;
+    /* see commit:0dc7b9a for details */
+    rt_thread_mdelay(1000);
+
+    utest_run(utest_name);
+}
+
+long utest_testcase_run(int argc, char** argv)
+{
 
     static char utest_name[UTEST_NAME_MAX_LEN];
     rt_memset(utest_name, 0x0, sizeof(utest_name));
@@ -278,7 +319,7 @@ static void utest_testcase_run(int argc, char** argv)
     if (argc == 1)
     {
         utest_run(RT_NULL);
-        return;
+        return 0;
     }
     else if (argc == 2 || argc == 3 || argc == 4)
     {
@@ -288,13 +329,12 @@ static void utest_testcase_run(int argc, char** argv)
             if (argc == 3 || argc == 4)
             {
                 rt_strncpy(utest_name, argv[2], sizeof(utest_name) -1);
-                thr_param = (void*)utest_name;
 
                 if (argc == 4) tc_loop = atoi(argv[3]);
             }
             tid = rt_thread_create("utest",
-                                    (void (*)(void *))utest_run, thr_param,
-                                    UTEST_THREAD_STACK_SIZE, UTEST_THREAD_PRIORITY, 10);
+                                   (void (*)(void *))utest_thr_entry, utest_name,
+                                   UTEST_THREAD_STACK_SIZE, UTEST_THREAD_PRIORITY, 10);
             if (tid != NULL)
             {
                 rt_thread_startup(tid);
@@ -316,6 +356,7 @@ static void utest_testcase_run(int argc, char** argv)
         LOG_E("[  error   ] at (%s:%d), in param error.", __func__, __LINE__);
         utest_help();
     }
+    return 0;
 }
 MSH_CMD_EXPORT_ALIAS(utest_testcase_run, utest_run, utest_run [-thread or -help] [testcase name] [loop num]);
 

@@ -61,7 +61,10 @@ FSP_HEADER
  *  - When the PLL only accepts the main oscillator as a source and XTAL is not used
  */
 #if BSP_FEATURE_CGC_HAS_PLL && !BSP_CFG_USE_LOW_VOLTAGE_MODE && \
-    !((1U != BSP_FEATURE_CGC_PLLCCR_TYPE) && (3U != BSP_FEATURE_CGC_PLLCCR_TYPE) && !BSP_CLOCK_CFG_MAIN_OSC_POPULATED)
+    !((1U != BSP_FEATURE_CGC_PLLCCR_TYPE) &&                    \
+    (3U != BSP_FEATURE_CGC_PLLCCR_TYPE) &&                      \
+    (4U != BSP_FEATURE_CGC_PLLCCR_TYPE) &&                      \
+    !BSP_CLOCK_CFG_MAIN_OSC_POPULATED)
  #define BSP_PRV_PLL_SUPPORTED              (1)
  #if BSP_FEATURE_CGC_HAS_PLL2
   #define BSP_PRV_PLL2_SUPPORTED            (1)
@@ -169,14 +172,14 @@ FSP_HEADER
 #define BSP_CLOCKS_USB_CLOCK_DIV_6       (3)  // Divide USB source clock by 6
 #define BSP_CLOCKS_USB_CLOCK_DIV_8       (4)  // Divide USB source clock by 8
 
-/* USBHS clock divider options. */
-#define BSP_CLOCKS_USBHS_CLOCK_DIV_1     (0)  // Divide USBHS source clock by 1
-#define BSP_CLOCKS_USBHS_CLOCK_DIV_2     (1)  // Divide USBHS source clock by 2
-#define BSP_CLOCKS_USBHS_CLOCK_DIV_3     (5)  // Divide USBHS source clock by 3
-#define BSP_CLOCKS_USBHS_CLOCK_DIV_4     (2)  // Divide USBHS source clock by 4
-#define BSP_CLOCKS_USBHS_CLOCK_DIV_5     (6)  // Divide USBHS source clock by 5
-#define BSP_CLOCKS_USBHS_CLOCK_DIV_6     (3)  // Divide USBHS source clock by 6
-#define BSP_CLOCKS_USBHS_CLOCK_DIV_8     (4)  // Divide USBHS source clock by 8
+/* USB60 clock divider options. */
+#define BSP_CLOCKS_USB60_CLOCK_DIV_1     (0)  // Divide USB60 source clock by 1
+#define BSP_CLOCKS_USB60_CLOCK_DIV_2     (1)  // Divide USB60 source clock by 2
+#define BSP_CLOCKS_USB60_CLOCK_DIV_3     (5)  // Divide USB60 source clock by 3
+#define BSP_CLOCKS_USB60_CLOCK_DIV_4     (2)  // Divide USB60 source clock by 4
+#define BSP_CLOCKS_USB60_CLOCK_DIV_5     (6)  // Divide USB60 source clock by 5
+#define BSP_CLOCKS_USB60_CLOCK_DIV_6     (3)  // Divide USB66 source clock by 6
+#define BSP_CLOCKS_USB60_CLOCK_DIV_8     (4)  // Divide USB60 source clock by 8
 
 /* GLCD clock divider options. */
 #define BSP_CLOCKS_LCD_CLOCK_DIV_1       (0)  // Divide LCD source clock by 1
@@ -197,7 +200,9 @@ FSP_HEADER
 /* CANFD clock divider options. */
 #define BSP_CLOCKS_CANFD_CLOCK_DIV_1     (0)  // Divide CANFD source clock by 1
 #define BSP_CLOCKS_CANFD_CLOCK_DIV_2     (1)  // Divide CANFD source clock by 2
+#define BSP_CLOCKS_CANFD_CLOCK_DIV_3     (5)  // Divide CANFD source clock by 3
 #define BSP_CLOCKS_CANFD_CLOCK_DIV_4     (2)  // Divide CANFD source clock by 4
+#define BSP_CLOCKS_CANFD_CLOCK_DIV_5     (6)  // Divide CANFD source clock by 5
 #define BSP_CLOCKS_CANFD_CLOCK_DIV_6     (3)  // Divide CANFD source clock by 6
 #define BSP_CLOCKS_CANFD_CLOCK_DIV_8     (4)  // Divide CANFD source clock by 8
 
@@ -241,6 +246,10 @@ FSP_HEADER
 #define BSP_CLOCKS_IIC_CLOCK_DIV_4       (2)  // Divide IIC source clock by 4
 #define BSP_CLOCKS_IIC_CLOCK_DIV_6       (3)  // Divide IIC source clock by 6
 #define BSP_CLOCKS_IIC_CLOCK_DIV_8       (4)  // Divide IIC source clock by 8
+
+/* CEC clock divider options. */
+#define BSP_CLOCKS_CEC_CLOCK_DIV_1       (0)  // Divide CEC source clock by 1
+#define BSP_CLOCKS_CEC_CLOCK_DIV_2       (1)  // Divide CEC source clock by 2
 
 /* I3C clock divider options. */
 #define BSP_CLOCKS_I3C_CLOCK_DIV_1       (0)  // Divide I3C source clock by 1
@@ -1044,6 +1053,8 @@ typedef enum e_cgc_pll_mul
     CGC_PLL_MUL_180_33 = BSP_CLOCKS_PLL_MUL(180U, 33U), ///< PLL multiplier of 180.33
     CGC_PLL_MUL_180_5  = BSP_CLOCKS_PLL_MUL(180U, 50U), ///< PLL multiplier of 180.50
     CGC_PLL_MUL_180_66 = BSP_CLOCKS_PLL_MUL(180U, 66U), ///< PLL multiplier of 180.66
+    CGC_PLL_MUL_732_0  = BSP_CLOCKS_PLL_MUL(732U, 0U),  ///< PLL multiplier of 732.00
+    CGC_PLL_MUL_781_0  = BSP_CLOCKS_PLL_MUL(781U, 0U),  ///< PLL multiplier of 781.00
 } cgc_pll_mul_t;
 
 /***********************************************************************************************************************

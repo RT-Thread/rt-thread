@@ -1,6 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
- * Copyright (c) 2022, Xiaohua Semiconductor Co., Ltd.
+ * Copyright (C) 2022-2024, Xiaohua Semiconductor Co., Ltd.
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -26,6 +25,8 @@ struct hc32_pin_irq_map
     func_ptr_t              irq_callback;
     struct hc32_irq_config  irq_config;
 };
+
+int rt_hw_pin_init(void);
 
 #endif
 

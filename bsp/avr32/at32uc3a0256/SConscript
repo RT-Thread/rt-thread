@@ -1,0 +1,11 @@
+import rtconfig
+Import('RTT_ROOT')
+from building import *
+
+src_bsp = ['application.c', 'startup.c', 'board.c']
+
+src = File(src_bsp)
+CPPPATH = [RTT_ROOT + '/bsp/avr32']
+group = DefineGroup('Startup', src, depend = [''], CPPPATH = CPPPATH)
+
+Return('group')

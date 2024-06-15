@@ -12,10 +12,7 @@
 #ifndef __BOARD_H__
 #define __BOARD_H__
 
-#include <rtthread.h>
 #include <stm32f4xx.h>
-#include "drv_common.h"
-#include "drv_gpio.h"
 
 #define STM32_FLASH_START_ADRESS     ((uint32_t)0x08000000)
 #define STM32_FLASH_SIZE             (512 * 1024)

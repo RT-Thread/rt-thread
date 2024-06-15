@@ -6,14 +6,19 @@
  * Change Logs:
  * Date           Author       Notes
  * 2018-11-06     SummerGift   first version
+ * 2023-12-03     Meco Man     support nano version
  */
 
-#include <rtthread.h>
-#include <rtdevice.h>
 #include <board.h>
+#include <rtthread.h>
+#include <drv_gpio.h>
+#ifndef RT_USING_NANO
+#include <rtdevice.h>
+#endif /* RT_USING_NANO */
 
-/* defined the LED0 pin: PC4-36 PA8-8,PC5-37,PA10-10*/
-#define LED0_PIN 10
+/* defined the LED0 pin: PC4 */
+/* LEDs: PC4, PA8, PC5, PA10 */
+#define LED0_PIN    GET_PIN(C, 4)
 
 int main(void)
 {

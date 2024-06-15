@@ -78,6 +78,10 @@ typedef struct rt_hwtimer_device
 rt_err_t rt_device_hwtimer_register(rt_hwtimer_t *timer, const char *name, void *user_data);
 void rt_device_hwtimer_isr(rt_hwtimer_t *timer);
 
+#ifdef RT_USING_DM
+extern void (*rt_device_hwtimer_us_delay)(rt_uint32_t us);
+#endif
+
 #ifdef __cplusplus
 }
 #endif

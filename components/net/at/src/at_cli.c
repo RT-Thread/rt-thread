@@ -114,7 +114,6 @@ static void server_cli_parser(void)
     rt_base_t level;
     static rt_device_t device_bak;
     static rt_err_t (*getchar_bak)(struct at_server *server, char *ch, rt_int32_t timeout);
-    static char endmark_back[AT_END_MARK_LEN];
 
     /* backup server device and getchar function */
     {
@@ -123,15 +122,9 @@ static void server_cli_parser(void)
         device_bak = server->device;
         getchar_bak = server->get_char;
 
-        rt_memset(endmark_back, 0x00, AT_END_MARK_LEN);
-        rt_memcpy(endmark_back, server->end_mark, strlen(server->end_mark));
-
         /* setup server device as console device */
         server->device = rt_console_get_device();
         server->get_char = at_server_console_getchar;
-
-        rt_memset(server->end_mark, 0x00, AT_END_MARK_LEN);
-        server->end_mark[0] = '\r';
 
         rt_hw_interrupt_enable(level);
     }
@@ -153,9 +146,6 @@ static void server_cli_parser(void)
 
         server->device = device_bak;
         server->get_char = getchar_bak;
-
-        rt_memset(server->end_mark, 0x00, AT_END_MARK_LEN);
-        rt_memcpy(server->end_mark, endmark_back, strlen(endmark_back));
 
         rt_hw_interrupt_enable(level);
     }
@@ -223,6 +213,9 @@ static void client_cli_parser(at_client_t  client)
             client->status = AT_STATUS_CLI;
         }
 
+        rt_sem_init(&client_rx_notice, "cli_r", 0, RT_IPC_FLAG_FIFO);
+        client_rx_fifo = rt_ringbuffer_create(AT_CLI_FIFO_SIZE);
+
         /* backup client device RX indicate */
         {
             level = rt_hw_interrupt_disable();
@@ -230,9 +223,6 @@ static void client_cli_parser(at_client_t  client)
             rt_device_set_rx_indicate(client->device, client_getchar_rx_ind);
             rt_hw_interrupt_enable(level);
         }
-
-        rt_sem_init(&client_rx_notice, "cli_r", 0, RT_IPC_FLAG_FIFO);
-        client_rx_fifo = rt_ringbuffer_create(AT_CLI_FIFO_SIZE);
 
         at_client = rt_thread_create("at_cli", at_client_entry, RT_NULL, 512, 8, 8);
         if (client_rx_fifo && at_client)

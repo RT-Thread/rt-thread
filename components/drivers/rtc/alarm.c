@@ -57,6 +57,9 @@ static rt_err_t alarm_set(struct rt_alarm *alarm)
     wkalarm.tm_sec = alarm->wktime.tm_sec;
     wkalarm.tm_min = alarm->wktime.tm_min;
     wkalarm.tm_hour = alarm->wktime.tm_hour;
+    wkalarm.tm_mday = alarm->wktime.tm_mday;
+    wkalarm.tm_mon = alarm->wktime.tm_mon;
+    wkalarm.tm_year = alarm->wktime.tm_year;
 
     ret = rt_device_control(device, RT_DEVICE_CTRL_RTC_SET_ALARM, &wkalarm);
     if ((ret == RT_EOK) && wkalarm.enable)
@@ -71,6 +74,9 @@ static rt_err_t alarm_set(struct rt_alarm *alarm)
             alarm->wktime.tm_sec = wkalarm.tm_sec;
             alarm->wktime.tm_min = wkalarm.tm_min;
             alarm->wktime.tm_hour = wkalarm.tm_hour;
+            alarm->wktime.tm_mday = wkalarm.tm_mday;
+            alarm->wktime.tm_mon = wkalarm.tm_mon;
+            alarm->wktime.tm_year = wkalarm.tm_year;
         }
     }
 
@@ -281,7 +287,11 @@ static void alarm_update(rt_uint32_t event)
         else
         {
             if (_container.current != RT_NULL)
+            {
                 alarm_set(_container.current);
+                if (!(_container.current->flag & RT_ALARM_STATE_START))
+                    _container.current = RT_NULL;
+            }
         }
     }
     rt_mutex_release(&_container.mutex);

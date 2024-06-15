@@ -1,17 +1,5 @@
 menu "Hardware Drivers Config"
 
-config SOC_STM32H750XB
-    bool
-    select SOC_SERIES_STM32H7
-    select RT_USING_COMPONENTS_INIT
-    select RT_USING_USER_MAIN
-    select RT_USING_CACHE
-    default y
-
-config BOARD_STM32H750_ARTPI
-    bool
-    default y
-
 menu "Board extended module"
 
     menuconfig ART_PI_USING_MEDIA_IO
@@ -147,31 +135,85 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_SERIAL
         select RT_SERIAL_USING_DMA
         if BSP_USING_UART
-            config BSP_USING_UART1
+            menuconfig BSP_USING_UART1
                 bool "Enable UART1"
                 default n
+                if BSP_USING_UART1
+                    config BSP_UART1_RX_USING_DMA
+                        bool "Enable UART1 RX DMA"
+                        depends on BSP_USING_UART1 && RT_SERIAL_USING_DMA
+                        default n
 
-            config BSP_UART1_RX_USING_DMA
-                bool "Enable UART1 RX DMA"
-                depends on BSP_USING_UART1 && RT_SERIAL_USING_DMA
-                default n
+                    config BSP_UART1_TX_USING_DMA
+                        bool "Enable UART1 TX DMA"
+                        depends on BSP_USING_UART1 && RT_SERIAL_USING_DMA
+                        default n
 
-            config BSP_UART1_TX_USING_DMA
-                bool "Enable UART1 TX DMA"
-                depends on BSP_USING_UART1 && RT_SERIAL_USING_DMA
-                default n
+                    config BSP_UART1_RX_BUFSIZE
+                        int "Set UART1 RX buffer size"
+                        range 64 65535
+                        depends on BSP_USING_UART1
+                        default 256
 
-            config BSP_USING_UART3
+                    config BSP_UART1_TX_BUFSIZE
+                        int "Set UART1 TX buffer size"
+                        range 0 65535
+                        depends on BSP_USING_UART1
+                        default 0
+
+                endif
+
+            menuconfig BSP_USING_UART3
                 bool "Enable UART3"
                 default n
+                if BSP_USING_UART3
+                    config BSP_UART3_RX_BUFSIZE
+                        int "Set UART3 RX buffer size"
+                        range 64 65535
+                        depends on BSP_USING_UART3
+                        default 256
 
-            config BSP_USING_UART4
+                    config BSP_UART3_TX_BUFSIZE
+                        int "Set UART3 TX buffer size"
+                        range 0 65535
+                        depends on BSP_USING_UART3
+                        default 0
+                endif
+
+            menuconfig BSP_USING_UART4
                 bool "Enable UART4"
                 default n
+                if BSP_USING_UART4
+                    config BSP_UART4_RX_BUFSIZE
+                        int "Set UART4 RX buffer size"
+                        range 64 65535
+                        depends on BSP_USING_UART4
+                        default 256
 
-            config BSP_USING_UART6
+                    config BSP_UART4_TX_BUFSIZE
+                        int "Set UART4 TX buffer size"
+                        range 0 65535
+                        depends on BSP_USING_UART4
+                        default 0
+                endif
+
+            menuconfig BSP_USING_UART6
                 bool "Enable UART6"
                 default n
+                if BSP_USING_UART6
+                    config BSP_UART6_RX_BUFSIZE
+                        int "Set UART6 RX buffer size"
+                        range 64 65535
+                        depends on BSP_USING_UART6
+                        default 256
+
+                    config BSP_UART6_TX_BUFSIZE
+                        int "Set UART6 TX buffer size"
+                        range 0 65535
+                        depends on BSP_USING_UART6
+                        default 0
+
+                endif
         endif
 
     menuconfig BSP_USING_SPI
@@ -332,7 +374,7 @@ menu "On-chip Peripheral Drivers"
     config BSP_USING_LTDC
         bool
         default n
-    source "../libraries/HAL_Drivers/Kconfig"
+    source "$BSP_DIR/../libraries/HAL_Drivers/drivers/Kconfig"
 
 endmenu
 

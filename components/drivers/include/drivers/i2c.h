@@ -45,8 +45,8 @@ struct rt_i2c_bus_device_ops
                             struct rt_i2c_msg msgs[],
                             rt_uint32_t num);
     rt_err_t (*i2c_bus_control)(struct rt_i2c_bus_device *bus,
-                                rt_uint32_t,
-                                rt_uint32_t);
+                                int cmd,
+                                void *args);
 };
 
 /*for i2c bus driver*/
@@ -63,9 +63,41 @@ struct rt_i2c_bus_device
 
 struct rt_i2c_client
 {
+#ifdef RT_USING_DM
+    struct rt_device parent;
+
+    const char *name;
+    const struct rt_i2c_device_id *id;
+    const struct rt_ofw_node_id *ofw_id;
+#endif
     struct rt_i2c_bus_device       *bus;
     rt_uint16_t                    client_addr;
 };
+
+#ifdef RT_USING_DM
+struct rt_i2c_device_id
+{
+    char name[20];
+    void *data;
+};
+
+struct rt_i2c_driver
+{
+    struct rt_driver parent;
+
+    const struct rt_i2c_device_id *ids;
+    const struct rt_ofw_node_id *ofw_ids;
+
+    rt_err_t (*probe)(struct rt_i2c_client *client);
+    rt_err_t (*remove)(struct rt_i2c_client *client);
+    rt_err_t (*shutdown)(struct rt_i2c_client *client);
+};
+
+rt_err_t rt_i2c_driver_register(struct rt_i2c_driver *driver);
+rt_err_t rt_i2c_device_register(struct rt_i2c_client *client);
+
+#define RT_I2C_DRIVER_EXPORT(driver)  RT_DRIVER_EXPORT(driver, i2c, BUILIN)
+#endif /* RT_USING_DM */
 
 rt_err_t rt_i2c_bus_device_register(struct rt_i2c_bus_device *bus,
                                     const char               *bus_name);
@@ -74,8 +106,8 @@ rt_ssize_t rt_i2c_transfer(struct rt_i2c_bus_device *bus,
                           struct rt_i2c_msg         msgs[],
                           rt_uint32_t               num);
 rt_err_t rt_i2c_control(struct rt_i2c_bus_device *bus,
-                        rt_uint32_t               cmd,
-                        rt_uint32_t               arg);
+                        int cmd,
+                        void *args);
 rt_ssize_t rt_i2c_master_send(struct rt_i2c_bus_device *bus,
                              rt_uint16_t               addr,
                              rt_uint16_t               flags,

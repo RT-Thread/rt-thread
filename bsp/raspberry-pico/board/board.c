@@ -11,11 +11,13 @@
 
 #include <rthw.h>
 #include <rtthread.h>
-
 #include <stdio.h>
-
 #include "board.h"
-#include "hardware/structs/systick.h"
+#include <pico/bootrom.h>
+#include <pico/stdlib.h>
+#include <hardware/clocks.h>
+#include <hardware/structs/systick.h>
+#include <drv_uart.h>
 
 #define PLL_SYS_KHZ (133 * 1000)
 
@@ -36,16 +38,16 @@ void isr_systick(void)
 
 uint32_t systick_config(uint32_t ticks)
 {
-  if ((ticks - 1UL) > M0PLUS_SYST_RVR_RELOAD_BITS)
-  {
-    return (1UL);                                                   /* Reload value impossible */
-  }
+    if ((ticks - 1UL) > M0PLUS_SYST_RVR_RELOAD_BITS)
+    {
+        return (1UL);                                                   /* Reload value impossible */
+    }
 
-  mpu_hw->rvr    = (uint32_t)(ticks - 1UL);                         /* set reload register */
-  mpu_hw->csr  = M0PLUS_SYST_CSR_CLKSOURCE_BITS |
+    systick_hw->rvr    = (uint32_t)(ticks - 1UL);                         /* set reload register */
+    systick_hw->csr  = M0PLUS_SYST_CSR_CLKSOURCE_BITS |
                    M0PLUS_SYST_CSR_TICKINT_BITS   |
                    M0PLUS_SYST_CSR_ENABLE_BITS;                     /* Enable SysTick IRQ and SysTick Timer */
-  return (0UL);                                                     /* Function successful */
+    return (0UL);                                                     /* Function successful */
 }
 
 void rt_hw_board_init()
@@ -71,12 +73,13 @@ void rt_hw_board_init()
     // Call each function in the list.
     // We have to take the address of the symbols, as __init_array_start *is*
     // the first function pointer, not the address of it.
-    for (void (**p)() = &__init_array_start; p < &__init_array_end; ++p) {
+    for (void (**p)() = &__init_array_start; p < &__init_array_end; ++p)
+    {
         (*p)();
     }
 
     /* Configure the SysTick */
-    systick_config(frequency_count_khz(CLOCKS_FC0_SRC_VALUE_ROSC_CLKSRC)*10000/RT_TICK_PER_SECOND);
+    systick_config(clock_get_hz(clk_sys) / RT_TICK_PER_SECOND);
 
 #ifdef RT_USING_COMPONENTS_INIT
     rt_components_board_init();
@@ -88,6 +91,15 @@ void rt_hw_board_init()
 #endif
 
 #ifdef RT_USING_CONSOLE
-   rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
+    rt_console_set_device(RT_CONSOLE_DEVICE_NAME);
 #endif
 }
+
+#ifdef RT_USING_MSH
+static int pico_reboot(int argc, char *argv[])
+{
+    reset_usb_boot(0, 0);
+    return 0;
+}
+MSH_CMD_EXPORT_ALIAS(pico_reboot, reboot, reset Pico to BOOTSEL mode);
+#endif

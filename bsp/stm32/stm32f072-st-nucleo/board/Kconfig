@@ -1,12 +1,5 @@
 menu "Hardware Drivers Config"
 
-config SOC_STM32F072RB
-    bool
-    select SOC_SERIES_STM32F0
-    select RT_USING_COMPONENTS_INIT
-    select RT_USING_USER_MAIN
-    default y
-
 menu "Onboard Peripheral Drivers"
     config BSP_USING_STLINK_TO_USART
         bool "Enable STLINK TO USART (uart2)"
@@ -34,8 +27,13 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_PWM17_CH1
         select BSP_USING_I2C
         select BSP_USING_I2C1
+        select BSP_USING_SPI
+        select BSP_USING_SPI1
+        select BSP_SPI1_TX_USING_DMA
+        select BSP_SPI1_RX_USING_DMA
+        select RTDUINO_USING_WIRE
+        select RTDUINO_USING_SPI
         imply RTDUINO_USING_SERVO
-        imply RTDUINO_USING_WIRE
         default n
 
 endmenu
@@ -166,7 +164,7 @@ menu "On-chip Peripheral Drivers"
                 endif
         endif
 
-    source "../libraries/HAL_Drivers/Kconfig"
+    source "$BSP_DIR/../libraries/HAL_Drivers/drivers/Kconfig"
 
 endmenu
 

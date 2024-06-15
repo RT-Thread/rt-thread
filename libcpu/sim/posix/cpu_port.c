@@ -49,8 +49,8 @@ static long interrupt_disable_flag;
 //static int systick_signal_flag;
 
 /* flag in interrupt handling */
-rt_uint32_t rt_interrupt_from_thread, rt_interrupt_to_thread;
-rt_uint32_t rt_thread_switch_interrupt_flag;
+rt_ubase_t rt_interrupt_from_thread, rt_interrupt_to_thread;
+rt_ubase_t rt_thread_switch_interrupt_flag;
 
 /* interrupt event mutex */
 static pthread_mutex_t *ptr_int_mutex;
@@ -363,8 +363,8 @@ void rt_hw_interrupt_enable(rt_base_t level)
     /*TODO: It may need to unmask the signal */
 }
 
-void rt_hw_context_switch(rt_uint32_t from,
-                          rt_uint32_t to)
+void rt_hw_context_switch(rt_ubase_t from,
+                          rt_ubase_t to)
 {
     struct rt_thread * tid;
     pthread_t pid;
@@ -380,12 +380,12 @@ void rt_hw_context_switch(rt_uint32_t from,
         rt_thread_switch_interrupt_flag = 1;
 
         // set rt_interrupt_from_thread
-        rt_interrupt_from_thread = *((rt_uint32_t *)from);
+        rt_interrupt_from_thread = *((rt_ubase_t *)from);
     }
 #endif
     pthread_mutex_lock(ptr_int_mutex);
-    rt_interrupt_from_thread = *((rt_uint32_t *)from);
-    rt_interrupt_to_thread = *((rt_uint32_t *)to);
+    rt_interrupt_from_thread = *((rt_ubase_t *)from);
+    rt_interrupt_to_thread = *((rt_ubase_t *)to);
 
     /* 这个函数只是并不会真正执行中断处理函数，而只是简单的
      * 设置一下中断挂起标志位
@@ -394,16 +394,15 @@ void rt_hw_context_switch(rt_uint32_t from,
     pthread_mutex_unlock(ptr_int_mutex);
 }
 
-void rt_hw_context_switch_interrupt(rt_uint32_t from,
-                                    rt_uint32_t to)
+void rt_hw_context_switch_interrupt(rt_ubase_t from, rt_ubase_t to, rt_thread_t from_thread, rt_thread_t to_thread)
 {
     rt_hw_context_switch(from, to);
 }
 
-void rt_hw_context_switch_to(rt_uint32_t to)
+void rt_hw_context_switch_to(rt_ubase_t to)
 {
     //set to thread
-    rt_interrupt_to_thread = *((rt_uint32_t *)(to));
+    rt_interrupt_to_thread = *((rt_ubase_t *)(to));
 
     //clear from thread
     rt_interrupt_from_thread = 0;
@@ -502,8 +501,6 @@ static void start_sys_timer(void)
 {
     struct itimerval itimer, oitimer;
     int us;
-
-    RT_ASSERT(RT_TICK_PER_SECOND <= 1000000 || RT_TICK_PER_SECOND >= 1);
 
     us = 1000000 / RT_TICK_PER_SECOND - 1;
 

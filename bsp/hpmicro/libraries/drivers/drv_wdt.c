@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 - 2022 hpmicro
+ * Copyright (c) 2021 - 2022 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -12,6 +12,7 @@
 #include "drv_wdt.h"
 #include "hpm_wdg_drv.h"
 #include "hpm_sysctl_drv.h"
+
 
 
 #ifdef BSP_USING_WDG
@@ -49,7 +50,7 @@ void wdog0_isr(void)
 {
     hpm_wdog_isr(&wdog0);
 }
-SDK_DECLARE_EXT_ISR_M(IRQn_WDOG0, wdog0_isr)
+SDK_DECLARE_EXT_ISR_M(IRQn_WDG0, wdog0_isr)
 #endif
 
 #if defined(BSP_USING_WDG1)
@@ -58,7 +59,7 @@ void wdog1_isr(void)
 {
     hpm_wdog_isr(&wdog1);
 }
-SDK_DECLARE_EXT_ISR_M(IRQn_WDOG1, wdog1_isr)
+SDK_DECLARE_EXT_ISR_M(IRQn_WDG1, wdog1_isr)
 #endif
 
 #if defined(BSP_USING_WDG2)
@@ -67,7 +68,7 @@ void wdog2_isr(void)
 {
     hpm_wdog_isr(&wdog2);
 }
-SDK_DECLARE_EXT_ISR_M(IRQn_WDOG2, wdog2_isr)
+SDK_DECLARE_EXT_ISR_M(IRQn_WDG2, wdog2_isr)
 #endif
 
 #if defined(BSP_USING_WDG3)
@@ -76,7 +77,7 @@ void wdog3_isr(void)
 {
     hpm_wdog_isr(&wdog3);
 }
-SDK_DECLARE_EXT_ISR_M(IRQn_WDOG3, wdog3_isr)
+SDK_DECLARE_EXT_ISR_M(IRQn_WDG3, wdog3_isr)
 #endif
 
 static hpm_wdog_t wdogs[] = {
@@ -207,7 +208,7 @@ static rt_err_t hpm_wdog_control(rt_watchdog_t *wdt, int cmd, void *args)
         hpm_wdog_close(wdt);
         break;
     default:
-        ret = -RT_EINVAL;
+        ret = RT_EINVAL;
         break;
     }
 

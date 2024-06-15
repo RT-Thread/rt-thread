@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 hpmicro
+ * Copyright (c) 2021-2024 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -27,10 +27,10 @@ typedef struct {
     } AFFILIATE[1];
     __R  uint8_t  RESERVED2[16];               /* 0x910 - 0x91F: Reserved */
     struct {
-        __RW uint32_t VALUE;                   /* 0x920: Retention Contol */
-        __RW uint32_t SET;                     /* 0x924: Retention Contol */
-        __RW uint32_t CLEAR;                   /* 0x928: Retention Contol */
-        __RW uint32_t TOGGLE;                  /* 0x92C: Retention Contol */
+        __RW uint32_t VALUE;                   /* 0x920: Retention Control */
+        __RW uint32_t SET;                     /* 0x924: Retention Control */
+        __RW uint32_t CLEAR;                   /* 0x928: Retention Control */
+        __RW uint32_t TOGGLE;                  /* 0x92C: Retention Control */
     } RETENTION[1];
     __R  uint8_t  RESERVED3[1744];             /* 0x930 - 0xFFF: Reserved */
     struct {
@@ -396,7 +396,7 @@ typedef struct {
  *
  * perform reset and release imediately
  * 0: reset is released
- * 1 reset is asserted and will release automaticly
+ * 1 reset is asserted and will release automatically
  */
 #define SYSCTL_RESET_CONTROL_RESET_MASK (0x1U)
 #define SYSCTL_RESET_CONTROL_RESET_SHIFT (0U)
@@ -880,7 +880,7 @@ typedef struct {
 /*
  * REFERENCE (RW)
  *
- * refrence clock selection,
+ * reference clock selection,
  * 0: 32k
  * 1: 24M
  */
@@ -1053,10 +1053,10 @@ typedef struct {
  *
  * register for software to handle resume, can save resume address or status
  */
-#define SYSCTL_GPR_GPR_MASK (0xFFFFFFFFUL)
-#define SYSCTL_GPR_GPR_SHIFT (0U)
-#define SYSCTL_GPR_GPR_SET(x) (((uint32_t)(x) << SYSCTL_GPR_GPR_SHIFT) & SYSCTL_GPR_GPR_MASK)
-#define SYSCTL_GPR_GPR_GET(x) (((uint32_t)(x) & SYSCTL_GPR_GPR_MASK) >> SYSCTL_GPR_GPR_SHIFT)
+#define SYSCTL_CPU_GPR_GPR_MASK (0xFFFFFFFFUL)
+#define SYSCTL_CPU_GPR_GPR_SHIFT (0U)
+#define SYSCTL_CPU_GPR_GPR_SET(x) (((uint32_t)(x) << SYSCTL_CPU_GPR_GPR_SHIFT) & SYSCTL_CPU_GPR_GPR_MASK)
+#define SYSCTL_CPU_GPR_GPR_GET(x) (((uint32_t)(x) & SYSCTL_CPU_GPR_GPR_MASK) >> SYSCTL_CPU_GPR_GPR_SHIFT)
 
 /* Bitfield definition for register of struct array CPU: STATUS0 */
 /*
@@ -1064,9 +1064,9 @@ typedef struct {
  *
  * IRQ values
  */
-#define SYSCTL_WAKEUP_STATUS_STATUS_MASK (0xFFFFFFFFUL)
-#define SYSCTL_WAKEUP_STATUS_STATUS_SHIFT (0U)
-#define SYSCTL_WAKEUP_STATUS_STATUS_GET(x) (((uint32_t)(x) & SYSCTL_WAKEUP_STATUS_STATUS_MASK) >> SYSCTL_WAKEUP_STATUS_STATUS_SHIFT)
+#define SYSCTL_CPU_WAKEUP_STATUS_STATUS_MASK (0xFFFFFFFFUL)
+#define SYSCTL_CPU_WAKEUP_STATUS_STATUS_SHIFT (0U)
+#define SYSCTL_CPU_WAKEUP_STATUS_STATUS_GET(x) (((uint32_t)(x) & SYSCTL_CPU_WAKEUP_STATUS_STATUS_MASK) >> SYSCTL_CPU_WAKEUP_STATUS_STATUS_SHIFT)
 
 /* Bitfield definition for register of struct array CPU: ENABLE0 */
 /*
@@ -1074,10 +1074,10 @@ typedef struct {
  *
  * IRQ wakeup enable
  */
-#define SYSCTL_WAKEUP_ENABLE_ENABLE_MASK (0xFFFFFFFFUL)
-#define SYSCTL_WAKEUP_ENABLE_ENABLE_SHIFT (0U)
-#define SYSCTL_WAKEUP_ENABLE_ENABLE_SET(x) (((uint32_t)(x) << SYSCTL_WAKEUP_ENABLE_ENABLE_SHIFT) & SYSCTL_WAKEUP_ENABLE_ENABLE_MASK)
-#define SYSCTL_WAKEUP_ENABLE_ENABLE_GET(x) (((uint32_t)(x) & SYSCTL_WAKEUP_ENABLE_ENABLE_MASK) >> SYSCTL_WAKEUP_ENABLE_ENABLE_SHIFT)
+#define SYSCTL_CPU_WAKEUP_ENABLE_ENABLE_MASK (0xFFFFFFFFUL)
+#define SYSCTL_CPU_WAKEUP_ENABLE_ENABLE_SHIFT (0U)
+#define SYSCTL_CPU_WAKEUP_ENABLE_ENABLE_SET(x) (((uint32_t)(x) << SYSCTL_CPU_WAKEUP_ENABLE_ENABLE_SHIFT) & SYSCTL_CPU_WAKEUP_ENABLE_ENABLE_MASK)
+#define SYSCTL_CPU_WAKEUP_ENABLE_ENABLE_GET(x) (((uint32_t)(x) & SYSCTL_CPU_WAKEUP_ENABLE_ENABLE_MASK) >> SYSCTL_CPU_WAKEUP_ENABLE_ENABLE_SHIFT)
 
 
 
@@ -1103,7 +1103,7 @@ typedef struct {
 #define SYSCTL_RESOURCE_CLK_SRC_PLL2_REF (45UL)
 #define SYSCTL_RESOURCE_CLK_TOP_CPU0 (64UL)
 #define SYSCTL_RESOURCE_CLK_TOP_MCT0 (65UL)
-#define SYSCTL_RESOURCE_CLK_TOP_DRAM (66UL)
+#define SYSCTL_RESOURCE_CLK_TOP_FEMC (66UL)
 #define SYSCTL_RESOURCE_CLK_TOP_XPI0 (67UL)
 #define SYSCTL_RESOURCE_CLK_TOP_XPI1 (68UL)
 #define SYSCTL_RESOURCE_CLK_TOP_TMR0 (69UL)
@@ -1150,7 +1150,7 @@ typedef struct {
 #define SYSCTL_RESOURCE_AHBP (256UL)
 #define SYSCTL_RESOURCE_AXIS (257UL)
 #define SYSCTL_RESOURCE_AXIC (258UL)
-#define SYSCTL_RESOURCE_DRAM (259UL)
+#define SYSCTL_RESOURCE_FEMC (259UL)
 #define SYSCTL_RESOURCE_ROM0 (260UL)
 #define SYSCTL_RESOURCE_LMM0 (261UL)
 #define SYSCTL_RESOURCE_RAM0 (262UL)
@@ -1232,7 +1232,7 @@ typedef struct {
 
 /* CLOCK register group index macro definition */
 #define SYSCTL_CLOCK_CLK_TOP_MCT0 (0UL)
-#define SYSCTL_CLOCK_CLK_TOP_DRAM (1UL)
+#define SYSCTL_CLOCK_CLK_TOP_FEMC (1UL)
 #define SYSCTL_CLOCK_CLK_TOP_XPI0 (2UL)
 #define SYSCTL_CLOCK_CLK_TOP_XPI1 (3UL)
 #define SYSCTL_CLOCK_CLK_TOP_TMR0 (4UL)

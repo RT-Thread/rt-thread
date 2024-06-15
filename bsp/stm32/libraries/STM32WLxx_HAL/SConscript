@@ -26,7 +26,7 @@ STM32WLxx_HAL_Driver/Src/stm32wlxx_hal_rng.c
 STM32WLxx_HAL_Driver/Src/stm32wlxx_hal_gpio.c
 ''')
 
-if GetDepend(['RT_USING_SERIAL']):
+if GetDepend(['RT_USING_SERIAL']) or GetDepend(['RT_USING_NANO', 'RT_USING_CONSOLE']):
     src += ['STM32WLxx_HAL_Driver/Src/stm32wlxx_hal_uart.c']
     src += ['STM32WLxx_HAL_Driver/Src/stm32wlxx_hal_uart_ex.c']
     src += ['STM32WLxx_HAL_Driver/Src/stm32wlxx_hal_usart.c']

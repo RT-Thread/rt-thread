@@ -8,7 +8,8 @@
  * 2020-07-13     Dozingfiretruck   first version
  */
 
-#include "board.h"
+#include <board.h>
+#include <drv_common.h>
 
 void SystemClock_Config(void)
 {

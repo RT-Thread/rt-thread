@@ -23,7 +23,7 @@
  * this function will reset CPU
  *
  */
-rt_weak void rt_hw_cpu_reset(void)
+void rt_hw_cpu_reset(void)
 {
     /* open the watch-dog */
     WDT_EN = 0x01;      /* watch dog enable */
@@ -33,18 +33,6 @@ rt_weak void rt_hw_cpu_reset(void)
     rt_kprintf("reboot system...\n");
     while (1);
 }
-
-/**
- * this function will shutdown CPU
- *
- */
-rt_weak void rt_hw_cpu_shutdown(void)
-{
-    rt_kprintf("shutdown...\n");
-
-    while (1);
-}
-
 
 #define Hit_Invalidate_I    0x10
 #define Hit_Invalidate_D    0x11

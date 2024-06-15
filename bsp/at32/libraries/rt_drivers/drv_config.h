@@ -8,6 +8,8 @@
  * 2022-11-09     shelton      first version
  * 2023-01-31     shelton      add support f421/f425
  * 2023-04-08     shelton      add support f423
+ * 2023-10-18     shelton      add support f402/f405
+ * 2024-04-12     shelton      add support a403a and a423
  */
 
 #ifndef __DRV_CONFIG_H__
@@ -20,7 +22,24 @@
 extern "C" {
 #endif
 
-#if defined(SOC_SERIES_AT32F403A) || defined (SOC_SERIES_AT32F407)
+#if defined(SOC_SERIES_AT32A403A)
+#include "a403a/dma_config.h"
+#include "a403a/uart_config.h"
+#include "a403a/spi_config.h"
+#include "a403a/usb_config.h"
+#include "a403a/dac_config.h"
+#elif defined(SOC_SERIES_AT32A423)
+#include "a423/dma_config.h"
+#include "a423/uart_config.h"
+#include "a423/spi_config.h"
+#include "a423/usb_config.h"
+#include "a423/dac_config.h"
+#elif defined(SOC_SERIES_AT32F402) || defined (SOC_SERIES_AT32F405)
+#include "f402_405/dma_config.h"
+#include "f402_405/uart_config.h"
+#include "f402_405/spi_config.h"
+#include "f402_405/usb_config.h"
+#elif defined(SOC_SERIES_AT32F403A) || defined (SOC_SERIES_AT32F407)
 #include "f403a_407/dma_config.h"
 #include "f403a_407/uart_config.h"
 #include "f403a_407/spi_config.h"

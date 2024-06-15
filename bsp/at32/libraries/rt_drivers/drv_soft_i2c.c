@@ -53,6 +53,16 @@ static void at32_i2c_gpio_init(struct at32_i2c *i2c)
     rt_pin_write(cfg->sda, PIN_HIGH);
 }
 
+static void at32_i2c_pin_init(void)
+{
+    rt_size_t obj_num = sizeof(i2c_obj) / sizeof(struct at32_i2c);
+
+    for(rt_size_t i = 0; i < obj_num; i++)
+    {
+        at32_i2c_gpio_init(&i2c_obj[i]);
+    }
+}
+
 /**
  * this function sets the sda pin.
  *
@@ -151,13 +161,15 @@ static void at32_udelay(rt_uint32_t us)
 static const struct rt_i2c_bit_ops at32_bit_ops_default =
 {
     .data     = RT_NULL,
+    .pin_init = at32_i2c_pin_init,
     .set_sda  = at32_set_sda,
     .set_scl  = at32_set_scl,
     .get_sda  = at32_get_sda,
     .get_scl  = at32_get_scl,
     .udelay   = at32_udelay,
     .delay_us = 1,
-    .timeout  = 100
+    .timeout  = 100,
+    .i2c_pin_init_flag = RT_FALSE
 };
 
 /**
@@ -195,12 +207,12 @@ int rt_hw_i2c_init(void)
     rt_size_t obj_num = sizeof(i2c_obj) / sizeof(struct at32_i2c);
     rt_err_t result;
 
-    for (int i = 0; i < obj_num; i++)
+    for (rt_size_t i = 0; i < obj_num; i++)
     {
         i2c_obj[i].ops = at32_bit_ops_default;
         i2c_obj[i].ops.data = (void*)&soft_i2c_config[i];
         i2c_obj[i].i2c_bus.priv = &i2c_obj[i].ops;
-        at32_i2c_gpio_init(&i2c_obj[i]);
+
         result = rt_i2c_bit_add_bus(&i2c_obj[i].i2c_bus, soft_i2c_config[i].bus_name);
         RT_ASSERT(result == RT_EOK);
         at32_i2c_bus_unlock(&soft_i2c_config[i]);

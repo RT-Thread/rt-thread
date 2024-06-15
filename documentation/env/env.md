@@ -1,26 +1,25 @@
 # User Manual of Env
 
-Env is a handy utility tool developed by RT-Thread team to build enviornment, graphical system configuration, and packages management for software projects that intend to run on RT-Thread operating system.
+Env is a handy utility tool developed by RT-Thread team to build environment, graphical system configuration, and packages management for software projects that intend to run on RT-Thread operating system. Env tool come with source code builder, compilation environment and package management system.
 
-It is a wrapper tool for build-in menuconfig; an open source GUI tool which is designed to tailor for ease of use for developers. It can also be used to configure the kernel configuraiton parameters, components and software packages so that developers can construct the system like lego blocks.
+It is a wrapper tool for build-in menuconfig, which is an open source GUI tool which is designed to tailor for ease of use for developers. It can also be used to configure the kernel configuration parameters, components and software packages so that developers can construct the system like lego blocks.
+
+Env for Windows repository: https://github.com/RT-Thread/env-windows
 
 ## Main Features
 
-- Menuconfig provides graphical interface to interact with operational logic and congfiguration parameters
+- menuconfig provides graphical interface to interact with operational logic and configuration parameters
 - Each configuration option come with help session by default.
 - It automates dependencies installation process.
 - Automatically generate rtconfig.h without manual modification.
-- It uses scons tool to streamline build project and compliation enviornment.
+- It uses scons tool to streamline build project and compliation environment.
 - Modular software packages and decoupling design make it easier to maintain.
 - It also featured with point and click to download additional software packages and dependencies directly from Internet.
 
-## Preparation
+## Download
 
-  Env tool come with source code builder, compilation enviornment and package management system.
-
-- [Download the Env tool]().
-- Install Git (download link - https://git-scm.com/downloads). Follow git installation instructions and configure environment variable to add git.
-- Take a note for working environment, all paths are not allowed to have Chinese characters or Spaces.
+- [Download the Env tool](https://github.com/RT-Thread/env-windows/releases), e.g. `env-windows-v1.3.5.7z`.
+- Extract the .7z file and the path shouldn't contain any non-ascii or space characters.
 
 ## User Guide of Env
 
@@ -38,11 +37,11 @@ To enter the Env directory, you can run  `env.exe` in this directory. If it fail
 
 Add Env to the right-click menu:
 
-![env settings](figures/Add_Env_To_Right-click_Menu-1.png)
+![Add_Env_To_Right-click_Menu-1](figures/Add_Env_To_Right-click_Menu-1.png)
 
-![1561968527218](figures/Add_Env_To_Right-click_Menu-2.png)
+![Add_Env_To_Right-click_Menu-2](figures/Add_Env_To_Right-click_Menu-2.png)
 
-![1561968626998](figures/Add_Env_To_Right-click_Menu-3.png)
+![Add_Env_To_Right-click_Menu-3](figures/Add_Env_To_Right-click_Menu-3.png)
 
 Follow the steps from the image to launch the Env console from the right-click menu in any folder. Result are as follows:
 
@@ -64,7 +63,9 @@ For example, the target BSP is `rt-thread\bsp\stm32\stm32f103-dofly-lyc8`:
 
 #### Step Two: Compile the BSP
 
-- Env carries `Python & scons` . To compile BSP, just use the default ARM_GCC toolchain by running `scons` command in the target BSP directory.
+Env for Windows carries Python2.7 & Scons . To compile BSP, just use the default ARM_GCC toolchain by running `scons` or `scons -j12` (12 CPU cores compiling) command in the target BSP directory.
+
+Env for Windows carries ARM GCC toolchain by default. When users compile ARM BSPs, users can directly type `scons` or `scons -j12` command to compile the BSP. However, if the BSP is other architecture, e.g. RISC-V, users need to use `scons --exec-path='C:\xxx\sdk-toolchain-RISC-V-GCC-WCH-1.0.0\bin' -j12` command to specify the toolchain when compiling.
 
 ![compilation project using scons command](figures/use_scons.png)
 
@@ -74,7 +75,8 @@ Compiled successfully:
 
 If you use mdk/iar for project development, you can use the project file in the BSP directly or use one of the following commands to regenerate the project and compile and download it.
 
-```
+``` shell
+scons --target=vsc
 scons --target=iar
 scons --target=mdk4
 scons --target=mdk5
@@ -90,7 +92,7 @@ Menuconfig is a graphical configuration tool that RT-Thread uses to configure an
 
 Go to the BSP root directory and open the interface by entering `menuconfig`. The menuconfig common shortcuts are as shown:
 
-![Commonly-used Shortcuts for menuconfig ](figures/hotkey.png)
+![Commonly-used Shortcuts for menuconfig](figures/hotkey.png)
 
 #### Modify Settings
 
@@ -113,20 +115,30 @@ As a part of Env, the `package` tool provides developers with management functio
 
 Enter the `pkgs` command on the Env command line to see an introduction to the command:
 
-```
+``` shell
 > pkgs
-usage: env.py package [-h] [--update] [--list] [--wizard] [--upgrade] [--force-upgrade]
-                      [--printenv]
+usage: env.py package [-h] [--update] [--update-force] [--list] [--wizard]
+                      [--upgrade] [--upgrade-force] [--upgrade-script-force]
+                      [--upgrade-modules] [--printenv]
 
 optional arguments:
-  -h, --help  show this help message and exit
-  --update    update packages, install or remove the packages as you set in
-              menuconfig
-  --list      list target packages
-  --wizard    create a package with wizard
-  --upgrade   update local packages list from git repo
-  --force-upgrade update local package index file from git repo forcely (will auto-fix the conflicts when git merge). 
-  --printenv  print environmental variables to check
+  -h, --help            show this help message and exit
+  --update              update packages, install or remove the packages by
+                        your settings in menuconfig
+  --update-force, --force-update
+                        forcely update and clean packages, install or remove
+                        packages by settings in menuconfig
+  --list                list target packages
+  --wizard              create a new package with wizard
+  --upgrade             upgrade local packages index from git repository
+  --upgrade-force, --force-upgrade
+                        forcely upgrade local packages index from git
+                        repository
+  --upgrade-script-force
+                        forcely upgrade local packages index and Env script
+                        from git repository
+  --upgrade-modules     upgrade python modules, e.g. requests module
+  --printenv            print environmental variables to check
 ```
 
 #### Download, update, and delete packages
@@ -143,9 +155,11 @@ Find the package you need and open, then save and exit menuconfig. The package w
 - **update**: if the selected package has a latest update on the server and the version is selected **latest**, then enter `pkgs --update` , the package will be updated in local;
 - **delete**: if a software package is not needed, deselect it in menuconfig and then use  `pkgs --update` command.  Then locally downloaded but unselected packages will be deleted.
 
-#### Update local package information
+#### Update local package information and index
 
-As the package system grows, more and more packages will be added, so the list of packages in menuconfig may be **unsynchronized**  with the server.  This can be fixed by using `pkgs --upgrade` command, which not only synchronizes updates to local package information, but also upgrades to Env's functional scripts, which are recommended for regular use.
+As the package system grows, more and more packages will be added, so the list of packages in menuconfig may be **unsynchronized**  with the server.  This can be fixed by using `pkgs --upgrade` or `pkgs --upgrade-force` command (recommended), which not only synchronizes updates to local software packages [information and index](https://github.com/RT-Thread/packages), which are recommended for regular use. If there is a upgrade failure or merge failure, please use `pkgs --upgrade-force` command to force upgrade the local software packages index (recommended to use).
+
+If wants to upgrade the [Env script](https://github.com/RT-Thread/env) as well, please use `pkgs --upgrade-script-force` command. This command not only can upgrade the software packages index, but also can upgrade the Env script.
 
 ### Env Tool Configuration
 
@@ -162,17 +176,11 @@ As the package system grows, more and more packages will be added, so the list o
 The three options are:
 
 - **Auto update pkgs config**：Automatic package update function: After exiting the menuconfig function, `pkgs --update` command is automatically used to download and install the package and delete the old package. This feature is used when downloading online packages.
-- **Auto create a MDK/IAR project**: After modifying the menuconfig configuration, you must re-generate the project by typing  `scons --target=xxx` . Turning on this feature will automatically regenerate the project when you exit menuconfig, without having to manually enter the scons command to regenerate the project.
-- **Use China Mainland server**: Please **cancel it** if you are NOT living in mainland China.
+- **Auto create a MDK/IAR project**: After modifying the menuconfig configuration, you must re-generate the project by typing  `scons --target=xxx`. Turning on this feature will automatically regenerate the project when you exit menuconfig, without having to manually enter the scons command to regenerate the project.
 - **Send usage data for improve product**: For user number statistic.
 
 
 ## Use Env in Your Project
-
-### Requirements for Using Env
-
-- Menuconfig is a feature of RT-Thread over version 3.0. It is recommended to update RT-Thread over version 3.0.
-- Currently RT-Thread does not support `menuconfig` for all BSPs, which means that some BSPs can't be configured with menuconfig for the time being, but the commonly used BSPs are already supported.
 
 ### How to Modify Options in Menuconfig
 
@@ -186,7 +194,7 @@ New project here refers to a newly developed project that has not yet generated 
 2. Note that modifying the RTT_ROOT value in Kconfig is the directory where RT-Thread is located, otherwise RTT_ROOT may be not found.
 3. Start the configuration with the menuconfig command.
 
-### To Add menuconfig function to Old Project
+### To Add menuconfig function to old Project
 
 Old project here refers to the development that has been going on for a while, and there is a modified `rtconfig.h` file in the project, but there is no project configured with menuconfig. The specific process is as follows:
 
@@ -197,30 +205,14 @@ Old project here refers to the development that has been going on for a while, a
 5. Use the menuconfig command to configure the old project we want to modify. Menuconfig will read the `.config` file generated in the second step and generate a new `.config` file and rtconfig.h file based on the configuration parameters of the old project.
 6. Check the old and new rtconfig.h files. If there are any inconsistencies, you can use the menuconfig command to adjust the configuration items.
 
-## Explore More with pip
-
-In the Env environment, you can't directly use the pip tool provided by Python to install more modules. If you need to use the pip function in Env environment, you can reinstall the pip tool as follows:
-
-1. Download the get-pip.py file from https://bootstrap.pypa.io/get-pip.py and save it on disk.
-2. Run `python get-pip.py` command in the Env environment to reinstall the pip tool.
-3. After the pip tool is reinstalled successfully, you can use `pip install module-name` command to install the required modules.
-
 ## Notes for Using Env
 
 - For the first time, Env is recommended to go to the official website to download the latest version of the Env tool. The new version of Env will have better compatibility and also support automatic update commands.
-- You can use the Env built-in command `pkgs --upgrade` to update the package list and Env's function code to minimize the problems you have fixed.
+- You can use the Env built-in command `pkgs --upgrade` or `pkgs --upgrade-force` (recommended to use) to update the package list and Env's function code to minimize the problems you have fixed.
 - Do not have Chinese or spaces in the routes of Env.
 - Do not have Chinese or spaces in the routes where the BSP project is located.
 
 ## FAQs
-
-### Q: There's unintelligible texts appear in Env.
-
-**A:** First check if there is a Chinese route.
-
-Check if the `chcp` command has been added to the system environment variable and try to change the character format to English using the `chcp 437` command. If the prompt does not have a `chcp` command, it is considered not to be added to the environment variable.
-
-The directory where the `chcp` command is located may be added to the environment variable in the `system32` directory.
 
 ### Q: It prompts that the git command cannot be found.
 
@@ -247,14 +239,22 @@ The directory where the `chcp` command is located may be added to the environmen
 
 **A:** You can refer to this chapter **Use Env in Your Project**.
 
-### Q: What is the difference between the pkgs --upgrade command and the pkgs --update command?
+### Q: What is the difference between the pkgs --upgrade/--upgrade-force command and the pkgs --update command?
 
  **A:**
 
-1. The `pkgs --upgrade` command is used to upgrade the Env script itself and the list of packages. You cannot select a recently updated package without the latest package list.
+1. The `pkgs --upgrade/--upgrade-force` command is used to upgrade the Env script itself and the list of packages. You cannot select a recently updated package without the latest package list.
 2. The `pkgs --update` command is used to update the package itself. For example, if you selected json and mqtt packages in menuconfig, you did not download them when you exit menuconfig. You need to use the `pkgs --update` command, at which point Env will download the package you selected and add it to your project.
 3. The new version of Env supports the `menuconfig -s/--setting` command. If you don't want to use the `pkgs --update` command after replacing the package, configure Env after using the `menuconfig -s/--setting` command. Select each time you use menuconfig. After the package is automatically updated.
 
 ### Q: Prompt "can't find file Kconfig" while using menuconfig.
 
 **A:** The Kconfig file is missing from the current working BSP directory. Please refer *To Add menuconfig function to New Project* and *To Add menuconfig function to Old Project*.
+
+### Q: There's unintelligible texts appear in Env.
+
+**A:** First check if there is a Chinese route.
+
+Check if the `chcp` command has been added to the system environment variable and try to change the character format to English using the `chcp 437` command. If the prompt does not have a `chcp` command, it is considered not to be added to the environment variable.
+
+The directory where the `chcp` command is located may be added to the environment variable in the `system32` directory.

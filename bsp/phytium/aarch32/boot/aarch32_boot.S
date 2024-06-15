@@ -7,7 +7,8 @@
  * 
  * Change Logs:
  * Date        Author       Notes
- * 2022-10-26  huanghe       first commit 
+ * 2022-10-26  huanghe       first commit
+ * 2023-07-27  zhugengyu     flush cache in aarch64-el2 
  *
  */
  
@@ -18,8 +19,75 @@
 
 .section .boot,"ax"
 
-/* switch from aarch64-el2 to aarch32-el1 */
 _boot:
+ 	/* hard code aarch64 instruction to flush dcache, refer to rt-thread __asm_flush_dcache_all */
+	.long 0xd2800000	/* mov	x0, #0x0 // clean and invaildate d-cache */
+	.long 0x1400001a	/* b	<InvalidateFlushDcaches> */
+
+InvalidateFlushDcacheLevel:
+	.long 0xd37ff80c	/* lsl	x12, x0, #1 */
+	.long 0xd51a000c	/* msr	csselr_el1, x12 */
+	.long 0xd5033fdf	/* isb */
+	.long 0xd5390006	/* mrs	x6, ccsidr_el1 */
+	.long 0x924008c2	/* and	x2, x6, #0x7 */
+	.long 0x91001042	/* add	x2, x2, #0x4 */
+	.long 0xd2807fe3	/* mov	x3, #0x3ff */
+	.long 0x8a460c63	/* and	x3, x3, x6, lsr #3 */
+	.long 0x5ac01065	/* clz	w5, w3 */
+	.long 0xd28fffe4	/* mov	x4, #0x7fff */
+	.long 0x8a463484	/* and	x4, x4, x6, lsr #13 */
+
+InvalidateFlushCacheSet:
+	.long 0xaa0303e6	/* mov	x6, x3 */
+
+InvalidateFlushCacheWay:
+	.long 0x9ac520c7	/* lsl	x7, x6, x5 */
+	.long 0xaa070189	/* orr	x9, x12, x7 */
+	.long 0x9ac22087	/* lsl	x7, x4, x2 */
+	.long 0xaa070129	/* orr	x9, x9, x7 */
+	.long 0x36000061	/* tbz	w1, #0, <InvalidateFlushCacheWay+0x1c> */
+	.long 0xd5087649	/* dc	isw, x9 */
+	.long 0x14000002	/* b	<InvalidateFlushCacheWay+0x20> */
+	.long 0xd5087e49	/* dc	cisw, x9 */
+	.long 0xf10004c6	/* subs	x6, x6, #0x1 */
+	.long 0x54fffeea	/* b.ge	 <InvalidateFlushCacheWay> */
+	.long 0xf1000484	/* subs	x4, x4, #0x1 */
+	.long 0x54fffe8a	/* b.ge	 <InvalidateFlushCacheSet> */
+	.long 0xd65f03c0	/* ret */
+
+InvalidateFlushDcaches:
+	.long 0xaa0003e1	/* mov	x1, x0 */
+	.long 0xd5033f9f	/* dsb	sy */
+	.long 0xd539002a	/* mrs	x10, clidr_el1 */
+	.long 0xd358fd4b	/* lsr	x11, x10, #24 */
+	.long 0x9240096b	/* and	x11, x11, #0x7 */
+	.long 0xb400024b	/* cbz	x11, <InvalidateFlushDcacheEnd> */
+	.long 0xaa1e03ef	/* mov	x15, x30 */
+	.long 0xd2800000	/* mov	x0, #0x0 */
+
+InvalidateFlushCachesLoopLevel:
+	.long 0xd37ff80c	/* lsl	x12, x0, #1 */
+	.long 0x8b00018c	/* add	x12, x12, x0 */
+	.long 0x9acc254c	/* lsr	x12, x10, x12 */
+	.long 0x9240098c	/* and	x12, x12, #0x7 */
+	.long 0xf100099f	/* cmp	x12, #0x2 */
+	.long 0x5400004b	/* b.lt	<InvalidateFlushCachesSkipLevel> */
+	.long 0x97ffffd9	/* bl	<InvalidateFlushDcacheLevel> */
+
+InvalidateFlushCachesSkipLevel:
+	.long 0x91000400	/* add	x0, x0, #0x1 */
+	.long 0xeb00017f	/* cmp	x11, x0 */
+	.long 0x54fffeec	/* b.gt	<InvalidateFlushCachesLoopLevel> */
+	.long 0xd2800000	/* mov	x0, #0x0 */
+	.long 0xd51a0000	/* msr	csselr_el1, x0 */
+	.long 0xd5033f9f	/* dsb	sy */
+	.long 0xd5033fdf	/* isb */
+	.long 0xaa0f03fe	/* mov	x30, x15 */
+
+InvalidateFlushDcacheEnd:
+/***************************************************************/
+
+/* switch from aarch64-el2 to aarch32-el1 */
 Startup_Aarch32:
     .long 0xd5384240 	/* mrs	x0, currentel                      */
     .long 0xd342fc00 	/* lsr	x0, x0, #2                         */

@@ -2,24 +2,14 @@ from building import *
 
 cwd = GetCurrentDir()
 src = Glob('*.S')
-src += Glob('*.c')
+src	+= Glob('*.c')
+path = [cwd]
+    
+if GetDepend(['CUS_DEMO_BOARD']):
+    src += Glob(cwd + '/cus_demo_board/fio_mux.c')
+    path += [cwd + '/cus_demo_board/']
 
-if GetDepend(['TARGET_E2000']):
-    if GetDepend(['TARGET_E2000Q']):
-        src += Glob(cwd + '/e2000/q/parameters.c')
-    elif GetDepend(['TARGET_E2000D']):
-        src += Glob(cwd + '/e2000/d/parameters.c')
-    elif GetDepend(['TARGET_E2000S']):
-        src += Glob(cwd + '/e2000/s/parameters.c')
-
-if GetDepend(['TARGET_F2000_4']):
-    src += Glob(cwd + '/d2000/parameters.c')
-
-if GetDepend(['TARGET_D2000']):
-    src += Glob(cwd + '/ft2004/parameters.c')
-
-CPPPATH = [cwd]
-
-group = DefineGroup('Board', src, depend = [''], CPPPATH = CPPPATH)
+group = DefineGroup('Board', src, depend=[
+                    ''], CPPPATH=path)
 
 Return('group')

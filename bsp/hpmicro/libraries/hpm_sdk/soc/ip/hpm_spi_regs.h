@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 hpmicro
+ * Copyright (c) 2021-2023 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -10,10 +10,13 @@
 #define HPM_SPI_H
 
 typedef struct {
-    __R  uint8_t  RESERVED0[16];               /* 0x0 - 0xF: Reserved */
+    __R  uint8_t  RESERVED0[4];                /* 0x0 - 0x3: Reserved */
+    __RW uint32_t WR_TRANS_CNT;                /* 0x4: Transfer count for write data */
+    __RW uint32_t RD_TRANS_CNT;                /* 0x8: Transfer count for read data */
+    __R  uint8_t  RESERVED1[4];                /* 0xC - 0xF: Reserved */
     __RW uint32_t TRANSFMT;                    /* 0x10: Transfer Format Register */
     __RW uint32_t DIRECTIO;                    /* 0x14: Direct IO Control Register */
-    __R  uint8_t  RESERVED1[8];                /* 0x18 - 0x1F: Reserved */
+    __R  uint8_t  RESERVED2[8];                /* 0x18 - 0x1F: Reserved */
     __RW uint32_t TRANSCTRL;                   /* 0x20: Transfer Control Register */
     __RW uint32_t CMD;                         /* 0x24: Command Register */
     __RW uint32_t ADDR;                        /* 0x28: Address Register */
@@ -23,13 +26,45 @@ typedef struct {
     __RW uint32_t INTREN;                      /* 0x38: Interrupt Enable Register */
     __W  uint32_t INTRST;                      /* 0x3C: Interrupt Status Register */
     __RW uint32_t TIMING;                      /* 0x40: Interface Timing Register */
-    __R  uint8_t  RESERVED2[28];               /* 0x44 - 0x5F: Reserved */
+    __R  uint8_t  RESERVED3[28];               /* 0x44 - 0x5F: Reserved */
     __RW uint32_t SLVST;                       /* 0x60: Slave Status Register */
     __R  uint32_t SLVDATACNT;                  /* 0x64: Slave Data Count Register */
-    __R  uint8_t  RESERVED3[20];               /* 0x68 - 0x7B: Reserved */
+    __R  uint32_t SLVDATAWCNT;                 /* 0x68: WCnt */
+    __R  uint32_t SLVDATARCNT;                 /* 0x6C: RCnt */
+    __R  uint8_t  RESERVED4[12];               /* 0x70 - 0x7B: Reserved */
     __R  uint32_t CONFIG;                      /* 0x7C: Configuration Register */
 } SPI_Type;
 
+
+/* Bitfield definition for register: WR_TRANS_CNT */
+/*
+ * WRTRANCNT (RW)
+ *
+ * Transfer count for write data
+ * WrTranCnt indicates the number of units of data to be transmitted to the SPI bus from the Data Register. The actual transfer count is (WrTranCnt+1).
+ * WrTranCnt only takes effect when TransMode is 0, 1, 3, 4, 5, 6 or 8.
+ * The size (bit-width) of a data unit is defined by the DataLen field of the Transfer Format Register.
+ * For TransMode 0, WrTranCnt must be equal to RdTranCnt.
+ */
+#define SPI_WR_TRANS_CNT_WRTRANCNT_MASK (0xFFFFFFFFUL)
+#define SPI_WR_TRANS_CNT_WRTRANCNT_SHIFT (0U)
+#define SPI_WR_TRANS_CNT_WRTRANCNT_SET(x) (((uint32_t)(x) << SPI_WR_TRANS_CNT_WRTRANCNT_SHIFT) & SPI_WR_TRANS_CNT_WRTRANCNT_MASK)
+#define SPI_WR_TRANS_CNT_WRTRANCNT_GET(x) (((uint32_t)(x) & SPI_WR_TRANS_CNT_WRTRANCNT_MASK) >> SPI_WR_TRANS_CNT_WRTRANCNT_SHIFT)
+
+/* Bitfield definition for register: RD_TRANS_CNT */
+/*
+ * RDTRANCNT (RW)
+ *
+ * Transfer count for read data
+ * RdTranCnt indicates the number of units of data to be received from SPI bus and stored to the Data Register. The actual received count is (RdTranCnt+1).
+ * RdTransCnt only takes effect when TransMode is 0, 2, 3, 4, 5, 6 or 9.
+ * The size (bit-width) of a data unit is defined by the DataLen field of the Transfer Format Register.
+ * For TransMode 0, WrTranCnt must equal RdTranCnt.
+ */
+#define SPI_RD_TRANS_CNT_RDTRANCNT_MASK (0xFFFFFFFFUL)
+#define SPI_RD_TRANS_CNT_RDTRANCNT_SHIFT (0U)
+#define SPI_RD_TRANS_CNT_RDTRANCNT_SET(x) (((uint32_t)(x) << SPI_RD_TRANS_CNT_RDTRANCNT_SHIFT) & SPI_RD_TRANS_CNT_RDTRANCNT_MASK)
+#define SPI_RD_TRANS_CNT_RDTRANCNT_GET(x) (((uint32_t)(x) & SPI_RD_TRANS_CNT_RDTRANCNT_MASK) >> SPI_RD_TRANS_CNT_RDTRANCNT_SHIFT)
 
 /* Bitfield definition for register: TRANSFMT */
 /*
@@ -509,6 +544,15 @@ typedef struct {
 
 /* Bitfield definition for register: CTRL */
 /*
+ * CS_EN (RW)
+ *
+ */
+#define SPI_CTRL_CS_EN_MASK (0xF000000UL)
+#define SPI_CTRL_CS_EN_SHIFT (24U)
+#define SPI_CTRL_CS_EN_SET(x) (((uint32_t)(x) << SPI_CTRL_CS_EN_SHIFT) & SPI_CTRL_CS_EN_MASK)
+#define SPI_CTRL_CS_EN_GET(x) (((uint32_t)(x) & SPI_CTRL_CS_EN_MASK) >> SPI_CTRL_CS_EN_SHIFT)
+
+/*
  * TXTHRES (RW)
  *
  * Transmit (TX) FIFO Threshold
@@ -847,12 +891,13 @@ typedef struct {
 
 /* Bitfield definition for register: SLVST */
 /*
- * UNDERRUN (R1C)
+ * UNDERRUN (W1C)
  *
  * Data underrun occurs in the last transaction
  */
 #define SPI_SLVST_UNDERRUN_MASK (0x40000UL)
 #define SPI_SLVST_UNDERRUN_SHIFT (18U)
+#define SPI_SLVST_UNDERRUN_SET(x) (((uint32_t)(x) << SPI_SLVST_UNDERRUN_SHIFT) & SPI_SLVST_UNDERRUN_MASK)
 #define SPI_SLVST_UNDERRUN_GET(x) (((uint32_t)(x) & SPI_SLVST_UNDERRUN_MASK) >> SPI_SLVST_UNDERRUN_SHIFT)
 
 /*
@@ -905,6 +950,24 @@ typedef struct {
 #define SPI_SLVDATACNT_RCNT_SHIFT (0U)
 #define SPI_SLVDATACNT_RCNT_GET(x) (((uint32_t)(x) & SPI_SLVDATACNT_RCNT_MASK) >> SPI_SLVDATACNT_RCNT_SHIFT)
 
+/* Bitfield definition for register: SLVDATAWCNT */
+/*
+ * VAL (RO)
+ *
+ */
+#define SPI_SLVDATAWCNT_VAL_MASK (0xFFFFFFFFUL)
+#define SPI_SLVDATAWCNT_VAL_SHIFT (0U)
+#define SPI_SLVDATAWCNT_VAL_GET(x) (((uint32_t)(x) & SPI_SLVDATAWCNT_VAL_MASK) >> SPI_SLVDATAWCNT_VAL_SHIFT)
+
+/* Bitfield definition for register: SLVDATARCNT */
+/*
+ * VAL (RO)
+ *
+ */
+#define SPI_SLVDATARCNT_VAL_MASK (0xFFFFFFFFUL)
+#define SPI_SLVDATARCNT_VAL_SHIFT (0U)
+#define SPI_SLVDATARCNT_VAL_GET(x) (((uint32_t)(x) & SPI_SLVDATARCNT_VAL_MASK) >> SPI_SLVDATARCNT_VAL_SHIFT)
+
 /* Bitfield definition for register: CONFIG */
 /*
  * SLAVE (RO)
@@ -914,15 +977,6 @@ typedef struct {
 #define SPI_CONFIG_SLAVE_MASK (0x4000U)
 #define SPI_CONFIG_SLAVE_SHIFT (14U)
 #define SPI_CONFIG_SLAVE_GET(x) (((uint32_t)(x) & SPI_CONFIG_SLAVE_MASK) >> SPI_CONFIG_SLAVE_SHIFT)
-
-/*
- * DIRECTIO (RO)
- *
- * Support for Direct SPI IO
- */
-#define SPI_CONFIG_DIRECTIO_MASK (0x800U)
-#define SPI_CONFIG_DIRECTIO_SHIFT (11U)
-#define SPI_CONFIG_DIRECTIO_GET(x) (((uint32_t)(x) & SPI_CONFIG_DIRECTIO_MASK) >> SPI_CONFIG_DIRECTIO_SHIFT)
 
 /*
  * QUADSPI (RO)

@@ -245,7 +245,7 @@ static void sep6200_poweroff(void)
  * reset cpu by dog's time-out
  *
  */
-rt_weak void rt_hw_cpu_reset()
+void rt_hw_cpu_reset()
 {
 
     rt_kprintf("Soft reset, Restarting system...\n");
@@ -260,7 +260,7 @@ rt_weak void rt_hw_cpu_reset()
  *  shutdown CPU
  *
  */
-rt_weak void rt_hw_cpu_shutdown()
+void rt_hw_cpu_shutdown(void)
 {
     rt_base_t level;
     rt_kprintf("shutdown...\n");

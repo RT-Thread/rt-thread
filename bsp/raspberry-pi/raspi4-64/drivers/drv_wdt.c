@@ -116,7 +116,7 @@ int rt_hw_wdt_init(void)
 }
 INIT_DEVICE_EXPORT(rt_hw_wdt_init);
 
-void reboot(void)
+void rt_hw_cpu_reset(void)
 {
     unsigned int r;
 
@@ -128,8 +128,8 @@ void reboot(void)
     PM_RSTS |= (PM_PASSWORD | r);   // boot from partition 0
     PM_WDOG |= (PM_PASSWORD | 0x0A);
     PM_RSTC |= (PM_PASSWORD | PM_RSTC_WRCFG_FULL_RESET);
-    
+
     while (1);
 }
-MSH_CMD_EXPORT(reboot,reboot system...);
+MSH_CMD_EXPORT_ALIAS(rt_hw_cpu_reset, reboot, reboot system...);
 #endif /*BSP_USING_WDT */

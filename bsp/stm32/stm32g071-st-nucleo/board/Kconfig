@@ -1,12 +1,5 @@
 menu "Hardware Drivers Config"
 
-config SOC_STM32G071RB
-    bool
-    select SOC_SERIES_STM32G0
-    select RT_USING_COMPONENTS_INIT
-    select RT_USING_USER_MAIN
-    default y
-
 menu "Onboard Peripheral Drivers"
 
     config BSP_USING_USB_TO_USART
@@ -37,6 +30,18 @@ menu "On-chip Peripheral Drivers"
                 depends on BSP_USING_LPUART1 && RT_SERIAL_USING_DMA
                 default n
 
+            config BSP_LPUART1_RX_BUFSIZE
+                int "Set LPUART1 RX buffer size"
+                range 64 65535
+                depends on RT_USING_SERIAL_V2
+                default 256
+
+            config BSP_LPUART1_TX_BUFSIZE
+                int "Set LPUART1 TX buffer size"
+                range 0 65535
+                depends on RT_USING_SERIAL_V2
+                default 256
+
             config BSP_USING_UART1
                 bool "Enable UART1"
                 default n
@@ -46,6 +51,23 @@ menu "On-chip Peripheral Drivers"
                 depends on BSP_USING_UART1 && RT_SERIAL_USING_DMA
                 default n
 
+            config BSP_UART1_TX_USING_DMA
+                bool "Enable UART1 TX DMA"
+                depends on BSP_USING_UART1 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_UART1_RX_BUFSIZE
+                int "Set UART1 RX buffer size"
+                range 64 65535
+                depends on RT_USING_SERIAL_V2
+                default 256
+
+            config BSP_UART1_TX_BUFSIZE
+                int "Set UART1 TX buffer size"
+                range 0 65535
+                depends on RT_USING_SERIAL_V2
+                default 256
+
             config BSP_USING_UART2
                 bool "Enable UART2"
                 default n
@@ -54,6 +76,23 @@ menu "On-chip Peripheral Drivers"
                 bool "Enable UART2 RX DMA"
                 depends on BSP_USING_UART2 && RT_SERIAL_USING_DMA
                 default n
+
+            config BSP_UART2_TX_USING_DMA
+                bool "Enable UART2 TX DMA"
+                depends on BSP_USING_UART2 && RT_SERIAL_USING_DMA
+                default n
+
+            config BSP_UART2_RX_BUFSIZE
+                int "Set UART2 RX buffer size"
+                range 64 65535
+                depends on RT_USING_SERIAL_V2
+                default 256
+
+            config BSP_UART2_TX_BUFSIZE
+                int "Set UART2 TX buffer size"
+                range 0 65535
+                depends on RT_USING_SERIAL_V2
+                default 256
         endif
 
     menuconfig BSP_USING_TIM
@@ -169,7 +208,7 @@ menu "On-chip Peripheral Drivers"
         bool "Enable Watchdog Timer"
         select RT_USING_WDT
         default n
-    source "../libraries/HAL_Drivers/Kconfig"
+    source "$BSP_DIR/../libraries/HAL_Drivers/drivers/Kconfig"
 
 endmenu
 

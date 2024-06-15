@@ -23,9 +23,33 @@
         union {struct {fields}; char _padding[GET_FLOOR(struct {fields})];};\
     } *rt_page_t
 
+/**
+ * @brief PAGE ALLOC FLAGS
+ *
+ * @info PAGE_ANY_AVAILABLE
+ * page allocation default to use lower region, this behavior can change by setting
+ * PAGE_ANY_AVAILABLE
+ */
+
+#define PAGE_ANY_AVAILABLE 0x1ul
+
+#ifdef RT_DEBUGING_PAGE_LEAK
+#define DEBUG_FIELD struct {    \
+    /* trace list */            \
+    struct rt_page *tl_next;    \
+    struct rt_page *tl_prev;    \
+    void *caller;               \
+    size_t trace_size;          \
+}
+#else
+#define DEBUG_FIELD
+#endif
+
 DEF_PAGE_T(
     struct rt_page *next;   /* same level next */
     struct rt_page *pre;    /* same level pre  */
+
+    DEBUG_FIELD;
 
     rt_uint32_t size_bits;     /* if is ARCH_ADDRESS_WIDTH_BITS, means not free */
     rt_uint32_t ref_cnt;       /* page group ref count */
@@ -38,6 +62,8 @@ typedef struct tag_region
 {
     rt_size_t start;
     rt_size_t end;
+
+    const char *name;
 } rt_region_t;
 
 extern const rt_size_t rt_mpr_size;
@@ -48,6 +74,8 @@ void rt_page_init(rt_region_t reg);
 void rt_page_cleanup(void);
 
 void *rt_pages_alloc(rt_uint32_t size_bits);
+
+void *rt_pages_alloc_ext(rt_uint32_t size_bits, size_t flags);
 
 void rt_page_ref_inc(void *addr, rt_uint32_t size_bits);
 
@@ -60,6 +88,8 @@ void rt_page_list(void);
 rt_size_t rt_page_bits(rt_size_t size);
 
 void rt_page_get_info(rt_size_t *total_nr, rt_size_t *free_nr);
+
+void rt_page_high_get_info(rt_size_t *total_nr, rt_size_t *free_nr);
 
 void *rt_page_page2addr(struct rt_page *p);
 
@@ -77,5 +107,9 @@ struct rt_page *rt_page_addr2page(void *addr);
  * @return int 0 on success
  */
 int rt_page_install(rt_region_t region);
+
+void rt_page_leak_trace_start(void);
+
+void rt_page_leak_trace_stop(void);
 
 #endif /* __MM_PAGE_H__ */

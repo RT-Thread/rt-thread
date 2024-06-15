@@ -1,0 +1,214 @@
+menu "Hardware Drivers Config"
+
+config SOC_LPC55S06
+    bool
+    select SOC_LPC55S06_SERIES
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+    default y
+
+menu "On-chip Peripheral Drivers"
+
+    config BSP_USING_DMA
+        bool "Enable DMA"
+        select RT_USING_DMA
+        default n
+
+    config BSP_USING_PIN
+        bool "Enable GPIO"
+        select RT_USING_PIN
+        default y
+
+    menuconfig BSP_USING_UART
+        config BSP_USING_UART
+            bool "Enable UART"
+            select RT_USING_UART
+            default y
+
+            if BSP_USING_UART
+                config BSP_USING_UART0
+                    bool "Enable Flexcomm0 as UART"
+                    default y
+                    if BSP_USING_UART0
+                        choice
+                            prompt "Select UART0 badurate"
+                            default HW_UART0_BAUDRATE_115200
+
+                            config HW_UART0_BAUDRATE_9600
+                                bool "Badurate 9600"
+
+                            config HW_UART0_BAUDRATE_115200
+                                bool "Badurate 115200"
+                        endchoice
+                    endif
+
+                config BSP_USING_UART2
+                    bool "Enable Flexcomm2 as UART"
+                    default n
+                    if BSP_USING_UART2
+                        choice
+                            prompt "Select UART2 badurate"
+                            default HW_UART2_BAUDRATE_115200
+
+                            config HW_UART2_BAUDRATE_9600
+                                bool "Badurate 9600"
+
+                            config HW_UART2_BAUDRATE_115200
+                                bool "Badurate 115200"
+                        endchoice
+                    endif
+            endif
+
+
+    menuconfig BSP_USING_I2C
+        config BSP_USING_I2C
+            bool "Enable I2C"
+            select RT_USING_I2C
+            default n
+
+            if BSP_USING_I2C
+                config BSP_USING_I2C1
+                    bool "Enable Flexcomm1 I2C"
+                    default n
+                    if BSP_USING_I2C1
+                        choice
+                            prompt "Select I2C1 badurate"
+                            default HW_I2C1_BAUDRATE_100kHZ
+
+                            config HW_I2C1_BAUDRATE_100kHZ
+                                bool "Badurate 100kHZ"
+
+                            config HW_I2C1_BAUDRATE_400kHZ
+                                bool "Badurate 400kHZ"
+                        endchoice
+                    endif
+
+                config BSP_USING_I2C4
+                    bool "Enable Flexcomm4 I2C"
+                    default n
+                    if BSP_USING_I2C4
+                        choice
+                            prompt "Select I2C4 badurate"
+                            default HW_I2C4_BAUDRATE_100kHZ
+
+                            config HW_I2C4_BAUDRATE_100kHZ
+                                bool "Badurate 100kHZ"
+
+                            config HW_I2C4_BAUDRATE_400kHZ
+                                bool "Badurate 400kHZ"
+                        endchoice
+                    endif
+            endif
+
+    menuconfig BSP_USING_SPI
+        config BSP_USING_SPI
+            bool "Enable SPI"
+            select RT_USING_SPI
+            default n
+
+            if BSP_USING_SPI
+                config BSP_USING_SPI3
+                    bool "Enable Flexcomm3 as SPI"
+                    default n
+
+                config BSP_USING_SPI8
+                    bool "Enable Flexcomm8 as High Speed SPI"
+                    default n
+            endif
+
+    menuconfig BSP_USING_ADC
+        config BSP_USING_ADC
+            bool "Enable ADC Channel"
+            select RT_USING_ADC
+            default n
+
+            if BSP_USING_ADC
+                config BSP_USING_ADC0_CH0
+                    bool "Enable ADC0 Channel0"
+                    default n
+
+                config BSP_USING_ADC0_CH1
+                    bool "Enable ADC0 Channel1"
+                    default n
+            endif
+
+    config BSP_USING_SDIO
+        bool "Enable SDIO SD Card Interface"
+        select RT_USING_SDIO
+        select RT_USING_DFS
+        select RT_USING_DFS_ELMFAT
+        default n
+
+    config BSP_USING_RTC
+        bool "Enable RTC"
+        select RT_USING_RTC
+        default n
+
+    config BSP_USING_WDT
+        bool "Enable WatchDog"
+        select RT_USING_WDT
+        default n
+
+    menuconfig BSP_USING_HWTIMER
+        config BSP_USING_HWTIMER
+            bool "Enable Timer"
+            select RT_USING_HWTIMER
+            default n
+
+            if BSP_USING_HWTIMER
+                config BSP_USING_CTIMER0
+                    bool "Enable CIMER0"
+                    default n
+
+                config BSP_USING_CTIMER1
+                    bool "Enable CIMER1"
+                    default n
+
+                config BSP_USING_CTIMER3
+                    bool "Enable CIMER3"
+                    default n
+
+                config BSP_USING_CTIMER4
+                    bool "Enable CIMER4"
+                    default n
+            endif
+
+    menuconfig BSP_USING_PWM
+        config BSP_USING_PWM
+            bool "Enable PWM"
+            select RT_USING_PWM
+            default n
+
+            if BSP_USING_PWM
+                config BSP_USING_CTIMER2_MAT0
+                    bool "Enable CIMER2 Match0 as PWM output"
+                    default n
+
+                config BSP_USING_CTIMER2_MAT1
+                    bool "Enable CIMER2 Match1 as PWM output"
+                    default n
+
+                config BSP_USING_CTIMER2_MAT2
+                    bool "Enable CIMER2 Match2 as PWM output"
+                    default n
+            endif
+endmenu
+
+menu "Onboard Peripheral Drivers"
+    config BSP_USING_MMA8562
+        bool "Enable MMA8562"
+        select BSP_USING_I2C4
+        default n
+        if BSP_USING_MMA8562
+            config BSP_USING_MMA8562I2C
+                string "the device name for 3-Axis Sensor"
+                default "i2c4"
+        endif
+
+endmenu
+
+menu "Board extended module Drivers"
+
+endmenu
+
+endmenu

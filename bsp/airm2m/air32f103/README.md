@@ -14,7 +14,7 @@
 
 ## 开发板介绍
 
-Air32F103为系列芯片，首发型号为Air32F103CBT6，其外设和硬件设计兼容市场上一些主流F103型号，主频最高可达216M，32K RAM+128K Flash，每个IO都可设置独立的内部上下拉电阻。
+Air32F103为系列芯片，首发型号为Air32F103CBT6，其外设和硬件设计兼容市场上一些主流F103型号，主频最高可达216M，96K RAM+128K Flash，每个IO都可设置独立的内部上下拉电阻。
 
 开发板外观如下图所示：
 
@@ -22,7 +22,7 @@ Air32F103为系列芯片，首发型号为Air32F103CBT6，其外设和硬件设�
 
 该开发板常用 **板载资源** 如下：
 
-- MCU：Air32F103CBT6，主频 216MHz，128K FLASH ，32K RAM
+- MCU：Air32F103CBT6，主频 216MHz，128K FLASH ，96K RAM
 - 调试下载接口，UART0 To Type-c USB 接口
 
 开发板更多详细信息请参考 [合宙Air32F103开发板 - LuatOS 文档](https://wiki.luatos.com/chips/air32f103/board.html)。

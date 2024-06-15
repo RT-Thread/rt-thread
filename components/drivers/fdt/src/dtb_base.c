@@ -401,7 +401,7 @@ int dtb_node_write_prop(const struct dtb_node *node, const char *propname, int l
         return -ENOENT;
 
     /* Property does not exist -> append new property */
-    new = malloc(sizeof(struct dtb_property));
+    new = (struct dtb_property *)malloc(sizeof(struct dtb_property));
     if (!new)
         return -ENOMEM;
 

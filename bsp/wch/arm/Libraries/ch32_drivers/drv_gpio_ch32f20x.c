@@ -354,7 +354,7 @@ void ch32f2_pin_write(rt_device_t dev, rt_base_t pin, rt_uint8_t value)
     GPIO_WriteBit(item->gpio, item->gpio_pin, (BitAction)value);
 }
 
-rt_int8_t ch32f2_pin_read(rt_device_t dev, rt_base_t pin)
+rt_ssize_t ch32f2_pin_read(rt_device_t dev, rt_base_t pin)
 {
     const struct pin_info *item;
 
@@ -467,6 +467,7 @@ rt_err_t ch32f2_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_uint8
 /*PX.XX*/
 rt_base_t ch32f2_pin_get(const char *name)
 {
+    rt_base_t pin;
     rt_uint16_t portsource, pinsource;
     int sz;
 
@@ -476,17 +477,24 @@ rt_base_t ch32f2_pin_get(const char *name)
     {
         portsource = name[1] - 0x41;
         pinsource = name[3] - 0x30;
-        return pin_info_list_find_pin(portsource, pinsource);
     }
 
     if (sz == 5)
     {
         portsource = name[1];
         pinsource = (name[3] - 0x30) * 10 + (name[4] - 0x30);
-        return pin_info_list_find_pin(portsource, pinsource);
     }
+    pin = pin_info_list_find_pin(portsource, pinsource);
 
-    return -1;
+    if (pin < 0)
+    {
+        goto out;
+    }
+    return pin;
+
+out:
+    rt_kprintf("Px.y  x:A~E  y:0~15, e.g. PA.0\n");
+    return -RT_EINVAL;
 }
 
 const static struct rt_pin_ops pin_ops = {

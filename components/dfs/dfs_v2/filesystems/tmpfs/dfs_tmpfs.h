@@ -30,6 +30,7 @@ struct tmpfs_file
     struct tmpfs_sb *sb;       /* superblock ptr */
     rt_uint8_t      *data;     /* file date ptr */
     rt_size_t        size;     /* file size */
+    rt_bool_t       fre_memory;/* Whether to release memory upon close */
 };
 
 
@@ -39,6 +40,7 @@ struct tmpfs_sb
     struct tmpfs_file root;        /* root dir */
     rt_size_t         df_size;     /* df size */
     rt_list_t         sibling;     /* sb sibling list */
+    struct rt_spinlock lock;       /* tmpfs lock */
 };
 
 int dfs_tmpfs_init(void);

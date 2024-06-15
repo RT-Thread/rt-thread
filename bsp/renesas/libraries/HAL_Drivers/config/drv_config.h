@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -40,7 +40,31 @@ extern "C"
 #endif
 #endif /* SOC_SERIES_R7FA6M5 */
 
-#if (defined(SOC_SERIES_R7FA6M3)) || (defined(SOC_SERIES_R7FA6M4))
+#if defined(SOC_SERIES_R7FA6M3)
+#include "ra6m3/uart_config.h"
+
+#ifdef BSP_USING_ADC
+#include "ra6m3/adc_config.h"
+#endif
+
+#ifdef BSP_USING_DAC
+#include "ra6m3/dac_config.h"
+#endif
+
+#ifdef BSP_USING_PWM
+#include "ra6m3/pwm_config.h"
+#endif
+
+#ifdef BSP_USING_TIM
+#include "ra6m3/timer_config.h"
+#endif
+
+#ifdef BSP_USING_CAN
+#include "ra6m3/can_config.h"
+#endif
+#endif /* SOC_SERIES_R7FA6M3 */
+
+#if defined(SOC_SERIES_R7FA6M4)
 #include "ra6m4/uart_config.h"
 
 #ifdef BSP_USING_ADC
@@ -99,6 +123,37 @@ extern "C"
 #include "ra4m2/can_config.h"
 #endif
 #endif /* SOC_SERIES_R7FA4M2 */
+
+#ifdef SOC_SERIES_R7FA8M85
+#include "ra8/uart_config.h"
+
+#ifdef BSP_USING_PWM
+#include "ra8/pwm_config.h"
+#endif
+
+#ifdef BSP_USING_ADC
+#include "ra8/adc_config.h"
+#endif
+
+#ifdef BSP_USING_DAC
+#include "ra8/dac_config.h"
+#endif
+
+#endif /* SOC_SERIES_R7FA8M85 */
+
+#ifdef SOC_SERIES_R9A07G0
+#include "rzt/uart_config.h"
+#include "rzt/timer_config.h"
+
+#ifdef BSP_USING_PWM
+#include "rzt/pwm_config.h"
+#endif
+
+#ifdef BSP_USING_ADC
+#include "rzt/adc_config.h"
+#endif
+
+#endif /* SOC_SERIES_R9A07G0 */
 
 #ifdef __cplusplus
 }

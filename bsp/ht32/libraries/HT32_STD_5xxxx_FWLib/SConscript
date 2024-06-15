@@ -1,0 +1,84 @@
+import os
+import sys
+import rtconfig
+from building import *
+Import('rtconfig')
+
+tools_path = os.path.normpath(os.getcwd() + '../../..' + '/tools')
+sys.path.append(tools_path)
+from sdk_dist import get_source
+
+source_file_path = os.path.join(os.getcwd(), 'Source_file')
+base_path = 'library/HT32F5xxxx_Driver/src/'
+system_path = 'library/Device/Holtek/HT32F5xxxx/Source/'
+source_path = []
+ic_list = [
+    'HT32F0006',
+    'HT32F0008',
+    'HT32F52367',
+    'HT50F3200S',
+    'HT50F3200T',
+    'HF5032',
+    'HT32F5828',
+    'HT50F32002',
+    'HT50F32003',
+    'HT32F50030',
+    'HT32F50230',
+    'HT32F50241',
+    'HT32F50343',
+    'HT32F50441',
+    'HT32F50452',
+    'HT32F52142',
+    'HT32F52230',
+    'HT32F52241',
+    'HT32F52244',
+    'HT32F52253',
+    'HT32F52341',
+    'HT32F52352',
+    'HT32F52354',
+    'HT32F52367',
+    'HT32F53241',
+    'HT32F53252',
+    'HT32F54241',
+    'HT32F54253',
+    'HT32F57341',
+    'HT32F57352',
+    'HT32F59041',
+    'HT32F59741',
+    'HT32F61141',
+    'HT32F61245',
+    'HT32F61352',
+    'HT32F61355',
+    'HT32F61356',
+    'HT32F61357',
+    'HT32F61630',
+    'HT32F61641',
+    'HT32F65232',
+    'HT32F65240',
+    'HT32F67051',
+    'HT32F67232',
+    'HT32F67233',
+    'HT32F67741'
+]
+
+cwd = GetCurrentDir()
+src = []
+
+for ic_name in ic_list:
+    if GetDepend(['SOC_' + ic_name]):
+        source_path = get_source(ic_name,source_file_path,system_path,base_path)
+
+src = Split(source_path)
+
+path = [
+    cwd + '/library/HT32F5xxxx_Driver/inc',
+    cwd + '/library/CMSIS/Include',
+    cwd + '/library/Device/Holtek/HT32F5xxxx/Include'
+]
+
+CPPDEFINES = ['USE_HT32_DRIVER']
+
+group = DefineGroup('Libraries', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
+
+Return('group')
+

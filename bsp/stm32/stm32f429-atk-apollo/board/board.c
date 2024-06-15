@@ -8,7 +8,8 @@
  * 2018-11-7      SummerGift   first version
  */
 
-#include "board.h"
+#include <board.h>
+#include <drv_common.h>
 
 /** System Clock Configuration
 */

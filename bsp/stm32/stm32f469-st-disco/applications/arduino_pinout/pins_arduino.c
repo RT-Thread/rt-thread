@@ -10,6 +10,11 @@
 
 #include <Arduino.h>
 #include "pins_arduino.h"
+#include <drv_gpio.h>
+
+#define DBG_TAG    "RTduino.pins_arduino"
+#define DBG_LVL    DBG_INFO
+#include <rtdbg.h>
 
 /*
  * {Arduino Pin, RT-Thread Pin [, Device Name, Channel]}
@@ -50,3 +55,42 @@ const pin_map_t pin_map_table[]=
     {A6, RT_NULL, "adc1", RT_ADC_INTERN_CH_VREF},   /* ADC, On-Chip: internal reference voltage */
     {A7, RT_NULL, "adc1", RT_ADC_INTERN_CH_TEMPER}, /* ADC, On-Chip: internal temperature sensor */
 };
+
+#ifdef RTDUINO_USING_SPI
+void switchToSPI(const char *bus_name)
+{
+    GPIO_InitTypeDef GPIO_InitStruct = {0};
+
+    if(!rt_strcmp(bus_name, "spi2"))
+    {
+        __HAL_RCC_SPI2_CLK_ENABLE();
+
+        __HAL_RCC_GPIOD_CLK_ENABLE();
+        __HAL_RCC_GPIOB_CLK_ENABLE();
+
+        HAL_GPIO_DeInit(GPIOD, GPIO_PIN_3);
+        HAL_GPIO_DeInit(GPIOB, GPIO_PIN_14 | GPIO_PIN_15);
+
+        /**SPI2 GPIO Configuration
+        PD3     ------> SPI2_SCK
+        PB14     ------> SPI2_MISO
+        PB15     ------> SPI2_MOSI
+        */
+        GPIO_InitStruct.Pin = GPIO_PIN_3;
+        GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+        GPIO_InitStruct.Pull = GPIO_NOPULL;
+        GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+        GPIO_InitStruct.Alternate = GPIO_AF5_SPI2;
+        HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
+
+        GPIO_InitStruct.Pin = GPIO_PIN_14|GPIO_PIN_15;
+        GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+        GPIO_InitStruct.Pull = GPIO_NOPULL;
+        GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+        GPIO_InitStruct.Alternate = GPIO_AF5_SPI2;
+        HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+        LOG_I("D11, D12 and D13 will switch from PWM to SPI");
+    }
+}
+#endif /* RTDUINO_USING_SPI */

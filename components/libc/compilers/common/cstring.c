@@ -19,10 +19,12 @@
  *
  * @note  The bzero() function is deprecated (marked as LEGACY in POSIX. 1-2001).
  */
+#ifndef RT_USING_PICOLIBC
 void bzero(void* s, size_t n)
 {
     rt_memset(s, 0, n);
 }
+#endif
 
 void bcopy(const void* src, void* dest, size_t n)
 {

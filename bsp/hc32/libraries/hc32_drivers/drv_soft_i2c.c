@@ -1,6 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
- * Copyright (c) 2022, Xiaohua Semiconductor Co., Ltd.
+ * Copyright (C) 2022-2024, Xiaohua Semiconductor Co., Ltd.
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -17,8 +16,8 @@
 
 #if defined(RT_USING_I2C)
 
-#if defined(BSP_USING_I2C1) || defined(BSP_USING_I2C2) || defined(BSP_USING_I2C3) || \
-    defined(BSP_USING_I2C4) || defined(BSP_USING_I2C5) || defined(BSP_USING_I2C6)
+#if defined(BSP_USING_I2C1_SW) || defined(BSP_USING_I2C2_SW) || defined(BSP_USING_I2C3_SW) || \
+    defined(BSP_USING_I2C4_SW) || defined(BSP_USING_I2C5_SW) || defined(BSP_USING_I2C6_SW)
 
 /*******************************************************************************
  * Local type definitions ('typedef')
@@ -45,27 +44,27 @@
 
 static const struct hc32_soft_i2c_config soft_i2c_config[] =
 {
-#ifdef BSP_USING_I2C1
+#ifdef BSP_USING_I2C1_SW
     I2C1_BUS_CONFIG,
 #endif
-#ifdef BSP_USING_I2C2
+#ifdef BSP_USING_I2C2_SW
     I2C2_BUS_CONFIG,
 #endif
-#ifdef BSP_USING_I2C3
+#ifdef BSP_USING_I2C3_SW
     I2C3_BUS_CONFIG,
 #endif
-#ifdef BSP_USING_I2C4
+#ifdef BSP_USING_I2C4_SW
     I2C4_BUS_CONFIG,
 #endif
-#ifdef BSP_USING_I2C5
+#ifdef BSP_USING_I2C5_SW
     I2C5_BUS_CONFIG,
 #endif
-#ifdef BSP_USING_I2C6
+#ifdef BSP_USING_I2C6_SW
     I2C6_BUS_CONFIG,
 #endif
 };
 
-static struct hc32_i2c i2c_obj[sizeof(soft_i2c_config) / sizeof(soft_i2c_config[0])];
+static struct hc32_soft_i2c i2c_obj[sizeof(soft_i2c_config) / sizeof(soft_i2c_config[0])];
 
 /*******************************************************************************
  * Function implementation - global ('extern') and local ('static')
@@ -73,9 +72,9 @@ static struct hc32_i2c i2c_obj[sizeof(soft_i2c_config) / sizeof(soft_i2c_config[
 /**
  * This function initializes the i2c pin.
  *
- * @param Hc32 i2c dirver class.
+ * @param Hc32 i2c driver class.
  */
-static void hc32_i2c_gpio_init(struct hc32_i2c *i2c)
+static void hc32_i2c_gpio_init(struct hc32_soft_i2c *i2c)
 {
     struct hc32_soft_i2c_config *cfg = (struct hc32_soft_i2c_config *)i2c->ops.data;
 
@@ -83,6 +82,16 @@ static void hc32_i2c_gpio_init(struct hc32_i2c *i2c)
     rt_pin_mode(cfg->sda_pin,   PIN_MODE_OUTPUT_OD);
     rt_pin_write(cfg->scl_pin,  PIN_HIGH);
     rt_pin_write(cfg->sda_pin,  PIN_HIGH);
+}
+
+static void hc32_i2c_pin_init(void)
+{
+    rt_size_t obj_num = sizeof(i2c_obj) / sizeof(struct hc32_soft_i2c);
+
+    for(rt_size_t i = 0; i < obj_num; i++)
+    {
+        hc32_i2c_gpio_init(&i2c_obj[i]);
+    }
 }
 
 /**
@@ -185,13 +194,15 @@ static void hc32_udelay(rt_uint32_t us)
 static const struct rt_i2c_bit_ops hc32_bit_ops_default =
 {
     .data     = RT_NULL,
+    .pin_init = hc_i2c_pin_init,
     .set_sda  = hc32_set_sda,
     .set_scl  = hc32_set_scl,
     .get_sda  = hc32_get_sda,
     .get_scl  = hc32_get_scl,
     .udelay   = hc32_udelay,
     .delay_us = 1,
-    .timeout  = 100
+    .timeout  = 100,
+    .i2c_pin_init_flag = RT_FALSE
 };
 
 /**
@@ -224,17 +235,17 @@ static rt_err_t hc32_i2c_bus_unlock(const struct hc32_soft_i2c_config *cfg)
 }
 
 /* I2C initialization function */
-int hc32_hw_i2c_init(void)
+int hc32_soft_i2c_init(void)
 {
-    rt_size_t obj_num = sizeof(i2c_obj) / sizeof(struct hc32_i2c);
+    rt_size_t obj_num = sizeof(i2c_obj) / sizeof(struct hc32_soft_i2c);
     rt_err_t result;
 
-    for (int i = 0; i < obj_num; i++)
+    for (rt_size_t i = 0; i < obj_num; i++)
     {
         i2c_obj[i].ops          = hc32_bit_ops_default;
         i2c_obj[i].ops.data     = (void *)&soft_i2c_config[i];
         i2c_obj[i].i2c_bus.priv = &i2c_obj[i].ops;
-        hc32_i2c_gpio_init(&i2c_obj[i]);
+
         result = rt_i2c_bit_add_bus(&i2c_obj[i].i2c_bus, soft_i2c_config[i].bus_name);
         RT_ASSERT(result == RT_EOK);
         hc32_i2c_bus_unlock(&soft_i2c_config[i]);
@@ -242,7 +253,7 @@ int hc32_hw_i2c_init(void)
 
     return RT_EOK;
 }
-INIT_BOARD_EXPORT(hc32_hw_i2c_init);
+INIT_BOARD_EXPORT(hc32_soft_i2c_init);
 
 #endif
 

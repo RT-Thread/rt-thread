@@ -26,8 +26,30 @@
 /* ELM FatFs provide a DIR struct */
 #define HAVE_DIR_STRUCTURE
 
+#include <dfs.h>
 #include <dfs_fs.h>
+#include <dfs_dentry.h>
 #include <dfs_file.h>
+#include <dfs_mnt.h>
+
+#ifdef RT_USING_PAGECACHE
+#include "dfs_pcache.h"
+#endif
+
+
+static int dfs_elm_free_vnode(struct dfs_vnode *vnode);
+static int dfs_elm_truncate(struct dfs_file *file, off_t offset);
+
+#ifdef RT_USING_PAGECACHE
+static ssize_t dfs_elm_page_read(struct dfs_file *file, struct dfs_page *page);
+static ssize_t dfs_elm_page_write(struct dfs_page *page);
+
+static struct dfs_aspace_ops dfs_elm_aspace_ops =
+{
+    .read = dfs_elm_page_read,
+    .write = dfs_elm_page_write,
+};
+#endif
 
 #undef SS
 #if FF_MAX_SS == FF_MIN_SS
@@ -37,6 +59,8 @@
 #endif
 
 static rt_device_t disk[FF_VOLUMES] = {0};
+
+int dfs_elm_unmount(struct dfs_mnt *mnt);
 
 static int elm_result_to_dfs(FRESULT result)
 {
@@ -102,7 +126,7 @@ static int get_disk(rt_device_t id)
     return -1;
 }
 
-int dfs_elm_mount(struct dfs_filesystem *fs, unsigned long rwflag, const void *data)
+static int dfs_elm_mount(struct dfs_mnt *mnt, unsigned long rwflag, const void *data)
 {
     FATFS *fat;
     FRESULT result;
@@ -110,20 +134,31 @@ int dfs_elm_mount(struct dfs_filesystem *fs, unsigned long rwflag, const void *d
     struct rt_device_blk_geometry geometry;
     char logic_nbr[3] = {'0',':', 0};
 
+    /* open device, but do not check the status of device */
+    if (mnt->dev_id == RT_NULL
+        || rt_device_open(mnt->dev_id, RT_DEVICE_OFLAG_RDWR) != RT_EOK)
+    {
+        return -ENODEV;
+    }
+
     /* get an empty position */
     index = get_disk(RT_NULL);
     if (index == -1)
+    {
+        rt_device_close(mnt->dev_id);
         return -ENOENT;
+    }
     logic_nbr[0] = '0' + index;
 
     /* save device */
-    disk[index] = fs->dev_id;
+    disk[index] = mnt->dev_id;
     /* check sector size */
-    if (rt_device_control(fs->dev_id, RT_DEVICE_CTRL_BLK_GETGEOME, &geometry) == RT_EOK)
+    if (rt_device_control(mnt->dev_id, RT_DEVICE_CTRL_BLK_GETGEOME, &geometry) == RT_EOK)
     {
         if (geometry.bytes_per_sector > FF_MAX_SS)
         {
             rt_kprintf("The sector size of device is greater than the sector size of FAT.\n");
+            rt_device_close(mnt->dev_id);
             return -EINVAL;
         }
     }
@@ -132,6 +167,7 @@ int dfs_elm_mount(struct dfs_filesystem *fs, unsigned long rwflag, const void *d
     if (fat == RT_NULL)
     {
         disk[index] = RT_NULL;
+        rt_device_close(mnt->dev_id);
         return -ENOMEM;
     }
 
@@ -149,6 +185,7 @@ int dfs_elm_mount(struct dfs_filesystem *fs, unsigned long rwflag, const void *d
             f_mount(RT_NULL, (const TCHAR *)logic_nbr, 1);
             disk[index] = RT_NULL;
             rt_free(fat);
+            rt_device_close(mnt->dev_id);
             return -ENOMEM;
         }
 
@@ -158,31 +195,32 @@ int dfs_elm_mount(struct dfs_filesystem *fs, unsigned long rwflag, const void *d
             goto __err;
 
         /* mount succeed! */
-        fs->data = fat;
+        mnt->data = fat;
         rt_free(dir);
-        return 0;
+        return RT_EOK;
     }
 
 __err:
     f_mount(RT_NULL, (const TCHAR *)logic_nbr, 1);
     disk[index] = RT_NULL;
     rt_free(fat);
+    rt_device_close(mnt->dev_id);
     return elm_result_to_dfs(result);
 }
 
-int dfs_elm_unmount(struct dfs_filesystem *fs)
+int dfs_elm_unmount(struct dfs_mnt *mnt)
 {
     FATFS *fat;
     FRESULT result;
     int  index;
     char logic_nbr[3] = {'0',':', 0};
 
-    fat = (FATFS *)fs->data;
+    fat = (FATFS *)mnt->data;
 
     RT_ASSERT(fat != RT_NULL);
 
     /* find the device index and then umount it */
-    index = get_disk(fs->dev_id);
+    index = get_disk(mnt->dev_id);
     if (index == -1) /* not found */
         return -ENOENT;
 
@@ -191,9 +229,10 @@ int dfs_elm_unmount(struct dfs_filesystem *fs)
     if (result != FR_OK)
         return elm_result_to_dfs(result);
 
-    fs->data = RT_NULL;
+    mnt->data = RT_NULL;
     disk[index] = RT_NULL;
     rt_free(fat);
+    rt_device_close(mnt->dev_id);
 
     return RT_EOK;
 }
@@ -296,17 +335,17 @@ int dfs_elm_mkfs(rt_device_t dev_id, const char *fs_name)
     return RT_EOK;
 }
 
-int dfs_elm_statfs(struct dfs_filesystem *fs, struct statfs *buf)
+int dfs_elm_statfs(struct dfs_mnt *mnt, struct statfs *buf)
 {
     FATFS *f;
     FRESULT res;
     char driver[4];
     DWORD fre_clust, fre_sect, tot_sect;
 
-    RT_ASSERT(fs != RT_NULL);
+    RT_ASSERT(mnt != RT_NULL);
     RT_ASSERT(buf != RT_NULL);
 
-    f = (FATFS *)fs->data;
+    f = (FATFS *)mnt->data;
 
     rt_snprintf(driver, sizeof(driver), "%d:", f->pdrv);
     res = f_getfree(driver, &fre_clust, &f);
@@ -337,35 +376,35 @@ int dfs_elm_open(struct dfs_file *file)
 
 #if (FF_VOLUMES > 1)
     int vol;
-    struct dfs_filesystem *fs = file->vnode->fs;
+    struct dfs_mnt *mnt = file->vnode->mnt;
     extern int elm_get_vol(FATFS * fat);
 
     RT_ASSERT(file->vnode->ref_count > 0);
-    if (file->vnode->ref_count > 1)
+    if (file->vnode->data)
     {
         if (file->vnode->type == FT_DIRECTORY
                 && !(file->flags & O_DIRECTORY))
         {
             return -ENOENT;
         }
-        file->pos = 0;
+        file->fpos = 0;
         return 0;
     }
 
-    if (fs == NULL)
+    if (mnt == NULL)
         return -ENOENT;
 
     /* add path for ELM FatFS driver support */
-    vol = elm_get_vol((FATFS *)fs->data);
+    vol = elm_get_vol((FATFS *)mnt->data);
     if (vol < 0)
         return -ENOENT;
     drivers_fn = (char *)rt_malloc(256);
     if (drivers_fn == RT_NULL)
         return -ENOMEM;
 
-    rt_snprintf(drivers_fn, 256, "%d:%s", vol, file->vnode->path);
+    rt_snprintf(drivers_fn, 256, "%d:%s", vol, file->dentry->pathname);
 #else
-    drivers_fn = file->vnode->path;
+    drivers_fn = file->dentry->pathname;
 #endif
 
     if (file->flags & O_DIRECTORY)
@@ -404,7 +443,8 @@ int dfs_elm_open(struct dfs_file *file)
             return elm_result_to_dfs(result);
         }
 
-        file->data = dir;
+        file->vnode->data = dir;
+        rt_mutex_init(&file->vnode->lock, file->dentry->pathname, RT_IPC_FLAG_PRIO);
         return RT_EOK;
     }
     else
@@ -441,16 +481,17 @@ int dfs_elm_open(struct dfs_file *file)
 #endif
         if (result == FR_OK)
         {
-            file->pos  = fd->fptr;
+            file->fpos  = fd->fptr;
             file->vnode->size = f_size(fd);
             file->vnode->type = FT_REGULAR;
-            file->data = fd;
+            file->vnode->data = fd;
+            rt_mutex_init(&file->vnode->lock, file->dentry->pathname, RT_IPC_FLAG_PRIO);
 
             if (file->flags & O_APPEND)
             {
                 /* seek to the end of file */
                 f_lseek(fd, f_size(fd));
-                file->pos = fd->fptr;
+                file->fpos = fd->fptr;
             }
         }
         else
@@ -478,7 +519,7 @@ int dfs_elm_close(struct dfs_file *file)
     {
         DIR *dir = RT_NULL;
 
-        dir = (DIR *)(file->data);
+        dir = (DIR *)(file->vnode->data);
         RT_ASSERT(dir != RT_NULL);
 
         /* release memory */
@@ -487,16 +528,17 @@ int dfs_elm_close(struct dfs_file *file)
     else if (file->vnode->type == FT_REGULAR)
     {
         FIL *fd = RT_NULL;
-        fd = (FIL *)(file->data);
+
+        fd = (FIL *)(file->vnode->data);
         RT_ASSERT(fd != RT_NULL);
 
-        result = f_close(fd);
-        if (result == FR_OK)
-        {
-            /* release memory */
-            rt_free(fd);
-        }
+        f_close(fd);
+        /* release memory */
+        rt_free(fd);
     }
+
+    file->vnode->data = RT_NULL;
+    rt_mutex_detach(&file->vnode->lock);
 
     return elm_result_to_dfs(result);
 }
@@ -506,41 +548,22 @@ int dfs_elm_ioctl(struct dfs_file *file, int cmd, void *args)
     switch (cmd)
     {
     case RT_FIOFTRUNCATE:
-        {
-            FIL *fd;
-            FSIZE_t fptr, length;
-            FRESULT result = FR_OK;
-            fd = (FIL *)(file->data);
-            RT_ASSERT(fd != RT_NULL);
-
-            /* save file read/write point */
-            fptr = fd->fptr;
-            length = *(off_t*)args;
-            if (length <= fd->obj.objsize)
-            {
-                fd->fptr = length;
-                result = f_truncate(fd);
-            }
-            else
-            {
-                result = f_lseek(fd, length);
-            }
-            /* restore file read/write point */
-            fd->fptr = fptr;
-            return elm_result_to_dfs(result);
-        }
+    {
+        off_t offset = (off_t)(size_t)(args);
+        return dfs_elm_truncate(file, offset);
+    }
     case F_GETLK:
-            return 0;
+        return 0;
     case F_SETLK:
-            return 0;
+        return 0;
     }
     return -ENOSYS;
 }
 
-int dfs_elm_read(struct dfs_file *file, void *buf, size_t len)
+ssize_t dfs_elm_read(struct dfs_file *file, void *buf, size_t len, off_t *pos)
 {
     FIL *fd;
-    FRESULT result;
+    FRESULT result = FR_OK;
     UINT byte_read;
 
     if (file->vnode->type == FT_DIRECTORY)
@@ -548,19 +571,24 @@ int dfs_elm_read(struct dfs_file *file, void *buf, size_t len)
         return -EISDIR;
     }
 
-    fd = (FIL *)(file->data);
-    RT_ASSERT(fd != RT_NULL);
-
-    result = f_read(fd, buf, len, &byte_read);
-    /* update position */
-    file->pos  = fd->fptr;
-    if (result == FR_OK)
-        return byte_read;
+    if (file->vnode->size > *pos)
+    {
+        fd = (FIL *)(file->vnode->data);
+        RT_ASSERT(fd != RT_NULL);
+        rt_mutex_take(&file->vnode->lock, RT_WAITING_FOREVER);
+        f_lseek(fd, *pos);
+        result = f_read(fd, buf, len, &byte_read);
+        /* update position */
+        *pos = fd->fptr;
+        rt_mutex_release(&file->vnode->lock);
+        if (result == FR_OK)
+            return byte_read;
+    }
 
     return elm_result_to_dfs(result);
 }
 
-int dfs_elm_write(struct dfs_file *file, const void *buf, size_t len)
+ssize_t dfs_elm_write(struct dfs_file *file, const void *buf, size_t len, off_t *pos)
 {
     FIL *fd;
     FRESULT result;
@@ -571,13 +599,15 @@ int dfs_elm_write(struct dfs_file *file, const void *buf, size_t len)
         return -EISDIR;
     }
 
-    fd = (FIL *)(file->data);
+    fd = (FIL *)(file->vnode->data);
     RT_ASSERT(fd != RT_NULL);
-
+    rt_mutex_take(&file->vnode->lock, RT_WAITING_FOREVER);
+    f_lseek(fd, *pos);
     result = f_write(fd, buf, len, &byte_write);
     /* update position and file size */
-    file->pos  = fd->fptr;
+    *pos = fd->fptr;
     file->vnode->size = f_size(fd);
+    rt_mutex_release(&file->vnode->lock);
     if (result == FR_OK)
         return byte_write;
 
@@ -589,29 +619,47 @@ int dfs_elm_flush(struct dfs_file *file)
     FIL *fd;
     FRESULT result;
 
-    fd = (FIL *)(file->data);
+    fd = (FIL *)(file->vnode->data);
     RT_ASSERT(fd != RT_NULL);
 
     result = f_sync(fd);
     return elm_result_to_dfs(result);
 }
 
-int dfs_elm_lseek(struct dfs_file *file, off_t offset)
+off_t dfs_elm_lseek(struct dfs_file *file, off_t offset, int wherece)
 {
     FRESULT result = FR_OK;
+
+    switch (wherece)
+    {
+    case SEEK_SET:
+        break;
+
+    case SEEK_CUR:
+        offset += file->fpos;
+        break;
+
+    case SEEK_END:
+        offset += file->vnode->size;
+        break;
+
+    default:
+        return -EINVAL;
+    }
+
     if (file->vnode->type == FT_REGULAR)
     {
         FIL *fd;
 
         /* regular file type */
-        fd = (FIL *)(file->data);
+        fd = (FIL *)(file->vnode->data);
         RT_ASSERT(fd != RT_NULL);
-
+        rt_mutex_take(&file->vnode->lock, RT_WAITING_FOREVER);
         result = f_lseek(fd, offset);
+        rt_mutex_release(&file->vnode->lock);
         if (result == FR_OK)
         {
             /* return current position */
-            file->pos = fd->fptr;
             return fd->fptr;
         }
     }
@@ -620,18 +668,42 @@ int dfs_elm_lseek(struct dfs_file *file, off_t offset)
         /* which is a directory */
         DIR *dir = RT_NULL;
 
-        dir = (DIR *)(file->data);
+        dir = (DIR *)(file->vnode->data);
         RT_ASSERT(dir != RT_NULL);
-
+        rt_mutex_take(&file->vnode->lock, RT_WAITING_FOREVER);
         result = f_seekdir(dir, offset / sizeof(struct dirent));
+        rt_mutex_release(&file->vnode->lock);
         if (result == FR_OK)
         {
             /* update file position */
-            file->pos = offset;
-            return file->pos;
+            return offset;
         }
     }
 
+    return elm_result_to_dfs(result);
+}
+
+static int dfs_elm_truncate(struct dfs_file *file, off_t offset)
+{
+    FIL *fd;
+    FSIZE_t fptr;
+    FRESULT result = FR_OK;
+    fd = (FIL *)(file->vnode->data);
+    RT_ASSERT(fd != RT_NULL);
+
+    /* save file read/write point */
+    fptr = fd->fptr;
+    if (offset <= fd->obj.objsize)
+    {
+        fd->fptr = offset;
+        result = f_truncate(fd);
+    }
+    else
+    {
+        result = f_lseek(fd, offset);
+    }
+    /* restore file read/write point */
+    fd->fptr = fptr;
     return elm_result_to_dfs(result);
 }
 
@@ -643,7 +715,7 @@ int dfs_elm_getdents(struct dfs_file *file, struct dirent *dirp, uint32_t count)
     rt_uint32_t index;
     struct dirent *d;
 
-    dir = (DIR *)(file->data);
+    dir = (DIR *)(file->vnode->data);
     RT_ASSERT(dir != RT_NULL);
 
     /* make integer count */
@@ -676,7 +748,7 @@ int dfs_elm_getdents(struct dfs_file *file, struct dirent *dirp, uint32_t count)
 
         d->d_namlen = (rt_uint8_t)rt_strlen(fn);
         d->d_reclen = (rt_uint16_t)sizeof(struct dirent);
-        rt_strncpy(d->d_name, fn, DFS_PATH_MAX);
+        rt_strncpy(d->d_name, fn, DIRENT_NAME_MAX);
 
         index ++;
         if (index * sizeof(struct dirent) >= count)
@@ -686,12 +758,12 @@ int dfs_elm_getdents(struct dfs_file *file, struct dirent *dirp, uint32_t count)
     if (index == 0)
         return elm_result_to_dfs(result);
 
-    file->pos += index * sizeof(struct dirent);
+    file->fpos += index * sizeof(struct dirent);
 
     return index * sizeof(struct dirent);
 }
 
-int dfs_elm_unlink(struct dfs_filesystem *fs, const char *path)
+int dfs_elm_unlink(struct dfs_dentry *dentry)
 {
     FRESULT result;
 
@@ -701,14 +773,14 @@ int dfs_elm_unlink(struct dfs_filesystem *fs, const char *path)
     extern int elm_get_vol(FATFS * fat);
 
     /* add path for ELM FatFS driver support */
-    vol = elm_get_vol((FATFS *)fs->data);
+    vol = elm_get_vol((FATFS *)dentry->mnt->data);
     if (vol < 0)
         return -ENOENT;
     drivers_fn = (char *)rt_malloc(256);
     if (drivers_fn == RT_NULL)
         return -ENOMEM;
 
-    rt_snprintf(drivers_fn, 256, "%d:%s", vol, path);
+    rt_snprintf(drivers_fn, 256, "%d:%s", vol, dentry->pathname);
 #else
     const char *drivers_fn;
     drivers_fn = path;
@@ -721,7 +793,7 @@ int dfs_elm_unlink(struct dfs_filesystem *fs, const char *path)
     return elm_result_to_dfs(result);
 }
 
-int dfs_elm_rename(struct dfs_filesystem *fs, const char *oldpath, const char *newpath)
+int dfs_elm_rename(struct dfs_dentry *old_dentry, struct dfs_dentry *new_dentry)
 {
     FRESULT result;
 
@@ -732,21 +804,21 @@ int dfs_elm_rename(struct dfs_filesystem *fs, const char *oldpath, const char *n
     extern int elm_get_vol(FATFS * fat);
 
     /* add path for ELM FatFS driver support */
-    vol = elm_get_vol((FATFS *)fs->data);
+    vol = elm_get_vol((FATFS *)old_dentry->mnt->data);
     if (vol < 0)
         return -ENOENT;
 
     drivers_oldfn = (char *)rt_malloc(256);
     if (drivers_oldfn == RT_NULL)
         return -ENOMEM;
-    drivers_newfn = newpath;
+    drivers_newfn = new_dentry->pathname;
 
-    rt_snprintf(drivers_oldfn, 256, "%d:%s", vol, oldpath);
+    rt_snprintf(drivers_oldfn, 256, "%d:%s", vol, old_dentry->pathname);
 #else
     const char *drivers_oldfn, *drivers_newfn;
 
-    drivers_oldfn = oldpath;
-    drivers_newfn = newpath;
+    drivers_oldfn = old_dentry->pathname;
+    drivers_newfn = new_dentry->pathname;
 #endif
 
     result = f_rename(drivers_oldfn, drivers_newfn);
@@ -756,13 +828,13 @@ int dfs_elm_rename(struct dfs_filesystem *fs, const char *oldpath, const char *n
     return elm_result_to_dfs(result);
 }
 
-int dfs_elm_stat(struct dfs_filesystem *fs, const char *path, struct stat *st)
+int dfs_elm_stat(struct dfs_dentry *dentry, struct stat *st)
 {
-    FATFS  *f;
+    FATFS  *fat;
     FILINFO file_info;
     FRESULT result;
 
-    f = (FATFS *)fs->data;
+    fat = (FATFS *)dentry->mnt->data;
 
 #if FF_VOLUMES > 1
     int vol;
@@ -770,17 +842,17 @@ int dfs_elm_stat(struct dfs_filesystem *fs, const char *path, struct stat *st)
     extern int elm_get_vol(FATFS * fat);
 
     /* add path for ELM FatFS driver support */
-    vol = elm_get_vol((FATFS *)fs->data);
+    vol = elm_get_vol(fat);
     if (vol < 0)
         return -ENOENT;
     drivers_fn = (char *)rt_malloc(256);
     if (drivers_fn == RT_NULL)
         return -ENOMEM;
 
-    rt_snprintf(drivers_fn, 256, "%d:%s", vol, path);
+    rt_snprintf(drivers_fn, 256, "%d:%s", vol, dentry->pathname);
 #else
     const char *drivers_fn;
-    drivers_fn = path;
+    drivers_fn = dentry->pathname;
 #endif
 
     result = f_stat(drivers_fn, &file_info);
@@ -790,28 +862,43 @@ int dfs_elm_stat(struct dfs_filesystem *fs, const char *path, struct stat *st)
     if (result == FR_OK)
     {
         /* convert to dfs stat structure */
-        st->st_dev = 0;
+        st->st_dev = (dev_t)(size_t)(dentry->mnt->dev_id);
+        st->st_ino = (ino_t)dfs_dentry_full_path_crc32(dentry);
 
-        st->st_mode = S_IFREG | S_IRUSR | S_IRGRP | S_IROTH |
-                      S_IWUSR | S_IWGRP | S_IWOTH;
         if (file_info.fattrib & AM_DIR)
         {
-            st->st_mode &= ~S_IFREG;
-            st->st_mode |= S_IFDIR | S_IXUSR | S_IXGRP | S_IXOTH;
+            st->st_mode = S_IFDIR | (S_IRUSR | S_IXUSR | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH);
         }
+        else
+        {
+            st->st_mode = S_IFREG | (S_IRWXU | S_IRWXG | S_IRWXO);
+        }
+
         if (file_info.fattrib & AM_RDO)
             st->st_mode &= ~(S_IWUSR | S_IWGRP | S_IWOTH);
 
-        st->st_size  = file_info.fsize;
-        st->st_blksize = f->csize * SS(f);
+        if (S_IFDIR & st->st_mode)
+        {
+            st->st_size = file_info.fsize;
+        }
+        else
+        {
+#ifdef RT_USING_PAGECACHE
+            st->st_size = (dentry->vnode && dentry->vnode->aspace) ? dentry->vnode->size : file_info.fsize;
+#else
+            st->st_size = file_info.fsize;
+#endif
+        }
+
+        st->st_blksize = fat->csize * SS(fat);
         if (file_info.fattrib & AM_ARC)
         {
-            st->st_blocks = file_info.fsize ? ((file_info.fsize - 1) / SS(f) / f->csize + 1) : 0;
+            st->st_blocks = st->st_size ? ((st->st_size - 1) / SS(fat) / fat->csize + 1) : 0;
             st->st_blocks *= (st->st_blksize / 512);  // man say st_blocks is number of 512B blocks allocated
         }
         else
         {
-            st->st_blocks = f->csize;
+            st->st_blocks = fat->csize;
         }
         /* get st_mtime. */
         {
@@ -848,39 +935,175 @@ int dfs_elm_stat(struct dfs_filesystem *fs, const char *path, struct stat *st)
     return elm_result_to_dfs(result);
 }
 
+static struct dfs_vnode *dfs_elm_lookup(struct dfs_dentry *dentry)
+{
+    struct stat st;
+    struct dfs_vnode *vnode = RT_NULL;
+
+    if (dentry == NULL || dentry->mnt == NULL || dentry->mnt->data == NULL)
+    {
+        return NULL;
+    }
+
+    if (dfs_elm_stat(dentry, &st) != 0)
+    {
+        return vnode;
+    }
+
+    vnode = dfs_vnode_create();
+    if (vnode)
+    {
+        vnode->mnt = dentry->mnt;
+        vnode->size = st.st_size;
+        vnode->data = NULL;
+
+        if (S_ISDIR(st.st_mode))
+        {
+            vnode->mode = S_IFDIR | (S_IRUSR | S_IXUSR | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH);
+            vnode->type = FT_DIRECTORY;
+        }
+        else
+        {
+            vnode->mode = S_IFREG | (S_IRWXU | S_IRWXG | S_IRWXO);
+            vnode->type = FT_REGULAR;
+#ifdef RT_USING_PAGECACHE
+            vnode->aspace = dfs_aspace_create(dentry, vnode, &dfs_elm_aspace_ops);
+#endif
+        }
+    }
+
+    return vnode;
+}
+
+static struct dfs_vnode *dfs_elm_create_vnode(struct dfs_dentry *dentry, int type, mode_t mode)
+{
+    struct dfs_vnode *vnode = RT_NULL;
+
+    if (dentry == NULL || dentry->mnt == NULL || dentry->mnt->data == NULL)
+    {
+        return NULL;
+    }
+
+    vnode = dfs_vnode_create();
+    if (vnode)
+    {
+        if (type == FT_DIRECTORY)
+        {
+            /* fat directory force mode 0555 */
+            vnode->mode = S_IFDIR | (S_IRUSR | S_IXUSR | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH);
+            vnode->type = FT_DIRECTORY;
+        }
+        else
+        {
+            /* fat REGULAR file mode force mode 0777 */
+            vnode->mode = S_IFREG | (S_IRWXU | S_IRWXG | S_IRWXO);
+            vnode->type = FT_REGULAR;
+#ifdef RT_USING_PAGECACHE
+            vnode->aspace = dfs_aspace_create(dentry, vnode, &dfs_elm_aspace_ops);
+#endif
+        }
+
+        vnode->mnt = dentry->mnt;
+        vnode->data = NULL;
+        vnode->size = 0;
+    }
+
+    return vnode;
+}
+
+static int dfs_elm_free_vnode(struct dfs_vnode *vnode)
+{
+    /* nothing to be freed */
+    if (vnode && vnode->ref_count <= 1)
+    {
+        vnode->data = NULL;
+    }
+
+    return 0;
+}
+
+#ifdef RT_USING_PAGECACHE
+static ssize_t dfs_elm_page_read(struct dfs_file *file, struct dfs_page *page)
+{
+    int ret = -EINVAL;
+
+    if (page->page)
+    {
+        off_t fpos = page->fpos;
+        ret = dfs_elm_read(file, page->page, page->size, &fpos);
+    }
+
+    return ret;
+}
+
+ssize_t dfs_elm_page_write(struct dfs_page *page)
+{
+    FIL *fd;
+    FRESULT result;
+    UINT byte_write;
+
+    if (page->aspace->vnode->type == FT_DIRECTORY)
+    {
+        return -EISDIR;
+    }
+
+    fd = (FIL *)(page->aspace->vnode->data);
+    RT_ASSERT(fd != RT_NULL);
+    rt_mutex_take(&page->aspace->vnode->lock, RT_WAITING_FOREVER);
+    f_lseek(fd, page->fpos);
+    result = f_write(fd, page->page, page->len, &byte_write);
+    rt_mutex_release(&page->aspace->vnode->lock);
+    if (result == FR_OK)
+    {
+        return byte_write;
+    }
+
+    return elm_result_to_dfs(result);
+}
+#endif
+
 static const struct dfs_file_ops dfs_elm_fops =
 {
-    dfs_elm_open,
-    dfs_elm_close,
-    dfs_elm_ioctl,
-    dfs_elm_read,
-    dfs_elm_write,
-    dfs_elm_flush,
-    dfs_elm_lseek,
-    dfs_elm_getdents,
-    RT_NULL, /* poll interface */
+    .open = dfs_elm_open,
+    .close = dfs_elm_close,
+    .ioctl = dfs_elm_ioctl,
+    .read = dfs_elm_read,
+    .write = dfs_elm_write,
+    .flush = dfs_elm_flush,
+    .lseek = dfs_elm_lseek,
+    .truncate = dfs_elm_truncate,
+    .getdents = dfs_elm_getdents,
 };
 
 static const struct dfs_filesystem_ops dfs_elm =
 {
     "elm",
-    DFS_FS_FLAG_DEFAULT,
+    FS_NEED_DEVICE,
     &dfs_elm_fops,
 
-    dfs_elm_mount,
-    dfs_elm_unmount,
-    dfs_elm_mkfs,
-    dfs_elm_statfs,
+    .mount = dfs_elm_mount,
+    .umount = dfs_elm_unmount,
+    .mkfs = dfs_elm_mkfs,
+    .statfs = dfs_elm_statfs,
 
-    dfs_elm_unlink,
-    dfs_elm_stat,
-    dfs_elm_rename,
+    .unlink = dfs_elm_unlink,
+    .stat = dfs_elm_stat,
+    .rename = dfs_elm_rename,
+
+    .lookup = dfs_elm_lookup,
+    .create_vnode = dfs_elm_create_vnode,
+    .free_vnode = dfs_elm_free_vnode
+};
+
+static struct dfs_filesystem_type _elmfs =
+{
+    .fs_ops = &dfs_elm,
 };
 
 int elm_init(void)
 {
     /* register fatfs file system */
-    dfs_register(&dfs_elm);
+    dfs_register(&_elmfs);
 
     return 0;
 }
@@ -1002,41 +1225,39 @@ DWORD get_fattime(void)
 }
 
 #if FF_FS_REENTRANT
-int ff_cre_syncobj(BYTE drv, FF_SYNC_t *m)
+
+static rt_mutex_t Mutex[FF_VOLUMES + 1];
+
+int ff_mutex_create (int vol)
 {
     char name[8];
     rt_mutex_t mutex;
 
-    rt_snprintf(name, sizeof(name), "fat%d", drv);
+    rt_snprintf(name, sizeof(name), "fat%d", vol);
     mutex = rt_mutex_create(name, RT_IPC_FLAG_PRIO);
     if (mutex != RT_NULL)
     {
-        *m = mutex;
+        Mutex[vol] = mutex;
         return RT_TRUE;
     }
 
     return RT_FALSE;
 }
-
-int ff_del_syncobj(FF_SYNC_t m)
+void ff_mutex_delete (int vol)
 {
-    if (m != RT_NULL)
-        rt_mutex_delete(m);
-
-    return RT_TRUE;
+    if (Mutex[vol] != RT_NULL)
+        rt_mutex_delete(Mutex[vol]);
 }
-
-int ff_req_grant(FF_SYNC_t m)
+int ff_mutex_take (int vol)
 {
-    if (rt_mutex_take(m, FF_FS_TIMEOUT) == RT_EOK)
+    if (rt_mutex_take(Mutex[vol], FF_FS_TIMEOUT) == RT_EOK)
         return RT_TRUE;
 
     return RT_FALSE;
 }
-
-void ff_rel_grant(FF_SYNC_t m)
+void ff_mutex_give (int vol)
 {
-    rt_mutex_release(m);
+    rt_mutex_release(Mutex[vol]);
 }
 
 #endif

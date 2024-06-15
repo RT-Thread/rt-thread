@@ -595,7 +595,7 @@ static void thread1_entry(void *parameter)
     while (1)
     {
         /* Receive messages from the message queue */
-        if (rt_mq_recv(&mq, &buf, sizeof(buf), RT_WAITING_FOREVER) == RT_EOK)
+        if (rt_mq_recv(&mq, &buf, sizeof(buf), RT_WAITING_FOREVER) >= 0)
         {
             rt_kprintf("thread1: recv msg from msg queue, the content:%c\n", buf);
             if (cnt == 19)
@@ -784,7 +784,7 @@ void message_handler()
     struct msg msg_ptr; /* Local variable used to place the message */
 
     /* Receive messages from the message queue into msg_ptr */
-    if (rt_mq_recv(mq, (void*)&msg_ptr, sizeof(struct msg)) == RT_EOK)
+    if (rt_mq_recv(mq, (void*)&msg_ptr, sizeof(struct msg)) >= 0)
     {
         /* Successfully received the message, corresponding data processing is performed */
     }

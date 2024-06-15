@@ -1,12 +1,5 @@
 menu "Hardware Drivers Config"
 
-config SOC_STM32F401RE
-    bool
-    select SOC_SERIES_STM32F4
-    select RT_USING_COMPONENTS_INIT
-    select RT_USING_USER_MAIN
-    default y
-
 menu "Onboard Peripheral Drivers"
     config BSP_USING_STLINK_TO_USART
         bool "Enable STLINK TO USART (uart2)"
@@ -19,6 +12,8 @@ menu "Onboard Peripheral Drivers"
         select PKG_USING_RTDUINO
         select BSP_USING_STLINK_TO_USART
         select BSP_USING_GPIO
+        select BSP_USING_TIM
+        select BSP_USING_TIM9
         select BSP_USING_ADC
         select BSP_USING_ADC1
         select BSP_USING_PWM
@@ -34,8 +29,13 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_PWM4_CH1
         select BSP_USING_I2C
         select BSP_USING_I2C1
+        select BSP_USING_SPI
+        select BSP_USING_SPI1
+        select BSP_SPI1_TX_USING_DMA
+        select BSP_SPI1_RX_USING_DMA
+        select RTDUINO_USING_WIRE
+        select RTDUINO_USING_SPI
         imply RTDUINO_USING_SERVO
-        imply RTDUINO_USING_WIRE
         default n
 
 endmenu
@@ -76,7 +76,12 @@ menu "On-chip Peripheral Drivers"
         bool "Enable timer"
         default n
         select RT_USING_HWTIMER
+
         if BSP_USING_TIM
+            config BSP_USING_TIM9
+                bool "Enable TIM9"
+                default n
+
             config BSP_USING_TIM11
                 bool "Enable TIM11"
                 default n
@@ -155,6 +160,21 @@ menu "On-chip Peripheral Drivers"
                 depends on BSP_USING_SPI1
                 select BSP_SPI1_TX_USING_DMA
                 default n
+
+            config BSP_USING_SPI3
+                bool "Enable SPI3 BUS"
+                default n
+
+            config BSP_SPI3_TX_USING_DMA
+                bool "Enable SPI3 TX DMA"
+                depends on BSP_USING_SPI3
+                default n
+
+            config BSP_SPI3_RX_USING_DMA
+                bool "Enable SPI3 RX DMA"
+                depends on BSP_USING_SPI3
+                select BSP_SPI3_TX_USING_DMA
+                default n
         endif
 
     menuconfig BSP_USING_I2C
@@ -181,7 +201,7 @@ menu "On-chip Peripheral Drivers"
                 endif
         endif
 
-    source "../libraries/HAL_Drivers/Kconfig"
+    source "$BSP_DIR/../libraries/HAL_Drivers/drivers/Kconfig"
 
 endmenu
 

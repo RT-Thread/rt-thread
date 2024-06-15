@@ -7,9 +7,10 @@
    Change Logs:
    Date             Author          Notes
    2022-03-31       CDT             First version
+   2022-10-31       CDT             Rename I2Cx_Error_IrqHandler as I2Cx_EE_IrqHandler
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -294,15 +295,15 @@ void I2S4_Error_IrqHandler(void);
 void I2C1_RxFull_IrqHandler(void);
 void I2C1_TxComplete_IrqHandler(void);
 void I2C1_TxEmpty_IrqHandler(void);
-void I2C1_Error_IrqHandler(void);
+void I2C1_EE_IrqHandler(void);
 void I2C2_RxFull_IrqHandler(void);
 void I2C2_TxComplete_IrqHandler(void);
 void I2C2_TxEmpty_IrqHandler(void);
-void I2C2_Error_IrqHandler(void);
+void I2C2_EE_IrqHandler(void);
 void I2C3_RxFull_IrqHandler(void);
 void I2C3_TxComplete_IrqHandler(void);
 void I2C3_TxEmpty_IrqHandler(void);
-void I2C3_Error_IrqHandler(void);
+void I2C3_EE_IrqHandler(void);
 
 void PWC_LVD1_IrqHandler(void);
 void PWC_LVD2_IrqHandler(void);

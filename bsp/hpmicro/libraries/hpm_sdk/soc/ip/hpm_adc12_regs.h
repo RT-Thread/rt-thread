@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 hpmicro
+ * Copyright (c) 2021-2023 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -12,7 +12,8 @@
 typedef struct {
     __RW uint32_t CONFIG[12];                  /* 0x0 - 0x2C:  */
     __RW uint32_t TRG_DMA_ADDR;                /* 0x30:  */
-    __R  uint8_t  RESERVED0[972];              /* 0x34 - 0x3FF: Reserved */
+    __RW uint32_t TRG_SW_STA;                  /* 0x34:  */
+    __R  uint8_t  RESERVED0[968];              /* 0x38 - 0x3FF: Reserved */
     __R  uint32_t BUS_RESULT[19];              /* 0x400 - 0x448:  */
     __R  uint8_t  RESERVED1[180];              /* 0x44C - 0x4FF: Reserved */
     __RW uint32_t BUF_CFG0;                    /* 0x500:  */
@@ -147,6 +148,29 @@ typedef struct {
 #define ADC12_TRG_DMA_ADDR_TRG_DMA_ADDR_SET(x) (((uint32_t)(x) << ADC12_TRG_DMA_ADDR_TRG_DMA_ADDR_SHIFT) & ADC12_TRG_DMA_ADDR_TRG_DMA_ADDR_MASK)
 #define ADC12_TRG_DMA_ADDR_TRG_DMA_ADDR_GET(x) (((uint32_t)(x) & ADC12_TRG_DMA_ADDR_TRG_DMA_ADDR_MASK) >> ADC12_TRG_DMA_ADDR_TRG_DMA_ADDR_SHIFT)
 
+/* Bitfield definition for register: TRG_SW_STA */
+/*
+ * TRG_SW_STA (RW)
+ *
+ * SW trigger start bit, HW will clear it after all conversions(up to 4) finished. SW should make sure it's 0 before set it.
+ */
+#define ADC12_TRG_SW_STA_TRG_SW_STA_MASK (0x10U)
+#define ADC12_TRG_SW_STA_TRG_SW_STA_SHIFT (4U)
+#define ADC12_TRG_SW_STA_TRG_SW_STA_SET(x) (((uint32_t)(x) << ADC12_TRG_SW_STA_TRG_SW_STA_SHIFT) & ADC12_TRG_SW_STA_TRG_SW_STA_MASK)
+#define ADC12_TRG_SW_STA_TRG_SW_STA_GET(x) (((uint32_t)(x) & ADC12_TRG_SW_STA_TRG_SW_STA_MASK) >> ADC12_TRG_SW_STA_TRG_SW_STA_SHIFT)
+
+/*
+ * TRIG_SW_INDEX (RW)
+ *
+ * which trigger for the SW trigger
+ * 0 for trig0a, 1 for trig0b…
+ * 3 for trig1a, …11 for trig3c
+ */
+#define ADC12_TRG_SW_STA_TRIG_SW_INDEX_MASK (0xFU)
+#define ADC12_TRG_SW_STA_TRIG_SW_INDEX_SHIFT (0U)
+#define ADC12_TRG_SW_STA_TRIG_SW_INDEX_SET(x) (((uint32_t)(x) << ADC12_TRG_SW_STA_TRIG_SW_INDEX_SHIFT) & ADC12_TRG_SW_STA_TRIG_SW_INDEX_MASK)
+#define ADC12_TRG_SW_STA_TRIG_SW_INDEX_GET(x) (((uint32_t)(x) & ADC12_TRG_SW_STA_TRIG_SW_INDEX_MASK) >> ADC12_TRG_SW_STA_TRIG_SW_INDEX_SHIFT)
+
 /* Bitfield definition for register array: BUS_RESULT */
 /*
  * VALID (RO)
@@ -167,8 +191,8 @@ typedef struct {
  * If wait_dis bit is set, SW will get the latest conversion result(not current one) with valid bit is 0, SW need polling valid bit till it's set to get current result
  * If wait_dis bit is 0, SW can get the current conversion result with holding the bus, valid bit is always set at this mode. this is not recommended if channel sample time is too long
  */
-#define ADC12_BUS_RESULT_CHAN_RESULT_MASK (0xFFFFU)
-#define ADC12_BUS_RESULT_CHAN_RESULT_SHIFT (0U)
+#define ADC12_BUS_RESULT_CHAN_RESULT_MASK (0xFFF0U)
+#define ADC12_BUS_RESULT_CHAN_RESULT_SHIFT (4U)
 #define ADC12_BUS_RESULT_CHAN_RESULT_GET(x) (((uint32_t)(x) & ADC12_BUS_RESULT_CHAN_RESULT_MASK) >> ADC12_BUS_RESULT_CHAN_RESULT_SHIFT)
 
 /* Bitfield definition for register: BUF_CFG0 */
@@ -368,8 +392,8 @@ typedef struct {
  *
  * threshold high, assert interrupt(if enabled) if result exceed high or low.
  */
-#define ADC12_PRD_CFG_PRD_THSHD_CFG_THSHDH_MASK (0xFFFF0000UL)
-#define ADC12_PRD_CFG_PRD_THSHD_CFG_THSHDH_SHIFT (16U)
+#define ADC12_PRD_CFG_PRD_THSHD_CFG_THSHDH_MASK (0xFFF00000UL)
+#define ADC12_PRD_CFG_PRD_THSHD_CFG_THSHDH_SHIFT (20U)
 #define ADC12_PRD_CFG_PRD_THSHD_CFG_THSHDH_SET(x) (((uint32_t)(x) << ADC12_PRD_CFG_PRD_THSHD_CFG_THSHDH_SHIFT) & ADC12_PRD_CFG_PRD_THSHD_CFG_THSHDH_MASK)
 #define ADC12_PRD_CFG_PRD_THSHD_CFG_THSHDH_GET(x) (((uint32_t)(x) & ADC12_PRD_CFG_PRD_THSHD_CFG_THSHDH_MASK) >> ADC12_PRD_CFG_PRD_THSHD_CFG_THSHDH_SHIFT)
 
@@ -378,8 +402,8 @@ typedef struct {
  *
  * threshold low
  */
-#define ADC12_PRD_CFG_PRD_THSHD_CFG_THSHDL_MASK (0xFFFFU)
-#define ADC12_PRD_CFG_PRD_THSHD_CFG_THSHDL_SHIFT (0U)
+#define ADC12_PRD_CFG_PRD_THSHD_CFG_THSHDL_MASK (0xFFF0U)
+#define ADC12_PRD_CFG_PRD_THSHD_CFG_THSHDL_SHIFT (4U)
 #define ADC12_PRD_CFG_PRD_THSHD_CFG_THSHDL_SET(x) (((uint32_t)(x) << ADC12_PRD_CFG_PRD_THSHD_CFG_THSHDL_SHIFT) & ADC12_PRD_CFG_PRD_THSHD_CFG_THSHDL_MASK)
 #define ADC12_PRD_CFG_PRD_THSHD_CFG_THSHDL_GET(x) (((uint32_t)(x) & ADC12_PRD_CFG_PRD_THSHD_CFG_THSHDL_MASK) >> ADC12_PRD_CFG_PRD_THSHD_CFG_THSHDL_SHIFT)
 
@@ -390,8 +414,8 @@ typedef struct {
  * adc convert result, update after each valid conversion.
  * it may be updated period according to config, also may be updated due to other queue convert the same channel
  */
-#define ADC12_PRD_CFG_PRD_RESULT_CHAN_RESULT_MASK (0xFFFFU)
-#define ADC12_PRD_CFG_PRD_RESULT_CHAN_RESULT_SHIFT (0U)
+#define ADC12_PRD_CFG_PRD_RESULT_CHAN_RESULT_MASK (0xFFF0U)
+#define ADC12_PRD_CFG_PRD_RESULT_CHAN_RESULT_SHIFT (4U)
 #define ADC12_PRD_CFG_PRD_RESULT_CHAN_RESULT_GET(x) (((uint32_t)(x) & ADC12_PRD_CFG_PRD_RESULT_CHAN_RESULT_MASK) >> ADC12_PRD_CFG_PRD_RESULT_CHAN_RESULT_SHIFT)
 
 /* Bitfield definition for register array: SAMPLE_CFG */
@@ -442,8 +466,12 @@ typedef struct {
  * CLOCK_DIVIDER (RW)
  *
  * clock_period, N half clock cycle per half adc cycle
- * 0 for same adc_clk and bus_clk, 1 for 1:2, 2 for 1:3.
- * set to 2 can genenerate 66.7MHz adc_clk at 200MHz bus_clk
+ * 0 for same adc_clk and bus_clk,
+ * 1 for 1:2,
+ * 2 for 1:3,
+ * ...
+ * 15 for 1:16
+ * Note: set to 2 can genenerate 66.7MHz adc_clk at 200MHz bus_clk
  */
 #define ADC12_CONV_CFG1_CLOCK_DIVIDER_MASK (0xFU)
 #define ADC12_CONV_CFG1_CLOCK_DIVIDER_SHIFT (0U)
@@ -474,7 +502,7 @@ typedef struct {
 
 /* Bitfield definition for register: INT_STS */
 /*
- * TRIG_CMPT (W1C)
+ * TRIG_CMPT (RW1C)
  *
  * interrupt for one trigger conversion complete if enabled
  */
@@ -484,7 +512,7 @@ typedef struct {
 #define ADC12_INT_STS_TRIG_CMPT_GET(x) (((uint32_t)(x) & ADC12_INT_STS_TRIG_CMPT_MASK) >> ADC12_INT_STS_TRIG_CMPT_SHIFT)
 
 /*
- * TRIG_SW_CFLCT (W1C)
+ * TRIG_SW_CFLCT (RW1C)
  *
  */
 #define ADC12_INT_STS_TRIG_SW_CFLCT_MASK (0x40000000UL)
@@ -493,7 +521,7 @@ typedef struct {
 #define ADC12_INT_STS_TRIG_SW_CFLCT_GET(x) (((uint32_t)(x) & ADC12_INT_STS_TRIG_SW_CFLCT_MASK) >> ADC12_INT_STS_TRIG_SW_CFLCT_SHIFT)
 
 /*
- * TRIG_HW_CFLCT (RW)
+ * TRIG_HW_CFLCT (RW1C)
  *
  */
 #define ADC12_INT_STS_TRIG_HW_CFLCT_MASK (0x20000000UL)
@@ -502,7 +530,7 @@ typedef struct {
 #define ADC12_INT_STS_TRIG_HW_CFLCT_GET(x) (((uint32_t)(x) & ADC12_INT_STS_TRIG_HW_CFLCT_MASK) >> ADC12_INT_STS_TRIG_HW_CFLCT_SHIFT)
 
 /*
- * READ_CFLCT (W1C)
+ * READ_CFLCT (RW1C)
  *
  * read conflict interrup, set if wait_dis is set, one conversion is in progress, SW read another channel
  */
@@ -512,7 +540,7 @@ typedef struct {
 #define ADC12_INT_STS_READ_CFLCT_GET(x) (((uint32_t)(x) & ADC12_INT_STS_READ_CFLCT_MASK) >> ADC12_INT_STS_READ_CFLCT_SHIFT)
 
 /*
- * SEQ_SW_CFLCT (W1C)
+ * SEQ_SW_CFLCT (RW1C)
  *
  * sequence queue conflict interrup, set if HW or SW trigger received during conversion
  */
@@ -522,7 +550,7 @@ typedef struct {
 #define ADC12_INT_STS_SEQ_SW_CFLCT_GET(x) (((uint32_t)(x) & ADC12_INT_STS_SEQ_SW_CFLCT_MASK) >> ADC12_INT_STS_SEQ_SW_CFLCT_SHIFT)
 
 /*
- * SEQ_HW_CFLCT (RW)
+ * SEQ_HW_CFLCT (RW1C)
  *
  */
 #define ADC12_INT_STS_SEQ_HW_CFLCT_MASK (0x4000000UL)
@@ -531,7 +559,7 @@ typedef struct {
 #define ADC12_INT_STS_SEQ_HW_CFLCT_GET(x) (((uint32_t)(x) & ADC12_INT_STS_SEQ_HW_CFLCT_MASK) >> ADC12_INT_STS_SEQ_HW_CFLCT_SHIFT)
 
 /*
- * SEQ_DMAABT (W1C)
+ * SEQ_DMAABT (RW1C)
  *
  * dma abort interrupt, set if seqence dma write pointer reachs sw read pointer if stop_en is set
  */
@@ -541,7 +569,7 @@ typedef struct {
 #define ADC12_INT_STS_SEQ_DMAABT_GET(x) (((uint32_t)(x) & ADC12_INT_STS_SEQ_DMAABT_MASK) >> ADC12_INT_STS_SEQ_DMAABT_SHIFT)
 
 /*
- * SEQ_CMPT (W1C)
+ * SEQ_CMPT (RW1C)
  *
  * the whole sequence complete interrupt
  */
@@ -551,7 +579,7 @@ typedef struct {
 #define ADC12_INT_STS_SEQ_CMPT_GET(x) (((uint32_t)(x) & ADC12_INT_STS_SEQ_CMPT_MASK) >> ADC12_INT_STS_SEQ_CMPT_SHIFT)
 
 /*
- * SEQ_CVC (W1C)
+ * SEQ_CVC (RW1C)
  *
  * one conversion complete in seq_queue if related seq_int_en is set
  */
@@ -561,7 +589,7 @@ typedef struct {
 #define ADC12_INT_STS_SEQ_CVC_GET(x) (((uint32_t)(x) & ADC12_INT_STS_SEQ_CVC_MASK) >> ADC12_INT_STS_SEQ_CVC_SHIFT)
 
 /*
- * DMA_FIFO_FULL (RW)
+ * DMA_FIFO_FULL (RW1C)
  *
  */
 #define ADC12_INT_STS_DMA_FIFO_FULL_MASK (0x400000UL)
@@ -570,7 +598,7 @@ typedef struct {
 #define ADC12_INT_STS_DMA_FIFO_FULL_GET(x) (((uint32_t)(x) & ADC12_INT_STS_DMA_FIFO_FULL_MASK) >> ADC12_INT_STS_DMA_FIFO_FULL_SHIFT)
 
 /*
- * AHB_ERR (RW)
+ * AHB_ERR (RW1C)
  *
  * set if got hresp=1
  */
@@ -580,7 +608,7 @@ typedef struct {
 #define ADC12_INT_STS_AHB_ERR_GET(x) (((uint32_t)(x) & ADC12_INT_STS_AHB_ERR_MASK) >> ADC12_INT_STS_AHB_ERR_SHIFT)
 
 /*
- * WDOG (W1C)
+ * WDOG (RW1C)
  *
  * set if one chanel watch dog event triggered
  */
@@ -591,7 +619,7 @@ typedef struct {
 
 /* Bitfield definition for register: INT_EN */
 /*
- * TRIG_CMPT (W1C)
+ * TRIG_CMPT (RW)
  *
  * interrupt for one trigger conversion complete if enabled
  */
@@ -601,7 +629,7 @@ typedef struct {
 #define ADC12_INT_EN_TRIG_CMPT_GET(x) (((uint32_t)(x) & ADC12_INT_EN_TRIG_CMPT_MASK) >> ADC12_INT_EN_TRIG_CMPT_SHIFT)
 
 /*
- * TRIG_SW_CFLCT (W1C)
+ * TRIG_SW_CFLCT (RW)
  *
  */
 #define ADC12_INT_EN_TRIG_SW_CFLCT_MASK (0x40000000UL)
@@ -619,7 +647,7 @@ typedef struct {
 #define ADC12_INT_EN_TRIG_HW_CFLCT_GET(x) (((uint32_t)(x) & ADC12_INT_EN_TRIG_HW_CFLCT_MASK) >> ADC12_INT_EN_TRIG_HW_CFLCT_SHIFT)
 
 /*
- * READ_CFLCT (W1C)
+ * READ_CFLCT (RW)
  *
  * read conflict interrup, set if wait_dis is set, one conversion is in progress, SW read another channel
  */
@@ -629,7 +657,7 @@ typedef struct {
 #define ADC12_INT_EN_READ_CFLCT_GET(x) (((uint32_t)(x) & ADC12_INT_EN_READ_CFLCT_MASK) >> ADC12_INT_EN_READ_CFLCT_SHIFT)
 
 /*
- * SEQ_SW_CFLCT (W1C)
+ * SEQ_SW_CFLCT (RW)
  *
  * sequence queue conflict interrup, set if HW or SW trigger received during conversion
  */
@@ -648,7 +676,7 @@ typedef struct {
 #define ADC12_INT_EN_SEQ_HW_CFLCT_GET(x) (((uint32_t)(x) & ADC12_INT_EN_SEQ_HW_CFLCT_MASK) >> ADC12_INT_EN_SEQ_HW_CFLCT_SHIFT)
 
 /*
- * SEQ_DMAABT (W1C)
+ * SEQ_DMAABT (RW)
  *
  * dma abort interrupt, set if seqence dma write pointer reachs sw read pointer if stop_en is set
  */
@@ -658,7 +686,7 @@ typedef struct {
 #define ADC12_INT_EN_SEQ_DMAABT_GET(x) (((uint32_t)(x) & ADC12_INT_EN_SEQ_DMAABT_MASK) >> ADC12_INT_EN_SEQ_DMAABT_SHIFT)
 
 /*
- * SEQ_CMPT (W1C)
+ * SEQ_CMPT (RW)
  *
  * the whole sequence complete interrupt
  */
@@ -668,7 +696,7 @@ typedef struct {
 #define ADC12_INT_EN_SEQ_CMPT_GET(x) (((uint32_t)(x) & ADC12_INT_EN_SEQ_CMPT_MASK) >> ADC12_INT_EN_SEQ_CMPT_SHIFT)
 
 /*
- * SEQ_CVC (W1C)
+ * SEQ_CVC (RW)
  *
  * one conversion complete in seq_queue if related seq_int_en is set
  */
@@ -678,7 +706,7 @@ typedef struct {
 #define ADC12_INT_EN_SEQ_CVC_GET(x) (((uint32_t)(x) & ADC12_INT_EN_SEQ_CVC_MASK) >> ADC12_INT_EN_SEQ_CVC_SHIFT)
 
 /*
- * DMA_FIFO_FULL (W1C)
+ * DMA_FIFO_FULL (RW)
  *
  * DMA fifo full interrupt, user need to check clock frequency if it's set.
  */
@@ -688,7 +716,7 @@ typedef struct {
 #define ADC12_INT_EN_DMA_FIFO_FULL_GET(x) (((uint32_t)(x) & ADC12_INT_EN_DMA_FIFO_FULL_MASK) >> ADC12_INT_EN_DMA_FIFO_FULL_SHIFT)
 
 /*
- * AHB_ERR (W1C)
+ * AHB_ERR (RW)
  *
  * set if got hresp=1, generally caused by wrong trg_dma_addr or seq_dma_addr
  */
@@ -698,7 +726,7 @@ typedef struct {
 #define ADC12_INT_EN_AHB_ERR_GET(x) (((uint32_t)(x) & ADC12_INT_EN_AHB_ERR_MASK) >> ADC12_INT_EN_AHB_ERR_SHIFT)
 
 /*
- * WDOG (W1C)
+ * WDOG (RW)
  *
  * set if one chanel watch dog event triggered
  */

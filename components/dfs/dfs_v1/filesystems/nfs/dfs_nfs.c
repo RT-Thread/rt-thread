@@ -1144,7 +1144,7 @@ int nfs_getdents(struct dfs_file *file, struct dirent *dirp, uint32_t count)
 
         d->d_namlen = rt_strlen(name);
         d->d_reclen = (rt_uint16_t)sizeof(struct dirent);
-        rt_strncpy(d->d_name, name, DFS_PATH_MAX);
+        rt_strncpy(d->d_name, name, DIRENT_NAME_MAX);
 
         index ++;
         if (index * sizeof(struct dirent) >= count)

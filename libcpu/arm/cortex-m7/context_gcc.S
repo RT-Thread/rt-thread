@@ -17,6 +17,8 @@
  */
 /*@{*/
 
+#include <rtconfig.h>
+
 .cpu cortex-m4
 .syntax unified
 .thumb
@@ -150,6 +152,13 @@ switch_to_thread:
     CMP     r3,  #0             /* if(flag_r3 != 0) */
     IT      NE
     BICNE   lr, lr, #0x10       /* lr &= ~(1 << 4), set FPCA. */
+#endif
+
+#if defined (RT_USING_MEM_PROTECTION)
+    PUSH    {r0-r3, r12, lr}
+    BL      rt_thread_self
+    BL      rt_hw_mpu_table_switch
+    POP     {r0-r3, r12, lr}
 #endif
 
 pendsv_exit:

@@ -12,11 +12,12 @@
 #include "drv_gpio.h"
 #include <stdbool.h>
 
+#ifdef BSP_USING_GPIO
+
 #define DBG_TAG              "drv.gpio"
 #define DBG_LVL               DBG_INFO
 #include <rtdbg.h>
 
-#ifdef RT_USING_PIN
 static struct bflb_device_s *gpio;
 
 static struct rt_pin_irq_hdr pin_irq_hdr_tab[GPIO_MAX];
@@ -39,7 +40,7 @@ static void gpio_isr(int irq, void *arg)
 
 }
 
-static void _pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
+static void _pin_write(rt_device_t dev, rt_base_t pin, rt_uint8_t value)
 {
     if(value)
         bflb_gpio_set(gpio, pin);
@@ -47,12 +48,12 @@ static void _pin_write(rt_device_t dev, rt_base_t pin, rt_base_t value)
         bflb_gpio_reset(gpio, pin);
 }
 
-static int _pin_read(rt_device_t dev, rt_base_t pin)
+static rt_ssize_t _pin_read(rt_device_t dev, rt_base_t pin)
 {
     return bflb_gpio_read(gpio, pin);
 }
 
-static void _pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
+static void _pin_mode(rt_device_t dev, rt_base_t pin, rt_uint8_t mode)
 {
     rt_uint32_t cfgset = 0;
 
@@ -87,8 +88,8 @@ static void _pin_mode(rt_device_t dev, rt_base_t pin, rt_base_t mode)
     bflb_gpio_init(gpio, pin, cfgset);
 }
 
-static rt_err_t _pin_attach_irq(struct rt_device *device, rt_int32_t pin,
-                                rt_uint32_t irq_mode, void (*hdr)(void *args), void *args)
+static rt_err_t _pin_attach_irq(struct rt_device *device, rt_base_t pin,
+                                rt_uint8_t irq_mode, void (*hdr)(void *args), void *args)
 {
     rt_base_t level;
 
@@ -118,7 +119,7 @@ static rt_err_t _pin_attach_irq(struct rt_device *device, rt_int32_t pin,
     return RT_EOK;
 }
 
-static rt_err_t _pin_detach_irq(struct rt_device *device, rt_int32_t pin)
+static rt_err_t _pin_detach_irq(struct rt_device *device, rt_base_t pin)
 {
     rt_base_t level;
 
@@ -142,7 +143,7 @@ static rt_err_t _pin_detach_irq(struct rt_device *device, rt_int32_t pin)
 }
 
 static rt_err_t _pin_irq_enable(struct rt_device *device, rt_base_t pin,
-                                rt_uint32_t enabled)
+                                rt_uint8_t enabled)
 {
     rt_base_t level;
     rt_uint8_t trig_mode = 0;
@@ -226,4 +227,4 @@ int rt_hw_pin_init(void)
 }
 INIT_BOARD_EXPORT(rt_hw_pin_init);
 
-#endif /*RT_USING_PIN */
+#endif /*BSP_USING_GPIO */

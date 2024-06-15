@@ -34,13 +34,6 @@
 /* SECTION: RT_DEBUG */
 #define RT_DEBUG
 #define RT_DEBUG_COLOR
-//#define RT_DEBUG_MEM              (1)
-//#define RT_DEBUG_SCHEDULER            (1)
-//#define RT_DEBUG_IPC              (1)
-//#define THREAD_DEBUG
-//#define IRQ_DEBUG
-#define RT_USING_OVERFLOW_CHECK
-//#define DFS_DEBUG
 #define RT_LWIP_DEBUG
 
 //#define RT_IRQHDL_DEBUG

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 hpmicro
+ * Copyright (c) 2021-2022 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -8,6 +8,7 @@
 #define HPM_PMP_DRV_H
 
 #include "hpm_common.h"
+#include "hpm_soc_feature.h"
 
 /**
  * @brief PMP Entry structure
@@ -26,6 +27,7 @@ typedef struct pmp_entry_struct {
     } pmp_cfg;
     uint8_t reserved0[3];
     uint32_t pmp_addr;
+#if (!defined(PMP_SUPPORT_PMA)) || (defined(PMP_SUPPORT_PMA) && (PMP_SUPPORT_PMA == 1))
     union {
         struct {
             uint8_t entry_addr_matching_mode: 2;
@@ -37,6 +39,7 @@ typedef struct pmp_entry_struct {
     } pma_cfg;
     uint8_t reserved1[3];
     uint32_t pma_addr;
+#endif
 } pmp_entry_t;
 
 /**
@@ -135,25 +138,12 @@ extern "C" {
 void write_pmp_cfg(uint32_t value, uint32_t idx);
 
 /**
- * @brief Write PMA Configuration to corresponding PMA_CFG register
- * @param value PMA configuration
- * @param idx PMA entry index, valid value is 0-15
- */
-void write_pma_cfg(uint32_t value, uint32_t idx);
-
-/**
  * @brief Read PMP configuration
  * @param idx PMP entry index
  * @return PMP configuration
  */
 uint32_t read_pmp_cfg(uint32_t idx);
 
-/**
- * @brief Read PMA configuration
- * @param idx PMA entry index
- * @return PMA configuration
- */
-uint32_t read_pma_cfg(uint32_t idx);
 
 /**
  * @brief Write PMP address to corresponding PMP_ADDR register
@@ -163,6 +153,28 @@ uint32_t read_pma_cfg(uint32_t idx);
 void write_pmp_addr(uint32_t value, uint32_t idx);
 
 /**
+ * @brief Read PMP address entry
+ * @param idx PMP address entry index
+ * @return PMP address
+ */
+uint32_t read_pmp_addr(uint32_t idx);
+
+#if (!defined(PMP_SUPPORT_PMA)) || (defined(PMP_SUPPORT_PMA) && (PMP_SUPPORT_PMA == 1))
+/**
+ * @brief Read PMA configuration
+ * @param idx PMA entry index
+ * @return PMA configuration
+ */
+uint32_t read_pma_cfg(uint32_t idx);
+
+/**
+ * @brief Write PMA Configuration to corresponding PMA_CFG register
+ * @param value PMA configuration
+ * @param idx PMA entry index, valid value is 0-15
+ */
+void write_pma_cfg(uint32_t value, uint32_t idx);
+
+/**
  * @brief Write PMA address to corresponding PMA_ADDR register
  * @param value PMA address
  * @param idx PMA address entry index, valid value is 0-15
@@ -170,25 +182,29 @@ void write_pmp_addr(uint32_t value, uint32_t idx);
 void write_pma_addr(uint32_t value, uint32_t idx);
 
 /**
- * @brief Read PMP address entry
- * @param idx PMP address entry index
- * @return PMP address
- */
-uint32_t read_pmp_addr(uint32_t idx);
-
-/**
  * @brief Read PMA address entry
  * @param idx PMA address entry index, valid value is 0-15
  * @return PMA address
  */
 uint32_t read_pma_addr(uint32_t idx);
+#endif /* #if (!defined(PMP_SUPPORT_PMA)) || (defined(PMP_SUPPORT_PMA) && (PMP_SUPPORT_PMA == 1)) */
+
+/**
+ * @brief Configure PMP and PMA for specified PMP/PMA entry
+ *
+ * @param[in] entry PMP entry
+ * @param entry_index PMP/PMA entry index
+ * @retval status_invalid_argument  Invalid Arguments were detected
+ * @retval status_success           Configuration completed without errors
+ */
+hpm_stat_t pmp_config_entry(const pmp_entry_t *entry, uint32_t entry_index);
 
 /**
  * @brief Configure PMP and PMA based on the PMP entry list
  * @param entry start of the PMP entry list
  * @param num_of_entries Number of entries in the PMP entry list
- * @return #status_invalid_argument - Invalid Arguments were detected
- *         #status_success - Configuration completed without errors
+ * @retval status_invalid_argument  Invalid Arguments were detected
+ * @retval status_success           Configuration completed without errors
  */
 hpm_stat_t pmp_config(const pmp_entry_t *entry, uint32_t num_of_entries);
 

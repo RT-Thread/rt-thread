@@ -73,6 +73,16 @@ if (!(EXPR))                                                                   \
 #define FAL_DEV_NAME_MAX 24
 #endif
 
+#ifndef FAL_DEV_BLK_MAX
+#define FAL_DEV_BLK_MAX 6
+#endif
+
+struct flash_blk
+{
+    size_t size;
+    size_t count;
+};
+
 struct fal_flash_dev
 {
     char name[FAL_DEV_NAME_MAX];
@@ -95,6 +105,7 @@ struct fal_flash_dev
        1(nor flash)/ 8(stm32f2/f4)/ 32(stm32f1)/ 64(stm32l4)
        0 will not take effect. */
     size_t write_gran;
+    struct flash_blk blocks[FAL_DEV_BLK_MAX];
 };
 typedef struct fal_flash_dev *fal_flash_dev_t;
 

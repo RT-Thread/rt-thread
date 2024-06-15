@@ -1,0 +1,3 @@
+menuconfig RT_USING_PIN
+    bool "Using Generic GPIO device drivers"
+    default y

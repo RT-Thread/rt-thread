@@ -9,7 +9,8 @@
  * 2019-10-03     xuzhuoyi     add stm32g431-st-nucleo bsp
  */
 
-#include "board.h"
+#include <board.h>
+#include <drv_common.h>
 
 void SystemClock_Config(void)
 {

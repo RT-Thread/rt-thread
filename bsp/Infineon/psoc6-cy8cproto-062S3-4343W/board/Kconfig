@@ -265,12 +265,17 @@ endmenu
 menu "Board extended module Drivers"
 
     config BSP_USING_SLIDER
-        bool "Enable Slider Demo"
-        select BSP_USING_PWM
-        select BSP_USING_PWM0
-        select BSP_USING_PWM0_CH3
-        select BSP_USING_PWM0_PORT13
+        bool "Enable Slider"
         default n
+    if BSP_USING_SLIDER
+        config BSP_USING_SLIDER_SAMPLE
+            bool "Enable Slider Demo"
+            select BSP_USING_PWM
+            select BSP_USING_PWM0
+            select BSP_USING_PWM0_CH3
+            select BSP_USING_PWM0_PORT13
+            default n
+    endif
 
         menuconfig BSP_USING_RW007
             bool "Enable RW007"

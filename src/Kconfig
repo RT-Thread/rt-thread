@@ -23,22 +23,51 @@ config RT_USING_SMART
     default n
     select RT_USING_LWP
     select RT_USING_DFS
-    select RT_USING_LIBC
     select RT_USING_POSIX_CLOCKTIME
-    select RT_USING_TTY
+    select RT_USING_DEVICE
     select RT_USING_NULL
     select RT_USING_ZERO
     select RT_USING_RANDOM
     select RT_USING_RTC
     select RT_USING_POSIX_TIMER
     select RT_USING_POSIX_CLOCK
+    select RT_USING_POSIX_FS
+    select RT_USING_POSIX_TERMIOS
+    select RT_USING_KTIME
+    select RT_USING_STDC_ATOMIC
+    select RT_USING_SYSTEM_WORKQUEUE
     depends on ARCH_ARM_CORTEX_M || ARCH_ARM_ARM9 || ARCH_ARM_CORTEX_A || ARCH_ARMV8 || ARCH_RISCV64
+    depends on !RT_USING_NANO
     help
         RT-Thread Smart is a microkernel based operating system on RT-Thread.
 
-config RT_USING_SMP
-    bool "Enable SMP(Symmetric multiprocessing)"
+config RT_USING_NANO
+    bool "Enable RT-Thread Nano"
     default n
+    help
+        RT-Thread Nano with a very small size and refined hard real-time kernel,
+        which is very suited for the resource-constrained MCU system.
+
+config RT_USING_AMP
+    bool "Enable AMP (Asymmetric Multi-Processing)"
+    default n
+    if RT_USING_AMP
+        choice
+            prompt "Select the AMP role"
+            default RT_AMP_SLAVE
+
+            config RT_AMP_MASTER
+            bool "amp role MASTER"
+
+            config RT_AMP_SLAVE
+            bool "amp role SLAVE"
+        endchoice
+    endif
+
+config RT_USING_SMP
+    bool "Enable SMP (Symmetric multiprocessing)"
+    default n
+    select RT_USING_SCHED_THREAD_CTX
     help
         This option should be selected by machines which have an SMP-
         capable CPU.
@@ -47,8 +76,8 @@ config RT_USING_SMP
 
 config RT_CPUS_NR
     int "Number of CPUs"
-    default 2
-    depends on RT_USING_SMP
+    default 1
+    range 1 1 if !RT_USING_SMP && !RT_USING_AMP
     help
         Number of CPUs in the system
 
@@ -58,19 +87,19 @@ config RT_ALIGN_SIZE
     help
         Alignment size for CPU architecture data access
 
-    choice
-        prompt "The maximal level value of priority of thread"
-        default RT_THREAD_PRIORITY_32
+choice
+    prompt "The maximal level value of priority of thread"
+    default RT_THREAD_PRIORITY_32
 
-        config RT_THREAD_PRIORITY_8
-            bool "8"
+    config RT_THREAD_PRIORITY_8
+        bool "8"
 
-        config RT_THREAD_PRIORITY_32
-            bool "32"
+    config RT_THREAD_PRIORITY_32
+        bool "32"
 
-        config RT_THREAD_PRIORITY_256
-            bool "256"
-    endchoice
+    config RT_THREAD_PRIORITY_256
+        bool "256"
+endchoice
 
 config RT_THREAD_PRIORITY_MAX
     int
@@ -85,13 +114,6 @@ config RT_TICK_PER_SECOND
     help
         System's tick frequency, Hz.
 
-config RT_USING_OVERFLOW_CHECK
-    bool "Using stack overflow checking"
-    default y
-    help
-        Enable thread stack overflow checking. The stack overflow is checking when
-        each thread switch.
-
 config RT_USING_HOOK
     bool "Enable system hook"
     default y
@@ -105,6 +127,13 @@ config RT_USING_HOOK
             bool "Using function pointers as system hook"
             default y
     endif
+
+config RT_USING_HOOKLIST
+    bool "Enable hook list"
+    default n
+    help
+        Enable the hook list feature for rt-thread packages. With this, they can
+        plug in to the system on run-time.
 
 config RT_USING_IDLE_HOOK
     bool "Enable IDLE Task hook"
@@ -147,29 +176,39 @@ if RT_USING_TIMER_SOFT
         default 512
 endif
 
+config RT_USING_CPU_USAGE_TRACER
+    select RT_USING_HOOK
+    bool "Enable cpu usage tracing"
+    help
+        Enable cpu usage tracer for application like top.
+    default y if RT_USING_SMART
+    default n
+
 menu "kservice optimization"
+    config RT_USING_TINY_FFS
+        bool "Enable kservice to use tiny finding first bit set method"
+        default n
+endmenu
 
-    config RT_KSERVICE_USING_STDLIB
-        bool "Enable kservice to use standard C library"
-        default y
+menu "klibc optimization"
 
-    if RT_KSERVICE_USING_STDLIB
-        config RT_KSERVICE_USING_STDLIB_MEMORY
+    config RT_KLIBC_USING_STDLIB
+        bool "Enable klibc to use standard C library"
+        default n
+
+    if RT_KLIBC_USING_STDLIB
+        config RT_KLIBC_USING_STDLIB_MEMORY
             bool "Use stdlib memory functions to replace (faster, but not safe)"
             default n
             help
                 e.g. use memcpy to replace rt_memcpy
     endif
 
-    config RT_KSERVICE_USING_TINY_SIZE
-        bool "Enable kservice to use tiny size"
+    config RT_KLIBC_USING_TINY_SIZE
+        bool "Enable tiny size of klibc"
         default n
 
-    config RT_USING_TINY_FFS
-        bool "Enable kservice to use tiny finding first bit set method"
-        default n
-
-    config RT_KPRINTF_USING_LONGLONG
+    config RT_KLIBC_USING_PRINTF_LONGLONG
         bool "Enable rt_printf-family functions to support long-long format"
         default y if ARCH_CPU_64BIT
         default n
@@ -179,97 +218,50 @@ menu "kservice optimization"
 
 endmenu
 
-menuconfig RT_DEBUG
+menuconfig RT_USING_DEBUG
     bool "Enable debugging features"
     default y
 
-if RT_DEBUG
+    if RT_USING_DEBUG
+        config RT_DEBUGING_ASSERT
+            bool "Enable assertion debugging"
+            default y
 
-    config RT_DEBUG_COLOR
-        bool "Enable color debugging log"
-        default n
+        config RT_DEBUGING_COLOR
+            bool "Enable color debugging log"
+            default y
 
-    config RT_DEBUG_INIT_CONFIG
-        bool "Enable debugging of components initialization"
-        default n
+        config RT_DEBUGING_CONTEXT
+            bool "Enable debugging of environment and context check"
+            default y
 
-    config RT_DEBUG_INIT
-        int
-        default 1 if RT_DEBUG_INIT_CONFIG
+        config RT_DEBUGING_AUTO_INIT
+            bool "Enable debugging of components automatic initialization"
+            default n
 
-    config RT_DEBUG_THREAD_CONFIG
-        bool "Enable debugging of Thread State Changes"
-        default n
+        config RT_DEBUGING_PAGE_LEAK
+            bool "Enable page leaking tracer"
+            depends on ARCH_MM_MMU
+            default n
 
-    config RT_DEBUG_THREAD
-        int
-        default 1 if RT_DEBUG_THREAD_CONFIG
+        config RT_DEBUGING_SPINLOCK
+            bool "Enable spinlock debugging"
+            depends on RT_USING_SMP
+            default n
 
-    config RT_DEBUG_SCHEDULER_CONFIG
-        bool "Enable debugging of Scheduler"
-        default n
+        config RT_DEBUGING_CRITICAL
+            bool "Enable critical level tracing"
+            depends on RT_USING_SMP
+            default y if RT_USING_SMART
+            default n
 
-    config RT_DEBUG_SCHEDULER
-        int
-        default 1 if RT_DEBUG_SCHEDULER_CONFIG
-
-    config RT_DEBUG_IPC_CONFIG
-        bool "Enable debugging of IPC"
-        default n
-
-    config RT_DEBUG_IPC
-        int
-        default 1 if RT_DEBUG_IPC_CONFIG
-
-    config RT_DEBUG_TIMER_CONFIG
-        bool "Enable debugging of Timer"
-        default n
-
-    config RT_DEBUG_TIMER
-        int
-        default 1 if RT_DEBUG_TIMER_CONFIG
-
-    config RT_DEBUG_IRQ_CONFIG
-        bool "Enable debugging of IRQ(Interrupt Request)"
-        default n
-
-    config RT_DEBUG_IRQ
-        int
-        default 1 if RT_DEBUG_IRQ_CONFIG
-
-    config RT_DEBUG_MEM_CONFIG
-        bool "Enable debugging of Small Memory Algorithm"
-        default n
-
-    config RT_DEBUG_MEM
-        int
-        default 1 if RT_DEBUG_MEM_CONFIG
-
-    config RT_DEBUG_SLAB_CONFIG
-        bool "Enable debugging of SLAB Memory Algorithm"
-        default n
-
-    config RT_DEBUG_SLAB
-        int
-        default 1 if RT_DEBUG_SLAB_CONFIG
-
-    config RT_DEBUG_MEMHEAP_CONFIG
-        bool "Enable debugging of Memory Heap Algorithm"
-        default n
-
-    config RT_DEBUG_MEMHEAP
-        int
-        default 1 if RT_DEBUG_MEMHEAP_CONFIG
-
-    config RT_DEBUG_MODULE_CONFIG
-        bool "Enable debugging of Application Module"
-        default n
-
-    config RT_DEBUG_MODULE
-        int
-        default 1 if RT_DEBUG_MODULE_CONFIG
-
-endif
+        config RT_USING_OVERFLOW_CHECK
+            bool "Using stack overflow checking"
+            default y
+            help
+                Enable thread stack overflow checking. The stack overflow is checking when
+                each thread switch.
+    endif
 
 menu "Inter-Thread communication"
 
@@ -293,6 +285,11 @@ menu "Inter-Thread communication"
         bool "Enable message queue"
         default y
 
+    config RT_USING_MESSAGEQUEUE_PRIORITY
+        bool "Enable message queue priority"
+        depends on RT_USING_MESSAGEQUEUE
+        default n
+
     config RT_USING_SIGNALS
         bool "Enable signals"
         select RT_USING_MEMPOOL
@@ -308,6 +305,7 @@ menu "Memory Management"
     config RT_PAGE_MAX_ORDER
         int "Max order of pages allocatable by page allocator"
         default 11
+        depends on ARCH_MM_MMU
         help
             For example, A value of 11 means the maximum chunk of contiguous memory
             allocatable by page system is 2^(11 + ARCH_PAGE_BITS - 1) Bytes.
@@ -426,61 +424,61 @@ menu "Memory Management"
         default y if RT_USING_USERHEAP
 endmenu
 
-menu "Kernel Device Object"
+config RT_USING_DEVICE
+    bool "Using device object"
+    depends on !RT_USING_NANO
+    default y
 
-    config RT_USING_DEVICE
-        bool "Using device object"
-        default y
+config RT_USING_DEVICE_OPS
+    bool "Using ops for each device object"
+    depends on RT_USING_DEVICE
+    default n
 
-    config RT_USING_DEVICE_OPS
-        bool "Using ops for each device object"
-        default n
+config RT_USING_INTERRUPT_INFO
+    bool "Enable additional interrupt trace information"
+    default n
+    help
+        Add name and counter information for interrupt trace.
 
-    config RT_USING_DM
-        bool "Enable device driver model with device tree"
-        default n
-        help
-            Enable device driver model with device tree (FDT). It will use more memory
-            to parse and support device tree feature.
+config RT_USING_THREADSAFE_PRINTF
+    bool "Enable thread safe kernel print service"
+    default y if RT_USING_SMP && RT_USING_SMART
 
-    config RT_USING_DM_FDT
-        bool "Enablie builtin libfdt"
-        depends on RT_USING_DM
-        default y
-        help
-            libfdt - Flat Device Tree manipulation. If your code already contains the
-            libfdt, you can cancel this built-in libfdt to avoid link issue.
+config RT_USING_SCHED_THREAD_CTX
+    bool "Using the scheduler thread context"
+    help
+        Using the scheduler thread context embedded in the thread object.
+        This options is only for backward compatible codes. Maybe use as a
+        mandatory option in the future.
+    default y if RT_USING_SMP
 
-    config RT_USING_INTERRUPT_INFO
-        bool "Enable additional interrupt trace information"
-        default n
-        help
-            Add name and counter information for interrupt trace.
+config RT_USING_CONSOLE
+    bool "Using console for rt_kprintf"
+    default y
 
-    config RT_USING_CONSOLE
-        bool "Using console for rt_kprintf"
-        default y
+if RT_USING_CONSOLE
+    config RT_CONSOLEBUF_SIZE
+        int "the buffer size for console log printf"
+        default 128
 
-    if RT_USING_CONSOLE
-        config RT_CONSOLEBUF_SIZE
-            int "the buffer size for console log printf"
-            default 128
+    config RT_CONSOLE_DEVICE_NAME
+        string "the device name for console"
+        default "uart1"
 
-        config RT_CONSOLE_DEVICE_NAME
-            string "the device name for console"
-            default "uart"
-    endif
-
-endmenu
+endif
 
 config RT_VER_NUM
     hex
-    default 0x50001
+    default 0x50200
     help
         RT-Thread version number
 
 config RT_USING_STDC_ATOMIC
     bool "Use atomic implemented in stdatomic.h"
     default n
+
+config RT_BACKTRACE_LEVEL_MAX_NR
+    int "Max number of backtrace level"
+    default 32
 
 endmenu

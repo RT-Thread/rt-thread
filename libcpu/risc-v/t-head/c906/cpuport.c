@@ -106,7 +106,7 @@ void rt_hw_context_switch_interrupt(rt_ubase_t from, rt_ubase_t to, rt_thread_t 
 #endif /* end of RT_USING_SMP */
 
 /** shutdown CPU */
-void rt_hw_cpu_shutdown()
+void rt_hw_cpu_shutdown(void)
 {
     rt_uint32_t level;
     rt_kprintf("shutdown...\n");

@@ -19,6 +19,13 @@ extern "C" {
 #endif
 
 /**
+ * @brief clear and disable rtc.
+ *
+ * @param [in] dev device handle
+ */
+void bflb_rtc_disable(struct bflb_device_s *dev);
+
+/**
  * @brief Set rtc alarming time.
  *
  * @param [in] dev device handle

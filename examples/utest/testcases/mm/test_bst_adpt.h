@@ -11,7 +11,6 @@
 #define __TEST_BST_ADPT_H__
 
 #include "common.h"
-#include "lwp_arch.h"
 
 #ifdef RT_USING_SMART
 #include "lwp_user_mm.h"
@@ -32,11 +31,11 @@ void test_bst_adpt(void)
     rt_mem_obj_t mem_obj;
 
     /* create aspace by lwp */
-    lwp = lwp_new();
+    lwp = lwp_create(LWP_CREATE_FLAG_NONE);
     uassert_true(!!lwp);
     uassert_true(!lwp_user_space_init(lwp, 0));
     aspace = lwp->aspace;
-    mem_obj = &lwp->lwp_obj->mem_obj;
+    mem_obj = &rt_mm_dummy_mapper;
     uassert_true(!!aspace);
     uassert_true(!!mem_obj);
 
@@ -47,9 +46,9 @@ void test_bst_adpt(void)
         !rt_aspace_map(aspace, &target_va, map_size, MMU_MAP_K_RWCB, flags, mem_obj, 0));
     /* 2 wrappers */
     uassert_true(
-        !rt_aspace_map(aspace, &prev_va, map_size - 1, MMU_MAP_K_RWCB, flags, mem_obj, 0));
+        !rt_aspace_map(aspace, &prev_va, map_size, MMU_MAP_K_RWCB, flags, mem_obj, 0));
     uassert_true(
-        !rt_aspace_map(aspace, &next_va, map_size - 1, MMU_MAP_K_RWCB, flags, mem_obj, 0));
+        !rt_aspace_map(aspace, &next_va, map_size, MMU_MAP_K_RWCB, flags, mem_obj, 0));
 
     /* _aspace_bst_search */
     uassert_true(!!_aspace_bst_search(aspace, target_va));

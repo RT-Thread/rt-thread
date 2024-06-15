@@ -20,7 +20,7 @@
 #endif
 
 #include <dfs_fs.h>
-#include "dfs_romfs.h"
+
 #ifdef BSP_USING_SDCARD_FS
     #include <board.h>
     #include "drv_sdio.h"
@@ -32,16 +32,29 @@
 #define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
+#ifdef RT_USING_DFS_ROMFS
+#include "dfs_romfs.h"
+
+#ifdef RT_USING_DFS_ELMFAT
+static const struct romfs_dirent _romfs_root[] =
+{
+    {ROMFS_DIRENT_DIR, "flash", RT_NULL, 0},
+    {ROMFS_DIRENT_DIR, "sdcard", RT_NULL, 0},
+    {ROMFS_DIRENT_DIR, "filesystem", RT_NULL, 0}
+};
+#else
 static const struct romfs_dirent _romfs_root[] =
 {
     {ROMFS_DIRENT_DIR, "flash", RT_NULL, 0},
     {ROMFS_DIRENT_DIR, "sdcard", RT_NULL, 0}
 };
+#endif
 
 const struct romfs_dirent romfs_root =
 {
     ROMFS_DIRENT_DIR, "/", (rt_uint8_t *)_romfs_root, sizeof(_romfs_root) / sizeof(_romfs_root[0])
 };
+#endif
 
 #ifdef BSP_USING_SDCARD_FS
 
@@ -52,19 +65,19 @@ static void _sdcard_mount(void)
 {
     rt_device_t device;
 
-    device = rt_device_find("sd0");
+    device = rt_device_find("sd");
 
     if (device == NULL)
     {
         mmcsd_wait_cd_changed(0);
         sdcard_change();
         mmcsd_wait_cd_changed(RT_WAITING_FOREVER);
-        device = rt_device_find("sd0");
+        device = rt_device_find("sd");
     }
 
     if (device != RT_NULL)
     {
-        if (dfs_mount("sd0", "/sdcard", "elm", 0, 0) == RT_EOK)
+        if (dfs_mount("sd", "/sdcard", "elm", 0, 0) == RT_EOK)
         {
             LOG_I("sd card mount to '/sdcard'");
         }
@@ -116,10 +129,12 @@ static void sd_mount(void *parameter)
 
 int mount_init(void)
 {
+    #ifdef RT_USING_DFS_ROMFS
     if (dfs_mount(RT_NULL, "/", "rom", 0, &(romfs_root)) != 0)
     {
         LOG_E("rom mount to '/' failed!");
     }
+    #endif
 
     #ifdef BSP_USING_SPI_FLASH_FS
     struct rt_device *flash_dev = RT_NULL;
@@ -130,6 +145,30 @@ int mount_init(void)
 
     flash_dev = fal_mtd_nor_device_create("filesystem");
 
+    #ifdef RT_USING_DFS_ELMFAT
+    flash_dev = fal_blk_device_create("filesystem");
+    if (flash_dev)
+    {
+        //mount filesystem
+        if (dfs_mount(flash_dev->parent.name, "/filesystem", "elm", 0, 0) != 0)
+        {
+            LOG_W("mount to '/filesystem' failed! try to mkfs %s", flash_dev->parent.name);
+            dfs_mkfs("elm", flash_dev->parent.name);
+            if (dfs_mount(flash_dev->parent.name, "/filesystem", "elm", 0, 0) == 0)
+            {
+                LOG_I("mount to '/filesystem' success!");
+            }
+        }
+        else
+        {
+            LOG_I("mount to '/filesystem' success!");
+        }
+    }
+    else
+    {
+        LOG_E("Can't create block device filesystem or bt_image partition.");
+    }
+    #else
     if (flash_dev)
     {
         //mount filesystem
@@ -150,8 +189,9 @@ int mount_init(void)
     }
     else
     {
-        LOG_E("Can't create  block device  filesystem or bt_image partition.");
+        LOG_E("Can't create block device filesystem or bt_image partition.");
     }
+    #endif
 
     #endif
 

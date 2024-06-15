@@ -901,12 +901,12 @@ static rt_err_t _rt_pm_device_control(rt_device_t dev,
     switch (cmd)
     {
     case RT_PM_DEVICE_CTRL_REQUEST:
-        mode = (rt_uint32_t)args;
+        mode = (rt_uint32_t)(rt_ubase_t)args;
         rt_pm_request(mode);
         break;
 
     case RT_PM_DEVICE_CTRL_RELEASE:
-        mode = (rt_uint32_t)args;
+        mode = (rt_uint32_t)(rt_ubase_t)args;
         rt_pm_release(mode);
         break;
     }

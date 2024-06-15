@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 hpmicro
+ * Copyright (c) 2021 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -10,15 +10,20 @@
 
 #include "hpm_common.h"
 
-#if CONFIG_TOUCH_FT5406
+#if defined(CONFIG_TOUCH_FT5406) && (CONFIG_TOUCH_FT5406 == 1)
 #include "hpm_ft5406.h"
 #define HPM_TOUCH_MAX_POINTS (FT5406_MAX_TOUCH_POINTS)
-#elif CONFIG_TOUCH_GT911
+#elif defined(CONFIG_TOUCH_GT911) && (CONFIG_TOUCH_GT911 == 1)
 #include "hpm_gt911.h"
 #define HPM_TOUCH_MAX_POINTS (GT911_MAX_TOUCH_POINTS)
 #else
 #error "unknown touch type, either have CONFIG_FT5406 or CONFIG_GT911 defined"
 #endif
+
+enum {
+    status_touch_buffer_no_ready = MAKE_STATUS(status_group_touch, 0),
+    status_touch_points_over_number = MAKE_STATUS(status_group_touch, 1),
+};
 
 typedef struct {
     uint16_t x;

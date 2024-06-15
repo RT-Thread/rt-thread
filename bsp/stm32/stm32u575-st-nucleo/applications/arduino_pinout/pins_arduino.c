@@ -9,8 +9,8 @@
  */
 
 #include <Arduino.h>
-#include <board.h>
 #include "pins_arduino.h"
+#include <drv_gpio.h>
 
 /*
  * {Arduino Pin, RT-Thread Pin [, Device Name, Channel]}

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 hpmicro
+ * Copyright (c) 2021 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -9,6 +9,7 @@
 
 void vad_get_default_config(VAD_Type *ptr, vad_config_t *config)
 {
+    (void) ptr;
     config->enable_buffer = true;
     config->enable_pdm_clock_out = true;
     config->enable_two_channels = true;

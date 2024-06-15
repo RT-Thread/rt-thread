@@ -6,12 +6,14 @@
  * Change Logs:
  * Date           Author       Notes
  * 2020-06-27     AHTYDHD      the first version
+ * 2024-04-11     Astrozen     add i2c support
  */
 
 #include <rtthread.h>
 #include <stdbool.h>
 #include <stdint.h>
 #include "inc/hw_memmap.h"
+#include "driverlib/rom.h"
 #include "driverlib/pin_map.h"
 #include "driverlib/sysctl.h"
 #include "driverlib/gpio.h"
@@ -29,6 +31,9 @@
 #ifdef RT_USING_SPI
     #include "driverlib/ssi.h"
 #endif /* RT_USING_SPI */
+#ifdef RT_USING_I2C
+#include "driverlib/i2c.h"
+#endif /* RT_USING_I2C */
 
 
 #ifdef RT_USING_SERIAL
@@ -84,5 +89,27 @@ void  spi_hw_config(void)
     GPIOPinTypeSSI(GPIO_PORTA_BASE, GPIO_PIN_5 | GPIO_PIN_4 | GPIO_PIN_2);
 }
 #endif /* RT_USING_SPI */
+
+#ifdef RT_USING_I2C
+void  i2c_hw_config(void)
+{
+    /* I2C0 */
+    ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOB);
+
+    ROM_GPIOPinConfigure(GPIO_PB2_I2C0SCL);
+    ROM_GPIOPinConfigure(GPIO_PB3_I2C0SDA);
+
+    ROM_GPIOPinTypeI2CSCL(GPIO_PORTB_BASE, GPIO_PIN_2);
+    ROM_GPIOPinTypeI2C(GPIO_PORTB_BASE, GPIO_PIN_3);
+
+    ROM_SysCtlPeripheralDisable(SYSCTL_PERIPH_I2C0);
+    ROM_SysCtlPeripheralReset(SYSCTL_PERIPH_I2C0);
+    ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_I2C0);
+    while (!SysCtlPeripheralReady(SYSCTL_PERIPH_I2C0));
+
+    // timeout:5ms
+    ROM_I2CMasterTimeoutSet(I2C0_BASE, 0x7d);
+}
+#endif /* RT_USING_I2C */
 
 /************************** end of file ******************/

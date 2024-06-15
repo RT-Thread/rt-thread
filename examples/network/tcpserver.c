@@ -10,6 +10,7 @@
 
 #include <rtthread.h>
 #include <string.h>
+#include <stdlib.h>
 
 #if !defined(SAL_USING_POSIX)
 #error "Please enable SAL_USING_POSIX!"
@@ -106,7 +107,7 @@ static void tcpserv(void *arg)
         /* Accept a request from client and the function is blocking */
         /* 接受一个客户端连接socket的请求，这个函数调用是阻塞式的 */
         connected = accept(sock, (struct sockaddr *)&client_addr, &sin_size);
-        /* Return the socket connected sucessfully */
+        /* Return the socket connected successfully */
         /* 返回的是连接成功的socket */
         if (connected < 0)
         {
@@ -132,20 +133,22 @@ static void tcpserv(void *arg)
             bytes_received = recv(connected, recv_data, BUFSZ, 0);
             if (bytes_received < 0)
             {
-                LOG_E("Received error, close the connect.");
+                LOG_E("Received error(%d), close the connect.", errno);
                 closesocket(connected);
                 connected = -1;
                 break;
             }
             else if (bytes_received == 0)
             {
-                /* Print warning message when recv function return 0 */
-                /* 打印recv函数返回值为0的警告信息 */
-                LOG_W("Received warning, recv function return 0.");
-                continue;
+                /* Socket has performed an orderly shutdown */
+                /* 连接已断开 */
+                LOG_E("Socket has performed an orderly shutdown.");
+                closesocket(connected);
+                connected = -1;
+                break;
             }
             else
-            {   /* Receive data sucessfully and append '\0' at the end of message */
+            {   /* Receive data successfully and append '\0' at the end of message */
                 /* 有接收到数据，把末端清零 */
                 recv_data[bytes_received] = '\0';
                 if (strcmp(recv_data, "q") == 0 || strcmp(recv_data, "Q") == 0)
@@ -177,16 +180,23 @@ static void tcpserv(void *arg)
             ret = send(connected, send_data, rt_strlen(send_data), 0);
             if (ret < 0)
             {
-                LOG_E("send error, close the connect.");
+                LOG_E("send error(%d), close the connect.", errno);
                 closesocket(connected);
                 connected = -1;
                 break;
             }
             else if (ret == 0)
             {
-                /* Print warning message when send function return 0 */
-                /* 打印send函数返回值为0的警告信息 */
-                LOG_W("Send warning, send function return 0.");
+                /* Socket has performed an orderly shutdown */
+                /* 连接已断开 */
+                LOG_E("Socket has performed an orderly shutdown.");
+                closesocket(connected);
+                connected = -1;
+                break;
+            }
+            else if (ret != rt_strlen(send_data))
+            {
+                LOG_W("%d out of %d bytes sent.", ret, rt_strlen(send_data));
             }
         }
     }

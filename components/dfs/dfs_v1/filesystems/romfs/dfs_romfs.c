@@ -146,7 +146,7 @@ struct romfs_dirent *dfs_romfs_lookup(struct romfs_dirent *root_dirent, const ch
     return NULL;
 }
 
-int dfs_romfs_read(struct dfs_file *file, void *buf, size_t count)
+ssize_t dfs_romfs_read(struct dfs_file *file, void *buf, size_t count)
 {
     rt_size_t length;
     struct romfs_dirent *dirent;
@@ -173,7 +173,7 @@ int dfs_romfs_read(struct dfs_file *file, void *buf, size_t count)
     return length;
 }
 
-int dfs_romfs_lseek(struct dfs_file *file, off_t offset)
+off_t dfs_romfs_lseek(struct dfs_file *file, off_t offset)
 {
     if (offset <= file->vnode->size)
     {
@@ -337,7 +337,7 @@ int dfs_romfs_getdents(struct dfs_file *file, struct dirent *dirp, uint32_t coun
         RT_ASSERT(len <= RT_UINT8_MAX);
         d->d_namlen = (rt_uint8_t)len;
         d->d_reclen = (rt_uint16_t)sizeof(struct dirent);
-        rt_strncpy(d->d_name, name, DFS_PATH_MAX);
+        rt_strncpy(d->d_name, name, DIRENT_NAME_MAX);
 
         /* move to next position */
         ++ file->pos;
@@ -382,3 +382,30 @@ int dfs_romfs_init(void)
 }
 INIT_COMPONENT_EXPORT(dfs_romfs_init);
 
+#ifndef RT_USING_DFS_ROMFS_USER_ROOT
+static const unsigned char _dummy_dummy_txt[] =
+{
+    0x74, 0x68, 0x69, 0x73, 0x20, 0x69, 0x73, 0x20, 0x61, 0x20, 0x66, 0x69, 0x6c, 0x65, 0x21, 0x0d, 0x0a,
+};
+
+static const struct romfs_dirent _dummy[] =
+{
+    {ROMFS_DIRENT_FILE, "dummy.txt", _dummy_dummy_txt, sizeof(_dummy_dummy_txt)},
+};
+
+static const unsigned char _dummy_txt[] =
+{
+    0x74, 0x68, 0x69, 0x73, 0x20, 0x69, 0x73, 0x20, 0x61, 0x20, 0x66, 0x69, 0x6c, 0x65, 0x21, 0x0d, 0x0a,
+};
+
+rt_weak const struct romfs_dirent _root_dirent[] =
+{
+    {ROMFS_DIRENT_DIR, "dummy", (rt_uint8_t *)_dummy, sizeof(_dummy) / sizeof(_dummy[0])},
+    {ROMFS_DIRENT_FILE, "dummy.txt", _dummy_txt, sizeof(_dummy_txt)},
+};
+
+rt_weak const struct romfs_dirent romfs_root =
+{
+    ROMFS_DIRENT_DIR, "/", (rt_uint8_t *)_root_dirent, sizeof(_root_dirent) / sizeof(_root_dirent[0])
+};
+#endif

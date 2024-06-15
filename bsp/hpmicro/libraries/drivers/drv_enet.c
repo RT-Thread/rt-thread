@@ -1,39 +1,33 @@
 /*
- * Copyright (c) 2021 - 2022 hpmicro
+ * Copyright (c) 2021-2024 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
  * Change Logs:
  * Date         Author      Notes
- * 2022-01-11   hpmicro     First version
- * 2022-07-10   hpmicro     Driver optimization for multiple instances
+ * 2022-01-11   HPMicro     First version
+ * 2022-07-10   HPMicro     Driver optimization for multiple instances
  */
 
 #include <rtdevice.h>
 
 #ifdef BSP_USING_ETH
 #include <rtdbg.h>
-#include <netif/ethernetif.h>
-#include "board.h"
 #include "drv_enet.h"
-#include "hpm_soc_feature.h"
-#include "hpm_enet_soc_drv.h"
-#include "hpm_enet_drv.h"
-
-#define ETH_DEBUG
+#include "hpm_otp_drv.h"
 
 #ifdef BSP_USING_ETH0
 
 ATTR_PLACE_AT_NONCACHEABLE_WITH_ALIGNMENT(ENET_SOC_DESC_ADDR_ALIGNMENT)
-__RW enet_rx_desc_t enet0_dma_rx_desc_tab[ENET0_RX_BUFF_COUNT] ; /* Ethernet0 Rx DMA Descriptor */
+__RW enet_rx_desc_t enet0_dma_rx_desc_tab[ENET0_RX_BUFF_COUNT]; /* Ethernet0 Rx DMA Descriptor */
 
 ATTR_PLACE_AT_NONCACHEABLE_WITH_ALIGNMENT(ENET_SOC_DESC_ADDR_ALIGNMENT)
-__RW enet_tx_desc_t enet0_dma_tx_desc_tab[ENET0_TX_BUFF_COUNT] ; /* Ethernet0 Tx DMA Descriptor */
+__RW enet_tx_desc_t enet0_dma_tx_desc_tab[ENET0_TX_BUFF_COUNT]; /* Ethernet0 Tx DMA Descriptor */
 
-ATTR_PLACE_AT_NONCACHEABLE_WITH_ALIGNMENT(ENET_SOC_BUFF_ADDR_ALIGNMENT)
+ATTR_PLACE_AT_WITH_ALIGNMENT(".fast_ram", ENET_SOC_BUFF_ADDR_ALIGNMENT)
 __RW uint8_t enet0_rx_buff[ENET0_RX_BUFF_COUNT][ENET0_RX_BUFF_SIZE]; /* Ethernet0 Receive Buffer */
 
-ATTR_PLACE_AT_NONCACHEABLE_WITH_ALIGNMENT(ENET_SOC_BUFF_ADDR_ALIGNMENT)
+ATTR_PLACE_AT_WITH_ALIGNMENT(".fast_ram", ENET_SOC_BUFF_ADDR_ALIGNMENT)
 __RW uint8_t enet0_tx_buff[ENET0_TX_BUFF_COUNT][ENET0_TX_BUFF_SIZE]; /* Ethernet0 Transmit Buffer */
 
 struct eth_device eth0_dev;
@@ -48,13 +42,15 @@ static enet_buff_config_t enet0_tx_buff_cfg = {.buffer = (uint32_t)enet0_tx_buff
                                                .size   = ENET0_TX_BUFF_SIZE
                                               };
 
-static enet_ptp_time_t ptp_timestamp0 = {0, 0};
-static enet_ptp_config_t ptp_config0 = {.sub_sec_count_res = enet_ptp_count_res_low,
+#if __USE_ENET_PTP
+static enet_ptp_ts_update_t ptp_timestamp0 = {0, 0};
+static enet_ptp_config_t ptp_config0 = {.timestamp_rollover_mode = enet_ts_dig_rollover_control,
                                         .update_method = enet_ptp_time_fine_update,
                                         .addend = 0xffffffff,
                                        };
+#endif
 
-static hpm_enet_t enet0 = {.name            = "ETH0",
+static hpm_enet_t enet0 = {.name            = "E0",
                            .base            = HPM_ENET0,
                            .irq_num         = IRQn_ENET0,
                            .inf             = BOARD_ENET0_INF,
@@ -64,14 +60,25 @@ static hpm_enet_t enet0 = {.name            = "ETH0",
                            .tx_buff_cfg     = &enet0_tx_buff_cfg,
                            .dma_rx_desc_tab = enet0_dma_rx_desc_tab,
                            .dma_tx_desc_tab = enet0_dma_tx_desc_tab,
+#if !BOARD_ENET0_INF
+                           .int_refclk      = BOARD_ENET0_INT_REF_CLK,
+#else
                            .tx_delay        = BOARD_ENET0_TX_DLY,
                            .rx_delay        = BOARD_ENET0_RX_DLY,
-                           .ptp_enable      = true,
+#endif
+
+#if __USE_ENET_PTP
                            .ptp_clk_src     = BOARD_ENET0_PTP_CLOCK,
                            .ptp_config      = &ptp_config0,
                            .ptp_timestamp   = &ptp_timestamp0
+#endif
                           };
 #endif
+
+mac_init_t mac_init[] = {
+    {MAC0_ADDR0, MAC0_ADDR1, MAC0_ADDR2, MAC0_ADDR3, MAC0_ADDR4, MAC0_ADDR5},
+    {MAC1_ADDR0, MAC1_ADDR1, MAC1_ADDR2, MAC1_ADDR3, MAC1_ADDR4, MAC1_ADDR5}
+};
 
 #ifdef BSP_USING_ETH1
 
@@ -81,10 +88,10 @@ __RW enet_rx_desc_t enet1_dma_rx_desc_tab[ENET1_RX_BUFF_COUNT]; /* Ethernet1 Rx 
 ATTR_PLACE_AT_NONCACHEABLE_WITH_ALIGNMENT(ENET_SOC_DESC_ADDR_ALIGNMENT)
 __RW enet_tx_desc_t enet1_dma_tx_desc_tab[ENET1_TX_BUFF_COUNT]; /* Ethernet1 Tx DMA Descriptor */
 
-ATTR_PLACE_AT_NONCACHEABLE_WITH_ALIGNMENT(ENET_SOC_BUFF_ADDR_ALIGNMENT)
+ATTR_PLACE_AT_WITH_ALIGNMENT(".fast_ram", ENET_SOC_BUFF_ADDR_ALIGNMENT)
 __RW uint8_t enet1_rx_buff[ENET1_RX_BUFF_COUNT][ENET1_RX_BUFF_SIZE]; /* Ethernet1 Receive Buffer */
 
-ATTR_PLACE_AT_NONCACHEABLE_WITH_ALIGNMENT(ENET_SOC_BUFF_ADDR_ALIGNMENT)
+ATTR_PLACE_AT_WITH_ALIGNMENT(".fast_ram", ENET_SOC_BUFF_ADDR_ALIGNMENT)
 __RW uint8_t enet1_tx_buff[ENET1_TX_BUFF_COUNT][ENET1_TX_BUFF_SIZE]; /* Ethernet1 Transmit Buffer */
 
 struct eth_device eth1_dev;
@@ -99,13 +106,15 @@ static enet_buff_config_t enet1_tx_buff_cfg = {.buffer = (uint32_t)enet1_tx_buff
                                                .size   = ENET1_TX_BUFF_SIZE
                                               };
 
-static enet_ptp_time_t ptp_timestamp1 = {0, 0};
-static enet_ptp_config_t ptp_config1 = {.sub_sec_count_res = enet_ptp_count_res_low,
+#if __USE_ENET_PTP
+static enet_ptp_ts_update_t ptp_timestamp1 = {0, 0};
+static enet_ptp_config_t ptp_config1 = {.timestamp_rollover_mode = enet_ts_dig_rollover_control,
                                         .update_method = enet_ptp_time_fine_update,
                                         .addend = 0xffffffff,
                                        };
+#endif
 
-static hpm_enet_t enet1 = {.name            = "ETH1",
+static hpm_enet_t enet1 = {.name            = "E1",
                            .base            = HPM_ENET1,
                            .irq_num         = IRQn_ENET1,
                            .inf             = BOARD_ENET1_INF,
@@ -115,13 +124,19 @@ static hpm_enet_t enet1 = {.name            = "ETH1",
                            .tx_buff_cfg     = &enet1_tx_buff_cfg,
                            .dma_rx_desc_tab = enet1_dma_rx_desc_tab,
                            .dma_tx_desc_tab = enet1_dma_tx_desc_tab,
+#if !BOARD_ENET1_INF
                            .int_refclk      = BOARD_ENET1_INT_REF_CLK,
-                           .ptp_enable      = true,
+#else
+                           .tx_delay        = BOARD_ENET1_TX_DLY,
+                           .rx_delay        = BOARD_ENET1_RX_DLY,
+#endif
+
+#if __USE_ENET_PTP
                            .ptp_clk_src     = BOARD_ENET1_PTP_CLOCK,
                            .ptp_config      = &ptp_config1,
                            .ptp_timestamp   = &ptp_timestamp1
+#endif
                           };
-
 #endif
 
 static hpm_enet_t *s_geths[] = {
@@ -134,42 +149,91 @@ static hpm_enet_t *s_geths[] = {
 #endif
 };
 
-
-static hpm_stat_t hpm_enet_init(enet_device *init)
+ATTR_WEAK uint8_t enet_get_mac_address(ENET_Type *ptr, uint8_t *mac)
 {
-    /* Initialize eth controller */
-    enet_controller_init(init->instance, init->media_interface, &init->desc, &init->mac_config, init->mask, init->dis_mask);
+    uint32_t macl, mach;
+    uint8_t i;
 
+    i = (ptr == HPM_ENET0) ? 0 : 1;
+
+        if (mac == NULL) {
+            return ENET_MAC_ADDR_PARA_ERROR;
+        }
+
+        /* load mac address from OTP MAC area */
+        if (i == 0) {
+            macl = otp_read_from_shadow(OTP_SOC_MAC0_IDX);
+            mach = otp_read_from_shadow(OTP_SOC_MAC0_IDX + 1);
+
+            mac[0] = (macl >>  0) & 0xff;
+            mac[1] = (macl >>  8) & 0xff;
+            mac[2] = (macl >> 16) & 0xff;
+            mac[3] = (macl >> 24) & 0xff;
+            mac[4] = (mach >>  0) & 0xff;
+            mac[5] = (mach >>  8) & 0xff;
+        } else {
+            macl = otp_read_from_shadow(OTP_SOC_MAC0_IDX + 1);
+            mach = otp_read_from_shadow(OTP_SOC_MAC0_IDX + 2);
+
+            mac[0] = (macl >> 16) & 0xff;
+            mac[1] = (macl >> 24) & 0xff;
+            mac[2] = (mach >>  0) & 0xff;
+            mac[3] = (mach >>  8) & 0xff;
+            mac[4] = (mach >> 16) & 0xff;
+            mac[5] = (mach >> 24) & 0xff;
+        }
+
+        if (!IS_MAC_INVALID(mac)) {
+            return ENET_MAC_ADDR_FROM_OTP_MAC;
+        }
+
+        /* load MAC address from MACRO definitions */
+        memcpy(mac, &mac_init[i], ENET_MAC);
+        return ENET_MAC_ADDR_FROM_MACRO;
+}
+
+static rt_err_t hpm_enet_init(enet_device *init)
+{
     if (init->media_interface == enet_inf_rmii)
     {
         /* Initialize reference clock */
         board_init_enet_rmii_reference_clock(init->instance, init->int_refclk);
-        enet_rmii_enable_clock(init->instance, init->int_refclk);
     }
 
+#if ENET_SOC_RGMII_EN
     /* Set RGMII clock delay */
    if (init->media_interface == enet_inf_rgmii)
    {
         enet_rgmii_enable_clock(init->instance);
         enet_rgmii_set_clock_delay(init->instance, init->tx_delay, init->rx_delay);
    }
+#endif
 
-   if (init->ptp_enable)
-   {
-       /* initialize Ethernet PTP Module */
-       init->ptp_config.ssinc = ENET_ONE_SEC_IN_NANOSEC / clock_get_frequency(init->ptp_clk_src);
-       enet_init_ptp(init->instance, &init->ptp_config);
+    /* Initialize eth controller */
+   enet_controller_init(init->instance, init->media_interface, &init->desc, &init->mac_config, &init->int_config);
 
-       /* set the initial timestamp */
-       enet_set_ptp_timestamp(init->instance, &init->ptp_timestamp);
-   }
+#if __USE_ENET_PTP
+   /* initialize PTP Clock */
+   board_init_enet_ptp_clock(init->instance);
 
-    /* enable irq */
-    intc_m_enable_irq(init->irq_number);
+   /* initialize Ethernet PTP Module */
+   init->ptp_config.ssinc = ENET_ONE_SEC_IN_NANOSEC / clock_get_frequency(init->ptp_clk_src);
+   enet_init_ptp(init->instance, &init->ptp_config);
+
+   /* set the initial timestamp */
+   enet_set_ptp_timestamp(init->instance, &init->ptp_timestamp);
+#endif
+
+   /* enable irq */
+   intc_m_enable_irq(init->irq_number);
+
+   return RT_EOK;
 }
 
 static rt_err_t rt_hpm_eth_init(rt_device_t dev)
 {
+    uint8_t mac[ENET_MAC];
+
     enet_device *enet_dev = (enet_device *)dev->user_data;
 
     /* Initialize GPIOs */
@@ -178,12 +242,25 @@ static rt_err_t rt_hpm_eth_init(rt_device_t dev)
     /* Reset an enet PHY */
     board_reset_enet_phy(enet_dev->instance);
 
-    /* Initialize MAC and DMA */
-    if (hpm_enet_init(enet_dev) == 0) {
-        LOG_D("Ethernet control initialize successfully\n");
-    }
+    /* Get MAC address */
+    enet_get_mac_address(enet_dev->instance, mac);
 
-    return RT_EOK;
+    /* Set mac0 address */
+    enet_dev->mac_config.mac_addr_high[0] = mac[5] << 8 | mac[4];
+    enet_dev->mac_config.mac_addr_low[0] = mac[3] << 24 | mac[2] << 16 | mac[1] << 8 | mac[0];
+    enet_dev->mac_config.valid_max_count = 1;
+
+    /* Initialize MAC and DMA */
+    if (hpm_enet_init(enet_dev) == 0)
+    {
+        LOG_D("Ethernet control initialize successfully\n");
+        return RT_EOK;
+    }
+    else
+    {
+        LOG_D("Ethernet control initialize unsuccessfully\n");
+        return -RT_ERROR;
+    }
 }
 
 static rt_err_t rt_hpm_eth_open(rt_device_t dev, rt_uint16_t oflag)
@@ -208,22 +285,16 @@ static rt_ssize_t rt_hpm_eth_write(rt_device_t dev, rt_off_t pos, const void * b
 
 static rt_err_t rt_hpm_eth_control(rt_device_t dev, int cmd, void * args)
 {
-    uint8_t *mac;
+    uint8_t *mac = (uint8_t *)args;
+    enet_device *enet_dev = (enet_device *)dev->user_data;
 
     switch (cmd)
     {
     case NIOCTL_GADDR:
-        /* read MAC address */
         if (args != NULL)
         {
-            mac = (uint8_t *)args;
-            mac[0] = MAC_ADDR0;
-            mac[1] = MAC_ADDR1;
-            mac[2] = MAC_ADDR2;
-            mac[3] = MAC_ADDR3;
-            mac[4] = MAC_ADDR4;
-            mac[5] = MAC_ADDR5;
-            SMEMCPY(args, mac, 6);
+            enet_get_mac_address(enet_dev->instance, (uint8_t *)mac);
+            SMEMCPY(args, mac, ENET_MAC);
         }
         else
         {
@@ -239,7 +310,7 @@ static rt_err_t rt_hpm_eth_control(rt_device_t dev, int cmd, void * args)
 
 static rt_err_t rt_hpm_eth_tx(rt_device_t dev, struct pbuf * p)
 {
-    rt_err_t ret = -RT_ERROR;
+    rt_err_t ret = RT_ERROR;
     uint32_t status;
     enet_device *enet_dev = (enet_device *)dev->user_data;
     uint32_t tx_buff_size = enet_dev->desc.tx_buff_cfg.size;
@@ -255,6 +326,7 @@ static rt_err_t rt_hpm_eth_tx(rt_device_t dev, struct pbuf * p)
     dma_tx_desc = tx_desc_list_cur;
     buffer = (uint8_t *)(dma_tx_desc->tdes2_bm.buffer1);
     buffer_offset = 0;
+    rt_tick_t t_start;
 
     /* copy frame from pbufs to driver buffers */
     for (q = p; q != NULL; q = q->next)
@@ -266,6 +338,16 @@ static rt_err_t rt_hpm_eth_tx(rt_device_t dev, struct pbuf * p)
         /* Check if the length of data to copy is bigger than Tx buffer size*/
         while ((bytes_left_to_copy + buffer_offset) > tx_buff_size)
         {
+            /* check DMA own status within timeout */
+            t_start = rt_tick_get();
+            while (dma_tx_desc->tdes0_bm.own)
+            {
+                if (rt_tick_get() - t_start > RT_TICK_PER_SECOND / 100)
+                {
+                    return ERR_TIMEOUT;
+                }
+            }
+
             /* Copy data to Tx buffer*/
             SMEMCPY((uint8_t *)((uint8_t *)buffer + buffer_offset),
                     (uint8_t *)((uint8_t *)q->payload + payload_offset),
@@ -278,7 +360,7 @@ static rt_err_t rt_hpm_eth_tx(rt_device_t dev, struct pbuf * p)
             if (dma_tx_desc->tdes0_bm.own != 0)
             {
                 LOG_E("DMA tx desc buffer is not valid\n");
-                return ERR_USE;
+                return ERR_BUF;
             }
 
             buffer = (uint8_t *)(dma_tx_desc->tdes2_bm.buffer1);
@@ -289,7 +371,18 @@ static rt_err_t rt_hpm_eth_tx(rt_device_t dev, struct pbuf * p)
             buffer_offset = 0;
         }
 
+        /* check DMA own status within timeout */
+        t_start = rt_tick_get();
+        while (dma_tx_desc->tdes0_bm.own)
+        {
+            if (rt_tick_get() - t_start > RT_TICK_PER_SECOND / 100)
+            {
+                return ERR_TIMEOUT;
+            }
+        }
+
         /* Copy the remaining bytes */
+        buffer = (void *)sys_address_to_core_local_mem(0, (uint32_t)buffer);
         SMEMCPY((uint8_t *)((uint8_t *)buffer + buffer_offset),
                 (uint8_t *)((uint8_t *)q->payload + payload_offset),
                 bytes_left_to_copy);
@@ -340,54 +433,57 @@ static struct pbuf *rt_hpm_eth_rx(rt_device_t dev)
     {
         /* allocate a pbuf chain of pbufs from the Lwip buffer pool */
         p = pbuf_alloc(PBUF_RAW, len, PBUF_POOL);
-    }
 
-    if (p != NULL)
-    {
-        dma_rx_desc = frame.rx_desc;
-        buffer_offset = 0;
-        for (q = p; q != NULL; q = q->next)
+        if (p != NULL)
         {
-            bytes_left_to_copy = q->len;
-            payload_offset = 0;
-
-            /* Check if the length of bytes to copy in current pbuf is bigger than Rx buffer size*/
-            while ((bytes_left_to_copy + buffer_offset) > rx_buff_size)
+            dma_rx_desc = frame.rx_desc;
+            buffer_offset = 0;
+            for (q = p; q != NULL; q = q->next)
             {
-                /* Copy data to pbuf */
-                SMEMCPY((uint8_t *)((uint8_t *)q->payload + payload_offset), (uint8_t *)((uint8_t *)buffer + buffer_offset), (rx_buff_size - buffer_offset));
+                bytes_left_to_copy = q->len;
+                payload_offset = 0;
 
-                /* Point to next descriptor */
-                dma_rx_desc = (enet_rx_desc_t *)(dma_rx_desc->rdes3_bm.next_desc);
-                buffer = (uint8_t *)(dma_rx_desc->rdes2_bm.buffer1);
+                /* Check if the length of bytes to copy in current pbuf is bigger than Rx buffer size*/
+                while ((bytes_left_to_copy + buffer_offset) > rx_buff_size)
+                {
+                    /* Copy data to pbuf */
+                    SMEMCPY((uint8_t *)((uint8_t *)q->payload + payload_offset), (uint8_t *)((uint8_t *)buffer + buffer_offset), (rx_buff_size - buffer_offset));
 
-                bytes_left_to_copy = bytes_left_to_copy - (rx_buff_size - buffer_offset);
-                payload_offset = payload_offset + (rx_buff_size - buffer_offset);
-                buffer_offset = 0;
+                    /* Point to next descriptor */
+                    dma_rx_desc = (enet_rx_desc_t *)(dma_rx_desc->rdes3_bm.next_desc);
+                    buffer = (uint8_t *)(dma_rx_desc->rdes2_bm.buffer1);
+
+                    bytes_left_to_copy = bytes_left_to_copy - (rx_buff_size - buffer_offset);
+                    payload_offset = payload_offset + (rx_buff_size - buffer_offset);
+                    buffer_offset = 0;
+                }
+                /* Copy remaining data in pbuf */
+                q->payload = (void *)sys_address_to_core_local_mem(0, (uint32_t)buffer);
+                buffer_offset = buffer_offset + bytes_left_to_copy;
             }
-            /* Copy remaining data in pbuf */
-            SMEMCPY((uint8_t *)((uint8_t *)q->payload + payload_offset), (uint8_t *)((uint8_t *)buffer + buffer_offset), bytes_left_to_copy);
-            buffer_offset = buffer_offset + bytes_left_to_copy;
         }
+
+        /* Release descriptors to DMA */
+        /* Point to first descriptor */
+        dma_rx_desc = frame.rx_desc;
+
+        /* Set Own bit in Rx descriptors: gives the buffers back to DMA */
+        for (i = 0; i < enet_dev->desc.rx_frame_info.seg_count; i++)
+        {
+            dma_rx_desc->rdes0_bm.own = 1;
+            dma_rx_desc = (enet_rx_desc_t*)(dma_rx_desc->rdes3_bm.next_desc);
+        }
+
+        /* Clear Segment_Count */
+        enet_dev->desc.rx_frame_info.seg_count = 0;
     }
-    else
+
+    /* Resume Rx Process */
+    if (ENET_DMA_STATUS_RU_GET(enet_dev->instance->DMA_STATUS))
     {
-        return NULL;
+        enet_dev->instance->DMA_STATUS = ENET_DMA_STATUS_RU_MASK;
+        enet_dev->instance->DMA_RX_POLL_DEMAND = 1;
     }
-
-    /* Release descriptors to DMA */
-    /* Point to first descriptor */
-    dma_rx_desc = frame.rx_desc;
-
-    /* Set Own bit in Rx descriptors: gives the buffers back to DMA */
-    for (i = 0; i < enet_dev->desc.rx_frame_info.seg_count; i++)
-    {
-        dma_rx_desc->rdes0_bm.own = 1;
-        dma_rx_desc = (enet_rx_desc_t*)(dma_rx_desc->rdes3_bm.next_desc);
-    }
-
-    /* Clear Segment_Count */
-    enet_dev->desc.rx_frame_info.seg_count = 0;
 
     return p;
 }
@@ -409,7 +505,7 @@ void isr_enet(hpm_enet_t *obj)
     status = obj->base->DMA_STATUS;
 
     if (ENET_DMA_STATUS_GLPII_GET(status)) {
-        obj->base->DMA_STATUS |= ENET_DMA_STATUS_GLPII_SET(ENET_DMA_STATUS_GLPII_GET(status));
+        obj->base->LPI_CSR;
     }
 
     if (ENET_DMA_STATUS_RI_GET(status)) {
@@ -436,7 +532,7 @@ SDK_DECLARE_EXT_ISR_M(IRQn_ENET1, isr_enet1)
 
 int rt_hw_eth_init(void)
 {
-    rt_err_t err = -RT_ERROR;
+    rt_err_t err = RT_ERROR;
 
     for (uint32_t i = 0; i < ARRAY_SIZE(s_geths); i++)
     {
@@ -459,44 +555,43 @@ int rt_hw_eth_init(void)
         s_geths[i]->enet_dev->desc.rx_buff_cfg.count = s_geths[i]->rx_buff_cfg->count;
         s_geths[i]->enet_dev->desc.rx_buff_cfg.size = s_geths[i]->rx_buff_cfg->size;
 
-        /* Set mac0 address */
-        s_geths[i]->enet_dev->mac_config.mac_addr_high[0] = MAC_ADDR5 << 8 | MAC_ADDR4;
-        s_geths[i]->enet_dev->mac_config.mac_addr_low[0] = MAC_ADDR3 << 24 | MAC_ADDR2 << 16 | MAC_ADDR1 << 8 | MAC_ADDR0;
-        s_geths[i]->enet_dev->mac_config.valid_max_count = 1;
+        /* Set DMA PBL */
+        s_geths[i]->enet_dev->mac_config.dma_pbl = board_get_enet_dma_pbl(s_geths[i]->base);
 
         /* Set instance */
         s_geths[i]->enet_dev->instance = s_geths[i]->base;
 
         /* Set media interface */
-        s_geths[i]->enet_dev->media_interface = s_geths[i]->inf;
+        s_geths[i]->enet_dev->media_interface = s_geths[i]->inf ? enet_inf_rgmii : enet_inf_rmii;
 
-        /* Set refclk  */
-        s_geths[i]->enet_dev->int_refclk = s_geths[i]->int_refclk;
+        if (s_geths[i]->enet_dev->media_interface == enet_inf_rmii)
+        {
+            /* Set refclk  */
+            s_geths[i]->enet_dev->int_refclk = s_geths[i]->int_refclk;
+        } else {
+            /* Set TX/RX delay */
+            s_geths[i]->enet_dev->tx_delay = s_geths[i]->tx_delay;
+            s_geths[i]->enet_dev->rx_delay = s_geths[i]->rx_delay;
+        }
 
-        /* Set TX delay */
-        s_geths[i]->enet_dev->tx_delay = s_geths[i]->tx_delay;
 
-        /* Set RX delay */
-        s_geths[i]->enet_dev->rx_delay = s_geths[i]->rx_delay;
-
+#if __USE_ENET_PTP
         /* Set PTP function */
-        s_geths[i]->enet_dev->ptp_enable    = s_geths[i]->ptp_enable;
         s_geths[i]->enet_dev->ptp_clk_src   = s_geths[i]->ptp_clk_src;
         s_geths[i]->enet_dev->ptp_config    = *s_geths[i]->ptp_config;
         s_geths[i]->enet_dev->ptp_timestamp = *s_geths[i]->ptp_timestamp;
-
+#endif
         /* Set the interrupt enable mask */
-        s_geths[i]->enet_dev->mask = ENET_DMA_INTR_EN_NIE_SET(1)   /* Enable normal interrupt summary */
-                                   | ENET_DMA_INTR_EN_RIE_SET(1);  /* Enable receive interrupt */
-
+        s_geths[i]->enet_dev->int_config.int_enable = enet_normal_int_sum_en   /* Enable normal interrupt summary */
+                                                    | enet_receive_int_en;  /* Enable receive interrupt */
         /* Set the interrupt disable mask */
-        s_geths[i]->enet_dev->dis_mask = ENET_INTR_MASK_RGSMIIIM_SET(1);
+
+        s_geths[i]->enet_dev->int_config.int_mask = enet_rgsmii_int_mask;
 
         /* Set the irq number */
         s_geths[i]->enet_dev->irq_number = s_geths[i]->irq_num;
 
         /* Set the parent parameters */
-
         s_geths[i]->eth_dev->parent.init      = rt_hpm_eth_init;
         s_geths[i]->eth_dev->parent.open      = rt_hpm_eth_open;
         s_geths[i]->eth_dev->parent.close     = rt_hpm_eth_close;
@@ -513,11 +608,11 @@ int rt_hw_eth_init(void)
 
         if (RT_EOK == err)
         {
-            LOG_D("Ethernet device initialize successfully!\n");
+            LOG_D("Ethernet device %d initialize successfully!\n", i);
         }
         else
         {
-            LOG_D("Ethernet device initialize unsuccessfully!\n");
+            LOG_D("Ethernet device %d initialize unsuccessfully!\n");
             return err;
         }
     }

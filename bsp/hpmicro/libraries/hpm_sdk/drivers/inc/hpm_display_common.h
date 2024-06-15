@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 hpmicro
+ * Copyright (c) 2021 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -50,6 +50,8 @@ typedef enum display_pixel_format {
     display_pixel_format_gbr422,
     display_pixel_format_yuv422,
     display_pixel_format_ycbcr422,
+    display_pixel_format_y8,
+    display_pixel_format_raw8,
 } display_pixel_format_t;
 
 /**
@@ -146,6 +148,29 @@ typedef struct display_rgb2yuv_config {
     uint16_t y_offset;
 } display_rgb2yuv_config_t;
 
+typedef enum display_buf_format {
+    display_buf_format_argb8888, /*!< memory layout in byte(low->high): b0[7:0], g0[7:0], r0[7:0], a0[7:0], b1[7:1], g1[7:1], r1[7:0], a1[7:0], ... */
+    display_buf_format_bgra8888, /*!< memory layout in byte(low->high): a0[7:0], r0[7:0], g0[7:0], b0[7:0], a1[7:1], r1[7:1], g1[7:0], b1[7:0], ... */
+    display_buf_format_rgb565, /*!< memory layout in byte(low->high): g0[2:0]:b0[4:0], r0[4:0]:g0[5:3], g1[2:0]:b1[4:0], r1[4:0]:g1[5:3], ... */
+    display_buf_format_rgb565_swap, /*!< memory layout in byte(low->high): r0[4:0]:g0[5:3], g0[2:0]:b0[4:0], r2[4:0]:g2[5:3], g1[2:0]:b1[4:0],  ... */
+    display_buf_format_yuyv, /*!< memory layout in byte(low->high): y0, u0, y1, v0, y2, u2, y3, v2, ... */
+    display_buf_format_uyvy, /*!< memory layout in byte(low->high): u0, y0, v0, y1, u2, y2, v2, y3, ... */
+    display_buf_format_y8, /*!< memory layout in byte(low->high): y0, y1, y2, y3, y4, y5, ... */
+    display_buf_format_max,
+} display_buf_format_t;
+
+typedef struct display_buf {
+    void *buf; /*!< point pixel memory */
+    uint16_t width; /*!< width in pixel */
+    uint16_t height; /*!< height in pixel */
+    uint32_t stride; /*!< stride each line, in byte */
+    display_buf_format_t format;
+    struct {
+        display_alpha_op_t op;
+        uint8_t val;
+    } alpha;
+} display_buf_t;
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -160,17 +185,21 @@ extern "C" {
 static inline
     uint8_t display_get_pixel_size_in_bit(display_pixel_format_t format)
 {
-    switch(format) {
-        case display_pixel_format_argb8888:
-            return 32;
-        case display_pixel_format_rgb565:
-            return 16;
-        case display_pixel_format_yuv422:
-            return 16;
-        case display_pixel_format_ycbcr422:
-            return 16;
-        default:
-            return 0;
+    switch (format) {
+    case display_pixel_format_argb8888:
+        return 32;
+    case display_pixel_format_rgb565:
+        return 16;
+    case display_pixel_format_yuv422:
+        return 16;
+    case display_pixel_format_ycbcr422:
+        return 16;
+    case display_pixel_format_y8:
+        return 8;
+    case display_pixel_format_raw8:
+        return 8;
+    default:
+        return 0;
     }
 }
 
@@ -183,13 +212,13 @@ static inline
  */
 static inline bool display_pixel_format_is_yuv_format(display_pixel_format_t format)
 {
-    switch(format) {
-        case display_pixel_format_yuv422:
-            return true;
-        case display_pixel_format_ycbcr422:
-            return true;
-        default:
-            return false;
+    switch (format) {
+    case display_pixel_format_yuv422:
+        return true;
+    case display_pixel_format_ycbcr422:
+        return true;
+    default:
+        return false;
     }
 }
 

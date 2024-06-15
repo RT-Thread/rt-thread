@@ -10,6 +10,8 @@
 #ifndef __DRV_GPIO_H__
 #define __DRV_GPIO_H__
 
+#include <rtdef.h>
+
 /* IO default function */
 #define IO_INPUT         (0x00)
 #define IO_OUTPUT        (0x01)

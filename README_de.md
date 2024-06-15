@@ -53,14 +53,14 @@ Sie umfasst:
 
 | Name          | Beschreibung                                             |
 | ------------- | ------------------------------------------------------- |
-| BSP          | Board Support Package basierend auf der Portierung von verschiedenen Entwicklungsboards. |
-| Komponenten    | Komponenten, wie Shell, Dateisystem, Protokollstapel usw. |
-| Dokumentation | Verwandte Dokumente, wie Coding Style, Doxygen usw.        |
-| Beispiele      | Zugehöriger Beispielcode.                                 |
-| einschließen   | Kopfdateien des RT-Thread-Kernels.                        |
+| bsp       | Board Support Package basierend auf der Portierung von verschiedenen Entwicklungsboards. |
+| components | Komponenten, wie Shell, Dateisystem, Protokollstapel usw. |
+| documentation | Verwandte Dokumente, wie Coding Style, Doxygen usw.        |
+| examples | Zugehöriger Beispielcode.                                 |
+| include | Kopfdateien des RT-Thread-Kernels.                        |
 | libcpu        | CPU-Portierungscode wie ARM/MIPS/RISC-V usw. |
 | src           | Die Quelldateien für den RT-Thread-Kernel. |
-| Werkzeuge     | Die Skriptdateien für das RT-Thread Befehlserstellungswerkzeug.  |
+| tools | Die Skriptdateien für das RT-Thread Befehlserstellungswerkzeug.  |
 
 RT-Thread wurde inzwischen für fast 200 Entwicklungsboards portiert, die meisten BSPs unterstützen MDK, IAR-Entwicklungsumgebung und GCC-Compiler und bieten ein Standard-MDK- und IAR-Projekt, das es den Benutzern ermöglicht, ihren eigenen Anwendungscode direkt auf der Grundlage des Projekts hinzuzufügen. Jedes BSP hat eine ähnliche Verzeichnisstruktur, und die meisten BSPs bieten eine README.md-Datei, eine Datei im Markdown-Format, die eine grundlegende Einführung in das BSP enthält und erklärt, wie man einfach mit dem BSP beginnt.
 
@@ -82,7 +82,7 @@ RT-Thread unterstützt viele Architekturen und hat die wichtigsten Architekturen
 - **ARM9**：manufacturers like Allwinner、Xilinx 、GOKE
 - **ARM11**：manufacturers like Fullhan
 - **MIPS32**：manufacturers like loongson、Ingenic
-- **RISC-V RV32E/RV32I[F]/RV64[D]**：manufacturers like Hifive、[Kendryte](https://github.com/RT-Thread/rt-thread/tree/master/bsp/k210)、[bouffalo_lab](https://github.com/RT-Thread/rt-thread/tree/master/bsp/bouffalo_lab)、[Nuclei](https://nucleisys.com/)、[T-Head](https://www.t-head.cn/)
+- **RISC-V RV32E/RV32I[F]/RV64[D]**：manufacturers like Hifive、[Kendryte](https://github.com/RT-Thread/rt-thread/tree/master/bsp/k210)、[bouffalo_lab](https://github.com/RT-Thread/rt-thread/tree/master/bsp/bouffalo_lab)、[Nuclei](https://nucleisys.com/)、[T-Head](https://www.t-head.cn/)、[HPMicro](https://github.com/RT-Thread/rt-thread/tree/master/bsp/hpmicro)
 - **ARC**：manufacturers like SYNOPSYS
 - **DSP**：manufacturers like TI
 - **C-Sky**
@@ -107,7 +107,7 @@ RT-Thread Studio IDE (auch bekannt als RT-Studio) ist eine integrierte Entwicklu
 
 ## Env-Werkzeug
 
-[User Manual](documentation/env/env/) | [Tutorial Videos](https://www.youtube.com/watch?v=dEK94o_YoSo)
+[User Manual](documentation/env/env.md) | [Tutorial Videos](https://www.youtube.com/watch?v=dEK94o_YoSo)
 
 In der Anfangsphase schuf das RT-Thread-Team auch ein Hilfswerkzeug namens Env. Dabei handelt es sich um ein Hilfstool mit einer TUI (textbasierten Benutzeroberfläche). Entwickler können das Env-Tool verwenden, um GCC, Keil MDK und IAR-Projekte zu konfigurieren und zu generieren.
 
@@ -144,5 +144,4 @@ RT-Thread ist sehr dankbar für die Unterstützung durch alle Entwickler der Com
 
 # Beitrag
 
-Wenn Sie an RT-Thread interessiert sind und sich an der Entwicklung von RT-Thread beteiligen und einen Beitrag zum Code leisten wollen, lesen Sie bitte den [Code Contribution Guide](documentation/contribution_guide/contribution_guide.md).
-
+Wenn Sie an RT-Thread interessiert sind und sich an der Entwicklung von RT-Thread beteiligen und einen Beitrag zum Code leisten wollen, lesen Sie bitte den [Code Contribution Guide](.github/CONTRIBUTING.md).

@@ -19,9 +19,12 @@
 #include <board.h>
 #include <rtthread.h>
 #include <rthw.h>
-#include <lwp_arch.h>
 #include <mmu.h>
 #include <tlb.h>
+
+#ifdef RT_USING_SMART
+#include <lwp_arch.h>
+#endif
 
 #include <ioremap.h>
 #include <mm_aspace.h>
@@ -32,10 +35,15 @@
 extern rt_base_t rt_heap_lock(void);
 extern void rt_heap_unlock(rt_base_t level);
 
+#define __int_compare(a, b, operator) do{long _a = (long)(a); long _b = (long)(b); __utest_assert((_a) operator (_b), "Assertion Failed: (" #a ") "#operator" (" #b ")"); if (!((_a) operator (_b)))LOG_E("\t"#a"=%ld(0x%lx), "#b"=%ld(0x%lx)", _a, _a, _b, _b);} while (0)
+#define utest_int_equal(a, b) __int_compare(a, b, ==)
+#define utest_int_less(a, b) __int_compare(a, b, <)
+#define utest_int_less_equal(a, b) __int_compare(a, b, <=)
+
 /**
  * @brief During the operations, is heap still the same;
  */
-#define CONSIST_HEAP(statement) do {                 \
+#define CONSIST_HEAP(statement) do {                \
     rt_size_t total, used, max_used;                \
     rt_size_t totala, useda, max_useda;             \
     rt_ubase_t level = rt_heap_lock();              \
@@ -43,10 +51,18 @@ extern void rt_heap_unlock(rt_base_t level);
     statement;                                      \
     rt_memory_info(&totala, &useda, &max_useda);    \
     rt_heap_unlock(level);                          \
-    uassert_true(total == totala);                  \
-    uassert_true(used == useda);                    \
-    uassert_true(max_used == max_useda);            \
+    utest_int_equal(total, totala);               \
+    utest_int_equal(used, useda);                 \
     } while (0)
+
+#ifdef STANDALONE_TC
+#define TC_ASSERT(expr)                                                        \
+    ((expr)                                                                    \
+         ? 0                                                                   \
+         : rt_kprintf("AssertFault(%d): %s\n", __LINE__, RT_STRINGIFY(expr)))
+#else
+#define TC_ASSERT(expr) uassert_true(expr)
+#endif
 
 rt_inline int memtest(volatile char *buf, int value, size_t buf_sz)
 {

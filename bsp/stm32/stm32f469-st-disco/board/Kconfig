@@ -1,12 +1,5 @@
 menu "Hardware Drivers Config"
 
-config SOC_STM32F469NI
-    bool
-    select SOC_SERIES_STM32F4
-    select RT_USING_COMPONENTS_INIT
-    select RT_USING_USER_MAIN
-    default y
-
 menu "Onboard Peripheral Drivers"
     config BSP_USING_STLINK_TO_USART
         bool "Enable STLINK TO USART (uart3)"
@@ -35,6 +28,8 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_GPIO
         select BSP_USING_ADC
         select BSP_USING_ADC1
+        select BSP_USING_TIM
+        select BSP_USING_TIM6
         select BSP_USING_PWM
         select BSP_USING_PWM2
         select BSP_USING_PWM2_CH2
@@ -47,8 +42,13 @@ menu "Onboard Peripheral Drivers"
         select BSP_USING_PWM12_CH2
         select BSP_USING_I2C
         select BSP_USING_I2C1
+        select BSP_USING_SPI
+        select BSP_USING_SPI2
+        select BSP_SPI2_TX_USING_DMA
+        select BSP_SPI2_RX_USING_DMA
+        select RTDUINO_USING_WIRE
+        select RTDUINO_USING_SPI
         imply RTDUINO_USING_SERVO
-        imply RTDUINO_USING_WIRE
         default n
 
     config BSP_USING_SDRAM
@@ -89,6 +89,7 @@ menu "Onboard Peripheral Drivers"
 
     config BSP_USING_TOUCH
         bool "Enable touch screen"
+        select RT_USING_TOUCH
         select BSP_USING_I2C1
 
     choice
@@ -179,6 +180,16 @@ menu "On-chip Peripheral Drivers"
             endif
         endif
 
+    menuconfig BSP_USING_TIM
+        bool "Enable timer"
+        default n
+        select RT_USING_HWTIMER
+        if BSP_USING_TIM
+            config BSP_USING_TIM6
+                bool "Enable TIM6"
+                default n
+        endif
+
     menuconfig BSP_USING_UART
         bool "Enable UART"
         select RT_USING_SERIAL
@@ -217,6 +228,21 @@ menu "On-chip Peripheral Drivers"
         select RT_USING_SPI
         default n
         if BSP_USING_SPI
+            config BSP_USING_SPI2
+                bool "Enable SPI2 Bus"
+                default n
+
+            config BSP_SPI2_TX_USING_DMA
+                bool "Enable SPI2 TX DMA"
+                depends on BSP_USING_SPI2
+                default n
+
+            config BSP_SPI2_RX_USING_DMA
+                bool "Enable SPI2 RX DMA"
+                depends on BSP_USING_SPI2
+                select BSP_SPI2_TX_USING_DMA
+                default n
+
             config BSP_USING_SPI3
                 bool "Enable SPI3 BUS"
                 default n
@@ -261,7 +287,7 @@ menu "On-chip Peripheral Drivers"
     config BSP_USING_LTDC
         bool "Enable LTDC"
         default n
-    source "../libraries/HAL_Drivers/Kconfig"
+    source "$BSP_DIR/../libraries/HAL_Drivers/drivers/Kconfig"
 
 endmenu
 

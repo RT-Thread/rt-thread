@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 hpmicro
+ * Copyright (c) 2021-2023 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -449,11 +449,12 @@ typedef struct {
 /*
  * CH_MAX (RW)
  *
- * CH_MAX[3:0] s the number of channels supported in TDM mode. When not in TDM mode, it must be set as 2.
+ * CH_MAX[4:0] s the number of channels supported in TDM mode. When not in TDM mode, it must be set as 2.
  * It must be an even number, so CH_MAX[0] is always 0.
- * 4'h2: 2 channels
- * 4'h4: 4 channels
+ * 5'h2: 2 channels
+ * 5'h4: 4 channels
  * ...
+ * 5‘h10: 16 channels (max)
  */
 #define I2S_CFGR_CH_MAX_MASK (0x7C0U)
 #define I2S_CFGR_CH_MAX_SHIFT (6U)

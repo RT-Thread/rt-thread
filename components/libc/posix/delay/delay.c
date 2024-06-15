@@ -12,36 +12,68 @@
 #include <rtthread.h>
 #include <rthw.h>
 
+/**
+ * @brief    Delays the execution of the current thread for the specified number of milliseconds.
+ *
+ * @param    msecs The number of milliseconds to sleep.
+ */
 void msleep(unsigned int msecs)
 {
     rt_thread_mdelay(msecs);
 }
 RTM_EXPORT(msleep);
 
+/**
+ * @brief    Delays the execution of the current thread for the specified number of seconds.
+ *
+ * @param    seconds The number of seconds to sleep.
+ */
 void ssleep(unsigned int seconds)
 {
     msleep(seconds * 1000);
 }
 RTM_EXPORT(ssleep);
 
+/**
+ * @brief    Delays the execution of the current thread for the specified number of milliseconds.
+ *
+ * @param    msecs The number of milliseconds to delay.
+ */
 void mdelay(unsigned long msecs)
 {
     rt_hw_us_delay(msecs * 1000);
 }
 RTM_EXPORT(mdelay);
 
+/**
+ * @brief    Delays the execution of the current thread for the specified number of microseconds.
+ *
+ * @param    usecs The number of microseconds to delay.
+ */
 void udelay(unsigned long usecs)
 {
     rt_hw_us_delay(usecs);
 }
 RTM_EXPORT(udelay);
 
+/**
+ * @brief    Delays the execution of the current thread for approximately one microsecond.
+ *
+ * @param    nsecs This parameter is ignored.
+ */
 void ndelay(unsigned long nsecs)
 {
     rt_hw_us_delay(1);
 }
 RTM_EXPORT(ndelay);
 
+/**
+ * @brief    Delays the execution of the current thread for the specified number of seconds.
+ *
+ * @param    seconds The number of seconds to sleep.
+ *
+ * @return   Returns 0 on success.
+ */
 unsigned int sleep(unsigned int seconds)
 {
     if (rt_thread_self() != RT_NULL)
@@ -61,6 +93,13 @@ unsigned int sleep(unsigned int seconds)
 }
 RTM_EXPORT(sleep);
 
+/**
+ * @brief    Delays the execution of the current thread for the specified number of microseconds.
+ *
+ * @param    usec The number of microseconds to sleep.
+ *
+ * @return   Returns 0 on success.
+ */
 int usleep(useconds_t usec)
 {
     if (rt_thread_self() != RT_NULL)

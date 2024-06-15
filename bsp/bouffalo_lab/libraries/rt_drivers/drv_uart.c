@@ -15,76 +15,15 @@
 #include "board.h"
 #include "drv_uart.h"
 
+#ifdef RT_USING_SMART
+#include <ioremap.h>
+#endif
+
 #define DBG_TAG "DRV.UART"
 #define DBG_LVL DBG_WARNING
 #include <rtdbg.h>
 
 #define UART_DEFAULT_BAUDRATE 2000000
-
-// uart0
-#ifdef UART0_TX_USING_GPIO14
-#define UART0_GPIO_TX           GPIO_PIN_14
-#elif defined(UART0_TX_USING_GPIO16)
-#define UART0_GPIO_TX           GPIO_PIN_16
-#elif defined(UART0_TX_USING_GPIO21)
-#define UART0_GPIO_TX           GPIO_PIN_21
-#endif
-
-#ifdef UART0_RX_USING_GPIO7
-#define UART0_GPIO_RX           GPIO_PIN_7
-#elif defined(UART0_RX_USING_GPIO15)
-#define UART0_GPIO_RX           GPIO_PIN_15
-#elif defined(UART0_RX_USING_GPIO22)
-#define UART0_GPIO_RX           GPIO_PIN_22
-#elif defined(UART0_RX_USING_GPIO23)
-#define UART0_GPIO_RX           GPIO_PIN_23
-#endif
-
-// uart1
-#ifdef UART1_TX_USING_GPIO4
-#define UART1_GPIO_TX           GPIO_PIN_4
-#elif defined(UART1_TX_USING_GPIO16)
-#define UART1_GPIO_TX           GPIO_PIN_16
-#elif defined(UART1_TX_USING_GPIO18)
-#define UART1_GPIO_TX           GPIO_PIN_18
-#elif defined(UART1_TX_USING_GPIO26)
-#define UART1_GPIO_TX           GPIO_PIN_26
-#endif
-
-#ifdef UART1_RX_USING_GPIO3
-#define UART1_GPIO_RX           GPIO_PIN_3
-#elif defined(UART1_RX_USING_GPIO5)
-#define UART1_GPIO_RX           GPIO_PIN_5
-#elif defined(UART1_RX_USING_GPIO17)
-#define UART1_GPIO_RX           GPIO_PIN_17
-#elif defined(UART1_RX_USING_GPIO19)
-#define UART1_GPIO_RX           GPIO_PIN_19
-#elif defined(UART1_RX_USING_GPIO27)
-#define UART1_GPIO_RX           GPIO_PIN_27
-#endif
-
-// uart2
-#ifdef UART2_TX_USING_GPIO4
-#define UART2_GPIO_TX           GPIO_PIN_4
-#elif defined(UART2_TX_USING_GPIO16)
-#define UART2_GPIO_TX           GPIO_PIN_16
-#elif defined(UART2_TX_USING_GPIO18)
-#define UART2_GPIO_TX           GPIO_PIN_18
-#elif defined(UART2_TX_USING_GPIO20)
-#define UART2_GPIO_TX           GPIO_PIN_20
-#endif
-
-#ifdef UART2_RX_USING_GPIO3
-#define UART2_GPIO_RX           GPIO_PIN_3
-#elif defined(UART2_RX_USING_GPIO5)
-#define UART2_GPIO_RX           GPIO_PIN_5
-#elif defined(UART2_RX_USING_GPIO17)
-#define UART2_GPIO_RX           GPIO_PIN_17
-#elif defined(UART2_RX_USING_GPIO19)
-#define UART2_GPIO_RX           GPIO_PIN_19
-#elif defined(UART2_RX_USING_GPIO21)
-#define UART2_GPIO_RX           GPIO_PIN_21
-#endif
 
 struct device_uart
 {
@@ -92,7 +31,7 @@ struct device_uart
     struct bflb_device_s    *bflb_device;
 };
 
-static void _uart_rx_irq(int irq, void *arg)
+static void uart_irq_handler(int irq, void *arg)
 {
     struct rt_serial_device *serial = (struct rt_serial_device *)arg;
     RT_ASSERT(serial != RT_NULL);
@@ -212,15 +151,26 @@ static rt_err_t _uart_control(struct rt_serial_device *serial, int cmd, void *ar
     {
     /* disable interrupt */
     case RT_DEVICE_CTRL_CLR_INT:
+        bflb_uart_rxint_mask(uart->bflb_device, true);
+#ifdef BL808_CORE_D0
+        rt_hw_interrupt_mask(uart->bflb_device->irq_num);
+        rt_hw_interrupt_install(uart->bflb_device->irq_num, RT_NULL, serial, RT_NULL);
+#else
         bflb_irq_disable(uart->bflb_device->irq_num);
-        bflb_irq_attach(uart->bflb_device->irq_num, NULL, NULL);
+        bflb_irq_attach(uart->bflb_device->irq_num, RT_NULL, RT_NULL);
+#endif
         break;
 
     /* enable interrupt */
     case RT_DEVICE_CTRL_SET_INT:
         bflb_uart_rxint_mask(uart->bflb_device, false);
-        bflb_irq_attach(uart->bflb_device->irq_num, _uart_rx_irq, serial);
+#ifdef BL808_CORE_D0
+        rt_hw_interrupt_install(uart->bflb_device->irq_num, uart_irq_handler, serial, RT_NULL);
+        rt_hw_interrupt_umask(uart->bflb_device->irq_num);
+#else
+        bflb_irq_attach(uart->bflb_device->irq_num, uart_irq_handler, serial);
         bflb_irq_enable(uart->bflb_device->irq_num);
+#endif
         break;
     }
     return RT_EOK;
@@ -265,85 +215,85 @@ static const struct rt_uart_ops _uart_ops =
     .dma_transmit = RT_NULL
 };
 
+static void _uart_init(const char *name, struct device_uart *uart, rt_uint32_t flag)
+{
+    rt_err_t result = RT_EOK;
+
+    struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT;
+    struct rt_serial_device *serial;
+
+    serial                   = &uart->serial;
+
+    serial->ops              = &_uart_ops;
+    serial->config           = config;
+    serial->config.baud_rate = UART_DEFAULT_BAUDRATE;
+
+    /* register USART device */
+    result = rt_hw_serial_register(serial,
+                                    name,
+                                    flag,
+                                    uart);
+    RT_ASSERT(result == RT_EOK);
+}
 /*
  * UART Initiation
  */
 int rt_hw_uart_init(void)
 {
-    rt_err_t result = 0;
     struct bflb_device_s    *gpio;
-
-    struct serial_configure config = RT_SERIAL_CONFIG_DEFAULT;
-    struct rt_serial_device *serial;
-    struct device_uart      *uart;
+    rt_uint32_t flag;
 
     gpio = bflb_device_get_by_name("gpio");
 
 #ifdef BSP_USING_UART0
     static struct device_uart bl_uart0;
-
-    serial  = &bl_uart0.serial;
-    uart    = &bl_uart0;
-
-    serial->ops              = &_uart_ops;
-    serial->config           = config;
-    serial->config.baud_rate = UART_DEFAULT_BAUDRATE;
-
-    uart->bflb_device = bflb_device_get_by_name("uart0");
+    bl_uart0.bflb_device = bflb_device_get_by_name("uart0");
 
     bflb_gpio_uart_init(gpio, UART0_GPIO_TX, GPIO_UART_FUNC_UART0_TX);
     bflb_gpio_uart_init(gpio, UART0_GPIO_RX, GPIO_UART_FUNC_UART0_RX);
 
-    /* register USART device */
-    result = rt_hw_serial_register(serial,
-                                    "uart0",
-                                    RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
-                                    uart);
-    RT_ASSERT(result == RT_EOK);
+    flag = RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX;
+
+    _uart_init("uart0", &bl_uart0, flag);
 #endif
 
 #ifdef BSP_USING_UART1
     static struct device_uart bl_uart1;
+    bl_uart1.bflb_device = bflb_device_get_by_name("uart1");
 
-    serial  = &bl_uart1.serial;
-    uart    = &bl_uart1;
-
-    serial->ops              = &_uart_ops;
-    serial->config           = config;
-    serial->config.baud_rate = UART_DEFAULT_BAUDRATE;
-
-    uart->bflb_device = bflb_device_get_by_name("uart1");
     bflb_gpio_uart_init(gpio, UART1_GPIO_TX, GPIO_UART_FUNC_UART1_TX);
     bflb_gpio_uart_init(gpio, UART1_GPIO_RX, GPIO_UART_FUNC_UART1_RX);
 
-    /* register USART device */
-    result = rt_hw_serial_register(serial,
-                                    "uart1",
-                                    RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
-                                    uart);
-    RT_ASSERT(result == RT_EOK);
+    flag = RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX;
+
+    _uart_init("uart1", &bl_uart1, flag);
 #endif
 
 #ifdef BSP_USING_UART2
     static struct device_uart bl_uart2;
+    bl_uart2.bflb_device = bflb_device_get_by_name("uart2");
 
-    serial  = &bl_uart2.serial;
-    uart    = &bl_uart2;
-
-    serial->ops              = &_uart_ops;
-    serial->config           = config;
-    serial->config.baud_rate = UART_DEFAULT_BAUDRATE;
-
-    uart->bflb_device = bflb_device_get_by_name("uart2");
     bflb_gpio_uart_init(gpio, UART2_GPIO_TX, GPIO_UART_FUNC_UART2_TX);
     bflb_gpio_uart_init(gpio, UART2_GPIO_RX, GPIO_UART_FUNC_UART2_RX);
 
-    /* register USART device */
-    result = rt_hw_serial_register(serial,
-                                    "uart2",
-                                    RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX,
-                                    uart);
-    RT_ASSERT(result == RT_EOK);
+    flag = RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX;
+
+    _uart_init("uart2", &bl_uart2, flag);
 #endif
+
+#ifdef BSP_USING_UART3
+    static struct device_uart bl_uart3;
+    bl_uart3.bflb_device = bflb_device_get_by_name("uart3");
+
+    bflb_gpio_init(gpio, UART3_GPIO_TX, 21 | GPIO_ALTERNATE | GPIO_PULLUP | GPIO_SMT_EN | GPIO_DRV_1);
+    bflb_gpio_init(gpio, UART3_GPIO_RX, 21 | GPIO_ALTERNATE | GPIO_PULLUP | GPIO_SMT_EN | GPIO_DRV_1);
+
+    flag = RT_DEVICE_FLAG_RDWR | RT_DEVICE_FLAG_INT_RX;
+    if(strcmp("uart3", RT_CONSOLE_DEVICE_NAME) == 0)
+        flag |= RT_DEVICE_FLAG_STREAM;
+
+    _uart_init("uart3", &bl_uart3, flag);
+#endif
+
     return 0;
 }

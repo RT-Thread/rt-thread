@@ -8,6 +8,8 @@
  * 2022-05-16     shelton      first version
  * 2023-01-31     shelton      add support f425
  * 2023-04-08     shelton      add support f423
+ * 2023-10-18     shelton      add support f402/f405
+ * 2024-04-12     shelton      add support a403a and a423
  */
 
 #include "drv_can.h"
@@ -17,6 +19,54 @@
 #define LOG_TAG    "drv_can"
 #include <drv_log.h>
 
+#ifdef SOC_SERIES_AT32A403A
+/* attention !!! baud calculation example: apbclk / ((ss + bs1 + bs2) * brp), ep: 96 / ((1 + 8 + 3) * 8) = 1MHz*/
+/* attention !!! default apbclk 96 mhz */
+static const struct at32_baud_rate can_baud_rate_tab[] =
+{
+    {CAN1MBaud,   {8 ,  CAN_RSAW_3TQ, CAN_BTS1_8TQ,  CAN_BTS2_3TQ}},
+    {CAN800kBaud, {20,  CAN_RSAW_1TQ, CAN_BTS1_3TQ,  CAN_BTS2_2TQ}},
+    {CAN500kBaud, {16,  CAN_RSAW_3TQ, CAN_BTS1_8TQ,  CAN_BTS2_3TQ}},
+    {CAN250kBaud, {32,  CAN_RSAW_3TQ, CAN_BTS1_8TQ,  CAN_BTS2_3TQ}},
+    {CAN125kBaud, {64,  CAN_RSAW_3TQ, CAN_BTS1_8TQ,  CAN_BTS2_3TQ}},
+    {CAN100kBaud, {160, CAN_RSAW_1TQ, CAN_BTS1_3TQ,  CAN_BTS2_2TQ}},
+    {CAN50kBaud,  {320, CAN_RSAW_1TQ, CAN_BTS1_3TQ,  CAN_BTS2_2TQ}},
+    {CAN20kBaud,  {800, CAN_RSAW_1TQ, CAN_BTS1_3TQ,  CAN_BTS2_2TQ}},
+    {CAN10kBaud,  {800, CAN_RSAW_1TQ, CAN_BTS1_8TQ,  CAN_BTS2_3TQ}},
+};
+#endif
+#ifdef SOC_SERIES_AT32A423
+/* attention !!! baud calculation example: apbclk / ((ss + bs1 + bs2) * brp), ep: 72 / ((1 + 8 + 3) * 10) = 1MHz*/
+/* attention !!! default apbclk 72 mhz */
+static const struct at32_baud_rate can_baud_rate_tab[] =
+{
+    {CAN1MBaud,   {6 ,  CAN_RSAW_3TQ, CAN_BTS1_8TQ,  CAN_BTS2_3TQ}},
+    {CAN800kBaud, {10 , CAN_RSAW_2TQ, CAN_BTS1_6TQ,  CAN_BTS2_2TQ}},
+    {CAN500kBaud, {12 , CAN_RSAW_3TQ, CAN_BTS1_8TQ,  CAN_BTS2_3TQ}},
+    {CAN250kBaud, {24 , CAN_RSAW_3TQ, CAN_BTS1_8TQ,  CAN_BTS2_3TQ}},
+    {CAN125kBaud, {48 , CAN_RSAW_3TQ, CAN_BTS1_8TQ,  CAN_BTS2_3TQ}},
+    {CAN100kBaud, {60 , CAN_RSAW_3TQ, CAN_BTS1_8TQ,  CAN_BTS2_3TQ}},
+    {CAN50kBaud,  {120, CAN_RSAW_3TQ, CAN_BTS1_8TQ,  CAN_BTS2_3TQ}},
+    {CAN20kBaud,  {300, CAN_RSAW_3TQ, CAN_BTS1_8TQ,  CAN_BTS2_3TQ}},
+    {CAN10kBaud,  {600, CAN_RSAW_3TQ, CAN_BTS1_8TQ,  CAN_BTS2_3TQ}}
+};
+#endif
+#ifdef SOC_SERIES_AT32F402
+/* attention !!! baud calculation example: apbclk / ((ss + bs1 + bs2) * brp), ep: 108 / ((1 + 8 + 3) * 9) = 1MHz*/
+/* attention !!! default apbclk 108 mhz */
+static const struct at32_baud_rate can_baud_rate_tab[] =
+{
+    {CAN1MBaud,   {9 ,  CAN_RSAW_3TQ, CAN_BTS1_8TQ,  CAN_BTS2_3TQ}},
+    {CAN800kBaud, {15 , CAN_RSAW_2TQ, CAN_BTS1_6TQ,  CAN_BTS2_2TQ}},
+    {CAN500kBaud, {18 , CAN_RSAW_3TQ, CAN_BTS1_8TQ,  CAN_BTS2_3TQ}},
+    {CAN250kBaud, {36 , CAN_RSAW_3TQ, CAN_BTS1_8TQ,  CAN_BTS2_3TQ}},
+    {CAN125kBaud, {72 , CAN_RSAW_3TQ, CAN_BTS1_8TQ,  CAN_BTS2_3TQ}},
+    {CAN100kBaud, {90 , CAN_RSAW_3TQ, CAN_BTS1_8TQ,  CAN_BTS2_3TQ}},
+    {CAN50kBaud,  {180, CAN_RSAW_3TQ, CAN_BTS1_8TQ,  CAN_BTS2_3TQ}},
+    {CAN20kBaud,  {450, CAN_RSAW_3TQ, CAN_BTS1_8TQ,  CAN_BTS2_3TQ}},
+    {CAN10kBaud,  {900, CAN_RSAW_3TQ, CAN_BTS1_8TQ,  CAN_BTS2_3TQ}}
+};
+#endif
 #ifdef SOC_SERIES_AT32F403A
 /* attention !!! baud calculation example: apbclk / ((ss + bs1 + bs2) * brp), ep: 120 / ((1 + 8 + 3) * 10) = 1MHz*/
 /* attention !!! default apbclk 120 mhz */
@@ -31,6 +81,22 @@ static const struct at32_baud_rate can_baud_rate_tab[] =
     {CAN50kBaud,  {150, CAN_RSAW_2TQ, CAN_BTS1_13TQ, CAN_BTS2_2TQ}},
     {CAN20kBaud,  {375, CAN_RSAW_2TQ, CAN_BTS1_13TQ, CAN_BTS2_2TQ}},
     {CAN10kBaud,  {750, CAN_RSAW_2TQ, CAN_BTS1_13TQ, CAN_BTS2_2TQ}}
+};
+#endif
+#ifdef SOC_SERIES_AT32F405
+/* attention !!! baud calculation example: apbclk / ((ss + bs1 + bs2) * brp), ep: 108 / ((1 + 8 + 3) * 9) = 1MHz*/
+/* attention !!! default apbclk 108 mhz */
+static const struct at32_baud_rate can_baud_rate_tab[] =
+{
+    {CAN1MBaud,   {9 ,  CAN_RSAW_3TQ, CAN_BTS1_8TQ,  CAN_BTS2_3TQ}},
+    {CAN800kBaud, {15 , CAN_RSAW_2TQ, CAN_BTS1_6TQ,  CAN_BTS2_2TQ}},
+    {CAN500kBaud, {18 , CAN_RSAW_3TQ, CAN_BTS1_8TQ,  CAN_BTS2_3TQ}},
+    {CAN250kBaud, {36 , CAN_RSAW_3TQ, CAN_BTS1_8TQ,  CAN_BTS2_3TQ}},
+    {CAN125kBaud, {72 , CAN_RSAW_3TQ, CAN_BTS1_8TQ,  CAN_BTS2_3TQ}},
+    {CAN100kBaud, {90 , CAN_RSAW_3TQ, CAN_BTS1_8TQ,  CAN_BTS2_3TQ}},
+    {CAN50kBaud,  {180, CAN_RSAW_3TQ, CAN_BTS1_8TQ,  CAN_BTS2_3TQ}},
+    {CAN20kBaud,  {450, CAN_RSAW_3TQ, CAN_BTS1_8TQ,  CAN_BTS2_3TQ}},
+    {CAN10kBaud,  {900, CAN_RSAW_3TQ, CAN_BTS1_8TQ,  CAN_BTS2_3TQ}}
 };
 #endif
 #ifdef SOC_SERIES_AT32F407
@@ -66,7 +132,7 @@ static const struct at32_baud_rate can_baud_rate_tab[] =
 };
 #endif
 #ifdef SOC_SERIES_AT32F415
-/* attention !!! baud calculation example: apbclk / ((ss + bs1 + bs2) * brp), ep: 72 / ((1 + 8 + 3) * 10) = 1MHz*/
+/* attention !!! baud calculation example: apbclk / ((ss + bs1 + bs2) * brp), ep: 72 / ((1 + 8 + 3) * 6) = 1MHz*/
 /* attention !!! default apbclk 72 mhz */
 static const struct at32_baud_rate can_baud_rate_tab[] =
 {
@@ -152,7 +218,9 @@ static const struct at32_baud_rate can_baud_rate_tab[] =
 #define CAN1_TX_IRQ_NUM         CAN1_IRQn
 #define CAN1_SE_IRQ_NUM         CAN1_IRQn
 #elif defined (SOC_SERIES_AT32F415) || defined (SOC_SERIES_AT32F435) || \
-      defined (SOC_SERIES_AT32F437) || defined (SOC_SERIES_AT32F423)
+      defined (SOC_SERIES_AT32F437) || defined (SOC_SERIES_AT32F423) || \
+      defined (SOC_SERIES_AT32F402) || defined (SOC_SERIES_AT32F405) || \
+      defined (SOC_SERIES_AT32A423)
 #define CAN1_RX0_IRQ_NUM        CAN1_RX0_IRQn
 #define CAN1_RX1_IRQ_NUM        CAN1_RX1_IRQn
 #define CAN1_TX_IRQ_NUM         CAN1_TX_IRQn
@@ -537,7 +605,7 @@ static rt_err_t _can_control(struct rt_can_device *can, int cmd, void *arg)
     return RT_EOK;
 }
 
-static int _can_sendmsg(struct rt_can_device *can, const void *buf, rt_uint32_t box_num)
+static rt_ssize_t _can_sendmsg(struct rt_can_device *can, const void *buf, rt_uint32_t box_num)
 {
     struct can_config *hcan;
     hcan = &((struct at32_can *) can->parent.user_data)->config;
@@ -610,7 +678,7 @@ static int _can_sendmsg(struct rt_can_device *can, const void *buf, rt_uint32_t 
     return RT_EOK;
 }
 
-static int _can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t fifo)
+static rt_ssize_t _can_recvmsg(struct rt_can_device *can, void *buf, rt_uint32_t fifo)
 {
     struct can_config *hcan;
     hcan = &((struct at32_can *) can->parent.user_data)->config;

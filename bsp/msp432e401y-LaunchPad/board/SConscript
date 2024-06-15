@@ -1,0 +1,30 @@
+import os
+import rtconfig
+from building import *
+
+Import('SDK_LIB')
+
+cwd = GetCurrentDir()
+
+# add general drivers
+src = Split('''
+board.c
+''')
+
+path =  [cwd]
+
+startup_path_prefix = SDK_LIB
+
+if rtconfig.PLATFORM in ['gcc']:
+    src += [startup_path_prefix + '/msp432e4/startup_system_files/gcc/startup_msp432e401y_gcc.c']
+elif rtconfig.PLATFORM in ['armcc', 'armclang']:
+    src += [startup_path_prefix + '/msp432e4/startup_system_files/keil/startup_msp432e401y_uvision.s']
+elif rtconfig.PLATFORM in ['iccarm']:
+    src += [startup_path_prefix + '/libraries/msp432e4/startup_system_files/iar/startup_msp432e401y_ewarm.c']
+
+
+CPPDEFINES = ['__MSP432E401Y__']
+if rtconfig.PLATFORM in ['armcc', 'armclang']:
+    CPPDEFINES += ['rvmdk']
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
+Return('group')

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2022 hpmicro
+ * Copyright (c) 2021-2023 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -298,7 +298,7 @@ typedef struct {
 #define VAD_ST_VAD_GET(x) (((uint32_t)(x) & VAD_ST_VAD_MASK) >> VAD_ST_VAD_SHIFT)
 
 /*
- * OFIFO_AV (ROI)
+ * OFIFO_AV (RO)
  *
  * OFIFO data available
  */
@@ -424,7 +424,7 @@ typedef struct {
 
 /* Bitfield definition for register array: COEF */
 /*
- * VAL (ROI)
+ * VAL (RO)
  *
  * The current detected short time energy
  */

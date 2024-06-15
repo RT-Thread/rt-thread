@@ -1,10 +1,15 @@
 menu "C/C++ and POSIX layer"
 
-config RT_LIBC_DEFAULT_TIMEZONE
-    int "Set the default time zone (UTC+)"
-    range -12 12
-    default 8
+config RT_USING_EXTERNAL_LIBC
+    bool
+    help
+        This is for external libc(e.g. mlib),
+        and NOT for newlib or picolibc which are inherent in the toolchains.
+        Usually, the external libc should be a software package and select
+        RT_USING_EXTERNAL_LIBC in software package's Kconfig
+        This option is not available for users to select.
 
+source "$RTT_DIR/components/libc/compilers/common/Kconfig"
 source "$RTT_DIR/components/libc/posix/Kconfig"
 source "$RTT_DIR/components/libc/cplusplus/Kconfig"
 

@@ -9,10 +9,10 @@
  * 2021-08-01     Meco Man     remove rt_delayed_work_init()
  * 2021-08-14     Jackistang   add comments for function interface
  * 2022-01-16     Meco Man     add rt_work_urgent()
+ * 2023-09-15     xqyjlj       perf rt_hw_interrupt_disable/enable
  */
 
 #include <rthw.h>
-#include <rtthread.h>
 #include <rtdevice.h>
 
 #ifdef RT_USING_HEAP
@@ -23,7 +23,6 @@ rt_inline rt_err_t _workqueue_work_completion(struct rt_workqueue *queue)
 {
     rt_err_t result;
 
-    rt_enter_critical();
     while (1)
     {
         /* try to take condition semaphore */
@@ -45,7 +44,6 @@ rt_inline rt_err_t _workqueue_work_completion(struct rt_workqueue *queue)
             break;
         }
     }
-    rt_exit_critical();
 
     return result;
 }
@@ -61,12 +59,15 @@ static void _workqueue_thread_entry(void *parameter)
 
     while (1)
     {
-        level = rt_hw_interrupt_disable();
+        level = rt_spin_lock_irqsave(&(queue->spinlock));
         if (rt_list_isempty(&(queue->work_list)))
         {
             /* no software timer exist, suspend self. */
             rt_thread_suspend_with_flag(rt_thread_self(), RT_UNINTERRUPTIBLE);
-            rt_hw_interrupt_enable(level);
+
+            /* release lock after suspend so we will not lost any wakeups */
+            rt_spin_unlock_irqrestore(&(queue->spinlock), level);
+
             rt_schedule();
             continue;
         }
@@ -77,7 +78,7 @@ static void _workqueue_thread_entry(void *parameter)
         queue->work_current = work;
         work->flags &= ~RT_WORK_STATE_PENDING;
         work->workqueue = RT_NULL;
-        rt_hw_interrupt_enable(level);
+        rt_spin_unlock_irqrestore(&(queue->spinlock), level);
 
         /* do work */
         work->work_func(work, work->work_data);
@@ -93,8 +94,9 @@ static rt_err_t _workqueue_submit_work(struct rt_workqueue *queue,
                                        struct rt_work *work, rt_tick_t ticks)
 {
     rt_base_t level;
+    rt_err_t err;
 
-    level = rt_hw_interrupt_disable();
+    level = rt_spin_lock_irqsave(&(queue->spinlock));
 
     /* remove list */
     rt_list_remove(&(work->list));
@@ -107,17 +109,15 @@ static rt_err_t _workqueue_submit_work(struct rt_workqueue *queue,
         work->workqueue = queue;
 
         /* whether the workqueue is doing work */
-        if (queue->work_current == RT_NULL &&
-                ((queue->work_thread->stat & RT_THREAD_SUSPEND_MASK) == RT_THREAD_SUSPEND_MASK))
+        if (queue->work_current == RT_NULL)
         {
-            /* resume work thread */
+            /* resume work thread, and do a re-schedule if succeed */
             rt_thread_resume(queue->work_thread);
-            rt_hw_interrupt_enable(level);
-            rt_schedule();
+            rt_spin_unlock_irqrestore(&(queue->spinlock), level);
         }
         else
         {
-            rt_hw_interrupt_enable(level);
+            rt_spin_unlock_irqrestore(&(queue->spinlock), level);
         }
         return RT_EOK;
     }
@@ -126,7 +126,6 @@ static rt_err_t _workqueue_submit_work(struct rt_workqueue *queue,
         /* Timer started */
         if (work->flags & RT_WORK_STATE_SUBMITTING)
         {
-            rt_timer_stop(&work->timer);
             rt_timer_control(&work->timer, RT_TIMER_CTRL_SET_TIME, &ticks);
         }
         else
@@ -138,11 +137,13 @@ static rt_err_t _workqueue_submit_work(struct rt_workqueue *queue,
         work->workqueue = queue;
         /* insert delay work list */
         rt_list_insert_after(queue->delayed_list.prev, &(work->list));
-        rt_hw_interrupt_enable(level);
-        rt_timer_start(&(work->timer));
-        return RT_EOK;
+
+        err = rt_timer_start(&(work->timer));
+        rt_spin_unlock_irqrestore(&(queue->spinlock), level);
+
+        return err;
     }
-    rt_hw_interrupt_enable(level);
+    rt_spin_unlock_irqrestore(&(queue->spinlock), level);
     return -RT_ERROR;
 }
 
@@ -151,19 +152,23 @@ static rt_err_t _workqueue_cancel_work(struct rt_workqueue *queue, struct rt_wor
     rt_base_t level;
     rt_err_t err;
 
-    level = rt_hw_interrupt_disable();
+    level = rt_spin_lock_irqsave(&(queue->spinlock));
     rt_list_remove(&(work->list));
     work->flags &= ~RT_WORK_STATE_PENDING;
     /* Timer started */
     if (work->flags & RT_WORK_STATE_SUBMITTING)
     {
-        rt_timer_stop(&(work->timer));
+        if ((err = rt_timer_stop(&(work->timer))) != RT_EOK)
+        {
+            rt_spin_unlock_irqrestore(&(queue->spinlock), level);
+            return err;
+        }
         rt_timer_detach(&(work->timer));
         work->flags &= ~RT_WORK_STATE_SUBMITTING;
     }
     err = queue->work_current != work ? RT_EOK : -RT_EBUSY;
     work->workqueue = RT_NULL;
-    rt_hw_interrupt_enable(level);
+    rt_spin_unlock_irqrestore(&(queue->spinlock), level);
     return err;
 }
 
@@ -175,9 +180,11 @@ static void _delayed_work_timeout_handler(void *parameter)
 
     work = (struct rt_work *)parameter;
     queue = work->workqueue;
+
+    RT_ASSERT(work->flags & RT_WORK_STATE_SUBMITTING);
     RT_ASSERT(queue != RT_NULL);
 
-    level = rt_hw_interrupt_disable();
+    level = rt_spin_lock_irqsave(&(queue->spinlock));
     rt_timer_detach(&(work->timer));
     work->flags &= ~RT_WORK_STATE_SUBMITTING;
     /* remove delay list */
@@ -189,17 +196,15 @@ static void _delayed_work_timeout_handler(void *parameter)
         work->flags |= RT_WORK_STATE_PENDING;
     }
     /* whether the workqueue is doing work */
-    if (queue->work_current == RT_NULL &&
-            ((queue->work_thread->stat & RT_THREAD_SUSPEND_MASK) == RT_THREAD_SUSPEND_MASK))
+    if (queue->work_current == RT_NULL)
     {
-        /* resume work thread */
+        /* resume work thread, and do a re-schedule if succeed */
         rt_thread_resume(queue->work_thread);
-        rt_hw_interrupt_enable(level);
-        rt_schedule();
+        rt_spin_unlock_irqrestore(&(queue->spinlock), level);
     }
     else
     {
-        rt_hw_interrupt_enable(level);
+        rt_spin_unlock_irqrestore(&(queue->spinlock), level);
     }
 }
 
@@ -255,10 +260,12 @@ struct rt_workqueue *rt_workqueue_create(const char *name, rt_uint16_t stack_siz
         queue->work_thread = rt_thread_create(name, _workqueue_thread_entry, queue, stack_size, priority, 10);
         if (queue->work_thread == RT_NULL)
         {
+            rt_sem_detach(&(queue->sem));
             RT_KERNEL_FREE(queue);
             return RT_NULL;
         }
 
+        rt_spin_lock_init(&(queue->spinlock));
         rt_thread_startup(queue->work_thread);
     }
 
@@ -342,22 +349,20 @@ rt_err_t rt_workqueue_urgent_work(struct rt_workqueue *queue, struct rt_work *wo
     RT_ASSERT(queue != RT_NULL);
     RT_ASSERT(work != RT_NULL);
 
-    level = rt_hw_interrupt_disable();
+    level = rt_spin_lock_irqsave(&(queue->spinlock));
     /* NOTE: the work MUST be initialized firstly */
     rt_list_remove(&(work->list));
     rt_list_insert_after(&queue->work_list, &(work->list));
     /* whether the workqueue is doing work */
-    if (queue->work_current == RT_NULL &&
-            ((queue->work_thread->stat & RT_THREAD_SUSPEND_MASK) == RT_THREAD_SUSPEND_MASK))
+    if (queue->work_current == RT_NULL)
     {
-        /* resume work thread */
+        /* resume work thread, and do a re-schedule if succeed */
         rt_thread_resume(queue->work_thread);
-        rt_hw_interrupt_enable(level);
-        rt_schedule();
+        rt_spin_unlock_irqrestore(&(queue->spinlock), level);
     }
     else
     {
-        rt_hw_interrupt_enable(level);
+        rt_spin_unlock_irqrestore(&(queue->spinlock), level);
     }
 
     return RT_EOK;
@@ -399,6 +404,7 @@ rt_err_t rt_workqueue_cancel_work_sync(struct rt_workqueue *queue, struct rt_wor
     {
         /* wait for work completion */
         rt_sem_take(&(queue->sem), RT_WAITING_FOREVER);
+        /* Note that because work items are automatically deleted after execution, they do not need to be deleted again */
     }
     else
     {

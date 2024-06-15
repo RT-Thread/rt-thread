@@ -40,6 +40,7 @@ rt_hw_interrupt_enable:
  */
 .globl rt_hw_context_switch_to
 rt_hw_context_switch_to:
+    clrex
     ldr sp, [r0]            @ get new task stack pointer
 
 #ifdef RT_USING_SMP
@@ -76,6 +77,7 @@ _guest_switch_lvl:
  */
 .globl rt_hw_context_switch
 rt_hw_context_switch:
+    clrex
     stmfd   sp!, {lr}       @ push pc (lr should be pushed in place of PC)
     stmfd   sp!, {r0-r12, lr}   @ push lr & register file
 
@@ -143,6 +145,7 @@ rt_hw_context_switch:
 .globl rt_interrupt_to_thread
 .globl rt_hw_context_switch_interrupt
 rt_hw_context_switch_interrupt:
+    clrex
 #ifdef RT_USING_SMP
     /* r0 :svc_mod context
      * r1 :addr of from_thread's sp

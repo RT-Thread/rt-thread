@@ -1,6 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
- * Copyright (c) 2022, Xiaohua Semiconductor Co., Ltd.
+ * Copyright (C) 2022-2024, Xiaohua Semiconductor Co., Ltd.
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -42,8 +41,10 @@ struct hc32_uart_rxto
     rt_uint32_t                 channel;
     rt_uint32_t                 clock;
     rt_size_t                   timeout_bits;
+#if defined (HC32F460) || defined (HC32F4A0)
     struct hc32_irq_config      irq_config;
     func_ptr_t                  irq_callback;
+#endif
 };
 
 /* HC32 config uart class */
@@ -52,24 +53,35 @@ struct hc32_uart_config
     const char                  *name;
     CM_USART_TypeDef            *Instance;
     rt_uint32_t                 clock;
+#if defined (HC32F460) || defined (HC32F4A0)
     struct hc32_uart_irq_config rxerr_irq;
     struct hc32_uart_irq_config rx_irq;
     struct hc32_uart_irq_config tx_irq;
+#elif defined (HC32F448) || defined (HC32F472)
+    IRQn_Type                   irq_num;
+    en_int_src_t                rxerr_int_src;
+    en_int_src_t                tx_int_src;
+    en_int_src_t                rx_int_src;
+#ifdef RT_SERIAL_USING_DMA
+    en_int_src_t                rxto_int_src;
+#endif
+#endif
+
 #ifdef RT_SERIAL_USING_DMA
     struct hc32_uart_rxto       *rx_timeout;
-    stc_dma_llp_descriptor_t    llp_desc;
+    stc_dma_llp_descriptor_t    llp_desc[2U];
     struct dma_config           *dma_rx;
     struct hc32_uart_irq_config *tc_irq;
     struct dma_config           *dma_tx;
 #endif
 };
 
-/* HC32 uart dirver class */
+/* HC32 uart driver class */
 struct hc32_uart
 {
     struct hc32_uart_config *config;
 #ifdef RT_SERIAL_USING_DMA
-    rt_size_t               dma_rx_last_index;
+    rt_size_t               dma_rx_remaining_cnt;
 #endif
     rt_uint16_t             uart_dma_flag;
     struct rt_serial_device serial;
@@ -86,6 +98,7 @@ struct hc32_uart
 /*******************************************************************************
  * Global function prototypes (definition in C source)
  ******************************************************************************/
+int rt_hw_usart_init(void);
 
 #ifdef __cplusplus
 }

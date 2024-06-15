@@ -26,9 +26,12 @@ MEMORY
     xip_memory  (rx)  : ORIGIN = 0x58000000, LENGTH = 32M
     itcm_memory (rx)  : ORIGIN = 0x62020000, LENGTH = 20K
     dtcm_memory (rx)  : ORIGIN = 0x62025000, LENGTH = 4K
-    nocache_ram_memory (!rx) : ORIGIN = 0x22026000, LENGTH = 40K
-    ram_memory  (!rx) : ORIGIN = 0x62030000, LENGTH = 160K + 64K - 20K - 4K - 40K
+    nocache_ram_memory (!rx) : ORIGIN = 0x22026000, LENGTH = 0K
+    ram_memory  (!rx) : ORIGIN = 0x22026000, LENGTH = 40K
+    ram_wifi    (!rx) : ORIGIN = 0x22030000, LENGTH = 96K 
+    ram_dram  (wxa)   : ORIGIN = 0x3EF80000, LENGTH = 512K
     xram_memory  (!rx) : ORIGIN = 0x40000000, LENGTH = 16K
+    ram_psram  (!rx)  : ORIGIN = 0x50000000, LENGTH = 1M
 }
 
 SECTIONS
@@ -97,6 +100,12 @@ SECTIONS
         *(.srodata)
         *(.srodata.*)
 
+        /* static fw attribute entry */
+        . = ALIGN(4);
+        _bl_static_fw_cfg_entry_start = .;
+        KEEP(*(.wifi.cfg.entry))
+        _bl_static_fw_cfg_entry_end = .;
+        
         . = ALIGN(4);
         __text_code_end__ = .;
     } > xip_memory
@@ -209,18 +218,73 @@ SECTIONS
     __etext_final = (__ram_load_addr + SIZEOF (RAM_DATA));
     ASSERT(__etext_final <= ORIGIN(xip_memory) + LENGTH(xip_memory), "code memory overflow")
 
+    .wifibss  (NOLOAD) :
+    {
+        PROVIDE( __wifi_bss_start = ADDR(.wifibss) );
+        PROVIDE( __wifi_bss_end = ADDR(.wifibss) + SIZEOF(.wifibss) );
+        *ipc_shared.o(COMMON)
+        *sdu_shared.o(COMMON)
+        *hal_desc.o(COMMON)
+        *txl_buffer_shared.o(COMMON)
+        *txl_frame_shared.o(COMMON)
+        *scan_shared.o(COMMON)
+        *scanu_shared.o(COMMON)
+        *mfp_bip.o(COMMON)
+        *me_mic.o(COMMON)
+        *bl_sta_mgmt_others.o(COMMON)
+        *bl_pmk_mgmt.o(COMMON)
+        *bl_pmk_mgmt_internal.o(COMMON)
+        *libwifi_drv.a:bl_utils.o(COMMON)
+        *libwifi_drv.a:bl_utils.o(.bss*)
+        *(.wifi_ram*)
+        . = ALIGN(16);
+    } > ram_wifi
+
     .bss (NOLOAD) :
     {
         . = ALIGN(4);
         __bss_start__ = .;
 
-        *(.bss*)
+        *interrupt*.o*(.bss*)
+        *riscv_fpu*.o*(.bss*)
+        *start*.o*(.bss*)
+        *system_bl808*.o*(.bss*)
+        *vector*.o*(.bss*)
+        *bl808_*.o*(.bss*)
+        *bflb_*.o*(.bss*)
+
         *(.sbss*)
-        *(COMMON)
 
         . = ALIGN(4);
         __bss_end__ = .;
     } > ram_memory
+
+    .drambss (NOLOAD) :
+    {
+        . = ALIGN(4);
+        __drambss_start__ = .;
+
+        . = ALIGN(4);
+        __drambss_end__ = .;
+    } > ram_dram
+
+    .psrambss (NOLOAD) :
+    {
+        . = ALIGN(4);
+        __psrambss_start__ = .;
+
+        *(EXCLUDE_FILE( *interrupt*.o* \
+        *riscv_fpu*.o* \
+        *start*.o* \
+        *system_bl808*.o* \
+        *vector*.o* \
+        *bl808_*.o* \
+        *bflb_*.o* ) .bss*)
+        *(COMMON)
+
+        . = ALIGN(4);
+        __psrambss_end__ = .;
+    } > ram_psram
 
     .noinit_data (NOLOAD) :
     {
@@ -256,10 +320,15 @@ SECTIONS
 
         . = ALIGN(4);
         __HeapLimit = .;
-    } > ram_memory
+    } > ram_psram
 
-    __HeapLimit = ORIGIN(ram_memory) + LENGTH(ram_memory);
+    __HeapLimit = ORIGIN(ram_psram) + LENGTH(ram_psram);
     ASSERT(__HeapLimit - __HeapBase >= HeapMinSize, "heap region overflow")
 
+    PROVIDE( _ld_ram_size2 = LENGTH(ram_wifi) );
+    PROVIDE( _ld_ram_addr2 = ORIGIN(ram_wifi) );
+
+    PROVIDE( _ld_bl_static_cfg_entry_start = _bl_static_fw_cfg_entry_start );
+    PROVIDE( _ld_bl_static_cfg_entry_end   = _bl_static_fw_cfg_entry_end );
 }
 

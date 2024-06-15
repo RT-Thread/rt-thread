@@ -22,7 +22,8 @@
 #include <rtthread.h>
 #include "utest.h"
 
-int recive_sig = 0;
+static volatile int recive_sig = 0;
+static struct rt_semaphore _received_signal;
 
 void sig_handle_default(int signo)
 {
@@ -125,12 +126,15 @@ void rt_signal_wait_thread(void *parm)
     (void)sigaddset(&selectset, SIGUSR1);
 
     /* case 5:rt_signal_wait, two thread, thread1: install and unmask, then wait 1s; thread2: kill, should received. */
-    if (rt_signal_wait(&selectset, &recive_si, RT_TICK_PER_SECOND) != RT_EOK)
+    if (rt_signal_wait((void *)&selectset, &recive_si, RT_TICK_PER_SECOND) != RT_EOK)
     {
         return;
     }
 
     recive_sig = recive_si.si_signo;
+
+    LOG_I("received signal %d", recive_sig);
+    rt_sem_release(&_received_signal);
 }
 
 static void rt_signal_wait_test(void)
@@ -147,7 +151,7 @@ static void rt_signal_wait_test(void)
     rt_thread_mdelay(1);
     /* case 5:rt_signal_wait, two thread, thread1: install and unmask, then wait 1s; thread2: kill, should received. */
     uassert_int_equal(rt_thread_kill(t1, SIGUSR1), RT_EOK);
-    rt_thread_mdelay(1);
+    rt_sem_take(&_received_signal, RT_WAITING_FOREVER);
     uassert_int_equal(recive_sig, SIGUSR1);
 
     return;
@@ -167,7 +171,9 @@ static void rt_signal_wait_test2(void)
     /* case 6:rt_signal_wait, two thread, thread1: install and unmask, then wait 1s; thread2: sleep 2s then kill, should can't received. */
     rt_thread_mdelay(2000);
     uassert_int_equal(rt_thread_kill(t1, SIGUSR1), RT_EOK);
-    rt_thread_mdelay(1);
+    uassert_int_not_equal(
+        rt_sem_take(&_received_signal, 1),
+        RT_EOK);
     uassert_int_not_equal(recive_sig, SIGUSR1);
 
     return;
@@ -175,11 +181,13 @@ static void rt_signal_wait_test2(void)
 
 static rt_err_t utest_tc_init(void)
 {
+    rt_sem_init(&_received_signal, "utest", 0, RT_IPC_FLAG_PRIO);
     return RT_EOK;
 }
 
 static rt_err_t utest_tc_cleanup(void)
 {
+    rt_sem_detach(&_received_signal);
     return RT_EOK;
 }
 

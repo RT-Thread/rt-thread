@@ -11,7 +11,8 @@
 #ifndef WORKQUEUE_H__
 #define WORKQUEUE_H__
 
-#include <rtthread.h>
+#include <rtdef.h>
+#include <rtconfig.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -40,6 +41,7 @@ struct rt_workqueue
 
     struct rt_semaphore sem;
     rt_thread_t    work_thread;
+    struct rt_spinlock spinlock;
 };
 
 struct rt_work

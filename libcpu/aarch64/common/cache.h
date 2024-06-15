@@ -23,7 +23,14 @@ void rt_hw_cpu_dcache_invalidate(void *start_addr, unsigned long size);
 
 static inline void rt_hw_icache_invalidate_all(void)
 {
-    __asm_invalidate_icache_all();
+    /* wait for previous modification to complete */
+    __asm__ volatile ("dsb ishst");
+
+    __asm__ volatile ("ic ialluis");
+    /* wait for ic to retire */
+    __asm__ volatile ("dsb nsh");
+    /* flush instruction pipeline */
+    __asm__ volatile ("isb");
 }
 
 void rt_hw_cpu_icache_invalidate(void *addr, rt_size_t size);

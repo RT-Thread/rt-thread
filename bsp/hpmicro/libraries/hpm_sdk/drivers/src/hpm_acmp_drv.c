@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 hpmicro
+ * Copyright (c) 2021 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -31,6 +31,7 @@ hpm_stat_t acmp_channel_config(ACMP_Type *ptr, uint8_t ch, acmp_channel_config_t
 
 void acmp_channel_get_default_config(ACMP_Type *ptr, acmp_channel_config_t *config)
 {
+    (void) ptr;
     config->plus_input = ACMP_INPUT_DAC_OUT;
     config->minus_input = ACMP_INPUT_DAC_OUT;
     config->filter_mode = ACMP_FILTER_MODE_BYPASS;

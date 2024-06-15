@@ -1,0 +1,129 @@
+Import('RTT_ROOT')
+Import('rtconfig')
+from building import *
+import os
+
+cwd = GetCurrentDir()
+group = []
+src = []
+path = [cwd]
+
+if GetDepend(['RT_USING_PIN']):
+    src += ['drv_gpio.c']
+
+if GetDepend(['RT_USING_SERIAL']):
+    if GetDepend(['RT_USING_SERIAL_V2']):
+        src += ['drv_usart_v2.c']
+    else:
+        src += ['drv_usart.c']
+
+if GetDepend(['BSP_USING_TIM']):
+    src += ['drv_tim.c']
+
+if GetDepend(['BSP_USING_PWM']):
+    src += ['drv_pwm.c', 'drv_tim.c']
+
+if GetDepend(['RT_USING_SPI']):
+    src += ['drv_spi.c']
+
+if GetDepend(['RT_USING_QSPI']):
+    src += ['drv_qspi.c']
+
+if GetDepend('RT_USING_SPI_BITOPS'):
+    src += ['drv_soft_spi.c']
+
+if GetDepend(['RT_USING_I2C', 'RT_USING_I2C_BITOPS']):
+    if GetDepend('BSP_USING_I2C1') or GetDepend('BSP_USING_I2C2') or GetDepend('BSP_USING_I2C3') or GetDepend('BSP_USING_I2C4'):
+        src += ['drv_soft_i2c.c']
+        
+if GetDepend(['RT_USING_I2C']):
+    if GetDepend('BSP_USING_HARD_I2C1') or GetDepend('BSP_USING_HARD_I2C2') or GetDepend('BSP_USING_HARD_I2C3') or GetDepend('BSP_USING_HARD_I2C4'):
+        src += ['drv_hard_i2c.c']
+
+if GetDepend(['BSP_USING_ETH', 'RT_USING_LWIP']):
+    src += ['drv_eth.c']
+
+if GetDepend(['RT_USING_ADC']):
+    src += ['drv_adc.c']
+
+if GetDepend(['RT_USING_DAC']):
+    src += ['drv_dac.c']
+
+if GetDepend(['RT_USING_CAN']):
+    src += ['drv_can.c']
+
+if GetDepend(['RT_USING_PM', 'SOC_SERIES_STM32L4']):
+    src += ['drv_pm.c']
+    src += ['drv_lptim.c']
+
+if GetDepend('BSP_USING_SDRAM'):
+    src += ['drv_sdram.c']
+
+if GetDepend(['BSP_USING_NAND1']):
+    src += ['drv_nand.c']
+
+if GetDepend('BSP_USING_LCD'):
+    src += ['drv_lcd.c']
+
+if GetDepend('BSP_USING_LCD_MIPI'):
+    src += ['drv_lcd_mipi.c']
+
+if GetDepend('BSP_USING_ONCHIP_RTC'):
+    src += ['drv_rtc.c']
+
+if GetDepend(['BSP_USING_ON_CHIP_FLASH', 'SOC_SERIES_STM32G0']):
+    src += [os.path.join('drv_flash', 'drv_flash_g0.c')]
+
+if GetDepend(['BSP_USING_ON_CHIP_FLASH', 'SOC_SERIES_STM32F0']):
+    src += [os.path.join('drv_flash', 'drv_flash_f0.c')]
+
+if GetDepend(['BSP_USING_ON_CHIP_FLASH', 'SOC_SERIES_STM32F1']):
+    src += [os.path.join('drv_flash', 'drv_flash_f1.c')]
+
+if GetDepend(['BSP_USING_ON_CHIP_FLASH', 'SOC_SERIES_STM32F2']):
+    src += [os.path.join('drv_flash', 'drv_flash_f2.c')]
+
+if GetDepend(['BSP_USING_ON_CHIP_FLASH', 'SOC_SERIES_STM32F4']):
+    src += [os.path.join('drv_flash', 'drv_flash_f4.c')]
+
+if GetDepend(['BSP_USING_ON_CHIP_FLASH', 'SOC_SERIES_STM32F7']):
+    src += [os.path.join('drv_flash', 'drv_flash_f7.c')]
+
+if GetDepend(['BSP_USING_ON_CHIP_FLASH', 'SOC_SERIES_STM32L4']):
+    src += [os.path.join('drv_flash', 'drv_flash_l4.c')]
+
+if GetDepend(['BSP_USING_ON_CHIP_FLASH', 'SOC_SERIES_STM32H7']):
+    src += [os.path.join('drv_flash', 'drv_flash_h7.c')]
+
+if GetDepend(['BSP_USING_ON_CHIP_FLASH', 'SOC_SERIES_STM32WB']):
+    src += [os.path.join('drv_flash', 'drv_flash_wb.c')]
+
+if GetDepend('RT_USING_HWCRYPTO'):
+    src += ['drv_crypto.c']
+
+if GetDepend(['BSP_USING_WDT']):
+    src += ['drv_wdt.c']
+
+if GetDepend(['BSP_USING_SDIO']):
+    if GetDepend('SOC_SERIES_STM32H7') or GetDepend('SOC_SERIES_STM32F7') or GetDepend('SOC_SERIES_STM32L4') or GetDepend('SOC_SERIES_STM32L5'):
+        src += ['drv_sdmmc.c']
+    else:
+        src += ['drv_sdio.c']
+
+if GetDepend(['BSP_USING_USBD']):
+    src += ['drv_usbd.c']
+
+if GetDepend(['BSP_USING_PULSE_ENCODER']):
+    src += ['drv_pulse_encoder.c']
+
+if GetDepend(['BSP_USING_USBH']):
+    src += ['drv_usbh.c']
+
+path += [os.path.join(cwd, 'config')]
+
+if GetDepend('BSP_USING_ON_CHIP_FLASH'):
+    path += [os.path.join(cwd, 'drv_flash')]
+
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path)
+
+Return('group')

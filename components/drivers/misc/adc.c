@@ -184,7 +184,7 @@ rt_int16_t rt_adc_voltage(rt_adc_device_t dev, rt_int8_t channel)
 
     /*read the value and convert to voltage*/
     dev->ops->convert(dev, channel, &value);
-    voltage = value * vref / (1 << resolution);
+    voltage = value * vref / ((1 << resolution) - 1);
 
 _voltage_exit:
     return voltage;
@@ -265,7 +265,6 @@ static int adc(int argc, char **argv)
                 if(argc == 3)
                 {
                     voltage = rt_adc_voltage(adc_device, atoi(argv[2]));
-                    result_str = (result == RT_EOK) ? "success" : "failure";
                     rt_kprintf("%s channel %d voltage is %d.%03dV \n", adc_device->parent.parent.name, (rt_base_t)atoi(argv[2]), voltage / 1000, voltage % 1000);
                 }
                 else
@@ -286,6 +285,7 @@ static int adc(int argc, char **argv)
         rt_kprintf("adc read <channel>      - read adc value on the channel\n");
         rt_kprintf("adc disable <channel>   - disable adc channel\n");
         rt_kprintf("adc enable <channel>    - enable adc channel\n");
+        rt_kprintf("adc voltage <channel>   - read voltage on the channel\n");
 
         result = -RT_ERROR;
     }

@@ -92,6 +92,16 @@ struct bflb_device_s bl808_device_table[] = {
       .idx = 0,
       .dev_type = BFLB_DEVICE_TYPE_SPI,
       .user_data = NULL },
+      { .name = "spi1",
+      .reg_base = SPI1_BASE,
+#if defined(CPU_D0)
+      .irq_num = BL808_IRQ_SPI1,
+#else
+      .irq_num = 0xff,
+#endif
+      .idx = 0,
+      .dev_type = BFLB_DEVICE_TYPE_SPI,
+      .user_data = NULL },
     { .name = "pwm_v2_0",
       .reg_base = PWM_BASE,
 #if defined(CPU_M0) || defined(CPU_LP)
@@ -199,6 +209,39 @@ struct bflb_device_s bl808_device_table[] = {
       .irq_num = 0xff,
 #endif
       .idx = 0,
+      .sub_idx = 0,
+      .dev_type = BFLB_DEVICE_TYPE_I2C,
+      .user_data = NULL },
+    { .name = "i2c1",
+      .reg_base = I2C1_BASE,
+#if defined(CPU_M0) || defined(CPU_LP)
+      .irq_num = BL808_IRQ_I2C1,
+#else
+      .irq_num = 0xff,
+#endif
+      .idx = 1,
+      .sub_idx = 0,
+      .dev_type = BFLB_DEVICE_TYPE_I2C,
+      .user_data = NULL },
+    { .name = "i2c2",
+      .reg_base = I2C2_BASE,
+#if defined(CPU_D0)
+      .irq_num = BL808_IRQ_I2C2,
+#else
+      .irq_num = 0xff,
+#endif
+      .idx = 2,
+      .sub_idx = 0,
+      .dev_type = BFLB_DEVICE_TYPE_I2C,
+      .user_data = NULL },
+    { .name = "i2c3",
+      .reg_base = I2C3_BASE,
+#if defined(CPU_D0)
+      .irq_num = BL808_IRQ_I2C3,
+#else
+      .irq_num = 0xff,
+#endif
+      .idx = 3,
       .sub_idx = 0,
       .dev_type = BFLB_DEVICE_TYPE_I2C,
       .user_data = NULL },

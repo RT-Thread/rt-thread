@@ -1,5 +1,5 @@
 /***********************************************************************************************************************
- * Copyright [2020-2021] Renesas Electronics Corporation and/or its affiliates.  All Rights Reserved.
+ * Copyright [2020-2023] Renesas Electronics Corporation and/or its affiliates.  All Rights Reserved.
  *
  * This software and documentation are supplied by Renesas Electronics America Inc. and may only be used with products
  * of Renesas Electronics Corp. and its affiliates ("Renesas").  No other uses are authorized.  Renesas products are
@@ -125,6 +125,12 @@ FSP_HEADER
  #define FSP_HARDWARE_REGISTER_WAIT(reg, required_value)    while (reg != required_value) { /* Wait. */}
 #endif
 
+#ifndef FSP_REGISTER_READ
+
+/* Read a register and discard the result. */
+ #define FSP_REGISTER_READ(A)    __ASM volatile ("" : : "r" (A));
+#endif
+
 /****************************************************************
  *
  * This check is performed to select suitable ASM API with respect to core
@@ -180,11 +186,15 @@ FSP_HEADER
 /** Used to signify that the requested IRQ vector is not defined in this system. */
 #define FSP_INVALID_VECTOR                      ((IRQn_Type) - 33)
 
-/* Private definition used in R_FSP_SystemClockHzGet. Each bitfield in SCKDIVCR is 3 bits wide. */
-#define FSP_PRIV_SCKDIVCR_DIV_MASK              (7)
+/* Private definition used in bsp_clocks and R_FSP_SystemClockHzGet. Each bitfield in SCKDIVCR is up to 4 bits wide. */
+#if (BSP_CFG_MCU_PART_SERIES == 8)
+ #define FSP_PRV_SCKDIVCR_DIV_MASK              (0xFU)
+#else
+ #define FSP_PRV_SCKDIVCR_DIV_MASK              (0x7U)
+#endif
 
 /* Use the secure registers for secure projects and flat projects. */
-#if !BSP_TZ_NONSECURE_BUILD && BSP_FEATURE_TZ_HAS_TRUSTZONE
+#if !BSP_TZ_NONSECURE_BUILD && BSP_FEATURE_TZ_HAS_TRUSTZONE && !(BSP_CFG_MCU_PART_SERIES == 8)
  #define FSP_PRIV_TZ_USE_SECURE_REGS            (1)
 #else
  #define FSP_PRIV_TZ_USE_SECURE_REGS            (0)
@@ -246,7 +256,6 @@ typedef struct st_bsp_unique_id
  * Exported global variables
  **********************************************************************************************************************/
 uint32_t R_BSP_SourceClockHzGet(fsp_priv_source_clock_t clock);
-
 /***********************************************************************************************************************
  * Global variables (defined in other files)
  **********************************************************************************************************************/
@@ -276,10 +285,68 @@ __STATIC_INLINE IRQn_Type R_FSP_CurrentIrqGet (void)
 __STATIC_INLINE uint32_t R_FSP_SystemClockHzGet (fsp_priv_clock_t clock)
 {
     uint32_t sckdivcr  = R_SYSTEM->SCKDIVCR;
-    uint32_t iclk_div  = (sckdivcr >> FSP_PRIV_CLOCK_ICLK) & FSP_PRIV_SCKDIVCR_DIV_MASK;
-    uint32_t clock_div = (sckdivcr >> clock) & FSP_PRIV_SCKDIVCR_DIV_MASK;
+    uint32_t clock_div = (sckdivcr >> clock) & FSP_PRV_SCKDIVCR_DIV_MASK;
+
+#if BSP_FEATURE_CGC_HAS_CPUCLK
+
+    /* Get CPUCLK divisor */
+    uint32_t cpuclk_div = R_SYSTEM->SCKDIVCR2 & FSP_PRV_SCKDIVCR_DIV_MASK;
+
+    /* Determine if either divisor is a multiple of 3 */
+    if ((cpuclk_div | clock_div) & 8U)
+    {
+        /* Convert divisor settings to their actual values */
+        cpuclk_div = (cpuclk_div & 8U) ? (3U << (cpuclk_div & 7U)) : (1U << cpuclk_div);
+        clock_div  = (clock_div & 8U) ? (3U << (clock_div & 7U)) : (1U << clock_div);
+
+        /* Calculate clock with multiplication and division instead of shifting */
+        return (SystemCoreClock * cpuclk_div) / clock_div;
+    }
+    else
+    {
+        return (SystemCoreClock << cpuclk_div) >> clock_div;
+    }
+#else
+    uint32_t iclk_div = (sckdivcr >> FSP_PRIV_CLOCK_ICLK) & FSP_PRV_SCKDIVCR_DIV_MASK;
 
     return (SystemCoreClock << iclk_div) >> clock_div;
+#endif
+}
+
+/*******************************************************************************************************************//**
+ * Converts a clock's CKDIVCR register value to a clock divider (Eg: SPICKDIVCR).
+ *
+ * @return     Clock Divider
+ **********************************************************************************************************************/
+__STATIC_INLINE uint32_t R_FSP_ClockDividerGet (uint32_t ckdivcr)
+{
+    if (2U >= ckdivcr)
+    {
+        /* clock_div:
+         * - Clock Divided by 1: 0
+         * - Clock Divided by 2: 1
+         * - Clock Divided by 4: 2
+         */
+        return 1 << ckdivcr;
+    }
+    else if (3U == ckdivcr)
+    {
+        /* Clock Divided by 6 */
+        return 6U;
+    }
+    else if (4U == ckdivcr)
+    {
+        /* Clock Divided by 8 */
+        return 8U;
+    }
+    else if (5U == ckdivcr)
+    {
+        /* Clock Divided by 3 */
+        return 3U;
+    }
+
+    /* Clock Divided by 5 */
+    return 5U;
 }
 
 #if BSP_FEATURE_BSP_HAS_SCISPI_CLOCK
@@ -292,10 +359,44 @@ __STATIC_INLINE uint32_t R_FSP_SystemClockHzGet (fsp_priv_clock_t clock)
 __STATIC_INLINE uint32_t R_FSP_SciSpiClockHzGet (void)
 {
     uint32_t                scispidivcr = R_SYSTEM->SCISPICKDIVCR;
-    uint32_t                clock_div   = (scispidivcr & FSP_PRIV_SCKDIVCR_DIV_MASK);
+    uint32_t                clock_div   = R_FSP_ClockDividerGet(scispidivcr & FSP_PRV_SCKDIVCR_DIV_MASK);
     fsp_priv_source_clock_t scispicksel = (fsp_priv_source_clock_t) R_SYSTEM->SCISPICKCR_b.SCISPICKSEL;
 
-    return R_BSP_SourceClockHzGet(scispicksel) >> clock_div;
+    return R_BSP_SourceClockHzGet(scispicksel) / clock_div;
+}
+
+#endif
+#if BSP_FEATURE_BSP_HAS_SPI_CLOCK
+
+/*******************************************************************************************************************//**
+ * Gets the frequency of a SPI clock.
+ *
+ * @return     Frequency of requested clock in Hertz.
+ **********************************************************************************************************************/
+__STATIC_INLINE uint32_t R_FSP_SpiClockHzGet (void)
+{
+    uint32_t                spidivcr  = R_SYSTEM->SPICKDIVCR;
+    uint32_t                clock_div = R_FSP_ClockDividerGet(spidivcr & FSP_PRV_SCKDIVCR_DIV_MASK);
+    fsp_priv_source_clock_t spicksel  = (fsp_priv_source_clock_t) R_SYSTEM->SPICKCR_b.CKSEL;
+
+    return R_BSP_SourceClockHzGet(spicksel) / clock_div;
+}
+
+#endif
+#if BSP_FEATURE_BSP_HAS_SCI_CLOCK
+
+/*******************************************************************************************************************//**
+ * Gets the frequency of a SCI clock.
+ *
+ * @return     Frequency of requested clock in Hertz.
+ **********************************************************************************************************************/
+__STATIC_INLINE uint32_t R_FSP_SciClockHzGet (void)
+{
+    uint32_t                scidivcr  = R_SYSTEM->SCICKDIVCR;
+    uint32_t                clock_div = R_FSP_ClockDividerGet(scidivcr & FSP_PRV_SCKDIVCR_DIV_MASK);
+    fsp_priv_source_clock_t scicksel  = (fsp_priv_source_clock_t) R_SYSTEM->SCICKCR_b.SCICKSEL;
+
+    return R_BSP_SourceClockHzGet(scicksel) / clock_div;
 }
 
 #endif
@@ -305,7 +406,7 @@ __STATIC_INLINE uint32_t R_FSP_SciSpiClockHzGet (void)
  *
  * @return  A pointer to the unique identifier structure
  **********************************************************************************************************************/
-__STATIC_INLINE bsp_unique_id_t const * R_BSP_UniqueIdGet ()
+__STATIC_INLINE bsp_unique_id_t const * R_BSP_UniqueIdGet (void)
 {
     return (bsp_unique_id_t *) BSP_FEATURE_BSP_UNIQUE_ID_POINTER;
 }
@@ -313,7 +414,7 @@ __STATIC_INLINE bsp_unique_id_t const * R_BSP_UniqueIdGet ()
 /*******************************************************************************************************************//**
  * Disables the flash cache.
  **********************************************************************************************************************/
-__STATIC_INLINE void R_BSP_FlashCacheDisable ()
+__STATIC_INLINE void R_BSP_FlashCacheDisable (void)
 {
 #if BSP_FEATURE_BSP_FLASH_CACHE
     R_FCACHE->FCACHEE = 0U;
@@ -329,7 +430,7 @@ __STATIC_INLINE void R_BSP_FlashCacheDisable ()
 /*******************************************************************************************************************//**
  * Enables the flash cache.
  **********************************************************************************************************************/
-__STATIC_INLINE void R_BSP_FlashCacheEnable ()
+__STATIC_INLINE void R_BSP_FlashCacheEnable (void)
 {
 #if BSP_FEATURE_BSP_FLASH_CACHE
 

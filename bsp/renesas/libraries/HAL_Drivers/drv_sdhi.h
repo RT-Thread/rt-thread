@@ -44,6 +44,7 @@
 #define SDHI_CMD_ADTC_EN (1 << 11)
 #define SDHI_CMD_DATA_DIR_READ (1 << 12)
 #define SDHI_BLK_TRANSFER (1 << 13)
+#define SDHI_BLK_NOT_AUTO_STOP (1 << 14)
 
 #define SDIO_MAX_FREQ 25000000
 
@@ -61,5 +62,7 @@ struct ra_sdhi
     const sdmmc_instance_t *instance;
     sdmmc_device_t *media_device;
 };
+
+extern void sdcard_change(void);
 
 #endif

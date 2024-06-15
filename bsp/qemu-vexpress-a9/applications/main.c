@@ -10,11 +10,11 @@
 
 #include <stdint.h>
 #include <stdio.h>
-#include <stdlib.h>
+#include <rtthread.h>
 
 int main(void)
 {
-    printf("Hello RT-Thread!\n");
+    rt_kprintf("Hello RT-Thread!\n");
 
     return 0;
 }

@@ -8,6 +8,8 @@
  * 2022-05-16     shelton      first version
  * 2023-01-31     shelton      add support f421/f425
  * 2023-04-08     shelton      add support f423
+ * 2023-10-18     shelton      add support f402/f405
+ * 2024-04-12     shelton      add support a403a and a423
  */
 
 #include "drv_common.h"
@@ -42,12 +44,12 @@ static struct at32_adc at32_adc_obj[] =
 #endif
 };
 
-static rt_err_t at32_adc_enabled(struct rt_adc_device *device, rt_uint32_t channel, rt_bool_t enabled)
+static rt_err_t at32_adc_enabled(struct rt_adc_device *device, rt_int8_t channel, rt_bool_t enabled)
 {
     adc_type *adc_x;
     adc_base_config_type adc_config_struct;
 #if defined (SOC_SERIES_AT32F435) || defined (SOC_SERIES_AT32F437) || \
-    defined (SOC_SERIES_AT32F423)
+    defined (SOC_SERIES_AT32F423) || defined (SOC_SERIES_AT32A423)
     adc_common_config_type adc_common_struct;
     adc_common_default_para_init(&adc_common_struct);
 #endif
@@ -73,7 +75,7 @@ static rt_err_t at32_adc_enabled(struct rt_adc_device *device, rt_uint32_t chann
     /* config voltage battery */
     adc_common_struct.vbat_state = FALSE;
     adc_common_config(&adc_common_struct);
-#elif defined (SOC_SERIES_AT32F423)
+#elif defined (SOC_SERIES_AT32F423) || defined (SOC_SERIES_AT32A423)
     /* config division, adcclk is division by hclk */
     adc_common_struct.div = ADC_HCLK_DIV_4;
     /* config inner temperature sensor and vintrv */
@@ -81,7 +83,8 @@ static rt_err_t at32_adc_enabled(struct rt_adc_device *device, rt_uint32_t chann
     adc_common_config(&adc_common_struct);
 #else
 #if !defined (SOC_SERIES_AT32F415) && !defined (SOC_SERIES_AT32F421) && \
-    !defined (SOC_SERIES_AT32F425)
+    !defined (SOC_SERIES_AT32F425) && !defined (SOC_SERIES_AT32F402) && \
+    !defined (SOC_SERIES_AT32F405)
     adc_combine_mode_select(ADC_INDEPENDENT_MODE);
 #endif
     adc_ordinary_conversion_trigger_set(adc_x, ADC12_ORDINARY_TRIG_SOFTWARE, TRUE);
@@ -122,7 +125,7 @@ static rt_err_t at32_adc_enabled(struct rt_adc_device *device, rt_uint32_t chann
     return RT_EOK;
 }
 
-static rt_err_t at32_get_adc_value(struct rt_adc_device *device, rt_uint32_t channel, rt_uint32_t *value)
+static rt_err_t at32_get_adc_value(struct rt_adc_device *device, rt_int8_t channel, rt_uint32_t *value)
 {
     adc_type *adc_x;
     rt_uint32_t timeout = 0;
@@ -132,9 +135,11 @@ static rt_err_t at32_get_adc_value(struct rt_adc_device *device, rt_uint32_t cha
 
     /* adc_x regular channels configuration */
 #if defined (SOC_SERIES_AT32F435) || defined (SOC_SERIES_AT32F437) || \
-    defined (SOC_SERIES_AT32F423)
+    defined (SOC_SERIES_AT32F423) || defined (SOC_SERIES_AT32A423)
+    adc_flag_clear(adc_x, ADC_OCCE_FLAG);
     adc_ordinary_channel_set(adc_x, (adc_channel_select_type)channel, 1, ADC_SAMPLETIME_247_5);
 #else
+    adc_flag_clear(adc_x, ADC_CCE_FLAG);
     adc_ordinary_channel_set(adc_x, (adc_channel_select_type)channel, 1, ADC_SAMPLETIME_239_5);
 #endif
 
@@ -143,7 +148,7 @@ static rt_err_t at32_get_adc_value(struct rt_adc_device *device, rt_uint32_t cha
 
     /* wait for the adc to convert */
 #if defined (SOC_SERIES_AT32F435) || defined (SOC_SERIES_AT32F437) || \
-    defined (SOC_SERIES_AT32F423)
+    defined (SOC_SERIES_AT32F423) || defined (SOC_SERIES_AT32A423)
     while((adc_flag_get(adc_x, ADC_OCCE_FLAG) == RESET) && timeout < 0xFFFF)
 #else
     while((adc_flag_get(adc_x, ADC_CCE_FLAG) == RESET) && timeout < 0xFFFF)

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 hpmicro
+ * Copyright (c) 2021 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -18,28 +18,24 @@
 #define CORE1_DLM_SYSTEM_BASE (0x11C0000U)
 
 #define ADDRESS_IN_ILM(address) \
-    ((ILM_LOCAL_BASE) <= (address)) && \
     ((ILM_LOCAL_BASE + ILM_SIZE_IN_BYTE) > (address))
 #define ADDRESS_IN_DLM(address) \
-    ((DLM_LOCAL_BASE) <= (address)) && \
-    ((DLM_LOCAL_BASE + DLM_SIZE_IN_BYTE) > (address))
-#define ADDRESS_IN_CORE0_DLM_SYSTEM(address) \
-    ((CORE0_DLM_SYSTEM_BASE) <= (address)) && \
-    ((CORE0_DLM_SYSTEM_BASE + DLM_SIZE_IN_BYTE) > (address))
+    (((DLM_LOCAL_BASE) <= (address)) && \
+     ((DLM_LOCAL_BASE + DLM_SIZE_IN_BYTE) > (address)))
 
 #define ADDRESS_IN_CORE0_ILM_SYSTEM(address) \
-    ((CORE0_ILM_SYSTEM_BASE) <= (address)) && \
-    ((CORE0_ILM_SYSTEM_BASE + ILM_SIZE_IN_BYTE) > (address))
+    (((CORE0_ILM_SYSTEM_BASE) <= (address)) && \
+     ((CORE0_ILM_SYSTEM_BASE + ILM_SIZE_IN_BYTE) > (address)))
 #define ADDRESS_IN_CORE0_DLM_SYSTEM(address) \
-    ((CORE0_DLM_SYSTEM_BASE) <= (address)) && \
-    ((CORE0_DLM_SYSTEM_BASE + DLM_SIZE_IN_BYTE) > (address))
+    (((CORE0_DLM_SYSTEM_BASE) <= (address)) && \
+     ((CORE0_DLM_SYSTEM_BASE + DLM_SIZE_IN_BYTE) > (address)))
 
 #define ADDRESS_IN_CORE1_ILM_SYSTEM(address) \
-    ((CORE1_ILM_SYSTEM_BASE) <= (address)) && \
-    ((CORE1_ILM_SYSTEM_BASE + ILM_SIZE_IN_BYTE) > (address))
+    (((CORE1_ILM_SYSTEM_BASE) <= (address)) && \
+     ((CORE1_ILM_SYSTEM_BASE + ILM_SIZE_IN_BYTE) > (address)))
 #define ADDRESS_IN_CORE1_DLM_SYSTEM(address) \
-    ((CORE1_DLM_SYSTEM_BASE) <= (address)) && \
-    ((CORE1_DLM_SYSTEM_BASE + DLM_SIZE_IN_BYTE) > (address))
+    (((CORE1_DLM_SYSTEM_BASE) <= (address)) && \
+     ((CORE1_DLM_SYSTEM_BASE + DLM_SIZE_IN_BYTE) > (address)))
 
 #define DLM_TO_SYSTEM(address) \
     (CORE0_DLM_SYSTEM_BASE + (address) - (DLM_LOCAL_BASE))
@@ -74,15 +70,15 @@ static inline uint32_t sys_address_to_core_local_mem(uint8_t core_id, uint32_t a
 {
     if (core_id == HPM_CORE1) {
         if (ADDRESS_IN_CORE1_DLM_SYSTEM(addr)) {
-            addr = addr - CORE1_DLM_SYSTEM_BASE + DLM_LOCAL_BASE;
+            addr = (addr - CORE1_DLM_SYSTEM_BASE) + DLM_LOCAL_BASE;
         } else if (ADDRESS_IN_CORE1_ILM_SYSTEM(addr)) {
-            addr = addr - CORE1_ILM_SYSTEM_BASE + ILM_LOCAL_BASE;
+            addr = (addr - CORE1_ILM_SYSTEM_BASE) + ILM_LOCAL_BASE;
         }
     } else {
         if (ADDRESS_IN_CORE0_DLM_SYSTEM(addr)) {
-            addr = addr - CORE0_DLM_SYSTEM_BASE + DLM_LOCAL_BASE;
+            addr = (addr - CORE0_DLM_SYSTEM_BASE) + DLM_LOCAL_BASE;
         } else if (ADDRESS_IN_CORE0_ILM_SYSTEM(addr)) {
-            addr = addr - CORE0_ILM_SYSTEM_BASE + ILM_LOCAL_BASE;
+            addr = (addr - CORE0_ILM_SYSTEM_BASE) + ILM_LOCAL_BASE;
         }
     }
 

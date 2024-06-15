@@ -1,0 +1,3 @@
+menuconfig RT_USING_KTIME
+    bool "Ktime: kernel time"
+    default n

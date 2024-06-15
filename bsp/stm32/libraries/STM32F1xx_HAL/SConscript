@@ -22,7 +22,7 @@ STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_gpio.c
 if GetDepend(['RT_USING_PIN']):
     src += ['STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_gpio_ex.c']
 
-if GetDepend(['RT_USING_SERIAL']):
+if GetDepend(['RT_USING_SERIAL']) or GetDepend(['RT_USING_NANO', 'RT_USING_CONSOLE']):
     src += ['STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_uart.c']
     src += ['STM32F1xx_HAL_Driver/Src/stm32f1xx_hal_usart.c']
 

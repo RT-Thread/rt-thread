@@ -73,7 +73,8 @@ else:
     env['CC']=rtconfig.CC
     env.Append(CFLAGS=rtconfig.CFLAGS)
     env.Append(LINKFLAGS=rtconfig.LFLAGS)
-    env.Append(LIBS=['winmm'])
+    if sys.platform == 'win32':
+        env.Append(LIBS=['winmm'])
 
 # prepare building environment
 
@@ -96,8 +97,9 @@ def ProjectRemove(group, remove):
                     item['src'].remove(src)
     return
 
-ObjRemove(objs, ['components.obj', 'components.o', 'components.c'])
-ProjectRemove('Kernel', ['components.obj', 'components.o', 'components.c'])
+if rtconfig.CPU != 'posix':
+    ObjRemove(objs, ['components.obj', 'components.o', 'components.c'])
+    ProjectRemove('Kernel', ['components.obj', 'components.o', 'components.c'])
 
 # build program  -shared
 if GetDepend('RT_USING_MODULE'):

@@ -150,7 +150,7 @@ OS_Status OS_QueueReceive(OS_Queue_t *queue, void *item, OS_Time_t waitMS)
     OS_HANDLE_ASSERT(OS_QueueIsValid(queue), queue->handle);
 
     ret = rt_mq_recv(queue->handle, item, queue->itemSize, OS_CalcWaitTicks(waitMS));
-    if (ret != RT_EOK) {
+    if (ret < 0) {
         OS_DBG("%s() fail @ %d, %"OS_TIME_F" ms\n", __func__, __LINE__, (unsigned int)waitMS);
         return OS_FAIL;
     }

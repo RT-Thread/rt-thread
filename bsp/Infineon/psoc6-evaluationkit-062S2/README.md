@@ -47,15 +47,19 @@
 
 #### 编译下载
 
-1、配置工程：
+1、下载软件包：在ENV环境下输入`pkgs --update`命令，将所需要的HAL库软件包下载下来，文件会存放在`Packages`目录下。
+
+2、生成MDK工程：在ENV环境下输入`SCons --target==MDK5`命令，ENV会自动生成MDK5工程
+
+3、配置工程：
 
 首先打开 MDK ，若没有安装 `Infineon-PSoC6` 的芯片支持包会提示在线安装，根据提示安装即可。若受网络问题，可以进入 [keil](https://www.keil.com/dd2/pack) 官网下载安装包，离线安装。
 
-![mdk_package](E:\workspace_work\rt-thread-5.0\bsp\Infineon\psoc6-cy8ckit-062S2-43012\figures\mdk_package.png)
+![mdk_package](figures\mdk_package.png)
 
-2、 编译此工程：在安装好芯片支持包后，在 `MDK`工程中进行编译。
+4、 编译此工程：在安装好芯片支持包后，在 `MDK`工程中进行编译。
 
-3、下载此工程：
+5、下载此工程：
 
 工程默认配置使用板载 `DAP-LINK` 使用 `SWD` 方式下载程序，使用数据线连接开发板，编译之后直接点击下载按钮即可。
 
@@ -65,23 +69,23 @@
 
 * 首先打开  `RT-Thread Studio` 开发工具，点加左上角文件—>导入—> RT-Thread Studio项目到工作空间中。
 
-![](E:\workspace_work\rt-thread-5.0\bsp\Infineon\psoc6-cy8ckit-062S2-43012\figures\studio1.png)
+![](figures\studio1.png)
 
 * 接着选择 `psoc6-evaluationkit-062S2` 开发板支持包的目录，进行导入。
 
-![](E:\workspace_work\rt-thread-5.0\bsp\Infineon\psoc6-cy8ckit-062S2-43012\figures\studio2.png)
+![](figures\studio2.png)
 
 #### 编译下载
 
 * 点击 IDE 左上角的构建选项进行工程的编译。
 
-![](E:\workspace_work\rt-thread-5.0\bsp\Infineon\psoc6-cy8ckit-062S2-43012\figures\studio3-build.png)
+![](figures\studio3-build.png)
 
 * 当编译无错误警告时，点击 `Debug` 或 `Download` 选项进行调试/下载。
 
   注：若点击下载并下载成功后串口终端无显示信息，请手动按下复位按键进行重启运行。
 
-  ![](E:\workspace_work\rt-thread-5.0\bsp\Infineon\psoc6-cy8ckit-062S2-43012\figures\studio4-download.png)
+  ![](figures\studio4-download.png)
 
 ## 运行结果
 

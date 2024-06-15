@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -9,6 +9,7 @@
  * Date        Author       Notes
  * 2022-10-26  huanghe      first commit
  * 2022-10-26  zhugengyu    support aarch64
+ * 2023-07-26  huanghe      update psci uage
  *
  */
 
@@ -22,6 +23,7 @@
     #include "cpuport.h"
     #include "gtimer.h"
     #include "mmu.h"
+    #include "cp15.h"
 #endif
 
 #ifdef RT_USING_SMP
@@ -29,20 +31,24 @@
 
 #if defined(TARGET_ARMV8_AARCH64)
     #include "psci.h"
+    extern void _secondary_cpu_entry(void);
+#else
+    extern void rt_secondary_cpu_entry(void);
 #endif
 
 #include "fpsci.h"
 
 rt_uint64_t rt_cpu_mpidr_early[] =
 {
+
 #if defined(TARGET_E2000D)
     [0] = 0x80000200,
     [1] = 0x80000201,
-#elif defined(TARGET_E2000Q)
-    [0] = 0x80000200,
-    [1] = 0x80000201,
-    [2] = 0x80000000,
-    [3] = 0x80000100,
+#elif defined(TARGET_E2000Q) || defined(TARGET_PHYTIUMPI)
+    [0] = 0x80000000,
+    [1] = 0x80000100,
+    [2] = 0x80000200,
+    [3] = 0x80000201,
 #elif defined(TARGET_F2000_4) || defined(TARGET_D2000)
     [0] = 0x80000000,
     [1] = 0x80000001,
@@ -59,53 +65,77 @@ rt_uint64_t rt_cpu_mpidr_early[] =
 };
 
 extern int rt_hw_timer_init(void);
-extern void secondary_cpu_start(void);
 
 void rt_hw_secondary_cpu_up(void)
 {
     rt_uint32_t i;
     rt_uint32_t cpu_mask = 0;
-
+    int cpu_id;
+    cpu_id = rt_hw_cpu_id();
     rt_kprintf("rt_hw_secondary_cpu_up is processing \r\n");
-    for (i = 1; i < RT_CPUS_NR; i++)
+    for (i = 0; i < RT_CPUS_NR; i++)
     {
-
-        cpu_mask = 1 << phytium_cpu_id_mapping(i);
-
-        /* code */
-        PsciCpuOn(cpu_mask, (uintptr)secondary_cpu_start);
-
+        if (i == cpu_id)
+        {
+            continue;
+        }
+        cpu_mask = 1<<phytium_cpu_id_mapping(i);
 
 #if defined(TARGET_ARMV8_AARCH64)
+        /* code */
+        rt_kprintf("cpu_mask = 0x%x \n", cpu_mask);
+        char *entry = (char *)_secondary_cpu_entry;
+        entry += PV_OFFSET;
+        FPsciCpuMaskOn(cpu_mask, (uintptr)entry);
         __DSB();
 #else
+        /* code */
+        char *entry = (char *)rt_secondary_cpu_entry;
+        entry += PV_OFFSET;
+        FPsciCpuMaskOn(cpu_mask, (uintptr)entry);
         __asm__ volatile("dsb" ::: "memory");
 #endif
+
     }
 }
 
-void secondary_cpu_c_start(void)
+/**
+ * This function will initialize board
+ */
+extern size_t MMUTable[];
+
+void rt_hw_secondary_cpu_bsp_start(void)
 {
-    /* mmu init */
-#if defined(TARGET_ARMV8_AARCH64)
-    rt_hw_mmu_init();
-#endif
     /*  spin lock init */
     rt_hw_spin_lock(&_cpus_lock);
+
+    /* mmu init */
+#if defined(TARGET_ARMV8_AARCH64)
+    extern unsigned long MMUTable[];
+    rt_hw_mmu_ktbl_set((unsigned long)MMUTable);
+#else
+    rt_uint32_t mmutable_p;
+    mmutable_p = (rt_uint32_t)MMUTable + (rt_uint32_t)PV_OFFSET ;
+    rt_hw_mmu_switch(mmutable_p) ;
+#endif
+
+    /* vector init */
+    rt_hw_vector_init();
     /* interrupt init */
 #if defined(TARGET_ARMV8_AARCH64)
-    arm_gic_cpu_init(0, platform_get_gic_cpu_base());
-    arm_gic_redist_init(0, platform_get_gic_redist_base());
+    arm_gic_cpu_init(0, 0);
+
+    phytium_aarch64_arm_gic_redist_init();
+    rt_kprintf("arm_gic_redist_init is over rt_hw_cpu_id() is %d \r\n", rt_hw_cpu_id());
 #else
     arm_gic_cpu_init(0);
     arm_gic_redist_init(0);
 #endif
 
-    /* vector init */
-    rt_hw_vector_init();
+
     /* gtimer init */
 #if defined(TARGET_ARMV8_AARCH64)
-    rt_hw_gtimer_local_enable();
+    rt_hw_gtimer_init();
 #else
     rt_hw_timer_init();
 #endif

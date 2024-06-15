@@ -152,8 +152,9 @@ rt_inline int _can_int_tx(struct rt_can_device *can, const struct rt_can_msg *da
         rt_list_remove(&tx_tosnd->list);
         rt_hw_interrupt_enable(level);
 
-        no = ((rt_uint32_t)tx_tosnd - (rt_uint32_t)tx_fifo->buffer) / sizeof(struct rt_can_sndbxinx_list);
+        no = ((rt_ubase_t)tx_tosnd - (rt_ubase_t)tx_fifo->buffer) / sizeof(struct rt_can_sndbxinx_list);
         tx_tosnd->result = RT_CAN_SND_RESULT_WAIT;
+        rt_completion_init(&tx_tosnd->completion);
         if (can->ops->sendmsg(can, data, no) != RT_EOK)
         {
             /* send failed. */
@@ -406,19 +407,23 @@ static rt_err_t rt_can_close(struct rt_device *dev)
     {
         struct rt_can_rx_fifo *rx_fifo;
 
+        /* clear can rx interrupt */
+        can->ops->control(can, RT_DEVICE_CTRL_CLR_INT, (void *)RT_DEVICE_FLAG_INT_RX);
+
         rx_fifo = (struct rt_can_rx_fifo *)can->can_rx;
         RT_ASSERT(rx_fifo != RT_NULL);
 
         rt_free(rx_fifo);
         dev->open_flag &= ~RT_DEVICE_FLAG_INT_RX;
         can->can_rx = RT_NULL;
-        /* clear can rx interrupt */
-        can->ops->control(can, RT_DEVICE_CTRL_CLR_INT, (void *)RT_DEVICE_FLAG_INT_RX);
     }
 
     if (dev->open_flag & RT_DEVICE_FLAG_INT_TX)
     {
         struct rt_can_tx_fifo *tx_fifo;
+
+        /* clear can tx interrupt */
+        can->ops->control(can, RT_DEVICE_CTRL_CLR_INT, (void *)RT_DEVICE_FLAG_INT_TX);
 
         tx_fifo = (struct rt_can_tx_fifo *)can->can_tx;
         RT_ASSERT(tx_fifo != RT_NULL);
@@ -427,8 +432,6 @@ static rt_err_t rt_can_close(struct rt_device *dev)
         rt_free(tx_fifo);
         dev->open_flag &= ~RT_DEVICE_FLAG_INT_TX;
         can->can_tx = RT_NULL;
-        /* clear can tx interrupt */
-        can->ops->control(can, RT_DEVICE_CTRL_CLR_INT, (void *)RT_DEVICE_FLAG_INT_TX);
     }
 
     can->ops->control(can, RT_DEVICE_CTRL_CLR_INT, (void *)RT_DEVICE_CAN_INT_ERR);
@@ -514,7 +517,7 @@ static rt_err_t rt_can_control(struct rt_device *dev,
 
     case RT_CAN_CMD_SET_PRIV:
         /* configure device */
-        if ((rt_uint32_t)args != can->config.privmode)
+        if ((rt_uint32_t)(rt_ubase_t)args != can->config.privmode)
         {
             int i;
             rt_base_t level;

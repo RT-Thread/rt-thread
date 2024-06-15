@@ -7,9 +7,10 @@
    Change Logs:
    Date             Author          Notes
    2022-03-31       CDT             First version
+   2023-09-30       CDT             Modify I2S_ClearStatus function
  @endverbatim
  *******************************************************************************
- * Copyright (C) 2022, Xiaohua Semiconductor Co., Ltd. All rights reserved.
+ * Copyright (C) 2022-2023, Xiaohua Semiconductor Co., Ltd. All rights reserved.
  *
  * This software component is licensed by XHSC under BSD 3-Clause license
  * (the "License"); You may not use this file except in compliance with the
@@ -246,7 +247,7 @@ static uint32_t I2S_GetClockFreq(const CM_I2S_TypeDef *I2Sx)
     switch (u16ClockSrc) {
         case I2S_CLK_SRC_PCLK:
             u32ClockFreq = SystemCoreClock >> ((READ_REG32_BIT(CM_CMU->I2S_CMU_SCFGR,
-                                                I2S_CMU_SCFGR_PCLK) >> I2S_CMU_SCFGR_PCLK_POS));
+                                                               I2S_CMU_SCFGR_PCLK) >> I2S_CMU_SCFGR_PCLK_POS));
             break;
         case I2S_CLK_SRC_PLLQ:
             u32Temp = READ_REG32(CM_CMU->I2S_CMU_PLLCFGR);
@@ -801,7 +802,7 @@ int32_t I2S_Receive(const CM_I2S_TypeDef *I2Sx, void *pvRxBuf, uint32_t u32Len, 
 
         u32DataWidth = READ_REG32_BIT(I2Sx->CFGR, I2S_CFGR_DATLEN);
         if (((I2S_DATA_LEN_16BIT == u32DataWidth) && IS_ADDR_ALIGN_HALFWORD(&((const uint16_t *)pvRxBuf)[0])) ||
-                (IS_ADDR_ALIGN_WORD(&((const uint32_t *)pvRxBuf)[0]))) {
+            (IS_ADDR_ALIGN_WORD(&((const uint32_t *)pvRxBuf)[0]))) {
             for (i = 0UL; i < u32Len; i++) {
                 i32Ret = I2S_WaitStatus(I2Sx, I2S_FLAG_RX_EMPTY, RESET, u32Timeout);
                 if (LL_OK != i32Ret) {
@@ -857,7 +858,7 @@ int32_t I2S_TransReceive(CM_I2S_TypeDef *I2Sx, const void *pvTxBuf,
 
         u32DataWidth = READ_REG32_BIT(I2Sx->CFGR, I2S_CFGR_DATLEN);
         if (((I2S_DATA_LEN_16BIT == u32DataWidth) && IS_ADDR_ALIGN_HALFWORD(&((const uint16_t *)pvTxBuf)[0]) && IS_ADDR_ALIGN_HALFWORD(&((const uint16_t *)pvRxBuf)[0])) ||
-                (IS_ADDR_ALIGN_WORD(&((const uint32_t *)pvTxBuf)[0]) && IS_ADDR_ALIGN_WORD(&((const uint32_t *)pvRxBuf)[0]))) {
+            (IS_ADDR_ALIGN_WORD(&((const uint32_t *)pvTxBuf)[0]) && IS_ADDR_ALIGN_WORD(&((const uint32_t *)pvRxBuf)[0]))) {
             i32Ret = I2S_WaitStatus(I2Sx, I2S_FLAG_TX_FULL, RESET, u32Timeout);
             if (LL_OK == i32Ret) {
                 /* Preload data */
@@ -1001,11 +1002,14 @@ en_flag_status_t I2S_GetStatus(const CM_I2S_TypeDef *I2Sx, uint32_t u32Flag)
  */
 void I2S_ClearStatus(CM_I2S_TypeDef *I2Sx, uint32_t u32Flag)
 {
+    uint32_t u32ErrorFlag;
+
     /* Check parameters */
     DDL_ASSERT(IS_I2S_UNIT(I2Sx));
     DDL_ASSERT(IS_I2S_CLR_FLAG(u32Flag));
 
-    CLR_REG32_BIT(I2Sx->ER, u32Flag);
+    u32ErrorFlag  = u32Flag >> 16U;
+    WRITE_REG32(I2Sx->ER, u32ErrorFlag);
 }
 
 /**
@@ -1019,8 +1023,8 @@ void I2S_ClearStatus(CM_I2S_TypeDef *I2Sx, uint32_t u32Flag)
  */
 
 /**
-* @}
-*/
+ * @}
+ */
 
 /******************************************************************************
  * EOF (not truncated)

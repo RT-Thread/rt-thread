@@ -13,8 +13,8 @@
 #include "rthw.h"
 
 #define UTEST_NAME "irq_tc"
-static uint32_t irq_count = 0;
-static uint32_t max_get_nest_count = 0;
+static volatile uint32_t irq_count = 0;
+static volatile uint32_t max_get_nest_count = 0;
 
 static void irq_callback()
 {

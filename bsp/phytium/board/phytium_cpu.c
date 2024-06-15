@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2023, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -20,45 +20,35 @@
 
 #include "phytium_cpu.h"
 
+/**
+@name: phytium_cpu_id_mapping
+@msg: Map Phytium CPU ID
+@brief: Map the input CPU ID to a new CPU ID based on the type and quantity of CPUs on the target board.
+@param {int} cpu_id Input CPU ID
+@return {int} Mapped CPU ID
+*/
 int phytium_cpu_id_mapping(int cpu_id)
 {
-#if defined(TARGET_E2000Q)
+#if defined(TARGET_E2000Q) || defined(TARGET_PHYTIUMPI)
     switch (cpu_id)
     {
-    case 0:
-        return 2;
-    case 1:
-        return 3;
-    case 2:
-        return 0;
-    case 3:
-        return 1;
-    default:
-        RT_ASSERT(0);
-        return 0;
-        break;
+        case 0:
+            return 2;
+        case 1:
+            return 3;
+        case 2:
+            return 0;
+        case 3:
+            return 1;
+        default:
+            RT_ASSERT(0);
+            return 0;
+            break;
     }
 #else
     return (int)cpu_id;
 #endif
 }
-
-#if defined(TARGET_ARMV8_AARCH64)
-
-int phytium_cpu_id(void)
-{
-    FError ret;
-    u32 cpu_id;
-    ret = GetCpuId(&cpu_id);
-
-    if (ret != ERR_SUCCESS)
-    {
-        RT_ASSERT(0);
-    }
-    return phytium_cpu_id_mapping(cpu_id);
-};
-
-#else
 
 int rt_hw_cpu_id(void)
 {
@@ -70,15 +60,14 @@ int rt_hw_cpu_id(void)
     {
         RT_ASSERT(0);
     }
-
     return phytium_cpu_id_mapping(cpu_id);
-};
+}
 
-
+#if defined(TARGET_ARMV8_AARCH32)
 
 rt_uint64_t get_main_cpu_affval(void)
 {
-#if defined(TARGET_E2000Q)
+#if defined(TARGET_E2000Q) || defined(TARGET_PHYTIUMPI)
     return CORE2_AFF;
 #else
     return CORE0_AFF;
