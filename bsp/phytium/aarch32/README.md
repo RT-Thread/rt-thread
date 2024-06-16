@@ -4,11 +4,35 @@
 
 ## 1. 准备编译环境
 
-- 在aarch32目录下创建tools文件夹，用于存放编译链
+- 在aarch32目录下创建tools文件夹，用于存放编译链，目前支持在以下两种环境进行开发
 ```shell
 mkdir tools
 ```
+注：使用RT-Smart编译链也可编译RT-Thread，但当前不支持C++
+
 ### Ubuntu 环境
+
+#### RT-Thread
+
+- 点击[下载编译链工具](https://developer.arm.com/-/media/Files/downloads/gnu-a/10.3-2021.07/binrel/gcc-arm-10.3-2021.07-x86_64-arm-none-eabi.tar.xz)压缩包，放置在tools目录下
+
+- 在tools目录下，使用tar命令解压缩
+```shell
+tar xvf gcc-arm-10.3-2021.07-x86_64-arm-none-eabi.tar.xz
+```
+
+![tar_toolschain_ubuntu](./figures/tar_toolschain_ubuntu.png)
+
+- 返回`aarch32`目录，运行`thread-env.sh脚本`，生效环境变量
+```shell
+source ./thread-env.sh
+```
+
+- 如下所示是`aarch32`编译相关的环境变量，运行`scons`前要确保环境变量设置正确
+
+![aarch32_thread](./figures/aarch32_thread.png)
+
+#### RT-Smart
 
 - 点击[下载编译链工具](https://github.com/RT-Thread/toolchains-ci/releases/tag/v1.7)压缩包，放置在tools目录下，如下所示
 
@@ -44,6 +68,16 @@ rtthread_a32.map
 ```
 
 ### RT-Thread env 环境
+
+#### RT-Thread
+
+- RT-Thread env 环境已经内嵌的`aarch32`编译链，运行`thread-env.bat`脚本，生效环境变量即可
+
+```shell
+.\thread-env.bat
+```
+
+#### RT-Smart
 
 - 点击[下载编译链工具](https://pan.baidu.com/s/1p7PRhV3dTGIb7hxv34YWYw)压缩包，提取码：ndxq
 
