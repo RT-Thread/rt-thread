@@ -1,0 +1,15 @@
+config RT_USING_SENSOR
+    bool "Using Sensor device drivers"
+    select RT_USING_PIN
+    default n
+
+if RT_USING_SENSOR
+    config RT_USING_SENSOR_V2
+        bool "Enable Sensor Framework v2"
+        default n
+
+    config RT_USING_SENSOR_CMD
+        bool "Using Sensor cmd"
+        select PKG_USING_RT_VSNPRINTF_FULL if RT_USING_SENSOR_V2
+        default y
+endif

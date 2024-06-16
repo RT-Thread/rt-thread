@@ -1,0 +1,24 @@
+menuconfig RT_USING_SERIAL
+    bool "USING Serial device drivers"
+    select RT_USING_DEVICE_IPC
+    select RT_USING_DEVICE
+    default y
+
+    if RT_USING_SERIAL
+        choice
+            prompt "Choice Serial version"
+            default RT_USING_SERIAL_V1
+            config RT_USING_SERIAL_V1
+                bool "RT_USING_SERIAL_V1"
+            config RT_USING_SERIAL_V2
+                bool "RT_USING_SERIAL_V2"
+        endchoice
+        config RT_SERIAL_USING_DMA
+            bool "Enable serial DMA mode"
+            default y
+
+        config RT_SERIAL_RB_BUFSZ
+            int "Set RX buffer size"
+            depends on !RT_USING_SERIAL_V2
+            default 64
+    endif

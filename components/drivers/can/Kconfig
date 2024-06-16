@@ -1,0 +1,12 @@
+config RT_USING_CAN
+    bool "Using CAN device drivers"
+    default n
+
+if RT_USING_CAN
+    config RT_CAN_USING_HDR
+        bool "Enable CAN hardware filter"
+        default n
+    config RT_CAN_USING_CANFD
+        bool "Enable CANFD support"
+        default n
+endif

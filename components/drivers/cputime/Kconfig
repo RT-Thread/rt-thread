@@ -1,0 +1,34 @@
+config RT_USING_CPUTIME
+    bool "Enable CPU time for high resolution clock counter"
+    default n
+    help
+        When enable this option, the BSP should provide a rt_clock_cputime_ops
+        for CPU time by:
+        const static struct rt_clock_cputime_ops _ops = {...};
+        clock_cpu_setops(&_ops);
+
+        Then user can use high resolution clock counter with:
+
+        ts1 = clock_cpu_gettime();
+        ts2 = clock_cpu_gettime();
+
+        /* and get the ms of delta tick with API: */
+        ms_tick = clock_cpu_millisecond(t2 - t1);
+        us_tick = clock_cpu_microsecond(t2 - t1);
+
+if RT_USING_CPUTIME
+    config RT_USING_CPUTIME_CORTEXM
+        bool "Support Cortex-M CPU"
+        default y
+        depends on ARCH_ARM_CORTEX_M0 || ARCH_ARM_CORTEX_M3 || ARCH_ARM_CORTEX_M4 || ARCH_ARM_CORTEX_M7
+        select PKG_USING_PERF_COUNTER
+    config RT_USING_CPUTIME_RISCV
+        bool "Use rdtime instructions for CPU time"
+        default y
+        depends on ARCH_RISCV64
+        help
+            Some RISCV64 MCU Use rdtime instructions read CPU time.
+    config CPUTIME_TIMER_FREQ
+        int "CPUTIME timer freq"
+        default 0
+endif

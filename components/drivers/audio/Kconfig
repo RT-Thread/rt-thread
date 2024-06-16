@@ -1,0 +1,17 @@
+config RT_USING_AUDIO
+    bool "Using Audio device drivers"
+    default n
+
+    if RT_USING_AUDIO
+        config RT_AUDIO_REPLAY_MP_BLOCK_SIZE
+            int "Replay memory pool block size"
+            default 4096
+
+        config RT_AUDIO_REPLAY_MP_BLOCK_COUNT
+            int "Replay memory pool block count"
+            default 2
+
+        config RT_AUDIO_RECORD_PIPE_SIZE
+            int "Record pipe size"
+            default 2048
+    endif

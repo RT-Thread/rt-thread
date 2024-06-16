@@ -1,0 +1,3 @@
+config RT_USING_WDT
+    bool "Using Watch Dog device drivers"
+    default n
