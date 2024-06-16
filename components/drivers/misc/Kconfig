@@ -1,0 +1,37 @@
+config RT_USING_ADC
+    bool "Using ADC device drivers"
+    default n
+
+config RT_USING_DAC
+    bool "Using DAC device drivers"
+    default n
+
+config RT_USING_NULL
+    bool "Using NULL device drivers"
+    default n
+
+config RT_USING_ZERO
+    bool "Using ZERO device drivers"
+    default n
+
+config RT_USING_RANDOM
+    bool "Using RANDOM device drivers"
+    default n
+
+config RT_USING_PWM
+    bool "Using PWM device drivers"
+    default n
+
+config RT_USING_PULSE_ENCODER
+    bool "Using PULSE ENCODER device drivers"
+    default n
+
+config RT_USING_INPUT_CAPTURE
+    bool "Using INPUT CAPTURE device drivers"
+    default n
+
+if RT_USING_INPUT_CAPTURE
+    config RT_INPUT_CAPTURE_RB_SIZE
+        int "Set input capture ringbuffer size"
+        default 100
+endif
