@@ -558,6 +558,25 @@ void rt_hw_mmu_setup(rt_aspace_t aspace, struct mem_desc *mdesc, int desc_nr)
     rt_page_cleanup();
 }
 
+void rt_hw_mmu_kernel_map_init(rt_aspace_t aspace, rt_size_t vaddr_start, rt_size_t size)
+{
+    rt_size_t paddr_start =
+        __UMASKVALUE(VPN_TO_PPN(vaddr_start, PV_OFFSET), PAGE_OFFSET_MASK);
+    rt_size_t va_s = GET_L1(vaddr_start);
+    rt_size_t va_e = GET_L1(vaddr_start + size - 1);
+    rt_size_t i;
+
+    for (i = va_s; i <= va_e; i++)
+    {
+        MMUTable[i] =
+            COMBINEPTE(paddr_start, PAGE_ATTR_RWX | PTE_G | PTE_V | PTE_CACHE |
+                                        PTE_SHARE | PTE_BUF | PTE_A | PTE_D);
+        paddr_start += L1_PAGE_SIZE;
+    }
+
+    rt_hw_tlb_invalidate_all_local();
+}
+
 #define SATP_BASE ((size_t)SATP_MODE << SATP_MODE_OFFSET)
 void rt_hw_mem_setup_early(void)
 {
