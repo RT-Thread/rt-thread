@@ -38,7 +38,7 @@ void init_bss(void)
     unsigned int *dst;
 
     dst = &__bss_start;
-    while (dst < &__bss_end)
+    while ((rt_ubase_t)dst < (rt_ubase_t)&__bss_end)
     {
         *dst++ = 0;
     }
