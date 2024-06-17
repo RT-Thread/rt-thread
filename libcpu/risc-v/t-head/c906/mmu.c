@@ -18,6 +18,7 @@
 #define DBG_LVL DBG_WARNING
 #include <rtdbg.h>
 
+#include <board.h>
 #include <cache.h>
 #include <mm_aspace.h>
 #include <mm_page.h>
@@ -324,6 +325,14 @@ static inline void _init_region(void *vaddr, size_t size)
 }
 #endif
 
+#if defined(RT_USING_SMART) && defined(ARCH_REMAP_KERNEL)
+#define KERN_SPACE_START    ((void *)KERNEL_VADDR_START)
+#define KERN_SPACE_SIZE     (0xfffffffffffff000UL - KERNEL_VADDR_START + 0x1000)
+#else
+#define KERN_SPACE_START    ((void *)0x1000)
+#define KERN_SPACE_SIZE     ((size_t)USER_VADDR_START - 0x1000)
+#endif
+
 int rt_hw_mmu_map_init(rt_aspace_t aspace, void *v_address, rt_size_t size,
                        rt_size_t *vtable, rt_size_t pv_off)
 {
@@ -363,8 +372,7 @@ int rt_hw_mmu_map_init(rt_aspace_t aspace, void *v_address, rt_size_t size,
         }
     }
 
-    rt_aspace_init(&rt_kernel_space, (void *)0x1000, USER_VADDR_START - 0x1000,
-                   vtable);
+    rt_aspace_init(&rt_kernel_space, KERN_SPACE_START, KERN_SPACE_SIZE, vtable);
 
     _init_region(v_address, size);
     return 0;
@@ -550,23 +558,60 @@ void rt_hw_mmu_setup(rt_aspace_t aspace, struct mem_desc *mdesc, int desc_nr)
     rt_page_cleanup();
 }
 
-void rt_hw_mmu_kernel_map_init(rt_aspace_t aspace, rt_size_t vaddr_start, rt_size_t size)
+#define SATP_BASE ((size_t)SATP_MODE << SATP_MODE_OFFSET)
+void rt_hw_mem_setup_early(void)
 {
-    rt_size_t paddr_start =
-        __UMASKVALUE(VPN_TO_PPN(vaddr_start, PV_OFFSET), PAGE_OFFSET_MASK);
-    rt_size_t va_s = GET_L1(vaddr_start);
-    rt_size_t va_e = GET_L1(vaddr_start + size - 1);
-    rt_size_t i;
+    rt_size_t pv_off;
+    rt_size_t ps = 0x0;
+    rt_size_t vs = 0x0;
+    rt_size_t *early_pgtbl = (size_t *)(((size_t)&__bss_end + 4095) & ~0xfff);
 
-    for (i = va_s; i <= va_e; i++)
+    /* calculate pv_offset */
+    void *symb_pc;
+    void *symb_linker;
+    __asm__ volatile("la %0, _start\n" : "=r"(symb_pc));
+    __asm__ volatile("la %0, _start_link_addr\n" : "=r"(symb_linker));
+    symb_linker = *(void **)symb_linker;
+    pv_off = symb_pc - symb_linker;
+    rt_kmem_pvoff_set(pv_off);
+
+    if (pv_off)
     {
-        MMUTable[i] =
-            COMBINEPTE(paddr_start, PAGE_ATTR_RWX | PTE_G | PTE_V | PTE_CACHE |
-                                        PTE_SHARE | PTE_BUF | PTE_A | PTE_D);
-        paddr_start += L1_PAGE_SIZE;
-    }
+        if (pv_off & (1ul << (ARCH_INDEX_WIDTH * 2 + ARCH_PAGE_SHIFT)))
+        {
+            LOG_E("%s: not aligned virtual address. pv_offset %p", __func__, pv_off);
+            RT_ASSERT(0);
+        }
+        /**
+         * identical mapping,
+         * PC are still at lower region before relocating to high memory
+         */
+        for (size_t i = 0; i < __SIZE(PPN0_BIT); i++)
+        {
+            early_pgtbl[i] = COMBINEPTE(ps, PAGE_ATTR_RWX | PTE_G | PTE_V);
+            ps += L1_PAGE_SIZE;
+        }
 
-    rt_hw_tlb_invalidate_all_local();
+        /* relocate text region */
+        __asm__ volatile("la %0, _start\n" : "=r"(ps));
+        ps &= ~(L1_PAGE_SIZE - 1);
+        vs = ps - pv_off;
+
+        /* relocate region */
+        rt_size_t vs_idx = GET_L1(vs);
+        rt_size_t ve_idx = GET_L1(vs + 0x80000000);
+        for (size_t i = vs_idx; i < ve_idx; i++)
+        {
+            early_pgtbl[i] = COMBINEPTE(ps, PAGE_ATTR_RWX | PTE_G | PTE_V);
+            ps += L1_PAGE_SIZE;
+        }
+
+        /* apply new mapping */
+        asm volatile("sfence.vma x0, x0");
+        write_csr(satp, SATP_BASE | ((size_t)early_pgtbl >> PAGE_OFFSET_BIT));
+        asm volatile("sfence.vma x0, x0");
+    }
+    /* return to lower text section */
 }
 
 void *rt_hw_mmu_pgtbl_create(void)
