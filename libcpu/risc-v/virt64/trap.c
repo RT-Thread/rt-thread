@@ -293,7 +293,6 @@ static void handle_nested_trap_panic(
 /* Trap entry */
 void handle_trap(rt_size_t scause, rt_size_t stval, rt_size_t sepc, struct rt_hw_stack_frame *sp)
 {
-    ENTER_TRAP;
     rt_size_t id = __MASKVALUE(scause, __MASK(63UL));
     const char *msg;
 
@@ -368,9 +367,9 @@ void handle_trap(rt_size_t scause, rt_size_t stval, rt_size_t sepc, struct rt_hw
         rt_kprintf("fp = %p", frame.fp);
         rt_backtrace_frame(rt_thread_self(), &frame);
 
+        ENTER_TRAP;
         RT_ASSERT(0);
     }
 _exit:
-    EXIT_TRAP;
     return ;
 }
