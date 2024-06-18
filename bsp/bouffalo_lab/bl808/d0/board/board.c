@@ -38,7 +38,7 @@ void init_bss(void)
     unsigned int *dst;
 
     dst = &__bss_start;
-    while (dst < &__bss_end)
+    while ((rt_ubase_t)dst < (rt_ubase_t)&__bss_end)
     {
         *dst++ = 0;
     }
@@ -62,7 +62,7 @@ void primary_cpu_entry(void)
 
 #define IOREMAP_SIZE (1ul << 30)
 
-#ifndef ARCH_KERNEL_IN_HIGH_VA
+#ifndef ARCH_REMAP_KERNEL
 #define IOREMAP_VEND USER_VADDR_START
 #else
 #define IOREMAP_VEND 0ul
