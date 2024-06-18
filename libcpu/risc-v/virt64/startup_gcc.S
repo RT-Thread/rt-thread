@@ -94,5 +94,39 @@ _start:
      */
     csrw sscratch, zero
     call init_bss
-    call sbi_init
-    j primary_cpu_entry
+#ifdef ARCH_MM_MMU
+    call    rt_hw_mem_setup_early
+    call    rt_kmem_pvoff
+    /* a0 := pvoff  */
+    beq     a0, zero, 1f
+
+    /* relocate pc */
+    la      x1, _after_pc_relocation
+    sub     x1, x1, a0
+    ret
+_after_pc_relocation:
+    /* relocate gp */
+    sub     gp, gp, a0
+
+    /* relocate context: sp */
+    la      sp, __stack_start__
+    li      t0, __STACKSIZE__
+    add     sp, sp, t0
+
+    /* reset s0-fp */
+    mv      s0, zero
+
+    /* relocate stvec */
+    la      t0, trap_entry
+    csrw    stvec, t0
+1:
+#endif
+    call    sbi_init
+    call    primary_cpu_entry
+
+_never_return_here:
+    j       .
+
+.global _start_link_addr
+_start_link_addr:
+    .dword __text_start

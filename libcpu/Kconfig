@@ -133,6 +133,7 @@ if RT_USING_SMART
         hex "The virtural address of kernel start"
         default 0xffff000000000000 if ARCH_ARMV8
         default 0xc0000000 if ARCH_ARM
+        default 0xffffffc000000000 if ARCH_RISCV && ARCH_REMAP_KERNEL
         default 0x80000000 if ARCH_RISCV
         depends on ARCH_MM_MMU
 
@@ -254,6 +255,14 @@ config ARCH_RISCV64
     select ARCH_RISCV
     select ARCH_CPU_64BIT
     bool
+
+if ARCH_RISCV64
+    config ARCH_REMAP_KERNEL
+        bool
+        depends on RT_USING_SMART
+        help
+            Remapping kernel image to high virtual address region
+endif
 
 config ARCH_IA32
     bool
