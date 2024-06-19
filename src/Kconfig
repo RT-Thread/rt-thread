@@ -176,6 +176,10 @@ if RT_USING_TIMER_SOFT
         int "The stack size of timer thread"
         default 2048 if ARCH_CPU_64BIT
         default 512
+
+    config RT_USING_TIMER_ALL_SOFT
+        bool "Set all timer as soft timer"
+        default n
 endif
 
 config RT_USING_CPU_USAGE_TRACER
