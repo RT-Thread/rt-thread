@@ -21,9 +21,6 @@
 
 /* kservice optimization */
 
-#define RT_USING_DEBUG
-#define RT_DEBUGING_COLOR
-#define RT_DEBUGING_CONTEXT
 
 /* Inter-Thread communication */
 
@@ -45,7 +42,7 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "usart1"
-#define RT_VER_NUM 0x50100
+#define RT_VER_NUM 0x50200
 #define RT_BACKTRACE_LEVEL_MAX_NR 32
 #define ARCH_ARM
 #define ARCH_ARM_CORTEX_M
@@ -62,11 +59,11 @@
 #define FINSH_USING_MSH
 #define FINSH_THREAD_NAME "tshell"
 #define FINSH_THREAD_PRIORITY 20
-#define FINSH_THREAD_STACK_SIZE 4096
+#define FINSH_THREAD_STACK_SIZE 1024
 #define FINSH_USING_HISTORY
 #define FINSH_HISTORY_LINES 5
 #define FINSH_USING_SYMTAB
-#define FINSH_CMD_SIZE 80
+#define FINSH_CMD_SIZE 32
 #define MSH_USING_BUILT_IN_COMMANDS
 #define FINSH_USING_DESCRIPTION
 #define FINSH_ARG_MAX 10
@@ -81,11 +78,12 @@
 #define RT_UNAMED_PIPE_NUMBER 64
 #define RT_USING_SERIAL
 #define RT_USING_SERIAL_V1
-#define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 64
 #define RT_USING_I2C
 #define RT_USING_I2C_BITOPS
+#define RT_USING_ADC
 #define RT_USING_SPI
+#define RT_USING_WDT
 #define RT_USING_PIN
 
 /* Using USB */
@@ -191,6 +189,9 @@
 /* STM32 HAL & SDK Drivers */
 
 
+/* Infineon HAL Packages */
+
+
 /* Kendryte SDK */
 
 
@@ -255,15 +256,21 @@
 
 /* Hardware Drivers Config */
 
+/* Chip Configuration */
+
+#define SOC_KERNEL
+#define CORTEX_M0
 #define SOC_HT32F52352
 
 /* Onboard Peripheral Drivers */
+
 
 /* On-chip Peripheral Drivers */
 
 #define BSP_USING_GPIO
 #define BSP_USING_UART
 #define BSP_USING_USART1
+#define BSP_USING_USART1_NAME "usart1"
 
 /* Board extended module Drivers */
 

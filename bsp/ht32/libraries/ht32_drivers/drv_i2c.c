@@ -11,8 +11,8 @@
 #include "drv_i2c.h"
 
 #ifdef RT_USING_I2C
-#if !defined(BSP_USING_I2C0) && !defined(BSP_USING_I2C1)
-    #error "Please define at least one BSP_USING_I2Cx"
+#if !defined(BSP_USING_I2C0_HW) && !defined(BSP_USING_I2C1_HW)
+    #error "Please define at least one BSP_USING_I2Cx_HW"
     /* this driver can be disabled at menuconfig RT-Thread Components Device Drivers */
 #endif
 
@@ -31,21 +31,29 @@ struct ht32_i2c
 
 enum
 {
-#ifdef BSP_USING_I2C0
+#ifdef BSP_USING_I2C0_HW
     I2C0_INDEX,
 #endif
-#ifdef BSP_USING_I2C1
+#ifdef BSP_USING_I2C1_HW
     I2C1_INDEX,
 #endif
 };
 
 static struct ht32_i2c_config i2c_config[] =
 {
-#ifdef BSP_USING_I2C0
-    {HT_I2C0, "i2c0", I2C0_IRQn},
+#ifdef BSP_USING_I2C0_HW
+    {
+        .i2c_x      = HT_I2C0,
+        .i2c_name   = BSP_USING_I2C0_HW_NAME,
+        .irq        = I2C0_IRQn
+    },
 #endif
-#ifdef BSP_USING_I2C1
-    {HT_I2C1, "i2c1", I2C1_IRQn},
+#ifdef BSP_USING_I2C1_HW
+    {
+        .i2c_x      = HT_I2C1,
+        .i2c_name   = BSP_USING_I2C1_HW_NAME,
+        .irq        = I2C1_IRQn
+    },
 #endif
 };
 
@@ -56,13 +64,13 @@ static rt_size_t ht32_i2c_init(struct ht32_i2c *i2c_drv)
     struct ht32_i2c_config *i2c_config = i2c_drv->config;
 
     CKCU_PeripClockConfig_TypeDef   CKCUClock = {{0}};
-#ifdef BSP_USING_I2C0
+#ifdef BSP_USING_I2C0_HW
     if (HT_I2C0 == i2c_config->i2c_x)
     {
         CKCUClock.Bit.I2C0  = 1;
     }
 #endif
-#ifdef BSP_USING_I2C1
+#ifdef BSP_USING_I2C1_HW
     if (HT_I2C1 == i2c_config->i2c_x)
     {
         CKCUClock.Bit.I2C1  = 1;
@@ -71,7 +79,7 @@ static rt_size_t ht32_i2c_init(struct ht32_i2c *i2c_drv)
     CKCUClock.Bit.AFIO  = 1;
     CKCU_PeripClockConfig(CKCUClock, ENABLE);
 
-    ht32_i2c_gpio_init(i2c_config->i2c_x);
+    ht32_hardware_i2c_gpio_init(i2c_config->i2c_x);
 
     I2C_InitTypeDef I2C_InitStructure;
     I2C_InitStructure.I2C_GeneralCall   =   DISABLE;
@@ -95,7 +103,11 @@ static int ht32_i2c_read(struct ht32_i2c_config *hi2c,
     uint16_t date_num = 0;
     uint8_t data = 0xFF;
 
+    /* Determine if the bus is idle */
+    while (I2C_GetFlagStatus(hi2c->i2c_x, I2C_FLAG_BUSBUSY));
+    /* Send start bit, slave address and read/write bit */
     I2C_TargetAddressConfig(hi2c->i2c_x, slave_address, I2C_MASTER_READ);
+
     while (!I2C_CheckStatus(hi2c->i2c_x, I2C_MASTER_SEND_START));
     while (!I2C_CheckStatus(hi2c->i2c_x, I2C_MASTER_RECEIVER_MODE));
     I2C_AckCmd(hi2c->i2c_x, ENABLE);
@@ -128,6 +140,9 @@ static int ht32_i2c_write(struct ht32_i2c_config *hi2c,
 {
     uint16_t date_num = data_byte;
 
+    /* Determine if the bus is idle */
+    while (I2C_GetFlagStatus(hi2c->i2c_x, I2C_FLAG_BUSBUSY));
+    /* Send start bit, slave address and read/write bit */
     I2C_TargetAddressConfig(hi2c->i2c_x, slave_address, I2C_MASTER_WRITE);
 
     while (!I2C_CheckStatus(hi2c->i2c_x, I2C_MASTER_SEND_START));
@@ -136,7 +151,8 @@ static int ht32_i2c_write(struct ht32_i2c_config *hi2c,
     while (date_num--)
     {
         while (!I2C_CheckStatus(hi2c->i2c_x, I2C_MASTER_TX_EMPTY));
-        I2C_SendData(hi2c->i2c_x, *p_buffer++);
+        I2C_SendData(hi2c->i2c_x, *p_buffer);
+        p_buffer++;
     }
 
     while (!I2C_CheckStatus(hi2c->i2c_x, I2C_MASTER_TX_EMPTY));

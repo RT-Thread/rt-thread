@@ -45,7 +45,7 @@
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
 #define RT_CONSOLE_DEVICE_NAME "usart0"
-#define RT_VER_NUM 0x50100
+#define RT_VER_NUM 0x50200
 #define RT_BACKTRACE_LEVEL_MAX_NR 32
 #define RT_USING_HW_ATOMIC
 #define RT_USING_CPU_FFS
@@ -87,7 +87,9 @@
 #define RT_SERIAL_RB_BUFSZ 64
 #define RT_USING_I2C
 #define RT_USING_I2C_BITOPS
+#define RT_USING_ADC
 #define RT_USING_SPI
+#define RT_USING_WDT
 #define RT_USING_PIN
 
 /* Using USB */
@@ -193,6 +195,9 @@
 /* STM32 HAL & SDK Drivers */
 
 
+/* Infineon HAL Packages */
+
+
 /* Kendryte SDK */
 
 
@@ -257,15 +262,21 @@
 
 /* Hardware Drivers Config */
 
+/* Chip Configuration */
+
+#define SOC_KERNEL
+#define CORTEX_M3
 #define SOC_HT32F12366
 
 /* Onboard Peripheral Drivers */
+
 
 /* On-chip Peripheral Drivers */
 
 #define BSP_USING_GPIO
 #define BSP_USING_UART
 #define BSP_USING_USART0
+#define BSP_USING_USART0_NAME "usart0"
 
 /* Board extended module Drivers */
 
