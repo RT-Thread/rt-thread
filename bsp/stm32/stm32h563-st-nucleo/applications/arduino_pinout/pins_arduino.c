@@ -11,6 +11,10 @@
 #include <Arduino.h>
 #include "pins_arduino.h"
 
+#define DBG_TAG    "RTduino.pins_arduino"
+#define DBG_LVL    DBG_INFO
+#include <rtdbg.h>
+
 /*
  * {Arduino Pin, RT-Thread Pin [, Device Name, Channel]}
  * [] means optional
@@ -43,3 +47,40 @@ const pin_map_t pin_map_table[]=
     {A4, GET_PIN(C, 2), "adc2", 12},        /* ADC */
     {A5, GET_PIN(F, 11), "adc1", 2},        /* ADC */
 };
+
+#ifdef RTDUINO_USING_SPI
+void switchToSPI(const char *bus_name)
+{
+    GPIO_InitTypeDef GPIO_InitStruct = {0};
+
+    if(!rt_strcmp(bus_name, "spi1"))
+    {
+        __HAL_RCC_SPI1_CLK_ENABLE();
+        __HAL_RCC_GPIOA_CLK_ENABLE();
+        __HAL_RCC_GPIOB_CLK_ENABLE();
+        __HAL_RCC_GPIOG_CLK_ENABLE();
+
+        HAL_GPIO_DeInit(GPIOA, GPIO_PIN_5);
+        HAL_GPIO_DeInit(GPIOG, GPIO_PIN_9);
+        HAL_GPIO_DeInit(GPIOB, GPIO_PIN_5);
+
+        /**SPI1 GPIO Configuration
+        PA5     ------> SPI1_SCK
+        PG9     ------> SPI1_MISO
+        PB5     ------> SPI1_MOSI
+        */
+        GPIO_InitStruct.Pin = GPIO_PIN_5;
+        GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+        GPIO_InitStruct.Pull = GPIO_NOPULL;
+        GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+        GPIO_InitStruct.Alternate = GPIO_AF5_SPI1;
+        HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+        GPIO_InitStruct.Pin = GPIO_PIN_9;
+        HAL_GPIO_Init(GPIOG, &GPIO_InitStruct);
+        GPIO_InitStruct.Pin = GPIO_PIN_5;
+        HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+
+        LOG_W("D11, D12 and D13 will switch from PWM to SPI");
+    }
+}
+#endif /* RTDUINO_USING_SPI */

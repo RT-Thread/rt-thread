@@ -47,4 +47,7 @@
 /* Serial2(lpuart1) : PB.6-TX  PB.7-RX */
 #define RTDUINO_SERIAL2_DEVICE_NAME "lpuart1"
 
+#define SS          D10
+#define RTDUINO_DEFAULT_SPI_BUS_NAME    "spi1"
+
 #endif /* Pins_Arduino_h */
