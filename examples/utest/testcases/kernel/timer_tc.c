@@ -12,6 +12,16 @@
 #include <stdlib.h>
 #include "utest.h"
 
+#undef uassert_true
+#define uassert_true(value)                                 \
+    do                                                      \
+    {                                                       \
+        if (!(value))                                       \
+        {                                                   \
+            __utest_assert(value, "(" #value ") is false"); \
+        }                                                   \
+    } while (0)
+
 static rt_uint8_t timer_flag_oneshot[] = {
     RT_TIMER_FLAG_ONE_SHOT,
     RT_TIMER_FLAG_ONE_SHOT | RT_TIMER_FLAG_HARD_TIMER,
@@ -39,6 +49,8 @@ static void timer_oneshot(void *param)
     timer_struct *timer_call;
     timer_call = (timer_struct *)param;
     timer_call->callbacks++;
+
+    uassert_true(rt_tick_get() == timer_call->expect_tick);
 }
 
 static void timer_periodic(void *param)
@@ -47,6 +59,8 @@ static void timer_periodic(void *param)
     timer_struct *timer_call;
     timer_call = (timer_struct *)param;
     timer_call->callbacks++;
+
+    uassert_true(rt_tick_get() == timer_call->expect_tick);
 
     if (timer_call->is_static)
     {
@@ -196,7 +210,9 @@ static void timer_control(void *param)
     rt_err_t result;
     timer_struct *timer_call;
     timer_call = (timer_struct *)param;
-    timer_call->callbacks ++;
+    timer_call->callbacks++;
+
+    uassert_true(rt_tick_get() == timer_call->expect_tick);
 
     /* periodic timer can stop */
     if (timer_call->is_static)
@@ -259,7 +275,9 @@ static void timer_start_in_callback(void *param)
     rt_err_t result;
     timer_struct *timer_call;
     timer_call = (timer_struct *)param;
-    timer_call->callbacks ++;
+    timer_call->callbacks++;
+
+    uassert_true(rt_tick_get() == timer_call->expect_tick);
 
     if (timer_call->is_static)
     {
@@ -280,7 +298,9 @@ static void timer_start_stop_in_callback(void *param)
     rt_err_t result;
     timer_struct *timer_call;
     timer_call = (timer_struct *)param;
-    timer_call->callbacks ++;
+    timer_call->callbacks++;
+
+    uassert_true(rt_tick_get() == timer_call->expect_tick);
 
     if (timer_call->is_static)
     {
