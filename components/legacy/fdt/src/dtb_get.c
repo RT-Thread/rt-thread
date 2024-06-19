@@ -69,6 +69,10 @@ static int _dtb_node_get_dtb_nodes_list(struct dtb_node *dtb_node_head, struct d
     int pathname_sz;
     int node_name_sz;
 
+#ifdef RT_USING_FDT_FWNODE
+    dtb_fwnode_init(dtb_node_head);
+#endif
+
     /* caller alrealy checked current_fdt */
     if ((root_off = fdt_path_offset(current_fdt, pathname)) >= 0)
     {
@@ -113,7 +117,9 @@ static int _dtb_node_get_dtb_nodes_list(struct dtb_node *dtb_node_head, struct d
             {
                 return FDT_RET_NO_MEMORY;
             }
-
+#ifdef RT_USING_FDT_FWNODE
+            dtb_fwnode_init(dtb_node);
+#endif
             fdt_exec_status = _dtb_node_get_dtb_properties_list(dtb_node->properties, node_off);
             if (fdt_exec_status == FDT_RET_GET_EMPTY)
             {
