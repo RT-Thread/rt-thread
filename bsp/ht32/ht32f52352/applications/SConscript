@@ -9,7 +9,12 @@ from building import *
 cwd = GetCurrentDir()
 
 #创建一个列表，用于保存需要使用到的C文件路径
-src = Glob('*c')
+#src = Glob('*.c')
+src = Split("""
+main.c
+""")
+if GetDepend(['BSP_USING_TEST']):
+    src += ['test.c']
 
 #创建一个列表，用于保存需要包含的H文件路径
 path = [cwd]
