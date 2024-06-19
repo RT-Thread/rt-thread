@@ -10,6 +10,10 @@
 #include <rtthread.h>
 #include <stdint.h>
 
+#ifdef RT_USING_FDT_FWNODE
+#include "dtb_fwnode.h"
+#endif
+
 //#define RT_DTB_DEBUG
 #ifdef RT_DTB_DEBUG
 #define debug(fmt, args...) rt_kprintf(fmt, ##args)
@@ -17,9 +21,9 @@
 #define debug(fmt, args...)
 #endif
 
-#define ERR_PTR(err)    ((void *)((long)(err)))
-#define PTR_ERR(ptr)    ((long)(ptr))
-#define IS_ERR(ptr)     ((unsigned long)(ptr) > (unsigned long)(-1000))
+#define DTB_ERR_PTR(err)    ((void *)((long)(err)))
+#define DTB_PTR_ERR(ptr)    ((long)(ptr))
+#define DTB_IS_ERR(ptr)     ((unsigned long)(ptr) > (unsigned long)(-1000))
 
 #define DEV_ROOT_NODE_ADDR_CELLS_DEFAULT 2
 #define DEV_ROOT_NODE_SIZE_CELLS_DEFAULT 1
@@ -71,7 +75,10 @@ struct dtb_node
     const char *path;
     phandle handle;
     int level;
-
+#ifdef RT_USING_FDT_FWNODE
+    struct fwnode_handle fwnode;
+    unsigned long _flags;
+#endif
     struct dtb_property *properties;
     struct dtb_node *parent;
     struct dtb_node *child;
@@ -381,5 +388,13 @@ int dtb_node_irq_count(struct dtb_node *dev);
     for (node = dtb_node_first_subnode(parent); \
          dtb_node_valid(node);                  \
          node = dtb_node_next_subnode(node))
+
+#ifdef RT_USING_FDT_FWNODE
+extern const struct fwnode_operations of_fwnode_ops;
+static inline void dtb_fwnode_init(struct dtb_node *node)
+{
+    fwnode_init(&node->fwnode, &of_fwnode_ops);
+}
+#endif
 
 #endif /* RT_FDT_H__ */
