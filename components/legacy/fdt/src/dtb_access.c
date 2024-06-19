@@ -28,11 +28,11 @@ static void *dtb_node_find_property_value_of_size(const struct dtb_node *dn,
     struct dtb_property *prop = dtb_node_get_dtb_node_property(dn, propname, NULL);
 
     if (!prop)
-        return ERR_PTR(-EINVAL);
+        return DTB_ERR_PTR(-EINVAL);
     if (!prop->value)
-        return ERR_PTR(-ENODATA);
+        return DTB_ERR_PTR(-ENODATA);
     if (len > prop->size)
-        return ERR_PTR(-EOVERFLOW);
+        return DTB_ERR_PTR(-EOVERFLOW);
     return prop->value;
 }
 
@@ -44,10 +44,10 @@ int dtb_node_read_u32(const struct dtb_node *dn, const char *propname, uint32_t 
     if (!dn)
         return -EINVAL;
     val = dtb_node_find_property_value_of_size(dn, propname, sizeof(*outp));
-    if (IS_ERR(val))
+    if (DTB_IS_ERR(val))
     {
         debug("(not found)\n");
-        return PTR_ERR(val);
+        return DTB_PTR_ERR(val);
     }
 
     *outp = fdt32_to_cpu(*val);
@@ -72,8 +72,8 @@ int dtb_node_read_u32_array(const struct dtb_node *dn, const char *propname,
     val = dtb_node_find_property_value_of_size(dn, propname,
                                           sz * sizeof(*out_values));
 
-    if (IS_ERR(val))
-        return PTR_ERR(val);
+    if (DTB_IS_ERR(val))
+        return DTB_PTR_ERR(val);
 
     debug("size %zd, val:%d\n", sz, *val);
     while (sz--)
@@ -110,10 +110,10 @@ int dtb_node_read_u32_index(const struct dtb_node *dn, const char *propname,
 
     val = dtb_node_find_property_value_of_size(dn, propname,
                                           sizeof(*outp) * (index + 1));
-    if (IS_ERR(val))
+    if (DTB_IS_ERR(val))
     {
         debug("(not found)\n");
-        return PTR_ERR(val);
+        return DTB_PTR_ERR(val);
     }
 
     *outp = fdt32_to_cpu(val[index]);
@@ -130,10 +130,10 @@ int dtb_node_read_u64(const struct dtb_node *dn, const char *propname, uint64_t 
     if (!dn)
         return -EINVAL;
     val = dtb_node_find_property_value_of_size(dn, propname, sizeof(*outp));
-    if (IS_ERR(val))
+    if (DTB_IS_ERR(val))
     {
         debug("(not found)\n");
-        return PTR_ERR(val);
+        return DTB_PTR_ERR(val);
     }
 
     *outp = fdt64_to_cpu(*val);
