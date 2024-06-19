@@ -48,10 +48,18 @@ enum
 static struct ht32_spi_config spi_config[] =
 {
 #ifdef BSP_USING_SPI0
-    {HT_SPI0, "spi0", SPI0_IRQn},
+    {
+    .spi_x          = HT_SPI0,
+    .spi_name       = BSP_USING_SPI0_NAME,
+    .irq            = SPI0_IRQn
+    },
 #endif
 #ifdef BSP_USING_SPI1
-    {HT_SPI1, "spi1", SPI1_IRQn},
+    {
+    .spi_x          = HT_SPI1,
+    .spi_name       = BSP_USING_SPI1_NAME,
+    .irq            = SPI1_IRQn
+    },
 #endif
 };
 

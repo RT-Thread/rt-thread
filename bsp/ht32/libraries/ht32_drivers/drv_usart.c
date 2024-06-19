@@ -52,50 +52,50 @@ static struct ht32_usart usart_config[] =
 {
 #ifdef BSP_USING_USART0
     {
-        "usart0",
-        HT_USART0,
-        USART0_IRQn,
-        RT_NULL
+    .name           = BSP_USING_USART0_NAME,
+    .usart_x        = HT_USART0,
+    .irq            = USART0_IRQn,
+    .serial         = RT_NULL
     },
 #endif
 #ifdef BSP_USING_USART1
     {
-        "usart1",
-        HT_USART1,
-        USART1_IRQn,
-        RT_NULL
+    .name           = BSP_USING_USART1_NAME,
+    .usart_x        = HT_USART1,
+    .irq            = USART1_IRQn,
+    .serial         = RT_NULL
     },
 #endif
 #ifdef BSP_USING_UART0
     {
-        "uart0",
-        HT_UART0,
-        UART0_IRQn,
-        RT_NULL
+    .name           = BSP_USING_UART0_NAME,
+    .usart_x        = HT_UART0,
+    .irq            = UART0_IRQn,
+    .serial         = RT_NULL
     },
 #endif
 #ifdef BSP_USING_UART1
     {
-        "uart1",
-        HT_UART1,
-        UART1_IRQn,
-        RT_NULL
+    .name           = BSP_USING_UART1_NAME,
+    .usart_x        = HT_UART1,
+    .irq            = UART1_IRQn,
+    .serial         = RT_NULL
     },
 #endif
 #ifdef BSP_USING_UART2
     {
-        "uart2",
-        HT_UART2,
-        UART0_UART2_IRQn,
-        RT_NULL
+    .name           = BSP_USING_UART2_NAME,
+    .usart_x        = HT_UART2,
+    .irq            = UART0_UART2_IRQn,
+    .serial         = RT_NULL
     },
 #endif
 #ifdef BSP_USING_UART3
     {
-        "uart3",
-        HT_UART3,
-        UART1_UART3_IRQn,
-        RT_NULL
+    .name           = BSP_USING_UART3_NAME,
+    .usart_x        = HT_UART3,
+    .irq            = UART1_UART3_IRQn,
+    .serial         = RT_NULL
     },
 #endif
 };
