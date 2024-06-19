@@ -256,7 +256,7 @@ static int ht32_getc(struct rt_serial_device *serial)
 
 static rt_ssize_t ht32_dma_transmit(struct rt_serial_device *serial, rt_uint8_t *buf, rt_size_t size, int direction)
 {
-    return RT_ERROR;
+    return -RT_ERROR;
 }
 
 static const struct rt_uart_ops ht32_usart_ops =

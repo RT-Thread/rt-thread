@@ -375,7 +375,7 @@ static int uart_task(int argc, char *argv[])
     if (!serial)
     {
         rt_kprintf("find %s failed!\n", uart_name);
-        return RT_ERROR;
+        return -RT_ERROR;
     }
     /* Initializing a Signal */
     rt_sem_init(&rx_sem, "rx_sem", 0, RT_IPC_FLAG_FIFO);
@@ -490,7 +490,7 @@ static int i2c_task(int argc, char *argv[])
     if (!i2c_dev)
     {
         rt_kprintf("find %s failed!\n", i2c_name);
-        return RT_ERROR;
+        return -RT_ERROR;
     }
     /* Execute I2C read/write eeprom function */
     i2c_thread(RT_NULL);
@@ -562,14 +562,14 @@ static int spi_task(int argc, char *argv[])
     if(ret != RT_EOK)
     {
         rt_kprintf("Failed CS pin binding for %s!\n", spi_name);
-        return RT_ERROR;
+        return -RT_ERROR;
     }
     /* Find flash devices */
     spi_dev = (struct rt_spi_device*)rt_device_find(flash_name);
     if (!spi_dev)
     {
         rt_kprintf("find %s failed!\n", spi_name);
-        return RT_ERROR;
+        return -RT_ERROR;
     }
     /* Configuring the SPI Bus */
     cfg.data_width = 8;
@@ -649,7 +649,7 @@ static void wdt_test(void)
 
 static int wdt_task(int argc, char *argv[])
 {
-    rt_err_t ret = RT_ERROR;
+    rt_err_t ret = -RT_ERROR;
     rt_uint16_t wdt_time = 5;
     char dev_name[] = "wdt";
     if(argc == 2)
