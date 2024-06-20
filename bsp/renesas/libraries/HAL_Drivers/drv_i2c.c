@@ -45,6 +45,9 @@ static struct ra_i2c_handle ra_i2cs[] =
 #ifdef BSP_USING_HW_I2C1
     {.bus_name = "i2c1", .i2c_cfg = &g_i2c_master1_cfg, .i2c_ctrl = &g_i2c_master1_ctrl,},
 #endif
+#ifdef BSP_USING_HW_I2C2
+    {.bus_name = "i2c2", .i2c_cfg = &g_i2c_master2_cfg, .i2c_ctrl = &g_i2c_master2_ctrl,},
+#endif
 };
 
 void i2c_master_callback(i2c_master_callback_args_t *p_args)
