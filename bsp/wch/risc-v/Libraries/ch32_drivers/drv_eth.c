@@ -24,19 +24,6 @@ static struct eth_device eth_device;
 
 static rt_uint8_t eth_mac_addr[] = { 0x84, 0xc2, 0xe4, 0x01, 0x02, 0x03 };
 
-void get_mac_addr(uint8_t *p)
-{
-    uint8_t i;
-    uint8_t *macaddr = (uint8_t *)(ROM_CFG_USERADR_ID+5);
-
-    for(i = 0; i < 6; i++)
-    {
-        *p = *macaddr;
-        p++;
-        macaddr--;
-    }
-}
-
 uint32_t eth_reg_init(ETH_InitTypeDef* ETH_InitStruct, uint16_t phy_address)
 {
     uint32_t tmpreg = 0;
@@ -290,6 +277,17 @@ error:
     return -RT_ERROR;
 }
 
+int read_eth_link_status()
+{
+    ETH->MACMIIAR |= 0x00000800;
+    ETH->MACMIIAR &= 0xFFFFFFFD;
+
+    if ((ETH->MACMIIDR & ETH_MACMIIDR_MD & 0x04) != 0)
+        return 1;
+
+    return 0;
+}
+
 void ETH_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
 void ETH_IRQHandler(void)
 {
@@ -310,12 +308,22 @@ void ETH_IRQHandler(void)
 
     if( int_sta & ETH_DMA_IT_NIS )
     {
-        if( int_sta & ETH_DMA_IT_R )
+        if(int_sta & ETH_DMA_IT_R)
             ETH_DMAClearITPendingBit(ETH_DMA_IT_R);
-        if( int_sta & ETH_DMA_IT_T )
+        if(int_sta & ETH_DMA_IT_T)
             ETH_DMAClearITPendingBit(ETH_DMA_IT_T);
-        if( int_sta & ETH_DMA_IT_PHYLINK)
+        if(int_sta & ETH_DMA_IT_PHYLINK)
+        {
             ETH_DMAClearITPendingBit(ETH_DMA_IT_PHYLINK);
+            if(read_eth_link_status())
+            {
+                eth_device_linkchange(&eth_device, RT_TRUE);
+            }
+            else
+            {
+                eth_device_linkchange(&eth_device, RT_FALSE);
+            }
+        }
         ETH_DMAClearITPendingBit(ETH_DMA_IT_NIS);
     }
 
@@ -325,8 +333,6 @@ void ETH_IRQHandler(void)
 int rt_hw_eth_init(void)
 {
     rt_err_t state = RT_EOK;
-
-    get_mac_addr(eth_mac_addr);
 
     //分配内存
     rx_buffer = (rt_uint8_t *)rt_calloc(ETH_RX_BUF_COUNT, ETH_MAX_PACKET_SIZE);
