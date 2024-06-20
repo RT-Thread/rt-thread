@@ -7,8 +7,8 @@
  * Date           Author         Notes
  * 2024/03/02     ShichengChu    first version
  */
-#ifndef __DRV_ADC_H__
-#define __DRV_ADC_H__
+#ifndef __DRV_WDT_H__
+#define __DRV_WDT_H__
 
 #include "pinctrl.h"
 #include "mmio.h"
@@ -161,4 +161,4 @@ rt_inline void cvi_wdt_clr_irq_en(unsigned long reg_base)
 
 int rt_hw_wdt_init(void);
 
-#endif /* __DRV_ADC_H__ */
+#endif /* __DRV_WDT_H__ */
