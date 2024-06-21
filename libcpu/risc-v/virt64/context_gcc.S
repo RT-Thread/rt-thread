@@ -44,9 +44,11 @@
     li      s10, (SSTATUS_SPP)
     or      s11, s11, s10
     PUSH_8  s11
+    addi    sp, sp, -8
 .endm
 
 .macro RESTORE_CONTEXT
+    addi    sp, sp, 8
     POP_8   s11
     csrw    sstatus, s11
     POP_8   s11
