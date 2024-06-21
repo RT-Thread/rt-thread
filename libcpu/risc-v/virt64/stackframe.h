@@ -21,6 +21,7 @@
 #define BYTES(idx)          ((idx) * REGBYTES)
 #define FRAME_OFF_SSTATUS   BYTES(2)
 #define FRAME_OFF_SP        BYTES(32)
+#define FRAME_OFF_GP        BYTES(3)
 
 #ifdef __ASSEMBLY__
 
