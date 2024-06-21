@@ -157,7 +157,7 @@ _secondary_cpu_entry:
 #endif /* RT_USING_OFW */
     /* Save cpu id global */
     bl      rt_hw_cpu_id_set
-    bl      rt_hw_cpu_id
+    mrs     x0, tpidr_el1
 
     /* Set current cpu's stack top */
     sub     x0, x0, #1

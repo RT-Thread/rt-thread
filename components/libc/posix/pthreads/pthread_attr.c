@@ -13,7 +13,7 @@
 #include "sched.h"
 #include <string.h>
 
-#define DEFAULT_STACK_SIZE  2048
+#define DEFAULT_STACK_SIZE  4096
 #define DEFAULT_PRIORITY    (RT_THREAD_PRIORITY_MAX/2 + RT_THREAD_PRIORITY_MAX/4)
 
 const pthread_attr_t pthread_default_attr =

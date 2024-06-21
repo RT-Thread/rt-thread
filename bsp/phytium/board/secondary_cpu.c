@@ -125,9 +125,7 @@ void rt_hw_secondary_cpu_bsp_start(void)
     /* interrupt init */
 #if defined(TARGET_ARMV8_AARCH64)
     arm_gic_cpu_init(0, 0);
-
     phytium_aarch64_arm_gic_redist_init();
-    rt_kprintf("arm_gic_redist_init is over rt_hw_cpu_id() is %d \r\n", rt_hw_cpu_id());
 #else
     arm_gic_cpu_init(0);
     arm_gic_redist_init(0);
@@ -143,7 +141,6 @@ void rt_hw_secondary_cpu_bsp_start(void)
     rt_hw_interrupt_umask(RT_SCHEDULE_IPI);
 
     /* start scheduler */
-
     rt_kprintf("\rcall cpu %d on success\n", rt_hw_cpu_id());
     rt_hw_secondary_cpu_idle_exec();
     rt_system_scheduler_start();
