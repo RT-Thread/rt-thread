@@ -5,12 +5,11 @@
 
 #define RT_NAME_MAX 16
 #define RT_USING_SMP
-#define RT_CPUS_NR 2
+#define RT_CPUS_NR 4
 #define RT_ALIGN_SIZE 4
 #define RT_THREAD_PRIORITY_32
 #define RT_THREAD_PRIORITY_MAX 32
 #define RT_TICK_PER_SECOND 1000
-#define RT_USING_OVERFLOW_CHECK
 #define RT_USING_HOOK
 #define RT_HOOK_USING_FUNC_PTR
 #define RT_USING_IDLE_HOOK
@@ -32,6 +31,8 @@
 #define RT_USING_DEBUG
 #define RT_DEBUGING_ASSERT
 #define RT_DEBUGING_COLOR
+#define RT_DEBUGING_CONTEXT
+#define RT_USING_OVERFLOW_CHECK
 
 /* Inter-Thread communication */
 
@@ -141,7 +142,6 @@
 #define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 64
 #define RT_USING_CAN
-#define RT_CAN_USING_HDR
 #define RT_CAN_USING_CANFD
 #define RT_USING_I2C
 #define RT_USING_I2C_BITOPS
@@ -161,10 +161,6 @@
 #define RT_USING_DEV_BUS
 #define RT_USING_PIN
 #define RT_USING_KTIME
-
-/* Using USB */
-
-/* end of Using USB */
 /* end of Device Drivers */
 
 /* C/C++ and POSIX layer */
@@ -275,6 +271,10 @@
 #define RT_USING_ADT_HASHMAP
 #define RT_USING_ADT_REF
 /* end of Utilities */
+
+/* Using USB legacy version */
+
+/* end of Using USB legacy version */
 /* end of RT-Thread Components */
 
 /* RT-Thread Utestcases */
@@ -471,10 +471,6 @@
 #define RT_USING_SPIM1
 #define RT_USING_SPIM2
 #define RT_USING_SPIM3
-#define BSP_USING_CAN
-#define RT_USING_CANFD
-#define RT_USING_CAN0
-#define RT_USING_CAN1
 #define BSP_USING_GPIO
 #define BSP_USING_QSPI
 #define RT_USING_QSPI0
@@ -482,18 +478,18 @@
 #define BSP_USING_ETH
 #define RT_LWIP_PBUF_POOL_BUFSIZE 1700
 #define BSP_USING_PWM
-#define RT_USING_PWM6
+#define RT_USING_PWM2
 #define BSP_USING_I2C
 #define I2C_USE_MIO
-#define RT_USING_MIO15
+#define RT_USING_MIO0
+#define RT_USING_MIO1
+#define RT_USING_MIO2
+#define RT_USING_MIO10
 #define BSP_USING_SDIF
 #define BSP_USING_SDCARD_FATFS
-#define USING_SDIF0
-#define USE_SDIF0_EMMC
 #define USING_SDIF1
 #define USE_SDIF1_TF
 #define BSP_USING_DC
-#define RT_USING_DC_CHANNEL1
 /* end of On-chip Peripheral Drivers */
 
 /* Board extended module Drivers */
@@ -502,7 +498,7 @@
 #define BSP_USING_GIC
 #define BSP_USING_GICV3
 #define PHYTIUM_ARCH_AARCH64
-#define ARM_SPI_BIND_CPU_ID 0
+#define ARM_SPI_BIND_CPU_ID 2
 
 /* Standalone Setting */
 
@@ -510,10 +506,9 @@
 
 /* Soc configuration */
 
-#define TARGET_E2000D
-#define SOC_NAME "e2000"
-#define TARGET_TYPE_NAME "d"
-#define SOC_CORE_NUM 2
+#define TARGET_PHYTIUMPI
+#define SOC_NAME "phytiumpi"
+#define SOC_CORE_NUM 4
 #define F32BIT_MEMORY_ADDRESS 0x80000000
 #define F32BIT_MEMORY_LENGTH 0x80000000
 #define F64BIT_MEMORY_ADDRESS 0x2000000000
@@ -524,8 +519,8 @@
 
 /* Board Configuration */
 
-#define E2000D_DEMO_BOARD
-#define BOARD_NAME "demo"
+#define BOARD_NAME "firefly"
+#define FIREFLY_DEMO_BOARD
 
 /* IO mux configuration when board start up */
 
