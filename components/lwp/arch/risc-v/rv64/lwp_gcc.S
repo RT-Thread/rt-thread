@@ -174,6 +174,9 @@ arch_thread_signal_enter:
     /* dummy a2 */
     mv a2, a1
 
+    /* restore user GP */
+    LOAD gp, FRAME_OFF_GP(s3)
+
     /**
      * handler(signo, psi, ucontext);
      */
