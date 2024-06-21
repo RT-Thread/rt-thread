@@ -424,7 +424,7 @@ void rt_hw_mmu_setup(rt_aspace_t aspace, struct mem_desc *mdesc, int desc_nr)
                                  mdesc->paddr_start >> MM_PAGE_SHIFT, &err);
         if (retval)
         {
-            LOG_E("%s: map failed with code %d", retval);
+            LOG_E("%s: map failed with code %d", __FUNCTION__, retval);
             RT_ASSERT(0);
         }
         mdesc++;
