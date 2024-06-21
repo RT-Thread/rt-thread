@@ -370,7 +370,10 @@ void rt_hw_common_setup(void)
             if (mem_region->start >= page_best_start &&
                 mem_region->start - page_best_start < best_offset &&
                 /* MUST >= 1MB */
-                mem_region->end - mem_region->start >= SIZE_MB)
+                mem_region->end - mem_region->start >= SIZE_MB &&
+                /* init page region must be mapped in rt_hw_mmu_setup_early */
+                mem_region->start > RT_ALIGN_DOWN((rt_size_t)&_start, 0x200000) &&
+                mem_region->start < RT_ALIGN_DOWN((rt_size_t)&_start, 0x200000) + ARCH_PAGE_INIT_THRESHOLD - SIZE_MB)
             {
                 page_region = mem_region;
 
