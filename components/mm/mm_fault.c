@@ -71,7 +71,9 @@ static int _write_fault(rt_varea_t varea, void *pa, struct rt_aspace_fault_msg *
         }
         else
         {
-            LOG_I("%s: No permission on %s(attr=0x%lx)", __func__, VAREA_NAME(varea), varea->attr);
+            LOG_I("%s: No permission on %s(attr=0x%lx,writable=%s,fault_type=%d)",
+                  __func__, VAREA_NAME(varea), varea->attr,
+                  VAREA_IS_WRITABLE(varea) ? "True" : "False", msg->fault_type);
         }
     }
     else if (msg->fault_type == MM_FAULT_TYPE_PAGE_FAULT)
