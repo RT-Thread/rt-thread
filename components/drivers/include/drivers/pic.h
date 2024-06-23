@@ -104,7 +104,6 @@ struct rt_pic_isr
 #ifdef RT_USING_PIC_STATISTICS
 struct rt_pic_irq_statistics
 {
-    rt_ubase_t current_irq_begin[RT_CPUS_NR];
     rt_ubase_t max_irq_time_ns;
     rt_ubase_t min_irq_time_ns;
     rt_ubase_t sum_irq_time_ns;
