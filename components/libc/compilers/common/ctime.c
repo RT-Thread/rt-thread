@@ -881,8 +881,7 @@ static void rtthread_timer_wrapper(void *timerobj)
                     rt_ktime_cputimer_getres();
     if (timer->reload)
     {
-        rt_ktime_hrtimer_control(&timer->hrtimer, RT_TIMER_CTRL_SET_TIME, &(timer->reload));
-        rt_ktime_hrtimer_start(&timer->hrtimer);
+        rt_ktime_hrtimer_start(&timer->hrtimer, timer->reload);
     }
 #ifdef RT_USING_SMART
     /* this field is named as tid in musl */
@@ -1003,7 +1002,7 @@ int timer_create(clockid_t clockid, struct sigevent *evp, timer_t *timerid)
     timer->status = NOT_ACTIVE;
     timer->clockid = clockid;
 
-    rt_ktime_hrtimer_init(&timer->hrtimer, timername, 0, RT_TIMER_FLAG_ONE_SHOT | RT_TIMER_FLAG_HARD_TIMER,
+    rt_ktime_hrtimer_init(&timer->hrtimer, timername, RT_TIMER_FLAG_ONE_SHOT | RT_TIMER_FLAG_HARD_TIMER,
                           rtthread_timer_wrapper, timer);
 
     _timerid = resource_id_get(&id_timer);
@@ -1226,8 +1225,7 @@ int timer_settime(timer_t timerid, int flags, const struct itimerspec *value,
     else
         rt_ktime_hrtimer_control(&timer->hrtimer, RT_TIMER_CTRL_SET_PERIODIC, RT_NULL);
 
-    rt_ktime_hrtimer_control(&timer->hrtimer, RT_TIMER_CTRL_SET_TIME, &(timer->reload));
-    rt_ktime_hrtimer_start(&timer->hrtimer);
+    rt_ktime_hrtimer_start(&timer->hrtimer, timer->reload);
 
     return 0;
 }
