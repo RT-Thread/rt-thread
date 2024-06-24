@@ -5,7 +5,7 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2024-03-28     Shell		   Move vector handling codes from context_gcc.S
+ * 2024-03-28     Shell        Move vector handling codes from context_gcc.S
  */
 
 #ifndef __ARM64_INC_VECTOR_H__

@@ -6,7 +6,7 @@
  * Change Logs:
  * Date           Author       Notes
  * 2018-10-06     ZhaoXiaowei  the first version
- * 2024-03-28     Shell		   Move vector handling codes from context_gcc.S
+ * 2024-03-28     Shell        Move vector handling codes from context_gcc.S
  */
 
 #ifndef __ASSEMBLY__
@@ -40,7 +40,7 @@ system_vectors:
     .org (VBAR + 0x200 + 0)
     b vector_exception                  /* Synchronous */
     .org (VBAR + 0x280 + 0)
-    b vector_irq    	                /* IRQ/vIRQ */
+    b vector_irq                        /* IRQ/vIRQ */
     .org (VBAR + 0x300 + 0)
     b vector_fiq                        /* FIQ/vFIQ */
     .org (VBAR + 0x380 + 0)

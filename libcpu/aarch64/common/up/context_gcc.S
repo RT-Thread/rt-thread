@@ -8,7 +8,7 @@
  * 2021-05-18     Jesven       the first version
  * 2023-06-24     Shell        Support backtrace for user thread
  * 2024-01-06     Shell        Fix barrier on irq_disable/enable
- * 2024-03-28     Shell		   Move vector handling codes from context_gcc.S
+ * 2024-03-28     Shell        Move vector handling codes from context_gcc.S
  */
 
 #ifndef __ASSEMBLY__
