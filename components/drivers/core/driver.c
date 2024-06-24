@@ -50,4 +50,4 @@ rt_err_t rt_driver_unregister(rt_driver_t drv)
 
     return ret;
 }
-RTM_EXPORT(rt_driver_register);
+RTM_EXPORT(rt_driver_unregister);
