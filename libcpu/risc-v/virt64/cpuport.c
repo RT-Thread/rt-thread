@@ -52,6 +52,7 @@ void *_rt_hw_stack_init(rt_ubase_t *sp, rt_ubase_t ra, rt_ubase_t sstatus)
     (*--sp) = 0;                                /* s10 */
     (*--sp) = 0;                                /* s11 */
     (*--sp) = sstatus;                          /* sstatus */
+    --sp; /* align to 16bytes */
 
     return (void *)sp;
 }
