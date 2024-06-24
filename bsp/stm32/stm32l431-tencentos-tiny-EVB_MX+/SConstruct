@@ -7,10 +7,6 @@ if os.getenv('RTT_ROOT'):
 else:
     RTT_ROOT = os.path.normpath(os.getcwd() + '/../../..')
 
-# set RTT_ROOT
-if not os.getenv("RTT_ROOT"):
-    RTT_ROOT="rt-thread"
-
 sys.path = sys.path + [os.path.join(RTT_ROOT, 'tools')]
 try:
     from building import *
@@ -39,7 +35,7 @@ Export('env')
 Export('RTT_ROOT')
 Export('rtconfig')
 
-SDK_ROOT = os.path.abspath('../')
+SDK_ROOT = os.path.abspath('./')
 
 if os.path.exists(SDK_ROOT + '/libraries'):
     libraries_path_prefix = SDK_ROOT + '/libraries'
@@ -52,7 +48,7 @@ objs = PrepareBuilding(env, RTT_ROOT, has_libcpu=False)
 rtconfig.BSP_LIBRARY_TYPE = None
 
 # include drivers
-objs.extend(SConscript(os.path.join(libraries_path_prefix, 'HAL_Drivers', 'SConscript'), variant_dir='build/libraries/HAL_Drivers', duplicate=0))
+objs.extend(SConscript(os.path.join(libraries_path_prefix, 'HAL_Drivers', 'SConscript'),variant_dir='build/libraries/HAL_Drivers', duplicate=0))
 
 # make a building
 DoBuilding(TARGET, objs)
