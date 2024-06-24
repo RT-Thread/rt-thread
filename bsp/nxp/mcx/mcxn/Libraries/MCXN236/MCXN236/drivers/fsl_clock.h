@@ -1305,11 +1305,11 @@ void CLOCK_SetPll1MonitorMode(scg_pll1_monitor_mode_t mode);
 void VBAT_SetOscConfig(VBAT_Type *base, const vbat_osc_config_t *config);
 
 /*!
- * @brief	Set the additional number of wait-states added to account for the ratio of system clock period to flash access
+ * @brief   Set the additional number of wait-states added to account for the ratio of system clock period to flash access
  * time during full speed power mode.
- * @param	system_freq_hz	: Input frequency
- * @param	mode	        : Active run mode (voltage level).
- * @return	success or fail status
+ * @param   system_freq_hz  : Input frequency
+ * @param   mode            : Active run mode (voltage level).
+ * @return  success or fail status
  */
 status_t CLOCK_SetFLASHAccessCyclesForFreq(uint32_t system_freq_hz, run_mode_t mode);
 
@@ -1519,8 +1519,8 @@ __STATIC_INLINE bool CLOCK_IsPLL0Locked(void)
     return (bool)((SCG0->APLLCSR & SCG_APLLCSR_APLL_LOCK_MASK) != 0UL);
 }
 
-/*! @brief	Check if PLL1 is locked or not
- *  @return	true if the PLL1 is locked, false if not locked
+/*! @brief  Check if PLL1 is locked or not
+ *  @return true if the PLL1 is locked, false if not locked
  */
 __STATIC_INLINE bool CLOCK_IsPLL1Locked(void)
 {

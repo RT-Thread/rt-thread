@@ -169,7 +169,7 @@ typedef struct
     status_t (*erase_all)(void);
 } memory_region_interface_t;
 
-//! @brief Structure of a memory map entry.
+/*! @brief Structure of a memory map entry.*/
 typedef struct
 {
     uint32_t startAddress;

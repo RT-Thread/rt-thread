@@ -21,7 +21,7 @@
  */
 #define NXPCLHASH_WA_SIZE_MAX             (128U + 64U)
 #define NBOOT_ROOT_CERT_COUNT             (4U)
-#define NXPCLCSS_HASH_RTF_OUTPUT_SIZE_HAL ((size_t)32U) ///< Size of RTF appendix to hash output buffer, in bytes
+#define NXPCLCSS_HASH_RTF_OUTPUT_SIZE_HAL ((size_t)32U) /*/< Size of RTF appendix to hash output buffer, in bytes*/
 
 #define NBOOT_KEYINFO_WORDLEN (23U)
 #define NBOOT_CONTEXT_BYTELEN (192U + NXPCLHASH_WA_SIZE_MAX)

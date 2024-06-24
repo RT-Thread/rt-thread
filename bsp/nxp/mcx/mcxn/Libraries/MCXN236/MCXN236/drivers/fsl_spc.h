@@ -45,7 +45,7 @@
 #define SPC_VDD_CORE_GLITCH_DETECT_SC_TIMEOUT                    SPC_GLITCH_DETECT_SC_TIMEOUT
 #define SPC_VDD_CORE_GLITCH_DETECT_SC_IE_MASK                    SPC_GLITCH_DETECT_SC_IE_MASK
 #define SPC_VDD_CORE_GLITCH_DETECT_SC_IE                         SPC_GLITCH_DETECT_SC_IE
-#endif 
+#endif
 
 /*!
  * @brief SPC status enumeration.
@@ -561,9 +561,9 @@ static inline void SPC_ClearLowPowerRequest(SPC_Type *base)
 #if (defined(FSL_FEATURE_MCX_SPC_HAS_SWITCH_STATE_BIT) && FSL_FEATURE_MCX_SPC_HAS_SWITCH_STATE_BIT)
 /*!
  * @brief Checks whether the power switch is on.
- * 
+ *
  * @param base SPC peripheral base address.
- * 
+ *
  * @retval true The power switch is on.
  * @retval false The power switch is off.
  */
@@ -621,7 +621,7 @@ static inline void SPC_ClearPowerDomainLowPowerRequestFlag(SPC_Type *base, spc_p
 
 /*!
  * @brief Trims SRAM retention regulator reference voltage, trim step is 12 mV, range is around 0.48V to 0.85V.
- * 
+ *
  * @param base SPC peripheral base address.
  * @param trimValue Reference voltage trim value.
  */
@@ -632,7 +632,7 @@ static inline void SPC_TrimSRAMLdoRefVoltage(SPC_Type *base, uint8_t trimValue)
 
 /*!
  * @brief Enables/disables SRAM retention LDO.
- * 
+ *
  * @param base SPC peripheral base address.
  * @param enable Used to enable/disable SRAM LDO :
  *          - \b true Enable SRAM LDO;
@@ -651,10 +651,10 @@ static inline void SPC_EnableSRAMLdo(SPC_Type *base, bool enable)
 }
 
 /*!
- * @brief 
- * 
+ * @brief
+ *
  * @todo Need to check.
- * 
+ *
  * @param base SPC peripheral base address.
  * @param mask The OR'ed value of SRAM Array.
  */
@@ -690,7 +690,7 @@ void SPC_SetLowPowerRequestConfig(SPC_Type *base, const spc_lowpower_request_con
 
 /*!
  * @brief Enables/disables the integrated power switch manually.
- * 
+ *
  * @param base SPC peripheral base address.
  * @param enable Used to enable/disable the integrated power switch:
  *             - \b true Enable the integrated power switch;
@@ -710,13 +710,13 @@ static inline void SPC_EnableIntegratedPowerSwitchManually(SPC_Type *base, bool 
 
 /*!
  * @brief Enables/disables the integrated power switch automatically.
- * 
+ *
  * To gate the integrated power switch when chip enter low power modes, and ungate the switch after wake-up from low
  * power modes:
  * @code
  *   SPC_EnableIntegratedPowerSwitchAutomatically(SPC, true, true);
  * @endcode
- * 
+ *
  * @param base SPC peripheral base address.
  * @param sleepGate Enable the integrated power switch when chip enter low power modes:
  *          - \b true SPC asserts an output pin at low-power entry to power-gate the switch;
@@ -1081,7 +1081,7 @@ status_t SPC_SetLowPowerModeBandgapmodeConfig(SPC_Type *base, spc_bandgap_mode_t
 #if (defined(FSL_FEATURE_MCX_SPC_HAS_SRAMLDO_DPD_ON_BIT) && FSL_FEATURE_MCX_SPC_HAS_SRAMLDO_DPD_ON_BIT)
 /*!
  * @brief Enables/disables SRAM_LDO deep power low power IREF.
- * 
+ *
  * @param base SPC peripheral base address.
  * @param enable Used to enable/disable low power IREF :
  *        - \b true: Low Power IREF is enabled ;
@@ -1730,7 +1730,7 @@ status_t SPC_SetActiveModeCoreLDORegulatorConfig(SPC_Type *base, const spc_activ
 
 /*!
  * @brief Set Core LDO VDD Regulator Voltage level in Active mode.
- * 
+ *
  *
  *
  * @param base SPC peripheral base address.
@@ -1759,7 +1759,7 @@ static inline spc_core_ldo_voltage_level_t SPC_GetActiveModeCoreLDOVDDVoltageLev
 #if (defined(FSL_FEATURE_SPC_HAS_CORELDO_VDD_DS) && FSL_FEATURE_SPC_HAS_CORELDO_VDD_DS)
 /*!
  * @brief Set Core LDO VDD Regulator Drive Strength in Active mode.
- * 
+ *
  * @param base SPC peripheral base address.
  * @param driveStrength Specify the drive strength of CORE LDO Regulator in Active mode, please
         refer to @ref spc_core_ldo_drive_strength_t.
@@ -1773,7 +1773,7 @@ status_t SPC_SetActiveModeCoreLDORegulatorDriveStrength(SPC_Type *base, spc_core
 
 /*!
  * @brief Gets CORE LDO VDD Regulator Drive Strength in Active mode.
- * 
+ *
  * @param base SPC peripheral base address.
  * @return Drive Strength of CORE LDO regulator in Active mode, please refer to @ref spc_core_ldo_drive_strength_t.
  */
@@ -1807,13 +1807,13 @@ status_t SPC_SetLowPowerModeCoreLDORegulatorConfig(SPC_Type *base, const spc_low
 
 /*!
  * @brief Set Core LDO VDD Regulator Voltage level in Low power mode.
- * 
+ *
  * @note If CORE LDO's drive strength is set to Normal, the CORE LDO VDD regulator voltage in active mode and low power
  *  mode must be same.
  * @note Voltage level for the CORE LDO in low power mode can only be changed when the CORE LDO Drive Strength set as
  * Normal.
  *
- * @param base SPC peripheral base address.	
+ * @param base SPC peripheral base address.
  * @param voltageLevel Voltage level of CORE LDO Regulator in Low power mode, please
         refer to @ref spc_core_ldo_voltage_level_t.
  *
@@ -1837,7 +1837,7 @@ static inline spc_core_ldo_voltage_level_t SPC_GetLowPowerCoreLDOVDDVoltageLevel
 
 /*!
  * @brief Set Core LDO VDD Regulator Drive Strength in Low power mode.
- * 
+ *
  * @param base SPC peripheral base address.
  * @param driveStrength Specify drive strength of CORE LDO in low power mode.
  *
@@ -1937,7 +1937,7 @@ status_t SPC_SetActiveModeSystemLDORegulatorConfig(SPC_Type *base, const spc_act
 
 /*!
  * @brief Set System LDO Regulator voltage level in Active mode.
- * 
+ *
  * @note The system LDO regulator can only operate at the overdrive voltage level for a limited amount of time for the
  * life of chip.
  *
@@ -1951,7 +1951,7 @@ status_t SPC_SetActiveModeSystemLDORegulatorVoltageLevel(SPC_Type *base, spc_sys
 
 /*!
  * @brief Get System LDO Regulator voltage level in Active mode.
- * 
+ *
  * @param base SPC peripheral base address.
  * @return System LDO Regulator voltage level in Active mode, please refer to @ref spc_sys_ldo_voltage_level_t.
  */
@@ -1962,10 +1962,10 @@ static inline spc_sys_ldo_voltage_level_t SPC_GetActiveModeSystemLDORegulatorVol
 
 /*!
  * @brief Set System LDO Regulator Drive Strength in Active mode.
- * 
+ *
  * @param base SPC peripheral base address.
  * @param driveStrength Specify the drive strength  of System LDO Regulator in Active mode.
- * 
+ *
  * @retval #kStatus_Success Set System LDO Regulator drive strength in Active mode successfully.
  * @retval #kStatus_SPC_SYSLDOLowDriveStrengthIgnore Attempt to specify low drive strength is ignored due to any
             voltage detect feature is enabled in active mode.
@@ -1976,7 +1976,7 @@ status_t SPC_SetActiveModeSystemLDORegulatorDriveStrength(SPC_Type *base, spc_sy
 
 /*!
  * @brief Get System LDO Regulator Drive Strength in Active mode.
- * 
+ *
  * @param base SPC peripheral base address.
  * @return System LDO regulator drive strength in Active mode, please refer to @ref spc_sys_ldo_drive_strength_t.
  */
@@ -2005,7 +2005,7 @@ status_t SPC_SetLowPowerModeSystemLDORegulatorConfig(SPC_Type *base, const spc_l
 
 /*!
  * @brief Set System LDO Regulator drive strength in Low Power Mode.
- * 
+ *
  * @param base SPC peripheral base address.
  * @param driveStrength Specify the drive strength of System LDO Regulator in Low Power Mode.
  *
@@ -2019,7 +2019,7 @@ status_t SPC_SetLowPowerModeSystemLDORegulatorDriveStrength(SPC_Type *base, spc_
 
 /*!
  * @brief Get System LDO Regulator drive strength in Low Power Mode.
- * 
+ *
  * @param base SPC peripheral base address.
  * @return System LDO regulator drive strength in Low Power Mode, please refer to @ref spc_sys_ldo_drive_strength_t.
  */
@@ -2083,10 +2083,10 @@ void SPC_SetDCDCRefreshCount(SPC_Type *base, uint16_t count);
 
 /*!
  * @brief Configs DCDC VDD Regulator in Active mode.
- * 
+ *
  * @note Before switching DCDC drive strength from low to normal, the DCDC voltage level should be configured back to
  * what it was before switching to low drive strength.
- * 
+ *
  * @param base SPC peripheral base address.
  * @param option Pointer to the spc_active_mode_dcdc_option_t structure.
  *
@@ -2098,7 +2098,7 @@ status_t SPC_SetActiveModeDCDCRegulatorConfig(SPC_Type *base, const spc_active_m
 
 /*!
  * @brief Set DCDC VDD Regulator voltage level in Active mode.
- * 
+ *
  * @param base SPC peripheral base address.
  * @param voltageLevel Specify the DCDC VDD Regulator voltage level, please refer to @ref spc_dcdc_voltage_level_t.
  */
@@ -2109,7 +2109,7 @@ static inline void SPC_SetActiveModeDCDCRegulatorVoltageLevel(SPC_Type *base, sp
 
 /*!
  * @brief Get DCDC VDD Regulator voltage level in Active mode.
- * 
+ *
  * @param base SPC peripheral base address.
  * @return DCDC VDD Regulator voltage level, please refer to @ref spc_dcdc_voltage_level_t.
  */
@@ -2121,7 +2121,7 @@ static inline spc_dcdc_voltage_level_t SPC_GetActiveModeDCDCRegulatorVoltageLeve
 
 /*!
  * @brief Set DCDC VDD Regulator drive strength in Active mode.
- * 
+ *
  * @param base SPC peripheral base address.
  * @param driveStrength Specify the DCDC VDD regulator drive strength, please refer to @ref spc_dcdc_drive_strength_t.
  *
@@ -2134,7 +2134,7 @@ status_t SPC_SetActiveModeDCDCRegulatorDriveStrength(SPC_Type *base, spc_dcdc_dr
 
 /*!
  * @brief Get DCDC VDD Regulator drive strength in Active mode.
- * 
+ *
  * @param base SPC peripheral base address.
  * @return DCDC VDD Regulator drive strength, please refer to @ref spc_dcdc_drive_strength_t.
  */
@@ -2166,7 +2166,7 @@ status_t SPC_SetLowPowerModeDCDCRegulatorConfig(SPC_Type *base, const spc_lowpow
 
 /*!
  * @brief Set DCDC VDD Regulator voltage level in Low power mode.
- * 
+ *
  * @param base SPC peripheral base address.
  * @param voltageLevel Specify the DCDC VDD Regulator voltage level, please refer to @ref spc_dcdc_voltage_level_t.
  */
@@ -2177,7 +2177,7 @@ static inline void SPC_SetLowPowerModeDCDCRegulatorVoltageLevel(SPC_Type *base, 
 
 /*!
  * @brief Get DCDC VDD Regulator voltage level in Low power mode.
- * 
+ *
  * @param base SPC peripheral base address.
  * @return DCDC VDD Regulator voltage level, please refer to @ref spc_dcdc_voltage_level_t.
  */
@@ -2189,7 +2189,7 @@ static inline spc_dcdc_voltage_level_t SPC_GetLowPowerModeDCDCRegulatorVoltageLe
 
 /*!
  * @brief Set DCDC VDD Regulator drive strength in Low power mode.
- * 
+ *
  * @param base SPC peripheral base address.
  * @param driveStrength Specify the DCDC VDD Regulator drive strength, please refer to @ref spc_dcdc_drive_strength_t.
  *
@@ -2202,7 +2202,7 @@ status_t SPC_SetLowPowerModeDCDCRegulatorDriveStrength(SPC_Type *base, spc_dcdc_
 
 /*!
  * @brief Get DCDC VDD Regulator drive strength in Low power mode.
- * 
+ *
  * @param base SPC peripheral base address.
  * @return DCDC VDD Regulator drive strength, please refer to @ref spc_dcdc_drive_strength_t.
  */

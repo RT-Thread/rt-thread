@@ -136,7 +136,7 @@ void LPI2C_MasterCreateEDMAHandle(LPI2C_Type *base,
     handle->tx                 = (FSL_FEATURE_LPI2C_HAS_SEPARATE_DMA_RX_TX_REQn(base) > 0) ? txDmaHandle : rxDmaHandle;
 
     if(LP_FLEXCOMM_GetBaseAddress(instance) != 0U)
-    {        
+    {
         lpi2c_to_lpflexcomm_edma_t handler;
         handler.lpi2c_master_handler = LPI2C_MasterTransferEdmaHandleIRQ;
 

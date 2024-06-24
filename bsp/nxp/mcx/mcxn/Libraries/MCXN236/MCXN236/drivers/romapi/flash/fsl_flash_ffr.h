@@ -89,42 +89,42 @@ typedef struct
         uint32_t cfpa_lc_state : 8;
         uint32_t cfpa_lc_state_inv : 8;
         uint32_t header_marker : 16;
-    } header; //!< [0x000-0x003]
+    } header; /*!< [0x000-0x003]*/
 
-    struct //!< [0x004-0x007]
+    struct /*!< [0x004-0x007]*/
     {
-        uint32_t version : 24; //!< cfpa version
-        uint32_t img_upd : 2;  //!< image cmac update
+        uint32_t version : 24; /*!< cfpa version*/
+        uint32_t img_upd : 2;  /*!< image cmac update*/
         uint32_t reserved0 : 1;
-        uint32_t cmpa_update : 3; //!< CFPA page updated through SB command.
+        uint32_t cmpa_update : 3; /*!< CFPA page updated through SB command.*/
         uint32_t reserved1 : 1;
-        uint32_t dice_en : 1; //!< Update DICE certificate during next boot
+        uint32_t dice_en : 1; /*!< Update DICE certificate during next boot*/
     } cfpa_page_version;
 
-    uint32_t secureFwVersion; //!< [0x008-0x00b]
-    uint32_t nsFwVersion;     //!< [0x00c-0x00f]
-    uint32_t recFwVersion;    //!< [0x010-0x013]
-    uint32_t secBootFlags;    //!< [0x014-0x01f]
-    uint32_t imageKeyRevoke;  //!< [0x018-0x01b]
-    uint32_t lpVectorAddr;    //!< [0x01c-0x01f]
-    uint32_t vendorUsage;     //!< [0x020-0x02f]
-    uint32_t dcfgNsPin;       //!< [0x024-0x027]
-    uint32_t dcfgNsDflt;      //!< [0x028-0x02b]
-    uint32_t reserved0;       //!< [0x02c-0x02f]
-    uint32_t ivPrince[4];     //!< [0x030-0x03f]
-    uint32_t ivIped[8];       //!< [0x040-0x05f]
+    uint32_t secureFwVersion; /*!< [0x008-0x00b]*/
+    uint32_t nsFwVersion;     /*!< [0x00c-0x00f]*/
+    uint32_t recFwVersion;    /*!< [0x010-0x013]*/
+    uint32_t secBootFlags;    /*!< [0x014-0x01f]*/
+    uint32_t imageKeyRevoke;  /*!< [0x018-0x01b]*/
+    uint32_t lpVectorAddr;    /*!< [0x01c-0x01f]*/
+    uint32_t vendorUsage;     /*!< [0x020-0x02f]*/
+    uint32_t dcfgNsPin;       /*!< [0x024-0x027]*/
+    uint32_t dcfgNsDflt;      /*!< [0x028-0x02b]*/
+    uint32_t reserved0;       /*!< [0x02c-0x02f]*/
+    uint32_t ivPrince[4];     /*!< [0x030-0x03f]*/
+    uint32_t ivIped[8];       /*!< [0x040-0x05f]*/
 
-    uint32_t errCnt[8]; //!< [0x060-0x07f]
+    uint32_t errCnt[8]; /*!< [0x060-0x07f]*/
 
-    uint32_t custCtr[8];     //!< [0x080-0x09f]
-    uint32_t mflagCtr[8];    //!< [0x0a0-0x0bf]
-    uint32_t flashAcl[8];    //!< [0x0C0-0x0Df]
-    uint32_t sblImg0Cmac[4]; //!< [0x0E0-0x0Ef]
-    uint32_t img1Cmac[4];    //!< [0x0F0-0x0Ff]
-    uint32_t diceCert[36];   //!< [0x100-0x18f]
-    uint32_t reserved2[23];  //!< [0x190-0x1eb]
-    uint32_t cfpaCrc;        //!< [0x1ec-0x1ef]
-    uint32_t cfpaCmac[4];    //!< [0x1f0-0x1ff]
+    uint32_t custCtr[8];     /*!< [0x080-0x09f]*/
+    uint32_t mflagCtr[8];    /*!< [0x0a0-0x0bf]*/
+    uint32_t flashAcl[8];    /*!< [0x0C0-0x0Df]*/
+    uint32_t sblImg0Cmac[4]; /*!< [0x0E0-0x0Ef]*/
+    uint32_t img1Cmac[4];    /*!< [0x0F0-0x0Ff]*/
+    uint32_t diceCert[36];   /*!< [0x100-0x18f]*/
+    uint32_t reserved2[23];  /*!< [0x190-0x1eb]*/
+    uint32_t cfpaCrc;        /*!< [0x1ec-0x1ef]*/
+    uint32_t cfpaCmac[4];    /*!< [0x1f0-0x1ff]*/
 } cfpa_cfg_info_t;
 
 #define FFR_BOOTCFG_USBSPEED_SHIFT    (9U)
@@ -189,14 +189,14 @@ typedef struct
         uint32_t boot_speed : 2;
         uint32_t rsv3 : 2;
         uint32_t header_marker : 16;
-    } bootCfg; //!< [0x000-0x003]
+    } bootCfg; /*!< [0x000-0x003]*/
 
     struct
     {
         uint32_t flash_remap_size : 5;
         uint32_t bank1_ifr0_usage : 3;
         uint32_t reserved : 24;
-    } FlashCfg; //!< [0x004-0x007]
+    } FlashCfg; /*!< [0x004-0x007]*/
 
     struct
     {
@@ -204,55 +204,55 @@ typedef struct
         uint8_t ispLed;
         uint8_t bootFailLed;
         uint8_t resv0;
-    } bootLedStatus; //!< [0x008-0x00b]
+    } bootLedStatus; /*!< [0x008-0x00b]*/
 
     struct
     {
         uint16_t powerDnTimeout;
         uint16_t wdogTimeout;
-    } bootTimers; //!< [0x00c-0x00f]
+    } bootTimers; /*!< [0x00c-0x00f]*/
 
-    uint32_t resv2; //!< [0x010-0x013]
-    uint32_t resv3; //!< [0x014-0x017]
+    uint32_t resv2; /*!< [0x010-0x013]*/
+    uint32_t resv3; /*!< [0x014-0x017]*/
 
-    uint32_t recSpiFlashCfg0; //!< [0x018-0x01b]
-    uint32_t recSpiFlashCfg1; //!< [0x01c-0x01f]
+    uint32_t recSpiFlashCfg0; /*!< [0x018-0x01b]*/
+    uint32_t recSpiFlashCfg1; /*!< [0x01c-0x01f]*/
 
-    uint32_t isp_uart_cfg; //!< [0x020-0x023]
-    uint32_t isp_i2c_cfg;  //!< [0x024-0x027]
-    uint32_t isp_can_cfg;  //!< [0x028-0x02b]
-    uint32_t isp_spi_cfg0; //!< [0x02c-0x02f]
-    uint32_t isp_spi_cfg1; //!< [0x030-0x034]
+    uint32_t isp_uart_cfg; /*!< [0x020-0x023]*/
+    uint32_t isp_i2c_cfg;  /*!< [0x024-0x027]*/
+    uint32_t isp_can_cfg;  /*!< [0x028-0x02b]*/
+    uint32_t isp_spi_cfg0; /*!< [0x02c-0x02f]*/
+    uint32_t isp_spi_cfg1; /*!< [0x030-0x034]*/
 
     struct
     {
         uint16_t vid;
         uint16_t pid;
-    } usbId; //!< [0x034-0x037]
+    } usbId; /*!< [0x034-0x037]*/
 
-    uint32_t isp_usb_cfg;    //!< [0x038-0x038]
-    uint32_t isp_misc_cfg;   //!< [0x03c-0x03f]
-    uint32_t dcfgPin;        //!< [0x040-0x043]
-    uint32_t dcfgDflt;       //!< [0x044-0x047]
-    uint32_t dapVendorUsage; //!< [0x048-0x04b]
-    uint32_t resv1;          //!< [0x04c-0x04f]
-    uint32_t secureBootCfg;  //!< [0x050-0x053]
-    uint32_t rokthUsage;     //!< [0x054-0x057]
-    uint32_t resv4;          //!< [0x058-0x05b]
-    uint32_t resv5;          //!< [0x05c-0x05f]
-    uint32_t rotkh[12];      //!< [0x060-0x08f]
+    uint32_t isp_usb_cfg;    /*!< [0x038-0x038]*/
+    uint32_t isp_misc_cfg;   /*!< [0x03c-0x03f]*/
+    uint32_t dcfgPin;        /*!< [0x040-0x043]*/
+    uint32_t dcfgDflt;       /*!< [0x044-0x047]*/
+    uint32_t dapVendorUsage; /*!< [0x048-0x04b]*/
+    uint32_t resv1;          /*!< [0x04c-0x04f]*/
+    uint32_t secureBootCfg;  /*!< [0x050-0x053]*/
+    uint32_t rokthUsage;     /*!< [0x054-0x057]*/
+    uint32_t resv4;          /*!< [0x058-0x05b]*/
+    uint32_t resv5;          /*!< [0x05c-0x05f]*/
+    uint32_t rotkh[12];      /*!< [0x060-0x08f]*/
 
     struct
     {
         uint32_t npx_w0;
         uint32_t npx_w1;
-    } princeSr[4]; //!< [0x090-0x0af]
+    } princeSr[4]; /*!< [0x090-0x0af]*/
 
     struct
     {
         uint32_t ipedStartAddr;
         uint32_t ipedEndAddr;
-    } ipedRegions[8]; //!< [0x0b0-0x11f]
+    } ipedRegions[8]; /*!< [0x0b0-0x11f]*/
 
     uint32_t rec_img_exit0;
     uint32_t rec_img_exit1;
@@ -263,14 +263,14 @@ typedef struct
     {
         uint32_t set0;
         uint32_t clr0;
-    } quickSetGpio[6]; //!< [0x120-0x14f]
+    } quickSetGpio[6]; /*!< [0x120-0x14f]*/
 
-    uint32_t resv7[4];          //!< [0x150-0x15f]
-    uint32_t cust_key_blob[12]; //!< [0x160-0x18f]
+    uint32_t resv7[4];          /*!< [0x150-0x15f]*/
+    uint32_t cust_key_blob[12]; /*!< [0x160-0x18f]*/
 
-    uint32_t resv8[23];   //!< [0x190-0x1eb]
-    uint32_t cmpaCrc;     //!< [0x1ec-0x1ef]
-    uint32_t cmpaCmac[4]; //!< [0x1f0-0x1ff]
+    uint32_t resv8[23];   /*!< [0x190-0x1eb]*/
+    uint32_t cmpaCrc;     /*!< [0x1ec-0x1ef]*/
+    uint32_t cmpaCmac[4]; /*!< [0x1f0-0x1ff]*/
 
 } cmpa_cfg_info_t;
 
@@ -328,35 +328,35 @@ typedef struct
 
 typedef struct
 {
-    uint32_t fro32kCfg;             //!< [0x000-0x003]
-    uint32_t puf_cfg;               //!< [0x004-0x007]
-    uint32_t bod;                   //!< [0x008-0x00b]
-    uint32_t trim;                  //!< [0x00c-0x00f]
-    uint32_t deviceID;              //!< [0x010-0x03f]
-    uint32_t peripheralCfg;         //!< [0x014-0x017]
-    uint32_t dcdPowerProFileLOW[2]; //!< [0x018-0x01f]
-    uint32_t deviceType;            //!< [0x020-0x023]
-    uint32_t ldo_ao;                //!< [0x024-0x027]
-    uint32_t gdetDelayCfg;          //!< [0x028-0x02b]
-    uint32_t gdetMargin;            //!< [0x02c-0x02f]
-    uint32_t gdetTrim1;             //!< [0x030-0x033]
-    uint32_t gdetEanble1;           //!< [0x034-0x037]
-    uint32_t gdetCtrl1;             //!< [0x038-0x03b]
-    uint32_t gdetUpdateTimer;       //!< [0x03c-0x03f]
-    uint32_t GpoDataChecksum[4];    //!< [0x040-0x04f]
-    uint32_t finalTestBatchId[4];   //!< [0x050-0x05f]
-    uint32_t ecidBackup[4];         //!< [0x060-0x06f]
-    uint32_t uuid[4];               //!< [0x070-0x07f]
-    uint32_t reserved1[7];          //!< [0x080-0x09b]
+    uint32_t fro32kCfg;             /*!< [0x000-0x003]*/
+    uint32_t puf_cfg;               /*!< [0x004-0x007]*/
+    uint32_t bod;                   /*!< [0x008-0x00b]*/
+    uint32_t trim;                  /*!< [0x00c-0x00f]*/
+    uint32_t deviceID;              /*!< [0x010-0x03f]*/
+    uint32_t peripheralCfg;         /*!< [0x014-0x017]*/
+    uint32_t dcdPowerProFileLOW[2]; /*!< [0x018-0x01f]*/
+    uint32_t deviceType;            /*!< [0x020-0x023]*/
+    uint32_t ldo_ao;                /*!< [0x024-0x027]*/
+    uint32_t gdetDelayCfg;          /*!< [0x028-0x02b]*/
+    uint32_t gdetMargin;            /*!< [0x02c-0x02f]*/
+    uint32_t gdetTrim1;             /*!< [0x030-0x033]*/
+    uint32_t gdetEanble1;           /*!< [0x034-0x037]*/
+    uint32_t gdetCtrl1;             /*!< [0x038-0x03b]*/
+    uint32_t gdetUpdateTimer;       /*!< [0x03c-0x03f]*/
+    uint32_t GpoDataChecksum[4];    /*!< [0x040-0x04f]*/
+    uint32_t finalTestBatchId[4];   /*!< [0x050-0x05f]*/
+    uint32_t ecidBackup[4];         /*!< [0x060-0x06f]*/
+    uint32_t uuid[4];               /*!< [0x070-0x07f]*/
+    uint32_t reserved1[7];          /*!< [0x080-0x09b]*/
     struct
     {
         uint8_t xo32mReadyTimeoutInMs;
         uint8_t usbSpeed;
         uint8_t reserved[2];
-    } usbCfg;                 //!< [0x09c-0x09f]
-    uint32_t reserved2[80];   //!< [0x0a0-0x1df]
-    uint8_t cmac[16];         //!< [0x1e0-0x1ef]
-    uint32_t pageChecksum[4]; //!< [0x1f0-0x1ff]
+    } usbCfg;                 /*!< [0x09c-0x09f]*/
+    uint32_t reserved2[80];   /*!< [0x0a0-0x1df]*/
+    uint8_t cmac[16];         /*!< [0x1e0-0x1ef]*/
+    uint32_t pageChecksum[4]; /*!< [0x1f0-0x1ff]*/
 } nmpa_cfg_info_t;
 
 typedef struct
@@ -522,7 +522,7 @@ status_t FFR_CustFactoryPageWrite(flash_config_t *config, uint8_t *page_data, bo
 status_t FFR_GetCustomerData(flash_config_t *config, uint8_t *pData, uint32_t offset, uint32_t len);
 
 /*!
- * @brief The API is used for getting the customer key store data from the customer key store region(0x3e400 �C
+ * @brief The API is used for getting the customer key store data from the customer key store region(0x3e400 ï¿½C
  * 0x3e600), and the API should be called after the FLASH_Init and FFR_Init.
  *
  * @param config A pointer to the storage for the driver runtime state.

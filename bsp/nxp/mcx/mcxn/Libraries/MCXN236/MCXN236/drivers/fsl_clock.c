@@ -513,10 +513,10 @@ void CLOCK_SetPll1MonitorMode(scg_pll1_monitor_mode_t mode)
 }
 
 /*!
- * @brief	Set the additional number of wait-states added to account for the ratio of system clock period to flash access time during full speed power mode.
- * @param	system_freq_hz	: Input frequency
- * @param	mode	        : Active run mode (voltage level). 
- * @return	success or fail status
+ * @brief   Set the additional number of wait-states added to account for the ratio of system clock period to flash access time during full speed power mode.
+ * @param   system_freq_hz  : Input frequency
+ * @param   mode            : Active run mode (voltage level).
+ * @return  success or fail status
  */
 status_t CLOCK_SetFLASHAccessCyclesForFreq(uint32_t system_freq_hz, run_mode_t mode)
 {
@@ -536,7 +536,7 @@ status_t CLOCK_SetFLASHAccessCyclesForFreq(uint32_t system_freq_hz, run_mode_t m
          else
          {
              num_wait_states_added = 0U;
-         }          
+         }
          break;
       }
       case kSD_Mode:
@@ -548,7 +548,7 @@ status_t CLOCK_SetFLASHAccessCyclesForFreq(uint32_t system_freq_hz, run_mode_t m
          if (system_freq_hz > 64000000)
          {
              num_wait_states_added = 2U;
-         }          
+         }
          else if (system_freq_hz > 36000000)
          {
              num_wait_states_added = 1U;
@@ -556,7 +556,7 @@ status_t CLOCK_SetFLASHAccessCyclesForFreq(uint32_t system_freq_hz, run_mode_t m
          else
          {
              num_wait_states_added = 0U;
-         }         
+         }
          break;
       }
       case kOD_Mode:
@@ -580,13 +580,13 @@ status_t CLOCK_SetFLASHAccessCyclesForFreq(uint32_t system_freq_hz, run_mode_t m
          else
          {
              num_wait_states_added = 0U;
-         }    
-      }     
+         }
+      }
   }
-  
+
   /* additional wait-states are added */
   FMU0 -> FCTRL = (FMU0 -> FCTRL & 0xFFFFFFF0UL) | (num_wait_states_added & 0xFUL);
-  
+
   return kStatus_Success;
 }
 
@@ -884,7 +884,7 @@ uint32_t CLOCK_GetFreq(clock_name_t clockName)
             freq = CLOCK_GetPll1OutFreq();
             break;
         case kCLOCK_UsbPllOut:
-            // freq = CLOCK_GetPll0OutFreq();
+            /* freq = CLOCK_GetPll0OutFreq();*/
             break;
         case kCLOCK_LpOsc:
             freq = CLOCK_GetLposcFreq();
@@ -977,7 +977,7 @@ uint32_t CLOCK_GetAdcClkFreq(uint32_t id)
             freq = CLOCK_GetPll1OutFreq() / (((SYSCON->PLL1CLK0DIV) & 0xffU) + 1U);
             break;
         case 6U:
-            // freq = CLOCK_GetUPllOutFreq();
+            /* freq = CLOCK_GetUPllOutFreq();*/
             break;
         default:
             freq = 0U;
@@ -1013,7 +1013,7 @@ uint32_t CLOCK_GetLPFlexCommClkFreq(uint32_t id)
             freq = CLOCK_GetClk1MFreq();
             break;
         case 5U:
-            // freq = CLOCK_GetUPllOutFreq();
+            /* freq = CLOCK_GetUPllOutFreq();*/
             break;
         case 6U:
             freq = CLOCK_GetLposcFreq();
@@ -1157,7 +1157,7 @@ uint32_t CLOCK_GetI3cClkFreq(uint32_t id)
             freq = CLOCK_GetPll1OutFreq() / (((SYSCON->PLL1CLK0DIV) & 0xffU) + 1U);
             break;
         case 6U:
-            // freq = CLOCK_GetUPllOutFreq();
+            /* freq = CLOCK_GetUPllOutFreq();*/
         default:
             freq = 0U;
             break;
@@ -1198,7 +1198,7 @@ uint32_t CLOCK_GetMicfilClkFreq(void)
             freq = CLOCK_GetSaiMclkFreq(0U);
             break;
         case 6U:
-            // freq = CLOCK_GetUPllOutFreq();
+            /* freq = CLOCK_GetUPllOutFreq();*/
         case 8U:
             freq = CLOCK_GetSaiMclkFreq(1U);
             break;
@@ -1236,7 +1236,7 @@ uint32_t CLOCK_GetFlexioClkFreq(void)
             freq = CLOCK_GetPll1OutFreq() / (((SYSCON->PLL1CLK0DIV) & 0xffU) + 1U);
             break;
         case 6U:
-            // freq = CLOCK_GetUPllOutFreq();
+            /* freq = CLOCK_GetUPllOutFreq();*/
         default:
             freq = 0U;
             break;
@@ -1269,7 +1269,7 @@ uint32_t CLOCK_GetFlexcanClkFreq(uint32_t id)
             freq = CLOCK_GetPll1OutFreq() / (((SYSCON->PLL1CLK0DIV) & 0xffU) + 1U);
             break;
         case 6U:
-            // freq = CLOCK_GetUPllOutFreq();
+            /* freq = CLOCK_GetUPllOutFreq();*/
         default:
             freq = 0U;
             break;
@@ -1400,7 +1400,7 @@ uint32_t CLOCK_GetCmpFClkFreq(uint32_t id)
             freq = CLOCK_GetPll1OutFreq() / (((SYSCON->PLL1CLK0DIV) & 0xffU) + 1U);
             break;
         case 6U:
-            // freq = CLOCK_GetUPllOutFreq();
+            /* freq = CLOCK_GetUPllOutFreq();*/
         default:
             freq = 0U;
             break;
@@ -1439,13 +1439,13 @@ uint32_t CLOCK_GetCmpRRClkFreq(uint32_t id)
             freq = CLOCK_GetPll1OutFreq() / (((SYSCON->PLL1CLK0DIV) & 0xffU) + 1U);
             break;
         case 6U:
-            // freq = CLOCK_GetUPllOutFreq();
+            /* freq = CLOCK_GetUPllOutFreq();*/
         default:
             freq = 0U;
             break;
     }
 
-    div = ((id == 0U) ? ((SYSCON->CMP0RRCLKDIV & SYSCON_CMP0RRCLKDIV_DIV_MASK) + 1U) : 
+    div = ((id == 0U) ? ((SYSCON->CMP0RRCLKDIV & SYSCON_CMP0RRCLKDIV_DIV_MASK) + 1U) :
               ((SYSCON->CMP1RRCLKDIV & SYSCON_CMP1RRCLKDIV_DIV_MASK) + 1U));
 
     return freq / div;
@@ -1502,7 +1502,7 @@ uint32_t CLOCK_GetSaiClkFreq(uint32_t id)
             freq = CLOCK_GetPll1OutFreq() / (((SYSCON->PLL1CLK0DIV) & 0xffU) + 1U);
             break;
         case 6U:
-            // freq = CLOCK_GetUPllOutFreq();
+            /* freq = CLOCK_GetUPllOutFreq();*/
         default:
             freq = 0U;
             break;
@@ -1791,7 +1791,7 @@ pll_error_t CLOCK_SetPLL1Freq(const pll_setup_t *pSetup)
     /* Unlock SPLLLOCK_CNFG register */
     SCG0->TRIM_LOCK = 0x5a5a0001;
 
-    /* Configure lock time of APLL stable, value = 500μs/x+300, where x is the period of clk_ref (clk_in/N). */
+    /* Configure lock time of APLL stable, value = 500Î¼s/x+300, where x is the period of clk_ref (clk_in/N). */
     inRate = CLOCK_GetPLL1InClockRate();
     prediv = findPll1PreDiv();
     /* Adjust input clock */
@@ -1819,7 +1819,7 @@ pll_error_t CLOCK_SetPLL1Freq(const pll_setup_t *pSetup)
  */
 void CLOCK_EnableOstimer32kClock(void)
 {
-    // PMC->OSEVENTTIMER |= PMC_OSEVENTTIMER_CLOCKENABLE_MASK;
+    /* PMC->OSEVENTTIMER |= PMC_OSEVENTTIMER_CLOCKENABLE_MASK;*/
 }
 
 /* Get FRO 12M Clk */
@@ -1942,7 +1942,7 @@ uint32_t CLOCK_GetCoreSysClkFreq(void)
             freq = CLOCK_GetPll1OutFreq();
             break;
         case 7U:
-            // freq = CLOCK_GetUPllOutFreq();
+            /* freq = CLOCK_GetUPllOutFreq();*/
             break;
         default:
             freq = 0U;
@@ -2011,7 +2011,7 @@ static uint32_t CLOCK_GetClockOutClkFreq(void)
             freq = CLOCK_GetLposcFreq();
             break;
         case 7U:
-            // freq = CLOCK_GetUPllOutFreq();
+            /* freq = CLOCK_GetUPllOutFreq();*/
             break;
         default:
             freq = 0U;

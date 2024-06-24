@@ -219,7 +219,7 @@ struct _ldr_Context
     uint32_t skipCount;      /*!<  Number of chunks to skip */
     bool skipToEnd;          /*!<  true if skipping to end of file */
 
-    // extended for SB 2.0
+    /* extended for SB 2.0*/
     uint32_t nonce[4];
     uint32_t keyBlobBlock;
     uint32_t keyBlobBlockCount;

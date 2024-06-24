@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2024, RT-Thread Development Team
+ * Copyright (c) 2006-2024 RT-Thread Development Team
  * Copyright (c) 2019-2020, Arm Limited. All rights reserved.
  *
  * SPDX-License-Identifier: Apache-2.0
@@ -68,4 +68,4 @@ static void sw_pin_cb(void *args)
     rt_kprintf("sw pressed\r\n");
 }
 
-// end file
+/* end file*/

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2024, RT-Thread Development Team
+ * Copyright (c) 2006-2024 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -26,9 +26,9 @@
 #include "pin_mux.h"
 #include "fsl_edma.h"
 
-// <RDTConfigurator URL="http://www.rt-thread.com/eclipse">
+/* <RDTConfigurator URL="http://www.rt-thread.com/eclipse">*/
 
-// </RDTConfigurator>
+/* </RDTConfigurator>*/
 #if defined(__ARMCC_VERSION)
 extern int Image$$ARM_LIB_HEAP$$ZI$$Base;
 extern int Image$$ARM_LIB_STACK$$ZI$$Base;

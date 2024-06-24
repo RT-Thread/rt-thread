@@ -299,7 +299,7 @@ typedef struct _lpuart_timeout_config
 {
     uint16_t rxExtendedTimeoutValue;            /*!< The number of bits since the last stop bit that is required for an
                   idle condition to be detected. Enable this will disable rxIdleType and rxIdleConfig. Set to 0 to disable. */
-    uint16_t txExtendedTimeoutValue;            /*!< The transmitter idle time in number of bits (baud rate) whenever an 
+    uint16_t txExtendedTimeoutValue;            /*!< The transmitter idle time in number of bits (baud rate) whenever an
                   idle character is queued through the transmit FIFO. */
     lpuart_timeout_counter_config_t rxCounter0; /*!< Rx counter 0 configuration. */
     lpuart_timeout_counter_config_t rxCounter1; /*!< Rx counter 1 configuration. */

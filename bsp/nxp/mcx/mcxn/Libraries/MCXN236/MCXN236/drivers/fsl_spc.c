@@ -820,7 +820,7 @@ status_t SPC_SetActiveModeCoreLDORegulatorConfig(SPC_Type *base, const spc_activ
         /* In active mode, CORE_LDO voltage level should only be changed when the CORE_LDO is in Normal strength. */
         return kStatus_SPC_CORELDOVoltageWrong;
     }
-    
+
     if ((option->CoreLDODriveStrength == kSPC_CoreLDO_LowDriveStrength) && (SPC_GetActiveModeCoreLDODriveStrength(base) == kSPC_CoreLDO_NormalDriveStrength))
     {
         /* Change Voltage level firstly. */
@@ -853,7 +853,7 @@ status_t SPC_SetActiveModeCoreLDORegulatorConfig(SPC_Type *base, const spc_activ
 
 /*!
  * brief Set Core LDO VDD Regulator Voltage level in Active mode.
- * 
+ *
  *
  *
  * param base SPC peripheral base address.
@@ -874,7 +874,7 @@ status_t SPC_SetActiveModeCoreLDORegulatorVoltageLevel(SPC_Type *base, spc_core_
 #if defined(FSL_FEATURE_SPC_HAS_CORELDO_VDD_DS) && FSL_FEATURE_SPC_HAS_CORELDO_VDD_DS
 /*!
  * brief Set Core LDO VDD Regulator Drive Strength in Active mode.
- * 
+ *
  * param base SPC peripheral base address.
  * param driveStrength Specify the drive strength of CORE LDO Regulator in Active mode, please
         refer to @ref spc_core_ldo_drive_strength_t.
@@ -907,7 +907,7 @@ status_t SPC_SetActiveModeCoreLDORegulatorDriveStrength(SPC_Type *base, spc_core
 
     base->ACTIVE_CFG = ((base->ACTIVE_CFG & ~SPC_ACTIVE_CFG_CORELDO_VDD_DS_MASK) |
                         SPC_ACTIVE_CFG_CORELDO_VDD_DS(driveStrength));
-    
+
     return kStatus_Success;
 }
 #endif /* FSL_FEATURE_SPC_HAS_CORELDO_VDD_DS */
@@ -981,13 +981,13 @@ status_t SPC_SetLowPowerModeCoreLDORegulatorConfig(SPC_Type *base, const spc_low
 
 /*!
  * brief Set Core LDO VDD Regulator Voltage level in Low power mode.
- * 
+ *
  * @note If CORE LDO's drive strength is set to Normal, the CORE LDO VDD regulator voltage in active mode and low power
  *  mode must be same.
  * @note Voltage level for the CORE LDO in low power mode can only be changed when the CORE LDO Drive Strength set as
  * Normal.
  *
- * param base SPC peripheral base address.	
+ * param base SPC peripheral base address.
  * param voltageLevel Voltage level of CORE LDO Regulator in Low power mode, please
         refer to @ref spc_core_ldo_voltage_level_t.
  *
@@ -1004,7 +1004,7 @@ status_t SPC_SetLowPowerModeCoreLDORegulatorVoltageLevel(SPC_Type *base, spc_cor
     }
 
     if ((SPC_GetLowPowerCoreLDOVDDDriveStrength(base) != kSPC_CoreLDO_NormalDriveStrength) && ((uint8_t)SPC_GetLowPowerCoreLDOVDDVoltageLevel(base) != (uint8_t)voltageLevel))
-    {   
+    {
         /* Voltage level for the LDO_CORE low power regulatorcan only be changed when core LDO work as normal drive strength. */
         return kStatus_SPC_CORELDOVoltageSetFail;
     }
@@ -1016,7 +1016,7 @@ status_t SPC_SetLowPowerModeCoreLDORegulatorVoltageLevel(SPC_Type *base, spc_cor
 
 /*!
  * brief Set Core LDO VDD Regulator Drive Strength in Low power mode.
- * 
+ *
  * param base SPC peripheral base address.
  * param driveStrength Specify drive strength of CORE LDO in low power mode.
  *
@@ -1047,7 +1047,7 @@ status_t SPC_SetLowPowerModeCoreLDORegulatorDriveStrength(SPC_Type *base, spc_co
 
     base->LP_CFG = ((base->LP_CFG & ~SPC_LP_CFG_CORELDO_VDD_DS_MASK) |
                     SPC_LP_CFG_CORELDO_VDD_DS(driveStrength));
-    
+
     return kStatus_Success;
 }
 
@@ -1108,7 +1108,7 @@ status_t SPC_SetActiveModeSystemLDORegulatorConfig(SPC_Type *base, const spc_act
 
 /*!
  * brief Set System LDO Regulator voltage level in Active mode.
- * 
+ *
  * @note The system LDO regulator can only operate at the overdrive voltage level for a limited amount of time for the
  * life of chip.
  *
@@ -1137,10 +1137,10 @@ status_t SPC_SetActiveModeSystemLDORegulatorVoltageLevel(SPC_Type *base, spc_sys
 
 /*!
  * brief Set System LDO Regulator Drive Strength in Active mode.
- * 
+ *
  * param base SPC peripheral base address.
  * param driveStrength Specify the drive strength  of System LDO Regulator in Active mode.
- * 
+ *
  * retval #kStatus_Success Set System LDO Regulator drive strength in Active mode successfully.
  * retval #kStatus_SPC_SYSLDOLowDriveStrengthIgnore Attempt to specify low drive strength is ignored due to any
             voltage detect feature is enabled in active mode.
@@ -1215,7 +1215,7 @@ status_t SPC_SetLowPowerModeSystemLDORegulatorConfig(SPC_Type *base, const spc_l
 
 /*!
  * brief Set System LDO Regulator drive strength in Low Power Mode.
- * 
+ *
  * param base SPC peripheral base address.
  * param driveStrength Specify the drive strength of System LDO Regulator in Low Power Mode.
  *
@@ -1298,7 +1298,7 @@ status_t SPC_SetActiveModeDCDCRegulatorConfig(SPC_Type *base, const spc_active_m
 
 /*!
  * brief Set DCDC VDD Regulator drive strength in Active mode.
- * 
+ *
  * param base SPC peripheral base address.
  * param driveStrength Specify the DCDC VDD regulator drive strength, please refer to @ref spc_dcdc_drive_strength_t.
  *
@@ -1383,7 +1383,7 @@ status_t SPC_SetLowPowerModeDCDCRegulatorConfig(SPC_Type *base, const spc_lowpow
 
 /*!
  * brief Set DCDC VDD Regulator drive strength in Low power mode.
- * 
+ *
  * param base SPC peripheral base address.
  * param driveStrength Specify the DCDC VDD Regulator drive strength, please refer to @ref spc_dcdc_drive_strength_t.
  *
@@ -1510,7 +1510,7 @@ status_t SPC_SetActiveModeRegulatorsConfig(SPC_Type *base, const spc_active_mode
                   strength. */
                 base->ACTIVE_CFG = ((base->ACTIVE_CFG) & (~SPC_ACTIVE_CFG_BGMODE_MASK)) | SPC_ACTIVE_CFG_BGMODE(config->bandgapMode);
                 bandgapConfigured = true;
-            } 
+            }
         }
     }
 #endif /* FSL_FEATURE_MCX_SPC_HAS_DCDC */
@@ -1531,7 +1531,7 @@ status_t SPC_SetActiveModeRegulatorsConfig(SPC_Type *base, const spc_active_mode
                   strength. */
                 base->ACTIVE_CFG = ((base->ACTIVE_CFG) & (~SPC_ACTIVE_CFG_BGMODE_MASK)) | SPC_ACTIVE_CFG_BGMODE(config->bandgapMode);
                 bandgapConfigured = true;
-            } 
+            }
         }
     }
 #endif /* FSL_FEATURE_SPC_HAS_CORELDO_VDD_DS */
@@ -1552,7 +1552,7 @@ status_t SPC_SetActiveModeRegulatorsConfig(SPC_Type *base, const spc_active_mode
                   strength. */
                 base->ACTIVE_CFG = ((base->ACTIVE_CFG) & (~SPC_ACTIVE_CFG_BGMODE_MASK)) | SPC_ACTIVE_CFG_BGMODE(config->bandgapMode);
                 bandgapConfigured = true;
-            } 
+            }
         }
     }
 #endif /* FSL_FEATURE_MCX_SPC_HAS_SYS_LDO */
@@ -1665,7 +1665,7 @@ status_t SPC_SetLowPowerModeRegulatorsConfig(SPC_Type *base, const spc_lowpower_
                   strength. */
                 base->LP_CFG = ((base->LP_CFG) & (~SPC_LP_CFG_BGMODE_MASK)) | SPC_LP_CFG_BGMODE(config->bandgapMode);
                 bandgapConfigured = true;
-            } 
+            }
         }
     }
 #endif /* FSL_FEATURE_MCX_SPC_HAS_DCDC */
@@ -1685,7 +1685,7 @@ status_t SPC_SetLowPowerModeRegulatorsConfig(SPC_Type *base, const spc_lowpower_
                   strength. */
                 base->LP_CFG = ((base->LP_CFG) & (~SPC_LP_CFG_BGMODE_MASK)) | SPC_LP_CFG_BGMODE(config->bandgapMode);
                 bandgapConfigured = true;
-            } 
+            }
         }
     }
 
@@ -1705,7 +1705,7 @@ status_t SPC_SetLowPowerModeRegulatorsConfig(SPC_Type *base, const spc_lowpower_
                   strength. */
                 base->LP_CFG = ((base->LP_CFG) & (~SPC_LP_CFG_BGMODE_MASK)) | SPC_LP_CFG_BGMODE(config->bandgapMode);
                 bandgapConfigured = true;
-            } 
+            }
         }
     }
 #endif /* FSL_FEATURE_MCX_SPC_HAS_SYS_LDO */

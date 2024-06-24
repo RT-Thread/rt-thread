@@ -7,7 +7,7 @@
 #define FXAS2100_I2C_DEV_NAME    ("i2c2")
 #define FXAS2100_CHIP_ADDR       (0x20)
 
-// register addresses FXAS21002C_H_
+/* register addresses FXAS21002C_H_*/
 #define FXAS21002C_H_STATUS           0x00
 #define FXAS21002C_H_DR_STATUS        0x07
 #define FXAS21002C_H_F_STATUS         0x08
@@ -84,19 +84,19 @@ static rt_err_t fxas2100_open(rt_device_t dev, rt_uint16_t oflag)
             val = fxos_read_reg(fxas2100, FXAS21002C_H_CTRL_REG1);
             fxos_write_reg(fxas2100, FXAS21002C_H_CTRL_REG1, val & ~(0x03));
 
-            // Disable FIFO, route FIFO and rate threshold interrupts to INT2, enable data ready interrupt, route to INT1
-            // Active HIGH, push-pull output driver on interrupts
+            /* Disable FIFO, route FIFO and rate threshold interrupts to INT2, enable data ready interrupt, route to INT1*/
+            /* Active HIGH, push-pull output driver on interrupts*/
             fxos_write_reg(fxas2100, FXAS21002C_H_CTRL_REG2, 0x0E);
             fxos_write_reg(fxas2100, FXAS21002C_H_CTRL_REG0, 0x80);
 
-             // Set up rate threshold detection; at max rate threshold = FSR; rate threshold = THS*FSR/128
-            fxos_write_reg(fxas2100, FXAS21002C_H_RT_CFG, 0x07);         // enable rate threshold detection on all axes
-            fxos_write_reg(fxas2100, FXAS21002C_H_RT_THS, 0x00 | 0x0D);  // unsigned 7-bit THS, set to one-tenth FSR; set clearing debounce counter
-            fxos_write_reg(fxas2100, FXAS21002C_H_RT_COUNT, 0x04);       // set to 4 (can set up to 255)
+             /* Set up rate threshold detection; at max rate threshold = FSR; rate threshold = THS*FSR/128*/
+            fxos_write_reg(fxas2100, FXAS21002C_H_RT_CFG, 0x07);         /* enable rate threshold detection on all axes*/
+            fxos_write_reg(fxas2100, FXAS21002C_H_RT_THS, 0x00 | 0x0D);  /* unsigned 7-bit THS, set to one-tenth FSR; set clearing debounce counter*/
+            fxos_write_reg(fxas2100, FXAS21002C_H_RT_COUNT, 0x04);       /* set to 4 (can set up to 255)*/
 
             val = fxos_read_reg(fxas2100, FXAS21002C_H_CTRL_REG1);
-            fxos_write_reg(fxas2100, FXAS21002C_H_CTRL_REG1, val & ~(0x03));  // Clear bits 0 and 1; standby mode
-            fxos_write_reg(fxas2100, FXAS21002C_H_CTRL_REG1, val |   0x02);   // Set bit 1 to 1, active mode; data acquisition enabled
+            fxos_write_reg(fxas2100, FXAS21002C_H_CTRL_REG1, val & ~(0x03));  /* Clear bits 0 and 1; standby mode*/
+            fxos_write_reg(fxas2100, FXAS21002C_H_CTRL_REG1, val |   0x02);   /* Set bit 1 to 1, active mode; data acquisition enabled*/
             return RT_EOK;
         }
         else

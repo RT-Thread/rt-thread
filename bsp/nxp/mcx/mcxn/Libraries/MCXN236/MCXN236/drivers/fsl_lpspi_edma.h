@@ -205,7 +205,7 @@ status_t LPSPI_MasterTransferEDMA(LPSPI_Type *base, lpspi_master_edma_handle_t *
 /*!
  * @brief LPSPI master config transfer parameter while using eDMA.
  *
- * This function is preparing to transfer data using eDMA, work with LPSPI_MasterTransferEDMALite. 
+ * This function is preparing to transfer data using eDMA, work with LPSPI_MasterTransferEDMALite.
  *
  * @param base LPSPI peripheral base address.
  * @param handle pointer to lpspi_master_edma_handle_t structure which stores the transfer state.
@@ -223,7 +223,7 @@ status_t LPSPI_MasterTransferPrepareEDMALite(LPSPI_Type *base, lpspi_master_edma
  * is transferred, the callback function is called.
  *
  * Note:
- * This API is only for transfer through DMA without configuration. 
+ * This API is only for transfer through DMA without configuration.
  * Before calling this API, you must call LPSPI_MasterTransferPrepareEDMALite to configure it once.
  * The transfer data size should be an integer multiple of bytesPerFrame if bytesPerFrame is less than or equal to 4.
  * For bytesPerFrame greater than 4:

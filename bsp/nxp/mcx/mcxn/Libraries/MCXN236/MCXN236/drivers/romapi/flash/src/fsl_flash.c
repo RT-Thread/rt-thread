@@ -273,7 +273,7 @@ status_t FLASH_VerifyProgramPrologue(flash_config_t *config,
         config, start, lengthInBytes, expectedData, failedAddress, failedData);
 }
 
-#endif // BL_FEATURE_HAS_BUS_CRYPTO_ENGINE
+#endif /* BL_FEATURE_HAS_BUS_CRYPTO_ENGINE*/
 
 #if defined(FSL_FEATURE_SYSCON_HAS_FLASH_HIDING) && (FSL_FEATURE_SYSCON_HAS_FLASH_HIDING == 1)
 /*!
@@ -368,7 +368,7 @@ status_t FFR_GetCustomerInfieldData(flash_config_t *config, uint8_t *pData, uint
 }
 
 /*!
- * @brief The API is used for getting the customer key store data from the customer key store region(0x3e400 �C
+ * @brief The API is used for getting the customer key store data from the customer key store region(0x3e400 ï¿½C
  * 0x3e600), and the API should be called after the FLASH_Init and FFR_Init.
  */
 status_t FFR_GetCustKeystoreData(flash_config_t *config, uint8_t *pData, uint32_t offset, uint32_t len)

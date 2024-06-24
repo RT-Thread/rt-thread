@@ -220,7 +220,7 @@ enum _lpspi_transfer_config_flag_for_master
     kLPSPI_MasterWidth1 = 0U << LPSPI_MASTER_WIDTH_SHIFT, /*!< LPSPI master transfer 1bit */
     kLPSPI_MasterWidth2 = 1U << LPSPI_MASTER_WIDTH_SHIFT, /*!< LPSPI master transfer 2bit */
     kLPSPI_MasterWidth4 = 2U << LPSPI_MASTER_WIDTH_SHIFT, /*!< LPSPI master transfer 4bit */
-    
+
     kLPSPI_MasterPcsContinuous = 1U << 20, /*!< Is PCS signal continuous */
 
     kLPSPI_MasterByteSwap =
@@ -293,7 +293,7 @@ typedef struct _lpspi_master_config
 
     lpspi_pin_config_t pinCfg; /*!< Configures which pins are used for input and output data
                                 *during single bit transfers.*/
-    
+
     lpspi_pcs_function_config_t pcsFunc; /*!< Configures cs pins function.*/
 
     lpspi_data_out_config_t dataOutConfig; /*!< Configures if the output data is tristated

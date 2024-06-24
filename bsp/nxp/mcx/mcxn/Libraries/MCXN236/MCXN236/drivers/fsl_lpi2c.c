@@ -369,10 +369,10 @@ void LPI2C_MasterInit(LPI2C_Type *base, const lpi2c_master_config_t *masterConfi
     uint32_t cfgr2;
     uint32_t value;
     uint32_t instance = LPI2C_GetInstance(base);
-    
+
     if(LP_FLEXCOMM_GetBaseAddress(instance) != 0U)
     {
-      
+
 #if !(defined(LPFLEXCOMM_INIT_NOT_USED_IN_DRIVER) && LPFLEXCOMM_INIT_NOT_USED_IN_DRIVER)
         /* initialize flexcomm to LPI2C mode */
         status_t status = LP_FLEXCOMM_Init(instance, LP_FLEXCOMM_PERIPH_LPI2C);
@@ -381,11 +381,11 @@ void LPI2C_MasterInit(LPI2C_Type *base, const lpi2c_master_config_t *masterConfi
             assert(false);
         }
 #endif /* LPFLEXCOMM_INIT_NOT_USED_IN_DRIVER */
-        
+
     }
     else
     {
-     
+
 #if !(defined(FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL) && FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL)
         /* Ungate the clock. */
         (void)CLOCK_EnableClock(kLpi2cClocks[instance]);
@@ -395,9 +395,9 @@ void LPI2C_MasterInit(LPI2C_Type *base, const lpi2c_master_config_t *masterConfi
 #endif
 
 #endif /* FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL */
-        
+
     }
-    
+
     /* Reset peripheral before configuring it. */
     LPI2C_MasterReset(base);
 
@@ -483,8 +483,8 @@ void LPI2C_MasterInit(LPI2C_Type *base, const lpi2c_master_config_t *masterConfi
  */
 void LPI2C_MasterDeinit(LPI2C_Type *base)
 {
-    uint32_t instance = LPI2C_GetInstance(base); 
-    
+    uint32_t instance = LPI2C_GetInstance(base);
+
     /* Restore to reset state. */
     LPI2C_MasterReset(base);
     if(LP_FLEXCOMM_GetBaseAddress(instance) != 0U)
@@ -1062,7 +1062,7 @@ void LPI2C_MasterTransferCreateHandle(LPI2C_Type *base,
     uint32_t instance;
 
     assert(NULL != handle);
-    
+
     /* Clear out the handle. */
     (void)memset(handle, 0, sizeof(*handle));
 
@@ -1688,7 +1688,7 @@ void LPI2C_SlaveInit(LPI2C_Type *base, const lpi2c_slave_config_t *slaveConfig, 
 
     if(LP_FLEXCOMM_GetBaseAddress(instance) != 0U)
     {
-      
+
 #if !(defined(LPFLEXCOMM_INIT_NOT_USED_IN_DRIVER) && LPFLEXCOMM_INIT_NOT_USED_IN_DRIVER)
         /* initialize flexcomm to LPI2C mode */
         status_t status = LP_FLEXCOMM_Init(instance, LP_FLEXCOMM_PERIPH_LPI2C);
@@ -1697,11 +1697,11 @@ void LPI2C_SlaveInit(LPI2C_Type *base, const lpi2c_slave_config_t *slaveConfig, 
             assert(false);
         }
 #endif /* LPFLEXCOMM_INIT_NOT_USED_IN_DRIVER */
-        
+
     }
     else
     {
-      
+
 #if !(defined(FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL) && FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL)
         /* Ungate the clock. */
         (void)CLOCK_EnableClock(kLpi2cClocks[instance]);
@@ -1711,7 +1711,7 @@ void LPI2C_SlaveInit(LPI2C_Type *base, const lpi2c_slave_config_t *slaveConfig, 
 #endif
 
 #endif /* FSL_SDK_DISABLE_DRIVER_CLOCK_CONTROL */
-      
+
     }
 
     /* Restore to reset conditions. */
@@ -1770,7 +1770,7 @@ void LPI2C_SlaveInit(LPI2C_Type *base, const lpi2c_slave_config_t *slaveConfig, 
  */
 void LPI2C_SlaveDeinit(LPI2C_Type *base)
 {
-    uint32_t instance = LPI2C_GetInstance(base); 
+    uint32_t instance = LPI2C_GetInstance(base);
 
     /* Restore to reset state. */
     LPI2C_SlaveReset(base);
@@ -2032,7 +2032,7 @@ void LPI2C_SlaveTransferCreateHandle(LPI2C_Type *base,
     uint32_t instance;
 
     assert(NULL != handle);
-    
+
     /* Clear out the handle. */
     (void)memset(handle, 0, sizeof(*handle));
 
@@ -2053,7 +2053,7 @@ void LPI2C_SlaveTransferCreateHandle(LPI2C_Type *base,
         LP_FLEXCOMM_SetIRQHandler(LPI2C_GetInstance(base), handler.lpflexcomm_handler, handle, LP_FLEXCOMM_PERIPH_LPI2C);
     }
     else
-    {        
+    {
         /* Save this handle for IRQ use. */
         s_lpi2cSlaveHandle[instance] = handle;
 
@@ -2356,7 +2356,7 @@ void LPI2C_SlaveTransferHandleIRQ(uint32_t instance, void *lpi2cSlaveHandle)
                     *xfer->data++ = (uint8_t)base->SRDR;
                     --xfer->dataSize;
                     ++handle->transferredCount;
-					if (0U != (base->SCFGR1 & LPI2C_SCFGR1_ACKSTALL_MASK))
+                    if (0U != (base->SCFGR1 & LPI2C_SCFGR1_ACKSTALL_MASK))
                     {
                         if (((0U == (handle->eventMask & (uint32_t)kLPI2C_SlaveTransmitAckEvent)) ||
                              (NULL == handle->callback)))

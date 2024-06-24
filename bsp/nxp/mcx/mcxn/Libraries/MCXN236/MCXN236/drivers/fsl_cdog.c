@@ -330,7 +330,7 @@ status_t CDOG_Init(CDOG_Type *base, cdog_config_t *conf)
         CDOG_GetDefaultConfig(&default_conf);
 
         /* Write default value to CDOG->CONTROL*/
-        base->CONTROL = 
+        base->CONTROL =
             CDOG_CONTROL_TIMEOUT_CTRL(default_conf.timeout) |       /* Action if the timeout event is triggered  */
             CDOG_CONTROL_MISCOMPARE_CTRL(default_conf.miscompare) | /* Action if the miscompare error event is triggered  */
             CDOG_CONTROL_SEQUENCE_CTRL(default_conf.sequence) |     /* Action if the sequence error event is triggered  */

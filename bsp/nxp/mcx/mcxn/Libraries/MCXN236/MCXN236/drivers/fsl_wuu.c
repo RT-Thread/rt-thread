@@ -145,7 +145,7 @@ void WUU_SetInternalWakeUpModulesConfig(WUU_Type *base, uint8_t moduleIndex, wuu
 
 /*!
  * brief Disable an on-chip internal modules' event as the wakeup sources.
- * 
+ *
  * param base WUU peripheral base address.
  * param moduleIndex The selected internal module. See the Reference Manual for the details.
  * param event The event(interrupt or DMA/trigger) of the internal module to disable.

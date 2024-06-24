@@ -26,15 +26,15 @@ void BOARD_InitBootPins(void)
     PORT1->PCR[9]   = PORT_PCR_MUX(2) | PORT_PCR_PS(0) | PORT_PCR_IBE(1);     /* FC4_P1 */
 
     /* Mikro Bus UART */
-//	  PORT1->PCR[16]  = PORT_PCR_MUX(2) | PORT_PCR_PS(0) | PORT_PCR_IBE(1);     /* FC5_P0 */
-//	  PORT1->PCR[17]  = PORT_PCR_MUX(2) | PORT_PCR_PS(0) | PORT_PCR_IBE(1);     /* FC5_P1 */
+/*    PORT1->PCR[16]  = PORT_PCR_MUX(2) | PORT_PCR_PS(0) | PORT_PCR_IBE(1);     /* FC5_P0 */
+/*    PORT1->PCR[17]  = PORT_PCR_MUX(2) | PORT_PCR_PS(0) | PORT_PCR_IBE(1);     /* FC5_P1 */
 
     PORT1->PCR[16]  = PORT_PCR_MUX(2) | PORT_PCR_PS(0) | PORT_PCR_PE(1) | PORT_PCR_IBE(1);     /* FC5_UART */
     PORT1->PCR[17]  = PORT_PCR_MUX(2) | PORT_PCR_PS(0) | PORT_PCR_PE(1) | PORT_PCR_IBE(1);     /* FC5_UART */
 
     /* DAC */
-    // PORT4->PCR[2] = PORT_PCR_MUX(0) | PORT_PCR_PS(0) | PORT_PCR_PE(0) | PORT_PCR_IBE(0); /* DAC0 */
-    // PORT4->PCR[3] = PORT_PCR_MUX(0) | PORT_PCR_PS(0) | PORT_PCR_PE(0) | PORT_PCR_IBE(0); /* DAC1 */
+    /* PORT4->PCR[2] = PORT_PCR_MUX(0) | PORT_PCR_PS(0) | PORT_PCR_PE(0) | PORT_PCR_IBE(0); /* DAC0 */
+    /* PORT4->PCR[3] = PORT_PCR_MUX(0) | PORT_PCR_PS(0) | PORT_PCR_PE(0) | PORT_PCR_IBE(0); /* DAC1 */
 
     /* MCX_RST UART */
     PORT4->PCR[2]  = PORT_PCR_MUX(2) | PORT_PCR_PS(0) | PORT_PCR_PE(1) | PORT_PCR_IBE(1);     /* FC2_UART */
@@ -60,8 +60,8 @@ void BOARD_InitBootPins(void)
 
     /* Arduino D8(P0_28), D9(P0_10), D10(P0_27) as GPIO function, for RW007 RST, INT, CS */
     /* drv_pin.c works well, follow lines just notice that pins we used as GPIO function */
-    // PORT0->PCR[28]   = PORT_PCR_MUX(0) | PORT_PCR_PS(1) | PORT_PCR_PE(1) | PORT_PCR_IBE(1);     /* P0_28: P0_28 */
-    // PORT0->PCR[10]   = PORT_PCR_MUX(0) | PORT_PCR_PS(0) | PORT_PCR_PE(1) | PORT_PCR_IBE(1);     /* P0_10: P0_27 */
+    /* PORT0->PCR[28]   = PORT_PCR_MUX(0) | PORT_PCR_PS(1) | PORT_PCR_PE(1) | PORT_PCR_IBE(1);     /* P0_28: P0_28 */
+    /* PORT0->PCR[10]   = PORT_PCR_MUX(0) | PORT_PCR_PS(0) | PORT_PCR_PE(1) | PORT_PCR_IBE(1);     /* P0_10: P0_27 */
     PORT0->PCR[27]   = PORT_PCR_MUX(0) | PORT_PCR_PS(1) | PORT_PCR_PE(1) | PORT_PCR_IBE(1);     /* P0_27: P0_27 */
 #endif
 
@@ -70,9 +70,9 @@ void BOARD_InitBootPins(void)
     PORT1->PCR[1]   = PORT_PCR_MUX(2) | PORT_PCR_PS(0) | PORT_PCR_PE(0) | PORT_PCR_IBE(1);     /* FC3_1 SCK, FC3_SPI_CLK */
     PORT1->PCR[2]   = PORT_PCR_MUX(2) | PORT_PCR_PS(0) | PORT_PCR_PE(0) | PORT_PCR_IBE(1);     /* FC3_2 SDI/D[1], FC3_SPI_MISO */
     PORT1->PCR[3]   = PORT_PCR_MUX(0) | PORT_PCR_PS(0) | PORT_PCR_PE(0) | PORT_PCR_IBE(1);     /* CS */
-//    PORT1->PCR[3]   = PORT_PCR_MUX(2) | PORT_PCR_PS(0) | PORT_PCR_PE(0) | PORT_PCR_IBE(1);     /* FC3_3 CS0 */
-//    PORT1->PCR[4]   = PORT_PCR_MUX(2) | PORT_PCR_PS(0) | PORT_PCR_PE(0) | PORT_PCR_IBE(1);     /* FC3_4 D[3] */
-//    PORT1->PCR[5]   = PORT_PCR_MUX(2) | PORT_PCR_PS(0) | PORT_PCR_PE(0) | PORT_PCR_IBE(1);     /* FC3_5 D[2] */
+/*    PORT1->PCR[3]   = PORT_PCR_MUX(2) | PORT_PCR_PS(0) | PORT_PCR_PE(0) | PORT_PCR_IBE(1);     /* FC3_3 CS0 */
+/*    PORT1->PCR[4]   = PORT_PCR_MUX(2) | PORT_PCR_PS(0) | PORT_PCR_PE(0) | PORT_PCR_IBE(1);     /* FC3_4 D[3] */
+/*    PORT1->PCR[5]   = PORT_PCR_MUX(2) | PORT_PCR_PS(0) | PORT_PCR_PE(0) | PORT_PCR_IBE(1);     /* FC3_5 D[2] */
 
     /* SPI */
     PORT3->PCR[8]   = PORT_PCR_MUX(3) | PORT_PCR_PS(0) | PORT_PCR_PE(0) | PORT_PCR_IBE(1);     /* FC7_P0, MOSI */
@@ -92,11 +92,11 @@ void BOARD_InitBootPins(void)
     PORT1->PCR[13]   = PORT_PCR_MUX(3) | PORT_PCR_PS(0) | PORT_PCR_PE(1) | PORT_PCR_IBE(1);     /* FC3_1 SCK */
     PORT1->PCR[14]   = PORT_PCR_MUX(3) | PORT_PCR_PS(0) | PORT_PCR_PE(1) | PORT_PCR_IBE(1);     /* FC3_2 SDI/D[1] */
     PORT1->PCR[15]   = PORT_PCR_MUX(3) | PORT_PCR_PS(0) | PORT_PCR_PE(1) | PORT_PCR_IBE(1);     /* FC3_3 CS0 */
-//    PORT1->PCR[16]   = PORT_PCR_MUX(3) | PORT_PCR_PS(0) | PORT_PCR_PE(1) | PORT_PCR_IBE(1);     /* FC3_4 D[3] */
-//    PORT1->PCR[17]   = PORT_PCR_MUX(3) | PORT_PCR_PS(0) | PORT_PCR_PE(1) | PORT_PCR_IBE(1);     /* FC3_5 D[2] */
+/*    PORT1->PCR[16]   = PORT_PCR_MUX(3) | PORT_PCR_PS(0) | PORT_PCR_PE(1) | PORT_PCR_IBE(1);     /* FC3_4 D[3] */
+/*    PORT1->PCR[17]   = PORT_PCR_MUX(3) | PORT_PCR_PS(0) | PORT_PCR_PE(1) | PORT_PCR_IBE(1);     /* FC3_5 D[2] */
 
-//    PORT1->PCR[8]   = PORT_PCR_MUX(3) | PORT_PCR_PS(0) | PORT_PCR_PE(1) | PORT_PCR_IBE(1);     /* FC5_4 D[3] */
-//    PORT1->PCR[9]   = PORT_PCR_MUX(3) | PORT_PCR_PS(0) | PORT_PCR_PE(1) | PORT_PCR_IBE(1);     /* FC5_5 D[2] */
+/*    PORT1->PCR[8]   = PORT_PCR_MUX(3) | PORT_PCR_PS(0) | PORT_PCR_PE(1) | PORT_PCR_IBE(1);     /* FC5_4 D[3] */
+/*    PORT1->PCR[9]   = PORT_PCR_MUX(3) | PORT_PCR_PS(0) | PORT_PCR_PE(1) | PORT_PCR_IBE(1);     /* FC5_5 D[2] */
     PORT1->PCR[4]   = PORT_PCR_MUX(3) | PORT_PCR_PS(0) | PORT_PCR_PE(1) | PORT_PCR_IBE(1);     /* FC5_0 SDO/D[0] */
     PORT1->PCR[5]   = PORT_PCR_MUX(3) | PORT_PCR_PS(0) | PORT_PCR_PE(1) | PORT_PCR_IBE(1);     /* FC5_1 SCK */
     PORT1->PCR[6]   = PORT_PCR_MUX(3) | PORT_PCR_PS(0) | PORT_PCR_PE(1) | PORT_PCR_IBE(1);     /* FC5_2 SDI/D[1] */
@@ -116,15 +116,15 @@ void BOARD_InitBootPins(void)
     PORT3->PCR[23]   = PORT_PCR_MUX(0) | PORT_PCR_PS(0) | PORT_PCR_PE(0) | PORT_PCR_IBE(1);     /* CS */
 
 
-//    PORT1->PCR[20]   = PORT_PCR_MUX(3) | PORT_PCR_PS(0) | PORT_PCR_PE(0) | PORT_PCR_IBE(1);     /* FC4_0 */
-//    PORT1->PCR[21]   = PORT_PCR_MUX(3) | PORT_PCR_PS(0) | PORT_PCR_PE(0) | PORT_PCR_IBE(1);     /* FC4_1 */
-//    PORT1->PCR[22]   = PORT_PCR_MUX(3) | PORT_PCR_PS(0) | PORT_PCR_PE(0) | PORT_PCR_IBE(1);     /* FC4_2 */
-//    PORT1->PCR[23]   = PORT_PCR_MUX(3) | PORT_PCR_PS(0) | PORT_PCR_PE(0) | PORT_PCR_IBE(1);     /* FC4_3 */
-//    PORT1->PCR[0]   = PORT_PCR_MUX(3) | PORT_PCR_PS(0) | PORT_PCR_PE(0) | PORT_PCR_IBE(1);      /* FC4_4 */
-//    PORT1->PCR[1]   = PORT_PCR_MUX(3) | PORT_PCR_PS(0) | PORT_PCR_PE(0) | PORT_PCR_IBE(1);      /* FC4_5 */
+/*    PORT1->PCR[20]   = PORT_PCR_MUX(3) | PORT_PCR_PS(0) | PORT_PCR_PE(0) | PORT_PCR_IBE(1);     /* FC4_0 */
+/*    PORT1->PCR[21]   = PORT_PCR_MUX(3) | PORT_PCR_PS(0) | PORT_PCR_PE(0) | PORT_PCR_IBE(1);     /* FC4_1 */
+/*    PORT1->PCR[22]   = PORT_PCR_MUX(3) | PORT_PCR_PS(0) | PORT_PCR_PE(0) | PORT_PCR_IBE(1);     /* FC4_2 */
+/*    PORT1->PCR[23]   = PORT_PCR_MUX(3) | PORT_PCR_PS(0) | PORT_PCR_PE(0) | PORT_PCR_IBE(1);     /* FC4_3 */
+/*    PORT1->PCR[0]   = PORT_PCR_MUX(3) | PORT_PCR_PS(0) | PORT_PCR_PE(0) | PORT_PCR_IBE(1);      /* FC4_4 */
+/*    PORT1->PCR[1]   = PORT_PCR_MUX(3) | PORT_PCR_PS(0) | PORT_PCR_PE(0) | PORT_PCR_IBE(1);      /* FC4_5 */
 
-//    PORT4->PCR[0]   = PORT_PCR_MUX(0) | PORT_PCR_PS(0) | PORT_PCR_PE(0) | PORT_PCR_IBE(1);     /* ANA_0, ADC0_A0 */
-//    PORT4->PCR[1]   = PORT_PCR_MUX(0) | PORT_PCR_PS(0) | PORT_PCR_PE(0) | PORT_PCR_IBE(1);     /* ANA_1, ADC0_B0 */
+/*    PORT4->PCR[0]   = PORT_PCR_MUX(0) | PORT_PCR_PS(0) | PORT_PCR_PE(0) | PORT_PCR_IBE(1);     /* ANA_0, ADC0_A0 */
+/*    PORT4->PCR[1]   = PORT_PCR_MUX(0) | PORT_PCR_PS(0) | PORT_PCR_PE(0) | PORT_PCR_IBE(1);     /* ANA_1, ADC0_B0 */
 
     PORT4->PCR[0]   = PORT_PCR_MUX(2) | PORT_PCR_PS(0) | PORT_PCR_PE(0) | PORT_PCR_IBE(1);     /* FC2_P0 I2C_SDA */
     PORT4->PCR[1]   = PORT_PCR_MUX(2) | PORT_PCR_PS(0) | PORT_PCR_PE(0) | PORT_PCR_IBE(1);     /* FC2_P1 I2C_SCL */
@@ -146,8 +146,8 @@ void BOARD_InitBootPins(void)
     PORT4->PCR[16] = PORT_PCR_MUX(FLEXIO_DATA8_MUX)  | PORT_PCR_PE_MASK | PORT_PCR_PS(0);         /* FXIO0_D8  */
 
 
-//    PORT4->PCR[15]   = PORT_PCR_MUX(11) | PORT_PCR_PS(0) | PORT_PCR_PE(1) | PORT_PCR_IBE(1);     /* CAN1 */
-//    PORT4->PCR[16]   = PORT_PCR_MUX(11) | PORT_PCR_PS(0) | PORT_PCR_PE(1) | PORT_PCR_IBE(1);     /* CAN */
+/*    PORT4->PCR[15]   = PORT_PCR_MUX(11) | PORT_PCR_PS(0) | PORT_PCR_PE(1) | PORT_PCR_IBE(1);     /* CAN1 */
+/*    PORT4->PCR[16]   = PORT_PCR_MUX(11) | PORT_PCR_PS(0) | PORT_PCR_PE(1) | PORT_PCR_IBE(1);     /* CAN */
 
 
     PORT4->PCR[17] = PORT_PCR_MUX(FLEXIO_DATA9_MUX)  | PORT_PCR_PE_MASK | PORT_PCR_PS(0);       /* FXIO0_D9  */
@@ -184,7 +184,7 @@ void FLEXIO_8080_Config_Data_Pin(void)
 /* Configure FLEXIO_WR pin as FlexIO function */
 void FLEXIO_8080_Config_WR_FlexIO(void)
 {
-   // FLEXIO_WR_PORT->PCR[FLEXIO_WR_PIN] = PORT_PCR_MUX(FLEXIO_WR_PIN_MUX) | PORT_PCR_PE_MASK | PORT_PCR_PS_MASK;
+   /* FLEXIO_WR_PORT->PCR[FLEXIO_WR_PIN] = PORT_PCR_MUX(FLEXIO_WR_PIN_MUX) | PORT_PCR_PE_MASK | PORT_PCR_PS_MASK;*/
 }
 
 /* Configure FLEXIO_WR pin as GPIO function and outputting high level */
@@ -196,15 +196,15 @@ void FLEXIO_8080_Config_WR_GPIO(void)
 /* Configure FLEXIO_RD pin as FlexIO function */
 void FLEXIO_8080_Config_RD_FlexIO(void)
 {
-  //  FLEXIO_RD_PORT->PCR[FLEXIO_RD_PIN] = PORT_PCR_MUX(FLEXIO_RD_PIN_MUX) | PORT_PCR_PE_MASK | PORT_PCR_PS_MASK;
+  /*  FLEXIO_RD_PORT->PCR[FLEXIO_RD_PIN] = PORT_PCR_MUX(FLEXIO_RD_PIN_MUX) | PORT_PCR_PE_MASK | PORT_PCR_PS_MASK;*/
 }
 
 /* Configure FLEXIO_RD pin as GPIO function and outputting high level */
 void FLEXIO_8080_Config_RD_GPIO(void)
 {
-//    FLEXIO_RD_GPIO->PSOR |= 1U << FLEXIO_RD_PIN;
-//    FLEXIO_RD_GPIO->PDDR |= 1U << FLEXIO_RD_PIN;
-//    FLEXIO_RD_PORT->PCR[FLEXIO_RD_PIN] = PORT_PCR_MUX(0U) | PORT_PCR_PE_MASK | PORT_PCR_PS_MASK;
+/*    FLEXIO_RD_GPIO->PSOR |= 1U << FLEXIO_RD_PIN;*/
+/*    FLEXIO_RD_GPIO->PDDR |= 1U << FLEXIO_RD_PIN;*/
+/*    FLEXIO_RD_PORT->PCR[FLEXIO_RD_PIN] = PORT_PCR_MUX(0U) | PORT_PCR_PE_MASK | PORT_PCR_PS_MASK;*/
 }
 
 /* Configure FLEXIO_CS pin as GPIO function and outputting high level */
@@ -212,7 +212,7 @@ void FLEXIO_8080_Config_CS_GPIO(void)
 {
     FLEXIO_CS_GPIO->PSOR |= 1U << FLEXIO_CS_PIN;
     FLEXIO_CS_GPIO->PDDR |= 1U << FLEXIO_CS_PIN;
-//    FLEXIO_CS_PORT->PCR[FLEXIO_CS_PIN] = PORT_PCR_MUX(0U) | PORT_PCR_PE_MASK | PORT_PCR_PS_MASK;
+/*    FLEXIO_CS_PORT->PCR[FLEXIO_CS_PIN] = PORT_PCR_MUX(0U) | PORT_PCR_PE_MASK | PORT_PCR_PS_MASK;*/
 }
 
 /* Set FLEXIO_CS pin's level */
@@ -233,7 +233,7 @@ void FLEXIO_8080_Config_RS_GPIO(void)
 {
     FLEXIO_RS_GPIO->PSOR |= 1U << FLEXIO_RS_PIN;
     FLEXIO_RS_GPIO->PDDR |= 1U << FLEXIO_RS_PIN;
-//    FLEXIO_RS_PORT->PCR[FLEXIO_RS_PIN] = PORT_PCR_MUX(0U) | PORT_PCR_PE_MASK | PORT_PCR_PS_MASK;
+/*    FLEXIO_RS_PORT->PCR[FLEXIO_RS_PIN] = PORT_PCR_MUX(0U) | PORT_PCR_PE_MASK | PORT_PCR_PS_MASK;*/
 }
 
 /* Set RS pin's level */

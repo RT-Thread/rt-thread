@@ -27,9 +27,9 @@
 
 #if !defined(VBAT_LDORAMC_RET_MASK)
 #define VBAT_LDORAMC_RET_MASK   (0xF00U)
-#define VBAT_LDORAMC_RET_SHIFT  (8U) 
+#define VBAT_LDORAMC_RET_SHIFT  (8U)
 #define VBAT_LDORAMC_RET(x)     (((uint32_t)(((uint32_t)(x)) << VBAT_LDORAMC_RET_SHIFT)) & VBAT_LDORAMC_RET_MASK)
-#endif 
+#endif
 
 /*!
  * @brief The enumeration of VBAT module status.
@@ -567,7 +567,7 @@ static inline void VBAT_BypassCrystalOsc32k(VBAT_Type *base, bool enableBypass)
     }
 }
 
-#if (defined(FSL_FEATURE_MCX_VBAT_HAS_OSCCTLA_FINE_AMP_GAIN_BIT) && FSL_FEATURE_MCX_VBAT_HAS_OSCCTLA_FINE_AMP_GAIN_BIT) 
+#if (defined(FSL_FEATURE_MCX_VBAT_HAS_OSCCTLA_FINE_AMP_GAIN_BIT) && FSL_FEATURE_MCX_VBAT_HAS_OSCCTLA_FINE_AMP_GAIN_BIT)
 /*!
  * @brief Adjust 32k crystal oscillator amplifier gain.
  *
@@ -592,7 +592,7 @@ static inline void VBAT_AdjustCrystalOsc32kAmplifierGain(VBAT_Type *base, uint8_
 static inline void VBAT_AdjustCrystalOsc32kAmplifierGain(VBAT_Type *base, uint8_t coarse)
 {
     base->OSCCTLA = (base->OSCCTLA & ~VBAT_OSCCTLA_COARSE_AMP_GAIN_MASK) | (VBAT_OSCCTLA_COARSE_AMP_GAIN(coarse));
-    base->OSCCTLB = (base->OSCCTLB & ~VBAT_OSCCTLA_COARSE_AMP_GAIN_MASK) | (VBAT_OSCCTLA_COARSE_AMP_GAIN(~coarse));        
+    base->OSCCTLB = (base->OSCCTLB & ~VBAT_OSCCTLA_COARSE_AMP_GAIN_MASK) | (VBAT_OSCCTLA_COARSE_AMP_GAIN(~coarse));
 }
 
 #endif /*  */

@@ -455,12 +455,12 @@ void FLEXIO_SetPinConfig(FLEXIO_Type *base, uint32_t pin, flexio_gpio_config_t *
             /* Enable interrupt in NVIC. */
             (void)EnableIRQ(flexio_irqs[FLEXIO_GetInstance(base)]);
         }
-        
+
         if (0U != (config->inputConfig & (uint8_t)kFLEXIO_FlagRisingEdgeEnable))
         {
             base->PINREN = 1UL << pin;
         }
-        
+
         if (0U != (config->inputConfig & (uint8_t)kFLEXIO_FlagFallingEdgeEnable))
         {
             base->PINFEN = 1UL << pin;

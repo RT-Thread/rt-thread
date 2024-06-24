@@ -103,7 +103,7 @@ static rt_err_t fxos8700_open(rt_device_t dev, rt_uint16_t oflag)
             LOG_D("fxos8700 found, id:0x%X", val);
 
             /* reset */
-        //    fxos_write_reg(instance, gChipAddr, CTRL_REG2, RST_MASK);
+        /*    fxos_write_reg(instance, gChipAddr, CTRL_REG2, RST_MASK);*/
             /* wait for a bit */
             for (i = 0; i < 0xFFFF; i++)
             {

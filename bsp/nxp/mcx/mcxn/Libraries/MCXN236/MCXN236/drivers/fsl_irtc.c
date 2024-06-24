@@ -123,7 +123,7 @@ status_t IRTC_Init(RTC_Type *base, const irtc_config_t *config)
 #endif
 #if defined(FSL_FEATURE_RTC_HAS_CLOCK_SELECT) && FSL_FEATURE_RTC_HAS_CLOCK_SELECT
                (uint16_t)RTC_CTRL_CLK_SEL_MASK |
-#endif 
+#endif
 #if defined(FSL_FEATURE_RTC_HAS_CLOCK_OUTPUT_DISABLE) && FSL_FEATURE_RTC_HAS_CLOCK_OUTPUT_DISABLE
                (uint16_t)RTC_CTRL_CLKO_DIS_MASK |
 #endif

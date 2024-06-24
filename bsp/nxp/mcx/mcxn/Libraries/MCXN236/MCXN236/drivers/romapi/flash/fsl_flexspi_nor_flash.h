@@ -100,7 +100,7 @@ enum _flexspi_nor_status
         MAKE_STATUS(kStatusROMGroup_FLEXSPINOR, 1), /*!< Status for Sector Erase failure */
     kStatus_FLEXSPINOR_EraseAllFail = MAKE_STATUS(kStatusROMGroup_FLEXSPINOR, 2), /*!< Status for Chip Erase failure */
     kStatus_FLEXSPINOR_WaitTimeout  = MAKE_STATUS(kStatusROMGroup_FLEXSPINOR, 3), /*!< Status for timeout */
-    kStatus_FlexSPINOR_NotSupported = MAKE_STATUS(kStatusROMGroup_FLEXSPINOR, 4), // Status for PageSize overflow */
+    kStatus_FlexSPINOR_NotSupported = MAKE_STATUS(kStatusROMGroup_FLEXSPINOR, 4), /* Status for PageSize overflow */
     kStatus_FlexSPINOR_WriteAlignmentError =
         MAKE_STATUS(kStatusROMGroup_FLEXSPINOR, 5), /*!< Status for Alignement error */
     kStatus_FlexSPINOR_CommandFailure =
@@ -428,8 +428,8 @@ typedef struct _FlexSPIConfig
                                  busy flag is 0 when flash device is busy */
     uint32_t lookupTable[64]; /*!< [0x080-0x17f] Lookup table holds Flash command sequences */
     flexspi_lut_seq_t lutCustomSeq[12]; /*!< [0x180-0x1af] Customizable LUT Sequences */
-    uint32_t dll0CrVal;                 //!> [0x1b0-0x1b3] Customizable DLL0CR setting */
-    uint32_t dll1CrVal;                 //!> [0x1b4-0x1b7] Customizable DLL1CR setting */
+    uint32_t dll0CrVal;                 /*!> [0x1b0-0x1b3] Customizable DLL0CR setting */
+    uint32_t dll1CrVal;                 /*!> [0x1b4-0x1b7] Customizable DLL1CR setting */
     uint32_t reserved4[2];              /*!< [0x1b8-0x1bf] Reserved for future use */
 } flexspi_mem_config_t;
 

@@ -18,15 +18,15 @@
  ******************************************************************************/
 
 /*   API prototype fields definition.
-| 31 : 24  	|    23 : 20    	|     19 : 16        |  15 : 12             |  11 : 8     |  7 ： 0  |
-    |     Tag  	|   Boot mode   	| bootloader periphal|  Instance            |  Image Index| Reserved  |
-|           | 			    	|					 |  Used For Boot mode 0|             |           |
-|			| 0: Passive mode   | 0 - Auto detection |            		    |             |           |
-|			| 1: ISP mode   	| 1 - USB-HID        |            		    |             |           |
-|			|					| 2 - UART           |            		    |             |           |
-|			|					| 3 - SPI            |            		    |             |           |
-|			|					| 4 - I2C            |            		    |             |           |
-|			|					| 5 - CAN		     |            		    |             |           |
+| 31 : 24   |    23 : 20        |     19 : 16        |  15 : 12             |  11 : 8     |  7 ï¼š 0  |
+    |     Tag   |   Boot mode       | bootloader periphal|  Instance            |  Image Index| Reserved  |
+|           |                   |                    |  Used For Boot mode 0|             |           |
+|           | 0: Passive mode   | 0 - Auto detection |                      |             |           |
+|           | 1: ISP mode       | 1 - USB-HID        |                      |             |           |
+|           |                   | 2 - UART           |                      |             |           |
+|           |                   | 3 - SPI            |                      |             |           |
+|           |                   | 4 - I2C            |                      |             |           |
+|           |                   | 5 - CAN            |                      |             |           |
 */
 
 typedef struct

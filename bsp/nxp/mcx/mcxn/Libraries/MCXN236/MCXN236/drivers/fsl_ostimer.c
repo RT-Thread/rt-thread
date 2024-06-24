@@ -106,7 +106,7 @@ static uint64_t OSTIMER_GrayToDecimalbyCodeGray(uint64_t gray)
     uint64_t decOut;
 
     SYSCTL->CODE_GRAY_LSB = (uint32_t)(gray & 0xFFFFFFFFU);
-    SYSCTL->CODE_GRAY_MSB = (uint32_t)((gray >> 32U) & 0x3FFU); // limit to 42bits as OSevent timer
+    SYSCTL->CODE_GRAY_MSB = (uint32_t)((gray >> 32U) & 0x3FFU); /* limit to 42bits as OSevent timer*/
     __NOP();
     decOut = ((uint64_t)(SYSCTL->CODE_BIN_MSB) & 0x3FFU) << 32U;
     decOut |= (uint64_t)(SYSCTL->CODE_BIN_LSB);

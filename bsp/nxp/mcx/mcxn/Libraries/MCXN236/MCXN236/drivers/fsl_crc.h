@@ -30,7 +30,7 @@
  *
  * - Version 2.0.4
  *   - Release peripheral from reset if necessary in init function.
- * 
+ *
  * - Version 2.0.3
  *   - Fix MISRA issues
  *

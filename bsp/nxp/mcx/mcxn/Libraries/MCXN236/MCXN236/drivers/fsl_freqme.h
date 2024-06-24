@@ -276,7 +276,7 @@ static inline void FREQME_SetMaxExpectedValue(FREQME_Type *base, uint32_t maxVal
  */
 
 /*!
- * @brief Calculate the frequency of selected target clock。
+ * @brief Calculate the frequency of selected target clockã€‚
  *
  * @note The formula: Ftarget = (RESULT - 2) * Freference / 2 ^ REF_SCALE.
  *
