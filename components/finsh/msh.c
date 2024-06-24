@@ -557,6 +557,10 @@ int msh_exec(char *cmd, rt_size_t length)
      */
     if (_msh_exec_cmd(cmd, length, &cmd_ret) == 0)
     {
+        if(cmd_ret < 0)
+        {
+            rt_kprintf("%s: command failed %d.\n", cmd, cmd_ret);
+        }
         return cmd_ret;
     }
 #ifdef DFS_USING_POSIX
