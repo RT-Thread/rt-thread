@@ -21,6 +21,7 @@
 #include <msh.h>
 #endif
 #include <ioremap.h>
+#include <mm_memblock.h>
 
 #ifdef RT_USING_OFW
 #define bootargs_select rt_ofw_bootargs_select
@@ -45,19 +46,13 @@ static int rootfs_mnt_init(void)
         rt_region_t *mem_region;
         rt_uint64_t initrd_start = 0, initrd_end = 0;
 
-        if (!memregion_request(&mem_region, &mem_region_nr, RT_TRUE))
+        rt_slist_for_each_entry(iter, &(rt_memblock_get_reserved()->reg_list), node)
         {
-            while (mem_region_nr-- > 0)
+            if (rt_strcmp(iter->memreg.name, name) == 0)
             {
-                if (mem_region->name == name || !rt_strcmp(mem_region->name, name))
-                {
-                    initrd_start = mem_region->start;
-                    initrd_end = mem_region->end;
-
-                    break;
-                }
-
-                mem_region++;
+                initrd_start = iter->memreg.start;
+                initrd_end = iter->memreg.end;
+                break;
             }
         }
 

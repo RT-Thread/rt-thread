@@ -112,9 +112,9 @@ rt_inline void _reg_remove_after(struct rt_mmblk_reg *prev)
 
 /* adding overlapped regions is banned */
 static rt_err_t _memblock_add_range(struct rt_memblock *memblock,
-                    char *name, rt_size_t start, rt_size_t end, mm_flag_t flag)
+                    const char *name, rt_size_t start, rt_size_t end, mm_flag_t flag)
 {
-    struct rt_mmblk_reg *reg, *reg_next;
+    struct rt_mmblk_reg *reg = RT_NULL, *reg_next = RT_NULL;
     rt_slist_t sentinel;
     rt_region_t new_region;
 
@@ -153,7 +153,7 @@ static rt_err_t _memblock_add_range(struct rt_memblock *memblock,
     return _reg_insert_after(reg, &new_region, flag);
 }
 
-rt_err_t rt_memblock_add_memory(char *name, rt_size_t start, rt_size_t end, mmblk_flag_t flags)
+rt_err_t rt_memblock_add_memory(const char *name, rt_size_t start, rt_size_t end, mmblk_flag_t flags)
 {
     LOG_D("add physical address range [%p-%p) with flag 0x%x" \
             " to overall memory regions\n", base, base + size, flag);
@@ -161,7 +161,7 @@ rt_err_t rt_memblock_add_memory(char *name, rt_size_t start, rt_size_t end, mmbl
     return _memblock_add_range(&mmblk_memory, name, start, end, flags);
 }
 
-rt_err_t rt_memblock_reserve_memory(char *name, rt_size_t start, rt_size_t end, mmblk_flag_t flags)
+rt_err_t rt_memblock_reserve_memory(const char *name, rt_size_t start, rt_size_t end, mmblk_flag_t flags)
 {
     LOG_D("add physical address range [%p-%p) to reserved memory regions\n",\
                                         base, base + size);
@@ -319,7 +319,7 @@ static void _next_free_region(struct rt_mmblk_reg **m, struct rt_mmblk_reg **r, 
 /* merge normal memory regions */
 static void _memblock_merge_memory(void)
 {
-    struct rt_mmblk_reg *reg;
+    struct rt_mmblk_reg *reg = RT_NULL;
 
     rt_slist_for_each_entry(reg, &(mmblk_memory.reg_list), node)
     {
@@ -333,43 +333,71 @@ static void _memblock_merge_memory(void)
     }
 }
 
-/* free all available memory to buddy system */
-static void _memblock_free_all(void)
+void rt_memblock_setup_memory_environment(void)
 {
-    rt_region_t reg;
+    struct rt_mmblk_reg *iter = RT_NULL, *start_reg = RT_NULL, *end_reg = RT_NULL;
+    static struct mem_desc platform_mem_desc = {0};
+    rt_region_t platform_mem_region = {.start = ~0UL,
+                                       .end   = 0};
+    rt_region_t reg = {0};
     rt_size_t mem = 0;
     struct rt_mmblk_reg *m, *r;
 
+    _memblock_merge_memory();
+
+    LOG_I("System memory:");
+
+    rt_slist_for_each_entry(iter, &(mmblk_memory.reg_list), node)
+    {
+        LOG_I("  %-*.s [%p, %p]", RT_NAME_MAX, iter->memreg.name, iter->memreg.start, iter->memreg.end);
+
+        if (platform_mem_region.start > iter->memreg.start)
+        {
+            platform_mem_region.start = iter->memreg.start;
+        }
+
+        if (platform_mem_region.end < iter->memreg.end)
+        {
+            platform_mem_region.end = iter->memreg.end;
+        }
+    }
+
+    /* create MMU mapping of system memory */
+    platform_mem_region.start = RT_ALIGN_DOWN(platform_mem_region.start, ARCH_PAGE_SIZE);
+    platform_mem_region.end   = RT_ALIGN(platform_mem_region.end, ARCH_PAGE_SIZE);
+
+    platform_mem_desc.paddr_start = platform_mem_region.start;
+    platform_mem_desc.vaddr_start = platform_mem_region.start - PV_OFFSET;
+    platform_mem_desc.vaddr_end = platform_mem_region.end - PV_OFFSET - 1;
+    platform_mem_desc.attr = NORMAL_MEM;
+
+    rt_hw_mmu_setup(&rt_kernel_space, &platform_mem_desc, 1);
+
+    LOG_I("Reserved memory:");
+
+    rt_slist_for_each_entry(iter, &(mmblk_reserved.reg_list), node)
+    {
+        LOG_I("  %-*.s [%p, %p]", RT_NAME_MAX, iter->memreg.name, iter->memreg.start, iter->memreg.end);
+
+        if (iter->flags != MEMBLOCK_NONE)
+        {
+            _memblock_separate_range(&mmblk_memory, iter->memreg.start, iter->memreg.end, &start_reg, &end_reg);
+            _memblock_set_flag(start_reg, end_reg, iter->flags);
+        }
+    }
+
+    /* install usable memory to system page */
     for_each_free_region(m, r, MEMBLOCK_NONE, &reg.start, &reg.end)
     {
+        LOG_I("physical memory region [%p-%p] installed to system page", reg.start, reg.end);
+
         reg.start -= PV_OFFSET;
         reg.end -= PV_OFFSET;
         rt_page_install(reg);
-
-        LOG_D("region [%p-%p) added to buddy system\n", reg.start, reg.end);
         mem += reg.end - reg.start;
     }
 
-    LOG_D("0x%lx(%ld) bytes memory added to buddy system\n", mem, mem);
-}
-
-void rt_memblock_setup_memory_environment(void)
-{
-    struct rt_mmblk_reg *reg, *start_reg, *end_reg;
-    rt_err_t err = RT_EOK;
-
-    _memblock_merge_memory();
-    rt_slist_for_each_entry(reg, &(mmblk_reserved.reg_list), node)
-    {
-        if (reg->flags != MEMBLOCK_NONE)
-        {
-            err = _memblock_separate_range(&mmblk_memory, reg->memreg.start, reg->memreg.end, &start_reg, &end_reg);
-            RT_ASSERT(err == RT_EOK);
-
-            _memblock_set_flag(start_reg, end_reg, reg->flags);
-        }
-    }
-    _memblock_free_all();
+    LOG_I("%ld MB memory installed to system page", mem/1000000);
 }
 
 #ifdef UTEST_MM_API_TC
