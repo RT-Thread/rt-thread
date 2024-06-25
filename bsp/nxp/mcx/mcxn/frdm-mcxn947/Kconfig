@@ -14,5 +14,5 @@ config SOC_MCX
 
 source "$(RTT_DIR)/Kconfig"
 osource "$PKGS_DIR/Kconfig"
-rsource "../libraries/Kconfig"
+rsource "../Libraries/Kconfig"
 rsource "board/Kconfig"
