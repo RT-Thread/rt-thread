@@ -143,7 +143,11 @@ static rt_err_t rt_usbd_rndis_control(rt_device_t dev, int cmd, void *args)
 
             /* get mac address */
             if (args)
-                rt_memcpy(args, mac, 6);
+            {
+                uint8_t *mac_dev = (uint8_t *)args;
+                rt_memcpy(mac_dev, mac, 6);
+                mac_dev[5] = ~mac_dev[5]; /* device mac can't same as host. */
+            }
             else
                 return -RT_ERROR;
 
@@ -247,6 +251,7 @@ void rndis_lwip_init(void)
 
     netif->hwaddr_len = 6;
     memcpy(netif->hwaddr, mac, 6);
+    netif->hwaddr[5] = ~netif->hwaddr[5]; /* device mac can't same as host. */
 
     netif = netif_add(netif, &ipaddr, &netmask, &gateway, NULL, rndisif_init, netif_input);
     netif_set_default(netif);

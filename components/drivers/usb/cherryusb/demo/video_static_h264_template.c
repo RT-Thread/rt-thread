@@ -5,7 +5,7 @@
  */
 #include "usbd_core.h"
 #include "usbd_video.h"
-#include "cherryusb_mjpeg.h"
+#include "cherryusb_h264.h"
 
 #define VIDEO_IN_EP  0x81
 #define VIDEO_INT_EP 0x83
@@ -34,7 +34,7 @@
 #define MAX_BIT_RATE   (unsigned long)(WIDTH * HEIGHT * 16 * CAM_FPS)
 #define MAX_FRAME_SIZE (unsigned long)(WIDTH * HEIGHT * 2)
 
-#define VS_HEADER_SIZ (unsigned int)(VIDEO_SIZEOF_VS_INPUT_HEADER_DESC(1,1) + VIDEO_SIZEOF_VS_FORMAT_MJPEG_DESC + VIDEO_SIZEOF_VS_FRAME_MJPEG_DESC(1))
+#define VS_HEADER_SIZ (unsigned int)(VIDEO_SIZEOF_VS_INPUT_HEADER_DESC(1,1) + VIDEO_SIZEOF_VS_FORMAT_H264_DESC + VIDEO_SIZEOF_VS_FRAME_H264_DESC(1))
 
 #define USB_VIDEO_DESC_SIZ (unsigned long)(9 +                            \
                                            VIDEO_VC_NOEP_DESCRIPTOR_LEN + \
@@ -55,8 +55,8 @@ const uint8_t video_descriptor[] = {
     VIDEO_VC_NOEP_DESCRIPTOR_INIT(0x00, VIDEO_INT_EP, 0x0100, VIDEO_VC_TERMINAL_LEN, 48000000, 0x02),
     VIDEO_VS_DESCRIPTOR_INIT(0x01, 0x00, 0x00),
     VIDEO_VS_INPUT_HEADER_DESCRIPTOR_INIT(0x01, VS_HEADER_SIZ, VIDEO_IN_EP, 0x00),
-    VIDEO_VS_FORMAT_MJPEG_DESCRIPTOR_INIT(0x01, 0x01),
-    VIDEO_VS_FRAME_MJPEG_DESCRIPTOR_INIT(0x01, WIDTH, HEIGHT, MIN_BIT_RATE, MAX_BIT_RATE, MAX_FRAME_SIZE, DBVAL(INTERVAL), 0x01, DBVAL(INTERVAL)),
+    VIDEO_VS_FORMAT_H264_DESCRIPTOR_INIT(0x01, 0x01),
+    VIDEO_VS_FRAME_H264_DESCRIPTOR_INIT(0x01, WIDTH, HEIGHT, MIN_BIT_RATE, MAX_BIT_RATE, DBVAL(INTERVAL), 0x01, DBVAL(INTERVAL)),
     VIDEO_VS_DESCRIPTOR_INIT(0x01, 0x01, 0x01),
     /* 1.2.2.2 Standard VideoStream Isochronous Video Data Endpoint Descriptor */
     USB_ENDPOINT_DESCRIPTOR_INIT(VIDEO_IN_EP, 0x05, VIDEO_PACKET_SIZE, 0x01),
@@ -213,7 +213,7 @@ void video_test(uint8_t busid)
     memset(packet_buffer, 0, 40 * 1024);
     while (1) {
         if (tx_flag) {
-            packets = usbd_video_payload_fill(busid, (uint8_t *)cherryusb_mjpeg, sizeof(cherryusb_mjpeg), packet_buffer, &out_len);
+            packets = usbd_video_payload_fill(busid, (uint8_t *)cherryusb_h264, sizeof(cherryusb_h264), packet_buffer, &out_len);
 #if 1
             iso_tx_busy = true;
             usbd_ep_start_write(busid, VIDEO_IN_EP, packet_buffer, out_len);

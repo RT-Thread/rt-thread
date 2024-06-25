@@ -275,7 +275,7 @@ void usbd_audio_open(uint8_t busid, uint8_t intf)
 void usbd_audio_close(uint8_t busid, uint8_t intf)
 {
     if (intf == 1) {
-        rx_flag = 1;
+        rx_flag = 0;
         USB_LOG_RAW("CLOSE1\r\n");
     } else {
         tx_flag = 0;

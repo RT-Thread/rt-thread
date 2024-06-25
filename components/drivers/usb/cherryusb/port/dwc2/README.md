@@ -29,3 +29,11 @@
 ## Espressif
 
 - ESP32S2、ESP32S3
+
+## Sophgo
+
+- CV18xx
+
+## Kendryte
+
+- K230

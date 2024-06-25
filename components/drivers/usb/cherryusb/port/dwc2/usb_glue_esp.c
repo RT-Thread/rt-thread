@@ -8,8 +8,8 @@
 #include "esp_intr_alloc.h"
 #include "esp_private/usb_phy.h"
 #include "soc/periph_defs.h"
-#include "usb_config.h"
-#include "usb_log.h"
+#include "usbd_core.h"
+#include "usbh_core.h"
 
 #ifdef CONFIG_IDF_TARGET_ESP32S2
 #define DEFAULT_CPU_FREQ_MHZ CONFIG_ESP32S2_DEFAULT_CPU_FREQ_MHZ
