@@ -168,20 +168,6 @@ menu "On-chip Peripheral Drivers"
 
             endif
 
-    config BSP_USING_SDIO
-        bool "Enable SDIO SD Card Interface"
-        select RT_USING_SDIO
-        select RT_USING_DFS
-        select RT_USING_DFS_ELMFAT
-        default y
-
-    config BSP_USING_ETH
-        bool "Enable Ethernet"
-        default n
-        select RT_USING_LWIP
-        select RT_USING_NETDEV
-        select RT_USING_SAL
-        
     config BSP_USING_RTC
         bool "Enable RTC"
         select RT_USING_RTC
