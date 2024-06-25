@@ -22,7 +22,7 @@
   </DaveTm>
 
   <Target>
-    <TargetName>rtthread-frdm-mcxn947</TargetName>
+    <TargetName>rtthread-frdm-mcxn236</TargetName>
     <ToolsetNumber>0x4</ToolsetNumber>
     <ToolsetName>ARM-ADS</ToolsetName>
     <TargetOption>
@@ -77,7 +77,7 @@
         <tvExpOptDlg>0</tvExpOptDlg>
         <IsCurrentTarget>1</IsCurrentTarget>
       </OPTFL>
-      <CpuCode>0</CpuCode>
+      <CpuCode>8</CpuCode>
       <DebugOpt>
         <uSim>0</uSim>
         <uTrg>1</uTrg>
@@ -119,13 +119,8 @@
       <TargetDriverDllRegistry>
         <SetRegEntry>
           <Number>0</Number>
-          <Key>CMSIS_AGDI_V8M</Key>
-          <Name>-X"" -O206 -S9 -C0 -P00000000 -N00("") -D00(00000000) -L00(0) -TO65554 -TC10000000 -TT10000000 -TP20 -TDS8007 -TDT0 -TDC1F -TIEFFFFFFFF -TIP8 -FO15 -FD20000000 -FC1000 -FN4 -FF0MCXN9XX_2048.FLM -FS00 -FL0200000 -FP0($$Device:MCXN947VDF$devices\MCXN947\arm\MCXN9XX_2048.FLM) -FF1MCXN9XX_2048_S.FLM -FS110000000 -FL1200000 -FP1($$Device:MCXN947VDF$devices\MCXN947\arm\MCXN9XX_2048_S.FLM) -FF2MCXN9XX_W25Q64.FLM -FS280000000 -FL2800000 -FP2($$Device:MCXN947VDF$devices\MCXN947\arm\MCXN9XX_W25Q64.FLM) -FF3MCXN9XX_W25Q64_S.FLM -FS390000000 -FL3800000 -FP3($$Device:MCXN947VDF$devices\MCXN947\arm\MCXN9XX_W25Q64_S.FLM)</Name>
-        </SetRegEntry>
-        <SetRegEntry>
-          <Number>0</Number>
           <Key>UL2V8M</Key>
-          <Name>UL2V8M(-S0 -C0 -P0 -FD20000000 -FC1000 -FN4 -FF0MCXN9XX_2048 -FS00 -FL0200000 -FF1MCXN9XX_2048_S -FS110000000 -FL1200000 -FF2MCXN9XX_W25Q64 -FS280000000 -FL2800000 -FF3MCXN9XX_W25Q64_S -FS390000000 -FL3800000 -FP0($$Device:MCXN947VDF$devices\MCXN947\arm\MCXN9XX_2048.FLM) -FP1($$Device:MCXN947VDF$devices\MCXN947\arm\MCXN9XX_2048_S.FLM) -FP2($$Device:MCXN947VDF$devices\MCXN947\arm\MCXN9XX_W25Q64.FLM) -FP3($$Device:MCXN947VDF$devices\MCXN947\arm\MCXN9XX_W25Q64_S.FLM))</Name>
+          <Name>UL2V8M(-S0 -C0 -P0 -FD20000000 -FC1000 -FN2 -FF0MCXN23X_1024 -FS00 -FL0100000 -FF1MCXN23X_1024_S -FS110000000 -FL1100000 -FP0($$Device:MCXN236VDF$devices\MCXN236\arm\MCXN23X_1024.FLM) -FP1($$Device:MCXN236VDF$devices\MCXN236\arm\MCXN23X_1024_S.FLM))</Name>
         </SetRegEntry>
       </TargetDriverDllRegistry>
       <Breakpoint/>
