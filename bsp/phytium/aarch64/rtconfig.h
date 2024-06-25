@@ -53,7 +53,7 @@
 #define RT_USING_DEVICE
 #define RT_USING_SCHED_THREAD_CTX
 #define RT_USING_CONSOLE
-#define RT_CONSOLEBUF_SIZE 128
+#define RT_CONSOLEBUF_SIZE 256
 #define RT_CONSOLE_DEVICE_NAME "uart1"
 #define RT_VER_NUM 0x50200
 #define RT_USING_STDC_ATOMIC
@@ -184,7 +184,7 @@
 #define RT_USING_POSIX_CLOCK
 #define RT_USING_POSIX_TIMER
 #define RT_USING_PTHREADS
-#define PTHREAD_NUM_MAX 8
+#define PTHREAD_NUM_MAX 15
 
 /* Interprocess Communication (IPC) */
 
@@ -193,8 +193,6 @@
 
 /* end of Interprocess Communication (IPC) */
 /* end of POSIX (Portable Operating System Interface) layer */
-#define RT_USING_CPLUSPLUS
-#define RT_USING_CPLUSPLUS11
 /* end of C/C++ and POSIX layer */
 
 /* Network */
@@ -266,6 +264,9 @@
 
 #define RT_USING_RYM
 #define YMODEM_USING_FILE_TRANSFER
+#define RT_USING_UTEST
+#define UTEST_THR_STACK_SIZE 4096
+#define UTEST_THR_PRIORITY 20
 #define RT_USING_RESOURCE_ID
 #define RT_USING_ADT
 #define RT_USING_ADT_AVL
@@ -281,6 +282,90 @@
 
 /* RT-Thread Utestcases */
 
+#define RT_USING_UTESTCASES
+
+/* Utest Self Testcase */
+
+#define UTEST_SELF_PASS_TC
+/* end of Utest Self Testcase */
+
+/* Kernel Testcase */
+
+#define UTEST_MEMHEAP_TC
+/* end of Kernel Testcase */
+
+/* CPP11 Testcase */
+
+/* end of CPP11 Testcase */
+
+/* Utest Serial Testcase */
+
+/* end of Utest Serial Testcase */
+
+/* Utest IPC Testcase */
+
+/* end of Utest IPC Testcase */
+
+/* RTT Posix Testcase */
+
+#define RTT_POSIX_TESTCASE
+#define RTT_POSIX_TESTCASE_STDIO_H
+#define STDIO_H_CLEARERR
+#define STDIO_H_FCLOSE
+#define STDIO_H_FDOPEN
+#define STDIO_H_FEOF
+#define STDIO_H_FERROR
+#define STDIO_H_FFLUSH
+#define STDIO_H_FGETC
+#define STDIO_H_FGETS
+#define STDIO_H_FILENO
+#define STDIO_H_FOPEN
+#define STDIO_H_FPRINTF
+#define STDIO_H_FPUTC
+#define STDIO_H_FPUTS
+#define STDIO_H_FREAD
+#define STDIO_H_FSCANF
+#define STDIO_H_FSEEK
+#define STDIO_H_FTELL
+#define STDIO_H_FWRITE
+#define STDIO_H_PERROR
+#define STDIO_H_PRINTF
+#define STDIO_H_PUTC
+#define STDIO_H_PUTCHAR
+#define STDIO_H_PUTS
+#define STDIO_H_REMOVE
+#define STDIO_H_RENAME
+#define STDIO_H_REWIND
+#define STDIO_H_SETBUF
+#define STDIO_H_SETVBUF
+#define STDIO_H_SNPRINTF
+#define STDIO_H_SPRINTF
+#define STDIO_H_SSCANF
+#define STDIO_H_VFPRINTF
+#define STDIO_H_VPRINTF
+#define STDIO_H_VSNPRINTF
+#define STDIO_H_VSPRINTF
+#define RTT_POSIX_TESTCASE_STDLIB_H
+#define STDLIB_H_ATOI
+#define STDLIB_H_ATOL
+#define STDLIB_H_QSORT
+#define STDLIB_H_STRTOL
+#define RTT_POSIX_TESTCASE_UNISTD_H
+#define UNISTD_H_ACCESS
+#define UNISTD_H_CHDIR
+#define UNISTD_H_FTRUNCATE
+#define UNISTD_H_ISATTY
+#define UNISTD_H_FSYNC
+#define UNISTD_H_RMDIR
+/* end of RTT Posix Testcase */
+
+/* Memory Management Subsytem Testcase */
+
+/* end of Memory Management Subsytem Testcase */
+
+/* Tmpfs Testcase */
+
+/* end of Tmpfs Testcase */
 /* end of RT-Thread Utestcases */
 
 /* RT-Thread online packages */

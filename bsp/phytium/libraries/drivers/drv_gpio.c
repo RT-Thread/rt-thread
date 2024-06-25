@@ -130,6 +130,11 @@ rt_err_t drv_pin_attach_irq(struct rt_device *device, rt_base_t pin,
     FError err = FGPIO_SUCCESS;
     u32 index = (u32)pin;
     rt_base_t level;
+    FGpioIntrMap *map = &fgpio_intr_map[instance[index].config.ctrl];
+
+#ifdef RT_USING_SMART
+    map->base_addr = (uintptr)rt_ioremap((void *)map->base_addr, 0x1000);
+#endif
 
     level = rt_hw_interrupt_disable();
 

@@ -71,7 +71,7 @@ void demo_core(void)
                        demo_core_thread,
                        RT_NULL,
                        &core_stack[i],
-                       4096,
+                       2048,
                        20,
                        32);
 

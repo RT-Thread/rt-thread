@@ -13,7 +13,7 @@
 
 #include "rtconfig.h"
 
-#define ARM_CPU_STACK_SIZE_OFFSET   12
+#define ARM_CPU_STACK_SIZE_OFFSET   16
 #define ARM_CPU_STACK_SIZE  (1<<ARM_CPU_STACK_SIZE_OFFSET)
 
 .equ Mode_USR,        0x10

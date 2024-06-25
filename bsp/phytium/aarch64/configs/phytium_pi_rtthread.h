@@ -10,7 +10,6 @@
 #define RT_THREAD_PRIORITY_32
 #define RT_THREAD_PRIORITY_MAX 32
 #define RT_TICK_PER_SECOND 1000
-#define RT_USING_OVERFLOW_CHECK
 #define RT_USING_HOOK
 #define RT_HOOK_USING_FUNC_PTR
 #define RT_USING_IDLE_HOOK
@@ -33,6 +32,7 @@
 #define RT_DEBUGING_ASSERT
 #define RT_DEBUGING_COLOR
 #define RT_DEBUGING_CONTEXT
+#define RT_USING_OVERFLOW_CHECK
 
 /* Inter-Thread communication */
 
@@ -161,10 +161,6 @@
 #define RT_USING_DEV_BUS
 #define RT_USING_PIN
 #define RT_USING_KTIME
-
-/* Using USB */
-
-/* end of Using USB */
 /* end of Device Drivers */
 
 /* C/C++ and POSIX layer */
@@ -275,6 +271,10 @@
 #define RT_USING_ADT_HASHMAP
 #define RT_USING_ADT_REF
 /* end of Utilities */
+
+/* Using USB legacy version */
+
+/* end of Using USB legacy version */
 /* end of RT-Thread Components */
 
 /* RT-Thread Utestcases */
