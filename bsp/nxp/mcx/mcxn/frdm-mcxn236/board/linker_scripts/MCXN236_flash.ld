@@ -26,8 +26,8 @@
 /* Entry Point */
 ENTRY(Reset_Handler)
 
-HEAP_SIZE  = DEFINED(__heap_size__)  ? __heap_size__  : 0x0400;
-STACK_SIZE = DEFINED(__stack_size__) ? __stack_size__ : 0x0800;
+HEAP_SIZE  = DEFINED(__heap_size__)  ? __heap_size__  : 0x2000;
+STACK_SIZE = DEFINED(__stack_size__) ? __stack_size__ : 0x2000;
 
 
 /* Specify the memory areas */
@@ -64,6 +64,26 @@ SECTIONS
     KEEP (*(.init))
     KEEP (*(.fini))
     . = ALIGN(4);
+  } > m_text
+
+  .rtt_const_tables :
+  {
+     /* section information for finsh shell */
+     . = ALIGN(4);
+     __fsymtab_start = .;
+     KEEP(*(FSymTab))
+     __fsymtab_end = .;
+
+     . = ALIGN(4);
+     __vsymtab_start = .;
+     KEEP(*(VSymTab))
+     __vsymtab_end = .;
+
+    /* section information for initial. */
+    . = ALIGN(4);
+    __rt_init_start = .;
+    KEEP(*(SORT(.rti_fn*)))
+    __rt_init_end = .;
   } > m_text
 
   .ARM.extab :

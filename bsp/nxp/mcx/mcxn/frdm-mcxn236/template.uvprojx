@@ -7,23 +7,23 @@
 
   <Targets>
     <Target>
-      <TargetName>rtthread-frdm-mcxn947</TargetName>
+      <TargetName>rtthread-frdm-mcxn236</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
       <pCCUsed>6160000::V6.16::ARMCLANG</pCCUsed>
       <uAC6>1</uAC6>
       <TargetOption>
         <TargetCommonOption>
-          <Device>MCXN947VDF:cm33_core0</Device>
+          <Device>MCXN236VDF</Device>
           <Vendor>NXP</Vendor>
-          <PackID>NXP.MCXN947_DFP.17.0.0</PackID>
+          <PackID>NXP.MCXN236_DFP.17.0.0</PackID>
           <PackURL>https://mcuxpresso.nxp.com/cmsis_pack/repo/</PackURL>
-          <Cpu>IRAM(0x20000000,0x060000) IRAM2(0x20060000,0x8000) IROM(0x03000000,0x040000) IROM2(0x13000000,0x040000) XRAM(0x30060000,0x8000) XRAM2(0x04000000,0x018000) XRAM3(0x14000000,0x018000) XROM(0x00000000,0x100000) XROM2(0x00100000,0x100000) XROM3(0x10000000,0x100000) CPUTYPE("Cortex-M33") FPU3(SFPU) DSP TZ CLOCK(12000000) ELITTLE</Cpu>
+          <Cpu>IRAM(0x20000000,0x038000) IRAM2(0x04000000,0x018000) IROM(0x03000000,0x040000) IROM2(0x13000000,0x040000) XRAM(0x14000000,0x018000) XRAM2(0x30000000,0x038000) XROM(0x00000000,0x080000) XROM2(0x00080000,0x080000) XROM3(0x10000000,0x080000) CPUTYPE("Cortex-M33") FPU3(SFPU) DSP TZ CLOCK(12000000) ELITTLE</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
           <StartupFile></StartupFile>
-          <FlashDriverDll>UL2V8M(-S0 -C0 -P0 -FD20000000 -FC1000 -FN4 -FF0MCXN9XX_2048 -FS00 -FL0200000 -FF1MCXN9XX_2048_S -FS110000000 -FL1200000 -FF2MCXN9XX_W25Q64 -FS280000000 -FL2800000 -FF3MCXN9XX_W25Q64_S -FS390000000 -FL3800000 -FP0($$Device:MCXN947VDF$arm\MCXN9XX_2048.FLM) -FP1($$Device:MCXN947VDF$arm\MCXN9XX_2048_S.FLM) -FP2($$Device:MCXN947VDF$arm\MCXN9XX_W25Q64.FLM) -FP3($$Device:MCXN947VDF$arm\MCXN9XX_W25Q64_S.FLM))</FlashDriverDll>
+          <FlashDriverDll>UL2V8M(-S0 -C0 -P0 -FD20000000 -FC1000 -FN2 -FF0MCXN23X_1024 -FS00 -FL0100000 -FF1MCXN23X_1024_S -FS110000000 -FL1100000 -FP0($$Device:MCXN236VDF$devices\MCXN236\arm\MCXN23X_1024.FLM) -FP1($$Device:MCXN236VDF$devices\MCXN236\arm\MCXN23X_1024_S.FLM))</FlashDriverDll>
           <DeviceId>0</DeviceId>
-          <RegisterFile>$$Device:MCXN947VDF$fsl_device_registers.h</RegisterFile>
+          <RegisterFile>$$Device:MCXN236VDF$devices\MCXN236\fsl_device_registers.h</RegisterFile>
           <MemoryEnv></MemoryEnv>
           <Cmp></Cmp>
           <Asm></Asm>
@@ -33,7 +33,7 @@
           <SLE66CMisc></SLE66CMisc>
           <SLE66AMisc></SLE66AMisc>
           <SLE66LinkerMisc></SLE66LinkerMisc>
-          <SFDFile>$$Device:MCXN947VDF$MCXN947_cm33_core0.xml</SFDFile>
+          <SFDFile>$$Device:MCXN236VDF$devices\MCXN236\MCXN236.xml</SFDFile>
           <bCustSvd>0</bCustSvd>
           <UseEnv>0</UseEnv>
           <BinPath></BinPath>
@@ -138,7 +138,7 @@
           </Flash1>
           <bUseTDR>1</bUseTDR>
           <Flash2>BIN\UL2V8M.DLL</Flash2>
-          <Flash3>"" ()</Flash3>
+          <Flash3></Flash3>
           <Flash4></Flash4>
           <pFcarmOut></pFcarmOut>
           <pFcarmGrp></pFcarmGrp>
@@ -186,7 +186,6 @@
             <RvdsVP>2</RvdsVP>
             <RvdsMve>0</RvdsMve>
             <RvdsCdeCp>0</RvdsCdeCp>
-            <nBranchProt>0</nBranchProt>
             <hadIRAM2>1</hadIRAM2>
             <hadIROM2>1</hadIROM2>
             <StupSel>16</StupSel>
@@ -247,7 +246,7 @@
               <IRAM>
                 <Type>0</Type>
                 <StartAddress>0x20000000</StartAddress>
-                <Size>0x60000</Size>
+                <Size>0x38000</Size>
               </IRAM>
               <IROM>
                 <Type>1</Type>
@@ -256,23 +255,23 @@
               </IROM>
               <XRAM>
                 <Type>1</Type>
-                <StartAddress>0x30060000</StartAddress>
-                <Size>0x8000</Size>
+                <StartAddress>0x14000000</StartAddress>
+                <Size>0x18000</Size>
               </XRAM>
               <OCR_RVCT1>
                 <Type>1</Type>
                 <StartAddress>0x0</StartAddress>
-                <Size>0x100000</Size>
+                <Size>0x80000</Size>
               </OCR_RVCT1>
               <OCR_RVCT2>
                 <Type>1</Type>
-                <StartAddress>0x100000</StartAddress>
-                <Size>0x100000</Size>
+                <StartAddress>0x80000</StartAddress>
+                <Size>0x80000</Size>
               </OCR_RVCT2>
               <OCR_RVCT3>
                 <Type>1</Type>
                 <StartAddress>0x10000000</StartAddress>
-                <Size>0x100000</Size>
+                <Size>0x80000</Size>
               </OCR_RVCT3>
               <OCR_RVCT4>
                 <Type>1</Type>
@@ -286,28 +285,28 @@
               </OCR_RVCT5>
               <OCR_RVCT6>
                 <Type>0</Type>
-                <StartAddress>0x30060000</StartAddress>
-                <Size>0x8000</Size>
+                <StartAddress>0x14000000</StartAddress>
+                <Size>0x18000</Size>
               </OCR_RVCT6>
               <OCR_RVCT7>
                 <Type>0</Type>
-                <StartAddress>0x4000000</StartAddress>
-                <Size>0x18000</Size>
+                <StartAddress>0x30000000</StartAddress>
+                <Size>0x38000</Size>
               </OCR_RVCT7>
               <OCR_RVCT8>
                 <Type>0</Type>
-                <StartAddress>0x14000000</StartAddress>
-                <Size>0x18000</Size>
+                <StartAddress>0x0</StartAddress>
+                <Size>0x0</Size>
               </OCR_RVCT8>
               <OCR_RVCT9>
                 <Type>0</Type>
                 <StartAddress>0x20000000</StartAddress>
-                <Size>0x60000</Size>
+                <Size>0x38000</Size>
               </OCR_RVCT9>
               <OCR_RVCT10>
                 <Type>0</Type>
-                <StartAddress>0x20060000</StartAddress>
-                <Size>0x8000</Size>
+                <StartAddress>0x4000000</StartAddress>
+                <Size>0x18000</Size>
               </OCR_RVCT10>
             </OnChipMemories>
             <RvctStartVector></RvctStartVector>
@@ -371,7 +370,7 @@
             <TextAddressRange>0x00000000</TextAddressRange>
             <DataAddressRange>0x02000000</DataAddressRange>
             <pXoBase></pXoBase>
-            <ScatterFile>.\board\linker_scripts\MCXN947_cm33_core0_flash.scf</ScatterFile>
+            <ScatterFile>.\board\linker_scripts\MCXN236_flash.scf</ScatterFile>
             <IncludeLibs></IncludeLibs>
             <IncludeLibsPath></IncludeLibsPath>
             <Misc>--keep *.o(.rti_fn.*)   --keep *.o(FSymTab) --keep *.o(VSymTab)</Misc>
@@ -393,6 +392,12 @@
     <Layers>
       <Layer>
         <LayName>template</LayName>
+        <LayDesc></LayDesc>
+        <LayUrl></LayUrl>
+        <LayKeys></LayKeys>
+        <LayCat></LayCat>
+        <LayLic></LayLic>
+        <LayTarg>0</LayTarg>
         <LayPrjMark>1</LayPrjMark>
       </Layer>
     </Layers>
