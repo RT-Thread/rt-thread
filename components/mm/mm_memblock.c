@@ -336,12 +336,10 @@ static void _memblock_merge_memory(void)
 void rt_memblock_setup_memory_environment(void)
 {
     struct rt_mmblk_reg *iter = RT_NULL, *start_reg = RT_NULL, *end_reg = RT_NULL;
-    static struct mem_desc platform_mem_desc = {0};
-    rt_region_t platform_mem_region = {.start = ~0UL,
-                                       .end   = 0};
     rt_region_t reg = {0};
     rt_size_t mem = 0;
     struct rt_mmblk_reg *m, *r;
+    void *err;
 
     _memblock_merge_memory();
 
@@ -350,28 +348,7 @@ void rt_memblock_setup_memory_environment(void)
     rt_slist_for_each_entry(iter, &(mmblk_memory.reg_list), node)
     {
         LOG_I("  %-*.s [%p, %p]", RT_NAME_MAX, iter->memreg.name, iter->memreg.start, iter->memreg.end);
-
-        if (platform_mem_region.start > iter->memreg.start)
-        {
-            platform_mem_region.start = iter->memreg.start;
-        }
-
-        if (platform_mem_region.end < iter->memreg.end)
-        {
-            platform_mem_region.end = iter->memreg.end;
-        }
     }
-
-    /* create MMU mapping of system memory */
-    platform_mem_region.start = RT_ALIGN_DOWN(platform_mem_region.start, ARCH_PAGE_SIZE);
-    platform_mem_region.end   = RT_ALIGN(platform_mem_region.end, ARCH_PAGE_SIZE);
-
-    platform_mem_desc.paddr_start = platform_mem_region.start;
-    platform_mem_desc.vaddr_start = platform_mem_region.start - PV_OFFSET;
-    platform_mem_desc.vaddr_end = platform_mem_region.end - PV_OFFSET - 1;
-    platform_mem_desc.attr = NORMAL_MEM;
-
-    rt_hw_mmu_setup(&rt_kernel_space, &platform_mem_desc, 1);
 
     LOG_I("Reserved memory:");
 
@@ -389,10 +366,24 @@ void rt_memblock_setup_memory_environment(void)
     /* install usable memory to system page */
     for_each_free_region(m, r, MEMBLOCK_NONE, &reg.start, &reg.end)
     {
+        reg.start = RT_ALIGN(reg.start, ARCH_PAGE_SIZE);
+        reg.end   = RT_ALIGN_DOWN(reg.end, ARCH_PAGE_SIZE);
+
+        if (reg.start >= reg.end)
+            continue;
+
         LOG_I("physical memory region [%p-%p] installed to system page", reg.start, reg.end);
 
         reg.start -= PV_OFFSET;
         reg.end -= PV_OFFSET;
+
+        struct rt_mm_va_hint hint = {.flags = MMF_MAP_FIXED,
+                                    .limit_start = rt_kernel_space.start,
+                                    .limit_range_size = rt_kernel_space.size,
+                                    .map_size = reg.end - reg.start,
+                                    .prefer = (void *)reg.start};
+
+        rt_aspace_map_phy(&rt_kernel_space, &hint, MMU_MAP_K_RWCB, (reg.start + PV_OFFSET) >> MM_PAGE_SHIFT, &err);
         rt_page_install(reg);
         mem += reg.end - reg.start;
     }

@@ -828,14 +828,9 @@ void rt_hw_mem_setup_early(unsigned long *tbl0, unsigned long *tbl1,
     int ret;
     unsigned long count = (size + ARCH_SECTION_MASK) >> ARCH_SECTION_SHIFT;
     unsigned long normal_attr = MMU_MAP_CUSTOM(MMU_AP_KAUN, NORMAL_MEM);
-
-#ifdef RT_USING_SMART
-    unsigned long va = KERNEL_VADDR_START;
-#else
     extern unsigned char _start;
-    unsigned long va = (unsigned long) &_start;
+    unsigned long va = (unsigned long) &_start - pv_off;
     va = RT_ALIGN_DOWN(va, 0x200000);
-#endif
 
     /* setup pv off */
     rt_kmem_pvoff_set(pv_off);

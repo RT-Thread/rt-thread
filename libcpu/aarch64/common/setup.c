@@ -206,6 +206,8 @@ void rt_hw_common_setup(void)
     rt_size_t init_page_start, init_page_end;
     rt_size_t fdt_start, fdt_end;
     rt_region_t init_page_region = { 0 };
+    rt_region_t platform_mem_region = { 0 };
+    static struct mem_desc platform_mem_desc;
 
     system_vectors_init();
 
@@ -224,6 +226,9 @@ void rt_hw_common_setup(void)
     fdt_start       = init_page_end;
     fdt_end         = RT_ALIGN(fdt_start + fdt_size, ARCH_PAGE_SIZE);
 
+    platform_mem_region.start = kernel_start;
+    platform_mem_region.end   = fdt_end;
+
     rt_memblock_reserve_memory("kernel", kernel_start, kernel_end, MEMBLOCK_NONE);
     rt_memblock_reserve_memory("memheap", heap_start, heap_end, MEMBLOCK_NONE);
     rt_memblock_reserve_memory("init-page", init_page_start, init_page_end, MEMBLOCK_NONE);
@@ -237,6 +242,17 @@ void rt_hw_common_setup(void)
     init_page_region.start = init_page_start - PV_OFFSET;
     init_page_region.end = init_page_end - PV_OFFSET;
     rt_page_init(init_page_region);
+
+    /* create MMU mapping of kernel memory */
+    platform_mem_region.start = RT_ALIGN_DOWN(platform_mem_region.start, ARCH_PAGE_SIZE);
+    platform_mem_region.end   = RT_ALIGN(platform_mem_region.end, ARCH_PAGE_SIZE);
+
+    platform_mem_desc.paddr_start = platform_mem_region.start;
+    platform_mem_desc.vaddr_start = platform_mem_region.start - PV_OFFSET;
+    platform_mem_desc.vaddr_end = platform_mem_region.end - PV_OFFSET - 1;
+    platform_mem_desc.attr = NORMAL_MEM;
+
+    rt_hw_mmu_setup(&rt_kernel_space, &platform_mem_desc, 1);
 
     if (rt_fdt_prefetch(fdt_ptr))
     {

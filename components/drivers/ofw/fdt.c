@@ -300,7 +300,6 @@ static void fdt_scan_reserved_memory(void)
 static rt_err_t fdt_scan_memory(void)
 {
     int nodeoffset, no;
-    rt_region_t *region;
     rt_uint64_t base, size;
     rt_err_t err = -RT_EEMPTY;
 

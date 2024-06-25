@@ -25,7 +25,6 @@
 
 #ifdef RT_USING_OFW
 #define bootargs_select rt_ofw_bootargs_select
-#define memregion_request rt_fdt_commit_memregion_request
 #else
 #error Platform have not kernel parameters select interfaces!
 #endif
@@ -42,9 +41,8 @@ static int rootfs_mnt_init(void)
     if (!dev || !fstype)
     {
         const char *name = "initrd";
-        rt_size_t mem_region_nr;
-        rt_region_t *mem_region;
         rt_uint64_t initrd_start = 0, initrd_end = 0;
+        struct rt_mmblk_reg *iter = RT_NULL;
 
         rt_slist_for_each_entry(iter, &(rt_memblock_get_reserved()->reg_list), node)
         {
