@@ -461,6 +461,7 @@ rt_weak rt_err_t rt_backtrace_formatted_print(rt_ubase_t *buffer, long buflen)
 /**
  * @brief Print backtrace from frame to the given buffer
  *
+ * @param thread the thread which frame belongs to
  * @param frame where backtrace starts from. NULL if it's the current one
  * @param skip the number of frames to discarded counted from calling function.
  *             Noted that the inner most frame is always discarded and not counted,
