@@ -17,7 +17,7 @@
 #include "drv_pin.h"
 
 #define LEDB_PIN        ((4*32)+18)
-#define BUTTON_PIN      ((0*32)+23)
+#define BUTTON_PIN      ((0*32)+20)
 
 static void sw_pin_cb(void *args);
 
