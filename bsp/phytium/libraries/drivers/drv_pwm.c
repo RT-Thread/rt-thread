@@ -12,7 +12,6 @@
  */
 #include "rtconfig.h"
 #include <rtdevice.h>
-#include <string.h>
 #define LOG_TAG      "pwm_drv"
 #include "drv_log.h"
 #include "drv_pwm.h"
@@ -79,7 +78,7 @@ static rt_err_t drv_pwm_set(struct phytium_pwm *pwm_dev, int cmd, struct rt_pwm_
     FPwmVariableConfig pwm_cfg;
     u32 channel = configuration->channel;
 
-    memset(&pwm_cfg, 0, sizeof(pwm_cfg));
+    rt_memset(&pwm_cfg, 0, sizeof(pwm_cfg));
     pwm_cfg.tim_ctrl_mode = FPWM_MODULO;
     pwm_cfg.tim_ctrl_div = 50 - 1;
     /* Precision set to microseconds */
@@ -124,7 +123,7 @@ static rt_err_t drv_pwm_get(struct phytium_pwm *pwm_dev, struct rt_pwm_configura
     FPwmVariableConfig pwm_cfg;
     u32 channel = configuration->channel;
 
-    memset(&pwm_cfg, 0, sizeof(pwm_cfg));
+    rt_memset(&pwm_cfg, 0, sizeof(pwm_cfg));
     ret = FPwmVariableGet(&pwm_dev->pwm_handle, channel, &pwm_cfg);
     if (ret != FPWM_SUCCESS)
     {
@@ -149,7 +148,7 @@ static rt_err_t drv_pwm_set_dead_time(struct phytium_pwm *pwm_dev, struct rt_pwm
     FPwmDbVariableConfig db_cfg;
     u32 channel = configuration->channel;
 
-    memset(&db_cfg, 0, sizeof(db_cfg));
+    rt_memset(&db_cfg, 0, sizeof(db_cfg));
     db_cfg.db_rise_cycle = configuration->dead_time / 1000;
     db_cfg.db_fall_cycle = configuration->dead_time / 1000;
     db_cfg.db_polarity_sel = FPWM_DB_AH;

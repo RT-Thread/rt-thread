@@ -15,7 +15,6 @@
 #include "rtconfig.h"
 #include <rtthread.h>
 #include <rtdevice.h>
-#include <string.h>
 #include "interrupt.h"
 #define LOG_TAG      "gpio_drv"
 #include "drv_log.h"
@@ -71,7 +70,7 @@ static void drv_pin_mode(struct rt_device *device, rt_base_t pin, rt_uint8_t mod
     }
 
     FGpioConfig input_cfg = *FGpioLookupConfig(index);
-    memset(&instance[index], 0, sizeof(FGpio));
+    rt_memset(&instance[index], 0, sizeof(FGpio));
 #ifdef RT_USING_SMART
     input_cfg.base_addr = (uintptr)rt_ioremap((void *)input_cfg.base_addr, 0x1000);
 #endif

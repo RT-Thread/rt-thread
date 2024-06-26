@@ -4,7 +4,6 @@
 /* RT-Thread Kernel */
 
 #define RT_NAME_MAX 16
-#define RT_USING_SMART
 #define RT_USING_SMP
 #define RT_CPUS_NR 4
 #define RT_ALIGN_SIZE 4
@@ -20,7 +19,6 @@
 #define RT_USING_TIMER_SOFT
 #define RT_TIMER_THREAD_PRIO 4
 #define RT_TIMER_THREAD_STACK_SIZE 8192
-#define RT_USING_CPU_USAGE_TRACER
 
 /* kservice optimization */
 
@@ -33,8 +31,6 @@
 #define RT_USING_DEBUG
 #define RT_DEBUGING_ASSERT
 #define RT_DEBUGING_COLOR
-#define RT_DEBUGING_CONTEXT
-#define RT_DEBUGING_CRITICAL
 #define RT_USING_OVERFLOW_CHECK
 
 /* Inter-Thread communication */
@@ -57,8 +53,6 @@
 #define RT_USING_HEAP
 /* end of Memory Management */
 #define RT_USING_DEVICE
-#define RT_USING_DEVICE_OPS
-#define RT_USING_THREADSAFE_PRINTF
 #define RT_USING_SCHED_THREAD_CTX
 #define RT_USING_CONSOLE
 #define RT_CONSOLEBUF_SIZE 128
@@ -83,7 +77,6 @@
 #define ARCH_MM_MMU
 #define ARCH_ARM
 #define ARCH_ARM_MMU
-#define KERNEL_VADDR_START 0xffff000000000000
 #define ARCH_ARMV8
 
 /* RT-Thread Components */
@@ -113,7 +106,9 @@
 #define DFS_USING_POSIX
 #define DFS_USING_WORKDIR
 #define DFS_FD_MAX 16
-#define RT_USING_DFS_V2
+#define RT_USING_DFS_V1
+#define DFS_FILESYSTEMS_MAX 4
+#define DFS_FILESYSTEM_TYPES_MAX 4
 #define RT_USING_DFS_ELMFAT
 
 /* elm-chan's FatFs, Generic FAT Filesystem Module */
@@ -131,18 +126,7 @@
 #define RT_DFS_ELM_MUTEX_TIMEOUT 3000
 /* end of elm-chan's FatFs, Generic FAT Filesystem Module */
 #define RT_USING_DFS_DEVFS
-#define RT_USING_DFS_PTYFS
-#define RT_USING_PAGECACHE
-
-/* page cache config */
-
-#define RT_PAGECACHE_COUNT 4096
-#define RT_PAGECACHE_ASPACE_COUNT 1024
-#define RT_PAGECACHE_PRELOAD 4
-#define RT_PAGECACHE_HASH_NR 1024
-#define RT_PAGECACHE_GC_WORK_LEVEL 90
-#define RT_PAGECACHE_GC_STOP_LEVEL 70
-/* end of page cache config */
+#define RT_USING_DFS_RAMFS
 /* end of DFS: device virtual file system */
 
 /* Device Drivers */
@@ -157,6 +141,7 @@
 #define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 64
 #define RT_USING_CAN
+#define RT_CAN_USING_HDR
 #define RT_CAN_USING_CANFD
 #define RT_USING_I2C
 #define RT_USING_I2C_BITOPS
@@ -196,10 +181,6 @@
 #define RT_USING_POSIX_FS
 #define RT_USING_POSIX_DEVIO
 #define RT_USING_POSIX_STDIO
-#define RT_USING_POSIX_POLL
-#define RT_USING_POSIX_EPOLL
-#define RT_USING_POSIX_SIGNALFD
-#define RT_SIGNALFD_MAX_NUM 10
 #define RT_USING_POSIX_TERMIOS
 #define RT_USING_POSIX_DELAY
 #define RT_USING_POSIX_CLOCK
@@ -290,20 +271,6 @@
 #define RT_USING_ADT_HASHMAP
 #define RT_USING_ADT_REF
 /* end of Utilities */
-#define RT_USING_LWP
-#define RT_LWP_MAX_NR 30
-#define LWP_TASK_STACK_SIZE 16384
-#define RT_CH_MSG_MAX_NR 1024
-#define LWP_CONSOLE_INPUT_BUFFER_SIZE 1024
-#define LWP_TID_MAX_NR 64
-#define RT_LWP_SHM_MAX_NR 64
-#define RT_USING_LDSO
-#define LWP_USING_TERMINAL
-#define LWP_PTY_MAX_PARIS_LIMIT 64
-
-/* Memory management */
-
-/* end of Memory management */
 
 /* Using USB legacy version */
 
@@ -500,7 +467,11 @@
 #define RT_USING_UART0
 #define RT_USING_UART1
 #define BSP_USING_SPI
-#define RT_USING_SPIM0
+#define RT_USING_SPIM2
+#define BSP_USING_CAN
+#define RT_USING_CANFD
+#define RT_USING_CAN0
+#define RT_USING_CAN1
 #define BSP_USING_GPIO
 #define BSP_USING_QSPI
 #define RT_USING_QSPI0
@@ -508,17 +479,16 @@
 #define BSP_USING_ETH
 #define RT_LWIP_PBUF_POOL_BUFSIZE 1700
 #define BSP_USING_PWM
-#define RT_USING_PWM2
+#define RT_USING_PWM6
 #define BSP_USING_I2C
 #define I2C_USE_MIO
-#define RT_USING_MIO0
-#define RT_USING_MIO1
-#define RT_USING_MIO2
-#define RT_USING_MIO10
+#define RT_USING_MIO15
 #define BSP_USING_SDIF
 #define BSP_USING_SDCARD_FATFS
 #define USING_SDIF0
-#define USE_SDIF0_TF
+#define USE_SDIF0_EMMC
+#define USING_SDIF1
+#define USE_SDIF1_TF
 #define BSP_USING_DC
 #define RT_USING_DC_CHANNEL0
 #define RT_USING_DC_CHANNEL1
@@ -538,8 +508,9 @@
 
 /* Soc configuration */
 
-#define TARGET_PHYTIUMPI
-#define SOC_NAME "phytiumpi"
+#define TARGET_E2000Q
+#define SOC_NAME "e2000"
+#define TARGET_TYPE_NAME "q"
 #define SOC_CORE_NUM 4
 #define F32BIT_MEMORY_ADDRESS 0x80000000
 #define F32BIT_MEMORY_LENGTH 0x80000000
@@ -551,8 +522,8 @@
 
 /* Board Configuration */
 
-#define BOARD_NAME "firefly"
-#define FIREFLY_DEMO_BOARD
+#define BOARD_NAME "demo"
+#define E2000Q_DEMO_BOARD
 
 /* IO mux configuration when board start up */
 

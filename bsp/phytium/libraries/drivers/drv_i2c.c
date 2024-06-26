@@ -119,7 +119,7 @@ static rt_err_t i2c_mio_config(struct phytium_i2c_bus *i2c_bus)
         return -RT_ERROR;
     }
     mio_handle.is_ready = 0;
-    memset(&mio_handle, 0, sizeof(mio_handle));
+    rt_memset(&mio_handle, 0, sizeof(mio_handle));
 
     return RT_EOK;
 }
