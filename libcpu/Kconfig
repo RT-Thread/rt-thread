@@ -17,6 +17,12 @@ if ARCH_ARMV8 && ARCH_CPU_64BIT
         select ARCH_USING_HW_THREAD_SELF
         default y if RT_USING_OFW
         default n
+    config ARCH_HEAP_SIZE
+        hex "Size of system heap"
+        default 0x4000000
+    config ARCH_INIT_PAGE_SIZE
+        hex "Size of init page region"
+        default 0x200000
     endmenu
 endif
 
