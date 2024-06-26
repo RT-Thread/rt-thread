@@ -11,7 +11,6 @@
 #define RT_THREAD_PRIORITY_32
 #define RT_THREAD_PRIORITY_MAX 32
 #define RT_TICK_PER_SECOND 1000
-#define RT_USING_OVERFLOW_CHECK
 #define RT_USING_HOOK
 #define RT_HOOK_USING_FUNC_PTR
 #define RT_USING_IDLE_HOOK
@@ -21,6 +20,7 @@
 #define RT_USING_TIMER_SOFT
 #define RT_TIMER_THREAD_PRIO 4
 #define RT_TIMER_THREAD_STACK_SIZE 8192
+#define RT_USING_CPU_USAGE_TRACER
 
 /* kservice optimization */
 
@@ -35,6 +35,7 @@
 #define RT_DEBUGING_COLOR
 #define RT_DEBUGING_CONTEXT
 #define RT_DEBUGING_CRITICAL
+#define RT_USING_OVERFLOW_CHECK
 
 /* Inter-Thread communication */
 
@@ -176,10 +177,6 @@
 #define RT_USING_DEV_BUS
 #define RT_USING_PIN
 #define RT_USING_KTIME
-
-/* Using USB */
-
-/* end of Using USB */
 /* end of Device Drivers */
 
 /* C/C++ and POSIX layer */
@@ -310,6 +307,10 @@
 /* Memory management */
 
 /* end of Memory management */
+
+/* Using USB legacy version */
+
+/* end of Using USB legacy version */
 /* end of RT-Thread Components */
 
 /* RT-Thread Utestcases */
@@ -502,10 +503,7 @@
 #define RT_USING_UART0
 #define RT_USING_UART1
 #define BSP_USING_SPI
-#define RT_USING_SPIM0
-#define RT_USING_SPIM1
 #define RT_USING_SPIM2
-#define RT_USING_SPIM3
 #define BSP_USING_CAN
 #define RT_USING_CANFD
 #define RT_USING_CAN0
@@ -528,6 +526,7 @@
 #define USING_SDIF1
 #define USE_SDIF1_TF
 #define BSP_USING_DC
+#define RT_USING_DC_CHANNEL0
 #define RT_USING_DC_CHANNEL1
 /* end of On-chip Peripheral Drivers */
 

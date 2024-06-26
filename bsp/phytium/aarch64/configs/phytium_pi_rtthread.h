@@ -468,9 +468,6 @@
 #define RT_USING_UART1
 #define BSP_USING_SPI
 #define RT_USING_SPIM0
-#define RT_USING_SPIM1
-#define RT_USING_SPIM2
-#define RT_USING_SPIM3
 #define BSP_USING_GPIO
 #define BSP_USING_QSPI
 #define RT_USING_QSPI0
@@ -490,6 +487,8 @@
 #define USING_SDIF1
 #define USE_SDIF1_TF
 #define BSP_USING_DC
+#define RT_USING_DC_CHANNEL0
+#define RT_USING_DC_CHANNEL1
 /* end of On-chip Peripheral Drivers */
 
 /* Board extended module Drivers */

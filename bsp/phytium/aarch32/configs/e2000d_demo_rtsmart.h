@@ -511,7 +511,7 @@
 #define BSP_USING_ETH
 #define RT_LWIP_PBUF_POOL_BUFSIZE 1700
 #define BSP_USING_PWM
-#define RT_USING_PWM6
+#define RT_USING_PWM2
 #define BSP_USING_I2C
 #define I2C_USE_MIO
 #define RT_USING_MIO15

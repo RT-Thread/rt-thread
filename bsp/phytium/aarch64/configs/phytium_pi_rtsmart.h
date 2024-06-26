@@ -501,9 +501,6 @@
 #define RT_USING_UART1
 #define BSP_USING_SPI
 #define RT_USING_SPIM0
-#define RT_USING_SPIM1
-#define RT_USING_SPIM2
-#define RT_USING_SPIM3
 #define BSP_USING_GPIO
 #define BSP_USING_QSPI
 #define RT_USING_QSPI0
@@ -520,8 +517,8 @@
 #define RT_USING_MIO10
 #define BSP_USING_SDIF
 #define BSP_USING_SDCARD_FATFS
-#define USING_SDIF1
-#define USE_SDIF1_TF
+#define USING_SDIF0
+#define USE_SDIF0_TF
 #define BSP_USING_DC
 #define RT_USING_DC_CHANNEL0
 #define RT_USING_DC_CHANNEL1

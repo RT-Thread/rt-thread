@@ -523,6 +523,7 @@
 #define USE_SDIF1_TF
 #define BSP_USING_DC
 #define RT_USING_DC_CHANNEL0
+#define RT_USING_DC_CHANNEL1
 /* end of On-chip Peripheral Drivers */
 
 /* Board extended module Drivers */

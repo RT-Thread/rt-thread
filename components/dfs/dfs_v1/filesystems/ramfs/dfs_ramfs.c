@@ -151,7 +151,7 @@ int dfs_ramfs_write(struct dfs_file *fd, const void *buf, size_t count)
     return count;
 }
 
-off_t dfs_ramfs_lseek(struct dfs_file *file, off_t offset)
+int dfs_ramfs_lseek(struct dfs_file *file, off_t offset)
 {
     if (offset <= (off_t)file->vnode->size)
     {
