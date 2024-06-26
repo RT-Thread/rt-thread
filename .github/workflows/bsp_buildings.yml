@@ -215,6 +215,7 @@ jobs:
                 - "nxp/imx/imxrt/imxrt1064-nxp-evk"
                 - "nxp/imx/imxrt/imxrt1021-nxp-evk"
                 - "nxp/mcx/mcxn/frdm-mcxn947"
+                - "nxp/mcx/mcxn/frdm-mcxn236"
                 - "nxp/mcx/mcxa/frdm-mcxa153"
                 - "renesas/ebf_qi_min_6m5"
                 - "renesas/ra6m4-cpk"
