@@ -1024,6 +1024,11 @@ struct rt_ipc_object
     rt_list_t suspend_thread;                 /**< threads pended on this resource */
 };
 
+/**
+ * @addtogroup semaphore
+ * @{
+ */
+
 #ifdef RT_USING_SEMAPHORE
 /**
  * Semaphore structure
@@ -1038,6 +1043,13 @@ struct rt_semaphore
 };
 typedef struct rt_semaphore *rt_sem_t;
 #endif /* RT_USING_SEMAPHORE */
+
+/**@}*/
+
+/**
+ * @addtogroup mutex
+ * @{
+ */
 
 #ifdef RT_USING_MUTEX
 /**
@@ -1058,6 +1070,13 @@ struct rt_mutex
 };
 typedef struct rt_mutex *rt_mutex_t;
 #endif /* RT_USING_MUTEX */
+
+/**@}*/
+
+/**
+ * @addtogroup event
+ * @{
+ */
 
 #ifdef RT_USING_EVENT
 /**
@@ -1080,6 +1099,13 @@ struct rt_event
 typedef struct rt_event *rt_event_t;
 #endif /* RT_USING_EVENT */
 
+/**@}*/
+
+/**
+ * @addtogroup mailbox
+ * @{
+ */
+
 #ifdef RT_USING_MAILBOX
 /**
  * mailbox structure
@@ -1101,6 +1127,13 @@ struct rt_mailbox
 };
 typedef struct rt_mailbox *rt_mailbox_t;
 #endif /* RT_USING_MAILBOX */
+
+/**@}*/
+
+/**
+ * @addtogroup messagequeue
+ * @{
+ */
 
 #ifdef RT_USING_MESSAGEQUEUE
 /**
@@ -1126,6 +1159,8 @@ struct rt_messagequeue
 };
 typedef struct rt_messagequeue *rt_mq_t;
 #endif /* RT_USING_MESSAGEQUEUE */
+
+/**@}*/
 
 /**@}*/
 
