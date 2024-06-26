@@ -124,13 +124,7 @@ static rt_err_t drv_pwm_get(struct phytium_pwm *pwm_dev, struct rt_pwm_configura
     u32 channel = configuration->channel;
 
     rt_memset(&pwm_cfg, 0, sizeof(pwm_cfg));
-    ret = FPwmVariableGet(&pwm_dev->pwm_handle, channel, &pwm_cfg);
-    if (ret != FPWM_SUCCESS)
-    {
-        LOG_E("Pwm variable get failed.\n");
-
-        return -RT_ERROR;
-    }
+    FPwmVariableGet(&pwm_dev->pwm_handle, channel, &pwm_cfg);
 
     configuration->period = pwm_cfg.pwm_period * 1000;
     configuration->pulse = pwm_cfg.pwm_pulse * 1000;
