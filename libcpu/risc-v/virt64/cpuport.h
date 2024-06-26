@@ -23,8 +23,8 @@
 #error "Not supported XLEN"
 #endif
 
-/* 33 general register */
-#define CTX_GENERAL_REG_NR  33
+/* 33 general register + 1 padding */
+#define CTX_GENERAL_REG_NR  34
 
 #ifdef ENABLE_FPU
 /* 32 fpu register */

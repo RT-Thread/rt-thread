@@ -56,7 +56,7 @@ struct rt_memblock
  * @param end the size of the physical address range
  * @param flags the flags of the region
  */
-rt_err_t rt_memblock_add_memory(char *name, rt_size_t start, rt_size_t end, mmblk_flag_t flags);
+rt_err_t rt_memblock_add_memory(const char *name, rt_size_t start, rt_size_t end, mmblk_flag_t flags);
 
 /**
  * @brief Add a physical address range to the reserved memory region
@@ -68,7 +68,7 @@ rt_err_t rt_memblock_add_memory(char *name, rt_size_t start, rt_size_t end, mmbl
  * @param end the size of the physical address range
  * @param flags the flags of the region
  */
-rt_err_t rt_memblock_reserve_memory(char *name, rt_size_t start, rt_size_t end, mmblk_flag_t flags);
+rt_err_t rt_memblock_reserve_memory(const char *name, rt_size_t start, rt_size_t end, mmblk_flag_t flags);
 
 /**
  * @brief To conclude the management of memory by the memblock.

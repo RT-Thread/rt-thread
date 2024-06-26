@@ -25,6 +25,7 @@
 #include <rtdevice.h>
 #include <gic.h>
 #include <gicv3.h>
+#include <mm_memblock.h>
 
 #define SIZE_KB  1024
 #define SIZE_MB (1024 * SIZE_KB)
@@ -198,38 +199,15 @@ rt_inline void cpu_info_init(void)
 #endif /* RT_USING_HWTIMER */
 }
 
-rt_inline rt_bool_t is_kernel_aspace(const char *name)
-{
-    static char * const names[] =
-    {
-        "kernel",
-        "memheap",
-    };
-
-    if (!name)
-    {
-        return RT_FALSE;
-    }
-
-    for (int i = 0; i < RT_ARRAY_SIZE(names); ++i)
-    {
-        if (!rt_strcmp(names[i], name))
-        {
-            return RT_TRUE;
-        }
-    }
-
-    return RT_FALSE;
-}
-
 void rt_hw_common_setup(void)
 {
-    rt_size_t mem_region_nr;
-    rt_region_t *mem_region;
-    rt_size_t page_best_start;
-    rt_region_t platform_mem_region;
+    rt_size_t kernel_start, kernel_end;
+    rt_size_t heap_start, heap_end;
+    rt_size_t init_page_start, init_page_end;
+    rt_size_t fdt_start, fdt_end;
+    rt_region_t init_page_region = { 0 };
+    rt_region_t platform_mem_region = { 0 };
     static struct mem_desc platform_mem_desc;
-    void *kernel_start, *kernel_end, *memheap_start = RT_NULL, *memheap_end = RT_NULL;
 
     system_vectors_init();
 
@@ -239,61 +217,42 @@ void rt_hw_common_setup(void)
     rt_hw_mmu_map_init(&rt_kernel_space, (void*)0xffffd0000000, 0x10000000, MMUTable, 0);
 #endif
 
-    kernel_start = rt_kmem_v2p((void *)&_start) - 64;
-    kernel_end   = rt_kmem_v2p((void *)&_end);
+    kernel_start    = RT_ALIGN_DOWN((rt_size_t)rt_kmem_v2p((void *)&_start) - 64, ARCH_PAGE_SIZE);
+    kernel_end      = RT_ALIGN((rt_size_t)rt_kmem_v2p((void *)&_end), ARCH_PAGE_SIZE);
+    heap_start      = kernel_end;
+    heap_end        = RT_ALIGN(heap_start + ARCH_HEAP_SIZE, ARCH_PAGE_SIZE);
+    init_page_start = heap_end;
+    init_page_end   = RT_ALIGN(init_page_start + ARCH_INIT_PAGE_SIZE, ARCH_PAGE_SIZE);
+    fdt_start       = init_page_end;
+    fdt_end         = RT_ALIGN(fdt_start + fdt_size, ARCH_PAGE_SIZE);
 
-    if (!rt_fdt_commit_memregion_request(&mem_region, &mem_region_nr, RT_TRUE))
-    {
-        const char *name = "memheap";
+    platform_mem_region.start = kernel_start;
+    platform_mem_region.end   = fdt_end;
 
-        while (mem_region_nr --> 0)
-        {
-            if (mem_region->name == name || !rt_strcmp(mem_region->name, name))
-            {
-                memheap_start = (void *)mem_region->start;
-                memheap_end = (void *)mem_region->end;
+    rt_memblock_reserve_memory("kernel", kernel_start, kernel_end, MEMBLOCK_NONE);
+    rt_memblock_reserve_memory("memheap", heap_start, heap_end, MEMBLOCK_NONE);
+    rt_memblock_reserve_memory("init-page", init_page_start, init_page_end, MEMBLOCK_NONE);
+    rt_memblock_reserve_memory("fdt", fdt_start, fdt_end, MEMBLOCK_NONE);
 
-                break;
-            }
-            mem_region++;
-        }
-    }
+    rt_memmove((void *)(fdt_start - PV_OFFSET), (void *)(fdt_ptr - PV_OFFSET), fdt_size);
+    fdt_ptr = (void *)fdt_start;
 
-    page_best_start = (rt_size_t)(memheap_end ? : kernel_end);
+    rt_system_heap_init((void *)(heap_start - PV_OFFSET), (void *)(heap_end - PV_OFFSET));
 
-    if (memheap_end && fdt_ptr > kernel_start)
-    {
-        rt_memmove(memheap_end - PV_OFFSET, fdt_ptr - PV_OFFSET, fdt_size);
+    init_page_region.start = init_page_start - PV_OFFSET;
+    init_page_region.end = init_page_end - PV_OFFSET;
+    rt_page_init(init_page_region);
 
-        fdt_ptr = memheap_end;
+    /* create MMU mapping of kernel memory */
+    platform_mem_region.start = RT_ALIGN_DOWN(platform_mem_region.start, ARCH_PAGE_SIZE);
+    platform_mem_region.end   = RT_ALIGN(platform_mem_region.end, ARCH_PAGE_SIZE);
 
-        page_best_start = (rt_size_t)fdt_ptr + fdt_size;
-    }
+    platform_mem_desc.paddr_start = platform_mem_region.start;
+    platform_mem_desc.vaddr_start = platform_mem_region.start - PV_OFFSET;
+    platform_mem_desc.vaddr_end = platform_mem_region.end - PV_OFFSET - 1;
+    platform_mem_desc.attr = NORMAL_MEM;
 
-    rt_fdt_commit_memregion_early(&(rt_region_t)
-    {
-        .name = "fdt",
-        .start = (rt_size_t)fdt_ptr,
-        .end = (rt_size_t)(fdt_ptr + fdt_size),
-    }, RT_TRUE);
-
-    fdt_ptr -= PV_OFFSET;
-
-    rt_fdt_commit_memregion_early(&(rt_region_t)
-    {
-        .name = "kernel",
-        .start = (rt_size_t)kernel_start,
-        .end = (rt_size_t)kernel_end,
-    }, RT_TRUE);
-
-#ifndef RT_USING_SMART
-    rt_fdt_commit_memregion_early(&(rt_region_t)
-    {
-        .name = "null",
-        .start = (rt_size_t)RT_NULL,
-        .end = (rt_size_t)RT_NULL + ARCH_PAGE_SIZE,
-    }, RT_TRUE);
-#endif /* !RT_USING_SMART */
+    rt_hw_mmu_setup(&rt_kernel_space, &platform_mem_desc, 1);
 
     if (rt_fdt_prefetch(fdt_ptr))
     {
@@ -307,143 +266,9 @@ void rt_hw_common_setup(void)
 
     rt_fdt_scan_memory();
 
-    if (memheap_start && memheap_end)
-    {
-        rt_system_heap_init(memheap_start - PV_OFFSET, memheap_end - PV_OFFSET);
-    }
+    rt_memblock_setup_memory_environment();
 
-    platform_mem_region.start = ~0UL;
-    platform_mem_region.end = 0;
-
-    if (!rt_fdt_commit_memregion_request(&mem_region, &mem_region_nr, RT_TRUE))
-    {
-        LOG_I("Reserved memory:");
-
-        while (mem_region_nr --> 0)
-        {
-            if (is_kernel_aspace(mem_region->name))
-            {
-                if (platform_mem_region.start > mem_region->start)
-                {
-                    platform_mem_region.start = mem_region->start;
-                }
-
-                if (platform_mem_region.end < mem_region->end)
-                {
-                    platform_mem_region.end = mem_region->end;
-                }
-            }
-
-            LOG_I("  %-*.s [%p, %p]", RT_NAME_MAX, mem_region->name, mem_region->start, mem_region->end);
-
-            ++mem_region;
-        }
-    }
-
-    if (!rt_fdt_commit_memregion_request(&mem_region, &mem_region_nr, RT_FALSE))
-    {
-        rt_ubase_t best_offset = ~0UL;
-        rt_region_t *usable_mem_region = mem_region, *page_region = RT_NULL;
-        rt_region_t init_page_region = { 0 };
-        rt_region_t defer_hi = { 0 };
-        rt_err_t error;
-
-        LOG_I("Usable memory:");
-
-        for (int i = 0; i < mem_region_nr; ++i, ++mem_region)
-        {
-            if (!mem_region->name)
-            {
-                continue;
-            }
-
-            if (platform_mem_region.start > mem_region->start)
-            {
-                platform_mem_region.start = mem_region->start;
-            }
-
-            if (platform_mem_region.end < mem_region->end)
-            {
-                platform_mem_region.end = mem_region->end;
-            }
-
-            if (mem_region->start >= page_best_start &&
-                mem_region->start - page_best_start < best_offset &&
-                /* MUST >= 1MB */
-                mem_region->end - mem_region->start >= SIZE_MB)
-            {
-                page_region = mem_region;
-
-                best_offset = page_region->start - page_best_start;
-            }
-
-            LOG_I("  %-*.s [%p, %p]", RT_NAME_MAX, mem_region->name, mem_region->start, mem_region->end);
-
-        }
-
-        RT_ASSERT(page_region != RT_NULL);
-
-        /* don't map more than ARCH_EARLY_MAP_SIZE */
-        if (page_region->end - page_region->start > ARCH_PAGE_INIT_THRESHOLD)
-        {
-            defer_hi.name = page_region->name;
-            defer_hi.end = page_region->end;
-            defer_hi.start = RT_ALIGN_DOWN(page_region->start + ARCH_PAGE_INIT_THRESHOLD,
-                                           ARCH_SECTION_SIZE);
-            page_region->end = defer_hi.start;
-        }
-
-        init_page_region.start = page_region->start - PV_OFFSET;
-        init_page_region.end = page_region->end - PV_OFFSET;
-
-        rt_page_init(init_page_region);
-
-        platform_mem_region.start = RT_ALIGN(platform_mem_region.start, ARCH_PAGE_SIZE);
-        platform_mem_region.end = RT_ALIGN_DOWN(platform_mem_region.end, ARCH_PAGE_SIZE);
-        RT_ASSERT(platform_mem_region.end - platform_mem_region.start != 0);
-
-        platform_mem_desc.paddr_start = platform_mem_region.start;
-        platform_mem_desc.vaddr_start = platform_mem_region.start - PV_OFFSET;
-        platform_mem_desc.vaddr_end = platform_mem_region.end - PV_OFFSET - 1;
-        platform_mem_desc.attr = NORMAL_MEM;
-
-        rt_hw_mmu_setup(&rt_kernel_space, &platform_mem_desc, 1);
-
-        rt_fdt_earlycon_kick(FDT_EARLYCON_KICK_UPDATE);
-
-        mem_region = usable_mem_region;
-
-        if (defer_hi.start)
-        {
-            /* to virt address */
-            init_page_region.start = defer_hi.start - PV_OFFSET;
-            init_page_region.end = defer_hi.end - PV_OFFSET;
-            error = rt_page_install(init_page_region);
-
-            if (error)
-            {
-                LOG_W("Deferred page installation FAILED:");
-                LOG_W("  %-*.s [%p, %p]", RT_NAME_MAX,
-                    defer_hi.name, defer_hi.start, defer_hi.end);
-            }
-            else
-            {
-                LOG_I("Deferred page installation SUCCEED:");
-                LOG_I("  %-*.s [%p, %p]", RT_NAME_MAX,
-                      defer_hi.name, defer_hi.start, defer_hi.end);
-            }
-        }
-
-        for (int i = 0; i < mem_region_nr; ++i, ++mem_region)
-        {
-            if (mem_region != page_region && mem_region->name)
-            {
-                init_page_region.start = mem_region->start - PV_OFFSET;
-                init_page_region.end = mem_region->end - PV_OFFSET;
-                rt_page_install(init_page_region);
-            }
-        }
-    }
+    rt_fdt_earlycon_kick(FDT_EARLYCON_KICK_UPDATE);
 
     rt_fdt_unflatten();
 

@@ -154,7 +154,7 @@
  * @brief error code
  *
  * The error code is defined to identify which kind of error occurs. When some
- * bad things happen, the current thread's errno will be set. see @ref _rt_errno
+ * bad things happen, the current thread's errno will be set.
  */
 
 /**@}*/
