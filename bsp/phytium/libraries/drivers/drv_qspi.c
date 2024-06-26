@@ -175,7 +175,7 @@ static rt_ssize_t phytium_qspi_xfer(struct rt_spi_device *device, struct rt_spi_
         }
         else
         {
-            // rt_kprintf("Write successfully!!!\r\n");
+            rt_kprintf("Write successfully!!!\r\n");
         }
 
         return RT_EOK;
@@ -200,9 +200,9 @@ static rt_ssize_t phytium_qspi_xfer(struct rt_spi_device *device, struct rt_spi_
         }
         else
         {
-            // rt_kprintf("Read successfully!!!, read_len = %d\r\n", read_len);
+            rt_kprintf("Read successfully!!!, read_len = %d\r\n", read_len);
         }
-        // FtDumpHexByte(message->recv_buf, read_len);
+        FtDumpHexByte(message->recv_buf, read_len);
 
         return read_len;
     }
