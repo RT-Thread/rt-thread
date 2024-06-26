@@ -99,8 +99,8 @@
 #define GIC_DIST_SOFTINT(hw_base)           HWREG32((hw_base) + 0xf00U)
 #define GIC_DIST_CPENDSGI(hw_base, n)       HWREG32((hw_base) + 0xf10U + ((n) / 4U) * 4U)
 #define GIC_DIST_SPENDSGI(hw_base, n)       HWREG32((hw_base) + 0xf20U + ((n) / 4U) * 4U)
-#define GIC_DIST_ICPIDR2(hw_base)           HWREG32((hw_base) + 0xfe8U)
-#define GIC_DIST_IROUTER(hw_base, n)        HWREG64((hw_base) + 0x6000U + (n) * 8U)
+#define GIC_DIST_ICPIDR2(hw_base)           HWREG32((hw_base) + 0xffe8U)
+#define GIC_DIST_IROUTER(hw_base, n)        HWREG64((hw_base) + 0x6100U + (n) * 8U)
 
 /* SGI base address is at 64K offset from Redistributor base address */
 #define GIC_RSGI_OFFSET 0x10000
