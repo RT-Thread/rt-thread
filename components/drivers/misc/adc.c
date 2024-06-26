@@ -296,6 +296,6 @@ static int adc(int argc, char **argv)
     }
     return RT_EOK;
 }
-MSH_CMD_EXPORT(adc, adc[option]);
+MSH_CMD_EXPORT(adc, adc [option]);
 
 #endif /* RT_USING_FINSH */
