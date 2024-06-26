@@ -12,6 +12,7 @@
  */
 #include "rtconfig.h"
 #include <rtdevice.h>
+#include <string.h>
 #define LOG_TAG      "pwm_drv"
 #include "drv_log.h"
 #include "drv_pwm.h"

@@ -12,6 +12,7 @@
  */
 #include "rtconfig.h"
 #include <rtdevice.h>
+#include <string.h>
 #define LOG_TAG      "i2c_drv"
 #include "drv_log.h"
 #include "drv_i2c.h"

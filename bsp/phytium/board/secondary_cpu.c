@@ -117,7 +117,7 @@ void rt_hw_secondary_cpu_bsp_start(void)
 #else
     rt_uint32_t mmutable_p;
     mmutable_p = (rt_uint32_t)MMUTable + (rt_uint32_t)PV_OFFSET ;
-    rt_hw_mmu_switch(mmutable_p) ;
+    rt_hw_mmu_switch((void*)mmutable_p) ;
 #endif
 
     /* vector init */
