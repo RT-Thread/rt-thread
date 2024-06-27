@@ -6,14 +6,14 @@ RTT_DIR := ../../..
 
 PKGS_DIR := packages
 
-config SOC_STM32F407ZG
+config SOC_STM32F407VE
     bool
     select SOC_SERIES_STM32F4
     select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN
     default y
 
-config BOARD_STM32F407_SPARK
+config BOARD_STM32F407_LCKFB
     bool
     default y
 
