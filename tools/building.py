@@ -304,8 +304,8 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
         env.AppendUnique(CPPDEFINES = ['_REENT_SMALL'])
 
     if GetOption('genconfig'):
-        from genconf import genconfig
-        genconfig()
+        menuconfig = utils.ImportModule('menuconfig')
+        menuconfig.genconfig()
         exit(0)
 
     if GetOption('stackanalysis'):
