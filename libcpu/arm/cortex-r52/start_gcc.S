@@ -49,8 +49,8 @@ stack_top:
 
     .globl _c_int00
 
-.globl _reset
-_reset:
+.globl Reset_Handler
+Reset_Handler:
 @-------------------------------------------------------------------------------
 @ Initialize CPU Registers
 @ After reset, the CPU is in the Supervisor mode (M = 10011)
@@ -71,9 +71,8 @@ _reset:
         mrs r1, cpsr
         msr spsr_cxsf, r1
 
-        cpsid  if, #19
+        bl init_cpu_mode
 
-#if defined (__VFP_FP__) && !defined(__SOFTFP__) && defined(RT_VFP_LAZY_STACKING)
         @ Turn on FPV coprocessor
         mrc   p15,     #0x00,      r2,       c1, c0, #0x02
         orr   r2,      r2,         #0xF00000
@@ -82,8 +81,9 @@ _reset:
         fmrx  r2,      fpexc
         orr   r2,      r2,   #0x40000000
         fmxr  fpexc,   r2
-#endif
 
+.global stack_init
+stack_init:
 @-------------------------------------------------------------------------------
 @ Initialize Stack Pointers
     ldr     r0, =stack_top
@@ -114,33 +114,8 @@ _reset:
     @  Switch back to SVC
     msr     cpsr_c, #Mode_SVC|I_Bit|F_Bit
 
-        bl    next1
-next1:
-        bl    next2
-next2:
-        bl    next3
-next3:
-        bl    next4
-next4:
-        ldr  lr, =_c_int00
-        bx   lr
-
-.globl data_init
-data_init:
-        /* copy .data to SRAM */
-        ldr     r1, =_mdata            /* .data start in image */
-        ldr     r2, =_data_end             /* .data end in image   */
-        ldr     r3, =_data_start             /* sram data start      */
-data_loop:
-        ldr     r0, [r1, #0]
-        str     r0, [r3]
-
-        add     r1, r1, #4
-        add     r3, r3, #4
-
-        cmp     r3, r2                   /* check if data to clear */
-        blo     data_loop                /* loop until done        */
-
+.globl bss_init
+bss_init:
         /* clear .bss */
         mov     r0,#0                   /* get a zero */
         ldr     r1,=__bss_start__         /* bss start  */
@@ -151,20 +126,36 @@ bss_loop:
         strlo   r0,[r1],#4              /* clear 4 bytes          */
         blo     bss_loop                /* loop until done        */
 
-    /* call C++ constructors of global objects                          */
-    ldr     r0, =__ctors_start__
-    ldr     r1, =__ctors_end__
+_c_int00:
+        ldr lr, =rtthread_startup
+        bx lr
 
-ctor_loop:
-    cmp     r0, r1
-    beq     ctor_end
-    ldr     r2, [r0], #4
-    stmfd   sp!, {r0-r3, ip, lr}
-    mov     lr, pc
-    bx      r2
-    ldmfd   sp!, {r0-r3, ip, lr}
-    b       ctor_loop
-ctor_end:
+.global init_cpu_mode
+init_cpu_mode:
+    /* Check for HYP mode */
+    mrs r0, cpsr_all
+    and r0, r0, #0x1F
+    mov r8, #0x1A
+    cmp r0, r8
+    beq overHyped
+    b continue_exit
+
+overHyped: /* Get out of HYP mode */
+    mov r9, lr 
+    /* HYP mode has a dedicated register, called ELR_hyp, 
+    to store the exception return address.
+    The lr register needs to be temporarily saved,
+    otherwise "mov pc lr" cannot be used after switching modes. */
+    adr r1, continue_exit
+    msr ELR_hyp, r1
+    mrs r1, cpsr_all
+    and r1, r1, #0xFFFFFFE0    /* CPSR_MODE_MASK */
+    orr r1, r1, #0x13          /* CPSR_MODE_SUPERVISOR */
+    msr SPSR_hyp, r1
+    eret
+
+continue_exit:
+    mov lr ,r9
     bx lr
 
 @-------------------------------------------------------------------------------
@@ -467,38 +458,244 @@ turnon_VFP:
         LDMIA sp!,     {r0}
         subs  pc,      lr,   #4
 
-    .macro push_svc_reg
-        sub     sp, sp, #17 * 4         @/* Sizeof(struct rt_hw_exp_stack)  */
-        stmia   sp, {r0 - r12}          @/* Calling r0-r12                  */
-        mov     r0, sp
-        mrs     r6, spsr                @/* Save CPSR                       */
-        str     lr, [r0, #15*4]         @/* Push PC                         */
-        str     r6, [r0, #16*4]         @/* Push CPSR                       */
-        cps     #Mode_SVC
-        str     sp, [r0, #13*4]         @/* Save calling SP                 */
-        str     lr, [r0, #14*4]         @/* Save calling PC                 */
-    .endm
 
-    .globl  vector_svc
-vector_svc:
-        push_svc_reg
-        bl      rt_hw_trap_svc
-        b       .
+@-------------------------------------------------------------------------------
+@ vector_isr
 
-    .globl  vector_pabort
-vector_pabort:
-        push_svc_reg
-        bl      rt_hw_trap_pabt
-        b       .
+.section .text.isr, "ax"
+    .align  5
+.globl vector_fiq
+vector_fiq:
+    stmfd   sp!,{r0-r7,lr}
+    bl      rt_hw_trap_fiq
+    ldmfd   sp!,{r0-r7,lr}
+    subs    pc, lr, #4
 
-    .globl  vector_dabort
-vector_dabort:
-        push_svc_reg
-        bl      rt_hw_trap_dabt
-        b       .
+.globl      rt_interrupt_enter
+.globl      rt_interrupt_leave
+.globl      rt_thread_switch_interrupt_flag
+.globl      rt_interrupt_from_thread
+.globl      rt_interrupt_to_thread
 
+.globl      rt_current_thread
+.globl      vmm_thread
+.globl      vmm_virq_check
+
+
+@-------------------------------------------------------------------------------
+@ vector_irq
+
+    .align  5
+.globl vector_irq
+vector_irq:
+#ifdef RT_USING_SMP
+    stmfd   sp!, {r0, r1}
+    cps     #Mode_SVC
+    mov     r0, sp          /* svc_sp */
+    mov     r1, lr          /* svc_lr */
+
+    cps     #Mode_IRQ
+    sub     lr, #4
+    stmfd   r0!, {r1, lr}     /* svc_lr, svc_pc */
+    stmfd   r0!, {r2 - r12}
+    ldmfd   sp!, {r1, r2}     /* original rf0, r1 */
+    stmfd   r0!, {r1 - r2}
+    mrs     r1,  spsr         /* original mode */
+    stmfd   r0!, {r1}
+
+#ifdef RT_USING_SMART
+    stmfd   r0, {r13, r14}^   /* usr_sp, usr_lr */
+    sub     r0, #8
+#endif /* RT_USING_SMART */
+#ifdef RT_USING_FPU
+    /* fpu context */
+    vmrs r6, fpexc
+    tst  r6, #(1<<30)
+    beq 1f
+    vstmdb r0!, {d0-d15}
+    vstmdb r0!, {d16-d31}
+    vmrs r5, fpscr
+    stmfd r0!, {r5}
+1:
+    stmfd r0!, {r6}
+#endif /* RT_USING_FPU */
+
+    /* now irq stack is clean */
+    /* r0 is task svc_sp */
+    /* backup r0 -> r8 */
+    mov r8, r0
+
+    cps     #Mode_SVC
+    mov     sp, r8
+
+    bl      rt_interrupt_enter
+    bl      rt_hw_trap_irq
+    bl      rt_interrupt_leave
+
+    mov     r0, r8
+    bl      rt_scheduler_do_irq_switch
+
+    b       rt_hw_context_switch_exit
+
+#else
+    stmfd   sp!, {r0-r12,lr}
+
+    bl      rt_interrupt_enter
+    bl      rt_hw_trap_irq
+    bl      rt_interrupt_leave
+
+    /* if rt_thread_switch_interrupt_flag set, jump to
+     * rt_hw_context_switch_interrupt_do and don't return */
+    ldr     r0, =rt_thread_switch_interrupt_flag
+    ldr     r1, [r0]
+    cmp     r1, #1
+    beq     rt_hw_context_switch_interrupt_do
+
+#ifdef RT_USING_SMART
+    ldmfd   sp!, {r0-r12,lr}
+    cps     #Mode_SVC
+    push    {r0-r12}
+    mov     r7, lr
+    cps     #Mode_IRQ
+    mrs     r4, spsr
+    sub     r5, lr, #4
+    cps     #Mode_SVC
+    and     r6, r4, #0x1f
+    cmp     r6, #0x10
+    bne     1f
+    msr     spsr_csxf, r4
+    mov     lr, r5
+    pop     {r0-r12}
+    b       arch_ret_to_user
+1:
+    mov     lr, r7
+    cps     #Mode_IRQ
+    msr     spsr_csxf, r4
+    mov     lr, r5
+    cps     #Mode_SVC
+    pop     {r0-r12}
+    cps     #Mode_IRQ
+    movs    pc, lr
+#else
+    ldmfd   sp!, {r0-r12,lr}
+    subs    pc,  lr, #4
+#endif /* RT_USING_SMART */
+#endif /* RT_USING_SMP */
+
+@-------------------------------------------------------------------------------
+@ push_svc_reg function
+
+.macro push_svc_reg
+    sub     sp, sp, #17 * 4         /* Sizeof(struct rt_hw_exp_stack)  */
+    stmia   sp, {r0 - r12}          /* Calling r0-r12                  */
+    mov     r0, sp
+    add     sp, sp, #17 * 4
+    mrs     r6, spsr                /* Save CPSR                       */
+    str     lr, [r0, #15*4]         /* Push PC                         */
+    str     r6, [r0, #16*4]         /* Push CPSR                       */
+    and     r1, r6, #0x1f
+    cmp     r1, #0x10
+    cps     #Mode_SYS
+    streq   sp, [r0, #13*4]         /* Save calling SP                 */
+    streq   lr, [r0, #14*4]         /* Save calling PC                 */
+    cps     #Mode_SVC
+    strne   sp, [r0, #13*4]         /* Save calling SP                 */
+    strne   lr, [r0, #14*4]         /* Save calling PC                 */
+.endm
+
+@-------------------------------------------------------------------------------
+@ vector_swi
+
+    .align  5
+.weak vector_swi
+vector_swi:
+    push_svc_reg
+    bl      rt_hw_trap_swi
+    b       .
+
+    .align  5
+    .globl  vector_undef
+vector_undef:
+    push_svc_reg
+    bl      rt_hw_trap_undef
+#ifdef RT_USING_FPU
+    cps     #Mode_UND
+    sub     sp, sp, #17 * 4
+    ldr     lr, [sp, #15*4]
+    ldmia   sp, {r0 - r12}
+    add     sp, sp, #17 * 4
+    movs    pc, lr
+#endif
+    b       .
+
+@-------------------------------------------------------------------------------
+@ vector_pabt
+
+    .align  5
+    .globl  vector_pabt
+vector_pabt:
+    push_svc_reg
+#ifdef RT_USING_SMART
+    /* cp Mode_ABT stack to SVC */
+    sub     sp, sp, #17 * 4     /* Sizeof(struct rt_hw_exp_stack)  */
+    mov     lr, r0
+    ldmia   lr, {r0 - r12}
+    stmia   sp, {r0 - r12}
+    add     r1, lr, #13 * 4
+    add     r2, sp, #13 * 4
+    ldmia   r1, {r4 - r7}
+    stmia   r2, {r4 - r7}
+    mov     r0, sp
+    bl      rt_hw_trap_pabt
+    /* return to user */
+    ldr     lr, [sp, #16*4]     /* orign spsr */
+    msr     spsr_cxsf, lr
+    ldr     lr, [sp, #15*4]     /* orign pc */
+    ldmia   sp, {r0 - r12}
+    add     sp, #17 * 4
+    b       arch_ret_to_user
+#else
+    bl      rt_hw_trap_pabt
+    b       .
+#endif
+
+@-------------------------------------------------------------------------------
+@ vector_dabt
+
+    .align  5
+    .globl  vector_dabt
+vector_dabt:
+    push_svc_reg
+#ifdef RT_USING_SMART
+    /* cp Mode_ABT stack to SVC */
+    sub     sp, sp, #17 * 4    /* Sizeof(struct rt_hw_exp_stack)  */
+    mov     lr, r0
+    ldmia   lr, {r0 - r12}
+    stmia   sp, {r0 - r12}
+    add     r1, lr, #13 * 4
+    add     r2, sp, #13 * 4
+    ldmia   r1, {r4 - r7}
+    stmia   r2, {r4 - r7}
+    mov     r0, sp
+    bl      rt_hw_trap_dabt
+    /* return to user */
+    ldr     lr, [sp, #16*4]    /* orign spsr */
+    msr     spsr_cxsf, lr
+    ldr     lr, [sp, #15*4]    /* orign pc */
+    ldmia   sp, {r0 - r12}
+    add     sp, #17 * 4
+    b       arch_ret_to_user
+#else
+    bl      rt_hw_trap_dabt
+    b       .
+#endif
+
+@-------------------------------------------------------------------------------
+@ vector_resv
+
+    .align  5
     .globl  vector_resv
 vector_resv:
-        push_svc_reg
-        bl      rt_hw_trap_resv
-        b       .
+    push_svc_reg
+    bl      rt_hw_trap_resv
+    b       .
