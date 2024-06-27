@@ -314,12 +314,18 @@ void *rt_page_alloc(rt_size_t npages);
 void rt_page_free(void *addr, rt_size_t npages);
 #endif /* defined(RT_USING_SLAB) && defined(RT_USING_SLAB_AS_HEAP) */
 
+/**
+ * @ingroup Hook
+ * @{
+ */
+
 #ifdef RT_USING_HOOK
 void rt_malloc_sethook(void (*hook)(void **ptr, rt_size_t size));
 void rt_realloc_set_entry_hook(void (*hook)(void **ptr, rt_size_t size));
 void rt_realloc_set_exit_hook(void (*hook)(void **ptr, rt_size_t size));
 void rt_free_sethook(void (*hook)(void **ptr));
 #endif /* RT_USING_HOOK */
+/**@}*/
 
 #endif /* RT_USING_HEAP */
 
