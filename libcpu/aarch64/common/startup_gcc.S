@@ -7,7 +7,7 @@
  * Date           Author       Notes
  */
 
-    .global	Reset_Handler
+    .global Reset_Handler
     .section ".start", "ax"
 Reset_Handler:
     nop

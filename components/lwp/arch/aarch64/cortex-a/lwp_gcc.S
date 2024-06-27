@@ -14,11 +14,11 @@
 #define __ASSEMBLY__
 #endif
 
-#include "rtconfig.h"
-#include "asm-generic.h"
-#include "asm-fpu.h"
-#include "armv8.h"
-#include "lwp_arch.h"
+#include <rtconfig.h>
+#include <asm-generic.h>
+#include <asm-fpu.h>
+#include <armv8.h>
+#include <lwp_arch.h>
 
 /*********************
  *      SPSR BIT     *
