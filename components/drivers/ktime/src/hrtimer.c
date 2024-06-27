@@ -146,20 +146,26 @@ static void _set_next_timeout_locked(void)
 {
     rt_ktime_hrtimer_t timer;
     rt_ubase_t next_timeout_hrtimer_cnt;
+    rt_bool_t find_next;
 
-    if ((timer = _first_hrtimer()) != RT_NULL)
+    do
     {
-        next_timeout_hrtimer_cnt = _cnt_convert(timer->timeout_cnt);
-        if (next_timeout_hrtimer_cnt > 0)
+        find_next = RT_FALSE;
+        if ((timer = _first_hrtimer()) != RT_NULL)
         {
-            rt_ktime_hrtimer_settimeout(next_timeout_hrtimer_cnt);
-        }
-        else
-        {
-            _hrtimer_process_locked();
-            _set_next_timeout_locked();
+            next_timeout_hrtimer_cnt = _cnt_convert(timer->timeout_cnt);
+            if (next_timeout_hrtimer_cnt > 0)
+            {
+                rt_ktime_hrtimer_settimeout(next_timeout_hrtimer_cnt);
+            }
+            else
+            {
+                _hrtimer_process_locked();
+                find_next = RT_TRUE;
+            }
         }
     }
+    while (find_next);
 }
 
 void rt_ktime_hrtimer_process(void)
