@@ -293,3 +293,15 @@ def ReloadModule(module):
         reload(module)
 
     return
+
+def ImportModule(module):
+    import sys
+    if sys.version_info.major >= 3:
+        import importlib.util
+        path = os.path.dirname(__file__)
+        spec = importlib.util.spec_from_file_location(module, os.path.join(path, module+".py"))
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        return module
+    else:
+        return __import__(module, fromlist=[module])

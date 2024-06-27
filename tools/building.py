@@ -164,8 +164,21 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
 
     # set RTT_ROOT in ENV
     Env['RTT_ROOT'] = Rtt_Root
+    os.environ["RTT_DIR"] = Rtt_Root
     # set BSP_ROOT in ENV
     Env['BSP_ROOT'] = Dir('#').abspath
+    os.environ["BSP_DIR"] = Dir('#').abspath
+    # set PKGS_ROOT in ENV
+    if "PKGS_DIR" in os.environ:
+        pass
+    elif "PKGS_ROOT" in os.environ:
+        os.environ["PKGS_DIR"] = os.environ["PKGS_ROOT"]
+    elif "ENV_ROOT" in os.environ:
+        os.environ["PKGS_DIR"] = os.path.join(os.environ["ENV_ROOT"], "packages")
+    elif sys.platform == "win32":
+        os.environ["PKGS_DIR"] = os.path.join(os.environ["USERPROFILE"], ".env", "packages")
+    else:
+        os.environ["PKGS_DIR"] = os.path.join(os.environ["HOME"], ".env", "packages")
 
     sys.path = sys.path + [os.path.join(Rtt_Root, 'tools')]
 
@@ -299,27 +312,25 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
         from WCS import ThreadStackStaticAnalysis
         ThreadStackStaticAnalysis(Env)
         exit(0)
-    if platform.system() != 'Windows':
-        if GetOption('menuconfig'):
-            from menuconfig import menuconfig
-            menuconfig(Rtt_Root)
-            exit(0)
+
+    if GetOption('menuconfig'):
+        menuconfig = utils.ImportModule('menuconfig')
+        menuconfig.menuconfig(Rtt_Root)
+        exit(0)
 
     if GetOption('pyconfig_silent'):
-        from menuconfig import guiconfig_silent
-
-        guiconfig_silent(Rtt_Root)
+        menuconfig = utils.ImportModule('menuconfig')
+        menuconfig.guiconfig_silent(Rtt_Root)
         exit(0)
     elif GetOption('pyconfig'):
-        from menuconfig import guiconfig
-
-        guiconfig(Rtt_Root)
+        menuconfig = utils.ImportModule('menuconfig')
+        menuconfig.guiconfig(Rtt_Root)
         exit(0)
 
     configfn = GetOption('useconfig')
     if configfn:
-        from menuconfig import mk_rtconfig
-        mk_rtconfig(configfn)
+        menuconfig = utils.ImportModule('menuconfig')
+        menuconfig.mk_rtconfig(configfn)
         exit(0)
 
 
