@@ -83,7 +83,7 @@ elif PLATFORM == 'armcc':
     DEVICE = ' --cpu ' + CPU + '.fp.sp'
     CFLAGS = DEVICE + ' --apcs=interwork'
     AFLAGS = DEVICE
-    LFLAGS = DEVICE + ' --libpath "' + EXEC_PATH + '/ARM/ARMCC/lib" --info sizes --info totals --info unused --info veneers --list rtthread.map --scatter "./LPC55S69_cm33_core0_flash.scf" '
+    LFLAGS = DEVICE + ' --libpath "' + EXEC_PATH + '/ARM/ARMCC/lib" --info sizes --info totals --info unused --info veneers --list rtthread.map --scatter "board/linker_scripts/MCXN236_flash" '
 
     LFLAGS += ' --keep *.o(.rti_fn.*)   --keep *.o(FSymTab) --keep *.o(VSymTab)' 
 
@@ -122,7 +122,7 @@ elif PLATFORM == 'armclang':
     AFLAGS = DEVICE + ' --apcs=interwork '
     LFLAGS = DEVICE + ' --info sizes --info totals --info unused --info veneers '
     LFLAGS += ' --list rt-thread.map '
-    LFLAGS += r' --strict --scatter "board\linker_scripts\link.sct" '
+    LFLAGS += r' --strict --scatter "board/linker_scripts/MCXN236_flash" '
     CFLAGS += ' -I' + EXEC_PATH + '/ARM/ARMCLANG/include'
     LFLAGS += ' --libpath=' + EXEC_PATH + '/ARM/ARMCLANG/lib'
 
@@ -180,7 +180,7 @@ elif PLATFORM == 'iccarm':
     else:
         CFLAGS += ' -Oh'
 
-    LFLAGS = ' --config "board/linker_scripts/MCXN947_cm33_core0_flash.icf"'
+    LFLAGS = ' --config "board/linker_scripts/MCXN236_flash.icf"'
     LFLAGS += ' --redirect _Printf=_PrintfTiny'
     LFLAGS += ' --redirect _Scanf=_ScanfSmall'
     LFLAGS += ' --entry __iar_program_start'
