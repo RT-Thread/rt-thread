@@ -2,7 +2,7 @@ Import('rtconfig')
 from building import *
 
 cwd = GetCurrentDir()
-path = [cwd + '/../CMSIS/Core/Include',cwd + '/components/codec', cwd + '/MCXN947', cwd + '/MCXN947/drivers', cwd + '/middleware/sdmmc/inc', cwd + '/middleware/sdmmc/port']
+path = [cwd + '/../CMSIS/Core/Include', cwd + '/MCXN947', cwd + '/MCXN947/drivers']
 src = Split('''
             MCXN947/system_MCXN947_cm33_core0.c
             ''')
