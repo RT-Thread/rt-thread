@@ -398,6 +398,51 @@ int netdev_family_get(struct netdev *netdev)
     return ((struct sal_proto_family *)netdev->sal_user_data)->family;
 }
 
+#if defined(SAL_USING_AF_NETLINK)
+int netdev_getnetdev(struct msg_buf *msg, int (*cb)(struct msg_buf *m_buf, struct netdev *nd, int nd_num, int index, int ipvx))
+{
+    struct netdev *cur_nd_list = netdev_list;
+    struct netdev *nd_node;
+    struct netdev nd;
+    rt_base_t level;
+    int index = 0;
+    int nd_num = 0;
+    int err = 0;
+
+    if (cur_nd_list == RT_NULL)
+        return 0;
+
+    level = rt_spin_lock_irqsave(&_spinlock);
+    nd_num = rt_slist_len(&cur_nd_list->list) + 1;
+    rt_spin_unlock_irqrestore(&_spinlock, level);
+
+    rt_memcpy(&nd, cur_nd_list, sizeof(struct netdev));
+    err = cb(msg, &nd, nd_num, index, ROUTE_IPV4_TRUE);
+    if (err < 0)
+        return err;
+
+    index ++;
+
+    level = rt_spin_lock_irqsave(&_spinlock);
+    rt_slist_for_each_entry(nd_node, &(cur_nd_list->list), list)
+    {
+        rt_memcpy(&nd, nd_node, sizeof(struct netdev));
+        rt_spin_unlock_irqrestore(&_spinlock, level);
+        err = cb(msg, &nd, nd_num, index, ROUTE_IPV4_TRUE);
+        if (err < 0)
+        {
+            return err;
+        }
+
+        index ++;
+        level = rt_spin_lock_irqsave(&_spinlock);
+    }
+    rt_spin_unlock_irqrestore(&_spinlock, level);
+
+    return 0;
+}
+#endif
+
 #endif /* RT_USING_SAL */
 
 /**
