@@ -5,10 +5,12 @@
  *
  * Change Logs:
  * Date           Author       Notes
- * 2013-07-05     Bernard      the first version
  */
- 
-#include "rtconfig.h"
+@-------------------------------------------------------------------------------
+@ sys_intvecs.asm
+@
+@ (c) Texas Instruments 2009-2013, All rights reserved.
+@
 
 .section .vectors, "ax"
 .code 32
@@ -36,4 +38,3 @@ system_vectors:
     b   Reserved_Handler
     b   IRQ_Handler
     b   FIQ_Handler
-
