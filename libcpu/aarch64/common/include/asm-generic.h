@@ -13,7 +13,7 @@
 /* use to mark a start point where every task start from */
 #define START_POINT(funcname)               \
     .global funcname;                       \
-    .type funcname, %function;	            \
+    .type funcname, %function;              \
     funcname:                               \
     .cfi_sections .debug_frame, .eh_frame;  \
     .cfi_startproc;                         \
