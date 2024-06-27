@@ -5,36 +5,53 @@
  *
  * Change Logs:
  * Date           Author       Notes
+ * 2013-07-05     Bernard      the first version
  */
-@-------------------------------------------------------------------------------
-@ sys_intvecs.asm
-@
-@ (c) Texas Instruments 2009-2013, All rights reserved.
-@
+ 
+#include "rtconfig.h"
 
 .section .vectors, "ax"
 .code 32
 
-@-------------------------------------------------------------------------------
-@ import reference for interrupt routines
-
-    .globl Reset_Handler
-    .globl turnon_VFP
-    .globl SVC_Handler
-    .globl Prefetch_Handler
-    .globl Abort_Handler
-    .globl Reserved_Handler
-    .globl IRQ_Handler
-    .globl FIQ_Handler
-
-
 .globl system_vectors
 system_vectors:
-        b   Reset_Handler
-        b   turnon_VFP
-        b   SVC_Handler
-        b   Prefetch_Handler
-        b   Abort_Handler
-        b   Reserved_Handler
-        b   IRQ_Handler
-        b   FIQ_Handler
+#ifdef RT_USING_SMART
+    b _reset
+#else
+    ldr pc, _vector_reset
+#endif
+    ldr pc, _vector_undef
+    ldr pc, _vector_swi
+    ldr pc, _vector_pabt
+    ldr pc, _vector_dabt
+    ldr pc, _vector_resv
+    ldr pc, _vector_irq
+    ldr pc, _vector_fiq
+
+.globl Reset_Handler
+.globl vector_undef
+.globl vector_swi
+.globl vector_pabt
+.globl vector_dabt
+.globl vector_resv
+.globl vector_irq
+.globl vector_fiq
+
+_vector_reset:
+    .word Reset_Handler
+_vector_undef:
+    .word vector_undef
+_vector_swi:
+    .word vector_swi
+_vector_pabt:
+    .word vector_pabt
+_vector_dabt:
+    .word vector_dabt
+_vector_resv:
+    .word vector_resv
+_vector_irq:
+    .word vector_irq
+_vector_fiq:
+    .word vector_fiq
+
+.balignl 	16,0xdeadbeef
