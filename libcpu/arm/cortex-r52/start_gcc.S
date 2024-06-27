@@ -49,8 +49,8 @@ stack_top:
 
     .globl _c_int00
 
-.globl _reset
-_reset:
+.globl Reset_Handler
+Reset_Handler:
 @-------------------------------------------------------------------------------
 @ Initialize CPU Registers
 @ After reset, the CPU is in the Supervisor mode (M = 10011)
@@ -71,9 +71,8 @@ _reset:
         mrs r1, cpsr
         msr spsr_cxsf, r1
 
-        cpsid  if, #19
+        bl init_cpu_mode
 
-#if defined (__VFP_FP__) && !defined(__SOFTFP__) && defined(RT_VFP_LAZY_STACKING)
         @ Turn on FPV coprocessor
         mrc   p15,     #0x00,      r2,       c1, c0, #0x02
         orr   r2,      r2,         #0xF00000
@@ -82,8 +81,9 @@ _reset:
         fmrx  r2,      fpexc
         orr   r2,      r2,   #0x40000000
         fmxr  fpexc,   r2
-#endif
 
+.global stack_init
+stack_init:
 @-------------------------------------------------------------------------------
 @ Initialize Stack Pointers
     ldr     r0, =stack_top
@@ -114,33 +114,8 @@ _reset:
     @  Switch back to SVC
     msr     cpsr_c, #Mode_SVC|I_Bit|F_Bit
 
-        bl    next1
-next1:
-        bl    next2
-next2:
-        bl    next3
-next3:
-        bl    next4
-next4:
-        ldr  lr, =_c_int00
-        bx   lr
-
-.globl data_init
-data_init:
-        /* copy .data to SRAM */
-        ldr     r1, =_mdata            /* .data start in image */
-        ldr     r2, =_data_end             /* .data end in image   */
-        ldr     r3, =_data_start             /* sram data start      */
-data_loop:
-        ldr     r0, [r1, #0]
-        str     r0, [r3]
-
-        add     r1, r1, #4
-        add     r3, r3, #4
-
-        cmp     r3, r2                   /* check if data to clear */
-        blo     data_loop                /* loop until done        */
-
+.globl bss_init
+bss_init:
         /* clear .bss */
         mov     r0,#0                   /* get a zero */
         ldr     r1,=__bss_start__         /* bss start  */
@@ -151,20 +126,36 @@ bss_loop:
         strlo   r0,[r1],#4              /* clear 4 bytes          */
         blo     bss_loop                /* loop until done        */
 
-    /* call C++ constructors of global objects                          */
-    ldr     r0, =__ctors_start__
-    ldr     r1, =__ctors_end__
+_c_int00:
+        ldr lr, =rtthread_startup
+        bx lr
 
-ctor_loop:
-    cmp     r0, r1
-    beq     ctor_end
-    ldr     r2, [r0], #4
-    stmfd   sp!, {r0-r3, ip, lr}
-    mov     lr, pc
-    bx      r2
-    ldmfd   sp!, {r0-r3, ip, lr}
-    b       ctor_loop
-ctor_end:
+.global init_cpu_mode
+init_cpu_mode:
+    /* Check for HYP mode */
+    mrs r0, cpsr_all
+    and r0, r0, #0x1F
+    mov r8, #0x1A
+    cmp r0, r8
+    beq overHyped
+    b continue_exit
+
+overHyped: /* Get out of HYP mode */
+    mov r9, lr 
+    /* HYP mode has a dedicated register, called ELR_hyp, 
+    to store the exception return address.
+    The lr register needs to be temporarily saved,
+    otherwise "mov pc lr" cannot be used after switching modes. */
+    adr r1, continue_exit
+    msr ELR_hyp, r1
+    mrs r1, cpsr_all
+    and r1, r1, #0xFFFFFFE0    /* CPSR_MODE_MASK */
+    orr r1, r1, #0x13          /* CPSR_MODE_SUPERVISOR */
+    msr SPSR_hyp, r1
+    eret
+
+continue_exit:
+    mov lr ,r9
     bx lr
 
 @-------------------------------------------------------------------------------
@@ -467,7 +458,10 @@ turnon_VFP:
         LDMIA sp!,     {r0}
         subs  pc,      lr,   #4
 
-    .macro push_svc_reg
+@-------------------------------------------------------------------------------
+@ push_svc_reg function
+
+.macro push_svc_reg
         sub     sp, sp, #17 * 4         @/* Sizeof(struct rt_hw_exp_stack)  */
         stmia   sp, {r0 - r12}          @/* Calling r0-r12                  */
         mov     r0, sp
@@ -477,28 +471,56 @@ turnon_VFP:
         cps     #Mode_SVC
         str     sp, [r0, #13*4]         @/* Save calling SP                 */
         str     lr, [r0, #14*4]         @/* Save calling PC                 */
-    .endm
+.endm
 
-    .globl  vector_svc
-vector_svc:
-        push_svc_reg
-        bl      rt_hw_trap_svc
-        b       .
+@-------------------------------------------------------------------------------
+@ FIQ_Handler
 
-    .globl  vector_pabort
-vector_pabort:
-        push_svc_reg
-        bl      rt_hw_trap_pabt
-        b       .
+.section .text.isr, "ax"
+    .align  5
+.globl FIQ_Handler
+FIQ_Handler:
+    stmfd   sp!,{r0-r7,lr}
+    bl      rt_hw_trap_fiq
+    ldmfd   sp!,{r0-r7,lr}
+    subs    pc, lr, #4
 
-    .globl  vector_dabort
-vector_dabort:
-        push_svc_reg
-        bl      rt_hw_trap_dabt
-        b       .
+@-------------------------------------------------------------------------------
+@ SVC_Handler
 
-    .globl  vector_resv
-vector_resv:
-        push_svc_reg
-        bl      rt_hw_trap_resv
-        b       .
+    .align  5
+.weak SVC_Handler
+SVC_Handler:
+    push_svc_reg
+    bl      rt_hw_trap_swi
+    b       .
+
+@-------------------------------------------------------------------------------
+@ Prefetch_Handler
+
+    .align  5
+    .globl  Prefetch_Handler
+Prefetch_Handler:
+    push_svc_reg
+    bl      rt_hw_trap_pabt
+    b       .
+
+@-------------------------------------------------------------------------------
+@ Abort_Handler
+
+    .align  5
+    .globl  Abort_Handler
+Abort_Handler:
+    push_svc_reg
+    bl      rt_hw_trap_dabt
+    b       .
+
+@-------------------------------------------------------------------------------
+@ Reserved_Handler
+
+    .align  5
+    .globl  Reserved_Handler
+Reserved_Handler:
+    push_svc_reg
+    bl      rt_hw_trap_resv
+    b       .

@@ -56,9 +56,10 @@ void rt_hw_interrupt_init(void)
 {
     rt_uint32_t gic_dist_base;
     rt_uint32_t gic_irq_start;
+    rt_int32_t cpu_id;
 
     /* initialize vector table */
-    /* rt_hw_vector_init(); */
+    rt_hw_vector_init();
 
     /* initialize exceptions table */
     rt_memset(isr_table, 0x00, sizeof(isr_table));
@@ -66,8 +67,11 @@ void rt_hw_interrupt_init(void)
     /* initialize ARM GIC */
     gic_dist_base = platform_get_gic_dist_base();
     gic_irq_start = GIC_IRQ_START;
-
     arm_gic_dist_init(0, gic_dist_base, gic_irq_start);
+
+    gic_dist_base = platform_get_gic_rdist_base();
+    cpu_id = rt_hw_cpu_id();
+    arm_gic_redist_address_set(0, gic_dist_base, cpu_id);
 
     arm_gic_cpu_init(0);
     arm_gic_redist_init(0);

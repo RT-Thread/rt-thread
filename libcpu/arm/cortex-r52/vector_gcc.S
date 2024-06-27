@@ -5,12 +5,10 @@
  *
  * Change Logs:
  * Date           Author       Notes
+ * 2013-07-05     Bernard      the first version
  */
-@-------------------------------------------------------------------------------
-@ sys_intvecs.asm
-@
-@ (c) Texas Instruments 2009-2013, All rights reserved.
-@
+ 
+#include "rtconfig.h"
 
 .section .vectors, "ax"
 .code 32
@@ -30,11 +28,12 @@
 
 .globl system_vectors
 system_vectors:
-        b   Reset_Handler
-        b   turnon_VFP
-        b   SVC_Handler
-        b   Prefetch_Handler
-        b   Abort_Handler
-        b   Reserved_Handler
-        b   IRQ_Handler
-        b   FIQ_Handler
+    b   Reset_Handler
+    b   turnon_VFP
+    b   SVC_Handler
+    b   Prefetch_Handler
+    b   Abort_Handler
+    b   Reserved_Handler
+    b   IRQ_Handler
+    b   FIQ_Handler
+
