@@ -94,7 +94,7 @@ void vsyslog(int priority, const char *format, va_list args)
         priority |= local_facility;
     }
 
-    ulog_voutput(priority, local_ident, RT_TRUE, format, args);
+    ulog_voutput(priority, local_ident, RT_TRUE, RT_NULL, 0, 0, 0, format, args);
 }
 
 /**

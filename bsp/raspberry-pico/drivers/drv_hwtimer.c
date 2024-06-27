@@ -54,10 +54,10 @@ static _timer_t timer0 = {.name = "timer0"};
 static _timer_t timer1 = {.name = "timer1" };
 #endif /* BSP_USING_TIMER1 */
 #ifdef BSP_USING_TIMER2
-static _timer_t timer0 = {.name = "timer2"};
+static _timer_t timer2 = {.name = "timer2"};
 #endif /* BSP_USING_TIMER2 */
 #ifdef BSP_USING_TIMER3
-static _timer_t timer1 = {.name = "timer3" };
+static _timer_t timer3 = {.name = "timer3" };
 #endif /* BSP_USING_TIMER3 */
 
 static _timer_t *_timer_obj[] = {

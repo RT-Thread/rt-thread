@@ -17,7 +17,7 @@
 #include "drv_pin.h"
 
 #define LEDB_PIN        ((4*32)+18)
-#define BUTTON_PIN      ((0*32)+23)
+#define BUTTON_PIN      ((0*32)+20)
 
 static void sw_pin_cb(void *args);
 
@@ -40,19 +40,6 @@ int main(void)
     rt_pin_irq_enable(BUTTON_PIN, 1);
 
     rt_kprintf("MCXN236 HelloWorld\r\n");
-
-
-#ifdef RT_USING_SDIO
-    rt_thread_mdelay(2000);
-    if (dfs_mount("sd", "/", "elm", 0, NULL) == 0)
-    {
-        rt_kprintf("sd mounted to /\n");
-    }
-    else
-    {
-        rt_kprintf("sd mount to / failed\n");
-    }
-#endif
 
     while (1)
     {
