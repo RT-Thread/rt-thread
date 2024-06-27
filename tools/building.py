@@ -143,15 +143,18 @@ def PrepareBuilding(env, root_directory, has_libcpu=False, remove_components = [
     Env['BSP_ROOT'] = Dir('#').abspath
     os.environ["BSP_DIR"] = Dir('#').abspath
     # set PKGS_ROOT in ENV
-    if not "PKGS_DIR" in os.environ:
-        if "ENV_ROOT" in os.environ:
-            os.environ["PKGS_DIR"] = os.path.join(os.environ["ENV_ROOT"], "packages")
-        elif sys.platform == "win32":
-            os.environ["PKGS_DIR"] = os.path.join(os.environ["USERPROFILE"], ".env/packages")
-        else:
-            os.environ["PKGS_DIR"] = os.path.join(os.environ["HOME"], ".env/packages")
+    if "PKGS_DIR" in os.environ:
+        pass
+    elif "PKGS_ROOT" in os.environ:
+        os.environ["PKGS_DIR"] = os.environ["PKGS_ROOT"]
+    elif "ENV_ROOT" in os.environ:
+        os.environ["PKGS_DIR"] = os.path.join(os.environ["ENV_ROOT"], "packages")
+    elif sys.platform == "win32":
+        os.environ["PKGS_DIR"] = os.path.join(os.environ["USERPROFILE"], ".env", "packages")
+    else:
+        os.environ["PKGS_DIR"] = os.path.join(os.environ["HOME"], ".env", "packages")
 
-    sys.path = sys.path + [os.path.join(Rtt_Root, 'tools'), os.path.join(Rtt_Root, 'tools/kconfiglib')]
+    sys.path += os.path.join(Rtt_Root, 'tools')
 
     # {target_name:(CROSS_TOOL, PLATFORM)}
     tgt_dict = {'mdk':('keil', 'armcc'),
