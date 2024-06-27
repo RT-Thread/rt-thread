@@ -63,6 +63,7 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get -yqq install scons qemu-system git
+        pip3 install kconfiglib
 
     - name: Install Arm ToolChains
       if: ${{ matrix.legs.QEMU_ARCH == 'arm' && matrix.legs.UTEST != 'rtsmart/arm' && success() }}
