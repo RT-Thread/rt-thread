@@ -14,9 +14,9 @@
 
 * [硬件开源地址](https://oshwhub.com/li-chuang-kai-fa-ban/li-chuang-liang-shan-pai-tian-kong-xing-kai-fa-ban)
 * [硬件文档](https://lceda001.feishu.cn/wiki/D4cqwUkiTi6723knO2cczSThnYb)
-* [入门手册]([【立创·天空星HC32F4A0PITB】入门手册 - 飞书云文档 (feishu.cn)](https://lceda001.feishu.cn/wiki/MqcKwTiJ2isvASk5xQzcdeUJnOb))
-* [模块移植手册]([飞书云文档 (feishu.cn)](https://lceda001.feishu.cn/wiki/RvtIwNuQ6iVhqvk4cELcr1vPncQ))
-* [购买地址]([项目详情 (lckfb.com)](https://lckfb.com/project/detail/lckfb-lspi-skystar-hc32f4a0pitb-lite?param=baseInfo))
+* [入门手册](https://lceda001.feishu.cn/wiki/MqcKwTiJ2isvASk5xQzcdeUJnOb)
+* [模块移植手册](https://lceda001.feishu.cn/wiki/RvtIwNuQ6iVhqvk4cELcr1vPncQ)
+* [购买地址](https://lckfb.com/project/detail/lckfb-lspi-skystar-hc32f4a0pitb-lite?param=baseInfo)
 
 ## 外设支持
 
@@ -29,7 +29,7 @@
 | I2C          |     支持     | I2C1                            |
 | SPI          |     支持     | SPI0 -  SPI2                    |
 | ADC          |     支持     | ADC0 - ADC2                     |
-| TF CARD      |     支持     | SDIO                            |
+| TF CARD      |     支持     | SDIO1                           |
 | SPI FLASH    |   暂不支持   |                                 |
 | **扩展模块** | **支持情况** | **备注**                        |
 | 暂无         |   暂不支持   | 暂不支持                        |
