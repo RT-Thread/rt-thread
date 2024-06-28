@@ -34,25 +34,25 @@ static void parse_weather_data(const char *buf)
         return;
     }
 
-		cJSON *msg = cJSON_GetObjectItem(root, "msg");
+    cJSON *msg = cJSON_GetObjectItem(root, "msg");
     if (msg == NULL) {
         rt_kprintf("Error getting msg object\n");
         cJSON_Delete(root);
         return;
     }
-		else {
-			  rt_kprintf("msg: %s\n", msg->valuestring);
-		}
+    else {
+        rt_kprintf("msg: %s\n", msg->valuestring);
+    }
 
-		cJSON *code = cJSON_GetObjectItem(root, "code");
+    cJSON *code = cJSON_GetObjectItem(root, "code");
     if (code == NULL) {
         rt_kprintf("Error getting code object\n");
         cJSON_Delete(root);
         return;
     }
-		else {
-			  rt_kprintf("code: %d\n", code->valueint);
-		}
+    else {
+        rt_kprintf("code: %d\n", code->valueint);
+    }
 
     cJSON *data = cJSON_GetObjectItem(root, "data");
     if (data == NULL) {
@@ -60,9 +60,9 @@ static void parse_weather_data(const char *buf)
         cJSON_Delete(root);
         return;
     }
-		else {
-			  rt_kprintf("data: \n");
-		}
+    else {
+        rt_kprintf("data: \n");
+    }
 
     cJSON *location = cJSON_GetObjectItem(data, "location");
     if (location == NULL) {
@@ -70,9 +70,9 @@ static void parse_weather_data(const char *buf)
         cJSON_Delete(root);
         return;
     }
-		else {
-			  rt_kprintf("  location: \n");
-		}
+    else {
+        rt_kprintf("  location: \n");
+    }
 
     cJSON *id = cJSON_GetObjectItem(location, "id");
     cJSON *name = cJSON_GetObjectItem(location, "name");
@@ -86,110 +86,110 @@ static void parse_weather_data(const char *buf)
         rt_kprintf("Error getting fields\n");
     }
 
-		cJSON *now = cJSON_GetObjectItem(data, "now");
+    cJSON *now = cJSON_GetObjectItem(data, "now");
     if (now == NULL) {
         rt_kprintf("Error getting now object\n");
         cJSON_Delete(root);
         return;
     }
-		else {
-			  rt_kprintf("  now: \n");
-		}
+    else {
+        rt_kprintf("  now: \n");
+    }
 
-		cJSON *precipitation = cJSON_GetObjectItem(now, "precipitation");
+    cJSON *precipitation = cJSON_GetObjectItem(now, "precipitation");
     cJSON *temperature = cJSON_GetObjectItem(now, "temperature");
     cJSON *pressure = cJSON_GetObjectItem(now, "pressure");
-		cJSON *humidity = cJSON_GetObjectItem(now, "humidity");
+    cJSON *humidity = cJSON_GetObjectItem(now, "humidity");
     cJSON *windDirection = cJSON_GetObjectItem(now, "windDirection");
     cJSON *windDirectionDegree = cJSON_GetObjectItem(now, "windDirectionDegree");
-		cJSON *windSpeed = cJSON_GetObjectItem(now, "windSpeed");
+    cJSON *windSpeed = cJSON_GetObjectItem(now, "windSpeed");
     cJSON *windScale = cJSON_GetObjectItem(now, "windScale");
 
-		if (precipitation != NULL && temperature != NULL && pressure != NULL && humidity != NULL && 
-			  windDirection != NULL && windDirectionDegree != NULL && windSpeed != NULL && windScale != NULL) {
+    if (precipitation != NULL && temperature != NULL && pressure != NULL && humidity != NULL &&
+        windDirection != NULL && windDirectionDegree != NULL && windSpeed != NULL && windScale != NULL) {
         rt_kprintf("     precipitation: %d\n", precipitation->valueint);
         rt_kprintf("     temperature: %.1f\n", temperature->valuedouble);
         rt_kprintf("     pressure: %d\n", pressure->valueint);
-			  rt_kprintf("     humidity: %d\n", humidity->valueint);
+        rt_kprintf("     humidity: %d\n", humidity->valueint);
         rt_kprintf("     windDirection: %s\n", windDirection->valuestring);
         rt_kprintf("     windDirectionDegree: %d\n", windDirectionDegree->valueint);
-			  rt_kprintf("     windSpeed: %.1f\n", windSpeed->valuedouble);
+        rt_kprintf("     windSpeed: %.1f\n", windSpeed->valuedouble);
         rt_kprintf("     windScale: %s\n", windScale->valuestring);
     } else {
         rt_kprintf("Error getting fields\n");
     }
 
-		cJSON *alarm = cJSON_GetObjectItem(data, "alarm");
+    cJSON *alarm = cJSON_GetObjectItem(data, "alarm");
     if (alarm == NULL) {
         rt_kprintf("Error getting alarm object\n");
         cJSON_Delete(root);
         return;
     }
-		else {
-			  rt_kprintf("  alarm: %s\n", cJSON_Print(alarm));
-		}
+    else {
+        rt_kprintf("  alarm: %s\n", cJSON_Print(alarm));
+    }
 
-		cJSON *lastUpdate = cJSON_GetObjectItem(data, "lastUpdate");
+    cJSON *lastUpdate = cJSON_GetObjectItem(data, "lastUpdate");
     if (lastUpdate == NULL) {
         rt_kprintf("Error getting lastUpdate object\n");
         cJSON_Delete(root);
         return;
     }
-		else {
-			  rt_kprintf("  lastUpdate: %s\n", cJSON_Print(lastUpdate));
-		}
+    else {
+        rt_kprintf("  lastUpdate: %s\n", cJSON_Print(lastUpdate));
+    }
 
     cJSON_Delete(root);
 }
 
 static void get_weather_forecast(void)
 {
-	  char url[256];
-	  snprintf(url, sizeof(url), "http://weather.cma.cn/api/now/%d", city_id);
+    char url[256];
+    snprintf(url, sizeof(url), "http://weather.cma.cn/api/now/%d", city_id);
 
-		struct webclient_session* session = webclient_session_create(1024);
-		if(session == NULL) return;
+    struct webclient_session* session = webclient_session_create(1024);
+    if(session == NULL) return;
 
-	  int rc = webclient_get(session, url);
-		if(rc != 200) goto free_session_exit;
+    int rc = webclient_get(session, url);
+    if(rc != 200) goto free_session_exit;
 
-		char *response = rt_malloc(INITIAL_RESPONSE_SIZE);
-		if(response == NULL) goto free_session_exit;
+    char *response = rt_malloc(INITIAL_RESPONSE_SIZE);
+    if(response == NULL) goto free_session_exit;
 
-		int data_ptr = 0;
-	  int buf_size = INITIAL_RESPONSE_SIZE;
-		do {
-				int bytes_read = webclient_read(session, &response[data_ptr], INITIAL_RESPONSE_SIZE);
-				if(bytes_read <= 0) {
-						break;
-				}
+    int data_ptr = 0;
+    int buf_size = INITIAL_RESPONSE_SIZE;
+    do {
+        int bytes_read = webclient_read(session, &response[data_ptr], INITIAL_RESPONSE_SIZE);
+        if(bytes_read <= 0) {
+           break;
+        }
 
-				data_ptr += bytes_read;
-				if(data_ptr > MAX_RESPONSE_SIZE) {
-					break;
-				}
+        data_ptr += bytes_read;
+        if(data_ptr > MAX_RESPONSE_SIZE) {
+           break;
+        }
 
-				if((data_ptr + INITIAL_RESPONSE_SIZE) > buf_size) {
-					  response = rt_realloc(response, data_ptr + INITIAL_RESPONSE_SIZE);
-					  buf_size += INITIAL_RESPONSE_SIZE;
-				}
-		} while(1);
+        if((data_ptr + INITIAL_RESPONSE_SIZE) > buf_size) {
+            response = rt_realloc(response, data_ptr + INITIAL_RESPONSE_SIZE);
+            buf_size += INITIAL_RESPONSE_SIZE;
+        }
+    } while(1);
 
-		/* response is alive */
-		parse_weather_data(response);
+    /* response is alive */
+    parse_weather_data(response);
 
-		rt_free(response);
+    rt_free(response);
 
 free_session_exit:
-		webclient_close(session);
+    webclient_close(session);
 }
 
 static void wifi_weather_sample(void)
 {
-	  /* wifi join */;
-	  get_weather_forecast();
-	  rt_kprintf("\r\n");
-	  rt_kprintf("wifi_weather_sample complete\r\n");
+    /* wifi join */;
+    get_weather_forecast();
+    rt_kprintf("\r\n");
+    rt_kprintf("wifi_weather_sample complete\r\n");
 }
 
 MSH_CMD_EXPORT(wifi_weather_sample, wifi weather sample);
