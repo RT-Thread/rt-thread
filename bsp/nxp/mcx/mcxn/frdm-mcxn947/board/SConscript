@@ -18,6 +18,9 @@ if GetDepend(['BSP_USING_RW007']):
 if GetDepend(['RT_USING_SFUD']):
     src += Glob('ports/drv_filesystem_spi_flash.c')
 
+if GetDepend(['PKG_USING_CJSON']) and GetDepend(['PKG_USING_WEBCLIENT']):
+    src += Glob('ports/wifi_weather_sample.c')
+
 
 CPPPATH = [cwd, cwd + '/MCUX_Config/board']
 CPPDEFINES = ['DEBUG', 'CPU_MCXN947VDF_cm33_core0']
