@@ -24,13 +24,13 @@
 
 /************************ USART port **********************/
 #if defined(BSP_USING_UART1)
-    #define USART1_RX_PORT                  (GPIO_PORT_H)
-    #define USART1_RX_PIN                   (GPIO_PIN_13)
-    #define USART1_RX_FUNC                  (GPIO_FUNC_33)
+    #define USART1_RX_PORT                  (GPIO_PORT_A)
+    #define USART1_RX_PIN                   (GPIO_PIN_10)
+    #define USART1_RX_FUNC                  (GPIO_FUNC_20)
 
-    #define USART1_TX_PORT                  (GPIO_PORT_H)
-    #define USART1_TX_PIN                   (GPIO_PIN_15)
-    #define USART1_TX_FUNC                  (GPIO_FUNC_32)
+    #define USART1_TX_PORT                  (GPIO_PORT_A)
+    #define USART1_TX_PIN                   (GPIO_PIN_09)
+    #define USART1_TX_FUNC                  (GPIO_FUNC_20)
 #endif
 
 #if defined(BSP_USING_UART6)
@@ -108,19 +108,19 @@
 
 /************************* SPI port ***********************/
 #if defined(BSP_USING_SPI1)
-    #define SPI1_CS_PORT                (GPIO_PORT_C)
-    #define SPI1_CS_PIN                 (GPIO_PIN_07)
+    #define SPI1_CS_PORT                (GPIO_PORT_A)
+    #define SPI1_CS_PIN                 (GPIO_PIN_04)
 
-    #define SPI1_SCK_PORT               (GPIO_PORT_C)
-    #define SPI1_SCK_PIN                (GPIO_PIN_06)
+    #define SPI1_SCK_PORT               (GPIO_PORT_A)
+    #define SPI1_SCK_PIN                (GPIO_PIN_05)
     #define SPI1_SCK_FUNC               (GPIO_FUNC_40)
 
-    #define SPI1_MOSI_PORT              (GPIO_PORT_B)
-    #define SPI1_MOSI_PIN               (GPIO_PIN_13)
+    #define SPI1_MOSI_PORT              (GPIO_PORT_A)
+    #define SPI1_MOSI_PIN               (GPIO_PIN_07)
     #define SPI1_MOSI_FUNC              (GPIO_FUNC_41)
 
-    #define SPI1_MISO_PORT              (GPIO_PORT_B)
-    #define SPI1_MISO_PIN               (GPIO_PIN_12)
+    #define SPI1_MISO_PORT              (GPIO_PORT_A)
+    #define SPI1_MISO_PIN               (GPIO_PIN_06)
     #define SPI1_MISO_FUNC              (GPIO_FUNC_42)
 
     #define SPI1_WP_PORT                (GPIO_PORT_B)
@@ -306,20 +306,20 @@
     #define SDIOC1_CMD_PIN                  (GPIO_PIN_02)
     #define SDIOC1_CMD_FUNC                 (GPIO_FUNC_9)
 
-    #define SDIOC1_D0_PORT                  (GPIO_PORT_B)
-    #define SDIOC1_D0_PIN                   (GPIO_PIN_07)
+    #define SDIOC1_D0_PORT                  (GPIO_PORT_C)
+    #define SDIOC1_D0_PIN                   (GPIO_PIN_08)
     #define SDIOC1_D0_FUNC                  (GPIO_FUNC_9)
 
-    #define SDIOC1_D1_PORT                  (GPIO_PORT_A)
-    #define SDIOC1_D1_PIN                   (GPIO_PIN_08)
+    #define SDIOC1_D1_PORT                  (GPIO_PORT_C)
+    #define SDIOC1_D1_PIN                   (GPIO_PIN_09)
     #define SDIOC1_D1_FUNC                  (GPIO_FUNC_9)
 
     #define SDIOC1_D2_PORT                  (GPIO_PORT_C)
     #define SDIOC1_D2_PIN                   (GPIO_PIN_10)
     #define SDIOC1_D2_FUNC                  (GPIO_FUNC_9)
 
-    #define SDIOC1_D3_PORT                  (GPIO_PORT_B)
-    #define SDIOC1_D3_PIN                   (GPIO_PIN_05)
+    #define SDIOC1_D3_PORT                  (GPIO_PORT_C)
+    #define SDIOC1_D3_PIN                   (GPIO_PIN_11)
     #define SDIOC1_D3_FUNC                  (GPIO_FUNC_9)
 #endif
 
