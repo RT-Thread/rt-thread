@@ -187,6 +187,7 @@ static rt_ssize_t spim_xfer(struct rt_spi_device *device, struct rt_spi_message 
             /* not supported yet */
             rt_kprintf("Do not support the situation that send_buf and recv_buf both not equal to 0.");
         }
+        rt_thread_mdelay(10);
     }
 
     if (FSPIM_SUCCESS != tx_rx_result)

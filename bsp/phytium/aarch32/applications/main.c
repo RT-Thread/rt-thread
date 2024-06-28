@@ -56,7 +56,7 @@ static void demo_core_thread(void *parameter)
     {
         /* code */
         level = rt_cpus_lock();
-        rt_kprintf("Hi, core%d \r\n", rt_hw_cpu_id());
+        // rt_kprintf("Hi, core%d \r\n", rt_hw_cpu_id());
         rt_cpus_unlock(level);
         rt_thread_mdelay(20000);
     }

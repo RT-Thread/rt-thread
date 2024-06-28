@@ -149,7 +149,6 @@
 #define RT_USING_ZERO
 #define RT_USING_RANDOM
 #define RT_USING_PWM
-#define RT_USING_RTC
 #define RT_USING_SDIO
 #define RT_SDIO_STACK_SIZE 8192
 #define RT_SDIO_THREAD_PRIORITY 15
@@ -475,11 +474,9 @@
 #define BSP_USING_GPIO
 #define BSP_USING_QSPI
 #define RT_USING_QSPI0
-#define USING_QSPI_CHANNEL0
+#define USING_QSPI_CHANNEL1
 #define BSP_USING_ETH
 #define RT_LWIP_PBUF_POOL_BUFSIZE 1700
-#define BSP_USING_PWM
-#define RT_USING_PWM6
 #define BSP_USING_I2C
 #define I2C_USE_MIO
 #define RT_USING_MIO15
@@ -535,10 +532,6 @@
 #define ELOG_LINE_BUF_SIZE 0x100
 #define LOG_DEBUG
 /* end of Sdk common configuration */
-
-/* Image information configuration */
-
-/* end of Image information configuration */
 /* end of Standalone Setting */
 
 #endif
