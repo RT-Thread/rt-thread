@@ -139,7 +139,7 @@ struct rt_serial_rx_fifo
 
 struct rt_serial_tx_fifo
 {
-    struct rt_completion completion;
+    struct rt_completion *completion;
 };
 
 /*
