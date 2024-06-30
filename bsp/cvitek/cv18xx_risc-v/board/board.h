@@ -19,7 +19,7 @@ extern unsigned int __bss_start;
 extern unsigned int __bss_end;
 
 #ifndef RT_USING_SMART
-#define KERNEL_VADDR_START 0x0
+#define KERNEL_VADDR_START 0x80200000
 #endif
 
 #define RT_HW_HEAP_BEGIN ((void *)&__bss_end)
