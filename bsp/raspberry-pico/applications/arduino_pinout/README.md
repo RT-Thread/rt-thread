@@ -51,6 +51,6 @@ Hardware Drivers Config --->
 | 27 (A1) | P | 是/否 | ADC1-CH1，默认被RT-Thread的ADC设备框架adc1接管 |
 | 28 (A2) | P | 是/否 | ADC2-CH2，默认被RT-Thread的ADC设备框架adc2接管 |
 
-> ![]()注意：
+> 注意：
 >
 > 暂无
