@@ -33,7 +33,7 @@ int formatted_code;
 void formatted_code_again;
 ```
 
-使用以下命令，将对除了bsp、elmfat、lwip和kconfig-frontends等文件夹之外的所有代码进行格式化：
+使用以下命令，将对除了bsp、elmfat、lwip等文件夹之外的所有代码进行格式化：
 
 ```shell
 # 安装clang-format
