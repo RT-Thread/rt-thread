@@ -32,9 +32,9 @@ static struct ehci_qh_hw *ehci_qh_alloc(struct usbh_bus *bus)
     struct ehci_qtd_hw *qtd;
     size_t flags;
 
+    flags = usb_osal_enter_critical_section();
     for (uint32_t i = 0; i < CONFIG_USB_EHCI_QH_NUM; i++) {
         if (!g_ehci_hcd[bus->hcd.hcd_id].ehci_qh_used[i]) {
-            flags = usb_osal_enter_critical_section();
             g_ehci_hcd[bus->hcd.hcd_id].ehci_qh_used[i] = true;
             usb_osal_leave_critical_section(flags);
 
@@ -56,6 +56,7 @@ static struct ehci_qh_hw *ehci_qh_alloc(struct usbh_bus *bus)
             return qh;
         }
     }
+    usb_osal_leave_critical_section(flags);
     return NULL;
 }
 
@@ -1160,21 +1161,18 @@ int usbh_submit_urb(struct usbh_urb *urb)
             if (qh == NULL) {
                 return -USB_ERR_NOMEM;
             }
-            urb->hcpriv = qh;
             break;
         case USB_ENDPOINT_TYPE_BULK:
             qh = ehci_bulk_urb_init(bus, urb, urb->transfer_buffer, urb->transfer_buffer_length);
             if (qh == NULL) {
                 return -USB_ERR_NOMEM;
             }
-            urb->hcpriv = qh;
             break;
         case USB_ENDPOINT_TYPE_INTERRUPT:
             qh = ehci_intr_urb_init(bus, urb, urb->transfer_buffer, urb->transfer_buffer_length);
             if (qh == NULL) {
                 return -USB_ERR_NOMEM;
             }
-            urb->hcpriv = qh;
             break;
         case USB_ENDPOINT_TYPE_ISOCHRONOUS:
 #ifdef CONFIG_USB_EHCI_ISO
@@ -1245,7 +1243,7 @@ int usbh_kill_urb(struct usbh_urb *urb)
         }
     } else {
 #ifdef CONFIG_USB_EHCI_ISO
-        ehci_remove_itd_urb(bus, urb);
+        ehci_kill_iso_urb(bus, urb);
         EHCI_HCOR->usbcmd |= (EHCI_USBCMD_PSEN | EHCI_USBCMD_ASEN);
         usb_osal_leave_critical_section(flags);
         return 0;
@@ -1346,8 +1344,8 @@ void USBH_IRQHandler(uint8_t busid)
                     for (uint8_t index = 0; index < CONFIG_USB_EHCI_QH_NUM; index++) {
                         g_ehci_hcd[bus->hcd.hcd_id].ehci_qh_used[index] = false;
                     }
-                    for (uint8_t index = 0; index < CONFIG_USB_EHCI_ITD_NUM; index++) {
-                        g_ehci_hcd[bus->hcd.hcd_id].ehci_itd_used[index] = false;
+                    for (uint8_t index = 0; index < CONFIG_USB_EHCI_ISO_NUM; index++) {
+                        g_ehci_hcd[bus->hcd.hcd_id].ehci_iso_used[index] = false;
                     }
                 }
 

@@ -217,7 +217,7 @@ static int rndis_query_cmd_handler(uint8_t *data, uint32_t len)
         case OID_GEN_MAXIMUM_FRAME_SIZE:
         case OID_GEN_TRANSMIT_BLOCK_SIZE:
         case OID_GEN_RECEIVE_BLOCK_SIZE:
-            RNDIS_INQUIRY_PUT_LE32(0x05DC);
+            RNDIS_INQUIRY_PUT_LE32(0x05DC); /* mtu 1500 */
             infomation_len = 4;
             break;
         case OID_GEN_VENDOR_ID:
@@ -255,7 +255,7 @@ static int rndis_query_cmd_handler(uint8_t *data, uint32_t len)
             infomation_len = 4;
             break;
         case OID_GEN_MAXIMUM_TOTAL_SIZE:
-            RNDIS_INQUIRY_PUT_LE32(CONFIG_USBDEV_RNDIS_ETH_MAX_FRAME_SIZE + CONFIG_USBDEV_RNDIS_RESP_BUFFER_SIZE);
+            RNDIS_INQUIRY_PUT_LE32(0x0616); /* 1514 + 44 */
             infomation_len = 4;
             break;
         case OID_GEN_MEDIA_CONNECT_STATUS:
@@ -488,7 +488,7 @@ struct pbuf *usbd_rndis_eth_rx(void)
     if (p == NULL) {
         return NULL;
     }
-    memcpy(p->payload, (uint8_t *)g_rndis_rx_data_buffer, g_rndis_rx_data_length);
+    usb_memcpy(p->payload, (uint8_t *)g_rndis_rx_data_buffer, g_rndis_rx_data_length);
     p->len = g_rndis_rx_data_length;
 
     USB_LOG_DBG("rxlen:%d\r\n", g_rndis_rx_data_length);
@@ -518,7 +518,7 @@ int usbd_rndis_eth_tx(struct pbuf *p)
 
     buffer = (uint8_t *)(g_rndis_tx_buffer + sizeof(rndis_data_packet_t));
     for (q = p; q != NULL; q = q->next) {
-        memcpy(buffer, q->payload, q->len);
+        usb_memcpy(buffer, q->payload, q->len);
         buffer += q->len;
     }
 

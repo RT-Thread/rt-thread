@@ -40,13 +40,20 @@ if GetDepend(['RT_CHERRYUSB_DEVICE']):
     if GetDepend(['RT_CHERRYUSB_DEVICE_DWC2_GD']):
         src += Glob('port/dwc2/usb_dc_dwc2.c')
         src += Glob('port/dwc2/usb_glue_gd.c')
+    if GetDepend(['RT_CHERRYUSB_DEVICE_DWC2_HC']):
+        src += Glob('port/dwc2/usb_dc_dwc2.c')
+        src += Glob('port/dwc2/usb_glue_hc.c')
     if GetDepend(['RT_CHERRYUSB_DEVICE_DWC2_CUSTOM']):
         src += Glob('port/dwc2/usb_dc_dwc2.c')
-    if GetDepend(['RT_CHERRYUSB_DEVICE_MUSB_STANDARD']):
+    if GetDepend(['RT_CHERRYUSB_DEVICE_MUSB_ES']):
         src += Glob('port/musb/usb_dc_musb.c')
+        src += Glob('port/musb/usb_glue_es.c')
     if GetDepend(['RT_CHERRYUSB_DEVICE_MUSB_SUNXI']):
         src += Glob('port/musb/usb_dc_musb.c')
         src += Glob('port/musb/usb_glue_sunxi.c')
+    if GetDepend(['RT_CHERRYUSB_DEVICE_MUSB_BK']):
+        src += Glob('port/musb/usb_dc_musb.c')
+        src += Glob('port/musb/usb_glue_bk.c')
     if GetDepend(['RT_CHERRYUSB_DEVICE_MUSB_CUSTOM']):
         src += Glob('port/musb/usb_dc_musb.c')
     if GetDepend(['RT_CHERRYUSB_DEVICE_BL']):
@@ -151,9 +158,15 @@ if GetDepend(['RT_CHERRYUSB_HOST']):
         src += Glob('port/dwc2/usb_hc_dwc2.c')
     if GetDepend(['RT_CHERRYUSB_HOST_MUSB_STANDARD']):
         src += Glob('port/musb/usb_hc_musb.c')
+    if GetDepend(['RT_CHERRYUSB_HOST_MUSB_ES']):
+        src += Glob('port/musb/usb_hc_musb.c')
+        src += Glob('port/musb/usb_glue_es.c')
     if GetDepend(['RT_CHERRYUSB_HOST_MUSB_SUNXI']):
         src += Glob('port/musb/usb_hc_musb.c')
         src += Glob('port/musb/usb_glue_sunxi.c')
+    if GetDepend(['RT_CHERRYUSB_HOST_MUSB_BK']):
+        src += Glob('port/musb/usb_hc_musb.c')
+        src += Glob('port/musb/usb_glue_bk.c')
     if GetDepend(['RT_CHERRYUSB_HOST_MUSB_CUSTOM']):
         src += Glob('port/musb/usb_hc_musb.c')
 
@@ -197,8 +210,8 @@ if GetDepend(['RT_CHERRYUSB_HOST']):
     if GetDepend('RT_CHERRYUSB_HOST_CDC_ECM') \
         or GetDepend('RT_CHERRYUSB_HOST_CDC_RNDIS') \
         or GetDepend('RT_CHERRYUSB_HOST_CDC_NCM') \
-        or GetDepend('RT_CHERRYUSB_HOST_CDC_ASIX') \
-        or GetDepend('RT_CHERRYUSB_HOST_CDC_RTL8152'):
+        or GetDepend('RT_CHERRYUSB_HOST_ASIX') \
+        or GetDepend('RT_CHERRYUSB_HOST_RTL8152'):
         src += Glob('platform/rtthread/usbh_lwip.c')
 
 src += Glob('platform/rtthread/usb_msh.c')

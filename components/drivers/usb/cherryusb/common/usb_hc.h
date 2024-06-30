@@ -34,6 +34,7 @@ struct usbh_iso_frame_packet {
  * Structure containing the USB Urb configuration.
  */
 struct usbh_urb {
+    usb_slist_t list;
     void *hcpriv;
     struct usbh_hubport *hport;
     struct usb_endpoint_descriptor *ep;
