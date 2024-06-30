@@ -11,6 +11,9 @@
 #ifndef  __DFS_CROMFS_H__
 #define  __DFS_CROMFS_H__
 
+#include <stdint.h>
+
 int dfs_cromfs_init(void);
+uint8_t *cromfs_get_partition_data(uint32_t *len);
 
 #endif  /*__DFS_CROMFS_H__*/

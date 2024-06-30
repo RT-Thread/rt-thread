@@ -20,13 +20,15 @@
 #include "page.h"
 #include "lwp_arch.h"
 
+/* must defined as 0xFFFFFFC000200000 */
+RT_STATIC_ASSERT(kmem_region, KERNEL_VADDR_START == 0xFFFFFFC000200000);
+
 rt_region_t init_page_region = {(rt_size_t)RT_HW_PAGE_START, (rt_size_t)RT_HW_PAGE_END};
 
 extern size_t MMUTable[];
 
 struct mem_desc platform_mem_desc[] = {
     {KERNEL_VADDR_START, (rt_size_t)RT_HW_PAGE_END - 1, (rt_size_t)ARCH_MAP_FAILED, NORMAL_MEM},
-    {0x1000, ((KERNEL_VADDR_START - 1) & 0xfffff000) - 1, (rt_size_t)ARCH_MAP_FAILED, DEVICE_MEM},
 };
 
 #define NUM_MEM_DESC (sizeof(platform_mem_desc) / sizeof(platform_mem_desc[0]))

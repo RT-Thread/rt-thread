@@ -23,7 +23,7 @@ extern unsigned int __bss_end;
 #endif
 
 #define RT_HW_HEAP_BEGIN ((void *)&__bss_end)
-#define RT_HW_HEAP_END   ((void *)(RT_HW_HEAP_BEGIN + 16 * 1024 * 1024))
+#define RT_HW_HEAP_END   ((void *)(KERNEL_VADDR_START + 16 * 1024 * 1024))
 #define RT_HW_PAGE_START RT_HW_HEAP_END
 #define RT_HW_PAGE_END   ((void *)(KERNEL_VADDR_START + 32 * 1024 * 1024))
 

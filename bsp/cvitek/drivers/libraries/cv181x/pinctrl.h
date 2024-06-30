@@ -23,12 +23,12 @@
 #define  PAD_MIPI_TXM0__MIPI_TXM0 0
 #define  PAD_MIPI_TXP0__MIPI_TXP0 0
 
-#if defined(ARCH_ARM)
+#if defined(ARCH_REMAP_KERNEL)
 extern rt_ubase_t pinmux_base_ioremap(void);
 #define PINMUX_BASE pinmux_base_ioremap()
 #else
 #define PINMUX_BASE 0x03001000
-#endif /* defined(ARCH_ARM) */
+#endif /* defined(ARCH_REMAP_KERNEL) */
 #define PINMUX_MASK(PIN_NAME) FMUX_GPIO_FUNCSEL_##PIN_NAME##_MASK
 #define PINMUX_OFFSET(PIN_NAME) FMUX_GPIO_FUNCSEL_##PIN_NAME##_OFFSET
 #define PINMUX_VALUE(PIN_NAME, FUNC_NAME) PIN_NAME##__##FUNC_NAME
