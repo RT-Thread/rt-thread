@@ -1,8 +1,8 @@
-# xxx 开发板的Arduino生态兼容说明
+# Raspberry Pi Pico 开发板的Arduino生态兼容说明
 
 ## 1 RTduino - RT-Thread的Arduino生态兼容层
 
-xxx 开发板已经完整适配了[RTduino软件包](https://github.com/RTduino/RTduino)，即RT-Thread的Arduino生态兼容层。用户可以按照Arduino的编程习惯来操作该BSP，并且可以使用大量Arduino社区丰富的库，是对RT-Thread生态的极大增强。更多信息，请参见[RTduino软件包说明文档](https://github.com/RTduino/RTduino)。
+Raspberry Pi Pico 开发板已经完整适配了[RTduino软件包](https://github.com/RTduino/RTduino)，即RT-Thread的Arduino生态兼容层。用户可以按照Arduino的编程习惯来操作该BSP，并且可以使用大量Arduino社区丰富的库，是对RT-Thread生态的极大增强。更多信息，请参见[RTduino软件包说明文档](https://github.com/RTduino/RTduino)。
 
 ### 1.1 如何开启针对本BSP的Arduino生态兼容层
 
@@ -18,7 +18,7 @@ Hardware Drivers Config --->
 
 更多引脚布局相关信息参见 [pins_arduino.c](pins_arduino.c) 和 [pins_arduino.h](pins_arduino.h)。
 
-![xxx-pinout](xxx-pinout.jpg)
+![Pico-Pinout](images/Pico-R3-Pinout-1719757322245-1.svg)
 | Arduino引脚编号  | STM32引脚编号 | 5V容忍 | 备注  |
 | ------------------- | --------- | ---- | ------------------------------------------------------------------------- |
 | 0 (D0) | P | 是/否 | Serial-TX，默认被RT-Thread的UART设备框架uart1接管 |
@@ -51,7 +51,6 @@ Hardware Drivers Config --->
 | 27 (A1) | P | 是/否 | ADC1-CH1，默认被RT-Thread的ADC设备框架adc1接管 |
 | 28 (A2) | P | 是/否 | ADC2-CH2，默认被RT-Thread的ADC设备框架adc2接管 |
 
-> 注意：
+> ![]()注意：
 >
-> 1. xxxxxxxxx
-> 2. xxxxxxxxx
+> 暂无
