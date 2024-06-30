@@ -215,98 +215,116 @@ def MDK45Project(tree, target, script):
     root = tree.getroot()
     out = open(target, 'w')
     out.write('<?xml version="1.0" encoding="UTF-8" standalone="no" ?>\n')
+    
+    #Addtion the name of OutputDir
+    for targcomoOp in root.findall('.//TargetCommonOption'):
+        OutputDir = targcomoOp.find('OutputDirectory')
+        OutputName = targcomoOp.find('OutputName')
+        #print(OutputDir.text)
+        #print(OutputName.text)
+        OutputDir.text += OutputName.text + '\\'
+        #print(OutputDir.text)
 
-    CPPPATH = []
-    CPPDEFINES = []
-    LINKFLAGS = ''
-    CXXFLAGS = ''
-    CCFLAGS = ''
-    CFLAGS = ''
-    ProjectFiles = []
+    for child in root.findall('.//Target'):
+        CPPPATH = []
+        CPPDEFINES = []
+        LINKFLAGS = ''
+        CXXFLAGS = ''
+        CCFLAGS = ''
+        CFLAGS = ''
+        ProjectFiles = []
+        groups = child.find('Groups')
+        if groups is None:
+            groups = SubElement(child,'Groups')
+        groups.clear() # clean old groups
 
-    # add group
-    groups = tree.find('Targets/Target/Groups')
-    if groups is None:
-        groups = SubElement(tree.find('Targets/Target'), 'Groups')
-    groups.clear() # clean old groups
-    for group in script:
-        group_tree = MDK4AddGroup(ProjectFiles, groups, group['name'], group['src'], project_path, group)
+        # add group
+        #groups = tree.find('Targets/Target/Groups')
+        #if groups is None:
+            #groups = SubElement(tree.find('Targets/Target'), 'Groups')
+        #groups.clear() # clean old groups
+        for group in script:
+            group_tree = MDK4AddGroup(ProjectFiles, groups, group['name'], group['src'], project_path, group)
+            # get each include path
+            if 'CPPPATH' in group and group['CPPPATH']:
+                if CPPPATH:
+                    CPPPATH += group['CPPPATH']
+                else:
+                    CPPPATH += group['CPPPATH']
 
-        # get each include path
-        if 'CPPPATH' in group and group['CPPPATH']:
-            if CPPPATH:
-                CPPPATH += group['CPPPATH']
-            else:
-                CPPPATH += group['CPPPATH']
+            # get each group's definitions
+            if 'CPPDEFINES' in group and group['CPPDEFINES']:
+                if CPPDEFINES:
+                    CPPDEFINES += group['CPPDEFINES']
+                else:
+                    CPPDEFINES = group['CPPDEFINES']
 
-        # get each group's definitions
-        if 'CPPDEFINES' in group and group['CPPDEFINES']:
-            if CPPDEFINES:
-                CPPDEFINES += group['CPPDEFINES']
-            else:
-                CPPDEFINES = group['CPPDEFINES']
+            # get each group's link flags
+            if 'LINKFLAGS' in group and group['LINKFLAGS']:
+                if LINKFLAGS:
+                    LINKFLAGS += ' ' + group['LINKFLAGS']
+                else:
+                    LINKFLAGS += group['LINKFLAGS']
 
-        # get each group's link flags
-        if 'LINKFLAGS' in group and group['LINKFLAGS']:
-            if LINKFLAGS:
-                LINKFLAGS += ' ' + group['LINKFLAGS']
-            else:
-                LINKFLAGS += group['LINKFLAGS']
+            # get each group's CXXFLAGS flags
+            if 'CXXFLAGS' in group and group['CXXFLAGS']:
+                if CXXFLAGS:
+                    CXXFLAGS += ' ' + group['CXXFLAGS']
+                else:
+                    CXXFLAGS += group['CXXFLAGS']
 
-        # get each group's CXXFLAGS flags
-        if 'CXXFLAGS' in group and group['CXXFLAGS']:
-            if CXXFLAGS:
-                CXXFLAGS += ' ' + group['CXXFLAGS']
-            else:
-                CXXFLAGS += group['CXXFLAGS']
+            # get each group's CCFLAGS flags
+            if 'CCFLAGS' in group and group['CCFLAGS']:
+                if CCFLAGS:
+                    CCFLAGS += ' ' + group['CCFLAGS']
+                else:
+                    CCFLAGS += group['CCFLAGS']
 
-        # get each group's CCFLAGS flags
-        if 'CCFLAGS' in group and group['CCFLAGS']:
-            if CCFLAGS:
-                CCFLAGS += ' ' + group['CCFLAGS']
-            else:
-                CCFLAGS += group['CCFLAGS']
+            # get each group's CFLAGS flags
+            if 'CFLAGS' in group and group['CFLAGS']:
+                if CFLAGS:
+                    CFLAGS += ' ' + group['CFLAGS']
+                else:
+                    CFLAGS += group['CFLAGS']
 
-        # get each group's CFLAGS flags
-        if 'CFLAGS' in group and group['CFLAGS']:
-            if CFLAGS:
-                CFLAGS += ' ' + group['CFLAGS']
-            else:
-                CFLAGS += group['CFLAGS']
+            # get each group's LIBS flags
+            if 'LIBS' in group and group['LIBS']:
+                for item in group['LIBS']:
+                    lib_path = ''
+                    for path_item in group['LIBPATH']:
+                        full_path = os.path.join(path_item, item + '.lib')
+                        if os.path.isfile(full_path): # has this library
+                            lib_path = full_path
+                            break
 
-        # get each group's LIBS flags
-        if 'LIBS' in group and group['LIBS']:
-            for item in group['LIBS']:
-                lib_path = ''
-                for path_item in group['LIBPATH']:
-                    full_path = os.path.join(path_item, item + '.lib')
-                    if os.path.isfile(full_path): # has this library
-                        lib_path = full_path
-                        break
+                    if lib_path != '':
+                        if group_tree != None:
+                            MDK4AddLibToGroup(ProjectFiles, group_tree, group['name'], lib_path, project_path)
+                        else:
+                            group_tree = MDK4AddGroupForFN(ProjectFiles, groups, group['name'], lib_path, project_path)
+        # write include path, definitions and link flags
+        IncludePath = child.find('TargetOption/TargetArmAds/Cads/VariousControls/IncludePath')
+        if(IncludePath.text != None):
+            IncludePath.text = IncludePath.text +';' + ';'.join([_make_path_relative(project_path, os.path.normpath(i)) for i in set(CPPPATH)])
+        else:
+            IncludePath.text = ';'.join([_make_path_relative(project_path, os.path.normpath(i)) for i in set(CPPPATH)])
 
-                if lib_path != '':
-                    if group_tree != None:
-                        MDK4AddLibToGroup(ProjectFiles, group_tree, group['name'], lib_path, project_path)
-                    else:
-                        group_tree = MDK4AddGroupForFN(ProjectFiles, groups, group['name'], lib_path, project_path)
+        Define = child.find('TargetOption/TargetArmAds/Cads/VariousControls/Define')
+        if(Define.text != None):
+            Define.text = Define.text +',' + ', '.join(set(CPPDEFINES))
+        else:
+            Define.text = ','.join(set(CPPDEFINES))
 
-    # write include path, definitions and link flags
-    IncludePath = tree.find('Targets/Target/TargetOption/TargetArmAds/Cads/VariousControls/IncludePath')
-    IncludePath.text = ';'.join([_make_path_relative(project_path, os.path.normpath(i)) for i in set(CPPPATH)])
+        if 'c99' in CXXFLAGS or 'c99' in CCFLAGS or 'c99' in CFLAGS:
+            uC99 = child.find('TargetOption/TargetArmAds/Cads/uC99')
+            uC99.text = '1'
 
-    Define = tree.find('Targets/Target/TargetOption/TargetArmAds/Cads/VariousControls/Define')
-    Define.text = ', '.join(set(CPPDEFINES))
+        if 'gnu' in CXXFLAGS or 'gnu' in CCFLAGS or 'gnu' in CFLAGS:
+            uGnu = child.find('TargetOption/TargetArmAds/Cads/uGnu')
+            uGnu.text = '1'
 
-    if 'c99' in CXXFLAGS or 'c99' in CCFLAGS or 'c99' in CFLAGS:
-        uC99 = tree.find('Targets/Target/TargetOption/TargetArmAds/Cads/uC99')
-        uC99.text = '1'
-
-    if 'gnu' in CXXFLAGS or 'gnu' in CCFLAGS or 'gnu' in CFLAGS:
-        uGnu = tree.find('Targets/Target/TargetOption/TargetArmAds/Cads/uGnu')
-        uGnu.text = '1'
-
-    Misc = tree.find('Targets/Target/TargetOption/TargetArmAds/LDads/Misc')
-    Misc.text = LINKFLAGS
+        Misc = child.find('TargetOption/TargetArmAds/LDads/Misc')
+        Misc.text = LINKFLAGS
 
     xml_indent(root)
     out.write(etree.tostring(root, encoding='utf-8').decode())
