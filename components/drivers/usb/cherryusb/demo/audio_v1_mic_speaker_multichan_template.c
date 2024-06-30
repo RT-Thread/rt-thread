@@ -194,11 +194,11 @@ void usbd_audio_open(uint8_t busid, uint8_t intf)
 void usbd_audio_close(uint8_t busid, uint8_t intf)
 {
     if (intf == 1) {
-        rx_flag = 1;
-        ep_tx_busy_flag = false;
+        rx_flag = 0;
         printf("CLOSE1\r\n");
     } else {
         tx_flag = 0;
+        ep_tx_busy_flag = false;
         printf("CLOSE2\r\n");
     }
 }

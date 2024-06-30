@@ -111,12 +111,6 @@ SECTIONS
         KEEP (*(.fini))
         . = ALIGN(8);
 
-        /* section information for usbh class */
-        . = ALIGN(8);
-        __usbh_class_info_start__ = .;
-        KEEP(*(.usbh_class_info))
-        __usbh_class_info_end__ = .;
-
         /*********************************************
          *
          *      RT-Thread related sections - Start
