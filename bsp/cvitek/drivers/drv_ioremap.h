@@ -6,4 +6,5 @@
 #include <ioremap.h>
 #else
 #define rt_ioremap(a, s) (a)
+#define rt_iounmap(a)
 #endif
