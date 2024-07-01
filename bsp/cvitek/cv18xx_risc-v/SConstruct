@@ -41,6 +41,10 @@ else:
 # prepare building environment
 objs = PrepareBuilding(env, RTT_ROOT, has_libcpu = False)
 
+if GetDepend('RT_USING_SMART'):
+    # use smart link.lds
+    env['LINKFLAGS'] = env['LINKFLAGS'].replace('link.lds', 'link_smart.lds')
+
 # include libraries
 objs.extend(SConscript(drivers_path_prefix + '/SConscript', variant_dir='build/drivers', duplicate=0))
 

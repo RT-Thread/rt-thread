@@ -9,7 +9,7 @@
 #include <stdint.h>
 #include "types.h"
 
-#ifndef ARCH_ARM
+#ifndef ARCH_REMAP_KERNEL
 #define __raw_readb(a)        (*(volatile unsigned char *)(a))
 #define __raw_readw(a)        (*(volatile unsigned short *)(a))
 #define __raw_readl(a)        (*(volatile unsigned int *)(a))
@@ -69,7 +69,7 @@
 #define cpu_write8(a, v)    writeb(a, v)
 #define cpu_write16(a, v)   writew(a, v)
 #define cpu_write32(a, v)   writel(a, v)
-#endif /* ARCH_ARM */
+#endif /* ARCH_REMAP_KERNEL */
 
 #define mmio_wr32 mmio_write_32
 #define mmio_rd32 mmio_read_32
