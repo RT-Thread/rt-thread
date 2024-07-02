@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2023, RT-Thread Development Team
+ * Copyright (c) 2006-2024, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -423,6 +423,7 @@ rt_ssize_t spi_bit_xfer(struct rt_spi_device *device, struct rt_spi_message *mes
     struct rt_spi_bit_ops *ops = obj->ops;
     struct rt_spi_configuration *config = &obj->config;
     rt_base_t cs_pin = device->cs_pin;
+    rt_ssize_t length = 0;
 
     RT_ASSERT(device != NULL);
     RT_ASSERT(message != NULL);
@@ -443,10 +444,17 @@ rt_ssize_t spi_bit_xfer(struct rt_spi_device *device, struct rt_spi_message *mes
 #endif
 
     /* take CS */
-    if (message->cs_take && (cs_pin != PIN_NONE))
+    if (message->cs_take && !(device->config.mode & RT_SPI_NO_CS) && (cs_pin != PIN_NONE))
     {
         LOG_I("spi take cs\n");
-        rt_pin_write(cs_pin, PIN_LOW);
+        if (device->config.mode & RT_SPI_CS_HIGH)
+        {
+            rt_pin_write(cs_pin, PIN_HIGH);
+        }
+        else
+        {
+            rt_pin_write(cs_pin, PIN_LOW);
+        }
         spi_delay(ops);
 
         /* spi phase */
@@ -461,50 +469,41 @@ rt_ssize_t spi_bit_xfer(struct rt_spi_device *device, struct rt_spi_message *mes
     {
         if (config->data_width <= 8)
         {
-            spi_xfer_3line_data8(ops,
-                                 config,
-                                 message->send_buf,
-                                 message->recv_buf,
-                                 message->length);
+            length = spi_xfer_3line_data8(ops, config, message->send_buf, message->recv_buf, message->length);
         }
         else if (config->data_width <= 16)
         {
-            spi_xfer_3line_data16(ops,
-                                  config,
-                                  message->send_buf,
-                                  message->recv_buf,
-                                  message->length);
+            length = spi_xfer_3line_data16(ops, config, message->send_buf, message->recv_buf, message->length);
         }
     }
     else
     {
         if (config->data_width <= 8)
         {
-            spi_xfer_4line_data8(ops,
-                                 config,
-                                 message->send_buf,
-                                 message->recv_buf,
-                                 message->length);
+            length = spi_xfer_4line_data8(ops, config, message->send_buf, message->recv_buf, message->length);
         }
         else if (config->data_width <= 16)
         {
-            spi_xfer_4line_data16(ops,
-                                  config,
-                                  message->send_buf,
-                                  message->recv_buf,
-                                  message->length);
+            length = spi_xfer_4line_data16(ops, config, message->send_buf, message->recv_buf, message->length);
         }
     }
 
     /* release CS */
-    if (message->cs_release && (cs_pin != PIN_NONE))
+    if (message->cs_take && !(device->config.mode & RT_SPI_NO_CS) && (cs_pin != PIN_NONE))
     {
         spi_delay(ops);
-        rt_pin_write(cs_pin, PIN_HIGH);
+        if (device->config.mode & RT_SPI_CS_HIGH)
+        {
+            rt_pin_write(cs_pin, PIN_LOW);
+        }
+        else
+        {
+            rt_pin_write(cs_pin, PIN_HIGH);
+        }
         LOG_I("spi release cs\n");
     }
 
-    return message->length;
+    return length;
 }
 
 static const struct rt_spi_ops spi_bit_bus_ops =
@@ -521,10 +520,6 @@ rt_err_t rt_spi_bit_add_bus(struct rt_spi_bit_obj *obj,
     obj->config.data_width = 8;
     obj->config.max_hz     = 1 * 1000 * 1000;
     obj->config.mode       = RT_SPI_MASTER | RT_SPI_MSB | RT_SPI_MODE_0;
-
-    /* idle status */
-    if (obj->config.mode & RT_SPI_CPOL) SCLK_H(ops);
-    else                                SCLK_L(ops);
 
     return rt_spi_bus_register(&obj->bus, bus_name, &spi_bit_bus_ops);
 }
