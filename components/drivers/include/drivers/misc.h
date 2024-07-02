@@ -48,6 +48,12 @@
 
 #define RT_ARRAY_SIZE(arr)      (sizeof(arr) / sizeof(arr[0]))
 
+#define rt_err_ptr(err)         ((void *)(rt_base_t)(err))
+#define rt_ptr_err(ptr)         ((rt_err_t)(rt_base_t)(ptr))
+#define rt_is_err_value(ptr)    ((rt_ubase_t)(void *)(ptr) >= (rt_ubase_t)-4095)
+#define rt_is_err(ptr)          rt_is_err_value(ptr)
+#define rt_is_err_or_null(ptr)  (!(ptr) || rt_is_err_value((rt_ubase_t)(ptr)))
+
 #define rt_min(x, y)            \
 ({                              \
     typeof(x) _x = (x);         \
