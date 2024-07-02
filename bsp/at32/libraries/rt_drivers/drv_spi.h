@@ -12,7 +12,7 @@
 #define __DRV_SPI__
 
 #include <rtthread.h>
-#include <drivers/spi.h>
+#include <drivers/spi_core.h>
 #include "drv_common.h"
 #include "drv_dma.h"
 

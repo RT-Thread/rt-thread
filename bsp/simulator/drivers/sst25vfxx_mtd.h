@@ -13,7 +13,7 @@
 #define SST25VFXX_MTD_H
 
 #include <rtthread.h>
-#include <drivers/spi.h>
+#include <drivers/spi_core.h>
 
 rt_err_t sst25vfxx_mtd_init(const char *spi_device_name, rt_uint32_t block_start, rt_uint32_t block_end);
 

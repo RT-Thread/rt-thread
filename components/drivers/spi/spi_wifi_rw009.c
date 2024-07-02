@@ -1,5 +1,5 @@
 /*
- * COPYRIGHT (C) 2011-2023, Real-Thread Information Technology Ltd
+ * COPYRIGHT (C) 2011-2024, Real-Thread Information Technology Ltd
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -11,7 +11,7 @@
  */
 
 #include <rtthread.h>
-#include <drivers/spi.h>
+#include <drivers/spi_core.h>
 
 #include <netif/ethernetif.h>
 #include <netif/etharp.h>

@@ -18,7 +18,7 @@
 #include <ctype.h>
 #include <stdint.h>
 #include <rtthread.h>
-#include <drivers/spi.h>
+#include <drivers/spi_core.h>
 #include "drv_spi.h"
 
 #ifdef RT_USING_SPI

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2023, RT-Thread Development Team
+ * Copyright (c) 2006-2024, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -10,8 +10,8 @@
  * 2022-09-01     liYony       fix api rt_spi_sendrecv16 about MSB and LSB bug
  */
 
-#ifndef __SPI_H__
-#define __SPI_H__
+#ifndef __SPI_CORE_H__
+#define __SPI_CORE_H__
 
 #include <stdlib.h>
 #include <rtthread.h>
@@ -81,6 +81,7 @@ struct rt_spi_configuration
     rt_uint16_t reserved;
 
     rt_uint32_t max_hz;
+    rt_uint32_t usage_freq;
 };
 
 struct rt_spi_ops;

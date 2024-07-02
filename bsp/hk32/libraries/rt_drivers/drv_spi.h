@@ -12,7 +12,7 @@
 #define __DRV_SPI__
 
 #include <rtthread.h>
-#include <drivers/spi.h>
+#include <drivers/spi_core.h>
 #include <hk32f0xx.h>
 
 struct hk32_spi_config
