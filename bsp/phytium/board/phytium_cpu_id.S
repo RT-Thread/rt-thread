@@ -8,6 +8,7 @@
  * Change Logs:
  * Date        Author       Notes
  * 2023-07-26  huanghe      first commit
+ * 2024-07-02  zhangyan     modify
  *
  */
 
@@ -93,29 +94,11 @@ core3:
     mov r0, #3
     b return 
 
-core4: 
-    mov r0, #4
-    b return 
-
-core5: 
-    mov r0, #5
-    b return 
-
-core6: 
-    mov r0, #6
-    b return 
-
-core8: 
-    mov r0, #8
-    b return 
-
 default: 
     and r0, r0, #15
 
 return: 
-
     bl cpu_id_mapping
-
     mov pc, r9
 
 #else
@@ -159,6 +142,53 @@ rt_hw_cpu_id_set:
     and x1, x0, #15
     msr tpidr_el1, x1
     mov lr, x9
+    RET
+
+.globl rt_hw_cpu_id
+rt_hw_cpu_id:
+    mrs x0,MPIDR_EL1
+    ubfx x0, x0, #0, #12
+    ldr x1,= CORE0_AFF
+    cmp x0, x1
+    beq core0
+
+#if defined(CORE1_AFF)
+    ldr x1,= CORE1_AFF
+    cmp x0, x1
+    beq core1
+#endif
+
+#if defined(CORE2_AFF)
+    ldr x1,= CORE2_AFF
+    cmp x0, x1
+    beq core2
+#endif
+
+#if defined(CORE3_AFF)
+    ldr x1,= CORE3_AFF
+    cmp x0, x1
+    beq core3
+#endif
+
+core0:
+    mov x0, #0
+    b return 
+
+core1: 
+    mov x0, #1
+    b return 
+
+core2: 
+    mov x0, #2
+    b return 
+
+core3: 
+    mov x0, #3
+    b return 
+
+return:
+    b cpu_id_mapping
+    
     RET
 #endif
 

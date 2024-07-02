@@ -50,6 +50,8 @@ int phytium_cpu_id_mapping(int cpu_id)
 #endif
 }
 
+#if defined(TARGET_ARMV8_AARCH32)
+
 int rt_hw_cpu_id(void)
 {
     FError ret;
@@ -62,8 +64,6 @@ int rt_hw_cpu_id(void)
     }
     return phytium_cpu_id_mapping(cpu_id);
 }
-
-#if defined(TARGET_ARMV8_AARCH32)
 
 rt_uint64_t get_main_cpu_affval(void)
 {
