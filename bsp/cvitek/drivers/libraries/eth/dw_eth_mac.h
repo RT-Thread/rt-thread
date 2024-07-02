@@ -11,6 +11,10 @@
 extern "C" {
 #endif
 
+#ifndef __aligned
+#define __aligned(x) __attribute__((aligned(x)))
+#endif
+
 typedef void *eth_mac_handle_t;
 
 #define CSI_ETH_MAC_CONFIGURE           (0x01)      ///< Configure MAC; arg = configuration
