@@ -195,6 +195,8 @@ static rt_err_t stm32_spi_init(struct stm32_spi *spi_drv, struct rt_spi_configur
         spi_handle->Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_256;
     }
 
+    cfg->usage_freq = SPI_CLOCK / (rt_size_t)pow(2,(spi_handle->Init.BaudRatePrescaler >> 28) + 1);
+
     LOG_D("sys freq: %d, pclk freq: %d, SPI limiting freq: %d, SPI usage freq: %d",
 #if defined(SOC_SERIES_STM32MP1)
           HAL_RCC_GetSystemCoreClockFreq(),
@@ -203,7 +205,7 @@ static rt_err_t stm32_spi_init(struct stm32_spi *spi_drv, struct rt_spi_configur
 #endif
           SPI_CLOCK,
           cfg->max_hz,
-          SPI_CLOCK / (rt_size_t)pow(2,(spi_handle->Init.BaudRatePrescaler >> 28) + 1));
+          cfg->usage_freq);
 
     if (cfg->mode & RT_SPI_MSB)
     {
@@ -280,7 +282,7 @@ static rt_err_t stm32_spi_init(struct stm32_spi *spi_drv, struct rt_spi_configur
 
 static rt_ssize_t spixfer(struct rt_spi_device *device, struct rt_spi_message *message)
 {
-    #define DMA_TRANS_MIN_LEN  10 /* only buffer length >= DMA_TRANS_MIN_LEN will use DMA mode */
+#define DMA_TRANS_MIN_LEN  10 /* only buffer length >= DMA_TRANS_MIN_LEN will use DMA mode */
 
     HAL_StatusTypeDef state = HAL_OK;
     rt_size_t message_length, already_send_length;
@@ -294,6 +296,8 @@ static rt_ssize_t spixfer(struct rt_spi_device *device, struct rt_spi_message *m
 
     struct stm32_spi *spi_drv =  rt_container_of(device->bus, struct stm32_spi, spi_bus);
     SPI_HandleTypeDef *spi_handle = &spi_drv->handle;
+    rt_uint32_t timeout = message->length / (1000 * spi_drv->cfg->usage_freq) + 5;
+
 
     if (message->cs_take && !(device->config.mode & RT_SPI_NO_CS) && (device->cs_pin != PIN_NONE))
     {
@@ -424,7 +428,7 @@ static rt_ssize_t spixfer(struct rt_spi_device *device, struct rt_spi_message *m
             }
             else
             {
-                state = HAL_SPI_TransmitReceive(spi_handle, (uint8_t *)send_buf, (uint8_t *)recv_buf, send_length, 1000);
+                state = HAL_SPI_TransmitReceive(spi_handle, (uint8_t *)send_buf, (uint8_t *)recv_buf, send_length, timeout);
             }
         }
         else if (message->send_buf)
@@ -435,7 +439,7 @@ static rt_ssize_t spixfer(struct rt_spi_device *device, struct rt_spi_message *m
             }
             else
             {
-                state = HAL_SPI_Transmit(spi_handle, (uint8_t *)send_buf, send_length, 1000);
+                state = HAL_SPI_Transmit(spi_handle, (uint8_t *)send_buf, send_length, timeout);
             }
 
             if (message->cs_release && (device->config.mode & RT_SPI_3WIRE))
@@ -455,7 +459,7 @@ static rt_ssize_t spixfer(struct rt_spi_device *device, struct rt_spi_message *m
             {
                 /* clear the old error flag */
                 __HAL_SPI_CLEAR_OVRFLAG(spi_handle);
-                state = HAL_SPI_Receive(spi_handle, (uint8_t *)recv_buf, send_length, 1000);
+                state = HAL_SPI_Receive(spi_handle, (uint8_t *)recv_buf, send_length, timeout);
             }
         }
         else
@@ -482,7 +486,7 @@ static rt_ssize_t spixfer(struct rt_spi_device *device, struct rt_spi_message *m
         if ((spi_drv->spi_dma_flag & (SPI_USING_TX_DMA_FLAG | SPI_USING_RX_DMA_FLAG)) && (send_length >= DMA_TRANS_MIN_LEN))
         {
             /* blocking the thread,and the other tasks can run */
-            if (rt_completion_wait(&spi_drv->cpt, 1000) != RT_EOK)
+            if (rt_completion_wait(&spi_drv->cpt, timeout) != RT_EOK)
             {
                 state = HAL_ERROR;
                 LOG_E("wait for DMA interrupt overtime!");

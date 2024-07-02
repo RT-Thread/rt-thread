@@ -15,7 +15,7 @@
 #include <drivers/pin.h>
 #include <drivers/watchdog.h>
 #include <drivers/hwtimer.h>
-#include <drivers/spi.h>
+#include <drivers/spi_core.h>
 #include <drivers/rt_drv_pwm.h>
 #include "board.h"
 

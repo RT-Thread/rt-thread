@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2023, RT-Thread Development Team
+ * Copyright (c) 2006-2024, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -13,7 +13,7 @@
 
 #include <stdint.h>
 #include <rtdevice.h>
-#include <drivers/spi.h>
+#include <drivers/spi_core.h>
 
 /* SD command (SPI mode) */
 #define GO_IDLE_STATE                       0   /* CMD0  R1  */
