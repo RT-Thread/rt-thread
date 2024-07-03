@@ -328,11 +328,11 @@ typedef struct {
     uint32_t features;
     int8_t name[20];
     /* config() should be called before calling start() */
-    int32_t (*config)(eth_phy_handle_t *phy_dev);
-    int32_t (*start)(eth_phy_handle_t *phy_dev);
-    int32_t (*stop)(eth_phy_handle_t *phy_dev);
-    int32_t (*loopback)(eth_phy_handle_t *phy_dev);
-    int32_t (*update_link)(eth_phy_handle_t *phy_dev);
+    int32_t (*config)(eth_phy_handle_t phy_dev);
+    int32_t (*start)(eth_phy_handle_t phy_dev);
+    int32_t (*stop)(eth_phy_handle_t phy_dev);
+    int32_t (*loopback)(eth_phy_handle_t phy_dev);
+    int32_t (*update_link)(eth_phy_handle_t phy_dev);
 } eth_phy_dev_t;
 
 /* ethernet phy config */
