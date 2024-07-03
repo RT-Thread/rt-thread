@@ -35,7 +35,7 @@ static void stm32_dma_config(struct rt_serial_device *serial, rt_ubase_t flag);
 #endif
 
 /* Number of while blocking timeouts for the stm32_putc */
-#define TX_BLOCK_TIMEOUT    1000
+#define TX_BLOCK_TIMEOUT    2000
 
 enum
 {
@@ -340,8 +340,6 @@ static rt_err_t stm32_control(struct rt_serial_device *serial, int cmd, void *ar
     }
     return RT_EOK;
 }
-
-
 
 static int stm32_putc(struct rt_serial_device *serial, char c)
 {
