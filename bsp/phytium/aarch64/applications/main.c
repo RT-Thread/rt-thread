@@ -53,7 +53,8 @@ static void demo_core_thread(void *parameter)
     {
         /* code */
         level = rt_cpus_lock();
-        rt_kprintf("Hi, core%d \r\n", rt_hw_cpu_id());
+        rt_uint64_t redis_base  = platform_get_gic_redist_base();
+        rt_kprintf("Hi, core%d 3redis_base = 0x%x\r\n", rt_hw_cpu_id(), redis_base);
         rt_cpus_unlock(level);
         rt_thread_mdelay(2000);
     }

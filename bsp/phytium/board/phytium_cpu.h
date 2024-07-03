@@ -18,6 +18,9 @@
 #include <rtthread.h>
 #include "fparameters.h"
 #include "fio.h"
+#include "faarch.h"
+#include "gicv3.h"
+
 #ifdef RT_USING_SMART
 #include"ioremap.h"
 #endif
@@ -46,8 +49,22 @@ rt_inline rt_uint32_t platform_get_gic_dist_base(void)
 #if defined(TARGET_ARMV8_AARCH64)
 
 /* the basic constants and interfaces needed by gic */
-rt_inline rt_uint32_t platform_get_gic_redist_base(void)
+rt_inline rt_uint64_t platform_get_gic_redist_base(void)
 {
+    rt_uint64_t redis_base = 0;
+    rt_size_t mpidr_aff = (GetAffinity() & 0xfff);
+    rt_uint64_t gicr_typer_aff = 0;
+
+    for(redis_base = GICV3_RD_BASE_ADDR; redis_base < GICV3_RD_BASE_ADDR + GICV3_RD_SIZE; redis_base += GICV3_RD_OFFSET)
+    {
+        gicr_typer_aff = GIC_RDIST_TYPER(redis_base) >> 32;
+        rt_kprintf("gicr_typer_aff = 0x%x  mpidr_aff =0x%x \n", gicr_typer_aff, mpidr_aff);
+        if (mpidr_aff == gicr_typer_aff)
+        {
+            return redis_base;
+        }
+    }
+
     return 0;
 }
 
