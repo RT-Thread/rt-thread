@@ -125,6 +125,7 @@ void rt_hw_secondary_cpu_bsp_start(void)
     /* interrupt init */
 #if defined(TARGET_ARMV8_AARCH64)
     arm_gic_cpu_init(0, 0);
+    arm_gic_redist_address_set(0, platform_get_gic_redist_base(), rt_hw_cpu_id());
     phytium_aarch64_arm_gic_redist_init();
 #else
     arm_gic_cpu_init(0);
