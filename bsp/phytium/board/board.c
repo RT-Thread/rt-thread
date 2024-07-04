@@ -17,6 +17,7 @@
 #include "rtconfig.h"
 #include <rthw.h>
 #include <rtthread.h>
+#include <phytium_cpu.h>
 
 #include <mmu.h>
 #include <mm_aspace.h> /* TODO: why need application space when RT_SMART off */
@@ -229,50 +230,12 @@ void rt_hw_board_aarch32_init(void)
 #if defined(FT_GIC_REDISTRUBUTIOR_OFFSET)
     cpu_offset = FT_GIC_REDISTRUBUTIOR_OFFSET ;
 #endif
-    rt_uint32_t redist_addr = 0;
-
     FEarlyUartProbe();
 
     FIOMuxInit();
 
-#if defined(RT_USING_SMART)
-    redist_addr = (uint32_t)rt_ioremap(GICV3_RD_BASE_ADDR, 4 * 128 * 1024);
-#else
-    redist_addr = GICV3_RD_BASE_ADDR;
-#endif
-
-    arm_gic_redist_address_set(0, redist_addr + (cpu_id + cpu_offset) * GICV3_RD_OFFSET, rt_hw_cpu_id());
-
-#if defined(TARGET_E2000Q) || defined(TARGET_PHYTIUMPI)
-
-#if RT_CPUS_NR == 2
-    arm_gic_redist_address_set(0, redist_addr + 3 * GICV3_RD_OFFSET, 1);
-#elif RT_CPUS_NR == 3
-    arm_gic_redist_address_set(0, redist_addr + 3 * GICV3_RD_OFFSET, 1);
-    arm_gic_redist_address_set(0, redist_addr, 2);
-#elif RT_CPUS_NR == 4
-    arm_gic_redist_address_set(0, redist_addr + 3 * GICV3_RD_OFFSET, 1);
-    arm_gic_redist_address_set(0, redist_addr, 2);
-    arm_gic_redist_address_set(0, redist_addr + GICV3_RD_OFFSET, 3);
-#endif
-
-#else
-
-#if RT_CPUS_NR == 2
-    arm_gic_redist_address_set(0, redist_addr + (1 + cpu_offset) * GICV3_RD_OFFSET, 1);
-#elif RT_CPUS_NR == 3
-    arm_gic_redist_address_set(0, redist_addr + (1 + cpu_offset) * GICV3_RD_OFFSET, 1);
-    arm_gic_redist_address_set(0, redist_addr + (2 + cpu_offset) * GICV3_RD_OFFSET, 2);
-#elif RT_CPUS_NR == 4
-    arm_gic_redist_address_set(0, redist_addr + (1 + cpu_offset) * GICV3_RD_OFFSET, 1);
-    arm_gic_redist_address_set(0, redist_addr + (2 + cpu_offset) * GICV3_RD_OFFSET, 2);
-    arm_gic_redist_address_set(0, redist_addr + (3 + cpu_offset) * GICV3_RD_OFFSET, 3);
-#endif
-
-#endif
-
+    arm_gic_redist_address_set(0, platform_get_gic_redist_base(), rt_hw_cpu_id());
     rt_hw_interrupt_init();
-
 
     /* compoent init */
 #ifdef RT_USING_COMPONENTS_INIT

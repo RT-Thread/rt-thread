@@ -16,10 +16,10 @@
 
 #include <rthw.h>
 #include <rtthread.h>
+#include <gicv3.h>
 #include "fparameters.h"
 #include "fio.h"
 #include "faarch.h"
-#include "gicv3.h"
 
 #ifdef RT_USING_SMART
 #include"ioremap.h"
@@ -46,22 +46,25 @@ rt_inline rt_uint32_t platform_get_gic_dist_base(void)
     return GICV3_DISTRIBUTOR_BASE_ADDR;
 }
 
-#if defined(TARGET_ARMV8_AARCH64)
-
 /* the basic constants and interfaces needed by gic */
-rt_inline rt_uint64_t platform_get_gic_redist_base(void)
+rt_inline uintptr_t platform_get_gic_redist_base(void)
 {
-    rt_uint64_t redis_base = 0;
-    rt_size_t mpidr_aff = (GetAffinity() & 0xfff);
-    rt_uint64_t gicr_typer_aff = 0;
+    uintptr_t redis_base, mpidr_aff, gicr_typer_aff;
+    mpidr_aff = (uintptr_t)(GetAffinity() & 0xfff);
 
-    for(redis_base = GICV3_RD_BASE_ADDR; redis_base < GICV3_RD_BASE_ADDR + GICV3_RD_SIZE; redis_base += GICV3_RD_OFFSET)
+    for (redis_base = GICV3_RD_BASE_ADDR; redis_base < GICV3_RD_BASE_ADDR + GICV3_RD_SIZE; redis_base += GICV3_RD_OFFSET)
     {
 #ifdef RT_USING_SMART
-        rt_uint64_t redis_base_virtual = redis_base;
-        redis_base_virtual  = (rt_uint64_t)rt_ioremap((void *)redis_base_virtual, GICV3_RD_OFFSET);
-        /*git the gic redist typer high 32-bit*/
+        uintptr_t redis_base_virtual = (uintptr_t)rt_ioremap((void *)redis_base, GICV3_RD_OFFSET);
+        if (redis_base_virtual == 0)
+        {
+            continue; // 跳过映射失败的地址
+        }
+#if defined(TARGET_ARMV8_AARCH64)
         gicr_typer_aff = GIC_RDIST_TYPER(redis_base_virtual) >> 32;
+#else
+        gicr_typer_aff = GIC_RDIST_TYPER(redis_base_virtual + 0x4);
+#endif
         if (mpidr_aff == gicr_typer_aff)
         {
             return redis_base_virtual;
@@ -71,8 +74,11 @@ rt_inline rt_uint64_t platform_get_gic_redist_base(void)
             rt_iounmap(redis_base_virtual);
         }
 #else
-        /*git the gic redist typer high 32-bit*/
+#if defined(TARGET_ARMV8_AARCH64)
         gicr_typer_aff = GIC_RDIST_TYPER(redis_base) >> 32;
+#else
+        gicr_typer_aff = GIC_RDIST_TYPER(redis_base + 0x4);
+#endif
         if (mpidr_aff == gicr_typer_aff)
         {
             return redis_base;
@@ -82,6 +88,9 @@ rt_inline rt_uint64_t platform_get_gic_redist_base(void)
 
     return 0;
 }
+
+
+#if defined(TARGET_ARMV8_AARCH64)
 
 rt_inline rt_uint32_t platform_get_gic_cpu_base(void)
 {
