@@ -342,4 +342,4 @@ int rt_hw_spi_init(void)
 
     return ret;
 }
-INIT_BOARD_EXPORT(rt_hw_spi_init);
+INIT_DEVICE_EXPORT(rt_hw_spi_init);
