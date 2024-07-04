@@ -57,10 +57,10 @@ rt_inline rt_uint64_t platform_get_gic_redist_base(void)
 
     for(redis_base = GICV3_RD_BASE_ADDR; redis_base < GICV3_RD_BASE_ADDR + GICV3_RD_SIZE; redis_base += GICV3_RD_OFFSET)
     {
-        /*git the gic redist typer high 32-bit*/
-#ifdef RT_USING_SMP
+#ifdef RT_USING_SMART
         rt_uint64_t redis_base_virtual = redis_base;
         redis_base_virtual  = (rt_uint64_t)rt_ioremap((void *)redis_base_virtual, GICV3_RD_OFFSET);
+        /*git the gic redist typer high 32-bit*/
         gicr_typer_aff = GIC_RDIST_TYPER(redis_base_virtual) >> 32;
         if (mpidr_aff == gicr_typer_aff)
         {
@@ -71,6 +71,7 @@ rt_inline rt_uint64_t platform_get_gic_redist_base(void)
             rt_iounmap(redis_base_virtual);
         }
 #else
+        /*git the gic redist typer high 32-bit*/
         gicr_typer_aff = GIC_RDIST_TYPER(redis_base) >> 32;
         if (mpidr_aff == gicr_typer_aff)
         {

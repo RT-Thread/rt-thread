@@ -571,6 +571,10 @@
 #define ELOG_LINE_BUF_SIZE 0x100
 #define LOG_DEBUG
 /* end of Sdk common configuration */
+
+/* Image information configuration */
+
+/* end of Image information configuration */
 /* end of Standalone Setting */
 
 #endif
