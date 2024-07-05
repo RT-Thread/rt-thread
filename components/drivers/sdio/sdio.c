@@ -6,7 +6,8 @@
  * Change Logs:
  * Date           Author        Notes
  * 2012-01-13     weety         first version
- * 2024-04-04     Evlers        fix an issue where repeated remove of card resulted in assertions
+ * 2024-07-04     Evlers        fix an issue where repeated remove of card resulted in assertions
+ * 2024-07-05     Evlers        fix a bug that read members in non-existent functions
  */
 
 #include <drivers/mmcsd_core.h>
@@ -1030,8 +1031,7 @@ static void sdio_irq_thread(void *param)
                     struct rt_sdio_function *func = card->sdio_function[i];
                     if (!func)
                     {
-                        mmcsd_dbg("pending IRQ for "
-                            "non-existant function %d\n", func->num);
+                        mmcsd_dbg("pending IRQ for non-existant function\n");
                         goto out;
                     }
                     else if (func->irq_handler)
