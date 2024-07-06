@@ -933,7 +933,7 @@ def GenTargetProject(program = None):
 
     if GetOption('target') == 'cmake' or GetOption('target') == 'cmake-armclang':
         from cmake import CMakeProject
-        CMakeProject(Env,Projects)
+        CMakeProject(Env, Projects, GetOption('project-name'))
 
     if GetOption('target') == 'xmake':
         from xmake import XMakeProject
