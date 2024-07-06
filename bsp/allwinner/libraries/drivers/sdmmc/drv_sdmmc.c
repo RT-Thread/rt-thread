@@ -8,6 +8,9 @@
  * 2021-10-29     JasonHu      first version
  */
 
+#define DBG_TAG "drv-sdmmc"
+#include <rtdbg.h>
+
 #include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
@@ -35,10 +38,6 @@
 #include <sys/stat.h>
 #include <sys/statfs.h> /* statfs() */
 #include "partition.h"
-
-#define DBG_LEVEL DBG_LOG
-#define DBG_SECTION_NAME "drv-sdmmc"
-#include <rtdbg.h>
 
 #ifdef CONFIG_SUPPORT_SDMMC_CACHE
 #include "sdmmc_cache.h"
@@ -73,7 +72,7 @@ static int _register_blk_part_device(rt_device_t dev, const char *dev_name)
 
     /* NOTICE: get block geometry fisrt time here, then you can read/write sdmmc. */
     struct dev_sdmmc *dev_sdmmc = (struct dev_sdmmc *)dev->user_data;
-    if (dev->control(dev, RT_DEVICE_CTRL_BLK_GETGEOME, &dev_sdmmc->geometry) != RT_EOK)
+    if (rt_dev_control(dev, RT_DEVICE_CTRL_BLK_GETGEOME, &dev_sdmmc->geometry) != RT_EOK)
     {
         LOG_E("device get geometry failed!");
         return -RT_EIO;
@@ -95,7 +94,7 @@ static int _register_blk_part_device(rt_device_t dev, const char *dev_name)
         return -RT_ENOMEM;
     }
 
-    if (dev->read(dev, 0, mbr_buf, 1) != 1)
+    if (rt_dev_read(dev, 0, mbr_buf, 1) != 1)
     {
         LOG_E("device read mbr 1-sector failure\n");
         ret = -RT_ERROR;
@@ -429,6 +428,18 @@ static rt_err_t sdmmc_control(rt_device_t dev, int cmd, void *args)
     return ret;
 }
 
+#ifdef RT_USING_DEVICE_OPS
+const static struct rt_device_ops _sdmmc_ops =
+{
+    .init = sdmmc_init,
+    .open = sdmmc_open,
+    .close = sdmmc_close,
+    .read = sdmmc_read,
+    .write = sdmmc_write,
+    .control = sdmmc_control
+};
+#endif /* RT_USING_DEVICE_OPS */
+
 static int init_sdmmc_device(rt_device_t device, void *usr_data, char *dev_name)
 {
     int ret = -1;
@@ -438,12 +449,17 @@ static int init_sdmmc_device(rt_device_t device, void *usr_data, char *dev_name)
     {
         return ret;
     }
+
+#ifndef RT_USING_DEVICE_OPS
     device->init = sdmmc_init;
     device->open = sdmmc_open;
     device->close = sdmmc_close;
     device->read = sdmmc_read;
     device->write = sdmmc_write;
     device->control = sdmmc_control;
+#else
+    device->ops = &_sdmmc_ops;
+#endif /* RT_USING_DEVICE_OPS */
     device->user_data = usr_data;
 
     ret = rt_device_register(device, dev_name, RT_DEVICE_FLAG_RDWR);
@@ -463,7 +479,7 @@ static int init_sdmmc_device(rt_device_t device, void *usr_data, char *dev_name)
 
     /* NOTICE: get block geometry fisrt time here, then you can read/write sdmmc. */
     struct dev_sdmmc *dev_sdmmc = (struct dev_sdmmc *)device->user_data;
-    if (device->control(device, RT_DEVICE_CTRL_BLK_GETGEOME, &dev_sdmmc->geometry) != RT_EOK)
+    if (rt_dev_control(device, RT_DEVICE_CTRL_BLK_GETGEOME, &dev_sdmmc->geometry) != RT_EOK)
     {
         LOG_E("device get geometry failed!");
         ret = -ENOSYS;

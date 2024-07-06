@@ -9,6 +9,9 @@
 #include <blkpart.h>
 #include <rtthread.h>
 #include <rtdevice.h>
+
+#include <drv_sdmmc.h>
+
 #define MIN(a, b) ((a) > (b) ? (b) : (a))
 #define ALIGN_DOWN(x, a) __ALIGN_KERNEL((x) - ((a) - 1), (a))
 #define __ALIGN_KERNEL(x, a) __ALIGN_KERNEL_MASK(x, (typeof(x))(a) - 1)
@@ -247,7 +250,7 @@ rt_size_t part_read(rt_device_t dev, rt_off_t offset, void *data, rt_size_t size
                  offset, blk->blk_bytes);
         pr_debug("step1: read page data from addr 0x%x\n", addr);
 
-        ret = spinor_dev->read(spinor_dev, addr / blk->page_bytes, page_buf, blk->page_bytes / blk->page_bytes);
+        ret = rt_dev_read(spinor_dev, addr / blk->page_bytes, page_buf, blk->page_bytes / blk->page_bytes);
         ret *= blk->page_bytes;
         if (ret != blk->blk_bytes)
         {
@@ -272,7 +275,7 @@ rt_size_t part_read(rt_device_t dev, rt_off_t offset, void *data, rt_size_t size
     {
         uint32_t len = (size/blk->page_bytes)*blk->page_bytes;
 
-        ret = spinor_dev->read(spinor_dev, offset / blk->blk_bytes, (char *)data, len / blk->blk_bytes);
+        ret = rt_dev_read(spinor_dev, offset / blk->blk_bytes, (char *)data, len / blk->blk_bytes);
         ret *= blk->page_bytes;
         if (ret != len)
         {
@@ -294,7 +297,7 @@ rt_size_t part_read(rt_device_t dev, rt_off_t offset, void *data, rt_size_t size
         pr_debug("last size %u not align %u, read them\n", size, blk->blk_bytes);
 
         pr_debug("step1: read page data from addr 0x%x\n", offset);
-        ret = spinor_dev->read(spinor_dev, offset / blk->blk_bytes, page_buf, blk->page_bytes / blk->page_bytes);
+        ret = rt_dev_read(spinor_dev, offset / blk->blk_bytes, page_buf, blk->page_bytes / blk->page_bytes);
         ret *= blk->page_bytes;
         if (ret != blk->page_bytes)
         {
@@ -325,7 +328,7 @@ out:
 
 int do_write_without_erase(rt_device_t dev, struct blkpart *blk, uint32_t addr, uint32_t size, char *buf)
 {
-    return dev->write(dev, addr, buf, size);
+    return rt_dev_write(dev, addr, buf, size);
 }
 static int do_erase_write_blk(rt_device_t dev, struct blkpart *blk, uint32_t addr, uint32_t size, char *buf)
 {
@@ -355,7 +358,7 @@ static int do_erase_write_blk(rt_device_t dev, struct blkpart *blk, uint32_t add
         memset(&erase_sector, 0, sizeof(blk_dev_erase_t));
         erase_sector.addr = align_addr;
         erase_sector.len = blk->blk_bytes;
-        ret = dev->control(dev, BLOCK_DEVICE_CMD_ERASE_SECTOR, &erase_sector);
+        ret = rt_dev_control(dev, BLOCK_DEVICE_CMD_ERASE_SECTOR, &erase_sector);
         if (ret)
         {
             free(read_buf);
@@ -365,7 +368,7 @@ static int do_erase_write_blk(rt_device_t dev, struct blkpart *blk, uint32_t add
 
     memcpy(read_buf + (addr - align_addr), buf, blk->page_bytes);
 
-    ret = dev->write(dev, align_addr, read_buf, blk->blk_bytes);
+    ret = rt_dev_write(dev, align_addr, read_buf, blk->blk_bytes);
     free(read_buf);
     if (ret == blk->blk_bytes)
     {
@@ -382,13 +385,13 @@ static int do_erase_write_blk(rt_device_t dev, struct blkpart *blk, uint32_t add
     memset(&erase_sector, 0, sizeof(blk_dev_erase_t));
     erase_sector.addr = addr;
     erase_sector.len = size;
-    ret = dev->control(dev, BLOCK_DEVICE_CMD_ERASE_SECTOR, &erase_sector);
+    ret = rt_dev_control(dev, BLOCK_DEVICE_CMD_ERASE_SECTOR, &erase_sector);
     if (ret)
     {
         return -EIO;
     }
 
-    ret = dev->write(dev, addr, buf, size);
+    ret = rt_dev_write(dev, addr, buf, size);
     if (ret == size)
     {
         return size;
@@ -466,7 +469,7 @@ rt_size_t _part_write(rt_device_t dev, rt_off_t offset, const void *data, rt_siz
         pr_debug("offset %u not align %u, fix them before align write\n",
                  offset, blk->blk_bytes);
         pr_debug("step1: read page data from addr 0x%x\n", addr);
-        ret = spinor_dev->read(spinor_dev, addr / blk->blk_bytes, blk_buf, blk->blk_bytes / blk->blk_bytes);
+        ret = rt_dev_read(spinor_dev, addr / blk->blk_bytes, blk_buf, blk->blk_bytes / blk->blk_bytes);
         ret *= blk->blk_bytes;
         if (ret != blk->blk_bytes)
         {
@@ -513,7 +516,7 @@ rt_size_t _part_write(rt_device_t dev, rt_off_t offset, const void *data, rt_siz
 
         pr_debug("step1: read page data from addr 0x%x\n", offset);
         memset(blk_buf, 0x00, sizeof(blk->blk_bytes));
-        ret = spinor_dev->read(spinor_dev, offset / blk->blk_bytes, blk_buf, blk->blk_bytes);
+        ret = rt_dev_read(spinor_dev, offset / blk->blk_bytes, blk_buf, blk->blk_bytes);
         if (ret != blk->blk_bytes)
         {
             goto err;
@@ -582,15 +585,15 @@ rt_err_t part_control(rt_device_t dev, int cmd, void *args)
             erase_sector->len = MIN(part->bytes - erase_sector->addr, erase_sector->len);
             erase_sector->addr = erase_sector->addr + part->off;
 
-            if (spinor_dev && spinor_dev->control)
+            if (spinor_dev && rt_dev_has_control(spinor_dev))
             {
-                ret = spinor_dev->control(spinor_dev, BLOCK_DEVICE_CMD_ERASE_SECTOR, erase_sector);
+                ret = rt_dev_control(spinor_dev, BLOCK_DEVICE_CMD_ERASE_SECTOR, erase_sector);
             }
             break;
         case DEVICE_PART_CMD_GET_BLOCK_SIZE:
-            if (spinor_dev && spinor_dev->control)
+            if (spinor_dev && rt_dev_has_control(spinor_dev))
             {
-                ret = spinor_dev->control(spinor_dev, BLOCK_DEVICE_CMD_GET_BLOCK_SIZE, args);
+                ret = rt_dev_control(spinor_dev, BLOCK_DEVICE_CMD_GET_BLOCK_SIZE, args);
             }
             else
             {
@@ -604,9 +607,9 @@ rt_err_t part_control(rt_device_t dev, int cmd, void *args)
         case RT_DEVICE_CTRL_BLK_GETGEOME:
             geometry = (struct rt_device_blk_geometry *)args;
             memset(geometry, 0, sizeof(struct rt_device_blk_geometry));
-            if (spinor_dev && spinor_dev->control)
+            if (spinor_dev && rt_dev_has_control(spinor_dev))
             {
-                ret = spinor_dev->control(spinor_dev, RT_DEVICE_CTRL_BLK_GETGEOME, args);
+                ret = rt_dev_control(spinor_dev, RT_DEVICE_CTRL_BLK_GETGEOME, args);
                 if (!ret)
                 {
                     geometry->sector_count = part->bytes / geometry->bytes_per_sector;
