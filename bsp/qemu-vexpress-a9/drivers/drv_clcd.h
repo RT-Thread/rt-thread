@@ -11,6 +11,7 @@
 #define DRV_CLCD_H__
 
 #include <rtthread.h>
+#include <rtdevice.h>
 
 #ifndef BSP_LCD_WIDTH
 #define BSP_LCD_WIDTH   640
