@@ -30,8 +30,11 @@
 
 #include "sys/time.h"
 #include <rthw.h>
+#include <rtthread.h>
+#ifdef RT_USING_RTC
 #include <rtdevice.h>
 #include <drivers/rtc.h>
+#endif /* RT_USING_RTC */
 #include <sys/errno.h>
 #include <unistd.h>
 #ifdef RT_USING_SMART
@@ -87,9 +90,9 @@ static void num2str(char *c, int i)
     c[1] = i % 10 + '0';
 }
 
+#ifdef RT_USING_RTC
 static rt_err_t _control_rtc(int cmd, void *arg)
 {
-#ifdef RT_USING_RTC
     static rt_device_t device = RT_NULL;
     rt_err_t rst = -RT_ERROR;
 
@@ -113,11 +116,8 @@ static rt_err_t _control_rtc(int cmd, void *arg)
         return -RT_ENOSYS;
     }
     return rst;
-#else
-    LOG_W(_WARNING_NO_RTC);
-    return -RT_ENOSYS;
-#endif /* RT_USING_RTC */
 }
+#endif /* RT_USING_RTC */
 
 /* lightweight timezone and daylight saving time */
 #ifdef RT_LIBC_USING_LIGHT_TZ_DST
@@ -340,6 +340,7 @@ RTM_EXPORT(strftime); /* inherent in the toolchain */
  */
 rt_weak time_t time(time_t *t)
 {
+#ifdef RT_USING_RTC
     time_t _t;
 
     if (_control_rtc(RT_DEVICE_CTRL_RTC_GET_TIME, &_t) != RT_EOK)
@@ -352,6 +353,10 @@ rt_weak time_t time(time_t *t)
         *t = _t;
 
     return _t;
+#else
+    rt_set_errno(EFAULT);
+    return (time_t)-1;
+#endif
 }
 RTM_EXPORT(time);
 
@@ -363,10 +368,12 @@ RTM_EXPORT(clock);
 
 int stime(const time_t *t)
 {
+#ifdef RT_USING_RTC
     if ((t != RT_NULL) && (_control_rtc(RT_DEVICE_CTRL_RTC_SET_TIME, (void *)t) == RT_EOK))
     {
         return 0;
     }
+#endif /* RT_USING_RTC */
 
     rt_set_errno(EFAULT);
     return -1;
@@ -475,6 +482,7 @@ int gettimeofday(struct timeval *tv, struct timezone *tz)
 #endif /* RT_LIBC_USING_LIGHT_TZ_DST */
     }
 
+#ifdef RT_USING_RTC
     if (tv != RT_NULL)
     {
         tv->tv_sec  = 0;
@@ -492,6 +500,7 @@ int gettimeofday(struct timeval *tv, struct timezone *tz)
             }
         }
     }
+#endif /* RT_USING_RTC */
 
     rt_set_errno(EINVAL);
     return -1;
@@ -505,6 +514,7 @@ int settimeofday(const struct timeval *tv, const struct timezone *tz)
      * The tz_dsttime field has never been used under Linux.
      * Thus, the following is purely of historic interest.
      */
+#ifdef RT_USING_RTC
     if (tv != RT_NULL && (long)tv->tv_usec >= 0 && (long)tv->tv_sec >= 0)
     {
         if (_control_rtc(RT_DEVICE_CTRL_RTC_SET_TIMEVAL, (void *)tv) == RT_EOK)
@@ -519,6 +529,7 @@ int settimeofday(const struct timeval *tv, const struct timezone *tz)
             }
         }
     }
+#endif /* RT_USING_RTC */
 
     rt_set_errno(EINVAL);
     return -1;
