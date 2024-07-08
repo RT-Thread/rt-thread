@@ -116,7 +116,7 @@ int mnt_init(void)
 
         rt_pin_mode(SD_CHECK_PIN, PIN_MODE_INPUT_PULLUP);
 
-        thread = rt_thread_create("sd", sd_check_thread_entry, NULL, 4096, 21, 10);
+        thread = rt_thread_create("sd", sd_check_thread_entry, NULL, RT_SYSTEM_WORKQUEUE_STACKSIZE, 21, 10);
         if (thread == NULL)
         {
             return -1;
