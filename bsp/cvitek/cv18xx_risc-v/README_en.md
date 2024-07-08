@@ -1,4 +1,4 @@
-[中文](README.md) | **English** 
+[中文](README.md) | **English**
 
 ## Overview
 The CV18xx series of chips are high-performance, low-power chips launched for various products in the field of civilian consumer surveillance IP cameras, smart homes, and more. These chips integrate H.264/H.265 video compression encoders, as well as ISP; they support various image enhancement and correction algorithms such as digital wide dynamic range, 3D noise reduction, defogging, and lens distortion correction, providing customers with professional-level video image quality.
@@ -31,6 +31,8 @@ The CV18xx series of chips are high-performance, low-power chips launched for va
 - Up to 1x JTAG
 - Integrated MAC PHY supports 10/100Mbps full or half duplex mode
 - One USB host/device interface
+
+4. [GPIO pinout](https://milkv.io/docs/duo/getting-started/duo256m#gpio-pinout)
 
 ## Toolchain Download
 1. RT-Thread Standard Edition Toolchain: `riscv64-unknown-elf-gcc` Download Link [https://occ-oss-prod.oss-cn-hangzhou.aliyuncs.com/resource//1705395512373/Xuantie-900-gcc-elf-newlib-x86_64-V2.8.1-20240115.tar.gz](https://occ-oss-prod.oss-cn-hangzhou.aliyuncs.com/resource//1705395512373/Xuantie-900-gcc-elf-newlib-x86_64-V2.8.1-20240115.tar.gz)
