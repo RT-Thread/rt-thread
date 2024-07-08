@@ -24,7 +24,7 @@
 
 #define SD_CHECK_PIN GET_PIN(GPIO_PORT_G, GPIO_PIN_3)
 
-int sd_check_thread_entry(void *p)
+void sd_check_thread_entry(void *p)
 {
     rt_uint8_t old_sd_check = 0;
 
@@ -38,7 +38,7 @@ int sd_check_thread_entry(void *p)
         else
         {
             rt_kprintf("Mount \"sd0p0\" on \"/\" fail\n");
-            return -1;
+            return ;
         }
 
         /* 挂载sd1分区 */
@@ -105,7 +105,7 @@ int sd_check_thread_entry(void *p)
             rt_thread_delay(RT_TICK_PER_SECOND);
         }
     }
-    return 0;
+    return ;
 }
 
 int mnt_init(void)
