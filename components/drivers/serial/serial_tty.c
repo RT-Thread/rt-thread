@@ -298,6 +298,16 @@ static int serial_tty_param(struct lwp_tty *tp, struct termios *t)
     RT_ASSERT(softc);
     serial = softc->parent;
 
+    if (!tty_opened(tp))
+    {
+        /**
+         * skip configure on open since all configs are copied from the current
+         * configuration on device. So we don't bother to set it back to device
+         * again.
+         */
+        return RT_EOK;
+    }
+
     cfsetispeed(t, t->__c_ispeed);
     return rt_device_control(&(serial->parent), TCSETS, t);
 }
