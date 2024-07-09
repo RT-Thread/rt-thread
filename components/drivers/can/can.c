@@ -54,7 +54,7 @@ rt_inline rt_ssize_t _can_int_rx(struct rt_can_device *can, struct rt_can_msg *d
     RT_ASSERT(rx_fifo != RT_NULL);
 
     /* read from software FIFO */
-    while (msgs / sizeof(struct rt_can_msg) != 0)
+    while (msgs / sizeof(struct rt_can_msg) > 0)
     {
         rt_base_t level;
 #ifdef RT_CAN_USING_HDR
