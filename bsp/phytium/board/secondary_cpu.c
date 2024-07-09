@@ -46,10 +46,10 @@ rt_uint64_t rt_cpu_mpidr_early[] =
     [0] = 0x80000200,
     [1] = 0x80000201,
 #elif defined(TARGET_E2000Q) || defined(TARGET_PHYTIUMPI)
-    [0] = 0x80000000,
-    [1] = 0x80000100,
-    [2] = 0x80000200,
-    [3] = 0x80000201,
+    [0] = 0x80000200,
+    [1] = 0x80000201,
+    [2] = 0x80000000,
+    [3] = 0x80000100,
 #elif defined(TARGET_F2000_4) || defined(TARGET_D2000)
     [0] = 0x80000000,
     [1] = 0x80000001,
