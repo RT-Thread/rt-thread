@@ -66,7 +66,6 @@ jobs:
           chmod 777 install_ubuntu.sh
           ./install_ubuntu.sh
           git config --global http.postBuffer 524288000
-          python -c "import tools.menukconfig; tools.menukconfig.touch_env()"
           echo "RTT_ROOT=${{ github.workspace }}" >> $GITHUB_ENV
           echo "RTT_CC=gcc" >> $GITHUB_ENV
 
@@ -145,7 +144,7 @@ jobs:
           RTT_BSP: ${{ github.event.inputs.bsp_options }}
           RTT_TOOL_CHAIN: ${{ github.event.inputs.bsp_tool_chain}}
         run: |
-          source ~/.env/env.sh
+          # source ~/.env/env.sh
           echo $RTT_BSP
           ls bsp/$RTT_BSP/Kconfig && scons -C bsp/$RTT_BSP --pyconfig-silent
           config=${{ github.event.inputs.bsp_config}}
