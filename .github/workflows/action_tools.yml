@@ -45,8 +45,9 @@ jobs:
     - name: Install Tools
       shell: bash
       run: |
-        sudo apt-get update
-        sudo apt-get -yqq install scons
+          wget https://raw.githubusercontent.com/RT-Thread/env/master/install_ubuntu.sh
+          chmod 777 install_ubuntu.sh
+          ./install_ubuntu.sh
 
     - name: Install Arm ToolChains
       if: ${{ success() }}
