@@ -6,14 +6,12 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics.
-  * All rights reserved.</center></h2>
+  * Copyright (c) 2017 STMicroelectronics.
+  * All rights reserved.
   *
-  * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the
-  * License. You may obtain a copy of the License at:
-  *                        opensource.org/licenses/BSD-3-Clause
-  *
+  * This software is licensed under terms that can be found in the LICENSE file in
+  * the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
   ******************************************************************************
   */
 
@@ -22,7 +20,7 @@
 #define STM32H7xx_HAL_RCC_H
 
 #ifdef __cplusplus
- extern "C" {
+extern "C" {
 #endif
 
 /* Includes ------------------------------------------------------------------*/
@@ -57,9 +55,9 @@ typedef struct
                             This parameter must be a number between Min_Data = 1 and Max_Data = 63    */
 
   uint32_t PLLN;       /*!< PLLN: Multiplication factor for PLL VCO output clock.
-                            This parameter must be a number between Min_Data = 4 and Max_Data = 512 
+                            This parameter must be a number between Min_Data = 4 and Max_Data = 512
                             or between Min_Data = 8 and Max_Data = 420(*)
-                            (*) : For stm32h7a3xx and stm32h7b3xx family lines.                       */                        
+                            (*) : For stm32h7a3xx and stm32h7b3xx family lines.                       */
 
   uint32_t PLLP;       /*!< PLLP: Division factor for system clock.
                             This parameter must be a number between Min_Data = 2 and Max_Data = 128
@@ -78,7 +76,7 @@ typedef struct
   uint32_t PLLFRACN;   /*!<PLLFRACN: Specifies Fractional Part Of The Multiplication Factor for
                         PLL1 VCO It should be a value between 0 and 8191                              */
 
-}RCC_PLLInitTypeDef;
+} RCC_PLLInitTypeDef;
 
 /**
   * @brief  RCC Internal/External Oscillator (HSE, HSI, CSI, LSE and LSI) configuration structure definition
@@ -104,7 +102,7 @@ typedef struct
   uint32_t LSIState;             /*!< The new state of the LSI.
                                       This parameter can be a value of @ref RCC_LSI_Config                        */
 
- uint32_t HSI48State;            /*!< The new state of the HSI48.
+  uint32_t HSI48State;            /*!< The new state of the HSI48.
                                       This parameter can be a value of @ref RCC_HSI48_Config                      */
 
   uint32_t CSIState;             /*!< The new state of the CSI.
@@ -116,7 +114,7 @@ typedef struct
 
   RCC_PLLInitTypeDef PLL;        /*!< PLL structure parameters                                                    */
 
-}RCC_OscInitTypeDef;
+} RCC_OscInitTypeDef;
 
 /**
   * @brief  RCC System, AHB and APB busses clock configuration structure definition
@@ -144,7 +142,7 @@ typedef struct
                                        This parameter can be a value of @ref RCC_APB2_Clock_Source                        */
   uint32_t APB4CLKDivider;      /*!< The APB4 clock (D3PCLK1) divider. This clock is derived from the AHB clock (HCLK).
                                        This parameter can be a value of @ref RCC_APB4_Clock_Source                        */
-}RCC_ClkInitTypeDef;
+} RCC_ClkInitTypeDef;
 
 /**
   * @}
@@ -1213,7 +1211,7 @@ typedef struct
                                         UNUSED(tmpreg); \
                                        } while(0)
 #endif /* FMAC */
-    
+
 #if defined(CORDIC)
 #define __HAL_RCC_CORDIC_CLK_ENABLE()   do { \
                                         __IO uint32_t tmpreg; \
@@ -2121,7 +2119,7 @@ typedef struct
 #define __HAL_RCC_TIM23_IS_CLK_ENABLED()           ((RCC->APB1HENR & RCC_APB1HENR_TIM23EN)   != 0U)
 #endif /* TIM23 */
 #if defined(TIM24)
-#define __HAL_RCC_TIM24_IS_CLK_ENABLED()           ((RCC->APB1HENR & RCC_APB1HENR_TIM24EN)   != 0U) 
+#define __HAL_RCC_TIM24_IS_CLK_ENABLED()           ((RCC->APB1HENR & RCC_APB1HENR_TIM24EN)   != 0U)
 #endif /* TIM24 */
 
 #define __HAL_RCC_TIM2_IS_CLK_DISABLED()           ((RCC->APB1LENR & RCC_APB1LENR_TIM2EN)    == 0U)
@@ -7572,7 +7570,7 @@ typedef struct
   *         between 192 and 836 MHZ or between 128 and 560 MHZ(*) (when in wide VCO range)
   *
   * @param  __PLLP1__: specifies the division factor for system  clock.
-  *          This parameter must be a number between 2 or 1(**) and 128 (where odd numbers are not allowed) 
+  *          This parameter must be a number between 2 or 1(**) and 128 (where odd numbers are not allowed)
   *
   * @param  __PLLQ1__: specifies the division factor for peripheral kernel clocks
   *          This parameter must be a number between 1 and 128
@@ -7581,7 +7579,7 @@ typedef struct
   *          This parameter must be a number between 1 and 128
   *
   * @note   To insure an optimal behavior of the PLL when one of the post-divider (DIVP, DIVQ or DIVR)
-  *         is not used, application shall clear the enable bit (DIVyEN) and assign lowest possible 
+  *         is not used, application shall clear the enable bit (DIVyEN) and assign lowest possible
   *         value to  __PLL1P__, __PLL1Q__ or __PLL1R__ parameters.
   * @retval None
   *
@@ -7625,7 +7623,7 @@ typedef struct
   *
   * @retval None
   */
- #define  __HAL_RCC_PLLFRACN_CONFIG(__RCC_PLL1FRACN__) MODIFY_REG(RCC->PLL1FRACR, RCC_PLL1FRACR_FRACN1, (uint32_t)(__RCC_PLL1FRACN__) << RCC_PLL1FRACR_FRACN1_Pos)
+#define  __HAL_RCC_PLLFRACN_CONFIG(__RCC_PLL1FRACN__) MODIFY_REG(RCC->PLL1FRACR, RCC_PLL1FRACR_FRACN1, (uint32_t)(__RCC_PLL1FRACN__) << RCC_PLL1FRACR_FRACN1_Pos)
 
 
 /** @brief  Macro to select  the PLL1  reference frequency range.
@@ -7960,9 +7958,9 @@ typedef struct
 #include "stm32h7xx_hal_rcc_ex.h"
 
 /* Exported functions --------------------------------------------------------*/
- /** @addtogroup RCC_Exported_Functions
-  * @{
-  */
+/** @addtogroup RCC_Exported_Functions
+ * @{
+ */
 
 /** @addtogroup RCC_Exported_Functions_Group1
   * @{
@@ -7992,7 +7990,7 @@ void     HAL_RCC_GetClockConfig(RCC_ClkInitTypeDef *RCC_ClkInitStruct, uint32_t 
 /* CSS NMI IRQ handler */
 void     HAL_RCC_NMI_IRQHandler(void);
 /* User Callbacks in non blocking mode (IT mode) */
-void     HAL_RCC_CCSCallback(void);
+void     HAL_RCC_CSSCallback(void);
 
 /**
   * @}
@@ -8015,6 +8013,7 @@ void     HAL_RCC_CCSCallback(void);
 #define CSI_TIMEOUT_VALUE          (2U)    /* 2 ms */
 #define LSI_TIMEOUT_VALUE          (2U)    /* 2 ms */
 #define PLL_TIMEOUT_VALUE          (2U)    /* 2 ms */
+#define PLL_FRAC_TIMEOUT_VALUE     (1U)    /* PLL Fractional part waiting time before new latch enable : 1 ms */
 #define CLOCKSWITCH_TIMEOUT_VALUE  (5000U) /* 5 s  */
 #define RCC_DBP_TIMEOUT_VALUE      (100U)
 #define RCC_LSE_TIMEOUT_VALUE      LSE_STARTUP_TIMEOUT
@@ -8265,4 +8264,3 @@ void     HAL_RCC_CCSCallback(void);
 
 #endif /* STM32H7xx_HAL_RCC_H */
 
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

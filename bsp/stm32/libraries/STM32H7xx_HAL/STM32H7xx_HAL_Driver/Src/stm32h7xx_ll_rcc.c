@@ -6,14 +6,12 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; COPYRIGHT(c) 2017 STMicroelectronics.
-  * All rights reserved.</center></h2>
+  * Copyright (c) 2017 STMicroelectronics.
+  * All rights reserved.
   *
-  * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the
-  * License. You may obtain a copy of the License at:
-  *                        opensource.org/licenses/BSD-3-Clause
-  *
+  * This software is licensed under terms that can be found in the LICENSE file in
+  * the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
   ******************************************************************************
   */
 #if defined(USE_FULL_LL_DRIVER)
@@ -22,9 +20,9 @@
 #include "stm32h7xx_ll_rcc.h"
 #include "stm32h7xx_ll_bus.h"
 #ifdef  USE_FULL_ASSERT
-  #include "stm32_assert.h"
+#include "stm32_assert.h"
 #else
-  #define assert_param(expr) ((void)0U)
+#define assert_param(expr) ((void)0U)
 #endif
 
 /** @addtogroup STM32H7xx_LL_Driver
@@ -39,7 +37,14 @@
 
 /* Private types -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
+/** @addtogroup RCC_LL_Private_Variables
+  * @{
+  */
 const uint8_t LL_RCC_PrescTable[16] = {0, 0, 0, 0, 1, 2, 3, 4, 1, 2, 3, 4, 6, 7, 8, 9};
+
+/**
+  * @}
+  */
 /* Private constants ---------------------------------------------------------*/
 /* Private macros ------------------------------------------------------------*/
 /** @addtogroup RCC_LL_Private_Macros
@@ -119,8 +124,8 @@ static uint32_t RCC_GetPCLK4ClockFreq(uint32_t HCLK_Frequency);
   */
 void LL_RCC_DeInit(void)
 {
-   /* Increasing the CPU frequency */
-  if(FLASH_LATENCY_DEFAULT  > (READ_BIT((FLASH->ACR), FLASH_ACR_LATENCY)))
+  /* Increasing the CPU frequency */
+  if (FLASH_LATENCY_DEFAULT  > (READ_BIT((FLASH->ACR), FLASH_ACR_LATENCY)))
   {
     /* Program the new number of wait states to the LATENCY bits in the FLASH_ACR register */
     MODIFY_REG(FLASH->ACR, FLASH_ACR_LATENCY, (uint32_t)(FLASH_LATENCY_DEFAULT));
@@ -130,26 +135,26 @@ void LL_RCC_DeInit(void)
   SET_BIT(RCC->CR, RCC_CR_HSION);
 
   /* Wait for HSI READY bit */
-  while(LL_RCC_HSI_IsReady() == 0U)
+  while (LL_RCC_HSI_IsReady() == 0U)
   {}
 
   /* Reset CFGR register */
   CLEAR_REG(RCC->CFGR);
 
   /* Reset CSION , CSIKERON, HSEON, HSI48ON, HSECSSON,HSIDIV, PLL1ON, PLL2ON, PLL3ON bits */
-  CLEAR_BIT(RCC->CR, RCC_CR_HSEON | RCC_CR_HSIKERON| RCC_CR_HSIDIV| RCC_CR_HSIDIVF| RCC_CR_CSION | RCC_CR_CSIKERON |  RCC_CR_HSI48ON  \
-  |RCC_CR_CSSHSEON | RCC_CR_PLL1ON | RCC_CR_PLL2ON | RCC_CR_PLL3ON);
+  CLEAR_BIT(RCC->CR, RCC_CR_HSEON | RCC_CR_HSIKERON | RCC_CR_HSIDIV | RCC_CR_HSIDIVF | RCC_CR_CSION | RCC_CR_CSIKERON |  RCC_CR_HSI48ON  \
+            | RCC_CR_CSSHSEON | RCC_CR_PLL1ON | RCC_CR_PLL2ON | RCC_CR_PLL3ON);
 
   /* Wait for PLL1 READY bit to be reset */
-  while(LL_RCC_PLL1_IsReady() != 0U)
+  while (LL_RCC_PLL1_IsReady() != 0U)
   {}
 
   /* Wait for PLL2 READY bit to be reset */
-  while(LL_RCC_PLL2_IsReady() != 0U)
+  while (LL_RCC_PLL2_IsReady() != 0U)
   {}
 
   /* Wait for PLL3 READY bit to be reset */
-  while(LL_RCC_PLL3_IsReady() != 0U)
+  while (LL_RCC_PLL3_IsReady() != 0U)
   {}
 
 #if defined(RCC_D1CFGR_HPRE)
@@ -174,7 +179,7 @@ void LL_RCC_DeInit(void)
 #endif /* RCC_D1CFGR_HPRE */
 
   /* Reset PLLCKSELR register to default value */
-  RCC->PLLCKSELR= RCC_PLLCKSELR_DIVM1_5|RCC_PLLCKSELR_DIVM2_5|RCC_PLLCKSELR_DIVM3_5;
+  RCC->PLLCKSELR = RCC_PLLCKSELR_DIVM1_5 | RCC_PLLCKSELR_DIVM2_5 | RCC_PLLCKSELR_DIVM3_5;
 
   /* Reset PLLCFGR register to default value */
   LL_RCC_WriteReg(PLLCFGR, 0x01FF0000U);
@@ -205,14 +210,14 @@ void LL_RCC_DeInit(void)
 
   /* Clear all interrupts */
   SET_BIT(RCC->CICR, RCC_CICR_LSIRDYC | RCC_CICR_LSERDYC | RCC_CICR_HSIRDYC | RCC_CICR_HSERDYC
-                   | RCC_CICR_CSIRDYC | RCC_CICR_HSI48RDYC | RCC_CICR_PLLRDYC | RCC_CICR_PLL2RDYC
-                   | RCC_CICR_PLL3RDYC | RCC_CICR_LSECSSC | RCC_CICR_HSECSSC);
+          | RCC_CICR_CSIRDYC | RCC_CICR_HSI48RDYC | RCC_CICR_PLLRDYC | RCC_CICR_PLL2RDYC
+          | RCC_CICR_PLL3RDYC | RCC_CICR_LSECSSC | RCC_CICR_HSECSSC);
 
   /* Clear reset source flags */
   SET_BIT(RCC->RSR, RCC_RSR_RMVF);
-  
-   /* Decreasing the number of wait states because of lower CPU frequency */
-  if(FLASH_LATENCY_DEFAULT  < (READ_BIT((FLASH->ACR), FLASH_ACR_LATENCY)))
+
+  /* Decreasing the number of wait states because of lower CPU frequency */
+  if (FLASH_LATENCY_DEFAULT  < (READ_BIT((FLASH->ACR), FLASH_ACR_LATENCY)))
   {
     /* Program the new number of wait states to the LATENCY bits in the FLASH_ACR register */
     MODIFY_REG(FLASH->ACR, FLASH_ACR_LATENCY, (uint32_t)(FLASH_LATENCY_DEFAULT));
@@ -298,7 +303,7 @@ void LL_RCC_GetPLL1ClockFreq(LL_PLL_ClocksTypeDef *PLL_Clocks)
     case LL_RCC_PLLSOURCE_HSI:
       if (LL_RCC_HSI_IsReady() != 0U)
       {
-        pllinputfreq = HSI_VALUE >> (LL_RCC_HSI_GetDivider()>> RCC_CR_HSIDIV_Pos);
+        pllinputfreq = HSI_VALUE >> (LL_RCC_HSI_GetDivider() >> RCC_CR_HSIDIV_Pos);
       }
       break;
 
@@ -372,7 +377,7 @@ void LL_RCC_GetPLL2ClockFreq(LL_PLL_ClocksTypeDef *PLL_Clocks)
     case LL_RCC_PLLSOURCE_HSI:
       if (LL_RCC_HSI_IsReady() != 0U)
       {
-        pllinputfreq = HSI_VALUE >> (LL_RCC_HSI_GetDivider()>> RCC_CR_HSIDIV_Pos);
+        pllinputfreq = HSI_VALUE >> (LL_RCC_HSI_GetDivider() >> RCC_CR_HSIDIV_Pos);
       }
       break;
 
@@ -446,7 +451,7 @@ void LL_RCC_GetPLL3ClockFreq(LL_PLL_ClocksTypeDef *PLL_Clocks)
     case LL_RCC_PLLSOURCE_HSI:
       if (LL_RCC_HSI_IsReady() != 0U)
       {
-        pllinputfreq = HSI_VALUE >> (LL_RCC_HSI_GetDivider()>> RCC_CR_HSIDIV_Pos);
+        pllinputfreq = HSI_VALUE >> (LL_RCC_HSI_GetDivider() >> RCC_CR_HSIDIV_Pos);
       }
       break;
 
@@ -516,9 +521,9 @@ uint32_t LL_RCC_CalcPLLClockFreq(uint32_t PLLInputFreq, uint32_t M, uint32_t N, 
 {
   float_t freq;
 
-  freq = ((float_t)PLLInputFreq / (float_t)M) * ((float_t)N + ((float_t)FRACN/(float_t)0x2000));
+  freq = ((float_t)PLLInputFreq / (float_t)M) * ((float_t)N + ((float_t)FRACN / (float_t)0x2000));
 
-  freq = freq/(float_t)PQR;
+  freq = freq / (float_t)PQR;
 
   return (uint32_t)freq;
 }
@@ -542,11 +547,11 @@ uint32_t LL_RCC_GetUSARTClockFreq(uint32_t USARTxSource)
   switch (LL_RCC_GetUSARTClockSource(USARTxSource))
   {
     case LL_RCC_USART16_CLKSOURCE_PCLK2:
-      usart_frequency = RCC_GetPCLK2ClockFreq(RCC_GetHCLKClockFreq(LL_RCC_CALC_SYSCLK_FREQ(RCC_GetSystemClockFreq(),LL_RCC_GetSysPrescaler())));
+      usart_frequency = RCC_GetPCLK2ClockFreq(RCC_GetHCLKClockFreq(LL_RCC_CALC_SYSCLK_FREQ(RCC_GetSystemClockFreq(), LL_RCC_GetSysPrescaler())));
       break;
 
     case LL_RCC_USART234578_CLKSOURCE_PCLK1:
-      usart_frequency = RCC_GetPCLK1ClockFreq(RCC_GetHCLKClockFreq(LL_RCC_CALC_SYSCLK_FREQ(RCC_GetSystemClockFreq(),LL_RCC_GetSysPrescaler())));
+      usart_frequency = RCC_GetPCLK1ClockFreq(RCC_GetHCLKClockFreq(LL_RCC_CALC_SYSCLK_FREQ(RCC_GetSystemClockFreq(), LL_RCC_GetSysPrescaler())));
       break;
 
     case LL_RCC_USART16_CLKSOURCE_PLL2Q:
@@ -571,7 +576,7 @@ uint32_t LL_RCC_GetUSARTClockFreq(uint32_t USARTxSource)
     case LL_RCC_USART234578_CLKSOURCE_HSI:
       if (LL_RCC_HSI_IsReady() != 0U)
       {
-        usart_frequency = HSI_VALUE >> (LL_RCC_HSI_GetDivider()>> RCC_CR_HSIDIV_Pos);
+        usart_frequency = HSI_VALUE >> (LL_RCC_HSI_GetDivider() >> RCC_CR_HSIDIV_Pos);
       }
       break;
 
@@ -614,7 +619,7 @@ uint32_t LL_RCC_GetLPUARTClockFreq(uint32_t LPUARTxSource)
   switch (LL_RCC_GetLPUARTClockSource(LPUARTxSource))
   {
     case LL_RCC_LPUART1_CLKSOURCE_PCLK4:
-      lpuart_frequency = RCC_GetPCLK4ClockFreq(RCC_GetHCLKClockFreq(LL_RCC_CALC_SYSCLK_FREQ(RCC_GetSystemClockFreq(),LL_RCC_GetSysPrescaler())));
+      lpuart_frequency = RCC_GetPCLK4ClockFreq(RCC_GetHCLKClockFreq(LL_RCC_CALC_SYSCLK_FREQ(RCC_GetSystemClockFreq(), LL_RCC_GetSysPrescaler())));
       break;
 
     case LL_RCC_LPUART1_CLKSOURCE_PLL2Q:
@@ -636,7 +641,7 @@ uint32_t LL_RCC_GetLPUARTClockFreq(uint32_t LPUARTxSource)
     case LL_RCC_LPUART1_CLKSOURCE_HSI:
       if (LL_RCC_HSI_IsReady() != 0U)
       {
-        lpuart_frequency = HSI_VALUE >> (LL_RCC_HSI_GetDivider()>> RCC_CR_HSIDIV_Pos);
+        lpuart_frequency = HSI_VALUE >> (LL_RCC_HSI_GetDivider() >> RCC_CR_HSIDIV_Pos);
       }
       break;
 
@@ -681,11 +686,11 @@ uint32_t LL_RCC_GetI2CClockFreq(uint32_t I2CxSource)
   switch (LL_RCC_GetI2CClockSource(I2CxSource))
   {
     case LL_RCC_I2C123_CLKSOURCE_PCLK1:
-      i2c_frequency = RCC_GetPCLK1ClockFreq(RCC_GetHCLKClockFreq(LL_RCC_CALC_SYSCLK_FREQ(RCC_GetSystemClockFreq(),LL_RCC_GetSysPrescaler())));
+      i2c_frequency = RCC_GetPCLK1ClockFreq(RCC_GetHCLKClockFreq(LL_RCC_CALC_SYSCLK_FREQ(RCC_GetSystemClockFreq(), LL_RCC_GetSysPrescaler())));
       break;
 
     case LL_RCC_I2C4_CLKSOURCE_PCLK4:
-      i2c_frequency = RCC_GetPCLK4ClockFreq(RCC_GetHCLKClockFreq(LL_RCC_CALC_SYSCLK_FREQ(RCC_GetSystemClockFreq(),LL_RCC_GetSysPrescaler())));
+      i2c_frequency = RCC_GetPCLK4ClockFreq(RCC_GetHCLKClockFreq(LL_RCC_CALC_SYSCLK_FREQ(RCC_GetSystemClockFreq(), LL_RCC_GetSysPrescaler())));
       break;
 
     case LL_RCC_I2C123_CLKSOURCE_PLL3R:
@@ -701,7 +706,7 @@ uint32_t LL_RCC_GetI2CClockFreq(uint32_t I2CxSource)
     case LL_RCC_I2C4_CLKSOURCE_HSI:
       if (LL_RCC_HSI_IsReady() != 0U)
       {
-        i2c_frequency = HSI_VALUE >> (LL_RCC_HSI_GetDivider()>> RCC_CR_HSIDIV_Pos);
+        i2c_frequency = HSI_VALUE >> (LL_RCC_HSI_GetDivider() >> RCC_CR_HSIDIV_Pos);
       }
       break;
 
@@ -741,12 +746,12 @@ uint32_t LL_RCC_GetLPTIMClockFreq(uint32_t LPTIMxSource)
   switch (LL_RCC_GetLPTIMClockSource(LPTIMxSource))
   {
     case LL_RCC_LPTIM1_CLKSOURCE_PCLK1:
-      lptim_frequency = RCC_GetPCLK1ClockFreq(RCC_GetHCLKClockFreq(LL_RCC_CALC_SYSCLK_FREQ(RCC_GetSystemClockFreq(),LL_RCC_GetSysPrescaler())));
+      lptim_frequency = RCC_GetPCLK1ClockFreq(RCC_GetHCLKClockFreq(LL_RCC_CALC_SYSCLK_FREQ(RCC_GetSystemClockFreq(), LL_RCC_GetSysPrescaler())));
       break;
 
     case LL_RCC_LPTIM2_CLKSOURCE_PCLK4:
     case LL_RCC_LPTIM345_CLKSOURCE_PCLK4:
-      lptim_frequency = RCC_GetPCLK4ClockFreq(RCC_GetHCLKClockFreq(LL_RCC_CALC_SYSCLK_FREQ(RCC_GetSystemClockFreq(),LL_RCC_GetSysPrescaler())));
+      lptim_frequency = RCC_GetPCLK4ClockFreq(RCC_GetHCLKClockFreq(LL_RCC_CALC_SYSCLK_FREQ(RCC_GetSystemClockFreq(), LL_RCC_GetSysPrescaler())));
       break;
 
     case LL_RCC_LPTIM1_CLKSOURCE_PLL2P:
@@ -836,7 +841,7 @@ uint32_t LL_RCC_GetSAIClockFreq(uint32_t SAIxSource)
 #if defined (RCC_CDCCIP1R_SAI2ASEL) || defined(RCC_CDCCIP1R_SAI2BSEL)
     case LL_RCC_SAI2A_CLKSOURCE_PLL1Q:
     case LL_RCC_SAI2B_CLKSOURCE_PLL1Q:
-#endif /* RCC_CDCCIP1R_SAI2ASEL || RCC_CDCCIP1R_SAI2BSEL */ 
+#endif /* RCC_CDCCIP1R_SAI2ASEL || RCC_CDCCIP1R_SAI2BSEL */
       if (LL_RCC_PLL1_IsReady() != 0U)
       {
         LL_RCC_GetPLL1ClockFreq(&PLL_Clocks);
@@ -1157,7 +1162,7 @@ uint32_t LL_RCC_GetDFSDMClockFreq(uint32_t DFSDMxSource)
       break;
 
     case LL_RCC_DFSDM1_CLKSOURCE_PCLK2:
-      dfsdm_frequency = RCC_GetPCLK2ClockFreq(RCC_GetHCLKClockFreq(LL_RCC_CALC_SYSCLK_FREQ(RCC_GetSystemClockFreq(),LL_RCC_GetSysPrescaler())));
+      dfsdm_frequency = RCC_GetPCLK2ClockFreq(RCC_GetHCLKClockFreq(LL_RCC_CALC_SYSCLK_FREQ(RCC_GetSystemClockFreq(), LL_RCC_GetSysPrescaler())));
       break;
 
     default:
@@ -1189,7 +1194,7 @@ uint32_t LL_RCC_GetDFSDM2ClockFreq(uint32_t DFSDMxSource)
       break;
 
     case LL_RCC_DFSDM2_CLKSOURCE_PCLK4:
-      dfsdm_frequency = RCC_GetPCLK4ClockFreq(RCC_GetHCLKClockFreq(LL_RCC_CALC_SYSCLK_FREQ(RCC_GetSystemClockFreq(),LL_RCC_GetSysPrescaler())));
+      dfsdm_frequency = RCC_GetPCLK4ClockFreq(RCC_GetHCLKClockFreq(LL_RCC_CALC_SYSCLK_FREQ(RCC_GetSystemClockFreq(), LL_RCC_GetSysPrescaler())));
       break;
 
     default:
@@ -1279,7 +1284,7 @@ uint32_t LL_RCC_GetSPDIFClockFreq(uint32_t SPDIFxSource)
     case LL_RCC_SPDIF_CLKSOURCE_HSI:
       if (LL_RCC_HSI_IsReady() != 0U)
       {
-        spdif_frequency = HSI_VALUE >> (LL_RCC_HSI_GetDivider()>> RCC_CR_HSIDIV_Pos);
+        spdif_frequency = HSI_VALUE >> (LL_RCC_HSI_GetDivider() >> RCC_CR_HSIDIV_Pos);
       }
       break;
 
@@ -1346,11 +1351,11 @@ uint32_t LL_RCC_GetSPIClockFreq(uint32_t SPIxSource)
       break;
 
     case LL_RCC_SPI45_CLKSOURCE_PCLK2:
-      spi_frequency = RCC_GetPCLK2ClockFreq(RCC_GetHCLKClockFreq(LL_RCC_CALC_SYSCLK_FREQ(RCC_GetSystemClockFreq(),LL_RCC_GetSysPrescaler())));
+      spi_frequency = RCC_GetPCLK2ClockFreq(RCC_GetHCLKClockFreq(LL_RCC_CALC_SYSCLK_FREQ(RCC_GetSystemClockFreq(), LL_RCC_GetSysPrescaler())));
       break;
 
     case LL_RCC_SPI6_CLKSOURCE_PCLK4:
-      spi_frequency = RCC_GetPCLK4ClockFreq(RCC_GetHCLKClockFreq(LL_RCC_CALC_SYSCLK_FREQ(RCC_GetSystemClockFreq(),LL_RCC_GetSysPrescaler())));
+      spi_frequency = RCC_GetPCLK4ClockFreq(RCC_GetHCLKClockFreq(LL_RCC_CALC_SYSCLK_FREQ(RCC_GetSystemClockFreq(), LL_RCC_GetSysPrescaler())));
       break;
 
     case LL_RCC_SPI45_CLKSOURCE_PLL2Q:
@@ -1375,7 +1380,7 @@ uint32_t LL_RCC_GetSPIClockFreq(uint32_t SPIxSource)
     case LL_RCC_SPI6_CLKSOURCE_HSI:
       if (LL_RCC_HSI_IsReady() != 0U)
       {
-        spi_frequency = HSI_VALUE >> (LL_RCC_HSI_GetDivider()>> RCC_CR_HSIDIV_Pos);
+        spi_frequency = HSI_VALUE >> (LL_RCC_HSI_GetDivider() >> RCC_CR_HSIDIV_Pos);
       }
       break;
 
@@ -1417,13 +1422,13 @@ uint32_t LL_RCC_GetSWPClockFreq(uint32_t SWPxSource)
   switch (LL_RCC_GetSWPClockSource(SWPxSource))
   {
     case LL_RCC_SWP_CLKSOURCE_PCLK1:
-      swp_frequency = RCC_GetPCLK1ClockFreq(RCC_GetHCLKClockFreq(LL_RCC_CALC_SYSCLK_FREQ(RCC_GetSystemClockFreq(),LL_RCC_GetSysPrescaler())));
+      swp_frequency = RCC_GetPCLK1ClockFreq(RCC_GetHCLKClockFreq(LL_RCC_CALC_SYSCLK_FREQ(RCC_GetSystemClockFreq(), LL_RCC_GetSysPrescaler())));
       break;
 
     case LL_RCC_SWP_CLKSOURCE_HSI:
       if (LL_RCC_HSI_IsReady() != 0U)
       {
-        swp_frequency = HSI_VALUE >> (LL_RCC_HSI_GetDivider()>> RCC_CR_HSIDIV_Pos);
+        swp_frequency = HSI_VALUE >> (LL_RCC_HSI_GetDivider() >> RCC_CR_HSIDIV_Pos);
       }
       break;
 
@@ -1495,7 +1500,7 @@ uint32_t LL_RCC_GetFMCClockFreq(uint32_t FMCxSource)
   switch (LL_RCC_GetFMCClockSource(FMCxSource))
   {
     case LL_RCC_FMC_CLKSOURCE_HCLK:
-      fmc_frequency = RCC_GetHCLKClockFreq(LL_RCC_CALC_SYSCLK_FREQ(RCC_GetSystemClockFreq(),LL_RCC_GetSysPrescaler()));
+      fmc_frequency = RCC_GetHCLKClockFreq(LL_RCC_CALC_SYSCLK_FREQ(RCC_GetSystemClockFreq(), LL_RCC_GetSysPrescaler()));
       break;
 
     case LL_RCC_FMC_CLKSOURCE_PLL1Q:
@@ -1542,7 +1547,7 @@ uint32_t LL_RCC_GetQSPIClockFreq(uint32_t QSPIxSource)
   switch (LL_RCC_GetQSPIClockSource(QSPIxSource))
   {
     case LL_RCC_QSPI_CLKSOURCE_HCLK:
-      qspi_frequency = RCC_GetHCLKClockFreq(LL_RCC_CALC_SYSCLK_FREQ(RCC_GetSystemClockFreq(),LL_RCC_GetSysPrescaler()));
+      qspi_frequency = RCC_GetHCLKClockFreq(LL_RCC_CALC_SYSCLK_FREQ(RCC_GetSystemClockFreq(), LL_RCC_GetSysPrescaler()));
       break;
 
     case LL_RCC_QSPI_CLKSOURCE_PLL1Q:
@@ -1591,7 +1596,7 @@ uint32_t LL_RCC_GetOSPIClockFreq(uint32_t OSPIxSource)
   switch (LL_RCC_GetOSPIClockSource(OSPIxSource))
   {
     case LL_RCC_OSPI_CLKSOURCE_HCLK:
-      ospi_frequency = RCC_GetHCLKClockFreq(LL_RCC_CALC_SYSCLK_FREQ(RCC_GetSystemClockFreq(),LL_RCC_GetSysPrescaler()));
+      ospi_frequency = RCC_GetHCLKClockFreq(LL_RCC_CALC_SYSCLK_FREQ(RCC_GetSystemClockFreq(), LL_RCC_GetSysPrescaler()));
       break;
 
     case LL_RCC_OSPI_CLKSOURCE_PLL1Q:
@@ -1639,7 +1644,7 @@ uint32_t LL_RCC_GetCLKPClockFreq(uint32_t CLKPxSource)
     case LL_RCC_CLKP_CLKSOURCE_HSI:
       if (LL_RCC_HSI_IsReady() != 0U)
       {
-        clkp_frequency = HSI_VALUE >> (LL_RCC_HSI_GetDivider()>> RCC_CR_HSIDIV_Pos);
+        clkp_frequency = HSI_VALUE >> (LL_RCC_HSI_GetDivider() >> RCC_CR_HSIDIV_Pos);
       }
       break;
 
@@ -1691,7 +1696,7 @@ static uint32_t RCC_GetSystemClockFreq(void)
   {
     /* No check on Ready: Won't be selected by hardware if not */
     case LL_RCC_SYS_CLKSOURCE_STATUS_HSI:
-      frequency = HSI_VALUE >> (LL_RCC_HSI_GetDivider()>> RCC_CR_HSIDIV_Pos);
+      frequency = HSI_VALUE >> (LL_RCC_HSI_GetDivider() >> RCC_CR_HSIDIV_Pos);
       break;
 
     case LL_RCC_SYS_CLKSOURCE_STATUS_CSI:
@@ -1786,4 +1791,3 @@ static uint32_t RCC_GetPCLK4ClockFreq(uint32_t HCLK_Frequency)
 
 #endif /* USE_FULL_LL_DRIVER */
 
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

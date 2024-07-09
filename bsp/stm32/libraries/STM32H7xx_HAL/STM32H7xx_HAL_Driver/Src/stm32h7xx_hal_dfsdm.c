@@ -16,6 +16,17 @@
   *           + Clock absence detector feature
   *           + Break generation on analog watchdog or short-circuit event
   *
+  ******************************************************************************
+  * @attention
+  *
+  * Copyright (c) 2017 STMicroelectronics.
+  * All rights reserved.
+  *
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
+  *
+  ******************************************************************************
   @verbatim
   ==============================================================================
                      ##### How to use this driver #####
@@ -250,17 +261,6 @@
     and weak callbacks are used.
 
     @endverbatim
-  ******************************************************************************
-  * @attention
-  *
-  * <h2><center>&copy; Copyright (c) 2017 STMicroelectronics.
-  * All rights reserved.</center></h2>
-  *
-  * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the
-  * License. You may obtain a copy of the License at:
-  *                        opensource.org/licenses/BSD-3-Clause
-  *
   ******************************************************************************
   */
 
@@ -819,7 +819,7 @@ HAL_StatusTypeDef HAL_DFSDM_ChannelCkabStart(DFSDM_Channel_HandleTypeDef *hdfsdm
   * @param  Timeout Timeout value in milliseconds.
   * @retval HAL status
   */
-HAL_StatusTypeDef HAL_DFSDM_ChannelPollForCkab(DFSDM_Channel_HandleTypeDef *hdfsdm_channel,
+HAL_StatusTypeDef HAL_DFSDM_ChannelPollForCkab(const DFSDM_Channel_HandleTypeDef *hdfsdm_channel,
                                                uint32_t Timeout)
 {
   uint32_t tickstart;
@@ -1109,7 +1109,7 @@ HAL_StatusTypeDef HAL_DFSDM_ChannelScdStart(DFSDM_Channel_HandleTypeDef *hdfsdm_
   * @param  Timeout Timeout value in milliseconds.
   * @retval HAL status
   */
-HAL_StatusTypeDef HAL_DFSDM_ChannelPollForScd(DFSDM_Channel_HandleTypeDef *hdfsdm_channel,
+HAL_StatusTypeDef HAL_DFSDM_ChannelPollForScd(const DFSDM_Channel_HandleTypeDef *hdfsdm_channel,
                                               uint32_t Timeout)
 {
   uint32_t tickstart;
@@ -1342,7 +1342,7 @@ HAL_StatusTypeDef HAL_DFSDM_ChannelScdStop_IT(DFSDM_Channel_HandleTypeDef *hdfsd
   * @param  hdfsdm_channel DFSDM channel handle.
   * @retval Channel analog watchdog value.
   */
-int16_t HAL_DFSDM_ChannelGetAwdValue(DFSDM_Channel_HandleTypeDef *hdfsdm_channel)
+int16_t HAL_DFSDM_ChannelGetAwdValue(const DFSDM_Channel_HandleTypeDef *hdfsdm_channel)
 {
   return (int16_t) hdfsdm_channel->Instance->CHWDATAR;
 }
@@ -1401,7 +1401,7 @@ HAL_StatusTypeDef HAL_DFSDM_ChannelModifyOffset(DFSDM_Channel_HandleTypeDef *hdf
   * @param  hdfsdm_channel DFSDM channel handle.
   * @retval DFSDM channel state.
   */
-HAL_DFSDM_Channel_StateTypeDef HAL_DFSDM_ChannelGetState(DFSDM_Channel_HandleTypeDef *hdfsdm_channel)
+HAL_DFSDM_Channel_StateTypeDef HAL_DFSDM_ChannelGetState(const DFSDM_Channel_HandleTypeDef *hdfsdm_channel)
 {
   /* Return DFSDM channel handle state */
   return hdfsdm_channel->State;
@@ -2393,7 +2393,7 @@ HAL_StatusTypeDef HAL_DFSDM_FilterRegularStop_DMA(DFSDM_Filter_HandleTypeDef *hd
   * @param  Channel Corresponding channel of regular conversion.
   * @retval Regular conversion value
   */
-int32_t HAL_DFSDM_FilterGetRegularValue(DFSDM_Filter_HandleTypeDef *hdfsdm_filter,
+int32_t HAL_DFSDM_FilterGetRegularValue(const DFSDM_Filter_HandleTypeDef *hdfsdm_filter,
                                         uint32_t                   *Channel)
 {
   uint32_t reg;
@@ -2810,7 +2810,7 @@ HAL_StatusTypeDef HAL_DFSDM_FilterInjectedStop_DMA(DFSDM_Filter_HandleTypeDef *h
   * @param  Channel Corresponding channel of injected conversion.
   * @retval Injected conversion value
   */
-int32_t HAL_DFSDM_FilterGetInjectedValue(DFSDM_Filter_HandleTypeDef *hdfsdm_filter,
+int32_t HAL_DFSDM_FilterGetInjectedValue(const DFSDM_Filter_HandleTypeDef *hdfsdm_filter,
                                          uint32_t                   *Channel)
 {
   uint32_t reg;
@@ -2841,7 +2841,7 @@ int32_t HAL_DFSDM_FilterGetInjectedValue(DFSDM_Filter_HandleTypeDef *hdfsdm_filt
   * @retval HAL status
   */
 HAL_StatusTypeDef HAL_DFSDM_FilterAwdStart_IT(DFSDM_Filter_HandleTypeDef   *hdfsdm_filter,
-                                              DFSDM_Filter_AwdParamTypeDef *awdParam)
+                                              const DFSDM_Filter_AwdParamTypeDef *awdParam)
 {
   HAL_StatusTypeDef status = HAL_OK;
 
@@ -2998,7 +2998,7 @@ HAL_StatusTypeDef HAL_DFSDM_FilterExdStop(DFSDM_Filter_HandleTypeDef *hdfsdm_fil
   * @retval Extreme detector maximum value
   *         This value is between Min_Data = -8388608 and Max_Data = 8388607.
   */
-int32_t HAL_DFSDM_FilterGetExdMaxValue(DFSDM_Filter_HandleTypeDef *hdfsdm_filter,
+int32_t HAL_DFSDM_FilterGetExdMaxValue(const DFSDM_Filter_HandleTypeDef *hdfsdm_filter,
                                        uint32_t                   *Channel)
 {
   uint32_t reg;
@@ -3029,7 +3029,7 @@ int32_t HAL_DFSDM_FilterGetExdMaxValue(DFSDM_Filter_HandleTypeDef *hdfsdm_filter
   * @retval Extreme detector minimum value
   *         This value is between Min_Data = -8388608 and Max_Data = 8388607.
   */
-int32_t HAL_DFSDM_FilterGetExdMinValue(DFSDM_Filter_HandleTypeDef *hdfsdm_filter,
+int32_t HAL_DFSDM_FilterGetExdMinValue(const DFSDM_Filter_HandleTypeDef *hdfsdm_filter,
                                        uint32_t                   *Channel)
 {
   uint32_t reg;
@@ -3059,7 +3059,7 @@ int32_t HAL_DFSDM_FilterGetExdMinValue(DFSDM_Filter_HandleTypeDef *hdfsdm_filter
   * @retval Conversion time value
   * @note   To get time in second, this value has to be divided by DFSDM clock frequency.
   */
-uint32_t HAL_DFSDM_FilterGetConvTimeValue(DFSDM_Filter_HandleTypeDef *hdfsdm_filter)
+uint32_t HAL_DFSDM_FilterGetConvTimeValue(const DFSDM_Filter_HandleTypeDef *hdfsdm_filter)
 {
   uint32_t reg;
   uint32_t value;
@@ -3413,7 +3413,7 @@ __weak void HAL_DFSDM_FilterErrorCallback(DFSDM_Filter_HandleTypeDef *hdfsdm_fil
   * @param  hdfsdm_filter DFSDM filter handle.
   * @retval DFSDM filter state.
   */
-HAL_DFSDM_Filter_StateTypeDef HAL_DFSDM_FilterGetState(DFSDM_Filter_HandleTypeDef *hdfsdm_filter)
+HAL_DFSDM_Filter_StateTypeDef HAL_DFSDM_FilterGetState(const DFSDM_Filter_HandleTypeDef *hdfsdm_filter)
 {
   /* Return DFSDM filter handle state */
   return hdfsdm_filter->State;
@@ -3424,7 +3424,7 @@ HAL_DFSDM_Filter_StateTypeDef HAL_DFSDM_FilterGetState(DFSDM_Filter_HandleTypeDe
   * @param  hdfsdm_filter DFSDM filter handle.
   * @retval DFSDM filter error code.
   */
-uint32_t HAL_DFSDM_FilterGetError(DFSDM_Filter_HandleTypeDef *hdfsdm_filter)
+uint32_t HAL_DFSDM_FilterGetError(const DFSDM_Filter_HandleTypeDef *hdfsdm_filter)
 {
   return hdfsdm_filter->ErrorCode;
 }
@@ -3795,4 +3795,3 @@ static void DFSDM_InjConvStop(DFSDM_Filter_HandleTypeDef *hdfsdm_filter)
   * @}
   */
 
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
