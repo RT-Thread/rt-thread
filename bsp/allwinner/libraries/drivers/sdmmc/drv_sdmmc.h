@@ -27,4 +27,18 @@ struct dev_sdmmc
 void sd_mmc1_init(void);
 void sd_mmc1_deinit(void);
 
+#ifdef RT_USING_DEVICE_OPS
+#define rt_dev_has_control(dev)         (dev)->ops->control
+#define rt_dev_control(dev, cmd, args) (dev)->ops->control(dev, cmd, args)
+#define rt_dev_read(dev, pos, buffer, size) (dev)->ops->read(dev, pos, buffer, size)
+#define rt_dev_write(dev, pos, buffer, size) (dev)->ops->write(dev, pos, buffer, size)
+
+#else
+#define rt_dev_has_control(dev)         (dev)->control
+#define rt_dev_control(dev, cmd, args) (dev)->control(dev, cmd, args)
+#define rt_dev_read(dev, pos, buffer, size) (dev)->read(dev, pos, buffer, size)
+#define rt_dev_write(dev, pos, buffer, size) (dev)->write(dev, pos, buffer, size)
+
+#endif
+
 #endif

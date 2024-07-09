@@ -66,18 +66,6 @@ rt_weak int msleep(unsigned int msecs)
     return 0;
 }
 
-void rt_hw_us_delay(rt_uint32_t us)
-{
-    uint64_t start, target;
-    uint64_t frequency;
-
-    frequency = arch_timer_get_cntfrq();
-    start = arch_counter_get_cntpct();
-    target = frequency / 1000000ULL * us;
-
-    while (arch_counter_get_cntpct() - start <= target) ;
-}
-
 rt_weak int usleep(unsigned int usecs)
 {
     int tickDiv = 1000 * (1000 / CONFIG_HZ);
