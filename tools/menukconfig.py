@@ -30,6 +30,17 @@ import shutil
 import hashlib
 import operator
 
+# test kconfiglib is installed
+try:
+    import kconfiglib
+except ImportError as e:
+    print("Failed to import kconfiglib: " + str(e))
+    print("")
+    print("You may need to install it using:")
+    print("    pip install kconfiglib")
+    print("")
+    sys.exit(1)
+
 DEFAULT_RTT_PACKAGE_URL = 'https://github.com/RT-Thread/packages.git'
 # you can change the package url by defining RTT_PACKAGE_URL, ex:
 #    export RTT_PACKAGE_URL=https://github.com/Varanda-Labs/packages.git
