@@ -2821,6 +2821,26 @@
       <BitField name="HIDE" start="8" size="2"/>
       <BitField name="SELECT" start="0" size="1"/>
     </Register>
+    <Register name="ASSIGN_GPIOC_PIN_PIN28" start="+0x170" size="0x4">
+      <BitField name="LOCK" start="31" size="1"/>
+      <BitField name="HIDE" start="8" size="2"/>
+      <BitField name="SELECT" start="0" size="1"/>
+    </Register>
+    <Register name="ASSIGN_GPIOC_PIN_PIN29" start="+0x174" size="0x4">
+      <BitField name="LOCK" start="31" size="1"/>
+      <BitField name="HIDE" start="8" size="2"/>
+      <BitField name="SELECT" start="0" size="1"/>
+    </Register>
+    <Register name="ASSIGN_GPIOC_PIN_PIN30" start="+0x178" size="0x4">
+      <BitField name="LOCK" start="31" size="1"/>
+      <BitField name="HIDE" start="8" size="2"/>
+      <BitField name="SELECT" start="0" size="1"/>
+    </Register>
+    <Register name="ASSIGN_GPIOC_PIN_PIN31" start="+0x17c" size="0x4">
+      <BitField name="LOCK" start="31" size="1"/>
+      <BitField name="HIDE" start="8" size="2"/>
+      <BitField name="SELECT" start="0" size="1"/>
+    </Register>
     <Register name="ASSIGN_GPIOX_PIN_PIN00" start="+0x680" size="0x4">
       <BitField name="LOCK" start="31" size="1"/>
       <BitField name="HIDE" start="8" size="2"/>
@@ -2857,6 +2877,126 @@
       <BitField name="SELECT" start="0" size="1"/>
     </Register>
     <Register name="ASSIGN_GPIOX_PIN_PIN07" start="+0x69c" size="0x4">
+      <BitField name="LOCK" start="31" size="1"/>
+      <BitField name="HIDE" start="8" size="2"/>
+      <BitField name="SELECT" start="0" size="1"/>
+    </Register>
+    <Register name="ASSIGN_GPIOX_PIN_PIN08" start="+0x6a0" size="0x4">
+      <BitField name="LOCK" start="31" size="1"/>
+      <BitField name="HIDE" start="8" size="2"/>
+      <BitField name="SELECT" start="0" size="1"/>
+    </Register>
+    <Register name="ASSIGN_GPIOX_PIN_PIN09" start="+0x6a4" size="0x4">
+      <BitField name="LOCK" start="31" size="1"/>
+      <BitField name="HIDE" start="8" size="2"/>
+      <BitField name="SELECT" start="0" size="1"/>
+    </Register>
+    <Register name="ASSIGN_GPIOX_PIN_PIN10" start="+0x6a8" size="0x4">
+      <BitField name="LOCK" start="31" size="1"/>
+      <BitField name="HIDE" start="8" size="2"/>
+      <BitField name="SELECT" start="0" size="1"/>
+    </Register>
+    <Register name="ASSIGN_GPIOX_PIN_PIN11" start="+0x6ac" size="0x4">
+      <BitField name="LOCK" start="31" size="1"/>
+      <BitField name="HIDE" start="8" size="2"/>
+      <BitField name="SELECT" start="0" size="1"/>
+    </Register>
+    <Register name="ASSIGN_GPIOX_PIN_PIN12" start="+0x6b0" size="0x4">
+      <BitField name="LOCK" start="31" size="1"/>
+      <BitField name="HIDE" start="8" size="2"/>
+      <BitField name="SELECT" start="0" size="1"/>
+    </Register>
+    <Register name="ASSIGN_GPIOX_PIN_PIN13" start="+0x6b4" size="0x4">
+      <BitField name="LOCK" start="31" size="1"/>
+      <BitField name="HIDE" start="8" size="2"/>
+      <BitField name="SELECT" start="0" size="1"/>
+    </Register>
+    <Register name="ASSIGN_GPIOX_PIN_PIN14" start="+0x6b8" size="0x4">
+      <BitField name="LOCK" start="31" size="1"/>
+      <BitField name="HIDE" start="8" size="2"/>
+      <BitField name="SELECT" start="0" size="1"/>
+    </Register>
+    <Register name="ASSIGN_GPIOX_PIN_PIN15" start="+0x6bc" size="0x4">
+      <BitField name="LOCK" start="31" size="1"/>
+      <BitField name="HIDE" start="8" size="2"/>
+      <BitField name="SELECT" start="0" size="1"/>
+    </Register>
+    <Register name="ASSIGN_GPIOX_PIN_PIN16" start="+0x6c0" size="0x4">
+      <BitField name="LOCK" start="31" size="1"/>
+      <BitField name="HIDE" start="8" size="2"/>
+      <BitField name="SELECT" start="0" size="1"/>
+    </Register>
+    <Register name="ASSIGN_GPIOX_PIN_PIN17" start="+0x6c4" size="0x4">
+      <BitField name="LOCK" start="31" size="1"/>
+      <BitField name="HIDE" start="8" size="2"/>
+      <BitField name="SELECT" start="0" size="1"/>
+    </Register>
+    <Register name="ASSIGN_GPIOX_PIN_PIN18" start="+0x6c8" size="0x4">
+      <BitField name="LOCK" start="31" size="1"/>
+      <BitField name="HIDE" start="8" size="2"/>
+      <BitField name="SELECT" start="0" size="1"/>
+    </Register>
+    <Register name="ASSIGN_GPIOX_PIN_PIN19" start="+0x6cc" size="0x4">
+      <BitField name="LOCK" start="31" size="1"/>
+      <BitField name="HIDE" start="8" size="2"/>
+      <BitField name="SELECT" start="0" size="1"/>
+    </Register>
+    <Register name="ASSIGN_GPIOX_PIN_PIN20" start="+0x6d0" size="0x4">
+      <BitField name="LOCK" start="31" size="1"/>
+      <BitField name="HIDE" start="8" size="2"/>
+      <BitField name="SELECT" start="0" size="1"/>
+    </Register>
+    <Register name="ASSIGN_GPIOX_PIN_PIN21" start="+0x6d4" size="0x4">
+      <BitField name="LOCK" start="31" size="1"/>
+      <BitField name="HIDE" start="8" size="2"/>
+      <BitField name="SELECT" start="0" size="1"/>
+    </Register>
+    <Register name="ASSIGN_GPIOX_PIN_PIN22" start="+0x6d8" size="0x4">
+      <BitField name="LOCK" start="31" size="1"/>
+      <BitField name="HIDE" start="8" size="2"/>
+      <BitField name="SELECT" start="0" size="1"/>
+    </Register>
+    <Register name="ASSIGN_GPIOX_PIN_PIN23" start="+0x6dc" size="0x4">
+      <BitField name="LOCK" start="31" size="1"/>
+      <BitField name="HIDE" start="8" size="2"/>
+      <BitField name="SELECT" start="0" size="1"/>
+    </Register>
+    <Register name="ASSIGN_GPIOX_PIN_PIN24" start="+0x6e0" size="0x4">
+      <BitField name="LOCK" start="31" size="1"/>
+      <BitField name="HIDE" start="8" size="2"/>
+      <BitField name="SELECT" start="0" size="1"/>
+    </Register>
+    <Register name="ASSIGN_GPIOX_PIN_PIN25" start="+0x6e4" size="0x4">
+      <BitField name="LOCK" start="31" size="1"/>
+      <BitField name="HIDE" start="8" size="2"/>
+      <BitField name="SELECT" start="0" size="1"/>
+    </Register>
+    <Register name="ASSIGN_GPIOX_PIN_PIN26" start="+0x6e8" size="0x4">
+      <BitField name="LOCK" start="31" size="1"/>
+      <BitField name="HIDE" start="8" size="2"/>
+      <BitField name="SELECT" start="0" size="1"/>
+    </Register>
+    <Register name="ASSIGN_GPIOX_PIN_PIN27" start="+0x6ec" size="0x4">
+      <BitField name="LOCK" start="31" size="1"/>
+      <BitField name="HIDE" start="8" size="2"/>
+      <BitField name="SELECT" start="0" size="1"/>
+    </Register>
+    <Register name="ASSIGN_GPIOX_PIN_PIN28" start="+0x6f0" size="0x4">
+      <BitField name="LOCK" start="31" size="1"/>
+      <BitField name="HIDE" start="8" size="2"/>
+      <BitField name="SELECT" start="0" size="1"/>
+    </Register>
+    <Register name="ASSIGN_GPIOX_PIN_PIN29" start="+0x6f4" size="0x4">
+      <BitField name="LOCK" start="31" size="1"/>
+      <BitField name="HIDE" start="8" size="2"/>
+      <BitField name="SELECT" start="0" size="1"/>
+    </Register>
+    <Register name="ASSIGN_GPIOX_PIN_PIN30" start="+0x6f8" size="0x4">
+      <BitField name="LOCK" start="31" size="1"/>
+      <BitField name="HIDE" start="8" size="2"/>
+      <BitField name="SELECT" start="0" size="1"/>
+    </Register>
+    <Register name="ASSIGN_GPIOX_PIN_PIN31" start="+0x6fc" size="0x4">
       <BitField name="LOCK" start="31" size="1"/>
       <BitField name="HIDE" start="8" size="2"/>
       <BitField name="SELECT" start="0" size="1"/>
@@ -2901,6 +3041,126 @@
       <BitField name="HIDE" start="8" size="2"/>
       <BitField name="SELECT" start="0" size="1"/>
     </Register>
+    <Register name="ASSIGN_GPIOY_PIN_PIN08" start="+0x720" size="0x4">
+      <BitField name="LOCK" start="31" size="1"/>
+      <BitField name="HIDE" start="8" size="2"/>
+      <BitField name="SELECT" start="0" size="1"/>
+    </Register>
+    <Register name="ASSIGN_GPIOY_PIN_PIN09" start="+0x724" size="0x4">
+      <BitField name="LOCK" start="31" size="1"/>
+      <BitField name="HIDE" start="8" size="2"/>
+      <BitField name="SELECT" start="0" size="1"/>
+    </Register>
+    <Register name="ASSIGN_GPIOY_PIN_PIN10" start="+0x728" size="0x4">
+      <BitField name="LOCK" start="31" size="1"/>
+      <BitField name="HIDE" start="8" size="2"/>
+      <BitField name="SELECT" start="0" size="1"/>
+    </Register>
+    <Register name="ASSIGN_GPIOY_PIN_PIN11" start="+0x72c" size="0x4">
+      <BitField name="LOCK" start="31" size="1"/>
+      <BitField name="HIDE" start="8" size="2"/>
+      <BitField name="SELECT" start="0" size="1"/>
+    </Register>
+    <Register name="ASSIGN_GPIOY_PIN_PIN12" start="+0x730" size="0x4">
+      <BitField name="LOCK" start="31" size="1"/>
+      <BitField name="HIDE" start="8" size="2"/>
+      <BitField name="SELECT" start="0" size="1"/>
+    </Register>
+    <Register name="ASSIGN_GPIOY_PIN_PIN13" start="+0x734" size="0x4">
+      <BitField name="LOCK" start="31" size="1"/>
+      <BitField name="HIDE" start="8" size="2"/>
+      <BitField name="SELECT" start="0" size="1"/>
+    </Register>
+    <Register name="ASSIGN_GPIOY_PIN_PIN14" start="+0x738" size="0x4">
+      <BitField name="LOCK" start="31" size="1"/>
+      <BitField name="HIDE" start="8" size="2"/>
+      <BitField name="SELECT" start="0" size="1"/>
+    </Register>
+    <Register name="ASSIGN_GPIOY_PIN_PIN15" start="+0x73c" size="0x4">
+      <BitField name="LOCK" start="31" size="1"/>
+      <BitField name="HIDE" start="8" size="2"/>
+      <BitField name="SELECT" start="0" size="1"/>
+    </Register>
+    <Register name="ASSIGN_GPIOY_PIN_PIN16" start="+0x740" size="0x4">
+      <BitField name="LOCK" start="31" size="1"/>
+      <BitField name="HIDE" start="8" size="2"/>
+      <BitField name="SELECT" start="0" size="1"/>
+    </Register>
+    <Register name="ASSIGN_GPIOY_PIN_PIN17" start="+0x744" size="0x4">
+      <BitField name="LOCK" start="31" size="1"/>
+      <BitField name="HIDE" start="8" size="2"/>
+      <BitField name="SELECT" start="0" size="1"/>
+    </Register>
+    <Register name="ASSIGN_GPIOY_PIN_PIN18" start="+0x748" size="0x4">
+      <BitField name="LOCK" start="31" size="1"/>
+      <BitField name="HIDE" start="8" size="2"/>
+      <BitField name="SELECT" start="0" size="1"/>
+    </Register>
+    <Register name="ASSIGN_GPIOY_PIN_PIN19" start="+0x74c" size="0x4">
+      <BitField name="LOCK" start="31" size="1"/>
+      <BitField name="HIDE" start="8" size="2"/>
+      <BitField name="SELECT" start="0" size="1"/>
+    </Register>
+    <Register name="ASSIGN_GPIOY_PIN_PIN20" start="+0x750" size="0x4">
+      <BitField name="LOCK" start="31" size="1"/>
+      <BitField name="HIDE" start="8" size="2"/>
+      <BitField name="SELECT" start="0" size="1"/>
+    </Register>
+    <Register name="ASSIGN_GPIOY_PIN_PIN21" start="+0x754" size="0x4">
+      <BitField name="LOCK" start="31" size="1"/>
+      <BitField name="HIDE" start="8" size="2"/>
+      <BitField name="SELECT" start="0" size="1"/>
+    </Register>
+    <Register name="ASSIGN_GPIOY_PIN_PIN22" start="+0x758" size="0x4">
+      <BitField name="LOCK" start="31" size="1"/>
+      <BitField name="HIDE" start="8" size="2"/>
+      <BitField name="SELECT" start="0" size="1"/>
+    </Register>
+    <Register name="ASSIGN_GPIOY_PIN_PIN23" start="+0x75c" size="0x4">
+      <BitField name="LOCK" start="31" size="1"/>
+      <BitField name="HIDE" start="8" size="2"/>
+      <BitField name="SELECT" start="0" size="1"/>
+    </Register>
+    <Register name="ASSIGN_GPIOY_PIN_PIN24" start="+0x760" size="0x4">
+      <BitField name="LOCK" start="31" size="1"/>
+      <BitField name="HIDE" start="8" size="2"/>
+      <BitField name="SELECT" start="0" size="1"/>
+    </Register>
+    <Register name="ASSIGN_GPIOY_PIN_PIN25" start="+0x764" size="0x4">
+      <BitField name="LOCK" start="31" size="1"/>
+      <BitField name="HIDE" start="8" size="2"/>
+      <BitField name="SELECT" start="0" size="1"/>
+    </Register>
+    <Register name="ASSIGN_GPIOY_PIN_PIN26" start="+0x768" size="0x4">
+      <BitField name="LOCK" start="31" size="1"/>
+      <BitField name="HIDE" start="8" size="2"/>
+      <BitField name="SELECT" start="0" size="1"/>
+    </Register>
+    <Register name="ASSIGN_GPIOY_PIN_PIN27" start="+0x76c" size="0x4">
+      <BitField name="LOCK" start="31" size="1"/>
+      <BitField name="HIDE" start="8" size="2"/>
+      <BitField name="SELECT" start="0" size="1"/>
+    </Register>
+    <Register name="ASSIGN_GPIOY_PIN_PIN28" start="+0x770" size="0x4">
+      <BitField name="LOCK" start="31" size="1"/>
+      <BitField name="HIDE" start="8" size="2"/>
+      <BitField name="SELECT" start="0" size="1"/>
+    </Register>
+    <Register name="ASSIGN_GPIOY_PIN_PIN29" start="+0x774" size="0x4">
+      <BitField name="LOCK" start="31" size="1"/>
+      <BitField name="HIDE" start="8" size="2"/>
+      <BitField name="SELECT" start="0" size="1"/>
+    </Register>
+    <Register name="ASSIGN_GPIOY_PIN_PIN30" start="+0x778" size="0x4">
+      <BitField name="LOCK" start="31" size="1"/>
+      <BitField name="HIDE" start="8" size="2"/>
+      <BitField name="SELECT" start="0" size="1"/>
+    </Register>
+    <Register name="ASSIGN_GPIOY_PIN_PIN31" start="+0x77c" size="0x4">
+      <BitField name="LOCK" start="31" size="1"/>
+      <BitField name="HIDE" start="8" size="2"/>
+      <BitField name="SELECT" start="0" size="1"/>
+    </Register>
     <Register name="ASSIGN_GPIOZ_PIN_PIN00" start="+0x780" size="0x4">
       <BitField name="LOCK" start="31" size="1"/>
       <BitField name="HIDE" start="8" size="2"/>
@@ -2937,6 +3197,126 @@
       <BitField name="SELECT" start="0" size="1"/>
     </Register>
     <Register name="ASSIGN_GPIOZ_PIN_PIN07" start="+0x79c" size="0x4">
+      <BitField name="LOCK" start="31" size="1"/>
+      <BitField name="HIDE" start="8" size="2"/>
+      <BitField name="SELECT" start="0" size="1"/>
+    </Register>
+    <Register name="ASSIGN_GPIOZ_PIN_PIN08" start="+0x7a0" size="0x4">
+      <BitField name="LOCK" start="31" size="1"/>
+      <BitField name="HIDE" start="8" size="2"/>
+      <BitField name="SELECT" start="0" size="1"/>
+    </Register>
+    <Register name="ASSIGN_GPIOZ_PIN_PIN09" start="+0x7a4" size="0x4">
+      <BitField name="LOCK" start="31" size="1"/>
+      <BitField name="HIDE" start="8" size="2"/>
+      <BitField name="SELECT" start="0" size="1"/>
+    </Register>
+    <Register name="ASSIGN_GPIOZ_PIN_PIN10" start="+0x7a8" size="0x4">
+      <BitField name="LOCK" start="31" size="1"/>
+      <BitField name="HIDE" start="8" size="2"/>
+      <BitField name="SELECT" start="0" size="1"/>
+    </Register>
+    <Register name="ASSIGN_GPIOZ_PIN_PIN11" start="+0x7ac" size="0x4">
+      <BitField name="LOCK" start="31" size="1"/>
+      <BitField name="HIDE" start="8" size="2"/>
+      <BitField name="SELECT" start="0" size="1"/>
+    </Register>
+    <Register name="ASSIGN_GPIOZ_PIN_PIN12" start="+0x7b0" size="0x4">
+      <BitField name="LOCK" start="31" size="1"/>
+      <BitField name="HIDE" start="8" size="2"/>
+      <BitField name="SELECT" start="0" size="1"/>
+    </Register>
+    <Register name="ASSIGN_GPIOZ_PIN_PIN13" start="+0x7b4" size="0x4">
+      <BitField name="LOCK" start="31" size="1"/>
+      <BitField name="HIDE" start="8" size="2"/>
+      <BitField name="SELECT" start="0" size="1"/>
+    </Register>
+    <Register name="ASSIGN_GPIOZ_PIN_PIN14" start="+0x7b8" size="0x4">
+      <BitField name="LOCK" start="31" size="1"/>
+      <BitField name="HIDE" start="8" size="2"/>
+      <BitField name="SELECT" start="0" size="1"/>
+    </Register>
+    <Register name="ASSIGN_GPIOZ_PIN_PIN15" start="+0x7bc" size="0x4">
+      <BitField name="LOCK" start="31" size="1"/>
+      <BitField name="HIDE" start="8" size="2"/>
+      <BitField name="SELECT" start="0" size="1"/>
+    </Register>
+    <Register name="ASSIGN_GPIOZ_PIN_PIN16" start="+0x7c0" size="0x4">
+      <BitField name="LOCK" start="31" size="1"/>
+      <BitField name="HIDE" start="8" size="2"/>
+      <BitField name="SELECT" start="0" size="1"/>
+    </Register>
+    <Register name="ASSIGN_GPIOZ_PIN_PIN17" start="+0x7c4" size="0x4">
+      <BitField name="LOCK" start="31" size="1"/>
+      <BitField name="HIDE" start="8" size="2"/>
+      <BitField name="SELECT" start="0" size="1"/>
+    </Register>
+    <Register name="ASSIGN_GPIOZ_PIN_PIN18" start="+0x7c8" size="0x4">
+      <BitField name="LOCK" start="31" size="1"/>
+      <BitField name="HIDE" start="8" size="2"/>
+      <BitField name="SELECT" start="0" size="1"/>
+    </Register>
+    <Register name="ASSIGN_GPIOZ_PIN_PIN19" start="+0x7cc" size="0x4">
+      <BitField name="LOCK" start="31" size="1"/>
+      <BitField name="HIDE" start="8" size="2"/>
+      <BitField name="SELECT" start="0" size="1"/>
+    </Register>
+    <Register name="ASSIGN_GPIOZ_PIN_PIN20" start="+0x7d0" size="0x4">
+      <BitField name="LOCK" start="31" size="1"/>
+      <BitField name="HIDE" start="8" size="2"/>
+      <BitField name="SELECT" start="0" size="1"/>
+    </Register>
+    <Register name="ASSIGN_GPIOZ_PIN_PIN21" start="+0x7d4" size="0x4">
+      <BitField name="LOCK" start="31" size="1"/>
+      <BitField name="HIDE" start="8" size="2"/>
+      <BitField name="SELECT" start="0" size="1"/>
+    </Register>
+    <Register name="ASSIGN_GPIOZ_PIN_PIN22" start="+0x7d8" size="0x4">
+      <BitField name="LOCK" start="31" size="1"/>
+      <BitField name="HIDE" start="8" size="2"/>
+      <BitField name="SELECT" start="0" size="1"/>
+    </Register>
+    <Register name="ASSIGN_GPIOZ_PIN_PIN23" start="+0x7dc" size="0x4">
+      <BitField name="LOCK" start="31" size="1"/>
+      <BitField name="HIDE" start="8" size="2"/>
+      <BitField name="SELECT" start="0" size="1"/>
+    </Register>
+    <Register name="ASSIGN_GPIOZ_PIN_PIN24" start="+0x7e0" size="0x4">
+      <BitField name="LOCK" start="31" size="1"/>
+      <BitField name="HIDE" start="8" size="2"/>
+      <BitField name="SELECT" start="0" size="1"/>
+    </Register>
+    <Register name="ASSIGN_GPIOZ_PIN_PIN25" start="+0x7e4" size="0x4">
+      <BitField name="LOCK" start="31" size="1"/>
+      <BitField name="HIDE" start="8" size="2"/>
+      <BitField name="SELECT" start="0" size="1"/>
+    </Register>
+    <Register name="ASSIGN_GPIOZ_PIN_PIN26" start="+0x7e8" size="0x4">
+      <BitField name="LOCK" start="31" size="1"/>
+      <BitField name="HIDE" start="8" size="2"/>
+      <BitField name="SELECT" start="0" size="1"/>
+    </Register>
+    <Register name="ASSIGN_GPIOZ_PIN_PIN27" start="+0x7ec" size="0x4">
+      <BitField name="LOCK" start="31" size="1"/>
+      <BitField name="HIDE" start="8" size="2"/>
+      <BitField name="SELECT" start="0" size="1"/>
+    </Register>
+    <Register name="ASSIGN_GPIOZ_PIN_PIN28" start="+0x7f0" size="0x4">
+      <BitField name="LOCK" start="31" size="1"/>
+      <BitField name="HIDE" start="8" size="2"/>
+      <BitField name="SELECT" start="0" size="1"/>
+    </Register>
+    <Register name="ASSIGN_GPIOZ_PIN_PIN29" start="+0x7f4" size="0x4">
+      <BitField name="LOCK" start="31" size="1"/>
+      <BitField name="HIDE" start="8" size="2"/>
+      <BitField name="SELECT" start="0" size="1"/>
+    </Register>
+    <Register name="ASSIGN_GPIOZ_PIN_PIN30" start="+0x7f8" size="0x4">
+      <BitField name="LOCK" start="31" size="1"/>
+      <BitField name="HIDE" start="8" size="2"/>
+      <BitField name="SELECT" start="0" size="1"/>
+    </Register>
+    <Register name="ASSIGN_GPIOZ_PIN_PIN31" start="+0x7fc" size="0x4">
       <BitField name="LOCK" start="31" size="1"/>
       <BitField name="HIDE" start="8" size="2"/>
       <BitField name="SELECT" start="0" size="1"/>
@@ -3172,9 +3552,6 @@
     </Register>
     <Register name="SEQ_DMA_ADDR" start="+0x804" size="0x4">
       <BitField name="TAR_ADDR" start="2" size="30"/>
-    </Register>
-    <Register name="SEQ_WR_ADDR" start="+0x808" size="0x4">
-      <BitField name="SEQ_WR_POINTER" start="0" size="24"/>
     </Register>
     <Register name="SEQ_DMA_CFG" start="+0x80c" size="0x4">
       <BitField name="STOP_POS" start="16" size="12"/>
@@ -3493,7 +3870,6 @@
     <Register name="ADC_CFG0" start="+0x1108" size="0x4">
       <BitField name="SEL_SYNC_AHB" start="31" size="1"/>
       <BitField name="ADC_AHB_EN" start="29" size="1"/>
-      <BitField name="CONVERT_DURATION" start="12" size="16"/>
       <BitField name="PORT3_REALTIME" start="0" size="1"/>
     </Register>
     <Register name="INT_STS" start="+0x1110" size="0x4">
@@ -3508,7 +3884,7 @@
       <BitField name="SEQ_CVC" start="23" size="1"/>
       <BitField name="DMA_FIFO_FULL" start="22" size="1"/>
       <BitField name="AHB_ERR" start="21" size="1"/>
-      <BitField name="WDOG" start="0" size="14"/>
+      <BitField name="WDOG" start="0" size="16"/>
     </Register>
     <Register name="INT_EN" start="+0x1114" size="0x4">
       <BitField name="TRIG_CMPT" start="31" size="1"/>
@@ -3522,7 +3898,7 @@
       <BitField name="SEQ_CVC" start="23" size="1"/>
       <BitField name="DMA_FIFO_FULL" start="22" size="1"/>
       <BitField name="AHB_ERR" start="21" size="1"/>
-      <BitField name="WDOG" start="0" size="14"/>
+      <BitField name="WDOG" start="0" size="16"/>
     </Register>
     <Register name="ANA_CTRL0" start="+0x1200" size="0x4">
       <BitField name="ADC_CLK_ON" start="12" size="1"/>
@@ -3634,7 +4010,6 @@
       <BitField name="PARAM_VAL" start="0" size="16"/>
     </Register>
     <Register name="ADC16_CONFIG0" start="+0x1444" size="0x4">
-      <BitField name="TEMPSNS_EN" start="25" size="1"/>
       <BitField name="REG_EN" start="24" size="1"/>
       <BitField name="BANDGAP_EN" start="23" size="1"/>
       <BitField name="CAL_AVG_CFG" start="20" size="3"/>
@@ -3876,9 +4251,6 @@
     <Register name="SEQ_DMA_ADDR" start="+0x804" size="0x4">
       <BitField name="TAR_ADDR" start="2" size="30"/>
     </Register>
-    <Register name="SEQ_WR_ADDR" start="+0x808" size="0x4">
-      <BitField name="SEQ_WR_POINTER" start="0" size="24"/>
-    </Register>
     <Register name="SEQ_DMA_CFG" start="+0x80c" size="0x4">
       <BitField name="STOP_POS" start="16" size="12"/>
       <BitField name="DMA_RST" start="13" size="1"/>
@@ -4196,7 +4568,6 @@
     <Register name="ADC_CFG0" start="+0x1108" size="0x4">
       <BitField name="SEL_SYNC_AHB" start="31" size="1"/>
       <BitField name="ADC_AHB_EN" start="29" size="1"/>
-      <BitField name="CONVERT_DURATION" start="12" size="16"/>
       <BitField name="PORT3_REALTIME" start="0" size="1"/>
     </Register>
     <Register name="INT_STS" start="+0x1110" size="0x4">
@@ -4211,7 +4582,7 @@
       <BitField name="SEQ_CVC" start="23" size="1"/>
       <BitField name="DMA_FIFO_FULL" start="22" size="1"/>
       <BitField name="AHB_ERR" start="21" size="1"/>
-      <BitField name="WDOG" start="0" size="14"/>
+      <BitField name="WDOG" start="0" size="16"/>
     </Register>
     <Register name="INT_EN" start="+0x1114" size="0x4">
       <BitField name="TRIG_CMPT" start="31" size="1"/>
@@ -4225,7 +4596,7 @@
       <BitField name="SEQ_CVC" start="23" size="1"/>
       <BitField name="DMA_FIFO_FULL" start="22" size="1"/>
       <BitField name="AHB_ERR" start="21" size="1"/>
-      <BitField name="WDOG" start="0" size="14"/>
+      <BitField name="WDOG" start="0" size="16"/>
     </Register>
     <Register name="ANA_CTRL0" start="+0x1200" size="0x4">
       <BitField name="ADC_CLK_ON" start="12" size="1"/>
@@ -4337,7 +4708,6 @@
       <BitField name="PARAM_VAL" start="0" size="16"/>
     </Register>
     <Register name="ADC16_CONFIG0" start="+0x1444" size="0x4">
-      <BitField name="TEMPSNS_EN" start="25" size="1"/>
       <BitField name="REG_EN" start="24" size="1"/>
       <BitField name="BANDGAP_EN" start="23" size="1"/>
       <BitField name="CAL_AVG_CFG" start="20" size="3"/>
@@ -4579,9 +4949,6 @@
     <Register name="SEQ_DMA_ADDR" start="+0x804" size="0x4">
       <BitField name="TAR_ADDR" start="2" size="30"/>
     </Register>
-    <Register name="SEQ_WR_ADDR" start="+0x808" size="0x4">
-      <BitField name="SEQ_WR_POINTER" start="0" size="24"/>
-    </Register>
     <Register name="SEQ_DMA_CFG" start="+0x80c" size="0x4">
       <BitField name="STOP_POS" start="16" size="12"/>
       <BitField name="DMA_RST" start="13" size="1"/>
@@ -4899,7 +5266,6 @@
     <Register name="ADC_CFG0" start="+0x1108" size="0x4">
       <BitField name="SEL_SYNC_AHB" start="31" size="1"/>
       <BitField name="ADC_AHB_EN" start="29" size="1"/>
-      <BitField name="CONVERT_DURATION" start="12" size="16"/>
       <BitField name="PORT3_REALTIME" start="0" size="1"/>
     </Register>
     <Register name="INT_STS" start="+0x1110" size="0x4">
@@ -4914,7 +5280,7 @@
       <BitField name="SEQ_CVC" start="23" size="1"/>
       <BitField name="DMA_FIFO_FULL" start="22" size="1"/>
       <BitField name="AHB_ERR" start="21" size="1"/>
-      <BitField name="WDOG" start="0" size="14"/>
+      <BitField name="WDOG" start="0" size="16"/>
     </Register>
     <Register name="INT_EN" start="+0x1114" size="0x4">
       <BitField name="TRIG_CMPT" start="31" size="1"/>
@@ -4928,7 +5294,7 @@
       <BitField name="SEQ_CVC" start="23" size="1"/>
       <BitField name="DMA_FIFO_FULL" start="22" size="1"/>
       <BitField name="AHB_ERR" start="21" size="1"/>
-      <BitField name="WDOG" start="0" size="14"/>
+      <BitField name="WDOG" start="0" size="16"/>
     </Register>
     <Register name="ANA_CTRL0" start="+0x1200" size="0x4">
       <BitField name="ADC_CLK_ON" start="12" size="1"/>
@@ -5040,7 +5406,6 @@
       <BitField name="PARAM_VAL" start="0" size="16"/>
     </Register>
     <Register name="ADC16_CONFIG0" start="+0x1444" size="0x4">
-      <BitField name="TEMPSNS_EN" start="25" size="1"/>
       <BitField name="REG_EN" start="24" size="1"/>
       <BitField name="BANDGAP_EN" start="23" size="1"/>
       <BitField name="CAL_AVG_CFG" start="20" size="3"/>
@@ -5240,7 +5605,6 @@
       <BitField name="BUF0_LEN" start="0" size="16"/>
     </Register>
     <Register name="IRQ_STS" start="+0x30" size="0x4">
-      <BitField name="STEP_CMPT" start="4" size="1"/>
       <BitField name="AHB_ERROR" start="3" size="1"/>
       <BitField name="FIFO_EMPTY" start="2" size="1"/>
       <BitField name="BUF1_CMPT" start="1" size="1"/>
@@ -5254,7 +5618,6 @@
       <BitField name="BUF0_CMPT" start="0" size="1"/>
     </Register>
     <Register name="DMA_EN" start="+0x38" size="0x4">
-      <BitField name="STEP_CMPT" start="4" size="1"/>
       <BitField name="BUF1_CMPT" start="1" size="1"/>
       <BitField name="BUF0_CMPT" start="0" size="1"/>
     </Register>
@@ -5282,7 +5645,6 @@
   </RegisterGroup>
   <RegisterGroup start="0xf0030000" name="SPI0">
     <Register name="TRANSFMT" start="+0x10" size="0x4">
-      <BitField name="RESERVED" start="18" size="14"/>
       <BitField name="ADDRLEN" start="16" size="2"/>
       <BitField name="DATALEN" start="8" size="5"/>
       <BitField name="DATAMERGE" start="7" size="1"/>
@@ -5375,7 +5737,6 @@
   </RegisterGroup>
   <RegisterGroup start="0xf0034000" name="SPI1">
     <Register name="TRANSFMT" start="+0x10" size="0x4">
-      <BitField name="RESERVED" start="18" size="14"/>
       <BitField name="ADDRLEN" start="16" size="2"/>
       <BitField name="DATALEN" start="8" size="5"/>
       <BitField name="DATAMERGE" start="7" size="1"/>
@@ -5468,7 +5829,6 @@
   </RegisterGroup>
   <RegisterGroup start="0xf0038000" name="SPI2">
     <Register name="TRANSFMT" start="+0x10" size="0x4">
-      <BitField name="RESERVED" start="18" size="14"/>
       <BitField name="ADDRLEN" start="16" size="2"/>
       <BitField name="DATALEN" start="8" size="5"/>
       <BitField name="DATAMERGE" start="7" size="1"/>
@@ -5561,7 +5921,6 @@
   </RegisterGroup>
   <RegisterGroup start="0xf003c000" name="SPI3">
     <Register name="TRANSFMT" start="+0x10" size="0x4">
-      <BitField name="RESERVED" start="18" size="14"/>
       <BitField name="ADDRLEN" start="16" size="2"/>
       <BitField name="DATALEN" start="8" size="5"/>
       <BitField name="DATAMERGE" start="7" size="1"/>
@@ -5654,7 +6013,6 @@
   </RegisterGroup>
   <RegisterGroup start="0xf0040000" name="UART0">
     <Register name="CFG" start="+0x10" size="0x4">
-      <BitField name="RESERVED" start="2" size="30"/>
       <BitField name="FIFOSIZE" start="0" size="2"/>
     </Register>
     <Register name="OSCR" start="+0x14" size="0x4">
@@ -5717,11 +6075,13 @@
     <Register name="MSR" start="+0x38" size="0x4">
       <BitField name="CTS" start="4" size="1"/>
       <BitField name="DCTS" start="0" size="1"/>
+    </Register>
+    <Register name="GPR" start="+0x3c" size="0x4">
+      <BitField name="DATA" start="0" size="8"/>
     </Register>
   </RegisterGroup>
   <RegisterGroup start="0xf0044000" name="UART1">
     <Register name="CFG" start="+0x10" size="0x4">
-      <BitField name="RESERVED" start="2" size="30"/>
       <BitField name="FIFOSIZE" start="0" size="2"/>
     </Register>
     <Register name="OSCR" start="+0x14" size="0x4">
@@ -5784,11 +6144,13 @@
     <Register name="MSR" start="+0x38" size="0x4">
       <BitField name="CTS" start="4" size="1"/>
       <BitField name="DCTS" start="0" size="1"/>
+    </Register>
+    <Register name="GPR" start="+0x3c" size="0x4">
+      <BitField name="DATA" start="0" size="8"/>
     </Register>
   </RegisterGroup>
   <RegisterGroup start="0xf0048000" name="UART2">
     <Register name="CFG" start="+0x10" size="0x4">
-      <BitField name="RESERVED" start="2" size="30"/>
       <BitField name="FIFOSIZE" start="0" size="2"/>
     </Register>
     <Register name="OSCR" start="+0x14" size="0x4">
@@ -5851,11 +6213,13 @@
     <Register name="MSR" start="+0x38" size="0x4">
       <BitField name="CTS" start="4" size="1"/>
       <BitField name="DCTS" start="0" size="1"/>
+    </Register>
+    <Register name="GPR" start="+0x3c" size="0x4">
+      <BitField name="DATA" start="0" size="8"/>
     </Register>
   </RegisterGroup>
   <RegisterGroup start="0xf004c000" name="UART3">
     <Register name="CFG" start="+0x10" size="0x4">
-      <BitField name="RESERVED" start="2" size="30"/>
       <BitField name="FIFOSIZE" start="0" size="2"/>
     </Register>
     <Register name="OSCR" start="+0x14" size="0x4">
@@ -5918,11 +6282,13 @@
     <Register name="MSR" start="+0x38" size="0x4">
       <BitField name="CTS" start="4" size="1"/>
       <BitField name="DCTS" start="0" size="1"/>
+    </Register>
+    <Register name="GPR" start="+0x3c" size="0x4">
+      <BitField name="DATA" start="0" size="8"/>
     </Register>
   </RegisterGroup>
   <RegisterGroup start="0xf0050000" name="UART4">
     <Register name="CFG" start="+0x10" size="0x4">
-      <BitField name="RESERVED" start="2" size="30"/>
       <BitField name="FIFOSIZE" start="0" size="2"/>
     </Register>
     <Register name="OSCR" start="+0x14" size="0x4">
@@ -5985,11 +6351,13 @@
     <Register name="MSR" start="+0x38" size="0x4">
       <BitField name="CTS" start="4" size="1"/>
       <BitField name="DCTS" start="0" size="1"/>
+    </Register>
+    <Register name="GPR" start="+0x3c" size="0x4">
+      <BitField name="DATA" start="0" size="8"/>
     </Register>
   </RegisterGroup>
   <RegisterGroup start="0xf0054000" name="UART5">
     <Register name="CFG" start="+0x10" size="0x4">
-      <BitField name="RESERVED" start="2" size="30"/>
       <BitField name="FIFOSIZE" start="0" size="2"/>
     </Register>
     <Register name="OSCR" start="+0x14" size="0x4">
@@ -6052,11 +6420,13 @@
     <Register name="MSR" start="+0x38" size="0x4">
       <BitField name="CTS" start="4" size="1"/>
       <BitField name="DCTS" start="0" size="1"/>
+    </Register>
+    <Register name="GPR" start="+0x3c" size="0x4">
+      <BitField name="DATA" start="0" size="8"/>
     </Register>
   </RegisterGroup>
   <RegisterGroup start="0xf0058000" name="UART6">
     <Register name="CFG" start="+0x10" size="0x4">
-      <BitField name="RESERVED" start="2" size="30"/>
       <BitField name="FIFOSIZE" start="0" size="2"/>
     </Register>
     <Register name="OSCR" start="+0x14" size="0x4">
@@ -6119,11 +6489,13 @@
     <Register name="MSR" start="+0x38" size="0x4">
       <BitField name="CTS" start="4" size="1"/>
       <BitField name="DCTS" start="0" size="1"/>
+    </Register>
+    <Register name="GPR" start="+0x3c" size="0x4">
+      <BitField name="DATA" start="0" size="8"/>
     </Register>
   </RegisterGroup>
   <RegisterGroup start="0xf005c000" name="UART7">
     <Register name="CFG" start="+0x10" size="0x4">
-      <BitField name="RESERVED" start="2" size="30"/>
       <BitField name="FIFOSIZE" start="0" size="2"/>
     </Register>
     <Register name="OSCR" start="+0x14" size="0x4">
@@ -6186,11 +6558,13 @@
     <Register name="MSR" start="+0x38" size="0x4">
       <BitField name="CTS" start="4" size="1"/>
       <BitField name="DCTS" start="0" size="1"/>
+    </Register>
+    <Register name="GPR" start="+0x3c" size="0x4">
+      <BitField name="DATA" start="0" size="8"/>
     </Register>
   </RegisterGroup>
   <RegisterGroup start="0xf40e4000" name="PUART">
     <Register name="CFG" start="+0x10" size="0x4">
-      <BitField name="RESERVED" start="2" size="30"/>
       <BitField name="FIFOSIZE" start="0" size="2"/>
     </Register>
     <Register name="OSCR" start="+0x14" size="0x4">
@@ -6253,6 +6627,9 @@
     <Register name="MSR" start="+0x38" size="0x4">
       <BitField name="CTS" start="4" size="1"/>
       <BitField name="DCTS" start="0" size="1"/>
+    </Register>
+    <Register name="GPR" start="+0x3c" size="0x4">
+      <BitField name="DATA" start="0" size="8"/>
     </Register>
   </RegisterGroup>
   <RegisterGroup start="0xf0080000" name="CAN0">
@@ -6833,20 +7210,16 @@
   <RegisterGroup start="0xf00a0000" name="MBX0A">
     <Register name="CR" start="+0x0" size="0x4">
       <BitField name="TXRESET" start="31" size="1"/>
-      <BitField name="RESERVED" start="16" size="15"/>
       <BitField name="BARCTL" start="14" size="2"/>
-      <BitField name="RESERVED" start="9" size="5"/>
       <BitField name="BEIE" start="8" size="1"/>
       <BitField name="TFMAIE" start="7" size="1"/>
       <BitField name="TFMEIE" start="6" size="1"/>
       <BitField name="RFMAIE" start="5" size="1"/>
       <BitField name="RFMFIE" start="4" size="1"/>
-      <BitField name="RESERVED" start="2" size="2"/>
       <BitField name="TWMEIE" start="1" size="1"/>
       <BitField name="RWMVIE" start="0" size="1"/>
     </Register>
     <Register name="SR" start="+0x4" size="0x4">
-      <BitField name="RESERVED" start="24" size="8"/>
       <BitField name="RFVC" start="20" size="4"/>
       <BitField name="TFEC" start="16" size="4"/>
       <BitField name="ERRRE" start="13" size="1"/>
@@ -6859,7 +7232,6 @@
       <BitField name="TFME" start="6" size="1"/>
       <BitField name="RFMA" start="5" size="1"/>
       <BitField name="RFMF" start="4" size="1"/>
-      <BitField name="RESERVED" start="2" size="2"/>
       <BitField name="TWME" start="1" size="1"/>
       <BitField name="RWMV" start="0" size="1"/>
     </Register>
@@ -6879,20 +7251,16 @@
   <RegisterGroup start="0xf00a4000" name="MBX0B">
     <Register name="CR" start="+0x0" size="0x4">
       <BitField name="TXRESET" start="31" size="1"/>
-      <BitField name="RESERVED" start="16" size="15"/>
       <BitField name="BARCTL" start="14" size="2"/>
-      <BitField name="RESERVED" start="9" size="5"/>
       <BitField name="BEIE" start="8" size="1"/>
       <BitField name="TFMAIE" start="7" size="1"/>
       <BitField name="TFMEIE" start="6" size="1"/>
       <BitField name="RFMAIE" start="5" size="1"/>
       <BitField name="RFMFIE" start="4" size="1"/>
-      <BitField name="RESERVED" start="2" size="2"/>
       <BitField name="TWMEIE" start="1" size="1"/>
       <BitField name="RWMVIE" start="0" size="1"/>
     </Register>
     <Register name="SR" start="+0x4" size="0x4">
-      <BitField name="RESERVED" start="24" size="8"/>
       <BitField name="RFVC" start="20" size="4"/>
       <BitField name="TFEC" start="16" size="4"/>
       <BitField name="ERRRE" start="13" size="1"/>
@@ -6905,7 +7273,6 @@
       <BitField name="TFME" start="6" size="1"/>
       <BitField name="RFMA" start="5" size="1"/>
       <BitField name="RFMF" start="4" size="1"/>
-      <BitField name="RESERVED" start="2" size="2"/>
       <BitField name="TWME" start="1" size="1"/>
       <BitField name="RWMV" start="0" size="1"/>
     </Register>
@@ -6928,7 +7295,6 @@
       <BitField name="CAPT_SNAP_KEEP" start="8" size="1"/>
       <BitField name="CAPT_SNAP_POS_EN" start="7" size="1"/>
       <BitField name="CAPT_SNAP_NEG_EN" start="6" size="1"/>
-      <BitField name="RESERVED" start="5" size="1"/>
       <BitField name="COMP_EN" start="4" size="1"/>
       <BitField name="UPDATE_TIMER" start="3" size="1"/>
       <BitField name="INIT_TIMER" start="2" size="1"/>
@@ -6974,7 +7340,6 @@
       <BitField name="CAPT_SNAP_KEEP" start="8" size="1"/>
       <BitField name="CAPT_SNAP_POS_EN" start="7" size="1"/>
       <BitField name="CAPT_SNAP_NEG_EN" start="6" size="1"/>
-      <BitField name="RESERVED" start="5" size="1"/>
       <BitField name="COMP_EN" start="4" size="1"/>
       <BitField name="UPDATE_TIMER" start="3" size="1"/>
       <BitField name="INIT_TIMER" start="2" size="1"/>
@@ -7036,6 +7401,12 @@
       <BitField name="COMP_INT_STS0" start="2" size="1"/>
       <BitField name="CAPTURE_INT_STS0" start="1" size="1"/>
       <BitField name="PPS_INT_STS0" start="0" size="1"/>
+    </Register>
+    <Register name="PTPC_CAN_TS_SEL" start="+0x3000" size="0x4">
+      <BitField name="TSU_TBIN3_SEL" start="26" size="6"/>
+      <BitField name="TSU_TBIN2_SEL" start="20" size="6"/>
+      <BitField name="TSU_TBIN1_SEL" start="14" size="6"/>
+      <BitField name="TSU_TBIN0_SEL" start="8" size="6"/>
     </Register>
   </RegisterGroup>
   <RegisterGroup start="0xf00c0000" name="DMAMUX">
@@ -7800,48 +8171,33 @@
   </RegisterGroup>
   <RegisterGroup start="0xf00c8000" name="RNG">
     <Register name="CMD" start="+0x0" size="0x4">
-      <BitField name="RESERVED" start="7" size="25"/>
       <BitField name="SFTRST" start="6" size="1"/>
       <BitField name="CLRERR" start="5" size="1"/>
       <BitField name="CLRINT" start="4" size="1"/>
-      <BitField name="RESERVED" start="2" size="2"/>
       <BitField name="GENSD" start="1" size="1"/>
       <BitField name="SLFCHK" start="0" size="1"/>
     </Register>
     <Register name="CTRL" start="+0x4" size="0x4">
-      <BitField name="RESERVED" start="7" size="25"/>
       <BitField name="MIRQERR" start="6" size="1"/>
       <BitField name="MIRQDN" start="5" size="1"/>
       <BitField name="AUTRSD" start="4" size="1"/>
-      <BitField name="RESERVED" start="2" size="2"/>
       <BitField name="FUFMOD" start="0" size="2"/>
     </Register>
     <Register name="STA" start="+0x8" size="0x4">
-      <BitField name="RESERVED" start="24" size="8"/>
       <BitField name="SCPF" start="21" size="3"/>
-      <BitField name="RESERVED" start="17" size="4"/>
       <BitField name="FUNCERR" start="16" size="1"/>
       <BitField name="FSIZE" start="12" size="4"/>
       <BitField name="FRNNU" start="8" size="4"/>
-      <BitField name="RESERVED" start="7" size="1"/>
       <BitField name="NSDDN" start="6" size="1"/>
       <BitField name="FSDDN" start="5" size="1"/>
       <BitField name="SCDN" start="4" size="1"/>
       <BitField name="RSDREQ" start="3" size="1"/>
       <BitField name="IDLE" start="2" size="1"/>
       <BitField name="BUSY" start="1" size="1"/>
-      <BitField name="RESERVED" start="0" size="1"/>
     </Register>
     <Register name="ERR" start="+0xc" size="0x4">
-      <BitField name="RESERVED" start="24" size="8"/>
-      <BitField name="RESERVED" start="16" size="8"/>
-      <BitField name="RESERVED" start="8" size="8"/>
       <BitField name="FUFE" start="5" size="1"/>
-      <BitField name="RESERVED" start="4" size="1"/>
       <BitField name="SCKERR" start="3" size="1"/>
-      <BitField name="RESERVED" start="2" size="1"/>
-      <BitField name="RESERVED" start="1" size="1"/>
-      <BitField name="RESERVED" start="0" size="1"/>
     </Register>
     <Register name="FO2B" start="+0x10" size="0x4">
       <BitField name="FO2B" start="0" size="32"/>
@@ -7947,7 +8303,6 @@
   </RegisterGroup>
   <RegisterGroup start="0xf0100000" name="I2S0">
     <Register name="CTRL" start="+0x0" size="0x4">
-      <BitField name="RSV" start="19" size="13"/>
       <BitField name="SFTRST_RX" start="18" size="1"/>
       <BitField name="SFTRST_TX" start="17" size="1"/>
       <BitField name="SFTRST_CLKGEN" start="16" size="1"/>
@@ -7975,17 +8330,14 @@
       <BitField name="TX0" start="0" size="8"/>
     </Register>
     <Register name="FIFO_THRESH" start="+0xc" size="0x4">
-      <BitField name="RSV" start="16" size="16"/>
       <BitField name="TX" start="8" size="8"/>
       <BitField name="RX" start="0" size="8"/>
     </Register>
     <Register name="STA" start="+0x10" size="0x4">
-      <BitField name="RSV" start="17" size="15"/>
       <BitField name="TX_UD" start="13" size="4"/>
       <BitField name="RX_OV" start="9" size="4"/>
       <BitField name="TX_DN" start="5" size="4"/>
       <BitField name="RX_DA" start="1" size="4"/>
-      <BitField name="RSV" start="0" size="1"/>
     </Register>
     <Register name="RXD_DATA0" start="+0x20" size="0x4">
       <BitField name="D" start="0" size="32"/>
@@ -8012,7 +8364,6 @@
       <BitField name="D" start="0" size="32"/>
     </Register>
     <Register name="CFGR" start="+0x50" size="0x4">
-      <BitField name="RSV" start="31" size="1"/>
       <BitField name="BCLK_GATEOFF" start="30" size="1"/>
       <BitField name="BCLK_DIV" start="21" size="9"/>
       <BitField name="INV_BCLK_OUT" start="20" size="1"/>
@@ -8032,10 +8383,7 @@
       <BitField name="CHSIZ" start="0" size="1"/>
     </Register>
     <Register name="MISC_CFGR" start="+0x58" size="0x4">
-      <BitField name="RSV" start="14" size="18"/>
       <BitField name="MCLK_GATEOFF" start="13" size="1"/>
-      <BitField name="RSV" start="11" size="1"/>
-      <BitField name="RSV" start="10" size="1"/>
       <BitField name="MCLKOE" start="0" size="1"/>
     </Register>
     <Register name="RXDSLOT_DATA0" start="+0x60" size="0x4">
@@ -8065,7 +8413,6 @@
   </RegisterGroup>
   <RegisterGroup start="0xf0104000" name="I2S1">
     <Register name="CTRL" start="+0x0" size="0x4">
-      <BitField name="RSV" start="19" size="13"/>
       <BitField name="SFTRST_RX" start="18" size="1"/>
       <BitField name="SFTRST_TX" start="17" size="1"/>
       <BitField name="SFTRST_CLKGEN" start="16" size="1"/>
@@ -8093,17 +8440,14 @@
       <BitField name="TX0" start="0" size="8"/>
     </Register>
     <Register name="FIFO_THRESH" start="+0xc" size="0x4">
-      <BitField name="RSV" start="16" size="16"/>
       <BitField name="TX" start="8" size="8"/>
       <BitField name="RX" start="0" size="8"/>
     </Register>
     <Register name="STA" start="+0x10" size="0x4">
-      <BitField name="RSV" start="17" size="15"/>
       <BitField name="TX_UD" start="13" size="4"/>
       <BitField name="RX_OV" start="9" size="4"/>
       <BitField name="TX_DN" start="5" size="4"/>
       <BitField name="RX_DA" start="1" size="4"/>
-      <BitField name="RSV" start="0" size="1"/>
     </Register>
     <Register name="RXD_DATA0" start="+0x20" size="0x4">
       <BitField name="D" start="0" size="32"/>
@@ -8130,7 +8474,6 @@
       <BitField name="D" start="0" size="32"/>
     </Register>
     <Register name="CFGR" start="+0x50" size="0x4">
-      <BitField name="RSV" start="31" size="1"/>
       <BitField name="BCLK_GATEOFF" start="30" size="1"/>
       <BitField name="BCLK_DIV" start="21" size="9"/>
       <BitField name="INV_BCLK_OUT" start="20" size="1"/>
@@ -8150,10 +8493,7 @@
       <BitField name="CHSIZ" start="0" size="1"/>
     </Register>
     <Register name="MISC_CFGR" start="+0x58" size="0x4">
-      <BitField name="RSV" start="14" size="18"/>
       <BitField name="MCLK_GATEOFF" start="13" size="1"/>
-      <BitField name="RSV" start="11" size="1"/>
-      <BitField name="RSV" start="10" size="1"/>
       <BitField name="MCLKOE" start="0" size="1"/>
     </Register>
     <Register name="RXDSLOT_DATA0" start="+0x60" size="0x4">
@@ -8288,12 +8628,10 @@
     <Register name="STA" start="+0x4" size="0x4">
       <BitField name="XSTA" start="28" size="4"/>
       <BitField name="STA" start="4" size="24"/>
-      <BitField name="RESERVED" start="0" size="4"/>
     </Register>
     <Register name="RLD" start="+0x8" size="0x4">
       <BitField name="XRLD" start="28" size="4"/>
       <BitField name="RLD" start="4" size="24"/>
-      <BitField name="RESERVED" start="0" size="4"/>
     </Register>
     <Register name="CMP_0" start="+0xc" size="0x4">
       <BitField name="XCMP" start="28" size="4"/>
@@ -8446,196 +8784,124 @@
       <BitField name="SHLK" start="31" size="1"/>
     </Register>
     <Register name="CHCFG_0" start="+0x80" size="0x4">
-      <BitField name="RESERVED" start="29" size="3"/>
       <BitField name="CMPSELEND" start="24" size="5"/>
-      <BitField name="RESERVED" start="21" size="3"/>
       <BitField name="CMPSELBEG" start="16" size="5"/>
       <BitField name="OUTPOL" start="1" size="1"/>
-      <BitField name="RESERVED" start="0" size="1"/>
     </Register>
     <Register name="CHCFG_1" start="+0x84" size="0x4">
-      <BitField name="RESERVED" start="29" size="3"/>
       <BitField name="CMPSELEND" start="24" size="5"/>
-      <BitField name="RESERVED" start="21" size="3"/>
       <BitField name="CMPSELBEG" start="16" size="5"/>
       <BitField name="OUTPOL" start="1" size="1"/>
-      <BitField name="RESERVED" start="0" size="1"/>
     </Register>
     <Register name="CHCFG_2" start="+0x88" size="0x4">
-      <BitField name="RESERVED" start="29" size="3"/>
       <BitField name="CMPSELEND" start="24" size="5"/>
-      <BitField name="RESERVED" start="21" size="3"/>
       <BitField name="CMPSELBEG" start="16" size="5"/>
       <BitField name="OUTPOL" start="1" size="1"/>
-      <BitField name="RESERVED" start="0" size="1"/>
     </Register>
     <Register name="CHCFG_3" start="+0x8c" size="0x4">
-      <BitField name="RESERVED" start="29" size="3"/>
       <BitField name="CMPSELEND" start="24" size="5"/>
-      <BitField name="RESERVED" start="21" size="3"/>
       <BitField name="CMPSELBEG" start="16" size="5"/>
       <BitField name="OUTPOL" start="1" size="1"/>
-      <BitField name="RESERVED" start="0" size="1"/>
     </Register>
     <Register name="CHCFG_4" start="+0x90" size="0x4">
-      <BitField name="RESERVED" start="29" size="3"/>
       <BitField name="CMPSELEND" start="24" size="5"/>
-      <BitField name="RESERVED" start="21" size="3"/>
       <BitField name="CMPSELBEG" start="16" size="5"/>
       <BitField name="OUTPOL" start="1" size="1"/>
-      <BitField name="RESERVED" start="0" size="1"/>
     </Register>
     <Register name="CHCFG_5" start="+0x94" size="0x4">
-      <BitField name="RESERVED" start="29" size="3"/>
       <BitField name="CMPSELEND" start="24" size="5"/>
-      <BitField name="RESERVED" start="21" size="3"/>
       <BitField name="CMPSELBEG" start="16" size="5"/>
       <BitField name="OUTPOL" start="1" size="1"/>
-      <BitField name="RESERVED" start="0" size="1"/>
     </Register>
     <Register name="CHCFG_6" start="+0x98" size="0x4">
-      <BitField name="RESERVED" start="29" size="3"/>
       <BitField name="CMPSELEND" start="24" size="5"/>
-      <BitField name="RESERVED" start="21" size="3"/>
       <BitField name="CMPSELBEG" start="16" size="5"/>
       <BitField name="OUTPOL" start="1" size="1"/>
-      <BitField name="RESERVED" start="0" size="1"/>
     </Register>
     <Register name="CHCFG_7" start="+0x9c" size="0x4">
-      <BitField name="RESERVED" start="29" size="3"/>
       <BitField name="CMPSELEND" start="24" size="5"/>
-      <BitField name="RESERVED" start="21" size="3"/>
       <BitField name="CMPSELBEG" start="16" size="5"/>
       <BitField name="OUTPOL" start="1" size="1"/>
-      <BitField name="RESERVED" start="0" size="1"/>
     </Register>
     <Register name="CHCFG_8" start="+0xa0" size="0x4">
-      <BitField name="RESERVED" start="29" size="3"/>
       <BitField name="CMPSELEND" start="24" size="5"/>
-      <BitField name="RESERVED" start="21" size="3"/>
       <BitField name="CMPSELBEG" start="16" size="5"/>
       <BitField name="OUTPOL" start="1" size="1"/>
-      <BitField name="RESERVED" start="0" size="1"/>
     </Register>
     <Register name="CHCFG_9" start="+0xa4" size="0x4">
-      <BitField name="RESERVED" start="29" size="3"/>
       <BitField name="CMPSELEND" start="24" size="5"/>
-      <BitField name="RESERVED" start="21" size="3"/>
       <BitField name="CMPSELBEG" start="16" size="5"/>
       <BitField name="OUTPOL" start="1" size="1"/>
-      <BitField name="RESERVED" start="0" size="1"/>
     </Register>
     <Register name="CHCFG_10" start="+0xa8" size="0x4">
-      <BitField name="RESERVED" start="29" size="3"/>
       <BitField name="CMPSELEND" start="24" size="5"/>
-      <BitField name="RESERVED" start="21" size="3"/>
       <BitField name="CMPSELBEG" start="16" size="5"/>
       <BitField name="OUTPOL" start="1" size="1"/>
-      <BitField name="RESERVED" start="0" size="1"/>
     </Register>
     <Register name="CHCFG_11" start="+0xac" size="0x4">
-      <BitField name="RESERVED" start="29" size="3"/>
       <BitField name="CMPSELEND" start="24" size="5"/>
-      <BitField name="RESERVED" start="21" size="3"/>
       <BitField name="CMPSELBEG" start="16" size="5"/>
       <BitField name="OUTPOL" start="1" size="1"/>
-      <BitField name="RESERVED" start="0" size="1"/>
     </Register>
     <Register name="CHCFG_12" start="+0xb0" size="0x4">
-      <BitField name="RESERVED" start="29" size="3"/>
       <BitField name="CMPSELEND" start="24" size="5"/>
-      <BitField name="RESERVED" start="21" size="3"/>
       <BitField name="CMPSELBEG" start="16" size="5"/>
       <BitField name="OUTPOL" start="1" size="1"/>
-      <BitField name="RESERVED" start="0" size="1"/>
     </Register>
     <Register name="CHCFG_13" start="+0xb4" size="0x4">
-      <BitField name="RESERVED" start="29" size="3"/>
       <BitField name="CMPSELEND" start="24" size="5"/>
-      <BitField name="RESERVED" start="21" size="3"/>
       <BitField name="CMPSELBEG" start="16" size="5"/>
       <BitField name="OUTPOL" start="1" size="1"/>
-      <BitField name="RESERVED" start="0" size="1"/>
     </Register>
     <Register name="CHCFG_14" start="+0xb8" size="0x4">
-      <BitField name="RESERVED" start="29" size="3"/>
       <BitField name="CMPSELEND" start="24" size="5"/>
-      <BitField name="RESERVED" start="21" size="3"/>
       <BitField name="CMPSELBEG" start="16" size="5"/>
       <BitField name="OUTPOL" start="1" size="1"/>
-      <BitField name="RESERVED" start="0" size="1"/>
     </Register>
     <Register name="CHCFG_15" start="+0xbc" size="0x4">
-      <BitField name="RESERVED" start="29" size="3"/>
       <BitField name="CMPSELEND" start="24" size="5"/>
-      <BitField name="RESERVED" start="21" size="3"/>
       <BitField name="CMPSELBEG" start="16" size="5"/>
       <BitField name="OUTPOL" start="1" size="1"/>
-      <BitField name="RESERVED" start="0" size="1"/>
     </Register>
     <Register name="CHCFG_16" start="+0xc0" size="0x4">
-      <BitField name="RESERVED" start="29" size="3"/>
       <BitField name="CMPSELEND" start="24" size="5"/>
-      <BitField name="RESERVED" start="21" size="3"/>
       <BitField name="CMPSELBEG" start="16" size="5"/>
       <BitField name="OUTPOL" start="1" size="1"/>
-      <BitField name="RESERVED" start="0" size="1"/>
     </Register>
     <Register name="CHCFG_17" start="+0xc4" size="0x4">
-      <BitField name="RESERVED" start="29" size="3"/>
       <BitField name="CMPSELEND" start="24" size="5"/>
-      <BitField name="RESERVED" start="21" size="3"/>
       <BitField name="CMPSELBEG" start="16" size="5"/>
       <BitField name="OUTPOL" start="1" size="1"/>
-      <BitField name="RESERVED" start="0" size="1"/>
     </Register>
     <Register name="CHCFG_18" start="+0xc8" size="0x4">
-      <BitField name="RESERVED" start="29" size="3"/>
       <BitField name="CMPSELEND" start="24" size="5"/>
-      <BitField name="RESERVED" start="21" size="3"/>
       <BitField name="CMPSELBEG" start="16" size="5"/>
       <BitField name="OUTPOL" start="1" size="1"/>
-      <BitField name="RESERVED" start="0" size="1"/>
     </Register>
     <Register name="CHCFG_19" start="+0xcc" size="0x4">
-      <BitField name="RESERVED" start="29" size="3"/>
       <BitField name="CMPSELEND" start="24" size="5"/>
-      <BitField name="RESERVED" start="21" size="3"/>
       <BitField name="CMPSELBEG" start="16" size="5"/>
       <BitField name="OUTPOL" start="1" size="1"/>
-      <BitField name="RESERVED" start="0" size="1"/>
     </Register>
     <Register name="CHCFG_20" start="+0xd0" size="0x4">
-      <BitField name="RESERVED" start="29" size="3"/>
       <BitField name="CMPSELEND" start="24" size="5"/>
-      <BitField name="RESERVED" start="21" size="3"/>
       <BitField name="CMPSELBEG" start="16" size="5"/>
       <BitField name="OUTPOL" start="1" size="1"/>
-      <BitField name="RESERVED" start="0" size="1"/>
     </Register>
     <Register name="CHCFG_21" start="+0xd4" size="0x4">
-      <BitField name="RESERVED" start="29" size="3"/>
       <BitField name="CMPSELEND" start="24" size="5"/>
-      <BitField name="RESERVED" start="21" size="3"/>
       <BitField name="CMPSELBEG" start="16" size="5"/>
       <BitField name="OUTPOL" start="1" size="1"/>
-      <BitField name="RESERVED" start="0" size="1"/>
     </Register>
     <Register name="CHCFG_22" start="+0xd8" size="0x4">
-      <BitField name="RESERVED" start="29" size="3"/>
       <BitField name="CMPSELEND" start="24" size="5"/>
-      <BitField name="RESERVED" start="21" size="3"/>
       <BitField name="CMPSELBEG" start="16" size="5"/>
       <BitField name="OUTPOL" start="1" size="1"/>
-      <BitField name="RESERVED" start="0" size="1"/>
     </Register>
     <Register name="CHCFG_23" start="+0xdc" size="0x4">
-      <BitField name="RESERVED" start="29" size="3"/>
       <BitField name="CMPSELEND" start="24" size="5"/>
-      <BitField name="RESERVED" start="21" size="3"/>
       <BitField name="CMPSELBEG" start="16" size="5"/>
       <BitField name="OUTPOL" start="1" size="1"/>
-      <BitField name="RESERVED" start="0" size="1"/>
     </Register>
     <Register name="GCR" start="+0xf0" size="0x4">
       <BitField name="FAULTI3EN" start="31" size="1"/>
@@ -8740,7 +9006,6 @@
     <Register name="CNT" start="+0x170" size="0x4">
       <BitField name="XCNT" start="28" size="4"/>
       <BitField name="CNT" start="4" size="24"/>
-      <BitField name="RESERVED" start="0" size="4"/>
     </Register>
     <Register name="CAPNEG_0" start="+0x180" size="0x4">
       <BitField name="CAPNEG" start="0" size="32"/>
@@ -8817,7 +9082,6 @@
     <Register name="CNTCOPY" start="+0x1f0" size="0x4">
       <BitField name="XCNT" start="28" size="4"/>
       <BitField name="CNT" start="4" size="24"/>
-      <BitField name="RESERVED" start="0" size="4"/>
     </Register>
     <Register name="PWMCFG_0" start="+0x200" size="0x4">
       <BitField name="OEN" start="28" size="1"/>
@@ -8916,145 +9180,121 @@
       <BitField name="XCNTCMPEN" start="4" size="4"/>
       <BitField name="CMPSHDWUPT" start="2" size="2"/>
       <BitField name="CMPMODE" start="1" size="1"/>
-      <BitField name="RESERVED" start="0" size="1"/>
     </Register>
     <Register name="CMPCFG_1" start="+0x234" size="0x4">
       <BitField name="XCNTCMPEN" start="4" size="4"/>
       <BitField name="CMPSHDWUPT" start="2" size="2"/>
       <BitField name="CMPMODE" start="1" size="1"/>
-      <BitField name="RESERVED" start="0" size="1"/>
     </Register>
     <Register name="CMPCFG_2" start="+0x238" size="0x4">
       <BitField name="XCNTCMPEN" start="4" size="4"/>
       <BitField name="CMPSHDWUPT" start="2" size="2"/>
       <BitField name="CMPMODE" start="1" size="1"/>
-      <BitField name="RESERVED" start="0" size="1"/>
     </Register>
     <Register name="CMPCFG_3" start="+0x23c" size="0x4">
       <BitField name="XCNTCMPEN" start="4" size="4"/>
       <BitField name="CMPSHDWUPT" start="2" size="2"/>
       <BitField name="CMPMODE" start="1" size="1"/>
-      <BitField name="RESERVED" start="0" size="1"/>
     </Register>
     <Register name="CMPCFG_4" start="+0x240" size="0x4">
       <BitField name="XCNTCMPEN" start="4" size="4"/>
       <BitField name="CMPSHDWUPT" start="2" size="2"/>
       <BitField name="CMPMODE" start="1" size="1"/>
-      <BitField name="RESERVED" start="0" size="1"/>
     </Register>
     <Register name="CMPCFG_5" start="+0x244" size="0x4">
       <BitField name="XCNTCMPEN" start="4" size="4"/>
       <BitField name="CMPSHDWUPT" start="2" size="2"/>
       <BitField name="CMPMODE" start="1" size="1"/>
-      <BitField name="RESERVED" start="0" size="1"/>
     </Register>
     <Register name="CMPCFG_6" start="+0x248" size="0x4">
       <BitField name="XCNTCMPEN" start="4" size="4"/>
       <BitField name="CMPSHDWUPT" start="2" size="2"/>
       <BitField name="CMPMODE" start="1" size="1"/>
-      <BitField name="RESERVED" start="0" size="1"/>
     </Register>
     <Register name="CMPCFG_7" start="+0x24c" size="0x4">
       <BitField name="XCNTCMPEN" start="4" size="4"/>
       <BitField name="CMPSHDWUPT" start="2" size="2"/>
       <BitField name="CMPMODE" start="1" size="1"/>
-      <BitField name="RESERVED" start="0" size="1"/>
     </Register>
     <Register name="CMPCFG_8" start="+0x250" size="0x4">
       <BitField name="XCNTCMPEN" start="4" size="4"/>
       <BitField name="CMPSHDWUPT" start="2" size="2"/>
       <BitField name="CMPMODE" start="1" size="1"/>
-      <BitField name="RESERVED" start="0" size="1"/>
     </Register>
     <Register name="CMPCFG_9" start="+0x254" size="0x4">
       <BitField name="XCNTCMPEN" start="4" size="4"/>
       <BitField name="CMPSHDWUPT" start="2" size="2"/>
       <BitField name="CMPMODE" start="1" size="1"/>
-      <BitField name="RESERVED" start="0" size="1"/>
     </Register>
     <Register name="CMPCFG_10" start="+0x258" size="0x4">
       <BitField name="XCNTCMPEN" start="4" size="4"/>
       <BitField name="CMPSHDWUPT" start="2" size="2"/>
       <BitField name="CMPMODE" start="1" size="1"/>
-      <BitField name="RESERVED" start="0" size="1"/>
     </Register>
     <Register name="CMPCFG_11" start="+0x25c" size="0x4">
       <BitField name="XCNTCMPEN" start="4" size="4"/>
       <BitField name="CMPSHDWUPT" start="2" size="2"/>
       <BitField name="CMPMODE" start="1" size="1"/>
-      <BitField name="RESERVED" start="0" size="1"/>
     </Register>
     <Register name="CMPCFG_12" start="+0x260" size="0x4">
       <BitField name="XCNTCMPEN" start="4" size="4"/>
       <BitField name="CMPSHDWUPT" start="2" size="2"/>
       <BitField name="CMPMODE" start="1" size="1"/>
-      <BitField name="RESERVED" start="0" size="1"/>
     </Register>
     <Register name="CMPCFG_13" start="+0x264" size="0x4">
       <BitField name="XCNTCMPEN" start="4" size="4"/>
       <BitField name="CMPSHDWUPT" start="2" size="2"/>
       <BitField name="CMPMODE" start="1" size="1"/>
-      <BitField name="RESERVED" start="0" size="1"/>
     </Register>
     <Register name="CMPCFG_14" start="+0x268" size="0x4">
       <BitField name="XCNTCMPEN" start="4" size="4"/>
       <BitField name="CMPSHDWUPT" start="2" size="2"/>
       <BitField name="CMPMODE" start="1" size="1"/>
-      <BitField name="RESERVED" start="0" size="1"/>
     </Register>
     <Register name="CMPCFG_15" start="+0x26c" size="0x4">
       <BitField name="XCNTCMPEN" start="4" size="4"/>
       <BitField name="CMPSHDWUPT" start="2" size="2"/>
       <BitField name="CMPMODE" start="1" size="1"/>
-      <BitField name="RESERVED" start="0" size="1"/>
     </Register>
     <Register name="CMPCFG_16" start="+0x270" size="0x4">
       <BitField name="XCNTCMPEN" start="4" size="4"/>
       <BitField name="CMPSHDWUPT" start="2" size="2"/>
       <BitField name="CMPMODE" start="1" size="1"/>
-      <BitField name="RESERVED" start="0" size="1"/>
     </Register>
     <Register name="CMPCFG_17" start="+0x274" size="0x4">
       <BitField name="XCNTCMPEN" start="4" size="4"/>
       <BitField name="CMPSHDWUPT" start="2" size="2"/>
       <BitField name="CMPMODE" start="1" size="1"/>
-      <BitField name="RESERVED" start="0" size="1"/>
     </Register>
     <Register name="CMPCFG_18" start="+0x278" size="0x4">
       <BitField name="XCNTCMPEN" start="4" size="4"/>
       <BitField name="CMPSHDWUPT" start="2" size="2"/>
       <BitField name="CMPMODE" start="1" size="1"/>
-      <BitField name="RESERVED" start="0" size="1"/>
     </Register>
     <Register name="CMPCFG_19" start="+0x27c" size="0x4">
       <BitField name="XCNTCMPEN" start="4" size="4"/>
       <BitField name="CMPSHDWUPT" start="2" size="2"/>
       <BitField name="CMPMODE" start="1" size="1"/>
-      <BitField name="RESERVED" start="0" size="1"/>
     </Register>
     <Register name="CMPCFG_20" start="+0x280" size="0x4">
       <BitField name="XCNTCMPEN" start="4" size="4"/>
       <BitField name="CMPSHDWUPT" start="2" size="2"/>
       <BitField name="CMPMODE" start="1" size="1"/>
-      <BitField name="RESERVED" start="0" size="1"/>
     </Register>
     <Register name="CMPCFG_21" start="+0x284" size="0x4">
       <BitField name="XCNTCMPEN" start="4" size="4"/>
       <BitField name="CMPSHDWUPT" start="2" size="2"/>
       <BitField name="CMPMODE" start="1" size="1"/>
-      <BitField name="RESERVED" start="0" size="1"/>
     </Register>
     <Register name="CMPCFG_22" start="+0x288" size="0x4">
       <BitField name="XCNTCMPEN" start="4" size="4"/>
       <BitField name="CMPSHDWUPT" start="2" size="2"/>
       <BitField name="CMPMODE" start="1" size="1"/>
-      <BitField name="RESERVED" start="0" size="1"/>
     </Register>
     <Register name="CMPCFG_23" start="+0x28c" size="0x4">
       <BitField name="XCNTCMPEN" start="4" size="4"/>
       <BitField name="CMPSHDWUPT" start="2" size="2"/>
       <BitField name="CMPMODE" start="1" size="1"/>
-      <BitField name="RESERVED" start="0" size="1"/>
     </Register>
   </RegisterGroup>
   <RegisterGroup start="0xf0210000" name="PWM1">
@@ -9064,12 +9304,10 @@
     <Register name="STA" start="+0x4" size="0x4">
       <BitField name="XSTA" start="28" size="4"/>
       <BitField name="STA" start="4" size="24"/>
-      <BitField name="RESERVED" start="0" size="4"/>
     </Register>
     <Register name="RLD" start="+0x8" size="0x4">
       <BitField name="XRLD" start="28" size="4"/>
       <BitField name="RLD" start="4" size="24"/>
-      <BitField name="RESERVED" start="0" size="4"/>
     </Register>
     <Register name="CMP_0" start="+0xc" size="0x4">
       <BitField name="XCMP" start="28" size="4"/>
@@ -9222,196 +9460,124 @@
       <BitField name="SHLK" start="31" size="1"/>
     </Register>
     <Register name="CHCFG_0" start="+0x80" size="0x4">
-      <BitField name="RESERVED" start="29" size="3"/>
       <BitField name="CMPSELEND" start="24" size="5"/>
-      <BitField name="RESERVED" start="21" size="3"/>
       <BitField name="CMPSELBEG" start="16" size="5"/>
       <BitField name="OUTPOL" start="1" size="1"/>
-      <BitField name="RESERVED" start="0" size="1"/>
     </Register>
     <Register name="CHCFG_1" start="+0x84" size="0x4">
-      <BitField name="RESERVED" start="29" size="3"/>
       <BitField name="CMPSELEND" start="24" size="5"/>
-      <BitField name="RESERVED" start="21" size="3"/>
       <BitField name="CMPSELBEG" start="16" size="5"/>
       <BitField name="OUTPOL" start="1" size="1"/>
-      <BitField name="RESERVED" start="0" size="1"/>
     </Register>
     <Register name="CHCFG_2" start="+0x88" size="0x4">
-      <BitField name="RESERVED" start="29" size="3"/>
       <BitField name="CMPSELEND" start="24" size="5"/>
-      <BitField name="RESERVED" start="21" size="3"/>
       <BitField name="CMPSELBEG" start="16" size="5"/>
       <BitField name="OUTPOL" start="1" size="1"/>
-      <BitField name="RESERVED" start="0" size="1"/>
     </Register>
     <Register name="CHCFG_3" start="+0x8c" size="0x4">
-      <BitField name="RESERVED" start="29" size="3"/>
       <BitField name="CMPSELEND" start="24" size="5"/>
-      <BitField name="RESERVED" start="21" size="3"/>
       <BitField name="CMPSELBEG" start="16" size="5"/>
       <BitField name="OUTPOL" start="1" size="1"/>
-      <BitField name="RESERVED" start="0" size="1"/>
     </Register>
     <Register name="CHCFG_4" start="+0x90" size="0x4">
-      <BitField name="RESERVED" start="29" size="3"/>
       <BitField name="CMPSELEND" start="24" size="5"/>
-      <BitField name="RESERVED" start="21" size="3"/>
       <BitField name="CMPSELBEG" start="16" size="5"/>
       <BitField name="OUTPOL" start="1" size="1"/>
-      <BitField name="RESERVED" start="0" size="1"/>
     </Register>
     <Register name="CHCFG_5" start="+0x94" size="0x4">
-      <BitField name="RESERVED" start="29" size="3"/>
       <BitField name="CMPSELEND" start="24" size="5"/>
-      <BitField name="RESERVED" start="21" size="3"/>
       <BitField name="CMPSELBEG" start="16" size="5"/>
       <BitField name="OUTPOL" start="1" size="1"/>
-      <BitField name="RESERVED" start="0" size="1"/>
     </Register>
     <Register name="CHCFG_6" start="+0x98" size="0x4">
-      <BitField name="RESERVED" start="29" size="3"/>
       <BitField name="CMPSELEND" start="24" size="5"/>
-      <BitField name="RESERVED" start="21" size="3"/>
       <BitField name="CMPSELBEG" start="16" size="5"/>
       <BitField name="OUTPOL" start="1" size="1"/>
-      <BitField name="RESERVED" start="0" size="1"/>
     </Register>
     <Register name="CHCFG_7" start="+0x9c" size="0x4">
-      <BitField name="RESERVED" start="29" size="3"/>
       <BitField name="CMPSELEND" start="24" size="5"/>
-      <BitField name="RESERVED" start="21" size="3"/>
       <BitField name="CMPSELBEG" start="16" size="5"/>
       <BitField name="OUTPOL" start="1" size="1"/>
-      <BitField name="RESERVED" start="0" size="1"/>
     </Register>
     <Register name="CHCFG_8" start="+0xa0" size="0x4">
-      <BitField name="RESERVED" start="29" size="3"/>
       <BitField name="CMPSELEND" start="24" size="5"/>
-      <BitField name="RESERVED" start="21" size="3"/>
       <BitField name="CMPSELBEG" start="16" size="5"/>
       <BitField name="OUTPOL" start="1" size="1"/>
-      <BitField name="RESERVED" start="0" size="1"/>
     </Register>
     <Register name="CHCFG_9" start="+0xa4" size="0x4">
-      <BitField name="RESERVED" start="29" size="3"/>
       <BitField name="CMPSELEND" start="24" size="5"/>
-      <BitField name="RESERVED" start="21" size="3"/>
       <BitField name="CMPSELBEG" start="16" size="5"/>
       <BitField name="OUTPOL" start="1" size="1"/>
-      <BitField name="RESERVED" start="0" size="1"/>
     </Register>
     <Register name="CHCFG_10" start="+0xa8" size="0x4">
-      <BitField name="RESERVED" start="29" size="3"/>
       <BitField name="CMPSELEND" start="24" size="5"/>
-      <BitField name="RESERVED" start="21" size="3"/>
       <BitField name="CMPSELBEG" start="16" size="5"/>
       <BitField name="OUTPOL" start="1" size="1"/>
-      <BitField name="RESERVED" start="0" size="1"/>
     </Register>
     <Register name="CHCFG_11" start="+0xac" size="0x4">
-      <BitField name="RESERVED" start="29" size="3"/>
       <BitField name="CMPSELEND" start="24" size="5"/>
-      <BitField name="RESERVED" start="21" size="3"/>
       <BitField name="CMPSELBEG" start="16" size="5"/>
       <BitField name="OUTPOL" start="1" size="1"/>
-      <BitField name="RESERVED" start="0" size="1"/>
     </Register>
     <Register name="CHCFG_12" start="+0xb0" size="0x4">
-      <BitField name="RESERVED" start="29" size="3"/>
       <BitField name="CMPSELEND" start="24" size="5"/>
-      <BitField name="RESERVED" start="21" size="3"/>
       <BitField name="CMPSELBEG" start="16" size="5"/>
       <BitField name="OUTPOL" start="1" size="1"/>
-      <BitField name="RESERVED" start="0" size="1"/>
     </Register>
     <Register name="CHCFG_13" start="+0xb4" size="0x4">
-      <BitField name="RESERVED" start="29" size="3"/>
       <BitField name="CMPSELEND" start="24" size="5"/>
-      <BitField name="RESERVED" start="21" size="3"/>
       <BitField name="CMPSELBEG" start="16" size="5"/>
       <BitField name="OUTPOL" start="1" size="1"/>
-      <BitField name="RESERVED" start="0" size="1"/>
     </Register>
     <Register name="CHCFG_14" start="+0xb8" size="0x4">
-      <BitField name="RESERVED" start="29" size="3"/>
       <BitField name="CMPSELEND" start="24" size="5"/>
-      <BitField name="RESERVED" start="21" size="3"/>
       <BitField name="CMPSELBEG" start="16" size="5"/>
       <BitField name="OUTPOL" start="1" size="1"/>
-      <BitField name="RESERVED" start="0" size="1"/>
     </Register>
     <Register name="CHCFG_15" start="+0xbc" size="0x4">
-      <BitField name="RESERVED" start="29" size="3"/>
       <BitField name="CMPSELEND" start="24" size="5"/>
-      <BitField name="RESERVED" start="21" size="3"/>
       <BitField name="CMPSELBEG" start="16" size="5"/>
       <BitField name="OUTPOL" start="1" size="1"/>
-      <BitField name="RESERVED" start="0" size="1"/>
     </Register>
     <Register name="CHCFG_16" start="+0xc0" size="0x4">
-      <BitField name="RESERVED" start="29" size="3"/>
       <BitField name="CMPSELEND" start="24" size="5"/>
-      <BitField name="RESERVED" start="21" size="3"/>
       <BitField name="CMPSELBEG" start="16" size="5"/>
       <BitField name="OUTPOL" start="1" size="1"/>
-      <BitField name="RESERVED" start="0" size="1"/>
     </Register>
     <Register name="CHCFG_17" start="+0xc4" size="0x4">
-      <BitField name="RESERVED" start="29" size="3"/>
       <BitField name="CMPSELEND" start="24" size="5"/>
-      <BitField name="RESERVED" start="21" size="3"/>
       <BitField name="CMPSELBEG" start="16" size="5"/>
       <BitField name="OUTPOL" start="1" size="1"/>
-      <BitField name="RESERVED" start="0" size="1"/>
     </Register>
     <Register name="CHCFG_18" start="+0xc8" size="0x4">
-      <BitField name="RESERVED" start="29" size="3"/>
       <BitField name="CMPSELEND" start="24" size="5"/>
-      <BitField name="RESERVED" start="21" size="3"/>
       <BitField name="CMPSELBEG" start="16" size="5"/>
       <BitField name="OUTPOL" start="1" size="1"/>
-      <BitField name="RESERVED" start="0" size="1"/>
     </Register>
     <Register name="CHCFG_19" start="+0xcc" size="0x4">
-      <BitField name="RESERVED" start="29" size="3"/>
       <BitField name="CMPSELEND" start="24" size="5"/>
-      <BitField name="RESERVED" start="21" size="3"/>
       <BitField name="CMPSELBEG" start="16" size="5"/>
       <BitField name="OUTPOL" start="1" size="1"/>
-      <BitField name="RESERVED" start="0" size="1"/>
     </Register>
     <Register name="CHCFG_20" start="+0xd0" size="0x4">
-      <BitField name="RESERVED" start="29" size="3"/>
       <BitField name="CMPSELEND" start="24" size="5"/>
-      <BitField name="RESERVED" start="21" size="3"/>
       <BitField name="CMPSELBEG" start="16" size="5"/>
       <BitField name="OUTPOL" start="1" size="1"/>
-      <BitField name="RESERVED" start="0" size="1"/>
     </Register>
     <Register name="CHCFG_21" start="+0xd4" size="0x4">
-      <BitField name="RESERVED" start="29" size="3"/>
       <BitField name="CMPSELEND" start="24" size="5"/>
-      <BitField name="RESERVED" start="21" size="3"/>
       <BitField name="CMPSELBEG" start="16" size="5"/>
       <BitField name="OUTPOL" start="1" size="1"/>
-      <BitField name="RESERVED" start="0" size="1"/>
     </Register>
     <Register name="CHCFG_22" start="+0xd8" size="0x4">
-      <BitField name="RESERVED" start="29" size="3"/>
       <BitField name="CMPSELEND" start="24" size="5"/>
-      <BitField name="RESERVED" start="21" size="3"/>
       <BitField name="CMPSELBEG" start="16" size="5"/>
       <BitField name="OUTPOL" start="1" size="1"/>
-      <BitField name="RESERVED" start="0" size="1"/>
     </Register>
     <Register name="CHCFG_23" start="+0xdc" size="0x4">
-      <BitField name="RESERVED" start="29" size="3"/>
       <BitField name="CMPSELEND" start="24" size="5"/>
-      <BitField name="RESERVED" start="21" size="3"/>
       <BitField name="CMPSELBEG" start="16" size="5"/>
       <BitField name="OUTPOL" start="1" size="1"/>
-      <BitField name="RESERVED" start="0" size="1"/>
     </Register>
     <Register name="GCR" start="+0xf0" size="0x4">
       <BitField name="FAULTI3EN" start="31" size="1"/>
@@ -9516,7 +9682,6 @@
     <Register name="CNT" start="+0x170" size="0x4">
       <BitField name="XCNT" start="28" size="4"/>
       <BitField name="CNT" start="4" size="24"/>
-      <BitField name="RESERVED" start="0" size="4"/>
     </Register>
     <Register name="CAPNEG_0" start="+0x180" size="0x4">
       <BitField name="CAPNEG" start="0" size="32"/>
@@ -9593,7 +9758,6 @@
     <Register name="CNTCOPY" start="+0x1f0" size="0x4">
       <BitField name="XCNT" start="28" size="4"/>
       <BitField name="CNT" start="4" size="24"/>
-      <BitField name="RESERVED" start="0" size="4"/>
     </Register>
     <Register name="PWMCFG_0" start="+0x200" size="0x4">
       <BitField name="OEN" start="28" size="1"/>
@@ -9692,160 +9856,131 @@
       <BitField name="XCNTCMPEN" start="4" size="4"/>
       <BitField name="CMPSHDWUPT" start="2" size="2"/>
       <BitField name="CMPMODE" start="1" size="1"/>
-      <BitField name="RESERVED" start="0" size="1"/>
     </Register>
     <Register name="CMPCFG_1" start="+0x234" size="0x4">
       <BitField name="XCNTCMPEN" start="4" size="4"/>
       <BitField name="CMPSHDWUPT" start="2" size="2"/>
       <BitField name="CMPMODE" start="1" size="1"/>
-      <BitField name="RESERVED" start="0" size="1"/>
     </Register>
     <Register name="CMPCFG_2" start="+0x238" size="0x4">
       <BitField name="XCNTCMPEN" start="4" size="4"/>
       <BitField name="CMPSHDWUPT" start="2" size="2"/>
       <BitField name="CMPMODE" start="1" size="1"/>
-      <BitField name="RESERVED" start="0" size="1"/>
     </Register>
     <Register name="CMPCFG_3" start="+0x23c" size="0x4">
       <BitField name="XCNTCMPEN" start="4" size="4"/>
       <BitField name="CMPSHDWUPT" start="2" size="2"/>
       <BitField name="CMPMODE" start="1" size="1"/>
-      <BitField name="RESERVED" start="0" size="1"/>
     </Register>
     <Register name="CMPCFG_4" start="+0x240" size="0x4">
       <BitField name="XCNTCMPEN" start="4" size="4"/>
       <BitField name="CMPSHDWUPT" start="2" size="2"/>
       <BitField name="CMPMODE" start="1" size="1"/>
-      <BitField name="RESERVED" start="0" size="1"/>
     </Register>
     <Register name="CMPCFG_5" start="+0x244" size="0x4">
       <BitField name="XCNTCMPEN" start="4" size="4"/>
       <BitField name="CMPSHDWUPT" start="2" size="2"/>
       <BitField name="CMPMODE" start="1" size="1"/>
-      <BitField name="RESERVED" start="0" size="1"/>
     </Register>
     <Register name="CMPCFG_6" start="+0x248" size="0x4">
       <BitField name="XCNTCMPEN" start="4" size="4"/>
       <BitField name="CMPSHDWUPT" start="2" size="2"/>
       <BitField name="CMPMODE" start="1" size="1"/>
-      <BitField name="RESERVED" start="0" size="1"/>
     </Register>
     <Register name="CMPCFG_7" start="+0x24c" size="0x4">
       <BitField name="XCNTCMPEN" start="4" size="4"/>
       <BitField name="CMPSHDWUPT" start="2" size="2"/>
       <BitField name="CMPMODE" start="1" size="1"/>
-      <BitField name="RESERVED" start="0" size="1"/>
     </Register>
     <Register name="CMPCFG_8" start="+0x250" size="0x4">
       <BitField name="XCNTCMPEN" start="4" size="4"/>
       <BitField name="CMPSHDWUPT" start="2" size="2"/>
       <BitField name="CMPMODE" start="1" size="1"/>
-      <BitField name="RESERVED" start="0" size="1"/>
     </Register>
     <Register name="CMPCFG_9" start="+0x254" size="0x4">
       <BitField name="XCNTCMPEN" start="4" size="4"/>
       <BitField name="CMPSHDWUPT" start="2" size="2"/>
       <BitField name="CMPMODE" start="1" size="1"/>
-      <BitField name="RESERVED" start="0" size="1"/>
     </Register>
     <Register name="CMPCFG_10" start="+0x258" size="0x4">
       <BitField name="XCNTCMPEN" start="4" size="4"/>
       <BitField name="CMPSHDWUPT" start="2" size="2"/>
       <BitField name="CMPMODE" start="1" size="1"/>
-      <BitField name="RESERVED" start="0" size="1"/>
     </Register>
     <Register name="CMPCFG_11" start="+0x25c" size="0x4">
       <BitField name="XCNTCMPEN" start="4" size="4"/>
       <BitField name="CMPSHDWUPT" start="2" size="2"/>
       <BitField name="CMPMODE" start="1" size="1"/>
-      <BitField name="RESERVED" start="0" size="1"/>
     </Register>
     <Register name="CMPCFG_12" start="+0x260" size="0x4">
       <BitField name="XCNTCMPEN" start="4" size="4"/>
       <BitField name="CMPSHDWUPT" start="2" size="2"/>
       <BitField name="CMPMODE" start="1" size="1"/>
-      <BitField name="RESERVED" start="0" size="1"/>
     </Register>
     <Register name="CMPCFG_13" start="+0x264" size="0x4">
       <BitField name="XCNTCMPEN" start="4" size="4"/>
       <BitField name="CMPSHDWUPT" start="2" size="2"/>
       <BitField name="CMPMODE" start="1" size="1"/>
-      <BitField name="RESERVED" start="0" size="1"/>
     </Register>
     <Register name="CMPCFG_14" start="+0x268" size="0x4">
       <BitField name="XCNTCMPEN" start="4" size="4"/>
       <BitField name="CMPSHDWUPT" start="2" size="2"/>
       <BitField name="CMPMODE" start="1" size="1"/>
-      <BitField name="RESERVED" start="0" size="1"/>
     </Register>
     <Register name="CMPCFG_15" start="+0x26c" size="0x4">
       <BitField name="XCNTCMPEN" start="4" size="4"/>
       <BitField name="CMPSHDWUPT" start="2" size="2"/>
       <BitField name="CMPMODE" start="1" size="1"/>
-      <BitField name="RESERVED" start="0" size="1"/>
     </Register>
     <Register name="CMPCFG_16" start="+0x270" size="0x4">
       <BitField name="XCNTCMPEN" start="4" size="4"/>
       <BitField name="CMPSHDWUPT" start="2" size="2"/>
       <BitField name="CMPMODE" start="1" size="1"/>
-      <BitField name="RESERVED" start="0" size="1"/>
     </Register>
     <Register name="CMPCFG_17" start="+0x274" size="0x4">
       <BitField name="XCNTCMPEN" start="4" size="4"/>
       <BitField name="CMPSHDWUPT" start="2" size="2"/>
       <BitField name="CMPMODE" start="1" size="1"/>
-      <BitField name="RESERVED" start="0" size="1"/>
     </Register>
     <Register name="CMPCFG_18" start="+0x278" size="0x4">
       <BitField name="XCNTCMPEN" start="4" size="4"/>
       <BitField name="CMPSHDWUPT" start="2" size="2"/>
       <BitField name="CMPMODE" start="1" size="1"/>
-      <BitField name="RESERVED" start="0" size="1"/>
     </Register>
     <Register name="CMPCFG_19" start="+0x27c" size="0x4">
       <BitField name="XCNTCMPEN" start="4" size="4"/>
       <BitField name="CMPSHDWUPT" start="2" size="2"/>
       <BitField name="CMPMODE" start="1" size="1"/>
-      <BitField name="RESERVED" start="0" size="1"/>
     </Register>
     <Register name="CMPCFG_20" start="+0x280" size="0x4">
       <BitField name="XCNTCMPEN" start="4" size="4"/>
       <BitField name="CMPSHDWUPT" start="2" size="2"/>
       <BitField name="CMPMODE" start="1" size="1"/>
-      <BitField name="RESERVED" start="0" size="1"/>
     </Register>
     <Register name="CMPCFG_21" start="+0x284" size="0x4">
       <BitField name="XCNTCMPEN" start="4" size="4"/>
       <BitField name="CMPSHDWUPT" start="2" size="2"/>
       <BitField name="CMPMODE" start="1" size="1"/>
-      <BitField name="RESERVED" start="0" size="1"/>
     </Register>
     <Register name="CMPCFG_22" start="+0x288" size="0x4">
       <BitField name="XCNTCMPEN" start="4" size="4"/>
       <BitField name="CMPSHDWUPT" start="2" size="2"/>
       <BitField name="CMPMODE" start="1" size="1"/>
-      <BitField name="RESERVED" start="0" size="1"/>
     </Register>
     <Register name="CMPCFG_23" start="+0x28c" size="0x4">
       <BitField name="XCNTCMPEN" start="4" size="4"/>
       <BitField name="CMPSHDWUPT" start="2" size="2"/>
       <BitField name="CMPMODE" start="1" size="1"/>
-      <BitField name="RESERVED" start="0" size="1"/>
     </Register>
   </RegisterGroup>
   <RegisterGroup start="0xf0204000" name="HALL0">
     <Register name="CR" start="+0x0" size="0x4">
       <BitField name="READ" start="31" size="1"/>
-      <BitField name="RESERVED" start="16" size="1"/>
       <BitField name="SNAPEN" start="11" size="1"/>
-      <BitField name="RESERVED" start="5" size="1"/>
       <BitField name="RSTCNT" start="4" size="1"/>
-      <BitField name="RESERVED" start="2" size="2"/>
-      <BitField name="RESERVED" start="0" size="2"/>
     </Register>
     <Register name="PHCFG" start="+0x4" size="0x4">
       <BitField name="DLYSEL" start="31" size="1"/>
-      <BitField name="RESERVED" start="24" size="7"/>
       <BitField name="DLYCNT" start="0" size="24"/>
     </Register>
     <Register name="WDGCFG" start="+0x8" size="0x4">
@@ -9853,7 +9988,6 @@
       <BitField name="WDGTO" start="0" size="31"/>
     </Register>
     <Register name="UVWCFG" start="+0xc" size="0x4">
-      <BitField name="RESERVED" start="24" size="3"/>
       <BitField name="PRECNT" start="0" size="24"/>
     </Register>
     <Register name="TRGOEN" start="+0x10" size="0x4">
@@ -9861,10 +9995,6 @@
       <BitField name="PHUPTEN" start="30" size="1"/>
       <BitField name="PHPREEN" start="29" size="1"/>
       <BitField name="PHDLYEN" start="28" size="1"/>
-      <BitField name="RESERVED" start="27" size="1"/>
-      <BitField name="RESERVED" start="26" size="1"/>
-      <BitField name="RESERVED" start="25" size="1"/>
-      <BitField name="RESERVED" start="24" size="1"/>
       <BitField name="UFEN" start="23" size="1"/>
       <BitField name="VFEN" start="22" size="1"/>
       <BitField name="WFEN" start="21" size="1"/>
@@ -9874,10 +10004,6 @@
       <BitField name="PHUPTEN" start="30" size="1"/>
       <BitField name="PHPREEN" start="29" size="1"/>
       <BitField name="PHDLYEN" start="28" size="1"/>
-      <BitField name="RESERVED" start="27" size="1"/>
-      <BitField name="RESERVED" start="26" size="1"/>
-      <BitField name="RESERVED" start="25" size="1"/>
-      <BitField name="RESERVED" start="24" size="1"/>
       <BitField name="UFEN" start="23" size="1"/>
       <BitField name="VFEN" start="22" size="1"/>
       <BitField name="WFEN" start="21" size="1"/>
@@ -9887,10 +10013,6 @@
       <BitField name="PHUPTEN" start="30" size="1"/>
       <BitField name="PHPREEN" start="29" size="1"/>
       <BitField name="PHDLYEN" start="28" size="1"/>
-      <BitField name="RESERVED" start="27" size="1"/>
-      <BitField name="RESERVED" start="26" size="1"/>
-      <BitField name="RESERVED" start="25" size="1"/>
-      <BitField name="RESERVED" start="24" size="1"/>
       <BitField name="UFEN" start="23" size="1"/>
       <BitField name="VFEN" start="22" size="1"/>
       <BitField name="WFEN" start="21" size="1"/>
@@ -9900,10 +10022,6 @@
       <BitField name="PHUPTF" start="30" size="1"/>
       <BitField name="PHPREF" start="29" size="1"/>
       <BitField name="PHDLYF" start="28" size="1"/>
-      <BitField name="RESERVED" start="27" size="1"/>
-      <BitField name="RESERVED" start="26" size="1"/>
-      <BitField name="RESERVED" start="25" size="1"/>
-      <BitField name="RESERVED" start="24" size="1"/>
       <BitField name="UF" start="23" size="1"/>
       <BitField name="VF" start="22" size="1"/>
       <BitField name="WF" start="21" size="1"/>
@@ -9913,10 +10031,6 @@
       <BitField name="PHUPTIE" start="30" size="1"/>
       <BitField name="PHPREIE" start="29" size="1"/>
       <BitField name="PHDLYIE" start="28" size="1"/>
-      <BitField name="RESERVED" start="27" size="1"/>
-      <BitField name="RESERVED" start="26" size="1"/>
-      <BitField name="RESERVED" start="25" size="1"/>
-      <BitField name="RESERVED" start="24" size="1"/>
       <BitField name="UFIE" start="23" size="1"/>
       <BitField name="VFIE" start="22" size="1"/>
       <BitField name="WFIE" start="21" size="1"/>
@@ -9925,8 +10039,6 @@
       <BitField name="WCNT" start="0" size="28"/>
     </Register>
     <Register name="COUNT_CURRENT_V" start="+0x34" size="0x4">
-      <BitField name="RESERVED" start="31" size="1"/>
-      <BitField name="RESERVED" start="30" size="1"/>
       <BitField name="VCNT" start="0" size="28"/>
     </Register>
     <Register name="COUNT_CURRENT_U" start="+0x38" size="0x4">
@@ -9943,8 +10055,6 @@
       <BitField name="WCNT" start="0" size="28"/>
     </Register>
     <Register name="COUNT_READ_V" start="+0x44" size="0x4">
-      <BitField name="RESERVED" start="31" size="1"/>
-      <BitField name="RESERVED" start="30" size="1"/>
       <BitField name="VCNT" start="0" size="28"/>
     </Register>
     <Register name="COUNT_READ_U" start="+0x48" size="0x4">
@@ -9961,8 +10071,6 @@
       <BitField name="WCNT" start="0" size="28"/>
     </Register>
     <Register name="COUNT_SNAP0_V" start="+0x54" size="0x4">
-      <BitField name="RESERVED" start="31" size="1"/>
-      <BitField name="RESERVED" start="30" size="1"/>
       <BitField name="VCNT" start="0" size="28"/>
     </Register>
     <Register name="COUNT_SNAP0_U" start="+0x58" size="0x4">
@@ -9979,8 +10087,6 @@
       <BitField name="WCNT" start="0" size="28"/>
     </Register>
     <Register name="COUNT_SNAP1_V" start="+0x64" size="0x4">
-      <BitField name="RESERVED" start="31" size="1"/>
-      <BitField name="RESERVED" start="30" size="1"/>
       <BitField name="VCNT" start="0" size="28"/>
     </Register>
     <Register name="COUNT_SNAP1_U" start="+0x68" size="0x4">
@@ -10015,16 +10121,11 @@
   <RegisterGroup start="0xf0214000" name="HALL1">
     <Register name="CR" start="+0x0" size="0x4">
       <BitField name="READ" start="31" size="1"/>
-      <BitField name="RESERVED" start="16" size="1"/>
       <BitField name="SNAPEN" start="11" size="1"/>
-      <BitField name="RESERVED" start="5" size="1"/>
       <BitField name="RSTCNT" start="4" size="1"/>
-      <BitField name="RESERVED" start="2" size="2"/>
-      <BitField name="RESERVED" start="0" size="2"/>
     </Register>
     <Register name="PHCFG" start="+0x4" size="0x4">
       <BitField name="DLYSEL" start="31" size="1"/>
-      <BitField name="RESERVED" start="24" size="7"/>
       <BitField name="DLYCNT" start="0" size="24"/>
     </Register>
     <Register name="WDGCFG" start="+0x8" size="0x4">
@@ -10032,7 +10133,6 @@
       <BitField name="WDGTO" start="0" size="31"/>
     </Register>
     <Register name="UVWCFG" start="+0xc" size="0x4">
-      <BitField name="RESERVED" start="24" size="3"/>
       <BitField name="PRECNT" start="0" size="24"/>
     </Register>
     <Register name="TRGOEN" start="+0x10" size="0x4">
@@ -10040,10 +10140,6 @@
       <BitField name="PHUPTEN" start="30" size="1"/>
       <BitField name="PHPREEN" start="29" size="1"/>
       <BitField name="PHDLYEN" start="28" size="1"/>
-      <BitField name="RESERVED" start="27" size="1"/>
-      <BitField name="RESERVED" start="26" size="1"/>
-      <BitField name="RESERVED" start="25" size="1"/>
-      <BitField name="RESERVED" start="24" size="1"/>
       <BitField name="UFEN" start="23" size="1"/>
       <BitField name="VFEN" start="22" size="1"/>
       <BitField name="WFEN" start="21" size="1"/>
@@ -10053,10 +10149,6 @@
       <BitField name="PHUPTEN" start="30" size="1"/>
       <BitField name="PHPREEN" start="29" size="1"/>
       <BitField name="PHDLYEN" start="28" size="1"/>
-      <BitField name="RESERVED" start="27" size="1"/>
-      <BitField name="RESERVED" start="26" size="1"/>
-      <BitField name="RESERVED" start="25" size="1"/>
-      <BitField name="RESERVED" start="24" size="1"/>
       <BitField name="UFEN" start="23" size="1"/>
       <BitField name="VFEN" start="22" size="1"/>
       <BitField name="WFEN" start="21" size="1"/>
@@ -10066,10 +10158,6 @@
       <BitField name="PHUPTEN" start="30" size="1"/>
       <BitField name="PHPREEN" start="29" size="1"/>
       <BitField name="PHDLYEN" start="28" size="1"/>
-      <BitField name="RESERVED" start="27" size="1"/>
-      <BitField name="RESERVED" start="26" size="1"/>
-      <BitField name="RESERVED" start="25" size="1"/>
-      <BitField name="RESERVED" start="24" size="1"/>
       <BitField name="UFEN" start="23" size="1"/>
       <BitField name="VFEN" start="22" size="1"/>
       <BitField name="WFEN" start="21" size="1"/>
@@ -10079,10 +10167,6 @@
       <BitField name="PHUPTF" start="30" size="1"/>
       <BitField name="PHPREF" start="29" size="1"/>
       <BitField name="PHDLYF" start="28" size="1"/>
-      <BitField name="RESERVED" start="27" size="1"/>
-      <BitField name="RESERVED" start="26" size="1"/>
-      <BitField name="RESERVED" start="25" size="1"/>
-      <BitField name="RESERVED" start="24" size="1"/>
       <BitField name="UF" start="23" size="1"/>
       <BitField name="VF" start="22" size="1"/>
       <BitField name="WF" start="21" size="1"/>
@@ -10092,10 +10176,6 @@
       <BitField name="PHUPTIE" start="30" size="1"/>
       <BitField name="PHPREIE" start="29" size="1"/>
       <BitField name="PHDLYIE" start="28" size="1"/>
-      <BitField name="RESERVED" start="27" size="1"/>
-      <BitField name="RESERVED" start="26" size="1"/>
-      <BitField name="RESERVED" start="25" size="1"/>
-      <BitField name="RESERVED" start="24" size="1"/>
       <BitField name="UFIE" start="23" size="1"/>
       <BitField name="VFIE" start="22" size="1"/>
       <BitField name="WFIE" start="21" size="1"/>
@@ -10104,8 +10184,6 @@
       <BitField name="WCNT" start="0" size="28"/>
     </Register>
     <Register name="COUNT_CURRENT_V" start="+0x34" size="0x4">
-      <BitField name="RESERVED" start="31" size="1"/>
-      <BitField name="RESERVED" start="30" size="1"/>
       <BitField name="VCNT" start="0" size="28"/>
     </Register>
     <Register name="COUNT_CURRENT_U" start="+0x38" size="0x4">
@@ -10122,8 +10200,6 @@
       <BitField name="WCNT" start="0" size="28"/>
     </Register>
     <Register name="COUNT_READ_V" start="+0x44" size="0x4">
-      <BitField name="RESERVED" start="31" size="1"/>
-      <BitField name="RESERVED" start="30" size="1"/>
       <BitField name="VCNT" start="0" size="28"/>
     </Register>
     <Register name="COUNT_READ_U" start="+0x48" size="0x4">
@@ -10140,8 +10216,6 @@
       <BitField name="WCNT" start="0" size="28"/>
     </Register>
     <Register name="COUNT_SNAP0_V" start="+0x54" size="0x4">
-      <BitField name="RESERVED" start="31" size="1"/>
-      <BitField name="RESERVED" start="30" size="1"/>
       <BitField name="VCNT" start="0" size="28"/>
     </Register>
     <Register name="COUNT_SNAP0_U" start="+0x58" size="0x4">
@@ -10158,8 +10232,6 @@
       <BitField name="WCNT" start="0" size="28"/>
     </Register>
     <Register name="COUNT_SNAP1_V" start="+0x64" size="0x4">
-      <BitField name="RESERVED" start="31" size="1"/>
-      <BitField name="RESERVED" start="30" size="1"/>
       <BitField name="VCNT" start="0" size="28"/>
     </Register>
     <Register name="COUNT_SNAP1_U" start="+0x68" size="0x4">
@@ -10206,7 +10278,6 @@
       <BitField name="HFDIR0" start="8" size="1"/>
       <BitField name="SNAPEN" start="5" size="1"/>
       <BitField name="RSTCNT" start="4" size="1"/>
-      <BitField name="RESERVED" start="2" size="2"/>
       <BitField name="ENCTYP" start="0" size="2"/>
     </Register>
     <Register name="PHCFG" start="+0x4" size="0x4">
@@ -10363,7 +10434,6 @@
       <BitField name="HFDIR0" start="8" size="1"/>
       <BitField name="SNAPEN" start="5" size="1"/>
       <BitField name="RSTCNT" start="4" size="1"/>
-      <BitField name="RESERVED" start="2" size="2"/>
       <BitField name="ENCTYP" start="0" size="2"/>
     </Register>
     <Register name="PHCFG" start="+0x4" size="0x4">
@@ -11997,54 +12067,6 @@
     <Register name="L3_L4_CFG_0_L3_ADDR_3" start="+0x41c" size="0x4">
       <BitField name="L3A30" start="0" size="32"/>
     </Register>
-    <Register name="L3_L4_CFG_1_L4_ADDR" start="+0x434" size="0x4">
-      <BitField name="L4DP0" start="16" size="16"/>
-      <BitField name="L4SP0" start="0" size="16"/>
-    </Register>
-    <Register name="L3_L4_CFG_1_L3_ADDR_0" start="+0x440" size="0x4">
-      <BitField name="L3A00" start="0" size="32"/>
-    </Register>
-    <Register name="L3_L4_CFG_1_L3_ADDR_1" start="+0x444" size="0x4">
-      <BitField name="L3A10" start="0" size="32"/>
-    </Register>
-    <Register name="L3_L4_CFG_1_L3_ADDR_2" start="+0x448" size="0x4">
-      <BitField name="L3A20" start="0" size="32"/>
-    </Register>
-    <Register name="L3_L4_CFG_1_L3_ADDR_3" start="+0x44c" size="0x4">
-      <BitField name="L3A30" start="0" size="32"/>
-    </Register>
-    <Register name="L3_L4_CFG_2_L4_ADDR" start="+0x464" size="0x4">
-      <BitField name="L4DP0" start="16" size="16"/>
-      <BitField name="L4SP0" start="0" size="16"/>
-    </Register>
-    <Register name="L3_L4_CFG_2_L3_ADDR_0" start="+0x470" size="0x4">
-      <BitField name="L3A00" start="0" size="32"/>
-    </Register>
-    <Register name="L3_L4_CFG_2_L3_ADDR_1" start="+0x474" size="0x4">
-      <BitField name="L3A10" start="0" size="32"/>
-    </Register>
-    <Register name="L3_L4_CFG_2_L3_ADDR_2" start="+0x478" size="0x4">
-      <BitField name="L3A20" start="0" size="32"/>
-    </Register>
-    <Register name="L3_L4_CFG_2_L3_ADDR_3" start="+0x47c" size="0x4">
-      <BitField name="L3A30" start="0" size="32"/>
-    </Register>
-    <Register name="L3_L4_CFG_3_L4_ADDR" start="+0x494" size="0x4">
-      <BitField name="L4DP0" start="16" size="16"/>
-      <BitField name="L4SP0" start="0" size="16"/>
-    </Register>
-    <Register name="L3_L4_CFG_3_L3_ADDR_0" start="+0x4a0" size="0x4">
-      <BitField name="L3A00" start="0" size="32"/>
-    </Register>
-    <Register name="L3_L4_CFG_3_L3_ADDR_1" start="+0x4a4" size="0x4">
-      <BitField name="L3A10" start="0" size="32"/>
-    </Register>
-    <Register name="L3_L4_CFG_3_L3_ADDR_2" start="+0x4a8" size="0x4">
-      <BitField name="L3A20" start="0" size="32"/>
-    </Register>
-    <Register name="L3_L4_CFG_3_L3_ADDR_3" start="+0x4ac" size="0x4">
-      <BitField name="L3A30" start="0" size="32"/>
-    </Register>
     <Register name="VLAN_TAG_INC_RPL" start="+0x584" size="0x4">
       <BitField name="CSVL" start="19" size="1"/>
       <BitField name="VLP" start="18" size="1"/>
@@ -12316,11 +12338,16 @@
     <Register name="DMA_CURR_HOST_RX_BUF" start="+0x1054" size="0x4">
       <BitField name="CURRBUFAPTR" start="0" size="32"/>
     </Register>
+    <Register name="CTRL2" start="+0x3008" size="0x4">
+      <BitField name="ENET0_LPI_IRQ_EN" start="29" size="1"/>
+      <BitField name="ENET0_REFCLK_OE" start="19" size="1"/>
+      <BitField name="ENET0_PHY_INF_SEL" start="13" size="3"/>
+      <BitField name="ENET0_FLOWCTRL" start="12" size="1"/>
+    </Register>
   </RegisterGroup>
   <RegisterGroup start="0xf2010000" name="NTMR0">
     <Register name="CHANNEL_CH0_CR" start="+0x0" size="0x4">
       <BitField name="CNTUPT" start="31" size="1"/>
-      <BitField name="RESERVED" start="18" size="13"/>
       <BitField name="CNTRST" start="14" size="1"/>
       <BitField name="SYNCFLW" start="13" size="1"/>
       <BitField name="SYNCIFEN" start="12" size="1"/>
@@ -12363,7 +12390,6 @@
     </Register>
     <Register name="CHANNEL_CH1_CR" start="+0x40" size="0x4">
       <BitField name="CNTUPT" start="31" size="1"/>
-      <BitField name="RESERVED" start="18" size="13"/>
       <BitField name="CNTRST" start="14" size="1"/>
       <BitField name="SYNCFLW" start="13" size="1"/>
       <BitField name="SYNCIFEN" start="12" size="1"/>
@@ -12406,7 +12432,6 @@
     </Register>
     <Register name="CHANNEL_CH2_CR" start="+0x80" size="0x4">
       <BitField name="CNTUPT" start="31" size="1"/>
-      <BitField name="RESERVED" start="18" size="13"/>
       <BitField name="CNTRST" start="14" size="1"/>
       <BitField name="SYNCFLW" start="13" size="1"/>
       <BitField name="SYNCIFEN" start="12" size="1"/>
@@ -12449,7 +12474,6 @@
     </Register>
     <Register name="CHANNEL_CH3_CR" start="+0xc0" size="0x4">
       <BitField name="CNTUPT" start="31" size="1"/>
-      <BitField name="RESERVED" start="18" size="13"/>
       <BitField name="CNTRST" start="14" size="1"/>
       <BitField name="SYNCFLW" start="13" size="1"/>
       <BitField name="SYNCIFEN" start="12" size="1"/>
@@ -12491,7 +12515,6 @@
       <BitField name="COUNTER" start="0" size="32"/>
     </Register>
     <Register name="SR" start="+0x200" size="0x4">
-      <BitField name="RESERVED" start="16" size="16"/>
       <BitField name="CH3CMP1F" start="15" size="1"/>
       <BitField name="CH3CMP0F" start="14" size="1"/>
       <BitField name="CH3CAPF" start="13" size="1"/>
@@ -12510,7 +12533,6 @@
       <BitField name="CH0RLDF" start="0" size="1"/>
     </Register>
     <Register name="IRQEN" start="+0x204" size="0x4">
-      <BitField name="RESERVED" start="16" size="16"/>
       <BitField name="CH3CMP1EN" start="15" size="1"/>
       <BitField name="CH3CMP0EN" start="14" size="1"/>
       <BitField name="CH3CAPEN" start="13" size="1"/>
@@ -12535,7 +12557,6 @@
   <RegisterGroup start="0xf3000000" name="GPTMR0">
     <Register name="CHANNEL_CH0_CR" start="+0x0" size="0x4">
       <BitField name="CNTUPT" start="31" size="1"/>
-      <BitField name="RESERVED" start="18" size="13"/>
       <BitField name="CNTRST" start="14" size="1"/>
       <BitField name="SYNCFLW" start="13" size="1"/>
       <BitField name="SYNCIFEN" start="12" size="1"/>
@@ -12578,7 +12599,6 @@
     </Register>
     <Register name="CHANNEL_CH1_CR" start="+0x40" size="0x4">
       <BitField name="CNTUPT" start="31" size="1"/>
-      <BitField name="RESERVED" start="18" size="13"/>
       <BitField name="CNTRST" start="14" size="1"/>
       <BitField name="SYNCFLW" start="13" size="1"/>
       <BitField name="SYNCIFEN" start="12" size="1"/>
@@ -12621,7 +12641,6 @@
     </Register>
     <Register name="CHANNEL_CH2_CR" start="+0x80" size="0x4">
       <BitField name="CNTUPT" start="31" size="1"/>
-      <BitField name="RESERVED" start="18" size="13"/>
       <BitField name="CNTRST" start="14" size="1"/>
       <BitField name="SYNCFLW" start="13" size="1"/>
       <BitField name="SYNCIFEN" start="12" size="1"/>
@@ -12664,7 +12683,6 @@
     </Register>
     <Register name="CHANNEL_CH3_CR" start="+0xc0" size="0x4">
       <BitField name="CNTUPT" start="31" size="1"/>
-      <BitField name="RESERVED" start="18" size="13"/>
       <BitField name="CNTRST" start="14" size="1"/>
       <BitField name="SYNCFLW" start="13" size="1"/>
       <BitField name="SYNCIFEN" start="12" size="1"/>
@@ -12706,7 +12724,6 @@
       <BitField name="COUNTER" start="0" size="32"/>
     </Register>
     <Register name="SR" start="+0x200" size="0x4">
-      <BitField name="RESERVED" start="16" size="16"/>
       <BitField name="CH3CMP1F" start="15" size="1"/>
       <BitField name="CH3CMP0F" start="14" size="1"/>
       <BitField name="CH3CAPF" start="13" size="1"/>
@@ -12725,7 +12742,6 @@
       <BitField name="CH0RLDF" start="0" size="1"/>
     </Register>
     <Register name="IRQEN" start="+0x204" size="0x4">
-      <BitField name="RESERVED" start="16" size="16"/>
       <BitField name="CH3CMP1EN" start="15" size="1"/>
       <BitField name="CH3CMP0EN" start="14" size="1"/>
       <BitField name="CH3CAPEN" start="13" size="1"/>
@@ -12750,7 +12766,6 @@
   <RegisterGroup start="0xf3004000" name="GPTMR1">
     <Register name="CHANNEL_CH0_CR" start="+0x0" size="0x4">
       <BitField name="CNTUPT" start="31" size="1"/>
-      <BitField name="RESERVED" start="18" size="13"/>
       <BitField name="CNTRST" start="14" size="1"/>
       <BitField name="SYNCFLW" start="13" size="1"/>
       <BitField name="SYNCIFEN" start="12" size="1"/>
@@ -12793,7 +12808,6 @@
     </Register>
     <Register name="CHANNEL_CH1_CR" start="+0x40" size="0x4">
       <BitField name="CNTUPT" start="31" size="1"/>
-      <BitField name="RESERVED" start="18" size="13"/>
       <BitField name="CNTRST" start="14" size="1"/>
       <BitField name="SYNCFLW" start="13" size="1"/>
       <BitField name="SYNCIFEN" start="12" size="1"/>
@@ -12836,7 +12850,6 @@
     </Register>
     <Register name="CHANNEL_CH2_CR" start="+0x80" size="0x4">
       <BitField name="CNTUPT" start="31" size="1"/>
-      <BitField name="RESERVED" start="18" size="13"/>
       <BitField name="CNTRST" start="14" size="1"/>
       <BitField name="SYNCFLW" start="13" size="1"/>
       <BitField name="SYNCIFEN" start="12" size="1"/>
@@ -12879,7 +12892,6 @@
     </Register>
     <Register name="CHANNEL_CH3_CR" start="+0xc0" size="0x4">
       <BitField name="CNTUPT" start="31" size="1"/>
-      <BitField name="RESERVED" start="18" size="13"/>
       <BitField name="CNTRST" start="14" size="1"/>
       <BitField name="SYNCFLW" start="13" size="1"/>
       <BitField name="SYNCIFEN" start="12" size="1"/>
@@ -12921,7 +12933,6 @@
       <BitField name="COUNTER" start="0" size="32"/>
     </Register>
     <Register name="SR" start="+0x200" size="0x4">
-      <BitField name="RESERVED" start="16" size="16"/>
       <BitField name="CH3CMP1F" start="15" size="1"/>
       <BitField name="CH3CMP0F" start="14" size="1"/>
       <BitField name="CH3CAPF" start="13" size="1"/>
@@ -12940,7 +12951,6 @@
       <BitField name="CH0RLDF" start="0" size="1"/>
     </Register>
     <Register name="IRQEN" start="+0x204" size="0x4">
-      <BitField name="RESERVED" start="16" size="16"/>
       <BitField name="CH3CMP1EN" start="15" size="1"/>
       <BitField name="CH3CMP0EN" start="14" size="1"/>
       <BitField name="CH3CAPEN" start="13" size="1"/>
@@ -12965,7 +12975,6 @@
   <RegisterGroup start="0xf3008000" name="GPTMR2">
     <Register name="CHANNEL_CH0_CR" start="+0x0" size="0x4">
       <BitField name="CNTUPT" start="31" size="1"/>
-      <BitField name="RESERVED" start="18" size="13"/>
       <BitField name="CNTRST" start="14" size="1"/>
       <BitField name="SYNCFLW" start="13" size="1"/>
       <BitField name="SYNCIFEN" start="12" size="1"/>
@@ -13008,7 +13017,6 @@
     </Register>
     <Register name="CHANNEL_CH1_CR" start="+0x40" size="0x4">
       <BitField name="CNTUPT" start="31" size="1"/>
-      <BitField name="RESERVED" start="18" size="13"/>
       <BitField name="CNTRST" start="14" size="1"/>
       <BitField name="SYNCFLW" start="13" size="1"/>
       <BitField name="SYNCIFEN" start="12" size="1"/>
@@ -13051,7 +13059,6 @@
     </Register>
     <Register name="CHANNEL_CH2_CR" start="+0x80" size="0x4">
       <BitField name="CNTUPT" start="31" size="1"/>
-      <BitField name="RESERVED" start="18" size="13"/>
       <BitField name="CNTRST" start="14" size="1"/>
       <BitField name="SYNCFLW" start="13" size="1"/>
       <BitField name="SYNCIFEN" start="12" size="1"/>
@@ -13094,7 +13101,6 @@
     </Register>
     <Register name="CHANNEL_CH3_CR" start="+0xc0" size="0x4">
       <BitField name="CNTUPT" start="31" size="1"/>
-      <BitField name="RESERVED" start="18" size="13"/>
       <BitField name="CNTRST" start="14" size="1"/>
       <BitField name="SYNCFLW" start="13" size="1"/>
       <BitField name="SYNCIFEN" start="12" size="1"/>
@@ -13136,7 +13142,6 @@
       <BitField name="COUNTER" start="0" size="32"/>
     </Register>
     <Register name="SR" start="+0x200" size="0x4">
-      <BitField name="RESERVED" start="16" size="16"/>
       <BitField name="CH3CMP1F" start="15" size="1"/>
       <BitField name="CH3CMP0F" start="14" size="1"/>
       <BitField name="CH3CAPF" start="13" size="1"/>
@@ -13155,7 +13160,6 @@
       <BitField name="CH0RLDF" start="0" size="1"/>
     </Register>
     <Register name="IRQEN" start="+0x204" size="0x4">
-      <BitField name="RESERVED" start="16" size="16"/>
       <BitField name="CH3CMP1EN" start="15" size="1"/>
       <BitField name="CH3CMP0EN" start="14" size="1"/>
       <BitField name="CH3CAPEN" start="13" size="1"/>
@@ -13180,7 +13184,6 @@
   <RegisterGroup start="0xf300c000" name="GPTMR3">
     <Register name="CHANNEL_CH0_CR" start="+0x0" size="0x4">
       <BitField name="CNTUPT" start="31" size="1"/>
-      <BitField name="RESERVED" start="18" size="13"/>
       <BitField name="CNTRST" start="14" size="1"/>
       <BitField name="SYNCFLW" start="13" size="1"/>
       <BitField name="SYNCIFEN" start="12" size="1"/>
@@ -13223,7 +13226,6 @@
     </Register>
     <Register name="CHANNEL_CH1_CR" start="+0x40" size="0x4">
       <BitField name="CNTUPT" start="31" size="1"/>
-      <BitField name="RESERVED" start="18" size="13"/>
       <BitField name="CNTRST" start="14" size="1"/>
       <BitField name="SYNCFLW" start="13" size="1"/>
       <BitField name="SYNCIFEN" start="12" size="1"/>
@@ -13266,7 +13268,6 @@
     </Register>
     <Register name="CHANNEL_CH2_CR" start="+0x80" size="0x4">
       <BitField name="CNTUPT" start="31" size="1"/>
-      <BitField name="RESERVED" start="18" size="13"/>
       <BitField name="CNTRST" start="14" size="1"/>
       <BitField name="SYNCFLW" start="13" size="1"/>
       <BitField name="SYNCIFEN" start="12" size="1"/>
@@ -13309,7 +13310,6 @@
     </Register>
     <Register name="CHANNEL_CH3_CR" start="+0xc0" size="0x4">
       <BitField name="CNTUPT" start="31" size="1"/>
-      <BitField name="RESERVED" start="18" size="13"/>
       <BitField name="CNTRST" start="14" size="1"/>
       <BitField name="SYNCFLW" start="13" size="1"/>
       <BitField name="SYNCIFEN" start="12" size="1"/>
@@ -13351,7 +13351,6 @@
       <BitField name="COUNTER" start="0" size="32"/>
     </Register>
     <Register name="SR" start="+0x200" size="0x4">
-      <BitField name="RESERVED" start="16" size="16"/>
       <BitField name="CH3CMP1F" start="15" size="1"/>
       <BitField name="CH3CMP0F" start="14" size="1"/>
       <BitField name="CH3CAPF" start="13" size="1"/>
@@ -13370,7 +13369,6 @@
       <BitField name="CH0RLDF" start="0" size="1"/>
     </Register>
     <Register name="IRQEN" start="+0x204" size="0x4">
-      <BitField name="RESERVED" start="16" size="16"/>
       <BitField name="CH3CMP1EN" start="15" size="1"/>
       <BitField name="CH3CMP0EN" start="14" size="1"/>
       <BitField name="CH3CAPEN" start="13" size="1"/>
@@ -13395,7 +13393,6 @@
   <RegisterGroup start="0xf40e0000" name="PTMR">
     <Register name="CHANNEL_CH0_CR" start="+0x0" size="0x4">
       <BitField name="CNTUPT" start="31" size="1"/>
-      <BitField name="RESERVED" start="18" size="13"/>
       <BitField name="CNTRST" start="14" size="1"/>
       <BitField name="SYNCFLW" start="13" size="1"/>
       <BitField name="SYNCIFEN" start="12" size="1"/>
@@ -13438,7 +13435,6 @@
     </Register>
     <Register name="CHANNEL_CH1_CR" start="+0x40" size="0x4">
       <BitField name="CNTUPT" start="31" size="1"/>
-      <BitField name="RESERVED" start="18" size="13"/>
       <BitField name="CNTRST" start="14" size="1"/>
       <BitField name="SYNCFLW" start="13" size="1"/>
       <BitField name="SYNCIFEN" start="12" size="1"/>
@@ -13481,7 +13477,6 @@
     </Register>
     <Register name="CHANNEL_CH2_CR" start="+0x80" size="0x4">
       <BitField name="CNTUPT" start="31" size="1"/>
-      <BitField name="RESERVED" start="18" size="13"/>
       <BitField name="CNTRST" start="14" size="1"/>
       <BitField name="SYNCFLW" start="13" size="1"/>
       <BitField name="SYNCIFEN" start="12" size="1"/>
@@ -13524,7 +13519,6 @@
     </Register>
     <Register name="CHANNEL_CH3_CR" start="+0xc0" size="0x4">
       <BitField name="CNTUPT" start="31" size="1"/>
-      <BitField name="RESERVED" start="18" size="13"/>
       <BitField name="CNTRST" start="14" size="1"/>
       <BitField name="SYNCFLW" start="13" size="1"/>
       <BitField name="SYNCIFEN" start="12" size="1"/>
@@ -13566,7 +13560,6 @@
       <BitField name="COUNTER" start="0" size="32"/>
     </Register>
     <Register name="SR" start="+0x200" size="0x4">
-      <BitField name="RESERVED" start="16" size="16"/>
       <BitField name="CH3CMP1F" start="15" size="1"/>
       <BitField name="CH3CMP0F" start="14" size="1"/>
       <BitField name="CH3CAPF" start="13" size="1"/>
@@ -13585,7 +13578,6 @@
       <BitField name="CH0RLDF" start="0" size="1"/>
     </Register>
     <Register name="IRQEN" start="+0x204" size="0x4">
-      <BitField name="RESERVED" start="16" size="16"/>
       <BitField name="CH3CMP1EN" start="15" size="1"/>
       <BitField name="CH3CMP0EN" start="14" size="1"/>
       <BitField name="CH3CAPEN" start="13" size="1"/>
@@ -13705,12 +13697,12 @@
       <BitField name="TXSCHOH" start="0" size="7"/>
     </Register>
     <Register name="ENDPTNAK" start="+0x178" size="0x4">
-      <BitField name="EPTN" start="16" size="8"/>
-      <BitField name="EPRN" start="0" size="8"/>
+      <BitField name="EPTN" start="16" size="16"/>
+      <BitField name="EPRN" start="0" size="16"/>
     </Register>
     <Register name="ENDPTNAKEN" start="+0x17c" size="0x4">
-      <BitField name="EPTNE" start="16" size="8"/>
-      <BitField name="EPRNE" start="0" size="8"/>
+      <BitField name="EPTNE" start="16" size="16"/>
+      <BitField name="EPRNE" start="0" size="16"/>
     </Register>
     <Register name="PORTSC1" start="+0x184" size="0x4">
       <BitField name="STS" start="29" size="1"/>
@@ -13756,23 +13748,23 @@
       <BitField name="CM" start="0" size="2"/>
     </Register>
     <Register name="ENDPTSETUPSTAT" start="+0x1ac" size="0x4">
-      <BitField name="ENDPTSETUPSTAT" start="0" size="8"/>
+      <BitField name="ENDPTSETUPSTAT" start="0" size="16"/>
     </Register>
     <Register name="ENDPTPRIME" start="+0x1b0" size="0x4">
-      <BitField name="PETB" start="16" size="8"/>
-      <BitField name="PERB" start="0" size="8"/>
+      <BitField name="PETB" start="16" size="16"/>
+      <BitField name="PERB" start="0" size="16"/>
     </Register>
     <Register name="ENDPTFLUSH" start="+0x1b4" size="0x4">
-      <BitField name="FETB" start="16" size="8"/>
-      <BitField name="FERB" start="0" size="8"/>
+      <BitField name="FETB" start="16" size="16"/>
+      <BitField name="FERB" start="0" size="16"/>
     </Register>
     <Register name="ENDPTSTAT" start="+0x1b8" size="0x4">
-      <BitField name="ETBR" start="16" size="8"/>
-      <BitField name="ERBR" start="0" size="8"/>
+      <BitField name="ETBR" start="16" size="16"/>
+      <BitField name="ERBR" start="0" size="16"/>
     </Register>
     <Register name="ENDPTCOMPLETE" start="+0x1bc" size="0x4">
-      <BitField name="ETCE" start="16" size="8"/>
-      <BitField name="ERCE" start="0" size="8"/>
+      <BitField name="ETCE" start="16" size="16"/>
+      <BitField name="ERCE" start="0" size="16"/>
     </Register>
     <Register name="ENDPTCTRL_ENDPTCTRL0" start="+0x1c0" size="0x4">
       <BitField name="TXE" start="23" size="1"/>
@@ -14299,12 +14291,6 @@
     <Register name="MSHC_VER_TYPE" start="+0x504" size="0x4">
       <BitField name="VER_TYPE" start="0" size="32"/>
     </Register>
-    <Register name="MBIU_CTRL" start="+0x510" size="0x4">
-      <BitField name="BURST_INCR16_EN" start="3" size="1"/>
-      <BitField name="BURST_INCR8_EN" start="2" size="1"/>
-      <BitField name="BUSRT_INCR4_EN" start="1" size="1"/>
-      <BitField name="UNDEFL_INCR_EN" start="0" size="1"/>
-    </Register>
     <Register name="EMMC_BOOT_CTRL" start="+0x52c" size="0x4">
       <BitField name="BOOT_TOUT_CNT" start="28" size="4"/>
       <BitField name="BOOT_ACK_ENABLE" start="24" size="1"/>
@@ -14349,11 +14335,9 @@
   </RegisterGroup>
   <RegisterGroup start="0xf3020000" name="I2C0">
     <Register name="CFG" start="+0x10" size="0x4">
-      <BitField name="RESERVED" start="2" size="30"/>
       <BitField name="FIFOSIZE" start="0" size="2"/>
     </Register>
     <Register name="INTEN" start="+0x14" size="0x4">
-      <BitField name="RESERVED" start="10" size="22"/>
       <BitField name="CMPL" start="9" size="1"/>
       <BitField name="BYTERECV" start="8" size="1"/>
       <BitField name="BYTETRANS" start="7" size="1"/>
@@ -14366,7 +14350,6 @@
       <BitField name="FIFOEMPTY" start="0" size="1"/>
     </Register>
     <Register name="STATUS" start="+0x18" size="0x4">
-      <BitField name="RESERVED" start="15" size="17"/>
       <BitField name="LINESDA" start="14" size="1"/>
       <BitField name="LINESCL" start="13" size="1"/>
       <BitField name="GENCALL" start="12" size="1"/>
@@ -14384,15 +14367,12 @@
       <BitField name="FIFOEMPTY" start="0" size="1"/>
     </Register>
     <Register name="ADDR" start="+0x1c" size="0x4">
-      <BitField name="RESERVED" start="10" size="22"/>
       <BitField name="ADDR" start="0" size="10"/>
     </Register>
     <Register name="DATA" start="+0x20" size="0x4">
-      <BitField name="RESERVED" start="8" size="24"/>
       <BitField name="DATA" start="0" size="8"/>
     </Register>
     <Register name="CTRL" start="+0x24" size="0x4">
-      <BitField name="RESERVED" start="15" size="5"/>
       <BitField name="PHASE_START" start="12" size="1"/>
       <BitField name="PHASE_ADDR" start="11" size="1"/>
       <BitField name="PHASE_DATA" start="10" size="1"/>
@@ -14401,15 +14381,12 @@
       <BitField name="DATACNT" start="0" size="8"/>
     </Register>
     <Register name="CMD" start="+0x28" size="0x4">
-      <BitField name="RESERVED" start="3" size="29"/>
       <BitField name="CMD" start="0" size="3"/>
     </Register>
     <Register name="SETUP" start="+0x2c" size="0x4">
-      <BitField name="RESERVED" start="29" size="3"/>
       <BitField name="T_SUDAT" start="24" size="5"/>
       <BitField name="T_SP" start="21" size="3"/>
       <BitField name="T_HDDAT" start="16" size="5"/>
-      <BitField name="RESERVED" start="14" size="2"/>
       <BitField name="T_SCLRADIO" start="13" size="1"/>
       <BitField name="T_SCLHI" start="4" size="9"/>
       <BitField name="DMAEN" start="3" size="1"/>
@@ -14418,17 +14395,14 @@
       <BitField name="IICEN" start="0" size="1"/>
     </Register>
     <Register name="TPM" start="+0x30" size="0x4">
-      <BitField name="RESERVED" start="5" size="27"/>
       <BitField name="TPM" start="0" size="5"/>
     </Register>
   </RegisterGroup>
   <RegisterGroup start="0xf3024000" name="I2C1">
     <Register name="CFG" start="+0x10" size="0x4">
-      <BitField name="RESERVED" start="2" size="30"/>
       <BitField name="FIFOSIZE" start="0" size="2"/>
     </Register>
     <Register name="INTEN" start="+0x14" size="0x4">
-      <BitField name="RESERVED" start="10" size="22"/>
       <BitField name="CMPL" start="9" size="1"/>
       <BitField name="BYTERECV" start="8" size="1"/>
       <BitField name="BYTETRANS" start="7" size="1"/>
@@ -14441,7 +14415,6 @@
       <BitField name="FIFOEMPTY" start="0" size="1"/>
     </Register>
     <Register name="STATUS" start="+0x18" size="0x4">
-      <BitField name="RESERVED" start="15" size="17"/>
       <BitField name="LINESDA" start="14" size="1"/>
       <BitField name="LINESCL" start="13" size="1"/>
       <BitField name="GENCALL" start="12" size="1"/>
@@ -14459,15 +14432,12 @@
       <BitField name="FIFOEMPTY" start="0" size="1"/>
     </Register>
     <Register name="ADDR" start="+0x1c" size="0x4">
-      <BitField name="RESERVED" start="10" size="22"/>
       <BitField name="ADDR" start="0" size="10"/>
     </Register>
     <Register name="DATA" start="+0x20" size="0x4">
-      <BitField name="RESERVED" start="8" size="24"/>
       <BitField name="DATA" start="0" size="8"/>
     </Register>
     <Register name="CTRL" start="+0x24" size="0x4">
-      <BitField name="RESERVED" start="15" size="5"/>
       <BitField name="PHASE_START" start="12" size="1"/>
       <BitField name="PHASE_ADDR" start="11" size="1"/>
       <BitField name="PHASE_DATA" start="10" size="1"/>
@@ -14476,15 +14446,12 @@
       <BitField name="DATACNT" start="0" size="8"/>
     </Register>
     <Register name="CMD" start="+0x28" size="0x4">
-      <BitField name="RESERVED" start="3" size="29"/>
       <BitField name="CMD" start="0" size="3"/>
     </Register>
     <Register name="SETUP" start="+0x2c" size="0x4">
-      <BitField name="RESERVED" start="29" size="3"/>
       <BitField name="T_SUDAT" start="24" size="5"/>
       <BitField name="T_SP" start="21" size="3"/>
       <BitField name="T_HDDAT" start="16" size="5"/>
-      <BitField name="RESERVED" start="14" size="2"/>
       <BitField name="T_SCLRADIO" start="13" size="1"/>
       <BitField name="T_SCLHI" start="4" size="9"/>
       <BitField name="DMAEN" start="3" size="1"/>
@@ -14493,17 +14460,14 @@
       <BitField name="IICEN" start="0" size="1"/>
     </Register>
     <Register name="TPM" start="+0x30" size="0x4">
-      <BitField name="RESERVED" start="5" size="27"/>
       <BitField name="TPM" start="0" size="5"/>
     </Register>
   </RegisterGroup>
   <RegisterGroup start="0xf3028000" name="I2C2">
     <Register name="CFG" start="+0x10" size="0x4">
-      <BitField name="RESERVED" start="2" size="30"/>
       <BitField name="FIFOSIZE" start="0" size="2"/>
     </Register>
     <Register name="INTEN" start="+0x14" size="0x4">
-      <BitField name="RESERVED" start="10" size="22"/>
       <BitField name="CMPL" start="9" size="1"/>
       <BitField name="BYTERECV" start="8" size="1"/>
       <BitField name="BYTETRANS" start="7" size="1"/>
@@ -14516,7 +14480,6 @@
       <BitField name="FIFOEMPTY" start="0" size="1"/>
     </Register>
     <Register name="STATUS" start="+0x18" size="0x4">
-      <BitField name="RESERVED" start="15" size="17"/>
       <BitField name="LINESDA" start="14" size="1"/>
       <BitField name="LINESCL" start="13" size="1"/>
       <BitField name="GENCALL" start="12" size="1"/>
@@ -14534,15 +14497,12 @@
       <BitField name="FIFOEMPTY" start="0" size="1"/>
     </Register>
     <Register name="ADDR" start="+0x1c" size="0x4">
-      <BitField name="RESERVED" start="10" size="22"/>
       <BitField name="ADDR" start="0" size="10"/>
     </Register>
     <Register name="DATA" start="+0x20" size="0x4">
-      <BitField name="RESERVED" start="8" size="24"/>
       <BitField name="DATA" start="0" size="8"/>
     </Register>
     <Register name="CTRL" start="+0x24" size="0x4">
-      <BitField name="RESERVED" start="15" size="5"/>
       <BitField name="PHASE_START" start="12" size="1"/>
       <BitField name="PHASE_ADDR" start="11" size="1"/>
       <BitField name="PHASE_DATA" start="10" size="1"/>
@@ -14551,15 +14511,12 @@
       <BitField name="DATACNT" start="0" size="8"/>
     </Register>
     <Register name="CMD" start="+0x28" size="0x4">
-      <BitField name="RESERVED" start="3" size="29"/>
       <BitField name="CMD" start="0" size="3"/>
     </Register>
     <Register name="SETUP" start="+0x2c" size="0x4">
-      <BitField name="RESERVED" start="29" size="3"/>
       <BitField name="T_SUDAT" start="24" size="5"/>
       <BitField name="T_SP" start="21" size="3"/>
       <BitField name="T_HDDAT" start="16" size="5"/>
-      <BitField name="RESERVED" start="14" size="2"/>
       <BitField name="T_SCLRADIO" start="13" size="1"/>
       <BitField name="T_SCLHI" start="4" size="9"/>
       <BitField name="DMAEN" start="3" size="1"/>
@@ -14568,17 +14525,14 @@
       <BitField name="IICEN" start="0" size="1"/>
     </Register>
     <Register name="TPM" start="+0x30" size="0x4">
-      <BitField name="RESERVED" start="5" size="27"/>
       <BitField name="TPM" start="0" size="5"/>
     </Register>
   </RegisterGroup>
   <RegisterGroup start="0xf302c000" name="I2C3">
     <Register name="CFG" start="+0x10" size="0x4">
-      <BitField name="RESERVED" start="2" size="30"/>
       <BitField name="FIFOSIZE" start="0" size="2"/>
     </Register>
     <Register name="INTEN" start="+0x14" size="0x4">
-      <BitField name="RESERVED" start="10" size="22"/>
       <BitField name="CMPL" start="9" size="1"/>
       <BitField name="BYTERECV" start="8" size="1"/>
       <BitField name="BYTETRANS" start="7" size="1"/>
@@ -14591,7 +14545,6 @@
       <BitField name="FIFOEMPTY" start="0" size="1"/>
     </Register>
     <Register name="STATUS" start="+0x18" size="0x4">
-      <BitField name="RESERVED" start="15" size="17"/>
       <BitField name="LINESDA" start="14" size="1"/>
       <BitField name="LINESCL" start="13" size="1"/>
       <BitField name="GENCALL" start="12" size="1"/>
@@ -14609,15 +14562,12 @@
       <BitField name="FIFOEMPTY" start="0" size="1"/>
     </Register>
     <Register name="ADDR" start="+0x1c" size="0x4">
-      <BitField name="RESERVED" start="10" size="22"/>
       <BitField name="ADDR" start="0" size="10"/>
     </Register>
     <Register name="DATA" start="+0x20" size="0x4">
-      <BitField name="RESERVED" start="8" size="24"/>
       <BitField name="DATA" start="0" size="8"/>
     </Register>
     <Register name="CTRL" start="+0x24" size="0x4">
-      <BitField name="RESERVED" start="15" size="5"/>
       <BitField name="PHASE_START" start="12" size="1"/>
       <BitField name="PHASE_ADDR" start="11" size="1"/>
       <BitField name="PHASE_DATA" start="10" size="1"/>
@@ -14626,15 +14576,12 @@
       <BitField name="DATACNT" start="0" size="8"/>
     </Register>
     <Register name="CMD" start="+0x28" size="0x4">
-      <BitField name="RESERVED" start="3" size="29"/>
       <BitField name="CMD" start="0" size="3"/>
     </Register>
     <Register name="SETUP" start="+0x2c" size="0x4">
-      <BitField name="RESERVED" start="29" size="3"/>
       <BitField name="T_SUDAT" start="24" size="5"/>
       <BitField name="T_SP" start="21" size="3"/>
       <BitField name="T_HDDAT" start="16" size="5"/>
-      <BitField name="RESERVED" start="14" size="2"/>
       <BitField name="T_SCLRADIO" start="13" size="1"/>
       <BitField name="T_SCLHI" start="4" size="9"/>
       <BitField name="DMAEN" start="3" size="1"/>
@@ -14643,7 +14590,6 @@
       <BitField name="IICEN" start="0" size="1"/>
     </Register>
     <Register name="TPM" start="+0x30" size="0x4">
-      <BitField name="RESERVED" start="5" size="27"/>
       <BitField name="TPM" start="0" size="5"/>
     </Register>
   </RegisterGroup>
@@ -14653,13 +14599,11 @@
       <BitField name="CLKGAT" start="30" size="1"/>
       <BitField name="CIPDIS" start="29" size="1"/>
       <BitField name="HASDIS" start="28" size="1"/>
-      <BitField name="RESERVED" start="24" size="4"/>
       <BitField name="CIPHEN" start="23" size="1"/>
       <BitField name="HASHEN" start="22" size="1"/>
       <BitField name="MCPEN" start="21" size="1"/>
       <BitField name="CONFEN" start="20" size="1"/>
       <BitField name="DCRPDI" start="19" size="1"/>
-      <BitField name="RESERVED" start="18" size="1"/>
       <BitField name="TSTPKT0IRQ" start="17" size="1"/>
       <BitField name="RDSCEN" start="8" size="1"/>
       <BitField name="INTEN" start="0" size="1"/>
@@ -14668,36 +14612,27 @@
       <BitField name="AESALG" start="28" size="4"/>
       <BitField name="AESMOD" start="24" size="4"/>
       <BitField name="AESKS" start="18" size="6"/>
-      <BitField name="RESERVED" start="17" size="1"/>
       <BitField name="AESDIR" start="16" size="1"/>
       <BitField name="HASALG" start="12" size="4"/>
       <BitField name="CRCEN" start="11" size="1"/>
       <BitField name="HASCHK" start="10" size="1"/>
       <BitField name="HASOUT" start="9" size="1"/>
-      <BitField name="RESERVED" start="8" size="1"/>
-      <BitField name="RESERVED" start="6" size="2"/>
       <BitField name="DINSWP" start="4" size="2"/>
       <BitField name="DOUTSWP" start="2" size="2"/>
       <BitField name="KEYSWP" start="0" size="2"/>
     </Register>
     <Register name="PKTCNT" start="+0x8" size="0x4">
-      <BitField name="RESERVED" start="31" size="1"/>
-      <BitField name="RESERVED" start="30" size="1"/>
-      <BitField name="RESERVED" start="24" size="6"/>
       <BitField name="CNTVAL" start="16" size="8"/>
-      <BitField name="RESERVED" start="8" size="8"/>
       <BitField name="CNTINCR" start="0" size="8"/>
     </Register>
     <Register name="STA" start="+0xc" size="0x4">
       <BitField name="TAG" start="24" size="8"/>
       <BitField name="IRQ" start="23" size="1"/>
-      <BitField name="RESERVED" start="21" size="2"/>
       <BitField name="CHN1PKT0" start="20" size="1"/>
       <BitField name="AESBSY" start="19" size="1"/>
       <BitField name="HASBSY" start="18" size="1"/>
       <BitField name="PKTCNT0" start="17" size="1"/>
       <BitField name="PKTDON" start="16" size="1"/>
-      <BitField name="RESERVED" start="6" size="10"/>
       <BitField name="ERRSET" start="5" size="1"/>
       <BitField name="ERRPKT" start="4" size="1"/>
       <BitField name="ERRSRC" start="3" size="1"/>
@@ -14706,9 +14641,7 @@
       <BitField name="ERRCHAIN" start="0" size="1"/>
     </Register>
     <Register name="KEYADDR" start="+0x10" size="0x4">
-      <BitField name="RESERVED" start="24" size="8"/>
       <BitField name="INDEX" start="16" size="8"/>
-      <BitField name="RESERVED" start="2" size="14"/>
       <BitField name="SUBWRD" start="0" size="2"/>
     </Register>
     <Register name="KEYDAT" start="+0x14" size="0x4">
@@ -14758,14 +14691,12 @@
     </Register>
     <Register name="PKTCTL" start="+0x50" size="0x4">
       <BitField name="PKTTAG" start="24" size="8"/>
-      <BitField name="RESERVED" start="7" size="17"/>
       <BitField name="CIPHIV" start="6" size="1"/>
       <BitField name="HASFNL" start="5" size="1"/>
       <BitField name="HASINI" start="4" size="1"/>
       <BitField name="CHAIN" start="3" size="1"/>
       <BitField name="DCRSEMA" start="2" size="1"/>
       <BitField name="PKTINT" start="1" size="1"/>
-      <BitField name="RESERVED" start="0" size="1"/>
     </Register>
     <Register name="PKTSRC" start="+0x54" size="0x4">
       <BitField name="PKTSRC" start="0" size="32"/>
@@ -14908,17 +14839,14 @@
   <RegisterGroup start="0xf3058000" name="FFA">
     <Register name="CTRL" start="+0x0" size="0x4">
       <BitField name="SFTRST" start="31" size="1"/>
-      <BitField name="RSV" start="9" size="22"/>
       <BitField name="EN" start="0" size="1"/>
     </Register>
     <Register name="STATUS" start="+0x4" size="0x4">
-      <BitField name="RSV" start="8" size="24"/>
       <BitField name="FIR_OV" start="7" size="1"/>
       <BitField name="FFT_OV" start="6" size="1"/>
       <BitField name="WR_ERR" start="5" size="1"/>
       <BitField name="RD_NXT_ERR" start="4" size="1"/>
       <BitField name="RD_ERR" start="3" size="1"/>
-      <BitField name="RSV" start="2" size="1"/>
       <BitField name="NXT_CMD_RD_DONE" start="1" size="1"/>
       <BitField name="OP_CMD_DONE" start="0" size="1"/>
     </Register>
@@ -14929,7 +14857,6 @@
       <BitField name="WR_ERR" start="5" size="1"/>
       <BitField name="RD_NXT_ERR" start="4" size="1"/>
       <BitField name="RD_ERR" start="3" size="1"/>
-      <BitField name="RSV" start="2" size="1"/>
       <BitField name="NXT_CMD_RD_DONE" start="1" size="1"/>
       <BitField name="OP_CMD_DONE" start="0" size="1"/>
     </Register>
@@ -14955,7 +14882,6 @@
     <Register name="OP_FFT_MISC" start="+0x28" size="0x4">
       <BitField name="FFT_LEN" start="7" size="4"/>
       <BitField name="IFFT" start="6" size="1"/>
-      <BitField name="RSV" start="4" size="2"/>
       <BitField name="TMP_BLK" start="2" size="2"/>
       <BitField name="IND_BLK" start="0" size="2"/>
     </Register>
@@ -23547,7 +23473,6 @@
       <BitField name="VBG_P50_TRIM" start="0" size="5"/>
     </Register>
     <Register name="LDO1P1" start="+0x4" size="0x4">
-      <BitField name="ENABLE" start="16" size="1"/>
       <BitField name="VOLT" start="0" size="12"/>
     </Register>
     <Register name="LDO2P5" start="+0x8" size="0x4">
@@ -23585,7 +23510,6 @@
       <BitField name="DC_R" start="16" size="4"/>
       <BitField name="EN_FF_DET" start="6" size="1"/>
       <BitField name="EN_FF_LOOP" start="5" size="1"/>
-      <BitField name="EN_AUTOLP" start="4" size="1"/>
       <BitField name="EN_DCM_EXIT" start="3" size="1"/>
       <BitField name="EN_SKIP" start="2" size="1"/>
       <BitField name="EN_IDLE" start="1" size="1"/>
@@ -23877,6 +23801,12 @@
       <BitField name="ENABLE" start="28" size="1"/>
       <BitField name="DIV" start="0" size="6"/>
     </Register>
+    <Register name="PLL_PLL1_DIV_DIV2" start="+0x148" size="0x4">
+      <BitField name="BUSY" start="31" size="1"/>
+      <BitField name="RESPONSE" start="29" size="1"/>
+      <BitField name="ENABLE" start="28" size="1"/>
+      <BitField name="DIV" start="0" size="6"/>
+    </Register>
     <Register name="PLL_PLL2_MFI" start="+0x180" size="0x4">
       <BitField name="BUSY" start="31" size="1"/>
       <BitField name="RESPONSE" start="29" size="1"/>
@@ -23916,6 +23846,12 @@
       <BitField name="DIV" start="0" size="6"/>
     </Register>
     <Register name="PLL_PLL2_DIV_DIV1" start="+0x1c4" size="0x4">
+      <BitField name="BUSY" start="31" size="1"/>
+      <BitField name="RESPONSE" start="29" size="1"/>
+      <BitField name="ENABLE" start="28" size="1"/>
+      <BitField name="DIV" start="0" size="6"/>
+    </Register>
+    <Register name="PLL_PLL2_DIV_DIV2" start="+0x1c8" size="0x4">
       <BitField name="BUSY" start="31" size="1"/>
       <BitField name="RESPONSE" start="29" size="1"/>
       <BitField name="ENABLE" start="28" size="1"/>
@@ -23985,6 +23921,21 @@
       <BitField name="POS_ONLY" start="0" size="1"/>
     </Register>
   </RegisterGroup>
+  <RegisterGroup start="0xf5000000" name="BACC">
+    <Register name="CONFIG" start="+0x0" size="0x4">
+      <BitField name="FAST_WRITE" start="29" size="1"/>
+      <BitField name="FAST_READ" start="28" size="1"/>
+      <BitField name="TIMING" start="0" size="16"/>
+    </Register>
+    <Register name="PRE_TIME" start="+0x8" size="0x4">
+      <BitField name="PRE_RATIO" start="16" size="4"/>
+      <BitField name="PRE_OFFSET" start="0" size="16"/>
+    </Register>
+    <Register name="POST_TIME" start="+0xc" size="0x4">
+      <BitField name="POST_RATIO" start="16" size="4"/>
+      <BitField name="POST_OFFSET" start="0" size="16"/>
+    </Register>
+  </RegisterGroup>
   <RegisterGroup start="0xf5004000" name="BPOR">
     <Register name="POR_CAUSE" start="+0x0" size="0x4">
       <BitField name="CAUSE" start="0" size="5"/>
@@ -24051,29 +24002,29 @@
     </Register>
   </RegisterGroup>
   <RegisterGroup start="0xf5018000" name="BGPR">
-    <Register name="BATT_GPR0" start="+0x0" size="0x4">
-      <BitField name="GPR" start="0" size="32"/>
+    <Register name="GPR_0" start="+0x0" size="0x4">
+      <BitField name="DATA" start="0" size="32"/>
     </Register>
-    <Register name="BATT_GPR1" start="+0x4" size="0x4">
-      <BitField name="GPR" start="0" size="32"/>
+    <Register name="GPR_1" start="+0x4" size="0x4">
+      <BitField name="DATA" start="0" size="32"/>
     </Register>
-    <Register name="BATT_GPR2" start="+0x8" size="0x4">
-      <BitField name="GPR" start="0" size="32"/>
+    <Register name="GPR_2" start="+0x8" size="0x4">
+      <BitField name="DATA" start="0" size="32"/>
     </Register>
-    <Register name="BATT_GPR3" start="+0xc" size="0x4">
-      <BitField name="GPR" start="0" size="32"/>
+    <Register name="GPR_3" start="+0xc" size="0x4">
+      <BitField name="DATA" start="0" size="32"/>
     </Register>
-    <Register name="BATT_GPR4" start="+0x10" size="0x4">
-      <BitField name="GPR" start="0" size="32"/>
+    <Register name="GPR_4" start="+0x10" size="0x4">
+      <BitField name="DATA" start="0" size="32"/>
     </Register>
-    <Register name="BATT_GPR5" start="+0x14" size="0x4">
-      <BitField name="GPR" start="0" size="32"/>
+    <Register name="GPR_5" start="+0x14" size="0x4">
+      <BitField name="DATA" start="0" size="32"/>
     </Register>
-    <Register name="BATT_GPR6" start="+0x18" size="0x4">
-      <BitField name="GPR" start="0" size="32"/>
+    <Register name="GPR_6" start="+0x18" size="0x4">
+      <BitField name="DATA" start="0" size="32"/>
     </Register>
-    <Register name="BATT_GPR7" start="+0x1c" size="0x4">
-      <BitField name="GPR" start="0" size="32"/>
+    <Register name="GPR_7" start="+0x1c" size="0x4">
+      <BitField name="DATA" start="0" size="32"/>
     </Register>
   </RegisterGroup>
   <RegisterGroup start="0xf5040000" name="BSEC">

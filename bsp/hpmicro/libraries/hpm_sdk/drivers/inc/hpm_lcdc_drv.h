@@ -101,6 +101,7 @@ typedef struct lcdc_layer_config {
     uint16_t position_y;                                /**< Layer output position Y coord */
     display_color_32b_t background;                     /**< Background color */
     uint32_t buffer;                                    /**< Pointer of layer display buffer */
+    uint32_t stride;                                    /**< stride of lines in bytes. stride is calculated by driver if stride == 0. */
 } lcdc_layer_config_t;
 
 #ifdef __cplusplus
@@ -383,6 +384,31 @@ static inline void lcdc_set_background(LCDC_Type *ptr,
         | LCDC_BGND_CL_B_SET(color.b);
 }
 
+/**
+ *
+ * @brief enable background on alpha blender
+ *
+ * @note it not depend the background color of the layer itself. it can be used with lcdc_set_background API
+ * 
+ * @param[in] ptr LCD base address
+ */
+static inline void lcdc_enable_background_in_alpha_blender(LCDC_Type *ptr)
+{
+    ptr->CTRL |= LCDC_CTRL_BGDCL4CLR_MASK;
+}
+
+/**
+ *
+ * @brief disable background on alpha blender
+ * 
+ * @note if not use background but want depend the the background color of the layer itself, can be use the API
+ *
+ * @param[in] ptr LCD base address
+ */
+static inline void lcdc_disable_background_in_alpha_blender(LCDC_Type *ptr)
+{
+    ptr->CTRL &= ~LCDC_CTRL_BGDCL4CLR_MASK;
+}
 /**
  *
  * @brief Get default layer configuration value

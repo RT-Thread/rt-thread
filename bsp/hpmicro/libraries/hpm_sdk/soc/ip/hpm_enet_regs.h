@@ -21,7 +21,7 @@ typedef struct {
     __R  uint8_t  RESERVED0[8];                /* 0x20 - 0x27: Reserved */
     __RW uint32_t RWKFRMFILT;                  /* 0x28: Remote Wake-Up Frame Filter Register */
     __RW uint32_t PMT_CSR;                     /* 0x2C: PMT Control and Status Register */
-    __RW uint32_t LPI_CSR;                     /* 0x30: LPI Control and Status Regsiter */
+    __RW uint32_t LPI_CSR;                     /* 0x30: LPI Control and Status Register */
     __RW uint32_t LPI_TCR;                     /* 0x34: LPI Timers Control Register */
     __R  uint32_t INTR_STATUS;                 /* 0x38: Interrupt Status Register */
     __RW uint32_t INTR_MASK;                   /* 0x3C: Interrupt Mask Register */
@@ -325,7 +325,7 @@ ICMP payload */
  * DM (RW)
  *
  * Duplex Mode
- *  When this bit is set, the MAC operates in the full-duplex mode where it can transmit and receive simultaneously. This bit is RO with default value of 1'b1 in the full-duplex-only configuration.
+ *  When this bit is set, the MAC operates in the full-duplex mode where it can transmit and receive simultaneously.
  */
 #define ENET_MACCFG_DM_MASK (0x800U)
 #define ENET_MACCFG_DM_SHIFT (11U)

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 HPMicro
+ * Copyright (c) 2021-2024 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -11,7 +11,7 @@
 
 typedef enum {
     RTL8201_BMCR                        = 0,   /* 0x0: Basic Mode Control Register */
-    RTL8201_BMSR                        = 1,   /* 0x1: (Basic Mode Status Register */
+    RTL8201_BMSR                        = 1,   /* 0x1: Basic Mode Status Register */
     RTL8201_PHYID1                      = 2,   /* 0x2: PHY Identifier Register 1 */
     RTL8201_PHYID2                      = 3,   /* 0x3: PHY Identifier Register 2 */
     RTL8201_RMSR_P7                     = 16,  /* 0x10: RMII Mode Setting Register */

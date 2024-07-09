@@ -579,14 +579,13 @@ struct rt_object_information
  */
 #define RT_TIMER_FLAG_DEACTIVATED       0x0             /**< timer is deactive */
 #define RT_TIMER_FLAG_ACTIVATED         0x1             /**< timer is active */
-#define RT_TIMER_FLAG_PROCESSING        0x2             /**< timer's timeout fuction is processing */
 #define RT_TIMER_FLAG_ONE_SHOT          0x0             /**< one shot timer */
-#define RT_TIMER_FLAG_PERIODIC          0x4             /**< periodic timer */
+#define RT_TIMER_FLAG_PERIODIC          0x2             /**< periodic timer */
 
 #define RT_TIMER_FLAG_HARD_TIMER        0x0             /**< hard timer,the timer's callback function will be called in tick isr. */
-#define RT_TIMER_FLAG_SOFT_TIMER        0x8             /**< soft timer,the timer's callback function will be called in timer thread. */
+#define RT_TIMER_FLAG_SOFT_TIMER        0x4             /**< soft timer,the timer's callback function will be called in timer thread. */
 #define RT_TIMER_FLAG_THREAD_TIMER \
-    (0x10 | RT_TIMER_FLAG_HARD_TIMER)                    /**< thread timer that cooperates with scheduler directly */
+    (0x8 | RT_TIMER_FLAG_HARD_TIMER)                    /**< thread timer that cooperates with scheduler directly */
 
 #define RT_TIMER_CTRL_SET_TIME          0x0             /**< set timer control command */
 #define RT_TIMER_CTRL_GET_TIME          0x1             /**< get timer control command */
@@ -701,6 +700,18 @@ enum
 #define RT_THREAD_CTRL_INFO             0x03                /**< Get thread information. */
 #define RT_THREAD_CTRL_BIND_CPU         0x04                /**< Set thread bind cpu. */
 
+/**
+ * CPU usage statistics data
+ */
+struct rt_cpu_usage_stats
+{
+    rt_ubase_t user;
+    rt_ubase_t system;
+    rt_ubase_t irq;
+    rt_ubase_t idle;
+};
+typedef struct rt_cpu_usage_stats *rt_cpu_usage_stats_t;
+
 #ifdef RT_USING_SMP
 
 #define RT_CPU_DETACHED                 RT_CPUS_NR          /**< The thread not running on cpu. */
@@ -713,15 +724,6 @@ enum
 #ifndef RT_STOP_IPI
 #define RT_STOP_IPI                     1
 #endif /* RT_STOP_IPI */
-
-struct rt_cpu_usage_stats
-{
-    rt_uint64_t user;
-    rt_uint64_t system;
-    rt_uint64_t irq;
-    rt_uint64_t idle;
-};
-typedef struct rt_cpu_usage_stats *rt_cpu_usage_stats_t;
 
 #define _SCHEDULER_CONTEXT(fileds) fileds
 
@@ -762,14 +764,21 @@ struct rt_cpu
 
 #ifdef RT_USING_SMART
     struct rt_spinlock          spinlock;
+#endif /* RT_USING_SMART */
+#ifdef RT_USING_CPU_USAGE_TRACER
     struct rt_cpu_usage_stats   cpu_stat;
-#endif
+#endif /* RT_USING_CPU_USAGE_TRACER */
 };
 
 #else /* !RT_USING_SMP */
 struct rt_cpu
 {
     struct rt_thread            *current_thread;
+    struct rt_thread            *idle_thread;
+
+#ifdef RT_USING_CPU_USAGE_TRACER
+    struct rt_cpu_usage_stats   cpu_stat;
+#endif /* RT_USING_CPU_USAGE_TRACER */
 };
 
 #endif /* RT_USING_SMP */
@@ -947,9 +956,6 @@ struct rt_thread
     void                        *susp_recycler;         /**< suspended recycler on this thread */
     void                        *robust_list;           /**< pi lock, very carefully, it's a userspace list!*/
 
-    rt_uint64_t                 user_time;
-    rt_uint64_t                 system_time;
-
 #ifndef ARCH_MM_MMU
     lwp_sighandler_t            signal_handler[32];
 #else
@@ -962,6 +968,11 @@ struct rt_thread
     int                         *clear_child_tid;
 #endif /* ARCH_MM_MMU */
 #endif /* RT_USING_SMART */
+
+#ifdef RT_USING_CPU_USAGE_TRACER
+    rt_ubase_t                  user_time;              /**< Ticks on user */
+    rt_ubase_t                  system_time;            /**< Ticks on system */
+#endif /* RT_USING_CPU_USAGE_TRACER */
 
 #ifdef RT_USING_MEM_PROTECTION
     void *mem_regions;
@@ -976,7 +987,9 @@ struct rt_thread
 typedef struct rt_thread *rt_thread_t;
 
 #ifdef RT_USING_SMART
-#define IS_USER_MODE(t) ((t)->user_ctx.ctx == RT_NULL)
+#define LWP_IS_USER_MODE(t) ((t)->user_ctx.ctx == RT_NULL)
+#else
+#define LWP_IS_USER_MODE(t) (0)
 #endif /* RT_USING_SMART */
 
 /**@}*/
@@ -1011,6 +1024,11 @@ struct rt_ipc_object
     rt_list_t suspend_thread;                 /**< threads pended on this resource */
 };
 
+/**
+ * @addtogroup semaphore
+ * @{
+ */
+
 #ifdef RT_USING_SEMAPHORE
 /**
  * Semaphore structure
@@ -1025,6 +1043,13 @@ struct rt_semaphore
 };
 typedef struct rt_semaphore *rt_sem_t;
 #endif /* RT_USING_SEMAPHORE */
+
+/**@}*/
+
+/**
+ * @addtogroup mutex
+ * @{
+ */
 
 #ifdef RT_USING_MUTEX
 /**
@@ -1045,6 +1070,13 @@ struct rt_mutex
 };
 typedef struct rt_mutex *rt_mutex_t;
 #endif /* RT_USING_MUTEX */
+
+/**@}*/
+
+/**
+ * @addtogroup event
+ * @{
+ */
 
 #ifdef RT_USING_EVENT
 /**
@@ -1067,6 +1099,13 @@ struct rt_event
 typedef struct rt_event *rt_event_t;
 #endif /* RT_USING_EVENT */
 
+/**@}*/
+
+/**
+ * @addtogroup mailbox
+ * @{
+ */
+
 #ifdef RT_USING_MAILBOX
 /**
  * mailbox structure
@@ -1088,6 +1127,13 @@ struct rt_mailbox
 };
 typedef struct rt_mailbox *rt_mailbox_t;
 #endif /* RT_USING_MAILBOX */
+
+/**@}*/
+
+/**
+ * @addtogroup messagequeue
+ * @{
+ */
 
 #ifdef RT_USING_MESSAGEQUEUE
 /**
@@ -1113,6 +1159,8 @@ struct rt_messagequeue
 };
 typedef struct rt_messagequeue *rt_mq_t;
 #endif /* RT_USING_MESSAGEQUEUE */
+
+/**@}*/
 
 /**@}*/
 

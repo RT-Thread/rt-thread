@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 HPMicro
+ * Copyright (c) 2021-2024 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -10,106 +10,32 @@
 #define HPM_BGPR_H
 
 typedef struct {
-    __RW uint32_t BATT_GPR0;                   /* 0x0: Generic control */
-    __RW uint32_t BATT_GPR1;                   /* 0x4: Generic control */
-    __RW uint32_t BATT_GPR2;                   /* 0x8: Generic control */
-    __RW uint32_t BATT_GPR3;                   /* 0xC: Generic control */
-    __RW uint32_t BATT_GPR4;                   /* 0x10: Generic control */
-    __RW uint32_t BATT_GPR5;                   /* 0x14: Generic control */
-    __RW uint32_t BATT_GPR6;                   /* 0x18: Generic control */
-    __RW uint32_t BATT_GPR7;                   /* 0x1C: Generic control */
+    __RW uint32_t GPR[8];                      /* 0x0 - 0x1C: Generic control */
 } BGPR_Type;
 
 
-/* Bitfield definition for register: BATT_GPR0 */
+/* Bitfield definition for register array: GPR */
 /*
- * GPR (RW)
+ * DATA (RW)
  *
  * Generic control
  */
-#define BGPR_BATT_GPR0_GPR_MASK (0xFFFFFFFFUL)
-#define BGPR_BATT_GPR0_GPR_SHIFT (0U)
-#define BGPR_BATT_GPR0_GPR_SET(x) (((uint32_t)(x) << BGPR_BATT_GPR0_GPR_SHIFT) & BGPR_BATT_GPR0_GPR_MASK)
-#define BGPR_BATT_GPR0_GPR_GET(x) (((uint32_t)(x) & BGPR_BATT_GPR0_GPR_MASK) >> BGPR_BATT_GPR0_GPR_SHIFT)
-
-/* Bitfield definition for register: BATT_GPR1 */
-/*
- * GPR (RW)
- *
- * Generic control
- */
-#define BGPR_BATT_GPR1_GPR_MASK (0xFFFFFFFFUL)
-#define BGPR_BATT_GPR1_GPR_SHIFT (0U)
-#define BGPR_BATT_GPR1_GPR_SET(x) (((uint32_t)(x) << BGPR_BATT_GPR1_GPR_SHIFT) & BGPR_BATT_GPR1_GPR_MASK)
-#define BGPR_BATT_GPR1_GPR_GET(x) (((uint32_t)(x) & BGPR_BATT_GPR1_GPR_MASK) >> BGPR_BATT_GPR1_GPR_SHIFT)
-
-/* Bitfield definition for register: BATT_GPR2 */
-/*
- * GPR (RW)
- *
- * Generic control
- */
-#define BGPR_BATT_GPR2_GPR_MASK (0xFFFFFFFFUL)
-#define BGPR_BATT_GPR2_GPR_SHIFT (0U)
-#define BGPR_BATT_GPR2_GPR_SET(x) (((uint32_t)(x) << BGPR_BATT_GPR2_GPR_SHIFT) & BGPR_BATT_GPR2_GPR_MASK)
-#define BGPR_BATT_GPR2_GPR_GET(x) (((uint32_t)(x) & BGPR_BATT_GPR2_GPR_MASK) >> BGPR_BATT_GPR2_GPR_SHIFT)
-
-/* Bitfield definition for register: BATT_GPR3 */
-/*
- * GPR (RW)
- *
- * Generic control
- */
-#define BGPR_BATT_GPR3_GPR_MASK (0xFFFFFFFFUL)
-#define BGPR_BATT_GPR3_GPR_SHIFT (0U)
-#define BGPR_BATT_GPR3_GPR_SET(x) (((uint32_t)(x) << BGPR_BATT_GPR3_GPR_SHIFT) & BGPR_BATT_GPR3_GPR_MASK)
-#define BGPR_BATT_GPR3_GPR_GET(x) (((uint32_t)(x) & BGPR_BATT_GPR3_GPR_MASK) >> BGPR_BATT_GPR3_GPR_SHIFT)
-
-/* Bitfield definition for register: BATT_GPR4 */
-/*
- * GPR (RW)
- *
- * Generic control
- */
-#define BGPR_BATT_GPR4_GPR_MASK (0xFFFFFFFFUL)
-#define BGPR_BATT_GPR4_GPR_SHIFT (0U)
-#define BGPR_BATT_GPR4_GPR_SET(x) (((uint32_t)(x) << BGPR_BATT_GPR4_GPR_SHIFT) & BGPR_BATT_GPR4_GPR_MASK)
-#define BGPR_BATT_GPR4_GPR_GET(x) (((uint32_t)(x) & BGPR_BATT_GPR4_GPR_MASK) >> BGPR_BATT_GPR4_GPR_SHIFT)
-
-/* Bitfield definition for register: BATT_GPR5 */
-/*
- * GPR (RW)
- *
- * Generic control
- */
-#define BGPR_BATT_GPR5_GPR_MASK (0xFFFFFFFFUL)
-#define BGPR_BATT_GPR5_GPR_SHIFT (0U)
-#define BGPR_BATT_GPR5_GPR_SET(x) (((uint32_t)(x) << BGPR_BATT_GPR5_GPR_SHIFT) & BGPR_BATT_GPR5_GPR_MASK)
-#define BGPR_BATT_GPR5_GPR_GET(x) (((uint32_t)(x) & BGPR_BATT_GPR5_GPR_MASK) >> BGPR_BATT_GPR5_GPR_SHIFT)
-
-/* Bitfield definition for register: BATT_GPR6 */
-/*
- * GPR (RW)
- *
- * Generic control
- */
-#define BGPR_BATT_GPR6_GPR_MASK (0xFFFFFFFFUL)
-#define BGPR_BATT_GPR6_GPR_SHIFT (0U)
-#define BGPR_BATT_GPR6_GPR_SET(x) (((uint32_t)(x) << BGPR_BATT_GPR6_GPR_SHIFT) & BGPR_BATT_GPR6_GPR_MASK)
-#define BGPR_BATT_GPR6_GPR_GET(x) (((uint32_t)(x) & BGPR_BATT_GPR6_GPR_MASK) >> BGPR_BATT_GPR6_GPR_SHIFT)
-
-/* Bitfield definition for register: BATT_GPR7 */
-/*
- * GPR (RW)
- *
- * Generic control
- */
-#define BGPR_BATT_GPR7_GPR_MASK (0xFFFFFFFFUL)
-#define BGPR_BATT_GPR7_GPR_SHIFT (0U)
-#define BGPR_BATT_GPR7_GPR_SET(x) (((uint32_t)(x) << BGPR_BATT_GPR7_GPR_SHIFT) & BGPR_BATT_GPR7_GPR_MASK)
-#define BGPR_BATT_GPR7_GPR_GET(x) (((uint32_t)(x) & BGPR_BATT_GPR7_GPR_MASK) >> BGPR_BATT_GPR7_GPR_SHIFT)
+#define BGPR_GPR_DATA_MASK (0xFFFFFFFFUL)
+#define BGPR_GPR_DATA_SHIFT (0U)
+#define BGPR_GPR_DATA_SET(x) (((uint32_t)(x) << BGPR_GPR_DATA_SHIFT) & BGPR_GPR_DATA_MASK)
+#define BGPR_GPR_DATA_GET(x) (((uint32_t)(x) & BGPR_GPR_DATA_MASK) >> BGPR_GPR_DATA_SHIFT)
 
 
+
+/* GPR register group index macro definition */
+#define BGPR_GPR_0 (0UL)
+#define BGPR_GPR_1 (1UL)
+#define BGPR_GPR_2 (2UL)
+#define BGPR_GPR_3 (3UL)
+#define BGPR_GPR_4 (4UL)
+#define BGPR_GPR_5 (5UL)
+#define BGPR_GPR_6 (6UL)
+#define BGPR_GPR_7 (7UL)
 
 
 #endif /* HPM_BGPR_H */

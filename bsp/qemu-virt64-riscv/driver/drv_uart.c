@@ -52,7 +52,6 @@ void uart_init(void)
 
 static rt_err_t _uart_configure(struct rt_serial_device *serial, struct serial_configure *cfg)
 {
-    uart_init();
     return (RT_EOK);
 }
 

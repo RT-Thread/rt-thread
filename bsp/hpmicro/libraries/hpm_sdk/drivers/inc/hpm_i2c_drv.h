@@ -29,7 +29,7 @@ enum {
     status_i2c_not_supported = MAKE_STATUS(status_group_i2c, 9),
 };
 
-/* convert data count value into CTRL[DATACNT] value map */
+/* convert data count value into register(CTRL[DATACNT] and CTRL[DATACNT_HIGH] if exist) */
 /* x range from 1 to I2C_SOC_TRANSFER_COUNT_MAX */
 /* 0 for I2C_SOC_TRANSFER_COUNT_MAX */
 #define I2C_DATACNT_MAP(x) (((x) == I2C_SOC_TRANSFER_COUNT_MAX) ? 0 : x)
@@ -84,6 +84,13 @@ enum {
 #define I2C_STATUS_GENERAL_CALL         I2C_STATUS_GENCALL_MASK
 #define I2C_STATUS_BUS_BUSY             I2C_STATUS_BUSBUSY_MASK
 #define I2C_STATUS_ACK                  I2C_STATUS_ACK_MASK
+
+#define I2C_WR                0x0000    /* not operable with read flags*/
+#define I2C_RD               (1u << 0)  /* not operable with write flags*/
+#define I2C_ADDR_10BIT       (1u << 2)  /* this is a ten bit chip address */
+#define I2C_NO_START         (1u << 4)  /* no start */
+#define I2C_NO_READ_ACK      (1u << 6)  /* when I2C reading, we do not ACK */
+#define I2C_NO_STOP          (1u << 7)  /* no stop */
 
 /**
  * @brief I2C config
@@ -158,7 +165,8 @@ static inline void i2c_clear_fifo(I2C_Type *ptr)
  */
 static inline uint8_t i2c_get_data_count(I2C_Type *ptr)
 {
-    return I2C_CTRL_DATACNT_GET(ptr->CTRL);
+    uint32_t i2c_ctrl = ptr->CTRL;
+    return (I2C_CTRL_DATACNT_HIGH_GET(i2c_ctrl) << 8U) + I2C_CTRL_DATACNT_GET(i2c_ctrl);
 }
 
 /**
@@ -263,7 +271,7 @@ static inline bool i2c_get_line_scl_status(I2C_Type *ptr)
  */
 static inline void i2c_clear_status(I2C_Type *ptr, uint32_t mask)
 {
-    ptr->STATUS |= (mask & I2C_EVENT_ALL_MASK);
+    ptr->STATUS = mask;
 }
 
 /**
@@ -599,8 +607,8 @@ hpm_stat_t i2c_master_configure_transfer(I2C_Type *i2c_ptr, const uint16_t devic
 /**
  * @brief sequential transmit in master I2C mode an amount of data in blocking
  *
- * @param i2c_ptr [in] ptr I2C base address
- * @param device_address [in] I2C slave address
+ * @param [in] ptr ptr I2C base address
+ * @param [in] device_address I2C slave address
  * @param [in] buf pointer of the buffer to store data sent from device
  * @param [in] size size of data to be sent in bytes
  * @param [in] opt I2c sequential transfer options
@@ -612,8 +620,8 @@ hpm_stat_t i2c_master_seq_transmit(I2C_Type *ptr, const uint16_t device_address,
 /**
  * @brief sequential receive in master I2C mode an amount of data in blocking
  *
- * @param i2c_ptr [in] ptr I2C base address
- * @param device_address [in] I2C slave address
+ * @param [in] ptr ptr I2C base address
+ * @param [in] device_address I2C slave address
  * @param [in] buf pointer of the buffer to store data sent from device
  * @param [in] size size of data to be sent in bytes
  * @param [in] opt I2c sequential transfer options
@@ -622,6 +630,32 @@ hpm_stat_t i2c_master_seq_transmit(I2C_Type *ptr, const uint16_t device_address,
 hpm_stat_t i2c_master_seq_receive(I2C_Type *ptr, const uint16_t device_address,
                                   uint8_t *buf, const uint32_t size, i2c_seq_transfer_opt_t opt);
 
+#if defined(HPM_IP_FEATURE_I2C_SUPPORT_RESET) && (HPM_IP_FEATURE_I2C_SUPPORT_RESET == 1)
+/**
+ * @brief generate SCL clock as reset signal
+ *
+ * @param ptr [in] ptr I2C base address
+ * @param [in] clk_len SCL clock length
+ */
+static inline void i2s_gen_reset_signal(I2C_Type *ptr, uint8_t clk_len)
+{
+    ptr->CTRL = (ptr->CTRL & ~I2C_CTRL_RESET_LEN_MASK) | I2C_CTRL_RESET_LEN_SET(clk_len) \
+                | I2C_CTRL_RESET_HOLD_SCKIN_MASK | I2C_CTRL_RESET_ON_MASK;
+}
+#endif
+
+/**
+ * @brief data transfer on master I2C mode in blocking
+ *
+ * @param [in] ptr ptr I2C base address
+ * @param [in] device_address I2C slave address
+ * @param [in] buf pointer of the buffer to store data sent from device
+ * @param [in] size size of data to be sent in bytes
+ * @param [in] flags flag bit, which can be other flag bits except I2C_WR I2C_RD, and can perform "|" operation
+ * @retval hpm_stat_t status_success if receive is completed without any error
+ */
+hpm_stat_t i2c_master_transfer(I2C_Type *ptr, const uint16_t device_address,
+                                    uint8_t *buf, const uint32_t size,  uint16_t flags);
 /**
  * @}
  */

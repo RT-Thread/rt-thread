@@ -56,7 +56,7 @@ static void test_mmap_fix_private(void)
     char *next_va;
     struct rt_aspace_fault_msg msg;
     msg.fault_op = MM_FAULT_OP_WRITE;
-    msg.fault_type = MM_FAULT_TYPE_ACCESS_FAULT;
+    msg.fault_type = MM_FAULT_TYPE_RWX_PERM;
 
     /* map new pages at ex_vaddr to anonymous */
     next_va = ex_vaddr;

@@ -12,7 +12,7 @@
 #include "hpm_soc_feature.h"
 
 /* The range of DAC output value setting is from 0.0 to 10000.0, which is mapped to 0 to 100 in percentage. */
-#define DAC_OUTPUT(PERCENT) (PERCENT / 10000.0f * (DAC_SOC_MAX_DATA + 1))
+#define DAC_OUTPUT(PERCENT) (PERCENT / 10000.0f * DAC_SOC_MAX_DATA)
 
 #define DAC_AHB_ERROR_EVENT     DAC_IRQ_EN_AHB_ERROR_MASK
 #define DAC_FIFO_EMPTY_EVENT    DAC_IRQ_EN_FIFO_EMPTY_MASK
@@ -23,7 +23,8 @@
 typedef enum {
     dac_mode_direct = 0,
     dac_mode_step,
-    dac_mode_buffer
+    dac_mode_buffer,
+    dac_mode_trig
 } dac_mode_t;
 
 typedef enum {

@@ -60,7 +60,7 @@ static inline void pllctlv2_xtal_set_rampup_time(PLLCTLV2_Type *ptr, uint32_t rc
  */
 static inline bool pllctlv2_pll_is_stable(PLLCTLV2_Type *ptr, uint8_t pll)
 {
-    return IS_HPM_BITMASK_SET(ptr->PLL[pll].MFI, PLLCTLV2_PLL_MFI_BUSY_MASK);
+    return IS_HPM_BITMASK_SET(ptr->PLL[pll].MFI, PLLCTLV2_PLL_MFI_RESPONSE_MASK);
 }
 
 /**

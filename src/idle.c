@@ -346,9 +346,11 @@ void rt_thread_idle_init(void)
                 32);
 #ifdef RT_USING_SMP
         rt_thread_control(&idle_thread[i], RT_THREAD_CTRL_BIND_CPU, (void*)i);
-
-        rt_cpu_index(i)->idle_thread = &idle_thread[i];
 #endif /* RT_USING_SMP */
+
+        /* update */
+        rt_cpu_index(i)->idle_thread = &idle_thread[i];
+
         /* startup */
         rt_thread_startup(&idle_thread[i]);
     }

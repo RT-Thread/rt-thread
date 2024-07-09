@@ -87,6 +87,7 @@ jobs:
                 - "hc32/ev_hc32f448_lqfp80"
                 - "hc32/ev_hc32f460_lqfp100_v2"
                 - "hc32/ev_hc32f472_lqfp100"
+                - "hc32/lckfb-hc32f4a0-lqfp100"
                 - "hc32l196"
                 - "mm32/mm32f3270-100ask-pitaya"
                 - "mm32f327x"
@@ -215,6 +216,7 @@ jobs:
                 - "nxp/imx/imxrt/imxrt1064-nxp-evk"
                 - "nxp/imx/imxrt/imxrt1021-nxp-evk"
                 - "nxp/mcx/mcxn/frdm-mcxn947"
+                - "nxp/mcx/mcxn/frdm-mcxn236"
                 - "nxp/mcx/mcxa/frdm-mcxa153"
                 - "renesas/ebf_qi_min_6m5"
                 - "renesas/ra6m4-cpk"
@@ -326,6 +328,17 @@ jobs:
                 - "bluetrum/ab32vg1-ab-prougen"
                 - "bouffalo_lab/bl60x"
                 - "bouffalo_lab/bl70x"
+         -  RTT_BSP: "hpmicro"
+            RTT_TOOL_CHAIN: "RISC-V-GCC-RV32"
+            SUB_RTT_BSP:
+                - "hpmicro/hpm6750evkmini"
+                - "hpmicro/hpm6750evk"
+                - "hpmicro/hpm6750evk2"
+                - "hpmicro/hpm6300evk"
+                - "hpmicro/hpm6200evk"
+                - "hpmicro/hpm5300evk"
+                - "hpmicro/hpm5301evklite"
+                - "hpmicro/hpm6800evk"
          -  RTT_BSP: "llvm-arm" 
             RTT_TOOL_CHAIN: "llvm-arm"
             SUB_RTT_BSP:  
@@ -405,6 +418,14 @@ jobs:
           sudo tar zxf riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14.tar.gz -C /opt
           /opt/riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14/bin/riscv64-unknown-elf-gcc --version
           echo "RTT_EXEC_PATH=/opt/riscv64-unknown-elf-toolchain-10.2.0-2020.12.8-x86_64-linux-ubuntu14/bin" >> $GITHUB_ENV
+
+      - name: Install riscv32-unknown-elf Toolchains
+        if: ${{ matrix.legs.RTT_TOOL_CHAIN == 'RISC-V-GCC-RV32' && success() }}
+        run: |
+           wget -q https://github.com/hpmicro/riscv-gnu-toolchain/releases/download/2022.05.15/riscv32-unknown-elf-newlib-multilib_2022.05.15_linux.tar.gz
+           sudo tar zxf riscv32-unknown-elf-newlib-multilib_2022.05.15_linux.tar.gz -C /opt
+           /opt/riscv32-unknown-elf-newlib-multilib/bin/riscv32-unknown-elf-gcc --version
+           echo "RTT_EXEC_PATH=/opt/riscv32-unknown-elf-newlib-multilib/bin/" >> $GITHUB_ENV
 
       - name: Install Riscv-none-embed ToolChains
         if: ${{ matrix.legs.RTT_TOOL_CHAIN == 'sourcery-riscv-none-embed' && success() }}

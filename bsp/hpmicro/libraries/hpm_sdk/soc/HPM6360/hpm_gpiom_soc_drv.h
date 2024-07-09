@@ -14,7 +14,7 @@
  */
 
 /* @brief gpiom control module */
-typedef enum hpm6300_gpiom_gpio {
+typedef enum gpiom_gpio {
     gpiom_soc_gpio0 = 0,
     gpiom_core0_fast = 1,
 } gpiom_gpio_t;

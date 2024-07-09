@@ -20,6 +20,11 @@
 #error "unknown touch type, either have CONFIG_FT5406 or CONFIG_GT911 defined"
 #endif
 
+enum {
+    status_touch_buffer_no_ready = MAKE_STATUS(status_group_touch, 0),
+    status_touch_points_over_number = MAKE_STATUS(status_group_touch, 1),
+};
+
 typedef struct {
     uint16_t x;
     uint16_t y;

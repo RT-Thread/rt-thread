@@ -33,7 +33,7 @@ menu "On-chip Peripheral Drivers"
                 default n
         endif
 
-    source "$BSP_DIR/../libraries/HAL_Drivers/drivers/Kconfig"
+    source "$(BSP_DIR)/../libraries/HAL_Drivers/drivers/Kconfig"
 
 endmenu
 

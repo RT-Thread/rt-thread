@@ -23,6 +23,15 @@
 
 /* CAN section */
 #define BOARD_CAN_NAME                        "can0"
+#define BOARD_CAN_HWFILTER_INDEX               (0U)
+
+/* UART section */
+#define BOARD_UART_NAME                        "uart2"
+#define BOARD_UART_RX_BUFFER_SIZE              BSP_UART2_RX_BUFSIZE
+
+#define BOARD_SD_NAME                          "sd0"
+
+#define IRQn_PendSV IRQn_DEBUG_0
 
 /***************************************************************
  *
@@ -44,7 +53,7 @@ typedef struct {
 
 void app_init_led_pins(void);
 void app_led_write(uint32_t index, bool state);
-
+void app_init_usb_pins(void);
 
 #if defined(__cplusplus)
 extern "C" {

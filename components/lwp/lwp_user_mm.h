@@ -151,9 +151,6 @@ void lwp_unmap_user_space(struct rt_lwp *lwp);
 int lwp_unmap_user(struct rt_lwp *lwp, void *va);
 void *lwp_map_user(struct rt_lwp *lwp, void *map_va, size_t map_size, rt_bool_t text);
 
-void lwp_free_command_line_args(char** argv);
-char** lwp_get_command_line_args(struct rt_lwp *lwp);
-
 rt_varea_t lwp_map_user_varea(struct rt_lwp *lwp, void *map_va, size_t map_size);
 
 /* check LWP_MAP_FLAG_* */
@@ -209,13 +206,17 @@ rt_inline rt_size_t lwp_user_mm_flag_to_kernel(int flags)
     return k_flags;
 }
 
+#ifndef MMU_MAP_U_ROCB
+#define MMU_MAP_U_ROCB MMU_MAP_U_RWCB
+#endif /* MMU_MAP_U_ROCB */
+
 rt_inline rt_size_t lwp_user_mm_attr_to_kernel(int prot)
 {
     RT_UNUSED(prot);
 
     rt_size_t k_attr = 0;
 
-#ifdef IMPL_MPROTECT
+#ifdef LWP_USING_MPROTECT
     if ((prot & PROT_EXEC) || (prot & PROT_WRITE) ||
         ((prot & PROT_READ) && (prot & PROT_WRITE)))
         k_attr = MMU_MAP_U_RWCB;
@@ -223,9 +224,9 @@ rt_inline rt_size_t lwp_user_mm_attr_to_kernel(int prot)
         k_attr = MMU_MAP_K_RWCB;
     else
         k_attr = MMU_MAP_U_ROCB;
-#else
+#else /* !LWP_USING_MPROTECT */
     k_attr = MMU_MAP_U_RWCB;
-#endif /* IMPL_MPROTECT */
+#endif /* LWP_USING_MPROTECT */
 
     return k_attr;
 }

@@ -1,0 +1,6 @@
+menu "Tmpfs Testcase"
+
+config UTEST_TMPFS_CP
+    bool "tmpfs cp test"
+    default n
+endmenu

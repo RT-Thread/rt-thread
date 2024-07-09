@@ -200,7 +200,7 @@ menu "On-chip Peripheral Drivers"
                 endif
         endif
 
-    source "../libraries/gd32_drivers/Kconfig"
+    rsource "../../libraries/gd32_drivers/Kconfig"
 
 endmenu
 

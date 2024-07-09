@@ -16,7 +16,7 @@ void dac_get_default_config(dac_config_t *config)
 
 hpm_stat_t dac_init(DAC_Type *ptr, dac_config_t *config)
 {
-    if (config->dac_mode > dac_mode_buffer) {
+    if (config->dac_mode > dac_mode_trig) {
         return status_invalid_argument;
     }
 
@@ -42,7 +42,7 @@ hpm_stat_t dac_init(DAC_Type *ptr, dac_config_t *config)
     ptr->CFG1 &= ~DAC_CFG1_ANA_DIV_CFG_MASK;
     ptr->CFG1 |= DAC_CFG1_ANA_DIV_CFG_SET(config->ana_div);
 
-    if (config->dac_mode == dac_mode_direct) {
+    if (config->dac_mode == dac_mode_direct || config->dac_mode == dac_mode_trig) {
         /* set ANA_CLK_EN */
         ptr->CFG1 |= DAC_CFG1_ANA_CLK_EN_MASK;
     }
@@ -264,7 +264,7 @@ uint32_t dac_get_status_flags(DAC_Type *ptr)
 
 void dac_set_status_flags(DAC_Type *ptr, uint32_t mask)
 {
-    ptr->IRQ_STS |= mask;
+    ptr->IRQ_STS = mask;
 }
 
 uint8_t dac_get_current_buffer_index(DAC_Type *ptr)

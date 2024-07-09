@@ -1,0 +1,200 @@
+menu "Using USB legacy version"
+    config RT_USING_USB
+        bool
+        default n
+
+    config RT_USING_USB_HOST
+        bool "Using USB host"
+        default n
+        select RT_USING_USB
+
+        if RT_USING_USB_HOST
+            config RT_USBH_MSTORAGE
+                bool "Enable Udisk Drivers"
+                default n
+                if RT_USBH_MSTORAGE
+                    config UDISK_MOUNTPOINT
+                        string "Udisk mount dir"
+                        default "/"
+                endif
+            config RT_USBH_HID
+                bool "Enable HID Drivers"
+                default n
+                if RT_USBH_HID
+                    config RT_USBH_HID_MOUSE
+                        bool "Enable HID mouse protocol"
+                        default n
+                    config RT_USBH_HID_KEYBOARD
+                        bool "Enable HID keyboard protocol"
+                        default n
+                endif
+        endif
+    config RT_USING_USB_DEVICE
+        bool "Using USB device"
+        default n
+        select RT_USING_USB
+
+        if RT_USING_USB_DEVICE || RT_USING_USB_HOST
+            config RT_USBD_THREAD_STACK_SZ
+                int "usb thread stack size"
+                default 4096
+        endif
+        if RT_USING_USB_DEVICE
+            config USB_VENDOR_ID
+                hex "USB Vendor ID"
+                default 0x0FFE
+            config USB_PRODUCT_ID
+                hex "USB Product ID"
+                default 0x0001
+
+            config RT_USB_DEVICE_COMPOSITE
+                bool "Enable composite device"
+                default n
+                choice
+                    prompt "Device type"
+                    default _RT_USB_DEVICE_NONE
+                    depends on !RT_USB_DEVICE_COMPOSITE
+                    config _RT_USB_DEVICE_NONE
+                        bool "Using custom class by register interface"
+                        select RT_USB_DEVICE_NONE
+                    config _RT_USB_DEVICE_CDC
+                        bool "Enable to use device as CDC device"
+                        select RT_USB_DEVICE_CDC
+                    config _RT_USB_DEVICE_MSTORAGE
+                        bool "Enable to use device as Mass Storage device"
+                        select RT_USB_DEVICE_MSTORAGE
+                    config _RT_USB_DEVICE_HID
+                        bool "Enable to use device as HID device"
+                        select RT_USB_DEVICE_HID
+                    config _RT_USB_DEVICE_RNDIS
+                        bool "Enable to use device as rndis device"
+                        select RT_USB_DEVICE_RNDIS
+                        depends on RT_USING_LWIP
+                    config _RT_USB_DEVICE_ECM
+                        bool "Enable to use device as ecm device"
+                        select RT_USB_DEVICE_ECM
+                        depends on RT_USING_LWIP
+                    config _RT_USB_DEVICE_WINUSB
+                        bool "Enable to use device as winusb device"
+                        select RT_USB_DEVICE_WINUSB
+                    config _RT_USB_DEVICE_AUDIO
+                        bool "Enable to use device as audio device"
+                        select RT_USB_DEVICE_AUDIO
+                endchoice
+                if RT_USB_DEVICE_COMPOSITE
+                    config RT_USB_DEVICE_CDC
+                        bool "Enable to use device as CDC device"
+                        default n
+                    config RT_USB_DEVICE_NONE
+                        bool
+                        default y
+                    config RT_USB_DEVICE_MSTORAGE
+                        bool "Enable to use device as Mass Storage device"
+                        default n
+                    config RT_USB_DEVICE_HID
+                        bool "Enable to use device as HID device"
+                        default n
+                    config RT_USB_DEVICE_RNDIS
+                        bool "Enable to use device as rndis device"
+                        default n
+                        depends on RT_USING_LWIP
+                    config RT_USB_DEVICE_ECM
+                        bool "Enable to use device as ecm device"
+                        default n
+                        depends on RT_USING_LWIP
+                    config RT_USB_DEVICE_WINUSB
+                        bool "Enable to use device as winusb device"
+                        default n
+                    config RT_USB_DEVICE_AUDIO
+                        bool "Enable to use device as audio device"
+                        default n
+                endif
+                if RT_USB_DEVICE_CDC
+                    config RT_VCOM_TASK_STK_SIZE
+                        int "virtual com thread stack size"
+                        default 512
+                    config RT_CDC_RX_BUFSIZE
+                        int "virtual com rx buffer size"
+                        default 128
+                    config RT_VCOM_TX_USE_DMA
+                        bool "Enable to use dma for vcom tx"
+                        default n
+                    config RT_VCOM_SERNO
+                        string "serial number of virtual com"
+                        default "32021919830108"
+                    config RT_VCOM_SER_LEN
+                        int "serial number length of virtual com"
+                        default 14
+                    config RT_VCOM_TX_TIMEOUT
+                        int "tx timeout(ticks) of virtual com"
+                        default 1000
+                endif
+                if RT_USB_DEVICE_WINUSB
+                    config RT_WINUSB_GUID
+                    string "Guid for winusb"
+                    default "{6860DC3C-C05F-4807-8807-1CA861CC1D66}"
+                endif
+                if RT_USB_DEVICE_MSTORAGE
+                    config RT_USB_MSTORAGE_DISK_NAME
+                    string "msc class disk name"
+                    default "flash0"
+                endif
+
+                if RT_USB_DEVICE_RNDIS
+                    config RNDIS_DELAY_LINK_UP
+                        bool "Delay linkup media connection"
+                        select RT_USING_TIMER_SOFT
+                        default n
+                endif
+
+                if RT_USB_DEVICE_HID
+                    config RT_USB_DEVICE_HID_KEYBOARD
+                        bool "Use to HID device as Keyboard"
+                        default n
+                    if RT_USB_DEVICE_HID_KEYBOARD
+                        config RT_USB_DEVICE_HID_KEYBOARD_NUMBER
+                        int "Number of Keyboard(max 3)"
+                        default 1
+                        range 1 3
+                    endif
+                    config RT_USB_DEVICE_HID_MOUSE
+                        bool "Use to HID device as Mouse"
+                        default n
+                    config RT_USB_DEVICE_HID_GENERAL
+                        bool "Use to HID device as General HID device"
+                        default y
+                        if RT_USB_DEVICE_HID_GENERAL
+                            config RT_USB_DEVICE_HID_GENERAL_OUT_REPORT_LENGTH
+                                int "General HID device out report length"
+                                default 63
+                                range 0 63
+
+                            config RT_USB_DEVICE_HID_GENERAL_IN_REPORT_LENGTH
+                                int "General HID device in report length"
+                                default 63
+                                range 0 63
+                        endif
+                    config RT_USB_DEVICE_HID_MEDIA
+                        bool "Use to HID device as media keyboard"
+                        default y
+                endif
+                if RT_USB_DEVICE_AUDIO
+                    config RT_USB_DEVICE_AUDIO_MIC
+                        bool "Use usb mic device as audio device"
+                        default n
+                        if RT_USB_DEVICE_AUDIO_MIC
+                            config RT_USBD_MIC_DEVICE_NAME
+                            string "audio mic device name"
+                            default "mic0"
+                        endif
+                    config RT_USB_DEVICE_AUDIO_SPEAKER
+                        bool "Use usb speaker device as audio device"
+                        default n
+                        if RT_USB_DEVICE_AUDIO_SPEAKER
+                            config RT_USBD_SPEAKER_DEVICE_NAME
+                            string "audio speaker device name"
+                            default "sound0"
+                        endif
+                endif
+        endif
+endmenu

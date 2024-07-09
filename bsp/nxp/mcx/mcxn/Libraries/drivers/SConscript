@@ -22,6 +22,9 @@ if  GetDepend('BSP_USING_SDIO'):
 if  GetDepend('BSP_USING_I2C'):
     src += ['drv_i2c.c']
 
+if  GetDepend('BSP_USING_SW_I2C'):
+    src += ['drv_soft_i2c.c']
+
 if  GetDepend('BSP_USING_ADC'):
     src += ['drv_adc.c']
 

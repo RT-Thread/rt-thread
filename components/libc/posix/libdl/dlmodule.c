@@ -128,8 +128,8 @@ static void _dlmodule_exit(void)
                 rt_thread_t thread = (rt_thread_t)object;
 
                 /* stop timer and suspend thread*/
-                if ((thread->stat & RT_THREAD_STAT_MASK) != RT_THREAD_CLOSE &&
-                    (thread->stat & RT_THREAD_STAT_MASK) != RT_THREAD_INIT)
+                if ((RT_SCHED_CTX(thread).stat & RT_THREAD_STAT_MASK) != RT_THREAD_CLOSE &&
+                    (RT_SCHED_CTX(thread).stat & RT_THREAD_STAT_MASK) != RT_THREAD_INIT)
                 {
                     rt_timer_stop(&(thread->thread_timer));
                     rt_thread_suspend(thread);
@@ -770,7 +770,7 @@ void dlmodule_exit(int ret_code)
     /* the stat of module was changed to CLOSING in _dlmodule_exit */
 
     thread = module->main_thread;
-    if ((thread->stat & RT_THREAD_STAT_MASK) == RT_THREAD_CLOSE)
+    if ((RT_SCHED_CTX(thread).stat & RT_THREAD_STAT_MASK) == RT_THREAD_CLOSE)
     {
         /* main thread already closed */
         rt_exit_critical();

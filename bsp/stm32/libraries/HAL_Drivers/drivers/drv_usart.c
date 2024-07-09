@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2023, RT-Thread Development Team
+ * Copyright (c) 2006-2024, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -33,6 +33,9 @@
 #ifdef RT_SERIAL_USING_DMA
 static void stm32_dma_config(struct rt_serial_device *serial, rt_ubase_t flag);
 #endif
+
+/* Number of while blocking timeouts for the stm32_putc */
+#define TX_BLOCK_TIMEOUT    2000
 
 enum
 {
@@ -230,6 +233,7 @@ static rt_err_t stm32_configure(struct rt_serial_device *serial, struct serial_c
         return -RT_ERROR;
     }
     uart->DR_mask = stm32_uart_get_mask(uart->handle.Init.WordLength, uart->handle.Init.Parity);
+    uart->tx_block_timeout = TX_BLOCK_TIMEOUT;
 
     return RT_EOK;
 }
@@ -248,10 +252,15 @@ static rt_err_t stm32_control(struct rt_serial_device *serial, int cmd, void *ar
     {
     /* disable interrupt */
     case RT_DEVICE_CTRL_CLR_INT:
-        /* disable rx irq */
+    {
+        /* disable uart irq */
         NVIC_DisableIRQ(uart->config->irq_type);
-        /* disable interrupt */
-        __HAL_UART_DISABLE_IT(&(uart->handle), UART_IT_RXNE);
+        rt_uint32_t direction = (rt_uint32_t)arg;
+        if(direction == RT_DEVICE_FLAG_INT_RX)
+        {
+            /* disable interrupt */
+            __HAL_UART_DISABLE_IT(&(uart->handle), UART_IT_RXNE);
+        }
 
 #ifdef RT_SERIAL_USING_DMA
         /* disable DMA */
@@ -278,34 +287,59 @@ static rt_err_t stm32_control(struct rt_serial_device *serial, int cmd, void *ar
         }
 #endif
         break;
+    }
 
     /* enable interrupt */
     case RT_DEVICE_CTRL_SET_INT:
-        /* enable rx irq */
+    {
+        /* enable uart irq */
         HAL_NVIC_SetPriority(uart->config->irq_type, 1, 0);
         HAL_NVIC_EnableIRQ(uart->config->irq_type);
-        /* enable interrupt */
-        __HAL_UART_ENABLE_IT(&(uart->handle), UART_IT_RXNE);
+        rt_uint32_t direction = (rt_uint32_t)arg;
+        if(direction == RT_DEVICE_FLAG_INT_RX)
+        {
+            /* enable interrupt */
+            __HAL_UART_ENABLE_IT(&(uart->handle), UART_IT_RXNE);
+        }
         break;
+    }
 
 #ifdef RT_SERIAL_USING_DMA
     case RT_DEVICE_CTRL_CONFIG:
+    {
         stm32_dma_config(serial, ctrl_arg);
         break;
+    }
 #endif
 
     case RT_DEVICE_CTRL_CLOSE:
+    {
         if (HAL_UART_DeInit(&(uart->handle)) != HAL_OK )
         {
             RT_ASSERT(0)
         }
         break;
+    }
 
+    case UART_CTRL_SET_BLOCK_TIMEOUT:
+    {
+        rt_uint32_t block_timeout = (rt_uint32_t)arg;
+        if(block_timeout > 0)
+        {
+            uart->tx_block_timeout = block_timeout;
+        }
+        else
+        {
+            return -RT_ERROR;
+        }
+        break;
+    }
+
+    default:
+        break;
     }
     return RT_EOK;
 }
-
-
 
 static int stm32_putc(struct rt_serial_device *serial, char c)
 {
@@ -313,6 +347,7 @@ static int stm32_putc(struct rt_serial_device *serial, char c)
     RT_ASSERT(serial != RT_NULL);
 
     uart = rt_container_of(serial, struct stm32_uart, serial);
+    rt_uint32_t block_timeout = uart->tx_block_timeout;
     UART_INSTANCE_CLEAR_FUNCTION(&(uart->handle), UART_FLAG_TC);
 #if defined(SOC_SERIES_STM32L4) || defined(SOC_SERIES_STM32WL) || defined(SOC_SERIES_STM32F7) || defined(SOC_SERIES_STM32F0) \
     || defined(SOC_SERIES_STM32L0) || defined(SOC_SERIES_STM32G0) || defined(SOC_SERIES_STM32H7) || defined(SOC_SERIES_STM32L5) \
@@ -322,8 +357,8 @@ static int stm32_putc(struct rt_serial_device *serial, char c)
 #else
     uart->handle.Instance->DR = c;
 #endif
-    while (__HAL_UART_GET_FLAG(&(uart->handle), UART_FLAG_TC) == RESET);
-    return 1;
+    while (__HAL_UART_GET_FLAG(&(uart->handle), UART_FLAG_TC) == RESET && block_timeout--);
+    return (block_timeout != 0) ? 1 : -1;
 }
 
 static int stm32_getc(struct rt_serial_device *serial)
@@ -439,13 +474,6 @@ static void uart_isr(struct rt_serial_device *serial)
     {
         rt_hw_serial_isr(serial, RT_SERIAL_EVENT_RX_IND);
     }
-#ifdef RT_SERIAL_USING_DMA
-    else if ((uart->uart_dma_flag) && (__HAL_UART_GET_FLAG(&(uart->handle), UART_FLAG_IDLE) != RESET)
-             && (__HAL_UART_GET_IT_SOURCE(&(uart->handle), UART_IT_IDLE) != RESET))
-    {
-        dma_recv_isr(serial, UART_RX_DMA_IT_IDLE_FLAG);
-        __HAL_UART_CLEAR_IDLEFLAG(&uart->handle);
-    }
     else if (__HAL_UART_GET_FLAG(&(uart->handle), UART_FLAG_TC) &&
             (__HAL_UART_GET_IT_SOURCE(&(uart->handle), UART_IT_TC) != RESET))
     {
@@ -453,7 +481,20 @@ static void uart_isr(struct rt_serial_device *serial)
         {
             HAL_UART_IRQHandler(&(uart->handle));
         }
+        else
+        {
+            /* Transmission complete interrupt disable ( CR1 Register) */
+            __HAL_UART_DISABLE_IT(&(uart->handle), UART_IT_TC);
+            rt_hw_serial_isr(serial, RT_SERIAL_EVENT_TX_DONE);
+        }
         UART_INSTANCE_CLEAR_FUNCTION(&(uart->handle), UART_FLAG_TC);
+    }
+#ifdef RT_SERIAL_USING_DMA
+    else if ((uart->uart_dma_flag) && (__HAL_UART_GET_FLAG(&(uart->handle), UART_FLAG_IDLE) != RESET)
+             && (__HAL_UART_GET_IT_SOURCE(&(uart->handle), UART_IT_IDLE) != RESET))
+    {
+        dma_recv_isr(serial, UART_RX_DMA_IT_IDLE_FLAG);
+        __HAL_UART_CLEAR_IDLEFLAG(&uart->handle);
     }
 #endif
     else

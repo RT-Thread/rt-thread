@@ -81,10 +81,12 @@ msh >
 | ----- | ------- | ------- |
 | UART  | Support | UART0/1 |
 | GPIO  | Support | 0-29    |
-| I2C   | -       | -       |
-| RTC   | -       | -       |
+| I2C   | Support | -       |
+| RTC   | Support | -       |
 | SDIO  | -       | -       |
-| SPI   | -       | -       |
-| TIMER | -       | -       |
-| WDT   | -       | -       |
-
+| SPI   | Support | -       |
+| TIMER | Support | -       |
+| WDT   | Support | -       |
+| ADC   | Support | -       |
+| FLASH | Support | -       |
+| PWM   | Support | -       |

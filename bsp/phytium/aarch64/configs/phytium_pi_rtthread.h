@@ -295,6 +295,18 @@
 /* Wiced WiFi */
 
 /* end of Wiced WiFi */
+
+/* CYW43012 WiFi */
+
+/* end of CYW43012 WiFi */
+
+/* BL808 WiFi */
+
+/* end of BL808 WiFi */
+
+/* CYW43439 WiFi */
+
+/* end of CYW43439 WiFi */
 /* end of Wi-Fi */
 
 /* IoT Cloud */
@@ -353,6 +365,17 @@
 
 /* peripheral libraries and drivers */
 
+/* HAL & SDK Drivers */
+
+/* STM32 HAL & SDK Drivers */
+
+/* end of STM32 HAL & SDK Drivers */
+
+/* Kendryte SDK */
+
+/* end of Kendryte SDK */
+/* end of HAL & SDK Drivers */
+
 /* sensors drivers */
 
 /* end of sensors drivers */
@@ -360,10 +383,6 @@
 /* touch drivers */
 
 /* end of touch drivers */
-
-/* Kendryte SDK */
-
-/* end of Kendryte SDK */
 /* end of peripheral libraries and drivers */
 
 /* AI packages */
@@ -452,6 +471,7 @@
 #define RT_USING_SPIM1
 #define RT_USING_SPIM2
 #define RT_USING_SPIM3
+#define BSP_USING_GPIO
 #define BSP_USING_QSPI
 #define RT_USING_QSPI0
 #define USING_QSPI_CHANNEL0
@@ -509,6 +529,7 @@
 
 /* Sdk common configuration */
 
+#define ELOG_LINE_BUF_SIZE 0x100
 #define LOG_DEBUG
 /* end of Sdk common configuration */
 

@@ -9,28 +9,42 @@ import re
 import utils
 import rtconfig
 from utils import _make_path_relative
+from collections import defaultdict
 
 
-def GenerateCFiles(env,project):
+def GenerateCFiles(env, project, project_name):
     """
     Generate CMakeLists.txt files
     """
     info = utils.ProjectInfo(env)
+    
+    PROJECT_NAME = project_name if project_name != "project" else "rtthread"
 
-    CC = os.path.join(rtconfig.EXEC_PATH, rtconfig.CC).replace('\\', "/")
+    tool_path_conv = defaultdict(lambda : {"name":"", "path": ""})
+    tool_path_conv_helper = lambda tool: {"name": tool, "path": os.path.join(rtconfig.EXEC_PATH, tool).replace('\\', "/")}
+    
+    tool_path_conv["CMAKE_C_COMPILER"] = tool_path_conv_helper(rtconfig.CC)
     if 'CXX' in dir(rtconfig):
-        CXX = os.path.join(rtconfig.EXEC_PATH, rtconfig.CXX).replace('\\', "/")
-    else:
-        CXX = ''
-    AS = os.path.join(rtconfig.EXEC_PATH, rtconfig.AS).replace('\\', "/")
-    AR = os.path.join(rtconfig.EXEC_PATH, rtconfig.AR).replace('\\', "/")
-    LINK = os.path.join(rtconfig.EXEC_PATH, rtconfig.LINK).replace('\\', "/")
+        tool_path_conv["CMAKE_CXX_COMPILER"] = tool_path_conv_helper(rtconfig.CXX)
+    tool_path_conv["CMAKE_ASM_COMPILER"] = tool_path_conv_helper(rtconfig.AS)
+    tool_path_conv["CMAKE_AR"] = tool_path_conv_helper(rtconfig.AR)
+    tool_path_conv["CMAKE_LINKER"] = tool_path_conv_helper(rtconfig.LINK)
     if rtconfig.PLATFORM in ['gcc']:
-        SIZE = os.path.join(rtconfig.EXEC_PATH, rtconfig.SIZE).replace('\\', "/")
-        OBJDUMP = os.path.join(rtconfig.EXEC_PATH, rtconfig.OBJDUMP).replace('\\', "/")
-        OBJCOPY = os.path.join(rtconfig.EXEC_PATH, rtconfig.OBJCPY).replace('\\', "/")
+        tool_path_conv["CMAKE_SIZE"] = tool_path_conv_helper(rtconfig.SIZE)
+        tool_path_conv["CMAKE_OBJDUMP"] = tool_path_conv_helper(rtconfig.OBJDUMP)
+        tool_path_conv["CMAKE_OBJCOPY"] = tool_path_conv_helper(rtconfig.OBJCPY)
     elif rtconfig.PLATFORM in ['armcc', 'armclang']:
-        FROMELF = os.path.join(rtconfig.EXEC_PATH, 'fromelf').replace('\\', "/")
+        tool_path_conv["CMAKE_FROMELF"] = tool_path_conv_helper(rtconfig.FROMELF)
+        
+    CC = tool_path_conv["CMAKE_C_COMPILER"]["path"]
+    CXX = tool_path_conv["CMAKE_CXX_COMPILER"]["path"]
+    AS = tool_path_conv["CMAKE_ASM_COMPILER"]["path"]
+    AR = tool_path_conv["CMAKE_AR"]["path"]
+    LINK = tool_path_conv["CMAKE_LINKER"]["path"]
+    SIZE = tool_path_conv["CMAKE_SIZE"]["path"]
+    OBJDUMP = tool_path_conv["CMAKE_OBJDUMP"]["path"]
+    OBJCOPY = tool_path_conv["CMAKE_OBJCOPY"]["path"]
+    FROMELF = tool_path_conv["CMAKE_FROMELF"]["path"]
 
     CFLAGS = rtconfig.CFLAGS.replace('\\', "/").replace('\"', "\\\"")
     if 'CXXFLAGS' in dir(rtconfig):
@@ -39,6 +53,27 @@ def GenerateCFiles(env,project):
         CXXFLAGS = CFLAGS
     AFLAGS = rtconfig.AFLAGS.replace('\\', "/").replace('\"', "\\\"")
     LFLAGS = env['LINKFLAGS'].replace('\\', "/").replace('\"', "\\\"")
+    
+    POST_ACTION = rtconfig.POST_ACTION
+    # replace the tool name with the cmake variable
+    for cmake_var, each_tool in tool_path_conv.items():
+        tool_name = each_tool['name']
+        if tool_name == "": continue
+        if "win32" in sys.platform:
+            while f"{tool_name}.exe" in POST_ACTION:    # find the tool with `.exe` suffix first
+                POST_ACTION = POST_ACTION.replace(tool_name, "string_to_replace")
+        while tool_name in POST_ACTION:
+            POST_ACTION = POST_ACTION.replace(tool_name, "string_to_replace")
+        while "string_to_replace" in POST_ACTION:
+            POST_ACTION = POST_ACTION.replace("string_to_replace", f"${{{cmake_var}}}")
+    # replace the `$TARGET` with `${CMAKE_PROJECT_NAME}.elf`
+    while "$TARGET" in POST_ACTION:
+        POST_ACTION = POST_ACTION.replace("$TARGET", "${CMAKE_PROJECT_NAME}.elf")
+    # add COMMAAND before each command
+    POST_ACTION = POST_ACTION.split('\n')
+    POST_ACTION = [each_line.strip() for each_line in POST_ACTION]
+    POST_ACTION = [f"\tCOMMAND {each_line}" for each_line in POST_ACTION if each_line != '']
+    POST_ACTION = "\n".join(POST_ACTION)
 
     if "win32" in sys.platform:
         CC += ".exe"
@@ -58,8 +93,7 @@ def GenerateCFiles(env,project):
         print("'Cannot found toolchain directory, please check RTT_CC and RTT_EXEC_PATH'")
         sys.exit(-1)
 
-    cm_file = open('CMakeLists.txt', 'w')
-    if cm_file:
+    with open("CMakeLists.txt", "w") as cm_file:
         cm_file.write("CMAKE_MINIMUM_REQUIRED(VERSION 3.10)\n\n")
 
         cm_file.write("SET(CMAKE_SYSTEM_NAME Generic)\n")
@@ -100,11 +134,31 @@ def GenerateCFiles(env,project):
                         LINKER_LIBS += ' ' + f.replace("\\", "/") + '.lib'
         cm_file.write("SET(CMAKE_EXE_LINKER_FLAGS \""+ re.sub(LINKER_FLAGS + '(\s*)', LINKER_FLAGS + ' ${CMAKE_SOURCE_DIR}/', LFLAGS) + LINKER_LIBS + "\")\n\n")
 
-        if CXX != '':
-            cm_file.write("SET(CMAKE_CXX_STANDARD 14)\n")
-            cm_file.write("PROJECT(rtthread C CXX ASM)\n")
+        # get the c/cpp standard version from compilation flags
+        # not support the version with alphabet in `-std` param yet
+        pattern = re.compile('-std=[\w+]+')
+        c_standard = 11
+        if '-std=' in CFLAGS:
+            c_standard = re.search(pattern, CFLAGS).group(0)
+            c_standard = "".join([each for each in c_standard if each.isdigit()])
         else:
-            cm_file.write("PROJECT(rtthread C ASM)\n")
+            print(f"Cannot find the param of the c standard in build flag, set to default {c_standard}")
+        cm_file.write(f"SET(CMAKE_C_STANDARD {c_standard})\n")
+
+        if CXX != '':
+            cpp_standard = 17
+            if '-std=' in CXXFLAGS:
+                cpp_standard = re.search(pattern, CXXFLAGS).group(0)
+                cpp_standard = "".join([each for each in cpp_standard if each.isdigit()])
+            else:
+                print(f"Cannot find the param of the cpp standard in build flag, set to default {cpp_standard}")
+            cm_file.write(f"SET(CMAKE_CXX_STANDARD {cpp_standard})\n")
+        
+        cm_file.write('\n')
+
+        cm_file.write(f"PROJECT({PROJECT_NAME} C {'CXX' if CXX != '' else ''} ASM)\n")
+        
+        cm_file.write('\n')
 
         cm_file.write("INCLUDE_DIRECTORIES(\n")
         for i in info['CPPPATH']:
@@ -141,19 +195,27 @@ def GenerateCFiles(env,project):
                         cm_file.write( "\t"+ "{}\n".format(f.replace("\\", "/")))
             cm_file.write(")\n\n")
 
-            cm_file.write("ADD_EXECUTABLE(${CMAKE_PROJECT_NAME}.elf ${PROJECT_SOURCES})\n")
-            cm_file.write("ADD_CUSTOM_COMMAND(TARGET ${CMAKE_PROJECT_NAME}.elf POST_BUILD \nCOMMAND ${CMAKE_OBJCOPY} -O binary ${CMAKE_PROJECT_NAME}.elf ${CMAKE_PROJECT_NAME}.bin COMMAND ${CMAKE_SIZE} ${CMAKE_PROJECT_NAME}.elf)")
-        elif rtconfig.PLATFORM in ['armcc', 'armclang']:
-            cm_file.write("ADD_EXECUTABLE(${CMAKE_PROJECT_NAME} ${PROJECT_SOURCES})\n")
-            cm_file.write("ADD_CUSTOM_COMMAND(TARGET ${CMAKE_PROJECT_NAME} POST_BUILD \nCOMMAND ${CMAKE_FROMELF} --bin ${CMAKE_PROJECT_NAME}.elf --output ${CMAKE_PROJECT_NAME}.bin COMMAND ${CMAKE_FROMELF} -z ${CMAKE_PROJECT_NAME}.elf)")
-
-        cm_file.close()
+        cm_file.write("ADD_EXECUTABLE(${CMAKE_PROJECT_NAME}.elf ${PROJECT_SOURCES})\n")
+        cm_file.write("ADD_CUSTOM_COMMAND(TARGET ${CMAKE_PROJECT_NAME}.elf POST_BUILD \n" + POST_ACTION + '\n)\n')
+            
+        # auto inclue `custom.cmake` for user custom settings
+        custom_cmake = \
+            '''
+            # if custom.cmake is exist, add it
+            if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/custom.cmake)
+                include(${CMAKE_CURRENT_SOURCE_DIR}/custom.cmake)
+            endif()
+            '''
+        custom_cmake = custom_cmake.split('\n')
+        custom_cmake = [each.strip() for each in custom_cmake]
+        custom_cmake = "\n".join(custom_cmake)
+        cm_file.write(custom_cmake)
 
     return
 
-def CMakeProject(env,project):
+def CMakeProject(env, project, project_name):
     print('Update setting files for CMakeLists.txt...')
-    GenerateCFiles(env,project)
+    GenerateCFiles(env, project, project_name)
     print('Done!')
 
     return

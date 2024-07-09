@@ -60,12 +60,4 @@ __attribute__((weak)) void system_init(void)
     enable_global_irq(CSR_MSTATUS_MIE_MASK);
 #endif
 #endif
-
-#ifndef CONFIG_NOT_ENABLE_ICACHE
-    l1c_ic_enable();
-#endif
-#ifndef CONFIG_NOT_ENABLE_DCACHE
-    l1c_dc_enable();
-    l1c_dc_invalidate_all();
-#endif
 }

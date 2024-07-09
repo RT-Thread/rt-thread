@@ -38,6 +38,8 @@
   ((!varea->mem_obj || !varea->mem_obj->get_name)                              \
        ? "unknow"                                                              \
        : varea->mem_obj->get_name(varea))
+
+/* only user address use COW technique, so user permission is always checked */
 #define VAREA_IS_WRITABLE(varea)                                               \
   (rt_hw_mmu_attr_test_perm(varea->attr,                                       \
                             RT_HW_MMU_PROT_USER | RT_HW_MMU_PROT_WRITE))

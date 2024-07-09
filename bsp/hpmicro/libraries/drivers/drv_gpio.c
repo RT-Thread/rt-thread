@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021-2023 HPMicro
+ * Copyright (c) 2021-2024 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -9,6 +9,9 @@
  * 2022-07-28   HPMicro     Fixed compiling warnings
  * 2023-05-08   HPMicro     Adapt RT-Thread V5.0.0
  * 2023-08-15   HPMicro     Enable pad loopback feature
+ * 2024-01-08   HPMicro     Implemented pin_get
+ * 2024-04-17   HPMicro     Refined pin irq implementation
+ * 2024-05-31   HPMicro     Adapt later PIN driver framework
  */
 
 #include <rtthread.h>
@@ -23,49 +26,105 @@
 #include "hpm_clock_drv.h"
 #include "hpm_soc_feature.h"
 
+
 typedef struct
 {
     uint32_t gpio_idx;
     uint32_t irq_num;
+    struct rt_pin_irq_hdr *pin_irq_tbl;
 } gpio_irq_map_t;
+
+#ifdef IRQn_GPIO0_A
+static struct rt_pin_irq_hdr hpm_gpio0_a_pin_hdr[32];
+#endif
+#ifdef IRQn_GPIO0_B
+static struct rt_pin_irq_hdr hpm_gpio0_b_pin_hdr[32];
+#endif
+#ifdef IRQn_GPIO0_C
+static struct rt_pin_irq_hdr hpm_gpio0_c_pin_hdr[32];
+#endif
+#ifdef IRQn_GPIO0_D
+static struct rt_pin_irq_hdr hpm_gpio0_d_pin_hdr[32];
+#endif
+#ifdef IRQn_GPIO0_E
+static struct rt_pin_irq_hdr hpm_gpio0_e_pin_hdr[32];
+#endif
+#ifdef IRQn_GPIO0_F
+static struct rt_pin_irq_hdr hpm_gpio0_f_pin_hdr[32];
+#endif
+#ifdef IRQn_GPIO0_V
+static struct rt_pin_irq_hdr hpm_gpio0_v_pin_hdr[32];
+#endif
+#ifdef IRQn_GPIO0_W
+static struct rt_pin_irq_hdr hpm_gpio0_w_pin_hdr[32];
+#endif
+#ifdef IRQn_GPIO0_X
+static struct rt_pin_irq_hdr hpm_gpio0_x_pin_hdr[32];
+#endif
+#ifdef IRQn_GPIO0_Y
+static struct rt_pin_irq_hdr hpm_gpio0_y_pin_hdr[32];
+#endif
+#ifdef IRQn_GPIO0_Z
+static struct rt_pin_irq_hdr hpm_gpio0_z_pin_hdr[32];
+#endif
 
 static const gpio_irq_map_t hpm_gpio_irq_map[] = {
 #ifdef IRQn_GPIO0_A
-        { GPIO_IE_GPIOA, IRQn_GPIO0_A },
+        { GPIO_IE_GPIOA, IRQn_GPIO0_A, hpm_gpio0_a_pin_hdr },
 #endif
 #ifdef IRQn_GPIO0_B
-        { GPIO_IE_GPIOB, IRQn_GPIO0_B },
+        { GPIO_IE_GPIOB, IRQn_GPIO0_B, hpm_gpio0_b_pin_hdr },
 #endif
 #ifdef IRQn_GPIO0_C
-        { GPIO_IE_GPIOC, IRQn_GPIO0_C },
+        { GPIO_IE_GPIOC, IRQn_GPIO0_C, hpm_gpio0_c_pin_hdr },
 #endif
-#ifdef GPIO_IE_GPIOD
-        { GPIO_IE_GPIOD, IRQn_GPIO0_D },
+#ifdef IRQn_GPIO0_D
+        { GPIO_IE_GPIOD, IRQn_GPIO0_D, hpm_gpio0_d_pin_hdr },
 #endif
 #ifdef IRQn_GPIO0_E
-        { GPIO_IE_GPIOE, IRQn_GPIO0_E },
+        { GPIO_IE_GPIOE, IRQn_GPIO0_E, hpm_gpio0_e_pin_hdr },
 #endif
 #ifdef IRQn_GPIO0_F
-        { GPIO_IE_GPIOF, IRQn_GPIO0_F },
+        { GPIO_IE_GPIOF, IRQn_GPIO0_F, hpm_gpio0_f_pin_hdr },
+#endif
+#ifdef IRQn_GPIO0_V
+        { GPIO_IE_GPIOV, IRQn_GPIO0_V, hpm_gpio0_v_pin_hdr },
+#endif
+#ifdef IRQn_GPIO0_W
+        { GPIO_IE_GPIOW, IRQn_GPIO0_W, hpm_gpio0_w_pin_hdr },
 #endif
 #ifdef IRQn_GPIO0_X
-        { GPIO_IE_GPIOX, IRQn_GPIO0_X },
+        { GPIO_IE_GPIOX, IRQn_GPIO0_X, hpm_gpio0_x_pin_hdr },
 #endif
 #ifdef IRQn_GPIO0_Y
-        { GPIO_IE_GPIOY, IRQn_GPIO0_Y },
+        { GPIO_IE_GPIOY, IRQn_GPIO0_Y, hpm_gpio0_y_pin_hdr },
 #endif
 #ifdef IRQn_GPIO0_Z
-        { GPIO_IE_GPIOZ, IRQn_GPIO0_Z },
+        { GPIO_IE_GPIOZ, IRQn_GPIO0_Z, hpm_gpio0_z_pin_hdr },
 #endif
-        };
+};
 
-static struct rt_pin_irq_hdr hpm_gpio_pin_hdr_tbl[IOC_SOC_PAD_MAX];
+static struct rt_pin_irq_hdr *lookup_pin_irq_hdr_tbl(rt_base_t pin)
+{
+    struct rt_pin_irq_hdr *pin_irq_hdr_tbl = RT_NULL;
+    uint32_t gpio_idx = pin >> 5;
 
-static int hpm_get_gpi_irq_num(uint32_t gpio_idx)
+    for (uint32_t i = 0; i < ARRAY_SIZE(hpm_gpio_irq_map); i++)
+    {
+        if (hpm_gpio_irq_map[i].gpio_idx == gpio_idx)
+        {
+            pin_irq_hdr_tbl = hpm_gpio_irq_map[i].pin_irq_tbl;
+            break;
+        }
+    }
+    return pin_irq_hdr_tbl;
+}
+
+static int hpm_get_gpio_irq_num(uint32_t gpio_idx)
 {
     int irq_num = -1;
 
-    for (uint32_t i = 0; i < sizeof(hpm_gpio_irq_map) / sizeof(hpm_gpio_irq_map[0]); i++)
+    for (uint32_t i = 0; i < ARRAY_SIZE(hpm_gpio_irq_map); i++)
     {
         if (hpm_gpio_irq_map[i].gpio_idx == gpio_idx)
         {
@@ -76,24 +135,34 @@ static int hpm_get_gpi_irq_num(uint32_t gpio_idx)
     return irq_num;
 }
 
-static void hpm_gpio_isr(uint32_t gpio_index, GPIO_Type *base)
+static void hpm_gpio_isr(uint32_t gpio_idx, GPIO_Type *base)
 {
-    uint32_t pin_idx = 0;
-    for(pin_idx = 0; pin_idx < 32; pin_idx++)
+    /* Lookup the Pin IRQ Header Table */
+    struct rt_pin_irq_hdr *pin_irq_hdr = RT_NULL;
+    for (uint32_t i = 0; i < ARRAY_SIZE(hpm_gpio_irq_map); i++)
     {
-        if (gpio_check_pin_interrupt_flag(base, gpio_index, pin_idx))
+        if (hpm_gpio_irq_map[i].gpio_idx == gpio_idx)
         {
-            uint32_t pin = gpio_index * 32U + pin_idx;
-            gpio_clear_pin_interrupt_flag(base, gpio_index, pin_idx);
-            if (hpm_gpio_pin_hdr_tbl[pin].hdr != RT_NULL)
+            pin_irq_hdr = hpm_gpio_irq_map[i].pin_irq_tbl;
+            break;
+        }
+    }
+
+    for(uint32_t pin_idx = 0; pin_idx < 32; pin_idx++)
+    {
+        if (gpio_check_pin_interrupt_flag(base, gpio_idx, pin_idx))
+        {
+            gpio_clear_pin_interrupt_flag(base, gpio_idx, pin_idx);
+
+            if (pin_irq_hdr[pin_idx].hdr != RT_NULL)
             {
-                hpm_gpio_pin_hdr_tbl[pin].hdr(hpm_gpio_pin_hdr_tbl[pin].args);
+                pin_irq_hdr[pin_idx].hdr(pin_irq_hdr[pin_idx].args);
             }
         }
     }
 }
 
-#ifdef GPIO_IF_GPIOA
+#ifdef IRQn_GPIO0_A
 void gpioa_isr(void)
 {
     hpm_gpio_isr(GPIO_IF_GPIOA, HPM_GPIO0);
@@ -101,7 +170,7 @@ void gpioa_isr(void)
 SDK_DECLARE_EXT_ISR_M(IRQn_GPIO0_A, gpioa_isr)
 #endif
 
-#ifdef GPIO_IF_GPIOB
+#ifdef IRQn_GPIO0_B
 void gpiob_isr(void)
 {
     hpm_gpio_isr(GPIO_IF_GPIOB, HPM_GPIO0);
@@ -109,7 +178,7 @@ void gpiob_isr(void)
 SDK_DECLARE_EXT_ISR_M(IRQn_GPIO0_B, gpiob_isr)
 #endif
 
-#ifdef GPIO_IF_GPIOC
+#ifdef IRQn_GPIO0_C
 void gpioc_isr(void)
 {
     hpm_gpio_isr(GPIO_IF_GPIOC, HPM_GPIO0);
@@ -117,7 +186,7 @@ void gpioc_isr(void)
 SDK_DECLARE_EXT_ISR_M(IRQn_GPIO0_C, gpioc_isr)
 #endif
 
-#ifdef GPIO_IF_GPIOD
+#ifdef IRQn_GPIO0_D
 void gpiod_isr(void)
 {
     hpm_gpio_isr(GPIO_IF_GPIOD, HPM_GPIO0);
@@ -125,7 +194,7 @@ void gpiod_isr(void)
 SDK_DECLARE_EXT_ISR_M(IRQn_GPIO0_D, gpiod_isr)
 #endif
 
-#ifdef GPIO_IF_GPIOE
+#ifdef IRQn_GPIO0_E
 void gpioe_isr(void)
 {
     hpm_gpio_isr(GPIO_IF_GPIOE, HPM_GPIO0);
@@ -133,7 +202,7 @@ void gpioe_isr(void)
 SDK_DECLARE_EXT_ISR_M(IRQn_GPIO0_E, gpioe_isr)
 #endif
 
-#ifdef GPIO_IF_GPIOF
+#ifdef IRQn_GPIO0_F
 void gpiof_isr(void)
 {
     hpm_gpio_isr(GPIO_IF_GPIOF, HPM_GPIO0);
@@ -141,7 +210,23 @@ void gpiof_isr(void)
 SDK_DECLARE_EXT_ISR_M(IRQn_GPIO0_F, gpiof_isr)
 #endif
 
-#ifdef GPIO_IF_GPIOX
+#ifdef IRQn_GPIO0_V
+void gpiox_isr(void)
+{
+    hpm_gpio_isr(GPIO_IF_GPIOV, HPM_GPIO0);
+}
+SDK_DECLARE_EXT_ISR_M(IRQn_GPIO0_V, gpiox_isr)
+#endif
+
+#ifdef IRQn_GPIO0_W
+void gpiox_isr(void)
+{
+    hpm_gpio_isr(GPIO_IF_GPIOW, HPM_GPIO0);
+}
+SDK_DECLARE_EXT_ISR_M(IRQn_GPIO0_W, gpiox_isr)
+#endif
+
+#ifdef IRQn_GPIO0_X
 void gpiox_isr(void)
 {
     hpm_gpio_isr(GPIO_IF_GPIOX, HPM_GPIO0);
@@ -149,7 +234,7 @@ void gpiox_isr(void)
 SDK_DECLARE_EXT_ISR_M(IRQn_GPIO0_X, gpiox_isr)
 #endif
 
-#ifdef GPIO_IF_GPIOY
+#ifdef IRQn_GPIO0_Y
 void gpioy_isr(void)
 {
     hpm_gpio_isr(GPIO_IF_GPIOY, HPM_GPIO0);
@@ -157,7 +242,7 @@ void gpioy_isr(void)
 SDK_DECLARE_EXT_ISR_M(IRQn_GPIO0_Y, gpioy_isr)
 #endif
 
-#ifdef GPIO_IF_GPIOZ
+#ifdef IRQn_GPIO0_Z
 void gpioz_isr(void)
 {
     hpm_gpio_isr(GPIO_IF_GPIOZ, HPM_GPIO0);
@@ -165,6 +250,29 @@ void gpioz_isr(void)
 SDK_DECLARE_EXT_ISR_M(IRQn_GPIO0_Z, gpioz_isr)
 #endif
 
+/**
+ * @brief Get Pin index from name
+ *
+ * Name rule is : <GPIO NAME><Index>
+ *  for example: PA00, PZ03
+ *
+ **/
+static rt_base_t hpm_pin_get(const char *name)
+{
+    if (!(  (rt_strlen(name) == 4) &&
+            (name[0] == 'P') &&
+            ((('A' <= name[1]) && (name[1] <= 'F')) || (('V' <= name[1]) && (name[1] <= 'Z'))) &&
+            (('0' <= name[2]) && (name[2] <= '9')) &&
+            (('0' <= name[3]) && (name[3] <= '9'))
+        ))
+    {
+        return -RT_EINVAL;
+    }
+
+    uint32_t gpio_idx = (name[1] <= 'F') ? (name[1] - 'A') : (11 + name[1] - 'V');
+    uint32_t pin_idx = (uint32_t)(name[2] - '0') * 10 + (name[3] - '0');
+    return (gpio_idx * 32 + pin_idx);
+}
 
 static void hpm_pin_mode(rt_device_t dev, rt_base_t pin, rt_uint8_t mode)
 {
@@ -182,7 +290,9 @@ static void hpm_pin_mode(rt_device_t dev, rt_base_t pin, rt_uint8_t mode)
         HPM_PIOC->PAD[pin].FUNC_CTL = 3;
         break;
     case GPIO_DI_GPIOZ :
+#ifdef HPM_BIOC
         HPM_BIOC->PAD[pin].FUNC_CTL = 3;
+#endif
         break;
     default :
         break;
@@ -241,13 +351,18 @@ static rt_err_t hpm_pin_attach_irq(struct rt_device *device,
                                    void (*hdr)(void *args),
                                    void *args)
 {
+    struct rt_pin_irq_hdr *pin_irq_hdr_tbl = lookup_pin_irq_hdr_tbl(pin);
+    if (pin_irq_hdr_tbl == RT_NULL)
+    {
+        return -RT_EINVAL;
+    }
 
-    rt_base_t level;
-    level = rt_hw_interrupt_disable();
-    hpm_gpio_pin_hdr_tbl[pin].pin = pin;
-    hpm_gpio_pin_hdr_tbl[pin].hdr = hdr;
-    hpm_gpio_pin_hdr_tbl[pin].mode = mode;
-    hpm_gpio_pin_hdr_tbl[pin].args = args;
+    rt_base_t level = rt_hw_interrupt_disable();
+    uint32_t pin_idx = pin & 0x1FUL;
+    pin_irq_hdr_tbl[pin_idx].pin = pin;
+    pin_irq_hdr_tbl[pin_idx].hdr = hdr;
+    pin_irq_hdr_tbl[pin_idx].mode = mode;
+    pin_irq_hdr_tbl[pin_idx].args = args;
     rt_hw_interrupt_enable(level);
 
     return RT_EOK;
@@ -255,12 +370,17 @@ static rt_err_t hpm_pin_attach_irq(struct rt_device *device,
 
 static rt_err_t hpm_pin_detach_irq(struct rt_device *device, rt_base_t pin)
 {
-    rt_base_t level;
-    level = rt_hw_interrupt_disable();
-    hpm_gpio_pin_hdr_tbl[pin].pin = -1;
-    hpm_gpio_pin_hdr_tbl[pin].hdr = RT_NULL;
-    hpm_gpio_pin_hdr_tbl[pin].mode = 0;
-    hpm_gpio_pin_hdr_tbl[pin].args = RT_NULL;
+    struct rt_pin_irq_hdr *pin_irq_hdr_tbl = lookup_pin_irq_hdr_tbl(pin);
+    if (pin_irq_hdr_tbl == RT_NULL)
+    {
+        return -RT_EINVAL;
+    }
+    rt_base_t level = rt_hw_interrupt_disable();
+    uint32_t pin_idx = pin & 0x1FUL;
+    pin_irq_hdr_tbl[pin_idx].pin = -1;
+    pin_irq_hdr_tbl[pin_idx].hdr = RT_NULL;
+    pin_irq_hdr_tbl[pin_idx].mode = 0;
+    pin_irq_hdr_tbl[pin_idx].args = RT_NULL;
     rt_hw_interrupt_enable(level);
 
     return RT_EOK;
@@ -272,10 +392,16 @@ static rt_err_t hpm_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_u
     uint32_t gpio_idx = pin >> 5;
     uint32_t pin_idx = pin & 0x1FU;
 
+    struct rt_pin_irq_hdr *pin_irq_hdr_tbl = lookup_pin_irq_hdr_tbl(pin);
+    if (pin_irq_hdr_tbl == RT_NULL)
+    {
+        return -RT_EINVAL;
+    }
+
     gpio_interrupt_trigger_t trigger;
     if (enabled == PIN_IRQ_ENABLE)
     {
-        switch(hpm_gpio_pin_hdr_tbl[pin].mode)
+        switch(pin_irq_hdr_tbl[pin_idx].mode)
         {
         case PIN_IRQ_MODE_RISING:
             trigger = gpio_interrupt_trigger_edge_rising;
@@ -294,7 +420,7 @@ static rt_err_t hpm_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_u
             break;
         }
         gpio_config_pin_interrupt(HPM_GPIO0, gpio_idx, pin_idx, trigger);
-        uint32_t irq_num = hpm_get_gpi_irq_num(gpio_idx);
+        uint32_t irq_num = hpm_get_gpio_irq_num(gpio_idx);
         gpio_enable_pin_interrupt(HPM_GPIO0, gpio_idx, pin_idx);
         intc_m_enable_irq_with_priority(irq_num, 1);
     }
@@ -304,20 +430,20 @@ static rt_err_t hpm_pin_irq_enable(struct rt_device *device, rt_base_t pin, rt_u
     }
     else
     {
-        return RT_EINVAL;
+        return -RT_EINVAL;
     }
 
     return RT_EOK;
 }
 
-const static struct rt_pin_ops hpm_pin_ops =
-{
-    .pin_mode = hpm_pin_mode,
-    .pin_write = hpm_pin_write,
-    .pin_read = hpm_pin_read,
-    .pin_attach_irq = hpm_pin_attach_irq,
-    .pin_detach_irq = hpm_pin_detach_irq,
-    .pin_irq_enable = hpm_pin_irq_enable
+const static struct rt_pin_ops hpm_pin_ops = {
+        .pin_mode = hpm_pin_mode,
+        .pin_write = hpm_pin_write,
+        .pin_read = hpm_pin_read,
+        .pin_attach_irq = hpm_pin_attach_irq,
+        .pin_detach_irq = hpm_pin_detach_irq,
+        .pin_irq_enable = hpm_pin_irq_enable,
+        .pin_get = hpm_pin_get,
 };
 
 int rt_hw_pin_init(void)

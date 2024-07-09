@@ -31,7 +31,7 @@ static int at_poll(struct dfs_file *file, struct rt_pollreq *req)
     struct at_socket *sock;
     struct sal_socket *sal_sock;
 
-    sal_sock = sal_get_socket((int) file->data);
+    sal_sock = sal_get_socket((int)file->vnode->data);
     if(!sal_sock)
     {
         return -1;

@@ -1,4 +1,4 @@
-source "$BSP_DIR/../common/drivers/Kconfig"
+source "$(BSP_DIR)/../common/drivers/Kconfig"
 
 menu "RT-Thread rockchip RK2108 drivers"
 

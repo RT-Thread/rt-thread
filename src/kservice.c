@@ -25,11 +25,15 @@
  * 2022-08-30     Yunjie       make rt_vsnprintf adapt to ti c28x (16bit int)
  * 2023-02-02     Bernard      add Smart ID for logo version show
  * 2023-10-16     Shell        Add hook point for rt_malloc services
+ * 2023-10-21     Shell        support the common backtrace API which is arch-independent
  * 2023-12-10     xqyjlj       perf rt_hw_interrupt_disable/enable, fix memheap lock
  * 2024-03-10     Meco Man     move std libc related functions to rtklibc
  */
 
 #include <rtthread.h>
+
+/* include rt_hw_backtrace macro defined in cpuport.h */
+#define RT_HW_INCLUDE_CPUPORT
 #include <rthw.h>
 
 #define DBG_TAG           "kernel.service"
@@ -74,18 +78,42 @@ rt_weak void rt_hw_cpu_reset(void)
 
 rt_weak void rt_hw_cpu_shutdown(void)
 {
-    rt_base_t level;
     LOG_I("CPU shutdown...");
     LOG_W("Using default rt_hw_cpu_shutdown()."
-        "Please consider implementing rt_hw_cpu_reset() in another file.");
-    level = rt_hw_interrupt_disable();
-    while (level)
-    {
-        RT_ASSERT(RT_NULL);
-    }
+        "Please consider implementing rt_hw_cpu_shutdown() in another file.");
+    rt_hw_interrupt_disable();
+    RT_ASSERT(0);
     return;
 }
 
+/**
+ * @note can be overridden by cpuport.h which is defined by a specific arch
+ */
+#ifndef RT_HW_BACKTRACE_FRAME_GET_SELF
+
+#ifdef __GNUC__
+    #define RT_HW_BACKTRACE_FRAME_GET_SELF(frame) do {          \
+        (frame)->fp = (rt_base_t)__builtin_frame_address(0U);   \
+        (frame)->pc = ({__label__ pc; pc: (rt_base_t)&&pc;});   \
+    } while (0)
+
+#else
+    #define RT_HW_BACKTRACE_FRAME_GET_SELF(frame) do {  \
+        (frame)->fp = 0;                                \
+        (frame)->pc = 0;                                \
+    } while (0)
+
+#endif /* __GNUC__ */
+
+#endif /* RT_HW_BACKTRACE_FRAME_GET_SELF */
+
+/**
+ * @brief Get the inner most frame of target thread
+ *
+ * @param thread the thread which frame belongs to
+ * @param frame the specified frame to be unwound
+ * @return rt_err_t 0 is succeed, otherwise a failure
+ */
 rt_weak rt_err_t rt_hw_backtrace_frame_get(rt_thread_t thread, struct rt_hw_backtrace_frame *frame)
 {
     RT_UNUSED(thread);
@@ -95,6 +123,13 @@ rt_weak rt_err_t rt_hw_backtrace_frame_get(rt_thread_t thread, struct rt_hw_back
     return -RT_ENOSYS;
 }
 
+/**
+ * @brief Unwind the target frame
+ *
+ * @param thread the thread which frame belongs to
+ * @param frame the specified frame to be unwound
+ * @return rt_err_t 0 is succeed, otherwise a failure
+ */
 rt_weak rt_err_t rt_hw_backtrace_frame_unwind(rt_thread_t thread, struct rt_hw_backtrace_frame *frame)
 {
     RT_UNUSED(thread);
@@ -356,27 +391,34 @@ rt_weak int rt_kprintf(const char *fmt, ...)
 RTM_EXPORT(rt_kprintf);
 #endif /* RT_USING_CONSOLE */
 
-#ifdef __GNUC__
+/**
+ * @brief Print backtrace of current thread to system console device
+ *
+ * @return rt_err_t 0 is success, otherwise a failure
+ */
 rt_weak rt_err_t rt_backtrace(void)
 {
-    struct rt_hw_backtrace_frame frame = {
-        .fp = (rt_base_t)__builtin_frame_address(0U),
-        .pc = ({__label__ pc; pc: (rt_base_t)&&pc;})
-    };
-    rt_hw_backtrace_frame_unwind(rt_thread_self(), &frame);
-    return rt_backtrace_frame(&frame);
+    struct rt_hw_backtrace_frame frame;
+    rt_thread_t thread = rt_thread_self();
+
+    RT_HW_BACKTRACE_FRAME_GET_SELF(&frame);
+    if (!frame.fp)
+        return -RT_EINVAL;
+
+    /* we don't want this frame to be printed which is nearly garbage info */
+    rt_hw_backtrace_frame_unwind(thread, &frame);
+
+    return rt_backtrace_frame(thread, &frame);
 }
 
-#else /* otherwise not implemented */
-rt_weak rt_err_t rt_backtrace(void)
-{
-   /* LOG_W cannot work under this environment */
-    rt_kprintf("%s is not implemented\n", __func__);
-    return -RT_ENOSYS;
-}
-#endif
-
-rt_err_t rt_backtrace_frame(struct rt_hw_backtrace_frame *frame)
+/**
+ * @brief Print backtrace from frame to system console device
+ *
+ * @param thread the thread which frame belongs to
+ * @param frame where backtrace starts from
+ * @return rt_err_t 0 is success, otherwise a failure
+ */
+rt_weak rt_err_t rt_backtrace_frame(rt_thread_t thread, struct rt_hw_backtrace_frame *frame)
 {
     long nesting = 0;
 
@@ -385,7 +427,7 @@ rt_err_t rt_backtrace_frame(struct rt_hw_backtrace_frame *frame)
     while (nesting < RT_BACKTRACE_LEVEL_MAX_NR)
     {
         rt_kprintf(" 0x%lx", (rt_ubase_t)frame->pc);
-        if (rt_hw_backtrace_frame_unwind(rt_thread_self(), frame))
+        if (rt_hw_backtrace_frame_unwind(thread, frame))
         {
             break;
         }
@@ -395,6 +437,90 @@ rt_err_t rt_backtrace_frame(struct rt_hw_backtrace_frame *frame)
     return RT_EOK;
 }
 
+/**
+ * @brief Print backtrace from buffer to system console
+ *
+ * @param buffer where traced frames saved
+ * @param buflen number of items in buffer
+ * @return rt_err_t 0 is success, otherwise a failure
+ */
+rt_weak rt_err_t rt_backtrace_formatted_print(rt_ubase_t *buffer, long buflen)
+{
+    rt_kprintf("please use: addr2line -e rtthread.elf -a -f");
+
+    for (size_t i = 0; i < buflen && buffer[i] != 0; i++)
+    {
+        rt_kprintf(" 0x%lx", (rt_ubase_t)buffer[i]);
+    }
+
+    rt_kprintf("\n");
+    return RT_EOK;
+}
+
+
+/**
+ * @brief Print backtrace from frame to the given buffer
+ *
+ * @param thread the thread which frame belongs to
+ * @param frame where backtrace starts from. NULL if it's the current one
+ * @param skip the number of frames to discarded counted from calling function.
+ *             Noted that the inner most frame is always discarded and not counted,
+ *             which is obviously reasonable since that's this function itself.
+ * @param buffer where traced frames saved
+ * @param buflen max number of items can be saved in buffer. If there are no more
+ *               than buflen items to be saved, there will be a NULL after the
+ *               last saved item in the buffer.
+ * @return rt_err_t 0 is success, otherwise a failure
+ */
+rt_weak rt_err_t rt_backtrace_to_buffer(rt_thread_t thread,
+                                        struct rt_hw_backtrace_frame *frame,
+                                        long skip,
+                                        rt_ubase_t *buffer,
+                                        long buflen)
+{
+    long nesting = 0;
+    struct rt_hw_backtrace_frame cur_frame;
+
+    if (!thread)
+        return -RT_EINVAL;
+
+    RT_ASSERT(rt_object_get_type(&thread->parent) == RT_Object_Class_Thread);
+
+    if (!frame)
+    {
+        frame = &cur_frame;
+        RT_HW_BACKTRACE_FRAME_GET_SELF(frame);
+        if (!frame->fp)
+            return -RT_EINVAL;
+    }
+
+    /* discard frames as required. The inner most is always threw. */
+    do {
+        rt_hw_backtrace_frame_unwind(thread, frame);
+    } while (skip-- > 0);
+
+    while (nesting < buflen)
+    {
+        *buffer++ = (rt_ubase_t)frame->pc;
+        if (rt_hw_backtrace_frame_unwind(thread, frame))
+        {
+            break;
+        }
+        nesting++;
+    }
+
+    if (nesting < buflen)
+        *buffer = RT_NULL;
+
+    return RT_EOK;
+}
+
+/**
+ * @brief Print backtrace of a thread to system console device
+ *
+ * @param thread which call stack is traced
+ * @return rt_err_t 0 is success, otherwise a failure
+ */
 rt_err_t rt_backtrace_thread(rt_thread_t thread)
 {
     rt_err_t rc;
@@ -404,7 +530,7 @@ rt_err_t rt_backtrace_thread(rt_thread_t thread)
         rc = rt_hw_backtrace_frame_get(thread, &frame);
         if (rc == RT_EOK)
         {
-            rc = rt_backtrace_frame(&frame);
+            rc = rt_backtrace_frame(thread, &frame);
         }
     }
     else
@@ -468,7 +594,7 @@ static void (*rt_realloc_exit_hook)(void **ptr, rt_size_t size);
 static void (*rt_free_hook)(void **ptr);
 
 /**
- * @addtogroup Hook
+ * @ingroup Hook
  * @{
  */
 
@@ -643,7 +769,14 @@ rt_inline void _slab_info(rt_size_t *total,
 #define _MEM_INFO(...)
 #endif
 
-static void _rt_system_heap_init(void *begin_addr, void *end_addr)
+/**
+ * @brief This function will do the generic system heap initialization.
+ *
+ * @param begin_addr the beginning address of system page.
+ *
+ * @param end_addr the end address of system page.
+ */
+void rt_system_heap_init_generic(void *begin_addr, void *end_addr)
 {
     rt_ubase_t begin_align = RT_ALIGN((rt_ubase_t)begin_addr, RT_ALIGN_SIZE);
     rt_ubase_t end_align   = RT_ALIGN_DOWN((rt_ubase_t)end_addr, RT_ALIGN_SIZE);
@@ -657,7 +790,8 @@ static void _rt_system_heap_init(void *begin_addr, void *end_addr)
 }
 
 /**
- * @brief This function will init system heap.
+ * @brief This function will init system heap. User can override this API to
+ *        complete other works, like heap sanitizer initialization.
  *
  * @param begin_addr the beginning address of system page.
  *
@@ -665,7 +799,7 @@ static void _rt_system_heap_init(void *begin_addr, void *end_addr)
  */
 rt_weak void rt_system_heap_init(void *begin_addr, void *end_addr)
 {
-    _rt_system_heap_init(begin_addr, end_addr);
+    rt_system_heap_init_generic(begin_addr, end_addr);
 }
 
 /**

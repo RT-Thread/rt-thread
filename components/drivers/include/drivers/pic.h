@@ -75,6 +75,12 @@ struct rt_pic_ops
     int         (*irq_alloc_msi)(struct rt_pic *pic, struct rt_pci_msi_desc *msi_desc);
     void        (*irq_free_msi)(struct rt_pic *pic, int irq);
 
+#define RT_IRQ_STATE_PENDING    0
+#define RT_IRQ_STATE_ACTIVE     1
+#define RT_IRQ_STATE_MASKED     2
+    rt_err_t    (*irq_set_state)(struct rt_pic *pic, int hwirq, int type, rt_bool_t state);
+    rt_err_t    (*irq_get_state)(struct rt_pic *pic, int hwirq, int type, rt_bool_t *out_state);
+
     int         (*irq_map)(struct rt_pic *pic, int hwirq, rt_uint32_t mode);
     rt_err_t    (*irq_parse)(struct rt_pic *pic, struct rt_ofw_cell_args *args, struct rt_pic_irq *out_pirq);
 
@@ -98,7 +104,6 @@ struct rt_pic_isr
 #ifdef RT_USING_PIC_STATISTICS
 struct rt_pic_irq_statistics
 {
-    rt_ubase_t current_irq_begin[RT_CPUS_NR];
     rt_ubase_t max_irq_time_ns;
     rt_ubase_t min_irq_time_ns;
     rt_ubase_t sum_irq_time_ns;
@@ -188,6 +193,11 @@ rt_err_t rt_pic_irq_get_affinity(int irq, rt_bitmap_t *out_affinity);
 rt_err_t rt_pic_irq_set_triger_mode(int irq, rt_uint32_t mode);
 rt_uint32_t rt_pic_irq_get_triger_mode(int irq);
 void rt_pic_irq_send_ipi(int irq, rt_bitmap_t *cpumask);
+
+rt_err_t rt_pic_irq_set_state_raw(struct rt_pic *pic, int hwirq, int type, rt_bool_t state);
+rt_err_t rt_pic_irq_get_state_raw(struct rt_pic *pic, int hwirq, int type, rt_bool_t *out_state);
+rt_err_t rt_pic_irq_set_state(int irq, int type, rt_bool_t state);
+rt_err_t rt_pic_irq_get_state(int irq, int type, rt_bool_t *out_state);
 
 void rt_pic_irq_parent_enable(struct rt_pic_irq *pirq);
 void rt_pic_irq_parent_disable(struct rt_pic_irq *pirq);

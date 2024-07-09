@@ -52,7 +52,7 @@ menu "Hardware Drivers Config"
                 select RT_USING_RTC
                 default n
 
-        source "$BSP_DIR/../libraries/HAL_Drivers/drivers/Kconfig"
+        source "$(BSP_DIR)/../libraries/HAL_Drivers/drivers/Kconfig"
 
     endmenu
 

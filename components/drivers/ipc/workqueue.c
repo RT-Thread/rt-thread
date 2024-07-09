@@ -94,7 +94,7 @@ static rt_err_t _workqueue_submit_work(struct rt_workqueue *queue,
                                        struct rt_work *work, rt_tick_t ticks)
 {
     rt_base_t level;
-    rt_err_t err;
+    rt_err_t err = RT_EOK;
 
     level = rt_spin_lock_irqsave(&(queue->spinlock));
 
@@ -113,13 +113,7 @@ static rt_err_t _workqueue_submit_work(struct rt_workqueue *queue,
         {
             /* resume work thread, and do a re-schedule if succeed */
             rt_thread_resume(queue->work_thread);
-            rt_spin_unlock_irqrestore(&(queue->spinlock), level);
         }
-        else
-        {
-            rt_spin_unlock_irqrestore(&(queue->spinlock), level);
-        }
-        return RT_EOK;
     }
     else if (ticks < RT_TICK_MAX / 2)
     {
@@ -139,12 +133,14 @@ static rt_err_t _workqueue_submit_work(struct rt_workqueue *queue,
         rt_list_insert_after(queue->delayed_list.prev, &(work->list));
 
         err = rt_timer_start(&(work->timer));
-        rt_spin_unlock_irqrestore(&(queue->spinlock), level);
-
-        return err;
     }
+    else
+    {
+        err = - RT_ERROR;
+    }
+
     rt_spin_unlock_irqrestore(&(queue->spinlock), level);
-    return -RT_ERROR;
+    return err;
 }
 
 static rt_err_t _workqueue_cancel_work(struct rt_workqueue *queue, struct rt_work *work)
@@ -160,14 +156,14 @@ static rt_err_t _workqueue_cancel_work(struct rt_workqueue *queue, struct rt_wor
     {
         if ((err = rt_timer_stop(&(work->timer))) != RT_EOK)
         {
-            rt_spin_unlock_irqrestore(&(queue->spinlock), level);
-            return err;
+            goto exit;
         }
         rt_timer_detach(&(work->timer));
         work->flags &= ~RT_WORK_STATE_SUBMITTING;
     }
     err = queue->work_current != work ? RT_EOK : -RT_EBUSY;
     work->workqueue = RT_NULL;
+exit:
     rt_spin_unlock_irqrestore(&(queue->spinlock), level);
     return err;
 }
@@ -200,12 +196,9 @@ static void _delayed_work_timeout_handler(void *parameter)
     {
         /* resume work thread, and do a re-schedule if succeed */
         rt_thread_resume(queue->work_thread);
-        rt_spin_unlock_irqrestore(&(queue->spinlock), level);
     }
-    else
-    {
-        rt_spin_unlock_irqrestore(&(queue->spinlock), level);
-    }
+
+    rt_spin_unlock_irqrestore(&(queue->spinlock), level);
 }
 
 /**
@@ -358,13 +351,9 @@ rt_err_t rt_workqueue_urgent_work(struct rt_workqueue *queue, struct rt_work *wo
     {
         /* resume work thread, and do a re-schedule if succeed */
         rt_thread_resume(queue->work_thread);
-        rt_spin_unlock_irqrestore(&(queue->spinlock), level);
-    }
-    else
-    {
-        rt_spin_unlock_irqrestore(&(queue->spinlock), level);
     }
 
+    rt_spin_unlock_irqrestore(&(queue->spinlock), level);
     return RT_EOK;
 }
 
@@ -404,6 +393,7 @@ rt_err_t rt_workqueue_cancel_work_sync(struct rt_workqueue *queue, struct rt_wor
     {
         /* wait for work completion */
         rt_sem_take(&(queue->sem), RT_WAITING_FOREVER);
+        /* Note that because work items are automatically deleted after execution, they do not need to be deleted again */
     }
     else
     {

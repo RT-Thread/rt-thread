@@ -186,6 +186,4 @@ rt_err_t lwp_critical_exit(struct rt_lwp *lwp);
 #define LWP_RETURN(name)            {RT_ASSERT(name != _LWP_UNINITIALIZED_RC);return name;}
 #endif /* LWP_DEBUG */
 
-int load_ldso(struct rt_lwp *lwp, char *exec_name, char *const argv[], char *const envp[]);
-
 #endif /* __LWP_INTERNAL_H__ */

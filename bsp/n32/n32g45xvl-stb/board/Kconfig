@@ -193,7 +193,7 @@ menu "On-chip Peripheral Drivers"
                 default n
         endif
 
-    source "../libraries/n32_drivers/Kconfig"
+    rsource "../../libraries/n32_drivers/Kconfig"
 
 endmenu
 

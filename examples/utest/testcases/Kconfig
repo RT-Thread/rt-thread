@@ -7,14 +7,14 @@ config RT_USING_UTESTCASES
 
 if RT_USING_UTESTCASES
 
-source "$RTT_DIR/examples/utest/testcases/utest/Kconfig"
-source "$RTT_DIR/examples/utest/testcases/kernel/Kconfig"
-source "$RTT_DIR/examples/utest/testcases/cpp11/Kconfig"
-source "$RTT_DIR/examples/utest/testcases/drivers/serial_v2/Kconfig"
-source "$RTT_DIR/examples/utest/testcases/drivers/ipc/Kconfig"
-source "$RTT_DIR/examples/utest/testcases/posix/Kconfig"
-source "$RTT_DIR/examples/utest/testcases/mm/Kconfig"
-
+rsource "utest/Kconfig"
+rsource "kernel/Kconfig"
+rsource "cpp11/Kconfig"
+rsource "drivers/serial_v2/Kconfig"
+rsource "drivers/ipc/Kconfig"
+rsource "posix/Kconfig"
+rsource "mm/Kconfig"
+rsource "tmpfs/Kconfig"
 endif
 
 endmenu

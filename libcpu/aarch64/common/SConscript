@@ -6,7 +6,14 @@ Import('rtconfig')
 
 cwd     = GetCurrentDir()
 src     = Glob('*.c') + Glob('*.cpp') + Glob('*.S')
-CPPPATH = [cwd]
+CPPPATH = [cwd, cwd + '/include']
+
+if GetDepend('RT_USING_SMP'):
+    core_model = 'mp'
+else:
+    core_model = 'up'
+
+src += Glob(core_model + '/*.S')
 
 if GetDepend('RT_USING_OFW') == False:
     SrcRemove(src, ['setup.c', 'cpu_psci.c', 'psci.c'])

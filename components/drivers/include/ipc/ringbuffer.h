@@ -12,6 +12,7 @@
 
 #include <rtdef.h>
 #include <rtconfig.h>
+#include <rtthread.h>
 
 #ifdef __cplusplus
 extern "C" {

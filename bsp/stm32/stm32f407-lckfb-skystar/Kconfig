@@ -1,35 +1,26 @@
 mainmenu "RT-Thread Configuration"
 
-config BSP_DIR
-    string
-    option env="BSP_ROOT"
-    default "."
+BSP_DIR := .
 
-config RTT_DIR
-    string
-    option env="RTT_ROOT"
-    default "../../.."
+RTT_DIR := ../../..
 
-config PKGS_DIR
-    string
-    option env="PKGS_ROOT"
-    default "packages"
+PKGS_DIR := packages
 
-config SOC_STM32F407ZG
+config SOC_STM32F407VE
     bool
     select SOC_SERIES_STM32F4
     select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN
     default y
 
-config BOARD_STM32F407_SPARK
+config BOARD_STM32F407_LCKFB
     bool
     default y
 
-source "$RTT_DIR/Kconfig"
-source "$PKGS_DIR/Kconfig"
-source "../libraries/Kconfig"
+source "$(RTT_DIR)/Kconfig"
+osource "$PKGS_DIR/Kconfig"
+rsource "../libraries/Kconfig"
 
 if !RT_USING_NANO
-source "board/Kconfig"
+rsource "board/Kconfig"
 endif

@@ -1,0 +1,453 @@
+menu "Hardware Drivers Config"
+
+config SOC_HPM6000
+    bool
+    select SOC_SERIES_HPM6000
+    select RT_USING_COMPONENTS_INIT
+    select RT_USING_USER_MAIN
+    default y
+
+config BSP_USING_ENET_PHY_RTL8211
+    bool
+    default n
+
+menu "On-chip Peripheral Drivers"
+    config BSP_USING_GPIO
+        bool "Enable GPIO"
+        select RT_USING_PIN if BSP_USING_GPIO
+        default n
+
+    menuconfig BSP_USING_UART
+        bool "Enable UART"
+        default y
+        select RT_USING_SERIAL
+        if BSP_USING_UART
+            menuconfig BSP_USING_UART0
+                bool "Enable UART0 (Debugger)"
+                default y
+                if BSP_USING_UART0
+                    config BSP_UART0_RX_USING_DMA
+                        bool "Enable UART0 RX DMA"
+                        depends on BSP_USING_UART0 && RT_SERIAL_USING_DMA
+                        default n
+                    config BSP_UART0_TX_USING_DMA
+                        bool "Enable UART0 TX DMA"
+                        depends on BSP_USING_UART0 && RT_SERIAL_USING_DMA
+                        default n
+                    config BSP_UART0_RX_BUFSIZE
+                        int "Set UART0 RX buffer size"
+                        range 64 65535
+                        depends on RT_USING_SERIAL_V2
+                        default 128
+                    config BSP_UART0_TX_BUFSIZE
+                        int "Set UART0 TX buffer size"
+                        range 0 65535
+                        depends on RT_USING_SERIAL_V2
+                        default 0
+                endif
+            menuconfig BSP_USING_UART3
+                bool "Enable UART3"
+                default y
+                if BSP_USING_UART3
+                    config BSP_UART3_RX_USING_DMA
+                        bool "Enable UART3 RX DMA"
+                        depends on BSP_USING_UART3 && RT_SERIAL_USING_DMA
+                        default n
+                    config BSP_UART3_TX_USING_DMA
+                        bool "Enable UART3 TX DMA"
+                        depends on BSP_USING_UART3 && RT_SERIAL_USING_DMA
+                        default n
+                    config BSP_UART3_RX_BUFSIZE
+                        int "Set UART3 RX buffer size"
+                        range 64 65535
+                        depends on RT_USING_SERIAL_V2
+                        default 1024
+                    config BSP_UART3_TX_BUFSIZE
+                        int "Set UART3 TX buffer size"
+                        range 0 65535
+                        depends on RT_USING_SERIAL_V2
+                        default 0
+                endif
+        endif
+
+
+    menuconfig BSP_USING_SPI
+        bool "Enable SPI"
+        default n
+        select RT_USING_SPI if BSP_USING_SPI
+        if BSP_USING_SPI
+            config BSP_USING_SPI3
+                bool "Enable SPI3"
+                default n
+                if BSP_USING_SPI3
+                    config BSP_SPI3_USING_DMA
+                        bool "Enable SPI3 DMA"
+                        default n
+                endif
+        endif
+
+    menuconfig BSP_USING_RTC
+       bool "Enable RTC"
+       default n
+
+    menuconfig BSP_USING_ETH
+       bool "Enable Ethernet"
+       default n
+
+       select RT_USING_ETH
+       if BSP_USING_ETH
+           choice
+               prompt "ETH"
+               default BSP_USING_ETH0
+
+               config BSP_USING_ETH0
+               bool "Enable ETH0"
+               select BSP_USING_ENET_PHY_RTL8211
+           endchoice
+       endif
+
+    menuconfig BSP_USING_SDXC
+        bool "Enable SDXC"
+        default n
+        select RT_USING_SDIO if BSP_USING_SDXC
+        if BSP_USING_SDXC
+            config BSP_USING_SDXC0
+                bool "Enable SDXC0"
+                default n
+            if BSP_USING_SDXC0
+                choice
+                    prompt "Select BUS_WIDTH"
+                    default BSP_SDXC0_BUS_WIDTH_8BIT
+                    config BSP_SDXC0_BUS_WIDTH_1BIT
+                        bool "1-bit"
+                    config BSP_SDXC0_BUS_WIDTH_4BIT
+                        bool "4-bit"
+                    config BSP_SDXC0_BUS_WIDTH_8BIT
+                        bool "8-bit"
+                endchoice
+                choice
+                    prompt "Select Voltage"
+                    default BSP_SDXC0_VOLTAGE_1V8
+                    config BSP_SDXC0_VOLTAGE_3V3
+                        bool "3.3V"
+                    config BSP_SDXC0_VOLTAGE_1V8
+                        bool "1.8V"
+                    config BSP_SDXC0_VOLTAGE_DUAL
+                        bool "Dual voltage 3.3V / 1.8V"
+                endchoice
+                config BSP_SDXC0_VSEL_PIN
+                    default "None"
+                    string "VSEL pin name"
+                config BSP_SDXC0_PWR_PIN
+                    default "None"
+                    string "PWR pin name"
+            endif
+
+            config BSP_USING_SDXC1
+                bool "Enable SDXC1"
+                default y
+                if BSP_USING_SDXC1
+                    choice
+                        prompt "Select BUS_WIDTH"
+                        default BSP_SDXC1_BUS_WIDTH_4BIT
+                        config BSP_SDXC1_BUS_WIDTH_1BIT
+                            bool "1-bit"
+                        config BSP_SDXC1_BUS_WIDTH_4BIT
+                            bool "4-bit"
+                    endchoice
+                    choice
+                        prompt "Select Voltage"
+                        default BSP_SDXC1_VOLTAGE_3V3
+                        config BSP_SDXC1_VOLTAGE_3V3
+                            bool "3.3V"
+                        config BSP_SDXC1_VOLTAGE_1V8
+                            bool "1.8V"
+                        config BSP_SDXC1_VOLTAGE_DUAL
+                            bool "Dual voltage 3.3V / 1.8V"
+                    endchoice
+                    config BSP_SDXC1_VSEL_PIN
+                        default "PD12"
+                        string "VSEL pin name"
+                    config BSP_SDXC1_PWR_PIN
+                        default "PD07"
+                        string "PWR pin name"
+                endif
+        endif
+
+    menuconfig BSP_USING_TOUCH
+       bool "Enable touch"
+       default n
+        if BSP_USING_TOUCH
+            config BSP_USING_TOUCH_GT911
+                bool "Enable GT911"
+                default y
+
+            config BSP_USING_TOUCH_FT5406
+                bool "Enable FT5406"
+                default n
+        endif
+
+    menuconfig BSP_USING_LCD
+        bool "Enable LCD"
+        default n
+        if BSP_USING_LCD
+            config BSP_USING_LCD_ISR
+                bool "Enable LCD interrupt"
+                default n
+        endif
+
+    menuconfig BSP_USING_LVGL
+        bool "Enable LVGL"
+        default n
+        select PKG_USING_LVGL if BSP_USING_LVGL
+        select BSP_USING_PDMA if BSP_USING_LVGL
+
+    menuconfig BSP_USING_PDMA
+        bool "Enable PDMA Driver"
+        default n
+
+    menuconfig BSP_USING_GPTMR
+        bool "Enable GPTMR"
+        default n
+        select RT_USING_HWTIMER if BSP_USING_GPTMR
+        if BSP_USING_GPTMR
+            config BSP_USING_GPTMR1
+                bool "Enable GPTMR1"
+                default n
+            config BSP_USING_GPTMR2
+                bool "Enable GPTMR2"
+                default n
+            config BSP_USING_GPTMR3
+                bool "Enable GPTMR3"
+                default n
+            config BSP_USING_GPTMR4
+                bool "Enable GPTMR4"
+                default n
+            config BSP_USING_GPTMR5
+                bool "Enable GPTMR5"
+                default n
+            config BSP_USING_GPTMR6
+                bool "Enable GPTMR6"
+                default n
+            config BSP_USING_GPTMR7
+                bool "Enable GPTMR7"
+                default n
+        endif
+
+    menuconfig BSP_USING_I2C
+        bool "Enable I2C"
+        default n
+        select RT_USING_I2C if BSP_USING_I2C
+        if BSP_USING_I2C
+            config BSP_USING_I2C0
+                bool "Enable I2C0"
+                default y
+            config BSP_USING_I2C1
+                bool "Enable I2C1"
+                default n
+            config BSP_USING_I2C3
+                bool "Enable I2C3"
+                default n
+        endif
+        if BSP_USING_I2C0
+            config BSP_I2C0_USING_DMA
+                bool "Enable I2C0 DMA"
+                default n
+        endif
+        if BSP_USING_I2C1
+            config BSP_I2C1_USING_DMA
+                bool "Enable I2C1 DMA"
+                default n
+        endif
+        if BSP_USING_I2C3
+            config BSP_I2C3_USING_DMA
+                bool "Enable I2C3 DMA"
+                default n
+        endif
+
+    menuconfig BSP_USING_FEMC
+       bool "Enable DRAM"
+       default y
+
+    menuconfig INIT_EXT_RAM_FOR_DATA
+        bool "INIT_EXT_RAM_FOR_DATA"
+        default y
+
+
+    menuconfig BSP_USING_XPI_FLASH
+        bool "Enable XPI FLASH"
+        default n
+        select RT_USING_FAL if BSP_USING_XPI_FLASH
+
+    menuconfig BSP_USING_DAO
+        bool "Enable Audio DAO play"
+        default n
+        select RT_USING_AUDIO if BSP_USING_DAO
+
+    menuconfig BSP_USING_PDM
+        bool "Enable Audio PDM record"
+        default n
+        select RT_USING_AUDIO if BSP_USING_PDM
+
+    menuconfig BSP_USING_I2S
+        bool "Enable Audio I2S device"
+        default n
+        select RT_USING_AUDIO if BSP_USING_I2S
+        if BSP_USING_I2S
+            config BSP_USING_I2S3
+                bool "Enable I2S3"
+                default y
+            config BSP_USING_AUDIO_CODEC_WM8960
+                bool "Enable audio codec on board"
+                default y
+        endif
+
+    menuconfig BSP_USING_USB
+       bool "Enable USB"
+       default n
+       if BSP_USING_USB
+            config BSP_USING_USB_DEVICE
+                bool "Enable USB Device"
+                default n
+            config BSP_USING_USB_HOST
+                bool "Enable USB Host"
+                select RT_USING_CACHE
+                default n
+       endif
+
+
+    menuconfig BSP_USING_EWDG
+        bool "Enable EWDG"
+        default n
+        select RT_USING_WDT if BSP_USING_EWDG
+        if BSP_USING_EWDG
+            config BSP_USING_EWDG0
+                bool "Enable EWDG0"
+                default n
+            config BSP_USING_EWDG1
+                bool "Enable EWDG1"
+                default n
+        endif
+
+    menuconfig BSP_USING_MCAN
+        bool "Enable MCAN"
+        default n
+        select RT_USING_CAN if BSP_USING_MCAN
+        if BSP_USING_MCAN
+            config BSP_USING_MCAN0
+                bool "Enable MCAN0"
+                default n
+            config BSP_USING_MCAN1
+                bool "Enable MCAN1"
+                default n
+            config BSP_USING_MCAN2
+                bool "Enable MCAN2"
+                default n
+            config BSP_USING_MCAN3
+                bool "Enable MCAN3"
+                default n
+            config BSP_USING_MCAN4
+                bool "Enable MCAN4"
+                default n
+            config BSP_USING_MCAN5
+                bool "Enable MCAN5"
+                default n
+            config BSP_USING_MCAN6
+                bool "Enable MCAN6"
+                default n
+            config BSP_USING_MCAN7
+                bool "Enable MCAN7"
+                default n
+        endif
+
+    menuconfig BSP_USING_ADC
+        bool "Enable ADC"
+        default n
+        select RT_USING_ADC if BSP_USING_ADC
+        if BSP_USING_ADC
+            menuconfig BSP_USING_ADC12
+                bool "Enable ADC12"
+                default n
+                if BSP_USING_ADC12
+                    config BSP_USING_ADC0
+                        bool "Enable ADC0"
+                        default n
+                    config BSP_USING_ADC1
+                        bool "Enable ADC1"
+                        default n
+                    config BSP_USING_ADC2
+                        bool "Enable ADC2"
+                        default n
+                    endif
+            menuconfig BSP_USING_ADC16
+                bool "Enable ADC16"
+                default n
+                if BSP_USING_ADC16
+                    config BSP_USING_ADC3
+                        bool "Enable ADC3"
+                        default n
+                endif
+         endif
+
+    menuconfig BSP_USING_CAMERA
+        bool "Enable camera"
+        default n
+            if BSP_USING_CAMERA
+                config BSP_USING_CAMERA_MT9M114
+                    bool "Enable mt9m114"
+                        default y
+
+                config BSP_USING_CAMERA_OV5640
+                    bool "Enable ov5640"
+                        default n
+
+                config BSP_USING_CAMERA_OV7725
+                    bool "Enable ov7725"
+                        default n
+            endif
+
+    menuconfig BSP_USING_JPEG
+        bool "Enable JPEG Driver"
+        default n
+
+    menuconfig BSP_USING_CAM
+        bool "Enable CAM Driver"
+        default n
+
+    menuconfig  BSP_USING_PANEL
+        bool "Enable panel"
+        default n
+        if BSP_USING_PANEL
+            config BSP_USEING_PANEL_RGB_TM070RDH13
+                bool "Enable RGB TM070RDH13"
+                default n
+            config BSP_USEING_PANEL_MIPI_MC10128007_31B
+                bool "Enable MIPI MC10128007_31B"
+                default y
+            config BSP_USEING_PANEL_LVDS_TM103XDGP01
+                bool "Enable LVDS TM103XDGP01"
+                default n
+            config BSP_USEING_PANEL_LVDS_CC10128007
+                bool "Enable LVDS CC10128007"
+                default n
+            endif
+
+    menuconfig BSP_USING_PIXELMUX
+        bool "Enable pixelmux Driver"
+        default n
+
+    menuconfig BSP_USING_MIPI_CSI
+        bool "Enable MIPI CSI Driver"
+        default n
+
+    menuconfig BSP_USING_MIPI_DSI
+        bool "Enable MIPI DSI Driver"
+        default n
+    menuconfig BSP_USING_RTT_LCD_DRIVER
+        bool "Enable RTT LCD Driver"
+        select BSP_USING_LCD
+        default n
+endmenu
+
+endmenu
+

@@ -515,6 +515,7 @@ rt_err_t rt_pic_handle_isr(struct rt_pic_irq *pirq)
 #ifdef RT_USING_PIC_STATISTICS
     struct timespec ts;
     rt_ubase_t irq_time_ns;
+    rt_ubase_t current_irq_begin;
 #endif
 
     RT_ASSERT(pirq != RT_NULL);
@@ -522,7 +523,7 @@ rt_err_t rt_pic_handle_isr(struct rt_pic_irq *pirq)
 
 #ifdef RT_USING_PIC_STATISTICS
     rt_ktime_boottime_get_ns(&ts);
-    pirq->stat.current_irq_begin[rt_hw_cpu_id()] = ts.tv_sec * (1000UL * 1000 * 1000) + ts.tv_nsec;
+    current_irq_begin = ts.tv_sec * (1000UL * 1000 * 1000) + ts.tv_nsec;
 #endif
 
     handler_nodes = &pirq->isr.list;
@@ -577,7 +578,7 @@ rt_err_t rt_pic_handle_isr(struct rt_pic_irq *pirq)
 
 #ifdef RT_USING_PIC_STATISTICS
     rt_ktime_boottime_get_ns(&ts);
-    irq_time_ns = ts.tv_sec * (1000UL * 1000 * 1000) + ts.tv_nsec - pirq->stat.current_irq_begin[rt_hw_cpu_id()];
+    irq_time_ns = ts.tv_sec * (1000UL * 1000 * 1000) + ts.tv_nsec - current_irq_begin;
     pirq->stat.sum_irq_time_ns += irq_time_ns;
     if (irq_time_ns < pirq->stat.min_irq_time_ns || pirq->stat.min_irq_time_ns == 0)
     {
@@ -891,6 +892,85 @@ void rt_pic_irq_send_ipi(int irq, rt_bitmap_t *cpumask)
 
         rt_hw_spin_unlock(&pirq->rw_lock.lock);
     }
+}
+
+rt_err_t rt_pic_irq_set_state_raw(struct rt_pic *pic, int hwirq, int type, rt_bool_t state)
+{
+    rt_err_t err;
+
+    if (pic && hwirq >= 0)
+    {
+        if (pic->ops->irq_set_state)
+        {
+            err = pic->ops->irq_set_state(pic, hwirq, type, state);
+        }
+        else
+        {
+            err = -RT_ENOSYS;
+        }
+    }
+    else
+    {
+        err = -RT_EINVAL;
+    }
+
+    return err;
+}
+
+rt_err_t rt_pic_irq_get_state_raw(struct rt_pic *pic, int hwirq, int type, rt_bool_t *out_state)
+{
+    rt_err_t err;
+
+    if (pic && hwirq >= 0)
+    {
+        if (pic->ops->irq_get_state)
+        {
+            rt_bool_t state;
+
+            if (!(err = pic->ops->irq_get_state(pic, hwirq, type, &state)) && out_state)
+            {
+                *out_state = state;
+            }
+        }
+        else
+        {
+            err = -RT_ENOSYS;
+        }
+    }
+    else
+    {
+        err = -RT_EINVAL;
+    }
+
+    return err;
+}
+
+rt_err_t rt_pic_irq_set_state(int irq, int type, rt_bool_t state)
+{
+    rt_err_t err;
+    struct rt_pic_irq *pirq = irq2pirq(irq);
+
+    RT_ASSERT(pirq != RT_NULL);
+
+    rt_hw_spin_lock(&pirq->rw_lock.lock);
+    err = rt_pic_irq_set_state_raw(pirq->pic, pirq->hwirq, type, state);
+    rt_hw_spin_unlock(&pirq->rw_lock.lock);
+
+    return err;
+}
+
+rt_err_t rt_pic_irq_get_state(int irq, int type, rt_bool_t *out_state)
+{
+    rt_err_t err;
+    struct rt_pic_irq *pirq = irq2pirq(irq);
+
+    RT_ASSERT(pirq != RT_NULL);
+
+    rt_hw_spin_lock(&pirq->rw_lock.lock);
+    err = rt_pic_irq_get_state_raw(pirq->pic, pirq->hwirq, type, out_state);
+    rt_hw_spin_unlock(&pirq->rw_lock.lock);
+
+    return err;
 }
 
 void rt_pic_irq_parent_enable(struct rt_pic_irq *pirq)

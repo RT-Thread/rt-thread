@@ -1,0 +1,2 @@
+rsource "usb/Kconfig"
+rsource "fdt/Kconfig"

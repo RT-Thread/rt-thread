@@ -28,6 +28,12 @@ typedef struct {
     bool vsync_active_low;
 } camera_param_dvp_t;
 
+typedef struct {
+    bool de_active_low;
+    bool hsync_active_low;
+    bool vsync_active_low;
+} camera_param_mipi_t;
+
 typedef enum {
     camera_interface_dvp,
     camera_interface_mipi,
@@ -85,6 +91,8 @@ extern "C" {
  */
 hpm_stat_t camera_device_init(camera_context_t *camera_context, camera_config_t *camera_config);
 hpm_stat_t camera_device_get_dvp_param(camera_context_t *camera_context, camera_config_t *camera_config);
+hpm_stat_t camera_device_get_mipi_param(camera_context_t *camera_context, camera_config_t *camera_config);
+
 #ifdef __cplusplus
 }
 #endif

@@ -52,6 +52,9 @@ hpm_stat_t wm8960_init(wm8960_control_t *control, wm8960_config_t *config)
     /* set wm8960 as slave */
     HPM_CHECK_RET(wm8960_modify_reg(control, WM8960_IFACE1, WM8960_IFACE1_MS_MASK, WM8960_IFACE1_MS_SET(0)));
 
+    /* invert LRCLK */
+    HPM_CHECK_RET(wm8960_modify_reg(control, WM8960_IFACE1, WM8960_IFACE1_LRP_MASK, WM8960_IFACE1_LRP_SET(1)));
+
     HPM_CHECK_RET(wm8960_write_reg(control, WM8960_ADDCTL1, 0xC0));
     HPM_CHECK_RET(wm8960_write_reg(control, WM8960_ADDCTL4, 0x40));
 
@@ -401,41 +404,36 @@ hpm_stat_t wm8960_set_volume(wm8960_control_t *control, wm8960_module_t module, 
     return stat;
 }
 
+static bool wm8960_check_clock_tolerance(uint32_t source, uint32_t target)
+{
+    uint32_t delta = (source >= target) ? (source - target) : (target - source);
+    if (delta * 100 <= HPM_WM8960_MCLK_TOLERANCE * target) {
+        return true;
+    }
+    return false;
+}
+
 hpm_stat_t wm8960_set_data_format(wm8960_control_t *control, uint32_t sysclk, uint32_t sample_rate, uint32_t bits)
 {
     hpm_stat_t stat = status_success;
-    uint32_t divider = 0;
-    uint16_t val     = 0;
+    uint16_t val = 0;
+    uint32_t ratio[7] = {256, 256 * 1.5, 256 * 2, 256 * 3, 256 * 4, 256 * 5.5, 256 * 6};
+    bool clock_meet_requirement = false;
 
-    /* Compute sample rate divider and SYSCLK Pre-divider, dac and adc are the same sample rate */
-    divider = sysclk / sample_rate;
-
-    if (divider > 6 * 512 * HPM_WM8960_MCLK_TOLERANCE / 100 + 6 * 512) {
-        divider = divider / 2; /* SYSCLK Pre-divider */
-        val |= WM8960_CLOCK1_SYSCLKDIV_SET(2U);
+    if (sysclk / sample_rate > 256 * 6) {
+        sysclk = sysclk / 2;
+        val = WM8960_CLOCK1_SYSCLKDIV_SET(2U); /* SYSCLK Pre-divider */
     }
 
-    if (abs(divider - 256) <= 256 * HPM_WM8960_MCLK_TOLERANCE) {
-        divider = 256;
-    } else if (abs(divider - 256 * 1.5) <= 256 * 1.5 * HPM_WM8960_MCLK_TOLERANCE) {
-        divider = 256 * 1.5;
-        val |= ((1 << WM8960_CLOCK1_ADCDIV_SHIFT) | (1 << WM8960_CLOCK1_DACDIV_SHIFT));
-    } else if (abs(divider - 256 * 2) <= 256 * 2 * HPM_WM8960_MCLK_TOLERANCE) {
-        divider = 256 * 2;
-        val |= ((2 << WM8960_CLOCK1_ADCDIV_SHIFT) | (2 << WM8960_CLOCK1_DACDIV_SHIFT));
-    } else if (abs(divider - 256 * 3) <= 256 * 3 * HPM_WM8960_MCLK_TOLERANCE) {
-        divider = 256 * 3;
-        val |= ((3 << WM8960_CLOCK1_ADCDIV_SHIFT) | (3 << WM8960_CLOCK1_DACDIV_SHIFT));
-    } else if (abs(divider - 256 * 4) <= 256 * 4 * HPM_WM8960_MCLK_TOLERANCE) {
-        divider = 256 * 4;
-        val |= ((4 << WM8960_CLOCK1_ADCDIV_SHIFT) | (4 << WM8960_CLOCK1_DACDIV_SHIFT));
-    } else if (abs(divider - 256 * 5.5) <= 256 * 5.5 * HPM_WM8960_MCLK_TOLERANCE) {
-        divider = 256 * 5.5;
-        val |= ((5 << WM8960_CLOCK1_ADCDIV_SHIFT) | (5 << WM8960_CLOCK1_DACDIV_SHIFT));
-    } else if (abs(divider - 256 * 6) <= 256 * 6 * HPM_WM8960_MCLK_TOLERANCE) {
-        divider = 256 * 6;
-        val |= ((6 << WM8960_CLOCK1_ADCDIV_SHIFT) | (6 << WM8960_CLOCK1_DACDIV_SHIFT));
-    } else {
+    for (uint8_t i = 0; i < 7; i++) {
+        if (wm8960_check_clock_tolerance(sysclk, sample_rate * ratio[i])) {
+            val |= ((i << WM8960_CLOCK1_ADCDIV_SHIFT) | (i << WM8960_CLOCK1_DACDIV_SHIFT));
+            clock_meet_requirement = true;
+            break;
+        }
+    }
+
+    if (!clock_meet_requirement) {
         return status_invalid_argument;
     }
     HPM_CHECK_RET(wm8960_modify_reg(control, WM8960_CLOCK1, 0x1FEU, val));

@@ -12,7 +12,11 @@
 #endif
 
 #ifndef HPM_UART_LIN_BREAK_LENGTH
-#define HPM_UART_LIN_BREAK_LENGTH (13U)
+#define HPM_UART_LIN_BREAK_LENGTH (13U)  /* bits */
+#endif
+
+#ifndef HPM_UART_LIN_WAKEUP_LENGTH
+#define HPM_UART_LIN_WAKEUP_LENGTH (400U) /* us */
 #endif
 
 
@@ -84,6 +88,16 @@ static void hpm_uart_lin_send_break(UART_Type *ptr, uart_lin_master_pin_ctrl_t *
 static void hpm_uart_lin_send_sync(UART_Type *ptr)
 {
     uart_write_byte(ptr, 0x55); /* sync phase */
+}
+
+void hpm_uart_lin_send_wakeup(UART_Type *ptr, uart_lin_master_pin_ctrl_t *pin_ctrl)
+{
+    pin_ctrl->config_uart_pin_as_gpio(ptr);
+    gpio_set_pin_output(pin_ctrl->ptr, pin_ctrl->tx_port, pin_ctrl->tx_pin);
+    gpio_write_pin(pin_ctrl->ptr, pin_ctrl->tx_port, pin_ctrl->tx_pin, 0);
+    pin_ctrl->delay_us(HPM_UART_LIN_WAKEUP_LENGTH);
+    gpio_write_pin(pin_ctrl->ptr, pin_ctrl->tx_port, pin_ctrl->tx_pin, 1);
+    pin_ctrl->config_uart_pin(ptr);
 }
 
 uart_lin_stat_t hpm_uart_lin_master_send_frame(uart_lin_master_config_t *config)
@@ -229,7 +243,7 @@ uart_lin_stat_t hpm_uart_lin_master_receive_data(uart_lin_master_config_t *confi
     UART_Type *ptr = config->ptr;
     uart_lin_data_t data = config->data;
     uint8_t pid = hpm_uart_lin_calculate_protected_id(config->id);
-    uint8_t checksum;
+    uint8_t checksum = 0;
     uint8_t index = 0;
     uint8_t *buff = data.buff;
 

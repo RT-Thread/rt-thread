@@ -68,14 +68,12 @@ typedef struct {
     __R  uint8_t  RESERVED8[800];              /* 0x1E0 - 0x4FF: Reserved */
     __R  uint32_t MSHC_VER_ID;                 /* 0x500:  */
     __R  uint32_t MSHC_VER_TYPE;               /* 0x504:  */
-    __R  uint8_t  RESERVED9[8];                /* 0x508 - 0x50F: Reserved */
-    __RW uint32_t MBIU_CTRL;                   /* 0x510: Y */
-    __R  uint8_t  RESERVED10[24];              /* 0x514 - 0x52B: Reserved */
+    __R  uint8_t  RESERVED9[36];               /* 0x508 - 0x52B: Reserved */
     __RW uint32_t EMMC_BOOT_CTRL;              /* 0x52C:  */
-    __R  uint8_t  RESERVED11[16];              /* 0x530 - 0x53F: Reserved */
+    __R  uint8_t  RESERVED10[16];              /* 0x530 - 0x53F: Reserved */
     __RW uint32_t AUTO_TUNING_CTRL;            /* 0x540:  */
     __RW uint32_t AUTO_TUNING_STAT;            /* 0x544:  */
-    __R  uint8_t  RESERVED12[10936];           /* 0x548 - 0x2FFF: Reserved */
+    __R  uint8_t  RESERVED11[10936];           /* 0x548 - 0x2FFF: Reserved */
     __RW uint32_t MISC_CTRL0;                  /* 0x3000:  */
     __RW uint32_t MISC_CTRL1;                  /* 0x3004:  */
 } SDXC_Type;
@@ -445,7 +443,7 @@ typedef struct {
  *
  * Command Response
  * These bits reflect 39-8 bits of SD/eMMC Response Field.
- * Note: For Auto CMD, the 32-bit response (bits 39-8 of the Response Field) is updated in the RESP67_R register.
+ * Note: For Auto CMD, the 32-bit response (bits 39-8 of the Response Field) is updated in the RESP[RESP67] register.
  */
 #define SDXC_RESP_RESP01_MASK (0xFFFFFFFFUL)
 #define SDXC_RESP_RESP01_SHIFT (0U)
@@ -826,7 +824,7 @@ typedef struct {
  * This bit enables VDD1 power of the card.
  * This setting is available on the sd_vdd1_on output of SDXC so that it can be used to control the VDD1 power supply of the card.
  * Before setting this bit, the SD Host Driver sets the SD Bus Voltage Select bit. If the Host Controller detects a No Card state, this bit is cleared.
- * In SD mode, if this bit is cleared, the Host Controller stops the SD Clock by clearing the SD_CLK_IN bit in the CLK_CTRL_R register.
+ * In SD mode, if this bit is cleared, the Host Controller stops the SD Clock by clearing the SD_CLK_EN bit in the SYS_CTRL register.
  * Values:
  * 0x0 (OFF): Power off
  * 0x1 (ON): Power on
@@ -1523,7 +1521,7 @@ typedef struct {
  * BOOT_ACK_ERR_STAT_EN (RW)
  *
  * Boot Acknowledgment Error (eMMC Mode only)
- * Setting this bit to 1 enables setting of Boot Acknowledgment Error in Error Interrupt Status register (ERROR_INT_STAT_R).
+ * Setting this bit to 1 enables setting of Boot Acknowledgment Error in Error Interrupt Status register (INT_STAT).
  * Values:
  * 0x0 (FALSE): Masked
  * 0x1 (TRUE): Enabled
@@ -3955,43 +3953,6 @@ typedef struct {
 #define SDXC_MSHC_VER_TYPE_VER_TYPE_SHIFT (0U)
 #define SDXC_MSHC_VER_TYPE_VER_TYPE_GET(x) (((uint32_t)(x) & SDXC_MSHC_VER_TYPE_VER_TYPE_MASK) >> SDXC_MSHC_VER_TYPE_VER_TYPE_SHIFT)
 
-/* Bitfield definition for register: MBIU_CTRL */
-/*
- * BURST_INCR16_EN (RW)
- *
- */
-#define SDXC_MBIU_CTRL_BURST_INCR16_EN_MASK (0x8U)
-#define SDXC_MBIU_CTRL_BURST_INCR16_EN_SHIFT (3U)
-#define SDXC_MBIU_CTRL_BURST_INCR16_EN_SET(x) (((uint32_t)(x) << SDXC_MBIU_CTRL_BURST_INCR16_EN_SHIFT) & SDXC_MBIU_CTRL_BURST_INCR16_EN_MASK)
-#define SDXC_MBIU_CTRL_BURST_INCR16_EN_GET(x) (((uint32_t)(x) & SDXC_MBIU_CTRL_BURST_INCR16_EN_MASK) >> SDXC_MBIU_CTRL_BURST_INCR16_EN_SHIFT)
-
-/*
- * BURST_INCR8_EN (RW)
- *
- */
-#define SDXC_MBIU_CTRL_BURST_INCR8_EN_MASK (0x4U)
-#define SDXC_MBIU_CTRL_BURST_INCR8_EN_SHIFT (2U)
-#define SDXC_MBIU_CTRL_BURST_INCR8_EN_SET(x) (((uint32_t)(x) << SDXC_MBIU_CTRL_BURST_INCR8_EN_SHIFT) & SDXC_MBIU_CTRL_BURST_INCR8_EN_MASK)
-#define SDXC_MBIU_CTRL_BURST_INCR8_EN_GET(x) (((uint32_t)(x) & SDXC_MBIU_CTRL_BURST_INCR8_EN_MASK) >> SDXC_MBIU_CTRL_BURST_INCR8_EN_SHIFT)
-
-/*
- * BUSRT_INCR4_EN (RW)
- *
- */
-#define SDXC_MBIU_CTRL_BUSRT_INCR4_EN_MASK (0x2U)
-#define SDXC_MBIU_CTRL_BUSRT_INCR4_EN_SHIFT (1U)
-#define SDXC_MBIU_CTRL_BUSRT_INCR4_EN_SET(x) (((uint32_t)(x) << SDXC_MBIU_CTRL_BUSRT_INCR4_EN_SHIFT) & SDXC_MBIU_CTRL_BUSRT_INCR4_EN_MASK)
-#define SDXC_MBIU_CTRL_BUSRT_INCR4_EN_GET(x) (((uint32_t)(x) & SDXC_MBIU_CTRL_BUSRT_INCR4_EN_MASK) >> SDXC_MBIU_CTRL_BUSRT_INCR4_EN_SHIFT)
-
-/*
- * UNDEFL_INCR_EN (RW)
- *
- */
-#define SDXC_MBIU_CTRL_UNDEFL_INCR_EN_MASK (0x1U)
-#define SDXC_MBIU_CTRL_UNDEFL_INCR_EN_SHIFT (0U)
-#define SDXC_MBIU_CTRL_UNDEFL_INCR_EN_SET(x) (((uint32_t)(x) << SDXC_MBIU_CTRL_UNDEFL_INCR_EN_SHIFT) & SDXC_MBIU_CTRL_UNDEFL_INCR_EN_MASK)
-#define SDXC_MBIU_CTRL_UNDEFL_INCR_EN_GET(x) (((uint32_t)(x) & SDXC_MBIU_CTRL_UNDEFL_INCR_EN_MASK) >> SDXC_MBIU_CTRL_UNDEFL_INCR_EN_SHIFT)
-
 /* Bitfield definition for register: EMMC_BOOT_CTRL */
 /*
  * BOOT_TOUT_CNT (RW)
@@ -4239,7 +4200,7 @@ typedef struct {
  *
  * This fields enables software-managed tuning flow.
  * Values:
- * 0x1 (SW_TUNING_ENABLE): Software-managed tuning enabled. AT_STAT_R.CENTER_PH_CODE Field is now writable.
+ * 0x1 (SW_TUNING_ENABLE): Software-managed tuning enabled. AUTO_TUNING_STAT.CENTER_PH_CODE Field is now writable.
  * 0x0 (SW_TUNING_DISABLE): Software-managed tuning disabled
  */
 #define SDXC_AUTO_TUNING_CTRL_SW_TUNE_EN_MASK (0x10U)
@@ -4295,7 +4256,7 @@ typedef struct {
  *
  * Setting this bit enables Auto tuning engine. This bit is enabled by default when core is configured with mode3 retuning support.
  * Clear this bit to 0 when core is configured to have Mode3 re-tuning but SW wishes to disable mode3 retuning.
- * This field should be programmed only when CLK_CTRL_R.SD_CLK_EN is 0.
+ * This field should be programmed only when SYS_CTRL.SD_CLK_EN is 0.
  * Values:
  * 0x1 (AT_ENABLE): AutoTuning is enabled
  * 0x0 (AT_DISABLE): AutoTuning is disabled
@@ -4327,7 +4288,7 @@ typedef struct {
 /*
  * CENTER_PH_CODE (RW)
  *
- * Centered Phase code. Reading this field returns the current value on tuning_cclk_sel output. Setting AT_CTRL_R.SW_TUNE_EN enables software to write to this field and its contents are reflected on tuning_cclk_sel
+ * Centered Phase code. Reading this field returns the current value on tuning_cclk_sel output. Setting AUTO_TUNING_CTRL.SW_TUNE_EN enables software to write to this field and its contents are reflected on tuning_cclk_sel
  */
 #define SDXC_AUTO_TUNING_STAT_CENTER_PH_CODE_MASK (0xFFU)
 #define SDXC_AUTO_TUNING_STAT_CENTER_PH_CODE_SHIFT (0U)

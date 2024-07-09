@@ -25,7 +25,7 @@ typedef struct {
         __R  uint8_t  RESERVED0[28];           /* 0xA4 - 0xBF: Reserved */
         __RW uint32_t DIV[3];                  /* 0xC0 - 0xC8: PLL0 divider output 0 configuration register */
         __R  uint8_t  RESERVED1[52];           /* 0xCC - 0xFF: Reserved */
-    } PLL[3];
+    } PLL[7];
 } PLLCTLV2_Type;
 
 
@@ -301,6 +301,10 @@ typedef struct {
 #define PLLCTLV2_PLL_PLL0 (0UL)
 #define PLLCTLV2_PLL_PLL1 (1UL)
 #define PLLCTLV2_PLL_PLL2 (2UL)
+#define PLLCTLV2_PLL_PLL3 (3UL)
+#define PLLCTLV2_PLL_PLL4 (4UL)
+#define PLLCTLV2_PLL_PLL5 (5UL)
+#define PLLCTLV2_PLL_PLL6 (6UL)
 
 
 #endif /* HPM_PLLCTLV2_H */

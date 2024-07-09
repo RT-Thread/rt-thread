@@ -38,6 +38,21 @@
 
 /* CAN section */
 #define BOARD_CAN_NAME                        "can0"
+#define BOARD_CAN_HWFILTER_INDEX               (0U)
+
+/* UART section */
+#define BOARD_UART_NAME                        "uart13"
+#define BOARD_UART_RX_BUFFER_SIZE              BSP_UART13_RX_BUFSIZE
+
+/* eeprom section */
+#define BOARD_EEPROM_I2C_NAME                  "i2c0"
+
+#define BOARD_SD_NAME                          "sd1"
+/* audio section */
+#define BOARD_AUDIO_CODEC_I2C_NAME             "i2c0"
+#define BOARD_AUDIO_CODEC_I2S_NAME             "i2s0"
+
+#define IRQn_PendSV IRQn_DEBUG_0
 
 /***************************************************************
  *
@@ -65,7 +80,7 @@ extern "C" {
 
 void app_init_led_pins(void);
 void app_led_write(uint32_t index, bool state);
-
+void app_init_usb_pins(void);
 
 
 #if defined(__cplusplus)

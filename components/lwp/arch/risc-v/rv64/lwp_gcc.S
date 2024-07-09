@@ -107,6 +107,7 @@ arch_signal_quit:
     call arch_signal_ucontext_restore
 
     /* reset kernel sp to the stack */
+    addi sp, sp, CTX_REG_NR * REGBYTES
     STORE sp, FRAME_OFF_SP(a0)
     /* return value is user sp */
     mv sp, a0
@@ -173,6 +174,9 @@ arch_thread_signal_enter:
     add a1, sp, 16
     /* dummy a2 */
     mv a2, a1
+
+    /* restore user GP */
+    LOAD gp, FRAME_OFF_GP(s3)
 
     /**
      * handler(signo, psi, ucontext);
@@ -277,7 +281,7 @@ arch_syscall_exit:
     CLOSE_INTERRUPT
 
     #if defined(ARCH_MM_MMU)
-        LOAD s0, 2 * REGBYTES(sp)
+        LOAD s0, FRAME_OFF_SSTATUS(sp)
         andi s0, s0, 0x100
         bnez s0, dont_ret_to_user
         j arch_ret_to_user

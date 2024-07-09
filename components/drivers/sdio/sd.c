@@ -755,6 +755,8 @@ static rt_int32_t mmcsd_sd_init_card(struct rt_mmcsd_host *host,
             goto err1;
     }
 
+    mmcsd_set_timing(host, MMCSD_TIMING_LEGACY);
+    mmcsd_set_clock(host, 25000000);
     /*switch bus width*/
     if ((host->flags & MMCSD_BUSWIDTH_4) && (card->scr.sd_bus_widths & SD_SCR_BUS_WIDTH_4))
     {
@@ -764,8 +766,6 @@ static rt_int32_t mmcsd_sd_init_card(struct rt_mmcsd_host *host,
 
         mmcsd_set_bus_width(host, MMCSD_BUS_WIDTH_4);
     }
-    mmcsd_set_timing(host, MMCSD_TIMING_LEGACY);
-    mmcsd_set_clock(host, 25000000);
 
     /* Read and decode SD Status and check whether UHS mode is supported */
     union rt_sd_status sd_status;
@@ -799,7 +799,6 @@ static rt_int32_t mmcsd_sd_init_card(struct rt_mmcsd_host *host,
     }
 
     mmcsd_set_clock(host, max_data_rate);
-
     host->card = card;
 
     return 0;

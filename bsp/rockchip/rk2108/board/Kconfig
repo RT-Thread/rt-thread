@@ -16,6 +16,6 @@ config RT_RUN_MEM_SIZE
     help
         Set RK2108 SRAM MEM SIZE
 
-source "$BSP_DIR/board/$RT_BOARD_NAME/Kconfig"
+source "$(BSP_DIR)/board/$RT_BOARD_NAME/Kconfig"
 
 endmenu

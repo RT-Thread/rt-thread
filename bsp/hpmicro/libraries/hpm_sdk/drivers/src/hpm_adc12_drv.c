@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 HPMicro
+ * Copyright (c) 2021-2024 HPMicro
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
@@ -24,8 +24,9 @@ void adc12_get_channel_default_config(adc12_channel_config_t *config)
     config->diff_sel           = adc12_sample_signal_single_ended;
     config->sample_cycle       = 10;
     config->sample_cycle_shift = 0;
-    config->thshdh             = 0;
-    config->thshdl             = 0;
+    config->thshdh             = 0xfff;
+    config->thshdl             = 0x000;
+    config->wdog_int_en        = false;
 }
 
 static hpm_stat_t adc12_do_calibration(ADC12_Type *ptr, adc12_sample_signal_t diff_sel)
@@ -38,10 +39,11 @@ static hpm_stat_t adc12_do_calibration(ADC12_Type *ptr, adc12_sample_signal_t di
     }
 
     /*Set diff_sel temporarily */
-    ptr->SAMPLE_CFG[0] = ADC12_SAMPLE_CFG_DIFF_SEL_SET(diff_sel);
+    ptr->SAMPLE_CFG[0] &= ~ADC12_SAMPLE_CFG_DIFF_SEL_MASK;
+    ptr->SAMPLE_CFG[0] |= ADC12_SAMPLE_CFG_DIFF_SEL_SET(diff_sel);
 
     /* Set resetcal and resetadc */
-    ptr->ANA_CTRL0 |= ADC12_ANA_CTRL0_RESETCAL_MASK;
+    ptr->ANA_CTRL0 |= ADC12_ANA_CTRL0_RESETCAL_MASK | ADC12_ANA_CTRL0_RESETADC_MASK;
 
     /* Clear resetcal and resetadc */
     ptr->ANA_CTRL0 &= ~(ADC12_ANA_CTRL0_RESETCAL_MASK | ADC12_ANA_CTRL0_RESETADC_MASK);
@@ -76,6 +78,14 @@ static hpm_stat_t adc12_do_calibration(ADC12_Type *ptr, adc12_sample_signal_t di
         ptr->ANA_CTRL0 = (ptr->ANA_CTRL0 & ~ADC12_ANA_CTRL0_CAL_VAL_DIFF_MASK)
                        | ADC12_ANA_CTRL0_CAL_VAL_DIFF_SET(cal_out);
     }
+
+    return status_success;
+}
+
+hpm_stat_t adc12_deinit(ADC12_Type *ptr)
+{
+    /* disable all interrupts */
+    ptr->INT_EN = 0;
 
     return status_success;
 }
@@ -115,10 +125,7 @@ hpm_stat_t adc12_init(ADC12_Type *ptr, adc12_config_t *config)
                   | ADC12_ADC_CFG0_ADC_AHB_EN_SET(config->adc_ahb_en);
 
     /* Set wait_dis */
-    if (config->conv_mode == adc12_conv_mode_oneshot) {
-        /* Set wait_dis */
-        ptr->BUF_CFG0 = ADC12_BUF_CFG0_WAIT_DIS_SET(config->wait_dis);
-    }
+    ptr->BUF_CFG0 = ADC12_BUF_CFG0_WAIT_DIS_SET(config->wait_dis);
 
     /*-------------------------------------------------------------------------------
      *                                 Calibration
@@ -166,6 +173,11 @@ hpm_stat_t adc12_init_channel(ADC12_Type *ptr, adc12_channel_config_t *config)
         return status_invalid_argument;
     }
 
+    /* Check sample cycle */
+    if (ADC12_IS_CHANNEL_SAMPLE_CYCLE_INVALID(config->sample_cycle)) {
+        return status_invalid_argument;
+    }
+
     /* Set warning threshold */
     ptr->PRD_CFG[config->ch].PRD_THSHD_CFG = ADC12_PRD_CFG_PRD_THSHD_CFG_THSHDH_SET(config->thshdh)
                                            | ADC12_PRD_CFG_PRD_THSHD_CFG_THSHDL_SET(config->thshdl);
@@ -176,6 +188,25 @@ hpm_stat_t adc12_init_channel(ADC12_Type *ptr, adc12_channel_config_t *config)
     ptr->SAMPLE_CFG[config->ch] = ADC12_SAMPLE_CFG_DIFF_SEL_SET(config->diff_sel)
                                 | ADC12_SAMPLE_CFG_SAMPLE_CLOCK_NUMBER_SHIFT_SET(config->sample_cycle_shift)
                                 | ADC12_SAMPLE_CFG_SAMPLE_CLOCK_NUMBER_SET(config->sample_cycle);
+
+    /* Enable watchdog interrupt */
+    if (config->wdog_int_en) {
+        ptr->INT_EN |= 1 << config->ch;
+    }
+
+    return status_success;
+}
+
+hpm_stat_t adc12_get_channel_threshold(ADC12_Type *ptr, uint8_t ch, adc12_channel_threshold_t *config)
+{
+    /* Check the specified channel number */
+    if (ADC12_IS_CHANNEL_INVALID(ch)) {
+        return status_invalid_argument;
+    }
+
+    config->ch     = ch;
+    config->thshdh = ADC12_PRD_CFG_PRD_THSHD_CFG_THSHDH_GET(ptr->PRD_CFG[ch].PRD_THSHD_CFG);
+    config->thshdl = ADC12_PRD_CFG_PRD_THSHD_CFG_THSHDL_GET(ptr->PRD_CFG[ch].PRD_THSHD_CFG);
 
     return status_success;
 }
@@ -229,10 +260,9 @@ hpm_stat_t adc12_set_prd_config(ADC12_Type *ptr, adc12_prd_config_t *config)
     ptr->PRD_CFG[config->ch].PRD_CFG = (ptr->PRD_CFG[config->ch].PRD_CFG & ~ADC12_PRD_CFG_PRD_CFG_PRESCALE_MASK)
                                      | ADC12_PRD_CFG_PRD_CFG_PRESCALE_SET(config->prescale);
 
-
     /* Set period count */
     ptr->PRD_CFG[config->ch].PRD_CFG = (ptr->PRD_CFG[config->ch].PRD_CFG & ~ADC12_PRD_CFG_PRD_CFG_PRD_MASK)
-                                         | ADC12_PRD_CFG_PRD_CFG_PRD_SET(config->period_count);
+                                     | ADC12_PRD_CFG_PRD_CFG_PRD_SET(config->period_count);
 
     return status_success;
 }

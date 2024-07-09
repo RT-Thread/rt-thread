@@ -131,7 +131,7 @@ typedef struct {
     volatile uint32_t data_toggle          : 1  ; /* Data Toggle bit */
 
     /* Buffer Page Pointer List, Each element in the list is a 4K page aligned, physical memory address. The lower 12 bits in each pointer are reserved (except for the first one) as each memory pointer must reference the start of a 4K page */
-    volatile uint32_t buffer[USB_SOC_HCD_QTD_BUFFER_COUNT];
+    volatile uint32_t buffer[USB_SOC_DCD_QHD_BUFFER_COUNT];
 } hcd_qtd_t;
 
 /* Queue Head */

@@ -22,14 +22,14 @@
 
 static rt_ssize_t _adc_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size_t size)
 {
-    rt_err_t result = RT_EOK;
-    rt_size_t i;
-    struct rt_adc_device *adc = (struct rt_adc_device *)dev;
-    rt_uint32_t *value = (rt_uint32_t *)buffer;
+    rt_err_t              result;
+    rt_size_t             i;
+    struct rt_adc_device *adc   = (struct rt_adc_device *)dev;
+    rt_uint32_t          *value = (rt_uint32_t *)buffer;
 
-    for (i = 0; i < size; i += sizeof(int))
+    for (i = 0; i < size; i++)
     {
-        result = adc->ops->convert(adc, pos + i, value);
+        result = adc->ops->convert(adc, pos, value);
         if (result != RT_EOK)
         {
             return 0;
@@ -42,8 +42,9 @@ static rt_ssize_t _adc_read(rt_device_t dev, rt_off_t pos, void *buffer, rt_size
 
 static rt_err_t _adc_control(rt_device_t dev, int cmd, void *args)
 {
-    rt_err_t result = -RT_EINVAL;
     rt_adc_device_t adc = (struct rt_adc_device *)dev;
+    rt_err_t        result;
+
 
     if (cmd == RT_ADC_CMD_ENABLE && adc->ops->enabled)
     {
@@ -56,9 +57,9 @@ static rt_err_t _adc_control(rt_device_t dev, int cmd, void *args)
     else if (cmd == RT_ADC_CMD_GET_RESOLUTION && adc->ops->get_resolution && args)
     {
         rt_uint8_t resolution = adc->ops->get_resolution(adc);
-        if(resolution != 0)
+        if (resolution != 0)
         {
-            *((rt_uint8_t*)args) = resolution;
+            *((rt_uint8_t *)args) = resolution;
             LOG_D("resolution: %d bits", resolution);
             result = RT_EOK;
         }
@@ -66,10 +67,10 @@ static rt_err_t _adc_control(rt_device_t dev, int cmd, void *args)
     else if (cmd == RT_ADC_CMD_GET_VREF && adc->ops->get_vref && args)
     {
         rt_int16_t value = adc->ops->get_vref(adc);
-        if(value != 0)
+        if (value != 0)
         {
-            *((rt_int16_t *) args) = value;
-            result = RT_EOK;
+            *((rt_int16_t *)args) = value;
+            result                = RT_EOK;
         }
     }
 
@@ -78,36 +79,36 @@ static rt_err_t _adc_control(rt_device_t dev, int cmd, void *args)
 
 #ifdef RT_USING_DEVICE_OPS
 const static struct rt_device_ops adc_ops =
-{
-    RT_NULL,
-    RT_NULL,
-    RT_NULL,
-    _adc_read,
-    RT_NULL,
-    _adc_control,
+    {
+        RT_NULL,
+        RT_NULL,
+        RT_NULL,
+        _adc_read,
+        RT_NULL,
+        _adc_control,
 };
 #endif
 
 rt_err_t rt_hw_adc_register(rt_adc_device_t device, const char *name, const struct rt_adc_ops *ops, const void *user_data)
 {
-    rt_err_t result = RT_EOK;
     RT_ASSERT(ops != RT_NULL && ops->convert != RT_NULL);
+    rt_err_t result;
 
-    device->parent.type = RT_Device_Class_ADC;
+    device->parent.type        = RT_Device_Class_ADC;
     device->parent.rx_indicate = RT_NULL;
     device->parent.tx_complete = RT_NULL;
 
 #ifdef RT_USING_DEVICE_OPS
-    device->parent.ops         = &adc_ops;
+    device->parent.ops = &adc_ops;
 #else
-    device->parent.init        = RT_NULL;
-    device->parent.open        = RT_NULL;
-    device->parent.close       = RT_NULL;
-    device->parent.read        = _adc_read;
-    device->parent.write       = RT_NULL;
-    device->parent.control     = _adc_control;
+    device->parent.init    = RT_NULL;
+    device->parent.open    = RT_NULL;
+    device->parent.close   = RT_NULL;
+    device->parent.read    = _adc_read;
+    device->parent.write   = RT_NULL;
+    device->parent.control = _adc_control;
 #endif
-    device->ops = ops;
+    device->ops              = ops;
     device->parent.user_data = (void *)user_data;
 
     result = rt_device_register(&device->parent, name, RT_DEVICE_FLAG_RDWR);
@@ -117,20 +118,21 @@ rt_err_t rt_hw_adc_register(rt_adc_device_t device, const char *name, const stru
 
 rt_uint32_t rt_adc_read(rt_adc_device_t dev, rt_int8_t channel)
 {
-    rt_uint32_t value;
-
     RT_ASSERT(dev);
+    rt_uint32_t value;
+    rt_err_t    result;
 
-    dev->ops->convert(dev, channel, &value);
+    result = dev->ops->convert(dev, channel, &value);
+    if (result != RT_EOK)
+        return 0;
 
     return value;
 }
 
 rt_err_t rt_adc_enable(rt_adc_device_t dev, rt_int8_t channel)
 {
-    rt_err_t result = RT_EOK;
-
     RT_ASSERT(dev);
+    rt_err_t result;
 
     if (dev->ops->enabled != RT_NULL)
     {
@@ -146,9 +148,8 @@ rt_err_t rt_adc_enable(rt_adc_device_t dev, rt_int8_t channel)
 
 rt_err_t rt_adc_disable(rt_adc_device_t dev, rt_int8_t channel)
 {
-    rt_err_t result = RT_EOK;
-
     RT_ASSERT(dev);
+    rt_err_t result;
 
     if (dev->ops->enabled != RT_NULL)
     {
@@ -164,27 +165,31 @@ rt_err_t rt_adc_disable(rt_adc_device_t dev, rt_int8_t channel)
 
 rt_int16_t rt_adc_voltage(rt_adc_device_t dev, rt_int8_t channel)
 {
-    rt_uint32_t value = 0;
-    rt_int16_t vref = 0, voltage = 0;
-    rt_uint8_t resolution = 0;
-
     RT_ASSERT(dev);
 
-    /*get the resolution in bits*/
-    if (_adc_control((rt_device_t) dev, RT_ADC_CMD_GET_RESOLUTION, &resolution) != RT_EOK)
-    {
-        goto _voltage_exit;
-    }
+    rt_uint32_t value;
+    rt_int16_t  vref, voltage;
+    rt_uint8_t  resolution;
+    rt_err_t    result;
 
+    /*get the resolution in bits*/
+    resolution = dev->ops->get_resolution(dev);
     /*get the reference voltage*/
-    if (_adc_control((rt_device_t) dev, RT_ADC_CMD_GET_VREF, &vref) != RT_EOK)
-    {
+    vref = dev->ops->get_vref(dev);
+    if (vref == 0)
         goto _voltage_exit;
-    }
 
     /*read the value and convert to voltage*/
-    dev->ops->convert(dev, channel, &value);
-    voltage = value * vref / (1 << resolution);
+    result = dev->ops->enabled(dev, channel, RT_TRUE);
+    if (result != RT_EOK)
+        goto _voltage_exit;
+    result = dev->ops->convert(dev, channel, &value);
+    if (result != RT_EOK)
+        goto _voltage_exit;
+    result = dev->ops->enabled(dev, channel, RT_FALSE);
+    if (result != RT_EOK)
+        goto _voltage_exit;
+    voltage = value * vref / ((1 << resolution) - 1);
 
 _voltage_exit:
     return voltage;
@@ -194,11 +199,11 @@ _voltage_exit:
 
 static int adc(int argc, char **argv)
 {
-    int value = 0;
-    rt_int16_t voltage = 0;
-    rt_err_t result = -RT_ERROR;
+    int                    value      = 0;
+    rt_int16_t             voltage    = 0;
+    rt_err_t               result     = -RT_ERROR;
     static rt_adc_device_t adc_device = RT_NULL;
-    char *result_str;
+    char                  *result_str;
 
     if (argc > 1)
     {
@@ -226,7 +231,7 @@ static int adc(int argc, char **argv)
             {
                 if (argc == 3)
                 {
-                    result = rt_adc_enable(adc_device, atoi(argv[2]));
+                    result     = rt_adc_enable(adc_device, atoi(argv[2]));
                     result_str = (result == RT_EOK) ? "success" : "failure";
                     rt_kprintf("%s channel %d enables %s \n", adc_device->parent.parent.name, (rt_base_t)atoi(argv[2]), result_str);
                 }
@@ -251,7 +256,7 @@ static int adc(int argc, char **argv)
             {
                 if (argc == 3)
                 {
-                    result = rt_adc_disable(adc_device, atoi(argv[2]));
+                    result     = rt_adc_disable(adc_device, atoi(argv[2]));
                     result_str = (result == RT_EOK) ? "success" : "failure";
                     rt_kprintf("%s channel %d disable %s \n", adc_device->parent.parent.name, (rt_base_t)atoi(argv[2]), result_str);
                 }
@@ -262,7 +267,7 @@ static int adc(int argc, char **argv)
             }
             else if (!strcmp(argv[1], "voltage"))
             {
-                if(argc == 3)
+                if (argc == 3)
                 {
                     voltage = rt_adc_voltage(adc_device, atoi(argv[2]));
                     rt_kprintf("%s channel %d voltage is %d.%03dV \n", adc_device->parent.parent.name, (rt_base_t)atoi(argv[2]), voltage / 1000, voltage % 1000);
@@ -285,6 +290,7 @@ static int adc(int argc, char **argv)
         rt_kprintf("adc read <channel>      - read adc value on the channel\n");
         rt_kprintf("adc disable <channel>   - disable adc channel\n");
         rt_kprintf("adc enable <channel>    - enable adc channel\n");
+        rt_kprintf("adc voltage <channel>   - read voltage on the channel\n");
 
         result = -RT_ERROR;
     }

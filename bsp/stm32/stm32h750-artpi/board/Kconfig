@@ -124,6 +124,14 @@ endmenu
 
 menu "On-chip Peripheral Drivers"
 
+    config BSP_SCB_ENABLE_I_CACHE
+        bool "Enable ICACHE"
+        default y
+
+    config BSP_SCB_ENABLE_D_CACHE
+        bool "Enable DCACHE"
+        default y
+
     config BSP_USING_GPIO
         bool "Enable GPIO"
         select RT_USING_PIN
@@ -302,6 +310,7 @@ menu "On-chip Peripheral Drivers"
 
     config BSP_USING_SDRAM
         bool "Enable SDRAM"
+        select RT_USING_MEMHEAP
         default n
 
     config BSP_USING_WDT
@@ -314,7 +323,6 @@ menu "On-chip Peripheral Drivers"
         select BSP_USING_LTDC
         select BSP_USING_GPIO
         select BSP_USING_SDRAM
-        select RT_USING_MEMHEAP
         default n
 
     menuconfig BSP_USING_SDIO_ARTPI
@@ -374,7 +382,7 @@ menu "On-chip Peripheral Drivers"
     config BSP_USING_LTDC
         bool
         default n
-    source "$BSP_DIR/../libraries/HAL_Drivers/drivers/Kconfig"
+    source "$(BSP_DIR)/../libraries/HAL_Drivers/drivers/Kconfig"
 
 endmenu
 

@@ -33,8 +33,9 @@ static inline void sdxc_disable_freq_selection(SDXC_Type *base)
 
 static inline void sdxc_set_clock_divider(SDXC_Type *base, uint32_t div)
 {
-    base->MISC_CTRL0 = (base->MISC_CTRL0 & ~SDXC_MISC_CTRL0_FREQ_SEL_SW_MASK) | SDXC_MISC_CTRL0_FREQ_SEL_SW_SET(div - 1U) |
-                       SDXC_MISC_CTRL0_FREQ_SEL_SW_EN_MASK;
+    base->MISC_CTRL0 =
+            (base->MISC_CTRL0 & ~SDXC_MISC_CTRL0_FREQ_SEL_SW_MASK) | SDXC_MISC_CTRL0_FREQ_SEL_SW_SET(div - 1U) |
+            SDXC_MISC_CTRL0_FREQ_SEL_SW_EN_MASK;
 }
 
 static inline uint32_t sdxc_get_clock_divider(SDXC_Type *base)
@@ -82,6 +83,39 @@ static inline void sdxc_set_cardclk_delay_chain(SDXC_Type *base, uint32_t number
 {
     base->MISC_CTRL1 = (base->MISC_CTRL1 & ~SDXC_MISC_CTRL1_CARDCLK_DLYSEL_MASK) |
                        SDXC_MISC_CTRL1_CARDCLK_DLYSEL_SET(number_of_delaycells);
+}
+
+/**
+ * @brief Set SDXC data strobe delay chain
+ * @param [in] base SDXC base
+ * @param [in] num_of_delaycells Number of delay cells for Data strobe
+ */
+static inline void sdxc_set_data_strobe_delay(SDXC_Type *base, uint8_t num_of_delaycells)
+{
+    base->MISC_CTRL1 = (base->MISC_CTRL1 & ~SDXC_MISC_CTRL1_STROBE_DLYSEL_MASK) |
+                       SDXC_MISC_CTRL1_STROBE_DLYSEL_SET(num_of_delaycells);
+}
+
+static inline uint32_t sdxc_get_default_strobe_delay(SDXC_Type *base)
+{
+    (void) base;
+    return 0;
+}
+
+static inline uint32_t sdxc_get_default_cardclk_delay_chain(SDXC_Type *base, uint32_t clock_freq)
+{
+    (void) base;
+    uint32_t num_delaycells = 3;
+    if (clock_freq <= 52000000) {
+        num_delaycells = 26;
+    }
+    return num_delaycells;
+}
+
+static inline bool sdxc_is_ddr50_supported(SDXC_Type *base)
+{
+    (void) base;
+    return false;
 }
 
 
