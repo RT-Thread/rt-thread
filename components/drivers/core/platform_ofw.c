@@ -244,7 +244,7 @@ rt_err_t rt_platform_ofw_free(struct rt_platform_device *pdev)
             rt_ofw_node_clear_flag(np, RT_OFW_F_PLATFORM);
             rt_ofw_node_put(np);
 
-            pdev->parent.ofw_node = RT_NULL;
+            rt_free(pdev);
         }
     }
     else
