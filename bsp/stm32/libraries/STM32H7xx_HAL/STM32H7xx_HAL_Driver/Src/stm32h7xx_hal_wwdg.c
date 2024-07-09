@@ -7,6 +7,17 @@
   *          functionalities of the Window Watchdog (WWDG) peripheral:
   *           + Initialization and Configuration functions
   *           + IO operation functions
+  ******************************************************************************
+  * @attention
+  *
+  * Copyright (c) 2017 STMicroelectronics.
+  * All rights reserved.
+  *
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
+  *
+  ******************************************************************************
   @verbatim
   ==============================================================================
                       ##### WWDG Specific features #####
@@ -40,17 +51,17 @@
         (++) max time (mS) = 1000 * (Counter - 0x40) / WWDG clock
     (+) Typical values (case of STM32H74x/5x devices):
         (++) Counter min (T[5;0] = 0x00) @100MHz (PCLK1) with zero prescaler:
-             max timeout before reset: approximately 40.96µs
+             max timeout before reset: approximately 40.96us
         (++) Counter max (T[5;0] = 0x3F) @100MHz (PCLK1) with prescaler dividing by 128:
              max timeout before reset: approximately 335.54ms
     (+) Typical values (case of STM32H7Ax/Bx devices):
         (++) Counter min (T[5;0] = 0x00) @140MHz (PCLK1) with zero prescaler:
-             max timeout before reset: approximately 29.25µs
+             max timeout before reset: approximately 29.25us
         (++) Counter max (T[5;0] = 0x3F) @140MHz (PCLK1) with prescaler dividing by 128:
              max timeout before reset: approximately 239.67ms
     (+) Typical values (case of STM32H72x/3x devices):
         (++) Counter min (T[5;0] = 0x00) @125MHz (PCLK1) with zero prescaler:
-             max timeout before reset: approximately 32.76µs
+             max timeout before reset: approximately 32.76us
         (++) Counter max (T[5;0] = 0x3F) @125MHz (PCLK1) with prescaler dividing by 128:
              max timeout before reset: approximately 268.43ms
 
@@ -64,7 +75,7 @@
     (+) Enable WWDG APB1 clock using __HAL_RCC_WWDG_CLK_ENABLE().
     (+) Configure the WWDG prescaler, refresh window value, counter value and early
         interrupt status using HAL_WWDG_Init() function. This will automatically
-        enable WWDG and start its downcounter. Time reference can be taken from 
+        enable WWDG and start its downcounter. Time reference can be taken from
         function exit. Care must be taken to provide a counter value
         greater than 0x40 to prevent generation of immediate reset.
     (+) If the Early Wakeup Interrupt (EWI) feature is enabled, an interrupt is
@@ -120,17 +131,6 @@
       (+) __HAL_WWDG_ENABLE_IT: Enable the WWDG early wakeup interrupt
 
   @endverbatim
-  ******************************************************************************
-  * @attention
-  *
-  * <h2><center>&copy; Copyright (c) 2017 STMicroelectronics.
-  * All rights reserved.</center></h2>
-  *
-  * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the
-  * License. You may obtain a copy of the License at:
-  *                        opensource.org/licenses/BSD-3-Clause
-  *
   ******************************************************************************
   */
 
@@ -427,5 +427,3 @@ __weak void HAL_WWDG_EarlyWakeupCallback(WWDG_HandleTypeDef *hwwdg)
 /**
   * @}
   */
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

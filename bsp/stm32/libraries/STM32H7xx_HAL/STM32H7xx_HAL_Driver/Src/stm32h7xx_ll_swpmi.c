@@ -6,13 +6,12 @@
   ******************************************************************************
   * @attention
   *
-  * <h2><center>&copy; Copyright (c) 2017 STMicroelectronics.
-  * All rights reserved.</center></h2>
+  * Copyright (c) 2017 STMicroelectronics.
+  * All rights reserved.
   *
-  * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the
-  * License. You may obtain a copy of the License at:
-  *                        opensource.org/licenses/BSD-3-Clause
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
   *
   ******************************************************************************
   */
@@ -99,8 +98,9 @@ ErrorStatus LL_SWPMI_DeInit(SWPMI_TypeDef *SWPMIx)
 
 /**
   * @brief  Initialize the SWPMI peripheral according to the specified parameters in the SWPMI_InitStruct.
-  * @note   As some bits in SWPMI configuration registers can only be written when the SWPMI is deactivated (SWPMI_CR_SWPACT bit = 0),
-  *         SWPMI IP should be in deactivated state prior calling this function. Otherwise, ERROR result will be returned.
+  * @note   As some bits in SWPMI configuration registers can only be written when the SWPMI is deactivated
+  *         (SWPMI_CR_SWPACT bit = 0), the SWPMI peripheral should be in deactivated state prior calling
+  *         this function. Otherwise, ERROR result will be returned.
   * @param  SWPMIx           SWPMI Instance
   * @param  SWPMI_InitStruct pointer to a @ref LL_SWPMI_InitTypeDef structure that contains
   *                          the configuration information for the SWPMI peripheral.
@@ -130,8 +130,8 @@ ErrorStatus LL_SWPMI_Init(SWPMI_TypeDef *SWPMIx, LL_SWPMI_InitTypeDef *SWPMI_Ini
 
     /* Set the new configuration of the SWPMI peripheral */
     MODIFY_REG(SWPMIx->CR,
-              (SWPMI_CR_RXMODE | SWPMI_CR_TXMODE),
-              (SWPMI_InitStruct->TxBufferingMode | SWPMI_InitStruct->RxBufferingMode));
+               (SWPMI_CR_RXMODE | SWPMI_CR_TXMODE),
+               (SWPMI_InitStruct->TxBufferingMode | SWPMI_InitStruct->RxBufferingMode));
   }
   /* Else (SWPMI not in deactivated state => return ERROR) */
   else
@@ -175,5 +175,3 @@ void LL_SWPMI_StructInit(LL_SWPMI_InitTypeDef *SWPMI_InitStruct)
   */
 
 #endif /* USE_FULL_LL_DRIVER */
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

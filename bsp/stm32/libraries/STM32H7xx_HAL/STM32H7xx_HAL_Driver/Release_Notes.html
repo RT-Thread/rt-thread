@@ -11,36 +11,658 @@
       span.underline{text-decoration: underline;}
       div.column{display: inline-block; vertical-align: top; width: 50%;}
   </style>
-  <link rel="stylesheet" href="_htmresc/mini-st.css" />
+  <link rel="stylesheet" href="_htmresc/mini-st_2020.css" />
   <!--[if lt IE 9]>
     <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
   <![endif]-->
+  <link rel="icon" type="image/x-icon" href="_htmresc/favicon.png" />
 </head>
 <body>
 <div class="row">
 <div class="col-sm-12 col-lg-4">
-<div class="card fluid">
-<div class="sectione dark">
 <center>
 <h1 id="release-notes-for-stm32h7xx-hal-drivers"><strong>Release Notes for STM32H7xx HAL Drivers</strong></h1>
 <p>Copyright © 2017 STMicroelectronics<br />
 </p>
-<a href="https://www.st.com" class="logo"><img src="_htmresc/st_logo.png" alt="ST logo" /></a>
+<a href="https://www.st.com" class="logo"><img src="_htmresc/st_logo_2020.png" alt="ST logo" /></a>
 </center>
-</div>
-</div>
-<h1 id="license"><strong>License</strong></h1>
-This software component is licensed by ST under BSD 3-Clause license, the “License”; You may not use this component except in compliance with the License. You may obtain a copy of the License at:
-<center>
-<a href="https://opensource.org/licenses/BSD-3-Clause">https://opensource.org/licenses/BSD-3-Clause</a>
-</center>
+<h1 id="purpose">Purpose</h1>
+<p>The STM32Cube HAL and LL, an STM32 abstraction layer embedded software, ensure maximized portability across STM32 portfolio.</p>
+<p>The portable APIs layer provides a generic, multi instanced and simple set of APIs to interact with the upper layer (application, libraries and stacks). It is composed of native and extended APIs set. It is directly built around a generic architecture and allows the build-upon layers, like the middleware layer, to implement its functions without knowing in-depth the used STM32 device. This improves the library code reusability and guarantees an easy portability on other devices and STM32 families.</p>
+<p>The Low Layer (LL) drivers are part of the STM32Cube firmware HAL that provides a basic set of optimized and one shot services. The Low layer drivers, contrary to the HAL ones are not fully portable across the STM32 families; the availability of some functions depends on the physical availability of the relative features on the product. The Low Layer (LL) drivers are designed to offer the following features:</p>
+<ul>
+<li>New set of inline functions for direct and atomic register access</li>
+<li>One-shot operations that can be used by the HAL drivers or from application level</li>
+<li>Full independence from HAL and standalone usage (without HAL drivers)</li>
+<li>Full features coverage of all the supported peripherals</li>
+</ul>
 </div>
 <div class="col-sm-12 col-lg-8">
 <h1 id="update-history"><strong>Update History</strong></h1>
 <div class="collapse">
-<input type="checkbox" id="collapse-section13" checked aria-hidden="true"> <label for="collapse-section13" aria-hidden="true"><strong>V1.10.0 / 12-February-2021</strong></label>
+<input type="checkbox" id="collapse-section18" checked aria-hidden="true"> <label for="collapse-section18" aria-hidden="true"><strong>V1.11.3 / 15-March-2024</strong></label>
 <div>
 <h2 id="main-changes">Main Changes</h2>
+<ul>
+<li>HAL code quality enhancement for MISRA-C Rule-8.13 by adding const qualifiers.</li>
+<li><strong>HAL Generic</strong>
+<ul>
+<li>Allow redefinition of macro UNUSED(x).</li>
+<li>Update of HAL_GetTickFreq() API brief.</li>
+<li>Update stm32h7xx_hal_conf_template.h file to support legacy HAL ETH driver.</li>
+</ul></li>
+<li><strong>HAL PWR</strong>
+<ul>
+<li>Add macro UNUSED() to avoid the generation of a warning related to the unused argument ‘Regulator’.</li>
+<li>Update HAL_PWREx_PVD_AVD_IRQHandle() API to call right callbacks before performing the clear.</li>
+</ul></li>
+<li><strong>HAL GPIO</strong>
+<ul>
+<li>Add alternative function mappings for CSLEEP, CSTOP and NDSTOP2.</li>
+</ul></li>
+<li><strong>HAL EXTI</strong>
+<ul>
+<li>Add macro UNUSED() to avoid the generation of a warning related to the unused argument ‘Edge’.</li>
+</ul></li>
+<li><strong>HAL CORTEX</strong>
+<ul>
+<li>Updated HAL_MPU_ConfigRegion() API to allow the configuration of the MPU registers independently of the value of Enable/Disable field.</li>
+<li>Add new APIs HAL_MPU_EnableRegion() / HAL_MPU_DisableRegion().</li>
+</ul></li>
+<li><strong>HAL RTC_BKP</strong>
+<ul>
+<li>Change RTC_ISR_INITF to RTC_ISR_INIT in the Exit Initialization mode.</li>
+<li>Remove macro __HAL_RTC_TAMPER_GET_IT() as it is redundant with macro __HAL_RTC_TAMPER_GET_FLAG() and create an alias into the hal_legacy.h file.</li>
+<li>Correct misleading note about shadow registers.</li>
+</ul></li>
+<li><strong>HAL PSSI</strong>
+<ul>
+<li>Replace hdmatx by hdmarx in HAL_PSSI_Receive_DMA() API.</li>
+<li>Use MODIFY_REG in HAL_PSSI_Transmit() and HAL_PSSI_Receive() APIs.</li>
+</ul></li>
+<li><strong>HAL/LL TIM</strong>
+<ul>
+<li>Remove multiple volatile reads in interrupt handler for better performance.</li>
+<li>Assert check for the right channels.</li>
+<li>Remove unnecessary change of MOE bitfield in LL_TIM_BDTR_Init() API.</li>
+<li>Remove useless check on macro IS_TIM_ADVANCED_INSTANCE() within LL_TIM_BDTR_Init() API to fix Break Filter configuration problem with specific TIM instances.</li>
+<li>Update interrupt flag is cleared when the update event is generated by software.</li>
+<li>Fix typo in PWM symmetric mode related constants names.</li>
+<li>Improve period configuration parameter check.</li>
+<li>Improve HAL TIM driver’s operational behavior.</li>
+</ul></li>
+<li><strong>HAL LPTIM</strong>
+<ul>
+<li>Remove redundant macro IS_LPTIM_AUTORELOAD().</li>
+</ul></li>
+<li><strong>LL COMP</strong>
+<ul>
+<li>Add new APIs:
+<ul>
+<li>LL_COMP_IsActiveFlag_OutputTrig().</li>
+<li>LL_COMP_ClearFlag_OutputTrig().</li>
+<li>LL_COMP_EnableIT_OutputTrig().</li>
+<li>LL_COMP_DisableIT_OutputTrig().</li>
+<li>LL_COMP_IsEnabledIT_OutputTrig().</li>
+</ul></li>
+</ul></li>
+<li><strong>HAL DSI</strong>
+<ul>
+<li>Align DSI Initialization sequence to the recommended ‘Programing procedure overview’ part to avoid DSI read LCD controller register 0x0A error.</li>
+</ul></li>
+<li><strong>HAL FLASH</strong>
+<ul>
+<li>Add macro UNUSED() to avoid the generation of a warning related to the unused argument ‘Edge’.</li>
+</ul></li>
+<li><strong>HAL NOR</strong>
+<ul>
+<li>Add x8 commands support for NOR Flash driver.</li>
+</ul></li>
+<li><strong>HAL SPDIFRX</strong>
+<ul>
+<li>Prevent hard fault by checking DMA usage.</li>
+<li>Tuning of default SPDIFRX timeout.</li>
+</ul></li>
+<li><strong>HAL HASH</strong>
+<ul>
+<li>Read the last remaining bytes (3 or 2 or 1) of the data in a temporary variable (taking into account swap mode) and enter this variable into the HASH-&gt;DIN when the data is not a multiple of 4 bytes.</li>
+<li>Code quality enhancement : Fix MISRA-C Rules 12.1, 10.7, 10.6, 10.4.</li>
+</ul></li>
+<li><strong>HAL CRYP</strong>
+<ul>
+<li>Update CRYP HAL driver to fix the issue of writing out the outputbuffer when the size is not multiple of 4.</li>
+</ul></li>
+<li><strong>HAL OPAMP</strong>
+<ul>
+<li>Fix incorrect word ‘surcharged’ in functions headers.</li>
+</ul></li>
+<li><strong>HAL/LL ADC</strong>
+<ul>
+<li>Update LL_ADC_SetAnalogWDThresholds(), LL_ADC_GetAnalogWDThresholds(), LL_ADC_ConfigAnalogWDThresholds() APIs for ADC3 IP version.</li>
+<li>Update HAL ADC driver to support case of dual mode with 2 DMA channels.</li>
+<li>Update setting of channel preselection for ADC internal channel.</li>
+<li>Update LL_ADC_DeInit() API with reference manual.</li>
+</ul></li>
+<li><strong>HAL DAC</strong>
+<ul>
+<li>Fix incorrect word ‘surcharged’ in functions headers.</li>
+<li>Updated DAC buffer calibration according to RM.</li>
+</ul></li>
+<li><strong>HAL OSPI</strong>
+<ul>
+<li>Update OCTOSPI driver to handle proper abort of the DMA transfer.</li>
+</ul></li>
+<li><strong>HAL CORDIC</strong>
+<ul>
+<li>Fix incorrect word ‘surcharged’ in functions headers.</li>
+</ul></li>
+<li><strong>HAL FMAC</strong>
+<ul>
+<li>Avoid usage of magic numbers.</li>
+<li>Fix incorrect word ‘surcharged’ in functions headers.</li>
+</ul></li>
+<li><strong>HAL/LL SPI</strong>
+<ul>
+<li>Code improvement related to LDRA inside HAL_SPI_TransmitReceive_DMA(), HAL_SPI_Abort() and HAL_SPI_Abort_IT() APIs.</li>
+<li>Update the register field modified by LL_SPI_SetTxCRCInitPattern() API.</li>
+<li>In Full Duplex mode, calling HAL_SPI_TransmitReceive_DMA() API can generate a RX HDMA busy if HDMA TX is not well initialized. To avoid this, now a DMA abort is done on RX path to reset HDMA RX to ready state.</li>
+<li>Feature Reload IT can generate Hardfault at high baudrate. This happens because variable hspi-&gt;Reload.Requested is reset before hspi-&gt;RxXferCount goes to zero. To avoid this, now hspi-&gt;Reload.Requested reset is done inside local ISR pointer instead of HAL_SPI_IRQHandler() API.</li>
+</ul></li>
+<li><strong>HAL QSPI</strong>
+<ul>
+<li>Clear the QSPI.AR register when sCommand.AddressMode is QSPI_ADDRESS_NONE</li>
+</ul></li>
+<li><strong>HAL SMBUS</strong>
+<ul>
+<li>Update HAL SMBUS driver to prefetch data before starting the transmission: implementation of errata sheet workaround I2C2-190208 : Transmission stalled after first byte.</li>
+<li>Update SMBUS_ITErrorHandler to flash TXDR just in case of error.</li>
+</ul></li>
+<li><strong>HAL ETH</strong>
+<ul>
+<li>Update the entry to critical section without enabling unwanted global interrupts.</li>
+<li>Add missing system time in different PTP APIs.</li>
+<li>Fix ETH_Start_IT sequence.</li>
+<li>HAL ETH Driver general updates to enhance the quality and robustness.</li>
+<li>Add condition to get the TimeStamp only when it was captured (Check on Last Descriptor and TimeStamp flag set).</li>
+<li>Fix comment “CSR Clock Range between 150-250* MHz”.</li>
+<li>Update on Rx descriptor Tail pointer management to avoid race condition.</li>
+<li>Move the section of disable MMC interrupts from HAL_ETH_Start_IT() API to HAL_ETH_Init() API.</li>
+<li>Fix MAC register name to get MAC LPI interrupt.</li>
+</ul></li>
+<li><strong>HAL UART</strong>
+<ul>
+<li>Update initialisation sequence for TXINV, RXINV and TXRXSWAP settings.</li>
+<li>Fix incorrect gState check in HAL_UART_RegisterRxEventCallback/HAL_UART_UnRegisterRxEventCallback APIs to allow user Rx Event Callback registration when a transmit is ongoing.</li>
+<li>Prevent RTOF flag from being cleared by a transmit process in polling mode.</li>
+</ul></li>
+<li><strong>HAL FDCAN</strong>
+<ul>
+<li>Fix GetIndex issue in HAL_FDCAN_GetRxMessage() API.</li>
+</ul></li>
+<li><strong>HAL SAI</strong>
+<ul>
+<li>Improve audio quality (avoid potential glitch).</li>
+<li>Fix incorrect word ‘surcharged’.</li>
+</ul></li>
+<li><strong>HAL I2C</strong>
+<ul>
+<li>Update I2C_WaitOnRXNEFlagUntilTimeout() function to check I2C_FLAG_AF independently from I2C_FLAG_RXNE.</li>
+<li>Update HAL_I2C_IsDeviceReady() API to support 10_bit addressing mode: Update done on the macro I2C_GENERATE_START.</li>
+<li>Update HAL I2C driver to prefetch data before starting the transmission: implementation of errata sheet workaround I2C2-190208 : Transmission stalled after first byte</li>
+<li>Update HAL_I2C_Init API to clear ADD10 bit in 7 bit addressing mode.</li>
+<li>Update HAL I2C driver to disable all interrupts after end of transaction.</li>
+<li>Update HAL_I2C_Mem_Write_IT() API to initialize XferSize at 0.</li>
+<li>Update I2C_Slave_ISR_IT(), I2C_Slave_ISR_DMA() and I2C_ITSlaveCplt() functions to prevent the call of HAL_I2C_ListenCpltCallback() API twice.</li>
+<li>In HAL_I2C_IsDeviceReady() API remove the unusable code.</li>
+<li>Update I2C_WaitOnFlagUntilTimeout() function to handle error case.</li>
+<li>Update HAL_I2C_Slave_Transmit() API to check if the received NACK is the good one.</li>
+<li>Update LL_I2C_HandleTranfer() API to prevent undefined behavior of volatile usage before updating the CR2 register.</li>
+</ul></li>
+<li><strong>HAL USB</strong>
+<ul>
+<li>ll_USB.c fix wrong mask to clear USB interrupt in USB_ClearInterrupts() function.</li>
+<li>ll_usb.c: remove useless software setting to setup the frame interval at 80%.</li>
+<li>ll_usb.c hal_hcd.c: adding support of hub split transactions.</li>
+<li>pcd.c/ll_usb.c: fix device connection in case battery charging used with HS instance linked to internal FS PHY.</li>
+<li>ll_usb.c: increase timeout value to allow core reset to complete.</li>
+<li>ll_usb.c: improve delay management to set core mode.</li>
+</ul></li>
+<li><strong>LL UTILS</strong>
+<ul>
+<li>Fix a note about Ticks parameter.</li>
+</ul></li>
+</ul>
+<h2 id="known-limitations">Known Limitations</h2>
+<ul>
+<li>None</li>
+</ul>
+<h2 id="backward-compatibility">Backward compatibility</h2>
+<ul>
+<li>None</li>
+</ul>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section17" aria-hidden="true"> <label for="collapse-section17" aria-hidden="true"><strong>V1.11.2 / 23-January-2024</strong></label>
+<div>
+<h2 id="main-changes-1">Main Changes</h2>
+<ul>
+<li><strong>HAL ETH</strong>
+<ul>
+<li>Update on Rx descriptor Tail pointer management to avoid race condition.</li>
+</ul></li>
+</ul>
+<h2 id="known-limitations-1">Known Limitations</h2>
+<ul>
+<li>None</li>
+</ul>
+<h2 id="backward-compatibility-1">Backward compatibility</h2>
+<ul>
+<li>None</li>
+</ul>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section16" aria-hidden="true"> <label for="collapse-section16" aria-hidden="true"><strong>V1.11.1 / 04-November-2022</strong></label>
+<div>
+<h2 id="main-changes-2">Main Changes</h2>
+<ul>
+<li>General updates to fix known defects and implementation enhancements.</li>
+<li>HAL code quality enhancement for MISRA-C Rule-8.13 by adding const qualifiers.</li>
+<li><p>HAL code quality enhancement for MISRA-C2012 Rule-2.2_c.</p></li>
+<li><strong>HAL Generic</strong>
+<ul>
+<li>HAL code quality enhancement for MISRA-C2012 Rule-10.4_a: adding sign qualifier.</li>
+</ul></li>
+<li><strong>HAL RCC</strong>
+<ul>
+<li>Wait at least 2 CK_REF cycles after FRACEN has been cleared before setting it back.</li>
+<li>Macros RCC_SPI4CLKSOURCE_D2PCLK1, RCC_SPI5CLKSOURCE_D2PCLK1, RCC_SPI45CLKSOURCE_D2PCLK1, RCC_SPI45CLKSOURCE_CDPCLK1 and RCC_SPI45CLKSOURCE_PCLK1 were renamed with suffix PCLK2.</li>
+<li>Add SPI45 peripheral clock frequency to HAL_RCCEx_GetPeriphCLKFreq().</li>
+<li>Rename HAL_RCC_CCSCallback() API to HAL_RCC_CSSCallback().</li>
+<li>The last line of the definition of IS_RCC_I2C4CLKSOURCE macro is corrected : RCC_I2C3CLKSOURCE_CSI is changed by RCC_I2C4CLKSOURCE_CSI.</li>
+<li>Update HAL_RCC_GetHCLKFreq() to return the right HCLK frequency when a single core product is selected.</li>
+</ul></li>
+<li><strong>HAL EXTI</strong>
+<ul>
+<li>Fix computation of pExtiConfig-&gt;GPIOSel in HAL_EXTI_GetConfigLine().</li>
+<li>Optimize computation of pExtiConfig-&gt;GPIOSel in HAL_EXTI_GetConfigLine().</li>
+</ul></li>
+<li><strong>HAL/LL ADC</strong>
+<ul>
+<li>Update the LL_ADC_ConfigOverSamplingRatioShift() and the LL_ADC_GetOverSamplingRatio() APIs to correctly set the data resolution for the ADC3.</li>
+<li>Add LL_ADC_GetChannelPreselection() API and rename LL_ADC_SetChannelPreSelection() to LL_ADC_SetChannelPreselection().</li>
+<li>Update description of offset value range: add mention of oversampling ratio increasing offset maximum value.</li>
+</ul></li>
+<li><strong>HAL RTC_BKP</strong>
+<ul>
+<li>Check if the RTC calendar has been previously initialized before entering Initialization mode.</li>
+<li>Clear RSF flag using a single ‘write’ operation instead of a ‘read-modify-write’ sequence to avoid clearing other ISR flags if set in the meantime.</li>
+<li>Optimize the use of #ifdef … #endif directives for better readability and maintainability.</li>
+<li>To avoid any possible clearing of other ISR flags during sequence read-modify-write , a direct assignment was applied with a mask of reserved bits to avoid setting them.</li>
+<li>Rearrange the de-initialization sequence to be compliant with the reference manual.</li>
+<li>Optimize the CR reset operation (from read-modify-write to write) and enrich related comments.</li>
+<li>Move the ‘exit initialization mode’ call after PRER, ALRMAR, ALRMBR, and WUTR registers are reset.</li>
+<li>Group the tamper registers reset instruction for better readability.</li>
+</ul></li>
+<li><strong>LL TIM</strong>
+<ul>
+<li>Remove useless check on IS_TIM_ADVANCED_INSTANCE() within LL_TIM_BDTR_Init() to fix Break Filter configuration problem with specific TIM instances.</li>
+</ul></li>
+<li><strong>HAL HRTIM</strong>
+<ul>
+<li>Macros HRTIM_TIMDEADTIME_PRESCALERRATIO_MUL8, HRTIM_TIMDEADTIME_PRESCALERRATIO_MUL4 and HRTIM_TIMDEADTIME_PRESCALERRATIO_MUL2 were removed from HAL library code.</li>
+</ul></li>
+<li><strong>HAL CRC</strong>
+<ul>
+<li>Add filter in HAL_CRCEx_Polynomial_Set() to exclude even polynomials.</li>
+</ul></li>
+<li><strong>HAL CEC</strong>
+<ul>
+<li>Better performance by removing multiple volatile reads or writes in interrupt handler.</li>
+</ul></li>
+<li><strong>HAL SDMMC</strong>
+<ul>
+<li>Update HAL_SD_ConfigSpeedBusOperation() API to add support of switch to Default Speed.</li>
+</ul></li>
+<li><strong>HAL DSI</strong>
+<ul>
+<li>Update to align DSI ULPS entry and exit sequences with reference manual.</li>
+</ul></li>
+<li><strong>HAL CRYP</strong>
+<ul>
+<li>Rename CRYP Data Type possible values to avoid any eventual usage confusion:</li>
+<li>CRYP_DATATYPE_32B renamed CRYP_NO_SWAP</li>
+<li>CRYP_DATATYPE_16B renamed CRYP_HALFWORD_SWAP</li>
+<li>CRYP_DATATYPE_8B renamed CRYP_BYTE_SWAP</li>
+<li>CRYP_DATATYPE_1B renamed CRYP_BIT_SWAP</li>
+</ul></li>
+<li><strong>HAL SAI</strong>
+<ul>
+<li>Avoid using magic numbers.</li>
+</ul></li>
+<li><strong>HAL I2C</strong>
+<ul>
+<li>Timeout issue using HAL MEM interface through FreeRTOS.</li>
+<li>I2C_IsErrorOccurred does not return error if timeout is detected.</li>
+<li>The ADDRF flag is cleared too early when the restart is received but the direction has changed.</li>
+</ul></li>
+<li><strong>HAL/LL SPI</strong>
+<ul>
+<li>Change argument order in SPI_WaitOnFlagUntilTimeout to be aligned with declaration.</li>
+<li>Fix dereferencing pointer warning on GNU compiler inside LL_SPI_ReceiveData16() function.</li>
+</ul></li>
+<li><strong>HAL ETH</strong>
+<ul>
+<li>Add missing default callbacks initialization to static function ETH_InitCallbacksToDefault().</li>
+<li>Fix MISRAC2012-Rule-2.3 warning in HAL ETH driver:
+<ul>
+<li>Unused type declaration</li>
+</ul></li>
+</ul></li>
+<li><strong>HAL UART</strong>
+<ul>
+<li>Removal of HAL_LOCK/HAL_UNLOCK calls in HAL UART Tx and Rx APIs.</li>
+<li>Disable the Receiver Timeout Interrupt when data reception is completed.</li>
+<li>Rework of UART_WaitOnFlagUntilTimeout() API to avoid being stuck forever when UART overrun error occurs and to enhance behavior.</li>
+</ul></li>
+<li><strong>HAL DTS</strong>
+<ul>
+<li>Correction on IS_DTS_DIVIDER_RATIO_NUMBER macro.</li>
+<li>Corrections on register callbacks feature implementation.</li>
+<li>Correction on factory temperature value.</li>
+<li>Avoid using magic numbers.</li>
+</ul></li>
+<li><strong>Documentation</strong>
+<ul>
+<li>Remove redundant word from <span class="citation" data-cites="note">@note</span> of HAL_InitTick() header description, which may cause confusion when reading the note.</li>
+</ul></li>
+</ul>
+<h2 id="known-limitations-2">Known Limitations</h2>
+<ul>
+<li>None</li>
+</ul>
+<h2 id="backward-compatibility-2">Backward compatibility</h2>
+<ul>
+<li>None</li>
+</ul>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section15" aria-hidden="true"> <label for="collapse-section15" aria-hidden="true"><strong>V1.11.0 / 11-February-2022</strong></label>
+<div>
+<h2 id="main-changes-3">Main Changes</h2>
+<ul>
+<li>General updates to fix known defects and implementation enhancements.</li>
+<li><strong>The following changes done on the HAL drivers require an update of the application code based on older HAL versions</strong>
+<ul>
+<li>Rework of HAL Ethernet driver to resolve problems and improve performance.(compatibility break)</li>
+<li>A new HAL Ethernet driver has been redesigned with new APIs, to bypass limitations with previous HAL Ethernet driver version.</li>
+<li>The new HAL Ethernet driver is the recommended version. It is located as usual in Drivers/STM32H7xx_HAL_Driver/Src and Drivers/STM32H7xx_HAL_Driver/Inc folders.
+<ul>
+<li>It can be enabled through switch HAL_ETH_MODULE_ENABLED in stm32h7xx_hal_conf.h</li>
+</ul></li>
+<li>The legacy HAL Ethernet driver is also present in the release in Drivers/STM32H7xx_HAL_Driver/Src/Legacy and Drivers/STM32F4xx_HAL_Driver/Inc/Legacy folders for software compatibility reasons.
+<ul>
+<li>Its usage is not recommended as deprecated. It can however be enabled through switch HAL_ETH_LEGACY_MODULE_ENABLED in stm32h7xx_hal_conf.h</li>
+</ul></li>
+</ul></li>
+<li><strong>HAL LTDC</strong>
+<ul>
+<li>Update HAL_LTDC_DeInit() to fix MCU Hang up during LCD turn OFF.</li>
+</ul></li>
+<li><strong>HAL QSPI</strong>
+<ul>
+<li>Update HAL_QSPI_Abort() and HAL_QSPI_Abort_IT() APIs to check on QSPI BUSY flag status before executing the abort procedure.</li>
+</ul></li>
+<li><strong>LL TIM</strong>
+<ul>
+<li>__LL_TIM_CALC_PSC() macro update to round up the evaluate value when the fractional part of the division is greater than 0.5.</li>
+</ul></li>
+<li><strong>HAL NOR</strong>
+<ul>
+<li>FMC_WRITE_OPERATION_DISABLE for NOR cause Hardfault for Read operations</li>
+</ul></li>
+<li><strong>HAL OSPI</strong>
+<ul>
+<li>Remove unsupported Clocked Chip Select High Time feature:
+<ul>
+<li>ClkChipSelectHighTime parameter removed from the OSPI_InitTypeDef structure</li>
+<li>Update HAL_OSPI_Init() API to no longer configure the ClkChipSelectHighTime parameter in the OCTOSPI_DCR1 register</li>
+</ul></li>
+<li>Fix an MPU issue with OTFDEC examples and STM32H735G-DK BSP example.</li>
+<li>Update HAL_OSPI_Init() to fix DelayBlockBypass parameter configuration issue.</li>
+</ul></li>
+<li><strong>HAL SPI</strong>
+<ul>
+<li>Update SPI_IRQ_Handler() to overrun error occurrence in full duplex communication.
+<ul>
+<li>Add clear for transmission flag.</li>
+</ul></li>
+<li>Update HAL_SPI_Receive() API to avoid hardfault exception in Master RX, Polling mode 8 bits mode when 2 byte are available at the same time.</li>
+</ul></li>
+<li><strong>HAL SMBUS</strong>
+<ul>
+<li>stm32h7xx_hal_smbus_ex.c/.h file added to support new <strong>HAL SMBUS extended feature</strong>.
+<ul>
+<li>Add Support for Fast Mode Plus to be SMBUS rev 3 compliant.
+<ul>
+<li>Add HAL_SMBUSEx_EnableFastModePlus() and HAL_SMBUSEx_DisableFastModePlus() APIs to manage Fm+.</li>
+</ul></li>
+<li>Add Support of wake up capability.
+<ul>
+<li>Add HAL_SMBUSEx_EnableWakeUp() and HAL_SMBUSEx_DisableWakeUp() APIs.</li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li><strong>HAL ETH</strong>
+<ul>
+<li>Entire receive process reworked.</li>
+<li>Resolve the problem of received data corruption.</li>
+<li>Implement transmission in interrupt mode.</li>
+<li>Handle one interrupt for multiple transmitted packets.</li>
+<li>Implement APIs to handle PTP feature.</li>
+<li>Implement APIs to handle Timestamp feature.</li>
+<li>Add support of receive buffer unavailable.</li>
+<li>Update HAL_ETH_IRQHandler() to handle receive buffer unavailable.</li>
+</ul></li>
+<li><strong>HAL/LL USB</strong>
+<ul>
+<li>Update to report correct received amount of data with USB DMA enabled</li>
+<li>Update USB IRQ handler to enable EP OUT disable</li>
+<li>Add support of USB IN/OUT Iso incomplete</li>
+<li>Fix USB BCD data contact timeout</li>
+</ul></li>
+</ul>
+<h2 id="known-limitations-3">Known Limitations</h2>
+<ul>
+<li>None</li>
+</ul>
+<h2 id="backward-compatibility-3">Backward compatibility</h2>
+<ul>
+<li>Compatibility break with HAL ETH driver V1.10.0 available within STM32CubeFW_H7 V1.9.0</li>
+</ul>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section14" aria-hidden="true"> <label for="collapse-section14" aria-hidden="true"><strong>V1.10.1 / 06-December-2021</strong></label>
+<div>
+<h2 id="main-changes-4">Main Changes</h2>
+<ul>
+<li>General updates to fix known defects and implementation enhancements.</li>
+<li>All source files: update disclaimer to add reference to the new license agreement.</li>
+<li><strong>HAL RCC</strong>
+<ul>
+<li>Fix issue where HSI is not taken into account in HAL_RCC_OscConfig.</li>
+</ul></li>
+<li><strong>HAL FLASH</strong>
+<ul>
+<li>Update to fix error checking issue when optimization is set to high.</li>
+</ul></li>
+<li><strong>HAL GPIO</strong>
+<ul>
+<li>Reorder EXTI configuration sequence in order to avoid unexpected level detection.</li>
+</ul></li>
+<li><strong>HAL EXTI</strong>
+<ul>
+<li>Update HAL_EXTI_GetConfigLine() API to set default configuration value of Trigger and GPIOSel before checking each corresponding registers.</li>
+</ul></li>
+<li><strong>HAL/LL ADC</strong>
+<ul>
+<li>Fix issue where an error state is returned by the IRQ handler in case of injection conversion in IT mode with trigger timer.</li>
+<li>Add missing injected external trigger to IS_ADC_EXTTRIGINJEC() macro.</li>
+<li>Add two new APIs to simplify internal channel configuration (LL_ADC_SetCommonPathInternalChAdd and LL_ADC_SetCommonPathInternalChRem).</li>
+<li>assert_param() now checks for continuous and discontinuous mode exclusivity.</li>
+<li>Update LL ADC driver to correctly configure the ADC3 resolution on some devices.</li>
+</ul></li>
+<li><strong>HAL TIM</strong>
+<ul>
+<li>Manage the Bi-directional break input feature for the concerned part numbers.</li>
+<li>Update input capture measurement in DMA mode to avoid zero return values at high frequencies.</li>
+<li>Update HAL_TIMEx_ConfigBreakInput to use CMSIS TIM1_OR2_BKDF1BK0E_Pos definition instead of its hard coded value.</li>
+<li>Fix wrong compile switch used in TIM_LL_EC_DMABURST_BASEADDR constant definitions.</li>
+</ul></li>
+<li><strong>HAL UART</strong>
+<ul>
+<li>Fix erroneous UART’s handle state in case of error returned after DMA reception start within UART_Start_Receive_DMA().</li>
+<li>Correct UART ReceptionType management in case if ReceptionToIdle API being called from RxEvent callback.</li>
+<li>Handling of UART concurrent register access in case of race condition between TX and RX transfers (HAL UART and LL LPUART).</li>
+<li>Improve header description of UART_WaitOnFlagUntilTimeout() function.</li>
+<li>Add a check on the UART parity before enabling the parity error interruption.</li>
+<li>Add const qualifier for read only pointers in API prototypes.</li>
+<li>Fix wrong cast when computing the USARTDIV value in UART_SetConfig().</li>
+</ul></li>
+<li><strong>HAL/LL USART</strong>
+<ul>
+<li>Improve header description of USART_WaitOnFlagUntilTimeout() function.</li>
+<li>Add a check on the USART parity before enabling the parity error interrupt.</li>
+<li>Add const qualifier for read only pointers for API prototypes.</li>
+<li>Handling of UART concurrent register access in case of race condition between TX and RX transfers (HAL UART and LL LPUART).</li>
+<li>Fix compilation warnings generated with ARMV6 compiler.</li>
+</ul></li>
+<li><strong>LL LPUART</strong>
+<ul>
+<li>Remove TXFECF reference from LL LPUART driver.</li>
+</ul></li>
+<li><strong>HAL SMBUS</strong>
+<ul>
+<li>Add Fm+ support to SMBus to be rev3 compliant.</li>
+<li>Add the support of wake up capability.</li>
+<li>Add new APIs:
+<ul>
+<li>HAL_SMBUSEx_EnableWakeUp()</li>
+<li>HAL_SMBUSEx_DisableWakeUp()</li>
+</ul></li>
+<li>Update to fix issue of mismatched data received by master in case of data size to be transmitted by the slave is greater than the data size to be received by the master.</li>
+<li>Add flush on TX register.</li>
+</ul></li>
+<li><strong>HAL I2C</strong>
+<ul>
+<li>Updated I2C_IsAcknowledgeFailed() API to avoid I2C in busy state if NACK received after transmitting register address.</li>
+<li>Fix written reserved bit 28 in I2C_CR2 register</li>
+<li>Update to handle errors in polling mode.</li>
+<li>Rename I2C_IsAcknowledgeFailed() to I2C_IsErrorOccurred() and correctly manage when error occurs.</li>
+<li>Update to fix issue detected due to low system frequency execution (HSI).</li>
+<li>Declare an internal macro link to DMA macro to check remaining data: I2C_GET_DMA_REMAIN_DATA.</li>
+</ul></li>
+<li><strong>HAL LPTIM</strong>
+<ul>
+<li>Add check on PRIMASK register to prevent from enabling unwanted global interrupts within LPTIM_Disable() and LL_LPTIM_Disable().</li>
+</ul></li>
+<li><strong>HAL Generic</strong>
+<ul>
+<li>Fix HAL_Init_Tick() priority handling for alternate (non SysTick) time bases.</li>
+</ul></li>
+<li><strong>HAL IRDA</strong>
+<ul>
+<li>Improve header description of IRDA_WaitOnFlagUntilTimeout() function.</li>
+<li>Add a check on the IRDA parity before enabling the parity error interrupt.</li>
+<li>Add const qualifier for read only pointers for API prototypes.</li>
+<li>Fix wrong cast when computing the USARTDIV value in IRDA_SetConfig().</li>
+</ul></li>
+<li><strong>HAL RTC_BKP</strong>
+<ul>
+<li>Add an exit condition to the RTC_EnterInitMode and HAL_RTC_DeInit functions to avoid the infinite loop when initializing and de-initializing the RTC.</li>
+<li>Add use of macros _\_RTC_&lt;&gt;_EXTI_ENABLE_IT() in case of DUAL_CORE configuration inside functions HAL_RTC_SetAlarm_IT(), HAL_RTCEx_SetWakeUpTimer_IT(),HAL_RTCEx_SetTimeStamp_IT(), and HAL_RTCEx_SetTamper_IT().</li>
+</ul></li>
+<li><strong>HAL DBGMCU</strong>
+<ul>
+<li>In Legacy/stm32_hal_legacy.h, exclude HAL_EnableDBG<em>Mode() HAL_DisableDBG</em>Mode() declarations as still defined in stm32h7xx_hal.c.</li>
+</ul></li>
+<li><strong>HAL NOR</strong>
+<ul>
+<li>Align HAL_NOR_Init() API with core of the function when write operation is disabled to avoid HardFault.</li>
+</ul></li>
+<li><strong>HAL SDMMC</strong>
+<ul>
+<li>Fix an issue with HAL_SD_GetCardState().</li>
+<li>Fix to take into consideration if the received RCA is 0x0 or not.</li>
+</ul></li>
+<li><strong>LL RTC_BKP</strong>
+<ul>
+<li>Fix IS_LL_RTC_MONTH assert check.</li>
+</ul></li>
+<li><strong>HAL DMA</strong>
+<ul>
+<li>Update HAL_DMA_IRQHandler() API to set the DMA state before unlocking access to the DMA handle.</li>
+<li>Manage the case of an invalid value of CallbackID passed to the HAL_DMA_RegisterCallback() API.</li>
+</ul></li>
+<li><strong>HAL SMARTCARD</strong>
+<ul>
+<li>Improve header description of SMARTCARD_WaitOnFlagUntilTimeout() function.</li>
+<li>Add const qualifier for read only pointers in API prototypes.</li>
+<li>Fix wrong cast when computing the USARTDIV value in SMARTCARD_SetConfig().</li>
+</ul></li>
+<li><strong>LL HSEM</strong>
+<ul>
+<li>Fix an issue where LL_HSEM_1StepLock uses HSEM_R_LOCK instead of HSEM_RLR_LOCK while checking the RLR register.</li>
+</ul></li>
+<li><strong>HAL RNG</strong>
+<ul>
+<li>Add check to avoid false timeout detection in case of preemption.</li>
+</ul></li>
+<li><strong>HAL ETH</strong>
+<ul>
+<li>Correct wrong call to DMAErrorCallback() instead of MACErrorCallback().</li>
+</ul></li>
+<li><strong>HAL/LL USB</strong>
+<ul>
+<li>hal_hcd: fix added to avoid compiler otmization on count variable used for USB HAL timeout loop check.</li>
+<li>hal_pcd: added missing registered callbacks check for HAL_HCD_HC_NotifyURBChange_Callback().</li>
+<li>hal_pcd: New API HAL_PCD_SetTestMode() added to handle USB device high speed Test modes.</li>
+<li>hal_pcd: setting SNAK for EPs not required during device reset.</li>
+<li>ll_USB: change added in USB_SetCurrentMode to improve required wait timing to change core mode.</li>
+<li>ll_USB: remove non required 200ms delay during host initialization.</li>
+<li>ll_USB: fix added to USB_FlushRxFifo() and USB_FlushTxFifo() APIs by adding check on AHB master IDLE state before flushing the USB FIFO.</li>
+<li>ll_USB: fix added to avoid resetting host channel direction during channel halt.</li>
+</ul></li>
+<li><strong>HAL USB_OTG</strong>
+<ul>
+<li>USB LL driver fix on USB_HC_Halt() function, should not clear channel direction during halt.</li>
+<li>USB HAL: fix unexpected HAL_TIMEOUT during USB core reset due to compiler optimization.</li>
+</ul></li>
+<li><strong>HAL IWDG</strong>
+<ul>
+<li>Add LSI startup time in default IWDG timeout calculation (HAL_IWDG_DEFAULT_TIMEOUT).</li>
+</ul></li>
+</ul>
+<h2 id="known-limitations-4">Known Limitations</h2>
+<ul>
+<li><strong>HAL/ETH</strong>
+<ul>
+<li>A full rework of the ETH HAL driver is planned in order to fix several issues including better synchronization with TCPIP stack for instance LwIP</li>
+</ul></li>
+</ul>
+<h2 id="backward-compatibility-4">Backward compatibility</h2>
+<ul>
+<li>None</li>
+</ul>
+</div>
+</div>
+<div class="collapse">
+<input type="checkbox" id="collapse-section13" aria-hidden="true"> <label for="collapse-section13" aria-hidden="true"><strong>V1.10.0 / 12-February-2021</strong></label>
+<div>
+<h2 id="main-changes-5">Main Changes</h2>
 <ul>
 <li><p>General updates to fix known defects and implementation enhancements</p></li>
 <li><p>Fix minor issues related to English typo in comments</p></li>
@@ -326,14 +948,14 @@ This software component is licensed by ST under BSD 3-Clause license, the “Lic
 </ul></li>
 </ul></li>
 </ul>
-<h2 id="known-limitations">Known Limitations</h2>
+<h2 id="known-limitations-5">Known Limitations</h2>
 <ul>
 <li><strong>HAL/ETH</strong>
 <ul>
 <li>A full rework of the ETH HAL driver is planned in order to fix several issues including better synchronization with TCPIP stack for instance LwIP</li>
 </ul></li>
 </ul>
-<h2 id="backward-compatibility">Backward compatibility</h2>
+<h2 id="backward-compatibility-5">Backward compatibility</h2>
 <ul>
 <li>None</li>
 </ul>
@@ -342,7 +964,7 @@ This software component is licensed by ST under BSD 3-Clause license, the “Lic
 <div class="collapse">
 <input type="checkbox" id="collapse-section12" aria-hidden="true"> <label for="collapse-section12" aria-hidden="true"><strong>V1.9.0 / 29-May-2020</strong></label>
 <div>
-<h2 id="main-changes-1">Main Changes</h2>
+<h2 id="main-changes-6">Main Changes</h2>
 <ul>
 <li>First official release of the STM32CubeH7 Firmware Package supporting <strong>STM32H72x/3x</strong> new devices</li>
 <li>General updates to fix known defects and implementation enhancements</li>
@@ -936,11 +1558,11 @@ This software component is licensed by ST under BSD 3-Clause license, the “Lic
 </ul></li>
 </ul></li>
 </ul>
-<h2 id="known-limitations-1">Known Limitations</h2>
+<h2 id="known-limitations-6">Known Limitations</h2>
 <ul>
 <li>None</li>
 </ul>
-<h2 id="backward-compatibility-1">Backward compatibility</h2>
+<h2 id="backward-compatibility-6">Backward compatibility</h2>
 <ul>
 <li>Extension RTC APIs HAL_RTCEx_MonotonicCounterIncrement and HAL_RTCEx_MonotonicCounterGet APIs prototypes updated with new parameters Instance (alignment with other STM32 families)</li>
 </ul>
@@ -949,7 +1571,7 @@ This software component is licensed by ST under BSD 3-Clause license, the “Lic
 <div class="collapse">
 <input type="checkbox" id="collapse-section10" aria-hidden="true"> <label for="collapse-section10" aria-hidden="true"><strong>V1.8.0 / 14-February-2020</strong></label>
 <div>
-<h2 id="main-changes-2">Main Changes</h2>
+<h2 id="main-changes-7">Main Changes</h2>
 <ul>
 <li>General updates to fix known defects and implementation enhancements</li>
 <li><strong>HAL</strong>: generic
@@ -1183,7 +1805,7 @@ This software component is licensed by ST under BSD 3-Clause license, the “Lic
 </ul></li>
 </ul></li>
 </ul>
-<h2 id="known-limitations-2">Known Limitations</h2>
+<h2 id="known-limitations-7">Known Limitations</h2>
 <ul>
 <li><strong>HAL I2S</strong>:
 <ul>
@@ -1193,7 +1815,7 @@ This software component is licensed by ST under BSD 3-Clause license, the “Lic
 </ul></li>
 </ul></li>
 </ul>
-<h2 id="backward-compatibility-2">Backward compatibility</h2>
+<h2 id="backward-compatibility-7">Backward compatibility</h2>
 <ul>
 <li>None</li>
 </ul>
@@ -1202,7 +1824,7 @@ This software component is licensed by ST under BSD 3-Clause license, the “Lic
 <div class="collapse">
 <input type="checkbox" id="collapse-section9" aria-hidden="true"> <label for="collapse-section9" aria-hidden="true"><strong>V1.7.0 / 06-December-2019</strong></label>
 <div>
-<h2 id="main-changes-3">Main Changes</h2>
+<h2 id="main-changes-8">Main Changes</h2>
 <ul>
 <li>Official release with support of STM32H7A3/B3xx/B0xx new devices<br />
 </li>
@@ -1757,7 +2379,7 @@ This software component is licensed by ST under BSD 3-Clause license, the “Lic
 </ul></li>
 </ul></li>
 </ul>
-<h2 id="known-limitations-3">Known Limitations</h2>
+<h2 id="known-limitations-8">Known Limitations</h2>
 <ul>
 <li><strong>HAL I2S</strong>:
 <ul>
@@ -1771,7 +2393,7 @@ This software component is licensed by ST under BSD 3-Clause license, the “Lic
 <li>New PSSI driver provided supporting both modes : DMA mode recommended/ polling mode has hardware limitation confirmed and mentioned in the STM32H7A3/B3xx/B0xx erratasheet.</li>
 </ul></li>
 </ul>
-<h2 id="backward-compatibility-3">Backward compatibility</h2>
+<h2 id="backward-compatibility-8">Backward compatibility</h2>
 <ul>
 <li><strong>HAL I2S</strong>:
 <ul>
@@ -1795,7 +2417,7 @@ This software component is licensed by ST under BSD 3-Clause license, the “Lic
 <div class="collapse">
 <input type="checkbox" id="collapse-section7" aria-hidden="true"> <label for="collapse-section7" aria-hidden="true"><strong>V1.6.0 / 28-June-2019</strong></label>
 <div>
-<h2 id="main-changes-4">Main Changes</h2>
+<h2 id="main-changes-9">Main Changes</h2>
 <ul>
 <li>General updates to fix known defects and implementation enhancements</li>
 <li><strong>HAL</strong>: generic
@@ -2070,11 +2692,11 @@ This software component is licensed by ST under BSD 3-Clause license, the “Lic
 </ul></li>
 </ul></li>
 </ul>
-<h2 id="known-limitations-4">Known Limitations</h2>
+<h2 id="known-limitations-9">Known Limitations</h2>
 <ul>
 <li>None</li>
 </ul>
-<h2 id="backward-compatibility-4">Backward compatibility</h2>
+<h2 id="backward-compatibility-9">Backward compatibility</h2>
 <ul>
 <li><strong>HAL TIM</strong>:
 <ul>
@@ -2092,7 +2714,7 @@ This software component is licensed by ST under BSD 3-Clause license, the “Lic
 <div class="collapse">
 <input type="checkbox" id="collapse-section6" aria-hidden="true"> <label for="collapse-section6" aria-hidden="true"><strong>V1.5.0 / 05-April-2019</strong></label>
 <div>
-<h2 id="main-changes-5">Main Changes</h2>
+<h2 id="main-changes-10">Main Changes</h2>
 <ul>
 <li>General updates to fix known defects and implementation enhancements</li>
 <li>Add support for VOS0 power regulator voltage scaling with 480MHz over clock</li>
@@ -2562,7 +3184,7 @@ This software component is licensed by ST under BSD 3-Clause license, the “Lic
 <li>Update LL_Init1msTick and LL_SetSystemCoreClock description for <strong>DUAL CORE</strong> lines</li>
 </ul></li>
 </ul>
-<h2 id="known-limitations-5">Known Limitations</h2>
+<h2 id="known-limitations-10">Known Limitations</h2>
 <ul>
 <li><strong>HAL SD</strong>:
 <ul>
@@ -2576,7 +3198,7 @@ This software component is licensed by ST under BSD 3-Clause license, the “Lic
 <li>Full duplex Transmit/receive feature not available</li>
 </ul></li>
 </ul>
-<h2 id="backward-compatibility-5">Backward compatibility</h2>
+<h2 id="backward-compatibility-10">Backward compatibility</h2>
 <ul>
 <li><strong>HAL ADC</strong>:
 <ul>
@@ -2628,7 +3250,7 @@ This software component is licensed by ST under BSD 3-Clause license, the “Lic
 <div class="collapse">
 <input type="checkbox" id="collapse-section5" aria-hidden="true"> <label for="collapse-section5" aria-hidden="true"><strong>V1.4.0 / 30-November-2018</strong></label>
 <div>
-<h2 id="main-changes-6">Main Changes</h2>
+<h2 id="main-changes-11">Main Changes</h2>
 <ul>
 <li>General updates to fix known defects and implementation enhancements</li>
 <li>Add LL drivers : LL_ADC, LL_BDMA, LL_BUS, LL_COMP, LL_CORTEX, LL_CRC, LL_DAC, LL_DMA, LL_DMA2D, LL_DMAMUX, LL_EXTI, LL_GPIO, LL_HRTIM, LL_HSEM, LL_I2C, LL_IWDG, LL_LPTIM, LL_LPUART, LL_MDMA, LL_OPAMP,LL_PWR, LL_RCC, LL_RNG, LL_RTC, LL_SPI, LL_SWPMI, LL_SYSTEM, LL_TIM, LL_USART, LL_UTILS, LL_WWDG</li>
@@ -2897,7 +3519,7 @@ This software component is licensed by ST under BSD 3-Clause license, the “Lic
 <li>Protect the hcd driver to be used only if the USB_OTG_FS, USB_OTG_HS are enabled</li>
 </ul></li>
 </ul>
-<h2 id="known-limitations-6">Known Limitations</h2>
+<h2 id="known-limitations-11">Known Limitations</h2>
 <ul>
 <li><strong>HAL I2S</strong>:
 <ul>
@@ -2905,7 +3527,7 @@ This software component is licensed by ST under BSD 3-Clause license, the “Lic
 <li>A new version of this driver will be available in next release with full features tested</li>
 </ul></li>
 </ul>
-<h2 id="backward-compatibility-6">Backward compatibility</h2>
+<h2 id="backward-compatibility-11">Backward compatibility</h2>
 <ul>
 <li><strong>HAL ADC</strong>:
 <ul>
@@ -2945,7 +3567,7 @@ This software component is licensed by ST under BSD 3-Clause license, the “Lic
 <div class="collapse">
 <input type="checkbox" id="collapse-section4" aria-hidden="true"> <label for="collapse-section4" aria-hidden="true"><strong>V1.3.0 / 29-June-2018</strong></label>
 <div>
-<h2 id="main-changes-7">Main Changes</h2>
+<h2 id="main-changes-12">Main Changes</h2>
 <ul>
 <li>Updates to fix known defects on HAL Cortex, HAL RCC and HAL SDMMC drivers</li>
 <li><strong>HAL Cortex</strong>: Driver update to support 16 MPU regions instead of 8. User can now select an MPU regions from MPU_REGION_NUMBER0 to MPU_REGION_NUMBER15</li>
@@ -2957,7 +3579,7 @@ This software component is licensed by ST under BSD 3-Clause license, the “Lic
 <div class="collapse">
 <input type="checkbox" id="collapse-section3" aria-hidden="true"> <label for="collapse-section3" aria-hidden="true"><strong>V1.2.0 / 29-December-2017</strong></label>
 <div>
-<h2 id="main-changes-8">Main Changes</h2>
+<h2 id="main-changes-13">Main Changes</h2>
 <ul>
 <li>General updates to fix known defects and enhancements implementation</li>
 <li><strong>HAL SPI</strong>: Driver reworked to fix critical issues</li>
@@ -2968,7 +3590,7 @@ This software component is licensed by ST under BSD 3-Clause license, the “Lic
 <div class="collapse">
 <input type="checkbox" id="collapse-section2" aria-hidden="true"> <label for="collapse-section2" aria-hidden="true"><strong>V1.1.0 / 31-August-2017</strong></label>
 <div>
-<h2 id="main-changes-9">Main Changes</h2>
+<h2 id="main-changes-14">Main Changes</h2>
 <ul>
 <li>General updates to fix known defects and enhancements implementation</li>
 <li><strong>HAL FLASH</strong>: Add Mass Erase for both banks</li>
@@ -2983,7 +3605,7 @@ This software component is licensed by ST under BSD 3-Clause license, the “Lic
 <div class="collapse">
 <input type="checkbox" id="collapse-section1" aria-hidden="true"> <label for="collapse-section1" aria-hidden="true"><strong>V1.0.0 / 21-April-2017</strong></label>
 <div>
-<h2 id="main-changes-10">Main Changes</h2>
+<h2 id="main-changes-15">Main Changes</h2>
 <ul>
 <li>First official release for STM32H743xx/753xx devices</li>
 </ul>
