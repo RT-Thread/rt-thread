@@ -262,13 +262,17 @@ config ARCH_RISCV64
     select ARCH_CPU_64BIT
     bool
 
-if ARCH_RISCV64
-    config ARCH_REMAP_KERNEL
-        bool
-        depends on RT_USING_SMART
-        help
-            Remapping kernel image to high virtual address region
-endif
+config ARCH_REMAP_KERNEL
+    bool
+    depends on RT_USING_SMART
+    help
+        Remapping kernel image to high virtual address region
+
+config ARCH_USING_ASID
+    bool
+    depends on RT_USING_SMART
+    help
+        Using ASID support from architecture
 
 config ARCH_IA32
     bool

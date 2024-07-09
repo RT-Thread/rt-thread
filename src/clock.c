@@ -23,6 +23,10 @@
 #include <rtthread.h>
 #include <rtatomic.h>
 
+#if defined(RT_USING_SMART) && defined(RT_USING_VDSO)
+#include <vdso.h>
+#endif
+
 #ifdef RT_USING_SMP
 #define rt_tick rt_cpu_index(0)->tick
 #else
@@ -141,6 +145,10 @@ void rt_tick_increase(void)
     }
 #endif
     rt_timer_check();
+
+#ifdef RT_USING_VDSO
+    rt_vdso_update_glob_time();
+#endif
 }
 
 /**

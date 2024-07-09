@@ -43,4 +43,5 @@ CPPPATH += ['./terminal/']
 
 group = DefineGroup('lwP', src, depend = ['RT_USING_SMART'], CPPPATH = CPPPATH)
 
+group = group + SConscript(os.path.join('vdso', 'SConscript'))
 Return('group')

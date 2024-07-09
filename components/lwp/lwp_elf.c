@@ -25,6 +25,10 @@
 #include <lwp_user_mm.h>
 #endif
 
+#ifdef RT_USING_VDSO
+#include <vdso.h>
+#endif
+
 #define DBG_TAG "load.elf"
 #ifdef ELF_DEBUG_ENABLE
 #define DBG_LVL DBG_LOG
@@ -606,6 +610,17 @@ static int elf_aux_fill(elf_load_info_t *load_info)
     ELF_AUX_ENT(aux_info, AT_HWCAP, 0);
     ELF_AUX_ENT(aux_info, AT_CLKTCK, 0);
     ELF_AUX_ENT(aux_info, AT_SECURE, 0);
+
+#ifdef RT_USING_VDSO
+    if(RT_EOK == arch_setup_additional_pages(load_info->lwp))
+    {
+        ELF_AUX_ENT(aux_info, AT_SYSINFO_EHDR, (size_t)load_info->lwp->vdso_vbase);
+    }
+    else
+    {
+        LOG_W("vdso map error,VDSO currently only supports aarch64 architecture!");
+    }
+#endif
 
     return 0;
 }
