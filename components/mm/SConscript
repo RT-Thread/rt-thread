@@ -11,6 +11,9 @@ if GetDepend('ARCH_ARM_CORTEX_A') or GetDepend('ARCH_ARMV8') or GetDepend('ARCH_
 
     CPPPATH = [cwd]
 
+    if !GetDepend('MM_USING_IOREMAP'):
+        SrcRemove(src, 'ioremap.c')
+
     group = DefineGroup('mm', src, depend = ['ARCH_MM_MMU'], CPPPATH = CPPPATH)
 
 Return('group')
