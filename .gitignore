@@ -50,3 +50,7 @@ tags
 CMakeLists.txt
 cmake-build-debug
 *.mk
+
+# vDSO
+vdso_sys.os
+vdso.lds
