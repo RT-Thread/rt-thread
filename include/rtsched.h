@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023-2024, RT-Thread Development Team
+ * Copyright (c) 2023-2024 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -157,7 +157,7 @@ void rt_sched_thread_startup(struct rt_thread *thread);
 
 /* scheduler related routine */
 void rt_sched_post_ctx_switch(struct rt_thread *thread);
-rt_err_t rt_sched_tick_increase(void);
+rt_err_t rt_sched_tick_increase(rt_tick_t tick);
 
 /* thread status operation */
 rt_uint8_t rt_sched_thread_get_stat(struct rt_thread *thread);
