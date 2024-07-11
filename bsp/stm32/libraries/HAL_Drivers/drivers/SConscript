@@ -52,8 +52,10 @@ if GetDepend(['RT_USING_DAC']):
 if GetDepend(['RT_USING_CAN']):
     src += ['drv_can.c']
 
-if GetDepend(['RT_USING_PM', 'SOC_SERIES_STM32L4']):
+if GetDepend(['RT_USING_PM']):
     src += ['drv_pm.c']
+
+if GetDepend(['BSP_USING_LPTIM']):
     src += ['drv_lptim.c']
 
 if GetDepend('BSP_USING_SDRAM'):
