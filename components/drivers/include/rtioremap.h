@@ -8,8 +8,8 @@
  * 2024-07-11     heyuanjie87  first version.
  */
 
-#ifndef __RT_DEVICE_H__
-#define __RT_DEVICE_H__
+#ifndef __RT_RTIOREMAP_H__
+#define __RT_RTIOREMAP_H__
 
 #include <rtconfig.h>
 
