@@ -16,4 +16,9 @@ config RT_INIT_MEMORY_REGIONS
         memory into different types of regions. This variable specifies
         the maximum number of regions supported by the system.
 
+config MM_USING_IOREMAP
+    bool "Enable ioremap"
+    default y
+    depends on ARCH_MM_MMU
+
 endmenu
