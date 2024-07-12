@@ -12,7 +12,6 @@
 #include <board.h>
 #include <drv_lptim.h>
 #include <rtdevice.h>
-#include <hwtimer.h>
 
 /*#define DRV_DEBUG*/
 #define LOG_TAG             "drv.pm"
