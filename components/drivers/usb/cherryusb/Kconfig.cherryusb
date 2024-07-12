@@ -107,7 +107,7 @@ if CHERRYUSB
 
         choice
             prompt "Select usb device template"
-            default CHERRYUSB_DEVICE_TEMPLATE
+            default CHERRYUSB_DEVICE_TEMPLATE_NONE
             config CHERRYUSB_DEVICE_TEMPLATE_NONE
                 bool "none (Implement it yourself)"
             config CHERRYUSB_DEVICE_TEMPLATE_CDC_ACM
