@@ -1,6 +1,6 @@
 #include "rtthread.h"
 
-#ifdef PKG_CHERRYUSB_HOST
+#ifdef RT_CHERRYUSB_HOST
 
 #ifndef RT_USING_TIMER_SOFT
 #error must enable RT_USING_TIMER_SOFT to support timer callback in thread
