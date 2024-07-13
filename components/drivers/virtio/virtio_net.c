@@ -24,10 +24,6 @@ static rt_err_t virtio_net_tx(rt_device_t dev, struct pbuf *p)
     struct virtio_device *virtio_dev = &virtio_net_dev->virtio_dev;
     struct virtq *queue_tx = &virtio_dev->queues[VIRTIO_NET_QUEUE_TX];
 
-#ifdef RT_USING_SMP
-    rt_base_t level = rt_spin_lock_irqsave(&virtio_dev->spinlock);
-#endif
-
     id = (queue_tx->avail->idx * 2) % queue_tx->num;
 
     virtio_net_dev->info[id].hdr.flags = 0;
@@ -56,10 +52,6 @@ static rt_err_t virtio_net_tx(rt_device_t dev, struct pbuf *p)
     virtio_alloc_desc(virtio_dev, VIRTIO_NET_QUEUE_TX);
     virtio_alloc_desc(virtio_dev, VIRTIO_NET_QUEUE_TX);
 
-#ifdef RT_USING_SMP
-    rt_spin_unlock_irqrestore(&virtio_dev->spinlock, level);
-#endif
-
     return RT_EOK;
 }
 
@@ -67,46 +59,26 @@ static struct pbuf *virtio_net_rx(rt_device_t dev)
 {
     rt_uint16_t id;
     rt_uint32_t len;
-    struct pbuf *p = RT_NULL, *new, *ret = RT_NULL;
+    struct pbuf *p = RT_NULL;
     struct virtio_net_device *virtio_net_dev = (struct virtio_net_device *)dev;
     struct virtio_device *virtio_dev = &virtio_net_dev->virtio_dev;
     struct virtq *queue_rx = &virtio_dev->queues[VIRTIO_NET_QUEUE_RX];
 
-    while (queue_rx->used_idx != queue_rx->used->idx)
+    if (queue_rx->used_idx != queue_rx->used->idx)
     {
-#ifdef RT_USING_SMP
-        rt_base_t level = rt_spin_lock_irqsave(&virtio_dev->spinlock);
-#endif
         id = (queue_rx->used->ring[queue_rx->used_idx % queue_rx->num].id + 1) % queue_rx->num;
         len = queue_rx->used->ring[queue_rx->used_idx % queue_rx->num].len - VIRTIO_NET_HDR_SIZE;
 
-#ifdef RT_USING_SMP
-        rt_spin_unlock_irqrestore(&virtio_dev->spinlock, level);
-#endif
         if (len > VIRTIO_NET_PAYLOAD_MAX_SIZE)
         {
             rt_kprintf("%s: Receive buffer's size = %u is too big!\n", virtio_net_dev->parent.parent.parent.name, len);
             len = VIRTIO_NET_PAYLOAD_MAX_SIZE;
         }
 
-        new = pbuf_alloc(PBUF_RAW, len, PBUF_RAM);
+        p = pbuf_alloc(PBUF_RAW, len, PBUF_RAM);
 
         if (p != RT_NULL)
         {
-            p->next = new;
-            p = p->next;
-        }
-        else
-        {
-            p = new;
-            ret = p;
-        }
-
-        if (p != RT_NULL)
-        {
-#ifdef RT_USING_SMP
-            level = rt_spin_lock_irqsave(&virtio_dev->spinlock);
-#endif
             rt_memcpy(p->payload, (void *)queue_rx->desc[id].addr - PV_OFFSET, len);
 
             queue_rx->used_idx++;
@@ -114,18 +86,10 @@ static struct pbuf *virtio_net_rx(rt_device_t dev)
             virtio_submit_chain(virtio_dev, VIRTIO_NET_QUEUE_RX, id - 1);
 
             virtio_queue_notify(virtio_dev, VIRTIO_NET_QUEUE_RX);
-
-#ifdef RT_USING_SMP
-            rt_spin_unlock_irqrestore(&virtio_dev->spinlock, level);
-#endif
-        }
-        else
-        {
-            break;
         }
     }
 
-    return ret;
+    return p;
 }
 
 static rt_err_t virtio_net_init(rt_device_t dev)
@@ -214,10 +178,6 @@ static void virtio_net_isr(int irqno, void *param)
     struct virtio_device *virtio_dev = &virtio_net_dev->virtio_dev;
     struct virtq *queue_rx = &virtio_dev->queues[VIRTIO_NET_QUEUE_RX];
 
-#ifdef RT_USING_SMP
-    rt_base_t level = rt_spin_lock_irqsave(&virtio_dev->spinlock);
-#endif
-
     virtio_interrupt_ack(virtio_dev);
     rt_hw_dsb();
 
@@ -227,10 +187,6 @@ static void virtio_net_isr(int irqno, void *param)
 
         eth_device_ready(&virtio_net_dev->parent);
     }
-
-#ifdef RT_USING_SMP
-    rt_spin_unlock_irqrestore(&virtio_dev->spinlock, level);
-#endif
 }
 
 rt_err_t rt_virtio_net_init(rt_ubase_t *mmio_base, rt_uint32_t irq)
@@ -252,10 +208,6 @@ rt_err_t rt_virtio_net_init(rt_ubase_t *mmio_base, rt_uint32_t irq)
     virtio_dev->mmio_base = mmio_base;
 
     virtio_net_dev->config = (struct virtio_net_config *)virtio_dev->mmio_config->config;
-
-#ifdef RT_USING_SMP
-    rt_spin_lock_init(&virtio_dev->spinlock);
-#endif
 
     virtio_reset_device(virtio_dev);
     virtio_status_acknowledge_driver(virtio_dev);
