@@ -70,11 +70,29 @@ static void _null_page_fault(struct rt_varea *varea,
 
 static rt_err_t _null_shrink(rt_varea_t varea, void *new_start, rt_size_t size)
 {
+    char *varea_start = varea->start;
+    void *rm_start;
+    void *rm_end;
+
+    if (varea_start == (char *)new_start)
+    {
+        rm_start = varea_start + size;
+        rm_end = varea_start + varea->size;
+    }
+    else /* if (varea_start < (char *)new_start) */
+    {
+        RT_ASSERT(varea_start < (char *)new_start);
+        rm_start = varea_start;
+        rm_end = new_start;
+    }
+
+    rt_varea_unmap_range(varea, rm_start, rm_end - rm_start);
     return RT_EOK;
 }
 
 static rt_err_t _null_split(struct rt_varea *existed, void *unmap_start, rt_size_t unmap_len, struct rt_varea *subset)
 {
+    rt_varea_unmap_range(existed, unmap_start, unmap_len);
     return RT_EOK;
 }
 
