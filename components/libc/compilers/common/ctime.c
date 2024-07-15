@@ -33,7 +33,6 @@
 #include <rtthread.h>
 #ifdef RT_USING_RTC
 #include <rtdevice.h>
-#include <drivers/rtc.h>
 #endif /* RT_USING_RTC */
 #include <sys/errno.h>
 #include <unistd.h>
