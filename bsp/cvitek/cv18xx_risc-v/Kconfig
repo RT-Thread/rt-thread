@@ -13,6 +13,7 @@ rsource "board/Kconfig"
 config BSP_USING_CV18XX
     bool
     select ARCH_RISCV64
+    select ARCH_USING_RISCV_COMMON64
     select RT_USING_SYSTEM_WORKQUEUE
     select RT_USING_COMPONENTS_INIT
     select RT_USING_USER_MAIN
@@ -26,7 +27,7 @@ config C906_PLIC_PHY_ADDR
     default 0x70000000
 
 config IRQ_MAX_NR
-    int 
+    int
     default 64
 
 config TIMER_CLK_FREQ
@@ -40,7 +41,7 @@ config GPIO_IRQ_BASE
 config SYS_GPIO_IRQ_BASE
     int
     default 70
-    
+
 config __STACKSIZE__
     int "stack size for interrupt"
     default 4096
@@ -72,5 +73,5 @@ choice
     config BOARD_TYPE_MILKV_DUO256M_SPINOR
         select SOC_TYPE_SG2002
         bool "milkv-duo256m-spinor"
-        
+
 endchoice
