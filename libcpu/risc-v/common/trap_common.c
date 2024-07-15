@@ -109,10 +109,3 @@ rt_weak void rt_show_stack_frame(void)
     rt_kprintf("t6      : 0x%08x\r\n", s_stack_frame->t6);
 #endif
 }
-
-/**
- * Trap Handler
- */
-rt_weak void handle_trap(rt_uint32_t mcause, rt_uint32_t mepc, rt_uint32_t sp)
-{
-}
