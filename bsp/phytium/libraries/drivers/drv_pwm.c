@@ -119,7 +119,6 @@ static rt_err_t drv_pwm_get(struct phytium_pwm *pwm_dev, struct rt_pwm_configura
 {
     RT_ASSERT(pwm_dev);
     RT_ASSERT(configuration);
-    u32 ret;
     FPwmVariableConfig pwm_cfg;
     u32 channel = configuration->channel;
 
