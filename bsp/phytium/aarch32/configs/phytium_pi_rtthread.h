@@ -124,6 +124,7 @@
 
 /* Device Drivers */
 
+#define RT_USING_DEV_BUS
 #define RT_USING_DEVICE_IPC
 #define RT_UNAMED_PIPE_NUMBER 64
 #define RT_USING_SYSTEM_WORKQUEUE
@@ -150,7 +151,6 @@
 #define RT_MMCSD_MAX_PARTITION 16
 #define RT_USING_SPI
 #define RT_USING_QSPI
-#define RT_USING_DEV_BUS
 #define RT_USING_PIN
 #define RT_USING_KTIME
 /* end of Device Drivers */
@@ -528,10 +528,6 @@
 #define USE_DEFAULT_INTERRUPT_CONFIG
 #define INTERRUPT_ROLE_MASTER
 /* end of Sdk common configuration */
-
-/* Image information configuration */
-
-/* end of Image information configuration */
 /* end of Standalone Setting */
 
 #endif

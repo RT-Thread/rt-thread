@@ -68,6 +68,8 @@
 #define ARCH_RAM_OFFSET 0x80000000
 #define ARCH_SECONDARY_CPU_STACK_SIZE 4096
 #define ARCH_HAVE_EFFICIENT_UNALIGNED_ACCESS
+#define ARCH_HEAP_SIZE 0x4000000
+#define ARCH_INIT_PAGE_SIZE 0x200000
 /* end of AArch64 Architecture Configuration */
 #define ARCH_CPU_64BIT
 #define RT_USING_CACHE
@@ -131,6 +133,7 @@
 
 /* Device Drivers */
 
+#define RT_USING_DEV_BUS
 #define RT_USING_DEVICE_IPC
 #define RT_UNAMED_PIPE_NUMBER 64
 #define RT_USING_SYSTEM_WORKQUEUE
@@ -158,7 +161,6 @@
 #define RT_MMCSD_MAX_PARTITION 16
 #define RT_USING_SPI
 #define RT_USING_QSPI
-#define RT_USING_DEV_BUS
 #define RT_USING_PIN
 #define RT_USING_KTIME
 /* end of Device Drivers */
@@ -535,10 +537,6 @@
 #define ELOG_LINE_BUF_SIZE 0x100
 #define LOG_DEBUG
 /* end of Sdk common configuration */
-
-/* Image information configuration */
-
-/* end of Image information configuration */
 /* end of Standalone Setting */
 
 #endif

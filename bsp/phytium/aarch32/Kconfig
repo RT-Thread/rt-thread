@@ -2,8 +2,6 @@ mainmenu "RT-Thread Project Configuration"
 
 RTT_DIR := ../../..
 
-BSP_DIR := ../.
-
 SDK_DIR := .././libraries/phytium_standalone_sdk
 
 PKGS_DIR := packages
