@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2024, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -61,7 +61,7 @@ void dump_regs(struct rt_hw_stack_frame *regs)
     rt_kprintf("\t%s\n", (regs->sstatus & SSTATUS_SPP) ? "Last Privilege is Supervisor Mode" : "Last Privilege is User Mode");
     rt_kprintf("\t%s\n", (regs->sstatus & SSTATUS_SUM) ? "Permit to Access User Page" : "Not Permit to Access User Page");
     rt_kprintf("\t%s\n", (regs->sstatus & (1 << 19)) ? "Permit to Read Executable-only Page" : "Not Permit to Read Executable-only Page");
-    rt_size_t satp_v = read_csr(satp);
+    rt_uintreg_t satp_v = read_csr(satp);
     rt_kprintf("satp = 0x%p\n", satp_v);
     rt_kprintf("\tCurrent Page Table(Physical) = 0x%p\n", __MASKVALUE(satp_v, __MASK(44)) << PAGE_OFFSET_BIT);
     rt_kprintf("\tCurrent ASID = 0x%p\n", __MASKVALUE(satp_v >> 44, __MASK(16)) << PAGE_OFFSET_BIT);
@@ -291,10 +291,10 @@ static void handle_nested_trap_panic(
 #define PAGE_FAULT (id == EP_LOAD_PAGE_FAULT || id == EP_STORE_PAGE_FAULT)
 
 /* Trap entry */
-void handle_trap(rt_size_t scause, rt_size_t stval, rt_size_t sepc, struct rt_hw_stack_frame *sp)
+void handle_trap(rt_uintreg_t scause, rt_uintreg_t stval, rt_uintreg_t sepc, struct rt_hw_stack_frame *sp)
 {
     ENTER_TRAP;
-    rt_size_t id = __MASKVALUE(scause, __MASK(63UL));
+    rt_uintreg_t id = __MASKVALUE(scause, __MASK(63UL));
     const char *msg;
 
     /* supervisor external interrupt */
@@ -316,7 +316,7 @@ void handle_trap(rt_size_t scause, rt_size_t stval, rt_size_t sepc, struct rt_hw
     {
         // trap cannot nested when handling another trap / interrupt
         CHECK_NESTED_PANIC(scause, stval, sepc, sp);
-        rt_size_t id = __MASKVALUE(scause, __MASK(63UL));
+        rt_uintreg_t id = __MASKVALUE(scause, __MASK(63UL));
         const char *msg;
 
         if (scause >> 63)
