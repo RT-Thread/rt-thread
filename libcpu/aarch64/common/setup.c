@@ -235,7 +235,7 @@ void rt_hw_common_setup(void)
     rt_memblock_reserve_memory("fdt", fdt_start, fdt_end, MEMBLOCK_NONE);
 
     rt_memmove((void *)(fdt_start - PV_OFFSET), (void *)(fdt_ptr - PV_OFFSET), fdt_size);
-    fdt_ptr = (void *)fdt_start;
+    fdt_ptr = (void *)fdt_start - PV_OFFSET;
 
     rt_system_heap_init((void *)(heap_start - PV_OFFSET), (void *)(heap_end - PV_OFFSET));
 
