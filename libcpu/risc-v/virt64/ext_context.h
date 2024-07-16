@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2022, RT-Thread Development Team
+ * Copyright (c) 2006-2024, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -28,38 +28,38 @@
  */
 
 #ifdef ENABLE_FPU
-#define FPU_CTX_F0_OFF   0   /* offsetof(fpu_context_t, fpustatus.f[0])  - offsetof(fpu_context_t, fpustatus.f[0]) */
-#define FPU_CTX_F1_OFF   8   /* offsetof(fpu_context_t, fpustatus.f[1])  - offsetof(fpu_context_t, fpustatus.f[0]) */
-#define FPU_CTX_F2_OFF   16  /* offsetof(fpu_context_t, fpustatus.f[2])  - offsetof(fpu_context_t, fpustatus.f[0]) */
-#define FPU_CTX_F3_OFF   24  /* offsetof(fpu_context_t, fpustatus.f[3])  - offsetof(fpu_context_t, fpustatus.f[0]) */
-#define FPU_CTX_F4_OFF   32  /* offsetof(fpu_context_t, fpustatus.f[4])  - offsetof(fpu_context_t, fpustatus.f[0]) */
-#define FPU_CTX_F5_OFF   40  /* offsetof(fpu_context_t, fpustatus.f[5])  - offsetof(fpu_context_t, fpustatus.f[0]) */
-#define FPU_CTX_F6_OFF   48  /* offsetof(fpu_context_t, fpustatus.f[6])  - offsetof(fpu_context_t, fpustatus.f[0]) */
-#define FPU_CTX_F7_OFF   56  /* offsetof(fpu_context_t, fpustatus.f[7])  - offsetof(fpu_context_t, fpustatus.f[0]) */
-#define FPU_CTX_F8_OFF   64  /* offsetof(fpu_context_t, fpustatus.f[8])  - offsetof(fpu_context_t, fpustatus.f[0]) */
-#define FPU_CTX_F9_OFF   72  /* offsetof(fpu_context_t, fpustatus.f[9])  - offsetof(fpu_context_t, fpustatus.f[0]) */
-#define FPU_CTX_F10_OFF  80  /* offsetof(fpu_context_t, fpustatus.f[10]) - offsetof(fpu_context_t, fpustatus.f[0]) */
-#define FPU_CTX_F11_OFF  88  /* offsetof(fpu_context_t, fpustatus.f[11]) - offsetof(fpu_context_t, fpustatus.f[0]) */
-#define FPU_CTX_F12_OFF  96  /* offsetof(fpu_context_t, fpustatus.f[12]) - offsetof(fpu_context_t, fpustatus.f[0]) */
-#define FPU_CTX_F13_OFF  104 /* offsetof(fpu_context_t, fpustatus.f[13]) - offsetof(fpu_context_t, fpustatus.f[0]) */
-#define FPU_CTX_F14_OFF  112 /* offsetof(fpu_context_t, fpustatus.f[14]) - offsetof(fpu_context_t, fpustatus.f[0]) */
-#define FPU_CTX_F15_OFF  120 /* offsetof(fpu_context_t, fpustatus.f[15]) - offsetof(fpu_context_t, fpustatus.f[0]) */
-#define FPU_CTX_F16_OFF  128 /* offsetof(fpu_context_t, fpustatus.f[16]) - offsetof(fpu_context_t, fpustatus.f[0]) */
-#define FPU_CTX_F17_OFF  136 /* offsetof(fpu_context_t, fpustatus.f[17]) - offsetof(fpu_context_t, fpustatus.f[0]) */
-#define FPU_CTX_F18_OFF  144 /* offsetof(fpu_context_t, fpustatus.f[18]) - offsetof(fpu_context_t, fpustatus.f[0]) */
-#define FPU_CTX_F19_OFF  152 /* offsetof(fpu_context_t, fpustatus.f[19]) - offsetof(fpu_context_t, fpustatus.f[0]) */
-#define FPU_CTX_F20_OFF  160 /* offsetof(fpu_context_t, fpustatus.f[20]) - offsetof(fpu_context_t, fpustatus.f[0]) */
-#define FPU_CTX_F21_OFF  168 /* offsetof(fpu_context_t, fpustatus.f[21]) - offsetof(fpu_context_t, fpustatus.f[0]) */
-#define FPU_CTX_F22_OFF  176 /* offsetof(fpu_context_t, fpustatus.f[22]) - offsetof(fpu_context_t, fpustatus.f[0]) */
-#define FPU_CTX_F23_OFF  184 /* offsetof(fpu_context_t, fpustatus.f[23]) - offsetof(fpu_context_t, fpustatus.f[0]) */
-#define FPU_CTX_F24_OFF  192 /* offsetof(fpu_context_t, fpustatus.f[24]) - offsetof(fpu_context_t, fpustatus.f[0]) */
-#define FPU_CTX_F25_OFF  200 /* offsetof(fpu_context_t, fpustatus.f[25]) - offsetof(fpu_context_t, fpustatus.f[0]) */
-#define FPU_CTX_F26_OFF  208 /* offsetof(fpu_context_t, fpustatus.f[26]) - offsetof(fpu_context_t, fpustatus.f[0]) */
-#define FPU_CTX_F27_OFF  216 /* offsetof(fpu_context_t, fpustatus.f[27]) - offsetof(fpu_context_t, fpustatus.f[0]) */
-#define FPU_CTX_F28_OFF  224 /* offsetof(fpu_context_t, fpustatus.f[28]) - offsetof(fpu_context_t, fpustatus.f[0]) */
-#define FPU_CTX_F29_OFF  232 /* offsetof(fpu_context_t, fpustatus.f[29]) - offsetof(fpu_context_t, fpustatus.f[0]) */
-#define FPU_CTX_F30_OFF  240 /* offsetof(fpu_context_t, fpustatus.f[30]) - offsetof(fpu_context_t, fpustatus.f[0]) */
-#define FPU_CTX_F31_OFF  248 /* offsetof(fpu_context_t, fpustatus.f[31]) - offsetof(fpu_context_t, fpustatus.f[0]) */
+#define FPU_CTX_F0_OFF  REGBYTES * 0  /* offsetof(fpu_context_t, fpustatus.f[0])  - offsetof(fpu_context_t, fpustatus.f[0]) */
+#define FPU_CTX_F1_OFF  REGBYTES * 1  /* offsetof(fpu_context_t, fpustatus.f[1])  - offsetof(fpu_context_t, fpustatus.f[0]) */
+#define FPU_CTX_F2_OFF  REGBYTES * 2  /* offsetof(fpu_context_t, fpustatus.f[2])  - offsetof(fpu_context_t, fpustatus.f[0]) */
+#define FPU_CTX_F3_OFF  REGBYTES * 3  /* offsetof(fpu_context_t, fpustatus.f[3])  - offsetof(fpu_context_t, fpustatus.f[0]) */
+#define FPU_CTX_F4_OFF  REGBYTES * 4  /* offsetof(fpu_context_t, fpustatus.f[4])  - offsetof(fpu_context_t, fpustatus.f[0]) */
+#define FPU_CTX_F5_OFF  REGBYTES * 5  /* offsetof(fpu_context_t, fpustatus.f[5])  - offsetof(fpu_context_t, fpustatus.f[0]) */
+#define FPU_CTX_F6_OFF  REGBYTES * 6  /* offsetof(fpu_context_t, fpustatus.f[6])  - offsetof(fpu_context_t, fpustatus.f[0]) */
+#define FPU_CTX_F7_OFF  REGBYTES * 7  /* offsetof(fpu_context_t, fpustatus.f[7])  - offsetof(fpu_context_t, fpustatus.f[0]) */
+#define FPU_CTX_F8_OFF  REGBYTES * 8  /* offsetof(fpu_context_t, fpustatus.f[8])  - offsetof(fpu_context_t, fpustatus.f[0]) */
+#define FPU_CTX_F9_OFF  REGBYTES * 9  /* offsetof(fpu_context_t, fpustatus.f[9])  - offsetof(fpu_context_t, fpustatus.f[0]) */
+#define FPU_CTX_F10_OFF REGBYTES * 10 /* offsetof(fpu_context_t, fpustatus.f[10]) - offsetof(fpu_context_t, fpustatus.f[0]) */
+#define FPU_CTX_F11_OFF REGBYTES * 11 /* offsetof(fpu_context_t, fpustatus.f[11]) - offsetof(fpu_context_t, fpustatus.f[0]) */
+#define FPU_CTX_F12_OFF REGBYTES * 12 /* offsetof(fpu_context_t, fpustatus.f[12]) - offsetof(fpu_context_t, fpustatus.f[0]) */
+#define FPU_CTX_F13_OFF REGBYTES * 13 /* offsetof(fpu_context_t, fpustatus.f[13]) - offsetof(fpu_context_t, fpustatus.f[0]) */
+#define FPU_CTX_F14_OFF REGBYTES * 14 /* offsetof(fpu_context_t, fpustatus.f[14]) - offsetof(fpu_context_t, fpustatus.f[0]) */
+#define FPU_CTX_F15_OFF REGBYTES * 15 /* offsetof(fpu_context_t, fpustatus.f[15]) - offsetof(fpu_context_t, fpustatus.f[0]) */
+#define FPU_CTX_F16_OFF REGBYTES * 16 /* offsetof(fpu_context_t, fpustatus.f[16]) - offsetof(fpu_context_t, fpustatus.f[0]) */
+#define FPU_CTX_F17_OFF REGBYTES * 17 /* offsetof(fpu_context_t, fpustatus.f[17]) - offsetof(fpu_context_t, fpustatus.f[0]) */
+#define FPU_CTX_F18_OFF REGBYTES * 18 /* offsetof(fpu_context_t, fpustatus.f[18]) - offsetof(fpu_context_t, fpustatus.f[0]) */
+#define FPU_CTX_F19_OFF REGBYTES * 19 /* offsetof(fpu_context_t, fpustatus.f[19]) - offsetof(fpu_context_t, fpustatus.f[0]) */
+#define FPU_CTX_F20_OFF REGBYTES * 20 /* offsetof(fpu_context_t, fpustatus.f[20]) - offsetof(fpu_context_t, fpustatus.f[0]) */
+#define FPU_CTX_F21_OFF REGBYTES * 21 /* offsetof(fpu_context_t, fpustatus.f[21]) - offsetof(fpu_context_t, fpustatus.f[0]) */
+#define FPU_CTX_F22_OFF REGBYTES * 22 /* offsetof(fpu_context_t, fpustatus.f[22]) - offsetof(fpu_context_t, fpustatus.f[0]) */
+#define FPU_CTX_F23_OFF REGBYTES * 23 /* offsetof(fpu_context_t, fpustatus.f[23]) - offsetof(fpu_context_t, fpustatus.f[0]) */
+#define FPU_CTX_F24_OFF REGBYTES * 24 /* offsetof(fpu_context_t, fpustatus.f[24]) - offsetof(fpu_context_t, fpustatus.f[0]) */
+#define FPU_CTX_F25_OFF REGBYTES * 25 /* offsetof(fpu_context_t, fpustatus.f[25]) - offsetof(fpu_context_t, fpustatus.f[0]) */
+#define FPU_CTX_F26_OFF REGBYTES * 26 /* offsetof(fpu_context_t, fpustatus.f[26]) - offsetof(fpu_context_t, fpustatus.f[0]) */
+#define FPU_CTX_F27_OFF REGBYTES * 27 /* offsetof(fpu_context_t, fpustatus.f[27]) - offsetof(fpu_context_t, fpustatus.f[0]) */
+#define FPU_CTX_F28_OFF REGBYTES * 28 /* offsetof(fpu_context_t, fpustatus.f[28]) - offsetof(fpu_context_t, fpustatus.f[0]) */
+#define FPU_CTX_F29_OFF REGBYTES * 29 /* offsetof(fpu_context_t, fpustatus.f[29]) - offsetof(fpu_context_t, fpustatus.f[0]) */
+#define FPU_CTX_F30_OFF REGBYTES * 30 /* offsetof(fpu_context_t, fpustatus.f[30]) - offsetof(fpu_context_t, fpustatus.f[0]) */
+#define FPU_CTX_F31_OFF REGBYTES * 31 /* offsetof(fpu_context_t, fpustatus.f[31]) - offsetof(fpu_context_t, fpustatus.f[0]) */
 #endif /* ENABLE_FPU */
 
 /**
@@ -84,9 +84,9 @@
 
 /**
  * @brief save vector extension hardware state
- * 
+ *
  * @param dst register storing bottom of storage block
- * 
+ *
  */
 .macro SAVE_VECTOR, dst
     mv      t1, \dst
@@ -117,9 +117,9 @@
 
 /**
  * @brief restore vector extension hardware states
- * 
+ *
  * @param dst register storing bottom of storage block
- * 
+ *
  */
 .macro RESTORE_VECTOR, dst
     // restore vector registers first since it will modify vector states

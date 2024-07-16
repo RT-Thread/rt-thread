@@ -59,3 +59,7 @@ config ARCH_USING_NEW_CTX_SWITCH
 config __STACKSIZE__
     int "stack size for interrupt"
     default 4096
+
+config RT_USING_RV64ILP32
+    bool "Use RV64ILP32 toolchain"
+    default n
