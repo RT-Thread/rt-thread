@@ -58,7 +58,7 @@ rt_inline uintptr_t platform_get_gic_redist_base(void)
         uintptr_t redis_base_virtual = (uintptr_t)rt_ioremap((void *)redis_base, GICV3_RD_OFFSET);
         if (redis_base_virtual == 0)
         {
-            continue; 
+            continue;
         }
 #if defined(TARGET_ARMV8_AARCH64)
         gicr_typer_aff = GIC_RDIST_TYPER(redis_base_virtual) >> 32;
