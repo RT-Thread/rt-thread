@@ -262,6 +262,15 @@ config ARCH_RISCV64
     select ARCH_CPU_64BIT
     bool
 
+if ARCH_RISCV64
+    config ARCH_USING_RISCV_COMMON64
+        bool
+        depends on ARCH_RISCV64
+        select RT_USING_CPUTIME
+        help
+            Using the common64 implementation under ./libcpu/risc-v
+endif
+
 config ARCH_REMAP_KERNEL
     bool
     depends on RT_USING_SMART

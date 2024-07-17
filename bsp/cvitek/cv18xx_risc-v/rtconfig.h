@@ -63,6 +63,7 @@
 #define ARCH_MM_MMU
 #define ARCH_RISCV
 #define ARCH_RISCV64
+#define ARCH_USING_RISCV_COMMON64
 
 /* RT-Thread Components */
 
@@ -123,6 +124,9 @@
 #define RT_USING_SERIAL_V1
 #define RT_SERIAL_USING_DMA
 #define RT_SERIAL_RB_BUFSZ 64
+#define RT_USING_CPUTIME
+#define RT_USING_CPUTIME_RISCV
+#define CPUTIME_TIMER_FREQ 25000000
 #define RT_USING_NULL
 #define RT_USING_ZERO
 #define RT_USING_RANDOM
@@ -434,6 +438,18 @@
 
 /* end of Arduino libraries */
 /* end of RT-Thread online packages */
+
+/* Privated Packages of RealThread */
+
+
+/* Network Utilities */
+
+/* end of Network Utilities */
+
+/* RT-Thread Smart */
+
+/* end of RT-Thread Smart */
+/* end of Privated Packages of RealThread */
 
 /* General Drivers Configuration */
 

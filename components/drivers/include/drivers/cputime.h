@@ -31,4 +31,8 @@ uint64_t clock_cpu_millisecond(uint64_t cpu_tick);
 
 int clock_cpu_setops(const struct rt_clock_cputime_ops *ops);
 
+#ifdef RT_USING_CPUTIME_RISCV
+int riscv_cputime_init(void);
+#endif /* RT_USING_CPUTIME_RISCV */
+
 #endif
