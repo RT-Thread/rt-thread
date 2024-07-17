@@ -23,6 +23,7 @@ struct _cvi_wdt_dev
     struct rt_watchdog_device device;
     const char *name;
     rt_uint32_t base;
+    rt_uint32_t timeout;
 };
 
 static struct _cvi_wdt_dev _wdt_dev[] =
@@ -65,6 +66,14 @@ rt_inline int wdt_top_in_ms(unsigned int top)
     return (1U << (16 + top)) / (WDT_FREQ_DEFAULT / 1000);
 }
 
+/**
+ * @brief set timeout period
+ *
+ * @param reg_base base address of the watchdog controller
+ * @param ms       timeout period (in millisecond)
+ *
+ * @return RT_EOK if successed.
+ */
 static rt_err_t csi_wdt_set_timeout(unsigned long reg_base, uint32_t ms)
 {
     rt_err_t ret = RT_EOK;
@@ -113,14 +122,14 @@ static rt_err_t _wdt_control(rt_watchdog_t *wdt_device, int cmd, void *arg)
         cvi_wdt_feed_en(reg_base);
         break;
     case RT_DEVICE_CTRL_WDT_SET_TIMEOUT:
-        csi_wdt_set_timeout(reg_base, *(rt_uint32_t *)arg);
-        wdt_device->parent.user_data = (rt_uint32_t)(*(rt_uint32_t *)arg);
+        wdt->timeout = *(rt_uint32_t *)arg;
+        csi_wdt_set_timeout(reg_base, wdt->timeout * 1000);
         break;
     case RT_DEVICE_CTRL_WDT_GET_TIMEOUT:
-        *(rt_uint32_t *)arg = (rt_uint32_t)wdt_device->parent.user_data;
+        *(rt_uint32_t *)arg = wdt->timeout;
         break;
     case RT_DEVICE_CTRL_WDT_GET_TIMELEFT:
-        *(rt_uint32_t *)arg = (cvi_wdt_get_counter_value(reg_base) / (WDT_FREQ_DEFAULT / 1000U));
+        *(rt_uint32_t *)arg = (cvi_wdt_get_counter_value(reg_base) / WDT_FREQ_DEFAULT);
         break;
     case RT_DEVICE_CTRL_WDT_START:
         cvi_wdt_set_respond_system_reset(reg_base);
