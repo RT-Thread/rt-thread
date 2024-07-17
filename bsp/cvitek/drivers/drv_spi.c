@@ -9,6 +9,7 @@
  */
 
 #include "drv_spi.h"
+#include "drv_pinmux.h"
 
 #define DBG_TAG "drv.spi"
 #define DBG_LVL DBG_INFO
@@ -209,10 +210,113 @@ const static struct rt_spi_ops drv_spi_ops =
     spixfer,
 };
 
+#if defined(BOARD_TYPE_MILKV_DUO) || defined(BOARD_TYPE_MILKV_DUO_SPINOR) || defined(BOARD_TYPE_MILKV_DUO256M) || defined(BOARD_TYPE_MILKV_DUO256M_SPINOR)
+
+#ifdef BSP_USING_SPI0
+static const char *pinname_whitelist_spi0_sck[] = {
+    NULL,
+};
+static const char *pinname_whitelist_spi0_sdo[] = {
+    NULL,
+};
+static const char *pinname_whitelist_spi0_sdi[] = {
+    NULL,
+};
+static const char *pinname_whitelist_spi0_cs[] = {
+    NULL,
+};
+#endif
+
+#ifdef BSP_USING_SPI1
+static const char *pinname_whitelist_spi1_sck[] = {
+    NULL,
+};
+static const char *pinname_whitelist_spi1_sdo[] = {
+    NULL,
+};
+static const char *pinname_whitelist_spi1_sdi[] = {
+    NULL,
+};
+static const char *pinname_whitelist_spi1_cs[] = {
+    NULL,
+};
+#endif
+
+#ifdef BSP_USING_SPI2
+static const char *pinname_whitelist_spi2_sck[] = {
+    "SD1_CLK",
+    NULL,
+};
+static const char *pinname_whitelist_spi2_sdo[] = {
+    "SD1_CMD",
+    NULL,
+};
+static const char *pinname_whitelist_spi2_sdi[] = {
+    "SD1_D0",
+    NULL,
+};
+static const char *pinname_whitelist_spi2_cs[] = {
+    "SD1_D3",
+    NULL,
+};
+#endif
+
+#ifdef BSP_USING_SPI3
+static const char *pinname_whitelist_spi3_sck[] = {
+    NULL,
+};
+static const char *pinname_whitelist_spi3_sdo[] = {
+    NULL,
+};
+static const char *pinname_whitelist_spi3_sdi[] = {
+    NULL,
+};
+static const char *pinname_whitelist_spi3_cs[] = {
+    NULL,
+};
+#endif
+
+#else
+    #error "Unsupported board type!"
+#endif
+
+static void rt_hw_spi_pinmux_config()
+{
+#ifdef BSP_USING_SPI0
+    pinmux_config(BSP_SPI0_SCK_PINNAME, SPI0_SCK,  pinname_whitelist_spi0_sck);
+    pinmux_config(BSP_SPI0_SDO_PINNAME, SPI0_SDO,  pinname_whitelist_spi0_sdo);
+    pinmux_config(BSP_SPI0_SDI_PINNAME, SPI0_SDI,  pinname_whitelist_spi0_sdi);
+    pinmux_config(BSP_SPI0_CS_PINNAME,  SPI0_CS_X, pinname_whitelist_spi0_cs);
+#endif /* BSP_USING_SPI0 */
+
+#ifdef BSP_USING_SPI1
+    pinmux_config(BSP_SPI1_SCK_PINNAME, SPI1_SCK,  pinname_whitelist_spi1_sck);
+    pinmux_config(BSP_SPI1_SDO_PINNAME, SPI1_SDO,  pinname_whitelist_spi1_sdo);
+    pinmux_config(BSP_SPI1_SDI_PINNAME, SPI1_SDI,  pinname_whitelist_spi1_sdi);
+    pinmux_config(BSP_SPI1_CS_PINNAME,  SPI1_CS_X, pinname_whitelist_spi1_cs);
+#endif /* BSP_USING_SPI1 */
+
+#ifdef BSP_USING_SPI2
+    pinmux_config(BSP_SPI2_SCK_PINNAME, SPI2_SCK,  pinname_whitelist_spi2_sck);
+    pinmux_config(BSP_SPI2_SDO_PINNAME, SPI2_SDO,  pinname_whitelist_spi2_sdo);
+    pinmux_config(BSP_SPI2_SDI_PINNAME, SPI2_SDI,  pinname_whitelist_spi2_sdi);
+    pinmux_config(BSP_SPI2_CS_PINNAME,  SPI2_CS_X, pinname_whitelist_spi2_cs);
+#endif /* BSP_USING_SPI2 */
+
+#ifdef BSP_USING_SPI3
+    pinmux_config(BSP_SPI3_SCK_PINNAME, SPI3_SCK,  pinname_whitelist_spi3_sck);
+    pinmux_config(BSP_SPI3_SDO_PINNAME, SPI3_SDO,  pinname_whitelist_spi3_sdo);
+    pinmux_config(BSP_SPI3_SDI_PINNAME, SPI3_SDI,  pinname_whitelist_spi3_sdi);
+    pinmux_config(BSP_SPI3_CS_PINNAME,  SPI3_CS_X, pinname_whitelist_spi3_cs);
+#endif /* BSP_USING_SPI3 */
+}
+
 int rt_hw_spi_init(void)
 {
     rt_err_t ret = RT_EOK;
     struct spi_regs *reg = NULL;
+
+    rt_hw_spi_pinmux_config();
 
     for (rt_size_t i = 0; i < sizeof(cv1800_spi_obj) / sizeof(struct cv1800_spi); i++) {
         /* set reg base addr */

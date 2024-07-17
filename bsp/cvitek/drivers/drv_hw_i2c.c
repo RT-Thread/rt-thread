@@ -10,6 +10,7 @@
 #include "drv_hw_i2c.h"
 #include <rtdevice.h>
 #include <board.h>
+#include "drv_pinmux.h"
 
 #define DBG_TAG              "drv.i2c"
 #define DBG_LVL               DBG_INFO
@@ -467,320 +468,153 @@ static const struct rt_i2c_bus_device_ops i2c_ops =
     .i2c_bus_control  = RT_NULL
 };
 
-static void rt_hw_i2c_pinmux_config_i2c0()
-{
+
+#if defined(BOARD_TYPE_MILKV_DUO) || defined(BOARD_TYPE_MILKV_DUO_SPINOR)
+
 #ifdef BSP_USING_I2C0
+static const char *pinname_whitelist_i2c0_scl[] = {
+    "IIC0_SCL",
+    NULL,
+};
+static const char *pinname_whitelist_i2c0_sda[] = {
+    "IIC0_SDA",
+    NULL,
+};
+#endif
 
-    // SCL
-    #if defined(SOC_TYPE_CV180X)
-        #if   defined(BSP_USING_IIC0_SCL__IIC0_SCL)
-            PINMUX_CONFIG(IIC0_SCL, IIC0_SCL);
-        #elif defined(BSP_USING_PWR_GPIO2__IIC0_SCL)
-            PINMUX_CONFIG(PWR_GPIO2, IIC0_SCL);
-        #elif defined(BSP_USING_PAD_MIPIRX4N__IIC0_SCL)
-            PINMUX_CONFIG(PAD_MIPIRX4N, IIC0_SCL);
-        #elif defined(BSP_USING_PAD_MIPI_TXP2__IIC0_SCL)
-            PINMUX_CONFIG(PAD_MIPI_TXP2, IIC0_SCL);
-        #endif
-    #endif // SOC_TYPE_CV180X
-
-    #if defined(SOC_TYPE_SG2002)
-        #if   defined(BSP_USING_IIC0_SCL__IIC0_SCL)
-            PINMUX_CONFIG(IIC0_SCL, IIC0_SCL);
-        #endif
-    #endif // SOC_TYPE_SG2002
-
-    // SDA
-    #if defined(SOC_TYPE_CV180X)
-        #if   defined(BSP_USING_IIC0_SDA__IIC0_SDA)
-            PINMUX_CONFIG(IIC0_SDA, IIC0_SDA);
-        #elif defined(BSP_USING_PWR_GPIO1__IIC0_SDA)
-            PINMUX_CONFIG(PWR_GPIO1, IIC0_SDA);
-        #elif defined(BSP_USING_PAD_MIPIRX4P__IIC0_SDA)
-            PINMUX_CONFIG(PAD_MIPIRX4P, IIC0_SDA);
-        #elif defined(BSP_USING_PAD_MIPI_TXM2__IIC0_SDA)
-            PINMUX_CONFIG(PAD_MIPI_TXM2, IIC0_SDA);
-        #endif
-    #endif // SOC_TYPE_CV180X
-
-    #if defined(SOC_TYPE_SG2002)
-        #if   defined(BSP_USING_IIC0_SDA__IIC0_SDA)
-            PINMUX_CONFIG(IIC0_SDA, IIC0_SDA);
-        #endif
-    #endif // SOC_TYPE_SG2002
-
-#endif /* BSP_USING_I2C0 */
-}
-
-static void rt_hw_i2c_pinmux_config_i2c1()
-{
 #ifdef BSP_USING_I2C1
+static const char *pinname_whitelist_i2c1_scl[] = {
+    "SD1_D2",
+    "SD1_D3",
+    "PAD_MIPIRX0N",
+    NULL,
+};
+static const char *pinname_whitelist_i2c1_sda[] = {
+    "SD1_D1",
+    "SD1_D0",
+    "PAD_MIPIRX1P",
+    NULL,
+};
+#endif
 
-    // SCL
-    #if defined(SOC_TYPE_CV180X)
-        #if   defined(BSP_USING_SD0_CMD__IIC1_SCL)
-            PINMUX_CONFIG(SD0_CMD, IIC1_SCL);
-        #elif defined(BSP_USING_SD0_D2__IIC1_SCL)
-            PINMUX_CONFIG(SD0_D2, IIC1_SCL);
-        #elif defined(BSP_USING_SD1_D3__IIC1_SCL)
-            PINMUX_CONFIG(SD1_D3, IIC1_SCL);
-        #elif defined(BSP_USING_SD1_D2__IIC1_SCL)
-            PINMUX_CONFIG(SD1_D2, IIC1_SCL);
-        #elif defined(BSP_USING_MUX_SPI1_MOSI__IIC1_SCL)
-            PINMUX_CONFIG(MUX_SPI1_MOSI, IIC1_SCL);
-        #elif defined(BSP_USING_PAD_ETH_TXP__IIC1_SCL)
-            PINMUX_CONFIG(PAD_ETH_TXP, IIC1_SCL);
-        #elif defined(BSP_USING_PAD_MIPIRX4P__IIC1_SCL)
-            PINMUX_CONFIG(PAD_MIPIRX4P, IIC1_SCL);
-        #elif defined(BSP_USING_PAD_MIPIRX0N__IIC1_SCL)
-            PINMUX_CONFIG(PAD_MIPIRX0N, IIC1_SCL);
-        #elif defined(BSP_USING_PAD_MIPI_TXP2__IIC1_SCL)
-            PINMUX_CONFIG(PAD_MIPI_TXP2, IIC1_SCL);
-        #endif
-    #endif // SOC_TYPE_CV180X
-
-    #if defined(SOC_TYPE_SG2002)
-        #if   defined(BSP_USING_SD0_CMD__IIC1_SCL)
-            PINMUX_CONFIG(SD0_CMD, IIC1_SCL);
-        #elif defined(BSP_USING_SD0_D2__IIC1_SCL)
-            PINMUX_CONFIG(SD0_D2, IIC1_SCL);
-        #elif defined(BSP_USING_SD1_D3__IIC1_SCL)
-            PINMUX_CONFIG(SD1_D3, IIC1_SCL);
-        #elif defined(BSP_USING_SD1_D2__IIC1_SCL)
-            PINMUX_CONFIG(SD1_D2, IIC1_SCL);
-        #elif defined(BSP_USING_MUX_SPI1_MOSI__IIC1_SCL)
-            PINMUX_CONFIG(MUX_SPI1_MOSI, IIC1_SCL);
-        #elif defined(BSP_USING_PAD_ETH_TXP__IIC1_SCL)
-            PINMUX_CONFIG(PAD_ETH_TXP, IIC1_SCL);
-        #elif defined(BSP_USING_VIVO_D9__IIC1_SCL)
-            PINMUX_CONFIG(VIVO_D9, IIC1_SCL);
-        #elif defined(BSP_USING_VIVO_D3__IIC1_SCL)
-            PINMUX_CONFIG(VIVO_D3, IIC1_SCL);
-        #elif defined(BSP_USING_PAD_MIPIRX4P__IIC1_SCL)
-            PINMUX_CONFIG(PAD_MIPIRX4P, IIC1_SCL);
-        #elif defined(BSP_USING_PAD_MIPIRX0N__IIC1_SCL)
-            PINMUX_CONFIG(PAD_MIPIRX0N, IIC1_SCL);
-        #elif defined(BSP_USING_PAD_MIPI_TXP4__IIC1_SCL)
-            PINMUX_CONFIG(PAD_MIPI_TXP4, IIC1_SCL);
-        #elif defined(BSP_USING_PAD_MIPI_TXP3__IIC1_SCL)
-            PINMUX_CONFIG(PAD_MIPI_TXP3, IIC1_SCL);
-        #elif defined(BSP_USING_PAD_MIPI_TXP2__IIC1_SCL)
-            PINMUX_CONFIG(PAD_MIPI_TXP2, IIC1_SCL);
-        #endif
-    #endif // SOC_TYPE_SG2002
-
-    // SDA
-    #if defined(SOC_TYPE_CV180X)
-        #if   defined(BSP_USING_SD0_CLK__IIC1_SDA)
-            PINMUX_CONFIG(SD0_CLK, IIC1_SDA);
-        #elif defined(BSP_USING_SD0_D1__IIC1_SDA)
-            PINMUX_CONFIG(SD0_D1, IIC1_SDA);
-        #elif defined(BSP_USING_SD1_D1__IIC1_SDA)
-            PINMUX_CONFIG(SD1_D1, IIC1_SDA);
-        #elif defined(BSP_USING_SD1_D0__IIC1_SDA)
-            PINMUX_CONFIG(SD1_D0, IIC1_SDA);
-        #elif defined(BSP_USING_MUX_SPI1_MISO__IIC1_SDA)
-            PINMUX_CONFIG(MUX_SPI1_MISO, IIC1_SDA);
-        #elif defined(BSP_USING_PAD_ETH_TXM__IIC1_SDA)
-            PINMUX_CONFIG(PAD_ETH_TXM, IIC1_SDA);
-        #elif defined(BSP_USING_PAD_MIPIRX4N__IIC1_SDA)
-            PINMUX_CONFIG(PAD_MIPIRX4N, IIC1_SDA);
-        #elif defined(BSP_USING_PAD_MIPIRX1P__IIC1_SDA)
-            PINMUX_CONFIG(PAD_MIPIRX1P, IIC1_SDA);
-        #elif defined(BSP_USING_PAD_MIPI_TXM2__IIC1_SDA)
-            PINMUX_CONFIG(PAD_MIPI_TXM2, IIC1_SDA);
-        #endif
-    #endif // SOC_TYPE_CV180X
-
-    #if defined(SOC_TYPE_SG2002)
-        #if   defined(BSP_USING_SD0_CLK__IIC1_SDA)
-            PINMUX_CONFIG(SD0_CLK, IIC1_SDA);
-        #elif defined(BSP_USING_SD0_D1__IIC1_SDA)
-            PINMUX_CONFIG(SD0_D1, IIC1_SDA);
-        #elif defined(BSP_USING_SD1_D1__IIC1_SDA)
-            PINMUX_CONFIG(SD1_D1, IIC1_SDA);
-        #elif defined(BSP_USING_SD1_D0__IIC1_SDA)
-            PINMUX_CONFIG(SD1_D0, IIC1_SDA);
-        #elif defined(BSP_USING_MUX_SPI1_MISO__IIC1_SDA)
-            PINMUX_CONFIG(MUX_SPI1_MISO, IIC1_SDA);
-        #elif defined(BSP_USING_PAD_ETH_TXM__IIC1_SDA)
-            PINMUX_CONFIG(PAD_ETH_TXM, IIC1_SDA);
-        #elif defined(BSP_USING_VIVO_D10__IIC1_SDA)
-            PINMUX_CONFIG(VIVO_D10, IIC1_SDA);
-        #elif defined(BSP_USING_VIVO_D4__IIC1_SDA)
-            PINMUX_CONFIG(VIVO_D4, IIC1_SDA);
-        #elif defined(BSP_USING_PAD_MIPIRX4N__IIC1_SDA)
-            PINMUX_CONFIG(PAD_MIPIRX4N, IIC1_SDA);
-        #elif defined(BSP_USING_PAD_MIPIRX1P__IIC1_SDA)
-            PINMUX_CONFIG(PAD_MIPIRX1P, IIC1_SDA);
-        #elif defined(BSP_USING_PAD_MIPI_TXM4__IIC1_SDA)
-            PINMUX_CONFIG(PAD_MIPI_TXM4, IIC1_SDA);
-        #elif defined(BSP_USING_PAD_MIPI_TXM3__IIC1_SDA)
-            PINMUX_CONFIG(PAD_MIPI_TXM3, IIC1_SDA);
-        #elif defined(BSP_USING_PAD_MIPI_TXM2__IIC1_SDA)
-            PINMUX_CONFIG(PAD_MIPI_TXM2, IIC1_SDA);
-        #endif
-    #endif // SOC_TYPE_SG2002
-
-#endif /* BSP_USING_I2C1 */
-}
-
-static void rt_hw_i2c_pinmux_config_i2c2()
-{
 #ifdef BSP_USING_I2C2
+// I2C2 is not ALLOWED for Duo
+static const char *pinname_whitelist_i2c2_scl[] = {
+    NULL,
+};
+static const char *pinname_whitelist_i2c2_sda[] = {
+    NULL,
+};
+#endif
 
-    // SCL
-    #if defined(SOC_TYPE_CV180X)
-        #if   defined(BSP_USING_PWR_GPIO1__IIC2_SCL)
-            PINMUX_CONFIG(PWR_GPIO1, IIC2_SCL);
-        #elif defined(BSP_USING_PAD_MIPI_TXP1__IIC2_SCL)
-            PINMUX_CONFIG(PAD_MIPI_TXP1, IIC2_SCL);
-        #endif
-    #endif // SOC_TYPE_CV180X
-
-    #if defined(SOC_TYPE_SG2002)
-        #if   defined(BSP_USING_PWR_GPIO1__IIC2_SCL)
-            PINMUX_CONFIG(PWR_GPIO1, IIC2_SCL);
-        #elif defined(BSP_USING_IIC2_SCL__IIC2_SCL)
-            PINMUX_CONFIG(IIC2_SCL, IIC2_SCL);
-        #elif defined(BSP_USING_VIVO_D8__IIC2_SCL)
-            PINMUX_CONFIG(VIVO_D8, IIC2_SCL);
-        #elif defined(BSP_USING_PAD_MIPI_TXP3__IIC2_SCL)
-            PINMUX_CONFIG(PAD_MIPI_TXP3, IIC2_SCL);
-        #elif defined(BSP_USING_PAD_MIPI_TXP1__IIC2_SCL)
-            PINMUX_CONFIG(PAD_MIPI_TXP1, IIC2_SCL);
-        #endif
-    #endif // SOC_TYPE_SG2002
-
-    // SDA
-    #if defined(SOC_TYPE_CV180X)
-        #if   defined(BSP_USING_PWR_GPIO2__IIC2_SDA)
-            PINMUX_CONFIG(PWR_GPIO2, IIC2_SDA);
-        #elif defined(BSP_USING_PAD_MIPI_TXM1__IIC2_SDA)
-            PINMUX_CONFIG(PAD_MIPI_TXM1, IIC2_SDA);
-        #endif
-    #endif // SOC_TYPE_CV180X
-
-    #if defined(SOC_TYPE_SG2002)
-        #if   defined(BSP_USING_PWR_GPIO2__IIC2_SDA)
-            PINMUX_CONFIG(PWR_GPIO2, IIC2_SDA);
-        #elif defined(BSP_USING_IIC2_SDA__IIC2_SDA)
-            PINMUX_CONFIG(IIC2_SDA, IIC2_SDA);
-        #elif defined(BSP_USING_VIVO_D7__IIC2_SDA)
-            PINMUX_CONFIG(VIVO_D7, IIC2_SDA);
-        #elif defined(BSP_USING_PAD_MIPI_TXM3__IIC2_SDA)
-            PINMUX_CONFIG(PAD_MIPI_TXM3, IIC2_SDA);
-        #elif defined(BSP_USING_PAD_MIPI_TXM1__IIC2_SDA)
-            PINMUX_CONFIG(PAD_MIPI_TXM1, IIC2_SDA);
-        #endif
-    #endif // SOC_TYPE_SG2002
-
-#endif /* BSP_USING_I2C2 */
-}
-
-static void rt_hw_i2c_pinmux_config_i2c3()
-{
 #ifdef BSP_USING_I2C3
+static const char *pinname_whitelist_i2c3_scl[] = {
+    "SD1_CMD",
+    NULL,
+};
+static const char *pinname_whitelist_i2c3_sda[] = {
+    "SD1_CLK",
+    NULL,
+};
+#endif
 
-    // SCL
-    #if defined(SOC_TYPE_CV180X)
-        #if defined(BSP_USING_SD1_CMD__IIC3_SCL)
-            PINMUX_CONFIG(SD1_CMD, IIC3_SCL);
-        #endif
-    #endif // SOC_TYPE_CV180X
-
-    #if defined(SOC_TYPE_SG2002)
-        #if   defined(BSP_USING_IIC3_SCL__IIC3_SCL)
-            PINMUX_CONFIG(IIC3_SCL, IIC3_SCL);
-        #elif defined(BSP_USING_SD1_CMD__IIC3_SCL)
-            PINMUX_CONFIG(SD1_CMD, IIC3_SCL);
-        #elif defined(BSP_USING_VIVO_D0__IIC3_SCL)
-            PINMUX_CONFIG(VIVO_D0, IIC3_SCL);
-        #endif
-    #endif // SOC_TYPE_SG2002
-
-    // SDA
-    #if defined(SOC_TYPE_CV180X)
-        #if defined(BSP_USING_SD1_CLK__IIC3_SDA)
-            PINMUX_CONFIG(SD1_CLK, IIC3_SDA);
-        #endif
-    #endif // SOC_TYPE_CV180X
-
-    #if defined(SOC_TYPE_SG2002)
-        #if   defined(BSP_USING_IIC3_SDA__IIC3_SDA)
-            PINMUX_CONFIG(IIC3_SDA, IIC3_SDA);
-        #elif defined(BSP_USING_SD1_CLK__IIC3_SDA)
-            PINMUX_CONFIG(SD1_CLK, IIC3_SDA);
-        #elif defined(BSP_USING_VIVO_D1__IIC3_SDA)
-            PINMUX_CONFIG(VIVO_D1, IIC3_SDA);
-        #endif
-    #endif // SOC_TYPE_SG2002
-
-#endif /* BSP_USING_I2C3 */
-}
-
-static void rt_hw_i2c_pinmux_config_i2c4()
-{
 #ifdef BSP_USING_I2C4
+// I2C4 is not ALLOWED for Duo
+static const char *pinname_whitelist_i2c4_scl[] = {
+    NULL,
+};
+static const char *pinname_whitelist_i2c4_sda[] = {
+    NULL,
+};
+#endif
 
-    // SCL
-    #if defined(SOC_TYPE_CV180X)
-        #if   defined(BSP_USING_PWR_WAKEUP0__IIC4_SCL)
-            PINMUX_CONFIG(PWR_WAKEUP0, IIC4_SCL);
-        #elif defined(BSP_USING_PAD_MIPIRX2N__IIC4_SCL)
-            PINMUX_CONFIG(PAD_MIPIRX2N, IIC4_SCL);
-        #endif
-    #endif // SOC_TYPE_CV180X
+#elif defined(BOARD_TYPE_MILKV_DUO256M) || defined(BOARD_TYPE_MILKV_DUO256M_SPINOR)
 
-    #if defined(SOC_TYPE_SG2002)
-        #if   defined(BSP_USING_CAM_RST0__IIC4_SCL)
-            PINMUX_CONFIG(CAM_RST0, IIC4_SCL);
-        #elif defined(BSP_USING_PWR_WAKEUP0__IIC4_SCL)
-            PINMUX_CONFIG(PWR_WAKEUP0, IIC4_SCL);
-        #elif defined(BSP_USING_PWR_WAKEUP1__IIC4_SCL)
-            PINMUX_CONFIG(PWR_WAKEUP1, IIC4_SCL);
-        #elif defined(BSP_USING_ADC3__IIC4_SCL)
-            PINMUX_CONFIG(ADC3, IIC4_SCL);
-        #elif defined(BSP_USING_VIVO_D1__IIC4_SCL)
-            PINMUX_CONFIG(VIVO_D1, IIC4_SCL);
-        #endif
-    #endif // SOC_TYPE_SG2002
+#ifdef BSP_USING_I2C0
+// I2C0 is not ALLOWED for Duo
+static const char *pinname_whitelist_i2c0_scl[] = {
+    NULL,
+};
+static const char *pinname_whitelist_i2c0_sda[] = {
+    NULL,
+};
+#endif
 
-    // SDA
-    #if defined(SOC_TYPE_CV180X)
-        #if   defined(BSP_USING_PWR_BUTTON1__IIC4_SDA)
-            PINMUX_CONFIG(PWR_BUTTON1, IIC4_SDA);
-        #elif defined(BSP_USING_PAD_MIPIRX2P__IIC4_SDA)
-            PINMUX_CONFIG(PAD_MIPIRX2P, IIC4_SDA);
-        #endif
-    #endif // SOC_TYPE_CV180X
+#ifdef BSP_USING_I2C1
+static const char *pinname_whitelist_i2c1_scl[] = {
+    "SD1_D2",
+    "SD1_D3",
+    NULL,
+};
+static const char *pinname_whitelist_i2c1_sda[] = {
+    "SD1_D1",
+    "SD1_D0",
+    NULL,
+};
+#endif
 
-    #if defined(SOC_TYPE_SG2002)
-        #if   defined(BSP_USING_CAM_PD1__IIC4_SDA)
-            PINMUX_CONFIG(CAM_PD1, IIC4_SDA);
-        #elif defined(BSP_USING_PWR_BUTTON1__IIC4_SDA)
-            PINMUX_CONFIG(PWR_BUTTON1, IIC4_SDA);
-        #elif defined(BSP_USING_PWR_ON__IIC4_SDA)
-            PINMUX_CONFIG(PWR_ON, IIC4_SDA);
-        #elif defined(BSP_USING_ADC2__IIC4_SDA)
-            PINMUX_CONFIG(ADC2, IIC4_SDA);
-        #elif defined(BSP_USING_VIVO_D0__IIC4_SDA)
-            PINMUX_CONFIG(VIVO_D0, IIC4_SDA);
-        #elif defined(BSP_USING_PAD_MIPIRX2P__IIC4_SDA)
-            PINMUX_CONFIG(PAD_MIPIRX2P, IIC4_SDA);
-        #endif
-    #endif // SOC_TYPE_SG2002
+#ifdef BSP_USING_I2C2
+static const char *pinname_whitelist_i2c2_scl[] = {
+    "PAD_MIPI_TXP1",
+    NULL,
+};
+static const char *pinname_whitelist_i2c2_sda[] = {
+    "PAD_MIPI_TXM1",
+    NULL,
+};
+#endif
 
-#endif /* BSP_USING_I2C4 */
-}
+#ifdef BSP_USING_I2C3
+static const char *pinname_whitelist_i2c3_scl[] = {
+    "SD1_CMD",
+    NULL,
+};
+static const char *pinname_whitelist_i2c3_sda[] = {
+    "SD1_CLK",
+    NULL,
+};
+#endif
+
+#ifdef BSP_USING_I2C4
+// I2C4 is not ALLOWED for Duo
+static const char *pinname_whitelist_i2c4_scl[] = {
+    NULL,
+};
+static const char *pinname_whitelist_i2c4_sda[] = {
+    NULL,
+};
+#endif
+
+#else
+    #error "Unsupported board type!"
+#endif
 
 static void rt_hw_i2c_pinmux_config()
 {
-    rt_hw_i2c_pinmux_config_i2c0();
-    rt_hw_i2c_pinmux_config_i2c1();
-    rt_hw_i2c_pinmux_config_i2c2();
-    rt_hw_i2c_pinmux_config_i2c3();
-    rt_hw_i2c_pinmux_config_i2c4();
+#ifdef BSP_USING_I2C0
+    pinmux_config(BSP_I2C0_SCL_PINNAME, IIC0_SCL, pinname_whitelist_i2c0_scl);
+    pinmux_config(BSP_I2C0_SDA_PINNAME, IIC0_SDA, pinname_whitelist_i2c0_sda);
+#endif /* BSP_USING_I2C0 */
+
+#ifdef BSP_USING_I2C1
+    pinmux_config(BSP_I2C1_SCL_PINNAME, IIC1_SCL, pinname_whitelist_i2c1_scl);
+    pinmux_config(BSP_I2C1_SDA_PINNAME, IIC1_SDA, pinname_whitelist_i2c1_sda);
+#endif /* BSP_USING_I2C1 */
+
+#ifdef BSP_USING_I2C2
+    pinmux_config(BSP_I2C2_SCL_PINNAME, IIC2_SCL, pinname_whitelist_i2c2_scl);
+    pinmux_config(BSP_I2C2_SDA_PINNAME, IIC2_SDA, pinname_whitelist_i2c2_sda);
+#endif /* BSP_USING_I2C2 */
+
+#ifdef BSP_USING_I2C3
+    pinmux_config(BSP_I2C3_SCL_PINNAME, IIC3_SCL, pinname_whitelist_i2c3_scl);
+    pinmux_config(BSP_I2C3_SDA_PINNAME, IIC3_SDA, pinname_whitelist_i2c3_sda);
+#endif /* BSP_USING_I2C3 */
+
+#ifdef BSP_USING_I2C4
+    pinmux_config(BSP_I2C4_SCL_PINNAME, IIC4_SCL, pinname_whitelist_i2c4_scl);
+    pinmux_config(BSP_I2C4_SDA_PINNAME, IIC4_SDA, pinname_whitelist_i2c4_sda);
+#endif /* BSP_USING_I2C4 */
 }
 
 int rt_hw_i2c_init(void)

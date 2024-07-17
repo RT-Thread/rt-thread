@@ -81,5 +81,6 @@ if RT_USING_LWP
     endif
 
 rsource "terminal/Kconfig"
+rsource "vdso/Kconfig"
 endif
 

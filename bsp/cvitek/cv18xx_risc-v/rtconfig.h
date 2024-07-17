@@ -454,7 +454,9 @@
 /* General Drivers Configuration */
 
 #define BSP_USING_UART
-#define RT_USING_UART0
+#define BSP_USING_UART0
+#define BSP_UART0_RX_PINNAME "UART0_RX"
+#define BSP_UART0_TX_PINNAME "UART0_TX"
 #define UART_IRQ_BASE 44
 /* end of General Drivers Configuration */
 #define BSP_USING_CV18XX

@@ -6,30 +6,74 @@ menu "General Drivers Configuration"
         default y
 
         if BSP_USING_UART
-            config RT_USING_UART0
-            bool "Enable UART 0"
-            default y
+            config BSP_USING_UART0
+                bool "Enable UART 0"
+                default y
+
+                if BSP_USING_UART0
+                    config BSP_UART0_RX_PINNAME
+                        string "uart0 rx pin name"
+                        default "UART0_RX"
+                    config BSP_UART0_TX_PINNAME
+                        string "uart0 tx pin name"
+                        default "UART0_TX"
+                endif
+
+            config BSP_USING_UART1
+                bool "Enable UART 1"
+                default n
+
+                if BSP_USING_UART1
+                    config BSP_UART1_RX_PINNAME
+                        string "uart1 rx pin name"
+                        default ""
+                    config BSP_UART1_TX_PINNAME
+                        string "uart1 tx pin name"
+                        default ""
+                endif
+
+            config BSP_USING_UART2
+                bool "Enable UART 2"
+                default n
+
+                if BSP_USING_UART2
+                    config BSP_UART2_RX_PINNAME
+                        string "uart2 rx pin name"
+                        default ""
+                    config BSP_UART2_TX_PINNAME
+                        string "uart2 tx pin name"
+                        default ""
+                endif
+
+            config BSP_USING_UART3
+                bool "Enable UART 3"
+                default n
+
+                if BSP_USING_UART3
+                    config BSP_UART3_RX_PINNAME
+                        string "uart3 rx pin name"
+                        default ""
+                    config BSP_UART3_TX_PINNAME
+                        string "uart3 tx pin name"
+                        default ""
+                endif
+
+            config BSP_USING_UART4
+                bool "Enable UART 4"
+                default n
+
+                if BSP_USING_UART4
+                    config BSP_UART4_RX_PINNAME
+                        string "uart4 rx pin name"
+                        default ""
+                    config BSP_UART4_TX_PINNAME
+                        string "uart4 tx pin name"
+                        default ""
+                endif
 
             config UART_IRQ_BASE
-            int
-            default 44
-            
-            config RT_USING_UART1
-            bool "Enable UART 1"
-            default n
-
-            config RT_USING_UART2
-            bool "Enable UART 2"
-            default n
-
-            config RT_USING_UART3
-            bool "Enable UART 3"
-            default n
-
-            config RT_USING_UART4
-            bool "Enable UART 4"
-            default n
-
+                int
+                default 44
         endif
 
     menuconfig BSP_USING_I2C
@@ -42,23 +86,15 @@ menu "General Drivers Configuration"
         if BSP_USING_I2C
             config BSP_USING_I2C0
                 bool "Enable I2C0"
-                depends on BOARD_TYPE_MILKV_DUO || BOARD_TYPE_MILKV_DUO_SPINOR
                 default n
 
                 if BSP_USING_I2C0
-                    choice
-                        prompt "SCL"
-
-                        config BSP_USING_IIC0_SCL__IIC0_SCL
-                            bool "IIC0_SCL/GP0"
-                    endchoice
-
-                    choice
-                        prompt "SDA"
-
-                        config BSP_USING_IIC0_SDA__IIC0_SDA
-                            bool "IIC0_SDA/GP1"
-                    endchoice
+                    config BSP_I2C0_SCL_PINNAME
+                        string "i2c0 scl pin name"
+                        default ""
+                    config BSP_I2C0_SDA_PINNAME
+                        string "i2c0 sda pin name"
+                        default ""
                 endif
 
             config BSP_USING_I2C1
@@ -66,67 +102,25 @@ menu "General Drivers Configuration"
                 default n
 
                 if BSP_USING_I2C1
-                    choice
-                        prompt "SCL"
-
-                        if BOARD_TYPE_MILKV_DUO || BOARD_TYPE_MILKV_DUO_SPINOR
-                            config BSP_USING_SD1_D2__IIC1_SCL
-                                bool "SD1_D2/GP4"
-                            config BSP_USING_SD1_D3__IIC1_SCL
-                                bool "SD1_D3/GP9"
-                            config BSP_USING_PAD_MIPIRX0N__IIC1_SCL
-                                bool "PAD_MIPIRX0N/GP11"
-                        endif
-
-                        if BOARD_TYPE_MILKV_DUO256M || BOARD_TYPE_MILKV_DUO256M_SPINOR
-                            config BSP_USING_SD1_D2__IIC1_SCL
-                                bool "SD1_D2/GP4"
-                            config BSP_USING_SD1_D3__IIC1_SCL
-                                bool "SD1_D3/GP9"
-                        endif
-
-                    endchoice
-
-                    choice
-                        prompt "SDA"
-
-                        if BOARD_TYPE_MILKV_DUO || BOARD_TYPE_MILKV_DUO_SPINOR
-                            config BSP_USING_SD1_D1__IIC1_SDA
-                                bool "SD1_D1/GP5"
-                            config BSP_USING_SD1_D0__IIC1_SDA
-                                bool "SD1_D0/GP8"
-                            config BSP_USING_PAD_MIPIRX1P__IIC1_SDA
-                                bool "PAD_MIPIRX1P/GP10"
-                        endif
-
-                        if BOARD_TYPE_MILKV_DUO256M || BOARD_TYPE_MILKV_DUO256M_SPINOR
-                            config BSP_USING_SD1_D1__IIC1_SDA
-                                bool "SD1_D1/GP5"
-                            config BSP_USING_SD1_D0__IIC1_SDA
-                                bool "SD1_D0/GP8"
-                        endif
-                    endchoice
+                    config BSP_I2C1_SCL_PINNAME
+                        string "i2c1 scl pin name"
+                        default ""
+                    config BSP_I2C1_SDA_PINNAME
+                        string "i2c1 sda pin name"
+                        default ""
                 endif
 
             config BSP_USING_I2C2
                 bool "Enable I2C2"
-                depends on BOARD_TYPE_MILKV_DUO256M || BOARD_TYPE_MILKV_DUO256M_SPINOR
                 default n
 
                 if BSP_USING_I2C2
-                    choice
-                        prompt "SCL"
-
-                        config BSP_USING_PAD_MIPI_TXP1__IIC2_SCL
-                            bool "PAD_MIPI_TXP1/GP11"
-                    endchoice
-
-                    choice
-                        prompt "SDA"
-
-                        config BSP_USING_PAD_MIPI_TXM1__IIC2_SDA
-                            bool "PAD_MIPI_TXM1/GP10"
-                    endchoice
+                    config BSP_I2C2_SCL_PINNAME
+                        string "i2c2 scl pin name"
+                        default ""
+                    config BSP_I2C2_SDA_PINNAME
+                        string "i2c2 sda pin name"
+                        default ""
                 endif
 
             config BSP_USING_I2C3
@@ -134,33 +128,25 @@ menu "General Drivers Configuration"
                 default n
 
                 if BSP_USING_I2C3
-                    choice
-                        prompt "SCL"
+                    config BSP_I2C3_SCL_PINNAME
+                        string "i2c3 scl pin name"
+                        default ""
+                    config BSP_I2C3_SDA_PINNAME
+                        string "i2c3 sda pin name"
+                        default ""
+                endif
 
-                        if BOARD_TYPE_MILKV_DUO || BOARD_TYPE_MILKV_DUO_SPINOR
-                            config BSP_USING_SD1_CMD__IIC3_SCL
-                                bool "SD1_CMD/GP7"
-                        endif
+            config BSP_USING_I2C4
+                bool "Enable I2C4"
+                default n
 
-                        if BOARD_TYPE_MILKV_DUO256M || BOARD_TYPE_MILKV_DUO256M_SPINOR
-                            config BSP_USING_SD1_CMD__IIC3_SCL
-                                bool "SD1_CMD/GP7"
-                        endif
-                    endchoice
-
-                    choice
-                        prompt "SDA"
-
-                        if BOARD_TYPE_MILKV_DUO || BOARD_TYPE_MILKV_DUO_SPINOR
-                            config BSP_USING_SD1_CLK__IIC3_SDA
-                                bool "SD1_CLK/GP6"
-                        endif
-
-                        if BOARD_TYPE_MILKV_DUO256M || BOARD_TYPE_MILKV_DUO256M_SPINOR
-                            config BSP_USING_SD1_CLK__IIC3_SDA
-                                bool "SD1_CLK/GP6"
-                        endif
-                    endchoice
+                if BSP_USING_I2C4
+                    config BSP_I2C4_SCL_PINNAME
+                        string "i2c4 scl pin name"
+                        default ""
+                    config BSP_I2C4_SDA_PINNAME
+                        string "i2c4 sda pin name"
+                        default ""
                 endif
 
             config I2C_IRQ_BASE
@@ -168,15 +154,127 @@ menu "General Drivers Configuration"
                 default 49
         endif
 
-    config BSP_USING_ADC
+    menuconfig BSP_USING_ADC
         bool "Using ADC"
         select RT_USING_ADC
         default n
+
+        if BSP_USING_ADC
+            config BSP_USING_ADC_ACTIVE
+                bool "Enable ADC Controller in Active Domain"
+                default n
+
+                if BSP_USING_ADC_ACTIVE
+                    config BSP_ACTIVE_ADC1_PINNAME
+                        string "Pin name for VIN1 in Active Domain"
+                        default ""
+                    config BSP_ACTIVE_ADC2_PINNAME
+                        string "Pin name for VIN2 in Active Domain"
+                        default ""
+                    config BSP_ACTIVE_ADC3_PINNAME
+                        string "Pin name for VIN3 in Active Domain"
+                        default ""
+                endif
+
+            config BSP_USING_ADC_NODIE
+                bool "Enable ADC Controller in No-die Domain"
+                default n
+
+                if BSP_USING_ADC_NODIE
+                    config BSP_NODIE_ADC1_PINNAME
+                        string "Pin name for VIN1 in No-die Domain"
+                        default ""
+                    config BSP_NODIE_ADC2_PINNAME
+                        string "Pin name for VIN2 in No-die Domain"
+                        default ""
+                    config BSP_NODIE_ADC3_PINNAME
+                        string "Pin name for VIN3 in No-die Domain"
+                        default ""
+                endif
+        endif
 
     config BSP_USING_SPI
         bool "Using SPI"
         select RT_USING_SPI
         default n
+
+        if BSP_USING_SPI
+            config BSP_USING_SPI0
+                bool "Enable SPI 0"
+                default n
+
+                if BSP_USING_SPI0
+                    config BSP_SPI0_SCK_PINNAME
+                        string "spi0 sck pin name"
+                        default ""
+                    config BSP_SPI0_SDO_PINNAME
+                        string "spi0 sdo pin name"
+                        default ""
+                    config BSP_SPI0_SDI_PINNAME
+                        string "spi0 sdi pin name"
+                        default ""
+                    config BSP_SPI0_CS_PINNAME
+                        string "spi0 cs pin name"
+                        default ""
+                endif
+
+            config BSP_USING_SPI1
+                bool "Enable SPI 1"
+                default n
+
+                if BSP_USING_SPI1
+                    config BSP_SPI1_SCK_PINNAME
+                        string "spi1 sck pin name"
+                        default ""
+                    config BSP_SPI1_SDO_PINNAME
+                        string "spi1 sdo pin name"
+                        default ""
+                    config BSP_SPI1_SDI_PINNAME
+                        string "spi1 sdi pin name"
+                        default ""
+                    config BSP_SPI1_CS_PINNAME
+                        string "spi1 cs pin name"
+                        default ""
+                endif
+
+            config BSP_USING_SPI2
+                bool "Enable SPI 2"
+                default n
+
+                if BSP_USING_SPI2
+                    config BSP_SPI2_SCK_PINNAME
+                        string "spi2 sck pin name"
+                        default ""
+                    config BSP_SPI2_SDO_PINNAME
+                        string "spi2 sdo pin name"
+                        default ""
+                    config BSP_SPI2_SDI_PINNAME
+                        string "spi2 sdi pin name"
+                        default ""
+                    config BSP_SPI2_CS_PINNAME
+                        string "spi2 cs pin name"
+                        default ""
+                endif
+
+            config BSP_USING_SPI3
+                bool "Enable SPI 3"
+                default n
+
+                if BSP_USING_SPI3
+                    config BSP_SPI3_SCK_PINNAME
+                        string "spi3 sck pin name"
+                        default ""
+                    config BSP_SPI3_SDO_PINNAME
+                        string "spi3 sdo pin name"
+                        default ""
+                    config BSP_SPI3_SDI_PINNAME
+                        string "spi3 sdi pin name"
+                        default ""
+                    config BSP_SPI3_CS_PINNAME
+                        string "spi3 cs pin name"
+                        default ""
+                endif
+        endif
 
     menuconfig BSP_USING_WDT
         bool "Enable Watchdog Timer"
@@ -204,20 +302,80 @@ menu "General Drivers Configuration"
 
         if BSP_USING_PWM
             config BSP_USING_PWM0
-            bool "Enable PWM 0"
-            default n
+                bool "Enable PWM 0"
+                default n
+
+                if BSP_USING_PWM0
+                    config BSP_PWM0_0_PINNAME
+                        string "pwm[0] pin name"
+                        default ""
+                    config BSP_PWM0_1_PINNAME
+                        string "pwm[1] pin name"
+                        default ""
+                    config BSP_PWM0_2_PINNAME
+                        string "pwm[2] pin name"
+                        default ""
+                    config BSP_PWM0_3_PINNAME
+                        string "pwm[3] pin name"
+                        default ""
+                endif
 
             config BSP_USING_PWM1
-            bool "Enable PWM 1"
-            default n
+                bool "Enable PWM 1"
+                default n
+
+                if BSP_USING_PWM1
+                    config BSP_PWM1_4_PINNAME
+                        string "pwm[4] pin name"
+                        default ""
+                    config BSP_PWM1_5_PINNAME
+                        string "pwm[5] pin name"
+                        default ""
+                    config BSP_PWM1_6_PINNAME
+                        string "pwm[6] pin name"
+                        default ""
+                    config BSP_PWM1_7_PINNAME
+                        string "pwm[7] pin name"
+                        default ""
+                endif
 
             config BSP_USING_PWM2
-            bool "Enable PWM 2"
-            default n
+                bool "Enable PWM 2"
+                default n
+
+                if BSP_USING_PWM2
+                    config BSP_PWM2_8_PINNAME
+                        string "pwm[8] pin name"
+                        default ""
+                    config BSP_PWM2_9_PINNAME
+                        string "pwm[9] pin name"
+                        default ""
+                    config BSP_PWM2_10_PINNAME
+                        string "pwm[10] pin name"
+                        default ""
+                    config BSP_PWM2_11_PINNAME
+                        string "pwm[11] pin name"
+                        default ""
+                endif
 
             config BSP_USING_PWM3
-            bool "Enable PWM 3"
-            default n
+                bool "Enable PWM 3"
+                default n
+
+                if BSP_USING_PWM3
+                    config BSP_PWM3_12_PINNAME
+                        string "pwm[12] pin name"
+                        default ""
+                    config BSP_PWM3_13_PINNAME
+                        string "pwm[13] pin name"
+                        default ""
+                    config BSP_PWM3_14_PINNAME
+                        string "pwm[14] pin name"
+                        default ""
+                    config BSP_PWM3_15_PINNAME
+                        string "pwm[15] pin name"
+                        default ""
+                endif
         endif
 
     config BSP_USING_RTC

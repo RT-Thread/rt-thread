@@ -302,3 +302,10 @@ void trap_entry(void)
     write_fcsr(fcsr);
 #endif
 }
+
+/**
+ * Trap Handler
+ */
+rt_weak void handle_trap(rt_uint32_t mcause, rt_uint32_t mepc, rt_uint32_t sp)
+{
+}
