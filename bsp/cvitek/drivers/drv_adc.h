@@ -53,49 +53,6 @@
 
 #define SARADC_TRIM_OFFSET                  0x034
 
-rt_inline void cvi_set_saradc_ctrl(unsigned long reg_base, rt_uint32_t value)
-{
-    value |= mmio_read_32(reg_base + SARADC_CTRL_OFFSET);
-    mmio_write_32(reg_base + SARADC_CTRL_OFFSET, value);
-}
-
-rt_inline void cvi_reset_saradc_ctrl(unsigned long reg_base, rt_uint32_t value)
-{
-    value = mmio_read_32(reg_base + SARADC_CTRL_OFFSET) & ~value;
-    mmio_write_32(reg_base + SARADC_CTRL_OFFSET, value);
-}
-
-rt_inline rt_uint32_t cvi_get_saradc_status(unsigned long reg_base)
-{
-    return((rt_uint32_t)mmio_read_32(reg_base + SARADC_STATUS_OFFSET));
-}
-
-rt_inline void cvi_set_cyc(unsigned long reg_base)
-{
-    rt_uint32_t value;
-
-    value = mmio_read_32(reg_base + SARADC_CYC_SET_OFFSET);
-
-    value &= ~SARADC_CYC_CLKDIV_DIV_16;
-    mmio_write_32(reg_base + SARADC_CYC_SET_OFFSET, value);
-
-    value |= SARADC_CYC_CLKDIV_DIV_16;                                                               //set saradc clock cycle=840ns
-    mmio_write_32(reg_base + SARADC_CYC_SET_OFFSET, value);
-}
-
-rt_inline void cvi_do_calibration(unsigned long reg_base)
-{
-    rt_uint32_t val;
-
-    val = mmio_read_32(reg_base + SARADC_TEST_OFFSET);
-    val |= 1 << SARADC_TEST_VREFSEL_BIT;
-    mmio_write_32(reg_base + SARADC_TEST_OFFSET, val);
-
-    val = mmio_read_32(reg_base + SARADC_TRIM_OFFSET);
-    val |= 0x4;
-    mmio_write_32(reg_base + SARADC_TRIM_OFFSET, val);
-}
-
 int rt_hw_adc_init(void);
 
 #endif /* __DRV_ADC_H__ */

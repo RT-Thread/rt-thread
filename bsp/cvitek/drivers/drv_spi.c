@@ -15,6 +15,70 @@
 #define DBG_LVL DBG_INFO
 #include <rtdbg.h>
 
+uint32_t gen_spi_mode(struct rt_spi_configuration *cfg, uint32_t *mode)
+{
+    uint32_t value = 0;
+
+    if (cfg->data_width != 8 && cfg->data_width != 16)
+        return -1;
+
+    value |= (cfg->data_width - 1) >> SPI_CTRL0_DATA_FREAM_SHIFT;
+    value |= cfg->mode >> SPI_CTRL0_CPHA_SHIFT;
+
+    *mode = value;
+    return 0;
+}
+
+/* set spi mode */
+static inline void spi_set_mode(struct spi_regs *reg, uint32_t mode)
+{
+    mmio_write_32((uintptr_t)&reg->spi_ctrl0, mode);
+}
+
+/* clear irq */
+static inline void spi_clear_irq(struct spi_regs *reg, uint32_t mode)
+{
+    mmio_write_32((uintptr_t)&reg->spi_imr, mode);
+}
+
+static inline void spi_enable_cs(struct spi_regs *reg, uint32_t enable)
+{
+    if (enable)
+        enable = 0x1;
+    else
+        enable = 0x0;
+
+    mmio_write_32((uintptr_t)&reg->spi_ser, enable);
+}
+
+/* set spi frequency*/
+static inline rt_err_t spi_set_frequency(struct spi_regs *reg, uint32_t speed)
+{
+    uint16_t value;
+
+    /* The value of the BAUDR register must be an even number between 2-65534 */
+    value = SPI_FREQUENCY / speed;
+    if (value % 2 != 0)
+        value++;
+
+    if (value < 4 || value > 65534)
+        value = 4;
+
+    mmio_write_32((uintptr_t)&reg->spi_baudr, value);
+
+    return RT_EOK;
+}
+
+static inline void spi_enable(struct spi_regs *reg, uint32_t enable)
+{
+    if (enable)
+        enable = 0x1;
+    else
+        enable = 0x0;
+
+    mmio_write_32((uintptr_t)&reg->spi_ssienr, enable);
+}
+
 static struct cv1800_spi cv1800_spi_obj[] =
 {
 #ifdef BSP_USING_SPI
