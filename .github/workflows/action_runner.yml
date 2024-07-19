@@ -1,0 +1,56 @@
+#
+# Copyright (c) 2006-2024, RT-Thread Development Team
+#
+# SPDX-License-Identifier: Apache-2.0
+#
+# Change Logs:
+# Date           Author       Notes
+# 2024-07-19     supperthomas the first version
+#
+name:  action_runner
+
+on:
+  workflow_dispatch:
+    inputs:
+      bsp_options:
+        description: 'Which bsp path Would you want dist in bsp?like stm32/stm32f103-blue-pill'
+        required: false
+        type: string
+        default: 'stm32/stm32f103-blue-pill'
+      bsp_tool_chain:
+        description: 'Choice tool_chain'
+        required: false
+        default: 'KEIL'
+        type: choice
+        options:
+          - "KEIL"
+          - "IAR"
+      bsp_config:
+        description: 'Type a config you want mannual test in .config, like: CONFIG_RT_USING_DEBUG=y,CONFIG_RT_DEBUGING_COLOR=y,CONFIG_RT_DEBUGING_CONTEXT=y'
+        required: false
+        type: string
+        default: 'CONFIG_RT_USING_DEBUG=y,CONFIG_RT_DEBUGING_COLOR=y,CONFIG_RT_DEBUGING_CONTEXT=y'
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: [self-hosted, windows, x64]
+    name: ${{ github.event.inputs.bsp_options }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Bsp Scons Compile
+        if: ${{ success() }}
+        env:
+          RTT_BSP: ${{ github.event.inputs.bsp_options }}
+          RTT_TOOL_CHAIN: ${{ github.event.inputs.bsp_tool_chain}}
+        run: |   
+          ls
+          echo $RTT_BSP
+          cd bsp/stm32/stm32f103-blue-pill
+          scons --target=mdk5
+          UV4.exe -b project.uvprojx -q -j0 -t rt-thread -o action_runner.log
+          ls
+          sleep 10
+          cat action_runner.log
