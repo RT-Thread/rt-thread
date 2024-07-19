@@ -331,4 +331,17 @@ Reserved_Handler:
         push_svc_reg
         bl      rt_hw_trap_resv
         b       .
+
+    EXPORT  FIQ_Handler
+FIQ_Handler:
+        push_svc_reg
+        bl      rt_hw_trap_fiq
+        b       .
+
+    EXPORT  Undefined_Handler
+Undefined_Handler:
+        push_svc_reg
+        bl      rt_hw_trap_undef
+        b.
+
   END
