@@ -22,6 +22,14 @@ config SOC_CV18XX_AARCH64
     select ARCH_MM_MMU
     default y
 
+config GPIO_IRQ_BASE
+    int
+    default 76
+
+config SYS_GPIO_IRQ_BASE
+    int
+    default 86
+
 choice
     prompt "Board Type"
     default BOARD_TYPE_MILKV_DUO256M
