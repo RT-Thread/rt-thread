@@ -329,6 +329,8 @@
 /* Uncategorized */
 
 #define SOC_CV18XX_AARCH64
+#define GPIO_IRQ_BASE 76
+#define SYS_GPIO_IRQ_BASE 86
 #define BOARD_TYPE_MILKV_DUO256M
 
 /* General Drivers Configuration */
