@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2023, RT-Thread Development Team
+ * Copyright (c) 2006-2024, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -278,7 +278,9 @@ rt_inline int _serial_poll_tx(struct rt_serial_device *serial, const rt_uint8_t 
             serial->ops->putc(serial, '\r');
         }
 
-        serial->ops->putc(serial, *data);
+        if(serial->ops->putc(serial, *data) < 0) {
+            break;
+        }
 
         ++ data;
         -- length;

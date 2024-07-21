@@ -354,7 +354,7 @@ int pthread_detach(pthread_t thread)
         goto __exit;
     }
 
-    if ((ptd->tid->stat & RT_THREAD_STAT_MASK) == RT_THREAD_CLOSE)
+    if ((RT_SCHED_CTX(ptd->tid).stat & RT_THREAD_STAT_MASK) == RT_THREAD_CLOSE)
     {
         /* destroy this pthread */
         _pthread_data_destroy(ptd);

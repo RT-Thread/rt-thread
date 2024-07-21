@@ -36,6 +36,8 @@ config RT_USING_SMART
     select RT_USING_KTIME
     select RT_USING_STDC_ATOMIC
     select RT_USING_SYSTEM_WORKQUEUE
+    select RT_USING_CPU_USAGE_TRACER
+    select RT_USING_SCHED_THREAD_CTX
     depends on ARCH_ARM_CORTEX_M || ARCH_ARM_ARM9 || ARCH_ARM_CORTEX_A || ARCH_ARMV8 || ARCH_RISCV64
     depends on !RT_USING_NANO
     help
@@ -174,6 +176,10 @@ if RT_USING_TIMER_SOFT
         int "The stack size of timer thread"
         default 2048 if ARCH_CPU_64BIT
         default 512
+
+    config RT_USING_TIMER_ALL_SOFT
+        bool "Set all timer as soft timer"
+        default n
 endif
 
 config RT_USING_CPU_USAGE_TRACER

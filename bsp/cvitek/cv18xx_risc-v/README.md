@@ -5,7 +5,7 @@ CV18xx 系列芯片面向民用消费监控 IP 摄像机、居家智能等多项
 
 1. 处理器内核
 
-- 主处理器 RISCV C906 @ 1.0Ghz 
+- 主处理器 RISCV C906 @ 1.0Ghz
   - 32KB I-cache, 64KB D-Cache
   -  集成矢量(Vector)及浮点运算单元 (FPU) .
 - 协处理器 RISCV C906 @ 700Mhz
@@ -32,6 +32,8 @@ CV18xx 系列芯片面向民用消费监控 IP 摄像机、居家智能等多项
 - Up to 1x JTAG
 - 集成 MAC PHY 支持 10/100Mbps 全双工或半双工模式
 - 一个 USB Host / device 接口
+
+4. [GPIO 引脚分布](https://milkv.io/zh/docs/duo/getting-started/duo256m#gpio-%E5%BC%95%E8%84%9A%E5%88%86%E5%B8%83)
 
 ## Toolchain 下载
 1. RT-Thread 标准版工具链：`riscv64-unknown-elf-gcc` 下载地址  [https://occ-oss-prod.oss-cn-hangzhou.aliyuncs.com/resource//1705395512373/Xuantie-900-gcc-elf-newlib-x86_64-V2.8.1-20240115.tar.gz](https://occ-oss-prod.oss-cn-hangzhou.aliyuncs.com/resource//1705395512373/Xuantie-900-gcc-elf-newlib-x86_64-V2.8.1-20240115.tar.gz)
@@ -112,10 +114,10 @@ Loading Environment from <NULL>... OK
 In:    serial
 Out:   serial
 Err:   serial
-Net:   
+Net:
 Warning: ethernet@4070000 (eth0) using random MAC address - 62:80:19:6c:d4:64
 eth0: ethernet@4070000
-Hit any key to stop autoboot:  0 
+Hit any key to stop autoboot:  0
 Boot from SD ...
 switch to partitions #0, OK
 mmc0 is current device

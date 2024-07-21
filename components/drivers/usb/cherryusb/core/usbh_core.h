@@ -20,6 +20,7 @@
 #include "usb_hc.h"
 #include "usb_osal.h"
 #include "usbh_hub.h"
+#include "usb_memcpy.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -51,10 +52,10 @@ extern "C" {
         ep = ep_desc;                                                        \
         USB_LOG_INFO("Ep=%02x Attr=%02u Mps=%d Interval=%02u Mult=%02u\r\n", \
                      ep_desc->bEndpointAddress,                              \
-                     USB_GET_ENDPOINT_TYPE(ep_desc->bmAttributes),           \
+                     ep_desc->bmAttributes,                                  \
                      USB_GET_MAXPACKETSIZE(ep_desc->wMaxPacketSize),         \
                      ep_desc->bInterval,                                     \
-                     USB_GET_MULT(ep_desc->bmAttributes));                   \
+                     USB_GET_MULT(ep_desc->wMaxPacketSize));                 \
     } while (0)
 
 struct usbh_class_info {
@@ -109,16 +110,12 @@ struct usbh_hubport {
     struct usb_setup_packet *setup;
     struct usbh_hub *parent;
     struct usbh_bus *bus;
-#ifdef CONFIG_USBHOST_XHCI
-    uint32_t protocol; /* port protocol, for xhci, some ports are USB2.0, others are USB3.0 */
-#endif
     struct usb_endpoint_descriptor ep0;
     struct usbh_urb ep0_urb;
     usb_osal_mutex_t mutex;
 };
 
 struct usbh_hub {
-    usb_slist_t list;
     bool connected;
     bool is_roothub;
     uint8_t index;
@@ -159,7 +156,6 @@ struct usbh_bus {
     struct usbh_devaddr_map devgen;
     usb_osal_thread_t hub_thread;
     usb_osal_mq_t hub_mq;
-    usb_slist_t hub_list;
 };
 
 static inline void usbh_control_urb_fill(struct usbh_urb *urb,

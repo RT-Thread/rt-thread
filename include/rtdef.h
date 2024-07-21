@@ -579,14 +579,13 @@ struct rt_object_information
  */
 #define RT_TIMER_FLAG_DEACTIVATED       0x0             /**< timer is deactive */
 #define RT_TIMER_FLAG_ACTIVATED         0x1             /**< timer is active */
-#define RT_TIMER_FLAG_PROCESSING        0x2             /**< timer's timeout fuction is processing */
 #define RT_TIMER_FLAG_ONE_SHOT          0x0             /**< one shot timer */
-#define RT_TIMER_FLAG_PERIODIC          0x4             /**< periodic timer */
+#define RT_TIMER_FLAG_PERIODIC          0x2             /**< periodic timer */
 
 #define RT_TIMER_FLAG_HARD_TIMER        0x0             /**< hard timer,the timer's callback function will be called in tick isr. */
-#define RT_TIMER_FLAG_SOFT_TIMER        0x8             /**< soft timer,the timer's callback function will be called in timer thread. */
+#define RT_TIMER_FLAG_SOFT_TIMER        0x4             /**< soft timer,the timer's callback function will be called in timer thread. */
 #define RT_TIMER_FLAG_THREAD_TIMER \
-    (0x10 | RT_TIMER_FLAG_HARD_TIMER)                    /**< thread timer that cooperates with scheduler directly */
+    (0x8 | RT_TIMER_FLAG_HARD_TIMER)                    /**< thread timer that cooperates with scheduler directly */
 
 #define RT_TIMER_CTRL_SET_TIME          0x0             /**< set timer control command */
 #define RT_TIMER_CTRL_GET_TIME          0x1             /**< get timer control command */
@@ -1025,6 +1024,11 @@ struct rt_ipc_object
     rt_list_t suspend_thread;                 /**< threads pended on this resource */
 };
 
+/**
+ * @addtogroup semaphore
+ * @{
+ */
+
 #ifdef RT_USING_SEMAPHORE
 /**
  * Semaphore structure
@@ -1039,6 +1043,13 @@ struct rt_semaphore
 };
 typedef struct rt_semaphore *rt_sem_t;
 #endif /* RT_USING_SEMAPHORE */
+
+/**@}*/
+
+/**
+ * @addtogroup mutex
+ * @{
+ */
 
 #ifdef RT_USING_MUTEX
 /**
@@ -1059,6 +1070,13 @@ struct rt_mutex
 };
 typedef struct rt_mutex *rt_mutex_t;
 #endif /* RT_USING_MUTEX */
+
+/**@}*/
+
+/**
+ * @addtogroup event
+ * @{
+ */
 
 #ifdef RT_USING_EVENT
 /**
@@ -1081,6 +1099,13 @@ struct rt_event
 typedef struct rt_event *rt_event_t;
 #endif /* RT_USING_EVENT */
 
+/**@}*/
+
+/**
+ * @addtogroup mailbox
+ * @{
+ */
+
 #ifdef RT_USING_MAILBOX
 /**
  * mailbox structure
@@ -1102,6 +1127,13 @@ struct rt_mailbox
 };
 typedef struct rt_mailbox *rt_mailbox_t;
 #endif /* RT_USING_MAILBOX */
+
+/**@}*/
+
+/**
+ * @addtogroup messagequeue
+ * @{
+ */
 
 #ifdef RT_USING_MESSAGEQUEUE
 /**
@@ -1127,6 +1159,8 @@ struct rt_messagequeue
 };
 typedef struct rt_messagequeue *rt_mq_t;
 #endif /* RT_USING_MESSAGEQUEUE */
+
+/**@}*/
 
 /**@}*/
 

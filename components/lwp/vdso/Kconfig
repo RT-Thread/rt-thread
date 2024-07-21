@@ -1,0 +1,5 @@
+menuconfig RT_USING_VDSO
+    bool "vDSO"
+    default y
+    depends on RT_USING_SMART
+

@@ -42,7 +42,12 @@ static void usbh_cp210x_class_free(struct usbh_cp210x *cp210x_class)
 
 static int usbh_cp210x_enable(struct usbh_cp210x *cp210x_class)
 {
-    struct usb_setup_packet *setup = cp210x_class->hport->setup;
+    struct usb_setup_packet *setup;
+
+    if (!cp210x_class || !cp210x_class->hport) {
+        return -USB_ERR_INVAL;
+    }
+    setup = cp210x_class->hport->setup;
 
     setup->bmRequestType = USB_REQUEST_DIR_OUT | USB_REQUEST_VENDOR | USB_REQUEST_RECIPIENT_INTERFACE;
     setup->bRequest = CP210X_IFC_ENABLE;
@@ -55,7 +60,12 @@ static int usbh_cp210x_enable(struct usbh_cp210x *cp210x_class)
 
 static int usbh_cp210x_set_flow(struct usbh_cp210x *cp210x_class)
 {
-    struct usb_setup_packet *setup = cp210x_class->hport->setup;
+    struct usb_setup_packet *setup;
+
+    if (!cp210x_class || !cp210x_class->hport) {
+        return -USB_ERR_INVAL;
+    }
+    setup = cp210x_class->hport->setup;
 
     setup->bmRequestType = USB_REQUEST_DIR_OUT | USB_REQUEST_VENDOR | USB_REQUEST_RECIPIENT_INTERFACE;
     setup->bRequest = CP210X_SET_FLOW;
@@ -70,7 +80,12 @@ static int usbh_cp210x_set_flow(struct usbh_cp210x *cp210x_class)
 
 static int usbh_cp210x_set_chars(struct usbh_cp210x *cp210x_class)
 {
-    struct usb_setup_packet *setup = cp210x_class->hport->setup;
+    struct usb_setup_packet *setup;
+
+    if (!cp210x_class || !cp210x_class->hport) {
+        return -USB_ERR_INVAL;
+    }
+    setup = cp210x_class->hport->setup;
 
     setup->bmRequestType = USB_REQUEST_DIR_OUT | USB_REQUEST_VENDOR | USB_REQUEST_RECIPIENT_INTERFACE;
     setup->bRequest = CP210X_SET_CHARS;
@@ -87,7 +102,12 @@ static int usbh_cp210x_set_chars(struct usbh_cp210x *cp210x_class)
 
 static int usbh_cp210x_set_baudrate(struct usbh_cp210x *cp210x_class, uint32_t baudrate)
 {
-    struct usb_setup_packet *setup = cp210x_class->hport->setup;
+    struct usb_setup_packet *setup;
+
+    if (!cp210x_class || !cp210x_class->hport) {
+        return -USB_ERR_INVAL;
+    }
+    setup = cp210x_class->hport->setup;
 
     setup->bmRequestType = USB_REQUEST_DIR_OUT | USB_REQUEST_VENDOR | USB_REQUEST_RECIPIENT_INTERFACE;
     setup->bRequest = CP210X_SET_BAUDRATE;
@@ -101,8 +121,13 @@ static int usbh_cp210x_set_baudrate(struct usbh_cp210x *cp210x_class, uint32_t b
 
 static int usbh_cp210x_set_data_format(struct usbh_cp210x *cp210x_class, uint8_t databits, uint8_t parity, uint8_t stopbits)
 {
-    struct usb_setup_packet *setup = cp210x_class->hport->setup;
+    struct usb_setup_packet *setup;
     uint16_t value;
+
+    if (!cp210x_class || !cp210x_class->hport) {
+        return -USB_ERR_INVAL;
+    }
+    setup = cp210x_class->hport->setup;
 
     value = ((databits & 0x0F) << 8) | ((parity & 0x0f) << 4) | ((stopbits & 0x03) << 0);
 
@@ -117,8 +142,13 @@ static int usbh_cp210x_set_data_format(struct usbh_cp210x *cp210x_class, uint8_t
 
 static int usbh_cp210x_set_mhs(struct usbh_cp210x *cp210x_class, uint8_t dtr, uint8_t rts, uint8_t dtr_mask, uint8_t rts_mask)
 {
-    struct usb_setup_packet *setup = cp210x_class->hport->setup;
+    struct usb_setup_packet *setup;
     uint16_t value;
+
+    if (!cp210x_class || !cp210x_class->hport) {
+        return -USB_ERR_INVAL;
+    }
+    setup = cp210x_class->hport->setup;
 
     value = ((dtr & 0x01) << 0) | ((rts & 0x01) << 1) | ((dtr_mask & 0x01) << 8) | ((rts_mask & 0x01) << 9);
 

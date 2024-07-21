@@ -1,16 +1,10 @@
 mainmenu "RT-Thread Project Configuration"
 
-config BSP_DIR
-    string
-    option env="BSP_ROOT"
-    default "."
+BSP_DIR := .
 
-config RTT_DIR
-    string
-    option env="RTT_ROOT"
-    default "../../.."
+RTT_DIR := ../../..
 
-source "$RTT_DIR/Kconfig"
+source "$(RTT_DIR)/Kconfig"
 
 config BSP_RK2108
     bool
@@ -21,5 +15,5 @@ config BSP_RK2108
     select RT_USING_USER_MAIN
     default y
 
-source "$BSP_DIR/board/Kconfig"
-source "$BSP_DIR/driver/Kconfig"
+source "$(BSP_DIR)/board/Kconfig"
+source "$(BSP_DIR)/driver/Kconfig"

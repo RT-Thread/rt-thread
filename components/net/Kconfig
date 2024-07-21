@@ -1,8 +1,8 @@
 menu "Network"
 
-source "$RTT_DIR/components/net/sal/Kconfig"
-source "$RTT_DIR/components/net/netdev/Kconfig"
-source "$RTT_DIR/components/net/lwip/Kconfig"
-source "$RTT_DIR/components/net/at/Kconfig"
+rsource "sal/Kconfig"
+rsource "netdev/Kconfig"
+rsource "lwip/Kconfig"
+rsource "at/Kconfig"
 
 endmenu

@@ -199,18 +199,19 @@ static rt_err_t stm32_adc_enabled(struct rt_adc_device *device, rt_int8_t channe
         HAL_PWREx_EnableVddA();
 #endif /* defined(SOC_SERIES_STM32U5) */
 
-    if(HAL_ADC_ConfigChannel(stm32_adc_handler, &ADC_ChanConf) != HAL_OK)
-    {
-        LOG_E("Failed to configure ADC channel %d", channel);
-    }
+		if(HAL_ADC_ConfigChannel(stm32_adc_handler, &ADC_ChanConf) != HAL_OK)
+		{
+			LOG_E("Failed to configure ADC channel %d", channel);
+			return -RT_ERROR;
+		}
 
     /* perform an automatic ADC calibration to improve the conversion accuracy */
 #if defined(SOC_SERIES_STM32L4) || defined (SOC_SERIES_STM32WB)
-        if (HAL_ADCEx_Calibration_Start(stm32_adc_handler, ADC_ChanConf.SingleDiff) != HAL_OK)
-        {
-            LOG_E("ADC calibration error!\n");
-            return -RT_ERROR;
-        }
+		if (HAL_ADCEx_Calibration_Start(stm32_adc_handler, ADC_ChanConf.SingleDiff) != HAL_OK)
+		{
+			LOG_E("ADC calibration error!\n");
+			return -RT_ERROR;
+		}
 #elif defined(SOC_SERIES_STM32MP1) || defined(SOC_SERIES_STM32H7) || defined(SOC_SERIES_STM32U5)
         /* Run the ADC linear calibration in single-ended mode */
         if (HAL_ADCEx_Calibration_Start(stm32_adc_handler, ADC_CALIB_OFFSET_LINEARITY, ADC_ChanConf.SingleDiff) != HAL_OK)
@@ -220,11 +221,14 @@ static rt_err_t stm32_adc_enabled(struct rt_adc_device *device, rt_int8_t channe
             return -RT_ERROR;
         }
 #endif
-        HAL_ADC_Start(stm32_adc_handler);
     }
     else
     {
-        HAL_ADC_Stop(stm32_adc_handler);
+        if (HAL_ADC_Stop(stm32_adc_handler) != HAL_OK)
+		{
+			LOG_E("Stop ADC conversion failed!\n");
+			return -RT_ERROR;
+		}
     }
 
     return RT_EOK;
@@ -255,33 +259,62 @@ static rt_uint8_t stm32_adc_get_resolution(struct rt_adc_device *device)
             return 10;
         case ADC_RESOLUTION_8B:
             return 8;
-#if defined(SOC_SERIES_STM32H7) || defined(SOC_SERIES_STM32U5)
+#if defined(SOC_SERIES_STM32H7) && (ADC_VER_V5_V90) || defined(SOC_SERIES_STM32U5)
         case ADC_RESOLUTION_6B:
             return 6;
-#endif /* defined(SOC_SERIES_STM32H7) || defined(SOC_SERIES_STM32U5) */
+#endif /* defined(SOC_SERIES_STM32H7) && (ADC_VER_V5_V90) || defined(SOC_SERIES_STM32U5) */
         default:
             return 0;
     }
 #endif /* defined(SOC_SERIES_STM32F1) || defined(SOC_SERIES_STM32F3) */
 }
 
+static rt_err_t stm32_adc_get_value(struct rt_adc_device *device, rt_int8_t channel, rt_uint32_t *value)
+{
+    ADC_HandleTypeDef *stm32_adc_handler;
+
+    RT_ASSERT(device != RT_NULL);
+    RT_ASSERT(value != RT_NULL);
+
+    stm32_adc_handler = device->parent.user_data;
+	
+	if (HAL_ADC_Start(stm32_adc_handler) != HAL_OK)
+	{
+		LOG_E("Start ADC conversion error!\n");
+		return -RT_ERROR;
+	}
+
+    /* Wait for the ADC to convert */
+    if (HAL_ADC_PollForConversion(stm32_adc_handler, 100) != RT_EOK)
+	{
+		LOG_E("ADC conversion error!\n");
+		return -RT_ERROR;
+	}
+
+    /* get ADC value */
+    *value = (rt_uint32_t)HAL_ADC_GetValue(stm32_adc_handler);
+
+    return RT_EOK;
+}
+
 static rt_int16_t stm32_adc_get_vref (struct rt_adc_device *device)
 {
-    if(device == RT_NULL)
-      return -RT_ERROR;
-
     rt_uint16_t vref_mv;
 #ifdef __LL_ADC_CALC_VREFANALOG_VOLTAGE
-    rt_err_t ret = RT_EOK;
+    rt_err_t ret;
     rt_uint32_t vref_value;
 
     ADC_HandleTypeDef *stm32_adc_handler = device->parent.user_data;
 
-    ret = rt_adc_enable(device, RT_ADC_INTERN_CH_VREF);
-    if (ret != RT_EOK) return (rt_int16_t)ret;
-    vref_value = rt_adc_read(device, RT_ADC_INTERN_CH_VREF);
-    ret = rt_adc_disable(device, RT_ADC_INTERN_CH_VREF);
-    if (ret != RT_EOK) return (rt_int16_t)ret;
+	ret = stm32_adc_enabled(device, RT_ADC_INTERN_CH_VREF, RT_TRUE);
+    if (ret != RT_EOK) 
+		return 0;
+    ret = stm32_adc_get_value(device, RT_ADC_INTERN_CH_VREF, &vref_value);
+	if (ret != RT_EOK) 
+		return 0;
+    ret = stm32_adc_enabled(device, RT_ADC_INTERN_CH_VREF, RT_FALSE);
+    if (ret != RT_EOK) 
+		return 0;
 
 #ifdef SOC_SERIES_STM32U5
     vref_mv = __LL_ADC_CALC_VREFANALOG_VOLTAGE(stm32_adc_handler->Instance, vref_value, stm32_adc_handler->Init.Resolution);
@@ -293,24 +326,6 @@ static rt_int16_t stm32_adc_get_vref (struct rt_adc_device *device)
     vref_mv = 3300;
 #endif /* __LL_ADC_CALC_VREFANALOG_VOLTAGE */
     return vref_mv;
-}
-
-static rt_err_t stm32_adc_get_value(struct rt_adc_device *device, rt_int8_t channel, rt_uint32_t *value)
-{
-    ADC_HandleTypeDef *stm32_adc_handler;
-
-    RT_ASSERT(device != RT_NULL);
-    RT_ASSERT(value != RT_NULL);
-
-    stm32_adc_handler = device->parent.user_data;
-
-    /* Wait for the ADC to convert */
-    HAL_ADC_PollForConversion(stm32_adc_handler, 100);
-
-    /* get ADC value */
-    *value = (rt_uint32_t)HAL_ADC_GetValue(stm32_adc_handler);
-
-    return RT_EOK;
 }
 
 static const struct rt_adc_ops stm_adc_ops =

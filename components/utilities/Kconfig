@@ -220,7 +220,7 @@ config RT_USING_RESOURCE_ID
     bool "Enable resource id"
     default n
 
-source "$RTT_DIR/components/utilities/libadt/Kconfig"
-source "$RTT_DIR/components/utilities/rt-link/Kconfig"
+rsource "libadt/Kconfig"
+rsource "rt-link/Kconfig"
 
 endmenu

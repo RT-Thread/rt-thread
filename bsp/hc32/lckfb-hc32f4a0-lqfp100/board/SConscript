@@ -1,0 +1,38 @@
+import os
+import rtconfig
+from building import *
+
+Import('SDK_LIB')
+
+cwd = GetCurrentDir()
+
+# add general drivers
+src = Split('''
+board.c
+board_config.c
+''')
+
+if GetDepend(['BSP_USING_TCA9539']):
+    src += Glob('ports/tca9539.c')
+
+if GetDepend(['BSP_USING_SPI_FLASH']):
+    src += Glob('ports/drv_spi_flash.c')
+
+path =  [cwd]
+path += [cwd + '/ports']
+path += [cwd + '/config']
+path += [cwd + '/config/usb_config']
+
+startup_path_prefix = SDK_LIB
+
+if rtconfig.PLATFORM in ['gcc']:
+    src += [startup_path_prefix + '/hc32f4a0_ddl/drivers/cmsis/Device/HDSC/hc32f4xx/Source/GCC/startup_hc32f4a0.S']
+elif rtconfig.PLATFORM in ['armcc', 'armclang']:
+    src += [startup_path_prefix + '/hc32f4a0_ddl/drivers/cmsis/Device/HDSC/hc32f4xx/Source/ARM/startup_hc32f4a0.s']
+elif rtconfig.PLATFORM in ['iccarm']:
+    src += [startup_path_prefix + '/hc32f4a0_ddl/drivers/cmsis/Device/HDSC/hc32f4xx/Source/IAR/startup_hc32f4a0.s']
+
+CPPDEFINES = ['HC32F4A0', '__DEBUG']
+group = DefineGroup('Drivers', src, depend = [''], CPPPATH = path, CPPDEFINES = CPPDEFINES)
+
+Return('group')

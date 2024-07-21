@@ -63,6 +63,7 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get -yqq install scons qemu-system git
+        pip3 install kconfiglib
 
     - name: Install Arm ToolChains
       if: ${{ matrix.legs.QEMU_ARCH == 'arm' && matrix.legs.UTEST != 'rtsmart/arm' && success() }}
@@ -142,9 +143,9 @@ jobs:
         popd
         pushd UtestRunner
         if [ $TEST_SD_FILE != "None" ]; then
-          python3 qemu_runner.py --system $TEST_QEMU_ARCH --machine $TEST_QEMU_MACHINE --elf ../$TEST_BSP_ROOT/rtthread.elf --sd ../$TEST_BSP_ROOT/$TEST_SD_FILE
+          python3 qemu_runner.py --system $TEST_QEMU_ARCH --machine $TEST_QEMU_MACHINE --elf ../$TEST_BSP_ROOT/rtthread.bin --sd ../$TEST_BSP_ROOT/$TEST_SD_FILE
         else
-          python3 qemu_runner.py --system $TEST_QEMU_ARCH --machine $TEST_QEMU_MACHINE --elf ../$TEST_BSP_ROOT/rtthread.elf
+          python3 qemu_runner.py --system $TEST_QEMU_ARCH --machine $TEST_QEMU_MACHINE --elf ../$TEST_BSP_ROOT/rtthread.bin
         fi
         cat rtt_console.log
         popd

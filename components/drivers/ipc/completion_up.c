@@ -147,7 +147,6 @@ __exit:
 
     return result;
 }
-RTM_EXPORT(rt_completion_wait);
 
 /**
  * @brief   This function indicates a completion has done and wakeup the thread

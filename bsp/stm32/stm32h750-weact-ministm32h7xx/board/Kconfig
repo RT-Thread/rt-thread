@@ -169,7 +169,7 @@ menu "On-chip Peripheral Drivers"
         select BSP_USBD_PHY_ULPI
         default n
 
-    source "$BSP_DIR/../libraries/HAL_Drivers/drivers/Kconfig"
+    source "$(BSP_DIR)/../libraries/HAL_Drivers/drivers/Kconfig"
 
 endmenu
 

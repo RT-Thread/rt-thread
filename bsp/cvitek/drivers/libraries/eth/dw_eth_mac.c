@@ -672,7 +672,7 @@ int32_t cvi_eth_mac_read_frame(eth_mac_handle_t handle, uint8_t *frame, uint32_t
   \param[in]   cb  callback to handle ethernet event
   \return      return ethernet handle if success
  */
-eth_mac_handle_t cvi_eth_mac_init(unsigned int base)
+eth_mac_handle_t cvi_eth_mac_init(unsigned int *base)
 {
     gmac_dev_t *mac_dev = &gmac_instance[0];
     struct dw_gmac_priv *priv, *priv_unalign;

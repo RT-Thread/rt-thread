@@ -1,0 +1,43 @@
+menuconfig RT_USING_VIRTIO
+    bool "Using VirtIO device drivers"
+    default n
+
+    if RT_USING_VIRTIO
+        choice
+            prompt "VirtIO Version"
+            default RT_USING_VIRTIO10
+
+            config RT_USING_VIRTIO10
+                bool "VirtIO v1.0"
+        endchoice
+
+        config RT_USING_VIRTIO_MMIO_ALIGN
+            bool "Using VirtIO MMIO alignment"
+            default y
+
+        config RT_USING_VIRTIO_BLK
+            bool "Using VirtIO BLK"
+            default y
+
+        config RT_USING_VIRTIO_NET
+            bool "Using VirtIO NET"
+            default y
+
+        menuconfig RT_USING_VIRTIO_CONSOLE
+            bool "Using VirtIO Console"
+            default y
+
+            if RT_USING_VIRTIO_CONSOLE
+                config RT_USING_VIRTIO_CONSOLE_PORT_MAX_NR
+                    int "Max number of port in VirtIO Console"
+                    default 4
+            endif
+
+        config RT_USING_VIRTIO_GPU
+            bool "Using VirtIO GPU"
+            default y
+
+        config RT_USING_VIRTIO_INPUT
+            bool "Using VirtIO Input"
+            default y
+    endif

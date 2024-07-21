@@ -26,25 +26,25 @@ config RT_USING_LEGACY
     default n
 
 if RT_USING_CONSOLE
-source "$RTT_DIR/components/finsh/Kconfig"
+rsource "finsh/Kconfig"
 endif
 
 if !RT_USING_NANO
-source "$RTT_DIR/components/dfs/Kconfig"
-source "$RTT_DIR/components/fal/Kconfig"
-source "$RTT_DIR/components/drivers/Kconfig"
-source "$RTT_DIR/components/libc/Kconfig"
-source "$RTT_DIR/components/net/Kconfig"
-source "$RTT_DIR/components/mprotect/Kconfig"
-source "$RTT_DIR/components/utilities/Kconfig"
-source "$RTT_DIR/components/vbus/Kconfig"
+rsource "dfs/Kconfig"
+rsource "fal/Kconfig"
+rsource "drivers/Kconfig"
+rsource "libc/Kconfig"
+rsource "net/Kconfig"
+rsource "mprotect/Kconfig"
+rsource "utilities/Kconfig"
+rsource "vbus/Kconfig"
 endif
 
 if RT_USING_SMART
-source "$RTT_DIR/components/lwp/Kconfig"
-source "$RTT_DIR/components/mm/Kconfig"
+rsource "lwp/Kconfig"
+rsource "mm/Kconfig"
 endif
 
-source "$RTT_DIR/components/legacy/Kconfig"
+rsource "legacy/Kconfig"
 
 endmenu

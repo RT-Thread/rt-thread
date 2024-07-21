@@ -131,7 +131,12 @@ static int usbh_pl2303_do(struct usbh_pl2303 *pl2303_class,
                           uint8_t req_type, uint8_t request, uint16_t value, uint16_t index,
                           uint16_t length)
 {
-    struct usb_setup_packet *setup = pl2303_class->hport->setup;
+    struct usb_setup_packet *setup;
+
+    if (!pl2303_class || !pl2303_class->hport) {
+        return -USB_ERR_INVAL;
+    }
+    setup = pl2303_class->hport->setup;
 
     setup->bmRequestType = req_type;
     setup->bRequest = request;
@@ -144,7 +149,12 @@ static int usbh_pl2303_do(struct usbh_pl2303 *pl2303_class,
 
 int usbh_pl2303_set_line_coding(struct usbh_pl2303 *pl2303_class, struct cdc_line_coding *line_coding)
 {
-    struct usb_setup_packet *setup = pl2303_class->hport->setup;
+    struct usb_setup_packet *setup;
+
+    if (!pl2303_class || !pl2303_class->hport) {
+        return -USB_ERR_INVAL;
+    }
+    setup = pl2303_class->hport->setup;
 
     setup->bmRequestType = USB_REQUEST_DIR_OUT | USB_REQUEST_CLASS | USB_REQUEST_RECIPIENT_INTERFACE;
     setup->bRequest = CDC_REQUEST_SET_LINE_CODING;
@@ -159,8 +169,13 @@ int usbh_pl2303_set_line_coding(struct usbh_pl2303 *pl2303_class, struct cdc_lin
 
 int usbh_pl2303_get_line_coding(struct usbh_pl2303 *pl2303_class, struct cdc_line_coding *line_coding)
 {
-    struct usb_setup_packet *setup = pl2303_class->hport->setup;
+    struct usb_setup_packet *setup;
     int ret;
+
+    if (!pl2303_class || !pl2303_class->hport) {
+        return -USB_ERR_INVAL;
+    }
+    setup = pl2303_class->hport->setup;
 
     setup->bmRequestType = USB_REQUEST_DIR_IN | USB_REQUEST_CLASS | USB_REQUEST_RECIPIENT_INTERFACE;
     setup->bRequest = CDC_REQUEST_GET_LINE_CODING;
@@ -178,7 +193,12 @@ int usbh_pl2303_get_line_coding(struct usbh_pl2303 *pl2303_class, struct cdc_lin
 
 int usbh_pl2303_set_line_state(struct usbh_pl2303 *pl2303_class, bool dtr, bool rts)
 {
-    struct usb_setup_packet *setup = pl2303_class->hport->setup;
+    struct usb_setup_packet *setup;
+
+    if (!pl2303_class || !pl2303_class->hport) {
+        return -USB_ERR_INVAL;
+    }
+    setup = pl2303_class->hport->setup;
 
     setup->bmRequestType = USB_REQUEST_DIR_OUT | USB_REQUEST_CLASS | USB_REQUEST_RECIPIENT_INTERFACE;
     setup->bRequest = CDC_REQUEST_SET_CONTROL_LINE_STATE;

@@ -25,7 +25,10 @@
 #define CONFIG_USB_EHCI_QTD_NUM  3
 #endif
 #ifndef CONFIG_USB_EHCI_ITD_NUM
-#define CONFIG_USB_EHCI_ITD_NUM  20
+#define CONFIG_USB_EHCI_ITD_NUM  5
+#endif
+#ifndef CONFIG_USB_EHCI_ISO_NUM
+#define CONFIG_USB_EHCI_ISO_NUM  4
 #endif
 
 extern uint8_t usbh_get_port_speed(struct usbh_bus *bus, const uint8_t port);
@@ -52,12 +55,17 @@ struct ehci_itd_hw {
     uint8_t mf_unmask;
     uint8_t mf_valid;
     uint32_t pkt_idx[8];
-    usb_slist_t list;
 } __attribute__((aligned(32)));
+
+struct ehci_iso_hw
+{
+    struct ehci_itd_hw itd_pool[CONFIG_USB_EHCI_ITD_NUM];
+    uint32_t itd_num;
+};
 
 struct ehci_hcd {
     bool ehci_qh_used[CONFIG_USB_EHCI_QH_NUM];
-    bool ehci_itd_used[CONFIG_USB_EHCI_ITD_NUM];
+    bool ehci_iso_used[CONFIG_USB_EHCI_ISO_NUM];
     bool ppc; /* Port Power Control */
     bool has_tt;   /* if use tt instead of Companion Controller */
     uint8_t n_cc;  /* Number of Companion Controller */
@@ -70,7 +78,7 @@ extern struct ehci_hcd g_ehci_hcd[CONFIG_USBHOST_MAX_BUS];
 extern uint32_t g_framelist[CONFIG_USBHOST_MAX_BUS][USB_ALIGN_UP(CONFIG_USB_EHCI_FRAME_LIST_SIZE, 1024)];
 
 int ehci_iso_urb_init(struct usbh_bus *bus, struct usbh_urb *urb);
-void ehci_remove_itd_urb(struct usbh_bus *bus, struct usbh_urb *urb);
+void ehci_kill_iso_urb(struct usbh_bus *bus, struct usbh_urb *urb);
 void ehci_scan_isochronous_list(struct usbh_bus *bus);
 
 #endif

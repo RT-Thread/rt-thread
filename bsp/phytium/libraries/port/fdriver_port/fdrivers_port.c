@@ -29,7 +29,7 @@
 /* cache */
 void FDriverDCacheRangeFlush(uintptr_t adr, size_t len)
 {
-    __asm_flush_dcache_range((void *)adr, len);
+    rt_hw_cpu_dcache_clean((void *)adr, len);
 }
 
 void FDriverDCacheRangeInvalidate(uintptr_t adr, size_t len)

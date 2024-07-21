@@ -42,4 +42,3 @@ function check_bootloader()
 fi
 }
 
-

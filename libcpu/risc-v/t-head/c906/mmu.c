@@ -18,6 +18,7 @@
 #define DBG_LVL DBG_WARNING
 #include <rtdbg.h>
 
+#include <board.h>
 #include <cache.h>
 #include <mm_aspace.h>
 #include <mm_page.h>
@@ -42,6 +43,7 @@ static void *current_mmu_table = RT_NULL;
 volatile __attribute__((aligned(4 * 1024)))
 rt_ubase_t MMUTable[__SIZE(VPN2_BIT)];
 
+#ifdef ARCH_USING_ASID
 static rt_uint8_t ASID_BITS = 0;
 static rt_uint32_t next_asid;
 static rt_uint64_t global_asid_generation;
@@ -107,6 +109,24 @@ void rt_hw_aspace_switch(rt_aspace_t aspace)
                         ((rt_ubase_t)page_table >> PAGE_OFFSET_BIT));
     asm volatile("sfence.vma x0,%0"::"r"(asid):"memory");
 }
+
+#define ASID_INIT() _asid_init()
+
+#else /* ARCH_USING_ASID */
+
+#define ASID_INIT()
+
+void rt_hw_aspace_switch(rt_aspace_t aspace)
+{
+    uintptr_t page_table = (uintptr_t)rt_kmem_v2p(aspace->page_table);
+    current_mmu_table = aspace->page_table;
+
+    write_csr(satp, (((size_t)SATP_MODE) << SATP_MODE_OFFSET) |
+                        ((rt_ubase_t)page_table >> PAGE_OFFSET_BIT));
+    rt_hw_tlb_invalidate_all_local();
+}
+
+#endif /* ARCH_USING_ASID */
 
 void *rt_hw_mmu_tbl_get()
 {
@@ -324,6 +344,14 @@ static inline void _init_region(void *vaddr, size_t size)
 }
 #endif
 
+#if defined(RT_USING_SMART) && defined(ARCH_REMAP_KERNEL)
+#define KERN_SPACE_START    ((void *)KERNEL_VADDR_START)
+#define KERN_SPACE_SIZE     (0xfffffffffffff000UL - KERNEL_VADDR_START + 0x1000)
+#else
+#define KERN_SPACE_START    ((void *)0x1000)
+#define KERN_SPACE_SIZE     ((size_t)USER_VADDR_START - 0x1000)
+#endif
+
 int rt_hw_mmu_map_init(rt_aspace_t aspace, void *v_address, rt_size_t size,
                        rt_size_t *vtable, rt_size_t pv_off)
 {
@@ -363,8 +391,7 @@ int rt_hw_mmu_map_init(rt_aspace_t aspace, void *v_address, rt_size_t size,
         }
     }
 
-    rt_aspace_init(&rt_kernel_space, (void *)0x1000, USER_VADDR_START - 0x1000,
-                   vtable);
+    rt_aspace_init(&rt_kernel_space, KERN_SPACE_START, KERN_SPACE_SIZE, vtable);
 
     _init_region(v_address, size);
     return 0;
@@ -544,7 +571,7 @@ void rt_hw_mmu_setup(rt_aspace_t aspace, struct mem_desc *mdesc, int desc_nr)
         mdesc++;
     }
 
-    _asid_init();
+    ASID_INIT();
 
     rt_hw_aspace_switch(&rt_kernel_space);
     rt_page_cleanup();
@@ -567,6 +594,65 @@ void rt_hw_mmu_kernel_map_init(rt_aspace_t aspace, rt_size_t vaddr_start, rt_siz
     }
 
     rt_hw_tlb_invalidate_all_local();
+}
+
+#define SATP_BASE ((size_t)SATP_MODE << SATP_MODE_OFFSET)
+void rt_hw_mem_setup_early(void)
+{
+    rt_size_t pv_off;
+    rt_size_t ps = 0x0;
+    rt_size_t vs = 0x0;
+    rt_size_t *early_pgtbl = (size_t *)(((size_t)&__bss_end + 4095) & ~0xfff);
+
+    /* calculate pv_offset */
+    void *symb_pc;
+    void *symb_linker;
+    __asm__ volatile("la %0, _start\n" : "=r"(symb_pc));
+    __asm__ volatile("la %0, _start_link_addr\n" : "=r"(symb_linker));
+    symb_linker = *(void **)symb_linker;
+    pv_off = symb_pc - symb_linker;
+    rt_kmem_pvoff_set(pv_off);
+
+    if (pv_off)
+    {
+        if (pv_off & (1ul << (ARCH_INDEX_WIDTH * 2 + ARCH_PAGE_SHIFT)))
+        {
+            LOG_E("%s: not aligned virtual address. pv_offset %p", __func__, pv_off);
+            RT_ASSERT(0);
+        }
+
+        /**
+         * identical mapping,
+         * PC are still at lower region before relocating to high memory
+         */
+        for (size_t i = 0; i < __SIZE(PPN0_BIT); i++)
+        {
+            early_pgtbl[i] = COMBINEPTE(ps, PAGE_ATTR_RWX | PTE_G | PTE_V | PTE_CACHE |
+                                        PTE_SHARE | PTE_BUF | PTE_A | PTE_D);
+            ps += L1_PAGE_SIZE;
+        }
+
+        /* relocate text region */
+        __asm__ volatile("la %0, _start\n" : "=r"(ps));
+        ps &= ~(L1_PAGE_SIZE - 1);
+        vs = ps - pv_off;
+
+        /* relocate region */
+        rt_size_t vs_idx = GET_L1(vs);
+        rt_size_t ve_idx = GET_L1(vs + 0x80000000);
+        for (size_t i = vs_idx; i < ve_idx; i++)
+        {
+            early_pgtbl[i] = COMBINEPTE(ps, PAGE_ATTR_RWX | PTE_G | PTE_V | PTE_CACHE |
+                                        PTE_SHARE | PTE_BUF | PTE_A | PTE_D);
+            ps += L1_PAGE_SIZE;
+        }
+
+        /* apply new mapping */
+        asm volatile("sfence.vma x0, x0");
+        write_csr(satp, SATP_BASE | ((size_t)early_pgtbl >> PAGE_OFFSET_BIT));
+        asm volatile("sfence.vma x0, x0");
+    }
+    /* return to lower text section */
 }
 
 void *rt_hw_mmu_pgtbl_create(void)

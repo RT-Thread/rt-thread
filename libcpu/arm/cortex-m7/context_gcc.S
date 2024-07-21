@@ -13,13 +13,13 @@
  */
 
 /**
- * @addtogroup cortex-m4
+ * @addtogroup cortex-m7
  */
 /*@{*/
 
 #include <rtconfig.h>
 
-.cpu cortex-m4
+.cpu cortex-m7
 .syntax unified
 .thumb
 .text

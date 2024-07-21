@@ -13,7 +13,7 @@ menu "Hardware Drivers Config"
 
     menu "On-chip Peripheral Drivers"
 
-        source "../libraries/HAL_Drivers/Kconfig"
+        rsource "../../libraries/HAL_Drivers/Kconfig"
 
         menuconfig BSP_USING_UART
             bool "Enable UART"

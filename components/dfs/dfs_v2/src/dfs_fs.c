@@ -127,7 +127,7 @@ int dfs_mount(const char *device_name,
     }
     else
     {
-        rt_set_errno(ENOENT);
+        rt_set_errno(ENODEV);
         ret = -1;
     }
 

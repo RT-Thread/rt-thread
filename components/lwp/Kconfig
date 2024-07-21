@@ -46,6 +46,12 @@ if RT_USING_LWP
         config RT_LWP_SHM_MAX_NR
             int "The maximum number of shared memory"
             default 64
+
+        config LWP_USING_MPROTECT
+            bool
+            default n
+            help
+                ARCH has the support of mprotect
     endif
 
     if ARCH_MM_MPU
@@ -74,6 +80,7 @@ if RT_USING_LWP
             default n
     endif
 
-source "$RTT_DIR/components/lwp/terminal/Kconfig"
+rsource "terminal/Kconfig"
+rsource "vdso/Kconfig"
 endif
 

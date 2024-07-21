@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2024, RT-Thread Development Team
+ * Copyright (c) 2006-2024 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -144,7 +144,7 @@ rt_err_t rt_sched_thread_ready(struct rt_thread *thread)
     return error;
 }
 
-rt_err_t rt_sched_tick_increase(void)
+rt_err_t rt_sched_tick_increase(rt_tick_t tick)
 {
     struct rt_thread *thread;
     rt_sched_lock_level_t slvl;
@@ -153,7 +153,15 @@ rt_err_t rt_sched_tick_increase(void)
 
     rt_sched_lock(&slvl);
 
-    RT_SCHED_PRIV(thread).remaining_tick--;
+    if(RT_SCHED_PRIV(thread).remaining_tick > tick)
+    {
+        RT_SCHED_PRIV(thread).remaining_tick -= tick;
+    }
+    else
+    {
+        RT_SCHED_PRIV(thread).remaining_tick = 0;
+    }
+
     if (RT_SCHED_PRIV(thread).remaining_tick)
     {
         rt_sched_unlock(slvl);

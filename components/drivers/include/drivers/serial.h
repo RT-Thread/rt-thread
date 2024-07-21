@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2023, RT-Thread Development Team
+ * Copyright (c) 2006-2024, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -85,8 +85,8 @@
 #define RT_SERIAL_TX_DATAQUEUE_SIZE     2048
 #define RT_SERIAL_TX_DATAQUEUE_LWM      30
 
-#define RT_SERIAL_FLOWCONTROL_CTSRTS     1
-#define RT_SERIAL_FLOWCONTROL_NONE       0
+#define RT_SERIAL_FLOWCONTROL_CTSRTS    1
+#define RT_SERIAL_FLOWCONTROL_NONE      0
 
 /* Default config for serial_configure structure */
 #define RT_SERIAL_CONFIG_DEFAULT           \

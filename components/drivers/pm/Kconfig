@@ -1,0 +1,39 @@
+config RT_USING_PM
+    bool "Using Power Management device drivers"
+    default n
+
+    if RT_USING_PM
+        config PM_TICKLESS_THRESHOLD_TIME
+            int "PM tickless threashold time"
+            default 2
+
+        config PM_USING_CUSTOM_CONFIG
+            bool "PM using custom pm config"
+            default n
+
+        config PM_ENABLE_DEBUG
+            bool "PM Enable Debug"
+            default n
+
+        config PM_ENABLE_SUSPEND_SLEEP_MODE
+            bool "PM Device suspend change sleep mode"
+            default n
+
+        config PM_ENABLE_THRESHOLD_SLEEP_MODE
+            bool "PM using threshold time change sleep mode"
+            default n
+
+        if PM_ENABLE_THRESHOLD_SLEEP_MODE
+            config PM_LIGHT_THRESHOLD_TIME
+                int "PM light mode threashold time"
+                default 5
+
+            config PM_DEEP_THRESHOLD_TIME
+                int "PM deep mode threashold time"
+                default 20
+
+            config PM_STANDBY_THRESHOLD_TIME
+                int "PM standby mode threashold time"
+                default 100
+        endif
+    endif

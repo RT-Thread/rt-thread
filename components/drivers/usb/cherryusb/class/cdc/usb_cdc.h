@@ -588,7 +588,7 @@ eth_statistics, wMaxSegmentSize, wNumberMCFilters, bNumberPowerFilters, str_idx)
     CDC_FUNC_DESC_ETHERNET_NETWORKING, /* Ethernet Networking functional descriptor subtype  */\
     str_idx,                                                    /* Device's MAC string index */\
     DBVAL_BE(eth_statistics),                                /* Ethernet statistics (bitmap) */\
-    WBVAL(wMaxPacketSize),/* wMaxSegmentSize: Ethernet Maximum Segment size, typically 1514 bytes */\
+    WBVAL(wMaxSegmentSize),/* wMaxSegmentSize: Ethernet Maximum Segment size, typically 1514 bytes */\
     WBVAL(wNumberMCFilters),            /* wNumberMCFilters: the number of multicast filters */\
     bNumberPowerFilters,          /* bNumberPowerFilters: the number of wakeup power filters */\
     0x07,                                                  /* bLength */                       \

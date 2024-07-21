@@ -3,7 +3,7 @@ menu "Hardware Drivers Config"
 menu "Onboard Peripheral Drivers"
 
     config BSP_USING_SPI_FLASH
-        bool "Enable SPI FLASH (GD25Q32 spi1)"
+        bool "Enable SPI FLASH (W25Q128 spi1)"
         select BSP_USING_SPI
         select BSP_USING_SPI1
         select RT_USING_SFUD
@@ -29,7 +29,7 @@ menu "Onboard Peripheral Drivers"
             endif
 
             config BSP_USING_FLASH_FATFS
-                bool "Enable FAL filesystem partition base on GD25Q32"
+                bool "Enable FAL filesystem partition base on W25Q128"
                 select BSP_USING_FAL
                 default n
             if BSP_USING_FLASH_FATFS
@@ -415,7 +415,7 @@ menu "On-chip Peripheral Drivers"
     config BSP_USING_FMC
         bool
         default n
- source "$BSP_DIR/../libraries/HAL_Drivers/drivers/Kconfig"
+ source "$(BSP_DIR)/../libraries/HAL_Drivers/drivers/Kconfig"
 
 endmenu
 

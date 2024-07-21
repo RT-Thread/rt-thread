@@ -1,0 +1,13 @@
+config RT_USING_MTD_NOR
+    bool "Using MTD Nor Flash device drivers"
+    default n
+
+config RT_USING_MTD_NAND
+    bool "Using MTD Nand Flash device drivers"
+    default n
+
+    if RT_USING_MTD_NAND
+    config RT_MTD_NAND_DEBUG
+        bool "Enable MTD Nand operations debug information"
+        default n
+    endif

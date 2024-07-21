@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2023, RT-Thread Development Team
+ * Copyright (c) 2006-2024, RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -11,10 +11,6 @@
 #ifndef TICK_H__
 #define TICK_H__
 
-/* timer clock is 24 MHZ */
-#ifndef TIMER_CLK_FREQ
-#define TIMER_CLK_FREQ  (24000000)
-#endif
 int tick_isr(void);
 int rt_hw_tick_init(void);
 

@@ -52,8 +52,10 @@ if GetDepend(['RT_USING_DAC']):
 if GetDepend(['RT_USING_CAN']):
     src += ['drv_can.c']
 
-if GetDepend(['RT_USING_PM', 'SOC_SERIES_STM32L4']):
+if GetDepend(['RT_USING_PM']):
     src += ['drv_pm.c']
+
+if GetDepend(['BSP_USING_LPTIM']):
     src += ['drv_lptim.c']
 
 if GetDepend('BSP_USING_SDRAM'):
@@ -88,6 +90,9 @@ if GetDepend(['BSP_USING_ON_CHIP_FLASH', 'SOC_SERIES_STM32F4']):
 
 if GetDepend(['BSP_USING_ON_CHIP_FLASH', 'SOC_SERIES_STM32F7']):
     src += [os.path.join('drv_flash', 'drv_flash_f7.c')]
+
+if GetDepend(['BSP_USING_ON_CHIP_FLASH', 'SOC_SERIES_STM32L1']):
+    src += [os.path.join('drv_flash', 'drv_flash_l1.c')]
 
 if GetDepend(['BSP_USING_ON_CHIP_FLASH', 'SOC_SERIES_STM32L4']):
     src += [os.path.join('drv_flash', 'drv_flash_l4.c')]

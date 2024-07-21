@@ -165,7 +165,8 @@ int usbh_asix_get_connect_status(struct usbh_asix *asix_class);
 void usbh_asix_run(struct usbh_asix *asix_class);
 void usbh_asix_stop(struct usbh_asix *asix_class);
 
-int usbh_asix_eth_output(uint8_t *buf, uint32_t buflen);
+uint8_t *usbh_asix_get_eth_txbuf(void);
+int usbh_asix_eth_output(uint32_t buflen);
 void usbh_asix_eth_input(uint8_t *buf, uint32_t buflen);
 void usbh_asix_rx_thread(void *argument);
 

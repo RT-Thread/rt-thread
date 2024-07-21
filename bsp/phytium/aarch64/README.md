@@ -4,11 +4,35 @@
 
 ## 1. 准备编译环境
 
-- 在aarch64目录下创建tools文件夹，用于存放编译链
+- 在aarch64目录下创建tools文件夹，用于存放编译链，目前支持在以下两种环境进行开发
 ```shell
 mkdir tools
 ```
+注：使用RT-Smart编译链也可编译RT-Thread，但当前不支持C++
+
 ### Ubuntu 环境
+
+#### RT-Thread
+
+- 点击[下载编译链工具](https://armkeil.blob.core.windows.net/developer/Files/downloads/gnu-a/10.3-2021.07/binrel/gcc-arm-10.3-2021.07-x86_64-aarch64-none-elf.tar.xz)压缩包，放置在tools目录下
+
+- 在tools目录下，使用tar命令解压缩
+```shell
+tar xvf gcc-arm-10.3-2021.07-x86_64-aarch64-none-elf.tar.xz
+```
+
+![tar_toolschain_ubuntu](./figures/tar_toolschain_ubuntu.png)
+
+- 返回`aarch64`目录，运行`thread-env.sh脚本`，生效环境变量
+```shell
+source ./thread-env.sh
+```
+
+- 如下所示是`aarch64`编译相关的环境变量，运行`scons`前要确保环境变量设置正确
+
+![aarch64_thread](./figures/aarch64_thread.png)
+
+#### RT-Smart
 
 - 点击[下载编译链工具](https://github.com/RT-Thread/toolchains-ci/releases/tag/v1.7)压缩包，放置在tools目录下
 
@@ -21,7 +45,7 @@ tar jxvf aarch64-linux-musleabi_for_x86_64-pc-linux-gnu_stable.tar.bz2
 
 ![tar_toolschain](./figures/tar_toolschain.png)
 
-- 返回`aarch64`目录，运行smart-env.sh脚本，生效环境变量
+- 返回`aarch64`目录，运行`smart-env.sh`脚本，生效环境变量
 ```shell
 source ./smart-env.sh
 ```
@@ -30,10 +54,11 @@ source ./smart-env.sh
 
 ![aarch64_env](./figures/aarch64_env.png)
 
-- 输入以下指令进行编译，初次编译会拉取`phytium_standalone_sdk`工具包，请确保当前环境下网络畅通
+- 输入以下指令进行编译，初次编译会拉取`phytium_standalone_sdk工具包`，请确保当前环境下网络畅通
 ```shell
 scons -j8
 ```
+![aarch64_ubuntu_scons](./figures/aarch64_ubuntu_scons.png)
 
 - 完成编译之后目录下将会生成以下几个文件
 ```
@@ -43,6 +68,24 @@ rtthread_a64.map
 ```
 
 ### RT-Thread env 环境
+
+#### RT-Thread
+
+- 点击[下载编译链工具](https://developer.arm.com/-/media/Files/downloads/gnu/11.2-2022.02/binrel/gcc-arm-11.2-2022.02-mingw-w64-i686-aarch64-none-elf.zip)压缩包，放置在tools目录下
+
+- 在tools目录下，将下载好的编译链工具压缩包解压
+
+
+- 返回`aarch32`目录，运行`thread-env.bat`脚本，生效环境变量
+```shell
+./thread-env.bat
+```
+
+- 如下所示是`aarch32`编译相关的环境变量，运行`scons`前要确保环境变量设置正确
+
+![aarch64_env_thread_tools](./figures/aarch64_env_thread_tools.png)
+
+#### RT-Smart
 
 - 点击[下载编译链工具](https://download.rt-thread.org/download/rt-smart/toolchains/aarch64-linux-musleabi_for_i686-w64-mingw32_latest.zip
 )压缩包
@@ -68,6 +111,7 @@ rtthread_a64.bin
 rtthread_a64.elf
 rtthread_a64.map
 ```
+
 ## 2. 如何选择开发板
 
 >注：在 RT-Thread env 环境下使用`menuconfig`指令即可打开配置菜单，在Ubuntu下需要使用`scons --menuconfig`

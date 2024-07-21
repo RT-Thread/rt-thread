@@ -1,0 +1,67 @@
+config RT_USING_SPI
+    bool "Using SPI Bus/Device device drivers"
+    default n
+
+    if RT_USING_SPI
+        config RT_USING_SPI_BITOPS
+            select RT_USING_PIN
+            bool "Use GPIO to simulate SPI"
+            default n
+
+        if RT_USING_SPI_BITOPS
+            config RT_SPI_BITOPS_DEBUG
+                bool "Use simulate SPI debug message"
+                default n
+        endif
+
+        config RT_USING_QSPI
+            bool "Enable QSPI mode"
+            default n
+
+        config RT_USING_SPI_MSD
+            bool "Using SD/TF card driver with spi"
+            select RT_USING_DFS
+            default n
+
+        config RT_USING_SFUD
+            bool "Using Serial Flash Universal Driver"
+            default n
+            help
+                An using JEDEC's SFDP standard serial (SPI) flash universal driver library
+
+            if RT_USING_SFUD
+                config RT_SFUD_USING_SFDP
+                bool "Using auto probe flash JEDEC SFDP parameter"
+                default y
+
+                config RT_SFUD_USING_FLASH_INFO_TABLE
+                bool "Using defined supported flash chip information table"
+                default y
+
+                config RT_SFUD_USING_QSPI
+                bool "Using QSPI mode support"
+                select RT_USING_QSPI
+                default n
+
+                config RT_SFUD_SPI_MAX_HZ
+                int "Default spi maximum speed(HZ)"
+                range 0 50000000
+                default 50000000
+                help
+                    Read the JEDEC SFDP command must run at 50 MHz or less,and you also can use rt_spi_configure(); to config spi speed.
+
+                config RT_DEBUG_SFUD
+                bool "Show more SFUD debug information"
+                default n
+            endif
+
+        config RT_USING_ENC28J60
+            bool "Using ENC28J60 SPI Ethernet network interface"
+            select RT_USING_LWIP
+            default n
+
+        config RT_USING_SPI_WIFI
+            bool "Using RW009/007 SPI Wi-Fi wireless interface"
+            select RT_USING_LWIP
+            default n
+    endif

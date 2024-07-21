@@ -52,11 +52,11 @@ void primary_cpu_entry(void)
 
 #define IOREMAP_SIZE (1ul << 30)
 
-#ifndef ARCH_KERNEL_IN_HIGH_VA
+#ifndef ARCH_REMAP_KERNEL
 #define IOREMAP_VEND USER_VADDR_START
 #else
 #define IOREMAP_VEND 0ul
-#endif
+#endif /* ARCH_REMAP_KERNEL */
 
 void rt_hw_board_init(void)
 {

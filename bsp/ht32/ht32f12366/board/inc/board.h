@@ -19,16 +19,8 @@
     #include "drv_gpio.h"
 #endif
 
-#ifdef BSP_USING_UART
-    #include "drv_usart.h"
-#endif
-
 #ifdef BSP_USING_SPI
     #include "drv_spi.h"
-#endif
-
-#ifdef BSP_USING_I2C
-    #include "drv_i2c.h"
 #endif
 
 #ifdef __cplusplus

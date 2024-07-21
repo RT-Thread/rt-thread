@@ -2172,7 +2172,7 @@ rt_weak sysret_t sys_vfork(void)
 
 sysret_t sys_execve(const char *path, char *const argv[], char *const envp[])
 {
-    int error = -1;
+    rt_err_t error = -1;
     size_t len;
     struct rt_lwp *new_lwp = NULL;
     struct rt_lwp *lwp;
@@ -2223,8 +2223,9 @@ sysret_t sys_execve(const char *path, char *const argv[], char *const envp[])
 
     if (access(kpath, X_OK) != 0)
     {
+        error = rt_get_errno();
         rt_free(kpath);
-        return -EACCES;
+        return (sysret_t)error;
     }
 
     /* setup args */
@@ -5784,6 +5785,11 @@ sysret_t sys_mount(char *source, char *target,
         copy_source = NULL;
     }
     ret = dfs_mount(copy_source, copy_target, copy_filesystemtype, 0, tmp);
+
+    if (ret < 0)
+    {
+        ret = -rt_get_errno();
+    }
     rt_free(copy_source);
 
     return ret;

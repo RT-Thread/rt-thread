@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2006-2021, RT-Thread Development Team
+ * Copyright (c) 2006-2024 RT-Thread Development Team
  *
  * SPDX-License-Identifier: Apache-2.0
  *
@@ -100,6 +100,7 @@ void rt_object_put_sethook(void (*hook)(struct rt_object *object));
 rt_tick_t rt_tick_get(void);
 void rt_tick_set(rt_tick_t tick);
 void rt_tick_increase(void);
+void rt_tick_increase_tick(rt_tick_t tick);
 rt_tick_t  rt_tick_from_millisecond(rt_int32_t ms);
 rt_tick_t rt_tick_get_millisecond(void);
 #ifdef RT_USING_HOOK
@@ -246,7 +247,7 @@ void rt_scheduler_ipi_handler(int vector, void *param);
 /**@}*/
 
 /**
- * @addtogroup Signals
+ * @addtogroup Signal
  * @{
  */
 #ifdef RT_USING_SIGNALS
@@ -314,12 +315,18 @@ void *rt_page_alloc(rt_size_t npages);
 void rt_page_free(void *addr, rt_size_t npages);
 #endif /* defined(RT_USING_SLAB) && defined(RT_USING_SLAB_AS_HEAP) */
 
+/**
+ * @ingroup Hook
+ * @{
+ */
+
 #ifdef RT_USING_HOOK
 void rt_malloc_sethook(void (*hook)(void **ptr, rt_size_t size));
 void rt_realloc_set_entry_hook(void (*hook)(void **ptr, rt_size_t size));
 void rt_realloc_set_exit_hook(void (*hook)(void **ptr, rt_size_t size));
 void rt_free_sethook(void (*hook)(void **ptr));
 #endif /* RT_USING_HOOK */
+/**@}*/
 
 #endif /* RT_USING_HEAP */
 
@@ -403,6 +410,11 @@ rt_err_t rt_thread_suspend_to_list(rt_thread_t thread, rt_list_t *susp_list, int
 /* only for a suspended thread, and caller must hold the scheduler lock */
 rt_err_t rt_susp_list_enqueue(rt_list_t *susp_list, rt_thread_t thread, int ipc_flags);
 
+/**
+ * @addtogroup semaphore
+ * @{
+ */
+
 #ifdef RT_USING_SEMAPHORE
 /*
  * semaphore interface
@@ -424,6 +436,13 @@ rt_err_t rt_sem_trytake(rt_sem_t sem);
 rt_err_t rt_sem_release(rt_sem_t sem);
 rt_err_t rt_sem_control(rt_sem_t sem, int cmd, void *arg);
 #endif /* RT_USING_SEMAPHORE */
+
+/**@}*/
+
+/**
+ * @addtogroup mutex
+ * @{
+ */
 
 #ifdef RT_USING_MUTEX
 /*
@@ -457,6 +476,13 @@ rt_inline rt_ubase_t rt_mutex_get_hold(rt_mutex_t mutex)
 
 #endif /* RT_USING_MUTEX */
 
+/**@}*/
+
+/**
+ * @addtogroup event
+ * @{
+ */
+
 #ifdef RT_USING_EVENT
 /*
  * event interface
@@ -486,6 +512,13 @@ rt_err_t rt_event_recv_killable(rt_event_t   event,
                        rt_uint32_t *recved);
 rt_err_t rt_event_control(rt_event_t event, int cmd, void *arg);
 #endif /* RT_USING_EVENT */
+
+/**@}*/
+
+/**
+ * @addtogroup mailbox
+ * @{
+ */
 
 #ifdef RT_USING_MAILBOX
 /*
@@ -521,6 +554,12 @@ rt_err_t rt_mb_recv_killable(rt_mailbox_t mb, rt_ubase_t *value, rt_int32_t time
 rt_err_t rt_mb_control(rt_mailbox_t mb, int cmd, void *arg);
 #endif /* RT_USING_MAILBOX */
 
+/**@}*/
+
+/**
+ * @addtogroup messagequeue
+ * @{
+ */
 #ifdef RT_USING_MESSAGEQUEUE
 
 struct rt_mq_message
@@ -598,6 +637,8 @@ rt_ssize_t rt_mq_recv_prio(rt_mq_t mq,
                            int suspend_flag);
 #endif /* RT_USING_MESSAGEQUEUE_PRIORITY */
 #endif /* RT_USING_MESSAGEQUEUE */
+
+/**@}*/
 
 /* defunct */
 void rt_thread_defunct_enqueue(rt_thread_t thread);

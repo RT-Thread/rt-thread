@@ -1,22 +1,13 @@
 mainmenu "RT-Thread Project Configuration"
 
-config BSP_DIR
-    string
-    option env="BSP_ROOT"
-    default "."
+BSP_DIR := .
 
-config RTT_DIR
-    string
-    option env="RTT_ROOT"
-    default "../../.."
+RTT_DIR := ../../..
 
-config PKGS_DIR
-    string
-    option env="PKGS_ROOT"
-    default "packages"
+PKGS_DIR := packages
 
-source "$RTT_DIR/Kconfig"
-source "$PKGS_DIR/Kconfig"
+source "$(RTT_DIR)/Kconfig"
+osource "$PKGS_DIR/Kconfig"
 
 config SOC_CV18XX_AARCH64
     bool
@@ -31,6 +22,14 @@ config SOC_CV18XX_AARCH64
     select ARCH_MM_MMU
     default y
 
+config GPIO_IRQ_BASE
+    int
+    default 76
+
+config SYS_GPIO_IRQ_BASE
+    int
+    default 86
+
 choice
     prompt "Board Type"
     default BOARD_TYPE_MILKV_DUO256M
@@ -43,4 +42,4 @@ choice
         
 endchoice
 
-source "$BSP_DIR/board/Kconfig"
+source "$(BSP_DIR)/board/Kconfig"

@@ -49,7 +49,11 @@ typedef struct rt_aspace
     struct rt_mutex bst_lock;
 
     struct rt_mem_obj *private_object;
+
+#ifdef ARCH_USING_ASID
     rt_uint64_t asid;
+#endif /* ARCH_USING_ASID */
+
 } *rt_aspace_t;
 
 typedef struct rt_varea

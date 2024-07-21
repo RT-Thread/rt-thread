@@ -215,6 +215,7 @@ void cdc_ecm_lwip_init(void)
 
     netif->hwaddr_len = 6;
     memcpy(netif->hwaddr, mac, 6);
+    netif->hwaddr[5] = ~netif->hwaddr[5]; /* device mac can't same as host. */
 
     netif = netif_add(netif, &ipaddr, &netmask, &gateway, NULL, cdc_ecm_if_init, netif_input);
     netif_set_default(netif);
@@ -264,14 +265,14 @@ struct usbd_interface intf0;
 struct usbd_interface intf1;
 
 /* ecm only supports in linux, and you should input the following command
- * 
+ *
  * sudo ifconfig enxaabbccddeeff up
  * sudo dhcpclient enxaabbccddeeff
 */
 void cdc_ecm_init(uint8_t busid, uint32_t reg_base)
 {
     cdc_ecm_lwip_init();
-    
+
     usbd_desc_register(busid, cdc_ecm_descriptor);
     usbd_add_interface(busid, usbd_cdc_ecm_init_intf(&intf0, CDC_INT_EP, CDC_OUT_EP, CDC_IN_EP));
     usbd_add_interface(busid, usbd_cdc_ecm_init_intf(&intf1, CDC_INT_EP, CDC_OUT_EP, CDC_IN_EP));

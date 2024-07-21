@@ -64,8 +64,8 @@
 #define PAGE_ATTR_CB    (PTE_BUF | PTE_CACHE)
 #define PAGE_ATTR_DEV   (PTE_SO)
 
-#define PAGE_DEFAULT_ATTR_LEAF (PTE_SHARE | PTE_BUF | PTE_CACHE | PTE_A | PTE_D | PTE_U | PAGE_ATTR_RWX | PTE_V)
-#define PAGE_DEFAULT_ATTR_NEXT (PTE_SHARE | PTE_BUF | PTE_CACHE | PTE_A | PTE_D | PTE_V)
+#define PAGE_DEFAULT_ATTR_LEAF (PTE_SHARE | PTE_BUF | PTE_CACHE | PTE_A | PTE_D | PTE_G | PTE_U | PAGE_ATTR_RWX | PTE_V)
+#define PAGE_DEFAULT_ATTR_NEXT (PTE_SHARE | PTE_BUF | PTE_CACHE | PTE_A | PTE_D | PTE_G | PTE_V)
 
 #define PAGE_IS_LEAF(pte) __MASKVALUE(pte, PAGE_ATTR_RWX)
 
@@ -131,6 +131,12 @@ rt_inline size_t rt_hw_mmu_attr_rm_perm(size_t attr, rt_base_t prot)
     {
         /* remove write permission for user */
         case RT_HW_MMU_PROT_WRITE | RT_HW_MMU_PROT_USER:
+            attr &= ~PTE_W;
+            break;
+        /* remove write permission for kernel */
+        case RT_HW_MMU_PROT_WRITE | RT_HW_MMU_PROT_KERNEL:
+            attr &= ~PTE_W;
+            break;
         default:
             RT_ASSERT(0);
     }
@@ -150,6 +156,8 @@ rt_inline size_t rt_hw_mmu_attr_add_perm(size_t attr, rt_base_t prot)
     {
         /* add write permission for user */
         case RT_HW_MMU_PROT_WRITE | RT_HW_MMU_PROT_USER:
+            attr |= (PTE_R | PTE_W | PTE_U);
+            break;
         default:
             RT_ASSERT(0);
     }
@@ -166,12 +174,25 @@ rt_inline size_t rt_hw_mmu_attr_add_perm(size_t attr, rt_base_t prot)
 rt_inline rt_bool_t rt_hw_mmu_attr_test_perm(size_t attr, rt_base_t prot)
 {
     rt_bool_t rc = 0;
-    switch (prot)
+    switch (prot & ~RT_HW_MMU_PROT_USER)
     {
         /* test write permission for user */
-        case RT_HW_MMU_PROT_WRITE | RT_HW_MMU_PROT_USER:
+        case RT_HW_MMU_PROT_WRITE:
+            rc = ((attr & PTE_W) && (attr & PTE_R));
+            break;
+        case RT_HW_MMU_PROT_READ:
+            rc = !!(attr & PTE_R);
+            break;
+        case RT_HW_MMU_PROT_EXECUTE:
+            rc = !!(attr & PTE_X);
+            break;
         default:
             RT_ASSERT(0);
+    }
+
+    if (rc && (prot & RT_HW_MMU_PROT_USER))
+    {
+        rc = !!(attr & PTE_U);
     }
     return rc;
 }

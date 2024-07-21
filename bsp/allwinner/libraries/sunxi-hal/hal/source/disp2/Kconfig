@@ -171,20 +171,20 @@ config DISP2_SUNXI_BOOT_COLORBAR
 menu "LCD panels select"
     depends on DISP2_SUNXI
 
-source "$BSP_DIR/../libraries/sunxi-hal/hal/source/disp2/disp/lcd/Kconfig"
+source "$(BSP_DIR)/../libraries/sunxi-hal/hal/source/disp2/disp/lcd/Kconfig"
 endmenu
 
 
 menu "Display engine feature select"
     depends on DISP2_SUNXI
 
-source "$BSP_DIR/../libraries/sunxi-hal/hal/source/disp2/disp/Kconfig"
+source "$(BSP_DIR)/../libraries/sunxi-hal/hal/source/disp2/disp/Kconfig"
 endmenu
 
 menu "Soc and board select"
     depends on DISP2_SUNXI
 
-source "$BSP_DIR/../libraries/sunxi-hal/hal/source/disp2/soc/Kconfig"
+source "$(BSP_DIR)/../libraries/sunxi-hal/hal/source/disp2/soc/Kconfig"
 endmenu
 
 endmenu
