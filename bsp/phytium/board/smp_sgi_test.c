@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache-2.0
  *
  * Email: opensource_embedded@phytium.com.cn
- * 
+ *
  * Change Logs:
  * Date        Author       Notes
  * 2024/07/15  zhangyan     first commit
