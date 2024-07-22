@@ -12,7 +12,7 @@
 #define VIRT_H__
 
 #include <rtdef.h>
-#include <ioremap.h>
+#include <rtioremap.h>
 
 #ifdef RT_USING_SMART
 #include <mmu.h>
