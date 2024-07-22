@@ -75,3 +75,18 @@ choice
         bool "milkv-duo256m-spinor"
 
 endchoice
+
+choice BSP_ROOTFS_TYPE
+    prompt "rootfs type"
+    default BSP_ROOTFS_TYPE_ROMFS
+
+    config BSP_ROOTFS_TYPE_ROMFS
+        bool "ROMFS"
+        select RT_USING_DFS_ROMFS
+
+    config BSP_ROOTFS_TYPE_CROMFS
+        bool "CROMFS"
+        select RT_USING_DFS_CROMFS
+        select PKG_USING_ZLIB
+        select PKG_USING_ZLIB_LATEST_VERSION
+endchoice
