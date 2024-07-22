@@ -11,7 +11,7 @@
 #ifndef __OFW_IO_H__
 #define __OFW_IO_H__
 
-#include <ioremap.h>
+#include <rtioremap.h>
 #include <drivers/ofw.h>
 
 int rt_ofw_bus_addr_cells(struct rt_ofw_node *np);
