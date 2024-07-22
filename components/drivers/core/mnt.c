@@ -20,7 +20,7 @@
 #ifdef RT_USING_FINSH
 #include <msh.h>
 #endif
-#include <ioremap.h>
+#include <rtioremap.h>
 #include <mm_memblock.h>
 
 #ifdef RT_USING_OFW
