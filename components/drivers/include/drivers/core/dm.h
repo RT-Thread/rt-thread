@@ -13,7 +13,7 @@
 
 #include <rthw.h>
 #include <rtdef.h>
-#include <ioremap.h>
+#include <rtioremap.h>
 #include <drivers/misc.h>
 #include <drivers/byteorder.h>
 
