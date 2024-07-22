@@ -32,6 +32,8 @@ enum ioremap_type
     MM_AREA_TYPE_PHY_CACHED
 };
 
+#ifdef MM_USING_IOREMAP
+
 static void *_ioremap_type(void *paddr, size_t size, enum ioremap_type type)
 {
     char *v_addr = NULL;
@@ -112,3 +114,4 @@ void rt_iounmap(volatile void *vaddr)
     rt_aspace_unmap(&rt_kernel_space, (void *)vaddr);
 }
 
+#endif
