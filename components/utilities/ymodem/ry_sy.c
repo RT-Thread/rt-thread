@@ -46,7 +46,6 @@ static enum rym_code _rym_recv_begin(
     rt_size_t len)
 {
     struct custom_ctx *cctx = (struct custom_ctx *)ctx;
-    struct stat file_buf;
     char insert_0 = '\0';
     char *ret;
     rt_err_t err;
@@ -64,7 +63,7 @@ static enum rym_code _rym_recv_begin(
     cctx->fd = open(cctx->fpath, O_CREAT | O_WRONLY | O_TRUNC, 0);
     if (cctx->fd < 0)
     {
-        rt_err_t err = rt_get_errno();
+        err = rt_get_errno();
         rt_kprintf("error creating file: %d\n", err);
         return RYM_CODE_CAN;
     }
