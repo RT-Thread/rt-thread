@@ -1,8 +1,6 @@
 /**
   **************************************************************************
   * @file     at32f413_usart.h
-  * @version  v2.0.5
-  * @date     2022-05-20
   * @brief    at32f413 usart header file
   **************************************************************************
   *                       Copyright notice & Disclaimer
@@ -318,9 +316,13 @@ typedef struct
 
 #define USART1                           ((usart_type *) USART1_BASE)
 #define USART2                           ((usart_type *) USART2_BASE)
+#if defined (AT32F413Rx) || defined (AT32F413Cx) || defined (AT32FEBKC8T7)
 #define USART3                           ((usart_type *) USART3_BASE)
+#endif
+#if defined (AT32F413Rx)
 #define UART4                            ((usart_type *) UART4_BASE)
 #define UART5                            ((usart_type *) UART5_BASE)
+#endif
 
 /** @defgroup USART_exported_functions
   * @{
@@ -354,6 +356,7 @@ void usart_irda_mode_enable(usart_type* usart_x, confirm_state new_state);
 void usart_irda_low_power_enable(usart_type* usart_x, confirm_state new_state);
 void usart_hardware_flow_control_set(usart_type* usart_x,usart_hardware_flow_control_type flow_state);
 flag_status usart_flag_get(usart_type* usart_x, uint32_t flag);
+flag_status usart_interrupt_flag_get(usart_type* usart_x, uint32_t flag);
 void usart_flag_clear(usart_type* usart_x, uint32_t flag);
 
 /**

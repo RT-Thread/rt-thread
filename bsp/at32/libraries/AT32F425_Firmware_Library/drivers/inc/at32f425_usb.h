@@ -705,6 +705,7 @@ typedef struct
       __IO uint32_t nptxfspcavail            : 16; /* [15:0] */
       __IO uint32_t nptxqspcavail            : 8; /* [23:16] */
       __IO uint32_t nptxqtop                 : 7; /* [30:24] */
+      __IO uint32_t reserved1                : 1; /* [31]    */
     } gnptxsts_bit;
   };
 

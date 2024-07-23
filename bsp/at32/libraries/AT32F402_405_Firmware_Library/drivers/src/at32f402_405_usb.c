@@ -1063,7 +1063,6 @@ void usb_hch_halt(otg_global_type *usbx, uint8_t chn)
     {
       usb_chh->hcchar_bit.chena = TRUE;
     }
-
   }
   else
   {

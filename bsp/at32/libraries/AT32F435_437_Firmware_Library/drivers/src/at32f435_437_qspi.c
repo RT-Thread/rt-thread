@@ -1,8 +1,6 @@
 /**
   **************************************************************************
   * @file     at32f435_437_qspi.c
-  * @version  v2.0.8
-  * @date     2022-04-25
   * @brief    contain all the functions for qspi firmware library
   **************************************************************************
   *                       Copyright notice & Disclaimer
@@ -42,6 +40,27 @@
   */
 
 /**
+  * @brief  deinitialize the qspi peripheral registers to their default reset values.
+  * @param  qspi_x: select the qspi peripheral.
+  *         this parameter can be one of the following values:
+  *         QSPI1,QSPI2.
+  * @retval none
+  */
+void qspi_reset(qspi_type* qspi_x)
+{
+  if(qspi_x == QSPI1)
+  {
+    crm_periph_reset(CRM_QSPI1_PERIPH_RESET, TRUE);
+    crm_periph_reset(CRM_QSPI1_PERIPH_RESET, FALSE);
+  }
+  else if(qspi_x == QSPI2)
+  {
+    crm_periph_reset(CRM_QSPI2_PERIPH_RESET, TRUE);
+    crm_periph_reset(CRM_QSPI2_PERIPH_RESET, FALSE);
+  }
+}
+
+/**
   * @brief  enable/disable encryption for qspi.
   * @note   the function must be configured only when qspi in command-port mode!!!
   * @param  qspi_x: select the qspi peripheral.
@@ -67,7 +86,7 @@ void qspi_encryption_enable(qspi_type* qspi_x, confirm_state new_state)
   *         - QSPI_SCK_MODE_3
   * @retval none
   */
-void qspi_sck_mode_set( qspi_type* qspi_x, qspi_clk_mode_type new_mode)
+void qspi_sck_mode_set(qspi_type* qspi_x, qspi_clk_mode_type new_mode)
 {
   qspi_x->ctrl_bit.sckmode = new_mode;
 }
@@ -102,6 +121,8 @@ void qspi_clk_division_set(qspi_type* qspi_x, qspi_clk_div_type new_clkdiv)
   *         this parameter can be one of the following values:
   *         QSPI1,QSPI2.
   * @param  new_state (TRUE or FALSE)
+  *         TRUE: disable cache
+  *         FALSE: enable cache
   * @retval none
   */
 void qspi_xip_cache_bypass_set(qspi_type* qspi_x, confirm_state new_state)
@@ -133,7 +154,7 @@ void qspi_interrupt_enable(qspi_type* qspi_x, confirm_state new_state)
   *         - QSPI_RXFIFORDY_FLAG
   *         - QSPI_TXFIFORDY_FLAG
   *         - QSPI_CMDSTS_FLAG
-  * @retval the new state of usart_flag (SET or RESET).
+  * @retval the new state of the flag (SET or RESET).
   */
 flag_status qspi_flag_get(qspi_type* qspi_x, uint32_t flag)
 {
@@ -156,6 +177,24 @@ flag_status qspi_flag_get(qspi_type* qspi_x, uint32_t flag)
 }
 
 /**
+  * @brief  get interrupt flags.
+  * @param  qspi_x: select the qspi peripheral.
+  *         this parameter can be one of the following values:
+  *         QSPI1,QSPI2.
+  * @param  flag: only QSPI_CMDSTS_FLAG valid.
+  * @retval the new state of the flag (SET or RESET).
+  */
+flag_status qspi_interrupt_flag_get(qspi_type* qspi_x, uint32_t flag)
+{
+  if(QSPI_CMDSTS_FLAG != flag)
+    return RESET;
+  if(qspi_x->cmdsts_bit.cmdsts && qspi_x->ctrl2_bit.cmdie)
+    return SET;
+  else
+    return RESET;
+}
+
+/**
   * @brief  clear flags
   * @param  qspi_x: select the qspi peripheral.
   *         this parameter can be one of the following values:
@@ -165,7 +204,7 @@ flag_status qspi_flag_get(qspi_type* qspi_x, uint32_t flag)
   *         - QSPI_CMDSTS_FLAG
   * @retval none
   */
-void qspi_flag_clear( qspi_type* qspi_x, uint32_t flag)
+void qspi_flag_clear(qspi_type* qspi_x, uint32_t flag)
 {
   qspi_x->cmdsts = QSPI_CMDSTS_FLAG;
 }
@@ -180,7 +219,7 @@ void qspi_flag_clear( qspi_type* qspi_x, uint32_t flag)
   *         this parameter can be one of the following values:
   *         - QSPI_DMA_FIFO_THOD_WORD08
   *         - QSPI_DMA_FIFO_THOD_WORD16
-  *         - QSPI_DMA_FIFO_THOD_WORD32
+  *         - QSPI_DMA_FIFO_THOD_WORD24
   * @retval none
   */
 void qspi_dma_rx_threshold_set(qspi_type* qspi_x, qspi_dma_fifo_thod_type new_threshold)
@@ -198,7 +237,7 @@ void qspi_dma_rx_threshold_set(qspi_type* qspi_x, qspi_dma_fifo_thod_type new_th
   *         this parameter can be one of the following values:
   *         - QSPI_DMA_FIFO_THOD_WORD08
   *         - QSPI_DMA_FIFO_THOD_WORD16
-  *         - QSPI_DMA_FIFO_THOD_WORD32
+  *         - QSPI_DMA_FIFO_THOD_WORD24
   * @retval none
   */
 void qspi_dma_tx_threshold_set(qspi_type* qspi_x, qspi_dma_fifo_thod_type new_threshold)
@@ -253,14 +292,22 @@ void qspi_busy_config(qspi_type* qspi_x, qspi_busy_pos_type busy_pos)
   */
 void qspi_xip_enable(qspi_type* qspi_x, confirm_state new_state)
 {
+  register uint16_t dly=0;
   /* skip if state is no change */
   if(new_state == (confirm_state)(qspi_x->ctrl_bit.xipsel))
   {
     return;
   }
 
-  /* wait until tx fifo emoty*/
+  /* wait until tx fifo is empty*/
   while(qspi_x->fifosts_bit.txfifordy == 0);
+
+  /* make sure IO is transmitted */
+  dly = 64;
+  while(dly--)
+  {
+    __NOP();
+  }
 
   /* flush and reset qspi state */
   qspi_x->ctrl_bit.xiprcmdf = 1;
@@ -268,6 +315,12 @@ void qspi_xip_enable(qspi_type* qspi_x, confirm_state new_state)
   /* wait until action is finished */
   while(qspi_x->ctrl_bit.abort);
 
+  /* make sure IO is transmitted */
+  dly = 64;
+  while(dly--)
+  {
+    __NOP();
+  }
   /* set xip mode to new state */
   qspi_x->ctrl_bit.xipsel = new_state;
 
@@ -412,6 +465,20 @@ void qspi_half_word_write(qspi_type* qspi_x, uint16_t value)
 void qspi_word_write(qspi_type* qspi_x, uint32_t value)
 {
   qspi_x->dt = value;
+}
+
+/**
+  * @brief  enable auto input sampling phase correction
+  * @param  qspi_x: select the qspi peripheral.
+  * @retval none.
+  */
+void qspi_auto_ispc_enable(qspi_type* qspi_x)
+{
+  qspi_x->ctrl3_bit.ispc = TRUE;
+  if(qspi_x == QSPI1)
+    qspi_x->ctrl3_bit.ispd = 56;
+  else if(qspi_x == QSPI2)
+    qspi_x->ctrl3_bit.ispd = 50;
 }
 
 /**

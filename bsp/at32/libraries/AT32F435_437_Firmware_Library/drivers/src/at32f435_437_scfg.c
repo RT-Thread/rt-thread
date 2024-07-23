@@ -1,8 +1,6 @@
 /**
   **************************************************************************
   * @file     at32f435_437_scfg.c
-  * @version  v2.0.8
-  * @date     2022-04-25
   * @brief    contains all the functions for the system config firmware library
   **************************************************************************
   *                       Copyright notice & Disclaimer
@@ -72,8 +70,6 @@ void scfg_xmc_mapping_swap_set(scfg_xmc_swap_type xmc_swap)
   * @param  source
   *         this parameter can be one of the following values:
   *         - SCFG_IR_SOURCE_TMR10
-  *         - SCFG_IR_SOURCE_USART1
-  *         - SCFG_IR_SOURCE_USART2
   * @param  polarity
   *         this parameter can be one of the following values:
   *         - SCFG_IR_POLARITY_NO_AFFECTE

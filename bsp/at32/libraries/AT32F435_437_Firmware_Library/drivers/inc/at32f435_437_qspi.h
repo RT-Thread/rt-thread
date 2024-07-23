@@ -1,8 +1,6 @@
 /**
   **************************************************************************
   * @file     at32f435_437_qspi.h
-  * @version  v2.0.8
-  * @date     2022-04-25
   * @brief    at32f435_437 qspi header file
   **************************************************************************
   *                       Copyright notice & Disclaimer
@@ -123,11 +121,11 @@ typedef enum
 typedef enum
 {
   QSPI_CLK_DIV_2                         = 0x00, /*!< qspi clk divide by 2 */
+  QSPI_CLK_DIV_3                         = 0x04, /*!< qspi clk divide by 3 */
   QSPI_CLK_DIV_4                         = 0x01, /*!< qspi clk divide by 4 */
+  QSPI_CLK_DIV_5                         = 0x05, /*!< qspi clk divide by 5 */
   QSPI_CLK_DIV_6                         = 0x02, /*!< qspi clk divide by 6 */
   QSPI_CLK_DIV_8                         = 0x03, /*!< qspi clk divide by 8 */
-  QSPI_CLK_DIV_3                         = 0x04, /*!< qspi clk divide by 3 */
-  QSPI_CLK_DIV_5                         = 0x05, /*!< qspi clk divide by 5 */
   QSPI_CLK_DIV_10                        = 0x06, /*!< qspi clk divide by 10 */
   QSPI_CLK_DIV_12                        = 0x07  /*!< qspi clk divide by 12 */
 } qspi_clk_div_type;
@@ -179,7 +177,7 @@ typedef enum
 {
   QSPI_DMA_FIFO_THOD_WORD08              = 0x00, /*!< qspi dma fifo threshold 8 words */
   QSPI_DMA_FIFO_THOD_WORD16              = 0x01, /*!< qspi dma fifo threshold 16 words */
-  QSPI_DMA_FIFO_THOD_WORD32              = 0x02  /*!< qspi dma fifo threshold 32 words */
+  QSPI_DMA_FIFO_THOD_WORD24              = 0x02  /*!< qspi dma fifo threshold 24 words */
 } qspi_dma_fifo_thod_type;
 
 /**
@@ -187,7 +185,7 @@ typedef enum
   */
 typedef struct
 {
-  confirm_state                          pe_mode_enable;          /*!< perfornance enhance mode enable */
+  confirm_state                          pe_mode_enable;          /*!< performance enhance mode enable */
   uint8_t                                pe_mode_operate_code;    /*!< performance enhance mode operate code */
   uint8_t                                instruction_code;        /*!< instruction code */
   qspi_cmd_inslen_type                   instruction_length;      /*!< instruction code length */
@@ -314,17 +312,9 @@ typedef struct
   };
 
   /**
-    * @brief qspi actr register, offset:0x14
+    * @brief qspi register, offset:0x14
     */
-  union
-  {
-    __IO uint32_t actr;
-    struct
-    {
-      __IO uint32_t csdly                : 4; /* [3:0] */
-      __IO uint32_t reserved1            : 28;/* [31:4] */
-    } actr_bit;
-  };
+  __IO uint32_t reserved0;
 
   /**
     * @brief qspi fifosts register, offset:0x18
@@ -441,12 +431,12 @@ typedef struct
     __IO uint32_t xip_cmd_w2;
     struct
     {
-      __IO uint32_t xipr_dcnt            : 6; /* [5:0] */
-      __IO uint32_t reserved1            : 2; /* [7:6] */
+      __IO uint32_t xipr_dcnt            : 5; /* [4:0] */
+      __IO uint32_t reserved1            : 3; /* [7:5] */
       __IO uint32_t xipr_tcnt            : 7; /* [14:8] */
       __IO uint32_t xipr_sel             : 1; /* [15] */
-      __IO uint32_t xipw_dcnt            : 6; /* [21:16] */
-      __IO uint32_t reserved2            : 2; /* [23:22] */
+      __IO uint32_t xipw_dcnt            : 5; /* [20:16] */
+      __IO uint32_t reserved2            : 3; /* [23:21] */
       __IO uint32_t xipw_tcnt            : 7; /* [30:24] */
       __IO uint32_t xipw_sel             : 1; /* [31] */
     } xip_cmd_w2_bit;
@@ -468,9 +458,24 @@ typedef struct
   };
 
   /**
-    * @brief qspi reserved register, offset:0x40~4C
+    * @brief qspi ctrl3 register, offset:0x40
     */
-  __IO uint32_t reserved2[4];
+  union
+  {
+    __IO uint32_t ctrl3;
+    struct
+    {
+      __IO uint32_t ispd                : 6; /* [5:0] */
+      __IO uint32_t reserved1           : 2; /* [7:6] */
+      __IO uint32_t ispc                : 1; /* [8] */
+      __IO uint32_t reserved2           : 23;/* [31:9] */
+    } ctrl3_bit;
+  };
+
+  /**
+    * @brief qspi reserved register, offset:0x44~4C
+    */
+  __IO uint32_t reserved2[3];
 
   /**
     * @brief qspi rev register, offset:0x50
@@ -516,13 +521,15 @@ typedef struct
   * @{
   */
 
+void qspi_reset(qspi_type* qspi_x);
 void qspi_encryption_enable(qspi_type* qspi_x, confirm_state new_state);
-void qspi_sck_mode_set( qspi_type* qspi_x, qspi_clk_mode_type new_mode);
+void qspi_sck_mode_set(qspi_type* qspi_x, qspi_clk_mode_type new_mode);
 void qspi_clk_division_set(qspi_type* qspi_x, qspi_clk_div_type new_clkdiv);
 void qspi_xip_cache_bypass_set(qspi_type* qspi_x, confirm_state new_state);
 void qspi_interrupt_enable(qspi_type* qspi_x, confirm_state new_state);
 flag_status qspi_flag_get(qspi_type* qspi_x, uint32_t flag);
-void qspi_flag_clear( qspi_type* qspi_x, uint32_t flag);
+flag_status qspi_interrupt_flag_get(qspi_type* qspi_x, uint32_t flag);
+void qspi_flag_clear(qspi_type* qspi_x, uint32_t flag);
 void qspi_dma_rx_threshold_set(qspi_type* qspi_x, qspi_dma_fifo_thod_type new_threshold);
 void qspi_dma_tx_threshold_set(qspi_type* qspi_x, qspi_dma_fifo_thod_type new_threshold);
 void qspi_dma_enable(qspi_type* qspi_x, confirm_state new_state);
@@ -536,6 +543,7 @@ uint32_t qspi_word_read(qspi_type* qspi_x);
 void qspi_word_write(qspi_type* qspi_x, uint32_t value);
 void qspi_half_word_write(qspi_type* qspi_x, uint16_t value);
 void qspi_byte_write(qspi_type* qspi_x, uint8_t value);
+void qspi_auto_ispc_enable(qspi_type* qspi_x);
 /**
   * @}
   */

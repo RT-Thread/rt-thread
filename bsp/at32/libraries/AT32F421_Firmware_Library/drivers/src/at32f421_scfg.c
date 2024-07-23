@@ -55,8 +55,6 @@ void scfg_reset(void)
   * @param  source
   *         this parameter can be one of the following values:
   *         - SCFG_IR_SOURCE_TMR16
-  *         - SCFG_IR_SOURCE_USART1
-  *         - SCFG_IR_SOURCE_USART2
   * @param  polarity
   *         this parameter can be one of the following values:
   *         - SCFG_IR_POLARITY_NO_AFFECTE

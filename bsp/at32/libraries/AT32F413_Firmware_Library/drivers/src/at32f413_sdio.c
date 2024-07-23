@@ -1,8 +1,6 @@
 /**
   **************************************************************************
   * @file     at32f413_sdio.c
-  * @version  v2.0.5
-  * @date     2022-05-20
   * @brief    contains all the functions for the sdio firmware library
   **************************************************************************
   *                       Copyright notice & Disclaimer
@@ -82,22 +80,11 @@ void sdio_power_set(sdio_type *sdio_x, sdio_power_state_type power_state)
   * @param  sdio_x: to select the sdio peripheral.
   *         this parameter can be one of the following values:
   *         SDIO1.
-  * @retval flag_status (SET or RESET)
+  * @retval sdio_power_state_type (SDIO_POWER_ON or SDIO_POWER_OFF)
   */
-flag_status sdio_power_status_get(sdio_type *sdio_x)
+sdio_power_state_type sdio_power_status_get(sdio_type *sdio_x)
 {
-  flag_status flag = RESET;
-
-  if(sdio_x->pwrctrl_bit.ps == SDIO_POWER_ON)
-  {
-    flag = SET;
-  }
-  else if(sdio_x->pwrctrl_bit.ps == SDIO_POWER_OFF)
-  {
-    flag = RESET;
-  }
-
-  return flag;
+  return (sdio_power_state_type)(sdio_x->pwrctrl_bit.ps);
 }
 
 /**
@@ -252,6 +239,50 @@ void sdio_interrupt_enable(sdio_type *sdio_x, uint32_t int_opt,  confirm_state n
   {
     sdio_x->inten &= ~(int_opt);
   }
+}
+
+/**
+  * @brief  get sdio interrupt flag.
+  * @param  sdio_x: to select the sdio peripheral.
+  *         this parameter can be one of the following values:
+  *         SDIO1.
+  * @param  flag
+  *         this parameter can be one of the following values:
+  *         - SDIO_CMDFAIL_FLAG
+  *         - SDIO_DTFAIL_FLAG
+  *         - SDIO_CMDTIMEOUT_FLAG
+  *         - SDIO_DTTIMEOUT_FLAG
+  *         - SDIO_TXERRU_FLAG
+  *         - SDIO_RXERRO_FLAG
+  *         - SDIO_CMDRSPCMPL_FLAG
+  *         - SDIO_CMDCMPL_FLAG
+  *         - SDIO_DTCMPL_FLAG
+  *         - SDIO_SBITERR_FLAG
+  *         - SDIO_DTBLKCMPL_FLAG
+  *         - SDIO_DOCMD_FLAG
+  *         - SDIO_DOTX_FLAG
+  *         - SDIO_DORX_FLAG
+  *         - SDIO_TXBUFH_FLAG
+  *         - SDIO_RXBUFH_FLAG
+  *         - SDIO_TXBUFF_FLAG
+  *         - SDIO_RXBUFF_FLAG
+  *         - SDIO_TXBUFE_FLAG
+  *         - SDIO_RXBUFE_FLAG
+  *         - SDIO_TXBUF_FLAG
+  *         - SDIO_RXBUF_FLAG
+  *         - SDIO_SDIOIF_FLAG
+  * @retval flag_status (SET or RESET)
+  */
+flag_status sdio_interrupt_flag_get(sdio_type *sdio_x, uint32_t flag)
+{
+  flag_status status = RESET;
+
+  if((sdio_x->inten & flag) && (sdio_x->sts & flag))
+  {
+    status = SET;
+  }
+
+  return status;
 }
 
 /**

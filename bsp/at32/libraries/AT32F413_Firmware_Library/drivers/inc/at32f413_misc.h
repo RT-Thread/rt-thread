@@ -1,8 +1,6 @@
 /**
   **************************************************************************
   * @file     at32f413_misc.h
-  * @version  v2.0.5
-  * @date     2022-05-20
   * @brief    at32f413 misc header file
   **************************************************************************
   *                       Copyright notice & Disclaimer
@@ -76,9 +74,9 @@ typedef enum
   */
 typedef enum
 {
-  NVIC_LP_SLEEPONEXIT                    = 0x02, /*!< send event on pending */
+  NVIC_LP_SLEEPONEXIT                    = 0x02, /*!< enable sleep-on-exit feature */
   NVIC_LP_SLEEPDEEP                      = 0x04, /*!< enable sleep-deep output signal when entering sleep mode */
-  NVIC_LP_SEVONPEND                      = 0x10  /*!< enable sleep-on-exit feature */
+  NVIC_LP_SEVONPEND                      = 0x10  /*!< send event on pending */
 } nvic_lowpower_mode_type;
 
 /**

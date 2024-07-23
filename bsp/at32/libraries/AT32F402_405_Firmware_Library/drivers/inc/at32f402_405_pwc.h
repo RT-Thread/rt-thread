@@ -126,8 +126,7 @@ typedef enum
 typedef enum
 {
   PWC_REGULATOR_ON                       = 0x00, /*!< voltage regulator state on when deepsleep mode */
-  PWC_REGULATOR_LOW_POWER                = 0x01, /*!< voltage regulator state low power when deepsleep mode */
-  PWC_REGULATOR_EXTRA_LOW_POWER          = 0x02  /*!< voltage regulator state extra low power when deepsleep mode */
+  PWC_REGULATOR_EXTRA_LOW_POWER          = 0x01  /*!< voltage regulator state extra low power when deepsleep mode */
 } pwc_regulator_type ;
 
 /**

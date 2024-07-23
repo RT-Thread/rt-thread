@@ -1,8 +1,6 @@
 /**
   **************************************************************************
   * @file     at32f403a_407_exint.c
-  * @version  v2.0.9
-  * @date     2022-04-25
   * @brief    contains all the functions for the exint firmware library
   **************************************************************************
   *                       Copyright notice & Disclaimer
@@ -125,7 +123,15 @@ void exint_init(exint_init_type *exint_struct)
   */
 void exint_flag_clear(uint32_t exint_line)
 {
-  EXINT->intsts = exint_line;
+  if((EXINT->swtrg & exint_line) == exint_line)
+  {
+    EXINT->intsts = exint_line;
+    EXINT->intsts = exint_line;
+  }
+  else
+  {
+    EXINT->intsts = exint_line;
+  }
 }
 
 /**
@@ -144,6 +150,35 @@ flag_status exint_flag_get(uint32_t exint_line)
   flag_status status = RESET;
   uint32_t exint_flag =0;
   exint_flag = EXINT->intsts & exint_line;
+  if((exint_flag != (uint16_t)RESET))
+  {
+    status = SET;
+  }
+  else
+  {
+    status = RESET;
+  }
+  return status;
+}
+
+/**
+  * @brief  get exint interrupt flag
+  * @param  exint_line
+  *         this parameter can be one of the following values:
+  *         - EXINT_LINE_0
+  *         - EXINT_LINE_1
+  *         ...
+  *         - EXINT_LINE_18
+  *         - EXINT_LINE_19
+  * @retval the new state of exint flag(SET or RESET).
+  */
+flag_status exint_interrupt_flag_get(uint32_t exint_line)
+{
+  flag_status status = RESET;
+  uint32_t exint_flag = 0;
+  exint_flag = EXINT->intsts & exint_line;
+  exint_flag = exint_flag & EXINT->inten;
+
   if((exint_flag != (uint16_t)RESET))
   {
     status = SET;

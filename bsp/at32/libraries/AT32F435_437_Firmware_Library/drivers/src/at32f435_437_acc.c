@@ -1,8 +1,6 @@
 /**
   **************************************************************************
   * @file     at32f435_437_acc.c
-  * @version  v2.0.8
-  * @date     2022-04-25
   * @brief    contains all the functions for the acc firmware library
   **************************************************************************
   *                       Copyright notice & Disclaimer
@@ -202,6 +200,23 @@ flag_status acc_flag_get(uint16_t acc_flag)
   else
     return (flag_status)(ACC->sts_bit.rslost);
 }
+
+/**
+  * @brief  check whether the specified acc interrupt flag is set or not.
+  * @param  acc_flag: specifies the flag to check.
+  *         this parameter can be one of the following values:
+  *         - ACC_RSLOST_FLAG
+  *         - ACC_CALRDY_FLAG
+  * @retval  flag_status (SET or RESET)
+  */
+flag_status acc_interrupt_flag_get(uint16_t acc_flag)
+{
+  if(acc_flag == ACC_CALRDY_FLAG)
+    return (flag_status)(ACC->sts_bit.calrdy && ACC->ctrl1_bit.calrdyien);
+  else
+    return (flag_status)(ACC->sts_bit.rslost && ACC->ctrl1_bit.eien);
+}
+
 
 /**
   * @brief  clear the specified acc flag is set or not.

@@ -1,8 +1,6 @@
 /**
   **************************************************************************
   * @file     at32f403a_407_bpr.c
-  * @version  v2.0.9
-  * @date     2022-04-25
   * @brief    contains all the functions for the bpr firmware library
   **************************************************************************
   *                       Copyright notice & Disclaimer
@@ -69,6 +67,26 @@ flag_status bpr_flag_get(uint32_t flag)
   else
   {
     return (flag_status)(BPR->ctrlsts_bit.tpef);
+  }
+}
+
+/**
+  * @brief  bpr interrupt flag get
+  * @param  flag: specifies the flag to check.
+  *         this parameter can be one of the following values:
+  *         - BPR_TAMPER_INTERRUPT_FLAG: tamper interrupt flag
+  *         - BPR_TAMPER_EVENT_FLAG:   tamper event flag
+  * @retval state of tamper event flag
+  */
+flag_status bpr_interrupt_flag_get(uint32_t flag)
+{
+  if(flag == BPR_TAMPER_INTERRUPT_FLAG)
+  {
+    return (flag_status)(BPR->ctrlsts_bit.tpif && BPR->ctrlsts_bit.tpien);
+  }
+  else
+  {
+    return (flag_status)(BPR->ctrlsts_bit.tpef && BPR->ctrlsts_bit.tpien);
   }
 }
 

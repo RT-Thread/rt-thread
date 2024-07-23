@@ -1,8 +1,6 @@
 /**
   **************************************************************************
   * @file     at32f435_437_crm.h
-  * @version  v2.0.8
-  * @date     2022-04-25
   * @brief    at32f435_437 crm header file
   **************************************************************************
   *                       Copyright notice & Disclaimer
@@ -398,13 +396,12 @@ typedef enum
   CRM_GPIOG_PERIPH_LOWPOWER              = MAKE_VALUE(0x50, 6),  /*!< gpiog sleep mode periph clock */
   CRM_GPIOH_PERIPH_LOWPOWER              = MAKE_VALUE(0x50, 7),  /*!< gpioh sleep mode periph clock */
   CRM_CRC_PERIPH_LOWPOWER                = MAKE_VALUE(0x50, 12), /*!< crc sleep mode periph clock */
+  CRM_FLASH_PERIPH_LOWPOWER              = MAKE_VALUE(0x50, 15), /*!< flash sleep mode periph clock */
+  CRM_SRAM1_PERIPH_LOWPOWER              = MAKE_VALUE(0x50, 16), /*!< sram1 sleep mode periph clock */
+  CRM_SRAM2_PERIPH_LOWPOWER              = MAKE_VALUE(0x50, 17), /*!< sram2 sleep mode periph clock */
   CRM_EDMA_PERIPH_LOWPOWER               = MAKE_VALUE(0x50, 21), /*!< edma sleep mode periph clock */
   CRM_DMA1_PERIPH_LOWPOWER               = MAKE_VALUE(0x50, 22), /*!< dma1 sleep mode periph clock */
   CRM_DMA2_PERIPH_LOWPOWER               = MAKE_VALUE(0x50, 24), /*!< dma2 sleep mode periph clock */
-  CRM_EMAC_PERIPH_LOWPOWER               = MAKE_VALUE(0x50, 25), /*!< emac sleep mode periph clock */
-  CRM_EMACTX_PERIPH_LOWPOWER             = MAKE_VALUE(0x50, 26), /*!< emac tx sleep mode periph clock */
-  CRM_EMACRX_PERIPH_LOWPOWER             = MAKE_VALUE(0x50, 27), /*!< emac rx sleep mode periph clock */
-  CRM_EMACPTP_PERIPH_LOWPOWER            = MAKE_VALUE(0x50, 28), /*!< emac ptp sleep mode periph clock */
   CRM_OTGFS2_PERIPH_LOWPOWER             = MAKE_VALUE(0x50, 29), /*!< otgfs2 sleep mode periph clock */
   /* ahb periph2 */
   CRM_DVP_PERIPH_LOWPOWER                = MAKE_VALUE(0x54, 0),  /*!< dvp sleep mode periph clock */
@@ -470,9 +467,16 @@ typedef enum
   CRM_GPIOG_PERIPH_LOWPOWER              = MAKE_VALUE(0x50, 6),  /*!< gpiog sleep mode periph clock */
   CRM_GPIOH_PERIPH_LOWPOWER              = MAKE_VALUE(0x50, 7),  /*!< gpioh sleep mode periph clock */
   CRM_CRC_PERIPH_LOWPOWER                = MAKE_VALUE(0x50, 12), /*!< crc sleep mode periph clock */
+  CRM_FLASH_PERIPH_LOWPOWER              = MAKE_VALUE(0x50, 15), /*!< flash sleep mode periph clock */
+  CRM_SRAM1_PERIPH_LOWPOWER              = MAKE_VALUE(0x50, 16), /*!< sram1 sleep mode periph clock */
+  CRM_SRAM2_PERIPH_LOWPOWER              = MAKE_VALUE(0x50, 17), /*!< sram2 sleep mode periph clock */
   CRM_EDMA_PERIPH_LOWPOWER               = MAKE_VALUE(0x50, 21), /*!< edma sleep mode periph clock */
   CRM_DMA1_PERIPH_LOWPOWER               = MAKE_VALUE(0x50, 22), /*!< dma1 sleep mode periph clock */
   CRM_DMA2_PERIPH_LOWPOWER               = MAKE_VALUE(0x50, 24), /*!< dma2 sleep mode periph clock */
+  CRM_EMAC_PERIPH_LOWPOWER               = MAKE_VALUE(0x50, 25), /*!< emac sleep mode periph clock */
+  CRM_EMACTX_PERIPH_LOWPOWER             = MAKE_VALUE(0x50, 26), /*!< emac tx sleep mode periph clock */
+  CRM_EMACRX_PERIPH_LOWPOWER             = MAKE_VALUE(0x50, 27), /*!< emac rx sleep mode periph clock */
+  CRM_EMACPTP_PERIPH_LOWPOWER            = MAKE_VALUE(0x50, 28), /*!< emac ptp sleep mode periph clock */
   CRM_OTGFS2_PERIPH_LOWPOWER             = MAKE_VALUE(0x50, 29), /*!< otgfs2 sleep mode periph clock */
   /* ahb periph2 */
   CRM_DVP_PERIPH_LOWPOWER                = MAKE_VALUE(0x54, 0),  /*!< dvp sleep mode periph clock */
@@ -1115,9 +1119,11 @@ typedef struct
       __IO uint32_t reserved3            : 1; /* [23] */
       __IO uint32_t dma2en               : 1; /* [24] */
       __IO uint32_t emacen               : 1; /* [25] */
-      __IO uint32_t reserved4            : 3; /* [28:26] */
+      __IO uint32_t emactxen             : 1; /* [26] */
+      __IO uint32_t emacrxen             : 1; /* [27] */
+      __IO uint32_t emacptpen            : 1; /* [28] */
       __IO uint32_t otgfs2en             : 1; /* [29] */
-      __IO uint32_t reserved5            : 2; /* [31:30] */
+      __IO uint32_t reserved4            : 2; /* [31:30] */
     } ahben1_bit;
 #endif
   };
@@ -1287,9 +1293,11 @@ typedef struct
       __IO uint32_t reserved3            : 1; /* [23] */
       __IO uint32_t dma2lpen             : 1; /* [24] */
       __IO uint32_t emaclpen             : 1; /* [25] */
-      __IO uint32_t reserved4            : 3; /* [28:26] */
+      __IO uint32_t emactxlpen           : 1; /* [26] */
+      __IO uint32_t emacrxlpen           : 1; /* [27] */
+      __IO uint32_t emacptplpen          : 1; /* [28] */
       __IO uint32_t otgfs2lpen           : 1; /* [29] */
-      __IO uint32_t reserved5            : 2; /* [31:30] */
+      __IO uint32_t reserved4            : 2; /* [31:30] */
     } ahblpen1_bit;
 #endif
   };
@@ -1513,6 +1521,7 @@ void crm_reset(void);
 void crm_lext_bypass(confirm_state new_state);
 void crm_hext_bypass(confirm_state new_state);
 flag_status crm_flag_get(uint32_t flag);
+flag_status crm_interrupt_flag_get(uint32_t flag);
 error_status crm_hext_stable_wait(void);
 void crm_hick_clock_trimming_set(uint8_t trim_value);
 void crm_hick_clock_calibration_set(uint8_t cali_value);

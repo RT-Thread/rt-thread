@@ -1,8 +1,6 @@
 /**
   **************************************************************************
   * @file     at32f435_437_dvp.h
-  * @version  v2.0.8
-  * @date     2022-04-25
   * @brief    at32f435_437 dvp header file
   **************************************************************************
   *                       Copyright notice & Disclaimer
@@ -204,17 +202,17 @@ typedef enum
 {
   DVP_STATUS_HSYN                        = 0x00,
   DVP_STATUS_VSYN                        = 0x01,
-  DVP_STATUS_OFS                         = 0x02
+  DVP_STATUS_OFNE                        = 0x02
 } dvp_status_basic_type;
 
 /**
-  * @brief dvp pcdse type
+  * @brief dvp pcdes type
   */
 typedef enum
 {
-  DVP_PCDSE_CAP_FIRST                    = 0x00,
-  DVP_PCDSE_DROP_FIRST                   = 0x01
-} dvp_pcdse_type;
+  DVP_PCDES_CAP_FIRST                    = 0x00,
+  DVP_PCDES_DROP_FIRST                   = 0x01
+} dvp_pcdes_type;
 
 /**
   * @brief dvp efdf type
@@ -224,18 +222,18 @@ typedef enum
   DVP_EFDF_BYPASS                        = 0x00,
   DVP_EFDF_YUV422_UYVY                   = 0x04,
   DVP_EFDF_YUV422_YUYV                   = 0x05,
-  DVP_EFDF_YUV444                        = 0x06,
+  DVP_EFDF_RGB565_555                    = 0x06,
   DVP_EFDF_Y8                            = 0x07
 } dvp_efdf_type;
 
 /**
-  * @brief dvp iduc type
+  * @brief dvp idus type
   */
 typedef enum
 {
-  DVP_IDUC_MSB                           = 0x00,
-  DVP_IDUC_LSB                           = 0x01
-} dvp_iduc_type;
+  DVP_IDUS_MSB                           = 0x00,
+  DVP_IDUS_LSB                           = 0x01
+} dvp_idus_type;
 
 /**
   * @brief dvp dmabt type
@@ -247,22 +245,22 @@ typedef enum
 } dvp_dmabt_type;
 
 /**
-  * @brief dvp hseis type
+  * @brief dvp hseid type
   */
 typedef enum
 {
-  DVP_HSEIS_LINE_END                     = 0x00,
-  DVP_HSEIS_LINE_START                   = 0x01
-} dvp_hseis_type;
+  DVP_HSEID_LINE_END                     = 0x00,
+  DVP_HSEID_LINE_START                   = 0x01
+} dvp_hseid_type;
 
 /**
-  * @brief dvp vseis type
+  * @brief dvp vseid type
   */
 typedef enum
 {
-  DVP_VSEIS_FRAME_END                    = 0x00,
-  DVP_VSEIS_FRMAE_START                  = 0x01
-} dvp_vseis_type;
+  DVP_VSEID_FRAME_END                    = 0x00,
+  DVP_VSEID_FRMAE_START                  = 0x01
+} dvp_vseid_type;
 /**
   * @brief dvp idun type
   */
@@ -301,7 +299,7 @@ typedef struct
       __IO uint32_t pcds                 : 1; /* [18] */
       __IO uint32_t lcdc                 : 1; /* [19] */
       __IO uint32_t lcds                 : 1; /* [20] */
-      __IO uint32_t                      : 11;/* [31:21] */
+      __IO uint32_t reserved3            : 11;/* [31:21] */
     } ctrl_bit;
   };
 
@@ -315,7 +313,7 @@ typedef struct
     {
       __IO uint32_t hsyn                 : 1; /* [0] */
       __IO uint32_t vsyn                 : 1; /* [1] */
-      __IO uint32_t ofs                  : 1; /* [2] */
+      __IO uint32_t ofne                 : 1; /* [2] */
       __IO uint32_t reserved1            : 29;/* [31:3] */
     } sts_bit;
   };
@@ -479,18 +477,18 @@ typedef struct
       __IO uint32_t eisre                : 1; /* [0] */
       __IO uint32_t efrce                : 1; /* [1] */
       __IO uint32_t mibe                 : 1; /* [2] */
-      __IO uint32_t pcdse                : 1; /* [3] */
+      __IO uint32_t pcdes                : 1; /* [3] */
       __IO uint32_t efdf                 : 3; /* [6:4] */
       __IO uint32_t reserved1            : 1; /* [7] */
       __IO uint32_t idun                 : 2; /* [9:8] */
-      __IO uint32_t iduc                 : 1; /* [10] */
+      __IO uint32_t idus                 : 1; /* [10] */
       __IO uint32_t reserved2            : 1; /* [11] */
       __IO uint32_t dmabt                : 1; /* [12] */
       __IO uint32_t reserved3            : 1; /* [13] */
       __IO uint32_t reserved4            : 1; /* [14] */
       __IO uint32_t reserved5            : 1; /* [15] */
-      __IO uint32_t hseis                : 1; /* [16] */
-      __IO uint32_t vseis                : 1; /* [17] */
+      __IO uint32_t hseid                : 1; /* [16] */
+      __IO uint32_t vseid                : 1; /* [17] */
       __IO uint32_t reserved6            : 1; /* [18] */
       __IO uint32_t reserved7            : 2; /* [20:19] */
       __IO uint32_t reserved8            : 11;/* [31:21] */
@@ -540,9 +538,9 @@ typedef struct
     __IO uint32_t frf;
     struct
     {
-      __IO uint32_t efrcfm               : 5; /* [4:0] */
+      __IO uint32_t efrcsf               : 5; /* [4:0] */
       __IO uint32_t reserved1            : 3; /* [7:5] */
-      __IO uint32_t efrcfn               : 5; /* [12:8] */
+      __IO uint32_t efrctf               : 5; /* [12:8] */
       __IO uint32_t reserved2            : 19;/* [31:13] */
     } frf_bit;
   };
@@ -572,10 +570,12 @@ typedef struct
   * @{
   */
 
+void dvp_reset(void);
+void dvp_capture_enable(confirm_state new_state);
 void dvp_capture_enable(confirm_state new_state);
 void dvp_capture_mode_set(dvp_cfm_type cap_mode);
 void dvp_window_crop_enable(confirm_state new_state);
-void dvp_window_crop_set(uint16_t crop_x, uint16_t crop_y, uint16_t crop_w, uint16_t crop_h);
+void dvp_window_crop_set(uint16_t crop_x, uint16_t crop_y, uint16_t crop_w, uint16_t crop_h, uint8_t bytes);
 void dvp_jpeg_enable(confirm_state new_state);
 void dvp_sync_mode_set(dvp_sm_type sync_mode);
 void dvp_sync_code_set(uint8_t fmsc, uint8_t fmec, uint8_t lnsc, uint8_t lnec);
@@ -586,20 +586,21 @@ void dvp_vsync_polarity_set(dvp_vsp_type vsync_pol);
 void dvp_basic_frame_rate_control_set(dvp_bfrc_type dvp_bfrc);
 void dvp_pixel_data_length_set(dvp_pdl_type dvp_pdl);
 void dvp_enable(confirm_state new_state);
-void dvp_zoomout_select(dvp_pcdse_type dvp_pcdse);
+void dvp_zoomout_select(dvp_pcdes_type dvp_pcdes);
 void dvp_zoomout_set(dvp_pcdc_type dvp_pcdc, dvp_pcds_type dvp_pcds, dvp_lcdc_type dvp_lcdc, dvp_lcds_type dvp_lcds);
 flag_status dvp_basic_status_get(dvp_status_basic_type dvp_status_basic);
 void dvp_interrupt_enable(uint32_t dvp_int, confirm_state new_state);
+flag_status dvp_interrupt_flag_get(uint32_t flag);
 flag_status dvp_flag_get(uint32_t flag);
 void dvp_flag_clear(uint32_t flag);
 void dvp_enhanced_scaling_resize_enable(confirm_state new_state);
 void dvp_enhanced_scaling_resize_set(uint16_t src_w, uint16_t des_w, uint16_t src_h, uint16_t des_h);
-void dvp_enhanced_framerate_set(uint16_t efrcfm, uint16_t efrcfn, confirm_state new_state);
+void dvp_enhanced_framerate_set(uint16_t efrcsf, uint16_t efrctf, confirm_state new_state);
 void dvp_monochrome_image_binarization_set(uint8_t mibthd, confirm_state new_state);
 void dvp_enhanced_data_format_set(dvp_efdf_type dvp_efdf);
-void dvp_input_data_unused_set(dvp_iduc_type dvp_iduc, dvp_idun_type dvp_idun);
+void dvp_input_data_unused_set(dvp_idus_type dvp_idus, dvp_idun_type dvp_idun);
 void dvp_dma_burst_set(dvp_dmabt_type dvp_dmabt);
-void dvp_sync_event_interrupt_set(dvp_hseis_type dvp_hseis, dvp_vseis_type dvp_vseis);
+void dvp_sync_event_interrupt_set(dvp_hseid_type dvp_hseid, dvp_vseid_type dvp_vseid);
 
 /**
   * @}

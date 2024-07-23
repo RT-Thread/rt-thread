@@ -730,6 +730,7 @@ uint16_t dma_data_number_get(dma_channel_type *dmax_channely);
 void dma_interrupt_enable(dma_channel_type *dmax_channely, uint32_t dma_int, confirm_state new_state);
 void dma_channel_enable(dma_channel_type *dmax_channely, confirm_state new_state);
 flag_status dma_flag_get(uint32_t dmax_flag);
+flag_status dma_interrupt_flag_get(uint32_t dmax_flag);
 void dma_flag_clear(uint32_t dmax_flag);
 void dma_default_para_init(dma_init_type *dma_init_struct);
 void dma_init(dma_channel_type *dmax_channely, dma_init_type *dma_init_struct);
@@ -745,8 +746,10 @@ void dmamux_generator_config(dmamux_generator_type *dmamux_gen_x, dmamux_gen_ini
 void dmamux_sync_interrupt_enable(dmamux_channel_type *dmamux_channelx, confirm_state new_state);
 void dmamux_generator_interrupt_enable(dmamux_generator_type *dmamux_gen_x, confirm_state new_state);
 flag_status dmamux_sync_flag_get(dma_type *dma_x, uint32_t flag);
+flag_status dmamux_sync_interrupt_flag_get(dma_type *dma_x, uint32_t flag);
 void dmamux_sync_flag_clear(dma_type *dma_x, uint32_t flag);
 flag_status dmamux_generator_flag_get(dma_type *dma_x, uint32_t flag);
+flag_status dmamux_generator_interrupt_flag_get(dma_type *dma_x, uint32_t flag);
 void dmamux_generator_flag_clear(dma_type *dma_x, uint32_t flag);
 
 /**

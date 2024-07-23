@@ -152,6 +152,34 @@ flag_status exint_flag_get(uint32_t exint_line)
 }
 
 /**
+  * @brief  get exint interrupt flag
+  * @param  exint_line
+  *         this parameter can be one of the following values:
+  *         - EXINT_LINE_0
+  *         - EXINT_LINE_1
+  *         ...
+  *         - EXINT_LINE_21
+  * @retval state of exint flag
+  */
+flag_status exint_interrupt_flag_get(uint32_t exint_line)
+{
+  flag_status status = RESET;
+  uint32_t exint_flag =0;
+  exint_flag = EXINT->intsts & exint_line;
+  exint_flag = exint_flag & EXINT->inten;
+
+  if((exint_flag != (uint16_t)RESET))
+  {
+    status = SET;
+  }
+  else
+  {
+    status = RESET;
+  }
+  return status;
+}
+
+/**
   * @brief  generate exint software interrupt event
   * @param  exint_line
   *         this parameter can be one of the following values:

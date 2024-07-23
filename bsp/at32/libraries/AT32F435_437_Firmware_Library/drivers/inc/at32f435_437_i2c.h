@@ -1,8 +1,6 @@
 /**
   **************************************************************************
   * @file     at32f435_437_i2c.h
-  * @version  v2.0.8
-  * @date     2022-04-25
   * @brief    at32f435_437 i2c header file
   **************************************************************************
   *                       Copyright notice & Disclaimer
@@ -157,12 +155,12 @@ typedef enum
 {
   I2C_ADDR2_NOMASK                       = 0x00, /*!< compare bit      [7:1] */
   I2C_ADDR2_MASK01                       = 0x01, /*!< only compare bit [7:2] */
-  I2C_ADDR2_MASK02                       = 0x02, /*!< only compare bit [7:2] */
-  I2C_ADDR2_MASK03                       = 0x03, /*!< only compare bit [7:3] */
-  I2C_ADDR2_MASK04                       = 0x04, /*!< only compare bit [7:4] */
-  I2C_ADDR2_MASK05                       = 0x05, /*!< only compare bit [7:5] */
-  I2C_ADDR2_MASK06                       = 0x06, /*!< only compare bit [7:6] */
-  I2C_ADDR2_MASK07                       = 0x07  /*!< only compare bit [7] */
+  I2C_ADDR2_MASK02                       = 0x02, /*!< only compare bit [7:3] */
+  I2C_ADDR2_MASK03                       = 0x03, /*!< only compare bit [7:4] */
+  I2C_ADDR2_MASK04                       = 0x04, /*!< only compare bit [7:5] */
+  I2C_ADDR2_MASK05                       = 0x05, /*!< only compare bit [7:6] */
+  I2C_ADDR2_MASK06                       = 0x06, /*!< only compare bit [7] */
+  I2C_ADDR2_MASK07                       = 0x07  /*!< response all addresses other than those reserved for i2c */
 } i2c_addr2_mask_type;
 
 /**
@@ -176,14 +174,14 @@ typedef enum
 } i2c_reload_stop_mode_type;
 
 /**
-  * @brief i2c start stop mode
+  * @brief i2c start mode
   */
 typedef enum
 {
   I2C_WITHOUT_START                      = 0x00000000, /*!< transfer data without start condition */
   I2C_GEN_START_READ                     = 0x00002400, /*!< read data and generate start */
   I2C_GEN_START_WRITE                    = 0x00002000  /*!< send data and generate start */
-} i2c_start_stop_mode_type;
+} i2c_start_mode_type;
 
 /**
   * @brief type define i2c register all
@@ -452,12 +450,13 @@ void i2c_ext_timeout_enable(i2c_type *i2c_x, confirm_state new_state);
 void i2c_interrupt_enable(i2c_type *i2c_x, uint32_t source, confirm_state new_state);
 flag_status i2c_interrupt_get(i2c_type *i2c_x, uint16_t source);
 void i2c_dma_enable(i2c_type *i2c_x, i2c_dma_request_type dma_req, confirm_state new_state);
-void i2c_transmit_set(i2c_type *i2c_x, uint16_t address, uint8_t cnt, i2c_reload_stop_mode_type rld_stop, i2c_start_stop_mode_type start_stop);
+void i2c_transmit_set(i2c_type *i2c_x, uint16_t address, uint8_t cnt, i2c_reload_stop_mode_type rld_stop, i2c_start_mode_type start);
 void i2c_start_generate(i2c_type *i2c_x);
 void i2c_stop_generate(i2c_type *i2c_x);
 void i2c_data_send(i2c_type *i2c_x, uint8_t data);
 uint8_t i2c_data_receive(i2c_type *i2c_x);
 flag_status i2c_flag_get(i2c_type *i2c_x, uint32_t flag);
+flag_status i2c_interrupt_flag_get(i2c_type *i2c_x, uint32_t flag);
 void i2c_flag_clear(i2c_type *i2c_x, uint32_t flag);
 
 /**

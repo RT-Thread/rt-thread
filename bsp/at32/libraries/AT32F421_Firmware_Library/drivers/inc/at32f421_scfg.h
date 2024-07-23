@@ -55,9 +55,7 @@ extern "C" {
   */
 typedef enum
 {
-  SCFG_IR_SOURCE_TMR16                   = 0x00, /* infrared signal source select tmr16 */
-  SCFG_IR_SOURCE_USART1                  = 0x01, /* infrared signal source select usart1 */
-  SCFG_IR_SOURCE_USART2                  = 0x02  /* infrared signal source select usart2 */
+  SCFG_IR_SOURCE_TMR16                   = 0x00  /* infrared signal source select tmr16 */
 } scfg_ir_source_type;
 
 /**
