@@ -24,13 +24,6 @@ Export('rtconfig')
 rtconfig.CPU='virt64'
 rtconfig.ARCH='risc-v'
 
-stack_size = 4096
-
-stack_lds = open('link_stacksize.lds', 'w')
-if GetDepend('__STACKSIZE__'): stack_size = GetDepend('__STACKSIZE__')
-stack_lds.write('__STACKSIZE__ = %d;\n' % stack_size)
-stack_lds.close()
-
 SDK_ROOT = os.path.abspath('./')
 
 if os.path.exists(SDK_ROOT + '/drivers'):
@@ -43,6 +36,14 @@ objs = PrepareBuilding(env, RTT_ROOT, has_libcpu = False)
 
 # include libraries
 objs.extend(SConscript(drivers_path_prefix + '/SConscript', variant_dir='build/drivers', duplicate=0))
+
+stack_size = 4096
+
+stack_lds = open('link_stacksize.lds', 'w')
+if GetDepend('__STACKSIZE__'):
+    stack_size = GetDepend('__STACKSIZE__')
+stack_lds.write('__STACKSIZE__ = %d;\n' % stack_size)
+stack_lds.close()
 
 # make a building
 DoBuilding(TARGET, objs)
