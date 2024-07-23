@@ -15,7 +15,7 @@
 
 #include <armv8.h>
 #include <rtcompiler.h>
-#include <rtdef.h>
+#include <rttypes.h>
 
 #ifdef RT_USING_SMP
 

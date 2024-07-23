@@ -92,7 +92,7 @@
 
 #else /* !__ASSEMBLY__ */
 
-#include <rtdef.h>
+#include <rttypes.h>
 
 typedef struct { rt_uint64_t value[2]; } rt_uint128_t;
 
