@@ -1,8 +1,6 @@
 /**
   **************************************************************************
   * @file     at32f413_rtc.c
-  * @version  v2.0.5
-  * @date     2022-05-20
   * @brief    contains all the functions for the rtc firmware library
   **************************************************************************
   *                       Copyright notice & Disclaimer
@@ -76,7 +74,7 @@ uint32_t rtc_counter_get(void)
 
 /**
   * @brief  rtc divider set
-  * @param  div_value (0x0000_0000 ~ 0xFFFF_FFFF)
+  * @param  div_value (0x0000_0000 ~ 0x000F_FFFF)
   * @retval none
   */
 void rtc_divider_set(uint32_t div_value)
@@ -175,13 +173,38 @@ flag_status rtc_flag_get(uint16_t flag)
 }
 
 /**
+  * @brief  rtc interrupt flag get
+  * @param  flag
+  *         this parameter can be one of the following values:
+  *         - RTC_TS_FLAG: time second flag.
+  *         - RTC_TA_FLAG: time alarm flag.
+  *         - RTC_OVF_FLAG: overflow flag.
+  * @retval state of rtc flag
+  */
+flag_status rtc_interrupt_flag_get(uint16_t flag)
+{
+  flag_status status = RESET;
+
+  if (((RTC->ctrll & flag) != (uint16_t)RESET) && ((RTC->ctrlh & flag) != (uint16_t)RESET))
+  {
+    status = SET;
+  }
+  else
+  {
+    status = RESET;
+  }
+
+  return status;
+}
+
+/**
   * @brief  rtc flag clear
   * @param  interrupt_flag
   *         this parameter can be any combination of the following values:
   *         - RTC_TS_FLAG: time second flag.
   *         - RTC_TA_FLAG: time alarm flag.
   *         - RTC_OVF_FLAG: overflow flag.
-  *         - RTC_CFGF_FLAG: rtc configuration finish flag.
+  *         - RTC_UPDF_FLAG: rtc update finish flag.
   * @retval none
   */
 void rtc_flag_clear(uint16_t flag)

@@ -129,6 +129,44 @@ void at32_msp_spi_init(void *instance)
 }
 #endif /* BSP_USING_SPI */
 
+#ifdef BSP_USING_HARD_I2C
+void at32_msp_i2c_init(void *instance)
+{
+    gpio_init_type gpio_init_struct;
+    i2c_type *i2c_x = (i2c_type *)instance;
+
+    gpio_default_para_init(&gpio_init_struct);
+    gpio_init_struct.gpio_drive_strength = GPIO_DRIVE_STRENGTH_STRONGER;
+#ifdef BSP_USING_HARD_I2C1
+    if(I2C1 == i2c_x)
+    {
+        crm_periph_clock_enable(CRM_I2C1_PERIPH_CLOCK, TRUE);
+        crm_periph_clock_enable(CRM_GPIOB_PERIPH_CLOCK, TRUE);
+
+        gpio_init_struct.gpio_mode = GPIO_MODE_MUX;
+        gpio_init_struct.gpio_out_type = GPIO_OUTPUT_OPEN_DRAIN;
+        gpio_init_struct.gpio_pull = GPIO_PULL_NONE;
+        gpio_init_struct.gpio_pins = GPIO_PINS_6 | GPIO_PINS_7;
+        gpio_init(GPIOB, &gpio_init_struct);
+    }
+#endif
+#ifdef BSP_USING_HARD_I2C2
+    if(I2C2 == i2c_x)
+    {
+        crm_periph_clock_enable(CRM_I2C2_PERIPH_CLOCK, TRUE);
+        crm_periph_clock_enable(CRM_GPIOB_PERIPH_CLOCK, TRUE);
+
+        gpio_init_struct.gpio_mode = GPIO_MODE_MUX;
+        gpio_init_struct.gpio_out_type = GPIO_OUTPUT_OPEN_DRAIN;
+        gpio_init_struct.gpio_pull = GPIO_PULL_NONE;
+        gpio_init_struct.gpio_pins = GPIO_PINS_10 | GPIO_PINS_11;
+        gpio_init(GPIOB, &gpio_init_struct);
+    }
+#endif
+    /* add others */
+}
+#endif /* BSP_USING_HARD_I2C */
+
 #ifdef BSP_USING_SDIO
 void at32_msp_sdio_init(void *instance)
 {

@@ -1,8 +1,6 @@
 /**
   **************************************************************************
   * @file     at32f435_437_def.h
-  * @version  v2.0.8
-  * @date     2022-04-25
   * @brief    at32f435_437 macros header file
   **************************************************************************
   *                       Copyright notice & Disclaimer
@@ -61,6 +59,8 @@ extern "C" {
     #define ALIGNED_TAIL
   #endif
 #endif
+
+#define UNUSED(x)                        (void)x /* to avoid gcc/g++ warnings */
 
 #ifdef __cplusplus
 }

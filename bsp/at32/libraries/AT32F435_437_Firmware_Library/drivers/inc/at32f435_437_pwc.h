@@ -1,8 +1,6 @@
 /**
   **************************************************************************
   * @file     at32f435_437_pwc.h
-  * @version  v2.0.8
-  * @date     2022-04-25
   * @brief    at32f435_437 pwr header file
   **************************************************************************
   *                       Copyright notice & Disclaimer
@@ -60,17 +58,19 @@ extern "C" {
 /**
   * @brief pwc wakeup pin num definition
   */
-#define PWC_WAKEUP_PIN_1                 ((uint32_t)0x00000100) /*!< standby wake-up pin1 */
-#define PWC_WAKEUP_PIN_2                 ((uint32_t)0x00000200) /*!< standby wake-up pin2 */
+#define PWC_WAKEUP_PIN_1                 ((uint32_t)0x00000100) /*!< standby wake-up pin1(pa0) */
+#define PWC_WAKEUP_PIN_2                 ((uint32_t)0x00000200) /*!< standby wake-up pin2(pc13) */
 
 /**
   * @brief  select ldo output voltage.
   * @param  val: set the ldo output voltage.
   *         this parameter can be one of the following values:
-  *         - PWC_LDO_OUTPUT_1V2
-  *         - PWC_LDO_OUTPUT_1V3
-  *         - PWC_LDO_OUTPUT_1V1
-  *         - PWC_LDO_OUTPUT_1V0
+  *         - PWC_LDO_OUTPUT_1V3: system clock up to 288MHz.
+  *         - PWC_LDO_OUTPUT_1V2: system clock up to 240MHz.
+  *         - PWC_LDO_OUTPUT_1V1: system clock up to 192MHz.
+  *         - PWC_LDO_OUTPUT_1V0: system clock up to 144MHz.
+  * @note   useage limited.
+  *         PWC_LDO_OUTPUT_1V3: operation temperature range -40~85 degree, VDD must over 3.0V.
   */
 #define pwc_ldo_output_voltage_set(val)  (PWC->ldoov_bit.ldoovsel = val)
 
@@ -97,8 +97,8 @@ typedef enum
   */
 typedef enum
 {
-  PWC_LDO_OUTPUT_1V2                     = 0x00, /*!< ldo output voltage is 1.2v */
   PWC_LDO_OUTPUT_1V3                     = 0x01, /*!< ldo output voltage is 1.3v */
+  PWC_LDO_OUTPUT_1V2                     = 0x00, /*!< ldo output voltage is 1.2v */
   PWC_LDO_OUTPUT_1V1                     = 0x04, /*!< ldo output voltage is 1.1v */
   PWC_LDO_OUTPUT_1V0                     = 0x05, /*!< ldo output voltage is 1.0v */
 } pwc_ldo_output_voltage_type;

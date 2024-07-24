@@ -1,8 +1,6 @@
 /**
   **************************************************************************
   * @file     at32f415_dma.h
-  * @version  v2.0.5
-  * @date     2022-05-20
   * @brief    at32f415 dma header file
   **************************************************************************
   *                       Copyright notice & Disclaimer
@@ -500,6 +498,7 @@ void dma_data_number_set(dma_channel_type* dmax_channely, uint16_t data_number);
 uint16_t dma_data_number_get(dma_channel_type* dmax_channely);
 void dma_interrupt_enable(dma_channel_type* dmax_channely, uint32_t dma_int, confirm_state new_state);
 flag_status dma_flag_get(uint32_t dmax_flag);
+flag_status dma_interrupt_flag_get(uint32_t dmax_flag);
 void dma_flag_clear(uint32_t dmax_flag);
 
 

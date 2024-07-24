@@ -1,8 +1,6 @@
 /**
   **************************************************************************
   * @file     at32f435_437_usb.c
-  * @version  v2.0.8
-  * @date     2022-04-25
   * @brief    contains all the functions for the usb firmware library
   **************************************************************************
   *                       Copyright notice & Disclaimer
@@ -447,6 +445,7 @@ void usb_read_packet(otg_global_type *usbx, uint8_t *pusr_buf, uint16_t num, uin
   uint32_t n_index;
   uint32_t nhbytes = (nbytes + 3) / 4;
   uint32_t *pbuf = (uint32_t *)pusr_buf;
+  UNUSED(num);
   for(n_index = 0; n_index < nhbytes; n_index ++)
   {
 #if defined (__ICCARM__) && (__VER__ < 7000000)
@@ -1020,11 +1019,10 @@ void usb_hch_halt(otg_global_type *usbx, uint8_t chn)
      usb_chh->hcchar_bit.eptype == EPT_BULK_TYPE)
   {
     usb_chh->hcchar_bit.chdis = TRUE;
-    if((usbx->gnptxsts & 0xFFFF) == 0)
+    if((usbx->gnptxsts_bit.nptxqspcavail) == 0)
     {
       usb_chh->hcchar_bit.chena = FALSE;
       usb_chh->hcchar_bit.chena = TRUE;
-      usb_chh->hcchar_bit.eptdir = 0;
       do
       {
         if(count ++ > 1000)
@@ -1039,11 +1037,10 @@ void usb_hch_halt(otg_global_type *usbx, uint8_t chn)
   else
   {
     usb_chh->hcchar_bit.chdis = TRUE;
-    if((usb_host->hptxsts & 0xFFFF) == 0)
+    if((usb_host->hptxsts_bit.ptxqspcavil) == 0)
     {
       usb_chh->hcchar_bit.chena = FALSE;
       usb_chh->hcchar_bit.chena = TRUE;
-      usb_chh->hcchar_bit.eptdir = 0;
       do
       {
         if(count ++ > 1000)

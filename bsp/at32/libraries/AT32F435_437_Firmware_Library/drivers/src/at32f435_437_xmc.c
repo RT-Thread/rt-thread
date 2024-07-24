@@ -1,8 +1,6 @@
 /**
   **************************************************************************
   * @file     at32f435_437_xmc.c
-  * @version  v2.0.8
-  * @date     2022-04-25
   * @brief    contains all the functions for the xmc firmware library
   **************************************************************************
   *                       Copyright notice & Disclaimer
@@ -224,9 +222,9 @@ void xmc_nor_sram_enable(xmc_nor_sram_subbank_type xmc_subbank, confirm_state ne
   * @param  r2r_timing :read timing
   * @retval none
   */
-void xmc_ext_timing_config(xmc_nor_sram_subbank_type xmc_sub_bank, uint16_t w2w_timing, uint16_t r2r_timing)
+void xmc_ext_timing_config(volatile xmc_nor_sram_subbank_type xmc_sub_bank, uint16_t w2w_timing, uint16_t r2r_timing)
 {
-  XMC_BANK1->ext_bit[xmc_sub_bank].buslatr2r = r2r_timing<<8;
+  XMC_BANK1->ext_bit[xmc_sub_bank].buslatr2r = r2r_timing;
   XMC_BANK1->ext_bit[xmc_sub_bank].buslatw2w = w2w_timing;
 }
 
@@ -721,6 +719,97 @@ flag_status xmc_flag_status_get(xmc_class_bank_type xmc_bank, xmc_interrupt_flag
   else
   {
     status = SET;
+  }
+  /* return the flag status */
+  return status;
+}
+
+/**
+  * @brief  check whether the specified xmc interrupt flag is set or not.
+  * @param  xmc_bank: specifies the xmc bank to be used
+  *         this parameter can be one of the following values:
+  *         - XMC_BANK2_NAND
+  *         - XMC_BANK3_NAND
+  *         - XMC_BANK4_PCCARD
+  * @param  xmc_flag: specifies the flag to check.
+  *         this parameter can be any combination of the following values:
+  *         - XMC_RISINGEDGE_FLAG
+  *         - XMC_LEVEL_FLAG
+  *         - XMC_FALLINGEDGE_FLAG
+  * @retval none
+  */
+flag_status xmc_interrupt_flag_status_get(xmc_class_bank_type xmc_bank, xmc_interrupt_flag_type xmc_flag)
+{
+  flag_status status = RESET;
+
+  if(xmc_bank == XMC_BANK2_NAND)
+  {
+    switch(xmc_flag)
+    {
+      case XMC_RISINGEDGE_FLAG:
+        if(XMC_BANK2->bk2is_bit.reien && XMC_BANK2->bk2is_bit.res)
+          status = SET;
+        break;
+
+      case XMC_LEVEL_FLAG:
+        if(XMC_BANK2->bk2is_bit.feien && XMC_BANK2->bk2is_bit.fes)
+          status = SET;
+        break;
+
+      case XMC_FALLINGEDGE_FLAG:
+        if(XMC_BANK2->bk2is_bit.hlien && XMC_BANK2->bk2is_bit.hls)
+          status = SET;
+        break;
+
+      default:
+        break;
+    }
+  }
+  else if(xmc_bank == XMC_BANK3_NAND)
+  {
+    switch(xmc_flag)
+    {
+      case XMC_RISINGEDGE_FLAG:
+        if(XMC_BANK3->bk3is_bit.reien && XMC_BANK3->bk3is_bit.res)
+          status = SET;
+        break;
+
+      case XMC_LEVEL_FLAG:
+        if(XMC_BANK3->bk3is_bit.feien && XMC_BANK3->bk3is_bit.fes)
+          status = SET;
+        break;
+
+      case XMC_FALLINGEDGE_FLAG:
+        if(XMC_BANK3->bk3is_bit.hlien && XMC_BANK3->bk3is_bit.hls)
+          status = SET;
+        break;
+
+      default:
+        break;
+    }
+  }
+  else if(xmc_bank == XMC_BANK4_PCCARD)
+  {
+    switch(xmc_flag)
+    {
+      case XMC_RISINGEDGE_FLAG:
+        if(XMC_BANK4->bk4is_bit.reien && XMC_BANK4->bk4is_bit.res)
+          status = SET;
+        break;
+
+      case XMC_LEVEL_FLAG:
+        if(XMC_BANK4->bk4is_bit.feien && XMC_BANK4->bk4is_bit.fes)
+          status = SET;
+        break;
+
+      case XMC_FALLINGEDGE_FLAG:
+        if(XMC_BANK4->bk4is_bit.hlien && XMC_BANK4->bk4is_bit.hls)
+          status = SET;
+        break;
+
+      default:
+        break;
+    }
   }
   /* return the flag status */
   return status;

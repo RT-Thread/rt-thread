@@ -1,8 +1,6 @@
 /**
   **************************************************************************
   * @file     at32f435_437_pwc.c
-  * @version  v2.0.8
-  * @date     2022-04-25
   * @brief    contains all the functions for the pwc firmware library
   **************************************************************************
   *                       Copyright notice & Disclaimer
@@ -226,10 +224,13 @@ void pwc_standby_mode_enter(void)
   PWC->ctrl_bit.clswef = TRUE;
   PWC->ctrl_bit.lpsel = TRUE;
   SCB->SCR |= 0x04;
-#if defined (__CC_ARM)
+#if defined (__ARMCC_VERSION)
   __force_stores();
 #endif
-  __WFI();
+  while(1)
+  {
+    __WFI();
+  }
 }
 
 /**

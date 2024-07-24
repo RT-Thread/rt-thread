@@ -1,8 +1,6 @@
 /**
   **************************************************************************
   * @file     system_at32f403a_407.c
-  * @version  v2.0.9
-  * @date     2022-04-25
   * @brief    contains all the functions for cmsis cortex-m4 system source file
   **************************************************************************
   *                       Copyright notice & Disclaimer
@@ -81,12 +79,12 @@ void SystemInit (void)
   /* wait sclk switch status */
   while(CRM->cfg_bit.sclksts != CRM_SCLK_HICK);
 
+  /* reset hexten, hextbyps, cfden and pllen bits */
+  CRM->ctrl &= ~(0x010D0000U);
+
   /* reset cfg register, include sclk switch, ahbdiv, apb1div, apb2div, adcdiv,
      clkout pllrcs, pllhextdiv, pllmult, usbdiv and pllrange bits */
   CRM->cfg = 0;
-
-  /* reset hexten, hextbyps, cfden and pllen bits */
-  CRM->ctrl &= ~(0x010D0000U);
 
   /* reset clkout[3], usbbufs, hickdiv, clkoutdiv */
   CRM->misc1 = 0;

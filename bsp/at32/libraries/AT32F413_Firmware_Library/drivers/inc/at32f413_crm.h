@@ -1,8 +1,6 @@
 /**
   **************************************************************************
   * @file     at32f413_crm.h
-  * @version  v2.0.5
-  * @date     2022-05-20
   * @brief    at32f413 crm header file
   **************************************************************************
   *                       Copyright notice & Disclaimer
@@ -139,7 +137,7 @@ typedef enum
   CRM_CAN1_PERIPH_CLOCK                  = MAKE_VALUE(0x1C, 25), /*!< can1 periph clock */
   CRM_BPR_PERIPH_CLOCK                   = MAKE_VALUE(0x1C, 27), /*!< bpr periph clock */
   CRM_PWC_PERIPH_CLOCK                   = MAKE_VALUE(0x1C, 28), /*!< pwc periph clock */
-  CRM_CAN2_PERIPH_CLOCK                  = MAKE_VALUE(0x1C, 31), /*!< can2 periph clock */
+  CRM_CAN2_PERIPH_CLOCK                  = MAKE_VALUE(0x1C, 31)  /*!< can2 periph clock */
 
 } crm_periph_clock_type;
 
@@ -183,7 +181,7 @@ typedef enum
   CRM_CAN1_PERIPH_RESET                  = MAKE_VALUE(0x10, 25), /*!< can1 periph reset */
   CRM_BPR_PERIPH_RESET                   = MAKE_VALUE(0x10, 27), /*!< bpr periph reset */
   CRM_PWC_PERIPH_RESET                   = MAKE_VALUE(0x10, 28), /*!< pwc periph reset */
-  CRM_CAN2_PERIPH_RESET                  = MAKE_VALUE(0x10, 31), /*!< can2 periph reset */
+  CRM_CAN2_PERIPH_RESET                  = MAKE_VALUE(0x10, 31)  /*!< can2 periph reset */
 
 } crm_periph_reset_type;
 
@@ -851,6 +849,7 @@ void crm_reset(void);
 void crm_lext_bypass(confirm_state new_state);
 void crm_hext_bypass(confirm_state new_state);
 flag_status crm_flag_get(uint32_t flag);
+flag_status crm_interrupt_flag_get(uint32_t flag);
 error_status crm_hext_stable_wait(void);
 void crm_hick_clock_trimming_set(uint8_t trim_value);
 void crm_hick_clock_calibration_set(uint8_t cali_value);

@@ -1,8 +1,6 @@
 /**
   **************************************************************************
   * @file     at32f403a_407_flash.h
-  * @version  v2.0.9
-  * @date     2022-04-25
   * @brief    at32f403a_407 flash header file
   **************************************************************************
   *                       Copyright notice & Disclaimer
@@ -190,7 +188,7 @@ typedef enum
 typedef enum
 {
   FLASH_SPIM_MODEL1                      = 0x01, /*!< spim model 1 */
-  FLASH_SPIM_MODEL2                      = 0x02, /*!< spim model 2 */
+  FLASH_SPIM_MODEL2                      = 0x02  /*!< spim model 2 */
 } flash_spim_model_type;
 
 /**
@@ -700,12 +698,14 @@ uint8_t flash_ssb_status_get(void);
 void flash_interrupt_enable(uint32_t flash_int, confirm_state new_state);
 void flash_spim_model_select(flash_spim_model_type mode);
 void flash_spim_encryption_range_set(uint32_t decode_address);
+void flash_spim_dummy_read(void);
+flash_status_type flash_spim_mass_program(uint32_t address, uint8_t *buf, uint32_t cnt);
 flash_status_type flash_slib_enable(uint32_t pwd, uint16_t start_sector, uint16_t data_start_sector, uint16_t end_sector);
 error_status flash_slib_disable(uint32_t pwd);
 uint32_t flash_slib_remaining_count_get(void);
 flag_status flash_slib_state_get(void);
 uint16_t flash_slib_start_sector_get(void);
-uint16_t flash_slib_datstart_sector_get(void);
+uint16_t flash_slib_datastart_sector_get(void);
 uint16_t flash_slib_end_sector_get(void);
 uint32_t flash_crc_calibrate(uint32_t start_sector, uint32_t sector_cnt);
 

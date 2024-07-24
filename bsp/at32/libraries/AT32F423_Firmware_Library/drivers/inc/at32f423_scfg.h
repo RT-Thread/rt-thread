@@ -54,9 +54,7 @@ extern "C" {
   */
 typedef enum
 {
-  SCFG_IR_SOURCE_TMR10                   = 0x00, /* infrared signal source select tmr10 */
-  SCFG_IR_SOURCE_USART1                  = 0x01, /* infrared signal source select usart1 */
-  SCFG_IR_SOURCE_USART2                  = 0x02  /* infrared signal source select usart2 */
+  SCFG_IR_SOURCE_TMR10                   = 0x00  /* infrared signal source select tmr10 */
 } scfg_ir_source_type;
 
 /**
@@ -277,7 +275,7 @@ typedef struct
 
 void scfg_reset(void);
 void scfg_infrared_config(scfg_ir_source_type source, scfg_ir_polarity_type polarity);
-uint8_t scfg_mem_map_get(void);
+scfg_mem_map_type scfg_mem_map_get(void);
 void scfg_i2s_full_duplex_config(scfg_i2s_type i2s_full_duplex);
 void scfg_pvm_lock_enable(confirm_state new_state);
 void scfg_lockup_enable(confirm_state new_state);

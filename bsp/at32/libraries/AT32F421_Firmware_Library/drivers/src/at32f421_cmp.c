@@ -206,7 +206,7 @@ void cmp_blanking_config(cmp_blanking_type blank_sel)
   *         - CMP_SCAL_BRG_11: vrefint = 1.2v, 3/4 vrefint = 0.9v, 1/2 vrefint = 0.6v, 1/4 vrefint = 0.3v
   * @retval none
   */
-void cmp_scal_brg_config(uint32_t scal_brg)
+void cmp_scal_brg_config(cmp_scal_brg_type scal_brg)
 {
   uint32_t tmp_scal = 0, tmp_brg = 0;
   tmp_scal = scal_brg >> 1;
