@@ -23,4 +23,15 @@
     .cfi_endproc;               \
     .size name, .-name;
 
+.macro GET_THREAD_SELF, dst:req
+#ifdef ARCH_USING_HW_THREAD_SELF
+    mrs     x0, tpidr_el1
+#else  /* !ARCH_USING_HW_THREAD_SELF */
+    bl      rt_thread_self
+#endif /* ARCH_USING_HW_THREAD_SELF */
+    .if \dst != x0
+    mov     dst, x0
+    .endif
+.endm
+
 #endif /* __ASM_GENERIC_H__ */

@@ -125,12 +125,15 @@ lwp_exec_user:
  * since this routine reset the SP, we take it as a start point
  */
 START_POINT(SVC_Handler)
+    mov fp, xzr
+    mov lr, xzr
+
     /* x0 is initial sp */
     mov sp, x0
 
     msr daifclr, #3  /* enable interrupt */
 
-    bl  rt_thread_self
+    GET_THREAD_SELF x0
     bl  lwp_user_setting_save
 
     ldp x8, x9, [sp, #(CONTEXT_OFFSET_X8)]
