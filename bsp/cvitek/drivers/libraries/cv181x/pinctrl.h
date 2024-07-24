@@ -23,7 +23,7 @@
 #define  PAD_MIPI_TXM0__MIPI_TXM0 0
 #define  PAD_MIPI_TXP0__MIPI_TXP0 0
 
-#if defined(ARCH_ARM)
+#if defined(BSP_USING_IOREMAP)
 extern rt_ubase_t pinmux_base_ioremap(void);
 #define PINMUX_BASE pinmux_base_ioremap()
 #else

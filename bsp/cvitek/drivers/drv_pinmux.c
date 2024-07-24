@@ -14,6 +14,7 @@
 #include "mmio.h"
 #include "pinctrl.h"
 #include "drv_pinmux.h"
+#include "drv_ioremap.h"
 
 #define DBG_TAG              "drv.pinmux"
 #define DBG_LVL               DBG_INFO
@@ -476,6 +477,20 @@ const struct fselect pin_selects_array[][8] = {
 
 #error "Unsupported SOC type!"
 
+#endif
+
+#if defined(BSP_USING_IOREMAP)
+static rt_ubase_t pinmux_base = RT_NULL;
+
+rt_ubase_t pinmux_base_ioremap(void)
+{
+    if (pinmux_base == RT_NULL)
+    {
+        pinmux_base = (rt_size_t)DRV_IOREMAP((void*)0x03001000, 0x1000);
+    }
+
+    return pinmux_base;
+}
 #endif
 
 static int8_t pinmux_get_index(uint8_t pin_index, fs_type func_type)
