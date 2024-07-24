@@ -48,7 +48,8 @@ OF SUCH DAMAGE.
 */
 void timer_deinit(uint32_t timer_periph)
 {
-    switch(timer_periph) {
+    switch(timer_periph)
+    {
     case TIMER0:
         /* reset TIMER0 */
         rcu_periph_reset_enable(RCU_TIMER0RST);
@@ -205,14 +206,16 @@ void timer_init(uint32_t timer_periph, timer_parameter_struct *initpara)
     /* configure the counter direction and aligned mode */
     if((TIMER0  == timer_periph) || (TIMER7  == timer_periph) || (TIMER1  == timer_periph) || (TIMER2  == timer_periph) || \
             (TIMER3  == timer_periph) || (TIMER4  == timer_periph) || (TIMER22 == timer_periph) || (TIMER23 == timer_periph) || \
-            (TIMER30 == timer_periph) || (TIMER31 == timer_periph)) {
+            (TIMER30 == timer_periph) || (TIMER31 == timer_periph))
+            {
         TIMER_CTL0(timer_periph) &= (~(uint32_t)(TIMER_CTL0_DIR | TIMER_CTL0_CAM));
         TIMER_CTL0(timer_periph) |= (uint32_t)(initpara->alignedmode & ALIGNEDMODE_MASK);
         TIMER_CTL0(timer_periph) |= (uint32_t)(initpara->counterdirection & COUNTERDIRECTION_MASK);
     }
 
     /* configure the autoreload value */
-    if((TIMER50  == timer_periph) || (TIMER51  == timer_periph)) {
+    if((TIMER50  == timer_periph) || (TIMER51  == timer_periph))
+    {
         TIMER_CARL(timer_periph) = (uint32_t)initpara->period;
         TIMER_CARH(timer_periph) = (uint32_t)(initpara->period >> 32U);
     } else {
@@ -220,7 +223,8 @@ void timer_init(uint32_t timer_periph, timer_parameter_struct *initpara)
     }
 
     /* configure the clock division value */
-    if((TIMER5 != timer_periph) && (TIMER6 != timer_periph) && (TIMER50 != timer_periph) && (TIMER51 != timer_periph)) {
+    if((TIMER5 != timer_periph) && (TIMER6 != timer_periph) && (TIMER50 != timer_periph) && (TIMER51 != timer_periph))
+    {
         /* reset the CKDIV bit */
         TIMER_CTL0(timer_periph) &= (~(uint32_t)TIMER_CTL0_CKDIV);
         TIMER_CTL0(timer_periph) |= (uint32_t)(initpara->clockdivision & CLOCKDIVISION_MASK);
@@ -228,9 +232,11 @@ void timer_init(uint32_t timer_periph, timer_parameter_struct *initpara)
 
     if((TIMER0  == timer_periph) || (TIMER7  == timer_periph) || (TIMER14 == timer_periph) || (TIMER15 == timer_periph) || \
             (TIMER16 == timer_periph) || (TIMER40 == timer_periph) || (TIMER41 == timer_periph) || (TIMER42 == timer_periph) || \
-            (TIMER43 == timer_periph) || (TIMER44 == timer_periph)) {
+            (TIMER43 == timer_periph) || (TIMER44 == timer_periph))
+            {
         /* configure the repetition counter value */
-        if(initpara->repetitioncounter <= 255U) {
+        if(initpara->repetitioncounter <= 255U)
+        {
             TIMER_CFG(timer_periph) &= (~(uint32_t)TIMER_CFG_CREPSEL);
             TIMER_CREP0(timer_periph) = (uint32_t)initpara->repetitioncounter;
         } else {
@@ -364,7 +370,8 @@ void timer_prescaler_config(uint32_t timer_periph, uint16_t prescaler, uint32_t 
 {
     TIMER_PSC(timer_periph) = (uint32_t)prescaler;
 
-    if(TIMER_PSC_RELOAD_NOW == pscreload) {
+    if(TIMER_PSC_RELOAD_NOW == pscreload)
+    {
         TIMER_SWEVG(timer_periph) |= (uint32_t)TIMER_SWEVG_UPG;
     }
 }
@@ -383,10 +390,12 @@ void timer_prescaler_config(uint32_t timer_periph, uint16_t prescaler, uint32_t 
 */
 void timer_repetition_value_config(uint32_t timer_periph, uint16_t ccsel, uint32_t repetition)
 {
-    if(TIMER_CREP0_ENABLE == ccsel) {
+    if(TIMER_CREP0_ENABLE == ccsel)
+    {
         TIMER_CFG(timer_periph) &= (~(uint32_t)TIMER_CFG_CREPSEL);
         TIMER_CREP0(timer_periph) = (uint32_t)repetition;
-    } else if(TIMER_CREP1_ENABLE == ccsel) {
+    } else if(TIMER_CREP1_ENABLE == ccsel)
+    {
         TIMER_CFG(timer_periph) |= (uint32_t)TIMER_CFG_CREPSEL;
         TIMER_CREP1(timer_periph) = (uint32_t)repetition;
     } else {
@@ -417,7 +426,8 @@ uint32_t timer_runtime_repetition_value_read(uint32_t timer_periph)
 void timer_autoreload_value_config(uint32_t timer_periph, uint64_t autoreload)
 {
     /* configure TIMER50/TIMER51 autoreload register value (64-bit) */
-    if((TIMER50 == timer_periph) || (TIMER51 == timer_periph)) {
+    if((TIMER50 == timer_periph) || (TIMER51 == timer_periph))
+    {
         TIMER_CARL(timer_periph) = (uint32_t)autoreload;
         TIMER_CARH(timer_periph) = (uint32_t)(autoreload >> 32U);
     } else {
@@ -438,7 +448,8 @@ uint64_t timer_autoreload_value_read(uint32_t timer_periph)
 {
     uint64_t autoreload = 0U;
     /* read TIMER50/TIMER51 autoreload register value (64-bit) */
-    if((TIMER50 == timer_periph) || (TIMER51 == timer_periph)) {
+    if((TIMER50 == timer_periph) || (TIMER51 == timer_periph))
+    {
         autoreload = (((uint64_t)TIMER_CARH(timer_periph)) << 32U);
         autoreload |= TIMER_CARL(timer_periph);
     } else {
@@ -460,15 +471,18 @@ uint64_t timer_autoreload_value_read(uint32_t timer_periph)
 void timer_counter_value_config(uint32_t timer_periph, uint64_t counter)
 {
     /* configure TIMER50/TIMER51 counter value (64-bit) */
-    if((TIMER50 == timer_periph) || (TIMER51 == timer_periph)) {
+    if((TIMER50 == timer_periph) || (TIMER51 == timer_periph))
+    {
         TIMER_CNTL(timer_periph) = (uint32_t)counter;
         TIMER_CNTH(timer_periph) = (uint32_t)(counter >> 32U);
-        if(TIMER_CTL0(timer_periph) & TIMER_CTL0_UPIFBUEN) {
+        if(TIMER_CTL0(timer_periph) & TIMER_CTL0_UPIFBUEN)
+        {
             TIMER_CNTH(timer_periph) &= (~TIMER_CNT_UPIFBU_MASK);
         }
     } else {
         /* configure other TIMER counter value (32-bit or 16-bit) */
-        if(TIMER_CTL0(timer_periph) & TIMER_CTL0_UPIFBUEN) {
+        if(TIMER_CTL0(timer_periph) & TIMER_CTL0_UPIFBUEN)
+        {
             counter &= (~TIMER_CNT_UPIFBU_MASK);
         }
         TIMER_CNT(timer_periph) = (uint32_t)counter;
@@ -488,9 +502,11 @@ uint64_t timer_counter_read(uint32_t timer_periph)
     uint64_t count_value = 0U;
 
     /* read TIMER50/TIMER51 counter value (64-bit) */
-    if((TIMER50 == timer_periph) || (TIMER51 == timer_periph)) {
+    if((TIMER50 == timer_periph) || (TIMER51 == timer_periph))
+    {
         count_value = (uint64_t)TIMER_CNTH(timer_periph);
-        if((TIMER_CTL0(timer_periph) & TIMER_CTL0_UPIFBUEN)) {
+        if((TIMER_CTL0(timer_periph) & TIMER_CTL0_UPIFBUEN))
+        {
             count_value &= (uint64_t)(~TIMER_CNT_UPIFBU_MASK);
         }
         count_value <<= 32U;
@@ -498,7 +514,8 @@ uint64_t timer_counter_read(uint32_t timer_periph)
     } else {
         /* read other TIMER counter value (32-bit or 16-bit) */
         count_value = (uint64_t)TIMER_CNT(timer_periph);
-        if((TIMER_CTL0(timer_periph) & TIMER_CTL0_UPIFBUEN)) {
+        if((TIMER_CTL0(timer_periph) & TIMER_CTL0_UPIFBUEN))
+        {
             count_value &= (uint64_t)(~TIMER_CNT_UPIFBU_MASK);
         }
     }
@@ -530,9 +547,11 @@ uint16_t timer_prescaler_read(uint32_t timer_periph)
 */
 void timer_single_pulse_mode_config(uint32_t timer_periph, uint32_t spmode)
 {
-    if(TIMER_SP_MODE_SINGLE == spmode) {
+    if(TIMER_SP_MODE_SINGLE == spmode)
+    {
         TIMER_CTL0(timer_periph) |= (uint32_t)TIMER_CTL0_SPM;
-    } else if(TIMER_SP_MODE_REPETITIVE == spmode) {
+    } else if(TIMER_SP_MODE_REPETITIVE == spmode)
+    {
         TIMER_CTL0(timer_periph) &= (~((uint32_t)TIMER_CTL0_SPM));
     } else {
         /* illegal parameters */
@@ -575,8 +594,10 @@ void timer_delayable_single_pulse_mode_config(uint32_t timer_periph, uint16_t ch
     TIMER_CTL0(timer_periph) &= (~(uint32_t)(TIMER_CTL0_DIR | TIMER_CTL0_CAM));
     TIMER_CTL0(timer_periph) |= (uint32_t)(cnt_dir & COUNTERDIRECTION_MASK);
     /* set the CHxCV/MCHxCV */
-    if(TIMER_COUNTER_UP == cnt_dir) {
-        switch(channel) {
+    if(TIMER_COUNTER_UP == cnt_dir)
+    {
+        switch(channel)
+        {
         /* configure TIMER_CH_0 */
         case TIMER_CH_0:
             TIMER_CH0CV(timer_periph) = 0U;
@@ -612,10 +633,12 @@ void timer_delayable_single_pulse_mode_config(uint32_t timer_periph, uint16_t ch
         default:
             break;
         }
-    } else if(TIMER_COUNTER_DOWN == cnt_dir) {
+    } else if(TIMER_COUNTER_DOWN == cnt_dir)
+    {
         /* read the CAR value */
         uint64_t value = timer_autoreload_value_read(timer_periph);
-        switch(channel) {
+        switch(channel)
+        {
         /* configure TIMER_CH_0 */
         case TIMER_CH_0:
             TIMER_CH0CV(timer_periph) = (uint32_t)value;
@@ -669,9 +692,11 @@ void timer_delayable_single_pulse_mode_config(uint32_t timer_periph, uint16_t ch
 */
 void timer_update_source_config(uint32_t timer_periph, uint32_t update)
 {
-    if(TIMER_UPDATE_SRC_REGULAR == update) {
+    if(TIMER_UPDATE_SRC_REGULAR == update)
+    {
         TIMER_CTL0(timer_periph) |= (uint32_t)TIMER_CTL0_UPS;
-    } else if(TIMER_UPDATE_SRC_GLOBAL == update) {
+    } else if(TIMER_UPDATE_SRC_GLOBAL == update)
+    {
         TIMER_CTL0(timer_periph) &= (~(uint32_t)TIMER_CTL0_UPS);
     } else {
         /* illegal parameters */
@@ -738,9 +763,11 @@ void timer_dma_disable(uint32_t timer_periph, uint32_t dma)
 */
 void timer_channel_dma_request_source_select(uint32_t timer_periph, uint32_t dma_request)
 {
-    if(TIMER_DMAREQUEST_UPDATEEVENT == dma_request) {
+    if(TIMER_DMAREQUEST_UPDATEEVENT == dma_request)
+    {
         TIMER_CTL1(timer_periph) |= (uint32_t)TIMER_CTL1_DMAS;
-    } else if(TIMER_DMAREQUEST_CHANNELEVENT == dma_request) {
+    } else if(TIMER_DMAREQUEST_CHANNELEVENT == dma_request)
+    {
         TIMER_CTL1(timer_periph) &= (~(uint32_t)TIMER_CTL1_DMAS);
     } else {
         /* illegal parameters */
@@ -882,7 +909,8 @@ void timer_break_struct_para_init(timer_break_parameter_struct *breakpara)
 */
 void timer_break_config(uint32_t timer_periph, timer_break_parameter_struct *breakpara)
 {
-    if((TIMER0 == timer_periph) || (TIMER7 == timer_periph)) {
+    if((TIMER0 == timer_periph) || (TIMER7 == timer_periph))
+    {
         TIMER_CCHP(timer_periph) = (uint32_t)(((uint32_t)(breakpara->runoffstate)) |
                                               ((uint32_t)(breakpara->ideloffstate)) |
                                               ((uint32_t)(breakpara->deadtime)) |
@@ -899,7 +927,8 @@ void timer_break_config(uint32_t timer_periph, timer_break_parameter_struct *bre
                                               ((uint32_t)(breakpara->break1lock)) |
                                               ((uint32_t)(breakpara->break1release)));
     } else if((TIMER14 == timer_periph) || (TIMER15 == timer_periph) || (TIMER16 == timer_periph) || (TIMER40 == timer_periph) || \
-              (TIMER41 == timer_periph) || (TIMER42 == timer_periph) || (TIMER43 == timer_periph) || (TIMER44 == timer_periph)) {
+              (TIMER41 == timer_periph) || (TIMER42 == timer_periph) || (TIMER43 == timer_periph) || (TIMER44 == timer_periph))
+              {
         TIMER_CCHP(timer_periph) = (uint32_t)(((uint32_t)(breakpara->runoffstate)) |
                                               ((uint32_t)(breakpara->ideloffstate)) |
                                               ((uint32_t)(breakpara->deadtime)) |
@@ -927,9 +956,11 @@ void timer_break_config(uint32_t timer_periph, timer_break_parameter_struct *bre
 */
 void timer_break_enable(uint32_t timer_periph, uint16_t break_num)
 {
-    if(TIMER_BREAK0 == break_num) {
+    if(TIMER_BREAK0 == break_num)
+    {
         TIMER_CCHP(timer_periph) |= (uint32_t)TIMER_CCHP_BRK0EN;
-    } else if(TIMER_BREAK1 == break_num) {
+    } else if(TIMER_BREAK1 == break_num)
+    {
         TIMER_CCHP(timer_periph) |= (uint32_t)TIMER_CCHP_BRK1EN;
     } else {
     }
@@ -947,9 +978,11 @@ void timer_break_enable(uint32_t timer_periph, uint16_t break_num)
 */
 void timer_break_disable(uint32_t timer_periph, uint16_t break_num)
 {
-    if(TIMER_BREAK0 == break_num) {
+    if(TIMER_BREAK0 == break_num)
+    {
         TIMER_CCHP(timer_periph) &= (~(uint32_t)TIMER_CCHP_BRK0EN);
-    } else if(TIMER_BREAK1 == break_num) {
+    } else if(TIMER_BREAK1 == break_num)
+    {
         TIMER_CCHP(timer_periph) &= (~(uint32_t)TIMER_CCHP_BRK1EN);
     } else {
     }
@@ -986,7 +1019,8 @@ void timer_automatic_output_disable(uint32_t timer_periph)
 */
 void timer_primary_output_config(uint32_t timer_periph, ControlStatus newvalue)
 {
-    if(ENABLE == newvalue) {
+    if(ENABLE == newvalue)
+    {
         TIMER_CCHP(timer_periph) |= (uint32_t)TIMER_CCHP_POEN;
     } else {
         TIMER_CCHP(timer_periph) &= (~(uint32_t)TIMER_CCHP_POEN);
@@ -1002,7 +1036,8 @@ void timer_primary_output_config(uint32_t timer_periph, ControlStatus newvalue)
 */
 void timer_channel_control_shadow_config(uint32_t timer_periph, ControlStatus newvalue)
 {
-    if(ENABLE == newvalue) {
+    if(ENABLE == newvalue)
+    {
         TIMER_CTL1(timer_periph) |= (uint32_t)TIMER_CTL1_CCSE;
     } else {
         TIMER_CTL1(timer_periph) &= (~(uint32_t)TIMER_CTL1_CCSE);
@@ -1066,7 +1101,8 @@ void timer_channel_output_struct_para_init(timer_oc_parameter_struct *ocpara)
 */
 void timer_channel_output_config(uint32_t timer_periph, uint16_t channel, timer_oc_parameter_struct *ocpara)
 {
-    switch(channel) {
+    switch(channel)
+    {
     /* configure TIMER_CH_0 */
     case TIMER_CH_0:
         /* reset the CH0EN bit */
@@ -1080,7 +1116,8 @@ void timer_channel_output_config(uint32_t timer_periph, uint16_t channel, timer_
 
         if((TIMER0  == timer_periph) || (TIMER7  == timer_periph) || (TIMER14 == timer_periph) || (TIMER15 == timer_periph) || \
                 (TIMER16 == timer_periph) || (TIMER40 == timer_periph) || (TIMER41 == timer_periph) || (TIMER42 == timer_periph) || \
-                (TIMER43 == timer_periph) || (TIMER44 == timer_periph)) {
+                (TIMER43 == timer_periph) || (TIMER44 == timer_periph))
+                {
 
             /* reset the MCH0EN bit */
             TIMER_CHCTL2(timer_periph) &= (~(uint32_t)TIMER_CHCTL2_MCH0EN);
@@ -1115,7 +1152,8 @@ void timer_channel_output_config(uint32_t timer_periph, uint16_t channel, timer_
         /* set the CH1P bit */
         TIMER_CHCTL2(timer_periph) |= ((uint32_t)(ocpara->ocpolarity) << 4U);
 
-        if((TIMER0 == timer_periph) || (TIMER7 == timer_periph)) {
+        if((TIMER0 == timer_periph) || (TIMER7 == timer_periph))
+        {
             /* reset the MCH1EN bit */
             TIMER_CHCTL2(timer_periph) &= (~(uint32_t)TIMER_CHCTL2_MCH1EN);
             /* set the MCH1EN bit */
@@ -1135,7 +1173,8 @@ void timer_channel_output_config(uint32_t timer_periph, uint16_t channel, timer_
         }
 
         if((TIMER14 == timer_periph) || (TIMER40 == timer_periph) || (TIMER41 == timer_periph) || (TIMER42 == timer_periph) || \
-                (TIMER43 == timer_periph) || (TIMER44 == timer_periph)) {
+                (TIMER43 == timer_periph) || (TIMER44 == timer_periph))
+                {
             /* reset the ISO1 bit */
             TIMER_CTL1(timer_periph) &= (~(uint32_t)TIMER_CTL1_ISO1);
             /* set the ISO1 bit */
@@ -1155,7 +1194,8 @@ void timer_channel_output_config(uint32_t timer_periph, uint16_t channel, timer_
         /* set the CH2P bit */
         TIMER_CHCTL2(timer_periph) |= ((uint32_t)(ocpara->ocpolarity) << 8U);
 
-        if((TIMER0 == timer_periph) || (TIMER7 == timer_periph)) {
+        if((TIMER0 == timer_periph) || (TIMER7 == timer_periph))
+        {
             /* reset the MCH2EN bit */
             TIMER_CHCTL2(timer_periph) &= (~(uint32_t)TIMER_CHCTL2_MCH2EN);
             /* set the MCH2EN bit */
@@ -1186,7 +1226,8 @@ void timer_channel_output_config(uint32_t timer_periph, uint16_t channel, timer_
         /* set the CH3P bit */
         TIMER_CHCTL2(timer_periph) |= ((uint32_t)(ocpara->ocpolarity) << 12U);
 
-        if((TIMER0 == timer_periph) || (TIMER7 == timer_periph)) {
+        if((TIMER0 == timer_periph) || (TIMER7 == timer_periph))
+        {
             /* reset the MCH3EN bit */
             TIMER_CHCTL2(timer_periph) &= (~(uint32_t)TIMER_CHCTL2_MCH3EN);
             /* set the MCH3EN bit */
@@ -1241,7 +1282,8 @@ void timer_channel_output_config(uint32_t timer_periph, uint16_t channel, timer_
 */
 void timer_channel_output_mode_config(uint32_t timer_periph, uint16_t channel, uint32_t ocmode)
 {
-    switch(channel) {
+    switch(channel)
+    {
     /* configure TIMER_CH_0 */
     case TIMER_CH_0:
         TIMER_CHCTL0(timer_periph) &= (~(uint32_t)TIMER_CHCTL0_CH0COMCTL);
@@ -1306,7 +1348,8 @@ void timer_channel_output_mode_config(uint32_t timer_periph, uint16_t channel, u
 */
 void timer_channel_output_pulse_value_config(uint32_t timer_periph, uint16_t channel, uint32_t pulse)
 {
-    switch(channel) {
+    switch(channel)
+    {
     /* configure TIMER_CH_0 */
     case TIMER_CH_0:
         TIMER_CH0CV(timer_periph) = (uint32_t)pulse;
@@ -1368,7 +1411,8 @@ void timer_channel_output_pulse_value_config(uint32_t timer_periph, uint16_t cha
 */
 void timer_channel_output_shadow_config(uint32_t timer_periph, uint16_t channel, uint16_t ocshadow)
 {
-    switch(channel) {
+    switch(channel)
+    {
     /* configure TIMER_CH_0 */
     case TIMER_CH_0:
         TIMER_CHCTL0(timer_periph) &= (~(uint32_t)TIMER_CHCTL0_CH0COMSEN);
@@ -1438,7 +1482,8 @@ void timer_channel_output_shadow_config(uint32_t timer_periph, uint16_t channel,
 */
 void timer_channel_output_clear_config(uint32_t timer_periph, uint16_t channel, uint16_t occlear)
 {
-    switch(channel) {
+    switch(channel)
+    {
     /* configure TIMER_CH_0 */
     case TIMER_CH_0:
         TIMER_CHCTL0(timer_periph) &= (~(uint32_t)TIMER_CHCTL0_CH0COMCEN);
@@ -1508,7 +1553,8 @@ void timer_channel_output_clear_config(uint32_t timer_periph, uint16_t channel, 
 */
 void timer_channel_output_polarity_config(uint32_t timer_periph, uint16_t channel, uint16_t ocpolarity)
 {
-    switch(channel) {
+    switch(channel)
+    {
     /* configure TIMER_CH_0 */
     case TIMER_CH_0:
         TIMER_CHCTL2(timer_periph) &= (~(uint32_t)TIMER_CHCTL2_CH0P);
@@ -1572,7 +1618,8 @@ void timer_channel_output_polarity_config(uint32_t timer_periph, uint16_t channe
 */
 void timer_channel_complementary_output_polarity_config(uint32_t timer_periph, uint16_t channel, uint16_t ocnpolarity)
 {
-    switch(channel) {
+    switch(channel)
+    {
     /* configure TIMER_CH_0 */
     case TIMER_CH_0:
         TIMER_CHCTL2(timer_periph) &= (~(uint32_t)TIMER_CHCTL2_MCH0P);
@@ -1622,7 +1669,8 @@ void timer_channel_complementary_output_polarity_config(uint32_t timer_periph, u
 */
 void timer_channel_output_state_config(uint32_t timer_periph, uint16_t channel, uint32_t state)
 {
-    switch(channel) {
+    switch(channel)
+    {
     /* configure TIMER_CH_0 */
     case TIMER_CH_0:
         TIMER_CHCTL2(timer_periph) &= (~(uint32_t)TIMER_CHCTL2_CH0EN);
@@ -1686,7 +1734,8 @@ void timer_channel_output_state_config(uint32_t timer_periph, uint16_t channel, 
 */
 void timer_channel_complementary_output_state_config(uint32_t timer_periph, uint16_t channel, uint16_t ocnstate)
 {
-    switch(channel) {
+    switch(channel)
+    {
     /* configure TIMER_CH_0 */
     case TIMER_CH_0:
         TIMER_CHCTL2(timer_periph) &= (~(uint32_t)TIMER_CHCTL2_MCH0EN);
@@ -1750,7 +1799,8 @@ void timer_channel_input_struct_para_init(timer_ic_parameter_struct *icpara)
 */
 void timer_input_capture_config(uint32_t timer_periph, uint16_t channel, timer_ic_parameter_struct *icpara)
 {
-    switch(channel) {
+    switch(channel)
+    {
     /* configure TIMER_CH_0 */
     case TIMER_CH_0:
         /* reset the CH0EN bit */
@@ -1762,7 +1812,8 @@ void timer_input_capture_config(uint32_t timer_periph, uint16_t channel, timer_i
 
         /* reset the CH0MS bit */
         TIMER_CHCTL0(timer_periph) &= (~(uint32_t)TIMER_CHCTL0_CH0MS);
-        if(TIMER_IC_SELECTION_PAIR == icpara->icselection) {
+        if(TIMER_IC_SELECTION_PAIR == icpara->icselection)
+        {
             TIMER_CHCTL0(timer_periph) |= (uint32_t)icpara->icselection << 28U;
         } else {
             TIMER_CHCTL0(timer_periph) |= ((uint32_t)icpara->icselection);
@@ -1787,7 +1838,8 @@ void timer_input_capture_config(uint32_t timer_periph, uint16_t channel, timer_i
 
         /* reset the CH1MS bit */
         TIMER_CHCTL0(timer_periph) &= (~(uint32_t)TIMER_CHCTL0_CH1MS);
-        if(TIMER_IC_SELECTION_PAIR == icpara->icselection) {
+        if(TIMER_IC_SELECTION_PAIR == icpara->icselection)
+        {
             TIMER_CHCTL0(timer_periph) |= ((uint32_t)icpara->icselection) << 29U;
         } else {
             TIMER_CHCTL0(timer_periph) |= (uint32_t)(icpara->icselection) << 8U;
@@ -1812,7 +1864,8 @@ void timer_input_capture_config(uint32_t timer_periph, uint16_t channel, timer_i
 
         /* reset the CH2MS bit */
         TIMER_CHCTL1(timer_periph) &= (~(uint32_t)TIMER_CHCTL1_CH2MS);
-        if(TIMER_IC_SELECTION_PAIR == icpara->icselection) {
+        if(TIMER_IC_SELECTION_PAIR == icpara->icselection)
+        {
             TIMER_CHCTL1(timer_periph) |= ((uint32_t)icpara->icselection << 28U);
         } else {
             TIMER_CHCTL1(timer_periph) |= ((uint32_t)(icpara->icselection));
@@ -1837,7 +1890,8 @@ void timer_input_capture_config(uint32_t timer_periph, uint16_t channel, timer_i
 
         /* reset the CH3MS bit */
         TIMER_CHCTL1(timer_periph) &= (~(uint32_t)TIMER_CHCTL1_CH3MS);
-        if(TIMER_IC_SELECTION_PAIR == icpara->icselection) {
+        if(TIMER_IC_SELECTION_PAIR == icpara->icselection)
+        {
             TIMER_CHCTL1(timer_periph) |= ((uint32_t)icpara->icselection << 29U);
         } else {
             TIMER_CHCTL1(timer_periph) |= ((uint32_t)(icpara->icselection) << 8U);
@@ -1858,7 +1912,8 @@ void timer_input_capture_config(uint32_t timer_periph, uint16_t channel, timer_i
 
         /* reset the MCH0FP bits */
         TIMER_MCHCTL2(timer_periph) &= (~(uint32_t)(TIMER_MCHCTL2_MCH0FP));
-        switch(icpara->icpolarity) {
+        switch(icpara->icpolarity)
+        {
         case TIMER_IC_POLARITY_RISING:
             TIMER_MCHCTL2(timer_periph) |= TIMER_IMC_POLARITY_RISING;
             break;
@@ -1874,7 +1929,8 @@ void timer_input_capture_config(uint32_t timer_periph, uint16_t channel, timer_i
 
         /* reset the MCH0MS bit */
         TIMER_MCHCTL0(timer_periph) &= (~(uint32_t)TIMER_MCHCTL0_MCH0MS);
-        if(TIMER_IC_SELECTION_PAIR == icpara->icselection) {
+        if(TIMER_IC_SELECTION_PAIR == icpara->icselection)
+        {
             TIMER_MCHCTL0(timer_periph) |= ((uint32_t)icpara->icselection << 28U);
         } else {
             TIMER_MCHCTL0(timer_periph) |= (uint32_t)(icpara->icselection);
@@ -1895,7 +1951,8 @@ void timer_input_capture_config(uint32_t timer_periph, uint16_t channel, timer_i
 
         /* reset the MCH1FP bits */
         TIMER_MCHCTL2(timer_periph) &= (~(uint32_t)(TIMER_MCHCTL2_MCH1FP));
-        switch(icpara->icpolarity) {
+        switch(icpara->icpolarity)
+        {
         case TIMER_IC_POLARITY_RISING:
             TIMER_MCHCTL2(timer_periph) |= (uint32_t)TIMER_IMC_POLARITY_RISING << 2U;
             break;
@@ -1911,7 +1968,8 @@ void timer_input_capture_config(uint32_t timer_periph, uint16_t channel, timer_i
 
         /* reset the MCH1MS bit */
         TIMER_MCHCTL0(timer_periph) &= (~(uint32_t)TIMER_MCHCTL0_MCH1MS);
-        if(TIMER_IC_SELECTION_PAIR == icpara->icselection) {
+        if(TIMER_IC_SELECTION_PAIR == icpara->icselection)
+        {
             TIMER_MCHCTL0(timer_periph) |= ((uint32_t)icpara->icselection << 29U);
         } else {
             TIMER_MCHCTL0(timer_periph) |= ((uint32_t)(icpara->icselection) << 8U);
@@ -1932,7 +1990,8 @@ void timer_input_capture_config(uint32_t timer_periph, uint16_t channel, timer_i
 
         /* reset the MCH2FP bits */
         TIMER_MCHCTL2(timer_periph) &= (~(uint32_t)(TIMER_MCHCTL2_MCH2FP));
-        switch(icpara->icpolarity) {
+        switch(icpara->icpolarity)
+        {
         case TIMER_IC_POLARITY_RISING:
             TIMER_MCHCTL2(timer_periph) |= (uint32_t)TIMER_IMC_POLARITY_RISING << 4U;
             break;
@@ -1948,7 +2007,8 @@ void timer_input_capture_config(uint32_t timer_periph, uint16_t channel, timer_i
 
         /* reset the MCH2MS bit */
         TIMER_MCHCTL1(timer_periph) &= (~(uint32_t)TIMER_MCHCTL1_MCH2MS);
-        if(TIMER_IC_SELECTION_PAIR == icpara->icselection) {
+        if(TIMER_IC_SELECTION_PAIR == icpara->icselection)
+        {
             TIMER_MCHCTL1(timer_periph) |= ((uint32_t)icpara->icselection << 28U);
         } else {
             TIMER_MCHCTL1(timer_periph) |= ((uint32_t)(icpara->icselection));
@@ -1969,7 +2029,8 @@ void timer_input_capture_config(uint32_t timer_periph, uint16_t channel, timer_i
 
         /* reset the MCH3FP bits */
         TIMER_MCHCTL2(timer_periph) &= (~(uint32_t)(TIMER_MCHCTL2_MCH3FP));
-        switch(icpara->icpolarity) {
+        switch(icpara->icpolarity)
+        {
         case TIMER_IC_POLARITY_RISING:
             TIMER_MCHCTL2(timer_periph) |= (uint32_t)TIMER_IMC_POLARITY_RISING << 6U;
             break;
@@ -1985,7 +2046,8 @@ void timer_input_capture_config(uint32_t timer_periph, uint16_t channel, timer_i
 
         /* reset the MCH3MS bit */
         TIMER_MCHCTL1(timer_periph) &= (~(uint32_t)TIMER_MCHCTL1_MCH3MS);
-        if(TIMER_IC_SELECTION_PAIR == icpara->icselection) {
+        if(TIMER_IC_SELECTION_PAIR == icpara->icselection)
+        {
             TIMER_MCHCTL1(timer_periph) |= ((uint32_t)icpara->icselection << 29U);
         } else {
             TIMER_MCHCTL1(timer_periph) |= ((uint32_t)(icpara->icselection) << 8U);
@@ -2030,7 +2092,8 @@ void timer_input_capture_config(uint32_t timer_periph, uint16_t channel, timer_i
 */
 void timer_channel_input_capture_prescaler_config(uint32_t timer_periph, uint16_t channel, uint16_t prescaler)
 {
-    switch(channel) {
+    switch(channel)
+    {
     /* configure TIMER_CH_0 */
     case TIMER_CH_0:
         TIMER_CHCTL0(timer_periph) &= (~(uint32_t)TIMER_CHCTL0_CH0CAPPSC);
@@ -2096,7 +2159,8 @@ uint32_t timer_channel_capture_value_register_read(uint32_t timer_periph, uint16
 {
     uint32_t count_value = 0U;
 
-    switch(channel) {
+    switch(channel)
+    {
     case TIMER_CH_0:
         /* read TIMER_CH_0 capture compare register value */
         count_value = TIMER_CH0CV(timer_periph);
@@ -2156,19 +2220,22 @@ void timer_input_pwm_capture_config(uint32_t timer_periph, uint16_t channel, tim
     uint16_t icselection = 0U;
 
     /* set channel input polarity */
-    if(TIMER_IC_POLARITY_RISING == icpwm->icpolarity) {
+    if(TIMER_IC_POLARITY_RISING == icpwm->icpolarity)
+    {
         icpolarity = TIMER_IC_POLARITY_FALLING;
     } else {
         icpolarity = TIMER_IC_POLARITY_RISING;
     }
     /* set channel input mode selection */
-    if(TIMER_IC_SELECTION_DIRECTTI == icpwm->icselection) {
+    if(TIMER_IC_SELECTION_DIRECTTI == icpwm->icselection)
+    {
         icselection = TIMER_IC_SELECTION_INDIRECTTI;
     } else {
         icselection = TIMER_IC_SELECTION_DIRECTTI;
     }
 
-    if(TIMER_CH_0 == channel) {
+    if(TIMER_CH_0 == channel)
+    {
         /* reset the CH0EN bit */
         TIMER_CHCTL2(timer_periph) &= (~(uint32_t)TIMER_CHCTL2_CH0EN);
         /* reset the CH0P and MCH0P bits */
@@ -2259,9 +2326,11 @@ void timer_input_pwm_capture_config(uint32_t timer_periph, uint16_t channel, tim
 */
 void timer_hall_mode_config(uint32_t timer_periph, uint32_t hallmode)
 {
-    if(TIMER_HALLINTERFACE_ENABLE == hallmode) {
+    if(TIMER_HALLINTERFACE_ENABLE == hallmode)
+    {
         TIMER_CTL1(timer_periph) |= (uint32_t)TIMER_CTL1_TI0S;
-    } else if(TIMER_HALLINTERFACE_DISABLE == hallmode) {
+    } else if(TIMER_HALLINTERFACE_DISABLE == hallmode)
+    {
         TIMER_CTL1(timer_periph) &= (~(uint32_t)TIMER_CTL1_TI0S);
     } else {
         /* illegal parameters */
@@ -2300,7 +2369,8 @@ void timer_multi_mode_channel_output_parameter_struct_init(timer_omc_parameter_s
 */
 void timer_multi_mode_channel_output_config(uint32_t timer_periph, uint16_t channel, timer_omc_parameter_struct *omcpara)
 {
-    switch(channel) {
+    switch(channel)
+    {
     /* configure TIMER_MCH_0 */
     case TIMER_MCH_0:
         TIMER_CTL2(timer_periph) &= (~(uint32_t)((uint32_t)TIMER_MCH_MODE_MASK << 20U));
@@ -2432,7 +2502,8 @@ void timer_input_trigger_source_select(uint32_t timer_periph, uint32_t intrigger
     uint8_t i = 0U;
     uint32_t TIMERxCFG0_value, TIMERxCFG1_value, TIMERxCFG2_value;
 
-    switch(timer_periph){
+    switch(timer_periph)
+    {
     case TIMER0:
         TIMERx_temp = SYSCFG_TIMER0;
         break;
@@ -2492,33 +2563,44 @@ void timer_input_trigger_source_select(uint32_t timer_periph, uint32_t intrigger
     /* read SYSCFG_TIMERCFG2 register value */
     TIMERxCFG2_value = SYSCFG_TIMERCFG2(TIMERx_temp) & 0x001F0000U;
 
-    if((0U == TIMERxCFG0_value)&&(0U == TIMERxCFG1_value)&&(0U == TIMERxCFG2_value)){
+    if((0U == TIMERxCFG0_value)&&(0U == TIMERxCFG1_value)&&(0U == TIMERxCFG2_value))
+    {
         TIMERxCFG_temp = (BITS(16, 20) & ((uint32_t)(intrigger) << 16U));
         TIMERxCFG_addr = &SYSCFG_TIMERCFG2(TIMERx_temp);
     }else{
-        if((SYSCFG_TIMERCFG0(TIMERx_temp) & 0x7FFF7FFFU) != 0U){
-            for(i = 0U; i < 3U; i++){
-                if((SYSCFG_TIMERCFG0(TIMERx_temp) & (BITS(0,4) << (i * 5U))) != 0U){
+        if((SYSCFG_TIMERCFG0(TIMERx_temp) & 0x7FFF7FFFU) != 0U)
+        {
+            for(i = 0U; i < 3U; i++)
+            {
+                if((SYSCFG_TIMERCFG0(TIMERx_temp) & (BITS(0,4) << (i * 5U))) != 0U)
+                {
                     TIMERxCFG_temp = ((BITS(0, 4)<< (i * 5U)) & ((uint32_t)(intrigger) << (i * 5U)));
                     break;
                 }
             }
-            for(i = 3U; i < 6U; i++){
-                if((SYSCFG_TIMERCFG0(TIMERx_temp) & (BITS(0,4) << ((i * 5U)+1U))) != 0U){
+            for(i = 3U; i < 6U; i++)
+            {
+                if((SYSCFG_TIMERCFG0(TIMERx_temp) & (BITS(0,4) << ((i * 5U)+1U))) != 0U)
+                {
                     TIMERxCFG_temp = ((BITS(0, 4)<< ((i * 5U)+1U)) & ((uint32_t)(intrigger) << ((i * 5U)+1U)));
                     break;
                 }
             }
             TIMERxCFG_addr = &SYSCFG_TIMERCFG0(TIMERx_temp);
-        }else if((SYSCFG_TIMERCFG1(TIMERx_temp) & 0x001F7FFFU) != 0U){
-            for(i = 6U; i < 10U; i++){
-                if(i < 9U){
-                    if((SYSCFG_TIMERCFG1(TIMERx_temp) & (BITS(0,4) << ((i-6U)*5U))) != 0U){
+        }else if((SYSCFG_TIMERCFG1(TIMERx_temp) & 0x001F7FFFU) != 0U)
+        {
+            for(i = 6U; i < 10U; i++)
+            {
+                if(i < 9U)
+                {
+                    if((SYSCFG_TIMERCFG1(TIMERx_temp) & (BITS(0,4) << ((i-6U)*5U))) != 0U)
+                    {
                         TIMERxCFG_temp = ((BITS(0, 4)<< ((i-6U)*5U)) & ((uint32_t)(intrigger) << ((i-6U)*5U)));
                         break;
                     }
                 }else{
-                    if((SYSCFG_TIMERCFG1(TIMERx_temp) & (BITS(0,4) << ((i-6U)*5U+1U))) != 0U){
+                    if((SYSCFG_TIMERCFG1(TIMERx_temp) & (BITS(0,4) << ((i-6U)*5U+1U))) != 0U)
+                    {
                         TIMERxCFG_temp = ((BITS(0, 4)<< ((i-6U)*5U+1U)) & ((uint32_t)(intrigger) << ((i-6U)*5U+1U)));
                     }
                 }
@@ -2612,7 +2694,8 @@ void timer_slave_mode_select(uint32_t timer_periph, uint32_t slavemode)
     uint8_t i = 0U;
     uint32_t TIMERxCFG0_value, TIMERxCFG1_value, TIMERxCFG2_value;
 
-    switch(timer_periph){
+    switch(timer_periph)
+    {
     case TIMER0:
         TIMERx_temp = SYSCFG_TIMER0;
         break;
@@ -2664,10 +2747,12 @@ void timer_slave_mode_select(uint32_t timer_periph, uint32_t slavemode)
     default:
           break;
     }
-    
-    if(slavemode <= 5U){
+
+    if(slavemode <= 5U)
+    {
         TIMERxCFG_addr = &SYSCFG_TIMERCFG0(TIMERx_temp);
-    }else if((slavemode >= 6U)&&(slavemode <= 9U)){
+    }else if((slavemode >= 6U)&&(slavemode <= 9U))
+    {
         TIMERxCFG_addr = &SYSCFG_TIMERCFG1(TIMERx_temp);
     }else{
         TIMERxCFG_addr = &SYSCFG_TIMERCFG2(TIMERx_temp);
@@ -2679,45 +2764,60 @@ void timer_slave_mode_select(uint32_t timer_periph, uint32_t slavemode)
     TIMERxCFG1_value = SYSCFG_TIMERCFG1(TIMERx_temp) & 0x001F7FFFU;
     /* read SYSCFG_TIMERCFG2 register value */
     TIMERxCFG2_value = SYSCFG_TIMERCFG2(TIMERx_temp) & 0x001F0000U;
-    
-    if((0U == TIMERxCFG0_value)&&(0U == TIMERxCFG1_value)&&(0U == TIMERxCFG2_value)){
-        if(slavemode <= 2U){
+
+    if((0U == TIMERxCFG0_value)&&(0U == TIMERxCFG1_value)&&(0U == TIMERxCFG2_value))
+    {
+        if(slavemode <= 2U)
+        {
             TIMERxCFG_temp = (uint32_t)0x1F << (slavemode * 5U);
-        }else if((slavemode <= 5U)&&(slavemode >= 3U)){
+        }else if((slavemode <= 5U)&&(slavemode >= 3U))
+        {
             TIMERxCFG_temp = (uint32_t)0x1F << ((slavemode * 5U) + 1U);
-        }else if((slavemode <= 8U)&&(slavemode >= 6U)){
+        }else if((slavemode <= 8U)&&(slavemode >= 6U))
+        {
             TIMERxCFG_temp = (uint32_t)0x1F << ((slavemode-6U) * 5U);
-        }else if(slavemode == 9U){
+        }else if(slavemode == 9U)
+        {
             TIMERxCFG_temp = (uint32_t)0x1F << (((slavemode-6U) * 5U) + 1U);
         }else{
             TIMERxCFG_temp = (uint32_t)0x1F << (((slavemode-12U) * 5U) + 1U);
         }
     }else{
-        if((SYSCFG_TIMERCFG0(TIMERx_temp) & 0x7FFF7FFFU) != 0U){
-            for(i = 0U; i < 3U; i++){
-                if((SYSCFG_TIMERCFG0(TIMERx_temp) & (BITS(0,4) << (i * 5U))) != 0U){
+        if((SYSCFG_TIMERCFG0(TIMERx_temp) & 0x7FFF7FFFU) != 0U)
+        {
+            for(i = 0U; i < 3U; i++)
+            {
+                if((SYSCFG_TIMERCFG0(TIMERx_temp) & (BITS(0,4) << (i * 5U))) != 0U)
+                {
                     trigger_temp = (SYSCFG_TIMERCFG0(TIMERx_temp) & (BITS(0,4) << (i * 5U))) >> (i * 5U);
                     SYSCFG_TIMERCFG0(TIMERx_temp)=0U;
                     break;
                 }
             }
-            for(i = 3U; i < 6U; i++){
-                if((SYSCFG_TIMERCFG0(TIMERx_temp) & (BITS(0,4) << ((i * 5U)+1U))) != 0U){
+            for(i = 3U; i < 6U; i++)
+            {
+                if((SYSCFG_TIMERCFG0(TIMERx_temp) & (BITS(0,4) << ((i * 5U)+1U))) != 0U)
+                {
                     trigger_temp = (SYSCFG_TIMERCFG0(TIMERx_temp) & (BITS(0,4) << ((i * 5U)+1U))) >> ((i * 5U)+1U);
                     SYSCFG_TIMERCFG0(TIMERx_temp)=0U;
                     break;
                 }
             }
-        }else if((SYSCFG_TIMERCFG1(TIMERx_temp) & 0x001F7FFFU) != 0U){
-            for(i = 6U; i < 10U; i++){
-                if(i < 9U){
-                    if((SYSCFG_TIMERCFG1(TIMERx_temp) & (BITS(0,4) << ((i-6U)*5U))) != 0U){
+        }else if((SYSCFG_TIMERCFG1(TIMERx_temp) & 0x001F7FFFU) != 0U)
+        {
+            for(i = 6U; i < 10U; i++)
+            {
+                if(i < 9U)
+                {
+                    if((SYSCFG_TIMERCFG1(TIMERx_temp) & (BITS(0,4) << ((i-6U)*5U))) != 0U)
+                    {
                         trigger_temp = (SYSCFG_TIMERCFG1(TIMERx_temp) & (BITS(0,4) << ((i-6U) * 5U))) >> ((i-6U) * 5U);
                         SYSCFG_TIMERCFG1(TIMERx_temp)=0U;
                         break;
                     }
                 }else{
-                    if((SYSCFG_TIMERCFG1(TIMERx_temp) & (BITS(0,4) << ((i-6U)*5U+1U))) != 0U){ 
+                    if((SYSCFG_TIMERCFG1(TIMERx_temp) & (BITS(0,4) << ((i-6U)*5U+1U))) != 0U)
+                    {
                         trigger_temp = (SYSCFG_TIMERCFG1(TIMERx_temp) & (BITS(0,4) << ((i-6U)*5U+1U))) >> ((i-6U)*5U+1U);
                         SYSCFG_TIMERCFG1(TIMERx_temp)=0U;
                     }
@@ -2727,14 +2827,18 @@ void timer_slave_mode_select(uint32_t timer_periph, uint32_t slavemode)
             trigger_temp = (SYSCFG_TIMERCFG2(TIMERx_temp) & (BITS(0,4) << 16U)) >> 16U;
             SYSCFG_TIMERCFG2(TIMERx_temp)=0U;
         }
-        
-        if(slavemode <= 2U){
+
+        if(slavemode <= 2U)
+        {
             TIMERxCFG_temp = trigger_temp << (slavemode * 5U);
-        }else if((slavemode <= 5U)&&(slavemode >= 3U)){
+        }else if((slavemode <= 5U)&&(slavemode >= 3U))
+        {
             TIMERxCFG_temp = trigger_temp << ((slavemode * 5U) + 1U);
-        }else if((slavemode <= 8U)&&(slavemode >= 6U)){
+        }else if((slavemode <= 8U)&&(slavemode >= 6U))
+        {
             TIMERxCFG_temp = trigger_temp << ((slavemode-6U) * 5U);
-        }else if(slavemode == 9U){
+        }else if(slavemode == 9U)
+        {
             TIMERxCFG_temp = trigger_temp << (((slavemode-6U) * 5U) + 1U);
         }else{
             TIMERxCFG_temp = trigger_temp << (((slavemode-12U) * 5U) + 1U);
@@ -2755,9 +2859,11 @@ void timer_slave_mode_select(uint32_t timer_periph, uint32_t slavemode)
 */
 void timer_master_slave_mode_config(uint32_t timer_periph, uint32_t masterslave)
 {
-    if(TIMER_MASTER_SLAVE_MODE_ENABLE == masterslave) {
+    if(TIMER_MASTER_SLAVE_MODE_ENABLE == masterslave)
+    {
         TIMER_SMCFG(timer_periph) |= (uint32_t)TIMER_SMCFG_MSM;
-    } else if(TIMER_MASTER_SLAVE_MODE_DISABLE == masterslave) {
+    } else if(TIMER_MASTER_SLAVE_MODE_DISABLE == masterslave)
+    {
         TIMER_SMCFG(timer_periph) &= (~(uint32_t)TIMER_SMCFG_MSM);
     } else {
         /* illegal parameters */
@@ -2915,7 +3021,8 @@ void timer_internal_trigger_as_external_clock_config(uint32_t timer_periph, uint
 */
 void timer_external_trigger_as_external_clock_config(uint32_t timer_periph, uint32_t extrigger, uint16_t extpolarity, uint32_t extfilter)
 {
-    if(TIMER_SMCFG_TRGSEL_CI1FE1 == extrigger) {
+    if(TIMER_SMCFG_TRGSEL_CI1FE1 == extrigger)
+    {
         /* reset the CH1EN bit */
         TIMER_CHCTL2(timer_periph) &= (~(uint32_t)TIMER_CHCTL2_CH1EN);
         /* reset the CH1P and MCH1P bits */
@@ -2932,7 +3039,8 @@ void timer_external_trigger_as_external_clock_config(uint32_t timer_periph, uint
         TIMER_CHCTL0(timer_periph) |= (uint32_t)(extfilter << 12U);
         /* set the CH1EN bit */
         TIMER_CHCTL2(timer_periph) |= (uint32_t)TIMER_CHCTL2_CH1EN;
-    } else if(TIMER_SMCFG_TRGSEL_CI2FE2 == extrigger) {
+    } else if(TIMER_SMCFG_TRGSEL_CI2FE2 == extrigger)
+    {
         /* reset the CH2EN bit */
         TIMER_CHCTL2(timer_periph) &= (~(uint32_t)TIMER_CHCTL2_CH2EN);
         /* reset the CH2P and MCH2P bits */
@@ -2949,7 +3057,8 @@ void timer_external_trigger_as_external_clock_config(uint32_t timer_periph, uint
         TIMER_CHCTL1(timer_periph) |= (uint32_t)(extfilter << 4U);
         /* set the CH2EN bit */
         TIMER_CHCTL2(timer_periph) |= (uint32_t)TIMER_CHCTL2_CH2EN;
-    } else if(TIMER_SMCFG_TRGSEL_CI3FE3 == extrigger) {
+    } else if(TIMER_SMCFG_TRGSEL_CI3FE3 == extrigger)
+    {
         /* reset the CH3EN bit */
         TIMER_CHCTL2(timer_periph) &= (~(uint32_t)TIMER_CHCTL2_CH3EN);
         /* reset the CH3P and MCH3P bits */
@@ -2966,15 +3075,18 @@ void timer_external_trigger_as_external_clock_config(uint32_t timer_periph, uint
         TIMER_CHCTL1(timer_periph) |= (uint32_t)(extfilter << 12U);
         /* set the CH3EN bit */
         TIMER_CHCTL2(timer_periph) |= (uint32_t)TIMER_CHCTL2_CH3EN;
-    } else if(TIMER_SMCFG_TRGSEL_MCI0FEM0 == extrigger) {
+    } else if(TIMER_SMCFG_TRGSEL_MCI0FEM0 == extrigger)
+    {
         /* reset the MCH0EN bit */
         TIMER_CHCTL2(timer_periph) &= (~(uint32_t)TIMER_CHCTL2_MCH0EN);
         /* reset the MCH0FP bit */
         TIMER_MCHCTL2(timer_periph) &= (~(uint32_t)TIMER_MCHCTL2_MCH0FP);
         /* set the MCH0FP bit */
-        if(TIMER_IC_POLARITY_RISING == extpolarity) {
+        if(TIMER_IC_POLARITY_RISING == extpolarity)
+        {
             TIMER_MCHCTL2(timer_periph) |= (uint32_t)TIMER_IMC_POLARITY_RISING;
-        } else if(TIMER_IC_POLARITY_FALLING == extpolarity) {
+        } else if(TIMER_IC_POLARITY_FALLING == extpolarity)
+        {
             TIMER_MCHCTL2(timer_periph) |= (uint32_t)TIMER_IMC_POLARITY_FALLING;
         } else {
             TIMER_MCHCTL2(timer_periph) |= (uint32_t)TIMER_IMC_POLARITY_BOTH_EDGE;
@@ -2989,15 +3101,18 @@ void timer_external_trigger_as_external_clock_config(uint32_t timer_periph, uint
         TIMER_MCHCTL0(timer_periph) |= (uint32_t)(extfilter << 4U);
         /* set the MCH0EN bit */
         TIMER_CHCTL2(timer_periph) |= (uint32_t)TIMER_CHCTL2_MCH0EN;
-    } else if(TIMER_SMCFG_TRGSEL_MCI1FEM1 == extrigger) {
+    } else if(TIMER_SMCFG_TRGSEL_MCI1FEM1 == extrigger)
+    {
         /* reset the MCH1EN bit */
         TIMER_CHCTL2(timer_periph) &= (~(uint32_t)TIMER_CHCTL2_MCH1EN);
         /* reset the MCH1FP bit */
         TIMER_MCHCTL2(timer_periph) &= (~(uint32_t)TIMER_MCHCTL2_MCH1FP);
         /* set the MCH1FP bit */
-        if(TIMER_IC_POLARITY_RISING == extpolarity) {
+        if(TIMER_IC_POLARITY_RISING == extpolarity)
+        {
             TIMER_MCHCTL2(timer_periph) |= (uint32_t)TIMER_IMC_POLARITY_RISING << 2U;
-        } else if(TIMER_IC_POLARITY_FALLING == extpolarity) {
+        } else if(TIMER_IC_POLARITY_FALLING == extpolarity)
+        {
             TIMER_MCHCTL2(timer_periph) |= (uint32_t)TIMER_IMC_POLARITY_FALLING << 2U;
         } else {
             TIMER_MCHCTL2(timer_periph) |= (uint32_t)TIMER_IMC_POLARITY_BOTH_EDGE << 2U;
@@ -3012,15 +3127,18 @@ void timer_external_trigger_as_external_clock_config(uint32_t timer_periph, uint
         TIMER_MCHCTL0(timer_periph) |= (uint32_t)(extfilter << 12U);
         /* set the MCH1EN bit */
         TIMER_CHCTL2(timer_periph) |= (uint32_t)TIMER_CHCTL2_MCH1EN;
-    } else if(TIMER_SMCFG_TRGSEL_MCI2FEM2 == extrigger) {
+    } else if(TIMER_SMCFG_TRGSEL_MCI2FEM2 == extrigger)
+    {
         /* reset the MCH2EN bit */
         TIMER_CHCTL2(timer_periph) &= (~(uint32_t)TIMER_CHCTL2_MCH2EN);
         /* reset the MCH2FP bit */
         TIMER_MCHCTL2(timer_periph) &= (~(uint32_t)TIMER_MCHCTL2_MCH2FP);
         /* set the MCH2FP bit */
-        if(TIMER_IC_POLARITY_RISING == extpolarity) {
+        if(TIMER_IC_POLARITY_RISING == extpolarity)
+        {
             TIMER_MCHCTL2(timer_periph) |= (uint32_t)TIMER_IMC_POLARITY_RISING << 4U;
-        } else if(TIMER_IC_POLARITY_FALLING == extpolarity) {
+        } else if(TIMER_IC_POLARITY_FALLING == extpolarity)
+        {
             TIMER_MCHCTL2(timer_periph) |= (uint32_t)TIMER_IMC_POLARITY_FALLING << 4U;
         } else {
             TIMER_MCHCTL2(timer_periph) |= (uint32_t)TIMER_IMC_POLARITY_BOTH_EDGE << 4U;
@@ -3035,15 +3153,18 @@ void timer_external_trigger_as_external_clock_config(uint32_t timer_periph, uint
         TIMER_MCHCTL1(timer_periph) |= (uint32_t)(extfilter << 4U);
         /* set the MCH2EN bit */
         TIMER_CHCTL2(timer_periph) |= (uint32_t)TIMER_CHCTL2_MCH2EN;
-    } else if(TIMER_SMCFG_TRGSEL_MCI3FEM3 == extrigger) {
+    } else if(TIMER_SMCFG_TRGSEL_MCI3FEM3 == extrigger)
+    {
         /* reset the MCH3EN bit */
         TIMER_CHCTL2(timer_periph) &= (~(uint32_t)TIMER_CHCTL2_MCH3EN);
         /* reset the MCH3FP bit */
         TIMER_MCHCTL2(timer_periph) &= (~(uint32_t)TIMER_MCHCTL2_MCH3FP);
         /* set the MCH3FP bit */
-        if(TIMER_IC_POLARITY_RISING == extpolarity) {
+        if(TIMER_IC_POLARITY_RISING == extpolarity)
+        {
             TIMER_MCHCTL2(timer_periph) |= (uint32_t)TIMER_IMC_POLARITY_RISING << 6U;
-        } else if(TIMER_IC_POLARITY_FALLING == extpolarity) {
+        } else if(TIMER_IC_POLARITY_FALLING == extpolarity)
+        {
             TIMER_MCHCTL2(timer_periph) |= (uint32_t)TIMER_IMC_POLARITY_FALLING << 6U;
         } else {
             TIMER_MCHCTL2(timer_periph) |= (uint32_t)TIMER_IMC_POLARITY_BOTH_EDGE << 6U;
@@ -3157,9 +3278,11 @@ void timer_external_clock_mode1_disable(uint32_t timer_periph)
 */
 void timer_write_chxval_register_config(uint32_t timer_periph, uint16_t ccsel)
 {
-    if(TIMER_CHVSEL_ENABLE == ccsel) {
+    if(TIMER_CHVSEL_ENABLE == ccsel)
+    {
         TIMER_CFG(timer_periph) |= (uint32_t)TIMER_CFG_CHVSEL;
-    } else if(TIMER_CHVSEL_DISABLE == ccsel) {
+    } else if(TIMER_CHVSEL_DISABLE == ccsel)
+    {
         TIMER_CFG(timer_periph) &= (~(uint32_t)TIMER_CFG_CHVSEL);
     } else {
         /* illegal parameters */
@@ -3178,9 +3301,11 @@ void timer_write_chxval_register_config(uint32_t timer_periph, uint16_t ccsel)
 */
 void timer_output_value_selection_config(uint32_t timer_periph, uint16_t outsel)
 {
-    if(TIMER_OUTSEL_ENABLE == outsel) {
+    if(TIMER_OUTSEL_ENABLE == outsel)
+    {
         TIMER_CFG(timer_periph) |= (uint32_t)TIMER_CFG_OUTSEL;
-    } else if(TIMER_OUTSEL_DISABLE == outsel) {
+    } else if(TIMER_OUTSEL_DISABLE == outsel)
+    {
         TIMER_CFG(timer_periph) &= (~(uint32_t)TIMER_CFG_OUTSEL);
     } else {
         /* illegal parameters */
@@ -3199,9 +3324,11 @@ void timer_output_value_selection_config(uint32_t timer_periph, uint16_t outsel)
 */
 void timer_commutation_control_shadow_register_config(uint32_t timer_periph, uint16_t ccssel)
 {
-    if(TIMER_CCUSEL_ENABLE == ccssel) {
+    if(TIMER_CCUSEL_ENABLE == ccssel)
+    {
         TIMER_CFG(timer_periph) |= (uint32_t)TIMER_CFG_CCUSEL;
-    } else if(TIMER_CCUSEL_DISABLE == ccssel) {
+    } else if(TIMER_CCUSEL_DISABLE == ccssel)
+    {
         TIMER_CFG(timer_periph) &= (~(uint32_t)TIMER_CFG_CCUSEL);
     } else {
         /* illegal parameters */
@@ -3231,7 +3358,8 @@ void timer_output_match_pulse_select(uint32_t timer_periph, uint32_t channel, ui
     uint32_t reg;
     reg  = TIMER_CTL2(timer_periph);
 
-    switch(channel) {
+    switch(channel)
+    {
     /* configure TIMER_CH_0 */
     case TIMER_CH_0:
         reg &= (~(uint32_t)((uint32_t)TIMER_PULSE_OUTPUT_MASK << 8U));
@@ -3273,7 +3401,8 @@ void timer_output_match_pulse_select(uint32_t timer_periph, uint32_t channel, ui
 */
 void timer_channel_composite_pwm_mode_config(uint32_t timer_periph, uint32_t channel, ControlStatus newvalue)
 {
-    if(ENABLE == newvalue) {
+    if(ENABLE == newvalue)
+    {
         TIMER_CTL2(timer_periph) |= (uint32_t)(TIMER_CTL2_CH0CPWMEN << channel);
     } else {
         TIMER_CTL2(timer_periph) &= (~(uint32_t)(TIMER_CTL2_CH0CPWMEN << channel));
@@ -3296,7 +3425,8 @@ void timer_channel_composite_pwm_mode_config(uint32_t timer_periph, uint32_t cha
 */
 void timer_channel_composite_pwm_mode_output_pulse_value_config(uint32_t timer_periph, uint32_t channel, uint32_t pulse, uint32_t add_pulse)
 {
-    switch(channel) {
+    switch(channel)
+    {
     /* configure TIMER_CH_0 */
     case TIMER_CH_0:
         TIMER_CH0CV(timer_periph) = (uint32_t)pulse;
@@ -3337,7 +3467,8 @@ void timer_channel_composite_pwm_mode_output_pulse_value_config(uint32_t timer_p
 */
 void timer_channel_additional_compare_value_config(uint32_t timer_periph, uint16_t channel, uint32_t value)
 {
-    switch(channel) {
+    switch(channel)
+    {
     /* configure TIMER_CH_0 */
     case TIMER_CH_0:
         TIMER_CH0COMV_ADD(timer_periph) = (uint32_t)value;
@@ -3377,7 +3508,8 @@ void timer_channel_additional_compare_value_config(uint32_t timer_periph, uint16
 */
 void timer_channel_additional_output_shadow_config(uint32_t timer_periph, uint16_t channel, uint16_t aocshadow)
 {
-    switch(channel) {
+    switch(channel)
+    {
     /* configure TIMER_CH_0 */
     case TIMER_CH_0:
         TIMER_CHCTL0(timer_periph) &= (~(uint32_t)TIMER_CHCTL0_CH0COMADDSEN);
@@ -3418,7 +3550,8 @@ void timer_channel_additional_output_shadow_config(uint32_t timer_periph, uint16
 uint32_t timer_channel_additional_compare_value_read(uint32_t timer_periph, uint16_t channel)
 {
     uint32_t value = 0U;
-    switch(channel) {
+    switch(channel)
+    {
     case TIMER_CH_0:
         /* read CH0COMV_ADD value */
         value = TIMER_CH0COMV_ADD(timer_periph);
@@ -3462,18 +3595,23 @@ uint32_t timer_channel_additional_compare_value_read(uint32_t timer_periph, uint
 */
 void timer_break_external_source_config(uint32_t timer_periph, uint16_t break_num, uint32_t break_src, ControlStatus newvalue)
 {
-    if(ENABLE == newvalue) {
-        if(TIMER_BREAK0 == break_num) {
+    if(ENABLE == newvalue)
+    {
+        if(TIMER_BREAK0 == break_num)
+        {
             TIMER_AFCTL0(timer_periph) |= break_src;
-        } else if(TIMER_BREAK1 == break_num) {
+        } else if(TIMER_BREAK1 == break_num)
+        {
             TIMER_AFCTL1(timer_periph) |= break_src;
         } else {
             /* illegal parameters */
         }
     } else {
-        if(TIMER_BREAK0 == break_num) {
+        if(TIMER_BREAK0 == break_num)
+        {
             TIMER_AFCTL0(timer_periph) &= (~break_src);
-        } else if(TIMER_BREAK1 == break_num) {
+        } else if(TIMER_BREAK1 == break_num)
+        {
             TIMER_AFCTL1(timer_periph) &= (~break_src);
         } else {
             /* illegal parameters */
@@ -3504,8 +3642,10 @@ void timer_break_external_source_config(uint32_t timer_periph, uint16_t break_nu
 */
 void timer_break_external_polarity_config(uint32_t timer_periph, uint16_t break_num, uint32_t break_src, uint16_t bkinpolarity)
 {
-    if(TIMER_BREAK0 == break_num) {
-        switch(break_src) {
+    if(TIMER_BREAK0 == break_num)
+    {
+        switch(break_src)
+        {
         case TIMER_BRKIN0:
             TIMER_AFCTL0(timer_periph) &= (~(uint32_t)TIMER_BRKIN0P);
             TIMER_AFCTL0(timer_periph) |= ((uint32_t)bkinpolarity << 16U);
@@ -3530,7 +3670,8 @@ void timer_break_external_polarity_config(uint32_t timer_periph, uint16_t break_
             break;
         }
     } else {
-        switch(break_src) {
+        switch(break_src)
+        {
         case TIMER_BRKIN0:
             TIMER_AFCTL1(timer_periph) &= (~(uint32_t)TIMER_BRKIN0P);
             TIMER_AFCTL1(timer_periph) |= ((uint32_t)bkinpolarity << 16U);
@@ -3570,14 +3711,17 @@ void timer_break_external_polarity_config(uint32_t timer_periph, uint16_t break_
 */
 void timer_break_lock_config(uint32_t timer_periph, uint16_t break_num, ControlStatus newvalue)
 {
-    if(ENABLE == newvalue) {
-        if(TIMER_BREAK0 == break_num) {
+    if(ENABLE == newvalue)
+    {
+        if(TIMER_BREAK0 == break_num)
+        {
             TIMER_CCHP(timer_periph) |= (uint32_t)TIMER_CCHP_BRK0LK;
         } else {
             TIMER_CCHP(timer_periph) |= (uint32_t)TIMER_CCHP_BRK1LK;
         }
     } else {
-        if(TIMER_BREAK0 == break_num) {
+        if(TIMER_BREAK0 == break_num)
+        {
             TIMER_CCHP(timer_periph) &= (~(uint32_t)TIMER_CCHP_BRK0LK);
         } else {
             TIMER_CCHP(timer_periph) &= (~(uint32_t)TIMER_CCHP_BRK1LK);
@@ -3598,14 +3742,17 @@ void timer_break_lock_config(uint32_t timer_periph, uint16_t break_num, ControlS
 */
 void timer_break_lock_release_config(uint32_t timer_periph, uint16_t break_num, ControlStatus newvalue)
 {
-    if(ENABLE == newvalue) {
-        if(TIMER_BREAK0 == break_num) {
+    if(ENABLE == newvalue)
+    {
+        if(TIMER_BREAK0 == break_num)
+        {
             TIMER_CCHP(timer_periph) |= (uint32_t)TIMER_CCHP_BRK0REL;
         } else {
             TIMER_CCHP(timer_periph) |= (uint32_t)TIMER_CCHP_BRK1REL;
         }
     } else {
-        if(TIMER_BREAK0 == break_num) {
+        if(TIMER_BREAK0 == break_num)
+        {
             TIMER_CCHP(timer_periph) &= (~(uint32_t)TIMER_CCHP_BRK0REL);
         } else {
             TIMER_CCHP(timer_periph) &= (~(uint32_t)TIMER_CCHP_BRK1REL);
@@ -3628,7 +3775,8 @@ void timer_break_lock_release_config(uint32_t timer_periph, uint16_t break_num, 
 */
 void timer_channel_break_control_config(uint32_t timer_periph, uint32_t channel, ControlStatus newvalue)
 {
-    if(ENABLE == newvalue) {
+    if(ENABLE == newvalue)
+    {
         TIMER_CTL2(timer_periph) |= (uint32_t)(TIMER_CTL2_BRKENCH0 << channel);
     } else {
         TIMER_CTL2(timer_periph) &= (~(uint32_t)(TIMER_CTL2_BRKENCH0 << channel));
@@ -3650,7 +3798,8 @@ void timer_channel_break_control_config(uint32_t timer_periph, uint32_t channel,
 */
 void timer_channel_dead_time_config(uint32_t timer_periph, uint32_t channel, ControlStatus newvalue)
 {
-    if(ENABLE == newvalue) {
+    if(ENABLE == newvalue)
+    {
         TIMER_CTL2(timer_periph) |= (uint32_t)(TIMER_CTL2_DTIENCH0 << channel);
     } else {
         TIMER_CTL2(timer_periph) &= (~(uint32_t)(TIMER_CTL2_DTIENCH0 << channel));
@@ -3691,7 +3840,8 @@ void timer_free_complementary_struct_para_init(timer_free_complementary_paramete
 */
 void timer_channel_free_complementary_config(uint32_t timer_periph, uint16_t channel, timer_free_complementary_parameter_struct *fcpara)
 {
-    switch(channel) {
+    switch(channel)
+    {
     case TIMER_CH_0:
         TIMER_FCCHP0(timer_periph) &= (~(uint32_t)(TIMER_FCCHP0_DTCFG | TIMER_FCCHP0_IOS | TIMER_FCCHP0_ROS | TIMER_FCCHP0_FCCHP0EN));
         TIMER_FCCHP0(timer_periph) |= fcpara->deadtime;
@@ -3757,7 +3907,8 @@ uint32_t timer_watchdog_value_read(uint32_t timer_periph)
 */
 void timer_decoder_disconnection_detection_config(uint32_t timer_periph, ControlStatus newvalue)
 {
-    if(ENABLE == newvalue) {
+    if(ENABLE == newvalue)
+    {
         TIMER_CTL2(timer_periph) |= TIMER_DECDISCONNECTDEN;
     } else {
         TIMER_CTL2(timer_periph) &= (~TIMER_DECDISCONNECTDEN);
@@ -3773,7 +3924,8 @@ void timer_decoder_disconnection_detection_config(uint32_t timer_periph, Control
 */
 void timer_decoder_jump_detection_config(uint32_t timer_periph, ControlStatus newvalue)
 {
-    if(ENABLE == newvalue) {
+    if(ENABLE == newvalue)
+    {
         TIMER_CTL2(timer_periph) |= TIMER_DECJUMPDEN;
     } else {
         TIMER_CTL2(timer_periph) &= (~TIMER_DECJUMPDEN);
@@ -3789,7 +3941,8 @@ void timer_decoder_jump_detection_config(uint32_t timer_periph, ControlStatus ne
 */
 void timer_upif_backup_config(uint32_t timer_periph, ControlStatus newvalue)
 {
-    if(ENABLE == newvalue) {
+    if(ENABLE == newvalue)
+    {
         TIMER_CTL0(timer_periph) |= (uint32_t)TIMER_CTL0_UPIFBUEN;
     } else {
         TIMER_CTL0(timer_periph) &= (~(uint32_t)TIMER_CTL0_UPIFBUEN);
@@ -3807,15 +3960,19 @@ void timer_upif_backup_config(uint32_t timer_periph, ControlStatus newvalue)
 */
 UPIFBUStatus timer_upifbu_bit_get(uint32_t timer_periph)
 {
-    if((TIMER_CTL0(timer_periph) & TIMER_CTL0_UPIFBUEN)) {
-        if((TIMER50 == timer_periph) || (TIMER51 == timer_periph)) {
-            if(TIMER_CNTH(timer_periph) & TIMER_CNT_UPIFBU) {
+    if((TIMER_CTL0(timer_periph) & TIMER_CTL0_UPIFBUEN))
+    {
+        if((TIMER50 == timer_periph) || (TIMER51 == timer_periph))
+        {
+            if(TIMER_CNTH(timer_periph) & TIMER_CNT_UPIFBU)
+            {
                 return VALID_SET;
             } else {
                 return VALID_RESET;
             }
         } else {
-            if(TIMER_CNT(timer_periph) & TIMER_CNT_UPIFBU) {
+            if(TIMER_CNT(timer_periph) & TIMER_CNT_UPIFBU)
+            {
                 return VALID_SET;
             } else {
                 return VALID_RESET;
@@ -3864,7 +4021,8 @@ UPIFBUStatus timer_upifbu_bit_get(uint32_t timer_periph)
 */
 FlagStatus timer_flag_get(uint32_t timer_periph, uint32_t flag)
 {
-    if(RESET != (TIMER_INTF(timer_periph) & flag)) {
+    if(RESET != (TIMER_INTF(timer_periph) & flag))
+    {
         return SET;
     } else {
         return RESET;
@@ -4006,15 +4164,18 @@ FlagStatus timer_interrupt_flag_get(uint32_t timer_periph, uint32_t int_flag)
 {
     uint32_t val;
 
-    if(TIMER_INT_FLAG_BRK1 == int_flag) {
+    if(TIMER_INT_FLAG_BRK1 == int_flag)
+    {
         val = (TIMER_DMAINTEN(timer_periph) & TIMER_DMAINTEN_BRKIE);
-    } else if(TIMER_INT_FLAG_SYSB == int_flag) {
+    } else if(TIMER_INT_FLAG_SYSB == int_flag)
+    {
         val = (TIMER_DMAINTEN(timer_periph) & TIMER_DMAINTEN_BRKIE);
     } else {
         val = (TIMER_DMAINTEN(timer_periph) & int_flag);
     }
 
-    if((RESET != (TIMER_INTF(timer_periph) & int_flag)) && (RESET != val)) {
+    if((RESET != (TIMER_INTF(timer_periph) & int_flag)) && (RESET != val))
+    {
         return SET;
     } else {
         return RESET;

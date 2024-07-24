@@ -50,7 +50,8 @@ DSTATUS disk_initialize(BYTE drv)
 {
     usb_core_driver *udev = (usb_core_driver *)usb_host_msc.data;
 
-    if(udev->host.connect_status) {
+    if(udev->host.connect_status)
+    {
         state &= ~STA_NOINIT;
     }
 
@@ -65,7 +66,8 @@ DSTATUS disk_initialize(BYTE drv)
 */
 DSTATUS disk_status(BYTE drv)
 {
-    if(drv) {
+    if(drv)
+    {
         return STA_NOINIT; /* supports only single drive */
     }
 
@@ -86,25 +88,30 @@ DRESULT disk_read(BYTE drv, BYTE *buff, DWORD sector, UINT count)
     BYTE status = USBH_OK;
     usb_core_driver *udev = (usb_core_driver *)usb_host_msc.data;
 
-    if(drv || (!count)) {
+    if(drv || (!count))
+    {
         return RES_PARERR;
     }
 
-    if(state & STA_NOINIT) {
+    if(state & STA_NOINIT)
+    {
         return RES_NOTRDY;
     }
 
-    if(udev->host.connect_status) {
+    if(udev->host.connect_status)
+    {
         do {
             status = usbh_msc_read(&usb_host_msc, drv, sector, buff, count);
 
-            if(!udev->host.connect_status) {
+            if(!udev->host.connect_status)
+            {
                 return RES_ERROR;
             }
         } while(status == USBH_BUSY);
     }
 
-    if(status == USBH_OK) {
+    if(status == USBH_OK)
+    {
         return RES_OK;
     }
 
@@ -127,29 +134,35 @@ DRESULT disk_write(BYTE drv, const BYTE *buff, DWORD sector, UINT count)
     BYTE status = USBH_OK;
     usb_core_driver *udev = (usb_core_driver *)usb_host_msc.data;
 
-    if((!count) || drv) {
+    if((!count) || drv)
+    {
         return RES_PARERR;
     }
 
-    if(state & STA_NOINIT) {
+    if(state & STA_NOINIT)
+    {
         return RES_NOTRDY;
     }
 
-    if(state & STA_PROTECT) {
+    if(state & STA_PROTECT)
+    {
         return RES_WRPRT;
     }
 
-    if(udev->host.connect_status) {
+    if(udev->host.connect_status)
+    {
         do {
             status = usbh_msc_write(&usb_host_msc, drv, sector, (BYTE *)buff, count);
 
-            if(!udev->host.connect_status) {
+            if(!udev->host.connect_status)
+            {
                 return RES_ERROR;
             }
         } while(status == USBH_BUSY);
     }
 
-    if(status == USBH_OK) {
+    if(status == USBH_OK)
+    {
         return RES_OK;
     }
 
@@ -171,17 +184,20 @@ DRESULT disk_ioctl(BYTE drv, BYTE ctrl, void *buff)
     DRESULT res = RES_OK;
     msc_lun info;
 
-    if(drv) {
+    if(drv)
+    {
         return RES_PARERR;
     }
 
     res = RES_ERROR;
 
-    if(state & STA_NOINIT) {
+    if(state & STA_NOINIT)
+    {
         return RES_NOTRDY;
     }
 
-    switch(ctrl) {
+    switch(ctrl)
+    {
     /* make sure that no pending write process */
     case CTRL_SYNC:
         res = RES_OK;
@@ -189,7 +205,8 @@ DRESULT disk_ioctl(BYTE drv, BYTE ctrl, void *buff)
 
     /* get number of sectors on the disk (dword) */
     case GET_SECTOR_COUNT:
-        if(USBH_OK == usbh_msc_lun_info_get(&usb_host_msc, drv, &info)) {
+        if(USBH_OK == usbh_msc_lun_info_get(&usb_host_msc, drv, &info))
+        {
             *(DWORD *)buff = (DWORD)info.capacity.block_nbr;
             res = RES_OK;
         }
@@ -197,7 +214,8 @@ DRESULT disk_ioctl(BYTE drv, BYTE ctrl, void *buff)
 
     /* get r/w sector size (word) */
     case GET_SECTOR_SIZE:
-        if(USBH_OK == usbh_msc_lun_info_get(&usb_host_msc, drv, &info)) {
+        if(USBH_OK == usbh_msc_lun_info_get(&usb_host_msc, drv, &info))
+        {
             *(WORD *)buff = (DWORD)info.capacity.block_size;
             res = RES_OK;
         }

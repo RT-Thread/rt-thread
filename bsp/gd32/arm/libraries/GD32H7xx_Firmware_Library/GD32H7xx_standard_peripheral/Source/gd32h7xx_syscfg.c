@@ -133,7 +133,8 @@ void syscfg_enet_phy_interface_config(uint32_t ethernet, uint32_t phy_interface)
     /* read the value of SYSCFG_PMCFG register */
     reg = SYSCFG_PMCFG;
     /* configure the ENET media interface */
-    if(ENET0 == ethernet) {
+    if(ENET0 == ethernet)
+    {
         reg &= ~SYSCFG_PMCFG_ENET0_PHY_SEL;
         reg |= ENET0_MEDIA_INTERFACE(phy_interface);
     } else {
@@ -160,7 +161,8 @@ void syscfg_exti_line_config(uint8_t exti_port, uint8_t exti_pin)
     uint32_t clear_exti_mask = ~((uint32_t)EXTI_SS_MASK << (EXTI_SS_MSTEP(exti_pin)));
     uint32_t config_exti_mask = ((uint32_t)exti_port) << (EXTI_SS_MSTEP(exti_pin));
 
-    switch(exti_pin / EXTI_SS_JSTEP) {
+    switch(exti_pin / EXTI_SS_JSTEP)
+    {
     case EXTISS0:
         /* clear EXTI source line(0..3) */
         SYSCFG_EXTISS0 &= clear_exti_mask;
@@ -351,7 +353,8 @@ void syscfg_timer_input_source_select(timer_channel_input_enum timer_input)
     uint32_t clear_timer_mask = ~((uint32_t)TIMER_IS_MASK << (TIMER_BIT_POS(timer_input)));
     uint32_t config_timer_mask = (TIMER_SEL_VAL(timer_input) << TIMER_BIT_POS(timer_input));
 
-    switch(TIMER_REG_INDEX(timer_input)) {
+    switch(TIMER_REG_INDEX(timer_input))
+    {
     case TIMERCISEL0:
         /* clear TIMER channel input select */
         SYSCFG_TIMERCISEL0 &= clear_timer_mask;
@@ -454,7 +457,8 @@ void syscfg_pnmos_compensation_code_set(uint32_t mos, uint32_t code)
 {
     uint32_t value;
     value = SYSCFG_CPSCCCFG;
-    if(NMOS_COMPENSATION == mos) {
+    if(NMOS_COMPENSATION == mos)
+    {
         value &= ~SYSCFG_CPSCCCFG_NCPSCC;
         value |= (code & 0x0FU);
     } else {
@@ -579,7 +583,8 @@ void syscfg_fpu_interrupt_disable(uint32_t fpu_int)
 */
 FlagStatus syscfg_compensation_flag_get(uint32_t cps_flag)
 {
-    if(SYSCFG_CPSCTL & cps_flag) {
+    if(SYSCFG_CPSCTL & cps_flag)
+    {
         return SET;
     } else {
         return RESET;
@@ -602,10 +607,12 @@ FlagStatus syscfg_compensation_flag_get(uint32_t cps_flag)
 uint32_t syscfg_cpu_cache_status_get(uint32_t cache, uint32_t status)
 {
     uint32_t value = 0U;
-    switch(cache) {
+    switch(cache)
+    {
     /* get ICACHE information */
     case ICACHE_STATUS:
-        if(CPU_CACHE_ERROR_DETECTION == status) {
+        if(CPU_CACHE_ERROR_DETECTION == status)
+        {
             /* return detection information */
             value = (uint32_t)((SYSCFG_CPUICAC & SYSCFG_CPUICAC_CPU_ICDET) >> 28U);
         } else {
@@ -615,7 +622,8 @@ uint32_t syscfg_cpu_cache_status_get(uint32_t cache, uint32_t status)
         break;
     /* get DCACHE information */
     case DCACHE_STATUS:
-        if(CPU_CACHE_ERROR_DETECTION == status) {
+        if(CPU_CACHE_ERROR_DETECTION == status)
+        {
             /* return detection information */
             value = (uint32_t)((SYSCFG_CPUDCAC & SYSCFG_CPUICAC_CPU_ICDET) >> 28U);
         } else {

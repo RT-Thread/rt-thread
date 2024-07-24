@@ -205,7 +205,8 @@ int32_t lpdts_temperature_get(void)
     reg_cfg = LPDTS_CFG;
 
     /* get the module frequency on Hz */
-    if((reg_cfg & LPDTS_CFG_REFSEL) == LPDTS_CFG_REFSEL) {
+    if((reg_cfg & LPDTS_CFG_REFSEL) == LPDTS_CFG_REFSEL)
+    {
         freq = (LXTAL_VALUE * count) / (2U * ((reg_cfg & LPDTS_CFG_SPT) >> LPDTS_CFG_SPT_OFFSET));
     } else {
         freq = (2U * rcu_clock_freq_get(CK_APB1) / count) * ((reg_cfg & LPDTS_CFG_SPT) >> LPDTS_CFG_SPT_OFFSET);
@@ -213,7 +214,8 @@ int32_t lpdts_temperature_get(void)
 
     /* read factory settings */
     t0 = (LPDTS_SDATA & LPDTS_SDATA_VAL) >> LPDTS_SDATA_VAL_OFFSET;
-    if(t0 == 0U) {
+    if(t0 == 0U)
+    {
         t0 = LPDTS_T0_TMP_VAL;
     }
 
@@ -240,7 +242,8 @@ FlagStatus lpdts_flag_get(uint32_t flag)
 {
     FlagStatus status = RESET;
 
-    if(LPDTS_STAT & flag) {
+    if(LPDTS_STAT & flag)
+    {
         status = SET;
     }
     /* return the state of corresponding LPDTS flag */
@@ -302,9 +305,11 @@ FlagStatus lpdts_interrupt_flag_get(uint32_t flag)
     uint32_t state;
 
     state = LPDTS_STAT;
-    if(state & flag) {
+    if(state & flag)
+    {
         state = LPDTS_INTEN;
-        if(state & flag) {
+        if(state & flag)
+        {
             status = SET;
         }
     }

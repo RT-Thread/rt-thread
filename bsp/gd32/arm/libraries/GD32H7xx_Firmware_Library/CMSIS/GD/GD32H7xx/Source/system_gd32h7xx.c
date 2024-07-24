@@ -38,16 +38,16 @@
 
 /* select a system clock by uncommenting the following line */
 /* use IRC64M */
-//#define __SYSTEM_CLOCK_IRC64M                   (__IRC64M)
-//#define __SYSTEM_CLOCK_600M_PLL0_IRC64M         (uint32_t)(600000000)
+/*#define __SYSTEM_CLOCK_IRC64M                   (__IRC64M)*/
+/*#define __SYSTEM_CLOCK_600M_PLL0_IRC64M         (uint32_t)(600000000)*/
 
 /* use LPIRC4M */
-//#define __SYSTEM_CLOCK_LPIRC4M                  (__LPIRC4M)
+/*#define __SYSTEM_CLOCK_LPIRC4M                  (__LPIRC4M)*/
 
 /* use HXTAL(CK_HXTAL = 25M) */
-//#define __SYSTEM_CLOCK_HXTAL                    (__HXTAL)
-//#define __SYSTEM_CLOCK_200M_PLL0_HXTAL          (uint32_t)(200000000)
-//#define __SYSTEM_CLOCK_400M_PLL0_HXTAL          (uint32_t)(400000000)
+/*#define __SYSTEM_CLOCK_HXTAL                    (__HXTAL)*/
+/*#define __SYSTEM_CLOCK_200M_PLL0_HXTAL          (uint32_t)(200000000)*/
+/*#define __SYSTEM_CLOCK_400M_PLL0_HXTAL          (uint32_t)(400000000)*/
 #define __SYSTEM_CLOCK_600M_PLL0_HXTAL          (uint32_t)(600000000)
 
 /*
@@ -63,18 +63,18 @@ Note: the power mode need to match the mcu selection and external power supply c
 the following macro SEL_PMU_SMPS_MODE.
 */
 #if defined(GD32H7XXI)
-//#define SEL_PMU_SMPS_MODE   PMU_LDO_SUPPLY
-//#define SEL_PMU_SMPS_MODE   PMU_DIRECT_SMPS_SUPPLY
-//#define SEL_PMU_SMPS_MODE   PMU_SMPS_1V8_SUPPLIES_LDO
-//#define SEL_PMU_SMPS_MODE   PMU_SMPS_2V5_SUPPLIES_LDO
-//#define SEL_PMU_SMPS_MODE   PMU_SMPS_1V8_SUPPLIES_EXT_AND_LDO
-//#define SEL_PMU_SMPS_MODE   PMU_SMPS_2V5_SUPPLIES_EXT_AND_LDO
-//#define SEL_PMU_SMPS_MODE   PMU_SMPS_1V8_SUPPLIES_EXT
-//#define SEL_PMU_SMPS_MODE   PMU_SMPS_2V5_SUPPLIES_EXT
+/*#define SEL_PMU_SMPS_MODE   PMU_LDO_SUPPLY*/
+/*#define SEL_PMU_SMPS_MODE   PMU_DIRECT_SMPS_SUPPLY*/
+/*#define SEL_PMU_SMPS_MODE   PMU_SMPS_1V8_SUPPLIES_LDO*/
+/*#define SEL_PMU_SMPS_MODE   PMU_SMPS_2V5_SUPPLIES_LDO*/
+/*#define SEL_PMU_SMPS_MODE   PMU_SMPS_1V8_SUPPLIES_EXT_AND_LDO*/
+/*#define SEL_PMU_SMPS_MODE   PMU_SMPS_2V5_SUPPLIES_EXT_AND_LDO*/
+/*#define SEL_PMU_SMPS_MODE   PMU_SMPS_1V8_SUPPLIES_EXT*/
+/*#define SEL_PMU_SMPS_MODE   PMU_SMPS_2V5_SUPPLIES_EXT*/
 #define SEL_PMU_SMPS_MODE   PMU_BYPASS
 #elif defined(GD32H7XXZ) | defined(GD32H7XXV)
-//#define SEL_PMU_SMPS_MODE   PMU_LDO_SUPPLY
-//#define SEL_PMU_SMPS_MODE   PMU_BYPASS
+/*#define SEL_PMU_SMPS_MODE   PMU_LDO_SUPPLY*/
+/*#define SEL_PMU_SMPS_MODE   PMU_BYPASS*/
 #endif
 
 #define SEL_IRC64MDIV       0x00U
@@ -153,7 +153,8 @@ void SystemInit(void)
 
     /* enable IRC64M */
     RCU_CTL |= RCU_CTL_IRC64MEN;
-    while(0U == (RCU_CTL & RCU_CTL_IRC64MSTB)) {
+    while(0U == (RCU_CTL & RCU_CTL_IRC64MSTB))
+    {
     }
 
     /* no TCM wait state */
@@ -256,8 +257,10 @@ static void system_clock_64m_irc64m(void)
     } while((0U == stab_flag) && (IRC64M_STARTUP_TIMEOUT != timeout));
 
     /* if fail */
-    if(0U == (RCU_CTL & RCU_CTL_IRC64MSTB)) {
-        while(1) {
+    if(0U == (RCU_CTL & RCU_CTL_IRC64MSTB))
+    {
+        while(1)
+        {
         }
     }
 
@@ -281,7 +284,8 @@ static void system_clock_64m_irc64m(void)
     RCU_CFG0 |= RCU_CKSYSSRC_IRC64MDIV;
 
     /* wait until IRC64M is selected as system clock */
-    while(RCU_SCSS_IRC64MDIV != (RCU_CFG0 & RCU_CFG0_SCSS)) {
+    while(RCU_SCSS_IRC64MDIV != (RCU_CFG0 & RCU_CFG0_SCSS))
+    {
     }
 }
 
@@ -307,8 +311,10 @@ static void system_clock_600m_irc64m(void)
     } while((0U == stab_flag) && (IRC64M_STARTUP_TIMEOUT != timeout));
 
     /* if fail */
-    if(0U == (RCU_CTL & RCU_CTL_IRC64MSTB)) {
-        while(1) {
+    if(0U == (RCU_CTL & RCU_CTL_IRC64MSTB))
+    {
+        while(1)
+        {
         }
     }
 
@@ -347,7 +353,8 @@ static void system_clock_600m_irc64m(void)
     RCU_CTL |= RCU_CTL_PLL0EN;
 
     /* wait until PLL0 is stable */
-    while(0U == (RCU_CTL & RCU_CTL_PLL0STB)) {
+    while(0U == (RCU_CTL & RCU_CTL_PLL0STB))
+    {
     }
 
     /* select PLL0 as system clock */
@@ -355,7 +362,8 @@ static void system_clock_600m_irc64m(void)
     RCU_CFG0 |= RCU_CKSYSSRC_PLL0P;
 
     /* wait until PLL0 is selected as system clock */
-    while(RCU_SCSS_PLL0P != (RCU_CFG0 & RCU_CFG0_SCSS)) {
+    while(RCU_SCSS_PLL0P != (RCU_CFG0 & RCU_CFG0_SCSS))
+    {
     }
 }
 
@@ -380,8 +388,10 @@ static void system_clock_4m_lpirc4m(void)
         stab_flag = (RCU_ADDCTL1 & RCU_ADDCTL1_LPIRC4MSTB);
     } while((0U == stab_flag) && (LPIRC4M_STARTUP_TIMEOUT != timeout));
     /* if fail */
-    if(0U == (RCU_ADDCTL1 & RCU_ADDCTL1_LPIRC4MSTB)) {
-        while(1) {
+    if(0U == (RCU_ADDCTL1 & RCU_ADDCTL1_LPIRC4MSTB))
+    {
+        while(1)
+        {
         }
     }
 
@@ -402,7 +412,8 @@ static void system_clock_4m_lpirc4m(void)
     RCU_CFG0 |= RCU_CKSYSSRC_LPIRC4M;
 
     /* wait until LPIRC4M is selected as system clock */
-    while(RCU_SCSS_LPIRC4M != (RCU_CFG0 & RCU_CFG0_SCSS)) {
+    while(RCU_SCSS_LPIRC4M != (RCU_CFG0 & RCU_CFG0_SCSS))
+    {
     }
 }
 
@@ -427,8 +438,10 @@ static void system_clock_hxtal(void)
         stab_flag = (RCU_CTL & RCU_CTL_HXTALSTB);
     } while((0U == stab_flag) && (HXTAL_STARTUP_TIMEOUT != timeout));
     /* if fail */
-    if(0U == (RCU_CTL & RCU_CTL_HXTALSTB)) {
-        while(1) {
+    if(0U == (RCU_CTL & RCU_CTL_HXTALSTB))
+    {
+        while(1)
+        {
         }
     }
 
@@ -449,7 +462,8 @@ static void system_clock_hxtal(void)
     RCU_CFG0 |= RCU_CKSYSSRC_HXTAL;
 
     /* wait until HXTAL is selected as system clock */
-    while(RCU_SCSS_HXTAL != (RCU_CFG0 & RCU_CFG0_SCSS)) {
+    while(RCU_SCSS_HXTAL != (RCU_CFG0 & RCU_CFG0_SCSS))
+    {
     }
 }
 
@@ -474,8 +488,10 @@ static void system_clock_200m_hxtal(void)
         stab_flag = (RCU_CTL & RCU_CTL_HXTALSTB);
     } while((0U == stab_flag) && (HXTAL_STARTUP_TIMEOUT != timeout));
     /* if fail */
-    if(0U == (RCU_CTL & RCU_CTL_HXTALSTB)) {
-        while(1) {
+    if(0U == (RCU_CTL & RCU_CTL_HXTALSTB))
+    {
+        while(1)
+        {
         }
     }
 
@@ -508,7 +524,8 @@ static void system_clock_200m_hxtal(void)
     RCU_CTL |= RCU_CTL_PLL0EN;
 
     /* wait until PLL0 is stable */
-    while(0U == (RCU_CTL & RCU_CTL_PLL0STB)) {
+    while(0U == (RCU_CTL & RCU_CTL_PLL0STB))
+    {
     }
 
     /* select PLL0 as system clock */
@@ -516,7 +533,8 @@ static void system_clock_200m_hxtal(void)
     RCU_CFG0 |= RCU_CKSYSSRC_PLL0P;
 
     /* wait until PLL0 is selected as system clock */
-    while(RCU_SCSS_PLL0P != (RCU_CFG0 & RCU_CFG0_SCSS)) {
+    while(RCU_SCSS_PLL0P != (RCU_CFG0 & RCU_CFG0_SCSS))
+    {
     }
 }
 
@@ -541,8 +559,10 @@ static void system_clock_400m_hxtal(void)
         stab_flag = (RCU_CTL & RCU_CTL_HXTALSTB);
     } while((0U == stab_flag) && (HXTAL_STARTUP_TIMEOUT != timeout));
     /* if fail */
-    if(0U == (RCU_CTL & RCU_CTL_HXTALSTB)) {
-        while(1) {
+    if(0U == (RCU_CTL & RCU_CTL_HXTALSTB))
+    {
+        while(1)
+        {
         }
     }
 
@@ -579,7 +599,8 @@ static void system_clock_400m_hxtal(void)
     RCU_CTL |= RCU_CTL_PLL0EN;
 
     /* wait until PLL0 is stable */
-    while(0U == (RCU_CTL & RCU_CTL_PLL0STB)) {
+    while(0U == (RCU_CTL & RCU_CTL_PLL0STB))
+    {
     }
 
     /* select PLL0 as system clock */
@@ -587,7 +608,8 @@ static void system_clock_400m_hxtal(void)
     RCU_CFG0 |= RCU_CKSYSSRC_PLL0P;
 
     /* wait until PLL0 is selected as system clock */
-    while(RCU_SCSS_PLL0P != (RCU_CFG0 & RCU_CFG0_SCSS)) {
+    while(RCU_SCSS_PLL0P != (RCU_CFG0 & RCU_CFG0_SCSS))
+    {
     }
 }
 
@@ -612,8 +634,10 @@ static void system_clock_600m_hxtal(void)
         stab_flag = (RCU_CTL & RCU_CTL_HXTALSTB);
     } while((0U == stab_flag) && (HXTAL_STARTUP_TIMEOUT != timeout));
     /* if fail */
-    if(0U == (RCU_CTL & RCU_CTL_HXTALSTB)) {
-        while(1) {
+    if(0U == (RCU_CTL & RCU_CTL_HXTALSTB))
+    {
+        while(1)
+        {
         }
     }
 
@@ -650,7 +674,8 @@ static void system_clock_600m_hxtal(void)
     RCU_CTL |= RCU_CTL_PLL0EN;
 
     /* wait until PLL0 is stable */
-    while(0U == (RCU_CTL & RCU_CTL_PLL0STB)) {
+    while(0U == (RCU_CTL & RCU_CTL_PLL0STB))
+    {
     }
 
     /* select PLL0 as system clock */
@@ -658,7 +683,8 @@ static void system_clock_600m_hxtal(void)
     RCU_CFG0 |= RCU_CKSYSSRC_PLL0P;
 
     /* wait until PLL0 is selected as system clock */
-    while(RCU_SCSS_PLL0P != (RCU_CFG0 & RCU_CFG0_SCSS)) {
+    while(RCU_SCSS_PLL0P != (RCU_CFG0 & RCU_CFG0_SCSS))
+    {
     }
 }
 
@@ -677,7 +703,8 @@ void SystemCoreClockUpdate(void)
     uint32_t pllpsc = 0U, plln = 0U, pllp = 0U, pllsel = 0U;
 
     sws = GET_BITS(RCU_CFG0, 2, 3);
-    switch(sws) {
+    switch(sws)
+    {
     /* IRC64M is selected as CK_SYS */
     case SEL_IRC64MDIV:
         irc64div = (1U << GET_BITS(RCU_ADDCTL1, 16, 17));
@@ -700,10 +727,12 @@ void SystemCoreClockUpdate(void)
 
         /* PLL clock source selection, HXTAL or IRC64M_VALUE or LPIRC4M_VALUE */
         pllsel = GET_BITS(RCU_PLLALL, 16, 17);
-        if(0U == pllsel) {
+        if(0U == pllsel)
+        {
             irc64div = (1U << GET_BITS(RCU_ADDCTL1, 16, 17));
             SystemCoreClock = (IRC64M_VALUE / irc64div / pllpsc) * plln / pllp;
-        } else if(1U == pllsel) {
+        } else if(1U == pllsel)
+        {
             SystemCoreClock = (LPIRC4M_VALUE / pllpsc) * plln / pllp;
         } else {
             SystemCoreClock = (HXTAL_VALUE / pllpsc) * plln / pllp;

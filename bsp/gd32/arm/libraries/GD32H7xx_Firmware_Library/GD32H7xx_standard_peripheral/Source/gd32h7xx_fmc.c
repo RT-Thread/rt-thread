@@ -78,7 +78,8 @@ static fmc_state_enum fmc_ready_wait(uint32_t timeout);
 */
 void fmc_unlock(void)
 {
-    if((RESET != (FMC_CTL & FMC_CTL_LK))) {
+    if((RESET != (FMC_CTL & FMC_CTL_LK)))
+    {
         /* write the FMC key */
         FMC_KEY = UNLOCK_KEY0;
         FMC_KEY = UNLOCK_KEY1;
@@ -120,7 +121,8 @@ fmc_state_enum fmc_sector_erase(uint32_t address)
     /* wait for the FMC ready */
     fmc_state = fmc_ready_wait(FMC_TIMEOUT_COUNT);
 
-    if(FMC_READY == fmc_state) {
+    if(FMC_READY == fmc_state)
+    {
         FMC_CTL |= FMC_CTL_SER;
         /* write the sector address */
         FMC_ADDR = address;
@@ -159,7 +161,8 @@ fmc_state_enum fmc_typical_mass_erase(void)
     /* wait for the FMC ready */
     fmc_state = fmc_ready_wait(FMC_TIMEOUT_COUNT);
 
-    if(FMC_READY == fmc_state) {
+    if(FMC_READY == fmc_state)
+    {
         /* enable mass erase operation */
         FMC_CTL |= FMC_CTL_MER;
         /* start whole chip erase */
@@ -197,7 +200,8 @@ fmc_state_enum fmc_protection_removed_mass_erase(void)
     /* wait for the FMC ready */
     fmc_state = fmc_ready_wait(FMC_TIMEOUT_COUNT);
 
-    if(FMC_READY == fmc_state) {
+    if(FMC_READY == fmc_state)
+    {
         /* remove DCRP area */
         ob_dcrp_area_config(OB_DCRP_AREA_ERASE_ENABLE, INVALID_DCRP_START_ADDR, INVALID_DCRP_END_ADDR);
         /* remove secure-access area */
@@ -242,7 +246,8 @@ fmc_state_enum fmc_word_program(uint32_t address, uint32_t data)
     /* wait for the FMC ready */
     fmc_state = fmc_ready_wait(FMC_TIMEOUT_COUNT);
 
-    if(FMC_READY == fmc_state) {
+    if(FMC_READY == fmc_state)
+    {
         /* set the PG bit to start program */
         FMC_CTL |= FMC_CTL_PG;
         __ISB();
@@ -287,7 +292,8 @@ fmc_state_enum fmc_doubleword_program(uint32_t address, uint64_t data)
 
     data0 = (uint32_t)(data & 0xFFFFFFFFU);
     data1 = (uint32_t)((data >> 32U) & 0xFFFFFFFFU);
-    if(FMC_READY == fmc_state) {
+    if(FMC_READY == fmc_state)
+    {
         /* set the PG bit to start program */
         FMC_CTL |= FMC_CTL_PG;
         __ISB();
@@ -372,7 +378,8 @@ fmc_state_enum fmc_check_programming_area_disable(void)
 */
 void ob_unlock(void)
 {
-    if(RESET != (FMC_OBCTL & FMC_OBCTL_OBLK)) {
+    if(RESET != (FMC_OBCTL & FMC_OBCTL_OBLK))
+    {
         /* write the FMC key */
         FMC_OBKEY = OB_UNLOCK_KEY0;
         FMC_OBKEY = OB_UNLOCK_KEY1;
@@ -442,7 +449,8 @@ fmc_state_enum ob_factory_value_config(void)
     /* wait for the FMC ready */
     fmc_state = fmc_ready_wait(FMC_TIMEOUT_COUNT);
 
-    if(FMC_READY == fmc_state) {
+    if(FMC_READY == fmc_state)
+    {
         /* get the option byte security protection value */
         obstat0_reg = (FMC_OBSTAT0_EFT & FMC_OBSTAT0_EFT_SPC);
         /* write factory value to FMC_OBSTAT0_MDF */
@@ -488,7 +496,8 @@ fmc_state_enum ob_secure_access_mode_enable(void)
     /* wait for the FMC ready */
     fmc_state = fmc_ready_wait(FMC_TIMEOUT_COUNT);
 
-    if(FMC_READY == fmc_state) {
+    if(FMC_READY == fmc_state)
+    {
         obstat0_reg = FMC_OBSTAT0_EFT;
         /* enable secure access mode */
         obstat0_reg |= FMC_OBSTAT0_MDF_SCR;
@@ -522,7 +531,8 @@ fmc_state_enum ob_secure_access_mode_disable(void)
     /* wait for the FMC ready */
     fmc_state = fmc_ready_wait(FMC_TIMEOUT_COUNT);
 
-    if(FMC_READY == fmc_state) {
+    if(FMC_READY == fmc_state)
+    {
         obstat0_reg = FMC_OBSTAT0_EFT;
         /* disable secure access mode */
         obstat0_reg &= ~FMC_OBSTAT0_MDF_SCR;
@@ -560,7 +570,8 @@ fmc_state_enum ob_security_protection_config(uint8_t ob_spc)
     /* wait for the FMC ready */
     fmc_state = fmc_ready_wait(FMC_TIMEOUT_COUNT);
 
-    if(FMC_READY == fmc_state) {
+    if(FMC_READY == fmc_state)
+    {
         obstat0_reg = FMC_OBSTAT0_EFT;
         /* reset the OBSTAT0_SPC, set according to ob_spc */
         obstat0_reg &= ~FMC_OBSTAT0_MDF_SPC;
@@ -600,7 +611,8 @@ fmc_state_enum ob_bor_threshold_config(uint32_t ob_bor_th)
     /* wait for the FMC ready */
     fmc_state = fmc_ready_wait(FMC_TIMEOUT_COUNT);
 
-    if(FMC_READY == fmc_state) {
+    if(FMC_READY == fmc_state)
+    {
         obstat0_reg = FMC_OBSTAT0_EFT;
         /* set BOR threshold level */
         obstat0_reg &= ~FMC_OBSTAT0_MDF_BOR_TH;
@@ -654,7 +666,8 @@ fmc_state_enum ob_low_power_config(uint32_t ob_fwdgt, uint32_t ob_deepsleep, uin
     /* wait for the FMC ready */
     fmc_state = fmc_ready_wait(FMC_TIMEOUT_COUNT);
 
-    if(FMC_READY == fmc_state) {
+    if(FMC_READY == fmc_state)
+    {
         obstat0_reg = FMC_OBSTAT0_EFT;
         /* set according to ob_fwdgt, ob_deepsleep, ob_stdby, ob_fwdg_suspend_deepsleep, ob_fwdg_suspend_standby */
         obstat0_reg &= ~(FMC_OBSTAT0_MDF_NWDG_HW | FMC_OBSTAT0_MDF_NRST_DPSLP | FMC_OBSTAT0_MDF_NRST_STDBY
@@ -700,7 +713,8 @@ fmc_state_enum ob_tcm_ecc_config(uint32_t ob_itcmecc, uint32_t ob_dtcm0ecc, uint
     /* wait for the FMC ready */
     fmc_state = fmc_ready_wait(FMC_TIMEOUT_COUNT);
 
-    if(FMC_READY == fmc_state) {
+    if(FMC_READY == fmc_state)
+    {
         obstat0_reg = FMC_OBSTAT0_EFT;
         /* set according to ob_itcmecc, ob_dtcm0ecc, ob_stdby, ob_dtcm1ecc */
         obstat0_reg &= ~(FMC_OBSTAT0_MDF_ITCMECCEN | FMC_OBSTAT0_MDF_DTCM0ECCEN | FMC_OBSTAT0_MDF_DTCM1ECCEN);
@@ -737,7 +751,8 @@ fmc_state_enum ob_iospeed_optimize_config(uint32_t ob_iospeed_op)
     /* wait for the FMC ready */
     fmc_state = fmc_ready_wait(FMC_TIMEOUT_COUNT);
 
-    if(FMC_READY == fmc_state) {
+    if(FMC_READY == fmc_state)
+    {
         obstat0_reg = FMC_OBSTAT0_EFT;
         /* set according to ob_iospeed_op */
         obstat0_reg &= ~(FMC_OBSTAT0_MDF_IOSPDOPEN);
@@ -786,7 +801,8 @@ fmc_state_enum ob_tcm_shared_ram_config(uint32_t itcm_shared_ram_size, uint32_t 
     /* wait for the FMC ready */
     fmc_state = fmc_ready_wait(FMC_TIMEOUT_COUNT);
 
-    if(FMC_READY == fmc_state) {
+    if(FMC_READY == fmc_state)
+    {
         obstat1_reg = FMC_OBSTAT1_EFT;
 
         /* set ITCM shared ram size according to itcm_shared_ram_size */
@@ -827,7 +843,8 @@ fmc_state_enum ob_data_program(uint16_t ob_data)
     /* wait for the FMC ready */
     fmc_state = fmc_ready_wait(FMC_TIMEOUT_COUNT);
 
-    if(FMC_READY == fmc_state) {
+    if(FMC_READY == fmc_state)
+    {
         obstat1_reg = FMC_OBSTAT1_EFT;
 
         /* modify user data according to ob_data */
@@ -867,10 +884,12 @@ fmc_state_enum ob_boot_address_config(uint8_t boot_pin, uint16_t boot_address)
     /* wait for the FMC ready */
     fmc_state = fmc_ready_wait(FMC_TIMEOUT_COUNT);
 
-    if(FMC_READY == fmc_state) {
+    if(FMC_READY == fmc_state)
+    {
         btaddr_reg = FMC_BTADDR_EFT;
 
-        if(BOOT_PIN_0 == boot_pin) {
+        if(BOOT_PIN_0 == boot_pin)
+        {
             /* set to boot address 0 */
             btaddr_reg &= ~FMC_BTADDR_MDF_BOOT_ADDR0;
             btaddr_reg |= (uint32_t)((uint32_t)boot_address << BTADDR_BOOT_ADDR0_OFFSET);
@@ -913,7 +932,8 @@ fmc_state_enum ob_dcrp_area_config(uint32_t dcrp_eren, uint32_t dcrp_start, uint
     /* wait for the FMC ready */
     fmc_state = fmc_ready_wait(FMC_TIMEOUT_COUNT);
 
-    if(FMC_READY == fmc_state) {
+    if(FMC_READY == fmc_state)
+    {
         dcrpaddr_reg = 0U;
         dcrpaddr_reg |= dcrp_eren;
         dcrpaddr_reg |= dcrp_start;
@@ -952,7 +972,8 @@ fmc_state_enum ob_secure_area_config(uint32_t scr_eren, uint32_t scr_start, uint
     /* wait for the FMC ready */
     fmc_state = fmc_ready_wait(FMC_TIMEOUT_COUNT);
 
-    if(FMC_READY == fmc_state) {
+    if(FMC_READY == fmc_state)
+    {
         scraddr_reg = 0U;
         scraddr_reg |= scr_eren;
         scraddr_reg |= scr_start;
@@ -1011,7 +1032,8 @@ fmc_state_enum ob_write_protection_enable(uint32_t ob_wp)
     /* wait for the FMC ready */
     fmc_state = fmc_ready_wait(FMC_TIMEOUT_COUNT);
 
-    if(FMC_READY == fmc_state) {
+    if(FMC_READY == fmc_state)
+    {
         wp_reg &= ~ob_wp;
         FMC_WP_MDF = wp_reg;
     }
@@ -1067,7 +1089,8 @@ fmc_state_enum ob_write_protection_disable(uint32_t ob_wp)
     /* wait for the FMC ready */
     fmc_state = fmc_ready_wait(FMC_TIMEOUT_COUNT);
 
-    if(FMC_READY == fmc_state) {
+    if(FMC_READY == fmc_state)
+    {
         wp_reg |= ob_wp;
         FMC_WP_MDF = wp_reg;
     }
@@ -1085,7 +1108,8 @@ FlagStatus ob_secure_mode_get(void)
 {
     FlagStatus secure_mode_state = RESET;
 
-    if(OB_SECURE_MODE_ENABLE == (uint32_t)(FMC_OBSTAT0_EFT & FMC_OBSTAT0_EFT_SCR)) {
+    if(OB_SECURE_MODE_ENABLE == (uint32_t)(FMC_OBSTAT0_EFT & FMC_OBSTAT0_EFT_SCR))
+    {
         secure_mode_state = SET;
     } else {
         secure_mode_state = RESET;
@@ -1103,7 +1127,8 @@ FlagStatus ob_security_protection_flag_get(void)
 {
     FlagStatus spc_state = RESET;
 
-    if(((uint8_t)(FMC_OBSTAT0_EFT >> OBSTAT0_SPC_OFFSET)) != (uint8_t)FMC_NSPC) {
+    if(((uint8_t)(FMC_OBSTAT0_EFT >> OBSTAT0_SPC_OFFSET)) != (uint8_t)FMC_NSPC)
+    {
         spc_state = SET;
     } else {
         spc_state = RESET;
@@ -1192,7 +1217,8 @@ FlagStatus ob_iospeed_optimize_get(void)
 {
     FlagStatus iospeed_opt_state = RESET;
 
-    if(OB_IOSPDOPEN_ENABLE == (uint32_t)(FMC_OBSTAT0_EFT & FMC_OBSTAT0_EFT_IOSPDOPEN)) {
+    if(OB_IOSPDOPEN_ENABLE == (uint32_t)(FMC_OBSTAT0_EFT & FMC_OBSTAT0_EFT_IOSPDOPEN))
+    {
         iospeed_opt_state = SET;
     } else {
         iospeed_opt_state = RESET;
@@ -1224,7 +1250,8 @@ void ob_tcm_shared_ram_size_get(uint32_t *itcm_shared_ram_kb_size, uint32_t *dtc
     itcm_size_value = (uint32_t)((uint32_t)FMC_OBSTAT1_EFT & FMC_OBSTAT1_EFT_ITCM_SZ_SHRRAM);
     dtcm_size_value = (uint32_t)((uint32_t)FMC_OBSTAT1_EFT & FMC_OBSTAT1_EFT_DTCM_SZ_SHRRAM);
 
-    switch(itcm_size_value) {
+    switch(itcm_size_value)
+    {
     case OB_ITCM_SHARED_RAM_0KB:
         /* ITCM shared RAM size is 0KB */
         *itcm_shared_ram_kb_size = 0U;
@@ -1249,7 +1276,8 @@ void ob_tcm_shared_ram_size_get(uint32_t *itcm_shared_ram_kb_size, uint32_t *dtc
         break;
     }
 
-    switch(dtcm_size_value) {
+    switch(dtcm_size_value)
+    {
     case OB_DTCM_SHARED_RAM_0KB:
         /* DTCM shared RAM size is 0KB */
         *dtcm_shared_ram_kb_size = 0U;
@@ -1300,7 +1328,8 @@ uint32_t ob_boot_address_get(uint8_t boot_pin)
     uint32_t boot_address;
     uint32_t btaddr_reg = FMC_BTADDR_EFT;
 
-    if(BOOT_PIN_0 == boot_pin) {
+    if(BOOT_PIN_0 == boot_pin)
+    {
         /* get boot address 0 */
         boot_address = (uint32_t)((btaddr_reg & FMC_BTADDR_EFT_BOOT_ADDR0) << 16u);
     } else {
@@ -1333,12 +1362,14 @@ uint8_t ob_dcrp_area_get(uint32_t *dcrp_erase_option, uint32_t *dcrp_area_start_
     *dcrp_erase_option = (uint32_t)(dcrpaddr_reg & FMC_DCRPADDR_EFT_DCRP_EREN);
     *dcrp_area_start_addr = ((uint32_t)(dcrpaddr_reg & FMC_DCRPADDR_EFT_DCRP_AREA_START)) >> DCRPADDR_DCRP_AREA_START_OFFSET;
     *dcrp_area_end_addr = ((uint32_t)(dcrpaddr_reg & FMC_DCRPADDR_EFT_DCRP_AREA_END)) >> DCRPADDR_DCRP_AREA_END_OFFSET;
-    if((*dcrp_area_start_addr) == (*dcrp_area_end_addr)) {
+    if((*dcrp_area_start_addr) == (*dcrp_area_end_addr))
+    {
         /* the whole main flash memory is DCRP area */
         *dcrp_area_start_addr = MAIN_FLASH_BASE_ADDRESS;
         *dcrp_area_end_addr = MAIN_FLASH_BASE_ADDRESS + main_flash_size - 1U;
         return VLD_AREA_ADDRESS;
-    } else if((*dcrp_area_start_addr) < (*dcrp_area_end_addr)) {
+    } else if((*dcrp_area_start_addr) < (*dcrp_area_end_addr))
+    {
         /* get DCRP area start address */
         *dcrp_area_start_addr = (*dcrp_area_start_addr) * DCRP_SIZE_UNIT;
         *dcrp_area_start_addr += MAIN_FLASH_BASE_ADDRESS;
@@ -1375,12 +1406,14 @@ uint8_t ob_secure_area_get(uint32_t *secure_area_option, uint32_t *scr_area_star
     *secure_area_option = (uint32_t)(scraddr_reg & FMC_SCRADDR_EFT_SCR_EREN);
     *scr_area_start_addr = ((uint32_t)(scraddr_reg & FMC_SCRADDR_EFT_SCR_AREA_START)) >> SCRADDR_SCR_AREA_START_OFFSET;
     *scr_area_end_addr = ((uint32_t)(scraddr_reg & FMC_SCRADDR_EFT_SCR_AREA_END)) >> SCRADDR_SCR_AREA_END_OFFSET;
-    if((*scr_area_start_addr) == (*scr_area_end_addr)) {
+    if((*scr_area_start_addr) == (*scr_area_end_addr))
+    {
         /* the whole main flash memory is secure-access area */
         *scr_area_start_addr = MAIN_FLASH_BASE_ADDRESS;
         *scr_area_end_addr = MAIN_FLASH_BASE_ADDRESS + main_flash_size - 1U;
         return VLD_AREA_ADDRESS;
-    } else if((*scr_area_start_addr) < (*scr_area_end_addr)) {
+    } else if((*scr_area_start_addr) < (*scr_area_end_addr))
+    {
         /* get secure-access area start address */
         *scr_area_start_addr = (*scr_area_start_addr) * SCR_SIZE_UNIT;
         *scr_area_start_addr += MAIN_FLASH_BASE_ADDRESS;
@@ -1431,7 +1464,8 @@ fmc_state_enum fmc_no_rtdec_config(uint32_t nodec_area_start, uint32_t nodec_are
     /* wait for the FMC ready */
     fmc_state = fmc_ready_wait(FMC_TIMEOUT_COUNT);
 
-    if(FMC_READY == fmc_state) {
+    if(FMC_READY == fmc_state)
+    {
         fmc_unlock();
         nodec_reg = 0U;
         nodec_reg |= nodec_area_start;
@@ -1467,7 +1501,8 @@ fmc_state_enum fmc_aes_iv_config(uint32_t *aes_iv)
     /* wait for the FMC ready */
     fmc_state = fmc_ready_wait(FMC_TIMEOUT_COUNT);
 
-    if(FMC_READY == fmc_state) {
+    if(FMC_READY == fmc_state)
+    {
         fmc_unlock();
         FMC_AESIV0_MDF = *(uint32_t *)(aes_iv_addr);
         aes_iv_addr += 4U;
@@ -1556,7 +1591,8 @@ void fmc_pid_get(uint32_t *pid)
 */
 FlagStatus fmc_flag_get(fmc_flag_enum flag)
 {
-    if(RESET != (FMC_REG_VAL(flag) & BIT(FMC_BIT_POS(flag)))) {
+    if(RESET != (FMC_REG_VAL(flag) & BIT(FMC_BIT_POS(flag))))
+    {
         return SET;
     } else {
         return RESET;
@@ -1647,7 +1683,8 @@ FlagStatus fmc_interrupt_flag_get(fmc_interrupt_flag_enum int_flag)
     /* get the corresponding flag bit status */
     flagstatus = (FMC_REG_VAL2(int_flag) & BIT(FMC_BIT_POS2(int_flag)));
 
-    if(flagstatus && intenable) {
+    if(flagstatus && intenable)
+    {
         return SET;
     } else {
         return RESET;
@@ -1694,22 +1731,30 @@ static fmc_state_enum fmc_state_get(void)
 {
     fmc_state_enum fmc_state = FMC_READY;
 
-    if((uint32_t)0x00U != (FMC_STAT & FMC_STAT_BUSY)) {
+    if((uint32_t)0x00U != (FMC_STAT & FMC_STAT_BUSY))
+    {
         fmc_state = FMC_BUSY;
     } else {
-        if((uint32_t)0x00U != (FMC_STAT & FMC_STAT_WPERR)) {
+        if((uint32_t)0x00U != (FMC_STAT & FMC_STAT_WPERR))
+        {
             fmc_state = FMC_WPERR;
-        } else if((uint32_t)0x00U != (FMC_STAT & FMC_STAT_PGSERR)) {
+        } else if((uint32_t)0x00U != (FMC_STAT & FMC_STAT_PGSERR))
+        {
             fmc_state = FMC_PGSERR;
-        } else if((uint32_t)0x00U != (FMC_STAT & FMC_STAT_RPERR)) {
+        } else if((uint32_t)0x00U != (FMC_STAT & FMC_STAT_RPERR))
+        {
             fmc_state = FMC_RPERR;
-        } else if((uint32_t)0x00U != (FMC_STAT & FMC_STAT_RSERR)) {
+        } else if((uint32_t)0x00U != (FMC_STAT & FMC_STAT_RSERR))
+        {
             fmc_state = FMC_RSERR;
-        } else if((uint32_t)0x00U != (FMC_STAT & FMC_STAT_ECCCOR)) {
+        } else if((uint32_t)0x00U != (FMC_STAT & FMC_STAT_ECCCOR))
+        {
             fmc_state = FMC_ECCCOR;
-        } else if((uint32_t)0x00U != (FMC_STAT & FMC_STAT_ECCDET)) {
+        } else if((uint32_t)0x00U != (FMC_STAT & FMC_STAT_ECCDET))
+        {
             fmc_state = FMC_ECCDET;
-        } else if((uint32_t)0x00U != (FMC_STAT & FMC_STAT_OBMERR)) {
+        } else if((uint32_t)0x00U != (FMC_STAT & FMC_STAT_OBMERR))
+        {
             fmc_state = FMC_OBMERR;
         } else {
             /* illegal parameters */
@@ -1747,7 +1792,8 @@ static fmc_state_enum fmc_ready_wait(uint32_t timeout)
         timeout--;
     } while((FMC_BUSY == fmc_state) && (0U != timeout));
 
-    if(FMC_BUSY == fmc_state) {
+    if(FMC_BUSY == fmc_state)
+    {
         fmc_state = FMC_TOERR;
     }
     /* return the FMC state */

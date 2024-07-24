@@ -47,7 +47,8 @@ OF SUCH DAMAGE.
 */
 void sai_deinit(uint32_t sai_periph)
 {
-    switch(sai_periph) {
+    switch(sai_periph)
+    {
         case SAI0:
             /* reset SAI0 */
             rcu_periph_reset_enable(RCU_SAI0RST);
@@ -293,7 +294,7 @@ void sai_sdoutput_config(uint32_t sai_periph, uint32_t block, uint32_t sdout)
     \retval     none
 */
 void sai_monomode_config(uint32_t sai_periph, uint32_t block, uint32_t mono)
-{ 
+{
      SAI_CFG0(sai_periph, block) &= ~SAI_CFG0_MONO;
      SAI_CFG0(sai_periph, block) |= mono ;
 }
@@ -440,15 +441,20 @@ sai_fifo_state_enum sai_fifo_status_get(uint32_t sai_periph, uint32_t block)
 {
     sai_fifo_state_enum sai_fifo_state = FIFO_EMPTY;
 
-    if(SAI_FIFO_STAT_EMPTY == (SAI_STAT(sai_periph, block) & SAI_STAT_FFSTAT)) {
+    if(SAI_FIFO_STAT_EMPTY == (SAI_STAT(sai_periph, block) & SAI_STAT_FFSTAT))
+    {
         sai_fifo_state = FIFO_EMPTY;
-    } else if(SAI_FIFO_STAT_QUARTER == (SAI_STAT(sai_periph, block) & SAI_STAT_FFSTAT)) {
+    } else if(SAI_FIFO_STAT_QUARTER == (SAI_STAT(sai_periph, block) & SAI_STAT_FFSTAT))
+    {
         sai_fifo_state = FIFO_EMPTY_TO_1_4_FULL;
-    } else if(SAI_FIFO_STAT_HALF == (SAI_STAT(sai_periph, block) & SAI_STAT_FFSTAT)) {
+    } else if(SAI_FIFO_STAT_HALF == (SAI_STAT(sai_periph, block) & SAI_STAT_FFSTAT))
+    {
         sai_fifo_state = FIFO_1_4_FULL_TO_1_2_FULL;
-    } else if(SAI_FIFO_STAT_THREE_QUARTER == (SAI_STAT(sai_periph, block) & SAI_STAT_FFSTAT)) {
+    } else if(SAI_FIFO_STAT_THREE_QUARTER == (SAI_STAT(sai_periph, block) & SAI_STAT_FFSTAT))
+    {
         sai_fifo_state = FIFO_1_2_FULL_TO_3_4_FULL;
-    } else if(SAI_FIFO_STAT_NEARFULL == (SAI_STAT(sai_periph, block) & SAI_STAT_FFSTAT)) {
+    } else if(SAI_FIFO_STAT_NEARFULL == (SAI_STAT(sai_periph, block) & SAI_STAT_FFSTAT))
+    {
         sai_fifo_state = FIFO_3_4_FULL_TO_FULL;
     } else {
         sai_fifo_state = FIFO_FULL;
@@ -713,7 +719,8 @@ FlagStatus sai_interrupt_flag_get(uint32_t sai_periph, uint32_t block, uint32_t 
 {
     uint32_t inten = 0U;
     inten = SAI_INTEN(sai_periph, block) & interrupt;
-    if((RESET != (SAI_STAT(sai_periph, block) & interrupt)) && (RESET != inten)) {
+    if((RESET != (SAI_STAT(sai_periph, block) & interrupt)) && (RESET != inten))
+    {
         return SET;
     } else {
         return RESET;
@@ -762,7 +769,8 @@ void sai_interrupt_flag_clear(uint32_t sai_periph, uint32_t block, uint32_t inte
 */
 FlagStatus sai_flag_get(uint32_t sai_periph, uint32_t block, uint32_t flag)
 {
-    if(RESET != (SAI_STAT(sai_periph, block) & flag)) {
+    if(RESET != (SAI_STAT(sai_periph, block) & flag))
+    {
         return SET;
     } else {
         return RESET;

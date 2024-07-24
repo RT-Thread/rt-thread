@@ -44,12 +44,14 @@ OF SUCH DAMAGE.
 */
 void cmp_deinit(cmp_enum cmp_periph)
 {
-    if(CMP0 == cmp_periph){
+    if(CMP0 == cmp_periph)
+    {
         CMP0_CS &= ((uint32_t)0x00000000U);
         CMP_IFC &= ((uint32_t)0xFFFEFFFFU);
         CMP_STAT &= ((uint32_t)0xFFFEFFFEU);
         CMP_SR &= ((uint32_t)0x00000000U);
-    }else if(CMP1 == cmp_periph){
+    }else if(CMP1 == cmp_periph)
+    {
         CMP1_CS &= ((uint32_t)0x00000000U);
         CMP_IFC &= ((uint32_t)0xFFFDFFFFU);
         CMP_STAT &= ((uint32_t)0xFFFDFFFDU);
@@ -88,13 +90,15 @@ void cmp_mode_init(cmp_enum cmp_periph, uint32_t operating_mode, uint32_t invert
 {
     uint32_t temp = 0U;
 
-    if(CMP0 == cmp_periph){
+    if(CMP0 == cmp_periph)
+    {
         /* initialize comparator 0 mode */
         temp = CMP0_CS;
         temp &= ~(uint32_t)(CMP_CS_CMPXM | CMP_CS_CMPXMISEL | CMP_CS_CMPXHST);
         temp |= (uint32_t)(operating_mode | inverting_input | output_hysteresis);
         CMP0_CS = temp;
-    }else if(CMP1 == cmp_periph){
+    }else if(CMP1 == cmp_periph)
+    {
         /* initialize comparator 1 mode */
         temp = CMP1_CS;
         temp &= ~(uint32_t)(CMP_CS_CMPXM | CMP_CS_CMPXMISEL | CMP_CS_CMPXHST);
@@ -119,12 +123,14 @@ void cmp_noninverting_input_select(cmp_enum cmp_periph, uint32_t noninverting_in
 {
     uint32_t temp = 0U;
 
-    if(CMP0 == cmp_periph){
+    if(CMP0 == cmp_periph)
+    {
         temp = CMP0_CS;
         temp &= ~(uint32_t)CMP_CS_CMPXPSEL;
         temp |= (uint32_t)noninverting_input;
         CMP0_CS = temp;
-    }else if(CMP1 == cmp_periph){
+    }else if(CMP1 == cmp_periph)
+    {
         temp = CMP1_CS;
         temp &= ~(uint32_t)CMP_CS_CMPXPSEL;
         temp |= (uint32_t)noninverting_input;
@@ -148,21 +154,25 @@ void cmp_output_init(cmp_enum cmp_periph, uint32_t output_polarity)
 {
     uint32_t temp = 0U;
 
-    if(CMP0 == cmp_periph){
+    if(CMP0 == cmp_periph)
+    {
         /* initialize comparator 0 output */
         temp = CMP0_CS;
         /* output polarity */
-        if(CMP_OUTPUT_POLARITY_INVERTED == output_polarity){
+        if(CMP_OUTPUT_POLARITY_INVERTED == output_polarity)
+        {
             temp |= (uint32_t)CMP_CS_CMPXPL;
         }else{
             temp &= ~(uint32_t)CMP_CS_CMPXPL;
         }
         CMP0_CS = temp;
-    }else if(CMP1 == cmp_periph){
+    }else if(CMP1 == cmp_periph)
+    {
         /* initialize comparator 1 output */
         temp = CMP1_CS;
         /* output polarity */
-        if(CMP_OUTPUT_POLARITY_INVERTED == output_polarity){
+        if(CMP_OUTPUT_POLARITY_INVERTED == output_polarity)
+        {
             temp |= (uint32_t)CMP_CS_CMPXPL;
         }else{
             temp &= ~(uint32_t)CMP_CS_CMPXPL;
@@ -194,9 +204,11 @@ void cmp_output_init(cmp_enum cmp_periph, uint32_t output_polarity)
 */
 void cmp_output_mux_config(cmp_enum cmp_periph, uint32_t cmp_output_sel)
 {
-    if(CMP0 == cmp_periph){
+    if(CMP0 == cmp_periph)
+    {
         CMP_SR &= ~(uint32_t)cmp_output_sel;
-    }else if(CMP1 == cmp_periph){
+    }else if(CMP1 == cmp_periph)
+    {
         CMP_SR |= cmp_output_sel;
     }else{
     }
@@ -207,7 +219,7 @@ void cmp_output_mux_config(cmp_enum cmp_periph, uint32_t cmp_output_sel)
     \param[in]  cmp_periph
       \arg        CMP0: comparator 0
       \arg        CMP1: comparator 1
-    \param[in]  blanking_source_selection 
+    \param[in]  blanking_source_selection
       \arg        CMP_BLANKING_NONE: CMP no blanking source
       \arg        CMP_BLANKING_TIMER0_OC0: CMP TIMER0_CH0 output compare signal selected as blanking source
       \arg        CMP_BLANKING_TIMER1_OC2: CMP TIMER1_CH2 output compare signal selected as blanking source
@@ -222,12 +234,14 @@ void cmp_blanking_init(cmp_enum cmp_periph, uint32_t blanking_source_selection)
 {
     uint32_t temp = 0U;
 
-    if(CMP0 == cmp_periph){
+    if(CMP0 == cmp_periph)
+    {
         temp = CMP0_CS;
         temp &= ~(uint32_t)CMP_CS_CMPXBLK;
         temp |= (uint32_t)blanking_source_selection;
         CMP0_CS = temp;
-    }else if(CMP1 == cmp_periph){
+    }else if(CMP1 == cmp_periph)
+    {
         temp = CMP1_CS;
         temp &= ~(uint32_t)CMP_CS_CMPXBLK;
         temp |= (uint32_t)blanking_source_selection;
@@ -246,9 +260,11 @@ void cmp_blanking_init(cmp_enum cmp_periph, uint32_t blanking_source_selection)
 */
 void cmp_enable(cmp_enum cmp_periph)
 {
-    if(CMP0 == cmp_periph){
+    if(CMP0 == cmp_periph)
+    {
         CMP0_CS |= (uint32_t)CMP_CS_CMPXEN;
-    }else if(CMP1 == cmp_periph){
+    }else if(CMP1 == cmp_periph)
+    {
         CMP1_CS |= (uint32_t)CMP_CS_CMPXEN;
     }else{
     }
@@ -264,9 +280,11 @@ void cmp_enable(cmp_enum cmp_periph)
 */
 void cmp_disable(cmp_enum cmp_periph)
 {
-    if(CMP0 == cmp_periph){
+    if(CMP0 == cmp_periph)
+    {
         CMP0_CS &= ~(uint32_t)CMP_CS_CMPXEN;
-    }else if(CMP1 == cmp_periph){
+    }else if(CMP1 == cmp_periph)
+    {
         CMP1_CS &= ~(uint32_t)CMP_CS_CMPXEN;
     }else{
     }
@@ -304,10 +322,12 @@ void cmp_window_disable(void)
 */
 void cmp_lock_enable(cmp_enum cmp_periph)
 {
-    if(CMP0 == cmp_periph){
+    if(CMP0 == cmp_periph)
+    {
         /* lock CMP0 */
         CMP0_CS |= (uint32_t)CMP_CS_CMPXLK;
-    }else if(CMP1 == cmp_periph){
+    }else if(CMP1 == cmp_periph)
+    {
         /* lock CMP1 */
         CMP1_CS |= (uint32_t)CMP_CS_CMPXLK;
     }else{
@@ -324,9 +344,11 @@ void cmp_lock_enable(cmp_enum cmp_periph)
 */
 void cmp_voltage_scaler_enable(cmp_enum cmp_periph)
 {
-    if(CMP0 == cmp_periph){
+    if(CMP0 == cmp_periph)
+    {
         CMP0_CS |= (uint32_t)CMP_CS_CMPXSEN;
-    }else if(CMP1 == cmp_periph){
+    }else if(CMP1 == cmp_periph)
+    {
         CMP1_CS |= (uint32_t)CMP_CS_CMPXSEN;
     }else{
     }
@@ -342,15 +364,17 @@ void cmp_voltage_scaler_enable(cmp_enum cmp_periph)
 */
 void cmp_voltage_scaler_disable(cmp_enum cmp_periph)
 {
-    if(CMP0 == cmp_periph){
+    if(CMP0 == cmp_periph)
+    {
         CMP0_CS &= ~(uint32_t)CMP_CS_CMPXSEN;
-    }else if(CMP1 == cmp_periph){
+    }else if(CMP1 == cmp_periph)
+    {
         CMP1_CS &= ~(uint32_t)CMP_CS_CMPXSEN;
     }else{
     }
 }
 
-/*! 
+/*!
     \brief      enable the scaler bridge
     \param[in]  cmp_periph
       \arg        CMP0: comparator 0
@@ -360,9 +384,11 @@ void cmp_voltage_scaler_disable(cmp_enum cmp_periph)
 */
 void cmp_scaler_bridge_enable(cmp_enum cmp_periph)
 {
-    if(CMP0 == cmp_periph){
+    if(CMP0 == cmp_periph)
+    {
         CMP0_CS |= (uint32_t)CMP_CS_CMPXBEN;
-    }else if(CMP1 == cmp_periph){
+    }else if(CMP1 == cmp_periph)
+    {
         CMP1_CS |= (uint32_t)CMP_CS_CMPXBEN;
     }else{
     }
@@ -378,9 +404,11 @@ void cmp_scaler_bridge_enable(cmp_enum cmp_periph)
 */
 void cmp_scaler_bridge_disable(cmp_enum cmp_periph)
 {
-    if(CMP0 == cmp_periph){
+    if(CMP0 == cmp_periph)
+    {
         CMP0_CS &= ~(uint32_t)CMP_CS_CMPXBEN;
-    }else if(CMP1 == cmp_periph){
+    }else if(CMP1 == cmp_periph)
+    {
         CMP1_CS &= ~(uint32_t)CMP_CS_CMPXBEN;
     }else{
     }
@@ -396,16 +424,19 @@ void cmp_scaler_bridge_disable(cmp_enum cmp_periph)
 */
 uint32_t cmp_output_level_get(cmp_enum cmp_periph)
 {
-    if(CMP0 == cmp_periph){
+    if(CMP0 == cmp_periph)
+    {
         /* get output level of CMP0 */
-        if((uint32_t)RESET != (CMP_STAT & CMP_STAT_CMP0O)) {
+        if((uint32_t)RESET != (CMP_STAT & CMP_STAT_CMP0O))
+        {
             return CMP_OUTPUTLEVEL_HIGH;
         }else{
             return CMP_OUTPUTLEVEL_LOW;
         }
     }else{
         /* get output level of CMP1 */
-        if((uint32_t)RESET != (CMP_STAT & CMP_STAT_CMP1O)) {
+        if((uint32_t)RESET != (CMP_STAT & CMP_STAT_CMP1O))
+        {
             return CMP_OUTPUTLEVEL_HIGH;
         }else{
             return CMP_OUTPUTLEVEL_LOW;
@@ -426,16 +457,22 @@ uint32_t cmp_output_level_get(cmp_enum cmp_periph)
 FlagStatus cmp_flag_get(cmp_enum cmp_periph, uint32_t flag)
 {
     FlagStatus reval = RESET;
-    
-    if(CMP0 == cmp_periph){
-        if(CMP_FLAG_COMPARE == flag){
-            if(0U != (CMP_STAT & CMP_STAT_CMP0IF)){
+
+    if(CMP0 == cmp_periph)
+    {
+        if(CMP_FLAG_COMPARE == flag)
+        {
+            if(0U != (CMP_STAT & CMP_STAT_CMP0IF))
+            {
                 reval = SET;
             }
         }
-    }else if(CMP1 == cmp_periph){
-        if(CMP_FLAG_COMPARE == flag){
-            if(0U != (CMP_STAT & CMP_STAT_CMP1IF)){
+    }else if(CMP1 == cmp_periph)
+    {
+        if(CMP_FLAG_COMPARE == flag)
+        {
+            if(0U != (CMP_STAT & CMP_STAT_CMP1IF))
+            {
                 reval = SET;
             }
         }
@@ -455,12 +492,16 @@ FlagStatus cmp_flag_get(cmp_enum cmp_periph, uint32_t flag)
 */
 void cmp_flag_clear(cmp_enum cmp_periph, uint32_t flag)
 {
-    if(CMP0 == cmp_periph){
-        if(CMP_FLAG_COMPARE == flag){
+    if(CMP0 == cmp_periph)
+    {
+        if(CMP_FLAG_COMPARE == flag)
+        {
             CMP_IFC |= (uint32_t)CMP_IFC_CMP0IC;
         }
-    }else if(CMP1 == cmp_periph){
-        if(CMP_FLAG_COMPARE == flag){
+    }else if(CMP1 == cmp_periph)
+    {
+        if(CMP_FLAG_COMPARE == flag)
+        {
             CMP_IFC |= (uint32_t)CMP_IFC_CMP1IC;
         }
     }else{
@@ -480,10 +521,12 @@ void cmp_flag_clear(cmp_enum cmp_periph, uint32_t flag)
 */
 void cmp_interrupt_enable(cmp_enum cmp_periph, uint32_t interrupt)
 {
-    if(CMP0 == cmp_periph){
+    if(CMP0 == cmp_periph)
+    {
         /* enable CMP0 interrupt */
         CMP0_CS |= (uint32_t)interrupt;
-    }else if(CMP1 == cmp_periph){
+    }else if(CMP1 == cmp_periph)
+    {
         /* enable CMP1 interrupt */
         CMP1_CS |= (uint32_t)interrupt;
     }else{
@@ -503,10 +546,12 @@ void cmp_interrupt_enable(cmp_enum cmp_periph, uint32_t interrupt)
 */
 void cmp_interrupt_disable(cmp_enum cmp_periph, uint32_t interrupt)
 {
-    if(CMP0 == cmp_periph){
+    if(CMP0 == cmp_periph)
+    {
         /* disable CMP0 interrupt */
         CMP0_CS &= ~(uint32_t)interrupt;
-    }else if(CMP1 == cmp_periph){
+    }else if(CMP1 == cmp_periph)
+    {
         /* disable CMP1 interrupt */
         CMP1_CS &= ~(uint32_t)interrupt;
     }else{
@@ -527,15 +572,19 @@ FlagStatus cmp_interrupt_flag_get(cmp_enum cmp_periph, uint32_t flag)
 {
     uint32_t intstatus = 0U, flagstatus = 0U;
 
-    if(CMP0 == cmp_periph){
-        if(CMP_INT_FLAG_COMPARE == flag){
+    if(CMP0 == cmp_periph)
+    {
+        if(CMP_INT_FLAG_COMPARE == flag)
+        {
             /* get the corresponding flag bit status */
             flagstatus = CMP_STAT & CMP_STAT_CMP0IF;
             /* get the interrupt enable bit status */
             intstatus = CMP0_CS & CMP_CS_CMPXINTEN;
         }
-    }else if(CMP1 == cmp_periph){
-        if(CMP_INT_FLAG_COMPARE == flag){
+    }else if(CMP1 == cmp_periph)
+    {
+        if(CMP_INT_FLAG_COMPARE == flag)
+        {
             /* get the corresponding flag bit status */
             flagstatus = CMP_STAT & CMP_STAT_CMP1IF;
             /* get the interrupt enable bit status */
@@ -544,7 +593,8 @@ FlagStatus cmp_interrupt_flag_get(cmp_enum cmp_periph, uint32_t flag)
     }else{
     }
 
-    if((0U != flagstatus) && (0U != intstatus)){
+    if((0U != flagstatus) && (0U != intstatus))
+    {
         return SET;
     }else{
         return RESET;
@@ -564,12 +614,16 @@ FlagStatus cmp_interrupt_flag_get(cmp_enum cmp_periph, uint32_t flag)
 void cmp_interrupt_flag_clear(cmp_enum cmp_periph, uint32_t flag)
 {
     /* clear CMP interrupt flag */
-    if(CMP0 == cmp_periph){
-        if(CMP_INT_FLAG_COMPARE == flag){
+    if(CMP0 == cmp_periph)
+    {
+        if(CMP_INT_FLAG_COMPARE == flag)
+        {
             CMP_IFC |= (uint32_t)CMP_IFC_CMP0IC;
         }
-    }else if(CMP1 == cmp_periph){
-        if(CMP_INT_FLAG_COMPARE == flag){
+    }else if(CMP1 == cmp_periph)
+    {
+        if(CMP_INT_FLAG_COMPARE == flag)
+        {
             CMP_IFC |= (uint32_t)CMP_IFC_CMP1IC;
         }
     }else{

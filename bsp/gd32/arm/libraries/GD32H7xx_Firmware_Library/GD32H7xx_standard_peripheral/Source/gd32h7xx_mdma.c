@@ -204,14 +204,18 @@ void mdma_init(mdma_channel_enum channelx, mdma_parameter_struct *init_struct)
     MDMA_CHXDADDR(channelx) = init_struct->destination_addr;
 
     /* configure block transfer byte number */
-    if(MDMA_BUFFER_TRANSFER == init_struct->trans_trig_mode) {
+    if(MDMA_BUFFER_TRANSFER == init_struct->trans_trig_mode)
+    {
         MDMA_CHXBTCFG(channelx) = (init_struct->tbytes_num_in_block & MDMA_CHXBTCFG_TBNUM);
-    } else if(MDMA_BLOCK_TRANSFER == init_struct->trans_trig_mode) {
+    } else if(MDMA_BLOCK_TRANSFER == init_struct->trans_trig_mode)
+    {
         MDMA_CHXBTCFG(channelx) = (init_struct->tbytes_num_in_block & MDMA_CHXBTCFG_TBNUM);
-    } else if(MDMA_MULTI_BLOCK_TRANSFER == init_struct->trans_trig_mode) {
+    } else if(MDMA_MULTI_BLOCK_TRANSFER == init_struct->trans_trig_mode)
+    {
         MDMA_CHXBTCFG(channelx) &= ~MDMA_CHXBTCFG_TBNUM;
         MDMA_CHXBTCFG(channelx) |= (init_struct->tbytes_num_in_block & MDMA_CHXBTCFG_TBNUM);
-    } else if(MDMA_COMPLETE_TRANSFER == init_struct->trans_trig_mode) {
+    } else if(MDMA_COMPLETE_TRANSFER == init_struct->trans_trig_mode)
+    {
         MDMA_CHXBTCFG(channelx) &= ~MDMA_CHXBTCFG_TBNUM;
         MDMA_CHXBTCFG(channelx) |= (init_struct->tbytes_num_in_block & MDMA_CHXBTCFG_TBNUM);
     } else {
@@ -220,7 +224,8 @@ void mdma_init(mdma_channel_enum channelx, mdma_parameter_struct *init_struct)
 
     /* configure request source */
     MDMA_CHXCFG(channelx) &= ~MDMA_CHXCFG_SWREQMOD;
-    if(MDMA_REQUEST_SW == init_struct->request) {
+    if(MDMA_REQUEST_SW == init_struct->request)
+    {
         MDMA_CHXCFG(channelx) |= MDMA_CHXCFG_SWREQMOD;
     } else {
         MDMA_CHXCTL1(channelx) &= ~MDMA_CHXCTL1_TRIGSEL;
@@ -274,7 +279,8 @@ void mdma_multi_block_mode_config(mdma_channel_enum channelx, uint32_t tbnum, md
 
     MDMA_CHXMBADDRU(channelx) &= ~(MDMA_CHXMBADDRU_SADDRUV | MDMA_CHXMBADDRU_DADDRUV);
     /* if block source address offset is negative, set the block repeat source address update mode to decrement */
-    if(UPDATE_DIR_DECREASE == block_init_struct->saddr_update_dir) {
+    if(UPDATE_DIR_DECREASE == block_init_struct->saddr_update_dir)
+    {
         MDMA_CHXBTCFG(channelx) |= MDMA_CHXBTCFG_SADDRUM;
         /* write new chxmbaddru register value: source repeat block offset */
         blockoffset = (uint32_t)block_init_struct->saddr_update_val;
@@ -285,7 +291,8 @@ void mdma_multi_block_mode_config(mdma_channel_enum channelx, uint32_t tbnum, md
         MDMA_CHXMBADDRU(channelx) |= (((uint32_t)block_init_struct->saddr_update_val) & MDMA_ADDRESS_MASK);
     }
 
-    if(UPDATE_DIR_DECREASE == block_init_struct->dstaddr_update_dir) {
+    if(UPDATE_DIR_DECREASE == block_init_struct->dstaddr_update_dir)
+    {
         MDMA_CHXBTCFG(channelx) |= MDMA_CHXBTCFG_DADDRUM;
         /* write new chxmbaddru register value: destination repeat block offset */
         blockoffset = (uint32_t)block_init_struct->dstaddr_update_val;
@@ -357,7 +364,8 @@ void mdma_node_create(mdma_link_node_parameter_struct *node, mdma_multi_block_pa
     node->chxcfg_reg = cfg;
 
     /* configure channel request source */
-    if(MDMA_REQUEST_SW == init_struct->request) {
+    if(MDMA_REQUEST_SW == init_struct->request)
+    {
         node->chxcfg_reg |= MDMA_CHXCFG_SWREQMOD;
     } else {
         node->chxctl1_reg &= ~MDMA_CHXCTL1_TRIGSEL;
@@ -366,7 +374,7 @@ void mdma_node_create(mdma_link_node_parameter_struct *node, mdma_multi_block_pa
     /* configure bus type for source and destination */
     node->chxctl1_reg &= ~(MDMA_CHXCTL1_SBSEL | MDMA_CHXCTL1_DBSEL);
     node->chxctl1_reg |= (init_struct->source_bus | init_struct->destination_bus);
-    
+
     /* configure channel block transfer configure register */
     cfg = (((block_init_struct->block_num << CHXBTCFG_BRNUM_OFFSET) & MDMA_CHXBTCFG_BRNUM)| (init_struct->tbytes_num_in_block & MDMA_CHXBTCFG_TBNUM));
     node->chxbtcfg_reg = cfg;
@@ -379,7 +387,8 @@ void mdma_node_create(mdma_link_node_parameter_struct *node, mdma_multi_block_pa
 
     node->chxmbaddru_reg &= ~(MDMA_CHXMBADDRU_SADDRUV | MDMA_CHXMBADDRU_DADDRUV);
     /* if block source address offset is negative, set the block repeat source address update mode to decrement */
-    if(UPDATE_DIR_DECREASE == block_init_struct->saddr_update_val) {
+    if(UPDATE_DIR_DECREASE == block_init_struct->saddr_update_val)
+    {
         node->chxbtcfg_reg |= MDMA_CHXBTCFG_SADDRUM;
         /* write new chxmbaddru register value: source repeat block offset */
         blockoffset = (uint32_t)block_init_struct->saddr_update_val;
@@ -390,7 +399,8 @@ void mdma_node_create(mdma_link_node_parameter_struct *node, mdma_multi_block_pa
         node->chxmbaddru_reg |= (((uint32_t)block_init_struct->saddr_update_val) & MDMA_ADDRESS_MASK);
     }
 
-    if(UPDATE_DIR_DECREASE == block_init_struct->dstaddr_update_dir) {
+    if(UPDATE_DIR_DECREASE == block_init_struct->dstaddr_update_dir)
+    {
         node->chxbtcfg_reg |= MDMA_CHXBTCFG_DADDRUM;
         /* write new chxmbaddru register value: destination repeat block offset */
         blockoffset = (uint32_t)block_init_struct->dstaddr_update_val;
@@ -462,7 +472,8 @@ void mdma_node_add(mdma_link_node_parameter_struct *pre_node, mdma_link_node_par
 */
 ErrStatus mdma_node_delete(mdma_link_node_parameter_struct *pre_node, mdma_link_node_parameter_struct *unused_node)
 {
-    if(pre_node->chxladdr_reg != (uint32_t)unused_node) {
+    if(pre_node->chxladdr_reg != (uint32_t)unused_node)
+    {
         /* link address unmatched */
         return ERROR;
     } else {
@@ -855,17 +866,20 @@ FlagStatus mdma_flag_get(mdma_channel_enum channelx, uint32_t flag)
 {
     uint32_t flag_pos = 0U;
 
-    if(STAT1_FLAG & flag) {
+    if(STAT1_FLAG & flag)
+    {
         /* get the flag in CHXSTAT1 */
         flag_pos = (flag & STAT1_FLAG_MASK);
-        if(MDMA_CHXSTAT1(channelx) & flag_pos) {
+        if(MDMA_CHXSTAT1(channelx) & flag_pos)
+        {
             return SET;
         } else {
             return RESET;
         }
     } else {
         /* get the flag in CHXSTAT0 */
-        if(MDMA_CHXSTAT0(channelx) & flag) {
+        if(MDMA_CHXSTAT0(channelx) & flag)
+        {
             return SET;
         } else {
             return RESET;
@@ -894,7 +908,8 @@ FlagStatus mdma_flag_get(mdma_channel_enum channelx, uint32_t flag)
 */
 void mdma_flag_clear(mdma_channel_enum channelx, uint32_t flag)
 {
-    if(STAT1_FLAG & flag) {
+    if(STAT1_FLAG & flag)
+    {
         MDMA_CHXSTATC(channelx) |= MDMA_CHXSTATC_ERRC;
     } else {
         MDMA_CHXSTATC(channelx) |= flag;
@@ -960,7 +975,8 @@ FlagStatus mdma_interrupt_flag_get(mdma_channel_enum channelx, uint32_t int_flag
 {
     uint32_t interrupt_enable = 0U, interrupt_flag = 0U;
 
-    switch(int_flag) {
+    switch(int_flag)
+    {
     case MDMA_INT_FLAG_ERR:
         /* get error interrupt enable bit and flag bit */
         interrupt_enable = (MDMA_CHXCTL0(channelx) & MDMA_CHXCTL0_ERRIE);
@@ -990,7 +1006,8 @@ FlagStatus mdma_interrupt_flag_get(mdma_channel_enum channelx, uint32_t int_flag
         break;
     }
 
-    if(interrupt_flag && interrupt_enable) {
+    if(interrupt_flag && interrupt_enable)
+    {
         return SET;
     } else {
         return RESET;

@@ -8,27 +8,27 @@
 /*
     Copyright (c) 2024, GigaDevice Semiconductor Inc.
 
-    Redistribution and use in source and binary forms, with or without modification, 
+    Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
 
-    1. Redistributions of source code must retain the above copyright notice, this 
+    1. Redistributions of source code must retain the above copyright notice, this
        list of conditions and the following disclaimer.
-    2. Redistributions in binary form must reproduce the above copyright notice, 
-       this list of conditions and the following disclaimer in the documentation 
+    2. Redistributions in binary form must reproduce the above copyright notice,
+       this list of conditions and the following disclaimer in the documentation
        and/or other materials provided with the distribution.
-    3. Neither the name of the copyright holder nor the names of its contributors 
-       may be used to endorse or promote products derived from this software without 
+    3. Neither the name of the copyright holder nor the names of its contributors
+       may be used to endorse or promote products derived from this software without
        specific prior written permission.
 
-    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
-AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
-IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
-INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
-NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
-PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
-WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 OF SUCH DAMAGE.
 */
 
@@ -66,7 +66,8 @@ void rcu_deinit(void)
 {
     /* enable IRC64M */
     RCU_CTL |= RCU_CTL_IRC64MEN;
-    while(0U == (RCU_CTL & RCU_CTL_IRC64MSTB)){
+    while(0U == (RCU_CTL & RCU_CTL_IRC64MSTB))
+    {
     }
 
     RCU_CFG0 &= ~RCU_CFG0_SCS;
@@ -709,7 +710,8 @@ void rcu_ckout1_config(uint32_t ckout1_src, uint32_t ckout1_div)
 */
 void rcu_pll_input_output_clock_range_config(pll_idx_enum pll_idx, uint32_t ck_input, uint32_t ck_output)
 {
-    switch(pll_idx) {
+    switch(pll_idx)
+    {
     case IDX_PLL0:
         /* reset the PLLRNG/PLLVCOSEL bits and set according to ck_input/ck_output */
         RCU_PLLALL &= ~(RCU_PLLALL_PLL0RNG | RCU_PLLALL_PLL0VCOSEL);
@@ -740,7 +742,8 @@ void rcu_pll_input_output_clock_range_config(pll_idx_enum pll_idx, uint32_t ck_i
 */
 void rcu_pll_fractional_config(pll_idx_enum pll_idx, uint32_t pll_fracn)
 {
-    switch(pll_idx) {
+    switch(pll_idx)
+    {
     case IDX_PLL0:
         /* reset the PLLFRAN and set according to pll_fracn */
         RCU_PLL0FRA &= ~(RCU_PLL0FRA_PLL0FRAN);
@@ -769,7 +772,8 @@ void rcu_pll_fractional_config(pll_idx_enum pll_idx, uint32_t pll_fracn)
 */
 void rcu_pll_fractional_latch_enable(pll_idx_enum pll_idx)
 {
-    switch(pll_idx) {
+    switch(pll_idx)
+    {
     case IDX_PLL0:
         /* set the PLL0FRAEN */
         RCU_PLL0FRA |= RCU_PLL0FRA_PLL0FRAEN ;
@@ -795,7 +799,8 @@ void rcu_pll_fractional_latch_enable(pll_idx_enum pll_idx)
 */
 void rcu_pll_fractional_latch_disable(pll_idx_enum pll_idx)
 {
-    switch(pll_idx) {
+    switch(pll_idx)
+    {
     case IDX_PLL0:
         /* reset the PLL0FRAEN */
         RCU_PLL0FRA &= ~RCU_PLL0FRA_PLL0FRAEN ;
@@ -849,7 +854,8 @@ ErrStatus rcu_pll0_config(uint32_t pll0_psc, uint32_t pll0_n, uint32_t pll0_p, u
     /* check the function parameter */
     if(CHECK_PLL0_PSC_VALID(pll0_psc) && CHECK_PLL0_N_VALID(pll0_n) &&
             CHECK_PLL0_P_VALID(pll0_p) && CHECK_PLL0_Q_VALID(pll0_q) &&
-            CHECK_PLL0_R_VALID(pll0_r)) {
+            CHECK_PLL0_R_VALID(pll0_r))
+            {
         RCU_PLL0 &= ~(RCU_PLL0_PLL0PSC | RCU_PLL0_PLL0N | RCU_PLL0_PLL0P | RCU_PLL0_PLL0R);
         RCU_PLL0 |= pll0_psc | ((pll0_n - 1U) << RCU_PLLNOFFSET) | ((pll0_p - 1U) << RCU_PLLPOFFSET) |
                     ((pll0_r - 1U) << RCU_PLLROFFSET);
@@ -885,7 +891,8 @@ ErrStatus rcu_pll1_config(uint32_t pll1_psc, uint32_t pll1_n, uint32_t pll1_p, u
     /* check the function parameter */
     if(CHECK_PLL1_PSC_VALID(pll1_psc) && CHECK_PLL1_N_VALID(pll1_n) &&
             CHECK_PLL1_P_VALID(pll1_p) && CHECK_PLL1_Q_VALID(pll1_q) &&
-            CHECK_PLL1_R_VALID(pll1_r)) {
+            CHECK_PLL1_R_VALID(pll1_r))
+            {
         RCU_PLL1 = (pll1_psc | ((pll1_n - 1U) << RCU_PLLNOFFSET) | ((pll1_p - 1U) << RCU_PLLPOFFSET) |
                     ((pll1_r - 1U) << RCU_PLLROFFSET));
         RCU_PLLADDCTL &= ~RCU_PLLADDCTL_PLL1Q;
@@ -920,7 +927,8 @@ ErrStatus rcu_pll2_config(uint32_t pll2_psc, uint32_t pll2_n, uint32_t pll2_p, u
     /* check the function parameter */
     if(CHECK_PLL2_PSC_VALID(pll2_psc) && CHECK_PLL2_N_VALID(pll2_n) &&
             CHECK_PLL2_P_VALID(pll2_p) && CHECK_PLL2_R_VALID(pll2_q) &&
-            CHECK_PLL2_R_VALID(pll2_r)) {
+            CHECK_PLL2_R_VALID(pll2_r))
+            {
         RCU_PLL2 = (pll2_psc | ((pll2_n - 1U) << RCU_PLLNOFFSET) | ((pll2_p - 1U) << RCU_PLLPOFFSET) |
                     ((pll2_r - 1U) << RCU_PLLROFFSET));
         RCU_PLLADDCTL &= ~RCU_PLLADDCTL_PLL2Q;
@@ -1133,13 +1141,17 @@ uint32_t rcu_irc64mdiv_freq_get(void)
     uint32_t irc64m_freq = 0U;
 
     /* CK_IRC64MDIV = CK_IRC64M/1/2/4/8 */
-    if(RCU_IRC64M_DIV1 == (RCU_ADDCTL1 & RCU_ADDCTL1_IRC64MDIV)) {
+    if(RCU_IRC64M_DIV1 == (RCU_ADDCTL1 & RCU_ADDCTL1_IRC64MDIV))
+    {
         irc64m_freq = IRC64M_VALUE;
-    } else if(RCU_IRC64M_DIV2 == (RCU_ADDCTL1 & RCU_ADDCTL1_IRC64MDIV)) {
+    } else if(RCU_IRC64M_DIV2 == (RCU_ADDCTL1 & RCU_ADDCTL1_IRC64MDIV))
+    {
         irc64m_freq = IRC64M_VALUE / 2U;
-    } else if(RCU_IRC64M_DIV4 == (RCU_ADDCTL1 & RCU_ADDCTL1_IRC64MDIV)) {
+    } else if(RCU_IRC64M_DIV4 == (RCU_ADDCTL1 & RCU_ADDCTL1_IRC64MDIV))
+    {
         irc64m_freq = IRC64M_VALUE / 4U;
-    } else if(RCU_IRC64M_DIV8 == (RCU_ADDCTL1 & RCU_ADDCTL1_IRC64MDIV)) {
+    } else if(RCU_IRC64M_DIV8 == (RCU_ADDCTL1 & RCU_ADDCTL1_IRC64MDIV))
+    {
         irc64m_freq = IRC64M_VALUE / 8U;
     } else {
     }
@@ -1165,7 +1177,8 @@ uint32_t rcu_irc64mdiv_freq_get(void)
 void rcu_timer_clock_prescaler_config(uint32_t timer_clock_prescaler)
 {
     /* configure the TIMERSEL bit and select the TIMER clock prescaler */
-    if(timer_clock_prescaler == RCU_TIMER_PSC_MUL2) {
+    if(timer_clock_prescaler == RCU_TIMER_PSC_MUL2)
+    {
         RCU_CFG1 &= timer_clock_prescaler;
     } else {
         RCU_CFG1 |= timer_clock_prescaler;
@@ -1196,7 +1209,8 @@ void rcu_timer_clock_prescaler_config(uint32_t timer_clock_prescaler)
 */
 void rcu_spi_clock_config(spi_idx_enum spi_idx, uint32_t ck_spi)
 {
-    switch(spi_idx) {
+    switch(spi_idx)
+    {
     case IDX_SPI0:
         /* reset the SPI0SEL bits and set according to ck_spi */
         RCU_CFG5 &= ~RCU_CFG5_SPI0SEL;
@@ -1246,7 +1260,8 @@ void rcu_spi_clock_config(spi_idx_enum spi_idx, uint32_t ck_spi)
 */
 void rcu_sdio_clock_config(sdio_idx_enum sdio_idx, uint32_t ck_sdio)
 {
-    switch(sdio_idx) {
+    switch(sdio_idx)
+    {
     case IDX_SDIO0:
         /* reset the SDIO0SEL bits and set according to ck_sdio */
         RCU_CFG4 &= ~RCU_CFG4_SDIO0SEL;
@@ -1310,7 +1325,8 @@ void rcu_tli_clock_div_config(uint32_t pll2_r_div)
 */
 void rcu_usart_clock_config(usart_idx_enum usart_idx, uint32_t ck_usart)
 {
-    switch(usart_idx) {
+    switch(usart_idx)
+    {
     case IDX_USART0:
         /* reset the USART0SEL bits and set according to ck_usart */
         RCU_CFG1 &= ~RCU_CFG1_USART0SEL;
@@ -1350,7 +1366,8 @@ void rcu_usart_clock_config(usart_idx_enum usart_idx, uint32_t ck_usart)
 */
 void rcu_i2c_clock_config(i2c_idx_enum i2c_idx, uint32_t ck_i2c)
 {
-    switch(i2c_idx) {
+    switch(i2c_idx)
+    {
     case IDX_I2C0:
         /* reset the I2C0SEL bits and set according to ck_i2c */
         RCU_CFG0 &= ~RCU_CFG0_I2C0SEL;
@@ -1390,7 +1407,8 @@ void rcu_i2c_clock_config(i2c_idx_enum i2c_idx, uint32_t ck_i2c)
 */
 void rcu_can_clock_config(can_idx_enum can_idx, uint32_t ck_can)
 {
-    switch(can_idx) {
+    switch(can_idx)
+    {
     case IDX_CAN0:
         /* reset the CAN0SEL bits and set according to ck_can */
         RCU_CFG1 &= ~RCU_CFG1_CAN0SEL;
@@ -1424,7 +1442,8 @@ void rcu_can_clock_config(can_idx_enum can_idx, uint32_t ck_can)
 */
 void rcu_adc_clock_config(adc_idx_enum adc_idx, uint32_t ck_adc)
 {
-    switch(adc_idx) {
+    switch(adc_idx)
+    {
     case IDX_ADC0:
     case IDX_ADC1:
         /* reset the ADC0SEL/ADC1SEL bits and set according to ck_adc */
@@ -1456,7 +1475,8 @@ void rcu_adc_clock_config(adc_idx_enum adc_idx, uint32_t ck_adc)
 */
 void rcu_sai_clock_config(sai_idx_enum sai_idx, uint32_t ck_sai)
 {
-    switch(sai_idx) {
+    switch(sai_idx)
+    {
     case IDX_SAI0:
         /* reset the SAI0SEL bits and set according to ck_sai */
         RCU_CFG2 &= ~RCU_CFG2_SAI0SEL;
@@ -1488,7 +1508,8 @@ void rcu_sai_clock_config(sai_idx_enum sai_idx, uint32_t ck_sai)
 */
 void rcu_sai2_block_clock_config(sai2b_idx_enum sai2b_idx, uint32_t ck_sai2b)
 {
-    switch(sai2b_idx) {
+    switch(sai2b_idx)
+    {
     case IDX_SAI2B0:
         /* reset the SAI2B0SEL bits and set according to ck_sai2b */
         RCU_CFG2 &= ~RCU_CFG2_SAI2B0SEL;
@@ -1591,7 +1612,8 @@ void rcu_per_clock_config(uint32_t ck_per)
 */
 void rcu_usbhs_pll1qpsc_config(usbhs_idx_enum usbhs_idx, uint32_t ck_usbhspsc)
 {
-    switch(usbhs_idx) {
+    switch(usbhs_idx)
+    {
     case IDX_USBHS0:
         /* reset the USBHS0PSC bits and set according to ck_usbhspsc */
         RCU_USBCLKCTL &= ~RCU_USBCLKCTL_USBHS0PSC;
@@ -1621,7 +1643,8 @@ void rcu_usbhs_pll1qpsc_config(usbhs_idx_enum usbhs_idx, uint32_t ck_usbhspsc)
 */
 void rcu_usb48m_clock_config(usbhs_idx_enum usbhs_idx, uint32_t ck_usb48m)
 {
-    switch(usbhs_idx) {
+    switch(usbhs_idx)
+    {
     case IDX_USBHS0:
         /* reset the USB048MSEL bits and set according to ck_usb48m */
         RCU_USBCLKCTL &= ~RCU_USBCLKCTL_USBHS048MSEL;
@@ -1649,7 +1672,8 @@ void rcu_usb48m_clock_config(usbhs_idx_enum usbhs_idx, uint32_t ck_usb48m)
 */
 void rcu_usbhs_clock_config(usbhs_idx_enum usbhs_idx, uint32_t ck_usbhs)
 {
-    switch(usbhs_idx) {
+    switch(usbhs_idx)
+    {
     case IDX_USBHS0:
         /* reset the USBHS0SEL bits and set according to ck_usbhs */
         RCU_USBCLKCTL &= ~RCU_USBCLKCTL_USBHS0SEL;
@@ -1673,7 +1697,8 @@ void rcu_usbhs_clock_config(usbhs_idx_enum usbhs_idx, uint32_t ck_usbhs)
 */
 void rcu_usbhs_clock_selection_enable(usbhs_idx_enum usbhs_idx)
 {
-    switch(usbhs_idx) {
+    switch(usbhs_idx)
+    {
     case IDX_USBHS0:
         /* set the USB0SWEN bit  */
         RCU_USBCLKCTL |= RCU_USBCLKCTL_USBHS0SWEN;
@@ -1695,7 +1720,8 @@ void rcu_usbhs_clock_selection_enable(usbhs_idx_enum usbhs_idx)
 */
 void rcu_usbhs_clock_selection_disable(usbhs_idx_enum usbhs_idx)
 {
-    switch(usbhs_idx) {
+    switch(usbhs_idx)
+    {
     case IDX_USBHS0:
         /* reset the USB0SWEN bit  */
         RCU_USBCLKCTL &= ~RCU_USBCLKCTL_USBHS0SWEN;
@@ -1755,136 +1781,159 @@ ErrStatus rcu_osci_stab_wait(rcu_osci_type_enum osci)
     ErrStatus reval = ERROR;
     FlagStatus osci_stat = RESET;
 
-    switch(osci) {
+    switch(osci)
+    {
     /* wait HXTAL stable */
     case RCU_HXTAL:
-        while((RESET == osci_stat) && (HXTAL_STARTUP_TIMEOUT != stb_cnt)) {
+        while((RESET == osci_stat) && (HXTAL_STARTUP_TIMEOUT != stb_cnt))
+        {
             osci_stat = rcu_flag_get(RCU_FLAG_HXTALSTB);
             stb_cnt++;
         }
 
         /* check whether flag is set */
-        if(RESET != rcu_flag_get(RCU_FLAG_HXTALSTB)) {
+        if(RESET != rcu_flag_get(RCU_FLAG_HXTALSTB))
+        {
             reval = SUCCESS;
         }
         break;
     /* wait LXTAL stable */
     case RCU_LXTAL:
-        while((RESET == osci_stat) && (LXTAL_STARTUP_TIMEOUT != stb_cnt)) {
+        while((RESET == osci_stat) && (LXTAL_STARTUP_TIMEOUT != stb_cnt))
+        {
             osci_stat = rcu_flag_get(RCU_FLAG_LXTALSTB);
             stb_cnt++;
         }
 
         /* check whether flag is set */
-        if(RESET != rcu_flag_get(RCU_FLAG_LXTALSTB)) {
+        if(RESET != rcu_flag_get(RCU_FLAG_LXTALSTB))
+        {
             reval = SUCCESS;
         }
         break;
     /* wait IRC64M stable */
     case RCU_IRC64M:
-        while((RESET == osci_stat) && (IRC64M_STARTUP_TIMEOUT != stb_cnt)) {
+        while((RESET == osci_stat) && (IRC64M_STARTUP_TIMEOUT != stb_cnt))
+        {
             osci_stat = rcu_flag_get(RCU_FLAG_IRC64MSTB);
             stb_cnt++;
         }
 
         /* check whether flag is set */
-        if(RESET != rcu_flag_get(RCU_FLAG_IRC64MSTB)) {
+        if(RESET != rcu_flag_get(RCU_FLAG_IRC64MSTB))
+        {
             reval = SUCCESS;
         }
         break;
     /* wait IRC48M stable */
     case RCU_IRC48M:
-        while((RESET == osci_stat) && (OSC_STARTUP_TIMEOUT != stb_cnt)) {
+        while((RESET == osci_stat) && (OSC_STARTUP_TIMEOUT != stb_cnt))
+        {
             osci_stat = rcu_flag_get(RCU_FLAG_IRC48MSTB);
             stb_cnt++;
         }
 
         /* check whether flag is set */
-        if(RESET != rcu_flag_get(RCU_FLAG_IRC48MSTB)) {
+        if(RESET != rcu_flag_get(RCU_FLAG_IRC48MSTB))
+        {
             reval = SUCCESS;
         }
         break;
     /* wait IRC32K stable */
     case RCU_IRC32K:
-        while((RESET == osci_stat) && (OSC_STARTUP_TIMEOUT != stb_cnt)) {
+        while((RESET == osci_stat) && (OSC_STARTUP_TIMEOUT != stb_cnt))
+        {
             osci_stat = rcu_flag_get(RCU_FLAG_IRC32KSTB);
             stb_cnt++;
         }
 
         /* check whether flag is set */
-        if(RESET != rcu_flag_get(RCU_FLAG_IRC32KSTB)) {
+        if(RESET != rcu_flag_get(RCU_FLAG_IRC32KSTB))
+        {
             reval = SUCCESS;
         }
         break;
     /* wait LPIRC4M stable */
     case RCU_LPIRC4M:
-        while((RESET == osci_stat) && (OSC_STARTUP_TIMEOUT != stb_cnt)) {
+        while((RESET == osci_stat) && (OSC_STARTUP_TIMEOUT != stb_cnt))
+        {
             osci_stat = rcu_flag_get(RCU_FLAG_LPIRC4MSTB);
             stb_cnt++;
         }
 
         /* check whether flag is set */
-        if(RESET != rcu_flag_get(RCU_FLAG_LPIRC4MSTB)) {
+        if(RESET != rcu_flag_get(RCU_FLAG_LPIRC4MSTB))
+        {
             reval = SUCCESS;
         }
         break;
     /* wait PLL0 stable */
     case RCU_PLL0_CK:
-        while((RESET == osci_stat) && (OSC_STARTUP_TIMEOUT != stb_cnt)) {
+        while((RESET == osci_stat) && (OSC_STARTUP_TIMEOUT != stb_cnt))
+        {
             osci_stat = rcu_flag_get(RCU_FLAG_PLL0STB);
             stb_cnt++;
         }
 
         /* check whether flag is set */
-        if(RESET != rcu_flag_get(RCU_FLAG_PLL0STB)) {
+        if(RESET != rcu_flag_get(RCU_FLAG_PLL0STB))
+        {
             reval = SUCCESS;
         }
         break;
     /* wait PLL1 stable */
     case RCU_PLL1_CK:
-        while((RESET == osci_stat) && (OSC_STARTUP_TIMEOUT != stb_cnt)) {
+        while((RESET == osci_stat) && (OSC_STARTUP_TIMEOUT != stb_cnt))
+        {
             osci_stat = rcu_flag_get(RCU_FLAG_PLL1STB);
             stb_cnt++;
         }
 
         /* check whether flag is set */
-        if(RESET != rcu_flag_get(RCU_FLAG_PLL1STB)) {
+        if(RESET != rcu_flag_get(RCU_FLAG_PLL1STB))
+        {
             reval = SUCCESS;
         }
         break;
     /* wait PLL2 stable */
     case RCU_PLL2_CK:
-        while((RESET == osci_stat) && (OSC_STARTUP_TIMEOUT != stb_cnt)) {
+        while((RESET == osci_stat) && (OSC_STARTUP_TIMEOUT != stb_cnt))
+        {
             osci_stat = rcu_flag_get(RCU_FLAG_PLL2STB);
             stb_cnt++;
         }
 
         /* check whether flag is set */
-        if(RESET != rcu_flag_get(RCU_FLAG_PLL2STB)) {
+        if(RESET != rcu_flag_get(RCU_FLAG_PLL2STB))
+        {
             reval = SUCCESS;
         }
         break;
     /* wait PLLUSBHS0 stable */
     case RCU_PLLUSBHS0_CK:
-        while((RESET == osci_stat) && (OSC_STARTUP_TIMEOUT != stb_cnt)) {
+        while((RESET == osci_stat) && (OSC_STARTUP_TIMEOUT != stb_cnt))
+        {
             osci_stat = rcu_flag_get(RCU_FLAG_PLLUSBHS0STB);
             stb_cnt++;
         }
 
         /* check whether flag is set */
-        if(RESET != rcu_flag_get(RCU_FLAG_PLLUSBHS0STB)) {
+        if(RESET != rcu_flag_get(RCU_FLAG_PLLUSBHS0STB))
+        {
             reval = SUCCESS;
         }
         break;
     /* wait PLLUSBHS1 stable */
     case RCU_PLLUSBHS1_CK:
-        while((RESET == osci_stat) && (OSC_STARTUP_TIMEOUT != stb_cnt)) {
+        while((RESET == osci_stat) && (OSC_STARTUP_TIMEOUT != stb_cnt))
+        {
             osci_stat = rcu_flag_get(RCU_FLAG_PLLUSBHS1STB);
             stb_cnt++;
         }
 
         /* check whether flag is set */
-        if(RESET != rcu_flag_get(RCU_FLAG_PLLUSBHS1STB)) {
+        if(RESET != rcu_flag_get(RCU_FLAG_PLLUSBHS1STB))
+        {
             reval = SUCCESS;
         }
         break;
@@ -1955,7 +2004,8 @@ void rcu_osci_bypass_mode_enable(rcu_osci_type_enum osci)
 {
     uint32_t reg;
 
-    switch(osci) {
+    switch(osci)
+    {
     /* enable HXTAL to bypass mode */
     case RCU_HXTAL:
         reg = RCU_CTL;
@@ -1986,7 +2036,8 @@ void rcu_osci_bypass_mode_disable(rcu_osci_type_enum osci)
 {
     uint32_t reg;
 
-    switch(osci) {
+    switch(osci)
+    {
     /* disable HXTAL to bypass mode */
     case RCU_HXTAL:
         reg = RCU_CTL;
@@ -2157,7 +2208,8 @@ uint32_t rcu_clock_freq_get(rcu_clock_freq_enum clock)
     irc64mdiv_freq = rcu_irc64mdiv_freq_get();
     sws = GET_BITS(RCU_CFG0, 2, 3);
 
-    switch(sws) {
+    switch(sws)
+    {
     /* IRC64MDIV is selected as CK_SYS */
     case SEL_IRC64MDIV:
         cksys_freq = irc64mdiv_freq;
@@ -2177,16 +2229,19 @@ uint32_t rcu_clock_freq_get(rcu_clock_freq_enum clock)
         pll0n = (GET_BITS(RCU_PLL0, 6U, 14U) + 1U);
         pll0p = (GET_BITS(RCU_PLL0, 16U, 22U) + 1U);
 
-        if((RCU_PLL0FRA & RCU_PLL0FRA_PLL0FRAEN) != 0U) {
+        if((RCU_PLL0FRA & RCU_PLL0FRA_PLL0FRAEN) != 0U)
+        {
             fracn = GET_BITS(RCU_PLL0FRA, 0U, 12U);
         }
 
         /* PLL clock source selection, HXTAL or IRC64MDIV */
         pllsel = (RCU_PLLALL & RCU_PLLALL_PLLSEL);
 
-        if(RCU_PLLSRC_HXTAL == pllsel) {
+        if(RCU_PLLSRC_HXTAL == pllsel)
+        {
             ck_src = HXTAL_VALUE;
-        } else if(RCU_PLLSRC_IRC64MDIV == pllsel) {
+        } else if(RCU_PLLSRC_IRC64MDIV == pllsel)
+        {
             ck_src = irc64mdiv_freq;
         } else {
             ck_src = LPIRC4M_VALUE;
@@ -2226,7 +2281,8 @@ uint32_t rcu_clock_freq_get(rcu_clock_freq_enum clock)
     apb4_freq = ahb_freq >> clk_exp;
 
     /* return the clocks frequency */
-    switch(clock) {
+    switch(clock)
+    {
     case CK_SYS:
         ck_freq = cksys_freq;
         break;
@@ -2252,23 +2308,28 @@ uint32_t rcu_clock_freq_get(rcu_clock_freq_enum clock)
         pll0n = (GET_BITS(RCU_PLL0, 6U, 14U) + 1U);
         pll0p = (GET_BITS(RCU_PLL0, 16U, 22U) + 1U);
 
-        if((RCU_PLL0FRA & RCU_PLL0FRA_PLL0FRAEN) != 0U) {
+        if((RCU_PLL0FRA & RCU_PLL0FRA_PLL0FRAEN) != 0U)
+        {
             fracn = GET_BITS(RCU_PLL0FRA, 0U, 12U);
         }
 
         /* PLL clock source selection (HXTAL, IRC64MDIV or LPIRC4M) */
         pllsel = (RCU_PLLALL & RCU_PLLALL_PLLSEL);
 
-        if(RCU_PLLSRC_HXTAL == pllsel) {
+        if(RCU_PLLSRC_HXTAL == pllsel)
+        {
             ck_src = HXTAL_VALUE;
-        } else if(RCU_PLLSRC_IRC64MDIV == pllsel) {
+        } else if(RCU_PLLSRC_IRC64MDIV == pllsel)
+        {
             ck_src = irc64mdiv_freq;
         } else {
             ck_src = LPIRC4M_VALUE;
         }
 
-        if((pll0psc != 0U) && (ck_src != 0U)) {
-            if((RCU_PLLADDCTL & RCU_PLLADDCTL_PLL0PEN) != 0U) {
+        if((pll0psc != 0U) && (ck_src != 0U))
+        {
+            if((RCU_PLLADDCTL & RCU_PLLADDCTL_PLL0PEN) != 0U)
+            {
                 pll0p_freq = rcu_pll_clock_freq_cal(ck_src, pll0psc, pll0n, fracn, pll0p);
             }
         }
@@ -2282,23 +2343,28 @@ uint32_t rcu_clock_freq_get(rcu_clock_freq_enum clock)
         pll0n = (GET_BITS(RCU_PLL0, 6U, 14U) + 1U);
         pll0r = (GET_BITS(RCU_PLL0, 24U, 30U) + 1U);
 
-        if((RCU_PLL0FRA & RCU_PLL0FRA_PLL0FRAEN) != 0U) {
+        if((RCU_PLL0FRA & RCU_PLL0FRA_PLL0FRAEN) != 0U)
+        {
             fracn = GET_BITS(RCU_PLL0FRA, 0U, 12U);
         }
 
         /* PLL clock source selection (HXTAL, IRC64MDIV or LPIRC4M) */
         pllsel = (RCU_PLLALL & RCU_PLLALL_PLLSEL);
 
-        if(RCU_PLLSRC_HXTAL == pllsel) {
+        if(RCU_PLLSRC_HXTAL == pllsel)
+        {
             ck_src = HXTAL_VALUE;
-        } else if(RCU_PLLSRC_IRC64MDIV == pllsel) {
+        } else if(RCU_PLLSRC_IRC64MDIV == pllsel)
+        {
             ck_src = irc64mdiv_freq;
         } else {
             ck_src = LPIRC4M_VALUE;
         }
 
-        if((pll0psc != 0U) && (ck_src != 0U)) {
-            if((RCU_PLLADDCTL & RCU_PLLADDCTL_PLL0REN) != 0U) {
+        if((pll0psc != 0U) && (ck_src != 0U))
+        {
+            if((RCU_PLLADDCTL & RCU_PLLADDCTL_PLL0REN) != 0U)
+            {
                 pll0r_freq = rcu_pll_clock_freq_cal(ck_src, pll0psc, pll0n, fracn, pll0r);
             }
         }
@@ -2312,23 +2378,28 @@ uint32_t rcu_clock_freq_get(rcu_clock_freq_enum clock)
         pll0n = (GET_BITS(RCU_PLL0, 6U, 14U) + 1U);
         pll0q = (GET_BITS(RCU_PLLADDCTL, 0U, 6U) + 1U);
 
-        if((RCU_PLL0FRA & RCU_PLL0FRA_PLL0FRAEN) != 0U) {
+        if((RCU_PLL0FRA & RCU_PLL0FRA_PLL0FRAEN) != 0U)
+        {
             fracn = GET_BITS(RCU_PLL0FRA, 0U, 12U);
         }
 
         /* PLL clock source selection (HXTAL, IRC64MDIV or LPIRC4M) */
         pllsel = (RCU_PLLALL & RCU_PLLALL_PLLSEL);
 
-        if(RCU_PLLSRC_HXTAL == pllsel) {
+        if(RCU_PLLSRC_HXTAL == pllsel)
+        {
             ck_src = HXTAL_VALUE;
-        } else if(RCU_PLLSRC_IRC64MDIV == pllsel) {
+        } else if(RCU_PLLSRC_IRC64MDIV == pllsel)
+        {
             ck_src = irc64mdiv_freq;
         } else {
             ck_src = LPIRC4M_VALUE;
         }
 
-        if((pll0psc != 0U) && (ck_src != 0U)) {
-            if((RCU_PLLADDCTL & RCU_PLLADDCTL_PLL0QEN) != 0U) {
+        if((pll0psc != 0U) && (ck_src != 0U))
+        {
+            if((RCU_PLLADDCTL & RCU_PLLADDCTL_PLL0QEN) != 0U)
+            {
                 pll0q_freq = rcu_pll_clock_freq_cal(ck_src, pll0psc, pll0n, fracn, pll0q);
             }
         }
@@ -2342,23 +2413,28 @@ uint32_t rcu_clock_freq_get(rcu_clock_freq_enum clock)
         pll1n = (GET_BITS(RCU_PLL1, 6U, 14U) + 1U);
         pll1p = (GET_BITS(RCU_PLL1, 16U, 22U) + 1U);
 
-        if((RCU_PLL1FRA & RCU_PLL1FRA_PLL1FRAEN) != 0U) {
+        if((RCU_PLL1FRA & RCU_PLL1FRA_PLL1FRAEN) != 0U)
+        {
             fracn = GET_BITS(RCU_PLL1FRA, 0U, 12U);
         }
 
         /* PLL clock source selection (HXTAL, IRC64MDIV or LPIRC4M) */
         pllsel = (RCU_PLLALL & RCU_PLLALL_PLLSEL);
 
-        if(RCU_PLLSRC_HXTAL == pllsel) {
+        if(RCU_PLLSRC_HXTAL == pllsel)
+        {
             ck_src = HXTAL_VALUE;
-        } else if(RCU_PLLSRC_IRC64MDIV == pllsel) {
+        } else if(RCU_PLLSRC_IRC64MDIV == pllsel)
+        {
             ck_src = irc64mdiv_freq;
         } else {
             ck_src = LPIRC4M_VALUE;
         }
 
-        if((pll1psc != 0U) && (ck_src != 0U)) {
-            if((RCU_PLLADDCTL & RCU_PLLADDCTL_PLL1PEN) != 0U) {
+        if((pll1psc != 0U) && (ck_src != 0U))
+        {
+            if((RCU_PLLADDCTL & RCU_PLLADDCTL_PLL1PEN) != 0U)
+            {
                 pll1p_freq = rcu_pll_clock_freq_cal(ck_src, pll1psc, pll1n, fracn, pll1p);
             }
         }
@@ -2372,23 +2448,28 @@ uint32_t rcu_clock_freq_get(rcu_clock_freq_enum clock)
         pll1n = (GET_BITS(RCU_PLL1, 6U, 14U) + 1U);
         pll1r = (GET_BITS(RCU_PLL1, 24U, 30U) + 1U);
 
-        if((RCU_PLL1FRA & RCU_PLL1FRA_PLL1FRAEN) != 0U) {
+        if((RCU_PLL1FRA & RCU_PLL1FRA_PLL1FRAEN) != 0U)
+        {
             fracn = GET_BITS(RCU_PLL1FRA, 0U, 12U);
         }
 
         /* PLL clock source selection (HXTAL, IRC64MDIV or LPIRC4M) */
         pllsel = (RCU_PLLALL & RCU_PLLALL_PLLSEL);
 
-        if(RCU_PLLSRC_HXTAL == pllsel) {
+        if(RCU_PLLSRC_HXTAL == pllsel)
+        {
             ck_src = HXTAL_VALUE;
-        } else if(RCU_PLLSRC_IRC64MDIV == pllsel) {
+        } else if(RCU_PLLSRC_IRC64MDIV == pllsel)
+        {
             ck_src = irc64mdiv_freq;
         } else {
             ck_src = LPIRC4M_VALUE;
         }
 
-        if((pll1psc != 0U) && (ck_src != 0U)) {
-            if((RCU_PLLADDCTL & RCU_PLLADDCTL_PLL1REN) != 0U) {
+        if((pll1psc != 0U) && (ck_src != 0U))
+        {
+            if((RCU_PLLADDCTL & RCU_PLLADDCTL_PLL1REN) != 0U)
+            {
                 pll1r_freq = rcu_pll_clock_freq_cal(ck_src, pll1psc, pll1n, fracn, pll1r);
             }
         }
@@ -2402,23 +2483,28 @@ uint32_t rcu_clock_freq_get(rcu_clock_freq_enum clock)
         pll1n = (GET_BITS(RCU_PLL1, 6U, 14U) + 1U);
         pll1q = (GET_BITS(RCU_PLLADDCTL, 8U, 14U) + 1U);
 
-        if((RCU_PLL1FRA & RCU_PLL1FRA_PLL1FRAEN) != 0U) {
+        if((RCU_PLL1FRA & RCU_PLL1FRA_PLL1FRAEN) != 0U)
+        {
             fracn = GET_BITS(RCU_PLL1FRA, 0U, 12U);
         }
 
         /* PLL clock source selection (HXTAL, IRC64MDIV or LPIRC4M) */
         pllsel = (RCU_PLLALL & RCU_PLLALL_PLLSEL);
 
-        if(RCU_PLLSRC_HXTAL == pllsel) {
+        if(RCU_PLLSRC_HXTAL == pllsel)
+        {
             ck_src = HXTAL_VALUE;
-        } else if(RCU_PLLSRC_IRC64MDIV == pllsel) {
+        } else if(RCU_PLLSRC_IRC64MDIV == pllsel)
+        {
             ck_src = irc64mdiv_freq;
         } else {
             ck_src = LPIRC4M_VALUE;
         }
 
-        if((pll1psc != 0U) && (ck_src != 0U)) {
-            if((RCU_PLLADDCTL & RCU_PLLADDCTL_PLL1QEN) != 0U) {
+        if((pll1psc != 0U) && (ck_src != 0U))
+        {
+            if((RCU_PLLADDCTL & RCU_PLLADDCTL_PLL1QEN) != 0U)
+            {
                 pll1q_freq = rcu_pll_clock_freq_cal(ck_src, pll1psc, pll1n, fracn, pll1q);
             }
         }
@@ -2432,23 +2518,28 @@ uint32_t rcu_clock_freq_get(rcu_clock_freq_enum clock)
         pll2n = (GET_BITS(RCU_PLL2, 6U, 14U) + 1U);
         pll2p = (GET_BITS(RCU_PLL2, 16U, 22U) + 1U);
 
-        if((RCU_PLL2FRA & RCU_PLL2FRA_PLL2FRAEN) != 0U) {
+        if((RCU_PLL2FRA & RCU_PLL2FRA_PLL2FRAEN) != 0U)
+        {
             fracn = GET_BITS(RCU_PLL2FRA, 0U, 12U);
         }
 
         /* PLL clock source selection (HXTAL, IRC64MDIV or LPIRC4M) */
         pllsel = (RCU_PLLALL & RCU_PLLALL_PLLSEL);
 
-        if(RCU_PLLSRC_HXTAL == pllsel) {
+        if(RCU_PLLSRC_HXTAL == pllsel)
+        {
             ck_src = HXTAL_VALUE;
-        } else if(RCU_PLLSRC_IRC64MDIV == pllsel) {
+        } else if(RCU_PLLSRC_IRC64MDIV == pllsel)
+        {
             ck_src = irc64mdiv_freq;
         } else {
             ck_src = LPIRC4M_VALUE;
         }
 
-        if((pll2psc != 0U) && (ck_src != 0U)) {
-            if((RCU_PLLADDCTL & RCU_PLLADDCTL_PLL2PEN) != 0U) {
+        if((pll2psc != 0U) && (ck_src != 0U))
+        {
+            if((RCU_PLLADDCTL & RCU_PLLADDCTL_PLL2PEN) != 0U)
+            {
                 pll2p_freq = rcu_pll_clock_freq_cal(ck_src, pll2psc, pll2n, fracn, pll2p);
             }
         }
@@ -2462,23 +2553,28 @@ uint32_t rcu_clock_freq_get(rcu_clock_freq_enum clock)
         pll2n = (GET_BITS(RCU_PLL2, 6U, 14U) + 1U);
         pll2r = (GET_BITS(RCU_PLL2, 24U, 30U) + 1U);
 
-        if((RCU_PLL2FRA & RCU_PLL2FRA_PLL2FRAEN) != 0U) {
+        if((RCU_PLL2FRA & RCU_PLL2FRA_PLL2FRAEN) != 0U)
+        {
             fracn = GET_BITS(RCU_PLL2FRA, 0U, 12U);
         }
 
         /* PLL clock source selection (HXTAL, IRC64MDIV or LPIRC4M) */
         pllsel = (RCU_PLLALL & RCU_PLLALL_PLLSEL);
 
-        if(RCU_PLLSRC_HXTAL == pllsel) {
+        if(RCU_PLLSRC_HXTAL == pllsel)
+        {
             ck_src = HXTAL_VALUE;
-        } else if(RCU_PLLSRC_IRC64MDIV == pllsel) {
+        } else if(RCU_PLLSRC_IRC64MDIV == pllsel)
+        {
             ck_src = irc64mdiv_freq;
         } else {
             ck_src = LPIRC4M_VALUE;
         }
 
-        if((pll2psc != 0U) && (ck_src != 0U)) {
-            if((RCU_PLLADDCTL & RCU_PLLADDCTL_PLL2REN) != 0U) {
+        if((pll2psc != 0U) && (ck_src != 0U))
+        {
+            if((RCU_PLLADDCTL & RCU_PLLADDCTL_PLL2REN) != 0U)
+            {
                 pll2r_freq = rcu_pll_clock_freq_cal(ck_src, pll2psc, pll2n, fracn, pll2r);
             }
         }
@@ -2492,23 +2588,28 @@ uint32_t rcu_clock_freq_get(rcu_clock_freq_enum clock)
         pll2n = (GET_BITS(RCU_PLL2, 6U, 14U) + 1U);
         pll2q = (GET_BITS(RCU_PLLADDCTL, 16U, 22U) + 1U);
 
-        if((RCU_PLL2FRA & RCU_PLL2FRA_PLL2FRAEN) != 0U) {
+        if((RCU_PLL2FRA & RCU_PLL2FRA_PLL2FRAEN) != 0U)
+        {
             fracn = GET_BITS(RCU_PLL2FRA, 0U, 12U);
         }
 
         /* PLL clock source selection (HXTAL, IRC64MDIV or LPIRC4M) */
         pllsel = (RCU_PLLALL & RCU_PLLALL_PLLSEL);
 
-        if(RCU_PLLSRC_HXTAL == pllsel) {
+        if(RCU_PLLSRC_HXTAL == pllsel)
+        {
             ck_src = HXTAL_VALUE;
-        } else if(RCU_PLLSRC_IRC64MDIV == pllsel) {
+        } else if(RCU_PLLSRC_IRC64MDIV == pllsel)
+        {
             ck_src = irc64mdiv_freq;
         } else {
             ck_src = LPIRC4M_VALUE;
         }
 
-        if((pll2psc != 0U) && (ck_src != 0U)) {
-            if((RCU_PLLADDCTL & RCU_PLLADDCTL_PLL2QEN) != 0U) {
+        if((pll2psc != 0U) && (ck_src != 0U))
+        {
+            if((RCU_PLLADDCTL & RCU_PLLADDCTL_PLL2QEN) != 0U)
+            {
                 pll2q_freq = rcu_pll_clock_freq_cal(ck_src, pll2psc, pll2n, fracn, pll2q);
             }
         }
@@ -2519,9 +2620,11 @@ uint32_t rcu_clock_freq_get(rcu_clock_freq_enum clock)
         /* calculate peripheral clock frequency */
         persel = (RCU_CFG1 & RCU_CFG1_PERSEL);
 
-        if(RCU_PERSRC_HXTAL == persel) {
+        if(RCU_PERSRC_HXTAL == persel)
+        {
             per_freq = HXTAL_VALUE;
-        } else if(RCU_PLLSRC_IRC64MDIV == persel) {
+        } else if(RCU_PLLSRC_IRC64MDIV == persel)
+        {
             per_freq = irc64mdiv_freq;
         } else {
             per_freq = LPIRC4M_VALUE;
@@ -2531,13 +2634,17 @@ uint32_t rcu_clock_freq_get(rcu_clock_freq_enum clock)
         break;
     case CK_USART0:
         /* calculate USART0 clock frequency */
-        if(RCU_USARTSRC_APB == (RCU_CFG1 & RCU_CFG1_USART0SEL)) {
+        if(RCU_USARTSRC_APB == (RCU_CFG1 & RCU_CFG1_USART0SEL))
+        {
             usart_freq = apb2_freq;
-        } else if(RCU_USARTSRC_AHB == (RCU_CFG1 & RCU_CFG1_USART0SEL)) {
+        } else if(RCU_USARTSRC_AHB == (RCU_CFG1 & RCU_CFG1_USART0SEL))
+        {
             usart_freq = ahb_freq;
-        } else if(RCU_USARTSRC_LXTAL == (RCU_CFG1 & RCU_CFG1_USART0SEL)) {
+        } else if(RCU_USARTSRC_LXTAL == (RCU_CFG1 & RCU_CFG1_USART0SEL))
+        {
             usart_freq = LXTAL_VALUE;
-        } else if(RCU_USARTSRC_IRC64MDIV == (RCU_CFG1 & RCU_CFG1_USART0SEL)) {
+        } else if(RCU_USARTSRC_IRC64MDIV == (RCU_CFG1 & RCU_CFG1_USART0SEL))
+        {
             usart_freq = irc64mdiv_freq;
         } else {
         }
@@ -2546,13 +2653,17 @@ uint32_t rcu_clock_freq_get(rcu_clock_freq_enum clock)
         break;
     case CK_USART1:
         /* calculate USART1 clock frequency */
-        if((RCU_USARTSRC_APB << 18U) == (RCU_CFG1 & RCU_CFG1_USART1SEL)) {
+        if((RCU_USARTSRC_APB << 18U) == (RCU_CFG1 & RCU_CFG1_USART1SEL))
+        {
             usart_freq = apb1_freq;
-        } else if((RCU_USARTSRC_AHB << 18U) == (RCU_CFG1 & RCU_CFG1_USART1SEL)) {
+        } else if((RCU_USARTSRC_AHB << 18U) == (RCU_CFG1 & RCU_CFG1_USART1SEL))
+        {
             usart_freq = ahb_freq;
-        } else if((RCU_USARTSRC_LXTAL << 18U) == (RCU_CFG1 & RCU_CFG1_USART1SEL)) {
+        } else if((RCU_USARTSRC_LXTAL << 18U) == (RCU_CFG1 & RCU_CFG1_USART1SEL))
+        {
             usart_freq = LXTAL_VALUE;
-        } else if((RCU_USARTSRC_IRC64MDIV << 18U) == (RCU_CFG1 & RCU_CFG1_USART1SEL)) {
+        } else if((RCU_USARTSRC_IRC64MDIV << 18U) == (RCU_CFG1 & RCU_CFG1_USART1SEL))
+        {
             usart_freq = irc64mdiv_freq;
         } else {
         }
@@ -2561,13 +2672,17 @@ uint32_t rcu_clock_freq_get(rcu_clock_freq_enum clock)
         break;
     case CK_USART2:
         /* calculate USART2 clock frequency */
-        if((RCU_USARTSRC_APB << 20U) == (RCU_CFG1 & RCU_CFG1_USART2SEL)) {
+        if((RCU_USARTSRC_APB << 20U) == (RCU_CFG1 & RCU_CFG1_USART2SEL))
+        {
             usart_freq = apb1_freq;
-        } else if((RCU_USARTSRC_AHB << 20U) == (RCU_CFG1 & RCU_CFG1_USART2SEL)) {
+        } else if((RCU_USARTSRC_AHB << 20U) == (RCU_CFG1 & RCU_CFG1_USART2SEL))
+        {
             usart_freq = ahb_freq;
-        } else if((RCU_USARTSRC_LXTAL << 20U) == (RCU_CFG1 & RCU_CFG1_USART2SEL)) {
+        } else if((RCU_USARTSRC_LXTAL << 20U) == (RCU_CFG1 & RCU_CFG1_USART2SEL))
+        {
             usart_freq = LXTAL_VALUE;
-        } else if((RCU_USARTSRC_IRC64MDIV << 20U) == (RCU_CFG1 & RCU_CFG1_USART2SEL)) {
+        } else if((RCU_USARTSRC_IRC64MDIV << 20U) == (RCU_CFG1 & RCU_CFG1_USART2SEL))
+        {
             usart_freq = irc64mdiv_freq;
         } else {
         }
@@ -2576,13 +2691,17 @@ uint32_t rcu_clock_freq_get(rcu_clock_freq_enum clock)
         break;
     case CK_USART5:
         /* calculate USART5 clock frequency */
-        if((RCU_USARTSRC_APB << 22U) == (RCU_CFG1 & RCU_CFG1_USART5SEL)) {
+        if((RCU_USARTSRC_APB << 22U) == (RCU_CFG1 & RCU_CFG1_USART5SEL))
+        {
             usart_freq = apb2_freq;
-        } else if((RCU_USARTSRC_AHB << 22U) == (RCU_CFG1 & RCU_CFG1_USART5SEL)) {
+        } else if((RCU_USARTSRC_AHB << 22U) == (RCU_CFG1 & RCU_CFG1_USART5SEL))
+        {
             usart_freq = ahb_freq;
-        } else if((RCU_USARTSRC_LXTAL << 22U) == (RCU_CFG1 & RCU_CFG1_USART5SEL)) {
+        } else if((RCU_USARTSRC_LXTAL << 22U) == (RCU_CFG1 & RCU_CFG1_USART5SEL))
+        {
             usart_freq = LXTAL_VALUE;
-        } else if((RCU_USARTSRC_IRC64MDIV << 22U) == (RCU_CFG1 & RCU_CFG1_USART5SEL)) {
+        } else if((RCU_USARTSRC_IRC64MDIV << 22U) == (RCU_CFG1 & RCU_CFG1_USART5SEL))
+        {
             usart_freq = irc64mdiv_freq;
         } else {
         }
@@ -2634,7 +2753,8 @@ uint32_t rcu_clock_freq_get(rcu_clock_freq_enum clock)
 FlagStatus rcu_flag_get(rcu_flag_enum flag)
 {
     /* get the rcu flag */
-    if(RESET != (RCU_REG_VAL(flag) & BIT(RCU_BIT_POS(flag)))) {
+    if(RESET != (RCU_REG_VAL(flag) & BIT(RCU_BIT_POS(flag))))
+    {
         return SET;
     } else {
         return RESET;
@@ -2722,7 +2842,8 @@ void rcu_interrupt_disable(rcu_int_enum interrupt)
 FlagStatus rcu_interrupt_flag_get(rcu_int_flag_enum int_flag)
 {
     /* get the rcu interrupt flag */
-    if(RESET != (RCU_REG_VAL(int_flag) & BIT(RCU_BIT_POS(int_flag)))) {
+    if(RESET != (RCU_REG_VAL(int_flag) & BIT(RCU_BIT_POS(int_flag))))
+    {
         return SET;
     } else {
         return RESET;

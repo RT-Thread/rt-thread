@@ -8,27 +8,27 @@
 /*
     Copyright (c) 2024, GigaDevice Semiconductor Inc.
 
-    Redistribution and use in source and binary forms, with or without modification, 
+    Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
 
-    1. Redistributions of source code must retain the above copyright notice, this 
+    1. Redistributions of source code must retain the above copyright notice, this
        list of conditions and the following disclaimer.
-    2. Redistributions in binary form must reproduce the above copyright notice, 
-       this list of conditions and the following disclaimer in the documentation 
+    2. Redistributions in binary form must reproduce the above copyright notice,
+       this list of conditions and the following disclaimer in the documentation
        and/or other materials provided with the distribution.
-    3. Neither the name of the copyright holder nor the names of its contributors 
-       may be used to endorse or promote products derived from this software without 
+    3. Neither the name of the copyright holder nor the names of its contributors
+       may be used to endorse or promote products derived from this software without
        specific prior written permission.
 
-    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
-AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
-IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
-INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
-NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
-PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
-WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 OF SUCH DAMAGE.
 */
 
@@ -47,7 +47,7 @@ static uint8_t msc_core_req    (usb_dev *udev, usb_req *req);
 static uint8_t msc_core_in     (usb_dev *udev, uint8_t ep_num);
 static uint8_t msc_core_out    (usb_dev *udev, uint8_t ep_num);
 
-usb_class_core msc_class = 
+usb_class_core msc_class =
 {
     .init     = msc_core_init,
     .deinit   = msc_core_deinit,
@@ -63,7 +63,7 @@ usb_class_core msc_class =
 __ALIGN_BEGIN const usb_desc_dev msc_dev_desc __ALIGN_END =
 {
     .header = {
-        .bLength           = USB_DEV_DESC_LEN, 
+        .bLength           = USB_DEV_DESC_LEN,
         .bDescriptorType   = USB_DESCTYPE_DEV
     },
     .bcdUSB                = 0x0200U,
@@ -81,12 +81,12 @@ __ALIGN_BEGIN const usb_desc_dev msc_dev_desc __ALIGN_END =
 };
 
 /* USB device configuration descriptor */
-__ALIGN_BEGIN const usb_desc_config_set msc_config_desc __ALIGN_END = 
+__ALIGN_BEGIN const usb_desc_config_set msc_config_desc __ALIGN_END =
 {
-    .config = 
+    .config =
     {
         .header = {
-            .bLength         = sizeof(usb_desc_config), 
+            .bLength         = sizeof(usb_desc_config),
             .bDescriptorType = USB_DESCTYPE_CONFIG
         },
         .wTotalLength        = USB_MSC_CONFIG_DESC_SIZE,
@@ -97,10 +97,10 @@ __ALIGN_BEGIN const usb_desc_config_set msc_config_desc __ALIGN_END =
         .bMaxPower           = 0x32U
     },
 
-    .msc_itf = 
+    .msc_itf =
     {
         .header = {
-            .bLength         = sizeof(usb_desc_itf), 
+            .bLength         = sizeof(usb_desc_itf),
             .bDescriptorType = USB_DESCTYPE_ITF
         },
         .bInterfaceNumber    = 0x00U,
@@ -112,10 +112,10 @@ __ALIGN_BEGIN const usb_desc_config_set msc_config_desc __ALIGN_END =
         .iInterface          = 0x00U
     },
 
-    .msc_epin = 
+    .msc_epin =
     {
         .header = {
-            .bLength         = sizeof(usb_desc_ep), 
+            .bLength         = sizeof(usb_desc_ep),
             .bDescriptorType = USB_DESCTYPE_EP
         },
         .bEndpointAddress    = MSC_IN_EP,
@@ -124,10 +124,10 @@ __ALIGN_BEGIN const usb_desc_config_set msc_config_desc __ALIGN_END =
         .bInterval           = 0x00U
     },
 
-    .msc_epout = 
+    .msc_epout =
     {
         .header = {
-            .bLength         = sizeof(usb_desc_ep), 
+            .bLength         = sizeof(usb_desc_ep),
             .bDescriptorType = USB_DESCTYPE_EP
         },
         .bEndpointAddress    = MSC_OUT_EP,
@@ -138,12 +138,12 @@ __ALIGN_BEGIN const usb_desc_config_set msc_config_desc __ALIGN_END =
 };
 
 /* USB device other speed configuration descriptor */
-__ALIGN_BEGIN const usb_desc_config_set other_speed_msc_config_desc __ALIGN_END = 
+__ALIGN_BEGIN const usb_desc_config_set other_speed_msc_config_desc __ALIGN_END =
 {
-    .config = 
+    .config =
     {
         .header = {
-            .bLength         = sizeof(usb_desc_config), 
+            .bLength         = sizeof(usb_desc_config),
             .bDescriptorType = USB_DESCTYPE_OTHER_SPD_CONFIG
         },
         .wTotalLength        = USB_MSC_CONFIG_DESC_SIZE,
@@ -154,10 +154,10 @@ __ALIGN_BEGIN const usb_desc_config_set other_speed_msc_config_desc __ALIGN_END 
         .bMaxPower           = 0x32U
     },
 
-    .msc_itf = 
+    .msc_itf =
     {
         .header = {
-            .bLength         = sizeof(usb_desc_itf), 
+            .bLength         = sizeof(usb_desc_itf),
             .bDescriptorType = USB_DESCTYPE_ITF
         },
         .bInterfaceNumber    = 0x00U,
@@ -169,10 +169,10 @@ __ALIGN_BEGIN const usb_desc_config_set other_speed_msc_config_desc __ALIGN_END 
         .iInterface          = 0x00U
     },
 
-    .msc_epin = 
+    .msc_epin =
     {
         .header = {
-            .bLength         = sizeof(usb_desc_ep), 
+            .bLength         = sizeof(usb_desc_ep),
             .bDescriptorType = USB_DESCTYPE_EP
         },
         .bEndpointAddress    = MSC_IN_EP,
@@ -181,10 +181,10 @@ __ALIGN_BEGIN const usb_desc_config_set other_speed_msc_config_desc __ALIGN_END 
         .bInterval           = 0x00U
     },
 
-    .msc_epout = 
+    .msc_epout =
     {
         .header = {
-            .bLength         = sizeof(usb_desc_ep), 
+            .bLength         = sizeof(usb_desc_ep),
             .bDescriptorType = USB_DESCTYPE_EP
         },
         .bEndpointAddress    = MSC_OUT_EP,
@@ -194,35 +194,35 @@ __ALIGN_BEGIN const usb_desc_config_set other_speed_msc_config_desc __ALIGN_END 
     }
 };
 
-__ALIGN_BEGIN const uint8_t usbd_qualifier_desc[10] __ALIGN_END = 
+__ALIGN_BEGIN const uint8_t usbd_qualifier_desc[10] __ALIGN_END =
 {
-    0x0A, 
+    0x0A,
     0x06,
-    0x00, 
-    0x02,
-    0x00, 
     0x00,
-    0x00, 
+    0x02,
+    0x00,
+    0x00,
+    0x00,
     0x40,
-    0x01, 
+    0x01,
     0x00
 };
 
 /* USB language ID descriptor */
-__ALIGN_BEGIN const usb_desc_LANGID usbd_language_id_desc __ALIGN_END = 
+__ALIGN_BEGIN const usb_desc_LANGID usbd_language_id_desc __ALIGN_END =
 {
-    .header = 
+    .header =
      {
-         .bLength            = sizeof(usb_desc_LANGID), 
+         .bLength            = sizeof(usb_desc_LANGID),
          .bDescriptorType    = USB_DESCTYPE_STR
      },
     .wLANGID                 = ENG_LANGID
 };
 
 /* USB manufacture string */
-__ALIGN_BEGIN static const usb_desc_str manufacturer_string __ALIGN_END = 
+__ALIGN_BEGIN static const usb_desc_str manufacturer_string __ALIGN_END =
 {
-    .header = 
+    .header =
      {
          .bLength         = USB_STRING_LEN(10U),
          .bDescriptorType = USB_DESCTYPE_STR,
@@ -231,28 +231,28 @@ __ALIGN_BEGIN static const usb_desc_str manufacturer_string __ALIGN_END =
 };
 
 /* USB product string */
-__ALIGN_BEGIN static const usb_desc_str product_string __ALIGN_END = 
+__ALIGN_BEGIN static const usb_desc_str product_string __ALIGN_END =
 {
-    .header = 
+    .header =
      {
-         .bLength         = USB_STRING_LEN(12U), 
+         .bLength         = USB_STRING_LEN(12U),
          .bDescriptorType = USB_DESCTYPE_STR,
      },
     .unicode_string = {'G', 'D', '3', '2', '-', 'U', 'S', 'B', '_', 'M', 'S', 'C'}
 };
 
 /* USBD serial string */
-__ALIGN_BEGIN static usb_desc_str serial_string __ALIGN_END = 
+__ALIGN_BEGIN static usb_desc_str serial_string __ALIGN_END =
 {
-    .header = 
+    .header =
      {
-         .bLength         = USB_STRING_LEN(12U), 
+         .bLength         = USB_STRING_LEN(12U),
          .bDescriptorType = USB_DESCTYPE_STR,
      }
 };
 
 /* USB string descriptor */
-void *const usbd_msc_strings[] = 
+void *const usbd_msc_strings[] =
 {
     [STR_IDX_LANGID]  = (uint8_t *)&usbd_language_id_desc,
     [STR_IDX_MFC]     = (uint8_t *)&manufacturer_string,
@@ -329,27 +329,30 @@ static uint8_t msc_core_req (usb_dev *udev, usb_req *req)
 {
     usb_transc *transc = &udev->dev.transc_in[0];
 
-    switch (req->bRequest) {
+    switch (req->bRequest)
+    {
     case BBB_GET_MAX_LUN :
-        if((0U == req->wValue) && 
+        if((0U == req->wValue) &&
             (1U == req->wLength) &&
-            (0x80U == (req->bmRequestType & 0x80U))) {
+            (0x80U == (req->bmRequestType & 0x80U)))
+            {
             usbd_msc_maxlun = (uint8_t)usbd_mem_fops->mem_maxlun();
 
             transc->xfer_buf = &usbd_msc_maxlun;
             transc->remain_len = 1U;
         } else {
-            return USBD_FAIL; 
+            return USBD_FAIL;
         }
         break;
 
     case BBB_RESET :
-        if((0U == req->wValue) && 
+        if((0U == req->wValue) &&
             (0U == req->wLength) &&
-             (0x80U != (req->bmRequestType & 0x80U))) {
+             (0x80U != (req->bmRequestType & 0x80U)))
+             {
             msc_bbb_reset(udev);
         } else {
-            return USBD_FAIL; 
+            return USBD_FAIL;
         }
         break;
 

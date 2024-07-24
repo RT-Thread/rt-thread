@@ -195,11 +195,14 @@ void crc_polynomial_set(uint32_t poly)
 */
 uint32_t crc_single_data_calculate(uint32_t sdata, uint8_t data_format)
 {
-    if(INPUT_FORMAT_WORD == data_format) {
+    if(INPUT_FORMAT_WORD == data_format)
+    {
         REG32(CRC) = sdata;
-    } else if(INPUT_FORMAT_HALFWORD == data_format) {
+    } else if(INPUT_FORMAT_HALFWORD == data_format)
+    {
         REG16(CRC) = (uint16_t)sdata;
-    } else if(INPUT_FORMAT_BYTE == data_format) {
+    } else if(INPUT_FORMAT_BYTE == data_format)
+    {
         REG8(CRC) = (uint8_t)sdata;
     } else {
     }
@@ -226,19 +229,24 @@ uint32_t crc_block_data_calculate(void *array, uint32_t size, uint8_t data_forma
     uint32_t *data32;
     uint32_t index;
 
-    if(INPUT_FORMAT_WORD == data_format) {
+    if(INPUT_FORMAT_WORD == data_format)
+    {
         data32 = (uint32_t *)array;
-        for(index = 0U; index < size; index++) {
+        for(index = 0U; index < size; index++)
+        {
             REG32(CRC) = data32[index];
         }
-    } else if(INPUT_FORMAT_HALFWORD == data_format) {
+    } else if(INPUT_FORMAT_HALFWORD == data_format)
+    {
         data16 = (uint16_t *)array;
-        for(index = 0U; index < size; index++) {
+        for(index = 0U; index < size; index++)
+        {
             REG16(CRC) = data16[index];
         }
     } else {
         data8 = (uint8_t *)array;
-        for(index = 0U; index < size; index++) {
+        for(index = 0U; index < size; index++)
+        {
             REG8(CRC) = data8[index];
         }
     }

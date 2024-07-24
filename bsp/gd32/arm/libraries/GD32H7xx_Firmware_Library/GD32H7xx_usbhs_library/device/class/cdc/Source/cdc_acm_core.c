@@ -277,10 +277,12 @@ usb_class_core cdc_class = {
 */
 uint8_t cdc_acm_check_ready(usb_dev *udev)
 {
-    if(udev->dev.class_data[CDC_COM_INTERFACE] != NULL) {
+    if(udev->dev.class_data[CDC_COM_INTERFACE] != NULL)
+    {
         usb_cdc_handler *cdc = (usb_cdc_handler *)udev->dev.class_data[CDC_COM_INTERFACE];
 
-        if((1U == cdc->packet_receive) && (1U == cdc->packet_sent)) {
+        if((1U == cdc->packet_receive) && (1U == cdc->packet_sent))
+        {
             return 0U;
         }
     }
@@ -298,7 +300,8 @@ void cdc_acm_data_send(usb_dev *udev)
 {
     usb_cdc_handler *cdc = (usb_cdc_handler *)udev->dev.class_data[CDC_COM_INTERFACE];
 
-    if(0U != cdc->receive_length) {
+    if(0U != cdc->receive_length)
+    {
         cdc->packet_sent = 0U;
 
         usbd_ep_send(udev, CDC_DATA_IN_EP, (uint8_t *)(cdc->data), cdc->receive_length);
@@ -348,7 +351,8 @@ static uint8_t cdc_acm_init(usb_dev *udev, uint8_t config_index)
     cdc_handler.packet_sent = 1U;
     cdc_handler.receive_length = 0U;
 
-    cdc_handler.line_coding = (acm_line) {
+    cdc_handler.line_coding = (acm_line)
+    {
         .dwDTERate   = 115200,
         .bCharFormat = 0,
         .bParityType = 0,
@@ -392,7 +396,8 @@ static uint8_t cdc_acm_req(usb_dev *udev, usb_req *req)
 
     usb_transc *transc = NULL;
 
-    switch(req->bRequest) {
+    switch(req->bRequest)
+    {
     case SEND_ENCAPSULATED_COMMAND:
         /* no operation for this driver */
         break;
@@ -457,7 +462,8 @@ static uint8_t cdc_ctlx_out(usb_dev *udev)
 {
     usb_cdc_handler *cdc = (usb_cdc_handler *)udev->dev.class_data[CDC_COM_INTERFACE];
 
-    if(NO_CMD != udev->dev.class_core->alter_set) {
+    if(NO_CMD != udev->dev.class_core->alter_set)
+    {
         /* process the command data */
         cdc->line_coding.dwDTERate = (uint32_t)((uint32_t)cdc->cmd[0] |
                                                 ((uint32_t)cdc->cmd[1] << 8U) |
@@ -487,7 +493,8 @@ static uint8_t cdc_acm_in(usb_dev *udev, uint8_t ep_num)
 
     usb_cdc_handler *cdc = (usb_cdc_handler *)udev->dev.class_data[CDC_COM_INTERFACE];
 
-    if((0U == transc->xfer_len % transc->max_len) && (0U != transc->xfer_len)) {
+    if((0U == transc->xfer_len % transc->max_len) && (0U != transc->xfer_len))
+    {
         usbd_ep_send(udev, ep_num, NULL, 0U);
     } else {
         cdc->packet_sent = 1U;

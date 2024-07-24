@@ -69,9 +69,11 @@ uint8_t dfu_mal_init(void)
     uint32_t mem_index = 0U;
 
     /* initialize all supported memory medias */
-    for(mem_index = 0U; mem_index < MAX_USED_MEMORY_MEDIA; mem_index++) {
+    for(mem_index = 0U; mem_index < MAX_USED_MEMORY_MEDIA; mem_index++)
+    {
         /* check if the memory media exists */
-        if(NULL != tMALTab[mem_index]->mal_init) {
+        if(NULL != tMALTab[mem_index]->mal_init)
+        {
             tMALTab[mem_index]->mal_init();
         }
     }
@@ -90,9 +92,11 @@ uint8_t dfu_mal_deinit(void)
     uint32_t mem_index = 0U;
 
     /* deinitializes all supported memory medias */
-    for(mem_index = 0U; mem_index < MAX_USED_MEMORY_MEDIA; mem_index++) {
+    for(mem_index = 0U; mem_index < MAX_USED_MEMORY_MEDIA; mem_index++)
+    {
         /* check if the memory media exists */
-        if(NULL != tMALTab[mem_index]->mal_deinit) {
+        if(NULL != tMALTab[mem_index]->mal_deinit)
+        {
             tMALTab[mem_index]->mal_deinit();
         }
     }
@@ -110,9 +114,11 @@ uint8_t dfu_mal_erase(uint32_t addr)
 {
     uint32_t mem_index = dfu_mal_checkaddr(addr);
 
-    if(mem_index < MAX_USED_MEMORY_MEDIA) {
+    if(mem_index < MAX_USED_MEMORY_MEDIA)
+    {
         /* check if the operation is supported */
-        if(NULL != tMALTab[mem_index]->mal_erase) {
+        if(NULL != tMALTab[mem_index]->mal_erase)
+        {
             return tMALTab[mem_index]->mal_erase(addr);
         } else {
             return MAL_FAIL;
@@ -134,9 +140,11 @@ uint8_t dfu_mal_write(uint8_t *buf, uint32_t addr, uint32_t len)
 {
     uint32_t mem_index = dfu_mal_checkaddr(addr);
 
-    if(mem_index < MAX_USED_MEMORY_MEDIA) {
+    if(mem_index < MAX_USED_MEMORY_MEDIA)
+    {
         /* check if the operation is supported */
-        if(NULL != tMALTab[mem_index]->mal_write) {
+        if(NULL != tMALTab[mem_index]->mal_write)
+        {
             return tMALTab[mem_index]->mal_write(buf, addr, len);
         } else {
             return MAL_FAIL;
@@ -158,9 +166,11 @@ uint8_t *dfu_mal_read(uint8_t *buf, uint32_t addr, uint32_t len)
 {
     uint32_t mem_index = 0U;
 
-    if(mem_index < MAX_USED_MEMORY_MEDIA) {
+    if(mem_index < MAX_USED_MEMORY_MEDIA)
+    {
         /* check if the operation is supported */
-        if(NULL != tMALTab[mem_index]->mal_read) {
+        if(NULL != tMALTab[mem_index]->mal_read)
+        {
             return tMALTab[mem_index]->mal_read(buf, addr, len);
         } else {
             return buf;
@@ -182,8 +192,10 @@ uint8_t dfu_mal_getstatus(uint32_t addr, uint8_t cmd, uint8_t *buffer)
 {
     uint32_t mem_index = dfu_mal_checkaddr(addr);
 
-    if(mem_index < MAX_USED_MEMORY_MEDIA) {
-        if(cmd & 0x01U) {
+    if(mem_index < MAX_USED_MEMORY_MEDIA)
+    {
+        if(cmd & 0x01U)
+        {
             SET_POLLING_TIMEOUT(tMALTab[mem_index]->write_timeout);
         } else {
             SET_POLLING_TIMEOUT(tMALTab[mem_index]->erase_timeout);
@@ -206,9 +218,11 @@ static uint8_t dfu_mal_checkaddr(uint32_t addr)
     uint8_t mem_index = 0U;
 
     /* check with all supported memories */
-    for(mem_index = 0U; mem_index < MAX_USED_MEMORY_MEDIA; mem_index++) {
+    for(mem_index = 0U; mem_index < MAX_USED_MEMORY_MEDIA; mem_index++)
+    {
         /* if the check address is supported, return the memory index */
-        if(MAL_OK == tMALTab[mem_index]->mal_checkaddr(addr)) {
+        if(MAL_OK == tMALTab[mem_index]->mal_checkaddr(addr))
+        {
             return mem_index;
         }
     }

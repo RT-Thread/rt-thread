@@ -71,7 +71,8 @@
   #pragma GCC diagnostic push
   #pragma GCC diagnostic ignored "-Wpacked"
   #pragma GCC diagnostic ignored "-Wattributes"
-  struct __attribute__((packed)) T_UINT32 { uint32_t v; };
+  struct __attribute__((packed))T_UINT32
+  { uint32_t v; };
   #pragma GCC diagnostic pop
   #define __UNALIGNED_UINT32(x)                  (((struct T_UINT32 *)(x))->v)
 #endif
@@ -154,14 +155,18 @@ __STATIC_FORCEINLINE __NO_RETURN void __cmsis_start(void)
   extern const __zero_table_t __zero_table_start__;
   extern const __zero_table_t __zero_table_end__;
 
-  for (__copy_table_t const* pTable = &__copy_table_start__; pTable < &__copy_table_end__; ++pTable) {
-    for(uint32_t i=0u; i<pTable->wlen; ++i) {
+  for (__copy_table_t const* pTable = &__copy_table_start__; pTable < &__copy_table_end__; ++pTable)
+  {
+    for(uint32_t i=0u; i<pTable->wlen; ++i)
+    {
       pTable->dest[i] = pTable->src[i];
     }
   }
 
-  for (__zero_table_t const* pTable = &__zero_table_start__; pTable < &__zero_table_end__; ++pTable) {
-    for(uint32_t i=0u; i<pTable->wlen; ++i) {
+  for (__zero_table_t const* pTable = &__zero_table_start__; pTable < &__zero_table_end__; ++pTable)
+  {
+    for(uint32_t i=0u; i<pTable->wlen; ++i)
+    {
       pTable->dest[i] = 0u;
     }
   }
@@ -202,7 +207,8 @@ __STATIC_FORCEINLINE __NO_RETURN void __cmsis_start(void)
 #endif
 
 
-__STATIC_FORCEINLINE void __TZ_set_STACKSEAL_S (uint32_t* stackTop) {
+__STATIC_FORCEINLINE void __TZ_set_STACKSEAL_S (uint32_t* stackTop)
+{
   *((uint64_t *)stackTop) = __TZ_STACK_SEAL_VALUE;
 }
 #endif
@@ -1421,7 +1427,7 @@ __STATIC_FORCEINLINE uint32_t __get_PSPLIM(void)
 {
 #if (!(defined (__ARM_ARCH_8M_MAIN__ ) && (__ARM_ARCH_8M_MAIN__ == 1)) && \
     (!defined (__ARM_FEATURE_CMSE) || (__ARM_FEATURE_CMSE < 3)))
-    // without main extensions, the non-secure PSPLIM is RAZ/WI
+    /* without main extensions, the non-secure PSPLIM is RAZ/WI*/
   return 0U;
 #else
   uint32_t result;
@@ -1442,7 +1448,7 @@ __STATIC_FORCEINLINE uint32_t __get_PSPLIM(void)
 __STATIC_FORCEINLINE uint32_t __TZ_get_PSPLIM_NS(void)
 {
 #if (!(defined (__ARM_ARCH_8M_MAIN__ ) && (__ARM_ARCH_8M_MAIN__ == 1)))
-  // without main extensions, the non-secure PSPLIM is RAZ/WI
+  /* without main extensions, the non-secure PSPLIM is RAZ/WI*/
   return 0U;
 #else
   uint32_t result;
@@ -1466,7 +1472,7 @@ __STATIC_FORCEINLINE void __set_PSPLIM(uint32_t ProcStackPtrLimit)
 {
 #if (!(defined (__ARM_ARCH_8M_MAIN__ ) && (__ARM_ARCH_8M_MAIN__ == 1)) && \
     (!defined (__ARM_FEATURE_CMSE) || (__ARM_FEATURE_CMSE < 3)))
-  // without main extensions, the non-secure PSPLIM is RAZ/WI
+  /* without main extensions, the non-secure PSPLIM is RAZ/WI*/
   (void)ProcStackPtrLimit;
 #else
   __ASM volatile ("MSR psplim, %0" : : "r" (ProcStackPtrLimit));
@@ -1486,7 +1492,7 @@ __STATIC_FORCEINLINE void __set_PSPLIM(uint32_t ProcStackPtrLimit)
 __STATIC_FORCEINLINE void __TZ_set_PSPLIM_NS(uint32_t ProcStackPtrLimit)
 {
 #if (!(defined (__ARM_ARCH_8M_MAIN__ ) && (__ARM_ARCH_8M_MAIN__ == 1)))
-  // without main extensions, the non-secure PSPLIM is RAZ/WI
+  /* without main extensions, the non-secure PSPLIM is RAZ/WI*/
   (void)ProcStackPtrLimit;
 #else
   __ASM volatile ("MSR psplim_ns, %0\n" : : "r" (ProcStackPtrLimit));
@@ -1508,7 +1514,7 @@ __STATIC_FORCEINLINE uint32_t __get_MSPLIM(void)
 {
 #if (!(defined (__ARM_ARCH_8M_MAIN__ ) && (__ARM_ARCH_8M_MAIN__ == 1)) && \
     (!defined (__ARM_FEATURE_CMSE) || (__ARM_FEATURE_CMSE < 3)))
-  // without main extensions, the non-secure MSPLIM is RAZ/WI
+  /* without main extensions, the non-secure MSPLIM is RAZ/WI*/
   return 0U;
 #else
   uint32_t result;
@@ -1530,7 +1536,7 @@ __STATIC_FORCEINLINE uint32_t __get_MSPLIM(void)
 __STATIC_FORCEINLINE uint32_t __TZ_get_MSPLIM_NS(void)
 {
 #if (!(defined (__ARM_ARCH_8M_MAIN__ ) && (__ARM_ARCH_8M_MAIN__ == 1)))
-  // without main extensions, the non-secure MSPLIM is RAZ/WI
+  /* without main extensions, the non-secure MSPLIM is RAZ/WI*/
   return 0U;
 #else
   uint32_t result;
@@ -1554,7 +1560,7 @@ __STATIC_FORCEINLINE void __set_MSPLIM(uint32_t MainStackPtrLimit)
 {
 #if (!(defined (__ARM_ARCH_8M_MAIN__ ) && (__ARM_ARCH_8M_MAIN__ == 1)) && \
     (!defined (__ARM_FEATURE_CMSE) || (__ARM_FEATURE_CMSE < 3)))
-  // without main extensions, the non-secure MSPLIM is RAZ/WI
+  /* without main extensions, the non-secure MSPLIM is RAZ/WI*/
   (void)MainStackPtrLimit;
 #else
   __ASM volatile ("MSR msplim, %0" : : "r" (MainStackPtrLimit));
@@ -1574,7 +1580,7 @@ __STATIC_FORCEINLINE void __set_MSPLIM(uint32_t MainStackPtrLimit)
 __STATIC_FORCEINLINE void __TZ_set_MSPLIM_NS(uint32_t MainStackPtrLimit)
 {
 #if (!(defined (__ARM_ARCH_8M_MAIN__ ) && (__ARM_ARCH_8M_MAIN__ == 1)))
-  // without main extensions, the non-secure MSPLIM is RAZ/WI
+  /* without main extensions, the non-secure MSPLIM is RAZ/WI*/
   (void)MainStackPtrLimit;
 #else
   __ASM volatile ("MSR msplim_ns, %0" : : "r" (MainStackPtrLimit));
@@ -1596,8 +1602,8 @@ __STATIC_FORCEINLINE uint32_t __get_FPSCR(void)
 #if ((defined (__FPU_PRESENT) && (__FPU_PRESENT == 1U)) && \
      (defined (__FPU_USED   ) && (__FPU_USED    == 1U))     )
 #if __has_builtin(__builtin_arm_get_fpscr)
-// Re-enable using built-in when GCC has been fixed
-// || (__GNUC__ > 7) || (__GNUC__ == 7 && __GNUC_MINOR__ >= 2)
+/* Re-enable using built-in when GCC has been fixed*/
+/* || (__GNUC__ > 7) || (__GNUC__ == 7 && __GNUC_MINOR__ >= 2)*/
   /* see https://gcc.gnu.org/ml/gcc-patches/2017-04/msg00443.html */
   return __builtin_arm_get_fpscr();
 #else
@@ -1622,8 +1628,8 @@ __STATIC_FORCEINLINE void __set_FPSCR(uint32_t fpscr)
 #if ((defined (__FPU_PRESENT) && (__FPU_PRESENT == 1U)) && \
      (defined (__FPU_USED   ) && (__FPU_USED    == 1U))     )
 #if __has_builtin(__builtin_arm_set_fpscr)
-// Re-enable using built-in when GCC has been fixed
-// || (__GNUC__ > 7) || (__GNUC__ == 7 && __GNUC_MINOR__ >= 2)
+/* Re-enable using built-in when GCC has been fixed*/
+/* || (__GNUC__ > 7) || (__GNUC__ == 7 && __GNUC_MINOR__ >= 2)*/
   /* see https://gcc.gnu.org/ml/gcc-patches/2017-04/msg00443.html */
   __builtin_arm_set_fpscr(fpscr);
 #else
@@ -1995,7 +2001,8 @@ __STATIC_FORCEINLINE uint32_t __SXTB16(uint32_t op1)
 __STATIC_FORCEINLINE uint32_t __SXTB16_RORn(uint32_t op1, uint32_t rotate)
 {
   uint32_t result;
-  if (__builtin_constant_p(rotate) && ((rotate == 8U) || (rotate == 16U) || (rotate == 24U))) {
+  if (__builtin_constant_p(rotate) && ((rotate == 8U) || (rotate == 16U) || (rotate == 24U)))
+  {
     __ASM volatile ("sxtb16 %0, %1, ROR %2" : "=r" (result) : "r" (op1), "i" (rotate) );
   } else {
     result = __SXTB16(__ROR(op1, rotate)) ;
@@ -2014,7 +2021,8 @@ __STATIC_FORCEINLINE uint32_t __SXTAB16(uint32_t op1, uint32_t op2)
 __STATIC_FORCEINLINE uint32_t __SXTAB16_RORn(uint32_t op1, uint32_t op2, uint32_t rotate)
 {
   uint32_t result;
-  if (__builtin_constant_p(rotate) && ((rotate == 8U) || (rotate == 16U) || (rotate == 24U))) {
+  if (__builtin_constant_p(rotate) && ((rotate == 8U) || (rotate == 16U) || (rotate == 24U)))
+  {
     __ASM volatile ("sxtab16 %0, %1, %2, ROR %3" : "=r" (result) : "r" (op1) , "r" (op2) , "i" (rotate));
   } else {
     result = __SXTAB16(op1, __ROR(op2, rotate));

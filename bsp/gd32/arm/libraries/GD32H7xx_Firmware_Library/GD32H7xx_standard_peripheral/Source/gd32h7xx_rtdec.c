@@ -8,27 +8,27 @@
 /*
     Copyright (c) 2024, GigaDevice Semiconductor Inc.
 
-    Redistribution and use in source and binary forms, with or without modification, 
+    Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
 
-    1. Redistributions of source code must retain the above copyright notice, this 
+    1. Redistributions of source code must retain the above copyright notice, this
        list of conditions and the following disclaimer.
-    2. Redistributions in binary form must reproduce the above copyright notice, 
-       this list of conditions and the following disclaimer in the documentation 
+    2. Redistributions in binary form must reproduce the above copyright notice,
+       this list of conditions and the following disclaimer in the documentation
        and/or other materials provided with the distribution.
-    3. Neither the name of the copyright holder nor the names of its contributors 
-       may be used to endorse or promote products derived from this software without 
+    3. Neither the name of the copyright holder nor the names of its contributors
+       may be used to endorse or promote products derived from this software without
        specific prior written permission.
 
-    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
-AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
-IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
-INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
-NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
-PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
-WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 OF SUCH DAMAGE.
 */
 
@@ -45,12 +45,14 @@ OF SUCH DAMAGE.
 */
 void rtdec_deinit(uint32_t rtdec_periph)
 {
-    if(RTDEC0 == rtdec_periph){
+    if(RTDEC0 == rtdec_periph)
+    {
         /* reset RTDEC0 */
         rcu_periph_reset_enable(RCU_RTDEC0RST);
         rcu_periph_reset_disable(RCU_RTDEC0RST);
     }
-    if(RTDEC1 == rtdec_periph) {
+    if(RTDEC1 == rtdec_periph)
+    {
         /* reset RTDEC1 */
         rcu_periph_reset_enable(RCU_RTDEC1RST);
         rcu_periph_reset_disable(RCU_RTDEC1RST);
@@ -79,7 +81,7 @@ void rtdec_struct_para_init(rtdec_parameter_struct* rtdec_struct)
     \brief      initialize RTDEC
     \param[in]  rtdec_periph: RTDECx(x = 0, 1)
     \param[in]  rtdec_area: RTDEC_AREAx(x = 0, 1, 2, 3)
-    \param[in]  rtdec_struct: RTDEC parameter initialization stuct members of the structure 
+    \param[in]  rtdec_struct: RTDEC parameter initialization stuct members of the structure
                               and the member values are shown as below:
                   access_mode: RTDEC_MODE_CODE_ACCESS, RTDEC_MODE_DATA_ACCESS, RTDEC_MODE_BOTH_ACCESS
                   key_crc: CRC value of area key
@@ -113,7 +115,8 @@ ErrStatus rtdec_init(uint32_t rtdec_periph, uint32_t rtdec_area, rtdec_parameter
     /* check the key CRC */
     key_crc_reg = (uint8_t)GET_BITS(RTDEC_ARE_CFG(rtdec_periph, rtdec_area), 8U, 15U);
 
-    if(key_crc_reg != rtdec_struct->key_crc){
+    if(key_crc_reg != rtdec_struct->key_crc)
+    {
         return ERROR;
     }
 
@@ -154,7 +157,7 @@ void rtdec_config(uint32_t rtdec_periph, uint32_t rtdec_area, uint8_t access_mod
     \brief      configure RTDEC key or register lock
     \param[in]  rtdec_periph: RTDECx(x = 0, 1)
     \param[in]  rtdec_area: RTDEC_AREAx(x = 0, 1, 2, 3)
-    \param[in]: lock_type: key lock or register lock 
+    \param[in]: lock_type: key lock or register lock
       \arg:       RTDEC_ARE_CFG_LK: register lock
       \arg:       RTDEC_ARE_K_LK: key lock
     \param[out] none
@@ -270,7 +273,8 @@ void rtdec_disable(uint32_t rtdec_periph, uint32_t rtdec_area)
 */
 FlagStatus rtdec_flag_get(uint32_t rtdec_periph, uint32_t flag)
 {
-    if(RESET != (RTDEC_INTF(rtdec_periph) & flag)){
+    if(RESET != (RTDEC_INTF(rtdec_periph) & flag))
+    {
         return SET;
     }else{
         return RESET;
@@ -278,7 +282,7 @@ FlagStatus rtdec_flag_get(uint32_t rtdec_periph, uint32_t flag)
 }
 
 /*!
-    \brief      clear RTDEC error flag 
+    \brief      clear RTDEC error flag
     \param[in]  rtdec_periph: RTDECx(x = 0, 1)
     \param[in]: flag: error flag
                 only one parameter can be selected which is shown as below:
@@ -310,7 +314,7 @@ void rtdec_interrupt_enable(uint32_t rtdec_periph, uint32_t interrupt)
 }
 
 /*!
-    \brief      disable RTDEC interrupt 
+    \brief      disable RTDEC interrupt
     \param[in]  rtdec_periph: RTDECx(x = 0, 1)
     \param[in]: interrupt: interrupt type
                 one or more parameters can be selected which is shown as below:
@@ -326,7 +330,7 @@ void rtdec_interrupt_disable(uint32_t rtdec_periph, uint32_t interrupt)
 }
 
 /*!
-    \brief      get RTDEC interrupt flag 
+    \brief      get RTDEC interrupt flag
     \param[in]  rtdec_periph: RTDECx(x = 0, 1)
     \param[in]: int_flag: interrupt flag
                 only one parameter can be selected which is shown as below:
@@ -340,7 +344,8 @@ FlagStatus rtdec_interrupt_flag_get(uint32_t rtdec_periph, uint32_t int_flag)
 {
     uint32_t interrupt_enable = 0U,  interrupt_flag = 0U;
 
-    switch(int_flag){
+    switch(int_flag)
+    {
     /* RTDEC security error interrupt */
     case RTDEC_INT_FLAG_SEC_ERROR:
         interrupt_flag = RTDEC_INTF(rtdec_periph) & int_flag;
@@ -360,7 +365,8 @@ FlagStatus rtdec_interrupt_flag_get(uint32_t rtdec_periph, uint32_t int_flag)
         break;
     }
     /* get RTDEC interrupt flag status */
-    if(interrupt_flag && interrupt_enable){
+    if(interrupt_flag && interrupt_enable)
+    {
         return SET;
     }else{
         return RESET;
@@ -368,7 +374,7 @@ FlagStatus rtdec_interrupt_flag_get(uint32_t rtdec_periph, uint32_t int_flag)
 }
 
 /*!
-    \brief      clear RTDEC interrupt flag 
+    \brief      clear RTDEC interrupt flag
     \param[in]  rtdec_periph: RTDECx(x = 0, 1)
     \param[in]: int_flag: interrupt flag
                 only one parameter can be selected which is shown as below:

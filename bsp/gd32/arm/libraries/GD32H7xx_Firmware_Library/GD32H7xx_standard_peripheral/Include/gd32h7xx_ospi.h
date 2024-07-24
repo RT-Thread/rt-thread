@@ -285,69 +285,69 @@ typedef struct {
 
 /* OSPI FIFO threshold level set */
 #define OSPI_FTL(regval)                  (BITS(8,12) & ((uint32_t)(regval) << 8U))
-#define OSPI_FIFO_THRESHOLD_1             OSPI_FTL(0)                          /*!< in indirect write mode, there are 1 or more free bytes available to be written to the FIFO, 
+#define OSPI_FIFO_THRESHOLD_1             OSPI_FTL(0)                          /*!< in indirect write mode, there are 1 or more free bytes available to be written to the FIFO,
                                                                                 in indirect read mode, there are 1 or more free bytes available to be read from the FIFO */
-#define OSPI_FIFO_THRESHOLD_2             OSPI_FTL(1)                          /*!< in indirect write mode, there are 2 or more free bytes available to be written to the FIFO, 
+#define OSPI_FIFO_THRESHOLD_2             OSPI_FTL(1)                          /*!< in indirect write mode, there are 2 or more free bytes available to be written to the FIFO,
                                                                                 in indirect read mode, there are 2 or more free bytes available to be read from the FIFO */
-#define OSPI_FIFO_THRESHOLD_3             OSPI_FTL(2)                          /*!< in indirect write mode, there are 3 or more free bytes available to be written to the FIFO, 
+#define OSPI_FIFO_THRESHOLD_3             OSPI_FTL(2)                          /*!< in indirect write mode, there are 3 or more free bytes available to be written to the FIFO,
                                                                                 in indirect read mode, there are 3 or more free bytes available to be read from the FIFO */
-#define OSPI_FIFO_THRESHOLD_4             OSPI_FTL(3)                          /*!< in indirect write mode, there are 4 or more free bytes available to be written to the FIFO, 
+#define OSPI_FIFO_THRESHOLD_4             OSPI_FTL(3)                          /*!< in indirect write mode, there are 4 or more free bytes available to be written to the FIFO,
                                                                                 in indirect read mode, there are 4 or more free bytes available to be read from the FIFO */
-#define OSPI_FIFO_THRESHOLD_5             OSPI_FTL(4)                          /*!< in indirect write mode, there are 5 or more free bytes available to be written to the FIFO, 
+#define OSPI_FIFO_THRESHOLD_5             OSPI_FTL(4)                          /*!< in indirect write mode, there are 5 or more free bytes available to be written to the FIFO,
                                                                                 in indirect read mode, there are 5 or more free bytes available to be read from the FIFO */
-#define OSPI_FIFO_THRESHOLD_6             OSPI_FTL(5)                          /*!< in indirect write mode, there are 6 or more free bytes available to be written to the FIFO, 
+#define OSPI_FIFO_THRESHOLD_6             OSPI_FTL(5)                          /*!< in indirect write mode, there are 6 or more free bytes available to be written to the FIFO,
                                                                                 in indirect read mode, there are 6 or more free bytes available to be read from the FIFO */
-#define OSPI_FIFO_THRESHOLD_7             OSPI_FTL(6)                          /*!< in indirect write mode, there are 7 or more free bytes available to be written to the FIFO, 
+#define OSPI_FIFO_THRESHOLD_7             OSPI_FTL(6)                          /*!< in indirect write mode, there are 7 or more free bytes available to be written to the FIFO,
                                                                                 in indirect read mode, there are 7 or more free bytes available to be read from the FIFO */
-#define OSPI_FIFO_THRESHOLD_8             OSPI_FTL(7)                          /*!< in indirect write mode, there are 8 or more free bytes available to be written to the FIFO, 
+#define OSPI_FIFO_THRESHOLD_8             OSPI_FTL(7)                          /*!< in indirect write mode, there are 8 or more free bytes available to be written to the FIFO,
                                                                                 in indirect read mode, there are 8 or more free bytes available to be read from the FIFO */
-#define OSPI_FIFO_THRESHOLD_9             OSPI_FTL(8)                          /*!< in indirect write mode, there are 9 or more free bytes available to be written to the FIFO, 
+#define OSPI_FIFO_THRESHOLD_9             OSPI_FTL(8)                          /*!< in indirect write mode, there are 9 or more free bytes available to be written to the FIFO,
                                                                                 in indirect read mode, there are 9 or more free bytes available to be read from the FIFO */
-#define OSPI_FIFO_THRESHOLD_10            OSPI_FTL(9)                          /*!< in indirect write mode, there are 10 or more free bytes available to be written to the FIFO, 
+#define OSPI_FIFO_THRESHOLD_10            OSPI_FTL(9)                          /*!< in indirect write mode, there are 10 or more free bytes available to be written to the FIFO,
                                                                                 in indirect read mode, there are 10 or more free bytes available to be read from the FIFO */
-#define OSPI_FIFO_THRESHOLD_11            OSPI_FTL(10)                         /*!< in indirect write mode, there are 11 or more free bytes available to be written to the FIFO, 
+#define OSPI_FIFO_THRESHOLD_11            OSPI_FTL(10)                         /*!< in indirect write mode, there are 11 or more free bytes available to be written to the FIFO,
                                                                                 in indirect read mode, there are 11 or more free bytes available to be read from the FIFO */
-#define OSPI_FIFO_THRESHOLD_12            OSPI_FTL(11)                         /*!< in indirect write mode, there are 12 or more free bytes available to be written to the FIFO, 
+#define OSPI_FIFO_THRESHOLD_12            OSPI_FTL(11)                         /*!< in indirect write mode, there are 12 or more free bytes available to be written to the FIFO,
                                                                                 in indirect read mode, there are 12 or more free bytes available to be read from the FIFO */
-#define OSPI_FIFO_THRESHOLD_13            OSPI_FTL(12)                         /*!< in indirect write mode, there are 13 or more free bytes available to be written to the FIFO, 
+#define OSPI_FIFO_THRESHOLD_13            OSPI_FTL(12)                         /*!< in indirect write mode, there are 13 or more free bytes available to be written to the FIFO,
                                                                                 in indirect read mode, there are 13 or more free bytes available to be read from the FIFO */
-#define OSPI_FIFO_THRESHOLD_14            OSPI_FTL(13)                         /*!< in indirect write mode, there are 14 or more free bytes available to be written to the FIFO, 
+#define OSPI_FIFO_THRESHOLD_14            OSPI_FTL(13)                         /*!< in indirect write mode, there are 14 or more free bytes available to be written to the FIFO,
                                                                                 in indirect read mode, there are 14 or more free bytes available to be read from the FIFO */
-#define OSPI_FIFO_THRESHOLD_15            OSPI_FTL(14)                         /*!< in indirect write mode, there are 15 or more free bytes available to be written to the FIFO, 
+#define OSPI_FIFO_THRESHOLD_15            OSPI_FTL(14)                         /*!< in indirect write mode, there are 15 or more free bytes available to be written to the FIFO,
                                                                                 in indirect read mode, there are 15 or more free bytes available to be read from the FIFO */
-#define OSPI_FIFO_THRESHOLD_16            OSPI_FTL(15)                         /*!< in indirect write mode, there are 16 or more free bytes available to be written to the FIFO, 
+#define OSPI_FIFO_THRESHOLD_16            OSPI_FTL(15)                         /*!< in indirect write mode, there are 16 or more free bytes available to be written to the FIFO,
                                                                                 in indirect read mode, there are 16 or more free bytes available to be read from the FIFO */
-#define OSPI_FIFO_THRESHOLD_17            OSPI_FTL(16)                         /*!< in indirect write mode, there are 17 or more free bytes available to be written to the FIFO, 
+#define OSPI_FIFO_THRESHOLD_17            OSPI_FTL(16)                         /*!< in indirect write mode, there are 17 or more free bytes available to be written to the FIFO,
                                                                                 in indirect read mode, there are 17 or more free bytes available to be read from the FIFO */
-#define OSPI_FIFO_THRESHOLD_18            OSPI_FTL(17)                         /*!< in indirect write mode, there are 18 or more free bytes available to be written to the FIFO, 
+#define OSPI_FIFO_THRESHOLD_18            OSPI_FTL(17)                         /*!< in indirect write mode, there are 18 or more free bytes available to be written to the FIFO,
                                                                                 in indirect read mode, there are 18 or more free bytes available to be read from the FIFO */
-#define OSPI_FIFO_THRESHOLD_19            OSPI_FTL(18)                         /*!< in indirect write mode, there are 19 or more free bytes available to be written to the FIFO, 
+#define OSPI_FIFO_THRESHOLD_19            OSPI_FTL(18)                         /*!< in indirect write mode, there are 19 or more free bytes available to be written to the FIFO,
                                                                                 in indirect read mode, there are 19 or more free bytes available to be read from the FIFO */
-#define OSPI_FIFO_THRESHOLD_20            OSPI_FTL(19)                         /*!< in indirect write mode, there are 20 or more free bytes available to be written to the FIFO, 
+#define OSPI_FIFO_THRESHOLD_20            OSPI_FTL(19)                         /*!< in indirect write mode, there are 20 or more free bytes available to be written to the FIFO,
                                                                                 in indirect read mode, there are 20 or more free bytes available to be read from the FIFO */
-#define OSPI_FIFO_THRESHOLD_21            OSPI_FTL(20)                         /*!< in indirect write mode, there are 21 or more free bytes available to be written to the FIFO, 
+#define OSPI_FIFO_THRESHOLD_21            OSPI_FTL(20)                         /*!< in indirect write mode, there are 21 or more free bytes available to be written to the FIFO,
                                                                                 in indirect read mode, there are 21 or more free bytes available to be read from the FIFO */
-#define OSPI_FIFO_THRESHOLD_22            OSPI_FTL(21)                         /*!< in indirect write mode, there are 22 or more free bytes available to be written to the FIFO, 
+#define OSPI_FIFO_THRESHOLD_22            OSPI_FTL(21)                         /*!< in indirect write mode, there are 22 or more free bytes available to be written to the FIFO,
                                                                                 in indirect read mode, there are 22 or more free bytes available to be read from the FIFO */
-#define OSPI_FIFO_THRESHOLD_23            OSPI_FTL(22)                         /*!< in indirect write mode, there are 23 or more free bytes available to be written to the FIFO, 
+#define OSPI_FIFO_THRESHOLD_23            OSPI_FTL(22)                         /*!< in indirect write mode, there are 23 or more free bytes available to be written to the FIFO,
                                                                                 in indirect read mode, there are 23 or more free bytes available to be read from the FIFO */
-#define OSPI_FIFO_THRESHOLD_24            OSPI_FTL(23)                         /*!< in indirect write mode, there are 24 or more free bytes available to be written to the FIFO, 
+#define OSPI_FIFO_THRESHOLD_24            OSPI_FTL(23)                         /*!< in indirect write mode, there are 24 or more free bytes available to be written to the FIFO,
                                                                                 in indirect read mode, there are 24 or more free bytes available to be read from the FIFO */
-#define OSPI_FIFO_THRESHOLD_25            OSPI_FTL(24)                         /*!< in indirect write mode, there are 25 or more free bytes available to be written to the FIFO, 
+#define OSPI_FIFO_THRESHOLD_25            OSPI_FTL(24)                         /*!< in indirect write mode, there are 25 or more free bytes available to be written to the FIFO,
                                                                                 in indirect read mode, there are 25 or more free bytes available to be read from the FIFO */
-#define OSPI_FIFO_THRESHOLD_26            OSPI_FTL(25)                         /*!< in indirect write mode, there are 26 or more free bytes available to be written to the FIFO, 
+#define OSPI_FIFO_THRESHOLD_26            OSPI_FTL(25)                         /*!< in indirect write mode, there are 26 or more free bytes available to be written to the FIFO,
                                                                                 in indirect read mode, there are 26 or more free bytes available to be read from the FIFO */
-#define OSPI_FIFO_THRESHOLD_27            OSPI_FTL(26)                         /*!< in indirect write mode, there are 27 or more free bytes available to be written to the FIFO, 
+#define OSPI_FIFO_THRESHOLD_27            OSPI_FTL(26)                         /*!< in indirect write mode, there are 27 or more free bytes available to be written to the FIFO,
                                                                                 in indirect read mode, there are 27 or more free bytes available to be read from the FIFO */
-#define OSPI_FIFO_THRESHOLD_28            OSPI_FTL(27)                         /*!< in indirect write mode, there are 28 or more free bytes available to be written to the FIFO, 
+#define OSPI_FIFO_THRESHOLD_28            OSPI_FTL(27)                         /*!< in indirect write mode, there are 28 or more free bytes available to be written to the FIFO,
                                                                                 in indirect read mode, there are 28 or more free bytes available to be read from the FIFO */
-#define OSPI_FIFO_THRESHOLD_29            OSPI_FTL(28)                         /*!< in indirect write mode, there are 29 or more free bytes available to be written to the FIFO, 
+#define OSPI_FIFO_THRESHOLD_29            OSPI_FTL(28)                         /*!< in indirect write mode, there are 29 or more free bytes available to be written to the FIFO,
                                                                                 in indirect read mode, there are 29 or more free bytes available to be read from the FIFO */
-#define OSPI_FIFO_THRESHOLD_30            OSPI_FTL(29)                         /*!< in indirect write mode, there are 30 or more free bytes available to be written to the FIFO, 
+#define OSPI_FIFO_THRESHOLD_30            OSPI_FTL(29)                         /*!< in indirect write mode, there are 30 or more free bytes available to be written to the FIFO,
                                                                                 in indirect read mode, there are 30 or more free bytes available to be read from the FIFO */
-#define OSPI_FIFO_THRESHOLD_31            OSPI_FTL(30)                         /*!< in indirect write mode, there are 31 or more free bytes available to be written to the FIFO, 
+#define OSPI_FIFO_THRESHOLD_31            OSPI_FTL(30)                         /*!< in indirect write mode, there are 31 or more free bytes available to be written to the FIFO,
                                                                                 in indirect read mode, there are 31 or more free bytes available to be read from the FIFO */
-#define OSPI_FIFO_THRESHOLD_32            OSPI_FTL(31)                         /*!< in indirect write mode, there are 32 or more free bytes available to be written to the FIFO, 
+#define OSPI_FIFO_THRESHOLD_32            OSPI_FTL(31)                         /*!< in indirect write mode, there are 32 or more free bytes available to be written to the FIFO,
                                                                                 in indirect read mode, there are 32 or more free bytes available to be read from the FIFO */
 
 /* OSPI chip select high cycle */

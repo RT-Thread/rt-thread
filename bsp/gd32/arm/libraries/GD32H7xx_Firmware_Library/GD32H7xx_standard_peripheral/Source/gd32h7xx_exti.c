@@ -84,7 +84,8 @@ void exti_init(exti_line_enum linex, exti_mode_enum mode, exti_trig_type_enum tr
     EXTI_FTEN(EXTI_REG_VAL(linex)) &= ~EXTI_BIT_POS(linex);
 
     /* set the EXTI mode and enable the interrupts or events from EXTI line x */
-    switch(mode) {
+    switch(mode)
+    {
     case EXTI_INTERRUPT:
         EXTI_INTEN(EXTI_REG_VAL(linex)) |= EXTI_BIT_POS(linex);
         break;
@@ -96,7 +97,8 @@ void exti_init(exti_line_enum linex, exti_mode_enum mode, exti_trig_type_enum tr
     }
 
     /* set the EXTI trigger type */
-    switch(trig_type) {
+    switch(trig_type)
+    {
     case EXTI_TRIG_RISING:
         EXTI_RTEN(EXTI_REG_VAL(linex)) |= EXTI_BIT_POS(linex);
         EXTI_FTEN(EXTI_REG_VAL(linex)) &= ~EXTI_BIT_POS(linex);
@@ -203,7 +205,8 @@ void exti_software_interrupt_disable(exti_line_enum linex)
 */
 FlagStatus exti_flag_get(exti_line_enum linex)
 {
-    if(RESET != (EXTI_PD(EXTI_REG_VAL(linex)) & EXTI_BIT_POS(linex))) {
+    if(RESET != (EXTI_PD(EXTI_REG_VAL(linex)) & EXTI_BIT_POS(linex)))
+    {
         return SET;
     } else {
         return RESET;
@@ -233,7 +236,8 @@ void exti_flag_clear(exti_line_enum linex)
 */
 FlagStatus exti_interrupt_flag_get(exti_line_enum linex)
 {
-    if(RESET != (EXTI_PD(EXTI_REG_VAL(linex)) & EXTI_BIT_POS(linex))) {
+    if(RESET != (EXTI_PD(EXTI_REG_VAL(linex)) & EXTI_BIT_POS(linex)))
+    {
         return SET;
     } else {
         return RESET;

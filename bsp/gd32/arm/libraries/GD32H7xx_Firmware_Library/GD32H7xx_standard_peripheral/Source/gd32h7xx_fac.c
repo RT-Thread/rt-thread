@@ -176,7 +176,7 @@ void fac_fixed_buffer_preload(fac_fixed_data_preload_struct *init_struct)
     /* load the X0 buffer for input data */
     fac_fixed_data_preload(init_struct->input_size, init_struct->input_ctx);
     /* configure dma for X0 preload */
-    
+
     /* FAC_PARACFG: configure parameter of filter preload */
     FAC_PARACFG = (((uint32_t)init_struct->coeffb_size) & FAC_PARACFG_IPP) | \
                   ((((uint32_t)init_struct->coeffa_size) << 8) & FAC_PARACFG_IPQ) | \
@@ -186,12 +186,14 @@ void fac_fixed_buffer_preload(fac_fixed_data_preload_struct *init_struct)
     fac_fixed_data_preload(init_struct->coeffb_size, (init_struct->coeffb_ctx));
 
     /* load the x1 buffer for cofficientA */
-    if((NULL != init_struct->coeffa_ctx) && (0U != init_struct->coeffa_size)) {
+    if((NULL != init_struct->coeffa_ctx) && (0U != init_struct->coeffa_size))
+    {
         /* Load the buffer into the internal memory */
         fac_fixed_data_preload(init_struct->coeffa_size, (init_struct->coeffa_ctx));
     }
     /* if need configure to preload output buffer */
-    if((NULL != init_struct->output_ctx) && (0U != init_struct->output_size)) {
+    if((NULL != init_struct->output_ctx) && (0U != init_struct->output_size))
+    {
         FAC_PARACFG = ((uint32_t)init_struct->output_size & FAC_PARACFG_IPP) |  \
                       FUNC_LOAD_Y | FAC_PARACFG_EXE;
 
@@ -235,12 +237,14 @@ void fac_float_buffer_preload(fac_float_data_preload_struct *init_struct)
     fac_float_data_preload(init_struct->coeffb_size, (init_struct->coeffb_ctx));
 
     /* load the x1 buffer for cofficientA */
-    if((NULL != init_struct->coeffa_ctx) && (0U != init_struct->coeffa_size)) {
+    if((NULL != init_struct->coeffa_ctx) && (0U != init_struct->coeffa_size))
+    {
         /* load the buffer into the internal memory */
         fac_float_data_preload(init_struct->coeffa_size, (init_struct->coeffa_ctx));
     }
     /* if need configure to preload output buffer */
-    if((NULL != init_struct->output_ctx) && (0U != init_struct->output_size)) {
+    if((NULL != init_struct->output_ctx) && (0U != init_struct->output_size))
+    {
         FAC_PARACFG = ((uint32_t)init_struct->output_size & FAC_PARACFG_IPP) | \
                       FUNC_LOAD_Y | FAC_PARACFG_EXE;
 
@@ -258,7 +262,8 @@ void fac_float_buffer_preload(fac_float_data_preload_struct *init_struct)
 void fac_fixed_data_preload(uint8_t size, int16_t array[])
 {
     uint8_t i;
-    for(i = 0U; i < size; i++) {
+    for(i = 0U; i < size; i++)
+    {
         FAC_WDATA = ((*((uint16_t*)&array[i])) & FAC_WDATA_WDATA);
     }
 }
@@ -273,7 +278,8 @@ void fac_fixed_data_preload(uint8_t size, int16_t array[])
 void fac_float_data_preload(uint8_t size, float array[])
 {
     uint8_t i;
-    for(i = 0U; i < size; i++) {
+    for(i = 0U; i < size; i++)
+    {
         FAC_WDATA = ((*((uint32_t*) & array[i])));
     }
 }
@@ -300,7 +306,8 @@ void fac_reset(void)
 */
 void fac_clip_config(uint8_t cpmod)
 {
-    if(FAC_CP_ENABLE == cpmod) {
+    if(FAC_CP_ENABLE == cpmod)
+    {
         FAC_CTL |= FAC_CTL_CPEN;
     } else {
         FAC_CTL &= ~(FAC_CTL_CPEN);
@@ -593,7 +600,8 @@ FlagStatus fac_interrupt_flag_get(uint8_t interrupt)
     uint32_t reg1 = FAC_CTL;
     uint32_t reg2 = FAC_STAT;
 
-    switch(interrupt) {
+    switch(interrupt)
+    {
         /*  Y buffer read interrupt */
         case FAC_INT_FLAG_YBEF:
             reg1 = reg1 & FAC_CTL_RIE;
@@ -628,7 +636,8 @@ FlagStatus fac_interrupt_flag_get(uint8_t interrupt)
             break;
     }
     /*get FAC interrupt flag status */
-    if(reg1 && reg2) {
+    if(reg1 && reg2)
+    {
         return SET;
     } else {
         return RESET;
@@ -650,7 +659,8 @@ FlagStatus fac_interrupt_flag_get(uint8_t interrupt)
 */
 FlagStatus fac_flag_get(uint32_t flag)
 {
-    if(FAC_STAT & flag) {
+    if(FAC_STAT & flag)
+    {
         return SET;
     } else {
         return RESET;

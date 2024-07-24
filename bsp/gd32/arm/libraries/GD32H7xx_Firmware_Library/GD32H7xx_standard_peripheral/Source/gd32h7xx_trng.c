@@ -8,27 +8,27 @@
 /*
     Copyright (c) 2024, GigaDevice Semiconductor Inc.
 
-    Redistribution and use in source and binary forms, with or without modification, 
+    Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
 
-    1. Redistributions of source code must retain the above copyright notice, this 
+    1. Redistributions of source code must retain the above copyright notice, this
        list of conditions and the following disclaimer.
-    2. Redistributions in binary form must reproduce the above copyright notice, 
-       this list of conditions and the following disclaimer in the documentation 
+    2. Redistributions in binary form must reproduce the above copyright notice,
+       this list of conditions and the following disclaimer in the documentation
        and/or other materials provided with the distribution.
-    3. Neither the name of the copyright holder nor the names of its contributors 
-       may be used to endorse or promote products derived from this software without 
+    3. Neither the name of the copyright holder nor the names of its contributors
+       may be used to endorse or promote products derived from this software without
        specific prior written permission.
 
-    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
-AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
-IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
-INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
-NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
-PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
-WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 OF SUCH DAMAGE.
 */
 
@@ -156,7 +156,7 @@ void trng_conditioning_disable(void)
 void trng_conditioning_input_bitwidth(trng_inmod_enum input_bitwidth)
 {
     uint32_t trng_config = TRNG_CTL;
-    
+
     trng_config &= ~TRNG_CTL_INMOD;
     trng_config |= input_bitwidth;
     TRNG_CTL = trng_config;
@@ -164,7 +164,7 @@ void trng_conditioning_input_bitwidth(trng_inmod_enum input_bitwidth)
 
 /*!
     \brief      configure TRNG conditioning module output bitwidth
-    \param[in]  output_bitwidth: 
+    \param[in]  output_bitwidth:
                 only one parameter can be selected which is shown as below:
       \arg        TRNG_OUTMOD_128BIT: conditioning module output bitwidth 128bits
       \arg        TRNG_OUTMOD_256BIT: conditioning module output bitwidth 256bits
@@ -364,7 +364,8 @@ void trng_health_tests_config(uint32_t adpo_threshold, uint8_t rep_threshold)
 */
 FlagStatus trng_flag_get(trng_flag_enum flag)
 {
-    if(RESET != (TRNG_STAT & flag)){
+    if(RESET != (TRNG_STAT & flag))
+    {
         return SET;
     }else{
         return RESET;
@@ -404,7 +405,8 @@ void trng_interrupt_disable(void)
 */
 FlagStatus trng_interrupt_flag_get(trng_int_flag_enum int_flag)
 {
-    if(RESET != (TRNG_STAT & int_flag)){
+    if(RESET != (TRNG_STAT & int_flag))
+    {
         return SET;
     }else{
         return RESET;

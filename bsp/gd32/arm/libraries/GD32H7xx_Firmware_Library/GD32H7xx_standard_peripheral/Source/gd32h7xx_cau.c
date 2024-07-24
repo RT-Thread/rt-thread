@@ -1,34 +1,34 @@
 /*!
     \file    gd32h7xx_cau.c
     \brief   CAU driver
-    
+
     \version 2024-01-05, V1.2.0, firmware for GD32H7xx
 */
 
 /*
     Copyright (c) 2024, GigaDevice Semiconductor Inc.
 
-    Redistribution and use in source and binary forms, with or without modification, 
+    Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
 
-    1. Redistributions of source code must retain the above copyright notice, this 
+    1. Redistributions of source code must retain the above copyright notice, this
        list of conditions and the following disclaimer.
-    2. Redistributions in binary form must reproduce the above copyright notice, 
-       this list of conditions and the following disclaimer in the documentation 
+    2. Redistributions in binary form must reproduce the above copyright notice,
+       this list of conditions and the following disclaimer in the documentation
        and/or other materials provided with the distribution.
-    3. Neither the name of the copyright holder nor the names of its contributors 
-       may be used to endorse or promote products derived from this software without 
+    3. Neither the name of the copyright holder nor the names of its contributors
+       may be used to endorse or promote products derived from this software without
        specific prior written permission.
 
-    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
-AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
-IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
-INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
-NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
-PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
-WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 OF SUCH DAMAGE.
 */
 
@@ -408,7 +408,8 @@ void cau_fifo_flush(void)
 ControlStatus cau_enable_state_get(void)
 {
     ControlStatus ret = DISABLE;
-    if(RESET != (CAU_CTL & CAU_CTL_CAUEN)) {
+    if(RESET != (CAU_CTL & CAU_CTL_CAUEN))
+    {
         ret = ENABLE;
     }
     return ret;
@@ -476,7 +477,8 @@ void cau_context_save(cau_context_parameter_struct *cau_context, cau_key_paramet
 
     algm_reg = CAU_CTL & CAU_CTL_ALGM;
     /* AES or DES */
-    if((uint32_t)0 != (algm_reg & (~CAU_MODE_TDES_CBC))) {
+    if((uint32_t)0 != (algm_reg & (~CAU_MODE_TDES_CBC)))
+    {
         /* wait until both the IN and OUT FIFOs are empty (IEM=1 and ONE=0 in the CAU_STAT0 register) and BUSY=0 */
         checkbits = CAU_STAT0_IEM;
         checkmask = STAT0_AESDES_MASK;
@@ -487,7 +489,8 @@ void cau_context_save(cau_context_parameter_struct *cau_context, cau_key_paramet
         checkmask = STAT0_TDES_MASK;
     }
 
-    while((CAU_STAT0 & checkmask) != checkbits) {
+    while((CAU_STAT0 & checkmask) != checkbits)
+    {
     }
 
     /* stop DMA transfers on the OUT FIFO by clear CAU_DMAEN_DMAOEN=0 */
@@ -513,7 +516,8 @@ void cau_context_save(cau_context_parameter_struct *cau_context, cau_key_paramet
     cau_context->key_3_high = key_initpara->key_3_high;
     cau_context->key_3_low  = key_initpara->key_3_low;
 
-    if((CAU_MODE_TDES_ECB != algm_reg) && (CAU_MODE_DES_ECB != algm_reg) && (CAU_MODE_AES_ECB != algm_reg)) {
+    if((CAU_MODE_TDES_ECB != algm_reg) && (CAU_MODE_DES_ECB != algm_reg) && (CAU_MODE_AES_ECB != algm_reg))
+    {
         /* if not in ECB mode, save the initialization vectors */
         cau_context->iv_0_high = CAU_IV0H;
         cau_context->iv_0_low = CAU_IV0L;
@@ -522,7 +526,8 @@ void cau_context_save(cau_context_parameter_struct *cau_context, cau_key_paramet
     }
 
     /* if in GCM/CCM mode, save the context switch registers */
-    if((CAU_MODE_AES_GCM == algm_reg) || (CAU_MODE_AES_CCM == algm_reg)) {
+    if((CAU_MODE_AES_GCM == algm_reg) || (CAU_MODE_AES_CCM == algm_reg))
+    {
         cau_context->gcmccmctxs[0U] = CAU_GCMCCMCTXSx(0U);
         cau_context->gcmccmctxs[1U] = CAU_GCMCCMCTXSx(1U);
         cau_context->gcmccmctxs[2U] = CAU_GCMCCMCTXSx(2U);
@@ -534,7 +539,8 @@ void cau_context_save(cau_context_parameter_struct *cau_context, cau_key_paramet
     }
 
     /* if in GCM mode, save the context switch registers */
-    if(CAU_MODE_AES_GCM == algm_reg) {
+    if(CAU_MODE_AES_GCM == algm_reg)
+    {
         cau_context->gcmctxs[0U] = CAU_GCMCTXSx(0U);
         cau_context->gcmctxs[1U] = CAU_GCMCTXSx(1U);
         cau_context->gcmctxs[2U] = CAU_GCMCTXSx(2U);
@@ -586,7 +592,8 @@ void cau_context_restore(cau_context_parameter_struct *cau_context)
     CAU_KEY3H = cau_context->key_3_high;
     CAU_KEY3L = cau_context->key_3_low;
 
-    if((CAU_MODE_TDES_ECB != algm_reg) && (CAU_MODE_DES_ECB != algm_reg) && (CAU_MODE_AES_ECB != algm_reg)) {
+    if((CAU_MODE_TDES_ECB != algm_reg) && (CAU_MODE_DES_ECB != algm_reg) && (CAU_MODE_AES_ECB != algm_reg))
+    {
         /* restore the initialization vectors */
         CAU_IV0H = cau_context->iv_0_high;
         CAU_IV0L = cau_context->iv_0_low;
@@ -595,7 +602,8 @@ void cau_context_restore(cau_context_parameter_struct *cau_context)
     }
 
     /* if in GCM/CCM mode, restore the context switch registers */
-    if((CAU_MODE_AES_GCM == algm_reg) || (CAU_MODE_AES_CCM == algm_reg)) {
+    if((CAU_MODE_AES_GCM == algm_reg) || (CAU_MODE_AES_CCM == algm_reg))
+    {
         CAU_GCMCCMCTXSx(0U) = cau_context->gcmccmctxs[0U];
         CAU_GCMCCMCTXSx(1U) = cau_context->gcmccmctxs[1U];
         CAU_GCMCCMCTXSx(2U) = cau_context->gcmccmctxs[2U];
@@ -607,7 +615,8 @@ void cau_context_restore(cau_context_parameter_struct *cau_context)
     }
 
     /* if in GCM mode, restore the context switch registers */
-    if(CAU_MODE_AES_GCM == algm_reg) {
+    if(CAU_MODE_AES_GCM == algm_reg)
+    {
         CAU_GCMCTXSx(0U) = cau_context->gcmctxs[0U];
         CAU_GCMCTXSx(1U) = cau_context->gcmctxs[1U];
         CAU_GCMCTXSx(2U) = cau_context->gcmctxs[2U];
@@ -620,7 +629,8 @@ void cau_context_restore(cau_context_parameter_struct *cau_context)
 
     /* if it is AES ECB/CBC decryption, then first prepare key */
     aes_decrypt = CAU_CTL & (CAU_CTL_ALGM | CAU_CTL_CAUDIR);
-    if(((CAU_MODE_AES_ECB | CAU_DECRYPT) == aes_decrypt) || ((CAU_MODE_AES_CBC | CAU_DECRYPT) == aes_decrypt)) {
+    if(((CAU_MODE_AES_ECB | CAU_DECRYPT) == aes_decrypt) || ((CAU_MODE_AES_CBC | CAU_DECRYPT) == aes_decrypt))
+    {
         uint32_t alg_dir, algo_mode, swapping;
 
         /* flush IN/OUT FIFOs */
@@ -635,7 +645,8 @@ void cau_context_restore(cau_context_parameter_struct *cau_context)
         cau_enable();
 
         /* wait until BUSY=0 */
-        while((uint32_t)0U != cau_flag_get(CAU_FLAG_BUSY)) {
+        while((uint32_t)0U != cau_flag_get(CAU_FLAG_BUSY))
+        {
         }
 
         /* parameters for decryption */
@@ -666,7 +677,8 @@ FlagStatus cau_flag_get(uint32_t flag)
     FlagStatus ret_flag = RESET;
 
     /* check if the flag is in CAU_STAT1 register */
-    if(RESET != (flag & FLAG_MASK)) {
+    if(RESET != (flag & FLAG_MASK))
+    {
         reg = CAU_STAT1;
     } else {
         /* the flag is in CAU_STAT0 register */
@@ -674,7 +686,8 @@ FlagStatus cau_flag_get(uint32_t flag)
     }
 
     /* check the status of the specified CAU flag */
-    if(RESET != (reg & flag)) {
+    if(RESET != (reg & flag))
+    {
         ret_flag = SET;
     }
 
@@ -725,7 +738,8 @@ FlagStatus cau_interrupt_flag_get(uint32_t int_flag)
     FlagStatus flag = RESET;
 
     /* check the status of the specified CAU interrupt */
-    if(RESET != (CAU_INTF & int_flag)) {
+    if(RESET != (CAU_INTF & int_flag))
+    {
         flag = SET;
     }
 

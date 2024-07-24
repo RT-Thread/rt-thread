@@ -42,13 +42,13 @@ OF SUCH DAMAGE.
 
 /* registers definitions */
 #define MDMA_GINTF                          REG32(MDMA + 0x00000000U)                                       /*!< MDMA global interrupt flag register */
-        
+
 #define MDMA_CHXSTAT0(mdma_chx)             REG32(MDMA + 0x00000040U + (0x40U * (mdma_chx)))                /*!< MDMA channel x status register 0 */
 #define MDMA_CHXSTATC(mdma_chx)             REG32(MDMA + 0x00000044U + (0x40U * (mdma_chx)))                /*!< MDMA channel x status clear register */
 #define MDMA_CHXSTAT1(mdma_chx)             REG32(MDMA + 0x00000048U + (0x40U * (mdma_chx)))                /*!< MDMA channel x status register 1*/
 #define MDMA_CHXCTL0(mdma_chx)              REG32(MDMA + 0x0000004CU + (0x40U * (mdma_chx)))                /*!< MDMA channel x control register 0 */
 #define MDMA_CHXCFG(mdma_chx)               REG32(MDMA + 0x00000050U + (0x40U * (mdma_chx)))                /*!< MDMA channel x configure register */
-#define MDMA_CHXBTCFG(mdma_chx)             REG32(MDMA + 0x00000054U + (0x40U * (mdma_chx)))                /*!< MDMA channel x block transfer configure register */  
+#define MDMA_CHXBTCFG(mdma_chx)             REG32(MDMA + 0x00000054U + (0x40U * (mdma_chx)))                /*!< MDMA channel x block transfer configure register */
 #define MDMA_CHXSADDR(mdma_chx)             REG32(MDMA + 0x00000058U + (0x40U * (mdma_chx)))                /*!< MDMA channel x source address register */
 #define MDMA_CHXDADDR(mdma_chx)             REG32(MDMA + 0x0000005CU + (0x40U * (mdma_chx)))                /*!< MDMA channel x destination address register */
 #define MDMA_CHXMBADDRU(mdma_chx)           REG32(MDMA + 0x00000060U + (0x40U * (mdma_chx)))                /*!< MDMA channel x multi-block address update register */
@@ -145,23 +145,23 @@ OF SUCH DAMAGE.
 #define MDMA_CHXMBADDRU_SADDRUV             BITS(0,15)                                                      /*!< source address update value */
 #define MDMA_CHXMBADDRU_DADDRUV             BITS(16,31)                                                     /*!< destination address update value */
 
-/* MDMA_CHxLADDR,x=0..15 */         
+/* MDMA_CHxLADDR,x=0..15 */
 #define MDMA_CHXLADDR_LADDR                 BITS(0,31)                                                      /*!< link address */
 
-/* MDMA_CHxCTL1,x=0..15 */          
+/* MDMA_CHxCTL1,x=0..15 */
 #define MDMA_CHXCTL1_TRIGSEL                BITS(0,5)                                                       /*!< trigger select */
 #define MDMA_CHXCTL1_SBSEL                  BIT(16)                                                         /*!< source bus select */
 #define MDMA_CHXCTL1_DBSEL                  BIT(17)                                                         /*!< destination bus select */
 
-/* MDMA_CHxMADDR,x=0..15 */         
+/* MDMA_CHxMADDR,x=0..15 */
 #define MDMA_CHXMADDR_MADDR                 BITS(0,31)                                                      /*!< mask address */
-            
-/* MDMA_CHxMDATA,x=0..15 */         
+
+/* MDMA_CHxMDATA,x=0..15 */
 #define MDMA_CHXMDATA_MDATA                 BITS(0,31)                                                      /*!< mask data */
 
 /* constants definitions */
 /* MDMA configuration structure definition */
-typedef struct {            
+typedef struct {
     uint32_t request;                                                                                       /*!< specifies the MDMA request */
     uint32_t trans_trig_mode;                                                                               /*!< specifies the trigger transfer mode */
     uint32_t priority;                                                                                      /*!< specifies the software priority for the MDMA channelx */
@@ -357,15 +357,15 @@ typedef enum {
 #define MDMA_SOURCE_AXI                             ((uint32_t)0x00000000U)                                 /*!< source bus of channel x is the system bus or AXI bus */
 #define MDMA_SOURCE_AHB_TCM                         MDMA_CHXCTL1_SBSEL                                      /*!< source bus of channel x is AHB bus or TCM */
 
-/* destination bus select */            
+/* destination bus select */
 #define MDMA_DESTINATION_AXI                        ((uint32_t)0x00000000U)                                 /*!< destination bus of channel x is the system bus or AXI bus */
 #define MDMA_DESTINATION_AHB_TCM                    MDMA_CHXCTL1_DBSEL                                      /*!< destination bus of channel x is AHB bus or TCM */
 
-/* MDMA access error direction */           
+/* MDMA access error direction */
 #define MDMA_READ_ERROR                             ((uint32_t)0x00000000U)                                 /*!< read access error */
 #define MDMA_WRITE_ERROR                            MDMA_CHXSTAT1_TERRD                                     /*!< write access error */
-            
-/* MDMA bufferable write mode */            
+
+/* MDMA bufferable write mode */
 #define MDMA_BUFFERABLE_WRITE_DISABLE               ((uint32_t)0x00000000U)                                 /*!< diable bufferable write mode */
 #define MDMA_BUFFERABLE_WRITE_ENABLE                MDMA_CHXCFG_BWMOD                                       /*!< enable bufferable write mode */
 
@@ -382,14 +382,14 @@ typedef enum {
 #define MDMA_FLAG_ASERR                             (MDMA_CHXSTAT1_ASERR | STAT1_FLAG)                      /*!< address and size error flag */
 #define MDMA_FLAG_BZERR                             (MDMA_CHXSTAT1_BZERR | STAT1_FLAG)                      /*!< block size error flag */
 
-/* MDMA interrupt */            
+/* MDMA interrupt */
 #define MDMA_INT_ERR                                MDMA_CHXCTL0_ERRIE                                      /*!< transfer error interrupt */
 #define MDMA_INT_CHTC                               MDMA_CHXCTL0_CHTCIE                                     /*!< channel transfer complete interrupt */
 #define MDMA_INT_MBTC                               MDMA_CHXCTL0_MBTCIE                                     /*!< multi-block transfer complete interrupt */
 #define MDMA_INT_BTC                                MDMA_CHXCTL0_BTCIE                                      /*!< block transfer complete interrupt */
 #define MDMA_INT_TC                                 MDMA_CHXCTL0_TCIE                                       /*!< buffer transfer complete interrupt */
 
-/* MDMA interrupt flags */          
+/* MDMA interrupt flags */
 #define MDMA_INT_FLAG_ERR                           MDMA_CHXSTAT0_ERR                                       /*!< transfer error interrupt flag */
 #define MDMA_INT_FLAG_CHTCF                         MDMA_CHXSTAT0_CHTCF                                     /*!< channel transfer complete interrupt flag */
 #define MDMA_INT_FLAG_MBTCF                         MDMA_CHXSTAT0_MBTCF                                     /*!< multi-block transfer complete interrupt flag */

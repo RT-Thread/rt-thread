@@ -8,27 +8,27 @@
 /*
     Copyright (c) 2024, GigaDevice Semiconductor Inc.
 
-    Redistribution and use in source and binary forms, with or without modification, 
+    Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
 
-    1. Redistributions of source code must retain the above copyright notice, this 
+    1. Redistributions of source code must retain the above copyright notice, this
        list of conditions and the following disclaimer.
-    2. Redistributions in binary form must reproduce the above copyright notice, 
-       this list of conditions and the following disclaimer in the documentation 
+    2. Redistributions in binary form must reproduce the above copyright notice,
+       this list of conditions and the following disclaimer in the documentation
        and/or other materials provided with the distribution.
-    3. Neither the name of the copyright holder nor the names of its contributors 
-       may be used to endorse or promote products derived from this software without 
+    3. Neither the name of the copyright holder nor the names of its contributors
+       may be used to endorse or promote products derived from this software without
        specific prior written permission.
 
-    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
-AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
-IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
-INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
-NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
-PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
-WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 OF SUCH DAMAGE.
 */
 
@@ -37,17 +37,17 @@ OF SUCH DAMAGE.
 
 #include "usb_conf.h"
 
-#define USBHS0                        USBHS_BASE            
+#define USBHS0                        USBHS_BASE
 #define USBHS1                        (USBHS_BASE+0x00040000U)
 
 #define USBHS0_REG_BASE               USBHS0        /*!< base address of USBHS0 registers */
-#define USBHS1_REG_BASE               USBHS1        /*!< base address of USBHS1 registers */        
+#define USBHS1_REG_BASE               USBHS1        /*!< base address of USBHS1 registers */
 
 #define USBHS_MAX_TX_FIFOS            16U           /*!< FIFO number */
 
 #define USBHS_MAX_PACKET_SIZE         512U          /*!< USBHS max packet size */
-#define USBHS_MAX_CHANNEL_COUNT       16U           /*!< USBHS host channel count */     
-#define USBHS_MAX_EP_COUNT            8U            /*!< USBHS device endpoint count */    
+#define USBHS_MAX_CHANNEL_COUNT       16U           /*!< USBHS host channel count */
+#define USBHS_MAX_EP_COUNT            8U            /*!< USBHS device endpoint count */
 #define USBHS_MAX_FIFO_WORDLEN        1280U         /*!< USBHS max fifo size in words */
 
 #define USB_DATA_FIFO_OFFSET          0x1000U       /*!< USB data fifo offset */
@@ -199,7 +199,7 @@ typedef struct _usb_regs
 #define GOTGCS_AVOV               BIT(5)              /*!< override value of A-peripheral session valid */
 #define GOTGCS_AVOE               BIT(4)              /*!< override enable of A-peripheral session valid */
 #define GOTGCS_VOV                BIT(3)              /*!< override value of VBUS valid */
-#define GOTGCS_VOE                BIT(2)              /*!< override enable of VBUS valid */               
+#define GOTGCS_VOE                BIT(2)              /*!< override enable of VBUS valid */
 #define GOTGCS_SRPREQ             BIT(1)              /*!< SRP request */
 #define GOTGCS_SRPS               BIT(0)              /*!< SRP successes */
 
@@ -384,7 +384,7 @@ typedef struct _usb_regs
 #define PHYCTL_HS_CALEN           BIT(31)             /*!< HS PHY calibration enable */
 #define PHYCTL_HS_CALR            BITS(25, 30)        /*!< HS PHY calibration value */
 #define PHYCTL_HS_RCALR           BITS(21, 24)        /*!< HS PHY R calibration value */
-#define PHYCTL_SQUECH             BIT(16)             /*!< HS PHY squech flag */ 
+#define PHYCTL_SQUECH             BIT(16)             /*!< HS PHY squech flag */
 #define PHYCTL_HS_BIST_DONE       BIT(15)             /*!< HS PHY bist finished flag */
 #define PHYCTL_HS_BIST_SUCCESS    BIT(14)             /*!< HS PHY bist success flag */
 #define PHYCTL_HS_BIST_FAIL       BIT(13)             /*!< HS PHY bist fail flag */
@@ -552,7 +552,7 @@ extern const uint32_t PIPE_DPID[2];
 #define DIEPINTEN_EPTXFUDEN       BIT(4)              /*!< endpoint Tx FIFO underrun interrupt enable bit */
 #define DIEPINTEN_CITOEN          BIT(3)              /*!< control In Timeout interrupt enable bit */
 #define DIEPINTEN_EPDISEN         BIT(1)              /*!< endpoint disabled interrupt enable bit */
-#define DIEPINTEN_TFEN            BIT(0)              /*!< transfer finished interrupt enable bit */ 
+#define DIEPINTEN_TFEN            BIT(0)              /*!< transfer finished interrupt enable bit */
 
 /* device OUT endpoint common interrupt enable registers bits definitions */
 #define DOEPINTEN_NYETEN          BIT(14)             /*!< NYET handshake is sent interrupt enable bit */

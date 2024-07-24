@@ -284,7 +284,8 @@ usb_class_core usbd_custom_hid_cb = {
 */
 uint8_t custom_hid_itfop_register(usb_dev *udev, hid_fop_handler *hid_fop)
 {
-    if(NULL != hid_fop) {
+    if(NULL != hid_fop)
+    {
         udev->dev.user_data = hid_fop;
 
         return USBD_OK;
@@ -332,9 +333,12 @@ static uint8_t custom_hid_init(usb_dev *udev, uint8_t config_index)
 
     udev->dev.class_data[CUSTOM_HID_INTERFACE] = (void *)&hid_handler;
 
-    if(udev->dev.user_data != NULL) {
-        for(uint8_t i = 0U; i < MAX_PERIPH_NUM; i++) {
-            if(((hid_fop_handler *)udev->dev.user_data)->periph_config[i] != NULL) {
+    if(udev->dev.user_data != NULL)
+    {
+        for(uint8_t i = 0U; i < MAX_PERIPH_NUM; i++)
+        {
+            if(((hid_fop_handler *)udev->dev.user_data)->periph_config[i] != NULL)
+            {
                 ((hid_fop_handler *)udev->dev.user_data)->periph_config[i]();
             }
         }
@@ -372,7 +376,8 @@ static uint8_t custom_hid_req_handler(usb_dev *udev, usb_req *req)
 
     custom_hid_handler *hid = (custom_hid_handler *)udev->dev.class_data[CUSTOM_HID_INTERFACE];
 
-    switch(req->bRequest) {
+    switch(req->bRequest)
+    {
     case GET_REPORT:
         break;
 
@@ -399,7 +404,8 @@ static uint8_t custom_hid_req_handler(usb_dev *udev, usb_req *req)
         break;
 
     case USB_GET_DESCRIPTOR:
-        if(USB_DESCTYPE_REPORT == (req->wValue >> 8U)) {
+        if(USB_DESCTYPE_REPORT == (req->wValue >> 8U))
+        {
             transc->remain_len = USB_MIN(DESC_LEN_REPORT, req->wLength);
             transc->xfer_buf = (uint8_t *)customhid_report_descriptor;
         }
@@ -435,9 +441,11 @@ static uint8_t custom_hid_data_out(usb_dev *udev, uint8_t ep_num)
 {
     custom_hid_handler *hid = (custom_hid_handler *)udev->dev.class_data[CUSTOM_HID_INTERFACE];
 
-    switch(hid->data[0]) {
+    switch(hid->data[0])
+    {
     case 0x11U:
-        if(RESET != hid->data[1]) {
+        if(RESET != hid->data[1])
+        {
             gd_eval_led_on(LED1);
         } else {
             gd_eval_led_off(LED1);
@@ -445,7 +453,8 @@ static uint8_t custom_hid_data_out(usb_dev *udev, uint8_t ep_num)
         break;
 
     case 0x12U:
-        if(RESET != hid->data[1]) {
+        if(RESET != hid->data[1])
+        {
             gd_eval_led_on(LED2);
         } else {
             gd_eval_led_off(LED2);

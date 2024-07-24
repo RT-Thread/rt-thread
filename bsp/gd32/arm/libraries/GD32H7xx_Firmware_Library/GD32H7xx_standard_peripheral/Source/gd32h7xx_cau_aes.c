@@ -1,34 +1,34 @@
 /*!
     \file    gd32h7xx_cau_aes.c
     \brief   CAU AES driver
-    
+
     \version 2024-01-05, V1.2.0, firmware for GD32H7xx
 */
 
 /*
     Copyright (c) 2024, GigaDevice Semiconductor Inc.
 
-    Redistribution and use in source and binary forms, with or without modification, 
+    Redistribution and use in source and binary forms, with or without modification,
 are permitted provided that the following conditions are met:
 
-    1. Redistributions of source code must retain the above copyright notice, this 
+    1. Redistributions of source code must retain the above copyright notice, this
        list of conditions and the following disclaimer.
-    2. Redistributions in binary form must reproduce the above copyright notice, 
-       this list of conditions and the following disclaimer in the documentation 
+    2. Redistributions in binary form must reproduce the above copyright notice,
+       this list of conditions and the following disclaimer in the documentation
        and/or other materials provided with the distribution.
-    3. Neither the name of the copyright holder nor the names of its contributors 
-       may be used to endorse or promote products derived from this software without 
+    3. Neither the name of the copyright holder nor the names of its contributors
+       may be used to endorse or promote products derived from this software without
        specific prior written permission.
 
-    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
-AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED 
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. 
-IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, 
-INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT 
-NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR 
-PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
-WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
-ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
+    THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED.
+IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT
+NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
 OF SUCH DAMAGE.
 */
 
@@ -74,7 +74,8 @@ ErrStatus cau_aes_ecb(cau_parameter_struct *cau_parameter, uint8_t *output)
     cau_key_init(&key_initpara);
 
     /* AES decryption */
-    if(CAU_DECRYPT == cau_parameter->alg_dir) {
+    if(CAU_DECRYPT == cau_parameter->alg_dir)
+    {
         /* flush the IN and OUT FIFOs */
         cau_fifo_flush();
         /* initialize the CAU peripheral */
@@ -89,7 +90,8 @@ ErrStatus cau_aes_ecb(cau_parameter_struct *cau_parameter, uint8_t *output)
             counter++;
         } while((AESBSY_TIMEOUT != counter) && (RESET != busystatus));
 
-        if(RESET != busystatus) {
+        if(RESET != busystatus)
+        {
             return ERROR;
         }
     }
@@ -141,7 +143,8 @@ ErrStatus cau_aes_cbc(cau_parameter_struct *cau_parameter, uint8_t *output)
     cau_key_init(&key_initpara);
 
     /* AES decryption */
-    if(CAU_DECRYPT == cau_parameter->alg_dir) {
+    if(CAU_DECRYPT == cau_parameter->alg_dir)
+    {
         /* flush the IN and OUT FIFOs */
         cau_fifo_flush();
         /* initialize the CAU peripheral */
@@ -156,7 +159,8 @@ ErrStatus cau_aes_cbc(cau_parameter_struct *cau_parameter, uint8_t *output)
             counter++;
         } while((AESBSY_TIMEOUT != counter) && (RESET != busystatus));
 
-        if(RESET != busystatus) {
+        if(RESET != busystatus)
+        {
             return ERROR;
         }
     }
@@ -396,11 +400,13 @@ ErrStatus cau_aes_gcm(cau_parameter_struct *cau_parameter, uint8_t *output, uint
     /* enable the CAU peripheral */
     cau_enable();
     /* wait for CAUEN bit to be 0 */
-    while(ENABLE == cau_enable_state_get()) {
+    while(ENABLE == cau_enable_state_get())
+    {
     }
 
     /* aad phase */
-    if((uint32_t)0U != cau_parameter->aad_size) {
+    if((uint32_t)0U != cau_parameter->aad_size)
+    {
         /* select aad phase */
         cau_phase_config(CAU_AAD_PHASE);
         /* flush the IN and OUT FIFOs */
@@ -410,13 +416,15 @@ ErrStatus cau_aes_gcm(cau_parameter_struct *cau_parameter, uint8_t *output, uint
 
         ret = cau_fill_data(cau_parameter->aad, cau_parameter->aad_size);
 
-        if(ERROR == ret) {
+        if(ERROR == ret)
+        {
             return ret;
         }
     }
 
     /* encrypt or decrypt phase */
-    if((uint32_t)0U != cau_parameter->in_length) {
+    if((uint32_t)0U != cau_parameter->in_length)
+    {
         /* select encrypt or decrypt phase */
         cau_phase_config(CAU_ENCRYPT_DECRYPT_PHASE);
         /* flush the IN and OUT FIFOs */
@@ -427,7 +435,8 @@ ErrStatus cau_aes_gcm(cau_parameter_struct *cau_parameter, uint8_t *output, uint
         /* AES calculate process */
         ret = cau_aes_calculate(cau_parameter->input, cau_parameter->in_length, output);
 
-        if(ERROR == ret) {
+        if(ERROR == ret)
+        {
             return ret;
         }
     }
@@ -440,7 +449,8 @@ ErrStatus cau_aes_gcm(cau_parameter_struct *cau_parameter, uint8_t *output, uint
     /* enable the CAU peripheral */
     cau_enable();
 
-    if(DISABLE == cau_enable_state_get()) {
+    if(DISABLE == cau_enable_state_get())
+    {
         return ERROR;
     }
 
@@ -450,7 +460,8 @@ ErrStatus cau_aes_gcm(cau_parameter_struct *cau_parameter, uint8_t *output, uint
     cau_data_write(__REV((uint32_t)inputlength));
 
     /* wait until the ONE flag is set */
-    while(RESET == cau_flag_get(CAU_FLAG_OUTFIFO_NO_EMPTY)) {
+    while(RESET == cau_flag_get(CAU_FLAG_OUTFIFO_NO_EMPTY))
+    {
     }
 
     /* read the tag in the OUT FIFO */
@@ -510,9 +521,11 @@ ErrStatus cau_aes_ccm(cau_parameter_struct *cau_parameter, uint8_t *output, uint
     uint32_t temp_tag[4U];
 
     /* formatting the aad block */
-    if((uint32_t)0U != aadsize) {
+    if((uint32_t)0U != aadsize)
+    {
         /* check that the aad length is lower than 2^16 - 2^8 = 65536 - 256 = 65280 */
-        if(aadsize < 65280U) {
+        if(aadsize < 65280U)
+        {
             aad_buf[head_index++] = (uint8_t)((aadsize >> 8U) & 0xFFU);
             aad_buf[head_index++] = (uint8_t)((aadsize) & 0xFFU);
             aad_block_size = aadsize + 2U;
@@ -527,13 +540,16 @@ ErrStatus cau_aes_ccm(cau_parameter_struct *cau_parameter, uint8_t *output, uint
             aad_block_size = aadsize + 6U;
         }
         /* copy the aad buffer in internal buffer "HBuffer" */
-        for(i = 0U; i < aadsize; i++) {
+        for(i = 0U; i < aadsize; i++)
+        {
             aad_buf[head_index++] = *(uint8_t *)((uint32_t)(aadaddr + i));
         }
         /* check if the aad block size is modulo 16 */
-        if(0U != (aad_block_size % 16U)) {
+        if(0U != (aad_block_size % 16U))
+        {
             /* Pad the aad buffer with 0s till the HBuffer length is modulo 16 */
-            for(i = aad_block_size; i <= ((aad_block_size / 16U) + 1U) * 16U; i++) {
+            for(i = aad_block_size; i <= ((aad_block_size / 16U) + 1U) * 16U; i++)
+            {
                 aad_buf[i] = 0U;
             }
             /* set the aad size to modulo 16 */
@@ -544,26 +560,31 @@ ErrStatus cau_aes_ccm(cau_parameter_struct *cau_parameter, uint8_t *output, uint
     }
 
     /* formatting the block B0 */
-    if(0U != aadsize) {
+    if(0U != aadsize)
+    {
         blockb0[0] = 0x40U;
     }
     /* flags byte */
     blockb0[0] |= (0U | (((((uint8_t) tag_size - 2U) / 2U) & 0x07U) << 3U) | (((uint8_t)(15U - ivsize) - 1U) & 0x07U));
 
-    if(ivsize > MAX_CCM_IV_SIZE) {
+    if(ivsize > MAX_CCM_IV_SIZE)
+    {
         return ERROR;
     }
 
-    for(i = 0U; i < ivsize; i++) {
+    for(i = 0U; i < ivsize; i++)
+    {
         blockb0[i + 1U] = *(uint8_t *)((uint32_t)(ivaddr + i));
     }
 
     /* the byte length for payload length expressing, which plus the ivsize must equal to 15 bytes */
     plen = 15U - ivsize;
     /* if the byte length for payload length expressing is more than 4 bytes */
-    if(plen > 4U) {
+    if(plen > 4U)
+    {
         /* pad the blockb0 after vectors, and before the last 4 bytes */
-        for(; i < 11U; i++) {
+        for(; i < 11U; i++)
+        {
             blockb0[i + 1U] = 0U;
         }
         blockb0[12U] = (uint8_t)((inputsize >> 24U) & 0xFFU);
@@ -572,7 +593,8 @@ ErrStatus cau_aes_ccm(cau_parameter_struct *cau_parameter, uint8_t *output, uint
         blockb0[15U] = (uint8_t)(inputsize & 0xFFU);
     } else {
         /* the payload length is expressed in plen bytes */
-        for(; i < 15U; i++) {
+        for(; i < 15U; i++)
+        {
             blockb0[i + 1U] = (uint8_t)((inputsize >> ((plen - 1U) * 8U)) & 0xFFU);
             plen--;
         }
@@ -581,7 +603,8 @@ ErrStatus cau_aes_ccm(cau_parameter_struct *cau_parameter, uint8_t *output, uint
     /* formatting the initial counter */
     /* byte 0: bits 0-2 contain the same encoding of q as in B0 */
     counter[0] = blockb0[0] & BLOCK_B0_MASK;
-    for(i = 1U; i < ivsize + 1U; i++) {
+    for(i = 1U; i < ivsize + 1U; i++)
+    {
         counter[i] = blockb0[i];
     }
     /* set the LSB to 1 */
@@ -628,11 +651,13 @@ ErrStatus cau_aes_ccm(cau_parameter_struct *cau_parameter, uint8_t *output, uint
     cau_data_write(*(uint32_t *)(b0addr));
 
     /* wait for CAUEN bit to be 0 */
-    while(ENABLE == cau_enable_state_get()) {
+    while(ENABLE == cau_enable_state_get())
+    {
     }
 
     /* aad phase */
-    if((uint32_t)0U != aadsize) {
+    if((uint32_t)0U != aadsize)
+    {
         /* select aad phase */
         cau_phase_config(CAU_AAD_PHASE);
         /* enable the CAU peripheral */
@@ -640,7 +665,8 @@ ErrStatus cau_aes_ccm(cau_parameter_struct *cau_parameter, uint8_t *output, uint
 
         ret = cau_fill_data((uint8_t *)aadaddr, aad_block_size);
 
-        if(ERROR == ret) {
+        if(ERROR == ret)
+        {
             return ret;
         }
     }
@@ -648,7 +674,8 @@ ErrStatus cau_aes_ccm(cau_parameter_struct *cau_parameter, uint8_t *output, uint
     /* encrypt or decrypt phase */
     inputsize = cau_parameter->in_length;
 
-    if((uint32_t)0U != inputsize) {
+    if((uint32_t)0U != inputsize)
+    {
         /* select encrypt or decrypt phase */
         cau_phase_config(CAU_ENCRYPT_DECRYPT_PHASE);
         /* enable the CAU peripheral */
@@ -657,7 +684,8 @@ ErrStatus cau_aes_ccm(cau_parameter_struct *cau_parameter, uint8_t *output, uint
         /* AES calculate process */
         ret = cau_aes_calculate((uint8_t *)inputaddr, inputsize, (uint8_t *)outputaddr);
 
-        if(ERROR == ret) {
+        if(ERROR == ret)
+        {
             return ret;
         }
     }
@@ -668,7 +696,8 @@ ErrStatus cau_aes_ccm(cau_parameter_struct *cau_parameter, uint8_t *output, uint
     /* enable the CAU peripheral */
     cau_enable();
 
-    if(DISABLE == cau_enable_state_get()) {
+    if(DISABLE == cau_enable_state_get())
+    {
         return ERROR;
     }
 
@@ -684,7 +713,8 @@ ErrStatus cau_aes_ccm(cau_parameter_struct *cau_parameter, uint8_t *output, uint
     cau_data_write(*(uint32_t *)(ctraddr) & 0xFEFFFFFFU);
 
     /* wait until the ONE flag is set */
-    while(RESET == cau_flag_get(CAU_FLAG_OUTFIFO_NO_EMPTY)) {
+    while(RESET == cau_flag_get(CAU_FLAG_OUTFIFO_NO_EMPTY))
+    {
     }
 
     /* read the tag in the OUT FIFO */
@@ -697,7 +727,8 @@ ErrStatus cau_aes_ccm(cau_parameter_struct *cau_parameter, uint8_t *output, uint
     cau_disable();
 
     /* Copy temporary authentication TAG in user TAG buffer */
-    for(i = 0U; i < tag_size; i++) {
+    for(i = 0U; i < tag_size; i++)
+    {
         tag[i] = (uint8_t)(temp_tag[i / 4U] >> (8U * (i % 4U)));
     }
 
@@ -722,7 +753,8 @@ static void cau_aes_key_config(uint8_t *key, uint32_t keysize, cau_key_parameter
 {
     uint32_t keyaddr = (uint32_t)key;
 
-    switch(keysize) {
+    switch(keysize)
+    {
     /* 128-bit key initialization */
     case 128:
         cau_aes_keysize_config(CAU_KEYSIZE_128BIT);
@@ -786,16 +818,20 @@ static ErrStatus cau_fill_data(uint8_t *input, uint32_t in_length)
     __IO uint32_t counter = 0U;
     uint32_t busystatus = 0U;
 
-    if(DISABLE == cau_enable_state_get()) {
+    if(DISABLE == cau_enable_state_get())
+    {
         return ERROR;
     }
 
-    for(i = 0U; i < in_length; i += BLOCK_DATA_SIZE) {
+    for(i = 0U; i < in_length; i += BLOCK_DATA_SIZE)
+    {
         /* wait until the IEM flag is set */
-        while(RESET == cau_flag_get(CAU_FLAG_INFIFO_EMPTY)) {
+        while(RESET == cau_flag_get(CAU_FLAG_INFIFO_EMPTY))
+        {
         }
 
-        if(i + BLOCK_DATA_SIZE > in_length) {
+        if(i + BLOCK_DATA_SIZE > in_length)
+        {
             /* the last block data number is less than 128bit */
             uint32_t block_data_temp[4] = {0U};
 
@@ -804,10 +840,13 @@ static ErrStatus cau_fill_data(uint8_t *input, uint32_t in_length)
             inputaddr = (uint32_t)block_data_temp;
 
             /* if GCM encryption or CCM decryption, then configurate NBPILB bits in CTL register */
-            if((CAU_CTL & CAU_CTL_GCM_CCMPH) == CAU_ENCRYPT_DECRYPT_PHASE) {
-                if((CAU_CTL & (CAU_CTL_ALGM | CAU_CTL_CAUDIR)) == (CAU_MODE_AES_GCM | CAU_ENCRYPT)) {
+            if((CAU_CTL & CAU_CTL_GCM_CCMPH) == CAU_ENCRYPT_DECRYPT_PHASE)
+            {
+                if((CAU_CTL & (CAU_CTL_ALGM | CAU_CTL_CAUDIR)) == (CAU_MODE_AES_GCM | CAU_ENCRYPT))
+                {
                     CAU_CTL |= CAU_PADDING_BYTES(i + BLOCK_DATA_SIZE - in_length);
-                } else if((CAU_CTL & (CAU_CTL_ALGM | CAU_CTL_CAUDIR)) == (CAU_MODE_AES_CCM | CAU_DECRYPT)) {
+                } else if((CAU_CTL & (CAU_CTL_ALGM | CAU_CTL_CAUDIR)) == (CAU_MODE_AES_CCM | CAU_DECRYPT))
+                {
                     CAU_CTL |= CAU_PADDING_BYTES(i + BLOCK_DATA_SIZE - in_length);
                 } else {
                 }
@@ -831,7 +870,8 @@ static ErrStatus cau_fill_data(uint8_t *input, uint32_t in_length)
         counter++;
     } while((AESBSY_TIMEOUT != counter) && (RESET != busystatus));
 
-    if(RESET != busystatus) {
+    if(RESET != busystatus)
+    {
         return ERROR;
     }
 
@@ -854,17 +894,21 @@ static ErrStatus cau_aes_calculate(uint8_t *input, uint32_t in_length, uint8_t *
     uint32_t busystatus = 0U;
 
     /* the clock is not enabled or there is no embedded CAU peripheral */
-    if(DISABLE == cau_enable_state_get()) {
+    if(DISABLE == cau_enable_state_get())
+    {
         return ERROR;
     }
 
-    for(i = 0U; i < in_length; i += BLOCK_DATA_SIZE) {
+    for(i = 0U; i < in_length; i += BLOCK_DATA_SIZE)
+    {
         /* wait until the IEM flag is set */
-        while(RESET == cau_flag_get(CAU_FLAG_INFIFO_EMPTY)) {
+        while(RESET == cau_flag_get(CAU_FLAG_INFIFO_EMPTY))
+        {
         }
 
         /* check if the last input data block */
-        if(i + BLOCK_DATA_SIZE > in_length) {
+        if(i + BLOCK_DATA_SIZE > in_length)
+        {
             /* the last block data number is less than 128bit */
             uint32_t block_data_temp[4] = {0};
 
@@ -873,9 +917,11 @@ static ErrStatus cau_aes_calculate(uint8_t *input, uint32_t in_length, uint8_t *
             inputaddr = (uint32_t)block_data_temp;
 
             /* if GCM encryption or CCM decryption, then configurate NBPILB bits in CTL register */
-            if((CAU_CTL & (CAU_CTL_ALGM | CAU_CTL_CAUDIR)) == (CAU_MODE_AES_GCM | CAU_ENCRYPT)) {
+            if((CAU_CTL & (CAU_CTL_ALGM | CAU_CTL_CAUDIR)) == (CAU_MODE_AES_GCM | CAU_ENCRYPT))
+            {
                 CAU_CTL |= CAU_PADDING_BYTES(i + BLOCK_DATA_SIZE - in_length);
-            } else if((CAU_CTL & (CAU_CTL_ALGM | CAU_CTL_CAUDIR)) == (CAU_MODE_AES_CCM | CAU_DECRYPT)) {
+            } else if((CAU_CTL & (CAU_CTL_ALGM | CAU_CTL_CAUDIR)) == (CAU_MODE_AES_CCM | CAU_DECRYPT))
+            {
                 CAU_CTL |= CAU_PADDING_BYTES(i + BLOCK_DATA_SIZE - in_length);
             } else {
             }
@@ -898,7 +944,8 @@ static ErrStatus cau_aes_calculate(uint8_t *input, uint32_t in_length, uint8_t *
             counter++;
         } while((AESBSY_TIMEOUT != counter) && (RESET != busystatus));
 
-        if(RESET != busystatus) {
+        if(RESET != busystatus)
+        {
             return ERROR;
         } else {
             /* read the output block from the output FIFO */
