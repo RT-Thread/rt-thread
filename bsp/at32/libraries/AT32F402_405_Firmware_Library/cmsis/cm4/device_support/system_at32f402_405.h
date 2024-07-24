@@ -52,6 +52,7 @@ extern unsigned int system_core_clock; /*!< system clock frequency (core clock) 
 
 extern void SystemInit(void);
 extern void system_core_clock_update(void);
+extern void reduce_power_consumption(void);
 
 /**
   * @}

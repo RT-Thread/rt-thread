@@ -160,11 +160,11 @@ void at32_msp_i2c_init(void *instance)
         gpio_init_struct.gpio_mode = GPIO_MODE_MUX;
         gpio_init_struct.gpio_out_type = GPIO_OUTPUT_OPEN_DRAIN;
         gpio_init_struct.gpio_pull = GPIO_PULL_NONE;
-        gpio_init_struct.gpio_pins = GPIO_PINS_10 | GPIO_PINS_11;
+        gpio_init_struct.gpio_pins = GPIO_PINS_3 | GPIO_PINS_10;
         gpio_init(GPIOB, &gpio_init_struct);
 
+        gpio_pin_mux_config(GPIOB, GPIO_PINS_SOURCE3, GPIO_MUX_4);
         gpio_pin_mux_config(GPIOB, GPIO_PINS_SOURCE10, GPIO_MUX_4);
-        gpio_pin_mux_config(GPIOB, GPIO_PINS_SOURCE11, GPIO_MUX_4);
     }
 #endif
 #ifdef BSP_USING_HARD_I2C3

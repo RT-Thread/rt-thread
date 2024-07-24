@@ -1588,7 +1588,7 @@ void I2C3_TX_DMA_IRQHandler(void)
 #endif /* defined(BSP_I2C3_TX_USING_DMA) */
 #endif
 
-#if defined (SOC_SERIES_AT32F421)
+#if defined (SOC_SERIES_AT32F421) || defined (SOC_SERIES_AT32F425)
 void I2C1_TX_RX_DMA_IRQHandler(void)
 {
 #if defined(BSP_USING_HARD_I2C1) && defined(BSP_I2C1_TX_USING_DMA)
@@ -1608,38 +1608,6 @@ void I2C2_TX_RX_DMA_IRQHandler(void)
 
 #if defined(BSP_USING_HARD_I2C2) && defined(BSP_I2C2_RX_USING_DMA)
     I2C2_RX_DMA_IRQHandler();
-#endif
-}
-#endif
-
-#if defined (SOC_SERIES_AT32F425)
-void I2C1_TX_RX_DMA_IRQHandler(void)
-{
-#if defined(BSP_USING_HARD_I2C1) && defined(BSP_I2C1_TX_USING_DMA)
-    I2C1_TX_DMA_IRQHandler();
-#endif
-
-#if defined(BSP_USING_HARD_I2C1) && defined(BSP_I2C1_RX_USING_DMA)
-    I2C1_RX_DMA_IRQHandler();
-#endif
-}
-
-void I2C3_2_TX_RX_DMA_IRQHandler(void)
-{
-#if defined(BSP_USING_HARD_I2C2) && defined(BSP_I2C2_TX_USING_DMA)
-    I2C2_TX_DMA_IRQHandler();
-#endif
-
-#if defined(BSP_USING_HARD_I2C2) && defined(BSP_I2C2_RX_USING_DMA)
-    I2C2_RX_DMA_IRQHandler();
-#endif
-
-#if defined(BSP_USING_HARD_I2C3) && defined(BSP_I2C3_TX_USING_DMA)
-    I2C3_TX_DMA_IRQHandler();
-#endif
-
-#if defined(BSP_USING_HARD_I2C3) && defined(BSP_I2C3_RX_USING_DMA)
-    I2C3_RX_DMA_IRQHandler();
 #endif
 }
 #endif
